@@ -1,6 +1,6 @@
 # imgevolve — status / plan (plan_ref)
 
-**作業名 imgevolve**(公開名は衝突実測後に確定)。画像処理アルゴリズムを **設計する** AI。
+**公開名 = fullseye**(2026-08-01確定 = full[FullSense]+bullseye[的を射る=正しいアルゴリズムを当てる]・PyPI/GitHub完全クリーン)/ **作業名 imgevolve**。物理リネーム(dir/repo/PyPI)は公開時=llcore統合可否確定後まで保留。画像処理アルゴリズムを **設計する** AI。
 **スケーラブルなオペレータ・レジストリ**を進化させ、holdout で正直にゲートし、多言語
 (Python/C)コードに codegen する。目標は **HALCON 級のオペレータ網羅**。
 
