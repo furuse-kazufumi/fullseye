@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-57 operators across 13 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+67 operators across 16 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -61,11 +61,21 @@
 | `count_contours` | contour->feature | features | count_obj_contours | len(findContours) | len(find_contours) | - |
 | `total_length` | contour->feature | features | length_xld | arcLength | - | - |
 | `ncc_locate` | image->match | matching | find_ncc_model | matchTemplate | feature.match_template | normxcorr2 |
+| `rotate_img` | image | geometry | rotate_image | warpAffine(rot) | transform.rotate | imrotate |
+| `rescale_img` | image | geometry | zoom_image_size | resize | transform.rescale | imresize |
+| `affine_warp` | image | geometry | affine_trans_image | warpAffine | transform.warp(Affine) | imwarp |
+| `gabor` | image | texture | gen_gabor | getGaborKernel+filter2D | filters.gabor | imgaborfilt |
+| `clahe` | image | gray | emphasize_adaptive | createCLAHE | exposure.equalize_adapthist | adapthisteq |
+| `corner_response` | image | edges | points_harris | cornerHarris | feature.corner_harris | detectHarrisFeatures |
+| `adaptive_gauss_thresh` | image->region | segmentation | local_threshold | adaptiveThreshold(GAUSSIAN) | filters.threshold_local | adaptthresh |
+| `shape_locate` | image->match | matching | find_shape_model | matchTemplate+rotations | - | - |
+| `classify_shape` | region->feature | classification | select_shape_circularity | - | regionprops(circularity) | regionprops('Circularity') |
+| `decode_barcode` | image->feature | barcode | decode_bar_code | barcode.BarcodeDetector | - | readBarcode |
 
 ## Coverage (ops with a direct analog)
-- opencv: 47/57
-- skimage: 51/57
-- matlab: 48/57
+- opencv: 56/67
+- skimage: 59/67
+- matlab: 57/67
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

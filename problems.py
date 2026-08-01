@@ -151,6 +151,69 @@ def _score_locate(final, gt):
     return 0.0
 
 
+# --- locate_rot (shape-based, rotation invariant) ---------------------------- #
+def _template_L(size=11):
+    t = np.zeros((size, size), np.float64); t[2:size - 2, 2:4] = 1.0; t[size - 4:size - 2, 2:size - 2] = 1.0
+    return t
+
+
+def _make_locate_rot(n, size, seed):
+    rng = np.random.default_rng(seed + 8)
+    T = _template_L(11); ops.set_match_template(T); rr = T.shape[0] // 2
+    imgs, locs = [], []
+    for _ in range(n):
+        base = _synth(rng, size) * 0.4
+        tr = ndimage.rotate(T, rng.uniform(0, 360), reshape=False)
+        r = int(rng.integers(rr + 1, size - rr - 1)); c = int(rng.integers(rr + 1, size - rr - 1))
+        base[r - rr:r + rr + 1, c - rr:c + rr + 1] = np.maximum(base[r - rr:r + rr + 1, c - rr:c + rr + 1], tr)
+        imgs.append(np.clip(base + rng.normal(0, 0.1, base.shape), 0, 1)); locs.append([float(r), float(c)])
+    return {"input": np.stack(imgs), "items": np.array(locs)}
+
+
+# --- classify (round vs elongated; OCR/decision basis) ----------------------- #
+def _make_classify(n, size, seed):
+    rng = np.random.default_rng(seed + 6); imgs, labels = [], []
+    for _ in range(n):
+        img = np.full((size, size), 0.15, np.float64)
+        cx, cy = rng.integers(size // 3, 2 * size // 3, 2)
+        if rng.random() < 0.5:  # circle
+            r = int(rng.integers(size // 6, size // 4)); yy, xx = np.mgrid[0:size, 0:size]
+            img[(xx - cx) ** 2 + (yy - cy) ** 2 <= r * r] = 0.9; lab = 1.0
+        else:                    # elongated rectangle
+            h = int(rng.integers(size // 6, size // 4)); w = max(2, h // 4)
+            if rng.random() < 0.5:
+                w, h = h, w
+            img[max(0, cy - h // 2):cy + h // 2, max(0, cx - w // 2):cx + w // 2] = 0.9; lab = 0.0
+        imgs.append(np.clip(img + rng.normal(0, 0.08, img.shape), 0, 1)); labels.append(lab)
+    return {"input": np.stack(imgs), "items": np.array(labels)}
+
+
+def _score_classify(final, gt):
+    if _is_img(final):
+        circ = 0.5
+    elif isinstance(final, dict):
+        return 0.0
+    else:
+        try:
+            circ = float(np.asarray(final, np.float64).ravel()[0])
+        except Exception:
+            return 0.0
+    return 1.0 if (1.0 if circ > 0.8 else 0.0) == gt else 0.0
+
+
+# --- barcode-lite (count vertical bars) -------------------------------------- #
+def _make_barcode(n, size, seed):
+    rng = np.random.default_rng(seed + 7); imgs, counts = [], []
+    for _ in range(n):
+        img = np.full((size, size), 0.85, np.float64)
+        nb = int(rng.integers(2, 8))
+        xs = sorted(rng.choice(range(4, size - 4, 3), size=nb, replace=False))
+        for x in xs:
+            img[:, x:x + int(rng.integers(1, 3))] = 0.1
+        imgs.append(np.clip(img + rng.normal(0, 0.05, img.shape), 0, 1)); counts.append(float(nb))
+    return {"input": np.stack(imgs), "items": np.array(counts)}
+
+
 PROBLEMS: dict[str, Problem] = {
     "denoise": Problem("denoise", "dB PSNR", _make_denoise,
                        lambda f, tgt: ops.psnr(_as_image(f, tgt.shape), tgt),
@@ -167,6 +230,14 @@ PROBLEMS: dict[str, Problem] = {
                               ops.stage("remove_small", 0.2, 0.0), ops.stage("blob_count", 0.0, 0.0)]),
     "locate": Problem("locate", "1/(1+px)", _make_locate, _score_locate,
                       lambda: [ops.stage("gaussian", 0.2, 0.0), ops.stage("ncc_locate", 0.0, 0.0)]),
+    "locate_rot": Problem("locate_rot", "1/(1+px)", _make_locate_rot, _score_locate,
+                          lambda: [ops.stage("gaussian", 0.2, 0.0), ops.stage("shape_locate", 0.0, 0.0)]),
+    "classify": Problem("classify", "accuracy", _make_classify, _score_classify,
+                        lambda: [ops.stage("gaussian", 0.2, 0.0), ops.stage("otsu", 0.0, 0.0),
+                                 ops.stage("select_largest", 0.0, 0.0), ops.stage("classify_shape", 0.0, 0.0)]),
+    "barcode": Problem("barcode", "1/(1+err)", _make_barcode,
+                       lambda f, gt: 1.0 / (1.0 + abs(_as_count(f) - gt)),
+                       lambda: [ops.stage("decode_barcode", 0.5, 0.0)]),
 }
 
 

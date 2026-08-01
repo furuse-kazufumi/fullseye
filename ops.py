@@ -291,6 +291,88 @@ def _ncc_locate(v, a, b):
     return np.array([float(corr.max()), float(idx[0]), float(idx[1])])
 
 
+# --- geometry (image -> image; calibration/rectification building blocks) ----- #
+def _rotate_img(v, a, b):
+    return np.clip(ndimage.rotate(v, angle=-45 + 90 * a, reshape=False, mode="reflect"), 0, 1)
+
+
+def _rescale_img(v, a, b):
+    s = 0.7 + 0.6 * a
+    off = (v.shape[0] * (1 - 1 / s) / 2, v.shape[1] * (1 - 1 / s) / 2)
+    return np.clip(ndimage.affine_transform(v, np.array([1 / s, 1 / s]), offset=off, mode="reflect"), 0, 1)
+
+
+def _affine_warp(v, a, b):
+    ang = np.deg2rad(-20 + 40 * a); sh = (b - 0.5) * 0.4
+    M = np.array([[np.cos(ang), -np.sin(ang) + sh], [np.sin(ang), np.cos(ang)]])
+    c = np.array(v.shape) / 2
+    return np.clip(ndimage.affine_transform(v, M, offset=c - M @ c, mode="reflect"), 0, 1)
+
+
+# --- more filters (OpenCV/skimage families) ---------------------------------- #
+def _gabor(v, a, b):
+    theta = np.pi * a; freq = 0.1 + 0.3 * b; k = 7
+    yy, xx = np.mgrid[-k:k + 1, -k:k + 1]
+    xr = xx * np.cos(theta) + yy * np.sin(theta)
+    g = np.exp(-(xx * xx + yy * yy) / 8.0) * np.cos(2 * np.pi * freq * xr)
+    return _norm(np.abs(ndimage.convolve(v, g, mode="reflect")))
+
+
+def _clahe(v, a, b):
+    nb = 2 + int(a * 3); H, W = v.shape; out = v.copy(); hs, ws = max(1, H // nb), max(1, W // nb)
+    for i in range(nb):
+        for j in range(nb):
+            blk = v[i * hs:(i + 1) * hs, j * ws:(j + 1) * ws]
+            if blk.size:
+                out[i * hs:(i + 1) * hs, j * ws:(j + 1) * ws] = _equalize(blk, 0, 0)
+    return out
+
+
+def _corner_response(v, a, b):
+    gx = ndimage.sobel(v, 1); gy = ndimage.sobel(v, 0); s = 0.5 + 2.0 * a
+    axx = ndimage.gaussian_filter(gx * gx, s); ayy = ndimage.gaussian_filter(gy * gy, s)
+    axy = ndimage.gaussian_filter(gx * gy, s)
+    return _norm(axx * ayy - axy * axy - 0.04 * (axx + ayy) ** 2)
+
+
+def _adaptive_gauss_thresh(v, a, b):
+    return (v > ndimage.gaussian_filter(v, 1.0 + 3.0 * a) + (b - 0.5) * 0.3).astype(np.float64)
+
+
+# --- shape-based matching (rotation invariant; image -> match) --------------- #
+def _shape_locate(v, a, b):
+    T = _MATCH_CTX.get("template")
+    if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
+        return np.array([0.0, 0.0, 0.0, 0.0])
+    best = [-1e18, 0.0, 0.0, 0.0]
+    for ang in range(0, 360, 30):
+        tr = ndimage.rotate(T, ang, reshape=False)
+        corr = ndimage.correlate(v - float(v.mean()), tr - float(tr.mean()), mode="constant")
+        m = float(corr.max())
+        if m > best[0]:
+            idx = np.unravel_index(int(np.argmax(corr)), corr.shape)
+            best = [m, float(idx[0]), float(idx[1]), float(ang)]
+    return np.array(best)
+
+
+# --- classification (region -> feature; OCR/decision basis) ------------------ #
+def _classify_shape(v, a, b):
+    lab, n = ndimage.label(_bin(v))
+    if n == 0:
+        return np.float64(0.0)
+    sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
+    mask = lab == (int(np.argmax(sizes)) + 1)
+    area = float(mask.sum())
+    per = float((mask.astype(np.float64) - ndimage.binary_erosion(mask).astype(np.float64)).sum())
+    return np.float64(min(1.0, 4 * np.pi * area / (per * per)) if per > 0 else 0.0)  # ~1 circle
+
+
+# --- barcode-lite (image -> feature; count dark bars on the mid scanline) ---- #
+def _decode_barcode(v, a, b):
+    row = (v[v.shape[0] // 2] < (0.3 + 0.4 * a)).astype(int)
+    return np.float64(int((np.diff(np.concatenate([[0], row, [0]])) == 1).sum()))
+
+
 @dataclass
 class Op:
     name: str
@@ -384,6 +466,21 @@ _DEFS = [
     ("total_length", "features", "length_xld", CONTOUR, FEATURE, _total_length),
     # image -> match (template matching)
     ("ncc_locate", "matching", "find_ncc_model", IMAGE, MATCH, _ncc_locate),
+    # geometry (calibration/rectification basis)
+    ("rotate_img", "geometry", "rotate_image", IMAGE, IMAGE, _rotate_img),
+    ("rescale_img", "geometry", "zoom_image_size", IMAGE, IMAGE, _rescale_img),
+    ("affine_warp", "geometry", "affine_trans_image", IMAGE, IMAGE, _affine_warp),
+    # extra filters
+    ("gabor", "texture", "gen_gabor", IMAGE, IMAGE, _gabor),
+    ("clahe", "gray", "emphasize_adaptive", IMAGE, IMAGE, _clahe),
+    ("corner_response", "edges", "points_harris", IMAGE, IMAGE, _corner_response),
+    ("adaptive_gauss_thresh", "segmentation", "local_threshold", IMAGE, REGION, _adaptive_gauss_thresh),
+    # shape-based matching (rotation invariant)
+    ("shape_locate", "matching", "find_shape_model", IMAGE, MATCH, _shape_locate),
+    # classification (OCR/decision basis)
+    ("classify_shape", "classification", "select_shape_circularity", REGION, FEATURE, _classify_shape),
+    # barcode
+    ("decode_barcode", "barcode", "decode_bar_code", IMAGE, FEATURE, _decode_barcode),
 ]
 
 REGISTRY: list[Op] = [Op(n, c, h, i, o, f, _c(n)) for (n, c, h, i, o, f) in _DEFS]

@@ -76,6 +76,16 @@ ANALOGS: dict[str, dict[str, str]] = {
     "count_contours": {"opencv": "len(findContours)", "skimage": "len(find_contours)", "matlab": "-"},
     "total_length": {"opencv": "arcLength", "skimage": "-", "matlab": "-"},
     "ncc_locate": {"opencv": "matchTemplate", "skimage": "feature.match_template", "matlab": "normxcorr2"},
+    "rotate_img": {"opencv": "warpAffine(rot)", "skimage": "transform.rotate", "matlab": "imrotate"},
+    "rescale_img": {"opencv": "resize", "skimage": "transform.rescale", "matlab": "imresize"},
+    "affine_warp": {"opencv": "warpAffine", "skimage": "transform.warp(Affine)", "matlab": "imwarp"},
+    "gabor": {"opencv": "getGaborKernel+filter2D", "skimage": "filters.gabor", "matlab": "imgaborfilt"},
+    "clahe": {"opencv": "createCLAHE", "skimage": "exposure.equalize_adapthist", "matlab": "adapthisteq"},
+    "corner_response": {"opencv": "cornerHarris", "skimage": "feature.corner_harris", "matlab": "detectHarrisFeatures"},
+    "adaptive_gauss_thresh": {"opencv": "adaptiveThreshold(GAUSSIAN)", "skimage": "filters.threshold_local", "matlab": "adaptthresh"},
+    "shape_locate": {"opencv": "matchTemplate+rotations", "skimage": "-", "matlab": "-"},
+    "classify_shape": {"opencv": "-", "skimage": "regionprops(circularity)", "matlab": "regionprops('Circularity')"},
+    "decode_barcode": {"opencv": "barcode.BarcodeDetector", "skimage": "-", "matlab": "readBarcode"},
 }
 
 LIBS = ("halcon", "opencv", "skimage", "matlab")

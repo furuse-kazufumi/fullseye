@@ -1,6 +1,6 @@
 # imgevolve — sample code (cross-library recipes)
 
-Runnable style; `img` is a float64 HxW in [0,1]. imgevolve calls are exact; the OpenCV/scikit-image lines are the equivalent calls (args are illustrative). The full 57-op x 4-library API table is in `OPERATORS.md`.
+Runnable style; `img` is a float64 HxW in [0,1]. imgevolve calls are exact; the OpenCV/scikit-image lines are the equivalent calls (args are illustrative). The full 67-op x 4-library API table is in `OPERATORS.md`.
 
 ## End-to-end workflow (evolve -> codegen -> verify)
 
@@ -104,7 +104,36 @@ length = ops.RT["total_length"](cv_, 0, 0)             # -> feature
 
 ```python
 ops.set_match_template(template)                  # 11x11 reference patch
-m = ops.RT["ncc_locate"](img, 0, 0)               # -> np.array([score, row, col])
+m = ops.RT["ncc_locate"](img, 0, 0)               # -> [score, row, col]
+m = ops.RT["shape_locate"](img, 0, 0)             # rotation-invariant -> [score, row, col, angle]
 # OpenCV: res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED); cv2.minMaxLoc(res)
 # skimage: feature.match_template(img, template)
+```
+
+### Geometric transforms (calibration/rectification)
+
+```python
+img = ops.RT["rotate_img"](img, a=0.5, b=0)       # rotate (a maps to angle)
+img = ops.RT["rescale_img"](img, a=0.6, b=0)      # scale about centre
+img = ops.RT["affine_warp"](img, a=0.5, b=0.5)    # rotate + shear
+# OpenCV: cv2.warpAffine(img, M, dsize); cv2.resize(img, None, fx, fy)
+# skimage: transform.rotate(img, deg); transform.warp(img, AffineTransform(...))
+```
+
+### Shape classification (region -> feature; OCR/decision basis)
+
+```python
+region = ops.RT["otsu"](img, 0, 0)
+region = ops.RT["select_largest"](region, 0, 0)
+circ   = ops.RT["classify_shape"](region, 0, 0)   # 4*pi*A/P^2  (~1 circle, lower elongated)
+# skimage: measure.regionprops(label)[0].perimeter / .area  -> circularity
+# OpenCV:  cnt=findContours(...); 4*pi*contourArea(cnt)/arcLength(cnt,True)**2
+```
+
+### 1D barcode-lite (image -> feature)
+
+```python
+n = ops.RT["decode_barcode"](img, a=0.5, b=0)     # count dark bars on the mid scanline
+# OpenCV: cv2.barcode.BarcodeDetector().detectAndDecode(img8)
+# (real 1D/2D decoding: zbar / pyzbar, or cv2.barcode / cv2.QRCodeDetector)
 ```
