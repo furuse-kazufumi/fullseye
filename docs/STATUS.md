@@ -2,56 +2,65 @@
 
 **作業名 imgevolve**(公開名は衝突実測後に確定)。画像処理アルゴリズムを **設計する** AI。
 **スケーラブルなオペレータ・レジストリ**を進化させ、holdout で正直にゲートし、多言語
-(Python/C)コードに codegen する。目標は **HALCON 級のオペレータ網羅**。raptor work-graph 上で自走。
+(Python/C)コードに codegen する。目標は **HALCON 級のオペレータ網羅**。
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
 ## 差別化(先行研究で確定, 2026-08-01)
-AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(schedule 探索・
-アルゴリズムは人が書く)いずれも「アルゴリズム発見 × 型付き画像IR × 検証済み多言語codegen ×
-オンデバイス × honest holdout」を全部は満たさない。Halide は C/GPU codegen の下敷きに流用可。
+AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)いずれも
+「アルゴリズム発見 × 型付き画像IR × 検証済み多言語codegen × オンデバイス × honest holdout」を
+全部は満たさない。
 
-## 現在地(v7=optional cv2/skimage backends + 論文provenance, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
-- **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`)。**op を1つ足すだけで進化も codegen も catalog も自動追従**。
-- **多ソート型システム(6 ソート)**: `image / region / feature / contour(XLD) / match / any`。**型整合のある進化**で
-  HALCON 中核パターン **image →(segment)→ region →(morph/select)→ feature** と
-  **image →(edges_sub_pix)→ contour →(select/smooth/fit_line)→ contour →(to_region/length)→ region/feature** と
-  **image →(ncc_locate)→ match** を表現。
-- **107 op**(pure core 67 + backend 40=skimage25/cv2 15、cv2/skimage 導入時に自動登録・IMGEVOLVE_NO_BACKENDS=1 で core のみ)。**16+ カテゴリ**: image(smoothing/rank/morphology/edges/gray/frequency/texture)+ segmentation(threshold/
-  otsu/dyn_threshold/canny/local_max)+ region(reg_morph/fill_holes/select_largest/remove_small/dist_transform/
-  boundary/convex)+ features(blob_count/area_frac/count_contours/total_length)+ contour(edges_sub_pix/select/
-  smooth/fit_line/to_region)+ matching(ncc_locate)。
-- **8タスク**: denoise/edge/binarize/count/locate/**locate_rot**(回転不変shape matching)/**classify**(OCR/決定基盤)/**barcode**(1D bar計数)。
-- **cross-library catalog**(`catalog.py`→`docs/OPERATORS.md`): 各 op を HALCON/OpenCV/scikit-image/MATLAB の
-  API にマップ。直接アナログ被覆 = opencv 56/67・skimage 59/67・matlab 57/67。
-- S2 codegen(IR→Python+C)+ difftest(honest gate)。多ソートでも Python 照合 PASS(edge diff 0.0/count 4e-7)。
-- **honest 結果**(多ソート seed0/25gen): count 大勝(0.938 vs hand 0.688)、binarize 勝ち(fill_holes 使用)、
-  denoise 僅差勝ち、edge は 25gen で hand に負け(空間が広い=要 seed/世代)。乱択は大空間で劣化。
+## 現在地(v10 = 実 HALCON 被覆計測, 2026-08-01)
+- **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`, **153 op**)。op を1つ足すだけで進化も
+  codegen も catalog も自動追従。core 67 + backend 86(skimage/opencv/torch を optional wrap)。
+- **多ソート型システム(6+1 ソート)**: image / region / feature / contour(XLD) / match / any / volume(3D)。
+- **10 タスク**: denoise/edge/binarize/count/locate/locate_rot/classify/barcode/vol_denoise/vol_count。
+- S2 codegen(IR→Python+C)+ difftest(honest gate)。
 
-## HALCON/多ライブラリ級への道(ロードマップ)
-- **済(v1-v6)**: image/region/feature/contour(XLD)/match の 6 ソート + 67 op(filter/rank/morphology/edge/gray/
-  threshold/frequency/texture/region/features/contour/matching/geometry/classification/barcode)。cross-library catalog。
-  8 タスク(denoise/edge/binarize/count/locate/locate_rot/classify/barcode)。多言語 codegen+difftest。
-- **次**: shape-model の**スケール不変**化 + **実 OCR**(文字テンプレ集/学習)+ **calibration 解**(対応点→変換の最小二乗/solvePnP 相当)+
-  **3D/stereo** ソート。これで HALCON ~2100 に接近。
-- **多ライブラリ被覆拡大**: OpenCV ~2500 / skimage ~300。ファミリ単位で registry を拡張、analogs は catalog が自動追跡。
-- **C ランタイム拡張**: 現状 image op 8 種。median/bilateral/morph/region/fft を足し、gcc 到着で compile+差分検証を自動充足。
+### ★実 HALCON 被覆(memory 由来の推測を廃し、公式リファレンスを実スクレイプ)
+- `halcon_scrape.py`: MVTec 公式 Operator Reference を実スクレイプ → **実 2313 op(HALCON 26.05,
+  最新)/ 30 top-level 章 / 説明文 100%**。`--version` 引数化・`--op-sets` で複数版スナップショット。
+- `halcon_coverage.py`: レジストリの `Op.halcon` を実リファレンスに突合。
+  **被覆 = 79 / 2313(3.4%, 最新版)/ dangling = 0**(全 `.halcon` が実 HALCON 名 or 正直に空)。
+- **バージョン横断(op 集合は版で増減する)**: v12=2147 / v13=2176 / v2311=2381 / v2411=2387 /
+  v2505=2411 / **v2605=2313(最新, Legacy 209→110 に削減)**。union=2466。
+  `.halcon` 名を **stable(全版)=77 / version-drift=2(`bilateral_filter`・`guided_filter`=v13 追加)/
+  never(捏造)=0** に分類 = honest disclosure。
+- **`mvtec-halcon` PyPI バインディング(版一致 26050.0.0=26.05)から型付き Python シグネチャ**を
+  抽出 → typed stub(`data/halcon_stubs.json`, 2235/2313 に実シグネチャ)。3ソース(HTML scrape /
+  binding / 被覆)が「dangling は本物の誤り」で一致=三重確定。
+- 成果物: `docs/HALCON_COVERAGE.md`(版認識+gap ランキング)。scrape データは再生成可能な
+  ローカルキャッシュ(`data/` は gitignore, MVTec docs/EULA 配慮で vendor しない)。
 
-## 研究provenance / backend
-- `backends.py`: cv2/skimage を optional で wrap(sk_/cv_、例外安全)。**実装はエコシステム、差別化層(型IR進化+honest gate+多言語codegen)は自前**=数千オペレータへの現実解。
-- `references.py`→`docs/REFERENCES.md`: 各 op を seminal paper(Otsu/Canny/ROF/Tomasi-Manduchi/Frangi/Steger…83/107)+ RAD image corpus を新op源に。
-- cross-lib catalog: opencv 71/skimage 84/matlab 57 of 107。
+## HALCON ~2313 の実装可能性(章別内訳, honest)
+- **アルゴリズム系 808**(Filters/Morphology/Regions/Segmentation/XLD/Image/Transformations/
+  Metrology/Inspection…)= imgevolve の対象。cv2/skimage/scipy backend wrap で大規模実装可。
+- **インフラ系 776**(Graphics/Tuple/System/File/Control/Develop/Matrix/Legacy)= HDevelop 言語・
+  システム関数 = **アルゴリズム設計エンジンの対象外**(stub は自明だが実装は無意味)。
+- **モデル/専有 622**(Deep Learning/OCR/Classification/Calibration/3D)= 学習済モデル・HALCON 専有 =
+  部分的(汎用版は可、parity 不可)。
+- → 「全 stub scaffold」= 生成可能。「全実装」= 不要。現実解 = **アルゴリズム系 808 を graph 駆動で
+  backend wrap**(被覆 79→数百)。
+
+## 次(graph エンジニアリングでスケール)
+1. **オペレータ知識グラフ**(node=2313 op {章, in/out sort, 型シグネチャ, backend-analog 候補}、
+   edge=型合成 + ライブラリ analog)を構築 → 進化の探索空間 + 自動 codegen の土台。
+2. グラフの analog edge から **アルゴリズム系 808 の backend-wrapped registry エントリを自動生成**
+   (HALCON op → cv2/skimage/scipy 呼出 + 型シグネチャ)→ 被覆を段階的に引上げ。
+3. 各families を sweep で seed/世代積み各タスクの勝ちを確定。C runtime を median/bilateral/morph/fft へ拡張。
 
 ## 自走のしかた(work-graph)
 ```powershell
 cd C:\dev\projects\imgevolve
-py -3.11 sweep.py --round N            # imgevolve-rN-* を投入(seed 変えて別軌道)
-cd C:\dev\tools\raptor
-py -3.11 libexec/raptor-worklog serve --workers 1 --poll 5   # 自律実行(review だけ human-gated)
+py -3.11 halcon_scrape.py --version 2605                 # 実リファレンス取得(最新)
+py -3.11 halcon_scrape.py --op-sets --versions 12,13,2311,2411,2505,2605   # 版横断スナップショット
+py -3.11 halcon_coverage.py                              # 被覆計測 → docs/HALCON_COVERAGE.md
+py -3.11 sweep.py --round N                              # 進化を投入(seed 変えて別軌道)
 ```
-成果物 = `C:/dev/tools/raptor/out/worklog/imgevolve/`。進捗は read-only(実行中に run-once/reclaim 禁止)。
 
 ## honest 限界
-- OCR/barcode/matching は self-contained な最小実装(barcode=バー計数、classify=円形度、OCR は実文字認識未搭載)。実運用級は次段。
-- C は image op のみ emit(この環境に gcc 無し)。compile 差分検証は toolchain 到着後に自動で埋まる。
-- 進化の優位はタスク依存(誇張しない)。op 空間が広いほど乱択は劣化し進化が相対的に勝つ(要 seed/世代)。locate系/classify/barcode は perfect。
+- 被覆 3.4% は正直な現在地(memory 推測でなく実測)。インフラ系 776 は意図的に非対象。
+- OCR/DL/3D/matching は重い依存 or 専有アルゴリズムで parity 困難(汎用近似のみ)。
+- 型シグネチャは `mvtec-halcon` バインディング由来(ライセンスは MVTec、ローカル参照のみ・非 vendor)。
+- C は image op のみ emit(gcc 未導入環境)。compile 差分検証は toolchain 到着で自動充足。

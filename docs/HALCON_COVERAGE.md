@@ -1,29 +1,73 @@
-# imgevolve — HALCON coverage (honest, partial)
+# HALCON operator coverage (measured vs the real reference)
 
-I don't have all ~2100 HALCON operators memorised. Below is HALCON's chapter structure with **estimated** counts and a **curated** (non-exhaustive) operator list, mapped against our registry's `halcon` analog names. The authoritative list is the **MVTec HALCON Operator Reference** — ingesting it (RAD) is how we drive exhaustive coverage.
+Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
+Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-Our registry currently exposes **153 operators**; HALCON is estimated at **~2330** (of which a large share is non-algorithmic infrastructure — graphics/tuple/system/file).
+**imgevolve maps to 79 / 2313 HALCON operators (3.4%)** via `Op.halcon`, from 153 registry ops.
 
-| chapter | est. count | curated known | ours (matched) |
+One imgevolve op claims one nearest HALCON operator, so coverage counts
+distinct real operators with an analogue. This number is grounded in the
+scraped reference, not memory; grow it by adding operator families to the
+registry (each new `Op.halcon` that names a real operator lifts coverage).
+
+## Per-chapter coverage (ranked by gap)
+
+| chapter | covered | total | gap |
 |---|---|---|---|
-| Filters | ~150 | 26 | 18: anisotropic_diffusion, bilateral_filter, butterworth, diff_of_gauss, dyn_threshold, edges_image, emphasize, gauss_filter, gen_gabor, gray_range_rect, highpass, laplace, laplace_of_gauss, lowpass, mean_image, median_image, rank_image, sobel_amp |
-| Morphology | ~90 | 17 | 13: boundary, closing_circle, connection, fill_up, gray_bothat, gray_closing, gray_dilation, gray_erosion, gray_opening, gray_range_rect, gray_tophat, opening_circle, skeleton |
-| Regions | ~140 | 19 | 13: area_center, binary_threshold, clear_border, complement, connection, dilation_circle, dyn_threshold, erosion_circle, fill_up, select_shape_area, select_shape_largest, threshold, var_threshold |
-| XLD / Contours | ~180 | 14 | 7: edges_sub_pix, find_contours, fit_line_contour_xld, gen_region_contour_xld, length_xld, select_contours_xld, smooth_contours_xld |
-| Matching | ~120 | 8 | 2: find_ncc_model, find_shape_model |
-| Measuring | ~60 | 4 | 0: — |
-| Identification (Bar/Data code, OCR) | ~120 | 8 | 1: decode_bar_code |
-| Calibration | ~90 | 4 | 0: — |
-| 3D (object model / reconstruction / metrology / matching) | ~330 | 8 | 0: — |
-| Classification | ~120 | 6 | 1: select_shape_circularity |
-| Deep Learning | ~150 | 4 | 0: — |
-| Image (channels / access / generation) | ~120 | 11 | 7: affine_trans_image, equ_histo_image, invert_image, pow_image, rotate_image, scale_image, zoom_image_size |
-| Graphics / Visualization | ~200 | 3 | 0: — |
-| Tuple / System / File / Tools | ~460 | 4 | 1: count_obj |
+| Graphics | 0 | 174 | 174 |
+| Tuple | 0 | 165 | 165 |
+| Filters | 32 | 196 | 164 |
+| System | 0 | 141 | 141 |
+| Transformations | 3 | 118 | 115 |
+| Image | 2 | 110 | 108 |
+| Legacy | 2 | 110 | 108 |
+| Tools | 2 | 108 | 106 |
+| Classification | 0 | 99 | 99 |
+| OCR | 0 | 96 | 96 |
+| Regions | 11 | 106 | 95 |
+| Matching | 2 | 96 | 94 |
+| XLD | 4 | 97 | 93 |
+| Deep Learning | 1 | 88 | 87 |
+| 3D Reconstruction | 0 | 76 | 76 |
+| Calibration | 0 | 68 | 68 |
+| 3D Matching | 0 | 59 | 59 |
+| Matrix | 0 | 57 | 57 |
+| Inspection | 0 | 55 | 55 |
+| File | 0 | 53 | 53 |
+| 3D Object Model | 0 | 51 | 51 |
+| Segmentation | 9 | 53 | 44 |
+| Develop | 0 | 37 | 37 |
+| Control | 0 | 34 | 34 |
+| 2D Metrology | 0 | 32 | 32 |
+| Morphology | 16 | 44 | 28 |
+| Identification | 1 | 27 | 26 |
+| Image Source | 0 | 25 | 25 |
+| 1D Measuring | 0 | 20 | 20 |
+| Object | 1 | 16 | 15 |
 
-**Matched 63 curated HALCON operators** across chapters (the imgevolve registry has 153 ops incl. OpenCV/skimage/torch analogs).
+## Build targets — biggest gaps first (sample uncovered operators)
+
+- **Graphics** (0/174): add_scene_3d_camera, add_scene_3d_instance, add_scene_3d_label, add_scene_3d_light, attach_background_to_window, attach_drawing_object_to_window, clear_drawing_object, clear_scene_3d, clear_window, close_window, convert_coordinates_image_to_window, convert_coordinates_window_to_image
+- **Tuple** (0/165): clear_handle, copy_dict, create_dict, dict_to_json, get_dict_object, get_dict_param, get_dict_tuple, get_handle_object, get_handle_param, get_handle_tuple, handle_to_integer, integer_to_handle
+- **Filters** (32/196): abs_diff_image, abs_image, acos_image, add_image, add_noise_distribution, add_noise_white, affine_trans_image_size, apply_color_trans_lut, asin_image, atan2_image, atan_image, bandpass_image
+- **System** (0/141): activate_compute_device, broadcast_condition, clear_barrier, clear_condition, clear_event, clear_message, clear_message_queue, clear_mutex, clear_serial, clear_serialized_item, close_io_channel, close_io_device
+- **Transformations** (3/118): affine_trans_contour_xld, affine_trans_image_size, affine_trans_pixel, affine_trans_point_2d, affine_trans_point_3d, affine_trans_polygon_xld, affine_trans_region, angle_ll, angle_lx, axis_angle_to_quat, convert_point_3d_cart_to_spher, convert_point_3d_spher_to_cart
+- **Image** (2/110): access_channel, add_channels, add_image_border, append_channel, area_center_gray, change_domain, change_format, channels_to_image, close_framegrabber, complex_to_real, compose2, compose3
+- **Legacy** (2/110): approx_chain, approx_chain_simple, bin_threshold, bottom_hat, clear_component_model, clear_rectangle, clear_training_components, close_ocr, closing_golay, cluster_model_components, copy_metrology_object, create_component_model
+- **Tools** (2/108): abs_funct_1d, adjust_mosaic_images, angle_ll, angle_lx, apply_distance_transform_xld, area_intersection_rectangle2, bundle_adjust_mosaic, clear_distance_transform_xld, clear_scattered_data_interpolator, close_bg_esti, compose_funct_1d, connect_grid_points
+- **Classification** (0/99): add_class_train_data_gmm, add_class_train_data_knn, add_class_train_data_mlp, add_class_train_data_svm, add_sample_class_gmm, add_sample_class_knn, add_sample_class_mlp, add_sample_class_svm, add_sample_class_train_data, classify_class_gmm, classify_class_knn, classify_class_mlp
+- **OCR** (0/96): append_ocr_trainf, apply_deep_ocr, clear_lexicon, clear_ocr_class_cnn, clear_ocr_class_knn, clear_ocr_class_mlp, clear_ocr_class_svm, clear_text_model, clear_text_result, concat_ocr_trainf, create_deep_ocr, create_lexicon
+- **Regions** (11/106): affine_trans_region, area_holes, background_seg, circularity, clip_region, clip_region_rel, closest_point_transform, compactness, connect_and_holes, contlength, convexity, diameter_region
+- **Matching** (2/96): adapt_shape_model_high_noise, apply_deep_counting_model, clear_deformable_model, clear_descriptor_model, clear_ncc_model, clear_shape_model, create_aniso_shape_model, create_aniso_shape_model_xld, create_calib_descriptor_model, create_deep_counting_model, create_generic_shape_model, create_local_deformable_model
+
+## Version awareness (HALCON's op set changes between releases)
+Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
+
+- **77** claimed names exist in **all** scraped releases (stable).
+- **2 version-drift** (real, but only some releases): `bilateral_filter` (in 13/2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605)
+- **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 
 ## Honest reading
-- Algorithmic chapters ~1670 operators; ~660 are infrastructure (graphics/tuple/system/file) that an algorithm-design engine does not target.
-- Many HALCON operators are parametric variants of a family (collapse to fewer).
-- **Gap to full coverage**: 3D/DL/OCR/calibration/matching need heavy deps (Open3D/torch/models) or the official reference for exact signatures. Next: fetch the MVTec Operator Reference into RAD, then generate typed stubs per operator so coverage is tracked against the real 2100, not memory.
+- HALCON's ~2313 operators include large non-algorithmic chapters (Graphics / Tuple / System / File / Develop / Control) an algorithm-design engine does not target; real algorithmic headroom is smaller than the raw gap.
+- Many operators are parametric variants of one family (collapse to fewer).
+- Coverage counts a *nearest analogue*, not signature-level parity; per-operator typed stubs (`data/halcon_stubs.json`, with real Python signatures from the `mvtec-halcon` binding when available) track what is named vs implemented.

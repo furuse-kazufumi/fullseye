@@ -451,7 +451,7 @@ _DEFS = [
     ("morph_grad", "morphology", "gray_range_rect", IMAGE, IMAGE, _morph_grad),
     ("sobel_mag", "edges", "sobel_amp", IMAGE, IMAGE, _sobel_mag),
     ("laplace", "edges", "laplace", IMAGE, IMAGE, _laplace),
-    ("prewitt_mag", "edges", "prewitt", IMAGE, IMAGE, _prewitt_mag),
+    ("prewitt_mag", "edges", "prewitt_amp", IMAGE, IMAGE, _prewitt_mag),
     ("roberts_mag", "edges", "roberts", IMAGE, IMAGE, _roberts_mag),
     ("dog", "edges", "diff_of_gauss", IMAGE, IMAGE, _dog),
     ("gamma", "gray", "pow_image", IMAGE, IMAGE, _gamma),
@@ -459,8 +459,8 @@ _DEFS = [
     ("scale_clip", "gray", "scale_image", IMAGE, IMAGE, _scale_clip),
     ("equalize", "gray", "equ_histo_image", IMAGE, IMAGE, _equalize),
     ("sigmoid", "gray", "scale_image_max", IMAGE, IMAGE, _sigmoid),
-    ("lowpass", "frequency", "lowpass", IMAGE, IMAGE, _lowpass),
-    ("highpass", "frequency", "highpass", IMAGE, IMAGE, _highpass),
+    ("lowpass", "frequency", "", IMAGE, IMAGE, _lowpass),
+    ("highpass", "frequency", "highpass_image", IMAGE, IMAGE, _highpass),
     ("std_filter", "texture", "deviation_image", IMAGE, IMAGE, _std_filter),
     # image -> region (segmentation)
     ("threshold", "segmentation", "threshold", IMAGE, REGION, _threshold),
@@ -472,14 +472,14 @@ _DEFS = [
     ("reg_open", "region", "opening_circle", REGION, REGION, _reg_open),
     ("reg_close", "region", "closing_circle", REGION, REGION, _reg_close),
     ("fill_holes", "region", "fill_up", REGION, REGION, _fill_holes),
-    ("select_largest", "region", "select_shape_largest", REGION, REGION, _select_largest),
-    ("remove_small", "region", "select_shape_area", REGION, REGION, _remove_small),
+    ("select_largest", "region", "select_shape_std", REGION, REGION, _select_largest),
+    ("remove_small", "region", "select_shape", REGION, REGION, _remove_small),
     ("invert_region", "region", "complement", REGION, REGION, _invert_region),
     # region -> feature (measurement)
     ("blob_count", "features", "count_obj", REGION, FEATURE, _blob_count),
     ("area_frac", "features", "area_center", REGION, FEATURE, _area_frac),
     # extra image ops
-    ("grad_dir", "edges", "direction_gradient", IMAGE, IMAGE, _grad_dir),
+    ("grad_dir", "edges", "", IMAGE, IMAGE, _grad_dir),
     ("log", "edges", "laplace_of_gauss", IMAGE, IMAGE, _log),
     # extra segmentation (image -> region)
     ("canny", "segmentation", "edges_image", IMAGE, REGION, _canny),
@@ -487,7 +487,7 @@ _DEFS = [
     # extra region ops
     ("dist_transform", "region", "distance_transform", REGION, IMAGE, _dist_transform),
     ("region_boundary", "region", "boundary", REGION, REGION, _region_boundary),
-    ("convex_fill", "region", "shape_trans_convex", REGION, REGION, _convex_fill),
+    ("convex_fill", "region", "shape_trans", REGION, REGION, _convex_fill),
     # image -> contour (XLD)
     ("edges_sub_pix", "contour", "edges_sub_pix", IMAGE, CONTOUR, _edges_sub_pix),
     # contour -> contour
@@ -496,7 +496,7 @@ _DEFS = [
     ("fit_line_contours", "contour", "fit_line_contour_xld", CONTOUR, CONTOUR, _fit_line_contours),
     # contour -> region / feature
     ("contours_to_region", "contour", "gen_region_contour_xld", CONTOUR, REGION, _contours_to_region),
-    ("count_contours", "features", "count_obj_contours", CONTOUR, FEATURE, _count_contours),
+    ("count_contours", "features", "count_obj", CONTOUR, FEATURE, _count_contours),
     ("total_length", "features", "length_xld", CONTOUR, FEATURE, _total_length),
     # image -> match (template matching)
     ("ncc_locate", "matching", "find_ncc_model", IMAGE, MATCH, _ncc_locate),
@@ -506,24 +506,24 @@ _DEFS = [
     ("affine_warp", "geometry", "affine_trans_image", IMAGE, IMAGE, _affine_warp),
     # extra filters
     ("gabor", "texture", "gen_gabor", IMAGE, IMAGE, _gabor),
-    ("clahe", "gray", "emphasize_adaptive", IMAGE, IMAGE, _clahe),
+    ("clahe", "gray", "", IMAGE, IMAGE, _clahe),
     ("corner_response", "edges", "points_harris", IMAGE, IMAGE, _corner_response),
     ("adaptive_gauss_thresh", "segmentation", "local_threshold", IMAGE, REGION, _adaptive_gauss_thresh),
     # shape-based matching (rotation invariant)
     ("shape_locate", "matching", "find_shape_model", IMAGE, MATCH, _shape_locate),
     # classification (OCR/decision basis)
-    ("classify_shape", "classification", "select_shape_circularity", REGION, FEATURE, _classify_shape),
+    ("classify_shape", "classification", "", REGION, FEATURE, _classify_shape),
     # barcode
-    ("decode_barcode", "barcode", "decode_bar_code", IMAGE, FEATURE, _decode_barcode),
+    ("decode_barcode", "barcode", "find_bar_code", IMAGE, FEATURE, _decode_barcode),
     # 3D volume (CT/MRI/depth stacks)
-    ("vol_gaussian", "3d", "gauss_filter_3d", VOLUME, VOLUME, _vol_gaussian),
-    ("vol_median", "3d", "median_image_3d", VOLUME, VOLUME, _vol_median),
-    ("vol_erode", "3d", "erosion_3d", VOLUME, VOLUME, _vol_erode),
-    ("vol_dilate", "3d", "dilation_3d", VOLUME, VOLUME, _vol_dilate),
-    ("vol_threshold", "3d", "threshold_3d", VOLUME, VOLUME, _vol_threshold),
-    ("vol_mip", "3d", "project_3d", VOLUME, IMAGE, _vol_mip),
-    ("vol_slice", "3d", "access_channel_3d", VOLUME, IMAGE, _vol_slice),
-    ("vol_count", "features", "connection_3d", VOLUME, FEATURE, _vol_count),
+    ("vol_gaussian", "3d", "", VOLUME, VOLUME, _vol_gaussian),
+    ("vol_median", "3d", "", VOLUME, VOLUME, _vol_median),
+    ("vol_erode", "3d", "", VOLUME, VOLUME, _vol_erode),
+    ("vol_dilate", "3d", "", VOLUME, VOLUME, _vol_dilate),
+    ("vol_threshold", "3d", "", VOLUME, VOLUME, _vol_threshold),
+    ("vol_mip", "3d", "", VOLUME, IMAGE, _vol_mip),
+    ("vol_slice", "3d", "", VOLUME, IMAGE, _vol_slice),
+    ("vol_count", "features", "", VOLUME, FEATURE, _vol_count),
 ]
 
 REGISTRY: list[Op] = [Op(n, c, h, i, o, f, _c(n)) for (n, c, h, i, o, f) in _DEFS]

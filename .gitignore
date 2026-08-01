@@ -1,3 +1,6 @@
 out/
 __pycache__/
 *.pyc
+# scraped HALCON reference is a local, regenerable cache (MVTec docs/EULA text);
+# regenerate with halcon_scrape.py + halcon_coverage.py, do not vendor.
+data/
