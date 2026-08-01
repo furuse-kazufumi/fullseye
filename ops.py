@@ -29,6 +29,7 @@ from scipy import ndimage
 
 IMAGE, REGION, FEATURE, ANY = "image", "region", "feature", "any"
 CONTOUR, MATCH = "contour", "match"   # XLD subpixel contours / template-match result
+VOLUME = "volume"                     # 3D voxel array (CT/MRI/depth stacks)
 
 # Matching context: the locate problem sets a reference template here before scoring
 # (matching needs a model + a search image; the pipeline threads the image, the model
@@ -373,6 +374,39 @@ def _decode_barcode(v, a, b):
     return np.float64(int((np.diff(np.concatenate([[0], row, [0]])) == 1).sum()))
 
 
+# --- 3D volume ops (scipy.ndimage is N-D; CT/MRI/depth stacks) --------------- #
+def _vol_gaussian(v, a, b):
+    return ndimage.gaussian_filter(v, sigma=0.3 + 2.7 * a)
+
+
+def _vol_median(v, a, b):
+    return ndimage.median_filter(v, size=3)
+
+
+def _vol_erode(v, a, b):
+    return ndimage.grey_erosion(v, size=1 + 2 * (1 + int(a)))
+
+
+def _vol_dilate(v, a, b):
+    return ndimage.grey_dilation(v, size=1 + 2 * (1 + int(a)))
+
+
+def _vol_threshold(v, a, b):
+    return (v > a).astype(np.float64)                    # volume -> binary volume
+
+
+def _vol_mip(v, a, b):
+    return _norm(np.max(v, axis=0))                      # volume -> image (max-intensity projection)
+
+
+def _vol_slice(v, a, b):
+    return np.clip(v[min(v.shape[0] - 1, int(a * v.shape[0]))], 0, 1)  # volume -> image
+
+
+def _vol_count(v, a, b):
+    return np.float64(ndimage.label(np.asarray(v) > 0.5)[1])          # volume -> feature (3D blobs)
+
+
 @dataclass
 class Op:
     name: str
@@ -481,6 +515,15 @@ _DEFS = [
     ("classify_shape", "classification", "select_shape_circularity", REGION, FEATURE, _classify_shape),
     # barcode
     ("decode_barcode", "barcode", "decode_bar_code", IMAGE, FEATURE, _decode_barcode),
+    # 3D volume (CT/MRI/depth stacks)
+    ("vol_gaussian", "3d", "gauss_filter_3d", VOLUME, VOLUME, _vol_gaussian),
+    ("vol_median", "3d", "median_image_3d", VOLUME, VOLUME, _vol_median),
+    ("vol_erode", "3d", "erosion_3d", VOLUME, VOLUME, _vol_erode),
+    ("vol_dilate", "3d", "dilation_3d", VOLUME, VOLUME, _vol_dilate),
+    ("vol_threshold", "3d", "threshold_3d", VOLUME, VOLUME, _vol_threshold),
+    ("vol_mip", "3d", "project_3d", VOLUME, IMAGE, _vol_mip),
+    ("vol_slice", "3d", "access_channel_3d", VOLUME, IMAGE, _vol_slice),
+    ("vol_count", "features", "connection_3d", VOLUME, FEATURE, _vol_count),
 ]
 
 REGISTRY: list[Op] = [Op(n, c, h, i, o, f, _c(n)) for (n, c, h, i, o, f) in _DEFS]
@@ -532,10 +575,10 @@ class Stage:
     sort: str  # the sort this stage operates on (for readability/codegen)
 
 
-def decode(genome) -> list[Stage]:
+def decode(genome, start: str = IMAGE) -> list[Stage]:
     """Type-aware decode: each slot picks a sort-compatible op; sort threads through."""
     g = np.clip(np.asarray(genome, np.float64), 0.0, 1.0)
-    sort = IMAGE
+    sort = start
     out: list[Stage] = []
     for i in range(N_SLOTS):
         t, a, b = g[3 * i], g[3 * i + 1], g[3 * i + 2]
@@ -548,17 +591,17 @@ def decode(genome) -> list[Stage]:
 
 
 def _apply(stages, img):
-    v = img.astype(np.float64)
+    v = np.asarray(img, np.float64)
     for st in stages:
         v = RT[st.op](v, st.a, st.b)
-        if isinstance(v, np.ndarray) and v.ndim == 2:
+        if isinstance(v, np.ndarray) and v.ndim in (2, 3):
             v = np.clip(v, 0.0, 1.0)
     return v
 
 
-def run_genome(genome, img):
-    """Run the decoded pipeline; returns an image/region (2-D array) or a feature (scalar)."""
-    return _apply(decode(genome), img)
+def run_genome(genome, img, start: str = IMAGE):
+    """Run the decoded pipeline; returns an image/region (2-D), volume (3-D), or feature."""
+    return _apply(decode(genome, start), img)
 
 
 def run_stages(stages: list, img):
@@ -578,8 +621,8 @@ def stage(op: str, a: float, b: float) -> Stage:
     return Stage(op, a, b, _BY_NAME[op].in_sort)
 
 
-def pipeline_str(genome) -> str:
-    parts = [f"{s.op}(a={s.a:.2f},b={s.b:.2f})" for s in decode(genome) if s.op != "identity"]
+def pipeline_str(genome, start: str = IMAGE) -> str:
+    parts = [f"{s.op}(a={s.a:.2f},b={s.b:.2f})" for s in decode(genome, start) if s.op != "identity"]
     return " -> ".join(parts) if parts else "identity"
 
 

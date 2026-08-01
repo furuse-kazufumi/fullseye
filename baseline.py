@@ -57,7 +57,7 @@ def main() -> int:
         "hand": {"train": round(prob.score_stages(hand, tr), 4),
                  "holdout": round(prob.score_stages(hand, ho), 4), "pipeline": _stages_str(hand)},
         "random": {"train": round(best_tr, 4), "holdout": round(prob.score(best_g, ho), 4),
-                   "pipeline": ops.pipeline_str(best_g), "genome": best_g.tolist()},
+                   "pipeline": ops.pipeline_str(best_g, prob.in_sort), "genome": best_g.tolist()},
     }
     (wd / f"baseline_{a.problem}.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     if a.out:

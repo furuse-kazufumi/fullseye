@@ -60,7 +60,7 @@ def _as_binary(final, shape):
 
 
 def _as_count(final):
-    if _is_img(final):
+    if isinstance(final, np.ndarray) and final.ndim in (2, 3):
         return float(ndimage.label(final > 0.5)[1])
     if isinstance(final, dict) and "cs" in final:      # contour -> number of contours
         return float(len(final["cs"]))
@@ -87,10 +87,12 @@ class Problem:
     make: Callable[[int, int, int], dict]
     score_value: Callable  # (final_value, item) -> float (higher better)
     hand_stages: Callable[[], list]
+    in_sort: str = "image"  # pipeline start sort (image | volume | ...)
 
     def score(self, genome, data) -> float:
         inp, items = data["input"], data["items"]
-        return float(np.mean([self.score_value(ops.run_genome(genome, inp[i]), items[i]) for i in range(len(inp))]))
+        return float(np.mean([self.score_value(ops.run_genome(genome, inp[i], self.in_sort), items[i])
+                              for i in range(len(inp))]))
 
     def score_stages(self, stages, data) -> float:
         inp, items = data["input"], data["items"]
@@ -214,6 +216,33 @@ def _make_barcode(n, size, seed):
     return {"input": np.stack(imgs), "items": np.array(counts)}
 
 
+# --- 3D volumes (CT/MRI-like voxel blobs) ------------------------------------ #
+def _vol_stack(n, size, seed):
+    rng = np.random.default_rng(seed)
+    vols = []
+    for _ in range(n):
+        vol = np.zeros((size, size, size), np.float64)
+        zz, yy, xx = np.mgrid[0:size, 0:size, 0:size]
+        for _ in range(rng.integers(2, 5)):
+            cz, cy, cx = rng.integers(0, size, 3); r = rng.integers(size // 8, size // 4)
+            vol[(xx - cx) ** 2 + (yy - cy) ** 2 + (zz - cz) ** 2 <= r * r] = rng.uniform(0.5, 1.0)
+        vols.append(vol)
+    return np.stack(vols)
+
+
+def _make_vol_denoise(n, size, seed, noise=0.15):
+    clean = _vol_stack(n, 24, seed)
+    noisy = np.clip(clean + np.random.default_rng(seed + 1).normal(0, noise, clean.shape), 0, 1)
+    return {"input": noisy, "items": clean}
+
+
+def _make_vol_count(n, size, seed, noise=0.1):
+    clean = _vol_stack(n, 24, seed)
+    inp = np.clip(clean + np.random.default_rng(seed + 2).normal(0, noise, clean.shape), 0, 1)
+    counts = np.array([float(ndimage.label(c > 0.5)[1]) for c in clean])
+    return {"input": inp, "items": counts}
+
+
 PROBLEMS: dict[str, Problem] = {
     "denoise": Problem("denoise", "dB PSNR", _make_denoise,
                        lambda f, tgt: ops.psnr(_as_image(f, tgt.shape), tgt),
@@ -238,6 +267,14 @@ PROBLEMS: dict[str, Problem] = {
     "barcode": Problem("barcode", "1/(1+err)", _make_barcode,
                        lambda f, gt: 1.0 / (1.0 + abs(_as_count(f) - gt)),
                        lambda: [ops.stage("decode_barcode", 0.5, 0.0)]),
+    "vol_denoise": Problem("vol_denoise", "dB PSNR", _make_vol_denoise,
+                           lambda f, tgt: ops.psnr(np.clip(f, 0, 1), tgt)
+                           if isinstance(f, np.ndarray) and f.ndim == 3 else 0.0,
+                           lambda: [ops.stage("vol_gaussian", 0.26, 0.0)], in_sort="volume"),
+    "vol_count": Problem("vol_count", "1/(1+err)", _make_vol_count,
+                         lambda f, gt: 1.0 / (1.0 + abs(_as_count(f) - gt)),
+                         lambda: [ops.stage("vol_gaussian", 0.3, 0.0), ops.stage("vol_threshold", 0.4, 0.0),
+                                  ops.stage("vol_count", 0.0, 0.0)], in_sort="volume"),
 }
 
 

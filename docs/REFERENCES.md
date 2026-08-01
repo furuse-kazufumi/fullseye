@@ -1,6 +1,6 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 145 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 153 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
@@ -71,6 +71,14 @@ Seminal references for the 145 operators (families collapse many variants). The 
 | `shape_locate` | matching | Steger, C. (2002). Occlusion-, clutter-, and illumination-invariant object recognition (shape-based matching). |
 | `classify_shape` | classification | Danielsson, P.-E. (1978). A new shape factor (circularity). Computer Graphics and Image Processing. |
 | `decode_barcode` | barcode | Wang & Srihari (1988). Object recognition in structured / barcode reading. (1D symbology). |
+| `vol_gaussian` | 3d | - |
+| `vol_median` | 3d | Tukey, J. (1977). Exploratory Data Analysis (running median smoothing). |
+| `vol_erode` | 3d | - |
+| `vol_dilate` | 3d | - |
+| `vol_threshold` | 3d | Sauvola & Pietikäinen (2000). Adaptive document image binarization. Pattern Recognition. |
+| `vol_mip` | 3d | - |
+| `vol_slice` | 3d | - |
+| `vol_count` | features | - |
 | `sk_scharr` | edges | - |
 | `sk_farid` | edges | - |
 | `sk_frangi` | texture | Frangi et al. (1998). Multiscale vessel enhancement filtering. MICCAI. |
@@ -150,7 +158,7 @@ Seminal references for the 145 operators (families collapse many variants). The 
 | `dl_aniso_diffusion` | smoothing | Perona & Malik (1990). Scale-space and edge detection using anisotropic diffusion. IEEE TPAMI. |
 | `dl_guided_filter` | smoothing | He, Sun & Tang (2010). Guided image filtering. ECCV. |
 
-**Provenance coverage: 96/145 operators cite a seminal paper.**
+**Provenance coverage: 98/153 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

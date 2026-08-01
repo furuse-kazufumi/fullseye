@@ -83,7 +83,7 @@ def main() -> int:
 
     champion = {
         "problem": a.problem, "unit": prob.unit,
-        "genome": champ.tolist(), "pipeline": ops.pipeline_str(champ),
+        "genome": champ.tolist(), "pipeline": ops.pipeline_str(champ, prob.in_sort),
         "train": round(champ_tr, 4), "holdout": round(holdout_fit(champ), 4),
         "config": cfg, "seed": a.seed, "gens": a.gens, "pop": a.pop,
     }
