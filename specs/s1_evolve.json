@@ -1,0 +1,10 @@
+{
+  "cmd": ["py", "-3.11", "evolve.py",
+          "--workdir", "C:/dev/tools/raptor/out/worklog/imgevolve",
+          "--baseline", "C:/dev/tools/raptor/out/worklog/imgevolve/baseline.json",
+          "--gens", "40", "--pop", "24", "--seed", "0", "--out", "<OUT>.json"],
+  "cwd": "C:/dev/projects/imgevolve",
+  "env": {"PYTHONUTF8": "1"},
+  "produces": "<OUT>.json",
+  "timeout": 3600
+}
