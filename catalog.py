@@ -101,6 +101,8 @@ def _analogs(name: str) -> dict:
         return {"opencv": "cv2." + name[3:], "skimage": "-", "matlab": "-"}
     if name.startswith("dl_"):
         return {"opencv": "-", "skimage": "-", "matlab": "-"}  # custom torch op
+    if name.startswith("vol_"):
+        return {"opencv": "-", "skimage": "scipy.ndimage (N-D)", "matlab": "-"}  # 3D volume op
     return {}
 
 

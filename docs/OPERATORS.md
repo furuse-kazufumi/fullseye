@@ -71,14 +71,14 @@
 | `shape_locate` | image->match | matching | find_shape_model | matchTemplate+rotations | - | - |
 | `classify_shape` | region->feature | classification | select_shape_circularity | - | regionprops(circularity) | regionprops('Circularity') |
 | `decode_barcode` | image->feature | barcode | decode_bar_code | barcode.BarcodeDetector | - | readBarcode |
-| `vol_gaussian` | volume | 3d | gauss_filter_3d | - | - | - |
-| `vol_median` | volume | 3d | median_image_3d | - | - | - |
-| `vol_erode` | volume | 3d | erosion_3d | - | - | - |
-| `vol_dilate` | volume | 3d | dilation_3d | - | - | - |
-| `vol_threshold` | volume | 3d | threshold_3d | - | - | - |
-| `vol_mip` | volume->image | 3d | project_3d | - | - | - |
-| `vol_slice` | volume->image | 3d | access_channel_3d | - | - | - |
-| `vol_count` | volume->feature | features | connection_3d | - | - | - |
+| `vol_gaussian` | volume | 3d | gauss_filter_3d | - | scipy.ndimage (N-D) | - |
+| `vol_median` | volume | 3d | median_image_3d | - | scipy.ndimage (N-D) | - |
+| `vol_erode` | volume | 3d | erosion_3d | - | scipy.ndimage (N-D) | - |
+| `vol_dilate` | volume | 3d | dilation_3d | - | scipy.ndimage (N-D) | - |
+| `vol_threshold` | volume | 3d | threshold_3d | - | scipy.ndimage (N-D) | - |
+| `vol_mip` | volume->image | 3d | project_3d | - | scipy.ndimage (N-D) | - |
+| `vol_slice` | volume->image | 3d | access_channel_3d | - | scipy.ndimage (N-D) | - |
+| `vol_count` | volume->feature | features | connection_3d | - | scipy.ndimage (N-D) | - |
 | `sk_scharr` | image | edges | edges_image | - | skimage.scharr | - |
 | `sk_farid` | image | edges | edges_image | - | skimage.farid | - |
 | `sk_frangi` | image | texture | lines_gauss | - | skimage.frangi | - |
@@ -160,7 +160,7 @@
 
 ## Coverage (ops with a direct analog)
 - opencv: 85/153
-- skimage: 106/153
+- skimage: 114/153
 - matlab: 57/153
 
 ## Roadmap toward full coverage
