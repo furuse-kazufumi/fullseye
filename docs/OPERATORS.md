@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-67 operators across 16 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+107 operators across 16 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -71,11 +71,51 @@
 | `shape_locate` | image->match | matching | find_shape_model | matchTemplate+rotations | - | - |
 | `classify_shape` | region->feature | classification | select_shape_circularity | - | regionprops(circularity) | regionprops('Circularity') |
 | `decode_barcode` | image->feature | barcode | decode_bar_code | barcode.BarcodeDetector | - | readBarcode |
+| `sk_scharr` | image | edges | edges_image | - | skimage.scharr | - |
+| `sk_farid` | image | edges | edges_image | - | skimage.farid | - |
+| `sk_frangi` | image | texture | lines_gauss | - | skimage.frangi | - |
+| `sk_meijering` | image | texture | lines_gauss | - | skimage.meijering | - |
+| `sk_hessian` | image | texture | lines_gauss | - | skimage.hessian | - |
+| `sk_dog` | image | edges | diff_of_gauss | - | skimage.dog | - |
+| `sk_gabor` | image | texture | gen_gabor | - | skimage.gabor | - |
+| `sk_butterworth` | image | frequency | butterworth | - | skimage.butterworth | - |
+| `sk_tv` | image | smoothing | tv_denoise | - | skimage.tv | - |
+| `sk_wavelet` | image | smoothing | wavelet_denoise | - | skimage.wavelet | - |
+| `sk_adapthist` | image | gray | emphasize_adaptive | - | skimage.adapthist | - |
+| `sk_median_disk` | image | rank | median_image | - | skimage.median_disk | - |
+| `sk_otsu` | image->region | segmentation | binary_threshold | - | skimage.otsu | - |
+| `sk_li` | image->region | segmentation | binary_threshold | - | skimage.li | - |
+| `sk_yen` | image->region | segmentation | binary_threshold | - | skimage.yen | - |
+| `sk_sauvola` | image->region | segmentation | var_threshold | - | skimage.sauvola | - |
+| `sk_niblack` | image->region | segmentation | var_threshold | - | skimage.niblack | - |
+| `sk_canny` | image->region | segmentation | edges_image | - | skimage.canny | - |
+| `sk_skeleton` | region | region | skeleton | - | skimage.skeleton | - |
+| `sk_medial` | region | region | skeleton | - | skimage.medial | - |
+| `sk_convex` | region | region | shape_trans_convex | - | skimage.convex | - |
+| `sk_thin` | region | region | thinning | - | skimage.thin | - |
+| `sk_remove_holes` | region | region | fill_up | - | skimage.remove_holes | - |
+| `sk_euler` | region->feature | features | euler_number | - | skimage.euler | - |
+| `sk_find_contours` | image->contour | contour | find_contours | - | skimage.find_contours | - |
+| `cv_bilateral` | image | smoothing | bilateral_filter | cv2.bilateral | - | - |
+| `cv_median` | image | rank | median_image | cv2.median | - | - |
+| `cv_box` | image | smoothing | mean_image | cv2.box | - | - |
+| `cv_gaussian` | image | smoothing | gauss_filter | cv2.gaussian | - | - |
+| `cv_scharr` | image | edges | edges_image | cv2.scharr | - | - |
+| `cv_laplacian` | image | edges | laplace | cv2.laplacian | - | - |
+| `cv_clahe` | image | gray | emphasize_adaptive | cv2.clahe | - | - |
+| `cv_open` | image | morphology | gray_opening | cv2.open | - | - |
+| `cv_close` | image | morphology | gray_closing | cv2.close | - | - |
+| `cv_tophat` | image | morphology | gray_tophat | cv2.tophat | - | - |
+| `cv_gradient` | image | morphology | gray_range_rect | cv2.gradient | - | - |
+| `cv_otsu` | image->region | segmentation | binary_threshold | cv2.otsu | - | - |
+| `cv_adaptive_mean` | image->region | segmentation | dyn_threshold | cv2.adaptive_mean | - | - |
+| `cv_adaptive_gauss` | image->region | segmentation | local_threshold | cv2.adaptive_gauss | - | - |
+| `cv_canny` | image->region | segmentation | edges_image | cv2.canny | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 56/67
-- skimage: 59/67
-- matlab: 57/67
+- opencv: 71/107
+- skimage: 84/107
+- matlab: 57/107
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

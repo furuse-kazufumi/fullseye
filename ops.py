@@ -491,6 +491,26 @@ N_OPS = len(REGISTRY)
 N_SLOTS = 6
 GENOME_LEN = N_SLOTS * 3
 
+# Optional library backends (scikit-image / OpenCV): wrap the ecosystem so op count
+# scales without reimplementing. Disable with IMGEVOLVE_NO_BACKENDS=1 for the pure,
+# always-deterministic numpy/scipy core. Adding backends only widens per-sort
+# candidate sets — GENOME_LEN is unchanged.
+import os as _os  # noqa: E402
+
+if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
+    try:
+        import backends as _backends  # noqa: E402
+
+        _extra = _backends.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
+        if _extra:
+            REGISTRY = REGISTRY + _extra
+            RT = {op.name: op.fn for op in REGISTRY}
+            _BY_NAME = {op.name: op for op in REGISTRY}
+            OPS = tuple((op.name, op.fn) for op in REGISTRY)
+            N_OPS = len(REGISTRY)
+    except Exception:
+        pass
+
 
 def categories() -> dict[str, list[str]]:
     out: dict[str, list[str]] = {}

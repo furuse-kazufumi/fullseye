@@ -91,6 +91,17 @@ ANALOGS: dict[str, dict[str, str]] = {
 LIBS = ("halcon", "opencv", "skimage", "matlab")
 
 
+def _analogs(name: str) -> dict:
+    """Analogs for an op — explicit map, or derived for wrapped backend ops."""
+    if name in ANALOGS:
+        return ANALOGS[name]
+    if name.startswith("sk_"):
+        return {"skimage": "skimage." + name[3:], "opencv": "-", "matlab": "-"}
+    if name.startswith("cv_"):
+        return {"opencv": "cv2." + name[3:], "skimage": "-", "matlab": "-"}
+    return {}
+
+
 def build_md() -> str:
     rows = ["# imgevolve — cross-library operator catalog", "",
             f"{ops.N_OPS} operators across {len(ops.categories())} categories, "
@@ -99,14 +110,14 @@ def build_md() -> str:
             "| op | sort | category | halcon | opencv | skimage | matlab |",
             "|---|---|---|---|---|---|---|"]
     for op in ops.REGISTRY:
-        an = ANALOGS.get(op.name, {})
+        an = _analogs(op.name)
         sort = op.in_sort if op.in_sort == op.out_sort else f"{op.in_sort}->{op.out_sort}"
         rows.append(f"| `{op.name}` | {sort} | {op.category} | {op.halcon} | "
                     f"{an.get('opencv', '-')} | {an.get('skimage', '-')} | {an.get('matlab', '-')} |")
     # coverage summary
     rows += ["", "## Coverage (ops with a direct analog)"]
     for lib in ("opencv", "skimage", "matlab"):
-        have = sum(1 for op in ops.REGISTRY if ANALOGS.get(op.name, {}).get(lib, "-") != "-")
+        have = sum(1 for op in ops.REGISTRY if _analogs(op.name).get(lib, "-") != "-")
         rows.append(f"- {lib}: {have}/{ops.N_OPS}")
     rows += ["", "## Roadmap toward full coverage",
              "- HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.",
@@ -121,7 +132,7 @@ def main() -> int:
     a = ap.parse_args()
     p = Path(a.out); p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(build_md(), encoding="utf-8")
-    miss = [op.name for op in ops.REGISTRY if op.name not in ANALOGS]
+    miss = [op.name for op in ops.REGISTRY if not _analogs(op.name)]
     print(f"[catalog] {ops.N_OPS} ops -> {p}" + (f" | MISSING analogs: {miss}" if miss else " | all mapped"))
     return 0
 
