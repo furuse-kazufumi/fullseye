@@ -1,0 +1,19 @@
+{
+  "cmd": [
+    "py",
+    "-3.11",
+    "report.py",
+    "--problem",
+    "binarize",
+    "--workdir",
+    "C:/dev/tools/raptor/out/worklog/imgevolve",
+    "--out",
+    "<OUT>.md"
+  ],
+  "cwd": "C:\\dev\\projects\\imgevolve",
+  "env": {
+    "PYTHONUTF8": "1"
+  },
+  "produces": "<OUT>.md",
+  "timeout": 300
+}

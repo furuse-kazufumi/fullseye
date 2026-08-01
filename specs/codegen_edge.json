@@ -1,0 +1,19 @@
+{
+  "cmd": [
+    "py",
+    "-3.11",
+    "codegen.py",
+    "--problem",
+    "edge",
+    "--workdir",
+    "C:/dev/tools/raptor/out/worklog/imgevolve",
+    "--out",
+    "<OUT>.json"
+  ],
+  "cwd": "C:\\dev\\projects\\imgevolve",
+  "env": {
+    "PYTHONUTF8": "1"
+  },
+  "produces": "<OUT>.json",
+  "timeout": 300
+}
