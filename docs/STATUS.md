@@ -11,13 +11,13 @@ AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(sc
 アルゴリズムは人が書く)いずれも「アルゴリズム発見 × 型付き画像IR × 検証済み多言語codegen ×
 オンデバイス × honest holdout」を全部は満たさない。Halide は C/GPU codegen の下敷きに流用可。
 
-## 現在地(v6=geometry/shape-match/classify/barcode 追加, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
+## 現在地(v7=optional cv2/skimage backends + 論文provenance, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
 - **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`)。**op を1つ足すだけで進化も codegen も catalog も自動追従**。
 - **多ソート型システム(6 ソート)**: `image / region / feature / contour(XLD) / match / any`。**型整合のある進化**で
   HALCON 中核パターン **image →(segment)→ region →(morph/select)→ feature** と
   **image →(edges_sub_pix)→ contour →(select/smooth/fit_line)→ contour →(to_region/length)→ region/feature** と
   **image →(ncc_locate)→ match** を表現。
-- **67 op / 16 カテゴリ**: image(smoothing/rank/morphology/edges/gray/frequency/texture)+ segmentation(threshold/
+- **107 op**(pure core 67 + backend 40=skimage25/cv2 15、cv2/skimage 導入時に自動登録・IMGEVOLVE_NO_BACKENDS=1 で core のみ)。**16+ カテゴリ**: image(smoothing/rank/morphology/edges/gray/frequency/texture)+ segmentation(threshold/
   otsu/dyn_threshold/canny/local_max)+ region(reg_morph/fill_holes/select_largest/remove_small/dist_transform/
   boundary/convex)+ features(blob_count/area_frac/count_contours/total_length)+ contour(edges_sub_pix/select/
   smooth/fit_line/to_region)+ matching(ncc_locate)。
@@ -36,6 +36,11 @@ AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(sc
   **3D/stereo** ソート。これで HALCON ~2100 に接近。
 - **多ライブラリ被覆拡大**: OpenCV ~2500 / skimage ~300。ファミリ単位で registry を拡張、analogs は catalog が自動追跡。
 - **C ランタイム拡張**: 現状 image op 8 種。median/bilateral/morph/region/fft を足し、gcc 到着で compile+差分検証を自動充足。
+
+## 研究provenance / backend
+- `backends.py`: cv2/skimage を optional で wrap(sk_/cv_、例外安全)。**実装はエコシステム、差別化層(型IR進化+honest gate+多言語codegen)は自前**=数千オペレータへの現実解。
+- `references.py`→`docs/REFERENCES.md`: 各 op を seminal paper(Otsu/Canny/ROF/Tomasi-Manduchi/Frangi/Steger…83/107)+ RAD image corpus を新op源に。
+- cross-lib catalog: opencv 71/skimage 84/matlab 57 of 107。
 
 ## 自走のしかた(work-graph)
 ```powershell
