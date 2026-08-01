@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-107 operators across 16 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+145 operators across 16 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -96,6 +96,28 @@
 | `sk_remove_holes` | region | region | fill_up | - | skimage.remove_holes | - |
 | `sk_euler` | region->feature | features | euler_number | - | skimage.euler | - |
 | `sk_find_contours` | image->contour | contour | find_contours | - | skimage.find_contours | - |
+| `sk_lbp` | image | texture | local_binary_pattern | - | skimage.lbp | - |
+| `sk_entropy` | image | texture | entropy_image | - | skimage.entropy | - |
+| `sk_enhance_contrast` | image | gray | enhance_contrast | - | skimage.enhance_contrast | - |
+| `sk_autolevel` | image | gray | scale_image_max | - | skimage.autolevel | - |
+| `sk_shape_index` | image | texture | curvature | - | skimage.shape_index | - |
+| `sk_hessian_det` | image | edges | hessian | - | skimage.hessian_det | - |
+| `sk_corner_harris` | image | edges | points_harris | - | skimage.corner_harris | - |
+| `sk_adjust_log` | image | gray | log_image | - | skimage.adjust_log | - |
+| `sk_rolling_ball` | image | smoothing | estimate_background | - | skimage.rolling_ball | - |
+| `sk_nlm` | image | smoothing | nl_means | - | skimage.nlm | - |
+| `sk_tv_bregman` | image | smoothing | tv_denoise | - | skimage.tv_bregman | - |
+| `sk_swirl` | image | geometry | polar_trans_image | - | skimage.swirl | - |
+| `sk_area_opening` | image | morphology | area_opening | - | skimage.area_opening | - |
+| `sk_felzenszwalb` | image->region | segmentation | felzenszwalb | - | skimage.felzenszwalb | - |
+| `sk_slic` | image->region | segmentation | superpixels | - | skimage.slic | - |
+| `sk_chan_vese` | image->region | segmentation | chan_vese | - | skimage.chan_vese | - |
+| `sk_local_maxima` | image->region | segmentation | local_max | - | skimage.local_maxima | - |
+| `sk_hysteresis` | image->region | segmentation | hysteresis_threshold | - | skimage.hysteresis | - |
+| `sk_clear_border` | region | region | clear_border | - | skimage.clear_border | - |
+| `sk_find_boundaries` | region | region | boundary | - | skimage.find_boundaries | - |
+| `sk_entropy_feat` | image->feature | features | entropy | - | skimage.entropy_feat | - |
+| `sk_blur_effect` | image->feature | features | estimate_sharpness | - | skimage.blur_effect | - |
 | `cv_bilateral` | image | smoothing | bilateral_filter | cv2.bilateral | - | - |
 | `cv_median` | image | rank | median_image | cv2.median | - | - |
 | `cv_box` | image | smoothing | mean_image | cv2.box | - | - |
@@ -111,11 +133,27 @@
 | `cv_adaptive_mean` | image->region | segmentation | dyn_threshold | cv2.adaptive_mean | - | - |
 | `cv_adaptive_gauss` | image->region | segmentation | local_threshold | cv2.adaptive_gauss | - | - |
 | `cv_canny` | image->region | segmentation | edges_image | cv2.canny | - | - |
+| `cv_corner_harris` | image | edges | points_harris | cv2.corner_harris | - | - |
+| `cv_min_eigen` | image | edges | points_harris | cv2.min_eigen | - | - |
+| `cv_precorner` | image | edges | corner_detect | cv2.precorner | - | - |
+| `cv_nlmeans` | image | smoothing | nl_means | cv2.nlmeans | - | - |
+| `cv_blackhat` | image | morphology | gray_bothat | cv2.blackhat | - | - |
+| `cv_erode` | image | morphology | gray_erosion | cv2.erode | - | - |
+| `cv_dilate` | image | morphology | gray_dilation | cv2.dilate | - | - |
+| `cv_sharpen` | image | smoothing | emphasize | cv2.sharpen | - | - |
+| `cv_trunc` | image | gray | scale_image | cv2.trunc | - | - |
+| `cv_dist` | region->image | region | distance_transform | cv2.dist | - | - |
+| `cv_cc_count` | region->feature | features | connection | cv2.cc_count | - | - |
+| `cv_hough_lines` | image->feature | features | hough_lines | cv2.hough_lines | - | - |
+| `cv_hough_circles` | image->feature | features | hough_circles | cv2.hough_circles | - | - |
+| `cv_good_features` | image->feature | features | points_features | cv2.good_features | - | - |
+| `dl_aniso_diffusion` | image | smoothing | anisotropic_diffusion | - | - | - |
+| `dl_guided_filter` | image | smoothing | guided_filter | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 71/107
-- skimage: 84/107
-- matlab: 57/107
+- opencv: 85/145
+- skimage: 106/145
+- matlab: 57/145
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

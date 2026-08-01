@@ -48,6 +48,15 @@ PAPERS = [
     (["rotate_img", "rescale_img", "affine_warp"], "Wolberg, G. (1990). Digital Image Warping. IEEE CS Press."),
     (["classify_shape"], "Danielsson, P.-E. (1978). A new shape factor (circularity). Computer Graphics and Image Processing."),
     (["decode_barcode"], "Wang & Srihari (1988). Object recognition in structured / barcode reading. (1D symbology)."),
+    (["dl_aniso"], "Perona & Malik (1990). Scale-space and edge detection using anisotropic diffusion. IEEE TPAMI."),
+    (["dl_guided", "guided"], "He, Sun & Tang (2010). Guided image filtering. ECCV."),
+    (["sk_nlm", "cv_nlmeans", "nl_means"], "Buades, Coll & Morel (2005). A non-local algorithm for image denoising. CVPR."),
+    (["sk_slic"], "Achanta et al. (2012). SLIC superpixels compared to state-of-the-art. IEEE TPAMI."),
+    (["sk_felzenszwalb"], "Felzenszwalb & Huttenlocher (2004). Efficient graph-based image segmentation. IJCV."),
+    (["sk_chan_vese"], "Chan & Vese (2001). Active contours without edges. IEEE TIP."),
+    (["hough"], "Duda & Hart (1972). Use of the Hough transformation to detect lines and curves. CACM."),
+    (["sk_lbp", "lbp"], "Ojala, Pietikainen & Maenpaa (2002). Multiresolution gray-scale... local binary patterns. IEEE TPAMI."),
+    (["sk_rolling_ball"], "Sternberg (1983). Biomedical image processing (rolling ball background). IEEE Computer."),
     (["equalize", "sigmoid", "gamma", "scale_clip", "invert"], "Gonzalez & Woods, Digital Image Processing — intensity transformations."),
 ]
 

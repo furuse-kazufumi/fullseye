@@ -1,6 +1,6 @@
 # imgevolve — operator research provenance
 
-Seminal references for the 107 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
+Seminal references for the 145 operators (families collapse many variants). The point: a designed pipeline is traceable to the literature, and the RAD image corpus is the mining source for *new* operators.
 
 | op | category | seminal reference |
 |---|---|---|
@@ -96,6 +96,28 @@ Seminal references for the 107 operators (families collapse many variants). The 
 | `sk_remove_holes` | region | - |
 | `sk_euler` | features | Rosenfeld & Pfaltz (1966). Connected components labeling. JACM. |
 | `sk_find_contours` | contour | Steger, C. (1998). An unbiased detector of curvilinear structures (subpixel edges). IEEE TPAMI. |
+| `sk_lbp` | texture | Ojala, Pietikainen & Maenpaa (2002). Multiresolution gray-scale... local binary patterns. IEEE TPAMI. |
+| `sk_entropy` | texture | - |
+| `sk_enhance_contrast` | gray | - |
+| `sk_autolevel` | gray | - |
+| `sk_shape_index` | texture | - |
+| `sk_hessian_det` | edges | - |
+| `sk_corner_harris` | edges | - |
+| `sk_adjust_log` | gray | Marr & Hildreth (1980). Theory of edge detection. Proc. R. Soc. Lond. B. |
+| `sk_rolling_ball` | smoothing | Sternberg (1983). Biomedical image processing (rolling ball background). IEEE Computer. |
+| `sk_nlm` | smoothing | Buades, Coll & Morel (2005). A non-local algorithm for image denoising. CVPR. |
+| `sk_tv_bregman` | smoothing | Rudin, Osher & Fatemi (1992). Nonlinear total variation based noise removal (ROF). Physica D. |
+| `sk_swirl` | geometry | - |
+| `sk_area_opening` | morphology | - |
+| `sk_felzenszwalb` | segmentation | Felzenszwalb & Huttenlocher (2004). Efficient graph-based image segmentation. IJCV. |
+| `sk_slic` | segmentation | Achanta et al. (2012). SLIC superpixels compared to state-of-the-art. IEEE TPAMI. |
+| `sk_chan_vese` | segmentation | Chan & Vese (2001). Active contours without edges. IEEE TIP. |
+| `sk_local_maxima` | segmentation | - |
+| `sk_hysteresis` | segmentation | - |
+| `sk_clear_border` | region | - |
+| `sk_find_boundaries` | region | - |
+| `sk_entropy_feat` | features | - |
+| `sk_blur_effect` | features | - |
 | `cv_bilateral` | smoothing | Tomasi & Manduchi (1998). Bilateral filtering for gray and color images. ICCV. |
 | `cv_median` | rank | Tukey, J. (1977). Exploratory Data Analysis (running median smoothing). |
 | `cv_box` | smoothing | - |
@@ -111,8 +133,24 @@ Seminal references for the 107 operators (families collapse many variants). The 
 | `cv_adaptive_mean` | segmentation | Sauvola & Pietikäinen (2000). Adaptive document image binarization. Pattern Recognition. |
 | `cv_adaptive_gauss` | segmentation | Sauvola & Pietikäinen (2000). Adaptive document image binarization. Pattern Recognition. |
 | `cv_canny` | segmentation | Canny, J. (1986). A computational approach to edge detection. IEEE TPAMI. |
+| `cv_corner_harris` | edges | - |
+| `cv_min_eigen` | edges | - |
+| `cv_precorner` | edges | - |
+| `cv_nlmeans` | smoothing | Buades, Coll & Morel (2005). A non-local algorithm for image denoising. CVPR. |
+| `cv_blackhat` | morphology | - |
+| `cv_erode` | morphology | - |
+| `cv_dilate` | morphology | - |
+| `cv_sharpen` | smoothing | - |
+| `cv_trunc` | gray | - |
+| `cv_dist` | region | - |
+| `cv_cc_count` | features | - |
+| `cv_hough_lines` | features | Duda & Hart (1972). Use of the Hough transformation to detect lines and curves. CACM. |
+| `cv_hough_circles` | features | Duda & Hart (1972). Use of the Hough transformation to detect lines and curves. CACM. |
+| `cv_good_features` | features | - |
+| `dl_aniso_diffusion` | smoothing | Perona & Malik (1990). Scale-space and edge detection using anisotropic diffusion. IEEE TPAMI. |
+| `dl_guided_filter` | smoothing | He, Sun & Tang (2010). Guided image filtering. ECCV. |
 
-**Provenance coverage: 83/107 operators cite a seminal paper.**
+**Provenance coverage: 96/145 operators cite a seminal paper.**
 
 ## Mining new operators from research (RAD)
 - RAD image / diffusion / deep_learning corpora (thousands of papers) = the source for operators beyond the classics: modern denoisers (BM3D, DnCNN), learned edges (HED), superpixels (SLIC), diffusion priors, foundation segmenters (SAM).

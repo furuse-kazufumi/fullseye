@@ -498,18 +498,19 @@ GENOME_LEN = N_SLOTS * 3
 import os as _os  # noqa: E402
 
 if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
-    try:
-        import backends as _backends  # noqa: E402
-
-        _extra = _backends.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
-        if _extra:
-            REGISTRY = REGISTRY + _extra
-            RT = {op.name: op.fn for op in REGISTRY}
-            _BY_NAME = {op.name: op for op in REGISTRY}
-            OPS = tuple((op.name, op.fn) for op in REGISTRY)
-            N_OPS = len(REGISTRY)
-    except Exception:
-        pass
+    _extra = []
+    for _mod in ("backends", "backends_dl"):
+        try:
+            _b = __import__(_mod)
+            _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
+        except Exception:
+            pass
+    if _extra:
+        REGISTRY = REGISTRY + _extra
+        RT = {op.name: op.fn for op in REGISTRY}
+        _BY_NAME = {op.name: op for op in REGISTRY}
+        OPS = tuple((op.name, op.fn) for op in REGISTRY)
+        N_OPS = len(REGISTRY)
 
 
 def categories() -> dict[str, list[str]]:
