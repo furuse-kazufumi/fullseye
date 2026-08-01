@@ -23,18 +23,19 @@ AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(sc
   smooth/fit_line/to_region)+ matching(ncc_locate)。
 - **8タスク**: denoise/edge/binarize/count/locate/**locate_rot**(回転不変shape matching)/**classify**(OCR/決定基盤)/**barcode**(1D bar計数)。
 - **cross-library catalog**(`catalog.py`→`docs/OPERATORS.md`): 各 op を HALCON/OpenCV/scikit-image/MATLAB の
-  API にマップ。直接アナログ被覆 = opencv 35/42・skimage 40/42・matlab 38/42。
+  API にマップ。直接アナログ被覆 = opencv 56/67・skimage 59/67・matlab 57/67。
 - S2 codegen(IR→Python+C)+ difftest(honest gate)。多ソートでも Python 照合 PASS(edge diff 0.0/count 4e-7)。
 - **honest 結果**(多ソート seed0/25gen): count 大勝(0.938 vs hand 0.688)、binarize 勝ち(fill_holes 使用)、
   denoise 僅差勝ち、edge は 25gen で hand に負け(空間が広い=要 seed/世代)。乱択は大空間で劣化。
 
 ## HALCON/多ライブラリ級への道(ロードマップ)
-- **済**: image/region/feature の3ソート + 42 op(filter/rank/morphology/edge/gray/threshold/frequency/texture/
-  region/features)。cross-library catalog(opencv/skimage/matlab/halcon マップ)。
-- **次**: **XLD/Contour ソート**(subpixel 輪郭・edges_sub_pix・fit_line/circle)+ **matching**(template/shape/
-  correlation model)+ **OCR/barcode** + **calibration/3D**。これで HALCON ~2100 に接近。
+- **済(v1-v6)**: image/region/feature/contour(XLD)/match の 6 ソート + 67 op(filter/rank/morphology/edge/gray/
+  threshold/frequency/texture/region/features/contour/matching/geometry/classification/barcode)。cross-library catalog。
+  8 タスク(denoise/edge/binarize/count/locate/locate_rot/classify/barcode)。多言語 codegen+difftest。
+- **次**: shape-model の**スケール不変**化 + **実 OCR**(文字テンプレ集/学習)+ **calibration 解**(対応点→変換の最小二乗/solvePnP 相当)+
+  **3D/stereo** ソート。これで HALCON ~2100 に接近。
 - **多ライブラリ被覆拡大**: OpenCV ~2500 / skimage ~300。ファミリ単位で registry を拡張、analogs は catalog が自動追跡。
-- **C ランタイム拡張**: 現状 8 image op。bilateral/median/morph/region/fft を足し、gcc 到着で compile+差分検証を自動充足。
+- **C ランタイム拡張**: 現状 image op 8 種。median/bilateral/morph/region/fft を足し、gcc 到着で compile+差分検証を自動充足。
 
 ## 自走のしかた(work-graph)
 ```powershell
@@ -46,6 +47,6 @@ py -3.11 libexec/raptor-worklog serve --workers 1 --poll 5   # 自律実行(revi
 成果物 = `C:/dev/tools/raptor/out/worklog/imgevolve/`。進捗は read-only(実行中に run-once/reclaim 禁止)。
 
 ## honest 限界
-- まだ Image→Image 単一ソート。regions/contours/matching/OCR は型システム拡張が前提(未着手)。
-- C は emit のみ(この環境に gcc 無し)。compile 検証は toolchain 到着後に自動で埋まる。
-- 進化の優位はタスク依存(誇張しない)。op を足すほど乱択が落ち進化が相対的に勝つ、という構造は確認済み。
+- OCR/barcode/matching は self-contained な最小実装(barcode=バー計数、classify=円形度、OCR は実文字認識未搭載)。実運用級は次段。
+- C は image op のみ emit(この環境に gcc 無し)。compile 差分検証は toolchain 到着後に自動で埋まる。
+- 進化の優位はタスク依存(誇張しない)。op 空間が広いほど乱択は劣化し進化が相対的に勝つ(要 seed/世代)。locate系/classify/barcode は perfect。
