@@ -11,5 +11,7 @@ void gamma_op(float* buf, int w, int h, float g);
 void threshold(float* buf, int w, int h, float t);
 void sharpen(float* buf, int w, int h, float amount, float sigma);
 void sobel_mag(float* buf, int w, int h);
+void invert(float* buf, int w, int h);
+void scale_clip(float* buf, int w, int h, float gain, float bias);
 
 #endif /* IMGOPS_H */

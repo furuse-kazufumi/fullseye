@@ -72,6 +72,14 @@ void threshold(float* buf, int w, int h, float t) {
     for (int i = 0; i < w * h; i++) buf[i] = buf[i] > t ? 1.0f : 0.0f;
 }
 
+void invert(float* buf, int w, int h) {
+    for (int i = 0; i < w * h; i++) buf[i] = 1.0f - clampf(buf[i], 0.0f, 1.0f);
+}
+
+void scale_clip(float* buf, int w, int h, float gain, float bias) {
+    for (int i = 0; i < w * h; i++) buf[i] = clampf(gain * buf[i] + bias, 0.0f, 1.0f);
+}
+
 void sharpen(float* buf, int w, int h, float amount, float sigma) {
     float* blur = (float*)malloc(sizeof(float) * w * h);
     memcpy(blur, buf, sizeof(float) * w * h);
