@@ -11,7 +11,7 @@ AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(sc
 アルゴリズムは人が書く)いずれも「アルゴリズム発見 × 型付き画像IR × 検証済み多言語codegen ×
 オンデバイス × honest holdout」を全部は満たさない。Halide は C/GPU codegen の下敷きに流用可。
 
-## 現在地(v4=多ソート型システム, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
+## 現在地(v5=XLD/Contour + Matching ソート追加, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
 - **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`)。**op を1つ足すだけで進化も codegen も catalog も自動追従**。
 - **多ソート型システム**: `image / region / feature` を導入。**型整合のある進化**(各段は in_sort 一致の op のみ)で
   HALCON 中核パターン **image →(segment)→ region →(region morph/select)→ feature** を表現。

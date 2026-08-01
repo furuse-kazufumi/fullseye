@@ -28,6 +28,16 @@ import numpy as np
 from scipy import ndimage
 
 IMAGE, REGION, FEATURE, ANY = "image", "region", "feature", "any"
+CONTOUR, MATCH = "contour", "match"   # XLD subpixel contours / template-match result
+
+# Matching context: the locate problem sets a reference template here before scoring
+# (matching needs a model + a search image; the pipeline threads the image, the model
+# comes from context). Honest coupling — documented, single-threaded.
+_MATCH_CTX: dict = {"template": None}
+
+
+def set_match_template(t) -> None:
+    _MATCH_CTX["template"] = None if t is None else np.asarray(t, np.float64)
 
 
 def _k(a: float) -> int:
@@ -175,6 +185,112 @@ def _area_frac(v, a, b):
     return np.float64(np.mean(_bin(v)))
 
 
+# --- more image -> image ----------------------------------------------------- #
+def _grad_dir(v, a, b):
+    return (np.arctan2(ndimage.sobel(v, 0), ndimage.sobel(v, 1)) + np.pi) / (2 * np.pi)
+
+
+def _log(v, a, b):
+    return _norm(np.abs(ndimage.gaussian_laplace(v, sigma=0.5 + 2.5 * a)))
+
+
+# --- more image -> region ---------------------------------------------------- #
+def _canny(v, a, b):
+    g = ndimage.gaussian_filter(v, 0.5 + 1.5 * a)
+    m = _norm(np.hypot(ndimage.sobel(g, 1), ndimage.sobel(g, 0)))
+    return (m > (0.1 + 0.5 * b)).astype(np.float64)
+
+
+def _local_max(v, a, b):
+    return ((v >= ndimage.maximum_filter(v, size=_k(a))) & (v > (0.3 + 0.4 * b))).astype(np.float64)
+
+
+# --- more region ops --------------------------------------------------------- #
+def _dist_transform(v, a, b):
+    return _norm(ndimage.distance_transform_edt(_bin(v)))
+
+
+def _region_boundary(v, a, b):
+    return (_bin(v).astype(np.float64) - ndimage.binary_erosion(_bin(v)).astype(np.float64)).clip(0, 1)
+
+
+def _convex_fill(v, a, b):
+    return ndimage.binary_closing(_bin(v), iterations=_it(a) + 2).astype(np.float64)
+
+
+# --- image -> contour (XLD) -------------------------------------------------- #
+def _edges_sub_pix(v, a, b):
+    m = _norm(np.hypot(ndimage.sobel(v, 1), ndimage.sobel(v, 0)))
+    lab, n = ndimage.label(m > (0.15 + 0.5 * a), structure=np.ones((3, 3)))
+    cs = []
+    for i in range(1, n + 1):
+        ys, xs = np.where(lab == i)
+        if len(ys) >= 3:
+            cs.append(np.stack([ys, xs], 1).astype(np.float64))
+    return {"shape": v.shape, "cs": cs}
+
+
+# --- contour -> contour ------------------------------------------------------ #
+def _select_contours(cv, a, b):
+    thr = 3 + int(a * 40)
+    return {"shape": cv["shape"], "cs": [c for c in cv["cs"] if len(c) >= thr]}
+
+
+def _smooth_contours(cv, a, b):
+    w = 1 + int(a * 3); out = []
+    for c in cv["cs"]:
+        if len(c) > 2 * w + 1:
+            k = np.ones(2 * w + 1) / (2 * w + 1)
+            out.append(np.stack([np.convolve(c[:, 0], k, "same"), np.convolve(c[:, 1], k, "same")], 1))
+        else:
+            out.append(c)
+    return {"shape": cv["shape"], "cs": out}
+
+
+def _fit_line_contours(cv, a, b):
+    out = []
+    for c in cv["cs"]:
+        if len(c) >= 2:
+            mean = c.mean(0); _, _, vt = np.linalg.svd(c - mean); d = vt[0]
+            t = (c - mean) @ d
+            out.append(mean + np.outer(np.linspace(t.min(), t.max(), max(2, len(c))), d))
+        else:
+            out.append(c)
+    return {"shape": cv["shape"], "cs": out}
+
+
+# --- contour -> region ------------------------------------------------------- #
+def _contours_to_region(cv, a, b):
+    H, W = cv["shape"]; mask = np.zeros((H, W), np.float64)
+    for c in cv["cs"]:
+        idx = np.clip(np.round(c).astype(int), [0, 0], [H - 1, W - 1])
+        mask[idx[:, 0], idx[:, 1]] = 1.0
+    return ndimage.binary_dilation(mask > 0.5, iterations=1 + int(a * 2)).astype(np.float64)
+
+
+# --- contour -> feature ------------------------------------------------------ #
+def _count_contours(cv, a, b):
+    return np.float64(len(cv["cs"]))
+
+
+def _total_length(cv, a, b):
+    tot = 0.0
+    for c in cv["cs"]:
+        if len(c) >= 2:
+            tot += float(np.sum(np.hypot(np.diff(c[:, 0]), np.diff(c[:, 1]))))
+    return np.float64(tot)
+
+
+# --- image -> match (template matching) -------------------------------------- #
+def _ncc_locate(v, a, b):
+    T = _MATCH_CTX.get("template")
+    if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
+        return np.array([0.0, 0.0, 0.0])
+    corr = ndimage.correlate(v - float(v.mean()), T - float(T.mean()), mode="constant")
+    idx = np.unravel_index(int(np.argmax(corr)), corr.shape)
+    return np.array([float(corr.max()), float(idx[0]), float(idx[1])])
+
+
 @dataclass
 class Op:
     name: str
@@ -246,6 +362,28 @@ _DEFS = [
     # region -> feature (measurement)
     ("blob_count", "features", "count_obj", REGION, FEATURE, _blob_count),
     ("area_frac", "features", "area_center", REGION, FEATURE, _area_frac),
+    # extra image ops
+    ("grad_dir", "edges", "direction_gradient", IMAGE, IMAGE, _grad_dir),
+    ("log", "edges", "laplace_of_gauss", IMAGE, IMAGE, _log),
+    # extra segmentation (image -> region)
+    ("canny", "segmentation", "edges_image", IMAGE, REGION, _canny),
+    ("local_max", "segmentation", "local_max_sub_pix", IMAGE, REGION, _local_max),
+    # extra region ops
+    ("dist_transform", "region", "distance_transform", REGION, IMAGE, _dist_transform),
+    ("region_boundary", "region", "boundary", REGION, REGION, _region_boundary),
+    ("convex_fill", "region", "shape_trans_convex", REGION, REGION, _convex_fill),
+    # image -> contour (XLD)
+    ("edges_sub_pix", "contour", "edges_sub_pix", IMAGE, CONTOUR, _edges_sub_pix),
+    # contour -> contour
+    ("select_contours", "contour", "select_contours_xld", CONTOUR, CONTOUR, _select_contours),
+    ("smooth_contours", "contour", "smooth_contours_xld", CONTOUR, CONTOUR, _smooth_contours),
+    ("fit_line_contours", "contour", "fit_line_contour_xld", CONTOUR, CONTOUR, _fit_line_contours),
+    # contour -> region / feature
+    ("contours_to_region", "contour", "gen_region_contour_xld", CONTOUR, REGION, _contours_to_region),
+    ("count_contours", "features", "count_obj_contours", CONTOUR, FEATURE, _count_contours),
+    ("total_length", "features", "length_xld", CONTOUR, FEATURE, _total_length),
+    # image -> match (template matching)
+    ("ncc_locate", "matching", "find_ncc_model", IMAGE, MATCH, _ncc_locate),
 ]
 
 REGISTRY: list[Op] = [Op(n, c, h, i, o, f, _c(n)) for (n, c, h, i, o, f) in _DEFS]

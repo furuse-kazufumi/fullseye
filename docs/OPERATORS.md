@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-42 operators across 11 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+57 operators across 13 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -46,11 +46,26 @@
 | `invert_region` | region | region | complement | bitwise_not | util.invert | imcomplement |
 | `blob_count` | region->feature | features | count_obj | connectedComponents | measure.label | bwconncomp |
 | `area_frac` | region->feature | features | area_center | countNonZero | regionprops(area) | bwarea |
+| `grad_dir` | image | edges | direction_gradient | phase | - | imgradient |
+| `log` | image | edges | laplace_of_gauss | - | filters.laplace(gaussian) | fspecial('log') |
+| `canny` | image->region | segmentation | edges_image | Canny | feature.canny | edge(...,'canny') |
+| `local_max` | image->region | segmentation | local_max_sub_pix | - | feature.peak_local_max | imregionalmax |
+| `dist_transform` | region->image | region | distance_transform | distanceTransform | ndi.distance_transform_edt | bwdist |
+| `region_boundary` | region | region | boundary | findContours | segmentation.find_boundaries | bwperim |
+| `convex_fill` | region | region | shape_trans_convex | convexHull | morphology.convex_hull_image | bwconvhull |
+| `edges_sub_pix` | image->contour | contour | edges_sub_pix | - | measure.find_contours | - |
+| `select_contours` | contour | contour | select_contours_xld | (filter contours) | - | - |
+| `smooth_contours` | contour | contour | smooth_contours_xld | approxPolyDP | - | - |
+| `fit_line_contours` | contour | contour | fit_line_contour_xld | fitLine | measure.LineModelND | polyfit |
+| `contours_to_region` | contour->region | contour | gen_region_contour_xld | drawContours/fillPoly | draw.polygon | poly2mask |
+| `count_contours` | contour->feature | features | count_obj_contours | len(findContours) | len(find_contours) | - |
+| `total_length` | contour->feature | features | length_xld | arcLength | - | - |
+| `ncc_locate` | image->match | matching | find_ncc_model | matchTemplate | feature.match_template | normxcorr2 |
 
 ## Coverage (ops with a direct analog)
-- opencv: 35/42
-- skimage: 40/42
-- matlab: 38/42
+- opencv: 47/57
+- skimage: 51/57
+- matlab: 48/57
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

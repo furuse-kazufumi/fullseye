@@ -43,23 +43,31 @@ def _clean_stack(n, size, seed):
     return np.stack([_synth(rng, size) for _ in range(n)]).astype(np.float64)
 
 
+def _is_img(v):
+    return isinstance(v, np.ndarray) and v.ndim == 2
+
+
 def _as_image(final, shape):
-    if isinstance(final, np.ndarray) and final.ndim == 2:
+    if _is_img(final):
         return np.clip(final, 0, 1)
-    return np.full(shape, float(np.clip(np.mean(final), 0, 1)), np.float64)
+    if isinstance(final, (int, float)) or (isinstance(final, np.ndarray) and final.ndim == 0):
+        return np.full(shape, float(np.clip(final, 0, 1)), np.float64)
+    return np.zeros(shape, np.float64)  # contour dict / match array -> penalise for image tasks
 
 
 def _as_binary(final, shape):
-    if isinstance(final, np.ndarray) and final.ndim == 2:
-        return (final > 0.5).astype(np.float64)
-    return np.zeros(shape, np.float64)
+    return (_as_image(final, shape) > 0.5).astype(np.float64)
 
 
 def _as_count(final):
-    if isinstance(final, np.ndarray) and final.ndim == 2:
-        _, n = ndimage.label(final > 0.5)
-        return float(n)
-    return float(np.asarray(final).ravel()[0])
+    if _is_img(final):
+        return float(ndimage.label(final > 0.5)[1])
+    if isinstance(final, dict) and "cs" in final:      # contour -> number of contours
+        return float(len(final["cs"]))
+    try:
+        return float(np.asarray(final).ravel()[0])
+    except Exception:
+        return 0.0
 
 
 def _f1(pred, gt):
@@ -119,6 +127,30 @@ def _make_count(n, size, seed, noise=0.12):
     return {"input": inp, "items": counts}
 
 
+# --- locate (template matching) ---------------------------------------------- #
+def _template(size=11):
+    yy, xx = np.mgrid[0:size, 0:size]; c = size // 2
+    return ((xx - c) ** 2 + (yy - c) ** 2 <= (size // 2 - 1) ** 2).astype(np.float64)
+
+
+def _make_locate(n, size, seed):
+    rng = np.random.default_rng(seed + 5)
+    T = _template(11); ops.set_match_template(T); rr = T.shape[0] // 2
+    imgs, locs = [], []
+    for _ in range(n):
+        base = _synth(rng, size) * 0.4
+        r = int(rng.integers(rr + 1, size - rr - 1)); c = int(rng.integers(rr + 1, size - rr - 1))
+        base[r - rr:r + rr + 1, c - rr:c + rr + 1] = np.maximum(base[r - rr:r + rr + 1, c - rr:c + rr + 1], T)
+        imgs.append(np.clip(base + rng.normal(0, 0.1, base.shape), 0, 1)); locs.append([float(r), float(c)])
+    return {"input": np.stack(imgs), "items": np.array(locs)}
+
+
+def _score_locate(final, gt):
+    if isinstance(final, np.ndarray) and final.ndim == 1 and final.size >= 3:
+        return 1.0 / (1.0 + float(np.hypot(final[1] - gt[0], final[2] - gt[1])))
+    return 0.0
+
+
 PROBLEMS: dict[str, Problem] = {
     "denoise": Problem("denoise", "dB PSNR", _make_denoise,
                        lambda f, tgt: ops.psnr(_as_image(f, tgt.shape), tgt),
@@ -133,6 +165,8 @@ PROBLEMS: dict[str, Problem] = {
                      lambda f, gtc: 1.0 / (1.0 + abs(_as_count(f) - gtc)),
                      lambda: [ops.stage("gaussian", 0.3, 0.0), ops.stage("otsu", 0.0, 0.0),
                               ops.stage("remove_small", 0.2, 0.0), ops.stage("blob_count", 0.0, 0.0)]),
+    "locate": Problem("locate", "1/(1+px)", _make_locate, _score_locate,
+                      lambda: [ops.stage("gaussian", 0.2, 0.0), ops.stage("ncc_locate", 0.0, 0.0)]),
 }
 
 

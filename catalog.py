@@ -61,6 +61,21 @@ ANALOGS: dict[str, dict[str, str]] = {
     "invert_region": {"opencv": "bitwise_not", "skimage": "util.invert", "matlab": "imcomplement"},
     "blob_count": {"opencv": "connectedComponents", "skimage": "measure.label", "matlab": "bwconncomp"},
     "area_frac": {"opencv": "countNonZero", "skimage": "regionprops(area)", "matlab": "bwarea"},
+    "grad_dir": {"opencv": "phase", "skimage": "-", "matlab": "imgradient"},
+    "log": {"opencv": "-", "skimage": "filters.laplace(gaussian)", "matlab": "fspecial('log')"},
+    "canny": {"opencv": "Canny", "skimage": "feature.canny", "matlab": "edge(...,'canny')"},
+    "local_max": {"opencv": "-", "skimage": "feature.peak_local_max", "matlab": "imregionalmax"},
+    "dist_transform": {"opencv": "distanceTransform", "skimage": "ndi.distance_transform_edt", "matlab": "bwdist"},
+    "region_boundary": {"opencv": "findContours", "skimage": "segmentation.find_boundaries", "matlab": "bwperim"},
+    "convex_fill": {"opencv": "convexHull", "skimage": "morphology.convex_hull_image", "matlab": "bwconvhull"},
+    "edges_sub_pix": {"opencv": "-", "skimage": "measure.find_contours", "matlab": "-"},
+    "select_contours": {"opencv": "(filter contours)", "skimage": "-", "matlab": "-"},
+    "smooth_contours": {"opencv": "approxPolyDP", "skimage": "-", "matlab": "-"},
+    "fit_line_contours": {"opencv": "fitLine", "skimage": "measure.LineModelND", "matlab": "polyfit"},
+    "contours_to_region": {"opencv": "drawContours/fillPoly", "skimage": "draw.polygon", "matlab": "poly2mask"},
+    "count_contours": {"opencv": "len(findContours)", "skimage": "len(find_contours)", "matlab": "-"},
+    "total_length": {"opencv": "arcLength", "skimage": "-", "matlab": "-"},
+    "ncc_locate": {"opencv": "matchTemplate", "skimage": "feature.match_template", "matlab": "normxcorr2"},
 }
 
 LIBS = ("halcon", "opencv", "skimage", "matlab")
