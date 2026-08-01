@@ -13,12 +13,15 @@ AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(sc
 
 ## 現在地(v5=XLD/Contour + Matching ソート追加, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
 - **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`)。**op を1つ足すだけで進化も codegen も catalog も自動追従**。
-- **多ソート型システム**: `image / region / feature` を導入。**型整合のある進化**(各段は in_sort 一致の op のみ)で
-  HALCON 中核パターン **image →(segment)→ region →(region morph/select)→ feature** を表現。
-- **42 op / 11 カテゴリ**: 上記 image 系 + **segmentation**(threshold/otsu/dyn_threshold=image→region)、
-  **region**(reg_erode/dilate/open/close/fill_holes/select_largest/remove_small/invert_region)、
-  **features**(blob_count/area_frac=region→feature)。
-- **4タスク**: denoise(PSNR, image)/edge(F1, region)/binarize(IoU, region)/**count**(1/(1+err), feature=image→region→feature)。
+- **多ソート型システム(6 ソート)**: `image / region / feature / contour(XLD) / match / any`。**型整合のある進化**で
+  HALCON 中核パターン **image →(segment)→ region →(morph/select)→ feature** と
+  **image →(edges_sub_pix)→ contour →(select/smooth/fit_line)→ contour →(to_region/length)→ region/feature** と
+  **image →(ncc_locate)→ match** を表現。
+- **57 op / 12 カテゴリ**: image(smoothing/rank/morphology/edges/gray/frequency/texture)+ segmentation(threshold/
+  otsu/dyn_threshold/canny/local_max)+ region(reg_morph/fill_holes/select_largest/remove_small/dist_transform/
+  boundary/convex)+ features(blob_count/area_frac/count_contours/total_length)+ contour(edges_sub_pix/select/
+  smooth/fit_line/to_region)+ matching(ncc_locate)。
+- **5タスク**: denoise(image)/edge(region)/binarize(region)/count(feature)/**locate**(match, template matching)。
 - **cross-library catalog**(`catalog.py`→`docs/OPERATORS.md`): 各 op を HALCON/OpenCV/scikit-image/MATLAB の
   API にマップ。直接アナログ被覆 = opencv 35/42・skimage 40/42・matlab 38/42。
 - S2 codegen(IR→Python+C)+ difftest(honest gate)。多ソートでも Python 照合 PASS(edge diff 0.0/count 4e-7)。
