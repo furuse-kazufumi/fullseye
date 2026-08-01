@@ -1,0 +1,21 @@
+{
+  "cmd": [
+    "py",
+    "-3.11",
+    "baseline.py",
+    "--problem",
+    "denoise",
+    "--seed",
+    "1",
+    "--workdir",
+    "C:/dev/tools/raptor/out/worklog/imgevolve",
+    "--out",
+    "<OUT>.json"
+  ],
+  "cwd": "C:\\dev\\projects\\imgevolve",
+  "env": {
+    "PYTHONUTF8": "1"
+  },
+  "produces": "<OUT>.json",
+  "timeout": 600
+}

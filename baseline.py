@@ -1,14 +1,10 @@
-"""S0 — the honest floor (per problem).
+"""S0 — the honest floor (per problem, multi-sort aware).
 
-Measures three references on a train/holdout split so S1's evolution has an honest
-yardstick (nothing here is 'the answer'; it is what evolution must beat):
+  trivial : empty pipeline (do nothing).
+  hand    : the problem's hand-built typed pipeline (may span image->region->feature).
+  random  : best of N random genomes selected on train, reported on holdout.
 
-  - trivial : do-nothing pipeline (identity).
-  - hand    : the problem's hand-built expert pipeline.
-  - random  : best of N random pipelines *selected on train*, reported on holdout
-              (same protocol as evolution, so a win over `random` isolates search).
-
-Writes baseline_<problem>.json into the shared workdir. Deterministic (seeded).
+Writes baseline_<problem>.json. Deterministic.
 """
 from __future__ import annotations
 
@@ -20,6 +16,11 @@ import numpy as np
 
 import ops
 import problems
+
+
+def _stages_str(stages) -> str:
+    parts = [f"{s.op}(a={s.a:.2f},b={s.b:.2f})" for s in stages if s.op != "identity"]
+    return " -> ".join(parts) if parts else "identity"
 
 
 def main() -> int:
@@ -39,11 +40,7 @@ def main() -> int:
     tr = prob.make(a.n_train, a.size, a.seed)
     ho = prob.make(a.n_holdout, a.size, a.seed + 10_000)
 
-    def ho_score(g):
-        return prob.score(g, ho)
-
-    trivial = problems.trivial_genome()
-    hand = prob.hand()
+    hand = prob.hand_stages()
     rng = np.random.default_rng(a.seed + 777)
     best_g, best_tr = None, -1e18
     for _ in range(a.random_samples):
@@ -56,10 +53,10 @@ def main() -> int:
         "problem": a.problem, "unit": prob.unit,
         "config": {"n_train": a.n_train, "n_holdout": a.n_holdout, "size": a.size,
                    "seed": a.seed, "random_samples": a.random_samples},
-        "trivial": {"holdout": round(ho_score(trivial), 4), "pipeline": ops.pipeline_str(trivial)},
-        "hand": {"train": round(prob.score(hand, tr), 4), "holdout": round(ho_score(hand), 4),
-                 "pipeline": ops.pipeline_str(hand)},
-        "random": {"train": round(best_tr, 4), "holdout": round(ho_score(best_g), 4),
+        "trivial": {"holdout": round(prob.score_stages(problems.trivial_stages(), ho), 4), "pipeline": "identity"},
+        "hand": {"train": round(prob.score_stages(hand, tr), 4),
+                 "holdout": round(prob.score_stages(hand, ho), 4), "pipeline": _stages_str(hand)},
+        "random": {"train": round(best_tr, 4), "holdout": round(prob.score(best_g, ho), 4),
                    "pipeline": ops.pipeline_str(best_g), "genome": best_g.tolist()},
     }
     (wd / f"baseline_{a.problem}.json").write_text(json.dumps(result, indent=2), encoding="utf-8")

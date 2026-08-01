@@ -56,11 +56,11 @@ def main() -> int:
     rng = np.random.default_rng(a.seed)
     mu = max(2, a.pop // 4)
     pop = rng.random((a.pop, ops.GENOME_LEN))
-    # warm-start with hand + random baselines if available
-    pop[0] = prob.hand()
+    # warm-start slot 0 with the baseline's random champion if available (hand is a
+    # typed stage-list, not a genome, so it is not injected into the population)
     rg = base.get("random", {}).get("genome")
     if rg and len(rg) == ops.GENOME_LEN:
-        pop[1] = np.asarray(rg, np.float64)
+        pop[0] = np.asarray(rg, np.float64)
 
     champ, champ_tr = pop[0].copy(), train_fit(pop[0])
     history = []

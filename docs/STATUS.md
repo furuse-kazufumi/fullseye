@@ -11,25 +11,27 @@ AlphaEvolve(生ソース進化・Gemini・汎用)/ TransCoder(翻訳)/ Halide(sc
 アルゴリズムは人が書く)いずれも「アルゴリズム発見 × 型付き画像IR × 検証済み多言語codegen ×
 オンデバイス × honest holdout」を全部は満たさない。Halide は C/GPU codegen の下敷きに流用可。
 
-## 現在地(v3, commit 未記入・local・未push=human-gate)
-- **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`)。**op を1つ足すだけで進化も codegen も自動追従**(driver 変更不要)。
-- **32 op / 9 カテゴリ**: smoothing(gaussian/mean/bilateral/unsharp) rank(median/min/max/percentile)
-  morphology(erode/dilate/open/close/tophat/bothat/grad) edges(sobel/laplace/prewitt/roberts/dog)
-  gray(gamma/invert/scale/equalize/sigmoid) segmentation(threshold/otsu/dyn_threshold)
-  frequency(lowpass/highpass) texture(std)。各 op に HALCON アナログ名を付与。
-- 3タスク: denoise(PSNR)/edge(F1)/binarize(IoU)。S2 codegen(IR→Python+C)+ difftest(honest gate)。
-- **honest 結果**(op 拡張後): op 空間が広がると**乱択は劣化・進化は決定的勝利**。
-  denoise 進化24.41 vs 乱択19.5(**+4.9dB**)/ edge 0.901 vs 0.72 / binarize 0.931 vs 0.72(**v2の負け→勝ちに反転**)。
-  edge codegen の Python 照合は **diff 0.0(ビット一致)**。C は gcc 待ち(正直 skip)。
+## 現在地(v4=多ソート型システム, commit 系列 e6587af→c4f2078→d6b5456→v4・local・未push=human-gate)
+- **スケーラブル・レジストリ**(`ops.py` の `REGISTRY`)。**op を1つ足すだけで進化も codegen も catalog も自動追従**。
+- **多ソート型システム**: `image / region / feature` を導入。**型整合のある進化**(各段は in_sort 一致の op のみ)で
+  HALCON 中核パターン **image →(segment)→ region →(region morph/select)→ feature** を表現。
+- **42 op / 11 カテゴリ**: 上記 image 系 + **segmentation**(threshold/otsu/dyn_threshold=image→region)、
+  **region**(reg_erode/dilate/open/close/fill_holes/select_largest/remove_small/invert_region)、
+  **features**(blob_count/area_frac=region→feature)。
+- **4タスク**: denoise(PSNR, image)/edge(F1, region)/binarize(IoU, region)/**count**(1/(1+err), feature=image→region→feature)。
+- **cross-library catalog**(`catalog.py`→`docs/OPERATORS.md`): 各 op を HALCON/OpenCV/scikit-image/MATLAB の
+  API にマップ。直接アナログ被覆 = opencv 35/42・skimage 40/42・matlab 38/42。
+- S2 codegen(IR→Python+C)+ difftest(honest gate)。多ソートでも Python 照合 PASS(edge diff 0.0/count 4e-7)。
+- **honest 結果**(多ソート seed0/25gen): count 大勝(0.938 vs hand 0.688)、binarize 勝ち(fill_holes 使用)、
+  denoise 僅差勝ち、edge は 25gen で hand に負け(空間が広い=要 seed/世代)。乱択は大空間で劣化。
 
-## HALCON 級への道(ロードマップ)
-- **済**: filter/rank/morphology/edge/gray/threshold/frequency/texture ファミリの代表 32 op(全て Image→Image)。
-- **次の型システム拡張(本命)**: HALCON は Image だけでなく **Region(領域)/ XLD(輪郭)/ Tuple(特徴)/ Model** を扱う。
-  多ソート型付き DSL(Image/Region/Feature)へ広げると blob 解析・connection・select_shape・
-  measure・matching(template/shape/correlation)・OCR/calibration まで射程に入る。genome は型整合の
-  ある列/DAG に。**これが 2000 級オペレータへスケールする鍵**(現状は単一ソート=Image→Image)。
-- **C ランタイム拡張**: 現状 8 op(gaussian/box/gamma/invert/scale/threshold/unsharp/sobel)。
-  bilateral/median/morph/fft を足せば denoise/binarize も C 化。gcc 到着で compile+差分検証が自動で埋まる。
+## HALCON/多ライブラリ級への道(ロードマップ)
+- **済**: image/region/feature の3ソート + 42 op(filter/rank/morphology/edge/gray/threshold/frequency/texture/
+  region/features)。cross-library catalog(opencv/skimage/matlab/halcon マップ)。
+- **次**: **XLD/Contour ソート**(subpixel 輪郭・edges_sub_pix・fit_line/circle)+ **matching**(template/shape/
+  correlation model)+ **OCR/barcode** + **calibration/3D**。これで HALCON ~2100 に接近。
+- **多ライブラリ被覆拡大**: OpenCV ~2500 / skimage ~300。ファミリ単位で registry を拡張、analogs は catalog が自動追跡。
+- **C ランタイム拡張**: 現状 8 image op。bilateral/median/morph/region/fft を足し、gcc 到着で compile+差分検証を自動充足。
 
 ## 自走のしかた(work-graph)
 ```powershell
