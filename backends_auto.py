@@ -417,7 +417,7 @@ def _sh_geom(p):
         if kind == "zoom":
             s = 0.7 + 0.6 * a
             off = (x.shape[0] * (1 - 1 / s) / 2, x.shape[1] * (1 - 1 / s) / 2)
-            return np.clip(ndimage.affine_transform(x, np.array([1 / s, 1 / s]),
+            return np.clip(ndimage.affine_transform(x, np.diag([1 / s, 1 / s]),
                                                     offset=off, mode="reflect"), 0, 1)
         if kind == "affine":
             ang = np.deg2rad(-20 + 40 * a)

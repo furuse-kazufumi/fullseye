@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-153 operators across 17 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+277 operators across 18 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -157,11 +157,135 @@
 | `cv_good_features` | image->feature | features |  | cv2.good_features | - | - |
 | `dl_aniso_diffusion` | image | smoothing | anisotropic_diffusion | - | - | - |
 | `dl_guided_filter` | image | smoothing | guided_filter | - | - | - |
+| `abs_image` | image | arithmetic | abs_image | - | - | - |
+| `sqrt_image` | image | arithmetic | sqrt_image | - | - | - |
+| `exp_image` | image | arithmetic | exp_image | - | - | - |
+| `log_image` | image | arithmetic | log_image | - | - | - |
+| `sin_image` | image | arithmetic | sin_image | - | - | - |
+| `cos_image` | image | arithmetic | cos_image | - | - | - |
+| `asin_image` | image | arithmetic | asin_image | - | - | - |
+| `acos_image` | image | arithmetic | acos_image | - | - | - |
+| `atan_image` | image | arithmetic | atan_image | - | - | - |
+| `gamma_image` | image | gray | gamma_image | - | - | - |
+| `pow_image` | image | gray | pow_image | - | - | - |
+| `invert_image` | image | gray | invert_image | - | - | - |
+| `scale_image` | image | gray | scale_image | - | - | - |
+| `equ_histo_image` | image | gray | equ_histo_image | - | - | - |
+| `illuminate` | image | gray | illuminate | - | - | - |
+| `scale_image_max` | image | gray | scale_image_max | - | - | - |
+| `gauss_filter` | image | smoothing | gauss_filter | - | - | - |
+| `gauss_image` | image | smoothing | gauss_image | - | - | - |
+| `mean_image` | image | smoothing | mean_image | - | - | - |
+| `binomial_filter` | image | smoothing | binomial_filter | - | - | - |
+| `smooth_image` | image | smoothing | smooth_image | - | - | - |
+| `derivate_gauss` | image | edges | derivate_gauss | - | - | - |
+| `laplace_of_gauss` | image | edges | laplace_of_gauss | - | - | - |
+| `diff_of_gauss` | image | edges | diff_of_gauss | - | - | - |
+| `mean_curvature_flow` | image | smoothing | mean_curvature_flow | - | - | - |
+| `median_image` | image | rank | median_image | - | - | - |
+| `median_rect` | image | rank | median_rect | - | - | - |
+| `median_separate` | image | rank | median_separate | - | - | - |
+| `gray_erosion_rect` | image | rank | gray_erosion_rect | - | - | - |
+| `gray_dilation_rect` | image | rank | gray_dilation_rect | - | - | - |
+| `gray_range_rect` | image | rank | gray_range_rect | - | - | - |
+| `rank_image` | image | rank | rank_image | - | - | - |
+| `rank_rect` | image | rank | rank_rect | - | - | - |
+| `sigma_image` | image | smoothing | sigma_image | - | - | - |
+| `trimmed_mean` | image | rank | trimmed_mean | - | - | - |
+| `gray_erosion` | image | morphology | gray_erosion | - | - | - |
+| `gray_dilation` | image | morphology | gray_dilation | - | - | - |
+| `gray_opening` | image | morphology | gray_opening | - | - | - |
+| `gray_closing` | image | morphology | gray_closing | - | - | - |
+| `gray_opening_shape` | image | morphology | gray_opening_shape | - | - | - |
+| `gray_closing_shape` | image | morphology | gray_closing_shape | - | - | - |
+| `gray_tophat` | image | morphology | gray_tophat | - | - | - |
+| `gray_bothat` | image | morphology | gray_bothat | - | - | - |
+| `sobel_amp` | image | edges | sobel_amp | - | - | - |
+| `sobel_dir` | image | edges | sobel_dir | - | - | - |
+| `prewitt_amp` | image | edges | prewitt_amp | - | - | - |
+| `prewitt_dir` | image | edges | prewitt_dir | - | - | - |
+| `roberts` | image | edges | roberts | - | - | - |
+| `kirsch_amp` | image | edges | kirsch_amp | - | - | - |
+| `kirsch_dir` | image | edges | kirsch_dir | - | - | - |
+| `frei_amp` | image | edges | frei_amp | - | - | - |
+| `robinson_amp` | image | edges | robinson_amp | - | - | - |
+| `laplace` | image | edges | laplace | Laplacian | filters.laplace | fspecial('laplacian') |
+| `fft_image` | image | frequency | fft_image | - | - | - |
+| `power_real` | image | frequency | power_real | - | - | - |
+| `power_byte` | image | frequency | power_byte | - | - | - |
+| `phase_rad` | image | frequency | phase_rad | - | - | - |
+| `highpass_image` | image | frequency | highpass_image | - | - | - |
+| `bandpass_image` | image | frequency | bandpass_image | - | - | - |
+| `anisotropic_diffusion` | image | smoothing | anisotropic_diffusion | - | - | - |
+| `isotropic_diffusion` | image | smoothing | isotropic_diffusion | - | - | - |
+| `coherence_enhancing_diff` | image | smoothing | coherence_enhancing_diff | - | - | - |
+| `bilateral_filter` | image | smoothing | bilateral_filter | - | - | - |
+| `guided_filter` | image | smoothing | guided_filter | - | - | - |
+| `deviation_image` | image | texture | deviation_image | - | - | - |
+| `texture_laws` | image | texture | texture_laws | - | - | - |
+| `entropy_image` | image | texture | entropy_image | - | - | - |
+| `gen_gabor` | image | texture | gen_gabor | - | - | - |
+| `mirror_image` | image | geometry | mirror_image | - | - | - |
+| `transpose_region` | region | geometry | transpose_region | - | - | - |
+| `rotate_image` | image | geometry | rotate_image | - | - | - |
+| `zoom_image_factor` | image | geometry | zoom_image_factor | - | - | - |
+| `zoom_image_size` | image | geometry | zoom_image_size | - | - | - |
+| `affine_trans_image` | image | geometry | affine_trans_image | - | - | - |
+| `polar_trans_image` | image | geometry | polar_trans_image | - | - | - |
+| `h_threshold` | image->region | segmentation | threshold | - | - | - |
+| `binary_threshold` | image->region | segmentation | binary_threshold | - | - | - |
+| `auto_threshold` | image->region | segmentation | auto_threshold | - | - | - |
+| `dyn_threshold` | image->region | segmentation | dyn_threshold | adaptiveThreshold | filters.threshold_local | adaptthresh |
+| `var_threshold` | image->region | segmentation | var_threshold | - | - | - |
+| `local_threshold` | image->region | segmentation | local_threshold | - | - | - |
+| `hysteresis_threshold` | image->region | segmentation | hysteresis_threshold | - | - | - |
+| `edges_image` | image->region | segmentation | edges_image | - | - | - |
+| `watersheds` | image->region | segmentation | watersheds | - | - | - |
+| `watersheds_threshold` | image->region | segmentation | watersheds_threshold | - | - | - |
+| `regiongrowing` | image->region | segmentation | regiongrowing | - | - | - |
+| `local_max` | image->region | segmentation | local_max | - | feature.peak_local_max | imregionalmax |
+| `erosion_circle` | region | region | erosion_circle | - | - | - |
+| `dilation_circle` | region | region | dilation_circle | - | - | - |
+| `opening_circle` | region | region | opening_circle | - | - | - |
+| `closing_circle` | region | region | closing_circle | - | - | - |
+| `erosion_rectangle1` | region | region | erosion_rectangle1 | - | - | - |
+| `dilation_rectangle1` | region | region | dilation_rectangle1 | - | - | - |
+| `opening_rectangle1` | region | region | opening_rectangle1 | - | - | - |
+| `closing_rectangle1` | region | region | closing_rectangle1 | - | - | - |
+| `fill_up` | region | region | fill_up | - | - | - |
+| `boundary` | region | region | boundary | - | - | - |
+| `skeleton` | region | region | skeleton | - | - | - |
+| `thinning` | region | region | thinning | - | - | - |
+| `shape_trans` | region | region | shape_trans | - | - | - |
+| `select_shape_std` | region | region | select_shape_std | - | - | - |
+| `select_shape` | region | region | select_shape | - | - | - |
+| `distance_transform` | region->image | region | distance_transform | - | - | - |
+| `area_center` | region->feature | features | area_center | - | - | - |
+| `count_obj` | region->feature | features | count_obj | - | - | - |
+| `circularity` | region->feature | features | circularity | - | - | - |
+| `compactness` | region->feature | features | compactness | - | - | - |
+| `convexity` | region->feature | features | convexity | - | - | - |
+| `rectangularity` | region->feature | features | rectangularity | - | - | - |
+| `eccentricity` | region->feature | features | eccentricity | - | - | - |
+| `orientation_region` | region->feature | features | orientation_region | - | - | - |
+| `roundness` | region->feature | features | roundness | - | - | - |
+| `diameter_region` | region->feature | features | diameter_region | - | - | - |
+| `euler_number` | region->feature | features | euler_number | - | - | - |
+| `min_max_gray` | image->feature | features | min_max_gray | - | - | - |
+| `intensity` | image->feature | features | intensity | - | - | - |
+| `gray_histo_abs` | image->feature | features | gray_histo_abs | - | - | - |
+| `entropy_gray` | image->feature | features | entropy_gray | - | - | - |
+| `edges_sub_pix` | image->contour | contour | edges_sub_pix | - | measure.find_contours | - |
+| `lines_gauss` | image->contour | contour | lines_gauss | - | - | - |
+| `select_contours_xld` | contour | contour | select_contours_xld | - | - | - |
+| `smooth_contours_xld` | contour | contour | smooth_contours_xld | - | - | - |
+| `gen_region_contour_xld` | contour->region | contour | gen_region_contour_xld | - | - | - |
+| `length_xld` | contour->feature | features | length_xld | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 85/153
-- skimage: 114/153
-- matlab: 57/153
+- opencv: 87/277
+- skimage: 118/277
+- matlab: 60/277
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
