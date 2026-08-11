@@ -611,13 +611,13 @@ def _sh_region_feat(p):
         if metric == "orientation":
             return np.float64((pr.orientation + np.pi / 2) / np.pi)
         if metric == "roundness":
-            return np.float64(min(1.0, 4 * pr.area / (np.pi * max(pr.major_axis_length, 1) ** 2)))
+            return np.float64(min(1.0, 4 * pr.area / (np.pi * max(pr.axis_major_length, 1) ** 2)))
         if metric == "diameter":
-            return np.float64(pr.equivalent_diameter / max(m.shape))
+            return np.float64(pr.equivalent_diameter_area / max(m.shape))
         if metric == "euler":
             return np.float64(skmeasure.euler_number(m))
         if metric == "anisometry":
-            return np.float64(pr.major_axis_length / max(pr.minor_axis_length, 1e-6) / 10)
+            return np.float64(pr.axis_major_length / max(pr.axis_minor_length, 1e-6) / 10)
         raise ValueError(metric)
     return fn
 
