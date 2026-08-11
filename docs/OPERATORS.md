@@ -286,7 +286,7 @@
 | `height_width_ratio` | region->feature | features | height_width_ratio | - | measure.regionprops | regionprops |
 | `moments_region_2nd` | region->feature | features | moments_region_2nd | - | measure.regionprops | regionprops |
 | `moments_region_2nd_invar` | region->feature | features | moments_region_2nd_invar | - | measure.regionprops | regionprops |
-| `cooc_feature_matrix` | image->feature | texture | cooc_feature_matrix | - | - | - |
+| `cooc_feature_matrix` | image->feature | texture | cooc_feature_matrix | - | feature.graycomatrix/graycoprops | graycomatrix/graycoprops |
 | `equ_histo_image_rect` | image | gray | equ_histo_image_rect | LUT | exposure/util | imadjust |
 | `simulate_motion` | image | smoothing | simulate_motion | GaussianBlur/blur | filters.gaussian | imfilter |
 | `projective_trans_image` | image | geometry | projective_trans_image | warpAffine/warpPolar | transform | imwarp |
@@ -294,7 +294,7 @@
 | `projective_trans_region` | region | geometry | projective_trans_region | warpAffine/warpPolar | transform | imwarp |
 | `polar_trans_image_inv` | image | geometry | polar_trans_image_inv | warpAffine/warpPolar | transform | imwarp |
 | `fft_image_inv` | image | frequency | fft_image_inv | dft+mask | fft+mask | fft2 |
-| `add_noise_white` | image | noise | add_noise_white | - | - | - |
+| `add_noise_white` | image | noise | add_noise_white | - | util.random_noise | imnoise |
 | `tan_image` | image | arithmetic | tan_image | pointwise/LUT | - | imadjust |
 | `bit_not` | image | gray | bit_not | LUT | exposure/util | imadjust |
 | `monotony` | image | gray | monotony | LUT | exposure/util | imadjust |
@@ -347,8 +347,8 @@
 
 ## Coverage (ops with a direct analog)
 - opencv: 246/340
-- skimage: 289/340
-- matlab: 228/340
+- skimage: 291/340
+- matlab: 230/340
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

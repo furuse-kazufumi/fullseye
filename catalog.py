@@ -110,6 +110,8 @@ _SHAPE_ANALOGS: dict[str, dict] = {
     "region_feat": {"opencv": "-", "skimage": "measure.regionprops", "matlab": "regionprops"},
     "img_feat": {"opencv": "minMaxLoc/meanStdDev", "skimage": "measure", "matlab": "-"},
     "xld": {"opencv": "findContours", "skimage": "measure.find_contours", "matlab": "-"},
+    "cooc": {"opencv": "-", "skimage": "feature.graycomatrix/graycoprops", "matlab": "graycomatrix/graycoprops"},
+    "noise": {"opencv": "-", "skimage": "util.random_noise", "matlab": "imnoise"},
 }
 
 
