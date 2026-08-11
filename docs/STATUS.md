@@ -60,10 +60,14 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   reduce_domain/overpaint_region/convol_image 等)を **17 op 本物実装**(全機能ゲート通過)。
 
 **★honest 被覆(実測, `honest_summary.py` → `docs/HALCON_PARITY.md`)**:
-- **203 / 2313 distinct real HALCON op を genuine 実装(8.8%)** = 進化 registry 186 + n-ary 17(disjoint)。
-- registry ops 326(core 67 + backend 86 + **auto 173**)。auto 173 は **全て機能ゲート通過**。
-- **dangling(偽名)= 0**(fail-closed)。回帰スモーク 500/500(image起点 decode+run クラッシュ0)。
-- 開始(v10)79 → **186(registry)/ 203(総capability)= 2.4〜2.6倍**。数値は memory 推測でなく実測。
+- **217 / 2313 distinct real HALCON op を genuine 実装(9.4%)** = 進化 registry 200 + n-ary 17(disjoint)。
+- registry ops 340(core 67 + backend 86 + **auto 187**)。auto 187 は **全て機能ゲート通過**。
+- **dangling(偽名)= 0**(fail-closed)。回帰スモーク 400/400(image起点 decode+run クラッシュ0)。
+- 開始(v10)79 → **200(registry)/ 217(総capability)= 2.5〜2.7倍**。数値は memory 推測でなく実測。
+- v11b 増分(shape 拡張で救済した families): region 計測(contlength=周長/area_holes/height_width_ratio/
+  moments_region_2nd/_2nd_invar)・cooc_feature_matrix(Haralick)・equ_histo_image_rect(局所equalize)・
+  simulate_motion(方向ブラー)・projective_trans_image/_size/_region(射影)・polar_trans_image_inv/
+  fft_image_inv(逆変換)・add_noise_white(決定論ノイズ)。
 
 ## HALCON ~2313 の実装可能性(章別内訳, honest)
 - **アルゴリズム系 808**(Filters/Morphology/Regions/Segmentation/XLD/Image/Transformations/
