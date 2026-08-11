@@ -304,10 +304,16 @@ def _sh_edge(p):
             return np.argmax(resp, 0).astype(np.float64) / (len(_KIRSCH) - 1)
         if kind == "frei":
             return _norm(np.hypot(ndimage.convolve(x, _FREI[0]), ndimage.convolve(x, _FREI[1])))
+        if kind == "frei_dir":
+            return (np.arctan2(ndimage.convolve(x, _FREI[1]),
+                               ndimage.convolve(x, _FREI[0])) + np.pi) / (2 * np.pi)
         if kind == "robinson":
             r0 = [np.rot90(_ROBINSON[0], i) for i in range(4)]
             r1 = [np.rot90(_ROBINSON[1], i) for i in range(4)]
             return _norm(_compass(x, r0 + r1))
+        if kind == "robinson_dir":
+            r = [np.rot90(_ROBINSON[0], i) for i in range(4)] + [np.rot90(_ROBINSON[1], i) for i in range(4)]
+            return np.argmax(np.stack([ndimage.convolve(x, k) for k in r]), 0).astype(np.float64) / (len(r) - 1)
         if kind == "laplace":
             return _norm(np.abs(ndimage.laplace(x)))
         raise ValueError(kind)
