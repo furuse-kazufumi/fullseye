@@ -554,8 +554,14 @@ def _sh_region_trans(p):
             return skmorph.convex_hull_image(m).astype(np.float64)
         if kind == "clear_border" and _HAS_SK:
             return skseg.clear_border(m).astype(np.float64)
-        if kind == "remove_small" and _HAS_SK:
-            return skmorph.remove_small_objects(m, min_size=int(16 + a * 200)).astype(np.float64)
+        if kind == "remove_small":
+            lab, n = ndimage.label(m)
+            if n == 0:
+                return np.zeros_like(m, np.float64)
+            sizes = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
+            thr = int(16 + a * 200)
+            keep = np.isin(lab, [i for i, s in enumerate(sizes, 1) if s >= thr])
+            return keep.astype(np.float64)
         if kind == "remove_holes" and _HAS_SK:
             return skmorph.remove_small_holes(m, area_threshold=int(16 + a * 200)).astype(np.float64)
         if kind == "select_largest":
