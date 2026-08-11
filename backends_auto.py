@@ -966,6 +966,27 @@ SEED: list[tuple] = [
     ("smooth_contours_xld", "contour", CON, CON, "xld", {"kind": "smooth_contours"}),
     ("gen_region_contour_xld", "contour", CON, REG, "xld", {"kind": "to_region"}),
     ("length_xld", "features", CON, FEA, "xld", {"kind": "length"}),
+    # ---- v11b increment: newly-enabled genuine families ------------------
+    # region measurements
+    ("contlength", "features", REG, FEA, "region_feat", {"metric": "perimeter"}),
+    ("area_holes", "features", REG, FEA, "region_feat", {"metric": "area_holes"}),
+    ("height_width_ratio", "features", REG, FEA, "region_feat", {"metric": "aspect"}),
+    ("moments_region_2nd", "features", REG, FEA, "region_feat", {"metric": "moment2"}),
+    ("moments_region_2nd_invar", "features", REG, FEA, "region_feat", {"metric": "hu1"}),
+    # Haralick texture (image -> feature)
+    ("cooc_feature_matrix", "texture", IMG, FEA, "cooc", {"prop": "energy"}),
+    # windowed histogram equalisation
+    ("equ_histo_image_rect", "gray", IMG, IMG, "lut", {"kind": "equalize_local"}),
+    # motion blur
+    ("simulate_motion", "smoothing", IMG, IMG, "linfilter", {"kind": "motion"}),
+    # projective / inverse transforms
+    ("projective_trans_image", "geometry", IMG, IMG, "geom", {"kind": "projective"}),
+    ("projective_trans_image_size", "geometry", IMG, IMG, "geom", {"kind": "projective"}),
+    ("projective_trans_region", "geometry", REG, REG, "geom", {"kind": "projective"}),
+    ("polar_trans_image_inv", "geometry", IMG, IMG, "geom", {"kind": "polar_inv"}),
+    ("fft_image_inv", "frequency", IMG, IMG, "freq", {"kind": "ifft"}),
+    # deterministic noise
+    ("add_noise_white", "noise", IMG, IMG, "noise", {"kind": "gaussian"}),
 ]
 
 

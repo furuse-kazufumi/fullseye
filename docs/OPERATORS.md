@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-326 operators across 18 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+340 operators across 19 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -281,6 +281,20 @@
 | `smooth_contours_xld` | contour | contour | smooth_contours_xld | findContours | measure.find_contours | - |
 | `gen_region_contour_xld` | contour->region | contour | gen_region_contour_xld | findContours | measure.find_contours | - |
 | `length_xld` | contour->feature | features | length_xld | findContours | measure.find_contours | - |
+| `contlength` | region->feature | features | contlength | - | measure.regionprops | regionprops |
+| `area_holes` | region->feature | features | area_holes | - | measure.regionprops | regionprops |
+| `height_width_ratio` | region->feature | features | height_width_ratio | - | measure.regionprops | regionprops |
+| `moments_region_2nd` | region->feature | features | moments_region_2nd | - | measure.regionprops | regionprops |
+| `moments_region_2nd_invar` | region->feature | features | moments_region_2nd_invar | - | measure.regionprops | regionprops |
+| `cooc_feature_matrix` | image->feature | texture | cooc_feature_matrix | - | - | - |
+| `equ_histo_image_rect` | image | gray | equ_histo_image_rect | LUT | exposure/util | imadjust |
+| `simulate_motion` | image | smoothing | simulate_motion | GaussianBlur/blur | filters.gaussian | imfilter |
+| `projective_trans_image` | image | geometry | projective_trans_image | warpAffine/warpPolar | transform | imwarp |
+| `projective_trans_image_size` | image | geometry | projective_trans_image_size | warpAffine/warpPolar | transform | imwarp |
+| `projective_trans_region` | region | geometry | projective_trans_region | warpAffine/warpPolar | transform | imwarp |
+| `polar_trans_image_inv` | image | geometry | polar_trans_image_inv | warpAffine/warpPolar | transform | imwarp |
+| `fft_image_inv` | image | frequency | fft_image_inv | dft+mask | fft+mask | fft2 |
+| `add_noise_white` | image | noise | add_noise_white | - | - | - |
 | `tan_image` | image | arithmetic | tan_image | pointwise/LUT | - | imadjust |
 | `bit_not` | image | gray | bit_not | LUT | exposure/util | imadjust |
 | `monotony` | image | gray | monotony | LUT | exposure/util | imadjust |
@@ -332,9 +346,9 @@
 | `select_shape_xld` | contour | contour | select_shape_xld | findContours | measure.find_contours | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 239/326
-- skimage: 277/326
-- matlab: 216/326
+- opencv: 246/340
+- skimage: 289/340
+- matlab: 228/340
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

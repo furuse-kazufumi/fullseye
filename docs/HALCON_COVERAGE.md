@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 186 / 2313 HALCON operators (8.0%)** via `Op.halcon`, from 326 registry ops.
+**imgevolve maps to 200 / 2313 HALCON operators (8.6%)** via `Op.halcon`, from 340 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
@@ -17,10 +17,10 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | Graphics | 0 | 174 | 174 |
 | Tuple | 0 | 165 | 165 |
 | System | 0 | 141 | 141 |
-| Transformations | 6 | 118 | 112 |
-| Filters | 85 | 196 | 111 |
+| Transformations | 10 | 118 | 108 |
 | Tools | 2 | 108 | 106 |
-| Image | 6 | 110 | 104 |
+| Filters | 92 | 196 | 104 |
+| Image | 7 | 110 | 103 |
 | Classification | 0 | 99 | 99 |
 | Legacy | 13 | 110 | 97 |
 | OCR | 0 | 96 | 96 |
@@ -28,7 +28,7 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | XLD | 6 | 97 | 91 |
 | Deep Learning | 1 | 88 | 87 |
 | 3D Reconstruction | 0 | 76 | 76 |
-| Regions | 31 | 106 | 75 |
+| Regions | 37 | 106 | 69 |
 | Calibration | 0 | 68 | 68 |
 | 3D Matching | 0 | 59 | 59 |
 | Matrix | 0 | 57 | 57 |
@@ -50,10 +50,10 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 - **Graphics** (0/174): add_scene_3d_camera, add_scene_3d_instance, add_scene_3d_label, add_scene_3d_light, attach_background_to_window, attach_drawing_object_to_window, clear_drawing_object, clear_scene_3d, clear_window, close_window, convert_coordinates_image_to_window, convert_coordinates_window_to_image
 - **Tuple** (0/165): clear_handle, copy_dict, create_dict, dict_to_json, get_dict_object, get_dict_param, get_dict_tuple, get_handle_object, get_handle_param, get_handle_tuple, handle_to_integer, integer_to_handle
 - **System** (0/141): activate_compute_device, broadcast_condition, clear_barrier, clear_condition, clear_event, clear_message, clear_message_queue, clear_mutex, clear_serial, clear_serialized_item, close_io_channel, close_io_device
-- **Transformations** (6/118): affine_trans_contour_xld, affine_trans_pixel, affine_trans_point_2d, affine_trans_point_3d, affine_trans_polygon_xld, angle_ll, angle_lx, axis_angle_to_quat, convert_point_3d_cart_to_spher, convert_point_3d_spher_to_cart, convert_pose_type, create_generic_shape_model
-- **Filters** (85/196): abs_diff_image, add_image, add_noise_distribution, add_noise_white, apply_color_trans_lut, atan2_image, bit_and, bit_lshift, bit_mask, bit_or, bit_rshift, bit_slice
+- **Transformations** (10/118): affine_trans_contour_xld, affine_trans_pixel, affine_trans_point_2d, affine_trans_point_3d, affine_trans_polygon_xld, angle_ll, angle_lx, axis_angle_to_quat, convert_point_3d_cart_to_spher, convert_point_3d_spher_to_cart, convert_pose_type, create_generic_shape_model
 - **Tools** (2/108): abs_funct_1d, adjust_mosaic_images, angle_ll, angle_lx, apply_distance_transform_xld, area_intersection_rectangle2, bundle_adjust_mosaic, clear_distance_transform_xld, clear_scattered_data_interpolator, close_bg_esti, compose_funct_1d, connect_grid_points
-- **Image** (6/110): access_channel, add_channels, add_image_border, append_channel, area_center_gray, change_domain, change_format, channels_to_image, close_framegrabber, complex_to_real, compose2, compose3
+- **Filters** (92/196): abs_diff_image, add_image, add_noise_distribution, apply_color_trans_lut, atan2_image, bit_and, bit_lshift, bit_mask, bit_or, bit_rshift, bit_slice, bit_xor
+- **Image** (7/110): access_channel, add_channels, add_image_border, append_channel, area_center_gray, change_domain, change_format, channels_to_image, close_framegrabber, complex_to_real, compose2, compose3
 - **Classification** (0/99): add_class_train_data_gmm, add_class_train_data_knn, add_class_train_data_mlp, add_class_train_data_svm, add_sample_class_gmm, add_sample_class_knn, add_sample_class_mlp, add_sample_class_svm, add_sample_class_train_data, classify_class_gmm, classify_class_knn, classify_class_mlp
 - **Legacy** (13/110): approx_chain, approx_chain_simple, bottom_hat, clear_component_model, clear_rectangle, clear_training_components, close_ocr, cluster_model_components, copy_metrology_object, create_component_model, create_ocr_class_box, create_text_model
 - **OCR** (0/96): append_ocr_trainf, apply_deep_ocr, clear_lexicon, clear_ocr_class_cnn, clear_ocr_class_knn, clear_ocr_class_mlp, clear_ocr_class_svm, clear_text_model, clear_text_result, concat_ocr_trainf, create_deep_ocr, create_lexicon
@@ -63,8 +63,8 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 ## Version awareness (HALCON's op set changes between releases)
 Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
 
-- **184** claimed names exist in **all** scraped releases (stable).
-- **2 version-drift** (real, but only some releases): `bilateral_filter` (in 13/2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605)
+- **196** claimed names exist in **all** scraped releases (stable).
+- **4 version-drift** (real, but only some releases): `bilateral_filter` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605)
 - **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 
 ## Honest reading
