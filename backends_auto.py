@@ -160,6 +160,21 @@ def _sh_lut(p):
                     if dy or dx:
                         cnt += (np.roll(np.roll(x, dy, 0), dx, 1) < x).astype(np.float64)
             return cnt / 8.0
+        if kind == "equalize_local":                 # windowed histogram equalisation (equ_histo_image_rect)
+            nb = 2 + int(a * 4)
+            H, W = x.shape
+            hs, ws = max(1, H // nb), max(1, W // nb)
+            out = x.copy()
+            for i in range(nb):
+                for j in range(nb):
+                    blk = x[i * hs:(i + 1) * hs, j * ws:(j + 1) * ws]
+                    if blk.size:
+                        h, e = np.histogram(blk, 64, (0, 1))
+                        c = np.cumsum(h).astype(np.float64)
+                        c = c / c[-1] if c[-1] > 0 else c
+                        out[i * hs:(i + 1) * hs, j * ws:(j + 1) * ws] = \
+                            np.interp(blk.ravel(), (e[:-1] + e[1:]) / 2, c).reshape(blk.shape)
+            return out
         raise ValueError(kind)
     return fn
 
