@@ -153,8 +153,13 @@ def _sh_lut(p):
         if kind == "illuminate":
             sm = ndimage.gaussian_filter(x, 3 + 12 * a)
             return np.clip(x + (0.3 + 0.7 * b) * (x - sm), 0, 1)
-        if kind == "monotony":
-            return _norm(ndimage.rank_filter(x, -1, size=3) - ndimage.rank_filter(x, 0, size=3))
+        if kind == "monotony":                      # HALCON monotony: rank of centre among 8 neighbours
+            cnt = np.zeros_like(x)
+            for dy in (-1, 0, 1):
+                for dx in (-1, 0, 1):
+                    if dy or dx:
+                        cnt += (np.roll(np.roll(x, dy, 0), dx, 1) < x).astype(np.float64)
+            return cnt / 8.0
         raise ValueError(kind)
     return fn
 

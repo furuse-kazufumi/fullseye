@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-277 operators across 18 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+326 operators across 18 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -281,11 +281,60 @@
 | `smooth_contours_xld` | contour | contour | smooth_contours_xld | findContours | measure.find_contours | - |
 | `gen_region_contour_xld` | contour->region | contour | gen_region_contour_xld | findContours | measure.find_contours | - |
 | `length_xld` | contour->feature | features | length_xld | findContours | measure.find_contours | - |
+| `tan_image` | image | arithmetic | tan_image | pointwise/LUT | - | imadjust |
+| `bit_not` | image | gray | bit_not | LUT | exposure/util | imadjust |
+| `monotony` | image | gray | monotony | LUT | exposure/util | imadjust |
+| `eliminate_min_max` | image | rank | eliminate_min_max | medianBlur/erode/dilate | filters.rank | ordfilt2 |
+| `median_weighted` | image | rank | median_weighted | medianBlur/erode/dilate | filters.rank | ordfilt2 |
+| `mean_sp` | image | rank | mean_sp | medianBlur/erode/dilate | filters.rank | ordfilt2 |
+| `eliminate_sp` | image | rank | eliminate_sp | medianBlur/erode/dilate | filters.rank | ordfilt2 |
+| `simulate_defocus` | image | smoothing | simulate_defocus | GaussianBlur/blur | filters.gaussian | imfilter |
+| `dots_image` | image | edges | dots_image | GaussianBlur/blur | filters.gaussian | imfilter |
+| `frei_dir` | image | edges | frei_dir | Sobel/Scharr/Laplacian | filters.sobel/prewitt | edge |
+| `robinson_dir` | image | edges | robinson_dir | Sobel/Scharr/Laplacian | filters.sobel/prewitt | edge |
+| `fft_generic` | image | frequency | fft_generic | dft+mask | fft+mask | fft2 |
+| `power_ln` | image | frequency | power_ln | dft+mask | fft+mask | fft2 |
+| `rft_generic` | image | frequency | rft_generic | dft+mask | fft+mask | fft2 |
+| `phase_deg` | image | frequency | phase_deg | dft+mask | fft+mask | fft2 |
+| `affine_trans_image_size` | image | geometry | affine_trans_image_size | warpAffine/warpPolar | transform | imwarp |
+| `polar_trans_image_ext` | image | geometry | polar_trans_image_ext | warpAffine/warpPolar | transform | imwarp |
+| `lines_facet` | image->contour | contour | lines_facet | findContours | measure.find_contours | - |
+| `bin_threshold` | image->region | segmentation | bin_threshold | threshold/adaptiveThreshold | filters.threshold_* | imbinarize |
+| `erosion_golay` | region | region | erosion_golay | morphologyEx | morphology.binary_* | imopen/imclose |
+| `dilation_golay` | region | region | dilation_golay | morphologyEx | morphology.binary_* | imopen/imclose |
+| `opening_golay` | region | region | opening_golay | morphologyEx | morphology.binary_* | imopen/imclose |
+| `closing_golay` | region | region | closing_golay | morphologyEx | morphology.binary_* | imopen/imclose |
+| `erosion_seq` | region | region | erosion_seq | morphologyEx | morphology.binary_* | imopen/imclose |
+| `dilation_seq` | region | region | dilation_seq | morphologyEx | morphology.binary_* | imopen/imclose |
+| `morph_skeleton` | region | region | morph_skeleton | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `thinning_golay` | region | region | thinning_golay | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `thinning_seq` | region | region | thinning_seq | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `gray_erosion_shape` | image | morphology | gray_erosion_shape | morphologyEx | morphology (gray) | imtophat/imopen |
+| `gray_dilation_shape` | image | morphology | gray_dilation_shape | morphologyEx | morphology (gray) | imtophat/imopen |
+| `gray_opening_rect` | image | morphology | gray_opening_rect | morphologyEx | morphology (gray) | imtophat/imopen |
+| `gray_closing_rect` | image | morphology | gray_closing_rect | morphologyEx | morphology (gray) | imtophat/imopen |
+| `dual_rank` | image | rank | dual_rank | medianBlur/erode/dilate | filters.rank | ordfilt2 |
+| `fast_threshold` | image->region | segmentation | fast_threshold | threshold/adaptiveThreshold | filters.threshold_* | imbinarize |
+| `nonmax_suppression_amp` | image->region | segmentation | nonmax_suppression_amp | Canny/watershed | segmentation | watershed |
+| `pouring` | image->region | segmentation | pouring | Canny/watershed | segmentation | watershed |
+| `affine_trans_region` | region | geometry | affine_trans_region | warpAffine/warpPolar | transform | imwarp |
+| `mirror_region` | region | geometry | mirror_region | warpAffine/warpPolar | transform | imwarp |
+| `zoom_region` | region | geometry | zoom_region | warpAffine/warpPolar | transform | imwarp |
+| `fill_up_shape` | region | region | fill_up_shape | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `remove_noise_region` | region | region | remove_noise_region | morphologyEx | morphology.binary_* | imopen/imclose |
+| `smallest_rectangle1` | region | region | smallest_rectangle1 | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `get_region_contour` | region | region | get_region_contour | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `get_region_convex` | region | region | get_region_convex | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `gen_region_polygon_xld` | contour->region | contour | gen_region_polygon_xld | findContours | measure.find_contours | - |
+| `connect_and_holes` | region->feature | features | connect_and_holes | - | measure.regionprops | regionprops |
+| `elliptic_axis` | region->feature | features | elliptic_axis | - | measure.regionprops | regionprops |
+| `gen_contour_region_xld` | region->contour | contour | gen_contour_region_xld | findContours | measure.find_contours | - |
+| `select_shape_xld` | contour | contour | select_shape_xld | findContours | measure.find_contours | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 192/277
-- skimage: 229/277
-- matlab: 171/277
+- opencv: 239/326
+- skimage: 277/326
+- matlab: 216/326
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
