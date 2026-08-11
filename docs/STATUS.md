@@ -33,6 +33,38 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
 - 成果物: `docs/HALCON_COVERAGE.md`(版認識+gap ランキング)。scrape データは再生成可能な
   ローカルキャッシュ(`data/` は gitignore, MVTec docs/EULA 配慮で vendor しない)。
 
+## ★現在地(v11 = HALCON-parity 自動生成 + 機能ゲート, 2026-08-12)
+**目標の再確認(ユーザー)= 「HALCON と同じことができる」= 名前だけの被覆でなく各 op が
+実際に同じ処理を行える**。これを honest に達成する土台を構築:
+
+- **operator 知識グラフ**(`graph.py` → `data/halcon_graph.json`): 2313 op を
+  {章 / desc / 型シグネチャ / arity(HObject入力数) / 推定sort / algorithm判定 / covered}
+  でノード化。**unary algorithm = 535(honest な対象規模)/ n-ary = 210**。fan-out と
+  自動生成の土台(正本 = STATUS.md の plan step 1)。
+- **固定 shape 語彙 + データ駆動生成**(`backends_auto.py`): 17 の検証済み factory shape
+  (pointwise/lut/linfilter/rank/graymorph/edge/freq/diffusion/texture/geom/threshold/
+  segment/binmorph/region_trans/region_feat/img_feat/xld)を **手書きで正しく実装**。
+  `SPECS`(halcon名→shape+params の**データのみ**)を語彙にマップ。**halcon 名は実
+  reference で実在検証し、偽名は fail-closed でドロップ(捏造で被覆を水増ししない)**。
+- **章別 fan-out**(`specs/fanout_workgraph.js`, 8 agent workflow): 各 algorithm 章の
+  未被覆 unary op を固定語彙にマップした verified specs(`data/auto_specs/*.json`)を生成。
+  **agent は genuine analog のみ採用し、noise生成/色多チャネル/射影変換/逆FFT/コーナー検出/
+  ドメインROI/学習モデル等は honest に skip**(捏造せず)。生成後、私が全マッピングを
+  **一次スポットチェック**し、非 genuine を除去(monotony/frei_dir/robinson_dir は誤マップを
+  genuine 実装に差し替えて救済、equ_histo_image_rect/region_features/polar_trans_region/
+  morph_skiz/gen_contours_skeleton_xld は同一性なしで削除)。
+- **機能ゲート**(`verify_auto.py`): 各 op を canonical 画像/領域/輪郭で実行し、**例外なく
+  宣言 sort を返すもののみ被覆にカウント**(「同じことができる」の実証)。
+- **n-ary capability tier**(`imgops_nary.py`): 単一画像スレッドに載らない多入力 HALCON op
+  (add/sub/mult/div/abs_diff/max/min_image、union2/intersection/difference/symm_difference、
+  reduce_domain/overpaint_region/convol_image 等)を **17 op 本物実装**(全機能ゲート通過)。
+
+**★honest 被覆(実測, `honest_summary.py` → `docs/HALCON_PARITY.md`)**:
+- **203 / 2313 distinct real HALCON op を genuine 実装(8.8%)** = 進化 registry 186 + n-ary 17(disjoint)。
+- registry ops 326(core 67 + backend 86 + **auto 173**)。auto 173 は **全て機能ゲート通過**。
+- **dangling(偽名)= 0**(fail-closed)。回帰スモーク 500/500(image起点 decode+run クラッシュ0)。
+- 開始(v10)79 → **186(registry)/ 203(総capability)= 2.4〜2.6倍**。数値は memory 推測でなく実測。
+
 ## HALCON ~2313 の実装可能性(章別内訳, honest)
 - **アルゴリズム系 808**(Filters/Morphology/Regions/Segmentation/XLD/Image/Transformations/
   Metrology/Inspection…)= imgevolve の対象。cv2/skimage/scipy backend wrap で大規模実装可。
