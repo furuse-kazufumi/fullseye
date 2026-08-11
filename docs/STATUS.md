@@ -76,11 +76,21 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   backend wrap**(被覆 79→数百)。
 
 ## 次(graph エンジニアリングでスケール)
-1. **オペレータ知識グラフ**(node=2313 op {章, in/out sort, 型シグネチャ, backend-analog 候補}、
-   edge=型合成 + ライブラリ analog)を構築 → 進化の探索空間 + 自動 codegen の土台。
-2. グラフの analog edge から **アルゴリズム系 808 の backend-wrapped registry エントリを自動生成**
-   (HALCON op → cv2/skimage/scipy 呼出 + 型シグネチャ)→ 被覆を段階的に引上げ。
-3. 各families を sweep で seed/世代積み各タスクの勝ちを確定。C runtime を median/bilateral/morph/fft へ拡張。
+1. ~~オペレータ知識グラフを構築~~ **DONE**(`graph.py` → `data/halcon_graph.json`, 2313ノード)。
+2. ~~analog edge から backend-wrapped registry を自動生成~~ **DONE**(`backends_auto.py` 固定 shape
+   語彙 + fail-closed 生成 + 8-agent fan-out + 機能ゲート = auto 173 op / 被覆 79→186)。
+3. **残る未被覆 unary algorithm = 366**(graph の `unary_uncovered_by_chapter`)。次の増分候補:
+   - **語彙の拡張**で救える families(現状 skip されたが genuine 実装可能): motion/defocus 方向ブラー
+     (linear blur kernel)、gray_skeleton(gray 版 thinning)、shock_filter(PDE 先鋭化)、
+     projective_trans(射影変換 shape)、inverse FFT(fft_image_inv/polar_inv)、corner→point sort
+     (Foerstner/Harris の点出力に新 sort)、cooc/Haralick テクスチャ特徴、moment features
+     (region moments)。**shape を1つ足すと該当 op 群が一気に被覆に入る**設計。
+   - **n-ary tier の拡張**(現17→): 画像演算の残り(min/max_image は済、`gen_*`除く算術)、
+     region 集合の union1/複数入力、channel 合成(多チャネル対応が要件)。
+4. 各 families を sweep で seed/世代積み各タスクの勝ちを確定。C runtime を median/bilateral/morph/fft へ拡張。
+5. **honest 規律**: 新規 op は必ず (a) halcon 名を実 reference で実在検証(fail-closed)、
+   (b) 機能ゲート通過(例外なく宣言 sort)、(c) shape が HALCON op の記述と materially 同一 —
+   でなければ skip。被覆数は `honest_summary.py` の実測のみを正本とする(推測で語らない)。
 
 ## 自走のしかた(work-graph)
 ```powershell
