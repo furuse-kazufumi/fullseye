@@ -90,6 +90,43 @@ ANALOGS: dict[str, dict[str, str]] = {
 
 LIBS = ("halcon", "opencv", "skimage", "matlab")
 
+# shape (backends_auto vocabulary) -> representative single-call analog per library.
+# Auto ops are genuine backend wrappers; this surfaces the backend they use.
+_SHAPE_ANALOGS: dict[str, dict] = {
+    "pointwise": {"opencv": "pointwise/LUT", "skimage": "-", "matlab": "imadjust"},
+    "lut": {"opencv": "LUT", "skimage": "exposure/util", "matlab": "imadjust"},
+    "linfilter": {"opencv": "GaussianBlur/blur", "skimage": "filters.gaussian", "matlab": "imfilter"},
+    "rank": {"opencv": "medianBlur/erode/dilate", "skimage": "filters.rank", "matlab": "ordfilt2"},
+    "graymorph": {"opencv": "morphologyEx", "skimage": "morphology (gray)", "matlab": "imtophat/imopen"},
+    "edge": {"opencv": "Sobel/Scharr/Laplacian", "skimage": "filters.sobel/prewitt", "matlab": "edge"},
+    "freq": {"opencv": "dft+mask", "skimage": "fft+mask", "matlab": "fft2"},
+    "diffusion": {"opencv": "bilateralFilter/fastNlMeans", "skimage": "restoration", "matlab": "imdiffusefilt"},
+    "texture": {"opencv": "-", "skimage": "filters.rank/feature", "matlab": "stdfilt/entropyfilt"},
+    "geom": {"opencv": "warpAffine/warpPolar", "skimage": "transform", "matlab": "imwarp"},
+    "threshold": {"opencv": "threshold/adaptiveThreshold", "skimage": "filters.threshold_*", "matlab": "imbinarize"},
+    "segment": {"opencv": "Canny/watershed", "skimage": "segmentation", "matlab": "watershed"},
+    "binmorph": {"opencv": "morphologyEx", "skimage": "morphology.binary_*", "matlab": "imopen/imclose"},
+    "region_trans": {"opencv": "distanceTransform/findContours", "skimage": "morphology/segmentation", "matlab": "bwmorph"},
+    "region_feat": {"opencv": "-", "skimage": "measure.regionprops", "matlab": "regionprops"},
+    "img_feat": {"opencv": "minMaxLoc/meanStdDev", "skimage": "measure", "matlab": "-"},
+    "xld": {"opencv": "findContours", "skimage": "measure.find_contours", "matlab": "-"},
+}
+
+
+def _auto_shape_map() -> dict:
+    """halcon-op name -> backends_auto shape (cached), for cross-library analogs."""
+    m = getattr(_auto_shape_map, "_cache", None)
+    if m is None:
+        m = {}
+        try:
+            import backends_auto
+            for s in backends_auto.load_specs():
+                m[s["halcon"]] = s["shape"]
+        except Exception:
+            pass
+        _auto_shape_map._cache = m
+    return m
+
 
 def _analogs(name: str) -> dict:
     """Analogs for an op — explicit map, or derived for wrapped backend ops."""
@@ -103,6 +140,9 @@ def _analogs(name: str) -> dict:
         return {"opencv": "-", "skimage": "-", "matlab": "-"}  # custom torch op
     if name.startswith("vol_"):
         return {"opencv": "-", "skimage": "scipy.ndimage (N-D)", "matlab": "-"}  # 3D volume op
+    shp = _auto_shape_map().get(name) or _auto_shape_map().get(name[2:] if name.startswith("h_") else name)
+    if shp and shp in _SHAPE_ANALOGS:
+        return _SHAPE_ANALOGS[shp]
     return {}
 
 
