@@ -1,0 +1,22 @@
+[
+ {
+  "halcon": "gen_contour_region_xld",
+  "category": "contour",
+  "in_sort": "region",
+  "out_sort": "contour",
+  "shape": "xld",
+  "params": {
+   "kind": "edges_sub_pix"
+  }
+ },
+ {
+  "halcon": "select_shape_xld",
+  "category": "contour",
+  "in_sort": "contour",
+  "out_sort": "contour",
+  "shape": "xld",
+  "params": {
+   "kind": "select_contours"
+  }
+ }
+]

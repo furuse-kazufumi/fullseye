@@ -1,0 +1,113 @@
+[
+ {
+  "halcon": "affine_trans_region",
+  "category": "geometry",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "geom",
+  "params": {
+   "kind": "affine"
+  }
+ },
+ {
+  "halcon": "mirror_region",
+  "category": "geometry",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "geom",
+  "params": {
+   "kind": "mirror"
+  }
+ },
+ {
+  "halcon": "zoom_region",
+  "category": "geometry",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "geom",
+  "params": {
+   "kind": "zoom"
+  }
+ },
+ {
+  "halcon": "fill_up_shape",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "remove_holes"
+  }
+ },
+ {
+  "halcon": "remove_noise_region",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "opening",
+   "shape": "disk"
+  }
+ },
+ {
+  "halcon": "smallest_rectangle1",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "shape_bbox"
+  }
+ },
+ {
+  "halcon": "get_region_contour",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "boundary"
+  }
+ },
+ {
+  "halcon": "get_region_convex",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "convex"
+  }
+ },
+ {
+  "halcon": "gen_region_polygon_xld",
+  "category": "contour",
+  "in_sort": "contour",
+  "out_sort": "region",
+  "shape": "xld",
+  "params": {
+   "kind": "to_region"
+  }
+ },
+ {
+  "halcon": "connect_and_holes",
+  "category": "features",
+  "in_sort": "region",
+  "out_sort": "feature",
+  "shape": "region_feat",
+  "params": {
+   "metric": "count"
+  }
+ },
+ {
+  "halcon": "elliptic_axis",
+  "category": "features",
+  "in_sort": "region",
+  "out_sort": "feature",
+  "shape": "region_feat",
+  "params": {
+   "metric": "anisometry"
+  }
+ }
+]

@@ -3,4 +3,7 @@ __pycache__/
 *.pyc
 # scraped HALCON reference is a local, regenerable cache (MVTec docs/EULA text);
 # regenerate with halcon_scrape.py + halcon_coverage.py, do not vendor.
-data/
+data/*
+# ...but the agent-authored HALCON->shape analog mappings are OUR IP (not MVTec
+# content, not regenerable) — track them so a fresh checkout keeps its coverage.
+!data/auto_specs/

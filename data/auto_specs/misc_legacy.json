@@ -1,0 +1,106 @@
+[
+ {
+  "halcon": "bin_threshold",
+  "category": "segmentation",
+  "in_sort": "image",
+  "out_sort": "region",
+  "shape": "threshold",
+  "params": {
+   "method": "otsu"
+  }
+ },
+ {
+  "halcon": "erosion_golay",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "erosion",
+   "shape": "disk"
+  }
+ },
+ {
+  "halcon": "dilation_golay",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "dilation",
+   "shape": "disk"
+  }
+ },
+ {
+  "halcon": "opening_golay",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "opening",
+   "shape": "disk"
+  }
+ },
+ {
+  "halcon": "closing_golay",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "closing",
+   "shape": "disk"
+  }
+ },
+ {
+  "halcon": "erosion_seq",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "erosion_it"
+  }
+ },
+ {
+  "halcon": "dilation_seq",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "binmorph",
+  "params": {
+   "op": "dilation_it"
+  }
+ },
+ {
+  "halcon": "morph_skeleton",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "skeleton"
+  }
+ },
+ {
+  "halcon": "thinning_golay",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "thin"
+  }
+ },
+ {
+  "halcon": "thinning_seq",
+  "category": "region",
+  "in_sort": "region",
+  "out_sort": "region",
+  "shape": "region_trans",
+  "params": {
+   "kind": "thin"
+  }
+ }
+]

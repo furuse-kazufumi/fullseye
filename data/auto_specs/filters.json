@@ -1,0 +1,182 @@
+[
+ {
+  "halcon": "tan_image",
+  "category": "arithmetic",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "pointwise",
+  "params": {
+   "func": "tan"
+  }
+ },
+ {
+  "halcon": "bit_not",
+  "category": "gray",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "lut",
+  "params": {
+   "kind": "invert"
+  }
+ },
+ {
+  "halcon": "monotony",
+  "category": "gray",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "lut",
+  "params": {
+   "kind": "monotony"
+  }
+ },
+ {
+  "halcon": "eliminate_min_max",
+  "category": "rank",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "rank",
+  "params": {
+   "kind": "median"
+  }
+ },
+ {
+  "halcon": "median_weighted",
+  "category": "rank",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "rank",
+  "params": {
+   "kind": "median"
+  }
+ },
+ {
+  "halcon": "mean_sp",
+  "category": "rank",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "rank",
+  "params": {
+   "kind": "trimmed_mean"
+  }
+ },
+ {
+  "halcon": "eliminate_sp",
+  "category": "rank",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "rank",
+  "params": {
+   "kind": "sigma"
+  }
+ },
+ {
+  "halcon": "simulate_defocus",
+  "category": "smoothing",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "linfilter",
+  "params": {
+   "kind": "mean"
+  }
+ },
+ {
+  "halcon": "dots_image",
+  "category": "edges",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "linfilter",
+  "params": {
+   "kind": "laplace_gauss"
+  }
+ },
+ {
+  "halcon": "frei_dir",
+  "category": "edges",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "edge",
+  "params": {
+   "kind": "frei_dir"
+  }
+ },
+ {
+  "halcon": "robinson_dir",
+  "category": "edges",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "edge",
+  "params": {
+   "kind": "robinson_dir"
+  }
+ },
+ {
+  "halcon": "fft_generic",
+  "category": "frequency",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "freq",
+  "params": {
+   "kind": "fft_power"
+  }
+ },
+ {
+  "halcon": "power_ln",
+  "category": "frequency",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "freq",
+  "params": {
+   "kind": "fft_power"
+  }
+ },
+ {
+  "halcon": "rft_generic",
+  "category": "frequency",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "freq",
+  "params": {
+   "kind": "fft_power_real"
+  }
+ },
+ {
+  "halcon": "phase_deg",
+  "category": "frequency",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "freq",
+  "params": {
+   "kind": "fft_phase"
+  }
+ },
+ {
+  "halcon": "affine_trans_image_size",
+  "category": "geometry",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "geom",
+  "params": {
+   "kind": "affine"
+  }
+ },
+ {
+  "halcon": "polar_trans_image_ext",
+  "category": "geometry",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "geom",
+  "params": {
+   "kind": "polar"
+  }
+ },
+ {
+  "halcon": "lines_facet",
+  "category": "contour",
+  "in_sort": "image",
+  "out_sort": "contour",
+  "shape": "xld",
+  "params": {
+   "kind": "lines_gauss"
+  }
+ }
+]

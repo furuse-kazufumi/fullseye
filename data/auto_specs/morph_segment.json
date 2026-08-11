@@ -1,0 +1,10 @@
+[
+  {"halcon": "gray_erosion_shape", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "erosion", "shape": "disk"}},
+  {"halcon": "gray_dilation_shape", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "dilation", "shape": "disk"}},
+  {"halcon": "gray_opening_rect", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "opening", "shape": "rect"}},
+  {"halcon": "gray_closing_rect", "category": "morphology", "in_sort": "image", "out_sort": "image", "shape": "graymorph", "params": {"op": "closing", "shape": "rect"}},
+  {"halcon": "dual_rank", "category": "rank", "in_sort": "image", "out_sort": "image", "shape": "rank", "params": {"kind": "rank"}},
+  {"halcon": "fast_threshold", "category": "segmentation", "in_sort": "image", "out_sort": "region", "shape": "threshold", "params": {"method": "fixed"}},
+  {"halcon": "nonmax_suppression_amp", "category": "segmentation", "in_sort": "image", "out_sort": "region", "shape": "segment", "params": {"kind": "local_max"}},
+  {"halcon": "pouring", "category": "segmentation", "in_sort": "image", "out_sort": "region", "shape": "segment", "params": {"kind": "watershed"}}
+]
