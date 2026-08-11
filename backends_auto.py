@@ -767,6 +767,44 @@ def _sh_xld(p):
     return fn
 
 
+# ---- image -> feature : Haralick / co-occurrence texture -------------------- #
+def _sh_cooc(p):
+    prop = p["prop"]
+
+    def fn(v, a, b):
+        lv = 16
+        xq = (np.clip(np.asarray(v, np.float64), 0, 1) * (lv - 1)).astype(np.uint8)
+        glcm = skfeat.graycomatrix(xq, distances=[1 + int(a * 3)], angles=[0.0],
+                                   levels=lv, symmetric=True, normed=True)
+        val = float(skfeat.graycoprops(glcm, prop)[0, 0])
+        if prop in ("contrast", "dissimilarity"):
+            val = val / (lv * lv)
+        elif prop == "correlation":
+            val = (val + 1) / 2
+        return np.float64(min(1.0, max(0.0, val)))
+    return fn
+
+
+# ---- image -> image : deterministic noise (add_noise_*) --------------------- #
+def _sh_noise(p):
+    kind = p["kind"]
+
+    def fn(v, a, b):
+        x = np.clip(np.asarray(v, np.float64), 0, 1)
+        rng = np.random.default_rng(int(a * 997) + 7)
+        if kind == "gaussian":
+            return np.clip(x + (0.02 + 0.2 * b) * rng.standard_normal(x.shape), 0, 1)
+        if kind == "sp":
+            m = rng.random(x.shape)
+            p_ = 0.02 + 0.1 * b
+            y = x.copy()
+            y[m < p_] = 0.0
+            y[m > 1 - p_] = 1.0
+            return y
+        raise ValueError(kind)
+    return fn
+
+
 SHAPES = {
     "pointwise": _sh_pointwise, "lut": _sh_lut, "linfilter": _sh_linfilter,
     "rank": _sh_rank, "graymorph": _sh_graymorph, "edge": _sh_edge,
@@ -774,6 +812,7 @@ SHAPES = {
     "geom": _sh_geom, "threshold": _sh_threshold, "segment": _sh_segment,
     "binmorph": _sh_binmorph, "region_trans": _sh_region_trans,
     "region_feat": _sh_region_feat, "img_feat": _sh_img_feat, "xld": _sh_xld,
+    "cooc": _sh_cooc, "noise": _sh_noise,
 }
 
 
