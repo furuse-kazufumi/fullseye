@@ -601,7 +601,7 @@ def _sh_region_feat(p):
         if metric == "compactness":
             return np.float64(min(1.0, (per * per) / (4 * np.pi * max(pr.area, 1)) / 10))
         if metric == "convexity":
-            return np.float64(pr.area / max(pr.convex_area, 1))
+            return np.float64(pr.area / max(pr.area_convex, 1))
         if metric == "solidity":
             return np.float64(pr.solidity)
         if metric == "rectangularity":
