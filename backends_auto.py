@@ -363,6 +363,8 @@ def _sh_freq(p):
             return _norm(np.abs(np.real(F)))
         if kind == "fft_phase":
             return (np.angle(F) + np.pi) / (2 * np.pi)
+        if kind == "ifft":                           # inverse Fourier transform (fft_image_inv)
+            return _norm(np.real(np.fft.ifft2(x)))
         H, W = x.shape
         rad = np.sqrt(np.fft.fftfreq(H)[:, None] ** 2 + np.fft.fftfreq(W)[None, :] ** 2)
         if kind == "lowpass":
