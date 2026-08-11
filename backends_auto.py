@@ -211,6 +211,16 @@ def _sh_linfilter(p):
             for _ in range(1 + int(a * 6)):
                 y = ndimage.gaussian_filter(y, 0.6)
             return y
+        if kind == "motion":                         # directional (linear) motion blur
+            ang, L = np.pi * a, 5 + int(b * 10)
+            ker = np.zeros((L, L))
+            c = (L - 1) / 2
+            for t in np.linspace(-c, c, L * 2):
+                yy, xx = int(round(c + t * np.sin(ang))), int(round(c + t * np.cos(ang)))
+                if 0 <= yy < L and 0 <= xx < L:
+                    ker[yy, xx] = 1.0
+            ker = ker / ker.sum() if ker.sum() > 0 else ker
+            return ndimage.convolve(x, ker, mode="reflect")
         raise ValueError(kind)
     return fn
 
