@@ -797,7 +797,7 @@ SEED: list[tuple] = [
     ("gen_gabor", "texture", IMG, IMG, "texture", {"kind": "gabor"}),
     # ---- Transformations: geometric --------------------------------------
     ("mirror_image", "geometry", IMG, IMG, "geom", {"kind": "mirror"}),
-    ("transpose_image", "geometry", IMG, IMG, "geom", {"kind": "transpose"}),
+    ("transpose_region", "geometry", REG, REG, "geom", {"kind": "transpose"}),
     ("rotate_image", "geometry", IMG, IMG, "geom", {"kind": "rotate"}),
     ("zoom_image_factor", "geometry", IMG, IMG, "geom", {"kind": "zoom"}),
     ("zoom_image_size", "geometry", IMG, IMG, "geom", {"kind": "zoom"}),
