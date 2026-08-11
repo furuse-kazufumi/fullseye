@@ -467,6 +467,18 @@ def _sh_geom(p):
             h, w = x.shape
             return cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
                                  min(h, w) / 2, cv2.WARP_POLAR_LINEAR).astype(np.float64)
+        if kind == "polar_inv" and _HAS_CV:          # inverse polar->Cartesian (polar_trans_image_inv)
+            h, w = x.shape
+            return np.clip(cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), min(h, w) / 2,
+                                         cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP).astype(np.float64), 0, 1)
+        if kind == "projective" and _HAS_CV:         # perspective warp (projective_trans_image)
+            h, w = x.shape
+            d = 0.06 + 0.12 * a
+            src = np.float32([[0, 0], [w, 0], [w, h], [0, h]])
+            dst = np.float32([[w * d * b, h * d], [w * (1 - d * b), 0], [w, h], [0, h * (1 - d)]])
+            M = cv2.getPerspectiveTransform(src, dst)
+            out = cv2.warpPerspective(x.astype(np.float32), M, (w, h), borderMode=cv2.BORDER_REFLECT)
+            return np.clip(out.astype(np.float64), 0, 1)
         if kind == "swirl" and _HAS_SK:
             return np.clip(sktrans.swirl(x, strength=1 + 4 * a, radius=30), 0, 1)
         raise ValueError(kind)
