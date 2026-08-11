@@ -629,6 +629,18 @@ def _sh_region_feat(p):
             return np.float64(skmeasure.euler_number(m))
         if metric == "anisometry":
             return np.float64(pr.axis_major_length / max(pr.axis_minor_length, 1e-6) / 10)
+        if metric == "perimeter":
+            return np.float64(min(1.0, per / (2.0 * (m.shape[0] + m.shape[1]))))
+        if metric == "area_holes":
+            return np.float64((pr.area_filled - pr.area) / max(pr.area_filled, 1))
+        if metric == "aspect":
+            minr, minc, maxr, maxc = pr.bbox
+            return np.float64(min(1.0, (maxr - minr) / max(maxc - minc, 1)))
+        if metric in ("moment2", "hu1"):
+            nu = skmeasure.moments_normalized(skmeasure.moments_central(big.astype(float)))
+            if metric == "moment2":
+                return np.float64(min(1.0, abs(nu[2, 0] + nu[0, 2])))
+            return np.float64(min(1.0, abs(skmeasure.moments_hu(nu)[0])))
         raise ValueError(metric)
     return fn
 
