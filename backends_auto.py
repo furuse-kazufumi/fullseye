@@ -737,7 +737,6 @@ SEED: list[tuple] = [
     ("equ_histo_image", "gray", IMG, IMG, "lut", {"kind": "equalize"}),
     ("illuminate", "gray", IMG, IMG, "lut", {"kind": "illuminate"}),
     ("scale_image_max", "gray", IMG, IMG, "lut", {"kind": "rescale"}),
-    ("log_image_class", "gray", IMG, IMG, "lut", {"kind": "log_gain"}),
     # ---- Filters: linear / smoothing -------------------------------------
     ("gauss_filter", "smoothing", IMG, IMG, "linfilter", {"kind": "gauss"}),
     ("gauss_image", "smoothing", IMG, IMG, "linfilter", {"kind": "gauss"}),
