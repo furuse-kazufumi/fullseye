@@ -129,7 +129,7 @@ RECIPES = {
  "xwt_firm_denoise": {
   "in": "image",
   "out": "image",
-  "recipe": "(lambda c: np.clip(pywt.waverec2([c[0]]+[tuple(pywt.threshold_firm(d,0.03+0.2*a,0.15+0.4*b) for d in lvl) for lvl in c[1:]],'sym4')[:v.shape[0],:v.shape[1]],0,1))(pywt.wavedec2(np.clip(v,0,1),'sym4',level=2))",
+  "recipe": "(lambda c: np.clip(pywt.waverec2([c[0]]+[tuple(pywt.threshold_firm(d,0.03+0.2*a,max(0.03+0.2*a+1e-6,0.15+0.4*b)) for d in lvl) for lvl in c[1:]],'sym4')[:v.shape[0],:v.shape[1]],0,1))(pywt.wavedec2(np.clip(v,0,1),'sym4',level=2))",
   "cat": "smoothing"
  },
  "xwt_detail_energy": {
