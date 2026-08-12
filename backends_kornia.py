@@ -27,12 +27,15 @@ except Exception:  # pragma: no cover
     _HAS = False
 
 
-def _safe(fn):
+def _safe(fn, out_sort=None):
+    from backend_safe import sanitize
+
     def w(v, a, b):
         try:
-            return fn(v, a, b)
+            out = fn(v, a, b)
         except Exception:
-            return v
+            out = None
+        return sanitize(out, v, out_sort)
     return w
 
 
