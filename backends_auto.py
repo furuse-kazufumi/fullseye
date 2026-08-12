@@ -518,6 +518,8 @@ def _sh_threshold(p):
             return (x > ndimage.gaussian_filter(x, 1 + 3 * a) + (b - 0.5) * 0.3).astype(np.float64)
         if method == "hysteresis" and _HAS_SK:
             return skfilters.apply_hysteresis_threshold(x, 0.2 + 0.3 * a, 0.5 + 0.3 * b).astype(np.float64)
+        if method == "dual":                         # signed threshold: |x-0.5| > t (dual_threshold)
+            return (np.abs(x - 0.5) > (0.1 + 0.35 * a)).astype(np.float64)
         raise ValueError(method)
     return fn
 
