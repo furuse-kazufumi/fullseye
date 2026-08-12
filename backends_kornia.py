@@ -111,4 +111,4 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         fn = getattr(KFEAT, attr, None)
         if fn is not None and name not in {d[0] for d in defs}:
             defs.append((name, "edges", IMAGE, IMAGE, _resp(fn)))
-    return [Op(n, c, "", i, o, _safe(f)) for (n, c, i, o, f) in defs]
+    return [Op(n, c, "", i, o, _safe(f, o)) for (n, c, i, o, f) in defs]
