@@ -94,13 +94,27 @@ def cmd_ops(a):
     return 0
 
 
+def _disposition(op):
+    p = os.path.join(HERE, "docs", "OP_DISPOSITION.json")
+    if not os.path.exists(p):
+        return None
+    return json.load(open(p, encoding="utf-8"))["dispositions"].get(op)
+
+
 def cmd_has(a):
     rows = _all_ops()
     q = a.op.lower()
     hits = [r for r in rows if q in (r["name"].lower(), (r["halcon"] or "").lower())]
     if not hits:
+        # Every one of the 2313 real ops still gets a truthful response.
+        d = _disposition(a.op)
+        if d:
+            print("NOT genuinely implemented: %s" % a.op)
+            print("  disposition: %s" % d["status"])
+            print("  reason: %s  [chapter=%s, arity=%d]" % (d["reason"], d["chapter"], d["arity"]))
+            return 0
         near = [r for r in rows if q in r["name"].lower() or q in (r["halcon"] or "").lower()]
-        print("NOT implemented: %s" % a.op)
+        print("unknown op: %s (not in the HALCON reference)" % a.op)
         if near:
             print("  near:", ", ".join(sorted({r["halcon"] or r["name"] for r in near}))[:400])
         return 1
