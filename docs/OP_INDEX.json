@@ -1,9 +1,9 @@
 {
- "n_ops": 470,
+ "n_ops": 526,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 441
+  "registry": 497
  },
  "sorts": [
   "any",
@@ -3374,6 +3374,70 @@
    "tier": "registry"
   },
   {
+   "name": "xcv3_agast_count",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_brisk_count",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_denoise_tvl1",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_gray_hu1",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_inpaint_ns",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "restoration",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_lsd_count",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_pyr_laplacian",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv3_sift_count",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "xcv_detail_enhance",
    "halcon": "",
    "in_sort": "image",
@@ -3435,6 +3499,86 @@
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_bernsen",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_bwperim",
+   "halcon": "",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region-transform",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_daubechies",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "transform",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_haar",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "transform",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_majority",
+   "halcon": "",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region-morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_pftas",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "texture-feature",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_regmin",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "morphology/markers",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_selfmatch",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "self-similarity",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_soft",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "intensity-transform",
+   "tier": "registry"
+  },
+  {
+   "name": "xmh_zernike",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "texture/shape-feature",
    "tier": "registry"
   },
   {
@@ -3542,6 +3686,118 @@
    "tier": "registry"
   },
   {
+   "name": "xsitk_closing_by_recon",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_confidence_connected",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_connected_threshold",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_curv_aniso_diff",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_curvature_flow",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_grayscale_fillhole",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_grayscale_grindpeak",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_huang_thresh",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_laplacian_sharpen",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_maxentropy_thresh",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_minmax_curv_flow",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_moments_thresh",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_opening_by_recon",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
+   "name": "xsitk_signed_maurer_dist",
+   "halcon": "",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "extra",
+   "tier": "registry"
+  },
+  {
    "name": "xsk2_corner_kr",
    "halcon": "",
    "in_sort": "image",
@@ -3627,6 +3883,126 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "restoration",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_area_closing",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_corner_fast",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_corner_moravec",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_diameter_closing",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_estimate_sigma",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_h_minima",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_integral_image",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_is_low_contrast",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_peak_local_max",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_rank_equalize",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_rank_majority",
+   "halcon": "",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_rank_mean_bilateral",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_rank_otsu",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_rank_subtract_mean",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk3_threshold_local_median",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
    "tier": "registry"
   },
   {
@@ -3815,6 +4191,78 @@
   },
   {
    "name": "xsp_wiener",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_detail_energy",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_directional_detail",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_firm_denoise",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_hf_reconstruct",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_lf_reconstruct",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_mra_component",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_packet_entropy",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_subband_tile",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "xwt_visushrink",
    "halcon": "",
    "in_sort": "image",
    "out_sort": "image",

@@ -76,8 +76,16 @@ imgevolve は HALCON 中心だが、**PIL/Pillow・scipy.signal/fft・cv2(484)�
 `xsp_`/`xsk2_`/`xcv2_`):
 - **1st batch(21)**: inpaint・blob(LoG/DoG/DoH)・ORB・random_walker/flood/grabCut/marker-watershed・structure/Hessian tensor・NPR(stylization/pencil/edge_preserving/detail)・meijering/sato。
 - **2nd batch(per-library fan-out 4-agent workflow で発掘→私が correctness 担保して実装, 40)**: PIL(emboss/contour/mode/posterize/solarize/autocontrast/offset[トロイダル]/contrast[平均中心])・scipy(wiener/savgol/hilbert/DCT spectrum/lowpass/denoise/cspline/detrend/morph_laplace/chamfer/gauss_grad_mag)・skimage(multiotsu/geomean-rank/reconstruction/h_maxima/diameter_opening/isotropic_close/HOG/Kitchen-Rosenfeld corner/Radon/inverse_gaussian_gradient/Wiener-deconv)・cv2(log-polar/mean-shift/hit-or-miss/Laplacian-variance焦点測度/FAST count)。
-全 exception-safe・回帰 800/800。**多ライブラリ被覆**(`docs/LIB_COVERAGE.md`): registry が OpenCV 90 / skimage 118
-関数を参照。これらは `.halcon=""`(HALCON 軸不変=269)で **他ライブラリ軸を拡張**。**registry 425 / 総 op 453**。
+- **3rd batch(per-library fan-out で mahotas/PyWavelets/SimpleITK を新規 pip 導入 + 発掘, 56)**: `backends_r3.py`
+  = agent が実走検証した one-line recipe を埋め込み、名前空間(np+各lib)で compile・exception-safe・**build 時に機能ゲートで
+  再検証(fail-closed)**。mahotas(Zernike/pftas/bernsen/majority/Haar/Daubechies/soft-threshold/bwperim/regmin/self-match)・
+  pywt(subband-tile/VisuShrink/firm-denoise/detail-energy/HF・LF-reconstruct/directional-detail/packet-entropy/MRA)・
+  SimpleITK(curvature-flow/minmax-curv/curv-aniso-diff/laplacian-sharpen/grayscale-fillhole・grindpeak/opening・closing-by-recon/
+  signed-Maurer-dist/connected・confidence-threshold/maxentropy・moments・huang-threshold)・skimage r3(rank otsu/majority/
+  subtract-mean/equalize/mean-bilateral・h-minima・area・diameter-closing・Moravec・FAST corner・integral・local-median-threshold・
+  is-low-contrast・estimate-sigma・peak-local-max)・cv2 r3(TVL1-denoise/NS-inpaint/pyr-laplacian/Hu/SIFT・BRISK・AGAST・LSD count)。
+全 exception-safe・回帰 800/800・56/56 機能ゲート通過。**多ライブラリ**(`docs/LIB_COVERAGE.md`): HALCON+OpenCV+scikit-image+
+PIL+scipy+mahotas+PyWavelets+SimpleITK+torch(GPU)= **9 ライブラリ横断**。全 `.halcon=""`(HALCON 軸不変=269)。**registry 481 / 総 op 509**。
 
 **★処理効率 = GPU-ready バッチバックエンド(`accel.py`/`bench.py`, ユーザー指摘「GPUで効率化も重要」)**:
 計算重い vectorizable op(gauss/mean/sobel/laplace/gamma/scale/invert/threshold/erosion/dilation/range_rect)を

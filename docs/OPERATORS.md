@@ -490,33 +490,33 @@
 | `xsitk_maxentropy_thresh` | image->region | extra |  | - | - | - |
 | `xsitk_moments_thresh` | image->region | extra |  | - | - | - |
 | `xsitk_huang_thresh` | image->region | extra |  | - | - | - |
-| `xsk3_rank_otsu` | image->region | segmentation |  | - | - | - |
-| `xsk3_rank_majority` | region | region |  | - | - | - |
-| `xsk3_rank_subtract_mean` | image | gray |  | - | - | - |
-| `xsk3_rank_equalize` | image | gray |  | - | - | - |
-| `xsk3_rank_mean_bilateral` | image | smoothing |  | - | - | - |
-| `xsk3_h_minima` | image->region | segmentation |  | - | - | - |
-| `xsk3_area_closing` | image | morphology |  | - | - | - |
-| `xsk3_diameter_closing` | image | morphology |  | - | - | - |
-| `xsk3_corner_moravec` | image | edges |  | - | - | - |
-| `xsk3_corner_fast` | image | edges |  | - | - | - |
-| `xsk3_integral_image` | image | gray |  | - | - | - |
-| `xsk3_threshold_local_median` | image->region | segmentation |  | - | - | - |
-| `xsk3_is_low_contrast` | image->feature | features |  | - | - | - |
-| `xsk3_estimate_sigma` | image->feature | features |  | - | - | - |
-| `xsk3_peak_local_max` | image->region | segmentation |  | - | - | - |
-| `xcv3_denoise_tvl1` | image | smoothing |  | - | - | - |
-| `xcv3_inpaint_ns` | image | restoration |  | - | - | - |
-| `xcv3_pyr_laplacian` | image | smoothing |  | - | - | - |
-| `xcv3_gray_hu1` | image->feature | features |  | - | - | - |
-| `xcv3_sift_count` | image->feature | features |  | - | - | - |
-| `xcv3_brisk_count` | image->feature | features |  | - | - | - |
-| `xcv3_agast_count` | image->feature | features |  | - | - | - |
-| `xcv3_lsd_count` | image->feature | features |  | - | - | - |
+| `xsk3_rank_otsu` | image->region | segmentation |  | - | skimage.rank_otsu | - |
+| `xsk3_rank_majority` | region | region |  | - | skimage.rank_majority | - |
+| `xsk3_rank_subtract_mean` | image | gray |  | - | skimage.rank_subtract_mean | - |
+| `xsk3_rank_equalize` | image | gray |  | - | skimage.rank_equalize | - |
+| `xsk3_rank_mean_bilateral` | image | smoothing |  | - | skimage.rank_mean_bilateral | - |
+| `xsk3_h_minima` | image->region | segmentation |  | - | skimage.h_minima | - |
+| `xsk3_area_closing` | image | morphology |  | - | skimage.area_closing | - |
+| `xsk3_diameter_closing` | image | morphology |  | - | skimage.diameter_closing | - |
+| `xsk3_corner_moravec` | image | edges |  | - | skimage.corner_moravec | - |
+| `xsk3_corner_fast` | image | edges |  | - | skimage.corner_fast | - |
+| `xsk3_integral_image` | image | gray |  | - | skimage.integral_image | - |
+| `xsk3_threshold_local_median` | image->region | segmentation |  | - | skimage.threshold_local_median | - |
+| `xsk3_is_low_contrast` | image->feature | features |  | - | skimage.is_low_contrast | - |
+| `xsk3_estimate_sigma` | image->feature | features |  | - | skimage.estimate_sigma | - |
+| `xsk3_peak_local_max` | image->region | segmentation |  | - | skimage.peak_local_max | - |
+| `xcv3_denoise_tvl1` | image | smoothing |  | cv2.denoise_tvl1 | - | - |
+| `xcv3_inpaint_ns` | image | restoration |  | cv2.inpaint_ns | - | - |
+| `xcv3_pyr_laplacian` | image | smoothing |  | cv2.pyr_laplacian | - | - |
+| `xcv3_gray_hu1` | image->feature | features |  | cv2.gray_hu1 | - | - |
+| `xcv3_sift_count` | image->feature | features |  | cv2.sift_count | - | - |
+| `xcv3_brisk_count` | image->feature | features |  | cv2.brisk_count | - | - |
+| `xcv3_agast_count` | image->feature | features |  | cv2.agast_count | - | - |
+| `xcv3_lsd_count` | image->feature | features |  | cv2.lsd_count | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 304/509
-- skimage: 367/509
+- opencv: 312/509
+- skimage: 382/509
 - matlab: 262/509
 
 ## Roadmap toward full coverage
