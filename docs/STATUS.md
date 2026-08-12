@@ -70,6 +70,14 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   mosaic・union contours・compose)(c) 座標/tuple plumbing(getter/test/query)(d) ごく特殊な shape 要 =
   **新 capability か本質的 scope 外**。更なる breadth より **codegen/difftest による parity 実証(depth)** が本筋。
 
+**★codegen/difftest parity 実証(`parity.py` → `docs/PARITY_CROSSBACKEND.md`, ユーザー選択 depth)**:
+HALCON/コンパイラ非依存で今実証できる parity = **クロスバックエンド一致**。独立実装(scipy/cv2/skimage)を
+≥2 持つ 65 op を holdout 照合: **agree 27**(独立/冗長実装が 0.02 以内一致 = 強い parity 証拠。うち
+scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen 忠実性)/ close 5 / **differ 33**
+(共有 HALCON 名の裏でアルゴリズム実差 = Otsu≠Li≠Yen、scipy≠cv2 構造要素、Canny 実装差 等を**隠さず開示**、
+`feedback_benchmark_honest_disclosure`)。C 経路(imgops.c 独立実装との言語横断 parity)は gcc 不在で本環境 skip
+(toolchain 到着で自動充足)。CLI = `imgevolve.py parity`。
+
 **★全 op 対応 = disposition map(`dispositions.py` → `docs/OP_DISPOSITION.json`)**: 偽実装で数を埋めず
 (feedback_no_false_reporting)、**全 2313 op に truthful な disposition を付与(100% 対応、捏造 0)**。
 `imgevolve.py has <任意の op>` が全 op に定義済み応答を返す(implemented=呼び方 / 未実装=status+理由)。内訳:
