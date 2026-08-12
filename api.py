@@ -41,7 +41,9 @@ import stereo  # noqa: E402  (numpy+scipy depth building blocks)
 import terrain  # noqa: E402  (elevation map / traversability)
 import imgio  # noqa: E402  (coercion / colormap visualisation / export)
 import detect  # noqa: E402  (object segmentation / description / identification)
+import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 from stereo import disparity_map, depth_from_disparity, reproject_to_points  # noqa: E402,F401
+from registration import kabsch, icp, apply_transform  # noqa: E402,F401
 from terrain import elevation_map, traversability, foothold_score, fill_gaps  # noqa: E402,F401
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
