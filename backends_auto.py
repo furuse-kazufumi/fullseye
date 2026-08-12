@@ -763,6 +763,53 @@ def _sh_xld(p):
                 if len(c) >= 2:
                     tot += float(np.sum(np.hypot(np.diff(c[:, 0]), np.diff(c[:, 1]))))
             return np.float64(tot)
+        # ---- contour -> feature (XLD shape measures on the largest contour) ----
+        if kind in ("area", "circularity", "compactness", "convexity", "num_points"):
+            cs = [c for c in cv["cs"] if len(c) >= 3]
+            if not cs:
+                return np.float64(0.0)
+            c = max(cs, key=len)
+            y, x = c[:, 0], c[:, 1]
+            area = 0.5 * abs(float(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1))))
+            per = float(np.sum(np.hypot(np.diff(y), np.diff(x)))) + 1e-8
+            if kind == "num_points":
+                return np.float64(min(1.0, len(c) / 500.0))
+            if kind == "area":
+                return np.float64(min(1.0, area / (cv["shape"][0] * cv["shape"][1])))
+            if kind == "circularity":
+                return np.float64(min(1.0, 4 * np.pi * area / (per * per)))
+            if kind == "compactness":
+                return np.float64(min(1.0, (per * per) / (4 * np.pi * max(area, 1)) / 10))
+            if kind == "convexity":
+                if _HAS_CV:
+                    hull = cv2.convexHull(np.stack([x, y], 1).astype(np.float32))
+                    ha = float(cv2.contourArea(hull))
+                    return np.float64(min(1.0, area / max(ha, 1e-6)))
+                return np.float64(1.0)
+        # ---- contour -> contour (transforms / closing) ----
+        if kind in ("close", "affine", "projective", "polar"):
+            out = []
+            H, W = cv["shape"]
+            for c in cv["cs"]:
+                if kind == "close" and len(c) >= 2:
+                    out.append(np.vstack([c, c[:1]]))
+                    continue
+                pts = c.astype(np.float64)
+                yc, xc = H / 2, W / 2
+                if kind == "affine":
+                    ang = np.deg2rad(-20 + 40 * a)
+                    R = np.array([[np.cos(ang), -np.sin(ang)], [np.sin(ang), np.cos(ang)]])
+                    q = (pts - [yc, xc]) @ R.T + [yc, xc]
+                elif kind == "projective":
+                    q = pts.copy()
+                    d = 1.0 + 0.3 * a * (pts[:, 1:2] - xc) / max(W, 1)
+                    q = (pts - [yc, xc]) / d + [yc, xc]
+                else:  # polar
+                    rr = np.hypot(pts[:, 0] - yc, pts[:, 1] - xc)
+                    th = np.arctan2(pts[:, 0] - yc, pts[:, 1] - xc)
+                    q = np.stack([rr / max(H, W) * H, (th + np.pi) / (2 * np.pi) * W], 1)
+                out.append(q)
+            return {"shape": cv["shape"], "cs": out}
         raise ValueError(kind)
     return fn
 
