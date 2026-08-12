@@ -86,7 +86,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
          lambda v, a, b: morphology.isotropic_closing(binm(v), 1 + a * 4).astype(np.float64)),
         ("xsk2_hog", "texture", IMAGE, IMAGE, _hog),
         ("xsk2_corner_kr", "edges", IMAGE, IMAGE,
-         lambda v, a, b: _norm(np.nan_to_num(feature.corner_kitchen_rosenfeld(np.clip(v, 0, 1))))),
+         lambda v, a, b: signed01(np.nan_to_num(feature.corner_kitchen_rosenfeld(np.clip(v, 0, 1))))),
         ("xsk2_radon", "frequency", IMAGE, IMAGE, _radon),
         ("xsk2_inv_gauss_grad", "edges", IMAGE, IMAGE,
          lambda v, a, b: segmentation.inverse_gaussian_gradient(np.clip(v, 0, 1), alpha=50 + 150 * a)),
