@@ -101,7 +101,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         pass
     out += [
         Op("xsp_morph_laplace", "edges", "", IMAGE, IMAGE, _safe(
-            lambda v, a, b: _norm(ndimage.morphological_laplace(
+            lambda v, a, b: signed01(ndimage.morphological_laplace(
                 np.clip(v, 0, 1), size=3 + 2 * int(a * 3))))),
         Op("xsp_chamfer_dist", "region", "", "region", IMAGE, _safe(
             lambda v, a, b: _norm(ndimage.distance_transform_cdt(np.asarray(v) > 0.5).astype(np.float64)))),
