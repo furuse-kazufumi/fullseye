@@ -1201,6 +1201,14 @@ SEED: list[tuple] = [
     ("zero_crossing", "segmentation", IMG, REG, "segment", {"kind": "zero_crossing"}),
     ("local_min", "segmentation", IMG, REG, "segment", {"kind": "local_min"}),
     ("pruning", "region", REG, REG, "region_trans", {"kind": "pruning"}),
+    # ---- v11f increment: Hough, subpixel crossings, skeleton/EDT region ops ----
+    ("hough_line_trans", "features", IMG, IMG, "hough", {"kind": "line"}),
+    ("hough_circle_trans", "features", IMG, IMG, "hough", {"kind": "circle"}),
+    ("threshold_sub_pix", "contour", IMG, CON, "xld", {"kind": "threshold_sub_pix"}),
+    ("zero_crossing_sub_pix", "contour", IMG, CON, "xld", {"kind": "zero_crossing_sub_pix"}),
+    ("closest_point_transform", "region", REG, IMG, "region_trans", {"kind": "closest_point_transform"}),
+    ("junctions_skeleton", "region", REG, REG, "region_trans", {"kind": "junctions_skeleton"}),
+    ("get_region_thickness", "features", REG, FEA, "region_feat", {"metric": "thickness"}),
 ]
 
 

@@ -1,9 +1,9 @@
 {
- "n_ops": 402,
+ "n_ops": 409,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 373
+  "registry": 380
  },
  "sorts": [
   "any",
@@ -611,6 +611,14 @@
    "in_sort": "contour",
    "out_sort": "contour",
    "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "closest_point_transform",
+   "halcon": "closest_point_transform",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "region",
    "tier": "registry"
   },
   {
@@ -1518,6 +1526,14 @@
    "tier": "registry"
   },
   {
+   "name": "get_region_thickness",
+   "halcon": "get_region_thickness",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "gopen",
    "halcon": "gray_opening",
    "in_sort": "image",
@@ -1702,6 +1718,22 @@
    "tier": "registry"
   },
   {
+   "name": "hough_circle_trans",
+   "halcon": "hough_circle_trans",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "hough_line_trans",
+   "halcon": "hough_line_trans",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "hysteresis_threshold",
    "halcon": "hysteresis_threshold",
    "in_sort": "image",
@@ -1763,6 +1795,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "junctions_skeleton",
+   "halcon": "junctions_skeleton",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
    "tier": "registry"
   },
   {
@@ -3158,6 +3198,14 @@
    "tier": "registry"
   },
   {
+   "name": "threshold_sub_pix",
+   "halcon": "threshold_sub_pix",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
    "name": "tophat",
    "halcon": "gray_tophat",
    "in_sort": "image",
@@ -3291,6 +3339,14 @@
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "zero_crossing_sub_pix",
+   "halcon": "zero_crossing_sub_pix",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
    "tier": "registry"
   },
   {

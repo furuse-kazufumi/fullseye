@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-385 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+392 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -324,6 +324,13 @@
 | `zero_crossing` | image->region | segmentation | zero_crossing | Canny/watershed | segmentation | watershed |
 | `local_min` | image->region | segmentation | local_min | Canny/watershed | segmentation | watershed |
 | `pruning` | region | region | pruning | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `hough_line_trans` | image | features | hough_line_trans | - | - | - |
+| `hough_circle_trans` | image | features | hough_circle_trans | - | - | - |
+| `threshold_sub_pix` | image->contour | contour | threshold_sub_pix | findContours | measure.find_contours | - |
+| `zero_crossing_sub_pix` | image->contour | contour | zero_crossing_sub_pix | findContours | measure.find_contours | - |
+| `closest_point_transform` | region->image | region | closest_point_transform | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `junctions_skeleton` | region | region | junctions_skeleton | distanceTransform/findContours | morphology/segmentation | bwmorph |
+| `get_region_thickness` | region->feature | features | get_region_thickness | - | measure.regionprops | regionprops |
 | `tan_image` | image | arithmetic | tan_image | pointwise/LUT | - | imadjust |
 | `bit_not` | image | gray | bit_not | LUT | exposure/util | imadjust |
 | `monotony` | image | gray | monotony | LUT | exposure/util | imadjust |
@@ -391,9 +398,9 @@
 | `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
 
 ## Coverage (ops with a direct analog)
-- opencv: 285/385
-- skimage: 336/385
-- matlab: 257/385
+- opencv: 289/392
+- skimage: 341/392
+- matlab: 260/392
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
