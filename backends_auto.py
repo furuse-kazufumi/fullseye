@@ -360,7 +360,7 @@ def _sh_corner(p):
         x = np.asarray(v, np.float64)
         s = 0.5 + 2.0 * a
         if kind == "harris" and _HAS_SK:
-            return _norm(skfeat.corner_harris(x, sigma=s))
+            return signed01(skfeat.corner_harris(x, sigma=s))
         if kind == "harris_binomial":                # Harris on a binomially pre-smoothed image
             xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
             if _HAS_SK:
