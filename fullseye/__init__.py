@@ -28,9 +28,11 @@ with warnings.catch_warnings():
     from api import (  # noqa: E402,F401
         apply, run_pipeline, find_op, list_ops, op_names, categories,
         read_image, write_image, RT, REGISTRY, __version__, version,
+        stereo, disparity_map, depth_from_disparity, reproject_to_points,
     )
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
     "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
+    "stereo", "disparity_map", "depth_from_disparity", "reproject_to_points",
 ]
