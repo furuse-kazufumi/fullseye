@@ -29,10 +29,12 @@ with warnings.catch_warnings():
         apply, run_pipeline, find_op, list_ops, op_names, categories,
         read_image, write_image, RT, REGISTRY, __version__, version,
         stereo, disparity_map, depth_from_disparity, reproject_to_points,
+        terrain, elevation_map, traversability, foothold_score, fill_gaps,
     )
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
     "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
     "stereo", "disparity_map", "depth_from_disparity", "reproject_to_points",
+    "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
 ]
