@@ -3,9 +3,9 @@
 Kornia runs on torch tensors, so these operators execute on the GPU when a CUDA
 device is available (set IMGEVOLVE_KORNIA_DEVICE=cuda on the RTX 5090). They add
 distinctive detectors/filters (Harris/GFTT/Hessian/DoG responses, motion &
-bilateral blur, guided blur, CLAHE) and are the torch-native path for those ops.
-Registry use is per-image; honest note: on CPU this is not faster than scipy —
-the speed is on GPU / in batch. Exception-safe; `xkor_` prefix; halcon="".
+bilateral blur, CLAHE) and are the torch-native path for those ops. Registry use
+is per-image; honest note: on CPU this is not faster than scipy — the speed is on
+GPU / in batch. Exception-safe; `xkor_` prefix; halcon="".
 """
 from __future__ import annotations
 
@@ -16,6 +16,9 @@ import numpy as np
 try:
     import torch
     import kornia
+    import kornia.filters as KF
+    import kornia.feature as KFEAT
+    import kornia.enhance as KE
     _HAS = True
     _DEV = os.environ.get("IMGEVOLVE_KORNIA_DEVICE", "cpu")
     if _DEV == "cuda" and not torch.cuda.is_available():
@@ -55,9 +58,6 @@ def _k(a):
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     if not _HAS:
         return []
-    import kornia.filters as KF
-    import kornia.feature as KfeatMod
-    import kornia.enhance as KE
 
     def _gauss(v, a, b):
         s = 0.3 + 2.7 * a
@@ -79,20 +79,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return _np(KF.motion_blur(_t(v), ks, float(360 * a), float(2 * b - 1)))
 
     def _canny(v, a, b):
-        mag, edges = KF.canny(_t(v), low_threshold=0.1 + 0.3 * a, high_threshold=0.3 + 0.4 * b)
+        _, edges = KF.canny(_t(v), low_threshold=0.1 + 0.3 * a, high_threshold=0.3 + 0.4 * b)
         return _np(edges)
-
-    def _harris(v, a, b):
-        return _norm(_np(KfeatMod.harris_response(_t(v), k=0.04 + 0.02 * a)))
-
-    def _gftt(v, a, b):
-        return _norm(_np(KeatSafe(KeatMod_gftt, _t(v))))
-
-    def _hessian(v, a, b):
-        return _norm(np.abs(_np(KfeatSafe(KfeatMod_hessian, _t(v)))))
-
-    def _dog(v, a, b):
-        return _norm(np.abs(_np(KfeatSafe(KfeatMod_dog, _t(v)))))
 
     def _clahe(v, a, b):
         return np.clip(_np(KE.equalize_clahe(_t(v), clip_limit=1.0 + 4.0 * a)), 0, 1)
@@ -100,10 +88,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     def _laplacian(v, a, b):
         return _norm(np.abs(_np(KF.laplacian(_t(v), _k(a)))))
 
-    # some kornia feature responses are named slightly differently across versions
-    KeatMod_gftt = getattr(KeatModAlias(), "gftt_response", None)
-    KfeatMod_hessian = getattr(KeatModAlias(), "hessian_response", None)
-    KfeatMod_dog = getattr(KeatModAlias(), "dog_response_single", None) or getattr(KeatModAlias(), "dog_response", None)
+    def _resp(fn):
+        return lambda v, a, b: _norm(np.abs(_np(fn(_t(v)))))
 
     defs = [
         ("xkor_gaussian", "smoothing", IMAGE, IMAGE, _gauss),
@@ -112,27 +98,14 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("xkor_unsharp", "smoothing", IMAGE, IMAGE, _unsharp),
         ("xkor_motion_blur", "smoothing", IMAGE, IMAGE, _motion),
         ("xkor_canny", "segmentation", IMAGE, REGION, _canny),
-        ("xkor_harris", "edges", IMAGE, IMAGE, _harris),
         ("xkor_clahe", "gray", IMAGE, IMAGE, _clahe),
         ("xkor_laplacian", "edges", IMAGE, IMAGE, _laplacian),
+        ("xkor_harris", "edges", IMAGE, IMAGE,
+         lambda v, a, b: _norm(_np(KFEAT.harris_response(_t(v), k=0.04 + 0.02 * a)))),
     ]
-    if KeatMod_gftt is not None:
-        defs.append(("xkor_gftt", "edges", IMAGE, IMAGE, _gftt))
-    if KfeatMod_hessian is not None:
-        defs.append(("xkor_hessian", "edges", IMAGE, IMAGE, _hessian))
-    if KfeatMod_dog is not None:
-        defs.append(("xkor_dog", "edges", IMAGE, IMAGE, _dog))
+    for name, attr in (("xkor_gftt", "gftt_response"), ("xkor_hessian", "hessian_response"),
+                       ("xkor_dog", "dog_response_single"), ("xkor_dog", "dog_response")):
+        fn = getattr(KFEAT, attr, None)
+        if fn is not None and name not in {d[0] for d in defs}:
+            defs.append((name, "edges", IMAGE, IMAGE, _resp(fn)))
     return [Op(n, c, "", i, o, _safe(f)) for (n, c, i, o, f) in defs]
-
-
-def KeatModAlias():
-    import kornia.feature as KF
-    return KF
-
-
-def KeatSafe(fn, t):
-    return fn(t)
-
-
-def KfeatSafe(fn, t):
-    return fn(t)
