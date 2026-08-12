@@ -1101,6 +1101,9 @@ SEED: list[tuple] = [
     ("segment_image_mser", "segmentation", IMG, REG, "segment", {"kind": "mser"}),
     ("regiongrowing_mean", "segmentation", IMG, REG, "segment", {"kind": "regiongrow"}),
     ("estimate_noise", "features", IMG, FEA, "img_feat", {"metric": "noise_est"}),
+    # corner strength maps (points_harris already covered by core corner_response)
+    ("points_foerstner", "edges", IMG, IMG, "corner", {"kind": "foerstner"}),
+    ("points_harris_binomial", "edges", IMG, IMG, "corner", {"kind": "harris_binomial"}),
 ]
 
 
