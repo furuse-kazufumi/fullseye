@@ -483,7 +483,7 @@ def _sh_texture(p):
         if kind == "lbp" and _HAS_SK:
             return _norm(skfeat.local_binary_pattern(x, 8, _rad(a)))
         if kind == "coherence" and _HAS_SK:
-            return _norm(np.nan_to_num(skfeat.shape_index(x, sigma=0.5 + 2 * a)))
+            return signed01(np.nan_to_num(skfeat.shape_index(x, sigma=0.5 + 2 * a)))
         raise ValueError(kind)
     return fn
 
