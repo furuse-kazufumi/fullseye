@@ -32,6 +32,7 @@ with warnings.catch_warnings():
         terrain, elevation_map, traversability, foothold_score, fill_gaps,
         imgio, to_float01, to_uint8, apply_cmap, colorize_depth,
         colorize_disparity, colorize_labels, overlay_mask, save, load, save_ply,
+        detect, segment_objects, object_descriptor, nearest_prototype, draw_objects,
     )
 
 __all__ = [
@@ -41,4 +42,5 @@ __all__ = [
     "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
     "colorize_disparity", "colorize_labels", "overlay_mask", "save", "load", "save_ply",
+    "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
 ]
