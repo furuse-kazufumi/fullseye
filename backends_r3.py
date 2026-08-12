@@ -418,7 +418,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     out = []
     for name, r in RECIPES.items():
         try:
-            fn = _make(r["recipe"])
+            fn = _make(r["recipe"], r.get("out"))
         except Exception:
             continue
         if _gate(fn, r["in"], r["out"]):                 # drop non-functional recipes (env-dependent)
