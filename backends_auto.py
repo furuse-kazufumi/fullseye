@@ -113,7 +113,7 @@ def _sh_pointwise(p):
         if kind == "cos":
             return (np.cos(2 * np.pi * x) + 1.0) / 2.0
         if kind == "tan":
-            return _norm(np.tan((x - 0.5) * (np.pi * 0.9)))
+            return signed01(np.tan((x - 0.5) * (np.pi * 0.9)))
         if kind == "asin":
             return np.arcsin(x) / (np.pi / 2)
         if kind == "acos":
