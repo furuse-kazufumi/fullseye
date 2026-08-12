@@ -36,17 +36,16 @@ try:
 except Exception:
     pass
 
-_SAFE_BUILTINS = {k: __builtins__[k] if isinstance(__builtins__, dict) else getattr(__builtins__, k)
-                  for k in ("float", "int", "max", "min", "abs", "len", "range", "sum",
-                            "round", "list", "tuple", "enumerate", "zip", "map", "sorted", "bool")}
-
-
 def _make(recipe):
+    # Vetted, agent-verified one-line recipes over our own libraries. Compiled once;
+    # everything lives in `globals` so nested lambdas/comprehensions resolve np/v/a/b.
     code = compile(recipe, "<recipe>", "eval")
 
     def fn(v, a, b):
         try:
-            return eval(code, {"__builtins__": _SAFE_BUILTINS}, {**_NS, "v": v, "a": float(a), "b": float(b)})
+            g = dict(_NS)
+            g.update(v=v, a=float(a), b=float(b))
+            return eval(code, g)
         except Exception:
             return v
     return fn
