@@ -60,14 +60,22 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   reduce_domain/overpaint_region/convol_image 等)を **17 op 本物実装**(全機能ゲート通過)。
 
 **★honest 被覆(実測, `honest_summary.py` → `docs/HALCON_PARITY.md`)**:
-- **217 / 2313 distinct real HALCON op を genuine 実装(9.4%)** = 進化 registry 200 + n-ary 17(disjoint)。
-- registry ops 340(core 67 + backend 86 + **auto 187**)。auto 187 は **全て機能ゲート通過**。
-- **dangling(偽名)= 0**(fail-closed)。回帰スモーク 400/400(image起点 decode+run クラッシュ0)。
-- 開始(v10)79 → **200(registry)/ 217(総capability)= 2.5〜2.7倍**。数値は memory 推測でなく実測。
-- v11b 増分(shape 拡張で救済した families): region 計測(contlength=周長/area_holes/height_width_ratio/
-  moments_region_2nd/_2nd_invar)・cooc_feature_matrix(Haralick)・equ_histo_image_rect(局所equalize)・
-  simulate_motion(方向ブラー)・projective_trans_image/_size/_region(射影)・polar_trans_image_inv/
-  fft_image_inv(逆変換)・add_noise_white(決定論ノイズ)。
+- **229 / 2313 distinct real HALCON op を genuine 実装(9.9%)** = 進化 registry 212(color 12 含む)+ n-ary 17(disjoint)。
+- registry ops 352(core 67 + backend 86 + **auto 187 + color 12**)。auto/color/n-ary は **全て機能ゲート通過**。
+- **dangling(偽名)= 0**(fail-closed)。回帰スモーク 800/800(image起点 decode+run クラッシュ0、color 到達 13 本も全 OK)。
+- 開始(v10)79 → **212(registry)/ 229(総capability)= 2.7〜2.9倍**。数値は memory 推測でなく実測。
+- **★multichannel `color` sort 導入(v11c, ユーザー選択)**: `backends_color.py` に H×W×3 RGB の first-class sort。
+  `cfa_to_rgb`(image→color, 実 Bayer demosaic)を bridge に進化から到達、`rgb1_to_gray`/`access_channel`/
+  `edges_color` 等で gray へ復帰。**sort スレッドで型分離 → gray op に color は渡らず進化は無傷**。genuine 色op 12
+  (trans_from/to_rgb・linear_trans_color・principal_comp・rgb1/3_to_gray・access_channel・edges_color(+_sub_pix)・
+  lines_color・count_channels)。
+- v11b 増分(shape 拡張で救済): region 計測(contlength/area_holes/height_width_ratio/moments_region_2nd/_2nd_invar)・
+  cooc_feature_matrix(Haralick)・equ_histo_image_rect(局所equalize)・simulate_motion(方向ブラー)・
+  projective_trans_image/_size/_region・polar_trans_image_inv・fft_image_inv・add_noise_white。
+- **★将来利用インターフェース(`imgevolve.py` CLI)**: `has`/`ops`/`apply`/`pipeline`/`coverage`/`index`。
+  `docs/OP_INDEX.json` = 全 369 op の機械可読索引。使い方 = README + memory `reference_imgevolve_usage`。
+- **★GitHub push 済(2026-08-12 ユーザー許可)= github.com/furuse-kazufumi/imgevolve(private)**。公開(public 化)・
+  PyPI・fullseye 物理リネームは別途 human-gate(公開時)。
 
 ## HALCON ~2313 の実装可能性(章別内訳, honest)
 - **アルゴリズム系 808**(Filters/Morphology/Regions/Segmentation/XLD/Image/Transformations/
