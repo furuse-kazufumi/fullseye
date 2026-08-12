@@ -23,7 +23,9 @@ holdout で正直にゲートする。raptor work-graph 上で自律実行(S0+S1
 | `graph.py` → `data/halcon_graph.json` | operator 知識グラフ（2313 ノード） |
 | `backends_auto.py` | 固定 shape 語彙 + データ駆動 SPECS（偽名は fail-closed ドロップ） |
 | `backends_color.py` | multichannel `color` sort（`cfa_to_rgb` bridge で進化から到達） |
+| `backends_extra.py` | 他ライブラリ distinctive op（inpaint/blob/ORB/random_walker/grabCut/NPR…、`xsk_`/`xcv_`） |
 | `imgops_nary.py` | 多入力 capability tier（画像演算・領域集合演算） |
+| `lib_coverage.py` | 多ライブラリ被覆（cv2/skimage を introspect、`docs/LIB_COVERAGE.md`） |
 | `verify_auto.py` / 各 `verify()` | 機能ゲート（例外なく宣言 sort を返す op のみ計上） |
 | `honest_summary.py` → `docs/HALCON_PARITY.md` | 3 tier を1つの正直な数値に |
 
