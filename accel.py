@@ -192,12 +192,13 @@ def main() -> int:
         print("[accel] CUDA not available here; falling back to CPU (run on the RTX 5090 for GPU).")
     print("accel ops: %d  | device=%s | torch=%s" % (len(ACCEL), dev, torch.__version__))
     rows = parity(dev)
-    ok = sum(1 for _, _, d in rows if d < 5e-3)
-    print("CPU parity vs registry (interior match; borders differ for pooling ops):")
-    for name, halcon, d in sorted(rows, key=lambda r: -r[2]):
-        flag = "ok" if d < 5e-3 else ("close" if d < 5e-2 else "differ")
-        print("  %-20s vs %-20s  max|diff|=%.4f  %s" % (name, halcon, d, flag))
-    print("faithful (<5e-3): %d / %d" % (ok, len(rows)))
+    ok = sum(1 for _, _, _, inter in rows if inter < 5e-3)
+    print("parity vs core registry op  (full = incl. borders, interior = 3px-inset):")
+    for name, halcon, full, inter in sorted(rows, key=lambda r: -r[3]):
+        flag = "exact" if inter < 5e-3 else ("close" if inter < 5e-2 else "differ")
+        print("  %-20s (%-18s)  full=%.4f interior=%.4f  %s" % (name, halcon, full, inter, flag))
+    print("interior-faithful (<5e-3): %d / %d  — borders differ only by reflect/pool convention"
+          % (ok, len(rows)))
     return 0
 
 
