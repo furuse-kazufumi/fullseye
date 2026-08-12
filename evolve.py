@@ -69,7 +69,7 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
         while len(children) < pop - mu:
             parent = elite[int(rng.integers(0, mu))]
             children.append(np.clip(parent + rng.normal(0, 0.12, ops.GENOME_LEN), 0.0, 1.0))
-        popm = np.vstack([elite, np.array(children)])
+        popm = np.vstack([elite, np.array(children)]) if children else elite.copy()
         history.append({"gen": gen, "best_train": round(champ_tr, 4),
                         "best_holdout": round(holdout_fit(champ), 4)})
         if verbose and (gen % 10 == 0 or gen == gens - 1):
