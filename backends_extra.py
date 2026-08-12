@@ -113,7 +113,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("xsk_sato", "texture", "", IMAGE, IMAGE,
              lambda v, a, b: _norm(filters.sato(np.clip(v, 0, 1), sigmas=range(1, 4)))),
         ]
-        out += [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in sk]
+        out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in sk]
     except Exception:
         pass
 
@@ -185,7 +185,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("xcv_watershed_markers", "segmentation", "watersheds", IMAGE, REGION, _watershed_markers),
             ("xcv_orb_count", "features", "", IMAGE, FEATURE, _orb_cv),
         ]
-        out += [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in cv]
+        out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in cv]
     except Exception:
         pass
 
