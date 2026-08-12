@@ -22,6 +22,7 @@ pil = ["Pillow>=9"]
 wavelets = ["PyWavelets>=1.4"]
 gpu = ["torch>=2.0", "kornia>=0.7"]
 extra = ["mahotas>=1.4", "SimpleITK>=2.2"]
+gui = ["PySide6>=6.5"]
 all = [
   "opencv-python>=4.6", "scikit-image>=0.20", "Pillow>=9", "PyWavelets>=1.4",
   "torch>=2.0", "kornia>=0.7", "mahotas>=1.4", "SimpleITK>=2.2",
