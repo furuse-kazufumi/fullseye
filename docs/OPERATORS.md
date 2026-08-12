@@ -312,8 +312,8 @@
 | `segment_image_mser` | image->region | segmentation | segment_image_mser | Canny/watershed | segmentation | watershed |
 | `regiongrowing_mean` | image->region | segmentation | regiongrowing_mean | Canny/watershed | segmentation | watershed |
 | `estimate_noise` | image->feature | features | estimate_noise | minMaxLoc/meanStdDev | measure | - |
-| `points_foerstner` | image | edges | points_foerstner | - | - | - |
-| `points_harris_binomial` | image | edges | points_harris_binomial | - | - | - |
+| `points_foerstner` | image | edges | points_foerstner | cornerHarris/goodFeaturesToTrack | feature.corner_* | detectHarrisFeatures |
+| `points_harris_binomial` | image | edges | points_harris_binomial | cornerHarris/goodFeaturesToTrack | feature.corner_* | detectHarrisFeatures |
 | `eccentricity_xld` | contour->feature | features | eccentricity_xld | findContours | measure.find_contours | - |
 | `orientation_xld` | contour->feature | features | orientation_xld | findContours | measure.find_contours | - |
 | `elliptic_axis_xld` | contour->feature | features | elliptic_axis_xld | findContours | measure.find_contours | - |
@@ -391,9 +391,9 @@
 | `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
 
 ## Coverage (ops with a direct analog)
-- opencv: 283/385
-- skimage: 334/385
-- matlab: 255/385
+- opencv: 285/385
+- skimage: 336/385
+- matlab: 257/385
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

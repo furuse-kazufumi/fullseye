@@ -112,6 +112,7 @@ _SHAPE_ANALOGS: dict[str, dict] = {
     "xld": {"opencv": "findContours", "skimage": "measure.find_contours", "matlab": "-"},
     "cooc": {"opencv": "-", "skimage": "feature.graycomatrix/graycoprops", "matlab": "graycomatrix/graycoprops"},
     "noise": {"opencv": "-", "skimage": "util.random_noise", "matlab": "imnoise"},
+    "corner": {"opencv": "cornerHarris/goodFeaturesToTrack", "skimage": "feature.corner_*", "matlab": "detectHarrisFeatures"},
 }
 
 
