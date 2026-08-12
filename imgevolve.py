@@ -189,6 +189,20 @@ def cmd_parity(a):
     return parity.main()
 
 
+def cmd_accel(a):
+    import sys as _s
+    _s.argv = ["accel.py", "--device", a.device]
+    import accel
+    return accel.main()
+
+
+def cmd_bench(a):
+    import sys as _s
+    _s.argv = ["bench.py", "--n", str(a.n), "--size", str(a.size), "--device", a.device]
+    import bench
+    return bench.main()
+
+
 def cmd_index(a):
     rows = _all_ops()
     try:
