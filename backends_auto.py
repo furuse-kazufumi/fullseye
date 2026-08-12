@@ -377,6 +377,25 @@ def _sh_corner(p):
     return fn
 
 
+# ---- image -> image : Hough accumulator (line / circle) --------------------- #
+def _sh_hough(p):
+    kind = p["kind"]
+
+    def fn(v, a, b):
+        x = np.asarray(v, np.float64)
+        edges = _norm(np.hypot(ndimage.sobel(x, 1), ndimage.sobel(x, 0))) > (0.2 + 0.4 * a)
+        if kind == "line" and _HAS_SK:
+            h, _, _ = sktrans.hough_line(edges)
+            acc = _norm(h.astype(np.float64))
+            return cv2.resize(acc, (x.shape[1], x.shape[0])).astype(np.float64) if _HAS_CV \
+                else np.resize(acc, x.shape)
+        if kind == "circle" and _HAS_SK:
+            radii = np.arange(4, 20, 3)
+            return _norm(sktrans.hough_circle(edges, radii).max(0))    # (R,H,W) -> (H,W)
+        raise ValueError(kind)
+    return fn
+
+
 # ---- image -> image : FFT / frequency domain ------------------------------- #
 def _sh_freq(p):
     kind = p["kind"]
