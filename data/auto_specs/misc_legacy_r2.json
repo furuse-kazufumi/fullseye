@@ -1,3 +1,1 @@
-[
-  {"halcon": "morph_skiz", "category": "region", "in_sort": "region", "out_sort": "region", "shape": "region_trans", "params": {"kind": "thin"}}
-]
+[]

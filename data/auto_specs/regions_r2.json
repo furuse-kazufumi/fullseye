@@ -1,4 +1,3 @@
 [
-  {"halcon": "polar_trans_region", "category": "geometry", "in_sort": "region", "out_sort": "region", "shape": "geom", "params": {"kind": "polar"}},
   {"halcon": "polar_trans_region_inv", "category": "geometry", "in_sort": "region", "out_sort": "region", "shape": "geom", "params": {"kind": "polar_inv"}}
 ]
