@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fullseye"
+version = "0.1.0"
+description = "Evolvable image-processing operator library and honest pipeline designer (numpy-native, optional GPU)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "furuse-kazufumi" }]
+keywords = ["image-processing", "computer-vision", "evolutionary-algorithm", "pipeline", "operators"]
+# The core (75 ops) runs on numpy + scipy alone. Everything else is optional and
+# only its own operators are affected when a backend is absent (graceful degradation).
+dependencies = ["numpy>=1.23", "scipy>=1.9"]
+
+[project.optional-dependencies]
+opencv = ["opencv-python>=4.6"]
+skimage = ["scikit-image>=0.20"]
+pil = ["Pillow>=9"]
+wavelets = ["PyWavelets>=1.4"]
+gpu = ["torch>=2.0", "kornia>=0.7"]
+extra = ["mahotas>=1.4", "SimpleITK>=2.2"]
+all = [
+  "opencv-python>=4.6", "scikit-image>=0.20", "Pillow>=9", "PyWavelets>=1.4",
+  "torch>=2.0", "kornia>=0.7", "mahotas>=1.4", "SimpleITK>=2.2",
+]
+
+[project.scripts]
+fullseye = "imgevolve:main"
+
+[tool.setuptools]
+# The public facade is the `fullseye` package; the engine is a set of flat
+# top-level modules kept at the repo root (historical layout). Both are shipped.
+packages = ["fullseye"]
+py-modules = [
+  "api", "ops", "backend_safe",
+  "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
+  "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
+  "backends_scipy", "backends_ski2",
+  "imgops_nary", "scale", "evolve", "problems", "baseline", "robust",
+  "verify_auto", "honest_summary", "dispositions", "catalog", "report",
+  "samples", "references", "codegen", "difftest", "parity", "accel", "bench",
+  "sweep", "graph", "graph_seed", "lib_coverage",
+  "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
+]
+
+[tool.setuptools.package-data]
+# Runtime data (operator specs / reference tables) read at import time.
+"*" = ["data/*.json", "data/auto_specs/*.json"]
