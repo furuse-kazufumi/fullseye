@@ -34,8 +34,8 @@ def main() -> int:
     wd = Path(a.workdir)
     base = json.loads((wd / f"baseline_{a.problem}.json").read_text(encoding="utf-8")) \
         if (wd / f"baseline_{a.problem}.json").exists() else {}
-    hand = base.get("hand", {}).get("score")
-    trivial = base.get("trivial", {}).get("score")
+    hand = base.get("hand", {}).get("holdout")       # baseline.py writes 'holdout', not 'score'
+    trivial = base.get("trivial", {}).get("holdout")
     unit = None
 
     champs = []
