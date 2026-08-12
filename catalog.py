@@ -152,6 +152,16 @@ def _analogs(name: str) -> dict:
         return {"pillow": "PIL." + name[5:], "opencv": "-", "skimage": "-", "matlab": "-"}
     if name.startswith("xsp_"):
         return {"scipy": "scipy." + name[4:], "opencv": "-", "skimage": "-", "matlab": "-"}
+    if name.startswith("xmh_"):
+        return {"mahotas": "mahotas." + name[4:], "opencv": "-", "skimage": "-", "matlab": "-"}
+    if name.startswith("xwt_"):
+        return {"pywt": "pywt." + name[4:], "opencv": "-", "skimage": "-", "matlab": "-"}
+    if name.startswith("xsitk_"):
+        return {"simpleitk": "sitk." + name[6:], "opencv": "-", "skimage": "-", "matlab": "-"}
+    if name.startswith("xsk3_"):
+        return {"skimage": "skimage." + name[5:], "opencv": "-", "matlab": "-"}
+    if name.startswith("xcv3_"):
+        return {"opencv": "cv2." + name[5:], "skimage": "-", "matlab": "-"}
     if name.startswith("dl_"):
         return {"opencv": "-", "skimage": "-", "matlab": "-"}  # custom torch op
     if name.startswith("vol_"):
