@@ -217,7 +217,7 @@ def _region_boundary(v, a, b):
 
 
 def _convex_fill(v, a, b):
-    return ndimage.binary_closing(_bin(v), iterations=_it(a) + 2).astype(np.float64)
+    return ndimage.binary_closing(_bin(v), iterations=_it(a) + 2, border_value=1).astype(np.float64)
 
 
 # --- image -> contour (XLD) -------------------------------------------------- #
