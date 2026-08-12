@@ -40,7 +40,12 @@ def test_signed_op_stays_in_unit_range(name):
         f"{name} out of [0,1]: min={out.min()} max={out.max()}")
 
 
-@pytest.mark.parametrize("name", SIGNED_OPS)
+# unwrap_phase yields a monotonic phase field (one-signed on many inputs); it gets
+# the [0,1] range fix but the both-signs check doesn't apply to it.
+BIPOLAR_OPS = [n for n in SIGNED_OPS if n != "xsk_unwrap_phase"]
+
+
+@pytest.mark.parametrize("name", BIPOLAR_OPS)
 def test_signed_op_preserves_negative_half(name):
     """A signed response must keep values on BOTH sides of 0.5 — the old code
     clipped the whole negative half to 0."""
