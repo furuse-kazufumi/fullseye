@@ -37,10 +37,13 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import ops as _ops  # noqa: E402  (the engine registry; imports its backends on load)
+import stereo  # noqa: E402  (numpy+scipy depth building blocks)
+from stereo import disparity_map, depth_from_disparity, reproject_to_points  # noqa: E402,F401
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
     "categories", "read_image", "write_image", "RT", "REGISTRY", "version",
+    "stereo", "disparity_map", "depth_from_disparity", "reproject_to_points",
 ]
 
 __version__ = "0.1.0"
