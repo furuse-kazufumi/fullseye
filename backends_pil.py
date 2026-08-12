@@ -55,4 +55,16 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("xpil_autocontrast", "gray", "", IMAGE, IMAGE,
          lambda v, a, b: _arr(ImageOps.autocontrast(_im(v), cutoff=int(a * 10)))),
     ]
+    try:
+        from PIL import ImageChops, ImageEnhance
+
+        defs += [
+            ("xpil_offset", "geometry", "", IMAGE, IMAGE,          # toroidal (wrap-around) shift
+             lambda v, a, b: _arr(ImageChops.offset(_im(v), int(a * np.asarray(v).shape[1]),
+                                                     int(b * np.asarray(v).shape[0])))),
+            ("xpil_contrast", "gray", "", IMAGE, IMAGE,            # contrast about the image mean
+             lambda v, a, b: _arr(ImageEnhance.Contrast(_im(v)).enhance(2 * a))),
+        ]
+    except Exception:
+        pass
     return [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in defs]
