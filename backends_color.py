@@ -191,7 +191,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         if real and n not in real:
             dropped.append(n)
             continue
-        out.append(Op(n, cat, n, i, o, _safe(fn)))
+        out.append(Op(n, cat, n, i, o, _safe(fn, o)))
     build.dropped = dropped
     return out
 
