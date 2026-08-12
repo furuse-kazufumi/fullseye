@@ -113,6 +113,7 @@ _SHAPE_ANALOGS: dict[str, dict] = {
     "cooc": {"opencv": "-", "skimage": "feature.graycomatrix/graycoprops", "matlab": "graycomatrix/graycoprops"},
     "noise": {"opencv": "-", "skimage": "util.random_noise", "matlab": "imnoise"},
     "corner": {"opencv": "cornerHarris/goodFeaturesToTrack", "skimage": "feature.corner_*", "matlab": "detectHarrisFeatures"},
+    "hough": {"opencv": "HoughLines/HoughCircles", "skimage": "transform.hough_line/hough_circle", "matlab": "hough"},
 }
 
 

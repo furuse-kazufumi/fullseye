@@ -324,8 +324,8 @@
 | `zero_crossing` | image->region | segmentation | zero_crossing | Canny/watershed | segmentation | watershed |
 | `local_min` | image->region | segmentation | local_min | Canny/watershed | segmentation | watershed |
 | `pruning` | region | region | pruning | distanceTransform/findContours | morphology/segmentation | bwmorph |
-| `hough_line_trans` | image | features | hough_line_trans | - | - | - |
-| `hough_circle_trans` | image | features | hough_circle_trans | - | - | - |
+| `hough_line_trans` | image | features | hough_line_trans | HoughLines/HoughCircles | transform.hough_line/hough_circle | hough |
+| `hough_circle_trans` | image | features | hough_circle_trans | HoughLines/HoughCircles | transform.hough_line/hough_circle | hough |
 | `threshold_sub_pix` | image->contour | contour | threshold_sub_pix | findContours | measure.find_contours | - |
 | `zero_crossing_sub_pix` | image->contour | contour | zero_crossing_sub_pix | findContours | measure.find_contours | - |
 | `closest_point_transform` | region->image | region | closest_point_transform | distanceTransform/findContours | morphology/segmentation | bwmorph |
@@ -398,9 +398,9 @@
 | `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
 
 ## Coverage (ops with a direct analog)
-- opencv: 289/392
-- skimage: 341/392
-- matlab: 260/392
+- opencv: 291/392
+- skimage: 343/392
+- matlab: 262/392
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
