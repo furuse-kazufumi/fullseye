@@ -364,7 +364,7 @@ def _sh_corner(p):
         if kind == "harris_binomial":                # Harris on a binomially pre-smoothed image
             xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
             if _HAS_SK:
-                return _norm(skfeat.corner_harris(xb, sigma=s))
+                return signed01(skfeat.corner_harris(xb, sigma=s))
             gx, gy = ndimage.sobel(xb, 1), ndimage.sobel(xb, 0)
             axx = ndimage.gaussian_filter(gx * gx, s)
             ayy = ndimage.gaussian_filter(gy * gy, s)
