@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-369 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+385 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -312,6 +312,18 @@
 | `segment_image_mser` | image->region | segmentation | segment_image_mser | Canny/watershed | segmentation | watershed |
 | `regiongrowing_mean` | image->region | segmentation | regiongrowing_mean | Canny/watershed | segmentation | watershed |
 | `estimate_noise` | image->feature | features | estimate_noise | minMaxLoc/meanStdDev | measure | - |
+| `points_foerstner` | image | edges | points_foerstner | - | - | - |
+| `points_harris_binomial` | image | edges | points_harris_binomial | - | - | - |
+| `eccentricity_xld` | contour->feature | features | eccentricity_xld | findContours | measure.find_contours | - |
+| `orientation_xld` | contour->feature | features | orientation_xld | findContours | measure.find_contours | - |
+| `elliptic_axis_xld` | contour->feature | features | elliptic_axis_xld | findContours | measure.find_contours | - |
+| `diameter_xld` | contour->feature | features | diameter_xld | findContours | measure.find_contours | - |
+| `rectangularity_xld` | contour->feature | features | rectangularity_xld | findContours | measure.find_contours | - |
+| `moments_xld` | contour->feature | features | moments_xld | findContours | measure.find_contours | - |
+| `shape_trans_xld` | contour | contour | shape_trans_xld | findContours | measure.find_contours | - |
+| `zero_crossing` | image->region | segmentation | zero_crossing | Canny/watershed | segmentation | watershed |
+| `local_min` | image->region | segmentation | local_min | Canny/watershed | segmentation | watershed |
+| `pruning` | region | region | pruning | distanceTransform/findContours | morphology/segmentation | bwmorph |
 | `tan_image` | image | arithmetic | tan_image | pointwise/LUT | - | imadjust |
 | `bit_not` | image | gray | bit_not | LUT | exposure/util | imadjust |
 | `monotony` | image | gray | monotony | LUT | exposure/util | imadjust |
@@ -330,6 +342,7 @@
 | `affine_trans_image_size` | image | geometry | affine_trans_image_size | warpAffine/warpPolar | transform | imwarp |
 | `polar_trans_image_ext` | image | geometry | polar_trans_image_ext | warpAffine/warpPolar | transform | imwarp |
 | `lines_facet` | image->contour | contour | lines_facet | findContours | measure.find_contours | - |
+| `add_noise_distribution` | image | noise | add_noise_distribution | - | util.random_noise | imnoise |
 | `bin_threshold` | image->region | segmentation | bin_threshold | threshold/adaptiveThreshold | filters.threshold_* | imbinarize |
 | `erosion_golay` | region | region | erosion_golay | morphologyEx | morphology.binary_* | imopen/imclose |
 | `dilation_golay` | region | region | dilation_golay | morphologyEx | morphology.binary_* | imopen/imclose |
@@ -359,8 +372,11 @@
 | `gen_region_polygon_xld` | contour->region | contour | gen_region_polygon_xld | findContours | measure.find_contours | - |
 | `connect_and_holes` | region->feature | features | connect_and_holes | - | measure.regionprops | regionprops |
 | `elliptic_axis` | region->feature | features | elliptic_axis | - | measure.regionprops | regionprops |
+| `polar_trans_region_inv` | region | geometry | polar_trans_region_inv | warpAffine/warpPolar | transform | imwarp |
+| `affine_trans_polygon_xld` | contour | contour | affine_trans_polygon_xld | findContours | measure.find_contours | - |
 | `gen_contour_region_xld` | region->contour | contour | gen_contour_region_xld | findContours | measure.find_contours | - |
 | `select_shape_xld` | contour | contour | select_shape_xld | findContours | measure.find_contours | - |
+| `contour_point_num_xld` | contour->feature | contour | contour_point_num_xld | findContours | measure.find_contours | - |
 | `cfa_to_rgb` | image->color | color | cfa_to_rgb | cvtColor/mixChannels | color | rgb2*/imsplit |
 | `trans_from_rgb` | color | color | trans_from_rgb | cvtColor/mixChannels | color | rgb2*/imsplit |
 | `trans_to_rgb` | color | color | trans_to_rgb | cvtColor/mixChannels | color | rgb2*/imsplit |
@@ -375,9 +391,9 @@
 | `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
 
 ## Coverage (ops with a direct analog)
-- opencv: 270/369
-- skimage: 320/369
-- matlab: 250/369
+- opencv: 283/385
+- skimage: 334/385
+- matlab: 255/385
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

@@ -1,9 +1,9 @@
 {
- "n_ops": 386,
+ "n_ops": 402,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 357
+  "registry": 373
  },
  "sorts": [
   "any",
@@ -358,6 +358,14 @@
    "tier": "registry"
   },
   {
+   "name": "add_noise_distribution",
+   "halcon": "add_noise_distribution",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "noise",
+   "tier": "registry"
+  },
+  {
    "name": "add_noise_white",
    "halcon": "add_noise_white",
    "in_sort": "image",
@@ -387,6 +395,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "affine_trans_polygon_xld",
+   "halcon": "affine_trans_polygon_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
    "tier": "registry"
   },
   {
@@ -659,6 +675,14 @@
    "in_sort": "region",
    "out_sort": "feature",
    "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "contour_point_num_xld",
+   "halcon": "contour_point_num_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "contour",
    "tier": "registry"
   },
   {
@@ -998,6 +1022,14 @@
    "tier": "registry"
   },
   {
+   "name": "diameter_xld",
+   "halcon": "diameter_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "diff_of_gauss",
    "halcon": "diff_of_gauss",
    "in_sort": "image",
@@ -1126,6 +1158,14 @@
    "tier": "registry"
   },
   {
+   "name": "eccentricity_xld",
+   "halcon": "eccentricity_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "edges_image",
    "halcon": "edges_image",
    "in_sort": "image",
@@ -1169,6 +1209,14 @@
    "name": "elliptic_axis",
    "halcon": "elliptic_axis",
    "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "elliptic_axis_xld",
+   "halcon": "elliptic_axis_xld",
+   "in_sort": "contour",
    "out_sort": "feature",
    "category": "features",
    "tier": "registry"
@@ -1798,6 +1846,14 @@
    "tier": "registry"
   },
   {
+   "name": "local_min",
+   "halcon": "local_min",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
    "name": "local_threshold",
    "halcon": "local_threshold",
    "in_sort": "image",
@@ -1998,6 +2054,14 @@
    "tier": "registry"
   },
   {
+   "name": "moments_xld",
+   "halcon": "moments_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "monotony",
    "halcon": "monotony",
    "in_sort": "image",
@@ -2070,6 +2134,14 @@
    "tier": "registry"
   },
   {
+   "name": "orientation_xld",
+   "halcon": "orientation_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "otsu",
    "halcon": "binary_threshold",
    "in_sort": "image",
@@ -2102,6 +2174,22 @@
    "tier": "registry"
   },
   {
+   "name": "points_foerstner",
+   "halcon": "points_foerstner",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "points_harris_binomial",
+   "halcon": "points_harris_binomial",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
    "name": "polar_trans_contour_xld",
    "halcon": "polar_trans_contour_xld",
    "in_sort": "contour",
@@ -2130,6 +2218,14 @@
    "halcon": "polar_trans_image_inv",
    "in_sort": "image",
    "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "polar_trans_region_inv",
+   "halcon": "polar_trans_region_inv",
+   "in_sort": "region",
+   "out_sort": "region",
    "category": "geometry",
    "tier": "registry"
   },
@@ -2230,6 +2326,14 @@
    "tier": "registry"
   },
   {
+   "name": "pruning",
+   "halcon": "pruning",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
    "name": "rank_image",
    "halcon": "rank_image",
    "in_sort": "image",
@@ -2249,6 +2353,14 @@
    "name": "rectangularity",
    "halcon": "rectangularity",
    "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "rectangularity_xld",
+   "halcon": "rectangularity_xld",
+   "in_sort": "contour",
    "out_sort": "feature",
    "category": "features",
    "tier": "registry"
@@ -2491,6 +2603,14 @@
    "in_sort": "region",
    "out_sort": "region",
    "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "shape_trans_xld",
+   "halcon": "shape_trans_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
    "tier": "registry"
   },
   {
@@ -3160,6 +3280,14 @@
   {
    "name": "watersheds_threshold",
    "halcon": "watersheds_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "zero_crossing",
+   "halcon": "zero_crossing",
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",

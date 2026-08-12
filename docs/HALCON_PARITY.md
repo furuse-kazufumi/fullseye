@@ -5,13 +5,13 @@ count below is a real numpy/scipy/skimage/cv2 implementation that runs; the
 functional gate rejects anything that does not return the declared sort.
 
 ## Headline
-- **246 / 2313 distinct real HALCON operators implemented (10.6%)**
-  = 229 evolvable registry ops + 17 n-ary capability ops (disjoint).
+- **262 / 2313 distinct real HALCON operators implemented (11.3%)**
+  = 245 evolvable registry ops + 17 n-ary capability ops (disjoint).
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 369 ; distinct real HALCON ops covered: **229**
-- auto-generated ops passing the functional gate: 204 / 204
+- registry ops: 385 ; distinct real HALCON ops covered: **245**
+- auto-generated ops passing the functional gate: 220 / 220
 - auto ops counted in coverage but FAILING the gate: 0 (none — honest)
 
 ## N-ary capability tier (multi-input; genuine, not evolvable)

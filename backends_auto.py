@@ -1154,6 +1154,17 @@ SEED: list[tuple] = [
     # corner strength maps (points_harris already covered by core corner_response)
     ("points_foerstner", "edges", IMG, IMG, "corner", {"kind": "foerstner"}),
     ("points_harris_binomial", "edges", IMG, IMG, "corner", {"kind": "harris_binomial"}),
+    # ---- v11e increment: XLD ellipse/moment features + crossings + pruning ----
+    ("eccentricity_xld", "features", CON, FEA, "xld", {"kind": "eccentricity"}),
+    ("orientation_xld", "features", CON, FEA, "xld", {"kind": "orientation"}),
+    ("elliptic_axis_xld", "features", CON, FEA, "xld", {"kind": "elliptic_axis"}),
+    ("diameter_xld", "features", CON, FEA, "xld", {"kind": "diameter"}),
+    ("rectangularity_xld", "features", CON, FEA, "xld", {"kind": "rectangularity"}),
+    ("moments_xld", "features", CON, FEA, "xld", {"kind": "moment_xld"}),
+    ("shape_trans_xld", "contour", CON, CON, "xld", {"kind": "convex"}),
+    ("zero_crossing", "segmentation", IMG, REG, "segment", {"kind": "zero_crossing"}),
+    ("local_min", "segmentation", IMG, REG, "segment", {"kind": "local_min"}),
+    ("pruning", "region", REG, REG, "region_trans", {"kind": "pruning"}),
 ]
 
 
