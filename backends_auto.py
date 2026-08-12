@@ -904,7 +904,7 @@ SHAPES = {
     "geom": _sh_geom, "threshold": _sh_threshold, "segment": _sh_segment,
     "binmorph": _sh_binmorph, "region_trans": _sh_region_trans,
     "region_feat": _sh_region_feat, "img_feat": _sh_img_feat, "xld": _sh_xld,
-    "cooc": _sh_cooc, "noise": _sh_noise,
+    "cooc": _sh_cooc, "noise": _sh_noise, "corner": _sh_corner,
 }
 
 
