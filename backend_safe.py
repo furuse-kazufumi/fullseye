@@ -19,6 +19,19 @@ from __future__ import annotations
 import numpy as np
 
 
+def signed01(x):
+    """Map a SIGNED filter response to [0,1] with the zero-crossing at 0.5.
+
+    Signed responses (Harris R, Laplacian-of-Gaussian, morphological Laplace,
+    high/band-pass, phase) carry information in their sign. `_norm(x)=x/max|x|`
+    yields [-1,1]; the pipeline's [0,1] clip then discards the entire negative
+    half. This preserves it: 0 -> 0.5, ±max -> 0/1.
+    """
+    x = np.asarray(x, np.float64)
+    m = float(np.max(np.abs(x))) if x.size else 0.0
+    return np.clip(x / (2 * m) + 0.5, 0, 1) if m > 1e-8 else np.full_like(x, 0.5)
+
+
 def _as_arr(v):
     return v if isinstance(v, np.ndarray) else None
 
