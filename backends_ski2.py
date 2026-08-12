@@ -10,6 +10,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from backend_safe import signed01
+
 
 def _safe(fn, out_sort=None):
     from backend_safe import sanitize
