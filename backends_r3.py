@@ -392,6 +392,26 @@ RECIPES = {
 
 
 
+def _gate(fn, in_sort, out_sort):
+    """Fail-closed: only ops that run and return the declared sort enter the registry."""
+    n = 24
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    img = np.clip(xx / n * 0.6 + 0.2, 0, 1)
+    img[(yy - 8) ** 2 + (xx - 8) ** 2 < 12] = 0.9
+    base = img if in_sort == "image" else (img > 0.5).astype(np.float64)
+    try:
+        o = fn(base.copy(), 0.5, 0.4)
+    except Exception:
+        return False
+    if out_sort == "feature":
+        return np.size(o) > 0 and np.isfinite(float(np.asarray(o).reshape(-1)[0]))
+    if not (isinstance(o, np.ndarray) and o.ndim == 2 and np.all(np.isfinite(o))):
+        return False
+    if out_sort == "region":
+        return o.min() >= 0 and o.max() <= 1
+    return True
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     out = []
     for name, r in RECIPES.items():
@@ -399,5 +419,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             fn = _make(r["recipe"])
         except Exception:
             continue
-        out.append(Op(name, r.get("cat") or "extra", "", r["in"], r["out"], fn))
+        if _gate(fn, r["in"], r["out"]):                 # drop non-functional recipes (env-dependent)
+            out.append(Op(name, r.get("cat") or "extra", "", r["in"], r["out"], fn))
+    build.dropped = [n for n in RECIPES if n not in {o.name for o in out}]
     return out
+
+
+build.dropped = []
