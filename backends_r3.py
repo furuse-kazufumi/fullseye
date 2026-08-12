@@ -13,7 +13,7 @@ import numpy as np
 
 _NS = {"np": np}
 for _m, _a in (("mahotas", "mahotas"), ("mahotas.features", None), ("mahotas.thresholding", None),
-               ("pywt", "pywt"), ("SimpleITK", "SimpleITK"), ("cv2", "cv2")):
+               ("pywt", "pywt"), ("SimpleITK", "SimpleITK"), ("SimpleITK", "sitk"), ("cv2", "cv2")):
     try:
         _mod = __import__(_m, fromlist=["x"]) if "." in _m else __import__(_m)
         if _a:
