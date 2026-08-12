@@ -670,6 +670,12 @@ def _sh_region_trans(p):
             if len(ys):
                 out[ys.min():ys.max() + 1, xs.min():xs.max() + 1] = 1.0
             return out
+        if kind == "pruning":                        # remove skeleton spurs (pruning)
+            sk = skmorph.skeletonize(m) if _HAS_SK else m
+            for _ in range(1 + int(a * 4)):
+                nb = ndimage.convolve(sk.astype(int), np.ones((3, 3)), mode="constant") - sk.astype(int)
+                sk = sk & ~(sk & (nb <= 1))
+            return sk.astype(np.float64)
         raise ValueError(kind)
     return fn
 
