@@ -184,6 +184,11 @@ def cmd_coverage(a):
     return honest_summary.main()
 
 
+def cmd_parity(a):
+    import parity
+    return parity.main()
+
+
 def cmd_index(a):
     rows = _all_ops()
     try:
