@@ -146,7 +146,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("sk_blur_effect", "features", "", IMAGE, FEATURE,
              lambda v, a, b: np.float64(measure.blur_effect(v))),
         ]
-        ops_out += [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in sk]
+        ops_out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in sk]
     except Exception:
         pass
 
@@ -229,7 +229,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: np.float64(0 if (pp := cv2.goodFeaturesToTrack(
                  v.astype(np.float32), int(10 + 40 * a), 0.01 + 0.1 * b, 5)) is None else len(pp))),
         ]
-        ops_out += [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in cv]
+        ops_out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in cv]
     except Exception:
         pass
 
