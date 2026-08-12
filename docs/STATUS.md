@@ -134,6 +134,12 @@ scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen �
 - **★GitHub push 済(2026-08-12 ユーザー許可)= github.com/furuse-kazufumi/imgevolve(private)**。公開(public 化)・
   PyPI・fullseye 物理リネームは別途 human-gate(公開時)。
 
+**★進化ループでの他ライブラリ op 実使用 検証(2026-08-12)**: 全 521-op registry で `evolve.py --problem edge`
+(15 世代)を実走 → champion holdout **0.830 F1**、pipeline に **取り込んだ他ライブラリ op を genuine に選択**
+(`xcv2_meanshift`・`xcv_detail_enhance`・`sk_enhance_contrast`)。baseline(手作り 0.897 / random 0.311 / trivial 0.267)。
+honest: 短予算では強い手作りに未達だが random を大きく上回り、他ライブラリ op は dead weight でなく実際に champion へ
+組み込まれる(拡張 registry は進化で使える)。
+
 ## HALCON ~2313 の実装可能性(章別内訳, honest)
 - **アルゴリズム系 808**(Filters/Morphology/Regions/Segmentation/XLD/Image/Transformations/
   Metrology/Inspection…)= imgevolve の対象。cv2/skimage/scipy backend wrap で大規模実装可。
