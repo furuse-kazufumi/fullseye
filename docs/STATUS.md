@@ -60,8 +60,15 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   reduce_domain/overpaint_region/convol_image 等)を **17 op 本物実装**(全機能ゲート通過)。
 
 **★honest 被覆(実測, `honest_summary.py` → `docs/HALCON_PARITY.md`)**:
-- **262 / 2313 distinct real HALCON op を genuine 実装(11.3%)** = 進化 registry 245(color 12 含む)+ n-ary 17(disjoint)。
-- registry ops 385(core 67 + backend 86 + **auto 220 + color 12**)。auto/color/n-ary は **全て機能ゲート通過**。
+- **269 / 2313 distinct real HALCON op を genuine 実装(11.6%)** = 進化 registry 252(color 12 含む)+ n-ary 17(disjoint)。
+- registry ops 392(core 67 + backend 86 + **auto 227 + color 12**)。auto/color/n-ary は **全て機能ゲート通過**。
+- v11f 増分 = Hough 変換(hough_line_trans/hough_circle_trans=accumulator図)+ subpixel crossings→contour
+  (threshold_sub_pix/zero_crossing_sub_pix)+ closest_point_transform(補集合 EDT)+ junctions_skeleton +
+  get_region_thickness。79→269 = **3.4倍**。
+- **★map-to-shape 方式は実質出し切り**(v11→v11f 6ラウンド + fan-out 2回)。残 ~330 未被覆は
+  (a) 専有/学習モデル(分類器・DL・OCR・Calibration・pose)(b) 多入力/n-ary(primitive間 distance・intersection・
+  mosaic・union contours・compose)(c) 座標/tuple plumbing(getter/test/query)(d) ごく特殊な shape 要 =
+  **新 capability か本質的 scope 外**。更なる breadth より **codegen/difftest による parity 実証(depth)** が本筋。
 - **dangling(偽名)= 0**(fail-closed)。回帰スモーク 600〜800/同(image起点 decode+run クラッシュ0、color 到達も全 OK)。
 - 開始(v10)79 → **245(registry)/ 262(総capability)= 3.3倍**。数値は memory 推測でなく実測。
 - v11e 増分 = fan-out 第2ラウンド(拡張語彙で残精査、genuine 5: add_noise_distribution/polar_trans_region_inv/
