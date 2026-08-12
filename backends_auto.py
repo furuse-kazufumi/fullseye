@@ -586,6 +586,15 @@ def _sh_segment(p):
             for pts in regs:
                 out[pts[:, 1], pts[:, 0]] = 1.0
             return skseg.find_boundaries(out > 0.5).astype(np.float64) if _HAS_SK else out
+        if kind == "zero_crossing":                  # Laplacian sign-changes (zero_crossing)
+            lap = ndimage.gaussian_laplace(x, 0.5 + 2.0 * a)
+            s = np.sign(lap)
+            zc = np.zeros_like(x, bool)
+            zc[:-1, :] |= np.abs(np.diff(s, axis=0)) > 0
+            zc[:, :-1] |= np.abs(np.diff(s, axis=1)) > 0
+            return zc.astype(np.float64)
+        if kind == "local_min":                      # regional minima (local_min)
+            return ((x <= ndimage.minimum_filter(x, _k(a))) & (x < (0.7 - 0.4 * b))).astype(np.float64)
         raise ValueError(kind)
     return fn
 
