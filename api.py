@@ -39,14 +39,21 @@ if _HERE not in sys.path:
 import ops as _ops  # noqa: E402  (the engine registry; imports its backends on load)
 import stereo  # noqa: E402  (numpy+scipy depth building blocks)
 import terrain  # noqa: E402  (elevation map / traversability)
+import imgio  # noqa: E402  (coercion / colormap visualisation / export)
 from stereo import disparity_map, depth_from_disparity, reproject_to_points  # noqa: E402,F401
 from terrain import elevation_map, traversability, foothold_score, fill_gaps  # noqa: E402,F401
+from imgio import (  # noqa: E402,F401
+    to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
+    colorize_labels, overlay_mask, save, load, save_ply,
+)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
     "categories", "read_image", "write_image", "RT", "REGISTRY", "version",
     "stereo", "disparity_map", "depth_from_disparity", "reproject_to_points",
     "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
+    "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
+    "colorize_disparity", "colorize_labels", "overlay_mask", "save", "load", "save_ply",
 ]
 
 __version__ = "0.1.0"
