@@ -552,6 +552,13 @@ def _sh_segment(p):
         if kind == "regiongrow":
             seed = x > (0.5 + 0.3 * a)
             return ndimage.binary_dilation(seed, iterations=1 + int(b * 4)).astype(np.float64)
+        if kind == "mser" and _HAS_CV:               # maximally stable extremal regions (segment_image_mser)
+            mser = cv2.MSER_create(delta=int(3 + 8 * a))
+            regs, _ = mser.detectRegions(_u8(x))
+            out = np.zeros_like(x, np.float64)
+            for pts in regs:
+                out[pts[:, 1], pts[:, 0]] = 1.0
+            return skseg.find_boundaries(out > 0.5).astype(np.float64) if _HAS_SK else out
         raise ValueError(kind)
     return fn
 
