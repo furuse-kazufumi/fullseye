@@ -130,19 +130,19 @@ def _range_rect(t, a, b, dev):
                    + F.max_pool2d(-t, k, stride=1, padding=k // 2))
 
 
-# accel op name -> (fn, registry halcon name it reproduces)
+# accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
-    "gauss_filter": (_gaussian, "gauss_filter"),
-    "mean_image": (_mean, "mean_image"),
-    "sobel_amp": (_sobel, "sobel_amp"),
-    "laplace": (_laplace, "laplace"),
-    "gamma_image": (_gamma, "gamma_image"),
-    "invert_image": (_invert, "invert_image"),
-    "scale_image": (_scale, "scale_image"),
-    "threshold": (_threshold, "threshold"),
-    "gray_erosion_rect": (_erode_rect, "gray_erosion_rect"),
-    "gray_dilation_rect": (_dilate_rect, "gray_dilation_rect"),
-    "gray_range_rect": (_range_rect, "gray_range_rect"),
+    "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
+    "mean_image": (_mean, "mean_box", "mean_image"),
+    "sobel_amp": (_sobel, "sobel_mag", "sobel_amp"),
+    "laplace": (_laplace, "laplace", "laplace"),
+    "gamma_image": (_gamma, "gamma", "pow_image"),
+    "invert_image": (_invert, "invert", "invert_image"),
+    "scale_image": (_scale, "scale_clip", "scale_image"),
+    "threshold": (_threshold, "threshold", "threshold"),
+    "gray_erosion_rect": (_erode_rect, "min_filter", "gray_erosion_rect"),
+    "gray_dilation_rect": (_dilate_rect, "max_filter", "gray_dilation_rect"),
+    "gray_range_rect": (_range_rect, "morph_grad", "gray_range_rect"),
 }
 
 
