@@ -55,11 +55,18 @@ def _run(op, v):
 def _diff(a, b, out_sort):
     if a is None or b is None:
         return None
+    if out_sort == "contour":                    # compare contour counts (normalised)
+        if isinstance(a, dict) and isinstance(b, dict):
+            na, nb = len(a.get("cs", [])), len(b.get("cs", []))
+            return abs(na - nb) / max(na, nb, 1)
+        return None
     if out_sort == "feature":
         try:
             return abs(float(np.asarray(a).reshape(-1)[0]) - float(np.asarray(b).reshape(-1)[0]))
         except Exception:
             return None
+    if not (isinstance(a, np.ndarray) and isinstance(b, np.ndarray)):
+        return None
     a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
     if a.shape != b.shape or a.ndim != 2:
         return None
