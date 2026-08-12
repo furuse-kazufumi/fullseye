@@ -149,7 +149,7 @@ def _dyn_threshold(v, a, b):
 def _reg_erode(v, a, b): return ndimage.binary_erosion(_bin(v), iterations=_it(a)).astype(np.float64)
 def _reg_dilate(v, a, b): return ndimage.binary_dilation(_bin(v), iterations=_it(a)).astype(np.float64)
 def _reg_open(v, a, b): return ndimage.binary_opening(_bin(v), iterations=_it(a)).astype(np.float64)
-def _reg_close(v, a, b): return ndimage.binary_closing(_bin(v), iterations=_it(a)).astype(np.float64)
+def _reg_close(v, a, b): return ndimage.binary_closing(_bin(v), iterations=_it(a), border_value=1).astype(np.float64)
 def _fill_holes(v, a, b): return ndimage.binary_fill_holes(_bin(v)).astype(np.float64)
 
 
