@@ -6,6 +6,14 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **v12 (2026-08-12) = production hardening.** 全 521 op をテスト皆無 → 本番品質へ。
+> 監査 = `docs/AUDIT_2026_08_12.md`(execution-verified 81 findings の disposition)+
+> `docs/audit_findings_2026_08_12.json`(生 repro)。テスト = `tests/`(**2255 passing**、
+> `py -3.11 -m pytest tests/ -q`)。**15 バグ修正済**(決定性 polar/sk_medial・NaN・型契約
+> sort-aware `backend_safe`・reg_close border・evolve pop・robust.py champion 永続・閾値逆転)。
+> 進化の北極星は無傷、被覆不変(269/2313)。deferred(意味論変更で champion が変わる=要判断)=
+> 符号付き応答 16op ほか、詳細は AUDIT_2026_08_12.md。利用 skill = `~/.claude/skills/image-processing/`。
+
 ## 差別化(先行研究で確定, 2026-08-01)
 AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)いずれも
 「アルゴリズム発見 × 型付き画像IR × 検証済み多言語codegen × オンデバイス × honest holdout」を
