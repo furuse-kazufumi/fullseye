@@ -695,6 +695,12 @@ def _sh_region_trans(p):
                 nb = ndimage.convolve(sk.astype(int), np.ones((3, 3)), mode="constant") - sk.astype(int)
                 sk = sk & ~(sk & (nb <= 1))
             return sk.astype(np.float64)
+        if kind == "closest_point_transform":        # distance to the nearest region point (EDT of complement)
+            return _norm(ndimage.distance_transform_edt(~m))
+        if kind == "junctions_skeleton":             # skeleton branch points (>=3 neighbours)
+            sk = skmorph.skeletonize(m) if _HAS_SK else m
+            nb = ndimage.convolve(sk.astype(int), np.ones((3, 3)), mode="constant") - sk.astype(int)
+            return (sk & (nb >= 3)).astype(np.float64)
         raise ValueError(kind)
     return fn
 
