@@ -69,4 +69,4 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ]
     except Exception:
         pass
-    return [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in defs]
+    return [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in defs]
