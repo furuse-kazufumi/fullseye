@@ -60,10 +60,16 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   reduce_domain/overpaint_region/convol_image 等)を **17 op 本物実装**(全機能ゲート通過)。
 
 **★honest 被覆(実測, `honest_summary.py` → `docs/HALCON_PARITY.md`)**:
-- **246 / 2313 distinct real HALCON op を genuine 実装(10.6%)** = 進化 registry 229(color 12 含む)+ n-ary 17(disjoint)。
-- registry ops 369(core 67 + backend 86 + **auto 204 + color 12**)。auto/color/n-ary は **全て機能ゲート通過**。
+- **262 / 2313 distinct real HALCON op を genuine 実装(11.3%)** = 進化 registry 245(color 12 含む)+ n-ary 17(disjoint)。
+- registry ops 385(core 67 + backend 86 + **auto 220 + color 12**)。auto/color/n-ary は **全て機能ゲート通過**。
 - **dangling(偽名)= 0**(fail-closed)。回帰スモーク 600〜800/同(image起点 decode+run クラッシュ0、color 到達も全 OK)。
-- 開始(v10)79 → **229(registry)/ 246(総capability)= 2.9〜3.1倍**。数値は memory 推測でなく実測。
+- 開始(v10)79 → **245(registry)/ 262(総capability)= 3.3倍**。数値は memory 推測でなく実測。
+- v11e 増分 = fan-out 第2ラウンド(拡張語彙で残精査、genuine 5: add_noise_distribution/polar_trans_region_inv/
+  contour_point_num_xld/affine_trans_polygon_xld)+ corner 強度図(points_foerstner/points_harris_binomial)+
+  XLD 楕円/モーメント特徴(eccentricity/orientation/elliptic_axis/diameter/rectangularity/moments_xld・shape_trans_xld)+
+  zero_crossing・local_min・pruning。★fan-out 第2は total 5 のみ=**「shape へマップ」方式の genuine 天井が近い**シグナル
+  (残未被覆は Hough/楕円フィット/subpixel点座標/多入力 distance・intersection/mosaic/pose/分類器モデル/run-length 等 =
+  新 sort・新 capability か本質的 scope 外)。
 - v11d 増分(XLD 輪郭群が主): 輪郭特徴 area_center_xld/circularity_xld/compactness_xld/convexity_xld・
   輪郭変換 close_contours_xld/affine_trans_contour_xld/projective_trans_contour_xld/polar_trans_contour_xld・
   region モーメント(moments_region_3rd/_central/_central_invar/_2nd_rel_invar/_3rd_invar)・
