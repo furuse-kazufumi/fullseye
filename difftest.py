@@ -80,15 +80,20 @@ def main() -> int:
 
     # --- Python backend vs IR reference ------------------------------------- #
     gen = _import_gen(wd / f"gen_{a.problem}.py")
-    py_max = 0.0
+    py_max, n_noncomparable = 0.0, 0
     for i in range(len(inp)):
         ref = ops.apply_genome(genome, inp[i])
-        got = np.clip(gen.pipeline(inp[i].astype(np.float64)), 0.0, 1.0)
-        py_max = max(py_max, float(np.max(np.abs(ref - got))))
-    py_pass = py_max < a.tol
+        got = gen.pipeline(inp[i].astype(np.float64))    # RAW — re-clipping here would hide a codegen clip bug
+        d = _maxdiff(ref, got)
+        if np.isnan(d):
+            n_noncomparable += 1
+        else:
+            py_max = max(py_max, d)
+    n_comparable = len(inp) - n_noncomparable
+    py_pass = n_comparable > 0 and py_max < a.tol
 
     result = {"problem": a.problem, "python_max_abs_diff": py_max, "python_pass": py_pass,
-              "tol": a.tol, "c_backend": None}
+              "tol": a.tol, "n_noncomparable_final": n_noncomparable, "c_backend": None}
 
     # --- C backend (compile-gated) ------------------------------------------ #
     cc = shutil.which("gcc") or shutil.which("cc") or shutil.which("clang")
