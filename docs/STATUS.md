@@ -70,6 +70,15 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   mosaic・union contours・compose)(c) 座標/tuple plumbing(getter/test/query)(d) ごく特殊な shape 要 =
   **新 capability か本質的 scope 外**。更なる breadth より **codegen/difftest による parity 実証(depth)** が本筋。
 
+**★処理効率 = GPU-ready バッチバックエンド(`accel.py`/`bench.py`, ユーザー指摘「GPUで効率化も重要」)**:
+計算重い vectorizable op(gauss/mean/sobel/laplace/gamma/scale/invert/threshold/erosion/dilation/range_rect)を
+**torch でバッチ一括処理**する高速経路。`--device cuda` で GPU 実行(device 非依存)。**忠実性**=accel が CPU
+registry を内部で exact 再現(`imgevolve.py accel` で 10/11 interior<5e-3、境界のみ reflect/pool 規約差)。
+**honest ベンチ(CPU 実測, `feedback_benchmark_honest_disclosure`)**: バッチは計算重い op を 1.6〜2.2x 加速
+(range_rect 2.15x/dilation 1.75x/sobel 1.66x/gamma 1.60x)する一方、**自明 pointwise は tensor 変換で損**
+(threshold 0.15x/scale 0.22x/invert 0.25x)、集計 1.31x。真の効き所は GPU(変換コストを大規模並列で償却)=
+本環境 torch-CPU のみゆえ GPU 数値は RTX 5090 で実測。CLI = `imgevolve.py accel|bench [--device cuda]`。
+
 **★codegen/difftest parity 実証(`parity.py` → `docs/PARITY_CROSSBACKEND.md`, ユーザー選択 depth)**:
 HALCON/コンパイラ非依存で今実証できる parity = **クロスバックエンド一致**。独立実装(scipy/cv2/skimage)を
 ≥2 持つ 65 op を holdout 照合: **agree 27**(独立/冗長実装が 0.02 以内一致 = 強い parity 証拠。うち
