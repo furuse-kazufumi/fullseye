@@ -614,9 +614,15 @@ def run_stages(stages: list, img):
 def apply_genome(genome, img):
     """Back-compat: coerce the final value to a 2-D array (feature -> constant image)."""
     v = run_genome(genome, img)
-    if not (isinstance(v, np.ndarray) and v.ndim == 2):
-        return np.full(img.shape, float(np.clip(np.mean(v), 0, 1)), np.float64)
-    return v
+    if isinstance(v, np.ndarray) and v.ndim == 2:
+        return v
+    if isinstance(v, dict):                       # contour -> use the contour count
+        v = float(len(v.get("cs", [])))
+    try:
+        m = float(np.clip(np.mean(np.asarray(v, np.float64)), 0, 1))
+    except Exception:
+        m = 0.0
+    return np.full(img.shape, m, np.float64)
 
 
 def stage(op: str, a: float, b: float) -> Stage:
