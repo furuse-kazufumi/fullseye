@@ -110,7 +110,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("sk_shape_index", "texture", "", IMAGE, IMAGE,
              lambda v, a, b: signed01(np.nan_to_num(feature.shape_index(v, sigma=0.5 + 2.0 * a)))),
             ("sk_hessian_det", "edges", "", IMAGE, IMAGE,
-             lambda v, a, b: norm(feature.hessian_matrix_det(v, sigma=0.5 + 2.5 * a))),
+             lambda v, a, b: signed01(feature.hessian_matrix_det(v, sigma=0.5 + 2.5 * a))),
             ("sk_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
              lambda v, a, b: norm(feature.corner_harris(v, sigma=0.5 + 2.0 * a))),
             ("sk_adjust_log", "gray", "log_image", IMAGE, IMAGE,
