@@ -36,18 +36,20 @@ try:
 except Exception:
     pass
 
-def _make(recipe):
+def _make(recipe, out_sort=None):
     # Vetted, agent-verified one-line recipes over our own libraries. Compiled once;
     # everything lives in `globals` so nested lambdas/comprehensions resolve np/v/a/b.
+    from backend_safe import sanitize
     code = compile(recipe, "<recipe>", "eval")
 
     def fn(v, a, b):
         try:
             g = dict(_NS)
             g.update(v=v, a=float(a), b=float(b))
-            return eval(code, g)
+            out = eval(code, g)
         except Exception:
-            return v
+            out = None
+        return sanitize(out, v, out_sort)
     return fn
 
 
