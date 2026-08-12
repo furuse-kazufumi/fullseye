@@ -118,7 +118,7 @@ def main() -> int:
             cout = np.fromfile(fout, np.float32).reshape(n, sz, sz)
             c_max = 0.0
             for i in range(n):
-                got = np.clip(gen.pipeline(inp[i].astype(np.float64)), 0.0, 1.0)
+                got = np.asarray(gen.pipeline(inp[i].astype(np.float64)), np.float64)
                 c_max = max(c_max, float(np.max(np.abs(got - cout[i]))))
             result["c_backend"] = {"status": "ran", "c_vs_python_max_abs_diff": c_max,
                                    "pass": c_max < 1e-3}  # float32 + kernel rounding tolerance
