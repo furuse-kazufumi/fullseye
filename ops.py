@@ -55,6 +55,14 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+def _signed01(x):
+    """Map a signed response to [0,1] with the zero-crossing at 0.5 (preserves the
+    negative half that a plain _norm→[-1,1] would lose to the pipeline's clip)."""
+    x = np.asarray(x, np.float64)
+    m = float(np.max(np.abs(x))) if x.size else 0.0
+    return np.clip(x / (2 * m) + 0.5, 0, 1) if m > 1e-8 else np.full_like(x, 0.5)
+
+
 def _bin(v):
     return (np.asarray(v) > 0.5)
 
