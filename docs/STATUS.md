@@ -135,9 +135,11 @@ scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen �
   PyPI・fullseye 物理リネームは別途 human-gate(公開時)。
 
 **★進化ループでの他ライブラリ op 実使用 検証(2026-08-12, 全 521-op registry・短予算15-18世代)**:
-- **denoise: champion holdout 24.12 dB > 手作り baseline 22.72 dB(+1.4 dB で上回る!)**。champion=
-  `xsitk_curv_aniso_diff`(SimpleITK)→`sk_area_opening`→`cv_bilateral`→gray_closing/opening→`sk_median_disk`。
-  = **他ライブラリ取り込みが実際に設計を改善**(North Star 実証)。
+- **denoise(★多 seed で honest 訂正, baseline 手作り 22.72 dB)**: seed0=24.12・seed1=24.14(**+1.4 dB で超え**)、
+  seed3=22.22(僅差下)、**seed2=13.99(崩壊=trivial 14.998 未満)**。→ **2/4 seed が baseline 超え・分散大・1 seed 崩壊 =
+  勝ちは seed 依存で robust でない**(`feedback_beat_the_null`/`honest_disclosure`: 単一 seed の勝ちを過大主張しない)。
+  超えた champion は `xsitk_curv_aniso_diff`(SimpleITK)等の他ライブラリ op を選択 = 取り込みが**改善に寄与しうる**
+  (robust 化には長予算・多 seed 選抜・崩壊対策が要)。
 - edge: 0.830 F1(手作り 0.897 に僅差未達・random 0.311 超)、champion=`xcv2_meanshift`・`xcv_detail_enhance`・`sk_enhance_contrast`。
 - binarize: 0.826 IoU(手作り 0.878 未達・random 0.407 超)、champion=`xsp_cspline_smooth`・`xkor_unsharp`(kornia)・`xsitk_minmax_curv_flow`。
 honest: 他ライブラリ op は dead weight でなく全 3 タスクで champion に genuine 選択される。denoise は手作りを超え、
