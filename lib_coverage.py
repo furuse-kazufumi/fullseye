@@ -67,9 +67,25 @@ def _referenced():
     return ref
 
 
+def registry_by_library():
+    """Honest per-library op count from the registry name prefixes."""
+    import ops
+    from collections import Counter
+    pref = {"sk_": "scikit-image", "cv_": "OpenCV", "dl_": "torch", "vol_": "scipy (3-D)",
+            "xsk_": "scikit-image", "xcv_": "OpenCV", "xsk2_": "scikit-image", "xcv2_": "OpenCV",
+            "xsk3_": "scikit-image", "xcv3_": "OpenCV", "xpil_": "Pillow", "xsp_": "scipy",
+            "xmh_": "mahotas", "xwt_": "PyWavelets", "xsitk_": "SimpleITK", "xkor_": "kornia (GPU)"}
+    c = Counter()
+    for op in ops.REGISTRY:
+        hit = next((pref[p] for p in sorted(pref, key=len, reverse=True) if op.name.startswith(p)), None)
+        c[hit or "core (numpy/scipy)"] += 1
+    return c
+
+
 def main() -> int:
     inv = inventory()
     ref = _referenced()
+    by_lib = registry_by_library()
     # normalise skimage refs to bare function names for matching against inventory tails
     sk_inv_tail = {x.split(".")[-1] for x in inv["skimage"]}
     sk_ref_tail = {x.split(".")[-1] for x in ref["skimage"]}
