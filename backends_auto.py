@@ -204,7 +204,7 @@ def _sh_linfilter(p):
             return _norm(np.hypot(ndimage.gaussian_filter(x, s, order=(1, 0)),
                                   ndimage.gaussian_filter(x, s, order=(0, 1))))
         if kind == "laplace_gauss":
-            return _norm(ndimage.gaussian_laplace(x, 0.5 + 2.5 * a))
+            return signed01(ndimage.gaussian_laplace(x, 0.5 + 2.5 * a))
         if kind == "dog":
             return _norm(np.abs(ndimage.gaussian_filter(x, 0.5 + 2 * a)
                                 - ndimage.gaussian_filter(x, 1 + 4 * b)))
