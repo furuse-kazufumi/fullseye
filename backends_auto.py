@@ -511,12 +511,22 @@ def _sh_geom(p):
             return np.clip(ndimage.affine_transform(x, M, offset=c - M @ c, mode="reflect"), 0, 1)
         if kind == "polar" and _HAS_CV:
             h, w = x.shape
-            return cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
-                                 min(h, w) / 2, cv2.WARP_POLAR_LINEAR).astype(np.float64)
+            # Zero-init the destination: cv2.warpPolar never writes pixels whose
+            # source maps outside the image, so a fresh buffer would leak stale
+            # memory (nondeterministic + out of range). Pre-zeroing makes the
+            # unmapped pixels a deterministic 0.
+            dst = np.zeros((h, w), np.float32)
+            cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2),
+                          min(h, w) / 2, cv2.WARP_POLAR_LINEAR, dst)
+            return np.clip(dst.astype(np.float64), 0, 1)
         if kind == "polar_inv" and _HAS_CV:          # inverse polar->Cartesian (polar_trans_image_inv)
             h, w = x.shape
-            return np.clip(cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), min(h, w) / 2,
-                                         cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP).astype(np.float64), 0, 1)
+            # Cartesian corners fall outside the polar disc and are never written;
+            # zero-init for determinism (see the forward branch above).
+            dst = np.zeros((h, w), np.float32)
+            cv2.warpPolar(x.astype(np.float32), (w, h), (w / 2, h / 2), min(h, w) / 2,
+                          cv2.WARP_POLAR_LINEAR + cv2.WARP_INVERSE_MAP, dst)
+            return np.clip(dst.astype(np.float64), 0, 1)
         if kind == "projective" and _HAS_CV:         # perspective warp (projective_trans_image)
             h, w = x.shape
             d = 0.06 + 0.12 * a
