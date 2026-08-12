@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-413 operators across 22 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+453 operators across 22 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -417,11 +417,51 @@
 | `xcv_grabcut` | image->region | segmentation |  | cv2.grabcut | - | - |
 | `xcv_watershed_markers` | image->region | segmentation | watersheds | cv2.watershed_markers | - | - |
 | `xcv_orb_count` | image->feature | features |  | cv2.orb_count | - | - |
+| `xpil_emboss` | image | artistic |  | - | - | - |
+| `xpil_contour` | image | edges |  | - | - | - |
+| `xpil_find_edges` | image | edges |  | - | - | - |
+| `xpil_edge_enhance` | image | gray |  | - | - | - |
+| `xpil_smooth_more` | image | smoothing |  | - | - | - |
+| `xpil_detail` | image | gray |  | - | - | - |
+| `xpil_mode_filter` | image | rank |  | - | - | - |
+| `xpil_unsharp_mask` | image | smoothing |  | - | - | - |
+| `xpil_posterize` | image | gray |  | - | - | - |
+| `xpil_solarize` | image | gray |  | - | - | - |
+| `xpil_autocontrast` | image | gray |  | - | - | - |
+| `xpil_offset` | image | geometry |  | - | - | - |
+| `xpil_contrast` | image | gray |  | - | - | - |
+| `xsp_wiener` | image | smoothing |  | - | - | - |
+| `xsp_savgol` | image | smoothing |  | - | - | - |
+| `xsp_hilbert_env` | image | texture |  | - | - | - |
+| `xsp_dct` | image | frequency |  | - | - | - |
+| `xsp_dct_lowpass` | image | frequency |  | - | - | - |
+| `xsp_dct_denoise` | image | smoothing |  | - | - | - |
+| `xsp_cspline_smooth` | image | smoothing |  | - | - | - |
+| `xsp_detrend_flatten` | image | gray |  | - | - | - |
+| `xsp_morph_laplace` | image | edges |  | - | - | - |
+| `xsp_chamfer_dist` | region->image | region |  | - | - | - |
+| `xsp_gauss_grad_mag` | image | edges |  | - | - | - |
+| `xsk2_multiotsu` | image | segmentation |  | - | skimage.multiotsu | - |
+| `xsk2_rank_geomean` | image | rank |  | - | skimage.rank_geomean | - |
+| `xsk2_reconstruction` | image | morphology |  | - | skimage.reconstruction | - |
+| `xsk2_h_maxima` | image->region | segmentation |  | - | skimage.h_maxima | - |
+| `xsk2_diameter_opening` | image | morphology |  | - | skimage.diameter_opening | - |
+| `xsk2_isotropic_close` | region | region |  | - | skimage.isotropic_close | - |
+| `xsk2_hog` | image | texture |  | - | skimage.hog | - |
+| `xsk2_corner_kr` | image | edges |  | - | skimage.corner_kr | - |
+| `xsk2_radon` | image | frequency |  | - | skimage.radon | - |
+| `xsk2_inv_gauss_grad` | image | edges |  | - | skimage.inv_gauss_grad | - |
+| `xsk2_wiener` | image | restoration |  | - | skimage.wiener | - |
+| `xcv2_warp_logpolar` | image | geometry |  | cv2.warp_logpolar | - | - |
+| `xcv2_meanshift` | image | segmentation |  | cv2.meanshift | - | - |
+| `xcv2_hitmiss` | region | region |  | cv2.hitmiss | - | - |
+| `xcv2_lap_var` | image->feature | features |  | cv2.lap_var | - | - |
+| `xcv2_fast_count` | image->feature | features |  | cv2.fast_count | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 299/413
-- skimage: 356/413
-- matlab: 262/413
+- opencv: 304/453
+- skimage: 367/453
+- matlab: 262/453
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

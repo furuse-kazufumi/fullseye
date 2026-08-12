@@ -5,8 +5,8 @@ registry references counted via the cross-library catalog.
 
 | library | referenced by registry | in installed inventory | matched |
 |---|---|---|---|
-| OpenCV (cv2) | 85 | 484 public callables | 44 |
-| scikit-image | 107 | 316 submodule functions | 70 |
+| OpenCV (cv2) | 90 | 484 public callables | 44 |
+| scikit-image | 118 | 316 submodule functions | 76 |
 
 ## Honest reading
 - Inventories are ALL public callables (cv2 ~484, skimage ~316); most are not
