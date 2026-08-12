@@ -18,13 +18,15 @@ import numpy as np
 from scipy import ndimage
 
 
-def _safe(fn):
+def _safe(fn, out_sort=None):
+    from backend_safe import sanitize
+
     def w(v, a, b):
         try:
             out = fn(v, a, b)
-            return out if out is not None else v
         except Exception:
-            return v
+            out = None
+        return sanitize(out, v, out_sort)
     return w
 
 
