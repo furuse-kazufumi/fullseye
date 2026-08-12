@@ -129,10 +129,20 @@ def cmd_has(a):
 
 
 def _find_op(ops, key):
+    # Exact op name wins; only then fall back to the HALCON alias. Several ops
+    # share a halcon alias (e.g. remove_small carries halcon='select_shape'),
+    # so first-match-wins on (name OR halcon) could bind `apply <name>` to an
+    # unrelated op. Among halcon matches, prefer the canonical op (name==halcon).
     for o in ops.REGISTRY:
-        if o.name == key or o.halcon == key:
+        if o.name == key:
             return o
-    return None
+    halcon_hits = [o for o in ops.REGISTRY if o.halcon == key]
+    if not halcon_hits:
+        return None
+    for o in halcon_hits:
+        if o.name == o.halcon:
+            return o
+    return halcon_hits[0]
 
 
 def cmd_apply(a):
