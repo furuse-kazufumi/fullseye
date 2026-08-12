@@ -350,6 +350,33 @@ def _sh_edge(p):
     return fn
 
 
+# ---- image -> image : corner strength (Harris/Foerstner/Shi-Tomasi) --------- #
+def _sh_corner(p):
+    kind = p["kind"]
+
+    def fn(v, a, b):
+        x = np.asarray(v, np.float64)
+        s = 0.5 + 2.0 * a
+        if kind == "harris" and _HAS_SK:
+            return _norm(skfeat.corner_harris(x, sigma=s))
+        if kind == "harris_binomial":                # Harris on a binomially pre-smoothed image
+            xb = ndimage.gaussian_filter(x, 0.5 + 1.5 * b)
+            if _HAS_SK:
+                return _norm(skfeat.corner_harris(xb, sigma=s))
+            gx, gy = ndimage.sobel(xb, 1), ndimage.sobel(xb, 0)
+            axx = ndimage.gaussian_filter(gx * gx, s)
+            ayy = ndimage.gaussian_filter(gy * gy, s)
+            axy = ndimage.gaussian_filter(gx * gy, s)
+            return _norm(axx * ayy - axy * axy - 0.04 * (axx + ayy) ** 2)
+        if kind == "foerstner" and _HAS_SK:
+            w, q = skfeat.corner_foerstner(x, sigma=s)
+            return _norm(np.nan_to_num(w) * np.nan_to_num(q))
+        if kind == "shi_tomasi" and _HAS_SK:
+            return _norm(skfeat.corner_shi_tomasi(x, sigma=s))
+        raise ValueError(kind)
+    return fn
+
+
 # ---- image -> image : FFT / frequency domain ------------------------------- #
 def _sh_freq(p):
     kind = p["kind"]
