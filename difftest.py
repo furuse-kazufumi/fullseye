@@ -132,7 +132,9 @@ def main() -> int:
     cb = result["c_backend"]
     print(f"[difftest:{a.problem}] python diff {py_max:.2e} (pass={py_pass}) | "
           f"C: {cb.get('status')}" + (f" reason={cb.get('reason')}" if cb.get("reason") else ""))
-    return 0 if py_pass else 1
+    # Fail the gate if the C backend actually ran and disagreed (previously ignored).
+    c_ok = cb.get("status") != "ran" or bool(cb.get("pass"))
+    return 0 if (py_pass and c_ok) else 1
 
 
 if __name__ == "__main__":
