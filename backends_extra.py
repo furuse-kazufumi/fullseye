@@ -100,7 +100,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: np.clip(restoration.richardson_lucy(
                  np.clip(v, 0, 1), np.ones((3, 3)) / 9, num_iter=2 + int(a * 15)), 0, 1)),
             ("xsk_unwrap_phase", "restoration", "", IMAGE, IMAGE,
-             lambda v, a, b: _norm(restoration.unwrap_phase(
+             lambda v, a, b: signed01(restoration.unwrap_phase(
                  (np.clip(v, 0, 1) - 0.5) * 2 * np.pi))),
             ("xsk_struct_coherence", "texture", "", IMAGE, IMAGE, _struct_coh),
             ("xsk_hessian_eig", "edges", "", IMAGE, IMAGE, _hessian_eig),
