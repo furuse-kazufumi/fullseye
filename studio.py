@@ -50,7 +50,6 @@ class PipelineModel:
 
     def set_knobs(self, i, a=None, b=None):
         if a is not None:
-            self.stages[i][0], self.stages[i][1] = self.stages[i][0], float(a)
             self.stages[i][1] = float(a)
         if b is not None:
             self.stages[i][2] = float(b)

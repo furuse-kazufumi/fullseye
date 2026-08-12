@@ -1,0 +1,57 @@
+"""Fullseye Studio: headless PipelineModel logic + an offscreen Qt smoke test."""
+import os
+
+import numpy as np
+import pytest
+
+import studio
+
+
+def test_pipeline_model_build_and_evaluate():
+    m = studio.PipelineModel(studio.demo_image(64))
+    m.add_stage("gaussian", 0.4, 0.5)
+    m.add_stage("sobel_amp", 0.5, 0.5)
+    m.add_stage("otsu", 0.4, 0.5)
+    assert len(m.stages) == 3
+    # intermediate result after stage 0 differs from the final (region) result
+    mid = m.result_upto(0)
+    out = m.output()
+    assert mid.shape == (64, 64)
+    assert set(np.unique(out)).issubset({0.0, 1.0})           # otsu -> binary
+
+
+def test_pipeline_model_edit_and_export():
+    m = studio.PipelineModel(studio.demo_image(48))
+    i = m.add_stage("gaussian")
+    m.add_stage("otsu")
+    m.set_knobs(i, a=0.7, b=0.3)
+    assert m.stages[i] == ["gaussian", 0.7, 0.3]
+    m.move_stage(0, 1)
+    assert m.ops_string() == "otsu,gaussian"
+    m.remove_stage(0)
+    assert m.ops_string() == "gaussian"
+    py = m.export_python()
+    assert "fullseye.run_pipeline" in py and "gaussian" in py
+
+
+def test_add_unknown_op_raises():
+    m = studio.PipelineModel(studio.demo_image(32))
+    with pytest.raises(KeyError):
+        m.add_stage("no_such_op")
+
+
+def test_result_upto_negative_is_raw_image():
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.add_stage("invert")
+    assert np.allclose(m.result_upto(-1), m.image)            # before any stage
+
+
+def test_qt_window_builds_offscreen():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(64)))
+    model.add_stage("gaussian")
+    win, model2 = studio.build_window()      # default demo image
+    assert win is not None and model2 is not None
