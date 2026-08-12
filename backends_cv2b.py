@@ -61,4 +61,4 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("xcv2_lap_var", "features", "", IMAGE, FEATURE, _lap_var),
         ("xcv2_fast_count", "features", "", IMAGE, FEATURE, _fast_count),
     ]
-    return [Op(n, c, h, i, o, _safe(f)) for (n, c, h, i, o, f) in defs]
+    return [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in defs]
