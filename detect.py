@@ -83,7 +83,7 @@ def segment_objects(image, threshold="otsu", invert: bool = False,
                 eccentricity=float(p.eccentricity),
                 extent=float(p.extent), solidity=float(p.solidity),
                 orientation=float(p.orientation),
-                equiv_diameter=float(p.equivalent_diameter),
+                equiv_diameter=equiv_d,
                 hu=np.asarray(p.moments_hu, np.float64),
                 mask=(lab == p.label),
             ))
