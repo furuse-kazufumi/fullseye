@@ -831,7 +831,42 @@ def _sh_xld(p):
                     ha = float(cv2.contourArea(hull))
                     return np.float64(min(1.0, area / max(ha, 1e-6)))
                 return np.float64(1.0)
+        # ---- contour -> feature (ellipse fit / diameter / moments; cv2) ----
+        if kind in ("eccentricity", "orientation", "elliptic_axis", "diameter",
+                    "rectangularity", "moment_xld") and _HAS_CV:
+            cs = [c for c in cv["cs"] if len(c) >= 5]
+            if not cs:
+                return np.float64(0.0)
+            c = max(cs, key=len)
+            pts = np.stack([c[:, 1], c[:, 0]], 1).astype(np.float32)   # (x, y)
+            if kind == "diameter":
+                (_, _), r = cv2.minEnclosingCircle(pts)
+                return np.float64(min(1.0, 2 * r / max(cv["shape"])))
+            if kind == "rectangularity":
+                ar = abs(float(cv2.contourArea(pts)))
+                (_, (w, h), _) = cv2.minAreaRect(pts)
+                return np.float64(min(1.0, ar / max(w * h, 1.0)))
+            if kind == "moment_xld":
+                mm = cv2.moments(pts)
+                a2 = mm["m00"] or 1.0
+                return np.float64(min(1.0, (mm["mu20"] + mm["mu02"]) / (a2 * a2 + 1e-6)))
+            (_, _), (d1, d2), ang = cv2.fitEllipse(pts)
+            major, minor = max(d1, d2), max(min(d1, d2), 1e-6)
+            if kind == "eccentricity":
+                return np.float64(np.sqrt(max(0.0, 1 - (minor / major) ** 2)))
+            if kind == "orientation":
+                return np.float64((ang % 180) / 180.0)
+            return np.float64(minor / major)                          # elliptic_axis
         # ---- contour -> contour (transforms / closing) ----
+        if kind == "convex" and _HAS_CV:
+            out = []
+            for c in cv["cs"]:
+                if len(c) >= 3:
+                    hull = cv2.convexHull(np.stack([c[:, 1], c[:, 0]], 1).astype(np.float32))
+                    out.append(np.stack([hull[:, 0, 1], hull[:, 0, 0]], 1).astype(np.float64))
+                else:
+                    out.append(c)
+            return {"shape": cv["shape"], "cs": out}
         if kind in ("close", "affine", "projective", "polar"):
             out = []
             H, W = cv["shape"]
