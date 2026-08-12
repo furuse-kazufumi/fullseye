@@ -1,62 +1,110 @@
-# imgevolve (working name)
+# Fullseye
 
-画像処理アルゴリズムを**設計する** AI の PoC。型付き画像 op-DSL を進化させ、
-holdout で正直にゲートする。raptor work-graph 上で自律実行(S0+S1)。
+**An in-house, numpy-native image-processing operator library and evolutionary
+pipeline designer.** Every operator is reimplemented from published algorithms and
+open-source libraries (OpenCV, scikit-image, SciPy, Pillow, PyWavelets, SimpleITK,
+mahotas, kornia/torch), given a single typed interface, and contract-tested
+(finite, deterministic, sort-typed). On top of the operators sits an evolutionary
+search that *designs* pipelines and gates them honestly on a held-out set.
 
-設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
+Two ways to use it: **apply known operators** (most of the time), or **evolve a new
+pipeline** when no single operator solves the task. It is `pip`-installable and works
+on plain numpy arrays, so other projects can drop it into a vision pipeline directly.
 
-- `ops.py` 型付き op-DSL + genome + dataset + PSNR
-- `baseline.py` S0 honest floor (hand-built + random search)
-- `evolve.py` S1 memetic 進化 (train fitness / holdout はトラックのみ)
-- `report.py` S1 honest gate (champion vs baseline, 汎化 gap, overfit flag)
-- `specs/*.json` CommandWorker specs
+## Install
 
-公開名 = **fullseye**(2026-08-01 確定)。物理リネームは公開時まで保留。
-
-## HALCON パリティ（同じことが「できる」）
-
-目標は名前だけの被覆でなく、各 op が **HALCON と同じ処理を実際に行える**こと。
-現状 **229 / 2313 の実 HALCON op を genuine 実装**（`docs/HALCON_PARITY.md`、実測）。
-
-| 生成物 | 役割 |
-|---|---|
-| `graph.py` → `data/halcon_graph.json` | operator 知識グラフ（2313 ノード） |
-| `backends_auto.py` | 固定 shape 語彙 + データ駆動 SPECS（偽名は fail-closed ドロップ） |
-| `backends_color.py` | multichannel `color` sort（`cfa_to_rgb` bridge で進化から到達） |
-| `backends_extra.py` | 他ライブラリ distinctive op（inpaint/blob/ORB/random_walker/grabCut/NPR…、`xsk_`/`xcv_`） |
-| `imgops_nary.py` | 多入力 capability tier（画像演算・領域集合演算） |
-| `lib_coverage.py` | 多ライブラリ被覆（cv2/skimage を introspect、`docs/LIB_COVERAGE.md`） |
-| `verify_auto.py` / 各 `verify()` | 機能ゲート（例外なく宣言 sort を返す op のみ計上） |
-| `honest_summary.py` → `docs/HALCON_PARITY.md` | 3 tier を1つの正直な数値に |
-
-## 使い方（`imgevolve.py` CLI — 将来のエージェントも利用可）
-
-```powershell
-py -3.11 imgevolve.py ops --search edge      # 実装済み op を検索
-py -3.11 imgevolve.py has gauss_filter       # ある HALCON op は実装済みか + 呼び方
-py -3.11 imgevolve.py apply gauss_filter in.png out.png --a 0.6
-py -3.11 imgevolve.py pipeline in.png out.png --ops "gauss_filter,sobel_amp,otsu"
-py -3.11 imgevolve.py coverage               # 正直な被覆数
-py -3.11 imgevolve.py index                  # 機械可読 docs/OP_INDEX.json を再生成
+```bash
+pip install -e .            # numpy + scipy core (≈75 operators)
+pip install -e ".[all]"     # + opencv, scikit-image, Pillow, PyWavelets, SimpleITK, kornia/torch
+# or per-backend: .[opencv] .[skimage] .[pil] .[wavelets] .[gpu] .[extra]
 ```
 
-`docs/OP_INDEX.json` = 全 op（name / halcon / in→out sort / tier）の機械可読索引。
-新しい op を1つ足すだけで進化・codegen・catalog・この索引が自動追従する設計。
+Only numpy and scipy are required; every other backend is optional and only its own
+operators are affected when it is absent (graceful degradation). GPU is opt-in.
 
-## 処理効率（GPU-ready バッチバックエンド）
+## Quickstart (programmatic API)
 
-CPU の registry は 1 枚ずつ scipy/OpenCV で処理する。スループット重視（および GPU 活用）向けに、
-計算が重い vectorizable な op は **torch でバッチ（N,1,H,W）を一括処理**する高速経路 (`accel.py`) を持つ。
-`--device cuda` で GPU 実行。
+```python
+import fullseye, numpy as np
 
-```powershell
-py -3.11 imgevolve.py accel                 # accel op が CPU registry と一致するか検証（10/11 内部 exact）
-py -3.11 imgevolve.py bench --n 400 --size 256   # スループット: CPU baseline vs バッチ
-py -3.11 imgevolve.py bench --device cuda   # ★RTX 5090 等の CUDA 機で GPU スループット実測
+frame = np.asarray(img, np.float64)                 # gray H×W in [0,1] (H×W×3 for color)
+edges = fullseye.apply(frame, "sobel_amp")          # numpy in, numpy out
+seg   = fullseye.apply(frame, "otsu")               # image → region (binary {0,1})
+n     = fullseye.apply(seg,   "count_obj")          # region → feature → a float
+out   = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])          # shared knobs
+out   = fullseye.run_pipeline(frame, [("gaussian",0.3,0.5), ("otsu",0.4,0.5)])   # per-stage knobs
+fullseye.list_ops(sort="region"); fullseye.op_names()   # discover
 ```
 
-**honest（`feedback_benchmark_honest_disclosure`）**: CPU 実測ではバッチは**計算重い op を加速**
-（morphology/sobel/gamma で 1.6〜2.2x）する一方、**自明な pointwise（threshold/scale/invert）は tensor 変換
-オーバーヘッドで損**（〜0.2x）。ブランケットな高速化は主張しない。真の効き所は GPU で、変換コストが
-大規模並列に償却される（この環境は torch-CPU のみ＝GPU 数値は CUDA 機で実測）。accel op は CPU registry を
-内部で忠実再現（境界のみ reflect/pool 規約差）＝ faithful な fast path。
+`apply(image, name, a=0.5, b=0.5)` and `run_pipeline` take an operator name and two
+knobs in `[0, 1]`. Feature operators return a Python float; contour operators a dict.
+
+## Operator library
+
+Roughly **520 typed operators** across ten backends, covering denoising, smoothing,
+sharpening, thresholding/segmentation, morphology, edge/corner/blob detection,
+distance transforms, color-space conversion, texture/shape features, contours, and
+volume (3-D) ops. Sorts: `image` (gray `[0,1]`), `color` (RGB), `region` (binary),
+`feature` (scalar), `contour`, `volume`.
+
+```bash
+py -3.11 imgevolve.py ops --search edge      # search implemented operators
+py -3.11 imgevolve.py apply gaussian in.png out.png --a 0.6
+py -3.11 imgevolve.py pipeline in.png out.png --ops "gaussian,sobel_amp,otsu"
+py -3.11 imgevolve.py coverage               # honest coverage numbers
+```
+
+Adding one operator makes evolution, code generation, the catalog, and the
+machine-readable index (`docs/OP_INDEX.json`) follow automatically.
+
+## Perception stack (robotics-friendly)
+
+Building blocks that turn frames into geometry and objects — the pieces a robot
+needs to perceive, measure, and act:
+
+```python
+import fullseye as fs
+disp  = fs.disparity_map(left, right, max_disp=16)         # dense stereo (block matching)
+Z     = fs.depth_from_disparity(disp, focal=f, baseline=B) # Z = f·B/d
+pts   = fs.reproject_to_points(Z, fx=f, fy=f)              # point cloud (N,3)
+grid,_= fs.elevation_map(world_pts, cell=0.05)            # 2.5-D terrain heightmap
+ok    = fs.traversability(grid, cell=0.05, max_step=0.1)  # foothold / obstacle mask
+objs  = fs.segment_objects(frame, threshold="otsu")       # per-object records (geometry + descriptors)
+rgb   = fs.colorize_depth(Z); fs.save_ply("cloud.ply", pts)   # visualise / export (no matplotlib)
+```
+
+`fs.to_float01(x)` coerces uint8/uint16/bool/PIL/path inputs to float64 `[0,1]`.
+
+## Evolutionary pipeline design
+
+When the task is "find an algorithm that maximizes metric *M* on my data", evolve one.
+Fitness is measured on the **training** split only; a **held-out** split is tracked but
+**never selected on**, so the reported generalization is honest rather than a fit to the
+evaluation set.
+
+```bash
+py -3.11 baseline.py --problem denoise --workdir out/mine     # honest floor first
+py -3.11 evolve.py   --problem denoise --workdir out/mine --gens 40 --pop 24
+py -3.11 robust.py   --problem denoise --workdir out/mine --seeds 5   # best-of-N, train-selected
+```
+
+## Performance (optional GPU batch backend)
+
+The default per-image path uses scipy/OpenCV. A batched `torch` fast path (`accel.py`,
+`--device cuda`) accelerates the compute-heavy vectorizable operators. Honest note: on
+CPU the batch path speeds up heavy operators (≈1.6–2.2×) but *loses* on trivial
+pointwise ops (tensor-conversion overhead); the real win is on GPU, where that overhead
+amortizes over large parallelism.
+
+## Design principles
+
+- **Reimplemented from public knowledge** — published algorithms and open-source
+  libraries, unified behind one typed interface; not derived from any proprietary product.
+- **Honest by construction** — held-out data is never used for selection; coverage and
+  benchmark numbers are measured, not asserted; limitations are disclosed, not hidden.
+- **Optional heavy dependencies** — a numpy+scipy core always works; richer backends and
+  GPU are opt-in.
+
+## License
+
+Apache-2.0.
