@@ -84,7 +84,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("sk_skeleton", "region", "skeleton", REGION, REGION,
              lambda v, a, b: morphology.skeletonize(binm(v)).astype(np.float64)),
             ("sk_medial", "region", "skeleton", REGION, REGION,
-             lambda v, a, b: morphology.medial_axis(binm(v)).astype(np.float64)),
+             lambda v, a, b: morphology.medial_axis(binm(v), rng=0).astype(np.float64)),
             ("sk_convex", "region", "shape_trans", REGION, REGION,
              lambda v, a, b: morphology.convex_hull_image(binm(v)).astype(np.float64)),
             ("sk_thin", "region", "thinning", REGION, REGION,
