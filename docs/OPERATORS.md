@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-392 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+413 operators across 22 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -396,11 +396,32 @@
 | `edges_color_sub_pix` | color->contour | contour | edges_color_sub_pix | cvtColor/mixChannels | color | rgb2*/imsplit |
 | `lines_color` | color->contour | contour | lines_color | cvtColor/mixChannels | color | rgb2*/imsplit |
 | `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `xsk_inpaint` | image | restoration |  | - | skimage.inpaint | - |
+| `xsk_richardson_lucy` | image | restoration |  | - | skimage.richardson_lucy | - |
+| `xsk_unwrap_phase` | image | restoration |  | - | skimage.unwrap_phase | - |
+| `xsk_struct_coherence` | image | texture |  | - | skimage.struct_coherence | - |
+| `xsk_hessian_eig` | image | edges |  | - | skimage.hessian_eig | - |
+| `xsk_random_walker` | image->region | segmentation |  | - | skimage.random_walker | - |
+| `xsk_flood` | image->region | segmentation |  | - | skimage.flood | - |
+| `xsk_blob_log` | image->feature | features |  | - | skimage.blob_log | - |
+| `xsk_blob_dog` | image->feature | features |  | - | skimage.blob_dog | - |
+| `xsk_blob_doh` | image->feature | features |  | - | skimage.blob_doh | - |
+| `xsk_orb_count` | image->feature | features |  | - | skimage.orb_count | - |
+| `xsk_meijering` | image | texture |  | - | skimage.meijering | - |
+| `xsk_sato` | image | texture |  | - | skimage.sato | - |
+| `xcv_stylization` | image | artistic |  | cv2.stylization | - | - |
+| `xcv_pencil_sketch` | image | artistic |  | cv2.pencil_sketch | - | - |
+| `xcv_edge_preserving` | image | smoothing |  | cv2.edge_preserving | - | - |
+| `xcv_detail_enhance` | image | gray |  | cv2.detail_enhance | - | - |
+| `xcv_inpaint` | image | restoration |  | cv2.inpaint | - | - |
+| `xcv_grabcut` | image->region | segmentation |  | cv2.grabcut | - | - |
+| `xcv_watershed_markers` | image->region | segmentation | watersheds | cv2.watershed_markers | - | - |
+| `xcv_orb_count` | image->feature | features |  | cv2.orb_count | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 291/392
-- skimage: 343/392
-- matlab: 262/392
+- opencv: 299/413
+- skimage: 356/413
+- matlab: 262/413
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

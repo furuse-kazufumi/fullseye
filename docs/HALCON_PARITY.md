@@ -10,7 +10,7 @@ functional gate rejects anything that does not return the declared sort.
 - dangling registry `Op.halcon` (fake names): **0** (fail-closed).
 
 ## Evolvable registry (single-image pipeline, coverage-counted)
-- registry ops: 392 ; distinct real HALCON ops covered: **252**
+- registry ops: 413 ; distinct real HALCON ops covered: **252**
 - auto-generated ops passing the functional gate: 227 / 227
 - auto ops counted in coverage but FAILING the gate: 0 (none — honest)
 

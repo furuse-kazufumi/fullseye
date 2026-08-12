@@ -1,9 +1,9 @@
 {
- "n_ops": 409,
+ "n_ops": 430,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 380
+  "registry": 401
  },
  "sorts": [
   "any",
@@ -3331,6 +3331,174 @@
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_detail_enhance",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_edge_preserving",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_grabcut",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_inpaint",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "restoration",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_orb_count",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_pencil_sketch",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "artistic",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_stylization",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "artistic",
+   "tier": "registry"
+  },
+  {
+   "name": "xcv_watershed_markers",
+   "halcon": "watersheds",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_blob_dog",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_blob_doh",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_blob_log",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_flood",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_hessian_eig",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_inpaint",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "restoration",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_meijering",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_orb_count",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_random_walker",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_richardson_lucy",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "restoration",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_sato",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_struct_coherence",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "xsk_unwrap_phase",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "restoration",
    "tier": "registry"
   },
   {
