@@ -50,7 +50,7 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
     holdout_fit = lambda g: prob.score(g, ho)  # noqa: E731
 
     rng = np.random.default_rng(seed)
-    mu = max(2, pop // 4)
+    mu = max(1, min(pop - 1, max(2, pop // 4))) if pop > 1 else 1  # keep >=1 child slot for tiny pops
     popm = rng.random((pop, ops.GENOME_LEN))
     rg = base.get("random", {}).get("genome")
     if rg and len(rg) == ops.GENOME_LEN:
