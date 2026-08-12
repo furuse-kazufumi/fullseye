@@ -90,4 +90,4 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
          lambda v, a, b: segmentation.inverse_gaussian_gradient(np.clip(v, 0, 1), alpha=50 + 150 * a)),
         ("xsk2_wiener", "restoration", IMAGE, IMAGE, _wiener),
     ]
-    return [Op(n, c, "", i, o, _safe(f)) for (n, c, i, o, f) in defs]
+    return [Op(n, c, "", i, o, _safe(f, o)) for (n, c, i, o, f) in defs]
