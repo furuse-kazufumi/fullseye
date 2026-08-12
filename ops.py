@@ -342,7 +342,7 @@ def _corner_response(v, a, b):
     gx = ndimage.sobel(v, 1); gy = ndimage.sobel(v, 0); s = 0.5 + 2.0 * a
     axx = ndimage.gaussian_filter(gx * gx, s); ayy = ndimage.gaussian_filter(gy * gy, s)
     axy = ndimage.gaussian_filter(gx * gy, s)
-    return _norm(axx * ayy - axy * axy - 0.04 * (axx + ayy) ** 2)
+    return _signed01(axx * ayy - axy * axy - 0.04 * (axx + ayy) ** 2)
 
 
 def _adaptive_gauss_thresh(v, a, b):
