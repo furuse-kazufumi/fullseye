@@ -41,6 +41,13 @@ def main() -> int:
     nary = NA.coverage()
     nary_names = set(nary["halcon_names"])
 
+    import backends_color as CL
+    col_cov = CL.coverage()
+    col_ver = CL.verify()
+    col_names = set(col_cov["halcon_names"])
+    col_pass = set(col_ver.get("passing", []))
+    col_fail = [n for n in col_names if n not in col_pass]
+
     # Every registry-covered name is functional: core ops run in the pipeline
     # (regression-tested) and auto ops are those that passed the gate. Flag any
     # registry-covered auto op that did NOT pass (should be none).
