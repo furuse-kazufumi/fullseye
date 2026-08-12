@@ -44,4 +44,5 @@ __all__ = [
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
     "colorize_disparity", "colorize_labels", "overlay_mask", "save", "load", "save_ply",
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
+    "registration", "kabsch", "icp", "apply_transform",
 ]
