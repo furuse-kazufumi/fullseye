@@ -722,6 +722,9 @@ def _sh_img_feat(p):
             return np.float64(-np.sum(pp * np.log2(pp)) / 6.0)
         if metric == "area_gray":
             return np.float64(np.mean(x > a))
+        if metric == "noise_est":                    # robust noise sigma (estimate_noise): MAD of Laplacian
+            lap = ndimage.laplace(x)
+            return np.float64(min(1.0, 1.4826 * np.median(np.abs(lap - np.median(lap))) * 3))
         raise ValueError(metric)
     return fn
 
