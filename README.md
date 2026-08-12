@@ -40,3 +40,21 @@ py -3.11 imgevolve.py index                  # 機械可読 docs/OP_INDEX.json �
 
 `docs/OP_INDEX.json` = 全 op（name / halcon / in→out sort / tier）の機械可読索引。
 新しい op を1つ足すだけで進化・codegen・catalog・この索引が自動追従する設計。
+
+## 処理効率（GPU-ready バッチバックエンド）
+
+CPU の registry は 1 枚ずつ scipy/OpenCV で処理する。スループット重視（および GPU 活用）向けに、
+計算が重い vectorizable な op は **torch でバッチ（N,1,H,W）を一括処理**する高速経路 (`accel.py`) を持つ。
+`--device cuda` で GPU 実行。
+
+```powershell
+py -3.11 imgevolve.py accel                 # accel op が CPU registry と一致するか検証（10/11 内部 exact）
+py -3.11 imgevolve.py bench --n 400 --size 256   # スループット: CPU baseline vs バッチ
+py -3.11 imgevolve.py bench --device cuda   # ★RTX 5090 等の CUDA 機で GPU スループット実測
+```
+
+**honest（`feedback_benchmark_honest_disclosure`）**: CPU 実測ではバッチは**計算重い op を加速**
+（morphology/sobel/gamma で 1.6〜2.2x）する一方、**自明な pointwise（threshold/scale/invert）は tensor 変換
+オーバーヘッドで損**（〜0.2x）。ブランケットな高速化は主張しない。真の効き所は GPU で、変換コストが
+大規模並列に償却される（この環境は torch-CPU のみ＝GPU 数値は CUDA 機で実測）。accel op は CPU registry を
+内部で忠実再現（境界のみ reflect/pool 規約差）＝ faithful な fast path。
