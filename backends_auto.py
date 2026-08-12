@@ -675,11 +675,17 @@ def _sh_region_feat(p):
         if metric == "aspect":
             minr, minc, maxr, maxc = pr.bbox
             return np.float64(min(1.0, (maxr - minr) / max(maxc - minc, 1)))
-        if metric in ("moment2", "hu1"):
+        if metric.startswith(("moment", "hu")):
             nu = skmeasure.moments_normalized(skmeasure.moments_central(big.astype(float)))
-            if metric == "moment2":
-                return np.float64(min(1.0, abs(nu[2, 0] + nu[0, 2])))
-            return np.float64(min(1.0, abs(skmeasure.moments_hu(nu)[0])))
+            hu = skmeasure.moments_hu(nu)
+            table = {
+                "moment2": abs(nu[2, 0] + nu[0, 2]),
+                "moment3": abs(nu[3, 0] + nu[0, 3]),
+                "moment_central": abs(nu[2, 0] + nu[1, 1] + nu[0, 2]),
+                "hu1": abs(hu[0]), "hu2": abs(hu[1]), "hu3": abs(hu[2]), "hu4": abs(hu[3]),
+            }
+            if metric in table:
+                return np.float64(min(1.0, float(table[metric])))
         raise ValueError(metric)
     return fn
 
