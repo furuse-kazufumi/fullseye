@@ -133,7 +133,7 @@ def _fft_mask(v, cutoff, high):
 
 
 def _lowpass(v, a, b): return np.clip(_fft_mask(v, 0.05 + 0.4 * a, False), 0, 1)
-def _highpass(v, a, b): return _norm(_fft_mask(v, 0.02 + 0.3 * a, True))
+def _highpass(v, a, b): return _signed01(_fft_mask(v, 0.02 + 0.3 * a, True))
 def _unsharp(v, a, b): return v + (1.5 * a) * (v - ndimage.gaussian_filter(v, 0.5 + 1.5 * b))
 
 
