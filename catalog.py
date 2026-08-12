@@ -145,7 +145,22 @@ def _analogs(name: str) -> dict:
     shp = _auto_shape_map().get(name) or _auto_shape_map().get(name[2:] if name.startswith("h_") else name)
     if shp and shp in _SHAPE_ANALOGS:
         return _SHAPE_ANALOGS[shp]
+    if name in _color_names():
+        return {"opencv": "cvtColor/mixChannels", "skimage": "color", "matlab": "rgb2*/imsplit"}
     return {}
+
+
+def _color_names() -> set:
+    m = getattr(_color_names, "_cache", None)
+    if m is None:
+        m = set()
+        try:
+            import backends_color
+            m = {d[0] for d in backends_color._DEFS}
+        except Exception:
+            pass
+        _color_names._cache = m
+    return m
 
 
 def build_md() -> str:

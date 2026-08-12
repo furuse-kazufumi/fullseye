@@ -1,0 +1,3057 @@
+{
+ "n_ops": 369,
+ "tiers": {
+  "color": 12,
+  "nary": 17,
+  "registry": 340
+ },
+ "sorts": [
+  "any",
+  "color",
+  "contour",
+  "feature",
+  "image",
+  "match",
+  "region",
+  "volume"
+ ],
+ "ops": [
+  {
+   "name": "access_channel",
+   "halcon": "access_channel",
+   "in_sort": "color",
+   "out_sort": "image",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "cfa_to_rgb",
+   "halcon": "cfa_to_rgb",
+   "in_sort": "image",
+   "out_sort": "color",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "count_channels",
+   "halcon": "count_channels",
+   "in_sort": "color",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "color"
+  },
+  {
+   "name": "edges_color",
+   "halcon": "edges_color",
+   "in_sort": "color",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "color"
+  },
+  {
+   "name": "edges_color_sub_pix",
+   "halcon": "edges_color_sub_pix",
+   "in_sort": "color",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "color"
+  },
+  {
+   "name": "linear_trans_color",
+   "halcon": "linear_trans_color",
+   "in_sort": "color",
+   "out_sort": "color",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "lines_color",
+   "halcon": "lines_color",
+   "in_sort": "color",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "color"
+  },
+  {
+   "name": "principal_comp",
+   "halcon": "principal_comp",
+   "in_sort": "color",
+   "out_sort": "color",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "rgb1_to_gray",
+   "halcon": "rgb1_to_gray",
+   "in_sort": "color",
+   "out_sort": "image",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "rgb3_to_gray",
+   "halcon": "rgb3_to_gray",
+   "in_sort": "color",
+   "out_sort": "image",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "trans_from_rgb",
+   "halcon": "trans_from_rgb",
+   "in_sort": "color",
+   "out_sort": "color",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "trans_to_rgb",
+   "halcon": "trans_to_rgb",
+   "in_sort": "color",
+   "out_sort": "color",
+   "category": "color",
+   "tier": "color"
+  },
+  {
+   "name": "abs_diff_image",
+   "halcon": "abs_diff_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "add_image",
+   "halcon": "add_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "bit_and",
+   "halcon": "bit_and",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "bit_or",
+   "halcon": "bit_or",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "convol_image",
+   "halcon": "convol_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "difference",
+   "halcon": "difference",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "region",
+    "region"
+   ]
+  },
+  {
+   "name": "div_image",
+   "halcon": "div_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "intersection",
+   "halcon": "intersection",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "region",
+    "region"
+   ]
+  },
+  {
+   "name": "max_image",
+   "halcon": "max_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "min_image",
+   "halcon": "min_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "mult_image",
+   "halcon": "mult_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "overpaint_region",
+   "halcon": "overpaint_region",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "region"
+   ]
+  },
+  {
+   "name": "paint_gray",
+   "halcon": "paint_gray",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "reduce_domain",
+   "halcon": "reduce_domain",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "region"
+   ]
+  },
+  {
+   "name": "sub_image",
+   "halcon": "sub_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "image",
+    "image"
+   ]
+  },
+  {
+   "name": "symm_difference",
+   "halcon": "symm_difference",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "region",
+    "region"
+   ]
+  },
+  {
+   "name": "union2",
+   "halcon": "union2",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "nary",
+   "tier": "nary",
+   "arity": 2,
+   "in_sorts": [
+    "region",
+    "region"
+   ]
+  },
+  {
+   "name": "abs_image",
+   "halcon": "abs_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "acos_image",
+   "halcon": "acos_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "adaptive_gauss_thresh",
+   "halcon": "local_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "add_noise_white",
+   "halcon": "add_noise_white",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "noise",
+   "tier": "registry"
+  },
+  {
+   "name": "affine_trans_image",
+   "halcon": "affine_trans_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "affine_trans_image_size",
+   "halcon": "affine_trans_image_size",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "affine_trans_region",
+   "halcon": "affine_trans_region",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "affine_warp",
+   "halcon": "affine_trans_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "anisotropic_diffusion",
+   "halcon": "anisotropic_diffusion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "area_center",
+   "halcon": "area_center",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "area_frac",
+   "halcon": "area_center",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "area_holes",
+   "halcon": "area_holes",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "asin_image",
+   "halcon": "asin_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "atan_image",
+   "halcon": "atan_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "auto_threshold",
+   "halcon": "auto_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "bandpass_image",
+   "halcon": "bandpass_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "bilateral",
+   "halcon": "bilateral_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "bilateral_filter",
+   "halcon": "bilateral_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "bin_threshold",
+   "halcon": "bin_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "binary_threshold",
+   "halcon": "binary_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "binomial_filter",
+   "halcon": "binomial_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "bit_not",
+   "halcon": "bit_not",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "blob_count",
+   "halcon": "count_obj",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "bothat",
+   "halcon": "gray_bothat",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "boundary",
+   "halcon": "boundary",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "canny",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "circularity",
+   "halcon": "circularity",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "clahe",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "classify_shape",
+   "halcon": "",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "classification",
+   "tier": "registry"
+  },
+  {
+   "name": "closing_circle",
+   "halcon": "closing_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "closing_golay",
+   "halcon": "closing_golay",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "closing_rectangle1",
+   "halcon": "closing_rectangle1",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "coherence_enhancing_diff",
+   "halcon": "coherence_enhancing_diff",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "compactness",
+   "halcon": "compactness",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "connect_and_holes",
+   "halcon": "connect_and_holes",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "contlength",
+   "halcon": "contlength",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "contours_to_region",
+   "halcon": "gen_region_contour_xld",
+   "in_sort": "contour",
+   "out_sort": "region",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "convex_fill",
+   "halcon": "shape_trans",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "convexity",
+   "halcon": "convexity",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "cooc_feature_matrix",
+   "halcon": "cooc_feature_matrix",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "corner_response",
+   "halcon": "points_harris",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "cos_image",
+   "halcon": "cos_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "count_contours",
+   "halcon": "count_obj",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "count_obj",
+   "halcon": "count_obj",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_adaptive_gauss",
+   "halcon": "local_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_adaptive_mean",
+   "halcon": "dyn_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_bilateral",
+   "halcon": "bilateral_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_blackhat",
+   "halcon": "gray_bothat",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_box",
+   "halcon": "mean_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_canny",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_cc_count",
+   "halcon": "connection",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_clahe",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_close",
+   "halcon": "gray_closing",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_corner_harris",
+   "halcon": "points_harris",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_dilate",
+   "halcon": "gray_dilation",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_dist",
+   "halcon": "distance_transform",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_erode",
+   "halcon": "gray_erosion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_gaussian",
+   "halcon": "gauss_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_good_features",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_gradient",
+   "halcon": "gray_range_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_hough_circles",
+   "halcon": "hough_circles",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_hough_lines",
+   "halcon": "hough_lines",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_laplacian",
+   "halcon": "laplace",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_median",
+   "halcon": "median_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_min_eigen",
+   "halcon": "points_harris",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_nlmeans",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_open",
+   "halcon": "gray_opening",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_otsu",
+   "halcon": "binary_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_precorner",
+   "halcon": "corner_response",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_scharr",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_sharpen",
+   "halcon": "emphasize",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_tophat",
+   "halcon": "gray_tophat",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "cv_trunc",
+   "halcon": "scale_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "decode_barcode",
+   "halcon": "find_bar_code",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "barcode",
+   "tier": "registry"
+  },
+  {
+   "name": "derivate_gauss",
+   "halcon": "derivate_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "deviation_image",
+   "halcon": "deviation_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "diameter_region",
+   "halcon": "diameter_region",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "diff_of_gauss",
+   "halcon": "diff_of_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "dilation_circle",
+   "halcon": "dilation_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "dilation_golay",
+   "halcon": "dilation_golay",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "dilation_rectangle1",
+   "halcon": "dilation_rectangle1",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "dilation_seq",
+   "halcon": "dilation_seq",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "dist_transform",
+   "halcon": "distance_transform",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "distance_transform",
+   "halcon": "distance_transform",
+   "in_sort": "region",
+   "out_sort": "image",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "dl_aniso_diffusion",
+   "halcon": "anisotropic_diffusion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "dl_guided_filter",
+   "halcon": "guided_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "dog",
+   "halcon": "diff_of_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "dots_image",
+   "halcon": "dots_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "dual_rank",
+   "halcon": "dual_rank",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "dyn_threshold",
+   "halcon": "dyn_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "dyn_threshold",
+   "halcon": "dyn_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "eccentricity",
+   "halcon": "eccentricity",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "edges_image",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "edges_sub_pix",
+   "halcon": "edges_sub_pix",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "edges_sub_pix",
+   "halcon": "edges_sub_pix",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "eliminate_min_max",
+   "halcon": "eliminate_min_max",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "eliminate_sp",
+   "halcon": "eliminate_sp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "elliptic_axis",
+   "halcon": "elliptic_axis",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "entropy_gray",
+   "halcon": "entropy_gray",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "entropy_image",
+   "halcon": "entropy_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "equ_histo_image",
+   "halcon": "equ_histo_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "equ_histo_image_rect",
+   "halcon": "equ_histo_image_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "equalize",
+   "halcon": "equ_histo_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "erosion_circle",
+   "halcon": "erosion_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "erosion_golay",
+   "halcon": "erosion_golay",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "erosion_rectangle1",
+   "halcon": "erosion_rectangle1",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "erosion_seq",
+   "halcon": "erosion_seq",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "euler_number",
+   "halcon": "euler_number",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "exp_image",
+   "halcon": "exp_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "fast_threshold",
+   "halcon": "fast_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "fft_generic",
+   "halcon": "fft_generic",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "fft_image",
+   "halcon": "fft_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "fft_image_inv",
+   "halcon": "fft_image_inv",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "fill_holes",
+   "halcon": "fill_up",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "fill_up",
+   "halcon": "fill_up",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "fill_up_shape",
+   "halcon": "fill_up_shape",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "fit_line_contours",
+   "halcon": "fit_line_contour_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "frei_amp",
+   "halcon": "frei_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "frei_dir",
+   "halcon": "frei_dir",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "gabor",
+   "halcon": "gen_gabor",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "gamma",
+   "halcon": "pow_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "gamma_image",
+   "halcon": "gamma_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "gauss_filter",
+   "halcon": "gauss_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "gauss_image",
+   "halcon": "gauss_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "gaussian",
+   "halcon": "gauss_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "gclose",
+   "halcon": "gray_closing",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gdilate",
+   "halcon": "gray_dilation",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gen_contour_region_xld",
+   "halcon": "gen_contour_region_xld",
+   "in_sort": "region",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "gen_gabor",
+   "halcon": "gen_gabor",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "gen_region_contour_xld",
+   "halcon": "gen_region_contour_xld",
+   "in_sort": "contour",
+   "out_sort": "region",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "gen_region_polygon_xld",
+   "halcon": "gen_region_polygon_xld",
+   "in_sort": "contour",
+   "out_sort": "region",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "gerode",
+   "halcon": "gray_erosion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "get_region_contour",
+   "halcon": "get_region_contour",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "get_region_convex",
+   "halcon": "get_region_convex",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "gopen",
+   "halcon": "gray_opening",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "grad_dir",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_bothat",
+   "halcon": "gray_bothat",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_closing",
+   "halcon": "gray_closing",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_closing_rect",
+   "halcon": "gray_closing_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_closing_shape",
+   "halcon": "gray_closing_shape",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_dilation",
+   "halcon": "gray_dilation",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_dilation_rect",
+   "halcon": "gray_dilation_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_dilation_shape",
+   "halcon": "gray_dilation_shape",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_erosion",
+   "halcon": "gray_erosion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_erosion_rect",
+   "halcon": "gray_erosion_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_erosion_shape",
+   "halcon": "gray_erosion_shape",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_histo_abs",
+   "halcon": "gray_histo_abs",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_opening",
+   "halcon": "gray_opening",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_opening_rect",
+   "halcon": "gray_opening_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_opening_shape",
+   "halcon": "gray_opening_shape",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_range_rect",
+   "halcon": "gray_range_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "gray_tophat",
+   "halcon": "gray_tophat",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "guided_filter",
+   "halcon": "guided_filter",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "h_threshold",
+   "halcon": "threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "height_width_ratio",
+   "halcon": "height_width_ratio",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "highpass",
+   "halcon": "highpass_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "highpass_image",
+   "halcon": "highpass_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "hysteresis_threshold",
+   "halcon": "hysteresis_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "identity",
+   "halcon": "copy_image",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "misc",
+   "tier": "registry"
+  },
+  {
+   "name": "illuminate",
+   "halcon": "illuminate",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "intensity",
+   "halcon": "intensity",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "invert",
+   "halcon": "invert_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "invert_image",
+   "halcon": "invert_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "invert_region",
+   "halcon": "complement",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "isotropic_diffusion",
+   "halcon": "isotropic_diffusion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "kirsch_amp",
+   "halcon": "kirsch_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "kirsch_dir",
+   "halcon": "kirsch_dir",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "laplace",
+   "halcon": "laplace",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "laplace",
+   "halcon": "laplace",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "laplace_of_gauss",
+   "halcon": "laplace_of_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "length_xld",
+   "halcon": "length_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "lines_facet",
+   "halcon": "lines_facet",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "lines_gauss",
+   "halcon": "lines_gauss",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "local_max",
+   "halcon": "local_max_sub_pix",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "local_max",
+   "halcon": "local_max",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "local_threshold",
+   "halcon": "local_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "log",
+   "halcon": "laplace_of_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "log_image",
+   "halcon": "log_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "lowpass",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "max_filter",
+   "halcon": "gray_dilation_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "mean_box",
+   "halcon": "mean_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "mean_curvature_flow",
+   "halcon": "mean_curvature_flow",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "mean_image",
+   "halcon": "mean_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "mean_sp",
+   "halcon": "mean_sp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "median",
+   "halcon": "median_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "median_image",
+   "halcon": "median_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "median_rect",
+   "halcon": "median_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "median_separate",
+   "halcon": "median_separate",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "median_weighted",
+   "halcon": "median_weighted",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "min_filter",
+   "halcon": "gray_erosion_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "min_max_gray",
+   "halcon": "min_max_gray",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "mirror_image",
+   "halcon": "mirror_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "mirror_region",
+   "halcon": "mirror_region",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "moments_region_2nd",
+   "halcon": "moments_region_2nd",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "moments_region_2nd_invar",
+   "halcon": "moments_region_2nd_invar",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "monotony",
+   "halcon": "monotony",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "morph_grad",
+   "halcon": "gray_range_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "morph_skeleton",
+   "halcon": "morph_skeleton",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "ncc_locate",
+   "halcon": "find_ncc_model",
+   "in_sort": "image",
+   "out_sort": "match",
+   "category": "matching",
+   "tier": "registry"
+  },
+  {
+   "name": "nonmax_suppression_amp",
+   "halcon": "nonmax_suppression_amp",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "opening_circle",
+   "halcon": "opening_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "opening_golay",
+   "halcon": "opening_golay",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "opening_rectangle1",
+   "halcon": "opening_rectangle1",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "orientation_region",
+   "halcon": "orientation_region",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "otsu",
+   "halcon": "binary_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "percentile",
+   "halcon": "rank_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "phase_deg",
+   "halcon": "phase_deg",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "phase_rad",
+   "halcon": "phase_rad",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "polar_trans_image",
+   "halcon": "polar_trans_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "polar_trans_image_ext",
+   "halcon": "polar_trans_image_ext",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "polar_trans_image_inv",
+   "halcon": "polar_trans_image_inv",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "pouring",
+   "halcon": "pouring",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "pow_image",
+   "halcon": "pow_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "power_byte",
+   "halcon": "power_byte",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "power_ln",
+   "halcon": "power_ln",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "power_real",
+   "halcon": "power_real",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "prewitt_amp",
+   "halcon": "prewitt_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "prewitt_dir",
+   "halcon": "prewitt_dir",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "prewitt_mag",
+   "halcon": "prewitt_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "projective_trans_image",
+   "halcon": "projective_trans_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "projective_trans_image_size",
+   "halcon": "projective_trans_image_size",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "projective_trans_region",
+   "halcon": "projective_trans_region",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "rank_image",
+   "halcon": "rank_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "rank_rect",
+   "halcon": "rank_rect",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "rectangularity",
+   "halcon": "rectangularity",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "reg_close",
+   "halcon": "closing_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "reg_dilate",
+   "halcon": "dilation_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "reg_erode",
+   "halcon": "erosion_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "reg_open",
+   "halcon": "opening_circle",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "region_boundary",
+   "halcon": "boundary",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "regiongrowing",
+   "halcon": "regiongrowing",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "remove_noise_region",
+   "halcon": "remove_noise_region",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "remove_small",
+   "halcon": "select_shape",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "rescale_img",
+   "halcon": "zoom_image_size",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "rft_generic",
+   "halcon": "rft_generic",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "roberts",
+   "halcon": "roberts",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "roberts_mag",
+   "halcon": "roberts",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "robinson_amp",
+   "halcon": "robinson_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "robinson_dir",
+   "halcon": "robinson_dir",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "rotate_image",
+   "halcon": "rotate_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "rotate_img",
+   "halcon": "rotate_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "roundness",
+   "halcon": "roundness",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "scale_clip",
+   "halcon": "scale_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "scale_image",
+   "halcon": "scale_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "scale_image_max",
+   "halcon": "scale_image_max",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "select_contours",
+   "halcon": "select_contours_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "select_contours_xld",
+   "halcon": "select_contours_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "select_largest",
+   "halcon": "select_shape_std",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "select_shape",
+   "halcon": "select_shape",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "select_shape_std",
+   "halcon": "select_shape_std",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "select_shape_xld",
+   "halcon": "select_shape_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "shape_locate",
+   "halcon": "find_shape_model",
+   "in_sort": "image",
+   "out_sort": "match",
+   "category": "matching",
+   "tier": "registry"
+  },
+  {
+   "name": "shape_trans",
+   "halcon": "shape_trans",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sigma_image",
+   "halcon": "sigma_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sigmoid",
+   "halcon": "scale_image_max",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "simulate_defocus",
+   "halcon": "simulate_defocus",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "simulate_motion",
+   "halcon": "simulate_motion",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sin_image",
+   "halcon": "sin_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_adapthist",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_adjust_log",
+   "halcon": "log_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_area_opening",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_autolevel",
+   "halcon": "scale_image_max",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_blur_effect",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_butterworth",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "frequency",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_canny",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_chan_vese",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_clear_border",
+   "halcon": "",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_convex",
+   "halcon": "shape_trans",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_corner_harris",
+   "halcon": "points_harris",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_dog",
+   "halcon": "diff_of_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_enhance_contrast",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_entropy",
+   "halcon": "entropy_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_entropy_feat",
+   "halcon": "entropy_gray",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_euler",
+   "halcon": "euler_number",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_farid",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_felzenszwalb",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_find_boundaries",
+   "halcon": "boundary",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_find_contours",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_frangi",
+   "halcon": "lines_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_gabor",
+   "halcon": "gen_gabor",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_hessian",
+   "halcon": "lines_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_hessian_det",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_hysteresis",
+   "halcon": "hysteresis_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_lbp",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_li",
+   "halcon": "binary_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_local_maxima",
+   "halcon": "local_max",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_medial",
+   "halcon": "skeleton",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_median_disk",
+   "halcon": "median_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_meijering",
+   "halcon": "lines_gauss",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_niblack",
+   "halcon": "var_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_nlm",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_otsu",
+   "halcon": "binary_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_remove_holes",
+   "halcon": "fill_up",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_rolling_ball",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_sauvola",
+   "halcon": "var_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_scharr",
+   "halcon": "edges_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_shape_index",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_skeleton",
+   "halcon": "skeleton",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_slic",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_swirl",
+   "halcon": "polar_trans_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_thin",
+   "halcon": "thinning",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_tv",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_tv_bregman",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_wavelet",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sk_yen",
+   "halcon": "binary_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "skeleton",
+   "halcon": "skeleton",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "smallest_rectangle1",
+   "halcon": "smallest_rectangle1",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "smooth_contours",
+   "halcon": "smooth_contours_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "smooth_contours_xld",
+   "halcon": "smooth_contours_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
+   "name": "smooth_image",
+   "halcon": "smooth_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "sobel_amp",
+   "halcon": "sobel_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sobel_dir",
+   "halcon": "sobel_dir",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sobel_mag",
+   "halcon": "sobel_amp",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "sqrt_image",
+   "halcon": "sqrt_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "std_filter",
+   "halcon": "deviation_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "tan_image",
+   "halcon": "tan_image",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "arithmetic",
+   "tier": "registry"
+  },
+  {
+   "name": "texture_laws",
+   "halcon": "texture_laws",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "texture",
+   "tier": "registry"
+  },
+  {
+   "name": "thinning",
+   "halcon": "thinning",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "thinning_golay",
+   "halcon": "thinning_golay",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "thinning_seq",
+   "halcon": "thinning_seq",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "threshold",
+   "halcon": "threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "tophat",
+   "halcon": "gray_tophat",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "morphology",
+   "tier": "registry"
+  },
+  {
+   "name": "total_length",
+   "halcon": "length_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "transpose_region",
+   "halcon": "transpose_region",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "trimmed_mean",
+   "halcon": "trimmed_mean",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "unsharp",
+   "halcon": "emphasize",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "var_threshold",
+   "halcon": "var_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_count",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_dilate",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "volume",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_erode",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "volume",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_gaussian",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "volume",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_median",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "volume",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_mip",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "image",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_slice",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "image",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "vol_threshold",
+   "halcon": "",
+   "in_sort": "volume",
+   "out_sort": "volume",
+   "category": "3d",
+   "tier": "registry"
+  },
+  {
+   "name": "watersheds",
+   "halcon": "watersheds",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "watersheds_threshold",
+   "halcon": "watersheds_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "zoom_image_factor",
+   "halcon": "zoom_image_factor",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "zoom_image_size",
+   "halcon": "zoom_image_size",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "geometry",
+   "tier": "registry"
+  },
+  {
+   "name": "zoom_region",
+   "halcon": "zoom_region",
+   "in_sort": "region",
+   "out_sort": "region",
+   "category": "geometry",
+   "tier": "registry"
+  }
+ ]
+}

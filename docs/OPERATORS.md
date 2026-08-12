@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-340 operators across 19 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+352 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -344,11 +344,23 @@
 | `elliptic_axis` | region->feature | features | elliptic_axis | - | measure.regionprops | regionprops |
 | `gen_contour_region_xld` | region->contour | contour | gen_contour_region_xld | findContours | measure.find_contours | - |
 | `select_shape_xld` | contour | contour | select_shape_xld | findContours | measure.find_contours | - |
+| `cfa_to_rgb` | image->color | color | cfa_to_rgb | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `trans_from_rgb` | color | color | trans_from_rgb | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `trans_to_rgb` | color | color | trans_to_rgb | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `linear_trans_color` | color | color | linear_trans_color | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `principal_comp` | color | color | principal_comp | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `rgb1_to_gray` | color->image | color | rgb1_to_gray | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `rgb3_to_gray` | color->image | color | rgb3_to_gray | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `access_channel` | color->image | color | access_channel | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `edges_color` | color->image | edges | edges_color | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `edges_color_sub_pix` | color->contour | contour | edges_color_sub_pix | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `lines_color` | color->contour | contour | lines_color | cvtColor/mixChannels | color | rgb2*/imsplit |
+| `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
 
 ## Coverage (ops with a direct analog)
-- opencv: 246/340
-- skimage: 291/340
-- matlab: 230/340
+- opencv: 258/352
+- skimage: 303/352
+- matlab: 242/352
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
