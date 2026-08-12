@@ -811,6 +811,15 @@ def _sh_xld(p):
             lab, n = ndimage.label(r > (0.1 + 0.4 * a), structure=np.ones((3, 3)))
             cs = [np.stack(np.where(lab == i), 1).astype(np.float64) for i in range(1, n + 1)]
             return {"shape": x.shape, "cs": [c for c in cs if len(c) >= 3]}
+        if kind == "threshold_sub_pix" and _HAS_SK:      # subpixel level crossings as contours
+            x = np.asarray(v, np.float64)
+            cs = [c for c in skmeasure.find_contours(x, 0.2 + 0.5 * a) if len(c) >= 3]
+            return {"shape": x.shape, "cs": cs}
+        if kind == "zero_crossing_sub_pix" and _HAS_SK:  # Laplacian zero crossings as contours
+            x = np.asarray(v, np.float64)
+            lap = ndimage.gaussian_laplace(x, 0.5 + 2.0 * a)
+            cs = [c for c in skmeasure.find_contours(lap, 0.0) if len(c) >= 3]
+            return {"shape": x.shape, "cs": cs}
         # contour -> contour / region / feature
         cv = v
         if kind == "select_contours":
