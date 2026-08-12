@@ -1279,7 +1279,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         seen.add(name)
         opname = name if name not in ("threshold", "identity") else "h_" + name
         ops_out.append(Op(opname, s.get("category", "misc"), name,
-                          s.get("in_sort", "image"), s.get("out_sort", "image"), _safe(fn)))
+                          s.get("in_sort", "image"), s.get("out_sort", "image"),
+                          _safe(fn, s.get("out_sort", "image"))))
     build.dropped = dropped                 # introspectable for honest reporting
     return ops_out
 
