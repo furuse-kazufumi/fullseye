@@ -48,7 +48,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             x = np.clip(np.asarray(v, np.float64), 0, 1) - 0.5
             return _norm(np.abs(signal.hilbert(x, axis=1)))
 
-        out += [Op(n, c, "", i, o, _safe(f)) for (n, c, i, o, f) in [
+        out += [Op(n, c, "", i, o, _safe(f, o)) for (n, c, i, o, f) in [
             ("xsp_wiener", "smoothing", IMAGE, IMAGE, _wiener),
             ("xsp_savgol", "smoothing", IMAGE, IMAGE, _savgol),
             ("xsp_hilbert_env", "texture", IMAGE, IMAGE, _hilbert_env),
