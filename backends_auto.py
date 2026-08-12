@@ -31,6 +31,8 @@ import json
 import os
 
 import numpy as np
+
+from backend_safe import signed01
 from scipy import ndimage
 
 HERE = os.path.dirname(os.path.abspath(__file__))
