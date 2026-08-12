@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-509 operators across 31 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+521 operators across 31 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -513,11 +513,23 @@
 | `xcv3_brisk_count` | image->feature | features |  | cv2.brisk_count | - | - |
 | `xcv3_agast_count` | image->feature | features |  | cv2.agast_count | - | - |
 | `xcv3_lsd_count` | image->feature | features |  | cv2.lsd_count | - | - |
+| `xkor_gaussian` | image | smoothing |  | - | - | - |
+| `xkor_bilateral` | image | smoothing |  | - | - | - |
+| `xkor_median` | image | rank |  | - | - | - |
+| `xkor_unsharp` | image | smoothing |  | - | - | - |
+| `xkor_motion_blur` | image | smoothing |  | - | - | - |
+| `xkor_canny` | image->region | segmentation |  | - | - | - |
+| `xkor_clahe` | image | gray |  | - | - | - |
+| `xkor_laplacian` | image | edges |  | - | - | - |
+| `xkor_harris` | image | edges |  | - | - | - |
+| `xkor_gftt` | image | edges |  | - | - | - |
+| `xkor_hessian` | image | edges |  | - | - | - |
+| `xkor_dog` | image | edges |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 312/509
-- skimage: 382/509
-- matlab: 262/509
+- opencv: 312/521
+- skimage: 382/521
+- matlab: 262/521
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

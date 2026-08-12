@@ -1,9 +1,9 @@
 {
- "n_ops": 526,
+ "n_ops": 538,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 497
+  "registry": 509
  },
  "sorts": [
   "any",
@@ -3499,6 +3499,102 @@
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_bilateral",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_canny",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_clahe",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_dog",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_gaussian",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_gftt",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_harris",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_hessian",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_laplacian",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_median",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "rank",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_motion_blur",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
+   "tier": "registry"
+  },
+  {
+   "name": "xkor_unsharp",
+   "halcon": "",
+   "in_sort": "image",
+   "out_sort": "image",
+   "category": "smoothing",
    "tier": "registry"
   },
   {
