@@ -7,3 +7,9 @@ data/*
 # ...but the agent-authored HALCON->shape analog mappings are OUR IP (not MVTec
 # content, not regenerable) — track them so a fresh checkout keeps its coverage.
 !data/auto_specs/
+
+# packaging build artifacts
+*.egg-info/
+build/
+dist/
+__pycache__/
