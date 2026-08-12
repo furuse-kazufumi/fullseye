@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-12 19:29:37
+- **最終更新**: 2026-08-12 19:44:38
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+ecd6fb6 auto: lib_mining_workgraph.js 編集前 (2026-08-12 19:43)
 cabf112 feat: imgevolve — cross-library round 2 (PIL/scipy/skimage/cv2, +40 ops)
 2edb4eb auto: STATUS.md 編集前 (2026-08-12 19:28)
 9030769 auto: catalog.py 編集前 (2026-08-12 19:27)
@@ -19,18 +20,19 @@ f069473 auto: backends_pil.py 編集前 (2026-08-12 19:26)
 97c02bb auto: ops.py 編集前 (2026-08-12 19:20)
 05bd063 feat: imgevolve — incorporate features from other libraries (skimage/OpenCV)
 2de04f3 auto: README.md 編集前 (2026-08-12 13:06)
-25c4d8e auto: STATUS.md 編集前 (2026-08-12 13:05)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M specs/lib_mining_workgraph.js
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+19:43 specs/lib_mining_workgraph.js
+19:29 docs/SESSION_SUMMARY.md
 19:28 data/halcon_graph.json
 19:28 docs/STATUS.md
 19:27 docs/OP_DISPOSITION.json
@@ -44,8 +46,6 @@ f069473 auto: backends_pil.py 編集前 (2026-08-12 19:26)
 19:27 catalog.py
 19:27 ops.py
 19:26 backends_cv2b.py
-19:26 backends_ski2.py
-19:26 backends_scipy.py
 ```
 
 ---
