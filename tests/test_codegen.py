@@ -33,7 +33,9 @@ def _emit_and_load(g, tmp_path, name="t"):
 
 
 def test_source_mirrors_runtime_conditional_clip(tmp_path):
-    g = _final_genome("image") or np.full(ops.GENOME_LEN, 0.1)
+    g = _final_genome("image")
+    if g is None:
+        g = np.full(ops.GENOME_LEN, 0.1)
     _emit_and_load(g, tmp_path)
     src = (tmp_path / "gen_t.py").read_text(encoding="utf-8")
     # the clip is runtime-conditional (2-D/3-D arrays only), matching ops._apply
