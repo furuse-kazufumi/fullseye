@@ -61,9 +61,47 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             return _norm(np.log1p(np.abs(sfft.dctn(x, norm="ortho"))))
 
-        out += [Op("xsp_dct", "frequency", "", IMAGE, IMAGE, _safe(_dct))]
+        def _dct_lowpass(v, a, b):
+            x = np.clip(np.asarray(v, np.float64), 0, 1)
+            C = sfft.dctn(x, norm="ortho")
+            keep = max(2, int((0.15 + 0.6 * a) * min(x.shape)))
+            M = np.zeros_like(C)
+            M[:keep, :keep] = C[:keep, :keep]
+            return np.clip(sfft.idctn(M, norm="ortho"), 0, 1)
+
+        def _dct_denoise(v, a, b):
+            x = np.clip(np.asarray(v, np.float64), 0, 1)
+            C = sfft.dctn(x, norm="ortho")
+            thr = (0.01 + 0.2 * a) * np.abs(C).max()
+            return np.clip(sfft.idctn(np.where(np.abs(C) > thr, C, 0.0), norm="ortho"), 0, 1)
+
+        out += [Op("xsp_dct", "frequency", "", IMAGE, IMAGE, _safe(_dct)),
+                Op("xsp_dct_lowpass", "frequency", "", IMAGE, IMAGE, _safe(_dct_lowpass)),
+                Op("xsp_dct_denoise", "smoothing", "", IMAGE, IMAGE, _safe(_dct_denoise))]
     except Exception:
         pass
+
+    # scipy.signal spline / detrend + ndimage morphological laplace / chamfer distance
+    try:
+        from scipy import signal as _sig
+
+        out += [
+            Op("xsp_cspline_smooth", "smoothing", "", IMAGE, IMAGE, _safe(
+                lambda v, a, b: np.clip(_sig.cspline2d(np.clip(np.asarray(v, np.float64), 0, 1),
+                                                       1.0 + 40.0 * a), 0, 1))),
+            Op("xsp_detrend_flatten", "gray", "", IMAGE, IMAGE, _safe(
+                lambda v, a, b: _norm(_sig.detrend(_sig.detrend(
+                    np.clip(np.asarray(v, np.float64), 0, 1), axis=0), axis=1)) * 0.5 + 0.5)),
+        ]
+    except Exception:
+        pass
+    out += [
+        Op("xsp_morph_laplace", "edges", "", IMAGE, IMAGE, _safe(
+            lambda v, a, b: _norm(ndimage.morphological_laplace(
+                np.clip(v, 0, 1), size=3 + 2 * int(a * 3))))),
+        Op("xsp_chamfer_dist", "region", "", "region", IMAGE, _safe(
+            lambda v, a, b: _norm(ndimage.distance_transform_cdt(np.asarray(v) > 0.5).astype(np.float64)))),
+    ]
 
     # Gaussian gradient magnitude (ndimage, but a distinct operator vs plain sobel)
     out += [Op("xsp_gauss_grad_mag", "edges", "", IMAGE, IMAGE, _safe(
