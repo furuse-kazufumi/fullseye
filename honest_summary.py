@@ -83,6 +83,12 @@ def main() -> int:
         "- ops: %d (all pass functional gate) — %s"
         % (nary["n_ops"], ", ".join(sorted(nary_names))),
         "",
+        "## Color (multichannel) sort — first-class, in the evolvable registry",
+        "- ops: %d (color functional gate %d/%d pass; reached via cfa_to_rgb bridge) — %s"
+        % (col_cov["n_ops"], len(col_pass), col_cov["n_ops"], ", ".join(sorted(col_names))),
+        "- color ops counted in coverage but FAILING their gate: %d %s"
+        % (len(col_fail), sorted(col_fail) or "(none — honest)"),
+        "",
         "## Honest scope",
         "- In scope = algorithmic operators (Filters/Image/Regions/Morphology/",
         "  Segmentation/Transformations/XLD/Matching/Inspection). Out of scope =",
