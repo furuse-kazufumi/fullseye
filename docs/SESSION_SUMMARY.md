@@ -3,49 +3,39 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-12 21:06:01
+- **最終更新**: 2026-08-13 07:34:28
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-c7c1a16 feat: robust.py — multi-seed champion selection (honest variance handling)
-54f81f6 auto: evolve.py 編集前 (2026-08-12 21:02)
-f0aa84d feat: lib_coverage reports per-library op breakdown (10+ libraries)
-c3ffe77 auto: lib_coverage.py 編集前 (2026-08-12 20:13)
-d6be258 docs: honest multi-seed correction — denoise win is seed-dependent
-615aefd docs: evolution validation across 3 tasks — cross-library expansion helps
-142c694 docs: validate cross-library ops are used by evolution (edge, holdout 0.830)
-3c0408c feat: imgevolve — kornia (GPU-native torch) ops, 10th library
-73a6712 auto: catalog.py 編集前 (2026-08-12 19:58)
-ba8580e auto: ops.py 編集前 (2026-08-12 19:58)
+4bd82d3 auto: test_scale.py 編集前 (2026-08-12 22:13)
+3ade5cc auto: scale.py 編集前 (2026-08-12 22:13)
+35603e6 auto: AUDIT_2026_08_12.md 編集前 (2026-08-12 22:11)
+4c22736 auto: AUDIT_2026_08_12.md 編集前 (2026-08-12 22:11)
+5f18954 auto: test_signed_response.py 編集前 (2026-08-12 22:05)
+9d4eb7d auto: backends_auto.py 編集前 (2026-08-12 22:04)
+f6ba7de auto: backends_auto.py 編集前 (2026-08-12 22:04)
+2359e5f auto: backends_auto.py 編集前 (2026-08-12 22:04)
+d4c9300 auto: backends_auto.py 編集前 (2026-08-12 22:04)
+f4af8d3 auto: backends_auto.py 編集前 (2026-08-12 22:04)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M docs/SESSION_SUMMARY.md
+ M tests/test_scale.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:03 robust.py
-21:02 evolve.py
-20:14 docs/SESSION_SUMMARY.md
-20:13 docs/LIB_COVERAGE.md
-20:13 data/lib_inventory.json
-20:13 lib_coverage.py
-20:12 docs/STATUS.md
-19:58 docs/OPERATORS.md
-19:58 data/halcon_graph.json
-19:58 docs/OP_INDEX.json
-19:58 catalog.py
-19:58 ops.py
-19:58 backends_kornia.py
-19:51 backends_r3.py
-19:48 data/lib_r3_recipes.json
+07:32 docs/SESSION_SUMMARY.md
+07:31 .pytest_cache/v/cache/nodeids
+07:30 docs/HALCON_PARITY.md
+07:30 data/auto_functional_gate.json
 ```
 
 ---
