@@ -9,9 +9,9 @@ libraries is real, falsifiable evidence the operation is faithfully implemented.
 |---|---|---|
 | agree (<=0.02) | independent backends match — strong parity evidence | 27 |
 | close (<=0.10) | minor numeric/library differences | 5 |
-| differ (>0.10) | different algorithm behind a shared name — disclosed | 33 |
+| differ (>0.10) | different algorithm behind a shared name — disclosed | 34 |
 
-**65 HALCON ops tested across backends; 27 agree, 5 close, 33 differ (honest).**
+**66 HALCON ops tested across backends; 27 agree, 5 close, 34 differ (honest).**
 
 ## Detail
 | halcon | sort | #impl | backends | max disagreement | band |
@@ -49,6 +49,7 @@ libraries is real, falsifiable evidence the operation is faithfully implemented.
 | `shape_trans` | region->region | 3 | convex_fill, sk_convex, shape_trans | 1.0000 | differ |
 | `skeleton` | region->region | 3 | sk_skeleton, sk_medial, skeleton | 1.0000 | differ |
 | `var_threshold` | image->region | 3 | sk_sauvola, sk_niblack, var_threshold | 1.0000 | differ |
+| `watersheds` | image->region | 2 | watersheds, xcv_watershed_markers | 1.0000 | differ |
 | `anisotropic_diffusion` | image->image | 2 | dl_aniso_diffusion, anisotropic_diffusion | 0.0400 | close |
 | `distance_transform` | region->image | 3 | dist_transform, cv_dist, distance_transform | 0.0750 | close |
 | `gauss_filter` | image->image | 3 | gaussian, cv_gaussian, gauss_filter | 0.0208 | close |
