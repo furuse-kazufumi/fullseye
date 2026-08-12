@@ -71,12 +71,13 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   **新 capability か本質的 scope 外**。更なる breadth より **codegen/difftest による parity 実証(depth)** が本筋。
 
 **★他ライブラリ機能の取り込み(`backends_extra.py`/`lib_coverage.py`, ユーザー指示「他の画像処理ライブラリの機能取り込み」)**:
-imgevolve は HALCON 中心だが、cv2(484 callable)/skimage(316 関数)を **introspect(実インストール=ground truth)**
-して多ライブラリ軸で計測。**HALCON が重視しない distinctive op を 21 追加**(`xsk_`/`xcv_`): inpaint(biharmonic/Telea)・
-blob 検出(LoG/DoG/DoH count)・ORB keypoint count・random_walker/flood/grabCut/marker-watershed segmentation・
-structure/Hessian tensor・meijering/sato ridges・NPR(stylization/pencil_sketch/edge_preserving/detail_enhance)。
-全 exception-safe・回帰 700/700。**多ライブラリ被覆**(`docs/LIB_COVERAGE.md`): registry が OpenCV 85 / skimage 107
-関数を参照。これらは `.halcon=""`(HALCON 軸不変=269)で **他ライブラリ軸を拡張**。registry 401 / 総 op 430。
+imgevolve は HALCON 中心だが、**PIL/Pillow・scipy.signal/fft・cv2(484)・skimage(316)を introspect**(実インストール
+=ground truth)して多ライブラリ軸で計測。**HALCON が重視しない distinctive op を 61 追加**(`xsk_`/`xcv_`/`xpil_`/
+`xsp_`/`xsk2_`/`xcv2_`):
+- **1st batch(21)**: inpaint・blob(LoG/DoG/DoH)・ORB・random_walker/flood/grabCut/marker-watershed・structure/Hessian tensor・NPR(stylization/pencil/edge_preserving/detail)・meijering/sato。
+- **2nd batch(per-library fan-out 4-agent workflow で発掘→私が correctness 担保して実装, 40)**: PIL(emboss/contour/mode/posterize/solarize/autocontrast/offset[トロイダル]/contrast[平均中心])・scipy(wiener/savgol/hilbert/DCT spectrum/lowpass/denoise/cspline/detrend/morph_laplace/chamfer/gauss_grad_mag)・skimage(multiotsu/geomean-rank/reconstruction/h_maxima/diameter_opening/isotropic_close/HOG/Kitchen-Rosenfeld corner/Radon/inverse_gaussian_gradient/Wiener-deconv)・cv2(log-polar/mean-shift/hit-or-miss/Laplacian-variance焦点測度/FAST count)。
+全 exception-safe・回帰 800/800。**多ライブラリ被覆**(`docs/LIB_COVERAGE.md`): registry が OpenCV 90 / skimage 118
+関数を参照。これらは `.halcon=""`(HALCON 軸不変=269)で **他ライブラリ軸を拡張**。**registry 425 / 総 op 453**。
 
 **★処理効率 = GPU-ready バッチバックエンド(`accel.py`/`bench.py`, ユーザー指摘「GPUで効率化も重要」)**:
 計算重い vectorizable op(gauss/mean/sobel/laplace/gamma/scale/invert/threshold/erosion/dilation/range_rect)を
