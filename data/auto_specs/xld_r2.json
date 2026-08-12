@@ -1,0 +1,3 @@
+[
+  {"halcon": "contour_point_num_xld", "category": "contour", "in_sort": "contour", "out_sort": "feature", "shape": "xld", "params": {"kind": "num_points"}}
+]

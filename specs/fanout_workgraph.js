@@ -73,18 +73,18 @@ STEPS (do them):
 4. For EACH candidate decide:
    - Is there a shape+params in the vocabulary that GENUINELY performs this operator (per its short_desc + signature)? Infer the correct in_sort/out_sort from the shape's contract and the operator (image filters -> image->image; thresholds/segmentation -> image->region; region morphology -> region->region; measurements returning tuples of scalars -> region->feature or image->feature; XLD -> contour). Use the sort_*_hint as a prior but TRUST the short_desc.
    - If yes -> emit a spec. If no genuine analog (needs a second image / color/multichannel / trained model / calibration / domain-ROI plumbing / 3D / arbitrary user LUT / interactive) -> SKIP it and add a one-line reason to notable_skips (keep to the most informative ~15).
-5. WRITE the result to ${DIR}/data/auto_specs/${g.slug}.json as a UTF-8 JSON array. Each element:
+5. WRITE the result to ${DIR}/data/auto_specs/${g.slug}_r2.json as a UTF-8 JSON array. Each element:
    {"halcon": <real op name>, "category": <short family label>, "in_sort": <image|region|feature|contour>, "out_sort": <...>, "shape": <shape name>, "params": {<enum params>}}
-   The array must be valid JSON (no comments, no trailing commas).
+   The array must be valid JSON (no comments, no trailing commas). This is round 2; already-covered ops are filtered out — you are mapping only what a NEWLY-ADDED shape/param now enables (motion, projective, ifft, cooc, noise, dual threshold, mser, region moments, perimeter/area_holes/aspect, XLD contour features & transforms). If nothing new is genuinely mappable, write [].
 6. VERIFY your own file before returning: run
-      cd ${DIR} && py -3.11 -W ignore -c "import json,backends_auto as B; real=B._real_ops(); S=json.load(open('data/auto_specs/${g.slug}.json',encoding='utf-8')); bad=[s['halcon'] for s in S if s['halcon'] not in real or s['shape'] not in B.SHAPES]; print('specs',len(S),'bad',bad)"
+      cd ${DIR} && py -3.11 -W ignore -c "import json,backends_auto as B; real=B._real_ops(); S=json.load(open('data/auto_specs/${g.slug}_r2.json',encoding='utf-8')); bad=[s['halcon'] for s in S if s['halcon'] not in real or s['shape'] not in B.SHAPES]; print('specs',len(S),'bad',bad)"
    Then run  cd ${DIR} && py -3.11 -W ignore verify_auto.py --failures  and confirm NONE of your mapped names appear under failures. REMOVE from your file any of your ops that fail the functional gate or are 'bad', and re-write the file. Iterate until your ops are clean.
 
 HONESTY RULES (hard):
 - Only use operator names that exist in the graph nodes for your chapters (they are real). Never invent names.
 - Never map onto a shape that does something materially different from the operator. Prefer skipping.
 - Every param value must be from the documented enums. No new shapes.
-- Do not touch any file other than data/auto_specs/${g.slug}.json.
+- Do not touch any file other than data/auto_specs/${g.slug}_r2.json.
 
 Return the structured summary: chapter (join of your chapters), file path, n_mapped, n_skipped, mapped_names (all), notable_skips.`
 }

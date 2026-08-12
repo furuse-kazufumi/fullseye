@@ -1,0 +1,3 @@
+[
+  {"halcon": "affine_trans_polygon_xld", "category": "contour", "in_sort": "contour", "out_sort": "contour", "shape": "xld", "params": {"kind": "affine"}}
+]

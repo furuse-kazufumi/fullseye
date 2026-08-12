@@ -1,0 +1,12 @@
+[
+ {
+  "halcon": "add_noise_distribution",
+  "category": "noise",
+  "in_sort": "image",
+  "out_sort": "image",
+  "shape": "noise",
+  "params": {
+   "kind": "gaussian"
+  }
+ }
+]
