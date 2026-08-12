@@ -258,6 +258,19 @@ def main() -> int:
     p.add_argument("--out", default="")
     p.set_defaults(fn=cmd_index)
 
+    p = sub.add_parser("parity", help="cross-backend parity evidence (independent impls agree)")
+    p.set_defaults(fn=cmd_parity)
+
+    p = sub.add_parser("accel", help="GPU-ready batch backend: parity vs CPU registry ops")
+    p.add_argument("--device", default="cpu")
+    p.set_defaults(fn=cmd_accel)
+
+    p = sub.add_parser("bench", help="throughput: CPU baseline vs batch (add --device cuda on a GPU)")
+    p.add_argument("--n", type=int, default=200)
+    p.add_argument("--size", type=int, default=256)
+    p.add_argument("--device", default="cpu")
+    p.set_defaults(fn=cmd_bench)
+
     a = ap.parse_args()
     return a.fn(a)
 
