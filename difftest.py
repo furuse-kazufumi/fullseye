@@ -49,6 +49,18 @@ def _import_gen(path: Path):
     return mod
 
 
+def _maxdiff(ref, got):
+    """Max abs difference between two pipeline outputs. Handles array (image/
+    region) and scalar (feature) finals; returns nan for non-numeric finals (a
+    contour dict), which are recorded as non-comparable rather than silently passed."""
+    if isinstance(ref, np.ndarray) and isinstance(got, np.ndarray):
+        return float("inf") if ref.shape != got.shape else float(np.max(np.abs(ref - got)))
+    try:
+        return abs(float(ref) - float(got))
+    except (TypeError, ValueError):
+        return float("nan")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--problem", default="edge")
