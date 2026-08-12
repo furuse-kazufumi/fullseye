@@ -62,8 +62,10 @@ def emit(problem: str, wd: Path) -> dict:
     (wd / f"gen_{problem}.c").write_text("\n".join(c), encoding="utf-8")
 
     used = [s.op for s in stages if s.op != "identity"]
+    final = next((s for s in reversed(stages) if s.op != "identity"), None)
+    final_sort = _OPMAP[final.op].out_sort if final is not None else "image"
     return {"problem": problem, "pipeline": champ["pipeline"], "n_stages": len(stages),
-            "ops_used": used, "c_fully_supported": c_ok,
+            "ops_used": used, "c_fully_supported": c_ok, "final_out_sort": final_sort,
             "py": str(wd / f"gen_{problem}.py"), "c": str(wd / f"gen_{problem}.c")}
 
 
