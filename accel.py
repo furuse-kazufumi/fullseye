@@ -154,24 +154,29 @@ def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
     return _from_batch(out)
 
 
+def _interior_max(ref, got, m=3):
+    """Max abs diff ignoring an m-px border (pooling/reflect borders differ)."""
+    return float(np.max(np.abs(ref[m:-m, m:-m] - got[m:-m, m:-m]))) if ref.shape[0] > 2 * m else \
+        float(np.max(np.abs(ref - got)))
+
+
 def parity(device="cpu"):
-    """Difftest every accel op against its CPU registry op on holdout images."""
+    """Difftest every accel op against the CORE registry op it reproduces."""
     import ops
     rng = np.random.default_rng(7)
     imgs = [np.clip(rng.random((64, 64)) * 0.6 + 0.2 * (np.mgrid[0:64, 0:64][1] / 64), 0, 1)
             for _ in range(6)]
     rows = []
-    for name, (fn, halcon) in ACCEL.items():
-        # find the registry op with this halcon name and matching pipeline behaviour
-        ref_op = next((o for o in ops.REGISTRY if o.halcon == halcon and o.in_sort == "image"), None)
-        if ref_op is None:
+    for name, (fn, core_name, halcon) in ACCEL.items():
+        if core_name not in ops.RT:
             continue
         got = run_batch(name, imgs, 0.5, 0.4, device)
-        worst = 0.0
+        full = inter = 0.0
         for i, im in enumerate(imgs):
-            ref = np.clip(ops.RT[ref_op.name](im.copy(), 0.5, 0.4), 0, 1)
-            worst = max(worst, float(np.max(np.abs(ref - got[i]))))
-        rows.append((name, halcon, worst))
+            ref = np.clip(ops.RT[core_name](im.copy(), 0.5, 0.4), 0, 1)
+            full = max(full, float(np.max(np.abs(ref - got[i]))))
+            inter = max(inter, _interior_max(ref, got[i]))
+        rows.append((name, halcon, full, inter))
     return rows
 
 
