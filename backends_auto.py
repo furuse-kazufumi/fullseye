@@ -744,6 +744,8 @@ def _sh_region_feat(p):
             return np.float64(skmeasure.euler_number(m))
         if metric == "anisometry":
             return np.float64(pr.axis_major_length / max(pr.axis_minor_length, 1e-6) / 10)
+        if metric == "thickness":                    # 2x max inscribed distance (get_region_thickness)
+            return np.float64(min(1.0, 2 * float(ndimage.distance_transform_edt(m).max()) / max(m.shape)))
         if metric == "perimeter":
             return np.float64(min(1.0, per / (2.0 * (m.shape[0] + m.shape[1]))))
         if metric == "area_holes":
