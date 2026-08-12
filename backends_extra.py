@@ -15,6 +15,8 @@ is no faithful HALCON name — these lift *other-library* coverage, not HALCON's
 from __future__ import annotations
 
 import numpy as np
+
+from backend_safe import signed01
 from scipy import ndimage
 
 
