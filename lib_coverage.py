@@ -105,6 +105,13 @@ def main() -> int:
         "| scikit-image | %d | %d submodule functions | %d |"
         % (len(sk_ref_tail), len(inv["skimage"]), len(sk_hit)),
         "",
+        "## Registry ops by source library (10+ libraries incorporated)",
+        "",
+        "| library | ops |",
+        "|---|---|",
+    ] + ["| %s | %d |" % (k, v) for k, v in by_lib.most_common()] + [
+        "| **total** | **%d** |" % sum(by_lib.values()),
+        "",
         "## Honest reading",
         "- Inventories are ALL public callables (cv2 ~%d, skimage ~%d); most are not"
         % (len(inv["opencv"]), len(inv["skimage"])),

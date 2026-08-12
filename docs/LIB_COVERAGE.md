@@ -5,8 +5,25 @@ registry references counted via the cross-library catalog.
 
 | library | referenced by registry | in installed inventory | matched |
 |---|---|---|---|
-| OpenCV (cv2) | 90 | 484 public callables | 44 |
-| scikit-image | 118 | 316 submodule functions | 76 |
+| OpenCV (cv2) | 98 | 484 public callables | 44 |
+| scikit-image | 132 | 316 submodule functions | 84 |
+
+## Registry ops by source library (10+ libraries incorporated)
+
+| library | ops |
+|---|---|
+| core (numpy/scipy) | 306 |
+| scikit-image | 86 |
+| OpenCV | 50 |
+| SimpleITK | 14 |
+| Pillow | 13 |
+| kornia (GPU) | 12 |
+| scipy | 11 |
+| mahotas | 10 |
+| PyWavelets | 9 |
+| scipy (3-D) | 8 |
+| torch | 2 |
+| **total** | **521** |
 
 ## Honest reading
 - Inventories are ALL public callables (cv2 ~484, skimage ~316); most are not
