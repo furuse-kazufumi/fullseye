@@ -34,6 +34,7 @@ with warnings.catch_warnings():
         colorize_disparity, colorize_labels, overlay_mask, save, load, save_ply,
         detect, segment_objects, object_descriptor, nearest_prototype, draw_objects,
         registration, kabsch, icp, apply_transform,
+        pose, pose_descriptor, skeleton_nodes, principal_axis,
     )
 
 __all__ = [
