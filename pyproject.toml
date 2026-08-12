@@ -39,7 +39,7 @@ py-modules = [
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
-  "imgops_nary", "scale", "evolve", "problems", "baseline", "robust",
+  "imgops_nary", "scale", "stereo", "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "bench",
   "sweep", "graph", "graph_seed", "lib_coverage",
