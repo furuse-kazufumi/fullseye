@@ -71,6 +71,10 @@ def segment_objects(image, threshold="otsu", invert: bool = False,
         for p in props:
             if p.area < min_area:
                 continue
+            try:
+                equiv_d = float(p.equivalent_diameter_area)   # skimage >= 0.26
+            except Exception:
+                equiv_d = float(p.equivalent_diameter)
             y0, x0, y1, x1 = p.bbox
             objs.append(dict(
                 label=int(p.label), area=float(p.area),
