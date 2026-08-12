@@ -11,23 +11,25 @@ const DIR = 'C:/dev/projects/imgevolve'
 const VOCAB = `
 FIXED SHAPE VOCABULARY (shape : in_sort->out_sort : params). Use ONLY these.
 - pointwise  : image->image  : {func: abs|sqrt|square|exp|log|sin|cos|tan|asin|acos|atan|reciprocal}   pointwise gray math
-- lut        : image->image  : {kind: gamma|scale|invert|sigmoid|log_gain|equalize|rescale|clip_range|illuminate|monotony}  gray LUT/contrast
-- linfilter  : image->image  : {kind: gauss|mean|binomial|smooth|derivate_gauss|laplace_gauss|dog|mean_curvature}  linear/smoothing/derivative
+- lut        : image->image  : {kind: gamma|scale|invert|sigmoid|log_gain|equalize|equalize_local|rescale|clip_range|illuminate|monotony}  gray LUT/contrast
+- linfilter  : image->image  : {kind: gauss|mean|binomial|smooth|derivate_gauss|laplace_gauss|dog|mean_curvature|motion}  linear/smoothing/derivative/motion-blur
 - rank       : image->image  : {kind: median|median_rect|min|max|rank|range|sigma|trimmed_mean}   rank/order-stat (min=gray erosion rect, max=gray dilation rect, range=local max-min)
 - graymorph  : image->image  : {op: erosion|dilation|opening|closing|tophat|bothat|gradient, shape: rect|disk}   grayscale morphology
-- edge       : image->image  : {kind: sobel|sobel_dir|prewitt|prewitt_dir|roberts|scharr|kirsch|kirsch_dir|frei|robinson|laplace}  edge amplitude (_dir=direction)
-- freq       : image->image  : {kind: fft_power|fft_power_real|fft_phase|lowpass|highpass|bandpass}   FFT domain
+- edge       : image->image  : {kind: sobel|sobel_dir|prewitt|prewitt_dir|roberts|scharr|kirsch|kirsch_dir|frei|frei_dir|robinson|robinson_dir|laplace}  edge amplitude (_dir=direction)
+- freq       : image->image  : {kind: fft_power|fft_power_real|fft_phase|ifft|lowpass|highpass|bandpass}   FFT domain (ifft=inverse transform)
 - diffusion  : image->image  : {kind: isotropic|anisotropic|tv|bilateral|nlm}   edge-preserving denoise
 - texture    : image->image  : {kind: deviation|variance|entropy|gabor|lbp|coherence}   texture response
-- geom       : image->image (mirror/transpose may be region->region) : {kind: mirror|transpose|rotate|zoom|affine|polar|swirl}   geometric transform
-- threshold  : image->region : {method: fixed|otsu|li|yen|triangle|isodata|mean|minimum|sauvola|niblack|dyn|local_gauss|hysteresis}   threshold to binary region
-- segment    : image->region : {kind: canny|sk_canny|local_max|watershed|felzenszwalb|slic|chan_vese|regiongrow}   segmentation to region/boundaries
+- cooc       : image->feature : {prop: contrast|dissimilarity|homogeneity|energy|correlation|ASM}   Haralick co-occurrence texture feature (scalar)
+- noise      : image->image  : {kind: gaussian|sp}   add deterministic noise
+- geom       : image->image (mirror/transpose/affine/projective/zoom/polar may be region->region) : {kind: mirror|transpose|rotate|zoom|affine|projective|polar|polar_inv|swirl}   geometric transform
+- threshold  : image->region : {method: fixed|otsu|li|yen|triangle|isodata|mean|minimum|sauvola|niblack|dyn|local_gauss|hysteresis|dual}   threshold to binary region (dual=signed |x-0.5|>t)
+- segment    : image->region : {kind: canny|sk_canny|local_max|watershed|felzenszwalb|slic|chan_vese|regiongrow|mser}   segmentation to region/boundaries
 - binmorph   : region->region: {op: erosion|dilation|opening|closing|erosion_it|dilation_it, shape: disk|rect}   binary morphology
 - region_trans: region->region (dist_transform->image): {kind: fill_up|boundary|skeleton|medial|thin|convex|clear_border|remove_small|remove_holes|select_largest|dist_transform|shape_bbox}
-- region_feat: region->feature: {metric: count|area|circularity|compactness|convexity|solidity|rectangularity|eccentricity|orientation|roundness|diameter|euler|anisometry}   scalar shape measurement
-- img_feat   : image->feature : {metric: min|max|mean|std|median|entropy|area_gray}   gray statistics (scalar)
-- xld        : image->contour {kind: edges_sub_pix|lines_gauss} ; contour->contour {kind: select_contours|smooth_contours} ; contour->region {kind: to_region} ; contour->feature {kind: count|length}
-Sorts are exactly: image, region, feature, contour.
+- region_feat: region->feature: {metric: count|area|circularity|compactness|convexity|solidity|rectangularity|eccentricity|orientation|roundness|diameter|euler|anisometry|perimeter|area_holes|aspect|moment2|moment3|moment_central|hu1|hu2|hu3|hu4}   scalar shape measurement
+- img_feat   : image->feature : {metric: min|max|mean|std|median|entropy|area_gray|noise_est}   gray statistics (scalar)
+- xld        : image->contour {kind: edges_sub_pix|lines_gauss} ; contour->contour {kind: select_contours|smooth_contours|close|affine|projective|polar} ; contour->region {kind: to_region} ; contour->feature {kind: count|length|area|circularity|compactness|convexity|num_points}
+Sorts are exactly: image, region, feature, contour. (Color/multichannel and 3D/volume ops are handled elsewhere — SKIP them here.)
 `
 
 // 8 chapter groups over the algorithm operators. XLD/Filters/Regions are the big
