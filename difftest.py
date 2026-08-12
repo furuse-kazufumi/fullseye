@@ -82,7 +82,7 @@ def main() -> int:
     gen = _import_gen(wd / f"gen_{a.problem}.py")
     py_max, n_noncomparable = 0.0, 0
     for i in range(len(inp)):
-        ref = ops.apply_genome(genome, inp[i])
+        ref = ops.run_genome(genome, inp[i])            # raw runtime output (NOT the coercing apply_genome)
         got = gen.pipeline(inp[i].astype(np.float64))    # RAW — re-clipping here would hide a codegen clip bug
         d = _maxdiff(ref, got)
         if np.isnan(d):
