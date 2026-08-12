@@ -47,6 +47,9 @@ def main() -> int:
 
     # SELECT on TRAIN only (holdout stays pure); report the selected champ's holdout.
     best = max(champs, key=lambda c: c["train"])
+    # Persist the TRAIN-selected champion: evolve.run overwrote champion_<problem>.json
+    # with EACH seed, so without this the file holds the last seed, not the best-of-N.
+    (wd / f"champion_{a.problem}.json").write_text(json.dumps(best, indent=2), encoding="utf-8")
     hold = np.array([c["holdout"] for c in champs], float)
     n_beat = int(np.sum(hold > hand)) if hand is not None else None
     n_collapse = int(np.sum(hold < trivial)) if trivial is not None else None
