@@ -69,6 +69,12 @@ AlphaEvolve(生ソース進化)/ TransCoder(翻訳)/ Halide(schedule 探索)い�
   (a) 専有/学習モデル(分類器・DL・OCR・Calibration・pose)(b) 多入力/n-ary(primitive間 distance・intersection・
   mosaic・union contours・compose)(c) 座標/tuple plumbing(getter/test/query)(d) ごく特殊な shape 要 =
   **新 capability か本質的 scope 外**。更なる breadth より **codegen/difftest による parity 実証(depth)** が本筋。
+
+**★全 op 対応 = disposition map(`dispositions.py` → `docs/OP_DISPOSITION.json`)**: 偽実装で数を埋めず
+(feedback_no_false_reporting)、**全 2313 op に truthful な disposition を付与(100% 対応、捏造 0)**。
+`imgevolve.py has <任意の op>` が全 op に定義済み応答を返す(implemented=呼び方 / 未実装=status+理由)。内訳:
+**implemented 269(11.6%)/ needs_new_capability 176(honest backlog)/ nary_multiinput 119 / out_of_scope_model 635(専有)/ out_of_scope_plumbing 1114(HDevelop言語・IO・getter=非アルゴリズム)**。
+→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 445)に対し **269/445 ≈ 60% を genuine 実装**。
 - **dangling(偽名)= 0**(fail-closed)。回帰スモーク 600〜800/同(image起点 decode+run クラッシュ0、color 到達も全 OK)。
 - 開始(v10)79 → **245(registry)/ 262(総capability)= 3.3倍**。数値は memory 推測でなく実測。
 - v11e 増分 = fan-out 第2ラウンド(拡張語彙で残精査、genuine 5: add_noise_distribution/polar_trans_region_inv/
