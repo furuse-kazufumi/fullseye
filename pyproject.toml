@@ -30,6 +30,7 @@ all = [
 
 [project.scripts]
 fullseye = "imgevolve:main"
+fullseye-studio = "studio:main"
 
 [tool.setuptools]
 # The public facade is the `fullseye` package; the engine is a set of flat
