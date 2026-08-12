@@ -107,7 +107,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("xkor_clahe", "gray", IMAGE, IMAGE, _clahe),
         ("xkor_laplacian", "edges", IMAGE, IMAGE, _laplacian),
         ("xkor_harris", "edges", IMAGE, IMAGE,
-         lambda v, a, b: _norm(_np(KFEAT.harris_response(_t(v), k=0.04 + 0.02 * a)))),
+         lambda v, a, b: signed01(_np(KFEAT.harris_response(_t(v), k=0.04 + 0.02 * a)))),
     ]
     for name, attr in (("xkor_gftt", "gftt_response"), ("xkor_hessian", "hessian_response"),
                        ("xkor_dog", "dog_response_single"), ("xkor_dog", "dog_response")):
