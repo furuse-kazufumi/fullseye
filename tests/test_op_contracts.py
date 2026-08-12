@@ -73,12 +73,17 @@ def test_op_output_is_finite(op):
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
 def test_op_is_deterministic(op):
-    """Same input twice -> identical output (required for reproducible scoring)."""
+    """Same input twice -> identical output (required for reproducible scoring).
+
+    Iterate every battery input and repeat 3x: uninitialized-buffer bugs
+    (e.g. cv2 warp on unmapped pixels) are flaky, so a single input/pair can
+    miss them. A correct op is identical across all of them.
+    """
     for iname, iv in inputs_for(op.in_sort):
-        o1 = op.fn(copy_input(iv), 0.5, 0.5)
-        o2 = op.fn(copy_input(iv), 0.5, 0.5)
-        assert _equal(o1, o2), f"{op.name} is nondeterministic on input '{iname}'"
-        break  # one representative input is enough to catch buffer-reuse bugs
+        ref = op.fn(copy_input(iv), 0.5, 0.5)
+        for _ in range(3):
+            again = op.fn(copy_input(iv), 0.5, 0.5)
+            assert _equal(ref, again), f"{op.name} is nondeterministic on input '{iname}'"
 
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
