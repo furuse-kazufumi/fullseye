@@ -34,7 +34,15 @@ def emit(problem: str, wd: Path) -> dict:
         if s.op == "identity":
             py.append("    # identity")
         else:
-            py.append(f"    x = np.clip(ops.RT[{s.op!r}](x, {s.a:.6f}, {s.b:.6f}), 0.0, 1.0)")
+            op = _OPMAP[s.op]
+            call = f"ops.RT[{s.op!r}](x, {s.a:.6f}, {s.b:.6f})"
+            # Only clip pixel outputs to [0,1]. Clipping a feature (a scalar
+            # measurement) or a contour (a dict) would silently destroy it — e.g.
+            # a blob count of 7 clamped to 1.0. Emit those raw.
+            if op.out_sort in ("image", "region"):
+                py.append(f"    x = np.clip({call}, 0.0, 1.0)")
+            else:
+                py.append(f"    x = {call}  # out_sort={op.out_sort}: raw (no [0,1] clip)")
     py += ["    return x", ""]
     (wd / f"gen_{problem}.py").write_text("\n".join(py), encoding="utf-8")
 
