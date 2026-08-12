@@ -82,7 +82,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         return _np(KF.motion_blur(_t(v), ks, float(360 * a), float(2 * b - 1)))
 
     def _canny(v, a, b):
-        _, edges = KF.canny(_t(v), low_threshold=0.1 + 0.3 * a, high_threshold=0.3 + 0.4 * b)
+        low = 0.1 + 0.3 * a
+        _, edges = KF.canny(_t(v), low_threshold=low, high_threshold=max(low + 1e-3, 0.3 + 0.4 * b))
         return _np(edges)
 
     def _clahe(v, a, b):
