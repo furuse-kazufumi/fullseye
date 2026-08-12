@@ -1052,6 +1052,28 @@ SEED: list[tuple] = [
     ("fft_image_inv", "frequency", IMG, IMG, "freq", {"kind": "ifft"}),
     # deterministic noise
     ("add_noise_white", "noise", IMG, IMG, "noise", {"kind": "gaussian"}),
+    # ---- v11d increment: XLD contour ops + region moments + misc ----------
+    # XLD contour -> feature
+    ("area_center_xld", "features", CON, FEA, "xld", {"kind": "area"}),
+    ("circularity_xld", "features", CON, FEA, "xld", {"kind": "circularity"}),
+    ("compactness_xld", "features", CON, FEA, "xld", {"kind": "compactness"}),
+    ("convexity_xld", "features", CON, FEA, "xld", {"kind": "convexity"}),
+    # XLD contour -> contour (transforms / closing)
+    ("close_contours_xld", "contour", CON, CON, "xld", {"kind": "close"}),
+    ("affine_trans_contour_xld", "contour", CON, CON, "xld", {"kind": "affine"}),
+    ("projective_trans_contour_xld", "contour", CON, CON, "xld", {"kind": "projective"}),
+    ("polar_trans_contour_xld", "contour", CON, CON, "xld", {"kind": "polar"}),
+    # region moments
+    ("moments_region_3rd", "features", REG, FEA, "region_feat", {"metric": "moment3"}),
+    ("moments_region_central", "features", REG, FEA, "region_feat", {"metric": "moment_central"}),
+    ("moments_region_central_invar", "features", REG, FEA, "region_feat", {"metric": "hu2"}),
+    ("moments_region_2nd_rel_invar", "features", REG, FEA, "region_feat", {"metric": "hu3"}),
+    ("moments_region_3rd_invar", "features", REG, FEA, "region_feat", {"metric": "hu4"}),
+    # segmentation / threshold / stats
+    ("dual_threshold", "segmentation", IMG, REG, "threshold", {"method": "dual"}),
+    ("segment_image_mser", "segmentation", IMG, REG, "segment", {"kind": "mser"}),
+    ("regiongrowing_mean", "segmentation", IMG, REG, "segment", {"kind": "regiongrow"}),
+    ("estimate_noise", "features", IMG, FEA, "img_feat", {"metric": "noise_est"}),
 ]
 
 

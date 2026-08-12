@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-352 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+369 operators across 20 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -295,6 +295,23 @@
 | `polar_trans_image_inv` | image | geometry | polar_trans_image_inv | warpAffine/warpPolar | transform | imwarp |
 | `fft_image_inv` | image | frequency | fft_image_inv | dft+mask | fft+mask | fft2 |
 | `add_noise_white` | image | noise | add_noise_white | - | util.random_noise | imnoise |
+| `area_center_xld` | contour->feature | features | area_center_xld | findContours | measure.find_contours | - |
+| `circularity_xld` | contour->feature | features | circularity_xld | findContours | measure.find_contours | - |
+| `compactness_xld` | contour->feature | features | compactness_xld | findContours | measure.find_contours | - |
+| `convexity_xld` | contour->feature | features | convexity_xld | findContours | measure.find_contours | - |
+| `close_contours_xld` | contour | contour | close_contours_xld | findContours | measure.find_contours | - |
+| `affine_trans_contour_xld` | contour | contour | affine_trans_contour_xld | findContours | measure.find_contours | - |
+| `projective_trans_contour_xld` | contour | contour | projective_trans_contour_xld | findContours | measure.find_contours | - |
+| `polar_trans_contour_xld` | contour | contour | polar_trans_contour_xld | findContours | measure.find_contours | - |
+| `moments_region_3rd` | region->feature | features | moments_region_3rd | - | measure.regionprops | regionprops |
+| `moments_region_central` | region->feature | features | moments_region_central | - | measure.regionprops | regionprops |
+| `moments_region_central_invar` | region->feature | features | moments_region_central_invar | - | measure.regionprops | regionprops |
+| `moments_region_2nd_rel_invar` | region->feature | features | moments_region_2nd_rel_invar | - | measure.regionprops | regionprops |
+| `moments_region_3rd_invar` | region->feature | features | moments_region_3rd_invar | - | measure.regionprops | regionprops |
+| `dual_threshold` | image->region | segmentation | dual_threshold | threshold/adaptiveThreshold | filters.threshold_* | imbinarize |
+| `segment_image_mser` | image->region | segmentation | segment_image_mser | Canny/watershed | segmentation | watershed |
+| `regiongrowing_mean` | image->region | segmentation | regiongrowing_mean | Canny/watershed | segmentation | watershed |
+| `estimate_noise` | image->feature | features | estimate_noise | minMaxLoc/meanStdDev | measure | - |
 | `tan_image` | image | arithmetic | tan_image | pointwise/LUT | - | imadjust |
 | `bit_not` | image | gray | bit_not | LUT | exposure/util | imadjust |
 | `monotony` | image | gray | monotony | LUT | exposure/util | imadjust |
@@ -358,9 +375,9 @@
 | `count_channels` | color->feature | features | count_channels | cvtColor/mixChannels | color | rgb2*/imsplit |
 
 ## Coverage (ops with a direct analog)
-- opencv: 258/352
-- skimage: 303/352
-- matlab: 242/352
+- opencv: 270/369
+- skimage: 320/369
+- matlab: 250/369
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.

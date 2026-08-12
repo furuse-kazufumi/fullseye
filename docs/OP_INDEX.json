@@ -1,9 +1,9 @@
 {
- "n_ops": 369,
+ "n_ops": 386,
  "tiers": {
   "color": 12,
   "nary": 17,
-  "registry": 340
+  "registry": 357
  },
  "sorts": [
   "any",
@@ -366,6 +366,14 @@
    "tier": "registry"
   },
   {
+   "name": "affine_trans_contour_xld",
+   "halcon": "affine_trans_contour_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
    "name": "affine_trans_image",
    "halcon": "affine_trans_image",
    "in_sort": "image",
@@ -409,6 +417,14 @@
    "name": "area_center",
    "halcon": "area_center",
    "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "area_center_xld",
+   "halcon": "area_center_xld",
+   "in_sort": "contour",
    "out_sort": "feature",
    "category": "features",
    "tier": "registry"
@@ -550,6 +566,14 @@
    "tier": "registry"
   },
   {
+   "name": "circularity_xld",
+   "halcon": "circularity_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "clahe",
    "halcon": "",
    "in_sort": "image",
@@ -563,6 +587,14 @@
    "in_sort": "region",
    "out_sort": "feature",
    "category": "classification",
+   "tier": "registry"
+  },
+  {
+   "name": "close_contours_xld",
+   "halcon": "close_contours_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
    "tier": "registry"
   },
   {
@@ -606,6 +638,14 @@
    "tier": "registry"
   },
   {
+   "name": "compactness_xld",
+   "halcon": "compactness_xld",
+   "in_sort": "contour",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "connect_and_holes",
    "halcon": "connect_and_holes",
    "in_sort": "region",
@@ -641,6 +681,14 @@
    "name": "convexity",
    "halcon": "convexity",
    "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "convexity_xld",
+   "halcon": "convexity_xld",
+   "in_sort": "contour",
    "out_sort": "feature",
    "category": "features",
    "tier": "registry"
@@ -1046,6 +1094,14 @@
    "tier": "registry"
   },
   {
+   "name": "dual_threshold",
+   "halcon": "dual_threshold",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
    "name": "dyn_threshold",
    "halcon": "dyn_threshold",
    "in_sort": "image",
@@ -1187,6 +1243,14 @@
    "in_sort": "region",
    "out_sort": "region",
    "category": "region",
+   "tier": "registry"
+  },
+  {
+   "name": "estimate_noise",
+   "halcon": "estimate_noise",
+   "in_sort": "image",
+   "out_sort": "feature",
+   "category": "features",
    "tier": "registry"
   },
   {
@@ -1894,6 +1958,46 @@
    "tier": "registry"
   },
   {
+   "name": "moments_region_2nd_rel_invar",
+   "halcon": "moments_region_2nd_rel_invar",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "moments_region_3rd",
+   "halcon": "moments_region_3rd",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "moments_region_3rd_invar",
+   "halcon": "moments_region_3rd_invar",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "moments_region_central",
+   "halcon": "moments_region_central",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
+   "name": "moments_region_central_invar",
+   "halcon": "moments_region_central_invar",
+   "in_sort": "region",
+   "out_sort": "feature",
+   "category": "features",
+   "tier": "registry"
+  },
+  {
    "name": "monotony",
    "halcon": "monotony",
    "in_sort": "image",
@@ -1998,6 +2102,14 @@
    "tier": "registry"
   },
   {
+   "name": "polar_trans_contour_xld",
+   "halcon": "polar_trans_contour_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
+   "tier": "registry"
+  },
+  {
    "name": "polar_trans_image",
    "halcon": "polar_trans_image",
    "in_sort": "image",
@@ -2083,6 +2195,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "edges",
+   "tier": "registry"
+  },
+  {
+   "name": "projective_trans_contour_xld",
+   "halcon": "projective_trans_contour_xld",
+   "in_sort": "contour",
+   "out_sort": "contour",
+   "category": "contour",
    "tier": "registry"
   },
   {
@@ -2176,6 +2296,14 @@
   {
    "name": "regiongrowing",
    "halcon": "regiongrowing",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
+   "tier": "registry"
+  },
+  {
+   "name": "regiongrowing_mean",
+   "halcon": "regiongrowing_mean",
    "in_sort": "image",
    "out_sort": "region",
    "category": "segmentation",
@@ -2291,6 +2419,14 @@
    "in_sort": "image",
    "out_sort": "image",
    "category": "gray",
+   "tier": "registry"
+  },
+  {
+   "name": "segment_image_mser",
+   "halcon": "segment_image_mser",
+   "in_sort": "image",
+   "out_sort": "region",
+   "category": "segmentation",
    "tier": "registry"
   },
   {
