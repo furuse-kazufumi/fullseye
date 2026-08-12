@@ -55,6 +55,22 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+def _shift_edge(x, dy, dx):
+    """Shift like ``np.roll`` but REPLICATE the border instead of wrapping around.
+
+    ``np.roll`` is circular, so a neighbourhood built from it makes the first
+    column/row see the LAST column/row of the image. Every local neighbourhood
+    here must stay inside the image, so out-of-image taps are clamped to the
+    nearest in-image pixel (``mode="edge"``). Interior values are bit-identical
+    to ``np.roll``; only the border ring changes.
+    """
+    x = np.asarray(x, np.float64)
+    H, W = x.shape[0], x.shape[1]
+    py0, py1, px0, px1 = max(dy, 0), max(-dy, 0), max(dx, 0), max(-dx, 0)
+    p = np.pad(x, ((py0, py1), (px0, px1)), mode="edge")
+    return p[py1:py1 + H, px1:px1 + W]
+
+
 def _signed01(x):
     """Map a signed response to [0,1] with the zero-crossing at 0.5 (preserves the
     negative half that a plain _norm→[-1,1] would lose to the pipeline's clip)."""
@@ -88,7 +104,7 @@ def _prewitt_mag(v, a, b): return _norm(np.hypot(ndimage.prewitt(v, 1), ndimage.
 
 
 def _roberts_mag(v, a, b):
-    return _norm(np.hypot(v - np.roll(np.roll(v, -1, 0), -1, 1), np.roll(v, -1, 1) - np.roll(v, -1, 0)))
+    return _norm(np.hypot(v - _shift_edge(v, -1, -1), _shift_edge(v, 0, -1) - _shift_edge(v, -1, 0)))
 
 
 def _dog(v, a, b):
@@ -114,7 +130,7 @@ def _bilateral(v, a, b):
     out = np.zeros_like(v, np.float64); wsum = np.zeros_like(v, np.float64)
     for dy in range(-r, r + 1):
         for dx in range(-r, r + 1):
-            sh = np.roll(np.roll(v, dy, 0), dx, 1)
+            sh = _shift_edge(v, dy, dx)   # edge-clamped: never wraps to the opposite border
             w = np.exp(-(dx * dx + dy * dy) / (2 * ss * ss)) * np.exp(-((sh - v) ** 2) / (2 * sr * sr))
             out += w * sh; wsum += w
     return out / np.maximum(wsum, 1e-8)
@@ -292,13 +308,49 @@ def _total_length(cv, a, b):
 
 
 # --- image -> match (template matching) -------------------------------------- #
+def _ncc_map(v, T):
+    """Normalized cross-correlation of template `T` over image `v` (Lewis 1995).
+
+    Value at (y,x) is Pearson's correlation between `T` and the T-sized window
+    centred there::
+
+        sum_w (I_w - mean_w)(T - mean_T) / (||I_w - mean_w|| * ||T - mean_T||)
+
+    so it is bounded to [-1,1], invariant to the window's brightness/contrast,
+    and 1.0 exactly for a match up to a positive affine map. Raw correlation
+    (no local normalization) instead peaks on whatever is brightest/largest.
+    Positions where the template does not fully overlap the image, flat windows
+    and a zero-energy template all score 0 (no match).
+    """
+    v = np.asarray(v, np.float64)
+    T = np.asarray(T, np.float64)
+    if T.ndim != v.ndim:
+        return np.zeros_like(v)
+    Tz = T - float(T.mean())
+    tnorm = float(np.sqrt(np.sum(Tz * Tz)))
+    if tnorm < 1e-12:
+        return np.zeros_like(v)
+    num = ndimage.correlate(v, Tz, mode="constant")          # sum(Tz) == 0 -> mean-free
+    m1 = ndimage.uniform_filter(v, size=T.shape, mode="constant")
+    m2 = ndimage.uniform_filter(v * v, size=T.shape, mode="constant")
+    den = np.sqrt(np.maximum(m2 - m1 * m1, 0.0) * float(T.size)) * tnorm
+    ok = np.zeros(v.shape, bool)                             # full-overlap positions only
+    lo = tuple(s // 2 for s in T.shape)
+    hi = tuple(n - (s - 1 - s // 2) for n, s in zip(v.shape, T.shape))
+    if all(h > l for l, h in zip(lo, hi)):
+        ok[tuple(slice(l, h) for l, h in zip(lo, hi))] = True
+    out = np.zeros_like(v)
+    np.divide(num, den, out=out, where=ok & (den > 1e-12))
+    return np.clip(out, -1.0, 1.0)
+
+
 def _ncc_locate(v, a, b):
     T = _MATCH_CTX.get("template")
     if T is None or not (isinstance(v, np.ndarray) and v.ndim == 2):
         return np.array([0.0, 0.0, 0.0])
-    corr = ndimage.correlate(v - float(v.mean()), T - float(T.mean()), mode="constant")
+    corr = _ncc_map(v, T)
     idx = np.unravel_index(int(np.argmax(corr)), corr.shape)
-    return np.array([float(corr.max()), float(idx[0]), float(idx[1])])
+    return np.array([float(corr[idx]), float(idx[0]), float(idx[1])])
 
 
 # --- geometry (image -> image; calibration/rectification building blocks) ----- #
@@ -325,16 +377,20 @@ def _gabor(v, a, b):
     yy, xx = np.mgrid[-k:k + 1, -k:k + 1]
     xr = xx * np.cos(theta) + yy * np.sin(theta)
     g = np.exp(-(xx * xx + yy * yy) / 8.0) * np.cos(2 * np.pi * freq * xr)
+    g = g - g.mean()   # DC-free (zero-mean) kernel: a Gabor is band-pass, not a brightness detector
     return _norm(np.abs(ndimage.convolve(v, g, mode="reflect")))
 
 
 def _clahe(v, a, b):
-    nb = 2 + int(a * 3); H, W = v.shape; out = v.copy(); hs, ws = max(1, H // nb), max(1, W // nb)
+    nb = 2 + int(a * 3); H, W = v.shape; out = v.copy()
+    # Boundaries from linspace so the tiles PARTITION the image: the last tile
+    # absorbs the H % nb / W % nb remainder instead of leaving it unequalised.
+    ys = np.linspace(0, H, nb + 1).astype(int); xs = np.linspace(0, W, nb + 1).astype(int)
     for i in range(nb):
         for j in range(nb):
-            blk = v[i * hs:(i + 1) * hs, j * ws:(j + 1) * ws]
+            blk = v[ys[i]:ys[i + 1], xs[j]:xs[j + 1]]
             if blk.size:
-                out[i * hs:(i + 1) * hs, j * ws:(j + 1) * ws] = _equalize(blk, 0, 0)
+                out[ys[i]:ys[i + 1], xs[j]:xs[j + 1]] = _equalize(blk, 0, 0)
     return out
 
 
@@ -356,11 +412,10 @@ def _shape_locate(v, a, b):
         return np.array([0.0, 0.0, 0.0, 0.0])
     best = [-1e18, 0.0, 0.0, 0.0]
     for ang in range(0, 360, 30):
-        tr = ndimage.rotate(T, ang, reshape=False)
-        corr = ndimage.correlate(v - float(v.mean()), tr - float(tr.mean()), mode="constant")
-        m = float(corr.max())
+        corr = _ncc_map(v, ndimage.rotate(T, ang, reshape=False))   # NCC per rotation
+        idx = np.unravel_index(int(np.argmax(corr)), corr.shape)
+        m = float(corr[idx])
         if m > best[0]:
-            idx = np.unravel_index(int(np.argmax(corr)), corr.shape)
             best = [m, float(idx[0]), float(idx[1]), float(ang)]
     return np.array(best)
 

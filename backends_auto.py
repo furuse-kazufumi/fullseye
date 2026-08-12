@@ -71,6 +71,16 @@ def _norm(x):
     return x / mx if mx > 1e-8 else x
 
 
+def _shift_edge(x, dy, dx):
+    """Shift like ``np.roll`` but REPLICATE the border instead of wrapping around
+    (``np.roll`` is circular, so the last row/col would leak into the first)."""
+    x = np.asarray(x, np.float64)
+    H, W = x.shape[0], x.shape[1]
+    py0, py1, px0, px1 = max(dy, 0), max(-dy, 0), max(dx, 0), max(-dx, 0)
+    p = np.pad(x, ((py0, py1), (px0, px1)), mode="edge")
+    return p[py1:py1 + H, px1:px1 + W]
+
+
 def _bin(v):
     return np.asarray(v) > 0.5
 
@@ -324,8 +334,8 @@ def _sh_edge(p):
         if kind == "prewitt_dir":
             return (np.arctan2(ndimage.prewitt(x, 0), ndimage.prewitt(x, 1)) + np.pi) / (2 * np.pi)
         if kind == "roberts":
-            return _norm(np.hypot(x - np.roll(np.roll(x, -1, 0), -1, 1),
-                                  np.roll(x, -1, 1) - np.roll(x, -1, 0)))
+            return _norm(np.hypot(x - _shift_edge(x, -1, -1),
+                                  _shift_edge(x, 0, -1) - _shift_edge(x, -1, 0)))
         if kind == "scharr":
             sh = np.array([[3, 0, -3], [10, 0, -10], [3, 0, -3]], float)
             return _norm(np.hypot(ndimage.convolve(x, sh), ndimage.convolve(x, sh.T)))
@@ -337,8 +347,11 @@ def _sh_edge(p):
         if kind == "frei":
             return _norm(np.hypot(ndimage.convolve(x, _FREI[0]), ndimage.convolve(x, _FREI[1])))
         if kind == "frei_dir":
-            return (np.arctan2(ndimage.convolve(x, _FREI[1]),
-                               ndimage.convolve(x, _FREI[0])) + np.pi) / (2 * np.pi)
+            # _FREI[0] is the horizontal-edge kernel (row/y gradient), _FREI[1] the
+            # vertical-edge kernel (col/x gradient); arctan2(gy, gx) matches the
+            # sobel_dir / prewitt_dir convention.
+            return (np.arctan2(ndimage.convolve(x, _FREI[0]),
+                               ndimage.convolve(x, _FREI[1])) + np.pi) / (2 * np.pi)
         if kind == "robinson":
             r0 = [np.rot90(_ROBINSON[0], i) for i in range(4)]
             r1 = [np.rot90(_ROBINSON[1], i) for i in range(4)]
@@ -479,6 +492,7 @@ def _sh_texture(p):
             yy, xx = np.mgrid[-7:8, -7:8]
             xr = xx * np.cos(theta) + yy * np.sin(theta)
             g = np.exp(-(xx * xx + yy * yy) / 8.0) * np.cos(2 * np.pi * freq * xr)
+            g = g - g.mean()   # DC-free (zero-mean) kernel: a Gabor is band-pass, not a brightness detector
             return _norm(np.abs(ndimage.convolve(x, g, mode="reflect")))
         if kind == "lbp" and _HAS_SK:
             return _norm(skfeat.local_binary_pattern(x, 8, _rad(a)))
@@ -1263,6 +1277,33 @@ def _safe(fn, out_sort=None):
     return w
 
 
+def _rebinarise(fn):
+    """Restore the {0,1} region contract after an INTERPOLATING geometry op.
+
+    `_sh_geom` resamples with cubic-spline (`ndimage.affine_transform`), bilinear
+    (`cv2.warpPolar`) or perspective (`cv2.warpPerspective`) interpolation and
+    then only clips to [0,1].  Applied to a spec whose declared `out_sort` is
+    "region" that produced FRACTIONAL membership -- transforming a 441 px binary
+    disk gave `affine_trans_region` 2009 distinct values / 906 fractional pixels
+    -- which both violates the sort contract and silently deletes small regions
+    at the `> 0.5` cut every region consumer (`ops._bin`) applies (a 1-pixel
+    region peaked at 0.4977 and vanished).  A geometric transform is a bijection
+    of the plane, so the image of a SET is a SET: threshold here, at the op
+    boundary, using the codebase's canonical region cut.
+
+    Only region-typed geometry specs are wrapped (see `build`); the image-typed
+    siblings compiled from the same `_sh_geom` (zoom_image_factor,
+    affine_trans_image, rotate_image, projective_trans_image, ...) stay
+    continuous.
+    """
+    def w(v, a, b):
+        out = fn(v, a, b)
+        if isinstance(out, np.ndarray) and out.dtype.kind in "fc":
+            return (np.real(out) > 0.5).astype(np.float64)
+        return out
+    return w
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """Compile validated specs into typed Op wrappers.
 
@@ -1289,10 +1330,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             dropped.append(("bad_params", name))
             continue
         seen.add(name)
+        out_sort = s.get("out_sort", "image")
+        if shape == "geom" and out_sort == "region":
+            fn = _rebinarise(fn)            # geometry interpolates; a region must stay {0,1}
         opname = name if name not in ("threshold", "identity") else "h_" + name
         ops_out.append(Op(opname, s.get("category", "misc"), name,
-                          s.get("in_sort", "image"), s.get("out_sort", "image"),
-                          _safe(fn, s.get("out_sort", "image"))))
+                          s.get("in_sort", "image"), out_sort,
+                          _safe(fn, out_sort)))
     build.dropped = dropped                 # introspectable for honest reporting
     return ops_out
 

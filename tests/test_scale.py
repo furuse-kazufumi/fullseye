@@ -15,12 +15,20 @@ def _img(n=200):
     return np.clip(0.5 + 0.3 * np.sin(xx / 9.0) * np.cos(yy / 7.0), 0, 1)
 
 
+# genuinely local ops with NO trailing global normalization -> bit-exact under tiling
 @pytest.mark.parametrize("name,halo", [
-    ("gaussian", 24), ("sobel_mag", 8), ("gerode", 8), ("mean_box", 8), ("median", 8),
+    ("gaussian", 24), ("gerode", 8), ("gdilate", 8), ("mean_box", 8), ("median", 8),
 ])
 def test_tiled_matches_whole_for_local_ops(name, halo):
     err = scale.tiling_error(ops.RT[name], _img(), a=0.4, b=0.5, tile=64, halo=halo)
     assert err < 1e-6, f"{name}: tiled result differs from whole-image by {err}"
+
+
+def test_globally_normalized_op_tiles_spatially_but_not_in_scale():
+    """sobel_mag ends in a global _norm, so tiling is structurally right but not
+    bit-identical — documents the scale.py caveat rather than pretending otherwise."""
+    err = scale.tiling_error(ops.RT["sobel_mag"], _img(), a=0.4, b=0.5, tile=64, halo=8)
+    assert err > 0.0   # differs (per-tile normalization) — expected, not a tile-safe op
 
 
 def test_process_tiled_handles_non_multiple_size():
