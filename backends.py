@@ -195,7 +195,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: (cv2.Canny(_u8(v), int(50 + 100 * a), int(100 + 150 * b)) > 0).astype(np.float64)),
             # more image->image
             ("cv_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
-             lambda v, a, b: norm(cv2.cornerHarris(v.astype(np.float32), 2, 3, 0.04))),
+             lambda v, a, b: signed01(cv2.cornerHarris(v.astype(np.float32), 2, 3, 0.04))),
             ("cv_min_eigen", "edges", "points_harris", IMAGE, IMAGE,
              lambda v, a, b: norm(cv2.cornerMinEigenVal(v.astype(np.float32), 3 + 2 * int(a * 2)))),
             ("cv_precorner", "edges", "corner_response", IMAGE, IMAGE,
