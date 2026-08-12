@@ -1,6 +1,6 @@
 # imgevolve — cross-library operator catalog
 
-453 operators across 22 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
+509 operators across 31 categories, typed by sort (image/region/feature). Each maps to the nearest single-call API in HALCON / OpenCV / scikit-image / MATLAB. `-` = no direct one-call analog.
 
 | op | sort | category | halcon | opencv | skimage | matlab |
 |---|---|---|---|---|---|---|
@@ -457,11 +457,67 @@
 | `xcv2_hitmiss` | region | region |  | cv2.hitmiss | - | - |
 | `xcv2_lap_var` | image->feature | features |  | cv2.lap_var | - | - |
 | `xcv2_fast_count` | image->feature | features |  | cv2.fast_count | - | - |
+| `xmh_zernike` | image->feature | texture/shape-feature |  | - | - | - |
+| `xmh_pftas` | image->feature | texture-feature |  | - | - | - |
+| `xmh_bernsen` | image->region | segmentation |  | - | - | - |
+| `xmh_majority` | region | region-morphology |  | - | - | - |
+| `xmh_haar` | image | transform |  | - | - | - |
+| `xmh_daubechies` | image | transform |  | - | - | - |
+| `xmh_soft` | image | intensity-transform |  | - | - | - |
+| `xmh_bwperim` | region | region-transform |  | - | - | - |
+| `xmh_regmin` | image->region | morphology/markers |  | - | - | - |
+| `xmh_selfmatch` | image | self-similarity |  | - | - | - |
+| `xwt_subband_tile` | image | frequency |  | - | - | - |
+| `xwt_visushrink` | image | smoothing |  | - | - | - |
+| `xwt_firm_denoise` | image | smoothing |  | - | - | - |
+| `xwt_detail_energy` | image->feature | features |  | - | - | - |
+| `xwt_hf_reconstruct` | image | edges |  | - | - | - |
+| `xwt_lf_reconstruct` | image | smoothing |  | - | - | - |
+| `xwt_directional_detail` | image | edges |  | - | - | - |
+| `xwt_packet_entropy` | image->feature | features |  | - | - | - |
+| `xwt_mra_component` | image | frequency |  | - | - | - |
+| `xsitk_curvature_flow` | image | extra |  | - | - | - |
+| `xsitk_minmax_curv_flow` | image | extra |  | - | - | - |
+| `xsitk_curv_aniso_diff` | image | extra |  | - | - | - |
+| `xsitk_laplacian_sharpen` | image | extra |  | - | - | - |
+| `xsitk_grayscale_fillhole` | image | extra |  | - | - | - |
+| `xsitk_grayscale_grindpeak` | image | extra |  | - | - | - |
+| `xsitk_opening_by_recon` | image | extra |  | - | - | - |
+| `xsitk_closing_by_recon` | image | extra |  | - | - | - |
+| `xsitk_signed_maurer_dist` | region->image | extra |  | - | - | - |
+| `xsitk_connected_threshold` | image->region | extra |  | - | - | - |
+| `xsitk_confidence_connected` | image->region | extra |  | - | - | - |
+| `xsitk_maxentropy_thresh` | image->region | extra |  | - | - | - |
+| `xsitk_moments_thresh` | image->region | extra |  | - | - | - |
+| `xsitk_huang_thresh` | image->region | extra |  | - | - | - |
+| `xsk3_rank_otsu` | image->region | segmentation |  | - | - | - |
+| `xsk3_rank_majority` | region | region |  | - | - | - |
+| `xsk3_rank_subtract_mean` | image | gray |  | - | - | - |
+| `xsk3_rank_equalize` | image | gray |  | - | - | - |
+| `xsk3_rank_mean_bilateral` | image | smoothing |  | - | - | - |
+| `xsk3_h_minima` | image->region | segmentation |  | - | - | - |
+| `xsk3_area_closing` | image | morphology |  | - | - | - |
+| `xsk3_diameter_closing` | image | morphology |  | - | - | - |
+| `xsk3_corner_moravec` | image | edges |  | - | - | - |
+| `xsk3_corner_fast` | image | edges |  | - | - | - |
+| `xsk3_integral_image` | image | gray |  | - | - | - |
+| `xsk3_threshold_local_median` | image->region | segmentation |  | - | - | - |
+| `xsk3_is_low_contrast` | image->feature | features |  | - | - | - |
+| `xsk3_estimate_sigma` | image->feature | features |  | - | - | - |
+| `xsk3_peak_local_max` | image->region | segmentation |  | - | - | - |
+| `xcv3_denoise_tvl1` | image | smoothing |  | - | - | - |
+| `xcv3_inpaint_ns` | image | restoration |  | - | - | - |
+| `xcv3_pyr_laplacian` | image | smoothing |  | - | - | - |
+| `xcv3_gray_hu1` | image->feature | features |  | - | - | - |
+| `xcv3_sift_count` | image->feature | features |  | - | - | - |
+| `xcv3_brisk_count` | image->feature | features |  | - | - | - |
+| `xcv3_agast_count` | image->feature | features |  | - | - | - |
+| `xcv3_lsd_count` | image->feature | features |  | - | - | - |
 
 ## Coverage (ops with a direct analog)
-- opencv: 304/453
-- skimage: 367/453
-- matlab: 262/453
+- opencv: 304/509
+- skimage: 367/509
+- matlab: 262/509
 
 ## Roadmap toward full coverage
 - HALCON ~2100 operators: add regions/XLD-contours/matching/OCR/calibration sorts.
