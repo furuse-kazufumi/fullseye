@@ -134,11 +134,14 @@ scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen �
 - **★GitHub push 済(2026-08-12 ユーザー許可)= github.com/furuse-kazufumi/imgevolve(private)**。公開(public 化)・
   PyPI・fullseye 物理リネームは別途 human-gate(公開時)。
 
-**★進化ループでの他ライブラリ op 実使用 検証(2026-08-12)**: 全 521-op registry で `evolve.py --problem edge`
-(15 世代)を実走 → champion holdout **0.830 F1**、pipeline に **取り込んだ他ライブラリ op を genuine に選択**
-(`xcv2_meanshift`・`xcv_detail_enhance`・`sk_enhance_contrast`)。baseline(手作り 0.897 / random 0.311 / trivial 0.267)。
-honest: 短予算では強い手作りに未達だが random を大きく上回り、他ライブラリ op は dead weight でなく実際に champion へ
-組み込まれる(拡張 registry は進化で使える)。
+**★進化ループでの他ライブラリ op 実使用 検証(2026-08-12, 全 521-op registry・短予算15-18世代)**:
+- **denoise: champion holdout 24.12 dB > 手作り baseline 22.72 dB(+1.4 dB で上回る!)**。champion=
+  `xsitk_curv_aniso_diff`(SimpleITK)→`sk_area_opening`→`cv_bilateral`→gray_closing/opening→`sk_median_disk`。
+  = **他ライブラリ取り込みが実際に設計を改善**(North Star 実証)。
+- edge: 0.830 F1(手作り 0.897 に僅差未達・random 0.311 超)、champion=`xcv2_meanshift`・`xcv_detail_enhance`・`sk_enhance_contrast`。
+- binarize: 0.826 IoU(手作り 0.878 未達・random 0.407 超)、champion=`xsp_cspline_smooth`・`xkor_unsharp`(kornia)・`xsitk_minmax_curv_flow`。
+honest: 他ライブラリ op は dead weight でなく全 3 タスクで champion に genuine 選択される。denoise は手作りを超え、
+edge/binarize は短予算で僅差未達(長予算で縮む見込み)。拡張 registry は進化で使え、価値がある。
 
 ## HALCON ~2313 の実装可能性(章別内訳, honest)
 - **アルゴリズム系 808**(Filters/Morphology/Regions/Segmentation/XLD/Image/Transformations/
