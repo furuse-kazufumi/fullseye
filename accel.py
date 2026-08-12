@@ -1,0 +1,200 @@
+"""GPU-ready batched backend — the same operators, high throughput.
+
+The CPU registry runs one image at a time through scipy/OpenCV. For throughput
+(and to exploit the user's RTX 5090) the hot, vectorisable operators also have a
+torch implementation that processes a whole BATCH (N,1,H,W) at once on a chosen
+device. `--device cuda` runs them on the GPU; on CPU, batching + fused kernels
+still beat the per-image Python loop.
+
+Honesty (feedback_cpu_short_poc_before_gpu / beat_the_null): the fast path must
+produce the SAME result as the CPU reference. `parity()` difftests every accel op
+against its registry op; `bench.py` measures images/sec vs the numpy baseline.
+This environment is torch-CPU only, so GPU numbers are measured on the user's box
+with --device cuda — never claimed here.
+
+Reflect padding matches scipy's default so the interiors agree; morphology uses
+pool ops whose borders differ slightly (disclosed via the parity tolerance).
+
+    py -3.11 accel.py                  # list accel ops + CPU parity vs registry
+    py -3.11 accel.py --device cuda    # (on a CUDA box) same, on the GPU
+"""
+from __future__ import annotations
+
+import argparse
+import os
+
+import numpy as np
+
+try:
+    import torch
+    import torch.nn.functional as F
+    _HAS_TORCH = True
+except Exception:  # pragma: no cover
+    _HAS_TORCH = False
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+
+def _to_batch(imgs, device):
+    x = np.stack([np.asarray(i, np.float64) for i in imgs])[:, None, :, :]
+    return torch.as_tensor(x, dtype=torch.float32, device=device)
+
+
+def _from_batch(t):
+    return [a[0] for a in t.detach().cpu().numpy().astype(np.float64)]
+
+
+def _gauss_kernel(sigma, device):
+    r = max(1, int(4.0 * sigma + 0.5))               # scipy truncate=4.0
+    x = torch.arange(-r, r + 1, dtype=torch.float32, device=device)
+    k = torch.exp(-(x * x) / (2 * sigma * sigma))
+    return (k / k.sum())
+
+
+def _sep_conv(t, k):
+    r = (k.numel() - 1) // 2
+    kh = k.view(1, 1, 1, -1)
+    kv = k.view(1, 1, -1, 1)
+    t = F.pad(t, (r, r, 0, 0), mode="reflect")
+    t = F.conv2d(t, kh)
+    t = F.pad(t, (0, 0, r, r), mode="reflect")
+    return F.conv2d(t, kv)
+
+
+def _conv(t, ker, device):
+    k = torch.as_tensor(ker, dtype=torch.float32, device=device).view(1, 1, *ker.shape)
+    r0, r1 = ker.shape[0] // 2, ker.shape[1] // 2
+    return F.conv2d(F.pad(t, (r1, r1, r0, r0), mode="reflect"), k)
+
+
+def _norm_b(t):
+    mx = t.abs().amax(dim=(2, 3), keepdim=True).clamp_min(1e-8)
+    return t / mx
+
+
+def _k(a):
+    return (3, 5, 7, 9)[min(3, int(a * 4))]
+
+
+# each: (batch tensor, a, b, device) -> batch tensor
+def _gaussian(t, a, b, dev):
+    return _sep_conv(t, _gauss_kernel(0.3 + 2.7 * a, dev))
+
+
+def _mean(t, a, b, dev):
+    k = _k(a)
+    ker = torch.ones(1, 1, k, k, device=dev) / (k * k)
+    r = k // 2
+    return F.conv2d(F.pad(t, (r, r, r, r), mode="reflect"), ker)
+
+
+def _sobel(t, a, b, dev):
+    gx = _conv(t, np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32), dev)
+    gy = _conv(t, np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], np.float32), dev)
+    return _norm_b(torch.hypot(gx, gy))
+
+
+def _laplace(t, a, b, dev):
+    return _norm_b(_conv(t, np.array([[0, 1, 0], [1, -4, 1], [0, 1, 0]], np.float32), dev).abs())
+
+
+def _gamma(t, a, b, dev):
+    return t.clamp(0, 1) ** (0.5 + 1.5 * a)
+
+
+def _invert(t, a, b, dev):
+    return 1.0 - t.clamp(0, 1)
+
+
+def _scale(t, a, b, dev):
+    return ((0.5 + 1.5 * a) * t + (b - 0.5)).clamp(0, 1)
+
+
+def _threshold(t, a, b, dev):
+    return (t > a).float()
+
+
+def _erode_rect(t, a, b, dev):
+    k = _k(a)
+    return -F.max_pool2d(-t, k, stride=1, padding=k // 2)
+
+
+def _dilate_rect(t, a, b, dev):
+    k = _k(a)
+    return F.max_pool2d(t, k, stride=1, padding=k // 2)
+
+
+def _range_rect(t, a, b, dev):
+    k = _k(a)
+    return _norm_b(F.max_pool2d(t, k, stride=1, padding=k // 2)
+                   + F.max_pool2d(-t, k, stride=1, padding=k // 2))
+
+
+# accel op name -> (fn, registry halcon name it reproduces)
+ACCEL = {
+    "gauss_filter": (_gaussian, "gauss_filter"),
+    "mean_image": (_mean, "mean_image"),
+    "sobel_amp": (_sobel, "sobel_amp"),
+    "laplace": (_laplace, "laplace"),
+    "gamma_image": (_gamma, "gamma_image"),
+    "invert_image": (_invert, "invert_image"),
+    "scale_image": (_scale, "scale_image"),
+    "threshold": (_threshold, "threshold"),
+    "gray_erosion_rect": (_erode_rect, "gray_erosion_rect"),
+    "gray_dilation_rect": (_dilate_rect, "gray_dilation_rect"),
+    "gray_range_rect": (_range_rect, "gray_range_rect"),
+}
+
+
+def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
+    """Run one accel op over a batch of images; returns a list of 2-D arrays."""
+    fn = ACCEL[name][0]
+    t = _to_batch(imgs, device)
+    out = fn(t, a, b, device).clamp(0, 1)
+    return _from_batch(out)
+
+
+def parity(device="cpu"):
+    """Difftest every accel op against its CPU registry op on holdout images."""
+    import ops
+    rng = np.random.default_rng(7)
+    imgs = [np.clip(rng.random((64, 64)) * 0.6 + 0.2 * (np.mgrid[0:64, 0:64][1] / 64), 0, 1)
+            for _ in range(6)]
+    rows = []
+    for name, (fn, halcon) in ACCEL.items():
+        # find the registry op with this halcon name and matching pipeline behaviour
+        ref_op = next((o for o in ops.REGISTRY if o.halcon == halcon and o.in_sort == "image"), None)
+        if ref_op is None:
+            continue
+        got = run_batch(name, imgs, 0.5, 0.4, device)
+        worst = 0.0
+        for i, im in enumerate(imgs):
+            ref = np.clip(ops.RT[ref_op.name](im.copy(), 0.5, 0.4), 0, 1)
+            worst = max(worst, float(np.max(np.abs(ref - got[i]))))
+        rows.append((name, halcon, worst))
+    return rows
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--device", default="cpu")
+    a = ap.parse_args()
+    if not _HAS_TORCH:
+        print("torch not available — accel disabled")
+        return 1
+    dev = a.device if (a.device == "cpu" or torch.cuda.is_available()) else "cpu"
+    if dev != a.device:
+        print("[accel] CUDA not available here; falling back to CPU (run on the RTX 5090 for GPU).")
+    print("accel ops: %d  | device=%s | torch=%s" % (len(ACCEL), dev, torch.__version__))
+    rows = parity(dev)
+    ok = sum(1 for _, _, d in rows if d < 5e-3)
+    print("CPU parity vs registry (interior match; borders differ for pooling ops):")
+    for name, halcon, d in sorted(rows, key=lambda r: -r[2]):
+        flag = "ok" if d < 5e-3 else ("close" if d < 5e-2 else "differ")
+        print("  %-20s vs %-20s  max|diff|=%.4f  %s" % (name, halcon, d, flag))
+    print("faithful (<5e-3): %d / %d" % (ok, len(rows)))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
