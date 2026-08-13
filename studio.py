@@ -883,14 +883,45 @@ def build_window(model=None):
 
     central.addWidget(left); central.addWidget(mid); central.addWidget(right)
     central.setSizes([340, 360, 640]); central.setStretchFactor(2, 1)
-    state = {"result": None, "raw": None, "view_raw": False, "reordering": False}
+    state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
+             "dirty": False, "errors": [], "perception_error": None, "renders": 0}
     pmodel = PerceptionModel()
 
     # -- behaviour --
     def selected_index():
         return stage_list.currentRow()
 
+    def mark_dirty():
+        """Record that the in-memory pipeline no longer matches anything on disk."""
+        state["dirty"] = True
+
+    def report_error(title, text):
+        """Surface a recoverable failure: status bar + a modal via ERROR_HOOK.
+
+        Also appended to ``state['errors']`` so a headless test can assert on it
+        without stubbing the dialog."""
+        state["errors"].append((title, str(text)))
+        flash("%s: %s" % (title, truncate(text, 120)))
+        try:
+            ERROR_HOOK(win, title, str(text))
+        except Exception:                 # a stubbed/absent dialog must never crash us
+            pass
+
+    def confirm_discard(title, what="the current pipeline"):
+        """True if it is OK to throw away unsaved pipeline edits."""
+        if not state["dirty"] or not model.stages:
+            return True
+        return bool(CONFIRM_HOOK(
+            win, title,
+            "%s has %d unsaved stage(s).\nDiscard them?" % (what.capitalize(), len(model.stages))))
+
     def refresh_stage_list(select=None):
+        """Rebuild the stage rows (and the Problems panel).
+
+        Never renders the image: the row is selected with the list's signals still
+        blocked and the knob panel is synced explicitly, so every caller renders
+        exactly once afterwards instead of twice (once via currentRowChanged and
+        once via its own show_result())."""
         state["reordering"] = True                    # suppress the drag-reorder handler
         stage_list.blockSignals(True)
         stage_list.clear()
@@ -903,35 +934,45 @@ def build_window(model=None):
             summ = step_summary(st) if st else ""
             it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
+            it.setToolTip(op_tooltip(_op_row(name)) if _op_row(name) else name)
             if st.get("kind") == "error":             # mark a stage that raised at runtime
                 it.setForeground(QtGui.QColor(AMBER))
-                it.setToolTip("runtime error: " + str(st.get("message", "")))
+                it.setToolTip("runtime error: " + truncate(st.get("message", "")))
             stage_list.addItem(it)
+        if select is not None and 0 <= select < len(model.stages):
+            stage_list.setCurrentRow(select)           # still blocked -> no extra render
         stage_list.blockSignals(False)
         state["reordering"] = False
         refresh_problems(states)
-        if select is not None and 0 <= select < len(model.stages):
-            stage_list.setCurrentRow(select)
+        sync_stage_ui()
 
     def refresh_problems(states=None):
         """Populate the Problems list: static validation (unknown op / sort mismatch,
-        via engine.diagnose_stages) + runtime errors (a stage that raised)."""
+        via engine.diagnose_stages) + runtime errors (a stage that raised) + the last
+        perception failure (which used to be a status-bar flash you could easily miss)."""
         problems_list.clear()
         probs = list(engine.diagnose_stages(model.stages))     # static checks
         if states:
             for s in states:                                    # runtime errors
                 if s.get("state", {}).get("kind") == "error":
                     probs.append({"index": s["index"], "op": s["op"], "severity": "error",
-                                  "message": "runtime: " + str(s["state"].get("message", ""))})
+                                  "message": "runtime: " + truncate(s["state"].get("message", ""))})
         probs.sort(key=lambda p: (p["index"], 0 if p["severity"] == "error" else 1))
         for p in probs:
             mark = "✕" if p["severity"] == "error" else "!"
             it = QtWidgets.QListWidgetItem("%s stage %d (%s): %s"
-                                           % (mark, p["index"] + 1, p.get("op", "?"), p["message"]))
+                                           % (mark, p["index"] + 1, p.get("op", "?"),
+                                              truncate(p["message"])))
             it.setData(QtCore.Qt.UserRole, p["index"])
             it.setForeground(QtGui.QColor(AMBER if p["severity"] == "error" else "#c9a227"))
             problems_list.addItem(it)
-        if not probs:
+        perr = state.get("perception_error")
+        if perr:
+            it = QtWidgets.QListWidgetItem("✕ perception (%s): %s" % (perr[0], truncate(perr[1])))
+            it.setData(QtCore.Qt.UserRole, -1)
+            it.setForeground(QtGui.QColor(AMBER))
+            problems_list.addItem(it)
+        if not probs and not perr:
             hint = QtWidgets.QListWidgetItem("no problems")
             hint.setForeground(QtGui.QColor(MUTED))
             hint.setData(QtCore.Qt.UserRole, -1)
