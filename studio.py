@@ -1186,6 +1186,8 @@ def build_window(model=None):
     act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
+    act_op_help.triggered.connect(show_op_reference)
+    act_samples.triggered.connect(show_samples)
     act_about.triggered.connect(show_about)
 
     def open_3d():
