@@ -63,6 +63,30 @@ def test_estimate_normals_handles_empty_cloud():
     assert n.shape == (0, 3)
 
 
+def test_statistical_outlier_removal_drops_strays():
+    rng = np.random.default_rng(5)
+    v = rng.standard_normal((500, 3))
+    clean = v / np.linalg.norm(v, axis=1, keepdims=True)          # sphere surface
+    strays = rng.uniform(-6, 6, (20, 3))                          # far outliers
+    P = np.vstack([clean, strays])
+    filt, keep = pc.remove_statistical_outliers(P, k=16, std_ratio=2.0)
+    assert not keep[500:].any()                                   # every stray dropped
+    assert keep[:500].mean() > 0.95                               # nearly all inliers kept
+
+
+def test_radius_outlier_removal_drops_isolated():
+    rng = np.random.default_rng(6)
+    cluster = rng.normal(0, 0.05, (300, 3))                       # dense blob near origin
+    isolated = np.array([[5.0, 5.0, 5.0], [-4.0, 2.0, 3.0]])
+    P = np.vstack([cluster, isolated])
+    filt, keep = pc.remove_radius_outliers(P, radius=0.2, min_neighbors=4)
+    assert not keep[300:].any()                                  # isolated points dropped
+    assert keep[:300].mean() > 0.95
+    import pytest
+    with pytest.raises(ValueError):
+        pc.remove_radius_outliers(P, radius=0.0)
+
+
 def test_voxel_downsample_rejects_nonpositive_voxel():
     import pytest
     with pytest.raises(ValueError):
