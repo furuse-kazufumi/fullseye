@@ -254,3 +254,22 @@ def test_command_palette_action_wired():
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert "palette" in win._actions
     assert win._actions["palette"].shortcut().toString() == "Ctrl+P"
+
+
+def test_shortcut_table_dedup_and_drop_empty():
+    items = [("Open image…", "Ctrl+O"), ("About", ""),
+             ("Open image…", "Ctrl+O"), ("Fit", "Ctrl+0")]
+    rows = studio.shortcut_table(items)
+    assert ("Open image", "Ctrl+O") in rows and ("Fit", "Ctrl+0") in rows
+    assert all(sc for _, sc in rows)            # empties dropped
+    assert len(rows) == 2                         # duplicate collapsed
+
+
+def test_shortcuts_help_action_wired():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert "shortcuts" in win._actions
+    assert win._actions["shortcuts"].shortcut().toString() == "F1"
