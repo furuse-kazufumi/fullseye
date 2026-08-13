@@ -263,10 +263,11 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
 def probe(path: str) -> dict:
     """Best-effort clip metadata: ``{"fps", "size" (w, h), "nframes"}``.
 
-    ``nframes`` is ``None`` when the backend cannot report it without decoding
-    the whole stream (common for mp4). Never raises for a readable file — falls
-    back to counting via :func:`iter_frames` only for the frame count if asked
-    implicitly elsewhere; here it just returns what the container advertises.
+    Values the container/plugin does not advertise are ``None`` — ``nframes`` is
+    commonly ``None`` for mp4 (the backend will not count without decoding the
+    whole stream). For GIF, ``fps`` is derived from the per-frame delay and
+    ``size`` from the first frame. Never raises: an unreadable/absent path yields
+    all-``None`` rather than an error. Accepts a ``str`` or ``os.PathLike``.
     """
     out = {"fps": None, "size": None, "nframes": None}
     imageio = _imageio()
