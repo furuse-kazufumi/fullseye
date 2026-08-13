@@ -46,7 +46,10 @@ import pose  # noqa: E402  (silhouette posture descriptors)
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
-from stereo import disparity_map, depth_from_disparity, reproject_to_points  # noqa: E402,F401
+from stereo import (  # noqa: E402,F401
+    disparity_map, disparity_subpixel, lr_consistency,
+    depth_from_disparity, reproject_to_points,
+)
 from measure import line_profile, distance, angle  # noqa: E402,F401
 from registration import kabsch, icp, apply_transform  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
