@@ -95,16 +95,20 @@ def motion_segments(u, v, threshold: float, subtract_dominant: bool = True,
     connected regions whose residual speed exceeds *threshold* (px/frame — size it
     from :func:`frame_motion_energy`). Returns ``(mask, segments)`` with per-region
     dicts (``area`` / ``centroid`` (row, col) / ``bbox`` / ``mean_speed``),
-    largest-first. Blobs smaller than *min_area* pixels are dropped. *smooth*
-    Gaussian-blurs the speed first to knit noisy interiors together."""
+    largest-first. Blobs smaller than *min_area* pixels are dropped. *smooth* is
+    the number of binary-closing iterations used to knit noisy interiors together
+    *after* thresholding — so ``area`` and ``mean_speed`` are measured on the true
+    (un-blurred) speed field, not a smoothed one."""
     if subtract_dominant:
         ru, rv = residual_motion(u, v)
     else:
         ru, rv = np.asarray(u, np.float64), np.asarray(v, np.float64)
     mag = np.hypot(ru, rv)
-    if smooth and smooth > 0:
-        mag = ndimage.gaussian_filter(mag, float(smooth), mode="nearest")
     mask = mag > float(threshold)
+    if smooth and smooth > 0:
+        # morphological closing fills holes/gaps without the area-dilation and
+        # interior-attenuation a Gaussian blur of the speed field would introduce.
+        mask = ndimage.binary_closing(mask, iterations=int(round(smooth)))
     lbl, n = ndimage.label(mask)
     segments = []
     for i in range(1, n + 1):
