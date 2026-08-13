@@ -67,11 +67,13 @@ __all__ = [
     "stereo", "disparity_map", "depth_from_disparity", "reproject_to_points",
     "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
-    "colorize_disparity", "colorize_labels", "colorize_height", "shaded_relief",
-    "overlay_mask", "save", "load", "save_ply", "COLORMAPS",
+    "colorize_disparity", "colorize_labels", "colorize_height", "colorize_flow",
+    "shaded_relief", "overlay_mask", "save", "load", "save_ply", "COLORMAPS",
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
     "registration", "kabsch", "icp", "apply_transform",
     "pose", "pose_descriptor", "skeleton_nodes", "principal_axis",
+    "flow", "optical_flow_lk", "optical_flow_hs", "warp_by_flow",
+    "flow_magnitude", "flow_angle",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
 ]
 
