@@ -959,6 +959,25 @@ def build_window(model=None):
         v.addWidget(ok, 0, QtCore.Qt.AlignRight)
         dlg.resize(480, 220); dlg.exec()
 
+    def show_shortcuts():
+        rows = shortcut_table([(a.text(), a.shortcut().toString()) for a in win._actions.values()])
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Keyboard shortcuts")
+        v = QtWidgets.QVBoxLayout(dlg)
+        tbl = QtWidgets.QTableWidget(len(rows), 2)
+        tbl.setHorizontalHeaderLabels(["Action", "Shortcut"])
+        tbl.verticalHeader().setVisible(False)
+        tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        tbl.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        for r, (lbl, sc) in enumerate(rows):
+            tbl.setItem(r, 0, QtWidgets.QTableWidgetItem(lbl))
+            tbl.setItem(r, 1, QtWidgets.QTableWidgetItem(sc))
+        tbl.resizeColumnsToContents()
+        tbl.horizontalHeader().setStretchLastSection(True)
+        v.addWidget(tbl)
+        ok = QtWidgets.QPushButton("Close"); ok.setProperty("accent", True); ok.clicked.connect(dlg.accept)
+        v.addWidget(ok, 0, QtCore.Qt.AlignRight)
+        dlg.resize(460, 540); dlg.exec()
+
     def add_op_by_name(n):
         model.add_stage(n)
         refresh_stage_list(select=len(model.stages) - 1)
