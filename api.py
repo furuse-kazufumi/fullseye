@@ -53,7 +53,9 @@ from stereo import (  # noqa: E402,F401
     depth_from_disparity, reproject_to_points,
 )
 from measure import line_profile, distance, angle  # noqa: E402,F401
-from registration import kabsch, icp, apply_transform, pca_align, register  # noqa: E402,F401
+from registration import (  # noqa: E402,F401
+    kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register,
+)
 from pointcloud import estimate_normals, voxel_downsample  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
