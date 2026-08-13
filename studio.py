@@ -796,14 +796,43 @@ def build_window(model=None):
         except Exception:
             states = []
         for i, (name, a, b) in enumerate(model.stages):
-            summ = step_summary(states[i]["state"]) if i < len(states) else ""
+            st = states[i]["state"] if i < len(states) else {}
+            summ = step_summary(st) if st else ""
             it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
+            if st.get("kind") == "error":             # mark a stage that raised at runtime
+                it.setForeground(QtGui.QColor(AMBER))
+                it.setToolTip("runtime error: " + str(st.get("message", "")))
             stage_list.addItem(it)
         stage_list.blockSignals(False)
         state["reordering"] = False
+        refresh_problems(states)
         if select is not None and 0 <= select < len(model.stages):
             stage_list.setCurrentRow(select)
+
+    def refresh_problems(states=None):
+        """Populate the Problems list: static validation (unknown op / sort mismatch,
+        via engine.diagnose_stages) + runtime errors (a stage that raised)."""
+        problems_list.clear()
+        probs = list(engine.diagnose_stages(model.stages))     # static checks
+        if states:
+            for s in states:                                    # runtime errors
+                if s.get("state", {}).get("kind") == "error":
+                    probs.append({"index": s["index"], "op": s["op"], "severity": "error",
+                                  "message": "runtime: " + str(s["state"].get("message", ""))})
+        probs.sort(key=lambda p: (p["index"], 0 if p["severity"] == "error" else 1))
+        for p in probs:
+            mark = "✕" if p["severity"] == "error" else "!"
+            it = QtWidgets.QListWidgetItem("%s stage %d (%s): %s"
+                                           % (mark, p["index"] + 1, p.get("op", "?"), p["message"]))
+            it.setData(QtCore.Qt.UserRole, p["index"])
+            it.setForeground(QtGui.QColor(AMBER if p["severity"] == "error" else "#c9a227"))
+            problems_list.addItem(it)
+        if not probs:
+            hint = QtWidgets.QListWidgetItem("no problems")
+            hint.setForeground(QtGui.QColor(MUTED))
+            hint.setData(QtCore.Qt.UserRole, -1)
+            problems_list.addItem(hint)
 
     def on_rows_moved(*_):
         """A drag-reorder inside the stage list -> permute model.stages to match."""
