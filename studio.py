@@ -563,6 +563,13 @@ def build_window(model=None):
             win._surf = show_3d_surface(g, None)
     b_3d.clicked.connect(open_3d)
 
+    def on_hover(x, y, v):
+        if np.ndim(v) == 0:
+            readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
+        else:
+            readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
+    view.hover_cb = on_hover
+
     refresh_stage_list(); show_result()
     return win, model
 
