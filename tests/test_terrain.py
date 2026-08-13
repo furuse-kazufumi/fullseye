@@ -54,3 +54,34 @@ def test_foothold_score_prefers_flat():
     assert (s >= 0).all() and (s <= 1).all()
     # a flat ground cell scores higher than a box-edge cell
     assert s[1, 1] > s[7, 10]
+
+
+def test_detect_obstacles_finds_the_box():
+    pts, _ = _scene()
+    grid, extent = terrain.elevation_map(pts, cell=0.05, agg="max", bounds=(0, 1, 0, 1))
+    mask, obstacles = terrain.detect_obstacles(
+        grid, cell=0.05, clearance=0.12, ground_radius=0.3, extent=extent)
+    assert len(obstacles) == 1, f"expected one obstacle, got {len(obstacles)}"
+    o = obstacles[0]
+    assert abs(o["height"] - 0.3) < 0.05                 # ~0.3 m rise
+    cx, cy = o["centroid_xy"]
+    assert abs(cx - 0.5) < 0.08 and abs(cy - 0.5) < 0.08  # centred on the box
+    assert mask[10, 10] and not mask[1, 1]               # box cell set, ground clear
+
+
+def _ramp(seed=1, slope=0.5):
+    """A tilted ground plane z = slope * x, no obstacle."""
+    rng = np.random.default_rng(seed)
+    x = rng.random(20000)
+    y = rng.random(20000)
+    return np.stack([x, y, slope * x], axis=1)
+
+
+def test_detect_obstacles_ignores_a_ramp():
+    # the ramp rises to 0.5 (>> clearance) yet is walkable ground, not an obstacle:
+    # a naive height threshold would flag half the map; the ground-relative test must not.
+    grid, extent = terrain.elevation_map(_ramp(), cell=0.05, agg="max", bounds=(0, 1, 0, 1))
+    mask, obstacles = terrain.detect_obstacles(
+        grid, cell=0.05, clearance=0.12, ground_radius=0.3, min_area=0.01, extent=extent)
+    big = [o for o in obstacles if o["area"] > 0.02]
+    assert not big, f"ramp wrongly flagged as obstacle(s): {big}"
