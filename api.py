@@ -63,7 +63,7 @@ from flow import (  # noqa: E402,F401
 )
 from motion import (  # noqa: E402,F401
     frame_motion_energy, dominant_motion, flow_from_model, residual_motion,
-    motion_segments,
+    motion_segments, motion_energy_series, detect_events,
 )
 from terrain import (  # noqa: E402,F401
     elevation_map, traversability, foothold_score, fill_gaps,
