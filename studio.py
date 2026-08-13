@@ -468,39 +468,131 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
     return ImageView
 
 
+def _group(QtWidgets, title, inner_layout):
+    """A titled section card (QGroupBox) wrapping *inner_layout*."""
+    g = QtWidgets.QGroupBox(title)
+    g.setLayout(inner_layout)
+    return g
+
+
 def build_window(model=None):
-    """Construct (but do not exec) the main window. Returns (window, model)."""
+    """Construct (but do not exec) the main window. Returns (window, model).
+
+    The window is a QMainWindow with a menu bar (all actions + keyboard
+    shortcuts), a branded toolbar, a status bar (hover read-out + transient
+    messages), and three titled panels: Operators, Pipeline/Knobs, and the
+    Image/Perception/Inspector column."""
     from PySide6 import QtWidgets, QtGui, QtCore
 
     model = model or PipelineModel(demo_image())
     win = QtWidgets.QMainWindow()
     win.setWindowTitle("Fullseye Studio")
-    win.resize(1300, 820)
+    win.resize(1320, 860)
     win.setStyleSheet(THEME)
-    root = QtWidgets.QWidget(); rootlay = QtWidgets.QVBoxLayout(root)
-    rootlay.setContentsMargins(0, 0, 0, 0); rootlay.setSpacing(0)
-    header = QtWidgets.QLabel("  Fullseye Studio  -  image pipeline workbench")
-    header.setStyleSheet("font-size:16px; font-weight:700; color:#ff6b4a; padding:10px 14px;"
-                         "background:#181920; border-bottom:1px solid #33353f;")
-    central = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
-    rootlay.addWidget(header); rootlay.addWidget(central, 1)
-    win.setCentralWidget(root)
+    if os.path.exists(_ICON_PATH):
+        win.setWindowIcon(QtGui.QIcon(_ICON_PATH))
 
-    # -- left: operator browser + samples --
-    left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left)
-    lv.addWidget(QtWidgets.QLabel("Sample pipelines"))
-    samples = QtWidgets.QComboBox(); samples.addItem("-- load a sample --")
+    # ---- actions (keyboard-first; wired to the closures at the end) ---------- #
+    def _act(text, shortcut=None, tip=None):
+        a = QtGui.QAction(text, win)
+        if shortcut:
+            a.setShortcut(QtGui.QKeySequence(shortcut))
+        if tip:
+            a.setToolTip(tip); a.setStatusTip(tip)
+        return a
+
+    act_open_img = _act("Open image…", "Ctrl+O", "Load an image file as the base frame")
+    act_demo = _act("Synthetic demo", "Ctrl+D", "Load the built-in synthetic demo scene")
+    act_save_res = _act("Save result…", "Ctrl+S", "Save the displayed result as a PNG")
+    act_open_pipe = _act("Open pipeline…", "Ctrl+Shift+O", "Load a pipeline from JSON")
+    act_save_pipe = _act("Save pipeline…", "Ctrl+Shift+S", "Save the pipeline to JSON")
+    act_export = _act("Export…", "Ctrl+E", "Export as an --ops string and Python code")
+    act_quit = _act("Quit", "Ctrl+Q", "Close Fullseye Studio")
+    act_remove = _act("Remove stage", "Del", "Remove the selected pipeline stage")
+    act_up = _act("Move stage up", "Ctrl+Up", "Move the selected stage earlier")
+    act_down = _act("Move stage down", "Ctrl+Down", "Move the selected stage later")
+    act_clear = _act("Clear pipeline", "Ctrl+Shift+Backspace", "Remove all stages")
+    act_zin = _act("Zoom in", "Ctrl+=", "Zoom the image in")
+    act_zout = _act("Zoom out", "Ctrl+-", "Zoom the image out")
+    act_fit = _act("Fit to window", "Ctrl+0", "Fit the image to the view")
+    act_11 = _act("Actual size (1:1)", "Ctrl+1", "Reset zoom to 1:1")
+    act_3d = _act("3D surface", "Ctrl+3", "Open a rotatable 3-D surface of the result")
+    act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1)")
+    act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
+    act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
+    act_about = _act("About Fullseye Studio", None, "About this application")
+
+    mb = win.menuBar()
+    m = mb.addMenu("&File")
+    m.addAction(act_open_img); m.addAction(act_demo); m.addSeparator()
+    m.addAction(act_save_res); m.addSeparator()
+    m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)
+    m.addSeparator(); m.addAction(act_quit)
+    m = mb.addMenu("&Edit")
+    m.addAction(act_remove); m.addAction(act_up); m.addAction(act_down)
+    m.addSeparator(); m.addAction(act_clear)
+    m = mb.addMenu("&View")
+    m.addAction(act_zin); m.addAction(act_zout); m.addAction(act_fit); m.addAction(act_11)
+    m.addSeparator(); m.addAction(act_3d)
+    m = mb.addMenu("&Run")
+    m.addAction(act_reset); m.addAction(act_step); m.addAction(act_runall)
+    m = mb.addMenu("&Help")
+    m.addAction(act_about)
+
+    # ---- branded toolbar ---------------------------------------------------- #
+    tb = QtWidgets.QToolBar(); tb.setMovable(False); tb.setFloatable(False)
+    tb.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+    win.addToolBar(tb)
+    if os.path.exists(_ICON_PATH):
+        brand = QtWidgets.QLabel()
+        brand.setPixmap(QtGui.QIcon(_ICON_PATH).pixmap(22, 22))
+        brand.setStyleSheet("padding:0 6px;")
+        tb.addWidget(brand)
+    title = QtWidgets.QLabel("Fullseye Studio")
+    title.setStyleSheet("font-size:15px; font-weight:800; color:%s; padding:0 4px;" % AMBER)
+    tb.addWidget(title)
+    subtitle = QtWidgets.QLabel("image pipeline workbench")
+    subtitle.setProperty("muted", True); subtitle.setStyleSheet("color:%s; padding-top:3px;" % MUTED)
+    tb.addWidget(subtitle)
+    spacer = QtWidgets.QWidget()
+    spacer.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
+    tb.addWidget(spacer)
+    tb.addAction(act_demo); tb.addAction(act_open_img); tb.addAction(act_runall); tb.addAction(act_export)
+
+    central = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
+    win.setCentralWidget(central)
+
+    status = win.statusBar()
+    readout = QtWidgets.QLabel("hover over the image for pixel coordinates + value")
+    readout.setProperty("hint", True)
+    status.addWidget(readout)
+
+    def flash(msg):
+        status.showMessage(msg, 6000)
+
+    # -- left: operator browser + samples ------------------------------------ #
+    left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(10)
+    samples = QtWidgets.QComboBox(); samples.addItem("— load a sample —")
     for nm in recipes.names():
         samples.addItem(nm)
-    lv.addWidget(samples)
-    lv.addWidget(QtWidgets.QLabel("Operators (double-click to insert)"))
+    samples.setToolTip("Replace the pipeline with a ready-made sample recipe")
+    slay = QtWidgets.QVBoxLayout(); slay.addWidget(samples)
+    lv.addWidget(_group(QtWidgets, "SAMPLE PIPELINES", slay))
+
     all_ops = api.list_ops()
-    cat = QtWidgets.QComboBox()
-    cat.addItem("all categories")
+    cat = QtWidgets.QComboBox(); cat.addItem("all categories")
     cat.addItems(sorted({r["category"] for r in all_ops}))
-    search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators...")
+    cat.setToolTip("Filter operators by category")
+    search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators…")
+    search.setClearButtonEnabled(True)
+    search.setToolTip("Filter by op name, HALCON alias or category")
     op_list = QtWidgets.QListWidget()
-    lv.addWidget(cat); lv.addWidget(search); lv.addWidget(op_list)
+    op_list.setToolTip("Double-click an operator to insert it into the pipeline")
+    op_hint = QtWidgets.QLabel("double-click to insert  ·  hover for details")
+    op_hint.setProperty("muted", True)
+    olay = QtWidgets.QVBoxLayout()
+    olay.addWidget(cat); olay.addWidget(search); olay.addWidget(op_list, 1); olay.addWidget(op_hint)
+    lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
     def refill_ops():
         kw = search.text().lower(); c = cat.currentText()
@@ -511,72 +603,103 @@ def build_window(model=None):
             hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
             if kw and kw not in hay:
                 continue
-            it = QtWidgets.QListWidgetItem(f"{r['name']}  [{r['in_sort']}->{r['out_sort']}]")
+            it = QtWidgets.QListWidgetItem(f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]")
             it.setData(QtCore.Qt.UserRole, r["name"])
+            it.setToolTip(op_tooltip(r))
             op_list.addItem(it)
     refill_ops()
-    search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
 
-    # -- centre: pipeline + knobs --
-    mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid)
+    # -- centre: pipeline + knobs + export ----------------------------------- #
+    mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid); mv.setSpacing(10)
     stage_list = QtWidgets.QListWidget()
-    btns = QtWidgets.QHBoxLayout()
-    b_rm = QtWidgets.QPushButton("Remove"); b_up = QtWidgets.QPushButton("Up"); b_dn = QtWidgets.QPushButton("Down")
-    btns.addWidget(b_rm); btns.addWidget(b_up); btns.addWidget(b_dn)
-    steprow = QtWidgets.QHBoxLayout()
-    b_reset = QtWidgets.QPushButton("|< Reset"); b_step = QtWidgets.QPushButton("Step >")
-    b_runall = QtWidgets.QPushButton("Run all >>")
-    steprow.addWidget(b_reset); steprow.addWidget(b_step); steprow.addWidget(b_runall)
-    sa = QtWidgets.QSlider(QtCore.Qt.Horizontal); sa.setRange(0, 100)
-    sb = QtWidgets.QSlider(QtCore.Qt.Horizontal); sb.setRange(0, 100)
-    la = QtWidgets.QLabel("a: 0.50"); lb = QtWidgets.QLabel("b: 0.50")
-    b_export = QtWidgets.QPushButton("Export (ops string + Python)")
-    iorow = QtWidgets.QHBoxLayout()
-    b_savep = QtWidgets.QPushButton("Save pipeline..."); b_openp = QtWidgets.QPushButton("Open pipeline...")
-    iorow.addWidget(b_savep); iorow.addWidget(b_openp)
-    mv.addWidget(QtWidgets.QLabel("Pipeline (step state per stage)")); mv.addWidget(stage_list)
-    mv.addLayout(btns); mv.addLayout(steprow)
-    mv.addWidget(la); mv.addWidget(sa); mv.addWidget(lb); mv.addWidget(sb)
-    mv.addWidget(b_export); mv.addLayout(iorow)
+    stage_list.setToolTip("The pipeline. Each row: op, knobs, and the result state after that stage.")
+    b_rm = QtWidgets.QPushButton("Remove"); b_up = QtWidgets.QPushButton("↑ Up"); b_dn = QtWidgets.QPushButton("↓ Down")
+    b_rm.setToolTip("Remove the selected stage (Del)")
+    b_up.setToolTip("Move the selected stage earlier (Ctrl+Up)")
+    b_dn.setToolTip("Move the selected stage later (Ctrl+Down)")
+    b_reset = QtWidgets.QPushButton("⏮ Reset"); b_step = QtWidgets.QPushButton("Step ▶")
+    b_runall = QtWidgets.QPushButton("Run all ▶▶"); b_runall.setProperty("accent", True)
+    b_reset.setToolTip("Show the raw image (Home)")
+    b_step.setToolTip("Advance one stage (Ctrl+Right)")
+    b_runall.setToolTip("Show the final result (Ctrl+Enter)")
+    play = QtWidgets.QVBoxLayout(); play.addWidget(stage_list, 1)
+    erow = QtWidgets.QHBoxLayout(); erow.addWidget(b_rm); erow.addWidget(b_up); erow.addWidget(b_dn)
+    srow = QtWidgets.QHBoxLayout(); srow.addWidget(b_reset); srow.addWidget(b_step); srow.addWidget(b_runall)
+    play.addLayout(erow); play.addLayout(srow)
+    mv.addWidget(_group(QtWidgets, "PIPELINE", play), 1)
 
-    # -- right: zoomable image view + zoom controls + histogram + inspector --
-    right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right)
-    top = QtWidgets.QHBoxLayout()
-    b_load = QtWidgets.QPushButton("Load image..."); b_demo = QtWidgets.QPushButton("Synthetic demo")
-    b_save = QtWidgets.QPushButton("Save result...")
-    top.addWidget(b_load); top.addWidget(b_demo); top.addWidget(b_save)
+    stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
+    stage_detail.setWordWrap(True); stage_detail.setProperty("hint", True)
+    sa = QtWidgets.QSlider(QtCore.Qt.Horizontal); sa.setRange(0, 100); sa.setEnabled(False)
+    sb = QtWidgets.QSlider(QtCore.Qt.Horizontal); sb.setRange(0, 100); sb.setEnabled(False)
+    sa.setToolTip("Knob a (0..1) — meaning depends on the selected op")
+    sb.setToolTip("Knob b (0..1) — meaning depends on the selected op")
+    la = QtWidgets.QLabel("a: 0.50"); lb = QtWidgets.QLabel("b: 0.50")
+    klay = QtWidgets.QVBoxLayout()
+    klay.addWidget(stage_detail); klay.addWidget(la); klay.addWidget(sa)
+    klay.addWidget(lb); klay.addWidget(sb)
+    mv.addWidget(_group(QtWidgets, "SELECTED STAGE · KNOBS", klay))
+
+    b_export = QtWidgets.QPushButton("Export (ops string + Python)…")
+    b_savep = QtWidgets.QPushButton("Save pipeline…"); b_openp = QtWidgets.QPushButton("Open pipeline…")
+    b_export.setToolTip("Copy this pipeline as an --ops string and Python (Ctrl+E)")
+    xlay = QtWidgets.QVBoxLayout(); xlay.addWidget(b_export)
+    xrow = QtWidgets.QHBoxLayout(); xrow.addWidget(b_savep); xrow.addWidget(b_openp)
+    xlay.addLayout(xrow)
+    mv.addWidget(_group(QtWidgets, "EXPORT & I/O", xlay))
+
+    # -- right: image view + display + perception + analysis ------------------ #
+    right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right); rv.setSpacing(10)
+    b_load = QtWidgets.QPushButton("Load image…"); b_demo = QtWidgets.QPushButton("Synthetic demo")
+    b_save = QtWidgets.QPushButton("Save result…")
+    b_load.setToolTip("Open an image file (Ctrl+O)")
+    b_demo.setToolTip("Load the synthetic demo scene (Ctrl+D)")
+    b_save.setToolTip("Save the displayed result (Ctrl+S)")
     ImageView = _image_view_class(QtWidgets, QtGui, QtCore)
     view = ImageView()
-    zoom = QtWidgets.QHBoxLayout()
-    b_zin = QtWidgets.QPushButton("Zoom +"); b_zout = QtWidgets.QPushButton("Zoom -")
+    b_zin = QtWidgets.QPushButton("Zoom +"); b_zout = QtWidgets.QPushButton("Zoom −")
     b_fit = QtWidgets.QPushButton("Fit"); b_11 = QtWidgets.QPushButton("1:1")
+    for _b, _t in ((b_zin, "Zoom in (Ctrl+=)"), (b_zout, "Zoom out (Ctrl+-)"),
+                   (b_fit, "Fit to window (Ctrl+0)"), (b_11, "Actual size (Ctrl+1)")):
+        _b.setToolTip(_t)
+    ilay = QtWidgets.QVBoxLayout()
+    itop = QtWidgets.QHBoxLayout(); itop.addWidget(b_load); itop.addWidget(b_demo); itop.addWidget(b_save)
+    izoom = QtWidgets.QHBoxLayout()
     for w_ in (b_zin, b_zout, b_fit, b_11):
-        zoom.addWidget(w_)
-    disp_row = QtWidgets.QHBoxLayout()
+        izoom.addWidget(w_)
+    ilay.addLayout(itop); ilay.addWidget(view, 1); ilay.addLayout(izoom)
+    rv.addWidget(_group(QtWidgets, "IMAGE", ilay), 1)
+
     display = QtWidgets.QComboBox()
     display.addItems(["gray", "shaded relief", "height (color)"]
                      + [c for c in imgio.COLORMAPS if c != "gray"])
-    b_3d = QtWidgets.QPushButton("3D surface")
-    disp_row.addWidget(QtWidgets.QLabel("Display:")); disp_row.addWidget(display, 1); disp_row.addWidget(b_3d)
-    percep_row = QtWidgets.QHBoxLayout()
-    b_loadb = QtWidgets.QPushButton("Load frame B...")
+    display.setToolTip("Colour-map the current 2-D result for display")
+    b_3d = QtWidgets.QPushButton("3D surface"); b_3d.setToolTip("Rotatable 3-D surface (Ctrl+3)")
+    b_loadb = QtWidgets.QPushButton("Load frame B…")
+    b_loadb.setToolTip("Load a second frame for two-frame perception (flow / stereo)")
     percep_mode = QtWidgets.QComboBox(); percep_mode.addItems(list(PerceptionModel.MODES))
-    b_percep = QtWidgets.QPushButton("Run")
-    percep_row.addWidget(QtWidgets.QLabel("Perception (v14):"))
-    percep_row.addWidget(b_loadb); percep_row.addWidget(percep_mode, 1); percep_row.addWidget(b_percep)
-    hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(70); hist_view.setStyleSheet("background:#181818;")
-    inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(140)
-    inspector.setStyleSheet("font-family:Consolas,monospace;")
-    readout = QtWidgets.QLabel("hover over the image for pixel coordinates + value")
-    readout.setStyleSheet("color:#9aa0ad; font-family:Consolas,monospace;")
-    rv.addLayout(top); rv.addWidget(view, 1); rv.addLayout(zoom); rv.addLayout(disp_row)
-    rv.addLayout(percep_row)
-    rv.addWidget(readout)
-    rv.addWidget(QtWidgets.QLabel("Histogram")); rv.addWidget(hist_view)
-    rv.addWidget(QtWidgets.QLabel("Inspector (variable / image / region)")); rv.addWidget(inspector)
+    percep_mode.setToolTip("Two-frame perception mode")
+    b_percep = QtWidgets.QPushButton("Run"); b_percep.setToolTip("Run the selected perception mode on A + B")
+    dlay = QtWidgets.QVBoxLayout()
+    drow = QtWidgets.QHBoxLayout()
+    drow.addWidget(QtWidgets.QLabel("Display:")); drow.addWidget(display, 1); drow.addWidget(b_3d)
+    prow = QtWidgets.QHBoxLayout()
+    prow.addWidget(b_loadb); prow.addWidget(percep_mode, 1); prow.addWidget(b_percep)
+    dlay.addLayout(drow); dlay.addLayout(prow)
+    rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION (v14)", dlay))
+
+    hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(64)
+    hist_view.setStyleSheet("background:#12141b; border:1px solid #262b38; border-radius:6px;")
+    inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(150)
+    inspector.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+    alay = QtWidgets.QVBoxLayout()
+    hl = QtWidgets.QLabel("Histogram"); hl.setProperty("muted", True)
+    il = QtWidgets.QLabel("Inspector (variable / image / region)"); il.setProperty("muted", True)
+    alay.addWidget(hl); alay.addWidget(hist_view); alay.addWidget(il); alay.addWidget(inspector)
+    rv.addWidget(_group(QtWidgets, "ANALYSIS", alay))
 
     central.addWidget(left); central.addWidget(mid); central.addWidget(right)
-    central.setSizes([320, 320, 620])
+    central.setSizes([340, 360, 640]); central.setStretchFactor(2, 1)
     state = {"result": None, "raw": None}
     pmodel = PerceptionModel()
 
