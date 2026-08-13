@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["kabsch", "apply_transform", "icp"]
+__all__ = ["kabsch", "apply_transform", "icp", "pca_align", "register"]
 
 
 def kabsch(src, dst):
