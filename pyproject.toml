@@ -42,7 +42,7 @@ py-modules = [
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
   "imgops_nary", "scale", "stereo", "terrain", "imgio", "detect", "registration", "pose",
-  "studio", "accuracy_bench",
+  "recipes", "studio", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "bench",
