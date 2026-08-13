@@ -52,6 +52,10 @@ with warnings.catch_warnings():
     from acquire import (  # noqa: E402,F401  (image acquisition: cameras / framegrabbers)
         Camera, list_cameras, open_framegrabber, grab_image, close_framegrabber,
     )
+    from comm import (  # noqa: E402,F401  (communication transports / industrial protocols)
+        open_channel, protocols, capabilities, Channel,
+        TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
+    )
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
