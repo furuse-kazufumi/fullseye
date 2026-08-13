@@ -46,6 +46,7 @@ import pointcloud  # noqa: E402  (point-cloud geometry: normals, voxel downsampl
 import pose  # noqa: E402  (silhouette posture descriptors)
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
+import video  # noqa: E402  (read/write video & GIF clips as numpy frames)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
 from stereo import (  # noqa: E402,F401
