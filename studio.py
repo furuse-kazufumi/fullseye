@@ -459,6 +459,7 @@ def build_window(model=None):
             qi = _to_qimage(shown, QtGui)
             if qi is not None:
                 view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
+            view.set_data(val)
             state["result"] = shown
             state["raw"] = val
             g = val if val.ndim == 2 else imgio.ensure_gray(val)
