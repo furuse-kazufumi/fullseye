@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-13 20:22:31
+- **最終更新**: 2026-08-13 21:16:31
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-4eb0859 v14 docs: point-to-plane ICP + motion/grasp examples in V14.md, examples README
-5ba205a auto: README.md 編集前 (2026-08-13 20:10)
-1820868 auto: V14.md 編集前 (2026-08-13 20:09)
-7ceb643 v14: point-to-plane ICP + motion/grasp examples
-2a51f7a auto: test_examples.py 編集前 (2026-08-13 20:07)
-f2a4537 auto: test_registration.py 編集前 (2026-08-13 20:05)
-8567f84 auto: __init__.py 編集前 (2026-08-13 20:05)
-396c6d3 auto: __init__.py 編集前 (2026-08-13 20:05)
-b70efc4 auto: api.py 編集前 (2026-08-13 20:05)
-14ba333 auto: api.py 編集前 (2026-08-13 20:05)
+04f8e9a v14: sparse point tracking (flow.track_points)
+7151c10 auto: test_flow.py 編集前 (2026-08-13 21:13)
+373e40c auto: __init__.py 編集前 (2026-08-13 21:13)
+946966d auto: __init__.py 編集前 (2026-08-13 21:13)
+ddfa75f auto: api.py 編集前 (2026-08-13 21:12)
+001535a auto: api.py 編集前 (2026-08-13 21:12)
+2492de9 auto: flow.py 編集前 (2026-08-13 21:12)
+3affbd2 v14 docs: Studio perception panel in V14.md
+5ba5dc7 v14: Studio perception panel — flow/motion/stereo depth+terrain in the IDE
+64f483d auto: studio.py 編集前 (2026-08-13 21:08)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:18 docs/SESSION_SUMMARY.md
-20:18 .pytest_cache/v/cache/nodeids
-20:10 examples/README.md
-20:09 docs/V14.md
-20:07 tests/test_examples.py
-20:06 examples/grasp_pose.py
-20:06 examples/motion_analysis.py
-20:05 tests/test_registration.py
-20:05 fullseye/__init__.py
-20:05 api.py
-20:05 registration.py
-19:59 tests/test_pointcloud.py
-19:59 pointcloud.py
-19:56 tests/test_motion.py
-19:55 motion.py
+21:15 .pytest_cache/v/cache/nodeids
+21:13 tests/test_flow.py
+21:13 fullseye/__init__.py
+21:12 api.py
+21:12 flow.py
+21:10 docs/V14.md
+21:08 studio.py
+21:06 tests/test_studio.py
+20:51 tests/test_registration.py
+20:50 tests/test_motion.py
+20:50 registration.py
+20:50 motion.py
+20:44 .pytest_cache/v/cache/lastfailed
+20:44 tests/test_pointcloud.py
+20:42 pointcloud.py
 ```
 
 ---
