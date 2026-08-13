@@ -174,15 +174,21 @@ def build_window(model=None):
     mv.addWidget(la); mv.addWidget(sa); mv.addWidget(lb); mv.addWidget(sb)
     mv.addWidget(b_export)
 
-    # -- right: image view + info --
+    # -- right: image view + histogram + info --
     right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right)
     view = QtWidgets.QLabel("(load an image or use the synthetic demo)")
     view.setAlignment(QtCore.Qt.AlignCenter); view.setMinimumSize(360, 360)
     view.setStyleSheet("background:#202020;color:#aaa;")
+    hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(72)
+    hist_view.setStyleSheet("background:#181818;")
     info = QtWidgets.QLabel(""); info.setWordWrap(True)
     b_load = QtWidgets.QPushButton("Load image…"); b_demo = QtWidgets.QPushButton("Synthetic demo")
-    rload = QtWidgets.QHBoxLayout(); rload.addWidget(b_load); rload.addWidget(b_demo)
-    rv.addLayout(rload); rv.addWidget(view, 1); rv.addWidget(info)
+    b_save = QtWidgets.QPushButton("Save result…")
+    rload = QtWidgets.QHBoxLayout()
+    rload.addWidget(b_load); rload.addWidget(b_demo); rload.addWidget(b_save)
+    rv.addLayout(rload); rv.addWidget(view, 1)
+    rv.addWidget(QtWidgets.QLabel("Histogram")); rv.addWidget(hist_view); rv.addWidget(info)
+    state = {"result": None}
 
     central.addWidget(left); central.addWidget(mid); central.addWidget(right)
     central.setSizes([300, 340, 540])
