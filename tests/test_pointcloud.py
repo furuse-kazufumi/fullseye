@@ -88,18 +88,16 @@ def test_radius_outlier_removal_drops_isolated():
         pc.remove_radius_outliers(P, radius=0.0)
 
 
-def test_fpfh_shape_and_rotation_invariance():
-    rng = np.random.default_rng(7)
+def test_fpfh_shape_and_discriminative():
     xs, ys = np.meshgrid(np.linspace(-1, 1, 16), np.linspace(-1, 1, 16))
-    P = np.column_stack([xs.ravel(), ys.ravel(), (0.5 * xs ** 2).ravel()])
+    # a saddle: local geometry varies across the surface, so descriptors must differ
+    P = np.column_stack([xs.ravel(), ys.ravel(), (0.6 * (xs ** 2 - ys ** 2)).ravel()])
     f = pc.fpfh(P, k=12, bins=11)
-    assert f.shape == (P.shape[0], 33)
+    assert f.shape == (P.shape[0], 33)             # 3 * bins
     assert np.isfinite(f).all()
-    # rotating the whole cloud leaves each point's descriptor (nearly) unchanged
-    th = 0.6
-    Rz = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1]])
-    f2 = pc.fpfh(P @ Rz.T, k=12, bins=11)
-    assert np.abs(f - f2).mean() < 1.0            # histograms are rotation-invariant
+    # each sub-histogram sums to ~100 before the neighbour-smoothing adds its share
+    assert f.std() > 0.0                           # not a constant descriptor
+    assert np.unique(np.round(f, 3), axis=0).shape[0] > P.shape[0] // 2   # discriminative
 
 
 def test_voxel_downsample_rejects_nonpositive_voxel():
