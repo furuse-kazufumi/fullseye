@@ -1075,7 +1075,7 @@ def build_window(model=None):
         "quit": act_quit, "remove": act_remove, "move_up": act_up, "move_down": act_down,
         "clear": act_clear, "zoom_in": act_zin, "zoom_out": act_zout, "fit": act_fit,
         "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
-        "run_all": act_runall, "about": act_about,
+        "run_all": act_runall, "palette": act_palette, "about": act_about,
     }
     refresh_stage_list(); on_stage_selected(); show_result()
     return win, model
