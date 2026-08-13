@@ -312,7 +312,8 @@ QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left
 QLineEdit,QComboBox,QPlainTextEdit,QListWidget,QSpinBox {{ background:{NAVY_2};
     border:1px solid {LINE}; border-radius:7px; padding:5px 8px;
     selection-background-color:{TEAL}; selection-color:{INK}; }}
-QLineEdit:focus,QComboBox:focus,QPlainTextEdit:focus,QListWidget:focus {{ border-color:{TEAL}; }}
+QLineEdit:focus,QComboBox:focus,QPlainTextEdit:focus,QListWidget:focus,QSpinBox:focus {{
+    border:1px solid {TEAL_HI}; }}
 QListWidget::item {{ padding:5px 6px; border-radius:5px; }}
 QListWidget::item:hover {{ background:#232a36; }}
 QListWidget::item:selected {{ background:{TEAL}; color:{INK}; }}
