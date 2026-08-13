@@ -229,14 +229,14 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
     silently. Raises ``RuntimeError`` if imageio is unavailable and ``ValueError``
     for an empty sequence.
     """
+    path = os.fspath(path)
     imageio = _imageio()
     if imageio is None:
         raise RuntimeError("write_video needs imageio (with imageio-ffmpeg for mp4)")
     seq = [_to_uint8_frame(f) for f in frames]
     if not seq:
         raise ValueError("no frames to write")
-    is_mp4 = path.lower().endswith((".mp4", ".m4v", ".mov", ".avi"))
-    if is_mp4:
+    if path.lower().endswith(_VIDEO_EXTS):
         padded = []
         for a in seq:
             ph = a.shape[0] % 2
@@ -251,7 +251,10 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
         # even-padding above already satisfies libx264's yuv420p ÷2 requirement.
         imageio.mimsave(path, seq, fps=float(fps), macro_block_size=1)
     else:
-        imageio.mimsave(path, seq, duration=1.0 / float(fps))
+        # GIF (Pillow plugin): pass fps and let the plugin convert to the per-frame
+        # delay. Passing duration=1/fps (seconds) would be truncated to a 0 ms delay
+        # — the Pillow plugin's `duration` is in milliseconds — so fps was inert.
+        imageio.mimsave(path, seq, fps=float(fps))
 
 
 def probe(path: str) -> dict:
