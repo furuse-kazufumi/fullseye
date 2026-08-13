@@ -31,7 +31,7 @@ from scipy import ndimage
 
 __all__ = [
     "optical_flow_lk", "optical_flow_hs", "warp_by_flow",
-    "flow_magnitude", "flow_angle",
+    "flow_magnitude", "flow_angle", "track_points",
 ]
 
 
