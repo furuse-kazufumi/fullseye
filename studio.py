@@ -303,6 +303,7 @@ QToolButton:hover {{ border-color:{TEAL}; color:{TEAL_HI}; }}
 QToolButton:pressed {{ background:{TEAL}; color:{INK}; }}
 QToolButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
 QToolButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
+QToolButton:focus {{ border:2px solid {TEAL_HI}; padding:5px 11px; }}
 
 QGroupBox {{ background:{NAVY_1}; border:1px solid #262b38; border-radius:10px;
     margin-top:14px; padding:12px 10px 10px 10px; }}
