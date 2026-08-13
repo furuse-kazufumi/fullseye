@@ -54,3 +54,18 @@ def test_pointcloud_reachable_through_facade():
     n = fs.estimate_normals(P, k=12)
     assert n.shape == P.shape and np.allclose(np.linalg.norm(n, axis=1), 1.0)
     assert fs.voxel_downsample(P, voxel=0.3).shape[0] < P.shape[0]
+
+
+def test_estimate_normals_handles_empty_cloud():
+    # an empty (0,3) cloud (nothing in view) must return empty normals, not crash
+    empty = pc.voxel_downsample(np.zeros((0, 3)), voxel=0.02)
+    n = pc.estimate_normals(empty, k=16)
+    assert n.shape == (0, 3)
+
+
+def test_voxel_downsample_rejects_nonpositive_voxel():
+    import pytest
+    with pytest.raises(ValueError):
+        pc.voxel_downsample(np.random.default_rng(0).random((10, 3)), voxel=0.0)
+    with pytest.raises(ValueError):
+        pc.voxel_downsample(np.random.default_rng(0).random((10, 3)), voxel=-0.1)
