@@ -102,11 +102,11 @@ def test_motion_segments_measures_unblurred_field():
 
 
 def _seq_static_then_shift(n=8, move_at=4, seed=20):
-    base = _textured := None  # placeholder to keep flake quiet
-    rng = np.random.default_rng(seed)
     from scipy import ndimage
+    rng = np.random.default_rng(seed)
     b = np.clip(ndimage.gaussian_filter(rng.random((64, 80)), 1.3), 0, 1)
-    return [ndimage.shift(b, (0, 0) if i < move_at else (2.0, 3.0), order=1, mode="nearest")
+    return [ndimage.shift(b, (0.0, 0.0) if i < move_at else (2.0, 3.0),
+                          order=1, mode="nearest")
             for i in range(n)]
 
 
