@@ -54,12 +54,13 @@ def _cv2():
 def _to01(a: np.ndarray) -> np.ndarray:
     """Scale a raw decoded frame to float64 ``[0, 1]`` honestly by dtype.
 
-    Integer frames divide by their dtype max (uint8 → /255, uint16 → /65535).
-    Float frames are assumed already scaled and are only clipped to ``[0, 1]``.
+    Unsigned-integer frames divide by their dtype max (uint8 → /255, uint16 →
+    /65535). Signed-integer frames divide by the max and then clip (a negative
+    sample maps to 0). Float frames are assumed already scaled and are clipped.
     """
     a = np.asarray(a)
     if np.issubdtype(a.dtype, np.integer):
-        return a.astype(np.float64) / float(np.iinfo(a.dtype).max)
+        return np.clip(a.astype(np.float64) / float(np.iinfo(a.dtype).max), 0.0, 1.0)
     return np.clip(a.astype(np.float64), 0.0, 1.0)
 
 
