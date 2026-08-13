@@ -170,10 +170,19 @@ def test_probe_missing_file_is_safe():
 
 
 def test_errors(tmp_path):
-    with pytest.raises((FileNotFoundError, ValueError, RuntimeError)):
-        video.read_frames(str(tmp_path / "nope.mp4"))
+    with pytest.raises(FileNotFoundError):
+        video.read_frames(str(tmp_path / "nope.mp4"))    # truly missing -> FileNotFoundError
     with pytest.raises(ValueError):
         video.write_video(str(tmp_path / "empty.gif"), [])
+
+
+def test_corrupt_file_not_reported_as_missing(tmp_path):
+    p = tmp_path / "bad.mp4"
+    p.write_bytes(b"this is not a video file")
+    # a file that exists but cannot be decoded must NOT masquerade as "not found"
+    with pytest.raises(Exception) as ei:
+        video.read_frames(str(p))
+    assert not isinstance(ei.value, FileNotFoundError)
 
 
 def test_max_frames_zero_returns_empty(tmp_path):
