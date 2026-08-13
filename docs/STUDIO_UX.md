@@ -138,8 +138,9 @@ Ranked by usability payoff; each is a self-contained, testable increment:
 6. ~~**Empty/So-what states**~~ **(done this pass)** — a scalar-feature, contour,
    or no-image result now shows a centred message in the image area (via
    `ImageView.set_message`) instead of a blank view.
-7. **Command palette** (`Ctrl+P`) to run any op/action by name — the fastest path
-   for power users once the op count grows.
+7. ~~**Command palette** (`Ctrl+P`)~~ **(done this pass)** — a fuzzy-filtered
+   dialog to run any action or insert any operator by name (`palette_filter` is a
+   Qt-free, unit-tested ranker: prefix > word-start > substring).
 8. **Onboarding**: a first-run overlay pointing at the operator browser →
    pipeline → knobs → result loop.
 
