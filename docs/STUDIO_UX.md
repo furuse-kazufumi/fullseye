@@ -135,8 +135,9 @@ Ranked by usability payoff; each is a self-contained, testable increment:
    geometry + splitter sizes between sessions.
 5. **Non-blocking apply** for slow ops (`QThreadPool`) with a busy indicator, so
    knob dragging stays responsive on large images.
-6. **Empty/So-what states**: when a result is a scalar feature or an empty
-   region, show a friendly message in the image area instead of a blank view.
+6. ~~**Empty/So-what states**~~ **(done this pass)** — a scalar-feature, contour,
+   or no-image result now shows a centred message in the image area (via
+   `ImageView.set_message`) instead of a blank view.
 7. **Command palette** (`Ctrl+P`) to run any op/action by name — the fastest path
    for power users once the op count grows.
 8. **Onboarding**: a first-run overlay pointing at the operator browser →
