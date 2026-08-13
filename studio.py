@@ -522,6 +522,17 @@ def build_window(model=None):
     b_export.clicked.connect(export)
     b_zin.clicked.connect(lambda: view.zoom(1.25)); b_zout.clicked.connect(lambda: view.zoom(0.8))
     b_fit.clicked.connect(view.fit); b_11.clicked.connect(view.reset_zoom)
+    display.currentIndexChanged.connect(lambda _=None: show_result())
+    b_reset.clicked.connect(lambda: step_to(0))
+    b_step.clicked.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
+    b_runall.clicked.connect(lambda: step_to(len(model.stages) - 1))
+
+    def open_3d():
+        raw = state.get("raw")
+        if isinstance(raw, np.ndarray):
+            g = raw if raw.ndim == 2 else imgio.ensure_gray(raw)
+            win._surf = show_3d_surface(g, None)
+    b_3d.clicked.connect(open_3d)
 
     refresh_stage_list(); show_result()
     return win, model
