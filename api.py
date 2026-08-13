@@ -63,6 +63,7 @@ from pointcloud import (  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
+    track_points,
 )
 from motion import (  # noqa: E402,F401
     frame_motion_energy, dominant_motion, flow_from_model, residual_motion,
