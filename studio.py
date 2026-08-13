@@ -1153,7 +1153,14 @@ def build_window(model=None):
     def load_sample(idx):
         if idx <= 0:
             return
-        model.load_recipe(samples.itemText(idx))
+        if not confirm_discard("Load sample pipeline"):
+            samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
+            return
+        try:
+            model.load_recipe(samples.itemText(idx))
+        except Exception as e:
+            report_error("Sample pipeline", e); return
+        mark_dirty()
         refresh_stage_list(select=len(model.stages) - 1)
         show_result()
 
@@ -1161,30 +1168,44 @@ def build_window(model=None):
         i = selected_index()
         if 0 <= i < len(model.stages):
             model.remove_stage(i)
-            refresh_stage_list()
-            on_stage_selected()          # selection is now -1 -> disable knobs, clear detail
+            mark_dirty()
+            refresh_stage_list()         # selection is now -1 -> disable knobs, clear detail
+            show_result()
 
     def move(delta):
         i = selected_index(); j = i + delta
         if 0 <= i < len(model.stages) and 0 <= j < len(model.stages):
-            model.move_stage(i, j); refresh_stage_list(select=j); show_result()
+            model.move_stage(i, j); mark_dirty()
+            refresh_stage_list(select=j); show_result()
 
     def load_image():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open image", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
-        if path:
-            model.set_image(imgio.load(path)); show_result()
+        if not path:
+            return
+        try:
+            arr = imgio.load(path)                # missing / undecodable / permission
+        except Exception as e:
+            report_error("Could not open image", "%s\n\n%s" % (path, e)); return
+        model.set_image(arr)
+        flash("loaded " + os.path.basename(path))
+        show_result()
 
     def use_demo():
         model.set_image(demo_image()); show_result()
 
     def save_result():
         if state["result"] is None:
-            return
+            flash("nothing to save — run the pipeline first"); return
         path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save result", "result.png",
                                                         "PNG (*.png);;All files (*)")
-        if path:
-            imgio.save(path, state["result"])
+        if not path:
+            return
+        try:
+            imgio.save(path, state["result"])     # permission / bad extension / full disk
+        except Exception as e:
+            report_error("Could not save result", "%s\n\n%s" % (path, e)); return
+        flash("saved " + os.path.basename(path))
 
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
