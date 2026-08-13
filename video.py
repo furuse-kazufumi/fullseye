@@ -127,6 +127,11 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     iterated (not at call): ``FileNotFoundError`` for a missing path, and
     ``RuntimeError`` if no video backend is available or the file cannot be
     decoded. Accepts a ``str`` or ``os.PathLike``.
+
+    Resource note: the underlying reader is released when iteration finishes, the
+    generator is ``.close()``-d, or it is garbage-collected. If you abandon it
+    early (``break``) and need the file handle freed at once — relevant on Windows
+    — call ``.close()`` on the generator, or use the eager :func:`read_frames`.
     """
     path = os.fspath(path)                      # accept str or pathlib.Path
     step = max(1, int(step))
