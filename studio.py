@@ -753,12 +753,18 @@ def build_window(model=None):
 
     def on_stage_selected():
         i = selected_index()
-        if 0 <= i < len(model.stages):
-            _, a, b = model.stages[i]
+        valid = 0 <= i < len(model.stages)
+        sa.setEnabled(valid); sb.setEnabled(valid)
+        if valid:
+            name, a, b = model.stages[i]
             sa.blockSignals(True); sb.blockSignals(True)
             sa.setValue(int(a * 100)); sb.setValue(int(b * 100))
             sa.blockSignals(False); sb.blockSignals(False)
             la.setText(f"a: {a:.2f}"); lb.setText(f"b: {b:.2f}")
+            row = _op_row(name)
+            stage_detail.setText(op_detail(row) if row else name)
+        else:
+            stage_detail.setText("select a stage to tune its knobs")
         show_result()
 
     def on_knob(_=None):
