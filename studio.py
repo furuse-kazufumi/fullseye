@@ -1436,36 +1436,71 @@ def build_window(model=None):
     def load_frame_b():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open frame B", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
-        if path:
-            pmodel.set_frame_b(imgio.load(path))
-            flash("frame B loaded: " + os.path.basename(path))
+        if not path:
+            return
+        try:
+            arr = imgio.load(path)
+        except Exception as e:
+            report_error("Could not open frame B", "%s\n\n%s" % (path, e)); return
+        pmodel.set_frame_b(arr)
+        flash("frame B loaded: " + os.path.basename(path))
 
     def run_perception():
+        """Run a two-frame perception mode. A failure now lands in the Problems
+        panel and the Inspector as well — a 6-second status-bar flash was far too
+        easy to miss, leaving the user with a stale image and no explanation."""
+        mode = percep_mode.currentText()
         try:
-            rgb = pmodel.view(percep_mode.currentText(), model.image)
+            rgb = pmodel.view(mode, model.image)
         except Exception as e:                                # missing/mismatched frame B, etc.
-            flash("perception: " + str(e)); return
+            state["perception_error"] = (mode, str(e))
+            inspector.setPlainText("perception failed (%s):\n\n%s" % (mode, e))
+            flash("perception: " + truncate(e, 120))
+            refresh_problems(None)
+            return
+        state["perception_error"] = None
         qi = _to_qimage(rgb, QtGui)
         if qi is not None:
             view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
         view.set_data(rgb)
         state["result"] = rgb; state["raw"] = rgb
-        inspector.setPlainText("perception: %s  ->  RGB %s" % (percep_mode.currentText(), rgb.shape))
+        inspector.setPlainText("perception: %s  ->  RGB %s" % (mode, rgb.shape))
+        refresh_problems(None)
+        update_actions()
     b_loadb.clicked.connect(load_frame_b); b_percep.clicked.connect(run_perception)
 
     def save_pipe():
         import json
         path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", "pipeline.json",
                                                         "JSON (*.json)")
-        if path:
-            open(path, "w", encoding="utf-8").write(json.dumps(model.to_dict(), indent=2))
+        if not path:
+            return
+        try:
+            with open(path, "w", encoding="utf-8") as fh:     # permission / bad path / full disk
+                fh.write(json.dumps(model.to_dict(), indent=2))
+        except Exception as e:
+            report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
+        state["dirty"] = False                                # now matches a file on disk
+        flash("saved " + os.path.basename(path))
 
     def open_pipe():
         import json
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
-        if path:
-            model.load_dict(json.loads(open(path, encoding="utf-8").read()))
-            refresh_stage_list(select=len(model.stages) - 1); show_result()
+        if not path:
+            return
+        if not confirm_discard("Open pipeline"):
+            return
+        try:
+            with open(path, encoding="utf-8") as fh:          # missing / permission
+                data = json.loads(fh.read())                  # malformed JSON
+            model.load_dict(data)                             # schema + op-name validation
+        except Exception as e:
+            # load_dict validates into a temporary list before assigning, so the
+            # pipeline currently on screen survives a bad file untouched.
+            report_error("Could not open pipeline", "%s\n\n%s" % (path, e)); return
+        mark_dirty()
+        refresh_stage_list(select=len(model.stages) - 1); show_result()
+        flash("loaded " + os.path.basename(path))
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
     act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
 
