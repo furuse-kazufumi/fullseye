@@ -65,6 +65,7 @@ _present = [p for p in _REAL_CLIPS if os.path.exists(p)]
 @pytest.mark.skipif(not _present, reason="local FullSense render clips not present")
 def test_perception_on_video_real_clip():
     r = _load("perception_on_video").run(clip_path=_present[0], max_frames=40)
-    assert r["n_frames"] >= 2
+    assert r["n_frames"] >= 10                       # the clip actually decoded many frames
     assert r["recon_gain"] > 0.0                     # real coherent motion is explained
+    assert r["energy_max"] > 0.5                     # measurable inter-frame motion
     assert r["tracked_survived"] >= 1
