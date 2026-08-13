@@ -49,6 +49,9 @@ with warnings.catch_warnings():
         recipes, recipe, measure, line_profile, distance, angle,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
+    from acquire import (  # noqa: E402,F401  (image acquisition: cameras / framegrabbers)
+        Camera, list_cameras, open_framegrabber, grab_image, close_framegrabber,
+    )
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",

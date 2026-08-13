@@ -1,0 +1,17 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Fullseye Studio
+GenericName=Image Pipeline Workbench
+Comment=Visual image-processing pipeline workbench (HDevelop-style)
+# install.sh substitutes @PYTHON@ (the interpreter path) and @REPO@ (the repo
+# root) via sed before copying this file to ~/.local/share/applications/.
+Exec=@PYTHON@ @REPO@/studio.py
+# A PNG icon is used because most Linux desktops do not render Windows .ico
+# files in menus; fullseye_256.png ships alongside fullseye.ico in assets/.
+Icon=@REPO@/assets/fullseye_256.png
+Path=@REPO@
+Terminal=false
+Categories=Graphics;Science;Education;
+Keywords=image;vision;pipeline;opencv;evolution;fullseye;
+StartupNotify=true
