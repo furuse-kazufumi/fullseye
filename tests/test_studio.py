@@ -1,4 +1,5 @@
 """Fullseye Studio: headless PipelineModel logic + an offscreen Qt smoke test."""
+import json
 import os
 
 import numpy as np
