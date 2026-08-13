@@ -44,6 +44,7 @@ import detect  # noqa: E402  (object segmentation / description / identification
 import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 import pose  # noqa: E402  (silhouette posture descriptors)
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
+import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
 from stereo import (  # noqa: E402,F401
