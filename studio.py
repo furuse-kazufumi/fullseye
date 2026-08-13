@@ -150,6 +150,85 @@ def format_inspection(d):
     return "\n".join(f"{k}: {v}" for k, v in d.items())
 
 
+def apply_display(val, mode):
+    """Map a 2-D result to an RGB image for the chosen display mode: 'gray', any
+    false-colour palette name, 'shaded relief', or 'height (color)'. Non-2-D or
+    already-color results are returned unchanged. (Headless, testable.)"""
+    if not isinstance(val, np.ndarray) or val.ndim != 2:
+        return val
+    if mode in ("gray", None):
+        return val
+    if mode == "shaded relief":
+        return imgio.shaded_relief(val)
+    if mode == "height (color)":
+        return imgio.colorize_height(val, name="terrain")
+    if mode in imgio.COLORMAPS:
+        return imgio.apply_cmap(val, name=mode)
+    return val
+
+
+def _downsample_grid(hm, max_side=140):
+    """Downsample a height map for a 3-D surface (headless, testable)."""
+    h = np.asarray(hm, np.float64)
+    if not np.isfinite(h).all():
+        fill = float(np.nanmin(h[np.isfinite(h)])) if np.isfinite(h).any() else 0.0
+        h = np.where(np.isfinite(h), h, fill)
+    ry = max(1, h.shape[0] // max_side)
+    rx = max(1, h.shape[1] // max_side)
+    return h[::ry, ::rx]
+
+
+# Dark, modern IDE theme (QSS). Accent is a warm "bullseye" coral.
+THEME = """
+QWidget { background:#1e1f26; color:#d7d9e0; font-size:12px; }
+QLabel { color:#9aa0ad; }
+QLineEdit,QComboBox,QPlainTextEdit,QListWidget { background:#262832; border:1px solid #33353f;
+    border-radius:6px; padding:4px; selection-background-color:#ff6b4a; }
+QListWidget::item:selected { background:#ff6b4a; color:#141414; }
+QPushButton { background:#2d2f3a; border:1px solid #3a3d49; border-radius:6px; padding:6px 10px; }
+QPushButton:hover { background:#3a3d49; border-color:#ff6b4a; }
+QPushButton:pressed { background:#ff6b4a; color:#141414; }
+QComboBox::drop-down { border:none; width:18px; }
+QSlider::groove:horizontal { height:6px; background:#33353f; border-radius:3px; }
+QSlider::handle:horizontal { width:16px; background:#ff6b4a; border-radius:8px; margin:-6px 0; }
+QSlider::sub-page:horizontal { background:#ff6b4a; border-radius:3px; }
+QScrollBar:vertical { background:#1e1f26; width:12px; margin:0; }
+QScrollBar::handle:vertical { background:#3a3d49; border-radius:6px; min-height:24px; }
+QScrollBar::add-line,QScrollBar::sub-line { height:0; }
+QSplitter::handle { background:#33353f; }
+"""
+
+
+def show_3d_surface(heightmap, parent=None):
+    """Open a rotatable 3-D surface plot of a height/depth image (Q3DSurface).
+    Best-effort: returns the container widget, or None if 3-D isn't available."""
+    try:
+        from PySide6.QtDataVisualization import (Q3DSurface, QSurface3DSeries,
+                                                 QSurfaceDataProxy, QSurfaceDataItem)
+        from PySide6 import QtGui, QtWidgets
+    except Exception:
+        return None
+    h = _downsample_grid(heightmap)
+    ny, nx = h.shape
+    proxy = QSurfaceDataProxy()
+    rows = []
+    for i in range(ny):
+        row = []
+        for j in range(nx):
+            row.append(QSurfaceDataItem(QtGui.QVector3D(float(j), float(h[i, j]), float(i))))
+        rows.append(row)
+    proxy.resetArray(rows)
+    series = QSurface3DSeries(proxy)
+    series.setDrawMode(QSurface3DSeries.DrawSurface)
+    surface = Q3DSurface()
+    surface.addSeries(series)
+    container = QtWidgets.QWidget.createWindowContainer(surface, parent)
+    container.setMinimumSize(560, 460)
+    container.setWindowTitle("Fullseye Studio - 3D surface")
+    container.show()
+    return container
+
+
 # --------------------------------------------------------------------------- #
 # Qt view (imported lazily so `import studio` works without a display).
 # --------------------------------------------------------------------------- #
