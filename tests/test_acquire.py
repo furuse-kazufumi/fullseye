@@ -83,3 +83,10 @@ def test_facade_exposes_camera():
 def test_list_cameras_is_safe():
     # never raises; returns a list (may be empty on a machine with no camera)
     assert isinstance(acquire.list_cameras(max_index=0), list)
+
+
+def test_backend_capabilities_catalog():
+    caps = {c["name"]: c for c in acquire.capabilities()}
+    assert caps["dir"]["kind"] == "native" and caps["dir"]["available"]
+    assert caps["realsense"]["kind"] == "optional" and caps["realsense"]["pip"] == "pyrealsense2"
+    assert caps["oak"]["pip"] == "depthai"                # Physical-AI depth cameras catalogued
