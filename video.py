@@ -230,7 +230,10 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
                 a = np.pad(a, pad, mode="edge")
             padded.append(a)
         seq = padded
-        imageio.mimsave(path, seq, fps=float(fps))
+        # macro_block_size=1 stops imageio-ffmpeg from silently resizing the frame
+        # up to a multiple of 16 (which would change the array's width/height); the
+        # even-padding above already satisfies libx264's yuv420p ÷2 requirement.
+        imageio.mimsave(path, seq, fps=float(fps), macro_block_size=1)
     else:
         imageio.mimsave(path, seq, duration=1.0 / float(fps))
 
