@@ -636,8 +636,8 @@ def test_file_io_errors_are_reported_not_raised(tmp_path, monkeypatch):
     assert win._state["result"] is not None
     win._actions["save_result"].trigger()
     assert "Could not save result" in errs[-1][0]
-    monkeypatch.undo()
-    monkeypatch.setattr(studio, "ERROR_HOOK", lambda *a: None)
+
+    # save_pipeline uses open()/json directly, which does raise on a missing dir
 
     unpipe = str(tmp_path / "nope_dir" / "p.json")
     monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
