@@ -1511,12 +1511,53 @@ def build_window(model=None):
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
 
+    # ---- keyboard-shortcut scoping ----------------------------------------- #
+    # These edit/step keys used to be WindowShortcut: Ctrl+Up / Ctrl+Down fired
+    # while the user was typing in the operator search box (QLineEdit only claims
+    # Del / Home / Ctrl+Right for itself), and Home hijacked "go to first row" in
+    # the operator list. Binding them to the pipeline list with
+    # WidgetWithChildrenShortcut keeps the *menu items*, the toolbar and the
+    # buttons working exactly as before — only the bare key press is now scoped.
+    for _a in (act_remove, act_up, act_down, act_step, act_reset):
+        _a.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)
+        stage_list.addAction(_a)
+
+    # ---- accessibility ------------------------------------------------------ #
+    la.setBuddy(sa); lb.setBuddy(sb)
+    for _w, _n in ((sa, "knob a (0 to 1)"), (sb, "knob b (0 to 1)"),
+                   (stage_list, "pipeline stages"), (op_list, "operator list"),
+                   (search, "search operators"), (cat, "operator category filter"),
+                   (samples, "sample pipelines"), (display, "display colour map"),
+                   (percep_mode, "perception mode"), (problems_list, "pipeline problems"),
+                   (inspector, "inspector"), (hist_view, "histogram"),
+                   (view, "image view"), (readout, "pixel read-out"),
+                   (b_rm, "remove stage"), (b_up, "move stage up"), (b_dn, "move stage down"),
+                   (b_reset, "reset to raw image"), (b_step, "step forward"),
+                   (b_runall, "run all stages"), (b_export, "export pipeline"),
+                   (b_savep, "save pipeline"), (b_openp, "open pipeline"),
+                   (b_load, "load image"), (b_demo, "synthetic demo"),
+                   (b_save, "save result"), (b_3d, "3D surface"),
+                   (b_loadb, "load frame B"), (b_percep, "run perception"),
+                   (b_zin, "zoom in"), (b_zout, "zoom out"),
+                   (b_fit, "fit to window"), (b_11, "actual size")):
+        _w.setAccessibleName(_n)
+        if not _w.toolTip():
+            _w.setToolTip(_n)
+
+    win.close_guard = lambda: confirm_discard("Quit Fullseye Studio")
     win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
     win._flash = flash
     win._state = state                                   # for tests / headless driving
     win._knob_sliders = (sa, sb)
+    win._knob_timer = knob_timer
     win._stage_list = stage_list
     win._problems_list = problems_list
+    win._inspector = inspector
+    win._update_actions = update_actions
+    win._confirm_discard = confirm_discard
+    win._buttons = {"remove": b_rm, "up": b_up, "down": b_dn, "save_result": b_save,
+                    "export": b_export, "surface_3d": b_3d, "step": b_step,
+                    "run_all": b_runall, "reset": b_reset, "save_pipeline": b_savep}
     win._actions = {
         "open_image": act_open_img, "demo": act_demo, "save_result": act_save_res,
         "open_pipeline": act_open_pipe, "save_pipeline": act_save_pipe, "export": act_export,
