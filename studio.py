@@ -370,6 +370,32 @@ def _op_row(name):
             "in_sort": op.in_sort, "out_sort": op.out_sort}
 
 
+def palette_filter(labels, query):
+    """Rank *labels* for the command palette by a substring *query*.
+
+    Prefix matches rank above word-start matches above bare substrings, then by
+    match position and shorter label. Returns indices into *labels*, best first;
+    an empty query keeps the original order. Qt-free -> unit-tested."""
+    q = str(query).lower().strip()
+    if not q:
+        return list(range(len(labels)))
+    scored = []
+    for i, lbl in enumerate(labels):
+        h = str(lbl).lower()
+        pos = h.find(q)
+        if pos < 0:
+            continue
+        if h.startswith(q):
+            rank = 0
+        elif any(sep + q in h for sep in (" ", ":", "▸")):
+            rank = 1
+        else:
+            rank = 2
+        scored.append(((rank, pos, len(h)), i))
+    scored.sort(key=lambda s: s[0])
+    return [i for _, i in scored]
+
+
 def show_3d_surface(heightmap, parent=None):
     """Open a rotatable 3-D surface plot of a height/depth image (Q3DSurface).
     Best-effort: returns the container widget, or None if 3-D isn't available."""
