@@ -72,4 +72,5 @@ __all__ = [
     "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
+    "FullseyeEngine", "diagnose_stages",
 ]
