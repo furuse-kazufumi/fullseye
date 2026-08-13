@@ -180,3 +180,43 @@ def test_clear_action_empties_pipeline():
     assert len(model.stages) == 2
     win._actions["clear"].trigger()
     assert model.stages == []
+
+
+def test_remove_disables_knobs():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(1)                     # select a stage -> knobs live
+    sa, sb = win._knob_sliders
+    assert sa.isEnabled() and sb.isEnabled()
+    win._actions["remove"].trigger()                     # remove the selected stage
+    # selection is gone -> knobs must not still describe a deleted stage
+    assert not sa.isEnabled() and not sb.isEnabled()
+
+
+def test_reset_shows_raw_image():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    import numpy as np
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("invert")                                # a visibly different single stage
+    win, model = studio.build_window(m)
+    win._actions["run_all"].trigger()                    # show the final (inverted) result
+    win._actions["reset"].trigger()                      # Reset must show the RAW image
+    assert win._state["view_raw"] is True
+    assert np.allclose(win._state["raw"], model.result_upto(-1))   # the pre-pipeline image
+
+
+def test_stage_list_drag_reorder_enabled():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win._stage_list.dragDropMode() == QtWidgets.QAbstractItemView.InternalMove
