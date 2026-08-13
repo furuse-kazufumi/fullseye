@@ -774,6 +774,8 @@ def build_window(model=None):
     def on_stage_selected():
         i = selected_index()
         valid = 0 <= i < len(model.stages)
+        if valid:
+            state["view_raw"] = False                 # selecting a stage leaves the raw view
         sa.setEnabled(valid); sb.setEnabled(valid)
         if valid:
             name, a, b = model.stages[i]
