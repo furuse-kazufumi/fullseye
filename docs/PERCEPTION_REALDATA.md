@@ -40,7 +40,7 @@ noise that, when warped, corrupts an already-good match.
 Local assets (onocollo / hillco physics renders — not vendored). Reproduce with
 `py -3.11 examples/perception_on_video.py <clip> --save out [--max-frames N] [--step K]`.
 
-| clip | size · fps | frames | energy max (px) | recon_gain | events | dominant transl. (px) | movers | track path (px) |
+| clip | size · fps | frames | energy max (px) | recon_gain | events | dominant transl. (px) | movers | track disp (px) |
 |---|---|---|---|---|---|---|---|---|
 | `rocket_arc.mp4` | 380×460 · 50 | 60 | 5.67 | **+0.69** | 1 @ 51 | (0.08, **−1.00**) | 1 (area 7882) | 14.8 (35/36) |
 | `box_grasp.mp4` (chopstick) | 440×320 · 25 | 41 | 4.57 | **+0.43** | 0 | (0.01, 0.00) | 3 (area 5201) | 16.4 (35/36) |
