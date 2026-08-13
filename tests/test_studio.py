@@ -138,3 +138,45 @@ def test_qt_window_builds_offscreen():
     model.add_stage("gaussian")
     win, model2 = studio.build_window()      # default demo image
     assert win is not None and model2 is not None
+
+
+def test_op_detail_and_tooltip():
+    row = {"name": "gaussian", "halcon": "gauss_filter", "category": "filter",
+           "in_sort": "image", "out_sort": "image"}
+    d = studio.op_detail(row)
+    assert "gaussian" in d and "image → image" in d and "gauss_filter" in d
+    # an op with no HALCON alias -> no "HALCON:" suffix
+    row2 = dict(row, halcon="")
+    assert "HALCON" not in studio.op_detail(row2)
+    tip = studio.op_tooltip(row)
+    assert "gauss_filter" in tip and "filter" in tip and "knobs" in tip
+
+
+def test_window_actions_and_shortcuts():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    acts = win._actions
+    for key in ("open_image", "save_result", "export", "remove", "fit",
+                "run_all", "clear", "about"):
+        assert key in acts and acts[key] is not None
+    # keyboard shortcuts are actually assigned
+    assert acts["open_image"].shortcut().toString() == "Ctrl+O"
+    assert acts["run_all"].shortcut().toString() in ("Ctrl+Return", "Ctrl+Enter")
+    assert win.menuBar() is not None and len(win.menuBar().actions()) == 5
+    assert callable(win._flash)
+
+
+def test_clear_action_empties_pipeline():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    assert len(model.stages) == 2
+    win._actions["clear"].trigger()
+    assert model.stages == []
