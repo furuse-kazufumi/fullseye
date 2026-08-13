@@ -79,12 +79,18 @@ class PipelineModel:
     def step_states(self):
         """Per-step state for step execution: for each stage, the op, its knobs and
         an inspection of the intermediate result after that stage. This is what a
-        step-through debugger shows — the object/variable state at every step."""
+        step-through debugger shows — the object/variable state at every step.
+
+        A stage that raises records an ``{"kind": "error"}`` state instead of
+        aborting the whole list, so one bad stage does not blank the rest."""
         out = []
         for i in range(len(self.stages)):
             op, a, b = self.stages[i]
-            out.append({"index": i, "op": op, "a": a, "b": b,
-                        "state": inspect_result(self.result_upto(i))})
+            try:
+                state = inspect_result(self.result_upto(i))
+            except Exception as e:                       # this op failed on its input
+                state = {"kind": "error", "message": str(e)}
+            out.append({"index": i, "op": op, "a": a, "b": b, "state": state})
         return out
 
     def ops_string(self):
