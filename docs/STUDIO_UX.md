@@ -55,7 +55,8 @@ toolbar and buttons — same handler, three entry points).
 
 *Principle — recognition over recall + Fitts's law:* the highest-frequency
 actions are also large toolbar targets; everything is discoverable in a menu
-without hunting through panels.
+without hunting through panels. **Help ▸ Keyboard shortcuts (F1)** shows the whole
+table in-app, so the bindings are self-documenting.
 
 ### 2. Status bar for feedback
 Transient results (frame B loaded, perception errors, "pipeline cleared") now go
