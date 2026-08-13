@@ -216,6 +216,14 @@ def test_read_obj_quads_are_fan_triangulated(tmp_path):
     assert abs(area - 6.0) < 1e-9                # unit cube surface area
 
 
+def test_read_obj_negative_indices(tmp_path):
+    """OBJ allows negative face indices, relative to the vertices seen so far."""
+    txt = "v 0 0 0\nv 1 0 0\nv 0 1 0\nf -3 -2 -1\nv 0 0 1\nf -4 -3 -1\n"
+    V, F = mesh.read_mesh(_write(tmp_path, "rel.obj", txt))
+    assert V.shape == (4, 3)
+    assert F.tolist() == [[0, 1, 2], [0, 1, 3]]
+
+
 def test_read_off_cube(tmp_path):
     V, F = mesh.read_mesh(_write(tmp_path, "cube.off", OFF_CUBE))
     assert_is_cube(V, F)
