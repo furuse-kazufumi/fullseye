@@ -80,4 +80,7 @@ __all__ = [
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
     "FullseyeEngine", "diagnose_stages",
+    "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
+    "open_channel", "protocols", "capabilities", "Channel",
+    "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
 ]
