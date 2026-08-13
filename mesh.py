@@ -226,8 +226,8 @@ def _read_obj_vertices(raw: bytes, src: str):
             raise ValueError("%s: OBJ 'v' record needs 3 coordinates, got %r" % (src, s[:60]))
         rows.append(parts[1:7])
         widths.append(len(parts) - 1)
-    if not rows:
-        return np.zeros((0, 3), np.float64), None
+    if not rows:                      # an OBJ declares nothing, so "no v records" can only
+        raise ValueError("%s: no 'v' vertex records — not a Wavefront OBJ file?" % src)
     V = _floats([r[:3] for r in rows], "OBJ vertex", src)
     C = None
     if all(w == 6 for w in widths):
