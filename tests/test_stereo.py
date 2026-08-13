@@ -100,3 +100,11 @@ def test_lr_consistency_accepts_clean_and_flags_corruption():
     dR_bad[40:60, 40:60] = 0.0
     ok_bad = stereo.lr_consistency(dL, dR_bad, max_diff=1.0)
     assert ok_bad[45:55, 50:60].mean() < 0.5
+
+
+def test_lr_consistency_rejects_no_overlap_margin():
+    # left columns whose match falls at x - dL < 0 have no right correspondence and
+    # must be marked untrustworthy, not clamped to column 0 and fabricated as valid
+    ok = stereo.lr_consistency(np.full((1, 10), 6.0), np.full((1, 10), 6.0), max_diff=1.0)
+    assert not ok[0, :6].any()          # columns 0..5 map to right cols -6..-1 -> invalid
+    assert ok[0, 6:].all()              # columns 6..9 have real matches at cols 0..3
