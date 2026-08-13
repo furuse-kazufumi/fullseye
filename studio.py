@@ -282,13 +282,29 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
             self.setBackgroundBrush(QtGui.QColor("#202020"))
             self.setMinimumSize(380, 380)
+            self.setMouseTracking(True)
+            self._data = None
+            self.hover_cb = None                     # set by build_window
 
         def set_pixmap(self, pm):
             self._item.setPixmap(pm)
             self._scene.setSceneRect(QtCore.QRectF(pm.rect()))
 
+        def set_data(self, arr):
+            self._data = np.asarray(arr) if arr is not None else None
+
+        def mouseMoveEvent(self, e):
+            super().mouseMoveEvent(e)
+            if self._data is not None and self.hover_cb is not None:
+                p = self.mapToScene(e.position().toPoint())
+                x, y = int(p.x()), int(p.y())
+                h, w = self._data.shape[:2]
+                if 0 <= x < w and 0 <= y < h:
+                    self.hover_cb(x, y, self._data[y, x])
+
         def clear(self):
             self._item.setPixmap(QtGui.QPixmap())
+            self._data = None
 
         def wheelEvent(self, e):
             f = 1.25 if e.angleDelta().y() > 0 else 0.8
