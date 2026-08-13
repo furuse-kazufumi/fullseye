@@ -65,6 +65,30 @@ def test_nearest_prototype_identifies_shape():
     assert label == "disk"
 
 
+def test_otsu_mask_not_degenerate_on_skewed_image():
+    # a mostly-bright field with a few dark spots trips a wrong between-class
+    # variance formula into an all-empty mask (the fixed bug). Foreground must be a
+    # sensible fraction, not 0 or 1.
+    img = np.full((100, 100), 0.7)
+    img[10:30, 10:30] = 0.15
+    img[60:80, 60:85] = 0.15
+    frac = detect._otsu_mask(img).mean()
+    assert 0.02 < frac < 0.98
+
+
+def test_segment_real_coins_image():
+    # regression for the Otsu empty-mask bug: real coins must segment into a
+    # plausible count of round objects, not zero.
+    data = __import__("importlib").import_module("skimage.data")
+    from scipy import ndimage
+    img = detect.np.asarray(data.coins(), np.float64) / 255.0
+    sm = ndimage.gaussian_filter(img, 1.0)
+    objs = detect.segment_objects(sm, threshold="otsu", min_area=120)
+    assert 15 <= len(objs) <= 30, f"expected ~24 coins, got {len(objs)}"
+    round_like = [o for o in objs if o.get("eccentricity", 1) < 0.8]
+    assert len(round_like) >= len(objs) * 0.7      # most coins are disk-shaped
+
+
 def test_draw_objects_returns_rgb():
     objs = detect.segment_objects(_scene(), threshold="otsu")
     vis = detect.draw_objects(_scene(), objs)
