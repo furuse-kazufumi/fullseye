@@ -125,11 +125,16 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     Frames are float64 in ``[0, 1]``. Raises ``RuntimeError`` if no video backend
     is available and ``FileNotFoundError`` / ``ValueError`` for a bad path.
     """
+    path = os.fspath(path)                      # accept str or pathlib.Path
     step = max(1, int(step))
     start = max(0, int(start))
     cap = None if max_frames is None else max(0, int(max_frames))
     if cap == 0:
         return
+    # a truly-missing file is FileNotFoundError; a file that exists but fails to
+    # decode surfaces the backend's real error (not a misleading "not found").
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
 
     imageio = _imageio()
     if imageio is not None:
