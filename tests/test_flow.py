@@ -52,7 +52,7 @@ def test_warp_by_flow_reconstructs_next():
     u0, v0 = 3.0, -2.0
     nxt = _shift(prev, u0, v0)
     # exact flow -> warp reproduces nxt in the interior
-    exact = warp = flow.warp_by_flow(prev, np.full_like(prev, u0), np.full_like(prev, v0))
+    exact = flow.warp_by_flow(prev, np.full_like(prev, u0), np.full_like(prev, v0))
     assert np.abs(_interior(exact) - _interior(nxt)).mean() < 0.02
     # estimated flow -> residual is much smaller than doing nothing
     u, v = flow.optical_flow_lk(prev, nxt, window=15, levels=3, iters=5)
