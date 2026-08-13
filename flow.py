@@ -149,6 +149,8 @@ def optical_flow_hs(prev, nxt, alpha: float = 1.0, iters: int = 100):
     N = np.asarray(nxt, np.float64)
     if P.shape != N.shape or P.ndim != 2:
         raise ValueError("prev/nxt must be equal-shape 2-D arrays")
+    if min(P.shape) < 2:
+        raise ValueError("prev/nxt must be at least 2x2 (need a spatial gradient)")
     Iy, Ix = np.gradient((P + N) * 0.5)
     It = N - P
     u = np.zeros_like(P)
@@ -157,7 +159,8 @@ def optical_flow_hs(prev, nxt, alpha: float = 1.0, iters: int = 100):
                     [1 / 6, 0.0, 1 / 6],
                     [1 / 12, 1 / 6, 1 / 12]])
     a2 = float(alpha) ** 2
-    den = a2 + Ix * Ix + Iy * Iy
+    # floor the denominator so a flat region with alpha=0 gives 0 flow, not 0/0=NaN
+    den = np.maximum(a2 + Ix * Ix + Iy * Iy, 1e-12)
     for _ in range(max(1, int(iters))):
         ub = ndimage.convolve(u, avg, mode="nearest")
         vb = ndimage.convolve(v, avg, mode="nearest")
