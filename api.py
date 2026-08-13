@@ -51,7 +51,7 @@ from stereo import (  # noqa: E402,F401
     depth_from_disparity, reproject_to_points,
 )
 from measure import line_profile, distance, angle  # noqa: E402,F401
-from registration import kabsch, icp, apply_transform  # noqa: E402,F401
+from registration import kabsch, icp, apply_transform, pca_align, register  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
