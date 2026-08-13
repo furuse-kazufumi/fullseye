@@ -205,3 +205,54 @@ def register(src, dst, max_iter: int = 60, trim: float | None = 0.2,
     same ``(R, t, aligned, rmse)`` tuple as :func:`icp`."""
     R0, t0 = pca_align(src, dst)
     return icp(src, dst, max_iter=max_iter, tol=tol, init=(R0, t0), trim=trim)
+
+
+def feature_register(src, dst, k: int = 16, bins: int = 11, ransac_iter: int = 4000,
+                     inlier_thresh: float | None = None, seed: int = 0,
+                     refine: bool = True):
+    """Correspondence-based registration via FPFH features + RANSAC (+ ICP refine).
+
+    Unlike :func:`pca_align` (which needs distinct global principal axes), this
+    matches local-geometry descriptors (:func:`pointcloud.fpfh`), so it aligns
+    shapes whose global axes are ambiguous but whose local geometry is
+    distinctive. Each source point is matched to its nearest-descriptor
+    destination point; RANSAC samples 3 correspondences at a time, keeps the
+    transform with the most inliers (within *inlier_thresh*, default 3x the median
+    destination point spacing), refits on the inliers, then (``refine``) polishes
+    with Trimmed :func:`icp`. Returns ``(R, t, aligned, rmse)`` like :func:`icp`."""
+    from scipy.spatial import cKDTree
+    import pointcloud
+
+    P = np.asarray(src, np.float64)
+    Q = np.asarray(dst, np.float64)
+    fp = pointcloud.fpfh(P, k=k, bins=bins)
+    fq = pointcloud.fpfh(Q, k=k, bins=bins)
+    match = cKDTree(fq).query(fp)[1]              # src i -> nearest-descriptor dst index
+    Qm = Q[match]
+    if inlier_thresh is None:
+        nn = cKDTree(Q).query(Q, k=2)[0][:, 1]
+        inlier_thresh = 3.0 * float(np.median(nn))
+    rng = np.random.default_rng(seed)
+    n = P.shape[0]
+    best = None
+    for _ in range(max(1, int(ransac_iter))):
+        s = rng.choice(n, 3, replace=False)
+        try:
+            R, t = kabsch(P[s], Qm[s])
+        except ValueError:
+            continue
+        err = np.linalg.norm(apply_transform(P, R, t) - Qm, axis=1)
+        inl = err < inlier_thresh
+        c = int(inl.sum())
+        if best is None or c > best[0]:
+            best = (c, inl)
+    inl = best[1] if best is not None else np.zeros(n, bool)
+    if int(inl.sum()) >= 3:
+        R, t = kabsch(P[inl], Qm[inl])
+    else:                                          # no consensus -> centroid start
+        R, t = np.eye(3), Q.mean(0) - P.mean(0)
+    if refine:
+        return icp(P, Q, init=(R, t), trim=0.2)
+    aligned = apply_transform(P, R, t)
+    rmse = float(np.sqrt(np.mean(cKDTree(Q).query(aligned)[0] ** 2)))
+    return R, t, aligned, rmse
