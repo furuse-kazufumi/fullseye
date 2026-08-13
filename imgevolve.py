@@ -312,6 +312,17 @@ def main() -> int:
     p.add_argument("--a", type=float, default=0.5); p.add_argument("--b", type=float, default=0.5)
     p.set_defaults(fn=cmd_pipeline)
 
+    p = sub.add_parser("run", help="run a saved pipeline (JSON or ops string) via FullseyeEngine")
+    p.add_argument("pipeline", help="a pipeline .json (Studio 'Save pipeline') or a comma-separated ops string")
+    p.add_argument("inp", nargs="?", default=None, help="input image (omit with --describe / --to-python)")
+    p.add_argument("--out", default="", help="save the result here")
+    p.add_argument("--upto", type=int, default=None, help="run only stages 0..N")
+    p.add_argument("--stepwise", action="store_true", help="report/save each stage's result")
+    p.add_argument("--describe", action="store_true", help="print pipeline I/O + validation, then exit if no input")
+    p.add_argument("--to-python", action="store_true", dest="to_python", help="print the pipeline as a Python function")
+    p.add_argument("--a", type=float, default=0.5); p.add_argument("--b", type=float, default=0.5)
+    p.set_defaults(fn=cmd_run)
+
     p = sub.add_parser("coverage", help="print honest coverage numbers")
     p.set_defaults(fn=cmd_coverage)
 
