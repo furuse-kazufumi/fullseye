@@ -810,6 +810,14 @@ def build_window(model=None):
         if 0 <= i < len(model.stages):
             stage_list.setCurrentRow(i)                      # triggers show_result for that step
 
+    def reset_to_raw():
+        """Show the pre-pipeline (raw) image — the start of the step-through."""
+        state["view_raw"] = True
+        if stage_list.currentRow() == -1:
+            on_stage_selected()                             # no row change -> refresh explicitly
+        else:
+            stage_list.setCurrentRow(-1)                    # currentRowChanged -> on_stage_selected
+
     def load_sample(idx):
         if idx <= 0:
             return
