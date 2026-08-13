@@ -67,6 +67,58 @@ def test_dominant_motion_robust_to_a_moving_object():
     assert abs(M_raw[0, 0] - 2.0) > 0.3                  # plain LS is dragged by the object
 
 
+def test_dominant_motion_handles_nan_without_failing_open():
+    # a single NaN flow sample must not collapse the model to a fake zero (which
+    # would report the whole frame as independently moving)
+    u, v = _const(4.0, 0.0)
+    u[0, 0] = np.nan
+    M = motion.dominant_motion(u, v)             # robust default
+    assert abs(M[0, 0] - 4.0) < 1e-6 and abs(M[1, 0]) < 1e-6
+    # too few finite samples -> visible NaN model, not a silent zero
+    allnan = np.full((8, 8), np.nan)
+    assert np.isnan(motion.dominant_motion(allnan, allnan)).all()
+
+
+def test_robust_one_iteration_actually_trims():
+    # robust=True, iters=1 must differ from the plain least-squares fit
+    u, v = _const(2.0, 1.0)
+    u[30:66, 42:78] = 10.0
+    v[30:66, 42:78] = 10.0
+    m1 = motion.dominant_motion(u, v, robust=True, iters=1)
+    mr = motion.dominant_motion(u, v, robust=False)
+    assert not np.allclose(m1, mr)
+    assert abs(m1[0, 0] - 2.0) < 0.15            # one robust pass already rejects the object
+
+
+def test_motion_segments_measures_unblurred_field():
+    # area and mean_speed must come from the true speed, not a blurred one
+    u = np.zeros((64, 64))
+    v = np.zeros((64, 64))
+    u[30:36, 30:36] = 10.0                        # a 6x6 block moving at exactly 10
+    _, segs = motion.motion_segments(u, v, threshold=2.0, min_area=25, subtract_dominant=False)
+    assert len(segs) == 1
+    assert segs[0]["area"] == 36                  # exact, no smoothing dilation
+    assert abs(segs[0]["mean_speed"] - 10.0) < 1e-6
+
+
+def _seq_static_then_shift(n=8, move_at=4, seed=20):
+    base = _textured := None  # placeholder to keep flake quiet
+    rng = np.random.default_rng(seed)
+    from scipy import ndimage
+    b = np.clip(ndimage.gaussian_filter(rng.random((64, 80)), 1.3), 0, 1)
+    return [ndimage.shift(b, (0, 0) if i < move_at else (2.0, 3.0), order=1, mode="nearest")
+            for i in range(n)]
+
+
+def test_motion_energy_series_and_detect_events():
+    frames = _seq_static_then_shift(n=8, move_at=4)
+    series = motion.motion_energy_series(frames, window=15, levels=2, iters=5)
+    assert series.shape == (7,)
+    assert int(series.argmax()) == 3              # the one static->moved transition (pair 3->4)
+    events = motion.detect_events(series)
+    assert 3 in events.tolist()
+
+
 def test_motion_reachable_through_facade():
     import fullseye as fs
     u, v = _bg_plus_patch()
