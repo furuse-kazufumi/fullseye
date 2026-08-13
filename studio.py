@@ -1336,8 +1336,9 @@ def build_window(model=None):
 
     def add_op_by_name(n):
         model.add_stage(n)
+        mark_dirty()
         refresh_stage_list(select=len(model.stages) - 1)
-        on_stage_selected()
+        show_result()
 
     def show_palette():
         # actions first, then every operator — run by name, keyboard-only.
