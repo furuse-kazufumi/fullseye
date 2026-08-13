@@ -196,8 +196,6 @@ def _to_finite_f64(arr, src: str) -> np.ndarray:
 # ---- SimpleITK image -> (vol, meta) ---------------------------------------- #
 def _meta_from_sitk(img, dtype: str, src_fmt: str,
                     n_series: Optional[int], modality: Optional[str]) -> "VolumeMeta":
-    sitk = _sitk()
-    del sitk  # imported only to fail loudly if the backend vanished mid-call
     spacing = tuple(float(s) for s in img.GetSpacing())      # (sx, sy, sz)
     origin = np.asarray(img.GetOrigin(), np.float64)         # (ox, oy, oz)
     direction = np.asarray(img.GetDirection(), np.float64)
