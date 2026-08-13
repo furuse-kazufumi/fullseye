@@ -110,6 +110,17 @@ def _seq_static_then_shift(n=8, move_at=4, seed=20):
             for i in range(n)]
 
 
+def test_motion_segments_keeps_border_touching_region():
+    # the smoothing (morphological closing) must not erode a moving region that
+    # touches the frame border (codex review: zero-pad closing ate the boundary)
+    u = np.ones((8, 8))
+    v = np.zeros((8, 8))
+    mask, segs = motion.motion_segments(u, v, threshold=0.5, subtract_dominant=False,
+                                        min_area=1, smooth=1)
+    assert mask.all()                                 # every pixel moves -> all kept
+    assert len(segs) == 1 and segs[0]["area"] == 64
+
+
 def test_motion_energy_series_and_detect_events():
     frames = _seq_static_then_shift(n=8, move_at=4)
     series = motion.motion_energy_series(frames, window=15, levels=2, iters=5)
