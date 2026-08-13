@@ -490,6 +490,7 @@ def build_window(model=None):
     central.addWidget(left); central.addWidget(mid); central.addWidget(right)
     central.setSizes([320, 320, 620])
     state = {"result": None, "raw": None}
+    pmodel = PerceptionModel()
 
     # -- behaviour --
     def selected_index():
