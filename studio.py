@@ -425,7 +425,16 @@ def build_window(model=None):
     def show_result():
         idx = selected_index()
         val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
-        inspector.setPlainText(format_inspection(inspect_result(val)))
+        insp = format_inspection(inspect_result(val))
+        if isinstance(val, np.ndarray) and val.ndim == 2 and _is_binary(val) and val.any():
+            try:
+                import detect
+                objs = detect.segment_objects(val, threshold="none", min_area=1)
+                if objs:
+                    insp += "\n\nRegion features:\n" + detect.feature_table(objs)
+            except Exception:
+                pass
+        inspector.setPlainText(insp)
         if isinstance(val, np.ndarray) and val.ndim in (2, 3):
             shown = apply_display(val, display.currentText())
             qi = _to_qimage(shown, QtGui)
