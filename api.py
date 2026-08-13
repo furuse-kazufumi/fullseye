@@ -54,11 +54,11 @@ from stereo import (  # noqa: E402,F401
 )
 from measure import line_profile, distance, angle  # noqa: E402,F401
 from registration import (  # noqa: E402,F401
-    kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register,
+    kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
 )
 from pointcloud import (  # noqa: E402,F401
     estimate_normals, voxel_downsample,
-    remove_statistical_outliers, remove_radius_outliers,
+    remove_statistical_outliers, remove_radius_outliers, fpfh,
 )
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
