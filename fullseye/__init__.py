@@ -39,6 +39,7 @@ with warnings.catch_warnings():
         registration, kabsch, icp, point_to_plane_icp, apply_transform,
         pca_align, register,
         pointcloud, estimate_normals, voxel_downsample,
+        remove_statistical_outliers, remove_radius_outliers,
         pose, pose_descriptor, skeleton_nodes, principal_axis,
         flow, optical_flow_lk, optical_flow_hs, warp_by_flow,
         flow_magnitude, flow_angle,
