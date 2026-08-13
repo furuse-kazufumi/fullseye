@@ -56,6 +56,7 @@ with warnings.catch_warnings():
         open_channel, protocols, capabilities, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
     )
+    from device import DigitalIO, pulse, signal_result, wait_input  # noqa: E402,F401  (device control)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
