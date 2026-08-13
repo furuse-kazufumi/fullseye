@@ -296,6 +296,7 @@ def build_window(model=None):
     b_rm.clicked.connect(remove)
     b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))
     b_load.clicked.connect(load_image); b_demo.clicked.connect(use_demo)
+    b_save.clicked.connect(save_result)
     b_export.clicked.connect(export)
 
     refresh_stage_list(); show_result()
