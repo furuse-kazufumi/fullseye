@@ -625,12 +625,19 @@ def test_file_io_errors_are_reported_not_raised(tmp_path, monkeypatch):
     assert "Could not open pipeline" in errs[-1][0]
     assert model.ops_string() == "gaussian"
 
-    undirectory = str(tmp_path / "nope_dir" / "out.png")
+    # imgio.save() delegates to cv2.imwrite(), which returns False rather than
+    # raising on a bad path, so force a real exception to exercise the wrapper.
+    out_png = str(tmp_path / "out.png")
     monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
-                        staticmethod(lambda *a, **k: (undirectory, "")))
+                        staticmethod(lambda *a, **k: (out_png, "")))
+    monkeypatch.setattr(studio.imgio, "save",
+                        lambda p, a: (_ for _ in ()).throw(OSError("disk on fire")))
     win._stage_list.setCurrentRow(0)
+    assert win._state["result"] is not None
     win._actions["save_result"].trigger()
     assert "Could not save result" in errs[-1][0]
+    monkeypatch.undo()
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda *a: None)
 
     unpipe = str(tmp_path / "nope_dir" / "p.json")
     monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
