@@ -101,12 +101,31 @@ one-line description. A desktop shortcut (`Fullseye Studio.lnk`, launched via
 | palette | one coral accent | brand teal + amber system, full state styling |
 | identity | none | window/taskbar icon, toolbar mark, About, desktop shortcut |
 
+## Review round (honest DoD)
+
+The video/perception code went through a 6-agent adversarial review (findings
+verified against the real code, then fixed). The Studio redesign was then given a
+second-opinion pass by an **external** model (Codex, read-only), per the project's
+"verify with a second AI" rule — it caught two real behaviour bugs this pass had
+introduced/left, both now fixed and regression-tested:
+
+- **Remove** left the knob sliders enabled and describing the just-deleted stage
+  (selection dropped to −1 with signals blocked, so the refresh never ran) →
+  `remove()` now calls `on_stage_selected()` to resync.
+- **Reset** showed stage 0's output, not the raw pre-pipeline image its label
+  promised → a `view_raw` state now makes Reset show `result_upto(-1)` (and Step
+  advances out of it).
+
+Lesson (again): an independent reviewer catches state-consistency bugs that the
+author's own tests, written to the author's mental model, miss.
+
 ## How to keep improving (backlog / methods)
 
 Ranked by usability payoff; each is a self-contained, testable increment:
 
-1. **Drag-to-reorder stages** in the pipeline list (currently Up/Down buttons) —
-   `QListWidget.InternalMove` + sync back to `model.move_stage`.
+1. ~~**Drag-to-reorder stages**~~ **(done this pass)** — the pipeline list is now
+   `QListWidget.InternalMove`; a drop permutes `model.stages` via each row's stored
+   model index. Up/Down buttons and `Ctrl+↑/↓` still work.
 2. **Per-op knob semantics.** The two knobs mean different things per op; surface
    the actual meaning (min/max radius, threshold, sigma) by adding an optional
    `knob_doc` to the `Op` dataclass and showing it under the sliders.
