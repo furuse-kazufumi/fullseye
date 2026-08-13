@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-13 21:34:52
+- **最終更新**: 2026-08-13 22:46:02
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-d67626f test: +10 degenerate/edge-input coverage for the v14 perception stack
-80f067e docs: STATUS.md points to PERCEPTION.md
-c0a8b86 docs: PERCEPTION.md — one-page v14 perception API reference for cross-project use
-ef78e0d v14 docs: track_points + FPFH feature_register in V14.md
-9f77270 auto: V14.md 編集前 (2026-08-13 21:27)
-af29e71 v14: FPFH features + correspondence-based registration (feature_register)
-72352af auto: test_pointcloud.py 編集前 (2026-08-13 21:23)
-e76a923 auto: test_pointcloud.py 編集前 (2026-08-13 21:21)
-7370b50 auto: test_registration.py 編集前 (2026-08-13 21:20)
-8c93953 auto: __init__.py 編集前 (2026-08-13 21:20)
+222a7a1 v15.3: Studio Help > Keyboard shortcuts dialog (F1)
+3200694 auto: STUDIO_UX.md 編集前 (2026-08-13 22:43)
+d399122 auto: test_studio.py 編集前 (2026-08-13 22:42)
+59be482 auto: studio.py 編集前 (2026-08-13 22:42)
+3b43630 auto: studio.py 編集前 (2026-08-13 22:42)
+2c8765c auto: studio.py 編集前 (2026-08-13 22:42)
+ff409ab auto: studio.py 編集前 (2026-08-13 22:42)
+78a29e6 auto: studio.py 編集前 (2026-08-13 22:42)
+9249a88 v15.2: Studio empty-state message + command palette (Ctrl+P)
+fdf9fc5 auto: STUDIO_UX.md 編集前 (2026-08-13 22:37)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:34 .pytest_cache/v/cache/nodeids
-21:31 tests/test_perception_edge.py
-21:30 docs/SESSION_SUMMARY.md
-21:30 docs/HALCON_PARITY.md
-21:30 data/auto_functional_gate.json
-21:29 docs/STATUS.md
-21:28 docs/PERCEPTION.md
-21:27 docs/V14.md
-21:23 tests/test_pointcloud.py
-21:21 .pytest_cache/v/cache/lastfailed
-21:20 tests/test_registration.py
-21:20 fullseye/__init__.py
-21:19 api.py
-21:19 registration.py
-21:18 pointcloud.py
+22:43 docs/STUDIO_UX.md
+22:42 tests/test_studio.py
+22:42 studio.py
+22:30 docs/PERCEPTION_REALDATA.md
+22:28 video.py
+22:18 examples/perception_on_video.py
+22:17 fullseye.egg-info/SOURCES.txt
+22:17 fullseye.egg-info/top_level.txt
+22:17 fullseye.egg-info/requires.txt
+22:17 fullseye.egg-info/entry_points.txt
+22:17 fullseye.egg-info/dependency_links.txt
+22:17 fullseye.egg-info/PKG-INFO
+22:17 README.md
+22:16 examples/README.md
+22:15 tests/test_examples.py
 ```
 
 ---
