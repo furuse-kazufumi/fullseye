@@ -63,7 +63,10 @@ class Channel:
         raise NotImplementedError("%s has no write()" % type(self).__name__)
 
     def __enter__(self):
-        return self.open()
+        # native channels connect in __init__ (connect=True); do not re-open here
+        # or a `with` would create a second connection. Construct with connect=False
+        # and call .open() explicitly for deferred opening.
+        return self
 
     def __exit__(self, *exc):
         self.close()
