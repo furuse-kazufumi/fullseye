@@ -70,6 +70,8 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
     N = np.asarray(nxt, np.float64)
     if P.shape != N.shape or P.ndim != 2:
         raise ValueError("prev/nxt must be equal-shape 2-D arrays")
+    if min(P.shape) < 2:
+        raise ValueError("prev/nxt must be at least 2x2 (need a spatial gradient)")
     k = max(3, int(window))
 
     pyrP = [P]
