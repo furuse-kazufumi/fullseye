@@ -904,13 +904,13 @@ def voxelize(V, F, pitch: float):
         raise ValueError("pitch must be > 0, got %r" % (pitch,))
     lo = np.minimum(np.minimum(A.min(0), B.min(0)), C.min(0))
     hi = np.maximum(np.maximum(A.max(0), B.max(0)), C.max(0))
-    shape = np.floor((hi - lo) / pitch).astype(np.int64) + 1
-    shape = np.maximum(shape, 1)
-    cells = int(np.prod(shape.astype(np.float64)))
-    if cells > MAX_VOXELS:
-        raise ValueError("pitch %g gives a %s grid (%d cells), over the %d cap "
+    span = np.maximum(np.floor((hi - lo) / pitch) + 1.0, 1.0)      # float: no int overflow
+    cells = float(np.prod(span))
+    if not np.isfinite(cells) or cells > MAX_VOXELS:
+        raise ValueError("pitch %g gives a %s grid (%.3g cells), over the %d cap "
                          "(mesh.MAX_VOXELS) — use a larger pitch"
-                         % (pitch, tuple(int(s) for s in shape), cells, MAX_VOXELS))
+                         % (pitch, tuple(span.tolist()), cells, MAX_VOXELS))
+    shape = span.astype(np.int64)
     edge = np.maximum(np.maximum(np.linalg.norm(B - A, axis=1),
                                  np.linalg.norm(C - A, axis=1)),
                       np.linalg.norm(C - B, axis=1))
