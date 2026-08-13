@@ -561,6 +561,7 @@ def build_window(model=None):
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1)")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
+    act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
     act_about = _act("About Fullseye Studio", None, "About this application")
 
     mb = win.menuBar()
