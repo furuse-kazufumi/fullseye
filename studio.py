@@ -986,8 +986,9 @@ def build_window(model=None):
         order = [stage_list.item(r).data(QtCore.Qt.UserRole) for r in range(stage_list.count())]
         if len(order) == len(model.stages) and set(order) == set(range(len(model.stages))):
             model.stages = [model.stages[i] for i in order]
+            mark_dirty()
             refresh_stage_list(select=stage_list.currentRow())
-            on_stage_selected()
+            show_result()
 
     def _render():
         idx = selected_index()
