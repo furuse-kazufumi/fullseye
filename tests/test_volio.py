@@ -289,11 +289,11 @@ def test_write_rejects_non_3d_and_out_of_scope(tmp_path):
 # --------------------------------------------------------------------------- #
 def test_values_are_kept_raw_not_normalized(tmp_path):
     """A CT-like volume in Hounsfield units survives with its range intact."""
-    hu = (np.mgrid[0:D, 0:H, 0:W][2].astype(np.int16) * 40 - 1000)  # ~[-1000, +?] HU
+    hu = (np.mgrid[0:D, 0:H, 0:W][2].astype(np.int16) * 100 - 1000)  # [-1000, +1300] HU
     p = str(tmp_path / "ct.nii")
     volio.write_volume(p, hu, META)
     vol, meta = volio.read_volume(p)
-    assert vol.min() < -900 and vol.max() > 0                  # not squashed into [0,1]
+    assert vol.min() < -900 and vol.max() > 900                # not squashed into [0,1]
     assert np.allclose(vol, hu.astype(np.float64))
 
 
