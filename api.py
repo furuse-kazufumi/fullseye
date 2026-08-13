@@ -71,7 +71,7 @@ from motion import (  # noqa: E402,F401
     motion_segments, motion_energy_series, detect_events,
 )
 from video import (  # noqa: E402,F401
-    read_frames, iter_frames, frame_pairs, write_video,
+    read_frames, iter_frames, frame_pairs, write_video, probe,
 )
 from terrain import (  # noqa: E402,F401
     elevation_map, traversability, foothold_score, fill_gaps,
