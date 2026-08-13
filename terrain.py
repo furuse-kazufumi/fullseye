@@ -93,6 +93,60 @@ def traversability(grid, cell: float = 0.05, max_step: float = 0.1,
     return ok
 
 
+def ground_surface(grid, cell: float = 0.05, radius: float = 0.4):
+    """Smooth walkable-ground envelope by grey-opening (min-filter then max-filter).
+
+    A morphological opening with a structuring element ``radius`` wide follows
+    slopes and gentle undulation but erases anything narrower that sticks *up* —
+    so subtracting it isolates obstacles even on a ramp, where a flat height
+    threshold would wrongly flag the whole up-slope. ``nan`` cells are filled
+    first."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    w = max(3, int(round(2.0 * radius / max(cell, 1e-6))) | 1)   # odd cell window
+    return ndimage.maximum_filter(
+        ndimage.minimum_filter(filled, w, mode="nearest"), w, mode="nearest")
+
+
+def detect_obstacles(grid, cell: float = 0.05, clearance: float = 0.12,
+                     ground_radius: float = 0.4, min_area: float = 0.01,
+                     extent=None):
+    """Segment cells rising more than *clearance* above the local walkable ground.
+
+    Ground is the :func:`ground_surface` envelope (slope-robust), so a ramp is not
+    an obstacle but a box, curb, or rock on it is. Returns ``(mask, obstacles)``:
+    a boolean obstacle mask and a list of per-obstacle dicts sorted largest-first,
+    each with ``area_cells`` / ``area`` (m²) / ``height`` (peak rise above ground) /
+    ``centroid_cell`` (row, col) / ``bbox_cells`` (i0, j0, i1, j1), plus
+    ``centroid_xy`` in world units when *extent* (from :func:`elevation_map`) is
+    given. Blobs smaller than *min_area* (m²) are dropped as noise."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    ground = ground_surface(grid, cell, ground_radius)
+    above = filled - ground
+    mask = above > float(clearance)
+    min_cells = max(1, int(round(min_area / (cell * cell))))
+    lbl, n = ndimage.label(mask)
+    obstacles = []
+    for i in range(1, n + 1):
+        ys, xs = np.where(lbl == i)
+        if xs.size < min_cells:
+            mask[ys, xs] = False
+            continue
+        rec = {
+            "area_cells": int(xs.size),
+            "area": float(xs.size) * cell * cell,
+            "height": float(above[ys, xs].max()),
+            "centroid_cell": (float(ys.mean()), float(xs.mean())),
+            "bbox_cells": (int(ys.min()), int(xs.min()), int(ys.max()), int(xs.max())),
+        }
+        if extent is not None:
+            xmin, _xmax, ymin, _ymax = extent
+            rec["centroid_xy"] = (xmin + (xs.mean() + 0.5) * cell,
+                                  ymin + (ys.mean() + 0.5) * cell)
+        obstacles.append(rec)
+    obstacles.sort(key=lambda r: r["area_cells"], reverse=True)
+    return mask, obstacles
+
+
 def foothold_score(grid, cell: float = 0.05, window: int = 3):
     """Per-cell flatness score in [0, 1] (1 = flat & level = good foothold).
 
