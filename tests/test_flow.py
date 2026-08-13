@@ -120,6 +120,17 @@ def test_lk_border_flow_stays_bounded():
     assert flow.flow_magnitude(u, v).max() < 10.0   # border spikes bounded (was ~14.5)
 
 
+def test_track_points_follows_known_shift():
+    prev = _textured(seed=15)
+    u0, v0 = 4.0, -2.0
+    nxt = _shift(prev, u0, v0)
+    pts = np.array([[40.0, 50.0], [90.0, 30.0], [70.0, 70.0]])   # (x, y), interior
+    tracked, ok = flow.track_points(prev, nxt, pts, levels=3, iters=5)
+    assert ok.all()
+    assert np.allclose(tracked[:, 0], pts[:, 0] + u0, atol=1.0)
+    assert np.allclose(tracked[:, 1], pts[:, 1] + v0, atol=1.0)
+
+
 def test_hs_alpha_zero_is_finite():
     # alpha=0 on a flat region must not produce 0/0 = NaN (codex review)
     z = np.zeros((8, 8))
