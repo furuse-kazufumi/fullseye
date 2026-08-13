@@ -388,10 +388,12 @@ def build_window(model=None):
         val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
         inspector.setPlainText(format_inspection(inspect_result(val)))
         if isinstance(val, np.ndarray) and val.ndim in (2, 3):
-            qi = _to_qimage(val, QtGui)
+            shown = apply_display(val, display.currentText())
+            qi = _to_qimage(shown, QtGui)
             if qi is not None:
                 view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
-            state["result"] = val
+            state["result"] = shown
+            state["raw"] = val
             g = val if val.ndim == 2 else imgio.ensure_gray(val)
             hq = _to_qimage(histogram_image(np.clip(g, 0, 1)), QtGui)
             if hq is not None:
@@ -399,7 +401,7 @@ def build_window(model=None):
                     max(hist_view.width(), 256), 70, QtCore.Qt.IgnoreAspectRatio,
                     QtCore.Qt.SmoothTransformation))
         else:
-            view.clear(); hist_view.clear(); state["result"] = None
+            view.clear(); hist_view.clear(); state["result"] = None; state["raw"] = None
 
     def on_stage_selected():
         i = selected_index()
