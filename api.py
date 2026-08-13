@@ -43,17 +43,21 @@ import imgio  # noqa: E402  (coercion / colormap visualisation / export)
 import detect  # noqa: E402  (object segmentation / description / identification)
 import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 import pose  # noqa: E402  (silhouette posture descriptors)
+import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
 from stereo import disparity_map, depth_from_disparity, reproject_to_points  # noqa: E402,F401
 from measure import line_profile, distance, angle  # noqa: E402,F401
 from registration import kabsch, icp, apply_transform  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
+from flow import (  # noqa: E402,F401
+    optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
+)
 from terrain import elevation_map, traversability, foothold_score, fill_gaps  # noqa: E402,F401
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
-    colorize_labels, colorize_height, shaded_relief, overlay_mask, save, load, save_ply,
-    COLORMAPS,
+    colorize_labels, colorize_height, colorize_flow, shaded_relief, overlay_mask,
+    save, load, save_ply, COLORMAPS,
 )
 from detect import segment_objects, object_descriptor, nearest_prototype, draw_objects  # noqa: E402,F401
 
