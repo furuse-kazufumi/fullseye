@@ -785,7 +785,18 @@ def build_window(model=None):
                     max(hist_view.width(), 256), 70, QtCore.Qt.IgnoreAspectRatio,
                     QtCore.Qt.SmoothTransformation))
         else:
-            view.clear(); hist_view.clear(); state["result"] = None; state["raw"] = None
+            kind = d.get("kind")
+            if kind == "feature":
+                view.set_message("Result is a scalar feature\n\nvalue = %s\n\n(see the Inspector below)"
+                                 % d.get("value"))
+            elif kind == "contour":
+                view.set_message("Result is a contour set (%d contour(s))\n\nno raster preview"
+                                 % d.get("n_contours", 0))
+            elif kind == "none":
+                view.set_message("No image loaded\n\nuse File ▸ Open image  or  Synthetic demo")
+            else:
+                view.set_message("Nothing to display")
+            hist_view.clear(); state["result"] = None; state["raw"] = None
 
     def on_stage_selected():
         i = selected_index()
