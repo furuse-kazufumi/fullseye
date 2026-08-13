@@ -97,10 +97,45 @@ def test_read_step_start_maxframes(tmp_path):
 
 def test_iter_frames_matches_read(tmp_path):
     p = str(tmp_path / "clip.gif")
-    frames = _frames(t=5)
-    video.write_video(p, frames, fps=10)
+    video.write_video(p, _frames(t=5), fps=10)
     it = list(video.iter_frames(p, gray=True))
-    assert len(it) == 5 and it[0].shape == frames[0].shape
+    rd = video.read_frames(p, gray=True)
+    assert len(it) == len(rd) == 5
+    assert np.array_equal(np.stack(it), rd)          # iter and read agree exactly
+
+
+def test_gif_roundtrip_preserves_pixel_structure(tmp_path):
+    frames = _frames(t=4)                             # bright block at rows 8:16
+    p = str(tmp_path / "s.gif")
+    video.write_video(p, frames, fps=10)
+    f0 = video.read_frames(p, gray=True)[0]
+    block = f0[8:16, 4:10].mean()                     # where the bright block sits
+    bg = f0[8:16, 30:40].mean()                       # a far background region
+    assert block > bg + 0.3                           # real content survived, not just shape
+
+
+def test_gif_timing_respects_fps(tmp_path):
+    Image = pytest.importorskip("PIL.Image")
+    p = str(tmp_path / "t.gif")
+    video.write_video(p, _frames(t=4), fps=5)         # 200 ms per frame
+    im = Image.open(p)
+    durs = []
+    try:
+        while True:
+            durs.append(im.info.get("duration")); im.seek(im.tell() + 1)
+    except EOFError:
+        pass
+    present = [d for d in durs if d]                   # first frame's delay may be None
+    assert len(present) >= 2                           # fps is honoured, not dropped to 0
+    assert all(abs(d - 200) <= 40 for d in present)
+
+
+def test_accepts_pathlib(tmp_path):
+    p = tmp_path / "pth.gif"                           # a pathlib.Path, not a str
+    video.write_video(p, _frames(t=3), fps=10)
+    back = video.read_frames(p, gray=True)
+    assert back.shape[0] == 3
+    assert video.probe(p)["size"] is not None         # gif size is reported now
 
 
 def test_frame_pairs():
