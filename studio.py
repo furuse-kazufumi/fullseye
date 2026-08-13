@@ -411,8 +411,13 @@ def build_window(model=None):
     def refresh_stage_list(select=None):
         stage_list.blockSignals(True)
         stage_list.clear()
-        for name, a, b in model.stages:
-            stage_list.addItem(f"{name}  (a={a:.2f}, b={b:.2f})")
+        try:
+            states = model.step_states()
+        except Exception:
+            states = []
+        for i, (name, a, b) in enumerate(model.stages):
+            summ = step_summary(states[i]["state"]) if i < len(states) else ""
+            stage_list.addItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
         stage_list.blockSignals(False)
         if select is not None and 0 <= select < len(model.stages):
             stage_list.setCurrentRow(select)
