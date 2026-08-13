@@ -53,7 +53,7 @@ with warnings.catch_warnings():
         Camera, list_cameras, open_framegrabber, grab_image, close_framegrabber,
     )
     from comm import (  # noqa: E402,F401  (communication transports / industrial protocols)
-        open_channel, protocols, capabilities, Channel,
+        open_channel, protocols, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
     )
     from device import DigitalIO, pulse, signal_result, wait_input  # noqa: E402,F401  (device control)
