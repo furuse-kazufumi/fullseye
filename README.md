@@ -73,7 +73,17 @@ objs  = fs.segment_objects(frame, threshold="otsu")       # per-object records (
 rgb   = fs.colorize_depth(Z); fs.save_ply("cloud.ply", pts)   # visualise / export (no matplotlib)
 ```
 
-`fs.to_float01(x)` coerces uint8/uint16/bool/PIL/path inputs to float64 `[0,1]`.
+Motion, over time — feed it a real clip:
+
+```python
+frames = fs.read_frames("clip.mp4", gray=True, step=2)     # (T,H,W) float64 [0,1] (mp4/gif)
+for a, b in fs.frame_pairs(frames):
+    u, v = fs.optical_flow_lk(a, b)                         # dense flow; also track_points / motion_*
+```
+
+`fs.to_float01(x)` coerces uint8/uint16/bool/PIL/path inputs to float64 `[0,1]`;
+`fs.read_frames` / `iter_frames` / `write_video` / `probe` handle video I/O (see
+`docs/PERCEPTION_REALDATA.md` for measured results on real footage).
 
 ## Evolutionary pipeline design
 
