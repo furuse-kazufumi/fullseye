@@ -452,6 +452,21 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._item.setPixmap(QtGui.QPixmap())
             self._data = None
 
+        def set_message(self, text):
+            """Show a centred message instead of an image (empty / non-raster state)."""
+            w = max(self.viewport().width(), 420)
+            h = max(self.viewport().height(), 300)
+            pm = QtGui.QPixmap(w, h)
+            pm.fill(QtGui.QColor("#12141b"))
+            p = QtGui.QPainter(pm)
+            p.setPen(QtGui.QColor("#8b91a0"))
+            f = p.font(); f.setPointSize(13); p.setFont(f)
+            p.drawText(pm.rect(), QtCore.Qt.AlignCenter, text)
+            p.end()
+            self.set_pixmap(pm)
+            self._data = None
+            self.reset_zoom()
+
         def wheelEvent(self, e):
             f = 1.25 if e.angleDelta().y() > 0 else 0.8
             self.scale(f, f)
