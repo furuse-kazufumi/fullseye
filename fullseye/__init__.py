@@ -103,4 +103,7 @@ __all__ = [
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
     "DigitalIO", "pulse", "signal_result", "wait_input",
+    "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
+    "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks", "signal_features",
+    "capabilities",
 ]
