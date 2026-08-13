@@ -56,6 +56,8 @@ def voxel_downsample(points, voxel: float = 0.05) -> np.ndarray:
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
+    if float(voxel) <= 0.0:
+        raise ValueError("voxel must be > 0, got %r" % (voxel,))
     if P.shape[0] == 0:
         return P.copy()
     keys = np.floor((P - P.min(0)) / float(voxel)).astype(np.int64)
