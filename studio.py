@@ -912,7 +912,7 @@ def build_window(model=None):
     act_clear.triggered.connect(clear_pipe)
     act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
-    act_reset.triggered.connect(lambda: step_to(0))
+    act_reset.triggered.connect(reset_to_raw)
     act_step.triggered.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
     act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
     act_about.triggered.connect(show_about)
