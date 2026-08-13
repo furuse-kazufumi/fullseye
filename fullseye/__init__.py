@@ -42,7 +42,7 @@ with warnings.catch_warnings():
         remove_statistical_outliers, remove_radius_outliers,
         pose, pose_descriptor, skeleton_nodes, principal_axis,
         flow, optical_flow_lk, optical_flow_hs, warp_by_flow,
-        flow_magnitude, flow_angle,
+        flow_magnitude, flow_angle, track_points,
         motion, frame_motion_energy, dominant_motion, flow_from_model,
         residual_motion, motion_segments, motion_energy_series, detect_events,
         recipes, recipe, measure, line_profile, distance, angle,
