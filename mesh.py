@@ -914,8 +914,7 @@ def voxelize(V, F, pitch: float):
     edge = np.maximum(np.maximum(np.linalg.norm(B - A, axis=1),
                                  np.linalg.norm(C - A, axis=1)),
                       np.linalg.norm(C - B, axis=1))
-    sub = np.ceil(edge / (0.5 * pitch)).astype(np.int64)
-    sub = np.clip(sub, 1, _MAX_SUBDIV)
+    sub = np.clip(np.ceil(edge / (0.5 * pitch)), 1.0, _MAX_SUBDIV).astype(np.int64)
     est = float(np.sum((sub + 1.0) * (sub + 2.0) / 2.0))
     if est > _MAX_VOXEL_SAMPLES:
         raise ValueError("pitch %g needs ~%d surface samples, over the %d cap — use a larger "
