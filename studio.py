@@ -216,12 +216,21 @@ def build_window(model=None):
                 view.setPixmap(pm)
             info.setText(f"array {val.shape}  range [{float(np.nanmin(val)):.3f}, "
                          f"{float(np.nanmax(val)):.3f}]")
+            state["result"] = val
+            g = val if val.ndim == 2 else imgio.ensure_gray(val)
+            hq = _to_qimage(histogram_image(np.clip(g, 0, 1)), QtGui)
+            if hq is not None:
+                hist_view.setPixmap(QtGui.QPixmap.fromImage(hq).scaled(
+                    max(hist_view.width(), 256), 72, QtCore.Qt.IgnoreAspectRatio,
+                    QtCore.Qt.SmoothTransformation))
         elif isinstance(val, dict):
             view.setText("(contour result)")
             info.setText(f"contour: {len(val.get('cs', []))} contours")
+            state["result"] = None; hist_view.clear()
         else:
             view.setText(str(val))
             info.setText("feature (scalar) result")
+            state["result"] = None; hist_view.clear()
 
     def on_stage_selected():
         i = selected_index()
