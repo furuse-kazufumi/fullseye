@@ -161,6 +161,20 @@ def format_inspection(d):
     return "\n".join(f"{k}: {v}" for k, v in d.items())
 
 
+def step_summary(st):
+    """One-line state summary for a step's result (for the pipeline/step list)."""
+    k = st.get("kind")
+    if k in ("image", "color"):
+        return f"{k} {st['shape']} mean={st['mean']}"
+    if k == "region":
+        return f"region: {st['regions']} obj, area={st['area_fraction']}"
+    if k == "feature":
+        return f"feature = {st['value']}"
+    if k == "contour":
+        return f"contour x{st['n_contours']}"
+    return str(k)
+
+
 def apply_display(val, mode):
     """Map a 2-D result to an RGB image for the chosen display mode: 'gray', any
     false-colour palette name, 'shaded relief', or 'height (color)'. Non-2-D or
