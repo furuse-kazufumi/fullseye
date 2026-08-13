@@ -109,16 +109,18 @@ def _importable(mod: str) -> bool:
 
 
 def capabilities() -> list:
-    """Per-protocol availability: ``{name, native, available, pip, desc}``.
+    """Per-protocol availability: ``{name, kind, native, available, pip, desc}``.
 
-    ``available`` is True for native protocols and for optional ones whose pip
-    package is importable — so you can see at a glance what this install can talk to."""
+    ``kind`` ∈ native / optional / scaffold. ``available`` is True for native
+    protocols and for optional/scaffold ones whose pip package is importable — so
+    you see at a glance what this install can talk to and what a ``pip install``
+    would unlock."""
     out = []
     for name in sorted(_REGISTRY):
         e = _REGISTRY[name]
         avail = True if e["native"] else (_importable(e["_probe"]) if e.get("_probe") else False)
-        out.append({"name": name, "native": e["native"], "available": avail,
-                    "pip": e["pip"], "desc": e["desc"]})
+        out.append({"name": name, "kind": e.get("kind", "optional"), "native": e["native"],
+                    "available": avail, "pip": e["pip"], "desc": e["desc"]})
     return out
 
 
