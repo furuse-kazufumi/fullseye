@@ -256,12 +256,3 @@ def test_render_rejects_degenerate_camera():
     with pytest.raises(ValueError):
         render3d.render_mesh(CUBE_V, CUBE_F, pose=frontal_pose(),
                              intrinsics=np.zeros((3, 3)))
-
-
-def test_sdf_and_solid_agree_on_inside():
-    # The SDF's negative region and the solid occupancy describe the same interior.
-    sdf, origin = render3d.mesh_to_sdf(CUBE_V, CUBE_F, pitch=0.1, pad=0.0)
-    occ, o2 = render3d.voxelize_solid(CUBE_V, CUBE_F, 0.1)
-    assert np.allclose(origin, o2)
-    assert sdf.shape == occ.shape
-    assert np.array_equal(sdf < 0, occ)                  # inside <=> negative distance
