@@ -70,6 +70,9 @@ from motion import (  # noqa: E402,F401
     frame_motion_energy, dominant_motion, flow_from_model, residual_motion,
     motion_segments, motion_energy_series, detect_events,
 )
+from video import (  # noqa: E402,F401
+    read_frames, iter_frames, frame_pairs, write_video,
+)
 from terrain import (  # noqa: E402,F401
     elevation_map, traversability, foothold_score, fill_gaps,
     ground_surface, ground_plane, detect_obstacles,
