@@ -288,9 +288,16 @@ def build_window(model=None):
     model = model or PipelineModel(demo_image())
     win = QtWidgets.QMainWindow()
     win.setWindowTitle("Fullseye Studio")
-    win.resize(1260, 780)
+    win.resize(1300, 820)
+    win.setStyleSheet(THEME)
+    root = QtWidgets.QWidget(); rootlay = QtWidgets.QVBoxLayout(root)
+    rootlay.setContentsMargins(0, 0, 0, 0); rootlay.setSpacing(0)
+    header = QtWidgets.QLabel("  Fullseye Studio  -  image pipeline workbench")
+    header.setStyleSheet("font-size:16px; font-weight:700; color:#ff6b4a; padding:10px 14px;"
+                         "background:#181920; border-bottom:1px solid #33353f;")
     central = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
-    win.setCentralWidget(central)
+    rootlay.addWidget(header); rootlay.addWidget(central, 1)
+    win.setCentralWidget(root)
 
     # -- left: operator browser + samples --
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left)
