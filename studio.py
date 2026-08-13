@@ -1158,6 +1158,7 @@ def build_window(model=None):
     win._state = state                                   # for tests / headless driving
     win._knob_sliders = (sa, sb)
     win._stage_list = stage_list
+    win._problems_list = problems_list
     win._actions = {
         "open_image": act_open_img, "demo": act_demo, "save_result": act_save_res,
         "open_pipeline": act_open_pipe, "save_pipeline": act_save_pipe, "export": act_export,
