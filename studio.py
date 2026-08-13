@@ -282,7 +282,6 @@ AMBER = "#f5a524"
 INK = "#0c1116"
 
 THEME = f"""
-* {{ outline:none; }}
 QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
     font-family:"Segoe UI","Yu Gothic UI","Meiryo",system-ui,sans-serif; }}
 QMainWindow, QDialog {{ background:{NAVY_0}; }}
