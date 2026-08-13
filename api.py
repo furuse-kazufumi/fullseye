@@ -73,6 +73,7 @@ __all__ = [
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
     "depth_from_disparity", "reproject_to_points",
     "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
+    "ground_surface", "detect_obstacles",
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
     "colorize_disparity", "colorize_labels", "colorize_height", "colorize_flow",
     "shaded_relief", "overlay_mask", "save", "load", "save_ply", "COLORMAPS",
