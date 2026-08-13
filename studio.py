@@ -740,7 +740,10 @@ def build_window(model=None):
 
     def show_result():
         idx = selected_index()
-        val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
+        if idx < 0 and state.get("view_raw"):
+            val = model.result_upto(-1)               # Reset -> the pre-pipeline raw image
+        else:
+            val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
         insp = format_inspection(inspect_result(val))
         if isinstance(val, np.ndarray) and val.ndim == 2 and _is_binary(val) and val.any():
             try:
