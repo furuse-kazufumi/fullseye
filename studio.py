@@ -828,7 +828,9 @@ def build_window(model=None):
     def remove():
         i = selected_index()
         if 0 <= i < len(model.stages):
-            model.remove_stage(i); refresh_stage_list(); show_result()
+            model.remove_stage(i)
+            refresh_stage_list()
+            on_stage_selected()          # selection is now -1 -> disable knobs, clear detail
 
     def move(delta):
         i = selected_index(); j = i + delta
