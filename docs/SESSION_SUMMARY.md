@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-13 22:46:02
+- **最終更新**: 2026-08-14 07:38:31
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-222a7a1 v15.3: Studio Help > Keyboard shortcuts dialog (F1)
-3200694 auto: STUDIO_UX.md 編集前 (2026-08-13 22:43)
-d399122 auto: test_studio.py 編集前 (2026-08-13 22:42)
-59be482 auto: studio.py 編集前 (2026-08-13 22:42)
-3b43630 auto: studio.py 編集前 (2026-08-13 22:42)
-2c8765c auto: studio.py 編集前 (2026-08-13 22:42)
-ff409ab auto: studio.py 編集前 (2026-08-13 22:42)
-78a29e6 auto: studio.py 編集前 (2026-08-13 22:42)
-9249a88 v15.2: Studio empty-state message + command palette (Ctrl+P)
-fdf9fc5 auto: STUDIO_UX.md 編集前 (2026-08-13 22:37)
+37c47cd v16.4: comprehensive connectivity catalog (44 protocols/sources/drivers)
+240d838 auto: test_device.py 編集前 (2026-08-14 07:35)
+fac6aee auto: test_acquire.py 編集前 (2026-08-14 07:34)
+ffdb8d5 auto: test_comm.py 編集前 (2026-08-14 07:34)
+d54ba42 auto: __init__.py 編集前 (2026-08-14 07:34)
+14a5abf auto: __init__.py 編集前 (2026-08-14 07:34)
+7cc3137 auto: device.py 編集前 (2026-08-14 07:33)
+5b856c8 auto: acquire.py 編集前 (2026-08-14 07:33)
+f13c4e3 auto: comm.py 編集前 (2026-08-14 07:32)
+0f3d239 auto: comm.py 編集前 (2026-08-14 07:31)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ fdf9fc5 auto: STUDIO_UX.md 編集前 (2026-08-13 22:37)
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:43 docs/STUDIO_UX.md
-22:42 tests/test_studio.py
-22:42 studio.py
-22:30 docs/PERCEPTION_REALDATA.md
-22:28 video.py
-22:18 examples/perception_on_video.py
-22:17 fullseye.egg-info/SOURCES.txt
-22:17 fullseye.egg-info/top_level.txt
-22:17 fullseye.egg-info/requires.txt
-22:17 fullseye.egg-info/entry_points.txt
-22:17 fullseye.egg-info/dependency_links.txt
-22:17 fullseye.egg-info/PKG-INFO
-22:17 README.md
-22:16 examples/README.md
-22:15 tests/test_examples.py
+07:35 tests/test_device.py
+07:34 tests/test_acquire.py
+07:34 tests/test_comm.py
+07:34 fullseye/__init__.py
+07:33 device.py
+07:33 acquire.py
+07:32 comm.py
+07:28 studio.py
+07:28 tests/test_studio.py
+07:20 docs/README.md
+07:19 pyproject.toml
+07:19 docs/ENGINE.md
+07:18 docs/STUDIO_GUIDE.md
+07:17 docs/INSTALL.md
+07:17 install/README.md
 ```
 
 ---
