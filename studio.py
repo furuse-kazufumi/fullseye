@@ -20,6 +20,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import api
 import imgio
 import recipes
+import flow          # v14 perception panel
+import motion
+import stereo
+import terrain
 
 
 # --------------------------------------------------------------------------- #
