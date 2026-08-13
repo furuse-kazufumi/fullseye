@@ -67,7 +67,8 @@ from detect import segment_objects, object_descriptor, nearest_prototype, draw_o
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
     "categories", "read_image", "write_image", "RT", "REGISTRY", "version",
-    "stereo", "disparity_map", "depth_from_disparity", "reproject_to_points",
+    "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
+    "depth_from_disparity", "reproject_to_points",
     "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
     "colorize_disparity", "colorize_labels", "colorize_height", "colorize_flow",
