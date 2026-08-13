@@ -71,6 +71,10 @@ from mesh import (  # noqa: E402,F401
 )
 from volio import read_volume, write_volume, list_dicom_series, VolumeMeta  # noqa: E402,F401
 from raster import read_raster, to01, read_depth, read_pfm, write_pfm, save16  # noqa: E402,F401
+from render3d import (  # noqa: E402,F401
+    render_mesh, look_at, intrinsics_from_fov, auto_view, mesh_to_sdf,
+    voxelize_solid, marching_cubes,
+)
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
