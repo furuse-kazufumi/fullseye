@@ -143,3 +143,21 @@ def test_kabsch_rejects_empty():
     import pytest
     with pytest.raises(ValueError):
         reg.kabsch(np.empty((0, 3)), np.empty((0, 3)))
+
+
+def _two_bumps(n=26):
+    """An asymmetric, distinctive surface (two Gaussian bumps) — unique registration."""
+    xs, ys = np.meshgrid(np.linspace(-2, 2, n), np.linspace(-2, 2, n))
+    z = (1.2 * np.exp(-((xs - 0.7) ** 2 + (ys - 0.3) ** 2) / 0.8)
+         + 0.6 * np.exp(-((xs + 0.8) ** 2 + (ys + 0.6) ** 2) / 0.4))
+    return np.column_stack([xs.ravel(), ys.ravel(), z.ravel()])
+
+
+def test_feature_register_recovers_transform_via_fpfh():
+    P = _two_bumps()
+    R0 = _rot(0.15, 0.2, 0.25)
+    t0 = np.array([0.3, -0.2, 0.15])
+    Q = reg.apply_transform(P, R0, t0)
+    R, t, aligned, rmse = reg.feature_register(P, Q, seed=0)
+    assert rmse < 0.02
+    assert np.allclose(R, R0, atol=0.05) and np.allclose(t, t0, atol=0.05)
