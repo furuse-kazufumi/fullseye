@@ -104,6 +104,26 @@ def test_to_python_is_valid_and_names_safely():
     assert "run_pipeline" in src and "gaussian" in src
 
 
+def test_to_python_keyword_and_unicode_safe():
+    # names that are Python keywords / non-ASCII must still yield compilable code
+    for nm in ("class", "return", "if", "step²", "1x", ""):
+        code = FullseyeEngine.from_dict({"name": nm, "stages": []}).to_python()
+        compile(code, "<gen>", "exec")
+
+
+def test_empty_run_returns_input_unchanged():
+    import numpy as np
+    a = np.array([[255]], np.uint8)
+    out = FullseyeEngine([]).run(a)
+    assert out.dtype == np.uint8 and out is a          # unchanged, per the docstring
+
+
+def test_empty_or_short_stage_entries():
+    eng = FullseyeEngine.from_dict({"stages": [[], ["gaussian", 0.5, 0.5], ["otsu"]]})
+    assert eng.op_names() == ["gaussian", "otsu"]      # empty skipped, short padded
+    assert eng.get_knobs(1) == (0.5, 0.5)
+
+
 def test_run_file(tmp_path):
     import imgio
     src = tmp_path / "in.png"
