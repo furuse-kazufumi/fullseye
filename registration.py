@@ -144,6 +144,12 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         if abs(prev - rmse) < tol:
             break
         prev = rmse
+    # report rmse for the RETURNED pose (the loop's value was for the pose before
+    # its final Kabsch step), so `rmse` and `aligned` describe the same alignment.
+    dist, _ = tree.query(cur)
+    if keep_n < P0.shape[0]:
+        dist = np.partition(dist, keep_n - 1)[:keep_n]
+    rmse = float(np.sqrt(np.mean(dist ** 2)))
     return R_tot, t_tot, cur, rmse
 
 
