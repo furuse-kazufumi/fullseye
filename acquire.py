@@ -85,13 +85,18 @@ def _auto_backend(source) -> str:
     if callable(source):
         return "callable"
     if isinstance(source, int):
-        return "opencv"
+        return "opencv"                              # a camera device index
     s = os.fspath(source) if not isinstance(source, str) else source
-    if os.path.isdir(s) or any(ch in s for ch in "*?[") or (
-            os.path.splitext(s)[1].lower() in _IMG_EXTS and os.path.isfile(s)):
-        # a directory, a glob, or a single still image -> the 'dir' server
-        return "dir"
-    return "opencv"                                  # a video file / URL / RTSP stream
+    if "://" in s:
+        return "opencv"                              # a URL / RTSP / HTTP stream
+    if any(ch in s for ch in "*?["):
+        return "dir"                                 # a glob of images
+    ext = os.path.splitext(s)[1].lower()
+    if ext in _VIDEO_EXTS:
+        return "opencv"                              # a video file
+    # a still image, a directory, or an extension-less local path -> the 'dir'
+    # server (a missing one then raises FileNotFoundError, not a vague open error)
+    return "dir"
 
 
 class Camera:
