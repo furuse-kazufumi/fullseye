@@ -15,7 +15,8 @@ from __future__ import annotations
 import numpy as np
 from scipy import ndimage
 
-__all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score"]
+__all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
+           "ground_surface", "detect_obstacles"]
 
 
 def elevation_map(points, cell: float = 0.05, agg: str = "max",
