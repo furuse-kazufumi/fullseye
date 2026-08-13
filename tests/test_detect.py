@@ -89,6 +89,15 @@ def test_segment_real_coins_image():
     assert len(round_like) >= len(objs) * 0.7      # most coins are disk-shaped
 
 
+def test_feature_table_and_circularity():
+    disk = np.zeros((80, 80)); yy, xx = np.mgrid[0:80, 0:80]
+    disk[(yy - 40) ** 2 + (xx - 40) ** 2 <= 15 ** 2] = 1
+    o = detect.segment_objects(disk, threshold="none")[0]
+    assert 0.7 < o["circularity"] <= 1.0          # a disk is nearly circular
+    txt = detect.feature_table([o])
+    assert "circ" in txt and "area" in txt
+
+
 def test_draw_objects_returns_rgb():
     objs = detect.segment_objects(_scene(), threshold="otsu")
     vis = detect.draw_objects(_scene(), objs)
