@@ -846,10 +846,16 @@ def build_window(model=None):
 
     def show_result():
         idx = selected_index()
-        if idx < 0 and state.get("view_raw"):
-            val = model.result_upto(-1)               # Reset -> the pre-pipeline raw image
-        else:
-            val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
+        try:
+            if idx < 0 and state.get("view_raw"):
+                val = model.result_upto(-1)           # Reset -> the pre-pipeline raw image
+            else:
+                val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
+        except Exception as e:                        # a bad/unknown op in the chain
+            view.set_message("Pipeline error\n\n%s\n\n(see the Problems list)" % str(e))
+            inspector.setPlainText("pipeline error: %s" % e)
+            hist_view.clear(); state["result"] = None; state["raw"] = None
+            return
         d = inspect_result(val)
         insp = format_inspection(d)
         if isinstance(val, np.ndarray) and val.ndim == 2 and _is_binary(val) and val.any():
