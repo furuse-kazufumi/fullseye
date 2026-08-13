@@ -58,7 +58,7 @@ from flow import (  # noqa: E402,F401
 )
 from terrain import (  # noqa: E402,F401
     elevation_map, traversability, foothold_score, fill_gaps,
-    ground_surface, detect_obstacles,
+    ground_surface, ground_plane, detect_obstacles,
 )
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
