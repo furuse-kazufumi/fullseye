@@ -1567,7 +1567,9 @@ def build_window(model=None):
         "run_all": act_runall, "palette": act_palette, "shortcuts": act_shortcuts,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
     }
-    refresh_stage_list(); on_stage_selected(); show_result()
+    refresh_stage_list(); show_result()      # refresh_stage_list syncs the knob panel
+    state["dirty"] = False                   # a freshly-built window has nothing to lose
+    state["renders"] = 0
     return win, model
 
 
