@@ -266,24 +266,84 @@ def save(path: str, arr) -> None:
         raise RuntimeError("save needs opencv-python or Pillow: %s" % e)
 
 
+def _as_gray_or_color(f, color: bool):
+    """Coerce an already-normalised [0, 1] float array to the load() shape:
+    grayscale (H, W) by default, RGB (H, W, 3) when *color*."""
+    a = np.asarray(f, np.float64)
+    if color:
+        if a.ndim == 2:
+            return np.repeat(a[:, :, None], 3, axis=2)
+        if a.shape[-1] >= 3:
+            return a[..., :3]
+        return np.repeat(a[..., :1], 3, axis=2)
+    if a.ndim == 2:
+        return a
+    if a.shape[-1] >= 3:
+        return a[..., :3] @ np.array([0.299, 0.587, 0.114])
+    return a[..., 0]
+
+
+def _load_via_fallback(path: str, color: bool):
+    """Decode a file OpenCV could *see* but not decode (a 16-bit / float TIFF, a
+    PFM, ...) via the bit-depth-preserving `raster` reader, then Pillow. Returns
+    float64 [0, 1]. Raises a clear ValueError if no backend can decode it."""
+    f = None
+    try:
+        import raster
+        arr, meta = raster.read_raster(path, keep_dtype=True)
+        f = raster.to01(arr, meta)
+    except FileNotFoundError:
+        raise
+    except Exception:
+        f = None
+    if f is None:
+        try:
+            from PIL import Image
+            im = Image.open(path)
+            im = im.convert("RGB") if color else im.convert("L")
+            return np.asarray(im, np.float64) / 255.0
+        except FileNotFoundError:
+            raise
+        except Exception:
+            f = None
+    if f is None:
+        raise ValueError("cannot decode image: %s (no backend among opencv / raster / "
+                         "Pillow could read it)" % path)
+    return _as_gray_or_color(f, color)
+
+
 def load(path: str, color: bool = False):
-    """Load *path* as float64 [0, 1] (grayscale by default)."""
+    """Load *path* as float64 [0, 1] (grayscale by default).
+
+    8-bit PNG/JPG go through OpenCV (or Pillow) divided by 255 — the contract the
+    whole operator suite depends on, unchanged. When OpenCV cannot decode a file
+    it can nevertheless *see* (a 16-bit or float TIFF, a PFM, ...), the read falls
+    back to the bit-depth-preserving :mod:`raster` reader (then Pillow) instead of
+    reporting the failure as a missing file. A file that genuinely does not exist
+    raises ``FileNotFoundError``; a file that exists but no backend can decode
+    raises a clear ``ValueError``.
+    """
+    import os
     cv2 = _cv2()
     if cv2 is not None:
         flag = cv2.IMREAD_COLOR if color else cv2.IMREAD_GRAYSCALE
         im = cv2.imread(path, flag)
-        if im is None:
+        if im is not None:
+            if color:
+                im = im[:, :, ::-1]
+            return im.astype(np.float64) / 255.0
+        if not os.path.exists(path):            # None + absent -> genuinely missing
             raise FileNotFoundError(path)
-        if color:
-            im = im[:, :, ::-1]
-        return im.astype(np.float64) / 255.0
+        return _load_via_fallback(path, color)  # None + present -> undecodable by cv2
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
     try:
         from PIL import Image
         im = Image.open(path)
         im = im.convert("RGB") if color else im.convert("L")
         return np.asarray(im, np.float64) / 255.0
     except Exception as e:  # pragma: no cover
-        raise RuntimeError("load needs opencv-python or Pillow: %s" % e)
+        raise ValueError("cannot decode image: %s (%s)" % (path, e))
 
 
 def save_ply(path: str, points, colors=None) -> None:
