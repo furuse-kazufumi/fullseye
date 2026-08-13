@@ -80,7 +80,11 @@ class FullseyeEngine:
         self.stages: list[list] = []
         for st in (stages or []):
             if isinstance(st, (tuple, list)):
-                op, a, b = (list(st) + [0.5, 0.5])[:3]
+                if len(st) == 0:
+                    continue                         # skip an empty/malformed stage entry
+                op = st[0]
+                a = st[1] if len(st) > 1 else 0.5
+                b = st[2] if len(st) > 2 else 0.5
             else:
                 op, a, b = st, 0.5, 0.5
             self.stages.append([str(op), float(a), float(b)])
