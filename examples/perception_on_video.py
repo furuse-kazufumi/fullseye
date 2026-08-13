@@ -106,9 +106,9 @@ def analyze(frames, flow_kwargs=None, event_k=2.0, track_grid=6, save_dir=None):
         nxt, ok = fs.track_points(frames[i], frames[i + 1], pts, **fk)
         alive &= ok
         pts = nxt
-    disp = np.linalg.norm(pts - pts0, axis=1)
+    disp = np.linalg.norm(pts - pts0, axis=1)             # net start→end displacement
     n_alive = int(alive.sum())
-    mean_path = float(disp[alive].mean()) if n_alive else 0.0
+    mean_disp = float(disp[alive].mean()) if n_alive else 0.0
 
     result = {
         "n_frames": T,
