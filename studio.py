@@ -1214,8 +1214,11 @@ def build_window(model=None):
         te.setReadOnly(True); v.addWidget(te); dlg.resize(560, 360); dlg.exec()
 
     def clear_pipe():
+        if not confirm_discard("Clear pipeline"):
+            return
         model.stages = []
-        refresh_stage_list(); on_stage_selected(); show_result()
+        mark_dirty()
+        refresh_stage_list(); show_result()
         flash("pipeline cleared")
 
     def show_about():
