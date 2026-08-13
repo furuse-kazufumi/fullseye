@@ -989,7 +989,7 @@ def build_window(model=None):
             refresh_stage_list(select=stage_list.currentRow())
             on_stage_selected()
 
-    def show_result():
+    def _render():
         idx = selected_index()
         try:
             if idx < 0 and state.get("view_raw"):
@@ -1009,8 +1009,13 @@ def build_window(model=None):
                 objs = detect.segment_objects(val, threshold="none", min_area=1)
                 if objs:
                     insp += "\n\nRegion features:\n" + detect.feature_table(objs)
-            except Exception:
-                pass
+            except Exception as e:
+                # Best-effort enrichment only: the region table is a bonus on top of
+                # a result that is already correct and displayable, and `detect`'s
+                # backends can raise anything (optional deps, degenerate labelings).
+                # Swallowing keeps a cosmetic extra from blanking a good result, but
+                # we say so in one line instead of failing silently.
+                insp += "\n\n(region features unavailable: %s)" % truncate(e, 80)
         inspector.setPlainText(insp)
         if isinstance(val, np.ndarray) and val.ndim in (2, 3):
             shown = apply_display(val, display.currentText())
@@ -1040,7 +1045,45 @@ def build_window(model=None):
                 view.set_message("Nothing to display")
             hist_view.clear(); state["result"] = None; state["raw"] = None
 
-    def on_stage_selected():
+    def show_result():
+        """Render the current result. The whole body is guarded, not just the
+        pipeline call: inspect_result / apply_display / _to_qimage / histogram_image
+        all run on backend output and can raise on a degenerate array (e.g. a
+        0-size result under 'shaded relief'). An exception escaping here used to
+        escape the Qt callback entirely."""
+        state["renders"] += 1
+        try:
+            _render()
+        except Exception as e:
+            view.set_message("Display error\n\n%s\n\n(see the Problems list)" % truncate(e, 200))
+            inspector.setPlainText("display error: %s" % e)
+            hist_view.clear(); state["result"] = None; state["raw"] = None
+            report_error("Display error", e)
+        update_actions()
+
+    def update_actions():
+        """Keep every action/button that needs a selection or a displayable result
+        in step with the current state, so the UI never offers a dead command."""
+        i = selected_index()
+        n = len(model.stages)
+        has_sel = 0 <= i < n
+        has_res = isinstance(state.get("result"), np.ndarray)
+        for w in (act_remove, b_rm):
+            w.setEnabled(has_sel)
+        for w in (act_up, b_up):
+            w.setEnabled(has_sel and i > 0)
+        for w in (act_down, b_dn):
+            w.setEnabled(has_sel and i < n - 1)
+        for w in (act_save_res, b_save, act_3d, b_3d):
+            w.setEnabled(has_res)
+        for w in (act_export, b_export, act_save_pipe, b_savep, act_clear):
+            w.setEnabled(n > 0)
+        for w in (act_step, b_step, act_runall, b_runall):
+            w.setEnabled(n > 0)
+
+    def sync_stage_ui():
+        """Sync the knob sliders / stage description / action states to the current
+        selection. Does not render — callers own exactly one show_result()."""
         i = selected_index()
         valid = 0 <= i < len(model.stages)
         if valid:
@@ -1056,15 +1099,34 @@ def build_window(model=None):
             stage_detail.setText(op_detail(row) if row else name)
         else:
             stage_detail.setText("select a stage to tune its knobs")
+        update_actions()
+
+    def on_stage_selected():
+        sync_stage_ui()
         show_result()
 
     def on_knob(_=None):
+        """A knob tick: update the model + the live preview only.
+
+        The per-stage summaries (model.step_states(), which re-runs every prefix and
+        is therefore O(n^2) in the number of stages) are debounced onto a timer, so
+        dragging a slider costs one pipeline evaluation per tick instead of n + 2."""
         i = selected_index()
         if 0 <= i < len(model.stages):
             model.set_knobs(i, a=sa.value() / 100.0, b=sb.value() / 100.0)
             la.setText(f"a: {sa.value()/100:.2f}"); lb.setText(f"b: {sb.value()/100:.2f}")
-            refresh_stage_list(select=i)
+            mark_dirty()
             show_result()
+            knob_timer.start(KNOB_DEBOUNCE_MS)
+
+    def on_knob_settled():
+        """Debounce tail: refresh the stage summaries once the drag has stopped."""
+        i = selected_index()
+        refresh_stage_list(select=i if 0 <= i < len(model.stages) else None)
+
+    knob_timer = QtCore.QTimer(win)
+    knob_timer.setSingleShot(True)
+    knob_timer.timeout.connect(on_knob_settled)
 
     def add_op(item):
         i = selected_index()
@@ -1072,6 +1134,7 @@ def build_window(model=None):
         newpos = len(model.stages) - 1
         if 0 <= i < newpos:                                  # insert just after the selected stage
             model.move_stage(newpos, i + 1); newpos = i + 1
+        mark_dirty()
         refresh_stage_list(select=newpos)
         show_result()
 
