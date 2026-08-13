@@ -270,14 +270,25 @@ def probe(path: str) -> dict:
     if imageio is None:
         return out
     try:
-        reader = imageio.get_reader(path)
+        reader = imageio.get_reader(os.fspath(path))
     except Exception:
         return out
     try:
         meta = reader.get_meta_data() or {}
         fps = meta.get("fps")
+        if not fps and meta.get("duration"):        # GIF: per-frame delay in ms
+            try:
+                fps = 1000.0 / float(meta["duration"])
+            except Exception:
+                fps = None
         out["fps"] = float(fps) if fps else None
         size = meta.get("size")
+        if not size:                                # GIF meta often lacks size
+            try:
+                fr = np.asarray(reader.get_data(0))
+                size = (fr.shape[1], fr.shape[0])   # (width, height)
+            except Exception:
+                size = None
         out["size"] = (int(size[0]), int(size[1])) if size else None
         n = meta.get("nframes")
         if isinstance(n, (int, float)) and np.isfinite(n) and n > 0:
