@@ -261,25 +261,113 @@ def _downsample_grid(hm, max_side=140):
     return h[::ry, ::rx]
 
 
-# Dark, modern IDE theme (QSS). Accent is a warm "bullseye" coral.
-THEME = """
-QWidget { background:#1e1f26; color:#d7d9e0; font-size:12px; }
-QLabel { color:#9aa0ad; }
-QLineEdit,QComboBox,QPlainTextEdit,QListWidget { background:#262832; border:1px solid #33353f;
-    border-radius:6px; padding:4px; selection-background-color:#ff6b4a; }
-QListWidget::item:selected { background:#ff6b4a; color:#141414; }
-QPushButton { background:#2d2f3a; border:1px solid #3a3d49; border-radius:6px; padding:6px 10px; }
-QPushButton:hover { background:#3a3d49; border-color:#ff6b4a; }
-QPushButton:pressed { background:#ff6b4a; color:#141414; }
-QComboBox::drop-down { border:none; width:18px; }
-QSlider::groove:horizontal { height:6px; background:#33353f; border-radius:3px; }
-QSlider::handle:horizontal { width:16px; background:#ff6b4a; border-radius:8px; margin:-6px 0; }
-QSlider::sub-page:horizontal { background:#ff6b4a; border-radius:3px; }
-QScrollBar:vertical { background:#1e1f26; width:12px; margin:0; }
-QScrollBar::handle:vertical { background:#3a3d49; border-radius:6px; min-height:24px; }
-QScrollBar::add-line,QScrollBar::sub-line { height:0; }
-QSplitter::handle { background:#33353f; }
+# Dark, modern IDE design system (QSS). The palette is taken from the Fullseye
+# brand mark (assets/fullseye.ico): deep navy ground, a teal primary accent for
+# interaction/selection, and an amber secondary for section titles / knob handles
+# — the "bullseye" that the whole product is named for.
+NAVY_0, NAVY_1, NAVY_2 = "#14161d", "#1b1e28", "#232734"
+LINE = "#2c313f"
+TEXT, MUTED = "#e2e5ec", "#8b91a0"
+TEAL, TEAL_HI = "#17b8a6", "#22d3bf"
+AMBER = "#f5a524"
+INK = "#0c1116"
+
+THEME = f"""
+* {{ outline:none; }}
+QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
+    font-family:"Segoe UI","Yu Gothic UI","Meiryo",system-ui,sans-serif; }}
+QMainWindow, QDialog {{ background:{NAVY_0}; }}
+QLabel {{ color:{TEXT}; background:transparent; }}
+QLabel[muted="true"] {{ color:{MUTED}; }}
+QLabel[hint="true"] {{ color:{MUTED}; font-family:Consolas,"Cascadia Mono",monospace; }}
+
+QMenuBar {{ background:#12141b; color:#c7cbd6; border-bottom:1px solid #262b38; padding:2px 6px; }}
+QMenuBar::item {{ background:transparent; padding:6px 12px; border-radius:6px; }}
+QMenuBar::item:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
+QMenu {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:8px; padding:6px; }}
+QMenu::item {{ padding:6px 28px 6px 14px; border-radius:6px; }}
+QMenu::item:selected {{ background:{TEAL}; color:{INK}; }}
+QMenu::separator {{ height:1px; background:{LINE}; margin:6px 8px; }}
+
+QToolBar {{ background:#12141b; border:none; border-bottom:1px solid #262b38; spacing:6px; padding:6px 10px; }}
+QToolButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:7px; padding:6px 12px; color:{TEXT}; }}
+QToolButton:hover {{ border-color:{TEAL}; color:{TEAL_HI}; }}
+QToolButton:pressed {{ background:{TEAL}; color:{INK}; }}
+QToolButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
+QToolButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
+
+QGroupBox {{ background:{NAVY_1}; border:1px solid #262b38; border-radius:10px;
+    margin-top:14px; padding:12px 10px 10px 10px; }}
+QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left:12px; top:1px;
+    padding:2px 8px; color:{AMBER}; font-size:10px; font-weight:700; letter-spacing:1px; }}
+
+QLineEdit,QComboBox,QPlainTextEdit,QListWidget,QSpinBox {{ background:{NAVY_2};
+    border:1px solid {LINE}; border-radius:7px; padding:5px 8px;
+    selection-background-color:{TEAL}; selection-color:{INK}; }}
+QLineEdit:focus,QComboBox:focus,QPlainTextEdit:focus,QListWidget:focus {{ border-color:{TEAL}; }}
+QListWidget::item {{ padding:5px 6px; border-radius:5px; }}
+QListWidget::item:hover {{ background:#232a36; }}
+QListWidget::item:selected {{ background:{TEAL}; color:{INK}; }}
+QComboBox::drop-down {{ border:none; width:22px; }}
+QComboBox QAbstractItemView {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:8px;
+    selection-background-color:{TEAL}; selection-color:{INK}; outline:none; }}
+
+QPushButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:7px; padding:7px 12px; color:{TEXT}; }}
+QPushButton:hover {{ background:#262b38; border-color:{TEAL}; }}
+QPushButton:pressed {{ background:{TEAL}; color:{INK}; }}
+QPushButton:disabled {{ color:#5b6270; border-color:#232734; background:#191c25; }}
+QPushButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
+QPushButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
+
+QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; }}
+QSlider::handle:horizontal {{ width:16px; background:{AMBER}; border-radius:8px; margin:-6px 0; }}
+QSlider::handle:horizontal:hover {{ background:#ffb841; }}
+QSlider::sub-page:horizontal {{ background:{TEAL}; border-radius:3px; }}
+QSlider:disabled::handle:horizontal {{ background:#4a4f5c; }}
+
+QScrollBar:vertical {{ background:transparent; width:12px; margin:2px; }}
+QScrollBar::handle:vertical {{ background:{LINE}; border-radius:6px; min-height:28px; }}
+QScrollBar::handle:vertical:hover {{ background:#3a4152; }}
+QScrollBar:horizontal {{ background:transparent; height:12px; margin:2px; }}
+QScrollBar::handle:horizontal {{ background:{LINE}; border-radius:6px; min-width:28px; }}
+QScrollBar::add-line,QScrollBar::sub-line {{ height:0; width:0; }}
+QSplitter::handle {{ background:#262b38; }}
+QSplitter::handle:horizontal {{ width:2px; }}
+QStatusBar {{ background:#12141b; color:{MUTED}; border-top:1px solid #262b38; }}
+QStatusBar QLabel {{ color:{MUTED}; }}
+QStatusBar::item {{ border:none; }}
+QToolTip {{ background:{INK}; color:{TEXT}; border:1px solid {TEAL}; border-radius:6px; padding:6px 8px; }}
 """
+
+_ICON_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets", "fullseye.ico")
+
+
+def op_detail(row) -> str:
+    """One-line human description of an operator (a ``list_ops`` row dict).
+
+    Shows what the op does at a glance: its name, the sort transform it performs,
+    its category and — when it mirrors a HALCON operator — the HALCON alias. Used
+    for the selected-stage label and (via :func:`op_tooltip`) list tooltips."""
+    hal = ("  ·  HALCON: " + row["halcon"]) if row.get("halcon") else ""
+    return "%s   [%s → %s]  ·  %s%s" % (
+        row["name"], row["in_sort"], row["out_sort"], row["category"], hal)
+
+
+def op_tooltip(row) -> str:
+    """Multi-line tooltip for an operator list item / stage."""
+    return ("%s\nHALCON alias: %s\ncategory: %s\nsort: %s → %s\n"
+            "a, b are the two knobs (each 0..1); their meaning depends on the op"
+            % (row["name"], row.get("halcon") or "(none)", row["category"],
+               row["in_sort"], row["out_sort"]))
+
+
+def _op_row(name):
+    """Look up an op and return a ``list_ops``-shaped dict, or None."""
+    op = api.find_op(name)
+    if op is None:
+        return None
+    return {"name": op.name, "halcon": op.halcon, "category": op.category,
+            "in_sort": op.in_sort, "out_sort": op.out_sort}
 
 
 def show_3d_surface(heightmap, parent=None):
