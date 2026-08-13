@@ -87,9 +87,15 @@ residual is rendering/dither noise and dense flow has nothing to lock onto.
 
 ## honest limits
 
-- `recon_gain` is a *self-consistency* proxy, not accuracy against true flow
-  (none exists for real footage); it rewards explaining brightness change, so
-  large illumination shifts or occlusion boundaries can depress it even when the
+- `recon_gain` is a *self-consistency* proxy against the no-motion baseline, not
+  accuracy against true flow (none exists for real footage); it is a necessary,
+  not sufficient, indicator — it rewards explaining brightness change, so large
+  illumination shifts or occlusion boundaries can depress it even when the
   visible motion is tracked well.
+- `n_moving_segments` / `largest_segment_area` come from `motion_segments` on the
+  residual field; on real footage they can include residual-warp artefacts near
+  the frame border, so treat the mover *count* as indicative, not exact.
+- `mean_track_disp_px` is net start→end displacement over the window, not arc
+  length, and mixes any surviving background points with the moving ones.
 - GIF sources are palette-quantised; prefer mp4 for photometric work.
 - These remain 2-D/2.5-D building blocks; no learned motion model is involved.
