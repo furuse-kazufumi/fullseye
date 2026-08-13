@@ -10,7 +10,7 @@
 > (`api.py`/`fullseye` パッケージ・`pip install -e`・stereo/terrain/detect/registration/pose/imgio・
 > HDevelop 風 `studio.py`・leg2 codegen/difftest/accuracy_bench)。
 >
-> **v14 (2026-08-13) = 知覚スタック完成(モーション + 堅牢化).** 詳細 = `docs/V14.md`。
+> **v14 (2026-08-13) = 知覚スタック完成(モーション + 堅牢化).** 詳細 = `docs/V14.md` / 使い方一枚 = `docs/PERCEPTION.md`。
 > 時間軸 = `flow.py`(pyramidal Lucas-Kanade + Horn-Schunck + warp + `imgio.colorize_flow`)。
 > 深度精緻化 = stereo `disparity_subpixel` + `lr_consistency`。歩行 = terrain `ground_plane` /
 > `ground_surface` / `detect_obstacles`。把持 = registration `pca_align` + Trimmed ICP + `register`。
