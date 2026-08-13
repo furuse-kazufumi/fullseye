@@ -68,6 +68,8 @@ from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, sample_surface, mesh_to_points, voxelize,
     bounds, recenter, normalize_scale,
 )
+from volio import read_volume, write_volume, list_dicom_series, VolumeMeta  # noqa: E402,F401
+from raster import read_raster, to01, read_depth, read_pfm, write_pfm, save16  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
