@@ -1361,19 +1361,27 @@ def build_window(model=None):
             if lst.count():
                 lst.setCurrentRow(0)
 
+        # A double-click on a QListWidget emits BOTH doubleClicked and activated, so
+        # wiring run_sel() to both ran the chosen command twice (two stages inserted
+        # per click). Keep a single activation path and latch it against re-entry.
+        pal = {"ran": False}
+
         def run_sel():
+            if pal["ran"]:
+                return
             it = lst.currentItem() or (lst.item(0) if lst.count() else None)
             if it is not None:
+                pal["ran"] = True
                 idx = it.data(QtCore.Qt.UserRole)
                 dlg.accept()
                 items[idx][1]()
 
         ed.textChanged.connect(refill)
         ed.returnPressed.connect(run_sel)
-        lst.itemActivated.connect(lambda _=None: run_sel())
-        lst.itemDoubleClicked.connect(lambda _=None: run_sel())
+        lst.itemActivated.connect(lambda _=None: run_sel())   # covers Enter AND double-click
         refill(); dlg.resize(560, 440); ed.setFocus()
-        win._palette = {"filter": palette_filter, "labels": labels, "run": run_sel, "edit": ed, "list": lst}
+        win._palette = {"filter": palette_filter, "labels": labels, "run": run_sel,
+                        "edit": ed, "list": lst, "state": pal}
         dlg.exec()
 
     # operator browser filters
