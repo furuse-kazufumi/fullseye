@@ -1310,10 +1310,17 @@ def build_window(model=None):
 
         def load_and_close():
             it = lst.currentItem()
-            if it is not None:
+            if it is None:
+                return
+            if not confirm_discard("Load sample pipeline"):
+                return
+            try:
                 model.load_recipe(it.text())
-                refresh_stage_list(select=len(model.stages) - 1); show_result()
-                dlg.accept()
+            except Exception as e:
+                report_error("Sample pipeline", e); return
+            mark_dirty()
+            refresh_stage_list(select=len(model.stages) - 1); show_result()
+            dlg.accept()
         left = QtWidgets.QVBoxLayout()
         lbl = QtWidgets.QLabel("Sample pipelines"); lbl.setProperty("muted", True)
         b_load = QtWidgets.QPushButton("Load into Studio"); b_load.setProperty("accent", True)
