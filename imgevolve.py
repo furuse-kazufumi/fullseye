@@ -189,6 +189,57 @@ def cmd_pipeline(a):
     return 0
 
 
+def cmd_run(a):
+    """Run a saved pipeline (Studio JSON or an ops string) via FullseyeEngine."""
+    import engine
+    import imgio
+    if str(a.pipeline).lower().endswith(".json"):
+        eng = engine.FullseyeEngine.load(a.pipeline)
+    else:
+        eng = engine.FullseyeEngine.from_ops(a.pipeline, a=a.a, b=a.b)
+
+    if a.describe or a.to_python:
+        if a.to_python:
+            print(eng.to_python())
+        else:
+            print("pipeline %r: %s -> %s" % (eng.name, eng.input_sort(), eng.output_sort()))
+            for d in eng.describe():
+                mark = "" if d["known"] else "   [UNKNOWN OP]"
+                print("  %2d. %-24s a=%.2f b=%.2f   [%s -> %s]%s"
+                      % (d["index"], d["op"], d["a"], d["b"], d["in_sort"], d["out_sort"], mark))
+            for p in eng.validate():
+                print("  ! %-7s stage %d: %s" % (p["severity"], p["index"], p["message"]))
+        if a.inp is None:
+            return 0
+
+    errors = [p for p in eng.validate() if p["severity"] == "error"]
+    if errors:
+        raise SystemExit("pipeline has errors: " + "; ".join(p["message"] for p in errors))
+    if a.inp is None:
+        raise SystemExit("need an input image (or use --describe / --to-python)")
+
+    img = imgio.load(a.inp)
+    if a.stepwise:
+        for i, s in enumerate(eng.run_stepwise(img)):
+            shp = getattr(s, "shape", type(s).__name__)
+            if a.out and isinstance(s, np.ndarray) and s.ndim in (2, 3):
+                base, ext = os.path.splitext(a.out)
+                imgio.save("%s_%02d%s" % (base, i, ext or ".png"), s)
+            print("  step %2d  %-24s -> %s" % (i, eng.stages[i][0], shp))
+        return 0
+
+    result = eng.run(img, upto=a.upto)
+    if isinstance(result, np.ndarray) and result.ndim in (2, 3):
+        if a.out:
+            imgio.save(a.out, result)
+            print("run %s -> %s %s" % (eng.name, a.out, result.shape))
+        else:
+            print("run %s -> result %s (pass --out to save)" % (eng.name, result.shape))
+    else:
+        print("run %s -> %s = %r" % (eng.name, type(result).__name__, result))
+    return 0
+
+
 def cmd_coverage(a):
     import honest_summary
     return honest_summary.main()
