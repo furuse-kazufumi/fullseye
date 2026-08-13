@@ -105,6 +105,54 @@ class PipelineModel:
         self.stages = [[s[0], float(s[1]), float(s[2])] for s in d.get("stages", [])]
 
 
+class PerceptionModel:
+    """Headless logic for the Studio v14 perception panel.
+
+    Given frame A (Studio's current image) and a second loaded frame B, render a
+    colourised view of a two-frame perception op (optical flow, moving-region
+    overlay, stereo depth, stereo terrain). Qt-free -> unit-testable."""
+
+    MODES = ("optical flow", "motion overlay", "stereo depth", "stereo terrain")
+
+    def __init__(self, frame_b=None):
+        self.frame_b = None if frame_b is None else np.asarray(frame_b, np.float64)
+
+    def set_frame_b(self, arr):
+        self.frame_b = None if arr is None else np.asarray(arr, np.float64)
+
+    def view(self, mode, frame_a):
+        """Return an (H, W, 3) RGB visualization for *mode*. Raises ValueError if a
+        second frame is missing or the two frames disagree in size."""
+        if frame_a is None:
+            raise ValueError("no frame A (load or generate an image first)")
+        a = imgio.ensure_gray(np.asarray(frame_a, np.float64))
+        if self.frame_b is None:
+            raise ValueError("load a second frame (B) first")
+        b = imgio.ensure_gray(self.frame_b)
+        if a.shape != b.shape:
+            raise ValueError("frame A %s and B %s must be the same size" % (a.shape, b.shape))
+        if mode == "optical flow":
+            u, v = flow.optical_flow_lk(a, b, levels=3)
+            return imgio.colorize_flow(u, v)
+        if mode == "motion overlay":
+            u, v = flow.optical_flow_lk(a, b, levels=3)
+            thr = max(0.5, float(motion.frame_motion_energy(u, v)))
+            mask, _ = motion.motion_segments(u, v, threshold=thr, min_area=20)
+            return imgio.overlay_mask(a, mask, color=(1.0, 0.25, 0.0))
+        if mode == "stereo depth":
+            disp = stereo.disparity_map(a, b, max_disp=16, block=9)
+            depth = stereo.depth_from_disparity(disp, focal=100.0, baseline=0.1)
+            return imgio.colorize_depth(depth)
+        if mode == "stereo terrain":
+            disp = stereo.disparity_map(a, b, max_disp=16, block=9)
+            depth = stereo.depth_from_disparity(disp, focal=100.0, baseline=0.1)
+            pts = stereo.reproject_to_points(depth, fx=100.0, fy=100.0)
+            world = np.stack([pts[:, 0], pts[:, 2], -pts[:, 1]], axis=1)
+            grid, _ = terrain.elevation_map(world, cell=0.5, agg="max")
+            return imgio.colorize_height(terrain.fill_gaps(grid))
+        raise ValueError("unknown perception mode: %r" % (mode,))
+
+
 def demo_image(n=256):
     """A synthetic scene with edges, blobs and gradients to play with."""
     y, x = np.mgrid[0:n, 0:n]
