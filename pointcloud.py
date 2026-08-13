@@ -70,3 +70,43 @@ def voxel_downsample(points, voxel: float = 0.05) -> np.ndarray:
     np.add.at(out, inv, P)
     np.add.at(counts, inv, 1.0)
     return out / counts[:, None]
+
+
+def remove_statistical_outliers(points, k: int = 16, std_ratio: float = 2.0):
+    """Drop points whose mean distance to their *k* nearest neighbours is a global
+    outlier (greater than ``mean + std_ratio*std`` over all points). Cleans stray
+    stereo/depth points before registration or normal estimation. Returns
+    ``(filtered, keep)`` — the surviving (M, 3) points and the boolean keep mask."""
+    from scipy.spatial import cKDTree
+
+    P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("points must be (N, 3)")
+    n = P.shape[0]
+    if n < 3:
+        return P.copy(), np.ones(n, bool)
+    kk = int(min(max(1, k), n - 1))
+    d, _ = cKDTree(P).query(P, k=kk + 1)          # +1: the first neighbour is self (d=0)
+    mean_d = d[:, 1:].mean(axis=1)
+    thr = float(mean_d.mean() + float(std_ratio) * mean_d.std())
+    keep = mean_d <= thr
+    return P[keep], keep
+
+
+def remove_radius_outliers(points, radius: float, min_neighbors: int = 4):
+    """Drop points with fewer than *min_neighbors* other points within *radius*
+    (isolated specks). Returns ``(filtered, keep)`` like
+    :func:`remove_statistical_outliers`."""
+    from scipy.spatial import cKDTree
+
+    P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("points must be (N, 3)")
+    if float(radius) <= 0.0:
+        raise ValueError("radius must be > 0, got %r" % (radius,))
+    n = P.shape[0]
+    if n == 0:
+        return P.copy(), np.ones(0, bool)
+    counts = cKDTree(P).query_ball_point(P, r=float(radius), return_length=True)
+    keep = (np.asarray(counts) - 1) >= int(min_neighbors)   # -1 excludes the point itself
+    return P[keep], keep
