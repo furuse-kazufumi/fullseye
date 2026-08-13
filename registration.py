@@ -40,28 +40,48 @@ def apply_transform(points, R, t):
     return (np.asarray(points, np.float64) @ np.asarray(R, np.float64).T) + np.asarray(t, np.float64)
 
 
-def icp(src, dst, max_iter: int = 50, tol: float = 1e-8):
+def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
+        init=None, trim: float | None = None):
     """Iterative Closest Point: align *src* to *dst* without known correspondences.
 
     Each iteration matches every source point to its nearest destination point and
     solves Kabsch on those pairs. Returns ``(R, t, aligned, rmse)`` where ``R, t``
     is the accumulated transform, ``aligned`` = R·src + t, and ``rmse`` is the final
     nearest-neighbour RMS distance.
+
+    *init* ``(R0, t0)`` seeds the alignment (use :func:`pca_align` for large
+    initial rotations that plain ICP-from-identity cannot escape). *trim*, if set
+    to a fraction in ``[0, 1)``, keeps only the best ``1 - trim`` matches by
+    distance each iteration (Trimmed ICP) — this rejects outliers and non-overlap,
+    the usual case when an observed cloud only partially matches a CAD model; the
+    reported ``rmse`` is then over the kept inliers.
     """
     from scipy.spatial import cKDTree
 
     P0 = np.asarray(src, np.float64)
     Q = np.asarray(dst, np.float64)
     tree = cKDTree(Q)
-    R_tot = np.eye(3)
-    t_tot = np.zeros(3)
-    cur = P0.copy()
+    if init is None:
+        R_tot = np.eye(3)
+        t_tot = np.zeros(3)
+        cur = P0.copy()
+    else:
+        R_tot = np.asarray(init[0], np.float64).copy()
+        t_tot = np.asarray(init[1], np.float64).copy()
+        cur = apply_transform(P0, R_tot, t_tot)
+    keep_n = P0.shape[0]
+    if trim is not None:
+        keep_n = max(3, int(round((1.0 - float(trim)) * P0.shape[0])))
     prev = np.inf
     rmse = np.inf
     for _ in range(max_iter):
         dist, idx = tree.query(cur)
-        rmse = float(np.sqrt(np.mean(dist ** 2)))
-        R, t = kabsch(cur, Q[idx])
+        if keep_n < P0.shape[0]:
+            sel = np.argpartition(dist, keep_n - 1)[:keep_n]
+        else:
+            sel = slice(None)
+        rmse = float(np.sqrt(np.mean(dist[sel] ** 2)))
+        R, t = kabsch(cur[sel], Q[idx[sel]])
         cur = apply_transform(cur, R, t)
         R_tot = R @ R_tot
         t_tot = R @ t_tot + t
@@ -69,3 +89,44 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8):
             break
         prev = rmse
     return R_tot, t_tot, cur, rmse
+
+
+def pca_align(src, dst):
+    """Coarse rigid alignment from principal axes (a one-shot ICP initialiser).
+
+    Centres both clouds and rotates *src*'s principal axes onto *dst*'s. Principal
+    axes are defined only up to sign, so all sign combinations that give a proper
+    rotation are tried and the lowest nearest-neighbour RMSE wins — this recovers
+    large rotations that ICP-from-identity would get stuck on. Returns ``(R, t)``.
+    Works best when the cloud is anisotropic (distinct principal extents); a
+    near-spherical cloud has ambiguous axes."""
+    from scipy.spatial import cKDTree
+
+    P = np.asarray(src, np.float64)
+    Q = np.asarray(dst, np.float64)
+    cp, cq = P.mean(0), Q.mean(0)
+    _, _, VtP = np.linalg.svd(P - cp, full_matrices=False)
+    _, _, VtQ = np.linalg.svd(Q - cq, full_matrices=False)
+    tree = cKDTree(Q)
+    best = None
+    for sx in (1.0, -1.0):
+        for sy in (1.0, -1.0):
+            for sz in (1.0, -1.0):
+                R = VtQ.T @ np.diag([sx, sy, sz]) @ VtP
+                if np.linalg.det(R) < 0:                 # keep proper rotations only
+                    continue
+                t = cq - R @ cp
+                dist, _ = tree.query(P @ R.T + t)
+                rmse = float(np.sqrt(np.mean(dist ** 2)))
+                if best is None or rmse < best[0]:
+                    best = (rmse, R, t)
+    return best[1], best[2]
+
+
+def register(src, dst, max_iter: int = 60, trim: float | None = 0.2,
+             tol: float = 1e-8):
+    """Robust one-call registration: :func:`pca_align` for a large-rotation start,
+    then Trimmed :func:`icp` for outlier/partial-overlap robustness. Returns the
+    same ``(R, t, aligned, rmse)`` tuple as :func:`icp`."""
+    R0, t0 = pca_align(src, dst)
+    return icp(src, dst, max_iter=max_iter, tol=tol, init=(R0, t0), trim=trim)
