@@ -95,11 +95,12 @@ def _coerce(frame, gray: bool) -> np.ndarray:
 
 
 def _iter_cv2(path):
-    """Fallback frame iterator via OpenCV (BGR uint8 → RGB)."""
+    """Fallback frame iterator via OpenCV (BGR uint8 → RGB). Callers check the
+    file exists first, so an open failure here means undecodable, not missing."""
     cv2 = _cv2()
     cap = cv2.VideoCapture(path)
     if not cap.isOpened():
-        raise FileNotFoundError(path)
+        raise RuntimeError("could not decode %s (corrupt or unsupported format)" % path)
     try:
         while True:
             ok, bgr = cap.read()
