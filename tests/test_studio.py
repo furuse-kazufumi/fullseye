@@ -220,3 +220,16 @@ def test_stage_list_drag_reorder_enabled():
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert win._stage_list.dragDropMode() == QtWidgets.QAbstractItemView.InternalMove
+
+
+def test_scalar_result_shows_message_not_crash():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("otsu"); m.add_stage("count_obj")        # -> region -> scalar feature
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(1)                     # select the feature stage
+    # a non-raster (scalar) result shows a message, not an image, and does not crash
+    assert win._state["result"] is None
