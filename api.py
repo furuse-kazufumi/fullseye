@@ -64,7 +64,13 @@ __all__ = [
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
     "registration", "kabsch", "icp", "apply_transform",
     "pose", "pose_descriptor", "skeleton_nodes", "principal_axis",
+    "recipes", "recipe",
 ]
+
+
+def recipe(name):
+    """Look up a curated sample pipeline by name (see ``fullseye.recipes``)."""
+    return recipes.get(name)
 
 __version__ = "0.1.0"
 
