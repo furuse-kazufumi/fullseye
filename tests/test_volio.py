@@ -55,9 +55,11 @@ def assert_is_ref(vol, meta, check_spacing=False, atol=1e-4):
 # --------------------------------------------------------------------------- #
 def _write_dicom_series(directory, vol_zyx, spacing_xyz=(0.5, 0.75, 2.5),
                         series_uid="1.2.826.0.1.3680043.2.1125.1.98765432109876543210",
-                        modality="CT"):
+                        modality="CT", prefix="slice"):
     """Write *vol_zyx* (D,H,W) as one .dcm per slice with the tags GDCM needs to
-    re-stack the series (Series UID, per-slice position + instance number)."""
+    re-stack the series (Series UID, per-slice position + instance number).
+
+    *prefix* keeps two series' files apart when they share a study directory."""
     os.makedirs(directory, exist_ok=True)
     img = sitk.GetImageFromArray(np.asarray(vol_zyx, np.int16))     # depth = D
     img.SetSpacing(spacing_xyz)
@@ -75,7 +77,7 @@ def _write_dicom_series(directory, vol_zyx, spacing_xyz=(0.5, 0.75, 2.5),
         sl.SetMetaData("0020|0037", orient)                        # Image Orientation
         pos = img.TransformIndexToPhysicalPoint((0, 0, i))
         sl.SetMetaData("0020|0032", "\\".join(str(x) for x in pos))  # Image Position
-        writer.SetFileName(os.path.join(directory, "slice_%03d.dcm" % i))
+        writer.SetFileName(os.path.join(directory, "%s_%03d.dcm" % (prefix, i)))
         writer.Execute(sl)
     return series_uid
 
