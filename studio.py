@@ -934,7 +934,8 @@ def build_window(model=None):
             summ = step_summary(st) if st else ""
             it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
-            it.setToolTip(op_tooltip(_op_row(name)) if _op_row(name) else name)
+            row = _op_row(name)
+            it.setToolTip(op_tooltip(row) if row else name)
             if st.get("kind") == "error":             # mark a stage that raised at runtime
                 it.setForeground(QtGui.QColor(AMBER))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
