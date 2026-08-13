@@ -254,10 +254,10 @@ def write_video(path: str, frames, fps: float = 30.0) -> None:
         # even-padding above already satisfies libx264's yuv420p ÷2 requirement.
         imageio.mimsave(path, seq, fps=float(fps), macro_block_size=1)
     else:
-        # GIF (Pillow plugin): pass fps and let the plugin convert to the per-frame
-        # delay. Passing duration=1/fps (seconds) would be truncated to a 0 ms delay
-        # — the Pillow plugin's `duration` is in milliseconds — so fps was inert.
-        imageio.mimsave(path, seq, fps=float(fps))
+        # GIF (Pillow plugin): the per-frame delay is `duration` in MILLISECONDS.
+        # Passing duration=1/fps (seconds) truncates to a 0 ms delay (fps inert);
+        # `fps=` works but is deprecated in imageio 2.28+. Convert explicitly.
+        imageio.mimsave(path, seq, duration=1000.0 / float(fps))
 
 
 def probe(path: str) -> dict:
