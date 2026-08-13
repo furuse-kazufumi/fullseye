@@ -828,19 +828,61 @@ def build_window(model=None):
         te.setPlainText('--ops "' + model.ops_string() + '"\n\n' + model.export_python())
         te.setReadOnly(True); v.addWidget(te); dlg.resize(560, 360); dlg.exec()
 
+    def clear_pipe():
+        model.stages = []
+        refresh_stage_list(); on_stage_selected(); show_result()
+        flash("pipeline cleared")
+
+    def show_about():
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("About Fullseye Studio")
+        v = QtWidgets.QVBoxLayout(dlg)
+        row = QtWidgets.QHBoxLayout()
+        if os.path.exists(_ICON_PATH):
+            ic = QtWidgets.QLabel(); ic.setPixmap(QtGui.QIcon(_ICON_PATH).pixmap(64, 64))
+            ic.setStyleSheet("padding:4px 12px 4px 4px;"); row.addWidget(ic, 0, QtCore.Qt.AlignTop)
+        txt = QtWidgets.QLabel(
+            "<b style='font-size:16px; color:%s'>Fullseye Studio</b><br>"
+            "<span style='color:%s'>image pipeline workbench · v%s</span><br><br>"
+            "Interactively build, tune, step through and export fullseye image-operator "
+            "pipelines — then evolve and codegen HALCON-parity operators.<br><br>"
+            "<span style='color:%s'>Part of the FullSense ecosystem.</span>"
+            % (AMBER, MUTED, api.version(), MUTED))
+        txt.setTextFormat(QtCore.Qt.RichText); txt.setWordWrap(True); row.addWidget(txt, 1)
+        v.addLayout(row)
+        ok = QtWidgets.QPushButton("Close"); ok.setProperty("accent", True); ok.clicked.connect(dlg.accept)
+        v.addWidget(ok, 0, QtCore.Qt.AlignRight)
+        dlg.resize(480, 220); dlg.exec()
+
+    # operator browser filters
+    search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
+    # pipeline + knobs
     op_list.itemDoubleClicked.connect(add_op)
     samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
     sa.valueChanged.connect(on_knob); sb.valueChanged.connect(on_knob)
+    display.currentIndexChanged.connect(lambda _=None: show_result())
+    # buttons
     b_rm.clicked.connect(remove); b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))
     b_load.clicked.connect(load_image); b_demo.clicked.connect(use_demo); b_save.clicked.connect(save_result)
     b_export.clicked.connect(export)
     b_zin.clicked.connect(lambda: view.zoom(1.25)); b_zout.clicked.connect(lambda: view.zoom(0.8))
     b_fit.clicked.connect(view.fit); b_11.clicked.connect(view.reset_zoom)
-    display.currentIndexChanged.connect(lambda _=None: show_result())
     b_reset.clicked.connect(lambda: step_to(0))
     b_step.clicked.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
     b_runall.clicked.connect(lambda: step_to(len(model.stages) - 1))
+    # menu / toolbar actions (share the same handlers as the buttons)
+    act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
+    act_save_res.triggered.connect(save_result); act_export.triggered.connect(export)
+    act_quit.triggered.connect(win.close)
+    act_remove.triggered.connect(remove)
+    act_up.triggered.connect(lambda: move(-1)); act_down.triggered.connect(lambda: move(1))
+    act_clear.triggered.connect(clear_pipe)
+    act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
+    act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
+    act_reset.triggered.connect(lambda: step_to(0))
+    act_step.triggered.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
+    act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
+    act_about.triggered.connect(show_about)
 
     def open_3d():
         raw = state.get("raw")
