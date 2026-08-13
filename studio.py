@@ -1067,6 +1067,12 @@ def build_window(model=None):
     search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
     # pipeline + knobs
     op_list.itemDoubleClicked.connect(add_op)
+
+    def jump_to_problem(item):
+        idx = item.data(QtCore.Qt.UserRole)
+        if idx is not None and 0 <= idx < len(model.stages):
+            stage_list.setCurrentRow(idx)
+    problems_list.itemDoubleClicked.connect(jump_to_problem)
     samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
     sa.valueChanged.connect(on_knob); sb.valueChanged.connect(on_knob)
