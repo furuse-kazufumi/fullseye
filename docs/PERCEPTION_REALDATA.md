@@ -85,6 +85,23 @@ residual is rendering/dither noise and dense flow has nothing to lock onto.
   that runs on `rocket_arc.mp4`/`box_grasp.mp4` when present and is skipped
   otherwise (keeps the suite portable).
 
+## Review round (honest DoD)
+
+A 6-agent adversarial review (each finding verified against the real code before
+fixing) plus an external second opinion (Codex, read-only) surfaced real bugs the
+first-pass tests missed — every one fixed with a regression test:
+
+- **GIF frame delay was passed in seconds** but the Pillow plugin reads `duration`
+  in **milliseconds**, so `fps` was inert (every GIF played at the viewer default)
+  → now `duration = 1000/fps`.
+- **`pyproject` `py-modules` omitted `video`/`flow`/`motion`/`pointcloud`** → the
+  built wheel could not `import fullseye` at all (a pre-existing v14 packaging
+  bug) → added all four; verified by building the wheel and importing it.
+- `_to_uint8_frame` crushed uint16 frames to 0/1; `_to01` didn't clip signed ints;
+  paths weren't `pathlib`-accepting; a corrupt-but-present file reported as
+  "missing"; the cv2 fallback didn't trigger on mid-stream decode failure; GIF
+  `probe` returned all-None. All fixed.
+
 ## honest limits
 
 - `recon_gain` is a *self-consistency* proxy against the no-motion baseline, not
