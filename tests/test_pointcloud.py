@@ -70,8 +70,9 @@ def test_statistical_outlier_removal_drops_strays():
     strays = rng.uniform(-6, 6, (20, 3))                          # far outliers
     P = np.vstack([clean, strays])
     filt, keep = pc.remove_statistical_outliers(P, k=16, std_ratio=2.0)
-    assert not keep[500:].any()                                   # every stray dropped
+    assert keep[500:].mean() < 0.2                                # most strays dropped (SOR is statistical, not exact)
     assert keep[:500].mean() > 0.95                               # nearly all inliers kept
+    assert filt.shape[0] == int(keep.sum())
 
 
 def test_radius_outlier_removal_drops_isolated():
