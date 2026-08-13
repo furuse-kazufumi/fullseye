@@ -1,14 +1,13 @@
 """Fullseye Studio — an HDevelop-style visual pipeline workbench (PySide6).
 
 Interactively build an operator pipeline, tune each stage's two knobs, watch the
-intermediate result update live, and export the pipeline as a `--ops` string or as
-Python. It is a thin front-end over the `fullseye` API; the pipeline logic lives in
-`PipelineModel` (no Qt) so it can be tested headless.
+intermediate result update live with zoom/pan, inspect the current value
+(variable / image / region check), load ready-made sample pipelines, and export the
+pipeline as a `--ops` string or as Python. It is a thin front-end over the
+`fullseye` API; the pipeline logic (`PipelineModel`), the inspector
+(`inspect_result`) and the sample library (`recipes`) are Qt-free and unit-tested.
 
     py -3.11 studio.py            # or: fullseye-studio  (installed console script)
-
-Left: searchable operator browser. Centre: the pipeline (add/remove/reorder) with
-a,b sliders for the selected stage. Right: the image after the selected stage.
 """
 from __future__ import annotations
 
@@ -20,6 +19,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import api
 import imgio
+import recipes
 
 
 # --------------------------------------------------------------------------- #
@@ -32,7 +32,6 @@ class PipelineModel:
         self.image = None if image is None else np.asarray(image, np.float64)
         self.stages: list[list] = []          # [ [name, a, b], ... ]
 
-    # -- editing --
     def set_image(self, arr):
         self.image = np.asarray(arr, np.float64)
 
@@ -54,7 +53,13 @@ class PipelineModel:
         if b is not None:
             self.stages[i][2] = float(b)
 
-    # -- evaluation --
+    def load_recipe(self, name):
+        """Replace the pipeline with a named sample recipe (see `recipes`)."""
+        st = recipes.stages(name)
+        if st is None:
+            raise KeyError(name)
+        self.stages = [[op, float(a), float(b)] for (op, a, b) in st]
+
     def result_upto(self, idx):
         """The value after applying stages[0 .. idx] (idx = -1 -> the raw image)."""
         if self.image is None:
@@ -67,7 +72,6 @@ class PipelineModel:
     def output(self):
         return self.result_upto(len(self.stages) - 1)
 
-    # -- export --
     def ops_string(self):
         return ",".join(s[0] for s in self.stages)
 
@@ -91,7 +95,7 @@ def demo_image(n=256):
 
 def histogram_image(arr, bins=64, w=256, h=64):
     """Render the intensity histogram of a [0,1] image as a (h, w) gray image with
-    bars (headless — used by the Studio's histogram panel, testable on its own)."""
+    bars (headless -- used by the Studio's histogram panel, testable on its own)."""
     a = np.asarray(arr, np.float64)
     a = a[np.isfinite(a)]
     out = np.zeros((h, w), np.float64)
@@ -114,7 +118,7 @@ def _is_binary(a):
 
 
 def inspect_result(val):
-    """Sort-aware inspection of a pipeline result — the Studio's variable / image /
+    """Sort-aware inspection of a pipeline result -- the Studio's variable / image /
     region checker. Returns a dict of human-readable fields (headless, testable)."""
     if isinstance(val, np.ndarray) and val.ndim in (2, 3):
         fin = np.isfinite(val)
@@ -150,7 +154,6 @@ def format_inspection(d):
 # Qt view (imported lazily so `import studio` works without a display).
 # --------------------------------------------------------------------------- #
 def _to_qimage(arr, QtGui):
-    """numpy image/region/color -> QImage (scalar/contour finals handled by caller)."""
     a = np.asarray(arr)
     if a.ndim == 2:
         u8 = np.ascontiguousarray(imgio.to_uint8(np.clip(a, 0, 1)))
@@ -163,25 +166,64 @@ def _to_qimage(arr, QtGui):
     return None
 
 
+def _image_view_class(QtWidgets, QtGui, QtCore):
+    """A zoom/pan image viewer (wheel = zoom at cursor, drag = pan)."""
+    class ImageView(QtWidgets.QGraphicsView):
+        def __init__(self):
+            super().__init__()
+            self._scene = QtWidgets.QGraphicsScene(self)
+            self.setScene(self._scene)
+            self._item = self._scene.addPixmap(QtGui.QPixmap())
+            self.setDragMode(QtWidgets.QGraphicsView.ScrollHandDrag)
+            self.setTransformationAnchor(QtWidgets.QGraphicsView.AnchorUnderMouse)
+            self.setBackgroundBrush(QtGui.QColor("#202020"))
+            self.setMinimumSize(380, 380)
+
+        def set_pixmap(self, pm):
+            self._item.setPixmap(pm)
+            self._scene.setSceneRect(QtCore.QRectF(pm.rect()))
+
+        def clear(self):
+            self._item.setPixmap(QtGui.QPixmap())
+
+        def wheelEvent(self, e):
+            f = 1.25 if e.angleDelta().y() > 0 else 0.8
+            self.scale(f, f)
+
+        def zoom(self, f):
+            self.scale(f, f)
+
+        def reset_zoom(self):
+            self.resetTransform()
+
+        def fit(self):
+            if not self._item.pixmap().isNull():
+                self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+    return ImageView
+
+
 def build_window(model=None):
     """Construct (but do not exec) the main window. Returns (window, model)."""
     from PySide6 import QtWidgets, QtGui, QtCore
 
     model = model or PipelineModel(demo_image())
-
     win = QtWidgets.QMainWindow()
     win.setWindowTitle("Fullseye Studio")
-    win.resize(1180, 720)
+    win.resize(1260, 780)
     central = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
     win.setCentralWidget(central)
 
-    # -- left: operator browser --
+    # -- left: operator browser + samples --
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left)
+    lv.addWidget(QtWidgets.QLabel("Sample pipelines"))
+    samples = QtWidgets.QComboBox(); samples.addItem("-- load a sample --")
+    for nm in recipes.names():
+        samples.addItem(nm)
+    lv.addWidget(samples)
+    lv.addWidget(QtWidgets.QLabel("Operators (double-click to add)"))
     search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators...")
     op_list = QtWidgets.QListWidget()
-    lv.addWidget(QtWidgets.QLabel("Operators (double-click to add)"))
     lv.addWidget(search); lv.addWidget(op_list)
-
     all_ops = api.list_ops()
 
     def refill_ops():
@@ -212,63 +254,60 @@ def build_window(model=None):
     mv.addWidget(la); mv.addWidget(sa); mv.addWidget(lb); mv.addWidget(sb)
     mv.addWidget(b_export)
 
-    # -- right: image view + histogram + info --
+    # -- right: zoomable image view + zoom controls + histogram + inspector --
     right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right)
-    view = QtWidgets.QLabel("(load an image or use the synthetic demo)")
-    view.setAlignment(QtCore.Qt.AlignCenter); view.setMinimumSize(360, 360)
-    view.setStyleSheet("background:#202020;color:#aaa;")
-    hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(72)
-    hist_view.setStyleSheet("background:#181818;")
-    info = QtWidgets.QLabel(""); info.setWordWrap(True)
+    top = QtWidgets.QHBoxLayout()
     b_load = QtWidgets.QPushButton("Load image..."); b_demo = QtWidgets.QPushButton("Synthetic demo")
     b_save = QtWidgets.QPushButton("Save result...")
-    rload = QtWidgets.QHBoxLayout()
-    rload.addWidget(b_load); rload.addWidget(b_demo); rload.addWidget(b_save)
-    rv.addLayout(rload); rv.addWidget(view, 1)
-    rv.addWidget(QtWidgets.QLabel("Histogram")); rv.addWidget(hist_view); rv.addWidget(info)
-    state = {"result": None}
+    top.addWidget(b_load); top.addWidget(b_demo); top.addWidget(b_save)
+    ImageView = _image_view_class(QtWidgets, QtGui, QtCore)
+    view = ImageView()
+    zoom = QtWidgets.QHBoxLayout()
+    b_zin = QtWidgets.QPushButton("Zoom +"); b_zout = QtWidgets.QPushButton("Zoom -")
+    b_fit = QtWidgets.QPushButton("Fit"); b_11 = QtWidgets.QPushButton("1:1")
+    for w_ in (b_zin, b_zout, b_fit, b_11):
+        zoom.addWidget(w_)
+    hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(70); hist_view.setStyleSheet("background:#181818;")
+    inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(140)
+    inspector.setStyleSheet("font-family:Consolas,monospace;")
+    rv.addLayout(top); rv.addWidget(view, 1); rv.addLayout(zoom)
+    rv.addWidget(QtWidgets.QLabel("Histogram")); rv.addWidget(hist_view)
+    rv.addWidget(QtWidgets.QLabel("Inspector (variable / image / region)")); rv.addWidget(inspector)
 
     central.addWidget(left); central.addWidget(mid); central.addWidget(right)
-    central.setSizes([300, 340, 540])
+    central.setSizes([320, 320, 620])
+    state = {"result": None}
 
     # -- behaviour --
     def selected_index():
         return stage_list.currentRow()
 
-    def refresh_stage_list():
+    def refresh_stage_list(select=None):
         stage_list.blockSignals(True)
         stage_list.clear()
         for name, a, b in model.stages:
             stage_list.addItem(f"{name}  (a={a:.2f}, b={b:.2f})")
         stage_list.blockSignals(False)
+        if select is not None and 0 <= select < len(model.stages):
+            stage_list.setCurrentRow(select)
 
     def show_result():
         idx = selected_index()
         val = model.result_upto(idx if idx >= 0 else len(model.stages) - 1)
+        inspector.setPlainText(format_inspection(inspect_result(val)))
         if isinstance(val, np.ndarray) and val.ndim in (2, 3):
             qi = _to_qimage(val, QtGui)
             if qi is not None:
-                pm = QtGui.QPixmap.fromImage(qi).scaled(
-                    view.width(), view.height(), QtCore.Qt.KeepAspectRatio,
-                    QtCore.Qt.SmoothTransformation)
-                view.setPixmap(pm)
-            info.setText(f"array {val.shape}  range [{float(np.nanmin(val)):.3f}, "
-                         f"{float(np.nanmax(val)):.3f}]")
+                view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
             state["result"] = val
             g = val if val.ndim == 2 else imgio.ensure_gray(val)
             hq = _to_qimage(histogram_image(np.clip(g, 0, 1)), QtGui)
             if hq is not None:
                 hist_view.setPixmap(QtGui.QPixmap.fromImage(hq).scaled(
-                    max(hist_view.width(), 256), 72, QtCore.Qt.IgnoreAspectRatio,
+                    max(hist_view.width(), 256), 70, QtCore.Qt.IgnoreAspectRatio,
                     QtCore.Qt.SmoothTransformation))
-        elif isinstance(val, dict):
-            view.setText("(contour result)")
-            info.setText(f"contour: {len(val.get('cs', []))} contours")
-            state["result"] = None; hist_view.clear()
         else:
-            view.setText(str(val))
-            info.setText("feature (scalar) result")
-            state["result"] = None; hist_view.clear()
+            view.clear(); hist_view.clear(); state["result"] = None
 
     def on_stage_selected():
         i = selected_index()
@@ -285,12 +324,19 @@ def build_window(model=None):
         if 0 <= i < len(model.stages):
             model.set_knobs(i, a=sa.value() / 100.0, b=sb.value() / 100.0)
             la.setText(f"a: {sa.value()/100:.2f}"); lb.setText(f"b: {sb.value()/100:.2f}")
-            refresh_stage_list(); stage_list.setCurrentRow(i)
+            refresh_stage_list(select=i)
             show_result()
 
     def add_op(item):
         model.add_stage(item.data(QtCore.Qt.UserRole))
-        refresh_stage_list(); stage_list.setCurrentRow(len(model.stages) - 1)
+        refresh_stage_list(select=len(model.stages) - 1)
+        show_result()
+
+    def load_sample(idx):
+        if idx <= 0:
+            return
+        model.load_recipe(samples.itemText(idx))
+        refresh_stage_list(select=len(model.stages) - 1)
         show_result()
 
     def remove():
@@ -301,7 +347,7 @@ def build_window(model=None):
     def move(delta):
         i = selected_index(); j = i + delta
         if 0 <= i < len(model.stages) and 0 <= j < len(model.stages):
-            model.move_stage(i, j); refresh_stage_list(); stage_list.setCurrentRow(j); show_result()
+            model.move_stage(i, j); refresh_stage_list(select=j); show_result()
 
     def load_image():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open image", "",
@@ -321,21 +367,20 @@ def build_window(model=None):
             imgio.save(path, state["result"])
 
     def export():
-        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export")
-        v = QtWidgets.QVBoxLayout(dlg)
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
         te = QtWidgets.QPlainTextEdit()
-        te.setPlainText("--ops \"" + model.ops_string() + "\"\n\n" + model.export_python())
-        te.setReadOnly(True); v.addWidget(te)
-        dlg.resize(560, 360); dlg.exec()
+        te.setPlainText('--ops "' + model.ops_string() + '"\n\n' + model.export_python())
+        te.setReadOnly(True); v.addWidget(te); dlg.resize(560, 360); dlg.exec()
 
     op_list.itemDoubleClicked.connect(add_op)
+    samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
     sa.valueChanged.connect(on_knob); sb.valueChanged.connect(on_knob)
-    b_rm.clicked.connect(remove)
-    b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))
-    b_load.clicked.connect(load_image); b_demo.clicked.connect(use_demo)
-    b_save.clicked.connect(save_result)
+    b_rm.clicked.connect(remove); b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))
+    b_load.clicked.connect(load_image); b_demo.clicked.connect(use_demo); b_save.clicked.connect(save_result)
     b_export.clicked.connect(export)
+    b_zin.clicked.connect(lambda: view.zoom(1.25)); b_zout.clicked.connect(lambda: view.zoom(0.8))
+    b_fit.clicked.connect(view.fit); b_11.clicked.connect(view.reset_zoom)
 
     refresh_stage_list(); show_result()
     return win, model
