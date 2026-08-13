@@ -30,6 +30,8 @@ def estimate_normals(points, k: int = 16, viewpoint=None) -> np.ndarray:
     if P.ndim != 2 or P.shape[1] != 3:
         raise ValueError("points must be (N, 3)")
     n = P.shape[0]
+    if n == 0:                              # empty cloud (nothing in view) -> empty normals
+        return np.empty((0, 3), np.float64)
     kk = int(min(max(3, k), n))
     _, idx = cKDTree(P).query(P, k=kk)
     if kk == 1:                                   # degenerate: only one point
