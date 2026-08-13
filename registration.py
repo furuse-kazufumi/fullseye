@@ -89,6 +89,12 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
         if abs(prev - rmse) < tol:
             break
         prev = rmse
+    # report rmse for the RETURNED pose: the loop's value was computed before its
+    # final Kabsch step, so re-query so `rmse` and `aligned` describe one alignment.
+    dist, _ = tree.query(cur)
+    if keep_n < P0.shape[0]:
+        dist = np.partition(dist, keep_n - 1)[:keep_n]
+    rmse = float(np.sqrt(np.mean(dist ** 2)))
     return R_tot, t_tot, cur, rmse
 
 
