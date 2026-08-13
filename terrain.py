@@ -163,7 +163,7 @@ def detect_obstacles(grid, cell: float = 0.05, clearance: float = 0.12,
         raise ValueError("ground must be 'plane', 'opening', or an array, got %r" % (ground,))
     above = filled - gsurf
     mask = above > float(clearance)
-    min_cells = max(1, int(round(min_area / (cell * cell))))
+    min_cells = max(1, int(np.ceil(min_area / (cell * cell))))   # drop blobs strictly < min_area
     lbl, n = ndimage.label(mask)
     obstacles = []
     for i in range(1, n + 1):
