@@ -94,6 +94,12 @@ class PipelineModel:
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
 
+    def to_dict(self):
+        return {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
+
+    def load_dict(self, d):
+        self.stages = [[s[0], float(s[1]), float(s[2])] for s in d.get("stages", [])]
+
 
 def demo_image(n=256):
     """A synthetic scene with edges, blobs and gradients to play with."""
