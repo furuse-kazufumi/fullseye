@@ -925,6 +925,7 @@ def build_window(model=None):
             model.load_dict(json.loads(open(path, encoding="utf-8").read()))
             refresh_stage_list(select=len(model.stages) - 1); show_result()
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
+    act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
 
     def on_hover(x, y, v):
         if np.ndim(v) == 0:
