@@ -24,6 +24,7 @@ gpu = ["torch>=2.0", "kornia>=0.7"]
 extra = ["mahotas>=1.4", "SimpleITK>=2.2"]
 gui = ["PySide6>=6.5"]
 video = ["imageio>=2.28", "imageio-ffmpeg>=0.4"]
+audio = ["soundfile>=0.12"]          # non-WAV audio (mp3/flac/ogg); WAV is built-in
 # --- connectivity (device control / industrial + Physical-AI comms) ---
 # The native transports (TCP/UDP/Modbus-TCP/HTTP) need nothing beyond stdlib;
 # these extras add optional protocol/device adapters.
