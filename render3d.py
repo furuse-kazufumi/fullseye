@@ -379,15 +379,14 @@ def _interior_mask(A, B, C, origin, dims, pitch: float, axis: int) -> np.ndarray
     Returns a world-indexed bool array ``(nx, ny, nz)`` (the caller transposes to
     the ``(D, H, W)`` volume layout). Rays are nudged off the lattice by a
     sub-pitch epsilon so they never strike a shared edge / vertex exactly."""
-    nx, ny, nz = int(dims[0]), int(dims[1]), int(dims[2])
-    occ = np.zeros((nx, ny, nz), bool)
+    n = (int(dims[0]), int(dims[1]), int(dims[2]))
+    occ = np.zeros(n, bool)
     a = int(axis)
-    perp = [ax for ax in (0, 1, 2) if ax != a]
-    p, q = perp
-    centers_a = origin[a] + (np.arange((nx, ny, nz)[a]) + 0.5) * pitch
-    for ip in range((nx, ny, nz)[p]):
+    p, q = [ax for ax in (0, 1, 2) if ax != a]
+    centers_a = origin[a] + (np.arange(n[a]) + 0.5) * pitch
+    for ip in range(n[p]):
         cp = origin[p] + (ip + 0.5) * pitch + _EPS_P * pitch
-        for iq in range((nx, ny, nz)[q]):
+        for iq in range(n[q]):
             cq = origin[q] + (iq + 0.5) * pitch + _EPS_Q * pitch
             o = np.zeros(3, np.float64)
             o[p], o[q] = cp, cq
