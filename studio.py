@@ -30,6 +30,67 @@ import terrain
 # --------------------------------------------------------------------------- #
 # Headless pipeline logic (no Qt) — unit-testable.
 # --------------------------------------------------------------------------- #
+def truncate(text, limit=160):
+    """Shorten *text* for a tooltip / list row so a 5-line backend traceback can
+    not blow up the widget. Qt-free -> unit-tested."""
+    s = " ".join(str(text).split())
+    return s if len(s) <= limit else s[: limit - 1] + "…"
+
+
+def validate_pipeline_dict(d):
+    """Validate a loaded pipeline payload and return ``[[op, a, b], ...]``.
+
+    Raises :class:`ValueError` with a human-readable message when the payload is
+    malformed (not an object, ``stages`` missing/not a list, a stage that is not
+    a 3-element sequence, a non-numeric knob) or names an operator that does not
+    exist in the registry. The caller gets a fully-built list, so a bad file can
+    never leave a half-applied pipeline behind. Qt-free -> unit-tested."""
+    if not isinstance(d, dict):
+        raise ValueError("not a pipeline file (expected a JSON object, got %s)"
+                         % type(d).__name__)
+    raw = d.get("stages")
+    if raw is None:
+        raise ValueError("not a pipeline file (no 'stages' key)")
+    if not isinstance(raw, (list, tuple)):
+        raise ValueError("'stages' must be a list, got %s" % type(raw).__name__)
+    out = []
+    for i, s in enumerate(raw):
+        if isinstance(s, str) or not isinstance(s, (list, tuple)) or len(s) != 3:
+            raise ValueError("stage %d must be [op, a, b], got %r" % (i + 1, truncate(s, 60)))
+        name = s[0]
+        if not isinstance(name, str):
+            raise ValueError("stage %d: operator name must be text, got %r"
+                             % (i + 1, truncate(name, 40)))
+        if api.find_op(name) is None:
+            raise ValueError("stage %d: unknown operator %r" % (i + 1, name))
+        try:
+            a, b = float(s[1]), float(s[2])
+        except (TypeError, ValueError):
+            raise ValueError("stage %d (%s): knobs a, b must be numbers" % (i + 1, name))
+        out.append([name, a, b])
+    return out
+
+
+# UI hooks, module-level so a headless test can stub the modal dialogs.
+def _default_error(parent, title, text):                      # pragma: no cover - GUI
+    from PySide6 import QtWidgets
+    QtWidgets.QMessageBox.critical(parent, title, text)
+
+
+def _default_confirm(parent, title, text):                    # pragma: no cover - GUI
+    from PySide6 import QtWidgets
+    btn = QtWidgets.QMessageBox.question(
+        parent, title, text,
+        QtWidgets.QMessageBox.Discard | QtWidgets.QMessageBox.Cancel,
+        QtWidgets.QMessageBox.Cancel)
+    return btn == QtWidgets.QMessageBox.Discard
+
+
+ERROR_HOOK = _default_error       # (parent, title, text) -> None
+CONFIRM_HOOK = _default_confirm   # (parent, title, text) -> bool (True = go ahead)
+KNOB_DEBOUNCE_MS = 160            # coalesce knob drags before re-running step_states
+
+
 class PipelineModel:
     """An ordered list of (op, a, b) stages applied to a base image."""
 
