@@ -599,7 +599,7 @@ def build_window(model=None):
     m.addAction(act_reset); m.addAction(act_step); m.addAction(act_runall)
     m.addSeparator(); m.addAction(act_palette)
     m = mb.addMenu("&Help")
-    m.addAction(act_about)
+    m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
     # ---- branded toolbar ---------------------------------------------------- #
     tb = QtWidgets.QToolBar(); tb.setMovable(False); tb.setFloatable(False)
