@@ -332,7 +332,13 @@ QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; 
 QSlider::handle:horizontal {{ width:16px; background:{AMBER}; border-radius:8px; margin:-6px 0; }}
 QSlider::handle:horizontal:hover {{ background:#ffb841; }}
 QSlider::sub-page:horizontal {{ background:{TEAL}; border-radius:3px; }}
-QSlider:disabled::handle:horizontal {{ background:#4a4f5c; }}
+/* Qt QSS orders sub-control BEFORE pseudo-state: `::handle:horizontal:disabled`.
+   The reverse (`QSlider:disabled::handle:horizontal`) silently never matches, which
+   left a disabled slider painting an enabled-looking amber handle. */
+QSlider::handle:horizontal:disabled {{ background:#3d424e; }}
+QSlider::sub-page:horizontal:disabled {{ background:#2a2f3b; }}
+QSlider::groove:horizontal:disabled {{ background:#232734; }}
+QSlider::handle:horizontal:focus {{ border:2px solid {TEAL_HI}; }}
 
 QScrollBar:vertical {{ background:transparent; width:12px; margin:2px; }}
 QScrollBar::handle:vertical {{ background:{LINE}; border-radius:6px; min-height:28px; }}
