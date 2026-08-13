@@ -4,11 +4,13 @@ global-motion removal -> moving-region segmentation -> multi-frame point trackin
 Unlike ``motion_analysis.py`` (synthetic pair, known ground truth) this runs the
 v14 perception stack on an *actual rendered clip* — an onocollo physics video, an
 evis / hillco motion capture, a driving rollout — and reports **honest measured**
-results. Real footage has no ground-truth flow, so correctness is judged by a
-*photometric self-consistency* check: warp ``prev`` by the estimated flow and see
-how much closer it gets to ``nxt`` than the raw frame difference
-(``recon_gain = 1 - mean|nxt - warp(prev)| / mean|nxt - prev|``; > 0 means the
-flow explains real motion).
+results. Real footage has no ground-truth flow, so the flow is judged by a
+*photometric self-consistency* check against the no-motion (identity) baseline:
+warp ``prev`` by the estimated flow and see how much closer it gets to ``nxt``
+than the raw frame difference
+(``recon_gain = 1 - mean|nxt - warp(prev)| / mean|nxt - prev|``). ``recon_gain > 0``
+means the flow reconstructs ``nxt`` better than assuming nothing moved — a
+necessary condition for useful flow, not a proof of per-pixel correctness.
 
     py -3.11 examples/perception_on_video.py <clip.mp4|clip.gif> [--save out_dir]
                                              [--max-frames N] [--step K]
