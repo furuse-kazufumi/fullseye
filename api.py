@@ -43,6 +43,7 @@ import imgio  # noqa: E402  (coercion / colormap visualisation / export)
 import detect  # noqa: E402  (object segmentation / description / identification)
 import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 import pose  # noqa: E402  (silhouette posture descriptors)
+import recipes  # noqa: E402  (curated sample pipelines)
 from stereo import disparity_map, depth_from_disparity, reproject_to_points  # noqa: E402,F401
 from registration import kabsch, icp, apply_transform  # noqa: E402,F401
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
