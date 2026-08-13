@@ -88,6 +88,38 @@ def test_colorize_flow_contract():
     assert np.allclose(rgb[0, 0], 0.0)          # zero motion -> black
 
 
+def test_lk_is_contrast_invariant():
+    # brightness constancy is scale-invariant; scaling both frames must not change
+    # the recovered flow (regression: a constant regulariser over-damped [0,1] input)
+    prev = _textured(seed=11)
+    nxt = _shift(prev, 3.0, 2.0)
+    meds = []
+    for c in (1.0, 0.25, 255.0):
+        u, v = flow.optical_flow_lk(prev * c, nxt * c, iters=5)
+        meds.append((np.median(_interior(u)), np.median(_interior(v))))
+    for mu, mv in meds:
+        assert abs(mu - 3.0) < 0.3 and abs(mv - 2.0) < 0.3
+    assert max(m[0] for m in meds) - min(m[0] for m in meds) < 0.05   # ~identical across scale
+
+
+def test_lk_does_not_diverge_with_many_iterations():
+    # the fixed-template iteration must not blow up as iters grows (regression:
+    # unbounded divergence past ~10 iterations)
+    prev = _textured(seed=12)
+    nxt = _shift(prev, 3.0, 2.0)
+    for it in (5, 20, 80):
+        u, v = flow.optical_flow_lk(prev, nxt, iters=it)
+        assert abs(np.median(_interior(u)) - 3.0) < 0.4
+        assert np.abs(u).max() < 20.0            # no runaway (was 225px at iters=80)
+
+
+def test_lk_border_flow_stays_bounded():
+    prev = _textured(seed=13)
+    nxt = _shift(prev, 3.0, 2.0)
+    u, v = flow.optical_flow_lk(prev, nxt)       # all defaults
+    assert flow.flow_magnitude(u, v).max() < 10.0   # border spikes bounded (was ~14.5)
+
+
 def test_flow_reachable_through_facade():
     import fullseye as fs
     prev = _textured(seed=5)
