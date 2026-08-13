@@ -54,6 +54,25 @@ def test_histogram_image():
     assert studio.histogram_image(np.array([[np.inf, np.nan]])).sum() == 0  # no finite data
 
 
+def test_inspect_result_by_sort():
+    img = studio.demo_image(32)
+    di = studio.inspect_result(img)
+    assert di["kind"] == "image" and di["shape"] == (32, 32)
+    region = (img > 0.6).astype(float)
+    dr = studio.inspect_result(region)
+    assert dr["kind"] == "region" and "regions" in dr and "area_fraction" in dr
+    assert studio.inspect_result(3.5)["kind"] == "feature"
+    assert studio.inspect_result({"cs": [1, 2]})["n_contours"] == 2
+
+
+def test_model_load_recipe():
+    import recipes
+    m = studio.PipelineModel(studio.demo_image(48))
+    name = recipes.names()[3]
+    m.load_recipe(name)
+    assert m.ops_string() == ",".join(s[0] for s in recipes.stages(name))
+
+
 def test_qt_window_builds_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
