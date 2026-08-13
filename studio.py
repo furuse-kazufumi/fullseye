@@ -696,10 +696,16 @@ def build_window(model=None):
     b_reset.setToolTip("Show the raw image (Home)")
     b_step.setToolTip("Advance one stage (Ctrl+Right)")
     b_runall.setToolTip("Show the final result (Ctrl+Enter)")
+    problems_list = QtWidgets.QListWidget()
+    problems_list.setFixedHeight(74)
+    problems_list.setToolTip("Pipeline problems (unknown op / sort mismatch / runtime error).\n"
+                             "Double-click to jump to the offending stage.")
     play = QtWidgets.QVBoxLayout(); play.addWidget(stage_list, 1)
     erow = QtWidgets.QHBoxLayout(); erow.addWidget(b_rm); erow.addWidget(b_up); erow.addWidget(b_dn)
     srow = QtWidgets.QHBoxLayout(); srow.addWidget(b_reset); srow.addWidget(b_step); srow.addWidget(b_runall)
     play.addLayout(erow); play.addLayout(srow)
+    problems_label = QtWidgets.QLabel("Problems"); problems_label.setProperty("muted", True)
+    play.addWidget(problems_label); play.addWidget(problems_list)
     mv.addWidget(_group(QtWidgets, "PIPELINE", play), 1)
 
     stage_detail = QtWidgets.QLabel("select a stage to tune its knobs")
