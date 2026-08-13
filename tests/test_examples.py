@@ -3,6 +3,8 @@ sane results, so the cross-project templates stay working."""
 import importlib.util
 import os
 
+import pytest
+
 _EX = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "examples")
 
 
