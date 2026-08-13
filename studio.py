@@ -108,6 +108,44 @@ def histogram_image(arr, bins=64, w=256, h=64):
     return out
 
 
+def _is_binary(a):
+    u = np.unique(a[np.isfinite(a)]) if a.size else a
+    return u.size <= 2 and set(np.round(u, 6).tolist()).issubset({0.0, 1.0})
+
+
+def inspect_result(val):
+    """Sort-aware inspection of a pipeline result — the Studio's variable / image /
+    region checker. Returns a dict of human-readable fields (headless, testable)."""
+    if isinstance(val, np.ndarray) and val.ndim in (2, 3):
+        fin = np.isfinite(val)
+        kind = "color" if val.ndim == 3 else ("region" if _is_binary(val) else "image")
+        d = {"kind": kind, "shape": tuple(int(s) for s in val.shape), "dtype": str(val.dtype),
+             "min": round(float(np.nanmin(val)), 4) if fin.any() else float("nan"),
+             "max": round(float(np.nanmax(val)), 4) if fin.any() else float("nan"),
+             "mean": round(float(np.nanmean(val)), 4) if fin.any() else float("nan"),
+             "nonfinite": int((~fin).sum())}
+        if kind == "region":
+            from scipy import ndimage
+            m = val > 0.5
+            lab, n = ndimage.label(m, structure=np.ones((3, 3), int))
+            d["regions"] = int(n)
+            d["area_px"] = int(m.sum())
+            d["area_fraction"] = round(float(m.mean()), 4)
+            if n:
+                sizes = ndimage.sum(np.ones_like(lab, float), lab, range(1, n + 1))
+                d["largest_region_px"] = int(sizes.max())
+        return d
+    if isinstance(val, dict):
+        return {"kind": "contour", "n_contours": int(len(val.get("cs", [])))}
+    if val is None:
+        return {"kind": "none"}
+    return {"kind": "feature", "value": round(float(np.asarray(val).reshape(-1)[0]), 6)}
+
+
+def format_inspection(d):
+    return "\n".join(f"{k}: {v}" for k, v in d.items())
+
+
 # --------------------------------------------------------------------------- #
 # Qt view (imported lazily so `import studio` works without a display).
 # --------------------------------------------------------------------------- #
