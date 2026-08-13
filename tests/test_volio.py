@@ -132,9 +132,9 @@ def test_dicom_single_file_reads_whole_series(tmp_path):
 
 def test_dicom_multiple_series_requires_series_id(tmp_path):
     d = str(tmp_path / "study")
-    uid_a = _write_dicom_series(d, REF - REF.min(),
+    uid_a = _write_dicom_series(d, REF - REF.min(), prefix="a",
                                 series_uid="1.2.826.0.1.3680043.2.1125.1.111", modality="CT")
-    uid_b = _write_dicom_series(d, (REF - REF.min())[:8],
+    uid_b = _write_dicom_series(d, (REF - REF.min())[:8], prefix="b",
                                 series_uid="1.2.826.0.1.3680043.2.1125.1.222", modality="MR")
     ids = volio.list_dicom_series(d)
     assert uid_a in ids and uid_b in ids
