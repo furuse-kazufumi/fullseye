@@ -97,10 +97,13 @@ def ground_surface(grid, cell: float = 0.05, radius: float = 0.4):
     """Smooth walkable-ground envelope by grey-opening (min-filter then max-filter).
 
     A morphological opening with a structuring element ``radius`` wide follows
-    slopes and gentle undulation but erases anything narrower that sticks *up* —
-    so subtracting it isolates obstacles even on a ramp, where a flat height
-    threshold would wrongly flag the whole up-slope. ``nan`` cells are filled
-    first."""
+    gentle undulation and erases anything narrower that sticks *up*, which makes it
+    a good ground model for **rough / curved** terrain. Honest limit: a flat
+    structuring element cannot sit under a steep ramp at the grid's up-slope
+    border, so on a strong planar slope the envelope lags by ``~radius*slope``
+    there and :func:`detect_obstacles` with ``ground='opening'`` can report a
+    phantom obstacle in the last ``radius/cell`` cells — use the default
+    ``ground='plane'`` for planar/ramp ground. ``nan`` cells are filled first."""
     filled = fill_gaps(np.asarray(grid, np.float64))
     w = max(3, int(round(2.0 * radius / max(cell, 1e-6))) | 1)   # odd cell window
     return ndimage.maximum_filter(
