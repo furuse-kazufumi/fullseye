@@ -889,20 +889,20 @@ def build_window(model=None):
         if isinstance(raw, np.ndarray):
             g = raw if raw.ndim == 2 else imgio.ensure_gray(raw)
             win._surf = show_3d_surface(g, None)
-    b_3d.clicked.connect(open_3d)
+    b_3d.clicked.connect(open_3d); act_3d.triggered.connect(open_3d)
 
     def load_frame_b():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open frame B", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
         if path:
             pmodel.set_frame_b(imgio.load(path))
-            readout.setText("frame B loaded: " + os.path.basename(path))
+            flash("frame B loaded: " + os.path.basename(path))
 
     def run_perception():
         try:
             rgb = pmodel.view(percep_mode.currentText(), model.image)
         except Exception as e:                                # missing/mismatched frame B, etc.
-            readout.setText("perception: " + str(e)); return
+            flash("perception: " + str(e)); return
         qi = _to_qimage(rgb, QtGui)
         if qi is not None:
             view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
