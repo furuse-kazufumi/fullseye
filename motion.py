@@ -20,6 +20,40 @@ __all__ = [
 ]
 
 
+def motion_energy_series(frames, **flow_kwargs) -> np.ndarray:
+    """Per-adjacent-pair motion energy across a frame sequence.
+
+    Returns a 1-D array of length ``len(frames) - 1``; its peaks flag events
+    (contact, impact, a sudden move) over a clip. *flow_kwargs* pass through to
+    :func:`flow.optical_flow_lk` (e.g. ``levels``, ``window``)."""
+    seq = [np.asarray(f, np.float64) for f in frames]
+    if len(seq) < 2:
+        return np.zeros(0)
+    import flow
+    return np.array([frame_motion_energy(*flow.optical_flow_lk(a, b, **flow_kwargs))
+                     for a, b in zip(seq[:-1], seq[1:])])
+
+
+def detect_events(energy, threshold=None, k: float = 2.0) -> np.ndarray:
+    """Indices of motion-energy spikes in a per-frame-pair energy signal.
+
+    Returns the local maxima that exceed *threshold* (default ``mean + k*std`` of
+    the signal) — the frame-pair indices at which an event occurred."""
+    e = np.asarray(energy, np.float64)
+    if e.size == 0:
+        return np.zeros(0, dtype=int)
+    thr = float(e.mean() + float(k) * e.std()) if threshold is None else float(threshold)
+    events = []
+    for i in range(e.size):
+        if e[i] <= thr:
+            continue
+        left = e[i - 1] if i > 0 else -np.inf
+        right = e[i + 1] if i < e.size - 1 else -np.inf
+        if e[i] >= left and e[i] >= right:
+            events.append(i)
+    return np.array(events, dtype=int)
+
+
 def frame_motion_energy(u, v) -> float:
     """RMS speed over the field — one scalar per frame pair. Tracking this across
     a clip gives a motion-energy signal whose peaks cue events (impact, contact,
