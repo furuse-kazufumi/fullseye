@@ -54,7 +54,7 @@ __all__ = [
     "colorize_disparity", "colorize_labels", "colorize_height", "colorize_flow",
     "shaded_relief", "overlay_mask", "save", "load", "save_ply", "COLORMAPS",
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
-    "registration", "kabsch", "icp", "apply_transform",
+    "registration", "kabsch", "icp", "apply_transform", "pca_align", "register",
     "pose", "pose_descriptor", "skeleton_nodes", "principal_axis",
     "flow", "optical_flow_lk", "optical_flow_hs", "warp_by_flow",
     "flow_magnitude", "flow_angle",
