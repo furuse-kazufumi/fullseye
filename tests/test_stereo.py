@@ -65,3 +65,38 @@ def test_reproject_to_points_shape_and_finiteness():
     assert pts.shape == (10 * 12 - 1, 3)
     assert np.all(np.isfinite(pts))
     assert np.allclose(pts[:, 2], 5.0)                 # all at the constant plane depth
+
+
+def _shift_subpixel(img, d0):
+    """Fractional-disparity right image: right[y, x] = left[y, x + d0]."""
+    from scipy import ndimage
+    return ndimage.shift(img, (0.0, -d0), order=1, mode="nearest")
+
+
+def test_subpixel_recovers_fractional_disparity():
+    d0 = 5.4
+    left = _textured(seed=7)
+    right = _shift_subpixel(left, d0)
+    sub = stereo.disparity_subpixel(left, right, max_disp=16, block=9, method="ssd")
+    core = sub[20:-20, 30:-10]
+    assert abs(np.median(core) - d0) < 0.3, f"subpixel median {np.median(core)} != {d0}"
+    # and it beats the integer matcher's rounding error on this fractional shift
+    integer = stereo.disparity_map(left, right, max_disp=16, block=9, method="ssd")
+    err_sub = abs(np.median(core) - d0)
+    err_int = abs(np.median(integer[20:-20, 30:-10]) - d0)
+    assert err_sub <= err_int + 1e-9
+
+
+def test_lr_consistency_accepts_clean_and_flags_corruption():
+    d0 = 6
+    left = _textured(seed=8)
+    right = _shift_left_by(left, d0)
+    dL = stereo.disparity_map(left, right, max_disp=16, block=9, reference="left")
+    dR = stereo.disparity_map(left, right, max_disp=16, block=9, reference="right")
+    ok = stereo.lr_consistency(dL, dR, max_diff=1.0)
+    assert ok[20:-20, 30:-10].mean() > 0.9            # clean interior is consistent
+    # corrupt a block of the right map -> those left pixels become inconsistent
+    dR_bad = dR.copy()
+    dR_bad[40:60, 40:60] = 0.0
+    ok_bad = stereo.lr_consistency(dL, dR_bad, max_diff=1.0)
+    assert ok_bad[45:55, 50:60].mean() < 0.5
