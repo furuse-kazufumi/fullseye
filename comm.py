@@ -506,32 +506,58 @@ class _SerialChannel(Channel):
             pass
 
 
-# ---- registry population -------------------------------------------------- #
+# ---- native transports (real uniform-Channel adapters, work out of the box) -- #
 register("tcp", lambda **o: TcpChannel(**o), native=True, desc="raw TCP client socket")
 register("udp", lambda **o: UdpChannel(**o), native=True, desc="UDP socket")
 register("http", lambda **o: HttpChannel(**o), native=True, desc="HTTP/REST client")
 register("modbus-tcp", lambda **o: ModbusTcpChannel(**o), native=True,
          desc="Modbus TCP client (PLC / I-O; built-in, no deps)")
+# serial has a real uniform-Channel adapter, gated on pyserial
+register("serial",
+         _optional_factory("serial", "serial", "pyserial",
+                           lambda mod, **o: _SerialChannel(mod, **o)),
+         native=False, pip="pyserial", kind="optional", probe="serial",
+         desc="RS-232/485 serial port (send/receive)")
 
-# optional (graceful): each records the import name so capabilities() can probe it
-_REGISTRY_OPTIONAL = [
-    ("serial", "serial", "pyserial",
-     _optional_factory("serial", "serial", "pyserial",
-                       lambda mod, **o: _SerialChannel(mod, **o)),
-     "RS-232/485 serial port"),
-    ("modbus-rtu", "pymodbus", "pymodbus",
-     _optional_factory("modbus-rtu", "pymodbus", "pymodbus",
-                       lambda mod, **o: mod.client.ModbusSerialClient(**o)),
-     "Modbus RTU (serial) via pymodbus"),
-    ("mqtt", "paho.mqtt.client", "paho-mqtt",
-     _optional_factory("mqtt", "paho.mqtt.client", "paho-mqtt",
-                       lambda mod, **o: mod.Client(**o)),
-     "MQTT publish/subscribe (IIoT broker)"),
-    ("opcua", "asyncua.sync", "asyncua",
-     _optional_factory("opcua", "asyncua.sync", "asyncua",
-                       lambda mod, url="opc.tcp://127.0.0.1:4840", **o: mod.Client(url, **o)),
-     "OPC-UA client (industrial servers)"),
+
+# ---- cataloged protocols (comprehensive menu; a first-class Channel adapter is
+# on the roadmap — capabilities() reports them so you know the exact lib + kind).
+def _cataloged_factory(name, pip, module):
+    def factory(**opts):
+        avail = _importable(module) if module else False
+        if not avail and pip:
+            raise CommError("protocol %r needs '%s' (pip install %s)" % (name, module, pip))
+        raise CommError(
+            "protocol %r is cataloged: install '%s' and use the %r client directly, "
+            "or see docs/CONNECTIVITY.md — a first-class Fullseye Channel adapter is "
+            "on the roadmap." % (name, pip, module))
+    return factory
+
+
+# (name, module-to-probe, pip, kind, one-line desc)
+_CATALOG = [
+    # --- IIoT / messaging ---
+    ("mqtt", "paho.mqtt.client", "paho-mqtt", "optional", "MQTT pub/sub (IIoT broker)"),
+    ("opcua", "asyncua", "asyncua", "optional", "OPC-UA client (industrial servers)"),
+    ("sparkplug", "pysparkplug", "pysparkplug", "optional", "Sparkplug B over MQTT"),
+    ("websocket", "websocket", "websocket-client", "optional", "WebSocket client"),
+    ("zmq", "zmq", "pyzmq", "optional", "ZeroMQ messaging"),
+    # --- PLC / fieldbus (register/tag read-write) ---
+    ("modbus-rtu", "pymodbus", "pymodbus", "optional", "Modbus RTU (serial) via pymodbus"),
+    ("ethernet-ip", "pycomm3", "pycomm3", "optional", "EtherNet/IP + CIP (Allen-Bradley Logix)"),
+    ("s7", "snap7", "python-snap7", "optional", "Siemens S7 (S7comm) — DB/Merker/I/O"),
+    ("slmp", "pymcprotocol", "pymcprotocol", "optional", "Mitsubishi MC protocol / SLMP (MELSEC)"),
+    ("fins", "fins", "fins-driver", "optional", "Omron FINS (CIO/DM areas)"),
+    ("bacnet", "BAC0", "BAC0", "optional", "BACnet/IP (building automation)"),
+    ("can", "can", "python-can", "optional", "raw CAN bus"),
+    # --- scaffold (special hardware / real-time / native SDK) ---
+    ("ethercat", "pysoem", "pysoem", "scaffold", "EtherCAT master (RT NIC + slaves; the motion bus)"),
+    ("profinet", "pnio_dcp", "pnio-dcp", "scaffold", "PROFINET DCP commissioning (RT via gateway)"),
+    ("profibus", "pyprofibus", "pyprofibus", "scaffold", "PROFIBUS DP (RS-485 PHY, GSD)"),
+    ("dnp3", "pydnp3", "pydnp3", "scaffold", "DNP3 / IEEE 1815 (SCADA/utility)"),
+    ("iec61850", "iec61850", "pyiec61850-ng", "scaffold", "IEC 61850 MMS/GOOSE (substation)"),
+    ("cclink", None, None, "scaffold", "CC-Link IE (no pure-python master; reach via SLMP)"),
 ]
-for _name, _probe, _pip, _factory, _desc in _REGISTRY_OPTIONAL:
-    register(_name, _factory, native=False, pip=_pip, desc=_desc)
-    _REGISTRY[_name]["_probe"] = _probe
+for _name, _module, _pip, _kind, _desc in _CATALOG:
+    register(_name, _cataloged_factory(_name, _pip, _module),
+             native=False, pip=_pip, kind=_kind, probe=_module, desc=_desc)
