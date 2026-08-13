@@ -193,3 +193,24 @@ def flow_magnitude(u, v) -> np.ndarray:
 def flow_angle(u, v) -> np.ndarray:
     """Per-pixel motion direction ``atan2(v, u)`` in radians, range (-pi, pi]."""
     return np.arctan2(np.asarray(v, np.float64), np.asarray(u, np.float64))
+
+
+def track_points(prev, nxt, points, **flow_kwargs):
+    """Track sparse points from *prev* to *nxt* (a Lucas-Kanade point tracker).
+
+    *points* is (N, 2) as ``(x, y)`` pixel coordinates. Returns ``(tracked, ok)``:
+    the (N, 2) positions in *nxt* and a boolean mask that is False where a point
+    left the frame. Positions come from bilinearly sampling the dense
+    :func:`optical_flow_lk` field, so *flow_kwargs* (``window``/``levels``/``iters``)
+    tune the underlying estimate. Use it to follow a marker on a limb (evis/hillco)
+    or an object across a video (onocollo)."""
+    u, v = optical_flow_lk(prev, nxt, **flow_kwargs)
+    pts = np.asarray(points, np.float64).reshape(-1, 2)
+    xs, ys = pts[:, 0], pts[:, 1]
+    du = ndimage.map_coordinates(u, [ys, xs], order=1, mode="nearest")
+    dv = ndimage.map_coordinates(v, [ys, xs], order=1, mode="nearest")
+    tracked = pts + np.stack([du, dv], axis=1)
+    H, W = np.asarray(prev).shape[:2]
+    ok = ((tracked[:, 0] >= 0) & (tracked[:, 0] <= W - 1)
+          & (tracked[:, 1] >= 0) & (tracked[:, 1] <= H - 1))
+    return tracked, ok
