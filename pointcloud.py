@@ -14,7 +14,8 @@ from __future__ import annotations
 
 import numpy as np
 
-__all__ = ["estimate_normals", "voxel_downsample"]
+__all__ = ["estimate_normals", "voxel_downsample",
+           "remove_statistical_outliers", "remove_radius_outliers"]
 
 
 def estimate_normals(points, k: int = 16, viewpoint=None) -> np.ndarray:
