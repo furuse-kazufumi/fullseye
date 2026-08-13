@@ -123,7 +123,7 @@ def analyze(frames, flow_kwargs=None, event_k=2.0, track_grid=6, save_dir=None):
         "largest_segment_area": segs[0]["area"] if segs else 0,
         "tracked_points": len(pts0),
         "tracked_survived": n_alive,
-        "mean_track_path_px": round(mean_path, 3),
+        "mean_track_disp_px": round(mean_disp, 3),       # net displacement, not arc length
         "track_window": (lo, hi),
     }
 
