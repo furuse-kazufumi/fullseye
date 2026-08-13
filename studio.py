@@ -331,16 +331,21 @@ def build_window(model=None):
     for nm in recipes.names():
         samples.addItem(nm)
     lv.addWidget(samples)
-    lv.addWidget(QtWidgets.QLabel("Operators (double-click to add)"))
+    lv.addWidget(QtWidgets.QLabel("Operators (double-click to insert)"))
+    all_ops = api.list_ops()
+    cat = QtWidgets.QComboBox()
+    cat.addItem("all categories")
+    cat.addItems(sorted({r["category"] for r in all_ops}))
     search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators...")
     op_list = QtWidgets.QListWidget()
-    lv.addWidget(search); lv.addWidget(op_list)
-    all_ops = api.list_ops()
+    lv.addWidget(cat); lv.addWidget(search); lv.addWidget(op_list)
 
     def refill_ops():
-        kw = search.text().lower()
+        kw = search.text().lower(); c = cat.currentText()
         op_list.clear()
         for r in all_ops:
+            if c != "all categories" and r["category"] != c:
+                continue
             hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
             if kw and kw not in hay:
                 continue
@@ -348,7 +353,7 @@ def build_window(model=None):
             it.setData(QtCore.Qt.UserRole, r["name"])
             op_list.addItem(it)
     refill_ops()
-    search.textChanged.connect(refill_ops)
+    search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
 
     # -- centre: pipeline + knobs --
     mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid)
