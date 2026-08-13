@@ -36,7 +36,7 @@ with warnings.catch_warnings():
         detect, segment_objects, object_descriptor, nearest_prototype, draw_objects,
         registration, kabsch, icp, apply_transform,
         pose, pose_descriptor, skeleton_nodes, principal_axis,
-        recipes, recipe,
+        recipes, recipe, measure, line_profile, distance, angle,
     )
 
 __all__ = [
