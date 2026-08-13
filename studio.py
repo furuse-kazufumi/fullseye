@@ -461,9 +461,17 @@ def build_window(model=None):
             show_result()
 
     def add_op(item):
-        model.add_stage(item.data(QtCore.Qt.UserRole))
-        refresh_stage_list(select=len(model.stages) - 1)
+        i = selected_index()
+        model.add_stage(item.data(QtCore.Qt.UserRole))       # appended at the end
+        newpos = len(model.stages) - 1
+        if 0 <= i < newpos:                                  # insert just after the selected stage
+            model.move_stage(newpos, i + 1); newpos = i + 1
+        refresh_stage_list(select=newpos)
         show_result()
+
+    def step_to(i):
+        if 0 <= i < len(model.stages):
+            stage_list.setCurrentRow(i)                      # triggers show_result for that step
 
     def load_sample(idx):
         if idx <= 0:
