@@ -195,14 +195,18 @@ def frame_pairs(frames):
 
 
 def _to_uint8_frame(f) -> np.ndarray:
-    """A gray/RGB float ``[0,1]`` (or already-uint8) frame → uint8 for encoding."""
+    """A gray/RGB frame → uint8 for encoding.
+
+    uint8 passes through; any other integer dtype (uint16, int) is scaled by its
+    dtype range (so a real 16-bit frame is not silently crushed to 0/1); a float
+    frame is treated as already in ``[0, 1]`` and clipped.
+    """
     a = np.asarray(f)
     if a.dtype == np.uint8:
-        out = a
-    else:
-        out = np.clip(np.asarray(a, np.float64), 0.0, 1.0)
-        out = np.round(out * 255.0).astype(np.uint8)
-    return out
+        return a
+    a01 = _to01(a) if np.issubdtype(a.dtype, np.integer) else np.clip(
+        np.asarray(a, np.float64), 0.0, 1.0)
+    return np.round(a01 * 255.0).astype(np.uint8)
 
 
 def write_video(path: str, frames, fps: float = 30.0) -> None:
