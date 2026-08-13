@@ -274,6 +274,14 @@ def build_window(model=None):
     def use_demo():
         model.set_image(demo_image()); show_result()
 
+    def save_result():
+        if state["result"] is None:
+            return
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save result", "result.png",
+                                                        "PNG (*.png);;All files (*)")
+        if path:
+            imgio.save(path, state["result"])
+
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export")
         v = QtWidgets.QVBoxLayout(dlg)
