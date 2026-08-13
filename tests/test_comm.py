@@ -104,7 +104,26 @@ def test_optional_without_lib_gives_clear_error():
         assert "pyserial" in str(ei.value)
 
 
+def test_catalog_kinds_and_scaffold():
+    caps = {c["name"]: c for c in comm.capabilities()}
+    # a broad, honestly-labelled menu: native + optional + scaffold
+    assert caps["modbus-tcp"]["kind"] == "native"
+    assert caps["ethernet-ip"]["kind"] == "optional" and caps["ethernet-ip"]["pip"] == "pycomm3"
+    assert caps["ethercat"]["kind"] == "scaffold"
+    kinds = {c["kind"] for c in comm.capabilities()}
+    assert kinds == {"native", "optional", "scaffold"}
+    assert len(comm.protocols()) >= 20                    # comprehensive
+
+
+def test_cataloged_protocol_gives_install_hint():
+    with pytest.raises(comm.CommError) as ei:
+        comm.open_channel("ethernet-ip")                  # not installed here
+    assert "pycomm3" in str(ei.value)
+
+
 def test_facade_exposes_comm():
     import fullseye
     assert hasattr(fullseye, "open_channel") and hasattr(fullseye, "ModbusTcpChannel")
     assert "modbus-tcp" in fullseye.protocols()
+    cap = fullseye.capabilities()                          # aggregate comm+acquire+device
+    assert set(cap) == {"comm", "acquire", "device"}
