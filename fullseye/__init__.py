@@ -42,6 +42,8 @@ with warnings.catch_warnings():
         remove_statistical_outliers, remove_radius_outliers, fpfh,
         mesh, read_mesh, read_points, write_mesh, sample_surface,
         mesh_to_points, voxelize, bounds, recenter, normalize_scale,
+        volio, read_volume, write_volume, list_dicom_series, VolumeMeta,
+        raster, read_raster, to01, read_depth, read_pfm, write_pfm, save16,
         pose, pose_descriptor, skeleton_nodes, principal_axis,
         flow, optical_flow_lk, optical_flow_hs, warp_by_flow,
         flow_magnitude, flow_angle, track_points,
