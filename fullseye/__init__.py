@@ -48,6 +48,7 @@ with warnings.catch_warnings():
         video, read_frames, iter_frames, frame_pairs, write_video, probe,
         recipes, recipe, measure, line_profile, distance, angle,
     )
+    from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
