@@ -10,6 +10,10 @@ import pytest
 
 import video
 
+# read/write need a video backend; the numpy-only install legitimately has none,
+# so skip the round-trip tests there instead of failing them.
+pytest.importorskip("imageio")
+
 
 def _frames(t=6, h=32, w=40):
     """A clip whose per-frame mean brightness increases monotonically, with a
