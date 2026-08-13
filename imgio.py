@@ -118,8 +118,34 @@ def _jet(t):
     return np.stack([r, g, b], axis=-1)
 
 
+def _hsv(t):
+    h = np.clip(t, 0, 1) * 6.0
+    i = np.floor(h).astype(int) % 6
+    f = h - np.floor(h)
+    v = np.ones_like(t); p = np.zeros_like(t); q = 1 - f
+    cond = [i == 0, i == 1, i == 2, i == 3, i == 4, i == 5]
+    r = np.select(cond, [v, q, p, p, f, v])
+    g = np.select(cond, [f, v, v, q, p, p])
+    b = np.select(cond, [p, p, f, v, v, q])
+    return np.stack([r, g, b], axis=-1)
+
+
+_LUTS["bone"] = [[0.0, 0.0, 0.0], [0.33, 0.33, 0.46], [0.66, 0.78, 0.78], [1.0, 1.0, 1.0]]
+
+_ANALYTIC = {
+    "gray": lambda t: np.repeat(t[..., None], 3, axis=-1),
+    "jet": _jet,
+    "hot": lambda t: np.stack([np.clip(3 * t, 0, 1), np.clip(3 * t - 1, 0, 1),
+                               np.clip(3 * t - 2, 0, 1)], axis=-1),
+    "cool": lambda t: np.stack([t, 1 - t, np.ones_like(t)], axis=-1),
+    "spring": lambda t: np.stack([np.ones_like(t), t, 1 - t], axis=-1),
+    "hsv": _hsv,
+}
+
+
 def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)):
-    """Map a scalar field to an (H, W, 3) RGB image in [0, 1].
+    """Map a scalar field to an (H, W, 3) RGB image in [0, 1] using a false-colour
+    palette (see ``COLORMAPS``).
 
     Values are normalised over [vmin, vmax] (auto from finite data if None).
     Non-finite cells (e.g. ``inf`` in a depth map) are painted *invalid*.
@@ -127,15 +153,13 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
     a = np.asarray(x, np.float64)
     fin = np.isfinite(a)
     t = normalize(np.where(fin, a, 0.0), vmin, vmax)
-    if name == "gray":
-        rgb = np.repeat(t[..., None], 3, axis=-1)
-    elif name == "jet":
-        rgb = _jet(t)
-    elif name == "viridis":
-        rgb = _lut(t, _VIRIDIS)
+    if name in _ANALYTIC:
+        rgb = _ANALYTIC[name](t)
+    elif name in _LUTS:
+        rgb = _lut(t, _LUTS[name])
     else:
         raise ValueError("unknown colormap %r (have %s)" % (name, COLORMAPS))
-    rgb = rgb.copy()
+    rgb = np.clip(rgb, 0, 1).copy()
     rgb[~fin] = np.asarray(invalid, np.float64)
     return rgb
 
