@@ -201,6 +201,21 @@ def colorize_height(heightmap, name="terrain", relief=True, azimuth=315.0, altit
     return rgb
 
 
+def colorize_flow(u, v, max_mag=None):
+    """Middlebury-style colour wheel for an optical-flow field: hue = motion
+    direction, brightness = speed. Zero motion -> black. Returns (H, W, 3) in
+    [0, 1]. *max_mag* fixes the speed that saturates to full brightness (auto =
+    the field's max), so several frames can share one scale."""
+    u = np.asarray(u, np.float64)
+    v = np.asarray(v, np.float64)
+    ang = (np.arctan2(v, u) / (2.0 * np.pi)) % 1.0     # direction -> hue in [0,1)
+    mag = np.hypot(u, v)
+    m = float(max_mag) if max_mag else (float(mag.max()) if mag.size and mag.max() > 0 else 1.0)
+    val = np.clip(mag / m, 0.0, 1.0)                   # speed -> brightness
+    rgb = _hsv(ang) * val[..., None]
+    return np.clip(rgb, 0.0, 1.0)
+
+
 def colorize_labels(labels, seed: int = 0):
     """Distinct random colour per positive label; label 0 (background) -> black."""
     lab = np.asarray(labels).astype(int)
