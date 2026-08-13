@@ -370,6 +370,24 @@ def _op_row(name):
             "in_sort": op.in_sort, "out_sort": op.out_sort}
 
 
+def shortcut_table(items):
+    """``[(label, shortcut_str), ...]`` -> the non-empty, de-duplicated rows for a
+    keyboard-shortcut reference (label trimmed of trailing ellipsis). Qt-free ->
+    unit-tested."""
+    seen = set()
+    rows = []
+    for label, sc in items:
+        sc = (sc or "").strip()
+        if not sc:
+            continue
+        key = (label, sc)
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append((str(label).replace("…", "").strip(), sc))
+    return rows
+
+
 def palette_filter(labels, query):
     """Rank *labels* for the command palette by a substring *query*.
 
