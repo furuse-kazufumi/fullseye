@@ -963,7 +963,8 @@ def build_window(model=None):
         for p in probs:
             mark = "✕" if p["severity"] == "error" else "!"
             it = QtWidgets.QListWidgetItem("%s stage %d (%s): %s"
-                                           % (mark, p["index"] + 1, p.get("op", "?"),
+                                           % (mark, p["index"] + 1,
+                                              truncate(p.get("op", "?"), 40),
                                               truncate(p["message"])))
             it.setData(QtCore.Qt.UserRole, p["index"])
             it.setForeground(QtGui.QColor(AMBER if p["severity"] == "error" else "#c9a227"))
