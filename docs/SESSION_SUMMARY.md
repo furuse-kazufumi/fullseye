@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-13 19:20:39
+- **最終更新**: 2026-08-13 20:22:31
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-e26e3bc v13: Studio save/open pipeline (JSON)
-c9a5001 auto: test_studio.py 編集前 (2026-08-13 13:00)
-4c749ef auto: studio.py 編集前 (2026-08-13 12:59)
-19a28ef auto: studio.py 編集前 (2026-08-13 12:59)
-babd86d auto: studio.py 編集前 (2026-08-13 12:59)
-e4cbbca v13: measurement primitives — line profile, distance, angle (measure.py)
-e06a501 auto: pyproject.toml 編集前 (2026-08-13 12:56)
-80dcc7d auto: __init__.py 編集前 (2026-08-13 12:56)
-28ddbb5 auto: __init__.py 編集前 (2026-08-13 12:56)
-8102eb2 auto: api.py 編集前 (2026-08-13 12:56)
+4eb0859 v14 docs: point-to-plane ICP + motion/grasp examples in V14.md, examples README
+5ba205a auto: README.md 編集前 (2026-08-13 20:10)
+1820868 auto: V14.md 編集前 (2026-08-13 20:09)
+7ceb643 v14: point-to-plane ICP + motion/grasp examples
+2a51f7a auto: test_examples.py 編集前 (2026-08-13 20:07)
+f2a4537 auto: test_registration.py 編集前 (2026-08-13 20:05)
+8567f84 auto: __init__.py 編集前 (2026-08-13 20:05)
+396c6d3 auto: __init__.py 編集前 (2026-08-13 20:05)
+b70efc4 auto: api.py 編集前 (2026-08-13 20:05)
+14ba333 auto: api.py 編集前 (2026-08-13 20:05)
 ```
 
 ## 現在の git status
@@ -31,7 +31,21 @@ M docs/SESSION_SUMMARY.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-(直近 2h の変更なし)
+20:18 docs/SESSION_SUMMARY.md
+20:18 .pytest_cache/v/cache/nodeids
+20:10 examples/README.md
+20:09 docs/V14.md
+20:07 tests/test_examples.py
+20:06 examples/grasp_pose.py
+20:06 examples/motion_analysis.py
+20:05 tests/test_registration.py
+20:05 fullseye/__init__.py
+20:05 api.py
+20:05 registration.py
+19:59 tests/test_pointcloud.py
+19:59 pointcloud.py
+19:56 tests/test_motion.py
+19:55 motion.py
 ```
 
 ---
