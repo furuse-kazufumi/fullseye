@@ -62,6 +62,10 @@ from pointcloud import (  # noqa: E402,F401
     estimate_normals, voxel_downsample,
     remove_statistical_outliers, remove_radius_outliers, fpfh,
 )
+from mesh import (  # noqa: E402,F401
+    read_mesh, read_points, write_mesh, sample_surface, mesh_to_points, voxelize,
+    bounds, recenter, normalize_scale,
+)
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
