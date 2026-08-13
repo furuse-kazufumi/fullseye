@@ -239,8 +239,11 @@ class FullseyeEngine:
 
 
 def _py_ident(name: str) -> str:
-    """A safe Python function name from a pipeline name."""
-    s = "".join(c if (c.isalnum() or c == "_") else "_" for c in str(name))
-    if not s or s[0].isdigit():
+    """A safe Python function name from a pipeline name (ASCII, non-keyword)."""
+    import keyword
+    s = "".join(c if (c.isascii() and (c.isalnum() or c == "_")) else "_" for c in str(name))
+    if not s or not s.isidentifier() or keyword.iskeyword(s):
         s = "pipeline_" + s
+    if not s.isidentifier() or keyword.iskeyword(s):    # e.g. a leading digit remained
+        s = "pipeline"
     return s
