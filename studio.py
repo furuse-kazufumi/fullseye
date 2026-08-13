@@ -402,9 +402,9 @@ QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; 
 QSlider::handle:horizontal {{ width:16px; background:{AMBER}; border-radius:8px; margin:-6px 0; }}
 QSlider::handle:horizontal:hover {{ background:#ffb841; }}
 QSlider::sub-page:horizontal {{ background:{TEAL}; border-radius:3px; }}
-/* Qt QSS orders sub-control BEFORE pseudo-state: `::handle:horizontal:disabled`.
-   The reverse (`QSlider:disabled::handle:horizontal`) silently never matches, which
-   left a disabled slider painting an enabled-looking amber handle. */
+/* Qt QSS orders the sub-control BEFORE the pseudo-state. Writing the state first
+   (widget-state, then sub-control) silently never matches, which is why a disabled
+   slider used to keep painting the enabled-looking amber handle. */
 QSlider::handle:horizontal:disabled {{ background:#3d424e; }}
 QSlider::sub-page:horizontal:disabled {{ background:#2a2f3b; }}
 QSlider::groove:horizontal:disabled {{ background:#232734; }}
