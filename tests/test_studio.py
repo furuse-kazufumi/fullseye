@@ -328,3 +328,397 @@ def test_problems_panel_clean_says_no_problems():
     win, _ = studio.build_window(m)
     texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
     assert texts == ["no problems"]
+
+
+# --------------------------------------------------------------------------- #
+# Regression tests for the 2026-08-14 UI review (docs/STUDIO_REVIEW_2026_08_14.md)
+# --------------------------------------------------------------------------- #
+def _app():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    return QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+
+
+def _slider_handle_amber_px(enabled):
+    """Render a themed QSlider and count AMBER (enabled-handle) pixels."""
+    from PySide6 import QtWidgets, QtGui, QtCore
+    app = _app()
+    w = QtWidgets.QWidget()
+    w.setStyleSheet(studio.THEME)
+    lay = QtWidgets.QVBoxLayout(w)
+    s = QtWidgets.QSlider(QtCore.Qt.Horizontal)
+    s.setRange(0, 100); s.setValue(50); s.setEnabled(enabled)
+    lay.addWidget(s)
+    w.resize(200, 60); w.show(); app.processEvents()
+    img = w.grab().toImage().convertToFormat(QtGui.QImage.Format_RGB32)
+    arr = np.frombuffer(img.constBits(), np.uint8).reshape(
+        img.height(), img.bytesPerLine() // 4, 4)
+    amber = ((np.abs(arr[:, :, 2].astype(int) - 0xF5) < 12)
+             & (np.abs(arr[:, :, 1].astype(int) - 0xA5) < 12)
+             & (np.abs(arr[:, :, 0].astype(int) - 0x24) < 12))
+    w.hide()
+    return int(amber.sum())
+
+
+def test_disabled_slider_handle_actually_reads_disabled():
+    """V2: `QSlider:disabled::handle:horizontal` never matched (Qt QSS wants the
+    sub-control BEFORE the pseudo-state), so a disabled knob still painted the
+    amber 'live' handle."""
+    _app()
+    assert "QSlider::handle:horizontal:disabled" in studio.THEME
+    assert "QSlider:disabled::handle:horizontal" not in studio.THEME   # the broken form
+    assert _slider_handle_amber_px(enabled=True) > 0                   # enabled: amber
+    assert _slider_handle_amber_px(enabled=False) == 0                 # disabled: not amber
+
+
+def test_theme_has_visible_focus_indicators():
+    """C12/V1: the blanket `* { outline:none; }` erased every focus ring."""
+    assert "* { outline:none; }" not in studio.THEME
+    for sel in ("QPushButton:focus", "QToolButton:focus", "QListWidget:focus",
+                "QComboBox:focus", "QLineEdit:focus", "QSlider::handle:horizontal:focus"):
+        assert sel in studio.THEME, sel
+
+
+def test_validate_pipeline_dict_rejects_malformed_payloads():
+    """C11/H: a bad pipeline file must raise a readable ValueError, not IndexError."""
+    good = {"fullseye_pipeline": 1, "stages": [["gaussian", 0.4, 0.5]]}
+    assert studio.validate_pipeline_dict(good) == [["gaussian", 0.4, 0.5]]
+    for bad in ([], {"stages": [["gaussian"]]}, {"stages": "abc"}, {"stages": [None]},
+                {"nope": 1}, {"stages": [["gaussian", "x", 0.5]]},
+                {"stages": [["no_such_op", 0.5, 0.5]]}, {"stages": [[7, 0.5, 0.5]]}):
+        with pytest.raises(ValueError):
+            studio.validate_pipeline_dict(bad)
+
+
+def test_load_dict_keeps_current_pipeline_on_bad_payload():
+    """H: validation happens into a temporary list -> the live pipeline survives."""
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    before = [list(s) for s in m.stages]
+    with pytest.raises(ValueError):
+        m.load_dict({"stages": [["gaussian"]]})
+    assert m.stages == before
+
+
+def test_truncate_shortens_long_error_text():
+    """C13/P9: raw backend errors must not be pasted whole into a tooltip."""
+    assert studio.truncate("short") == "short"
+    long = "x" * 500
+    assert len(studio.truncate(long)) == 160
+    assert studio.truncate(long).endswith("…")
+    assert studio.truncate("a\n  b\tc") == "a b c"          # whitespace collapsed
+
+
+def test_failing_stage_tooltip_is_truncated():
+    _app()
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.stages = [["gaussian", .5, .5], ["nope_" + "x" * 400, .5, .5]]
+    win, _ = studio.build_window(m)
+    assert len(win._stage_list.item(1).toolTip()) < 200
+    assert all(len(win._problems_list.item(i).text()) < 220
+               for i in range(win._problems_list.count()))
+
+
+def test_knob_tick_costs_one_pipeline_evaluation():
+    """C2: a knob tick used to run step_states() (every prefix, O(n^2)) plus two
+    renders. It must now cost exactly one evaluation, with the summaries debounced."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    for _ in range(6):
+        m.add_stage("gaussian")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(3)
+    calls = {"n": 0}
+    orig = model.result_upto
+    model.result_upto = lambda i: (calls.__setitem__("n", calls["n"] + 1), orig(i))[1]
+    sa, sb = win._knob_sliders
+    sa.setValue(sa.value() + 7)
+    assert calls["n"] == 1, "expected 1 pipeline evaluation per knob tick, got %d" % calls["n"]
+    assert model.stages[3][1] == pytest.approx(sa.value() / 100.0)
+    assert win._state["dirty"] is True
+    # the debounce timer carries the (expensive) per-stage summary refresh
+    assert win._knob_timer.isActive()
+    win._knob_timer.stop()
+
+
+def test_mutations_render_exactly_once():
+    """C3: refresh_stage_list() used to re-select the row with signals unblocked,
+    so every edit rendered twice (currentRowChanged + the caller's show_result)."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("invert"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(1)
+    for label, act in (("move_up", "move_up"), ("move_down", "move_down")):
+        win._state["renders"] = 0
+        win._actions[act].trigger()
+        assert win._state["renders"] == 1, "%s rendered %d times" % (label, win._state["renders"])
+    win._state["renders"] = 0
+    win._actions["remove"].trigger()
+    assert win._state["renders"] == 1
+
+
+def test_actions_track_selection_and_result():
+    """C7: Remove/Up/Down need a selected stage; Save-result/3D need a raster."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    for key in ("remove", "move_up", "move_down"):
+        assert not win._actions[key].isEnabled()            # empty pipeline, no selection
+    assert not win._buttons["remove"].isEnabled()
+    assert not win._actions["export"].isEnabled()           # nothing to export
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("invert")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(0)
+    assert win._actions["remove"].isEnabled()
+    assert not win._actions["move_up"].isEnabled()          # already first
+    assert win._actions["move_down"].isEnabled()
+    win._stage_list.setCurrentRow(1)
+    assert win._actions["move_up"].isEnabled()
+    assert not win._actions["move_down"].isEnabled()        # already last
+    assert win._actions["save_result"].isEnabled()          # a raster result is displayed
+    assert win._buttons["surface_3d"].isEnabled()
+
+
+def test_scalar_result_disables_save_and_3d():
+    """C7: a scalar feature is not saveable/3D-able -> those must go dim."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("otsu"); m.add_stage("count_obj")
+    win, _ = studio.build_window(m)
+    win._stage_list.setCurrentRow(1)
+    assert win._state["result"] is None
+    assert not win._actions["save_result"].isEnabled()
+    assert not win._actions["surface_3d"].isEnabled()
+
+
+def test_editing_shortcuts_are_scoped_to_the_pipeline_list():
+    """C8/P10: Ctrl+Up / Ctrl+Down were WindowShortcut and fired while the user
+    was typing in the operator search box (a QLineEdit does not claim them)."""
+    from PySide6 import QtCore
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    scoped = win._stage_list.actions()
+    for key in ("remove", "move_up", "move_down", "step", "reset"):
+        act = win._actions[key]
+        assert act.shortcutContext() == QtCore.Qt.WidgetWithChildrenShortcut, key
+        assert act in scoped, key
+    # global (menu/toolbar) actions keep window scope
+    for key in ("open_image", "save_result", "export", "clear", "palette", "run_all"):
+        assert win._actions[key].shortcutContext() == QtCore.Qt.WindowShortcut, key
+    # the menu entries still exist and still work when triggered directly
+    edit_menu = win.menuBar().actions()[1].menu()
+    assert win._actions["remove"] in edit_menu.actions()
+    win._stage_list.setCurrentRow(1)
+    win._actions["remove"].trigger()
+    assert model.ops_string() == "gaussian"
+
+
+def test_command_palette_runs_the_command_once():
+    """C9/P11: a double-click emits BOTH itemDoubleClicked and itemActivated; both
+    were wired to run_sel(), so the chosen command ran twice."""
+    from PySide6 import QtWidgets
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    orig_exec = QtWidgets.QDialog.exec
+    QtWidgets.QDialog.exec = lambda self: None          # open the palette non-modally
+    try:
+        win._actions["palette"].trigger()
+    finally:
+        QtWidgets.QDialog.exec = orig_exec
+    pal = win._palette
+    pal["edit"].setText("op: gaussian")
+    lst = pal["list"]
+    assert lst.count() >= 1
+    lst.setCurrentRow(0)
+    before = len(model.stages)
+    lst.itemDoubleClicked.emit(lst.item(0))             # what one real double-click
+    lst.itemActivated.emit(lst.item(0))                 # delivers to the widget
+    pal["run"]()                                        # and an extra explicit run
+    assert len(model.stages) == before + 1
+    assert pal["state"]["ran"] is True
+
+
+def test_dirty_flag_and_confirm_before_destructive_replace():
+    """C6/P4: clearing / loading over an edited pipeline used to discard it silently."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    assert win._state["dirty"] is False                 # freshly built == clean
+    assert win._confirm_discard("x") is True            # nothing to lose -> no prompt
+    win._stage_list.setCurrentRow(0)
+    win._actions["move_down"].trigger()                 # a mutation
+    assert win._state["dirty"] is True
+
+    asked = []
+    orig = studio.CONFIRM_HOOK
+    studio.CONFIRM_HOOK = lambda parent, title, text: (asked.append(title), False)[1]
+    try:
+        win._actions["clear"].trigger()                 # user says "cancel"
+        assert asked, "no confirmation was requested"
+        assert len(model.stages) == 2, "pipeline was cleared despite cancelling"
+        studio.CONFIRM_HOOK = lambda parent, title, text: True
+        win._actions["clear"].trigger()                 # user says "discard"
+        assert model.stages == []
+    finally:
+        studio.CONFIRM_HOOK = orig
+
+
+def test_close_event_is_vetoed_while_dirty():
+    """C6/P4: closing the window with unsaved edits must ask first."""
+    from PySide6 import QtGui, QtWidgets
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(0)
+    win._actions["move_down"].trigger()
+    orig = studio.CONFIRM_HOOK
+    studio.CONFIRM_HOOK = lambda parent, title, text: False      # "cancel"
+    try:
+        ev = QtGui.QCloseEvent(); ev.accept()
+        QtWidgets.QApplication.sendEvent(win, ev)
+        assert not ev.isAccepted(), "close was not vetoed while dirty"
+        studio.CONFIRM_HOOK = lambda parent, title, text: True   # "discard"
+        ev = QtGui.QCloseEvent(); ev.accept()
+        QtWidgets.QApplication.sendEvent(win, ev)
+        assert ev.isAccepted()
+    finally:
+        studio.CONFIRM_HOOK = orig
+
+
+def test_file_io_errors_are_reported_not_raised(tmp_path, monkeypatch):
+    """C5/P5: a missing image / malformed JSON / unwritable path must not crash."""
+    from PySide6 import QtWidgets
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian")
+    win, model = studio.build_window(m)
+    errs = win._state["errors"]
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda *a: None)   # no modal in tests
+
+    missing = str(tmp_path / "no_such.png")
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getOpenFileName",
+                        staticmethod(lambda *a, **k: (missing, "")))
+    win._actions["open_image"].trigger()                          # must not raise
+    assert errs and "Could not open image" in errs[-1][0]
+
+    bad = tmp_path / "bad.json"
+    bad.write_text("{ this is not json", encoding="utf-8")
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getOpenFileName",
+                        staticmethod(lambda *a, **k: (str(bad), "")))
+    win._actions["open_pipeline"].trigger()
+    assert "Could not open pipeline" in errs[-1][0]
+    assert model.ops_string() == "gaussian"                       # pipeline intact
+
+    schema = tmp_path / "schema.json"
+    schema.write_text('{"stages": [["gaussian"]]}', encoding="utf-8")
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getOpenFileName",
+                        staticmethod(lambda *a, **k: (str(schema), "")))
+    win._actions["open_pipeline"].trigger()
+    assert "Could not open pipeline" in errs[-1][0]
+    assert model.ops_string() == "gaussian"
+
+    undirectory = str(tmp_path / "nope_dir" / "out.png")
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
+                        staticmethod(lambda *a, **k: (undirectory, "")))
+    win._stage_list.setCurrentRow(0)
+    win._actions["save_result"].trigger()
+    assert "Could not save result" in errs[-1][0]
+
+    unpipe = str(tmp_path / "nope_dir" / "p.json")
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
+                        staticmethod(lambda *a, **k: (unpipe, "")))
+    win._actions["save_pipeline"].trigger()
+    assert "Could not save pipeline" in errs[-1][0]
+
+
+def test_save_pipeline_clears_the_dirty_flag(tmp_path, monkeypatch):
+    from PySide6 import QtWidgets
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(0)
+    win._actions["move_down"].trigger()
+    assert win._state["dirty"] is True
+    out = tmp_path / "pipe.json"
+    monkeypatch.setattr(QtWidgets.QFileDialog, "getSaveFileName",
+                        staticmethod(lambda *a, **k: (str(out), "")))
+    win._actions["save_pipeline"].trigger()
+    assert win._state["dirty"] is False
+    assert studio.validate_pipeline_dict(json.loads(out.read_text(encoding="utf-8"))) == model.stages
+
+
+def test_perception_error_reaches_problems_and_inspector():
+    """C15: a perception failure was only a 6-second status-bar flash."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._perception["run"]()                        # no frame B loaded -> ValueError
+    texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
+    assert any("perception" in t for t in texts), texts
+    assert "perception failed" in win._inspector.toPlainText()
+    # a successful run clears it again
+    from scipy import ndimage
+    a = model.image
+    win._perception["model"].set_frame_b(ndimage.shift(a, (0.0, 2.0), order=1, mode="nearest"))
+    win._perception["mode"].setCurrentText("optical flow")
+    win._perception["run"]()
+    texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
+    assert not any("perception" in t for t in texts), texts
+
+
+def test_show_result_survives_a_display_failure(monkeypatch):
+    """C4: only the pipeline call was guarded — inspect/display/histogram ran
+    unguarded on backend output and could escape the Qt callback."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian")
+    win, model = studio.build_window(m)
+    monkeypatch.setattr(studio, "ERROR_HOOK", lambda *a: None)
+    monkeypatch.setattr(studio, "apply_display",
+                        lambda v, mode: (_ for _ in ()).throw(ValueError("boom in display")))
+    win._stage_list.setCurrentRow(-1)
+    win._stage_list.setCurrentRow(0)                 # must not raise out of the slot
+    assert any("Display error" in t for t, _ in win._state["errors"])
+    assert "display error" in win._inspector.toPlainText()
+
+
+def test_primary_controls_have_accessible_names():
+    """C13/P8: screen readers had nothing but the (often empty) visual label."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    sa, sb = win._knob_sliders
+    assert sa.accessibleName() and sb.accessibleName()
+    assert win._stage_list.accessibleName() and win._problems_list.accessibleName()
+    for b in win._buttons.values():
+        assert b.accessibleName(), b.text()
+
+
+def test_drag_reorder_keeps_model_in_step_with_the_view():
+    """C10/P3: the reviewers called the UserRole remap race-prone. Exercise the
+    exact call QListWidget.dropEvent makes (model().moveRow) for every single-row
+    move and assert the model order always equals the visible order."""
+    from PySide6 import QtCore
+    _app()
+    ops = ["gaussian", "invert", "sobel_amp", "otsu", "median"]
+    bad = []
+    for src in range(len(ops)):
+        for dst in range(len(ops) + 1):
+            m = studio.PipelineModel(studio.demo_image(32))
+            for op in ops:
+                m.add_stage(op)
+            win, model = studio.build_window(m)
+            sl = win._stage_list
+            sl.setCurrentRow(src)
+            if not sl.model().moveRow(QtCore.QModelIndex(), src, QtCore.QModelIndex(), dst):
+                continue
+            visual = ",".join(sl.item(r).text().split(". ")[1].split(" (")[0]
+                              for r in range(sl.count()))
+            if visual != model.ops_string():
+                bad.append((src, dst, visual, model.ops_string()))
+    assert not bad, bad
