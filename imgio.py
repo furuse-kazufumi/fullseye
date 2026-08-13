@@ -174,6 +174,33 @@ def colorize_disparity(disp, name="jet"):
     return apply_cmap(disp, name=name)
 
 
+def shaded_relief(heightmap, azimuth: float = 315.0, altitude: float = 45.0, z: float = 1.0):
+    """Hillshade of a height map -> gray [0,1] shaded surface (a pseudo-3-D view of
+    a height/depth image). *azimuth*/*altitude* are the light direction in degrees."""
+    h = np.asarray(heightmap, np.float64)
+    if not np.isfinite(h).all():
+        fill = float(np.nanmin(h[np.isfinite(h)])) if np.isfinite(h).any() else 0.0
+        h = np.where(np.isfinite(h), h, fill)
+    gy, gx = np.gradient(h * float(z))
+    slope = np.pi / 2 - np.arctan(np.hypot(gx, gy))
+    aspect = np.arctan2(-gx, gy)
+    az = np.deg2rad(360.0 - azimuth + 90.0)
+    alt = np.deg2rad(altitude)
+    shade = (np.sin(alt) * np.sin(slope)
+             + np.cos(alt) * np.cos(slope) * np.cos(az - aspect))
+    return np.clip(shade, 0, 1)
+
+
+def colorize_height(heightmap, name="terrain", relief=True, azimuth=315.0, altitude=45.0):
+    """False-colour a height map and (optionally) modulate it by hillshade so the
+    surface reads as 2.5-D. Returns an (H, W, 3) RGB image."""
+    rgb = apply_cmap(heightmap, name=name)
+    if relief:
+        sh = shaded_relief(heightmap, azimuth, altitude)[..., None]
+        rgb = np.clip(rgb * (0.4 + 0.6 * sh), 0, 1)
+    return rgb
+
+
 def colorize_labels(labels, seed: int = 0):
     """Distinct random colour per positive label; label 0 (background) -> black."""
     lab = np.asarray(labels).astype(int)
