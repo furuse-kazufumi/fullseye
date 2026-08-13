@@ -139,9 +139,14 @@ def lr_consistency(disp_left, disp_right, max_diff: float = 1.0):
         raise ValueError("disparity maps must be equal-shape 2-D arrays")
     W = dL.shape[1]
     xx = np.arange(W)[None, :]
-    xr = np.clip(np.round(xx - dL).astype(int), 0, W - 1)
+    xr_raw = np.round(xx - dL).astype(int)
+    # a matched column outside [0, W) has no correspondence to check -> not
+    # trustworthy (clamping it to column 0 would fabricate an agreement on the
+    # left overlap-free margin, which is exactly what this check must reject).
+    valid = (xr_raw >= 0) & (xr_raw < W)
+    xr = np.clip(xr_raw, 0, W - 1)
     dR_at = np.take_along_axis(dR, xr, axis=1)
-    return np.abs(dL - dR_at) <= float(max_diff)
+    return valid & (np.abs(dL - dR_at) <= float(max_diff))
 
 
 def depth_from_disparity(disp, focal: float = 1.0, baseline: float = 1.0,
