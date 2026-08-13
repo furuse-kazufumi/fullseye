@@ -142,7 +142,11 @@ def motion_segments(u, v, threshold: float, subtract_dominant: bool = True,
     if smooth and smooth > 0:
         # morphological closing fills holes/gaps without the area-dilation and
         # interior-attenuation a Gaussian blur of the speed field would introduce.
-        mask = ndimage.binary_closing(mask, iterations=int(round(smooth)))
+        # Pad by edge-replication first so a moving region touching the frame
+        # border is not eroded away by the closing's zero-valued exterior.
+        it = int(round(smooth))
+        padded = ndimage.binary_closing(np.pad(mask, it, mode="edge"), iterations=it)
+        mask = padded[it:-it, it:-it]
     lbl, n = ndimage.label(mask)
     segments = []
     for i in range(1, n + 1):
