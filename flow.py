@@ -103,9 +103,20 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
         Ixx = Ixx0 + lam
         Iyy = Iyy0 + lam
         det = Ixx * Iyy - Ixy * Ixy
+        prev_res = np.inf
+        u_prev, v_prev = u.copy(), v.copy()
         for _ in range(max(1, int(iters))):
             warped = _remap(n, xx + u, yy + v)   # align nxt onto prev with current flow
             It = warped - p
+            # monotonic-residual guard: the fixed-template iteration is not
+            # globally contractive, so stop (and undo the last step) once the
+            # aggregate residual stops falling instead of letting it diverge.
+            res = float(np.mean(It * It))
+            if res >= prev_res:
+                u, v = u_prev, v_prev
+                break
+            prev_res = res
+            u_prev, v_prev = u.copy(), v.copy()
             Ixt = _box(Ix * It, k)
             Iyt = _box(Iy * It, k)
             # solve [[Ixx,Ixy],[Ixy,Iyy]] [du,dv]^T = [-Ixt,-Iyt]
@@ -116,14 +127,12 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
             inb = (xx + u >= 0) & (xx + u <= W - 1) & (yy + v >= 0) & (yy + v <= H - 1)
             du = np.where(inb, du, 0.0)
             dv = np.where(inb, dv, 0.0)
-            # clamp the step so the fixed-template Gauss-Newton stays contractive
-            # (its box-averaged Hessian can have gain > 1 at high-gradient pixels).
+            # clamp the per-step magnitude so a single high-gradient pixel cannot
+            # overshoot (its box-averaged Hessian can have gain > 1).
             np.clip(du, -1.0, 1.0, out=du)
             np.clip(dv, -1.0, 1.0, out=dv)
             u = u + du
             v = v + dv
-            if max(float(np.abs(du).max()), float(np.abs(dv).max())) < 1e-3:
-                break
     return u, v
 
 
