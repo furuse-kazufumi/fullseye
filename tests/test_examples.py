@@ -25,3 +25,17 @@ def test_segment_and_classify_runs():
     assert len(labelled) == 3                       # two disks + one square
     names = [name for name, *_ in labelled]
     assert names.count("disk") == 2 and names.count("square") == 1
+
+
+def test_motion_analysis_runs():
+    r = _load("motion_analysis").run()
+    assert r["motion_energy"] > 0.0
+    assert abs(r["global_u"] - 1.5) < 0.5           # recovers the ~1.5 px global drift
+    assert r["n_moving_segments"] >= 1              # the independently moving object
+
+
+def test_grasp_pose_runs():
+    r = _load("grasp_pose").run()
+    assert r["n_downsampled"] <= r["n_observed"] < r["n_model"]
+    assert r["rmse"] < 0.02                         # converges to ~sensor-noise level
+    assert r["rot_error_deg"] < 2.0                # recovers the object's orientation
