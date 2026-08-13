@@ -46,6 +46,14 @@ def test_result_upto_negative_is_raw_image():
     assert np.allclose(m.result_upto(-1), m.image)            # before any stage
 
 
+def test_histogram_image():
+    h = studio.histogram_image(studio.demo_image(64))
+    assert h.shape == (64, 256)
+    assert 0.0 <= h.min() and h.max() <= 1.0
+    assert studio.histogram_image(np.full((32, 32), 0.5)).sum() > 0   # constant -> a bar
+    assert studio.histogram_image(np.array([[np.inf, np.nan]])).sum() == 0  # no finite data
+
+
 def test_qt_window_builds_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
