@@ -940,6 +940,47 @@ def build_window(model=None):
         v.addWidget(ok, 0, QtCore.Qt.AlignRight)
         dlg.resize(480, 220); dlg.exec()
 
+    def add_op_by_name(n):
+        model.add_stage(n)
+        refresh_stage_list(select=len(model.stages) - 1)
+        on_stage_selected()
+
+    def show_palette():
+        # actions first, then every operator — run by name, keyboard-only.
+        items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
+                 for a in win._actions.values() if a is not act_palette]
+        items += [("op: " + r["name"], (lambda n=r["name"]: add_op_by_name(n))) for r in all_ops]
+        labels = [lbl for lbl, _ in items]
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
+        v = QtWidgets.QVBoxLayout(dlg)
+        ed = QtWidgets.QLineEdit(); ed.setPlaceholderText("type an action or operator…  (Enter to run)")
+        lst = QtWidgets.QListWidget()
+        v.addWidget(ed); v.addWidget(lst)
+
+        def refill(_=None):
+            lst.clear()
+            for i in palette_filter(labels, ed.text())[:200]:
+                it = QtWidgets.QListWidgetItem(labels[i])
+                it.setData(QtCore.Qt.UserRole, i)
+                lst.addItem(it)
+            if lst.count():
+                lst.setCurrentRow(0)
+
+        def run_sel():
+            it = lst.currentItem() or (lst.item(0) if lst.count() else None)
+            if it is not None:
+                idx = it.data(QtCore.Qt.UserRole)
+                dlg.accept()
+                items[idx][1]()
+
+        ed.textChanged.connect(refill)
+        ed.returnPressed.connect(run_sel)
+        lst.itemActivated.connect(lambda _=None: run_sel())
+        lst.itemDoubleClicked.connect(lambda _=None: run_sel())
+        refill(); dlg.resize(560, 440); ed.setFocus()
+        win._palette = {"filter": palette_filter, "labels": labels, "run": run_sel, "edit": ed, "list": lst}
+        dlg.exec()
+
     # operator browser filters
     search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
     # pipeline + knobs
