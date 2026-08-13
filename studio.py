@@ -578,6 +578,7 @@ def build_window(model=None):
     m.addSeparator(); m.addAction(act_3d)
     m = mb.addMenu("&Run")
     m.addAction(act_reset); m.addAction(act_step); m.addAction(act_runall)
+    m.addSeparator(); m.addAction(act_palette)
     m = mb.addMenu("&Help")
     m.addAction(act_about)
 
