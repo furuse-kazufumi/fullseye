@@ -50,7 +50,8 @@ from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F
 from terrain import elevation_map, traversability, foothold_score, fill_gaps  # noqa: E402,F401
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
-    colorize_labels, overlay_mask, save, load, save_ply,
+    colorize_labels, colorize_height, shaded_relief, overlay_mask, save, load, save_ply,
+    COLORMAPS,
 )
 from detect import segment_objects, object_descriptor, nearest_prototype, draw_objects  # noqa: E402,F401
 
