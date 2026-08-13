@@ -1041,6 +1041,72 @@ def build_window(model=None):
         v.addWidget(ok, 0, QtCore.Qt.AlignRight)
         dlg.resize(460, 540); dlg.exec()
 
+    def show_op_reference():
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Operator reference")
+        v = QtWidgets.QVBoxLayout(dlg)
+        srch = QtWidgets.QLineEdit(); srch.setPlaceholderText("search operators…")
+        srch.setClearButtonEnabled(True)
+        lst = QtWidgets.QListWidget()
+        detail = QtWidgets.QPlainTextEdit(); detail.setReadOnly(True); detail.setFixedHeight(96)
+        detail.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        rows = api.list_ops()
+
+        def refill(_=None):
+            kw = srch.text().lower(); lst.clear()
+            for r in rows:
+                hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
+                if kw and kw not in hay:
+                    continue
+                it = QtWidgets.QListWidgetItem(op_detail(r)); it.setData(QtCore.Qt.UserRole, r)
+                lst.addItem(it)
+
+        def show_detail(_=None):
+            it = lst.currentItem()
+            if it is not None:
+                detail.setPlainText(op_tooltip(it.data(QtCore.Qt.UserRole)))
+        srch.textChanged.connect(refill); lst.currentRowChanged.connect(lambda _=None: show_detail())
+        refill()
+        cnt = QtWidgets.QLabel("%d operators" % len(rows)); cnt.setProperty("muted", True)
+        v.addWidget(srch); v.addWidget(lst, 1); v.addWidget(cnt); v.addWidget(detail)
+        ok = QtWidgets.QPushButton("Close"); ok.setProperty("accent", True); ok.clicked.connect(dlg.accept)
+        v.addWidget(ok, 0, QtCore.Qt.AlignRight)
+        dlg.resize(560, 580); dlg.exec()
+
+    def show_samples():
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Samples & code")
+        h = QtWidgets.QHBoxLayout(dlg)
+        lst = QtWidgets.QListWidget()
+        for nm in recipes.names():
+            lst.addItem(nm)
+        code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
+        code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+
+        def preview(_=None):
+            it = lst.currentItem()
+            if it is not None:
+                sc = sample_code(it.text())
+                code.setPlainText(('--ops "%s"\n\n%s' % sc) if sc else "")
+        lst.currentRowChanged.connect(lambda _=None: preview())
+
+        def load_and_close():
+            it = lst.currentItem()
+            if it is not None:
+                model.load_recipe(it.text())
+                refresh_stage_list(select=len(model.stages) - 1); show_result()
+                dlg.accept()
+        left = QtWidgets.QVBoxLayout()
+        lbl = QtWidgets.QLabel("Sample pipelines"); lbl.setProperty("muted", True)
+        b_load = QtWidgets.QPushButton("Load into Studio"); b_load.setProperty("accent", True)
+        b_load.clicked.connect(load_and_close)
+        left.addWidget(lbl); left.addWidget(lst, 1); left.addWidget(b_load)
+        right = QtWidgets.QVBoxLayout()
+        clbl = QtWidgets.QLabel("Code (ops string + Python)"); clbl.setProperty("muted", True)
+        right.addWidget(clbl); right.addWidget(code, 1)
+        h.addLayout(left, 1); h.addLayout(right, 2)
+        if lst.count():
+            lst.setCurrentRow(0)
+        dlg.resize(740, 500); dlg.exec()
+
     def add_op_by_name(n):
         model.add_stage(n)
         refresh_stage_list(select=len(model.stages) - 1)
