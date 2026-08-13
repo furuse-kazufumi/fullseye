@@ -412,7 +412,10 @@ def build_window(model=None):
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(70); hist_view.setStyleSheet("background:#181818;")
     inspector = QtWidgets.QPlainTextEdit(); inspector.setReadOnly(True); inspector.setFixedHeight(140)
     inspector.setStyleSheet("font-family:Consolas,monospace;")
+    readout = QtWidgets.QLabel("hover over the image for pixel coordinates + value")
+    readout.setStyleSheet("color:#9aa0ad; font-family:Consolas,monospace;")
     rv.addLayout(top); rv.addWidget(view, 1); rv.addLayout(zoom); rv.addLayout(disp_row)
+    rv.addWidget(readout)
     rv.addWidget(QtWidgets.QLabel("Histogram")); rv.addWidget(hist_view)
     rv.addWidget(QtWidgets.QLabel("Inspector (variable / image / region)")); rv.addWidget(inspector)
 
