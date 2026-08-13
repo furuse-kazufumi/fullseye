@@ -56,6 +56,14 @@ def test_unknown_backend_raises():
         DigitalIO("nope")
 
 
+def test_driver_capabilities_catalog():
+    caps = {c["name"]: c for c in device.capabilities()}
+    assert caps["io-memory"]["kind"] == "native" and caps["io-memory"]["available"]
+    assert caps["dynamixel"]["kind"] == "optional" and caps["dynamixel"]["pip"] == "dynamixel-sdk"
+    assert caps["ur-rtde"]["family"] == "robot"          # Physical-AI robots catalogued
+    assert caps["franka"]["kind"] == "scaffold"
+
+
 def test_facade_exposes_device():
     import fullseye
     assert hasattr(fullseye, "DigitalIO") and hasattr(fullseye, "signal_result")
