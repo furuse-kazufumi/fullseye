@@ -6,6 +6,16 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **v13 (2026-08-13) = 実用化 + 知覚スタック + Studio.** 詳細 = `docs/V13.md`
+> (`api.py`/`fullseye` パッケージ・`pip install -e`・stereo/terrain/detect/registration/pose/imgio・
+> HDevelop 風 `studio.py`・leg2 codegen/difftest/accuracy_bench)。
+>
+> **v14 (2026-08-13) = 知覚スタック完成(モーション + 堅牢化).** 詳細 = `docs/V14.md`。
+> 時間軸 = `flow.py`(pyramidal Lucas-Kanade + Horn-Schunck + warp + `imgio.colorize_flow`)。
+> 深度精緻化 = stereo `disparity_subpixel` + `lr_consistency`。歩行 = terrain `ground_plane` /
+> `ground_surface` / `detect_obstacles`。把持 = registration `pca_align` + Trimmed ICP + `register`。
+> 全 `fullseye` 公開・ground-truth テスト付き・**全スイート 2497 passed**。commits `a8fe121`/`e2feaf8`。
+>
 > **v12 (2026-08-12) = production hardening.** 全 521 op をテスト皆無 → 本番品質へ。
 > 監査 = `docs/AUDIT_2026_08_12.md`(execution-verified 81 findings の disposition)+
 > `docs/audit_findings_2026_08_12.json`(生 repro)。テスト = `tests/`(**2255 passing**、
