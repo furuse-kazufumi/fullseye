@@ -86,16 +86,22 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
         p = pyrP[lvl]
         n = pyrN[lvl]
         H, W = p.shape
-        if u.shape != p.shape:                # upsample the flow into this finer level
-            sy = H / u.shape[0]
-            sx = W / u.shape[1]
-            u = ndimage.zoom(u, (sy, sx), order=1) * sx
-            v = ndimage.zoom(v, (sy, sx), order=1) * sy
+        if u.shape != p.shape:                # prolong the flow into this finer level
+            # _pyr_down decimates by 2, so a coarse pixel of displacement is 2 fine
+            # pixels: rescale the field to the finer grid and double its magnitude.
+            u = ndimage.zoom(u, (H / u.shape[0], W / u.shape[1]), order=1) * 2.0
+            v = ndimage.zoom(v, (H / v.shape[0], W / v.shape[1]), order=1) * 2.0
         yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
         Iy, Ix = np.gradient(p)               # template (prev) gradients — constant per level
-        Ixx = _box(Ix * Ix, k) + reg
-        Iyy = _box(Iy * Iy, k) + reg
+        Ixx0 = _box(Ix * Ix, k)
+        Iyy0 = _box(Iy * Iy, k)
         Ixy = _box(Ix * Iy, k)
+        # Tikhonov term as a fraction of the level's mean gradient energy, so the
+        # solve is invariant to a common intensity scale of the two frames (a
+        # constant `reg` would over-damp low-contrast pairs — the [0,1] range).
+        lam = reg * float(Ixx0.mean() + Iyy0.mean()) + 1e-20
+        Ixx = Ixx0 + lam
+        Iyy = Iyy0 + lam
         det = Ixx * Iyy - Ixy * Ixy
         for _ in range(max(1, int(iters))):
             warped = _remap(n, xx + u, yy + v)   # align nxt onto prev with current flow
@@ -105,8 +111,19 @@ def optical_flow_lk(prev, nxt, window: int = 15, levels: int = 3,
             # solve [[Ixx,Ixy],[Ixy,Iyy]] [du,dv]^T = [-Ixt,-Iyt]
             du = (-Iyy * Ixt + Ixy * Iyt) / det
             dv = (Ixy * Ixt - Ixx * Iyt) / det
+            # freeze pixels whose sample already left the frame: there the warp is
+            # edge-clamped so dIt/dflow = 0 and the solve would push them out forever.
+            inb = (xx + u >= 0) & (xx + u <= W - 1) & (yy + v >= 0) & (yy + v <= H - 1)
+            du = np.where(inb, du, 0.0)
+            dv = np.where(inb, dv, 0.0)
+            # clamp the step so the fixed-template Gauss-Newton stays contractive
+            # (its box-averaged Hessian can have gain > 1 at high-gradient pixels).
+            np.clip(du, -1.0, 1.0, out=du)
+            np.clip(dv, -1.0, 1.0, out=dv)
             u = u + du
             v = v + dv
+            if max(float(np.abs(du).max()), float(np.abs(dv).max())) < 1e-3:
+                break
     return u, v
 
 
