@@ -50,6 +50,8 @@ import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
 import video  # noqa: E402  (read/write video & GIF clips as numpy frames)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
+import volio  # noqa: E402  (volumetric/medical import: DICOM/NIfTI/NRRD/MetaImage/TIFF -> volume)
+import raster  # noqa: E402  (bit-depth-preserving raster + metric depth: 16-bit/float/PFM)
 from stereo import (  # noqa: E402,F401
     disparity_map, disparity_subpixel, lr_consistency,
     depth_from_disparity, reproject_to_points,
