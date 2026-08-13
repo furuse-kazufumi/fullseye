@@ -935,7 +935,16 @@ def build_window(model=None):
     view.hover_cb = on_hover
 
     win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
-    refresh_stage_list(); show_result()
+    win._flash = flash
+    win._actions = {
+        "open_image": act_open_img, "demo": act_demo, "save_result": act_save_res,
+        "open_pipeline": act_open_pipe, "save_pipeline": act_save_pipe, "export": act_export,
+        "quit": act_quit, "remove": act_remove, "move_up": act_up, "move_down": act_down,
+        "clear": act_clear, "zoom_in": act_zin, "zoom_out": act_zout, "fit": act_fit,
+        "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
+        "run_all": act_runall, "about": act_about,
+    }
+    refresh_stage_list(); on_stage_selected(); show_result()
     return win, model
 
 
