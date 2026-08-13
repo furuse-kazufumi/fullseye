@@ -27,6 +27,8 @@ def kabsch(src, dst):
     """
     P = np.asarray(src, np.float64)
     Q = np.asarray(dst, np.float64)
+    if P.shape != Q.shape or P.ndim != 2 or P.shape[0] < 1:
+        raise ValueError("kabsch needs matching, non-empty (N, 3) point sets")
     cp, cq = P.mean(0), Q.mean(0)
     H = (P - cp).T @ (Q - cq)
     U, _, Vt = np.linalg.svd(H)
