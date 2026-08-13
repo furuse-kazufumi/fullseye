@@ -233,3 +233,24 @@ def test_scalar_result_shows_message_not_crash():
     win._stage_list.setCurrentRow(1)                     # select the feature stage
     # a non-raster (scalar) result shows a message, not an image, and does not crash
     assert win._state["result"] is None
+
+
+def test_palette_filter_ranking():
+    labels = ["op: gaussian", "▸ Open image", "op: median", "op: gauss_deriv"]
+    got = [labels[i] for i in studio.palette_filter(labels, "gauss")]
+    assert "op: gaussian" in got and "op: gauss_deriv" in got
+    assert "op: median" not in got                       # non-matching filtered out
+    assert studio.palette_filter(labels, "") == list(range(len(labels)))  # empty -> all
+    # prefix beats word-start beats bare substring
+    order = studio.palette_filter(["gaussian", "a gaussian", "xgaussian"], "gauss")
+    assert order[0] == 0
+
+
+def test_command_palette_action_wired():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert "palette" in win._actions
+    assert win._actions["palette"].shortcut().toString() == "Ctrl+P"
