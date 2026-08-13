@@ -43,17 +43,24 @@ def dominant_motion(u, v, robust: bool = True, trim: float = 0.25,
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
     A = np.stack([np.ones(H * W), xx.ravel(), yy.ravel()], axis=1)
     bu, bv = u.ravel(), v.ravel()
-    keep = np.ones(bu.size, bool)
-    cu = np.zeros(3)
-    cv = np.zeros(3)
-    n = 1 if not robust else max(1, int(iters))
-    for _ in range(n):
-        cu, *_ = np.linalg.lstsq(A[keep], bu[keep], rcond=None)
-        cv, *_ = np.linalg.lstsq(A[keep], bv[keep], rcond=None)
-        if robust:
-            resid = np.hypot(bu - A @ cu, bv - A @ cv)
+    # fit on finite samples only; a NaN/inf flow pixel (occlusion, unmatched) must
+    # not silently collapse the whole model. Too few finite samples -> NaN model
+    # (a visible failure) rather than a fake zero-motion answer.
+    finite = np.isfinite(bu) & np.isfinite(bv)
+    if int(finite.sum()) < 3:
+        return np.full((2, 3), np.nan)
+    Af, buf, bvf = A[finite], bu[finite], bv[finite]
+    cu, *_ = np.linalg.lstsq(Af, buf, rcond=None)   # initial (non-robust) fit
+    cv, *_ = np.linalg.lstsq(Af, bvf, rcond=None)
+    if robust:
+        for _ in range(max(1, int(iters))):         # each pass trims then re-fits
+            resid = np.hypot(buf - Af @ cu, bvf - Af @ cv)
             thresh = np.quantile(resid, 1.0 - float(trim))
             keep = resid <= thresh
+            if int(keep.sum()) < 3:
+                break
+            cu, *_ = np.linalg.lstsq(Af[keep], buf[keep], rcond=None)
+            cv, *_ = np.linalg.lstsq(Af[keep], bvf[keep], rcond=None)
     return np.stack([cu, cv], axis=0)
 
 
