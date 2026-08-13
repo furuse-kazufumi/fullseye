@@ -117,6 +117,8 @@ __all__ = [
     "mesh_to_points", "voxelize", "bounds", "recenter", "normalize_scale",
     "volio", "read_volume", "write_volume", "list_dicom_series", "VolumeMeta",
     "raster", "read_raster", "to01", "read_depth", "read_pfm", "write_pfm", "save16",
+    "render3d", "render_mesh", "look_at", "intrinsics_from_fov", "auto_view",
+    "mesh_to_sdf", "voxelize_solid", "marching_cubes",
     "pose", "pose_descriptor", "skeleton_nodes", "principal_axis",
     "flow", "optical_flow_lk", "optical_flow_hs", "warp_by_flow",
     "flow_magnitude", "flow_angle", "track_points",
