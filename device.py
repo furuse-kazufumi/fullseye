@@ -19,7 +19,40 @@ from __future__ import annotations
 
 import time
 
-__all__ = ["DigitalIO", "pulse", "signal_result", "wait_input"]
+__all__ = ["DigitalIO", "pulse", "signal_result", "wait_input", "capabilities"]
+
+# Device / actuator catalogue (native DigitalIO backends + optional Physical-AI
+# & motion-control SDKs). (name, module-to-probe, pip, kind, family, one-line desc)
+_DRIVERS = [
+    ("io-memory", None, None, "native", "io", "in-process digital I/O (tests / dry-run)"),
+    ("io-modbus", None, None, "native", "io", "digital I/O over Modbus coils (built-in)"),
+    ("gpio", "periphery", "python-periphery", "optional", "io",
+     "SBC GPIO — Raspberry Pi / Jetson (also RPi.GPIO / gpiod)"),
+    ("dynamixel", "dynamixel_sdk", "dynamixel-sdk", "optional", "servo", "Robotis Dynamixel servos"),
+    ("feetech", "scservo_sdk", "feetech-servo-sdk", "optional", "servo", "Feetech STS/SCS servos"),
+    ("canopen", "canopen", "canopen", "optional", "motion", "CANopen CiA-402 motion drives"),
+    ("ur-rtde", "rtde_control", "ur_rtde", "optional", "robot", "Universal Robots RTDE / URScript"),
+    ("robotiq", "pyRobotiqGripper", "pyRobotiqGripper", "optional", "gripper", "Robotiq 2F / Hand-E grippers"),
+    ("xarm", "xarm", "xArm-Python-SDK", "optional", "robot", "UFACTORY xArm / Lite6 / 850"),
+    ("ros", "rclpy", "rclpy", "optional", "middleware", "ROS 2 node bridge (rclpy)"),
+    ("franka", "panda_py", "panda-python", "scaffold", "robot", "Franka Panda / FR3 (libfranka + RT kernel)"),
+    ("kinova", "kortex_api", None, "scaffold", "robot", "Kinova Gen3 (off-PyPI kortex wheel)"),
+]
+
+
+def capabilities() -> list:
+    """Device drivers: ``{name, kind, family, available, pip, desc}`` — the
+    actuators / robots / I-O this install can drive, and what a ``pip install``
+    would unlock. Native backends (memory / Modbus coils) always work."""
+    import importlib.util
+    out = []
+    for name, module, pip, kind, family, desc in _DRIVERS:
+        avail = (kind == "native") or (module is not None and
+                                       importlib.util.find_spec(module) is not None
+                                       if module else False)
+        out.append({"name": name, "kind": kind, "family": family,
+                    "available": bool(avail), "pip": pip, "desc": desc})
+    return out
 
 
 class DigitalIO:
