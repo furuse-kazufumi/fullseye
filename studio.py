@@ -711,6 +711,7 @@ def build_window(model=None):
         return stage_list.currentRow()
 
     def refresh_stage_list(select=None):
+        state["reordering"] = True                    # suppress the drag-reorder handler
         stage_list.blockSignals(True)
         stage_list.clear()
         try:
@@ -719,10 +720,23 @@ def build_window(model=None):
             states = []
         for i, (name, a, b) in enumerate(model.stages):
             summ = step_summary(states[i]["state"]) if i < len(states) else ""
-            stage_list.addItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
+            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
+            it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
+            stage_list.addItem(it)
         stage_list.blockSignals(False)
+        state["reordering"] = False
         if select is not None and 0 <= select < len(model.stages):
             stage_list.setCurrentRow(select)
+
+    def on_rows_moved(*_):
+        """A drag-reorder inside the stage list -> permute model.stages to match."""
+        if state.get("reordering"):
+            return
+        order = [stage_list.item(r).data(QtCore.Qt.UserRole) for r in range(stage_list.count())]
+        if len(order) == len(model.stages) and set(order) == set(range(len(model.stages))):
+            model.stages = [model.stages[i] for i in order]
+            refresh_stage_list(select=stage_list.currentRow())
+            on_stage_selected()
 
     def show_result():
         idx = selected_index()
