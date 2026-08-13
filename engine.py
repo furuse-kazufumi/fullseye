@@ -177,7 +177,7 @@ class FullseyeEngine:
         an unknown operator (call :meth:`validate` first to check)."""
         stages = self._stage_tuples(upto)
         if not stages:
-            return np.asarray(image, np.float64) if coerce else image
+            return image                             # no stages -> the input, unchanged
         return api.run_pipeline(image, stages, coerce=coerce)
 
     def run_stepwise(self, image, coerce: bool = True) -> list:
