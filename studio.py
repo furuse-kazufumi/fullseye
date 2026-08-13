@@ -170,7 +170,12 @@ class PipelineModel:
         return {"fullseye_pipeline": 1, "stages": [[op, a, b] for op, a, b in self.stages]}
 
     def load_dict(self, d):
-        self.stages = [[s[0], float(s[1]), float(s[2])] for s in d.get("stages", [])]
+        """Replace the pipeline from a saved dict.
+
+        The payload is validated into a temporary list first (see
+        :func:`validate_pipeline_dict`), so a malformed file raises
+        :class:`ValueError` and leaves the current pipeline untouched."""
+        self.stages = validate_pipeline_dict(d)
 
 
 class PerceptionModel:
