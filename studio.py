@@ -899,9 +899,10 @@ def build_window(model=None):
     b_export.clicked.connect(export)
     b_zin.clicked.connect(lambda: view.zoom(1.25)); b_zout.clicked.connect(lambda: view.zoom(0.8))
     b_fit.clicked.connect(view.fit); b_11.clicked.connect(view.reset_zoom)
-    b_reset.clicked.connect(lambda: step_to(0))
+    b_reset.clicked.connect(reset_to_raw)
     b_step.clicked.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
     b_runall.clicked.connect(lambda: step_to(len(model.stages) - 1))
+    stage_list.model().rowsMoved.connect(on_rows_moved)     # drag-reorder -> permute model
     # menu / toolbar actions (share the same handlers as the buttons)
     act_open_img.triggered.connect(load_image); act_demo.triggered.connect(use_demo)
     act_save_res.triggered.connect(save_result); act_export.triggered.connect(export)
