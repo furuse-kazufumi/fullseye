@@ -397,7 +397,7 @@ def build_window(model=None):
     mv.addWidget(QtWidgets.QLabel("Pipeline (step state per stage)")); mv.addWidget(stage_list)
     mv.addLayout(btns); mv.addLayout(steprow)
     mv.addWidget(la); mv.addWidget(sa); mv.addWidget(lb); mv.addWidget(sb)
-    mv.addWidget(b_export)
+    mv.addWidget(b_export); mv.addLayout(iorow)
 
     # -- right: zoomable image view + zoom controls + histogram + inspector --
     right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right)
