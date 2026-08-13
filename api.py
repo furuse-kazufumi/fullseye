@@ -56,7 +56,10 @@ from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
 )
-from terrain import elevation_map, traversability, foothold_score, fill_gaps  # noqa: E402,F401
+from terrain import (  # noqa: E402,F401
+    elevation_map, traversability, foothold_score, fill_gaps,
+    ground_surface, detect_obstacles,
+)
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
     colorize_labels, colorize_height, colorize_flow, shaded_relief, overlay_mask,
