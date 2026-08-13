@@ -91,6 +91,14 @@ def test_step_states_and_summary():
     assert "mean" in studio.step_summary(ss[0]["state"])
 
 
+def test_pipeline_save_load_dict():
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.add_stage("gaussian", 0.4, 0.5); m.add_stage("otsu", 0.3, 0.5)
+    m2 = studio.PipelineModel(studio.demo_image(32))
+    m2.load_dict(m.to_dict())
+    assert m2.stages == m.stages and m2.ops_string() == m.ops_string()
+
+
 def test_downsample_grid():
     g = studio._downsample_grid(np.zeros((300, 400)), max_side=100)
     assert max(g.shape) <= 160
