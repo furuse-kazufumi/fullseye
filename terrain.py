@@ -121,13 +121,18 @@ def ground_plane(grid, trim: float = 0.3, iters: int = 3):
     yy, xx = np.mgrid[0:ny, 0:nx].astype(np.float64)
     A = np.stack([xx.ravel(), yy.ravel(), np.ones(xx.size)], axis=1)
     z = filled.ravel()
-    keep = np.ones(z.size, bool)
+    finite = np.isfinite(z)
+    if int(finite.sum()) < 3:           # a fully unobserved map -> NaN plane (visible),
+        return np.full((ny, nx), np.nan)  # not a fake z=0 ground that reads as "clear"
+    keep = finite.copy()
     coef = np.zeros(3)
     for _ in range(max(1, int(iters))):
         coef, *_ = np.linalg.lstsq(A[keep], z[keep], rcond=None)
         resid = z - A @ coef
-        thresh = np.quantile(resid, 1.0 - float(trim))
-        keep = resid <= thresh
+        thresh = np.quantile(resid[finite], 1.0 - float(trim))
+        keep = finite & (resid <= thresh)   # trim high residuals but never re-admit NaNs
+        if int(keep.sum()) < 3:
+            break
     return (A @ coef).reshape(ny, nx)
 
 
