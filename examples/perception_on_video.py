@@ -35,10 +35,11 @@ import fullseye as fs
 # synthetic fallback clip (a blob that translates, with two speed bursts)
 # --------------------------------------------------------------------------- #
 def synthetic_clip(t=16, h=96, w=128, seed=0):
-    """A textured scene that pans (camera motion) with two speed bursts, plus one
+    """A textured scene that pans (camera motion) with one speed burst, plus one
     object drifting independently — the representative case real footage looks
-    like: coherent global motion the flow explains (positive recon_gain), energy
-    peaks at the bursts (events), and an independent mover the residual exposes."""
+    like: coherent global motion the flow explains (positive recon_gain), an
+    energy peak at the burst (an event), and an independent mover the residual
+    exposes."""
     rng = np.random.default_rng(seed)
     base = np.clip(ndimage.gaussian_filter(rng.random((h, w)), 1.3), 0, 1)
     yy, xx = np.mgrid[0:h, 0:w]
