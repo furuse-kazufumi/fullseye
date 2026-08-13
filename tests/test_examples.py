@@ -41,3 +41,30 @@ def test_grasp_pose_runs():
     assert r["n_downsampled"] <= r["n_observed"] < r["n_model"]
     assert r["rmse"] < 0.02                         # converges to ~sensor-noise level
     assert r["rot_error_deg"] < 2.0                # recovers the object's orientation
+
+
+def test_perception_on_video_synthetic():
+    r = _load("perception_on_video").run()          # synthetic pan + burst + object
+    assert r["n_frames"] >= 8
+    assert r["recon_gain"] > 0.3                     # flow explains the global pan
+    assert r["n_events"] >= 1                        # the speed burst is an event
+    assert abs(r["global_translation_px"][0] - 8.0) < 2.5    # ~8 px burst pan
+    assert r["tracked_survived"] >= r["tracked_points"] * 0.7
+
+
+# Real FullSense render clips (onocollo / hillco), if present on this machine — a
+# genuine (non-synthetic) end-to-end check. Skipped where the assets are absent
+# so the suite stays portable.
+_REAL_CLIPS = [
+    r"C:\dev\projects\onocollo-complete\out\media\rocket_arc.mp4",
+    r"C:\dev\projects\onocollo-complete\out\chopstick\box_grasp.mp4",
+]
+_present = [p for p in _REAL_CLIPS if os.path.exists(p)]
+
+
+@pytest.mark.skipif(not _present, reason="local FullSense render clips not present")
+def test_perception_on_video_real_clip():
+    r = _load("perception_on_video").run(clip_path=_present[0], max_frames=40)
+    assert r["n_frames"] >= 2
+    assert r["recon_gain"] > 0.0                     # real coherent motion is explained
+    assert r["tracked_survived"] >= 1
