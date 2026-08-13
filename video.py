@@ -123,8 +123,10 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
     start      : skip this many leading frames before the first kept frame.
     max_frames : stop after yielding this many kept frames (``None`` = all).
 
-    Frames are float64 in ``[0, 1]``. Raises ``RuntimeError`` if no video backend
-    is available and ``FileNotFoundError`` / ``ValueError`` for a bad path.
+    Frames are float64 in ``[0, 1]``. Being a generator, errors surface when it is
+    iterated (not at call): ``FileNotFoundError`` for a missing path, and
+    ``RuntimeError`` if no video backend is available or the file cannot be
+    decoded. Accepts a ``str`` or ``os.PathLike``.
     """
     path = os.fspath(path)                      # accept str or pathlib.Path
     step = max(1, int(step))
