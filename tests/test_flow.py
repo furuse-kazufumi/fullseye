@@ -120,6 +120,20 @@ def test_lk_border_flow_stays_bounded():
     assert flow.flow_magnitude(u, v).max() < 10.0   # border spikes bounded (was ~14.5)
 
 
+def test_hs_alpha_zero_is_finite():
+    # alpha=0 on a flat region must not produce 0/0 = NaN (codex review)
+    z = np.zeros((8, 8))
+    u, v = flow.optical_flow_hs(z, z, alpha=0.0)
+    assert np.isfinite(u).all() and np.isfinite(v).all()
+
+
+def test_flow_rejects_degenerate_shape():
+    import pytest
+    for fn in (flow.optical_flow_lk, flow.optical_flow_hs):
+        with pytest.raises(ValueError):
+            fn(np.zeros((1, 3)), np.zeros((1, 3)))     # too thin for a gradient
+
+
 def test_flow_reachable_through_facade():
     import fullseye as fs
     prev = _textured(seed=5)
