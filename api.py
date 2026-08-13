@@ -57,6 +57,10 @@ from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
 )
+from motion import (  # noqa: E402,F401
+    frame_motion_energy, dominant_motion, flow_from_model, residual_motion,
+    motion_segments,
+)
 from terrain import (  # noqa: E402,F401
     elevation_map, traversability, foothold_score, fill_gaps,
     ground_surface, ground_plane, detect_obstacles,
