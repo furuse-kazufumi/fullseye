@@ -572,6 +572,21 @@ def build_window(model=None):
             win._surf = show_3d_surface(g, None)
     b_3d.clicked.connect(open_3d)
 
+    def save_pipe():
+        import json
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(win, "Save pipeline", "pipeline.json",
+                                                        "JSON (*.json)")
+        if path:
+            open(path, "w", encoding="utf-8").write(json.dumps(model.to_dict(), indent=2))
+
+    def open_pipe():
+        import json
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
+        if path:
+            model.load_dict(json.loads(open(path, encoding="utf-8").read()))
+            refresh_stage_list(select=len(model.stages) - 1); show_result()
+    b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
+
     def on_hover(x, y, v):
         if np.ndim(v) == 0:
             readout.setText(f"x={x}  y={y}   value={float(v):.4f}")
