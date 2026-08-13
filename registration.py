@@ -167,6 +167,11 @@ def pca_align(src, dst):
     P = np.asarray(src, np.float64)
     Q = np.asarray(dst, np.float64)
     cp, cq = P.mean(0), Q.mean(0)
+    if P.shape[0] < 3 or Q.shape[0] < 3:
+        # fewer than 3 points -> principal axes are undefined; fall back to a
+        # centroid-only alignment (identity rotation), consistent with icp
+        # accepting the same input instead of raising an opaque shape error.
+        return np.eye(3), cq - cp
     _, _, VtP = np.linalg.svd(P - cp, full_matrices=False)
     _, _, VtQ = np.linalg.svd(Q - cq, full_matrices=False)
     tree = cKDTree(Q)
