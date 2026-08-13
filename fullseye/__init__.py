@@ -58,6 +58,20 @@ with warnings.catch_warnings():
     )
     from device import DigitalIO, pulse, signal_result, wait_input  # noqa: E402,F401  (device control)
 
+
+def capabilities() -> dict:
+    """What this install can connect to and drive, across all three connectivity
+    families: ``{"comm": [...], "acquire": [...], "device": [...]}``. Each entry
+    reports ``kind`` (native / optional / scaffold), whether it is ``available``
+    here, and the ``pip`` package that unlocks it. The comprehensive, honest menu
+    of protocols (23), image sources (9) and device drivers (12)."""
+    import comm
+    import acquire
+    import device
+    return {"comm": comm.capabilities(),
+            "acquire": acquire.capabilities(),
+            "device": device.capabilities()}
+
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names", "categories",
     "read_image", "write_image", "RT", "REGISTRY", "__version__", "version",
