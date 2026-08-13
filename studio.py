@@ -369,8 +369,8 @@ def build_window(model=None):
     sb = QtWidgets.QSlider(QtCore.Qt.Horizontal); sb.setRange(0, 100)
     la = QtWidgets.QLabel("a: 0.50"); lb = QtWidgets.QLabel("b: 0.50")
     b_export = QtWidgets.QPushButton("Export (ops string + Python)")
-    mv.addWidget(QtWidgets.QLabel("Pipeline")); mv.addWidget(stage_list)
-    mv.addLayout(btns)
+    mv.addWidget(QtWidgets.QLabel("Pipeline (step state per stage)")); mv.addWidget(stage_list)
+    mv.addLayout(btns); mv.addLayout(steprow)
     mv.addWidget(la); mv.addWidget(sa); mv.addWidget(lb); mv.addWidget(sb)
     mv.addWidget(b_export)
 
