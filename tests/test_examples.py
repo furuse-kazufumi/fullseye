@@ -62,6 +62,20 @@ _REAL_CLIPS = [
 _present = [p for p in _REAL_CLIPS if os.path.exists(p)]
 
 
+def test_ct_inspection_finds_voids():
+    r = _load("ct_inspection").run()
+    assert r["material_voxels"] > 0
+    assert r["n_defects"] == 2                        # the two synthetic internal voids
+    r2 = _load("ct_inspection").run(laminography=True)
+    assert r2["n_defects"] >= 1                        # still recovered under axial smear
+
+
+def test_gaussian_splat_cloud_registers():
+    r = _load("gaussian_splat_cloud").run()
+    assert r["n_downsampled"] < r["n_splats"]
+    assert r["register_rmse"] < 0.05                  # the second view aligns back
+
+
 @pytest.mark.skipif(not _present, reason="local FullSense render clips not present")
 def test_perception_on_video_real_clip():
     r = _load("perception_on_video").run(clip_path=_present[0], max_frames=40)
