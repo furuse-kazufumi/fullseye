@@ -112,3 +112,20 @@ def test_trimmed_icp_rejects_outliers():
     Rv, tv, _, _ = reg.icp(P, Q, max_iter=80)
     assert np.allclose(R, R0, atol=1e-2) and np.allclose(t, t0, atol=1e-2)
     assert not (np.allclose(Rv, R0, atol=1e-2) and np.allclose(tv, t0, atol=1e-2))
+
+
+def test_register_handles_fewer_than_three_points():
+    # register/pca_align must not crash on tiny clouds (icp accepts them)
+    R, t, aligned, rmse = reg.register(np.array([[0., 0, 0], [1., 0, 0]]),
+                                       np.array([[0., 0, 1], [1., 0, 1]]))
+    assert aligned.shape == (2, 3) and np.isfinite(rmse)
+
+
+def test_icp_rmse_matches_returned_pose():
+    # the reported rmse must describe the returned `aligned`, not the pose one
+    # iteration earlier (regression: budget-limited runs read the wrong pose's error)
+    P = _cloud(seed=5)
+    Q = reg.apply_transform(P, _rot(0.2, 0.1, -0.15), np.array([0.5, -0.3, 0.2]))
+    _, _, aligned, rmse = reg.icp(P, Q, max_iter=2)
+    true = float(np.sqrt(np.mean(np.min(((aligned[:, None, :] - Q[None, :, :]) ** 2).sum(-1), axis=1))))
+    assert np.isclose(rmse, true, rtol=1e-6)
