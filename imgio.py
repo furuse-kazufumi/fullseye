@@ -12,8 +12,8 @@ import numpy as np
 __all__ = [
     "to_float01", "to_uint8", "ensure_gray", "ensure_color", "normalize",
     "apply_cmap", "colorize_depth", "colorize_disparity", "colorize_labels",
-    "colorize_height", "shaded_relief", "overlay_mask", "save", "load", "save_ply",
-    "COLORMAPS",
+    "colorize_height", "colorize_flow", "shaded_relief", "overlay_mask",
+    "save", "load", "save_ply", "COLORMAPS",
 ]
 
 # A library of false-colour palettes (HDevelop-style pseudo-colour). Sequential
