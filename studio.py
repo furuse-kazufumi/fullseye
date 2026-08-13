@@ -600,6 +600,8 @@ def build_window(model=None):
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
     act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
+    act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
+    act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
     act_about = _act("About Fullseye Studio", None, "About this application")
 
     mb = win.menuBar()
