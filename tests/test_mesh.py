@@ -537,6 +537,8 @@ def test_voxelize_rejects_bad_pitch_and_oversized_grid():
             mesh.voxelize(CUBE_V, CUBE_F, bad)
     with pytest.raises(ValueError, match="MAX_VOXELS"):
         mesh.voxelize(CUBE_V, CUBE_F, 1e-4)        # 10001^3 cells
+    with pytest.raises(ValueError, match="MAX_VOXELS"):
+        mesh.voxelize(CUBE_V, CUBE_F, 1e-30)       # cell count overflows int64 if unguarded
 
 
 # --------------------------------------------------------------------------- #
