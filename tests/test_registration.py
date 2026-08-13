@@ -129,3 +129,17 @@ def test_icp_rmse_matches_returned_pose():
     _, _, aligned, rmse = reg.icp(P, Q, max_iter=2)
     true = float(np.sqrt(np.mean(np.min(((aligned[:, None, :] - Q[None, :, :]) ** 2).sum(-1), axis=1))))
     assert np.isclose(rmse, true, rtol=1e-6)
+
+
+def test_point_to_plane_icp_evaluates_zero_iterations():
+    # max_iter=0 must report the residual of the supplied alignment, not inf (codex)
+    _, _, _, rmse = reg.point_to_plane_icp(
+        np.array([[0., 0, 0]]), np.array([[0., 0, 0]]),
+        dst_normals=np.array([[1., 0, 0]]), max_iter=0)
+    assert rmse == 0.0
+
+
+def test_kabsch_rejects_empty():
+    import pytest
+    with pytest.raises(ValueError):
+        reg.kabsch(np.empty((0, 3)), np.empty((0, 3)))
