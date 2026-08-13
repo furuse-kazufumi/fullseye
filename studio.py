@@ -89,6 +89,25 @@ def demo_image(n=256):
     return np.clip(img, 0, 1)
 
 
+def histogram_image(arr, bins=64, w=256, h=64):
+    """Render the intensity histogram of a [0,1] image as a (h, w) gray image with
+    bars (headless — used by the Studio's histogram panel, testable on its own)."""
+    a = np.asarray(arr, np.float64)
+    a = a[np.isfinite(a)]
+    out = np.zeros((h, w), np.float64)
+    if a.size == 0:
+        return out
+    hist, _ = np.histogram(np.clip(a, 0, 1), bins=bins, range=(0, 1))
+    if hist.max() > 0:
+        hist = hist / hist.max()
+    for i in range(bins):
+        col0 = int(i * w / bins)
+        col1 = int((i + 1) * w / bins)
+        top = int((1 - hist[i]) * (h - 1))
+        out[top:h, col0:max(col1, col0 + 1)] = 1.0
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # Qt view (imported lazily so `import studio` works without a display).
 # --------------------------------------------------------------------------- #
