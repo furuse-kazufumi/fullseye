@@ -89,9 +89,9 @@ def analyze(frames, flow_kwargs=None, event_k=2.0, track_grid=6, save_dir=None):
     rmag = fs.flow_magnitude(ru, rv)
     thr = max(1.0, float(np.nanmean(rmag) + 2.0 * np.nanstd(rmag)))
     # min_area scales gently with frame size (a fixed floor for small frames, a
-    # small fraction for HD) so the detector is neither noise-blind on tiny clips
-    # nor object-blind on large ones.
-    mask, segs = fs.motion_segments(u, v, threshold=thr, min_area=max(25, a.size // 4000))
+    # ~0.1% fraction for HD) so the detector is neither object-blind on large
+    # footage nor swamped by residual-warp specks on small clips.
+    mask, segs = fs.motion_segments(u, v, threshold=thr, min_area=max(25, a.size // 1000))
 
     # 4) multi-frame sparse tracking over a window around the peak
     lo = max(0, peak - 4)
