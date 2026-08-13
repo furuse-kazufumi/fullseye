@@ -21,11 +21,17 @@ the library never hard-depends on a video backend.
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
 __all__ = [
     "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
 ]
+
+# Container extensions handled by the ffmpeg/video path (everything else that is
+# writable — .gif — goes through the Pillow animation path).
+_VIDEO_EXTS = (".mp4", ".m4v", ".mov", ".avi", ".mkv", ".webm")
 
 # Rec. 601 luma weights — the same gray convention imgio / the op registry use.
 _LUMA = np.array([0.299, 0.587, 0.114], np.float64)
