@@ -110,3 +110,77 @@ def remove_radius_outliers(points, radius: float, min_neighbors: int = 4):
     counts = cKDTree(P).query_ball_point(P, r=float(radius), return_length=True)
     keep = (np.asarray(counts) - 1) >= int(min_neighbors)   # -1 excludes the point itself
     return P[keep], keep
+
+
+def _spfh(P, N, idx, bins):
+    """Simplified Point Feature Histogram per point: bin the Darboux-frame angles
+    (alpha, phi, theta) between a point and each neighbour into ``bins`` bins each."""
+    M = P.shape[0]
+    out = np.zeros((M, 3 * bins))
+    ea = np.linspace(-1.0, 1.0, bins + 1)
+    et = np.linspace(-np.pi, np.pi, bins + 1)
+    for i in range(M):
+        neigh = idx[i, 1:]
+        if neigh.size == 0:
+            continue
+        d = P[neigh] - P[i]
+        dist = np.linalg.norm(d, axis=1)
+        m = dist > 1e-12
+        if not m.any():
+            continue
+        d = d[m] / dist[m, None]
+        nq = N[neigh][m]
+        u = N[i]
+        v = np.cross(d, u)                       # Darboux frame (Rusu 2009)
+        vn = np.linalg.norm(v, axis=1)
+        m2 = vn > 1e-12
+        if not m2.any():
+            continue
+        d, nq, v = d[m2], nq[m2], v[m2] / vn[m2, None]
+        w = np.cross(np.broadcast_to(u, v.shape), v)
+        alpha = (v * nq).sum(1)                  # in [-1, 1]
+        phi = (d * u).sum(1)                      # in [-1, 1]
+        theta = np.arctan2((w * nq).sum(1), (u * nq).sum(1))   # in (-pi, pi]
+        ha = np.histogram(alpha, bins=ea)[0]
+        hp = np.histogram(phi, bins=ea)[0]
+        ht = np.histogram(theta, bins=et)[0]
+        seg = np.concatenate([ha, hp, ht]).astype(np.float64)
+        for s in range(3):                        # normalise each sub-histogram to sum 100
+            tot = seg[s * bins:(s + 1) * bins].sum()
+            if tot > 0:
+                seg[s * bins:(s + 1) * bins] *= 100.0 / tot
+        out[i] = seg
+    return out
+
+
+def fpfh(points, normals=None, k: int = 16, bins: int = 11):
+    """Fast Point Feature Histogram descriptor per point (Rusu et al. 2009).
+
+    A rotation-invariant ``3*bins``-D local-geometry signature built from the
+    Darboux-frame angles between each point and its neighbours (and their normals),
+    then smoothed by its neighbours' SPFHs. Matching these across two clouds gives
+    correspondences for :func:`registration.feature_register`, which registers
+    shapes whose *global* axes are ambiguous (so :func:`registration.pca_align`
+    fails) but whose *local* geometry is distinctive. Returns (N, 3*bins)."""
+    from scipy.spatial import cKDTree
+
+    P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("points must be (N, 3)")
+    if P.shape[0] < 2:
+        return np.zeros((P.shape[0], 3 * bins))
+    N = (np.asarray(normals, np.float64) if normals is not None
+         else estimate_normals(P, k=k))
+    kk = int(min(k + 1, P.shape[0]))
+    dist, idx = cKDTree(P).query(P, k=kk)
+    if kk == 1:
+        dist, idx = dist.reshape(-1, 1), idx.reshape(-1, 1)
+    spfh = _spfh(P, N, idx, bins)
+    out = spfh.copy()
+    for i in range(P.shape[0]):
+        neigh, dd = idx[i, 1:], dist[i, 1:]
+        if neigh.size == 0:
+            continue
+        wgt = 1.0 / np.maximum(dd, 1e-12)
+        out[i] = spfh[i] + (wgt[:, None] * spfh[neigh]).sum(0) / neigh.size
+    return out
