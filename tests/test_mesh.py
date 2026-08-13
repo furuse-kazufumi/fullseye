@@ -376,6 +376,73 @@ def test_read_points_obj_uses_vertices_only(tmp_path):
     assert np.array_equal(np.unique(P, axis=0), np.unique(CUBE_V, axis=0))
 
 
+def test_read_ply_binary_ragged_faces(tmp_path):
+    """Mixed face degrees defeat the uniform-stride fast path — the sequential
+    fallback must read the same pyramid (1 quad base + 4 triangles -> 6 tris)."""
+    V = np.array([[0.0, 0, 0], [1, 0, 0], [1, 1, 0], [0, 1, 0], [0.5, 0.5, 1.0]])
+    faces = [[0, 1, 2, 3], [0, 1, 4], [1, 2, 4], [2, 3, 4], [3, 0, 4]]
+    head = ("ply\nformat binary_little_endian 1.0\nelement vertex 5\n"
+            "property float x\nproperty float y\nproperty float z\n"
+            "element face 5\nproperty list uchar int vertex_indices\n"
+            "end_header\n").encode("ascii")
+    body = V.astype("<f4").tobytes()
+    for f in faces:
+        body += np.array([len(f)], "u1").tobytes() + np.array(f, "<i4").tobytes()
+    Vr, Fr = mesh.read_mesh(_write(tmp_path, "pyramid.ply", head + body))
+    assert Vr.shape == (5, 3) and Fr.shape == (6, 3)
+    assert np.allclose(Vr, V)
+    assert tri_set(Vr, Fr) == tri_set(V, np.array([[0, 1, 2], [0, 2, 3], [0, 1, 4],
+                                                   [1, 2, 4], [2, 3, 4], [3, 0, 4]]))
+
+
+PLY_EXTRA_PROPS = """ply
+format ascii 1.0
+element vertex 3
+property float x
+property float y
+property float z
+property float nx
+property uchar red
+property uchar green
+property uchar blue
+property uchar alpha
+element face 1
+property list uchar int vertex_indices
+property uchar flags
+element edge 2
+property int v1
+property int v2
+end_header
+0 0 0 1 255 0 0 255
+1 0 0 1 0 255 0 255
+0 1 0 1 0 0 255 255
+3 0 1 2 7
+0 1
+1 2
+"""
+
+
+def test_ply_extra_properties_and_elements_are_skipped(tmp_path):
+    """Normals/alpha/per-face flags and a trailing 'edge' element are parsed for
+    layout and dropped; geometry and colours still come out exactly."""
+    p = _write(tmp_path, "extra.ply", PLY_EXTRA_PROPS)
+    V, F = mesh.read_mesh(p)
+    assert V.shape == (3, 3) and F.tolist() == [[0, 1, 2]]
+    P, C = mesh.read_points(p, with_colors=True)
+    assert np.array_equal(P, V)
+    assert np.allclose(C, np.eye(3))
+
+
+def test_read_points_pcd_packed_rgb(tmp_path):
+    """PCL packs r,g,b into the bits of one float32 'rgb' field."""
+    packed = np.array([255 * 65536 + 128 * 256 + 64], np.uint32).view(np.float32)[0]
+    txt = ("VERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4 4\nTYPE F F F F\nCOUNT 1 1 1 1\n"
+           "WIDTH 1\nHEIGHT 1\nPOINTS 1\nDATA ascii\n0 1 2 %.9g\n" % packed)
+    P, C = mesh.read_points(_write(tmp_path, "packed.pcd", txt), with_colors=True)
+    assert np.array_equal(P, [[0.0, 1.0, 2.0]])
+    assert np.allclose(C, [[1.0, 128 / 255.0, 64 / 255.0]])
+
+
 def test_read_points_ply_binary(tmp_path):
     P = mesh.read_points(_write(tmp_path, "cube_le.ply", _ply_binary_cube("<")))
     assert np.array_equal(np.unique(P, axis=0), np.unique(CUBE_V, axis=0))
