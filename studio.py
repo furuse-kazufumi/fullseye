@@ -639,7 +639,21 @@ def build_window(model=None):
     from PySide6 import QtWidgets, QtGui, QtCore
 
     model = model or PipelineModel(demo_image())
-    win = QtWidgets.QMainWindow()
+
+    class StudioWindow(QtWidgets.QMainWindow):
+        """Main window that refuses to close on unsaved pipeline edits.
+
+        ``close_guard`` is installed below; it returns False to veto the close."""
+        close_guard = None
+
+        def closeEvent(self, ev):
+            guard = self.close_guard
+            if guard is not None and not guard():
+                ev.ignore()
+                return
+            ev.accept()
+
+    win = StudioWindow()
     win.setWindowTitle("Fullseye Studio")
     win.resize(1320, 860)
     win.setStyleSheet(THEME)
