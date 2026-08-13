@@ -139,7 +139,7 @@ def build_window(model=None):
 
     # -- left: operator browser --
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left)
-    search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators…")
+    search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators...")
     op_list = QtWidgets.QListWidget()
     lv.addWidget(QtWidgets.QLabel("Operators (double-click to add)"))
     lv.addWidget(search); lv.addWidget(op_list)
@@ -153,7 +153,7 @@ def build_window(model=None):
             hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
             if kw and kw not in hay:
                 continue
-            it = QtWidgets.QListWidgetItem(f"{r['name']}  [{r['in_sort']}→{r['out_sort']}]")
+            it = QtWidgets.QListWidgetItem(f"{r['name']}  [{r['in_sort']}->{r['out_sort']}]")
             it.setData(QtCore.Qt.UserRole, r["name"])
             op_list.addItem(it)
     refill_ops()
@@ -163,7 +163,7 @@ def build_window(model=None):
     mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid)
     stage_list = QtWidgets.QListWidget()
     btns = QtWidgets.QHBoxLayout()
-    b_rm = QtWidgets.QPushButton("Remove"); b_up = QtWidgets.QPushButton("↑"); b_dn = QtWidgets.QPushButton("↓")
+    b_rm = QtWidgets.QPushButton("Remove"); b_up = QtWidgets.QPushButton("Up"); b_dn = QtWidgets.QPushButton("Down")
     btns.addWidget(b_rm); btns.addWidget(b_up); btns.addWidget(b_dn)
     sa = QtWidgets.QSlider(QtCore.Qt.Horizontal); sa.setRange(0, 100)
     sb = QtWidgets.QSlider(QtCore.Qt.Horizontal); sb.setRange(0, 100)
@@ -182,8 +182,8 @@ def build_window(model=None):
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(72)
     hist_view.setStyleSheet("background:#181818;")
     info = QtWidgets.QLabel(""); info.setWordWrap(True)
-    b_load = QtWidgets.QPushButton("Load image…"); b_demo = QtWidgets.QPushButton("Synthetic demo")
-    b_save = QtWidgets.QPushButton("Save result…")
+    b_load = QtWidgets.QPushButton("Load image..."); b_demo = QtWidgets.QPushButton("Synthetic demo")
+    b_save = QtWidgets.QPushButton("Save result...")
     rload = QtWidgets.QHBoxLayout()
     rload.addWidget(b_load); rload.addWidget(b_demo); rload.addWidget(b_save)
     rv.addLayout(rload); rv.addWidget(view, 1)

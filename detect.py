@@ -19,6 +19,10 @@ __all__ = ["segment_objects", "object_descriptor", "nearest_prototype", "draw_ob
 
 
 def _otsu_mask(g):
+    """Otsu threshold -> foreground mask. Between-class variance is
+    ``(mu·tot - w·muT)^2 / (w·wf)`` (Otsu 1979); it is evaluated only on bins where
+    both classes are non-empty, so a degenerate last bin can no longer win and
+    return an all-empty mask."""
     x = np.clip(np.asarray(g, np.float64), 0, 1)
     hist, edges = np.histogram(x, 256, (0, 1))
     hist = hist.astype(np.float64)
@@ -30,9 +34,10 @@ def _otsu_mask(g):
     mu = np.cumsum(hist * mids)
     muT = mu[-1]
     wf = tot - w
-    with np.errstate(invalid="ignore", divide="ignore"):
-        between = (muT * w - mu) ** 2 / (w * wf + 1e-12)
-    t = mids[int(np.nanargmax(between))]
+    valid = (w > 0) & (wf > 0)
+    between = np.zeros_like(w)
+    between[valid] = (mu[valid] * tot - w[valid] * muT) ** 2 / (w[valid] * wf[valid])
+    t = mids[int(np.argmax(between))]
     return x > t
 
 
