@@ -275,6 +275,26 @@ def test_shortcuts_help_action_wired():
     assert win._actions["shortcuts"].shortcut().toString() == "F1"
 
 
+def test_sample_code_helper():
+    import recipes
+    name = recipes.names()[0]
+    ops, py = studio.sample_code(name)
+    assert isinstance(ops, str) and ops                      # a comma-joined ops string
+    compile(py, "<sample>", "exec")                          # the Python is valid
+    assert "run_pipeline" in py
+    assert studio.sample_code("no such recipe") is None
+
+
+def test_help_op_reference_and_samples_wired():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert "op_reference" in win._actions and "samples" in win._actions
+    assert win._actions["op_reference"].shortcut().toString() == "Shift+F1"
+
+
 def test_step_states_robust_to_failing_stage():
     # a stage that raises must not blank the whole step summary (silent-bug fix)
     m = studio.PipelineModel(studio.demo_image(32))
