@@ -612,7 +612,10 @@ def build_window(model=None):
     # -- centre: pipeline + knobs + export ----------------------------------- #
     mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid); mv.setSpacing(10)
     stage_list = QtWidgets.QListWidget()
-    stage_list.setToolTip("The pipeline. Each row: op, knobs, and the result state after that stage.")
+    stage_list.setToolTip("The pipeline. Each row: op, knobs, and the result state after that stage.\n"
+                          "Drag a row to reorder, or use ↑/↓ (Ctrl+↑ / Ctrl+↓).")
+    stage_list.setDragDropMode(QtWidgets.QAbstractItemView.InternalMove)
+    stage_list.setDefaultDropAction(QtCore.Qt.MoveAction)
     b_rm = QtWidgets.QPushButton("Remove"); b_up = QtWidgets.QPushButton("↑ Up"); b_dn = QtWidgets.QPushButton("↓ Down")
     b_rm.setToolTip("Remove the selected stage (Del)")
     b_up.setToolTip("Move the selected stage earlier (Ctrl+Up)")
