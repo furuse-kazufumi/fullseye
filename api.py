@@ -104,6 +104,7 @@ __all__ = [
     "flow_magnitude", "flow_angle", "track_points",
     "motion", "frame_motion_energy", "dominant_motion", "flow_from_model",
     "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
+    "video", "read_frames", "iter_frames", "frame_pairs", "write_video",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
 ]
 
