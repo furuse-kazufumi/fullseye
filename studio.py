@@ -236,6 +236,8 @@ def step_summary(st):
         return f"feature = {st['value']}"
     if k == "contour":
         return f"contour x{st['n_contours']}"
+    if k == "error":
+        return "ERROR: " + str(st.get("message", ""))[:48]
     return str(k)
 
 
