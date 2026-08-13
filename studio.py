@@ -72,6 +72,17 @@ class PipelineModel:
     def output(self):
         return self.result_upto(len(self.stages) - 1)
 
+    def step_states(self):
+        """Per-step state for step execution: for each stage, the op, its knobs and
+        an inspection of the intermediate result after that stage. This is what a
+        step-through debugger shows — the object/variable state at every step."""
+        out = []
+        for i in range(len(self.stages)):
+            op, a, b = self.stages[i]
+            out.append({"index": i, "op": op, "a": a, "b": b,
+                        "state": inspect_result(self.result_upto(i))})
+        return out
+
     def ops_string(self):
         return ",".join(s[0] for s in self.stages)
 
