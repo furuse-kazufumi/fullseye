@@ -80,6 +80,11 @@ def segment_objects(image, threshold="otsu", invert: bool = False,
                 equiv_d = float(p.equivalent_diameter_area)   # skimage >= 0.26
             except Exception:
                 equiv_d = float(p.equivalent_diameter)
+            try:
+                perim = float(p.perimeter)
+            except Exception:
+                perim = float("nan")
+            circ = float(4 * np.pi * p.area / (perim * perim)) if perim > 0 else float("nan")
             y0, x0, y1, x1 = p.bbox
             objs.append(dict(
                 label=int(p.label), area=float(p.area),
@@ -88,6 +93,7 @@ def segment_objects(image, threshold="otsu", invert: bool = False,
                 eccentricity=float(p.eccentricity),
                 extent=float(p.extent), solidity=float(p.solidity),
                 orientation=float(p.orientation),
+                perimeter=perim, circularity=min(circ, 1.0) if circ == circ else circ,
                 equiv_diameter=equiv_d,
                 hu=np.asarray(p.moments_hu, np.float64),
                 mask=(lab == p.label),
