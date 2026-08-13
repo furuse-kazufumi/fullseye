@@ -80,6 +80,24 @@ def test_pca_align_then_register_recovers_large_rotation():
     assert np.allclose(R, R0, atol=1e-3) and np.allclose(t, t0, atol=1e-3)
 
 
+def _ellipsoid(n=900, seed=0):
+    """Points on an ellipsoid surface — non-symmetric, so registration is well posed."""
+    v = np.random.default_rng(seed).standard_normal((n, 3))
+    v /= np.linalg.norm(v, axis=1, keepdims=True)
+    return v * np.array([1.0, 0.6, 0.4])
+
+
+def test_point_to_plane_icp_recovers_transform_on_a_surface():
+    P = _ellipsoid()
+    R0 = _rot(0.10, 0.08, -0.06)
+    t0 = np.array([0.05, -0.03, 0.02])
+    Q = reg.apply_transform(P, R0, t0)
+    R, t, aligned, rmse = reg.point_to_plane_icp(P, Q, max_iter=60)
+    assert rmse < 1e-4, f"point-to-plane rmse {rmse} not tight"
+    assert np.allclose(R, R0, atol=1e-2) and np.allclose(t, t0, atol=1e-2)
+    assert np.allclose(aligned, Q, atol=1e-2)
+
+
 def test_trimmed_icp_rejects_outliers():
     base = _anisotropic(n=300, seed=3)
     R0 = _rot(0.12, 0.08, -0.1)
