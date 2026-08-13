@@ -510,9 +510,10 @@ def test_editing_shortcuts_are_scoped_to_the_pipeline_list():
     # global (menu/toolbar) actions keep window scope
     for key in ("open_image", "save_result", "export", "clear", "palette", "run_all"):
         assert win._actions[key].shortcutContext() == QtCore.Qt.WindowShortcut, key
-    # the menu entries still exist and still work when triggered directly
-    edit_menu = win.menuBar().actions()[1].menu()
-    assert win._actions["remove"] in edit_menu.actions()
+    # the action is still owned by its menu (menu entry unchanged) as well as by
+    # the pipeline list, and still works when triggered directly
+    assoc = {type(o).__name__ for o in win._actions["remove"].associatedObjects()}
+    assert "QMenu" in assoc and "QListWidget" in assoc, assoc
     win._stage_list.setCurrentRow(1)
     win._actions["remove"].trigger()
     assert model.ops_string() == "gaussian"
