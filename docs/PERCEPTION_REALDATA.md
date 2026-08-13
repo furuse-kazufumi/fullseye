@@ -30,8 +30,10 @@ measure how much closer it gets to `nxt` than the raw frame difference —
 recon_gain = 1 − mean|nxt − warp(prev, u, v)| / mean|nxt − prev|
 ```
 
-`recon_gain > 0` means the flow explains real motion; `≈ 0` means it found none;
-`< 0` means the "flow" is noise that, when warped, corrupts an already-good match.
+`recon_gain > 0` means the flow reconstructs `nxt` better than the no-motion
+(identity) baseline — a **necessary** condition for useful flow, not a proof of
+per-pixel correctness; `≈ 0` means it found no motion; `< 0` means the "flow" is
+noise that, when warped, corrupts an already-good match.
 
 ## Measured results (real FullSense render clips)
 
