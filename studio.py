@@ -394,8 +394,9 @@ QPushButton:pressed {{ background:{TEAL}; color:{INK}; }}
 QPushButton:disabled {{ color:#5b6270; border-color:#232734; background:#191c25; }}
 QPushButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
 QPushButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
-/* Visible keyboard focus. The old blanket `* {{ outline:none; }}` erased the focus
-   ring on every widget, leaving keyboard users with no idea where focus was. */
+/* Visible keyboard focus. A blanket universal-selector outline reset used to erase
+   the focus ring on every widget, leaving keyboard users with no idea where focus
+   was; each interactive widget now carries an explicit teal :focus border. */
 QPushButton:focus {{ border:2px solid {TEAL_HI}; padding:6px 11px; }}
 
 QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; }}
