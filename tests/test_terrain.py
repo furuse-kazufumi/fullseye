@@ -85,3 +85,19 @@ def test_detect_obstacles_ignores_a_ramp():
         grid, cell=0.05, clearance=0.12, ground_radius=0.3, min_area=0.01, extent=extent)
     big = [o for o in obstacles if o["area"] > 0.02]
     assert not big, f"ramp wrongly flagged as obstacle(s): {big}"
+
+
+def test_min_area_drops_blobs_strictly_smaller():
+    # a 2-cell blob = 0.005 m^2 must be dropped when min_area=0.006 (ceil, not round)
+    g = np.zeros((10, 10))
+    g[0, 0] = g[0, 1] = 0.5
+    _, obstacles = terrain.detect_obstacles(g, cell=0.05, min_area=0.006,
+                                            clearance=0.12, ground="opening")
+    assert obstacles == []
+
+
+def test_ground_plane_all_unobserved_is_nan_not_zero():
+    # a fully unobserved (all-NaN) map must yield a NaN plane (visible), not a fake
+    # z=0 ground that would read as clear traversable terrain
+    gp = terrain.ground_plane(np.full((5, 5), np.nan))
+    assert np.isnan(gp).all()
