@@ -580,6 +580,7 @@ def build_window(model=None):
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
+    act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
     act_about = _act("About Fullseye Studio", None, "About this application")
 
     mb = win.menuBar()
