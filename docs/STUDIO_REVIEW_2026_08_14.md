@@ -110,18 +110,22 @@ unreviewable or risks behaviour the tests cannot pin down.
 ## 4. Test results (honest disclosure)
 
 ```
-tests/test_studio.py:   50 passed, 44 warnings in 3.35s          (was 30 passed)
-tests/ (full suite):  2706 passed, 391 warnings in 116.10s       (0 failed)
+tests/test_studio.py:   50 passed, 44 warnings in 3.29s          (baseline: 30 passed)
+tests/ (full suite):  2732 passed, 391 warnings in 114.45s       (0 failed)
 ```
 
-**No regressions.** One caveat on arithmetic: the session baseline measured **2636 passed**,
-and this review adds **20** studio tests (30 → 50), which predicts 2656 — not 2706. The extra
-~50 are **not mine**. Other agents edited `tests/test_acquire.py`, `test_comm.py`,
-`test_device.py`, `test_dsp.py`, `test_engine.py`, `test_examples.py` and `test_mesh.py`
-concurrently (file mtimes 07:34–08:32 on 2026-08-14, i.e. after the baseline run and before
-the final run). Collection confirms `test_studio.py` contributes exactly 50 nodes, collected
-once. The suite is green either way; the delta is simply not attributable to this change
-alone.
+**No regressions — 0 failures.** One honest caveat on the arithmetic: the session baseline
+measured **2636 passed**, and this review adds **20** studio tests (30 → 50), which predicts
+2656 — not 2732. **The extra ~76 are not mine.** Other agents were editing the repo
+concurrently: `tests/test_acquire.py`, `test_comm.py`, `test_device.py`, `test_dsp.py`,
+`test_engine.py`, `test_examples.py` and `test_mesh.py` all have mtimes of 07:34–08:32 on
+2026-08-14, i.e. after the baseline run. The count was still climbing during this review
+(2706 → 2732 across two runs ~15 minutes apart with no source change of mine in between).
+
+What *is* attributable and verified: `pytest --collect-only` confirms `test_studio.py`
+contributes exactly **50** nodes, collected once, and the suite is green. The full-suite
+delta cannot be used as evidence for or against this change; the studio file count
+(30 → 50, all passing) is the meaningful number.
 
 **Files changed:** `studio.py`, `tests/test_studio.py`, and this document. No dependencies
 added (PySide6 + numpy + scipy only).
