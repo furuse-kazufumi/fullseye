@@ -40,6 +40,8 @@ with warnings.catch_warnings():
         pca_align, register, feature_register,
         pointcloud, estimate_normals, voxel_downsample,
         remove_statistical_outliers, remove_radius_outliers, fpfh,
+        mesh, read_mesh, read_points, write_mesh, sample_surface,
+        mesh_to_points, voxelize, bounds, recenter, normalize_scale,
         pose, pose_descriptor, skeleton_nodes, principal_axis,
         flow, optical_flow_lk, optical_flow_hs, warp_by_flow,
         flow_magnitude, flow_angle, track_points,
