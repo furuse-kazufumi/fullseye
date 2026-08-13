@@ -141,6 +141,7 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
 
     imageio = _imageio()
     if imageio is not None:
+        reader = None
         try:
             reader = imageio.get_reader(path)
         except FileNotFoundError:
@@ -148,9 +149,10 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
         except Exception as e:
             if _cv2() is None:
                 raise RuntimeError("could not open %s: %s" % (path, e))
-            reader = None
+            reader = None                       # unopenable by imageio -> try cv2 below
         if reader is not None:
             kept = 0
+            ok = True
             try:
                 for i, fr in enumerate(reader):
                     if i < start or (i - start) % step:
@@ -159,9 +161,17 @@ def iter_frames(path: str, gray: bool = True, step: int = 1, start: int = 0,
                     kept += 1
                     if cap is not None and kept >= cap:
                         break
+            except Exception:
+                ok = False                      # decode failure part-way through
             finally:
                 reader.close()
-            return
+            if ok:
+                return
+            if kept > 0:
+                # already yielded frames — cannot cleanly restart from a different
+                # backend without duplicating them, so surface the decode error.
+                raise RuntimeError("decode error after %d frame(s) in %s" % (kept, path))
+            # imageio decoded nothing before failing -> fall through to the cv2 path
 
     if _cv2() is not None:
         kept = 0
