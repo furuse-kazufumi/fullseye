@@ -15,7 +15,22 @@ from __future__ import annotations
 import numpy as np
 from scipy import ndimage
 
-__all__ = ["segment_objects", "object_descriptor", "nearest_prototype", "draw_objects"]
+__all__ = ["segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
+           "feature_table"]
+
+
+def feature_table(objects, top=12):
+    """Compact per-object feature lines (area, circularity, eccentricity, centroid)
+    -- the region feature display a vision IDE shows for a segmented result."""
+    lines = ["#    area  circ  ecc   centroid(y,x)"]
+    for i, o in enumerate(objects[:top], 1):
+        cy, cx = o["centroid"]
+        lines.append("%-3d %6.0f %4.2f %4.2f  (%.0f,%.0f)" % (
+            i, o["area"], o.get("circularity", float("nan")),
+            o.get("eccentricity", float("nan")), cy, cx))
+    if len(objects) > top:
+        lines.append("... +%d more" % (len(objects) - top))
+    return "\n".join(lines)
 
 
 def _otsu_mask(g):
