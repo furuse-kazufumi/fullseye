@@ -152,6 +152,12 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         if abs(prev - rmse) < tol:
             break
         prev = rmse
+    # final point-to-plane residual for the RETURNED pose (also gives a real value
+    # when max_iter=0, where the loop never runs, instead of leaving rmse = inf).
+    dist, idx = tree.query(cur)
+    sel = (np.argpartition(dist, keep_n - 1)[:keep_n]
+           if keep_n < P0.shape[0] else np.arange(P0.shape[0]))
+    rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - Q[idx[sel]], N[idx[sel]]) ** 2)))
     return R_tot, t_tot, cur, rmse
 
 
