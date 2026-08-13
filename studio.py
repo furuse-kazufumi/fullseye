@@ -703,7 +703,7 @@ def build_window(model=None):
 
     central.addWidget(left); central.addWidget(mid); central.addWidget(right)
     central.setSizes([340, 360, 640]); central.setStretchFactor(2, 1)
-    state = {"result": None, "raw": None}
+    state = {"result": None, "raw": None, "view_raw": False, "reordering": False}
     pmodel = PerceptionModel()
 
     # -- behaviour --
