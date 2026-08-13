@@ -329,8 +329,8 @@ def _read_stl(raw: bytes, src: str):
     if head == b"solid" and b"facet" in probe:
         return _read_stl_ascii(raw, src)
     if len(raw) < 84:
-        raise ValueError("%s: %d bytes is too short for a binary STL (80-byte header "
-                         "+ 4-byte count) and it does not start with 'solid'"
+        raise ValueError("%s: %d bytes is neither a binary STL (needs an 80-byte header + "
+                         "4-byte triangle count) nor an ASCII STL ('solid' + 'facet' records)"
                          % (src, len(raw)))
     return _read_stl_binary(raw, src)
 
