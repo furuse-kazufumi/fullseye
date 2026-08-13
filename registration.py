@@ -92,6 +92,61 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
     return R_tot, t_tot, cur, rmse
 
 
+def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
+                       max_iter: int = 50, tol: float = 1e-8,
+                       init=None, trim: float | None = None):
+    """Point-to-plane ICP: align *src* to *dst* minimizing the distance along the
+    destination **surface normal**, not straight-line point distance.
+
+    On a surface this converges faster and tighter than plain :func:`icp` because
+    a source point is free to slide within the tangent plane and is only penalised
+    for leaving it (Low, 2004). *dst_normals* are estimated with
+    :func:`pointcloud.estimate_normals` if not supplied. *init* and *trim* behave
+    as in :func:`icp`. Returns ``(R, t, aligned, rmse)`` where ``rmse`` is the
+    point-to-plane residual."""
+    from scipy.spatial import cKDTree
+    from scipy.spatial.transform import Rotation
+    import pointcloud
+
+    P0 = np.asarray(src, np.float64)
+    Q = np.asarray(dst, np.float64)
+    N = (np.asarray(dst_normals, np.float64) if dst_normals is not None
+         else pointcloud.estimate_normals(Q, k=k_normals))
+    tree = cKDTree(Q)
+    if init is None:
+        R_tot = np.eye(3)
+        t_tot = np.zeros(3)
+        cur = P0.copy()
+    else:
+        R_tot = np.asarray(init[0], np.float64).copy()
+        t_tot = np.asarray(init[1], np.float64).copy()
+        cur = apply_transform(P0, R_tot, t_tot)
+    keep_n = P0.shape[0] if trim is None else max(3, int(round((1.0 - float(trim)) * P0.shape[0])))
+    prev = np.inf
+    rmse = np.inf
+    for _ in range(max_iter):
+        dist, idx = tree.query(cur)
+        if keep_n < P0.shape[0]:
+            sel = np.argpartition(dist, keep_n - 1)[:keep_n]
+        else:
+            sel = np.arange(P0.shape[0])
+        p, q, n = cur[sel], Q[idx[sel]], N[idx[sel]]
+        # linearised (small-angle) point-to-plane: [cross(p,n) | n] · [r | t] = -(p-q)·n
+        A = np.concatenate([np.cross(p, n), n], axis=1)
+        b = -np.einsum("ij,ij->i", p - q, n)
+        x, *_ = np.linalg.lstsq(A, b, rcond=None)
+        R_inc = Rotation.from_rotvec(x[:3]).as_matrix()
+        t_inc = x[3:]
+        cur = cur @ R_inc.T + t_inc
+        R_tot = R_inc @ R_tot
+        t_tot = R_inc @ t_tot + t_inc
+        rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - q, n) ** 2)))
+        if abs(prev - rmse) < tol:
+            break
+        prev = rmse
+    return R_tot, t_tot, cur, rmse
+
+
 def pca_align(src, dst):
     """Coarse rigid alignment from principal axes (a one-shot ICP initialiser).
 
