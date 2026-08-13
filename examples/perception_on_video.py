@@ -44,7 +44,7 @@ def synthetic_clip(t=16, h=96, w=128, seed=0):
     gx = 0.0                       # accumulated camera pan (x)
     ox, oy = 28.0, 40.0           # independent object centre
     for i in range(t):
-        pan = 4.0 if i in (5, 6, 11, 12) else 1.2   # bursts -> two events
+        pan = 8.0 if i == 8 else 1.2                # one strong burst -> one event
         gx += pan
         bg = ndimage.shift(base, (0.0, gx), order=1, mode="nearest")
         ox += pan + 3.0            # object = camera pan + its own 3 px/frame drift
