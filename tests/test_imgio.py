@@ -28,6 +28,27 @@ def test_apply_cmap_shape_range_and_invalid_black():
     assert np.all(rgb[0, 1] == 0.0)                          # inf -> black
 
 
+def test_all_palettes_valid():
+    x = np.linspace(0, 1, 20).reshape(4, 5)
+    assert len(imgio.COLORMAPS) >= 12
+    for name in imgio.COLORMAPS:
+        rgb = imgio.apply_cmap(x, name=name)
+        assert rgb.shape == (4, 5, 3), name
+        assert rgb.min() >= 0.0 and rgb.max() <= 1.0, name
+
+
+def test_shaded_relief_and_colorize_height():
+    hm = np.tile(np.linspace(0, 1, 32), (32, 1))          # a slope
+    sh = imgio.shaded_relief(hm)
+    assert sh.shape == (32, 32) and 0 <= sh.min() and sh.max() <= 1
+    assert sh.std() > 0                                   # a slope shades non-uniformly
+    ch = imgio.colorize_height(hm, name="terrain")
+    assert ch.shape == (32, 32, 3) and ch.min() >= 0 and ch.max() <= 1
+    # inf in a depth map stays handled
+    d = np.array([[1.0, np.inf], [2.0, 3.0]])
+    assert imgio.shaded_relief(d).shape == (2, 2)
+
+
 def test_colorize_labels_background_black_and_distinct():
     lab = np.array([[0, 1], [2, 2]])
     rgb = imgio.colorize_labels(lab)
