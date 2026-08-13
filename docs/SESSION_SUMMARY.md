@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-13 09:06:32
+- **最終更新**: 2026-08-13 12:39:16
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-b577116 v13: Studio polish — histogram panel + save-result (HDevelop-style)
-c2c6c72 auto: test_studio.py 編集前 (2026-08-13 09:02)
-7c3ebc8 auto: studio.py 編集前 (2026-08-13 09:02)
-7a322ac auto: studio.py 編集前 (2026-08-13 09:01)
-309c78d auto: studio.py 編集前 (2026-08-13 09:01)
-ccbfd19 auto: studio.py 編集前 (2026-08-13 09:01)
-c48f00c v13: consolidated session record (docs/V13.md)
-f8b2177 v13: silhouette pose / posture descriptors (pose.py) — evis/hillco posture
-4ca23bc auto: pyproject.toml 編集前 (2026-08-13 08:56)
-ee3135f auto: __init__.py 編集前 (2026-08-13 08:56)
+6b8a3ea v13: Studio -> HDevelop-class workbench (theme, palettes, 3D, step exec, insert)
+d94c0f2 auto: test_studio.py 編集前 (2026-08-13 12:35)
+0d044c5 auto: studio.py 編集前 (2026-08-13 12:34)
+5580fd2 auto: studio.py 編集前 (2026-08-13 12:34)
+9655b6a auto: studio.py 編集前 (2026-08-13 12:34)
+014e285 auto: studio.py 編集前 (2026-08-13 12:34)
+49a5f3a auto: studio.py 編集前 (2026-08-13 12:34)
+dce0c91 auto: studio.py 編集前 (2026-08-13 12:34)
+1ac0a6b auto: studio.py 編集前 (2026-08-13 12:33)
+0dc677d auto: studio.py 編集前 (2026-08-13 12:33)
 ```
 
 ## 現在の git status
@@ -31,21 +31,18 @@ ee3135f auto: __init__.py 編集前 (2026-08-13 08:56)
 ## 直近 2 時間に変更されたファイル
 
 ```
-09:04 .pytest_cache/v/cache/nodeids
-09:02 tests/test_studio.py
-09:02 studio.py
-09:00 docs/V13.md
-08:56 pyproject.toml
-08:56 fullseye/__init__.py
-08:56 api.py
-08:55 tests/test_pose.py
-08:55 pose.py
-08:51 tests/test_registration.py
-08:51 registration.py
-08:50 docs/PROVENANCE.md
-08:49 docs/REPRODUCE.md
-08:49 docs/ADDING_OPS.md
-08:39 tests/test_accuracy_bench.py
+12:37 .pytest_cache/v/cache/nodeids
+12:35 tests/test_studio.py
+12:34 studio.py
+12:29 fullseye/__init__.py
+12:29 api.py
+12:29 tests/test_imgio.py
+12:29 imgio.py
+12:22 pyproject.toml
+12:21 tests/test_recipes.py
+12:18 recipes.py
+12:16 tests/test_detect.py
+12:14 detect.py
 ```
 
 ---
