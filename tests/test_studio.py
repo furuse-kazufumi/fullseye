@@ -73,6 +73,29 @@ def test_model_load_recipe():
     assert m.ops_string() == ",".join(s[0] for s in recipes.stages(name))
 
 
+def test_apply_display_modes():
+    img = studio.demo_image(32)
+    assert studio.apply_display(img, "gray") is img
+    assert studio.apply_display(img, "viridis").shape == (32, 32, 3)
+    assert studio.apply_display(img, "shaded relief").shape == (32, 32)
+    assert studio.apply_display(img, "height (color)").shape == (32, 32, 3)
+
+
+def test_step_states_and_summary():
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    ss = m.step_states()
+    assert len(ss) == 2 and ss[0]["op"] == "gaussian"
+    assert ss[1]["state"]["kind"] == "region"
+    assert "region" in studio.step_summary(ss[1]["state"])
+    assert "mean" in studio.step_summary(ss[0]["state"])
+
+
+def test_downsample_grid():
+    g = studio._downsample_grid(np.zeros((300, 400)), max_side=100)
+    assert max(g.shape) <= 160
+
+
 def test_qt_window_builds_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
