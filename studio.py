@@ -674,6 +674,7 @@ def build_window(model=None):
             readout.setText(f"x={x}  y={y}   RGB=({float(v[0]):.3f},{float(v[1]):.3f},{float(v[2]):.3f})")
     view.hover_cb = on_hover
 
+    win._perception = {"model": pmodel, "mode": percep_mode, "run": run_perception}
     refresh_stage_list(); show_result()
     return win, model
 
