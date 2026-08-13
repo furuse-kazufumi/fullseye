@@ -34,9 +34,36 @@ import os
 import numpy as np
 
 __all__ = [
-    "Camera", "list_cameras",
+    "Camera", "list_cameras", "capabilities",
     "open_framegrabber", "grab_image", "close_framegrabber",
 ]
+
+# Acquisition backends catalogue (native + optional industrial / Physical-AI sensors).
+# (name, module-to-probe, pip, kind, one-line desc)
+_BACKENDS = [
+    ("opencv", "cv2", "opencv-python", "optional", "USB/UVC webcam, IP/RTSP stream, video file"),
+    ("dir", None, None, "native", "a folder / glob of images (offline & tests)"),
+    ("callable", None, None, "native", "a user-supplied fn() -> frame"),
+    ("genicam", "harvesters", "harvesters", "optional", "GigE/USB3 Vision via GenTL (industrial)"),
+    ("basler", "pypylon", "pypylon", "optional", "Basler cameras"),
+    ("realsense", "pyrealsense2", "pyrealsense2", "optional", "Intel RealSense RGB-D (Physical AI)"),
+    ("oak", "depthai", "depthai", "optional", "Luxonis OAK-D depth camera"),
+    ("zed", "pyzed", "pyzed", "optional", "Stereolabs ZED stereo depth"),
+    ("kinect", "pyk4a", "pyk4a", "optional", "Azure Kinect DK depth"),
+]
+
+
+def capabilities() -> list:
+    """Acquisition backends: ``{name, kind, available, pip, desc}`` — what image
+    sources this install can grab from, and what a ``pip install`` would unlock."""
+    import importlib.util
+    out = []
+    for name, module, pip, kind, desc in _BACKENDS:
+        avail = (kind == "native") or (module is not None and
+                                       importlib.util.find_spec(module) is not None
+                                       if module else False)
+        out.append({"name": name, "kind": kind, "available": bool(avail), "pip": pip, "desc": desc})
+    return out
 
 _LUMA = np.array([0.299, 0.587, 0.114], np.float64)
 _IMG_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".pgm", ".ppm", ".webp")
