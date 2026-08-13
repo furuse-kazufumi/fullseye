@@ -273,3 +273,38 @@ def test_shortcuts_help_action_wired():
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert "shortcuts" in win._actions
     assert win._actions["shortcuts"].shortcut().toString() == "F1"
+
+
+def test_step_states_robust_to_failing_stage():
+    # a stage that raises must not blank the whole step summary (silent-bug fix)
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.stages = [["gaussian", 0.5, 0.5], ["nope_op", 0.5, 0.5]]   # 2nd op unknown
+    ss = m.step_states()                                          # must NOT raise
+    assert len(ss) == 2
+    assert ss[0]["state"]["kind"] != "error"                     # good stage still summarized
+    assert ss[1]["state"]["kind"] == "error"                     # bad stage flagged
+    assert "ERROR" in studio.step_summary(ss[1]["state"])
+
+
+def test_problems_panel_flags_unknown_op():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.stages = [["gaussian", 0.5, 0.5], ["nope_op", 0.5, 0.5]]
+    win, _ = studio.build_window(m)
+    texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
+    assert any("nope_op" in t for t in texts)
+
+
+def test_problems_panel_clean_says_no_problems():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    m = studio.PipelineModel(studio.demo_image(32))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, _ = studio.build_window(m)
+    texts = [win._problems_list.item(i).text() for i in range(win._problems_list.count())]
+    assert texts == ["no problems"]
