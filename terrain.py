@@ -107,21 +107,56 @@ def ground_surface(grid, cell: float = 0.05, radius: float = 0.4):
         ndimage.minimum_filter(filled, w, mode="nearest"), w, mode="nearest")
 
 
-def detect_obstacles(grid, cell: float = 0.05, clearance: float = 0.12,
-                     ground_radius: float = 0.4, min_area: float = 0.01,
-                     extent=None):
-    """Segment cells rising more than *clearance* above the local walkable ground.
+def ground_plane(grid, trim: float = 0.3, iters: int = 3):
+    """Robust least-squares ground plane ``z = a·x + b·y + c`` per cell.
 
-    Ground is the :func:`ground_surface` envelope (slope-robust), so a ramp is not
-    an obstacle but a box, curb, or rock on it is. Returns ``(mask, obstacles)``:
-    a boolean obstacle mask and a list of per-obstacle dicts sorted largest-first,
-    each with ``area_cells`` / ``area`` (m²) / ``height`` (peak rise above ground) /
-    ``centroid_cell`` (row, col) / ``bbox_cells`` (i0, j0, i1, j1), plus
-    ``centroid_xy`` in world units when *extent* (from :func:`elevation_map`) is
-    given. Blobs smaller than *min_area* (m²) are dropped as noise."""
+    Fits a plane to the (filled) elevation, then re-fits a few times after
+    trimming the highest-residual cells — the ones that rise above the ground and
+    are therefore obstacles, not ground. Recovers a flat *or* tilted (ramp) ground
+    exactly, with no boundary artefact, which is what obstacle detection wants
+    when the walkable surface is planar. *trim* is the top residual fraction
+    discarded each iteration."""
     filled = fill_gaps(np.asarray(grid, np.float64))
-    ground = ground_surface(grid, cell, ground_radius)
-    above = filled - ground
+    ny, nx = filled.shape
+    yy, xx = np.mgrid[0:ny, 0:nx].astype(np.float64)
+    A = np.stack([xx.ravel(), yy.ravel(), np.ones(xx.size)], axis=1)
+    z = filled.ravel()
+    keep = np.ones(z.size, bool)
+    coef = np.zeros(3)
+    for _ in range(max(1, int(iters))):
+        coef, *_ = np.linalg.lstsq(A[keep], z[keep], rcond=None)
+        resid = z - A @ coef
+        thresh = np.quantile(resid, 1.0 - float(trim))
+        keep = resid <= thresh
+    return (A @ coef).reshape(ny, nx)
+
+
+def detect_obstacles(grid, cell: float = 0.05, clearance: float = 0.12,
+                     ground: str = "plane", ground_radius: float = 0.4,
+                     trim: float = 0.3, min_area: float = 0.01, extent=None):
+    """Segment cells rising more than *clearance* above the walkable ground.
+
+    The ground model isolates obstacles from a sloped surface: ``ground='plane'``
+    (default) fits a robust :func:`ground_plane` (best when the ground is planar —
+    flat or ramp); ``ground='opening'`` uses the morphological
+    :func:`ground_surface` envelope (best for rough/curved terrain); or pass a
+    precomputed ground height array. So a ramp is not an obstacle but a box, curb,
+    or rock on it is. Returns ``(mask, obstacles)``: a boolean obstacle mask and a
+    list of per-obstacle dicts sorted largest-first, each with ``area_cells`` /
+    ``area`` (m²) / ``height`` (peak rise above ground) / ``centroid_cell``
+    (row, col) / ``bbox_cells`` (i0, j0, i1, j1), plus ``centroid_xy`` in world
+    units when *extent* (from :func:`elevation_map`) is given. Blobs smaller than
+    *min_area* (m²) are dropped as noise."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    if isinstance(ground, np.ndarray):
+        gsurf = np.asarray(ground, np.float64)
+    elif ground == "plane":
+        gsurf = ground_plane(grid, trim=trim)
+    elif ground == "opening":
+        gsurf = ground_surface(grid, cell, ground_radius)
+    else:
+        raise ValueError("ground must be 'plane', 'opening', or an array, got %r" % (ground,))
+    above = filled - gsurf
     mask = above > float(clearance)
     min_cells = max(1, int(round(min_area / (cell * cell))))
     lbl, n = ndimage.label(mask)
