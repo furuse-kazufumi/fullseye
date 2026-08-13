@@ -104,6 +104,31 @@ def test_downsample_grid():
     assert max(g.shape) <= 160
 
 
+def test_perception_model_two_frame_views():
+    import studio
+    from scipy import ndimage
+    rng = np.random.default_rng(0)
+    a = np.clip(ndimage.gaussian_filter(rng.random((64, 80)), 1.3), 0, 1)
+    b = ndimage.shift(a, (0.0, 3.0), order=1, mode="nearest")   # a horizontal shift
+    pm = studio.PerceptionModel(frame_b=b)
+    for mode in studio.PerceptionModel.MODES:
+        rgb = pm.view(mode, a)
+        assert rgb.ndim == 3 and rgb.shape[2] == 3
+        assert np.isfinite(rgb).all() and rgb.min() >= 0.0 and rgb.max() <= 1.0
+
+
+def test_perception_model_requires_matching_second_frame():
+    import studio
+    import pytest
+    a = np.zeros((16, 16))
+    pm = studio.PerceptionModel()
+    with pytest.raises(ValueError):
+        pm.view("optical flow", a)                 # no frame B loaded
+    pm.set_frame_b(np.zeros((8, 8)))
+    with pytest.raises(ValueError):
+        pm.view("optical flow", a)                 # size mismatch
+
+
 def test_qt_window_builds_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
