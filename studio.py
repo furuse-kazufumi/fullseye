@@ -379,6 +379,16 @@ def _op_row(name):
             "in_sort": op.in_sort, "out_sort": op.out_sort}
 
 
+def sample_code(name):
+    """``(ops_string, python_source)`` for a sample recipe — the 'Sample Code' view
+    (author-in-Studio, run-anywhere). Returns None for an unknown recipe. Qt-free."""
+    st = recipes.stages(name)
+    if st is None:
+        return None
+    eng = engine.FullseyeEngine([(op, a, b) for (op, a, b) in st], name=name)
+    return eng.to_ops(), eng.to_python()
+
+
 def shortcut_table(items):
     """``[(label, shortcut_str), ...]`` -> the non-empty, de-duplicated rows for a
     keyboard-shortcut reference (label trimmed of trailing ellipsis). Qt-free ->
