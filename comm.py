@@ -76,10 +76,15 @@ class Channel:
 _REGISTRY: dict = {}
 
 
-def register(name, factory, native=False, pip=None, desc=""):
+def register(name, factory, native=False, pip=None, desc="", kind=None, probe=None):
     """Register a Channel factory under *name*. *factory(**opts)* returns an opened
-    Channel. *native* = pure-stdlib; *pip* = the package an optional adapter needs."""
-    _REGISTRY[name] = {"factory": factory, "native": bool(native), "pip": pip, "desc": desc}
+    Channel. *native* = pure-stdlib; *pip* = the package an optional adapter needs;
+    *kind* ∈ {"native","optional","scaffold"} (defaults from *native*); *probe* is
+    the import name used to report availability."""
+    if kind is None:
+        kind = "native" if native else "optional"
+    _REGISTRY[name] = {"factory": factory, "native": bool(native), "pip": pip,
+                       "desc": desc, "kind": kind, "_probe": probe}
 
 
 def open_channel(protocol: str, **opts) -> Channel:
