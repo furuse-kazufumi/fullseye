@@ -56,7 +56,10 @@ from measure import line_profile, distance, angle  # noqa: E402,F401
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register,
 )
-from pointcloud import estimate_normals, voxel_downsample  # noqa: E402,F401
+from pointcloud import (  # noqa: E402,F401
+    estimate_normals, voxel_downsample,
+    remove_statistical_outliers, remove_radius_outliers,
+)
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
