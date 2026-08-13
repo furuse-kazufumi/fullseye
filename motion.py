@@ -16,7 +16,7 @@ from scipy import ndimage
 
 __all__ = [
     "frame_motion_energy", "dominant_motion", "flow_from_model",
-    "residual_motion", "motion_segments",
+    "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
 ]
 
 
