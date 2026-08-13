@@ -1011,6 +1011,7 @@ def build_window(model=None):
     act_reset.triggered.connect(reset_to_raw)
     act_step.triggered.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
     act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
+    act_palette.triggered.connect(show_palette)
     act_about.triggered.connect(show_about)
 
     def open_3d():
