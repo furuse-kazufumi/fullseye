@@ -40,6 +40,7 @@ __all__ = [
 
 _LUMA = np.array([0.299, 0.587, 0.114], np.float64)
 _IMG_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff", ".pgm", ".ppm", ".webp")
+_VIDEO_EXTS = (".mp4", ".m4v", ".mov", ".avi", ".mkv", ".webm")
 
 
 def _cv2():
