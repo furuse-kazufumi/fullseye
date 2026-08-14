@@ -340,6 +340,7 @@ def speckle_filter(disp, max_diff: float = 1.0, min_size: int = 50):
     ncomp, labels = connected_components(graph, directed=False)
     sizes = np.bincount(labels, minlength=ncomp)
     valid = (sizes[labels] >= min_size).reshape(H, W)
+    valid &= np.isfinite(d)               # a NaN input pixel is never a valid region
     out = d.copy()
     out[~valid] = np.nan
     return out, valid
