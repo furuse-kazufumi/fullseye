@@ -72,8 +72,11 @@ from pointcloud import (  # noqa: E402,F401
     remove_statistical_outliers, remove_radius_outliers, fpfh,
 )
 from mesh import (  # noqa: E402,F401
-    read_mesh, read_points, write_mesh, sample_surface, mesh_to_points, voxelize,
-    bounds, recenter, normalize_scale,
+    read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
+    voxelize, bounds, recenter, normalize_scale,
+)
+from meshio_opt import (  # noqa: E402,F401
+    read_gltf, read_gltf_merged, read_las, read_pcd, formats_available,
 )
 from volio import read_volume, write_volume, list_dicom_series, VolumeMeta  # noqa: E402,F401
 from raster import read_raster, to01, read_depth, read_pfm, write_pfm, save16  # noqa: E402,F401
