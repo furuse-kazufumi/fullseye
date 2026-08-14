@@ -53,6 +53,9 @@ import measure  # noqa: E402  (line profiles / distance / angle)
 import volio  # noqa: E402  (volumetric/medical import: DICOM/NIfTI/NRRD/MetaImage/TIFF -> volume)
 import raster  # noqa: E402  (bit-depth-preserving raster + metric depth: 16-bit/float/PFM)
 import render3d  # noqa: E402  (mesh -> depth/silhouette/normals render + SDF + solid voxelization)
+import grasp  # noqa: E402  (antipodal grasp synthesis: force-closure + Ferrari-Canny quality)
+import meshrepair  # noqa: E402  (watertight/repair/decimate + exact inertia -> sim-ready body)
+import volops  # noqa: E402  (3-D volume analysis: Frangi/Sato/label/distance/region props)
 from stereo import (  # noqa: E402,F401
     disparity_map, disparity_subpixel, lr_consistency,
     depth_from_disparity, reproject_to_points,
