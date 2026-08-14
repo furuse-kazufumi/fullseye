@@ -1052,19 +1052,28 @@ def read_points(path: str, with_colors: bool = False):
     return (P, C) if with_colors else P
 
 
-# ---- writer ----------------------------------------------------------------- #
-def write_mesh(path: str, vertices, faces) -> None:
-    """Write a triangle mesh to ``.obj`` or ``.ply`` (ASCII).
+# ---- mesh writer ------------------------------------------------------------ #
+def write_mesh(path: str, vertices, faces, binary: bool = False) -> None:
+    """Write a triangle mesh to any format :func:`read_mesh` reads — ``.obj``,
+    ``.ply``, ``.stl`` or ``.off`` — so import and export are symmetric.
 
-    Coordinates are written with 17 significant digits, and the PLY header
-    declares ``double`` vertex properties, so ``read_mesh(write_mesh(...))``
-    round-trips float64 exactly. Geometry only — no normals, materials or colours.
+      * ``.obj`` / ``.off`` — ASCII, 17 significant digits: **exact** float64.
+      * ``.ply`` — ASCII by default (17 digits, ``double`` properties: exact
+        float64); ``binary=True`` writes ``binary_little_endian`` with ``double``
+        vertices (also exact) and a ``uchar/int`` ``vertex_indices`` face list.
+      * ``.stl`` — binary STL only (3D Systems' *StereoLithography* spec): 80-byte
+        header, ``uint32`` count, 50 bytes/triangle with a computed facet normal.
+        STL is **float32**, so coordinates round-trip at single precision.
+
+    Geometry only — no materials, textures or per-vertex colours (see
+    :func:`write_points` for coloured clouds). Raises ``ValueError`` on a bad
+    extension, a non-``(M, 3)`` face array, an out-of-range index or a NaN/Inf.
     """
     src = str(path)
     ext = _ext(src)
-    if ext not in (".obj", ".ply"):
-        raise ValueError("unsupported write format %r for %s — write_mesh handles .obj, .ply"
-                         % (ext, src))
+    if ext not in WRITE_MESH_FORMATS:
+        raise ValueError("unsupported mesh write format %r for %s — write_mesh handles %s"
+                         % (ext, src, ", ".join(WRITE_MESH_FORMATS)))
     V = _finite_points(vertices, "vertices", src)
     F = np.asarray(faces, np.int64)
     if F.size == 0:
@@ -1074,19 +1083,174 @@ def write_mesh(path: str, vertices, faces) -> None:
     if F.size and (int(F.min()) < 0 or int(F.max()) >= V.shape[0]):
         raise ValueError("%s: face index out of range for %d vertices" % (src, V.shape[0]))
     if ext == ".obj":
-        out = ["# Wavefront OBJ written by fullseye.mesh", "o mesh"]
-        out += ["v %.17g %.17g %.17g" % (x, y, z) for x, y, z in V]
-        out += ["f %d %d %d" % (i + 1, j + 1, k + 1) for i, j, k in F]     # OBJ is 1-based
+        _write_obj(src, V, F)
+    elif ext == ".off":
+        _write_off(src, V, F)
+    elif ext == ".stl":
+        _write_stl_binary(src, V, F)
+    elif binary:
+        _write_ply_mesh_binary(src, V, F)
     else:
-        out = ["ply", "format ascii 1.0", "comment written by fullseye.mesh",
-               "element vertex %d" % V.shape[0],
-               "property double x", "property double y", "property double z",
-               "element face %d" % F.shape[0],
-               "property list uchar int vertex_indices", "end_header"]
-        out += ["%.17g %.17g %.17g" % (x, y, z) for x, y, z in V]
-        out += ["3 %d %d %d" % (i, j, k) for i, j, k in F]
+        _write_ply_mesh_ascii(src, V, F)
+
+
+def _write_obj(src: str, V: np.ndarray, F: np.ndarray) -> None:
+    out = ["# Wavefront OBJ written by fullseye.mesh", "o mesh"]
+    out += ["v %.17g %.17g %.17g" % (x, y, z) for x, y, z in V]
+    out += ["f %d %d %d" % (i + 1, j + 1, k + 1) for i, j, k in F]         # OBJ is 1-based
     with open(src, "w", encoding="ascii") as f:
         f.write("\n".join(out) + "\n")
+
+
+def _write_off(src: str, V: np.ndarray, F: np.ndarray) -> None:
+    out = ["OFF", "%d %d 0" % (V.shape[0], F.shape[0])]
+    out += ["%.17g %.17g %.17g" % (x, y, z) for x, y, z in V]
+    out += ["3 %d %d %d" % (i, j, k) for i, j, k in F]
+    with open(src, "w", encoding="ascii") as f:
+        f.write("\n".join(out) + "\n")
+
+
+def _write_ply_mesh_ascii(src: str, V: np.ndarray, F: np.ndarray) -> None:
+    out = ["ply", "format ascii 1.0", "comment written by fullseye.mesh",
+           "element vertex %d" % V.shape[0],
+           "property double x", "property double y", "property double z",
+           "element face %d" % F.shape[0],
+           "property list uchar int vertex_indices", "end_header"]
+    out += ["%.17g %.17g %.17g" % (x, y, z) for x, y, z in V]
+    out += ["3 %d %d %d" % (i, j, k) for i, j, k in F]
+    with open(src, "w", encoding="ascii") as f:
+        f.write("\n".join(out) + "\n")
+
+
+def _write_ply_mesh_binary(src: str, V: np.ndarray, F: np.ndarray) -> None:
+    header = ("ply\nformat binary_little_endian 1.0\ncomment written by fullseye.mesh\n"
+              "element vertex %d\nproperty double x\nproperty double y\nproperty double z\n"
+              "element face %d\nproperty list uchar int vertex_indices\n"
+              "end_header\n" % (V.shape[0], F.shape[0])).encode("ascii")
+    faces = np.zeros(F.shape[0], np.dtype([("n", "u1"), ("v", "<i4", (3,))]))
+    faces["n"] = 3
+    faces["v"] = F.astype("<i4")
+    with open(src, "wb") as f:
+        f.write(header)
+        f.write(np.ascontiguousarray(V, "<f8").tobytes())
+        f.write(faces.tobytes())
+
+
+def _write_stl_binary(src: str, V: np.ndarray, F: np.ndarray) -> None:
+    tri = V[F] if F.shape[0] else np.zeros((0, 3, 3), np.float64)          # (nf, 3, 3)
+    nrm = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    ln = np.linalg.norm(nrm, axis=1, keepdims=True)
+    nrm = np.divide(nrm, ln, out=np.zeros_like(nrm), where=ln > 0)         # 0 for degenerate
+    rec = np.zeros(F.shape[0], _STL_DTYPE)
+    rec["normal"] = nrm.astype("<f4")
+    rec["v"] = tri.astype("<f4")
+    head = b"binary STL written by fullseye.mesh".ljust(80, b"\0")
+    with open(src, "wb") as f:
+        f.write(head)
+        f.write(np.array([F.shape[0]], "<u4").tobytes())
+        f.write(rec.tobytes())
+
+
+# ---- point-cloud writer ----------------------------------------------------- #
+def write_points(path: str, points, colors=None, binary: bool = True) -> None:
+    """Write a point cloud to ``.ply``, ``.xyz`` (``.txt`` / ``.pts`` / ``.asc``),
+    ``.npy`` or ``.npz`` — the numpy-native export side of :func:`read_points`.
+
+    *points* is ``(N, 3)``; optional *colors* is ``(N, 3)`` in ``[0, 1]``.
+
+      * ``.npy`` / ``.npz`` — one array, ``(N, 3)`` or ``(N, 6=xyz+rgb)`` when
+        coloured. Coordinates **and** colours round-trip **exactly** (colours stay
+        float in ``[0, 1]``). ``.npz`` stores it under the ``points`` key.
+      * ``.xyz`` — text ``x y z [r g b]``, 17 digits; colours written as floats in
+        ``[0, 1]`` (exact round-trip through :func:`read_points`).
+      * ``.ply`` — ``binary_little_endian`` by default (``binary=False`` for
+        ASCII), ``double`` xyz (exact) and, when coloured, ``uchar`` red/green/blue
+        **quantised to 8 bits** (use ``.npy``/``.npz`` for exact colour).
+
+    This is the mesh module's own cloud writer (npy/xyz/binary-PLY); the ASCII-PLY
+    convenience writer in :mod:`imgio` (``save_ply``) is separate and not
+    duplicated here. Raises ``ValueError`` on a bad extension, a shape mismatch or
+    a NaN/Inf coordinate/colour.
+    """
+    src = str(path)
+    ext = _ext(src)
+    if ext not in WRITE_POINT_FORMATS:
+        raise ValueError("unsupported point write format %r for %s — write_points handles %s"
+                         % (ext, src, ", ".join(WRITE_POINT_FORMATS)))
+    P = _finite_points(points, "points", src)
+    C = None
+    if colors is not None:
+        C = np.asarray(colors, np.float64)
+        if C.ndim != 2 or C.shape != P.shape:
+            raise ValueError("%s: colours must be (N, 3) matching %d points, got %r"
+                             % (src, P.shape[0], (C.shape,)))
+        if not np.isfinite(C).all():
+            raise ValueError("%s: colours contain non-finite values" % src)
+        C = np.clip(C, 0.0, 1.0)
+    if ext == ".ply":
+        _write_ply_points(src, P, C, binary)
+    elif ext in (".npy", ".npz"):
+        _write_npy_points(src, P, C, ext == ".npz")
+    else:
+        _write_xyz_points(src, P, C)
+
+
+def _points_array(P: np.ndarray, C):
+    """Fold optional colours into a single ``(N, 3)`` or ``(N, 6)`` float64 array."""
+    return P if C is None else np.column_stack([P, C]).astype(np.float64)
+
+
+def _write_npy_points(src: str, P: np.ndarray, C, as_npz: bool) -> None:
+    arr = _points_array(P, C)
+    if as_npz:
+        np.savez(src, points=arr)
+    else:
+        np.save(src, arr)
+
+
+def _write_xyz_points(src: str, P: np.ndarray, C) -> None:
+    if C is None:
+        rows = ["%.17g %.17g %.17g" % (x, y, z) for x, y, z in P]
+    else:
+        rows = ["%.17g %.17g %.17g %.17g %.17g %.17g" % (x, y, z, r, g, b)
+                for (x, y, z), (r, g, b) in zip(P, C)]
+    with open(src, "w", encoding="ascii") as f:
+        f.write("\n".join(rows) + ("\n" if rows else ""))
+
+
+def _write_ply_points(src: str, P: np.ndarray, C, binary: bool) -> None:
+    n = P.shape[0]
+    lines = ["ply",
+             "format %s 1.0" % ("binary_little_endian" if binary else "ascii"),
+             "comment written by fullseye.mesh",
+             "element vertex %d" % n,
+             "property double x", "property double y", "property double z"]
+    if C is not None:
+        lines += ["property uchar red", "property uchar green", "property uchar blue"]
+    lines.append("end_header")
+    header = "\n".join(lines) + "\n"
+    q = None if C is None else np.clip(np.rint(C * 255.0), 0, 255).astype(np.uint8)
+    if binary:
+        if C is None:
+            dt = np.dtype([("x", "<f8"), ("y", "<f8"), ("z", "<f8")])
+            rec = np.zeros(n, dt)
+        else:
+            dt = np.dtype([("x", "<f8"), ("y", "<f8"), ("z", "<f8"),
+                           ("red", "u1"), ("green", "u1"), ("blue", "u1")])
+            rec = np.zeros(n, dt)
+            rec["red"], rec["green"], rec["blue"] = q[:, 0], q[:, 1], q[:, 2]
+        rec["x"], rec["y"], rec["z"] = P[:, 0], P[:, 1], P[:, 2]
+        with open(src, "wb") as f:
+            f.write(header.encode("ascii"))
+            f.write(rec.tobytes())
+    else:
+        if C is None:
+            body = ["%.17g %.17g %.17g" % (x, y, z) for x, y, z in P]
+        else:
+            body = ["%.17g %.17g %.17g %d %d %d" % (x, y, z, r, g, b)
+                    for (x, y, z), (r, g, b) in zip(P, q)]
+        with open(src, "w", encoding="ascii") as f:
+            f.write(header + "\n".join(body) + ("\n" if body else ""))
 
 
 # ---- geometry helpers -------------------------------------------------------- #
