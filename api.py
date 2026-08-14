@@ -78,6 +78,21 @@ from render3d import (  # noqa: E402,F401
     render_mesh, look_at, intrinsics_from_fov, auto_view, mesh_to_sdf,
     voxelize_solid, marching_cubes,
 )
+from grasp import (  # noqa: E402,F401
+    Grasp, sample_antipodal_grasps, grasps_from_mesh, force_closure,
+    ferrari_canny_quality, approach_vector_from_normals, rank_grasps,
+    grasp_pose, collision_free,
+)
+from meshrepair import (  # noqa: E402,F401
+    is_watertight, is_edge_manifold, boundary_edges, weld_vertices,
+    remove_degenerate_faces, orient_consistent, fill_holes, smooth_taubin,
+    decimate_qem, convex_hull, inertia_tensor, components,
+)
+from volops import (  # noqa: E402,F401
+    vol_frangi, vol_sato, vol_hessian_blobness, vol_distance_transform,
+    vol_label, vol_region_props, vol_gradient_magnitude, vol_local_maxima,
+    vol_watershed,
+)
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
