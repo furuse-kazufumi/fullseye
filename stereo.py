@@ -354,10 +354,12 @@ def fill_disparity(disp, valid=None) -> np.ndarray:
     or :func:`speckle_filter`. ``valid`` is the trust mask (default: finite &
     positive). Rows with no valid pixel stay ``NaN``. Returns the filled map."""
     d = np.asarray(disp, np.float64).copy()
+    if d.ndim != 2:
+        raise ValueError("disp must be a 2-D (H, W) map")
     if valid is None:
-        valid = np.isfinite(d) & (d > 0)
-    else:
-        valid = np.asarray(valid, bool)
+        valid = np.isfinite(d)            # a measured 0 disparity (far surface) is
+    else:                                 # legitimate; only NaN/inf is a hole here.
+        valid = np.broadcast_to(np.asarray(valid, bool), d.shape)
     H, W = d.shape
     cols = np.arange(W)[None, :]
     # forward fill: index of last valid pixel at or before each column (-1 if none)
