@@ -80,6 +80,11 @@ def focus_of_expansion(u, v, min_speed: float = 1e-3):
     b = v[m] * xx[m] - u[m] * yy[m]
     w = speed[m]
     aw = a * w[:, None]
+    # collinear/parallel flow (e.g. pure lateral pan) makes the FoE lines coincident
+    # -> the intersection is at infinity, not a min-norm point in the image.
+    sv = np.linalg.svd(aw, compute_uv=False)
+    if sv[0] < 1e-12 or sv[-1] <= 1e-6 * sv[0]:
+        return (float("nan"), float("nan"))
     q, *_ = np.linalg.lstsq(aw, b * w, rcond=None)
     return (float(q[0]), float(q[1]))
 
