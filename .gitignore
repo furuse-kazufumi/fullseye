@@ -7,6 +7,9 @@ data/*
 # ...but the agent-authored HALCON->shape analog mappings are OUR IP (not MVTec
 # content, not regenerable) — track them so a fresh checkout keeps its coverage.
 !data/auto_specs/
+# The Wave-0 north-star pin baseline is a committed test fixture (regenerate with
+# recapture_wave0_pins.py --write), not a scrape cache — track it.
+!data/wave0_pins.json
 
 # packaging build artifacts
 *.egg-info/

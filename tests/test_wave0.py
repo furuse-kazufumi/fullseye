@@ -19,6 +19,7 @@ install-specific) while the install-independent invariants still run.
 from __future__ import annotations
 
 import json
+import os
 
 import numpy as np
 import pytest
@@ -27,44 +28,14 @@ import evolve
 import ops
 import problems
 
-# Captured from the pre-change code in the all-backends environment (see
-# scratchpad/snap_before.json). If these ever change, an "additive" edit silently
-# altered decode/selection — the gate has caught a north-star regression.
-PINS = json.loads(r"""
-{"cand_counts": {"image": 378, "region": 96, "feature": 1, "contour": 30, "match": 1, "volume": 9, "any": 1},
- "genomes": [[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0],
-             [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0],
-             [0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5],
-             [0.0,0.058823529411764705,0.11764705882352941,0.17647058823529413,0.23529411764705882,
-              0.29411764705882354,0.35294117647058826,0.4117647058823529,0.47058823529411764,
-              0.5294117647058824,0.5882352941176471,0.6470588235294118,0.7058823529411765,
-              0.7647058823529411,0.8235294117647058,0.8823529411764706,0.9411764705882353,1.0],
-             [0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,
-              0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,0.999999,0.999999]],
- "pins": [
-   {"image":"identity","region":"identity","feature":"identity","contour":"identity","match":"identity","volume":"identity","any":"identity"},
-   {"image":"xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00)",
-    "region":"xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00)",
-    "feature":"identity","contour":"contour_point_num_xld(a=1.00,b=1.00)","match":"identity",
-    "volume":"vol_count(a=1.00,b=1.00)","any":"identity"},
-   {"image":"h_threshold(a=0.50,b=0.50) -> eccentricity(a=0.50,b=0.50)","region":"eccentricity(a=0.50,b=0.50)",
-    "feature":"identity",
-    "contour":"close_contours_xld(a=0.50,b=0.50) -> close_contours_xld(a=0.50,b=0.50) -> close_contours_xld(a=0.50,b=0.50) -> close_contours_xld(a=0.50,b=0.50) -> close_contours_xld(a=0.50,b=0.50) -> close_contours_xld(a=0.50,b=0.50)",
-    "match":"identity",
-    "volume":"vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50)",
-    "any":"identity"},
-   {"image":"sk_lbp(a=0.24,b=0.29) -> mean_image(a=0.41,b=0.47) -> local_max(a=0.59,b=0.65) -> get_region_thickness(a=0.76,b=0.82)",
-    "region":"sk_medial(a=0.24,b=0.29) -> closing_rectangle1(a=0.41,b=0.47) -> roundness(a=0.59,b=0.65)",
-    "feature":"identity","contour":"count_contours(a=0.24,b=0.29)","match":"identity",
-    "volume":"vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_dilate(a=0.59,b=0.65) -> vol_mip(a=0.76,b=0.82) -> xsitk_curv_aniso_diff(a=0.94,b=1.00)",
-    "any":"identity"},
-   {"image":"xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00) -> xkor_dog(a=1.00,b=1.00)",
-    "region":"xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00) -> xsk3_rank_majority(a=1.00,b=1.00)",
-    "feature":"identity","contour":"contour_point_num_xld(a=1.00,b=1.00)","match":"identity",
-    "volume":"vol_count(a=1.00,b=1.00)","any":"identity"}],
- "denoise": {"pipeline":"xkor_gaussian(a=0.36,b=0.32) -> sk_blur_effect(a=0.64,b=0.20)","train":13.0059,"holdout":13.3463},
- "edge": {"pipeline":"xpil_autocontrast(a=0.78,b=0.61) -> xsp_savgol(a=0.35,b=0.60) -> cos_image(a=0.97,b=0.45) -> gray_range_rect(a=0.68,b=0.00) -> xpil_smooth_more(a=0.57,b=0.22) -> gray_erosion_shape(a=0.66,b=0.73)","train":0.6302,"holdout":0.5235}}
-""")
+# The Wave-0 north-star baseline lives in data/wave0_pins.json (regenerate with
+# `py -3.11 recapture_wave0_pins.py --write` after a deliberate op-add). If these
+# values change without a recapture, an "additive" edit silently altered
+# decode/selection — the gate has caught a north-star regression.
+_PINS_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                          "data", "wave0_pins.json")
+with open(_PINS_PATH, encoding="utf-8") as _f:
+    PINS = json.load(_f)
 
 SORTS = ["image", "region", "feature", "contour", "match", "volume", "any"]
 
