@@ -151,6 +151,12 @@ from video import (  # noqa: E402,F401
 from terrain import (  # noqa: E402,F401
     elevation_map, traversability, foothold_score, fill_gaps,
     ground_surface, ground_plane, detect_obstacles,
+    fuse_elevation, slope_map, roughness_map, surface_normals,
+    step_edges, foothold_candidates,
+)
+from locomotion import (  # noqa: E402,F401
+    contact_points, com_from_silhouette, support_polygon,
+    com_support_margin, gait_phase,
 )
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
