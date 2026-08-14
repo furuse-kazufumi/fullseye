@@ -27,6 +27,9 @@ video = ["imageio>=2.28", "imageio-ffmpeg>=0.4"]
 audio = ["soundfile>=0.12"]          # non-WAV audio (mp3/flac/ogg); WAV is built-in
 volume = ["SimpleITK>=2.2", "tifffile>=2023.1"]   # volumetric/medical import: DICOM/NIfTI/NRRD/MetaImage/TIFF -> volume sort
 raster = ["imageio>=2.28", "tifffile>=2023.1"]    # bit-depth-preserving raster (16-bit/float/PFM) + metric depth I/O
+gltf = ["pygltflib>=1.16"]                        # glTF 2.0 / GLB object import
+lidar = ["laspy>=2.5", "lazrs>=0.5"]              # LAS / LAZ LiDAR point clouds
+pcd = ["pypcd4>=1.4"]                             # PCD binary / binary_compressed point clouds
 # --- connectivity (device control / industrial + Physical-AI comms) ---
 # The native transports (TCP/UDP/Modbus-TCP/HTTP) need nothing beyond stdlib;
 # these extras add optional protocol/device adapters.
