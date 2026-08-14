@@ -37,8 +37,16 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
 
     Selection is on TRAIN only; HOLDOUT is tracked but never selected on (honest
     guard against the pseudo-equation trap).
+
+    ``problem`` may be a registered problem NAME (str) or a Problem instance
+    (e.g. one built by ``Problem.from_pairs`` from real frames) — the latter lets
+    real-data problems drive evolution without registering them globally.
     """
-    prob = problems.PROBLEMS[problem]
+    if isinstance(problem, problems.Problem):
+        prob = problem
+        problem = prob.name
+    else:
+        prob = problems.PROBLEMS[problem]
     wd = Path(workdir); wd.mkdir(parents=True, exist_ok=True)
     bpath = wd / f"baseline_{problem}.json"
     base = json.loads(bpath.read_text(encoding="utf-8")) if bpath.exists() else {}
