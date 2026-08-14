@@ -91,6 +91,8 @@ _PLY_TYPES = {
     "float": "f4", "float32": "f4", "double": "f8", "float64": "f8",
 }
 _OFF_MAGIC = ("OFF", "COFF", "NOFF", "CNOFF", "STOFF", "STCOFF", "4OFF", "NCOFF")
+#: PCD TYPE code (F/I/U) -> numpy kind, per the PCL PCD spec.
+_PCD_KIND = {"F": "f", "I": "i", "U": "u"}
 
 
 # ---- low-level guards ------------------------------------------------------ #
