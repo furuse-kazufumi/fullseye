@@ -38,17 +38,32 @@ _DNA_PATH = os.path.join(_HERE, "data", "macro_champions.json")
 
 
 def _load_entries() -> list:
-    """The macro-champion DNA entries (``[]`` if the file is absent/empty)."""
-    if not os.path.exists(_DNA_PATH):
-        return []
+    """The macro-champion DNA entries (``[]`` if none).
+
+    Prefers the generated py-module ``macro_champions_data.MACROS``: a flat-layout
+    ``.py`` always ships in the wheel, whereas ``data/`` files do NOT — so this is
+    what lets macro ops register on a ``pip``-installed package, not only in the
+    editable source tree. Falls back to the human-readable
+    ``data/macro_champions.json`` when the module is absent (e.g. a partial
+    checkout). Both are written together by ``champion_to_macro.py``.
+    """
     try:
-        with open(_DNA_PATH, encoding="utf-8") as f:
-            data = json.load(f)
-    except (OSError, ValueError):
-        return []
-    if isinstance(data, dict):
-        data = data.get("macros", [])
-    return data if isinstance(data, list) else []
+        from macro_champions_data import MACROS
+        if isinstance(MACROS, list) and MACROS:
+            return MACROS
+    except Exception:  # noqa: BLE001 - module optional; fall back to the JSON
+        pass
+    if os.path.exists(_DNA_PATH):
+        try:
+            with open(_DNA_PATH, encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                data = data.get("macros", [])
+            if isinstance(data, list):
+                return data
+        except (OSError, ValueError):
+            pass
+    return []
 
 
 def _make_runner(stages_spec, out_sort):
