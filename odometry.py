@@ -76,10 +76,11 @@ def rgbd_odometry(depth0, depth1, u, v, K, thresh: float = 0.02,
     Back-projects each valid pixel at ``t0`` (``depth0``) and its flow-matched pixel
     at ``t1`` (``depth1`` sampled at ``(x+u, y+v)``) into two 3-D clouds, then fits a
     robust rigid transform between the matched points (RANSAC + Kabsch, Arun 1987).
-    ``stride`` subsamples pixels for speed. Returns ``(R, t, inlier_fraction)`` where
-    ``X1 ≈ R @ X0 + t`` is the scene motion between frames (the camera moved by its
-    inverse). Depth outside ``[min_depth, max_depth]`` or whose flow lands off-frame
-    is dropped."""
+    ``stride`` subsamples pixels for speed. Returns ``(R, t, inlier_fraction)`` = the
+    **camera's motion** between the two frames (the relative camera-to-world pose):
+    a point fixed in the world appears to move by the inverse. Feed these directly to
+    :func:`integrate_trajectory` to build the camera path. Depth outside
+    ``[min_depth, max_depth]`` or whose flow lands off-frame is dropped."""
     from scipy import ndimage
     from camera import backproject
 
