@@ -3,51 +3,54 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-15 08:11:35
+- **最終更新**: 2026-08-15 08:40:51
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-480e33f auto: ops.py 編集前 (2026-08-15 08:06)
-a3550c6 auto: backends_alife.py 編集前 (2026-08-15 07:59)
-05aa6b6 auto: backends_aug.py 編集前 (2026-08-15 07:58)
-3e7b07f auto: backends_aug.py 編集前 (2026-08-15 07:58)
-8e3f7d6 registry: self-expanding macro ("DNA") ops — condense evolved champions into reusable operators
-50d6532 auto: .gitignore 編集前 (2026-08-15 07:46)
-e9a9a50 auto: ops.py 編集前 (2026-08-15 07:42)
-228af17 examples: consumer integration templates (onocollo, hillco) — 推奨(f)
-854b8d5 api: public-API stability contract + INTEGRATION.md (foundation for consumers)
-539cd14 auto: __init__.py 編集前 (2026-08-15 05:37)
+f43854a facade: event-camera (neuromorphic) vision + fix wheel packaging so the op wave & DNA op ship
+ebfba5f auto: STATUS.md 編集前 (2026-08-15 08:30)
+c7c63f7 auto: test_macro_ops.py 編集前 (2026-08-15 08:27)
+a99a5ff auto: pyproject.toml 編集前 (2026-08-15 08:27)
+fffb164 auto: champion_to_macro.py 編集前 (2026-08-15 08:27)
+ccd9e7c auto: champion_to_macro.py 編集前 (2026-08-15 08:27)
+b853680 auto: backends_macro.py 編集前 (2026-08-15 08:27)
+e1a2f3d auto: pyproject.toml 編集前 (2026-08-15 08:22)
+108f850 auto: pyproject.toml 編集前 (2026-08-15 08:22)
+fe74c6f auto: __init__.py 編集前 (2026-08-15 08:22)
 ```
 
 ## 現在の git status
 
 ```
-M data/wave0_pins.json
- M ops.py
-?? examples/sim2real_and_alife.py
+M data/macro_champions.json
+ M data/wave0_pins.json
+ M docs/HALCON_COVERAGE.md
+ M docs/SESSION_SUMMARY.md
+ M macro_champions_data.py
+?? examples/event_camera.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:10 examples/sim2real_and_alife.py
-08:10 .pytest_cache/v/cache/nodeids
-08:07 data/wave0_pins.json
-08:06 ops.py
-08:01 tests/test_alife.py
-08:00 tests/test_aug.py
-07:59 backends_alife.py
-07:58 docs/SESSION_SUMMARY.md
-07:58 backends_aug.py
-07:58 tests/test_tactile.py
-07:57 backends_tactile.py
-07:46 .gitignore
-07:45 data/halcon_stubs.json
-07:45 docs/HALCON_COVERAGE.md
-07:45 data/halcon_coverage_report.txt
+08:40 data/halcon_stubs.json
+08:40 docs/HALCON_COVERAGE.md
+08:40 data/halcon_coverage_report.txt
+08:40 docs/OP_DISPOSITION.json
+08:39 .pytest_cache/v/cache/nodeids
+08:39 data/wave0_pins.json
+08:39 macro_champions_data.py
+08:39 data/macro_champions.json
+08:38 docs/SESSION_SUMMARY.md
+08:34 examples/event_camera.py
+08:30 docs/STATUS.md
+08:28 fullseye.egg-info/SOURCES.txt
+08:28 fullseye.egg-info/top_level.txt
+08:28 fullseye.egg-info/requires.txt
+08:28 fullseye.egg-info/entry_points.txt
 ```
 
 ---
