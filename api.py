@@ -93,6 +93,14 @@ from render3d import (  # noqa: E402,F401
     render_mesh, look_at, intrinsics_from_fov, auto_view, mesh_to_sdf,
     voxelize_solid, marching_cubes,
 )
+from camera import (  # noqa: E402,F401
+    intrinsic_matrix, decompose_intrinsics, projection_matrix,
+    project_points, backproject, depth_to_points, normals_from_depth,
+    triangulate, reprojection_error, solve_pnp, rodrigues, rotation_log,
+    fundamental_matrix, essential_matrix, essential_from_fundamental,
+    decompose_essential, recover_pose, epipolar_lines,
+    distort_points, undistort_points, stereo_rectify,
+)
 from grasp import (  # noqa: E402,F401
     Grasp, sample_antipodal_grasps, grasps_from_mesh, force_closure,
     ferrari_canny_quality, approach_vector_from_normals, rank_grasps,
