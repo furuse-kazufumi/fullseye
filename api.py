@@ -194,6 +194,8 @@ __all__ = [
     "step_edges", "foothold_candidates",
     "locomotion", "contact_points", "com_from_silhouette", "support_polygon",
     "com_support_margin", "gait_phase",
+    "occupancy", "occupancy_grid_2d", "inflate_obstacles", "clearance_map",
+    "line_of_sight", "frontier_cells",
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
     "colorize_disparity", "colorize_labels", "colorize_height", "colorize_flow",
     "shaded_relief", "overlay_mask", "save", "load", "save_ply", "COLORMAPS",
