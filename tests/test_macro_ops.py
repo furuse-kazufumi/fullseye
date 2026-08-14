@@ -34,9 +34,14 @@ def _stages(e):
     return ops.decode_by_names([(s["op"], s["a"], s["b"]) for s in e["stages"]])
 
 
-def test_dna_file_present_and_nonempty():
-    assert os.path.exists(_DNA_PATH), "data/macro_champions.json missing"
+def test_dna_store_present_and_nonempty():
+    # The runtime DNA store is the py-module (it ships in the wheel; flat-layout
+    # data/*.json does not). It must exist and be non-empty, and the human-readable
+    # JSON mirror should be present in the source tree too.
+    import macro_champions_data
+    assert isinstance(macro_champions_data.MACROS, list) and macro_champions_data.MACROS
     assert ENTRIES, "expected at least one macro champion entry"
+    assert os.path.exists(_DNA_PATH), "data/macro_champions.json mirror missing"
 
 
 @pytest.mark.parametrize("e", ENTRIES, ids=IDS)
