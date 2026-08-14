@@ -93,6 +93,28 @@ def test_normals_from_depth_tilted_plane_exact():
     assert np.allclose(core, nrm, atol=1e-6)
 
 
+def test_normals_from_depth_oblique_face_camera():
+    # a steeply-slanted plane (front-facing, n_z > 0) must still yield normals that
+    # point BACK toward the camera (n . X <= 0), not away — the Z-sign test alone
+    # flips them wrong past ~55 deg tilt.
+    K = camera.intrinsic_matrix(500.0, 500.0, 320.0, 240.0)
+    H, W = 480, 640
+    nrm = np.array([-0.9798, 0.0, 0.2]); nrm /= np.linalg.norm(nrm)   # n_z > 0
+    d = -2.34                                          # plane n.X = d, front-facing (d<0)
+    v, u = np.mgrid[0:H, 0:W].astype(float)
+    x = (u - 320.0) / 500.0
+    y = (v - 240.0) / 500.0
+    denom = nrm[0] * x + nrm[1] * y + nrm[2]
+    Z = np.where(np.abs(denom) > 1e-6, d / denom, np.nan)
+    Z[Z <= 0] = np.nan                                 # keep only in-front pixels
+    got = camera.normals_from_depth(Z, K)
+    grid = camera.depth_to_points(Z, K, organized=True)
+    dotp = np.einsum("...i,...i->...", got, grid)
+    valid = np.isfinite(dotp)
+    assert valid.sum() > 1000
+    assert (dotp[valid] <= 1e-6).mean() > 0.999        # ~all normals face the camera
+
+
 def test_triangulate_recovers_structure():
     s = _scene()
     P1 = camera.projection_matrix(s["K"])
