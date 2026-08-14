@@ -100,6 +100,8 @@ with warnings.catch_warnings():
         fit_line, fit_circle, fit_ellipse, fit_rectangle2,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
+    import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
+    from graphengine import FullseyeGraph  # noqa: E402,F401
     from acquire import (  # noqa: E402,F401  (image acquisition: cameras / framegrabbers)
         Camera, list_cameras, open_framegrabber, grab_image, close_framegrabber,
     )
@@ -196,7 +198,7 @@ __all__ = [
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
     "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
-    "FullseyeEngine", "diagnose_stages",
+    "FullseyeEngine", "diagnose_stages", "graphengine", "FullseyeGraph",
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
