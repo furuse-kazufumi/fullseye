@@ -175,35 +175,45 @@ def warp_frame(frame, dy, dx):
     return np.clip(ndimage.shift(x, (float(dy), float(dx)), order=1, mode="reflect"), 0.0, 1.0)
 
 
-def contrast_maximization(prev, nxt, max_shift=6, thr=0.1, eps=_EPS):
-    """Estimate the global motion between two frames by CONTRAST MAXIMISATION
-    (Gallego et al. 2018): the true optic flow is the one that, when used to warp
-    the events back onto a single image, produces the SHARPEST (highest-variance)
-    image of warped events. Here motion is a global translation searched over
-    integer shifts in ``[-max_shift, max_shift]^2``; the score is the variance of
-    the event image formed between ``prev`` and the shift-compensated ``nxt``.
+def contrast_maximization(frames, max_v=4, thr=0.1, eps=_EPS):
+    """Estimate the global optic flow by CONTRAST MAXIMISATION (Gallego et al. 2018).
 
-    Returns ``{"dy", "dx", "contrast", "iwe"}`` — the recovered shift (pixels the
-    scene moved), the winning contrast, and the sharpened event image (IWE) in
-    [0,1]. Ground truth: for ``nxt = shift(prev, dy0, dx0)`` it recovers (dy0,dx0).
+    The event-vision principle: the true motion is the one that, when used to warp
+    every event back to a common reference time, piles the events from a moving edge
+    onto ONE sharp curve — maximising the CONTRAST (variance) of the accumulated
+    "image of warped events" (IWE). Here the motion is a constant global translation
+    ``(vy, vx)`` pixels/frame, searched over integers in ``[-max_v, max_v]^2`` over a
+    ``(T, H, W)`` stack: each interval's events (fired at end-time ``t``) are warped
+    back to ``t = 0`` by ``-(t·vy, t·vx)`` and summed; the sharpest sum wins.
 
-    Honest limit: a single global translation (no rotation / per-region flow) and
-    an integer search; for a true event stream this generalises to per-event warp.
+    Returns ``{"vy", "vx", "contrast", "iwe"}`` — the recovered per-frame velocity,
+    the winning IWE variance, and the sharpened event image in [0,1]. Ground truth:
+    for ``frames[t] = shift(base, t·vy0, t·vx0)`` it recovers ``(vy0, vx0)``.
+
+    Honest limit: a constant global translation (no rotation / per-region flow) on an
+    integer velocity grid; T>=3 disambiguates the blur (T=2 sees a single interval,
+    so any velocity of the right displacement scores alike — pass a real short clip).
     """
-    p = _img(prev)
-    ms = int(max(0, min(max_shift, min(p.shape) - 1)))
-    best = {"dy": 0.0, "dx": 0.0, "contrast": -1.0, "iwe": None}
-    for dy in range(-ms, ms + 1):
-        for dx in range(-ms, ms + 1):
-            # Compensate nxt by (-dy,-dx): if the scene moved by (dy,dx), this
-            # cancels the motion so prev and the warped nxt align and their event
-            # image collapses to sharp residual edges (high variance / contrast).
-            comp = warp_frame(nxt, -dy, -dx)
-            iwe = event_image(p, comp, thr, eps, polarity="both", normalize=False)
-            score = float(np.var(iwe))
+    f = np.asarray(frames, np.float64)
+    if f.ndim != 3 or f.shape[0] < 2:
+        raise ValueError("contrast_maximization needs a (T,H,W) stack with T>=2")
+    T, H, W = f.shape
+    ev = [(t, event_count(f[t - 1], f[t], thr, eps)) for t in range(1, T)]
+    mv = int(max(0, min(max_v, (min(H, W) - 1) // max(T - 1, 1))))
+
+    def _iwe(vy, vx):
+        acc = np.zeros((H, W), np.float64)
+        for t, e in ev:
+            acc += ndimage.shift(e, (-t * vy, -t * vx), order=1, mode="constant", cval=0.0)
+        return acc
+
+    best = {"vy": 0.0, "vx": 0.0, "contrast": -1.0}
+    for vy in range(-mv, mv + 1):
+        for vx in range(-mv, mv + 1):
+            score = float(np.var(_iwe(vy, vx)))
             if score > best["contrast"]:
-                best = {"dy": float(dy), "dx": float(dx), "contrast": score,
-                        "iwe": event_image(p, comp, thr, eps, polarity="both", normalize=True)}
-    if best["iwe"] is None:
-        best["iwe"] = np.zeros_like(p)
+                best = {"vy": float(vy), "vx": float(vx), "contrast": score}
+    raw = np.abs(_iwe(best["vy"], best["vx"]))
+    lo, hi = float(raw.min()), float(raw.max())
+    best["iwe"] = ((raw - lo) / (hi - lo)) if hi - lo > 1e-12 else np.zeros((H, W), np.float64)
     return best
