@@ -130,9 +130,14 @@ def gait_phase(foot_heights, stance_frac: float = 0.25):
     H = np.asarray(foot_heights, np.float64)
     if H.ndim != 2:
         raise ValueError("foot_heights must be (T, F)")
-    lo = H.min(0, keepdims=True)
-    rng = H.max(0, keepdims=True) - lo
-    rng = np.where(rng < 1e-12, 1.0, rng)            # a foot that never moves is planted
+    import warnings
+    with warnings.catch_warnings():                 # all-NaN foot -> handled below
+        warnings.simplefilter("ignore", RuntimeWarning)
+        lo = np.nanmin(H, 0, keepdims=True)          # a single NaN sample must not
+        rng = np.nanmax(H, 0, keepdims=True) - lo    # poison the whole foot's min/max
+    rng = np.where(~np.isfinite(rng) | (rng < 1e-12), 1.0, rng)  # never-moving foot = planted
+    lo = np.where(np.isfinite(lo), lo, 0.0)
+    # a NaN height at a frame compares False -> that (foot, frame) counts as not-stance
     stance = (H - lo) <= float(stance_frac) * rng
     duty = stance.mean(0)
     n_contacts = stance.sum(1)
