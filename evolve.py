@@ -84,10 +84,16 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
         if verbose and (gen % 10 == 0 or gen == gens - 1):
             print(f"  [{problem}] gen {gen:3d} train {champ_tr:.3f} holdout {holdout_fit(champ):.3f}", flush=True)
 
+    # Touch the LOCKED holdout exactly once, on the final champion only.
+    locked_holdout = round(prob.score(champ, locked), 4)
     champion = {
         "problem": problem, "unit": prob.unit,
         "genome": champ.tolist(), "pipeline": ops.pipeline_str(champ, prob.in_sort),
+        # Name-pinned, index-independent champion record (cross-install reload via
+        # ops.decode_by_names) — additive; does not affect selection or scoring.
+        "pipeline_stages": ops.pipeline_stages(champ, prob.in_sort),
         "train": round(champ_tr, 4), "holdout": round(holdout_fit(champ), 4),
+        "locked_holdout": locked_holdout,
         "config": cfg, "seed": seed, "gens": gens, "pop": pop,
     }
     (wd / f"champion_{problem}.json").write_text(json.dumps(champion, indent=2), encoding="utf-8")
