@@ -269,7 +269,7 @@ def surface_normals(grid, cell: float = 0.05):
     patch gives ``[0, 0, 1]``; a ramp tilts accordingly. Feeds foot-orientation
     planning and slope-aware foothold scoring."""
     filled = fill_gaps(np.asarray(grid, np.float64))
-    gy, gx = np.gradient(filled, cell)
+    gy, gx = _grad2(filled, cell)
     n = np.stack([-gx, -gy, np.ones_like(gx)], axis=-1)
     return n / np.linalg.norm(n, axis=-1, keepdims=True)
 
