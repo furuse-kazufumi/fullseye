@@ -63,6 +63,22 @@ def test_process_tiled_memmap_out_of_core(tmp_path):
                        atol=1e-12)
 
 
+def test_process_tiled_multichannel():
+    # (H,W,C) input must not crash and must match whole-image per channel
+    rng = np.random.default_rng(3)
+    rgb = np.clip(ndimage.gaussian_filter(rng.random((60, 70, 3)), (1.2, 1.2, 0)), 0, 1)
+
+    def perchan(arr, a=0.5, b=0.5):
+        return ndimage.uniform_filter(np.asarray(arr, np.float64), (5, 5, 1), mode="nearest")
+
+    whole = perchan(rgb)
+    tiled = scale.process_tiled(perchan, rgb, tile=24, halo=4)
+    par = scale.process_tiled_mt(perchan, rgb, tile=24, halo=4, workers=3)
+    assert tiled.shape == rgb.shape and par.shape == rgb.shape
+    assert np.allclose(par[8:-8, 8:-8], whole[8:-8, 8:-8], atol=1e-9)
+    assert np.array_equal(tiled, par)
+
+
 def test_tile_specs_cover_everything():
     specs = scale._tile_specs(100, 130, tile=32, halo=4)
     covered = np.zeros((100, 130), bool)
