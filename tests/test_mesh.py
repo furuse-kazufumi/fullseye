@@ -393,10 +393,104 @@ def test_read_points_pcd_ascii(tmp_path):
     assert np.array_equal(P, EXPECT_P)
 
 
-def test_read_points_pcd_binary_is_refused(tmp_path):
-    txt = PCD_ASCII.replace("DATA ascii", "DATA binary")
-    with pytest.raises(ValueError, match="ascii"):
-        mesh.read_points(_write(tmp_path, "bin.pcd", txt))
+def _pcd_binary_bytes(P, rgb=None, rgb_type="U") -> bytes:
+    """A tiny uncompressed binary PCD (packed little-endian records)."""
+    n = P.shape[0]
+    P = P.astype("<f4")
+    if rgb is None:
+        head = ("VERSION 0.7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\n"
+                "WIDTH %d\nHEIGHT 1\nPOINTS %d\nDATA binary\n" % (n, n))
+        dt = np.dtype([("x", "<f4"), ("y", "<f4"), ("z", "<f4")])
+        rec = np.zeros(n, dt)
+    else:
+        head = ("VERSION 0.7\nFIELDS x y z rgb\nSIZE 4 4 4 4\nTYPE F F F %s\n"
+                "COUNT 1 1 1 1\nWIDTH %d\nHEIGHT 1\nPOINTS %d\nDATA binary\n"
+                % (rgb_type, n, n))
+        rt = "<u4" if rgb_type == "U" else "<f4"
+        dt = np.dtype([("x", "<f4"), ("y", "<f4"), ("z", "<f4"), ("rgb", rt)])
+        rec = np.zeros(n, dt)
+        rec["rgb"] = (np.asarray(rgb, np.uint32) if rgb_type == "U"
+                      else np.asarray(rgb, np.uint32).view(np.float32))
+    rec["x"], rec["y"], rec["z"] = P[:, 0], P[:, 1], P[:, 2]
+    return head.encode("ascii") + rec.tobytes()
+
+
+def _lzf_compress_literal(data: bytes) -> bytes:
+    """A valid LZF stream using only literal runs (no back-references) — the
+    simplest correct encoding, enough to exercise the reader's decompress +
+    structure-of-arrays de-interleave path."""
+    out, i, n = bytearray(), 0, len(data)
+    while i < n:
+        run = min(32, n - i)
+        out.append(run - 1)
+        out += data[i:i + run]
+        i += run
+    return bytes(out)
+
+
+def _pcd_binary_compressed_bytes(P, usize_override=None) -> bytes:
+    n = P.shape[0]
+    P = P.astype("<f4")
+    soa = P[:, 0].tobytes() + P[:, 1].tobytes() + P[:, 2].tobytes()     # structure-of-arrays
+    comp = _lzf_compress_literal(soa)
+    head = ("VERSION 0.7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\n"
+            "WIDTH %d\nHEIGHT 1\nPOINTS %d\nDATA binary_compressed\n" % (n, n))
+    usize = len(soa) if usize_override is None else usize_override
+    body = np.array([len(comp), usize], "<u4").tobytes() + comp
+    return head.encode("ascii") + body
+
+
+def test_read_points_pcd_binary_roundtrip(tmp_path):
+    """Binary PCD is now read (it used to be refused). Coords are exact in f32."""
+    raw = _pcd_binary_bytes(EXPECT_P)
+    P = mesh.read_points(_write(tmp_path, "bin.pcd", raw))
+    assert np.array_equal(P, EXPECT_P)
+
+
+def test_read_points_pcd_binary_rgb(tmp_path):
+    rgb = np.array([255 * 65536 + 128 * 256 + 64, 0, 51 * 65536 + 102 * 256 + 153])
+    raw = _pcd_binary_bytes(EXPECT_P, rgb=rgb, rgb_type="U")
+    P, C = mesh.read_points(_write(tmp_path, "brgb.pcd", raw), with_colors=True)
+    assert np.array_equal(P, EXPECT_P)
+    assert np.allclose(C[0], [1.0, 128 / 255.0, 64 / 255.0])
+    assert np.allclose(C[2], [51 / 255.0, 102 / 255.0, 153 / 255.0])
+
+
+def test_read_points_pcd_binary_compressed_roundtrip(tmp_path):
+    """binary_compressed = LZF over a structure-of-arrays buffer; the reader
+    decompresses and de-interleaves it back to (N, 3)."""
+    raw = _pcd_binary_compressed_bytes(EXPECT_P)
+    P = mesh.read_points(_write(tmp_path, "bc.pcd", raw))
+    assert np.array_equal(P, EXPECT_P)
+
+
+def test_read_points_pcd_binary_truncated_raises(tmp_path):
+    raw = _pcd_binary_bytes(EXPECT_P)[:-8]           # drop two points' worth of bytes
+    with pytest.raises(ValueError, match="bytes"):
+        mesh.read_points(_write(tmp_path, "trunc.pcd", raw))
+
+
+def test_read_points_pcd_binary_compressed_bad_size_raises(tmp_path):
+    raw = _pcd_binary_compressed_bytes(EXPECT_P, usize_override=999)
+    with pytest.raises(ValueError, match="uncompressed size"):
+        mesh.read_points(_write(tmp_path, "badbc.pcd", raw))
+
+
+def test_lzf_decompress_literal_and_back_reference():
+    # literal run of 3 bytes
+    assert mesh._lzf_decompress(bytes([0x02, 1, 2, 3]), 3, "t") == bytes([1, 2, 3])
+    # 'ABC' then a back-reference copying 6 bytes from distance 3 -> 'ABCABCABC'
+    stream = bytes([0x02, 65, 66, 67, 0x80, 0x02])
+    assert mesh._lzf_decompress(stream, 9, "t") == b"ABCABCABC"
+
+
+def test_lzf_decompress_rejects_malformed():
+    with pytest.raises(ValueError):                             # literal run past the data
+        mesh._lzf_decompress(bytes([0x05, 1, 2]), 6, "t")
+    with pytest.raises(ValueError, match="declared"):          # ends short of the length
+        mesh._lzf_decompress(bytes([0x02, 1, 2, 3]), 99, "t")
+    with pytest.raises(ValueError, match="before the output start"):
+        mesh._lzf_decompress(bytes([0x80, 0x02]), 9, "t")     # back-reference before start
 
 
 def test_read_points_obj_uses_vertices_only(tmp_path):
