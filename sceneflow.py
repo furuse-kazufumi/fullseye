@@ -122,7 +122,8 @@ def looming(u, v) -> dict:
     mean_divergence`` frames (from ``div ~ 2/tau`` for a frontally approached plane),
     ``inf`` when not approaching. A cheap "am I about to hit something" gate."""
     div = flow_divergence(u, v)
-    md = float(np.mean(div))
+    md = float(np.nanmean(div)) if np.isfinite(div).any() else 0.0
+    # NaN flow vectors must not mask an approach as "not expanding" -> nanmean
     ttc = 2.0 / md if md > 1e-9 else float("inf")
     return {"mean_divergence": md, "expanding": md > 0.0, "ttc": ttc}
 
