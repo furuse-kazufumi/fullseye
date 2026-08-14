@@ -155,13 +155,14 @@ def match_descriptors(desc1, desc2, ratio: float = 0.8, mutual: bool = True):
     best = nn[:, 0]
     matches = []
     b_best = np.argmin(d, axis=0)                      # set2 -> best set1 (for mutual)
+    r2 = float(ratio) ** 2
     for i in range(A.shape[0]):
-        j = best[i]
+        j = int(best[i])
         d1 = d[i, j]
         d2 = d[i, nn[i, 1]] if B.shape[0] > 1 else np.inf
-        if d1 < (ratio ** 2) * d2 if np.isfinite(d2) else True:
-            if not mutual or b_best[j] == i:
-                matches.append((i, int(j)))
+        passes_ratio = (d1 < r2 * d2) if np.isfinite(d2) else True   # sole candidate accepted
+        if passes_ratio and (not mutual or b_best[j] == i):
+            matches.append((i, j))
     return np.asarray(matches, int).reshape(-1, 2)
 
 
