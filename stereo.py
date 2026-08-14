@@ -378,18 +378,23 @@ def disparity_confidence(left, right, max_disp: int = 16, block: int = 7,
                          method: str = "ssd") -> np.ndarray:
     """Per-pixel matching confidence in [0, 1] from the cost curve (PKRN-style).
 
-    Compares the best matching cost ``c1`` with the second-best ``c2``:
-    ``conf = 1 - c1 / c2``. A sharp, unambiguous minimum (well-textured pixel) gives
-    ``conf -> 1``; a flat cost curve (textureless / repetitive region where the
-    disparity is untrustworthy) gives ``conf -> 0``. Use it to gate depth before
-    building a cloud. Returns (H, W)."""
+    Peak-ratio confidence: compares the winning cost ``c1`` with the best cost
+    ``c2`` *outside a +/-1 window of the winner* (the runner-up basin), so
+    ``conf = 1 - (c1+eps)/(c2+eps)``. A sharp, isolated minimum (well-textured pixel)
+    gives ``conf -> 1``; a flat or repetitive cost curve, where a rival disparity is
+    almost as good (textureless region, the disparity is untrustworthy), gives
+    ``conf -> 0``. Use it to gate depth before building a cloud. Returns (H, W)."""
     L = np.asarray(left, np.float64)
     R = np.asarray(right, np.float64)
     if L.shape != R.shape or L.ndim != 2:
         raise ValueError("left/right must be equal-shape 2-D arrays")
     vol = _cost_volume(L, R, int(max_disp), int(block), method)
-    part = np.sort(vol, axis=0)                    # ascending cost per pixel
-    c1 = part[0]
-    c2 = part[1] if part.shape[0] > 1 else part[0]
-    conf = 1.0 - c1 / np.where(c2 < 1e-12, 1e-12, c2)
+    D = vol.shape[0]
+    d1 = vol.argmin(0)
+    c1 = vol.min(0)
+    dd = np.arange(D)[:, None, None]
+    excl = np.abs(dd - d1[None]) <= 1               # mask the winner and its neighbours
+    c2 = np.where(excl, np.inf, vol).min(0)         # best competing (runner-up) basin
+    eps = 1e-6
+    conf = np.where(np.isfinite(c2), 1.0 - (c1 + eps) / (c2 + eps), 0.0)
     return np.clip(conf, 0.0, 1.0)
