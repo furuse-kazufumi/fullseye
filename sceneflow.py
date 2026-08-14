@@ -155,7 +155,7 @@ def ego_translation_from_flow(u, v, K, min_speed: float = 1e-3) -> np.ndarray:
 
 def scene_flow(disp0, disp1, u, v, fx: float = 1.0, baseline: float = 1.0,
                cx: float | None = None, cy: float | None = None,
-               min_disp: float = 1e-6) -> np.ndarray:
+               fy: float | None = None, min_disp: float = 1e-6) -> np.ndarray:
     """Per-pixel 3-D scene flow from a stereo+optical-flow pair (Vedula 1999).
 
     Combines two disparity maps and the optical flow between the two left frames:
