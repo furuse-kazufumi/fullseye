@@ -46,6 +46,15 @@ def run(problem, workdir="out/worklog/imgevolve", gens=50, pop=24, seed=0, out=N
 
     tr = prob.make(cfg["n_train"], cfg["size"], cfg["seed"])
     ho = prob.make(cfg["n_holdout"], cfg["size"], cfg["seed"] + 10_000)
+    # THIRD split — a LOCKED holdout, distinct from both train (seed) and the
+    # per-gen search-validation holdout (seed+10000). It is evaluated EXACTLY ONCE
+    # on the final champion (below), never per-gen and never for selection, so it
+    # is the strongest honesty guard against the pseudo-equation trap. Selection is
+    # unchanged (train-only); adding this split cannot move the champion. Backward
+    # compatible: the existing "holdout" key keeps its meaning; "locked_holdout" is
+    # additive. Size defaults to n_holdout; override via config "n_locked".
+    n_locked = cfg.get("n_locked", cfg["n_holdout"])
+    locked = prob.make(n_locked, cfg["size"], cfg["seed"] + 20_000)
     train_fit = lambda g: prob.score(g, tr)  # noqa: E731
     holdout_fit = lambda g: prob.score(g, ho)  # noqa: E731
 
