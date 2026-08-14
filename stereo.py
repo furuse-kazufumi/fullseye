@@ -359,7 +359,9 @@ def fill_disparity(disp, valid=None) -> np.ndarray:
     if valid is None:
         valid = np.isfinite(d)            # a measured 0 disparity (far surface) is
     else:                                 # legitimate; only NaN/inf is a hole here.
-        valid = np.broadcast_to(np.asarray(valid, bool), d.shape)
+        valid = np.asarray(valid, bool)
+        if valid.shape != d.shape:
+            raise ValueError("valid mask shape %r != disp shape %r" % (valid.shape, d.shape))
     H, W = d.shape
     cols = np.arange(W)[None, :]
     # forward fill: index of last valid pixel at or before each column (-1 if none)
