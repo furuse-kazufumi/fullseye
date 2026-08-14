@@ -788,6 +788,118 @@ def test_ragged_xyz_and_pcd_rows_raise(tmp_path):
 
 
 # --------------------------------------------------------------------------- #
+# NPY / NPZ point clouds  (read + write_points)                                #
+# --------------------------------------------------------------------------- #
+CLOUD_P = np.array([[0.5, -1.25, 3.0], [-2.0, 0.0, 0.125], [1.0, 2.0, 3.0]])
+CLOUD_C = np.array([[1.0, 0.0, 0.0], [0.0, 0.5, 1.0], [0.2, 0.4, 0.6]])
+
+
+@pytest.mark.parametrize("ext", [".npy", ".npz"])
+def test_write_read_points_numpy_roundtrip_exact(tmp_path, ext):
+    """numpy formats round-trip coordinates AND colours exactly (float, not 8-bit)."""
+    p = str(tmp_path / ("cloud" + ext))
+    mesh.write_points(p, CLOUD_P, CLOUD_C)
+    P, C = mesh.read_points(p, with_colors=True)
+    assert np.array_equal(P, CLOUD_P)
+    assert np.array_equal(C, CLOUD_C)
+    # and without colours -> (N, 3), C is None
+    q = str(tmp_path / ("plain" + ext))
+    mesh.write_points(q, CLOUD_P)
+    P2, C2 = mesh.read_points(q, with_colors=True)
+    assert np.array_equal(P2, CLOUD_P) and C2 is None
+
+
+def test_read_points_npy_xyzrgb_and_255_scale(tmp_path):
+    A = np.array([[0.0, 0, 0, 255, 0, 0], [1, 1, 1, 0, 128, 255]])
+    p = str(tmp_path / "a.npy")
+    np.save(p, A)
+    P, C = mesh.read_points(p, with_colors=True)
+    assert np.array_equal(P, A[:, :3])
+    assert np.allclose(C, [[1.0, 0.0, 0.0], [0.0, 128 / 255.0, 1.0]])   # max>1 => 0..255
+
+
+def test_read_points_npz_key_selection(tmp_path):
+    sole = str(tmp_path / "sole.npz")
+    np.savez(sole, whatever=CLOUD_P)
+    assert np.array_equal(mesh.read_points(sole), CLOUD_P)              # sole array
+    keyed = str(tmp_path / "keyed.npz")
+    np.savez(keyed, points=CLOUD_P + 9.0, xyz=CLOUD_P)                  # 'xyz' wins over 'points'
+    assert np.array_equal(mesh.read_points(keyed), CLOUD_P)
+    withcol = str(tmp_path / "withcol.npz")
+    np.savez(withcol, xyz=CLOUD_P, colors=CLOUD_C)                      # separate colours key
+    P, C = mesh.read_points(withcol, with_colors=True)
+    assert np.array_equal(P, CLOUD_P) and np.allclose(C, CLOUD_C)
+
+
+def test_read_points_npy_rejects_bad_shape_and_nonfinite(tmp_path):
+    bad = str(tmp_path / "bad.npy")
+    np.save(bad, np.zeros((4, 4)))                                     # 4 columns: neither 3 nor 6
+    with pytest.raises(ValueError, match="N, 3"):
+        mesh.read_points(bad)
+    nan = str(tmp_path / "nan.npy")
+    np.save(nan, np.array([[0.0, 0.0, np.nan]]))
+    with pytest.raises(ValueError, match="non-finite"):
+        mesh.read_points(nan)
+
+
+def test_read_points_npz_ambiguous_raises(tmp_path):
+    p = str(tmp_path / "amb.npz")
+    np.savez(p, a=CLOUD_P, b=CLOUD_P)                                  # 2 arrays, no xyz/points
+    with pytest.raises(ValueError, match="sole array"):
+        mesh.read_points(p)
+
+
+def test_read_points_npy_rejects_pickle(tmp_path):
+    """allow_pickle=False: an object array (which would need pickle) is refused."""
+    p = str(tmp_path / "obj.npy")
+    np.save(p, np.array([{"x": 1}, {"y": 2}], dtype=object), allow_pickle=True)
+    with pytest.raises(ValueError, match="not a readable .npy"):
+        mesh.read_points(p)
+
+
+# --------------------------------------------------------------------------- #
+# write_points: xyz / ply                                                      #
+# --------------------------------------------------------------------------- #
+def test_write_points_xyz_roundtrip(tmp_path):
+    p = str(tmp_path / "cloud.xyz")
+    mesh.write_points(p, CLOUD_P, CLOUD_C)
+    P, C = mesh.read_points(p, with_colors=True)
+    assert np.array_equal(P, CLOUD_P)                # 17-digit text: exact coords
+    assert np.allclose(C, CLOUD_C)                   # floats in [0,1]: exact colours
+
+
+@pytest.mark.parametrize("binary", [True, False])
+def test_write_points_ply_roundtrip(tmp_path, binary):
+    p = str(tmp_path / ("pts_%s.ply" % binary))
+    mesh.write_points(p, CLOUD_P, CLOUD_C, binary=binary)
+    P, C = mesh.read_points(p, with_colors=True)
+    assert np.array_equal(P, CLOUD_P)                # double xyz: exact coords
+    assert np.allclose(C, CLOUD_C, atol=1.5 / 255)   # uchar colour: 8-bit quantised
+    # no-colour PLY reads back coords with C is None
+    q = str(tmp_path / ("plain_%s.ply" % binary))
+    mesh.write_points(q, CLOUD_P, binary=binary)
+    P2, C2 = mesh.read_points(q, with_colors=True)
+    assert np.array_equal(P2, CLOUD_P) and C2 is None
+
+
+def test_write_points_rejects_bad_extension_and_shapes(tmp_path):
+    with pytest.raises(ValueError, match="unsupported point write format"):
+        mesh.write_points(str(tmp_path / "c.gltf"), CLOUD_P)
+    with pytest.raises(ValueError, match="colours"):
+        mesh.write_points(str(tmp_path / "c.npy"), CLOUD_P, np.ones((2, 3)))   # wrong count
+    with pytest.raises(ValueError, match="non-finite"):
+        mesh.write_points(str(tmp_path / "c.xyz"), CLOUD_P * np.nan)
+
+
+def test_write_points_all_formats_recover_coords(tmp_path):
+    """Every write_points format hands back the same coordinates."""
+    for name in ("c.npy", "c.npz", "c.xyz", "c.ply"):
+        p = str(tmp_path / name)
+        mesh.write_points(p, CLOUD_P, CLOUD_C)
+        assert np.array_equal(mesh.read_points(p), CLOUD_P), name
+
+
+# --------------------------------------------------------------------------- #
 # wiring: the facade and the rest of the perception stack                      #
 # --------------------------------------------------------------------------- #
 def test_mesh_reachable_through_facade(tmp_path):
