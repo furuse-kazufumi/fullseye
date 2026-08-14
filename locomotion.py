@@ -37,7 +37,10 @@ def contact_points(points, plane, tol: float = 0.02):
     pl = np.asarray(plane, np.float64).ravel()
     if pl.size != 4:
         raise ValueError("plane must be [a, b, c, d]")
-    dist = np.abs(P @ pl[:3] + pl[3]) / max(np.linalg.norm(pl[:3]), 1e-12)
+    nrm = np.linalg.norm(pl[:3])
+    if nrm < 1e-12:                                 # a zero-normal 'plane' is not a
+        raise ValueError("degenerate plane: normal has zero length")   # plane; would
+    dist = np.abs(P @ pl[:3] + pl[3]) / nrm         # otherwise mark EVERY point a contact
     mask = dist <= float(tol)
     return P[mask], mask
 
