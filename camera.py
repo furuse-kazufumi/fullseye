@@ -223,9 +223,12 @@ def normals_from_depth(depth, K, smooth: int = 0) -> np.ndarray:
     n = np.cross(du, dv)
     norm = np.linalg.norm(n, axis=-1, keepdims=True)
     n = n / np.where(norm < 1e-12, np.nan, norm)
-    # orient toward the camera: the point is at +Z, so a visible surface normal
-    # should have a negative Z component (point back toward the origin).
-    flip = n[..., 2] > 0
+    # orient toward the camera centre (origin): a visible surface normal must point
+    # back toward the viewpoint, i.e. n . X <= 0 (the ray to the point). Testing
+    # only the Z sign is wrong once the surface is viewed obliquely enough that the
+    # lateral normal components dominate (a steeply-slanted wall past ~55 deg).
+    dotp = np.einsum("...i,...i->...", n, grid)
+    flip = dotp > 0
     n[flip] *= -1.0
     return n
 
