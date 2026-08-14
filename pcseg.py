@@ -395,9 +395,13 @@ def farthest_point_sampling(points, k: int, seed: int = 0) -> np.ndarray:
     chosen = np.empty(k, int)
     chosen[0] = rng.integers(n)
     d = np.linalg.norm(P - P[chosen[0]], axis=1)
+    d = np.nan_to_num(d, nan=-1.0)                 # NaN points are not valid samples
+    d[chosen[0]] = -1.0
     for i in range(1, k):
-        chosen[i] = int(np.argmax(d))
-        d = np.minimum(d, np.linalg.norm(P - P[chosen[i]], axis=1))
+        j = int(np.argmax(d))
+        chosen[i] = j
+        d = np.minimum(d, np.nan_to_num(np.linalg.norm(P - P[j], axis=1), nan=-1.0))
+        d[chosen[:i + 1]] = -1.0                    # never re-pick an already-chosen point
     return chosen
 
 
