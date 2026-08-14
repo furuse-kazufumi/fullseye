@@ -191,6 +191,7 @@ __all__ = [
     "detect", "segment_objects", "object_descriptor", "nearest_prototype", "draw_objects",
     "registration", "kabsch", "icp", "point_to_plane_icp", "apply_transform",
     "pca_align", "register", "feature_register",
+    "ppf", "ppf_model", "surface_match", "find_surface_pose",
     "pointcloud", "estimate_normals", "voxel_downsample",
     "remove_statistical_outliers", "remove_radius_outliers", "fpfh",
     "pcseg", "fit_plane", "fit_plane_ransac", "fit_sphere_ransac", "fit_cylinder_ransac",
