@@ -611,7 +611,8 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  "backends_ski2", "backends_cv2b", "backends_r3", "backends_kornia",
                  "backends_filters2", "backends_regions2", "backends_subpix", "backends_xldgeom",
                  "backends_regions3", "backends_imgtools", "backends_measure1d",
-                 "backends_physics", "backends_decomp"):
+                 "backends_physics", "backends_decomp",
+                 "backends_inverse", "backends_transform2", "backends_segment2", "backends_tomo"):
         try:
             _b = __import__(_mod)
             _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)

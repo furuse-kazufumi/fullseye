@@ -140,6 +140,15 @@ isotropic/coherence/mean_curvature は backends_auto と重複ゆえ被覆主張
 full_domain=恒等 no-op)。★検証 agent が physics の重複被覆主張を摘発→私が一次確認して halcon クリア(v11 規律)。
 REGISTRY 556→595。**固定参照パイプライン北極星は +39 op 後もスコア不変(dtrain +0.0)= gate 設計を実証**。
 
+**★op 拡張 wave 3(2026-08-14, ultracode workflow)= registry +25 op(全て新 capability・halcon="")**: 4 新
+モジュール — `backends_inverse`(逆問題=Richardson-Lucy/spatial Wiener/unsharp-deblur/motion-deblur/
+back-projection 超解像/harmonic inpainting 6)・`backends_transform2`(領域変換=log-polar/Radon sinogram/
+steerable/phase-congruency/gradient-domain/census/rank 7)・`backends_segment2`(適応セグメント=SLIC/
+felzenszwalb/GMM/k-means/region-growing/normalized-cut/watershed 7)・**`backends_tomo`(トモグラフィ=
+radon forward/FBP/SART/unfiltered-BP/sinogram-denoise 5、★XCT プロジェクト直結)**。**HALCON に無い新
+capability ゆえ全て halcon=""**(被覆主張ゼロ=honest、coverage 307 不変・dangling=0)。4 クラスタ全て敵対検証
+pass・suspect ゼロ。REGISTRY 595→620。**参照北極星は +25 op 後もスコア不変(dtrain +0.0)= gate を3度実証**。
+
 **★op 拡張 wave(2026-08-14, ultracode workflow)= registry +35 op / coverage 252→282(dangling=0)**: 4 新 backend
 モジュール(`backends_filters2` shock/gray_skeleton/topographic/lut/symmetry 等 9・`backends_regions2`
 inner_circle/smallest_circle/smallest_rectangle2/runlength 等 10・`backends_subpix` サブピクセル極値点 6・

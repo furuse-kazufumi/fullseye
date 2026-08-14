@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 307 / 2313 HALCON operators (13.3%)** via `Op.halcon`, from 595 registry ops.
+**imgevolve maps to 307 / 2313 HALCON operators (13.3%)** via `Op.halcon`, from 620 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the

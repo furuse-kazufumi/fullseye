@@ -1,6 +1,6 @@
 {
  "cand_counts": {
-  "image": 422,
+  "image": 447,
   "region": 116,
   "feature": 1,
   "contour": 40,
@@ -121,7 +121,7 @@
    "any": "identity"
   },
   {
-   "image": "dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00)",
+   "image": "tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00)",
    "region": "r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00)",
    "feature": "identity",
    "contour": "xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00)",
@@ -130,7 +130,7 @@
    "any": "identity"
   },
   {
-   "image": "projective_trans_image_size(a=0.50,b=0.50) -> projective_trans_image_size(a=0.50,b=0.50) -> projective_trans_image_size(a=0.50,b=0.50) -> projective_trans_image_size(a=0.50,b=0.50) -> projective_trans_image_size(a=0.50,b=0.50) -> projective_trans_image_size(a=0.50,b=0.50)",
+   "image": "hough_line_trans(a=0.50,b=0.50) -> hough_line_trans(a=0.50,b=0.50) -> hough_line_trans(a=0.50,b=0.50) -> hough_line_trans(a=0.50,b=0.50) -> hough_line_trans(a=0.50,b=0.50) -> hough_line_trans(a=0.50,b=0.50)",
    "region": "projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50)",
    "feature": "identity",
    "contour": "orientation_xld(a=0.50,b=0.50)",
@@ -139,16 +139,16 @@
    "any": "identity"
   },
   {
-   "image": "sk_rolling_ball(a=0.24,b=0.29) -> sigma_image(a=0.41,b=0.47) -> hough_line_trans(a=0.59,b=0.65) -> xsp_detrend_flatten(a=0.76,b=0.82) -> xkor_clahe(a=0.94,b=1.00)",
+   "image": "sk_area_opening(a=0.24,b=0.29) -> gray_bothat(a=0.41,b=0.47) -> frei_dir(a=0.59,b=0.65) -> xmh_pftas(a=0.76,b=0.82)",
    "region": "sk_euler(a=0.24,b=0.29)",
    "feature": "identity",
    "contour": "select_contours_xld(a=0.24,b=0.29) -> convexity_xld(a=0.41,b=0.47)",
    "match": "identity",
-   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_dilate(a=0.59,b=0.65) -> vol_mip(a=0.76,b=0.82) -> xkor_clahe(a=0.94,b=1.00)",
+   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_dilate(a=0.59,b=0.65) -> vol_mip(a=0.76,b=0.82) -> it_crop_part(a=0.94,b=1.00)",
    "any": "identity"
   },
   {
-   "image": "dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00) -> dc_homomorphic(a=1.00,b=1.00)",
+   "image": "tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00) -> tm_sinogram_denoise(a=1.00,b=1.00)",
    "region": "r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00) -> r3_label_to_region(a=1.00,b=1.00)",
    "feature": "identity",
    "contour": "xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00)",
