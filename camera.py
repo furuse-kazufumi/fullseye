@@ -681,8 +681,12 @@ def stereo_rectify(K1, K2, R, t):
     # new y-axis: orthogonal to new-x and the *old* left optical axis z=[0,0,1]
     oldz = np.array([0.0, 0.0, 1.0])
     v2 = np.cross(oldz, v1)
-    if np.linalg.norm(v2) < 1e-12:                 # baseline parallel to optical axis
-        v2 = np.cross(np.array([0.0, 1.0, 0.0]), v1)
+    if np.linalg.norm(v2) < 1e-6:
+        # baseline (nearly) parallel to the optical axis = forward-motion stereo:
+        # the epipole is inside the image and planar rectification is undefined
+        # (it needs polar rectification). Refuse rather than return inf/NaN pixels.
+        raise ValueError("baseline is parallel to the optical axis (forward-motion "
+                         "stereo); planar rectification is undefined here")
     v2 = v2 / np.linalg.norm(v2)
     v3 = np.cross(v1, v2)
     Rn = np.stack([v1, v2, v3])                    # world(cam1)-> rectified rows
