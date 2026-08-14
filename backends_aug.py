@@ -197,7 +197,8 @@ def aug_shot_noise(v, a, b):
 
     The image is interpreted as a normalised photon rate, scaled by the photon
     scale ``K = 5 + 250*(1-a)``, sampled from a Poisson distribution and scaled
-    back: ``Poisson(v*K)/K``. Low ``a`` = few photons = very noisy (SNR ~ sqrt(K)).
+    back: ``Poisson(v*K)/K``. High ``a`` = few photons = very noisy
+    (SNR ~ sqrt(K); a=0 -> K=255 near-clean, a=1 -> K=5 photon-starved).
     ``b`` adds a small dark-current pedestal (``0.05*b`` in rate units) before
     counting, so even a pure-black frame shows dark noise. The RNG is seeded from
     (a, b) -> the realisation is fixed per knob setting."""
