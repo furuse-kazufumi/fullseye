@@ -231,6 +231,8 @@ __all__ = [
     "flow_magnitude", "flow_angle", "track_points",
     "motion", "frame_motion_energy", "dominant_motion", "flow_from_model",
     "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
+    "sceneflow", "flow_divergence", "flow_curl", "focus_of_expansion", "time_to_contact",
+    "looming", "ego_translation_from_flow", "scene_flow",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
     "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
