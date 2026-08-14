@@ -59,7 +59,12 @@ def test_describe_drops_border_keypoints():
     kp = np.array([[1, 1], [60, 70], [0, 0]])          # two are within a 9-patch border
     desc, kept = features.describe_patches(img, kp, patch=9)
     assert kept.shape[0] == 1 and tuple(kept[0]) == (60, 70)
-    assert np.isclose(np.linalg.norm(desc[0]), 1.0)     # unit-norm descriptor
+    assert desc.shape == (1, 81)
+    assert abs(desc[0].mean()) < 1e-9                   # zero-mean patch descriptor
+    # a textured keypoint gives a unit-norm descriptor (a flat patch -> zero, honestly)
+    img2 = np.zeros((40, 40)); img2[10:30, 10:30] = 1.0
+    d2, _ = features.describe_patches(img2, np.array([[10, 10]]), patch=9)
+    assert np.isclose(np.linalg.norm(d2[0]), 1.0)
 
 
 def test_match_descriptors_ratio_rejects_ambiguous():
