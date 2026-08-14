@@ -21,6 +21,16 @@ __all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
            "step_edges", "foothold_candidates"]
 
 
+def _grad2(a, cell):
+    """(dz/dy, dz/dx) that tolerates a length-1 axis (np.gradient raises there).
+
+    A grid with a size-1 dimension (which elevation_map can produce from a sparse
+    cloud) has zero gradient along that axis, not an error."""
+    gy = np.gradient(a, cell, axis=0) if a.shape[0] >= 2 else np.zeros_like(a)
+    gx = np.gradient(a, cell, axis=1) if a.shape[1] >= 2 else np.zeros_like(a)
+    return gy, gx
+
+
 def elevation_map(points, cell: float = 0.05, agg: str = "max",
                   bounds=None):
     """Bin a point cloud into a 2.5-D elevation grid.
