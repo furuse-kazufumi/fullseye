@@ -10,6 +10,7 @@ MANIPULATION:  image ─▶ (stereo) depth ─▶ point cloud ─▶ segment obj
 LOCOMOTION:    depth ─▶ cloud + normals ─▶ elevation map ─▶ slope / foothold ─▶
                support polygon + static-stability margin
 NAVIGATION:    optical flow ─▶ heading (FoE) + time-to-contact + 3-D scene flow
+ODOMETRY:      RGB-D pair ─▶ frame-to-frame camera motion ─▶ integrated trajectory
 ```
 
 Runnable template: [`examples/physical_ai_perception.py`](../examples/physical_ai_perception.py)
