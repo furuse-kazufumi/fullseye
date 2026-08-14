@@ -86,7 +86,10 @@ def test_scene_flow_recovers_lateral_translation():
     u = np.full((H, W), fx * dx / Z)
     v = np.zeros((H, W))
     sf = sceneflow.scene_flow(d, d, u, v, fx=fx, baseline=baseline)
-    core = sf[5:-5, 5:-5]                            # interior (flow stays in-frame)
+    # only sample where the flow-matched pixel (x + 16px) stays inside the frame;
+    # past the right edge the t1 disparity is unavailable -> NaN (correctly).
+    core = sf[5:-5, 5:30]
+    assert np.isfinite(core).all()
     assert np.allclose(core[..., 0], dx, atol=1e-6)
     assert np.allclose(core[..., 1], 0.0, atol=1e-6)
     assert np.allclose(core[..., 2], 0.0, atol=1e-6)
