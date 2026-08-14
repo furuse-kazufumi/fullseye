@@ -29,6 +29,27 @@ from collections import Counter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 DNA_PATH = os.path.join(HERE, "data", "macro_champions.json")
+PY_STORE_PATH = os.path.join(HERE, "macro_champions_data.py")
+
+
+def _write_py_store(entries) -> None:
+    """Mirror the entries into macro_champions_data.py — the RUNTIME store
+    backends_macro reads. A flat-layout .py always ships in the wheel, whereas
+    data/*.json does not, so this is what makes macro ops register on a pip-installed
+    package (not only the editable source tree). Kept in sync with the JSON here."""
+    import pprint
+    hdr = (
+        '"""Generated DNA store for macro ("self-expanding registry") ops — DO NOT hand-edit.\n\n'
+        "Written by champion_to_macro.py alongside the human-readable data/macro_champions.json.\n"
+        "This is the RUNTIME source backends_macro.py reads: as a plain py-module it always\n"
+        "ships in the wheel (flat-layout data files under data/ do NOT), so macro ops register\n"
+        'on a pip-installed package, not only in the editable source tree.\n"""\n'
+        "from __future__ import annotations\n\nMACROS = "
+    )
+    with open(PY_STORE_PATH, "w", encoding="utf-8") as f:
+        f.write(hdr)
+        f.write(pprint.pformat(entries, width=100, sort_dicts=False))
+        f.write("\n")
 
 # The canonical strong hand baselines per problem, for an honest side-by-side. The
 # denoise reference matches tests/data/wave0_pins.json (gaussian -> median).
