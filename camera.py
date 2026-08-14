@@ -318,6 +318,64 @@ def _pnp_dlt(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     return best[1], best[2]
 
 
+def _coplanar(X: np.ndarray, tol: float = 1e-6) -> bool:
+    """True if the 3-D points lie (near-)coplanar — where general DLT resection is
+    rank-deficient and returns garbage. Ratio of the smallest to largest spread."""
+    c = X - X.mean(0)
+    s = np.linalg.svd(c, compute_uv=False)
+    return bool(s[-1] <= tol * s[0])
+
+
+def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
+    """Pose init for a coplanar target via the plane->image homography (H&Z §8.1.1).
+
+    General DLT resection is degenerate for planar points; instead fit a homography
+    from the model's own in-plane coordinates to the normalized image points and
+    decompose it into (R, t). Returns an initial (R, t) for the LM refinement."""
+    c = X.mean(0)
+    Xc = X - c
+    _, _, Vt = np.linalg.svd(Xc)
+    B = Vt.T                                        # columns: 2 in-plane axes + normal
+    p2 = Xc @ B[:, :2]                              # (N,2) planar model coords
+    Kinv = np.linalg.inv(K)
+    m = np.hstack([uv, np.ones((uv.shape[0], 1))]) @ Kinv.T
+    m = m[:, :2] / m[:, 2:3]
+    # homography DLT: p2 (homogeneous) -> m
+    N = X.shape[0]
+    A = np.zeros((2 * N, 9))
+    for i in range(N):
+        x, y = p2[i]
+        u, v = m[i]
+        A[2 * i] = [-x, -y, -1, 0, 0, 0, u * x, u * y, u]
+        A[2 * i + 1] = [0, 0, 0, -x, -y, -1, v * x, v * y, v]
+    _, _, Vt2 = np.linalg.svd(A)
+    H = Vt2[-1].reshape(3, 3)
+    best = None
+    for s in (1.0, -1.0):
+        lam = s / max(0.5 * (np.linalg.norm(H[:, 0]) + np.linalg.norm(H[:, 1])), 1e-12)
+        r1, r2, t_h = lam * H[:, 0], lam * H[:, 1], lam * H[:, 2]
+        r3 = np.cross(r1, r2)
+        U, _, Vt3 = np.linalg.svd(np.stack([r1, r2, r3], 1))
+        Rh = U @ Vt3
+        if np.linalg.det(Rh) < 0:
+            Rh = -Rh
+        R_full = Rh @ B.T                           # plane-frame -> original model frame
+        t_full = t_h - R_full @ c
+        err = float(np.mean(reprojection_error(X, uv, K, R_full, t_full)))
+        front = float(((X @ R_full.T + t_full)[:, 2] > 0).mean())
+        score = (front, -err)
+        if best is None or score > best[0]:
+            best = (score, R_full, t_full)
+    return best[1], best[2]
+
+
+def _pnp_init(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
+    """Initial pose for PnP: homography-based for coplanar targets, DLT otherwise."""
+    if _coplanar(X):
+        return _pnp_planar(X, uv, K)
+    return _pnp_dlt(X, uv, K)
+
+
 def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
     """Recover object/camera 6-DoF pose ``(R, t)`` from >=6 3-D<->2-D matches.
 
