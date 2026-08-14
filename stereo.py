@@ -21,7 +21,9 @@ import numpy as np
 from scipy import ndimage
 
 __all__ = ["disparity_map", "disparity_subpixel", "lr_consistency",
-           "depth_from_disparity", "reproject_to_points"]
+           "depth_from_disparity", "reproject_to_points",
+           "census_transform", "disparity_census", "disparity_sgm",
+           "speckle_filter", "fill_disparity", "disparity_confidence"]
 
 
 def _shift_right_cols(R: np.ndarray, d: int) -> np.ndarray:
