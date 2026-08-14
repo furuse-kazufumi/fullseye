@@ -248,7 +248,7 @@ def slope_map(grid, cell: float = 0.05, degrees: bool = True):
     or radians. The steepness a leg has to cope with — a walkability primitive
     complementing :func:`traversability`."""
     filled = fill_gaps(np.asarray(grid, np.float64))
-    gy, gx = np.gradient(filled, cell)
+    gy, gx = _grad2(filled, cell)
     ang = np.arctan(np.hypot(gx, gy))
     return np.degrees(ang) if degrees else ang
 
