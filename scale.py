@@ -15,6 +15,8 @@ memory at any image size.
 """
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
 # --- scale classification --------------------------------------------------- #
