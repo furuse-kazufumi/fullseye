@@ -59,6 +59,7 @@ import volio  # noqa: E402  (volumetric/medical import: DICOM/NIfTI/NRRD/MetaIma
 import raster  # noqa: E402  (bit-depth-preserving raster + metric depth: 16-bit/float/PFM)
 import render3d  # noqa: E402  (mesh -> depth/silhouette/normals render + SDF + solid voxelization)
 import camera  # noqa: E402  (pinhole geometry: project/triangulate/PnP/essential/rectify -- 2D<->3D backbone)
+import odometry  # noqa: E402  (visual/RGB-D odometry: frame-to-frame camera motion + trajectory)
 import grasp  # noqa: E402  (antipodal grasp synthesis: force-closure + Ferrari-Canny quality)
 import meshrepair  # noqa: E402  (watertight/repair/decimate + exact inertia -> sim-ready body)
 import volops  # noqa: E402  (3-D volume analysis: Frangi/Sato/label/distance/region props)
