@@ -648,48 +648,149 @@ def _read_xyz(raw: bytes, src: str):
     return A[:, :3], C
 
 
-def _read_pcd(raw: bytes, src: str):
-    """ASCII PCD (Point Cloud Library file format). Binary/binary_compressed PCD
-    is refused — it belongs with the optional-extra formats."""
-    lines = _text(raw).splitlines()
-    fields = types = counts = None
-    npts, width, height, data, di = None, None, None, None, None
-    for i, ln in enumerate(lines):
-        s = ln.strip()
+def _pcd_header(raw: bytes, src: str):
+    """Parse the ASCII PCD header -> ``(hdr, data_offset)``. The header is ASCII
+    even for a binary body, so it is scanned byte-line by byte-line and the byte
+    offset just past the ``DATA`` line's newline is returned for the binary readers
+    (PCL, *The PCD (Point Cloud Data) file format*)."""
+    fields = types = sizes = counts = None
+    npts = width = height = data = None
+    offset, pos, n = 0, 0, len(raw)
+    while pos < n:
+        nl = raw.find(b"\n", pos)
+        end, nxt = (n, n) if nl < 0 else (nl, nl + 1)
+        s = raw[pos:end].decode("ascii", "replace").strip()
+        pos = nxt
         if not s or s.startswith("#"):
             continue
         parts = s.split()
         key = parts[0].upper()
         if key == "FIELDS":
             fields = parts[1:]
+        elif key == "SIZE":
+            sizes = parts[1:]
         elif key == "TYPE":
             types = parts[1:]
         elif key == "COUNT":
             counts = parts[1:]
-        elif key == "POINTS":
-            npts = _one_int(parts[1], "PCD POINTS", src) if len(parts) > 1 else None
         elif key == "WIDTH":
             width = _one_int(parts[1], "PCD WIDTH", src) if len(parts) > 1 else None
         elif key == "HEIGHT":
             height = _one_int(parts[1], "PCD HEIGHT", src) if len(parts) > 1 else None
+        elif key == "POINTS":
+            npts = _one_int(parts[1], "PCD POINTS", src) if len(parts) > 1 else None
         elif key == "DATA":
             data = parts[1].lower() if len(parts) > 1 else ""
-            di = i + 1
+            offset = nxt
             break
     if data is None:
         raise ValueError("%s: no PCD 'DATA' line — not a PCD file?" % src)
-    if data != "ascii":
-        raise ValueError("%s: PCD DATA %r is not supported — only 'ascii' (binary PCD needs "
-                         "an optional extra)" % (src, data))
-    if not fields:
+    if npts is None and width is not None and height is not None:
+        npts = width * height
+    hdr = {"fields": fields, "types": types, "sizes": sizes, "counts": counts,
+           "npts": npts, "width": width, "height": height, "data": data,
+           "low": [f.lower() for f in fields] if fields else []}
+    return hdr, offset
+
+
+def _pcd_check_layout(hdr: dict, src: str) -> None:
+    """Constraints shared by every PCD body encoding."""
+    if not hdr["fields"]:
         raise ValueError("%s: PCD header has no 'FIELDS' line" % src)
+    counts = hdr["counts"]
     if counts is not None and any(c != "1" for c in counts):
         raise ValueError("%s: PCD COUNT != 1 per field is not supported (got %r)"
                          % (src, " ".join(counts)))
-    if npts is None:
-        npts = (width * height) if (width is not None and height is not None) else None
+
+
+def _pcd_np_type(tc: str, sz, src: str) -> str:
+    """PCD ``(TYPE, SIZE)`` -> a little-endian numpy dtype string. PCD binary is
+    written in the host byte order, which is little-endian on every platform PCL
+    targets; that is what is honoured here."""
+    kind = _PCD_KIND.get(str(tc).upper())
+    if kind is None:
+        raise ValueError("%s: unsupported PCD TYPE %r (want F, I or U)" % (src, tc))
+    try:
+        s = int(sz)
+    except (ValueError, TypeError):
+        raise ValueError("%s: malformed PCD SIZE %r" % (src, sz)) from None
+    if kind == "f" and s not in (4, 8):
+        raise ValueError("%s: PCD float SIZE %d unsupported (want 4 or 8)" % (src, s))
+    if kind in "iu" and s not in (1, 2, 4, 8):
+        raise ValueError("%s: PCD %s SIZE %d unsupported (want 1/2/4/8)"
+                         % (src, "int" if kind == "i" else "uint", s))
+    return "<%s%d" % (kind, s)
+
+
+def _pcd_binary_layout(hdr: dict, src: str):
+    """Validate + return the per-field numpy dtype strings for a binary PCD."""
+    fields, types, sizes = hdr["fields"], hdr["types"], hdr["sizes"]
+    if types is None or sizes is None:
+        raise ValueError("%s: binary PCD needs both SIZE and TYPE header lines" % src)
+    if not (len(fields) == len(sizes) == len(types)):
+        raise ValueError("%s: PCD FIELDS/SIZE/TYPE lengths differ (%d/%d/%d)"
+                         % (src, len(fields), len(sizes), len(types)))
+    if hdr["npts"] is None:
+        raise ValueError("%s: binary PCD needs a POINTS or WIDTH*HEIGHT count" % src)
+    return [_pcd_np_type(types[j], sizes[j], src) for j in range(len(fields))]
+
+
+def _pcd_extract(col: dict, hdr: dict, src: str):
+    """Column dict (field name -> 1-D array) -> ``(P, C)``. ``x/y/z`` build the
+    cloud; colours come from ``r/g/b``, ``red/green/blue`` (0..255) or a packed
+    ``rgb``/``rgba`` field, exactly as the ASCII path always has. Non-xyz/rgb
+    fields (intensity, normals, curvature, ...) are dropped."""
+    low, types = hdr["low"], hdr["types"]
+    for axis in ("x", "y", "z"):
+        if axis not in col:
+            raise ValueError("%s: PCD FIELDS %r has no %r field"
+                             % (src, " ".join(hdr["fields"]), axis))
+    P = np.column_stack([col[a].astype(np.float64) for a in ("x", "y", "z")])
+    C = None
+    for trio in (("r", "g", "b"), ("red", "green", "blue")):
+        if all(c in col for c in trio):
+            C = np.clip(np.column_stack([col[c].astype(np.float64) for c in trio])
+                        / 255.0, 0.0, 1.0)
+            break
+    if C is None and ("rgb" in col or "rgba" in col):
+        name = "rgb" if "rgb" in col else "rgba"
+        j = low.index(name)
+        kind = (types[j].upper() if types is not None and j < len(types) else "F")
+        vals = col[name]
+        packed = (vals.astype(np.float32).view(np.uint32) if kind == "F"
+                  else vals.astype(np.int64).astype(np.uint32))
+        C = np.clip(np.column_stack([(packed >> 16) & 255, (packed >> 8) & 255,
+                                     packed & 255]).astype(np.float64) / 255.0, 0.0, 1.0)
+    return P, C
+
+
+def _read_pcd(raw: bytes, src: str):
+    """PCD (Point Cloud Library file format), all three encodings:
+
+      * ``ascii`` — whitespace ``FIELDS`` values, one point per line.
+      * ``binary`` — packed little-endian records (array-of-structures).
+      * ``binary_compressed`` — LZF-compressed, structure-of-arrays layout.
+
+    Only the ``x/y/z`` (and ``r/g/b`` / packed ``rgb``) fields are returned;
+    ``COUNT != 1`` is refused. Fields are read with the declared ``SIZE``/``TYPE``.
+    """
+    hdr, offset = _pcd_header(raw, src)
+    _pcd_check_layout(hdr, src)
+    data = hdr["data"]
+    if data == "ascii":
+        return _read_pcd_ascii(raw, offset, hdr, src)
+    if data == "binary":
+        return _read_pcd_binary(raw, offset, hdr, src)
+    if data == "binary_compressed":
+        return _read_pcd_binary_compressed(raw, offset, hdr, src)
+    raise ValueError("%s: PCD DATA %r is not supported — want 'ascii', 'binary' or "
+                     "'binary_compressed'" % (src, data))
+
+
+def _read_pcd_ascii(raw: bytes, offset: int, hdr: dict, src: str):
+    fields, npts = hdr["fields"], hdr["npts"]
     rows = []
-    for ln in lines[di:]:
+    for ln in raw[offset:].decode("utf-8", "replace").splitlines():
         s = ln.strip()
         if not s or s.startswith("#"):
             continue
@@ -706,25 +807,171 @@ def _read_pcd(raw: bytes, src: str):
     if bad is not None:
         raise ValueError("%s: PCD row %d has %d values, expected %d (one per FIELD)"
                          % (src, bad, len(rows[bad]), nf))
-    low = [f.lower() for f in fields]
-    for axis in ("x", "y", "z"):
-        if axis not in low:
-            raise ValueError("%s: PCD FIELDS %r has no %r field" % (src, " ".join(fields), axis))
     A = _floats(rows, "PCD row", src).reshape(npts, nf) if npts else np.zeros((0, nf))
-    P = np.column_stack([A[:, low.index(a)] for a in ("x", "y", "z")])
+    col = {hdr["low"][j]: A[:, j] for j in range(nf)}
+    return _pcd_extract(col, hdr, src)
+
+
+def _read_pcd_binary(raw: bytes, offset: int, hdr: dict, src: str):
+    formats = _pcd_binary_layout(hdr, src)
+    npts = _check_count(int(hdr["npts"]), "points", src)
+    dt = np.dtype([("f%d" % j, formats[j]) for j in range(len(formats))])
+    need = dt.itemsize * npts
+    if offset + need > len(raw):
+        raise ValueError("%s: binary PCD declares %d points (%d bytes) but only %d bytes "
+                         "follow the header" % (src, npts, need, len(raw) - offset))
+    if npts == 0:
+        col = {hdr["low"][j]: np.zeros(0, formats[j]) for j in range(len(formats))}
+    else:
+        arr = np.frombuffer(raw, dt, count=npts, offset=offset)
+        col = {hdr["low"][j]: arr["f%d" % j] for j in range(len(formats))}
+    return _pcd_extract(col, hdr, src)
+
+
+def _read_pcd_binary_compressed(raw: bytes, offset: int, hdr: dict, src: str):
+    formats = _pcd_binary_layout(hdr, src)
+    npts = _check_count(int(hdr["npts"]), "points", src)
+    if offset + 8 > len(raw):
+        raise ValueError("%s: binary_compressed PCD ends before its 8-byte size header" % src)
+    csize, usize = (int(v) for v in np.frombuffer(raw, "<u4", count=2, offset=offset))
+    body = offset + 8
+    if csize > len(raw) - body:
+        raise ValueError("%s: binary_compressed PCD declares %d compressed bytes but only %d "
+                         "follow" % (src, csize, len(raw) - body))
+    sizes = [np.dtype(f).itemsize for f in formats]
+    expect = int(np.sum(sizes)) * npts
+    if usize != expect:
+        raise ValueError("%s: binary_compressed PCD uncompressed size %d != %d "
+                         "(fields x points)" % (src, usize, expect))
+    if usize > MAX_FILE_BYTES:
+        raise ValueError("%s: binary_compressed PCD uncompressed size %d over the %d-byte cap "
+                         "(mesh.MAX_FILE_BYTES)" % (src, usize, MAX_FILE_BYTES))
+    buf = _lzf_decompress(raw[body:body + csize], usize, src)
+    # binary_compressed is structure-of-arrays: every point's field 0, then every
+    # point's field 1, ... — the transpose of the packed binary record layout.
+    col, off = {}, 0
+    for j, fmt in enumerate(formats):
+        col[hdr["low"][j]] = (np.frombuffer(buf, fmt, count=npts, offset=off)
+                              if npts else np.zeros(0, fmt))
+        off += sizes[j] * npts
+    return _pcd_extract(col, hdr, src)
+
+
+def _lzf_decompress(data: bytes, expected_len: int, src: str) -> bytes:
+    """Decompress an LZF stream (Marc Lehmann's *liblzf*, the codec PCL uses for
+    ``binary_compressed`` PCD). Pure-Python and bounds-checked: a control byte
+    ``< 32`` is a literal run of ``ctrl+1`` bytes; otherwise it is a back-reference
+    whose length is ``(ctrl >> 5) + 2`` (extended by one byte when the field is 7)
+    at distance ``((ctrl & 0x1f) << 8) + next + 1``. Every offset is validated
+    against the output produced so far, and the total is capped at *expected_len*,
+    so a malformed stream raises ``ValueError`` rather than looping or over-reading.
+
+    Literal runs are copied by slice; only back-references iterate in Python, so a
+    very large highly-compressible cloud decompresses slowly — acceptable for the
+    import path, and bounded by ``MAX_FILE_BYTES``."""
+    out = bytearray()
+    ip, n = 0, len(data)
+    while ip < n:
+        ctrl = data[ip]
+        ip += 1
+        if ctrl < 32:                                   # literal run
+            run = ctrl + 1
+            if ip + run > n:
+                raise ValueError("%s: LZF literal run runs past the compressed data" % src)
+            out += data[ip:ip + run]
+            ip += run
+        else:                                           # back reference
+            length = ctrl >> 5
+            if length == 7:
+                if ip >= n:
+                    raise ValueError("%s: LZF stream truncated in an extended length" % src)
+                length += data[ip]
+                ip += 1
+            if ip >= n:
+                raise ValueError("%s: LZF stream truncated in a back-reference" % src)
+            ref = len(out) - ((ctrl & 0x1f) << 8) - 1 - data[ip]
+            ip += 1
+            if ref < 0:
+                raise ValueError("%s: LZF back-reference points before the output start" % src)
+            for _ in range(length + 2):                 # min match length is 3
+                out.append(out[ref])
+                ref += 1
+        if len(out) > expected_len:
+            raise ValueError("%s: LZF output exceeds the declared uncompressed size (%d)"
+                             % (src, expected_len))
+    if len(out) != expected_len:
+        raise ValueError("%s: LZF decompressed to %d bytes, header declared %d"
+                         % (src, len(out), expected_len))
+    return bytes(out)
+
+
+# ---- NPY / NPZ (points only) ------------------------------------------------ #
+def _points_from_array(A, src: str, what: str = "array"):
+    """An in-memory array -> ``(P, C)``: an ``(N, 3)`` cloud, or ``(N, 6)`` as
+    ``xyz`` + ``rgb`` (a colour column whose maximum exceeds 1 is read as 0..255,
+    matching the ``.xyz`` convention; values already in ``[0, 1]`` are kept exactly
+    so a ``write_points`` round-trip is lossless)."""
+    A = np.asarray(A)
+    if A.ndim != 2 or A.shape[1] not in (3, 6):
+        raise ValueError("%s: %s must be (N, 3) xyz or (N, 6) xyz+rgb, got shape %r"
+                         % (src, what, (A.shape,)))
+    _check_count(A.shape[0], "points", src)
+    P = A[:, :3].astype(np.float64)
     C = None
-    for trio in (("r", "g", "b"), ("red", "green", "blue")):
-        if all(c in low for c in trio):
-            C = np.clip(np.column_stack([A[:, low.index(c)] for c in trio]) / 255.0, 0.0, 1.0)
-            break
-    if C is None and ("rgb" in low or "rgba" in low):
-        j = low.index("rgb" if "rgb" in low else "rgba")
-        col = A[:, j]
-        kind = (types[j].upper() if types is not None and j < len(types) else "F")
-        packed = (col.astype(np.float32).view(np.uint32) if kind == "F"
-                  else col.astype(np.int64).astype(np.uint32))
-        C = np.clip(np.column_stack([(packed >> 16) & 255, (packed >> 8) & 255,
-                                     packed & 255]).astype(np.float64) / 255.0, 0.0, 1.0)
+    if A.shape[1] == 6:
+        C = A[:, 3:6].astype(np.float64)
+        if C.size and np.isfinite(C).all() and C.max() > 1.0:
+            C = C / 255.0
+        C = np.clip(C, 0.0, 1.0)
+    return P, C
+
+
+def _read_npy(raw: bytes, src: str):
+    """A ``.npy`` array (NumPy's public NPY format). Loaded with
+    ``allow_pickle=False`` so an untrusted file cannot smuggle a pickle."""
+    try:
+        A = np.load(io.BytesIO(raw), allow_pickle=False)
+    except Exception as e:                              # noqa: BLE001 — untrusted input
+        raise ValueError("%s: not a readable .npy array (%s)" % (src, e)) from None
+    return _points_from_array(A, src, ".npy array")
+
+
+def _read_npz(raw: bytes, src: str):
+    """A ``.npz`` archive. The primary cloud is the ``xyz`` key, else ``points``,
+    else the sole array; an optional ``colors`` (or ``rgb``) key supplies separate
+    colours when the primary array is ``(N, 3)``. ``allow_pickle=False`` throughout."""
+    try:
+        z = np.load(io.BytesIO(raw), allow_pickle=False)
+    except Exception as e:                              # noqa: BLE001 — untrusted input
+        raise ValueError("%s: not a readable .npz archive (%s)" % (src, e)) from None
+    try:
+        keys = list(z.keys())
+
+        def _pick(names):
+            for k in names:
+                if k in keys:
+                    return np.asarray(z[k])
+            return None
+
+        A = _pick(("xyz", "points"))
+        if A is None:
+            if len(keys) == 1:
+                A = np.asarray(z[keys[0]])
+            else:
+                raise ValueError("%s: .npz holds %d arrays %r — need a sole array or an "
+                                 "'xyz'/'points' key" % (src, len(keys), keys))
+        Csep = _pick(("colors", "rgb"))
+    finally:
+        z.close()
+    P, C = _points_from_array(A, src, ".npz array")
+    if Csep is not None and C is None:
+        Csep = np.asarray(Csep, np.float64)
+        if Csep.ndim != 2 or Csep.shape != (P.shape[0], 3):
+            raise ValueError("%s: .npz colours have shape %r, need (%d, 3)"
+                             % (src, (Csep.shape,), P.shape[0]))
+        if Csep.size and np.isfinite(Csep).all() and Csep.max() > 1.0:
+            Csep = Csep / 255.0
+        C = np.clip(Csep, 0.0, 1.0)
     return P, C
 
 
