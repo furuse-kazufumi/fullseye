@@ -188,7 +188,14 @@ def _hessian_components(vol: np.ndarray, sigma: float):
     axis 0=z, 1=y, 2=x), scaled by ``sigma**2`` for scale invariance (Lindeberg's
     gamma-normalisation with gamma=1). Returns ``(a, b, c, d, e, f)`` = the
     ``(zz, yy, xx, zy, zx, yx)`` entries of the symmetric matrix
-    ``[[a, d, e], [d, b, f], [e, f, c]]``."""
+    ``[[a, d, e], [d, b, f], [e, f, c]]``.
+
+    The volume is demeaned first. The Hessian is a second-order (DC-invariant)
+    operator analytically, but the *truncated* discrete Gaussian second-derivative
+    kernel does not sum to exactly zero, so a constant input leaks a small
+    intensity-proportional residual; demeaning makes a globally-constant volume
+    exactly zero and removes that artefact without touching real structure."""
+    vol = vol - float(vol.mean())
     s = float(sigma)
     g = s * s
     hzz = ndimage.gaussian_filter(vol, s, order=(2, 0, 0)) * g
