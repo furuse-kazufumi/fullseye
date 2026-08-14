@@ -63,7 +63,8 @@ from stereo import (  # noqa: E402,F401
     disparity_map, disparity_subpixel, lr_consistency,
     depth_from_disparity, reproject_to_points,
 )
-from measure import line_profile, distance, angle  # noqa: E402,F401
+from measure import (line_profile, distance, angle,  # noqa: E402,F401
+                     fit_line, fit_circle, fit_ellipse, fit_rectangle2)
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
 )
@@ -175,6 +176,7 @@ __all__ = [
     "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
+    "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
 ]
 
 

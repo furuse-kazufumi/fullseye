@@ -64,6 +64,20 @@ R,t,aln,rmse = fs.point_to_plane_icp(cloud, model)  # tighter on surfaces (Low 2
 R,t,aln,rmse = fs.feature_register(cloud, model)    # FPFH + RANSAC + ICP (ambiguous global axes)
 ```
 
+## Metrology — `measure` (sub-pixel primitive fitting)
+The measurement side HALCON does with `fit_*_contour_xld`: fit a geometric
+primitive to a set of `(row, col)` points (e.g. an XLD edge contour) by classical
+least squares and read back the parameters + an honest RMS residual.
+```python
+prof = fs.line_profile(img, (r0, c0), (r1, c1))     # bilinear intensity profile
+c = fs.fit_circle(points)      # Kåsa/Coope algebraic fit -> {cy, cx, r, rms}
+e = fs.fit_ellipse(points)     # Halir-Flusser 1998 direct fit -> {cy, cx, ra, rb, angle_deg, rms}
+l = fs.fit_line(points)        # total-least-squares -> {cy, cx, dy, dx, angle_deg, rms}
+r = fs.fit_rectangle2(points)  # min-area oriented box (rotating calipers) -> {cy, cx, l1, l2, angle_deg, rms}
+```
+Exact on noise-free points; robust under moderate noise; fail-closed (collinear /
+< min points / non-finite raise `ValueError` rather than return a meaningless fit).
+
 ## Visualise / export — `imgio` (no matplotlib)
 `colorize_depth` · `colorize_disparity` · `colorize_labels` · `colorize_flow` ·
 `colorize_height` · `shaded_relief` · `apply_cmap(x, name)` (16 maps) ·

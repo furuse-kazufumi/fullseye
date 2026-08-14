@@ -68,6 +68,7 @@ with warnings.catch_warnings():
         residual_motion, motion_segments, motion_energy_series, detect_events,
         video, read_frames, iter_frames, frame_pairs, write_video, probe,
         recipes, recipe, measure, line_profile, distance, angle,
+        fit_line, fit_circle, fit_ellipse, fit_rectangle2,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     from acquire import (  # noqa: E402,F401  (image acquisition: cameras / framegrabbers)
@@ -140,6 +141,7 @@ __all__ = [
     "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
+    "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
     "FullseyeEngine", "diagnose_stages",
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
     "open_channel", "protocols", "capabilities", "Channel",
