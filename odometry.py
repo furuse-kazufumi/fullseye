@@ -175,14 +175,18 @@ def umeyama_align(src, dst, with_scale: bool = True):
     return float(s), R, t
 
 
-def trajectory_error(est_poses, gt_poses, align: bool = True):
+def trajectory_error(est_poses, gt_poses, align: bool = True, with_scale: bool = False):
     """Absolute Trajectory Error (ATE) between estimated and ground-truth poses.
 
-    Takes two ``(N,4,4)`` (or (N,3) position) trajectories, optionally Umeyama-aligns
-    the estimate to ground truth first (the fair comparison for odometry, which is
-    only recoverable up to a global transform), and returns
-    ``{rmse, mean, max, aligned_positions}`` of the per-pose position error. The
-    honest scalar for how well the odometry tracked."""
+    Takes two ``(N,4,4)`` (or (N,3) position) trajectories, optionally aligns the
+    estimate to ground truth first (the fair comparison for odometry, recoverable
+    only up to a global transform), and returns ``{rmse, mean, max,
+    aligned_positions}`` of the per-pose position error. ``with_scale=False``
+    (default) uses a **rigid** alignment so scale drift is *measured* — the right
+    choice for metric RGB-D odometry, which recovers real scale; ``with_scale=True``
+    is the Sim3 (scale-absorbing) convention used to benchmark monocular SLAM
+    (TUM/ORB-SLAM), which would hide a metric pipeline's scale error. The honest
+    scalar for how well the odometry tracked."""
     def positions(P):
         P = np.asarray(P, np.float64)
         return P[:, :3, 3] if P.ndim == 3 else P
