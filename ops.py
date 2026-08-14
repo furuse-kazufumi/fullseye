@@ -714,6 +714,11 @@ def pipeline_str(genome, start: str = IMAGE) -> str:
 # champion across installs is done by op NAME instead of index: pipeline_stages()
 # records the champion as (name, a, b) and decode_by_names() rebuilds the exact
 # pipeline from those names, independent of the index layout. See docs/WAVE0_STABLE_SLOTS.md.
+#
+# A few names occur twice (a backend overrides a core op, e.g. "laplace"). Like RT
+# and _BY_NAME, SLOTS resolves a name to its LAST (canonical) occurrence — the op
+# that actually executes (decode() stores a name; _apply runs RT[name]). Name-pinned
+# reload is therefore consistent with execution on both sides.
 SLOTS: dict[str, int] = {op.name: i for i, op in enumerate(REGISTRY)}
 
 
