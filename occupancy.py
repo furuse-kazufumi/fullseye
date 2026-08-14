@@ -95,10 +95,12 @@ def clearance_map(occ, cell: float = 0.05):
 def line_of_sight(occ, start, end) -> bool:
     """True if the straight segment between two cells crosses no obstacle.
 
-    Supercover Bresenham traversal of the occupancy grid between ``start`` and
-    ``end`` (each ``(row, col)``) — the collision test a planner runs to add an edge
-    or shortcut a path. Endpoints outside the grid, or either endpoint occupied,
-    return False."""
+    Bresenham traversal of the occupancy grid between ``start`` and ``end`` (each
+    ``(row, col)``) with **corner-cutting rejected**: a diagonal step is blocked if
+    both cells flanking the corner are occupied, so the line cannot tunnel between two
+    diagonally-touching obstacles. The collision test a planner runs to add an edge or
+    shortcut a path. Endpoints outside the grid, or either endpoint occupied, return
+    False."""
     occ = np.asarray(occ, bool)
     H, W = occ.shape
     r0, c0 = int(start[0]), int(start[1])
@@ -119,12 +121,17 @@ def line_of_sight(occ, start, end) -> bool:
         if r == r1 and c == c1:
             return True
         e2 = 2 * err
+        moved_r = moved_c = False
         if e2 > -dc:
             err -= dc
             r += sr
+            moved_r = True
         if e2 < dr:
             err += dr
             c += sc
+            moved_c = True
+        if moved_r and moved_c and occ[r - sr, c] and occ[r, c - sc]:
+            return False                            # diagonal step would cut a corner
 
 
 def frontier_cells(free, unknown, min_cluster: int = 1):
