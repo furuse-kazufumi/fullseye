@@ -115,10 +115,10 @@ def fast_corners(img, thresh: float = 0.05, min_distance: int = 5,
 def describe_patches(img, keypoints, patch: int = 9):
     """Zero-mean, unit-norm intensity-patch descriptor around each keypoint.
 
-    A ``patch x patch`` window is normalized (mean-subtracted, L2-normalized) so its
-    dot product with another is the correlation — illumination-affine invariant.
-    Keypoints closer than ``patch//2`` to the border are dropped. Returns
-    ``(descriptors (M, patch*patch), kept_keypoints (M, 2))``."""
+    A square window of odd side ``s = 2*(patch//2)+1`` (so an even *patch* rounds up)
+    is normalized (mean-subtracted, L2-normalized) so its dot product with another is
+    the correlation — illumination-affine invariant. Keypoints closer than ``s//2`` to
+    the border are dropped. Returns ``(descriptors (M, s*s), kept_keypoints (M, 2))``."""
     g = _gray(img)
     kp = np.asarray(keypoints, int).reshape(-1, 2)
     r = int(patch) // 2
