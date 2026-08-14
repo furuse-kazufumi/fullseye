@@ -166,6 +166,17 @@ def _norm01(x: np.ndarray) -> np.ndarray:
     return x / m
 
 
+def _structure_floor(v: np.ndarray) -> float:
+    """An absolute Hessian-strength threshold below which a volume is treated as
+    structureless. A flat / constant volume yields only floating-point dust
+    (~1e-16) in its second derivatives; normalising that to ``[0, 1]`` would
+    manufacture a spurious full-range vesselness. This floor (scaled to the
+    volume's own intensity range) sits far above the dust and far below any real
+    ridge, so the enhancement filters honestly return zeros on a flat volume."""
+    scale = float(v.max() - v.min())
+    return 1e-8 * (scale if scale > 0.0 else 1.0)
+
+
 # --------------------------------------------------------------------------- #
 # Hessian + symmetric-3x3 eigenvalues (shared by Frangi / Sato / blobness)     #
 # --------------------------------------------------------------------------- #
@@ -344,7 +355,7 @@ def vol_hessian_blobness(vol, scale, black_ridges=False):
     (Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.
     """
     v = _require_volume(vol)
-    _check_voxels(v, MAX_EIGEN_VOXELS, "vol_hessian_blobness")
+    _check_voxels(v, MAX_EIGEN_VOXELS, "vol_hessian_blobness", "MAX_EIGEN_VOXELS")
     sigma = _iter_scales(scale, "scale")[0]
     e1, e2, e3 = _eigvalsh_sym3(*_hessian_components(v, sigma))
     if black_ridges:
@@ -373,7 +384,7 @@ def vol_distance_transform(vol_binary, spacing=None):
     Reference: Felzenszwalb & Huttenlocher, Theory of Computing 2012.
     """
     m = _as_binary(vol_binary)
-    _check_voxels(m, MAX_VOXELS, "vol_distance_transform")
+    _check_voxels(m, MAX_VOXELS, "vol_distance_transform", "MAX_VOXELS")
     sp = _spacing_tuple(spacing)
     dt = ndimage.distance_transform_edt(m, sampling=sp)
     return np.ascontiguousarray(dt, dtype=np.float64)
@@ -397,7 +408,7 @@ def vol_label(vol_binary, connectivity=26):
         raise ValueError("connectivity must be 6, 18 or 26 (3-D neighbourhoods), got %r"
                          % (connectivity,))
     m = _as_binary(vol_binary)
-    _check_voxels(m, MAX_VOXELS, "vol_label")
+    _check_voxels(m, MAX_VOXELS, "vol_label", "MAX_VOXELS")
     structure = ndimage.generate_binary_structure(3, rank)
     labels, n = ndimage.label(m, structure=structure)
     return labels.astype(np.int32, copy=False), int(n)
@@ -519,7 +530,7 @@ def vol_gradient_magnitude(vol):
     interface and is ~0 in flat regions). Returns a ``(D, H, W)`` float64 volume.
     """
     v = _require_volume(vol)
-    _check_voxels(v, MAX_VOXELS, "vol_gradient_magnitude")
+    _check_voxels(v, MAX_VOXELS, "vol_gradient_magnitude", "MAX_VOXELS")
     gz = ndimage.sobel(v, axis=0)
     gy = ndimage.sobel(v, axis=1)
     gx = ndimage.sobel(v, axis=2)
@@ -539,7 +550,7 @@ def vol_local_maxima(vol, min_distance, threshold=None):
     ``scipy.ndimage.maximum_filter`` / ``minimum_filter`` (no skimage).
     """
     v = _require_volume(vol)
-    _check_voxels(v, MAX_VOXELS, "vol_local_maxima")
+    _check_voxels(v, MAX_VOXELS, "vol_local_maxima", "MAX_VOXELS")
     md = int(min_distance)
     if md < 1:
         raise ValueError("min_distance must be a positive integer, got %r" % (min_distance,))
@@ -566,7 +577,7 @@ def vol_watershed(vol, markers, mask=None):
     numpy + scipy.
     """
     v = _require_volume(vol)
-    _check_voxels(v, MAX_VOXELS, "vol_watershed")
+    _check_voxels(v, MAX_VOXELS, "vol_watershed", "MAX_VOXELS")
     mk = np.asarray(markers)
     if mk.shape != v.shape:
         raise ValueError("markers must match the volume shape %r, got %r"
