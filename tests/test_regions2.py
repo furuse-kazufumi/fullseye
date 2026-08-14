@@ -1,0 +1,314 @@
+"""Ground-truth + functional-gate tests for backends_regions2 (r2_ tier).
+
+Runs WITHOUT importing ops.py: a tiny ``_Op`` stub stands in for the real dataclass
+and we drive :func:`backends_regions2.build` directly.  Every operator gets (1) a
+functional-gate check across three (a, b) knob settings and (2) a constructed-input
+test that proves the CLAIMED semantics, not merely that the fn runs.
+"""
+from __future__ import annotations
+
+import numpy as np
+import pytest
+
+import backends_regions2 as R2
+
+
+class _Op:
+    def __init__(self, *a):
+        self.name = a[0]
+        self.halcon = a[2]
+        self.in_sort = a[3]
+        self.out_sort = a[4]
+        self.fn = a[5]
+
+
+def _norm(x):
+    m = float(np.max(np.abs(x)))
+    return x / m if m > 1e-8 else x
+
+
+def _binm(v):
+    return np.asarray(v) > 0.5
+
+
+OPS = R2.build(_Op, "image", "region", "feature", "contour", _norm, _binm)
+OPS_BY_NAME = {o.name: o for o in OPS}
+
+
+# --------------------------------------------------------------------------- #
+# canonical inputs
+# --------------------------------------------------------------------------- #
+def _canonical_region():
+    """A mask with a filled disk, a rectangle blob and a small blob (multi-component)."""
+    m = np.zeros((60, 60), np.float64)
+    yy, xx = np.ogrid[:60, :60]
+    m[(yy - 15) ** 2 + (xx - 15) ** 2 <= 9 ** 2] = 1.0     # disk
+    m[35:50, 30:55] = 1.0                                  # rectangle
+    m[5:9, 45:49] = 1.0                                    # small blob
+    return m
+
+
+def _disk_mask(h, w, cy, cx, r):
+    yy, xx = np.ogrid[:h, :w]
+    return ((yy - cy) ** 2 + (xx - cx) ** 2 <= r * r).astype(np.float64)
+
+
+AB = [(0.3, 0.4), (0.6, 0.7), (0.15, 0.85)]
+
+
+# --------------------------------------------------------------------------- #
+# registry sanity
+# --------------------------------------------------------------------------- #
+def test_registry_names_unique_and_prefixed():
+    names = [o.name for o in OPS]
+    assert len(names) == len(set(names)), "duplicate op names"
+    assert all(n.startswith("r2_") for n in names)
+    # halcon is always a str; it MAY be "" for a genuine op that does not claim a
+    # HALCON name (e.g. r2_smallest_rectangle1 duplicates a core op's coverage, so
+    # it carries no name to avoid a double coverage-claim).
+    assert all(isinstance(o.halcon, str) for o in OPS)
+    assert {o.name for o in OPS if not o.halcon} == {"r2_smallest_rectangle1"}
+    # contlength is honestly skipped, not silently faked
+    assert "contlength" in R2.SKIPPED
+    assert "contlength" not in {o.halcon for o in OPS}
+
+
+# --------------------------------------------------------------------------- #
+# functional gate: correct sort / ndim / dtype / finite / domain, never raises
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("op", OPS, ids=[o.name for o in OPS])
+@pytest.mark.parametrize("a,b", AB)
+def test_functional_gate(op, a, b):
+    m = _canonical_region()
+    out = op.fn(m.copy(), a, b)
+    if op.out_sort == "region":
+        assert isinstance(out, np.ndarray)
+        assert out.ndim == 2
+        assert out.dtype == np.float64
+        assert out.shape == m.shape
+        assert np.all(np.isfinite(out))
+        assert out.min() >= 0.0 and out.max() <= 1.0
+        assert np.all((out == 0.0) | (out == 1.0)), "region must be a 0/1 mask"
+    elif op.out_sort == "feature":
+        f = float(out)
+        assert np.isfinite(f)
+    else:
+        raise AssertionError(f"unexpected out_sort {op.out_sort}")
+
+
+@pytest.mark.parametrize("op", OPS, ids=[o.name for o in OPS])
+def test_fail_soft_on_degenerate(op):
+    for bad in (np.zeros((8, 8)), np.ones((8, 8)), np.zeros((1, 1)), np.zeros((3, 3))):
+        out = op.fn(bad.astype(np.float64), 0.5, 0.5)     # must not raise
+        if op.out_sort == "region":
+            assert np.all(np.isfinite(out))
+        else:
+            assert np.isfinite(float(out))
+
+
+# --------------------------------------------------------------------------- #
+# ground truth
+# --------------------------------------------------------------------------- #
+def test_inner_circle_of_disk_recovers_disk():
+    h = w = 61
+    cy = cx = 30
+    r = 18
+    disk = _disk_mask(h, w, cy, cx, r)
+    out = OPS_BY_NAME["r2_inner_circle"].fn(disk, 0.5, 0.5)   # a=0.5 -> exact inradius
+    inter = np.logical_and(out > 0.5, disk > 0.5).sum()
+    union = np.logical_or(out > 0.5, disk > 0.5).sum()
+    iou = inter / union
+    assert iou > 0.85, f"inner circle of a disk should ~equal the disk (IoU={iou:.3f})"
+    # center of the drawn circle sits at the disk center
+    ys, xs = np.where(out > 0.5)
+    assert abs(ys.mean() - cy) <= 1.5 and abs(xs.mean() - cx) <= 1.5
+
+
+def test_inner_circle_stays_inside_ring_free_region():
+    # inscribed circle of a square must fit inside it (no spill of note)
+    m = np.zeros((50, 50), np.float64)
+    m[10:40, 10:40] = 1.0
+    out = OPS_BY_NAME["r2_inner_circle"].fn(m, 0.5, 0.5)
+    spill = np.logical_and(out > 0.5, m < 0.5).sum()
+    assert spill <= out.sum() * 0.03, "inscribed circle should stay within the region"
+
+
+def test_inner_rectangle1_of_solid_rectangle_is_that_rectangle():
+    m = np.zeros((50, 60), np.float64)
+    m[8:33, 12:52] = 1.0                                     # 25 x 40 solid block
+    out = OPS_BY_NAME["r2_inner_rectangle1"].fn(m, 0.0, 0.0)  # a=0 -> exact
+    assert np.array_equal(out > 0.5, m > 0.5), "max inscribed rect == the solid block"
+
+
+def test_inner_rectangle1_all_foreground():
+    # the returned rectangle must be entirely inside the region
+    m = np.zeros((40, 40), np.float64)
+    m[5:35, 5:35] = 1.0
+    m[20:35, 20:35] = 0.0                                    # carve an L
+    out = OPS_BY_NAME["r2_inner_rectangle1"].fn(m, 0.0, 0.0)
+    assert out.sum() > 0
+    assert np.all(m[out > 0.5] > 0.5), "inscribed rect must be all-foreground"
+
+
+def test_smallest_rectangle1_is_axis_bbox():
+    m = np.zeros((40, 40), np.float64)
+    pts = [(6, 9), (30, 33), (6, 33), (30, 9), (18, 20)]
+    for (y, x) in pts:
+        m[y, x] = 1.0
+    out = OPS_BY_NAME["r2_smallest_rectangle1"].fn(m, 0.5, 0.5)
+    ys, xs = np.where(out > 0.5)
+    assert ys.min() == 6 and ys.max() == 30
+    assert xs.min() == 9 and xs.max() == 33
+    # every point is covered
+    for (y, x) in pts:
+        assert out[y, x] > 0.5
+
+
+def test_smallest_circle_encloses_all_and_radius_is_minimal():
+    # exact geometry on the four corners of a square
+    s = 40
+    corners = np.array([[0, 0], [0, s], [s, 0], [s, s]], np.float64)
+    cy, cx, r = R2._min_enclosing_circle(corners)
+    assert abs(cy - s / 2) < 1e-6 and abs(cx - s / 2) < 1e-6
+    # minimal enclosing radius of a square = half the diagonal
+    assert abs(r - (s * np.sqrt(2) / 2)) < 1e-4
+    # and no smaller than that: a radius = side/2 would NOT enclose the corners
+    assert r > s / 2 + 1.0
+
+    # op: every foreground pixel of a filled square lands inside the drawn circle
+    m = np.zeros((60, 60), np.float64)
+    m[10:50, 10:50] = 1.0
+    out = OPS_BY_NAME["r2_smallest_circle"].fn(m, 0.0, 0.0)
+    assert np.all(out[m > 0.5] > 0.5), "min enclosing circle must contain the region"
+
+
+def test_smallest_circle_tight_not_whole_image():
+    m = np.zeros((80, 80), np.float64)
+    m[30:50, 30:50] = 1.0                                    # 20x20 square near center
+    ys, xs = np.where(m > 0.5)
+    _, _, r = R2._min_enclosing_circle(np.column_stack([ys, xs]))
+    # radius ~ half diagonal of a 19-wide square (~13.4), certainly < 20
+    assert 12.0 < r < 16.0
+
+
+def test_smallest_rectangle2_aligns_to_rotated_bar():
+    # build a bar of length ~40, width ~6, rotated by theta
+    h = w = 100
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
+    cx = cy = 50.0
+    theta = np.deg2rad(30.0)
+    ux, uy = np.cos(theta), np.sin(theta)
+    du = (xx - cx) * ux + (yy - cy) * uy
+    dv = -(xx - cx) * uy + (yy - cy) * ux
+    bar = ((np.abs(du) <= 20.0) & (np.abs(dv) <= 3.0)).astype(np.float64)
+
+    ys, xs = np.where(bar > 0.5)
+    _, _, long_len, short_len, ang = R2._min_area_rect(np.column_stack([ys, xs]))
+    # long side ~ 40, short side ~ 6
+    assert 36 < long_len < 46, long_len
+    assert 3 < short_len < 10, short_len
+    # orientation matches the bar (mod 180)
+    err = abs(((np.rad2deg(ang) - 30.0 + 90) % 180) - 90)
+    assert err < 6.0, f"oriented rect angle off by {err:.1f} deg"
+
+    # rasterised oriented rect covers essentially the whole bar
+    out = OPS_BY_NAME["r2_smallest_rectangle2"].fn(bar, 0.0, 0.0)
+    covered = np.logical_and(out > 0.5, bar > 0.5).sum() / bar.sum()
+    assert covered > 0.95, f"oriented rect should cover the bar (covered={covered:.3f})"
+
+
+def test_smallest_rectangle2_beats_axis_bbox_on_diagonal():
+    # a diagonal bar: oriented min-area rect is far smaller than the axis bbox
+    h = w = 80
+    m = np.zeros((h, w), np.float64)
+    for t in range(10, 70):
+        m[t, t] = 1.0
+        m[t, t + 1] = 1.0
+    ys, xs = np.where(m > 0.5)
+    _, _, long_len, short_len, _ = R2._min_area_rect(np.column_stack([ys, xs]))
+    axis_area = (ys.max() - ys.min() + 1) * (xs.max() - xs.min() + 1)
+    oriented_area = long_len * short_len
+    assert oriented_area < axis_area * 0.5, "oriented rect must be tighter than axis bbox"
+
+
+def test_sort_region_picks_kth_largest():
+    m = np.zeros((60, 60), np.float64)
+    m[2:22, 2:22] = 1.0                                      # area 400 (largest)
+    m[2:12, 40:50] = 1.0                                     # area 100 (middle)
+    m[50:55, 50:54] = 1.0                                    # area 20  (smallest)
+    op = OPS_BY_NAME["r2_sort_region"]
+    largest = op.fn(m, 0.0, 0.0)                             # k=0
+    middle = op.fn(m, 0.5, 0.0)                              # k=1 (n=3 -> round(0.5*2)=1)
+    smallest = op.fn(m, 1.0, 0.0)                            # k=2
+    assert abs(largest.sum() - 400) < 1e-6
+    assert abs(middle.sum() - 100) < 1e-6
+    assert abs(smallest.sum() - 20) < 1e-6
+    # each result is a single connected component
+    from scipy import ndimage
+    for r in (largest, middle, smallest):
+        _, n = ndimage.label(r > 0.5)
+        assert n == 1
+
+
+def test_union1_merges_all_components():
+    m = np.zeros((40, 40), np.float64)
+    m[2:10, 2:10] = 1.0
+    m[20:30, 25:35] = 1.0
+    out = OPS_BY_NAME["r2_union1"].fn(m, 0.5, 0.5)
+    # union of components == the whole foreground
+    assert np.array_equal(out > 0.5, m > 0.5)
+    assert out.sum() == m.sum()
+
+
+def test_partition_rectangle_drops_empty_cells():
+    # L-shaped region: bbox is a full square, bottom-right quadrant is empty
+    m = np.zeros((40, 40), np.float64)
+    m[0:40, 0:20] = 1.0                                      # left half
+    m[0:20, 0:40] = 1.0                                      # top half  -> L (br empty)
+    m[20:40, 20:40] = 0.0
+    out = OPS_BY_NAME["r2_partition_rectangle"].fn(m, 0.1, 0.0)   # a small -> 2x2 grid
+    # bottom-right quadrant must be dropped
+    assert out[20:40, 20:40].sum() == 0.0
+    # the three occupied quadrants are fully filled
+    assert out[0:20, 0:20].mean() == 1.0
+    assert out[20:40, 0:20].mean() == 1.0
+    assert out[0:20, 20:40].mean() == 1.0
+
+
+def test_runlength_features_mean_equals_width():
+    m = np.zeros((30, 40), np.float64)
+    m[5:20, 8:28] = 1.0                                      # solid rows of width 20
+    f = float(OPS_BY_NAME["r2_runlength_features"].fn(m, 0.5, 0.5))
+    assert abs(f - 20.0) < 1e-9, f"mean run length of width-20 rows should be 20 (got {f})"
+
+
+def test_runlength_features_two_runs_per_row():
+    m = np.zeros((10, 30), np.float64)
+    m[3:7, 2:7] = 1.0                                        # run length 5
+    m[3:7, 20:29] = 1.0                                      # run length 9
+    f = float(OPS_BY_NAME["r2_runlength_features"].fn(m, 0.5, 0.5))
+    assert abs(f - 7.0) < 1e-9, f"mean of runs {{5,9}} should be 7 (got {f})"
+
+
+def test_split_skeleton_lines_breaks_plus_into_arms():
+    from scipy import ndimage
+    m = np.zeros((41, 41), np.float64)
+    m[19:22, 5:36] = 1.0                                     # thick horizontal bar
+    m[5:36, 19:22] = 1.0                                     # thick vertical bar (a plus)
+    _, n_before = ndimage.label(m > 0.5)
+    assert n_before == 1
+    out = OPS_BY_NAME["r2_split_skeleton_lines"].fn(m, 0.0, 0.0)
+    _, n_after = ndimage.label(out > 0.5)                    # 4-connectivity
+    assert n_after >= 4, f"splitting a plus at its junction should yield >=4 arms (got {n_after})"
+    # the junction region is removed: center pixel is no longer set
+    assert out[20, 20] == 0.0
+
+
+def test_split_skeleton_lines_leaves_straight_line_intact_count():
+    from scipy import ndimage
+    m = np.zeros((20, 40), np.float64)
+    m[9:11, 4:36] = 1.0                                      # a single straight bar
+    out = OPS_BY_NAME["r2_split_skeleton_lines"].fn(m, 0.0, 0.0)
+    _, n = ndimage.label(out > 0.5)
+    assert n == 1, "a junction-free line stays a single segment"
+    assert out.sum() > 0

@@ -125,9 +125,18 @@ scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen �
 **★全 op 対応 = disposition map(`dispositions.py` → `docs/OP_DISPOSITION.json`)**: 偽実装で数を埋めず
 (feedback_no_false_reporting)、**全 2313 op に truthful な disposition を付与(100% 対応、捏造 0)**。
 `imgevolve.py has <任意の op>` が全 op に定義済み応答を返す(implemented=呼び方 / 未実装=status+理由)。内訳
-(**2026-08-14 被覆修正後**): **implemented 269(11.6%)/ needs_new_capability 183(honest backlog)/
+(**2026-08-14 op 拡張 wave 後**): **implemented 299(12.9%)/ needs_new_capability 153(honest backlog)/
 nary_multiinput 125 / out_of_scope_model 586(learned 442 + geometric 144)/ out_of_scope_plumbing 1150**。
-→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 452)に対し **269/452 ≈ 60% を genuine 実装**。
+→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 452)に対し **299/452 ≈ 66% を genuine 実装**。
+
+**★op 拡張 wave(2026-08-14, ultracode workflow)= registry +35 op / coverage 252→282(dangling=0)**: 4 新 backend
+モジュール(`backends_filters2` shock/gray_skeleton/topographic/lut/symmetry 等 9・`backends_regions2`
+inner_circle/smallest_circle/smallest_rectangle2/runlength 等 10・`backends_subpix` サブピクセル極値点 6・
+`backends_xldgeom` 輪郭モーメント/DP 簡略化 等 10)を並列実装→敵対検証。**30 が genuine 新 HALCON 被覆、5 は
+honest に halcon="" **(重複2=smallest_rectangle1/local_max_sub_pix・再解釈3=clip/crop/regress は HALCON 意味論と
+不一致ゆえ被覆主張せず)。加えて **video/時空間モジュール `videops`**(T×H×W を一級化=temporal 中央値/背景差分/
+motion_energy/時空間 Gauss・Sobel/temporal MIP/flicker 除去/per-frame 等 15 関数、facade 公開)を追加。REGISTRY
+521→556。**op 追加で Wave-0 fingerprint が trip → `recapture_wave0_pins.py --write` で gate 再祝福**(champion 無回帰を確認)。
 
 **★被覆修正(2026-08-14, dispositions.py)= honest-disclosure バグ修正**: 旧 `MODEL_KW` は素の部分文字列マッチで、
 `"pose"` が transpose/compose/decompose・pose タプル/四元数/同次行列の**代数 op を 47 件**、`"bundle"` が古典

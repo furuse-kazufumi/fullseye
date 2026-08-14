@@ -78,6 +78,24 @@ def test_decode_is_deterministic_across_sorts():
             assert s1 == s2
 
 
+def _out_equal(a, b):
+    """Equality for any pipeline output sort — array (image/region/volume), contour
+    dict, or scalar feature. A pin genome may decode to any sort once more ops widen
+    the candidate sets, so the roundtrip check must not assume a 2-D array."""
+    if isinstance(a, dict) or isinstance(b, dict):
+        if not (isinstance(a, dict) and isinstance(b, dict)):
+            return False
+        if a.get("shape") != b.get("shape"):
+            return False
+        ca, cb = a.get("cs", []), b.get("cs", [])
+        return len(ca) == len(cb) and all(
+            np.array_equal(np.asarray(x, np.float64), np.asarray(y, np.float64))
+            for x, y in zip(ca, cb))
+    if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+        return np.array_equal(np.asarray(a, np.float64), np.asarray(b, np.float64))
+    return float(a) == float(b)
+
+
 def test_decode_by_names_roundtrip_reconstructs_pipeline():
     """pipeline_stages() -> decode_by_names() rebuilds the exact same pipeline
     (name-pinned, index-independent) and runs to identical output."""
@@ -87,10 +105,8 @@ def test_decode_by_names_roundtrip_reconstructs_pipeline():
         rebuilt = ops.decode_by_names(specs)
         # same string form as the index-based decode (identity dropped)
         assert ops.stages_str(rebuilt) == ops.pipeline_str(g, "image")
-        # and identical numeric result when executed
-        a = ops.run_genome(g, img, "image")
-        b = ops.run_stages(rebuilt, img)
-        assert np.array_equal(np.asarray(a, np.float64), np.asarray(b, np.float64))
+        # and identical result when executed (any output sort)
+        assert _out_equal(ops.run_genome(g, img, "image"), ops.run_stages(rebuilt, img))
 
 
 # --------------------------------------------------------------------------- #
@@ -107,60 +123,55 @@ def test_pipeline_str_pinned_for_fixed_genomes_and_sorts():
 
 
 # --------------------------------------------------------------------------- #
-# North-star champions (evolve once, reuse).                                  #
+# North-star = FIXED reference pipelines (name-pinned, core ops). Their score is
+# invariant to op-adding (only that pipeline's own ops matter), so a mismatch means
+# a building-block op changed behaviour — the real regression this gate must catch.
+# Always runs (core ops are always present); regenerate with recapture_wave0_pins.py.
+# (An evolved champion is deliberately NOT pinned: at gens=8 it is search-variance —
+# adding an op remaps decode() indices so the tiny search finds a different pipeline.)
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("prob_name", sorted(PINS["reference_pipelines"]))
+def test_reference_pipeline_score_unchanged(prob_name):
+    ref = PINS["reference_pipelines"][prob_name]
+    prob = problems.PROBLEMS[prob_name]
+    stages = ops.decode_by_names(ref["stages"])
+    assert ops.stages_str(stages) == ref["pipeline"]
+    tr = prob.make(14, 64, 0)
+    ho = prob.make(8, 64, 10_000)
+    assert round(prob.score_stages(stages, tr), 4) == ref["train"]
+    assert round(prob.score_stages(stages, ho), 4) == ref["holdout"]
+
+
+# --------------------------------------------------------------------------- #
+# Evolution mechanism: a lightweight champion (gens=3) for the name-pin record and
+# locked-holdout invariants — we test the machinery, not a fragile evolved score.
 # --------------------------------------------------------------------------- #
 @pytest.fixture(scope="module")
-def denoise_champ(tmp_path_factory):
-    wd = tmp_path_factory.mktemp("wave0_denoise")
-    return evolve.run("denoise", workdir=str(wd), gens=8, pop=12, seed=0, verbose=False)
+def champ(tmp_path_factory):
+    wd = tmp_path_factory.mktemp("wave0_champ")
+    return evolve.run("denoise", workdir=str(wd), gens=3, pop=8, seed=0, verbose=False)
 
 
-@pytest.fixture(scope="module")
-def edge_champ(tmp_path_factory):
-    wd = tmp_path_factory.mktemp("wave0_edge")
-    return evolve.run("edge", workdir=str(wd), gens=8, pop=12, seed=4, verbose=False)
-
-
-@_skip_install
-def test_north_star_denoise_champion_unchanged(denoise_champ):
-    assert denoise_champ["pipeline"] == PINS["denoise"]["pipeline"]
-    assert denoise_champ["train"] == PINS["denoise"]["train"]
-    assert denoise_champ["holdout"] == PINS["denoise"]["holdout"]
-
-
-@_skip_install
-def test_north_star_edge_champion_unchanged(edge_champ):
-    assert edge_champ["pipeline"] == PINS["edge"]["pipeline"]
-    assert edge_champ["train"] == PINS["edge"]["train"]
-    assert edge_champ["holdout"] == PINS["edge"]["holdout"]
-
-
-# --------------------------------------------------------------------------- #
-# (1) name-pinned champion record round-trips.                                #
-# --------------------------------------------------------------------------- #
-def test_champion_carries_name_pinned_record_and_roundtrips(denoise_champ):
-    assert "pipeline_stages" in denoise_champ and denoise_champ["pipeline_stages"]
-    rebuilt = ops.decode_by_names(denoise_champ["pipeline_stages"])
-    assert ops.stages_str(rebuilt) == denoise_champ["pipeline"]
+def test_champion_carries_name_pinned_record_and_roundtrips(champ):
+    assert champ.get("pipeline_stages")
+    rebuilt = ops.decode_by_names(champ["pipeline_stages"])
+    assert ops.stages_str(rebuilt) == champ["pipeline"]
     # executes to the same result as the index-based genome decode
     img = np.clip(np.random.default_rng(2).random((48, 48)), 0, 1)
-    g = np.asarray(denoise_champ["genome"], np.float64)
-    assert np.array_equal(ops.run_genome(g, img, "image"), ops.run_stages(rebuilt, img))
+    g = np.asarray(champ["genome"], np.float64)
+    assert _out_equal(ops.run_genome(g, img, "image"), ops.run_stages(rebuilt, img))
 
 
-# --------------------------------------------------------------------------- #
-# (2) locked holdout evaluated exactly once; selection unchanged.             #
-# --------------------------------------------------------------------------- #
-def test_locked_holdout_is_recorded_and_recomputable(denoise_champ):
-    assert "locked_holdout" in denoise_champ
+def test_locked_holdout_is_recorded_and_recomputable(champ):
+    assert "locked_holdout" in champ
     # It must equal a fresh score on the seed+20000 split — proof it is a real
     # single evaluation of that third split, recorded once.
     prob = problems.PROBLEMS["denoise"]
-    cfg = denoise_champ["config"]
+    cfg = champ["config"]
     n_locked = cfg.get("n_locked", cfg["n_holdout"])
     locked = prob.make(n_locked, cfg["size"], cfg["seed"] + 20_000)
-    recomputed = round(prob.score(np.asarray(denoise_champ["genome"], np.float64), locked), 4)
-    assert recomputed == denoise_champ["locked_holdout"]
+    recomputed = round(prob.score(np.asarray(champ["genome"], np.float64), locked), 4)
+    assert recomputed == champ["locked_holdout"]
 
 
 def test_locked_split_is_distinct_from_train_and_holdout():
@@ -170,13 +181,6 @@ def test_locked_split_is_distinct_from_train_and_holdout():
     lk = prob.make(8, 64, 20_000)
     assert not np.array_equal(lk["input"], tr["input"][: lk["input"].shape[0]])
     assert not np.array_equal(lk["input"], ho["input"])
-
-
-@_skip_install
-def test_adding_locked_split_did_not_move_selection(denoise_champ):
-    """Selection stays train-only: the champion train score is unchanged versus
-    the pinned pre-change value even though a third split was added."""
-    assert denoise_champ["train"] == PINS["denoise"]["train"]
 
 
 # --------------------------------------------------------------------------- #

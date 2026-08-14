@@ -59,6 +59,13 @@ import meshrepair  # noqa: E402  (watertight/repair/decimate + exact inertia -> 
 import volops  # noqa: E402  (3-D volume analysis: Frangi/Sato/label/distance/region props)
 import complexops  # noqa: E402  (complex/FFT-domain ops + 2-D phase unwrap [HALCON has none])
 import specops  # noqa: E402  (multispectral/hyperspectral cube: ENVI + SAM + unmix + band math)
+import videops  # noqa: E402  (video / temporal (T,H,W): temporal denoise, bg-subtract, motion, spatiotemporal filters)
+from videops import (  # noqa: E402,F401
+    temporal_mean, temporal_median, temporal_std, temporal_max, temporal_min,
+    frame_difference, background_subtraction, temporal_gradient, motion_energy,
+    moving_average, spatiotemporal_gaussian, spatiotemporal_sobel, per_frame,
+    flicker_reduce, optical_flow_sequence,
+)
 from stereo import (  # noqa: E402,F401
     disparity_map, disparity_subpixel, lr_consistency,
     depth_from_disparity, reproject_to_points,
@@ -169,6 +176,10 @@ __all__ = [
     "specops", "BandMeta", "read_envi", "write_envi", "spec_band", "spec_rgb_composite",
     "spec_nearest_band", "spec_band_ratio", "spec_index", "spec_angle_mapper", "spec_pca",
     "spec_mnf", "spec_unmix", "spec_endmembers_ppi", "spec_continuum_removal",
+    "videops", "temporal_mean", "temporal_median", "temporal_std", "temporal_max",
+    "temporal_min", "frame_difference", "background_subtraction", "temporal_gradient",
+    "motion_energy", "moving_average", "spatiotemporal_gaussian", "spatiotemporal_sobel",
+    "per_frame", "flicker_reduce", "optical_flow_sequence",
     "pose", "pose_descriptor", "skeleton_nodes", "principal_axis",
     "flow", "optical_flow_lk", "optical_flow_hs", "warp_by_flow",
     "flow_magnitude", "flow_angle", "track_points",

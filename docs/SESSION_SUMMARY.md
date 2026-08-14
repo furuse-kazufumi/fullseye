@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-14 20:14:09
+- **最終更新**: 2026-08-14 21:56:26
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-da7ed49 measure: add sub-pixel primitive fitting (line / circle / ellipse / rectangle)
-ea998c1 dispositions: fix false "needs a trained model" labels (honest disclosure)
-b711db8 Wave-0: name-pinned champions + 3-way locked holdout + Problem.from_pairs
-03d1036 auto: ops.py 編集前 (2026-08-14 13:27)
-07c3c4c auto: test_wave0.py 編集前 (2026-08-14 13:27)
-cce0da5 auto: evolve.py 編集前 (2026-08-14 13:23)
-ff7b4d8 auto: problems.py 編集前 (2026-08-14 13:23)
-3ac09cf auto: evolve.py 編集前 (2026-08-14 13:22)
-907db45 auto: evolve.py 編集前 (2026-08-14 13:22)
-c9a26e8 auto: ops.py 編集前 (2026-08-14 13:22)
+bece53d auto: backends_filters2.py 編集前 (2026-08-14 21:53)
+607f5ee auto: backends_filters2.py 編集前 (2026-08-14 21:53)
+9dec1c5 auto: backends_xldgeom.py 編集前 (2026-08-14 21:53)
+f92b428 auto: backends_subpix.py 編集前 (2026-08-14 21:53)
+e2b45d8 auto: test_subpix.py 編集前 (2026-08-14 21:53)
+db67cd2 auto: test_subpix.py 編集前 (2026-08-14 21:53)
+951c937 auto: backends_subpix.py 編集前 (2026-08-14 21:53)
+fb19e7e auto: backends_subpix.py 編集前 (2026-08-14 21:53)
+af05125 auto: test_subpix.py 編集前 (2026-08-14 21:52)
+703e9f5 auto: backends_regions2.py 編集前 (2026-08-14 21:52)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M backends_filters2.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:11 .pytest_cache/v/cache/nodeids
-20:09 .ruff_cache/0.16.0/7363606932562918290
-20:09 .ruff_cache/0.16.0/2128910586982079947
-20:09 .ruff_cache/0.16.0/1286514413293979089
-20:08 docs/PERCEPTION.md
-20:08 tests/test_measure.py
-20:08 fullseye/__init__.py
-20:08 api.py
-20:08 measure.py
-19:44 docs/STATUS.md
-19:43 tests/test_dispositions.py
-19:43 .ruff_cache/CACHEDIR.TAG
-19:43 .ruff_cache/.gitignore
-19:41 .pytest_cache/v/cache/lastfailed
-19:40 docs/OP_DISPOSITION.json
+21:54 .pytest_cache/v/cache/nodeids
+21:53 .ruff_cache/0.16.0/7363606932562918290
+21:53 .ruff_cache/0.16.0/2128910586982079947
+21:53 backends_filters2.py
+21:53 backends_xldgeom.py
+21:53 backends_subpix.py
+21:53 tests/test_subpix.py
+21:53 tests/test_filters2.py
+21:52 .pytest_cache/v/cache/lastfailed
+21:52 backends_regions2.py
+21:51 tests/test_regions2.py
+21:50 tests/test_xldgeom.py
+21:49 docs/SESSION_SUMMARY.md
+21:49 tests/test_videops.py
+21:49 videops.py
 ```
 
 ---

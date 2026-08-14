@@ -32,6 +32,22 @@ mask,segs = fs.motion_segments(u, v, threshold=2.0)# label moving regions
 series = fs.motion_energy_series(frames); ev = fs.detect_events(series)  # event frames in a clip
 ```
 
+## Video / higher-dimensional (T,H,W) — `videops`
+A video is a first-class `(T, H, W)` float array (a stack of frames). Genuine
+spatiotemporal ops — denoise a sequence over time, model + subtract a background,
+find where motion happened, filter in 3-D across (t, y, x).
+```python
+bg  = fs.temporal_median(video)                 # static-camera background (also temporal_mean/std/max/min)
+fg  = fs.background_subtraction(video, threshold=0.1)   # per-frame foreground mask
+me  = fs.motion_energy(video)                   # sum |d/dt| = where motion happened
+d   = fs.frame_difference(video); g = fs.temporal_gradient(video)   # inter-frame change
+sm  = fs.spatiotemporal_gaussian(video, sigma_t=1, sigma_s=1)       # 3-D smooth; spatiotemporal_sobel = 3-D edges
+mv  = fs.moving_average(video, window=3); fl = fs.flicker_reduce(video)
+out = fs.per_frame(video, lambda f: fs.apply(f, "gauss_filter"))    # apply any 2-D op per frame
+of  = fs.optical_flow_sequence(video)           # consecutive-frame flow magnitude volume
+```
+Fail-closed (non-3-D / non-finite / T<1 raise `ValueError`); numpy+scipy only.
+
 ## Depth (space axis) — `stereo`
 ```python
 disp  = fs.disparity_map(left, right, method="sad")     # sad|ssd|ncc; disparity_subpixel for sub-px
