@@ -58,6 +58,34 @@ def test_step_edges_detects_curb():
     assert edge[:, 9:11].any()                          # edge marked at the boundary
     assert not edge[:, :6].any() and not edge[:, 14:].any()   # flat interiors clean
     assert np.abs(signed[edge]).max() > 0.0
+    # signed_rise reports the FULL step height (~0.3), not a ~0.15 under-report
+    assert 0.25 < np.abs(signed[edge]).max() < 0.35
+
+
+def test_step_edges_diagonal_step_not_zeroed():
+    # a step along the diagonal (grad has gx=-gy) — the old sign(gx+gy) zeroed it.
+    grid = np.zeros((30, 30))
+    ii, jj = np.mgrid[0:30, 0:30]
+    grid[(ii + jj) > 30] = 0.4                          # raised half-plane on a diagonal
+    edge, signed = terrain.step_edges(grid, cell=0.05, min_rise=0.1, window=3)
+    assert edge.any()
+    assert np.abs(signed[edge]).max() > 0.1             # signed rise is non-zero at the edge
+
+
+def test_foothold_candidates_skip_unobserved():
+    grid = np.full((40, 40), np.nan)                    # entirely unobserved...
+    grid[10:30, 10:30] = 0.0                            # ...except an observed flat patch
+    cands = terrain.foothold_candidates(grid, cell=0.05, min_score=0.5, min_dist=0.1)
+    assert len(cands) >= 1
+    for c in cands:                                     # never a candidate in a NaN cell
+        r, cc = c["cell"]
+        assert np.isfinite(grid[r, cc])
+
+
+def test_step_edges_size1_grid_no_crash():
+    grid = np.array([[0.0, 0.0, 0.3, 0.3]])             # a 1xN heightmap
+    edge, signed = terrain.step_edges(grid, cell=0.05, min_rise=0.1)
+    assert edge.shape == grid.shape                     # np.gradient would have raised
 
 
 def test_foothold_candidates_land_on_flat_plateau():
