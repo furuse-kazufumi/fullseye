@@ -77,6 +77,37 @@ def test_ego_translation_forward_and_tilted():
     assert np.allclose(t2, expect, atol=1e-6)
 
 
+def test_focus_of_expansion_collinear_is_nan():
+    # a pure lateral pan gives parallel (collinear) flow -> FoE at infinity, must be
+    # NaN, not a min-norm garbage point in the image.
+    xx, yy = _grid()
+    u = np.full_like(xx, 3.0)
+    v = np.zeros_like(yy)
+    foe = sceneflow.focus_of_expansion(u, v)
+    assert not np.isfinite(foe[0]) and not np.isfinite(foe[1])
+
+
+def test_looming_survives_a_nan_vector():
+    xx, yy = _grid()
+    u = 0.03 * (xx - 40.0); v = 0.03 * (yy - 30.0)
+    u[5, 5] = np.nan                                    # one bad flow vector
+    loom = sceneflow.looming(u, v)
+    assert loom["expanding"] and loom["mean_divergence"] > 0   # not masked to False
+
+
+def test_ego_translation_backward_is_negative_z():
+    xx, yy = _grid()
+    K = camera_K()
+    u = -0.05 * (xx - 40.0); v = -0.05 * (yy - 30.0)    # contracting = receding
+    t = sceneflow.ego_translation_from_flow(u, v, K)
+    assert t[2] < 0.0                                   # heading points backward
+
+
+def camera_K():
+    import camera
+    return camera.intrinsic_matrix(400.0, 400.0, 40.0, 30.0)
+
+
 def test_scene_flow_recovers_lateral_translation():
     # a fronto-parallel plane at depth Z moving sideways by dx: disparity unchanged,
     # optical flow u = fx*dx/Z constant, and scene flow must recover (dx, 0, 0).
