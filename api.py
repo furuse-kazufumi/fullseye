@@ -171,6 +171,9 @@ from locomotion import (  # noqa: E402,F401
     contact_points, com_from_silhouette, support_polygon,
     com_support_margin, gait_phase,
 )
+from occupancy import (  # noqa: E402,F401
+    occupancy_grid_2d, inflate_obstacles, clearance_map, line_of_sight, frontier_cells,
+)
 from imgio import (  # noqa: E402,F401
     to_float01, to_uint8, apply_cmap, colorize_depth, colorize_disparity,
     colorize_labels, colorize_height, colorize_flow, shaded_relief, overlay_mask,
