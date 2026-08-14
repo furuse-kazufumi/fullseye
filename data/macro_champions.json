@@ -70,5 +70,169 @@
    "beats_hand_on_locked_holdout": true,
    "honest_note": "A macro op is the exact evolved pipeline, knobs frozen; its score is recomputed here in the full registry. beats_hand_on_locked_holdout states, without spin, whether it beats the strongest hand baseline on the locked split (the one honesty guard evolution never selected on)."
   }
+ },
+ {
+  "name": "macro_edge",
+  "category": "macro",
+  "problem": "edge",
+  "in_sort": "image",
+  "out_sort": "region",
+  "stages": [
+   {
+    "op": "gamma",
+    "a": 0.3862921309155467,
+    "b": 0.9363822065955621
+   },
+   {
+    "op": "bilateral",
+    "a": 0.2152938464607123,
+    "b": 0.08090318183045037
+   },
+   {
+    "op": "sobel_mag",
+    "a": 0.8055029707830818,
+    "b": 0.7976900427133748
+   },
+   {
+    "op": "scale_clip",
+    "a": 1.0,
+    "b": 0.900181490402993
+   },
+   {
+    "op": "otsu",
+    "a": 0.7790793603327741,
+    "b": 0.9307264503702687
+   }
+  ],
+  "pipeline": "gamma(a=0.39,b=0.94) -> bilateral(a=0.22,b=0.08) -> sobel_mag(a=0.81,b=0.80) -> scale_clip(a=1.00,b=0.90) -> otsu(a=0.78,b=0.93)",
+  "provenance": {
+   "source": "evolve.py / robust.py, core-only search (IMGEVOLVE_NO_BACKENDS=1)",
+   "champion_file": "out/macro_edge/champion_edge.json",
+   "unit": "F1",
+   "config": {
+    "n_train": 14,
+    "n_holdout": 8,
+    "size": 64,
+    "seed": 0
+   },
+   "seeds": 8,
+   "gens": 80,
+   "pop": 28,
+   "selected_seed": 7,
+   "captured": "2026-08-15",
+   "score": {
+    "train": 0.9697,
+    "holdout": 0.9475,
+    "locked_holdout": 0.9062
+   },
+   "recorded_evolution_score": {
+    "train": 0.9697,
+    "holdout": 0.9475,
+    "locked_holdout": 0.9062
+   },
+   "score_matches_evolution": true,
+   "overridden_ops": [],
+   "baselines": {
+    "trivial": {
+     "train": 0.2505,
+     "holdout": 0.2673,
+     "locked_holdout": 0.2161
+    },
+    "hand": {
+     "train": 0.9325,
+     "holdout": 0.8968,
+     "locked_holdout": 0.7717
+    },
+    "reference": {
+     "train": 0.267,
+     "holdout": 0.2677,
+     "locked_holdout": 0.2897
+    }
+   },
+   "beats_hand_on_locked_holdout": true,
+   "honest_note": "A macro op is the exact evolved pipeline, knobs frozen; its score is recomputed here in the full registry. beats_hand_on_locked_holdout states, without spin, whether it beats the strongest hand baseline on the locked split (the one honesty guard evolution never selected on)."
+  }
+ },
+ {
+  "name": "macro_binarize",
+  "category": "macro",
+  "problem": "binarize",
+  "in_sort": "image",
+  "out_sort": "image",
+  "stages": [
+   {
+    "op": "bilateral",
+    "a": 0.06099253952944164,
+    "b": 0.891531397738003
+   },
+   {
+    "op": "unsharp",
+    "a": 0.5068518736223502,
+    "b": 0.3425965636950455
+   },
+   {
+    "op": "bilateral",
+    "a": 0.039336483471460244,
+    "b": 0.235214981336033
+   },
+   {
+    "op": "lowpass",
+    "a": 0.753333646329263,
+    "b": 0.5947708589548446
+   },
+   {
+    "op": "gopen",
+    "a": 0.3774757893995089,
+    "b": 1.0
+   },
+   {
+    "op": "unsharp",
+    "a": 0.7779043057358495,
+    "b": 0.6808532667629071
+   }
+  ],
+  "pipeline": "bilateral(a=0.06,b=0.89) -> unsharp(a=0.51,b=0.34) -> bilateral(a=0.04,b=0.24) -> lowpass(a=0.75,b=0.59) -> gopen(a=0.38,b=1.00) -> unsharp(a=0.78,b=0.68)",
+  "provenance": {
+   "source": "evolve.py / robust.py, core-only search (IMGEVOLVE_NO_BACKENDS=1)",
+   "champion_file": "out/macro_binarize/champion_binarize.json",
+   "unit": "IoU",
+   "config": {
+    "n_train": 14,
+    "n_holdout": 8,
+    "size": 64,
+    "seed": 0
+   },
+   "seeds": 8,
+   "gens": 80,
+   "pop": 28,
+   "selected_seed": 5,
+   "captured": "2026-08-15",
+   "score": {
+    "train": 0.9068,
+    "holdout": 0.9534,
+    "locked_holdout": 0.7496
+   },
+   "recorded_evolution_score": {
+    "train": 0.9068,
+    "holdout": 0.9534,
+    "locked_holdout": 0.7496
+   },
+   "score_matches_evolution": true,
+   "overridden_ops": [],
+   "baselines": {
+    "trivial": {
+     "train": 0.6324,
+     "holdout": 0.6976,
+     "locked_holdout": 0.5165
+    },
+    "hand": {
+     "train": 0.7731,
+     "holdout": 0.8776,
+     "locked_holdout": 0.6194
+    }
+   },
+   "beats_hand_on_locked_holdout": true,
+   "honest_note": "A macro op is the exact evolved pipeline, knobs frozen; its score is recomputed here in the full registry. beats_hand_on_locked_holdout states, without spin, whether it beats the strongest hand baseline on the locked split (the one honesty guard evolution never selected on)."
+  }
  }
 ]
