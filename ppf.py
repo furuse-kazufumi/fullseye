@@ -234,5 +234,5 @@ def find_surface_pose(model_points, scene_points, model_normals=None,
     ``{R, t, rmse, votes, inlier_fraction}`` dict — the 6-DoF pose of the model in
     the scene, ready to drive a grasp."""
     model = ppf_model(model_points, model_normals, dist_step=dist_step,
-                      angle_bins=angle_bins)
-    return surface_match(model, scene_points, scene_normals, **kw)
+                      angle_bins=angle_bins, k_normals=k_normals)
+    return surface_match(model, scene_points, scene_normals, k_normals=k_normals, **kw)
