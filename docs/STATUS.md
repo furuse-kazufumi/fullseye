@@ -6,6 +6,21 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **v18.3 (2026-08-15) = Physical-AI 知覚パイプラインを徹底拡充(ユーザー指示「Physical AI に繋がる op を徹底的に増やす」+「skill として実用レベルに」).**
+> **視覚 → 深度 → 点群 → 物体6DoF姿勢 → 把持** と **深度 → 地形 → 足場 → 歩容安定** を end-to-end で完備。
+> 全 numpy/scipy native・古典手法(H&Z / Drost / Hirschmüller / Fusiello、**学習モデル不使用**)・ground-truth テスト付き。
+> これらは進化 REGISTRY でなく **facade モジュール**ゆえ Wave-0 recapture 不要([A]自律安全)。full suite 3728→**3794 pass**(+66)。
+> - **`camera.py`**(2D↔3D バックボーン, 22 テスト): `intrinsic_matrix`/`project_points`/`backproject`/`depth_to_points`/`normals_from_depth`/`triangulate`(DLT)/`solve_pnp`(DLT+LM=物体6DoF)/`fundamental_matrix`/`essential_matrix`/`recover_pose`(cheirality)/`undistort_points`(Brown-Conrady)/`stereo_rectify`(Fusiello)/`rodrigues`。
+> - **`pcseg.py`**(点群セグメント/フィット, 15 テスト): `fit_plane/sphere/cylinder_ransac`/`remove_ground`/`euclidean_clusters`/`region_growing`/`obb`/`aabb`/`crop_box/sphere`/`farthest_point_sampling`/`curvature`/`height_above_plane`/`principal_axes`。
+> - **`stereo.py` 深化**(6 テスト): `census_transform`+`disparity_census`(照明不変)/`disparity_sgm`(4-path SGM)/`speckle_filter`/`fill_disparity`/`disparity_confidence`(PKRN)。
+> - **`terrain.py` 拡張 + `locomotion.py`**(12 テスト): `fuse_elevation`/`slope_map`/`roughness_map`/`surface_normals`/`step_edges`/`foothold_candidates`; `contact_points`/`support_polygon`/`com_support_margin`(静的安定余裕 McGhee-Frank)/`com_from_silhouette`/`gait_phase`(Alexander duty factor)。
+> - **`sceneflow.py`**(7 テスト): `flow_divergence`/`flow_curl`/`focus_of_expansion`/`time_to_contact`(tau Lee1976)/`looming`/`ego_translation_from_flow`/`scene_flow`(Vedula1999)。
+> - **`ppf.py`**(4 テスト): Point Pair Features 6-DoF 表面マッチング(Drost2010)= `ppf_model`/`surface_match`/`find_surface_pose`。既知姿勢を <0.2°/<1mm で回復(統合 example 実測)。
+> - **wheel パッケージング修正**: v18 波の 13 backends_* + videops が `py-modules` 欠落=pip wheel で import 不能だった(v14-review 系バグ)→ 全 runtime モジュールを監査補完。
+> - **実用化 = skill + example**: `examples/physical_ai_perception.py`(manipulation/locomotion/ego-motion の3経路、実行検証済)+ グローバル skill `~/.claude/skills/image-processing/` に全 API + 2 worked pipeline を追記(subagent 実用レベル)。
+> - 消費先: onocollo(物理動画→motion/TTC)・evis(ステレオ→`disparity_sgm`→`depth_to_points`→物体姿勢)・hillco(heightmap→`slope`/`foothold_candidates`+`com_support_margin` 歩容安定)。全 push 済 origin/master。
+> - **★公開開示ポリシー厳守**([[project_imgevolve_goal_knowledge_layer_2026_08_13]]): provenance=公開論文/OSS からの再実装。記事で商用製品名を出さない。
+
 > **v13 (2026-08-13) = 実用化 + 知覚スタック + Studio.** 詳細 = `docs/V13.md`
 > (`api.py`/`fullseye` パッケージ・`pip install -e`・stereo/terrain/detect/registration/pose/imgio・
 > HDevelop 風 `studio.py`・leg2 codegen/difftest/accuracy_bench)。
