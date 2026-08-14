@@ -95,6 +95,8 @@ with warnings.catch_warnings():
         looming, ego_translation_from_flow, scene_flow,
         features, harris_corners, fast_corners, describe_patches,
         match_descriptors, match_keypoints,
+        events, simulate_events, event_count, event_image, event_rate,
+        event_rate_map, time_surface, warp_frame, contrast_maximization,
         video, read_frames, iter_frames, frame_pairs, write_video, probe,
         recipes, recipe, measure, line_profile, distance, angle,
         fit_line, fit_circle, fit_ellipse, fit_rectangle2,
