@@ -45,8 +45,15 @@ Honest limitations (nothing here claims more than its round-trip test proves):
     ``vertex`` / ``face`` are parsed for structure but dropped.
   * Materials, textures, normals, groups, smoothing and per-face attributes are
     not read from any format — this module returns geometry only.
-  * Binary PCD and the heavier formats (glTF/GLB, COLLADA, LAS) are **not**
-    supported here; they need more than numpy and belong in an optional extra.
+  * PCD ``binary_compressed`` uses PCL's LZF codec, decompressed here in pure
+    Python; correct but not fast for very large clouds (bounded by
+    ``MAX_FILE_BYTES``). PCD ``COUNT != 1`` per field is refused, and non-xyz
+    fields (intensity, normals, curvature) are dropped — only ``x/y/z`` and an
+    ``rgb`` triple are returned.
+  * The heavier formats (glTF/GLB, COLLADA, LAS) are **not** supported here; they
+    need more than numpy and belong in an optional extra.
+  * ``.npy`` / ``.npz`` load with ``allow_pickle=False``, so an object-array or
+    pickled archive is refused rather than executed (untrusted-input safety).
   * STL carries no vertex sharing, so :func:`read_mesh` welds bit-identical
     coordinates into shared vertices; coordinates that differ in the last float
     bit stay separate.
