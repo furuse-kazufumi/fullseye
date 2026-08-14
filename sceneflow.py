@@ -144,7 +144,13 @@ def ego_translation_from_flow(u, v, K, min_speed: float = 1e-3) -> np.ndarray:
     if K.shape != (3, 3):
         raise ValueError("K must be 3x3")
     d = np.linalg.inv(K) @ np.array([foe[0], foe[1], 1.0])
-    return d / max(np.linalg.norm(d), 1e-12)
+    d = d / max(np.linalg.norm(d), 1e-12)
+    # the same point is the focus of expansion for forward motion and the focus of
+    # contraction for backward motion; the divergence sign disambiguates. Flip to a
+    # backward (-z) heading when the field is contracting (camera receding).
+    if float(np.nanmean(flow_divergence(u, v))) < 0.0:
+        d = -d
+    return d
 
 
 def scene_flow(disp0, disp1, u, v, fx: float = 1.0, baseline: float = 1.0,
