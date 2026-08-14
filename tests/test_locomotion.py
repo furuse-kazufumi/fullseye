@@ -143,6 +143,24 @@ def test_com_support_margin_degenerate():
     assert locomotion.com_support_margin([0.5, 0.0], feet) == float("-inf")
 
 
+def test_contact_points_rejects_degenerate_plane():
+    import pytest
+    P = np.random.default_rng(0).normal(size=(20, 3))
+    with pytest.raises(ValueError):
+        locomotion.contact_points(P, [0.0, 0.0, 0.0, 0.0])   # zero-normal -> not a plane
+
+
+def test_gait_phase_survives_nan_sample():
+    t = np.linspace(0, 4 * np.pi, 200)
+    planted = np.zeros_like(t)
+    swinging = np.clip(np.sin(t), 0, None)
+    H = np.stack([planted, swinging], 1)
+    H[50, 0] = np.nan                                   # one bad reading on the planted foot
+    g = locomotion.gait_phase(H)
+    assert g["duty_factor"][0] > 0.9                    # still (almost) always planted
+    assert 0.1 < g["duty_factor"][1] < 0.6              # swinging foot unaffected
+
+
 def test_gait_phase_antiphase_and_planted():
     t = np.linspace(0, 4 * np.pi, 200)
     # two feet in anti-phase: heights lift out of stance alternately
