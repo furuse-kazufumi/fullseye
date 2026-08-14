@@ -161,6 +161,15 @@ def test_fill_disparity_background_bias():
     assert filled[0, 0] == 5.0                                # valid pixels untouched
 
 
+def test_fill_disparity_keeps_measured_zero():
+    # a legitimately-measured 0 disparity (far background) must NOT be treated as a
+    # hole and overwritten; only NaN is a hole under the default mask.
+    disp = np.array([[0.0, 5.0, np.nan, 5.0]])
+    filled = stereo.fill_disparity(disp)
+    assert filled[0, 0] == 0.0                          # measured zero preserved
+    assert filled[0, 2] == 5.0                          # the NaN hole is filled
+
+
 def test_confidence_high_on_texture_low_on_flat():
     d0 = 5
     left = _textured(seed=14)
