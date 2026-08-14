@@ -71,6 +71,8 @@ from videops import (  # noqa: E402,F401
 from stereo import (  # noqa: E402,F401
     disparity_map, disparity_subpixel, lr_consistency,
     depth_from_disparity, reproject_to_points,
+    census_transform, disparity_census, disparity_sgm,
+    speckle_filter, fill_disparity, disparity_confidence,
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
                      fit_line, fit_circle, fit_ellipse, fit_rectangle2)
