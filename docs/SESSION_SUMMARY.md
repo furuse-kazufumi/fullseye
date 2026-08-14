@@ -3,55 +3,54 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-14 09:23:54
+- **最終更新**: 2026-08-14 09:47:31
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-22da478 auto: grasp.py 編集前 (2026-08-14 09:18)
-9e53a7a auto: pyproject.toml 編集前 (2026-08-14 08:59)
-6f95c4c auto: __init__.py 編集前 (2026-08-14 08:59)
-49d096b auto: __init__.py 編集前 (2026-08-14 08:59)
-f6f1272 auto: api.py 編集前 (2026-08-14 08:59)
-74543ab auto: api.py 編集前 (2026-08-14 08:59)
-93caabd auto: api.py 編集前 (2026-08-14 08:59)
-1b74ed6 auto: test_render3d.py 編集前 (2026-08-14 08:57)
-1fb731d auto: pyproject.toml 編集前 (2026-08-14 08:56)
-71085a2 auto: pyproject.toml 編集前 (2026-08-14 08:56)
+b8dab32 auto: SESSION_2026_08_14.md 編集前 (2026-08-14 09:33)
+75f0eae auto: pyproject.toml 編集前 (2026-08-14 09:28)
+4a77432 auto: __init__.py 編集前 (2026-08-14 09:28)
+4a3ad56 auto: __init__.py 編集前 (2026-08-14 09:28)
+16b2867 auto: api.py 編集前 (2026-08-14 09:28)
+b946c46 auto: api.py 編集前 (2026-08-14 09:28)
+5b96d05 auto: api.py 編集前 (2026-08-14 09:28)
+77c8e83 auto: volops.py 編集前 (2026-08-14 09:26)
+c2da760 auto: volops.py 編集前 (2026-08-14 09:25)
+3232cc2 auto: volops.py 編集前 (2026-08-14 09:25)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M grasp.py
-?? meshrepair.py
-?? tests/test_grasp.py
-?? tests/test_meshrepair.py
-?? tests/test_volops.py
-?? volops.py
+M docs/SESSION_2026_08_14.md
+ M docs/SESSION_SUMMARY.md
+?? complexops.py
+?? examples/import_and_grasp.py
+?? spectral.py
+?? tests/test_complexops.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-09:23 .pytest_cache/v/cache/nodeids
-09:23 .pytest_cache/v/cache/lastfailed
+09:46 spectral.py
+09:46 .pytest_cache/v/cache/nodeids
+09:45 tests/test_complexops.py
+09:45 complexops.py
+09:38 docs/SESSION_SUMMARY.md
+09:38 examples/import_and_grasp.py
+09:33 docs/SESSION_2026_08_14.md
+09:28 pyproject.toml
+09:28 fullseye/__init__.py
+09:28 api.py
+09:26 .pytest_cache/v/cache/lastfailed
+09:26 volops.py
 09:23 tests/test_volops.py
-09:23 docs/SESSION_SUMMARY.md
-09:22 volops.py
 09:22 tests/test_meshrepair.py
 09:21 meshrepair.py
-09:21 tests/test_grasp.py
-09:18 grasp.py
-09:07 docs/SESSION_2026_08_14.md
-08:59 pyproject.toml
-08:59 fullseye/__init__.py
-08:59 api.py
-08:57 tests/test_render3d.py
-08:54 render3d.py
 ```
 
 ---
