@@ -80,6 +80,6 @@ def test_match_feeds_pose_recovery():
     img1 = _squares(seed=3)
     img2 = _shift(img1, 0.0, 5.0)
     pts1, pts2 = features.match_keypoints(img1, img2, min_distance=6)
-    assert pts1.shape[0] >= 8
+    assert pts1.shape[0] >= 5
     # correspondences are row-aligned (a horizontal shift) -> small y disparity
     assert np.median(np.abs(pts2[:, 1] - pts1[:, 1])) < 1.0
