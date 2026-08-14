@@ -125,9 +125,20 @@ scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen �
 **★全 op 対応 = disposition map(`dispositions.py` → `docs/OP_DISPOSITION.json`)**: 偽実装で数を埋めず
 (feedback_no_false_reporting)、**全 2313 op に truthful な disposition を付与(100% 対応、捏造 0)**。
 `imgevolve.py has <任意の op>` が全 op に定義済み応答を返す(implemented=呼び方 / 未実装=status+理由)。内訳
-(**2026-08-14 op 拡張 wave 後**): **implemented 299(12.9%)/ needs_new_capability 153(honest backlog)/
+(**2026-08-14 op 拡張 wave 1+2 後**): **implemented 324(14.0%)/ needs_new_capability 128(honest backlog)/
 nary_multiinput 125 / out_of_scope_model 586(learned 442 + geometric 144)/ out_of_scope_plumbing 1150**。
-→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 452)に対し **299/452 ≈ 66% を genuine 実装**。
+→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 452)に対し **324/452 ≈ 72% を genuine 実装**。
+
+**★op 拡張 wave 2(2026-08-14, ultracode workflow)= registry +39 op / coverage 282→307**: 5 新 backend
+モジュール — `backends_regions3`(background_seg/clip_region/eliminate_runs/rank_region/region_features/
+polar_trans_region 等 10)・`backends_imgtools`(add_image_border/crop_part/bit_lshift/rshift/mask/
+convert_image_type 等 11)・`backends_measure1d`(1D caliper=measure_projection/pos/thresh/pairs/fuzzy 5)・
+`backends_physics`(**物理演算 PDE**=perona-malik/coherence/reaction-diffusion/heat/mean-curvature/TV flow 6)・
+`backends_decomp`(**分解**=structure-texture/texture-residual/RPCA low-rank/sparse/retinex/local-contrast/
+homomorphic 7、産業検査差別化)。**25 が genuine 新 HALCON 被覆、14 は halcon=""**(physics 4=anisotropic/
+isotropic/coherence/mean_curvature は backends_auto と重複ゆえ被覆主張せず[より忠実な実装]・decomp 7=新 capability・
+full_domain=恒等 no-op)。★検証 agent が physics の重複被覆主張を摘発→私が一次確認して halcon クリア(v11 規律)。
+REGISTRY 556→595。**固定参照パイプライン北極星は +39 op 後もスコア不変(dtrain +0.0)= gate 設計を実証**。
 
 **★op 拡張 wave(2026-08-14, ultracode workflow)= registry +35 op / coverage 252→282(dangling=0)**: 4 新 backend
 モジュール(`backends_filters2` shock/gray_skeleton/topographic/lut/symmetry 等 9・`backends_regions2`

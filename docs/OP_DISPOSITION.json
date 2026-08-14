@@ -2,9 +2,9 @@
  "n_total": 2313,
  "n_dispositioned": 2313,
  "counts": {
-  "implemented": 299,
+  "implemented": 324,
   "out_of_scope_plumbing": 1150,
-  "needs_new_capability": 153,
+  "needs_new_capability": 128,
   "out_of_scope_model": 586,
   "nary_multiinput": 125
  },
@@ -118,8 +118,8 @@
    "arity": 2
   },
   "add_image_border": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -532,8 +532,8 @@
    "arity": 0
   },
   "background_seg": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -616,14 +616,14 @@
    "arity": 2
   },
   "bit_lshift": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 1
   },
   "bit_mask": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 1
   },
@@ -640,8 +640,8 @@
    "arity": 2
   },
   "bit_rshift": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 1
   },
@@ -760,8 +760,8 @@
    "arity": 2
   },
   "change_format": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -1270,8 +1270,8 @@
    "arity": 1
   },
   "clip_region": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -1612,8 +1612,8 @@
    "arity": 0
   },
   "convert_image_type": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -2608,8 +2608,8 @@
    "arity": 1
   },
   "crop_domain": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 1
   },
@@ -2620,14 +2620,14 @@
    "arity": 1
   },
   "crop_part": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
   "crop_rectangle1": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -4132,8 +4132,8 @@
    "arity": 1
   },
   "eliminate_runs": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -4810,8 +4810,8 @@
    "arity": 1
   },
   "fuzzy_measure_pos": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "1D Measuring",
    "arity": 1
   },
@@ -7786,8 +7786,8 @@
    "arity": 1
   },
   "label_to_region": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -8044,14 +8044,14 @@
    "arity": 1
   },
   "measure_pairs": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "1D Measuring",
    "arity": 1
   },
   "measure_pos": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "1D Measuring",
    "arity": 1
   },
@@ -8062,14 +8062,14 @@
    "arity": 1
   },
   "measure_projection": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "1D Measuring",
    "arity": 1
   },
   "measure_thresh": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "1D Measuring",
    "arity": 1
   },
@@ -8596,8 +8596,8 @@
    "arity": 0
   },
   "partition_dynamic": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -8752,8 +8752,8 @@
    "arity": 1
   },
   "polar_trans_region": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -9280,8 +9280,8 @@
    "arity": 1
   },
   "rank_region": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -9850,14 +9850,14 @@
    "arity": 1
   },
   "region_features": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
   "region_to_bin": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -10138,8 +10138,8 @@
    "arity": 0
   },
   "runlength_distribution": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -10366,8 +10366,8 @@
    "arity": 0
   },
   "select_region_point": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
