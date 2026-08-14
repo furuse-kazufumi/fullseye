@@ -71,7 +71,7 @@ def process_tiled(fn, img, a=0.5, b=0.5, tile=1024, halo=16):
     """
     src = np.asarray(img, np.float64)
     H, W = src.shape[:2]
-    out = np.empty((H, W), np.float64)
+    out = np.empty(src.shape, np.float64)           # preserve trailing channel dims, if any
     for y0 in range(0, H, tile):
         for x0 in range(0, W, tile):
             y1, x1 = min(y0 + tile, H), min(x0 + tile, W)
