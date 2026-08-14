@@ -612,7 +612,11 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  "backends_filters2", "backends_regions2", "backends_subpix", "backends_xldgeom",
                  "backends_regions3", "backends_imgtools", "backends_measure1d",
                  "backends_physics", "backends_decomp",
-                 "backends_inverse", "backends_transform2", "backends_segment2", "backends_tomo"):
+                 "backends_inverse", "backends_transform2", "backends_segment2", "backends_tomo",
+                 # self-expanding registry: macro ("DNA") ops condensed from evolved
+                 # champions (backends_macro.py). LAST, so it can reference any backend
+                 # op and minimally perturbs existing registration indices.
+                 "backends_macro"):
         try:
             _b = __import__(_mod)
             _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
