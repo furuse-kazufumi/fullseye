@@ -158,11 +158,23 @@ def test_crop_box_and_sphere():
     assert mask2.tolist() == [True, False, False, True]
 
 
-def test_farthest_point_sampling_grabs_extremes():
+def test_farthest_point_sampling_covers_evenly():
+    # FPS minimises the covering radius (max distance from any point to its nearest
+    # sample) -- it spreads out, unlike taking the first k points.
     P = np.column_stack([np.arange(100.0), np.zeros(100), np.zeros(100)])
-    idx = pcseg.farthest_point_sampling(P, 3, seed=0)
-    assert len(np.unique(idx)) == 3
-    assert 0 in idx and 99 in idx                  # the two farthest endpoints chosen
+    k = 5
+    idx = pcseg.farthest_point_sampling(P, k, seed=0)
+    assert len(np.unique(idx)) == k
+
+    def covering_radius(sel):
+        from scipy.spatial import cKDTree
+        d, _ = cKDTree(P[sel]).query(P, k=1)
+        return float(d.max())
+
+    fps_cov = covering_radius(idx)
+    naive_cov = covering_radius(np.arange(k))       # first k points: terrible coverage
+    assert fps_cov < naive_cov
+    assert fps_cov <= 99.0 / (2 * (k - 1)) + 1.0    # ~even spacing bound on a line
 
 
 def test_curvature_flat_vs_sphere():
