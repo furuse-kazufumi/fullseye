@@ -60,9 +60,10 @@ def _ransac_kabsch(A, B, thresh: float, iters: int, seed: int):
         if cnt > best_cnt:
             best_cnt, best_inl = cnt, inl
     if best_inl is None or best_cnt < 3:
-        R, t = _kabsch(A, B)
-        return R, t, np.ones(n, bool)
-    R, t = _kabsch(A[best_inl], B[best_inl])
+        R, t = _kabsch(A, B)                        # RANSAC found no consensus: full refit,
+        inl = np.linalg.norm((A @ R.T + t) - B, axis=1) <= thresh  # but report the REAL
+        return R, t, inl                            # inlier mask (not all-True) so a failed
+    R, t = _kabsch(A[best_inl], B[best_inl])        # fit is not disguised as confident
     inl = np.linalg.norm((A @ R.T + t) - B, axis=1) <= thresh
     return R, t, inl
 
