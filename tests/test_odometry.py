@@ -87,6 +87,42 @@ def test_trajectory_error_zero_and_aligned():
     assert err["rmse"] < 1e-6
 
 
+def test_rgbd_odometry_builds_correct_camera_trajectory():
+    # end-to-end: a camera stepping +dx each frame -> integrate_trajectory must give a
+    # trajectory moving in +x (not the negated scene motion).
+    K = camera.intrinsic_matrix(400.0, 400.0, 80.0, 60.0)
+    H, W = 120, 160
+    Z, dx = 4.0, 0.2
+    Z0 = np.full((H, W), Z); Z1 = np.full((H, W), Z)
+    u = np.full((H, W), -400.0 * dx / Z); v = np.zeros((H, W))
+    R, t, _ = odometry.rgbd_odometry(Z0, Z1, u, v, K, thresh=0.01, stride=4)
+    traj = odometry.integrate_trajectory([(R, t)] * 4)
+    assert np.allclose(traj[:, 0, 3], [0, dx, 2 * dx, 3 * dx, 4 * dx], atol=1e-3)
+
+
+def test_trajectory_error_scale_drift():
+    # a metric estimate at 2x scale: rigid (default) ATE must expose it; Sim3 hides it.
+    gt = np.stack([odometry._to_4x4(np.eye(3), p)
+                   for p in np.cumsum(np.ones((10, 3)) * 0.1, axis=0)])
+    est_xyz = 2.0 * (gt[:, :3, 3])
+    est = np.stack([odometry._to_4x4(np.eye(3), p) for p in est_xyz])
+    rigid = odometry.trajectory_error(est, gt, with_scale=False)
+    sim3 = odometry.trajectory_error(est, gt, with_scale=True)
+    assert rigid["rmse"] > 0.1                        # scale drift is measured
+    assert sim3["rmse"] < 1e-6                         # scale drift is absorbed
+
+
+def test_ransac_kabsch_reports_real_inlier_fraction():
+    # two unrelated clouds -> no rigid fit -> inlier fraction must be low, not 1.0
+    K = camera.intrinsic_matrix(400.0, 400.0, 80.0, 60.0)
+    rng = np.random.default_rng(4)
+    H, W = 40, 40
+    Z0 = rng.uniform(1, 5, (H, W)); Z1 = rng.uniform(1, 5, (H, W))
+    u = rng.uniform(-2, 2, (H, W)); v = rng.uniform(-2, 2, (H, W))
+    _, _, inl = odometry.rgbd_odometry(Z0, Z1, u, v, K, thresh=1e-3, stride=2)
+    assert inl < 0.5                                   # not a fabricated 1.0
+
+
 def test_pnp_odometry_wraps_solve_pnp():
     s_rng = np.random.default_rng(2)
     X = s_rng.uniform(-1, 1, (40, 3)); X[:, 2] += 6
