@@ -18,6 +18,7 @@
 > - **`ppf.py`**(4 テスト): Point Pair Features 6-DoF 表面マッチング(Drost2010)= `ppf_model`/`surface_match`/`find_surface_pose`。既知姿勢を <0.2°/<1mm で回復(統合 example 実測)。
 > - **wheel パッケージング修正**: v18 波の 13 backends_* + videops が `py-modules` 欠落=pip wheel で import 不能だった(v14-review 系バグ)→ 全 runtime モジュールを監査補完。
 > - **実用化 = skill + example**: `examples/physical_ai_perception.py`(manipulation/locomotion/ego-motion の3経路、実行検証済)+ グローバル skill `~/.claude/skills/image-processing/` に全 API + 2 worked pipeline を追記(subagent 実用レベル)。
+> - **敵対レビュー(honest DoD)**: 6モジュールを ultracode workflow で並列レビュー(12 agents・repro 検証)→ 31 confirmed。私が全件一次コード確認(v11 規律)→ **real 30 件修正 + 回帰テスト +21(suite 3794→3806)**。camera solve_pnp が coplanar/checkerboard で誤姿勢(DLT 退化→homography init)/ normals_from_depth が斜面で法線を逆向き(n·X 判定へ)/ step_edges の対角ステップ符号消失・2x 過少 / foothold が未観測 NaN セルを提案 / gait/looming の NaN fail-open / scene_flow の無効視差ブレンド 等。**ppf の符号指摘(:186)は FALSE POSITIVE と検証**(α=α_s−α_m は Drost 準拠・全テスト+example が正しく回復・反転は破壊)=agent 指摘の鵜呑み禁止を実践。全 push 済(eae7d5c)。
 > - 消費先: onocollo(物理動画→motion/TTC)・evis(ステレオ→`disparity_sgm`→`depth_to_points`→物体姿勢)・hillco(heightmap→`slope`/`foothold_candidates`+`com_support_margin` 歩容安定)。全 push 済 origin/master。
 > - **★公開開示ポリシー厳守**([[project_imgevolve_goal_knowledge_layer_2026_08_13]]): provenance=公開論文/OSS からの再実装。記事で商用製品名を出さない。
 
