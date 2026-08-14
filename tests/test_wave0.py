@@ -81,12 +81,20 @@ _skip_install = pytest.mark.skipif(
 # Install-independent invariants (always run).                                #
 # --------------------------------------------------------------------------- #
 def test_slots_are_registration_order():
-    """SLOTS freezes each op's registration-order index, and decode() indexes
-    _candidates in that same order (slots strictly increase within a sort)."""
+    """SLOTS freezes each op's registration-order index. A handful of names occur
+    twice (core + a backend override); like RT/_BY_NAME, SLOTS resolves a name to
+    its LAST (canonical) occurrence — the exact op that actually executes. And
+    _candidates(sort) is the registration-order filter of REGISTRY (object order
+    preserved), which is what decode() indexes into."""
     assert ops.SLOTS == {op.name: i for i, op in enumerate(ops.REGISTRY)}
+    # SLOTS points at the canonical op the name resolves to (matches _BY_NAME/RT).
+    for name, i in ops.SLOTS.items():
+        assert ops.REGISTRY[i].name == name
+        assert ops._BY_NAME[name] is ops.REGISTRY[i]
+    # _candidates preserves REGISTRY order (deterministic within an install).
     for sort in SORTS:
-        slots = [ops.SLOTS[op.name] for op in ops._candidates(sort)]
-        assert slots == sorted(slots), f"_candidates({sort}) not in registration order"
+        expected = [op for op in ops.REGISTRY if op.in_sort in (sort, ops.ANY)]
+        assert ops._candidates(sort) == expected
 
 
 def test_decode_is_deterministic_across_sorts():
