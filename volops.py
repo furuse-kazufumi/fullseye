@@ -124,12 +124,11 @@ def _require_volume(vol, name: str = "vol", check_finite: bool = True) -> np.nda
     return v
 
 
-def _check_voxels(v: np.ndarray, cap: int, op: str) -> None:
+def _check_voxels(v: np.ndarray, cap: int, op: str, cap_name: str) -> None:
     if v.size > cap:
         raise ValueError("%s: a %d-voxel volume (shape %r) exceeds the %d cap "
                          "(volops.%s) — crop to an ROI or downsample first"
-                         % (op, v.size, v.shape, cap,
-                            "MAX_EIGEN_VOXELS" if cap == MAX_EIGEN_VOXELS else "MAX_VOXELS"))
+                         % (op, v.size, v.shape, cap, cap_name))
 
 
 def _as_binary(vol, name: str = "vol_binary") -> np.ndarray:
