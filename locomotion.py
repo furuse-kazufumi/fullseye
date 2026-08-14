@@ -67,9 +67,13 @@ def support_polygon(contacts) -> dict:
     if C.ndim != 2 or C.shape[1] not in (2, 3):
         raise ValueError("contacts must be (N, 2) or (N, 3)")
     xy = C[:, :2]
+    xy = xy[np.isfinite(xy).all(1)]                 # drop inf/NaN contacts (not a foot)
     uniq = np.unique(np.round(xy, 9), axis=0)
     if uniq.shape[0] < 3:
-        return {"vertices": uniq, "area": 0.0, "perimeter": 0.0,
+        # a point or a segment: centroid = midpoint / the point (consistent everywhere)
+        return {"vertices": uniq, "area": 0.0,
+                "perimeter": (2.0 * float(np.linalg.norm(uniq[0] - uniq[-1]))
+                              if uniq.shape[0] == 2 else 0.0),
                 "centroid": uniq.mean(0) if uniq.size else np.array([np.nan, np.nan])}
     from scipy.spatial import ConvexHull, QhullError
     try:
@@ -80,10 +84,20 @@ def support_polygon(contacts) -> dict:
         ends = uniq[[int(np.argmin(t)), int(np.argmax(t))]]
         return {"vertices": ends, "area": 0.0,
                 "perimeter": 2.0 * float(np.linalg.norm(ends[0] - ends[1])),
-                "centroid": uniq.mean(0)}
+                "centroid": ends.mean(0)}
     verts = xy[h.vertices]                           # scipy gives CCW for 2-D
+    # true area (shoelace) centroid, not the mean of vertices
+    x, y = verts[:, 0], verts[:, 1]
+    cross = x * np.roll(y, -1) - np.roll(x, -1) * y
+    A2 = cross.sum()
+    if abs(A2) < 1e-15:
+        centroid = verts.mean(0)
+    else:
+        cx = ((x + np.roll(x, -1)) * cross).sum() / (3.0 * A2)
+        cy = ((y + np.roll(y, -1)) * cross).sum() / (3.0 * A2)
+        centroid = np.array([cx, cy])
     return {"vertices": verts, "area": float(h.volume),   # 'volume' = area in 2-D
-            "perimeter": float(h.area), "centroid": verts.mean(0)}
+            "perimeter": float(h.area), "centroid": centroid}
 
 
 def com_support_margin(com_xy, contacts) -> float:
