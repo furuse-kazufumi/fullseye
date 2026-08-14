@@ -195,7 +195,7 @@ def trajectory_error(est_poses, gt_poses, align: bool = True, with_scale: bool =
     if E.shape != G.shape:
         raise ValueError("est and gt trajectories must have the same length/shape")
     if align:
-        s, R, t = umeyama_align(E, G)
+        s, R, t = umeyama_align(E, G, with_scale=with_scale)
         E = (s * (E @ R.T)) + t
     err = np.linalg.norm(E - G, axis=1)
     return {"rmse": float(np.sqrt(np.mean(err ** 2))), "mean": float(err.mean()),
