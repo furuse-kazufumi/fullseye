@@ -398,8 +398,12 @@ def alife_dla(v, a, b):
     sigma = 1.5
     for _ in range(gens):
         free = (~clus).astype(np.float64)
-        # mean-field walker concentration: diffuse the still-unclaimed brightness
-        conc = ndimage.gaussian_filter(x * free, sigma=sigma, mode="nearest")
+        # Mean-field walker concentration. Walkers arrive from the unclaimed
+        # space (a uniform far field, weighted by the local image brightness)
+        # and are absorbed by the cluster, so diffusing the free-space source
+        # approximates the harmonic measure: exposed tips see a high
+        # concentration, cells inside fjords are screened.
+        conc = ndimage.gaussian_filter(free * (0.2 + 0.8 * x), sigma=sigma, mode="nearest")
         bnd = ndimage.binary_dilation(clus, structure=struct) & (~clus)
         if not bnd.any():
             break
