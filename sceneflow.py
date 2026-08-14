@@ -33,6 +33,13 @@ def _uv(u, v):
     return u, v
 
 
+def _grad(a, axis):
+    """np.gradient that returns zeros along a length-1 axis (np.gradient raises)."""
+    if a.shape[axis] < 2:
+        return np.zeros_like(a)
+    return np.gradient(a, axis=axis)
+
+
 def flow_divergence(u, v) -> np.ndarray:
     """Divergence of the flow field ``du/dx + dv/dy`` (per-pixel).
 
@@ -40,9 +47,7 @@ def flow_divergence(u, v) -> np.ndarray:
     it is approaching (looming). The scalar collision cue underlying
     :func:`time_to_contact`. Returns (H, W)."""
     u, v = _uv(u, v)
-    dudx = np.gradient(u, axis=1)
-    dvdy = np.gradient(v, axis=0)
-    return dudx + dvdy
+    return _grad(u, 1) + _grad(v, 0)
 
 
 def flow_curl(u, v) -> np.ndarray:
@@ -51,9 +56,7 @@ def flow_curl(u, v) -> np.ndarray:
     Non-zero under camera roll or a spinning object; separating it from divergence
     tells rotation apart from approach. Returns (H, W)."""
     u, v = _uv(u, v)
-    dvdx = np.gradient(v, axis=1)
-    dudy = np.gradient(u, axis=0)
-    return dvdx - dudy
+    return _grad(v, 1) - _grad(u, 0)
 
 
 def focus_of_expansion(u, v, min_speed: float = 1e-3):
