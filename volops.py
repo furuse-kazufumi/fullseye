@@ -315,7 +315,8 @@ def vol_sato(vol, scales=(1, 2, 3), black_ridges=False):
     detector. Reference: Sato et al., Medical Image Analysis 1998.
     """
     v = _require_volume(vol)
-    _check_voxels(v, MAX_EIGEN_VOXELS, "vol_sato")
+    _check_voxels(v, MAX_EIGEN_VOXELS, "vol_sato", "MAX_EIGEN_VOXELS")
+    tol = _structure_floor(v)
     out = np.zeros_like(v)
     for sigma in _iter_scales(scales):
         e1, e2, e3 = _eigvalsh_sym3(*_hessian_components(v, sigma))
@@ -326,6 +327,8 @@ def vol_sato(vol, scales=(1, 2, 3), black_ridges=False):
             lo, hi = e3, e2
             resp = np.where((lo < 0) & (hi < 0), np.sqrt(np.maximum(lo * hi, 0.0)), 0.0)
         out = np.maximum(out, resp)
+    if float(out.max()) <= tol:                # no real structure — do not amplify dust
+        return np.zeros_like(v)
     return _norm01(out)
 
 
