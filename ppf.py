@@ -38,7 +38,15 @@ def _rot_align(a, b):
     c = float(a @ b)
     s = np.linalg.norm(v)
     if s < 1e-12:
-        return np.eye(3) if c > 0 else np.diag([1.0, -1.0, -1.0])  # a == b or a == -b
+        if c > 0:
+            return np.eye(3)                        # a == b
+        # a == -b: a proper 180 deg rotation about ANY axis perpendicular to a maps
+        # a onto b. (diag([1,-1,-1]) only works when a is along +x — it left a normal
+        # of -x pointing at -x, so _align_to_x mis-aligned it.)
+        p = np.array([1.0, 0.0, 0.0]) if abs(a[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
+        p = p - (p @ a) * a
+        p = p / np.linalg.norm(p)
+        return 2.0 * np.outer(p, p) - np.eye(3)
     vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
     return np.eye(3) + vx + vx @ vx * ((1.0 - c) / (s * s))
 
