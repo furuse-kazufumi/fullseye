@@ -285,9 +285,15 @@ def step_edges(grid, cell: float = 0.05, min_rise: float = 0.05, window: int = 3
     filled = fill_gaps(np.asarray(grid, np.float64))
     lo = ndimage.minimum_filter(filled, window, mode="nearest")
     hi = ndimage.maximum_filter(filled, window, mode="nearest")
-    edge = (hi - lo) > float(min_rise)
-    gy, gx = np.gradient(filled, cell)
-    signed = np.hypot(gx, gy) * cell * np.sign(gx + gy)
+    relief = hi - lo
+    edge = relief > float(min_rise)
+    gy, gx = _grad2(filled, cell)
+    # signed_rise = full local relief (the step height), signed by the DOMINANT
+    # gradient component. The old |grad|*cell*sign(gx+gy) both under-reported a sharp
+    # step ~2x (central diff spreads it over 2 cells) and vanished (sign 0) for any
+    # step not aligned to +x/+y (e.g. a diagonal curb where gx = -gy).
+    dom = np.where(np.abs(gx) >= np.abs(gy), gx, gy)
+    signed = relief * np.sign(dom)
     return edge, np.where(edge, signed, 0.0)
 
 
