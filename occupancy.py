@@ -71,8 +71,8 @@ def inflate_obstacles(occ, radius_cells: float):
     rounded correctly (not a square dilation). Returns a boolean grid."""
     occ = np.asarray(occ, bool)
     r = float(radius_cells)
-    if r <= 0:
-        return occ.copy()
+    if r <= 0 or not occ.any():
+        return occ.copy()                           # no obstacles -> nothing to inflate
     # distance from every free cell to the nearest obstacle; inflate where <= r
     dist = ndimage.distance_transform_edt(~occ)
     return dist <= r
