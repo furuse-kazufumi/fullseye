@@ -30,19 +30,42 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 
-MODEL_CH = {"Classification", "OCR", "Deep Learning", "Deep Learning Model",
-            "3D Reconstruction", "3D Matching", "3D Object Model", "Calibration",
-            "Identification"}
+# Chapters whose operators genuinely need a trained model or proprietary matching.
+LEARNED_CH = {"Classification", "OCR", "Deep Learning", "Deep Learning Model",
+              "3D Matching", "3D Object Model", "Identification"}
+# Chapters that are classical 3D/geometric algorithms (NOT trained models) but need
+# camera calibration and/or multiple views — outside the single-image thread.
+GEOMETRIC_CH = {"3D Reconstruction", "Calibration"}
+MODEL_CH = LEARNED_CH | GEOMETRIC_CH
 INFRA_CH = {"Graphics", "Tuple", "System", "File", "Develop", "Control", "Matrix",
             "Image Source", "Serial", "Socket", "I/O-Devices"}
-MODEL_KW = ("classif", "ocr", "deep_", "_dl_", "gmm", "_svm", "_mlp", "_knn",
-            "calibrat", "pose", "stereo", "disparity", "bundle", "sheet_of_light",
-            "self_calib", "binocular", "photometric_stereo", "train_")
+# Name signals for learned/proprietary operators, matched on underscore-delimited
+# TOKENS (not raw substrings) so an unrelated word is never caught. History: the old
+# tuple used raw `substr in name`, so "pose" flagged transpose/compose/decompose and
+# every pose-tuple/quaternion/hom-mat *algebra* op (47 ops) as "needs a trained model"
+# — factually wrong (a HALCON pose is a 7-tuple manipulated by classical algebra), so
+# "pose" (and "bundle", classical bundle-adjustment) are deliberately absent here.
+MODEL_TOKEN_PREFIX = ("classif", "calibrat")      # classify/classification, calibrate/calibration
+MODEL_TOKEN_EXACT = {"ocr", "deep", "dl", "gmm", "svm", "mlp", "knn",
+                     "stereo", "disparity", "binocular", "photometric", "sheet", "train"}
+MODEL_PHRASE = ("self_calib",)                    # self_calibration
 PLUMB_KW = ("get_", "set_", "query_", "test_", "clear_", "gen_empty", "gen_image_const",
             "read_", "write_", "open_", "close_", "dev_", "disp_", "create_", "serialize",
             "deserialize", "_handle", "access_", "select_obj", "concat_obj", "copy_obj",
             "count_obj_class", "obj_to_integer", "integer_to_obj", "tuple_", "get_grayval",
             "set_grayval", "add_channels", "channels_to", "image_to_channels", "tile_")
+
+
+def _is_model_name(name: str) -> bool:
+    """True if the op NAME signals a trained-model/proprietary op, matched on
+    underscore tokens so unrelated words (transpose, compose, decompose, ...) never
+    trip it. Pure-algebra pose/quaternion/hom-mat ops carry no model signal."""
+    toks = name.split("_")
+    if any(t.startswith(MODEL_TOKEN_PREFIX) for t in toks):
+        return True
+    if any(t in MODEL_TOKEN_EXACT for t in toks):
+        return True
+    return any(p in name for p in MODEL_PHRASE)
 
 
 def classify(node, covered, nary_names):
@@ -55,7 +78,11 @@ def classify(node, covered, nary_names):
         return "implemented", "genuine implementation (functionally gated)"
     if name in nary_names:
         return "implemented", "n-ary capability tier (genuine multi-input impl)"
-    if (chs & MODEL_CH) or any(k in name for k in MODEL_KW):
+    if (chs & MODEL_CH) or _is_model_name(name):
+        # Honest reason: classical 3D/stereo/calibration geometry is NOT a trained model.
+        if (chs & GEOMETRIC_CH) and not (chs & LEARNED_CH):
+            return "out_of_scope_model", ("classical 3D/stereo/calibration algorithm — needs camera "
+                "calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)")
         return "out_of_scope_model", "needs a trained model / proprietary algorithm — generic approximation only, not parity"
     infra = bool(chs & INFRA_CH) and not (chs - INFRA_CH - {"Legacy"})
     if infra or any(name.startswith(k) or k in name for k in PLUMB_KW):

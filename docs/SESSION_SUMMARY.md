@@ -3,43 +3,35 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-14 13:18:46
+- **最終更新**: 2026-08-14 19:13:51
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+b711db8 Wave-0: name-pinned champions + 3-way locked holdout + Problem.from_pairs
+03d1036 auto: ops.py 編集前 (2026-08-14 13:27)
+07c3c4c auto: test_wave0.py 編集前 (2026-08-14 13:27)
+cce0da5 auto: evolve.py 編集前 (2026-08-14 13:23)
+ff7b4d8 auto: problems.py 編集前 (2026-08-14 13:23)
+3ac09cf auto: evolve.py 編集前 (2026-08-14 13:22)
+907db45 auto: evolve.py 編集前 (2026-08-14 13:22)
+c9a26e8 auto: ops.py 編集前 (2026-08-14 13:22)
 45d5e26 auto: pyproject.toml 編集前 (2026-08-14 13:14)
 5edc183 auto: pyproject.toml 編集前 (2026-08-14 13:14)
-33195cc auto: __init__.py 編集前 (2026-08-14 13:14)
-5b02ce5 auto: __init__.py 編集前 (2026-08-14 13:14)
-0c9b9ea auto: api.py 編集前 (2026-08-14 13:14)
-03e5f1e auto: api.py 編集前 (2026-08-14 13:13)
-2e35131 auto: api.py 編集前 (2026-08-14 13:13)
-b003962 auto: test_mesh.py 編集前 (2026-08-14 13:11)
-82252b4 auto: test_mesh.py 編集前 (2026-08-14 13:10)
-8b30bb7 auto: test_mesh.py 編集前 (2026-08-14 13:10)
 ```
 
 ## 現在の git status
 
 ```
-M pyproject.toml
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-13:16 .pytest_cache/v/cache/nodeids
-13:14 pyproject.toml
-13:14 fullseye/__init__.py
-13:14 api.py
-13:11 tests/test_mesh.py
-13:07 mesh.py
-13:07 docs/SESSION_SUMMARY.md
-13:05 tests/test_meshio_opt.py
-13:04 meshio_opt.py
+19:10 docs/SESSION_SUMMARY.md
 ```
 
 ---

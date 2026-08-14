@@ -3,10 +3,10 @@
  "n_dispositioned": 2313,
  "counts": {
   "implemented": 269,
-  "out_of_scope_plumbing": 1114,
-  "needs_new_capability": 176,
-  "out_of_scope_model": 635,
-  "nary_multiinput": 119
+  "out_of_scope_plumbing": 1150,
+  "needs_new_capability": 183,
+  "out_of_scope_model": 586,
+  "nary_multiinput": 125
  },
  "dispositions": {
   "abs_diff_image": {
@@ -311,7 +311,7 @@
   },
   "affine_trans_point_3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -413,7 +413,7 @@
   },
   "apply_sheet_of_light_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -563,43 +563,43 @@
   },
   "binocular_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "binocular_disparity": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "binocular_disparity_mg": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "binocular_disparity_ms": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "binocular_distance": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "binocular_distance_mg": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "binocular_distance_ms": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
@@ -682,56 +682,56 @@
    "arity": 0
   },
   "bundle_adjust_mosaic": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Tools",
    "arity": 0
   },
   "calibrate_cameras": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "calibrate_hand_eye": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "calibrate_sheet_of_light": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "caltab_points": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "cam_mat_to_cam_par": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "cam_par_pose_to_hom_mat3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "cam_par_to_cam_mat": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "camera_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -767,25 +767,25 @@
   },
   "change_radial_distortion_cam_par": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "change_radial_distortion_contours_xld": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
   "change_radial_distortion_image": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 2
   },
   "change_radial_distortion_points": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -911,13 +911,13 @@
   },
   "clear_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "clear_camera_setup_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -1181,13 +1181,13 @@
   },
   "clear_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "clear_stereo_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -1468,44 +1468,44 @@
    "arity": 1
   },
   "compose2": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "nary_multiinput",
+   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
    "chapter": "Image",
    "arity": 2
   },
   "compose3": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "nary_multiinput",
+   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
    "chapter": "Image",
    "arity": 3
   },
   "compose4": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "nary_multiinput",
+   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
    "chapter": "Image",
    "arity": 4
   },
   "compose5": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "nary_multiinput",
+   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
    "chapter": "Image",
    "arity": 5
   },
   "compose6": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "nary_multiinput",
+   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
    "chapter": "Image",
    "arity": 6
   },
   "compose7": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "nary_multiinput",
+   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
    "chapter": "Image",
    "arity": 7
   },
   "compose_funct_1d": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Tools",
    "arity": 0
   },
@@ -1571,7 +1571,7 @@
   },
   "contour_to_world_plane_xld": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
@@ -1636,8 +1636,8 @@
    "arity": 0
   },
   "convert_pose_type": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -1841,7 +1841,7 @@
   },
   "create_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -1853,7 +1853,7 @@
   },
   "create_caltab": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -1865,7 +1865,7 @@
   },
   "create_camera_setup_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -2471,7 +2471,7 @@
   },
   "create_pose": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -2531,25 +2531,25 @@
   },
   "create_sheet_of_light_calib_object": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "create_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "create_stereo_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "create_structured_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -2657,49 +2657,49 @@
   },
   "decode_structured_light_pattern": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "decompose2": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Image",
    "arity": 1
   },
   "decompose3": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Image",
    "arity": 1
   },
   "decompose4": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Image",
    "arity": 1
   },
   "decompose5": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Image",
    "arity": 1
   },
   "decompose6": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Image",
    "arity": 1
   },
   "decompose7": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Image",
    "arity": 1
   },
   "decompose_matrix": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Matrix",
    "arity": 0
   },
@@ -2723,7 +2723,7 @@
   },
   "depth_from_focus": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -2759,19 +2759,19 @@
   },
   "deserialize_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "deserialize_cam_par": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "deserialize_camera_setup_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -2956,8 +2956,8 @@
    "arity": 0
   },
   "deserialize_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -2987,13 +2987,13 @@
   },
   "deserialize_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "deserialize_structured_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -3443,7 +3443,7 @@
   },
   "disp_caltab": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -3551,19 +3551,19 @@
   },
   "disparity_image_to_xyz": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "disparity_to_distance": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "disparity_to_point_3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -3719,7 +3719,7 @@
   },
   "distance_to_disparity": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -3982,8 +3982,8 @@
    "arity": 1
   },
   "dual_quat_compose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -4012,8 +4012,8 @@
    "arity": 0
   },
   "dual_quat_to_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -4295,13 +4295,13 @@
   },
   "essential_to_fundamental_matrix": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "estimate_al_am": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -4313,25 +4313,25 @@
   },
   "estimate_sl_al_lr": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "estimate_sl_al_zc": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "estimate_tilt_lr": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "estimate_tilt_zc": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -4523,13 +4523,13 @@
   },
   "find_calib_object": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
   "find_caltab": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
@@ -4565,7 +4565,7 @@
   },
   "find_marks_and_pose": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 2
   },
@@ -4883,13 +4883,13 @@
   },
   "gen_binocular_proj_rectification": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "gen_binocular_rectification_map": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -4900,14 +4900,14 @@
    "arity": 0
   },
   "gen_bundle_adjusted_mosaic": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "needs_new_capability",
+   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
    "chapter": "Tools",
    "arity": 1
   },
   "gen_caltab": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -5165,7 +5165,7 @@
   },
   "gen_image_to_world_plane_map": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -5267,7 +5267,7 @@
   },
   "gen_radial_distortion_map": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -5399,7 +5399,7 @@
   },
   "gen_structured_light_pattern": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -5459,31 +5459,31 @@
   },
   "get_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "get_calib_data_observ_contours": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "get_calib_data_observ_points": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "get_calib_data_observ_pose": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "get_camera_setup_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -5506,8 +5506,8 @@
    "arity": 0
   },
   "get_circle_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 1
   },
@@ -6059,7 +6059,7 @@
   },
   "get_line_of_sight": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -6394,8 +6394,8 @@
    "arity": 1
   },
   "get_pose_type": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -6430,8 +6430,8 @@
    "arity": 0
   },
   "get_rectangle_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 1
   },
@@ -6647,19 +6647,19 @@
   },
   "get_sheet_of_light_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "get_sheet_of_light_result": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "get_sheet_of_light_result_object_model_3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -6689,25 +6689,25 @@
   },
   "get_stereo_model_image_pairs": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "get_stereo_model_object": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "get_stereo_model_object_model_3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "get_stereo_model_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -6719,13 +6719,13 @@
   },
   "get_structured_light_model_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "get_structured_light_object": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -6941,7 +6941,7 @@
   },
   "grab_image": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -7115,7 +7115,7 @@
   },
   "hand_eye_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -7180,8 +7180,8 @@
    "arity": 1
   },
   "hom_mat2d_compose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -7270,14 +7270,14 @@
    "arity": 0
   },
   "hom_mat2d_transpose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
   "hom_mat3d_compose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -7330,8 +7330,8 @@
    "arity": 0
   },
   "hom_mat3d_to_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -7348,8 +7348,8 @@
    "arity": 0
   },
   "hom_mat3d_transpose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -7421,7 +7421,7 @@
   },
   "image_points_to_world_plane": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -7439,7 +7439,7 @@
   },
   "image_to_world_plane": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
@@ -7631,7 +7631,7 @@
   },
   "intersect_lines_of_sight": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -7955,7 +7955,7 @@
   },
   "match_essential_matrix_ransac": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
@@ -7967,19 +7967,19 @@
   },
   "match_fundamental_matrix_distortion_ransac": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "match_fundamental_matrix_ransac": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
   "match_rel_pose_ransac": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
@@ -8057,7 +8057,7 @@
   },
   "measure_profile_sheet_of_light": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -8423,7 +8423,7 @@
   },
   "open_framegrabber": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -8554,8 +8554,8 @@
    "arity": 1
   },
   "orthogonal_decompose_matrix": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Matrix",
    "arity": 0
   },
@@ -8633,7 +8633,7 @@
   },
   "photometric_stereo": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -8764,38 +8764,38 @@
    "arity": 1
   },
   "pose_average": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
   "pose_compose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
   "pose_invert": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
   "pose_to_dual_quat": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
   "pose_to_hom_mat3d": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
   "pose_to_quat": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -8908,8 +8908,8 @@
    "arity": 1
   },
   "proj_hom_mat2d_to_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -8939,13 +8939,13 @@
   },
   "project_3d_point": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "project_hom_point_hom_mat3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -8957,7 +8957,7 @@
   },
   "project_point_hom_mat3d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -9011,7 +9011,7 @@
   },
   "projective_trans_point_2d": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -9040,8 +9040,8 @@
    "arity": 1
   },
   "quat_compose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -9076,8 +9076,8 @@
    "arity": 0
   },
   "quat_to_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -9113,7 +9113,7 @@
   },
   "query_calib_data_observ_indices": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -9227,7 +9227,7 @@
   },
   "query_sheet_of_light_params": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -9251,13 +9251,13 @@
   },
   "radial_distortion_self_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
   "radiometric_self_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 1
   },
@@ -9299,19 +9299,19 @@
   },
   "read_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "read_cam_par": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "read_camera_setup_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -9604,8 +9604,8 @@
    "arity": 0
   },
   "read_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -9659,7 +9659,7 @@
   },
   "read_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -9671,7 +9671,7 @@
   },
   "read_structured_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -9761,31 +9761,31 @@
   },
   "reconst3d_from_fundamental_matrix": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "reconstruct_height_field_from_gradient": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "reconstruct_points_stereo": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "reconstruct_surface_stereo": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "reconstruct_surface_structured_light": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -9911,7 +9911,7 @@
   },
   "rel_pose_to_fundamental_matrix": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -9929,13 +9929,13 @@
   },
   "remove_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "remove_calib_data_observ": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -10061,7 +10061,7 @@
   },
   "reset_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -10325,7 +10325,7 @@
   },
   "select_grayvalues_from_channels": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 2
   },
@@ -10481,19 +10481,19 @@
   },
   "serialize_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "serialize_cam_par": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "serialize_camera_setup_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -10678,8 +10678,8 @@
    "arity": 0
   },
   "serialize_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -10709,13 +10709,13 @@
   },
   "serialize_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "serialize_structured_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -10787,43 +10787,43 @@
   },
   "set_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "set_calib_data_calib_object": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "set_calib_data_cam_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "set_calib_data_observ_points": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "set_calib_data_observ_pose": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "set_camera_setup_cam_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "set_camera_setup_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -11242,8 +11242,8 @@
    "arity": 0
   },
   "set_origin_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -11291,7 +11291,7 @@
   },
   "set_profile_sheet_of_light": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -11332,8 +11332,8 @@
    "arity": 0
   },
   "set_scene_3d_camera_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Graphics",
    "arity": 0
   },
@@ -11344,8 +11344,8 @@
    "arity": 0
   },
   "set_scene_3d_instance_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Graphics",
    "arity": 0
   },
@@ -11368,8 +11368,8 @@
    "arity": 0
   },
   "set_scene_3d_to_world_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Graphics",
    "arity": 0
   },
@@ -11417,7 +11417,7 @@
   },
   "set_sheet_of_light_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -11435,19 +11435,19 @@
   },
   "set_stereo_model_image_pairs": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "set_stereo_model_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "set_structured_light_model_param": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -11531,25 +11531,25 @@
   },
   "sfs_mod_lr": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "sfs_orig_lr": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "sfs_pentland": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "shade_height_field": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -11603,7 +11603,7 @@
   },
   "sim_caltab": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -11819,7 +11819,7 @@
   },
   "stationary_camera_self_calibration": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -12232,14 +12232,14 @@
    "arity": 0
   },
   "transpose_matrix": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Matrix",
    "arity": 0
   },
   "transpose_matrix_mod": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Matrix",
    "arity": 0
   },
@@ -13163,7 +13163,7 @@
   },
   "uncalibrated_photometric_stereo": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -13276,8 +13276,8 @@
    "arity": 0
   },
   "update_window_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Graphics",
    "arity": 0
   },
@@ -13319,19 +13319,19 @@
   },
   "vector_to_essential_matrix": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "vector_to_fundamental_matrix": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
   "vector_to_fundamental_matrix_distortion": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -13348,8 +13348,8 @@
    "arity": 0
   },
   "vector_to_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "not a single-image algorithm operator",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -13367,7 +13367,7 @@
   },
   "vector_to_rel_pose": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -13463,19 +13463,19 @@
   },
   "write_calib_data": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "write_cam_par": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
   "write_camera_setup_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "Calibration",
    "arity": 0
   },
@@ -13738,8 +13738,8 @@
    "arity": 1
   },
   "write_pose": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "out_of_scope_plumbing",
+   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
    "chapter": "Transformations",
    "arity": 0
   },
@@ -13787,7 +13787,7 @@
   },
   "write_sheet_of_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },
@@ -13799,7 +13799,7 @@
   },
   "write_structured_light_model": {
    "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
    "chapter": "3D Reconstruction",
    "arity": 0
   },

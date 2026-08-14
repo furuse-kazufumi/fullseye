@@ -124,9 +124,21 @@ scipy↔skimage の真クロスライブラリ一致 + core↔auto の codegen �
 
 **★全 op 対応 = disposition map(`dispositions.py` → `docs/OP_DISPOSITION.json`)**: 偽実装で数を埋めず
 (feedback_no_false_reporting)、**全 2313 op に truthful な disposition を付与(100% 対応、捏造 0)**。
-`imgevolve.py has <任意の op>` が全 op に定義済み応答を返す(implemented=呼び方 / 未実装=status+理由)。内訳:
-**implemented 269(11.6%)/ needs_new_capability 176(honest backlog)/ nary_multiinput 119 / out_of_scope_model 635(専有)/ out_of_scope_plumbing 1114(HDevelop言語・IO・getter=非アルゴリズム)**。
-→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 445)に対し **269/445 ≈ 60% を genuine 実装**。
+`imgevolve.py has <任意の op>` が全 op に定義済み応答を返す(implemented=呼び方 / 未実装=status+理由)。内訳
+(**2026-08-14 被覆修正後**): **implemented 269(11.6%)/ needs_new_capability 183(honest backlog)/
+nary_multiinput 125 / out_of_scope_model 586(learned 442 + geometric 144)/ out_of_scope_plumbing 1150**。
+→ honest な分母(実装しうる algorithm 系 ≈ implemented+needs_new_capability = 452)に対し **269/452 ≈ 60% を genuine 実装**。
+
+**★被覆修正(2026-08-14, dispositions.py)= honest-disclosure バグ修正**: 旧 `MODEL_KW` は素の部分文字列マッチで、
+`"pose"` が transpose/compose/decompose・pose タプル/四元数/同次行列の**代数 op を 47 件**、`"bundle"` が古典
+bundle-adjust を「要・学習モデル」と**誤ラベル**していた(feedback_no_false_reporting 違反)。修正: (1)`pose`/`bundle`
+を除去し、bare キーワードを**アンダースコア・トークン境界マッチ**化(部分文字列 FP を根絶、正当な model ヒットは不変を実測検証)
+→ **49 op が out_of_scope_model から離脱**(plumbing 36 / needs_new_capability 7 / nary 6)、`implemented` は 269 で不変
+(inflate ゼロ)。(2)model 章を **learned**(Classification/OCR/Deep Learning/3D Matching/Identification=真の学習モデル)と
+**geometric**(3D Reconstruction/Calibration=古典幾何。学習不要、要キャリブ/多視点)に区別し reason を正確化。
+回帰テスト = `tests/test_dispositions.py`(8 tests)。**未対応(要ユーザー判断の follow-up)**: 3D Matching 章の
+純幾何ヘルパー(例 `create_cam_pose_look_at_point`)や 3D/Calibration の一部を out_of_scope_model → needs_new_capability
+へ再分類するかは章単位判定の判断領域。今回は status を動かさず reason のみ正直化(backlog を私の判断で inflate しない)。
 - **dangling(偽名)= 0**(fail-closed)。回帰スモーク 600〜800/同(image起点 decode+run クラッシュ0、color 到達も全 OK)。
 - 開始(v10)79 → **245(registry)/ 262(総capability)= 3.3倍**。数値は memory 推測でなく実測。
 - v11e 増分 = fan-out 第2ラウンド(拡張語彙で残精査、genuine 5: add_noise_distribution/polar_trans_region_inv/
