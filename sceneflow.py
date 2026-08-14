@@ -176,18 +176,27 @@ def scene_flow(disp0, disp1, u, v, fx: float = 1.0, baseline: float = 1.0,
     H, W = d0.shape
     cx = (W - 1) / 2.0 if cx is None else float(cx)
     cy = (H - 1) / 2.0 if cy is None else float(cy)
+    fyv = float(fx) if fy is None else float(fy)
     yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
 
     def points(disp, X, Y):
         Z = np.full_like(disp, np.nan)
-        ok = disp > min_disp
+        ok = np.isfinite(disp) & (disp > min_disp)
         Z[ok] = float(fx) * float(baseline) / disp[ok]
         Xc = (X - cx) * Z / float(fx)
-        Yc = (Y - cy) * Z / float(fx)
+        Yc = (Y - cy) * Z / fyv                      # use fy for the vertical axis
         return np.stack([Xc, Yc, Z], axis=-1)
 
     P0 = points(d0, xx, yy)
     x1, y1 = xx + u, yy + v
-    d1_at = ndimage.map_coordinates(d1, [y1, x1], order=1, mode="constant", cval=np.nan)
+    # interpolate the t1 disparity AND its validity, then reject any target pixel
+    # whose bilinear support touched an invalid disparity (blending a valid with an
+    # invalid disparity would fabricate a bogus mid-depth).
+    valid1 = (np.isfinite(d1) & (d1 > min_disp)).astype(np.float64)
+    d1_at = ndimage.map_coordinates(np.nan_to_num(d1), [y1, x1], order=1,
+                                    mode="constant", cval=0.0)
+    v1_at = ndimage.map_coordinates(valid1, [y1, x1], order=1,
+                                    mode="constant", cval=0.0)
+    d1_at = np.where(v1_at > 0.999, d1_at, np.nan)
     P1 = points(d1_at, x1, y1)
     return P1 - P0
