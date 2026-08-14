@@ -177,6 +177,14 @@ def test_farthest_point_sampling_covers_evenly():
     assert fps_cov <= 99.0 / (k - 1)                # FPS 2-approximation of optimal spacing
 
 
+def test_farthest_point_sampling_no_duplicates_with_repeats():
+    # a cloud with many duplicate points must still return k DISTINCT indices.
+    base = np.array([[0, 0, 0], [1, 0, 0], [0, 1, 0]], float)
+    P = np.repeat(base, 10, axis=0)                     # 30 points, only 3 distinct
+    idx = pcseg.farthest_point_sampling(P, 5, seed=0)
+    assert len(np.unique(idx)) == 5                     # no index picked twice
+
+
 def test_curvature_flat_vs_sphere():
     n, u, v = _plane_basis([0.0, 0.0, 1.0])
     rng = np.random.default_rng(9)
