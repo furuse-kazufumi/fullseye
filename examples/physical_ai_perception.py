@@ -135,8 +135,26 @@ def demo_egomotion():
     assert loom["expanding"] and np.isfinite(loom["ttc"])
 
 
+def demo_odometry():
+    print("\n=== ODOMETRY: RGB-D frame pair -> camera motion -> trajectory ===")
+    K = fs.intrinsic_matrix(400.0, 400.0, 80.0, 60.0)
+    H, W = 120, 160
+    Z, dx = 4.0, 0.25
+    Z0 = np.full((H, W), Z)
+    Z1 = np.full((H, W), Z)
+    u = np.full((H, W), -400.0 * dx / Z)              # lateral camera step -> uniform flow
+    v = np.zeros((H, W))
+    R, t, inl = fs.rgbd_odometry(Z0, Z1, u, v, K, thresh=0.01, stride=4)
+    print(f"  frame-to-frame motion: t={np.round(t, 3)} (scene moves -dx)  inliers={inl:.2f}")
+    # dead-reckon a few identical steps into an absolute trajectory
+    traj = fs.integrate_trajectory([(R, t)] * 4)
+    print(f"  integrated trajectory: {traj.shape[0]} poses, end xy={np.round(traj[-1][:2, 3], 3)}")
+    assert inl > 0.9 and abs(t[0] + dx) < 1e-2
+
+
 if __name__ == "__main__":
     demo_manipulation()
     demo_locomotion()
     demo_egomotion()
+    demo_odometry()
     print("\nAll Physical-AI perception pipelines composed OK.")
