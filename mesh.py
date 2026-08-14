@@ -23,8 +23,15 @@ dependency-free spec — no third-party parser (and no GPL code) is needed:
             Polygon File Format" (Stanford, 1994).
   ``.off``  Object File Format — the Geomview / Princeton Shape Benchmark spec.
 
-Point clouds additionally read ``.xyz`` (plain ``x y z [r g b]`` text) and
-ASCII ``.pcd`` (Point Cloud Library file format).
+Point clouds additionally read ``.xyz`` (plain ``x y z [r g b]`` text), ``.pcd``
+(Point Cloud Library format — ``ascii``, ``binary`` and LZF ``binary_compressed``)
+and ``.npy`` / ``.npz`` (a numpy ``(N, 3)`` or ``(N, 6=xyz+rgb)`` array).
+
+Export is symmetric with import. :func:`write_mesh` writes every format
+:func:`read_mesh` reads (``.obj`` / ``.off`` / ASCII+binary ``.ply`` exactly in
+float64; binary ``.stl`` in float32), and :func:`write_points` writes ``.ply``
+(binary or ASCII), ``.xyz`` and ``.npy`` / ``.npz`` (the numpy formats round-trip
+coordinates and colours exactly).
 
 Honest limitations (nothing here claims more than its round-trip test proves):
 
