@@ -44,7 +44,9 @@ def test_rgbd_odometry_roll():
     Z0 = np.full((H, W), Z)
     Z1 = np.full((H, W), Z)                           # roll about z keeps the plane at Z
     R, t, inl = odometry.rgbd_odometry(Z0, Z1, u, v, K, thresh=0.01, stride=3)
-    ang = np.degrees(np.linalg.norm(camera.rotation_log(R @ Rpt.T)))
+    # scene points rotate by Rpt=Rz(-theta); the CAMERA rolled by +theta = Rpt.T,
+    # so R (camera motion) @ Rpt should be identity.
+    ang = np.degrees(np.linalg.norm(camera.rotation_log(R @ Rpt)))
     assert inl > 0.8
     assert ang < 1.0
     assert np.linalg.norm(t) < 0.02
