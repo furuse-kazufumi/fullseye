@@ -109,6 +109,27 @@ def test_solve_pnp_recovers_pose_clean():
     assert np.allclose(t, s["t"], atol=1e-4)
 
 
+def test_solve_pnp_planar_target():
+    # a coplanar (checkerboard-style) target: general DLT resection is degenerate
+    # here, so the planar homography init must carry it. 5x5 grid on z=0.
+    K = camera.intrinsic_matrix(600.0, 600.0, 320.0, 240.0)
+    gx, gy = np.meshgrid(np.linspace(-0.1, 0.1, 5), np.linspace(-0.1, 0.1, 5))
+    X = np.column_stack([gx.ravel(), gy.ravel(), np.zeros(gx.size)])
+    fails = 0
+    for seed in range(20):
+        rng = np.random.default_rng(seed)
+        R_true = camera.rodrigues(rng.uniform(-0.6, 0.6, 3))
+        t_true = np.array([rng.uniform(-0.2, 0.2), rng.uniform(-0.2, 0.2), 1.5])
+        uv, z = camera.project_points(X, K, R_true, t_true)
+        if (z <= 0).any():
+            continue
+        R, t, rms = camera.solve_pnp(X, uv, K)
+        ang = np.degrees(np.linalg.norm(camera.rotation_log(R @ R_true.T)))
+        if ang > 1.0 or rms > 1e-2:
+            fails += 1
+    assert fails == 0, f"{fails}/20 planar-target PnP recoveries failed"
+
+
 def test_solve_pnp_robust_to_noise():
     s = _scene(seed=5)
     rng = np.random.default_rng(9)
