@@ -396,7 +396,7 @@ def solve_pnp(points3d, uv, K, iters: int = 30, refine: bool = True):
         raise ValueError("points3d and uv must have the same length")
     if X.shape[0] < 6:
         raise ValueError("PnP needs at least 6 correspondences, got %d" % X.shape[0])
-    R0, t0 = _pnp_dlt(X, uv, K)
+    R0, t0 = _pnp_init(X, uv, K)
     if not refine:
         rms = float(np.sqrt(np.mean(reprojection_error(X, uv, K, R0, t0) ** 2)))
         return R0, t0, rms
