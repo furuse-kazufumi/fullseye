@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-14 23:10:25
+- **最終更新**: 2026-08-15 00:26:25
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-8e12b51 ops: wave 3 — +25 new-capability ops (inverse / transforms / segmentation / tomography)
-133a954 ops: wave 2 — +39 ops (regions/image-tools/1D-measure/physics/decomposition)
-d7813c7 ops: +35 registry ops (30 new HALCON coverage) + video module + robust Wave-0 gate
-8e9438a wave0: recapture script + file-backed pins — make op-adding safe & repeatable
-da7ed49 measure: add sub-pixel primitive fitting (line / circle / ellipse / rectangle)
-ea998c1 dispositions: fix false "needs a trained model" labels (honest disclosure)
-b711db8 Wave-0: name-pinned champions + 3-way locked holdout + Problem.from_pairs
-03d1036 auto: ops.py 編集前 (2026-08-14 13:27)
-07c3c4c auto: test_wave0.py 編集前 (2026-08-14 13:27)
-cce0da5 auto: evolve.py 編集前 (2026-08-14 13:23)
+5adf205 docs: v18.3 Physical-AI perception — STATUS section + consolidated PERCEPTION doc
+d6d5984 examples: end-to-end Physical-AI perception pipelines (manipulation + locomotion + ego-motion)
+ccf9062 auto: physical_ai_perception.py 編集前 (2026-08-15 00:13)
+0a23109 auto: physical_ai_perception.py 編集前 (2026-08-15 00:12)
+8826bf6 perception: ppf.py — 6-DoF surface matching (Point Pair Features, Drost 2010)
+d1c5d23 auto: pyproject.toml 編集前 (2026-08-15 00:05)
+af3171f auto: __init__.py 編集前 (2026-08-15 00:05)
+728679b auto: __init__.py 編集前 (2026-08-15 00:05)
+a44de27 auto: api.py 編集前 (2026-08-15 00:05)
+f3a59b6 auto: api.py 編集前 (2026-08-15 00:05)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ cce0da5 auto: evolve.py 編集前 (2026-08-14 13:23)
 ## 直近 2 時間に変更されたファイル
 
 ```
-23:07 .pytest_cache/v/cache/nodeids
-23:04 .ruff_cache/0.16.0/7363606932562918290
-23:04 .ruff_cache/0.16.0/2128910586982079947
-23:04 docs/STATUS.md
-23:03 data/wave0_pins.json
-23:03 data/halcon_stubs.json
-23:03 docs/HALCON_COVERAGE.md
-23:03 data/halcon_coverage_report.txt
-23:03 ops.py
-22:58 .ruff_cache/0.16.0/3569801712097633687
-22:58 tests/test_tomo.py
-22:58 .ruff_cache/0.16.0/12000078984894527412
-22:57 tests/test_transform2.py
-22:57 .pytest_cache/v/cache/lastfailed
-22:56 backends_inverse.py
+00:26 .pytest_cache/v/cache/nodeids
+00:20 docs/PERCEPTION_PHYSICAL_AI.md
+00:18 docs/STATUS.md
+00:15 .ruff_cache/0.16.0/2128910586982079947
+00:15 .ruff_cache/0.16.0/8687138234577503176
+00:13 examples/physical_ai_perception.py
+00:05 pyproject.toml
+00:05 fullseye/__init__.py
+00:05 api.py
+00:05 tests/test_ppf.py
+00:04 ppf.py
+23:57 .pytest_cache/v/cache/lastfailed
+23:57 tests/test_sceneflow.py
+23:56 sceneflow.py
+23:50 terrain.py
 ```
 
 ---
