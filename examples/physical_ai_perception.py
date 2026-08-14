@@ -145,11 +145,11 @@ def demo_odometry():
     u = np.full((H, W), -400.0 * dx / Z)              # lateral camera step -> uniform flow
     v = np.zeros((H, W))
     R, t, inl = fs.rgbd_odometry(Z0, Z1, u, v, K, thresh=0.01, stride=4)
-    print(f"  frame-to-frame motion: t={np.round(t, 3)} (scene moves -dx)  inliers={inl:.2f}")
-    # dead-reckon a few identical steps into an absolute trajectory
+    print(f"  frame-to-frame camera motion: t={np.round(t, 3)} (camera steps +dx)  inliers={inl:.2f}")
+    # dead-reckon a few identical steps into an absolute camera trajectory
     traj = fs.integrate_trajectory([(R, t)] * 4)
     print(f"  integrated trajectory: {traj.shape[0]} poses, end xy={np.round(traj[-1][:2, 3], 3)}")
-    assert inl > 0.9 and abs(t[0] + dx) < 1e-2
+    assert inl > 0.9 and abs(t[0] - dx) < 1e-2
 
 
 if __name__ == "__main__":
