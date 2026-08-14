@@ -122,10 +122,11 @@ def describe_patches(img, keypoints, patch: int = 9):
     g = _gray(img)
     kp = np.asarray(keypoints, int).reshape(-1, 2)
     r = int(patch) // 2
+    side = 2 * r + 1                                 # actual odd window side (even patch rounds up)
     H, W = g.shape
     keep = (kp[:, 0] >= r) & (kp[:, 0] < H - r) & (kp[:, 1] >= r) & (kp[:, 1] < W - r)
     kp = kp[keep]
-    desc = np.empty((kp.shape[0], patch * patch))
+    desc = np.empty((kp.shape[0], side * side))      # match the extracted window, not patch^2
     for i, (y, x) in enumerate(kp):
         p = g[y - r:y + r + 1, x - r:x + r + 1].ravel()
         p = p - p.mean()
