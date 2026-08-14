@@ -1,6 +1,6 @@
 {
  "cand_counts": {
-  "image": 448,
+  "image": 471,
   "region": 116,
   "feature": 1,
   "contour": 40,
@@ -130,7 +130,7 @@
    "any": "identity"
   },
   {
-   "image": "hough_circle_trans(a=0.50,b=0.50) -> hough_circle_trans(a=0.50,b=0.50) -> hough_circle_trans(a=0.50,b=0.50) -> hough_circle_trans(a=0.50,b=0.50) -> hough_circle_trans(a=0.50,b=0.50) -> hough_circle_trans(a=0.50,b=0.50)",
+   "image": "dots_image(a=0.50,b=0.50) -> dots_image(a=0.50,b=0.50) -> dots_image(a=0.50,b=0.50) -> dots_image(a=0.50,b=0.50) -> dots_image(a=0.50,b=0.50) -> dots_image(a=0.50,b=0.50)",
    "region": "projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50)",
    "feature": "identity",
    "contour": "orientation_xld(a=0.50,b=0.50)",
@@ -139,12 +139,12 @@
    "any": "identity"
   },
   {
-   "image": "sk_felzenszwalb(a=0.24,b=0.29) -> select_shape(a=0.41,b=0.47) -> moments_region_central_invar(a=0.59,b=0.65)",
+   "image": "sk_hysteresis(a=0.24,b=0.29) -> select_shape(a=0.41,b=0.47) -> moments_region_central_invar(a=0.59,b=0.65)",
    "region": "sk_euler(a=0.24,b=0.29)",
    "feature": "identity",
    "contour": "select_contours_xld(a=0.24,b=0.29) -> convexity_xld(a=0.41,b=0.47)",
    "match": "identity",
-   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_dilate(a=0.59,b=0.65) -> vol_mip(a=0.76,b=0.82) -> it_crop_rectangle1(a=0.94,b=1.00)",
+   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_dilate(a=0.59,b=0.65) -> vol_mip(a=0.76,b=0.82) -> dc_structure_texture(a=0.94,b=1.00)",
    "any": "identity"
   },
   {

@@ -613,6 +613,10 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  "backends_regions3", "backends_imgtools", "backends_measure1d",
                  "backends_physics", "backends_decomp",
                  "backends_inverse", "backends_transform2", "backends_segment2", "backends_tomo",
+                 # Physical-AI / evolution op wave (all halcon="", new capabilities):
+                 # sim2real sensor corruption (aug_), artificial-life / cellular automata
+                 # (alife_), and tactile / contact-from-shading (tac_).
+                 "backends_aug", "backends_alife", "backends_tactile",
                  # self-expanding registry: macro ("DNA") ops condensed from evolved
                  # champions (backends_macro.py). LAST, so it can reference any backend
                  # op and minimally perturbs existing registration indices.
