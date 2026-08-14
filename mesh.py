@@ -52,21 +52,27 @@ a message naming the file and the problem — it never returns partial garbage.
 """
 from __future__ import annotations
 
+import io
 import os
 
 import numpy as np
 
 __all__ = [
-    "read_mesh", "read_points", "write_mesh",
+    "read_mesh", "read_points", "write_mesh", "write_points",
     "sample_surface", "mesh_to_points", "voxelize",
     "bounds", "recenter", "normalize_scale",
-    "MESH_FORMATS", "POINT_FORMATS",
+    "MESH_FORMATS", "POINT_FORMATS", "WRITE_MESH_FORMATS", "WRITE_POINT_FORMATS",
 ]
 
 #: Extensions :func:`read_mesh` accepts.
 MESH_FORMATS = (".obj", ".stl", ".ply", ".off")
 #: Extensions :func:`read_points` accepts.
-POINT_FORMATS = (".ply", ".xyz", ".txt", ".pts", ".asc", ".obj", ".pcd", ".off", ".stl")
+POINT_FORMATS = (".ply", ".xyz", ".txt", ".pts", ".asc", ".obj", ".pcd", ".off",
+                 ".stl", ".npy", ".npz")
+#: Extensions :func:`write_mesh` accepts (every format :func:`read_mesh` reads).
+WRITE_MESH_FORMATS = (".obj", ".stl", ".ply", ".off")
+#: Extensions :func:`write_points` accepts.
+WRITE_POINT_FORMATS = (".ply", ".xyz", ".txt", ".pts", ".asc", ".npy", ".npz")
 
 #: Refuse files larger than this (untrusted input / accidental DoS guard).
 MAX_FILE_BYTES = 1 << 29          # 512 MiB
