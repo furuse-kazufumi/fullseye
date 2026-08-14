@@ -49,6 +49,7 @@ import mesh  # noqa: E402  (3-D object import: OBJ/STL/PLY/OFF -> vertices, poin
 import meshio_opt  # noqa: E402  (optional heavier object formats: glTF/GLB, LAS/LAZ, PCD-binary)
 import pose  # noqa: E402  (silhouette posture descriptors)
 import locomotion  # noqa: E402  (balance/gait perception: contacts, support polygon, stability margin, gait phase)
+import occupancy  # noqa: E402  (2-D occupancy / free-space navigation grids: inflate, clearance, line-of-sight)
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
 import sceneflow  # noqa: E402  (scene flow / ego-motion: FoE, time-to-contact, looming, 3D scene flow)
