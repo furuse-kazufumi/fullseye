@@ -11,6 +11,7 @@ LOCOMOTION:    depth ─▶ cloud + normals ─▶ elevation map ─▶ slope / 
                support polygon + static-stability margin
 NAVIGATION:    optical flow ─▶ heading (FoE) + time-to-contact + 3-D scene flow
 ODOMETRY:      RGB-D pair ─▶ frame-to-frame camera motion ─▶ integrated trajectory
+PLANNING:      cloud ─▶ 2-D occupancy grid ─▶ inflate + clearance ─▶ line-of-sight / frontier
 ```
 
 Runnable template: [`examples/physical_ai_perception.py`](../examples/physical_ai_perception.py)
