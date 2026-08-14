@@ -191,6 +191,8 @@ __all__ = [
     "residual_motion", "motion_segments", "motion_energy_series", "detect_events",
     "sceneflow", "flow_divergence", "flow_curl", "focus_of_expansion", "time_to_contact",
     "looming", "ego_translation_from_flow", "scene_flow",
+    "features", "harris_corners", "fast_corners", "describe_patches",
+    "match_descriptors", "match_keypoints",
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
     "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
