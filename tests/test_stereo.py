@@ -108,3 +108,65 @@ def test_lr_consistency_rejects_no_overlap_margin():
     ok = stereo.lr_consistency(np.full((1, 10), 6.0), np.full((1, 10), 6.0), max_diff=1.0)
     assert not ok[0, :6].any()          # columns 0..5 map to right cols -6..-1 -> invalid
     assert ok[0, 6:].all()              # columns 6..9 have real matches at cols 0..3
+
+
+# --- census / SGM / post-processing ----------------------------------------- #
+def test_census_is_illumination_invariant():
+    img = _textured(seed=11)
+    a = stereo.census_transform(img, window=5)
+    b = stereo.census_transform(2.0 * img + 0.3, window=5)   # monotonic gain+offset
+    assert np.array_equal(a, b)                              # ordering preserved -> same code
+
+
+def test_census_disparity_robust_to_gain():
+    d0 = 6
+    left = _textured(seed=12)
+    right = _shift_left_by(1.7 * left + 0.15, d0)            # brightened + shifted
+    disp = stereo.disparity_census(left, right, max_disp=16, window=5)
+    core = disp[20:-20, 30:-10]
+    assert np.median(core) == d0
+    assert (np.abs(core - d0) <= 1).mean() > 0.9
+
+
+def test_sgm_recovers_shift_and_is_smoother():
+    d0 = 7
+    rng = np.random.default_rng(13)
+    left = _textured(seed=13)
+    right = _shift_left_by(left, d0) + rng.normal(0, 0.05, left.shape)   # noisy right
+    wta = stereo.disparity_census(left, right, max_disp=16, window=5)
+    sgm = stereo.disparity_sgm(left, right, max_disp=16, window=5, paths=4)
+    assert np.median(sgm[20:-20, 30:-10]) == d0
+
+    def tv(a):
+        return np.abs(np.diff(a, axis=0)).mean() + np.abs(np.diff(a, axis=1)).mean()
+
+    assert tv(sgm) < tv(wta)                                 # smoothness prior -> fewer specks
+
+
+def test_speckle_filter_removes_small_blob():
+    disp = np.full((60, 60), 6.0)
+    disp[10:13, 10:13] = 0.0                                 # 9-px speckle, differs by 6
+    clean, valid = stereo.speckle_filter(disp, max_diff=1.0, min_size=50)
+    assert np.isnan(clean[10:13, 10:13]).all()               # small region invalidated
+    assert valid[10:13, 10:13].sum() == 0
+    assert np.isfinite(clean[30:, 30:]).all()                # large region kept
+
+
+def test_fill_disparity_background_bias():
+    disp = np.array([[5.0, 5.0, np.nan, np.nan, 3.0, 3.0],
+                     [4.0, np.nan, np.nan, np.nan, np.nan, 4.0]])
+    filled = stereo.fill_disparity(disp)
+    assert filled[0, 2] == 3.0 and filled[0, 3] == 3.0       # min(left 5, right 3) = 3
+    assert np.allclose(filled[1], 4.0)                        # both neighbours 4
+    assert filled[0, 0] == 5.0                                # valid pixels untouched
+
+
+def test_confidence_high_on_texture_low_on_flat():
+    d0 = 5
+    left = _textured(seed=14)
+    left[:, :40] = 0.5                                        # left block: flat / ambiguous
+    right = _shift_left_by(left, d0)
+    conf = stereo.disparity_confidence(left, right, max_disp=16, block=9, method="ssd")
+    flat = conf[20:-20, 10:30].mean()
+    textured = conf[20:-20, 60:-10].mean()
+    assert textured > flat + 0.2                             # texture is more trustworthy
