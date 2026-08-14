@@ -146,6 +146,10 @@ from motion import (  # noqa: E402,F401
     frame_motion_energy, dominant_motion, flow_from_model, residual_motion,
     motion_segments, motion_energy_series, detect_events,
 )
+from sceneflow import (  # noqa: E402,F401
+    flow_divergence, flow_curl, focus_of_expansion, time_to_contact,
+    looming, ego_translation_from_flow, scene_flow,
+)
 from video import (  # noqa: E402,F401
     read_frames, iter_frames, frame_pairs, write_video, probe,
 )
