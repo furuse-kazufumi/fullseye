@@ -54,8 +54,11 @@ def occupancy_grid_2d(points, cell: float = 0.05, z_range=None, bounds=None,
     ny = max(1, int(np.ceil((ymax - ymin) / cell)))
     counts = np.zeros((ny, nx), np.int64)
     if P.shape[0]:
-        jx = np.clip(((x - xmin) / cell).astype(int), 0, nx - 1)
-        iy = np.clip(((y - ymin) / cell).astype(int), 0, ny - 1)
+        # DROP out-of-bounds points; clamping them onto the edge cells would pile up
+        # phantom obstacles along the grid border.
+        inb = (x >= xmin) & (x <= xmax) & (y >= ymin) & (y <= ymax)
+        jx = np.clip(((x[inb] - xmin) / cell).astype(int), 0, nx - 1)
+        iy = np.clip(((y[inb] - ymin) / cell).astype(int), 0, ny - 1)
         np.add.at(counts, (iy, jx), 1)
     return counts >= int(min_points), (xmin, xmax, ymin, ymax)
 
