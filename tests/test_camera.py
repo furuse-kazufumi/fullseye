@@ -19,7 +19,8 @@ def _scene(seed=0, n=60):
     t = np.array([-1.2, 0.15, 0.25])
     uv1, z1 = camera.project_points(Xw, K)            # camera 1 = identity pose
     uv2, z2 = camera.project_points(Xw, K, R, t)      # camera 2 = (R, t)
-    return dict(Xw=Xw, K=K, R=R, t=t, uv1=uv1, uv2=uv2, z1=z1, z2=z2)
+    return {"Xw": Xw, "K": K, "R": R, "t": t,
+            "uv1": uv1, "uv2": uv2, "z1": z1, "z2": z2}
 
 
 def test_intrinsic_roundtrip():
