@@ -1,4 +1,4 @@
-"""Ground-truth tests for multispectral / hyperspectral cube handling (spectral.py).
+"""Ground-truth tests for multispectral / hyperspectral cube handling (specops.py).
 
 The cube modality is (H, W, B) with B > 3 bands (B = 2 is allowed as an explicit
 two-band cube; B = 3 is refused because it is ambiguous with an RGB `color` image).
@@ -9,7 +9,7 @@ a fail-closed battery on malformed input.
 import numpy as np
 import pytest
 
-import spectral as sp
+import specops as sp
 
 
 # --------------------------------------------------------------------------- #

@@ -9,7 +9,7 @@ scan of the HALCON operator corpus returns **zero** spectral operators — HDeve
 colour handling stops at channel access and RGB colour-space transforms. So this
 module is both a genuine format expansion and a clear differentiator.
 
-    import spectral as sp
+    import specops as sp
     cube, meta = sp.read_envi("scene.hdr")     # (H, W, B) + BandMeta
     ndvi  = sp.spec_index(cube, nir, red)      # normalised difference engine
     ang   = sp.spec_angle_mapper(cube, ref)    # material match, illumination-invariant
@@ -101,7 +101,7 @@ _ENVI_DTYPES = {
     1: "u1", 2: "i2", 3: "i4", 4: "f4", 5: "f8",
     12: "u2", 13: "u4", 14: "i8", 15: "u8",
 }
-_NUMPY_TO_ENVI = {v: k for k, v in _ENVI_DTYPES.items()}
+_NUMPY_TO_ENVI = {np.dtype(v).name: k for k, v in _ENVI_DTYPES.items()}
 _INTERLEAVES = ("bsq", "bil", "bip")
 #: Data-file extensions tried next to a ``.hdr`` (ENVI leaves this unspecified).
 _ENVI_DATA_EXTS = ("", ".img", ".dat", ".raw", ".bin", ".bsq", ".bil", ".bip", ".cube")
