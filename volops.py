@@ -269,15 +269,18 @@ def vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None,
     MICCAI 1998.
     """
     v = _require_volume(vol)
-    _check_voxels(v, MAX_EIGEN_VOXELS, "vol_frangi")
+    _check_voxels(v, MAX_EIGEN_VOXELS, "vol_frangi", "MAX_EIGEN_VOXELS")
     a2 = 2.0 * float(alpha) ** 2
     b2 = 2.0 * float(beta) ** 2
+    tol = _structure_floor(v)
     out = np.zeros_like(v)
+    smax = 0.0
     for sigma in _iter_scales(scales):
         e1, e2, e3 = _eigvalsh_sym3(*_hessian_components(v, sigma))
         l1, l2, l3 = _abs_sorted_eigs(e1, e2, e3)
         al2, al3 = np.abs(l2), np.abs(l3)
         S = np.sqrt(l1 * l1 + l2 * l2 + l3 * l3)
+        smax = max(smax, float(S.max()))
         cc = 0.5 * float(S.max()) if c is None else float(c)
         if cc <= 0.0:
             cc = 1.0
@@ -293,6 +296,8 @@ def vol_frangi(vol, scales=(1, 2, 3), alpha=0.5, beta=0.5, c=None,
             resp[(l2 > 0) | (l3 > 0)] = 0.0
         resp = np.nan_to_num(resp, nan=0.0, posinf=0.0, neginf=0.0)
         out = np.maximum(out, resp)
+    if smax <= tol:                          # no real structure — do not amplify dust
+        return np.zeros_like(v)
     return _norm01(out)
 
 
