@@ -16,7 +16,9 @@ import numpy as np
 from scipy import ndimage
 
 __all__ = ["elevation_map", "fill_gaps", "traversability", "foothold_score",
-           "ground_surface", "ground_plane", "detect_obstacles"]
+           "ground_surface", "ground_plane", "detect_obstacles",
+           "fuse_elevation", "slope_map", "roughness_map", "surface_normals",
+           "step_edges", "foothold_candidates"]
 
 
 def elevation_map(points, cell: float = 0.05, agg: str = "max",
