@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-15 00:26:25
+- **最終更新**: 2026-08-15 01:57:01
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-5adf205 docs: v18.3 Physical-AI perception — STATUS section + consolidated PERCEPTION doc
-d6d5984 examples: end-to-end Physical-AI perception pipelines (manipulation + locomotion + ego-motion)
-ccf9062 auto: physical_ai_perception.py 編集前 (2026-08-15 00:13)
-0a23109 auto: physical_ai_perception.py 編集前 (2026-08-15 00:12)
-8826bf6 perception: ppf.py — 6-DoF surface matching (Point Pair Features, Drost 2010)
-d1c5d23 auto: pyproject.toml 編集前 (2026-08-15 00:05)
-af3171f auto: __init__.py 編集前 (2026-08-15 00:05)
-728679b auto: __init__.py 編集前 (2026-08-15 00:05)
-a44de27 auto: api.py 編集前 (2026-08-15 00:05)
-f3a59b6 auto: api.py 編集前 (2026-08-15 00:05)
+8dfb671 docs: record P9 features in STATUS + PERCEPTION doc
+082ca8e auto: PERCEPTION_PHYSICAL_AI.md 編集前 (2026-08-15 01:54)
+45c6278 perception: features.py — sparse keypoint detection / description / matching
+1f3bdcc auto: pyproject.toml 編集前 (2026-08-15 01:49)
+6632097 auto: __init__.py 編集前 (2026-08-15 01:49)
+6462711 auto: __init__.py 編集前 (2026-08-15 01:49)
+2b13904 auto: api.py 編集前 (2026-08-15 01:49)
+c3007f4 auto: api.py 編集前 (2026-08-15 01:49)
+06c9d8d auto: api.py 編集前 (2026-08-15 01:49)
+add1c33 auto: test_features.py 編集前 (2026-08-15 01:49)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ f3a59b6 auto: api.py 編集前 (2026-08-15 00:05)
 ## 直近 2 時間に変更されたファイル
 
 ```
-00:26 .pytest_cache/v/cache/nodeids
-00:20 docs/PERCEPTION_PHYSICAL_AI.md
-00:18 docs/STATUS.md
-00:15 .ruff_cache/0.16.0/2128910586982079947
-00:15 .ruff_cache/0.16.0/8687138234577503176
-00:13 examples/physical_ai_perception.py
-00:05 pyproject.toml
-00:05 fullseye/__init__.py
-00:05 api.py
-00:05 tests/test_ppf.py
-00:04 ppf.py
-23:57 .pytest_cache/v/cache/lastfailed
-23:57 tests/test_sceneflow.py
-23:56 sceneflow.py
-23:50 terrain.py
+01:54 docs/PERCEPTION_PHYSICAL_AI.md
+01:54 docs/STATUS.md
+01:53 .pytest_cache/v/cache/nodeids
+01:49 pyproject.toml
+01:49 fullseye/__init__.py
+01:49 api.py
+01:49 .pytest_cache/v/cache/lastfailed
+01:49 tests/test_features.py
+01:48 features.py
+01:38 examples/physical_ai_perception.py
+01:38 tests/test_odometry.py
+01:38 odometry.py
+01:32 tests/test_occupancy.py
+01:31 occupancy.py
+01:25 tests/test_scale_ooc.py
 ```
 
 ---
