@@ -174,7 +174,7 @@ def test_farthest_point_sampling_covers_evenly():
     fps_cov = covering_radius(idx)
     naive_cov = covering_radius(np.arange(k))       # first k points: terrible coverage
     assert fps_cov < naive_cov
-    assert fps_cov <= 99.0 / (2 * (k - 1)) + 1.0    # ~even spacing bound on a line
+    assert fps_cov <= 99.0 / (k - 1)                # FPS 2-approximation of optimal spacing
 
 
 def test_curvature_flat_vs_sphere():
