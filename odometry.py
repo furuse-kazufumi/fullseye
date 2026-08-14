@@ -134,8 +134,13 @@ def integrate_trajectory(rel_poses, T0=None):
     T = np.eye(4) if T0 is None else np.asarray(T0, np.float64)
     out = [T.copy()]
     for p in rel_poses:
-        step = p if np.asarray(p).shape == (4, 4) else _to_4x4(*p)
-        T = T @ np.asarray(step, np.float64)
+        if isinstance(p, (tuple, list)) and len(p) == 2:
+            step = _to_4x4(p[0], p[1])               # an (R, t) pair
+        else:
+            step = np.asarray(p, np.float64)
+            if step.shape != (4, 4):
+                raise ValueError("each relative pose must be a 4x4 matrix or (R, t)")
+        T = T @ step
         out.append(T.copy())
     return np.stack(out)
 
