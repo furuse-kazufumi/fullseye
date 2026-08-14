@@ -1013,9 +1013,12 @@ def read_points(path: str, with_colors: bool = False):
     Supported: ``.ply`` (the ``vertex`` element, with ``red/green/blue``,
     ``r/g/b`` or ``diffuse_*`` colours), ``.xyz`` / ``.txt`` / ``.pts`` / ``.asc``
     (whitespace ``x y z [r g b]``; a colour column whose maximum exceeds 1 is read
-    as 0..255), ``.obj`` (``v`` records only — faces ignored), ASCII ``.pcd``
-    (fields ``x y z`` plus ``r g b`` or a packed ``rgb``), and ``.stl`` / ``.off``
-    via their mesh vertices.
+    as 0..255), ``.obj`` (``v`` records only — faces ignored), ``.pcd`` (``ascii``,
+    ``binary`` and ``binary_compressed``; fields ``x y z`` plus ``r g b`` or a
+    packed ``rgb``), ``.npy`` / ``.npz`` (an ``(N, 3)`` or ``(N, 6=xyz+rgb)`` array;
+    ``.npz`` takes the ``xyz``/``points`` key or the sole array), and ``.stl`` /
+    ``.off`` via their mesh vertices. ``.npy`` / ``.npz`` load with
+    ``allow_pickle=False`` so an untrusted archive cannot execute code.
     """
     src = str(path)
     ext = _ext(src)
@@ -1033,6 +1036,10 @@ def read_points(path: str, with_colors: bool = False):
         P, C = _read_stl(raw, src)[0], None
     elif ext == ".off":
         P, C = _read_off(raw, src)[0], None
+    elif ext == ".npy":
+        P, C = _read_npy(raw, src)
+    elif ext == ".npz":
+        P, C = _read_npz(raw, src)
     else:
         P, C = _read_xyz(raw, src)
     P = _finite_points(P, "points", src)
