@@ -44,6 +44,7 @@ import detect  # noqa: E402  (object segmentation / description / identification
 import registration  # noqa: E402  (rigid point-cloud registration: Kabsch + ICP)
 import pointcloud  # noqa: E402  (point-cloud geometry: normals, voxel downsample)
 import mesh  # noqa: E402  (3-D object import: OBJ/STL/PLY/OFF -> vertices, points, voxels)
+import meshio_opt  # noqa: E402  (optional heavier object formats: glTF/GLB, LAS/LAZ, PCD-binary)
 import pose  # noqa: E402  (silhouette posture descriptors)
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
