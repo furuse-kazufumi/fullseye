@@ -159,6 +159,9 @@ from sceneflow import (  # noqa: E402,F401
     flow_divergence, flow_curl, focus_of_expansion, time_to_contact,
     looming, ego_translation_from_flow, scene_flow,
 )
+from features import (  # noqa: E402,F401
+    harris_corners, fast_corners, describe_patches, match_descriptors, match_keypoints,
+)
 from video import (  # noqa: E402,F401
     read_frames, iter_frames, frame_pairs, write_video, probe,
 )
