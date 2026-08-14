@@ -698,6 +698,67 @@ def pipeline_str(genome, start: str = IMAGE) -> str:
     return " -> ".join(parts) if parts else "identity"
 
 
+# --------------------------------------------------------------------------- #
+# Wave-0: stable op slots + name-pinned (cross-install) champion records.       #
+# --------------------------------------------------------------------------- #
+# SLOTS freezes each op's registration-order index the moment REGISTRY is fully
+# built (core _DEFS first, then any optional backends in import order). decode()
+# indexes _candidates(sort) in exactly this order, so within a given install the
+# genome->op mapping is deterministic and documented by SLOTS.
+#
+# CROSS-INSTALL CAVEAT (honest): the index a genome resolves to depends on how
+# many candidates a sort has, which grows with the optional backends present in
+# THIS install. Re-sorting _candidates to a globally stable order WOULD change
+# that mapping and therefore change every existing champion — so decode() is
+# deliberately left byte-identical (proven in tests/test_wave0.py). Reproducing a
+# champion across installs is done by op NAME instead of index: pipeline_stages()
+# records the champion as (name, a, b) and decode_by_names() rebuilds the exact
+# pipeline from those names, independent of the index layout. See docs/WAVE0_STABLE_SLOTS.md.
+SLOTS: dict[str, int] = {op.name: i for i, op in enumerate(REGISTRY)}
+
+
+def op_slot(name: str) -> int:
+    """Stable registration-order slot of an op (frozen when REGISTRY was built)."""
+    return SLOTS[name]
+
+
+def stages_str(stages) -> str:
+    """Render a decoded pipeline (list[Stage]) to the same string form as
+    pipeline_str, but from stages rather than a genome (drops identity)."""
+    parts = [f"{s.op}(a={s.a:.2f},b={s.b:.2f})" for s in stages if s.op != "identity"]
+    return " -> ".join(parts) if parts else "identity"
+
+
+def pipeline_stages(genome, start: str = IMAGE) -> list[dict]:
+    """Name-pinned champion record: the decoded pipeline as a list of
+    ``{"op", "a", "b", "sort"}`` dicts (identity dropped). Index-independent, so
+    it reloads to the SAME pipeline on any install that has the named ops, via
+    :func:`decode_by_names`. This is the cross-install-reproducible counterpart
+    to the index-based :func:`decode`."""
+    return [{"op": s.op, "a": float(s.a), "b": float(s.b), "sort": s.sort}
+            for s in decode(genome, start) if s.op != "identity"]
+
+
+def decode_by_names(stage_specs) -> list[Stage]:
+    """Reconstruct a pipeline from op NAMES (independent of registry index order).
+
+    ``stage_specs`` is an iterable of either ``(name, a, b)`` tuples or dicts with
+    keys ``op``/``a``/``b``. Each op's ``in_sort`` is resolved from ``_BY_NAME``,
+    so a champion saved by name (see :func:`pipeline_stages`) rebuilds to the same
+    pipeline regardless of which optional backends shifted the index layout. Raises
+    ``KeyError`` (fail-closed) if a named op is absent in this install."""
+    out: list[Stage] = []
+    for spec in stage_specs:
+        if isinstance(spec, dict):
+            name = spec["op"]
+            a = float(spec.get("a", 0.0))
+            b = float(spec.get("b", 0.0))
+        else:
+            name, a, b = spec[0], float(spec[1]), float(spec[2])
+        out.append(Stage(name, a, b, _BY_NAME[name].in_sort))
+    return out
+
+
 def psnr(a, b) -> float:
     mse = float(np.mean((np.asarray(a, np.float64) - np.asarray(b, np.float64)) ** 2))
     return 99.0 if mse <= 1e-12 else float(10.0 * np.log10(1.0 / mse))
