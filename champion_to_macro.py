@@ -195,7 +195,8 @@ def main() -> int:
     os.makedirs(os.path.dirname(DNA_PATH), exist_ok=True)
     with open(DNA_PATH, "w", encoding="utf-8") as f:
         json.dump(entries, f, ensure_ascii=False, indent=1)
-    print(f"\n[ok] wrote {DNA_PATH}  ({len(entries)} macro op(s))")
+    _write_py_store(entries)  # runtime store that ships in the wheel
+    print(f"\n[ok] wrote {DNA_PATH} + {os.path.basename(PY_STORE_PATH)}  ({len(entries)} macro op(s))")
     print("  next: add \"backends_macro\" to ops.py's backend list (once), then "
           "`py -3.11 recapture_wave0_pins.py --write`")
     return 0
