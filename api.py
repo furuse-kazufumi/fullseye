@@ -216,6 +216,8 @@ __all__ = [
     "fundamental_matrix", "essential_matrix", "essential_from_fundamental",
     "decompose_essential", "recover_pose", "epipolar_lines",
     "distort_points", "undistort_points", "stereo_rectify",
+    "odometry", "rgbd_odometry", "pnp_odometry", "integrate_trajectory",
+    "umeyama_align", "trajectory_error",
     "grasp", "Grasp", "sample_antipodal_grasps", "grasps_from_mesh", "force_closure",
     "ferrari_canny_quality", "approach_vector_from_normals", "rank_grasps",
     "grasp_pose", "collision_free",
