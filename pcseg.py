@@ -83,7 +83,8 @@ def fit_plane_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int =
         if cnt > best_cnt:
             best_cnt, best_inl = cnt, inl
     if best_inl is None or best_cnt < 3:
-        return fit_plane(P), np.ones(n, bool)
+        plane = fit_plane(P)                       # RANSAC found nothing -> plain TLS
+        return plane, np.abs(P @ plane[:3] + plane[3]) <= thresh   # honest inlier mask
     plane = fit_plane(P[best_inl])
     inliers = np.abs(P @ plane[:3] + plane[3]) <= thresh
     return plane, inliers
