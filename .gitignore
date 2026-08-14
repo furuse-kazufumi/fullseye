@@ -10,6 +10,10 @@ data/*
 # The Wave-0 north-star pin baseline is a committed test fixture (regenerate with
 # recapture_wave0_pins.py --write), not a scrape cache — track it.
 !data/wave0_pins.json
+# The macro ("DNA") champion registry is OUR IP — the pipelines the evolutionary
+# core discovered, condensed into ops. It MUST ship or backends_macro registers
+# nothing on a fresh checkout (and tests/test_macro_ops.py fails). Not a scrape cache.
+!data/macro_champions.json
 
 # packaging build artifacts
 *.egg-info/
