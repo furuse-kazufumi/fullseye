@@ -248,8 +248,7 @@ def _inscribed_ball_radius(W: np.ndarray) -> float:
     outside that hull, when the origin is off the spanned subspace (so no wrench
     combination reaches it), or when the set is too degenerate to hull.
     """
-    from scipy.spatial import ConvexHull
-    from scipy.spatial.qhull import QhullError  # type: ignore
+    from scipy.spatial import ConvexHull, QhullError
 
     if W.shape[0] < 2:
         return 0.0
