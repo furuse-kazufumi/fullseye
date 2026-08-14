@@ -69,11 +69,14 @@ def demo_manipulation():
           f"| rot err={ang:.2f} deg  t err={np.linalg.norm(res['t'] - t_true):.4f} m")
     assert res["inlier_fraction"] > 0.8 and ang < 8.0
 
-    # 4) plan a grasp on the (now localised) object model
-    grasps = fs.grasps_from_mesh  # note: mesh grasp needs V,F; use point-cloud approach dir
-    nrm = fs.estimate_normals(cluster, k=16, viewpoint=(0, 0, 1.0))
-    approach = fs.approach_vector_from_normals(nrm)
-    print(f"  grasp approach vector (from surface normals): {np.round(approach, 3)}")
+    # 4) a parallel-jaw grasp cue straight from the localised object's OBB:
+    #    the jaws close across the narrowest dimension (smallest extent).
+    gi = int(np.argmin(box["extents"]))
+    grasp_axis = box["axes"][:, gi]
+    grasp_width = 2.0 * box["extents"][gi]
+    print(f"  parallel-jaw grasp: close along {np.round(grasp_axis, 2)}  "
+          f"width={grasp_width * 100:.1f} cm")
+    assert grasp_width < 0.15
     return res
 
 
