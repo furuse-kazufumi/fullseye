@@ -226,7 +226,7 @@ def surface_match(model: dict, scene_points, scene_normals=None,
 
 def find_surface_pose(model_points, scene_points, model_normals=None,
                       scene_normals=None, dist_step: float = None,
-                      angle_bins: int = 30, **kw) -> dict:
+                      angle_bins: int = 30, k_normals: int = 16, **kw) -> dict:
     """One-shot convenience: build the model descriptor and match it against a scene.
 
     Equivalent to :func:`ppf_model` followed by :func:`surface_match`; use the
