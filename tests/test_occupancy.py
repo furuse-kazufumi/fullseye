@@ -59,6 +59,33 @@ def test_line_of_sight_clear_and_blocked():
     assert not occupancy.line_of_sight(occ, (2, 2), (2, 25))  # off-grid endpoint
 
 
+def test_occupancy_drops_out_of_bounds_points():
+    # points outside the given bounds must be dropped, not clamped onto edge cells
+    pts = np.array([[0.5, 0.5, 0.3], [5.0, 5.0, 0.3], [-3.0, 0.5, 0.3]])   # 2 outside
+    occ, _ = occupancy.occupancy_grid_2d(pts, cell=0.1, bounds=(0, 1, 0, 1))
+    assert occ.sum() == 1                              # only the in-bounds point
+    assert not occ[:, -1].any() and not occ[:, 0].any() and not occ[-1, :].any()
+
+
+def test_clearance_and_inflate_no_obstacles():
+    free = np.zeros((8, 8), bool)
+    clr = occupancy.clearance_map(free, cell=0.1)
+    assert np.isinf(clr).all()                         # nothing to avoid -> infinite clearance
+    inf = occupancy.inflate_obstacles(free, radius_cells=3.0)
+    assert not inf.any()                               # no phantom C-space obstacles
+
+
+def test_line_of_sight_no_corner_cutting():
+    # two obstacles touching only at a diagonal must block the diagonal line between
+    # the cells they flank (standard Bresenham would tunnel through).
+    occ = np.zeros((7, 7), bool)
+    occ[3, 4] = True
+    occ[4, 3] = True
+    assert not occupancy.line_of_sight(occ, (3, 3), (4, 4))   # corner is sealed
+    # but a genuinely open diagonal is still visible
+    assert occupancy.line_of_sight(np.zeros((7, 7), bool), (1, 1), (5, 5))
+
+
 def test_frontier_between_free_and_unknown():
     free = np.zeros((10, 10), bool)
     unknown = np.zeros((10, 10), bool)
