@@ -308,9 +308,11 @@ def foothold_candidates(grid, cell: float = 0.05, window: int = 3,
     "here are places you may put a foot". Returns a list of dicts sorted best-first,
     each with ``cell`` (row, col), ``score``, and ``xy`` (world) when *extent* is
     given. The actionable output a foot-placement planner consumes."""
-    score = foothold_score(grid, cell=cell, window=window)
+    g = np.asarray(grid, np.float64)
+    observed = np.isfinite(g)                       # never propose a foot where the
+    score = foothold_score(g, cell=cell, window=window)   # terrain was not observed
     peak = score >= ndimage.maximum_filter(score, window, mode="nearest") - 1e-12
-    ys, xs = np.where(peak & (score >= float(min_score)))
+    ys, xs = np.where(peak & (score >= float(min_score)) & observed)
     if ys.size == 0:
         return []
     vals = score[ys, xs]
