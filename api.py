@@ -163,6 +163,8 @@ __all__ = [
     "categories", "read_image", "write_image", "RT", "REGISTRY", "version",
     "stereo", "disparity_map", "disparity_subpixel", "lr_consistency",
     "depth_from_disparity", "reproject_to_points",
+    "census_transform", "disparity_census", "disparity_sgm",
+    "speckle_filter", "fill_disparity", "disparity_confidence",
     "terrain", "elevation_map", "traversability", "foothold_score", "fill_gaps",
     "ground_surface", "ground_plane", "detect_obstacles",
     "imgio", "to_float01", "to_uint8", "apply_cmap", "colorize_depth",
