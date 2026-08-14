@@ -47,6 +47,7 @@ import pcseg  # noqa: E402  (point-cloud segmentation/fitting: RANSAC plane/sphe
 import mesh  # noqa: E402  (3-D object import: OBJ/STL/PLY/OFF -> vertices, points, voxels)
 import meshio_opt  # noqa: E402  (optional heavier object formats: glTF/GLB, LAS/LAZ, PCD-binary)
 import pose  # noqa: E402  (silhouette posture descriptors)
+import locomotion  # noqa: E402  (balance/gait perception: contacts, support polygon, stability margin, gait phase)
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
 import video  # noqa: E402  (read/write video & GIF clips as numpy frames)
