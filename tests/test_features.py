@@ -67,6 +67,15 @@ def test_describe_drops_border_keypoints():
     assert np.isclose(np.linalg.norm(d2[0]), 1.0)
 
 
+def test_describe_even_patch_no_crash():
+    # an even patch size must not crash (window rounds up to an odd side)
+    img = np.zeros((40, 40)); img[10:30, 10:30] = 1.0
+    for patch in (6, 8, 9):
+        d, k = features.describe_patches(img, np.array([[15, 15]]), patch=patch)
+        side = 2 * (patch // 2) + 1
+        assert d.shape == (1, side * side)
+
+
 def test_match_descriptors_ratio_rejects_ambiguous():
     # three identical descriptors in set2 -> every match is ambiguous -> rejected
     d1 = np.array([[1.0, 0.0], [0.0, 1.0]])
