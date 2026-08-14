@@ -56,6 +56,8 @@ import render3d  # noqa: E402  (mesh -> depth/silhouette/normals render + SDF + 
 import grasp  # noqa: E402  (antipodal grasp synthesis: force-closure + Ferrari-Canny quality)
 import meshrepair  # noqa: E402  (watertight/repair/decimate + exact inertia -> sim-ready body)
 import volops  # noqa: E402  (3-D volume analysis: Frangi/Sato/label/distance/region props)
+import complexops  # noqa: E402  (complex/FFT-domain ops + 2-D phase unwrap [HALCON has none])
+import specops  # noqa: E402  (multispectral/hyperspectral cube: ENVI + SAM + unmix + band math)
 from stereo import (  # noqa: E402,F401
     disparity_map, disparity_subpixel, lr_consistency,
     depth_from_disparity, reproject_to_points,
