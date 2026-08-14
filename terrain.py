@@ -205,3 +205,116 @@ def foothold_score(grid, cell: float = 0.05, window: int = 3):
     slope = np.hypot(gx, gy)
     score = np.exp(-(rough / max(cell, 1e-6))) * np.exp(-slope)
     return np.clip(score, 0.0, 1.0)
+
+
+def fuse_elevation(grids, agg: str = "max"):
+    """Fuse several aligned elevation grids into one robot-centric map.
+
+    Multi-frame accumulation: as a robot walks it sees the terrain from several
+    depth frames; binning each into an :func:`elevation_map` on a common grid and
+    fusing them here fills gaps and firms up heights. ``agg`` = 'max' (obstacle-safe,
+    default), 'min' (ground-safe) or 'mean'. ``nan`` (unobserved in a given frame)
+    is ignored; a cell unobserved in *every* frame stays ``nan``. Input grids must
+    share a shape."""
+    stack = np.stack([np.asarray(g, np.float64) for g in grids], 0)
+    if stack.ndim != 3:
+        raise ValueError("grids must be a sequence of equal-shape 2-D arrays")
+    allnan = ~np.isfinite(stack).any(0)
+    with np.errstate(all="ignore"):
+        if agg == "max":
+            out = np.nanmax(stack, 0)
+        elif agg == "min":
+            out = np.nanmin(stack, 0)
+        elif agg == "mean":
+            out = np.nanmean(stack, 0)
+        else:
+            raise ValueError("agg must be 'max', 'min' or 'mean', got %r" % (agg,))
+    out[allnan] = np.nan
+    return out
+
+
+def slope_map(grid, cell: float = 0.05, degrees: bool = True):
+    """Per-cell terrain slope = angle of the surface from horizontal.
+
+    ``atan(|grad z|)`` from the (filled) heightmap gradient, in degrees (default)
+    or radians. The steepness a leg has to cope with — a walkability primitive
+    complementing :func:`traversability`."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    gy, gx = np.gradient(filled, cell)
+    ang = np.arctan(np.hypot(gx, gy))
+    return np.degrees(ang) if degrees else ang
+
+
+def roughness_map(grid, window: int = 3):
+    """Per-cell surface roughness = local height standard deviation over a
+    ``window`` neighbourhood. High on rubble / vegetation, ~0 on smooth ground."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    m = ndimage.uniform_filter(filled, window, mode="nearest")
+    m2 = ndimage.uniform_filter(filled * filled, window, mode="nearest")
+    return np.sqrt(np.maximum(m2 - m * m, 0.0))
+
+
+def surface_normals(grid, cell: float = 0.05):
+    """Per-cell terrain surface normal (H, W, 3), unit, pointing up (+z).
+
+    From the heightmap gradient: ``n = normalize([-dz/dx, -dz/dy, 1])``. A flat
+    patch gives ``[0, 0, 1]``; a ramp tilts accordingly. Feeds foot-orientation
+    planning and slope-aware foothold scoring."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    gy, gx = np.gradient(filled, cell)
+    n = np.stack([-gx, -gy, np.ones_like(gx)], axis=-1)
+    return n / np.linalg.norm(n, axis=-1, keepdims=True)
+
+
+def step_edges(grid, cell: float = 0.05, min_rise: float = 0.05, window: int = 3):
+    """Detect step edges (curbs / stair nosings) in the heightmap.
+
+    A step is a cell whose neighbourhood height range (max - min over *window*)
+    exceeds *min_rise*. Returns ``(edge_mask, signed_rise)`` where ``signed_rise``
+    is the along-gradient height change per cell (positive = step **up** in the
+    +gradient direction, negative = step down) — the terrain feature a climbing
+    gait keys on. The stair/curb detector locomotion asked for."""
+    filled = fill_gaps(np.asarray(grid, np.float64))
+    lo = ndimage.minimum_filter(filled, window, mode="nearest")
+    hi = ndimage.maximum_filter(filled, window, mode="nearest")
+    edge = (hi - lo) > float(min_rise)
+    gy, gx = np.gradient(filled, cell)
+    signed = np.hypot(gx, gy) * cell * np.sign(gx + gy)
+    return edge, np.where(edge, signed, 0.0)
+
+
+def foothold_candidates(grid, cell: float = 0.05, window: int = 3,
+                        min_score: float = 0.6, min_dist: float = 0.15,
+                        max_n: int = 50, extent=None):
+    """Pick discrete safe stepping targets from the terrain.
+
+    Scores every cell with :func:`foothold_score`, keeps local maxima above
+    *min_score*, and greedily suppresses candidates within *min_dist* (world units)
+    of a better one — turning the continuous flatness field into a short list of
+    "here are places you may put a foot". Returns a list of dicts sorted best-first,
+    each with ``cell`` (row, col), ``score``, and ``xy`` (world) when *extent* is
+    given. The actionable output a foot-placement planner consumes."""
+    score = foothold_score(grid, cell=cell, window=window)
+    peak = score >= ndimage.maximum_filter(score, window, mode="nearest") - 1e-12
+    ys, xs = np.where(peak & (score >= float(min_score)))
+    if ys.size == 0:
+        return []
+    vals = score[ys, xs]
+    order = np.argsort(-vals)
+    ys, xs, vals = ys[order], xs[order], vals[order]
+    min_cells = float(min_dist) / max(cell, 1e-9)
+    chosen = []
+    for y, x, v in zip(ys, xs, vals):
+        if any((y - cy) ** 2 + (x - cx) ** 2 < min_cells ** 2 for cy, cx, _ in chosen):
+            continue
+        chosen.append((y, x, v))
+        if len(chosen) >= int(max_n):
+            break
+    out = []
+    for y, x, v in chosen:
+        rec = {"cell": (int(y), int(x)), "score": float(v)}
+        if extent is not None:
+            xmin, _xmax, ymin, _ymax = extent
+            rec["xy"] = (xmin + (x + 0.5) * cell, ymin + (y + 0.5) * cell)
+        out.append(rec)
+    return out
