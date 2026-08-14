@@ -1,0 +1,48 @@
+"""Generated DNA store for macro ("self-expanding registry") ops — DO NOT hand-edit.
+
+Written by champion_to_macro.py alongside the human-readable data/macro_champions.json.
+This is the RUNTIME source backends_macro.py reads: as a plain py-module it always
+ships in the wheel (flat-layout data files under data/ do NOT), so macro ops register
+on a pip-installed package, not only in the editable source tree.
+"""
+from __future__ import annotations
+
+MACROS = [{'name': 'macro_denoise',
+  'category': 'macro',
+  'problem': 'denoise',
+  'in_sort': 'image',
+  'out_sort': 'image',
+  'stages': [{'op': 'bilateral', 'a': 0.09583587098538462, 'b': 0.7620098191899134},
+             {'op': 'bilateral', 'a': 0.12194888602848218, 'b': 0.2656968479954811},
+             {'op': 'bilateral', 'a': 0.7345632984672005, 'b': 0.10773367102145374}],
+  'pipeline': 'bilateral(a=0.10,b=0.76) -> bilateral(a=0.12,b=0.27) -> bilateral(a=0.73,b=0.11)',
+  'provenance': {'source': 'evolve.py / robust.py, core-only search (IMGEVOLVE_NO_BACKENDS=1)',
+                 'champion_file': 'out/macro_denoise2/champion_denoise.json',
+                 'unit': 'dB PSNR',
+                 'config': {'n_train': 14, 'n_holdout': 8, 'size': 64, 'seed': 0},
+                 'seeds': 8,
+                 'gens': 80,
+                 'pop': 28,
+                 'selected_seed': 7,
+                 'captured': '2026-08-15',
+                 'score': {'train': 26.0357, 'holdout': 26.0542, 'locked_holdout': 26.2769},
+                 'recorded_evolution_score': {'train': 26.0357,
+                                              'holdout': 26.0542,
+                                              'locked_holdout': 26.2769},
+                 'score_matches_evolution': True,
+                 'overridden_ops': [],
+                 'baselines': {'trivial': {'train': 14.9581,
+                                           'holdout': 14.9979,
+                                           'locked_holdout': 14.9287},
+                               'hand': {'train': 22.5495,
+                                        'holdout': 22.7185,
+                                        'locked_holdout': 22.8316},
+                               'reference': {'train': 22.6732,
+                                             'holdout': 23.0185,
+                                             'locked_holdout': 23.7173}},
+                 'beats_hand_on_locked_holdout': True,
+                 'honest_note': 'A macro op is the exact evolved pipeline, knobs frozen; its score '
+                                'is recomputed here in the full registry. '
+                                'beats_hand_on_locked_holdout states, without spin, whether it '
+                                'beats the strongest hand baseline on the locked split (the one '
+                                'honesty guard evolution never selected on).'}}]

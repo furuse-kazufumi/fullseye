@@ -64,7 +64,7 @@ py-modules = [
   "backends_xldgeom",
   "backends_aug", "backends_alife", "backends_tactile", "backends_macro",
   "imgops_nary", "scale", "stereo", "terrain", "locomotion", "occupancy", "imgio", "detect", "registration", "ppf", "pose",
-  "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "complexops", "specops", "flow", "motion", "sceneflow", "features", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp",
+  "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp",
   "recipes", "measure", "studio", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
