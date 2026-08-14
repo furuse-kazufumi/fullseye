@@ -34,6 +34,7 @@ these as an in-house library, never a commercial product name.
 | `locomotion` | balance / gait | `contact_points` `support_polygon` `com_support_margin` `com_from_silhouette` `gait_phase` | McGhee & Frank 1968; Alexander 1984 |
 | `sceneflow` | ego-motion / 3-D motion | `flow_divergence` `flow_curl` `focus_of_expansion` `time_to_contact` `looming` `ego_translation_from_flow` `scene_flow` | Longuet-Higgins & Prazdny 1980; Lee 1976; Vedula 1999 |
 | `odometry` | self-localization | `rgbd_odometry` `pnp_odometry` `integrate_trajectory` `umeyama_align` `trajectory_error` | Arun 1987; Umeyama 1991; Fischler & Bolles 1981 |
+| `occupancy` | navigation grid | `occupancy_grid_2d` `inflate_obstacles` `clearance_map` `line_of_sight` `frontier_cells` | Elfes 1989; Lozano-Pérez 1979; Yamauchi 1997 |
 | `pose` | silhouette posture | `pose_descriptor` `skeleton_nodes` `principal_axis` | — |
 | `pointcloud` | cloud primitives | `estimate_normals` `voxel_downsample` `remove_statistical_outliers` `remove_radius_outliers` `fpfh` | Hoppe 1992; Rusu 2009 |
 | `grasp` | antipodal grasp | `grasps_from_mesh` `force_closure` `ferrari_canny_quality` `rank_grasps` | Nguyen 1988; Ferrari & Canny 1992 |
