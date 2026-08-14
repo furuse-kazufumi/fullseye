@@ -625,6 +625,19 @@ def undistort_points(uv, K, dist, iters: int = 10) -> np.ndarray:
     xd = (uv[:, 0] - cx) / fx
     yd = (uv[:, 1] - cy) / fy
     x, y = xd.copy(), yd.copy()
+    # track the best iterate by how well it re-distorts back onto the input, so a
+    # non-contractive fixed point (extreme distortion where |g'|>1 gives a period-2
+    # cycle) returns the closest inverse found rather than an arbitrary cycle member.
+    best_x, best_y = x.copy(), y.copy()
+    best_res = np.full(x.shape, np.inf)
+
+    def fwd_res(xx, yy):
+        r2 = xx * xx + yy * yy
+        rad = 1.0 + k1 * r2 + k2 * r2 ** 2 + k3 * r2 ** 3
+        ddx = 2 * p1 * xx * yy + p2 * (r2 + 2 * xx * xx)
+        ddy = p1 * (r2 + 2 * yy * yy) + 2 * p2 * xx * yy
+        return np.hypot(xx * rad + ddx - xd, yy * rad + ddy - yd)
+
     for _ in range(int(iters)):
         r2 = x * x + y * y
         radial = 1.0 + k1 * r2 + k2 * r2 ** 2 + k3 * r2 ** 3
@@ -632,7 +645,12 @@ def undistort_points(uv, K, dist, iters: int = 10) -> np.ndarray:
         dy = p1 * (r2 + 2 * y * y) + 2 * p2 * x * y
         x = (xd - dx) / radial
         y = (yd - dy) / radial
-    return np.stack([fx * x + cx, fy * y + cy], 1)
+        res = fwd_res(x, y)
+        upd = res < best_res
+        best_res = np.where(upd, res, best_res)
+        best_x = np.where(upd, x, best_x)
+        best_y = np.where(upd, y, best_y)
+    return np.stack([fx * best_x + cx, fy * best_y + cy], 1)
 
 
 # --- calibrated stereo rectification (Fusiello et al. 2000) ----------------- #
