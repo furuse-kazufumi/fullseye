@@ -163,6 +163,10 @@ from sceneflow import (  # noqa: E402,F401
 from features import (  # noqa: E402,F401
     harris_corners, fast_corners, describe_patches, match_descriptors, match_keypoints,
 )
+from events import (  # noqa: E402,F401
+    simulate_events, event_count, event_image, event_rate, event_rate_map,
+    time_surface, warp_frame, contrast_maximization,
+)
 from video import (  # noqa: E402,F401
     read_frames, iter_frames, frame_pairs, write_video, probe,
 )
