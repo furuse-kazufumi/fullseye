@@ -53,6 +53,7 @@ import occupancy  # noqa: E402  (2-D occupancy / free-space navigation grids: in
 import flow  # noqa: E402  (dense optical flow: two-frame motion)
 import motion  # noqa: E402  (flow analysis: energy / dominant / segmentation)
 import sceneflow  # noqa: E402  (scene flow / ego-motion: FoE, time-to-contact, looming, 3D scene flow)
+import features  # noqa: E402  (sparse keypoints/descriptors/matching: Harris/FAST + patch match)
 import video  # noqa: E402  (read/write video & GIF clips as numpy frames)
 import recipes  # noqa: E402  (curated sample pipelines)
 import measure  # noqa: E402  (line profiles / distance / angle)
