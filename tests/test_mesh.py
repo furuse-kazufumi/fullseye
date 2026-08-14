@@ -267,27 +267,48 @@ def test_all_formats_agree(tmp_path):
 # --------------------------------------------------------------------------- #
 # write_mesh round-trip                                                        #
 # --------------------------------------------------------------------------- #
-@pytest.mark.parametrize("name", ["out.obj", "out.ply"])
-def test_write_mesh_roundtrip(tmp_path, name):
+# .obj / .off / .ply(ascii) / .ply(binary) all keep vertex order and float64 value.
+@pytest.mark.parametrize("name,binary", [
+    ("out.obj", False), ("out.off", False), ("out.ply", False), ("out.ply", True)])
+def test_write_mesh_roundtrip(tmp_path, name, binary):
     p = str(tmp_path / name)
-    mesh.write_mesh(p, CUBE_V, CUBE_F)
+    mesh.write_mesh(p, CUBE_V, CUBE_F, binary=binary)
     V, F = mesh.read_mesh(p)
     assert_is_cube(V, F)
     assert np.array_equal(V, CUBE_V)             # order and float64 value preserved
     assert np.array_equal(F, CUBE_F)
 
 
-def test_write_mesh_preserves_float64_precision(tmp_path):
+def test_write_mesh_stl_binary_roundtrip(tmp_path):
+    """STL has no vertex sharing, so the writer's per-triangle corners are welded
+    back to 8 vertices on read; the unit cube is exact in float32."""
+    p = str(tmp_path / "out.stl")
+    mesh.write_mesh(p, CUBE_V, CUBE_F)
+    V, F = mesh.read_mesh(p)
+    assert_is_cube(V, F)
+
+
+def test_write_mesh_every_read_format_round_trips(tmp_path):
+    """Import/export symmetry: everything read_mesh reads, write_mesh writes."""
+    for name, binary in [("c.obj", False), ("c.off", False), ("c.stl", False),
+                         ("c.ply", False), ("cb.ply", True)]:
+        p = str(tmp_path / name)
+        mesh.write_mesh(p, CUBE_V, CUBE_F, binary=binary)
+        assert tri_set(*mesh.read_mesh(p)) == REF, name
+
+
+@pytest.mark.parametrize("binary", [False, True])
+def test_write_mesh_preserves_float64_precision(tmp_path, binary):
     V = CUBE_V + np.pi / 7.0                     # coordinates that float32 cannot hold
     p = str(tmp_path / "prec.ply")
-    mesh.write_mesh(p, V, CUBE_F)
+    mesh.write_mesh(p, V, CUBE_F, binary=binary)
     back, _ = mesh.read_mesh(p)
-    assert np.array_equal(back, V)
+    assert np.array_equal(back, V)               # ASCII 17-digit and binary double both exact
 
 
 def test_write_mesh_rejects_bad_extension_and_indices(tmp_path):
-    with pytest.raises(ValueError):
-        mesh.write_mesh(str(tmp_path / "x.stl"), CUBE_V, CUBE_F)
+    with pytest.raises(ValueError, match="unsupported mesh write format"):
+        mesh.write_mesh(str(tmp_path / "x.gltf"), CUBE_V, CUBE_F)     # .stl is now supported
     with pytest.raises(ValueError):
         mesh.write_mesh(str(tmp_path / "x.obj"), CUBE_V, np.array([[0, 1, 99]]))
 
