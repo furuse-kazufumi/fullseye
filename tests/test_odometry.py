@@ -23,7 +23,8 @@ def test_rgbd_odometry_lateral_translation():
     R, t, inl = odometry.rgbd_odometry(Z0, Z1, u, v, K, thresh=0.01, stride=4)
     assert inl > 0.9
     assert np.allclose(R, np.eye(3), atol=1e-6)
-    assert np.allclose(t, [-dx, 0.0, 0.0], atol=1e-3)
+    # rgbd_odometry returns the CAMERA motion: the camera stepped +dx (points slid -dx)
+    assert np.allclose(t, [dx, 0.0, 0.0], atol=1e-3)
 
 
 def test_rgbd_odometry_roll():
