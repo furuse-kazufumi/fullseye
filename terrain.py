@@ -219,16 +219,14 @@ def fuse_elevation(grids, agg: str = "max"):
     stack = np.stack([np.asarray(g, np.float64) for g in grids], 0)
     if stack.ndim != 3:
         raise ValueError("grids must be a sequence of equal-shape 2-D arrays")
+    if agg not in ("max", "min", "mean"):
+        raise ValueError("agg must be 'max', 'min' or 'mean', got %r" % (agg,))
     allnan = ~np.isfinite(stack).any(0)
-    with np.errstate(all="ignore"):
-        if agg == "max":
-            out = np.nanmax(stack, 0)
-        elif agg == "min":
-            out = np.nanmin(stack, 0)
-        elif agg == "mean":
-            out = np.nanmean(stack, 0)
-        else:
-            raise ValueError("agg must be 'max', 'min' or 'mean', got %r" % (agg,))
+    import warnings
+    with warnings.catch_warnings():          # all-NaN cells are handled below, not an error
+        warnings.simplefilter("ignore", RuntimeWarning)
+        fn = {"max": np.nanmax, "min": np.nanmin, "mean": np.nanmean}[agg]
+        out = fn(stack, 0)
     out[allnan] = np.nan
     return out
 
