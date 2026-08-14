@@ -5,7 +5,10 @@ docs/AUDIT_2026_08_12.md): cv2 warps fail past ~32767 px, FFT ops are O(N^2)
 memory, and iterative filters are compute-bound. But **local** operators
 (pointwise + separable filters + morphology) give bit-interior-identical results
 when run on **haloed tiles** — that is the algorithm change for those: bounded
-memory at any image size.
+memory at any image size. (Bit-identical holds for **all-finite** input; a NaN/Inf
+poisons scipy's running-sum separable filters unboundedly, so its effective
+receptive field exceeds the halo and the tiled result then differs from — and is
+usually more local/correct than — the whole-image one.)
 
     import scale, ops
     big = ...                                   # e.g. 20000 x 20000 gray [0,1]
