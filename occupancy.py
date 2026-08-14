@@ -83,8 +83,12 @@ def clearance_map(occ, cell: float = 0.05):
 
     The Euclidean distance transform of the free space — a smooth cost field a
     planner uses to prefer routes with margin (larger = safer). Occupied cells are
-    0. Returns a float grid in the same units as *cell*."""
+    0. With no obstacles the clearance is infinite everywhere (nothing to avoid) —
+    not the corner-biased distance-to-border a raw EDT of an all-free grid invents.
+    Returns a float grid in the same units as *cell*."""
     occ = np.asarray(occ, bool)
+    if not occ.any():
+        return np.full(occ.shape, np.inf)
     return ndimage.distance_transform_edt(~occ) * float(cell)
 
 
