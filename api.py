@@ -95,6 +95,16 @@ from volops import (  # noqa: E402,F401
     vol_label, vol_region_props, vol_gradient_magnitude, vol_local_maxima,
     vol_watershed,
 )
+from complexops import (  # noqa: E402,F401
+    cx_fft, cx_ifft, cx_magnitude, cx_phase, cx_real, cx_imag, cx_log_magnitude,
+    cx_from_mag_phase, phase_unwrap, cx_wiener_deconvolve, cx_apply_transfer_function,
+    cx_bandpass,
+)
+from specops import (  # noqa: E402,F401
+    BandMeta, read_envi, write_envi, spec_band, spec_rgb_composite, spec_nearest_band,
+    spec_band_ratio, spec_index, spec_angle_mapper, spec_pca, spec_mnf, spec_unmix,
+    spec_endmembers_ppi, spec_continuum_removal,
+)
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
