@@ -115,6 +115,10 @@ from camera import (  # noqa: E402,F401
     decompose_essential, recover_pose, epipolar_lines,
     distort_points, undistort_points, stereo_rectify,
 )
+from odometry import (  # noqa: E402,F401
+    rgbd_odometry, pnp_odometry, integrate_trajectory,
+    umeyama_align, trajectory_error,
+)
 from grasp import (  # noqa: E402,F401
     Grasp, sample_antipodal_grasps, grasps_from_mesh, force_closure,
     ferrari_canny_quality, approach_vector_from_normals, rank_grasps,
