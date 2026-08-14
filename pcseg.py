@@ -211,15 +211,14 @@ def plane_distance(points, plane) -> np.ndarray:
 
 
 def height_above_plane(points, plane) -> np.ndarray:
-    """Height of each point *above* a plane along its normal (signed distance with
-    the normal flipped to point 'up', i.e. toward the side most points sit on).
-    Turns a table/ground plane into a per-point clearance — the cloud analogue of
-    a terrain heightmap for foothold and clearance checks."""
-    P = _pts3(points)
-    dist = plane_distance(P, plane)
-    if np.median(dist) < 0:                       # orient 'up' toward the bulk of points
-        dist = -dist
-    return dist
+    """Height of each point above a plane = signed distance along the plane's own
+    (given) normal. The **caller** controls which way is 'up' by the orientation of
+    the plane normal — pass a plane whose normal points up (e.g. ``[0,0,1,d]`` for a
+    floor) and clearance comes back positive. (This deliberately does *not* re-orient
+    by a majority-of-points heuristic: that silently discarded the caller's chosen
+    normal and flipped the sign depending on the sampling.) The cloud analogue of a
+    terrain heightmap for foothold / clearance checks."""
+    return plane_distance(points, plane)
 
 
 def remove_ground(points, thresh: float = 0.02, iters: int = 200,
