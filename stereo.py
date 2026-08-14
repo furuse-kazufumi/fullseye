@@ -401,5 +401,7 @@ def disparity_confidence(left, right, max_disp: int = 16, block: int = 7,
     excl = np.abs(dd - d1[None]) <= 1               # mask the winner and its neighbours
     c2 = np.where(excl, np.inf, vol).min(0)         # best competing (runner-up) basin
     eps = 1e-6
-    conf = np.where(np.isfinite(c2), 1.0 - (c1 + eps) / (c2 + eps), 0.0)
+    # where no rival basin exists outside the +/-1 window (e.g. max_disp <= 2), the
+    # match has no competitor -> it is unambiguous, so confidence is high, not 0.
+    conf = np.where(np.isfinite(c2), 1.0 - (c1 + eps) / (c2 + eps), 1.0)
     return np.clip(conf, 0.0, 1.0)
