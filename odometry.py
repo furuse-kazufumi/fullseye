@@ -106,8 +106,10 @@ def rgbd_odometry(depth0, depth1, u, v, K, thresh: float = 0.02,
     p1 = np.stack([x1[ok], y1[ok]], 1)
     X0 = backproject(p0, z0[ok], K)
     X1 = backproject(p1, z1[ok], K)
-    R, t, inl = _ransac_kabsch(X0, X1, thresh, iters, seed)
-    return R, t, float(inl.mean())
+    Rs, ts, inl = _ransac_kabsch(X0, X1, thresh, iters, seed)
+    # _ransac_kabsch gives the scene-point motion (X1 = Rs X0 + ts); return the CAMERA
+    # motion, its inverse, so integrate_trajectory composes a correct camera path.
+    return Rs.T, -Rs.T @ ts, float(inl.mean())
 
 
 def pnp_odometry(points3d_prev, uv_curr, K, **kw):
