@@ -17,8 +17,8 @@ brand-new capability.
 
   aug_shot_noise       Poisson (photon shot) noise, the fundamental quantum limit
                        of any photon-counting sensor: ``Poisson(v*K)/K`` with
-                       photon scale ``K = 5 + 250*(1-a)``. a = signal level
-                       (a=0 -> K=5, extremely noisy; a=1 -> K=255, near-clean).
+                       photon scale ``K = 5 + 250*(1-a)``. a = noise strength
+                       (a=0 -> K=255, near-clean; a=1 -> K=5, extremely noisy).
                        b = a small dark-current offset added before counting.
   aug_read_noise       additive Gaussian read noise (amplifier / ADC noise) with
                        ``sigma = 0.005 + 0.15*a``; b mixes in a row-correlated
