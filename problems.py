@@ -98,6 +98,58 @@ class Problem:
         inp, items = data["input"], data["items"]
         return float(np.mean([self.score_value(ops.run_stages(stages, inp[i]), items[i]) for i in range(len(inp))]))
 
+    @classmethod
+    def from_pairs(cls, inputs, targets, name="pairs", metric=None, unit=None,
+                   in_sort="image", hand_stages=None) -> "Problem":
+        """Build a Problem from explicit ``(input, target)`` arrays.
+
+        This is the real-data counterpart to the synthetic ``_synth`` generator:
+        drop in captured frames (``inputs``) and their desired outputs (``targets``)
+        and evolution optimizes against them exactly like a built-in PROBLEM. Purely
+        additive — it does not touch ``PROBLEMS`` or ``_synth``.
+
+        Parameters
+        ----------
+        inputs, targets : array-likes of equal length; ``inputs[i]`` pairs with
+            ``targets[i]``. Targets may be images (H x W) or scalars (counts).
+        metric : ``(final_value, target) -> float`` (higher better). Defaults to
+            PSNR when the target is a 2-D image, else ``1/(1+|count_err|)``.
+        unit : label for reporting (defaults to a metric-appropriate string).
+        in_sort : pipeline start sort (``"image"`` | ``"volume"`` | ...).
+        hand_stages : optional ``() -> list`` baseline; defaults to trivial (identity).
+
+        ``make(n, size, seed)`` returns a deterministic ``n``-item subset via a
+        seed-dependent rotation over the pool, so evolve.run's train (seed) and
+        holdout (seed+10000) splits draw different orderings. For a genuinely
+        disjoint holdout, provide enough distinct pairs (an honest caveat: a tiny
+        pool cannot yield a clean holdout).
+        """
+        inp = np.asarray(inputs, np.float64)
+        tgt = np.asarray(targets)
+        if inp.shape[0] == 0 or tgt.shape[0] == 0:
+            raise ValueError("from_pairs needs at least one (input, target) pair")
+        if inp.shape[0] != tgt.shape[0]:
+            raise ValueError(f"inputs ({inp.shape[0]}) and targets ({tgt.shape[0]}) "
+                             "must have equal length")
+
+        def _default_metric(final, target):
+            if np.ndim(target) == 2:                      # image / region target
+                return ops.psnr(_as_image(final, np.shape(target)), target)
+            return 1.0 / (1.0 + abs(_as_count(final) - float(np.asarray(target).ravel()[0])))
+
+        m = metric or _default_metric
+        if unit is None:
+            unit = "dB PSNR" if tgt.ndim == 3 else "score"
+
+        def _make(n, size, seed, _inp=inp, _tgt=tgt):
+            pool = _inp.shape[0]
+            off = int(seed) % pool
+            idx = np.array([(off + i) % pool for i in range(int(n))], dtype=int)
+            return {"input": _inp[idx], "items": _tgt[idx]}
+
+        return cls(name=name, unit=unit, make=_make, score_value=m,
+                   hand_stages=(hand_stages or (lambda: [])), in_sort=in_sort)
+
 
 # --- denoise ----------------------------------------------------------------- #
 def _make_denoise(n, size, seed, noise=0.2):
