@@ -82,6 +82,7 @@ from measure import (line_profile, distance, angle,  # noqa: E402,F401
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
 )
+from ppf import ppf_model, surface_match, find_surface_pose  # noqa: E402,F401
 from pointcloud import (  # noqa: E402,F401
     estimate_normals, voxel_downsample,
     remove_statistical_outliers, remove_radius_outliers, fpfh,
