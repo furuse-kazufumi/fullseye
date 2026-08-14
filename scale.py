@@ -127,7 +127,7 @@ def process_tiled_mt(fn, img, a=0.5, b=0.5, tile=1024, halo=16, workers=None):
     (check :func:`scale_class`); NOT for global ops."""
     src = np.asarray(img, np.float64)
     H, W = src.shape[:2]
-    out = np.empty((H, W), np.float64)
+    out = np.empty(src.shape, np.float64)           # preserve trailing channel dims, if any
     specs = _tile_specs(H, W, tile, halo)
     n = len(specs) if workers is None else int(workers)
     n = max(1, min(n, len(specs), (os.cpu_count() or 1)))
