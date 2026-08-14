@@ -81,6 +81,12 @@ from pointcloud import (  # noqa: E402,F401
     estimate_normals, voxel_downsample,
     remove_statistical_outliers, remove_radius_outliers, fpfh,
 )
+from pcseg import (  # noqa: E402,F401
+    fit_plane, fit_plane_ransac, fit_sphere_ransac, fit_cylinder_ransac,
+    plane_distance, height_above_plane, remove_ground,
+    euclidean_clusters, region_growing, aabb, obb, crop_box, crop_sphere,
+    farthest_point_sampling, curvature, centroid, principal_axes,
+)
 from mesh import (  # noqa: E402,F401
     read_mesh, read_points, write_mesh, write_points, sample_surface, mesh_to_points,
     voxelize, bounds, recenter, normalize_scale,
