@@ -336,6 +336,8 @@ def _pnp_planar(X: np.ndarray, uv: np.ndarray, K: np.ndarray):
     Xc = X - c
     _, _, Vt = np.linalg.svd(Xc)
     B = Vt.T                                        # columns: 2 in-plane axes + normal
+    if np.linalg.det(B) < 0:                        # SVD basis may be a reflection;
+        B[:, 2] = -B[:, 2]                          # flip the (unused) normal -> det +1
     p2 = Xc @ B[:, :2]                              # (N,2) planar model coords
     Kinv = np.linalg.inv(K)
     m = np.hstack([uv, np.ones((uv.shape[0], 1))]) @ Kinv.T
