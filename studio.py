@@ -1737,6 +1737,16 @@ def build_window(model=None):
     # operator browser filters
     search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
     # pipeline + knobs
+    def on_op_selected(cur, _prev=None):
+        if cur is None:
+            op_param.setText("select an operator to see its signature")
+            b_insert.setEnabled(False); return
+        row = _op_row(cur.data(QtCore.Qt.UserRole))
+        op_param.setText(op_detail(row) if row else cur.text())
+        b_insert.setEnabled(True)
+    op_list.currentItemChanged.connect(on_op_selected)
+    b_insert.clicked.connect(
+        lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
     op_list.itemDoubleClicked.connect(add_op)
 
     def jump_to_problem(item):
