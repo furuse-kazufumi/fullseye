@@ -202,6 +202,49 @@ def test_dockable_layout_and_program_editor():
     assert set(prog["edit"].timings) == {1, 2} and prog["edit"]._exec_line == 2
 
 
+def test_variables_window_lists_and_displays_stage_outputs():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    for op, a, b in (("gaussian", 0.4, 0.5), ("sobel_mag", 0.5, 0.5), ("otsu", 0.5, 0.5)):
+        model.add_stage(op, a, b)
+    v = win._variables
+    v["refresh"]()
+    # input + one row per stage, each labelled with the output sort (otsu -> region)
+    labels = [v["list"].item(i).text() for i in range(v["list"].count())]
+    assert v["list"].count() == 4
+    assert labels[0].startswith("input") and "region" in labels[-1]
+    n0 = len(win._graphics_windows)
+    v["list"].setCurrentRow(3); v["display"](True)     # display a variable in a new graphics window
+    assert len(win._graphics_windows) == n0 + 1
+
+
+def test_i18n_from_file_and_dedicated_help_dialog():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    # localisation data comes from studio_assets/i18n.json (not hardcoded), en is the base
+    assert "en" in studio.LANGUAGES and set(studio.LANGUAGES) >= {"en", "ja", "zh"}
+    assert studio.TOOLTIPS_I18N, "tooltips should load from the i18n file"
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    b = win._buttons["save_result"]
+    en = b.toolTip()
+    win._apply_language("ja"); ja = b.toolTip()
+    win._apply_language("zh"); zh = b.toolTip()
+    win._apply_language("en")
+    assert ja != en and zh != en and b.toolTip() == en   # switches and restores
+    # op help is HTML, with a dedicated dialog + related-op / sample-load anchors
+    html = studio.op_help_html("gaussian", "en", {"in_sort": "image", "out_sort": "image"})
+    assert "<h2" in html and ("sample:" in html or "Load this pipeline" in html) and "op:" in html
+    win._help["show"]("gaussian")
+    assert win._help["dialog"].isVisible()
+    # an operator with no authored file still gets a generated card (no crash)
+    assert "<h2" in studio.op_help_html("percentile", "en", {"in_sort": "image", "out_sort": "image"})
+
+
 def test_clear_action_empties_pipeline():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
