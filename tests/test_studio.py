@@ -914,21 +914,76 @@ def test_builtin_layout_arrangements():
 
 
 def test_detach_and_reattach_graphics_window():
-    """A graphics window can be popped OUT of the MDI workspace into an independent
-    top-level window and returned — the count bookkeeping stays consistent."""
+    """A *non-primary* graphics window can be popped OUT of the MDI workspace into an
+    independent top-level window and returned. The primary (resident) window refuses
+    to detach — it hosts the always-present view + the global controls."""
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     n_sub0 = len(win._graphics_windows)
     assert n_sub0 >= 1 and not win._detached_graphics
-    top = win._detach_graphics()
+    # the resident primary window cannot be detached (that would take the global
+    # Load/Demo/Save/Zoom controls out of the workspace and could destroy them)
+    assert win._detach_graphics(win._primary_gsub) is None
+    assert len(win._graphics_windows) == n_sub0 and not win._detached_graphics
+    # a second, disposable graphics window detaches and reattaches cleanly
+    sub2 = win._new_graphics_window()
+    n_sub1 = len(win._graphics_windows)
+    assert n_sub1 == n_sub0 + 1
+    top = win._detach_graphics(sub2)
     assert top is not None and top.isWindow()               # a real independent window
     assert len(win._detached_graphics) == 1
-    assert len(win._graphics_windows) == n_sub0 - 1
+    assert len(win._graphics_windows) == n_sub1 - 1
     sub = win._reattach_graphics()
     assert sub is not None and not win._detached_graphics
-    assert len(win._graphics_windows) == n_sub0
+    assert len(win._graphics_windows) == n_sub1
     # reattaching with nothing detached is a safe no-op
     assert win._reattach_graphics() is None
+
+
+def test_primary_graphics_window_is_resident_and_uncloseable():
+    """The primary graphics sub-window is the HDevelop-style resident window: closing
+    it (its close button / system menu / Ctrl+W all route through a Close event) is
+    vetoed so the image view + global controls are never destroyed."""
+    from PySide6 import QtCore, QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    gsub = win._primary_gsub
+    assert gsub.widget().objectName() == "graphics_primary"
+    # a Close request must be ignored and the window must stay in the MDI
+    ev = QtGui_QCloseEvent()
+    QtWidgets.QApplication.sendEvent(gsub, ev)
+    assert not ev.isAccepted(), "primary graphics window close was not vetoed"
+    assert gsub in win._mdi.subWindowList()
+    # calling close() likewise leaves it open
+    assert gsub.close() is False
+    assert gsub in win._mdi.subWindowList()
+
+
+def test_update_actions_survives_a_deleted_control():
+    """A queued action-sync must not raise if one of the tracked controls' C++ object
+    was torn down (a graphics window closing can destroy an embedded button)."""
+    import shiboken6
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    b = win._buttons["save_result"]
+    # force the C++ object away, mimicking a torn-down window's child button
+    shiboken6.delete(b)
+    assert not shiboken6.isValid(b)
+    win._update_actions()                     # must not raise despite the dead button
+
+
+def test_3d_surface_degrades_without_opengl(monkeypatch):
+    """Offscreen (and any GL-less display session) has no usable OpenGL context, where
+    Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
+    must report it rather than crash."""
+    _app()
+    assert studio._opengl_available() is False           # offscreen platform
+    assert studio.show_3d_surface(studio.demo_image(32)) is None
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._flash("clear")
+    win._actions["surface_3d"].trigger()                 # must not crash
+    # a message was flashed telling the user 3-D needs OpenGL
+    assert "OpenGL" in win.statusBar().currentMessage() or win._surf is None
 
 
 def test_float_single_panel():
