@@ -666,6 +666,13 @@ def build_window(model=None):
             if guard is not None and not guard():
                 ev.ignore()
                 return
+            try:                              # remember window position + panel layout
+                if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+                    s = QtCore.QSettings("Fullseye", "Studio")
+                    s.setValue("geometry", self.saveGeometry())
+                    s.setValue("windowState", self.saveState())
+            except Exception:
+                pass
             ev.accept()
 
     win = StudioWindow()
