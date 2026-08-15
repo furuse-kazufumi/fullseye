@@ -2253,6 +2253,30 @@ def build_window(model=None):
     act_reset.triggered.connect(reset_to_raw)
     act_step.triggered.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
     act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
+
+    # Debugger-style function keys that fire ANYWHERE in the window. The Ctrl+Arrow
+    # step/run keys above are deliberately scoped to the pipeline list so they do
+    # not fire while you type in the operator search box; function keys never clash
+    # with typing, so these are WindowShortcut — press F6 to step from any panel,
+    # F5 to run all, Shift+F5 to reset, exactly like a debugger.
+    def _do_step():
+        step_to(min(selected_index() + 1, len(model.stages) - 1))
+
+    def _do_run_all():
+        step_to(len(model.stages) - 1)
+
+    act_dbg_run = _act("Run all (F5)", "F5", "Run the whole pipeline to the final result (debugger Run)")
+    act_dbg_step = _act("Step (F6)", "F6", "Advance one pipeline stage (debugger Step) — works from any panel")
+    act_dbg_reset = _act("Reset to start (Shift+F5)", "Shift+F5", "Show the raw image — restart the step-through")
+    win._menus["run"].addSeparator()
+    for _a, _fn in ((act_dbg_run, _do_run_all), (act_dbg_step, _do_step), (act_dbg_reset, reset_to_raw)):
+        _a.setShortcutContext(QtCore.Qt.WindowShortcut)   # fires app-wide, not only on the pipeline list
+        _a.triggered.connect(_fn)
+        win.addAction(_a)                                 # keep the shortcut active even without a menu
+        win._menus["run"].addAction(_a)                   # discoverable in the Run menu
+    win._actions["dbg_run"] = act_dbg_run
+    win._actions["dbg_step"] = act_dbg_step
+    win._actions["dbg_reset"] = act_dbg_reset
     # -- program / code editor wiring (parse <-> pipeline, timed run, step) ---- #
     import time as _time
 
