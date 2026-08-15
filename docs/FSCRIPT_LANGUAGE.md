@@ -82,6 +82,9 @@
   - 演算子 `+` は **数値タプル同士=要素和、文字列を含む=連結** の HALCON 曖昧規則を踏襲(仕様書に明記、`.` を文字列連結専用にするかは要検討)。空タプル `[]`、混在時の型昇格規則(int→real)を定義。
   - iconic(Image/Region/XLD/ObjectSet)は Tuple ではない別クラス(§3、混同禁止)。
   - ★実装注意: 現 PoC(`fscript.py`)は control を素の float/int/str/list で扱う。**増分1の型システムを HALCON Tuple に置換**(`Tuple` クラス + 要素型保持 + broadcast 演算)する必要がある。
+- **★Vector 型(HDevelop 13+、ユーザー指摘 2026-08-15)**: HALCON には Tuple とは別に **Vector**(タプル or iconic を格納する**型付き・多次元コンテナ**)がある。`vector(dim)`、`Vec.at(i)`、`|Vec|`、代入 `Vec[i] := ...`、`for` で反復。Tuple(平坦・混在スカラ)と Vector(入れ子・object も格納可)を**別型として**用意する。
+  - 用途: object/tuple の配列(例 各 blob の輪郭 Vector、行ごとの計測 Vector of Tuple)。ObjectSet(§3)は「iconic の 1 次元集合」の特化で、Vector はより一般(多次元・control も格納)。
+  - 実装(段階): 増分1では Python list で近似、増分2以降で **`FVector`(要素型 + 次元を保持)** に厳密化。ウォッチは §4 の型別レンダラで Vector(要素を展開表示)対応。
 - **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
 - **測定 multi-output**(Codex #8): `area_center(Region : : : Area, Row, Column)` の複数 control 出力を正式サポート(現 `api.apply` は先頭要素のみ float 化=情報欠落)。空領域/NaN/長さ不一致は定義済み例外か空 tuple、条件式で暗黙真偽化しない。
 
