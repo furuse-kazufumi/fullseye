@@ -1221,10 +1221,10 @@ def test_holdout_validation_runs_pipeline_over_a_folder(tmp_path):
 
 def test_holdout_action_and_report_are_wired():
     """The Studio exposes a holdout action + a report renderer over the summary."""
-    from PySide6 import QtCore, QtWidgets
+    from PySide6 import QtCore, QtGui, QtWidgets
     _app()
     win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    assert win._actions["holdout"].shortcut() == QtGui_key("Ctrl+H")
+    assert win._actions["holdout"].shortcut() == QtGui.QKeySequence("Ctrl+H")
     assert callable(win._show_holdout)
     # the report renderer builds a table from a summary (dismiss the modal via a timer)
     summary = {"n": 2, "n_ok": 1, "n_err": 1, "mean_ms": 1.2, "mean_metric": 0.5,
