@@ -206,7 +206,9 @@ Codex の指摘(確信度高)を実測が裏書きした:
 **R1. 型モデル(iconic / control を厳密に分離し、sort は「運ぶ」— 推測しない)**
 - `FImage(pixels, dtype, value_range, domain: Region)` — **値域を型が持つ**(欠陥 2 の根治)。
   `domain` は HALCON 忠実(既定=全面、`reduce_domain`/`full_domain`/`get_domain`)。
-- `Region` / `XLD` / `ObjectSet(label_image, ids)` / `handle`(不透明)を**別クラス**として定義。
+- `Region` / `XLD` / `ObjectSet(label_image, ids, **feats**)` / `handle`(不透明)を**別クラス**として定義。
+  ★`ObjectSet` は**測定済み特徴量を id 索引で保持して運ぶ**(§1.7 の実測: これが無いと同じ連結成分パスを
+  3 回走らせて 2.5 倍遅くなる)。`select` は id フィルタのみでラベル画像と特徴量表を共有する。
 - `Tuple` = HALCON 準拠の異種混在タプル(int/real/string、スカラ=長さ 1、要素ごとブロードキャスト)。
   **`+` は数値タプル同士なら要素和**(欠陥 3 の根治)。連結は別構文 `[t1, t2]`。
 - `Vector`(型付き多次元コンテナ)/ `FContainer` 群(list/map/set/stack/queue = **Fullseye 拡張と正直にラベル**)。
