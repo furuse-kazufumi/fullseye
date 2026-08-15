@@ -175,6 +175,20 @@ def test_op_arg_roles_and_signature_detail():
     assert "knob a" in d2
 
 
+def test_region_overlay_display_mode():
+    """v18.7 P4b: 'region overlay' blends a binary region onto the source image
+    (HDevelop's dev_display of a region on the current image)."""
+    import numpy as np
+    base = np.linspace(0, 1, 64 * 64).reshape(64, 64)          # grayscale source
+    region = np.zeros((64, 64)); region[20:40, 20:40] = 1.0    # a binary region
+    out = studio.apply_display(region, "region overlay", base=base)
+    assert out.ndim == 3 and out.shape[:2] == (64, 64)          # RGB overlay
+    inside = out[25:35, 25:35]
+    assert inside[..., 0].mean() > inside[..., 2].mean()        # amber = more red than blue
+    # no base -> falls back to the raw region (no crash)
+    assert studio.apply_display(region, "region overlay", base=None).ndim == 2
+
+
 def test_window_actions_and_shortcuts():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
