@@ -963,29 +963,39 @@ def build_window(model=None):
     # Window = panels/graphics/layout (submenus, not a flat wall), Tools = cross-cutting,
     # Help = reference. Display/screen concerns live under View, never File.
     mb = win.menuBar()
-    m = mb.addMenu("&File")
+    # Retain every QMenu on the window: a menu returned by addMenu() that keeps no
+    # Python owner is shiboken-collected (its C++ object is deleted), which empties
+    # the menu. win._menus is the single owner for all top-level menus + submenus.
+    win._menus = {}
+
+    def _menu(parent, title, key):
+        mm = parent.addMenu(title)
+        win._menus[key] = mm
+        return mm
+
+    m = _menu(mb, "&File", "file")
     m.addAction(act_open_img); m.addAction(act_demo)          # image in
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
     m.addSeparator()
     m.addAction(act_save_res)                                 # result out
     m.addSeparator(); m.addAction(act_quit)
-    m = mb.addMenu("&Edit")
+    m = _menu(mb, "&Edit", "edit")
     m.addAction(act_remove); m.addAction(act_up); m.addAction(act_down)
     m.addSeparator(); m.addAction(act_clear)
-    menu_view = mb.addMenu("&View")
+    menu_view = _menu(mb, "&View", "view")
     menu_view.addAction(act_zin); menu_view.addAction(act_zout)
     menu_view.addSeparator(); menu_view.addAction(act_fit); menu_view.addAction(act_11)
     menu_view.addSeparator()          # Display mode submenu + 3D surface appended once the display combo exists
-    m = mb.addMenu("&Run")
+    m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
     m.addSeparator(); m.addAction(act_runall)
-    menu_windows = mb.addMenu("&Window")     # panels / graphics / layout submenus (filled after docks)
-    menu_tools = mb.addMenu("&Tools")
+    menu_windows = _menu(mb, "&Window", "window")   # panels / graphics / layout submenus (filled after docks)
+    menu_tools = _menu(mb, "&Tools", "tools")
     menu_tools.addAction(act_palette)                         # cross-cutting command launcher (was under Run)
     menu_tools.addSeparator()
-    lang_menu = menu_tools.addMenu("Language / 言語 / 语言")   # UI/help language = a preference, not Help content
-    m = mb.addMenu("&Help")
+    lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
+    m = _menu(mb, "&Help", "help")
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
     act_guide = _act("Quick guide (en/ja/zh)", "Shift+F2", "A short guide in the selected language")
     m.addAction(act_guide)
