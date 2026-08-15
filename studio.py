@@ -1286,18 +1286,26 @@ def build_window(model=None):
         return sub
     win._new_graphics_window = new_graphics_window
 
-    # ---- Windows menu: toggle every tool panel + graphics-window controls ------- #
+    # ---- Window menu: 3 submenus (Panels / Graphics windows / Layout) ----------- #
+    # Consolidated so the menu is a short, scannable list of groups, not a flat wall
+    # of ~15 items (the v18.6 overload the user flagged). Panels/Graphics filled here;
+    # Float/Detach/Layout items are appended to these same submenus further below.
     act_newgfx = _act("New graphics window", "Ctrl+G", "Open another image / result window")
     act_tile = _act("Tile graphics windows", None, "Tile the open graphics windows")
     act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
     act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
+    menu_panels = menu_windows.addMenu("Panels")
     for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars):
-        menu_windows.addAction(_d.toggleViewAction())
-    win._dock_menu = menu_windows          # later milestones append their docks here
-    menu_windows.addSeparator()
-    menu_windows.addAction(act_newgfx)
-    menu_windows.addAction(act_tile); menu_windows.addAction(act_cascade)
-    menu_windows.addSeparator(); menu_windows.addAction(act_reset_layout)
+        menu_panels.addAction(_d.toggleViewAction())
+    menu_panels.addSeparator()             # Float all/Dock all + per-panel Float appended below
+    menu_graphics = menu_windows.addMenu("Graphics windows")
+    menu_graphics.addAction(act_newgfx)
+    menu_graphics.addSeparator()
+    menu_graphics.addAction(act_tile); menu_graphics.addAction(act_cascade)
+    menu_graphics.addSeparator()           # Detach/Reattach appended below
+    win._dock_menu = menu_panels           # later milestones append their docks here
+    win._menu_panels = menu_panels
+    win._menu_graphics = menu_graphics
     act_newgfx.triggered.connect(lambda: new_graphics_window())
     act_tile.triggered.connect(mdi.tileSubWindows)
     act_cascade.triggered.connect(mdi.cascadeSubWindows)
