@@ -2,17 +2,35 @@
 <p style="color:#8b91a0;margin:2px 0"><b>image → region</b></p>
 <p>Global <b>automatic thresholding</b> by Otsu's method. It scans every possible
 threshold of the intensity histogram and picks the one that <b>maximises the
-between-class variance</b> (equivalently, minimises the within-class variance) of
-the foreground/background split. No manual threshold is needed, which makes it a
-robust default for bimodal images (an object against a distinct background).</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Output</h3>
-<p>A binary <b>region</b> ({0,1}) — the foreground mask. Feed it to region ops
-(<code style="color:#22d3bf">fill_holes</code>, <code style="color:#22d3bf">select_largest</code>)
-or count blobs with <code style="color:#22d3bf">blob_count</code>.</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Knobs</h3>
-<ul style="margin:2px 0 2px 18px;padding:0">
-  <li><b>a</b> — bias applied to the automatic threshold (nudge the cut up/down).</li>
-  <li><b>b</b> — reserved.</li>
-</ul>
+between-class variance</b> of the foreground/background split. No manual threshold
+is needed, which makes it a robust default for bimodal images (an object against a
+distinct background).</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Arguments</h3>
+<table cellpadding="3" style="color:#e2e5ec">
+  <tr><td><b>a</b></td><td>bias applied to the automatic threshold (nudge the cut up/down).</td></tr>
+  <tr><td><b>b</b></td><td>reserved.</td></tr>
+</table>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Usage</h3>
+<p>Produces a binary <b>region</b> ({0,1}) — the foreground mask. Feed it to region
+ops (<a style="color:#22d3bf" href="op:fill_holes">fill_holes</a>,
+<a style="color:#22d3bf" href="op:select_largest">select_largest</a>) or count blobs
+with <a style="color:#22d3bf" href="op:blob_count">blob_count</a>.</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Sample code</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gaussian 0.3 0.5
+otsu 0.5 0.5
+fill_holes 0.5 0.5
+blob_count 0.5 0.5</pre>
+<p>▸ <a style="color:#22d3bf" href="sample:gaussian%200.3%200.5%0Aotsu%200.5%200.5%0Afill_holes%200.5%200.5%0Ablob_count%200.5%200.5">Load this pipeline</a>
+&nbsp;·&nbsp; <a style="color:#f5a524" href="run:gaussian%200.3%200.5%0Aotsu%200.5%200.5%0Afill_holes%200.5%200.5%0Ablob_count%200.5%200.5">Load &amp; run</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Related operators</h3>
+<p><a style="color:#22d3bf" href="op:threshold">threshold</a> ·
+<a style="color:#22d3bf" href="op:dyn_threshold">dyn_threshold</a> ·
+<a style="color:#22d3bf" href="op:adaptive_gauss_thresh">adaptive_gauss_thresh</a> ·
+<a style="color:#22d3bf" href="op:canny">canny</a></p>
+
 <p style="color:#8b91a0;font-size:11px">Provenance: Otsu 1979, "A Threshold Selection Method from Gray-Level Histograms".
 See docs/PROVENANCE.md.</p>
