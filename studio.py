@@ -995,6 +995,10 @@ def build_window(model=None):
     menu_windows = mb.addMenu("&Windows")   # tool-panel toggles + graphics windows (filled after docks)
     m = mb.addMenu("&Help")
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
+    act_guide = _act("Quick guide (en/ja/zh)", "Shift+F2", "A short guide in the selected language")
+    m.addAction(act_guide)
+    lang_menu = m.addMenu("Language / 言語 / 语言")   # tooltip + help language (filled after build)
+    m.addSeparator()
     m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
     # ---- branded toolbar ---------------------------------------------------- #
