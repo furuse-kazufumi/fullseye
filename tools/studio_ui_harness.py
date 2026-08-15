@@ -95,6 +95,7 @@ class StepLog:
 def _run_step(log: StepLog, name: str, fn, **extra) -> Any:
     """Run one operation; catch Python-level errors as findings.  A hard
     segfault escapes this and is attributed via the on-disk ``phase_start``."""
+    log._cur_phase = name          # so the slot-exception hook can attribute async faults
     log.start(name, **extra)
     try:
         out = fn()
