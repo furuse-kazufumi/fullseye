@@ -70,6 +70,14 @@ class Tok:
         return "Tok(%s,%r,L%d)" % (self.kind, self.val, self.line)
 
 
+def _at_line_start(src: str, i: int) -> bool:
+    """True when only whitespace precedes ``src[i]`` on its line."""
+    j = i - 1
+    while j >= 0 and src[j] in " \t\r":
+        j -= 1
+    return j < 0 or src[j] == "\n"
+
+
 def tokenize(src: str):
     toks = []
     line = 1
@@ -80,7 +88,12 @@ def tokenize(src: str):
             toks.append(Tok("nl", "\n", line)); line += 1; i += 1; continue
         if c in " \t\r":
             i += 1; continue
-        if c == "*":                                   # whole-line HDevelop comment
+        if c == "*" and _at_line_start(src, i):
+            # HDevelop's comment marker is a *whole-line* '*'.  Mid-expression a
+            # '*' is multiplication — treating it as a comment there silently
+            # truncated the expression and returned a wrong value instead of an
+            # error, which is the one failure mode an inspection language must
+            # never have.
             while i < n and src[i] != "\n":
                 i += 1
             continue
