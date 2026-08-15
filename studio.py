@@ -1566,10 +1566,20 @@ def build_window(model=None):
     win._resident_guard = _resident_guard          # keep a Python owner (shiboken)
     win._primary_gsub = gsub
 
+    # HDevelop "current window" model: every graphics window has a stable handle
+    # number (never reused), and there is always exactly one *current* window —
+    # the target for a variable double-click / Run once, like dev_set_window +
+    # dev_display. It defaults to the resident primary window and follows the
+    # active MDI sub-window as the user clicks between windows.
+    gsub._fs_handle = 1
+    win._gfx_handle_seq = 1
+    win._current_gfx = gsub
+
     def new_graphics_window(pixmap=None, title=None):
         """Open another graphics window (HDevelop allows several). Shows a snapshot
         of the current display by default, or a supplied pixmap (e.g. a variable)."""
-        n = len(win._graphics_windows) + 1
+        win._gfx_handle_seq += 1
+        h = win._gfx_handle_seq
         gv = ImageView()
         try:
             gv.set_pixmap(pixmap if pixmap is not None else view._item.pixmap())
@@ -1577,13 +1587,63 @@ def build_window(model=None):
         except Exception:
             pass
         sub = mdi.addSubWindow(gv)
-        sub.setWindowTitle(title or ("Graphics %d" % n))
+        sub._fs_handle = h
+        sub.setWindowTitle(title or ("Graphics %d" % h))
         sub.resize(440, 360)
         sub.show()
         win._graphics_windows.append(sub)
+        win._current_gfx = sub                     # a freshly opened window becomes current
+        _update_current_indicator()
         win._flash and win._flash("opened %s" % sub.windowTitle())
         return sub
     win._new_graphics_window = new_graphics_window
+
+    # -- current-window helpers (which ImageView does "display" write to) ------- #
+    def _graphics_view_of(sub):
+        """The ImageView a graphics sub-window draws into. The primary window nests
+        its view inside image_panel (return the shared `view`); every extra window
+        *is* an ImageView."""
+        if sub is win._primary_gsub:
+            return view
+        w = sub.widget() if sub is not None else None
+        return w if isinstance(w, ImageView) else None
+
+    def _current_view():
+        """The ImageView of the current window, healing a stale pointer back to the
+        resident primary window if the current one was closed."""
+        sub = win._current_gfx
+        if sub is None or sub not in win._graphics_windows:
+            win._current_gfx = win._primary_gsub
+            return view
+        v = _graphics_view_of(sub)
+        return v if v is not None else view
+
+    def _current_handle():
+        sub = win._current_gfx
+        if sub is None or sub not in win._graphics_windows:
+            return 1
+        return getattr(sub, "_fs_handle", 1)
+
+    def _update_current_indicator():
+        lbl = getattr(win, "_current_label", None)
+        if lbl is not None:
+            lbl.setText("current: Graphics %d" % _current_handle())
+
+    def _set_current_gfx(sub):
+        """Follow the active MDI sub-window: clicking a graphics window makes it the
+        current target (HDevelop dev_set_window)."""
+        if sub is not None and sub in win._graphics_windows:
+            win._current_gfx = sub
+            _update_current_indicator()
+
+    # a small permanent status-bar readout of the current window's handle
+    win._current_label = QtWidgets.QLabel("current: Graphics 1")
+    win._current_label.setProperty("hint", True)
+    win.statusBar().addPermanentWidget(win._current_label)
+    mdi.subWindowActivated.connect(_set_current_gfx)
+    win._current_view = _current_view
+    win._current_handle = _current_handle
+    win._set_current_gfx = _set_current_gfx
 
     # ---- Window menu: 3 submenus (Panels / Graphics windows / Layout) ----------- #
     # Consolidated so the menu is a short, scannable list of groups, not a flat wall
