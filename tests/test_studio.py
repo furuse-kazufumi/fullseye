@@ -806,3 +806,69 @@ def test_drag_reorder_keeps_model_in_step_with_the_view():
             if visual != model.ops_string():
                 bad.append((src, dst, visual, model.ops_string()))
     assert not bad, bad
+
+
+def test_layout_presets_save_apply_delete():
+    """v18.6 window freedom: named layout presets round-trip (save -> apply -> delete)
+    and the Windows ▸ Layouts menu rebuilds to expose saved presets."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert callable(win._save_layout_preset) and callable(win._apply_layout_preset)
+    assert win._save_layout_preset("wide-graphics") is True
+    assert "wide-graphics" in win._preset_store
+    # a blank name is rejected; unknown names apply/delete to False (no crash)
+    assert win._save_layout_preset("   ") is False
+    assert win._apply_layout_preset("wide-graphics") is True
+    assert win._apply_layout_preset("nope") is False
+    # the saved preset is reachable from the Windows ▸ Layouts submenu
+    wmenu = next(m.menu() for m in win.menuBar().actions() if m.text() == "&Windows")
+    lmenu = next(a.menu() for a in wmenu.actions() if a.text() == "Layouts")
+    apply_sub = next(a.menu() for a in lmenu.actions() if a.menu() and a.text() == "Apply saved layout")
+    assert "wide-graphics" in [a.text() for a in apply_sub.actions()]
+    assert win._delete_layout_preset("wide-graphics") is True
+    assert "wide-graphics" not in win._preset_store
+    assert win._delete_layout_preset("wide-graphics") is False
+
+
+def test_builtin_layout_arrangements():
+    """Built-in layouts deterministically arrange the tool docks (hide/show state is
+    independent of top-level visibility, so it is assertable offscreen)."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._apply_builtin_layout("Graphics focus")
+    assert win._docks["operators"].isHidden() and win._docks["display"].isHidden()
+    assert not win._docks["pipeline"].isHidden()
+    win._apply_builtin_layout("Code focus")
+    assert win._docks["operators"].isHidden() and not win._docks["program"].isHidden()
+    win._apply_builtin_layout("Balanced (default)")
+    assert not any(win._docks[k].isHidden()
+                   for k in ("operators", "pipeline", "display", "program", "variables"))
+
+
+def test_detach_and_reattach_graphics_window():
+    """A graphics window can be popped OUT of the MDI workspace into an independent
+    top-level window and returned — the count bookkeeping stays consistent."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    n_sub0 = len(win._graphics_windows)
+    assert n_sub0 >= 1 and not win._detached_graphics
+    top = win._detach_graphics()
+    assert top is not None and top.isWindow()               # a real independent window
+    assert len(win._detached_graphics) == 1
+    assert len(win._graphics_windows) == n_sub0 - 1
+    sub = win._reattach_graphics()
+    assert sub is not None and not win._detached_graphics
+    assert len(win._graphics_windows) == n_sub0
+    # reattaching with nothing detached is a safe no-op
+    assert win._reattach_graphics() is None
+
+
+def test_float_single_panel():
+    """Per-panel float control floats/re-docks one tool panel at a time."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win._float_panel("operators", True) is True
+    assert win._docks["operators"].isFloating() is True
+    assert win._float_panel("operators", False) is True
+    assert win._docks["operators"].isFloating() is False
+    assert win._float_panel("no-such-panel", True) is False
