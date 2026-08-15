@@ -2070,7 +2070,11 @@ def build_window(model=None):
         if 0 <= i < len(model.stages):
             model.remove_stage(i)
             mark_dirty()
-            refresh_stage_list()         # selection is now -1 -> disable knobs, clear detail
+            n = len(model.stages)
+            # keep a neighbour selected so the operation target isn't lost after a
+            # delete (Codex #11) — the stage now at i, or the new last one
+            sel = min(i, n - 1) if n > 0 else None
+            refresh_stage_list(select=sel)
             show_result()
 
     def move(delta):
