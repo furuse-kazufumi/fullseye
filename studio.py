@@ -1672,6 +1672,39 @@ def build_window(model=None):
         refresh_stage_list(select=newpos)
         show_result()
 
+    def run_op_once():
+        """HDevelop single-step: apply the selected operator ONCE with the a, b from
+        the operator panel to the loaded image, and show the result in a graphics
+        window. The pipeline is NOT modified (a scratch preview)."""
+        cur = op_list.currentItem()
+        if cur is None:
+            return
+        name = cur.data(QtCore.Qt.UserRole)
+        base = model.image
+        if base is None:
+            flash("load an image first (File ▸ Open image / Synthetic demo)")
+            return
+        a, b = op_a_spin.value(), op_b_spin.value()
+        try:
+            out = api.apply(base, name, a, b)
+        except Exception as e:
+            report_error("Run once", e)
+            return
+        title = "%s (a=%.2f, b=%.2f)" % (name, a, b)
+        pm = None
+        if isinstance(out, np.ndarray) and out.ndim in (2, 3):
+            qi = _to_qimage(apply_display(out, display.currentText()), QtGui)
+            pm = QtGui.QPixmap.fromImage(qi) if qi is not None else None
+        if pm is not None:
+            new_graphics_window(pm, title)
+            flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
+        else:                                   # scalar feature / contour: no raster preview
+            d = inspect_result(out)
+            flash("ran %s once → %s (pipeline unchanged)" % (name, d.get("value", d.get("kind", "result"))))
+        win._last_run_once = {"op": name, "a": a, "b": b, "result": out}
+    win._run_op_once = run_op_once
+    win._op_arg_spins = (op_a_spin, op_b_spin)
+
     def step_to(i):
         if 0 <= i < len(model.stages):
             stage_list.setCurrentRow(i)                      # triggers show_result for that step
