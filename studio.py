@@ -1865,6 +1865,8 @@ def build_window(model=None):
             refresh_stage_list(select=i)
         stage_list.setCurrentRow(i)                          # triggers show_result for that step
         _select_var_row(i + 1)                               # sync: highlight this step's output var
+        flash("step %d/%d — %s (showing this stage's result)"
+              % (i + 1, len(model.stages), model.stages[i][0]))
     win._step_to = step_to
 
     def reset_to_raw():
