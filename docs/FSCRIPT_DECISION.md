@@ -376,22 +376,25 @@ Fullseye が売るもの、優先順:
 ### 4.1 二プロファイル
 
 ```
-┌──────────────────────────────┐        ┌──────────────────────────────┐
-│ Fullseye Studio (設計時)      │        │ Fullseye Runtime (配布)       │
-│ ─────────────────            │        │ ─────────────────            │
-│ L3 ウォッチ IDE (PySide6)     │        │ (GUI なし・常駐・headless)    │
-│ L2 Fullseye Script VM  ←─── 同一 VM ───→ L2 Fullseye Script VM         │
-│ L1 全 650 op / numpy 実装      │        │ L1 限定プロファイル / native   │
-│ + 進化エンジン + holdout       │        │ + init/cycle 分離 + deadline  │
-│ + torch / kornia (研究用)      │        │ + PLC state machine           │
-│ ~5 GB                        │        │ **~375 MB / Python 非公開**    │
-└──────────────────────────────┘        └──────────────────────────────┘
-              │                                        ▲
-              └── 同じ .fsh スクリプト + 同じ IR version ─┘
-                  差分は「どのバックエンドが選ばれるか」だけ
+┌───────────────────────────────┐      ┌───────────────────────────────┐
+│ Fullseye Studio (設計時)       │      │ Fullseye Runtime (配布)        │
+│ ──────────────────            │      │ ──────────────────            │
+│ L3 ウォッチ IDE (PySide6)      │      │ GUI なし・常駐・headless        │
+│ L2 Fullseye Script VM   ←── 同一 VM ──→ L2 Fullseye Script VM          │
+│ L1 native 優先 / numpy 補完     │      │ L1 native のみ (fail-closed)   │
+│ + 650 op 進化エンジン + holdout │      │ + init/cycle 分離 + deadline   │
+│ + torch / kornia (研究用)       │      │ + PLC state machine            │
+│ 起動 1663 ms / 約 5 GB          │      │ 起動 160 ms / 約 375 MB         │
+│                               │      │ Python を顧客に公開しない        │
+└───────────────────────────────┘      └───────────────────────────────┘
+              │                                       ▲
+              └── 同じ .fsh スクリプト + 同じ IR version ┘
+                  差分は「native が無い op を許すか」だけ
 ```
 
-**同じスクリプトが両方で走り、結果が一致することを差分テストで保証する**(§4.5)。
+**★重要**: Studio 側も **native を優先**する(numpy は native が無い op の補完のみ)。
+「設計者が見たものがそのまま出荷される」ため(§4.2)。**同じスクリプトが両方で走り、
+結果が一致することを差分テストで保証する**(§4.5)。
 
 ### 4.2 3 層 + バックエンド選択(R2 の中核)
 
