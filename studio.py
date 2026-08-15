@@ -1732,12 +1732,19 @@ def build_window(model=None):
             pass
 
     def confirm_discard(title, what="the current pipeline"):
-        """True if it is OK to throw away unsaved pipeline edits."""
-        if not state["dirty"] or not model.stages:
+        """True if it is OK to throw away unsaved work — unsaved pipeline stages OR
+        unapplied Program-editor edits (Codex #9). When neither is pending, no prompt."""
+        pipe_dirty = state["dirty"] and bool(model.stages)
+        code_dirty = bool(state.get("code_dirty"))
+        if not (pipe_dirty or code_dirty):
             return True
+        parts = []
+        if pipe_dirty:
+            parts.append("%d unsaved stage(s)" % len(model.stages))
+        if code_dirty:
+            parts.append("unapplied Program edits")
         return bool(CONFIRM_HOOK(
-            win, title,
-            "%s has %d unsaved stage(s).\nDiscard them?" % (what.capitalize(), len(model.stages))))
+            win, title, "%s has %s.\nDiscard them?" % (what.capitalize(), " and ".join(parts))))
 
     def refresh_stage_list(select=None):
         """Rebuild the stage rows (and the Problems panel).
