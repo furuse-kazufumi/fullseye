@@ -1,0 +1,9 @@
+Windows fatal exception: access violation
+
+Current thread 0x00003f40 (most recent call first):
+  File "C:\dev\projects\imgevolve\studio.py", line 737 in show_3d_surface
+  File "C:\dev\projects\imgevolve\studio.py", line 2489 in open_3d
+  File "C:\dev\projects\imgevolve\tools\studio_ui_harness.py", line 217 in p1
+  File "C:\dev\projects\imgevolve\tools\studio_ui_harness.py", line 100 in _run_step
+  File "C:\dev\projects\imgevolve\tools\studio_ui_harness.py", line 224 in main
+  File "C:\dev\projects\imgevolve\tools\studio_ui_harness.py", line 401 in <module>

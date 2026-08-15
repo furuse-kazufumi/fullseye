@@ -352,17 +352,26 @@ def main() -> int:
     shot("08_after_layout")
 
     # ---- P9: right-click context menus (watchdog closes the QMenu.exec) ---- #
+    # win._ctx values are the actions_fn callbacks, not widgets; the real list
+    # widgets carry the CustomContextMenu policy, so emit the signal on those.
     def p9():
-        for key, target in win._ctx.items():
-            # simulate a context-menu request; the handler calls menu.exec()
+        widgets = {"operators": win._op_list,
+                   "pipeline": win._stage_list,
+                   "variables": win._variables["list"]}
+        for key, wdg in widgets.items():
+            log.start("P9_context", widget=key)
             try:
-                target.customContextMenuRequested.emit(QtCore.QPoint(5, 5))
-            except Exception:
-                pass
-            pump(30)
-            _kill_modal()
+                if wdg.count() > 0:
+                    wdg.setCurrentRow(0)
+                pump(10)
+                wdg.customContextMenuRequested.emit(QtCore.QPoint(5, 5))
+                pump(30)
+                _kill_modal()
+                log.end("P9_context", True)
+            except Exception as e:  # noqa: BLE001
+                log.end("P9_context", False, detail="%s: %s" % (type(e).__name__, e))
         return True
-    _run_step(log, "P9_context", p9)
+    _run_step(log, "P9_context_all", p9)
     shot("09_after_context")
 
     wd.stop()

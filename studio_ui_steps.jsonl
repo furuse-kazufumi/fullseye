@@ -1,0 +1,32 @@
+{"step": "P0_build", "phase_start": true}
+{"step": "P0_build", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P0_show", "phase_start": true}
+{"step": "P0_show", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_buttons", "phase_start": true}
+{"step": "P1_click", "phase_start": true, "widget": "Browse with code…"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Insert ▸"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Run once ▷"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Help…"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Remove"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "↑ Up"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "↓ Down"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "⏮ Reset"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Step ▶"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Run all ▶▶"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Export (ops string + Python)…"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Save pipeline…"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "Open pipeline…"}
+{"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P1_click", "phase_start": true, "widget": "3D surface"}
