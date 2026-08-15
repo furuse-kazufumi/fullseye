@@ -894,6 +894,333 @@ def spec_continuum_removal(cube, wavelengths=None) -> np.ndarray:
     return out.reshape(H, W, B)
 
 
+# --------------------------------------------------------------------------- #
+# Fusion: pansharpening, decorrelation stretch, multi-source image fusion      #
+# --------------------------------------------------------------------------- #
+#: Component-substitution methods accepted by :func:`spec_pansharpen`.
+PANSHARPEN_METHODS = ("brovey", "ihs", "pca")
+#: Pixel-level fusion rules accepted by :func:`spec_fuse`.
+FUSE_METHODS = ("pca", "average", "max_abs_detail")
+
+
+def _as_pan(pan, H: int, W: int, name: str = "pan") -> np.ndarray:
+    """Coerce the panchromatic band to a validated ``(H, W)`` float64 image.
+
+    Fail-closed: the pan band must be 2-D, exactly the cube's spatial size (this
+    module does **not** resample — put both on a common grid first) and finite.
+    """
+    p = np.asarray(pan, np.float64)
+    if p.ndim != 2:
+        raise ValueError(
+            "%s must be a 2-D panchromatic `image` (H, W); got a %d-D array of shape %r"
+            % (name, p.ndim, p.shape))
+    if p.shape != (H, W):
+        raise ValueError(
+            "%s is %r but the cube is %dx%d — resample the pan band and the cube onto a "
+            "common grid before fusing (spec_pansharpen does no resampling)"
+            % (name, p.shape, H, W))
+    if not np.isfinite(p).all():
+        raise ValueError("%s contains non-finite values (NaN/Inf)" % name)
+    return p
+
+
+def _finite_or_raise(out: np.ndarray, what: str) -> np.ndarray:
+    """Fail-closed output guard: never hand back NaN/Inf (module-wide contract)."""
+    if not np.isfinite(out).all():
+        raise ValueError(
+            "%s produced non-finite values — the input is outside the method's "
+            "numerical range (check for zero/negative band means or extreme dynamic "
+            "range)" % what)
+    return out
+
+
+def _canonical_signs(V: np.ndarray) -> np.ndarray:
+    """Fix the arbitrary sign of each eigenvector **column** deterministically.
+
+    ``numpy.linalg.eigh`` returns eigenvectors up to a sign. Flipping each column so
+    that its largest-magnitude entry is positive (ties -> the first such entry) makes
+    the basis a pure function of the input, which is what determinism requires.
+    """
+    out = np.array(V, np.float64, copy=True)
+    for k in range(out.shape[1]):
+        col = out[:, k]
+        if col[int(np.argmax(np.abs(col)))] < 0.0:
+            out[:, k] = -col
+    return out
+
+
+def _pca_basis(X: np.ndarray):
+    """``(mean, components, eigenvalues)`` of the (N, B) matrix *X*.
+
+    *components* is ``(B, B)`` with the eigenvectors as **columns**, ordered by
+    descending eigenvalue and sign-canonicalised (see :func:`_canonical_signs`).
+    """
+    mean = X.mean(axis=0)
+    Xc = X - mean
+    cov = (Xc.T @ Xc) / max(X.shape[0] - 1, 1)
+    evals, V = np.linalg.eigh(cov)                       # ascending, V columns
+    order = np.argsort(evals)[::-1]
+    return mean, _canonical_signs(V[:, order]), np.clip(evals[order], 0.0, None)
+
+
+def _match_ranks_to(src: np.ndarray, ref: np.ndarray) -> np.ndarray:
+    """Exact histogram matching by rank: *src* re-quantised onto *ref*'s values.
+
+    Both are 1-D and the same length. The i-th output is the value of ``sort(ref)``
+    at the rank *src[i]* holds within *src*, so the result carries **ref's exact
+    empirical distribution** with **src's ordering**. Stable sorts make ties (and
+    therefore the whole mapping) deterministic; when ``src is ref`` the mapping is
+    the identity, including under ties.
+    """
+    order = np.argsort(src, kind="stable")
+    ranks = np.empty(order.size, np.intp)
+    ranks[order] = np.arange(order.size, dtype=np.intp)
+    return np.sort(ref, kind="stable")[ranks]
+
+
+def spec_pansharpen(cube, pan, method: str = "brovey", eps: float = _EPS) -> np.ndarray:
+    """Fuse a high-resolution **panchromatic** band into a multispectral cube ->
+    ``(H, W, B)``, the same shape as *cube*.
+
+    Pansharpening buys the spatial detail of the broad, high-resolution pan channel
+    for the spectrally rich but coarse cube. All three methods here are
+    *component-substitution* schemes; *cube* must already be resampled onto the pan
+    grid (identical ``H x W`` — nothing is resampled here).
+
+    * ``"brovey"`` (default) — the chromaticity / colour-normalised transform
+      (Gillespie et al. 1987, popularised as the Brovey transform)::
+
+          fused_i = cube_i * pan / (mean_over_bands(cube) + eps)
+
+      Every band is scaled by the **same** per-pixel factor, so the band *ratios*
+      of the input survive exactly (``fused_i / fused_j == cube_i / cube_j``) — that
+      is the defining property of the method, and the unit test asserts it.
+    * ``"ihs"`` — fast / generalised IHS (Tu et al. 2001): the intensity
+      ``I = mean_over_bands(cube)`` is *replaced* by the pan band, which for the
+      generalised (additive) form is ``fused_i = cube_i + (pan - I)``. The fused
+      cube then has ``mean_over_bands(fused) == pan`` exactly. Classical IHS is
+      defined for three bands; the generalised form used here takes the intensity
+      over **all** B bands, so it applies to any cube.
+    * ``"pca"`` — PC1 substitution (Chavez et al. 1991): the cube is PCA-rotated
+      (:func:`spec_pca`'s transform), PC1 is replaced by the pan band **histogram-
+      matched to PC1's own distribution** (exact rank matching, so the injected
+      component keeps PC1's radiometry), and the inverse rotation is applied.
+      Components 2..B pass through untouched.
+
+    *eps* guards the Brovey denominator; the guard is floored at ``1e-12`` times the
+    cube's peak magnitude so a near-zero band mean cannot blow up. The output keeps
+    the cube's radiometric scale (it is **not** rescaled to [0, 1]) and is verified
+    finite. Fail-closed on a shape/finiteness mismatch or an unknown *method*.
+    """
+    a = _as_cube(cube)
+    H, W, B = a.shape
+    p = _as_pan(pan, H, W)
+    m = str(method).strip().lower()
+    if m not in PANSHARPEN_METHODS:
+        raise ValueError("method %r is not one of %s" % (method, PANSHARPEN_METHODS))
+    if not np.isfinite(eps) or float(eps) < 0.0:
+        raise ValueError("eps must be a finite value >= 0, got %r" % (eps,))
+
+    if m == "brovey":
+        inten = a.mean(axis=2)                           # (H, W)
+        scale = float(np.max(np.abs(a)))
+        floor = max(float(eps), _EPS * (scale if scale > 0.0 else 1.0))
+        denom = np.where(np.abs(inten) > floor, inten, floor)
+        return _finite_or_raise(a * (p / denom)[:, :, None], "spec_pansharpen('brovey')")
+
+    if m == "ihs":
+        inten = a.mean(axis=2)                           # generalised IHS intensity
+        return _finite_or_raise(a + (p - inten)[:, :, None], "spec_pansharpen('ihs')")
+
+    X = a.reshape(-1, B)
+    mean, V, _ = _pca_basis(X)                           # V: (B, B), columns
+    scores = (X - mean) @ V                              # (N, B)
+    scores[:, 0] = _match_ranks_to(p.reshape(-1), scores[:, 0])
+    fused = (scores @ V.T + mean).reshape(H, W, B)
+    return _finite_or_raise(fused, "spec_pansharpen('pca')")
+
+
+def _select_bands(B: int, bands, name: str = "bands") -> np.ndarray:
+    """Validate an explicit band selection -> ``(k,)`` intp indices (k >= 2)."""
+    if bands is None:
+        return np.arange(B, dtype=np.intp)
+    idx = [_band_index(int(i), B, "selected band")
+           for i in np.asarray(bands).ravel().tolist()]
+    if len(idx) < 2:
+        raise ValueError("%s must select at least 2 bands, got %d" % (name, len(idx)))
+    if len(set(idx)) != len(idx):
+        raise ValueError("%s repeats a band index (%r) — the selection must be unique"
+                         % (name, idx))
+    return np.asarray(idx, np.intp)
+
+
+def spec_decorrelation_stretch(cube, bands=None, target_std=None) -> np.ndarray:
+    """Decorrelation stretch (Gillespie, Kahle & Walker 1986) -> a cube of the
+    **same shape**.
+
+    Highly correlated bands (the normal case in remote sensing: everything is
+    dominated by overall brightness) produce a cigar-shaped, nearly 1-D cloud in
+    band space, so a plain per-band contrast stretch cannot open it up. DCS rotates
+    the cloud onto its principal axes, stretches **each axis** to a common target
+    standard deviation, and rotates back — colour/spectral differences become
+    visible while the axes of the original band space, and each band's mean, are
+    preserved.
+
+    Concretely, with the band covariance ``S = V diag(L) V^T`` the transform is the
+    symmetric matrix ``T = V diag(g) V^T``, ``g_i = target_std / sqrt(L_i)``, applied
+    to the mean-centred spectra and re-centred on the original means. The output
+    covariance is then exactly ``target_std**2 * I`` — **all** band-to-band
+    correlation is removed — which is what the unit test asserts.
+
+    * *bands* — optional subset of band indices (>= 2, unique) to stretch. The
+      remaining bands are copied through **bit-identically**, so the result always
+      has the cube's shape. ``None`` (default) stretches every band.
+    * *target_std* — the common per-axis standard deviation. ``None`` (default) uses
+      the mean of the selected bands' own standard deviations, which keeps the
+      output at the input's overall contrast scale rather than at an arbitrary one.
+
+    Degenerate directions (variance <= 1e-12 of the largest, e.g. a cube whose bands
+    are identical) carry no information and would be divided by ~0, so their gain is
+    set to **0** instead: the result stays finite and NaN-free by construction. The
+    output is not clipped to [0, 1]; a display stretch is the caller's business.
+    """
+    a = _as_cube(cube)
+    H, W, B = a.shape
+    idx = _select_bands(B, bands)
+    k = int(idx.size)
+    X = a[:, :, idx].reshape(-1, k)
+    mean = X.mean(axis=0)
+    Xc = X - mean
+    cov = (Xc.T @ Xc) / max(X.shape[0] - 1, 1)           # (k, k), ddof=1
+    evals, V = np.linalg.eigh(cov)
+    evals = np.clip(evals, 0.0, None)                    # PSD; kill round-off negatives
+
+    if target_std is None:
+        s = float(np.mean(np.sqrt(np.clip(np.diag(cov), 0.0, None))))
+        if not np.isfinite(s) or s <= 0.0:
+            s = 1.0                                      # a constant cube: no scale to keep
+    else:
+        s = float(target_std)
+        if not np.isfinite(s) or s <= 0.0:
+            raise ValueError("target_std must be a finite value > 0, got %r" % (target_std,))
+
+    tol = float(np.max(evals)) * 1e-12
+    good = evals > tol
+    gains = np.where(good, s / np.sqrt(np.where(good, evals, 1.0)), 0.0)
+    T = (V * gains) @ V.T                                # V diag(g) V^T, symmetric
+    out = a.copy()
+    out[:, :, idx] = (Xc @ T + mean).reshape(H, W, k)
+    return _finite_or_raise(out, "spec_decorrelation_stretch")
+
+
+def _as_stack(images, name: str = "images") -> np.ndarray:
+    """Coerce a list of ``(H, W)`` images (or an ``(H, W, K)`` array) to ``(H, W, K)``.
+
+    Note the deliberate difference from :func:`_as_cube`: the argument here is a
+    *stack of co-registered single-band sources*, not a spectral cube, so an
+    ``(H, W, 3)`` array is accepted and read as three sources (fusing the channels of
+    an RGB frame is a meaningful request, not a modality error). Pass a **list** of
+    2-D images for the unambiguous form.
+    """
+    if isinstance(images, np.ndarray):
+        S = np.asarray(images, np.float64)
+        if S.ndim != 3:
+            raise ValueError(
+                "%s as an array must be (H, W, K) — a stack of K co-registered images; "
+                "got a %d-D array of shape %r (pass [img] for a single source)"
+                % (name, S.ndim, S.shape))
+    else:
+        try:
+            items = list(images)
+        except TypeError:
+            raise ValueError("%s must be a sequence of (H, W) images or an (H, W, K) "
+                             "array, got %r" % (name, type(images).__name__)) from None
+        if not items:
+            raise ValueError("%s is empty — need at least one source image" % name)
+        arrs = []
+        for i, im in enumerate(items):
+            b = np.asarray(im, np.float64)
+            if b.ndim != 2:
+                raise ValueError("%s[%d] must be a 2-D (H, W) image, got shape %r"
+                                 % (name, i, b.shape))
+            arrs.append(b)
+        for i, b in enumerate(arrs):
+            if b.shape != arrs[0].shape:
+                raise ValueError("%s[%d] has shape %r but %s[0] has %r — the sources must "
+                                 "be co-registered onto one grid"
+                                 % (name, i, b.shape, name, arrs[0].shape))
+        S = np.stack(arrs, axis=-1)
+    if min(S.shape[0], S.shape[1]) < 1 or S.shape[2] < 1:
+        raise ValueError("%s must hold at least one non-empty (H, W) image, got shape %r"
+                         % (name, S.shape))
+    if not np.isfinite(S).all():
+        raise ValueError("%s contains non-finite values (NaN/Inf)" % name)
+    return S
+
+
+def spec_fuse(images, method: str = "pca", detail_size: int = 3) -> np.ndarray:
+    """Fuse a stack of co-registered single-band images into one ``image`` ``(H, W)``.
+
+    *images* is a list of ``(H, W)`` arrays or an ``(H, W, K)`` stack (multi-sensor,
+    multi-exposure or multi-focus frames of the same scene). Rules:
+
+    * ``"pca"`` (default) — pixel-level PCA fusion (Naidu & Raol 2008): treat each
+      source as a variable and the pixels as observations, take the first principal
+      component of the ``(K, K)`` source covariance and use its loadings, normalised
+      to sum to one, as the fusion weights. Weighting by PC1 gives the most mutually
+      consistent (highest-variance) combination rather than a flat average. The
+      sum-normalisation makes the weights independent of the eigenvector's arbitrary
+      sign, so identical sources fuse back to exactly that image.
+    * ``"average"`` — the plain per-pixel mean, the honest baseline.
+    * ``"max_abs_detail"`` — *choose-max activity* multi-focus fusion (the selection
+      rule of Burt & Adelson 1983 / Li et al. 1995, here at a single scale): the
+      high-pass residual ``|src - boxmean(src, detail_size)|`` measures local
+      activity, and each pixel is taken from whichever source is sharpest there
+      (ties -> the lowest source index, so the choice is deterministic).
+
+    *detail_size* is the odd box-filter width of the ``max_abs_detail`` high pass.
+    Returns float64 ``(H, W)`` on the sources' own radiometric scale (not rescaled
+    to [0, 1]), verified finite. Fail-closed on ragged/empty/non-finite input.
+    """
+    S = _as_stack(images)
+    H, W, K = S.shape
+    m = str(method).strip().lower()
+    if m not in FUSE_METHODS:
+        raise ValueError("method %r is not one of %s" % (method, FUSE_METHODS))
+
+    if m == "average":
+        return _finite_or_raise(S.mean(axis=2), "spec_fuse('average')")
+
+    if m == "pca":
+        X = S.reshape(-1, K)
+        Xc = X - X.mean(axis=0)
+        cov = (Xc.T @ Xc) / max(X.shape[0] - 1, 1)       # (K, K)
+        evals, V = np.linalg.eigh(cov)
+        v = V[:, int(np.argmax(evals))]                  # PC1 loadings, sign arbitrary
+        total = float(v.sum())
+        if abs(total) > _EPS:
+            w = v / total                                # sign-invariant, sums to 1
+        else:
+            # Perfectly anti-correlated sources: the loadings cancel and the
+            # sum-normalisation is undefined. Fall back to the flat average
+            # (documented) rather than return NaN.
+            w = np.full(K, 1.0 / K, np.float64)
+        return _finite_or_raise((S * w).sum(axis=2), "spec_fuse('pca')")
+
+    n = int(detail_size)
+    if n < 3 or n % 2 == 0:
+        raise ValueError("detail_size must be an odd integer >= 3, got %r" % (detail_size,))
+    from scipy import ndimage
+
+    detail = np.empty_like(S)
+    for i in range(K):
+        low = ndimage.uniform_filter(S[:, :, i], size=n, mode="nearest")
+        detail[:, :, i] = np.abs(S[:, :, i] - low)
+    pick = np.argmax(detail, axis=2)                     # ties -> lowest index
+    fused = np.take_along_axis(S, pick[:, :, None], axis=2)[:, :, 0]
+    return _finite_or_raise(np.ascontiguousarray(fused), "spec_fuse('max_abs_detail')")
+
+
 #: Introspectable list of the spectral operations this module exposes.
 SPECTRALOPS = (
     "read_envi", "write_envi",
