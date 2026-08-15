@@ -1168,6 +1168,7 @@ def build_window(model=None):
     m.addAction(act_open_img); m.addAction(act_demo)          # image in
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
+    m.addAction(act_samples)                                  # sample pipelines + code gallery
     m.addSeparator()
     m.addAction(act_save_res)                                 # result out
     m.addSeparator(); m.addAction(act_quit)
