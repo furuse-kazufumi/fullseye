@@ -969,7 +969,12 @@ def build_window(model=None):
     win._menus = {}
 
     def _menu(parent, title, key):
-        mm = parent.addMenu(title)
+        # Explicit-parent QMenu + a retained reference. The bare addMenu(str)
+        # overload can have its returned QMenu's C++ object collected by shiboken
+        # (which silently empties the menu); constructing with a parent hands Qt
+        # ownership so the submenu survives. Used for every menu and submenu.
+        mm = QtWidgets.QMenu(title, parent)
+        parent.addMenu(mm)
         win._menus[key] = mm
         return mm
 
