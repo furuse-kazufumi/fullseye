@@ -988,6 +988,22 @@ def test_sample_pipeline_loads_and_gallery_reachable():
     assert win._browse_samples is not None and callable(win._show_samples)
 
 
+def test_variable_window_thumbnails_and_iconic_control():
+    """v18.7 P4a: iconic variables (image/region) show a shape thumbnail and are
+    tagged iconic vs control — HDevelop's Variable Window model."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    for op in ("gaussian", "otsu"):
+        model.add_stage(op)
+    v = win._variables
+    v["refresh"]()
+    lst = v["list"]
+    n_icon = sum(1 for i in range(lst.count()) if not lst.item(i).icon().isNull())
+    assert n_icon >= 2                                   # input + stage outputs are iconic
+    texts = [lst.item(i).text() for i in range(lst.count())]
+    assert any("iconic" in t for t in texts)
+
+
 def test_tools_menu_holds_palette_and_language():
     """v18.7: Command palette (was in Run) and Language (was in Help) move to Tools."""
     _app()
