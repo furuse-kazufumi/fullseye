@@ -1198,12 +1198,14 @@ def spec_fuse(images, method: str = "pca", detail_size: int = 3) -> np.ndarray:
         evals, V = np.linalg.eigh(cov)
         v = V[:, int(np.argmax(evals))]                  # PC1 loadings, sign arbitrary
         total = float(v.sum())
-        if abs(total) > _EPS:
-            w = v / total                                # sign-invariant, sums to 1
+        # w = v / sum(v) is sign-invariant and sums to 1. But when the loadings
+        # nearly cancel (near-anti-correlated sources) sum(v) -> 0 and the weights
+        # blow up, throwing the fused pixel far outside the source hull. Guard
+        # RELATIVELY (not just against exact zero) against that ill-conditioning
+        # and fall back to the flat average, which is the documented degenerate rule.
+        if abs(total) > 1e-3 * (float(np.abs(v).sum()) + _EPS):
+            w = v / total
         else:
-            # Perfectly anti-correlated sources: the loadings cancel and the
-            # sum-normalisation is undefined. Fall back to the flat average
-            # (documented) rather than return NaN.
             w = np.full(K, 1.0 / K, np.float64)
         return _finite_or_raise((S * w).sum(axis=2), "spec_fuse('pca')")
 
