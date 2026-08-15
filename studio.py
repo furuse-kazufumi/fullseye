@@ -2449,6 +2449,7 @@ def build_window(model=None):
             return
         model.stages = list(stages)
         mark_dirty()
+        state["code_dirty"] = False           # the edits are now applied to the pipeline
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
         show_result()
