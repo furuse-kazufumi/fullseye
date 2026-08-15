@@ -402,8 +402,8 @@ Fullseye が売るもの、優先順:
 L3 Studio IDE      … エディタ / step / breakpoint / ★ウォッチ(型別レンダラ登録制)
 L2 Fullseye Script … lexer→parser→typed AST→(将来 bytecode)→VM
                      ★ロジックを持たない。L1 を LanguageOperatorSpec 経由で呼ぶだけ
-L1 Fullseye Lib    … 1 op = N backend。profile("studio"|"industrial") で選択
-                     numpy 実装 = 常に存在(= 正解オラクル)
+L1 Fullseye Lib    … 1 op = N backend。profile("studio"|"industrial"|"reference") で選択
+                     numpy 実装 = 常に存在(= 差分テストの正解オラクル)
                      native 実装 = 任意(cv2 / C / Rust)。差分テストで等価性を証明したものだけ有効
 ```
 
