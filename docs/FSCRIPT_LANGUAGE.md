@@ -77,6 +77,11 @@
   - `threshold`/`connection` 等の出力 Region は入力 Image の domain と交差。これで「ROI に限定した検査」が第一級表現になり、§4 の **domain ウォッチ**(image の domain を見る)がネイティブに成立。
   - 実装(増分): 既定は domain=全面の軽量ラッパ(matrix そのまま + `domain=None`=full)。`reduce_domain` 時のみ Region を保持。DLL 化時も `FImage` の C ABI(pixels ptr + domain run-length)で表現。
 - **式**: `:=`(代入)/ `=`(比較)/ `# != <= >= < >` / `and or not` / `+ - * / mod` / tuple `[..]`・`t[i]`・`|t|`・連結 / 括弧。**未実装構文は黙って解釈せず構文エラー**。
+- **★control = HALCON タプルモデル(ユーザー指摘 2026-08-15)**: HALCON では **control 変数は全て Tuple**(スカラ=長さ1のタプル)で、**1 つのタプル内に整数/実数/文字列が混在**できる(例 `['part', 5, 3.14, 'ok']`)。→ Fullseye も control 値を **異種混在 Tuple**(要素 = int / real / string、bool は int)としてモデル化。
+  - `Tuple` は不変値。要素型は保持(整数 5 と実数 5.0 を区別)。`t[i]`(0-based)・`|t|`(長さ)・`t1 + t2`(連結)・`subset/remove/insert/tuple_gen_const`。算術/比較は**要素ごとにブロードキャスト**(HALCON 準拠、長さ 1↔N・N↔N)。
+  - 演算子 `+` は **数値タプル同士=要素和、文字列を含む=連結** の HALCON 曖昧規則を踏襲(仕様書に明記、`.` を文字列連結専用にするかは要検討)。空タプル `[]`、混在時の型昇格規則(int→real)を定義。
+  - iconic(Image/Region/XLD/ObjectSet)は Tuple ではない別クラス(§3、混同禁止)。
+  - ★実装注意: 現 PoC(`fscript.py`)は control を素の float/int/str/list で扱う。**増分1の型システムを HALCON Tuple に置換**(`Tuple` クラス + 要素型保持 + broadcast 演算)する必要がある。
 - **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
 - **測定 multi-output**(Codex #8): `area_center(Region : : : Area, Row, Column)` の複数 control 出力を正式サポート(現 `api.apply` は先頭要素のみ float 化=情報欠落)。空領域/NaN/長さ不一致は定義済み例外か空 tuple、条件式で暗黙真偽化しない。
 
