@@ -207,6 +207,9 @@ def _pct(xs, q):
 
 def measure(mode: str, img, cycles: int, gc_enabled: bool, warmup: int = 5) -> Result:
     fn = MODES[mode]
+    shape = img.shape
+    if mode in U8_MODES:
+        img = (np.clip(img, 0.0, 1.0) * 255).astype(np.uint8)
     for _ in range(warmup):
         fn(img)
 
