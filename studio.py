@@ -382,8 +382,10 @@ QToolButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 9px; }}
 /* Dockable tool windows (VS/HDevelop-style). Compact title bars, square-ish. */
 QDockWidget {{ titlebar-close-icon:none; titlebar-normal-icon:none;
     font-size:11px; color:{MUTED}; }}
-QDockWidget::title {{ background:#12141b; padding:3px 8px; border-bottom:1px solid #262b38;
-    text-transform:uppercase; letter-spacing:1px; }}
+QDockWidget::title {{ background:#161922; padding:7px 8px; border:1px solid #262b38;
+    border-bottom:2px solid {TEAL}; text-transform:uppercase; letter-spacing:1px;
+    text-align:left; }}
+QDockWidget::title:hover {{ background:{NAVY_2}; }}
 QDockWidget::close-button, QDockWidget::float-button {{
     background:transparent; border:none; padding:0; icon-size:12px; }}
 QMdiArea {{ background:{NAVY_0}; }}
