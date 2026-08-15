@@ -2422,6 +2422,7 @@ def build_window(model=None):
             for nm in sorted(win._preset_store):
                 dm.addAction(nm).triggered.connect(lambda _=False, n=nm: delete_layout_preset(n))
     win._rebuild_layouts_menu = _rebuild_layouts_menu
+    win._layouts_menu = layouts_menu
 
     # per-panel float submenu + graphics detach/reattach (parent = Windows menu)
     menu_windows.addSeparator()
