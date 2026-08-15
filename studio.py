@@ -310,12 +310,18 @@ def step_summary(st):
     return str(k)
 
 
-def apply_display(val, mode):
+def apply_display(val, mode, base=None):
     """Map a 2-D result to an RGB image for the chosen display mode: 'gray', any
-    false-colour palette name, 'shaded relief', or 'height (color)'. Non-2-D or
-    already-color results are returned unchanged. (Headless, testable.)"""
+    false-colour palette name, 'shaded relief', 'height (color)', or 'region overlay'
+    (blend a binary region onto *base* — HDevelop dev_display of a region on the
+    current image). Non-2-D or already-color results are returned unchanged.
+    (Headless, testable.)"""
     if not isinstance(val, np.ndarray) or val.ndim != 2:
         return val
+    if mode == "region overlay":
+        if _is_binary(val) and isinstance(base, np.ndarray) and base.shape[:2] == val.shape:
+            return imgio.overlay_mask(base, val, color=(0.96, 0.62, 0.14), alpha=0.5)
+        return val                        # not a region, or no matching base -> raw
     if mode in ("gray", None):
         return val
     if mode == "shaded relief":
