@@ -1270,9 +1270,10 @@ def build_window(model=None):
     image_panel.setMinimumSize(320, 260)
 
     display = QtWidgets.QComboBox()
-    display.addItems(["gray", "shaded relief", "height (color)"]
+    display.addItems(["gray", "region overlay", "shaded relief", "height (color)"]
                      + [c for c in imgio.COLORMAPS if c != "gray"])
-    display.setToolTip("Colour-map the current 2-D result for display")
+    display.setToolTip("How to render the 2-D result: gray, region overlay (a region drawn "
+                       "on the source image), a false-colour palette, shaded relief, or height")
     b_3d = QtWidgets.QPushButton("3D surface"); b_3d.setToolTip("Rotatable 3-D surface (Ctrl+3)")
     b_loadb = QtWidgets.QPushButton("Load frame B…")
     b_loadb.setToolTip("Load a second frame for two-frame perception (flow / stereo)")
