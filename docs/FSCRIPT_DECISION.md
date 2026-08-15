@@ -359,6 +359,12 @@ Fullseye が売るもの、優先順:
 - `FImage(pixels, dtype, value_range, domain: Region)` — **値域を型が持つ**(欠陥 2 の根治)。
   `domain` は HALCON 忠実(既定=全面、`reduce_domain`/`full_domain`/`get_domain`)。
 - `Region` / `XLD` / `ObjectSet(label_image, ids, **feats**)` / `handle`(不透明)を**別クラス**として定義。
+- ★**Region の内部表現は将来 run-length encoding(RLE)に変えられるよう、API を表現非依存に切る**。
+  HALCON の Region は RLE で格納されており(公式に `runlength_features` が run 数/バイト数を返す)、
+  領域演算が **O(run 数)** で済む。現 PoC は密 bool マスク = **O(画素数)**。
+  小さな ROI を多数扱う検査(HALCON が得意な形)では**この差が支配的**になる。
+  → 増分 1 では密マスクのままでよいが、**`Region` の公開 API に `.mask` を露出させない**
+  (`area()` / `bbox()` / 集合演算だけを見せる)ことで、後から RLE へ差し替え可能に保つ。
   ★`ObjectSet` は**測定済み特徴量を id 索引で保持して運ぶ**(§1.7 の実測: これが無いと同じ連結成分パスを
   3 回走らせて 2.5 倍遅くなる)。`select` は id フィルタのみでラベル画像と特徴量表を共有する。
 - `Tuple` = HALCON 準拠の異種混在タプル(int/real/string、スカラ=長さ 1、要素ごとブロードキャスト)。
