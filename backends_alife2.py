@@ -77,9 +77,10 @@ Operators (a, b are the two knobs, both in [0,1])
                      4 orthogonal neighbours. The boundary is **dissipative**
                      (grains that leave the grid are lost -- no wrap-around,
                      otherwise the pile could never stabilise). ``b`` sets the
-                     number of parallel relaxation sweeps, and for b >= 0.9 the
-                     pile is relaxed all the way to its stable configuration.
-                     Returns h / max(h).
+                     number of parallel relaxation sweeps; for b >= 0.9 it
+                     relaxes toward stability (work-bounded, so a large maximally-
+                     supercritical pile is only partially relaxed). Returns
+                     h / max(h) in [0, 1].
 
 Honest limitations
 ------------------
