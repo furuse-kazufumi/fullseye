@@ -1230,4 +1230,5 @@ SPECTRALOPS = (
     "spec_pca", "spec_mnf",
     "spec_unmix", "spec_endmembers_ppi",
     "spec_continuum_removal",
+    "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
 )
