@@ -320,9 +320,14 @@ def test_dcs_handles_a_fully_correlated_cube_without_nan():
     assert np.isfinite(out).all()
     assert not np.isnan(out).any()
     assert np.array_equal(out, sp.spec_decorrelation_stretch(cube))   # deterministic
-    # the one real axis is still stretched to the target std
-    s_ref = float(np.mean(np.std(cube.reshape(-1, 5), axis=0, ddof=1)))
-    assert np.isclose(float(np.std(out[:, :, 0], ddof=1)), s_ref, rtol=1e-9)
+    # identical bands in => identical bands out (the transform is symmetric)
+    for j in range(1, 5):
+        assert np.allclose(out[:, :, j], out[:, :, 0], atol=1e-12), j
+    # The one surviving axis is the diagonal v1 = 1/sqrt(k) * (1,...,1): stretching it
+    # to std s puts s / sqrt(k) into each band. Analytic, recomputed here.
+    k = 5
+    s_ref = float(np.mean(np.std(cube.reshape(-1, k), axis=0, ddof=1)))
+    assert np.isclose(float(np.std(out[:, :, 0], ddof=1)), s_ref / np.sqrt(k), rtol=1e-9)
 
 
 def test_dcs_on_a_constant_cube_is_finite():
