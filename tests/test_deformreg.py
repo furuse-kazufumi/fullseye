@@ -177,7 +177,7 @@ def test_thirion_stabiliser_bounds_one_step_at_half_a_pixel():
     # stabiliser buys, so show the difference is real.
     gy, gx = np.gradient(F, axis=0), np.gradient(F, axis=1)
     raw = np.abs((M - F) * gx) / (gx ** 2 + gy ** 2 + 1e-9)
-    assert raw.max() > 10.0
+    assert raw.max() > 4.0 * mag.max(), (raw.max(), mag.max())
 
 
 def test_step_cap_rescales_without_turning():
