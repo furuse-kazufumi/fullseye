@@ -2284,14 +2284,41 @@ def build_window(model=None):
     win._op_completer = op_completer
     win._select_op_in_list = _select_op_in_list
     # pipeline + knobs
+    def _knob_label(letter, role, curated):
+        """The a/b label text for the selected op: its role's short name when known,
+        "(–)" when the op curates the knob as genuinely unused, else the bare letter
+        (an un-curated op may still use the knob, so we never claim it is unused)."""
+        if role:                                  # a curated, non-empty role
+            short = role
+            for sep in ("—", "=", "("):
+                short = short.split(sep)[0]
+            short = short.strip()[:16]
+            return "%s · %s" % (letter, short) if short else letter
+        if curated and role == "":                # curated AND explicitly empty = unused
+            return "%s (–)" % letter
+        return letter                             # un-curated op: keep it generic
+
     def on_op_selected(cur, _prev=None):
         if cur is None:
             op_param.setText("select an operator to see its signature")
+            lbl_a.setText("a"); lbl_b.setText("b")
+            op_a_spin.setEnabled(True); op_b_spin.setEnabled(True)
             b_insert.setEnabled(False); b_help.setEnabled(False); b_run_once.setEnabled(False); return
-        row = _op_row(cur.data(QtCore.Qt.UserRole))
+        name = cur.data(QtCore.Qt.UserRole)
+        row = _op_row(name)
         op_param.setText(op_signature_detail(row) if row else cur.text())
+        curated = name in _ARG_ROLES
+        a_role, b_role = op_arg_roles(name)
+        lbl_a.setText(_knob_label("a", a_role, curated))
+        lbl_b.setText(_knob_label("b", b_role, curated))
+        # only disable a knob we KNOW is unused (curated ""); never for un-curated ops
+        op_a_spin.setEnabled(not (curated and a_role == ""))
+        op_b_spin.setEnabled(not (curated and b_role == ""))
+        lbl_a.setToolTip(a_role or ("(unused by %s)" % name if curated else "argument a"))
+        lbl_b.setToolTip(b_role or ("(unused by %s)" % name if curated else "argument b"))
         b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
+    win._op_arg_labels = (lbl_a, lbl_b)
     b_insert.clicked.connect(
         lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
     b_run_once.clicked.connect(run_op_once)
