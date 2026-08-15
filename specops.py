@@ -72,6 +72,22 @@ Honest limitations (nothing here claims more than its unit test proves):
     estimate — here a simple spatial-difference estimate, which assumes the noise
     is spatially white and the signal is not.
   * :func:`spec_continuum_removal` assumes positive reflectance-like spectra.
+  * :func:`spec_pansharpen` does **no resampling and no co-registration** — the cube
+    must already sit on the panchromatic grid (same H x W). Every method here is a
+    *component-substitution* scheme, so all of them trade spectral fidelity for
+    spatial detail: Brovey assumes non-negative reflectance and forces the pan
+    brightness onto the band ratios, IHS injects the same additive detail into every
+    band, and PC1 substitution only preserves the spectral information that does not
+    live in the first principal component.
+  * :func:`spec_decorrelation_stretch` is a **global** (whole-scene) linear
+    transform: directions whose variance is numerically zero (a fully correlated
+    cube) carry no information and are zeroed rather than divided by ~0, and
+    near-degenerate directions legitimately receive a very large gain — that noise
+    amplification is inherent to the method, not a bug.
+  * :func:`spec_fuse` is **single-scale**: the ``max_abs_detail`` rule is a
+    box-high-pass "choose max activity" selector, not a multiresolution pyramid /
+    wavelet fusion, so it can switch source mid-structure and leave a seam. It also
+    assumes the sources are already co-registered.
 
 Every reader is **fail-closed** on untrusted input: the header magic and required
 fields are validated, the declared cube size is checked against the bytes actually
