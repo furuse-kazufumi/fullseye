@@ -285,7 +285,9 @@ def demons_register(fixed, moving, iters: int = 50, sigma: float = 1.5,
             den = g2 + diff * diff + e
             vx = diff * gx / den
             vy = diff * gy / den
-            # cap the per-iteration step (ITK MaximumUpdateStepLength)
+            # optional extra cap on the step (ITK MaximumUpdateStepLength); the
+            # stabilised force is already <= 0.5 px, so this only bites if the
+            # caller asked for a tighter step.
             mag = np.hypot(vx, vy)
             scale = np.minimum(1.0, cap / np.maximum(mag, _EPS))
             vx = vx * scale
