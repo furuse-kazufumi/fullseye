@@ -1005,6 +1005,7 @@ def test_current_graphics_window_model():
     _app()
     m = studio.PipelineModel(studio.demo_image(48))
     m.add_stage("gaussian"); m.add_stage("otsu")
+    from PySide6 import QtCore
     win, model = studio.build_window(m)
     disp = win._variables["display"]; lst = win._variables["list"]
     win._variables["refresh"](); lst.setCurrentRow(1)          # an iconic variable
