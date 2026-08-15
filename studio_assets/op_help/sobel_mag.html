@@ -5,13 +5,29 @@ image with a horizontal and a vertical 3×3 derivative kernel and returns
 √(Gx² + Gy²). Bright pixels mark strong intensity transitions — i.e. <b>edges</b>.
 The Sobel kernel combines differentiation with a little smoothing, so it is more
 noise-tolerant than a bare finite difference.</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Knobs</h3>
-<ul style="margin:2px 0 2px 18px;padding:0">
-  <li><b>a</b> — output gain / normalisation of the magnitude.</li>
-  <li><b>b</b> — reserved.</li>
-</ul>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Tips</h3>
-<p>Pre-smooth with <code style="color:#22d3bf">gaussian</code> to avoid amplifying
-noise, then follow with <code style="color:#22d3bf">otsu</code> or
-<code style="color:#22d3bf">threshold</code> to turn the edge map into a region.</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Arguments</h3>
+<table cellpadding="3" style="color:#e2e5ec">
+  <tr><td><b>a</b></td><td>output gain / normalisation of the magnitude.</td></tr>
+  <tr><td><b>b</b></td><td>reserved.</td></tr>
+</table>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Usage</h3>
+<p>Pre-smooth with <a style="color:#22d3bf" href="op:gaussian">gaussian</a> to avoid
+amplifying noise, then follow with a threshold to turn the edge map into a region.</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Sample code</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gaussian 0.3 0.5
+sobel_mag 0.6 0.5
+otsu 0.5 0.5</pre>
+<p>▸ <a style="color:#22d3bf" href="sample:gaussian%200.3%200.5%0Asobel_mag%200.6%200.5%0Aotsu%200.5%200.5">Load this pipeline</a>
+&nbsp;·&nbsp; <a style="color:#f5a524" href="run:gaussian%200.3%200.5%0Asobel_mag%200.6%200.5%0Aotsu%200.5%200.5">Load &amp; run</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Related operators</h3>
+<p><a style="color:#22d3bf" href="op:laplace">laplace</a> ·
+<a style="color:#22d3bf" href="op:prewitt_mag">prewitt_mag</a> ·
+<a style="color:#22d3bf" href="op:dog">dog</a> ·
+<a style="color:#22d3bf" href="op:canny">canny</a> ·
+<a style="color:#22d3bf" href="op:otsu">otsu</a></p>
+
 <p style="color:#8b91a0;font-size:11px">Provenance: Sobel 3×3 derivative kernels (numpy/scipy). See docs/PROVENANCE.md.</p>
