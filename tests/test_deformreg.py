@@ -121,9 +121,9 @@ def test_warp_subpixel_field_is_exact_bilinear():
     ref = 0.5 * img[:, :-1] + 0.5 * img[:, 1:]          # value midway between x-1 and x
     assert np.allclose(out[:, 1:], ref, atol=1e-12)
     # a 2-D sub-pixel offset, recomputed from the four corners
-    out2 = D.warp_by_field(img, 0.25, 0.75)             # samples (y-0.75, x-0.25)
+    out2 = D.warp_by_field(img, 0.25, 0.75)             # fx=0.25, fy=0.75
     y, x = 10, 12
-    fy, fx = 0.25, 0.75
+    fx, fy = 0.25, 0.75                                  # samples (y-0.75, x-0.25)
     y0, x0 = y - 1, x - 1                                # floor(y-0.75)=y-1, floor(x-0.25)=x-1
     wy, wx = (y - fy) - y0, (x - fx) - x0
     exp = ((1 - wy) * (1 - wx) * img[y0, x0] + (1 - wy) * wx * img[y0, x0 + 1]
