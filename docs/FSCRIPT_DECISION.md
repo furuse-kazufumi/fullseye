@@ -61,6 +61,16 @@ Codex が一次資料で確認した結論(確信度: 高):
 なお「日本では SIer 文化ゆえ Python が拒否される」「装置保守年数は必ず 15 年」といった一般化は、
 公的統計では**裏付けられなかった**(IPA 2012 年組込み調査で C 60.3% / C++・C# 21.0% という古いデータのみ)。
 
+**★敵対検証が潰した「Python 不利」論(いずれも Python 固有ではなかった)**:
+
+| よく聞く反論 | 検証の結論 |
+|---|---|
+| Cognex / Keyence CV-X / OMRON FH に Python の入口が無い | **C++ / C# にも無い**。これらは専用 GUI・独自マクロ・専用コントローラであり、真の分岐は「専用コントローラを買うか PC ベースで作るか」= **言語選択と直交** |
+| CPython は 5 年 EOL で装置寿命とズレる | **比較先の .NET の方が短い**(現行 .NET は LTS 3 年 / STS 2 年)。同じ論法なら C# の方がズレは大きい |
+| Euresys 公式が「性能が要る箇所は C++/C# で書き直す前提」と明記 | **一次情報の誤読**。原文は *"programming a specific functionality in more runtime efficient languages such as C++/C# is still possible"* = **選択肢の提示**であって前提ではない |
+| PySide6 の `QImage(numpy_buffer)` は use-after-free になる | **Qt が全言語に課している API 契約**。Qt 公式は C++ の同一コンストラクタにも同じ寿命要件を明記しており、Python 固有のコストではない |
+| 凍結配布が 345 MB で C# の単一 exe(数十 MB)より 10-50 倍重い | 成果物の中身が違う。**345.9 MB の 94.9% は OpenCV / Qt / OpenBLAS などのネイティブバイナリで、CPython 本体は 2.8%**。同機能を C# で作れば同じネイティブを積む |
+
 ### 1.3 ★HALCON は本番にインタプリタを出荷している(MVTec 公式で確認)
 
 > HDevEngine is "**an interpreter-based library that loads and executes HDevelop programs and procedures at runtime**"
