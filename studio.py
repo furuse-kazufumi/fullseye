@@ -771,7 +771,8 @@ def build_window(model=None):
         status.showMessage(msg, 6000)
 
     # -- left: operator browser + samples ------------------------------------ #
-    left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(10)
+    left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(6)
+    lv.setContentsMargins(6, 6, 6, 6)
     samples = QtWidgets.QComboBox(); samples.addItem("— load a sample —")
     for nm in recipes.names():
         samples.addItem(nm)
