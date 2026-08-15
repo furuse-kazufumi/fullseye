@@ -134,10 +134,21 @@ endfor
 
 
 def test_value_kind_classifies_iconic_and_control():
+    grey = _scene() * 0.6 + np.linspace(0, 0.3, 64)[None, :]     # genuinely grey
     v = run("Region := threshold(Image, 0.5, 1.0)\nObjects := connection(Region)\n"
-            "N := count_obj(Objects)", Image=_scene())
+            "N := count_obj(Objects)", Image=grey)
     kinds = {k: fscript.value_kind(x) for k, x in v.items()}
     assert kinds["Image"] == "image"
     assert kinds["Region"] == "region"
     assert kinds["Objects"] == "object"
     assert kinds["N"] == "control"
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "Known type-model defect: iconic sort is INFERRED from pixel content "
+    "(`_is_region` = at most two distinct values), so a legitimate grey image "
+    "that happens to be binary is reported as a Region. The fix is the typed "
+    "L1 model (FImage(pixels, domain) / Region as distinct classes) in "
+    "docs/FSCRIPT_LANGUAGE.md section 2 — the sort must be carried, not guessed."))
+def test_binary_valued_image_is_not_mistaken_for_a_region():
+    assert fscript.value_kind(_scene()) == "image"
