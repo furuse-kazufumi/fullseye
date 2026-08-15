@@ -2967,6 +2967,11 @@ def build_window(model=None):
             if _kw in _t:
                 try:
                     _b.setIcon(_sty.standardIcon(_sp))
+                    if not _b.toolTip():
+                        _b.setToolTip(_b.text())      # keep the name on hover
+                    _b.setText("")                    # icon-only = compact (no wasted space)
+                    _b.setMinimumWidth(30)
+                    _b.setCursor(QtCore.Qt.PointingHandCursor)
                 except Exception:
                     pass
                 break
