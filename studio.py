@@ -2129,6 +2129,7 @@ def build_window(model=None):
     def remove():
         i = selected_index()
         if 0 <= i < len(model.stages):
+            push_undo()
             model.remove_stage(i)
             mark_dirty()
             n = len(model.stages)
