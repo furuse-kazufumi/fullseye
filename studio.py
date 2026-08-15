@@ -1674,6 +1674,24 @@ def build_window(model=None):
         "run_all": act_runall, "palette": act_palette, "shortcuts": act_shortcuts,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
     }
+    # Default (factory) panel layout — captured before any saved layout is applied,
+    # so "Reset panel layout" always has somewhere to go back to.
+    win._default_state = win.saveState()
+    try:                                     # restore the user's remembered geometry + layout
+        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+            s = QtCore.QSettings("Fullseye", "Studio")
+            geo = s.value("geometry"); st = s.value("windowState")
+            if geo:
+                win.restoreGeometry(geo)
+            if st:
+                win.restoreState(st)
+    except Exception:
+        pass
+    try:
+        gsub.showMaximized()                 # the primary graphics window fills the workspace
+    except Exception:
+        pass
+
     refresh_stage_list(); show_result()      # refresh_stage_list syncs the knob panel
     state["dirty"] = False                   # a freshly-built window has nothing to lose
     state["renders"] = 0
