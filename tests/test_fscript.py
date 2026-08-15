@@ -144,6 +144,56 @@ def test_value_kind_classifies_iconic_and_control():
     assert kinds["N"] == "control"
 
 
+# --------------------------------------------------------------------------- #
+# Pinned semantic defects — all one root cause: the language has no type model of
+# its own and inherits numpy/Python semantics.  Each of these returns a WRONG
+# ANSWER SILENTLY, and each survives a rewrite in any implementation language,
+# so they are the increment-1 blockers named in docs/FSCRIPT_LANGUAGE.md.
+# --------------------------------------------------------------------------- #
+@pytest.mark.xfail(strict=True, reason=(
+    "Known L1 defect: `_norm01` divides by the image maximum, so the meaning of a "
+    "threshold depends on the image CONTENT — one specular highlight or hot pixel "
+    "elsewhere in the frame silently changes the judgement. An inspection library "
+    "must carry the value range in the image type (FImage: dtype + range + domain), "
+    "not infer it per call. See docs/FSCRIPT_LANGUAGE.md section 2."))
+def test_threshold_is_independent_of_unrelated_bright_pixels():
+    part = np.zeros((32, 32)); part[8:24, 8:24] = 120.0
+    hot = part.copy(); hot[0, 0] = 250.0
+    a = run("R := threshold(Image, 0.5, 1.0)\nA := area(R)", Image=part)["A"]
+    b = run("R := threshold(Image, 0.5, 1.0)\nA := area(R)", Image=hot)["A"]
+    assert a == b
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "Known control-model defect: '+' concatenates two numeric tuples. HALCON's "
+    "tuple '+' is element-wise (with broadcast); concatenation is `[t1, t2]`. "
+    "Shipping Python list semantics as the language contract is the migration trap "
+    "flagged in the design review. See docs/FSCRIPT_LANGUAGE.md section 2 (Tuple)."))
+def test_numeric_tuple_plus_is_elementwise_like_halcon():
+    assert run("S := [1,2,3] + [10,20,30]")["S"] == [11, 22, 33]
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "Known defect: an iconic value is implicitly coerced to a bool via ndarray.any() "
+    "in a condition. The spec says iconic values must not be implicitly truthy — "
+    "`if (Region)` should be a type error, forcing `if (|Objects| > 0)` or an "
+    "explicit predicate. See docs/FSCRIPT_LANGUAGE.md section 2."))
+def test_iconic_in_a_condition_is_a_type_error():
+    with pytest.raises(fscript.FScriptError):
+        fscript.run("R := threshold(Image, 0.5, 1.0)\nif (R)\n  F := 1\nendif",
+                    images={"Image": _scene()})
+
+
+@pytest.mark.xfail(strict=True, reason=(
+    "Known defect: comparing an image against a scalar yields an ndarray, which a "
+    "condition then collapses with .any() — so `if (Image = 0)` reads as 'any pixel "
+    "is 0', not 'the image is 0'. Element-wise comparison of an iconic value must be "
+    "a type error or an explicit reduction. See docs/FSCRIPT_LANGUAGE.md section 2."))
+def test_image_comparison_does_not_silently_reduce_with_any():
+    with pytest.raises(fscript.FScriptError):
+        fscript.run("if (Image = 0)\n  C := 1\nendif", images={"Image": _scene()})
+
+
 @pytest.mark.xfail(strict=True, reason=(
     "Known type-model defect: iconic sort is INFERRED from pixel content "
     "(`_is_region` = at most two distinct values), so a legitimate grey image "
