@@ -150,7 +150,29 @@ def test_op_detail_and_tooltip():
     row2 = dict(row, halcon="")
     assert "HALCON" not in studio.op_detail(row2)
     tip = studio.op_tooltip(row)
-    assert "gauss_filter" in tip and "filter" in tip and "knobs" in tip
+    assert "gauss_filter" in tip and "image → image" in tip and "a:" in tip
+
+
+def test_op_arg_roles_and_signature_detail():
+    """v18.7 P2: the operator panel can now answer 'what do the arguments do?'
+    — curated knob roles for common ops + the implementation source as a universal
+    fallback (honest: shows exactly how a and b are used)."""
+    a_role, b_role = studio.op_arg_roles("gaussian")
+    assert a_role and "σ" in a_role                 # a controls the Gaussian sigma
+    src = studio.op_impl_source("gaussian")
+    assert "gaussian_filter" in src and "a" in src  # source shows a's actual use
+    row = {"name": "gaussian", "halcon": "gauss_filter", "category": "smoothing",
+           "in_sort": "image", "out_sort": "image"}
+    detail = studio.op_signature_detail(row)
+    assert "knob a" in detail and "impl:" in detail and "gauss_filter" in detail
+    # an unknown op is handled gracefully
+    assert studio.op_arg_roles("no_such_op_xyz") == (None, None)
+    assert studio.op_impl_source("no_such_op_xyz") == ""
+    # a real but uncurated op still gets a signature (impl source), never crashes
+    other = next(n for n in api.op_names() if n not in ("gaussian",))
+    d2 = studio.op_signature_detail({"name": other, "halcon": "", "category": "x",
+                                     "in_sort": "image", "out_sort": "image"})
+    assert "knob a" in d2
 
 
 def test_window_actions_and_shortcuts():
