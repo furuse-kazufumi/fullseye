@@ -6,6 +6,12 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **v18.8 (2026-08-15, Opus5[1m]/ultracode) = 自律 UI 操作デバッグ・ハーネス + クラッシュ級バグ 3 件修正 + step 実行のショートカット化.** ユーザー指示「UIと操作系の修正・デバッグを自律で / 操作方法は外部AIと審議」。
+> - **★自律 UI ハーネス** `tools/studio_ui_harness.py` = offscreen subprocess で Studio を起動し **実マウス/キーイベント**を全ボタン/アクション/**dock ドラッグ**/変数/右クリックへ注入(187 ステップ)。crash 帰属(step-log 前置 + faulthandler)+ hang 回避(modal/popup watchdog)+ slot 例外捕捉。**実イベントでしか出ない 3 クラッシュを自動検出→修正**(regression 付き studio 69→**74**):(1)3D surface ボタンで **Q3DSurface() の GL 不在 segfault** → `_opengl_available()` プローブで degrade(Remote Desktop/ソフトGLでも安全)、(2)`update_actions` が削除済みボタンで **RuntimeError** → `_enable` で削除耐性化、(3)**プライマリ Graphics 窓を閉じると常駐 view+グローバル操作ボタンが破棄** → close 拒否 event filter + detach 拒否で**常駐窓化**(=Codex #2)。dock ドラッグは全 25 パターン crash せず。
+> - **★step 実行等をショートカット化**(ユーザー指示)= debugger 風ファンクションキー **F5=Run all / F6=Step / Shift+F5=Reset** を **window-scoped**(Ctrl+Arrow はパイプラインリスト scoped=タイプ中誤発火回避のため)で追加。QTest 実キー注入で Program エディタフォーカスからも発火を検証。Run メニュー + Keyboard shortcuts help に自動掲載。
+> - **★操作仕様を外部 AI(Codex read-only)と審議**(「用途を考えて批判」)= 12 件の code-backed 指摘を一次検証。最大クラスタ=**カレント Graphics 窓モデル欠如**(Codex #1–5)を次の実装対象に確定(常駐化済で土台あり)。詳細 = `docs/HDEVELOP_FIDELITY.md`『v18.8 実装記録 + 操作仕様・審議』。
+> - full suite **4297→4300 passed**(studio +3、回帰なし)。全 local(auto-commit hook)。
+>
 > **v18.7 (2026-08-15, Opus5[1m]/ultracode) = Studio を HDevelop 忠実な IDE へ / P1 メニュー再構成.** ユーザー指摘「メニュー構成がおかしい・一般 IDE でない」+ 原則「IDE の画面はシンプルかつ多機能」([[feedback_ide_design_simple_multifunctional]])を受け、**HDevelop 仕様を Perplexity で確認**(iconic 変数モデル / Operator 窓 = コンボ選択+引数行 / 制御フロー if-else-for-while / メニュー構成)した上でメニューを標準 IDE 構成へ再編:
 > - **Window 過積載を解消** = Panels / Graphics windows / Layout の3 submenu へ階層化(v18.6 で平坦に積んだ float/detach/layout を整理)。"Windows"→"Window"(単数・HIG 準拠)。
 > - **View に Display mode(色マップ)を新設** = 右パネル combo のみだった 18 色マップを View から辿れるようにし双方向同期。
