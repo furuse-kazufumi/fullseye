@@ -6,6 +6,13 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **v18.7 (2026-08-15, Opus5[1m]/ultracode) = Studio を HDevelop 忠実な IDE へ / P1 メニュー再構成.** ユーザー指摘「メニュー構成がおかしい・一般 IDE でない」+ 原則「IDE の画面はシンプルかつ多機能」([[feedback_ide_design_simple_multifunctional]])を受け、**HDevelop 仕様を Perplexity で確認**(iconic 変数モデル / Operator 窓 = コンボ選択+引数行 / 制御フロー if-else-for-while / メニュー構成)した上でメニューを標準 IDE 構成へ再編:
+> - **Window 過積載を解消** = Panels / Graphics windows / Layout の3 submenu へ階層化(v18.6 で平坦に積んだ float/detach/layout を整理)。"Windows"→"Window"(単数・HIG 準拠)。
+> - **View に Display mode(色マップ)を新設** = 右パネル combo のみだった 18 色マップを View から辿れるようにし双方向同期。
+> - **Command palette を Run→Tools、Language を Help→Tools** へ(意味論の是正)。File を 画像入力 / pipeline 文書 / 結果 / Quit の群に整理。
+> - **★submenu 実バグ修正** = `QMenu.addMenu(str)` の返す submenu の C++ 実体が shiboken に回収され**メニューが空になり得た**問題を、明示親付き `QMenu(title, parent)` 構築 + win 保持で解消(テストで実証・全 submenu に適用)。
+> テスト = studio 53→**60 passed**(Window submenu 構造 / View Display mode 同期 / Tools 配置を新規)、**full suite 4285→4288 passed / 0 fail**(回帰なし)。全 local commit・push は都度。**★HDevelop 忠実化ロードマップ**(ユーザー要望を統合): P1 メニュー[済] → P2 Operator ブラウザ(コンボ選択+引数名/型/デフォルト/doc 表示・引数が判断できる)→ P3 サンプル/スクリプト読込導線 → P4 iconic 変数モデル(image/Region の与え方・Variable 窓 iconic/control 分離・ダブルクリック→Graphics 表示・Region overlay)+ 各パネルを自己完結化・**アイコンツールバーでコンパクト化**(ユーザー指摘「HDevelop の各窓は完結したソフト・ボタンはアイコン」)→ P5 HDevelop script 構文・制御フロー(if/else/for/while、`op (params)`、`:=`、`*` コメント)。正本 = 本 STATUS『v18.7』。
+>
 > **v18.6 (2026-08-15, Opus5[1m]/ultracode) = Fullseye Studio 窓レイアウト自由度の拡張(ユーザー指示「窓/レイアウト配置の自由度をさらに上げる」).** v18.5 の Studio v2(ドック+MDI+Float-all)を「不十分」との評価→ `studio.py` に4方向追加(全て offscreen headless テスト付き):
 > **(1) 名前付きレイアウトプリセット**=現在の geometry+dock/toolbar 配置(`saveState`/`saveGeometry`)を任意名で保存→適用→削除(QSettings 永続・offscreen は in-memory)。組込3種 `Balanced (default)` / `Graphics focus`(操作/表示/コード/変数 dock を隠しグラフィクス最大化)/ `Code focus`(Program dock 前面)。Windows▸Layouts を動的再構築=**フラット action 設計**(PySide6 `addMenu(str)` の submenu が Python 参照喪失で shiboken 削除される既知落とし穴を回避、テストで実証・修正済)。
 > **(2) グラフィクス窓の MDI 外 detach/reattach**=アクティブ graphics サブ窓を独立トップレベル窓へ pop out(`Ctrl+Shift+D`)/復帰。image view は描画継続。
