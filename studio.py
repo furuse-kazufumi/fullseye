@@ -2183,6 +2183,67 @@ def build_window(model=None):
         "run_all": act_runall, "palette": act_palette, "shortcuts": act_shortcuts,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
     }
+    # -- multi-monitor: pop every tool panel out as its own top-level window --- #
+    def float_all_panels(floating=True):
+        for d in win._docks.values():
+            d.setFloating(floating)
+        if win._flash:
+            win._flash("panels floated for multi-display" if floating else "panels re-docked")
+    act_float_all = _act("Float all panels (multi-display)", None,
+                         "Detach every tool panel to its own window — move them across monitors")
+    act_dock_all = _act("Dock all panels", None, "Re-dock every floated tool panel")
+    menu_windows.addSeparator()
+    menu_windows.addAction(act_float_all); menu_windows.addAction(act_dock_all)
+    act_float_all.triggered.connect(lambda: float_all_panels(True))
+    act_dock_all.triggered.connect(lambda: float_all_panels(False))
+    win._float_all_panels = float_all_panels
+
+    # -- tooltip / help localisation (en / ja / zh) --------------------------- #
+    win._tt_en = {w: w.toolTip() for w in win.findChildren(QtWidgets.QWidget) if w.toolTip()}
+    win._lang = "en"
+    win._lang_actions = {}
+
+    def apply_language(lang):
+        win._lang = lang if lang in ("en", "ja", "zh") else "en"
+        for w, en in win._tt_en.items():
+            try:
+                w.setToolTip(en if win._lang == "en"
+                             else TOOLTIPS_I18N.get(en, {}).get(win._lang, en))
+            except Exception:
+                pass
+        for code, a in win._lang_actions.items():
+            a.setChecked(code == win._lang)
+        try:
+            if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+                QtCore.QSettings("Fullseye", "Studio").setValue("lang", win._lang)
+        except Exception:
+            pass
+    win._apply_language = apply_language
+
+    _lang_group = QtGui.QActionGroup(win); _lang_group.setExclusive(True)
+    for _code, _label in (("en", "English"), ("ja", "日本語"), ("zh", "中文")):
+        _a = QtGui.QAction(_label, win); _a.setCheckable(True); _lang_group.addAction(_a)
+        lang_menu.addAction(_a); win._lang_actions[_code] = _a
+        _a.triggered.connect(lambda _checked=False, c=_code: apply_language(c))
+    win._lang_actions["en"].setChecked(True)
+
+    def show_guide():
+        try:
+            QtWidgets.QMessageBox.information(win, "Fullseye Studio — guide",
+                                             HELP_I18N.get(win._lang, HELP_I18N["en"]))
+        except Exception:
+            pass
+    act_guide.triggered.connect(show_guide)
+    win._show_guide = show_guide
+
+    try:                                     # restore the remembered language
+        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+            _lang = QtCore.QSettings("Fullseye", "Studio").value("lang")
+            if _lang in ("en", "ja", "zh"):
+                apply_language(_lang)
+    except Exception:
+        pass
+
     # Default (factory) panel layout — captured before any saved layout is applied,
     # so "Reset panel layout" always has somewhere to go back to.
     win._default_state = win.saveState()

@@ -1,0 +1,18 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">gaussian <span style="color:#8b91a0;font-size:11px">· smoothing · HALCON: gauss_filter</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image → image</b></p>
+<p>Convolves the image with an isotropic 2-D Gaussian kernel. It is the canonical
+<b>linear low-pass filter</b>: it suppresses high-frequency noise while preserving
+the overall structure, at the cost of blurring edges. Because a Gaussian is
+separable and scale-space optimal, it is the usual first step before gradient,
+edge or threshold operators.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Knobs</h3>
+<ul style="margin:2px 0 2px 18px;padding:0">
+  <li><b>a</b> — kernel <i>sigma</i> (blur radius). Small a = gentle denoise,
+      large a = strong blur. Map ≈ σ = 0.3 + 2.7·a.</li>
+  <li><b>b</b> — unused / reserved for this op.</li>
+</ul>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Typical use</h3>
+<p><code style="color:#22d3bf">gaussian 0.4 0.5 → sobel_mag 0.5 0.5 → otsu 0.5 0.5</code><br>
+denoise, then take an edge magnitude, then binarise — a classic segmentation chain.</p>
+<p style="color:#8b91a0;font-size:11px">Provenance: separable Gaussian convolution (scipy.ndimage). Reimplemented from the
+published algorithm — see docs/PROVENANCE.md.</p>
