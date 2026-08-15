@@ -1018,6 +1018,21 @@ def test_variable_window_thumbnails_and_iconic_control():
     assert any("iconic" in t for t in texts)
 
 
+def test_step_execution_syncs_variable_window():
+    """v18.7 P4c: stepping to a stage highlights that stage's output variable in the
+    Variable window (row 0 = input, row i+1 = stage i output) — HDevelop step sync."""
+    from PySide6 import QtCore
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    ol, ins = win._op_list, win._op_buttons["insert"]
+    for op in ("gaussian", "invert", "otsu"):
+        idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == op)
+        ol.setCurrentRow(idx); ins.click()
+    win._step_to(1)
+    assert win._stage_list.currentRow() == 1
+    assert win._variables["list"].currentRow() == 2         # stage 1 output = variable row 2
+
+
 def test_context_menus_on_lists():
     """v18.7 P4d: right-click context menus on the core lists (dev-IDE density —
     'act where you point', as the user asked)."""
