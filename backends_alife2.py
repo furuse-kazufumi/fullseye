@@ -375,7 +375,13 @@ def alife_lenia(v, a, b):
 # --------------------------------------------------------------------------- #
 # 4. Abelian sandpile (Bak-Tang-Wiesenfeld)                                   #
 # --------------------------------------------------------------------------- #
-_RELAX_CAP = 100000      # hard ceiling on "relax to stable" (documented above)
+_RELAX_CAP = 4000        # hard ceiling on sweeps (small piles stabilise far below this)
+# Total-work budget for the "relax toward stable" mode: the sweep count is bounded
+# by BUDGET // pixels, so a small/varied pile gets enough sweeps to fully stabilise
+# while a large maximally-supercritical pile is only partially relaxed — which keeps
+# this registry op FAST (~tens of ms worst case) no matter the image size. Full BTW
+# stabilisation is O(L^2) sweeps and would stall the evolution loop on big inputs.
+_SANDPILE_BUDGET = 8_000_000
 
 
 def _sandpile_relax(h, max_sweeps):
