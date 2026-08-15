@@ -2520,9 +2520,14 @@ def build_window(model=None):
 
     def open_3d():
         raw = state.get("raw")
-        if isinstance(raw, np.ndarray):
-            g = raw if raw.ndim == 2 else imgio.ensure_gray(raw)
-            win._surf = show_3d_surface(g, None)
+        if not isinstance(raw, np.ndarray):
+            flash("load an image first — 3-D surface needs a height/depth map")
+            return
+        g = raw if raw.ndim == 2 else imgio.ensure_gray(raw)
+        surf = show_3d_surface(g, None)
+        win._surf = surf
+        if surf is None:                 # GL-less env (offscreen / Remote Desktop / no GPU)
+            flash("3-D surface needs OpenGL — unavailable in this display session")
     b_3d.clicked.connect(open_3d); act_3d.triggered.connect(open_3d)
 
     # View ▸ Display mode — colour-map the result, mirrored with the Display combo
