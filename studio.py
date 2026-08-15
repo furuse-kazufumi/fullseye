@@ -2741,6 +2741,14 @@ def build_window(model=None):
                 win._flash and win._flash("no graphics window to detach")
                 return None
             inner = sub.widget()
+            if inner is not None and inner.objectName() == "graphics_primary":
+                # The primary window hosts the resident image view AND the global
+                # Load / Demo / Save / Zoom controls. Detaching it (and later
+                # closing the detached top-level) would destroy those controls and
+                # leave update_actions poking at freed QPushButtons. It is the
+                # HDevelop-style resident "current" window — keep it in the workspace.
+                win._flash and win._flash("the primary graphics window stays in the workspace")
+                return None
             title = sub.windowTitle()
             mdi.removeSubWindow(sub)                # reparents inner to no parent
             if sub in win._graphics_windows:
