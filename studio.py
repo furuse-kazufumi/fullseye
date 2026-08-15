@@ -2484,7 +2484,16 @@ def build_window(model=None):
         var_list.blockSignals(False)
         show_variable_inspection()
 
-    def display_variable(new_window=True):
+    def display_variable(target="current"):
+        """Show the selected variable (HDevelop: double-click iconic → current window).
+
+        ``target``: ``"current"`` = the active graphics window (dev_display),
+        ``"new"`` = a fresh window, ``"main"`` = the resident primary view.
+        Legacy booleans are accepted (``True`` → new window, ``False`` → main)."""
+        if target is True:
+            target = "new"
+        elif target is False:
+            target = "main"
         it = var_list.currentItem()
         if it is None:
             return
@@ -2497,10 +2506,14 @@ def build_window(model=None):
             pm = QtGui.QPixmap.fromImage(qi) if qi is not None else None
             if pm is None:
                 flash("cannot render variable"); return
-            if new_window:
-                new_graphics_window(pm, title="var %s" % it.text().split("  ", 1)[0])
+            vtitle = "var %s" % it.text().split("  ", 1)[0]
+            if target == "new":
+                new_graphics_window(pm, title=vtitle)
             else:
-                view.set_pixmap(pm); view.fit(); view.set_data(val)
+                v = view if target == "main" else _current_view()
+                v.set_pixmap(pm); v.fit(); v.set_data(val)
+                where = "Graphics %d" % (_current_handle() if target == "current" else 1)
+                flash("displayed %s in %s" % (vtitle, where))
         else:
             flash("variable is not iconic — see the inspector")
 
