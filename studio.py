@@ -2123,7 +2123,7 @@ def build_window(model=None):
 
     # View ▸ Display mode — colour-map the result, mirrored with the Display combo
     # (was previously reachable only from the right panel). Menu <-> combo stay in sync.
-    disp_menu = menu_view.addMenu("Display mode")
+    disp_menu = _menu(menu_view, "Display mode", "display_mode")
     _disp_group = QtGui.QActionGroup(win); _disp_group.setExclusive(True)
     win._display_actions = {}
 
