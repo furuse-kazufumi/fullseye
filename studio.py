@@ -1565,6 +1565,11 @@ def build_window(model=None):
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars}
+    # Quick-access toggles on the toolbar for the on-demand panels (each toggle's text
+    # is the panel name; checking it shows the panel, unchecking hides it again).
+    tb.addSeparator()
+    for _d in (dock_vars, dock_disp, dock_pipe):
+        tb.addAction(_d.toggleViewAction())
 
     # ---- central graphics workspace: the primary image window ------------------ #
     gsub = mdi.addSubWindow(image_panel)
