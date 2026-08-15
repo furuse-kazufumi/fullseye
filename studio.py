@@ -2512,6 +2512,7 @@ def build_window(model=None):
             code_status.setText("✕ " + "  ·  ".join(errs[:3]))
             flash("code has %d error(s)" % len(errs))
             return
+        push_undo()
         model.stages = list(stages)
         mark_dirty()
         state["code_dirty"] = False           # the edits are now applied to the pipeline
