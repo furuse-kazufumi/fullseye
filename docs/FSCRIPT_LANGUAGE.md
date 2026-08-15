@@ -194,8 +194,22 @@ samples/
 
 ---
 
-## 9. 現状のプロトタイプ
+## 9. 現状のプロトタイプ(2026-08-15 実測検証済)
 
-- `fscript.py`(増分 1・AST インタプリタ): lexer/parser/AST/evaluator + 変数環境 + 実 if/for/while/repeat + object 反復 + 例外 + step 予算。**意味論の検証用**(interpreter→bytecode VM→compiler は自然な進化で、まず意味論を固めるのが定石)。
-- `fslib.py`(増分 1・L1 種): 実パラメータのビジョン関数群。
-- 次: この 2 つで実アルゴリズムをテスト実証 → 増分 2 の bytecode VM + ウォッチへ。
+- `fscript.py`(増分 1・AST インタプリタ): lexer/parser/AST/evaluator + 変数環境 + 実 if/for/while/repeat + 例外 + step 予算。
+  L1 の builtin(`_b_*` / `BUILTINS`)も**同一ファイル内**にあり、**L1/L2 は未分離**。
+- `tests/test_fscript.py`(**本セッション新規**): 22 passed / 5 xfail。それ以前は **fscript のテストは 1 件も存在しなかった**
+  (「smoke test 実証」は ad-hoc 実行であってコミットされた回帰テストではなかった — 正直な訂正)。
+- **実測記録 = `docs/FSCRIPT_MEASUREMENTS.md`**(サイクルタイム / ジッタ / コールドスタート / 配布サイズ / 欠陥 5 件)。
+
+### ★実測が変えた設計の優先順位
+
+`docs/FSCRIPT_MEASUREMENTS.md` の結論:
+
+1. **言語の実行方式(AST インタプリタ)はサイクルタイムに実質影響しない**(+0.4〜4.7%)。
+   → bytecode VM 化の動機は**速度ではなくデバッグ体験**(step/breakpoint/span/ウォッチ)。正直に区別する。
+2. **オブジェクトモデルが 5.8 倍**、**画素カーネルの実装が 23 倍**効く。合計 134 倍。
+   → 優先順位は **型・意味論 → ObjectSet → native カーネル契約 → VM 化**。
+3. **黙って誤った値を返す欠陥が 5 件**(`*` のコメント誤認 = 修正済、値域の内容依存正規化、Tuple `+`、
+   iconic の暗黙真偽化、比較の `.any()` 潰れ)。すべて **実装言語を変えても残る**意味論の問題。
+   → **「まず型システム、次に VM」**。ネイティブ化はその後。
