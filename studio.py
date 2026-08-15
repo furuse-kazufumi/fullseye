@@ -2114,6 +2114,7 @@ def build_window(model=None):
         if not confirm_discard("Load sample pipeline"):
             samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
             return
+        push_undo()
         try:
             model.load_recipe(samples.itemText(idx))
         except Exception as e:
