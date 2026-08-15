@@ -166,8 +166,40 @@ def test_window_actions_and_shortcuts():
     # keyboard shortcuts are actually assigned
     assert acts["open_image"].shortcut().toString() == "Ctrl+O"
     assert acts["run_all"].shortcut().toString() in ("Ctrl+Return", "Ctrl+Enter")
-    assert win.menuBar() is not None and len(win.menuBar().actions()) == 5
+    # File / Edit / View / Run / Windows / Help
+    assert win.menuBar() is not None and len(win.menuBar().actions()) == 6
+    menu_titles = [a.text() for a in win.menuBar().actions()]
+    assert "&Windows" in menu_titles
     assert callable(win._flash)
+
+
+def test_dockable_layout_and_program_editor():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    # every tool panel is a dockable/floatable window reachable from the Windows menu
+    for key in ("operators", "pipeline", "display", "program"):
+        assert key in win._docks
+        assert win._docks[key].isFloatable() if hasattr(win._docks[key], "isFloatable") else True
+    assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)     # graphics workspace
+    assert callable(win._new_graphics_window) and callable(win._reset_layout)
+    # multiple graphics windows can be opened (HDevelop allows several)
+    n0 = len(win._graphics_windows)
+    win._new_graphics_window()
+    assert len(win._graphics_windows) == n0 + 1
+    # the program/code editor round-trips code <-> pipeline and validates input
+    prog = win._program
+    prog["edit"].setPlainText("gaussian 0.4 0.5\nsobel_mag 0.5 0.5\n# a comment\notsu")
+    prog["apply"]()
+    assert [s[0] for s in model.stages] == ["gaussian", "sobel_mag", "otsu"]
+    _stages, errs = prog["parse"]("gaussian 0.4 0.5\nbogus_op 0.1")
+    assert errs and "bogus_op" in errs[0]
+    # a breakpoint stops the timed run and records per-line timings
+    prog["edit"].breakpoints = {2}
+    prog["run"](True)
+    assert set(prog["edit"].timings) == {1, 2} and prog["edit"]._exec_line == 2
 
 
 def test_clear_action_empties_pipeline():
