@@ -811,7 +811,8 @@ def build_window(model=None):
     refill_ops()
 
     # -- centre: pipeline + knobs + export ----------------------------------- #
-    mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid); mv.setSpacing(10)
+    mid = QtWidgets.QWidget(); mv = QtWidgets.QVBoxLayout(mid); mv.setSpacing(6)
+    mv.setContentsMargins(6, 6, 6, 6)
     stage_list = QtWidgets.QListWidget()
     stage_list.setToolTip("The pipeline. Each row: op, knobs, and the result state after that stage.\n"
                           "Drag a row to reorder, or use ↑/↓ (Ctrl+↑ / Ctrl+↓).")
