@@ -1104,6 +1104,31 @@ def build_window(model=None):
     alay.addWidget(hl); alay.addWidget(hist_view); alay.addWidget(il); alay.addWidget(inspector)
     rv.addWidget(_group(QtWidgets, "ANALYSIS", alay))
 
+    # -- program / code editor (HDevelop program window) --------------------- #
+    ProgEdit = _program_editor_class(QtWidgets, QtGui, QtCore)
+    op_names = [r["name"] for r in all_ops]
+    code_edit = ProgEdit(op_names)
+    code_edit.setToolTip("Edit the pipeline as code — one `op a b` per line (# starts a comment).\n"
+                         "Type for autocomplete; click the gutter to toggle a breakpoint.")
+    c_run = QtWidgets.QPushButton("▶ Run (timed)"); c_run.setProperty("accent", True)
+    c_step = QtWidgets.QPushButton("Step ▶")
+    c_reset = QtWidgets.QPushButton("⏹ Reset")
+    c_apply = QtWidgets.QPushButton("Apply → pipeline")
+    c_sync = QtWidgets.QPushButton("Sync ← pipeline")
+    c_run.setToolTip("Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)")
+    c_step.setToolTip("Execute one more line and show its result (F10)")
+    c_reset.setToolTip("Clear the run highlight and per-line timings")
+    c_apply.setToolTip("Parse the code and replace the pipeline")
+    c_sync.setToolTip("Regenerate the code from the current pipeline")
+    code_status = QtWidgets.QLabel("ready"); code_status.setProperty("hint", True)
+    code_w = QtWidgets.QWidget(); cvl = QtWidgets.QVBoxLayout(code_w)
+    cvl.setContentsMargins(4, 4, 4, 4); cvl.setSpacing(4)
+    crow = QtWidgets.QHBoxLayout()
+    for _cb in (c_run, c_step, c_reset, c_apply, c_sync):
+        crow.addWidget(_cb)
+    crow.addStretch(1)
+    cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_status)
+
     # ---- dockable tool windows (VS / HDevelop-style, all movable/floatable) ---- #
     def _mk_dock(title, widget, objname):
         d = QtWidgets.QDockWidget(title, win)
