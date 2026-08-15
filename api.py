@@ -146,6 +146,7 @@ from specops import (  # noqa: E402,F401
     BandMeta, read_envi, write_envi, spec_band, spec_rgb_composite, spec_nearest_band,
     spec_band_ratio, spec_index, spec_angle_mapper, spec_pca, spec_mnf, spec_unmix,
     spec_endmembers_ppi, spec_continuum_removal,
+    spec_pansharpen, spec_decorrelation_stretch, spec_fuse,
 )
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
