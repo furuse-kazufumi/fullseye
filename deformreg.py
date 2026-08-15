@@ -28,9 +28,13 @@ Sec. 2.4, which is what keeps the deformation spatially coherent instead of
 letting each pixel wander independently. Iterating (warp -> demon force ->
 accumulate -> smooth) is the classic "additive demons" loop, later formalised as
 a gradient descent on SSD by Pennec, Cachier & Ayache (*Understanding the demons
-algorithm*, MICCAI 1999). The per-iteration step cap follows ITK's
-``DemonsRegistrationFilter::MaximumUpdateStepLength`` -- without it a demon in a
-near-flat region can request a displacement of ``1/(2|grad F|)`` pixels.
+algorithm*, MICCAI 1999). The optional per-iteration step cap plays the role of
+ITK's ``DemonsRegistrationFilter::MaximumUpdateStepLength``; note honestly that
+Thirion's stabiliser *already* bounds one demon step analytically at **0.5 px**
+(``|v| = |d||g| / (|g|^2 + d^2 + eps) <= 1/2`` by AM-GM, with equality at
+``|d| = |g|``), so the default cap of 0.5 is a safety net that never engages --
+it is there to tighten the descent when a caller lowers it, not to rescue the
+default path.
 
 Convention
 ----------
