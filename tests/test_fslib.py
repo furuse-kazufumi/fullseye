@@ -40,14 +40,33 @@ def scene(h=256, w=256, n=12, seed=3):
 # --------------------------------------------------------------------------- #
 # Claim 1: the sort and the value range are carried, not guessed
 # --------------------------------------------------------------------------- #
+def _measured_part_area(frame: np.ndarray) -> float:
+    """Area of the largest object — what an inspection actually reports."""
+    objs = fslib.connection(fslib.threshold(FImage.from_u8(frame), 0.4, 1.0))
+    areas, _, _ = fslib.region_features(objs)
+    return float(areas.max())
+
+
 def test_threshold_is_independent_of_unrelated_bright_pixels():
-    """The defect that `fscript._norm01` has, fixed by construction."""
+    """The defect `fscript._norm01` has (area 256 -> 1), fixed by construction.
+
+    A hot pixel is still *detected* — that is correct, it is above threshold.
+    What must not happen is the threshold's meaning shifting, which is what
+    dividing by the frame maximum does: it rescales every other pixel.
+    """
     part = np.zeros((32, 32), dtype=np.uint8); part[8:24, 8:24] = 120
     hot = part.copy(); hot[0, 0] = 250
-    a = fslib.threshold(FImage.from_u8(part), 0.4, 1.0).area()
-    b = fslib.threshold(FImage.from_u8(hot), 0.4, 1.0).area()
-    assert a == 16 * 16
-    assert a == b, "a hot pixel elsewhere in the frame must not change the judgement"
+    assert _measured_part_area(part) == 16 * 16
+    assert _measured_part_area(hot) == 16 * 16, (
+        "a hot pixel elsewhere in the frame must not change the measured part")
+
+    # …and the same input through the current fscript path does change it, which
+    # is why this model exists.  (Kept as an executable comparison, not a claim
+    # about fslib.)
+    import fscript
+    old = fscript.run("R := threshold(Image, 0.4, 1.0)\nA := area(R)",
+                      images={"Image": hot.astype(np.float64)}).vars["A"]
+    assert old != 16 * 16
 
 
 def test_value_range_comes_from_the_sensor_not_the_content():
