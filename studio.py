@@ -2258,6 +2258,75 @@ def build_window(model=None):
         refresh_stage_list(); show_result()
         flash("pipeline cleared")
 
+    _IMG_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
+
+    def _show_holdout_report(summary):
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Holdout validation")
+        v = QtWidgets.QVBoxLayout(dlg)
+        head = "%d image(s): %d ran, %d failed · mean %.1f ms" % (
+            summary["n"], summary["n_ok"], summary["n_err"], summary["mean_ms"])
+        if summary["mean_metric"] is not None:
+            head += " · mean %s %.3f" % (summary["metric_kind"], summary["mean_metric"])
+        lbl = QtWidgets.QLabel(head); lbl.setStyleSheet("font-weight:700;"); v.addWidget(lbl)
+        kind = summary["metric_kind"] or "metric"
+        tbl = QtWidgets.QTableWidget(len(summary["results"]), 4)
+        tbl.setHorizontalHeaderLabels(["image", "status", "ms", kind])
+        tbl.verticalHeader().setVisible(False)
+        tbl.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        for r, rec in enumerate(summary["results"]):
+            tbl.setItem(r, 0, QtWidgets.QTableWidgetItem(os.path.basename(rec["path"])))
+            status = "ok" if rec["ok"] else ("error: " + rec["error"][:60])
+            it = QtWidgets.QTableWidgetItem(status)
+            if not rec["ok"]:
+                it.setForeground(QtGui.QColor(AMBER))
+            tbl.setItem(r, 1, it)
+            tbl.setItem(r, 2, QtWidgets.QTableWidgetItem("%.1f" % rec["ms"]))
+            tbl.setItem(r, 3, QtWidgets.QTableWidgetItem("" if rec["metric"] is None else "%.3f" % rec["metric"]))
+        tbl.resizeColumnsToContents(); tbl.horizontalHeader().setStretchLastSection(True)
+        v.addWidget(tbl)
+        note = QtWidgets.QLabel("Honest note: a metric is only shown when an aligned ground-truth "
+                               "folder was given and shapes match; otherwise this is a ran/failed + "
+                               "timing check.")
+        note.setWordWrap(True); note.setProperty("muted", True); v.addWidget(note)
+        okb = QtWidgets.QPushButton("Close"); okb.setProperty("accent", True); okb.clicked.connect(dlg.accept)
+        v.addWidget(okb, 0, QtCore.Qt.AlignRight)
+        dlg.resize(600, 480)
+        win._holdout_dialog = dlg
+        dlg.exec()
+
+    def show_holdout():
+        """HDevelop-style batch validation: run the current pipeline over a folder of
+        holdout images (+ an optional aligned ground-truth folder) and report results —
+        imgevolve's honest 'does it generalise to unseen images' gate, in the UI."""
+        if not model.stages:
+            flash("build a pipeline first, then validate it on a holdout set"); return
+        folder = QtWidgets.QFileDialog.getExistingDirectory(win, "Holdout image folder")
+        if not folder:
+            return
+        try:
+            names = sorted(f for f in os.listdir(folder) if f.lower().endswith(_IMG_EXTS))
+        except OSError as e:
+            report_error("Holdout folder", e); return
+        paths = [os.path.join(folder, f) for f in names]
+        if not paths:
+            flash("no images (%s) in that folder" % "/".join(e[1:] for e in _IMG_EXTS)); return
+        gt_dir = QtWidgets.QFileDialog.getExistingDirectory(
+            win, "Ground-truth folder (optional — Cancel to skip)")
+        gt_paths = None
+        if gt_dir:
+            gt_paths = [os.path.join(gt_dir, n) if os.path.exists(os.path.join(gt_dir, n)) else None
+                        for n in names]
+        summary = run_holdout(model.stages, paths, gt_paths)
+        win._last_holdout = summary
+        flash("holdout: %d ran, %d failed%s" % (
+            summary["n_ok"], summary["n_err"],
+            ("" if summary["mean_metric"] is None
+             else " · mean %s %.3f" % (summary["metric_kind"], summary["mean_metric"]))))
+        _show_holdout_report(summary)
+    win._show_holdout = show_holdout
+    win._show_holdout_report = _show_holdout_report
+    act_holdout.triggered.connect(show_holdout)
+
     def show_about():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("About Fullseye Studio")
         v = QtWidgets.QVBoxLayout(dlg)
