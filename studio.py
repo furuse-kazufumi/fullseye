@@ -1168,8 +1168,12 @@ def build_window(model=None):
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
     win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_code)
     win.resizeDocks([dock_code], [210], QtCore.Qt.Vertical)
+    dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
+    win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_vars)
+    win.tabifyDockWidget(dock_code, dock_vars)
+    dock_code.raise_()
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
-                  "program": dock_code}
+                  "program": dock_code, "variables": dock_vars}
 
     # ---- central graphics workspace: the primary image window ------------------ #
     gsub = mdi.addSubWindow(image_panel)
