@@ -2026,6 +2026,7 @@ def build_window(model=None):
     win._push_undo = push_undo
 
     def add_op(item):
+        push_undo()
         i = selected_index()
         # insert with the args entered in the operator panel (HDevelop-style)
         model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
