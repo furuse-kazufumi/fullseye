@@ -726,7 +726,7 @@ C ランタイムのカバレッジは 8/650 op(1.2%)、かつ region/blob 系�
 | 増分 | 内容 | 完了条件(falsifiable) |
 |---|---|---|
 | **0. 種(★完了)** | `fslib.py` = 型モデル(FImage/Region/ObjectSet)+ 3 プロファイル + 1 op = N backend + 差分テスト + fail-closed | **済**: `tests/test_fslib.py` **21 passed**、4 MP で 14.2x(§1.7) |
-| **I-1. ABI 仕様を先に書く** | **C コードを 1 行も書かずに** `fullseye_abi.h` を仕様として書き、`fslib.py` をその適合実装にする。opaque handle / error code / 所有権・寿命規約 / `FImage{pixels,dtype,value_range,domain}` / `Region{runs}` | 「C ABI に落とせる形だけを許す」が**規律でなく機械検査**になる(適合テストが CI で回る) |
+| **I-1. ABI 仕様を先に書く(★完了)** | **C コードを 1 行も書かずに** `fullseye_abi.h` を仕様として書き、`fslib.py` をその適合実装にする | **済**: `tests/test_abi_conformance.py` **19 passed**。ヘッダを機械パースして (1) 演算子集合の一致 (2) arity 一致 (3) ABI 表現可能な型のみ (4) **dict が境界を越えない** (5) **Region が storage を公開しない** (6) 例外→status code 対応、を検査 |
 | **I-2. 意味論を閉じる** | **欠陥 2〜5 を修正**(xfail → pass)+ `Tuple` 最小核 + `domain` の実効化 + golden vector 形式(入力 seed + 期待出力 + 許容差)の確定 | `tests/test_fscript.py` の **5 xfail が全て pass**。golden 形式で回帰が回る |
 | **I-3. 産業プロファイル + per-op 差分ゲート** | 頻出 20〜40 op へ backend 拡張 / **ロード時 fail-closed マニフェスト検証**(op ごとに name / backend id / ABI ver / golden の SHA-256 + build ID、不一致は**起動拒否**) | 4 MP 検査が industrial で **p99.9 < 20 ms**、全 op が差分テスト合格、依存欠落機で**起動しない**ことを実証 |
 | **I-4. 周期実行の骨格 + ★裾の切り分け** | 非 GUI 常駐 + `timeBeginPeriod(1)` + init/cycle 分離 + **cycle 中のヒープ確保ゼロを CI ゲートで機械保証** + deadline と `ERROR`/`TIMEOUT`。**あわせて N1b(裾 = p50 の 4.6 倍)の原因を切り分ける** | 10 ms ループの max が実測で 1 ms 未満。確保カウンタのアサートが CI で落ちる。**4 MP soak の max/p50 が 4.6 → 2 倍以下** |

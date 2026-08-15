@@ -88,11 +88,26 @@ def test_every_operator_returns_a_status_code():
 # fslib must implement exactly the declared operator set
 # --------------------------------------------------------------------------- #
 def test_operator_sets_agree():
+    """The ABI declares the operator SURFACE; fslib must export exactly it.
+
+    Not every operator needs multiple backends — `select_shape` filters ids on
+    already-measured values, so it is backend-independent by construction.  What
+    must never happen is an operator existing on one side only.
+    """
     declared = set(OPS)
-    implemented = set(fslib._REGISTRY)
-    assert declared == implemented, (
+    exported = {n for n in declared | set(fslib._REGISTRY)
+                if callable(getattr(fslib, n, None))}
+    assert declared == exported, (
         "ABI and fslib disagree.\n  only in fullseye_abi.h: %s\n  only in fslib: %s"
-        % (sorted(declared - implemented), sorted(implemented - declared)))
+        % (sorted(declared - exported), sorted(exported - declared)))
+
+
+def test_every_backend_op_is_declared_in_the_abi():
+    """A backend may only be registered for an operator the ABI knows about."""
+    undeclared = set(fslib._REGISTRY) - set(OPS)
+    assert not undeclared, (
+        "backends registered for operators the ABI does not declare: %s"
+        % sorted(undeclared))
 
 
 @pytest.mark.parametrize("name", sorted(OPS))
