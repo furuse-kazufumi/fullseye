@@ -1069,8 +1069,13 @@ def spec_decorrelation_stretch(cube, bands=None, target_std=None) -> np.ndarray:
     Concretely, with the band covariance ``S = V diag(L) V^T`` the transform is the
     symmetric matrix ``T = V diag(g) V^T``, ``g_i = target_std / sqrt(L_i)``, applied
     to the mean-centred spectra and re-centred on the original means. The output
-    covariance is then exactly ``target_std**2 * I`` — **all** band-to-band
-    correlation is removed — which is what the unit test asserts.
+    covariance is then ``target_std**2 * I`` for a **full-rank** cube — all
+    band-to-band correlation is removed. Honest caveat: on a rank-deficient cube
+    (a constant band, or linearly dependent bands) the near-zero eigenvalues are
+    floored before the ``1/sqrt(L_i)`` whitening, so those degenerate axes are not
+    fully whitened and a little residual correlation survives in the null space —
+    the output stays finite and decorrelation still *reduces* the correlation, but
+    the "exactly I" identity holds only at full rank.
 
     * *bands* — optional subset of band indices (>= 2, unique) to stretch. The
       remaining bands are copied through **bit-identically**, so the result always
