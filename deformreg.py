@@ -218,7 +218,7 @@ def warp_by_field(img, fx, fy):
 
 
 def demons_register(fixed, moving, iters: int = 50, sigma: float = 1.5,
-                    max_step: float = 2.0, eps: float = 1e-9):
+                    max_step: float = 0.5, eps: float = 1e-9):
     """Thirion's demons: deformably align *moving* to *fixed*.
 
     Iterates, starting from a zero field ``(fx, fy)``:
