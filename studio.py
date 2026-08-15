@@ -1823,6 +1823,7 @@ def build_window(model=None):
             return
         order = [stage_list.item(r).data(QtCore.Qt.UserRole) for r in range(stage_list.count())]
         if len(order) == len(model.stages) and set(order) == set(range(len(model.stages))):
+            push_undo()
             model.stages = [model.stages[i] for i in order]
             mark_dirty()
             refresh_stage_list(select=stage_list.currentRow())
