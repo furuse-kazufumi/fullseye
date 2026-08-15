@@ -109,7 +109,10 @@
   - **型変換**: `int(x)`/`real(x)`/`number(x)`/`is_number/is_int/is_string`、tuple 要素の型判定 `type_of(t[i])`、int↔real 昇格規則。HALCON の暗黙昇格 + 明示変換の両立。
   - **文字列**: `string(x, fmt)`(数値→書式付き文字列、HALCON `'$.3f'` 風)/`str_to_number`/`split`/`join`/`regexp_match/replace`/`length`/部分文字列/`str_upper/lower`/連結。ロボット制御の I/O(コマンド組立/パース)や結果出力に必須。
   - **これらは「しっかりした言語」の必要条件**: 型システム(§2 の Tuple/Vector/container + iconic/handle)+ 変換 + エラー型 + スコープ + procedure を厳密設計(増分2以降で仕様書化)。**高速性は §0 の二モード(IDE=VM / 配布=compile→C→DLL)で解決**、ホット path のみ native 化。「見た目だけ言語」を避けるため、未実装機能は構文/型エラーで正直に弾く。
-- **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
+- **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。
+  - ★**事実訂正(2026-08-15 検証)**: **`for Obj in Objects` は未実装**(`_KEYWORDS` に `in` が無く、パーサは `for V := a to b` のみ受理)。
+    現状の per-object 反復は `for I := 0 to N-1` + `select_obj(Objects, I)` で書く。`for ... in` は増分 1 の追加項目。
+    未実装構文が構文エラーになること自体は正しい挙動(`tests/test_fscript.py` で固定)。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
 - **測定 multi-output**(Codex #8): `area_center(Region : : : Area, Row, Column)` の複数 control 出力を正式サポート(現 `api.apply` は先頭要素のみ float 化=情報欠落)。空領域/NaN/長さ不一致は定義済み例外か空 tuple、条件式で暗黙真偽化しない。
 
 ---
