@@ -68,7 +68,7 @@ Operators (a, b are the two knobs, both in [0,1])
                the frame is anchored. a -> amp = 0.15*a*min(H,W);
                b -> spatial frequency f = 0.5 + 1.5b. The TPS system is solved
                exactly (dense LU, least-squares fallback) and evaluated at every
-               destination pixel. a = 0 is the exact identity.
+               destination pixel. a = 0 is the identity (up to sub-pixel resampling error).
   deform_ffd   Cubic B-spline free-form deformation on a (n+3)x(n+3) control
                lattice covering n x n spans. The displacement at a pixel is the
                tensor product of the four cubic B-spline basis functions of its
@@ -76,7 +76,7 @@ Operators (a, b are the two knobs, both in [0,1])
                so each control point influences exactly 4 spans (compact
                support). a -> amplitude 0.45*a*min(dy,dx) (injectivity bound);
                b -> lattice resolution n = 2 + int(6b) spans. a = 0 is the
-               exact identity.
+               identity (up to sub-pixel resampling error).
   deform_mls   Moving-least-squares (affine) deformation from a 5x5 control
                grid. For every pixel v the weights w_i = 1/|p_i - v|^(2 alpha)
                define a weighted least-squares affine map {p_i} -> {q_i} that is
@@ -84,7 +84,7 @@ Operators (a, b are the two knobs, both in [0,1])
                map reproduces any affine data exactly, interpolates the control
                points, and is smooth everywhere. a -> displacement amplitude
                0.12*a*min(H,W); b -> alpha = 0.5 + 1.5b (large alpha = tightly
-               local, small alpha = global). a = 0 is the exact identity.
+               local, small alpha = global). a = 0 is the identity (up to sub-pixel resampling error).
 
 Determinism: no random number generator is used anywhere in this module -- the
 control displacements are closed-form trigonometric functions of the control
@@ -244,7 +244,7 @@ def deform_tps(v, a, b):
     would take -- and it is evaluated at every destination pixel before bilinear
     resampling. ``a`` sets the amplitude ``amp = 0.15*a*min(H,W)``, ``b`` the
     spatial frequency ``f = 0.5 + 1.5b``. ``a = 0`` leaves the control points
-    where they are, so the solved map is the exact identity.
+    where they are, so the solved map is the identity (up to sub-pixel resampling error).
     """
     x = _img(v)
     a = _knob(a)
@@ -342,7 +342,7 @@ def deform_ffd(v, a, b):
     ``a`` sets the amplitude ``amp = 0.45*a*min(sy,sx)`` -- kept under the
     ``0.48*spacing`` injectivity bound of Choi & Lee (2000), so the deformation
     stays a fold-free bijection -- and ``b`` the lattice resolution. ``a = 0``
-    gives a zero lattice, hence the exact identity.
+    gives a zero lattice, hence the identity (up to sub-pixel resampling error).
     """
     x = _img(v)
     a = _knob(a)
@@ -450,7 +450,7 @@ def deform_mls(v, a, b):
     and a smooth approximation of it otherwise. ``a`` sets the amplitude
     ``amp = 0.12*a*min(H,W)``, ``b`` the falloff ``alpha = 0.5 + 1.5b`` (large
     alpha = tightly local deformation). ``a = 0`` gives ``q = p``, hence the
-    exact identity.
+    identity (up to sub-pixel resampling error).
     """
     x = _img(v)
     a = _knob(a)
