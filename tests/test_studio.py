@@ -944,13 +944,13 @@ def test_primary_graphics_window_is_resident_and_uncloseable():
     """The primary graphics sub-window is the HDevelop-style resident window: closing
     it (its close button / system menu / Ctrl+W all route through a Close event) is
     vetoed so the image view + global controls are never destroyed."""
-    from PySide6 import QtCore, QtWidgets
+    from PySide6 import QtGui, QtWidgets
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     gsub = win._primary_gsub
     assert gsub.widget().objectName() == "graphics_primary"
     # a Close request must be ignored and the window must stay in the MDI
-    ev = QtGui_QCloseEvent()
+    ev = QtGui.QCloseEvent()
     QtWidgets.QApplication.sendEvent(gsub, ev)
     assert not ev.isAccepted(), "primary graphics window close was not vetoed"
     assert gsub in win._mdi.subWindowList()
