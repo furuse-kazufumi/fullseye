@@ -169,7 +169,7 @@ def test_op_arg_roles_and_signature_detail():
     assert studio.op_arg_roles("no_such_op_xyz") == (None, None)
     assert studio.op_impl_source("no_such_op_xyz") == ""
     # a real but uncurated op still gets a signature (impl source), never crashes
-    other = next(n for n in api.op_names() if n not in ("gaussian",))
+    other = next(n for n in studio.api.op_names() if n not in ("gaussian",))
     d2 = studio.op_signature_detail({"name": other, "halcon": "", "category": "x",
                                      "in_sort": "image", "out_sort": "image"})
     assert "knob a" in d2
