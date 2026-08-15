@@ -2518,9 +2518,9 @@ def build_window(model=None):
             flash("variable is not iconic — see the inspector")
 
     var_list.currentRowChanged.connect(lambda _r: show_variable_inspection())
-    var_list.itemDoubleClicked.connect(lambda _it: display_variable(True))
-    v_disp.clicked.connect(lambda: display_variable(True))
-    v_here.clicked.connect(lambda: display_variable(False))
+    var_list.itemDoubleClicked.connect(lambda _it: display_variable("current"))  # HDevelop: → current window
+    v_disp.clicked.connect(lambda: display_variable("new"))
+    v_here.clicked.connect(lambda: display_variable("current"))
     win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
 
     # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #
