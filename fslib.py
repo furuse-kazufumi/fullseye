@@ -76,14 +76,8 @@ class Region:
         return int(np.count_nonzero(self._mask))
 
     def run_count(self) -> int:
-        """fs_region_run_count — how many row runs this region would encode to."""
-        m = self._mask
-        if not m.any():
-            return 0
-        padded = np.zeros((m.shape[0], m.shape[1] + 1), dtype=bool)
-        padded[:, :-1] = m
-        starts = padded[:, 0:1].astype(np.int8)
-        return int(m[:, 0].sum() + (m[:, 1:] & ~m[:, :-1]).sum()) if m.shape[1] > 1 else int(starts.sum())
+        """fs_region_run_count — how many row runs this region encodes to."""
+        return int(self.runs().shape[0])
 
     def runs(self) -> np.ndarray:
         """fs_region_runs — (N, 3) int32 array of (row, col_begin, col_end).
@@ -324,7 +318,7 @@ def _threshold_cv2(img: FImage, lo: float, hi: float) -> Region:
 
 @op("connection", "numpy")
 def _connection_numpy(reg: Region) -> ObjectSet:
-    lbl, k = ndi.label(reg.mask)
+    lbl, k = ndi.label(reg._mask)
     return ObjectSet(lbl.astype(np.int32), np.arange(1, k + 1, dtype=np.int32))
 
 
@@ -333,13 +327,12 @@ def _connection_cv2(reg: Region) -> ObjectSet:
     """One pass produces the labels *and* the stats — carry both."""
     import cv2
     k, lbl, stats, cents = cv2.connectedComponentsWithStats(
-        reg.mask.astype(np.uint8), 8, cv2.CV_32S)
+        reg._mask.astype(np.uint8), 8, cv2.CV_32S)
     return ObjectSet(lbl, np.arange(1, k, dtype=np.int32),
                      {"_cc_stats": stats, "_cc_centroids": cents})
 
 
-@op("measure_all", "numpy")
-def _measure_all_numpy(objs: ObjectSet) -> dict:
+def _tables_numpy(objs: ObjectSet) -> dict:
     """Measure every label once.  Returned tables are indexed by label id."""
     n = int(objs.labels.max())
     if n == 0:
@@ -355,8 +348,7 @@ def _measure_all_numpy(objs: ObjectSet) -> dict:
             "column": np.concatenate([[0.0], cents[:, 1]])}
 
 
-@op("measure_all", "cv2")
-def _measure_all_cv2(objs: ObjectSet) -> dict:
+def _tables_cv2(objs: ObjectSet) -> dict:
     import cv2
     stats = objs.feats.get("_cc_stats")
     cents = objs.feats.get("_cc_centroids")
@@ -369,16 +361,46 @@ def _measure_all_cv2(objs: ObjectSet) -> dict:
             "column": cents[:, 0].astype(np.float64)}
 
 
+@op("measure_all", "numpy")
+def _measure_all_numpy(objs: ObjectSet):
+    return _measure_with(objs, _tables_numpy)
+
+
+@op("measure_all", "cv2")
+def _measure_all_cv2(objs: ObjectSet):
+    return _measure_with(objs, _tables_cv2)
+
+
+def _measure_with(objs: ObjectSet, tables_fn):
+    """fs_measure_all shape: three tuples for the LIVE objects.
+
+    The label-indexed tables stay behind the boundary as a private cache so that
+    `select` costs nothing; only the per-object values cross the API, which is
+    what the C ABI declares (no dictionary crosses the boundary — ABI rule R-4).
+    """
+    if len(objs) == 0:
+        z = np.zeros(0)
+        return (z, z.copy(), z.copy())
+    for k, v in tables_fn(objs).items():
+        objs.feats.setdefault(k, v)
+    ids = objs.ids
+    return (objs.feats["area"][ids], objs.feats["row"][ids], objs.feats["column"][ids])
+
+
 def _measure_all(objs: ObjectSet) -> dict:
+    """Internal: fill the label-indexed cache using the active backend."""
+    _dispatch("measure_all", objs)
+    return objs.feats
+
+
+def measure_all(objs: ObjectSet):
+    """fs_measure_all — (area, row, column) for the live objects."""
+    _require(objs, ObjectSet, "measure_all")
     return _dispatch("measure_all", objs)
 
 
-def region_features(objs: ObjectSet):
-    """areas, rows, cols for the live objects (measured once, then cached)."""
-    _require(objs, ObjectSet, "region_features")
-    if len(objs) == 0:
-        return (np.zeros(0), np.zeros(0), np.zeros(0))
-    return (objs.feature("area"), objs.feature("row"), objs.feature("column"))
+#: `region_features` is the historical name; `measure_all` is the ABI one.
+region_features = measure_all
 
 
 def gauss(img: FImage, sigma: float) -> FImage:

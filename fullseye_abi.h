@@ -176,7 +176,7 @@ fs_status_t fs_connection(const fs_region_t *in, fs_objectset_t **out);
 fs_status_t fs_measure_all(const fs_objectset_t *in,
                            fs_tuple_t **area, fs_tuple_t **row, fs_tuple_t **column);
 
-/* @fslib select_shape — filters ids; the label image and measurements are shared. */
+/* @fslib select_shape — filters ids, sharing the label image and measurements. */
 fs_status_t fs_select_shape(const fs_objectset_t *in, const char *feature,
                             double vmin, double vmax, fs_objectset_t **out);
 
