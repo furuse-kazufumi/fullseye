@@ -2578,7 +2578,26 @@ def build_window(model=None):
             var_list.addItem(it)
         var_list.setCurrentRow(sel if 0 <= sel < var_list.count() else var_list.count() - 1)
         var_list.blockSignals(False)
+        _mark_variable_frontier()
         show_variable_inspection()
+
+    def _mark_variable_frontier():
+        """Grey out variables whose stage output lies past the current execution
+        frontier (the selected stage) so that, during step-through, not-yet-reached
+        outputs read as *pending* instead of already-present (Codex #8). Row 0 = the
+        raw input (always live); stage i's output is live once the frontier reaches i."""
+        frontier = stage_list.currentRow()             # -1 = only the raw input is live
+        for r in range(var_list.count()):
+            it = var_list.item(r)
+            idx = it.data(QtCore.Qt.UserRole)
+            pending = isinstance(idx, int) and idx > frontier
+            it.setForeground(QtGui.QColor(MUTED) if pending else QtGui.QBrush())
+            base = it.text().split("   ", 1)
+            tag = base[1] if len(base) == 2 else ""
+            want = (tag.replace(" · pending", "") + (" · pending" if pending else ""))
+            if want != tag:
+                it.setText("%s   %s" % (base[0], want))
+    win._mark_variable_frontier = _mark_variable_frontier
 
     def display_variable(target="current"):
         """Show the selected variable (HDevelop: double-click iconic → current window).
