@@ -167,7 +167,8 @@ class ObjectSet:
         return Region(self.labels == self.ids[i])
 
     def select(self, keep) -> "ObjectSet":
-        return ObjectSet(self.labels, np.asarray(self.ids)[np.asarray(keep)])
+        """Filter ids — the label image and the measured features are shared."""
+        return ObjectSet(self.labels, np.asarray(self.ids)[np.asarray(keep)], self.feats)
 
     def __bool__(self):
         raise FsTypeError("an ObjectSet has no truth value; write `|Objects| > 0`")
