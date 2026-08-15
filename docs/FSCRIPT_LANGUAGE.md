@@ -85,6 +85,11 @@
 - **★Vector 型(HDevelop 13+、ユーザー指摘 2026-08-15)**: HALCON には Tuple とは別に **Vector**(タプル or iconic を格納する**型付き・多次元コンテナ**)がある。`vector(dim)`、`Vec.at(i)`、`|Vec|`、代入 `Vec[i] := ...`、`for` で反復。Tuple(平坦・混在スカラ)と Vector(入れ子・object も格納可)を**別型として**用意する。
   - 用途: object/tuple の配列(例 各 blob の輪郭 Vector、行ごとの計測 Vector of Tuple)。ObjectSet(§3)は「iconic の 1 次元集合」の特化で、Vector はより一般(多次元・control も格納)。
   - 実装(段階): 増分1では Python list で近似、増分2以降で **`FVector`(要素型 + 次元を保持)** に厳密化。ウォッチは §4 の型別レンダラで Vector(要素を展開表示)対応。
+- **★標準コンテナライブラリ(C++ STL 風、ユーザー指摘 2026-08-15)**: HALCON の Tuple/Vector に加え、**デザインパターンで多用する汎用コンテナ**を標準ライブラリとして提供したい。
+  - 候補: `list`(可変長)・`map`/`dict`(連想)・`set`・`stack`・`queue`/`deque`・`pair`。iterator/for-each、`push/pop/insert/erase/find/size/empty` 等の STL 相当メソッド。
+  - 位置付け: これらは **control 領域の複合型**(iconic は格納しても handle/参照で持つ)。HALCON 純正には無い Fullseye 拡張として明示(仕様書で「HALCON 互換」でなく「Fullseye 拡張」と正直にラベル)。
+  - 実装: L1/言語ランタイム側に `FContainer` 群(内部は Python dict/list/set 等を薄くラップ、型付き)。DLL 化時は C++ STL / 相当の C ABI で対応。ウォッチは型別レンダラ(map=キー/値表、set/stack/queue=要素列)。
+  - 用途例: blob→分類ラベルの `map`、処理待ち ROI の `queue`、状態機械の `stack`(ロボット制御シーケンス)、ユニーク特徴の `set`。デザインパターン(State/Strategy/Observer 等)を素直に書ける土台。
 - **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
 - **測定 multi-output**(Codex #8): `area_center(Region : : : Area, Row, Column)` の複数 control 出力を正式サポート(現 `api.apply` は先頭要素のみ float 化=情報欠落)。空領域/NaN/長さ不一致は定義済み例外か空 tuple、条件式で暗黙真偽化しない。
 
