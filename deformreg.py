@@ -243,8 +243,9 @@ def demons_register(fixed, moving, iters: int = 50, sigma: float = 1.5,
         stiffer/smoother deformation; ``0`` disables regularisation (and is then
         the unregularised, noise-sensitive limit).
     max_step : per-iteration cap on ``|v|`` in pixels (ITK's
-        ``MaximumUpdateStepLength``); the demon force is bounded by
-        ``1/(2|grad F|)``, which is unbounded as the fixed image flattens.
+        ``MaximumUpdateStepLength``). Honest note: the stabilised demon force is
+        *already* bounded by 0.5 px/iteration, so the default 0.5 never actually
+        engages -- lower it (e.g. 0.1) for a slower, more conservative descent.
     eps : denominator floor, keeping ``v`` finite where both the gradient and the
         intensity difference vanish.
 
