@@ -1044,6 +1044,7 @@ def test_operator_arg_labels_reflect_selected_op():
     """v18.8 P2b': the a/b knob labels name each argument's role for the selected op,
     a knob the op curates as unused is disabled, and an un-curated op keeps generic
     (never-falsely-unused) labels — so the user can judge what a/b do before setting them."""
+    from PySide6 import QtCore
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     ol = win._op_list
