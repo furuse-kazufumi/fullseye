@@ -882,7 +882,7 @@ def test_window_menu_is_grouped_into_submenus():
     """v18.7: the once-overloaded Window menu is now 3 clean submenus, not a flat wall."""
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    wmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Window")
+    wmenu = win._menus["window"]
     subs = [a.text() for a in wmenu.actions() if a.menu()]
     assert subs == ["Panels", "Graphics windows", "Layout"]
     assert not [a for a in wmenu.actions() if not a.menu() and not a.isSeparator()]  # nothing flat
