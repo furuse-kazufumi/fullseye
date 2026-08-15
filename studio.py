@@ -1742,6 +1742,113 @@ def build_window(model=None):
     act_reset.triggered.connect(reset_to_raw)
     act_step.triggered.connect(lambda: step_to(min(selected_index() + 1, len(model.stages) - 1)))
     act_runall.triggered.connect(lambda: step_to(len(model.stages) - 1))
+    # -- program / code editor wiring (parse <-> pipeline, timed run, step) ---- #
+    import time as _time
+
+    def program_text_from_model():
+        if not model.stages:
+            return ("# empty pipeline — type ops here, one per line, e.g.:\n"
+                    "# gaussian 0.4 0.5\n# sobel_mag 0.5 0.5\n# otsu 0.5 0.5")
+        return "\n".join("%s %.3f %.3f" % (n, a, b) for (n, a, b) in model.stages)
+
+    def sync_program():
+        if code_edit.hasFocus():          # never clobber what the user is typing
+            return
+        code_edit.blockSignals(True)
+        code_edit.setPlainText(program_text_from_model())
+        code_edit.blockSignals(False)
+        code_edit.clear_exec()
+
+    def parse_program(text):
+        stages, errs, names = [], [], set(op_names)
+        for i, raw in enumerate(text.splitlines(), 1):
+            line = raw.split("#", 1)[0].strip()
+            if not line:
+                continue
+            parts = line.split()
+            if parts[0] not in names:
+                errs.append("line %d: unknown op '%s'" % (i, parts[0])); continue
+            try:
+                a = float(parts[1]) if len(parts) > 1 else 0.5
+                b = float(parts[2]) if len(parts) > 2 else 0.5
+            except ValueError:
+                errs.append("line %d: knobs must be numbers" % i); continue
+            stages.append((parts[0], max(0.0, min(1.0, a)), max(0.0, min(1.0, b))))
+        return stages, errs
+
+    def apply_program():
+        stages, errs = parse_program(code_edit.toPlainText())
+        if errs:
+            code_status.setText("✕ " + "  ·  ".join(errs[:3]))
+            flash("code has %d error(s)" % len(errs))
+            return
+        model.stages = list(stages)
+        mark_dirty()
+        code_status.setText("applied %d stage(s)" % len(stages))
+        refresh_stage_list(select=(len(stages) - 1) if stages else None)
+        show_result()
+
+    def run_program(stop_at_breakpoints=True):
+        try:
+            v = model.result_upto(-1)     # the raw base image
+        except Exception as e:
+            code_status.setText("cannot run: %s" % e); return
+        timings, last, hit_bp = {}, -1, False
+        for i, (name, a, b) in enumerate(model.stages):
+            fn = api.RT.get(name)
+            if fn is None:
+                break
+            t0 = _time.perf_counter()
+            try:
+                v = fn(v, a, b)
+            except Exception:
+                pass
+            timings[i + 1] = (_time.perf_counter() - t0) * 1000.0
+            last = i
+            if stop_at_breakpoints and (i + 1) in code_edit.breakpoints:
+                hit_bp = True
+                break
+        code_edit.set_timings(timings)
+        code_edit.set_exec_line(last + 1)
+        if 0 <= last < len(model.stages):
+            stage_list.setCurrentRow(last)     # show the result up to the reached line
+        code_status.setText("ran %d line(s) in %.1f ms%s"
+                            % (len(timings), sum(timings.values()),
+                               "  · stopped at breakpoint" if hit_bp else ""))
+
+    def step_program():
+        cur = code_edit._exec_line
+        nxt = (cur + 1) if cur >= 1 else 1
+        if not model.stages:
+            code_status.setText("no stages to step"); return
+        nxt = max(1, min(nxt, len(model.stages)))
+        try:
+            v = model.result_upto(-1)
+            tmap = dict(code_edit.timings)
+            for i in range(nxt):
+                name, a, b = model.stages[i]
+                fn = api.RT.get(name)
+                t0 = _time.perf_counter()
+                v = fn(v, a, b) if fn else v
+                if i == nxt - 1:
+                    tmap[nxt] = (_time.perf_counter() - t0) * 1000.0
+            code_edit.set_timings(tmap)
+        except Exception:
+            pass
+        code_edit.set_exec_line(nxt)
+        stage_list.setCurrentRow(nxt - 1)
+        code_status.setText("stepped to line %d" % nxt)
+
+    c_apply.clicked.connect(apply_program)
+    c_sync.clicked.connect(sync_program)
+    c_run.clicked.connect(lambda: run_program(True))
+    c_step.clicked.connect(step_program)
+    c_reset.clicked.connect(lambda: (code_edit.clear_exec(), code_status.setText("ready")))
+    win._code_sync = sync_program
+    win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
+                    "step": step_program, "parse": parse_program, "text": program_text_from_model}
+    sync_program()
+
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
     act_op_help.triggered.connect(show_op_reference)
