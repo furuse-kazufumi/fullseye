@@ -94,3 +94,10 @@
 - **変数ダブルクリック → カレント窓**(Codex #3 解消。旧=常に新窓で増殖)。`display_variable(target)` を `"current"`/`"new"`/`"main"` の 3-way に(旧 bool 互換維持)。`v_disp`=新窓 / `v_here`「Display → current」/ 右クリックも current/new に。
 - **Run once → カレント窓**(Codex #4)= current がプライマリ(既定)なら新スクラッチ窓(結果窓を汚さない)、二次窓がアクティブなら再利用(調整のたびの窓増殖を回避)。
 - ヘルパ `_current_view()`(カレント窓の ImageView、閉窓時はプライマリへ自己修復)/ `_current_handle()`。回帰 `test_current_graphics_window_model`。**ハーネス実測=変数操作の窓増殖が 8→5 に減少**。残(Codex #1)= パイプライン結果 `_render` 自体を current 窓へ出す案は結果表示の意味変更が大きく、現状はプライマリ固定のまま(要検討)。次=P2b' op 別引数 UI。
+
+### 追記: op 別引数 UI(P2b'、Codex #6)実装済
+- op 選択時に a/b ラベルを役割名へ更新(例 gaussian→「a · blur amount」)、curated かつ空=真に未使用の knob はラベル「(–)」+スピン無効化。**非 curated op は "a"/"b" のまま(誤って未使用と主張しない)**。`_ARG_ROLES`(既存 curated 表)+ `_knob_label` ヘルパ。公開 `win._op_arg_labels`。回帰 `test_operator_arg_labels_reflect_selected_op`。
+
+### 追記: 既定レイアウトを画像優先へ(ユーザー指針 2026-08-15)
+ユーザー指針=「画像を一番大きく / 次にスクリプトコード / op選択・変数窓は縦小さめ・ほとんどドッキングせず必要時のみ表示」。
+- **画像(中央 MDI)=最大**(左上、maximized)/ **Program(スクリプトコード)=下部の幅広ストリップ=2番目**(コードは幅を要するので右狭列は不可・実測 minW=916 が右列を膨張させる問題を回避)/ **Operators=右の compact 列**(op_hint 折返し + カテゴリ/サンプル combo を最小内容長化で minW 850→460)/ **Variables & Objects・Pipeline·Params・Display·Analysis=既定非表示(on-demand)**、ツールバー+Window▸Panels のトグルで表示。`setCorner` で下部 Program を画像下のみに限定。`layout_version` 2→3(既存 save を無効化し新既定を反映)。回帰 `test_default_layout_is_image_dominant`。「Balanced (default)」プリセットは従来通り全表示(reset は全 show)。
