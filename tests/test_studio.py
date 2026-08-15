@@ -957,6 +957,37 @@ def test_operator_panel_args_insert_and_run_once():
     assert win._last_run_once["op"] == "gaussian" and abs(win._last_run_once["a"] - 0.80) < 1e-6
 
 
+def test_operator_autocomplete_selects_op():
+    """v18.7 P2b: HDevelop-style autocomplete — the search field completes op names
+    and picking a completion selects that operator in the list."""
+    from PySide6 import QtCore
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    comp = win._op_completer
+    assert comp is not None and comp.filterMode() == QtCore.Qt.MatchContains
+    # the completion model covers real op names
+    model_strs = [comp.model().data(comp.model().index(i, 0))
+                  for i in range(comp.model().rowCount())]
+    assert "gaussian" in model_strs
+    # selecting a completion selects that op in the list
+    assert win._select_op_in_list("gaussian") is True
+    cur = win._op_list.currentItem()
+    assert cur is not None and cur.data(QtCore.Qt.UserRole) == "gaussian"
+
+
+def test_sample_pipeline_loads_and_gallery_reachable():
+    """v18.7 P3: picking a sample loads it into the pipeline; the code gallery is
+    reachable from the panel (not only the Help menu)."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    combo = win._samples
+    assert combo.count() > 1                       # placeholder + real recipes
+    win._state["dirty"] = False                    # nothing to discard -> no confirm dialog
+    combo.setCurrentIndex(1)                        # fires load_sample
+    assert len(model.stages) >= 1                   # the sample populated the pipeline
+    assert win._browse_samples is not None and callable(win._show_samples)
+
+
 def test_tools_menu_holds_palette_and_language():
     """v18.7: Command palette (was in Run) and Language (was in Help) move to Tools."""
     _app()
