@@ -617,6 +617,11 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  # sim2real sensor corruption (aug_), artificial-life / cellular automata
                  # (alife_), and tactile / contact-from-shading (tac_).
                  "backends_aug", "backends_alife", "backends_tactile",
+                 # more cellular-automata / artificial-life (Langton / Wolfram-1D /
+                 # Lenia / Abelian sandpile) and control-point deformable warps
+                 # (thin-plate spline / B-spline FFD / moving least squares). All
+                 # halcon="" new capabilities; numpy/scipy-native, deterministic.
+                 "backends_alife2", "backends_deform",
                  # self-expanding registry: macro ("DNA") ops condensed from evolved
                  # champions (backends_macro.py). LAST, so it can reference any backend
                  # op and minimally perturbs existing registration indices.
