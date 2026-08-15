@@ -1859,9 +1859,12 @@ def build_window(model=None):
     win._select_var_row = _select_var_row
 
     def step_to(i):
-        if 0 <= i < len(model.stages):
-            stage_list.setCurrentRow(i)                      # triggers show_result for that step
-            _select_var_row(i + 1)                           # sync: highlight this step's output var
+        if not (0 <= i < len(model.stages)):
+            return
+        if stage_list.count() != len(model.stages):          # self-heal a desynced UI list
+            refresh_stage_list(select=i)
+        stage_list.setCurrentRow(i)                          # triggers show_result for that step
+        _select_var_row(i + 1)                               # sync: highlight this step's output var
     win._step_to = step_to
 
     def reset_to_raw():
