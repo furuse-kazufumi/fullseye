@@ -713,9 +713,45 @@ def palette_filter(labels, query):
     return [i for _, i in scored]
 
 
+def _opengl_available() -> bool:
+    """True only if a *valid* OpenGL context can actually be created.
+
+    ``Q3DSurface`` assumes a live GL context and **segfaults** (a native access
+    violation, not a catchable Python exception) when one cannot be made — the
+    ``QT_QPA_PLATFORM=offscreen`` test/CI platform, a software-only build, or a
+    thin Remote-Desktop session with no GPU acceleration. We therefore probe
+    before ever touching QtDataVisualization: create a throwaway
+    ``QOffscreenSurface`` + ``QOpenGLContext`` and only report success if the
+    context is real and can be made current. ``QOpenGLContext.create()`` returns
+    False (it does not crash) when GL is unavailable, so the probe itself is safe."""
+    if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+        return False
+    try:
+        from PySide6 import QtGui, QtWidgets
+        if QtWidgets.QApplication.instance() is None:
+            return False
+        surf = QtGui.QOffscreenSurface()
+        surf.create()
+        if not surf.isValid():
+            return False
+        ctx = QtGui.QOpenGLContext()
+        if not ctx.create():
+            surf.destroy()
+            return False
+        ok = bool(ctx.makeCurrent(surf))
+        if ok:
+            ctx.doneCurrent()
+        surf.destroy()
+        return ok
+    except Exception:
+        return False
+
+
 def show_3d_surface(heightmap, parent=None):
     """Open a rotatable 3-D surface plot of a height/depth image (Q3DSurface).
     Best-effort: returns the container widget, or None if 3-D isn't available."""
+    if not _opengl_available():          # Q3DSurface segfaults without a real GL context
+        return None
     try:
         from PySide6.QtDataVisualization import (Q3DSurface, QSurface3DSeries,
                                                  QSurfaceDataProxy, QSurfaceDataItem)
