@@ -177,13 +177,21 @@ class ObjectSet:
 # --------------------------------------------------------------------------- #
 # Profiles and backend selection
 # --------------------------------------------------------------------------- #
-#: Ordered backend preference per profile.  "studio" prefers the reference
-#: implementation so that what the designer sees is what the oracle computes;
-#: "industrial" demands a native kernel and refuses to degrade silently.
+#: Ordered backend preference per profile.
+#:
+#: **What the designer sees must be what ships.**  If the Studio ran the numpy
+#: reference while the line ran the native kernel, a recipe tuned near a decision
+#: boundary could flip on deployment — and manufacturing does not accept "we
+#: shipped a migration tool", it asks for proof that the judgement is unchanged.
+#: So "studio" prefers the *same* native backend the line will use, and falls back
+#: to numpy only where no native kernel exists yet.
+#:
+#: The numpy implementation's job is to be the **oracle in tests** (profile
+#: "reference"), not the designer's default.
 PROFILES = {
-    "studio": ("numpy",),
-    "industrial": ("cv2",),
-    "fastest": ("cv2", "numpy"),
+    "studio": ("cv2", "numpy"),
+    "industrial": ("cv2",),      # fail-closed: never degrade silently on the line
+    "reference": ("numpy",),     # the oracle — differential tests only
 }
 
 _state = threading.local()

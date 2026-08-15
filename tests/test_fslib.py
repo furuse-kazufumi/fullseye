@@ -102,9 +102,24 @@ def test_operators_reject_the_wrong_sort():
 # --------------------------------------------------------------------------- #
 # Claim 2: one operator, several backends, selected by profile
 # --------------------------------------------------------------------------- #
-def test_studio_profile_uses_the_numpy_oracle():
+def test_studio_runs_what_the_line_will_run():
+    """What the designer sees must be what ships — studio prefers the native
+    backend, not the oracle."""
     assert fslib.current_profile() == "studio"
-    with fslib.profile("studio"):
+    if HAVE_CV2:
+        with fslib.profile("studio"):
+            assert fslib.gauss(scene(64, 64, 4), 1.0).pixels is not None
+        # studio and industrial must select the same backend when one exists
+        img = scene(128, 128, 6)
+        with fslib.profile("studio"):
+            a = fslib.gauss(img, 1.5).pixels
+        with fslib.profile("industrial"):
+            b = fslib.gauss(img, 1.5).pixels
+        assert np.array_equal(a, b), "studio must not diverge from what ships"
+
+
+def test_reference_profile_is_the_oracle():
+    with fslib.profile("reference"):
         assert fslib.gauss(scene(64, 64, 4), 1.0) is not None
 
 
@@ -140,7 +155,7 @@ def test_profile_is_restored_after_the_block():
 @pytest.mark.parametrize("sigma", [0.8, 1.5, 3.0])
 def test_differential_gauss_native_agrees_with_oracle(sigma):
     img = scene(256, 256, 12)
-    with fslib.profile("studio"):
+    with fslib.profile("reference"):
         ref = fslib.gauss(img, sigma).pixels.astype(np.float64)
     with fslib.profile("industrial"):
         nat = fslib.gauss(img, sigma).pixels.astype(np.float64)
@@ -154,7 +169,7 @@ def test_differential_connection_and_features_agree_with_oracle():
     img = scene(256, 256, 12)
     reg = fslib.threshold(img, 0.5, 1.0)
 
-    with fslib.profile("studio"):
+    with fslib.profile("reference"):
         objs_ref = fslib.connection(reg)
         a_ref, r_ref, c_ref = fslib.region_features(objs_ref)
     with fslib.profile("industrial"):
@@ -180,7 +195,7 @@ def test_differential_select_shape_agrees_with_oracle():
     img = scene(256, 256, 12)
     reg = fslib.threshold(img, 0.5, 1.0)
     counts = []
-    for prof in ("studio", "industrial"):
+    for prof in ("reference", "industrial"):
         with fslib.profile(prof):
             objs = fslib.connection(reg)
             counts.append(len(fslib.select_shape(objs, "area", 80, 1e12)))
