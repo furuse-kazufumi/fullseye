@@ -2509,7 +2509,12 @@ def build_window(model=None):
     c_sync.clicked.connect(sync_program)
     c_run.clicked.connect(lambda: run_program(True))
     c_step.clicked.connect(step_program)
-    c_reset.clicked.connect(lambda: (code_edit.clear_exec(), code_status.setText("ready")))
+    def reset_program():
+        state["code_dirty"] = False           # discard unapplied edits, restore code from the pipeline
+        sync_program()
+        code_edit.clear_exec()
+        code_status.setText("ready")
+    c_reset.clicked.connect(reset_program)
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "parse": parse_program, "text": program_text_from_model}
 
