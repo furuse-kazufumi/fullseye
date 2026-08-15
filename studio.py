@@ -1420,8 +1420,9 @@ def build_window(model=None):
     ProgEdit = _program_editor_class(QtWidgets, QtGui, QtCore)
     op_names = [r["name"] for r in all_ops]
     code_edit = ProgEdit(op_names)
-    code_edit.setToolTip("Edit the pipeline as code — one `op a b` per line (# starts a comment).\n"
-                         "Type for autocomplete; click the gutter to toggle a breakpoint.")
+    code_edit.setToolTip("Edit the pipeline as HDevelop-style code: `op (a, b)` (or `op a b`), "
+                         "`*`/`#` comments, and control flow `for N … endfor` / `if … else … endif`.\n"
+                         "Type for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).")
     c_run = QtWidgets.QPushButton("▶ Run (timed)"); c_run.setProperty("accent", True)
     c_step = QtWidgets.QPushButton("Step ▶")
     c_reset = QtWidgets.QPushButton("⏹ Reset")
