@@ -459,6 +459,41 @@ def parse(src: str):
     return Parser(tokenize(src)).parse_program()
 
 
+#: fscript builtins that dispatch to a fslib registry op — used by the Runtime
+#: load-time readiness check to map a recipe's calls onto backends to verify.
+#: Builtins not listed here resolve to Region/ObjectSet methods (no dispatch).
+FSLIB_OP_FOR_BUILTIN = {
+    "gauss_image": "gauss", "threshold": "threshold", "connection": "connection",
+    "select_shape": "measure_all", "area_center": "measure_all",
+}
+
+
+def used_op_names(program) -> set:
+    """Every function/operator name called anywhere in a parsed program.
+
+    Walks the AST collecting ``Call`` names so a Runtime can check, before it
+    becomes READY, that every operator a recipe uses has a working backend.
+    """
+    names: set = set()
+    stack = [program]
+    _CHILDREN = ("items", "base", "idx", "a", "b", "args", "expr", "target",
+                 "start", "stop", "step", "cond", "body", "orelse", "branches")
+    while stack:
+        node = stack.pop()
+        if node is None:
+            continue
+        if isinstance(node, (list, tuple)):
+            stack.extend(node)
+            continue
+        if isinstance(node, Call):
+            names.add(node.name)
+        for attr in _CHILDREN:
+            child = getattr(node, attr, None)
+            if child is not None:
+                stack.append(child)
+    return names
+
+
 # --------------------------------------------------------------------------- #
 # Values / environment
 # --------------------------------------------------------------------------- #
