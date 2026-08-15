@@ -2409,18 +2409,22 @@ def build_window(model=None):
             pass
 
     def _rebuild_layouts_menu():
+        # Flat actions only (no nested QMenu): a submenu returned by addMenu(str)
+        # has no Python owner and shiboken deletes it once the local ref drops —
+        # flat actions are owned by layouts_menu and survive clear()/rebuild.
         layouts_menu.clear()
         for nm, fn in win._builtin_layouts.items():
             layouts_menu.addAction(nm).triggered.connect(lambda _=False, f=fn: f())
         layouts_menu.addSeparator()
         layouts_menu.addAction("Save current layout as…").triggered.connect(_prompt_save_layout)
         if win._preset_store:
-            am = layouts_menu.addMenu("Apply saved layout")
+            layouts_menu.addSeparator()
             for nm in sorted(win._preset_store):
-                am.addAction(nm).triggered.connect(lambda _=False, n=nm: apply_layout_preset(n))
-            dm = layouts_menu.addMenu("Delete saved layout")
+                layouts_menu.addAction("Apply layout: %s" % nm).triggered.connect(
+                    lambda _=False, n=nm: apply_layout_preset(n))
             for nm in sorted(win._preset_store):
-                dm.addAction(nm).triggered.connect(lambda _=False, n=nm: delete_layout_preset(n))
+                layouts_menu.addAction("Delete layout: %s" % nm).triggered.connect(
+                    lambda _=False, n=nm: delete_layout_preset(n))
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
 
