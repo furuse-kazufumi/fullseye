@@ -914,8 +914,74 @@ def build_window(model=None):
     alay.addWidget(hl); alay.addWidget(hist_view); alay.addWidget(il); alay.addWidget(inspector)
     rv.addWidget(_group(QtWidgets, "ANALYSIS", alay))
 
-    central.addWidget(left); central.addWidget(mid); central.addWidget(right)
-    central.setSizes([340, 360, 640]); central.setStretchFactor(2, 1)
+    # ---- dockable tool windows (VS / HDevelop-style, all movable/floatable) ---- #
+    def _mk_dock(title, widget, objname):
+        d = QtWidgets.QDockWidget(title, win)
+        d.setObjectName(objname)
+        d.setWidget(widget)
+        d.setFeatures(QtWidgets.QDockWidget.DockWidgetMovable
+                      | QtWidgets.QDockWidget.DockWidgetFloatable
+                      | QtWidgets.QDockWidget.DockWidgetClosable)
+        d.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        return d
+
+    dock_ops = _mk_dock("Operators", left, "dock_operators")
+    dock_pipe = _mk_dock("Pipeline · Parameters", mid, "dock_pipeline")
+    dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
+    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_ops)
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_pipe)
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
+    win.splitDockWidget(dock_pipe, dock_disp, QtCore.Qt.Vertical)
+    win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp}
+
+    # ---- central graphics workspace: the primary image window ------------------ #
+    gsub = mdi.addSubWindow(image_panel)
+    gsub.setWindowTitle("Graphics 1")
+    gsub.setObjectName("graphics_sub_1")
+    win._graphics_windows.append(gsub)
+
+    def new_graphics_window(pixmap=None, title=None):
+        """Open another graphics window (HDevelop allows several). Shows a snapshot
+        of the current display by default, or a supplied pixmap (e.g. a variable)."""
+        n = len(win._graphics_windows) + 1
+        gv = ImageView()
+        try:
+            gv.set_pixmap(pixmap if pixmap is not None else view._item.pixmap())
+            gv.fit()
+        except Exception:
+            pass
+        sub = mdi.addSubWindow(gv)
+        sub.setWindowTitle(title or ("Graphics %d" % n))
+        sub.resize(440, 360)
+        sub.show()
+        win._graphics_windows.append(sub)
+        win._flash and win._flash("opened %s" % sub.windowTitle())
+        return sub
+    win._new_graphics_window = new_graphics_window
+
+    # ---- Windows menu: toggle every tool panel + graphics-window controls ------- #
+    act_newgfx = _act("New graphics window", "Ctrl+G", "Open another image / result window")
+    act_tile = _act("Tile graphics windows", None, "Tile the open graphics windows")
+    act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
+    act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
+    for _d in (dock_ops, dock_pipe, dock_disp):
+        menu_windows.addAction(_d.toggleViewAction())
+    win._dock_menu = menu_windows          # later milestones append their docks here
+    menu_windows.addSeparator()
+    menu_windows.addAction(act_newgfx)
+    menu_windows.addAction(act_tile); menu_windows.addAction(act_cascade)
+    menu_windows.addSeparator(); menu_windows.addAction(act_reset_layout)
+    act_newgfx.triggered.connect(lambda: new_graphics_window())
+    act_tile.triggered.connect(mdi.tileSubWindows)
+    act_cascade.triggered.connect(mdi.cascadeSubWindows)
+
+    def reset_layout():
+        if getattr(win, "_default_state", None) is not None:
+            win.restoreState(win._default_state)
+        for _d in win._docks.values():
+            _d.show()
+    act_reset_layout.triggered.connect(reset_layout)
+    win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "errors": [], "perception_error": None, "renders": 0}
     pmodel = PerceptionModel()
