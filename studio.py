@@ -1971,8 +1971,18 @@ def build_window(model=None):
             qi = _to_qimage(apply_display(out, display.currentText()), QtGui)
             pm = QtGui.QPixmap.fromImage(qi) if qi is not None else None
         if pm is not None:
-            new_graphics_window(pm, title)
-            flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
+            cur = win._current_gfx
+            if cur is None or cur is win._primary_gsub or cur not in win._graphics_windows:
+                # default (current = the resident main window): open a fresh scratch
+                # window so the single-shot preview never clobbers the pipeline result
+                new_graphics_window(pm, title)
+                flash("ran %s once — result in a new graphics window (pipeline unchanged)" % name)
+            else:
+                # a secondary window is current: reuse it (HDevelop dev_display) so
+                # repeated Run-once tuning doesn't spawn a new window every time
+                v = _current_view()
+                v.set_pixmap(pm); v.fit(); v.set_data(out)
+                flash("ran %s once → Graphics %d (pipeline unchanged)" % (name, _current_handle()))
         else:                                   # scalar feature / contour: no raster preview
             d = inspect_result(out)
             flash("ran %s once → %s (pipeline unchanged)" % (name, d.get("value", d.get("kind", "result"))))
