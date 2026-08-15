@@ -1608,9 +1608,11 @@ def build_window(model=None):
             sa.blockSignals(True); sb.blockSignals(True)
             sa.setValue(int(a * 100)); sb.setValue(int(b * 100))
             sa.blockSignals(False); sb.blockSignals(False)
-            la.setText(f"a: {a:.2f}"); lb.setText(f"b: {b:.2f}")
             row = _op_row(name)
-            stage_detail.setText(op_detail(row) if row else name)
+            a_role, b_role = op_arg_roles(name)
+            la.setText("a: %.2f%s" % (a, ("  ·  " + a_role) if a_role else ""))
+            lb.setText("b: %.2f%s" % (b, ("  ·  " + b_role) if b_role else ""))
+            stage_detail.setText(op_signature_detail(row) if row else name)
         else:
             stage_detail.setText("select a stage to tune its knobs")
         update_actions()
