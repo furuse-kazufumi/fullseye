@@ -1040,6 +1040,24 @@ def test_current_graphics_window_model():
     assert len(win._graphics_windows) == g2
 
 
+def test_default_layout_is_image_dominant():
+    """v18.8 (user-directed): the image (central MDI) is the largest surface and the
+    Program panel is the second; op selection + Variables/Objects are compact panels.
+    Every tool dock sits in the RIGHT column so the image keeps the whole left+centre,
+    Program is its own (tall) panel, and the op/var panels are tabbed together (short)."""
+    from PySide6 import QtCore, QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)          # image workspace is central
+    for key in ("operators", "program", "variables", "pipeline", "display"):
+        assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
+    tabbed = set(win.tabifiedDockWidgets(win._docks["operators"]))
+    assert win._docks["variables"] in tabbed
+    assert win._docks["pipeline"] in tabbed
+    assert win._docks["display"] in tabbed
+    assert win._docks["program"] not in tabbed                          # Program = its own tall panel
+
+
 def test_operator_arg_labels_reflect_selected_op():
     """v18.8 P2b': the a/b knob labels name each argument's role for the selected op,
     a knob the op curates as unused is disabled, and an un-curated op keeps generic
