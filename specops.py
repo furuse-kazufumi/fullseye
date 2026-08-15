@@ -39,6 +39,22 @@ References (public):
     partial unmixing of AVIRIS data" (1995); Heinz & Chang, "Fully constrained
     least squares linear spectral mixture analysis", IEEE TGRS 39 (2001).
   * Pixel Purity Index — Boardman, Kruse & Green (1995).
+  * Pansharpening — Tu, Su, Shyu & Huang, "A new look at IHS-like image fusion
+    methods", Information Fusion 2 (2001) (fast/generalised IHS); Gillespie, Kahle
+    & Walker, "Color enhancement of highly correlated images. II. Channel ratio and
+    'chromaticity' transformation techniques", Remote Sensing of Environment 22
+    (1987) (the chromaticity transform popularised as **Brovey**); Chavez, Sides &
+    Anderson, "Comparison of three different methods to merge multiresolution and
+    multispectral data", PE&RS 57 (1991) (the PC1-substitution merge).
+  * Decorrelation stretch — Gillespie, Kahle & Walker, "Color enhancement of highly
+    correlated images. I. Decorrelation and HSI contrast stretches", Remote Sensing
+    of Environment 20 (1986).
+  * Pixel-level multi-source fusion — Naidu & Raol, "Pixel-level image fusion using
+    wavelets and principal component analysis", Defence Science Journal 58 (2008)
+    (PC1 weighting); Burt & Adelson, "The Laplacian pyramid as a compact image
+    code", IEEE Trans. Communications 31 (1983) and Li, Manjunath & Mitra,
+    "Multisensor image fusion using the wavelet transform", CVGIP: Graphical Models
+    and Image Processing 57 (1995) (the *choose-max* activity selection rule).
 
 Honest limitations (nothing here claims more than its unit test proves):
   * Linear unmixing assumes the **linear** mixing model — one bounce, no multiple
