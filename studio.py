@@ -2455,7 +2455,7 @@ def build_window(model=None):
                             "Code focus": layout_code_focus}
     win._apply_builtin_layout = lambda nm: (win._builtin_layouts.get(nm) or (lambda: None))()
 
-    layouts_menu = menu_windows.addMenu("Layout")
+    layouts_menu = _menu(menu_windows, "Layout", "layout")
 
     def _prompt_save_layout():
         try:
