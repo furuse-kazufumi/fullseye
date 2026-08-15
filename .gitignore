@@ -20,3 +20,9 @@ data/*
 build/
 dist/
 __pycache__/
+
+# UI harness generated artifacts (regenerated each run)
+studio_ui_steps.jsonl
+studio_ui_report.json
+studio_ui_crash.log
+out/ui_harness_shots/

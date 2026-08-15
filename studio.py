@@ -2738,6 +2738,7 @@ def build_window(model=None):
         "actual_size": act_11, "surface_3d": act_3d, "reset": act_reset, "step": act_step,
         "run_all": act_runall, "palette": act_palette, "shortcuts": act_shortcuts,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
+        "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
     }
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
