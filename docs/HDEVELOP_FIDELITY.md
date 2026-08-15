@@ -47,3 +47,9 @@
 - 各 UI 挙動は headless（`QT_QPA_PLATFORM=offscreen`）でテストする（build_window ハンドル経由）。
 - submenu/QMenu は**明示親付き構築**（`QMenu(title, parent)`）で shiboken 回収を防ぐ（v18.7 で判明）。
 - HDevelop 挙動は**公式ドキュメントで裏取り**してから実装（Perplexity は補助）。
+
+## 次セッション最優先(2026-08-15 実 GUI レビューで判明)
+1. **★自律 UI 操作デバッグ・ハーネス**: QTest で実マウス click/press/move/release を全ボタン/ドラッグへ注入し、操作系のクラッシュ・不具合をユーザーに触らせず自動検出。手順: build_window(offscreen)→全 QPushButton/QAction を QTest.mouseClick→dock ドラッグ→各段でスクショ+状態 assert。ハンドラ直呼びでは実イベント固有のバグ(旧 GroupedDragging segfault 等)を見逃す。
+2. **カレント画像表示窓モデル(HDevelop)**: 画像表示窓は最低1つ常駐(最後は閉じられない)=「カレント窓」。変数/オブジェクトのダブルクリック表示は**カレント窓へ**行う(現状は new window/main が分離)。new_graphics_window/display_variable を current-window 概念で統一。
+3. **修正済(本セッション)**: ステップ実行が表示更新しないバグ(step_to 自己修復化)。既定レイアウト HDevelop 型。ボタンアイコン+ラベル。crash ログ常設。
+4. **検証規律**: ユーザーに手動テストさせる前に**サンドボックス(QTest+スクショ)で私が e2e 検証**する(ユーザー明示指摘)。
