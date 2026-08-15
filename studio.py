@@ -2075,7 +2075,9 @@ def build_window(model=None):
 
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
-    act_op_help.triggered.connect(show_op_reference)
+    act_op_help.triggered.connect(
+        lambda: show_op_help((op_list.currentItem().data(QtCore.Qt.UserRole))
+                             if op_list.currentItem() else (op_names[0] if op_names else "")))
     act_samples.triggered.connect(show_samples)
     act_about.triggered.connect(show_about)
 
