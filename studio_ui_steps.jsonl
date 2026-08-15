@@ -2,6 +2,7 @@
 {"step": "P0_build", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P0_show", "phase_start": true}
 {"step": "P0_show", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "00_initial", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 1}
 {"step": "P1_buttons", "phase_start": true}
 {"step": "P1_click", "phase_start": true, "widget": "Browse with code…"}
 {"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
@@ -68,6 +69,7 @@
 {"step": "P1_click", "phase_start": true, "widget": "▶"}
 {"step": "P1_click", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P1_buttons", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "01_after_buttons", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 2}
 {"step": "P2_actions", "phase_start": true}
 {"step": "P2_action", "phase_start": true, "widget": "Open image…"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
@@ -294,14 +296,19 @@
 {"step": "P2_action", "phase_start": true, "widget": "中文"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P2_actions", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "02_after_actions", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 3}
 {"step": "P3_combos", "phase_start": true}
 {"step": "P3_combos", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "03_after_combos", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 3}
 {"step": "P4_program", "phase_start": true}
 {"step": "P4_program", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "04_after_program", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 3}
 {"step": "P5_variables", "phase_start": true}
 {"step": "P5_variables", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "05_after_variables", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 6}
 {"step": "P6_graphics", "phase_start": true}
 {"step": "P6_graphics", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "06_after_graphics", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 8}
 {"step": "P7_dockdrag_all", "phase_start": true}
 {"step": "P7_dockdrag", "phase_start": true, "widget": "operators", "target": [-200, 200]}
 {"step": "P7_dockdrag", "phase_end": true, "ok": true, "detail": ""}
@@ -354,8 +361,10 @@
 {"step": "P7_dockdrag", "phase_start": true, "widget": "pipeline", "target": [900, 500]}
 {"step": "P7_dockdrag", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P7_dockdrag_all", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "07_after_dockdrag", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 8}
 {"step": "P8_layout", "phase_start": true}
 {"step": "P8_layout", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "08_after_layout", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 8}
 {"step": "P9_context_all", "phase_start": true}
 {"step": "P9_context", "phase_start": true, "widget": "operators"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
@@ -365,4 +374,6 @@
 {"step": "P9_context", "phase_start": true, "widget": "variables"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context_all", "phase_end": true, "ok": true, "detail": ""}
+{"probe": "09_after_context", "primary_alive": false, "primary_in_mdi": false, "n_gfx": 8}
+{"probe": "10_final", "primary_alive": false, "primary_in_mdi": false, "n_gfx": 8}
 {"note": "sweep complete: ok=183 fail=1 modal_closes=9"}

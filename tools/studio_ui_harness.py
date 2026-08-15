@@ -196,7 +196,28 @@ def main() -> int:
     def pump(ms: int = 40) -> None:
         QtWidgets.QApplication.processEvents(QtCore.QEventLoop.AllEvents, ms)
 
+    try:
+        import shiboken6
+    except Exception:
+        shiboken6 = None
+
+    def probe_primary(tag: str) -> None:
+        """Record whether the resident primary graphics window (and its image
+        view) is still alive + still in the MDI — pinpoints which op destroys it."""
+        gp = win.findChild(QtWidgets.QWidget, "graphics_primary")
+        alive = gp is not None and (shiboken6 is None or shiboken6.isValid(gp))
+        in_mdi = False
+        if alive:
+            try:
+                in_mdi = any(s.widget() is gp for s in win._mdi.subWindowList())
+            except Exception:
+                in_mdi = False
+        log._emit({"probe": tag, "primary_alive": bool(alive),
+                   "primary_in_mdi": bool(in_mdi),
+                   "n_gfx": len(getattr(win, "_graphics_windows", []))})
+
     def shot(tag: str) -> None:
+        probe_primary(tag)
         try:
             pm = win.grab()
             pm.save(os.path.join(args.shots, "shot_%s.png" % tag))
