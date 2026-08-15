@@ -2186,6 +2186,7 @@ def build_window(model=None):
     def clear_pipe():
         if not confirm_discard("Clear pipeline"):
             return
+        push_undo()
         model.stages = []
         mark_dirty()
         refresh_stage_list(); show_result()
