@@ -1304,6 +1304,8 @@ def build_window(model=None):
     cat = QtWidgets.QComboBox(); cat.addItem("all categories")
     cat.addItems(sorted({r["category"] for r in all_ops}))
     cat.setToolTip("Filter operators by category")
+    cat.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+    cat.setMinimumContentsLength(10)                       # narrow: don't size to the widest category
     search = QtWidgets.QLineEdit(); search.setPlaceholderText("search / autocomplete operators…")
     search.setClearButtonEnabled(True)
     search.setToolTip("Filter by op name, HALCON alias or category")
