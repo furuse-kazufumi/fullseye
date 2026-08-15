@@ -234,7 +234,6 @@
 {"step": "P2_action", "phase_start": true, "widget": "action"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P2_action", "phase_start": true, "widget": "&Close"}
-{"note": "PRIMARY LEFT MDI", "action": "&Close"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P2_action", "phase_start": true, "widget": "New graphics window"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
@@ -297,19 +296,19 @@
 {"step": "P2_action", "phase_start": true, "widget": "中文"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P2_actions", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "02_after_actions", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 3}
+{"probe": "02_after_actions", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 3}
 {"step": "P3_combos", "phase_start": true}
 {"step": "P3_combos", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "03_after_combos", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 3}
+{"probe": "03_after_combos", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 3}
 {"step": "P4_program", "phase_start": true}
 {"step": "P4_program", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "04_after_program", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 3}
+{"probe": "04_after_program", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 3}
 {"step": "P5_variables", "phase_start": true}
 {"step": "P5_variables", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "05_after_variables", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 6}
+{"probe": "05_after_variables", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 6}
 {"step": "P6_graphics", "phase_start": true}
 {"step": "P6_graphics", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "06_after_graphics", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 8}
+{"probe": "06_after_graphics", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 8}
 {"step": "P7_dockdrag_all", "phase_start": true}
 {"step": "P7_dockdrag", "phase_start": true, "widget": "operators", "target": [-200, 200]}
 {"step": "P7_dockdrag", "phase_end": true, "ok": true, "detail": ""}
@@ -362,19 +361,18 @@
 {"step": "P7_dockdrag", "phase_start": true, "widget": "pipeline", "target": [900, 500]}
 {"step": "P7_dockdrag", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P7_dockdrag_all", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "07_after_dockdrag", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 8}
+{"probe": "07_after_dockdrag", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 8}
 {"step": "P8_layout", "phase_start": true}
 {"step": "P8_layout", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "08_after_layout", "primary_alive": true, "primary_in_mdi": false, "n_gfx": 8}
+{"probe": "08_after_layout", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 8}
 {"step": "P9_context_all", "phase_start": true}
 {"step": "P9_context", "phase_start": true, "widget": "operators"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context", "phase_start": true, "widget": "pipeline"}
-{"slot_exception": "RuntimeError: libshiboken: Internal C++ object (ImageView) already deleted.", "during_phase": "P9_context_all", "traceback": "Traceback (most recent call last):\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1773, in show_result\n    _render()\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1741, in _render\n    view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 815, in set_pixmap\n    self._item.setPixmap(pm)\nRuntimeError: libshiboken: Internal C++ object (PySide6.QtWidgets.QGraphicsPixmapItem) already deleted.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 2212, in <lambda>\n    stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())\n                                                        ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1834, in on_stage_selected\n    show_result()\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1775, in show_result\n    view.set_message(\"Display error\\n\\n%s\\n\\n(see the Problems list)\" % truncate(e, 200))\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 836, in set_message\n    w = max(self.viewport().width(), 420)\n            ^^^^^^^^^^^^^^^\nRuntimeError: libshiboken: Internal C++ object (ImageView) already deleted.\n"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context", "phase_start": true, "widget": "variables"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context_all", "phase_end": true, "ok": true, "detail": ""}
-{"probe": "09_after_context", "primary_alive": false, "primary_in_mdi": false, "n_gfx": 8}
-{"probe": "10_final", "primary_alive": false, "primary_in_mdi": false, "n_gfx": 8}
-{"note": "sweep complete: ok=183 fail=1 modal_closes=9"}
+{"probe": "09_after_context", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 8}
+{"probe": "10_final", "primary_alive": true, "primary_in_mdi": true, "n_gfx": 8}
+{"note": "sweep complete: ok=183 fail=0 modal_closes=9"}

@@ -1547,6 +1547,25 @@ def build_window(model=None):
     gsub.setObjectName("graphics_sub_1")
     win._graphics_windows.append(gsub)
 
+    # The primary graphics sub-window is the HDevelop-style *resident* window: it
+    # hosts the always-present image view AND the global Load/Demo/Save/Zoom
+    # controls, so it must never be closed — closing it would destroy those
+    # controls and blank the display (and a queued action-sync would then poke at
+    # freed QPushButtons). An event filter vetoes its Close event, covering every
+    # path: the sub-window close button, its system-menu "Close", and Ctrl+W.
+    # Extra windows opened via new_graphics_window stay freely closable.
+    class _ResidentCloseGuard(QtCore.QObject):
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Close:
+                ev.ignore()
+                flash("the primary graphics window stays open (resident view)")
+                return True
+            return False
+    _resident_guard = _ResidentCloseGuard(win)
+    gsub.installEventFilter(_resident_guard)
+    win._resident_guard = _resident_guard          # keep a Python owner (shiboken)
+    win._primary_gsub = gsub
+
     def new_graphics_window(pixmap=None, title=None):
         """Open another graphics window (HDevelop allows several). Shows a snapshot
         of the current display by default, or a supplied pixmap (e.g. a variable)."""
