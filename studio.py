@@ -2171,9 +2171,10 @@ def build_window(model=None):
 
     def program_text_from_model():
         if not model.stages:
-            return ("# empty pipeline — type ops here, one per line, e.g.:\n"
-                    "# gaussian 0.4 0.5\n# sobel_mag 0.5 0.5\n# otsu 0.5 0.5")
-        return "\n".join("%s %.3f %.3f" % (n, a, b) for (n, a, b) in model.stages)
+            return ("* empty pipeline — type ops here (HDevelop syntax), e.g.:\n"
+                    "* gaussian (0.4, 0.5)\n* sobel_mag (0.5, 0.5)\n* otsu (0.5, 0.5)\n"
+                    "* control flow:  for 3 ... endfor   ·   if 1 ... else ... endif")
+        return "\n".join("%s (%.3f, %.3f)" % (n, a, b) for (n, a, b) in model.stages)
 
     def sync_program():
         if code_edit.hasFocus():          # never clobber what the user is typing
