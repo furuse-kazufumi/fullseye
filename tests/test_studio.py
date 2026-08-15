@@ -189,6 +189,34 @@ def test_region_overlay_display_mode():
     assert studio.apply_display(region, "region overlay", base=None).ndim == 2
 
 
+def test_hdev_program_syntax_and_control_flow():
+    """v18.7 P5: HDevelop-style program parsing — `op (a, b)`, `*`/`#` comments,
+    `for N ... endfor` (loop unrolling) and `if ... else ... endif` (constant branch)."""
+    names = studio.api.op_names()
+    # paren syntax + terse syntax + * and # comments
+    stages, errs = studio.parse_hdev_program(
+        "* a comment\ngaussian (0.4, 0.5)\nsobel_mag 0.5 0.5   # inline\n", names)
+    assert not errs and [s[0] for s in stages] == ["gaussian", "sobel_mag"]
+    assert abs(stages[0][1] - 0.4) < 1e-6 and abs(stages[0][2] - 0.5) < 1e-6
+    # for-loop unrolls the block N times
+    st2, e2 = studio.parse_hdev_program("for 3\n  gaussian (0.5, 0.5)\nendfor", names)
+    assert not e2 and len(st2) == 3 and all(s[0] == "gaussian" for s in st2)
+    # if/else picks a branch by a constant condition
+    st3, _ = studio.parse_hdev_program("if 1\n gaussian 0.5 0.5\nelse\n invert 0.5 0.5\nendif", names)
+    assert [s[0] for s in st3] == ["gaussian"]
+    st4, _ = studio.parse_hdev_program("if 0\n gaussian 0.5 0.5\nelse\n invert 0.5 0.5\nendif", names)
+    assert [s[0] for s in st4] == ["invert"]
+    # comparison condition + nested for
+    st5, _ = studio.parse_hdev_program("if 2 > 1\n otsu 0.5 0.5\nendif", names)
+    assert [s[0] for s in st5] == ["otsu"]
+    st6, e6 = studio.parse_hdev_program("for 2\n for 2\n  invert 0.5 0.5\n endfor\nendfor", names)
+    assert not e6 and len(st6) == 4
+    # unsupported / malformed -> clear errors
+    assert any("while" in e for e in studio.parse_hdev_program("while 1\n gaussian 0.5 0.5\nendwhile", names)[1])
+    assert any("endfor" in e for e in studio.parse_hdev_program("for 3\n gaussian 0.5 0.5", names)[1])
+    assert any("unknown op" in e for e in studio.parse_hdev_program("bogus_op (0.1, 0.2)", names)[1])
+
+
 def test_window_actions_and_shortcuts():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
