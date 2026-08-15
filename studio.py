@@ -2275,6 +2275,56 @@ def build_window(model=None):
     win._code_sync = sync_panels
     sync_panels()
 
+    # right-click context menus (dev-IDE density: act where you point) --------- #
+    def _ctx_menu(widget, actions_fn):
+        widget.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+
+        def _show(pos):
+            items = actions_fn()
+            if not items:
+                return
+            menu = QtWidgets.QMenu(widget)
+            for label, cb in items:
+                if label == "---":
+                    menu.addSeparator()
+                else:
+                    menu.addAction(label).triggered.connect(cb)
+            menu.exec(widget.mapToGlobal(pos))
+        widget.customContextMenuRequested.connect(_show)
+        return actions_fn                       # returned for tests / reuse
+
+    def _op_ctx():
+        cur = op_list.currentItem()
+        if cur is None:
+            return []
+        name = cur.data(QtCore.Qt.UserRole)
+        return [("Insert into pipeline", lambda: add_op(cur)),
+                ("Run once (preview)", run_op_once),
+                ("---", None),
+                ("Operator help…", lambda: show_op_help(name))]
+
+    def _stage_ctx():
+        i = stage_list.currentRow()
+        if not (0 <= i < len(model.stages)):
+            return []
+        return [("Run to here", lambda: step_to(i)),
+                ("---", None),
+                ("Remove stage", remove),
+                ("Move up", lambda: move(-1)),
+                ("Move down", lambda: move(1))]
+
+    def _var_ctx():
+        if var_list.currentItem() is None:
+            return []
+        return [("Display → new window", lambda: display_variable(True)),
+                ("Display → main view", lambda: display_variable(False)),
+                ("---", None),
+                ("Inspect", show_variable_inspection)]
+
+    win._ctx = {"operators": _ctx_menu(op_list, _op_ctx),
+                "pipeline": _ctx_menu(stage_list, _stage_ctx),
+                "variables": _ctx_menu(var_list, _var_ctx)}
+
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
     act_op_help.triggered.connect(
