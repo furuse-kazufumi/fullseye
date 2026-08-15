@@ -171,6 +171,21 @@ Codex が一次資料で確認した結論(確信度: 高):
 
 → **産業プロファイルの到達に Rust/C の新規実装は不要**。Path C(最初からネイティブコア)を採る理由がさらに薄れる。
 
+**★「名前があること」から「実際に動くこと」へ格上げ済み**: 代表 16 op を **4 MP(2048x2048)の実 u8 フレームで実行**し、
+16/16 成功。p50(ms):
+
+| op | ms | op | ms | op | ms |
+|---|---:|---|---:|---|---:|
+| GaussianBlur | 2.09 | connCompWithStats | 8.77 | distanceTransform | 6.59 |
+| medianBlur | 6.58 | findContours | 2.64 | HoughLinesP | 12.52 |
+| Canny | 3.93 | minAreaRect / fitEllipse / moments | ~0.01 | solvePnP | 0.03 |
+| adaptiveThreshold | 8.99 | warpAffine | 2.46 | cornerSubPix | 0.01 |
+| morphologyEx(open) | 1.43 | **matchTemplate** | **46.74** | | |
+
+**★ `matchTemplate` が突出して遅い(46.7 ms)** — しかもこれは**回転・スケール不変ですらない NCC**。
+つまり **マッチングは機能面で最も弱く、同時に最も高価**。
+→ §1.8 の「差別化 3 領域」のうち **shape-based matching が最優先**であることが、数字でも裏付けられた。
+
 **★ただし正直に区別すべきこと** — 問題は「ネイティブカーネルが無い」ことではなく
 **「OpenCV のアルゴリズム集合 ≠ HALCON のアルゴリズム集合」**である。HALCON が高価な理由そのものが OpenCV に無い:
 
