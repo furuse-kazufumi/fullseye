@@ -972,6 +972,32 @@ def test_update_actions_survives_a_deleted_control():
     win._update_actions()                     # must not raise despite the dead button
 
 
+def test_function_key_shortcuts_step_from_any_panel():
+    """F5 / F6 / Shift+F5 drive run-all / step / reset like a debugger, and fire even
+    when a non-pipeline widget (here the Program editor) holds focus — unlike the
+    Ctrl+Arrow keys which are scoped to the pipeline list."""
+    from PySide6 import QtCore, QtGui, QtWidgets
+    from PySide6.QtTest import QTest
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu"); m.add_stage("sobel_mag")
+    win, model = studio.build_window(m)
+    win.show(); QtWidgets.QApplication.processEvents()
+    assert win._actions["dbg_step"].shortcut() == QtGui.QKeySequence("F6")
+    assert win._actions["dbg_run"].shortcut() == QtGui.QKeySequence("F5")
+    assert win._actions["dbg_reset"].shortcut() == QtGui.QKeySequence("Shift+F5")
+    # focus a NON-pipeline widget to prove the key works window-wide
+    editor = win._program["edit"]
+    editor.setFocus(); QtWidgets.QApplication.processEvents()
+    win._stage_list.setCurrentRow(-1)
+    QTest.keyClick(editor, QtCore.Qt.Key_F6); QtWidgets.QApplication.processEvents()
+    assert win._stage_list.currentRow() == 0, "F6 did not step to stage 1"
+    QTest.keyClick(editor, QtCore.Qt.Key_F6); QtWidgets.QApplication.processEvents()
+    assert win._stage_list.currentRow() == 1, "F6 did not step to stage 2"
+    QTest.keyClick(editor, QtCore.Qt.Key_F5); QtWidgets.QApplication.processEvents()
+    assert win._stage_list.currentRow() == len(model.stages) - 1, "F5 did not run all"
+
+
 def test_3d_surface_degrades_without_opengl(monkeypatch):
     """Offscreen (and any GL-less display session) has no usable OpenGL context, where
     Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
