@@ -1479,19 +1479,23 @@ def build_window(model=None):
     dock_ops = _mk_dock("Operators", left, "dock_operators")
     dock_pipe = _mk_dock("Pipeline · Parameters", mid, "dock_pipeline")
     dock_disp = _mk_dock("Display · Analysis", right, "dock_display")
-    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_ops)
-    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_pipe)
-    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
-    win.splitDockWidget(dock_pipe, dock_disp, QtCore.Qt.Vertical)
-    # Keep the central graphics workspace the dominant surface; tool docks stay narrow.
-    win.resizeDocks([dock_ops, dock_pipe], [290, 330], QtCore.Qt.Horizontal)
     dock_code = _mk_dock("Program (code)", code_w, "dock_program")
-    win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_code)
-    win.resizeDocks([dock_code], [210], QtCore.Qt.Vertical)
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
-    win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_vars)
-    win.tabifyDockWidget(dock_code, dock_vars)
-    dock_code.raise_()
+    # HDevelop default layout: LEFT half = Graphics (central MDI) + Variables & Objects;
+    # RIGHT half = Operators (op selection) on top + Program (code) below. The extra
+    # Studio panels (Pipeline·Parameters, Display·Analysis) are tabbed alongside so the
+    # four HDevelop windows stay dominant.
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ops)      # op selection (top-right)
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_code)     # program editing (bottom-right)
+    win.splitDockWidget(dock_ops, dock_code, QtCore.Qt.Vertical)
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_pipe)
+    win.tabifyDockWidget(dock_code, dock_pipe)                      # Program / Pipeline·Params tabbed
+    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_vars)      # variables (left, by the image)
+    win.addDockWidget(QtCore.Qt.LeftDockWidgetArea, dock_disp)
+    win.tabifyDockWidget(dock_vars, dock_disp)                      # Variables / Display·Analysis tabbed
+    dock_code.raise_(); dock_vars.raise_()
+    win.resizeDocks([dock_ops, dock_vars], [440, 280], QtCore.Qt.Horizontal)   # right ~half + left col
+    win.resizeDocks([dock_ops, dock_code], [360, 360], QtCore.Qt.Vertical)
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars}
 
