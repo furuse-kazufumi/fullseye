@@ -51,9 +51,18 @@ def rss_mb() -> float:
 
         pmc = PMC()
         pmc.cb = ctypes.sizeof(PMC)
-        ctypes.windll.psapi.GetProcessMemoryInfo(
-            ctypes.windll.kernel32.GetCurrentProcess(), ctypes.byref(pmc), pmc.cb)
-        return pmc.WorkingSetSize / 1024 / 1024
+        # Modern Windows exports the API from kernel32 as K32GetProcessMemoryInfo;
+        # psapi.dll still forwards it. Try both and require a non-zero return.
+        for dll, fn in ((ctypes.windll.kernel32, "K32GetProcessMemoryInfo"),
+                        (ctypes.windll.psapi, "GetProcessMemoryInfo")):
+            f = getattr(dll, fn, None)
+            if f is None:
+                continue
+            f.argtypes = [wintypes.HANDLE, ctypes.POINTER(PMC), wintypes.DWORD]
+            f.restype = wintypes.BOOL
+            if f(ctypes.windll.kernel32.GetCurrentProcess(), ctypes.byref(pmc), pmc.cb):
+                return pmc.WorkingSetSize / 1024 / 1024
+        raise OSError("GetProcessMemoryInfo failed")
     except Exception:
         try:
             import resource
