@@ -1102,6 +1102,54 @@ def test_operator_arg_labels_reflect_selected_op():
     assert sa.isEnabled() and sb.isEnabled()
 
 
+def test_program_editor_tracks_unapplied_edits():
+    """Codex #9: hand-written Program edits are not silently lost — typing marks the
+    editor dirty, a pipeline refresh won't overwrite it, the discard guard warns about
+    it, and Apply clears the flag."""
+    import studio as S
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    prog = win._program
+    ed = prog["edit"]
+    assert not win._state["code_dirty"]
+    ed.setPlainText("gaussian (2, 0)\n")                      # simulate typing
+    assert win._state["code_dirty"] is True
+    model.add_stage("otsu")                                   # a pipeline change...
+    win._code_sync()                                         # ...must NOT clobber the edits
+    assert "gaussian (2, 0)" in ed.toPlainText()
+    assert win._state["code_dirty"] is True
+    orig = S.CONFIRM_HOOK; asked = []
+    S.CONFIRM_HOOK = lambda p, t, txt: (asked.append(txt), False)[1]
+    try:
+        assert win._confirm_discard("Quit") is False         # guard fires...
+        assert asked and "unapplied Program edits" in asked[-1]
+    finally:
+        S.CONFIRM_HOOK = orig
+    prog["apply"]()                                           # applying clears the flag
+    assert win._state["code_dirty"] is False
+
+
+def test_step_through_marks_variable_frontier():
+    """Codex #8: during step-through, variables for stages past the current step read as
+    'pending' (greyed) so future outputs don't look already-computed."""
+    from PySide6 import QtCore
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    ol, ins = win._op_list, win._op_buttons["insert"]
+    for op in ("gaussian", "invert", "otsu"):
+        idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == op)
+        ol.setCurrentRow(idx); ins.click()
+    win._variables["refresh"]()
+    lst = win._variables["list"]                              # rows: 0=input,1=st0,2=st1,3=st2
+    win._step_to(0)                                           # frontier = stage 0
+    texts = [lst.item(r).text() for r in range(lst.count())]
+    assert "pending" not in texts[0] and "pending" not in texts[1]   # input + stage0 live
+    assert "pending" in texts[2] and "pending" in texts[3]           # stage1, stage2 pending
+    win._step_to(2)                                           # advance the frontier to the end
+    texts = [lst.item(r).text() for r in range(lst.count())]
+    assert not any("pending" in t for t in texts)                    # all live now
+
+
 def test_3d_surface_degrades_without_opengl(monkeypatch):
     """Offscreen (and any GL-less display session) has no usable OpenGL context, where
     Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
