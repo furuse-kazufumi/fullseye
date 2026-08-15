@@ -5,11 +5,17 @@ rule-based image-processing algorithm can actually be written: named variables,
 real control flow that branches on *measured* values, per-object iteration, and
 I/O. It is the language layer the Studio's Program window runs.
 
-Design (increment 1):
-  * Values are typed dynamically:
-      - control : number / string / tuple (Python float/int/str/list)
-      - iconic  : an image or a region  (a numpy array; a region is a boolean mask)
-      - object  : a *tuple of regions*  (connected components / selected blobs)
+Design (increment I-2 — the language runs on fslib's typed L1 model):
+  * Values are typed by their class, never guessed from pixel content:
+      - control : number / string / tuple (Python float/int/str + a flat list
+                  whose ``+`` is HALCON element-wise; ``[t1, t2]`` concatenates)
+      - iconic  : ``fslib.FImage`` (pixels + declared value range + domain) /
+                  ``fslib.Region`` / ``fslib.ObjectSet``.  The sort is *carried*
+                  by the type (a threshold means the same thing on every frame),
+                  and an iconic value has no truth value, so ``if (Region)`` and
+                  ``if (Image = 0)`` are type errors rather than silent .any()s.
+  * Vision builtins delegate to fslib operators (one implementation per op, with
+    profile-selectable backends) — there is no second copy of the pixel work.
   * Statements: assignment ``Name := expr``, bare op/procedure calls, and control
     flow ``if/elseif/else/endif``, ``for V := a to b [by s] ... endfor``,
     ``while (c) ... endwhile``, ``repeat ... until (c)``, ``break``, ``continue``.
@@ -30,6 +36,10 @@ control-flow / tuple / ``:=`` syntax is HDevelop-flavoured.
 from __future__ import annotations
 
 import numpy as np
+from scipy import ndimage as ndi
+
+import fslib
+from fslib import FImage, ObjectSet, Region
 
 
 # --------------------------------------------------------------------------- #
@@ -454,18 +464,24 @@ def parse(src: str):
 # --------------------------------------------------------------------------- #
 def value_kind(v) -> str:
     """Classify a value for the Variable window: 'image' / 'region' / 'object'
-    (a tuple of regions) / 'control'."""
-    if isinstance(v, np.ndarray):
-        if v.ndim == 2 and _is_region(v):
-            return "region"
+    / 'control'.
+
+    The sort is read from the *type*, never guessed from pixel content.  A grey
+    image that happens to be binary is still an image (defect 5); the previous
+    ``np.unique(v).size <= 2`` heuristic silently reclassified it as a region.
+    """
+    if isinstance(v, FImage):
         return "image"
-    if isinstance(v, list) and v and all(isinstance(x, np.ndarray) for x in v):
+    if isinstance(v, Region):
+        return "region"
+    if isinstance(v, ObjectSet):
         return "object"
+    if isinstance(v, np.ndarray):
+        # A raw array only reaches here before it is wrapped (e.g. a value handed
+        # to value_kind directly).  Classify by declared dtype, not by how many
+        # distinct values it happens to contain.
+        return "region" if v.dtype == bool else "image"
     return "control"
-
-
-def _is_region(v) -> bool:
-    return v.dtype == bool or (v.ndim == 2 and np.unique(v).size <= 2)
 
 
 class Env:
@@ -594,7 +610,18 @@ class Interp:
 
     def _ev_Bool(self, n): return n.v
 
-    def _ev_TupleLit(self, n): return [self._eval(x) for x in n.items]
+    def _ev_TupleLit(self, n):
+        # HALCON's ``[...]`` builds a tuple by *flattening*: ``[Rows, x]`` appends
+        # x to the tuple Rows.  Concatenation therefore has its own syntax,
+        # leaving ``+`` free to be element-wise (defect 3).
+        out = []
+        for x in n.items:
+            v = self._eval(x)
+            if isinstance(v, list):
+                out.extend(v)
+            else:
+                out.append(v)
+        return out
 
     def _ev_Name(self, n):
         if n.name in self.env.vars:
@@ -624,10 +651,21 @@ class Interp:
                 return _truth(a) and _truth(self._eval(n.b))
             return _truth(a) or _truth(self._eval(n.b))
         a, b = self._eval(n.a), self._eval(n.b)
+        if n.op in _COMPARE_OPS and (isinstance(a, _ICONIC) or isinstance(b, _ICONIC)):
+            # Defect 5: comparing an iconic value against a scalar yields an array,
+            # which a condition then collapses with .any() — so `if (Image = 0)`
+            # read as "any pixel is 0".  Element-wise iconic comparison must be
+            # reduced explicitly, never used as a predicate.
+            raise FScriptError(
+                "cannot compare an iconic value with '%s'; reduce it first "
+                "(e.g. area(R), count_obj(Objects), mean_gray(Image))" % n.op, n.line)
         try:
             if n.op == "+":
-                if isinstance(a, list) or isinstance(b, list):   # tuple concat
-                    return (a if isinstance(a, list) else [a]) + (b if isinstance(b, list) else [b])
+                if isinstance(a, _ICONIC) or isinstance(b, _ICONIC):
+                    raise FScriptError("cannot add iconic values in the language; "
+                                       "call an operator instead", n.line)
+                if isinstance(a, list) or isinstance(b, list):
+                    return _tuple_add(a, b, n.line)          # HALCON element-wise
                 return a + b
             if n.op == "-": return a - b
             if n.op == "*": return a * b
@@ -639,6 +677,8 @@ class Interp:
             if n.op == ">": return a > b
             if n.op == "<=": return a <= b
             if n.op == ">=": return a >= b
+        except FScriptError:
+            raise
         except (TypeError, ZeroDivisionError) as e:
             raise FScriptError("bad operation %s: %s" % (n.op, e), n.line)
         raise FScriptError("bad binary op %s" % n.op, n.line)
@@ -660,33 +700,120 @@ class Interp:
         raise FScriptError("unknown function/operator '%s'" % n.name, n.line)
 
 
+#: The sorts that have no truth value and cannot be compared element-wise as a
+#: language predicate.  ``np.ndarray`` is included so a raw array that slips
+#: through (e.g. a 3-channel image awaiting to_gray) is treated the same way.
+_ICONIC = (FImage, Region, ObjectSet, np.ndarray)
+_COMPARE_OPS = ("=", "==", "!=", "#", "<", ">", "<=", ">=")
+
+
 def _truth(v) -> bool:
-    if isinstance(v, np.ndarray):
-        return bool(v.any())
+    if isinstance(v, _ICONIC):
+        # Defect 4: an iconic value used as a condition was silently coerced with
+        # ndarray.any().  The language forbids it — a condition must be a scalar
+        # predicate, written explicitly.
+        raise FScriptError(
+            "an iconic value has no truth value in a condition; write an explicit "
+            "predicate such as count_obj(Objects) > 0, area(R) > 0 or "
+            "mean_gray(Image) > 0.5")
     if isinstance(v, list):
         return len(v) > 0
     return bool(v)
 
 
+def _tuple_add(a, b, line=0):
+    """HALCON numeric-tuple ``+`` — element-wise with scalar broadcast.
+
+    Defect 3: the old path concatenated (Python list ``+``), so ``[1,2,3] +
+    [10,20,30]`` gave a 6-tuple.  HALCON's ``+`` is element-wise; concatenation
+    is the ``[t1, t2]`` literal.
+    """
+    la = a if isinstance(a, list) else [a]
+    lb = b if isinstance(b, list) else [b]
+    if len(la) == 1 and len(lb) != 1:
+        la = la * len(lb)
+    elif len(lb) == 1 and len(la) != 1:
+        lb = lb * len(la)
+    if len(la) != len(lb):
+        raise FScriptError(
+            "tuple '+' needs equal lengths or a scalar (HALCON is element-wise); "
+            "use [t1, t2] to concatenate", line)
+    return [x + y for x, y in zip(la, lb)]
+
+
 # --------------------------------------------------------------------------- #
 # Built-in vision vocabulary (REAL parameters)
+#
+# Iconic values are the typed L1 sorts (FImage / Region / ObjectSet from
+# ``fslib``); the pixel operators delegate to ``fslib`` so there is one
+# implementation of each operator, not a second copy here.  What this layer adds
+# is the *language* vocabulary and the coercion at the boundary — the type model
+# is fslib's.
 # --------------------------------------------------------------------------- #
-def _to_gray(img):
-    img = np.asarray(img, dtype=np.float64)
-    if img.ndim == 3:
-        img = img[..., :3].mean(axis=2)
-    return img
+def _range_for_dtype(dt) -> tuple[float, float]:
+    """The declared value range for a raw array — read from the dtype (the sensor
+    convention), never from the pixel content (defect 2)."""
+    dt = np.dtype(dt)
+    if dt.kind in "ui":
+        return (0.0, float(np.iinfo(dt).max))
+    return (0.0, 1.0)                       # float: the 0..1 sensor convention
 
 
-def _norm01(img):
-    img = np.asarray(img, dtype=np.float64)
-    m = img.max()
-    return img / m if m > 1.0 else img
+def _wrap_array_as_image(a) -> FImage:
+    a = np.asarray(a)
+    if a.ndim != 2:
+        raise FScriptError("expected a 2-D image; call to_gray first (got %dD)" % a.ndim)
+    if a.dtype == bool:
+        raise FScriptError("a boolean array is a region, not an image")
+    return FImage(a, value_range=_range_for_dtype(a.dtype))
 
 
-def _as_mask(region):
-    r = np.asarray(region)
-    return r > (0.5 if r.max() <= 1.0 else r.max() * 0.5) if r.dtype != bool else r
+def _as_fimage(x) -> FImage:
+    if isinstance(x, FImage):
+        return x
+    if isinstance(x, np.ndarray):
+        return _wrap_array_as_image(x)
+    raise FScriptError("expected an image, got %s" % type(x).__name__)
+
+
+def _as_region(x) -> Region:
+    if isinstance(x, Region):
+        return x
+    if isinstance(x, np.ndarray) and x.ndim == 2:
+        return Region(x)
+    raise FScriptError("expected a region, got %s (call connection/threshold first)"
+                       % type(x).__name__)
+
+
+def _as_objectset(x) -> ObjectSet:
+    if isinstance(x, ObjectSet):
+        return x
+    raise FScriptError("expected an object set; call connection first, got %s"
+                       % type(x).__name__)
+
+
+def _region_mask(reg: Region) -> np.ndarray:
+    """Rebuild a dense mask from a Region's public run view — no private storage
+    is touched, so this keeps working if Region moves to run-length encoding."""
+    m = np.zeros(reg.shape, dtype=bool)
+    for r, cb, ce in reg.runs():
+        m[r, cb:ce] = True
+    return m
+
+
+def _region_area_center(reg: Region):
+    """HALCON ``area_center`` -> [area, row, column], computed from the run view."""
+    runs = reg.runs()
+    if runs.shape[0] == 0:
+        return [0.0, 0.0, 0.0]
+    rows = runs[:, 0].astype(np.float64)
+    cb = runs[:, 1].astype(np.float64)
+    ce = runs[:, 2].astype(np.float64)          # exclusive
+    w = ce - cb                                 # run widths
+    area = float(w.sum())
+    row_c = float((rows * w).sum() / area)
+    col_c = float((((cb + ce - 1) * 0.5) * w).sum() / area)   # mean column over runs
+    return [area, row_c, col_c]
 
 
 def _b_read_image(env, path):
@@ -697,38 +824,48 @@ def _b_read_image(env, path):
         if os.path.exists(cand):
             p = cand
     import imgio
-    return _norm01(imgio.load(p))
+    return _seed_value(imgio.load(p))
 
 
 def _b_rgb1_to_gray(env, img):
-    return _to_gray(img)
+    if isinstance(img, FImage):
+        return img
+    a = np.asarray(img, dtype=np.float64)
+    if a.ndim == 3:
+        a = a[..., :3].mean(axis=2)
+    return FImage(a, value_range=(0.0, 1.0))
 
 
 def _b_gauss_image(env, img, sigma):
-    from scipy.ndimage import gaussian_filter
-    return gaussian_filter(np.asarray(img, dtype=np.float64), float(sigma))
+    return fslib.gauss(_as_fimage(img), float(sigma))
 
 
 def _b_mean_image(env, img, radius):
-    from scipy.ndimage import uniform_filter
+    img = _as_fimage(img)
     k = max(1, int(2 * float(radius) + 1))
-    return uniform_filter(np.asarray(img, dtype=np.float64), k)
+    return img.with_pixels(ndi.uniform_filter(img.pixels.astype(np.float64), k))
 
 
 def _b_invert_image(env, img):
-    a = _norm01(img)
-    return 1.0 - a
+    img = _as_fimage(img)
+    lo, hi = img.value_range
+    return img.with_pixels(lo + hi - img.pixels.astype(np.float64))    # reflect in range
 
 
 def _b_threshold(env, img, lo, hi):
-    a = _norm01(_to_gray(img)) if np.asarray(img).ndim == 3 else _norm01(img)
-    return (a >= float(lo)) & (a <= float(hi))
+    return fslib.threshold(_as_fimage(img), float(lo), float(hi))
 
 
 def _b_binary_threshold(env, img):
-    """Otsu auto-threshold -> region (bright objects)."""
-    a = _norm01(_to_gray(img)) if np.asarray(img).ndim == 3 else _norm01(img)
-    hist, edges = np.histogram(a, bins=256, range=(0.0, 1.0))
+    """Otsu auto-threshold -> region (bright objects).
+
+    Otsu is *meant* to adapt to the frame, so it derives its threshold from the
+    histogram — but it does so on pixels normalised by the DECLARED range, not by
+    the running maximum, so an out-of-range hot pixel does not rescale it."""
+    img = _as_fimage(img)
+    lo, hi = img.value_range
+    a = np.clip((img.pixels.astype(np.float64) - lo) / (hi - lo), 0.0, 1.0)
+    hist, _ = np.histogram(a, bins=256, range=(0.0, 1.0))
     p = hist.astype(np.float64) / max(1, hist.sum())
     omega = np.cumsum(p)
     mu = np.cumsum(p * (np.arange(256) + 0.5) / 256.0)
@@ -737,110 +874,78 @@ def _b_binary_threshold(env, img):
     denom[denom == 0] = 1e-12
     sigma_b = (mu_t * omega - mu) ** 2 / denom
     t = (np.argmax(sigma_b) + 0.5) / 256.0
-    return a >= t
+    return Region(a >= t)
 
 
 def _b_dilation(env, region, radius):
     from scipy.ndimage import binary_dilation, generate_binary_structure, iterate_structure
+    reg = _as_region(region)
     st = iterate_structure(generate_binary_structure(2, 1), max(1, int(radius)))
-    return binary_dilation(_as_mask(region), st)
+    return Region(binary_dilation(_region_mask(reg), st))
 
 
 def _b_erosion(env, region, radius):
     from scipy.ndimage import binary_erosion, generate_binary_structure, iterate_structure
+    reg = _as_region(region)
     st = iterate_structure(generate_binary_structure(2, 1), max(1, int(radius)))
-    return binary_erosion(_as_mask(region), st)
+    return Region(binary_erosion(_region_mask(reg), st))
 
 
 def _b_connection(env, region):
-    """Split a region into its connected components — the object variable that a
-    for-loop iterates and select_shape filters."""
-    from scipy.ndimage import label
-    lbl, k = label(_as_mask(region))
-    return [(lbl == i) for i in range(1, k + 1)]
-
-
-def _objects(x):
-    if isinstance(x, list):
-        return x
-    if isinstance(x, np.ndarray):
-        return [_as_mask(x)]
-    raise ValueError("expected a region or object tuple")
+    """Split a region into its connected components — the ObjectSet a for-loop
+    iterates and select_shape filters (label image + ids, no mask per blob)."""
+    return fslib.connection(_as_region(region))
 
 
 def _b_count_obj(env, objects):
-    return len(_objects(objects))
+    return len(_as_objectset(objects))
 
 
 def _b_select_obj(env, objects, index):
-    objs = _objects(objects)
+    objs = _as_objectset(objects)
     i = int(index)
-    if not (0 <= i < len(objs)):
-        raise ValueError("select_obj index %d out of range 0..%d" % (i, len(objs) - 1))
-    return objs[i]
-
-
-def _region_area(region):
-    return int(np.count_nonzero(_as_mask(region)))
-
-
-def _region_center(region):
-    m = _as_mask(region)
-    ys, xs = np.nonzero(m)
-    if ys.size == 0:
-        return (0, 0.0, 0.0)
-    return (int(ys.size), float(ys.mean()), float(xs.mean()))
-
-
-_FEATURES = {
-    "area": lambda r: float(_region_area(r)),
-    "row": lambda r: _region_center(r)[1],
-    "column": lambda r: _region_center(r)[2],
-    "width": lambda r: float(np.ptp(np.nonzero(_as_mask(r))[1]) + 1) if _region_area(r) else 0.0,
-    "height": lambda r: float(np.ptp(np.nonzero(_as_mask(r))[0]) + 1) if _region_area(r) else 0.0,
-}
+    try:
+        return objs.region(i)
+    except IndexError as e:
+        raise FScriptError(str(e))
 
 
 def _b_area_center(env, region):
-    return list(_region_center(region))
+    return _region_area_center(_as_region(region))
 
 
 def _b_area(env, region):
-    return float(_region_area(region))
+    return float(_as_region(region).area())
 
 
 def _b_select_shape(env, objects, feature, vmin, vmax):
-    feat = _FEATURES.get(str(feature))
-    if feat is None:
-        raise ValueError("unknown feature '%s' (have: %s)" % (feature, ", ".join(_FEATURES)))
-    lo, hi = float(vmin), float(vmax)
-    return [r for r in _objects(objects) if lo <= feat(r) <= hi]
+    try:
+        return fslib.select_shape(_as_objectset(objects), str(feature),
+                                  float(vmin), float(vmax))
+    except fslib.FsTypeError as e:
+        raise FScriptError(str(e))
 
 
 def _b_union_object(env, objects):
-    objs = _objects(objects)
-    if not objs:
-        return np.zeros((1, 1), dtype=bool)
-    out = np.zeros_like(objs[0], dtype=bool)
-    for r in objs:
-        out |= _as_mask(r)
-    return out
+    objs = _as_objectset(objects)
+    return Region(np.isin(objs.labels, objs.ids))
 
 
 def _b_mean_gray(env, img):
-    return float(np.asarray(img, dtype=np.float64).mean())
+    return float(_as_fimage(img).pixels.mean())
 
 
 def _b_max_gray(env, img):
-    return float(np.asarray(img, dtype=np.float64).max())
+    return float(_as_fimage(img).pixels.max())
 
 
 def _b_min_gray(env, img):
-    return float(np.asarray(img, dtype=np.float64).min())
+    return float(_as_fimage(img).pixels.min())
 
 
 def _b_region_to_image(env, region):
-    return _as_mask(region).astype(np.float64)
+    return FImage(_region_mask(_as_region(region)).astype(np.float64),
+                  value_range=(0.0, 1.0))
 
 
 # name -> (env, *args) callable
@@ -863,6 +968,48 @@ BUILTINS = {
 _NO_OP = object()
 
 
+def _seed_value(v):
+    """Wrap a seeded / loaded value into the typed model.
+
+    A raw 2-D array is an FImage whose range comes from its dtype (never from the
+    content); a boolean array is a Region.  Values that are already typed pass
+    through unchanged, and a 3-channel array is left raw for ``to_gray``.
+    """
+    if isinstance(v, (FImage, Region, ObjectSet)):
+        return v
+    if isinstance(v, np.ndarray):
+        if v.ndim == 2 and v.dtype == bool:
+            return Region(v)
+        if v.ndim == 2:
+            return _wrap_array_as_image(v)
+    return v
+
+
+def _unwrap_iconic(v):
+    """The raw array behind an iconic value, for the registry long-tail."""
+    if isinstance(v, FImage):
+        return v.pixels
+    if isinstance(v, Region):
+        return _region_mask(v)
+    return np.asarray(v)
+
+
+def _wrap_registry_out(out, out_sort, inp):
+    """Re-wrap a registry op's raw output into the typed model by declared sort."""
+    if out_sort == "region":
+        return out if isinstance(out, Region) else Region(np.asarray(out) > 0)
+    if out_sort == "image":
+        lo, hi = inp.value_range if isinstance(inp, FImage) else (0.0, 1.0)
+        return FImage(np.asarray(out, dtype=np.float64), value_range=(lo, hi))
+    if out_sort == "feature":
+        arr = np.asarray(out)
+        return float(arr) if arr.size == 1 else [float(x) for x in arr.ravel()]
+    arr = np.asarray(out)
+    if arr.ndim == 2:
+        return Region(arr) if arr.dtype == bool else FImage(arr.astype(np.float64))
+    return out
+
+
 def _call_registry_op(name, args):
     """Long-tail: call any registered fullseye op as op(Input, a=0.5, b=0.5).
     Returns _NO_OP when the name is not a registered op."""
@@ -870,14 +1017,16 @@ def _call_registry_op(name, args):
         import api
     except Exception:
         return _NO_OP
-    if api.find_op(name) is None:
+    op = api.find_op(name)
+    if op is None:
         return _NO_OP
     if not args:
         raise FScriptError("op '%s' needs an input image/region" % name)
-    img = args[0]
+    inp = args[0]
     a = float(args[1]) if len(args) > 1 else 0.5
     b = float(args[2]) if len(args) > 2 else 0.5
-    return api.RT[name](np.asarray(img), a, b)
+    out = api.RT[name](_unwrap_iconic(inp), a, b)
+    return _wrap_registry_out(out, getattr(op, "out_sort", None), inp)
 
 
 # --------------------------------------------------------------------------- #
@@ -892,7 +1041,8 @@ def run(src_or_program, images=None, base_dir=None, trace=None, max_steps=2_000_
     env = Env(base_dir=base_dir)
     env.trace = trace
     if images:
-        env.vars.update(images)
+        for name, value in images.items():
+            env.vars[name] = _seed_value(value)
     Interp(env, max_steps=max_steps).run(program)
     return env
 

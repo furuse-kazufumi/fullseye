@@ -23,17 +23,19 @@ from scipy import ndimage as ndi
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import fscript  # noqa: E402
 from bench_realtime import make_scene, MIN_AREA  # noqa: E402
 
 
 def current_model(reg):
-    """What fscript.BUILTINS does today."""
-    env = fscript.Env()
-    B = fscript.BUILTINS
-    objs = B["connection"](env, reg)                     # k full-frame masks
-    kept = B["select_shape"](env, objs, "area", MIN_AREA, 1e12)
-    cents = [B["area_center"](env, o) for o in kept]     # k full-frame scans
+    """The pre-I2 object model: one full-frame boolean mask per connected
+    component, then a full-frame scan per feature.  fscript no longer does this
+    (it uses ObjectSet since I-2), but this is the model the comparison motivated,
+    so it is kept inline as the baseline rather than removed."""
+    lbl, k = ndi.label(reg)
+    masks = [(lbl == i) for i in range(1, k + 1)]            # k full-frame masks
+    kept = [m for m in masks if m.sum() >= MIN_AREA]         # k full-frame scans
+    cents = [(float(ys.mean()), float(xs.mean()))
+             for m in kept for ys, xs in [np.nonzero(m)]]
     return len(kept), cents
 
 

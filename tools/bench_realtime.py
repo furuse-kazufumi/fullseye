@@ -37,6 +37,8 @@ from scipy import ndimage as ndi
 sys.path.insert(0, str(__import__("pathlib").Path(__file__).resolve().parents[1]))
 
 import fscript  # noqa: E402  (path set above)
+import fslib  # noqa: E402
+from fslib import FImage  # noqa: E402
 
 
 # --------------------------------------------------------------------------- #
@@ -89,36 +91,31 @@ def cycle_raw_numpy(img):
 
 
 def cycle_l1_builtins(img):
-    """Current L1: fscript's BUILTINS called directly from Python.  Measures the
-    library's data model (one full-frame bool mask per blob) without any
-    language/VM overhead."""
+    """L1 via fscript's BUILTINS, which now delegate to the typed fslib model
+    (FImage / Region / ObjectSet).  Measures the library layer without the
+    language/VM overhead.  Since I-2 the object model *is* ObjectSet, so this and
+    cycle_objectset now measure the same data model — the pre-I2 mask-per-blob
+    cost is recorded in docs/FSCRIPT_MEASUREMENTS.md."""
     env = fscript.Env()
     B = fscript.BUILTINS
-    sm = B["gauss_image"](env, img, 1.5)
+    sm = B["gauss_image"](env, FImage(img, value_range=(0.0, 1.0)), 1.5)
     reg = B["threshold"](env, sm, 0.5, 1.0)
     objs = B["connection"](env, reg)
     kept = B["select_shape"](env, objs, "area", MIN_AREA, 1e12)
-    cents = [B["area_center"](env, o) for o in kept]
-    return len(kept), cents
+    _areas, rows, cols = fslib.region_features(kept)
+    return len(kept), list(zip(rows.tolist(), cols.tolist()))
 
 
 def cycle_objectset(img):
-    """Proposed L1 (FSCRIPT_LANGUAGE.md §3): ObjectSet = label image + id list,
-    masks materialised lazily.  Still pure Python/numpy — the only change is the
-    object model.  Isolates "slow because of the data model" from "slow because
-    of Python"."""
-    env = fscript.Env()
-    B = fscript.BUILTINS
-    sm = B["gauss_image"](env, img, 1.5)
-    reg = B["threshold"](env, sm, 0.5, 1.0)
-    lbl, k = ndi.label(reg)                      # <- ObjectSet.connection
-    if k == 0:
-        return 0, []
-    idx = np.arange(1, k + 1)
-    areas = ndi.sum_labels(reg, lbl, index=idx)  # <- vectorised feature
-    keep = idx[areas >= MIN_AREA]                # <- select_shape on ids
-    cents = ndi.center_of_mass(reg, lbl, keep) if keep.size else []
-    return int(keep.size), list(cents)
+    """The ObjectSet L1 in isolation (label image + id list, masks materialised
+    lazily), driven straight through fslib.  Pure Python/numpy."""
+    fim = FImage(img, value_range=(0.0, 1.0))
+    sm = fslib.gauss(fim, 1.5)
+    reg = fslib.threshold(sm, 0.5, 1.0)
+    objs = fslib.connection(reg)
+    kept = fslib.select_shape(objs, "area", MIN_AREA, 1e12)
+    _areas, rows, cols = fslib.region_features(kept)
+    return len(kept), list(zip(rows.tolist(), cols.tolist()))
 
 
 FSCRIPT_SRC = """
@@ -133,7 +130,7 @@ for I := 0 to N - 1
   A := area(Obj)
   if (A >= 20)
     AC := area_center(Obj)
-    Rows := Rows + [AC[1]]
+    Rows := [Rows, AC[1]]
     Kept := Kept + 1
   endif
 endfor

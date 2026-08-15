@@ -12,7 +12,7 @@ import numpy as np
 import pytest
 
 import fslib
-from fslib import FImage, ObjectSet, Region, FsBackendError, FsTypeError
+from fslib import FImage, Region, FsBackendError, FsTypeError
 
 HAVE_CV2 = "cv2" in fslib.backends_for("gauss")
 needs_cv2 = pytest.mark.skipif(not HAVE_CV2, reason="OpenCV not installed")
@@ -60,13 +60,17 @@ def test_threshold_is_independent_of_unrelated_bright_pixels():
     assert _measured_part_area(hot) == 16 * 16, (
         "a hot pixel elsewhere in the frame must not change the measured part")
 
-    # …and the same input through the current fscript path does change it, which
-    # is why this model exists.  (Kept as an executable comparison, not a claim
-    # about fslib.)
+    # …and the language layer now shares this typed model (fscript loads onto
+    # fslib), so the same recipe run through fscript AGREES: the measured part is
+    # 256 whether or not a hot pixel is present.  (An executable cross-check of
+    # the L1/L2 boundary, not a claim about fslib.)
     import fscript
-    old = fscript.run("R := threshold(Image, 0.4, 1.0)\nA := area(R)",
-                      images={"Image": hot.astype(np.float64)}).vars["A"]
-    assert old != 16 * 16
+    src = ("R := threshold(Image, 0.4, 1.0)\nObjs := connection(R)\n"
+           "Big := select_shape(Objs, 'area', 50, 1000000)\n"
+           "A := area(select_obj(Big, 0))")
+    part_area = fscript.run(src, images={"Image": FImage.from_u8(part)}).vars["A"]
+    hot_area = fscript.run(src, images={"Image": FImage.from_u8(hot)}).vars["A"]
+    assert part_area == hot_area == 16 * 16
 
 
 def test_value_range_comes_from_the_sensor_not_the_content():
