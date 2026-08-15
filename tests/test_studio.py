@@ -167,9 +167,11 @@ def test_window_actions_and_shortcuts():
     assert acts["open_image"].shortcut().toString() == "Ctrl+O"
     assert acts["run_all"].shortcut().toString() in ("Ctrl+Return", "Ctrl+Enter")
     # File / Edit / View / Run / Windows / Help
-    assert win.menuBar() is not None and len(win.menuBar().actions()) == 6
+    # File / Edit / View / Run / Window / Tools / Help
+    assert win.menuBar() is not None and len(win.menuBar().actions()) == 7
     menu_titles = [a.text() for a in win.menuBar().actions()]
-    assert "&Windows" in menu_titles
+    assert "&Window" in menu_titles and "&Tools" in menu_titles
+    assert "&Windows" not in menu_titles         # singular per HIG, not the OS plural
     assert callable(win._flash)
 
 
