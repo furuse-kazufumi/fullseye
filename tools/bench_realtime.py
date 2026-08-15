@@ -235,7 +235,7 @@ def measure(mode: str, img, cycles: int, gc_enabled: bool, warmup: int = 5) -> R
     after = sum(s["collections"] for s in gc.get_stats())
 
     return Result(
-        mode=mode, height=img.shape[0], width=img.shape[1], blobs=-1,
+        mode=mode, height=shape[0], width=shape[1], blobs=-1,
         cycles=cycles, gc_enabled=gc_enabled,
         mean_ms=statistics.fmean(times),
         p50_ms=_pct(times, 0.50), p90_ms=_pct(times, 0.90),
