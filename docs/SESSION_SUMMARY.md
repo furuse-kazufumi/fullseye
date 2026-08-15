@@ -3,47 +3,48 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-15 17:59:40
+- **最終更新**: 2026-08-15 19:15:16
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-870473b docs(fscript): 中心的要件分岐 Path A(Python-native IDE+画像ウォッチ)vs Path B(独自言語)を確定
-4784ace auto: FSCRIPT_LANGUAGE.md 編集前 (2026-08-15 17:39)
-5a32433 docs(STATUS): 次セッション最優先=Fullseye Script の要件定義→基本設計を外部AI交えて確定
-c7ba1a7 docs(fscript): クロスプラットフォーム(Linux)+ 独自基盤の段階戦略を確定
-625e4b6 auto: FSCRIPT_LANGUAGE.md 編集前 (2026-08-15 17:37)
-a7c6bb6 docs(fscript): 型/文字列変換の標準ライブラリ + 「しっかりした言語+高速性」要件を確定
-b728579 docs(fscript): STL 風標準コンテナライブラリ(list/map/set/stack/queue/pair)を設計に追加
-1ed350d docs(fscript): HALCON 忠実な型システムを設計に確定(control=Tuple / Vector / Image=domain)
-56fe2b6 auto: FSCRIPT_LANGUAGE.md 編集前 (2026-08-15 17:32)
-d343774 auto: FSCRIPT_LANGUAGE.md 編集前 (2026-08-15 17:32)
+b411339 ★確定案を改訂: A/B は今決めない。Path 非依存の共通核から着手し顧客の2問で分岐
+f6db96a auto: FSCRIPT_DECISION.md 編集前 (2026-08-15 19:10)
+2fa9355 auto: FSCRIPT_DECISION.md 編集前 (2026-08-15 19:10)
+119e4c3 auto: FSCRIPT_DECISION.md 編集前 (2026-08-15 19:10)
+5982fd5 test(fslib): 依存欠落環境で studio は劣化継続・industrial は拒否することを固定
+f19a74d docs(fscript): 自己参照の誤りを修正
+e71ece7 docs(fscript): 実測記録に fslib PoC のプロファイル切替結果を追加(記録の完全化)
+b02662d docs(fscript): 工数を点推定でなくゲート(G1-G3)で管理する節を追加
+354d7b5 docs(fscript): 言語スコープを絞る(DSL の真のコストは VM でなく標準ライブラリ)+ Path C/D の独立評価
+4ffa7eb auto: FSCRIPT_DECISION.md 編集前 (2026-08-15 19:04)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-17:58 docs/SESSION_SUMMARY.md
-17:39 docs/FSCRIPT_LANGUAGE.md
+19:10 docs/FSCRIPT_DECISION.md
+19:08 .pytest_cache/v/cache/nodeids
+19:08 tests/test_fslib.py
+19:06 docs/FSCRIPT_MEASUREMENTS.md
+18:50 tools/bench_soak.py
+18:33 fslib.py
+18:28 .pytest_cache/v/cache/lastfailed
+18:15 docs/FSCRIPT_LANGUAGE.md
+18:11 tools/bench_realtime.py
+18:10 tests/test_fscript.py
+18:07 fscript.py
+18:05 tools/bench_objectset_memory.py
+17:59 docs/SESSION_SUMMARY.md
 17:38 docs/STATUS.md
-17:21 fscript.py
-17:05 studio_crash.log
-16:37 .pytest_cache/v/cache/nodeids
-16:34 docs/HDEVELOP_FIDELITY.md
-16:34 studio_ui_steps.jsonl
-16:34 studio_ui_report.json
-16:34 studio_ui_crash.log
-16:33 .pytest_cache/v/cache/lastfailed
-16:33 studio.py
-16:32 tests/test_studio.py
 ```
 
 ---
