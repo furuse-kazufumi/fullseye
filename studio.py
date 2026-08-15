@@ -1949,6 +1949,9 @@ def build_window(model=None):
     def on_stage_selected():
         sync_stage_ui()
         show_result()
+        # step-through frontier: grey out variables past the current stage (Codex #8).
+        # Guarded because early build-time selections fire before the helper is defined.
+        getattr(win, "_mark_variable_frontier", lambda: None)()
 
     def on_knob(_=None):
         """A knob tick: update the model + the live preview only.
