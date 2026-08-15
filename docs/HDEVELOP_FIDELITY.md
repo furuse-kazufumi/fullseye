@@ -101,3 +101,8 @@
 ### 追記: 既定レイアウトを画像優先へ(ユーザー指針 2026-08-15)
 ユーザー指針=「画像を一番大きく / 次にスクリプトコード / op選択・変数窓は縦小さめ・ほとんどドッキングせず必要時のみ表示」。
 - **画像(中央 MDI)=最大**(左上、maximized)/ **Program(スクリプトコード)=下部の幅広ストリップ=2番目**(コードは幅を要するので右狭列は不可・実測 minW=916 が右列を膨張させる問題を回避)/ **Operators=右の compact 列**(op_hint 折返し + カテゴリ/サンプル combo を最小内容長化で minW 850→460)/ **Variables & Objects・Pipeline·Params・Display·Analysis=既定非表示(on-demand)**、ツールバー+Window▸Panels のトグルで表示。`setCorner` で下部 Program を画像下のみに限定。`layout_version` 2→3(既存 save を無効化し新既定を反映)。回帰 `test_default_layout_is_image_dominant`。「Balanced (default)」プリセットは従来通り全表示(reset は全 show)。
+
+### 追記: 残 Codex 指摘の実装(ユーザー選択=4項目全部, 2026-08-15)
+- **#11 削除後に隣接選択維持**(remove が min(i, n-1) を選択)/ **#9 Program 未適用編集の保護**(state["code_dirty"] 追跡・sync が上書きしない・apply/Reset でクリア・confirm_discard 拡張)/ **#8 step 実行で変数窓フロンティア**(現ステップより先の stage を pending グレーアウト)。
+- **#10 Undo/Redo**: パイプライン編集履歴(挿入/削除/移動/reorder/apply/clear/load を push_undo() スナップショット、2スタックswap、Ctrl+Z/Ctrl+Shift+Z、Edit メニュー、上限100)。ノブ調整は coalesce 複雑ゆえ今回除外。
+- **#12 holdout 検証経路**: `run_holdout(stages, image_paths, gt_paths=None)`(Qt-free、api.run_pipeline で検証画像フォルダを batch 実行→per-image ran/failed+timing、GT フォルダがあれば `holdout_metric`=IoU(binary)/PSNR(intensity) の per-image+mean、honest=GT 無ければ metric 出さず)+ Studio「Validate on holdout…」(Ctrl+H, Run メニュー)=フォルダ選択→結果テーブル+集計+honest note。imgevolve 北極星(holdout gate)を UI に接続。**残(Codex #1)= パイプライン結果 `_render` 自体を current 窓へ出す案のみ未実装(意味変更大・要検討)**。回帰 `test_undo_redo_pipeline_edits` / `test_program_editor_tracks_unapplied_edits` / `test_step_through_marks_variable_frontier` / `test_remove_keeps_a_neighbour_selected` / `test_holdout_*`。studio テスト 69→**82**、full suite 4300→(次計測)、ハーネス 192 steps・fail0・slot0。
