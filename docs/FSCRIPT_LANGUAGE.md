@@ -120,7 +120,10 @@
 - **正規化ノブ(a/b∈[0,1], 進化専用)と言語の実引数(sigma=1.5 等)を分離**(Codex #7)。逆写像が不正確な op は native 実装を用意。`normalized_knobs` と `semantic_parameters` を別契約に。
 - **ObjectSet**(Codex #9): 現 region は二値マスクで個別 identity 無し。`ObjectSet` = **ラベル画像 + object ID 列 + 遅延 view**(mask はコピーせず必要時 materialize、copy-on-write)。`connection` が生成、`select_obj/concat_obj/count_obj/for Obj in Objects`。
 - **未整備 op** は `legacy_apply(Image : Result : A, B :)` に警告付き隔離(一括で HDevelop 互換と称さない)。
-- **増分 1 の L1 最小語彙**(実装済み種= `fslib.py`): read_image/to_gray/gauss/mean_smooth/invert/threshold/binary_threshold/dilation/erosion/connection/count_obj/select_obj/area_center/area/select_shape/union_object/mean_gray/max_gray/min_gray/region_to_image。
+- **増分 1 の L1 最小語彙**: read_image/to_gray/gauss/mean_smooth/invert/threshold/binary_threshold/dilation/erosion/connection/count_obj/select_obj/area_center/area/select_shape/union_object/mean_gray/max_gray/min_gray/region_to_image。
+  - ★**事実訂正(2026-08-15 検証)**: 本書は当初これを「実装済み種 = `fslib.py`」と書いていたが、**`fslib.py` は存在しない**。
+    上記の語彙は `fscript.py` 内の `_b_*` 関数 + `BUILTINS` 辞書として実装されており、**L1 と L2 は未分離**。
+    「L1 を `fslib.py` へ分離する」は済んだ作業ではなく、**増分 1 の未着手タスク**である。
 
 ---
 
