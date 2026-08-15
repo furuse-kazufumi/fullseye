@@ -149,12 +149,30 @@ def cycle_fscript_vm(img):
     return int(env.vars["Kept"]), env.vars["Rows"]
 
 
+def cycle_native_cv2(img_u8):
+    """What an industrial Fullseye runtime would actually be: the same algorithm,
+    still driven from Python, but every kernel is a tuned native one (OpenCV) and
+    the object model is the label image.  This is the shape every commercial
+    vendor's Python API already has — Python orchestrating a native core."""
+    import cv2
+    sm = cv2.GaussianBlur(img_u8, (0, 0), 1.5)
+    _, reg = cv2.threshold(sm, 127, 255, cv2.THRESH_BINARY)
+    n, _lbl, stats, cents = cv2.connectedComponentsWithStats(reg, 8, cv2.CV_32S)
+    keep = stats[1:, cv2.CC_STAT_AREA] >= MIN_AREA      # areas and centroids
+    return int(keep.sum()), cents[1:][keep]             # come out of one pass
+
+
 MODES = {
     "raw_numpy": cycle_raw_numpy,
     "l1_builtins": cycle_l1_builtins,
     "objectset": cycle_objectset,
     "fscript_vm": cycle_fscript_vm,
+    "native_cv2": cycle_native_cv2,
 }
+
+#: modes that want an 8-bit frame (what a camera actually delivers) rather than
+#: the float64 convention the current core normalises everything into.
+U8_MODES = {"native_cv2"}
 
 
 # --------------------------------------------------------------------------- #
