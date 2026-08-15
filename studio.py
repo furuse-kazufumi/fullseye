@@ -1129,6 +1129,22 @@ def build_window(model=None):
     crow.addStretch(1)
     cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_status)
 
+    # -- variables & objects window (HDevelop variable window) --------------- #
+    var_list = QtWidgets.QListWidget()
+    var_list.setToolTip("Every pipeline variable: the input frame and each stage's output.\n"
+                        "Select one to inspect it; the buttons display it in a graphics window.")
+    var_inspect = QtWidgets.QPlainTextEdit(); var_inspect.setReadOnly(True)
+    var_inspect.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+    v_disp = QtWidgets.QPushButton("Display → new window")
+    v_here = QtWidgets.QPushButton("Display → main")
+    v_disp.setToolTip("Open the selected variable in a new graphics window")
+    v_here.setToolTip("Show the selected variable in the main graphics window")
+    var_w = QtWidgets.QWidget(); vvl = QtWidgets.QVBoxLayout(var_w)
+    vvl.setContentsMargins(4, 4, 4, 4); vvl.setSpacing(4)
+    vrow = QtWidgets.QHBoxLayout()
+    vrow.addWidget(v_disp); vrow.addWidget(v_here); vrow.addStretch(1)
+    vvl.addWidget(var_list, 1); vvl.addLayout(vrow); vvl.addWidget(var_inspect, 1)
+
     # ---- dockable tool windows (VS / HDevelop-style, all movable/floatable) ---- #
     def _mk_dock(title, widget, objname):
         d = QtWidgets.QDockWidget(title, win)
