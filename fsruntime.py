@@ -69,6 +69,27 @@ class GoldenVector:
     expect: dict
     tol: float = 0.0
 
+    def __post_init__(self):
+        # Validate at authoring so a malformed golden can never reach the load
+        # path (where a non-dict would AttributeError past the FsNotReady contract,
+        # or a non-finite tol would make the comparison assert nothing).
+        if not isinstance(self.inputs, dict):
+            raise TypeError("GoldenVector.inputs must be a dict, got %s"
+                            % type(self.inputs).__name__)
+        if not isinstance(self.expect, dict):
+            raise TypeError("GoldenVector.expect must be a dict, got %s"
+                            % type(self.expect).__name__)
+        if not all(isinstance(k, str) for k in self.expect):
+            raise TypeError("GoldenVector.expect keys must be strings")
+        try:
+            t = float(self.tol)
+        except (TypeError, ValueError):
+            raise ValueError("GoldenVector.tol must be a number, got %r" % (self.tol,))
+        if not math.isfinite(t) or t < 0.0:
+            raise ValueError(
+                "GoldenVector.tol must be finite and >= 0 (an infinite/NaN/negative "
+                "tolerance would make the golden prove nothing), got %r" % (self.tol,))
+
 
 @dataclass(frozen=True)
 class Recipe:
@@ -137,28 +158,43 @@ def sign(source: str, abi_major: int = ABI_VERSION_MAJOR, goldens=(),
 
 
 def _compare(name: str, got, exp, tol: float) -> None:
-    if isinstance(exp, bool) or isinstance(got, bool):
-        if bool(got) != bool(exp):
+    # Normalise 0-d numpy arrays (returned by numpy reductions) to Python scalars
+    # so the tolerance branch applies instead of an exact ndarray compare.
+    if isinstance(got, np.ndarray) and got.ndim == 0:
+        got = got.item()
+    if isinstance(exp, np.ndarray) and exp.ndim == 0:
+        exp = exp.item()
+    # Only collapse to a truth compare when BOTH sides are bool; a bool-vs-number
+    # otherwise fell through to `bool(got)!=bool(exp)` and matched True to any
+    # truthy number.  bool is an int subclass, so a mixed pair drops to numeric.
+    if isinstance(exp, bool) and isinstance(got, bool):
+        if got != exp:
             raise FsNotReady("golden mismatch on %s: got %r, expected %r" % (name, got, exp))
         return
     if isinstance(exp, _NUMERIC) and isinstance(got, _NUMERIC):
         g, e = float(got), float(exp)
-        # NaN is the one value that always slips through `> tol` (IEEE: every NaN
-        # comparison is False), so it is rejected explicitly — a NaN result is the
-        # silent-degradation the golden gate exists to catch.
+        # NaN always slips through `> tol` (IEEE: every NaN comparison is False),
+        # so it is rejected explicitly — a NaN result is exactly the silent
+        # degradation the golden gate exists to catch.  (tol is validated finite
+        # and non-negative at GoldenVector construction.)
         if math.isnan(g) or math.isnan(e) or not (abs(g - e) <= float(tol)):
             raise FsNotReady("golden mismatch on %s: got %r, expected %r (tol %g)"
                              % (name, got, exp, tol))
         return
-    if isinstance(exp, (list, tuple)):
-        seq = list(got) if isinstance(got, (list, tuple, np.ndarray)) else None
-        if seq is None or len(seq) != len(exp):
+    if isinstance(exp, (list, tuple)) or isinstance(got, (list, tuple)):
+        gseq = list(got) if isinstance(got, (list, tuple, np.ndarray)) else None
+        eseq = list(exp) if isinstance(exp, (list, tuple, np.ndarray)) else None
+        if gseq is None or eseq is None or len(gseq) != len(eseq):
             raise FsNotReady("golden mismatch on %s: got %r, expected %r" % (name, got, exp))
-        for i, (g, e) in enumerate(zip(seq, exp)):
+        for i, (g, e) in enumerate(zip(gseq, eseq)):
             _compare("%s[%d]" % (name, i), g, e, tol)
         return
-    if bool(np.any(np.asarray(got) != np.asarray(exp))) if isinstance(got, np.ndarray) \
-            else (got != exp):
+    if isinstance(got, np.ndarray) or isinstance(exp, np.ndarray):
+        ga, ea = np.asarray(got), np.asarray(exp)
+        if ga.shape != ea.shape or bool(np.any(ga != ea)):
+            raise FsNotReady("golden mismatch on %s: got %r, expected %r" % (name, got, exp))
+        return
+    if got != exp:
         raise FsNotReady("golden mismatch on %s: got %r, expected %r" % (name, got, exp))
 
 
@@ -179,7 +215,10 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
     # 2. Manifest digest — the recipe must be the exact one validated.  A missing
     #    manifest is not "nothing to verify" on a line: the industrial profile
     #    refuses an unsigned recipe outright (absence must fail closed).
-    actual = recipe.digest()
+    try:
+        actual = recipe.digest()
+    except Exception as e:                              # contract: only FsNotReady escapes
+        raise FsNotReady("recipe manifest cannot be digested: %s" % e)
     if recipe.source_sha256:
         if recipe.source_sha256 != actual:
             raise FsNotReady(
@@ -198,21 +237,20 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
         raise FsNotReady("recipe does not parse: %s" % e)
 
     # 4. Operator vocabulary + backend self-check.
-    #    ★The industrial profile allows ONLY the curated fslib-backed builtins.
-    #    Any other call is a 650-op evolution-registry op resolved through
-    #    fscript._call_registry_op → api.RT, whose _safe wrapper is fail-OPEN
-    #    (it swallows an op failure and returns a benign "no defects" value).
-    #    That surface must never judge a part, so a recipe that uses it is
-    #    rejected at load rather than allowed to fail open on the line
-    #    (docs/FSCRIPT_DECISION.md 1.6b).
+    #    ★A judging recipe may use ONLY the curated fslib-backed builtins, under
+    #    EVERY profile (not just industrial).  Any other call is a 650-op
+    #    evolution-registry op resolved through fscript._call_registry_op →
+    #    api.RT, whose _safe wrapper is fail-OPEN (it swallows an op failure and
+    #    returns a benign "no defects" value).  That surface must never be a
+    #    recipe's operator — a studio/reference runtime judges parts too — so a
+    #    recipe that uses it is rejected at load (docs/FSCRIPT_DECISION.md 1.6b).
     op_names = fscript.used_op_names(program)
-    if industrial:
-        un_vetted = sorted(n for n in op_names if n not in fscript.BUILTINS)
-        if un_vetted:
-            raise FsNotReady(
-                "industrial profile forbids un-vetted operator(s) %s — only the "
-                "curated fslib vocabulary may judge parts; the fail-open evolution "
-                "registry must not reach a line" % ", ".join(un_vetted))
+    un_vetted = sorted(n for n in op_names if n not in fscript.BUILTINS)
+    if un_vetted:
+        raise FsNotReady(
+            "recipe uses un-vetted operator(s) %s — only the curated fslib "
+            "vocabulary may judge parts; the fail-open evolution registry must not "
+            "be a recipe's operator (any profile)" % ", ".join(un_vetted))
     #    Name existence is not availability; the industrial profile has no numpy
     #    fallback, so a missing native backend stops the load.
     fslib_ops = sorted({fscript.FSLIB_OP_FOR_BUILTIN[n] for n in op_names
@@ -240,6 +278,8 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
             raise FsNotReady("golden %d: %s" % (i, e))
         except fscript.FScriptError as e:
             raise FsNotReady("golden %d failed to run: %s" % (i, e))
+        except Exception as e:                          # contract: only FsNotReady escapes
+            raise FsNotReady("golden %d could not run: %s" % (i, e))
         for var, exp in g.expect.items():
             if var not in env.vars:
                 raise FsNotReady("golden %d expects variable %r which the recipe "
@@ -258,18 +298,19 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
 # The resident Runtime — what actually judges parts on the line.
 #
 # It ties the load-time gate (compile_recipe) to the tail mitigations the N1b
-# diagnosis established (docs/FSCRIPT_MEASUREMENTS.md 9.1): the catastrophic tail
-# was external CPU-core contention preempting cv2's worker threads.  The
-# DEFINITIVE fix measured there is *core availability* — with spare cores the tail
-# is tight even beside many busy processes — which is a deployment/OS concern, not
-# something a process sets for itself.  The Runtime's own self-help levers are
-# weaker and reported honestly: (a) bounding cv2 threads (modest, noisy under full
-# saturation) and (b) attempting HIGH process priority (which did NOT take effect
-# in the probe — SetPriorityClass needs elevation/a service context — so
-# ``high_priority`` reports whether it actually applied).  Plus it reports a
-# deadline overrun instead of pretending to abort a native call (R4: "make a
-# Python that missed its deadline safe for the line to handle", not "make Python
-# hard-real-time").  Verdicts are the boundary a PLC layer consumes:
+# work SUGGESTS (docs/FSCRIPT_MEASUREMENTS.md 9.1 — indicative, N=1, NOT
+# established): the large tail appears strongly tied to external CPU-core
+# contention preempting cv2's worker threads.  The lever that helped most in a
+# 24-core probe was *core availability* (a deployment/OS concern, not something a
+# process sets for itself), but that was measured on ONE many-core host and is
+# unverified on 4-8-core line PCs — so it is a candidate, not a proven fix.  The
+# Runtime's own self-help levers are weaker and reported honestly: (a) bounding
+# cv2 threads (modest, noisy) and (b) attempting HIGH process priority (which did
+# NOT take effect in the probe — SetPriorityClass needs elevation/a service
+# context — so ``high_priority`` reports whether it actually applied).  Plus it
+# reports a deadline overrun instead of pretending to abort a native call (R4:
+# "make a Python that missed its deadline safe for the line to handle", not "make
+# Python hard-real-time").  Verdicts are the boundary a PLC layer consumes:
 # OK / NG / ERROR / TIMEOUT.
 # --------------------------------------------------------------------------- #
 _VERDICTS = ("ok", "ng", "error", "timeout")
@@ -322,6 +363,16 @@ class FullseyeRuntime:
     """
 
     def __init__(self, ready: ReadyRecipe, deadline_ms: float | None = None):
+        if deadline_ms is not None:
+            try:
+                d = float(deadline_ms)
+            except (TypeError, ValueError):
+                raise ValueError("deadline_ms must be a number or None, got %r" % (deadline_ms,))
+            # A NaN deadline would silently disable the TIMEOUT guard (elapsed > NaN
+            # is always False); 0/negative would time out every cycle.  Reject both.
+            if not math.isfinite(d) or d <= 0.0:
+                raise ValueError("deadline_ms must be a finite positive number or "
+                                 "None, got %r" % (deadline_ms,))
         self.ready = ready
         self.deadline_ms = deadline_ms
         self.cv2_threads_bounded = False

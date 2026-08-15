@@ -231,3 +231,65 @@ def test_industrial_loads_a_signed_recipe_with_a_golden_and_only_builtins():
     ready = fsruntime.compile_recipe(r, profile="industrial")
     v = fsruntime.FullseyeRuntime(ready).inspect({"Image": scene()})
     assert v.status == "ok" and v.result["N"] == 3
+
+
+# --------------------------------------------------------------------------- #
+# Second-pass hardening (from re-attacking the fixes adversarially).
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("bad_tol", [float("inf"), float("nan"), -1.0])
+def test_a_non_finite_or_negative_tolerance_is_refused_at_authoring(bad_tol):
+    # tol=inf would make a numeric golden accept any drift; nan/negative would
+    # false-refuse. Reject all three when the GoldenVector is built.
+    with pytest.raises(ValueError, match="tol"):
+        GoldenVector({"Image": scene()}, {"M": 0.5}, tol=bad_tol)
+
+
+@pytest.mark.parametrize("bad", [
+    {"inputs": [("Image", None)], "expect": {"N": 3}},   # inputs not a dict
+    {"inputs": {"Image": None}, "expect": [("N", 3)]},   # expect not a dict
+    {"inputs": {"Image": None}, "expect": {3: "N"}},     # expect key not a string
+])
+def test_a_malformed_golden_is_refused_at_authoring(bad):
+    with pytest.raises((TypeError, ValueError)):
+        GoldenVector(**bad)
+
+
+def test_registry_longtail_op_is_refused_under_every_profile():
+    # The fail-open registry must never be a recipe's operator, not only under
+    # industrial — a studio/reference runtime judges parts too.
+    src = "Out := emboss(Image)\nM := mean_gray(Out)"
+    signed = fsruntime.sign(src, goldens=[GoldenVector({"Image": scene()}, {"M": 0.0})])
+    for prof in ("reference", "studio", "industrial"):
+        with pytest.raises(FsNotReady, match="un-vetted operator"):
+            fsruntime.compile_recipe(signed, profile=prof)
+
+
+def test_a_bool_result_does_not_match_a_nonmatching_number():
+    # got=True must not silently match expect=2 via truthiness collapse.
+    src = "F := count_obj(connection(threshold(Image, 0.4, 1.0))) > 0"
+    r = fsruntime.sign(src, goldens=[GoldenVector({"Image": scene()}, {"F": 2})])
+    with pytest.raises(FsNotReady, match="golden mismatch"):
+        fsruntime.compile_recipe(r, profile="reference")
+
+
+def test_a_bool_result_matches_the_same_bool():
+    src = "F := count_obj(connection(threshold(Image, 0.4, 1.0))) > 0"
+    r = fsruntime.sign(src, goldens=[GoldenVector({"Image": scene()}, {"F": True})])
+    assert fsruntime.compile_recipe(r, profile="reference") is not None
+
+
+@pytest.mark.parametrize("bad_deadline", [float("nan"), 0.0, -5.0, float("inf")])
+def test_runtime_rejects_an_invalid_deadline(bad_deadline):
+    ready = fsruntime.compile_recipe(Recipe(RECIPE_SRC, goldens=()), profile="reference")
+    with pytest.raises(ValueError, match="deadline_ms"):
+        fsruntime.FullseyeRuntime(ready, deadline_ms=bad_deadline)
+
+
+def test_zero_d_array_result_honours_tolerance():
+    # A 0-d ndarray got (numpy reduction) must use tol, not an exact compare.
+    assert fsruntime._compare("x", np.array(0.5000001), 0.5, 1e-3) is None
+
+
+def test_ndarray_expect_matches_an_equal_python_list():
+    # A golden authored with a numpy array must accept an equal Python-list got.
+    assert fsruntime._compare("x", [10.0, 3.0, 5.0], np.array([10.0, 3.0, 5.0]), 0.0) is None
