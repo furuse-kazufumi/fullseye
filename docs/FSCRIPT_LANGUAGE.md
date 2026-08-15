@@ -96,12 +96,15 @@
 
 ユーザー要件 = 変数ウォッチだけでなく **画像ウォッチ / Region ウォッチ / 画像の特定ドメイン(ROI)ウォッチ**。デバッガの中核。
 
-- **観測対象(Watch)は型付き式**: `Watch(expr, kind, options)`。
+- **観測対象(Watch)は型付き式**: `Watch(expr, kind, options)`。**ウォッチは型ごとに拡張可能なレンダラ登録制**(`WatchRenderer` レジストリ)= 新しい iconic/handle 型を足したら renderer を 1 つ登録すれば IDE が対応。ユーザー指摘「HALCON には Region 以外のオブジェクトもある、それも全てウォッチ必須」に対応。
   - `kind=control` … 数値/文字列/tuple の値(履歴リング + 変化グラフ)。
-  - `kind=image` … 画像。表示=サムネイル + ピクセル統計(min/max/mean/hist) + **ズーム可能ビュー**。オプション: colormap、値レンジ。
+  - `kind=image` … 画像(+ domain)。表示=サムネイル + ピクセル統計(min/max/mean/hist) + **ズーム可能ビュー** + **domain 境界 overlay**。オプション: colormap、値レンジ。
   - `kind=region` … Region(マスク)。表示=元画像上に色 overlay(margin/fill) + 面積/重心/bbox。
-  - `kind=domain(ROI)` … **画像の特定ドメインをウォッチ**: `Watch(Image, domain=Rect(r1,c1,r2,c2))` または `Watch(Image, domain=Region)`。表示=その ROI に**限定**した crop + 統計(ROI 内 mean/hist/欠陥率)。**HDevelop の `reduce_domain` に相当**する観測を非破壊で行う。
-  - `kind=objectset` … ObjectSet。表示=object 数 + 各 object のサムネイル/特徴表(area/row/col)。
+  - `kind=xld` … **XLD(サブピクセル輪郭/ポリゴン)**。表示=元画像上に輪郭 polyline overlay + 制御点数/長さ/曲率。HALCON の XLD_cont/XLD_poly に相当(imgevolve は contour(XLD) sort を既に持つ)。
+  - `kind=domain(ROI)` … **画像の特定ドメインをウォッチ**: `Watch(Image, domain=Rect(r1,c1,r2,c2))` または `Watch(Image, domain=Region)`。表示=その ROI に**限定**した crop + 統計(ROI 内 mean/hist/欠陥率)。**HALCON の Image が内包する domain(§3)そのもの**を非破壊観測。
+  - `kind=objectset` … ObjectSet(**任意 iconic 型の集合**、Region に限らない)。表示=object 数 + 各 object を型別 renderer でサムネイル + 特徴表。
+  - `kind=handle` … **不透明ハンドル(matching model / measure / classifier / calibration / OCR 等)**。表示=ハンドル型名 + 主要パラメータ + 生成元(内部生データは出さない)。HALCON の handle 群に対応。
+  - **拡張性**: `register_watch_renderer(type, renderer)` で新型を追加(volume/point-cloud/mesh 等 imgevolve 固有の iconic も同機構でウォッチ可能に)。
 - **評価タイミング**: VM の各 statement 境界で、生存しているウォッチ式を**その時点の変数環境で再評価**(step 中は現在 pc の環境)。ループ内は iteration index + call depth を付す(同一行の区別、Codex #13)。
 - **性能/メモリ**: 巨大配列を signal でコピーせず **value ID + generation** を渡し、thumbnail worker が世代確認後に非同期描画。履歴は既定「直近 N 世代 + サムネイル」、明示 watch のみ完全値 pin(Codex #12/#13)。ROI ウォッチは crop だけ materialize。
 - **ウォッチ式の言語内表現**: `watch Image`, `watch Region as overlay`, `watch Image[Rect(10,10,50,50)]`, `watch |Objects|` を Studio UI(右クリック→Watch / Watch パネルに式追加)で管理。式は L2 のサブセット(副作用なし)に限定。
