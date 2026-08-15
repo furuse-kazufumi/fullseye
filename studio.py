@@ -1149,7 +1149,11 @@ def build_window(model=None):
     win.splitDockWidget(dock_pipe, dock_disp, QtCore.Qt.Vertical)
     # Keep the central graphics workspace the dominant surface; tool docks stay narrow.
     win.resizeDocks([dock_ops, dock_pipe], [290, 330], QtCore.Qt.Horizontal)
-    win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp}
+    dock_code = _mk_dock("Program (code)", code_w, "dock_program")
+    win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_code)
+    win.resizeDocks([dock_code], [210], QtCore.Qt.Vertical)
+    win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
+                  "program": dock_code}
 
     # ---- central graphics workspace: the primary image window ------------------ #
     gsub = mdi.addSubWindow(image_panel)
