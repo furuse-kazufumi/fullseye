@@ -79,7 +79,7 @@ def test_no_third_party_imports():
     src = inspect.getsource(D)
     for line in src.splitlines():
         s = line.strip()
-        if s.startswith("import ") or s.startswith("from "):
+        if s.startswith(("import ", "from ")):
             mod = s.split()[1].split(".")[0]
             assert mod in {"__future__", "numpy", "scipy", "backend_safe"}, f"unexpected import: {s}"
 
