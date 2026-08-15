@@ -11,6 +11,7 @@ pipeline as a `--ops` string or as Python. It is a thin front-end over the
 """
 from __future__ import annotations
 
+import json
 import os
 import sys
 
