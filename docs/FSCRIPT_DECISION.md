@@ -711,16 +711,30 @@ C ランタイムのカバレッジは 8/650 op(1.2%)、かつ region/blob 系�
 
 ## 5. 増分計画
 
+### フェーズ I — Path 非依存の共通核(A / B / D のどれを選んでも同じ。今すぐ着手可)
+
 | 増分 | 内容 | 完了条件(falsifiable) |
 |---|---|---|
-| **0. 種(★完了)** | `fslib.py` = 型モデル(FImage/Region/ObjectSet)+ プロファイル + 1 op = N backend + 差分テスト。5 op で実証 | **済**: `tests/test_fslib.py` 18 passed、4 MP で 14.2x(§1.7) |
-| **1. 型と意味論を閉じる** | `fscript` を `fslib` の上に載せ替え / `Tuple`(HALCON 準拠)/ `domain` の実効化 / **欠陥 2〜5 を修正**(xfail → pass)/ `for Obj in Objects` 実装 | `tests/test_fscript.py` の 5 xfail が全て pass。full suite 緑 |
-| **2. 契約の一般化 + 産業プロファイル** | `LanguageOperatorSpec` 化 / 頻出 20〜40 op へ backend を拡張 / 既存 `difftest.py` と統合 / 配布時に不足 op を静的検出 | 4 MP 検査が **industrial プロファイルで p99.9 < 20 ms**、全 op が差分テスト合格 |
-| **3. bytecode VM + ウォッチ** | source span 第一級 / `ExecutionEvent` / Studio ウォッチパネル(型別レンダラ)/ breakpoint / step | 実スクリプトを step 実行しながら image/region/domain/objectset をウォッチできる |
-| **4. Runtime プロファイル** | headless 常駐 / init-cycle 分離 / deadline + ERROR/TIMEOUT / PLC state machine / lazy import / 閉じた配布イメージ | Python 未インストール PC で起動し、連続 N 時間の試験レポートを出せる |
-| **5. 必要になった op のみ native/Rust** | 実案件で計測されたホットパスのみ | 差分テスト合格 + ベンチで妥当性確認できたものだけ採用 |
+| **0. 種(★完了)** | `fslib.py` = 型モデル(FImage/Region/ObjectSet)+ 3 プロファイル + 1 op = N backend + 差分テスト + fail-closed | **済**: `tests/test_fslib.py` **21 passed**、4 MP で 14.2x(§1.7) |
+| **I-1. ABI 仕様を先に書く** | **C コードを 1 行も書かずに** `fullseye_abi.h` を仕様として書き、`fslib.py` をその適合実装にする。opaque handle / error code / 所有権・寿命規約 / `FImage{pixels,dtype,value_range,domain}` / `Region{runs}` | 「C ABI に落とせる形だけを許す」が**規律でなく機械検査**になる(適合テストが CI で回る) |
+| **I-2. 意味論を閉じる** | **欠陥 2〜5 を修正**(xfail → pass)+ `Tuple` 最小核 + `domain` の実効化 + golden vector 形式(入力 seed + 期待出力 + 許容差)の確定 | `tests/test_fscript.py` の **5 xfail が全て pass**。golden 形式で回帰が回る |
+| **I-3. 産業プロファイル + per-op 差分ゲート** | 頻出 20〜40 op へ backend 拡張 / **ロード時 fail-closed マニフェスト検証**(op ごとに name / backend id / ABI ver / golden の SHA-256 + build ID、不一致は**起動拒否**) | 4 MP 検査が industrial で **p99.9 < 20 ms**、全 op が差分テスト合格、依存欠落機で**起動しない**ことを実証 |
+| **I-4. 周期実行の骨格** | 非 GUI 常駐 + `timeBeginPeriod(1)` + init/cycle 分離 + **cycle 中のヒープ確保ゼロを CI ゲートで機械保証** + deadline と `ERROR`/`TIMEOUT` | 10 ms ループの max が実測で 1 ms 未満。確保カウンタのアサートが CI で落ちる |
+| **I-5. 画素ループを表現不能にする** | 言語/API の設計で、per-pixel 反復を**書けなくする**(リントでは不十分) | ラボの 256² で通り 4 MP で溶けるコードが**書けない**ことをテストで示す |
 
-**増分 1 と 2 の順序は入れ替えない。** 意味論が間違ったまま速くしても、間違いが速くなるだけ。
+**フェーズ I の途中で、顧客への Q1 / Q2(判断 3)を投げる。**
+
+### フェーズ II — 分岐後(Q1 / Q2 の答えで決まる)
+
+| 答え | 進む先 | 内容 |
+|---|---|---|
+| 顧客の工程技術者が触る & Python 実行が許される | **A** | 可読レシピ(Python)+ 顧客側 golden セット + ライブウォッチ IDE |
+| ベンダ封印 & 証明責任がベンダ | **B** | 独自 DSL + 封印パッケージ + ロード時検証(共通核の I-3 がそのまま効く) |
+| 顧客が C#/C++ に組み込む / OEM / 非 x64 | **+D or +C** | C ABI shim(200〜400 行)。ビジョンロジックを C へ codegen しない |
+
+いずれの分岐でも **フェーズ I は 100% 再利用される**。これが「今 A/B を決めない」ことの正当性。
+
+**フェーズ I の内部でも I-2 と I-3 の順序は入れ替えない。** 意味論が間違ったまま速くしても、間違いが速くなるだけ。
 
 ### 工数の正直な扱い — 点推定でなく「ゲート」で管理する
 
