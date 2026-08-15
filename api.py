@@ -149,6 +149,9 @@ from specops import (  # noqa: E402,F401
     spec_endmembers_ppi, spec_continuum_removal,
     spec_pansharpen, spec_decorrelation_stretch, spec_fuse,
 )
+from deformreg import (  # noqa: E402,F401
+    warp_by_field, demons_register, field_magnitude, residual_ssd,
+)
 from pose import pose_descriptor, skeleton_nodes, principal_axis  # noqa: E402,F401
 from flow import (  # noqa: E402,F401
     optical_flow_lk, optical_flow_hs, warp_by_flow, flow_magnitude, flow_angle,
