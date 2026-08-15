@@ -1981,6 +1981,50 @@ def build_window(model=None):
     knob_timer.setSingleShot(True)
     knob_timer.timeout.connect(on_knob_settled)
 
+    # ---- undo / redo of pipeline edits (Codex #10) -------------------------- #
+    # History of pipeline snapshots (each = a list of (op, a, b) tuples). Every
+    # mutating action snapshots the CURRENT pipeline via push_undo() *before*
+    # changing it; undo/redo swap between the stacks. A fresh edit forks history
+    # (clears redo). Knob drags coalesce (one snapshot per settled drag).
+    win._undo_stack = []
+    win._redo_stack = []
+    _UNDO_CAP = 100
+
+    def _sync_undo_actions():
+        act_undo.setEnabled(bool(win._undo_stack))
+        act_redo.setEnabled(bool(win._redo_stack))
+
+    def push_undo():
+        win._undo_stack.append(list(model.stages))
+        if len(win._undo_stack) > _UNDO_CAP:
+            del win._undo_stack[0]
+        win._redo_stack.clear()
+        _sync_undo_actions()
+
+    def _restore_stages(stages):
+        model.stages = list(stages)
+        mark_dirty()
+        refresh_stage_list(select=(len(model.stages) - 1) if model.stages else None)
+        show_result()
+        _sync_undo_actions()
+
+    def undo():
+        if not win._undo_stack:
+            return
+        win._redo_stack.append(list(model.stages))
+        _restore_stages(win._undo_stack.pop())
+        flash("undo (%d more)" % len(win._undo_stack))
+
+    def redo():
+        if not win._redo_stack:
+            return
+        win._undo_stack.append(list(model.stages))
+        _restore_stages(win._redo_stack.pop())
+        flash("redo (%d more)" % len(win._redo_stack))
+    win._undo = undo
+    win._redo = redo
+    win._push_undo = push_undo
+
     def add_op(item):
         i = selected_index()
         # insert with the args entered in the operator panel (HDevelop-style)
