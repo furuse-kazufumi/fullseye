@@ -2913,7 +2913,9 @@ def build_window(model=None):
             if inner is None:
                 return None
             sub = mdi.addSubWindow(inner)
-            sub.setWindowTitle(title or "Graphics")
+            win._gfx_handle_seq += 1
+            sub._fs_handle = win._gfx_handle_seq        # a reattached window gets a fresh handle
+            sub.setWindowTitle(title or ("Graphics %d" % sub._fs_handle))
             sub.resize(440, 360); sub.show()
             win._graphics_windows.append(sub)
             win._flash and win._flash("reattached %s to the workspace" % (title or "graphics"))
