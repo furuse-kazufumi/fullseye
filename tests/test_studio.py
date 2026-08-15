@@ -883,13 +883,15 @@ def test_window_menu_is_grouped_into_submenus():
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     wmenu = win._menus["window"]
-    subs = [a.text() for a in wmenu.actions() if a.menu()]
-    assert subs == ["Panels", "Graphics windows", "Layout"]
+    # derive submenus fresh from the parent at access time (a separately-stored
+    # submenu wrapper can go stale under shiboken's multi-wrapper handling)
+    sub_by_title = {a.text(): a.menu() for a in wmenu.actions() if a.menu()}
+    assert list(sub_by_title) == ["Panels", "Graphics windows", "Layout"]
     assert not [a for a in wmenu.actions() if not a.menu() and not a.isSeparator()]  # nothing flat
-    panel_items = [a.text() for a in win._menu_panels.actions()]
+    panel_items = [a.text() for a in sub_by_title["Panels"].actions()]
     assert "Float: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
     assert "Reset panel layout" in panel_items
-    gfx_items = [a.text() for a in win._menu_graphics.actions()]
+    gfx_items = [a.text() for a in sub_by_title["Graphics windows"].actions()]
     assert "New graphics window" in gfx_items and "Detach graphics window" in gfx_items
 
 
