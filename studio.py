@@ -1215,6 +1215,8 @@ def build_window(model=None):
     m.addAction(act_save_res)                                 # result out
     m.addSeparator(); m.addAction(act_quit)
     m = _menu(mb, "&Edit", "edit")
+    m.addAction(act_undo); m.addAction(act_redo)
+    m.addSeparator()
     m.addAction(act_remove); m.addAction(act_up); m.addAction(act_down)
     m.addSeparator(); m.addAction(act_clear)
     menu_view = _menu(mb, "&View", "view")
