@@ -327,7 +327,9 @@ def residual_ssd(a, b) -> float:
     The objective demons descends (Pennec et al. 1999); use it to *check* a
     registration: ``residual_ssd(warped, fixed)`` must drop below
     ``residual_ssd(moving, fixed)``. Shapes are matched fail-soft by resampling
-    the second image onto the first's grid."""
+    the second image onto the first's grid. Note: both inputs are coerced through
+    ``_image`` first (colour reduced to luma, values clipped to [0, 1]), so the SSD
+    is measured on that normalised domain, not on raw out-of-range pixel values."""
     A = _image(a)
     B = _image(b)
     if A.shape != B.shape:
