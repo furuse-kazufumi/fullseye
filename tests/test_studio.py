@@ -1184,6 +1184,59 @@ def test_undo_redo_pipeline_edits():
     assert [s[0] for s in model.stages] == ["gaussian", "invert"]
 
 
+def test_holdout_metric_psnr_and_iou():
+    """holdout_metric: PSNR for intensity images, IoU for binary masks, None when the
+    pair can't be compared (so nothing is over-claimed)."""
+    import numpy as np
+    g = np.linspace(0, 1, 256).reshape(16, 16)
+    assert studio.holdout_metric(g, g) >= 90                      # identical intensity -> ~99 dB
+    b = np.zeros((16, 16)); b[:8] = 1.0
+    c = np.zeros((16, 16)); c[:8] = 1.0
+    assert studio.holdout_metric(b, c) == 1.0                     # identical binary -> IoU 1
+    d = np.zeros((16, 16)); d[:4] = 1.0
+    assert 0 < studio.holdout_metric(b, d) < 1                    # partial overlap
+    assert studio.holdout_metric(g, np.zeros((8, 8))) is None     # shape mismatch -> None
+
+
+def test_holdout_validation_runs_pipeline_over_a_folder(tmp_path):
+    """Codex #12: run_holdout applies the pipeline to a validation image set, reporting
+    per-image ran/failed + timing (and a metric when aligned ground truth is given), and
+    a bad image is recorded rather than aborting the batch."""
+    import numpy as np
+    imgdir = tmp_path / "val"; imgdir.mkdir()
+    paths = []
+    for i in range(3):
+        p = str(imgdir / ("img%d.png" % i))
+        studio.api.write_image(p, np.random.default_rng(i).random((32, 32)))
+        paths.append(p)
+    stages = [("gaussian", 0.4, 0.5)]
+    s = studio.run_holdout(stages, paths)
+    assert s["n"] == 3 and s["n_ok"] == 3 and s["n_err"] == 0
+    assert s["mean_ms"] >= 0 and s["mean_metric"] is None         # no ground truth -> no metric
+    s2 = studio.run_holdout(stages, paths + [str(imgdir / "missing.png")])
+    assert s2["n_ok"] == 3 and s2["n_err"] == 1                   # bad path recorded, batch survived
+    s3 = studio.run_holdout(stages, paths, gt_paths=paths)        # aligned ground truth
+    assert s3["mean_metric"] is not None and s3["metric_kind"] in ("PSNR(dB)", "IoU")
+
+
+def test_holdout_action_and_report_are_wired():
+    """The Studio exposes a holdout action + a report renderer over the summary."""
+    from PySide6 import QtCore, QtWidgets
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win._actions["holdout"].shortcut() == QtGui_key("Ctrl+H")
+    assert callable(win._show_holdout)
+    # the report renderer builds a table from a summary (dismiss the modal via a timer)
+    summary = {"n": 2, "n_ok": 1, "n_err": 1, "mean_ms": 1.2, "mean_metric": 0.5,
+               "metric_kind": "IoU",
+               "results": [{"path": "a.png", "ok": True, "error": "", "ms": 1.2, "metric": 0.5},
+                           {"path": "b.png", "ok": False, "error": "boom", "ms": 0.0, "metric": None}]}
+    QtCore.QTimer.singleShot(0, lambda: (win._holdout_dialog.accept()
+                                         if getattr(win, "_holdout_dialog", None) else None))
+    win._show_holdout_report(summary)
+    assert win._holdout_dialog is not None
+
+
 def test_3d_surface_degrades_without_opengl(monkeypatch):
     """Offscreen (and any GL-less display session) has no usable OpenGL context, where
     Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
