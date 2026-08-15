@@ -63,6 +63,10 @@
   ```
   ★互換のため増分 1 では **assignment 形 `Out := op(In, ctrl…)`**(C/C++ 風・universal)も許可し、4 区画は op signature 整備と共に段階導入。
 - **型**(Codex #3): **iconic**=`Image/Region/XLD` + **ObjectSet**(反復可能な iconic 集合)/ **control**=number/string/bool/tuple/handle。iconic↔control の暗黙混同は禁止(代入で sort 記録)。numpy 配列を tuple 扱いしない。
+- **★Image = ピクセル + domain(HALCON 忠実、ユーザー指摘 2026-08-15)**: HALCON では **Image オブジェクトは domain(=処理対象領域を表す Region、既定=全面)を内包**する。Fullseye L1 も **`Image = FImage(matrix, domain: Region)`** とする。
+  - ops は **domain 内のみ処理**(domain 外ピクセルは不変/未定義)。`reduce_domain(Image, Region : ImageReduced : :)` で domain を制限、`full_domain(Image)` で全面化、`get_domain(Image : Region : :)` で domain を Region として取り出す。
+  - `threshold`/`connection` 等の出力 Region は入力 Image の domain と交差。これで「ROI に限定した検査」が第一級表現になり、§4 の **domain ウォッチ**(image の domain を見る)がネイティブに成立。
+  - 実装(増分): 既定は domain=全面の軽量ラッパ(matrix そのまま + `domain=None`=full)。`reduce_domain` 時のみ Region を保持。DLL 化時も `FImage` の C ABI(pixels ptr + domain run-length)で表現。
 - **式**: `:=`(代入)/ `=`(比較)/ `# != <= >= < >` / `and or not` / `+ - * / mod` / tuple `[..]`・`t[i]`・`|t|`・連結 / 括弧。**未実装構文は黙って解釈せず構文エラー**。
 - **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
 - **測定 multi-output**(Codex #8): `area_center(Region : : : Area, Row, Column)` の複数 control 出力を正式サポート(現 `api.apply` は先頭要素のみ float 化=情報欠落)。空領域/NaN/長さ不一致は定義済み例外か空 tuple、条件式で暗黙真偽化しない。
