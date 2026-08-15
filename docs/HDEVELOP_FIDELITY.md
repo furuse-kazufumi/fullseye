@@ -87,3 +87,10 @@
 - **[高] holdout 検証への操作経路が Studio 内に無い**(`load_image` は単一画像のみ、`load_frame_b` は 2 フレーム perception 用)= 用途の最終工程が未完結。**要ユーザー判断(スコープ大)**。
 
 **次の実装順(deliberated)**: (P4-current)カレント窓モデル ← 常駐化済で土台あり・最大クラスタ(Codex #1–5)を一括で筋通し → (P2b')op 別引数 UI → (step 連動)→(Program dirty 追跡)。Undo / holdout 経路はスコープ大ゆえユーザー確認後。
+
+### 追記: カレント Graphics 窓モデル(P4-current)実装済(v18.8 本セッション)
+- **ハンドル番号**(`_fs_handle`、never-reused の連番 `_gfx_handle_seq`)を各 graphics 窓に付与。primary=1、new/reattach で連番。
+- **カレント窓ポインタ** `win._current_gfx`(既定=常駐プライマリ)+ **`mdi.subWindowActivated`→追従**(窓クリックでカレント切替=`dev_set_window`)+ ステータスバー右に「current: Graphics N」常設表示。
+- **変数ダブルクリック → カレント窓**(Codex #3 解消。旧=常に新窓で増殖)。`display_variable(target)` を `"current"`/`"new"`/`"main"` の 3-way に(旧 bool 互換維持)。`v_disp`=新窓 / `v_here`「Display → current」/ 右クリックも current/new に。
+- **Run once → カレント窓**(Codex #4)= current がプライマリ(既定)なら新スクラッチ窓(結果窓を汚さない)、二次窓がアクティブなら再利用(調整のたびの窓増殖を回避)。
+- ヘルパ `_current_view()`(カレント窓の ImageView、閉窓時はプライマリへ自己修復)/ `_current_handle()`。回帰 `test_current_graphics_window_model`。**ハーネス実測=変数操作の窓増殖が 8→5 に減少**。残(Codex #1)= パイプライン結果 `_render` 自体を current 窓へ出す案は結果表示の意味変更が大きく、現状はプライマリ固定のまま(要検討)。次=P2b' op 別引数 UI。
