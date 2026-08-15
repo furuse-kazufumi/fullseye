@@ -2929,7 +2929,11 @@ def build_window(model=None):
     try:                                     # restore the user's remembered geometry + layout
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
             s = QtCore.QSettings("Fullseye", "Studio")
-            geo = s.value("geometry"); st = s.value("windowState")
+            geo = s.value("geometry")
+            # Only reuse a saved dock layout from the SAME layout version. The HDevelop
+            # default (v2: left=Graphics+Variables, right=Operators+Program) differs from
+            # older saves, so a stale windowState is ignored and the new default shows.
+            st = s.value("windowState") if str(s.value("layout_version")) == "2" else None
             if geo:
                 win.restoreGeometry(geo)
             if st:
