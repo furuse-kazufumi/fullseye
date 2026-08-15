@@ -1284,6 +1284,9 @@ def build_window(model=None):
     left = QtWidgets.QWidget(); lv = QtWidgets.QVBoxLayout(left); lv.setSpacing(6)
     lv.setContentsMargins(6, 6, 6, 6)
     samples = QtWidgets.QComboBox(); samples.addItem("— load a sample —")
+    # size to ~10 chars, not the widest recipe name, so the compact panel can be narrow
+    samples.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToMinimumContentsLengthWithIcon)
+    samples.setMinimumContentsLength(10)
     for nm in recipes.names():
         samples.addItem(nm)
     samples.setToolTip("Pick a ready-made sample — it loads into the pipeline and its code appears "
