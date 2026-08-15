@@ -306,7 +306,7 @@ _LENIA_SHELL_SIGMA = 0.15      # ring thickness (Chan's default shape)
 def _lenia_radius(shape):
     """Kernel radius R for an image of this shape (>=1, <=6, <= H/4 and W/4)."""
     h, w = int(shape[0]), int(shape[1])
-    return int(np.clip(min(h, w) // 4, 1, 6))
+    return int(np.clip(min(h, w) // 4, 2, 6))   # >=2: R=1 degenerates to a box, not a ring
 
 
 def _lenia_kernel(radius):
