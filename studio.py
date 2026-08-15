@@ -1778,6 +1778,21 @@ def build_window(model=None):
             report_error("Display error", e)
         update_actions()
 
+    def _enable(cond, *widgets):
+        """Set the enabled state, tolerating a widget whose C++ object was torn
+        down. Some controls (e.g. b_save lives inside the primary graphics
+        window) can be destroyed when a graphics window is detached/closed, yet a
+        queued ``currentRowChanged`` still fires this sync afterwards — calling
+        ``setEnabled`` on the dead QPushButton would raise
+        ``RuntimeError: Internal C++ object already deleted`` and (via the slot)
+        spam the console / abort the update. Skipping dead widgets keeps the
+        surviving controls in sync instead."""
+        for w in widgets:
+            try:
+                w.setEnabled(bool(cond))
+            except RuntimeError:
+                pass                      # widget was deleted (torn-down window) — skip it
+
     def update_actions():
         """Keep every action/button that needs a selection or a displayable result
         in step with the current state, so the UI never offers a dead command."""
@@ -1785,18 +1800,12 @@ def build_window(model=None):
         n = len(model.stages)
         has_sel = 0 <= i < n
         has_res = isinstance(state.get("result"), np.ndarray)
-        for w in (act_remove, b_rm):
-            w.setEnabled(has_sel)
-        for w in (act_up, b_up):
-            w.setEnabled(has_sel and i > 0)
-        for w in (act_down, b_dn):
-            w.setEnabled(has_sel and i < n - 1)
-        for w in (act_save_res, b_save, act_3d, b_3d):
-            w.setEnabled(has_res)
-        for w in (act_export, b_export, act_save_pipe, b_savep, act_clear):
-            w.setEnabled(n > 0)
-        for w in (act_step, b_step, act_runall, b_runall):
-            w.setEnabled(n > 0)
+        _enable(has_sel, act_remove, b_rm)
+        _enable(has_sel and i > 0, act_up, b_up)
+        _enable(has_sel and i < n - 1, act_down, b_dn)
+        _enable(has_res, act_save_res, b_save, act_3d, b_3d)
+        _enable(n > 0, act_export, b_export, act_save_pipe, b_savep, act_clear)
+        _enable(n > 0, act_step, b_step, act_runall, b_runall)
 
     def sync_stage_ui():
         """Sync the knob sliders / stage description / action states to the current
