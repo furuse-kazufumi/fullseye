@@ -1132,7 +1132,7 @@ def build_window(model=None):
     cat = QtWidgets.QComboBox(); cat.addItem("all categories")
     cat.addItems(sorted({r["category"] for r in all_ops}))
     cat.setToolTip("Filter operators by category")
-    search = QtWidgets.QLineEdit(); search.setPlaceholderText("search operators…")
+    search = QtWidgets.QLineEdit(); search.setPlaceholderText("search / autocomplete operators…")
     search.setClearButtonEnabled(True)
     search.setToolTip("Filter by op name, HALCON alias or category")
     op_list = QtWidgets.QListWidget()
