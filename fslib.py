@@ -31,7 +31,7 @@ from scipy import ndimage as ndi
 __all__ = [
     "FImage", "Region", "ObjectSet", "FsTypeError", "FsBackendError",
     "profile", "current_profile", "backends_for", "op",
-    "gauss", "threshold", "connection", "region_features", "select_shape",
+    "gauss", "threshold", "connection", "region_features", "select_shape", "measure_all",
 ]
 
 
@@ -285,9 +285,12 @@ def _connection_numpy(reg: Region) -> ObjectSet:
 
 @op("connection", "cv2")
 def _connection_cv2(reg: Region) -> ObjectSet:
+    """One pass produces the labels *and* the stats — carry both."""
     import cv2
-    k, lbl = cv2.connectedComponents(reg.mask.astype(np.uint8), 8, cv2.CV_32S)
-    return ObjectSet(lbl, np.arange(1, k, dtype=np.int32))
+    k, lbl, stats, cents = cv2.connectedComponentsWithStats(
+        reg.mask.astype(np.uint8), 8, cv2.CV_32S)
+    return ObjectSet(lbl, np.arange(1, k, dtype=np.int32),
+                     {"_cc_stats": stats, "_cc_centroids": cents})
 
 
 @op("measure_all", "numpy")
