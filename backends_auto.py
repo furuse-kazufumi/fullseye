@@ -1254,14 +1254,27 @@ def load_specs() -> list[tuple]:
     specs = [dict(zip(("halcon", "category", "in_sort", "out_sort", "shape", "params"), s))
              for s in SEED]
     d = os.path.join(HERE, "data", "auto_specs")
+    loaded = False
     if os.path.isdir(d):
         for fn in sorted(os.listdir(d)):
             if fn.endswith(".json"):
                 try:
                     for s in json.load(open(os.path.join(d, fn), encoding="utf-8")):
                         specs.append(s)
+                    loaded = True
                 except Exception:
                     pass
+    if not loaded:
+        # Wheel install: the flat-layout data/auto_specs/ dir is not shipped
+        # (setuptools maps package-data to the fullseye package, not the root
+        # data/ tree), so read the generated py-module mirror that DOES ship —
+        # same data-as-code fix the macro DNA store uses. Keep in sync via
+        # gen_auto_specs_data.py.
+        try:
+            from auto_specs_data import AUTO_SPECS
+            specs.extend(AUTO_SPECS)
+        except Exception:
+            pass
     return specs
 
 
