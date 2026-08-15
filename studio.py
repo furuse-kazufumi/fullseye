@@ -455,12 +455,73 @@ def op_detail(row) -> str:
         row["name"], row["in_sort"], row["out_sort"], row["category"], hal)
 
 
+# Curated, human-readable roles for the two knobs a, b of common ops — so the
+# operator panel can answer "what do these arguments do?" at a glance. Ops not
+# listed fall back to the implementation source (op_impl_source), which is honest
+# and universal (it shows exactly how a and b are used). "" means the knob is unused.
+_ARG_ROLES = {
+    "gaussian": ("blur amount — Gaussian σ = 0.3 + 2.7·a", ""),
+    "mean_box": ("box size (odd kernel from a)", ""),
+    "median": ("kernel size (odd, from a)", ""),
+    "min_filter": ("kernel size (from a)", ""),
+    "max_filter": ("kernel size (from a)", ""),
+    "gamma": ("gamma = 0.5 + 1.5·a (a<0.5 brightens)", ""),
+    "invert": ("", ""),
+    "scale_clip": ("contrast scale = 0.5 + 1.5·a", "brightness offset = b − 0.5"),
+    "threshold": ("threshold level (a, on 0..1)", ""),
+    "unsharp": ("sharpen amount = 1.5·a", "radius = 0.5 + 1.5·b"),
+    "sobel_mag": ("", ""),
+    "bilateral": ("spatial σ (from a)", "range/edge σ (from b)"),
+    "clahe": ("clip limit (from a)", "tile size (from b)"),
+    "otsu": ("", ""),
+}
+
+
+def op_arg_roles(name):
+    """Best-effort (a_role, b_role) description for an op's two knobs. Curated for
+    common ops; ('', '') stays generic. Returns (None, None) if the op is unknown."""
+    if api.find_op(name) is None:
+        return (None, None)
+    return _ARG_ROLES.get(name, ("", ""))
+
+
+def op_impl_source(name):
+    """The operative expression of an op's implementation (honest, universal answer
+    to 'what do a and b do'): e.g. gaussian -> 'gaussian_filter(v, sigma=0.3 + 2.7 * a)'.
+    Empty string if the source is unavailable (C-extension, lambda without source)."""
+    op = api.find_op(name)
+    if op is None:
+        return ""
+    try:
+        src = " ".join(inspect.getsource(op.fn).split())
+    except (OSError, TypeError):
+        return ""
+    body = src.split("return ", 1)
+    return (body[1] if len(body) == 2 else src)[:220]
+
+
+def op_signature_detail(row) -> str:
+    """Rich multi-line signature for the operator panel: the sort/category/HALCON
+    line, each knob's role, and the implementation expression. Answers the user's
+    'the arguments can't be judged' by showing exactly what a and b control."""
+    lines = [op_detail(row)]
+    a_role, b_role = op_arg_roles(row["name"])
+    lines.append("knob a — %s" % (a_role if a_role else "(unused)" if a_role == "" else "see impl"))
+    lines.append("knob b — %s" % (b_role if b_role else "(unused)" if b_role == "" else "see impl"))
+    src = op_impl_source(row["name"])
+    if src:
+        lines.append("impl: %s" % src)
+    return "\n".join(lines)
+
+
 def op_tooltip(row) -> str:
     """Multi-line tooltip for an operator list item / stage."""
-    return ("%s\nHALCON alias: %s\ncategory: %s\nsort: %s → %s\n"
-            "a, b are the two knobs (each 0..1); their meaning depends on the op"
+    a_role, b_role = op_arg_roles(row["name"])
+    knobs = ("a: %s\nb: %s" % (a_role or "(op-dependent)", b_role or "(op-dependent)")
+             if (a_role or b_role) else "a, b are the two knobs (each 0..1); meaning depends on the op")
+    return ("%s\nHALCON alias: %s\ncategory: %s\nsort: %s → %s\n%s"
             % (row["name"], row.get("halcon") or "(none)", row["category"],
-               row["in_sort"], row["out_sort"]))
+               row["in_sort"], row["out_sort"], knobs))
 
 
 def _op_row(name):
