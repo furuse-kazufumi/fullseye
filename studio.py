@@ -2237,6 +2237,10 @@ def build_window(model=None):
         lambda: show_op_help((op_list.currentItem().data(QtCore.Qt.UserRole))
                              if op_list.currentItem() else (op_names[0] if op_names else "")))
     act_samples.triggered.connect(show_samples)
+    b_browse_samples.clicked.connect(show_samples)       # sample gallery reachable from the panel
+    win._samples = samples
+    win._browse_samples = b_browse_samples
+    win._show_samples = show_samples
     act_about.triggered.connect(show_about)
 
     def open_3d():
