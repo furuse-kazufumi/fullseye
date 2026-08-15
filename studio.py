@@ -1813,10 +1813,10 @@ def build_window(model=None):
     def on_op_selected(cur, _prev=None):
         if cur is None:
             op_param.setText("select an operator to see its signature")
-            b_insert.setEnabled(False); return
+            b_insert.setEnabled(False); b_help.setEnabled(False); return
         row = _op_row(cur.data(QtCore.Qt.UserRole))
         op_param.setText(op_detail(row) if row else cur.text())
-        b_insert.setEnabled(True)
+        b_insert.setEnabled(True); b_help.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
     b_insert.clicked.connect(
         lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
