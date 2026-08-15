@@ -1309,11 +1309,11 @@ def build_window(model=None):
     act_tile = _act("Tile graphics windows", None, "Tile the open graphics windows")
     act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
     act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
-    menu_panels = menu_windows.addMenu("Panels")
+    menu_panels = _menu(menu_windows, "Panels", "panels")
     for _d in (dock_ops, dock_pipe, dock_disp, dock_code, dock_vars):
         menu_panels.addAction(_d.toggleViewAction())
     menu_panels.addSeparator()             # Float all/Dock all + per-panel Float appended below
-    menu_graphics = menu_windows.addMenu("Graphics windows")
+    menu_graphics = _menu(menu_windows, "Graphics windows", "graphics")
     menu_graphics.addAction(act_newgfx)
     menu_graphics.addSeparator()
     menu_graphics.addAction(act_tile); menu_graphics.addAction(act_cascade)
