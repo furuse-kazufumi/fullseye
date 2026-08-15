@@ -1721,9 +1721,16 @@ def build_window(model=None):
     win._op_list = op_list
     win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
 
+    def _select_var_row(row):
+        """Highlight a variable in the Variable window (step-execution sync)."""
+        if 0 <= row < var_list.count():
+            var_list.setCurrentRow(row)
+    win._select_var_row = _select_var_row
+
     def step_to(i):
         if 0 <= i < len(model.stages):
             stage_list.setCurrentRow(i)                      # triggers show_result for that step
+            _select_var_row(i + 1)                           # sync: highlight this step's output var
 
     def reset_to_raw():
         """Show the pre-pipeline (raw) image — the start of the step-through."""
