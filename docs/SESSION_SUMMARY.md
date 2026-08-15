@@ -3,50 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-15 10:35:02
+- **最終更新**: 2026-08-15 12:30:16
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-c60d38c auto: test_deformreg.py 編集前 (2026-08-15 10:20)
-a9a78db auto: test_alife2.py 編集前 (2026-08-15 10:18)
-59abd2d auto: test_specops_fusion.py 編集前 (2026-08-15 10:18)
-e0585ca auto: test_deformreg.py 編集前 (2026-08-15 10:16)
-96b74a2 auto: test_deformreg.py 編集前 (2026-08-15 10:16)
-41f796f auto: test_deformreg.py 編集前 (2026-08-15 10:16)
-27505d5 auto: deformreg.py 編集前 (2026-08-15 10:16)
-dc8039c auto: deformreg.py 編集前 (2026-08-15 10:15)
-c456d3b auto: deformreg.py 編集前 (2026-08-15 10:15)
-c8ffbc2 auto: deformreg.py 編集前 (2026-08-15 10:15)
+e608476 auto: STATUS.md 編集前 (2026-08-15 11:35)
+cfe9fc8 auto: backends_deform.py 編集前 (2026-08-15 11:33)
+1db3538 auto: deformreg.py 編集前 (2026-08-15 11:32)
+22b24d1 auto: deformreg.py 編集前 (2026-08-15 11:32)
+c7b5686 auto: specops.py 編集前 (2026-08-15 11:30)
+d8e18d6 auto: test_deform.py 編集前 (2026-08-15 11:30)
+8bcc786 auto: test_deform.py 編集前 (2026-08-15 11:29)
+e3bba40 auto: __init__.py 編集前 (2026-08-15 11:27)
+647ff6d auto: __init__.py 編集前 (2026-08-15 11:27)
+aaf96e1 auto: api.py 編集前 (2026-08-15 11:27)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M tests/test_deformreg.py
+D dist_test/fullseye-0.1.0-py3-none-any.whl
+ M docs/SESSION_SUMMARY.md
+ M docs/STATUS.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-10:34 docs/SESSION_SUMMARY.md
-10:31 .pytest_cache/v/cache/nodeids
-10:21 .pytest_cache/v/cache/lastfailed
-10:20 tests/test_deformreg.py
-10:20 .ruff_cache/0.16.0/7363606932562918290
-10:20 .ruff_cache/0.16.0/2128910586982079947
-10:19 deformreg.py
-10:18 tests/test_alife2.py
-10:18 tests/test_specops_fusion.py
-10:18 tests/test_deform.py
-10:15 specops.py
-10:15 backends_alife2.py
-10:15 backends_deform.py
-10:14 pyproject.toml
-10:14 backends_auto.py
+12:26 docs/SESSION_SUMMARY.md
+11:35 docs/STATUS.md
+11:33 fullseye.egg-info/SOURCES.txt
+11:33 fullseye.egg-info/top_level.txt
+11:33 fullseye.egg-info/requires.txt
+11:33 fullseye.egg-info/entry_points.txt
+11:33 fullseye.egg-info/dependency_links.txt
+11:33 fullseye.egg-info/PKG-INFO
+11:33 .pytest_cache/v/cache/nodeids
+11:33 backends_deform.py
+11:32 deformreg.py
+11:30 specops.py
+11:30 .pytest_cache/v/cache/lastfailed
+11:30 tests/test_deform.py
+11:28 docs/OP_DISPOSITION.json
 ```
 
 ---
