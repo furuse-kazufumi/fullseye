@@ -1961,13 +1961,14 @@ def build_window(model=None):
     def on_op_selected(cur, _prev=None):
         if cur is None:
             op_param.setText("select an operator to see its signature")
-            b_insert.setEnabled(False); b_help.setEnabled(False); return
+            b_insert.setEnabled(False); b_help.setEnabled(False); b_run_once.setEnabled(False); return
         row = _op_row(cur.data(QtCore.Qt.UserRole))
         op_param.setText(op_signature_detail(row) if row else cur.text())
-        b_insert.setEnabled(True); b_help.setEnabled(True)
+        b_insert.setEnabled(True); b_help.setEnabled(True); b_run_once.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
     b_insert.clicked.connect(
         lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
+    b_run_once.clicked.connect(run_op_once)
     op_list.itemDoubleClicked.connect(add_op)
 
     def jump_to_problem(item):
