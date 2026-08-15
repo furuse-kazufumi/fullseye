@@ -211,6 +211,14 @@ op 数には数えられるが黙って何もしない可能性がある」と�
   「登録されているか」ではなく「**動作するバックエンドが実在するか**」を検証し、
   1 つでも欠ければ READY にならない**(self-check)。名前の存在をもって可用と見なさない。
 
+  **★実装済(2026-08-15, I-2 後続, commit f1a7379)= この self-check プリミティブを `fslib` に追加**:
+  `unmet_ops(op_names, profile)`(profile を満たすバックエンドが無い op を列挙=unregistered も unmet)/
+  `readiness_report(op_names, profile)`(各 op が dispatch するバックエンド、無ければ None)/
+  `require_ready(op_names, profile)`(1 つでも unmet なら `FsBackendError` で起動拒否・全列挙、degrade しない)。
+  `industrial` は numpy fallback を持たないので numpy-only op は unmet=起動拒否、`studio` は numpy へ degrade
+  (`tests/test_fslib.py` に 5 テスト、cv2 非依存)。**残り = 実際の Runtime ローダー(レシピ/マニフェスト読込)から
+  `require_ready` を呼ぶ配線**。ローダー自体は golden vector 形式・マニフェスト検証と同じ後段で作る。
+
 → **これが「Studio と Runtime は意味論を分けねばならない」の最も具体的な証拠**であり、
   §4.2 の `industrial` = fail-closed 設計の**必然性**を示す。
   要件 R4 に「**Runtime プロファイルは op の例外を決して飲まない**」を明記する(下記)。
