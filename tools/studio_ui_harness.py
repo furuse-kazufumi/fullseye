@@ -271,8 +271,18 @@ def main() -> int:
     shot("01_after_buttons")
 
     # ---- P2: trigger every QAction (watchdog dismisses any modal) ---------- #
+    def _primary_in_mdi():
+        gp = win.findChild(QtWidgets.QWidget, "graphics_primary")
+        if gp is None:
+            return None
+        try:
+            return any(s.widget() is gp for s in win._mdi.subWindowList())
+        except Exception:
+            return None
+
     def p2():
         acts = [a for a in win.findChildren(QtGui.QAction) if a.isEnabled()]
+        prev_in = _primary_in_mdi()
         for a in acts:
             name = a.objectName() or a.text() or "action"
             if not name:
@@ -282,6 +292,10 @@ def main() -> int:
                 a.trigger()
                 pump(30)
                 _kill_modal()
+                now_in = _primary_in_mdi()
+                if prev_in and now_in is False:
+                    log._emit({"note": "PRIMARY LEFT MDI", "action": name})
+                prev_in = now_in
                 log.end("P2_action", True)
             except Exception as e:  # noqa: BLE001
                 log.end("P2_action", False, detail="%s: %s" % (type(e).__name__, e))

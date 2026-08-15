@@ -234,6 +234,7 @@
 {"step": "P2_action", "phase_start": true, "widget": "action"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P2_action", "phase_start": true, "widget": "&Close"}
+{"note": "PRIMARY LEFT MDI", "action": "&Close"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P2_action", "phase_start": true, "widget": "New graphics window"}
 {"step": "P2_action", "phase_end": true, "ok": true, "detail": ""}
