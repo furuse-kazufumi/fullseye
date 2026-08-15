@@ -1004,6 +1004,28 @@ def test_variable_window_thumbnails_and_iconic_control():
     assert any("iconic" in t for t in texts)
 
 
+def test_context_menus_on_lists():
+    """v18.7 P4d: right-click context menus on the core lists (dev-IDE density —
+    'act where you point', as the user asked)."""
+    from PySide6 import QtCore
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win._op_list.contextMenuPolicy() == QtCore.Qt.CustomContextMenu
+    assert win._stage_list.contextMenuPolicy() == QtCore.Qt.CustomContextMenu
+    assert win._variables["list"].contextMenuPolicy() == QtCore.Qt.CustomContextMenu
+    # operator context menu offers insert / run-once / help when an op is selected
+    win._op_list.setCurrentRow(0)
+    olabels = [lbl for lbl, _ in win._ctx["operators"]()]
+    assert "Run once (preview)" in olabels and any("Insert" in l for l in olabels)
+    # pipeline context menu offers stage edits when a stage exists
+    model.add_stage("gaussian"); win._stage_list.setCurrentRow(0)
+    slabels = [lbl for lbl, _ in win._ctx["pipeline"]()]
+    assert "Remove stage" in slabels and "Run to here" in slabels
+    # empty selection -> empty menu (no crash)
+    win._op_list.setCurrentRow(-1)
+    assert win._ctx["operators"]() == []
+
+
 def test_tools_menu_holds_palette_and_language():
     """v18.7: Command palette (was in Run) and Language (was in Help) move to Tools."""
     _app()
