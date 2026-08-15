@@ -1530,23 +1530,27 @@ def build_window(model=None):
     dock_vars = _mk_dock("Variables & Objects", var_w, "dock_variables")
     # Default layout (user-directed 2026-08-15): the IMAGE (central MDI) is the largest
     # surface, the Program (script code) is the second, and op selection + Variables /
-    # Objects are compact panels ("small vertical size", mostly floated / shown on
-    # demand). So every tool panel lives in ONE narrow RIGHT column — the image keeps
-    # the whole left + centre. Right column, top→bottom = Program (tall) over a short
-    # strip that tabs Operators / Variables & Objects / Pipeline·Params / Display·Analysis.
-    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_code)     # Program = main right panel (2nd largest)
-    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ops)
-    win.splitDockWidget(dock_code, dock_ops, QtCore.Qt.Vertical)    # code on top (tall), tool strip under (short)
+    # Objects are compact panels ("small size", mostly floated / shown on demand).
+    #   • Image = central, maximised → top-left, largest.
+    #   • Program (code) = a wide BOTTOM strip (code wants width, not a narrow column) →
+    #     second-largest; kept under the image only (setCorner) so it doesn't span the
+    #     op/var column.
+    #   • Operators / Variables & Objects / Pipeline·Params / Display·Analysis = a single
+    #     narrow RIGHT column, tabbed → compact and out of the way.
+    win.setCorner(QtCore.Qt.BottomLeftCorner, QtCore.Qt.BottomDockWidgetArea)
+    win.setCorner(QtCore.Qt.BottomRightCorner, QtCore.Qt.RightDockWidgetArea)  # right col runs full height
+    win.setCorner(QtCore.Qt.TopRightCorner, QtCore.Qt.RightDockWidgetArea)
+    win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_code)    # Program = wide bottom strip (2nd largest)
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ops)      # op selection (compact right column)
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_vars)
-    win.tabifyDockWidget(dock_ops, dock_vars)                       # Variables tabbed with Operators (compact)
+    win.tabifyDockWidget(dock_ops, dock_vars)                       # Variables tabbed with Operators
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_pipe)
     win.tabifyDockWidget(dock_ops, dock_pipe)                       # Pipeline·Params tabbed in
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
     win.tabifyDockWidget(dock_ops, dock_disp)                       # Display·Analysis tabbed in
-    dock_code.raise_(); dock_ops.raise_()
-    # image dominant: keep the right column narrow; Program tall, the op/var strip short
-    win.resizeDocks([dock_code], [360], QtCore.Qt.Horizontal)       # right column ~360 → image gets the rest
-    win.resizeDocks([dock_code, dock_ops], [560, 220], QtCore.Qt.Vertical)  # code tall, op/var strip short
+    dock_ops.raise_()
+    win.resizeDocks([dock_ops], [300], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
+    win.resizeDocks([dock_code], [240], QtCore.Qt.Vertical)         # short-ish code strip → image stays tallest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars}
 
