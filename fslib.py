@@ -31,6 +31,7 @@ from scipy import ndimage as ndi
 __all__ = [
     "FImage", "Region", "ObjectSet", "FsTypeError", "FsBackendError",
     "profile", "current_profile", "backends_for", "op",
+    "unmet_ops", "readiness_report", "require_ready",
     "gauss", "threshold", "connection", "region_features", "select_shape", "measure_all",
 ]
 
@@ -287,6 +288,73 @@ def _dispatch(name: str, *args, **kw):
         "this operator cannot be deployed until a native backend passes its "
         "differential test." % (name, current_profile(),
                                 ", ".join(_REGISTRY[name]), ", ".join(available) or "none"))
+
+
+# --------------------------------------------------------------------------- #
+# Load-time self-check — the answer to the registry's fail-open hazard.
+#
+# The 650-op evolution registry (``backends._safe``) swallows an op failure and
+# returns a benign value of the declared sort, so on a line a missing dependency
+# would silently report "no defects" (docs/FSCRIPT_DECISION.md 1.6b).  fslib's
+# dispatch already fails *closed at run time*; this adds the stronger guarantee
+# the decision doc requires (R-1 / R-4): a runtime must verify, *before it
+# becomes READY*, that every operator a recipe uses has a WORKING backend — not
+# merely that the name is registered.  Name existence is not availability.
+# --------------------------------------------------------------------------- #
+def _profile_prefs(profile_name: str) -> tuple[str, ...]:
+    if profile_name not in PROFILES:
+        raise FsBackendError("unknown profile %r (have: %s)"
+                             % (profile_name, ", ".join(PROFILES)))
+    return PROFILES[profile_name]
+
+
+def unmet_ops(op_names, profile_name: str = "industrial") -> list[str]:
+    """Operators from ``op_names`` that have NO backend satisfying ``profile_name``.
+
+    An operator is *unmet* if it is unregistered, or if none of its registered
+    backends is importable under the profile's preference list.  An empty result
+    means every operator would dispatch to a real implementation.
+    """
+    prefs = _profile_prefs(profile_name)
+    missing = []
+    for name in op_names:
+        if name not in _REGISTRY:
+            missing.append(name)
+            continue
+        available = backends_for(name)
+        if not any(b in available for b in prefs):
+            missing.append(name)
+    return missing
+
+
+def readiness_report(op_names, profile_name: str = "industrial") -> dict:
+    """Per-operator readiness for diagnostics.
+
+    Maps each operator name to the backend it *would* dispatch to under the
+    profile, or ``None`` when nothing satisfies it (i.e. it is unmet).
+    """
+    prefs = _profile_prefs(profile_name)
+    report = {}
+    for name in op_names:
+        available = backends_for(name) if name in _REGISTRY else []
+        report[name] = next((b for b in prefs if b in available), None)
+    return report
+
+
+def require_ready(op_names, profile_name: str = "industrial") -> None:
+    """Load-time gate: refuse READY unless every operator has a working backend.
+
+    Raises ``FsBackendError`` (never degrades) listing every unmet operator, so a
+    runtime started against a machine missing a dependency stops at load rather
+    than silently judging every part OK.
+    """
+    missing = unmet_ops(op_names, profile_name)
+    if missing:
+        raise FsBackendError(
+            "recipe is not ready under profile %r: %d operator(s) have no working "
+            "backend: %s. The runtime refuses to start rather than run a pipeline "
+            "that would silently degrade." % (profile_name, len(missing),
+                                              ", ".join(sorted(missing))))
 
 
 # --------------------------------------------------------------------------- #

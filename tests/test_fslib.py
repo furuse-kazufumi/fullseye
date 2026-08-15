@@ -191,6 +191,50 @@ def test_the_evolution_registry_is_fail_open_and_fslib_must_not_be():
 
 
 # --------------------------------------------------------------------------- #
+# Load-time self-check — a runtime must verify a working backend for every op a
+# recipe uses BEFORE it becomes READY (docs/FSCRIPT_DECISION.md 1.6b / R-4).
+# Name existence is not availability.
+# --------------------------------------------------------------------------- #
+def test_require_ready_passes_when_every_op_has_a_backend():
+    # numpy is always importable, so the reference profile is always ready.
+    # (These are the dispatchable primitives; select_shape is a composite over
+    # measure_all, not a registry op, so it is not part of the backend check.)
+    ops = ["gauss", "threshold", "connection", "measure_all"]
+    assert fslib.unmet_ops(ops, "reference") == []
+    fslib.require_ready(ops, "reference")               # must not raise
+
+
+def test_require_ready_refuses_a_recipe_with_an_unbacked_op():
+    """The industrial profile has no numpy fallback, so a numpy-only op is unmet
+    there and the runtime refuses to start — while studio degrades to numpy."""
+    @fslib.op("numpy_only_demo", "numpy")
+    def _impl(img):
+        return img
+    try:
+        assert "numpy_only_demo" in fslib.unmet_ops(["numpy_only_demo"], "industrial")
+        assert fslib.unmet_ops(["numpy_only_demo"], "studio") == []   # numpy fallback
+        with pytest.raises(fslib.FsBackendError, match="not ready"):
+            fslib.require_ready(["numpy_only_demo"], "industrial")
+    finally:
+        fslib._REGISTRY.pop("numpy_only_demo", None)
+
+
+def test_unmet_ops_flags_an_unregistered_name():
+    assert fslib.unmet_ops(["definitely_not_an_op"], "reference") == ["definitely_not_an_op"]
+
+
+def test_readiness_report_names_the_backend_each_op_would_use():
+    rep = fslib.readiness_report(["gauss", "definitely_not_an_op"], "reference")
+    assert rep["gauss"] == "numpy"
+    assert rep["definitely_not_an_op"] is None
+
+
+def test_the_self_check_rejects_an_unknown_profile():
+    with pytest.raises(fslib.FsBackendError, match="unknown profile"):
+        fslib.unmet_ops(["gauss"], "nonexistent")
+
+
+# --------------------------------------------------------------------------- #
 # Claim 3: the numpy implementation is the oracle — native must agree with it
 # --------------------------------------------------------------------------- #
 @needs_cv2
