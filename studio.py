@@ -1468,17 +1468,10 @@ def build_window(model=None):
                       | QtWidgets.QDockWidget.DockWidgetFloatable
                       | QtWidgets.QDockWidget.DockWidgetClosable)
         d.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
-
-        def _on_float(floating, dock=d):
-            # When a panel floats, give it a real OS title bar (move/resize/min/max like
-            # a normal window). Qt's default floating dock has only the thin custom title
-            # strip, which is very hard to grab — the user's complaint.
-            if floating:
-                dock.setWindowFlags(QtCore.Qt.Window | QtCore.Qt.CustomizeWindowHint
-                                    | QtCore.Qt.WindowTitleHint | QtCore.Qt.WindowSystemMenuHint
-                                    | QtCore.Qt.WindowMinMaxButtonsHint | QtCore.Qt.WindowCloseButtonHint)
-                dock.show()                       # re-show so the new frame takes effect
-        d.topLevelChanged.connect(_on_float)
+        # NOTE: we deliberately keep Qt's native dock title (not an OS window frame).
+        # Dragging the Qt title is what shows the drop-guide rectangles and lets a panel
+        # be re-docked at any edge / tabbed / split. A native OS frame moves freely but
+        # kills those drop guides. The title bar is made tall + grabbable via the QSS.
         return d
 
     dock_ops = _mk_dock("Operators", left, "dock_operators")
