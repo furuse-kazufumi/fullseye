@@ -2106,6 +2106,31 @@ def build_window(model=None):
             win._surf = show_3d_surface(g, None)
     b_3d.clicked.connect(open_3d); act_3d.triggered.connect(open_3d)
 
+    # View ▸ Display mode — colour-map the result, mirrored with the Display combo
+    # (was previously reachable only from the right panel). Menu <-> combo stay in sync.
+    disp_menu = menu_view.addMenu("Display mode")
+    _disp_group = QtGui.QActionGroup(win); _disp_group.setExclusive(True)
+    win._display_actions = {}
+
+    def _set_display_mode(mode):
+        i = display.findText(mode)
+        if i >= 0:
+            display.setCurrentIndex(i)             # fires currentIndexChanged -> show_result
+
+    for _mode in [display.itemText(i) for i in range(display.count())]:
+        _a = QtGui.QAction(_mode, win); _a.setCheckable(True); _disp_group.addAction(_a)
+        disp_menu.addAction(_a); win._display_actions[_mode] = _a
+        _a.triggered.connect(lambda _=False, mo=_mode: _set_display_mode(mo))
+
+    def _sync_display_menu(text=None):
+        a = win._display_actions.get(text if text is not None else display.currentText())
+        a and a.setChecked(True)
+    display.currentTextChanged.connect(_sync_display_menu)
+    _sync_display_menu()
+    menu_view.addSeparator(); menu_view.addAction(act_3d)
+    win._display_menu = disp_menu
+    win._set_display_mode = _set_display_mode
+
     def load_frame_b():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open frame B", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
