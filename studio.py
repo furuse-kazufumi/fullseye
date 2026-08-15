@@ -1910,7 +1910,7 @@ def build_window(model=None):
             op_param.setText("select an operator to see its signature")
             b_insert.setEnabled(False); b_help.setEnabled(False); return
         row = _op_row(cur.data(QtCore.Qt.UserRole))
-        op_param.setText(op_detail(row) if row else cur.text())
+        op_param.setText(op_signature_detail(row) if row else cur.text())
         b_insert.setEnabled(True); b_help.setEnabled(True)
     op_list.currentItemChanged.connect(on_op_selected)
     b_insert.clicked.connect(
