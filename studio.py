@@ -939,6 +939,8 @@ def build_window(model=None):
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_pipe)
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
     win.splitDockWidget(dock_pipe, dock_disp, QtCore.Qt.Vertical)
+    # Keep the central graphics workspace the dominant surface; tool docks stay narrow.
+    win.resizeDocks([dock_ops, dock_pipe], [290, 330], QtCore.Qt.Horizontal)
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp}
 
     # ---- central graphics workspace: the primary image window ------------------ #
