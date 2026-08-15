@@ -2201,12 +2201,14 @@ def build_window(model=None):
             pass
     win._apply_language = apply_language
 
+    # Data-driven from studio_assets/i18n.json 'languages' — add a language there,
+    # no code change. English is always present as the base.
     _lang_group = QtGui.QActionGroup(win); _lang_group.setExclusive(True)
-    for _code, _label in (("en", "English"), ("ja", "日本語"), ("zh", "中文")):
+    for _code, _label in LANGUAGES.items():
         _a = QtGui.QAction(_label, win); _a.setCheckable(True); _lang_group.addAction(_a)
         lang_menu.addAction(_a); win._lang_actions[_code] = _a
         _a.triggered.connect(lambda _checked=False, c=_code: apply_language(c))
-    win._lang_actions["en"].setChecked(True)
+    win._lang_actions.get("en") and win._lang_actions["en"].setChecked(True)
 
     def show_guide():
         try:
