@@ -1291,6 +1291,7 @@ def build_window(model=None):
     m = _menu(mb, "&Run", "run")
     m.addAction(act_reset); m.addAction(act_step)
     m.addSeparator(); m.addAction(act_runall)
+    m.addSeparator(); m.addAction(act_holdout)
     menu_windows = _menu(mb, "&Window", "window")   # panels / graphics / layout submenus (filled after docks)
     menu_tools = _menu(mb, "&Tools", "tools")
     menu_tools.addAction(act_palette)                         # cross-cutting command launcher (was under Run)
