@@ -1049,13 +1049,15 @@ def test_default_layout_is_image_dominant():
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)          # image workspace is central
-    for key in ("operators", "program", "variables", "pipeline", "display"):
+    # Program (code) = wide bottom strip; op/var panels = a compact right column
+    assert win.dockWidgetArea(win._docks["program"]) == QtCore.Qt.BottomDockWidgetArea
+    for key in ("operators", "variables", "pipeline", "display"):
         assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
     tabbed = set(win.tabifiedDockWidgets(win._docks["operators"]))
     assert win._docks["variables"] in tabbed
     assert win._docks["pipeline"] in tabbed
     assert win._docks["display"] in tabbed
-    assert win._docks["program"] not in tabbed                          # Program = its own tall panel
+    assert win._docks["program"] not in tabbed                          # Program lives in the bottom strip
 
 
 def test_operator_arg_labels_reflect_selected_op():
