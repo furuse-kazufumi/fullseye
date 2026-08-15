@@ -233,9 +233,17 @@ def main(argv=None):
     ap.add_argument("--cycles", type=int, default=0, help="cycles per config")
     ap.add_argument("--json", default=None, help="write results as JSON")
     ap.add_argument("--modes", default=",".join(MODES))
+    ap.add_argument("--configs", default=None,
+                    help="semicolon-separated HxWxBLOBS, e.g. '1024x1024x50;2048x2048x200'")
     args = ap.parse_args(argv)
 
-    if args.quick:
+    if args.configs:
+        configs = []
+        for spec in args.configs.split(";"):
+            h, w, nb = (int(x) for x in spec.lower().split("x"))
+            configs.append((h, w, nb))
+        cycles = args.cycles or 120
+    elif args.quick:
         configs = [(512, 512, 25)]
         cycles = args.cycles or 30
     else:
