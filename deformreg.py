@@ -271,7 +271,7 @@ def demons_register(fixed, moving, iters: int = 50, sigma: float = 1.5,
         M = _resample_to(M, F.shape)
     n = int(_scalar(iters, 0.0, 0.0, 1e6))
     sig = _scalar(sigma, 0.0, 0.0, 1e3)
-    cap = _scalar(max_step, 2.0, 1e-6, 1e6)
+    cap = _scalar(max_step, 0.5, 1e-6, 1e6)
     e = _scalar(eps, 1e-9, _EPS, 1.0)
 
     fx = np.zeros(F.shape, np.float64)
