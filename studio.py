@@ -1494,9 +1494,10 @@ def build_window(model=None):
     var_inspect = QtWidgets.QPlainTextEdit(); var_inspect.setReadOnly(True)
     var_inspect.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
     v_disp = QtWidgets.QPushButton("Display → new window")
-    v_here = QtWidgets.QPushButton("Display → main")
-    v_disp.setToolTip("Open the selected variable in a new graphics window")
-    v_here.setToolTip("Show the selected variable in the main graphics window")
+    v_here = QtWidgets.QPushButton("Display → current")
+    v_disp.setToolTip("Open the selected variable in a NEW graphics window")
+    v_here.setToolTip("Show the selected variable in the CURRENT graphics window "
+                      "(the active one — double-clicking the variable does the same)")
     var_w = QtWidgets.QWidget(); vvl = QtWidgets.QVBoxLayout(var_w)
     vvl.setContentsMargins(4, 4, 4, 4); vvl.setSpacing(4)
     vrow = QtWidgets.QHBoxLayout()
