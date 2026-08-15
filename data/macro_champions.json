@@ -234,5 +234,67 @@
    "beats_hand_on_locked_holdout": true,
    "honest_note": "A macro op is the exact evolved pipeline, knobs frozen; its score is recomputed here in the full registry. beats_hand_on_locked_holdout states, without spin, whether it beats the strongest hand baseline on the locked split (the one honesty guard evolution never selected on)."
   }
+ },
+ {
+  "name": "macro_vol_denoise",
+  "category": "macro",
+  "problem": "vol_denoise",
+  "in_sort": "volume",
+  "out_sort": "volume",
+  "stages": [
+   {
+    "op": "vol_threshold",
+    "a": 0.5232292799734952,
+    "b": 0.761768170285529
+   },
+   {
+    "op": "vol_gaussian",
+    "a": 0.0760881116165437,
+    "b": 0.8875448600421568
+   }
+  ],
+  "pipeline": "vol_threshold(a=0.52,b=0.76) -> vol_gaussian(a=0.08,b=0.89)",
+  "provenance": {
+   "source": "evolve.py / robust.py, core-only search (IMGEVOLVE_NO_BACKENDS=1)",
+   "champion_file": "out/macro_voldenoise/champion_vol_denoise.json",
+   "unit": "dB PSNR",
+   "config": {
+    "n_train": 14,
+    "n_holdout": 8,
+    "size": 64,
+    "seed": 0
+   },
+   "seeds": 8,
+   "gens": 80,
+   "pop": 28,
+   "selected_seed": 7,
+   "captured": "2026-08-15",
+   "score": {
+    "train": 26.2351,
+    "holdout": 25.7124,
+    "locked_holdout": 25.7364
+   },
+   "recorded_evolution_score": {
+    "train": 26.2351,
+    "holdout": 25.7124,
+    "locked_holdout": 25.7364
+   },
+   "score_matches_evolution": true,
+   "overridden_ops": [],
+   "baselines": {
+    "trivial": {
+     "train": 19.3839,
+     "holdout": 19.3364,
+     "locked_holdout": 19.3047
+    },
+    "hand": {
+     "train": 20.6998,
+     "holdout": 21.1637,
+     "locked_holdout": 20.9354
+    }
+   },
+   "beats_hand_on_locked_holdout": true,
+   "honest_note": "A macro op is the exact evolved pipeline, knobs frozen; its score is recomputed here in the full registry. beats_hand_on_locked_holdout states, without spin, whether it beats the strongest hand baseline on the locked split (the one honesty guard evolution never selected on)."
+  }
  }
 ]

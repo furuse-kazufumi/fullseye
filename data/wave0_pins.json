@@ -1,11 +1,11 @@
 {
  "cand_counts": {
-  "image": 473,
+  "image": 480,
   "region": 116,
   "feature": 1,
   "contour": 40,
   "match": 1,
-  "volume": 9,
+  "volume": 10,
   "any": 1
  },
  "genomes": [
@@ -126,25 +126,25 @@
    "feature": "identity",
    "contour": "xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00)",
    "match": "identity",
-   "volume": "vol_count(a=1.00,b=1.00)",
+   "volume": "macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00)",
    "any": "identity"
   },
   {
-   "image": "frei_dir(a=0.50,b=0.50) -> frei_dir(a=0.50,b=0.50) -> frei_dir(a=0.50,b=0.50) -> frei_dir(a=0.50,b=0.50) -> frei_dir(a=0.50,b=0.50) -> frei_dir(a=0.50,b=0.50)",
+   "image": "rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50) -> rft_generic(a=0.50,b=0.50)",
    "region": "projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50) -> projective_trans_region(a=0.50,b=0.50)",
    "feature": "identity",
    "contour": "orientation_xld(a=0.50,b=0.50)",
    "match": "identity",
-   "volume": "vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50) -> vol_dilate(a=0.50,b=0.50)",
+   "volume": "vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50) -> vol_threshold(a=0.50,b=0.50)",
    "any": "identity"
   },
   {
-   "image": "sk_hysteresis(a=0.24,b=0.29) -> select_shape(a=0.41,b=0.47) -> moments_region_central_invar(a=0.59,b=0.65)",
+   "image": "sk_entropy_feat(a=0.24,b=0.29)",
    "region": "sk_euler(a=0.24,b=0.29)",
    "feature": "identity",
    "contour": "select_contours_xld(a=0.24,b=0.29) -> convexity_xld(a=0.41,b=0.47)",
    "match": "identity",
-   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_dilate(a=0.59,b=0.65) -> vol_mip(a=0.76,b=0.82) -> dc_rpca_lowrank(a=0.94,b=1.00)",
+   "volume": "vol_gaussian(a=0.24,b=0.29) -> vol_erode(a=0.41,b=0.47) -> vol_threshold(a=0.59,b=0.65) -> vol_slice(a=0.76,b=0.82) -> iv_wiener_deconv_spatial(a=0.94,b=1.00)",
    "any": "identity"
   },
   {
@@ -153,7 +153,7 @@
    "feature": "identity",
    "contour": "xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00) -> xg_crop_contours(a=1.00,b=1.00)",
    "match": "identity",
-   "volume": "vol_count(a=1.00,b=1.00)",
+   "volume": "macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00) -> macro_vol_denoise(a=1.00,b=1.00)",
    "any": "identity"
   }
  ],
