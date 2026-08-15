@@ -3162,10 +3162,11 @@ def build_window(model=None):
         if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
             s = QtCore.QSettings("Fullseye", "Studio")
             geo = s.value("geometry")
-            # Only reuse a saved dock layout from the SAME layout version. The HDevelop
-            # default (v2: left=Graphics+Variables, right=Operators+Program) differs from
-            # older saves, so a stale windowState is ignored and the new default shows.
-            st = s.value("windowState") if str(s.value("layout_version")) == "2" else None
+            # Only reuse a saved dock layout from the SAME layout version. The current
+            # default (v3: image-dominant central, Program tall on the right, op/var
+            # panels compact) differs from older saves, so a stale windowState is
+            # ignored and the new default shows.
+            st = s.value("windowState") if str(s.value("layout_version")) == "3" else None
             if geo:
                 win.restoreGeometry(geo)
             if st:
