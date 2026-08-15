@@ -1966,6 +1966,28 @@ def build_window(model=None):
 
     # operator browser filters
     search.textChanged.connect(refill_ops); cat.currentIndexChanged.connect(refill_ops)
+
+    # HDevelop-style autocomplete: typing shows op-name candidates in a popup; picking
+    # one clears the category filter, filters the list to it, and selects it.
+    op_completer = QtWidgets.QCompleter([r["name"] for r in all_ops], win)
+    op_completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+    op_completer.setFilterMode(QtCore.Qt.MatchContains)
+    op_completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+    search.setCompleter(op_completer)
+
+    def _select_op_in_list(name):
+        for i in range(op_list.count()):
+            if op_list.item(i).data(QtCore.Qt.UserRole) == name:
+                op_list.setCurrentRow(i); op_list.scrollToItem(op_list.item(i)); return True
+        return False
+
+    def on_op_completed(name):
+        cat.setCurrentIndex(0)          # "all categories" so the picked op is visible
+        search.setText(name)            # fires refill_ops synchronously
+        _select_op_in_list(name)
+    op_completer.activated[str].connect(on_op_completed)
+    win._op_completer = op_completer
+    win._select_op_in_list = _select_op_in_list
     # pipeline + knobs
     def on_op_selected(cur, _prev=None):
         if cur is None:
