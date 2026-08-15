@@ -1243,6 +1243,8 @@ def build_window(model=None):
     act_reset = _act("Reset to start", "Home", "Show the raw image (before stage 1)")
     act_step = _act("Step forward", "Ctrl+Right", "Advance one pipeline stage")
     act_runall = _act("Run all", "Ctrl+Return", "Show the final pipeline result")
+    act_holdout = _act("Validate on holdout…", "Ctrl+H",
+                       "Run the current pipeline over a folder of validation images and report results")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
     act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
     act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
