@@ -876,3 +876,45 @@ def test_float_single_panel():
     assert win._float_panel("operators", False) is True
     assert win._docks["operators"].isFloating() is False
     assert win._float_panel("no-such-panel", True) is False
+
+
+def test_window_menu_is_grouped_into_submenus():
+    """v18.7: the once-overloaded Window menu is now 3 clean submenus, not a flat wall."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    wmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Window")
+    subs = [a.text() for a in wmenu.actions() if a.menu()]
+    assert subs == ["Panels", "Graphics windows", "Layout"]
+    assert not [a for a in wmenu.actions() if not a.menu() and not a.isSeparator()]  # nothing flat
+    panel_items = [a.text() for a in win._menu_panels.actions()]
+    assert "Float: Operators" in panel_items and "Float all panels (multi-display)" in panel_items
+    assert "Reset panel layout" in panel_items
+    gfx_items = [a.text() for a in win._menu_graphics.actions()]
+    assert "New graphics window" in gfx_items and "Detach graphics window" in gfx_items
+
+
+def test_view_display_mode_menu_syncs_with_combo():
+    """v18.7: colormap/display mode is reachable from View (was right-panel combo only)
+    and the menu checkmark tracks the combo."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win._display_menu is not None and "gray" in win._display_actions
+    win._set_display_mode("gray")
+    assert win._display_actions["gray"].isChecked()
+    other = next(m for m in win._display_actions if m != "gray")
+    win._set_display_mode(other)
+    assert win._display_actions[other].isChecked() and not win._display_actions["gray"].isChecked()
+
+
+def test_tools_menu_holds_palette_and_language():
+    """v18.7: Command palette (was in Run) and Language (was in Help) move to Tools."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    tmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Tools")
+    ttexts = [a.text() for a in tmenu.actions()]
+    assert any("palette" in t.lower() for t in ttexts)
+    assert any("Language" in t for t in ttexts)
+    rmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Run")
+    assert not any("palette" in a.text().lower() for a in rmenu.actions())
+    hmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Help")
+    assert not any("Language" in a.text() for a in hmenu.actions())
