@@ -446,8 +446,12 @@ def alife_sandpile(v, a, b):
     b = _knob(b)
     grains = 4 + int(a * 12)
     h = np.rint(x * grains).astype(np.int64)
-    if b >= 0.9:                              # relax toward stability, work-bounded
-        sweeps = min(_RELAX_CAP, max(64, _SANDPILE_BUDGET // max(int(h.size), 1)))
+    if b >= 0.9:
+        # Relax toward stability with the sweep count set so total grain-updates
+        # ~= _SANDPILE_BUDGET: small piles get plenty of sweeps (capped, and the
+        # early-out ends them sooner), large piles get few — so wall time is
+        # bounded by the budget, not the image size (no size-scaling floor).
+        sweeps = min(_RELAX_CAP, max(1, _SANDPILE_BUDGET // max(int(h.size), 1)))
     else:
         sweeps = 1 + int(b * 50)
     h, _used = _sandpile_relax(h, sweeps)
