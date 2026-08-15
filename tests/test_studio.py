@@ -324,7 +324,10 @@ def test_clear_action_empties_pipeline():
     assert model.stages == []
 
 
-def test_remove_disables_knobs():
+def test_remove_keeps_a_neighbour_selected():
+    """Codex #11: after deleting a stage the operation target is kept — the neighbour
+    (the stage now at the deleted index, or the new last one) is selected, so the knobs
+    describe that surviving stage rather than being left with nothing selected."""
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
     from PySide6 import QtWidgets
@@ -332,11 +335,16 @@ def test_remove_disables_knobs():
     m = studio.PipelineModel(studio.demo_image(48))
     m.add_stage("gaussian"); m.add_stage("otsu")
     win, model = studio.build_window(m)
-    win._stage_list.setCurrentRow(1)                     # select a stage -> knobs live
+    win._stage_list.setCurrentRow(1)                     # select the last stage -> knobs live
     sa, sb = win._knob_sliders
     assert sa.isEnabled() and sb.isEnabled()
-    win._actions["remove"].trigger()                     # remove the selected stage
-    # selection is gone -> knobs must not still describe a deleted stage
+    win._actions["remove"].trigger()                     # remove it
+    # neighbour (now the last, index 0) stays selected; knobs describe it
+    assert win._stage_list.currentRow() == 0
+    assert sa.isEnabled() and sb.isEnabled()
+    win._actions["remove"].trigger()                     # remove the last remaining stage
+    # nothing left -> no selection, knobs off
+    assert win._stage_list.currentRow() == -1
     assert not sa.isEnabled() and not sb.isEnabled()
 
 
