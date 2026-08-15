@@ -192,7 +192,8 @@ def warp_by_field(img, fx, fy):
     ----------
     img : (H, W) or (H, W, C) array in [0, 1].
     fx, fy : (H, W) arrays (or scalars / broadcastable arrays) of pixel
-        displacements. Non-finite entries are treated as zero displacement.
+        displacements. NaN entries become zero; infinities are clamped to a finite
+        bound (they are not silently propagated), so the warp stays finite.
 
     Returns a float64 array in [0, 1] with the *same shape as* ``img``.
     Overlaps HALCON ``unwarp_image_vector_field`` (disclosed, not a new claim).
