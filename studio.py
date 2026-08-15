@@ -748,8 +748,19 @@ def build_window(model=None):
     tb.addWidget(spacer)
     tb.addAction(act_demo); tb.addAction(act_open_img); tb.addAction(act_runall); tb.addAction(act_export)
 
-    central = QtWidgets.QSplitter(QtCore.Qt.Horizontal)
-    win.setCentralWidget(central)
+    # Central document area = an MDI workspace of graphics windows (HDevelop-style:
+    # multiple image/result windows the user can open, tile, cascade and float).
+    mdi = QtWidgets.QMdiArea()
+    mdi.setViewMode(QtWidgets.QMdiArea.SubWindowView)
+    mdi.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+    mdi.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAsNeeded)
+    win.setCentralWidget(mdi)
+    win.setDockOptions(QtWidgets.QMainWindow.AllowNestedDocks
+                       | QtWidgets.QMainWindow.AllowTabbedDocks
+                       | QtWidgets.QMainWindow.AnimatedDocks)
+    win.setTabPosition(QtCore.Qt.AllDockWidgetAreas, QtWidgets.QTabWidget.North)
+    win._mdi = mdi
+    win._graphics_windows = []
 
     status = win.statusBar()
     readout = QtWidgets.QLabel("hover over the image for pixel coordinates + value")
