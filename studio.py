@@ -2305,6 +2305,7 @@ def build_window(model=None):
         dlg.resize(740, 500); dlg.exec()
 
     def add_op_by_name(n):
+        push_undo()
         model.add_stage(n)
         mark_dirty()
         refresh_stage_list(select=len(model.stages) - 1)
