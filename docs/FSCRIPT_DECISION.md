@@ -360,8 +360,9 @@ native 実装 (任意)    ──┘   不一致 or 未カバーなら industrial
 
 | 増分 | 内容 | 完了条件(falsifiable) |
 |---|---|---|
-| **1. 型と意味論を閉じる** | `fslib.py` へ L1 分離 / `FImage`(値域+domain)/ `Tuple` / `Region` / `ObjectSet` をクラス化 / **欠陥 2〜5 を修正**(xfail → pass)/ `for Obj in Objects` 実装 | `tests/test_fscript.py` の 5 xfail が全て pass。full suite 緑 |
-| **2. バックエンド契約 + 産業プロファイル** | `LanguageOperatorSpec` / 1 op = N backend / `profile("industrial")` / 頻出 20〜40 op に cv2 backend + `difftest` 拡張 | 4 MP 検査が **industrial プロファイルで p99.9 < 20 ms**、numpy 実装との差分テスト合格 |
+| **0. 種(★完了)** | `fslib.py` = 型モデル(FImage/Region/ObjectSet)+ プロファイル + 1 op = N backend + 差分テスト。5 op で実証 | **済**: `tests/test_fslib.py` 18 passed、4 MP で 14.2x(§1.7) |
+| **1. 型と意味論を閉じる** | `fscript` を `fslib` の上に載せ替え / `Tuple`(HALCON 準拠)/ `domain` の実効化 / **欠陥 2〜5 を修正**(xfail → pass)/ `for Obj in Objects` 実装 | `tests/test_fscript.py` の 5 xfail が全て pass。full suite 緑 |
+| **2. 契約の一般化 + 産業プロファイル** | `LanguageOperatorSpec` 化 / 頻出 20〜40 op へ backend を拡張 / 既存 `difftest.py` と統合 / 配布時に不足 op を静的検出 | 4 MP 検査が **industrial プロファイルで p99.9 < 20 ms**、全 op が差分テスト合格 |
 | **3. bytecode VM + ウォッチ** | source span 第一級 / `ExecutionEvent` / Studio ウォッチパネル(型別レンダラ)/ breakpoint / step | 実スクリプトを step 実行しながら image/region/domain/objectset をウォッチできる |
 | **4. Runtime プロファイル** | headless 常駐 / init-cycle 分離 / deadline + ERROR/TIMEOUT / PLC state machine / lazy import / 閉じた配布イメージ | Python 未インストール PC で起動し、連続 N 時間の試験レポートを出せる |
 | **5. 必要になった op のみ native/Rust** | 実案件で計測されたホットパスのみ | 差分テスト合格 + ベンチで妥当性確認できたものだけ採用 |
