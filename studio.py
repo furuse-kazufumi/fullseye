@@ -1225,8 +1225,7 @@ def build_window(model=None):
     win.setCentralWidget(mdi)
     win.setDockOptions(QtWidgets.QMainWindow.AllowNestedDocks
                        | QtWidgets.QMainWindow.AllowTabbedDocks
-                       | QtWidgets.QMainWindow.AnimatedDocks
-                       | QtWidgets.QMainWindow.GroupedDragging)   # finer re-dock targets
+                       | QtWidgets.QMainWindow.AnimatedDocks)      # GroupedDragging removed (crash-prone)
     win.setTabPosition(QtCore.Qt.AllDockWidgetAreas, QtWidgets.QTabWidget.North)
     win._mdi = mdi
     win._graphics_windows = []
