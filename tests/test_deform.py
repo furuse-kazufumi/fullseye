@@ -467,24 +467,37 @@ def test_ffd_warp_matches_the_reference_field_on_a_ramp():
 
 def test_ffd_amplitude_respects_the_injectivity_bound():
     # Choi & Lee (2000): |phi| < 0.48 * spacing keeps a uniform cubic B-spline
-    # FFD fold-free. The op caps at 0.45 * spacing, so the backward map must be
-    # strictly monotone along both axes (no fold) even at a = 1.
+    # FFD fold-free. Each displacement component is varied ALONG ITS OWN lattice
+    # axis so the monotonicity (fold) check is non-vacuous: the Jacobian diagonal
+    # d(coord+disp)/dcoord then actually depends on the amplitude, and a fold shows
+    # up as a non-positive diagonal. The counter-case below (amplitude far over the
+    # bound) is required to fold, which proves the assertion can fail.
     h = w = 49
     for b in (0.0, 0.5, 1.0):
         ny = nx = 2 + int(b * 6)
         sy = (h - 1.0) / ny
         sx = (w - 1.0) / nx
-        amp = 0.45 * 1.0 * min(sy, sx)
-        assert amp < 0.48 * min(sy, sx)
         ii = (np.arange(ny + 3) - 1.0) / ny
         jj = (np.arange(nx + 3) - 1.0) / nx
-        phi = np.zeros((ny + 3, nx + 3, 2))
-        phi[:, :, 0] = amp * np.sin(2 * np.pi * jj)[None, :]
-        phi[:, :, 1] = amp * np.cos(2 * np.pi * ii)[:, None]
-        field = D._ffd_field((h, w), phi, ny, nx)
         yy, xx = np.mgrid[0:h, 0:w]
-        assert np.diff(yy + field[:, :, 0], axis=0).min() > 0.0
-        assert np.diff(xx + field[:, :, 1], axis=1).min() > 0.0
+
+        def field_for(amp):
+            phi = np.zeros((ny + 3, nx + 3, 2))
+            phi[:, :, 0] = amp * np.sin(2 * np.pi * ii)[:, None]   # y-disp varies along y
+            phi[:, :, 1] = amp * np.sin(2 * np.pi * jj)[None, :]   # x-disp varies along x
+            return D._ffd_field((h, w), phi, ny, nx)
+
+        # within the injectivity bound -> strictly monotone (fold-free) both ways
+        amp_ok = 0.45 * min(sy, sx)
+        assert amp_ok < 0.48 * min(sy, sx)
+        f = field_for(amp_ok)
+        assert np.diff(yy + f[:, :, 0], axis=0).min() > 0.0
+        assert np.diff(xx + f[:, :, 1], axis=1).min() > 0.0
+
+        # far over the bound the map MUST fold somewhere -> the check is non-vacuous
+        f_bad = field_for(3.0 * min(sy, sx))
+        assert (np.diff(yy + f_bad[:, :, 0], axis=0).min() <= 0.0
+                or np.diff(xx + f_bad[:, :, 1], axis=1).min() <= 0.0)
 
 
 def test_ffd_lattice_resolution_knob_changes_the_deformation():
