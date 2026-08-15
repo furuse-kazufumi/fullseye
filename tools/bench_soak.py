@@ -15,6 +15,7 @@ Run:  py -3.11 tools/bench_soak.py --minutes 30
 from __future__ import annotations
 
 import argparse
+import contextlib
 import gc
 import json
 import sys
@@ -71,6 +72,31 @@ def rss_mb() -> float:
             return float("nan")
 
 
+@contextlib.contextmanager
+def timer_resolution(ms: int = 1):
+    """Raise the Windows scheduler timer resolution for the block.
+
+    docs/FSCRIPT_DECISION.md R4 identifies ``timeBeginPeriod(1)`` as the single
+    biggest lever on the cycle-time TAIL — in the reference measurement it moved
+    max from 8.9 ms to 0.34 ms (26x), more than GC.  A Runtime must hold it for
+    its whole life; this lets the soak measure the tail with and without it.
+    Yields whether the resolution was actually raised (no-op / False off Windows).
+    """
+    winmm = None
+    try:
+        import ctypes
+        cand = ctypes.WinDLL("winmm")
+        if cand.timeBeginPeriod(int(ms)) == 0:      # TIMERR_NOERROR
+            winmm = cand
+    except Exception:
+        winmm = None
+    try:
+        yield winmm is not None
+    finally:
+        if winmm is not None:
+            winmm.timeEndPeriod(int(ms))
+
+
 def inspect(img: FImage):
     sm = fslib.gauss(img, 1.5)
     reg = fslib.threshold(sm, 0.5, 1.0)
@@ -92,6 +118,9 @@ def main(argv=None):
     ap.add_argument("--size", default="2048x2048x200")
     ap.add_argument("--profile", default="industrial")
     ap.add_argument("--bucket", type=int, default=2000, help="cycles per report row")
+    ap.add_argument("--timer-resolution", action=argparse.BooleanOptionalAction,
+                    default=True,
+                    help="hold Windows timeBeginPeriod(1) for the run (R4; tail lever)")
     ap.add_argument("--json", default=None)
     args = ap.parse_args(argv)
 
@@ -99,7 +128,11 @@ def main(argv=None):
     base = make_scene(h, w, nb)
     img = FImage.from_u8((np.clip(base, 0, 1) * 255).astype(np.uint8))
 
-    with fslib.profile(args.profile):
+    tr_cm = timer_resolution(1) if args.timer_resolution else contextlib.nullcontext(False)
+    with tr_cm as tr_on, fslib.profile(args.profile):
+        print("timer_resolution(1): %s" % ("ON" if tr_on else
+              ("requested but unavailable" if args.timer_resolution else "off")),
+              flush=True)
         for _ in range(20):
             inspect(img)                               # warm caches / allocator
         gc.collect()
