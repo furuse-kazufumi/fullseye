@@ -53,3 +53,4 @@
 2. **カレント画像表示窓モデル(HDevelop)**: 画像表示窓は最低1つ常駐(最後は閉じられない)=「カレント窓」。変数/オブジェクトのダブルクリック表示は**カレント窓へ**行う(現状は new window/main が分離)。new_graphics_window/display_variable を current-window 概念で統一。
 3. **修正済(本セッション)**: ステップ実行が表示更新しないバグ(step_to 自己修復化)。既定レイアウト HDevelop 型。ボタンアイコン+ラベル。crash ログ常設。
 4. **検証規律**: ユーザーに手動テストさせる前に**サンドボックス(QTest+スクショ)で私が e2e 検証**する(ユーザー明示指摘)。
+   - 補足(HDevelop): 各 Graphics 窓に**ハンドル番号**(`open_window`/`dev_open_window` の WindowHandle)。`dev_*` 系オペレータ(dev_display/dev_set_color/dev_set_draw/dev_clear_window 等)は**カレント窓**へ描画。`dev_set_window(Handle)` でカレント切替。→ Studio 実装: 各 graphics 窓に handle 番号 + カレント窓ポインタ + 変数ダブルクリック=カレント窓へ描画 + カレント切替 UI(窓クリック or ハンドル指定)。
