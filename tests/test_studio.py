@@ -1014,11 +1014,15 @@ def test_context_menus_on_lists():
     assert win._stage_list.contextMenuPolicy() == QtCore.Qt.CustomContextMenu
     assert win._variables["list"].contextMenuPolicy() == QtCore.Qt.CustomContextMenu
     # operator context menu offers insert / run-once / help when an op is selected
-    win._op_list.setCurrentRow(0)
+    idx = next(i for i in range(win._op_list.count())
+               if win._op_list.item(i).data(QtCore.Qt.UserRole) == "gaussian")
+    win._op_list.setCurrentRow(idx)
     olabels = [lbl for lbl, _ in win._ctx["operators"]()]
     assert "Run once (preview)" in olabels and any("Insert" in l for l in olabels)
-    # pipeline context menu offers stage edits when a stage exists
-    model.add_stage("gaussian"); win._stage_list.setCurrentRow(0)
+    # pipeline context menu offers stage edits when a stage exists (add via the UI so
+    # the stage list is populated, then select it)
+    win._op_buttons["insert"].click()
+    win._stage_list.setCurrentRow(0)
     slabels = [lbl for lbl, _ in win._ctx["pipeline"]()]
     assert "Remove stage" in slabels and "Run to here" in slabels
     # empty selection -> empty menu (no crash)
