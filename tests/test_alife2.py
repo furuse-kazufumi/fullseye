@@ -545,14 +545,27 @@ def test_sandpile_full_relaxation_leaves_every_cell_below_four():
     for h in (np.full((14, 14), 9, np.int64),
               ((np.mgrid[0:16, 0:16][0] * 7 + np.mgrid[0:16, 0:16][1] * 5) % 11),
               np.zeros((5, 5), np.int64)):
-        stable, _s = A._sandpile_relax(np.asarray(h, np.int64), A._RELAX_CAP)
-        assert stable.max() <= 3
+        h = np.asarray(h, np.int64)
+        stable, _s = A._sandpile_relax(h, A._RELAX_CAP)
+        assert stable.max() <= 3                       # the critical state
         assert stable.min() >= 0
-    # through the op: b >= 0.9 relaxes to stable, so h/max lands on {0,1/3,2/3,1}
+        assert np.array_equal(stable, _sequential_stabilise(h))
+
+    # end to end through the op, against the independent sequential stabiliser
+    yy, xx = np.mgrid[0:12, 0:12]
+    img = ((yy * 5 + xx * 3) % 13) / 12.0
+    grains = 4 + int(1.0 * 12)                          # a = 1.0 -> K = 16
+    ref = _sequential_stabilise(np.rint(img * grains).astype(np.int64))
+    assert ref.max() <= 3
+    out = A.alife_sandpile(img, 1.0, 1.0)               # b >= 0.9 -> run to stable
+    assert np.array_equal(out, ref.astype(np.float64) / float(ref.max()))
+
+    # every battery image relaxes onto a max<=3 grid, so h/max(h) can only take
+    # the uniform levels j/mx with mx in {0,1,2,3}
     for iname, iv in image_bank().items():
-        out = A.alife_sandpile(iv, 1.0, 1.0)
-        allowed = {0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0}
-        assert set(np.unique(out)).issubset(allowed), iname
+        uniq = set(np.unique(A.alife_sandpile(iv, 1.0, 1.0)))
+        assert (uniq.issubset({0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0})
+                or uniq.issubset({0.0, 0.5, 1.0})), (iname, sorted(uniq))
 
 
 def test_sandpile_is_abelian_order_of_toppling_does_not_matter():
