@@ -2445,18 +2445,21 @@ def build_window(model=None):
     win._rebuild_layouts_menu = _rebuild_layouts_menu
     win._layouts_menu = layouts_menu
 
-    # per-panel float submenu + graphics detach/reattach (parent = Windows menu)
-    menu_windows.addSeparator()
-    fp_menu = menu_windows.addMenu("Float panel")
+    # per-panel float as flat items in Panels (avoids a 3rd nesting level) + reset
+    menu_panels.addSeparator()
     for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
                      ("display", "Display · Analysis"), ("program", "Program (code)"),
                      ("variables", "Variables & Objects")):
-        fp_menu.addAction(_lbl).triggered.connect(lambda _=False, k=_k: float_panel(k, True))
+        menu_panels.addAction("Float: %s" % _lbl).triggered.connect(
+            lambda _=False, k=_k: float_panel(k, True))
+    menu_panels.addSeparator()
+    menu_panels.addAction(act_reset_layout)
+    # graphics detach/reattach live under the Graphics windows submenu
     act_detach = _act("Detach graphics window", "Ctrl+Shift+D",
                       "Pop the active graphics window out of the workspace into its own window")
     act_reattach = _act("Reattach graphics window", None,
                         "Return a detached graphics window to the workspace")
-    menu_windows.addAction(act_detach); menu_windows.addAction(act_reattach)
+    menu_graphics.addAction(act_detach); menu_graphics.addAction(act_reattach)
     act_detach.triggered.connect(lambda: detach_graphics())
     act_reattach.triggered.connect(lambda: reattach_graphics())
     win._actions["detach_graphics"] = act_detach
