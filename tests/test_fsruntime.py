@@ -94,3 +94,68 @@ def test_a_signed_recipe_that_matches_loads():
     ready = fsruntime.compile_recipe(signed, profile="reference")
     assert ready.build_id == "build-2026.08"
     assert ready.source_sha256 == signed.digest()
+
+
+# --------------------------------------------------------------------------- #
+# The resident Runtime — PLC verdicts + tail mitigations + the READY gate.
+# --------------------------------------------------------------------------- #
+ERR_SRC = """
+R := threshold(Image, 0.5, 1.0)
+Objs := connection(R)
+X := area(select_obj(Objs, 99))
+"""
+
+
+def test_runtime_starts_ready_and_returns_ok():
+    rt = fsruntime.FullseyeRuntime.start(
+        fsruntime.sign(RECIPE_SRC, goldens=[golden(3)]), profile="reference")
+    v = rt.inspect({"Image": scene()})
+    assert v.status == "ok"
+    assert v.result["N"] == 3
+    assert v.elapsed_ms > 0.0
+
+
+def test_runtime_ng_verdict_via_judge():
+    rt = fsruntime.FullseyeRuntime.start(
+        fsruntime.sign(RECIPE_SRC, goldens=[golden(3)]), profile="reference")
+    v = rt.inspect({"Image": scene()}, judge=lambda out: out["N"] > 2)
+    assert v.status == "ng"
+
+
+def test_runtime_error_on_operator_failure():
+    # No goldens (the failure is input-independent, so it would block the load);
+    # the operator error must surface as ERROR, never a benign value.
+    rt = fsruntime.FullseyeRuntime.start(Recipe(ERR_SRC, goldens=()), profile="reference")
+    v = rt.inspect({"Image": scene()})
+    assert v.status == "error"
+    assert "operator error" in v.detail
+
+
+def test_runtime_timeout_when_deadline_exceeded():
+    rt = fsruntime.FullseyeRuntime.start(
+        fsruntime.sign(RECIPE_SRC, goldens=[golden(3)]),
+        profile="reference", deadline_ms=0.0001)
+    v = rt.inspect({"Image": scene()})
+    assert v.status == "timeout"
+    assert v.result["N"] == 3          # the late result is attached for the PLC
+    assert v.elapsed_ms > 0.0001
+
+
+def test_runtime_refuses_to_start_on_a_failed_load():
+    with pytest.raises(FsNotReady, match="golden mismatch"):
+        fsruntime.FullseyeRuntime.start(
+            fsruntime.sign(RECIPE_SRC, goldens=[golden(99)]), profile="reference")
+
+
+def test_verdict_status_is_validated():
+    with pytest.raises(ValueError):
+        fsruntime.Verdict("bogus")
+    assert fsruntime.Verdict("ok").status == "ok"
+
+
+def test_runtime_applies_cv2_thread_bound_when_asked():
+    # The tail-mitigation knob is applied at start (no-op flagged False if cv2 or
+    # the platform can't honour it); it never raises.
+    rt = fsruntime.FullseyeRuntime.start(
+        Recipe(RECIPE_SRC, goldens=()), profile="reference", cv2_threads=1)
+    assert isinstance(rt.cv2_threads_bounded, bool)

@@ -25,7 +25,8 @@ loaded safely.
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -38,7 +39,7 @@ ABI_VERSION_MAJOR = 0
 
 __all__ = [
     "ABI_VERSION_MAJOR", "FsNotReady", "GoldenVector", "Recipe", "ReadyRecipe",
-    "sign", "compile_recipe",
+    "sign", "compile_recipe", "Verdict", "FullseyeRuntime",
 ]
 
 
@@ -175,3 +176,125 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
             _compare("golden[%d].%s" % (i, var), env.vars[var], exp, g.tol)
 
     return ReadyRecipe(program, profile, actual, recipe.build_id, frozenset(op_names))
+
+
+# --------------------------------------------------------------------------- #
+# The resident Runtime — what actually judges parts on the line.
+#
+# It ties the load-time gate (compile_recipe) to the tail mitigations the N1b
+# diagnosis established (docs/FSCRIPT_MEASUREMENTS.md 9.1): the catastrophic tail
+# was external CPU-core contention preempting cv2's worker threads.  The
+# DEFINITIVE fix measured there is *core availability* — with spare cores the tail
+# is tight even beside many busy processes — which is a deployment/OS concern, not
+# something a process sets for itself.  The Runtime's own self-help levers are
+# weaker and reported honestly: (a) bounding cv2 threads (modest, noisy under full
+# saturation) and (b) attempting HIGH process priority (which did NOT take effect
+# in the probe — SetPriorityClass needs elevation/a service context — so
+# ``high_priority`` reports whether it actually applied).  Plus it reports a
+# deadline overrun instead of pretending to abort a native call (R4: "make a
+# Python that missed its deadline safe for the line to handle", not "make Python
+# hard-real-time").  Verdicts are the boundary a PLC layer consumes:
+# OK / NG / ERROR / TIMEOUT.
+# --------------------------------------------------------------------------- #
+_VERDICTS = ("ok", "ng", "error", "timeout")
+
+
+@dataclass(frozen=True)
+class Verdict:
+    """The result of inspecting one frame, in the vocabulary a PLC understands."""
+
+    status: str                       # one of _VERDICTS
+    result: dict = field(default=None, compare=False)
+    elapsed_ms: float = 0.0
+    detail: str = ""
+
+    def __post_init__(self):
+        if self.status not in _VERDICTS:
+            raise ValueError("verdict status %r not in %s" % (self.status, _VERDICTS))
+
+
+def _bound_cv2_threads(n) -> bool:
+    if n is None:
+        return False
+    try:
+        import cv2
+        cv2.setNumThreads(int(n))
+        return True
+    except Exception:
+        return False
+
+
+def _raise_process_priority() -> bool:
+    """Attempt Win32 HIGH_PRIORITY_CLASS so the Runtime wins scheduling against
+    other work.  Returns whether it actually applied — it commonly does NOT
+    without elevation / a service context (measured), so callers must not assume
+    it took effect.  The reliable tail fix is reserving cores, not this."""
+    try:
+        import ctypes
+        HIGH_PRIORITY_CLASS = 0x00000080
+        h = ctypes.windll.kernel32.GetCurrentProcess()
+        return bool(ctypes.windll.kernel32.SetPriorityClass(h, HIGH_PRIORITY_CLASS))
+    except Exception:
+        return False
+
+
+class FullseyeRuntime:
+    """A loaded, READY recipe that inspects frames and returns PLC verdicts.
+
+    Not READY until :meth:`start` returns — it refuses to construct from a recipe
+    that fails the load-time gate (that is the whole point of the Runtime profile).
+    """
+
+    def __init__(self, ready: ReadyRecipe, deadline_ms: float | None = None):
+        self.ready = ready
+        self.deadline_ms = deadline_ms
+        self.cv2_threads_bounded = False
+        self.high_priority = False
+
+    @classmethod
+    def start(cls, recipe: Recipe, profile: str = "industrial",
+              deadline_ms: float | None = None, cv2_threads: int | None = None,
+              high_priority: bool = False) -> "FullseyeRuntime":
+        """Load fail-closed, apply the tail mitigations, and become READY.
+
+        Raises :class:`FsNotReady` if the recipe does not pass the load gate.
+        """
+        ready = compile_recipe(recipe, profile)          # the READY gate
+        rt = cls(ready, deadline_ms=deadline_ms)
+        rt.cv2_threads_bounded = _bound_cv2_threads(cv2_threads)
+        rt.high_priority = _raise_process_priority() if high_priority else False
+        return rt
+
+    @property
+    def profile(self) -> str:
+        return self.ready.profile
+
+    def inspect(self, images=None, judge=None) -> Verdict:
+        """Inspect one frame. ``judge(vars) -> bool`` marks a defect (NG); without
+        it the verdict is OK/ERROR/TIMEOUT only.
+
+        An operator failure is ERROR (never a silent benign value — the fail-open
+        registry must not reach here); a cycle over ``deadline_ms`` is TIMEOUT with
+        the (late) result attached, so the PLC decides, not the vision code.
+        """
+        t0 = time.perf_counter()
+        try:
+            with fslib.profile(self.ready.profile):
+                out = fscript.run(self.ready.program, images=images).vars
+        except fslib.FsBackendError as e:
+            return Verdict("error", elapsed_ms=(time.perf_counter() - t0) * 1e3,
+                           detail="backend unavailable: %s" % e)
+        except fscript.FScriptError as e:
+            return Verdict("error", elapsed_ms=(time.perf_counter() - t0) * 1e3,
+                           detail="operator error: %s" % e)
+        elapsed = (time.perf_counter() - t0) * 1e3
+        if self.deadline_ms is not None and elapsed > self.deadline_ms:
+            return Verdict("timeout", result=out, elapsed_ms=elapsed,
+                           detail="cycle %.2f ms exceeded deadline %.2f ms"
+                                  % (elapsed, self.deadline_ms))
+        try:
+            is_ng = bool(judge(out)) if judge is not None else False
+        except Exception as e:
+            return Verdict("error", result=out, elapsed_ms=elapsed,
+                           detail="judge raised: %s" % e)
+        return Verdict("ng" if is_ng else "ok", result=out, elapsed_ms=elapsed)
