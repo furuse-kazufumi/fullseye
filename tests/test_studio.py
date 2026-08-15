@@ -998,6 +998,47 @@ def test_function_key_shortcuts_step_from_any_panel():
     assert win._stage_list.currentRow() == len(model.stages) - 1, "F5 did not run all"
 
 
+def test_current_graphics_window_model():
+    """HDevelop current-window model: a variable "current" display and Run once target
+    the CURRENT graphics window (not always a fresh one), handles are stable + rising,
+    and the current pointer follows freshly-opened windows and heals to the primary."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    disp = win._variables["display"]; lst = win._variables["list"]
+    win._variables["refresh"](); lst.setCurrentRow(1)          # an iconic variable
+    # current defaults to the resident primary window (handle 1)
+    assert win._current_gfx is win._primary_gsub and win._current_handle() == 1
+    g0 = len(win._graphics_windows)
+    disp("current")                                            # → current window, no new window
+    assert len(win._graphics_windows) == g0
+    # opening a window makes it current with a fresh, higher handle
+    sub2 = win._new_graphics_window()
+    assert win._current_gfx is sub2 and win._current_handle() == 2
+    g1 = len(win._graphics_windows)
+    disp("current")                                            # reuses the secondary window
+    assert len(win._graphics_windows) == g1
+    # Run once reuses the current (secondary) window instead of spawning one
+    ol = win._op_list
+    idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == "gaussian")
+    ol.setCurrentRow(idx)
+    win._run_op_once()
+    assert len(win._graphics_windows) == g1
+    # back on the primary, Run once opens a fresh scratch window (never clobbers the result)
+    win._set_current_gfx(win._primary_gsub)
+    assert win._current_handle() == 1
+    win._run_op_once()
+    assert len(win._graphics_windows) == g1 + 1
+    # explicit "new" always opens a window
+    disp("new")
+    assert len(win._graphics_windows) == g1 + 2
+    # legacy booleans still work (True→new, False→main view = no new window)
+    g2 = len(win._graphics_windows)
+    disp(False)
+    assert len(win._graphics_windows) == g2
+
+
 def test_3d_surface_degrades_without_opengl(monkeypatch):
     """Offscreen (and any GL-less display session) has no usable OpenGL context, where
     Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
