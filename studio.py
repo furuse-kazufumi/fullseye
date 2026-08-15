@@ -877,7 +877,10 @@ def build_window(model=None):
     for w_ in (b_zin, b_zout, b_fit, b_11):
         izoom.addWidget(w_)
     ilay.addLayout(itop); ilay.addWidget(view, 1); ilay.addLayout(izoom)
-    rv.addWidget(_group(QtWidgets, "IMAGE", ilay), 1)
+    ilay.setContentsMargins(4, 4, 4, 4); ilay.setSpacing(4)
+    image_panel = QtWidgets.QWidget(); image_panel.setLayout(ilay)
+    image_panel.setObjectName("graphics_primary")
+    image_panel.setMinimumSize(320, 260)
 
     display = QtWidgets.QComboBox()
     display.addItems(["gray", "shaded relief", "height (color)"]
