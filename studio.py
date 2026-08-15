@@ -355,40 +355,51 @@ QLabel {{ color:{TEXT}; background:transparent; }}
 QLabel[muted="true"] {{ color:{MUTED}; }}
 QLabel[hint="true"] {{ color:{MUTED}; font-family:Consolas,"Cascadia Mono",monospace; }}
 
-QMenuBar {{ background:#12141b; color:#c7cbd6; border-bottom:1px solid #262b38; padding:2px 6px; }}
-QMenuBar::item {{ background:transparent; padding:6px 12px; border-radius:6px; }}
+QMenuBar {{ background:#12141b; color:#c7cbd6; border-bottom:1px solid #262b38; padding:1px 4px; }}
+QMenuBar::item {{ background:transparent; padding:3px 9px; border-radius:4px; }}
 QMenuBar::item:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
-QMenu {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:8px; padding:6px; }}
-QMenu::item {{ padding:6px 28px 6px 14px; border-radius:6px; }}
+QMenu {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:5px; padding:3px; }}
+QMenu::item {{ padding:4px 24px 4px 12px; border-radius:4px; }}
 QMenu::item:selected {{ background:{TEAL}; color:{INK}; }}
-QMenu::separator {{ height:1px; background:{LINE}; margin:6px 8px; }}
+QMenu::separator {{ height:1px; background:{LINE}; margin:4px 6px; }}
 
-QToolBar {{ background:#12141b; border:none; border-bottom:1px solid #262b38; spacing:6px; padding:6px 10px; }}
-QToolButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:7px; padding:6px 12px; color:{TEXT}; }}
+QToolBar {{ background:#12141b; border:none; border-bottom:1px solid #262b38; spacing:3px; padding:2px 6px; }}
+QToolButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:4px; padding:3px 9px; color:{TEXT}; }}
 QToolButton:hover {{ border-color:{TEAL}; color:{TEAL_HI}; }}
 QToolButton:pressed {{ background:{TEAL}; color:{INK}; }}
 QToolButton[accent="true"] {{ background:{TEAL}; color:{INK}; border:none; font-weight:700; }}
 QToolButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
-QToolButton:focus {{ border:2px solid {TEAL_HI}; padding:5px 11px; }}
+QToolButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 9px; }}
 
-QGroupBox {{ background:{NAVY_1}; border:1px solid #262b38; border-radius:10px;
-    margin-top:14px; padding:12px 10px 10px 10px; }}
-QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left:12px; top:1px;
-    padding:2px 8px; color:{AMBER}; font-size:10px; font-weight:700; letter-spacing:1px; }}
+/* Dockable tool windows (VS/HDevelop-style). Compact title bars, square-ish. */
+QDockWidget {{ titlebar-close-icon:none; titlebar-normal-icon:none;
+    font-size:11px; color:{MUTED}; }}
+QDockWidget::title {{ background:#12141b; padding:3px 8px; border-bottom:1px solid #262b38;
+    text-transform:uppercase; letter-spacing:1px; }}
+QDockWidget::close-button, QDockWidget::float-button {{
+    background:transparent; border:none; padding:0; icon-size:12px; }}
+QMdiArea {{ background:{NAVY_0}; }}
+QMdiSubWindow {{ background:{NAVY_1}; }}
+QMdiSubWindow > QWidget {{ border:1px solid #262b38; }}
+
+QGroupBox {{ background:{NAVY_1}; border:1px solid #262b38; border-radius:6px;
+    margin-top:9px; padding:6px 7px 7px 7px; }}
+QGroupBox::title {{ subcontrol-origin:margin; subcontrol-position:top left; left:8px; top:0px;
+    padding:0px 6px; color:{AMBER}; font-size:10px; font-weight:700; letter-spacing:1px; }}
 
 QLineEdit,QComboBox,QPlainTextEdit,QListWidget,QSpinBox {{ background:{NAVY_2};
-    border:1px solid {LINE}; border-radius:7px; padding:5px 8px;
+    border:1px solid {LINE}; border-radius:4px; padding:2px 7px;
     selection-background-color:{TEAL}; selection-color:{INK}; }}
 QLineEdit:focus,QComboBox:focus,QPlainTextEdit:focus,QListWidget:focus,QSpinBox:focus {{
     border:1px solid {TEAL_HI}; }}
-QListWidget::item {{ padding:5px 6px; border-radius:5px; }}
+QListWidget::item {{ padding:2px 6px; border-radius:3px; }}
 QListWidget::item:hover {{ background:#232a36; }}
 QListWidget::item:selected {{ background:{TEAL}; color:{INK}; }}
-QComboBox::drop-down {{ border:none; width:22px; }}
-QComboBox QAbstractItemView {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:8px;
+QComboBox::drop-down {{ border:none; width:18px; }}
+QComboBox QAbstractItemView {{ background:{NAVY_1}; border:1px solid {LINE}; border-radius:5px;
     selection-background-color:{TEAL}; selection-color:{INK}; outline:none; }}
 
-QPushButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:7px; padding:7px 12px; color:{TEXT}; }}
+QPushButton {{ background:{NAVY_2}; border:1px solid {LINE}; border-radius:4px; padding:3px 10px; color:{TEXT}; }}
 QPushButton:hover {{ background:#262b38; border-color:{TEAL}; }}
 QPushButton:pressed {{ background:{TEAL}; color:{INK}; }}
 QPushButton:disabled {{ color:#5b6270; border-color:#232734; background:#191c25; }}
@@ -397,7 +408,10 @@ QPushButton[accent="true"]:hover {{ background:{TEAL_HI}; }}
 /* Visible keyboard focus. A blanket universal-selector outline reset used to erase
    the focus ring on every widget, leaving keyboard users with no idea where focus
    was; each interactive widget now carries an explicit teal :focus border. */
-QPushButton:focus {{ border:2px solid {TEAL_HI}; padding:6px 11px; }}
+QPushButton:focus {{ border:1px solid {TEAL_HI}; padding:3px 10px; }}
+QTabBar::tab {{ background:{NAVY_1}; color:{MUTED}; padding:3px 10px; border:1px solid #262b38;
+    border-bottom:none; border-top-left-radius:4px; border-top-right-radius:4px; }}
+QTabBar::tab:selected {{ background:{NAVY_2}; color:{TEAL_HI}; }}
 
 QSlider::groove:horizontal {{ height:6px; background:{LINE}; border-radius:3px; }}
 QSlider::handle:horizontal {{ width:16px; background:{AMBER}; border-radius:8px; margin:-6px 0; }}
