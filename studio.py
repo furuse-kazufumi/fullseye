@@ -2237,6 +2237,222 @@ def build_window(model=None):
     act_dock_all.triggered.connect(lambda: float_all_panels(False))
     win._float_all_panels = float_all_panels
 
+    # -- per-panel float control (finer than all-or-nothing float) ------------ #
+    def float_panel(name, floating=True):
+        """Float (or re-dock) a single tool panel — cross-monitor freedom without
+        detaching every panel at once."""
+        d = win._docks.get(name)
+        if d is None:
+            return False
+        d.setFloating(bool(floating))
+        if floating:
+            d.show()
+        return True
+    win._float_panel = float_panel
+
+    # -- graphics windows: detach out of the MDI workspace into standalone ----- #
+    win._detached_graphics = []
+
+    def detach_graphics(sub=None):
+        """Pop a graphics window out of the MDI workspace into an independent
+        top-level window (HDevelop-style). The image view keeps rendering; it just
+        lives outside the workspace now. Returns the new top-level window."""
+        try:
+            sub = sub or mdi.activeSubWindow()
+            if sub is None:                        # offscreen has no 'active' one
+                live = [s for s in win._graphics_windows if s in mdi.subWindowList()]
+                sub = live[-1] if live else None
+            if sub is None:
+                win._flash and win._flash("no graphics window to detach")
+                return None
+            inner = sub.widget()
+            title = sub.windowTitle()
+            mdi.removeSubWindow(sub)                # reparents inner to no parent
+            if sub in win._graphics_windows:
+                win._graphics_windows.remove(sub)
+            sub.deleteLater()
+            top = QtWidgets.QMainWindow(win)
+            top.setWindowFlag(QtCore.Qt.Window, True)
+            top.setWindowTitle((title or "Graphics") + " — detached")
+            top.setStyleSheet(THEME)
+            if os.path.exists(_ICON_PATH):
+                top.setWindowIcon(QtGui.QIcon(_ICON_PATH))
+            if inner is not None:
+                top.setCentralWidget(inner)
+            top.resize(480, 400)
+            top.show()
+            win._detached_graphics.append(top)
+            win._flash and win._flash("detached %s from the workspace" % (title or "graphics"))
+            return top
+        except Exception as e:                     # never let a window op crash the app
+            report_error("Detach graphics", e)
+            return None
+    win._detach_graphics = detach_graphics
+
+    def reattach_graphics(top=None):
+        """Return a detached graphics window to the MDI workspace."""
+        try:
+            top = top or (win._detached_graphics[-1] if win._detached_graphics else None)
+            if top is None:
+                win._flash and win._flash("no detached graphics window to reattach")
+                return None
+            inner = top.takeCentralWidget()
+            title = top.windowTitle().replace(" — detached", "")
+            if top in win._detached_graphics:
+                win._detached_graphics.remove(top)
+            top.close(); top.deleteLater()
+            if inner is None:
+                return None
+            sub = mdi.addSubWindow(inner)
+            sub.setWindowTitle(title or "Graphics")
+            sub.resize(440, 360); sub.show()
+            win._graphics_windows.append(sub)
+            win._flash and win._flash("reattached %s to the workspace" % (title or "graphics"))
+            return sub
+        except Exception as e:
+            report_error("Reattach graphics", e)
+            return None
+    win._reattach_graphics = reattach_graphics
+
+    # -- named layout presets (save / apply / delete) + built-in arrangements -- #
+    win._preset_store = {}          # name -> (geometry: QByteArray, state: QByteArray)
+
+    def _persist_presets():
+        if os.environ.get("QT_QPA_PLATFORM") == "offscreen":
+            return                                 # tests keep presets in-memory only
+        try:
+            s = QtCore.QSettings("Fullseye", "Studio")
+            s.beginGroup("layout_presets"); s.remove("")
+            for nm, (geo, st) in win._preset_store.items():
+                s.beginGroup(nm)
+                s.setValue("geometry", geo); s.setValue("state", st)
+                s.endGroup()
+            s.endGroup()
+        except Exception:
+            pass
+
+    def save_layout_preset(name):
+        """Capture the current window geometry + full dock/toolbar arrangement under
+        *name* (persisted via QSettings unless offscreen). Overwrites a same-named one."""
+        name = (name or "").strip()
+        if not name:
+            return False
+        win._preset_store[name] = (win.saveGeometry(), win.saveState())
+        _persist_presets(); win._rebuild_layouts_menu()
+        win._flash and win._flash("saved layout '%s'" % name)
+        return True
+    win._save_layout_preset = save_layout_preset
+
+    def apply_layout_preset(name):
+        item = win._preset_store.get(name)
+        if item is None:
+            return False
+        geo, st = item
+        try:
+            if geo is not None:
+                win.restoreGeometry(geo)
+            if st is not None:
+                win.restoreState(st)
+        except Exception as e:
+            report_error("Apply layout", e); return False
+        win._flash and win._flash("applied layout '%s'" % name)
+        return True
+    win._apply_layout_preset = apply_layout_preset
+
+    def delete_layout_preset(name):
+        if name in win._preset_store:
+            del win._preset_store[name]
+            _persist_presets(); win._rebuild_layouts_menu()
+            win._flash and win._flash("deleted layout '%s'" % name)
+            return True
+        return False
+    win._delete_layout_preset = delete_layout_preset
+
+    # built-in deterministic arrangements (no saved state needed)
+    def layout_balanced():
+        win._reset_layout()                        # restore factory state + show all docks
+        win._flash and win._flash("layout: balanced (default)")
+
+    def layout_graphics_focus():
+        for k in ("operators", "display", "program", "variables"):
+            win._docks[k].hide()
+        win._docks["pipeline"].show()
+        try:
+            subs = [s for s in win._graphics_windows if s in mdi.subWindowList()]
+            target = mdi.activeSubWindow() or (subs[-1] if subs else None)
+            target and target.showMaximized()
+        except Exception:
+            pass
+        win._flash and win._flash("layout: graphics focus")
+
+    def layout_code_focus():
+        for k in ("operators", "display"):
+            win._docks[k].hide()
+        for k in ("pipeline", "program", "variables"):
+            win._docks[k].show()
+        win._docks["program"].raise_()
+        win._flash and win._flash("layout: code focus")
+
+    win._builtin_layouts = {"Balanced (default)": layout_balanced,
+                            "Graphics focus": layout_graphics_focus,
+                            "Code focus": layout_code_focus}
+    win._apply_builtin_layout = lambda nm: (win._builtin_layouts.get(nm) or (lambda: None))()
+
+    layouts_menu = menu_windows.addMenu("Layouts")
+
+    def _prompt_save_layout():
+        try:
+            name, ok = QtWidgets.QInputDialog.getText(win, "Save layout", "Layout name:")
+            if ok and str(name).strip():
+                save_layout_preset(str(name).strip())
+        except Exception:
+            pass
+
+    def _rebuild_layouts_menu():
+        layouts_menu.clear()
+        for nm, fn in win._builtin_layouts.items():
+            layouts_menu.addAction(nm).triggered.connect(lambda _=False, f=fn: f())
+        layouts_menu.addSeparator()
+        layouts_menu.addAction("Save current layout as…").triggered.connect(_prompt_save_layout)
+        if win._preset_store:
+            am = layouts_menu.addMenu("Apply saved layout")
+            for nm in sorted(win._preset_store):
+                am.addAction(nm).triggered.connect(lambda _=False, n=nm: apply_layout_preset(n))
+            dm = layouts_menu.addMenu("Delete saved layout")
+            for nm in sorted(win._preset_store):
+                dm.addAction(nm).triggered.connect(lambda _=False, n=nm: delete_layout_preset(n))
+    win._rebuild_layouts_menu = _rebuild_layouts_menu
+
+    # per-panel float submenu + graphics detach/reattach (parent = Windows menu)
+    menu_windows.addSeparator()
+    fp_menu = menu_windows.addMenu("Float panel")
+    for _k, _lbl in (("operators", "Operators"), ("pipeline", "Pipeline · Parameters"),
+                     ("display", "Display · Analysis"), ("program", "Program (code)"),
+                     ("variables", "Variables & Objects")):
+        fp_menu.addAction(_lbl).triggered.connect(lambda _=False, k=_k: float_panel(k, True))
+    act_detach = _act("Detach graphics window", "Ctrl+Shift+D",
+                      "Pop the active graphics window out of the workspace into its own window")
+    act_reattach = _act("Reattach graphics window", None,
+                        "Return a detached graphics window to the workspace")
+    menu_windows.addAction(act_detach); menu_windows.addAction(act_reattach)
+    act_detach.triggered.connect(lambda: detach_graphics())
+    act_reattach.triggered.connect(lambda: reattach_graphics())
+    win._actions["detach_graphics"] = act_detach
+    win._actions["reattach_graphics"] = act_reattach
+
+    # load persisted presets, then build the Layouts menu
+    try:
+        if os.environ.get("QT_QPA_PLATFORM") != "offscreen":
+            s = QtCore.QSettings("Fullseye", "Studio"); s.beginGroup("layout_presets")
+            for nm in s.childGroups():
+                s.beginGroup(nm); geo = s.value("geometry"); st = s.value("state"); s.endGroup()
+                if geo is not None or st is not None:
+                    win._preset_store[nm] = (geo, st)
+            s.endGroup()
+    except Exception:
+        pass
+    _rebuild_layouts_menu()
+
     # -- tooltip / help localisation (en / ja / zh) --------------------------- #
     win._tt_en = {w: w.toolTip() for w in win.findChildren(QtWidgets.QWidget) if w.toolTip()}
     win._lang = "en"
