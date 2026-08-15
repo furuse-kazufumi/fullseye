@@ -1150,6 +1150,40 @@ def test_step_through_marks_variable_frontier():
     assert not any("pending" in t for t in texts)                    # all live now
 
 
+def test_undo_redo_pipeline_edits():
+    """Codex #10: pipeline edits (insert / remove) can be undone and redone, and a fresh
+    edit forks history (clears the redo stack)."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    ol, ins = win._op_list, win._op_buttons["insert"]
+
+    def insert(op):
+        from PySide6 import QtCore
+        idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == op)
+        ol.setCurrentRow(idx); ins.click()
+
+    insert("gaussian"); insert("otsu")
+    assert [s[0] for s in model.stages] == ["gaussian", "otsu"]
+    assert win._actions["undo"].isEnabled() and not win._actions["redo"].isEnabled()
+    win._actions["undo"].trigger()                       # undo the otsu insert
+    assert [s[0] for s in model.stages] == ["gaussian"]
+    assert win._actions["redo"].isEnabled()
+    win._actions["undo"].trigger()                       # undo the gaussian insert
+    assert model.stages == []
+    win._actions["redo"].trigger(); win._actions["redo"].trigger()   # redo both
+    assert [s[0] for s in model.stages] == ["gaussian", "otsu"]
+    # a fresh edit after an undo forks history: redo becomes unavailable
+    win._actions["undo"].trigger()                       # -> [gaussian]
+    insert("invert")
+    assert [s[0] for s in model.stages] == ["gaussian", "invert"]
+    assert not win._actions["redo"].isEnabled()
+    # remove is undoable too
+    win._stage_list.setCurrentRow(1); win._actions["remove"].trigger()
+    assert [s[0] for s in model.stages] == ["gaussian"]
+    win._actions["undo"].trigger()
+    assert [s[0] for s in model.stages] == ["gaussian", "invert"]
+
+
 def test_3d_surface_degrades_without_opengl(monkeypatch):
     """Offscreen (and any GL-less display session) has no usable OpenGL context, where
     Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
