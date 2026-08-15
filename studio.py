@@ -2144,6 +2144,7 @@ def build_window(model=None):
     def move(delta):
         i = selected_index(); j = i + delta
         if 0 <= i < len(model.stages) and 0 <= j < len(model.stages):
+            push_undo()
             model.move_stage(i, j); mark_dirty()
             refresh_stage_list(select=j); show_result()
 
