@@ -2160,12 +2160,34 @@ def build_window(model=None):
         except Exception as e:
             var_inspect.setPlainText("inspect error: %s" % e)
 
+    _VAR_THUMB = 44
+
+    def _var_icon(val):
+        """A small thumbnail for an iconic variable (image/region → shows its shape),
+        or None for control variables (scalars/contours have no raster preview)."""
+        if isinstance(val, np.ndarray) and val.ndim in (2, 3):
+            qi = _to_qimage(apply_display(val, display.currentText()), QtGui)
+            if qi is not None:
+                pm = QtGui.QPixmap.fromImage(qi).scaled(
+                    _VAR_THUMB, _VAR_THUMB, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
+                return QtGui.QIcon(pm)
+        return None
+
     def refresh_variables():
         sel = var_list.currentRow()
         var_list.blockSignals(True); var_list.clear()
+        var_list.setIconSize(QtCore.QSize(_VAR_THUMB, _VAR_THUMB))
         for label, idx, kind in _var_entries():
-            it = QtWidgets.QListWidgetItem("%s   · %s" % (label, kind))
+            try:
+                val = model.result_upto(idx)
+            except Exception:
+                val = None
+            ic = _var_icon(val)                      # iconic vars get a shape thumbnail
+            iconic = ic is not None
+            it = QtWidgets.QListWidgetItem("%s   %s · %s" % (label, kind, "iconic" if iconic else "control"))
             it.setData(QtCore.Qt.UserRole, idx)
+            if ic is not None:
+                it.setIcon(ic)
             var_list.addItem(it)
         var_list.setCurrentRow(sel if 0 <= sel < var_list.count() else var_list.count() - 1)
         var_list.blockSignals(False)
