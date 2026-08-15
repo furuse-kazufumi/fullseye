@@ -216,8 +216,13 @@ op 数には数えられるが黙って何もしない可能性がある」と�
   `readiness_report(op_names, profile)`(各 op が dispatch するバックエンド、無ければ None)/
   `require_ready(op_names, profile)`(1 つでも unmet なら `FsBackendError` で起動拒否・全列挙、degrade しない)。
   `industrial` は numpy fallback を持たないので numpy-only op は unmet=起動拒否、`studio` は numpy へ degrade
-  (`tests/test_fslib.py` に 5 テスト、cv2 非依存)。**残り = 実際の Runtime ローダー(レシピ/マニフェスト読込)から
-  `require_ready` を呼ぶ配線**。ローダー自体は golden vector 形式・マニフェスト検証と同じ後段で作る。
+  (`tests/test_fslib.py` に 5 テスト、cv2 非依存)。
+
+  **★Runtime ローダーへ配線済(2026-08-16, commit 9b74fd3)= `fsruntime.py`**: `compile_recipe(recipe, profile)` が
+  fail-closed で ①ABI major 一致 ②source SHA-256 が manifest 署名と一致(改ざん/drift 検出) ③`require_ready` で
+  backend self-check ④golden vector で「以前と同じ判定」を再現(R5) を検査し、いずれか失敗で `FsNotReady`(degrade しない)。
+  golden 実行が backend self-check と判定証明を兼ねる。`Recipe`/`GoldenVector`/`ReadyRecipe`/`sign`、`tests/test_fsruntime.py` 10 件。
+  **残り = このローダーを実 CLI/常駐配布イメージへ結線**(PLC state machine・deadline/ERROR/TIMEOUT・§4.1 の二プロファイル)。
 
 → **これが「Studio と Runtime は意味論を分けねばならない」の最も具体的な証拠**であり、
   §4.2 の `industrial` = fail-closed 設計の**必然性**を示す。
