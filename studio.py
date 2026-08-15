@@ -958,27 +958,37 @@ def build_window(model=None):
     act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
     act_about = _act("About Fullseye Studio", None, "About this application")
 
+    # Menu bar — standard IDE semantics, one home per concern (simple + multifunctional):
+    # File = document I/O, Edit = pipeline-stage edits, View = display, Run = execution,
+    # Window = panels/graphics/layout (submenus, not a flat wall), Tools = cross-cutting,
+    # Help = reference. Display/screen concerns live under View, never File.
     mb = win.menuBar()
     m = mb.addMenu("&File")
-    m.addAction(act_open_img); m.addAction(act_demo); m.addSeparator()
-    m.addAction(act_save_res); m.addSeparator()
-    m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)
+    m.addAction(act_open_img); m.addAction(act_demo)          # image in
+    m.addSeparator()
+    m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
+    m.addSeparator()
+    m.addAction(act_save_res)                                 # result out
     m.addSeparator(); m.addAction(act_quit)
     m = mb.addMenu("&Edit")
     m.addAction(act_remove); m.addAction(act_up); m.addAction(act_down)
     m.addSeparator(); m.addAction(act_clear)
-    m = mb.addMenu("&View")
-    m.addAction(act_zin); m.addAction(act_zout); m.addAction(act_fit); m.addAction(act_11)
-    m.addSeparator(); m.addAction(act_3d)
+    menu_view = mb.addMenu("&View")
+    menu_view.addAction(act_zin); menu_view.addAction(act_zout)
+    menu_view.addSeparator(); menu_view.addAction(act_fit); menu_view.addAction(act_11)
+    menu_view.addSeparator()          # Display mode submenu + 3D surface appended once the display combo exists
     m = mb.addMenu("&Run")
-    m.addAction(act_reset); m.addAction(act_step); m.addAction(act_runall)
-    m.addSeparator(); m.addAction(act_palette)
-    menu_windows = mb.addMenu("&Windows")   # tool-panel toggles + graphics windows (filled after docks)
+    m.addAction(act_reset); m.addAction(act_step)
+    m.addSeparator(); m.addAction(act_runall)
+    menu_windows = mb.addMenu("&Window")     # panels / graphics / layout submenus (filled after docks)
+    menu_tools = mb.addMenu("&Tools")
+    menu_tools.addAction(act_palette)                         # cross-cutting command launcher (was under Run)
+    menu_tools.addSeparator()
+    lang_menu = menu_tools.addMenu("Language / 言語 / 语言")   # UI/help language = a preference, not Help content
     m = mb.addMenu("&Help")
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
     act_guide = _act("Quick guide (en/ja/zh)", "Shift+F2", "A short guide in the selected language")
     m.addAction(act_guide)
-    lang_menu = m.addMenu("Language / 言語 / 语言")   # tooltip + help language (filled after build)
     m.addSeparator()
     m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
