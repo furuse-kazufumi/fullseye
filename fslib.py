@@ -48,23 +48,60 @@ class FsBackendError(RuntimeError):
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True)
 class Region:
-    """A binary point set.  Distinct from an image *by type*, never by content."""
+    """A binary point set.  Distinct from an image *by type*, never by content.
 
-    mask: np.ndarray
+    **The storage is not part of the API** (`fullseye_abi.h` R-2).  Today it is a
+    dense mask; HALCON stores regions as row runs, which makes region algebra
+    O(runs) instead of O(pixels) and matters as soon as a recipe works on many
+    small ROIs.  Keeping `_mask` private is what allows that swap later without
+    touching a single caller — so callers get `area()` / `run_count()` /
+    `runs()`, which are exactly the accessors the C ABI exposes.
+    """
+
+    _mask: np.ndarray
 
     def __post_init__(self):
-        m = np.asarray(self.mask)
+        m = np.asarray(self._mask)
         if m.ndim != 2:
             raise FsTypeError("Region must be 2-D, got %dD" % m.ndim)
         if m.dtype != bool:
-            object.__setattr__(self, "mask", m.astype(bool))
+            object.__setattr__(self, "_mask", m.astype(bool))
 
     @property
     def shape(self):
-        return self.mask.shape
+        return self._mask.shape
 
     def area(self) -> int:
-        return int(np.count_nonzero(self.mask))
+        """fs_region_area"""
+        return int(np.count_nonzero(self._mask))
+
+    def run_count(self) -> int:
+        """fs_region_run_count — how many row runs this region would encode to."""
+        m = self._mask
+        if not m.any():
+            return 0
+        padded = np.zeros((m.shape[0], m.shape[1] + 1), dtype=bool)
+        padded[:, :-1] = m
+        starts = padded[:, 0:1].astype(np.int8)
+        return int(m[:, 0].sum() + (m[:, 1:] & ~m[:, :-1]).sum()) if m.shape[1] > 1 else int(starts.sum())
+
+    def runs(self) -> np.ndarray:
+        """fs_region_runs — (N, 3) int32 array of (row, col_begin, col_end).
+
+        The representation-independent view.  A native run-length region returns
+        the same array without materialising anything.
+        """
+        m = self._mask
+        rows, cols = np.nonzero(m)
+        if rows.size == 0:
+            return np.zeros((0, 3), dtype=np.int32)
+        # a run breaks where the row changes or the column is not contiguous
+        brk = np.empty(rows.size, dtype=bool)
+        brk[0] = True
+        brk[1:] = (rows[1:] != rows[:-1]) | (cols[1:] != cols[:-1] + 1)
+        begin = np.flatnonzero(brk)
+        end = np.append(begin[1:], rows.size) - 1
+        return np.stack([rows[begin], cols[begin], cols[end] + 1], axis=1).astype(np.int32)
 
     def __bool__(self):
         # Defect 4: `if (Region)` silently meant `.any()`.  Iconic values are not
