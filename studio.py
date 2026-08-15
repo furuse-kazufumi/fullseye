@@ -1266,6 +1266,7 @@ def build_window(model=None):
         state["reordering"] = False
         refresh_problems(states)
         sync_stage_ui()
+        getattr(win, "_code_sync", lambda: None)()   # keep the program (code) view in sync
 
     def refresh_problems(states=None):
         """Populate the Problems list: static validation (unknown op / sort mismatch,
