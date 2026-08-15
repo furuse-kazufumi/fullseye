@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-15 09:53:51
+- **最終更新**: 2026-08-15 10:16:28
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-ca6c545 docs: STATUS v18.4 — record the three DNA ops (self-expanding registry generalises across tasks)
-531f973 auto: STATUS.md 編集前 (2026-08-15 08:43)
-8f75879 registry: two more DNA ops (macro_edge, macro_binarize) — self-expanding registry generalises across tasks
-f43854a facade: event-camera (neuromorphic) vision + fix wheel packaging so the op wave & DNA op ship
-ebfba5f auto: STATUS.md 編集前 (2026-08-15 08:30)
-c7c63f7 auto: test_macro_ops.py 編集前 (2026-08-15 08:27)
-a99a5ff auto: pyproject.toml 編集前 (2026-08-15 08:27)
-fffb164 auto: champion_to_macro.py 編集前 (2026-08-15 08:27)
-ccd9e7c auto: champion_to_macro.py 編集前 (2026-08-15 08:27)
-b853680 auto: backends_macro.py 編集前 (2026-08-15 08:27)
+96b74a2 auto: test_deformreg.py 編集前 (2026-08-15 10:16)
+41f796f auto: test_deformreg.py 編集前 (2026-08-15 10:16)
+27505d5 auto: deformreg.py 編集前 (2026-08-15 10:16)
+dc8039c auto: deformreg.py 編集前 (2026-08-15 10:15)
+c456d3b auto: deformreg.py 編集前 (2026-08-15 10:15)
+c8ffbc2 auto: deformreg.py 編集前 (2026-08-15 10:15)
+d3d2441 auto: deformreg.py 編集前 (2026-08-15 10:15)
+b141cbd auto: specops.py 編集前 (2026-08-15 10:15)
+bc3cfeb auto: specops.py 編集前 (2026-08-15 10:15)
+8b81608 auto: specops.py 編集前 (2026-08-15 10:14)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M tests/test_deformreg.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-09:52 docs/SESSION_SUMMARY.md
+10:16 .pytest_cache/v/cache/nodeids
+10:16 .pytest_cache/v/cache/lastfailed
+10:16 tests/test_deformreg.py
+10:16 deformreg.py
+10:15 specops.py
+10:15 backends_alife2.py
+10:15 backends_deform.py
+10:14 pyproject.toml
+10:14 backends_auto.py
+10:14 auto_specs_data.py
+10:13 gen_auto_specs_data.py
+09:53 docs/SESSION_SUMMARY.md
 08:43 docs/STATUS.md
 08:40 data/halcon_stubs.json
 08:40 docs/HALCON_COVERAGE.md
-08:40 data/halcon_coverage_report.txt
-08:40 docs/OP_DISPOSITION.json
-08:39 .pytest_cache/v/cache/nodeids
-08:39 data/wave0_pins.json
-08:39 macro_champions_data.py
-08:39 data/macro_champions.json
-08:34 examples/event_camera.py
-08:28 fullseye.egg-info/SOURCES.txt
-08:28 fullseye.egg-info/top_level.txt
-08:28 fullseye.egg-info/requires.txt
-08:28 fullseye.egg-info/entry_points.txt
 ```
 
 ---

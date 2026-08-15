@@ -162,19 +162,38 @@ def test_one_iteration_equals_the_thirion_velocity_formula():
     assert np.allclose(fy, vy, atol=1e-12), float(np.max(np.abs(fy - vy)))
 
 
-def test_step_cap_bounds_the_per_iteration_displacement():
-    """ITK MaximumUpdateStepLength: |v| per iteration <= max_step."""
+def test_thirion_stabiliser_bounds_one_step_at_half_a_pixel():
+    """|v| = |d||g|/(|g|^2 + d^2 + eps) <= 1/2 by AM-GM -- the whole point of the
+    ``d^2`` stabiliser. Asserted on the module AND on the independent formula."""
     F = _blob()
     M = ndimage.shift(F, (1.0, 2.0), order=1, mode="nearest")
-    cap = 0.5
+    _, fx, fy = D.demons_register(F, M, iters=1, sigma=0.0, max_step=1e9)
+    mag = np.hypot(fx, fy)
+    assert mag.max() <= 0.5 + 1e-12, mag.max()
+    assert mag.max() > 1e-3, "test is vacuous unless the demons actually moved"
+    vx, vy = _demon_velocity(F, M)
+    assert np.hypot(vx, vy).max() <= 0.5 + 1e-12
+    # unregularised optical flow (no d^2 term) is NOT bounded -- that is what the
+    # stabiliser buys, so show the difference is real.
+    gy, gx = np.gradient(F, axis=0), np.gradient(F, axis=1)
+    raw = np.abs((M - F) * gx) / (gx ** 2 + gy ** 2 + 1e-9)
+    assert raw.max() > 10.0
+
+
+def test_step_cap_rescales_without_turning():
+    """A tighter ITK-style MaximumUpdateStepLength clips the length, not the
+    direction."""
+    F = _blob()
+    M = ndimage.shift(F, (1.0, 2.0), order=1, mode="nearest")
+    cap = 0.05
     _, fx, fy = D.demons_register(F, M, iters=1, sigma=0.0, max_step=cap)
     assert np.max(np.hypot(fx, fy)) <= cap + 1e-12
-    # the cap only rescales: direction is preserved where it bites
     vx, vy = _demon_velocity(F, M)
     mag = np.hypot(vx, vy)
     hit = mag > cap
     assert hit.any(), "test is vacuous unless the cap actually engages"
     assert np.allclose(fx[hit], vx[hit] * cap / mag[hit], atol=1e-12)
+    assert np.allclose(fy[hit], vy[hit] * cap / mag[hit], atol=1e-12)
 
 
 def test_elastic_regulariser_smooths_the_field():
