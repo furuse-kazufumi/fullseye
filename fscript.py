@@ -461,10 +461,13 @@ def parse(src: str):
 
 #: fscript builtins that dispatch to a fslib registry op — used by the Runtime
 #: load-time readiness check to map a recipe's calls onto backends to verify.
-#: Builtins not listed here resolve to Region/ObjectSet methods (no dispatch).
+#: Only builtins that actually go through ``fslib._dispatch`` belong here:
+#: ``area_center`` is intentionally absent (``_b_area_center`` computes the
+#: centroid from ``Region.runs()`` in pure numpy and never dispatches, so mapping
+#: it to ``measure_all`` would wrongly demand a cv2 backend on a cv2-less line).
 FSLIB_OP_FOR_BUILTIN = {
     "gauss_image": "gauss", "threshold": "threshold", "connection": "connection",
-    "select_shape": "measure_all", "area_center": "measure_all",
+    "select_shape": "measure_all",
 }
 
 

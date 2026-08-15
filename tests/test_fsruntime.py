@@ -13,6 +13,9 @@ import fslib
 import fsruntime
 from fsruntime import FsNotReady, GoldenVector, Recipe
 
+HAVE_CV2 = "cv2" in fslib.backends_for("gauss")
+needs_cv2 = pytest.mark.skipif(not HAVE_CV2, reason="OpenCV not installed")
+
 
 RECIPE_SRC = """
 Region := threshold(Image, 0.4, 1.0)
@@ -52,8 +55,18 @@ def test_a_tampered_source_is_refused():
     signed = fsruntime.sign(RECIPE_SRC, goldens=[golden()])
     tampered = Recipe(RECIPE_SRC + "\nN := 0\n", abi_major=signed.abi_major,
                       goldens=signed.goldens, source_sha256=signed.source_sha256)
-    with pytest.raises(FsNotReady, match="SHA-256 mismatch"):
+    with pytest.raises(FsNotReady, match="digest mismatch"):
         fsruntime.compile_recipe(tampered, profile="reference")
+
+
+def test_swapping_goldens_on_a_signed_recipe_is_refused():
+    # goldens are inside the digest now, so gutting them (goldens=()) after signing
+    # must break the hash rather than silently pass.
+    signed = fsruntime.sign(RECIPE_SRC, goldens=[golden(3)])
+    gutted = Recipe(RECIPE_SRC, abi_major=signed.abi_major, goldens=(),
+                    source_sha256=signed.source_sha256)
+    with pytest.raises(FsNotReady, match="digest mismatch"):
+        fsruntime.compile_recipe(gutted, profile="reference")
 
 
 def test_a_wrong_golden_is_refused():
@@ -159,3 +172,62 @@ def test_runtime_applies_cv2_thread_bound_when_asked():
     rt = fsruntime.FullseyeRuntime.start(
         Recipe(RECIPE_SRC, goldens=()), profile="reference", cv2_threads=1)
     assert isinstance(rt.cv2_threads_bounded, bool)
+
+
+# --------------------------------------------------------------------------- #
+# Industrial fail-closed hardening (from the adversarial gate review).
+# --------------------------------------------------------------------------- #
+def test_industrial_refuses_an_unsigned_recipe():
+    with pytest.raises(FsNotReady, match="signed recipe"):
+        fsruntime.compile_recipe(Recipe(RECIPE_SRC, goldens=(golden(3),)),
+                                 profile="industrial")
+
+
+def test_industrial_requires_at_least_one_golden():
+    with pytest.raises(FsNotReady, match="at least one golden"):
+        fsruntime.compile_recipe(fsruntime.sign(RECIPE_SRC), profile="industrial")
+
+
+def test_industrial_forbids_registry_longtail_ops():
+    # `emboss` is not a curated builtin; on a line it would dispatch through the
+    # fail-open registry, so the industrial gate must refuse it at load — whether
+    # or not the op happens to exist.
+    src = "Out := emboss(Image)\nM := mean_gray(Out)"
+    r = fsruntime.sign(src, goldens=[GoldenVector({"Image": scene()}, {"M": 0.0}, tol=1e9)])
+    with pytest.raises(FsNotReady, match="un-vetted operator"):
+        fsruntime.compile_recipe(r, profile="industrial")
+
+
+def test_a_golden_with_empty_expect_is_refused():
+    r = fsruntime.sign(RECIPE_SRC, goldens=[GoldenVector({"Image": scene()}, {})])
+    with pytest.raises(FsNotReady, match="asserts nothing"):
+        fsruntime.compile_recipe(r, profile="reference")
+
+
+def test_a_nan_result_does_not_pass_a_golden():
+    # A NaN would sail through `abs(got-exp) > tol` (IEEE); it must be rejected.
+    src = "M := mean_gray(Image)"
+    nan_img = np.full((16, 16), np.nan, dtype=np.float32)
+    r = fsruntime.sign(src, goldens=[GoldenVector({"Image": nan_img}, {"M": 0.5}, tol=1e9)])
+    with pytest.raises(FsNotReady, match="golden mismatch"):
+        fsruntime.compile_recipe(r, profile="reference")
+
+
+def test_a_numpy_scalar_expectation_honours_tolerance():
+    # expect authored as a numpy scalar must still use the tolerance branch,
+    # not fall through to an exact compare.
+    src = "M := mean_gray(Image)"
+    img = np.full((16, 16), 0.5, np.float32)
+    r = fsruntime.sign(src, goldens=[GoldenVector({"Image": img},
+                                                  {"M": np.float32(0.5001)}, tol=1e-2)])
+    ready = fsruntime.compile_recipe(r, profile="reference")   # must NOT raise
+    assert ready.run({"Image": img})["M"] == pytest.approx(0.5, abs=1e-3)
+
+
+@needs_cv2
+def test_industrial_loads_a_signed_recipe_with_a_golden_and_only_builtins():
+    # The happy path for the strict profile: signed, ≥1 golden, only fslib ops.
+    r = fsruntime.sign(RECIPE_SRC, goldens=[golden(3)])
+    ready = fsruntime.compile_recipe(r, profile="industrial")
+    v = fsruntime.FullseyeRuntime(ready).inspect({"Image": scene()})
+    assert v.status == "ok" and v.result["N"] == 3

@@ -6,13 +6,19 @@ inspected, it proves all of:
 
   1. **ABI major matches.**  A recipe records the contract version it was
      validated against; a runtime refuses a recipe from a different major.
-  2. **The source is the one the manifest was signed over** (SHA-256).  Tamper /
-     drift detection: a recipe whose bytes changed since validation is rejected.
-  3. **Every operator has a WORKING backend** under the industrial profile.  The
-     650-op evolution registry is fail-open (a failed op silently returns "no
-     defects"); that must never reach a line (docs/FSCRIPT_DECISION.md 1.6b).
+  2. **The recipe is the one the manifest was signed over** (SHA-256 over source
+     + goldens + metadata).  Integrity / drift detection — a recipe whose bytes,
+     goldens or build-id changed since validation is rejected.  The industrial
+     profile refuses an *unsigned* recipe outright.  (This is a checksum, not
+     cryptographic authenticity; a keyed signature is a deployment concern.)
+  3. **Only vetted, fail-closed operators may judge, each with a WORKING
+     backend.**  The industrial profile forbids the 650-op evolution registry
+     entirely (its ops fail-open, silently returning "no defects") and verifies a
+     backend for every curated op used (docs/FSCRIPT_DECISION.md 1.6b).
   4. **The recipe still returns the SAME judgement on its golden vectors** — the
      proof manufacturing requires instead of "we shipped a migration tool" (R5).
+     The industrial profile requires at least one golden, and each must assert
+     something.
 
 Any failure raises :class:`FsNotReady`.  Nothing degrades, nothing is guessed;
 the runtime stops at load rather than run a pipeline that could judge wrongly.
@@ -25,6 +31,7 @@ loaded safely.
 from __future__ import annotations
 
 import hashlib
+import math
 import time
 from dataclasses import dataclass, field
 
@@ -32,6 +39,8 @@ import numpy as np
 
 import fscript
 import fslib
+
+_NUMERIC = (int, float, np.integer, np.floating)
 
 #: Mirrors ``fullseye_abi.h`` FULLSEYE_ABI_VERSION_MAJOR.  A recipe records the
 #: major it was validated against; a runtime refuses to load a different major.
@@ -73,8 +82,30 @@ class Recipe:
     build_id: str = ""
 
     def digest(self) -> str:
-        """SHA-256 of the source — the thing the manifest signs."""
-        return hashlib.sha256(self.source.encode("utf-8")).hexdigest()
+        """SHA-256 over the WHOLE manifest, not just the source.
+
+        Covering ``abi_major``, ``build_id`` and each golden's ``(expect, tol)``
+        means the "same judgement" proof and the provenance stamp cannot be gutted
+        (e.g. ``goldens=()`` swapped in, or a forged ``build_id``) while the hash
+        still matches.  Golden *input pixels* are not hashed (they are bulk data;
+        a weak golden input is a Studio authoring concern, not a drift signal).
+
+        ★This is an unkeyed checksum: it detects accidental drift / corruption /
+        field-swaps within a trusted Studio→Runtime pipeline.  It is NOT
+        cryptographic authenticity — a party that can edit the Recipe can also
+        re-run ``sign``.  Real provenance needs a keyed (HMAC/asymmetric)
+        signature and is a deployment concern (see docs/FSCRIPT_DECISION.md).
+        """
+        h = hashlib.sha256()
+        h.update(self.source.encode("utf-8")); h.update(b"\x00")
+        h.update(str(self.abi_major).encode("utf-8")); h.update(b"\x00")
+        h.update(self.build_id.encode("utf-8")); h.update(b"\x00")
+        for g in self.goldens:
+            items = sorted(g.expect.items(), key=lambda kv: kv[0])
+            h.update(repr(items).encode("utf-8"))
+            h.update(("%.12g" % float(g.tol)).encode("utf-8"))
+            h.update(b"\x01")
+        return h.hexdigest()
 
 
 @dataclass(frozen=True)
@@ -95,7 +126,11 @@ class ReadyRecipe:
 
 def sign(source: str, abi_major: int = ABI_VERSION_MAJOR, goldens=(),
          build_id: str = "") -> Recipe:
-    """Studio-side: seal a recipe by recording the SHA-256 of its source."""
+    """Studio-side: seal a recipe by recording the manifest digest.
+
+    ★Integrity/drift detection, not cryptographic authenticity (see
+    ``Recipe.digest``).  The industrial profile refuses to load an *unsigned*
+    recipe, so this is what the Studio calls before shipping one to a line."""
     r = Recipe(source, abi_major=abi_major, goldens=tuple(goldens), build_id=build_id)
     return Recipe(source, abi_major=abi_major, goldens=tuple(goldens),
                   source_sha256=r.digest(), build_id=build_id)
@@ -106,8 +141,12 @@ def _compare(name: str, got, exp, tol: float) -> None:
         if bool(got) != bool(exp):
             raise FsNotReady("golden mismatch on %s: got %r, expected %r" % (name, got, exp))
         return
-    if isinstance(exp, (int, float)) and isinstance(got, (int, float, np.integer, np.floating)):
-        if abs(float(got) - float(exp)) > tol:
+    if isinstance(exp, _NUMERIC) and isinstance(got, _NUMERIC):
+        g, e = float(got), float(exp)
+        # NaN is the one value that always slips through `> tol` (IEEE: every NaN
+        # comparison is False), so it is rejected explicitly — a NaN result is the
+        # silent-degradation the golden gate exists to catch.
+        if math.isnan(g) or math.isnan(e) or not (abs(g - e) <= float(tol)):
             raise FsNotReady("golden mismatch on %s: got %r, expected %r (tol %g)"
                              % (name, got, exp, tol))
         return
@@ -118,7 +157,8 @@ def _compare(name: str, got, exp, tol: float) -> None:
         for i, (g, e) in enumerate(zip(seq, exp)):
             _compare("%s[%d]" % (name, i), g, e, tol)
         return
-    if got != exp:
+    if bool(np.any(np.asarray(got) != np.asarray(exp))) if isinstance(got, np.ndarray) \
+            else (got != exp):
         raise FsNotReady("golden mismatch on %s: got %r, expected %r" % (name, got, exp))
 
 
@@ -128,19 +168,28 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
     On success returns a :class:`ReadyRecipe`; until then the runtime is not READY
     and must not judge a part.
     """
+    industrial = profile == "industrial"
+
     # 1. ABI major — a recipe from a different contract is not loadable.
     if recipe.abi_major != ABI_VERSION_MAJOR:
         raise FsNotReady(
             "recipe ABI major %d != runtime %d — refusing a recipe validated "
             "against a different contract" % (recipe.abi_major, ABI_VERSION_MAJOR))
 
-    # 2. Manifest source hash — the recipe must be the exact one validated.
+    # 2. Manifest digest — the recipe must be the exact one validated.  A missing
+    #    manifest is not "nothing to verify" on a line: the industrial profile
+    #    refuses an unsigned recipe outright (absence must fail closed).
     actual = recipe.digest()
-    if recipe.source_sha256 and recipe.source_sha256 != actual:
+    if recipe.source_sha256:
+        if recipe.source_sha256 != actual:
+            raise FsNotReady(
+                "recipe digest mismatch: manifest %s… != actual %s… — the recipe "
+                "is not the one that was validated (source/goldens/build_id changed)"
+                % (recipe.source_sha256[:12], actual[:12]))
+    elif industrial:
         raise FsNotReady(
-            "recipe source SHA-256 mismatch: manifest %s… != actual %s… — the "
-            "recipe is not the one that was validated"
-            % (recipe.source_sha256[:12], actual[:12]))
+            "industrial profile requires a signed recipe (source_sha256); an "
+            "unsigned recipe cannot prove it is the validated one")
 
     # 3. Parse.
     try:
@@ -148,10 +197,24 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
     except fscript.FScriptError as e:
         raise FsNotReady("recipe does not parse: %s" % e)
 
-    # 4. Backend self-check — a clear early error before running goldens.  Name
-    #    existence is not availability; the industrial profile has no numpy
-    #    fallback, so a missing native backend stops the load.
+    # 4. Operator vocabulary + backend self-check.
+    #    ★The industrial profile allows ONLY the curated fslib-backed builtins.
+    #    Any other call is a 650-op evolution-registry op resolved through
+    #    fscript._call_registry_op → api.RT, whose _safe wrapper is fail-OPEN
+    #    (it swallows an op failure and returns a benign "no defects" value).
+    #    That surface must never judge a part, so a recipe that uses it is
+    #    rejected at load rather than allowed to fail open on the line
+    #    (docs/FSCRIPT_DECISION.md 1.6b).
     op_names = fscript.used_op_names(program)
+    if industrial:
+        un_vetted = sorted(n for n in op_names if n not in fscript.BUILTINS)
+        if un_vetted:
+            raise FsNotReady(
+                "industrial profile forbids un-vetted operator(s) %s — only the "
+                "curated fslib vocabulary may judge parts; the fail-open evolution "
+                "registry must not reach a line" % ", ".join(un_vetted))
+    #    Name existence is not availability; the industrial profile has no numpy
+    #    fallback, so a missing native backend stops the load.
     fslib_ops = sorted({fscript.FSLIB_OP_FOR_BUILTIN[n] for n in op_names
                         if n in fscript.FSLIB_OP_FOR_BUILTIN})
     try:
@@ -159,9 +222,17 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
     except fslib.FsBackendError as e:
         raise FsNotReady(str(e))
 
-    # 5. Golden verification — definitive: running each golden under the profile
-    #    exercises every operator's dispatch AND proves the judgement is unchanged.
+    # 5. Golden verification — the proof the judgement is unchanged.  The
+    #    industrial profile requires at least one, and every golden must assert
+    #    something (an empty ``expect`` proves only that the program ran).
+    if industrial and not recipe.goldens:
+        raise FsNotReady(
+            "industrial profile requires at least one golden vector (the proof the "
+            "judgement is unchanged, R5); none were supplied")
     for i, g in enumerate(recipe.goldens):
+        if not g.expect:
+            raise FsNotReady("golden %d asserts nothing (empty 'expect') — it "
+                             "cannot prove the judgement is unchanged" % i)
         try:
             with fslib.profile(profile):
                 env = fscript.run(program, images=g.inputs)
@@ -173,7 +244,12 @@ def compile_recipe(recipe: Recipe, profile: str = "industrial") -> ReadyRecipe:
             if var not in env.vars:
                 raise FsNotReady("golden %d expects variable %r which the recipe "
                                  "did not produce" % (i, var))
-            _compare("golden[%d].%s" % (i, var), env.vars[var], exp, g.tol)
+            try:
+                _compare("golden[%d].%s" % (i, var), env.vars[var], exp, g.tol)
+            except FsNotReady:
+                raise
+            except Exception as e:                     # contract: only FsNotReady escapes
+                raise FsNotReady("golden %d: cannot compare %r: %s" % (i, var, e))
 
     return ReadyRecipe(program, profile, actual, recipe.build_id, frozenset(op_names))
 
@@ -274,8 +350,13 @@ class FullseyeRuntime:
         it the verdict is OK/ERROR/TIMEOUT only.
 
         An operator failure is ERROR (never a silent benign value — the fail-open
-        registry must not reach here); a cycle over ``deadline_ms`` is TIMEOUT with
-        the (late) result attached, so the PLC decides, not the vision code.
+        registry is refused at load, so it cannot reach here); a cycle over
+        ``deadline_ms`` is TIMEOUT with the (late) result attached, so the PLC
+        decides, not the vision code.  ★Honest limit: the deadline is checked
+        *after* the cycle returns — a true hang inside a native call cannot be
+        interrupted from this thread, so a hard hang would need a watchdog
+        thread/process, not this post-hoc check.  Every non-hanging outcome maps
+        to exactly one of OK/NG/ERROR/TIMEOUT (any unexpected exception is ERROR).
         """
         t0 = time.perf_counter()
         try:
@@ -287,6 +368,9 @@ class FullseyeRuntime:
         except fscript.FScriptError as e:
             return Verdict("error", elapsed_ms=(time.perf_counter() - t0) * 1e3,
                            detail="operator error: %s" % e)
+        except Exception as e:                          # never crash the line
+            return Verdict("error", elapsed_ms=(time.perf_counter() - t0) * 1e3,
+                           detail="unexpected error: %s" % e)
         elapsed = (time.perf_counter() - t0) * 1e3
         if self.deadline_ms is not None and elapsed > self.deadline_ms:
             return Verdict("timeout", result=out, elapsed_ms=elapsed,

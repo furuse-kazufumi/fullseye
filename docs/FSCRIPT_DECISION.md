@@ -221,8 +221,15 @@ op 数には数えられるが黙って何もしない可能性がある」と�
   **★Runtime ローダーへ配線済(2026-08-16, commit 9b74fd3)= `fsruntime.py`**: `compile_recipe(recipe, profile)` が
   fail-closed で ①ABI major 一致 ②source SHA-256 が manifest 署名と一致(改ざん/drift 検出) ③`require_ready` で
   backend self-check ④golden vector で「以前と同じ判定」を再現(R5) を検査し、いずれか失敗で `FsNotReady`(degrade しない)。
-  golden 実行が backend self-check と判定証明を兼ねる。`Recipe`/`GoldenVector`/`ReadyRecipe`/`sign`、`tests/test_fsruntime.py` 10 件。
-  **残り = このローダーを実 CLI/常駐配布イメージへ結線**(PLC state machine・deadline/ERROR/TIMEOUT・§4.1 の二プロファイル)。
+  golden 実行が backend self-check と判定証明を兼ねる。`Recipe`/`GoldenVector`/`ReadyRecipe`/`sign` + 常駐 `FullseyeRuntime`(Verdict OK/NG/ERROR/TIMEOUT)。
+
+  **★敵対レビューで fail-closed の穴を摘発・修正済(2026-08-16, 4 レンズ WF 21 findings→一次検証、`tests/test_fsruntime.py` 24 件)**:
+  (F1)**industrial は 650op fail-open レジストリの long-tail op を拒否**(curated builtin 以外は起動拒否。従来は require_ready 素通り + `api.RT` の `_safe` が benign「欠陥なし」を返し inspect が "ok"=まさに §1.6b の穴が産線に到達)。
+  (F2)industrial は golden ≥1 必須(判定証明ゼロで READY を防ぐ)。(F3)industrial は署名必須(空 source_sha256 のスキップを塞ぐ)。
+  (F4)空 expect の golden を拒否。(F5)golden 照合の **NaN fail-open** を修正(NaN は常に照合をすり抜けていた)。(F6)照合の生例外を `FsNotReady` に統一。(F7)np scalar 期待値も tol 分岐。
+  (F8)`area_center→measure_all` の誤マップ除去(純 numpy で dispatch せず cv2 不在機を誤拒否)。(F9)inspect は想定外例外も Verdict("error")。(F10)digest を **全 manifest(source+abi+build_id+goldens)** へ拡張。
+  ★**正直な限界**: 署名は**完全性/drift 検出であり暗号的真正性ではない**(無鍵 SHA-256=Recipe を編集できる者は再署名可)。真の provenance は鍵付き署名=配布時の課題。native hang は同スレッドから中断不可(watchdog が要る)。
+  **残り = 実 CLI/常駐配布イメージ結線(PLC プロトコル・OS コア確保・§4.1 二プロファイル)+ 鍵付き署名**。
 
 → **これが「Studio と Runtime は意味論を分けねばならない」の最も具体的な証拠**であり、
   §4.2 の `industrial` = fail-closed 設計の**必然性**を示す。
