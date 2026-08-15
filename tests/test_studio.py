@@ -820,13 +820,14 @@ def test_layout_presets_save_apply_delete():
     assert win._save_layout_preset("   ") is False
     assert win._apply_layout_preset("wide-graphics") is True
     assert win._apply_layout_preset("nope") is False
-    # the Layouts submenu rebuilt without error and exposes the saved preset via a
-    # nested "Apply saved layout" menu (built-ins are always present too)
-    top_texts = [a.text() for a in win._layouts_menu.actions()]
-    assert "Balanced (default)" in top_texts and "Apply saved layout" in top_texts
-    apply_sub = next(a.menu() for a in win._layouts_menu.actions() if a.text() == "Apply saved layout")
-    assert "wide-graphics" in [a.text() for a in apply_sub.actions()]
+    # the Layouts menu rebuilt without error and exposes the saved preset as flat
+    # apply/delete actions (built-ins are always present too)
+    texts = [a.text() for a in win._layouts_menu.actions()]
+    assert "Balanced (default)" in texts and "Save current layout as…" in texts
+    assert "Apply layout: wide-graphics" in texts
+    assert "Delete layout: wide-graphics" in texts
     assert win._delete_layout_preset("wide-graphics") is True
+    assert "Apply layout: wide-graphics" not in [a.text() for a in win._layouts_menu.actions()]
     assert "wide-graphics" not in win._preset_store
     assert win._delete_layout_preset("wide-graphics") is False
 
