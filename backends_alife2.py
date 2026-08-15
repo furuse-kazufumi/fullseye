@@ -425,17 +425,25 @@ def alife_sandpile(v, a, b):
     holds at most 3 grains.
 
     ``a`` sets the initial grain scale K (how supercritical the pile starts);
-    ``b`` sets the number of parallel relaxation sweeps 1 + int(50b), and for
-    b >= 0.9 the pile is relaxed all the way to stability (capped at
-    ``_RELAX_CAP`` sweeps so the op can never hang). Returns h / max(h), so a
-    fully relaxed pile takes values in {0, 1/3, 2/3, 1}.
+    ``b`` sets the number of parallel relaxation sweeps 1 + int(50b). For
+    b >= 0.9 the pile relaxes *toward* stability with early termination, but the
+    sweep count is bounded by a total-work budget (``_SANDPILE_BUDGET`` grain-
+    updates) so the op stays fast on any image size: a small or varied pile
+    reaches the stable critical state (every cell <= 3), while a very large
+    maximally-supercritical pile is only partially relaxed (full BTW
+    stabilisation is O(L^2) sweeps). Returns h / max(h) in [0, 1]; a fully
+    relaxed pile (max 3) takes values in {0, 1/3, 2/3, 1} (or {0, 1/2, 1} when
+    the stable maximum is 2).
     """
     x = _img(v)
     a = _knob(a)
     b = _knob(b)
     grains = 4 + int(a * 12)
     h = np.rint(x * grains).astype(np.int64)
-    sweeps = _RELAX_CAP if b >= 0.9 else 1 + int(b * 50)
+    if b >= 0.9:                              # relax toward stability, work-bounded
+        sweeps = min(_RELAX_CAP, max(64, _SANDPILE_BUDGET // max(int(h.size), 1)))
+    else:
+        sweeps = 1 + int(b * 50)
     h, _used = _sandpile_relax(h, sweeps)
     mx = int(h.max()) if h.size else 0
     if mx <= 0:
