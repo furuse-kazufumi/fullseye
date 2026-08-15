@@ -1185,7 +1185,7 @@ def build_window(model=None):
     act_tile = _act("Tile graphics windows", None, "Tile the open graphics windows")
     act_cascade = _act("Cascade graphics windows", None, "Cascade the open graphics windows")
     act_reset_layout = _act("Reset panel layout", None, "Restore the default tool-panel layout")
-    for _d in (dock_ops, dock_pipe, dock_disp):
+    for _d in (dock_ops, dock_pipe, dock_disp, dock_code):
         menu_windows.addAction(_d.toggleViewAction())
     win._dock_menu = menu_windows          # later milestones append their docks here
     menu_windows.addSeparator()
