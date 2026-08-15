@@ -2978,7 +2978,26 @@ def build_window(model=None):
 
 
 def main() -> int:
+    import faulthandler
+    import traceback
     from PySide6 import QtWidgets
+    # Crash log: pythonw has no console, so capture both C++/Qt segfaults (faulthandler)
+    # and Python exceptions (excepthook) to studio_crash.log next to this file.
+    _log = os.path.join(os.path.dirname(os.path.abspath(__file__)), "studio_crash.log")
+    try:
+        faulthandler.enable(open(_log, "w", encoding="utf-8"))
+    except Exception:
+        pass
+
+    def _hook(t, v, tb):
+        try:
+            with open(_log, "a", encoding="utf-8") as fh:
+                traceback.print_exception(t, v, tb, file=fh)
+        except Exception:
+            pass
+        sys.__excepthook__(t, v, tb)
+    sys.excepthook = _hook
+
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication(sys.argv)
     win, _ = build_window()
     win.show()
