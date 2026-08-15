@@ -360,8 +360,9 @@
 {"step": "P9_context", "phase_start": true, "widget": "operators"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context", "phase_start": true, "widget": "pipeline"}
+{"slot_exception": "RuntimeError: libshiboken: Internal C++ object (PySide6.QtWidgets.QPushButton) already deleted.", "during_phase": "P9_context_all", "traceback": "Traceback (most recent call last):\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 2203, in <lambda>\n    stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())\n                                                        ^^^^^^^^^^^^^^^^^^^\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1824, in on_stage_selected\n    sync_stage_ui()\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1821, in sync_stage_ui\n    update_actions()\n  File \"C:\\dev\\projects\\imgevolve\\studio.py\", line 1795, in update_actions\n    w.setEnabled(has_res)\nRuntimeError: libshiboken: Internal C++ object (PySide6.QtWidgets.QPushButton) already deleted.\n"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context", "phase_start": true, "widget": "variables"}
 {"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context_all", "phase_end": true, "ok": true, "detail": ""}
-{"note": "sweep complete: ok=183 fail=0 modal_closes=9"}
+{"note": "sweep complete: ok=183 fail=1 modal_closes=9"}

@@ -132,11 +132,11 @@ def main() -> int:
     # pump()): PySide6 routes these through sys.excepthook, so record the full
     # traceback + the phase that was active — otherwise they only print one line
     # and are lost (they never reach a synchronous try/except in a phase body).
-    _cur_phase = {"name": "<pre>"}
+    log._cur_phase = "<pre>"
 
     def _slot_hook(t, v, tb):
         rec = {"slot_exception": "%s: %s" % (t.__name__, v),
-               "during_phase": _cur_phase["name"],
+               "during_phase": getattr(log, "_cur_phase", "<pre>"),
                "traceback": "".join(traceback.format_exception(t, v, tb))}
         log._emit(rec)
         log.n_fail += 1

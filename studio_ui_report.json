@@ -1,7 +1,7 @@
 {
   "ok": true,
   "steps_ok": 183,
-  "steps_fail": 0,
+  "steps_fail": 1,
   "modal_closes": 9,
   "graphics_windows": 8,
   "findings": [],
