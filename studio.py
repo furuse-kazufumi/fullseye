@@ -746,6 +746,7 @@ def run_holdout(stages, image_paths, gt_paths=None):
     the honest 'does this pipeline hold up on unseen images' check that imgevolve gates
     on — ground truth is optional; without it only ran/failed + timing are reported.
     Qt-free -> unit-tested."""
+    import time
     results = []
     metric_kind = None
     for i, p in enumerate(image_paths):
@@ -753,9 +754,9 @@ def run_holdout(stages, image_paths, gt_paths=None):
         gt = gt_paths[i] if (gt_paths and i < len(gt_paths) and gt_paths[i]) else None
         try:
             img = api.read_image(p)
-            t0 = _time.perf_counter()
+            t0 = time.perf_counter()
             out = api.run_pipeline(img, list(stages))
-            rec["ms"] = (_time.perf_counter() - t0) * 1000.0
+            rec["ms"] = (time.perf_counter() - t0) * 1000.0
             rec["ok"] = True
             rec["out_shape"] = tuple(np.shape(out))
             if gt is not None:
