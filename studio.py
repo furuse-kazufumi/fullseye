@@ -713,6 +713,69 @@ def palette_filter(labels, query):
     return [i for _, i in scored]
 
 
+def _looks_binary(x) -> bool:
+    return np.unique(np.asarray(x)).size <= 2
+
+
+def holdout_metric(out, gt):
+    """An honest comparison metric for one holdout pair: IoU for equal-shape binary
+    masks, PSNR (dB) for equal-shape intensity images, or None when the pair cannot be
+    compared (different shapes / non-image sorts) — so nothing is over-claimed."""
+    out = np.asarray(out); gt = np.asarray(gt)
+    if out.ndim not in (2, 3) or out.shape != gt.shape:
+        return None
+    o = out.astype(np.float64); g = gt.astype(np.float64)
+    if _looks_binary(o) and _looks_binary(g):
+        ob = o > (o.max() * 0.5 if o.max() else 0.5)
+        gb = g > (g.max() * 0.5 if g.max() else 0.5)
+        union = np.logical_or(ob, gb).sum()
+        return float(np.logical_and(ob, gb).sum() / union) if union else 1.0
+
+    def _norm(x):
+        m = x.max()
+        return x / m if m > 1.0 else x
+    mse = float(np.mean((_norm(o) - _norm(g)) ** 2))
+    return 99.0 if mse <= 1e-12 else float(10.0 * np.log10(1.0 / mse))
+
+
+def run_holdout(stages, image_paths, gt_paths=None):
+    """Run the current pipeline over a holdout / validation image set (Codex #12).
+
+    Returns a summary dict: per-image ``results`` (path / ok / error / out_shape / ms /
+    metric) plus aggregates (n, n_ok, n_err, mean_ms, mean_metric, metric_kind). This is
+    the honest 'does this pipeline hold up on unseen images' check that imgevolve gates
+    on — ground truth is optional; without it only ran/failed + timing are reported.
+    Qt-free -> unit-tested."""
+    results = []
+    metric_kind = None
+    for i, p in enumerate(image_paths):
+        rec = {"path": p, "ok": False, "error": "", "ms": 0.0, "out_shape": None, "metric": None}
+        gt = gt_paths[i] if (gt_paths and i < len(gt_paths) and gt_paths[i]) else None
+        try:
+            img = api.read_image(p)
+            t0 = _time.perf_counter()
+            out = api.run_pipeline(img, list(stages))
+            rec["ms"] = (_time.perf_counter() - t0) * 1000.0
+            rec["ok"] = True
+            rec["out_shape"] = tuple(np.shape(out))
+            if gt is not None:
+                m = holdout_metric(out, api.read_image(gt))
+                rec["metric"] = m
+                if m is not None:
+                    metric_kind = "IoU" if _looks_binary(np.asarray(out)) else "PSNR(dB)"
+        except Exception as e:                    # a bad image / op failure must not abort the batch
+            rec["error"] = str(e)
+        results.append(rec)
+    ok = [r for r in results if r["ok"]]
+    metrics = [r["metric"] for r in ok if r["metric"] is not None]
+    return {
+        "n": len(results), "n_ok": len(ok), "n_err": len(results) - len(ok),
+        "mean_ms": (sum(r["ms"] for r in ok) / len(ok)) if ok else 0.0,
+        "mean_metric": (sum(metrics) / len(metrics)) if metrics else None,
+        "metric_kind": metric_kind, "results": results,
+    }
+
+
 def _opengl_available() -> bool:
     """True only if a *valid* OpenGL context can actually be created.
 
