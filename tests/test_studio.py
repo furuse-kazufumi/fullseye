@@ -930,6 +930,33 @@ def test_view_display_mode_menu_syncs_with_combo():
     assert win._display_actions[other].isChecked() and not win._display_actions["gray"].isChecked()
 
 
+def test_operator_panel_args_insert_and_run_once():
+    """v18.7 P2b: the operator panel takes a, b arguments, inserts WITH them, and
+    runs the op once (single-shot) showing the result in a graphics window without
+    touching the pipeline (HDevelop operator-window flow)."""
+    from PySide6 import QtCore
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    a_spin, b_spin = win._op_arg_spins
+    ol = win._op_list
+    idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == "gaussian")
+    ol.setCurrentRow(idx)                                  # selecting enables insert + run-once
+    assert win._op_buttons["insert"].isEnabled() and win._op_buttons["run_once"].isEnabled()
+    a_spin.setValue(0.80); b_spin.setValue(0.30)
+    # Insert uses the entered args
+    n0 = len(model.stages)
+    win._op_buttons["insert"].click()
+    assert len(model.stages) == n0 + 1
+    assert model.stages[-1][0] == "gaussian"
+    assert abs(model.stages[-1][1] - 0.80) < 1e-6 and abs(model.stages[-1][2] - 0.30) < 1e-6
+    # Run once = single-shot preview: opens a graphics window, pipeline unchanged
+    g0 = len(win._graphics_windows); s0 = len(model.stages)
+    win._run_op_once()
+    assert len(win._graphics_windows) == g0 + 1        # result shown in a new graphics window
+    assert len(model.stages) == s0                     # pipeline NOT modified
+    assert win._last_run_once["op"] == "gaussian" and abs(win._last_run_once["a"] - 0.80) < 1e-6
+
+
 def test_tools_menu_holds_palette_and_language():
     """v18.7: Command palette (was in Run) and Language (was in Help) move to Tools."""
     _app()
