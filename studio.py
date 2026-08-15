@@ -1514,6 +1514,11 @@ def build_window(model=None):
         mark_dirty()
         refresh_stage_list(select=len(model.stages) - 1)
         show_result()
+        flash("loaded sample '%s' — its code is now in the Program panel" % samples.itemText(idx))
+        try:                                  # surface the code so the sample is easy to read/run
+            win._docks["program"].show(); win._docks["program"].raise_()
+        except Exception:
+            pass
 
     def remove():
         i = selected_index()
