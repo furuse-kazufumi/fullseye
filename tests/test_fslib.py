@@ -174,6 +174,7 @@ def test_the_evolution_registry_is_fail_open_and_fslib_must_not_be():
     assert backend_safe.fallback(np.zeros((16, 16)), "feature") == 0.0
 
     # fslib's contract: no result is an error, never a benign-looking value.
+    # (see also test_missing_dependency_degrades_studio_but_stops_the_line)
     @fslib.op("always_raises_demo", "numpy")
     def _boom(img):
         raise RuntimeError("backend exploded")
@@ -257,3 +258,21 @@ def test_select_shape_filters_ids_and_keeps_the_label_image():
     kept = fslib.select_shape(objs, "area", 1e9, 1e12)      # impossible area
     assert len(kept) == 0
     assert kept.labels is objs.labels                       # no copy
+
+
+def test_missing_dependency_degrades_studio_but_stops_the_line(monkeypatch):
+    """A customer machine missing OpenCV must not quietly run a different pipeline.
+
+    This is the direct answer to the registry's fail-open hazard: the designer can
+    keep working (studio falls back to the numpy reference), but the line refuses
+    to start rather than silently running a backend nobody validated.
+    """
+    monkeypatch.setattr(fslib, "_have_cv2", lambda: False)
+    img = scene(64, 64, 4)
+
+    with fslib.profile("studio"):
+        assert isinstance(fslib.gauss(img, 1.5), FImage)      # degrades, keeps working
+
+    with fslib.profile("industrial"):
+        with pytest.raises(FsBackendError, match="no backend for profile"):
+            fslib.gauss(img, 1.5)                             # refuses to run
