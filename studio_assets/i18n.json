@@ -1,5 +1,6 @@
 {
-  "_note": "Fullseye Studio localisation data. Loaded at runtime by studio.py (edit here, not in code). 'tooltips' is keyed by the exact English tooltip string; 'guide' is the multilingual quick-guide text. Missing keys/languages fall back to English gracefully.",
+  "_note": "Fullseye Studio localisation data. Loaded at runtime by studio.py (edit here, not in code). Add a NEW language by (1) adding it to 'languages' below, (2) adding its code to each 'tooltips' entry, (3) adding a 'guide' string, and optionally (4) dropping op-help files named <op>.<code>.html under op_help/. No code change is needed. 'en' is always the base/fallback.",
+  "languages": {"en": "English", "ja": "日本語", "zh": "中文"},
   "tooltips": {
     "Load an image file (Ctrl+O)": {"ja": "画像ファイルを開く (Ctrl+O)", "zh": "打开图像文件 (Ctrl+O)"},
     "Load the synthetic demo scene (Ctrl+D)": {"ja": "合成デモ画像を読み込む (Ctrl+D)", "zh": "载入合成演示图像 (Ctrl+D)"},

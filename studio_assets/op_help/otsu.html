@@ -1,0 +1,18 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">otsu <span style="color:#8b91a0;font-size:11px">· segmentation · HALCON: binary_threshold</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image → region</b></p>
+<p>Global <b>automatic thresholding</b> by Otsu's method. It scans every possible
+threshold of the intensity histogram and picks the one that <b>maximises the
+between-class variance</b> (equivalently, minimises the within-class variance) of
+the foreground/background split. No manual threshold is needed, which makes it a
+robust default for bimodal images (an object against a distinct background).</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Output</h3>
+<p>A binary <b>region</b> ({0,1}) — the foreground mask. Feed it to region ops
+(<code style="color:#22d3bf">fill_holes</code>, <code style="color:#22d3bf">select_largest</code>)
+or count blobs with <code style="color:#22d3bf">blob_count</code>.</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Knobs</h3>
+<ul style="margin:2px 0 2px 18px;padding:0">
+  <li><b>a</b> — bias applied to the automatic threshold (nudge the cut up/down).</li>
+  <li><b>b</b> — reserved.</li>
+</ul>
+<p style="color:#8b91a0;font-size:11px">Provenance: Otsu 1979, "A Threshold Selection Method from Gray-Level Histograms".
+See docs/PROVENANCE.md.</p>
