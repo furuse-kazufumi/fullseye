@@ -1040,6 +1040,37 @@ def test_current_graphics_window_model():
     assert len(win._graphics_windows) == g2
 
 
+def test_operator_arg_labels_reflect_selected_op():
+    """v18.8 P2b': the a/b knob labels name each argument's role for the selected op,
+    a knob the op curates as unused is disabled, and an un-curated op keeps generic
+    (never-falsely-unused) labels — so the user can judge what a/b do before setting them."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    ol = win._op_list
+    lbl_a, lbl_b = win._op_arg_labels
+    sa, sb = win._op_arg_spins
+
+    def select(op):
+        idx = next(i for i in range(ol.count()) if ol.item(i).data(QtCore.Qt.UserRole) == op)
+        ol.setCurrentRow(idx)
+
+    select("gaussian")                     # a = blur amount (named), b unused
+    assert "a ·" in lbl_a.text() and lbl_a.text() != "a"
+    assert lbl_b.text() == "b (–)" and not sb.isEnabled() and sa.isEnabled()
+    select("bilateral")                    # both used + named + enabled
+    assert "a ·" in lbl_a.text() and "b ·" in lbl_b.text()
+    assert sa.isEnabled() and sb.isEnabled()
+    select("otsu")                         # curated as both-unused
+    assert lbl_a.text() == "a (–)" and lbl_b.text() == "b (–)"
+    assert not sa.isEnabled() and not sb.isEnabled()
+    # an un-curated op keeps the plain letters and both knobs enabled
+    noncur = next(ol.item(i).data(QtCore.Qt.UserRole) for i in range(ol.count())
+                  if ol.item(i).data(QtCore.Qt.UserRole) not in studio._ARG_ROLES)
+    select(noncur)
+    assert lbl_a.text() == "a" and lbl_b.text() == "b"
+    assert sa.isEnabled() and sb.isEnabled()
+
+
 def test_3d_surface_degrades_without_opengl(monkeypatch):
     """Offscreen (and any GL-less display session) has no usable OpenGL context, where
     Q3DSurface would segfault. show_3d_surface must return None instead, and open_3d
