@@ -2621,8 +2621,8 @@ def build_window(model=None):
     def _var_ctx():
         if var_list.currentItem() is None:
             return []
-        return [("Display → new window", lambda: display_variable(True)),
-                ("Display → main view", lambda: display_variable(False)),
+        return [("Display → current window", lambda: display_variable("current")),
+                ("Display → new window", lambda: display_variable("new")),
                 ("---", None),
                 ("Inspect", show_variable_inspection)]
 
