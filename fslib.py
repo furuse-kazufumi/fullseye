@@ -351,11 +351,6 @@ def connection(reg: Region) -> ObjectSet:
     return _dispatch("connection", reg)
 
 
-def region_features(objs: ObjectSet):
-    _require(objs, ObjectSet, "region_features")
-    return _dispatch("region_features", objs)
-
-
 def select_shape(objs: ObjectSet, feature: str, vmin: float, vmax: float) -> ObjectSet:
     """Filter by a measured feature — on ids, without materialising masks."""
     areas, rows, cols = region_features(objs)
