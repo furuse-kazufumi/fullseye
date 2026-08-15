@@ -1130,7 +1130,7 @@ def build_window(model=None):
     search.setToolTip("Filter by op name, HALCON alias or category")
     op_list = QtWidgets.QListWidget()
     op_list.setToolTip("Double-click an operator to insert it into the pipeline")
-    op_hint = QtWidgets.QLabel("double-click / Enter to insert  ·  hover for details")
+    op_hint = QtWidgets.QLabel("set a, b · Insert into pipeline or Run once · double-click = insert")
     op_hint.setProperty("muted", True)
     op_param = QtWidgets.QLabel("select an operator to see its signature")
     op_param.setProperty("hint", True); op_param.setWordWrap(True)
