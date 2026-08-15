@@ -92,10 +92,15 @@ Honest limitations
 * ``alife_wolfram1d`` consumes only the *first row* of the image -- a 1-D CA has
   no other place to put an initial condition. The rest of the input affects the
   output only through its width/height.
-* ``alife_sandpile``'s "relax to stable" mode is capped at ``_RELAX_CAP``
-  parallel sweeps so the op can never hang; on every input in the test battery
-  the pile stabilises far below that cap, but the cap is a real (documented)
-  truncation, not a proof of termination.
+* ``alife_sandpile``'s "relax toward stable" mode (b >= 0.9) bounds its sweep
+  count by a total-work budget (``_SANDPILE_BUDGET`` grain-updates), so the op
+  runs in ~tens of ms regardless of image size. A small or varied pile reaches
+  the stable critical state (max <= 3) well inside the budget; a large,
+  maximally-supercritical pile (e.g. a constant bright field) is only PARTIALLY
+  relaxed and its output may still hold cells with 4+ grains. Full BTW
+  stabilisation is O(L^2) sweeps -- deliberately not attempted here, because a
+  registry op is called thousands of times inside the evolution loop and must
+  stay fast. This is a real (documented) truncation, not full stabilisation.
 
 Determinism: no random number generator is used anywhere in this module. Every
 op is a pure function of (input, a, b) and is bit-reproducible.
