@@ -1663,7 +1663,8 @@ def build_window(model=None):
 
     def add_op(item):
         i = selected_index()
-        model.add_stage(item.data(QtCore.Qt.UserRole))       # appended at the end
+        # insert with the args entered in the operator panel (HDevelop-style)
+        model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
         newpos = len(model.stages) - 1
         if 0 <= i < newpos:                                  # insert just after the selected stage
             model.move_stage(newpos, i + 1); newpos = i + 1
