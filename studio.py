@@ -1547,16 +1547,22 @@ def build_window(model=None):
     win.setCorner(QtCore.Qt.BottomRightCorner, QtCore.Qt.RightDockWidgetArea)  # right col runs full height
     win.setCorner(QtCore.Qt.TopRightCorner, QtCore.Qt.RightDockWidgetArea)
     win.addDockWidget(QtCore.Qt.BottomDockWidgetArea, dock_code)    # Program = wide bottom strip (2nd largest)
-    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ops)      # op selection (compact right column)
+    win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_ops)      # op selection = compact right column
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_vars)
-    win.tabifyDockWidget(dock_ops, dock_vars)                       # Variables tabbed with Operators
+    win.tabifyDockWidget(dock_ops, dock_vars)                       # Variables tabbed behind Operators
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_pipe)
     win.tabifyDockWidget(dock_ops, dock_pipe)                       # Pipeline·Params tabbed in
     win.addDockWidget(QtCore.Qt.RightDockWidgetArea, dock_disp)
     win.tabifyDockWidget(dock_ops, dock_disp)                       # Display·Analysis tabbed in
     dock_ops.raise_()
-    win.resizeDocks([dock_ops], [300], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
-    win.resizeDocks([dock_code], [240], QtCore.Qt.Vertical)         # short-ish code strip → image stays tallest
+    # The inspection panels (Variables & Objects, Pipeline·Params, Display·Analysis) are
+    # on-demand — the user keeps them undocked / shown only when needed — so they start
+    # hidden and the image owns the workspace. Toolbar + Window ▸ Panels toggles bring
+    # each back. Operators stays (compact) since it is the primary build tool.
+    for _d in (dock_vars, dock_pipe, dock_disp):
+        _d.hide()
+    win.resizeDocks([dock_ops], [420], QtCore.Qt.Horizontal)        # narrow right column → image keeps the rest
+    win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars}
 
