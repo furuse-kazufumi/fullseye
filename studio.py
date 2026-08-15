@@ -1731,6 +1731,7 @@ def build_window(model=None):
         if 0 <= i < len(model.stages):
             stage_list.setCurrentRow(i)                      # triggers show_result for that step
             _select_var_row(i + 1)                           # sync: highlight this step's output var
+    win._step_to = step_to
 
     def reset_to_raw():
         """Show the pre-pipeline (raw) image — the start of the step-through."""
