@@ -530,6 +530,124 @@ def op_tooltip(row) -> str:
                row["in_sort"], row["out_sort"], knobs))
 
 
+# --- HDevelop-style program syntax (parser is module-level + headless-testable) --- #
+def _hdev_strip_comment(line):
+    """Strip an HDevelop comment: a whole-line `*` comment, or an inline `#`."""
+    s = line.strip()
+    if s.startswith("*"):
+        return ""
+    return s.split("#", 1)[0].strip()
+
+
+def _hdev_parse_op(line, lineno, errs, names):
+    """Parse one operator statement — HDevelop `op (a, b)` or the terse `op a b`.
+    Returns (name, a, b) clamped to [0,1], or None (appending an error)."""
+    line = line.strip()
+    if "(" in line and line.endswith(")"):
+        name = line[:line.index("(")].strip()
+        inner = line[line.index("(") + 1:-1].strip()
+        args = [p.strip() for p in inner.split(",")] if inner else []
+    else:
+        parts = line.split()
+        name, args = parts[0], parts[1:]
+    if name not in names:
+        errs.append("line %d: unknown op '%s'" % (lineno, name)); return None
+    try:
+        a = float(args[0]) if len(args) > 0 and args[0] != "" else 0.5
+        b = float(args[1]) if len(args) > 1 and args[1] != "" else 0.5
+    except ValueError:
+        errs.append("line %d: args must be numbers" % lineno); return None
+    return (name, max(0.0, min(1.0, a)), max(0.0, min(1.0, b)))
+
+
+def _hdev_eval_cond(expr):
+    """Evaluate a constant if-condition: a number (0=false) or `x <cmp> y` with
+    numeric constants (< > <= >= = == != #). Unknown -> True (include the block)."""
+    expr = expr.strip().replace("#", "!=")
+    for sym, fn in (("<=", lambda a, b: a <= b), (">=", lambda a, b: a >= b),
+                    ("==", lambda a, b: a == b), ("!=", lambda a, b: a != b),
+                    ("<", lambda a, b: a < b), (">", lambda a, b: a > b),
+                    ("=", lambda a, b: a == b)):
+        if sym in expr:
+            try:
+                left, right = expr.split(sym, 1)
+                return bool(fn(float(left), float(right)))
+            except ValueError:
+                return True
+    try:
+        return float(expr) != 0.0
+    except ValueError:
+        return True
+
+
+def parse_hdev_program(text, names):
+    """Parse an HDevelop-style program into a flat list of (op, a, b) stages.
+
+    Supports operator calls (`op (a, b)` or `op a b`), `*`/`#` comments, and control
+    flow that expands statically into the linear pipeline:
+      * `for N ... endfor`               — repeat the block N times (loop unrolling)
+      * `if <const-cond> ... [else ...] endif` — pick a branch by a constant test
+    `while`/`elseif` are reported as unsupported (they need runtime control variables
+    the flat pipeline model does not have). Returns (stages, errors)."""
+    names = set(names)
+    errs = []
+    toks = []
+    for n, raw in enumerate(text.splitlines(), 1):
+        line = _hdev_strip_comment(raw)
+        if not line:
+            continue
+        head = line.split()[0].lower()
+        kind = head if head in ("for", "endfor", "if", "else", "elseif",
+                                "endif", "while", "endwhile") else "op"
+        toks.append((kind, line, n))
+
+    pos = [0]
+
+    def expect(kw, openln):
+        if pos[0] < len(toks) and toks[pos[0]][0] == kw:
+            pos[0] += 1
+        else:
+            errs.append("missing '%s' (opened at line %d)" % (kw, openln))
+
+    def parse_block(terminators):
+        out = []
+        while pos[0] < len(toks):
+            kind, line, n = toks[pos[0]]
+            if kind in terminators:
+                return out
+            pos[0] += 1
+            if kind == "for":
+                try:
+                    count = int(float(line.split()[1]))
+                except (IndexError, ValueError):
+                    errs.append("line %d: 'for' needs a count, e.g. 'for 3'" % n); count = 0
+                body = parse_block(("endfor",))
+                expect("endfor", n)
+                out += body * max(0, count)
+            elif kind == "if":
+                cond = _hdev_eval_cond(line[2:].strip())
+                then_body = parse_block(("else", "endif"))
+                else_body = []
+                if pos[0] < len(toks) and toks[pos[0]][0] == "else":
+                    pos[0] += 1
+                    else_body = parse_block(("endif",))
+                expect("endif", n)
+                out += then_body if cond else else_body
+            elif kind == "while":
+                errs.append("line %d: 'while' not supported — use 'for N'" % n)
+                parse_block(("endwhile",)); expect("endwhile", n)
+            elif kind in ("endfor", "endif", "endwhile", "else", "elseif"):
+                errs.append("line %d: unexpected '%s'" % (n, kind))
+            else:  # op
+                st = _hdev_parse_op(line, n, errs, names)
+                if st:
+                    out.append(st)
+        return out
+
+    stages = parse_block(())
+    return stages, errs
+
+
 def _op_row(name):
     """Look up an op and return a ``list_ops``-shaped dict, or None."""
     op = api.find_op(name)
