@@ -2418,12 +2418,23 @@ def build_window(model=None):
         return "\n".join("%s (%.3f, %.3f)" % (n, a, b) for (n, a, b) in model.stages)
 
     def sync_program():
-        if code_edit.hasFocus():          # never clobber what the user is typing
+        # Never clobber what the user is typing OR unapplied edits (Codex #9): the
+        # editor keeps the user's code until they Apply it or Reset — a pipeline
+        # change no longer silently overwrites hand-written, not-yet-applied code.
+        if code_edit.hasFocus() or state.get("code_dirty"):
             return
         code_edit.blockSignals(True)
         code_edit.setPlainText(program_text_from_model())
         code_edit.blockSignals(False)
         code_edit.clear_exec()
+        state["code_dirty"] = False
+
+    def _on_code_changed():
+        # A real user edit (sync_program blocks signals around its own setPlainText,
+        # so this only fires for typing) → mark the Program as having unapplied edits.
+        state["code_dirty"] = True
+        code_status.setText("● unapplied edits — Apply to run, or Reset to discard")
+    code_edit.textChanged.connect(_on_code_changed)
 
     def parse_program(text):
         # HDevelop-style syntax: op (a, b) / op a b, * and # comments, for/endfor and
