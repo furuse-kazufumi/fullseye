@@ -1707,7 +1707,8 @@ def build_window(model=None):
     act_reset_layout.triggered.connect(reset_layout)
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
-             "dirty": False, "errors": [], "perception_error": None, "renders": 0}
+             "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
+             "renders": 0}
     pmodel = PerceptionModel()
 
     # -- behaviour --
