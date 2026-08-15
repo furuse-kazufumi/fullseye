@@ -290,32 +290,47 @@ def _connection_cv2(reg: Region) -> ObjectSet:
     return ObjectSet(lbl, np.arange(1, k, dtype=np.int32))
 
 
-@op("region_features", "numpy")
-def _region_features_numpy(objs: ObjectSet):
-    """areas, rows, cols for every live object — one pass, no per-blob masks."""
-    if len(objs) == 0:
-        return (np.zeros(0), np.zeros(0), np.zeros(0))
-    idx = objs.ids
+@op("measure_all", "numpy")
+def _measure_all_numpy(objs: ObjectSet) -> dict:
+    """Measure every label once.  Returned tables are indexed by label id."""
+    n = int(objs.labels.max())
+    if n == 0:
+        z = np.zeros(1)
+        return {"area": z, "row": z.copy(), "column": z.copy()}
+    idx = np.arange(1, n + 1)
     binary = objs.labels > 0
-    areas = ndi.sum_labels(binary, objs.labels, index=idx)
-    cents = ndi.center_of_mass(binary, objs.labels, idx)
-    cents = np.atleast_2d(np.asarray(cents, dtype=np.float64))
-    return areas.astype(np.float64), cents[:, 0], cents[:, 1]
+    areas = np.asarray(ndi.sum_labels(binary, objs.labels, index=idx), dtype=np.float64)
+    cents = np.atleast_2d(np.asarray(
+        ndi.center_of_mass(binary, objs.labels, idx), dtype=np.float64))
+    return {"area": np.concatenate([[0.0], areas]),
+            "row": np.concatenate([[0.0], cents[:, 0]]),
+            "column": np.concatenate([[0.0], cents[:, 1]])}
 
 
-@op("region_features", "cv2")
-def _region_features_cv2(objs: ObjectSet):
+@op("measure_all", "cv2")
+def _measure_all_cv2(objs: ObjectSet) -> dict:
     import cv2
+    stats = objs.feats.get("_cc_stats")
+    cents = objs.feats.get("_cc_centroids")
+    if stats is None:
+        # No stats were carried from `connection` — measure now.
+        _n, _lbl, stats, cents = cv2.connectedComponentsWithStats(
+            (objs.labels > 0).astype(np.uint8), 8, cv2.CV_32S)
+    return {"area": stats[:, cv2.CC_STAT_AREA].astype(np.float64),
+            "row": cents[:, 1].astype(np.float64),
+            "column": cents[:, 0].astype(np.float64)}
+
+
+def _measure_all(objs: ObjectSet) -> dict:
+    return _dispatch("measure_all", objs)
+
+
+def region_features(objs: ObjectSet):
+    """areas, rows, cols for the live objects (measured once, then cached)."""
+    _require(objs, ObjectSet, "region_features")
     if len(objs) == 0:
         return (np.zeros(0), np.zeros(0), np.zeros(0))
-    n, _lbl, stats, cents = cv2.connectedComponentsWithStats(
-        (objs.labels > 0).astype(np.uint8), 8, cv2.CV_32S)
-    # cv2 relabels; align by matching each live id's pixel count is unnecessary
-    # because both backends label the same binary image with the same
-    # connectivity — the differential test in tests/test_fslib.py pins that the
-    # resulting feature *sets* agree.
-    areas = stats[1:, cv2.CC_STAT_AREA].astype(np.float64)
-    return areas, cents[1:, 1].astype(np.float64), cents[1:, 0].astype(np.float64)
+    return (objs.feature("area"), objs.feature("row"), objs.feature("column"))
 
 
 def gauss(img: FImage, sigma: float) -> FImage:
