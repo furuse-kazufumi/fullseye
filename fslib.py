@@ -130,17 +130,35 @@ class ObjectSet:
     Replaces ``connection`` returning one full-frame mask per blob, which was
     measured at 5.8x slower and 10.2x more peak memory
     (``docs/FSCRIPT_MEASUREMENTS.md`` section 0).
+
+    **Features travel with the set.**  Measuring the whole label image is one
+    pass; an API that recomputes it per query turns a 10 ms cycle into a 40 ms
+    one (measured while building this PoC).  ``feats`` maps a feature name to a
+    value per *label id* — indexed by id, so ``select`` is a pure id filter and
+    costs nothing.
     """
 
     labels: np.ndarray                    # int32 label image, 0 = background
     ids: np.ndarray = field(default=None)  # 1-D int array of live labels
+    feats: dict = field(default=None, compare=False)   # name -> value per id
 
     def __post_init__(self):
         if self.ids is None:
             object.__setattr__(self, "ids", np.unique(self.labels)[1:].astype(np.int32))
+        if self.feats is None:
+            object.__setattr__(self, "feats", {})
 
     def __len__(self):
         return int(self.ids.size)
+
+    def feature(self, name: str) -> np.ndarray:
+        """Values of ``name`` for the live ids, computing once if needed."""
+        table = self.feats.get(name)
+        if table is None:
+            for k, v in _measure_all(self).items():
+                self.feats.setdefault(k, v)
+            table = self.feats[name]
+        return table[self.ids]           # table is indexed by label id
 
     def region(self, i: int) -> Region:
         """Materialise one object on demand (the only place a mask is built)."""
