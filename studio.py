@@ -2249,8 +2249,7 @@ def build_window(model=None):
     act_float_all = _act("Float all panels (multi-display)", None,
                          "Detach every tool panel to its own window — move them across monitors")
     act_dock_all = _act("Dock all panels", None, "Re-dock every floated tool panel")
-    menu_windows.addSeparator()
-    menu_windows.addAction(act_float_all); menu_windows.addAction(act_dock_all)
+    menu_panels.addAction(act_float_all); menu_panels.addAction(act_dock_all)
     act_float_all.triggered.connect(lambda: float_all_panels(True))
     act_dock_all.triggered.connect(lambda: float_all_panels(False))
     win._float_all_panels = float_all_panels
