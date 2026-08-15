@@ -2274,9 +2274,7 @@ def build_window(model=None):
         _a.triggered.connect(_fn)
         win.addAction(_a)                                 # keep the shortcut active even without a menu
         win._menus["run"].addAction(_a)                   # discoverable in the Run menu
-    win._actions["dbg_run"] = act_dbg_run
-    win._actions["dbg_step"] = act_dbg_step
-    win._actions["dbg_reset"] = act_dbg_reset
+    # (registered into win._actions below, once that dict exists)
     # -- program / code editor wiring (parse <-> pipeline, timed run, step) ---- #
     import time as _time
 
