@@ -188,6 +188,18 @@ VM 化の動機は速度ではなく **step/breakpoint/ソース span/ウォッ�
 - ただし **Runtime プロファイルから torch を排除すれば ~1 秒**。さらに op レジストリを遅延構築すれば数百 ms 台。
   → **要件: Runtime プロファイルは lazy import を規律とし、torch/kornia/PySide6 を含まない。**
 
+### ★Runtime プロファイルで実測(`fslib.py` PoC)
+
+| | 起動 |
+|---|---:|
+| **Runtime プロファイル** `import fslib`(numpy + scipy) | **147 ms** |
+| **Runtime プロファイル** `import fslib, cv2` | **160 ms** |
+| Studio プロファイル `import api`(650 op レジストリ) | 1663 ms |
+
+**10.4 倍の改善。160 ms なら、ウォッチドッグによるプロセス再起動が 0.2 秒で完了する**
+(= 障害復旧が実運用に耐える)。これは「Runtime を Studio と分ける」判断の直接の裏付けであり、
+`fslib.py` が 650 op レジストリを import しない設計にした理由でもある。
+
 ---
 
 ## 5. 配布フットプリント
