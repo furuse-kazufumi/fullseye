@@ -358,6 +358,11 @@ Fullseye が売るもの、優先順:
 - 測定の multi-output(`area_center → Area, Row, Column`)を正式サポート。空領域/NaN は定義済み例外か空 tuple。
 
 **R4. 決定論と設備との協調(Runtime プロファイル)**
+- **★最優先: Runtime は op の例外を決して飲まない(fail-closed)。**
+  現行 650 op レジストリは `backends._safe` が全例外を飲んで「sort として妥当な無害値」を返す
+  = region なら**空 region = 欠陥ゼロ = 全数 OK 判定**(§1.6b)。
+  進化エンジンにはこの挙動が必要だが、**Runtime に持ち込んではならない**。
+  Runtime では op の失敗は `ERROR` として PLC へ上がり、判定は行われない。
 - **init フェーズと cycle フェーズを分離**。モデルロード・メモリ確保・式コンパイルは init で完了。
 - cycle 中の **import / ファイル探索 / ネットワーク / 動的コード生成を禁止**(静的に検査する)。
 - 画像バッファは pool 化して寿命を明示管理。
