@@ -3,42 +3,47 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-15 15:11:11
+- **最終更新**: 2026-08-15 17:04:59
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-3f3b63c studio: ドッキング自由度を回復(GroupedDragging 再有効化 + setDockNestingEnabled + 全エリア tab位置)。crash ログ常設下で次セッション自律ハーネスが dock ドラッグを検証
-16bd948 auto: studio.py 編集前 (2026-08-15 15:09)
-72f87bb docs: カレント画像窓のハンドル番号/dev_*描画モデルを追記
-b887091 docs: 次セッション最優先(自律UIデバッグ harness / カレント画像窓 / 検証規律)を記録
-9d29008 studio: ★ステップ実行バグ修正 — 各ステップで画像+変数窓が更新される
-ed00598 auto: studio.py 編集前 (2026-08-15 15:06)
-0f9c230 auto: studio.py 編集前 (2026-08-15 15:05)
-6a31db7 auto: studio.py 編集前 (2026-08-15 15:03)
-7619245 studio: 既定レイアウトを HDevelop 型に(左=画像+変数 / 右=op選択+プログラム)+ レイアウト版数ガードで反映
-419d99c auto: studio.py 編集前 (2026-08-15 14:59)
+43f54ec docs: STATUS v18.8 を最終数値・全操作仕様項目で更新(full suite 4310)
+7dcb9c3 studio: holdout 検証経路(Codex #12)を Studio に接続
+aca2a96 auto: HDEVELOP_FIDELITY.md 編集前 (2026-08-15 16:34)
+4e06de2 auto: studio.py 編集前 (2026-08-15 16:33)
+f767e0e auto: test_studio.py 編集前 (2026-08-15 16:32)
+655d885 auto: test_studio.py 編集前 (2026-08-15 16:32)
+1e90998 auto: studio.py 編集前 (2026-08-15 16:31)
+99524c0 auto: studio.py 編集前 (2026-08-15 16:31)
+f2ec099 auto: studio.py 編集前 (2026-08-15 16:31)
+1cd011c auto: studio.py 編集前 (2026-08-15 16:31)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-15:10 .pytest_cache/v/cache/nodeids
-15:09 studio.py
-15:08 docs/SESSION_SUMMARY.md
-15:07 docs/HDEVELOP_FIDELITY.md
+16:39 docs/SESSION_SUMMARY.md
+16:38 docs/STATUS.md
+16:37 .pytest_cache/v/cache/nodeids
+16:34 docs/HDEVELOP_FIDELITY.md
+16:34 studio_ui_steps.jsonl
+16:34 studio_ui_report.json
+16:34 studio_ui_crash.log
+16:33 .pytest_cache/v/cache/lastfailed
+16:33 studio.py
+16:32 tests/test_studio.py
+15:48 .gitignore
+15:38 tools/studio_ui_harness.py
 15:07 studio_crash.log
-14:13 docs/STATUS.md
-14:09 tests/test_studio.py
-13:56 .pytest_cache/v/cache/lastfailed
 ```
 
 ---

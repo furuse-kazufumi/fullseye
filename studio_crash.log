@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'abs_diff_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'abs_diff_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'abs_diff_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'add_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'abs_diff_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'add_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'bit_and'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'bit_or'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'abs_diff_image'
+Traceback (most recent call last):
+  File "C:\dev\projects\imgevolve\studio.py", line 2100, in add_op
+    model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+  File "C:\dev\projects\imgevolve\studio.py", line 108, in add_stage
+    raise KeyError(name)
+KeyError: 'bit_or'
