@@ -1,18 +1,31 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussian <span style="color:#8b91a0;font-size:11px">· smoothing · HALCON: gauss_filter</span></h2>
 <p style="color:#8b91a0;margin:2px 0"><b>image → image</b></p>
-<p>Convolves the image with an isotropic 2-D Gaussian kernel. It is the canonical
-<b>linear low-pass filter</b>: it suppresses high-frequency noise while preserving
-the overall structure, at the cost of blurring edges. Because a Gaussian is
-separable and scale-space optimal, it is the usual first step before gradient,
-edge or threshold operators.</p>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Knobs</h3>
-<ul style="margin:2px 0 2px 18px;padding:0">
-  <li><b>a</b> — kernel <i>sigma</i> (blur radius). Small a = gentle denoise,
-      large a = strong blur. Map ≈ σ = 0.3 + 2.7·a.</li>
-  <li><b>b</b> — unused / reserved for this op.</li>
-</ul>
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Typical use</h3>
-<p><code style="color:#22d3bf">gaussian 0.4 0.5 → sobel_mag 0.5 0.5 → otsu 0.5 0.5</code><br>
-denoise, then take an edge magnitude, then binarise — a classic segmentation chain.</p>
-<p style="color:#8b91a0;font-size:11px">Provenance: separable Gaussian convolution (scipy.ndimage). Reimplemented from the
-published algorithm — see docs/PROVENANCE.md.</p>
+<p>Convolves the image with an isotropic 2-D Gaussian kernel — the canonical
+<b>linear low-pass filter</b>. It suppresses high-frequency noise while preserving
+overall structure, at the cost of blurring edges. Being separable and scale-space
+optimal, it is the usual first step before gradient, edge or threshold operators.</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Arguments</h3>
+<table cellpadding="3" style="color:#e2e5ec">
+  <tr><td><b>a</b></td><td>kernel <i>sigma</i> (blur radius). σ ≈ 0.3 + 2.7·a — small a = gentle denoise, large a = strong blur.</td></tr>
+  <tr><td><b>b</b></td><td>reserved / unused for this operator.</td></tr>
+</table>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Usage</h3>
+<p>Denoise first, then differentiate/segment. Over-blurring (large a) erases fine
+detail, so pick the smallest sigma that removes the noise you care about.</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Sample code</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gaussian 0.4 0.5
+sobel_mag 0.5 0.5
+otsu 0.5 0.5</pre>
+<p>▸ <a style="color:#22d3bf" href="sample:gaussian%200.4%200.5%0Asobel_mag%200.5%200.5%0Aotsu%200.5%200.5">Load this pipeline</a>
+&nbsp;·&nbsp; <a style="color:#f5a524" href="run:gaussian%200.4%200.5%0Asobel_mag%200.5%200.5%0Aotsu%200.5%200.5">Load &amp; run</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Related operators</h3>
+<p><a style="color:#22d3bf" href="op:median">median</a> ·
+<a style="color:#22d3bf" href="op:bilateral">bilateral</a> ·
+<a style="color:#22d3bf" href="op:mean_box">mean_box</a> ·
+<a style="color:#22d3bf" href="op:sobel_mag">sobel_mag</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: separable Gaussian convolution (scipy.ndimage). See docs/PROVENANCE.md.</p>
