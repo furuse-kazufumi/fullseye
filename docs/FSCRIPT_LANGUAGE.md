@@ -23,6 +23,15 @@
 
 **結論(Codex #1)**: **言語を主**、線形パイプラインは「分岐・副作用の無い直列部分集合(LinearSubset)」として残し、進化・高速化・旧 UI に再利用。
 
+### ★インタプリタ vs コンパイラの解決(ユーザー指摘: ウォッチは構造的に難しい / PyBind11 / DLL 現実性)
+- **リッチなライブウォッチ(画像 / Region / domain / object / 変数)は「生きた変数環境」を要する** → **VM / インタプリタが自然に提供**する。**ネイティブコンパイル済コードは変数がレジスタ/スタックに散り、DWARF + デバッガ(gdb 型)が必要 = 構造的に困難**(ユーザー指摘の通り)。→ **ウォッチ要件が VM を事実上必須にする。**
+- ∴ **HALCON と同じ二モード運用が正解**:
+  - **IDE = VM 実行**(解釈): 各 statement 境界で生きた環境をウォッチ/step/breakpoint。← ここが本設計の主戦場。
+  - **配布 / 高速 = compile**: DSL→C→ネイティブ DLL(既存 C codegen 資産)。デバッグ情報無しの最適化実行。
+  - これは **HDevelop(対話=解釈)+ HDevEngine(配布=エンジン)** そのもの。
+- **PyBind11 / 呼出し規約**: IDE を **全 Python(VM + L1 ライブラリ)で統一すれば PyBind11 不要**。PyBind11 / CPython 埋込が要るのは「**ネイティブコンパイル済プログラムが Python の Fullseye を呼ぶ**」混在時のみ → **配布時に L1 を DLL 化**して回避(native 言語ランタイム→native Fullseye DLL の直呼び)。**混在(native 言語 + Python ライブラリ)を避ける**のが工夫の要点。
+- **DLL 化の難易度(正直)**: 「Python をそのまま綺麗な DLL 化」は不可(Cython/Nuitka は CPython+numpy 同梱の "Python in a box"、クリーンな C ABI にならない)。**本物の DLL = op を native 再実装 + C ABI = 大工事**。ただし **純アルゴリズム系 op は既存 C codegen で C→DLL 化可能**(cv2/skimage/scipy ラップ系は対象外)。→ **段階的にホット op のみ native 化**。**言語 / ウォッチ / ライブラリ API の設計検証に DLL は不要**なので、そこは Python で先に固める(de-risk)。L1 の API 契約を今固定 → 後で L2 を変えず L1 を DLL 差し替え。
+
 ---
 
 ## 1. 3 層アーキテクチャ
