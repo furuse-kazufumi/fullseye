@@ -1704,6 +1704,8 @@ def build_window(model=None):
         win._last_run_once = {"op": name, "a": a, "b": b, "result": out}
     win._run_op_once = run_op_once
     win._op_arg_spins = (op_a_spin, op_b_spin)
+    win._op_list = op_list
+    win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
 
     def step_to(i):
         if 0 <= i < len(model.stages):
