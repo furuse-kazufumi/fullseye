@@ -2184,21 +2184,9 @@ def build_window(model=None):
         code_edit.clear_exec()
 
     def parse_program(text):
-        stages, errs, names = [], [], set(op_names)
-        for i, raw in enumerate(text.splitlines(), 1):
-            line = raw.split("#", 1)[0].strip()
-            if not line:
-                continue
-            parts = line.split()
-            if parts[0] not in names:
-                errs.append("line %d: unknown op '%s'" % (i, parts[0])); continue
-            try:
-                a = float(parts[1]) if len(parts) > 1 else 0.5
-                b = float(parts[2]) if len(parts) > 2 else 0.5
-            except ValueError:
-                errs.append("line %d: knobs must be numbers" % i); continue
-            stages.append((parts[0], max(0.0, min(1.0, a)), max(0.0, min(1.0, b))))
-        return stages, errs
+        # HDevelop-style syntax: op (a, b) / op a b, * and # comments, for/endfor and
+        # if/else/endif control flow (expanded into the flat pipeline).
+        return parse_hdev_program(text, op_names)
 
     def apply_program():
         stages, errs = parse_program(code_edit.toPlainText())
