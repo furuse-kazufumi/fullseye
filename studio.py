@@ -644,6 +644,189 @@ def _group(QtWidgets, title, inner_layout):
     return g
 
 
+def _program_editor_class(QtWidgets, QtGui, QtCore):
+    """A HDevelop/VS-style program editor widget factory.
+
+    Features: a line-number + breakpoint gutter (click to toggle a breakpoint),
+    per-line execution timing shown in the gutter, a current-execution-line
+    highlight, and op-name autocomplete (IntelliSense). The editable text is the
+    pipeline as one ``op a b`` statement per line; ``#`` starts a comment."""
+
+    class _Gutter(QtWidgets.QWidget):
+        def __init__(self, editor):
+            super().__init__(editor)
+            self._editor = editor
+
+        def sizeHint(self):
+            return QtCore.QSize(self._editor.gutter_width(), 0)
+
+        def paintEvent(self, ev):
+            self._editor.paint_gutter(ev)
+
+        def mousePressEvent(self, ev):
+            self._editor.gutter_click(ev)
+
+    class ProgramEditor(QtWidgets.QPlainTextEdit):
+        BREAK = "#e5484d"
+
+        def __init__(self, words=(), parent=None):
+            super().__init__(parent)
+            self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+            f = QtGui.QFont("Consolas"); f.setStyleHint(QtGui.QFont.Monospace); f.setPointSize(10)
+            self.setFont(f)
+            self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(" "))
+            self.breakpoints = set()          # 1-based line numbers
+            self.timings = {}                 # 1-based line -> milliseconds (float)
+            self._exec_line = -1
+            self._gutter = _Gutter(self)
+            self.blockCountChanged.connect(lambda _n: self._update_gutter_width())
+            self.updateRequest.connect(self._update_gutter)
+            self.cursorPositionChanged.connect(self._highlight)
+            self._update_gutter_width()
+            self._highlight()
+            # --- IntelliSense: op-name completion popup ---
+            self._completer = QtWidgets.QCompleter(sorted(set(words)), self)
+            self._completer.setWidget(self)
+            self._completer.setCompletionMode(QtWidgets.QCompleter.PopupCompletion)
+            self._completer.setCaseSensitivity(QtCore.Qt.CaseInsensitive)
+            self._completer.activated.connect(self._insert_completion)
+
+        # -- gutter geometry / painting --
+        def gutter_width(self):
+            digits = max(2, len(str(max(1, self.blockCount()))))
+            num = self.fontMetrics().horizontalAdvance("9") * digits
+            return 16 + num + 62          # dot + number + "  123.4ms"
+
+        def _update_gutter_width(self):
+            self.setViewportMargins(self.gutter_width(), 0, 0, 0)
+
+        def _update_gutter(self, rect, dy):
+            if dy:
+                self._gutter.scroll(0, dy)
+            else:
+                self._gutter.update(0, rect.y(), self._gutter.width(), rect.height())
+            if rect.contains(self.viewport().rect()):
+                self._update_gutter_width()
+
+        def resizeEvent(self, ev):
+            super().resizeEvent(ev)
+            cr = self.contentsRect()
+            self._gutter.setGeometry(QtCore.QRect(cr.left(), cr.top(),
+                                                  self.gutter_width(), cr.height()))
+
+        def paint_gutter(self, ev):
+            p = QtGui.QPainter(self._gutter)
+            p.fillRect(ev.rect(), QtGui.QColor("#12141b"))
+            block = self.firstVisibleBlock()
+            n = block.blockNumber()
+            top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
+            bottom = top + self.blockBoundingRect(block).height()
+            fm = self.fontMetrics()
+            w = self._gutter.width()
+            numw = 16 + fm.horizontalAdvance("9") * max(2, len(str(max(1, self.blockCount()))))
+            while block.isValid() and top <= ev.rect().bottom():
+                if block.isVisible() and bottom >= ev.rect().top():
+                    ln = n + 1
+                    if ln in self.breakpoints:      # breakpoint dot
+                        p.setBrush(QtGui.QColor(self.BREAK)); p.setPen(QtCore.Qt.NoPen)
+                        p.drawEllipse(3, int(top) + (fm.height() - 8) // 2, 8, 8)
+                    p.setPen(QtGui.QColor("#e5484d" if ln == self._exec_line else "#6b7280"))
+                    p.drawText(0, int(top), numw, fm.height(),
+                               QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, str(ln))
+                    ms = self.timings.get(ln)
+                    if ms is not None:              # per-line execution time
+                        p.setPen(QtGui.QColor("#17b8a6"))
+                        p.drawText(0, int(top), w - 4, fm.height(),
+                                   QtCore.Qt.AlignRight | QtCore.Qt.AlignVCenter, "%.1fms" % ms)
+                block = block.next()
+                top = bottom
+                bottom = top + self.blockBoundingRect(block).height()
+                n += 1
+            p.end()
+
+        def gutter_click(self, ev):
+            block = self.firstVisibleBlock()
+            n = block.blockNumber()
+            top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
+            bottom = top + self.blockBoundingRect(block).height()
+            y = ev.position().y() if hasattr(ev, "position") else ev.y()
+            while block.isValid():
+                if top <= y <= bottom:
+                    ln = n + 1
+                    self.breakpoints.symmetric_difference_update({ln})
+                    self._gutter.update()
+                    return
+                block = block.next(); n += 1
+                top = bottom; bottom = top + self.blockBoundingRect(block).height()
+
+        # -- highlights --
+        def set_exec_line(self, ln):
+            self._exec_line = int(ln)
+            self._highlight()
+            self._gutter.update()
+
+        def clear_exec(self):
+            self._exec_line = -1
+            self.timings = {}
+            self._highlight(); self._gutter.update()
+
+        def set_timings(self, timings):
+            self.timings = dict(timings or {})
+            self._gutter.update()
+
+        def _highlight(self):
+            sels = []
+            cur = QtWidgets.QTextEdit.ExtraSelection()
+            cur.format.setBackground(QtGui.QColor("#1f2430"))
+            cur.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
+            cur.cursor = self.textCursor(); cur.cursor.clearSelection()
+            sels.append(cur)
+            if self._exec_line > 0:
+                doc = self.document()
+                blk = doc.findBlockByNumber(self._exec_line - 1)
+                if blk.isValid():
+                    ex = QtWidgets.QTextEdit.ExtraSelection()
+                    ex.format.setBackground(QtGui.QColor("#14342f"))
+                    ex.format.setProperty(QtGui.QTextFormat.FullWidthSelection, True)
+                    c = self.textCursor(); c.setPosition(blk.position()); c.clearSelection()
+                    ex.cursor = c
+                    sels.append(ex)
+            self.setExtraSelections(sels)
+
+        # -- autocomplete --
+        def _text_under_cursor(self):
+            c = self.textCursor(); c.select(QtGui.QTextCursor.WordUnderCursor)
+            return c.selectedText()
+
+        def _insert_completion(self, completion):
+            c = self.textCursor()
+            extra = len(completion) - len(self._completer.completionPrefix())
+            c.movePosition(QtGui.QTextCursor.Left); c.movePosition(QtGui.QTextCursor.EndOfWord)
+            c.insertText(completion[len(completion) - extra:])
+            self.setTextCursor(c)
+
+        def keyPressEvent(self, ev):
+            comp = self._completer
+            if comp.popup().isVisible() and ev.key() in (
+                    QtCore.Qt.Key_Enter, QtCore.Qt.Key_Return, QtCore.Qt.Key_Escape,
+                    QtCore.Qt.Key_Tab, QtCore.Qt.Key_Backtab):
+                ev.ignore(); return
+            super().keyPressEvent(ev)
+            prefix = self._text_under_cursor()
+            if len(prefix) >= 2 and prefix[0].isalpha():
+                if prefix != comp.completionPrefix():
+                    comp.setCompletionPrefix(prefix)
+                    comp.popup().setCurrentIndex(comp.completionModel().index(0, 0))
+                cr = self.cursorRect()
+                cr.setWidth(comp.popup().sizeHintForColumn(0)
+                            + comp.popup().verticalScrollBar().sizeHint().width())
+                comp.complete(cr)
+            else:
+                comp.popup().hide()
+
+    return ProgramEditor
+
+
 def build_window(model=None):
     """Construct (but do not exec) the main window. Returns (window, model).
 
