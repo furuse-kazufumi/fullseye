@@ -1101,6 +1101,7 @@ def build_window(model=None):
                     s = QtCore.QSettings("Fullseye", "Studio")
                     s.setValue("geometry", self.saveGeometry())
                     s.setValue("windowState", self.saveState())
+                    s.setValue("layout_version", "2")
             except Exception:
                 pass
             ev.accept()
