@@ -2017,6 +2017,57 @@ def build_window(model=None):
     v_here.clicked.connect(lambda: display_variable(False))
     win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
 
+    # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #
+    help_browser = QtWidgets.QTextBrowser()
+    help_browser.setOpenLinks(False)          # custom op:/sample:/run: anchors handled below
+    help_browser.setStyleSheet("QTextBrowser{background:#1b1e28;border:1px solid #2c313f;}")
+    help_dialog = QtWidgets.QDialog(win)       # dedicated, non-modal (good for multi-monitor)
+    help_dialog.setWindowTitle("Operator help — Fullseye Studio")
+    help_dialog.resize(560, 640)
+    _hdl = QtWidgets.QVBoxLayout(help_dialog)
+    _htop = QtWidgets.QHBoxLayout()
+    hd_back = QtWidgets.QPushButton("◀"); hd_back.setToolTip("Back")
+    hd_fwd = QtWidgets.QPushButton("▶"); hd_fwd.setToolTip("Forward")
+    help_pick = QtWidgets.QComboBox(); help_pick.setEditable(True)
+    help_pick.addItems(op_names); help_pick.setToolTip("Jump to any operator's help")
+    _htop.addWidget(hd_back); _htop.addWidget(hd_fwd); _htop.addWidget(help_pick, 1)
+    _hdl.addLayout(_htop); _hdl.addWidget(help_browser, 1)
+
+    def show_op_help(name):
+        if not name:
+            return
+        row = _op_row(name) or {"in_sort": "?", "out_sort": "?"}
+        help_browser.setHtml(op_help_html(name, getattr(win, "_lang", "en"), row))
+        i = help_pick.findText(name)
+        if i >= 0:
+            help_pick.blockSignals(True); help_pick.setCurrentIndex(i); help_pick.blockSignals(False)
+        help_dialog.show(); help_dialog.raise_(); help_dialog.activateWindow()
+
+    def _help_anchor(url):
+        s = url.toString()
+        if s.startswith("op:"):                # related-operator link
+            show_op_help(s[3:])
+        elif s.startswith("sample:") or s.startswith("run:"):   # load a sample pipeline
+            import urllib.parse as _up
+            code = _up.unquote(s.split(":", 1)[1])
+            code_edit.setPlainText(code)
+            apply_program()
+            if s.startswith("run:"):
+                run_program(True)
+            try:
+                win._docks["program"].show(); win._docks["program"].raise_()
+            except Exception:
+                pass
+            flash("loaded sample pipeline from help")
+
+    help_browser.anchorClicked.connect(_help_anchor)
+    help_pick.currentTextChanged.connect(lambda t: show_op_help(t) if t in set(op_names) else None)
+    hd_back.clicked.connect(help_browser.backward)
+    hd_fwd.clicked.connect(help_browser.forward)
+    b_help.clicked.connect(
+        lambda: show_op_help(op_list.currentItem().data(QtCore.Qt.UserRole)) if op_list.currentItem() else None)
+    win._help = {"dialog": help_dialog, "browser": help_browser, "show": show_op_help}
+
     def sync_panels():
         sync_program(); refresh_variables()
     win._code_sync = sync_panels
