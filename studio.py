@@ -1864,10 +1864,72 @@ def build_window(model=None):
     c_run.clicked.connect(lambda: run_program(True))
     c_step.clicked.connect(step_program)
     c_reset.clicked.connect(lambda: (code_edit.clear_exec(), code_status.setText("ready")))
-    win._code_sync = sync_program
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
                     "step": step_program, "parse": parse_program, "text": program_text_from_model}
-    sync_program()
+
+    # -- variables & objects window wiring (inspect / display any stage output) - #
+    def _var_entries():
+        ents = [("input", -1, "image")]
+        try:
+            states = model.step_states()
+        except Exception:
+            states = []
+        for i, (name, a, b) in enumerate(model.stages):
+            kind = states[i]["state"].get("kind", "?") if i < len(states) else "?"
+            ents.append(("%d: %s" % (i + 1, name), i, kind))
+        return ents
+
+    def show_variable_inspection():
+        it = var_list.currentItem()
+        if it is None:
+            var_inspect.setPlainText(""); return
+        try:
+            val = model.result_upto(it.data(QtCore.Qt.UserRole))
+            var_inspect.setPlainText(format_inspection(inspect_result(val)))
+        except Exception as e:
+            var_inspect.setPlainText("inspect error: %s" % e)
+
+    def refresh_variables():
+        sel = var_list.currentRow()
+        var_list.blockSignals(True); var_list.clear()
+        for label, idx, kind in _var_entries():
+            it = QtWidgets.QListWidgetItem("%s   · %s" % (label, kind))
+            it.setData(QtCore.Qt.UserRole, idx)
+            var_list.addItem(it)
+        var_list.setCurrentRow(sel if 0 <= sel < var_list.count() else var_list.count() - 1)
+        var_list.blockSignals(False)
+        show_variable_inspection()
+
+    def display_variable(new_window=True):
+        it = var_list.currentItem()
+        if it is None:
+            return
+        try:
+            val = model.result_upto(it.data(QtCore.Qt.UserRole))
+        except Exception as e:
+            flash("cannot display: %s" % e); return
+        if isinstance(val, np.ndarray) and val.ndim in (2, 3):
+            qi = _to_qimage(apply_display(val, display.currentText()), QtGui)
+            pm = QtGui.QPixmap.fromImage(qi) if qi is not None else None
+            if pm is None:
+                flash("cannot render variable"); return
+            if new_window:
+                new_graphics_window(pm, title="var %s" % it.text().split("  ", 1)[0])
+            else:
+                view.set_pixmap(pm); view.fit(); view.set_data(val)
+        else:
+            flash("variable is not iconic — see the inspector")
+
+    var_list.currentRowChanged.connect(lambda _r: show_variable_inspection())
+    var_list.itemDoubleClicked.connect(lambda _it: display_variable(True))
+    v_disp.clicked.connect(lambda: display_variable(True))
+    v_here.clicked.connect(lambda: display_variable(False))
+    win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
+
+    def sync_panels():
+        sync_program(); refresh_variables()
+    win._code_sync = sync_panels
+    sync_panels()
 
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
