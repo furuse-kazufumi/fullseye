@@ -90,6 +90,10 @@
   - 位置付け: これらは **control 領域の複合型**(iconic は格納しても handle/参照で持つ)。HALCON 純正には無い Fullseye 拡張として明示(仕様書で「HALCON 互換」でなく「Fullseye 拡張」と正直にラベル)。
   - 実装: L1/言語ランタイム側に `FContainer` 群(内部は Python dict/list/set 等を薄くラップ、型付き)。DLL 化時は C++ STL / 相当の C ABI で対応。ウォッチは型別レンダラ(map=キー/値表、set/stack/queue=要素列)。
   - 用途例: blob→分類ラベルの `map`、処理待ち ROI の `queue`、状態機械の `stack`(ロボット制御シーケンス)、ユニーク特徴の `set`。デザインパターン(State/Strategy/Observer 等)を素直に書ける土台。
+- **★標準ライブラリ: 型変換 / 文字列変換(ユーザー指摘 2026-08-15「結構しっかりした言語設計 + 高速性が必要」)**:
+  - **型変換**: `int(x)`/`real(x)`/`number(x)`/`is_number/is_int/is_string`、tuple 要素の型判定 `type_of(t[i])`、int↔real 昇格規則。HALCON の暗黙昇格 + 明示変換の両立。
+  - **文字列**: `string(x, fmt)`(数値→書式付き文字列、HALCON `'$.3f'` 風)/`str_to_number`/`split`/`join`/`regexp_match/replace`/`length`/部分文字列/`str_upper/lower`/連結。ロボット制御の I/O(コマンド組立/パース)や結果出力に必須。
+  - **これらは「しっかりした言語」の必要条件**: 型システム(§2 の Tuple/Vector/container + iconic/handle)+ 変換 + エラー型 + スコープ + procedure を厳密設計(増分2以降で仕様書化)。**高速性は §0 の二モード(IDE=VM / 配布=compile→C→DLL)で解決**、ホット path のみ native 化。「見た目だけ言語」を避けるため、未実装機能は構文/型エラーで正直に弾く。
 - **制御**: `if/elseif/else/endif`・`for V := a to b [by s]/endfor`・`for Obj in Objects/endfor`・`while (c)/endwhile`・`repeat/until (c)`・`break/continue`。停止性: VM に**命令予算 + wall-clock deadline + キャンセルフラグ**、`while/repeat` は定期 UI ポンプ。
 - **測定 multi-output**(Codex #8): `area_center(Region : : : Area, Row, Column)` の複数 control 出力を正式サポート(現 `api.apply` は先頭要素のみ float 化=情報欠落)。空領域/NaN/長さ不一致は定義済み例外か空 tuple、条件式で暗黙真偽化しない。
 
