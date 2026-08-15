@@ -157,6 +157,35 @@ Codex が一次資料で確認した結論(確信度: 高):
 (`threshold` が u8 上で numpy 比較 2 回 + AND、`connection` で uint8 への変換コピー)。
 アーキテクチャの限界ではなく、実装の詰めしろ。
 
+### 1.8 産業プロファイル候補 44 op の native カバレッジ = 44/44
+
+増分 2 の kill criteria(「頻出 op の半分以上にネイティブの道が無ければ設計を捨てる」)を先に検証した。
+実検査で頻出する 44 op を列挙し、OpenCV に対応関数が存在するかを確認 → **不足 0**。
+
+> gauss / box / median / bilateral / sobel / laplace / canny / threshold / otsu / adaptive_threshold /
+> dilation / erosion / opening・closing / connection+features / contours / contour_features /
+> min_area_rect / fit_circle / fit_line / fit_ellipse / convex_hull / moments / hu_moments /
+> match_template / warp_affine / warp_perspective / resize / remap / calibrate / solve_pnp /
+> hough_lines / hough_circles / distance_transform / watershed / histogram / equalize / inrange /
+> cvt_color / subpixel_corner / optical_flow / barcode / qrcode / phase_correlate / ecc_align
+
+→ **産業プロファイルの到達に Rust/C の新規実装は不要**。Path C(最初からネイティブコア)を採る理由がさらに薄れる。
+
+**★ただし正直に区別すべきこと** — 問題は「ネイティブカーネルが無い」ことではなく
+**「OpenCV のアルゴリズム集合 ≠ HALCON のアルゴリズム集合」**である。HALCON が高価な理由そのものが OpenCV に無い:
+
+| HALCON の中核ツール | OpenCV の対応 | 実態 |
+|---|---|---|
+| **shape-based matching**(回転・スケール不変、サブピクセル、遮蔽耐性) | `matchTemplate` | **NCC テンプレートマッチのみ**。回転・スケール不変ではない = **別物** |
+| **XLD サブピクセル輪郭 + 計測** | `findContours` | **画素レベル**。サブピクセル輪郭の当てはめ・計測は無い |
+| **1D measure object**(`measure_pairs` 等のエッジ対計測) | — | 相当機能なし |
+
+→ **含意(戦略)**: cv2 で「速い産業プロファイル」は**すぐ届く**。
+  一方 **HALCON 級の差別化はこの 3 つ**にあり、そこは自前実装が要る。
+  そしてそこは **Fullseye の進化エンジンが新規性を出せる可能性がある唯一の領域**でもある
+  (op を 650 個並べることではなく、この 3 領域で「設計された」アルゴリズムを出すこと)。
+  ロードマップ上は **増分 2 = cv2 で産業成立 → 増分 5 = 差別化 3 領域を自前実装**、と位置づける。
+
 ---
 
 ## 2. 確定判断
