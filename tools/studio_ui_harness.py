@@ -156,13 +156,20 @@ def main() -> int:
     modal_closes = {"n": 0}
 
     def _kill_modal():
-        w = app.activeModalWidget()
-        if w is not None:
+        # Close BOTH a modal dialog (QDialog.exec) and a popup (QMenu.exec is a
+        # *popup*, not a modal widget — activeModalWidget() returns None for it,
+        # so a context menu would block the sweep forever without this).
+        closed = False
+        for getter in (app.activeModalWidget, app.activePopupWidget):
+            w = getter()
+            if w is not None:
+                try:
+                    w.close()
+                except Exception:
+                    pass
+                closed = True
+        if closed:
             modal_closes["n"] += 1
-            try:
-                w.close()
-            except Exception:
-                pass
     wd = QtCore.QTimer()
     wd.setInterval(30)
     wd.timeout.connect(_kill_modal)

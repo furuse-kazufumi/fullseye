@@ -1,0 +1,11 @@
+{
+  "ok": true,
+  "steps_ok": 183,
+  "steps_fail": 0,
+  "modal_closes": 9,
+  "graphics_windows": 8,
+  "findings": [],
+  "steplog": "C:\\dev\\projects\\imgevolve\\studio_ui_steps.jsonl",
+  "shots": "C:\\dev\\projects\\imgevolve\\out\\ui_harness_shots",
+  "crashlog": "C:\\dev\\projects\\imgevolve\\studio_ui_crash.log"
+}

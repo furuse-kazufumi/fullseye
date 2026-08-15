@@ -358,3 +358,10 @@
 {"step": "P8_layout", "phase_end": true, "ok": true, "detail": ""}
 {"step": "P9_context_all", "phase_start": true}
 {"step": "P9_context", "phase_start": true, "widget": "operators"}
+{"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P9_context", "phase_start": true, "widget": "pipeline"}
+{"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P9_context", "phase_start": true, "widget": "variables"}
+{"step": "P9_context", "phase_end": true, "ok": true, "detail": ""}
+{"step": "P9_context_all", "phase_end": true, "ok": true, "detail": ""}
+{"note": "sweep complete: ok=183 fail=0 modal_closes=9"}
