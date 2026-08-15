@@ -2446,6 +2446,7 @@ def build_window(model=None):
     act_remove.triggered.connect(remove)
     act_up.triggered.connect(lambda: move(-1)); act_down.triggered.connect(lambda: move(1))
     act_clear.triggered.connect(clear_pipe)
+    act_undo.triggered.connect(undo); act_redo.triggered.connect(redo)
     act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
     act_reset.triggered.connect(reset_to_raw)
