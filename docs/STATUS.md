@@ -17,8 +17,8 @@
 > - **P2b Operator 窓(引数入力+単発実行)— 済**: a/b の spinbox 引数入力、Insert はその値で挿入、**Run once ▷**=単発実行(`api.apply`)→結果を Graphics 窓表示・pipeline 不変、**op 名オートコンプリート**(QCompleter・contains)。
 > - **P3 サンプル読込導線 — 済**: SAMPLE PIPELINES にヒント+「Browse with code…」でギャラリーをパネルから到達可能に。
 > - **P4 iconic 変数モデル + パネル刷新 — 済(a/b/c/d)**: (a)Variable 窓の iconic 変数に **shape サムネイル**+iconic/control ラベル、ダブルクリック→Graphics 表示(既存)。(b)**Region 色 overlay**(`apply_display` の "region overlay"=binary region を source に amber 合成、View/combo に追加)。(c)**step 連動**(step_to で該当出力変数を var 窓でハイライト)。(d)**右クリック・コンテキストメニュー**(op/stage/var 各リスト)。残(P4e)=各パネル自己完結化・アイコンツールバー・変数編集。
-> - **P5 HDevelop script 構文・制御フロー — 未(次の大物)**: `op (params)` / `:=` / コメント / if・else・for・while、実行カーソル・breakpoint。
-> テスト = studio 53→**68 passed**、full suite 4285→**4296 passed / 0 fail**(各段で回帰なし)。全 local commit・push は都度。正本 = 本 STATUS『v18.7』+ `docs/HDEVELOP_FIDELITY.md`。
+> - **P5 HDevelop script 構文・制御フロー — 済**: Program 窓のパーサを HDevelop-style へ(module-level `parse_hdev_program`)。`op (a, b)`(括弧)+ `op a b`、`*`/`#` コメント、**`for N … endfor`(loop unrolling)**、**`if <定数条件> … else … endif`(静的分岐、< > <= >= = # 比較)**。while/elseif は runtime 変数要のため honest な unsupported エラー。生成も `op (a, b)` 形式。実行カーソル・breakpoint は既存(run_program)。残(P4e)= 各パネル自己完結・アイコンツールバー・変数編集。
+> テスト = studio 53→**69 passed**、full suite 4285→**4297 passed / 0 fail**(各段で回帰なし)。全 local commit・push は都度。**★HDevelop 同等機能仕様の中核(P1 メニュー / P2 Operator 窓=引数入力+単発実行+補完 / P3 サンプル / P4 iconic 変数=サムネイル+overlay+step連動+右クリック / P5 script 構文+制御フロー)を一通り実装完了。** 正本 = 本 STATUS『v18.7』+ `docs/HDEVELOP_FIDELITY.md`。
 >
 > **v18.6 (2026-08-15, Opus5[1m]/ultracode) = Fullseye Studio 窓レイアウト自由度の拡張(ユーザー指示「窓/レイアウト配置の自由度をさらに上げる」).** v18.5 の Studio v2(ドック+MDI+Float-all)を「不十分」との評価→ `studio.py` に4方向追加(全て offscreen headless テスト付き):
 > **(1) 名前付きレイアウトプリセット**=現在の geometry+dock/toolbar 配置(`saveState`/`saveGeometry`)を任意名で保存→適用→削除(QSettings 永続・offscreen は in-memory)。組込3種 `Balanced (default)` / `Graphics focus`(操作/表示/コード/変数 dock を隠しグラフィクス最大化)/ `Code focus`(Program dock 前面)。Windows▸Layouts を動的再構築=**フラット action 設計**(PySide6 `addMenu(str)` の submenu が Python 参照喪失で shiboken 削除される既知落とし穴を回避、テストで実証・修正済)。
