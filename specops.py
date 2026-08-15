@@ -111,7 +111,9 @@ __all__ = [
     "spec_pca", "spec_mnf",
     "spec_unmix", "spec_endmembers_ppi",
     "spec_continuum_removal",
+    "spec_pansharpen", "spec_decorrelation_stretch", "spec_fuse",
     "SPECTRALOPS",
+    "PANSHARPEN_METHODS", "FUSE_METHODS",
     "MAX_VOXELS", "MAX_FILE_BYTES", "MAX_BANDS",
 ]
 
