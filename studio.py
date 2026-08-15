@@ -2912,6 +2912,7 @@ def build_window(model=None):
         try:
             with open(path, encoding="utf-8") as fh:          # missing / permission
                 data = json.loads(fh.read())                  # malformed JSON
+            push_undo()
             model.load_dict(data)                             # schema + op-name validation
         except Exception as e:
             # load_dict validates into a temporary list before assigning, so the
