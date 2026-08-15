@@ -75,5 +75,8 @@ py-modules = [
 ]
 
 [tool.setuptools.package-data]
-# Runtime data (operator specs / reference tables) read at import time.
-"*" = ["data/*.json", "data/auto_specs/*.json"]
+# Runtime data (operator specs / reference tables) read at import time, plus the
+# Studio localisation + per-operator HTML help assets (studio.py loads these from
+# studio_assets/ at runtime; the loaders fall back gracefully when absent).
+"*" = ["data/*.json", "data/auto_specs/*.json",
+       "studio_assets/i18n.json", "studio_assets/op_help/*.html", "studio_assets/op_help/*.md"]
