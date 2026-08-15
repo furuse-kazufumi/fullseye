@@ -149,6 +149,43 @@ def test_profile_is_restored_after_the_block():
 
 
 # --------------------------------------------------------------------------- #
+# Fail-closed vs fail-open — the difference between a search engine and a line
+# --------------------------------------------------------------------------- #
+def test_the_evolution_registry_is_fail_open_and_fslib_must_not_be():
+    """The 650-op registry deliberately swallows op failures.
+
+    ``backends._safe`` wraps every op in ``except Exception: out = None`` and
+    ``backend_safe.sanitize`` then returns a *valid, benign value of the declared
+    sort* — for a region that is an empty region.  For the evolution search this
+    is right: a candidate that raises should score badly, not kill the run.
+
+    On a production line the same behaviour means a missing dependency or a
+    degenerate frame silently reports **no defects found**, and every part
+    passes.  That is fail-open on the judgement itself.
+
+    This test pins both halves: the registry's behaviour (so a change is noticed)
+    and fslib's opposite guarantee.
+    """
+    import backend_safe
+
+    # The registry's contract: a failed op becomes an empty region, not an error.
+    empty = backend_safe.sanitize(None, np.zeros((16, 16)), "region")
+    assert isinstance(empty, np.ndarray) and empty.sum() == 0.0
+    assert backend_safe.fallback(np.zeros((16, 16)), "feature") == 0.0
+
+    # fslib's contract: no result is an error, never a benign-looking value.
+    @fslib.op("always_raises_demo", "numpy")
+    def _boom(img):
+        raise RuntimeError("backend exploded")
+    try:
+        with fslib.profile("reference"):
+            with pytest.raises(RuntimeError):
+                fslib._dispatch("always_raises_demo", scene(32, 32, 1))
+    finally:
+        fslib._REGISTRY.pop("always_raises_demo", None)
+
+
+# --------------------------------------------------------------------------- #
 # Claim 3: the numpy implementation is the oracle — native must agree with it
 # --------------------------------------------------------------------------- #
 @needs_cv2
