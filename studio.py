@@ -860,7 +860,8 @@ def build_window(model=None):
     mv.addWidget(_group(QtWidgets, "EXPORT & I/O", xlay))
 
     # -- right: image view + display + perception + analysis ------------------ #
-    right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right); rv.setSpacing(10)
+    right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right); rv.setSpacing(6)
+    rv.setContentsMargins(6, 6, 6, 6)
     b_load = QtWidgets.QPushButton("Load image…"); b_demo = QtWidgets.QPushButton("Synthetic demo")
     b_save = QtWidgets.QPushButton("Save result…")
     b_load.setToolTip("Open an image file (Ctrl+O)")
