@@ -1049,15 +1049,17 @@ def test_default_layout_is_image_dominant():
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     assert isinstance(win.centralWidget(), QtWidgets.QMdiArea)          # image workspace is central
-    # Program (code) = wide bottom strip; op/var panels = a compact right column
+    # Program (code) = wide bottom strip; Operators = compact right column (visible)
     assert win.dockWidgetArea(win._docks["program"]) == QtCore.Qt.BottomDockWidgetArea
-    for key in ("operators", "variables", "pipeline", "display"):
+    assert win.dockWidgetArea(win._docks["operators"]) == QtCore.Qt.RightDockWidgetArea
+    assert not win._docks["program"].isHidden() and not win._docks["operators"].isHidden()
+    # the inspection panels start HIDDEN (on-demand) so the image owns the workspace
+    for key in ("variables", "pipeline", "display"):
         assert win.dockWidgetArea(win._docks[key]) == QtCore.Qt.RightDockWidgetArea, key
-    tabbed = set(win.tabifiedDockWidgets(win._docks["operators"]))
-    assert win._docks["variables"] in tabbed
-    assert win._docks["pipeline"] in tabbed
-    assert win._docks["display"] in tabbed
-    assert win._docks["program"] not in tabbed                          # Program lives in the bottom strip
+        assert win._docks[key].isHidden(), "%s should start hidden (on-demand)" % key
+    # each on-demand panel has a toggle action (toolbar + Window ▸ Panels) to bring it back
+    for key in ("variables", "pipeline", "display"):
+        assert win._docks[key].toggleViewAction() is not None
 
 
 def test_operator_arg_labels_reflect_selected_op():
