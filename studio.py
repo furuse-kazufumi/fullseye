@@ -2941,6 +2941,35 @@ def build_window(model=None):
     except Exception:
         pass
 
+    # -- compact icon buttons (the user asked for icons, not words) ----------- #
+    # Give every push-button a themed icon (icon + short label) so the toolbars read
+    # as an IDE, not a wall of text. Icons come from the Qt style (no asset files).
+    _sty = win.style(); _SP = QtWidgets.QStyle
+    _icon_for = [
+        ("open image", _SP.SP_DialogOpenButton), ("open pipeline", _SP.SP_DialogOpenButton),
+        ("load frame", _SP.SP_DialogOpenButton), ("load image", _SP.SP_DialogOpenButton),
+        ("save result", _SP.SP_DialogSaveButton), ("save pipeline", _SP.SP_DialogSaveButton),
+        ("synthetic demo", _SP.SP_FileDialogContentsView), ("demo", _SP.SP_FileDialogContentsView),
+        ("run all", _SP.SP_MediaPlay), ("run (timed)", _SP.SP_MediaPlay), ("run once", _SP.SP_MediaPlay),
+        ("run", _SP.SP_MediaPlay), ("step", _SP.SP_MediaSeekForward), ("reset", _SP.SP_MediaSkipBackward),
+        ("↑ up", _SP.SP_ArrowUp), ("↓ down", _SP.SP_ArrowDown), ("remove", _SP.SP_TrashIcon),
+        ("help", _SP.SP_MessageBoxQuestion), ("browse with code", _SP.SP_DirOpenIcon),
+        ("export", _SP.SP_FileDialogDetailedView), ("apply", _SP.SP_DialogApplyButton),
+        ("sync", _SP.SP_BrowserReload), ("3d surface", _SP.SP_FileDialogInfoView),
+        ("insert", _SP.SP_ArrowRight), ("display → new", _SP.SP_FileDialogNewFolder),
+        ("display → main", _SP.SP_DesktopIcon), ("zoom +", _SP.SP_ArrowUp),
+        ("zoom −", _SP.SP_ArrowDown), ("fit", _SP.SP_BrowserReload),
+    ]
+    for _b in win.findChildren(QtWidgets.QPushButton):
+        _t = _b.text().lower()
+        for _kw, _sp in _icon_for:
+            if _kw in _t:
+                try:
+                    _b.setIcon(_sty.standardIcon(_sp))
+                except Exception:
+                    pass
+                break
+
     refresh_stage_list(); show_result()      # refresh_stage_list syncs the knob panel
     state["dirty"] = False                   # a freshly-built window has nothing to lose
     state["renders"] = 0
