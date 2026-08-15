@@ -910,11 +910,8 @@ def test_tools_menu_holds_palette_and_language():
     """v18.7: Command palette (was in Run) and Language (was in Help) move to Tools."""
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
-    tmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Tools")
-    ttexts = [a.text() for a in tmenu.actions()]
+    ttexts = [a.text() for a in win._menus["tools"].actions()]
     assert any("palette" in t.lower() for t in ttexts)
     assert any("Language" in t for t in ttexts)
-    rmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Run")
-    assert not any("palette" in a.text().lower() for a in rmenu.actions())
-    hmenu = next(a.menu() for a in win.menuBar().actions() if a.text() == "&Help")
-    assert not any("Language" in a.text() for a in hmenu.actions())
+    assert not any("palette" in a.text().lower() for a in win._menus["run"].actions())
+    assert not any("Language" in a.text() for a in win._menus["help"].actions())
