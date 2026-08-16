@@ -2751,6 +2751,14 @@ def build_window(model=None):
         name = cur.data(QtCore.Qt.UserRole)
         row = _op_row(name)
         op_param.setText(op_signature_detail(row) if row else cur.text())
+        if row and row.get("backend") == "general":
+            # general-algorithm tier: read-only in the image UI (different seq/scalar
+            # model). No a/b knobs, and Insert / Run once / Help are image-pipeline
+            # actions that don't apply — run it via the CLI instead.
+            lbl_a.setText("a"); lbl_b.setText("b")
+            op_a_spin.setEnabled(False); op_b_spin.setEnabled(False)
+            b_insert.setEnabled(False); b_help.setEnabled(False); b_run_once.setEnabled(False)
+            return
         curated = name in _ARG_ROLES
         a_role, b_role = op_arg_roles(name)
         lbl_a.setText(_knob_label("a", a_role, curated))
