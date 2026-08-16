@@ -130,8 +130,7 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
 - **P1.5a(済, 2026-08-16)**: `imgevolve.py algo <list|run|emit-c|emit-py|difftest>` サブコマンドを追加
   (統一 CLI 入口。`algo run quicksort --seq 3,1,2` / `algo emit-c mergesort` / `algo difftest all`)。
   CLI 回帰テスト 2 件 + skill の CLI 例を更新。
-- **P1.5b(残)**: Studio の op ブラウザに general tier を出す(design 段階計画「Studio の op ブラウザに
-  新 tier を出す」。studio.py の op リストへ seq/scalar tier セクション追加=GUI 変更ゆえ次段)。
+- **P1.5b(完了 2026-08-17)**: Studio の op ブラウザに general(algo)tier を **read-only 表示**(下記記録)。
 - **P2(完了 2026-08-16)**: 数値計算 op を seq/scalar 型基盤の上に。**simpson / bisection / newton**
   (多項式・サンプルを入力 seq に内包する seq→scalar・既存 reduce ドライバに載る)+ **gauss_solve**
   (連立一次 Gauss 消去・部分ピボット=下記 P2 完遂記録)。honest gate = **C-vs-Python は bit 一致**
@@ -230,3 +229,25 @@ breadth は work-graph の difftest ゲート、敵対 findings 採否・push �
   が実 C を compile/run して被覆済 → 検証エージェントが mutation で健全性を確認し **棄却**。残る macOS
   cross-compile guard の軽微 nit(`_ALL`→`_ALL_OPS` で numeric/gauss も被覆)のみ採用。
 レビュー後も gauss difftest = python 3.55e-15 / C bit 一致 / c_verified=true・work-graph ノード(hardened)= done。
+
+## P1.5b 完遂記録 — Studio に general tier を read-only 表示(2026-08-17, Opus5[1m]/ultracode)
+**op ブラウザに general(algo)tier を表示。** 画像フォーカスを薄めない設計 = general op は seq/scalar の別
+計算モデルゆえ **read-only**(画像パイプラインに入れない)。
+- `api.list_ops(include_algo=False)` に opt-in パラメータ + `api.algo_rows()`(backend="general"・category "algo:*"・
+  tier "z_algo" で末尾ソート・halcon None・provenance 付き)。**既定は不変**(既存 caller は画像 op のみ=焦点維持)。
+- studio: `all_ops = list_ops(include_algo=True)` で browser に表示 / `_op_row` が algo フォールバック /
+  `op_signature_detail`・`op_tooltip` が general 分岐(「seq/scalar op・not an image op・run via CLI」+ provenance)/
+  `on_op_selected` が general 選択時に Insert・Run once・Help・a/b ノブを無効化 / `add_op`・`run_op_once`・
+  palette が general を flash 拒否。多重防御 = **`PipelineModel.add_stage` が画像 REGISTRY で KeyError fail-closed**。
+- **敵対レビュー(2 レンズ・実行検証)= 3 CONFIRMED(2 は同一根本原因)を全修正**:
+  - **[HIGH/MED] Program(HDevelop コード)エディタ「Apply → pipeline」が未ガード**: `op_names` を
+    `list_ops(include_algo=True)` から導出していたため general 名がコードパーサ/補完/Help ピッカーに伝播 →
+    `apply_program` が `model.stages=` 直書きで **add_stage backstop を迂回** → general op がパイプライン侵入。
+    → **`op_names` を画像限定に**(`backend != "general"` で除外。browser 表示 `all_ops` は general 保持)+
+    `apply_program` に general stage 拒否ガード(多重防御)。
+  - **[MED] Help ダイアログのピッカーが general を虚偽表示**(「Two knobs a,b tune this operator」)→ 同じ
+    `op_names` 画像限定化で Help ピッカーからも除外(root fix が両方を解消)。
+- 回帰テスト: `_op_row`/signature/tooltip の general 分岐、offscreen で browser が general を表示しつつ Insert 等が
+  無効・`win._op_names` が general 除外・コードパーサが general 行を拒否。全スイート緑・ruff net-new 0(新規テストは
+  clean、studio.py の flash は file の `%`-format idiom に一貫)・mypy 回帰 0。**候補 (d) op 波**も実演=全 12 algo op を
+  work-graph に 1 op=1 ノードで載せ `run-once` で無人 done。
