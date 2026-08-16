@@ -200,7 +200,7 @@ from imgio import (  # noqa: E402,F401
 from detect import segment_objects, object_descriptor, nearest_prototype, draw_objects  # noqa: E402,F401
 from synth import (  # noqa: E402,F401
     learn_features, synthesize_like, match_histogram, radial_power_spectrum,
-    feature_distance, patch_novelty,
+    feature_distance, patch_novelty, pyramid_stat_distance,
 )
 
 __all__ = [
