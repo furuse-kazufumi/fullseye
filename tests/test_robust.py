@@ -17,9 +17,15 @@ import robust
 UNIT = "dB PSNR"
 
 
-def _baseline(wd, hand=20.0, trivial=15.0):
+def _baseline(wd, hand=20.0, trivial=15.0, hand_locked=None, trivial_locked=None):
+    h = {"holdout": hand}
+    t = {"holdout": trivial}
+    if hand_locked is not None:
+        h["locked_holdout"] = hand_locked        # baseline.py scores hand on the locked split too
+    if trivial_locked is not None:
+        t["locked_holdout"] = trivial_locked
     (wd / "baseline_denoise.json").write_text(json.dumps({
-        "hand": {"holdout": hand}, "trivial": {"holdout": trivial},
+        "hand": h, "trivial": t,
         "config": {"n_train": 4, "n_holdout": 4, "size": 32, "seed": 0},
     }), encoding="utf-8")
 
