@@ -637,6 +637,54 @@ def test_dev_update_gates_and_resumes_display():
     assert win._dev_update_actions["_toolbar"].isChecked() is True
 
 
+def test_dev_directives_recognized_excluded_and_extracted():
+    """HDevelop dev_* display directives in a Program are recognized (not 'unknown op'),
+    excluded from the pipeline stages, and extractable in source order; an unsupported
+    dev_ op is an honest error."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    parse = win._program["parse"]
+    stages, errs = parse("dev_update_off ()\ngaussian (0.5, 0.5)\n"
+                         "dev_set_part (0, 0, 20, 20)\ndev_update_on ()")
+    assert not errs
+    assert [s[0] for s in stages] == ["gaussian"]          # dev_* are directives, not stages
+    _s, e2 = parse("dev_bogus ('x')")
+    assert any("unsupported dev_" in x for x in e2)
+    dirs = studio.extract_dev_directives(
+        "dev_update_window ('off')\ngaussian 0.5 0.5\ndev_set_part (1, 2, 30, 40)")
+    assert dirs == [("dev_update_window", ["off"]), ("dev_set_part", [1.0, 2.0, 30.0, 40.0])]
+
+
+def test_apply_program_applies_dev_update_directives():
+    """A Program's dev_update_off/on set the session display flags on apply."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._program["edit"].setPlainText("dev_update_off ()\ngaussian (0.5, 0.5)")
+    win._program["apply"]()
+    assert [s[0] for s in model.stages] == ["gaussian"]
+    assert all(v is False for v in win._state["dev_update"].values())    # dev_update_off applied
+    win._program["edit"].setPlainText("dev_update_on ()\ngaussian (0.5, 0.5)")
+    win._program["apply"]()
+    assert all(v is True for v in win._state["dev_update"].values())
+
+
+def test_dev_set_part_zooms_current_view():
+    """dev_set_part(Row1,Col1,Row2,Col2) fits the current view to that image part;
+    a smaller part zooms in further; a negative value fits the whole image."""
+    from PySide6 import QtGui
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(64)))
+    view = win._current_view()
+    view.set_pixmap(QtGui.QPixmap(64, 64))                 # deterministic content
+    win._set_part(0, 0, 63, 63)
+    m_full = view.transform().m11()
+    win._set_part(0, 0, 8, 8)                              # small part -> more zoom
+    m_zoom = view.transform().m11()
+    assert m_zoom > m_full
+    win._set_part(-1, -1, -1, -1)                          # fit whole, must not crash
+    assert view.transform().m11() == pytest.approx(m_full, rel=0.05)
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
