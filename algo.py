@@ -524,6 +524,18 @@ ALGO_REGISTRY: list[AlgoOp] = [
            _PY_SEQ_MIN, _C_SEQ_MIN,
            "Minimum element of a sequence (exact, order-independent).",
            "linear scan"),
+    AlgoOp("simpson", "numeric", SEQ, SCALAR, KIND_REDUCE, "simpson",
+           _PY_SIMPSON, _C_SIMPSON,
+           "Definite integral of samples [h, y0..y_{m-1}] by composite Simpson's rule.",
+           "Simpson's rule; composite, trapezoid tail for an odd interval", tol=1e-9),
+    AlgoOp("bisection", "numeric", SEQ, SCALAR, KIND_REDUCE, "bisection",
+           _PY_BISECTION, _C_BISECTION,
+           "Root of a polynomial in a bracket [lo,hi,c0..cn] by bisection (100 iters).",
+           "bisection method (Bolzano); Horner evaluation", tol=1e-6),
+    AlgoOp("newton", "numeric", SEQ, SCALAR, KIND_REDUCE, "newton",
+           _PY_NEWTON, _C_NEWTON,
+           "Root of a polynomial from x0 [x0,c0..cn] by Newton-Raphson.",
+           "Newton-Raphson; simultaneous Horner for p and p'", tol=1e-6),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
