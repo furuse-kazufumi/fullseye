@@ -145,7 +145,7 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
         # would make np.linalg.solve unstable or raise, i.e. a holdout bug rather than a
         # backend fault). Diagonal dominance guarantees a unique, well-conditioned
         # solution; a few row-permuted cases force the partial-pivoting path.
-        cases: list[list[float]] = []
+        cases = []
 
         def _pack(matrix: list[list[float]], x: list[float]) -> list[float]:
             nn = len(x)
