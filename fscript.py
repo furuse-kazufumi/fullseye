@@ -1094,7 +1094,7 @@ def _call_registry_op(name, args):
     # Every registered op is called as RT[name](input, a, b) — the registry has no
     # third knob.  A 4th argument used to be dropped in silence, so the op ran with
     # settings the script never wrote; say so instead.
-    if False and len(args) > 3:
+    if len(args) > 3:
         raise FScriptError(
             "op '%s' takes at most 3 arguments (input, a, b); got %d"
             % (name, len(args)))
