@@ -85,9 +85,13 @@ def main() -> int:
     out = {
         "problem": a.problem, "unit": unit, "seeds": a.seeds, "gens": a.gens,
         "baseline_hand": hand, "baseline_trivial": trivial,
+        "baseline_hand_locked": hand_lk, "baseline_trivial_locked": trivial_lk,
         "split_note": ("holdout_*/n_beat_hand/n_collapse_below_trivial = OBSERVED split "
-                       "(seed+10000, scored every generation, never selected on); "
-                       "*_locked = LOCKED split (seed+20000, scored once per seed)"),
+                       "(seed+10000, scored every generation, never selected on) vs the "
+                       "OBSERVED-split hand/trivial baseline; *_locked = LOCKED split "
+                       "(seed+20000, scored once per seed) vs the LOCKED-split baseline "
+                       "(baseline_*_locked). The locked tally is null unless the baseline "
+                       "file carries locked-split scores — never mixed with observed ones."),
         "selected_by_train": {"seed": best["seed"], "train": best["train"],
                               "holdout": best["holdout"],
                               "locked_holdout": best.get("locked_holdout"),
