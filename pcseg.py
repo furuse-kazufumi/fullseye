@@ -41,6 +41,21 @@ def _pts3(a) -> np.ndarray:
     return a
 
 
+def _consensus_floor(n: int, k: int, min_inliers, min_inlier_frac) -> int:
+    """Smallest inlier count a RANSAC hypothesis may have and still be called a model.
+
+    The *k* samples that generate a hypothesis always fit it, so self-support is not
+    consensus: the floor is ``k + 1`` unless the caller asks for more via
+    *min_inliers* (absolute count) or *min_inlier_frac* (fraction of the cloud) —
+    the strictest of the three wins, so the gate can only ever tighten."""
+    floor = k + 1
+    if min_inliers is not None:
+        floor = max(floor, int(min_inliers))
+    if min_inlier_frac is not None:
+        floor = max(floor, int(np.ceil(float(min_inlier_frac) * n)))
+    return floor
+
+
 # --- plane / primitive fitting ---------------------------------------------- #
 def fit_plane(points) -> np.ndarray:
     """Total-least-squares plane through all points (PCA).
