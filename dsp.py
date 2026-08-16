@@ -7,7 +7,9 @@ design→measure→decide→signal-the-line loop the image side uses.
 
 Core is numpy + scipy (already required). WAV I/O uses the stdlib ``wave`` module
 (native, no deps); other audio formats come through the optional ``soundfile``
-extra. Signals are float64 in ``[-1, 1]``.
+extra. Signals are float64 in ``[-1, 1]`` and must be **finite** — a NaN / Inf
+sample is refused with ``ValueError`` (fail-closed, as in volops / complexops /
+specops) instead of quietly turning every downstream feature into NaN.
 
     import fullseye
     x, rate = fullseye.read_wav("knock.wav")

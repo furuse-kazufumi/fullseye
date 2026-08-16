@@ -1091,6 +1091,13 @@ def _call_registry_op(name, args):
         return _NO_OP
     if not args:
         raise FScriptError("op '%s' needs an input image/region" % name)
+    # Every registered op is called as RT[name](input, a, b) — the registry has no
+    # third knob.  A 4th argument used to be dropped in silence, so the op ran with
+    # settings the script never wrote; say so instead.
+    if len(args) > 3:
+        raise FScriptError(
+            "op '%s' takes at most 3 arguments (input, a, b); got %d"
+            % (name, len(args)))
     inp = args[0]
     a = float(args[1]) if len(args) > 1 else 0.5
     b = float(args[2]) if len(args) > 2 else 0.5
