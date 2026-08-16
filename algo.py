@@ -1126,6 +1126,7 @@ int graph_dijkstra(const double* a, int n_in, double* out) {
         double w = a[3 + 3 * k + 2];
         if (u < 0 || u >= n || v < 0 || v >= n || w < 0.0) return 0;
     }
+    if (!out) return n;                                /* size probe: out_len = n (>= input len when sparse) */
     char* settled = (char*)calloc((size_t)n, 1);
     if (!settled) return 0;
     for (int i = 0; i < n; i++) out[i] = -1.0;
