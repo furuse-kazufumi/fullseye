@@ -744,6 +744,20 @@ def test_system_settings_dialog_constructs_headless():
     assert win._act_system_settings.text().startswith("System settings")
 
 
+def test_set_system_program_directive():
+    """HALCON set_system(param, value) in a Program is a config directive (not a
+    pipeline stage) and applies the setting."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    stages, errs = win._program["parse"]("set_system ('thread_num', 2)\ngaussian (0.5, 0.5)")
+    assert not errs
+    assert [s[0] for s in stages] == ["gaussian"]         # set_system is a directive, not a stage
+    win._apply_dev_directives("set_system ('operator_timeout', 300)")
+    assert win._get_system_param("operator_timeout") == 300
+    assert studio.extract_dev_directives("set_system ('thread_num', 4)") == \
+        [("set_system", ["thread_num", 4.0])]
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
