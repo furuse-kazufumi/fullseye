@@ -69,6 +69,55 @@ def test_fit_cylinder_ransac_recovers_axis_radius():
     assert inl.mean() > 0.9
 
 
+def _blob(seed, n=300, scale=0.5):
+    """A gaussian blob + random normals: no sphere and no cylinder in it."""
+    rng = np.random.default_rng(seed)
+    P = rng.normal(0, scale, (n, 3))
+    N = rng.normal(size=(n, 3))
+    N /= np.linalg.norm(N, axis=1, keepdims=True)
+    return P, N
+
+
+def test_ransac_rejects_self_supporting_hypotheses():
+    # the 4 (sphere) / 2 (cylinder) samples always fit the model they generated, so
+    # without a consensus gate every cloud yields a confident-looking fit backed by
+    # nothing but its own samples. No model => None, not a meaningless one.
+    for seed in range(4):
+        P, N = _blob(seed, n=20, scale=1.0)
+        assert pcseg.fit_sphere_ransac(P, thresh=1e-6, iters=200, seed=seed) is None
+        assert pcseg.fit_cylinder_ransac(P, N, thresh=1e-6, iters=200, seed=seed) is None
+
+
+def test_ransac_consensus_gate_rejects_blob_keeps_real_shapes():
+    # a blob has no primitive in it: demanding that the model explain half the cloud
+    # must come back empty-handed ...
+    P, N = _blob(0)
+    assert pcseg.fit_cylinder_ransac(P, N, thresh=0.01, iters=300,
+                                     min_inlier_frac=0.5) is None
+    assert pcseg.fit_sphere_ransac(P, thresh=0.01, iters=300,
+                                   min_inlier_frac=0.5) is None
+    assert pcseg.fit_cylinder_ransac(P, N, thresh=0.01, iters=300,
+                                     min_inliers=150) is None
+
+    # ... while the same gate leaves a genuine cylinder / sphere untouched.
+    rng = np.random.default_rng(11)
+    w0 = np.array([0.0, 0.0, 1.0])
+    e1, e2 = np.array([1.0, 0.0, 0.0]), np.array([0.0, 1.0, 0.0])
+    th = rng.uniform(0, 2 * np.pi, 500)
+    radial = np.cos(th)[:, None] * e1 + np.sin(th)[:, None] * e2
+    Pc = np.array([1.0, 1.0, 0.0]) + 1.5 * radial + rng.uniform(-2, 2, 500)[:, None] * w0
+    ax_pt, ax_dir, r, inl = pcseg.fit_cylinder_ransac(Pc, radial, thresh=0.02,
+                                                      iters=400, min_inlier_frac=0.5)
+    assert abs(r - 1.5) < 0.05 and inl.mean() > 0.9
+
+    dirs = rng.normal(size=(400, 3))
+    dirs /= np.linalg.norm(dirs, axis=1, keepdims=True)
+    Ps = np.array([1.0, -2.0, 3.0]) + 2.5 * dirs + rng.normal(0, 0.003, (400, 3))
+    c, sr, sinl = pcseg.fit_sphere_ransac(Ps, thresh=0.03, iters=300,
+                                          min_inlier_frac=0.5)
+    assert abs(sr - 2.5) < 0.05 and sinl.mean() > 0.9
+
+
 def test_height_above_plane_signed_up():
     P = np.array([[0, 0, 0.0], [0, 0, 1.0], [0, 0, 2.0], [1, 1, 0.5]])
     plane = np.array([0.0, 0.0, 1.0, 0.0])         # z = 0
