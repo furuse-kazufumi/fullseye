@@ -216,6 +216,37 @@ def test_op_browser_general_tier_is_readonly_offscreen():
         _model.add_stage("strfind")              # not an image-pipeline op
 
 
+def test_hdev_program_rejects_general_tier_op():
+    # P1.5b review: the code parser / autocomplete / Help picker must use IMAGE-only
+    # names, so a general-algorithm op cannot become a valid image-pipeline token (which
+    # apply_program would write straight into model.stages, bypassing add_stage's KeyError
+    # backstop). An image op still parses; a general op is rejected with an error.
+    import algo
+    names = studio.api.op_names()                       # image REGISTRY names (what the window uses)
+    assert not (set(names) & set(algo.algo_names()))    # no general op is a valid program token
+    stages, errs = studio.parse_hdev_program("gaussian (0.4, 0.5)", names)
+    assert not errs and stages[0][0] == "gaussian"
+    for gop in ("strfind", "gauss_solve", "quicksort"):
+        st, er = studio.parse_hdev_program("%s (0.5, 0.5)" % gop, names)
+        assert er and not st, "general op %r must be rejected by the image code parser" % gop
+
+
+def test_program_editor_and_help_exclude_general_tier_offscreen():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    import algo
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    # the browser SHOWS the general tier (read-only) ...
+    shown = [win._op_list.item(i).data(__import__("PySide6.QtCore", fromlist=["Qt"]).Qt.UserRole)
+             for i in range(win._op_list.count())]
+    assert set(algo.algo_names()) <= set(shown)
+    # ... but the code parser / autocomplete / Help picker names EXCLUDE it
+    assert "gaussian" in win._op_names
+    assert not (set(win._op_names) & set(algo.algo_names()))
+
+
 def test_region_overlay_display_mode():
     """v18.7 P4b: 'region overlay' blends a binary region onto the source image
     (HDevelop's dev_display of a region on the current image)."""
