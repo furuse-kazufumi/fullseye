@@ -383,6 +383,36 @@ def feature_distance(a, b) -> dict:
             "mean_diff": abs(fa["mean"] - fb["mean"]), "std_diff": abs(fa["std"] - fb["std"])}
 
 
+def pyramid_stat_distance(a, b, levels: int = 4, bins: int = 64) -> float:
+    """Mean chi-square distance between two images' PER-SCALE band marginals (0 = same).
+
+    Builds a Laplacian pyramid of each and compares, band by band on a COMMON value
+    range, the marginal histogram of each band. This measures exactly what the
+    ``pyramid`` method matches and the single-band ``spectral`` method does not — so it
+    is the honest metric for the multi-scale synthesis (small for a pyramid synthesis,
+    larger for a spectral one on a texture with scale-dependent marginals). Isotropic /
+    marginal-only, matching the synthesis's scope.
+    """
+    la = _laplacian_pyramid(_gray01(a), levels)
+    lb = _laplacian_pyramid(_gray01(b), levels)
+    n = min(len(la), len(lb))
+    if n == 0:
+        return float("inf")
+    tot = 0.0
+    for i in range(n):
+        ba, bb = la[i], lb[i]
+        lo = min(float(ba.min()), float(bb.min()))
+        hi = max(float(ba.max()), float(bb.max()))
+        if hi <= lo:
+            hi = lo + 1e-9
+        ha, _ = np.histogram(ba, bins=bins, range=(lo, hi))
+        hb, _ = np.histogram(bb, bins=bins, range=(lo, hi))
+        ha = ha.astype(np.float64) / max(1, ha.sum())
+        hb = hb.astype(np.float64) / max(1, hb.sum())
+        tot += 0.5 * float(np.sum((ha - hb) ** 2 / (ha + hb + 1e-12)))
+    return tot / n
+
+
 def patch_novelty(synth, source, block: int = 16, n: int = 48, seed: int = 0,
                   max_source_blocks: int = 20000) -> float:
     """Mean nearest-patch distance from *synth* back to *source* (higher = more novel).
