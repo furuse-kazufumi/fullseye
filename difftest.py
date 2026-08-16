@@ -139,7 +139,7 @@ def main() -> int:
                 got = np.asarray(gen.pipeline(inp[i].astype(np.float64)), np.float64)
                 c_max = max(c_max, float(np.max(np.abs(got - cout[i]))))
             result["c_backend"] = {"status": "ran", "c_vs_python_max_abs_diff": c_max,
-                                   "pass": c_max < 1e-3}  # float32 + kernel rounding tolerance
+                                   "pass": c_max < a.c_tol}  # --c-tol: float32 + kernel rounding
         except subprocess.CalledProcessError as e:
             result["c_backend"] = {"status": "compile_error", "detail": (e.stderr or str(e))[-400:]}
 

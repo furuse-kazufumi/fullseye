@@ -182,7 +182,7 @@ def envelope(x):
 def rms(x, frame=None, hop=None):
     """RMS level. Scalar for the whole signal, or a framewise array when *frame*
     is given (a vibration/energy envelope over time)."""
-    x = np.asarray(x, np.float64)
+    x = _require_finite(x)
     if frame is None:
         return float(np.sqrt(np.mean(x * x))) if x.size else 0.0
     frame = int(frame)
