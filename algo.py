@@ -1015,6 +1015,10 @@ ALGO_REGISTRY: list[AlgoOp] = [
            _PY_LCS_LENGTH, _C_LCS_LENGTH,
            "Longest-common-subsequence length of two strings [na, A(na), B] (two-row DP).",
            "longest common subsequence; two-row dynamic programming"),
+    AlgoOp("graph_components", "graph", SEQ, SCALAR, KIND_REDUCE, "graph_components",
+           _PY_GRAPH_COMPONENTS, _C_GRAPH_COMPONENTS,
+           "Connected-component count of an undirected graph [n, m, (u,v,w)*m] (union-find).",
+           "union-find (path halving); connected components"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
