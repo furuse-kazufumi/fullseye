@@ -92,7 +92,7 @@ def make_holdout(seed: int = 0, n_random: int = 40, max_len: int = 257) -> list[
 # --------------------------------------------------------------------------- #
 # oracle / backends
 # --------------------------------------------------------------------------- #
-def _oracle(op: "algo.AlgoOp", arr: list[float]):
+def _oracle(op: algo.AlgoOp, arr: list[float]):
     a = np.asarray(arr, np.float64)
     if op.kind == algo.KIND_SORT:
         return np.sort(a, kind="stable").tolist()
