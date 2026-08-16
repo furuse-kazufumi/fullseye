@@ -44,6 +44,11 @@ def main() -> int:
         if (wd / f"baseline_{a.problem}.json").exists() else {}
     hand = base.get("hand", {}).get("holdout")       # baseline.py writes 'holdout', not 'score'
     trivial = base.get("trivial", {}).get("holdout")
+    # The locked tally MUST use a locked-split baseline, not the observed one, or a
+    # number labelled "locked" is compared against an observed-split threshold. These
+    # are null for a baseline file written before locked-split scoring existed.
+    hand_lk = base.get("hand", {}).get("locked_holdout")
+    trivial_lk = base.get("trivial", {}).get("locked_holdout")
     unit = None
 
     champs = []
