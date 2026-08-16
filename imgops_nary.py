@@ -215,7 +215,13 @@ def verify() -> dict:
             out = op.fn([x.copy() for x in io], 0.5, 0.4)
             ok = isinstance(out, np.ndarray) and out.ndim == 2 and np.all(np.isfinite(out))
             if ok and op.out_sort == REG:
-                ok = out.min() >= 0 and out.max() <= 1
+                ok = set(np.unique(np.round(out, 6)).tolist()) <= {0.0, 1.0}
+                if not ok:
+                    failed.append("%s:region not binary {0,1}" % op.halcon)
+                    continue
+            if ok and out.shape == io[0].shape and float(np.max(np.abs(out - io[0]))) <= 1e-9:
+                failed.append("%s:identity on canonical inputs" % op.halcon)
+                continue
             (passed if ok else failed).append(op.halcon)
         except Exception as e:  # noqa: BLE001
             failed.append("%s:%r" % (op.halcon, e))
