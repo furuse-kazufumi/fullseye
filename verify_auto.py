@@ -80,8 +80,12 @@ def _check_sort(out, sort, shape):
     changed = out.shape != shape or float(np.max(np.abs(out - _REF.get(id(shape), out)))) > 1e-9
     if sort == "region":
         vals = np.unique(np.round(out, 6))
-        binary = set(vals.tolist()) <= {0.0, 1.0} or (out.min() >= 0 and out.max() <= 1)
-        return binary, changed, "" if binary else "region not in [0,1]"
+        # A region is a SET of pixels: {0,1}. The old fallback clause
+        # (`or (out.min() >= 0 and out.max() <= 1)`) accepted ANY grayscale image
+        # in range, so an op declaring "region" that returned the input untouched
+        # passed the gate.
+        binary = set(vals.tolist()) <= {0.0, 1.0}
+        return binary, changed, "" if binary else "region not binary {0,1} (%d values)" % vals.size
     return True, changed, ""
 
 
