@@ -542,7 +542,12 @@ def recover_pose(E, uv1, uv2, K, K2=None):
     correspondences for each, and returns the ``(R, t, mask)`` under which the most
     points lie in front of both cameras (cheirality, H&Z §9.6.3). ``R, t`` map the
     first camera frame to the second (``X2 = R @ X1 + t``); ``mask`` marks the
-    triangulated points that are in front of both."""
+    triangulated points that are in front of both.
+
+    Raises ``ValueError`` when *no* candidate puts a single point in front of both
+    cameras: the pair is degenerate (zero baseline / pure rotation, all-identical
+    correspondences) and the cheirality test cannot pick a pose, so returning the
+    arbitrary best-of-four would be a silent fabrication."""
     a = _pts2(uv1)
     b = _pts2(uv2)
     K = _K3(K)
