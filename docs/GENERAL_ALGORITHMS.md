@@ -132,6 +132,10 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   CLI 回帰テスト 2 件 + skill の CLI 例を更新。
 - **P1.5b(残)**: Studio の op ブラウザに general tier を出す(design 段階計画「Studio の op ブラウザに
   新 tier を出す」。studio.py の op リストへ seq/scalar tier セクション追加=GUI 変更ゆえ次段)。
-- **P2**: 数値計算(二分法/Newton/Simpson/Gauss)op 族。scalar/seq に加え `numeric` 系。
-  累積順序に注意し tol の扱いを honest に(bit 一致でなく数値許容差を明示)。
+- **P2(一部完了 2026-08-16)**: 数値計算 op を seq/scalar 型基盤の上に。**完了 = simpson / bisection /
+  newton**(多項式・サンプルを入力 seq に内包する seq→scalar・既存 reduce ドライバに載る)。honest gate =
+  **C-vs-Python は bit 一致**(同一アルゴリズム + `-ffp-contract=off` で FMA 抑止)/ **Python-vs-oracle は
+  数値許容差**(`AlgoOp.tol`)で独立 oracle(simpson=scipy / 求根=残差 |p(root)|)照合。実測=C diff 0.0・
+  oracle diff ≤ 1e-15〜1e-16。fail-soft を honest 文書化。**残 = gauss_solve**(連立一次=seq→seq 可変長
+  出力ゆえドライバへ `[out_len, values...]` モード追加が前提=次段)。
 - P3 文字列(+`text` 型)/ P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。

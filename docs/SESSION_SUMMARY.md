@@ -3,49 +3,47 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 17:49:41
+- **最終更新**: 2026-08-16 18:43:52
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-ee1d47a type-model review fixes: Seq copies+immutable, value equality, reject non-numeric
-2295f43 auto: test_fstypes.py 編集前 (2026-08-16 17:44)
-99f549a auto: test_fstypes.py 編集前 (2026-08-16 17:44)
-82611d2 auto: fslib.py 編集前 (2026-08-16 17:43)
-8052bf4 auto: fslib.py 編集前 (2026-08-16 17:43)
-53f5466 type-model: Seq/Scalar control values + unified sort vocabulary in fslib (foundation)
-c9d1ae2 auto: fslib.py 編集前 (2026-08-16 17:37)
-516838e auto: fslib.py 編集前 (2026-08-16 17:36)
-c3354e0 auto: fslib.py 編集前 (2026-08-16 17:36)
-f239804 auto: fslib.py 編集前 (2026-08-16 17:36)
+066d08f auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-16 18:43)
+adc6908 auto: test_algo.py 編集前 (2026-08-16 18:41)
+f223deb auto: algo.py 編集前 (2026-08-16 18:41)
+3fc741e auto: test_algo.py 編集前 (2026-08-16 18:40)
+7294f23 auto: test_algo.py 編集前 (2026-08-16 18:40)
+9af2a5f auto: test_algo.py 編集前 (2026-08-16 18:40)
+c5f8997 auto: test_algo.py 編集前 (2026-08-16 18:39)
+0407915 auto: algo_difftest.py 編集前 (2026-08-16 18:38)
+c0d1142 auto: algo_difftest.py 編集前 (2026-08-16 18:38)
+dc753e5 auto: algo_difftest.py 編集前 (2026-08-16 18:38)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M docs/GENERAL_ALGORITHMS.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-17:48 .pytest_cache/v/cache/nodeids
-17:45 docs/SESSION_SUMMARY.md
-17:44 .pytest_cache/v/cache/lastfailed
-17:44 .ruff_cache/0.16.0/7363606932562918290
+18:43 docs/GENERAL_ALGORITHMS.md
+18:41 .pytest_cache/v/cache/nodeids
+18:41 .pytest_cache/v/cache/lastfailed
+18:41 tests/test_algo.py
+18:41 algo.py
+18:40 .ruff_cache/0.16.0/7363606932562918290
+18:40 .ruff_cache/0.16.0/2128910586982079947
+18:38 algo_difftest.py
+17:49 docs/SESSION_SUMMARY.md
 17:44 tests/test_fstypes.py
-17:44 .ruff_cache/0.16.0/2128910586982079947
 17:43 fslib.py
 17:38 .ruff_cache/0.16.0/8689656194404726249
 17:38 .ruff_cache/0.16.0/15181651514195995246
-16:41 fullseye.egg-info/SOURCES.txt
-16:41 fullseye.egg-info/top_level.txt
-16:41 fullseye.egg-info/requires.txt
-16:41 fullseye.egg-info/entry_points.txt
-16:41 fullseye.egg-info/dependency_links.txt
-16:41 fullseye.egg-info/PKG-INFO
 ```
 
 ---
