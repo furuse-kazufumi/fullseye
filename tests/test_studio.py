@@ -819,6 +819,21 @@ def test_region_style_menu_syncs_with_draw_state():
     assert win._state["draw"]["mode"] == "margin"
 
 
+def test_sample_images_and_dev_visual_demo():
+    """The collected license-clean sample images load, and the dev_* visualization
+    demo loads a real image + a Program that actually USES the dev_* ops."""
+    import sample_images
+    assert "coins" in sample_images.names() and "blobs" in sample_images.names()
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    win._load_sample_image("blobs")
+    assert model.image is not None and model.image.shape[:2] == (256, 256)
+    win._load_visual_demo()
+    assert [s[0] for s in model.stages] == ["gaussian", "otsu"]     # dev_* are directives
+    assert win._state["draw"]["mode"] == "margin"                   # dev_set_draw applied
+    assert win._state["draw"]["color"] == (0.0, 1.0, 1.0)           # dev_set_color('cyan')
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
