@@ -3224,6 +3224,11 @@ def build_window(model=None):
                     win._set_display_mode(match)       # only Studio's display-mode LUTs are honoured
             elif name == "dev_clear_window":
                 _current_view().clear()
+            elif name == "set_system" and len(args) >= 2:
+                try:
+                    _set_system_param(str(args[0]), args[1])   # HALCON set_system(param, value)
+                except (TypeError, ValueError):
+                    pass
     win._apply_dev_directives = apply_dev_directives
 
     # -- HALCON set_system-style global configuration (Tools > System settings) ----- #
