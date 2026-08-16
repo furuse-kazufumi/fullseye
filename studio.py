@@ -1877,7 +1877,10 @@ def build_window(model=None):
              # per-stage operator timeout in ms (0 = off; a slow stage is flagged — native
              # ops cannot be hard-interrupted, same honest limit as fsruntime). Fullseye's
              # runtime error mode is always fail-closed. See docs/HDEVELOP_DEV_OPS.md (F).
-             "system": {"threads": 0, "operator_timeout_ms": 0}}
+             "system": {"threads": 0, "operator_timeout_ms": 0},
+             # HDevelop dev_set_draw / dev_set_color / dev_set_line_width: how a region
+             # result is drawn over the source in the 'region overlay' display mode.
+             "draw": {"mode": "fill", "color": (0.96, 0.62, 0.14), "line_width": 1, "alpha": 0.5}}
     pmodel = PerceptionModel()
 
     # -- behaviour --
