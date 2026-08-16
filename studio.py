@@ -3154,6 +3154,33 @@ def build_window(model=None):
     act_upd.triggered.connect(lambda on: set_dev_update("all", on))
     tb.addAction(act_upd); win._dev_update_actions["_toolbar"] = act_upd
 
+    def _set_part(r1, c1, r2, c2):
+        """dev_set_part: set the displayed image part of the CURRENT graphics window."""
+        _current_view().set_part(r1, c1, r2, c2)
+    win._set_part = _set_part
+
+    def apply_dev_directives(text):
+        """Apply a program's dev_* display directives (source order): dev_update_* /
+        dev_update_off|on set the display-update flags; dev_set_part zooms the current
+        view. Studio's runner batches stage evaluation, so these set the SESSION
+        display state (the last value of each wins) rather than executing inline per
+        line — see docs/HDEVELOP_DEV_OPS.md."""
+        for name, args in extract_dev_directives(text):
+            if name == "dev_update_off":
+                set_dev_update("all", False)
+            elif name == "dev_update_on":
+                set_dev_update("all", True)
+            elif name in ("dev_update_window", "dev_update_var",
+                          "dev_update_pc", "dev_update_time"):
+                on = not (args and str(args[0]).lower() in ("off", "0", "0.0", "false"))
+                set_dev_update(name[len("dev_update_"):], on)
+            elif name == "dev_set_part" and len(args) >= 4:
+                try:
+                    _set_part(int(args[0]), int(args[1]), int(args[2]), int(args[3]))
+                except (TypeError, ValueError):
+                    pass
+    win._apply_dev_directives = apply_dev_directives
+
     def load_frame_b():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open frame B", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
