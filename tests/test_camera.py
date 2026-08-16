@@ -192,6 +192,17 @@ def test_recover_pose_from_essential():
     assert np.allclose(t, s["t"] / np.linalg.norm(s["t"]), atol=1e-3)
 
 
+def test_recover_pose_rejects_degenerate_pair():
+    """Zero baseline (pure rotation) leaves cheirality with nothing to decide:
+    all four candidates put 0 points in front, so the failure must be raised, not
+    papered over with an arbitrary pose and an all-False mask."""
+    s = _scene(seed=0)
+    uv2, _ = camera.project_points(s["Xw"], s["K"], s["R"], np.zeros(3))
+    E = camera.essential_matrix(s["uv1"], uv2, s["K"])
+    with pytest.raises(ValueError, match="degenerate correspondences"):
+        camera.recover_pose(E, s["uv1"], uv2, s["K"])
+
+
 def test_essential_from_fundamental_matches_direct():
     s = _scene()
     F = camera.fundamental_matrix(s["uv1"], s["uv2"])
