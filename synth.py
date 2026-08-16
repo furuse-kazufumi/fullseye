@@ -34,8 +34,12 @@ import numpy as np
 from scipy import ndimage
 
 __all__ = [
-    "learn_features", "synthesize_like", "match_histogram",
-    "radial_power_spectrum", "feature_distance", "patch_novelty",
+    "feature_distance",
+    "learn_features",
+    "match_histogram",
+    "patch_novelty",
+    "radial_power_spectrum",
+    "synthesize_like",
 ]
 
 
@@ -185,8 +189,8 @@ def _synth_patch(img: np.ndarray, shape, seed: int, block: int, overlap: int, to
     out = np.zeros((H, W), np.float64)
     filled = np.zeros((H, W), bool)
     # all candidate top-left corners in the exemplar
-    ys = list(range(0, h - block + 1)) or [0]
-    xs = list(range(0, w - block + 1)) or [0]
+    ys = list(range(h - block + 1)) or [0]
+    xs = list(range(w - block + 1)) or [0]
     corners = [(yy, xx) for yy in ys for xx in xs]
     for oy in range(0, H, step):
         for ox in range(0, W, step):
@@ -295,8 +299,8 @@ def patch_novelty(synth, source, block: int = 16, n: int = 48, seed: int = 0) ->
     b = int(min(block, s.shape[0], s.shape[1], src.shape[0], src.shape[1]))
     b = max(2, b)
     rng = np.random.default_rng(seed)
-    sy = list(range(0, src.shape[0] - b + 1)) or [0]
-    sx = list(range(0, src.shape[1] - b + 1)) or [0]
+    sy = list(range(src.shape[0] - b + 1)) or [0]
+    sx = list(range(src.shape[1] - b + 1)) or [0]
     src_blocks = np.stack([src[y:y + b, x:x + b] for y in sy for x in sx]).reshape(len(sy) * len(sx), -1)
     dists = []
     for _ in range(n):

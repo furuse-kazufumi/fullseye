@@ -73,7 +73,7 @@ py-modules = [
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "bench",
-  "algo", "algo_codegen", "algo_difftest",
+  "algo", "algo_codegen", "algo_difftest", "synth",
   "sweep", "graph", "graph_seed", "lib_coverage",
   "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
   "fscript", "fslib", "fsruntime",
