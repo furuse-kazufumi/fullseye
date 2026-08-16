@@ -70,6 +70,9 @@ import volops  # noqa: E402  (3-D volume analysis: Frangi/Sato/label/distance/re
 import complexops  # noqa: E402  (complex/FFT-domain ops + 2-D phase unwrap [HALCON has none])
 import specops  # noqa: E402  (multispectral/hyperspectral cube: ENVI + SAM + unmix + band math)
 import videops  # noqa: E402  (video / temporal (T,H,W): temporal denoise, bg-subtract, motion, spatiotemporal filters)
+import algo  # noqa: E402  (general-algorithm tier: seq/scalar sorts+reductions with Python+C references)
+import algo_codegen  # noqa: E402  (standalone Python/C emission for the general tier)
+import algo_difftest as _algo_difftest  # noqa: E402  (honest gate: Python==oracle, C==Python bit-for-bit)
 from videops import (  # noqa: E402,F401
     temporal_mean, temporal_median, temporal_std, temporal_max, temporal_min,
     frame_difference, background_subtraction, temporal_gradient, motion_energy,
