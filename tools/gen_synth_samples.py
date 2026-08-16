@@ -84,8 +84,9 @@ def _exemplar_brick(seed: int = 0) -> np.ndarray:
 _SAMPLES = {
     "grain_synth": (_exemplar_grain(0), "spectral", {"seed": 11}, "1/f grain (spectral synthesis)"),
     "weave_synth": (_exemplar_weave(0), "spectral", {"seed": 12}, "fabric weave (spectral synthesis)"),
-    "brick_quilt": (_exemplar_brick(), "patch",
-                    {"seed": 13, "block": 48, "overlap": 12}, "brick wall (image quilting)"),
+    "brick_quilt": (_exemplar_brick(0), "patch",
+                    {"seed": 13, "block": 40, "overlap": 12, "size": (320, 320)},
+                    "brick wall, enlarged (image quilting)"),
 }
 
 
