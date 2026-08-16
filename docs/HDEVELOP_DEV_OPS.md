@@ -74,6 +74,14 @@ HDevelop IDE 内部の制御で、Fullseye Studio の設計デモ用途では不
 
 各段は offscreen テスト + `tools/studio_ui_harness.py`(192 steps)で回帰確認。
 
+**実装状況(2026-08-16)**: Phase A(`dev_update_window/var/pc/time` + `dev_update_off/on`)= **済**
+(`state["dev_update"]` / View▸Display updates / ツールバー Auto-update / Program directive)。
+Phase B(`dev_set_part`)= **済**(`ImageView.set_part` / `win._set_part` / directive)。
+Program パーサは `dev_*` を directive として認識(未対応 dev_ はエラー)、`extract_dev_directives`
+で source 順収集、`apply_program` が元テキストから適用。studio 88 passed / harness 202・0 fail。
+次(○)= `dev_clear_window` / `dev_disp_text` / `dev_set_lut`(display mode)/ `dev_set_draw`
+(region overlay)を script directive 面へ配線(UI では既に対応済み)。
+
 ## F. System / 設定系 op(ユーザー指摘・System 章 140 op)
 HALCON はグローバル設定を `set_system`/`get_system`(パラメータ名+値)で行う。HDevelop は
 `dev_set_system`/`dev_get_system`(IDE 実行系)+ `dev_set_preferences`/`dev_get_preferences`
