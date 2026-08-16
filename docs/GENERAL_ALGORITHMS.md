@@ -167,9 +167,10 @@ breadth は work-graph の difftest ゲート、敵対 findings 採否・push �
 - **work-graph ノード化**: `raptor-worklog add --capability tool --project imgevolve --priority 0`(spec=
   `tools/algo_gate.py --op gauss_solve --out <OUT>`、produces=`<OUT>/gate_ok.json`)→ `run-once --available
   tool:command` で **無人実行 → status=done**(exit0・c_verified=true・bit 一致マーカー生成)。
-- **回帰**: `tests/test_algo.py` に gauss + algo_gate + C fail-soft テスト群を追加。私の全ファイル
-  **ruff clean**・mypy 回帰 0(既存 baseline=scipy/ziglang stub 欠如と difftest 署名の既存 quirk のみ、私の
-  追加行由来 0)。全 local commit・**未 push=human-gate**。
+- **回帰**: `tests/test_algo.py` に gauss + algo_gate + C fail-soft + require_c テスト群を追加(算法テスト
+  **93 passed**)、全スイート **4649 passed / 0 failed**(レビュー前 4637 から +12)。私の全ファイル **ruff clean**・
+  mypy 回帰 0(既存 baseline=scipy/ziglang stub 欠如と difftest 署名の既存 quirk のみ、私の追加行由来 0)。全
+  local commit・**未 push=human-gate**。
 
 ### P2 gauss 敵対レビュー後の強化(2026-08-16, [[feedback_no_solo_ai_judgment]])
 自作 gauss コードへ独立敵対レビュー Workflow(4 レンズ=numeric 正しさ / C 安全 / gate 健全性 / 統合・被覆、
