@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 12:22:39
+- **最終更新**: 2026-08-16 12:34:42
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-d179458 docs(STATUS): record dev_* op family + Track 5 adversarial self-review
-909ecd8 Address adversarial self-review of session code (7 findings)
-6db3f49 auto: robust.py 編集前 (2026-08-16 12:20)
-e8eb4da auto: test_imgio.py 編集前 (2026-08-16 12:20)
-d2b2e6c auto: imgio.py 編集前 (2026-08-16 12:20)
-12da549 auto: studio.py 編集前 (2026-08-16 12:20)
-1cfa7ac auto: studio.py 編集前 (2026-08-16 12:20)
-46f1e42 auto: test_pcseg.py 編集前 (2026-08-16 12:19)
-a0e910b auto: pcseg.py 編集前 (2026-08-16 12:19)
-64359fe auto: pcseg.py 編集前 (2026-08-16 12:19)
+7957bca Studio: HALCON set_system-style System settings (threads, operator timeout)
+02d28c8 auto: HDEVELOP_DEV_OPS.md 編集前 (2026-08-16 12:33)
+a5b94bd auto: STUDIO_GUIDE.md 編集前 (2026-08-16 12:33)
+c888f14 auto: test_studio.py 編集前 (2026-08-16 12:33)
+d8a5ded auto: studio.py 編集前 (2026-08-16 12:33)
+2d53d7b auto: studio.py 編集前 (2026-08-16 12:32)
+04f305d auto: studio.py 編集前 (2026-08-16 12:32)
+2f2c7f8 auto: studio.py 編集前 (2026-08-16 12:32)
+000c34c auto: test_studio.py 編集前 (2026-08-16 12:31)
+b4797cb auto: studio.py 編集前 (2026-08-16 12:31)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ a0e910b auto: pcseg.py 編集前 (2026-08-16 12:19)
 ## 直近 2 時間に変更されたファイル
 
 ```
+12:33 docs/HDEVELOP_DEV_OPS.md
+12:33 docs/STUDIO_GUIDE.md
+12:33 tests/test_studio.py
+12:33 studio.py
+12:32 studio_ui_steps.jsonl
+12:32 studio_ui_crash.log
+12:22 docs/SESSION_SUMMARY.md
 12:22 docs/STATUS.md
-12:21 studio_ui_steps.jsonl
-12:21 studio_ui_crash.log
 12:20 tests/test_robust.py
 12:20 robust.py
 12:20 tests/test_imgio.py
 12:20 imgio.py
-12:20 studio.py
 12:19 tests/test_pcseg.py
 12:19 pcseg.py
 12:14 .pytest_cache/v/cache/nodeids
-12:11 docs/SESSION_SUMMARY.md
-12:06 tests/test_studio.py
-12:01 docs/HDEVELOP_DEV_OPS.md
-11:31 fullseye/__init__.py
 ```
 
 ---
