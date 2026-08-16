@@ -6,6 +6,21 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **★★(2026-08-16 その2, Opus5[1m]/ultracode) = algo-c 汎用アルゴリズム対応 P1 完了(ユーザー要望).**
+> 正本 = `docs/GENERAL_ALGORITHMS.md`「P1 完了記録」。**新 tier(画像 REGISTRY と完全分離・opt-in)**
+> `algo.py` に `seq`/`scalar` 型 + ソート 3 種(quicksort/heapsort/mergesort)+ reduction 2 種
+> (seq_max/seq_min)を **仕様から再実装**(丸写し禁止・provenance 明記)。`algo_codegen.py`
+> (standalone Python/C emit)+ `algo_difftest.py`(honest gate)。**★C コンパイラ皆無の本環境で
+> `pip install ziglang`(`python -m ziglang cc`)を導入し、C 一致を deferred skip でなく本当に実測** =
+> 全 5 op で python(==numpy oracle)diff 0.0 / **C==Python bit 一致 diff 0.0 / passed=True**(実
+> compile→実 run→bit 比較)。単一 source of truth(同一文字列を in-process 参照 compile と codegen
+> emit の両方に使用)でテスト oracle と出荷物が drift しない。fail-closed(compile/run 失敗=gate FAIL、
+> toolchain 無し=honest skip)。facade(`fullseye.algo_ops/run_algo/algo_to_c/algo_to_python/
+> algo_difftest`)+ **skill 追記**(`~/.claude/skills/image-processing/SKILL.md`「General algorithms」
+> 節=サブエージェント利用可)。**tests/test_algo.py 42 件**(画像 registry 非汚染も実証)。全 local
+> (auto-commit hook)・push は human-gate。**残(次段)** = P1.5(imgevolve.py サブコマンド + Studio op
+> ブラウザ tier)/ P2 数値計算。honest 限界 = NaN 除外・累積順序依存 op は P1 非対象・fscript 言語化は別 track。
+>
 > **★★(2026-08-16, Opus5[1m]/ultracode) = 「Fullseye と Fullseye Studio の修正と改善を完了」(ユーザーゴール, 自律).** 全スイート **4426 → 4494 passed / 0 failed**(+68)、studio **82 → 84**、UI ハーネス **192 steps / 0 fail / 0 crash**。全 local(auto-commit hook)・push は human-gate。
 > - **Track 1 = 全域敵対監査(2026-08-15 の 27 findings)の medium/low 残り 17 件を潰す**。12 ファイルグループの Workflow(21 agents=各グループ verify→fix→regression、high-risk は敵対検証段)。**fscript 3 件(not 優先/空ループ/iconic 算術)は前回 60024e8 で修正済み**。confirmed_fixed = honesty-gates(M1 `_real_ops` を data-as-code `halcon_names_data.py` で fail-closed 化+空 real で pass-everything しない / M2 verify_auto・imgops_nary の region ゲートを厳密二値化+identity 非計上)/ camera(M7 recover_pose 退化で honest fail)/ difftest(M9 compile_error=FAIL / L1 C tol を `--c-tol` で可変)/ imgio(M10 16-bit 保持)/ dsp(L3 非有限 guard / L6 Nyquist 超で raise)。**★verify が `incomplete` を出した 4 件は main が residual を精査・追加修正**(feedback_no_solo_ai_judgment 実践): ops-match(M3 スレッドローカル化は到達バグを修正済=OK、非到達の pooled-staleness/cross-thread inherit を docstring で honest 開示)/ pcseg(M6 デフォルト consensus ゲートを実効化=`_DEFAULT_CONSENSUS_FRAC=0.10` で現実的 blob を既定で棄却、R5 の ceil/clamp、R2 半径縮退・R3 None 単一契約・R4 最小点数を docstring 開示)/ api-coerce(L5 int/uint {0,1} も float64 化し契約と docstring 整合)/ reporting-honesty(L4 locked tally を**真の locked-split ベースライン**と突合=`baseline.py` に hand/trivial の locked_holdout を追加、無ければ fail-closed で null)。low-risk(dispatch-safe M4/M5・locomotion M8・fscript-tail L7)は自己検証堅実(strict mode/ error ring / 任意 ground gate / arity guard)。
 > - **imgio.save の phantom-success バグ修正**(`cv2.imwrite` は False を返すだけ=Studio §3.4)→ `OSError` を raise(commit 275a53d)。
