@@ -140,6 +140,41 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             else:
                 cases.append([root + rng.uniform(-0.4, 0.4)] + c)   # x0 near root
         return cases
+    if name == "gauss_solve":
+        # WELL-CONDITIONED augmented systems only (a singular / ill-conditioned holdout
+        # would make np.linalg.solve unstable or raise, i.e. a holdout bug rather than a
+        # backend fault). Diagonal dominance guarantees a unique, well-conditioned
+        # solution; a few row-permuted cases force the partial-pivoting path.
+        cases: list[list[float]] = []
+
+        def _pack(matrix: list[list[float]], x: list[float]) -> list[float]:
+            nn = len(x)
+            b = [sum(matrix[i][j] * x[j] for j in range(nn)) for i in range(nn)]
+            flat: list[float] = [float(nn)]
+            for i in range(nn):
+                flat.extend(matrix[i])
+                flat.append(b[i])
+            return flat
+
+        def _diag_dominant(nn: int) -> list[list[float]]:
+            mat = [[rng.uniform(-5.0, 5.0) for _ in range(nn)] for _ in range(nn)]
+            for i in range(nn):
+                mag = sum(abs(mat[i][j]) for j in range(nn)) + rng.uniform(1.0, 3.0)
+                mat[i][i] = -mag if rng.random() < 0.5 else mag
+            return mat
+
+        cases.append([1.0, 4.0, 8.0])                        # 1x1: 4x = 8 -> x = 2
+        for _ in range(24):                                  # diagonally dominant, sizes 1..7
+            nn = rng.randint(1, 7)
+            x = [rng.uniform(-10.0, 10.0) for _ in range(nn)]
+            cases.append(_pack(_diag_dominant(nn), x))
+        for _ in range(6):                                   # row-permuted -> forces a pivot swap
+            nn = rng.randint(2, 5)
+            mat = _diag_dominant(nn)
+            mat[0], mat[nn - 1] = mat[nn - 1], mat[0]        # same well-conditioned system, reordered
+            x = [rng.uniform(-10.0, 10.0) for _ in range(nn)]
+            cases.append(_pack(mat, x))
+        return cases
     return make_holdout(seed)
 
 
