@@ -2848,7 +2848,10 @@ def build_window(model=None):
             s = (_VAR_THUMB - 2) / max(H, W)          # uniform scale, keep aspect, 1px margin
             ox, oy = (_VAR_THUMB - s * W) / 2.0, (_VAR_THUMB - s * H) / 2.0
             for c in cs:
-                pts = np.asarray(c, float)
+                try:
+                    pts = np.asarray(c, float)
+                except Exception:
+                    continue                      # a ragged/malformed contour entry is skipped
                 if pts.ndim != 2 or pts.shape[0] < 2 or pts.shape[1] < 2:
                     continue
                 poly = QtGui.QPolygonF([QtCore.QPointF(ox + pts[i, 1] * s, oy + pts[i, 0] * s)
