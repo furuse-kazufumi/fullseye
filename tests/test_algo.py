@@ -192,6 +192,29 @@ def test_gauss_codegen_emits_varlen_driver():
     assert "int main(" in c
 
 
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_gauss_c_fail_soft_matches_python(tmp_path):
+    # The difftest holdout is well-conditioned ONLY (its oracle np.linalg.solve cannot
+    # handle singular/malformed rows), so the C fail-soft path is verified HERE directly
+    # against Python — no oracle. C must return empty (out_len 0) EXACTLY where Python
+    # returns [], and a real solution where Python solves: this pins both the variable-
+    # length KIND_MAP wire (including the empty-array case) and the fail-soft branch.
+    op = algo.ALGO_BY_NAME["gauss_solve"]
+    cases = [
+        _pack_system([[1.0, 1.0], [1.0, -1.0]], [3.0, 1.0]),   # valid -> [2, 1]
+        _pack_system([[1.0, 1.0], [1.0, 1.0]], [2.0, 2.0]),    # singular -> []
+        [2.0, 1.0, 2.0],                                       # malformed (too short) -> []
+        [0.0],                                                 # n < 1 -> []
+        [],                                                    # empty -> []
+    ]
+    cc = algo_difftest.find_c_compiler()
+    res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
+    assert res["status"] == "ran", res
+    py = [algo.py_fn("gauss_solve")([float(x) for x in a]) for a in cases]
+    assert res["outputs"] == py                             # C == Python on every case
+    assert res["outputs"][1] == [] and res["outputs"][2] == []   # fail-soft genuinely exercised
+
+
 @pytest.mark.parametrize("name", _NUMERIC)
 def test_numeric_difftest_python_half(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc=None)
