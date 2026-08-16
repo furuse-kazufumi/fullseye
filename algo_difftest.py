@@ -103,6 +103,62 @@ def make_holdout(seed: int = 0, n_random: int = 40, max_len: int = 257) -> list[
     return cases
 
 
+def _poly_at(coeffs, x: float) -> float:
+    r = 0.0
+    for c in reversed(coeffs):
+        r = r * x + c
+    return r
+
+
+def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
+    """Per-op holdout. Numeric ops need VALID structured inputs (samples for
+    Simpson, sign-bracketed / near-root polynomials for the root finders)."""
+    rng = random.Random(seed + 777)
+    if name == "simpson":
+        cases = []
+        for _ in range(24):
+            m = rng.choice([3, 5, 7, 9, 11])                 # odd sample count (clean Simpson)
+            h = rng.uniform(0.05, 0.5)
+            coeffs = [rng.uniform(-2.0, 2.0) for _ in range(rng.randint(1, 4))]
+            cases.append([h] + [_poly_at(coeffs, i * h) for i in range(m)])
+        return cases
+    if name in ("bisection", "newton"):
+        cases = []
+        for _ in range(24):
+            root = rng.uniform(-3.0, 3.0)
+            other = root + rng.choice([-1.0, 1.0]) * rng.uniform(1.5, 3.0)  # far from root
+            c = [root * other, -(root + other), 1.0]         # (x-root)(x-other), ascending
+            if name == "bisection":
+                cases.append([root - 0.3, root + 0.3] + c)   # bracket straddles only `root`
+            else:
+                cases.append([root + rng.uniform(-0.4, 0.4)] + c)   # x0 near root
+        return cases
+    return make_holdout(seed)
+
+
+def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -> float:
+    """Max error of the Python reference vs an INDEPENDENT oracle (fail-closed)."""
+    name = op.name
+    if name == "simpson":
+        from scipy import integrate
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref = float(integrate.simpson(np.asarray(arr[1:], np.float64), dx=arr[0]))
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name in ("bisection", "newton"):
+        # independent check: the returned value must actually be a root -> |p(x)| ~ 0
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            coeffs = arr[2:] if name == "bisection" else arr[1:]
+            errs.append(_diff01(_poly_at(coeffs, float(got)), 0.0))
+        return max(errs, default=0.0)
+    oracle = [_oracle(op, arr) for arr in holdout]
+    if op.kind == algo.KIND_SORT:
+        return _max_diff_sort(oracle, py_out)
+    return _max_diff_scalar(oracle, py_out)
+
+
 # --------------------------------------------------------------------------- #
 # oracle / backends
 # --------------------------------------------------------------------------- #
