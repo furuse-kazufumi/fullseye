@@ -132,10 +132,40 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   CLI 回帰テスト 2 件 + skill の CLI 例を更新。
 - **P1.5b(残)**: Studio の op ブラウザに general tier を出す(design 段階計画「Studio の op ブラウザに
   新 tier を出す」。studio.py の op リストへ seq/scalar tier セクション追加=GUI 変更ゆえ次段)。
-- **P2(一部完了 2026-08-16)**: 数値計算 op を seq/scalar 型基盤の上に。**完了 = simpson / bisection /
-  newton**(多項式・サンプルを入力 seq に内包する seq→scalar・既存 reduce ドライバに載る)。honest gate =
-  **C-vs-Python は bit 一致**(同一アルゴリズム + `-ffp-contract=off` で FMA 抑止)/ **Python-vs-oracle は
-  数値許容差**(`AlgoOp.tol`)で独立 oracle(simpson=scipy / 求根=残差 |p(root)|)照合。実測=C diff 0.0・
-  oracle diff ≤ 1e-15〜1e-16。fail-soft を honest 文書化。**残 = gauss_solve**(連立一次=seq→seq 可変長
-  出力ゆえドライバへ `[out_len, values...]` モード追加が前提=次段)。
+- **P2(完了 2026-08-16)**: 数値計算 op を seq/scalar 型基盤の上に。**simpson / bisection / newton**
+  (多項式・サンプルを入力 seq に内包する seq→scalar・既存 reduce ドライバに載る)+ **gauss_solve**
+  (連立一次 Gauss 消去・部分ピボット=下記 P2 完遂記録)。honest gate = **C-vs-Python は bit 一致**
+  (同一アルゴリズム + `-ffp-contract=off` で FMA 抑止)/ **Python-vs-oracle は数値許容差**(`AlgoOp.tol`)で
+  独立 oracle(simpson=scipy / 求根=残差 |p(root)| / gauss=`np.linalg.solve`)照合。fail-soft を honest 文書化。
 - P3 文字列(+`text` 型)/ P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。
+
+## P2 完遂記録 — gauss_solve(2026-08-16, Opus5[1m]/ultracode, `graph-loop-engineering`)
+**連立一次方程式 Gauss 消去(部分ピボット)を追加し、P2 数値計算を完遂。** ユーザー指示どおり
+`graph-loop-engineering` スキルで raptor work-graph にノード化し、tool driver に無人実行させた(二層方針=
+breadth は work-graph の difftest ゲート、敵対 findings 採否・push はセッションの human checkpoint)。
+
+- **新 kind `KIND_MAP`(`map_varlen`)= 可変長 seq→seq**: 既存 op は sort(入力長=出力長)/ reduce(→1 値)
+  のみで、連立解(入力 `[n, 拡大係数行列 n×(n+1) row-major]` → 解ベクトル長 n)は入力長≠出力長。C 境界=
+  `int f(const double* a, int n, double* out)` が out に out_len(≤ n)個書き out_len を返す(fail-soft=0)。
+- **`algo_codegen` ドライバに可変長出力モード**: KIND_MAP 分岐が `{int32 out_len, out_len*float64}` を書く
+  (sort と同じ wire だが out_len≠入力長)。out バッファは入力長で確保(契約 out_len≤n が上界を保証)+
+  `out_len ∈ [0,len]` に **fail-closed clamp**(暴走 op が読み手を over-read させない)。
+- **gauss_solve(`algo.py`)**: Python 参照(stdlib のみ・index-by-index で C を鏡写し)と C 参照を単一 source。
+  前進消去(部分ピボット=最大 |要素| 行を選択)+ 後退代入。特異(ピボット 0 残存)/ malformed は **[] / 0** で
+  fail-soft(例外なし)。**Python/C の FP 演算順を厳密一致**(同一除算・subtract-then-multiply・被消去要素を
+  exact `0.0` 代入・abs は inline 符号反転で `math.h`/`-lm` 非依存)ゆえ bit 一致。int overflow は `n≤46340` +
+  `long long need` で防止。
+- **honest gate 二段(実測)**: (1)Python **== `np.linalg.solve`**(独立 oracle・良条件 holdout 31 ケース=対角
+  優位 + 行置換でピボット経路)→ **max abs diff 3.55e-15**(tol 1e-9)。(2)codegen **C == Python bit 一致**
+  (`ziglang cc`・`-ffp-contract=off`)→ **diff 0.0 / c_verified=true**。特異/malformed の **C fail-soft は Python と
+  完全一致**を別テストで直接検証(oracle 非対応領域ゆえ holdout でなく C-vs-Python 直接比較)。
+- **`tools/algo_gate.py`(再利用可能な gated-stage runner)**: work-graph の `CommandWorker` は produces 生成 or
+  exit0 で done 判定するため、difftest が FAIL 時も JSON を書く現状では **fail-open**(失敗ゲートが done)になる。
+  これを塞ぐ = **pass 時のみマーカー `gate_ok.json` を書き、exit code=判定**。ノードの produces をマーカーに
+  向けると失敗ゲートが **fail-closed** でノード失敗になる。P3 以降の op 波(1 op=1 ノード)にそのまま使える。
+- **work-graph ノード化**: `raptor-worklog add --capability tool --project imgevolve --priority 0`(spec=
+  `tools/algo_gate.py --op gauss_solve --out <OUT>`、produces=`<OUT>/gate_ok.json`)→ `run-once --available
+  tool:command` で **無人実行 → status=done**(exit0・c_verified=true・bit 一致マーカー生成)。
+- **回帰**: 全スイート **4637→(gauss+C fail-soft テスト後)passed/0 failed**、`tests/test_algo.py` に gauss 9 件
+  + algo_gate 4 件 + C fail-soft 1 件を追加。私の全ファイル **ruff clean**・mypy 回帰 0(既存 baseline=scipy/
+  ziglang stub 欠如と difftest 署名の既存 quirk のみ、私の追加行由来 0)。全 local commit・**未 push=human-gate**。

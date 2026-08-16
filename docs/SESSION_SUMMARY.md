@@ -3,43 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 20:25:06
+- **最終更新**: 2026-08-16 20:47:34
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-b333f5c algo P2 (partial): numeric ops on the seq/scalar foundation — simpson/bisection/newton
-238cbe9 auto: test_algo.py 編集前 (2026-08-16 18:48)
-629cf4f auto: algo.py 編集前 (2026-08-16 18:48)
-3bce88c auto: algo_difftest.py 編集前 (2026-08-16 18:47)
-d67036a auto: algo_difftest.py 編集前 (2026-08-16 18:47)
-066d08f auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-16 18:43)
-adc6908 auto: test_algo.py 編集前 (2026-08-16 18:41)
-f223deb auto: algo.py 編集前 (2026-08-16 18:41)
-3fc741e auto: test_algo.py 編集前 (2026-08-16 18:40)
-7294f23 auto: test_algo.py 編集前 (2026-08-16 18:40)
+6bbdfd9 auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-16 20:46)
+8ad94b1 auto: test_algo.py 編集前 (2026-08-16 20:45)
+0886c23 auto: test_algo.py 編集前 (2026-08-16 20:45)
+5e329ba auto: test_algo.py 編集前 (2026-08-16 20:45)
+d2b13d1 auto: algo_difftest.py 編集前 (2026-08-16 20:42)
+0357d84 auto: algo_gate.py 編集前 (2026-08-16 20:41)
+77b1eb8 auto: algo_gate.py 編集前 (2026-08-16 20:41)
+92987f4 auto: test_algo.py 編集前 (2026-08-16 20:39)
+afd14cf auto: test_algo.py 編集前 (2026-08-16 20:35)
+f17db86 auto: test_algo.py 編集前 (2026-08-16 20:35)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M docs/GENERAL_ALGORITHMS.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:24 docs/SESSION_SUMMARY.md
-18:52 .pytest_cache/v/cache/nodeids
-18:49 .ruff_cache/0.16.0/7363606932562918290
-18:49 tests/test_algo.py
-18:48 .ruff_cache/0.16.0/2128910586982079947
-18:48 algo.py
-18:47 algo_difftest.py
-18:43 docs/GENERAL_ALGORITHMS.md
-18:41 .pytest_cache/v/cache/lastfailed
+20:46 docs/GENERAL_ALGORITHMS.md
+20:46 .pytest_cache/v/cache/nodeids
+20:45 .ruff_cache/0.16.0/7363606932562918290
+20:45 .pytest_cache/v/cache/lastfailed
+20:45 tests/test_algo.py
+20:42 .mypy_cache/3.11/cache.3.db
+20:42 .mypy_cache/3.11/cache.10.db
+20:42 .mypy_cache/3.11/cache.9.db
+20:42 .mypy_cache/3.11/cache.7.db
+20:42 .mypy_cache/3.11/cache.14.db
+20:42 .ruff_cache/0.16.0/2128910586982079947
+20:42 .ruff_cache/0.16.0/17072135449836082734
+20:42 algo_difftest.py
+20:41 tools/algo_gate.py
+20:40 .mypy_cache/3.11/cache.15.db
 ```
 
 ---
