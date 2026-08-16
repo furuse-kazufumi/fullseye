@@ -3255,6 +3255,17 @@ def build_window(model=None):
                     win._set_display_mode(match)       # only Studio's display-mode LUTs are honoured
             elif name == "dev_clear_window":
                 _current_view().clear()
+            elif name == "dev_set_draw" and args:
+                set_draw_style(mode=str(args[0]).lower())      # 'fill' | 'margin'
+            elif name == "dev_set_color" and args:
+                col = _HALCON_COLORS.get(str(args[0]).lower())
+                if col is not None:
+                    set_draw_style(color=col)
+            elif name == "dev_set_line_width" and args:
+                try:
+                    set_draw_style(line_width=int(args[0]))
+                except (TypeError, ValueError):
+                    pass
             elif name == "set_system" and len(args) >= 2:
                 try:
                     _set_system_param(str(args[0]), args[1])   # HALCON set_system(param, value)
