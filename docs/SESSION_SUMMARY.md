@@ -3,49 +3,50 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 10:55:51
+- **最終更新**: 2026-08-16 11:28:29
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-0c3a28d auto: parity.py 編集前 (2026-08-16 10:55)
-ebf3b0a auto: pcseg.py 編集前 (2026-08-16 10:55)
-52708f4 auto: imgops_nary.py 編集前 (2026-08-16 10:55)
-7f624f9 auto: parity.py 編集前 (2026-08-16 10:55)
-07549b7 auto: imgops_nary.py 編集前 (2026-08-16 10:55)
-acf5bcc auto: parity.py 編集前 (2026-08-16 10:55)
-22dfe88 auto: pcseg.py 編集前 (2026-08-16 10:55)
-9804379 auto: parity.py 編集前 (2026-08-16 10:55)
-0708966 auto: imgops_nary.py 編集前 (2026-08-16 10:55)
-75654c1 auto: parity.py 編集前 (2026-08-16 10:55)
+a17af5e auto: imgio.py 編集前 (2026-08-16 11:25)
+3ae7aa8 auto: test_pcseg.py 編集前 (2026-08-16 11:24)
+33c03c5 auto: test_api.py 編集前 (2026-08-16 11:24)
+bc5450c auto: test_robust.py 編集前 (2026-08-16 11:23)
+3973631 auto: test_robust.py 編集前 (2026-08-16 11:23)
+ab4b7a8 auto: parity.py 編集前 (2026-08-16 11:22)
+6259340 auto: robust.py 編集前 (2026-08-16 11:21)
+b294951 auto: robust.py 編集前 (2026-08-16 11:21)
+3903f9b auto: robust.py 編集前 (2026-08-16 11:21)
+b4c2473 auto: robust.py 編集前 (2026-08-16 11:21)
 ```
 
 ## 現在の git status
 
 ```
-M parity.py
+M imgio.py
+ M tests/test_imgio.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-10:55 parity.py
-10:55 pcseg.py
-10:55 .pytest_cache/v/cache/nodeids
-10:55 imgops_nary.py
-10:55 .pytest_cache/v/cache/lastfailed
-10:55 backends.py
-10:55 backends_auto.py
-10:55 fscript.py
-10:55 tests/test_dsp.py
-10:55 robust.py
-10:55 halcon_names_data.py
-10:55 backend_safe.py
-10:55 gen_halcon_names_data.py
-10:55 dsp.py
-10:54 tests/test_imgio.py
+11:26 studio_ui_crash.log
+11:25 tests/test_imgio.py
+11:25 imgio.py
+11:24 tests/test_pcseg.py
+11:24 tests/test_api.py
+11:23 tests/test_robust.py
+11:22 parity.py
+11:21 robust.py
+11:21 baseline.py
+11:20 pcseg.py
+11:19 api.py
+11:18 ops.py
+11:12 .pytest_cache/v/cache/nodeids
+11:07 docs/HALCON_PARITY.md
+11:07 data/auto_functional_gate.json
 ```
 
 ---
