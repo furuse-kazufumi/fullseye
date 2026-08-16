@@ -140,6 +140,11 @@ def run(verbose_failures=False):
             if not ok:
                 ok_all, reason = False, why
                 break
+        if ok_all and not changed_any:
+            # A pass-through is not an implementation of anything; fail it so it
+            # never reaches covered_pass (and so honest_summary drops it from the
+            # headline) instead of only footnoting it as "identity on canonical".
+            ok_all, reason = False, IDENTITY_REASON
         results.append((name, "pass" if ok_all else "fail", "" if ok_all else reason,
                         "changed" if changed_any else "identity"))
 
