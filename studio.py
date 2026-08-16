@@ -2686,8 +2686,10 @@ def build_window(model=None):
             if stop_at_breakpoints and (i + 1) in code_edit.breakpoints:
                 hit_bp = True
                 break
-        code_edit.set_timings(timings)
-        code_edit.set_exec_line(last + 1)
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(timings)     # dev_update_time
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(last + 1)  # dev_update_pc: execution cursor
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)     # show the result up to the reached line
         code_status.setText("ran %d line(s) in %.1f ms%s"
