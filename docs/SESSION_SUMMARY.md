@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 11:28:29
+- **最終更新**: 2026-08-16 11:39:28
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-a17af5e auto: imgio.py 編集前 (2026-08-16 11:25)
-3ae7aa8 auto: test_pcseg.py 編集前 (2026-08-16 11:24)
-33c03c5 auto: test_api.py 編集前 (2026-08-16 11:24)
-bc5450c auto: test_robust.py 編集前 (2026-08-16 11:23)
-3973631 auto: test_robust.py 編集前 (2026-08-16 11:23)
-ab4b7a8 auto: parity.py 編集前 (2026-08-16 11:22)
-6259340 auto: robust.py 編集前 (2026-08-16 11:21)
-b294951 auto: robust.py 編集前 (2026-08-16 11:21)
-3903f9b auto: robust.py 編集前 (2026-08-16 11:21)
-b4c2473 auto: robust.py 編集前 (2026-08-16 11:21)
+ca3b882 docs(STATUS): record 2026-08-16 session — audit medium/low fixes + Studio + PLC bridge
+3c7b83a Studio contour thumbnails + device.signal_verdict (Track 2/3) — tests
+35c7945 auto: test_studio.py 編集前 (2026-08-16 11:33)
+6457cdf auto: studio.py 編集前 (2026-08-16 11:33)
+b26e105 auto: studio.py 編集前 (2026-08-16 11:32)
+190c94a auto: __init__.py 編集前 (2026-08-16 11:31)
+8bb3a68 auto: __init__.py 編集前 (2026-08-16 11:31)
+3809ca2 auto: test_device.py 編集前 (2026-08-16 11:30)
+8ed76c9 auto: device.py 編集前 (2026-08-16 11:30)
+58ba391 auto: device.py 編集前 (2026-08-16 11:30)
 ```
 
 ## 現在の git status
 
 ```
-M imgio.py
- M tests/test_imgio.py
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-11:26 studio_ui_crash.log
+11:38 docs/SESSION_SUMMARY.md
+11:35 docs/STATUS.md
+11:34 studio_ui_steps.jsonl
+11:34 studio_ui_crash.log
+11:33 tests/test_studio.py
+11:33 studio.py
+11:31 fullseye/__init__.py
+11:30 tests/test_device.py
+11:30 device.py
 11:25 tests/test_imgio.py
 11:25 imgio.py
 11:24 tests/test_pcseg.py
 11:24 tests/test_api.py
 11:23 tests/test_robust.py
 11:22 parity.py
-11:21 robust.py
-11:21 baseline.py
-11:20 pcseg.py
-11:19 api.py
-11:18 ops.py
-11:12 .pytest_cache/v/cache/nodeids
-11:07 docs/HALCON_PARITY.md
-11:07 data/auto_functional_gate.json
 ```
 
 ---
