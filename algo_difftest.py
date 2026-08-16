@@ -379,8 +379,8 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
         return max(errs, default=0.0)
     if name in ("graph_components", "graph_mst_weight", "graph_dijkstra"):
         # INDEPENDENT oracle: scipy.sparse.csgraph (a different implementation entirely).
-        from scipy.sparse import csr_matrix
         from scipy.sparse import csgraph as _csg
+        from scipy.sparse import csr_matrix
         base = 3 if name == "graph_dijkstra" else 2
         errs = []
         for arr, got in zip(holdout, py_out):
