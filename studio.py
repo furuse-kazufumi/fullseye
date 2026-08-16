@@ -650,6 +650,52 @@ def parse_hdev_program(text, names):
     return stages, errs
 
 
+#: HDevelop dev_* operators Fullseye Studio honours as display DIRECTIVES — they set
+#: display state (update on/off, display range); they are NOT image pipeline stages.
+#: See docs/HDEVELOP_DEV_OPS.md.
+_DEV_DIRECTIVES = {"dev_update_window", "dev_update_var", "dev_update_pc",
+                   "dev_update_time", "dev_update_off", "dev_update_on", "dev_set_part"}
+
+
+def _dev_op_head(line):
+    """The operator name of a program line ('dev_set_part' from
+    'dev_set_part (0, 0, -1, -1)'), lowercased; '' if the line has no leading name."""
+    m = re.match(r"\s*([A-Za-z_]\w*)", line)
+    return m.group(1).lower() if m else ""
+
+
+def _parse_dev_args(line):
+    """Parse a dev_* directive's arguments into a list of float/str (numbers become
+    float, quoted or bare words stay str). Accepts both 'op (a, b)' and 'op a b'."""
+    if "(" in line:
+        body = line.split("(", 1)[1].rsplit(")", 1)[0]
+    else:
+        parts = line.split(None, 1)
+        body = parts[1] if len(parts) > 1 else ""
+    args = []
+    for tok in re.split(r"[,\s]+", body.strip()):
+        if not tok:
+            continue
+        t = tok.strip("'\"")
+        try:
+            args.append(float(t))
+        except ValueError:
+            args.append(t)
+    return args
+
+
+def extract_dev_directives(text):
+    """Scan an HDevelop program for supported dev_* display directives, in source
+    order → list of (name, args). Comments are stripped; image-stage lines are left
+    to :func:`parse_hdev_program`."""
+    out = []
+    for raw in text.splitlines():
+        line = _hdev_strip_comment(raw)
+        if line and _dev_op_head(line) in _DEV_DIRECTIVES:
+            out.append((_dev_op_head(line), _parse_dev_args(line)))
+    return out
+
+
 def _op_row(name):
     """Look up an op and return a ``list_ops``-shaped dict, or None."""
     op = api.find_op(name)
