@@ -49,15 +49,18 @@ def _driver_c(op: algo.AlgoOp) -> str:
         per_array_call = f"        double r = {op.c_func}(buf, len);\n"
         write_out = "        if (fwrite(&r, sizeof(double), 1, fo) != 1) return 4;\n"
     elif op.kind == algo.KIND_MAP:
-        # Variable-length seq -> seq: the op writes out_len (<= len) doubles into a
-        # caller buffer sized to the input length (the KIND_MAP contract guarantees
-        # out_len <= n). out_len is clamped to [0, len] fail-closed so a misbehaving
-        # op can never make the reader over-read. Emitted wire = {out_len, values...}.
+        # Variable-length seq -> seq. TWO-PHASE so the output can be LARGER than the input
+        # (e.g. Dijkstra distances = n on a sparse [n,m,src,...] graph where 3+3m < n): the
+        # op is first called with out=NULL to return an UPPER BOUND on out_len (writing
+        # nothing), we allocate exactly that, then call again to fill. out_len is clamped to
+        # [0, cap] fail-closed so the reader can never over-read. Emitted wire = {out_len, values...}.
         per_array_call = (
-            "        double* out = (double*)malloc((size_t)(len > 0 ? len : 1) * sizeof(double));\n"
+            f"        int cap = {op.c_func}(buf, len, (double*)0);\n"
+            "        if (cap < 0) cap = 0;\n"
+            "        double* out = (double*)malloc((size_t)(cap > 0 ? cap : 1) * sizeof(double));\n"
             "        if (!out) { free(buf); return 6; }\n"
-            f"        int out_len = {op.c_func}(buf, len, out);\n"
-            "        if (out_len < 0 || out_len > len) out_len = 0;   /* fail-closed clamp */\n"
+            f"        int out_len = (cap > 0) ? {op.c_func}(buf, len, out) : 0;\n"
+            "        if (out_len < 0 || out_len > cap) out_len = 0;   /* fail-closed clamp */\n"
         )
         write_out = (
             "        if (fwrite(&out_len, sizeof(int), 1, fo) != 1) { free(out); free(buf); return 4; }\n"
