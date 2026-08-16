@@ -3,57 +3,35 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 13:46:45
+- **最終更新**: 2026-08-16 16:05:22
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+b31b649 algo-c P1.5a: unified `imgevolve.py algo` CLI subcommand (list/run/emit-c/emit-py/difftest)
+c4dc4be auto: STATUS.md 編集前 (2026-08-16 13:52)
+4123f7a auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-16 13:52)
+512aa7e auto: test_algo.py 編集前 (2026-08-16 13:52)
+51a20a1 auto: imgevolve.py 編集前 (2026-08-16 13:51)
+4d32b78 auto: imgevolve.py 編集前 (2026-08-16 13:50)
+b268da3 auto: imgevolve.py 編集前 (2026-08-16 13:50)
+691578b algo-c P1: general-algorithm tier (seq/scalar sorts+reductions) with verified Python+C codegen
 b029f6a auto: test_algo.py 編集前 (2026-08-16 13:22)
 ffabdad auto: pyproject.toml 編集前 (2026-08-16 13:20)
-149fd46 auto: test_algo.py 編集前 (2026-08-16 13:19)
-50b22cb auto: test_algo.py 編集前 (2026-08-16 13:19)
-1e95dc6 auto: algo_difftest.py 編集前 (2026-08-16 13:19)
-6bc514d auto: algo_difftest.py 編集前 (2026-08-16 13:19)
-f031098 auto: algo_difftest.py 編集前 (2026-08-16 13:19)
-3a77109 auto: algo_codegen.py 編集前 (2026-08-16 13:19)
-2ff3583 auto: algo_codegen.py 編集前 (2026-08-16 13:19)
-8d5920c auto: algo_codegen.py 編集前 (2026-08-16 13:19)
 ```
 
 ## 現在の git status
 
 ```
-M algo.py
- M algo_codegen.py
- M algo_difftest.py
- M docs/GENERAL_ALGORITHMS.md
- M docs/SESSION_SUMMARY.md
- M docs/STATUS.md
- M pyproject.toml
- M tests/test_algo.py
-?? nul
+M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-13:45 docs/STATUS.md
-13:45 docs/GENERAL_ALGORITHMS.md
-13:44 fullseye.egg-info/SOURCES.txt
-13:44 fullseye.egg-info/top_level.txt
-13:44 fullseye.egg-info/requires.txt
-13:44 fullseye.egg-info/entry_points.txt
-13:44 fullseye.egg-info/dependency_links.txt
-13:44 fullseye.egg-info/PKG-INFO
-13:44 pyproject.toml
-13:43 .pytest_cache/v/cache/nodeids
-13:43 .pytest_cache/v/cache/lastfailed
-13:43 .ruff_cache/0.16.0/7363606932562918290
-13:43 .ruff_cache/0.16.0/2128910586982079947
-13:43 tests/test_algo.py
-13:43 algo.py
+(直近 2h の変更なし)
 ```
 
 ---
