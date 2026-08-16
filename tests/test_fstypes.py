@@ -57,10 +57,46 @@ def test_seq_values_is_a_defensive_copy():
     assert s.tolist() == [1.0, 2.0, 3.0]       # mutating the copy must not touch storage
 
 
+def test_seq_construction_copies_the_input_array():
+    # a "frozen" Seq must NOT alias the caller's ndarray (the write path, not just
+    # the read path) — mutating the original must not change the Seq.
+    a = np.array([1.0, 2.0, 3.0])
+    s = Seq.of(a)
+    a[0] = 99.0
+    assert s.tolist() == [1.0, 2.0, 3.0]
+    s2 = Seq(a)                                 # direct constructor too
+    a[1] = 77.0
+    assert s2.tolist() == [1.0, 99.0, 3.0]      # sees a[0]=99 (set above) but not a[1]=77
+
+
 def test_seq_is_immutable():
     s = Seq.of([1.0])
     with pytest.raises(dataclasses.FrozenInstanceError):
         s._values = np.array([2.0])
+
+
+def test_seq_rejects_non_numeric():
+    with pytest.raises(FsTypeError):
+        Seq.of(["1", "2.5"])                    # numeric strings are NOT numbers (no inference)
+    with pytest.raises(FsTypeError):
+        Seq.of(["abc"])                         # FsTypeError, not a bare ValueError
+
+
+def test_seq_allows_non_finite_at_the_container_level():
+    # a Seq is a general numeric container; NaN/inf are stored (algo.py enforces
+    # finiteness at its own boundary). Pins the documented decision.
+    s = Seq.of([np.nan, np.inf, -np.inf, 1.0])
+    assert s.length() == 4 and not np.isfinite(s.values()[:3]).any()
+
+
+def test_seq_and_scalar_value_equality_and_hash():
+    assert Seq.of([1, 2, 3]) == Seq.of([1, 2, 3])
+    assert Seq.of([1, 2, 3]) != Seq.of([1, 2, 4])
+    assert Scalar.of(5.0) == Scalar.of(5.0)
+    assert Scalar.of(5.0) != Scalar.of(6.0)
+    # hashable by value (storage is write-protected)
+    assert len({Seq.of([1, 2]), Seq.of([1, 2]), Seq.of([3])}) == 2
+    assert len({Scalar.of(1.0), Scalar.of(1.0)}) == 1
 
 
 # --------------------------------------------------------------------------- #
