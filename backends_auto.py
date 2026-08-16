@@ -1242,6 +1242,19 @@ SEED: list[tuple] = [
 # spec loading + validation + compilation                                     #
 # --------------------------------------------------------------------------- #
 def _real_ops() -> set:
+    """Real HALCON operator names — generated py-module first, flat data/ JSON second.
+
+    `halcon_names_data` ALWAYS ships in the wheel; `data/halcon_operators.json` does
+    NOT (same flat-layout gap the macro DNA store and auto_specs_data already dodge).
+    Reading the JSON alone returned an EMPTY set on a pip-installed package, which
+    turned the fail-closed name guard in `build` into a pass-everything no-op — see
+    the guard there, which now drops rather than admits when this set is empty.
+    """
+    try:
+        from halcon_names_data import HALCON_NAMES
+        return set(HALCON_NAMES)
+    except Exception:
+        pass
     path = os.path.join(HERE, "data", "halcon_operators.json")
     if not os.path.exists(path):
         return set()
