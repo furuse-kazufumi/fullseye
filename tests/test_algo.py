@@ -60,6 +60,7 @@ def test_categories_grouping():
     assert set(cats["sort"]) == set(_SORTS)
     assert set(cats["reduce"]) == set(_REDUCES)
     assert set(cats["numeric"]) == set(_NUMERIC)
+    assert set(cats["string"]) == set(_STRING)
 
 
 # --------------------------------------------------------------------------- #
