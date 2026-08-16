@@ -77,7 +77,11 @@ def radial_power_spectrum(img, nbins: int | None = None):
     power = np.bincount(rb.ravel(), P.ravel(), minlength=nb)[:nb]
     count = np.bincount(rb.ravel(), minlength=nb)[:nb]
     power = power / np.maximum(count, 1)
-    freqs = np.linspace(0.0, 0.5, nb)
+    # cycles/pixel: a radius of N/2 (Nyquist along the short axis) is 0.5; the
+    # diagonal corner is ~0.707. (Earlier this wrongly pinned 0.5 to the diagonal,
+    # compressing every reported frequency by ~1/sqrt(2).) Non-square is approximate.
+    ref = float(max(1, min(h, w)))
+    freqs = np.linspace(0.0, rmax, nb) / ref
     return freqs, power
 
 
