@@ -6,6 +6,13 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **★★(2026-08-16 その3, Opus5[1m]/ultracode) = 「土台から確実に」= パッケージング/API 土台固め + 特徴学習→類似画像合成.** ユーザー方針「できるだけ土台になる層から確実にしよう」+「画像処理スキルでサンプル画像を自作(基盤検証)」+「画像から特徴を学習して似た画像を生成」。
+> - **★土台(install/packaging + public-API)を実測で固定**(wheel 実ビルド + 隔離 venv で end-to-end 検証): studio_assets を package 化し package-data で i18n/op_help/sample_images を wheel 同梱(flat-layout の `"*"` glob が落としていた=installed Studio が英語のみ/help 無し/サンプル無しに degrade していた既存バグ)。dead な flat-`data/*.json` glob 除去(gitignore・runtime は data-as-code)。`sample_images` を py-modules 追加。`fullseye.__all__` に欠落していた pcseg 系 18 名を補完。**durable ガード** `tests/test_packaging_foundation.py`(runtime root module⊆py-modules / api.__all__⊆fullseye.__all__ / studio_assets 全 tracked file が package-data glob に一致)で再発防止(v14/v18/v18.3/v18.5 で繰り返した ship-bug クラス)。隔離 venv で studio_assets 解決(en/ja/zh)+ facade/algo/sample_images を非 repo cwd で検証。
+> - **★特徴学習→類似画像合成 `synth.py`**(古典・学習モデル不使用・facade): spectral(Heeger-Bergen 流=振幅スペクトル+ヒストグラムを random-phase noise に反復適用)+ patch(Efros-Freeman quilting/min-cut seam・候補cap でハング解消)。honest 検証 `feature_distance`/`patch_novelty`。**実測=spectral は source 統計を独立サンプルより厳密一致(spectrum_l2≈0.0002)しつつ novelty は独立同等**=「同じテクスチャの genuinely 新規インスタンス」。facade(api/fullseye)+ CLI `imgevolve.py synth`。
+> - **★敵対レビュー(3 レンズ Workflow・7 findings・全件一次検証)修正**: radial_power_spectrum の周波数軸(Nyquist を対角に誤配置→半径 N/2 に是正、真の 0.0625 を報告)/ match_histogram を nearest-rank 化(離散 ref で存在しない中間値を出さない)/ 「never a crop」overclaim を honest 訂正(退化 exemplar=定数/単一周波数は数学的に shifted copy に一致し得る)/ patch_novelty の docstring 正確化(raw MSE 明記)+ source ブロックを stride 制限(大画像 OOM 回避、1024²=0.17s)/ quilting の候補 cap(256→512 が 192s→数秒)/ 非有限入力を fail-closed 拒否。
+> - **★dogfooding**: `tools/gen_synth_samples.py` で own-work サンプル 3 枚(grain/weave=spectral, brick=quilting)生成→`imgio.save`+round-trip→studio_assets(provenance「own work」、計 11 枚)。apply/synth/save を end-to-end 検証。
+> - **検証**: 全スイート **4578 → (synth+CLI 追加後 再確認)passed / 0 failed**、ruff clean(新規 synth/synth tests/guard は全 clean、既存 grandfathered ファイルは不変)、wheel 実ビルドで studio_assets+algo+synth+sample_images 同梱確認。commit/push 済。
+>
 > **★★(2026-08-16 その2, Opus5[1m]/ultracode) = algo-c 汎用アルゴリズム対応 P1 完了(ユーザー要望).**
 > 正本 = `docs/GENERAL_ALGORITHMS.md`「P1 完了記録」。**新 tier(画像 REGISTRY と完全分離・opt-in)**
 > `algo.py` に `seq`/`scalar` 型 + ソート 3 種(quicksort/heapsort/mergesort)+ reduction 2 種
