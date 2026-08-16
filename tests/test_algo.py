@@ -488,3 +488,58 @@ def test_cli_algo_difftest_action(tmp_path, capsys):
     assert rc == 0 and "passed=True" in out
     for name in _ALL_OPS:
         assert name in out
+
+
+# --------------------------------------------------------------------------- #
+# algo_gate — work-graph gated-stage runner (marker-only-on-pass, exit=verdict)
+# --------------------------------------------------------------------------- #
+def _load_algo_gate():
+    import importlib.util
+    from pathlib import Path
+    p = Path(__file__).resolve().parents[1] / "tools" / "algo_gate.py"
+    spec = importlib.util.spec_from_file_location("algo_gate", p)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_algo_gate_passes_and_writes_marker(tmp_path):
+    gate = _load_algo_gate()
+    # use_c=False keeps this toolchain-independent: gauss's Python half is within tol,
+    # the C half skips (neutral) -> passed True -> marker written.
+    res = gate.gate("gauss_solve", tmp_path, use_c=False)
+    assert res["passed"] is True
+    marker = tmp_path / "gate_ok.json"
+    assert marker.is_file()
+    import json
+    m = json.loads(marker.read_text())
+    assert m["op"] == "gauss_solve" and m["passed"] is True
+
+
+def test_algo_gate_fails_closed_writes_no_marker(tmp_path, monkeypatch):
+    gate = _load_algo_gate()
+    # a FAILED gate must leave NO marker so the work-graph node fails closed (the
+    # CommandWorker's `produces` points at the marker, so its absence == node failure).
+    monkeypatch.setattr(algo_difftest, "difftest", lambda *a, **k: {
+        "passed": False, "python_max_abs_diff": float("inf"),
+        "c_backend": None, "c_verified": False, "compiler": "none"})
+    res = gate.gate("gauss_solve", tmp_path, use_c=False)
+    assert res["passed"] is False
+    assert not (tmp_path / "gate_ok.json").exists()
+
+
+def test_algo_gate_removes_stale_marker_on_failure(tmp_path, monkeypatch):
+    gate = _load_algo_gate()
+    stale = tmp_path / "gate_ok.json"
+    stale.write_text('{"op": "gauss_solve", "passed": true}', encoding="utf-8")  # prior pass
+    monkeypatch.setattr(algo_difftest, "difftest", lambda *a, **k: {
+        "passed": False, "python_max_abs_diff": float("inf"),
+        "c_backend": None, "c_verified": False, "compiler": "none"})
+    gate.gate("gauss_solve", tmp_path, use_c=False)
+    assert not stale.exists()                       # stale pass never survives a later failure
+
+
+def test_algo_gate_unknown_op_fail_closed(tmp_path):
+    gate = _load_algo_gate()
+    with pytest.raises(SystemExit):
+        gate.gate("nope", tmp_path, use_c=False)
