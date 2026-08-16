@@ -3124,9 +3124,13 @@ def build_window(model=None):
             if a is not None:
                 a.blockSignals(True); a.setChecked(state["dev_update"][k]); a.blockSignals(False)
         tb_a = win._dev_update_actions.get("_toolbar")
+        all_on = all(state["dev_update"].values())
         if tb_a is not None:
-            all_on = all(state["dev_update"].values())
             tb_a.blockSignals(True); tb_a.setChecked(all_on); tb_a.blockSignals(False)
+        lbl = getattr(win, "_update_label", None)
+        if lbl is not None:                       # surface a frozen display, never silently
+            off = [k for k, v in state["dev_update"].items() if not v]
+            lbl.setText("" if all_on else "updates off: " + ",".join(off))
 
     def set_dev_update(kind, on):
         """dev_update_{window,var,pc,time} / dev_update_off|on: set a display-update flag
