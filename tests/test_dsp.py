@@ -64,6 +64,43 @@ def test_find_peaks_on_impulses():
     assert set(idx.tolist()) == {100, 500, 900}
 
 
+def test_non_finite_signal_is_refused_not_turned_into_nan_features():
+    """A NaN / Inf sample used to come back as rms=inf, crest_factor=nan … while the
+    docstring promised finite features; the 1-D layer now fails closed like volops."""
+    for bad in ([1.0, np.inf, 2.0], [1.0, np.nan, 2.0]):
+        with pytest.raises(ValueError, match="non-finite"):
+            dsp.signal_features(bad)
+        with pytest.raises(ValueError, match="non-finite"):
+            dsp.spectrum(bad, 1000)
+        with pytest.raises(ValueError, match="non-finite"):
+            dsp.rms(bad)
+    x, rate = _tone(1000.0, rate=16000)
+    assert all(np.isfinite(v) for v in dsp.signal_features(x, rate).values())
+    assert dsp.signal_features(np.array([]))["rms"] == 0.0   # empty stays the zero case
+
+
+def test_cutoff_above_nyquist_raises_instead_of_near_allpass():
+    """cutoff=600 Hz at rate=1000 Hz used to be clipped to wn=0.999999 and returned
+    the signal essentially unfiltered; an impossible cutoff is now rejected."""
+    x, rate = _tone(300.0, rate=1000, dur=2.0, amp=1.0)
+    with pytest.raises(ValueError, match="Nyquist"):
+        dsp.lowpass(x, rate, 600)                            # above Nyquist (500 Hz)
+    with pytest.raises(ValueError, match="Nyquist"):
+        dsp.bandpass(x, rate, 100, 900)
+    with pytest.raises(ValueError, match="Nyquist"):
+        dsp.highpass(x, rate, 0.0)
+    y = dsp.lowpass(x, rate, 100)                            # valid cutoff still filters
+    assert dsp.rms(y) < 0.1 * dsp.rms(x)
+
+
+def test_short_signal_filter_raises_instead_of_silent_no_op():
+    """filtfilt needs 3x the filter length; too-short input used to be returned
+    unchanged, so the caller could not tell filtered from unfiltered."""
+    short = np.arange(10, dtype=np.float64)
+    with pytest.raises(ValueError, match="filtfilt"):
+        dsp.lowpass(short, 1000, 100)
+
+
 def test_facade_exposes_dsp():
     import fullseye
     assert hasattr(fullseye, "read_wav") and hasattr(fullseye, "signal_features")
