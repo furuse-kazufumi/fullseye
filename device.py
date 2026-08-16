@@ -190,6 +190,38 @@ def signal_result(io: DigitalIO, ok: bool, pass_pin: int = 0, fail_pin: int = 1)
     return bool(ok)
 
 
+def signal_verdict(io: DigitalIO, verdict, coils=None) -> str:
+    """Drive a 4-state inspection Verdict onto PLC coils, ONE-HOT.
+
+    *verdict* is a :class:`fsruntime.Verdict` (or any object with a ``.status`` in
+    ``{"ok","ng","error","timeout"}``, or the status string itself). Unlike
+    :func:`signal_result`, which collapses everything to PASS/FAIL, this preserves
+    the distinction the fail-closed Runtime exists to keep: a vision ``error`` or a
+    deadline ``timeout`` must NOT read to the PLC as a good part. Exactly the coil
+    for the verdict's status is set high and the other three low, so the PLC routes
+    on an unambiguous one-hot signal — ``ok`` alone means "good part", and both a
+    fault and a slow cycle are visibly distinct from a pass and from each other.
+
+    *coils* overrides the address map (default ``ok=0, ng=1, error=2, timeout=3``).
+    Returns the status string. Raises :class:`ValueError` on an unknown status
+    (fail-closed — an unmapped verdict never silently clears every coil, which a
+    PLC could misread as "no fault"). Register-based PLCs can map from these coils
+    or write a status code via :mod:`comm` directly.
+    """
+    cmap = _VERDICT_COILS if coils is None else coils
+    status = getattr(verdict, "status", verdict)
+    if not isinstance(status, str):
+        raise ValueError("verdict must be a Verdict, an object with .status, or a "
+                         "status string, got %r" % (verdict,))
+    status = status.lower()
+    if status not in cmap:
+        raise ValueError("unknown verdict status %r; expected one of %s"
+                         % (status, sorted(cmap)))
+    for st, pin in cmap.items():
+        io.set(pin, st == status)                    # one-hot: exactly this coil high
+    return status
+
+
 def wait_input(io: DigitalIO, pin: int, state: bool = True,
                timeout: float = 5.0, poll: float = 0.01) -> bool:
     """Block until input *pin* reads *state* (a part-present / trigger signal).
