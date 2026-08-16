@@ -104,8 +104,10 @@ def run(verbose_failures=False):
     results = []
     for s in specs:
         name, shape, in_s, out_s = (s["halcon"], s["shape"], s["in_sort"], s["out_sort"])
-        if real and name not in real:
-            results.append((name, "drop_fake", ""))
+        if name not in real:
+            # Unverifiable is not verified: an empty reference set drops every
+            # name-tagged spec instead of short-circuiting the guard to pass-all.
+            results.append((name, "drop_fake" if real else "drop_unverified", ""))
             continue
         if shape not in BA.SHAPES:
             results.append((name, "drop_shape", shape))
@@ -115,6 +117,8 @@ def run(verbose_failures=False):
         except Exception as e:
             results.append((name, "bad_params", repr(e)))
             continue
+        if shape == "geom" and out_s == "region":
+            fn = BA._rebinarise(fn)         # gate the op `build` compiles, not the raw factory
         base = inputs.get(in_s)
         if base is None:
             results.append((name, "no_input", in_s))
