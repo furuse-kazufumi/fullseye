@@ -151,6 +151,11 @@ class FImage:
     def with_pixels(self, pixels) -> "FImage":
         return replace(self, pixels=pixels)
 
+    @property
+    def sort(self) -> str:
+        """The value's sort, carried by the type (never inferred)."""
+        return "image"
+
     def __bool__(self):
         raise FsTypeError("an FImage has no truth value; compare a measurement instead")
 
