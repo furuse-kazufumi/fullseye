@@ -142,6 +142,8 @@ Apply 時に適用されます（`docs/HDEVELOP_DEV_OPS.md` に全 43 `dev_*` �
 | `dev_set_part (Row1, Col1, Row2, Col2)` | 表示範囲（ズーム/パン）を設定・負値=全体 | マウスホイール/Fit と併用 |
 | `dev_set_lut ('gray'|'jet'|'viridis'…)` | カラーマップ（LUT）を切替 | View ▸ Display mode |
 | `dev_clear_window ()` | カレント窓をクリア | — |
+| `set_system ('thread_num', N)` | OpenCV ワーカースレッド数（0=既定/全）を設定 | Tools ▸ System settings |
+| `set_system ('operator_timeout', ms)` | ソフト operator タイムアウト（遅い段を Run status で警告） | 〃 |
 
 **用途**: `dev_update_off ()` を先頭に置くと、重い処理や多数の編集を**描画コストなし**で行え、
 `dev_update_on ()` で現状態へ一括更新できます（HDevelop の性能テクニックと同じ）。更新が
