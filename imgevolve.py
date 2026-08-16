@@ -388,6 +388,14 @@ def main() -> int:
     p.add_argument("--device", default="cpu")
     p.set_defaults(fn=cmd_bench)
 
+    p = sub.add_parser("algo", help="general-algorithm tier (algo-c): list/run/emit-c/emit-py/difftest")
+    p.add_argument("action", choices=["list", "run", "emit-c", "emit-py", "difftest"])
+    p.add_argument("op", nargs="?", default=None, help="op name (or 'all' for difftest)")
+    p.add_argument("--seq", default="", help="run: comma-separated numbers, e.g. --seq 3,1,2")
+    p.add_argument("--workdir", default="out/algo", help="difftest: where to emit/compile")
+    p.add_argument("--no-c", action="store_true", help="difftest: force the honest C skip")
+    p.set_defaults(fn=cmd_algo)
+
     a = ap.parse_args()
     return a.fn(a)
 
