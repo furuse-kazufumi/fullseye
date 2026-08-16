@@ -110,6 +110,38 @@ def _poly_at(coeffs, x: float) -> float:
     return r
 
 
+def _lev_recursive(a: tuple, b: tuple) -> float:
+    """Levenshtein by TOP-DOWN memoized recursion — an independent oracle for the
+    op's bottom-up two-row DP (different code path, same definition)."""
+    from functools import lru_cache
+
+    @lru_cache(maxsize=None)
+    def d(i: int, j: int) -> int:
+        if i == 0:
+            return j
+        if j == 0:
+            return i
+        cost = 0 if a[i - 1] == b[j - 1] else 1
+        return min(d(i - 1, j) + 1, d(i, j - 1) + 1, d(i - 1, j - 1) + cost)
+
+    return float(d(len(a), len(b)))
+
+
+def _lcs_recursive(a: tuple, b: tuple) -> float:
+    """LCS length by TOP-DOWN memoized recursion — independent oracle for the op's DP."""
+    from functools import lru_cache
+
+    @lru_cache(maxsize=None)
+    def c(i: int, j: int) -> int:
+        if i == 0 or j == 0:
+            return 0
+        if a[i - 1] == b[j - 1]:
+            return c(i - 1, j - 1) + 1
+        return max(c(i - 1, j), c(i, j - 1))
+
+    return float(c(len(a), len(b)))
+
+
 def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
     """Per-op holdout. Numeric ops need VALID structured inputs (samples for
     Simpson, sign-bracketed / near-root polynomials for the root finders)."""
