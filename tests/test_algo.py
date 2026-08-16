@@ -344,7 +344,7 @@ def test_general_sorts_do_not_enter_image_registry():
 # --------------------------------------------------------------------------- #
 def test_facade_exposes_algo_tier():
     import fullseye
-    assert set(fullseye.algo_ops()) == set(_ALL)
+    assert set(fullseye.algo_ops()) == set(_ALL_OPS)
     assert fullseye.run_algo("quicksort", [3, 1, 2]) == [1.0, 2.0, 3.0]
     assert fullseye.run_algo("seq_max", [3, 1, 2]) == 3.0
     assert "void heapsort_asc" in fullseye.algo_to_c("heapsort")   # BSD-safe C symbol
