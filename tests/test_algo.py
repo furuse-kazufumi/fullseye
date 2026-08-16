@@ -359,9 +359,6 @@ def test_difftest_python_half_passes(name, tmp_path):
     assert res["passed"] is True                            # a skip is neutral, not a fail
 
 
-_HAS_CC = algo_difftest.find_c_compiler() is not None
-
-
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 @pytest.mark.parametrize("name", _ALL)
 def test_difftest_c_matches_python_bit_for_bit(name, tmp_path):
