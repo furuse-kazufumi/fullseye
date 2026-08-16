@@ -154,7 +154,8 @@ def _butter(x, rate, cutoff, btype, order=4):
 def lowpass(x, rate, cutoff, order=4):
     """Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
     ``(0, rate/2)``; an out-of-Nyquist cutoff raises instead of passing the signal
-    through. Signals shorter than ``3*(2*order+1)`` samples also raise."""
+    through. A signal too short for zero-phase filtfilt also raises (the message
+    names the exact minimum) instead of silently coming back unfiltered."""
     return _butter(x, rate, cutoff, "low", order)
 
 
