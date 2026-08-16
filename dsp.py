@@ -101,7 +101,7 @@ def read_audio(path):
 # --------------------------------------------------------------------------- #
 def spectrum(x, rate=1.0):
     """Single-sided magnitude spectrum -> ``(freqs, magnitude)`` (real FFT)."""
-    x = np.asarray(x, np.float64)
+    x = _require_finite(x)
     mag = np.abs(np.fft.rfft(x))
     freqs = np.fft.rfftfreq(len(x), d=1.0 / float(rate))
     return freqs, mag
