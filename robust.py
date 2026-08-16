@@ -70,11 +70,13 @@ def main() -> int:
     # The tally above is on the OBSERVED holdout (seed+10000) — the split evolve.run
     # scores EVERY generation. Tally the LOCKED holdout (seed+20000, scored once per
     # seed) too instead of letting the observed number stand in for the untouched one.
-    # Fail-closed: a champion without a locked score leaves the locked fields null.
+    # Fail-closed twice: a champion without a locked score leaves `locked` null, AND
+    # the locked beat/collapse tally uses the LOCKED-split baseline (hand_lk/trivial_lk)
+    # — never the observed-split threshold — so it is null unless that baseline exists.
     lk = [c.get("locked_holdout") for c in champs]
     locked = np.array(lk, float) if lk and all(v is not None for v in lk) else None
-    n_beat_lk = int(np.sum(locked > hand)) if (locked is not None and hand is not None) else None
-    n_collapse_lk = int(np.sum(locked < trivial)) if (locked is not None and trivial is not None) else None
+    n_beat_lk = int(np.sum(locked > hand_lk)) if (locked is not None and hand_lk is not None) else None
+    n_collapse_lk = int(np.sum(locked < trivial_lk)) if (locked is not None and trivial_lk is not None) else None
 
     def _spread(x):
         return None if x is None else {"min": float(x.min()), "max": float(x.max()),
