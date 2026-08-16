@@ -2789,8 +2789,9 @@ def build_window(model=None):
         state["code_dirty"] = False           # the edits are now applied to the pipeline
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
-        apply_dev_directives(text)            # dev_* display directives (update/part), from the original text
+        apply_dev_directives(text)            # state/style directives (update/part/lut/draw/system) — pre-render
         show_result()
+        apply_text_directives(text)           # dev_disp_text annotations — drawn on top of the render
 
     def run_program(stop_at_breakpoints=True):
         try:
