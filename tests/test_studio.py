@@ -234,8 +234,9 @@ def test_hdev_program_rejects_general_tier_op():
 def test_program_editor_and_help_exclude_general_tier_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
-    import algo
     from PySide6 import QtCore, QtWidgets
+
+    import algo
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     # the browser SHOWS the general tier (read-only) ...
