@@ -808,6 +808,17 @@ def test_dev_disp_text_annotation():
     assert len(view._text_items) == 0
 
 
+def test_region_style_menu_syncs_with_draw_state():
+    """View > Region style checkmarks track state['draw'] (set from menu or directive)."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    assert win._draw_mode_actions["fill"].isChecked()          # default
+    win._set_draw_style(mode="margin", color=(0.0, 1.0, 0.0))
+    assert win._draw_mode_actions["margin"].isChecked()
+    assert win._draw_color_actions["green"].isChecked()
+    assert win._state["draw"]["mode"] == "margin"
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
