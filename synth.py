@@ -48,7 +48,7 @@ def _gray01(img) -> np.ndarray:
     if a.ndim == 3:
         a = a.mean(axis=2)                     # simple luma-free gray (RGB mean)
     if a.ndim != 2:
-        raise ValueError("synth expects a 2-D (or H,W,3) image, got %dD" % a.ndim)
+        raise ValueError(f"synth expects a 2-D (or H,W,3) image, got {a.ndim}D")
     return a
 
 
