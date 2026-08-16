@@ -327,9 +327,11 @@ def load(path: str, color: bool = False):
     """Load *path* as float64 [0, 1] (grayscale by default).
 
     8-bit PNG/JPG go through OpenCV (or Pillow) divided by 255 — the contract the
-    whole operator suite depends on, unchanged. When OpenCV cannot decode a file
-    it can nevertheless *see* (a 16-bit or float TIFF, a PFM, ...), the read falls
-    back to the bit-depth-preserving :mod:`raster` reader (then Pillow) instead of
+    whole operator suite depends on, unchanged. A 16-bit raster OpenCV *can*
+    decode keeps its depth (``IMREAD_ANYDEPTH``) and is divided by its own max
+    level (65535), not crushed to 8 bits first. When OpenCV cannot decode a file
+    it can nevertheless *see* (a float TIFF, a PFM, ...), the read falls back to
+    the bit-depth-preserving :mod:`raster` reader (then Pillow) instead of
     reporting the failure as a missing file. A file that genuinely does not exist
     raises ``FileNotFoundError``; a file that exists but no backend can decode
     raises a clear ``ValueError``.
@@ -337,12 +339,14 @@ def load(path: str, color: bool = False):
     import os
     cv2 = _cv2()
     if cv2 is not None:
-        flag = cv2.IMREAD_COLOR if color else cv2.IMREAD_GRAYSCALE
+        # ANYDEPTH keeps 16-bit / float samples native; the channel coercion
+        # (gray vs 3-channel) is untouched, so 8-bit files decode as before.
+        flag = (cv2.IMREAD_COLOR if color else cv2.IMREAD_GRAYSCALE) | cv2.IMREAD_ANYDEPTH
         im = cv2.imread(path, flag)
         if im is not None:
             if color:
                 im = im[:, :, ::-1]
-            return im.astype(np.float64) / 255.0
+            return _to01_by_depth(im)
         if not os.path.exists(path):            # None + absent -> genuinely missing
             raise FileNotFoundError(path)
         return _load_via_fallback(path, color)  # None + present -> undecodable by cv2
