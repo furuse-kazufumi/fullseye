@@ -24,8 +24,11 @@ _REDUCES = ["seq_max", "seq_min"]
 # P2: oracle-tolerance ops. simpson/bisection/newton are seq -> scalar; gauss_solve
 # is a variable-length seq -> seq map (KIND_MAP).
 _NUMERIC = ["simpson", "bisection", "newton", "gauss_solve"]
+# P3: string ops (code-point sequences). strfind is a variable-length KIND_MAP (match
+# positions); edit_distance/lcs_length fold to an exact integer (KIND_REDUCE, tol 0).
+_STRING = ["strfind", "edit_distance", "lcs_length"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
-_ALL_OPS = _ALL + _NUMERIC
+_ALL_OPS = _ALL + _NUMERIC + _STRING                # every registered op, in registry order
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
