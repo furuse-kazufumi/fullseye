@@ -41,9 +41,11 @@ def test_every_op_has_valid_kind_and_sorts():
     for op in algo.ALGO_REGISTRY:
         assert op.in_sort == algo.SEQ
         assert op.out_sort in (algo.SEQ, algo.SCALAR)
-        assert op.kind in (algo.KIND_SORT, algo.KIND_REDUCE)
-        # kind and out_sort must agree
-        assert (op.kind == algo.KIND_SORT) == (op.out_sort == algo.SEQ)
+        assert op.kind in (algo.KIND_SORT, algo.KIND_REDUCE, algo.KIND_MAP)
+        # out_sort and kind must agree: a SEQ output comes from a seq-producing kind
+        # (an in-place sort or a variable-length map); a SCALAR output from a reduction.
+        assert (op.out_sort == algo.SEQ) == (op.kind in (algo.KIND_SORT, algo.KIND_MAP))
+        assert (op.out_sort == algo.SCALAR) == (op.kind == algo.KIND_REDUCE)
         assert op.py_code.strip() and op.c_code.strip() and op.c_func
         assert op.provenance                      # honest attribution, never blank
 
