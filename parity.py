@@ -189,13 +189,16 @@ def main() -> int:
     json.dump(rows, open(os.path.join(HERE, "data", "parity_crossbackend.json"), "w",
                          encoding="utf-8"), ensure_ascii=False, indent=1)
 
-    print("cross-backend parity: %d HALCON ops with >=2 independent backends" % n)
-    print("  agree %d  |  close %d  |  differ %d  -> %s" % (bands["agree"], bands["close"], bands["differ"], p))
+    print("cross-backend parity: %d HALCON ops with >=2 independent backends, %d knob points"
+          % (n, len(KNOBS)))
+    print("  agree %d  |  close %d  |  differ %d  |  incomparable %d  -> %s"
+          % (bands["agree"], bands["close"], bands["differ"], bands["incomparable"], p))
     if a.list in bands:
         print("  --- %s ---" % a.list)
         for r in rows:
             if r["band"] == a.list:
-                print("    %-22s diff=%.4f  %s" % (r["halcon"], r["max_disagreement"], ", ".join(r["impls"])))
+                dis = "n/a" if r["max_disagreement"] is None else "%.4f" % r["max_disagreement"]
+                print("    %-22s diff=%s  %s" % (r["halcon"], dis, ", ".join(r["impls"])))
     return 0
 
 
