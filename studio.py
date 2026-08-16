@@ -3182,6 +3182,14 @@ def build_window(model=None):
                     _set_part(int(args[0]), int(args[1]), int(args[2]), int(args[3]))
                 except (TypeError, ValueError):
                     pass
+            elif name == "dev_set_lut" and args:
+                lut = str(args[0]).lower()             # map a HALCON LUT name to a Studio display mode
+                match = next((m for m in win._display_actions
+                              if m.lower() == lut or lut in m.lower()), None)
+                if match is not None:
+                    win._set_display_mode(match)       # only Studio's display-mode LUTs are honoured
+            elif name == "dev_clear_window":
+                _current_view().clear()
     win._apply_dev_directives = apply_dev_directives
 
     def load_frame_b():
