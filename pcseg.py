@@ -148,13 +148,15 @@ def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int 
         cnt = int(inl.sum())
         if best is None or cnt > best[0]:
             best = (cnt, c, r, inl)
-    if best is None:
-        raise ValueError("sphere RANSAC failed to find any valid model")
+    floor = _consensus_floor(n, 4, min_inliers, min_inlier_frac)
+    if best is None or best[0] < floor:
+        return None                                # no consensus -> honest "no sphere"
     res = solve(P[best[3]])
     if res is not None:
         c, r = res
         inl = np.abs(np.linalg.norm(P - c, axis=1) - r) <= thresh
-        return c, float(r), inl
+        if int(inl.sum()) >= floor:                # the refit must keep the consensus
+            return c, float(r), inl
     return best[1], float(best[2]), best[3]
 
 

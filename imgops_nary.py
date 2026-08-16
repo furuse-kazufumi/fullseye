@@ -194,7 +194,13 @@ def coverage() -> dict:
 
 
 def verify() -> dict:
-    """Run every op on canonical inputs; count those returning the declared sort."""
+    """Run every op on canonical inputs; count those returning the declared sort.
+
+    Fail-closed on both counts a "region" claim can be faked with: the output must
+    be BINARY ({0,1}), not merely inside [0,1] (any grayscale image satisfies the
+    range test), and an op that returns its first input unchanged is an identity,
+    not an implementation, so it is failed rather than counted.
+    """
     n = 48
     yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
     i1 = np.clip(xx / n + 0.2, 0, 1)
