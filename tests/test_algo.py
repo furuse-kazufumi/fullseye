@@ -20,7 +20,9 @@ import algo_difftest
 
 _SORTS = ["quicksort", "heapsort", "mergesort"]
 _REDUCES = ["seq_max", "seq_min"]
-_ALL = _SORTS + _REDUCES
+_NUMERIC = ["simpson", "bisection", "newton"]      # P2: seq -> scalar, oracle-tolerance
+_ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
+_ALL_OPS = _ALL + _NUMERIC
 
 
 # --------------------------------------------------------------------------- #
@@ -28,7 +30,7 @@ _ALL = _SORTS + _REDUCES
 # --------------------------------------------------------------------------- #
 def test_registry_names_are_distinct_and_expected():
     names = algo.algo_names()
-    assert names == _ALL
+    assert names == _ALL_OPS
     assert len(names) == len(set(names))
 
 
