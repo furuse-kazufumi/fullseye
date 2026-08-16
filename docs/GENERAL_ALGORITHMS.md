@@ -155,10 +155,11 @@ breadth は work-graph の difftest ゲート、敵対 findings 採否・push �
   fail-soft(例外なし)。**Python/C の FP 演算順を厳密一致**(同一除算・subtract-then-multiply・被消去要素を
   exact `0.0` 代入・abs は inline 符号反転で `math.h`/`-lm` 非依存)ゆえ bit 一致。int overflow は `n≤46340` +
   `long long need` で防止。
-- **honest gate 二段(実測)**: (1)Python **== `np.linalg.solve`**(独立 oracle・良条件 holdout 31 ケース=対角
-  優位 + 行置換でピボット経路)→ **max abs diff 3.55e-15**(tol 1e-9)。(2)codegen **C == Python bit 一致**
-  (`ziglang cc`・`-ffp-contract=off`)→ **diff 0.0 / c_verified=true**。特異/malformed の **C fail-soft は Python と
-  完全一致**を別テストで直接検証(oracle 非対応領域ゆえ holdout でなく C-vs-Python 直接比較)。
+- **honest gate 二段(実測)**: (1)Python **== `np.linalg.solve`**(独立 oracle・良条件 holdout 34 ケース=対角
+  優位 + 行置換 + **ピボット必須ケース**[exact-zero(0,0)・微小(0,0)・3×3 ゼロ対角])→ **max abs diff 3.55e-15**
+  (tol 1e-9)。(2)codegen **C == Python bit 一致**(`ziglang cc`・`-ffp-contract=off`)→ **diff 0.0 / c_verified=true**。
+  特異/malformed の **C fail-soft は Python と完全一致**を別テストで直接検証(oracle 非対応領域ゆえ holdout でなく
+  C-vs-Python 直接比較)。
 - **`tools/algo_gate.py`(再利用可能な gated-stage runner)**: work-graph の `CommandWorker` は produces 生成 or
   exit0 で done 判定するため、difftest が FAIL 時も JSON を書く現状では **fail-open**(失敗ゲートが done)になる。
   これを塞ぐ = **pass 時のみマーカー `gate_ok.json` を書き、exit code=判定**。ノードの produces をマーカーに
