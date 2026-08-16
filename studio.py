@@ -1964,6 +1964,8 @@ def build_window(model=None):
         all run on backend output and can raise on a degenerate array (e.g. a
         0-size result under 'shaded relief'). An exception escaping here used to
         escape the Qt callback entirely."""
+        if not state["dev_update"]["window"]:
+            return                            # dev_update_window('off'): no auto-display
         state["renders"] += 1
         try:
             _render()
