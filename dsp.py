@@ -31,6 +31,20 @@ __all__ = [
 ]
 
 
+def _require_finite(x, name: str = "signal") -> np.ndarray:
+    """Coerce to a float64 array and reject any NaN / Inf.
+
+    One poisoned sample spreads across the whole spectrum through the FFT, so the
+    1-D layer refuses it up front rather than emitting NaN/Inf features that look
+    like measurements. Empty signals are allowed (they are the documented
+    zero-feature case)."""
+    a = np.asarray(x, np.float64)
+    if a.size and not np.isfinite(a).all():
+        n = int((~np.isfinite(a)).sum())
+        raise ValueError("%s has %d non-finite sample(s) (NaN/Inf) — refusing" % (name, n))
+    return a
+
+
 # --------------------------------------------------------------------------- #
 # I/O
 # --------------------------------------------------------------------------- #
