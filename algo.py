@@ -39,7 +39,8 @@ legitimately produce NaN will define their own convention explicitly.
 stdlib only (the Python references use no numpy — they mirror the C index-by-index
 so "re-implemented from spec" is visibly true). P1: seq/scalar + 3 sorts + 2
 reductions. Later phases add ops here: P2 numerics, P3 strings, P4 graphs, P5 number
-theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE).
+theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE),
+P6 computational geometry (polygon area, point-in-polygon; integer coords, exact).
 """
 from __future__ import annotations
 
@@ -1427,6 +1428,253 @@ int rle_encode(const double* a, int n, double* out) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P6 — computational geometry (bridges to the image tier's contour / region work).
+# 2-D points are packed into the input seq; INTEGER coordinates (each in [-100000,
+# 100000]) keep every cross product / shoelace sum an EXACT integer < 2^53, so C ==
+# Python bit-for-bit AND Python == an independent oracle with tol 0 — no floating
+# division anywhere (that would break bit-identity). Orientation / crossing tests use
+# integer cross products. A query point exactly on a polygon edge/vertex is left
+# implementation-defined and excluded by contract (a boundary point has no crossing-vs-
+# winding agreement); the honest gate's holdout only uses strict interior/exterior
+# points. See docs/GENERAL_ALGORITHMS.md P6.
+# --------------------------------------------------------------------------- #
+_PY_POLYGON_AREA2 = '''\
+def run(a):
+    """Twice the SIGNED area of a polygon by the shoelace formula. Input packs the vertices in
+    order: a = [n, x0, y0, x1, y1, ..., x_{n-1}, y_{n-1}] (n >= 3). Returns 2 * signed area — the
+    sign is positive for a counter-clockwise vertex order, negative for clockwise (so the winding
+    is recoverable) — as an EXACT integer double for integer coordinates.
+
+    Fail-soft 0.0 on malformed input, n < 3, or a coordinate outside [-100000, 100000] / non-integer
+    (the bound keeps the accumulated cross-product sum < 2^53, so the result is exact in float64)."""
+    if len(a) < 1:
+        return 0.0
+    nd = a[0]
+    if not (nd >= 3.0 and nd <= 100000.0 and nd == float(int(nd))):
+        return 0.0
+    n = int(nd)
+    if len(a) < 1 + 2 * n:
+        return 0.0
+    for i in range(2 * n):                              # integer, bounded coordinate guard
+        c = a[1 + i]
+        if not (c >= -100000.0 and c <= 100000.0 and c == float(int(c))):
+            return 0.0
+    s = 0
+    for i in range(n):
+        x1 = int(a[1 + 2 * i]); y1 = int(a[1 + 2 * i + 1])
+        j = 0 if i + 1 == n else i + 1
+        x2 = int(a[1 + 2 * j]); y2 = int(a[1 + 2 * j + 1])
+        s = s + x1 * y2 - x2 * y1
+    return float(s)
+'''
+
+_C_POLYGON_AREA2 = '''\
+/* Twice the signed area of a polygon a = [n, x0,y0,...] by the shoelace formula (integer coords
+ * in [-100000,100000]; the sum stays < 2^53, exact). Fail-soft 0.0 on malformed / out-of-domain. */
+double polygon_area2(const double* a, int n_in) {
+    if (n_in < 1) return 0.0;
+    double nd = a[0];
+    if (!(nd >= 3.0 && nd <= 100000.0 && nd == (double)(long long)nd)) return 0.0;
+    int n = (int)nd;
+    if ((long long)n_in < 1LL + 2LL * n) return 0.0;
+    for (int i = 0; i < 2 * n; i++) {
+        double c = a[1 + i];
+        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return 0.0;
+    }
+    long long s = 0;
+    for (int i = 0; i < n; i++) {
+        long long x1 = (long long)a[1 + 2 * i], y1 = (long long)a[1 + 2 * i + 1];
+        int j = (i + 1 == n) ? 0 : i + 1;
+        long long x2 = (long long)a[1 + 2 * j], y2 = (long long)a[1 + 2 * j + 1];
+        s += x1 * y2 - x2 * y1;
+    }
+    return (double)s;
+}
+'''
+
+_PY_POINT_IN_POLYGON = '''\
+def run(a):
+    """Point-in-polygon test by crossing number (ray casting). Input packs the query point and the
+    simple polygon: a = [px, py, n, x0, y0, x1, y1, ..., x_{n-1}, y_{n-1}] (n >= 3). Returns 1.0 if
+    (px, py) is strictly INSIDE, 0.0 if outside. INTEGER coordinates in [-100000, 100000]; a point
+    exactly ON an edge/vertex is implementation-defined and excluded by contract. No floating
+    division (an integer cross product decides each crossing), so C == Python bit-for-bit.
+
+    Fail-soft 0.0 on malformed input, n < 3, or an out-of-domain / non-integer coordinate."""
+    if len(a) < 3:
+        return 0.0
+    pxd = a[0]; pyd = a[1]; nd = a[2]
+    if not (pxd >= -100000.0 and pxd <= 100000.0 and pxd == float(int(pxd))):
+        return 0.0
+    if not (pyd >= -100000.0 and pyd <= 100000.0 and pyd == float(int(pyd))):
+        return 0.0
+    if not (nd >= 3.0 and nd <= 100000.0 and nd == float(int(nd))):
+        return 0.0
+    n = int(nd)
+    if len(a) < 3 + 2 * n:
+        return 0.0
+    for i in range(2 * n):
+        c = a[3 + i]
+        if not (c >= -100000.0 and c <= 100000.0 and c == float(int(c))):
+            return 0.0
+    px = int(pxd); py = int(pyd)
+    inside = False
+    for i in range(n):
+        x1 = int(a[3 + 2 * i]); y1 = int(a[3 + 2 * i + 1])
+        j = 0 if i + 1 == n else i + 1
+        x2 = int(a[3 + 2 * j]); y2 = int(a[3 + 2 * j + 1])
+        if (y1 > py) != (y2 > py):                     # edge straddles the horizontal ray at py
+            dy = y2 - y1
+            cross = (x2 - x1) * (py - y1) - (px - x1) * dy    # integer, no division
+            if (dy > 0 and cross > 0) or (dy < 0 and cross < 0):
+                inside = not inside                    # ray crosses this edge to the right of px
+    return 1.0 if inside else 0.0
+'''
+
+_C_POINT_IN_POLYGON = '''\
+/* Point-in-polygon by crossing number (integer coords in [-100000,100000], no division).
+ * a = [px, py, n, x0,y0,...]; returns 1.0 inside / 0.0 outside. Fail-soft 0.0 on malformed. */
+double point_in_polygon(const double* a, int n_in) {
+    if (n_in < 3) return 0.0;
+    double pxd = a[0], pyd = a[1], nd = a[2];
+    if (!(pxd >= -100000.0 && pxd <= 100000.0 && pxd == (double)(long long)pxd)) return 0.0;
+    if (!(pyd >= -100000.0 && pyd <= 100000.0 && pyd == (double)(long long)pyd)) return 0.0;
+    if (!(nd >= 3.0 && nd <= 100000.0 && nd == (double)(long long)nd)) return 0.0;
+    int n = (int)nd;
+    if ((long long)n_in < 3LL + 2LL * n) return 0.0;
+    for (int i = 0; i < 2 * n; i++) {
+        double c = a[3 + i];
+        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return 0.0;
+    }
+    long long px = (long long)pxd, py = (long long)pyd;
+    int inside = 0;
+    for (int i = 0; i < n; i++) {
+        long long x1 = (long long)a[3 + 2 * i], y1 = (long long)a[3 + 2 * i + 1];
+        int j = (i + 1 == n) ? 0 : i + 1;
+        long long x2 = (long long)a[3 + 2 * j], y2 = (long long)a[3 + 2 * j + 1];
+        if ((y1 > py) != (y2 > py)) {
+            long long dy = y2 - y1;
+            long long cross = (x2 - x1) * (py - y1) - (px - x1) * dy;
+            if ((dy > 0 && cross > 0) || (dy < 0 && cross < 0)) inside = !inside;
+        }
+    }
+    return inside ? 1.0 : 0.0;
+}
+'''
+
+
+_PY_CONVEX_HULL = '''\
+def run(a):
+    """Convex hull of a 2-D integer point set (Andrew's monotone chain). Input packs the points:
+    a = [n, x0, y0, x1, y1, ..., x_{n-1}, y_{n-1}] (n points). Returns the hull vertices as
+    [hx0, hy0, hx1, hy1, ...] in COUNTER-CLOCKWISE order starting from the lexicographically smallest
+    vertex (min x, then min y) — a VARIABLE-LENGTH output. Collinear points on a hull edge are
+    EXCLUDED (strict hull: only true corners). Integer coordinates in [-100000, 100000] make every
+    orientation test an exact integer cross product, so C == Python bit-for-bit.
+
+    Fail-soft [] if malformed / out-of-domain, or the point set is DEGENERATE (fewer than 3 distinct
+    points, or all points collinear — no 2-D hull)."""
+    if len(a) < 1:
+        return []
+    nd = a[0]
+    if not (nd >= 3.0 and nd <= 100000.0 and nd == float(int(nd))):
+        return []
+    n = int(nd)
+    if len(a) < 1 + 2 * n:
+        return []
+    for i in range(2 * n):
+        c = a[1 + i]
+        if not (c >= -100000.0 and c <= 100000.0 and c == float(int(c))):
+            return []
+    pts = sorted({(int(a[1 + 2 * i]), int(a[1 + 2 * i + 1])) for i in range(n)})   # unique, lex order
+    m = len(pts)
+    if m < 3:
+        return []                                       # fewer than 3 distinct points -> degenerate
+
+    def cross(o, p, q):                                 # >0 left turn, <0 right, 0 collinear
+        return (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0])
+
+    lower = []
+    for p in pts:
+        while len(lower) >= 2 and cross(lower[-2], lower[-1], p) <= 0:   # <=0: drop collinear too
+            lower.pop()
+        lower.append(p)
+    upper = []
+    for p in reversed(pts):
+        while len(upper) >= 2 and cross(upper[-2], upper[-1], p) <= 0:
+            upper.pop()
+        upper.append(p)
+    hull = lower[:-1] + upper[:-1]                       # drop the shared endpoints (CCW from lex-min)
+    if len(hull) < 3:
+        return []                                       # all points collinear -> degenerate
+    res = []
+    for (x, y) in hull:
+        res.append(float(x))
+        res.append(float(y))
+    return res
+'''
+
+_C_CONVEX_HULL = '''\
+/* Convex hull of a 2-D integer point set (Andrew's monotone chain). a = [n, x0,y0,...]; writes the
+ * hull vertices [hx,hy,...] CCW from the lex-min vertex to `out` and returns the count (2 per vertex).
+ * Collinear edge points excluded. Fail-soft 0 on malformed / out-of-domain / degenerate. Integer
+ * coords in [-100000,100000] -> exact cross products, bit-identical to Python. */
+typedef struct { long long x, y; } _HullPt;
+static int _hull_cmp(const void* pa, const void* pb) {
+    const _HullPt* a = (const _HullPt*)pa;
+    const _HullPt* b = (const _HullPt*)pb;
+    if (a->x < b->x) return -1; if (a->x > b->x) return 1;
+    if (a->y < b->y) return -1; if (a->y > b->y) return 1;
+    return 0;
+}
+static long long _hull_cross(_HullPt o, _HullPt p, _HullPt q) {
+    return (p.x - o.x) * (q.y - o.y) - (p.y - o.y) * (q.x - o.x);
+}
+int convex_hull(const double* a, int n_in, double* out) {
+    if (n_in < 1) return 0;
+    double nd = a[0];
+    if (!(nd >= 3.0 && nd <= 100000.0 && nd == (double)(long long)nd)) return 0;
+    int n = (int)nd;
+    if ((long long)n_in < 1LL + 2LL * n) return 0;
+    for (int i = 0; i < 2 * n; i++) {
+        double c = a[1 + i];
+        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return 0;
+    }
+    if (!out) return 2 * n;                             /* size probe: hull has <= n vertices */
+    _HullPt* pts = (_HullPt*)malloc((size_t)n * sizeof(_HullPt));
+    if (!pts) return 0;
+    for (int i = 0; i < n; i++) { pts[i].x = (long long)a[1 + 2 * i]; pts[i].y = (long long)a[1 + 2 * i + 1]; }
+    qsort(pts, (size_t)n, sizeof(_HullPt), _hull_cmp);
+    /* dedup adjacent points so this list == Python's sorted(set(pts)) (keeping the two backends in
+     * lockstep for bit-parity). This is also defensive redundancy: the strict <=0 monotone-chain pop
+     * below already eliminates duplicate/collinear points, and the hv<3 post-check catches residual
+     * degeneracy — so dropping the dedup on BOTH sides is a proven-equivalent no-op (review, 200k cases). */
+    int m = 0;
+    for (int i = 0; i < n; i++)
+        if (m == 0 || pts[i].x != pts[m - 1].x || pts[i].y != pts[m - 1].y) pts[m++] = pts[i];
+    if (m < 3) { free(pts); return 0; }
+    _HullPt* h = (_HullPt*)malloc((size_t)(2 * m) * sizeof(_HullPt));   /* lower+upper <= 2m */
+    if (!h) { free(pts); return 0; }
+    int k = 0;
+    for (int i = 0; i < m; i++) {                       /* lower hull */
+        while (k >= 2 && _hull_cross(h[k - 2], h[k - 1], pts[i]) <= 0) k--;
+        h[k++] = pts[i];
+    }
+    int lower_k = k + 1;
+    for (int i = m - 2; i >= 0; i--) {                  /* upper hull */
+        while (k >= lower_k && _hull_cross(h[k - 2], h[k - 1], pts[i]) <= 0) k--;
+        h[k++] = pts[i];
+    }
+    int hv = k - 1;                                     /* drop the repeated first point */
+    if (hv < 3) { free(pts); free(h); return 0; }
+    for (int i = 0; i < hv; i++) { out[2 * i] = (double)h[i].x; out[2 * i + 1] = (double)h[i].y; }
+    free(pts); free(h);
+    return 2 * hv;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -1514,6 +1762,21 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "Run-length encode a sequence -> [value, count, ...] "
            "(variable-length seq -> seq, output up to 2x the input).",
            "run-length encoding (lossless)"),
+    AlgoOp("polygon_area2", "geometry", SEQ, SCALAR, KIND_REDUCE, "polygon_area2",
+           _PY_POLYGON_AREA2, _C_POLYGON_AREA2,
+           "Twice the signed area of a polygon [n, x0,y0,...] by the shoelace formula "
+           "(integer coordinates; sign encodes winding).",
+           "shoelace / surveyor's formula for polygon area"),
+    AlgoOp("point_in_polygon", "geometry", SEQ, SCALAR, KIND_REDUCE, "point_in_polygon",
+           _PY_POINT_IN_POLYGON, _C_POINT_IN_POLYGON,
+           "Point-in-polygon test of [px, py, n, x0,y0,...] by crossing number "
+           "(ray casting; 1.0 inside / 0.0 outside; integer coordinates).",
+           "crossing-number / ray-casting point-in-polygon (integer cross products)"),
+    AlgoOp("convex_hull", "geometry", SEQ, SEQ, KIND_MAP, "convex_hull",
+           _PY_CONVEX_HULL, _C_CONVEX_HULL,
+           "Convex hull of a 2-D integer point set [n, x0,y0,...] by Andrew's monotone "
+           "chain -> hull vertices CCW from the lex-min vertex (variable-length seq -> seq).",
+           "Andrew's monotone-chain convex hull (integer orientation cross products)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

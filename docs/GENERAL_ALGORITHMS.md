@@ -342,3 +342,36 @@ guard を falsify できるか」への深い突き**:
 - **REFUTED 5 件**(検証で棄却): いずれも現行コードは正しく、finding が実挙動を誤認(検証エージェントが実行で反証)。
 - レビュー後: 5 P5 op とも difftest = python exact / C bit 一致 / c_verified=true、全スイート **4742 passed / 0 failed**
   (レビュー修正テスト +6)・私の新規ファイル ruff clean・mypy 新規 0。work-graph 5 ノードも post-fix で再ゲート(done)。
+
+## P6 完遂記録 — 計算幾何(2026-08-17, Opus5[1m]/ultracode, 12h 自律・`graph-loop-engineering`)
+**幾何アルゴリズム 3 種を algo tier に追加**(algo-c ロードマップ P1→P5 完遂後の拡張=P6。当初 TOC の「幾何=凸包/
+線分交差」に対応)。**画像 tier の輪郭/領域処理への橋渡し**でもある。2-D 点を入力 seq にパックし、**整数座標**
+(各 [-100000, 100000])で全ての向き判定/靴紐和を**厳密な整数**にする(浮動小数除算を一切使わない)=C bit 一致 かつ
+Python==独立 oracle tol 0。
+- **op(3)**:
+  - `polygon_area2`(KIND_REDUCE): 靴紐公式で多角形の **2×符号付き面積**(符号=巻き方向)。oracle=numpy ベクトル化靴紐
+    (`dot`+`roll`=別コード経路)。**honest 域**: 座標 ≤1e5・n ≤1e5 で和は最大 2e15 < 2^53(box 周回スパイラルで実測=exact)。
+  - `point_in_polygon`(KIND_REDUCE): 交差数(レイキャスティング)で内外判定。整数の外積で交差を決める(除算なし)。
+    oracle=**巻き数アルゴリズム**(交差数とは別手法・両者は単純多角形の厳密内外で一致)。凹多角形も正しい(notch=outside を検証)。
+    **境界(辺上)の点は実装依存**と開示し holdout から除外(交差 vs 巻き数が境界で分岐しうるため)。
+  - `convex_hull`(**KIND_MAP**): Andrew の monotone chain で凸包。出力=**lex-min 頂点から CCW 順**の頂点列(共線点は除外
+    =strict hull・scipy と一致)。oracle=`scipy.spatial.ConvexHull` の**頂点集合**比較(順序は C-vs-Python bit 一致で別途担保)。
+    退化(3 未満の distinct / 全共線)は両者 [] で fail-soft。**2000 ランダム点集合で scipy と mismatch 0**を事前実測。
+- **KIND_MAP**: convex_hull は出力 ≤ 入力長(頂点 ≤ n)だが 2 段 size-probe(上界 2n)を踏襲。
+- **honest gate 実測(3 op とも passed=True・c_verified=true・ziglang cc)**: Python==独立 oracle diff 0.0 / C==Python bit 一致 diff 0.0。
+- **work-graph op 波**: 3 幾何 op も `algo_gate` ノード化(`1 op=1 ノード`)→ `run-once` で無人 done(全 algo op 23 が gate 化)。
+- **回帰**: `tests/test_algo.py` に幾何テスト群(既知解・scipy/numpy/matplotlib/巻き数の複数独立 oracle 照合・凸性/CCW/点内包の
+  構造検証・fail-soft・退化・no-mutation・python exact・C bit 一致)。全スイート **4742 → 4765 passed / 0 failed**(+23)・ruff clean・mypy 新規 0。
+
+### P6 敵対レビュー(2026-08-17, [[feedback_no_solo_ai_judgment]])
+2 本の独立敵対レビュー Workflow(各 finding を検証エージェントが実 compile/実行/ストレスで再現)を並行実施:
+- **P6a(polygon_area2 / point_in_polygon、4 レンズ・102 tool uses)= findings 0**。geometry-correctness / C-safety /
+  gate-honesty / integration-focus すべてゼロ(整数厳密・境界開示・2^53 域を事前実測済み)。私も最悪ケース(box 周回スパイラル
+  n=1e5)で 2×面積=2.0e15 < 2^53 を実測し op==numpy==C 一致を確認済み。
+- **P6b(convex_hull、3 レンズ・85 tool uses)= 1 raw → 0 CONFIRMED**(1 REFUTED)。唯一の指摘「dedup 削除変異が difftest を
+  通過」は**非欠陥**と検証で棄却: dedup は strict `<=0` monotone-chain pop + `hv<3` 後置チェックで既に保証される**防御的冗長**
+  (両 backend で削除しても等価=200,000 重複多点集合で divergence 0)。検証エージェントが独立に確認=**2n size-probe はタイト
+  非超過上界**(放物線入力で out_len=2n)/ **ASan+UBSan が 1104 hostile cases でクリーン**(out[] 書込 OOB なし・long long 外積
+  overflow なし)/ C==Python bit 一致・Python==scipy 頂点集合 全一致 / CCW-from-lex-min 順序も test で担保 / qsort 不安定性は
+  (x,y) 全順序比較子 + 隣接 dedup で無影響(=`sorted(set())`)。→ dedup が防御的冗長である旨の説明コメントのみ追記(挙動不変)。
+- **結論**: P6 幾何 3 op に shipped bug なし。commit + push はこのセッション。

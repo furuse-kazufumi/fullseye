@@ -6,6 +6,11 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **★★(2026-08-17 その12, Opus5[1m]/ultracode, 12h 自律・`graph-loop-engineering`) = algo-c P6(計算幾何).**
+> algo-c ロードマップ P1→P5 完遂後の拡張(当初 TOC の「幾何」)。**画像 tier の輪郭/領域処理への橋渡し**。2-D 点を **整数座標**(≤1e5)でパックし全ての向き判定/靴紐和を厳密な整数化(浮動小数除算なし)= C bit 一致 かつ Python==独立 oracle tol 0。
+> - **op(3)**: `polygon_area2`(靴紐=2×符号付き面積・oracle numpy 靴紐・honest 域 2e15<2^53 実測)/ `point_in_polygon`(交差数・oracle 巻き数・凹多角形 OK・境界は実装依存と開示)/ `convex_hull`(**KIND_MAP**・Andrew monotone chain・lex-min から CCW・共線除外・oracle scipy 頂点集合・2000 cases で mismatch 0)。
+> - **検証**: 3 op とも difftest passed(python exact / C bit 一致 / c_verified)、work-graph 3 ノード無人 done(全 algo op 23 が gate 化)。全スイート **4742 → 4765 passed / 0 failed**(+23)。**敵対レビュー(並行 2 本)= P6a findings 0 / P6b 1 raw→0 CONFIRMED**(dedup 削除は防御的冗長=非欠陥と検証で棄却、ASan+UBSan 1104 cases クリーン)。commit + push はこのセッション。正本=`docs/GENERAL_ALGORITHMS.md`「P6 完遂記録 + P6 敵対レビュー」。
+>
 > **★★(2026-08-17 その10, Opus5[1m]/ultracode, `graph-loop-engineering`) = algo-c P5(数論・圧縮・教育用ハッシュ)= algo-c ロードマップ完遂.**
 > 「自律で前回の続きを継続」ゴール。前セッション(その4-9)が P2→P4 を完遂・push 済 → 次候補 (a)P5 を実装。**algo 詳細の正本 = `docs/GENERAL_ALGORITHMS.md`「P5 完遂記録」**。
 > - **op(5)**: `gcd_seq`(Euclid=KIND_REDUCE)/ `sieve_primes`(エラトステネス=**KIND_MAP**・出力≫入力)/ `pow_mod`(square-and-multiply=RSA/DH primitive)/ `crc32`(IEEE 802.3・c_func `crc32_ieee`)/ `rle_encode`(連長圧縮=**KIND_MAP**・出力≤2×入力)。整数を float64 で運ぶ(exact <2^53)ため新 wire 型不要。

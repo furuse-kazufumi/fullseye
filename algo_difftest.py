@@ -152,6 +152,40 @@ def _int_in(x: float, lo: float, hi: float) -> bool:
     return math.isfinite(x) and lo <= x <= hi and x == float(int(x))
 
 
+def _winding_number_inside(px: int, py: int, xs: list[int], ys: list[int]) -> bool:
+    """Winding-number != 0 point-in-polygon test (Sunday) — an INDEPENDENT oracle for the
+    crossing-number op (a different algorithm; both integer-exact and agree at strict interior/
+    exterior points of a simple polygon)."""
+    n = len(xs)
+    wn = 0
+    for i in range(n):
+        x1, y1 = xs[i], ys[i]
+        j = (i + 1) % n
+        x2, y2 = xs[j], ys[j]
+        if y1 <= py:
+            if y2 > py and (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) > 0:
+                wn += 1                                     # upward crossing, P left of edge
+        else:
+            if y2 <= py and (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) < 0:
+                wn -= 1                                     # downward crossing, P right of edge
+    return wn != 0
+
+
+def _on_segment_int(px: int, py: int, x1: int, y1: int, x2: int, y2: int) -> bool:
+    """True iff integer point (px,py) lies on the closed segment (x1,y1)-(x2,y2)."""
+    if (x2 - x1) * (py - y1) - (px - x1) * (y2 - y1) != 0:   # not collinear
+        return False
+    return min(x1, x2) <= px <= max(x1, x2) and min(y1, y2) <= py <= max(y1, y2)
+
+
+def _on_boundary(px: int, py: int, xs: list[int], ys: list[int]) -> bool:
+    """True iff (px,py) lies on any edge of the polygon — such points are excluded from the
+    point_in_polygon holdout (boundary is implementation-defined; crossing vs winding can differ)."""
+    n = len(xs)
+    return any(_on_segment_int(px, py, xs[i], ys[i], xs[(i + 1) % n], ys[(i + 1) % n])
+               for i in range(n))
+
+
 def _is_prime_trial(p: int) -> bool:
     """Primality by trial division — an INDEPENDENT oracle for sieve_primes (a wholly
     different code path from the sieve: per-candidate division vs. a marking pass)."""
@@ -434,6 +468,92 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             k = rng.randint(0, 30)
             cases.append([float(rng.randint(0, 3)) for _ in range(k)])   # small alphabet -> runs
         return cases
+    if name == "polygon_area2":
+        rng2 = random.Random(seed + 202)
+        cases = [
+            [3.0, 0.0, 0.0, 4.0, 0.0, 0.0, 3.0],            # CCW triangle -> 2*area = 12
+            [3.0, 0.0, 0.0, 0.0, 3.0, 4.0, 0.0],            # CW triangle -> -12
+            [4.0, 0.0, 0.0, 4.0, 0.0, 4.0, 4.0, 0.0, 4.0],  # CCW square -> 32
+            [4.0, 0.0, 0.0, 0.0, 4.0, 4.0, 4.0, 4.0, 0.0],  # CW square -> -32
+            # out-of-domain -> op fail-softs 0.0 (exercises the guard)
+            [2.0, 0.0, 0.0, 1.0, 1.0],                       # n < 3
+            [3.0, 0.0, 0.0, 4.0, 0.0, 200000.0, 3.0],        # coord out of range
+            [3.0, 0.0, 0.0, 4.0, 0.0, 0.5, 3.0],             # non-integer coord
+        ]
+        for _ in range(30):                                  # any vertex sequence: shoelace is defined
+            n = rng2.randint(3, 8)
+            flat = [float(n)]
+            for _ in range(n):
+                flat += [float(rng2.randint(-500, 500)), float(rng2.randint(-500, 500))]
+            cases.append(flat)
+        return cases
+    if name == "point_in_polygon":
+        rng2 = random.Random(seed + 303)
+        cases = []
+        square = [0, 0, 6, 0, 6, 6, 0, 6]
+        for (px, py) in [(3, 3), (1, 1), (5, 5), (10, 3), (-2, 3), (3, 10)]:
+            cases.append([float(px), float(py), 4.0] + [float(v) for v in square])
+        tri = [0, 0, 8, 0, 4, 6]
+        for (px, py) in [(4, 2), (1, 1), (4, 5), (7, 5), (-1, -1)]:
+            cases.append([float(px), float(py), 3.0] + [float(v) for v in tri])
+        lshape = [0, 0, 6, 0, 6, 2, 2, 2, 2, 6, 0, 6]        # concave 'L'
+        for (px, py) in [(1, 1), (4, 1), (1, 4), (4, 4), (3, 5)]:
+            cases.append([float(px), float(py), 6.0] + [float(v) for v in lshape])
+        try:                                                 # random convex polygons (scipy hull)
+            from scipy.spatial import ConvexHull
+            for _ in range(20):
+                pool = list(dict.fromkeys(
+                    (rng2.randint(-40, 40), rng2.randint(-40, 40)) for _ in range(rng2.randint(6, 12))))
+                if len(pool) < 3:
+                    continue
+                try:
+                    verts = [pool[i] for i in ConvexHull(pool).vertices]     # CCW hull vertices
+                except Exception:  # noqa: BLE001, S112 - degenerate point sets are expected; skip
+                    continue
+                if len(verts) < 3:
+                    continue
+                xs = [v[0] for v in verts]
+                ys = [v[1] for v in verts]
+                for _ in range(3):
+                    px, py = rng2.randint(-50, 50), rng2.randint(-50, 50)
+                    if _on_boundary(px, py, xs, ys):
+                        continue                             # skip boundary (implementation-defined)
+                    cases.append([float(px), float(py), float(len(verts))]
+                                 + [float(c) for v in verts for c in v])
+        except ImportError:
+            pass
+        cases += [                                           # out-of-domain -> fail-soft 0.0
+            [1.0, 1.0, 2.0, 0.0, 0.0, 5.0, 5.0],             # n < 3
+            [1.5, 1.0, 3.0] + [float(v) for v in tri],       # non-integer query point
+            [1.0, 1.0, 3.0, 0.0, 0.0, 200000.0, 0.0, 4.0, 6.0],  # coord out of range
+        ]
+        return cases
+    if name == "convex_hull":
+        rng2 = random.Random(seed + 404)
+        cases = [
+            [4.0, 0, 0, 4, 0, 4, 4, 0, 4],                   # square (all 4 corners)
+            [5.0, 0, 0, 2, 0, 4, 0, 4, 4, 0, 4],             # square + collinear midpoint (excluded)
+            [5.0, 0, 0, 4, 0, 4, 4, 0, 4, 2, 2],             # square + interior point (excluded)
+            [3.0, 0, 0, 4, 0, 2, 3],                         # triangle
+            [3.0, 0, 0, 1, 1, 2, 2],                         # collinear -> degenerate []
+            [3.0, 5, 5, 5, 5, 5, 5],                         # all identical (< 3 distinct) -> []
+            [2.0, 0, 0, 1, 1],                               # n < 3 -> []
+            [3.0, 0, 0, 4, 0, 200000, 3],                    # coord out of range -> []
+            [3.0, 0, 0, 4, 0, 0.5, 3],                       # non-integer -> []
+        ]
+        for _ in range(30):                                  # random point sets
+            n = rng2.randint(3, 15)
+            flat = [float(n)]
+            for _ in range(n):
+                flat += [float(rng2.randint(-100, 100)), float(rng2.randint(-100, 100))]
+            cases.append(flat)
+        for _ in range(6):                                   # duplicate-heavy / small range (ties, collinear)
+            n = rng2.randint(4, 12)
+            flat = [float(n)]
+            for _ in range(n):
+                flat += [float(rng2.randint(-3, 3)), float(rng2.randint(-3, 3))]
+            cases.append(flat)
+        return cases
     return make_holdout(seed)
 
 
@@ -597,6 +717,61 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 return float("inf")
             for x, y in zip(got, pairs):
                 errs.append(_diff01(float(x), float(y)))
+        return max(errs, default=0.0)
+    if name == "polygon_area2":
+        # independent oracle: a numpy vectorized shoelace (roll + dot), a different code path from
+        # the op's scalar C-mirror loop. Domain-aware (out-of-domain / n<3 -> op fail-soft 0.0).
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref = 0.0
+            if arr and _int_in(arr[0], 3.0, 100000.0) and len(arr) >= 1 + 2 * int(arr[0]):
+                n = int(arr[0])
+                coords = arr[1:1 + 2 * n]
+                if all(_int_in(c, -100000.0, 100000.0) for c in coords):
+                    x = np.asarray(coords[0::2], np.float64)
+                    y = np.asarray(coords[1::2], np.float64)
+                    ref = float(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "point_in_polygon":
+        # independent oracle: the WINDING-NUMBER algorithm (vs the op's crossing number) — a
+        # different method, integer-exact, agreeing at strict interior/exterior of a simple polygon.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref = 0.0
+            if (len(arr) >= 3 and _int_in(arr[0], -100000.0, 100000.0)
+                    and _int_in(arr[1], -100000.0, 100000.0) and _int_in(arr[2], 3.0, 100000.0)
+                    and len(arr) >= 3 + 2 * int(arr[2])):
+                n = int(arr[2])
+                coords = arr[3:3 + 2 * n]
+                if all(_int_in(c, -100000.0, 100000.0) for c in coords):
+                    xs = [int(coords[2 * i]) for i in range(n)]
+                    ys = [int(coords[2 * i + 1]) for i in range(n)]
+                    ref = 1.0 if _winding_number_inside(int(arr[0]), int(arr[1]), xs, ys) else 0.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "convex_hull":
+        # independent oracle: scipy.spatial.ConvexHull (qhull). Compare the SET of hull vertices
+        # (order is enforced separately by the C-vs-Python bit check); a degenerate point set
+        # (< 3 distinct / all collinear) raises in qhull and mirrors the op's fail-soft []. The
+        # count guard rejects a hull with duplicate vertices. Domain-aware (out-of-domain -> []).
+        from scipy.spatial import ConvexHull
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref_set: frozenset = frozenset()
+            if arr and _int_in(arr[0], 3.0, 100000.0) and len(arr) >= 1 + 2 * int(arr[0]):
+                n = int(arr[0])
+                coords = arr[1:1 + 2 * n]
+                if all(_int_in(c, -100000.0, 100000.0) for c in coords):
+                    pts = list({(int(coords[2 * i]), int(coords[2 * i + 1])) for i in range(n)})
+                    if len(pts) >= 3:
+                        try:
+                            ref_set = frozenset(tuple(pts[i]) for i in ConvexHull(pts).vertices)
+                        except Exception:  # noqa: BLE001 - qhull raises on collinear/degenerate -> []
+                            ref_set = frozenset()
+            got_set = frozenset((int(got[2 * i]), int(got[2 * i + 1])) for i in range(len(got) // 2))
+            ok = got_set == ref_set and len(got) // 2 == len(ref_set)   # same vertices, no duplicates
+            errs.append(0.0 if ok else float("inf"))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:

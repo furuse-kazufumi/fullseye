@@ -38,9 +38,13 @@ _NUMTHEORY = ["gcd_seq", "sieve_primes", "pow_mod"]
 _HASH = ["crc32"]
 _COMPRESS = ["rle_encode"]
 _P5 = _NUMTHEORY + _HASH + _COMPRESS
+# P6: computational geometry (integer coords, exact). polygon_area2 / point_in_polygon are
+# KIND_REDUCE; convex_hull is a KIND_MAP. Independent oracles = numpy shoelace / the winding-number
+# algorithm / scipy.spatial.ConvexHull (vertex-set comparison).
+_GEOMETRY = ["polygon_area2", "point_in_polygon", "convex_hull"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
-_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5
+_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -77,6 +81,7 @@ def test_categories_grouping():
     assert set(cats["numtheory"]) == set(_NUMTHEORY)
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS)
+    assert set(cats["geometry"]) == set(_GEOMETRY)
 
 
 # --------------------------------------------------------------------------- #
@@ -1040,6 +1045,179 @@ def test_p5_c_python_parity_on_out_of_domain(tmp_path):
         assert res["status"] == "ran", (name, res)
         py = [algo.py_fn(name)([float(x) for x in c]) for c in cases]
         assert res["outputs"] == py, name                        # C fail-softs identically
+
+
+# --------------------------------------------------------------------------- #
+# P6 computational geometry (polygon area, point-in-polygon; integer coords, exact).
+# --------------------------------------------------------------------------- #
+def test_geometry_ops_registered_kinds():
+    assert algo.ALGO_BY_NAME["polygon_area2"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["point_in_polygon"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["convex_hull"].kind == algo.KIND_MAP
+    assert set(algo.algo_categories()["geometry"]) == set(_GEOMETRY)
+    for name in _GEOMETRY:
+        assert algo.ALGO_BY_NAME[name].tol == 0.0
+
+
+def test_polygon_area2_known():
+    assert algo.run_algo("polygon_area2", [3.0, 0, 0, 4, 0, 0, 3]) == 12.0    # CCW tri -> 2*area
+    assert algo.run_algo("polygon_area2", [3.0, 0, 0, 0, 3, 4, 0]) == -12.0   # CW tri (sign flips)
+    assert algo.run_algo("polygon_area2", [4.0, 0, 0, 4, 0, 4, 4, 0, 4]) == 32.0   # square
+    assert algo.run_algo("polygon_area2", [6.0, 0, 0, 6, 0, 6, 2, 2, 2, 2, 6, 0, 6]) == 40.0  # concave L
+
+
+def test_polygon_area2_matches_numpy_shoelace_over_random():
+    import numpy as np
+    rng = random.Random(51)
+    for _ in range(200):
+        n = rng.randint(3, 10)
+        pts = [(rng.randint(-500, 500), rng.randint(-500, 500)) for _ in range(n)]
+        got = algo.run_algo("polygon_area2", [float(n)] + [float(c) for p in pts for c in p])
+        x = np.array([p[0] for p in pts], float)
+        y = np.array([p[1] for p in pts], float)
+        assert got == float(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+
+
+def test_polygon_area2_fail_soft():
+    assert algo.run_algo("polygon_area2", [2.0, 0, 0, 1, 1]) == 0.0          # n < 3
+    assert algo.run_algo("polygon_area2", [3.0, 0, 0, 4, 0, 200000, 3]) == 0.0   # coord out of range
+    assert algo.run_algo("polygon_area2", [3.0, 0, 0, 4, 0, 0.5, 3]) == 0.0      # non-integer coord
+    assert algo.run_algo("polygon_area2", [3.0, 0, 0, 4, 0]) == 0.0          # truncated
+
+
+def test_point_in_polygon_known():
+    square = [float(v) for v in (0, 0, 6, 0, 6, 6, 0, 6)]
+    assert algo.run_algo("point_in_polygon", [3.0, 3.0, 4.0] + square) == 1.0
+    assert algo.run_algo("point_in_polygon", [10.0, 3.0, 4.0] + square) == 0.0
+    lshape = [float(v) for v in (0, 0, 6, 0, 6, 2, 2, 2, 2, 6, 0, 6)]
+    assert algo.run_algo("point_in_polygon", [4.0, 4.0, 6.0] + lshape) == 0.0   # the concave notch
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 6.0] + lshape) == 1.0
+
+
+def test_point_in_polygon_matches_matplotlib_over_random():
+    # a THIRD independent check (matplotlib Path, beyond the winding-number difftest oracle):
+    # convex polygons via scipy hull, integer query points filtered off-boundary.
+    path_mod = pytest.importorskip("matplotlib.path")
+    hull = pytest.importorskip("scipy.spatial").ConvexHull
+    rng = random.Random(63)
+    checked = 0
+    for _ in range(120):
+        pool = list(dict.fromkeys((rng.randint(-30, 30), rng.randint(-30, 30))
+                                  for _ in range(rng.randint(6, 12))))
+        if len(pool) < 3:
+            continue
+        try:
+            verts = [pool[i] for i in hull(pool).vertices]
+        except Exception:  # noqa: BLE001, S112 - degenerate point set is expected; skip
+            continue
+        if len(verts) < 3:
+            continue
+        xs = [v[0] for v in verts]
+        ys = [v[1] for v in verts]
+        path = path_mod.Path([(float(x), float(y)) for x, y in verts])
+        for _ in range(5):
+            px, py = rng.randint(-40, 40), rng.randint(-40, 40)
+            if algo_difftest._on_boundary(px, py, xs, ys):
+                continue                                        # boundary is implementation-defined
+            got = algo.run_algo("point_in_polygon", [float(px), float(py), float(len(verts))]
+                                + [float(c) for v in verts for c in v])
+            assert got == (1.0 if path.contains_point((px, py)) else 0.0)
+            checked += 1
+    assert checked > 50                                         # a meaningful number of comparisons
+
+
+def test_point_in_polygon_fail_soft():
+    tri = [float(v) for v in (0, 0, 8, 0, 4, 6)]
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 2.0, 0, 0, 5, 5]) == 0.0   # n < 3
+    assert algo.run_algo("point_in_polygon", [1.5, 1.0, 3.0] + tri) == 0.0          # non-integer point
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 3.0, 0, 0, 200000, 0, 4, 6]) == 0.0  # range
+    assert algo.run_algo("point_in_polygon", [1.0, 1.0, 3.0, 0, 0, 8, 0]) == 0.0    # truncated
+
+
+def test_convex_hull_known():
+    # square: all 4 corners, CCW from lex-min (0,0)
+    assert algo.run_algo("convex_hull", [4.0, 0, 0, 4, 0, 4, 4, 0, 4]) == [0, 0, 4, 0, 4, 4, 0, 4]
+    # square + a collinear edge midpoint (2,0) + an interior point (2,2): both EXCLUDED
+    assert algo.run_algo("convex_hull", [6.0, 0, 0, 2, 0, 4, 0, 4, 4, 0, 4, 2, 2]) == [0, 0, 4, 0, 4, 4, 0, 4]
+    # triangle
+    assert algo.run_algo("convex_hull", [3.0, 0, 0, 4, 0, 2, 3]) == [0, 0, 4, 0, 2, 3]
+
+
+def test_convex_hull_matches_scipy_over_random():
+    hull_of = pytest.importorskip("scipy.spatial").ConvexHull
+    rng = random.Random(71)
+    checked = 0
+    for _ in range(300):
+        n = rng.randint(3, 20)
+        pts = [(rng.randint(-40, 40), rng.randint(-40, 40)) for _ in range(n)]
+        got = algo.run_algo("convex_hull", [float(n)] + [float(c) for p in pts for c in p])
+        got_set = {(int(got[2 * i]), int(got[2 * i + 1])) for i in range(len(got) // 2)}
+        uniq = list(set(pts))
+        try:
+            ref = {tuple(uniq[i]) for i in hull_of(uniq).vertices} if len(uniq) >= 3 else set()
+        except Exception:  # noqa: BLE001 - degenerate (collinear) -> []
+            ref = set()
+        assert got_set == ref and len(got) // 2 == len(ref)     # same vertices, no duplicates
+        checked += 1
+    assert checked == 300
+
+
+def test_convex_hull_is_valid_ccw_polygon():
+    # independent structural validation (no scipy): the output is a strictly-convex CCW polygon whose
+    # vertices are all input points, and every input point is inside or on it.
+    rng = random.Random(89)
+    for _ in range(100):
+        n = rng.randint(5, 25)
+        pts = [(rng.randint(-50, 50), rng.randint(-50, 50)) for _ in range(n)]
+        got = algo.run_algo("convex_hull", [float(n)] + [float(c) for p in pts for c in p])
+        hull = [(int(got[2 * i]), int(got[2 * i + 1])) for i in range(len(got) // 2)]
+        if not hull:
+            continue
+        assert set(hull) <= set(pts)                            # hull vertices are input points
+        assert hull[0] == min(hull)                             # starts at the lex-min vertex
+        h = len(hull)
+        for i in range(h):                                      # every turn is a strict LEFT turn (CCW, convex)
+            o, p, q = hull[i], hull[(i + 1) % h], hull[(i + 2) % h]
+            assert (p[0] - o[0]) * (q[1] - o[1]) - (p[1] - o[1]) * (q[0] - o[0]) > 0
+        for (px, py) in pts:                                    # every input point is inside or on the hull
+            for i in range(h):
+                o, p = hull[i], hull[(i + 1) % h]
+                assert (p[0] - o[0]) * (py - o[1]) - (p[1] - o[1]) * (px - o[0]) >= 0
+
+
+def test_convex_hull_fail_soft():
+    assert algo.run_algo("convex_hull", [3.0, 0, 0, 1, 1, 2, 2]) == []       # collinear -> degenerate
+    assert algo.run_algo("convex_hull", [3.0, 5, 5, 5, 5, 5, 5]) == []       # < 3 distinct points
+    assert algo.run_algo("convex_hull", [2.0, 0, 0, 1, 1]) == []             # n < 3
+    assert algo.run_algo("convex_hull", [3.0, 0, 0, 4, 0, 200000, 3]) == []  # coord out of range
+    assert algo.run_algo("convex_hull", [3.0, 0, 0, 4, 0, 0.5, 3]) == []     # non-integer
+    assert algo.run_algo("convex_hull", [3.0, 0, 0, 4, 0]) == []             # truncated
+
+
+@pytest.mark.parametrize("name", _GEOMETRY)
+def test_geometry_reference_does_not_mutate_input(name):
+    inputs = {"polygon_area2": [4.0, 0, 0, 4, 0, 4, 4, 0, 4],
+              "point_in_polygon": [3.0, 3.0, 4.0, 0, 0, 6, 0, 6, 6, 0, 6],
+              "convex_hull": [5.0, 0, 0, 4, 0, 4, 4, 0, 4, 2, 2]}
+    arg = [float(x) for x in inputs[name]]
+    before = list(arg)
+    algo.run_algo(name, arg)
+    assert arg == before
+
+
+@pytest.mark.parametrize("name", _GEOMETRY)
+def test_geometry_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _GEOMETRY)
+def test_geometry_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
 
 
 # --------------------------------------------------------------------------- #
