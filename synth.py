@@ -191,7 +191,8 @@ def _min_cut_mask(err: np.ndarray, axis: int) -> np.ndarray:
     return mask if axis == 0 else mask.T
 
 
-def _synth_patch(img: np.ndarray, shape, seed: int, block: int, overlap: int, tol: float) -> np.ndarray:
+def _synth_patch(img: np.ndarray, shape, seed: int, block: int, overlap: int,
+                 tol: float, max_candidates: int) -> np.ndarray:
     h, w = img.shape
     block = int(min(block, h, w))
     block = max(4, block)
@@ -201,10 +202,15 @@ def _synth_patch(img: np.ndarray, shape, seed: int, block: int, overlap: int, to
     H, W = shape
     out = np.zeros((H, W), np.float64)
     filled = np.zeros((H, W), bool)
-    # all candidate top-left corners in the exemplar
+    # candidate top-left corners in the exemplar. Full search is O(corners x
+    # out-blocks) and hangs for large inputs, so cap to a random (seeded) subset —
+    # the standard quilting speed-up (Efros-Freeman search a sampled pool).
     ys = list(range(h - block + 1)) or [0]
     xs = list(range(w - block + 1)) or [0]
     corners = [(yy, xx) for yy in ys for xx in xs]
+    if max_candidates and len(corners) > max_candidates:
+        sel = rng.choice(len(corners), size=max_candidates, replace=False)
+        corners = [corners[int(i)] for i in sel]
     for oy in range(0, H, step):
         for ox in range(0, W, step):
             bh = min(block, H - oy)
