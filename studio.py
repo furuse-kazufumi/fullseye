@@ -3291,7 +3291,23 @@ def build_window(model=None):
                     _set_system_param(str(args[0]), args[1])   # HALCON set_system(param, value)
                 except (TypeError, ValueError):
                     pass
+            # dev_disp_text is a DRAW directive applied after the render (apply_text_directives)
     win._apply_dev_directives = apply_dev_directives
+
+    def apply_text_directives(text):
+        """dev_disp_text: annotations drawn AFTER the pipeline render (a fresh render
+        clears them first), so the text sits on top of the result. Separated from the
+        state/style directives, which are applied before the render."""
+        for name, args in extract_dev_directives(text):
+            if name == "dev_disp_text" and args:
+                label = str(args[0])
+                row = int(args[1]) if len(args) > 1 and isinstance(args[1], float) else 12
+                col = int(args[2]) if len(args) > 2 and isinstance(args[2], float) else 12
+                color = (_HALCON_COLORS.get(str(args[3]).lower(), (1.0, 1.0, 1.0))
+                         if len(args) > 3 else state["draw"]["color"])
+                _current_view().disp_text(row, col, label, color)
+    win._apply_text_directives = apply_text_directives
+    win._disp_text = lambda row, col, s, color=(1.0, 1.0, 1.0): _current_view().disp_text(row, col, s, color)
 
     # -- HALCON set_system-style global configuration (Tools > System settings) ----- #
     def _cv2_mod():
