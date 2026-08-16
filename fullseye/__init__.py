@@ -113,7 +113,7 @@ with warnings.catch_warnings():
         open_channel, protocols, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
     )
-    from device import DigitalIO, pulse, signal_result, wait_input  # noqa: E402,F401  (device control)
+    from device import DigitalIO, pulse, signal_result, signal_verdict, wait_input  # noqa: E402,F401  (device control)
     from dsp import (  # noqa: E402,F401  (1-D signal / acoustic / vibration — beyond images)
         read_wav, write_wav, read_audio, spectrum, spectrogram,
         lowpass, highpass, bandpass, envelope, rms, find_peaks, signal_features,
