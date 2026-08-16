@@ -349,8 +349,10 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True)
     *      -> contour        : returns the XLD dict {"shape", "cs"}
 
     With ``coerce=True`` (default) a grayscale array handed to a ``region`` op is
-    binarised at 0.5, matching the CLI. Pass ``coerce=False`` to feed the array
-    through untouched.
+    binarised at 0.5 and a bool mask is re-typed to float64, matching the CLI —
+    see :func:`_coerce_input` for the exact rule (an in-range two-level array is
+    left to the op's own 0.5 binarisation). Pass ``coerce=False`` to feed the
+    array through untouched.
     """
     op = _resolve(name)
     v = _coerce_input(image, op) if coerce else image
