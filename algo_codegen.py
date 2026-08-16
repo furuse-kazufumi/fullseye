@@ -11,9 +11,10 @@ Mirrors the image ``codegen.py`` philosophy for the general tier (``algo.py``):
 Binary protocol (native endianness — writer and reader run on the same machine):
 
   input  : int32 n_arrays, then per array {int32 len, len * float64}
-  output : int32 n_arrays, then
-             sort  (out_sort == SEQ)    : per array {int32 len, len * float64}
-             reduce(out_sort == SCALAR) : n_arrays * float64
+  output : int32 n_arrays, then per array, keyed on the op's kind:
+             sort   (KIND_SORT)   : {int32 len,     len * float64}      (len == input len)
+             map    (KIND_MAP)    : {int32 out_len, out_len * float64}  (out_len <= input len)
+             reduce (KIND_REDUCE) : one float64                         (n_arrays floats total)
 
 The exact same protocol is implemented on the Python side in ``algo_difftest`` —
 keeping both here in one docstring is deliberate so a change to one is a visible
