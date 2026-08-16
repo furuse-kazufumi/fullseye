@@ -77,4 +77,12 @@ def sanitize(out, v, out_sort=None):
         if isinstance(fb, np.ndarray) and fb.shape == real.shape:
             return np.where(np.isfinite(real), real, fb)
         return np.nan_to_num(real, nan=0.0, posinf=1.0, neginf=0.0)
+    # ★A feature op returns a numpy SCALAR, not an ndarray, so the branch above
+    # never saw it: a NaN/Inf measurement (e.g. a 0/0 inside sk_blur_effect on a
+    # degenerate frame) used to flow straight out of api.apply.  Scrub non-finite
+    # scalars to the sort fallback so the declared "finite, sort-valid" guarantee
+    # actually holds for feature/contour scalars too.
+    if isinstance(out, (float, int, np.floating, np.integer, np.complexfloating, complex)):
+        if not np.isfinite(float(np.real(out))):
+            return fallback(v, out_sort)
     return out

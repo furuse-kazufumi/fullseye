@@ -174,10 +174,24 @@ def main() -> int:
     ap.add_argument("--seeds", type=int, default=None, help="seeds used by robust.py (provenance only)")
     ap.add_argument("--date", default=None, help="capture date (provenance only); default: unset")
     ap.add_argument("--force", action="store_true", help="overwrite an existing entry of the same name")
+    ap.add_argument("--allow-regression", action="store_true",
+                    help="register even if the macro does NOT beat the hand baseline on the "
+                         "locked holdout (off by default — the honesty guard is enforced, not just printed)")
     ap.add_argument("--dry-run", action="store_true", help="print the entry; do not write the file")
     a = ap.parse_args()
 
     entry = build_entry(a.champion, a.name, {"seeds": a.seeds, "date": a.date})
+
+    # ★Enforce the headline honesty claim ("a DNA op is added only when it beats the
+    # hand baseline on a LOCKED holdout") — previously this flag was printed but never
+    # gated, so a worse-than-hand macro could be registered and then selected by the
+    # next evolution.  The gate refuses that unless it is explicitly overridden.
+    beats = bool(entry.get("provenance", {}).get("beats_hand_on_locked_holdout", False))
+    if not beats and not a.allow_regression:
+        raise SystemExit(
+            f"[abort] {a.name} does NOT beat the hand baseline on the locked holdout "
+            f"(beats_hand_on_locked_holdout=False). Refusing to register a non-improving "
+            f"DNA op. Pass --allow-regression to override deliberately (disclosed in provenance).")
 
     entries = []
     if os.path.exists(DNA_PATH):
