@@ -2712,10 +2712,12 @@ def build_window(model=None):
                 v = fn(v, a, b) if fn else v
                 if i == nxt - 1:
                     tmap[nxt] = (_time.perf_counter() - t0) * 1000.0
-            code_edit.set_timings(tmap)
+            if state["dev_update"]["time"]:
+                code_edit.set_timings(tmap)
         except Exception:
             pass
-        code_edit.set_exec_line(nxt)
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(nxt)       # dev_update_pc
         stage_list.setCurrentRow(nxt - 1)
         code_status.setText("stepped to line %d" % nxt)
 
