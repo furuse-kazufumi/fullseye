@@ -62,14 +62,33 @@ def main() -> int:
     n_beat = int(np.sum(hold > hand)) if hand is not None else None
     n_collapse = int(np.sum(hold < trivial)) if trivial is not None else None
 
+    # The tally above is on the OBSERVED holdout (seed+10000) — the split evolve.run
+    # scores EVERY generation. Tally the LOCKED holdout (seed+20000, scored once per
+    # seed) too instead of letting the observed number stand in for the untouched one.
+    # Fail-closed: a champion without a locked score leaves the locked fields null.
+    lk = [c.get("locked_holdout") for c in champs]
+    locked = np.array(lk, float) if lk and all(v is not None for v in lk) else None
+    n_beat_lk = int(np.sum(locked > hand)) if (locked is not None and hand is not None) else None
+    n_collapse_lk = int(np.sum(locked < trivial)) if (locked is not None and trivial is not None) else None
+
+    def _spread(x):
+        return None if x is None else {"min": float(x.min()), "max": float(x.max()),
+                                       "mean": round(float(x.mean()), 4), "std": round(float(x.std()), 4)}
+
     out = {
         "problem": a.problem, "unit": unit, "seeds": a.seeds, "gens": a.gens,
         "baseline_hand": hand, "baseline_trivial": trivial,
+        "split_note": ("holdout_*/n_beat_hand/n_collapse_below_trivial = OBSERVED split "
+                       "(seed+10000, scored every generation, never selected on); "
+                       "*_locked = LOCKED split (seed+20000, scored once per seed)"),
         "selected_by_train": {"seed": best["seed"], "train": best["train"],
-                              "holdout": best["holdout"], "pipeline": best["pipeline"]},
-        "holdout_spread": {"min": float(hold.min()), "max": float(hold.max()),
-                           "mean": round(float(hold.mean()), 4), "std": round(float(hold.std()), 4)},
+                              "holdout": best["holdout"],
+                              "locked_holdout": best.get("locked_holdout"),
+                              "pipeline": best["pipeline"]},
+        "holdout_spread": _spread(hold),
         "n_beat_hand": n_beat, "n_collapse_below_trivial": n_collapse,
+        "locked_holdout_spread": _spread(locked),
+        "n_beat_hand_locked": n_beat_lk, "n_collapse_below_trivial_locked": n_collapse_lk,
     }
     (wd / f"robust_{a.problem}.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
 
