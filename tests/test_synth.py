@@ -282,6 +282,7 @@ def test_facade_exposes_synth():
     assert "histogram" in feats and "radial_power" in feats
     d = fullseye.feature_distance(src, out)
     assert d["spectrum_l2"] < 0.05
+    assert fullseye.pyramid_stat_distance(src, src) < 1e-9        # per-scale metric exposed
 
 
 def test_cli_synth_subcommand(tmp_path, capsys):
