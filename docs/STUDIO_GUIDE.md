@@ -157,6 +157,12 @@ off の間はステータスバー右に `updates off: …` が出るため、�
 **注意**（honest）: `dev_*` はパイプライン段と違い `if`/`for` に従わず**無条件に適用**されます
 （分岐内に置いても発火）。トップレベルに書いてください。未対応の `dev_*` はエラーになります。
 
+**動かして見る**: **File ▸ dev_* visualization demo** で、coins 画像 + 上記 `dev_*` を実際に使う
+HDevelop プログラム（区分→領域を cyan の輪郭 + ラベルで表示）が読み込まれ適用されます。作業用の
+サンプル画像は **File ▸ Sample images**（8 枚・provenance は `studio_assets/sample_images/manifest.json`。
+合成 = own work / `coins`・`camera` 等 = skimage.data の BSD/public-domain。`tools/gen_sample_images.py`
+で再生成）。
+
 ---
 
 ## Export と Save/Open の関係
