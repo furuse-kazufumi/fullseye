@@ -446,6 +446,25 @@ def test_graph_c_is_bit_identical(name, tmp_path):
     assert res["passed"] is True
 
 
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_graph_dijkstra_c_sparse_output_larger_than_input(tmp_path):
+    # A SPARSE graph makes the KIND_MAP output (n distances) LARGER than the input length
+    # (3 + 3m): n=5, m=0 -> input len 3, output len 5. The two-phase driver (size-probe
+    # out=NULL -> n, then allocate n) must handle this WITHOUT a heap overflow. Verify the
+    # emitted C == Python and returns the -1.0 sentinels for the isolated nodes.
+    op = algo.ALGO_BY_NAME["graph_dijkstra"]
+    cases = [
+        [5.0, 0.0, 0.0],                                # 5 nodes, no edges: [0, -1, -1, -1, -1]
+        [4.0, 1.0, 2.0, 2.0, 3.0, 7.0],                 # src=2, edge 2-3: node 2,3 reached, 0,1 not
+    ]
+    cc = algo_difftest.find_c_compiler()
+    res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
+    assert res["status"] == "ran", res
+    py = [algo.py_fn("graph_dijkstra")([float(x) for x in c]) for c in cases]
+    assert res["outputs"] == py
+    assert res["outputs"][0] == [0.0, -1.0, -1.0, -1.0, -1.0]
+
+
 def test_string_ops_fail_soft_on_bad_header_no_crash():
     # regression for the P3 review: int(a[0]) once ran BEFORE the range check, so a
     # fractional-negative header slipped through (int(-0.5)==0) and a NaN header crashed
