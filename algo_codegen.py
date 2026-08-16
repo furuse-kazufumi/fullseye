@@ -36,7 +36,7 @@ def emit_python(op: algo.AlgoOp) -> str:
     return _HEADER_PY + "\n\n" + op.py_code
 
 
-def _driver_c(op: "algo.AlgoOp") -> str:
+def _driver_c(op: algo.AlgoOp) -> str:
     """The binary-I/O ``main`` for ``op`` (tailored to sort vs reduce)."""
     if op.kind == algo.KIND_SORT:
         per_array_call = f"        {op.c_func}(buf, len);\n"
