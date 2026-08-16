@@ -27,6 +27,8 @@ _NUMERIC = ["simpson", "bisection", "newton", "gauss_solve"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 _ALL_OPS = _ALL + _NUMERIC
 
+_HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
+
 
 # --------------------------------------------------------------------------- #
 # registry integrity
