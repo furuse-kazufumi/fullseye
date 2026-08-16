@@ -14,18 +14,93 @@ numpy/scipy core; the core keeps working when neither library is present.
 """
 from __future__ import annotations
 
+import os
+import threading
+from contextlib import contextmanager
+
 import numpy as np
 
 from backend_safe import signed01
 
+# ★The _safe fallback is a LAST RESORT and it can MASK A DEAD OP. For
+# out_sort=="image" `backend_safe.fallback` returns the clipped INPUT, so a
+# wrapper whose library call raises on every input looks to evolution / difftest
+# / coverage like a working identity op instead of a failure — and the swallow is
+# unconditional (bare Exception), so API drift in skimage/cv2 is invisible.
+# Runtime robustness is kept, but the degradation is now DETECTABLE two ways:
+# every swallowed exception is recorded, and strict mode re-raises instead.
+_ERR_LOCK = threading.Lock()
+_ERRORS: list[dict] = []          # bounded ring, most recent last
+_ERR_MAX = 64
+_STRICT = os.environ.get("IMGEVOLVE_STRICT_BACKENDS", "") not in ("", "0", "false", "False")
+
+
+def is_strict() -> bool:
+    """True when wrapped ops re-raise instead of degrading to a fallback."""
+    return _STRICT
+
+
+def set_strict(on: bool = True) -> bool:
+    """Turn strict mode on/off; returns the PREVIOUS value so callers can restore it."""
+    global _STRICT
+    prev, _STRICT = _STRICT, bool(on)
+    return prev
+
+
+@contextmanager
+def strict_mode(on: bool = True):
+    """Scoped strict mode — a verifier wraps a probe call in this to tell a dead op
+    (raises) from an op that genuinely returns its input (does not)."""
+    prev = set_strict(on)
+    try:
+        yield
+    finally:
+        set_strict(prev)
+
+
+def swallowed_errors() -> list[dict]:
+    """Copy of the recorded swallowed-exception ring (oldest first, max `_ERR_MAX`)."""
+    with _ERR_LOCK:
+        return [dict(e) for e in _ERRORS]
+
+
+def last_error():
+    """The most recently swallowed wrapper exception as a dict, or None."""
+    with _ERR_LOCK:
+        return dict(_ERRORS[-1]) if _ERRORS else None
+
+
+def clear_errors() -> None:
+    """Drop the recorded swallowed exceptions (call before a probe run)."""
+    with _ERR_LOCK:
+        _ERRORS.clear()
+
+
+def _record_error(fn, exc, out_sort) -> None:
+    with _ERR_LOCK:
+        _ERRORS.append({"fn": getattr(fn, "__qualname__", repr(fn)), "out_sort": out_sort,
+                        "error": "%s: %s" % (type(exc).__name__, exc)})
+        del _ERRORS[:-_ERR_MAX]
+
 
 def _safe(fn, out_sort=None):
+    """Wrap `fn` so a library failure degrades to a sort-valid fallback.
+
+    HONEST CAVEAT: that fallback is a last resort — for out_sort=="image" it is
+    the clipped input, i.e. a permanently broken wrapper is indistinguishable
+    from a working identity op. Use `strict_mode()` (or IMGEVOLVE_STRICT_BACKENDS=1)
+    to make failures RAISE, and `last_error()`/`swallowed_errors()` to see what the
+    non-strict path swallowed.
+    """
     from backend_safe import sanitize
 
     def w(v, a, b):
         try:
             out = fn(v, a, b)
-        except Exception:
+        except Exception as e:
+            if _STRICT:
+                raise
+            _record_error(fn, e, out_sort)
             out = None
         return sanitize(out, v, out_sort)
     return w
