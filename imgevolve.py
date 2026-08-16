@@ -337,6 +337,24 @@ def cmd_algo(a):
     return 0
 
 
+def cmd_synth(a):
+    """Learn a texture from an image and synthesise a NEW, similar one (synth.py)."""
+    import imgio
+    import synth
+    img = imgio.load(a.inp)
+    size = None
+    if a.size:
+        h, w = a.size.lower().split("x")
+        size = (int(h), int(w))
+    out = synth.synthesize_like(img, size=size, seed=a.seed, method=a.method)
+    imgio.save(a.out, out)
+    d = synth.feature_distance(img, out)
+    nov = synth.patch_novelty(out, img)
+    print("synth %s -> %s  spectrum_l2=%.4f hist_chi2=%.4f novelty=%.5f"
+          % (a.method, a.out, d["spectrum_l2"], d["hist_chi2"], nov))
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
