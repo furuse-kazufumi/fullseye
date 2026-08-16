@@ -17,6 +17,19 @@ that share it. Two complementary methods, both from public literature:
       essentially only one image with that spectrum and histogram. Check with
       :func:`patch_novelty` when it matters.
 
+  method="pyramid" — Heeger & Bergen 1995 multi-scale (Laplacian-pyramid variant).
+      Build a Laplacian pyramid and iteratively match EACH band's marginal histogram to
+      the exemplar's corresponding band (coarse-to-fine), re-imposing the global marginal
+      each pass. This captures per-SCALE marginal statistics the single-band ``spectral``
+      method cannot (e.g. a texture whose fine-scale detail distribution differs from what
+      its global spectrum + histogram imply). Verify the gain with
+      :func:`pyramid_stat_distance` (smaller for a pyramid than a spectral synthesis).
+      Honest scope: this is the ISOTROPIC, MARGINAL-only variant — no oriented steerable
+      subbands, and NO Portilla-Simoncelli 2000 cross-scale/orientation correlations, so
+      it does not reproduce oriented or phase-aligned structure the way the full model or
+      the patch method can. Still random-phase/noise-seeded, so genuinely new (check
+      :func:`patch_novelty`).
+
   method="patch" — Efros & Freeman 2001 image quilting (min-cut seams).
       Grow the output from overlapping exemplar blocks chosen to match already-placed
       neighbours, stitched along a minimum-error seam. Reproduces STRUCTURED textures
