@@ -29,7 +29,8 @@ import numpy as np
 from scipy import ndimage as ndi
 
 __all__ = [
-    "FImage", "Region", "ObjectSet", "FsTypeError", "FsBackendError",
+    "FImage", "Region", "ObjectSet", "Seq", "Scalar", "SORTS", "sort_of",
+    "FsTypeError", "FsBackendError",
     "profile", "current_profile", "backends_for", "op",
     "unmet_ops", "readiness_report", "require_ready",
     "gauss", "threshold", "connection", "region_features", "select_shape", "measure_all",
