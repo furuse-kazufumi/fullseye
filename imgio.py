@@ -226,10 +226,18 @@ def colorize_labels(labels, seed: int = 0):
     return cols[np.clip(lab, 0, n)]
 
 
-def overlay_mask(image, mask, color=(1.0, 0.0, 0.0), alpha: float = 0.5):
-    """Blend *color* onto *image* where *mask* is set (mask > 0.5)."""
+def overlay_mask(image, mask, color=(1.0, 0.0, 0.0), alpha: float = 0.5,
+                 mode: str = "fill", line_width: int = 1):
+    """Blend *color* onto *image* on the region *mask* (mask > 0.5).
+
+    ``mode='fill'`` (default) paints the whole region; ``mode='margin'`` paints only
+    its boundary, ``line_width`` px thick — HDevelop ``dev_set_draw('margin')``."""
     img = ensure_color(image).copy()
     m = np.asarray(mask) > 0.5
+    if mode == "margin" and m.any():
+        from scipy import ndimage
+        er = ndimage.binary_erosion(m, iterations=max(1, int(line_width)))
+        m = m & ~er                               # a boundary band of the requested width
     col = np.asarray(color, np.float64)
     img[m] = (1 - alpha) * img[m] + alpha * col
     return np.clip(img, 0, 1)
