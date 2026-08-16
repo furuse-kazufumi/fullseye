@@ -7,8 +7,11 @@ Verifies the emitted backends reproduce the typed-IR reference on holdout inputs
                    diff. PASS if < --tol.
   C backend      : run ONLY if a C compiler is found AND every op is in the C
                    runtime. Compile imgops.c + gen_<problem>.c + a generated driver,
-                   run on the same inputs, compare to Python. Otherwise SKIP with an
-                   honest reason (this environment has no gcc — verification deferred).
+                   run on the same inputs, compare to Python. PASS if < --c-tol
+                   (looser than --tol by design: float32 + kernel rounding).
+                   Otherwise SKIP with an honest reason (this environment has no gcc
+                   — verification deferred). A compile/run FAILURE of a backend that
+                   codegen declared c_fully_supported is a gate failure, not a skip.
 
 Writes difftest_<problem>.json + report line. Deterministic.
 """
