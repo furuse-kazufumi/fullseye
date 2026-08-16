@@ -8,6 +8,14 @@ and DISCLOSES the full per-seed spread (min/max/mean holdout, collapses, and how
 many beat the hand-built baseline). Best-of-N with the variance shown — not a
 cherry-picked single seed.
 
+Two holdouts are reported, and they are NOT interchangeable. The OBSERVED holdout
+(seed+10000) is the split evolve.run scores every generation: never selected on,
+but not untouched either. The LOCKED holdout (seed+20000) is scored exactly once
+per seed on the final champion — that is the genuinely untouched number. Every
+`holdout_*`/`n_*` field below is the observed split; its `*_locked` twin is the
+locked one. If a champion carries no locked score, the locked fields stay null
+rather than quietly reusing the observed value.
+
     py -3.11 robust.py --problem denoise --seeds 5 --gens 20
 """
 from __future__ import annotations
