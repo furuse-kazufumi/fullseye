@@ -685,6 +685,24 @@ def test_dev_set_part_zooms_current_view():
     assert view.transform().m11() == pytest.approx(m_full, rel=0.05)
 
 
+def test_dev_set_lut_and_clear_window_directives():
+    """dev_set_lut(name) maps a HALCON LUT name to a Studio display mode (only known
+    ones are honoured); dev_clear_window() clears the current graphics window."""
+    from PySide6 import QtGui
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._apply_dev_directives("dev_set_lut ('jet')")
+    assert win._display_actions["jet"].isChecked()
+    prev = next(m for m, a in win._display_actions.items() if a.isChecked())
+    win._apply_dev_directives("dev_set_lut ('temperature_no_such')")     # unknown -> no-op
+    assert next(m for m, a in win._display_actions.items() if a.isChecked()) == prev
+    view = win._current_view()
+    view.set_pixmap(QtGui.QPixmap(16, 16))
+    assert not view._item.pixmap().isNull()
+    win._apply_dev_directives("dev_clear_window ()")
+    assert view._item.pixmap().isNull()
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
