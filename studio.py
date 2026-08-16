@@ -702,7 +702,7 @@ def extract_dev_directives(text):
     out = []
     for raw in text.splitlines():
         line = _hdev_strip_comment(raw)
-        if line and _dev_op_head(line) in _DEV_DIRECTIVES:
+        if line and _dev_op_head(line) in (_DEV_DIRECTIVES | _CONFIG_DIRECTIVES):
             out.append((_dev_op_head(line), _parse_dev_args(line)))
     return out
 
