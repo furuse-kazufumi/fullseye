@@ -11,6 +11,10 @@ without re-reading the source. Discover and invoke everything from here:
     py -3.11 imgevolve.py pipeline in.png out.png --ops "gauss_filter,sobel_amp,otsu"
     py -3.11 imgevolve.py coverage               # honest coverage numbers
     py -3.11 imgevolve.py index                  # (re)write docs/OP_INDEX.json (machine-readable)
+    py -3.11 imgevolve.py algo list              # general-algorithm tier (sorts/reductions)
+    py -3.11 imgevolve.py algo run quicksort --seq 3,1,2   # -> [1.0, 2.0, 3.0]
+    py -3.11 imgevolve.py algo emit-c mergesort  # standalone, compilable C
+    py -3.11 imgevolve.py algo difftest all      # honest gate (Python==oracle, C==Python bit-for-bit)
 
 Sorts: image (gray H*W [0,1]) / color (H*W*3 RGB) / region (binary) / feature
 (scalar) / contour (XLD) / volume (3-D). `apply` loads the input to match the
