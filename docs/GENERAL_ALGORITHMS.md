@@ -161,6 +161,22 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   可変長出力・no-mutation・python exact・C bit 一致)。全スイート **4669 passed / 0 failed**(P2 後 4649 から +20)・
   ruff clean・mypy 回帰 0。commit + push はこのセッションで実施(ユーザー承認 2026-08-16 就寝時=push ゲート開放)。
 
+### P3 文字列 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+独立敵対レビュー Workflow(4 レンズ・各 finding を検証エージェントが実コード/実 compile で確認)= **3 findings 全
+CONFIRMED**(うち 2 件は同一根本原因を別レンズが報告)。一次検証の上で全修正:
+- **[MED] Python が `int(a[0])` を範囲チェックの前に実行 → C と非一致**: edit_distance/lcs_length の Python は
+  `na = int(a[0])` を先に評価(truncation)、C は raw double を先にガード。**`a[0]` ∈ (-1.0, 0.0)**(例 -0.5)で
+  Python は na=0(有効な空文字列)で続行し実距離を返す一方、C は raw guard で拒否し 0.0 → **bit 一致契約違反**
+  (ziglang cc で実測: `[-0.5,65,66]` = Python 2.0 vs C 0.0)。holdout は非負整数 na のみゆえゲートが未検出。
+- **[LOW] NaN header で Python がクラッシュ**(C は fail-soft): `int(nan)` が ValueError を送出し、op docstring の
+  fail-soft 約束に反する(C は NaN-false ガードで 0.0/`[]`)。※NaN は「NaN-free 前提」で契約外だが同じガード順序の欠陥。
+- **修正(1 つで両方)**: 3 op すべての Python を **raw-value ガードを `int()` の前**に移動(`not (x >= lo and x <= hi)`=
+  NaN-false)=**C を厳密に鏡写し**。gauss は元から raw guard で正しかった(同型に統一)。
+- **境界の被覆**: oracle 検証域外(oracle は truncation で別値を出す=まさにこのバグ)ゆえ、小数負/NaN/超過ヘッダの
+  **C-vs-Python parity を専用テストで直接固定**(`test_string_c_python_parity_on_bad_headers`)+ Python fail-soft
+  no-crash テスト。algorithm-correctness/c-safety の中核指摘は 0(KMP/DP/メモリ安全はクリーン)。
+- レビュー後: 3 op とも difftest = python exact / C bit 一致 / c_verified=true、全スイート緑(下記)・ruff/mypy 回帰 0。
+
 ## P2 完遂記録 — gauss_solve(2026-08-16, Opus5[1m]/ultracode, `graph-loop-engineering`)
 **連立一次方程式 Gauss 消去(部分ピボット)を追加し、P2 数値計算を完遂。** ユーザー指示どおり
 `graph-loop-engineering` スキルで raptor work-graph にノード化し、tool driver に無人実行させた(二層方針=
