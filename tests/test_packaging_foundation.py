@@ -33,20 +33,19 @@ _DEV_TOOLS = {
 }
 
 
-def _pyproject_text() -> str:
-    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as f:
+def _read(relpath: str) -> str:
+    with open(os.path.join(ROOT, relpath), encoding="utf-8", errors="ignore") as f:
         return f.read()
 
 
 def _py_modules() -> set[str]:
-    m = re.search(r"py-modules\s*=\s*\[(.*?)\]", _pyproject_text(), re.S)
+    m = re.search(r"py-modules\s*=\s*\[(.*?)\]", _read("pyproject.toml"), re.DOTALL)
     assert m, "py-modules list not found in pyproject.toml"
     return set(re.findall(r'"([^"]+)"', m.group(1)))
 
 
 def _all_of(relpath: str) -> set[str]:
-    with open(os.path.join(ROOT, relpath), encoding="utf-8") as f:
-        tree = ast.parse(f.read())
+    tree = ast.parse(_read(relpath))
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign) and any(
                 isinstance(t, ast.Name) and t.id == "__all__" for t in node.targets):
@@ -63,33 +62,30 @@ def test_every_runtime_root_module_is_in_py_modules():
     root_mods = {os.path.basename(p)[:-3] for p in glob.glob(os.path.join(ROOT, "*.py"))}
     missing = []
     for mod in sorted(root_mods - declared - _DEV_TOOLS):
-        pat = re.compile(r"\b(?:import\s+%s\b|from\s+%s\s+import)" % (re.escape(mod), re.escape(mod)))
+        pat = re.compile(rf"\b(?:import\s+{re.escape(mod)}\b|from\s+{re.escape(mod)}\s+import)")
         for src in shipped_sources:
-            p = os.path.join(ROOT, src)
-            if os.path.exists(p) and pat.search(open(p, encoding="utf-8", errors="ignore").read()):
+            if os.path.exists(os.path.join(ROOT, src)) and pat.search(_read(src)):
                 missing.append(mod)
                 break
     assert not missing, (
-        "root modules imported at runtime but missing from pyproject py-modules "
-        "(they would vanish from a non-editable wheel): %s" % missing)
+        f"root modules imported at runtime but missing from pyproject py-modules "
+        f"(they would vanish from a non-editable wheel): {missing}")
 
 
 def test_facade_all_covers_api_all():
     """Everything api.py exports must be re-exported by the fullseye facade,
     else `from fullseye import *` silently loses a public symbol."""
-    api_all = _all_of("api.py")
-    fs_all = _all_of(os.path.join("fullseye", "__init__.py"))
-    missing = sorted(api_all - fs_all)
-    assert not missing, "api.__all__ names missing from fullseye.__all__: %s" % missing
+    missing = sorted(_all_of("api.py") - _all_of(os.path.join("fullseye", "__init__.py")))
+    assert not missing, f"api.__all__ names missing from fullseye.__all__: {missing}"
 
 
 def test_studio_assets_are_shipped_by_package_data():
     """studio_assets must be a declared package and every tracked asset must match a
     package-data glob (else the installed Studio loses i18n / help / sample images)."""
-    txt = _pyproject_text()
+    txt = _read("pyproject.toml")
     assert re.search(r'packages\s*=\s*\[[^\]]*"studio_assets"', txt), \
         "studio_assets is not a declared package in pyproject.toml"
-    m = re.search(r'"studio_assets"\s*=\s*\[(.*?)\]', txt, re.S)
+    m = re.search(r'"studio_assets"\s*=\s*\[(.*?)\]', txt, re.DOTALL)
     assert m, "no package-data globs declared for studio_assets"
     globs = re.findall(r'"([^"]+)"', m.group(1))
     tracked = [
@@ -99,4 +95,4 @@ def test_studio_assets_are_shipped_by_package_data():
     ]
     assert tracked, "no studio_assets files found"
     unshipped = [f for f in tracked if not any(fnmatch.fnmatch(f, g) for g in globs)]
-    assert not unshipped, "studio_assets files not covered by any package-data glob: %s" % unshipped
+    assert not unshipped, f"studio_assets files not covered by any package-data glob: {unshipped}"
