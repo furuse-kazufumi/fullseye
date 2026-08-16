@@ -2308,6 +2308,11 @@ def build_window(model=None):
         if cur is None:
             return
         name = cur.data(QtCore.Qt.UserRole)
+        row = _op_row(name)
+        if row and row.get("backend") == "general":
+            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
+                  "imgevolve.py algo run %s" % (name, name))
+            return
         base = model.image
         if base is None:
             flash("load an image first (File ▸ Open image / Synthetic demo)")
