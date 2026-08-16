@@ -98,6 +98,10 @@ class Region:
         end = np.append(begin[1:], rows.size) - 1
         return np.stack([rows[begin], cols[begin], cols[end] + 1], axis=1).astype(np.int32)
 
+    @property
+    def sort(self) -> str:
+        return "region"
+
     def __bool__(self):
         # Defect 4: `if (Region)` silently meant `.any()`.  Iconic values are not
         # truthy — the language must force an explicit predicate.
