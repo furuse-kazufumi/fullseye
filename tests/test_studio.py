@@ -632,9 +632,11 @@ def test_dev_update_gates_and_resumes_display():
     assert all(v is False for v in st["dev_update"].values())
     assert win._dev_update_actions["_toolbar"].isChecked() is False
     assert win._dev_update_actions["pc"].isChecked() is False
+    assert win._update_label.text() != ""            # a frozen display is surfaced, not silent
     win._set_dev_update("all", True)
     assert all(v is True for v in st["dev_update"].values())
     assert win._dev_update_actions["_toolbar"].isChecked() is True
+    assert win._update_label.text() == ""            # cleared when everything auto-updates
 
 
 def test_dev_directives_recognized_excluded_and_extracted():
