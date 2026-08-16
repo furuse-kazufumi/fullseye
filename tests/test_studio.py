@@ -592,6 +592,51 @@ def test_knob_tick_costs_one_pipeline_evaluation():
     win._knob_timer.stop()
 
 
+def test_dev_update_gates_and_resumes_display():
+    """HDevelop dev_update_{window,var,pc,time}: turning updates off suppresses the
+    auto-refresh (the display cost), turning them back on refreshes to the current
+    state (as HDevelop updates when execution stops). Backs View > Display updates and
+    the script ops dev_update_off/on."""
+    _app()
+    m = studio.PipelineModel(studio.demo_image(48))
+    m.add_stage("gaussian"); m.add_stage("otsu")
+    win, model = studio.build_window(m)
+    win._stage_list.setCurrentRow(0)
+    st = win._state
+    sa, _sb = win._knob_sliders
+
+    # window ON (default): a knob tick renders
+    n0 = st["renders"]
+    sa.setValue(sa.value() + 5)
+    assert st["renders"] > n0
+    win._knob_timer.stop()
+
+    # window OFF: the same edit still updates the model but does NOT render
+    win._set_dev_update("window", False)
+    assert st["dev_update"]["window"] is False
+    assert win._dev_update_actions["window"].isChecked() is False
+    n1 = st["renders"]
+    a_before = model.stages[0][1]
+    sa.setValue(sa.value() + 5)
+    win._knob_timer.stop()
+    assert st["renders"] == n1                       # display frozen
+    assert model.stages[0][1] != a_before            # the edit itself still happened
+
+    # turning it back on refreshes to the current state exactly once
+    win._set_dev_update("window", True)
+    assert st["renders"] == n1 + 1
+    assert win._dev_update_actions["window"].isChecked() is True
+
+    # 'all' toggles every flag and the toolbar mirror
+    win._set_dev_update("all", False)
+    assert all(v is False for v in st["dev_update"].values())
+    assert win._dev_update_actions["_toolbar"].isChecked() is False
+    assert win._dev_update_actions["pc"].isChecked() is False
+    win._set_dev_update("all", True)
+    assert all(v is True for v in st["dev_update"].values())
+    assert win._dev_update_actions["_toolbar"].isChecked() is True
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
