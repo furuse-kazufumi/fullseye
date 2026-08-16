@@ -1780,7 +1780,13 @@ def build_window(model=None):
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
-             "renders": 0}
+             "renders": 0,
+             # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
+             # variable window, execution cursor and per-line timings auto-update during
+             # editing/execution. Turn off to make many edits (or a heavy run) without the
+             # display cost; turning back on refreshes to the current state (as HDevelop
+             # updates when execution stops). See docs/HDEVELOP_DEV_OPS.md.
+             "dev_update": {"window": True, "var": True, "pc": True, "time": True}}
     pmodel = PerceptionModel()
 
     # -- behaviour --
