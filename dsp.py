@@ -176,7 +176,7 @@ def envelope(x):
     """Amplitude envelope via the analytic (Hilbert) signal — the shape of a
     knock / impact / acoustic-emission burst."""
     from scipy.signal import hilbert
-    return np.abs(hilbert(np.asarray(x, np.float64)))
+    return np.abs(hilbert(_require_finite(x)))
 
 
 def rms(x, frame=None, hop=None):
