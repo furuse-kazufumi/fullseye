@@ -458,7 +458,9 @@ _PY_NEWTON = '''\
 def run(a):
     """Newton-Raphson root of a polynomial from x0: a = [x0, c0, c1, ..., cn]
     (ascending coeffs). Up to 100 iterations; stops when |step| < 1e-12 or the
-    derivative vanishes (returns the current x, fail-soft)."""
+    derivative vanishes. Fail-soft, no crash: on a vanishing derivative, or if it
+    cycles / diverges within 100 iterations, it returns the current x, which is NOT
+    a root (verify with |p(x)| if it matters — same caveat as bisection)."""
     if len(a) < 2:
         return 0.0
     x = a[0]
