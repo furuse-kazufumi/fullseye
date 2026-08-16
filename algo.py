@@ -660,10 +660,14 @@ def run(a):
     numeric sequence works, but the str oracle only makes sense for code points."""
     if len(a) < 1:
         return []
-    m = int(a[0])
-    if m < 1:
-        return []                                   # empty pattern: fail-soft (avoid the
-        #                                             degenerate "" -> every gap convention)
+    m_d = a[0]
+    # raw-value guard BEFORE int() so Python matches the C guard EXACTLY: a fractional
+    # (int() truncation), negative, NaN (comparison-false), or oversized header fail-softs
+    # identically in both -> no Python-vs-C divergence, no int(nan) crash. m >= 1 avoids the
+    # degenerate empty-pattern "" -> every-gap convention.
+    if not (m_d >= 1.0 and m_d <= 2147483000.0):
+        return []
+    m = int(m_d)
     if len(a) < 1 + m:
         return []                                   # truncated pattern
     pat = a[1:1 + m]
