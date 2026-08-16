@@ -209,10 +209,13 @@ def fit_cylinder_ransac(points, normals=None, thresh: float = 0.01,
     once it clears :func:`_consensus_floor` — by default the larger of 3 points and
     10% of the cloud, tightened by *min_inliers* / *min_inlier_frac*. ``None`` is the
     single "no model" signal for BOTH no consensus and no valid hypothesis; only a
-    precondition violation (``< 2`` points) raises. Honest limit: consensus does not
+    precondition violation (``< 2`` points) raises (this REPLACES a prior
+    ``ValueError``). Honest limits (the default gate is WEAK): (1) consensus does not
     bound the RADIUS — a flat sheet is a cylinder of near-infinite radius and clears
-    the gate with genuine consensus, so sanity-check the returned radius against your
-    scene scale if flat surfaces may reach this call."""
+    the gate; (2) the 10% default only rejects a blob when the cloud is large relative
+    to *thresh* — a COMPACT blob can still pass with a plausible radius (see
+    :data:`_DEFAULT_CONSENSUS_FRAC`). Sanity-check the returned radius against your
+    scene scale, and pass a stricter *min_inlier_frac* for compact clouds."""
     P = _pts3(points)
     n = P.shape[0]
     if n < 2:
