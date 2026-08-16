@@ -137,7 +137,29 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   (連立一次 Gauss 消去・部分ピボット=下記 P2 完遂記録)。honest gate = **C-vs-Python は bit 一致**
   (同一アルゴリズム + `-ffp-contract=off` で FMA 抑止)/ **Python-vs-oracle は数値許容差**(`AlgoOp.tol`)で
   独立 oracle(simpson=scipy / 求根=残差 |p(root)| / gauss=`np.linalg.solve`)照合。fail-soft を honest 文書化。
-- P3 文字列(+`text` 型)/ P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。
+- **P3(完了 2026-08-17)**: 文字列 op(下記 P3 完遂記録)。`text` 型は「コードポイント列を float64 で運ぶ」
+  規約(`text_to_seq`/`seq_to_text`)で既存 float64 harness に載せ、新 wire 型を足さずに実現。
+- P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。
+
+## P3 完遂記録 — 文字列 op(2026-08-17, Opus5[1m]/ultracode, `graph-loop-engineering`)
+**文字列アルゴリズム 3 種を algo tier に追加。** 「文字列 = コードポイント列を float64 で運ぶ」(Unicode スカラーは
+< 2^53 ゆえ厳密)で **既存の float64 バイナリ harness に無改造で載る**(新 wire 型不要)。値は等値比較のみ(整数コードで
+厳密)・位置/距離は厳密整数 → **C-vs-Python bit 一致 かつ Python-vs-oracle は EXACT(tol 0)**。
+
+- **op(3)**: `strfind`(Knuth-Morris-Pratt=失敗関数プレフィックスオートマトン。入力 `[m, pattern(m), text]` → 全出現
+  開始位置の昇順リスト・重複出現含む=**可変長 KIND_MAP**、gauss で作った可変長 wire を再利用) / `edit_distance`
+  (Wagner-Fischer/Levenshtein 2 行 DP=**KIND_REDUCE**・厳密整数) / `lcs_length`(最長共通部分列長 2 行 DP=
+  KIND_REDUCE)。全て仕様から再実装(provenance 明記)。fail-soft=空パターン/切詰/パターン>テキストは `[]`、
+  na<0/切詰は `0.0`。
+- **単一 source of truth + text 型ヘルパ**: `text_to_seq(s)`/`seq_to_text(seq)`(コードポイント↔float64)を追加。
+- **honest gate 実測(3 op とも passed=True・c_verified=true)**: Python==**独立 oracle**(strfind=素朴 all-occurrences
+  スキャン[KMP と独立]/ edit・lcs=**top-down memo 再帰**[bottom-up 2 行 DP と別コード経路])で **diff 0.0(exact)** /
+  codegen **C==Python bit 一致**(ziglang cc)。
+- **work-graph op 波(候補 d の実演)**: 新 op ごとに `algo_gate` ゲートノードを積む=**1 op=1 ノード**。3 op を
+  `raptor-worklog add --capability tool` → `run-once --available tool:command` で **無人 done**(gate_ok.json 生成)。
+- **回帰**: `tests/test_algo.py` に strfind/edit_distance/lcs_length のテスト群(既知解・random×独立 oracle・fail-soft・
+  可変長出力・no-mutation・python exact・C bit 一致)。全スイート **4669 passed / 0 failed**(P2 後 4649 から +20)・
+  ruff clean・mypy 回帰 0。全 local commit・**push 済**(ユーザー承認 2026-08-16 就寝時=push ゲート開放)。
 
 ## P2 完遂記録 — gauss_solve(2026-08-16, Opus5[1m]/ultracode, `graph-loop-engineering`)
 **連立一次方程式 Gauss 消去(部分ピボット)を追加し、P2 数値計算を完遂。** ユーザー指示どおり
