@@ -135,6 +135,8 @@ def test_save_raises_on_unwritable_path(tmp_path):
     see the failure. save() now checks the return value and raises OSError."""
     if imgio._cv2() is None:
         pytest.skip("needs opencv-python (the cv2.imwrite-returns-False path)")
-    bad = str(tmp_path / "no_such_subdir" / "x.png")   # parent dir does not exist
+    bad = str(tmp_path / "no_such_subdir" / "x.png")   # parent dir does not exist -> imwrite False
     with pytest.raises(OSError):
         imgio.save(bad, np.zeros((8, 8), np.float64))
+    with pytest.raises(OSError):                        # unknown extension -> cv2.error, normalised
+        imgio.save(str(tmp_path / "x.zzz"), np.zeros((8, 8), np.float64))
