@@ -55,4 +55,45 @@ Fullseye の既存資産を汎用へ拡張する。**画像 AI の焦点は薄�
   ライセンス確認前にコードを取り込まない。
 - **画像 AI の焦点を薄めない**: 汎用 op は opt-in tier。北極星(HALCON 級画像 op 網羅 + honest
   holdout)は不変。
-- **本セッションでは着手しない**(context budget)。本 doc が次セッションの実行正本。
+
+---
+
+## P1 完了記録(2026-08-16, Opus5[1m]/ultracode)
+**最小実証「Fullseye は汎用アルゴリズムも C 生成でき、C 一致を honest 実測できる」を達成。**
+
+- **新 tier(画像 REGISTRY と完全分離・opt-in)** = `algo.py`。`seq`(1-D 数列)/`scalar`(単一実数)型を新設。
+  画像 `ops.REGISTRY` には一切触れないため、進化探索・Wave-0 champion pin は無影響(テストで実証)。
+- **op(5)**: ソート 3 種 `quicksort`(Hoare/median-of-three/Lomuto/明示スタック)・`heapsort`(Williams
+  1964 binary max-heap)・`mergesort`(von Neumann 1945 top-down stable)= `seq→seq`。加えて `scalar`
+  型に役割を与える reduction `seq_max`/`seq_min`(`seq→scalar`、順序非依存で exact)。**全て仕様から
+  再実装**(algo-c ソースは丸写しせず・各 op に `provenance` を明記)。
+- **単一 source of truth**: 各 op は Python 本体と C 本体を**文字列で保持**し、in-process 参照は
+  `algo.py_fn` が同じ文字列を compile、`algo_codegen` は同じ文字列を standalone `.py`/`.c` に emit。
+  → テストした oracle と出荷物が drift しない(テスト `test_emitted_python_*` で実証)。
+- **codegen** = `algo_codegen.py`(`emit_python`/`emit_c`。C は関数 + バイナリ I/O driver = 完全に
+  compile 可能な単体プログラム)。
+- **honest gate** = `algo_difftest.py`(2 つの実測、deferred skip でない):
+  (1) Python 参照 **== numpy oracle**(`np.sort`/`np.max`/`np.min`)、(2) codegen **C == Python を
+  bit 一致**(holdout=edge cases 10 + random 40)。これらの op は既存 double を移動/選択するのみゆえ
+  正しい実装は bit 完全一致(tol=0.0)。
+- **★実測(2026-08-16, `zig cc` = `python -m ziglang cc`, ziglang 0.16.0 を pip 導入)**:
+  全 5 op で **python diff 0.00e+00 / C-vs-Python diff 0.00e+00 / passed=True**(実 compile→実 run→bit
+  比較)。= 「C 一致を honest 実測」を **deferred skip でなく本当の測定**として達成。
+- **fail-closed**: toolchain 無し → C 半分は honest skip(Python 半分は走る)。compile/run 失敗 →
+  gate FAIL(neutral skip にしない。テスト `test_difftest_compile_error_fails_closed` で実証)。
+- **facade**: `fullseye.algo_ops()/run_algo()/algo_to_c()/algo_to_python()/algo_difftest()`
+  (+ `api.py`)。**skill** = `~/.claude/skills/image-processing/SKILL.md` に「General algorithms
+  (algo-c tier)」節を追記(サブエージェントから使用可)。
+- **テスト**: `tests/test_algo.py`(42 件=registry 整合・Python==sorted/oracle・安定性・単一 source
+  of truth・C bit 一致[toolchain 有時]・compile-error fail-closed・画像 registry 非汚染・facade)。
+- **honest な限界**: ①NaN を含む数列は比較ソートの規約が Python/C/numpy で分かれるため holdout から
+  除外(開示)。②浮動小数の和など**累積で順序依存になる op は P1 に含めない**(seq_max/min は exact)。
+  ③CLI サブコマンド統合(`imgevolve.py algo ...`)と Studio op ブラウザ tier 表示は次段(P1.5)。
+  ④fscript の配列/procedure 言語化(設計 doc アーキ項 2)は P1 スコープ外(別 track)。
+
+## 次(P2 以降)
+- **P1.5(小)**: `imgevolve.py` に `algo`/`algo-c`/`algo-difftest` サブコマンド、Studio の op ブラウザに
+  general tier を出す(design 段階計画「Studio の op ブラウザに新 tier を出す」)。
+- **P2**: 数値計算(二分法/Newton/Simpson/Gauss)op 族。scalar/seq に加え `numeric` 系。
+  累積順序に注意し tol の扱いを honest に(bit 一致でなく数値許容差を明示)。
+- P3 文字列(+`text` 型)/ P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。
