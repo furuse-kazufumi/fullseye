@@ -660,7 +660,8 @@ def parse_hdev_program(text, names):
 #: display state (update on/off, display range); they are NOT image pipeline stages.
 #: See docs/HDEVELOP_DEV_OPS.md.
 _DEV_DIRECTIVES = {"dev_update_window", "dev_update_var", "dev_update_pc",
-                   "dev_update_time", "dev_update_off", "dev_update_on", "dev_set_part"}
+                   "dev_update_time", "dev_update_off", "dev_update_on", "dev_set_part",
+                   "dev_set_lut", "dev_clear_window"}
 
 
 def _dev_op_head(line):
