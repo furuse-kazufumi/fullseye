@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 12:11:04
+- **最終更新**: 2026-08-16 12:22:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-48f8926 Studio: status-bar indicator when display updates are off
-98d1029 auto: test_studio.py 編集前 (2026-08-16 12:06)
-d89ca1c auto: studio.py 編集前 (2026-08-16 12:05)
-5cc6769 Studio: dev_set_lut + dev_clear_window directives; STATUS/DEV_OPS docs
-819aa57 auto: test_studio.py 編集前 (2026-08-16 12:03)
-c6e47fc auto: studio.py 編集前 (2026-08-16 12:02)
-4d8bb88 auto: studio.py 編集前 (2026-08-16 12:02)
-d2cb856 auto: HDEVELOP_DEV_OPS.md 編集前 (2026-08-16 12:01)
-82788a5 Studio: HDevelop dev_* display-control ops (dev_update_*, dev_set_part)
-aff9ae0 auto: studio.py 編集前 (2026-08-16 11:59)
+d179458 docs(STATUS): record dev_* op family + Track 5 adversarial self-review
+909ecd8 Address adversarial self-review of session code (7 findings)
+6db3f49 auto: robust.py 編集前 (2026-08-16 12:20)
+e8eb4da auto: test_imgio.py 編集前 (2026-08-16 12:20)
+d2b2e6c auto: imgio.py 編集前 (2026-08-16 12:20)
+12da549 auto: studio.py 編集前 (2026-08-16 12:20)
+1cfa7ac auto: studio.py 編集前 (2026-08-16 12:20)
+46f1e42 auto: test_pcseg.py 編集前 (2026-08-16 12:19)
+a0e910b auto: pcseg.py 編集前 (2026-08-16 12:19)
+64359fe auto: pcseg.py 編集前 (2026-08-16 12:19)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-12:10 docs/SESSION_SUMMARY.md
-12:06 studio_ui_steps.jsonl
-12:06 studio_ui_crash.log
+12:22 docs/STATUS.md
+12:21 studio_ui_steps.jsonl
+12:21 studio_ui_crash.log
+12:20 tests/test_robust.py
+12:20 robust.py
+12:20 tests/test_imgio.py
+12:20 imgio.py
+12:20 studio.py
+12:19 tests/test_pcseg.py
+12:19 pcseg.py
+12:14 .pytest_cache/v/cache/nodeids
+12:11 docs/SESSION_SUMMARY.md
 12:06 tests/test_studio.py
-12:05 studio.py
 12:01 docs/HDEVELOP_DEV_OPS.md
-12:01 docs/STATUS.md
 11:31 fullseye/__init__.py
-11:30 tests/test_device.py
-11:30 device.py
-11:25 tests/test_imgio.py
-11:25 imgio.py
-11:24 tests/test_pcseg.py
-11:24 tests/test_api.py
-11:23 tests/test_robust.py
 ```
 
 ---
