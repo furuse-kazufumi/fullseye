@@ -138,7 +138,9 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   独立 oracle(simpson=scipy / 求根=残差 |p(root)| / gauss=`np.linalg.solve`)照合。fail-soft を honest 文書化。
 - **P3(完了 2026-08-17)**: 文字列 op(下記 P3 完遂記録)。`text` 型は「コードポイント列を float64 で運ぶ」
   規約(`text_to_seq`/`seq_to_text`)で既存 float64 harness に載せ、新 wire 型を足さずに実現。
-- P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。
+- **P4(完了 2026-08-17)**: グラフ op(components/mst_weight/dijkstra、下記 P4 完遂記録)。`graph` は
+  `[n, m, (u,v,w)*m]` パックで既存 harness に載せた(新 wire 型不要)。
+- P5 圧縮・数論・暗号(教育用・honest 開示)。
 
 ## P3 完遂記録 — 文字列 op(2026-08-17, Opus5[1m]/ultracode, `graph-loop-engineering`)
 **文字列アルゴリズム 3 種を algo tier に追加。** 「文字列 = コードポイント列を float64 で運ぶ」(Unicode スカラーは
