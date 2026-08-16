@@ -2862,6 +2862,7 @@ def build_window(model=None):
     v_disp.clicked.connect(lambda: display_variable("new"))
     v_here.clicked.connect(lambda: display_variable("current"))
     win._variables = {"list": var_list, "refresh": refresh_variables, "display": display_variable}
+    win._contour_icon = _contour_icon                # exposed for the headless thumbnail test
 
     # -- dedicated Operator Help dialog (HTML: args / usage / sample code / links) - #
     help_browser = QtWidgets.QTextBrowser()
