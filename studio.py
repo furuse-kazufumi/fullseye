@@ -3241,8 +3241,30 @@ def build_window(model=None):
             state["draw"]["color"] = color
         if line_width is not None:
             state["draw"]["line_width"] = max(1, int(line_width))
+        for m, a in getattr(win, "_draw_mode_actions", {}).items():   # reflect in View > Region style
+            a.setChecked(state["draw"]["mode"] == m)
+        for cn, a in getattr(win, "_draw_color_actions", {}).items():
+            a.setChecked(state["draw"]["color"] == _HALCON_COLORS[cn])
         show_result()
     win._set_draw_style = set_draw_style
+
+    # View ▸ Region style — HDevelop dev_set_draw / dev_set_color for the region overlay
+    menu_view.addSeparator()
+    style_menu = _menu(menu_view, "Region style", "region_style")
+    _draw_group = QtGui.QActionGroup(win); _draw_group.setExclusive(True)
+    win._draw_mode_actions = {}
+    for _m, _lbl in (("fill", "Fill"), ("margin", "Margin (outline)")):
+        _a = QtGui.QAction(_lbl, win); _a.setCheckable(True); _a.setChecked(_m == "fill")
+        _draw_group.addAction(_a); style_menu.addAction(_a); win._draw_mode_actions[_m] = _a
+        _a.triggered.connect(lambda _=False, m=_m: set_draw_style(mode=m))
+    color_menu = _menu(style_menu, "Color", "region_color")
+    _color_group = QtGui.QActionGroup(win); _color_group.setExclusive(True)
+    win._draw_color_actions = {}
+    for _cn in ("orange", "red", "green", "blue", "yellow", "cyan", "magenta", "white"):
+        _a = QtGui.QAction(_cn.capitalize(), win); _a.setCheckable(True); _a.setChecked(_cn == "orange")
+        _color_group.addAction(_a); color_menu.addAction(_a); win._draw_color_actions[_cn] = _a
+        _a.triggered.connect(lambda _=False, cn=_cn: set_draw_style(color=_HALCON_COLORS[cn]))
+    win._region_style_menu = style_menu
 
     def apply_dev_directives(text):
         """Apply a program's dev_* display directives (source order): dev_update_* /
