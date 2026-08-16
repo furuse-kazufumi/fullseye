@@ -232,8 +232,9 @@ def fit_cylinder_ransac(points, normals=None, thresh: float = 0.01,
         cnt = int(inl.sum())
         if best is None or cnt > best[0]:
             best = (cnt, c, w, r, inl)
-    if best is None:
-        raise ValueError("cylinder RANSAC failed to find any valid model")
+    floor = _consensus_floor(n, 2, min_inliers, min_inlier_frac)
+    if best is None or best[0] < floor:
+        return None                                # no consensus -> honest "no cylinder"
     return best[1], best[2], float(best[3]), best[4]
 
 
