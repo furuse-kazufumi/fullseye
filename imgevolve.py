@@ -288,6 +288,51 @@ def cmd_index(a):
     return 0
 
 
+def cmd_algo(a):
+    """General-algorithm tier (algo-c parity): list / run / emit C or Python / difftest.
+
+    A separate, opt-in tier from the image ops (sequences, not rasters). See
+    ``algo.py`` and ``docs/GENERAL_ALGORITHMS.md``.
+    """
+    import algo
+    if a.action == "list":
+        for op in algo.ALGO_REGISTRY:
+            print("%-10s %-4s->%-6s [%-6s]  %s"
+                  % (op.name, op.in_sort, op.out_sort, op.category, op.provenance))
+        print("--- %d general-algorithm ops (seq/scalar tier) ---" % len(algo.ALGO_REGISTRY))
+        return 0
+    if a.action == "run":
+        if a.op is None or algo.find_algo(a.op) is None:
+            raise SystemExit("run needs a known op (try: imgevolve.py algo list)")
+        seq = [float(x) for x in a.seq.split(",") if x.strip()]
+        print(algo.run_algo(a.op, seq))
+        return 0
+    if a.action in ("emit-c", "emit-py"):
+        import algo_codegen
+        if a.op is None or algo.find_algo(a.op) is None:
+            raise SystemExit("%s needs a known op (try: imgevolve.py algo list)" % a.action)
+        op = algo.ALGO_BY_NAME[a.op]
+        print(algo_codegen.emit_c(op) if a.action == "emit-c" else algo_codegen.emit_python(op))
+        return 0
+    if a.action == "difftest":
+        import algo_difftest
+        cc = None if a.no_c else "auto"
+        names = algo.algo_names() if a.op in (None, "all") else [a.op]
+        rc = 0
+        for nm in names:
+            if algo.find_algo(nm) is None:
+                raise SystemExit("unknown algo op: %r (try: imgevolve.py algo list)" % nm)
+            r = algo_difftest.difftest(nm, a.workdir, cc=cc)
+            cb = r["c_backend"]
+            extra = (" bit_identical=%s" % cb.get("c_vs_python_bit_identical")) if cb.get("status") == "ran" else ""
+            print("[algo:%s] python pass=%s | C %s%s | c_verified=%s -> passed=%s"
+                  % (nm, r["python_pass"], cb.get("status"), extra, r["c_verified"], r["passed"]))
+            if not r["passed"]:
+                rc = 1
+        return rc
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
