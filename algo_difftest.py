@@ -290,23 +290,22 @@ def difftest(name: str, wd: Path, seed: int = 0, tol: float = 0.0,
     if cc == "auto":
         cc = find_c_compiler()
 
-    holdout = make_holdout(seed)
+    holdout = holdout_for(name, seed)
     ref = algo.py_fn(name)
     py_out = [ref([float(x) for x in arr]) for arr in holdout]
-    oracle = [_oracle(op, arr) for arr in holdout]
 
-    # Python vs oracle: VALUE equality, fail-closed. A structural mismatch or any
-    # non-finite value yields inf, and inf is never tol-gated (so --tol inf cannot
-    # pass a malformed result).
-    if op.kind == algo.KIND_SORT:
-        py_vs_oracle = _max_diff_sort(oracle, py_out)
-    else:
-        py_vs_oracle = _max_diff_scalar(oracle, py_out)
-    python_pass = math.isfinite(py_vs_oracle) and py_vs_oracle <= tol
+    # Python vs oracle: an INDEPENDENT reference (np.sort / np.max / np.min for
+    # sorts/reductions; scipy.integrate.simpson for Simpson; the residual |p(root)|
+    # for the root finders). Fail-closed: a non-finite / structural error yields inf,
+    # never tol-gated. Numeric ops accumulate, so they use the op's own tolerance
+    # while sorts/reductions stay exact (op.tol == 0.0).
+    py_vs_oracle = py_oracle_error(op, holdout, py_out)
+    otol = max(tol, op.tol)
+    python_pass = math.isfinite(py_vs_oracle) and py_vs_oracle <= otol
 
     result = {
         "op": name, "kind": op.kind, "provenance": op.provenance,
-        "n_cases": len(holdout), "tol": tol,
+        "n_cases": len(holdout), "tol": otol,
         "python_max_abs_diff": py_vs_oracle, "python_pass": python_pass,
         "compiler": compiler_label(cc), "c_verified": False, "c_backend": None,
     }
