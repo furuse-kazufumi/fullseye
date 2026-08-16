@@ -159,7 +159,7 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   `raptor-worklog add --capability tool` → `run-once --available tool:command` で **無人 done**(gate_ok.json 生成)。
 - **回帰**: `tests/test_algo.py` に strfind/edit_distance/lcs_length のテスト群(既知解・random×独立 oracle・fail-soft・
   可変長出力・no-mutation・python exact・C bit 一致)。全スイート **4669 passed / 0 failed**(P2 後 4649 から +20)・
-  ruff clean・mypy 回帰 0。全 local commit・**push 済**(ユーザー承認 2026-08-16 就寝時=push ゲート開放)。
+  ruff clean・mypy 回帰 0。commit + push はこのセッションで実施(ユーザー承認 2026-08-16 就寝時=push ゲート開放)。
 
 ## P2 完遂記録 — gauss_solve(2026-08-16, Opus5[1m]/ultracode, `graph-loop-engineering`)
 **連立一次方程式 Gauss 消去(部分ピボット)を追加し、P2 数値計算を完遂。** ユーザー指示どおり

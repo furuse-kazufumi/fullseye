@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-17 00:00:00
+- **最終更新**: 2026-08-17 00:02:56
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+3be247f auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-17 00:02)
+97632e8 auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-17 00:02)
 1feec1d auto: algo_difftest.py 編集前 (2026-08-16 23:57)
 b7849c0 auto: algo_difftest.py 編集前 (2026-08-16 23:56)
 477085a auto: algo_difftest.py 編集前 (2026-08-16 23:56)
@@ -18,19 +20,20 @@ b7849c0 auto: algo_difftest.py 編集前 (2026-08-16 23:56)
 eb963f8 auto: test_algo.py 編集前 (2026-08-16 23:54)
 72262b6 auto: test_algo.py 編集前 (2026-08-16 23:54)
 a7fc631 auto: algo_difftest.py 編集前 (2026-08-16 23:54)
-a7c0329 auto: algo_difftest.py 編集前 (2026-08-16 23:54)
-1069424 auto: algo_difftest.py 編集前 (2026-08-16 23:53)
 ```
 
 ## 現在の git status
 
 ```
-M algo_difftest.py
+M docs/GENERAL_ALGORITHMS.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+00:02 docs/GENERAL_ALGORITHMS.md
+00:00 .pytest_cache/v/cache/nodeids
+00:00 docs/SESSION_SUMMARY.md
 23:57 .mypy_cache/missing_stubs
 23:57 .mypy_cache/3.11/cache.3.db
 23:57 .mypy_cache/3.11/cache.10.db
@@ -41,7 +44,6 @@ M algo_difftest.py
 23:56 .ruff_cache/0.16.0/2128910586982079947
 23:55 algo.py
 23:55 .ruff_cache/0.16.0/7363606932562918290
-23:55 .pytest_cache/v/cache/nodeids
 23:55 tests/test_algo.py
 ```
 
