@@ -129,9 +129,9 @@ def _lev_recursive(a: tuple, b: tuple) -> float:
 
 def _lcs_recursive(a: tuple, b: tuple) -> float:
     """LCS length by TOP-DOWN memoized recursion — independent oracle for the op's DP."""
-    from functools import lru_cache
+    from functools import cache
 
-    @lru_cache(maxsize=None)
+    @cache
     def c(i: int, j: int) -> int:
         if i == 0 or j == 0:
             return 0
