@@ -9,6 +9,7 @@ Contracts pinned here:
 """
 from __future__ import annotations
 
+import math
 import random
 import sys
 
@@ -78,6 +79,27 @@ def test_root_finders_fail_soft():
     assert 0.0 <= r <= 1.0
     # newton with a vanishing derivative at x0 -> returns x0 (no divide-by-zero crash)
     assert algo.run_algo("newton", [0.0, -1.0, 0.0, 1.0]) == 0.0   # p'=2x=0 at x0=0
+
+
+def test_simpson_even_sample_trapezoid_tail():
+    # EVEN sample count (odd interval count) exercises the trapezoid-tail branch.
+    # y=x on [0,1] with 4 samples (h=1/3) -> exact 0.5 (both Simpson and trapezoid
+    # are exact on a line), so this pins the tail branch to a known answer.
+    third = 1.0 / 3.0
+    got = algo.run_algo("simpson", [third, 0.0, third, 2 * third, 1.0])
+    assert got == pytest.approx(0.5, abs=1e-12)
+    # a non-linear even-m case: y=x^2 on [0,1], 4 samples -> Simpson[0,2/3] + trap tail
+    ys = [(i * third) ** 2 for i in range(4)]
+    got2 = algo.run_algo("simpson", [third] + ys)
+    assert got2 > 0.0 and math.isfinite(got2)
+
+
+def test_newton_non_convergence_is_fail_soft():
+    # x^3 - 2x + 2 from x0=0 is a classic Newton 2-cycle -> returns a non-root, no crash
+    r = algo.run_algo("newton", [0.0, 2.0, -2.0, 0.0, 1.0])
+    assert math.isfinite(r)                                  # fail-soft: finite, no exception
+    residual = 2.0 - 2.0 * r + r ** 3
+    assert abs(residual) > 1e-3                              # honestly NOT a root (documented)
 
 
 @pytest.mark.parametrize("name", _NUMERIC)
