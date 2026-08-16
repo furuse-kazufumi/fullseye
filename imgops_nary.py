@@ -150,6 +150,17 @@ _DEFS = [
 
 
 def _real_ops() -> set:
+    """Real HALCON names — generated py-module first, flat data/ JSON second.
+
+    `halcon_names_data` ships in the wheel, `data/halcon_operators.json` does not,
+    so reading only the JSON returned an EMPTY set on a pip-installed package and
+    the fail-closed guard in `build_nary` admitted everything instead.
+    """
+    try:
+        from halcon_names_data import HALCON_NAMES
+        return set(HALCON_NAMES)
+    except Exception:
+        pass
     p = os.path.join(HERE, "data", "halcon_operators.json")
     if not os.path.exists(p):
         return set()
@@ -157,11 +168,15 @@ def _real_ops() -> set:
 
 
 def build_nary() -> list[NaryOp]:
-    """Compile n-ary ops, dropping any whose HALCON name is not real (fail-closed)."""
+    """Compile n-ary ops, dropping any whose HALCON name is not real (fail-closed).
+
+    An unavailable reference set drops everything rather than admitting everything
+    — an unverifiable name is not a verified one.
+    """
     real = _real_ops()
     out, dropped = [], []
     for (n, h, ar, ins, o, fn, d) in _DEFS:
-        if real and h not in real:
+        if h not in real:
             dropped.append(h)
             continue
         out.append(NaryOp(n, h, ar, ins, o, fn, d))
