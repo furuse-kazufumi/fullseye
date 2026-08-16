@@ -91,6 +91,8 @@ def _check_sort(out, sort, shape):
 
 _REF: dict = {}
 
+IDENTITY_REASON = "identity on canonical inputs"
+
 
 def run(verbose_failures=False):
     img = _canonical_image()

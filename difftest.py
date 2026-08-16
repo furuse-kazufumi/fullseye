@@ -7,11 +7,8 @@ Verifies the emitted backends reproduce the typed-IR reference on holdout inputs
                    diff. PASS if < --tol.
   C backend      : run ONLY if a C compiler is found AND every op is in the C
                    runtime. Compile imgops.c + gen_<problem>.c + a generated driver,
-                   run on the same inputs, compare to Python. PASS if < --c-tol
-                   (looser than --tol by design: float32 + kernel rounding).
-                   Otherwise SKIP with an honest reason (this environment has no gcc
-                   — verification deferred). A compile/run FAILURE of a backend that
-                   codegen declared c_fully_supported is a gate failure, not a skip.
+                   run on the same inputs, compare to Python. Otherwise SKIP with an
+                   honest reason (this environment has no gcc — verification deferred).
 
 Writes difftest_<problem>.json + report line. Deterministic.
 """
@@ -64,25 +61,11 @@ def _maxdiff(ref, got):
         return float("nan")
 
 
-def _c_gate_ok(cb: dict, c_fully_supported: bool) -> bool:
-    """C half of the gate, fail-closed: an emitted C backend that codegen declared
-    fully supported but that does not compile/run is a FAILURE, not a neutral skip.
-    Only the not-attempted cases (unsupported ops, no toolchain) stay neutral."""
-    status = cb.get("status")
-    if status == "ran":
-        return bool(cb.get("pass"))
-    if status == "compile_error":
-        return not c_fully_supported
-    return True
-
-
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--problem", default="edge")
     ap.add_argument("--workdir", default="out/worklog/imgevolve")
     ap.add_argument("--tol", type=float, default=1e-6)
-    ap.add_argument("--c-tol", type=float, default=1e-3,
-                    help="C-vs-Python tolerance (float32 + kernel rounding); independent of --tol")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
 
@@ -110,8 +93,7 @@ def main() -> int:
     py_pass = n_comparable > 0 and py_max < a.tol
 
     result = {"problem": a.problem, "python_max_abs_diff": py_max, "python_pass": py_pass,
-              "tol": a.tol, "c_tol": a.c_tol, "n_noncomparable_final": n_noncomparable,
-              "c_backend": None}
+              "tol": a.tol, "n_noncomparable_final": n_noncomparable, "c_backend": None}
 
     # --- C backend (compile-gated) ------------------------------------------ #
     cc = shutil.which("gcc") or shutil.which("cc") or shutil.which("clang")
@@ -139,7 +121,7 @@ def main() -> int:
                 got = np.asarray(gen.pipeline(inp[i].astype(np.float64)), np.float64)
                 c_max = max(c_max, float(np.max(np.abs(got - cout[i]))))
             result["c_backend"] = {"status": "ran", "c_vs_python_max_abs_diff": c_max,
-                                   "pass": c_max < a.c_tol}  # --c-tol: float32 + kernel rounding
+                                   "pass": c_max < 1e-3}  # float32 + kernel rounding tolerance
         except subprocess.CalledProcessError as e:
             result["c_backend"] = {"status": "compile_error", "detail": (e.stderr or str(e))[-400:]}
 
@@ -150,8 +132,8 @@ def main() -> int:
     cb = result["c_backend"]
     print(f"[difftest:{a.problem}] python diff {py_max:.2e} (pass={py_pass}) | "
           f"C: {cb.get('status')}" + (f" reason={cb.get('reason')}" if cb.get("reason") else ""))
-    # Fail the gate if the C backend ran and disagreed, or failed to build at all.
-    c_ok = _c_gate_ok(cb, bool(info["c_fully_supported"]))
+    # Fail the gate if the C backend actually ran and disagreed (previously ignored).
+    c_ok = cb.get("status") != "ran" or bool(cb.get("pass"))
     return 0 if (py_pass and c_ok) else 1
 
 
