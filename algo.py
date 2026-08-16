@@ -958,7 +958,22 @@ def py_fn(name: str) -> Callable:
 def run_algo(name: str, seq):
     """Run the general-algorithm ``name`` on ``seq`` (any iterable of numbers).
 
-    Returns a Python ``list`` for a sort (``out_sort == SEQ``) or a ``float`` for
-    a reduction (``out_sort == SCALAR``). Fail-closed ``KeyError`` for unknown ops.
+    Returns a Python ``list`` for a sort or variable-length map (``out_sort == SEQ``)
+    or a ``float`` for a reduction (``out_sort == SCALAR``). Fail-closed ``KeyError``
+    for unknown ops.
     """
     return py_fn(name)([float(x) for x in seq])
+
+
+def text_to_seq(s: str) -> list[float]:
+    """Encode a string as a code-point sequence (float64) for the P3 string ops.
+
+    Unicode scalars are all < 2^53, so the encoding is exact. Use it to pack inputs,
+    e.g. ``[len(p)] + text_to_seq(p) + text_to_seq(t)`` for ``strfind``.
+    """
+    return [float(ord(c)) for c in s]
+
+
+def seq_to_text(seq) -> str:
+    """Decode a code-point sequence (as produced/consumed by the string ops) to a str."""
+    return "".join(chr(int(round(float(x)))) for x in seq)
