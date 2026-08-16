@@ -133,16 +133,22 @@ def support_polygon(contacts, ground=None, contact_tol: float = 0.02) -> dict:
             "perimeter": float(h.area), "centroid": centroid}
 
 
-def com_support_margin(com_xy, contacts) -> float:
+def com_support_margin(com_xy, contacts, ground=None, contact_tol: float = 0.02) -> float:
     """Static stability margin: signed distance from the COM ground-projection to
     the support-polygon boundary (McGhee & Frank 1968).
 
     ``com_xy`` is the COM projected onto the ground (x, y). Positive = the COM is
     **inside** the support polygon by that margin (statically stable, larger =
     safer); negative = outside (tipping). Returns the margin in world units
-    (``-inf`` if the polygon is degenerate / has no area)."""
+    (``-inf`` if the polygon is degenerate / has no area).
+
+    ★``ground`` / ``contact_tol`` are forwarded to :func:`support_polygon` — pass
+    them (floor level ``z`` or plane ``[a, b, c, d]``) so airborne feet are
+    excluded. Without them the contacts are used as given and a lifted foot can
+    turn a tipping robot into a "stable" one; pre-filter with
+    :func:`contact_points` in that case."""
     com = np.asarray(com_xy, np.float64).ravel()[:2]
-    poly = support_polygon(contacts)
+    poly = support_polygon(contacts, ground=ground, contact_tol=contact_tol)
     V = poly["vertices"]
     if poly["area"] <= 0.0 or V.shape[0] < 3:
         return float("-inf")
