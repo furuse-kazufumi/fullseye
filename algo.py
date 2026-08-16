@@ -1069,9 +1069,9 @@ def run(a):
         return []
     n = int(nd)
     m = int(md)
-    if not (sd >= 0.0 and sd < nd):
-        return []
-    src = int(sd)
+    if not (sd >= 0.0 and sd < n):                     # bound src against the INTEGER n, not
+        return []                                      # raw nd: a fractional nd could pass sd<nd
+    src = int(sd)                                      # yet give src==n (out-of-range write)
     if len(a) < 3 + 3 * m:
         return []
     for k in range(m):                                 # validate up front
