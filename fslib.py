@@ -253,12 +253,10 @@ class Seq:
 
     @classmethod
     def of(cls, values) -> "Seq":
-        """Build a Seq from any iterable of numbers (copied to a float64 1-D array)."""
-        if isinstance(values, np.ndarray):
-            arr = np.asarray(values, np.float64).reshape(-1)
-        else:
-            arr = np.fromiter((float(x) for x in values), dtype=np.float64)
-        return cls(arr)
+        """Build a Seq from a 1-D iterable of numbers. A 2-D array or nested list is
+        rejected (``FsTypeError``) rather than silently flattened."""
+        arr = np.asarray(values if isinstance(values, np.ndarray) else list(values), np.float64)
+        return cls(arr)                            # __post_init__ enforces 1-D
 
     @property
     def sort(self) -> str:
