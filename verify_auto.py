@@ -7,8 +7,10 @@ on canonical inputs and checks:
 
   1. runs without exception on several (a, b) samples
   2. returns the declared output sort (image / region / feature / contour), with
-     the right ndim / dtype / value domain
-  3. (informational) whether it changed the input — pure pass-throughs are flagged
+     the right ndim / dtype / value domain — a "region" must be BINARY ({0,1}),
+     since a mere [0,1] range test passes any grayscale image unchanged
+  3. changed the input — a pure pass-through is an identity, not an implementation,
+     so it FAILS the gate instead of being counted with a footnote
 
 Honest coverage = distinct real HALCON operators whose generated op PASSES this
 gate. That is the number we report — earned, not claimed.
