@@ -110,7 +110,8 @@ def main() -> int:
     py_pass = n_comparable > 0 and py_max < a.tol
 
     result = {"problem": a.problem, "python_max_abs_diff": py_max, "python_pass": py_pass,
-              "tol": a.tol, "n_noncomparable_final": n_noncomparable, "c_backend": None}
+              "tol": a.tol, "c_tol": a.c_tol, "n_noncomparable_final": n_noncomparable,
+              "c_backend": None}
 
     # --- C backend (compile-gated) ------------------------------------------ #
     cc = shutil.which("gcc") or shutil.which("cc") or shutil.which("clang")
