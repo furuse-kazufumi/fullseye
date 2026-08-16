@@ -878,6 +878,92 @@ double lcs_length(const double* a, int n_in) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P4 — graph ops. A graph is packed into the input seq: a = [n, m, edge triples...]
+# where n = node count (0..n-1), m = edge count, then m * (u, v, w) = (endpoint,
+# endpoint, weight); undirected. graph_components counts connected components
+# (KIND_REDUCE, exact integer). graph_mst_weight = total minimum-spanning-forest
+# weight (KIND_REDUCE; sums edge weights, so tol like the numeric ops). graph_dijkstra
+# packs a source too — a = [n, m, src, edges...] — and returns the length-n shortest-
+# distance vector (KIND_MAP; -1.0 = unreachable). Node/edge counts get the raw-value
+# guard (they bound loops/memory); edge endpoints/weights are assumed finite (module
+# NaN-free contract). Deterministic union rule + (weight,index) edge sort + lowest-index
+# Dijkstra tie-break => C matches Python bit-for-bit; the independent oracle is
+# scipy.sparse.csgraph. See docs/GENERAL_ALGORITHMS.md P4.
+# --------------------------------------------------------------------------- #
+_PY_GRAPH_COMPONENTS = '''\
+def run(a):
+    """Number of connected components of an undirected graph a = [n, m, (u,v,w)*m].
+
+    Union-find with path halving. Returns the component count as an exact integer
+    (weights ignored). Fail-soft 0.0 on malformed input (n<1 / m<0 / truncated) or an
+    out-of-range edge endpoint. Edge endpoints assumed finite (NaN-free contract)."""
+    if len(a) < 2:
+        return 0.0
+    nd = a[0]
+    md = a[1]
+    if not (nd >= 1.0 and nd <= 2147483000.0):
+        return 0.0
+    if not (md >= 0.0 and md <= 2147483000.0):
+        return 0.0
+    n = int(nd)
+    m = int(md)
+    if len(a) < 2 + 3 * m:
+        return 0.0
+    parent = list(range(n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]                  # path halving
+            x = parent[x]
+        return x
+
+    for k in range(m):
+        u = int(a[2 + 3 * k])
+        v = int(a[2 + 3 * k + 1])
+        if u < 0 or u >= n or v < 0 or v >= n:
+            return 0.0                                     # bad edge -> fail-soft
+        ru = find(u)
+        rv = find(v)
+        if ru != rv:
+            parent[ru] = rv                                # deterministic union (ru -> rv)
+    c = 0
+    for x in range(n):
+        if find(x) == x:
+            c = c + 1
+    return float(c)
+'''
+
+_C_GRAPH_COMPONENTS = '''\
+/* Connected-component count of an undirected graph a = [n, m, (u,v,w)*m] (union-find). */
+static int _uf_find(int* parent, int x) {
+    while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+    return x;
+}
+double graph_components(const double* a, int n_in) {
+    if (n_in < 2) return 0.0;
+    double nd = a[0], md = a[1];
+    if (!(nd >= 1.0 && nd <= 2147483000.0)) return 0.0;
+    if (!(md >= 0.0 && md <= 2147483000.0)) return 0.0;
+    int n = (int)nd, m = (int)md;
+    if ((long long)n_in < 2LL + 3LL * m) return 0.0;
+    int* parent = (int*)malloc((size_t)n * sizeof(int));
+    if (!parent) return 0.0;
+    for (int i = 0; i < n; i++) parent[i] = i;
+    for (int k = 0; k < m; k++) {
+        int u = (int)a[2 + 3 * k], v = (int)a[2 + 3 * k + 1];
+        if (u < 0 || u >= n || v < 0 || v >= n) { free(parent); return 0.0; }
+        int ru = _uf_find(parent, u), rv = _uf_find(parent, v);
+        if (ru != rv) parent[ru] = rv;
+    }
+    int c = 0;
+    for (int x = 0; x < n; x++) if (_uf_find(parent, x) == x) c++;
+    free(parent);
+    return (double)c;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
