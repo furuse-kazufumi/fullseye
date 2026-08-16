@@ -317,16 +317,19 @@ def _resolve(name: str):
 def _coerce_input(v, op):
     """Gently match the array to the op's declared input sort (opt-in).
 
-    Only a ``region`` input is touched, and only when the array is not already a
-    float64 {0,1} mask read at the 0.5 threshold every region op uses internally
-    (``ops._bin``): more than two levels, values outside [0,1], or a bool array
-    (re-typed to float64 — never re-valued, since ``-``/``sum`` on bool either
-    raises or silently changes meaning).
+    Only a ``region`` input is touched. It is re-typed to a float64 {0,1} mask —
+    never re-valued — when it is not already one:
+      * a bool array is re-typed (``-``/``sum`` on bool either raises or silently
+        changes meaning);
+      * an int/uint array that is already a {0,1} mask is re-typed to float64 so
+        the declared "returns float64" contract holds for it too;
+      * any array with more than two levels or values outside [0,1] is binarised
+        at the same 0.5 threshold every region op uses internally (``ops._bin``).
 
-    A one- or two-level in-range array such as {0.3, 0.7} is deliberately left
-    alone: ``_bin`` already reads it as an unambiguous mask, so binarising here
-    would change nothing for mask ops while destroying the gray levels that the
-    few label-reading region ops (``r3_label_to_region``) legitimately consume.
+    A float one- or two-level in-range array such as {0.3, 0.7} is deliberately
+    left alone: ``_bin`` already reads it as an unambiguous mask, so binarising
+    here would change nothing for mask ops while destroying the gray levels that
+    the few label-reading region ops (``r3_label_to_region``) legitimately consume.
     """
     a = np.asarray(v)
     if op.in_sort != "region":
@@ -337,6 +340,8 @@ def _coerce_input(v, op):
         vals = np.unique(a)
         if vals.size > 2 or (vals.size and (vals.min() < 0.0 or vals.max() > 1.0)):
             return (a.astype(np.float64) > 0.5).astype(np.float64)
+        if a.dtype.kind in "iu":
+            return a.astype(np.float64)              # int/uint {0,1} mask -> float64 (same values)
     return v
 
 
