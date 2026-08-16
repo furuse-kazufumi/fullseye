@@ -53,7 +53,7 @@ def find_c_compiler() -> list[str] | None:
     try:
         import ziglang  # noqa: F401
         return [sys.executable, "-m", "ziglang", "cc"]
-    except Exception:
+    except ImportError:
         return None
 
 
