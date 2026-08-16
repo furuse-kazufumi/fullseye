@@ -33,13 +33,13 @@ Studio の残件「大画像/重い op で GUI が固まる」に対し、HDevel
 | op | 説明 | Studio |
 |---|---|---|
 | `dev_display` | 現在窓へ image object を表示 | ✔ (display_variable) |
-| `dev_disp_text` | テキスト表示 | ○ |
-| `dev_set_lut` | ルックアップテーブル(カラーマップ) | ✔ (18 display modes) |
-| `dev_set_draw` | region 塗り mode(margin/fill) | ✔ (region overlay) |
-| `dev_set_color` / `dev_set_colored` | 出力色 | △ |
+| `dev_disp_text` | テキスト表示 | ✔ (ImageView.disp_text・script directive) |
+| `dev_set_lut` | ルックアップテーブル(カラーマップ) | ✔ (script + 18 display modes) |
+| `dev_set_draw` | region 塗り mode(margin/fill) | ✔ (script directive・overlay_mask mode) |
+| `dev_set_color` / `dev_set_colored` | 出力色 | ✔ dev_set_color(script・色名→RGB) / △ colored |
+| `dev_set_line_width` | 線幅(margin 輪郭幅) | ✔ (script directive) |
 | `dev_set_shape` | region 出力形状 | ○ |
 | `dev_set_paint` | gray value 出力 mode | ○ |
-| `dev_set_line_width` | contour 線幅 | ○ |
 | `dev_set_contour_style` | contour 塗りスタイル | ○ |
 | `dev_clear_obj` | iconic object を DB から削除 | — |
 
