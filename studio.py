@@ -2776,9 +2776,12 @@ def build_window(model=None):
             code_edit.set_exec_line(last + 1)  # dev_update_pc: execution cursor
         if 0 <= last < len(model.stages):
             stage_list.setCurrentRow(last)     # show the result up to the reached line
-        code_status.setText("ran %d line(s) in %.1f ms%s"
+        tmo = state["system"]["operator_timeout_ms"]
+        slow = [ln for ln, ms in timings.items() if tmo and ms > tmo]   # soft set_operator_timeout
+        code_status.setText("ran %d line(s) in %.1f ms%s%s"
                             % (len(timings), sum(timings.values()),
-                               "  · stopped at breakpoint" if hit_bp else ""))
+                               "  · stopped at breakpoint" if hit_bp else "",
+                               ("  · %d stage(s) over %d ms timeout" % (len(slow), tmo)) if slow else ""))
 
     def step_program():
         cur = code_edit._exec_line
