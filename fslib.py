@@ -252,10 +252,12 @@ class Seq:
 
     @classmethod
     def of(cls, values) -> "Seq":
-        """Build a Seq from any iterable of numbers (copied to a float64 array)."""
-        arr = values if isinstance(values, np.ndarray) else np.fromiter(
-            (float(x) for x in values), dtype=np.float64)
-        return cls(np.asarray(arr, np.float64).reshape(-1) if arr.size or True else arr)
+        """Build a Seq from any iterable of numbers (copied to a float64 1-D array)."""
+        if isinstance(values, np.ndarray):
+            arr = np.asarray(values, np.float64).reshape(-1)
+        else:
+            arr = np.fromiter((float(x) for x in values), dtype=np.float64)
+        return cls(arr)
 
     @property
     def sort(self) -> str:
