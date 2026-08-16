@@ -168,6 +168,7 @@ def run(verbose_failures=False):
     art = {
         "n_specs": len(specs), "n_pass": len(passed), "n_fail": len(failed),
         "n_dropped": len(dropped), "n_identity_on_canonical": len(identity),
+        "identity_ops": sorted(r[0] for r in identity),
         "passing_ops": sorted(covered_pass),
         "failures": [(r[0], r[2]) for r in failed],
     }
