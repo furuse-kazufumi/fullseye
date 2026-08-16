@@ -596,6 +596,7 @@ int gauss_solve(const double* a, int n_in, double* out) {
     int n = (int)n_d;
     long long need = 1LL + (long long)n * (n + 1);
     if ((long long)n_in < need) return 0;
+    if (!out) return n;                                     /* size probe: out_len upper bound = n */
     int w = n + 1;
     double* m = (double*)malloc((size_t)n * (size_t)w * sizeof(double));
     if (!m) return 0;
