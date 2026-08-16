@@ -150,6 +150,35 @@ def test_contact_points_rejects_degenerate_plane():
         locomotion.contact_points(P, [0.0, 0.0, 0.0, 0.0])   # zero-normal -> not a plane
 
 
+def test_support_polygon_ground_gate_excludes_airborne_foot():
+    """A lifted foot far out in x/y must NOT enlarge the base of support when a
+    ground reference is given (the anti-cheat gate); ground=None keeps the old
+    behaviour, which needs contacts pre-filtered by contact_points."""
+    import pytest
+    feet = np.array([[0.0, 0.0, 0.0],                   # three feet on the floor...
+                     [0.3, 0.0, 0.0],
+                     [0.15, 0.2, 0.0],
+                     [-0.6, -0.5, 0.9]], float)         # ...and one 0.9 m in the air
+    com = np.array([-0.05, -0.02])                      # outside the true triangle
+    planted = feet[:3]
+    truth = locomotion.com_support_margin(com, planted)
+    assert truth < 0.0                                  # really tipping
+    assert locomotion.com_support_margin(com, feet) > 0.0        # unfiltered = fail-open
+    gated = locomotion.com_support_margin(com, feet, ground=0.0)
+    assert abs(gated - truth) < 1e-12                   # airborne foot ignored
+    # the same gate via a ground plane [a, b, c, d], as returned by fit_plane_ransac
+    assert abs(locomotion.com_support_margin(com, feet,
+                                             ground=[0.0, 0.0, 1.0, 0.0]) - truth) < 1e-12
+    poly = locomotion.support_polygon(feet, ground=0.0)
+    assert abs(poly["area"] - locomotion.support_polygon(planted)["area"]) < 1e-12
+    # fail-closed: a z gate on (N, 2) contacts has no z to test
+    with pytest.raises(ValueError):
+        locomotion.support_polygon(feet[:, :2], ground=0.0)
+    # every foot airborne -> no support at all, not a silent polygon
+    allup = feet[:, :3].copy(); allup[:, 2] = 1.0
+    assert locomotion.com_support_margin(com, allup, ground=0.0) == float("-inf")
+
+
 def test_gait_phase_survives_nan_sample():
     t = np.linspace(0, 4 * np.pi, 200)
     planted = np.zeros_like(t)
