@@ -64,6 +64,18 @@ def _maxdiff(ref, got):
         return float("nan")
 
 
+def _c_gate_ok(cb: dict, c_fully_supported: bool) -> bool:
+    """C half of the gate, fail-closed: an emitted C backend that codegen declared
+    fully supported but that does not compile/run is a FAILURE, not a neutral skip.
+    Only the not-attempted cases (unsupported ops, no toolchain) stay neutral."""
+    status = cb.get("status")
+    if status == "ran":
+        return bool(cb.get("pass"))
+    if status == "compile_error":
+        return not c_fully_supported
+    return True
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--problem", default="edge")
