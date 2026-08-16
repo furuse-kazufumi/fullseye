@@ -25,8 +25,8 @@ _ROOT = os.path.dirname(HERE)
 if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
-import imgio  # noqa: E402
-import synth  # noqa: E402
+import imgio
+import synth
 
 OUT = os.path.join(_ROOT, "studio_assets", "sample_images")
 _N = 256
