@@ -27,8 +27,11 @@ _NUMERIC = ["simpson", "bisection", "newton", "gauss_solve"]
 # P3: string ops (code-point sequences). strfind is a variable-length KIND_MAP (match
 # positions); edit_distance/lcs_length fold to an exact integer (KIND_REDUCE, tol 0).
 _STRING = ["strfind", "edit_distance", "lcs_length"]
+# P4: graph ops (packed [n, m, (u,v,w)*m]). graph_dijkstra is a KIND_MAP distance vector;
+# graph_components/graph_mst_weight are KIND_REDUCE. Independent oracle = scipy.csgraph.
+_GRAPH = ["graph_components", "graph_mst_weight", "graph_dijkstra"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
-_ALL_OPS = _ALL + _NUMERIC + _STRING                # every registered op, in registry order
+_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH       # every registered op, in registry order
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
