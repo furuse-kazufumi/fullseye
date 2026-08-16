@@ -23,10 +23,12 @@ import json
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # import the repo modules
+# tools/ is this script's dir, so add the repo root (parent) to import algo* modules
+# whatever the caller's cwd is.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-import algo  # noqa: E402
-import algo_difftest  # noqa: E402
+import algo
+import algo_difftest
 
 
 def gate(op: str, out: Path, *, use_c: bool = True) -> dict:
