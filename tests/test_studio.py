@@ -705,6 +705,45 @@ def test_dev_set_lut_and_clear_window_directives():
     assert view._item.pixmap().isNull()
 
 
+def test_system_settings_get_set_persist_and_fail_closed():
+    """HALCON set_system-style config: thread_num applies to OpenCV, operator_timeout
+    is stored, an unknown parameter is fail-closed, and the settings persist."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    import cv2
+    win._set_system_param("thread_num", 3)
+    assert cv2.getNumThreads() == 3
+    assert win._get_system_param("thread_num") == 3
+    assert win._set_system_param("operator_timeout", 250) == 250
+    assert win._get_system_param("operator_timeout") == 250
+    assert win._state["system"]["operator_timeout_ms"] == 250
+    assert win._get_system_param("check") == "on"          # runtime is fail-closed
+    with pytest.raises(ValueError):
+        win._set_system_param("operator_timeout", -1)
+    with pytest.raises(ValueError):                        # unknown name -> fail-closed
+        win._set_system_param("bogus_param", 1)
+    with pytest.raises(ValueError):
+        win._get_system_param("bogus_param")
+    # persistence: a fresh window restores the stored timeout (offscreen QSettings = in-memory)
+    win2, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    assert win2._get_system_param("operator_timeout") == 250
+
+
+def test_system_settings_dialog_constructs_headless():
+    """Tools > System settings builds without blocking (exec stubbed to Cancel)."""
+    from PySide6 import QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    orig = QtWidgets.QDialog.exec
+    QtWidgets.QDialog.exec = lambda self: QtWidgets.QDialog.Rejected
+    try:
+        win._open_system_settings()
+    finally:
+        QtWidgets.QDialog.exec = orig
+    assert win._system_dialog is not None
+    assert win._act_system_settings.text().startswith("System settings")
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
