@@ -129,14 +129,25 @@ def spectrogram(x, rate=1.0, win=256, hop=None):
 # --------------------------------------------------------------------------- #
 def _butter(x, rate, cutoff, btype, order=4):
     from scipy.signal import butter, filtfilt
-    nyq = 0.5 * float(rate)
-    wn = np.atleast_1d(np.asarray(cutoff, np.float64) / nyq)
-    wn = np.clip(wn, 1e-6, 0.999999)
+    rate = float(rate)
+    if not np.isfinite(rate) or rate <= 0.0:
+        raise ValueError("rate must be a positive finite sample rate, got %r" % (rate,))
+    nyq = 0.5 * rate
+    cut = np.atleast_1d(np.asarray(cutoff, np.float64))
+    if not np.isfinite(cut).all() or np.any(cut <= 0.0) or np.any(cut >= nyq):
+        raise ValueError(                            # never clip to a near-allpass
+            "cutoff %s Hz must lie inside (0, %g) Hz — the Nyquist limit for "
+            "rate=%g Hz; an out-of-band cutoff cannot be filtered, it would only "
+            "return the signal essentially unchanged" % (cut.tolist(), nyq, rate))
+    wn = cut / nyq
     b, a = butter(order, wn if wn.size > 1 else wn[0], btype=btype)
-    x = np.asarray(x, np.float64)
-    pad = 3 * (max(len(a), len(b)) - 1)
+    x = _require_finite(x)
+    pad = 3 * max(len(a), len(b))                    # scipy filtfilt's default padlen
     if len(x) <= pad:                                # filtfilt needs enough samples
-        return x
+        raise ValueError(
+            "signal has %d sample(s); zero-phase filtfilt needs more than %d for an "
+            "order-%d filter — use a longer signal or a lower order"
+            % (len(x), pad, int(order)))
     return filtfilt(b, a, x)
 
 
