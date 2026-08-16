@@ -43,6 +43,7 @@ __all__ = [
     "learn_features",
     "match_histogram",
     "patch_novelty",
+    "pyramid_stat_distance",
     "radial_power_spectrum",
     "synthesize_like",
 ]
