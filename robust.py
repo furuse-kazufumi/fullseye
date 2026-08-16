@@ -93,14 +93,25 @@ def main() -> int:
     (wd / f"robust_{a.problem}.json").write_text(json.dumps(out, indent=2), encoding="utf-8")
 
     print("\n[robust:%s] %d seeds, hand baseline=%s %s" % (a.problem, a.seeds, hand, unit))
-    print("  selected-by-train champion: train %.3f holdout %.3f (seed %d)"
-          % (best["train"], best["holdout"], best["seed"]))
-    print("  holdout spread: min %.3f / mean %.3f / max %.3f (std %.3f)"
+    print("  selected-by-train champion: train %.3f observed-holdout %.3f locked-holdout %s (seed %d)"
+          % (best["train"], best["holdout"],
+             "n/a" if best.get("locked_holdout") is None else "%.3f" % best["locked_holdout"],
+             best["seed"]))
+    print("  observed-holdout spread (seed+10000, seen every gen): min %.3f / mean %.3f / max %.3f (std %.3f)"
           % (hold.min(), hold.mean(), hold.max(), hold.std()))
     if hand is not None:
-        print("  seeds beating hand baseline: %d/%d   |   collapses (< trivial %.3f): %d/%d"
+        print("    seeds beating hand baseline: %d/%d   |   collapses (< trivial %.3f): %d/%d"
               % (n_beat, a.seeds, trivial, n_collapse, a.seeds))
-    print("  -> honest: best-of-N (train-selected) = %.3f; variance disclosed above." % best["holdout"])
+    if locked is not None:
+        print("  LOCKED-holdout spread (seed+20000, scored once): min %.3f / mean %.3f / max %.3f (std %.3f)"
+              % (locked.min(), locked.mean(), locked.max(), locked.std()))
+        if hand is not None:
+            print("    seeds beating hand baseline: %d/%d   |   collapses (< trivial %.3f): %d/%d"
+                  % (n_beat_lk, a.seeds, trivial, n_collapse_lk, a.seeds))
+    else:
+        print("  LOCKED-holdout: not available (champions carry no 'locked_holdout') — not substituted")
+    print("  -> honest: best-of-N (train-selected) = %.3f observed / %s locked; variance disclosed above."
+          % (best["holdout"], "n/a" if best.get("locked_holdout") is None else "%.3f" % best["locked_holdout"]))
     return 0
 
 
