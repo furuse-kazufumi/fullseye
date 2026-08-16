@@ -1336,14 +1336,20 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     Fail-closed: a spec whose `halcon` name is not a real HALCON operator, or
     whose `shape` is unknown, is dropped (never counted). One op claims one
     HALCON name; later duplicates for the same name are skipped.
+
+    "Not a real operator" includes the case where the reference set itself is
+    unavailable: an unverifiable name is dropped as `unverified_name`, never
+    admitted. The previous `if real and ...` short-circuit meant an empty
+    reference (a wheel install, before `_real_ops` gained its shipped mirror)
+    silently compiled EVERY spec, fabricated names included.
     """
     real = _real_ops()
     ops_out, seen, dropped = [], set(), []
     for s in load_specs():
         name = s.get("halcon", "")
         shape = s.get("shape", "")
-        if real and name not in real:
-            dropped.append(("fake_name", name))
+        if name not in real:
+            dropped.append(("fake_name" if real else "unverified_name", name))
             continue
         if shape not in SHAPES:
             dropped.append(("bad_shape", name + ":" + shape))
