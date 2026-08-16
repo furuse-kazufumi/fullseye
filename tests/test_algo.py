@@ -106,6 +106,92 @@ def test_newton_non_convergence_is_fail_soft():
     assert abs(residual) > 1e-3                              # honestly NOT a root (documented)
 
 
+# --------------------------------------------------------------------------- #
+# P2 gauss_solve — variable-length seq -> seq (KIND_MAP): linear system solve
+# --------------------------------------------------------------------------- #
+def _pack_system(A, b):
+    """Pack an n x n matrix A and RHS b into the gauss input seq [n, aug row-major]."""
+    n = len(b)
+    seq = [float(n)]
+    for i in range(n):
+        seq.extend(float(v) for v in A[i])
+        seq.append(float(b[i]))
+    return seq
+
+
+def test_gauss_is_kind_map():
+    op = algo.ALGO_BY_NAME["gauss_solve"]
+    assert op.kind == algo.KIND_MAP           # the new variable-length seq->seq kind
+    assert op.out_sort == algo.SEQ and op.in_sort == algo.SEQ
+
+
+def test_gauss_known_answers():
+    # 1x1: 4x = 8 -> x = 2
+    assert algo.run_algo("gauss_solve", [1.0, 4.0, 8.0]) == pytest.approx([2.0], abs=1e-12)
+    # 2x2: x + y = 3 ; x - y = 1  -> x=2, y=1
+    got = algo.run_algo("gauss_solve", _pack_system([[1.0, 1.0], [1.0, -1.0]], [3.0, 1.0]))
+    assert got == pytest.approx([2.0, 1.0], abs=1e-12)
+    # 3x3 identity -> solution is the RHS itself
+    ident = algo.run_algo("gauss_solve", _pack_system(
+        [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]], [5.0, -2.0, 7.0]))
+    assert ident == pytest.approx([5.0, -2.0, 7.0], abs=1e-12)
+
+
+def test_gauss_matches_numpy_over_random():
+    np = pytest.importorskip("numpy")
+    rng = random.Random(20260816)
+    for _ in range(200):
+        n = rng.randint(1, 6)
+        A = [[rng.uniform(-5.0, 5.0) for _ in range(n)] for _ in range(n)]
+        for i in range(n):                      # diagonal dominance -> well-conditioned
+            A[i][i] = sum(abs(A[i][j]) for j in range(n)) + rng.uniform(1.0, 3.0)
+        x = [rng.uniform(-10.0, 10.0) for _ in range(n)]
+        b = [sum(A[i][j] * x[j] for j in range(n)) for i in range(n)]
+        got = algo.run_algo("gauss_solve", _pack_system(A, b))
+        ref = np.linalg.solve(np.asarray(A), np.asarray(b)).tolist()
+        assert got == pytest.approx(ref, abs=1e-9)
+
+
+def test_gauss_partial_pivoting_needed():
+    # a[0][0] == 0 forces a pivot swap; the (permuted) system is still non-singular.
+    #   0*x + 1*y = 1 ; 1*x + 0*y = 2  -> x=2, y=1
+    got = algo.run_algo("gauss_solve", _pack_system([[0.0, 1.0], [1.0, 0.0]], [1.0, 2.0]))
+    assert got == pytest.approx([2.0, 1.0], abs=1e-12)
+
+
+def test_gauss_variable_length_output():
+    # the whole point of KIND_MAP: output length (n) != input length (1 + n*(n+1)).
+    seq = _pack_system([[2.0, 0.0], [0.0, 2.0]], [4.0, 6.0])
+    out = algo.run_algo("gauss_solve", seq)
+    assert len(seq) == 7 and len(out) == 2                  # 1 + 2*3 = 7 in, 2 out
+    assert out == pytest.approx([2.0, 3.0], abs=1e-12)
+
+
+def test_gauss_fail_soft_malformed_and_singular():
+    assert algo.run_algo("gauss_solve", []) == []           # empty
+    assert algo.run_algo("gauss_solve", [0.0]) == []        # n < 1
+    assert algo.run_algo("gauss_solve", [2.0, 1.0, 2.0]) == []   # too few values for 2x2
+    # singular: two identical rows -> no unique solution -> [] (fail-soft, no crash)
+    assert algo.run_algo("gauss_solve", _pack_system([[1.0, 1.0], [1.0, 1.0]], [2.0, 2.0])) == []
+    # a zero column (whole variable absent) is also singular
+    assert algo.run_algo("gauss_solve", _pack_system([[0.0, 1.0], [0.0, 2.0]], [1.0, 2.0])) == []
+
+
+def test_gauss_does_not_mutate_input():
+    seq = _pack_system([[1.0, 1.0], [1.0, -1.0]], [3.0, 1.0])
+    snapshot = list(seq)
+    algo.py_fn("gauss_solve")(seq)
+    assert seq == snapshot
+
+
+def test_gauss_codegen_emits_varlen_driver():
+    c = algo_codegen.emit_c(algo.ALGO_BY_NAME["gauss_solve"])
+    assert "int gauss_solve(const double* a, int n_in, double* out)" in c
+    assert "int out_len =" in c                             # variable-length wire header
+    assert "out_len < 0 || out_len > len" in c             # fail-closed clamp
+    assert "int main(" in c
+
+
 @pytest.mark.parametrize("name", _NUMERIC)
 def test_numeric_difftest_python_half(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc=None)
