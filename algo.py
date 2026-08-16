@@ -1208,6 +1208,14 @@ ALGO_REGISTRY: list[AlgoOp] = [
            _PY_GRAPH_COMPONENTS, _C_GRAPH_COMPONENTS,
            "Connected-component count of an undirected graph [n, m, (u,v,w)*m] (union-find).",
            "union-find (path halving); connected components"),
+    AlgoOp("graph_mst_weight", "graph", SEQ, SCALAR, KIND_REDUCE, "graph_mst_weight",
+           _PY_GRAPH_MST_WEIGHT, _C_GRAPH_MST_WEIGHT,
+           "Minimum-spanning-forest total weight of [n, m, (u,v,w)*m] (Kruskal).",
+           "Kruskal minimum spanning tree; union-find; (weight,index) sort", tol=1e-9),
+    AlgoOp("graph_dijkstra", "graph", SEQ, SEQ, KIND_MAP, "graph_dijkstra",
+           _PY_GRAPH_DIJKSTRA, _C_GRAPH_DIJKSTRA,
+           "Single-source shortest distances of [n, m, src, (u,v,w)*m] (Dijkstra; -1=unreachable).",
+           "Dijkstra shortest paths; deterministic settle order", tol=1e-9),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
