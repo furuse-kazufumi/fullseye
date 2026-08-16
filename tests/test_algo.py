@@ -340,6 +340,112 @@ def test_string_c_is_bit_identical(name, tmp_path):
     assert res["passed"] is True
 
 
+# --------------------------------------------------------------------------- #
+# P4 graph ops — components / mst_weight (KIND_REDUCE), dijkstra (KIND_MAP)
+# --------------------------------------------------------------------------- #
+def test_graph_ops_are_registered_kinds():
+    assert algo.ALGO_BY_NAME["graph_components"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["graph_mst_weight"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["graph_dijkstra"].kind == algo.KIND_MAP
+    assert set(algo.algo_categories()["graph"]) == {"graph_components", "graph_mst_weight", "graph_dijkstra"}
+
+
+def test_graph_components_known():
+    assert algo.run_algo("graph_components", [1.0, 0.0]) == 1.0            # single node
+    assert algo.run_algo("graph_components", [3.0, 0.0]) == 3.0            # 3 isolated
+    # path 0-1-2 -> 1 component; adding node 3 isolated -> 2
+    assert algo.run_algo("graph_components", [3.0, 2.0, 0.0, 1.0, 1.0, 1.0, 2.0, 1.0]) == 1.0
+    assert algo.run_algo("graph_components", [4.0, 2.0, 0.0, 1.0, 1.0, 1.0, 2.0, 1.0]) == 2.0
+
+
+def test_graph_mst_weight_known():
+    # triangle with weights 1,2,3 -> MST picks 1+2 = 3
+    assert algo.run_algo("graph_mst_weight",
+                         [3.0, 3.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 0.0, 2.0, 3.0]) == 3.0
+    assert algo.run_algo("graph_mst_weight", [3.0, 0.0]) == 0.0            # forest of isolated -> 0
+
+
+def test_graph_dijkstra_known():
+    # path 0-1-2 with weights 5, 3 from src 0 -> [0, 5, 8]
+    assert algo.run_algo("graph_dijkstra",
+                         [3.0, 2.0, 0.0, 0.0, 1.0, 5.0, 1.0, 2.0, 3.0]) == [0.0, 5.0, 8.0]
+    # a disconnected node is unreachable -> -1.0
+    assert algo.run_algo("graph_dijkstra",
+                         [3.0, 1.0, 0.0, 0.0, 1.0, 5.0]) == [0.0, 5.0, -1.0]
+
+
+def test_graph_components_matches_scipy_over_random():
+    csr = pytest.importorskip("scipy.sparse").csr_matrix
+    cc = pytest.importorskip("scipy.sparse.csgraph").connected_components
+    rng = random.Random(31)
+    for _ in range(150):
+        n = rng.randint(1, 9)
+        m = rng.randint(0, 14)
+        edges = []
+        for _ in range(m):
+            edges += [float(rng.randint(0, n - 1)), float(rng.randint(0, n - 1)), 1.0]
+        got = algo.run_algo("graph_components", [float(n), float(m)] + edges)
+        rows = [int(edges[3 * k]) for k in range(m)] + [int(edges[3 * k + 1]) for k in range(m)]
+        cols = [int(edges[3 * k + 1]) for k in range(m)] + [int(edges[3 * k]) for k in range(m)]
+        mtx = csr((([1.0] * len(rows)), (rows, cols)), shape=(n, n)) if rows else csr((n, n))
+        assert got == float(cc(mtx, directed=False)[0])
+
+
+def test_graph_dijkstra_matches_scipy_over_random():
+    import numpy as np
+    csr = pytest.importorskip("scipy.sparse").csr_matrix
+    dij = pytest.importorskip("scipy.sparse.csgraph").dijkstra
+    rng = random.Random(77)
+    for _ in range(150):
+        n = rng.randint(1, 8)
+        used = {(i, i + 1) for i in range(n - 1)}
+        edges = []
+        for i in range(n - 1):
+            edges += [float(i), float(i + 1), float(rng.randint(1, 9))]
+        spare = [(u, v) for u in range(n) for v in range(u + 1, n) if (u, v) not in used]
+        rng.shuffle(spare)
+        for (u, v) in spare[:rng.randint(0, min(5, len(spare)))]:
+            edges += [float(u), float(v), float(rng.randint(1, 9))]
+        m = len(edges) // 3
+        src = rng.randint(0, n - 1)
+        got = algo.run_algo("graph_dijkstra", [float(n), float(m), float(src)] + edges)
+        rows = [int(edges[3 * k]) for k in range(m)] + [int(edges[3 * k + 1]) for k in range(m)]
+        cols = [int(edges[3 * k + 1]) for k in range(m)] + [int(edges[3 * k]) for k in range(m)]
+        data = [edges[3 * k + 2] for k in range(m)] * 2
+        mtx = csr((data, (rows, cols)), shape=(n, n)) if rows else csr((n, n))
+        ref = dij(mtx, directed=False, indices=src)
+        assert len(got) == n
+        for i in range(n):
+            if np.isfinite(ref[i]):
+                assert abs(got[i] - float(ref[i])) < 1e-9
+            else:
+                assert got[i] == -1.0
+
+
+def test_graph_fail_soft():
+    assert algo.run_algo("graph_components", [0.0]) == 0.0                 # malformed
+    assert algo.run_algo("graph_components", [2.0, 1.0, 5.0, 0.0, 1.0]) == 0.0   # edge u=5 out of range
+    assert algo.run_algo("graph_mst_weight", [2.0, 1.0, 9.0, 0.0, 1.0]) == 0.0   # bad endpoint
+    assert algo.run_algo("graph_dijkstra", []) == []
+    assert algo.run_algo("graph_dijkstra", [3.0, 0.0, 9.0]) == []          # src out of range
+    assert algo.run_algo("graph_dijkstra", [2.0, 1.0, 0.0, 0.0, 1.0, -3.0]) == []   # negative weight
+
+
+@pytest.mark.parametrize("name", _GRAPH)
+def test_graph_difftest_python_half(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] <= algo.ALGO_BY_NAME[name].tol
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _GRAPH)
+def test_graph_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
 def test_string_ops_fail_soft_on_bad_header_no_crash():
     # regression for the P3 review: int(a[0]) once ran BEFORE the range check, so a
     # fractional-negative header slipped through (int(-0.5)==0) and a NaN header crashed
