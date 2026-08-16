@@ -32,6 +32,49 @@ def test_signal_result_drives_pass_fail():
     assert io.get(0) is False and io.get(1) is True
 
 
+def test_signal_verdict_one_hot_all_states():
+    io = DigitalIO("memory")
+    for status in device._VERDICT_COILS:
+        assert device.signal_verdict(io, status) == status
+        for st, pin in device._VERDICT_COILS.items():
+            assert io.get(pin) is (st == status)     # exactly one coil high per verdict
+
+
+def test_signal_verdict_error_and_timeout_never_read_as_pass():
+    """Fail-closed: a vision error or a deadline timeout must clear the OK coil."""
+    io = DigitalIO("memory")
+    device.signal_verdict(io, "ok")
+    assert io.get(0) is True                          # ok coil high
+    for bad in ("error", "timeout", "ng"):
+        device.signal_verdict(io, bad)
+        assert io.get(0) is False                     # ok coil cleared for every non-ok verdict
+
+
+def test_signal_verdict_accepts_a_verdict_object_and_rejects_unknown():
+    import pytest
+
+    class _V:                                         # duck-typed fsruntime.Verdict
+        status = "ng"
+    io = DigitalIO("memory")
+    assert device.signal_verdict(io, _V()) == "ng"
+    assert io.get(1) is True and io.get(0) is False
+    with pytest.raises(ValueError):
+        device.signal_verdict(io, "bogus")           # unmapped -> raise, never all-low
+    with pytest.raises(ValueError):
+        device.signal_verdict(io, 123)               # not a status/Verdict
+
+
+def test_signal_verdict_over_modbus_simulator():
+    srv = comm.ModbusTcpServer(port=0).start()
+    try:
+        with DigitalIO("modbus", host="127.0.0.1", port=srv.port) as io:
+            device.signal_verdict(io, "timeout")
+            assert io.get(3) is True                  # timeout coil high
+            assert not any(io.get(p) for p in (0, 1, 2))
+    finally:
+        srv.stop()
+
+
 def test_wait_input_true_and_timeout():
     io = DigitalIO("memory", initial={5: True})
     assert device.wait_input(io, 5, True, timeout=0.1) is True
