@@ -80,8 +80,14 @@ py-modules = [
 ]
 
 [tool.setuptools.package-data]
-# Runtime data (operator specs / reference tables) read at import time, plus the
-# Studio localisation + per-operator HTML help assets (studio.py loads these from
-# studio_assets/ at runtime; the loaders fall back gracefully when absent).
-"*" = ["data/*.json", "data/auto_specs/*.json",
-       "studio_assets/i18n.json", "studio_assets/op_help/*.html", "studio_assets/op_help/*.md"]
+# Studio runtime assets shipped inside the `studio_assets` package so an installed
+# wheel has localisation, per-operator help, and the bundled sample images (the
+# Studio degrades to English-only / no-help / no-samples without them).
+#
+# Note: the flat root-level `data/` directory is deliberately NOT shipped — it is
+# gitignored (a regenerable dev cache) and, being in no package, cannot ride a
+# flat-layout wheel anyway. The runtime that needs it uses the data-as-code stores
+# (`halcon_names_data` / `auto_specs_data` / `macro_champions_data`) instead, which
+# always ship as .py modules.
+"studio_assets" = ["*.json", "op_help/*.html", "op_help/*.md",
+                   "sample_images/*.png", "sample_images/*.json"]
