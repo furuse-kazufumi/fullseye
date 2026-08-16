@@ -150,6 +150,11 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
         from scipy import integrate
         errs = []
         for arr, got in zip(holdout, py_out):
+            m = len(arr) - 1                          # sample count
+            if m < 3 or m % 2 == 0:
+                continue                              # even m: scipy's tail convention differs
+                #        from our trapezoid tail -> not an independent oracle here.
+                #        The C-vs-Python bit check still covers the even-m branch.
             ref = float(integrate.simpson(np.asarray(arr[1:], np.float64), dx=arr[0]))
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
