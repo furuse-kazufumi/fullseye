@@ -127,8 +127,11 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   確実に同梱・facade は整合)**。
 
 ## 次(P2 以降)
-- **P1.5(小)**: `imgevolve.py` に `algo`/`algo-c`/`algo-difftest` サブコマンド、Studio の op ブラウザに
-  general tier を出す(design 段階計画「Studio の op ブラウザに新 tier を出す」)。
+- **P1.5a(済, 2026-08-16)**: `imgevolve.py algo <list|run|emit-c|emit-py|difftest>` サブコマンドを追加
+  (統一 CLI 入口。`algo run quicksort --seq 3,1,2` / `algo emit-c mergesort` / `algo difftest all`)。
+  CLI 回帰テスト 2 件 + skill の CLI 例を更新。
+- **P1.5b(残)**: Studio の op ブラウザに general tier を出す(design 段階計画「Studio の op ブラウザに
+  新 tier を出す」。studio.py の op リストへ seq/scalar tier セクション追加=GUI 変更ゆえ次段)。
 - **P2**: 数値計算(二分法/Newton/Simpson/Gauss)op 族。scalar/seq に加え `numeric` 系。
   累積順序に注意し tol の扱いを honest に(bit 一致でなく数値許容差を明示)。
 - P3 文字列(+`text` 型)/ P4 グラフ(+`graph` 型)/ P5 圧縮・数論・暗号(教育用・honest 開示)。
