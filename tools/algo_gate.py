@@ -83,15 +83,21 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--op", required=True)
     ap.add_argument("--out", required=True)
-    ap.add_argument("--no-c", action="store_true", help="force the honest C skip")
+    ap.add_argument("--no-c", action="store_true",
+                    help="skip the C half (a Python-only pass, deliberately UNVERIFIED)")
+    ap.add_argument("--allow-unverified-c", action="store_true",
+                    help="let a toolchain-less (C-skipped) pass still write gate_ok.json")
     a = ap.parse_args()
-    res = gate(a.op, Path(a.out), use_c=not a.no_c)
+    # exit code == the graph's success signal: 0 only when gate_ok.json was written.
+    require_c = not (a.allow_unverified_c or a.no_c)
+    res = gate(a.op, Path(a.out), use_c=not a.no_c, require_c=require_c)
     cb = res["c_backend"] or {}
-    print(f"[algo_gate:{a.op}] passed={res['passed']} "
+    ok = bool(res.get("gate_marker_written"))
+    print(f"[algo_gate:{a.op}] passed={res['passed']} marker_written={ok} "
           f"python_diff={res['python_max_abs_diff']:.2e} "
           f"C={cb.get('status')} bit_identical={cb.get('c_vs_python_bit_identical')} "
           f"c_verified={res['c_verified']}")
-    return 0 if res["passed"] else 1
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
