@@ -923,6 +923,19 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
         def fit(self):
             if not self._item.pixmap().isNull():
                 self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
+
+        def set_part(self, r1, c1, r2, c2):
+            """dev_set_part: show the image part with corners (Row1,Col1)-(Row2,Col2)
+            in HALCON (row, col) order. Any negative value fits the whole image (a
+            Studio convenience for 'reset to full'). Scene coords are (x=col, y=row)
+            because the pixmap is placed 1:1, so the part maps directly to a QRectF."""
+            if self._item.pixmap().isNull():
+                return
+            if min(r1, c1, r2, c2) < 0:
+                self.fit(); return
+            rect = QtCore.QRectF(float(min(c1, c2)), float(min(r1, r2)),
+                                 float(abs(c2 - c1)) or 1.0, float(abs(r2 - r1)) or 1.0)
+            self.fitInView(rect, QtCore.Qt.KeepAspectRatio)
     return ImageView
 
 
