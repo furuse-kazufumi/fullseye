@@ -150,8 +150,8 @@ def main() -> int:
     cb = result["c_backend"]
     print(f"[difftest:{a.problem}] python diff {py_max:.2e} (pass={py_pass}) | "
           f"C: {cb.get('status')}" + (f" reason={cb.get('reason')}" if cb.get("reason") else ""))
-    # Fail the gate if the C backend actually ran and disagreed (previously ignored).
-    c_ok = cb.get("status") != "ran" or bool(cb.get("pass"))
+    # Fail the gate if the C backend ran and disagreed, or failed to build at all.
+    c_ok = _c_gate_ok(cb, bool(info["c_fully_supported"]))
     return 0 if (py_pass and c_ok) else 1
 
 
