@@ -76,7 +76,7 @@ def _driver_c(op: algo.AlgoOp) -> str:
     )
 
 
-def emit_c(op: "algo.AlgoOp") -> str:
+def emit_c(op: algo.AlgoOp) -> str:
     """A complete, compilable C program: the op's function + a binary-I/O driver."""
     parts = [
         _HEADER_C,
