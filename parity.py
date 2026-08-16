@@ -39,6 +39,11 @@ import ops
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
+# Knob operating points. One (a,b) is not enough: measured on this registry, 5 ops
+# (threshold, fill_up, dilation/erosion/opening_circle) agree exactly at (0.5,0.4)
+# yet disagree by a full 1.0 at a knob corner. Sweep the corners too.
+KNOBS = [(0.5, 0.4), (0.0, 0.0), (1.0, 1.0), (0.15, 0.85)]
+
 
 def _holdout(n=6, sz=64):
     rng = np.random.default_rng(20260812)
