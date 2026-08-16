@@ -152,17 +152,20 @@ def _butter(x, rate, cutoff, btype, order=4):
 
 
 def lowpass(x, rate, cutoff, order=4):
-    """Butterworth low-pass (scipy, zero-phase filtfilt)."""
+    """Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
+    ``(0, rate/2)``; an out-of-Nyquist cutoff raises instead of passing the signal
+    through. Signals shorter than ``3*(2*order+1)`` samples also raise."""
     return _butter(x, rate, cutoff, "low", order)
 
 
 def highpass(x, rate, cutoff, order=4):
-    """Butterworth high-pass."""
+    """Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`."""
     return _butter(x, rate, cutoff, "high", order)
 
 
 def bandpass(x, rate, low, high, order=4):
-    """Butterworth band-pass between *low* and *high* Hz."""
+    """Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
+    ``(0, rate/2)``; same length contract as :func:`lowpass`."""
     return _butter(x, rate, [low, high], "band", order)
 
 
