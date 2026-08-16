@@ -423,7 +423,7 @@ def main() -> int:
 
     p = sub.add_parser("synth", help="learn a texture from an image and synthesise a similar one")
     p.add_argument("inp"); p.add_argument("out")
-    p.add_argument("--method", default="spectral", choices=["spectral", "patch"])
+    p.add_argument("--method", default="spectral", choices=["spectral", "pyramid", "patch"])
     p.add_argument("--size", default="", help="output HxW, e.g. 256x256 (default: source size)")
     p.add_argument("--seed", type=int, default=0)
     p.set_defaults(fn=cmd_synth)
