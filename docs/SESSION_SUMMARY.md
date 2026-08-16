@@ -3,49 +3,57 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 13:00:03
+- **最終更新**: 2026-08-16 13:46:45
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-9204d38 docs: roadmap to implement algo-c-style general algorithms (user request)
-a7c517e docs: sample-image provenance — source papers, licenses, public repos
-a76a783 docs: HDevelop visualization ops + dev_* demo + collected sample images
-6333817 auto: STUDIO_GUIDE.md 編集前 (2026-08-16 12:52)
-6b73ea1 Studio: dev_* visualization demo + collected sample images (user request)
-09f5c17 auto: test_studio.py 編集前 (2026-08-16 12:50)
-f5cba39 auto: studio.py 編集前 (2026-08-16 12:50)
-f4404ec auto: studio.py 編集前 (2026-08-16 12:50)
-eaf3d46 auto: studio.py 編集前 (2026-08-16 12:49)
-2446ad9 auto: gen_sample_images.py 編集前 (2026-08-16 12:48)
+b029f6a auto: test_algo.py 編集前 (2026-08-16 13:22)
+ffabdad auto: pyproject.toml 編集前 (2026-08-16 13:20)
+149fd46 auto: test_algo.py 編集前 (2026-08-16 13:19)
+50b22cb auto: test_algo.py 編集前 (2026-08-16 13:19)
+1e95dc6 auto: algo_difftest.py 編集前 (2026-08-16 13:19)
+6bc514d auto: algo_difftest.py 編集前 (2026-08-16 13:19)
+f031098 auto: algo_difftest.py 編集前 (2026-08-16 13:19)
+3a77109 auto: algo_codegen.py 編集前 (2026-08-16 13:19)
+2ff3583 auto: algo_codegen.py 編集前 (2026-08-16 13:19)
+8d5920c auto: algo_codegen.py 編集前 (2026-08-16 13:19)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M algo.py
+ M algo_codegen.py
+ M algo_difftest.py
+ M docs/GENERAL_ALGORITHMS.md
+ M docs/SESSION_SUMMARY.md
+ M docs/STATUS.md
+ M pyproject.toml
+ M tests/test_algo.py
+?? nul
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-12:58 docs/GENERAL_ALGORITHMS.md
-12:56 docs/SAMPLE_IMAGE_REFERENCES.md
-12:52 docs/SESSION_SUMMARY.md
-12:52 docs/STUDIO_GUIDE.md
-12:51 docs/STATUS.md
-12:51 studio_ui_steps.jsonl
-12:51 studio_ui_crash.log
-12:50 tests/test_studio.py
-12:50 studio.py
-12:49 sample_images.py
-12:48 studio_assets/sample_images/page.png
-12:48 studio_assets/sample_images/manifest.json
-12:48 studio_assets/sample_images/cell.png
-12:48 studio_assets/sample_images/camera.png
-12:48 studio_assets/sample_images/coins.png
+13:45 docs/STATUS.md
+13:45 docs/GENERAL_ALGORITHMS.md
+13:44 fullseye.egg-info/SOURCES.txt
+13:44 fullseye.egg-info/top_level.txt
+13:44 fullseye.egg-info/requires.txt
+13:44 fullseye.egg-info/entry_points.txt
+13:44 fullseye.egg-info/dependency_links.txt
+13:44 fullseye.egg-info/PKG-INFO
+13:44 pyproject.toml
+13:43 .pytest_cache/v/cache/nodeids
+13:43 .pytest_cache/v/cache/lastfailed
+13:43 .ruff_cache/0.16.0/7363606932562918290
+13:43 .ruff_cache/0.16.0/2128910586982079947
+13:43 tests/test_algo.py
+13:43 algo.py
 ```
 
 ---
