@@ -2794,6 +2794,8 @@ def build_window(model=None):
         return None
 
     def refresh_variables():
+        if not state["dev_update"]["var"]:
+            return                            # dev_update_var('off'): variable window frozen
         sel = var_list.currentRow()
         var_list.blockSignals(True); var_list.clear()
         var_list.setIconSize(QtCore.QSize(_VAR_THUMB, _VAR_THUMB))
