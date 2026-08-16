@@ -393,8 +393,9 @@ double simpson(const double* a, int n) {
 _PY_BISECTION = '''\
 def run(a):
     """Bisection root of a polynomial in a bracket: a = [lo, hi, c0, c1, ..., cn]
-    (ascending coeffs, p(x) = sum c_i x^i). 100 iterations. Returns the bracket
-    midpoint if [lo,hi] does not straddle a sign change (fail-soft, no root found).
+    (ascending coeffs, p(x) = sum c_i x^i). 100 iterations. If [lo,hi] does not
+    straddle a sign change the precondition is violated: the result is some point in
+    [lo,hi] but NOT a root (fail-soft, no crash — verify with |p(x)| if it matters).
     """
     if len(a) < 3:
         return 0.0
