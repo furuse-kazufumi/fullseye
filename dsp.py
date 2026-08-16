@@ -209,7 +209,7 @@ def find_peaks(x, height=None, distance=None):
 def resample(x, rate, new_rate):
     """Resample a signal to *new_rate* (Fourier method)."""
     from scipy.signal import resample as _rs
-    x = np.asarray(x, np.float64)
+    x = _require_finite(x)
     n = int(round(len(x) * float(new_rate) / float(rate)))
     return _rs(x, max(1, n)), new_rate
 
