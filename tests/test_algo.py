@@ -302,3 +302,30 @@ def test_facade_exposes_algo_tier():
     assert fullseye.run_algo("seq_max", [3, 1, 2]) == 3.0
     assert "void heapsort_asc" in fullseye.algo_to_c("heapsort")   # BSD-safe C symbol
     assert "def run(" in fullseye.algo_to_python("mergesort")
+
+
+# --------------------------------------------------------------------------- #
+# CLI subcommand (imgevolve.py algo ...)
+# --------------------------------------------------------------------------- #
+def test_cli_algo_subcommand(capsys):
+    import types
+
+    import imgevolve
+    imgevolve.cmd_algo(types.SimpleNamespace(action="list", op=None))
+    assert "quicksort" in capsys.readouterr().out
+    imgevolve.cmd_algo(types.SimpleNamespace(action="run", op="quicksort", seq="3,1,2"))
+    assert "[1.0, 2.0, 3.0]" in capsys.readouterr().out
+    imgevolve.cmd_algo(types.SimpleNamespace(action="emit-c", op="heapsort"))
+    assert "void heapsort_asc" in capsys.readouterr().out
+
+
+def test_cli_algo_difftest_action(tmp_path, capsys):
+    import types
+
+    import imgevolve
+    rc = imgevolve.cmd_algo(types.SimpleNamespace(
+        action="difftest", op="all", workdir=str(tmp_path), no_c=(not _HAS_CC)))
+    out = capsys.readouterr().out
+    assert rc == 0 and "passed=True" in out
+    for name in _ALL:
+        assert name in out
