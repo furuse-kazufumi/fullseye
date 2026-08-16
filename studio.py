@@ -3210,6 +3210,19 @@ def build_window(model=None):
         _current_view().set_part(r1, c1, r2, c2)
     win._set_part = _set_part
 
+    def set_draw_style(mode=None, color=None, line_width=None):
+        """dev_set_draw / dev_set_color / dev_set_line_width: how a region result is
+        drawn over the source in the 'region overlay' display mode. Re-renders so the
+        change is visible."""
+        if mode in ("fill", "margin"):
+            state["draw"]["mode"] = mode
+        if color is not None:
+            state["draw"]["color"] = color
+        if line_width is not None:
+            state["draw"]["line_width"] = max(1, int(line_width))
+        show_result()
+    win._set_draw_style = set_draw_style
+
     def apply_dev_directives(text):
         """Apply a program's dev_* display directives (source order): dev_update_* /
         dev_update_off|on set the display-update flags; dev_set_part zooms the current
