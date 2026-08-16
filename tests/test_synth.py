@@ -217,3 +217,18 @@ def test_facade_exposes_synth():
     assert "histogram" in feats and "radial_power" in feats
     d = fullseye.feature_distance(src, out)
     assert d["spectrum_l2"] < 0.05
+
+
+def test_cli_synth_subcommand(tmp_path, capsys):
+    import types
+
+    import imgevolve
+    import imgio
+    inp = tmp_path / "ex.png"
+    out = tmp_path / "syn.png"
+    imgio.save(str(inp), _pink(64, 64, 0))
+    rc = imgevolve.cmd_synth(types.SimpleNamespace(
+        inp=str(inp), out=str(out), method="spectral", size="", seed=1))
+    assert rc == 0 and out.exists()
+    assert "spectrum_l2" in capsys.readouterr().out
+    assert imgio.load(str(out)).shape == (64, 64)
