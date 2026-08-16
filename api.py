@@ -273,6 +273,8 @@ __all__ = [
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
     "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
+    "algo", "algo_ops", "algo_categories", "find_algo", "run_algo",
+    "algo_to_python", "algo_to_c", "algo_difftest",
 ]
 
 
