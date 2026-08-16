@@ -67,7 +67,7 @@ class AlgoOp:
     """
 
     name: str
-    category: str        # "sort" | "reduce"
+    category: str        # "sort" | "reduce" | "numeric"
     in_sort: str         # SEQ
     out_sort: str        # SEQ | SCALAR
     kind: str            # KIND_SORT | KIND_REDUCE
@@ -76,6 +76,12 @@ class AlgoOp:
     c_code: str          # C source defining c_func
     doc: str
     provenance: str
+    # Oracle tolerance for the honest gate's Python-vs-oracle half. Sorts/reductions
+    # only move or select existing doubles, so they must match EXACTLY (0.0). Numeric
+    # ops accumulate (order-dependent float), so they are checked against an
+    # independent oracle within this tolerance — while C-vs-Python stays bit-exact
+    # (same algorithm, same order). See docs/GENERAL_ALGORITHMS.md P2.
+    tol: float = 0.0
 
 
 # --------------------------------------------------------------------------- #
