@@ -8,9 +8,14 @@ that share it. Two complementary methods, both from public literature:
       Iterate: impose the exemplar's Fourier AMPLITUDE spectrum on random-phase noise
       (matches 2nd-order structure: roughness, directionality, spectral slope), then
       match the marginal intensity histogram. Randomised phase ⇒ a genuinely new
-      image with the same 2nd-order + marginal statistics. Fast, fully reproducible,
-      and its output is *never* a crop of the source. Best for stochastic textures
-      (noise, grain, sand, cloud, fabric weave without rigid structure).
+      image with the same 2nd-order + marginal statistics. Fast and fully
+      reproducible. Best for stochastic textures (noise, grain, sand, cloud, fabric
+      weave without rigid structure). Honest edge case: a DEGENERATE exemplar — a
+      constant image, or a single pure frequency — has an amplitude spectrum with no
+      broadband content, so random phase cannot add structure and the output can
+      coincide with (a shift of) the source. That is correct, not a leak: there is
+      essentially only one image with that spectrum and histogram. Check with
+      :func:`patch_novelty` when it matters.
 
   method="patch" — Efros & Freeman 2001 image quilting (min-cut seams).
       Grow the output from overlapping exemplar blocks chosen to match already-placed
