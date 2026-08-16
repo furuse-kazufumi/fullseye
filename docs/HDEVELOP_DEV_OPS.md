@@ -95,10 +95,13 @@ HALCON はグローバル設定を `set_system`/`get_system`(パラメータ名+
 | `get_system_info` | ライセンス不要のシステム情報 | 環境レポート(capabilities) |
 | `init_compute_device` / `set_compute_device_param` / `optimize_aop` | GPU/計算デバイス・自動並列 | 将来(GPU 化・NAS スイープ) |
 
-**方針**: Studio/Runtime は**既に等価 knob を持つ**(runtime の `cv2_threads`/`deadline_ms`/`high_priority`、
-fail-closed 既定)。`set_system` 風の汎用パラメータ面を Studio に増やすかは需要次第(○)。まずは
-描画制御(A/B)を優先し、system 設定は runtime 側の既存 knob に集約したままにする(過剰な設定面を
-作らない=「IDE はシンプルかつ多機能」原則)。
+**実装状況(2026-08-16)= 済**: **Tools ▸ System settings** ダイアログ + `state["system"]` +
+QSettings 永続化。`thread_num`(OpenCV `cv2.setNumThreads`、対話 op 速度に直結)/ `operator_timeout`
+(ソフト=遅い段を Run status で警告。native op は hard-interrupt 不可の honest 限界)/ `check`=
+fail-closed 表示。**`set_system(param, value)` を Program directive 化**(HALCON 忠実、非 dev_ の
+`_CONFIG_DIRECTIVES`)。`get_system` は戻り値を格納する変数モデルが flat pipeline に無いため未対応
+(honest)。deadline_ms/high_priority の runtime 配布設定は fsruntime 側の既存 knob に集約(過剰な
+設定面を作らない=「IDE はシンプルかつ多機能」原則)。studio 89→92 / harness 202→204。
 
 ## 出典
 一次情報 = `data/halcon_operators.json`(MVTec Operator Reference 実スクレイプ, HALCON 26.05)。
