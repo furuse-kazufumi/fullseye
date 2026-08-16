@@ -110,7 +110,7 @@ def spectrum(x, rate=1.0):
 def spectrogram(x, rate=1.0, win=256, hop=None):
     """STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
     ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``."""
-    x = np.asarray(x, np.float64)
+    x = _require_finite(x)
     win = int(win)
     hop = win // 2 if hop is None else int(hop)
     if len(x) < win:
