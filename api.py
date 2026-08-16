@@ -73,6 +73,7 @@ import videops  # noqa: E402  (video / temporal (T,H,W): temporal denoise, bg-su
 import algo  # noqa: E402  (general-algorithm tier: seq/scalar sorts+reductions with Python+C references)
 import algo_codegen  # noqa: E402  (standalone Python/C emission for the general tier)
 import algo_difftest as _algo_difftest  # noqa: E402  (honest gate: Python==oracle, C==Python bit-for-bit)
+import synth  # noqa: E402  (learn an image's features -> synthesise a similar image; classical texture synthesis)
 from videops import (  # noqa: E402,F401
     temporal_mean, temporal_median, temporal_std, temporal_max, temporal_min,
     frame_difference, background_subtraction, temporal_gradient, motion_energy,
