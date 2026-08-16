@@ -217,6 +217,19 @@ def test_empty_body_loop_still_hits_the_step_limit():
         fscript.run("repeat\nuntil (1 = 2)", max_steps=5000)
 
 
+def test_extra_argument_to_a_registry_op_is_an_error_not_a_silent_drop():
+    """The long-tail wrapper calls every registered op as RT[name](input, a, b).
+    A 4th argument was dropped in silence, so `gaussian(Image, 0.3, 0.7, 999)`
+    ran with the knobs of the 3-argument call and returned a wrong-by-omission
+    result with no error."""
+    img = _scene()
+    with pytest.raises(fscript.FScriptError):
+        fscript.run("R := gaussian(Image, 0.3, 0.7, 999)", images={"Image": img})
+    # the (input, a, b) happy path is untouched
+    assert fscript.value_kind(
+        run("R := gaussian(Image, 0.3, 0.7)", Image=img)["R"]) == "image"
+
+
 def test_binary_valued_image_is_not_mistaken_for_a_region():
     """The sort is carried by the type, not inferred from content: a grey image
     that happens to be binary-valued is still an image, never a Region."""
