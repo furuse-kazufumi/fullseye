@@ -123,6 +123,71 @@ def test_radial_power_spectrum_shape():
 
 
 # --------------------------------------------------------------------------- #
+# pyramid (multi-scale Heeger-Bergen): per-scale marginals the single-band can't
+# --------------------------------------------------------------------------- #
+def _multiscale_tex(h, w, seed):
+    """Smooth low-frequency base + SPARSE impulsive fine detail. The fine-scale
+    (Laplacian) band is heavy-tailed/sparse — a per-scale marginal NOT implied by the
+    global amplitude spectrum + intensity histogram, so it separates pyramid from
+    spectral synthesis."""
+    rng = np.random.default_rng(seed)
+    yy, xx = np.mgrid[0:h, 0:w]
+    coarse = 0.5 + 0.22 * np.sin(2 * np.pi * 3 * xx / w) + 0.14 * np.cos(2 * np.pi * 2 * yy / h)
+    fine = np.zeros((h, w))
+    n = (h * w) // 40
+    ys, xs = rng.integers(0, h, n), rng.integers(0, w, n)
+    fine[ys, xs] = rng.choice([-1.0, 1.0], n) * rng.uniform(0.3, 0.5, n)   # sparse spikes
+    return np.clip(coarse + fine, 0.0, 1.0)
+
+
+def test_pyramid_matches_features_and_is_novel():
+    src = _pink(128, 128, 0)
+    syn = synth.synthesize_like(src, seed=5, method="pyramid")
+    d = synth.feature_distance(src, syn)
+    assert d["hist_chi2"] < 0.02                          # global marginal matched
+    assert d["spectrum_l2"] < 0.2                         # 2nd-order structure preserved (looser than spectral)
+    ind = _pink(128, 128, 999)
+    nov_syn = synth.patch_novelty(syn, src, seed=1)
+    nov_ind = synth.patch_novelty(ind, src, seed=1)
+    assert nov_syn > 0.5 * nov_ind                        # genuinely new, not a copy
+    assert not np.array_equal(syn, src)
+
+
+def test_pyramid_matches_per_scale_marginals_better_than_spectral():
+    # the honest "deepening" claim, MEASURED: on a texture with scale-dependent marginals
+    # the pyramid method matches the per-band marginals; the single-band spectral does not.
+    src = _multiscale_tex(128, 128, 0)
+    pyr = synth.synthesize_like(src, seed=1, method="pyramid")
+    spec = synth.synthesize_like(src, seed=1, method="spectral")
+    d_pyr = synth.pyramid_stat_distance(src, pyr)
+    d_spec = synth.pyramid_stat_distance(src, spec)
+    assert d_pyr < d_spec, (d_pyr, d_spec)                # pyramid matches per-scale marginals better
+    # ...and the pyramid result is still novel + matches the global marginal
+    assert synth.patch_novelty(pyr, src, seed=1) > 0.0
+    assert synth.feature_distance(src, pyr)["hist_chi2"] < 0.05
+
+
+def test_pyramid_stat_distance_zero_for_identical():
+    src = _multiscale_tex(96, 96, 2)
+    assert synth.pyramid_stat_distance(src, src) < 1e-9
+
+
+def test_pyramid_is_deterministic_and_size_controlled():
+    src = _pink(64, 64, 3)
+    a = synth.synthesize_like(src, seed=7, method="pyramid")
+    b = synth.synthesize_like(src, seed=7, method="pyramid")
+    assert np.array_equal(a, b)
+    out = synth.synthesize_like(src, size=(96, 128), seed=2, method="pyramid")
+    assert out.shape == (96, 128) and np.isfinite(out).all()
+    assert out.min() >= 0.0 and out.max() <= 1.0
+
+
+def test_pyramid_edge_cases_do_not_crash():
+    assert synth.synthesize_like(np.full((32, 32), 0.5), seed=0, method="pyramid").shape == (32, 32)
+    assert synth.synthesize_like(np.array([[0.1, 0.9], [0.8, 0.2]]), seed=0, method="pyramid").shape == (2, 2)
+
+
+# --------------------------------------------------------------------------- #
 # patch / quilting
 # --------------------------------------------------------------------------- #
 def test_patch_quilting_enlarges_and_resembles():
