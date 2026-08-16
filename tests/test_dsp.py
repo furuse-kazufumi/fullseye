@@ -3,6 +3,7 @@
 Synthetic tones have known frequency content, so the spectral + feature results are
 checked against the exact answer, and WAV round-trips through the stdlib writer."""
 import numpy as np
+import pytest
 
 import dsp
 
