@@ -244,7 +244,9 @@ def _write_input(path: Path, holdout: list[list[float]]) -> None:
 def _read_output(path: Path, kind: str):
     with open(path, "rb") as f:
         n = int(np.fromfile(f, np.int32, 1)[0])
-        if kind == algo.KIND_SORT:
+        # SEQ-producing kinds (sort in place, variable-length map) write per-array
+        # {int32 len, len * float64}; a reduction writes n_arrays flat float64s.
+        if kind in (algo.KIND_SORT, algo.KIND_MAP):
             out = []
             for _ in range(n):
                 length = int(np.fromfile(f, np.int32, 1)[0])
