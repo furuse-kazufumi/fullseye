@@ -412,10 +412,11 @@ _HAS_ZIG = (algo_difftest.find_c_compiler() is not None
 
 
 @pytest.mark.skipif(not _HAS_ZIG, reason="needs ziglang cc for cross-target compile")
-@pytest.mark.parametrize("name", _ALL)
+@pytest.mark.parametrize("name", _ALL_OPS)
 def test_emitted_c_cross_compiles_for_macos(name, tmp_path):
     # regression guard for the BSD <stdlib.h> name clash: heapsort()/mergesort()
     # are declared by BSD libc, so the emitted C must not export those plain names.
+    # Covers every op (incl. numeric / gauss_solve) so no future op regresses portability.
     import subprocess
     c_path = tmp_path / f"gen_{name}.c"
     c_path.write_text(algo_codegen.emit_c(algo.ALGO_BY_NAME[name]), encoding="utf-8")
