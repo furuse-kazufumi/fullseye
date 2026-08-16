@@ -902,6 +902,19 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "Solve a linear system [n, augmented n x (n+1) matrix] by Gaussian "
            "elimination with partial pivoting (variable-length seq -> seq).",
            "Gaussian elimination with partial pivoting; back substitution", tol=1e-9),
+    AlgoOp("strfind", "string", SEQ, SEQ, KIND_MAP, "strfind",
+           _PY_STRFIND, _C_STRFIND,
+           "All start positions of a pattern in a text [m, pattern(m), text] by "
+           "Knuth-Morris-Pratt (variable-length seq -> seq of match indices).",
+           "Knuth-Morris-Pratt string search; failure-function prefix automaton"),
+    AlgoOp("edit_distance", "string", SEQ, SCALAR, KIND_REDUCE, "edit_distance",
+           _PY_EDIT_DISTANCE, _C_EDIT_DISTANCE,
+           "Levenshtein edit distance between two strings [na, A(na), B] (two-row DP).",
+           "Wagner-Fischer / Levenshtein edit distance; two-row dynamic programming"),
+    AlgoOp("lcs_length", "string", SEQ, SCALAR, KIND_REDUCE, "lcs_length",
+           _PY_LCS_LENGTH, _C_LCS_LENGTH,
+           "Longest-common-subsequence length of two strings [na, A(na), B] (two-row DP).",
+           "longest common subsequence; two-row dynamic programming"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
