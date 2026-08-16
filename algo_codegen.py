@@ -38,7 +38,7 @@ def emit_python(op: algo.AlgoOp) -> str:
 
 
 def _driver_c(op: algo.AlgoOp) -> str:
-    """The binary-I/O ``main`` for ``op`` (tailored to sort vs reduce)."""
+    """The binary-I/O ``main`` for ``op`` (tailored to sort / reduce / variable-length map)."""
     if op.kind == algo.KIND_SORT:
         per_array_call = f"        {op.c_func}(buf, len);\n"
         write_out = (
@@ -48,6 +48,23 @@ def _driver_c(op: algo.AlgoOp) -> str:
     elif op.kind == algo.KIND_REDUCE:
         per_array_call = f"        double r = {op.c_func}(buf, len);\n"
         write_out = "        if (fwrite(&r, sizeof(double), 1, fo) != 1) return 4;\n"
+    elif op.kind == algo.KIND_MAP:
+        # Variable-length seq -> seq: the op writes out_len (<= len) doubles into a
+        # caller buffer sized to the input length (the KIND_MAP contract guarantees
+        # out_len <= n). out_len is clamped to [0, len] fail-closed so a misbehaving
+        # op can never make the reader over-read. Emitted wire = {out_len, values...}.
+        per_array_call = (
+            "        double* out = (double*)malloc((size_t)(len > 0 ? len : 1) * sizeof(double));\n"
+            "        if (!out) { free(buf); return 6; }\n"
+            f"        int out_len = {op.c_func}(buf, len, out);\n"
+            "        if (out_len < 0 || out_len > len) out_len = 0;   /* fail-closed clamp */\n"
+        )
+        write_out = (
+            "        if (fwrite(&out_len, sizeof(int), 1, fo) != 1) { free(out); free(buf); return 4; }\n"
+            "        if (out_len > 0 && fwrite(out, sizeof(double), (size_t)out_len, fo) != (size_t)out_len)\n"
+            "            { free(out); free(buf); return 4; }\n"
+            "        free(out);\n"
+        )
     else:  # fail-closed: an unknown kind must not silently emit a no-op driver
         raise ValueError(f"unknown algo op kind {op.kind!r}")
 
