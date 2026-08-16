@@ -258,7 +258,7 @@ def synthesize_like(img, size=None, seed: int = 0, method: str = "spectral",
         return _synth_spectral(a, shape, seed, iters)
     if method == "patch":
         return _synth_patch(a, shape, seed, block, overlap, tol)
-    raise ValueError("unknown method %r (use 'spectral' or 'patch')" % method)
+    raise ValueError(f"unknown method {method!r} (use 'spectral' or 'patch')")
 
 
 # --------------------------------------------------------------------------- #
