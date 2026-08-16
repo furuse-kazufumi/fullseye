@@ -262,14 +262,16 @@ def _synth_patch(img: np.ndarray, shape, seed: int, block: int, overlap: int,
 
 def synthesize_like(img, size=None, seed: int = 0, method: str = "spectral",
                     iters: int = 6, block: int = 32, overlap: int = 8, tol: float = 0.1,
-                    max_candidates: int = 400) -> np.ndarray:
+                    max_candidates: int = 400, levels: int = 4) -> np.ndarray:
     """Generate a NEW image sharing *img*'s texture (gray, float64 in [0,1]).
 
     ``size`` = (H, W) output shape (default: the exemplar's). ``method`` = ``spectral``
-    (power-spectrum + histogram) or ``patch`` (image quilting). ``seed`` makes it
-    deterministic. ``max_candidates`` caps the quilting search (bounds the cost to
-    ~out_blocks x max_candidates; 0 = search every exemplar block, which can be very
-    slow on large inputs). See the module docstring for the honest scope.
+    (single-band power-spectrum + histogram), ``pyramid`` (multi-scale Heeger-Bergen:
+    per-scale band histograms), or ``patch`` (image quilting). ``seed`` makes it
+    deterministic. ``levels`` sets the pyramid depth for ``pyramid``. ``max_candidates``
+    caps the quilting search (bounds the cost to ~out_blocks x max_candidates; 0 =
+    search every exemplar block, which can be very slow on large inputs). See the module
+    docstring for the honest scope.
     """
     a = _gray01(img)
     if not np.isfinite(a).all():
@@ -281,9 +283,11 @@ def synthesize_like(img, size=None, seed: int = 0, method: str = "spectral",
         raise ValueError("size must be a 2-tuple (H, W) >= (2, 2)")
     if method == "spectral":
         return _synth_spectral(a, shape, seed, iters)
+    if method == "pyramid":
+        return _synth_pyramid(a, shape, seed, iters, levels)
     if method == "patch":
         return _synth_patch(a, shape, seed, block, overlap, tol, max_candidates)
-    raise ValueError(f"unknown method {method!r} (use 'spectral' or 'patch')")
+    raise ValueError(f"unknown method {method!r} (use 'spectral', 'pyramid' or 'patch')")
 
 
 # --------------------------------------------------------------------------- #
