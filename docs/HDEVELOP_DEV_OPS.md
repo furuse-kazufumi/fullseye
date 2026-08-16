@@ -73,3 +73,27 @@ HDevelop IDE 内部の制御で、Fullseye Studio の設計デモ用途では不
 3. 将来(○) = `dev_clear_window` / `dev_disp_text` / `dev_set_line_width` 等の描画スタイル op。
 
 各段は offscreen テスト + `tools/studio_ui_harness.py`(192 steps)で回帰確認。
+
+## F. System / 設定系 op(ユーザー指摘・System 章 140 op)
+HALCON はグローバル設定を `set_system`/`get_system`(パラメータ名+値)で行う。HDevelop は
+`dev_set_system`/`dev_get_system`(IDE 実行系)+ `dev_set_preferences`/`dev_get_preferences`
+(IDE 設定)。Fullseye に直結する設定は:
+
+| op | 設定内容 | Fullseye での対応先 |
+|---|---|---|
+| `set_system('thread_num', N)` / `get_system` | 並列スレッド数 | `fsruntime` の `cv2_threads` knob(N1b 裾対策)/ `scale.process_tiled_mt` |
+| `set_check('on'/'off')` / `get_check` | エラーチェック制御モード(fail-closed の可否) | fail-closed 規律(既定 on を崩さない)。runtime は常に fail-closed |
+| `set_operator_timeout` | operator 単位のタイムアウト | `FullseyeRuntime(deadline_ms=...)` → TIMEOUT verdict |
+| `get_system_info` | ライセンス不要のシステム情報 | 環境レポート(capabilities) |
+| `init_compute_device` / `set_compute_device_param` / `optimize_aop` | GPU/計算デバイス・自動並列 | 将来(GPU 化・NAS スイープ) |
+
+**方針**: Studio/Runtime は**既に等価 knob を持つ**(runtime の `cv2_threads`/`deadline_ms`/`high_priority`、
+fail-closed 既定)。`set_system` 風の汎用パラメータ面を Studio に増やすかは需要次第(○)。まずは
+描画制御(A/B)を優先し、system 設定は runtime 側の既存 knob に集約したままにする(過剰な設定面を
+作らない=「IDE はシンプルかつ多機能」原則)。
+
+## 出典
+一次情報 = `data/halcon_operators.json`(MVTec Operator Reference 実スクレイプ, HALCON 26.05)。
+個別 op 裏取り例: [dev_update_window](https://www.mvtec.com/doc/halcon/13/en/dev_update_window.html) /
+[dev_set_part](https://www.mvtec.com/doc/halcon/2411/en/dev_set_part.html) /
+[set_system](https://www.mvtec.com/doc/halcon/2411/en/set_system.html)。
