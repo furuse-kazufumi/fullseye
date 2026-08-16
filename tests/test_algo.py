@@ -563,5 +563,41 @@ def test_algo_gate_removes_stale_marker_on_failure(tmp_path, monkeypatch):
 
 def test_algo_gate_unknown_op_fail_closed(tmp_path):
     gate = _load_algo_gate()
+    # a fresh (no prior marker) unknown op fails closed by raising, writing no marker
     with pytest.raises(SystemExit):
         gate.gate("nope", tmp_path, use_c=False)
+    assert not (tmp_path / "gate_ok.json").exists()
+
+
+def test_algo_gate_unknown_op_removes_stale_marker(tmp_path):
+    # an unresolvable op must NOT inherit a prior run's pass: the stale marker is removed
+    # BEFORE the unknown-op guard, so the work-graph node fails closed (produces gone + exit 1).
+    gate = _load_algo_gate()
+    stale = tmp_path / "gate_ok.json"
+    stale.write_text('{"op": "gauss_solve", "passed": true}', encoding="utf-8")  # prior pass
+    with pytest.raises(SystemExit):
+        gate.gate("nope", tmp_path, use_c=False)
+    assert not stale.exists()
+
+
+def test_algo_gate_requires_c_by_default_when_toolchain_absent(tmp_path, monkeypatch):
+    # With C required (the default the work-graph node uses) and NO toolchain, an
+    # honest-but-UNVERIFIED Python pass must NOT write gate_ok.json — so the node fails
+    # closed instead of turning green on C that was never compiled.
+    gate = _load_algo_gate()
+    monkeypatch.setattr(algo_difftest, "find_c_compiler", lambda: None)  # simulate C-less venv
+    res = gate.gate("gauss_solve", tmp_path, use_c=True)   # require_c defaults to True
+    assert res["passed"] is True                           # Python half still passes
+    assert res["c_verified"] is False                      # but C was skipped (unverified)
+    assert res["gate_marker_written"] is False
+    assert not (tmp_path / "gate_ok.json").exists()        # no success signal for the graph
+    assert (tmp_path / "gate_unverified.json").exists()    # honest diagnostic instead
+
+
+def test_algo_gate_allow_unverified_c_writes_marker(tmp_path, monkeypatch):
+    # the explicit opt-out lets a C-less pass count (deliberate, not silent)
+    gate = _load_algo_gate()
+    monkeypatch.setattr(algo_difftest, "find_c_compiler", lambda: None)
+    res = gate.gate("gauss_solve", tmp_path, use_c=True, require_c=False)
+    assert res["gate_marker_written"] is True
+    assert (tmp_path / "gate_ok.json").exists()
