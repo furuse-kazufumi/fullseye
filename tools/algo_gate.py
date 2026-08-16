@@ -44,7 +44,10 @@ def gate(op: str, out: Path, *, use_c: bool = True) -> dict:
     marker = out / "gate_ok.json"
     if marker.exists():                                   # never certify a stale prior pass
         marker.unlink()
-    res = algo_difftest.difftest(op, out, cc="auto" if use_c else None)  # writes algo_difftest_<op>.json
+    # resolve the compiler ourselves (concrete list[str] | None) rather than passing
+    # difftest's "auto" sentinel, so the type matches its signature exactly.
+    cc = algo_difftest.find_c_compiler() if use_c else None
+    res = algo_difftest.difftest(op, out, cc=cc)          # writes algo_difftest_<op>.json
     if res["passed"]:
         cb = res["c_backend"] or {}
         marker.write_text(json.dumps({
