@@ -151,11 +151,11 @@ def run(verbose_failures=False):
     passed = [r for r in results if r[1] == "pass"]
     failed = [r for r in results if r[1] == "fail"]
     dropped = [r for r in results if r[1].startswith(("drop", "bad", "no_"))]
-    identity = [r for r in passed if len(r) > 3 and r[3] == "identity"]
+    identity = [r for r in failed if r[2] == IDENTITY_REASON]
     covered_pass = {r[0] for r in passed}
 
     print("functional gate over %d specs:" % len(specs))
-    print("  PASS %d  |  FAIL %d  |  dropped %d  |  (of PASS, %d were identity on canonical)"
+    print("  PASS %d  |  FAIL %d  |  dropped %d  |  (of FAIL, %d were identity on canonical)"
           % (len(passed), len(failed), len(dropped), len(identity)))
     print("  distinct real HALCON ops that PASS: %d" % len(covered_pass))
     if failed:
