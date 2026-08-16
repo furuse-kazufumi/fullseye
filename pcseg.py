@@ -105,12 +105,22 @@ def fit_plane_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int =
     return plane, inliers
 
 
-def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int = 0):
-    """Robust sphere fit by RANSAC. Returns ``(center (3,), radius, inliers)``.
+def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int = 0,
+                      min_inliers: int | None = None,
+                      min_inlier_frac: float | None = None):
+    """Robust sphere fit by RANSAC. Returns ``(center (3,), radius, inliers)``, or
+    ``None`` when no hypothesis reaches the consensus gate.
 
     Each hypothesis solves the algebraic sphere through 4 random points (linear in
     ``[2x,2y,2z,1]`` against ``x^2+y^2+z^2``); the best consensus set is refit
-    algebraically. Detects balls / spherical fittings for grasping."""
+    algebraically. Detects balls / spherical fittings for grasping.
+
+    The 4 sampled points always lie on their own sphere, so *any* cloud would
+    otherwise yield a confident-looking centre/radius backed by 4 points. A model is
+    only returned once it clears :func:`_consensus_floor` — by default 5 points (more
+    than the sample that made it), tightened by *min_inliers* / *min_inlier_frac*.
+    Pass a fraction to demand that the sphere actually explain the cloud; ``None``
+    back means "no sphere here", not "a bad sphere here"."""
     P = _pts3(points)
     n = P.shape[0]
     if n < 4:
