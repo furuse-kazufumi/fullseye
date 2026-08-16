@@ -41,11 +41,17 @@ def _pts3(a) -> np.ndarray:
     return a
 
 
-#: A hypothesis must explain at least this fraction of the cloud by DEFAULT, so a
-#: random blob whose only inliers are surface-distance noise is rejected without
-#: the caller opting in. Picked to sit above the noise floor a non-primitive cloud
-#: produces (a gaussian blob lands ~5-7% of its points within a tight *thresh* of
-#: any fitted surface) and well below the consensus a real primitive commands.
+#: Default minimum fraction of the cloud a RANSAC hypothesis must explain. This is a
+#: WEAK, honest heuristic — NOT a proof of primitiveness. The inlier fraction a
+#: non-primitive blob produces scales with cloud_extent / thresh, so this gate
+#: reliably rejects a blob only when the cloud is LARGE relative to *thresh*
+#: (empirically extent >= ~20-30x thresh). A COMPACT blob (extent ~10-15x thresh) can
+#: still clear 10% with a plausible small radius — a scale-independent fraction cannot
+#: separate it from a real small primitive (verified: a std-0.10 gaussian blob at
+#: thresh=0.01 keeps ~16% of its points and fits a radius-~0.08 "sphere"). Callers who
+#: may see compact non-primitive clouds must pass a stricter *min_inlier_frac* AND
+#: validate the returned model's geometry (radius vs the known scene scale). A
+#: fail-closed default that helps for well-scaled clouds, no more.
 _DEFAULT_CONSENSUS_FRAC = 0.10
 
 
@@ -54,15 +60,20 @@ def _consensus_floor(n: int, k: int, min_inliers, min_inlier_frac) -> int:
 
     The *k* samples that generate a hypothesis always fit it, so self-support is not
     consensus. The floor is the STRICTEST of: ``k + 1`` (more than self-support), a
-    default fraction :data:`_DEFAULT_CONSENSUS_FRAC` of the cloud (so a non-primitive
-    blob is rejected by default, not only when the caller asks), and any caller
-    override via *min_inliers* (absolute) or *min_inlier_frac* (fraction). The gate
-    can only ever tighten. Note this means a cloud of exactly ``k`` points can never
-    clear the floor — ``k`` points are pure self-support, so the fit is ``None``."""
+    default fraction :data:`_DEFAULT_CONSENSUS_FRAC` of the cloud (a WEAK, scale-
+    dependent blob reject — see that constant's note; it is not a guarantee), and any
+    caller override via *min_inliers* (absolute) or *min_inlier_frac* (fraction). The
+    gate can only ever tighten. A cloud of exactly ``k`` points can never clear the
+    floor — ``k`` points are pure self-support, so the fit is ``None``. Non-finite
+    overrides are rejected (fail-closed) rather than silently producing a broken gate."""
     floor = max(k + 1, int(np.ceil(_DEFAULT_CONSENSUS_FRAC * n)))
     if min_inliers is not None:
+        if not np.isfinite(min_inliers):
+            raise ValueError("min_inliers must be finite, got %r" % (min_inliers,))
         floor = max(floor, int(np.ceil(float(min_inliers))))      # ceil, so 10.9 -> 11, not 10
     if min_inlier_frac is not None:
+        if not np.isfinite(min_inlier_frac):
+            raise ValueError("min_inlier_frac must be finite, got %r" % (min_inlier_frac,))
         frac = min(max(float(min_inlier_frac), 0.0), 1.0)         # clamp: >1 would be unreachable
         floor = max(floor, int(np.ceil(frac * n)))
     return floor
