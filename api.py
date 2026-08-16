@@ -198,6 +198,10 @@ from imgio import (  # noqa: E402,F401
     save, load, save_ply, COLORMAPS,
 )
 from detect import segment_objects, object_descriptor, nearest_prototype, draw_objects  # noqa: E402,F401
+from synth import (  # noqa: E402,F401
+    learn_features, synthesize_like, match_histogram, radial_power_spectrum,
+    feature_distance, patch_novelty,
+)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
