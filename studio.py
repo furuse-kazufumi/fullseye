@@ -518,6 +518,14 @@ def op_signature_detail(row) -> str:
     """Rich multi-line signature for the operator panel: the sort/category/HALCON
     line, each knob's role, and the implementation expression. Answers the user's
     'the arguments can't be judged' by showing exactly what a and b control."""
+    if row.get("backend") == "general":
+        # general-algorithm tier: a seq/scalar op, NOT an image-pipeline op. Show its
+        # signature + provenance and how to run it (via the CLI), read-only.
+        return ("%s   [%s → %s]\ngeneral-algorithm tier (%s) — a seq/scalar op, not an "
+                "image-pipeline op\nprovenance: %s\nrun via CLI:  py -3.11 imgevolve.py "
+                "algo run %s --seq ..."
+                % (row["name"], row["in_sort"], row["out_sort"], row["category"],
+                   row.get("provenance") or "(none)", row["name"]))
     lines = [op_detail(row)]
     a_role, b_role = op_arg_roles(row["name"])
     lines.append("knob a — %s" % (a_role if a_role else "(unused)" if a_role == "" else "see impl"))
