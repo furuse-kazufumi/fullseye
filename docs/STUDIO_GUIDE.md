@@ -126,6 +126,33 @@ fullseye-studio             # pip install -e . 済みなら、コンソールス
 
 ---
 
+## HDevelop `dev_*` 描画制御ディレクティブ
+
+HDevelop と同様に、**描画の挙動をプログラムから制御**できます。Program ウィンドウの
+スクリプトに `dev_*` 行を書くと、画像ステージではなく**表示ディレクティブ**として解釈され、
+Apply 時に適用されます（`docs/HDEVELOP_DEV_OPS.md` に全 43 `dev_*` の網羅把握）。
+
+| ディレクティブ | 効果 | 対応 UI |
+|---|---|---|
+| `dev_update_window ('off'|'on')` | グラフィクス窓の自動更新を切替 | View ▸ Display updates ▸ Graphics window |
+| `dev_update_var ('off'|'on')` | 変数窓の自動更新を切替 | 〃 Variable window |
+| `dev_update_pc ('off'|'on')` | 実行カーソルの更新を切替 | 〃 Program counter |
+| `dev_update_time ('off'|'on')` | 行ごとの処理時間表示を切替 | 〃 Operator timings |
+| `dev_update_off ()` / `dev_update_on ()` | 上記すべてを一括で off / on | ツールバー **Auto-update** トグル |
+| `dev_set_part (Row1, Col1, Row2, Col2)` | 表示範囲（ズーム/パン）を設定・負値=全体 | マウスホイール/Fit と併用 |
+| `dev_set_lut ('gray'|'jet'|'viridis'…)` | カラーマップ（LUT）を切替 | View ▸ Display mode |
+| `dev_clear_window ()` | カレント窓をクリア | — |
+
+**用途**: `dev_update_off ()` を先頭に置くと、重い処理や多数の編集を**描画コストなし**で行え、
+`dev_update_on ()` で現状態へ一括更新できます（HDevelop の性能テクニックと同じ）。更新が
+off の間はステータスバー右に `updates off: …` が出るため、凍結状態が「壊れて見える」ことは
+ありません。ツールバーの **Auto-update** トグルでも同じ切替ができます。
+
+**注意**（honest）: `dev_*` はパイプライン段と違い `if`/`for` に従わず**無条件に適用**されます
+（分岐内に置いても発火）。トップレベルに書いてください。未対応の `dev_*` はエラーになります。
+
+---
+
 ## Export と Save/Open の関係
 
 Studio で組んだパイプラインは 3 つの形で持ち出せます。
