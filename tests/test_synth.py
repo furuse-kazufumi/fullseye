@@ -53,13 +53,29 @@ def test_spectral_matches_features_and_is_novel():
 def test_spectral_preserves_dominant_frequency():
     h = w = 128
     _yy, xx = np.mgrid[0:h, 0:w]
-    grating = 0.5 + 0.4 * np.sin(2 * np.pi * 8 * xx / w)
+    grating = 0.5 + 0.4 * np.sin(2 * np.pi * 8 * xx / w)   # true freq 8/128 = 0.0625 cyc/px
     out = synth.synthesize_like(grating, seed=1, method="spectral")
     fr, ps = synth.radial_power_spectrum(grating)
     fr2, ps2 = synth.radial_power_spectrum(out)
     peak_src = fr[np.argmax(ps[1:]) + 1]
     peak_out = fr2[np.argmax(ps2[1:]) + 1]
-    assert abs(peak_src - peak_out) < 0.03
+    assert abs(peak_src - peak_out) < 0.02
+    # the frequency axis is physically correct (Nyquist=0.5 at radius N/2), so the
+    # reported peak matches the TRUE 0.0625 cyc/px (not the ~0.039 of the old axis).
+    assert abs(peak_out - 0.0625) < 0.01, peak_out
+
+
+def test_match_histogram_nearest_rank_no_invented_values():
+    # tied (discrete) reference + different size: output must contain ONLY values
+    # that exist in ref (nearest-rank), never interpolated in-betweens.
+    ref = np.array([[0.0, 1.0], [1.0, 0.0]])          # only {0, 1}
+    src = np.random.default_rng(0).standard_normal((6, 6))
+    out = synth.match_histogram(src, ref)
+    assert set(np.unique(out)).issubset({0.0, 1.0})
+    # equal sizes -> exact rank mapping
+    src2 = np.random.default_rng(1).standard_normal((2, 2))
+    out2 = synth.match_histogram(src2, ref)
+    assert sorted(out2.ravel()) == sorted(ref.ravel())
 
 
 def test_spectral_is_deterministic():
