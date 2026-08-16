@@ -338,6 +338,171 @@ double seq_min(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P2 — numeric ops (self-contained: the polynomial / samples are packed into the
+# input seq, so no function is passed across the boundary and the op stays a pure
+# seq -> scalar map that codegens to C exactly like the reductions. Accumulate, so
+# C-vs-Python is bit-exact (same order) but Python-vs-oracle uses a tolerance.
+# --------------------------------------------------------------------------- #
+_PY_SIMPSON = '''\
+def run(a):
+    """Composite Simpson's rule on samples: a = [h, y0, y1, ..., y_{m-1}].
+
+    Integrates m samples spaced h apart. Uses Simpson over the largest even number
+    of intervals; a trailing odd interval (even m) is closed with the trapezoid
+    rule. m < 2 integrates to 0.0.
+    """
+    if len(a) < 2:
+        return 0.0
+    h = a[0]
+    y = a[1:]
+    m = len(y)
+    if m < 2:
+        return 0.0
+    total = 0.0
+    n_int = m - 1
+    k = n_int if n_int % 2 == 0 else n_int - 1   # even interval count for Simpson
+    i = 0
+    while i < k:
+        total = total + (h / 3.0) * (y[i] + 4.0 * y[i + 1] + y[i + 2])
+        i = i + 2
+    if k < n_int:                                # one leftover interval -> trapezoid
+        total = total + (h / 2.0) * (y[m - 2] + y[m - 1])
+    return total
+'''
+
+_C_SIMPSON = '''\
+/* Composite Simpson's rule on samples a = [h, y0..y_{m-1}]. */
+double simpson(const double* a, int n) {
+    if (n < 2) return 0.0;
+    double h = a[0];
+    const double* y = a + 1;
+    int m = n - 1;
+    if (m < 2) return 0.0;
+    double total = 0.0;
+    int n_int = m - 1;
+    int k = (n_int % 2 == 0) ? n_int : n_int - 1;
+    for (int i = 0; i < k; i += 2)
+        total = total + (h / 3.0) * (y[i] + 4.0 * y[i + 1] + y[i + 2]);
+    if (k < n_int)
+        total = total + (h / 2.0) * (y[m - 2] + y[m - 1]);
+    return total;
+}
+'''
+
+_PY_BISECTION = '''\
+def run(a):
+    """Bisection root of a polynomial in a bracket: a = [lo, hi, c0, c1, ..., cn]
+    (ascending coeffs, p(x) = sum c_i x^i). 100 iterations. Returns the bracket
+    midpoint if [lo,hi] does not straddle a sign change (fail-soft, no root found).
+    """
+    if len(a) < 3:
+        return 0.0
+    lo = a[0]
+    hi = a[1]
+    c = a[2:]
+    nc = len(c)
+
+    def pev(x):
+        r = 0.0
+        for i in range(nc - 1, -1, -1):          # Horner, highest degree first
+            r = r * x + c[i]
+        return r
+
+    flo = pev(lo)
+    if flo == 0.0:
+        return lo
+    if pev(hi) == 0.0:
+        return hi
+    for _ in range(100):
+        mid = 0.5 * (lo + hi)
+        fm = pev(mid)
+        if fm == 0.0:
+            return mid
+        if (flo < 0.0) != (fm < 0.0):            # sign change in [lo, mid]
+            hi = mid
+        else:
+            lo = mid
+            flo = fm
+    return 0.5 * (lo + hi)
+'''
+
+_C_BISECTION = '''\
+/* Bisection root of a polynomial in a bracket a = [lo, hi, c0..cn]. */
+static double _poly_eval(const double* c, int nc, double x) {
+    double r = 0.0;
+    for (int i = nc - 1; i >= 0; i--) r = r * x + c[i];
+    return r;
+}
+double bisection(const double* a, int n) {
+    if (n < 3) return 0.0;
+    double lo = a[0], hi = a[1];
+    const double* c = a + 2;
+    int nc = n - 2;
+    double flo = _poly_eval(c, nc, lo);
+    if (flo == 0.0) return lo;
+    if (_poly_eval(c, nc, hi) == 0.0) return hi;
+    for (int it = 0; it < 100; it++) {
+        double mid = 0.5 * (lo + hi);
+        double fm = _poly_eval(c, nc, mid);
+        if (fm == 0.0) return mid;
+        if ((flo < 0.0) != (fm < 0.0)) hi = mid;
+        else { lo = mid; flo = fm; }
+    }
+    return 0.5 * (lo + hi);
+}
+'''
+
+_PY_NEWTON = '''\
+def run(a):
+    """Newton-Raphson root of a polynomial from x0: a = [x0, c0, c1, ..., cn]
+    (ascending coeffs). Up to 100 iterations; stops when |step| < 1e-12 or the
+    derivative vanishes (returns the current x, fail-soft)."""
+    if len(a) < 2:
+        return 0.0
+    x = a[0]
+    c = a[1:]
+    nc = len(c)
+    for _ in range(100):
+        p = 0.0
+        dp = 0.0
+        for i in range(nc - 1, -1, -1):          # p and p' by simultaneous Horner
+            dp = dp * x + p
+            p = p * x + c[i]
+        if dp == 0.0:
+            return x
+        step = p / dp
+        x = x - step
+        as_ = -step if step < 0.0 else step
+        if as_ < 1e-12:
+            return x
+    return x
+'''
+
+_C_NEWTON = '''\
+/* Newton-Raphson root of a polynomial from x0: a = [x0, c0..cn]. */
+double newton(const double* a, int n) {
+    if (n < 2) return 0.0;
+    double x = a[0];
+    const double* c = a + 1;
+    int nc = n - 1;
+    for (int it = 0; it < 100; it++) {
+        double p = 0.0, dp = 0.0;
+        for (int i = nc - 1; i >= 0; i--) {      /* p and p' by simultaneous Horner */
+            dp = dp * x + p;
+            p = p * x + c[i];
+        }
+        if (dp == 0.0) return x;
+        double step = p / dp;
+        x = x - step;
+        double as = step < 0.0 ? -step : step;
+        if (as < 1e-12) return x;
+    }
+    return x;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
