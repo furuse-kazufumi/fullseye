@@ -210,7 +210,7 @@ __all__ = [
     "Camera", "list_cameras", "open_framegrabber", "grab_image", "close_framegrabber",
     "open_channel", "protocols", "capabilities", "Channel",
     "TcpChannel", "UdpChannel", "HttpChannel", "ModbusTcpChannel", "ModbusTcpServer",
-    "DigitalIO", "pulse", "signal_result", "wait_input",
+    "DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks", "signal_features",
 ]
