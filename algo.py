@@ -976,4 +976,4 @@ def text_to_seq(s: str) -> list[float]:
 
 def seq_to_text(seq) -> str:
     """Decode a code-point sequence (as produced/consumed by the string ops) to a str."""
-    return "".join(chr(int(round(float(x)))) for x in seq)
+    return "".join(chr(round(float(x))) for x in seq)
