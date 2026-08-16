@@ -55,20 +55,27 @@ def main() -> int:
     reg_auto = reg_covered & auto_names
     reg_auto_failing = reg_auto - auto_pass
 
-    total = reg_covered | nary_names
+    # ★Exclude auto ops that FAILED the functional gate from the headline — they
+    # were previously only [warn]-printed while still counted, inflating the
+    # "functionally gated" parity number with ops the gate rejects.
+    reg_counted = reg_covered - reg_auto_failing
+    total = reg_counted | nary_names
     lines = [
         "# HALCON parity — what imgevolve genuinely DOES (not just names)",
         "",
-        "Grounded in the scraped MVTec reference (%d real operators, v%s). Every"
+        "Grounded in the scraped MVTec reference (%d real operators, v%s). Counts"
         % (n_real, data["version"]),
-        "count below is a real numpy/scipy/skimage/cv2 implementation that runs; the",
-        "functional gate rejects anything that does not return the declared sort.",
+        "below are real numpy/scipy/skimage/cv2 implementations that run: core ops",
+        "are regression-tested; auto ops must pass the functional gate (which rejects",
+        "anything not returning the declared sort — %d gate-failing auto op(s) are"
+        % len(reg_auto_failing),
+        "excluded here, not counted).",
         "",
         "## Headline",
         "- **%d / %d distinct real HALCON operators implemented (%.1f%%)**"
         % (len(total), n_real, 100.0 * len(total) / n_real),
         "  = %d evolvable registry ops + %d n-ary capability ops (disjoint)."
-        % (len(reg_covered), len(nary_names)),
+        % (len(reg_counted), len(nary_names)),
         "- dangling registry `Op.halcon` (fake names): **%d** (fail-closed)." % len(a["dangling"]),
         "",
         "## Evolvable registry (single-image pipeline, coverage-counted)",

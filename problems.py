@@ -143,8 +143,36 @@ class Problem:
 
         def _make(n, size, seed, _inp=inp, _tgt=tgt):
             pool = _inp.shape[0]
-            off = int(seed) % pool
-            idx = np.array([(off + i) % pool for i in range(int(n))], dtype=int)
+            n = int(n)
+            # ★A deterministic global shuffle (fixed base, so train/holdout/locked
+            # index the SAME permutation) split into three DISJOINT bands keyed by
+            # the seed's role (evolve.run draws train=seed, holdout=seed+10000,
+            # locked=seed+20000, so seed//10000 mod 3 picks the band).  The old
+            # `off = seed % pool` collapsed all three windows to the SAME frames
+            # whenever pool divided 10000 — a silent train↔holdout↔locked leak that
+            # made a train-overfit champion look like it "beat hand on a pure
+            # holdout".  A pure 3-way split needs pool >= 3n; a smaller pool cannot
+            # yield a clean holdout, so we refuse rather than leak silently.
+            third = pool // 3
+            perm = np.random.default_rng(0xC0FFEE).permutation(pool)
+            band = (int(seed) // 10000) % 3          # 0=train,1=holdout,2=locked
+            if third >= n:
+                idx = perm[band * third:band * third + n]      # fully disjoint splits
+            else:
+                # pool too small for a pure 3-way split — a tiny pool cannot yield an
+                # untouched holdout.  Best effort: give each split a DISTINCT band
+                # offset so holdout/locked are no longer IDENTICAL to train (the old
+                # `off = seed % pool` collapsed all three to the same frames whenever
+                # pool divided 10000).  Overlap is now partial and disclosed, not a
+                # silent total leak.  A pure holdout needs pool >= 3*n.
+                import warnings
+                warnings.warn(
+                    f"from_pairs pool={pool} < 3*n={3 * n}: train/holdout/locked "
+                    f"cannot be fully disjoint; splits overlap partially (holdout is "
+                    f"not pure). Supply >= {3 * n} frames for a clean split.",
+                    stacklevel=2)
+                start = (band * max(1, third)) % pool
+                idx = perm[[(start + i) % pool for i in range(n)]]
             return {"input": _inp[idx], "items": _tgt[idx]}
 
         return cls(name=name, unit=unit, make=_make, score_value=m,
