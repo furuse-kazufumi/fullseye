@@ -113,9 +113,9 @@ def _poly_at(coeffs, x: float) -> float:
 def _lev_recursive(a: tuple, b: tuple) -> float:
     """Levenshtein by TOP-DOWN memoized recursion — an independent oracle for the
     op's bottom-up two-row DP (different code path, same definition)."""
-    from functools import lru_cache
+    from functools import cache
 
-    @lru_cache(maxsize=None)
+    @cache
     def d(i: int, j: int) -> int:
         if i == 0:
             return j
