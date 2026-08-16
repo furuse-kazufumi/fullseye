@@ -637,6 +637,233 @@ int gauss_solve(const double* a, int n_in, double* out) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P3 — string / text ops. A "string" is packed as a sequence of code points stored
+# as float64 (exact for every Unicode scalar, < 2^53), so these ride the SAME
+# float64 binary harness as the numeric ops — no new wire type. Values are only
+# ever compared for equality (exact for integer codes) and indices/counts are exact
+# integers, so C-vs-Python is bit-identical and the oracle half is EXACT (tol 0.0).
+# strfind returns match positions (variable-length -> KIND_MAP); edit_distance /
+# lcs_length fold to one integer (KIND_REDUCE). See text_to_seq() for the encoding.
+# --------------------------------------------------------------------------- #
+_PY_STRFIND = '''\
+def run(a):
+    """All start positions of a pattern in a text (Knuth-Morris-Pratt).
+
+    Input packs both strings as code-point sequences: a = [m, p0..p_{m-1}, t0..t_{k-1}]
+    where m = pattern length, the next m values are the pattern, the rest are the text.
+    Returns the ascending list of 0-based start indices where the pattern occurs in the
+    text (overlapping occurrences included) — a VARIABLE-LENGTH output.
+
+    Fail-soft (returns []): empty pattern (m < 1), truncated input (fewer than m pattern
+    values), or a pattern longer than the text. Values are compared with ==, so any
+    numeric sequence works, but the str oracle only makes sense for code points."""
+    if len(a) < 1:
+        return []
+    m = int(a[0])
+    if m < 1:
+        return []                                   # empty pattern: fail-soft (avoid the
+        #                                             degenerate "" -> every gap convention)
+    if len(a) < 1 + m:
+        return []                                   # truncated pattern
+    pat = a[1:1 + m]
+    text = a[1 + m:]
+    k = len(text)
+    if m > k:
+        return []                                   # pattern longer than text: no matches
+    fail = [0] * m                                  # KMP failure = longest proper prefix-suffix
+    j = 0
+    for i in range(1, m):
+        while j > 0 and pat[i] != pat[j]:
+            j = fail[j - 1]
+        if pat[i] == pat[j]:
+            j = j + 1
+        fail[i] = j
+    res = []
+    j = 0
+    for i in range(k):
+        while j > 0 and text[i] != pat[j]:
+            j = fail[j - 1]
+        if text[i] == pat[j]:
+            j = j + 1
+        if j == m:
+            res.append(float(i - m + 1))
+            j = fail[j - 1]
+    return res
+'''
+
+_C_STRFIND = '''\
+/* All start positions of a pattern in a text (Knuth-Morris-Pratt).
+ * Input a = [m, pattern(m), text(k)]; writes ascending match indices to `out` and
+ * returns the count. Returns 0 (empty) on m < 1 / truncated / pattern-longer-than-text. */
+int strfind(const double* a, int n_in, double* out) {
+    if (n_in < 1) return 0;
+    double m_d = a[0];
+    if (!(m_d >= 1.0 && m_d <= 2147483000.0)) return 0;     /* m >= 1, fits int */
+    int m = (int)m_d;
+    if ((long long)n_in < 1LL + m) return 0;                /* truncated pattern */
+    const double* pat = a + 1;
+    const double* text = a + 1 + m;
+    int k = n_in - 1 - m;
+    if (m > k) return 0;                                    /* pattern longer than text */
+    int* fail = (int*)malloc((size_t)m * sizeof(int));
+    if (!fail) return 0;
+    fail[0] = 0;
+    int j = 0;
+    for (int i = 1; i < m; i++) {
+        while (j > 0 && pat[i] != pat[j]) j = fail[j - 1];
+        if (pat[i] == pat[j]) j++;
+        fail[i] = j;
+    }
+    int cnt = 0;
+    j = 0;
+    for (int i = 0; i < k; i++) {
+        while (j > 0 && text[i] != pat[j]) j = fail[j - 1];
+        if (text[i] == pat[j]) j++;
+        if (j == m) {
+            out[cnt++] = (double)(i - m + 1);
+            j = fail[j - 1];
+        }
+    }
+    free(fail);
+    return cnt;
+}
+'''
+
+_PY_EDIT_DISTANCE = '''\
+def run(a):
+    """Levenshtein edit distance between two strings (insert/delete/substitute = cost 1).
+
+    Input packs both strings as code-point sequences: a = [na, A0..A_{na-1}, B0..B_{nb-1}]
+    where na = length of the first string, the next na values are string A, the rest are
+    string B. Returns the edit distance as an exact non-negative integer (as a float).
+    Bottom-up two-row dynamic programming. Fail-soft: returns 0.0 on na < 0 / truncated
+    input. NaN-free assumed (== is used to score matches)."""
+    if len(a) < 1:
+        return 0.0
+    na = int(a[0])
+    if na < 0 or len(a) < 1 + na:
+        return 0.0
+    sa = a[1:1 + na]
+    sb = a[1 + na:]
+    nb = len(sb)
+    prev = [float(j) for j in range(nb + 1)]        # distance from "" to B[:j]
+    for i in range(1, na + 1):
+        cur = [0.0] * (nb + 1)
+        cur[0] = float(i)
+        ai = sa[i - 1]
+        for j in range(1, nb + 1):
+            cost = 0.0 if ai == sb[j - 1] else 1.0
+            dele = prev[j] + 1.0
+            ins = cur[j - 1] + 1.0
+            sub = prev[j - 1] + cost
+            mn = dele
+            if ins < mn:
+                mn = ins
+            if sub < mn:
+                mn = sub
+            cur[j] = mn
+        prev = cur
+    return prev[nb]
+'''
+
+_C_EDIT_DISTANCE = '''\
+/* Levenshtein edit distance between two strings, two-row DP.
+ * Input a = [na, A(na), B(nb)]; returns the distance as an exact integer double. */
+double edit_distance(const double* a, int n_in) {
+    if (n_in < 1) return 0.0;
+    double na_d = a[0];
+    if (!(na_d >= 0.0 && na_d <= 2147483000.0)) return 0.0;
+    int na = (int)na_d;
+    if ((long long)na + 1 > (long long)n_in) return 0.0;
+    const double* sa = a + 1;
+    const double* sb = a + 1 + na;
+    int nb = n_in - 1 - na;
+    double* prev = (double*)malloc((size_t)(nb + 1) * sizeof(double));
+    double* cur = (double*)malloc((size_t)(nb + 1) * sizeof(double));
+    if (!prev || !cur) { free(prev); free(cur); return 0.0; }
+    for (int j = 0; j <= nb; j++) prev[j] = (double)j;
+    for (int i = 1; i <= na; i++) {
+        cur[0] = (double)i;
+        double ai = sa[i - 1];
+        for (int j = 1; j <= nb; j++) {
+            double cost = (ai == sb[j - 1]) ? 0.0 : 1.0;
+            double dele = prev[j] + 1.0;
+            double ins = cur[j - 1] + 1.0;
+            double sub = prev[j - 1] + cost;
+            double mn = dele;
+            if (ins < mn) mn = ins;
+            if (sub < mn) mn = sub;
+            cur[j] = mn;
+        }
+        double* t = prev; prev = cur; cur = t;      /* row i is now in prev */
+    }
+    double r = prev[nb];
+    free(prev); free(cur);
+    return r;
+}
+'''
+
+_PY_LCS_LENGTH = '''\
+def run(a):
+    """Length of the longest common subsequence of two strings (not substring).
+
+    Input packs both strings as code-point sequences: a = [na, A0..A_{na-1}, B0..B_{nb-1}]
+    (same layout as edit_distance). Returns the LCS length as an exact non-negative integer
+    (as a float). Bottom-up two-row DP. Fail-soft: returns 0.0 on na < 0 / truncated input."""
+    if len(a) < 1:
+        return 0.0
+    na = int(a[0])
+    if na < 0 or len(a) < 1 + na:
+        return 0.0
+    sa = a[1:1 + na]
+    sb = a[1 + na:]
+    nb = len(sb)
+    prev = [0.0] * (nb + 1)
+    for i in range(1, na + 1):
+        cur = [0.0] * (nb + 1)
+        ai = sa[i - 1]
+        for j in range(1, nb + 1):
+            if ai == sb[j - 1]:
+                cur[j] = prev[j - 1] + 1.0
+            else:
+                cur[j] = prev[j] if prev[j] >= cur[j - 1] else cur[j - 1]
+        prev = cur
+    return prev[nb]
+'''
+
+_C_LCS_LENGTH = '''\
+/* Longest common subsequence length of two strings, two-row DP.
+ * Input a = [na, A(na), B(nb)]; returns the LCS length as an exact integer double. */
+double lcs_length(const double* a, int n_in) {
+    if (n_in < 1) return 0.0;
+    double na_d = a[0];
+    if (!(na_d >= 0.0 && na_d <= 2147483000.0)) return 0.0;
+    int na = (int)na_d;
+    if ((long long)na + 1 > (long long)n_in) return 0.0;
+    const double* sa = a + 1;
+    const double* sb = a + 1 + na;
+    int nb = n_in - 1 - na;
+    double* prev = (double*)malloc((size_t)(nb + 1) * sizeof(double));
+    double* cur = (double*)malloc((size_t)(nb + 1) * sizeof(double));
+    if (!prev || !cur) { free(prev); free(cur); return 0.0; }
+    for (int j = 0; j <= nb; j++) prev[j] = 0.0;
+    for (int i = 1; i <= na; i++) {
+        cur[0] = 0.0;
+        double ai = sa[i - 1];
+        for (int j = 1; j <= nb; j++) {
+            if (ai == sb[j - 1]) cur[j] = prev[j - 1] + 1.0;
+            else cur[j] = (prev[j] >= cur[j - 1]) ? prev[j] : cur[j - 1];
+        }
+        double* t = prev; prev = cur; cur = t;
+    }
+    double r = prev[nb];
+    free(prev); free(cur);
+    return r;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
