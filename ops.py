@@ -33,6 +33,7 @@ CONTOUR, MATCH = "contour", "match"   # XLD subpixel contours / template-match r
 VOLUME = "volume"                     # 3D voxel array (CT/MRI/depth stacks)
 COLOR = "color"                       # multichannel H x W x 3 (RGB); reached via cfa_to_rgb
 
+
 # Matching context: the locate problem sets a reference template here before scoring
 # (matching needs a model + a search image; the pipeline threads the image, the model
 # comes from context). Honest coupling — documented.
