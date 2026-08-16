@@ -104,10 +104,14 @@ def learn_features(img) -> dict:
 # helpers
 # --------------------------------------------------------------------------- #
 def match_histogram(src, ref) -> np.ndarray:
-    """Map *src* so its intensity distribution equals *ref*'s (exact, rank-based).
+    """Map *src* so its intensity distribution follows *ref*'s (rank-based).
 
-    Each source pixel is sent to the reference value at the same quantile, so the
-    output's marginal histogram matches ``ref`` regardless of the two sizes.
+    Each source pixel is sent, by its quantile, to an ACTUAL sorted reference value
+    (nearest-rank) — never an interpolated in-between value. So the output only ever
+    contains values that exist in ``ref`` (important for discrete/low-level
+    exemplars). The match is EXACT when the two have the same number of pixels; for
+    different sizes it is the closest rank (an exact multiset match is impossible
+    when a value's count cannot be split).
     """
     s = np.asarray(src, np.float64)
     r = np.sort(_gray01(ref).ravel())
@@ -118,8 +122,8 @@ def match_histogram(src, ref) -> np.ndarray:
     ranks = np.empty(flat.size, np.float64)
     ranks[order] = np.arange(flat.size, dtype=np.float64)
     q = ranks / max(1, flat.size - 1)                       # each pixel's quantile in [0,1]
-    ref_q = np.linspace(0.0, 1.0, r.size)
-    matched = np.interp(q, ref_q, r)
+    idx = np.clip(np.rint(q * (r.size - 1)).astype(np.int64), 0, r.size - 1)
+    matched = r[idx]                                        # always a real reference value
     return matched.reshape(s.shape)
 
 
