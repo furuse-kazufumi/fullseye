@@ -374,5 +374,5 @@ def test_cli_algo_difftest_action(tmp_path, capsys):
         action="difftest", op="all", workdir=str(tmp_path), no_c=(not _HAS_CC)))
     out = capsys.readouterr().out
     assert rc == 0 and "passed=True" in out
-    for name in _ALL:
+    for name in _ALL_OPS:
         assert name in out
