@@ -191,9 +191,13 @@ def fit_cylinder_ransac(points, normals=None, thresh: float = 0.01,
 
     A 2-sample hypothesis is self-supporting, so without a gate a random blob comes
     back as a confident axis/radius carried by ~2 points. A model is only returned
-    once it clears :func:`_consensus_floor` — by default 3 points, tightened by
-    *min_inliers* / *min_inlier_frac*; pass a fraction to demand that the cylinder
-    actually explain the cloud rather than just its own samples."""
+    once it clears :func:`_consensus_floor` — by default the larger of 3 points and
+    10% of the cloud, tightened by *min_inliers* / *min_inlier_frac*. ``None`` is the
+    single "no model" signal for BOTH no consensus and no valid hypothesis; only a
+    precondition violation (``< 2`` points) raises. Honest limit: consensus does not
+    bound the RADIUS — a flat sheet is a cylinder of near-infinite radius and clears
+    the gate with genuine consensus, so sanity-check the returned radius against your
+    scene scale if flat surfaces may reach this call."""
     P = _pts3(points)
     n = P.shape[0]
     if n < 2:
