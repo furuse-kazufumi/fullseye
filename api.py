@@ -315,9 +315,25 @@ def _resolve(name: str):
 
 
 def _coerce_input(v, op):
-    """Gently match the array to the op's declared input sort (opt-in)."""
+    """Gently match the array to the op's declared input sort (opt-in).
+
+    Only a ``region`` input is touched, and only when the array is not already a
+    float64 {0,1} mask read at the 0.5 threshold every region op uses internally
+    (``ops._bin``): more than two levels, values outside [0,1], or a bool array
+    (re-typed to float64 — never re-valued, since ``-``/``sum`` on bool either
+    raises or silently changes meaning).
+
+    A one- or two-level in-range array such as {0.3, 0.7} is deliberately left
+    alone: ``_bin`` already reads it as an unambiguous mask, so binarising here
+    would change nothing for mask ops while destroying the gray levels that the
+    few label-reading region ops (``r3_label_to_region``) legitimately consume.
+    """
     a = np.asarray(v)
-    if op.in_sort == "region" and a.dtype.kind in "fiu":
+    if op.in_sort != "region":
+        return v
+    if a.dtype.kind == "b":
+        return a.astype(np.float64)                  # mask already; only the dtype is off
+    if a.dtype.kind in "fiu":
         vals = np.unique(a)
         if vals.size > 2 or (vals.size and (vals.min() < 0.0 or vals.max() > 1.0)):
             return (a.astype(np.float64) > 0.5).astype(np.float64)
