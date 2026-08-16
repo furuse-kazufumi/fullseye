@@ -43,10 +43,24 @@ class _MatchCtx:
     Two evaluators scoring different models in parallel (evolution sweeps run the
     scorers on a thread pool) used to share one module-level dict: B's template
     overwrote A's and A then returned a plausible-but-wrong ``[corr, y, x]`` with no
-    exception. Each thread now sees the template IT set. A thread that never set one
-    inherits the last template set anywhere, so the usual "build the dataset on the
-    main thread, score in workers" flow is unchanged. Dict-like on purpose: callers
-    save/restore via ``ctx["template"]`` / ``ctx.get("template")``.
+    exception. Each thread now sees the template IT set, which removes that race for
+    the reachable pattern. Dict-like on purpose: callers save/restore via
+    ``ctx["template"]`` / ``ctx.get("template")``.
+
+    Precondition (honest disclosure — this is a per-call global, not a per-call
+    argument, because a registry op's signature is fixed at ``(v, a, b)``):
+    ``set_match_template`` must be called on the SAME thread immediately before the
+    matching op that consumes it. Given that, this is race-free. Two known limits
+    it does NOT solve, neither reachable in-repo (evolution builds the dataset and
+    sets the template on the main thread; the only thread pool, ``scale.py``, has
+    workers that merely READ via ``fn`` and never set a template):
+      * a thread pool reused across tasks reads its OWN last-set template, so a
+        worker must re-set per task rather than rely on a later main-thread set;
+      * a thread that never set one inherits the last template set anywhere (a
+        best-effort seed for the build-on-main / score-on-fresh-worker flow), which
+        is not a guarantee under two threads scoring DIFFERENT templates at once.
+    When no template was ever set, the matching ops return a zero (no-match) vector
+    rather than a wrong match, so the failure mode is fail-closed, not silent-wrong.
     """
 
     def __init__(self) -> None:
