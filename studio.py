@@ -2025,7 +2025,8 @@ def build_window(model=None):
                 insp += "\n\n(region features unavailable: %s)" % truncate(e, 80)
         inspector.setPlainText(insp)
         if isinstance(val, np.ndarray) and val.ndim in (2, 3):
-            shown = apply_display(val, display.currentText(), base=model.image)  # region overlay uses the source
+            shown = apply_display(val, display.currentText(), base=model.image,  # region overlay uses the source
+                                  draw=state["draw"])                            # dev_set_draw/color/line_width
             qi = _to_qimage(shown, QtGui)
             if qi is not None:
                 view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
