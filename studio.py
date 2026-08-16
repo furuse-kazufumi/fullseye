@@ -1363,6 +1363,11 @@ def build_window(model=None):
     menu_tools = _menu(mb, "&Tools", "tools")
     menu_tools.addAction(act_palette)                         # cross-cutting command launcher (was under Run)
     menu_tools.addSeparator()
+    act_system_settings = QtGui.QAction("System settings…", win)   # HALCON set_system-style config
+    act_system_settings.triggered.connect(lambda: win._open_system_settings())
+    menu_tools.addAction(act_system_settings)
+    win._act_system_settings = act_system_settings
+    menu_tools.addSeparator()
     lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
     m = _menu(mb, "&Help", "help")
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
