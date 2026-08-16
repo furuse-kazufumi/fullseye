@@ -47,6 +47,24 @@
       "file": "cell.png",
       "source": "skimage.data",
       "licence": "BSD / public domain (see scikit-image)"
+    },
+    {
+      "name": "grain_synth",
+      "file": "grain_synth.png",
+      "source": "synthesized (Fullseye synth.synthesize_like, 1/f grain (spectral synthesis))",
+      "licence": "own work"
+    },
+    {
+      "name": "weave_synth",
+      "file": "weave_synth.png",
+      "source": "synthesized (Fullseye synth.synthesize_like, fabric weave (spectral synthesis))",
+      "licence": "own work"
+    },
+    {
+      "name": "brick_quilt",
+      "file": "brick_quilt.png",
+      "source": "synthesized (Fullseye synth.synthesize_like, brick wall, enlarged (image quilting))",
+      "licence": "own work"
     }
   ]
 }

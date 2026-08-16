@@ -93,7 +93,9 @@ _SAMPLES = {
 def _generate() -> dict:
     results = {}
     for name, (ex, method, kw, desc) in _SAMPLES.items():
-        out = synth.synthesize_like(ex, seed=kw.pop("seed"), method=method, **kw)
+        seed = kw.get("seed", 0)
+        call_kw = {k: v for k, v in kw.items() if k != "seed"}
+        out = synth.synthesize_like(ex, seed=seed, method=method, **call_kw)
         fd = synth.feature_distance(ex, out)
         nov = synth.patch_novelty(out, ex, seed=1)
         results[name] = {"image": out, "desc": desc, "method": method,
