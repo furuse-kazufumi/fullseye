@@ -2283,10 +2283,16 @@ def build_window(model=None):
     win._push_undo = push_undo
 
     def add_op(item):
+        name = item.data(QtCore.Qt.UserRole)
+        row = _op_row(name)
+        if row and row.get("backend") == "general":     # double-click on a read-only general op
+            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
+                  "imgevolve.py algo run %s" % (name, name))
+            return
         push_undo()
         i = selected_index()
         # insert with the args entered in the operator panel (HDevelop-style)
-        model.add_stage(item.data(QtCore.Qt.UserRole), op_a_spin.value(), op_b_spin.value())
+        model.add_stage(name, op_a_spin.value(), op_b_spin.value())
         newpos = len(model.stages) - 1
         if 0 <= i < newpos:                                  # insert just after the selected stage
             model.move_stage(newpos, i + 1); newpos = i + 1
