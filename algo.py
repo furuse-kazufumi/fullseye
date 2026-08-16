@@ -822,8 +822,13 @@ def run(a):
     (as a float). Bottom-up two-row DP. Fail-soft: returns 0.0 on na < 0 / truncated input."""
     if len(a) < 1:
         return 0.0
-    na = int(a[0])
-    if na < 0 or len(a) < 1 + na:
+    na_d = a[0]
+    # raw-value guard BEFORE int() = exact C parity (fractional/negative/NaN/oversized header
+    # fail-softs identically; no int(nan) crash).
+    if not (na_d >= 0.0 and na_d <= 2147483000.0):
+        return 0.0
+    na = int(na_d)
+    if len(a) < 1 + na:
         return 0.0
     sa = a[1:1 + na]
     sb = a[1 + na:]
