@@ -168,12 +168,20 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             nn = rng.randint(1, 7)
             x = [rng.uniform(-10.0, 10.0) for _ in range(nn)]
             cases.append(_pack(_diag_dominant(nn), x))
-        for _ in range(6):                                   # row-permuted -> forces a pivot swap
-            nn = rng.randint(2, 5)
-            mat = _diag_dominant(nn)
-            mat[0], mat[nn - 1] = mat[nn - 1], mat[0]        # same well-conditioned system, reordered
+        for _ in range(6):                                   # row-permuted (a swap occurs, but is
+            nn = rng.randint(2, 5)                            # NOT required for correctness — the
+            mat = _diag_dominant(nn)                          # pivot-REQUIRED cases below are what
+            mat[0], mat[nn - 1] = mat[nn - 1], mat[0]        # falsify a missing-pivot defect)
             x = [rng.uniform(-10.0, 10.0) for _ in range(nn)]
             cases.append(_pack(mat, x))
+        # PIVOT-REQUIRED cases: all well-conditioned (np.linalg.solve stays a valid oracle),
+        # but a gauss WITHOUT partial pivoting gives a wrong answer / divides by zero here — so
+        # the gate can now actually FALSIFY a missing-pivot defect, which the diag-dominant cases
+        # (min |A[0,0]| ~ 0.7, never zero) cannot. (2026-08-16 review, feedback_no_solo_ai_judgment.)
+        cases.append(_pack([[0.0, 1.0], [1.0, 0.0]], [2.0, 1.0]))          # exact-zero (0,0) pivot
+        cases.append(_pack([[0.0, 2.0, 1.0], [1.0, 0.0, 3.0], [2.0, 1.0, 0.0]],
+                           [1.0, -2.0, 3.0]))                             # 3x3, zero (0,0), det!=0
+        cases.append(_pack([[1e-14, 1.0], [1.0, 1.0]], [3.0, 5.0]))        # tiny (0,0): no-pivot blows up
         return cases
     return make_holdout(seed)
 
