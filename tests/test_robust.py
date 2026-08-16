@@ -121,3 +121,12 @@ def test_docstring_names_both_splits():
     doc = robust.__doc__
     assert "seed+10000" in doc and "seed+20000" in doc
     assert "OBSERVED" in doc and "LOCKED" in doc
+
+
+def test_seeds_below_one_is_rejected(monkeypatch):
+    """Degenerate --seeds 0/negative must fail loudly at the arg boundary, not crash
+    later on max() of an empty champion list (adversarial review)."""
+    import pytest
+    monkeypatch.setattr(sys, "argv", ["robust.py", "--problem", "denoise", "--seeds", "0"])
+    with pytest.raises(SystemExit):
+        robust.main()

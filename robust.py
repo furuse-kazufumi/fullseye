@@ -38,6 +38,8 @@ def main() -> int:
     ap.add_argument("--gens", type=int, default=20)
     ap.add_argument("--pop", type=int, default=16)
     a = ap.parse_args()
+    if a.seeds < 1:
+        ap.error("--seeds must be >= 1 (nothing to select from otherwise)")
 
     wd = Path(a.workdir)
     base = json.loads((wd / f"baseline_{a.problem}.json").read_text(encoding="utf-8")) \
