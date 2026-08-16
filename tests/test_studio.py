@@ -758,6 +758,36 @@ def test_set_system_program_directive():
         [("set_system", ["thread_num", 4.0])]
 
 
+def test_dev_region_draw_style_directives():
+    """dev_set_draw / dev_set_color / dev_set_line_width change how a region result is
+    drawn in the 'region overlay' display mode (HDevelop visualization ops)."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._apply_dev_directives(
+        "dev_set_draw ('margin')\ndev_set_color ('red')\ndev_set_line_width (3)")
+    d = win._state["draw"]
+    assert d["mode"] == "margin"
+    assert d["color"] == (1.0, 0.0, 0.0)
+    assert d["line_width"] == 3
+    win._apply_dev_directives("dev_set_draw ('fill')")
+    assert win._state["draw"]["mode"] == "fill"
+
+
+def test_apply_display_region_margin_vs_fill():
+    """apply_display colours fewer pixels for a 'margin' region (boundary only) than a
+    'fill' region, and both are non-empty."""
+    base = np.zeros((40, 40), float)
+    reg = np.zeros((40, 40), float); reg[10:30, 10:30] = 1.0        # a 20x20 filled square
+    fill = studio.apply_display(reg, "region overlay", base=base,
+                                draw={"mode": "fill", "color": (1, 0, 0), "alpha": 0.5})
+    margin = studio.apply_display(reg, "region overlay", base=base,
+                                  draw={"mode": "margin", "color": (1, 0, 0), "alpha": 0.5,
+                                        "line_width": 1})
+    n_fill = int((fill[..., 0] > 0.1).sum())
+    n_margin = int((margin[..., 0] > 0.1).sum())
+    assert 0 < n_margin < n_fill
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
