@@ -68,9 +68,10 @@ class AlgoOp:
     """One general-purpose algorithm, with a Python reference and a C reference.
 
     ``py_code`` defines a top-level ``run(a)`` (``a`` a Python list of floats):
-    a sort returns a new sorted list; a reduction returns a float. ``c_code`` is
-    the C definition of ``c_func`` with the signature implied by ``kind``. Both
-    are re-implementations from the named ``provenance`` method.
+    a sort returns a new sorted list; a reduction returns a float; a variable-length
+    map (``KIND_MAP``) returns a new list whose length may differ from the input.
+    ``c_code`` is the C definition of ``c_func`` with the signature implied by
+    ``kind``. Both are re-implementations from the named ``provenance`` method.
     """
 
     name: str
