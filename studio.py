@@ -2718,7 +2718,8 @@ def build_window(model=None):
         return parse_hdev_program(text, op_names)
 
     def apply_program():
-        stages, errs = parse_program(code_edit.toPlainText())
+        text = code_edit.toPlainText()        # capture first: refresh_stage_list rewrites the editor
+        stages, errs = parse_program(text)
         if errs:
             code_status.setText("✕ " + "  ·  ".join(errs[:3]))
             flash("code has %d error(s)" % len(errs))
@@ -2729,7 +2730,7 @@ def build_window(model=None):
         state["code_dirty"] = False           # the edits are now applied to the pipeline
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
-        apply_dev_directives(code_edit.toPlainText())   # dev_* display directives (update/part)
+        apply_dev_directives(text)            # dev_* display directives (update/part), from the original text
         show_result()
 
     def run_program(stop_at_breakpoints=True):
