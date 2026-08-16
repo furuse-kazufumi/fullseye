@@ -183,6 +183,39 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
                            [1.0, -2.0, 3.0]))                             # 3x3, zero (0,0), det!=0
         cases.append(_pack([[1e-14, 1.0], [1.0, 1.0]], [3.0, 5.0]))        # tiny (0,0): no-pivot blows up
         return cases
+    if name == "strfind":
+        # small alphabet -> many (overlapping) matches; codes are exact-integer float64.
+        cases = [
+            [1.0, 65.0, 65.0, 65.0, 65.0],                     # "A" in "AAA" -> 0,1,2 (overlap)
+            [2.0, 65.0, 65.0, 65.0, 65.0, 65.0],               # "AA" in "AAA" -> 0,1 (overlap)
+            [3.0, 65.0, 66.0, 67.0, 68.0, 69.0, 70.0],         # "ABC" in "DEF" -> [] (no match)
+            [2.0, 65.0, 66.0, 65.0, 66.0, 65.0, 66.0],         # "AB" in "ABAB" -> 0,2
+            [4.0, 65.0, 66.0, 67.0, 68.0, 65.0, 66.0, 67.0, 68.0],  # pattern == text -> 0
+        ]
+        for _ in range(30):
+            alpha = rng.randint(2, 4)                          # 2..4 distinct symbols -> ties/matches
+            m = rng.randint(1, 4)
+            k = rng.randint(m, 24)
+            pat = [float(65 + rng.randint(0, alpha - 1)) for _ in range(m)]
+            text = [float(65 + rng.randint(0, alpha - 1)) for _ in range(k)]
+            cases.append([float(m)] + pat + text)
+        return cases
+    if name in ("edit_distance", "lcs_length"):
+        # pairs of small strings over a tiny alphabet, incl. empty / identical / disjoint.
+        cases = [
+            [0.0],                                             # both empty -> 0
+            [3.0, 65.0, 66.0, 67.0],                           # A="ABC", B="" -> 3 / lcs 0
+            [3.0, 65.0, 66.0, 67.0, 65.0, 66.0, 67.0],         # identical "ABC" -> 0 / lcs 3
+            [3.0, 65.0, 66.0, 67.0, 68.0, 69.0, 70.0],         # disjoint "ABC" vs "DEF" -> 3 / lcs 0
+        ]
+        for _ in range(30):
+            alpha = rng.randint(2, 4)
+            na = rng.randint(0, 9)
+            nb = rng.randint(0, 9)
+            sa = [float(65 + rng.randint(0, alpha - 1)) for _ in range(na)]
+            sb = [float(65 + rng.randint(0, alpha - 1)) for _ in range(nb)]
+            cases.append([float(na)] + sa + sb)
+        return cases
     return make_holdout(seed)
 
 
