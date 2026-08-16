@@ -2382,6 +2382,29 @@ def build_window(model=None):
     def use_demo():
         model.set_image(demo_image()); show_result()
 
+    def load_sample_image(name):
+        """Load one of the collected, license-clean sample images (sample_images.py)."""
+        try:
+            import sample_images
+            model.set_image(sample_images.load(name))
+        except Exception as e:
+            report_error("Could not load sample image", "%s\n\n%s" % (name, e)); return
+        flash("loaded sample image: " + name); show_result()
+    win._load_sample_image = load_sample_image
+
+    def load_visual_demo():
+        """dev_* visualization demo: load the coins sample image and a Program that
+        actually USES the HDevelop dev_set_draw / dev_set_color / dev_disp_text ops."""
+        load_sample_image(HDEV_VISUAL_DEMO_IMAGE)
+        code_edit.setPlainText(HDEV_VISUAL_DEMO)
+        apply_program()
+        try:
+            win._docks["program"].show(); win._docks["program"].raise_()
+        except Exception:
+            pass
+        flash("loaded dev_* visualization demo")
+    win._load_visual_demo = load_visual_demo
+
     def save_result():
         if state["result"] is None:
             flash("nothing to save — run the pipeline first"); return
