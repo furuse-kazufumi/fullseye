@@ -352,8 +352,9 @@ def cmd_synth(a):
     imgio.save(a.out, out)
     d = synth.feature_distance(img, out)
     nov = synth.patch_novelty(out, img)
-    print("synth %s -> %s  spectrum_l2=%.4f hist_chi2=%.4f novelty=%.5f"
-          % (a.method, a.out, d["spectrum_l2"], d["hist_chi2"], nov))
+    pyr = synth.pyramid_stat_distance(img, out)            # per-scale marginal match
+    print("synth %s -> %s  spectrum_l2=%.4f hist_chi2=%.4f pyramid=%.4f novelty=%.5f"
+          % (a.method, a.out, d["spectrum_l2"], d["hist_chi2"], pyr, nov))
     return 0
 
 
