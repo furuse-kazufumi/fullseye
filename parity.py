@@ -133,41 +133,56 @@ def main() -> int:
     ap.add_argument("--list", default="", help="agree|close|differ — print that band")
     a = ap.parse_args()
     rows = analyze()
-    bands = {"agree": 0, "close": 0, "differ": 0}
+    bands = {"agree": 0, "close": 0, "differ": 0, "incomparable": 0}
     for r in rows:
         bands[r["band"]] += 1
     n = len(rows)
+    n_cmp = n - bands["incomparable"]             # ops we could actually compare
+    pts = ", ".join("(%.2f, %.2f)" % k for k in KNOBS)
 
     md = [
-        "# Cross-backend parity — independent implementations agree",
+        "# Cross-backend parity — independent implementations agree at the tested points",
         "",
         "For HALCON operators imgevolve implements with >=2 INDEPENDENT backends",
-        "(scipy / OpenCV / scikit-image), we run them on 6 holdout images and measure",
-        "the worst pairwise disagreement. Agreement between genuinely independent",
-        "libraries is real, falsifiable evidence the operation is faithfully implemented.",
+        "(scipy / OpenCV / scikit-image), we run them on 6 holdout images at %d knob" % len(KNOBS),
+        "operating points — %s — and measure the worst pairwise" % pts,
+        "disagreement over all of them (raw max-abs, not clipped to [0,1]).",
         "",
         "| band | meaning | count |",
         "|---|---|---|",
-        "| agree (<=0.02) | independent backends match — strong parity evidence | %d |" % bands["agree"],
+        "| agree (<=0.02) | independent backends match at every tested point | %d |" % bands["agree"],
         "| close (<=0.10) | minor numeric/library differences | %d |" % bands["close"],
         "| differ (>0.10) | different algorithm behind a shared name — disclosed | %d |" % bands["differ"],
+        "| incomparable | a backend raised or outputs cannot be diffed — not evidence | %d |"
+        % bands["incomparable"],
         "",
-        "**%d HALCON ops tested across backends; %d agree, %d close, %d differ (honest).**"
-        % (n, bands["agree"], bands["close"], bands["differ"]),
+        "**%d HALCON ops with >=2 backends; %d comparable (%d agree, %d close, %d differ), "
+        "%d incomparable (honest).**"
+        % (n, n_cmp, bands["agree"], bands["close"], bands["differ"], bands["incomparable"]),
         "",
         "## Detail",
-        "| halcon | sort | #impl | backends | max disagreement | band |",
-        "|---|---|---|---|---|---|",
+        "| halcon | sort | #impl | backends | max disagreement | worst (a,b) | band |",
+        "|---|---|---|---|---|---|---|",
     ]
-    for r in sorted(rows, key=lambda r: (-{"differ": 2, "close": 1, "agree": 0}[r["band"]], r["halcon"])):
-        md.append("| `%s` | %s->%s | %d | %s | %.4f | %s |"
+    order = {"incomparable": 3, "differ": 2, "close": 1, "agree": 0}
+    for r in sorted(rows, key=lambda r: (-order[r["band"]], r["halcon"])):
+        dis = "n/a" if r["max_disagreement"] is None else "%.4f" % r["max_disagreement"]
+        knob = "n/a" if not r["worst_knob"] else "%.2f/%.2f" % tuple(r["worst_knob"])
+        md.append("| `%s` | %s->%s | %d | %s | %s | %s | %s |"
                   % (r["halcon"], r["in"], r["out"], r["n_impl"],
-                     ", ".join(r["impls"]), r["max_disagreement"], r["band"]))
+                     ", ".join(r["impls"]), dis, knob, r["band"]))
     md += ["", "## Honest reading",
+           "- 'agree' means the backends agreed **at the %d operating points sampled**, on" % len(KNOBS),
+           "  these 6 holdout images. It is evidence of agreement, not a proof the operation",
+           "  is faithfully implemented: the knob space is not exhausted. Sampling one point",
+           "  was not enough — 5 ops agreed exactly at (0.50, 0.40) and diverged by 1.0 at a",
+           "  corner, which is why the sweep exists.",
            "- A shared `Op.halcon` is a nearest analogue; two libraries need not implement",
            "  it identically. 'differ' rows are disclosed, not hidden — they show where the",
            "  name is shared but the algorithm/parameters differ (e.g. Canny hysteresis,",
            "  adaptive thresholds, corner kernels).",
+           "- 'incomparable' rows are counted, not dropped: an op we could not compare is",
+           "  not an op that agreed.",
            "- Parity here is cross-backend, not vs HALCON itself (no license/binary).", ""]
     p = os.path.join(HERE, "docs", "PARITY_CROSSBACKEND.md")
     open(p, "w", encoding="utf-8").write("\n".join(md))
