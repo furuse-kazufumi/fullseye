@@ -944,11 +944,30 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self.setMinimumSize(380, 380)
             self.setMouseTracking(True)
             self._data = None
+            self._text_items = []                    # dev_disp_text annotations (scene items)
             self.hover_cb = None                     # set by build_window
 
         def set_pixmap(self, pm):
+            self.clear_text()                        # a fresh render starts without stale annotations
             self._item.setPixmap(pm)
             self._scene.setSceneRect(QtCore.QRectF(pm.rect()))
+
+        def disp_text(self, row, col, text, color=(1.0, 1.0, 1.0)):
+            """dev_disp_text: add a text annotation at image (row, col) on the current
+            window. Persists over the pixmap until the next render or dev_clear_window."""
+            item = self._scene.addText(str(text))
+            item.setDefaultTextColor(QtGui.QColor.fromRgbF(*[float(c) for c in color[:3]]))
+            item.setPos(float(col), float(row))      # scene is (x=col, y=row)
+            self._text_items.append(item)
+            return item
+
+        def clear_text(self):
+            for it in self._text_items:
+                try:
+                    self._scene.removeItem(it)
+                except Exception:
+                    pass
+            self._text_items = []
 
         def set_data(self, arr):
             self._data = np.asarray(arr) if arr is not None else None
