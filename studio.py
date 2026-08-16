@@ -722,12 +722,25 @@ def extract_dev_directives(text):
 
 
 def _op_row(name):
-    """Look up an op and return a ``list_ops``-shaped dict, or None."""
+    """Look up an op and return a ``list_ops``-shaped dict, or None.
+
+    Falls back to the opt-in general-algorithm tier (``algo.py``); those rows carry
+    ``backend == "general"`` so the UI shows them read-only (a different seq/scalar
+    computational model, not an image-pipeline op)."""
     op = api.find_op(name)
-    if op is None:
-        return None
-    return {"name": op.name, "halcon": op.halcon, "category": op.category,
-            "in_sort": op.in_sort, "out_sort": op.out_sort}
+    if op is not None:
+        return {"name": op.name, "halcon": op.halcon, "category": op.category,
+                "in_sort": op.in_sort, "out_sort": op.out_sort}
+    try:
+        import algo
+        aop = algo.find_algo(name)
+    except Exception:  # noqa: BLE001 - general tier is optional
+        aop = None
+    if aop is not None:
+        return {"name": aop.name, "halcon": None, "category": "algo:" + aop.category,
+                "in_sort": aop.in_sort, "out_sort": aop.out_sort,
+                "backend": "general", "provenance": aop.provenance}
+    return None
 
 
 #: Sample image the dev_* visualization demo loads (a collected, license-clean image).
