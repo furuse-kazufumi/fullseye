@@ -130,17 +130,25 @@ def com_support_margin(com_xy, contacts) -> float:
     return min(margins)                              # distance to the nearest edge (signed)
 
 
-def gait_phase(foot_heights, stance_frac: float = 0.25):
+def gait_phase(foot_heights, stance_frac: float = 0.25, ground=None, contact_tol=None):
     """Classify each foot as stance (planted) or swing per frame from its height.
 
     ``foot_heights`` is ``(T, F)`` — the height of each of ``F`` feet over ``T``
-    frames. A foot is in **stance** when its height is within *stance_frac* of that
-    foot's own range above its minimum (near the ground). Returns
-    ``{stance (T,F bool), duty_factor (F,), n_contacts (T,), double_support}``:
-    the fraction of the cycle each foot is planted (duty factor, Alexander 1984),
-    how many feet are down each frame, and the fraction of frames with >=2 feet
-    down (a coarse static-support indicator). The gait read-out for a walking
-    controller."""
+    frames. Returns ``{stance (T,F bool), duty_factor (F,), n_contacts (T,),
+    double_support}`` (duty factor, Alexander 1984; how many feet are down each
+    frame; fraction of frames with >=2 feet down).
+
+    ★Stance is defined against a ground reference:
+
+    * ``ground`` given (recommended for anti-cheat) — a foot is stance only when it
+      is within ``contact_tol`` of the absolute floor level ``ground``. This is the
+      honest test: an airborne / hopping / frozen-in-air foot is correctly NOT
+      stance.  ``contact_tol`` defaults to ``stance_frac`` × the foot's own range.
+    * ``ground=None`` (default, backward-compatible) — stance is inferred from each
+      foot's OWN height range (within ``stance_frac`` of its per-foot minimum).
+      ★This heuristic CANNOT tell a foot planted on the floor from a foot at the
+      bottom of an airborne trajectory, so it must NOT be used as a stability /
+      cheat gate — pass ``ground`` for that."""
     H = np.asarray(foot_heights, np.float64)
     if H.ndim != 2:
         raise ValueError("foot_heights must be (T, F)")
@@ -152,7 +160,11 @@ def gait_phase(foot_heights, stance_frac: float = 0.25):
     rng = np.where(~np.isfinite(rng) | (rng < 1e-12), 1.0, rng)  # never-moving foot = planted
     lo = np.where(np.isfinite(lo), lo, 0.0)
     # a NaN height at a frame compares False -> that (foot, frame) counts as not-stance
-    stance = (H - lo) <= float(stance_frac) * rng
+    if ground is not None:
+        tol = float(contact_tol) if contact_tol is not None else float(stance_frac) * rng
+        stance = (H - float(ground)) <= tol          # absolute proximity to the floor
+    else:
+        stance = (H - lo) <= float(stance_frac) * rng
     duty = stance.mean(0)
     n_contacts = stance.sum(1)
     return {"stance": stance, "duty_factor": duty,

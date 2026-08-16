@@ -175,3 +175,16 @@ def test_gait_phase_antiphase_and_planted():
     # left and right rarely in stance together (anti-phase)
     both = g["stance"][:, 0] & g["stance"][:, 1]
     assert both.mean() < 0.2
+
+
+def test_gait_phase_ground_reference_rejects_airborne_stance():
+    """An airborne/frozen/hopping foot must NOT read as stance when a ground
+    reference is given (the anti-cheat gate); ground=None keeps the old heuristic."""
+    import numpy as np
+    import locomotion
+    frozen = np.full((20, 2), 5.0)                     # motionless 5 m up, ground at 0
+    assert locomotion.gait_phase(frozen, ground=0.0)["duty_factor"].tolist() == [0.0, 0.0]
+    assert locomotion.gait_phase(frozen)["duty_factor"].tolist() == [1.0, 1.0]  # old heuristic
+    t = np.linspace(0, 2 * np.pi, 40)
+    hop = np.stack([0.6 + 0.2 * np.sin(t)] * 2, 1)     # oscillates 0.4..0.8, never touches
+    assert locomotion.gait_phase(hop, ground=0.0)["duty_factor"].tolist() == [0.0, 0.0]

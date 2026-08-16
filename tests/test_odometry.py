@@ -131,4 +131,7 @@ def test_pnp_odometry_wraps_solve_pnp():
     uv, _ = camera.project_points(X, K, R_true, t_true)
     R, t, rms = odometry.pnp_odometry(X, uv, K)
     assert rms < 1e-3
-    assert np.allclose(R, R_true, atol=1e-4) and np.allclose(t, t_true, atol=1e-4)
+    # pnp_odometry returns CAMERA motion (same convention as rgbd_odometry), which
+    # is the inverse of solve_pnp's scene-point motion (R_true, t_true).
+    assert np.allclose(R, R_true.T, atol=1e-4)
+    assert np.allclose(t, -R_true.T @ t_true, atol=1e-4)

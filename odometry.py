@@ -14,10 +14,10 @@ pixels via PnP). Plus trajectory utilities: compose relative motions
 (:func:`integrate_trajectory`) and evaluate against ground truth with a Umeyama
 alignment (:func:`umeyama_align`, :func:`trajectory_error`).
 
-Convention: a returned relative pose ``(R, t)`` is the **scene-point motion**
-between frames, ``X1 ≈ R @ X0 + t`` (points expressed in each camera's frame);
-the camera's own motion is its inverse. ``integrate_trajectory`` composes these
-into absolute 4x4 poses.
+Convention: both estimators (:func:`rgbd_odometry`, :func:`pnp_odometry`) return
+the **camera motion** ``(R, t)`` between frames, so ``integrate_trajectory``
+composes them directly into absolute 4x4 camera poses.  (Internally each derives
+the scene-point motion ``X1 ≈ R·X0 + t`` and inverts it to the camera motion.)
 
 References (public literature — reimplemented, not derived from any product):
 - Umeyama, "Least-squares estimation of transformation parameters between two
@@ -113,13 +113,19 @@ def rgbd_odometry(depth0, depth1, u, v, K, thresh: float = 0.02,
 
 
 def pnp_odometry(points3d_prev, uv_curr, K, **kw):
-    """Frame-to-frame camera pose from the previous frame's 3-D points seen in the
-    current frame's pixels (3-D↔2-D). Thin wrapper over :func:`camera.solve_pnp`;
-    returns ``(R, t, rms)`` mapping the previous points into the current camera
-    frame. Use when only the previous frame's depth is available."""
+    """Frame-to-frame CAMERA motion from the previous frame's 3-D points seen in
+    the current frame's pixels (3-D↔2-D). Uses :func:`camera.solve_pnp`.
+
+    ★Returns ``(R, t, rms)`` in the SAME convention as :func:`rgbd_odometry` — the
+    camera motion between the two frames — so it composes correctly through
+    :func:`integrate_trajectory`.  ``solve_pnp`` itself returns the *scene-point*
+    motion (X_cur = R·X_prev + t); this inverts it to the camera motion.  (Before
+    this fix pnp_odometry returned the un-inverted solve_pnp result, which is the
+    inverse of rgbd_odometry's and produced a reversed integrated trajectory.)"""
     from camera import solve_pnp
 
-    return solve_pnp(points3d_prev, uv_curr, K, **kw)
+    R, t, rms = solve_pnp(points3d_prev, uv_curr, K, **kw)
+    return R.T, -R.T @ t, rms
 
 
 def _to_4x4(R, t):
