@@ -566,6 +566,9 @@ def recover_pose(E, uv1, uv2, K, K2=None):
             n = int(infront.sum())
             if best is None or n > best[0]:
                 best = (n, R, tt, infront)
+    if best[0] == 0:                            # cheirality decided nothing
+        raise ValueError("degenerate correspondences (zero baseline / pure "
+                         "rotation): no pose puts any point in front of both cameras")
     return best[1], best[2], best[3]
 
 
