@@ -101,24 +101,30 @@ def analyze():
     imgs = _holdout()
     rows = []
     for (h, isort, osort), impls in sorted(multi.items()):
-        worst = 0.0
+        worst, worst_knob = 0.0, None
         comparable = True
-        for v in imgs:
-            base = v if isort == "image" else (v > 0.5).astype(np.float64)
-            outs = [_run(op, base) for op in impls]
-            for i in range(len(outs)):
-                for j in range(i + 1, len(outs)):
-                    d = _diff(outs[i], outs[j], osort)
-                    if d is None:
-                        comparable = False
-                    else:
-                        worst = max(worst, d)
-        if not comparable:
-            continue
-        band = "agree" if worst <= 0.02 else ("close" if worst <= 0.10 else "differ")
-        rows.append({"halcon": h, "in": isort, "out": osort, "n_impl": len(impls),
-                     "impls": [op.name for op in impls], "max_disagreement": round(worst, 5),
-                     "band": band})
+        for ka, kb in KNOBS:                     # worst case over the operating points
+            for v in imgs:
+                base = v if isort == "image" else (v > 0.5).astype(np.float64)
+                outs = [_run(op, base, ka, kb) for op in impls]
+                for i in range(len(outs)):
+                    for j in range(i + 1, len(outs)):
+                        d = _diff(outs[i], outs[j], osort)
+                        if d is None:
+                            comparable = False
+                        elif worst_knob is None or d > worst:
+                            worst, worst_knob = d, (ka, kb)
+        row = {"halcon": h, "in": isort, "out": osort, "n_impl": len(impls),
+               "impls": [op.name for op in impls], "knobs_tested": len(KNOBS)}
+        if comparable:
+            row.update({"max_disagreement": round(worst, 5),
+                        "worst_knob": list(worst_knob) if worst_knob else None,
+                        "band": "agree" if worst <= 0.02 else ("close" if worst <= 0.10 else "differ")})
+        else:
+            # Fail-closed: this group used to be dropped silently, so the headline
+            # counted only ops we could compare while claiming to count ops tested.
+            row.update({"max_disagreement": None, "worst_knob": None, "band": "incomparable"})
+        rows.append(row)
     return rows
 
 
