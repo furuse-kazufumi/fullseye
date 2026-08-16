@@ -6,10 +6,7 @@ read only `data/halcon_operators.json`, which is NOT shipped in the wheel, and t
 guard `if real and name not in real` short-circuits on an empty set — so on a
 pip-installed package every fabricated / mistyped name was compiled in and counted.
 """
-import os
-import sys
-
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from __future__ import annotations
 
 import backends_auto as BA
 
