@@ -1808,6 +1808,11 @@ def build_window(model=None):
     win._current_label = QtWidgets.QLabel("current: Graphics 1")
     win._current_label.setProperty("hint", True)
     win.statusBar().addPermanentWidget(win._current_label)
+    # a permanent indicator when display updates are OFF, so a frozen display never
+    # reads as a broken one (HDevelop dev_update_off state).
+    win._update_label = QtWidgets.QLabel("")
+    win._update_label.setStyleSheet("QLabel{color:%s;}" % AMBER)
+    win.statusBar().addPermanentWidget(win._update_label)
     mdi.subWindowActivated.connect(_set_current_gfx)
     win._current_view = _current_view
     win._current_handle = _current_handle
