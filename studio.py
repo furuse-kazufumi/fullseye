@@ -752,7 +752,7 @@ def _op_row(name):
     if aop is not None:
         return {"name": aop.name, "halcon": None, "category": "algo:" + aop.category,
                 "in_sort": aop.in_sort, "out_sort": aop.out_sort,
-                "backend": "general", "provenance": aop.provenance}
+                "backend": "general", "provenance": aop.provenance, "desc": aop.doc}
     return None
 
 
@@ -1125,6 +1125,23 @@ def op_help_html(name, lang="en", meta=None):
             except Exception:
                 break
     m = meta or {}
+    if m.get("backend") == "general":
+        # general-algorithm tier: a seq/scalar op run via the CLI, NOT an image op with a/b knobs.
+        # (op_signature_detail / op_tooltip / add_op / apply_program already guard on this; the help
+        # CARD was the one path that fell through to the false "Two knobs a, b" text — review finding.)
+        def _esc(s):
+            return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        sig = _esc(op_signature_detail(m)).replace("\n", "<br>")
+        desc = _esc(m.get("desc") or "")
+        return ("<h2 style='color:#f5a524;margin:0 0 4px 0'>%s "
+                "<span style='color:#8b91a0;font-size:11px'>· general-algorithm tier</span></h2>"
+                "<p style='color:#8b91a0'><b>%s</b></p>"
+                "<p style='font-family:monospace;font-size:11px'>%s</p>"
+                "<p style='color:#8b91a0;font-size:11px'>A <b>seq/scalar</b> op — not an image "
+                "operator: it has no a/b knobs and does not enter the pipeline. Run it from the CLI "
+                "(<code>py -3.11 imgevolve.py algo run %s --seq ...</code>) or via "
+                "<code>fullseye.run_algo(\"%s\", [...])</code>.</p>"
+                % (_esc(name), desc, sig, _esc(name), _esc(name)))
     halcon = (" · HALCON: %s" % m["halcon"]) if m.get("halcon") else ""
     sorts = "%s → %s" % (m.get("in_sort", "?"), m.get("out_sort", "?"))
     return ("<h2 style='color:#f5a524;margin:0 0 4px 0'>%s "

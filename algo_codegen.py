@@ -106,11 +106,29 @@ def emit_c(op: algo.AlgoOp) -> str:
         "#include <stdlib.h>",
         "#include <stdint.h>",     # SIZE_MAX for the driver's length bound check
         "",
+        _IEEE_GUARD,
+        "",
         op.c_code.rstrip(),
         "",
         _driver_c(op),
     ]
     return "\n".join(parts)
+
+
+# The whole tier's contract is bit-exact agreement with the Python reference, and the ops' NaN /
+# range guards rely on IEEE comparison semantics (a plain `x >= 0.0` that a NaN must fail). Under
+# -ffast-math / -ffinite-math-only the compiler ASSUMES operands are never NaN/Inf, which ELIDES
+# those guards — an out-of-range or NaN double then reaches the (long long)/(unsigned long long)
+# cast and executes UB (verified: `gcd_seq([NaN,6])` returns 2.0 instead of the fail-soft 0.0 when
+# built with -ffinite-math-only). This shipped artifact refuses to build under that assumption
+# rather than miscompile silently. __FAST_MATH__ is defined by -ffast-math; __FINITE_MATH_ONLY__ is
+# 1 under -ffast-math and -ffinite-math-only, 0 otherwise (incl. the gate's -O2 -ffp-contract=off).
+_IEEE_GUARD = (
+    "#if defined(__FAST_MATH__) || (defined(__FINITE_MATH_ONLY__) && __FINITE_MATH_ONLY__)\n"
+    '#error "fullseye algo codegen requires IEEE semantics: do not compile with '
+    '-ffast-math / -ffinite-math-only (they elide the NaN/range guards)."\n'
+    "#endif"
+)
 
 
 def emit(name: str, wd: Path) -> dict:

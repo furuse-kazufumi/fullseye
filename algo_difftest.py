@@ -142,6 +142,33 @@ def _lcs_recursive(a: tuple, b: tuple) -> float:
     return float(c(len(a), len(b)))
 
 
+def _int_in(x: float, lo: float, hi: float) -> bool:
+    """True iff x is a finite, integer-valued double in [lo, hi] — the NaN-safe raw-value +
+    integrality guard the P5 data-value ops use. The P5 oracles call this to mirror each op's
+    declared domain, so an out-of-domain holdout case makes the oracle return the op's fail-soft
+    value (0.0 / []) — which the op must also return — instead of crashing (zlib.crc32 / pow() /
+    int(nan) all raise on out-of-domain input). That lets the honest gate itself FALSIFY a broken
+    guard (a divergent op no longer matches the oracle), not only the one parity unit test."""
+    return math.isfinite(x) and lo <= x <= hi and x == float(int(x))
+
+
+def _is_prime_trial(p: int) -> bool:
+    """Primality by trial division — an INDEPENDENT oracle for sieve_primes (a wholly
+    different code path from the sieve: per-candidate division vs. a marking pass)."""
+    if p < 2:
+        return False
+    if p < 4:
+        return True
+    if p % 2 == 0:
+        return False
+    i = 3
+    while i * i <= p:
+        if p % i == 0:
+            return False
+        i += 2
+    return True
+
+
 def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
     """Per-op holdout. Numeric ops need VALID structured inputs (samples for
     Simpson, sign-bracketed / near-root polynomials for the root finders)."""
@@ -313,6 +340,100 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             m = len(edges) // 3
             cases.append([float(n), float(m), float(rng.randint(0, n - 1))] + edges)
         return cases
+    if name == "gcd_seq":
+        cases = [
+            [],                                            # empty -> 0
+            [0.0],                                         # gcd(0) = 0
+            [0.0, 0.0],                                    # gcd(0,0) = 0
+            [12.0],                                        # gcd(12) = 12
+            [12.0, 18.0],                                  # gcd = 6
+            [12.0, 18.0, 24.0],                            # gcd = 6
+            [17.0, 5.0],                                   # coprime -> 1
+            [0.0, 7.0],                                    # gcd(0,7) = 7
+            [1000000000.0, 999999999.0],                   # large coprime -> 1
+            [2.0 ** 40, 2.0 ** 35],                        # powers of two -> 2^35
+            [9007199254740992.0, 4503599627370496.0],      # AT the 2^53 guard edge -> 2^52
+            [9007199254740992.0, 9007199254740991.0],      # 2^53 vs 2^53-1 (coprime) -> 1
+            # out-of-domain -> op fail-softs 0.0 (exercises the guard; oracle mirrors it):
+            [12.0, -6.0],                                  # negative
+            [12.0, 6.5],                                   # non-integer
+            [float("nan"), 6.0],                           # NaN header value
+            [1e300],                                       # > 2^53
+        ]
+        for _ in range(30):
+            k = rng.randint(0, 6)
+            cases.append([float(rng.randint(0, 100000)) for _ in range(k)])
+        for _ in range(6):                                 # share a common factor -> gcd > 1
+            g = rng.randint(2, 50)
+            cases.append([float(g * rng.randint(1, 5000)) for _ in range(rng.randint(2, 5))])
+        return cases
+    if name == "sieve_primes":
+        cases = [[float(n)] for n in (0, 1, 2, 3, 4, 5, 10, 11, 12, 30, 97, 100, 541, 1000)]
+        for _ in range(20):
+            cases.append([float(rng.randint(0, 2000))])
+        # out-of-domain / boundary -> op fail-softs [] (over cap / NaN / negative) or truncates a
+        # fractional header. (The AT-cap accept edge n=5,000,000 is slow in the Python reference, so
+        # it lives in a dedicated C-only test, not this shared holdout — see test_algo.py.)
+        cases += [[float("nan")], [-3.0], [5000001.0], [1e9], [30.5]]
+        return cases
+    if name == "pow_mod":
+        cases = [
+            [2.0, 10.0, 1000.0],                           # 1024 mod 1000 = 24
+            [3.0, 0.0, 7.0],                               # exp 0 -> 1
+            [0.0, 5.0, 7.0],                               # 0
+            [5.0, 3.0, 1.0],                               # mod 1 -> 0
+            [7.0, 128.0, 13.0],                            # large exp
+            [123456.0, 65537.0, 1000000007.0],             # RSA-flavoured (< 2^32 modulus)
+            # AT the declared base/exp domain edge (2^53) — pins the honest-domain disclosure so an
+            # exp->uint32 / base->uint32 C truncation regression is caught by the gate, not just docs:
+            [2.0, 9007199254740992.0, 7.0],                # base small, exp = 2^53
+            [9007199254740992.0, 9007199254740992.0, 4294967295.0],   # base=exp=2^53, mod=2^32-1
+            [9007199254740991.0, 9007199254740991.0, 4294967291.0],   # 2^53-1, near-max mod
+            [9007199254740992.0, 3.0, 1000003.0],          # base > mod -> reduction path
+            # the '1 % mod' special case (exp == 0 AND mod == 1): unfalsifiable without BOTH together
+            [7.0, 0.0, 1.0],                               # pow(7,0,1) = 0
+            [0.0, 0.0, 1.0],                               # pow(0,0,1) = 0
+            # short / empty (falsifies the C `n < 3` guard, which else OOB-reads freed heap):
+            [], [2.0], [2.0, 3.0],
+            # out-of-domain -> op fail-softs 0.0 (exercises base/exp/mod guards in the gate):
+            [2.0, 3.0, 0.0],                               # mod 0
+            [2.0, -1.0, 7.0],                              # negative exp
+            [2.0, 3.0, 5e9],                               # mod > 2^32-1
+            [2.5, 3.0, 7.0],                               # non-integer base
+            [float("nan"), 3.0, 7.0],                      # NaN
+        ]
+        for _ in range(30):
+            cases.append([float(rng.randint(0, 1000000)),
+                          float(rng.randint(0, 100000)),
+                          float(rng.randint(1, 4294967295))])
+        return cases
+    if name == "crc32":
+        cases = [
+            [],                                            # crc32(b'') = 0
+            [0.0],
+            [255.0],
+            [72.0, 101.0, 108.0, 108.0, 111.0],            # "Hello"
+            [float(i) for i in range(256)],                # every byte value
+            # out-of-domain -> op fail-softs 0.0 (exercises the byte guard in the gate):
+            [256.0], [-1.0], [1.5], [float("nan")],
+        ]
+        for _ in range(30):
+            k = rng.randint(0, 40)
+            cases.append([float(rng.randint(0, 255)) for _ in range(k)])
+        return cases
+    if name == "rle_encode":
+        cases = [
+            [],                                            # empty
+            [5.0],                                         # single run
+            [7.0, 7.0, 7.0, 7.0],                          # one long run
+            [1.0, 2.0, 3.0, 4.0],                          # all distinct -> output 2x input
+            [1.0, 1.0, 2.0, 2.0, 2.0, 3.0],                # mixed runs
+            [0.0, -0.0, 0.0],                              # +0/-0 compare equal -> one run
+        ]
+        for _ in range(30):
+            k = rng.randint(0, 30)
+            cases.append([float(rng.randint(0, 3)) for _ in range(k)])   # small alphabet -> runs
+        return cases
     return make_holdout(seed)
 
 
@@ -408,6 +529,74 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                         return float("inf")            # disagree on reachability
                     if reach_g:
                         errs.append(_diff01(float(got[i]), float(d[i])))
+        return max(errs, default=0.0)
+    if name == "gcd_seq":
+        # independent oracle: math.gcd (CPython's C-level GCD). Domain-aware: an out-of-domain
+        # element (negative / non-integer / > 2^53) mirrors the op's fail-soft 0.0 (also empty).
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if arr and all(_int_in(x, 0.0, 9007199254740992.0) for x in arr):
+                ref = float(math.gcd(*[int(x) for x in arr]))
+            else:
+                ref = 0.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "sieve_primes":
+        # independent oracle: per-candidate trial division (a different code path). Domain-aware:
+        # n out of [0, 5,000,000] (or a NaN header) mirrors the op's fail-soft []; n is a truncated
+        # header (no integrality), so n=int(nd) — matching the op — and n<2 yields [] naturally.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if arr and math.isfinite(arr[0]) and 0.0 <= arr[0] <= 5000000.0:
+                n = int(arr[0])
+                primes = [float(p) for p in range(2, n + 1) if _is_prime_trial(p)]
+            else:
+                primes = []
+            if len(got) != len(primes):
+                return float("inf")
+            for x, y in zip(got, primes):
+                errs.append(_diff01(float(x), float(y)))
+        return max(errs, default=0.0)
+    if name == "pow_mod":
+        # independent oracle: Python's built-in three-arg pow. Domain-aware: short input or a
+        # base/exp/mod outside the declared domain mirrors the op's fail-soft 0.0 (and keeps pow()
+        # off mod == 0, which would raise).
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if (len(arr) >= 3 and _int_in(arr[0], 0.0, 9007199254740992.0)
+                    and _int_in(arr[1], 0.0, 9007199254740992.0)
+                    and _int_in(arr[2], 1.0, 4294967295.0)):
+                ref = float(pow(int(arr[0]), int(arr[1]), int(arr[2])))
+            else:
+                ref = 0.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "crc32":
+        # independent oracle: zlib.crc32 (the zlib C library). Domain-aware: a non-byte value
+        # (out of [0,255] / non-integer / NaN) mirrors the op's fail-soft 0.0 and keeps the bytes()
+        # call in range (it raises otherwise). Empty stays crc32(b'') = 0.
+        import zlib
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if all(_int_in(x, 0.0, 255.0) for x in arr):
+                ref = float(zlib.crc32(bytes(int(x) for x in arr)) & 0xFFFFFFFF)
+            else:
+                ref = 0.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "rle_encode":
+        # independent oracle: itertools.groupby (a different grouping mechanism).
+        from itertools import groupby
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            pairs: list[float] = []
+            for val, grp in groupby(arr):
+                pairs.append(float(val))
+                pairs.append(float(sum(1 for _ in grp)))
+            if len(got) != len(pairs):
+                return float("inf")
+            for x, y in zip(got, pairs):
+                errs.append(_diff01(float(x), float(y)))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:

@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-17 01:02:36
+- **最終更新**: 2026-08-17 08:00:09
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-830518f auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-17 01:02)
-c0aef08 auto: test_algo.py 編集前 (2026-08-17 01:01)
-b2da2f6 auto: test_algo.py 編集前 (2026-08-17 01:01)
-34b0f76 auto: algo.py 編集前 (2026-08-17 01:00)
-45679a3 auto: algo.py 編集前 (2026-08-17 01:00)
-b4c0efa auto: test_algo.py 編集前 (2026-08-17 00:58)
-e2c295b auto: test_algo.py 編集前 (2026-08-17 00:58)
-1084598 auto: algo.py 編集前 (2026-08-17 00:57)
-d7b326d auto: algo.py 編集前 (2026-08-17 00:57)
-60e8682 auto: algo.py 編集前 (2026-08-17 00:57)
+e18692b auto: GENERAL_ALGORITHMS.md 編集前 (2026-08-17 07:59)
+47f7972 auto: test_algo.py 編集前 (2026-08-17 07:58)
+97358b2 auto: test_studio.py 編集前 (2026-08-17 07:56)
+c59767c auto: studio.py 編集前 (2026-08-17 07:55)
+58b05d4 auto: studio.py 編集前 (2026-08-17 07:55)
+58be39d auto: api.py 編集前 (2026-08-17 07:55)
+9bd30be auto: test_algo.py 編集前 (2026-08-17 07:54)
+6f9b76a auto: algo.py 編集前 (2026-08-17 07:53)
+96a54bd auto: algo.py 編集前 (2026-08-17 07:53)
+669d0fa auto: algo.py 編集前 (2026-08-17 07:53)
 ```
 
 ## 現在の git status
 
 ```
 M docs/GENERAL_ALGORITHMS.md
- M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-01:02 docs/SESSION_SUMMARY.md
-01:02 .pytest_cache/v/cache/nodeids
-01:02 docs/GENERAL_ALGORITHMS.md
-01:01 .ruff_cache/0.16.0/7363606932562918290
-01:01 .ruff_cache/0.16.0/2128910586982079947
-01:01 tests/test_algo.py
-01:00 algo.py
-00:58 .pytest_cache/v/cache/lastfailed
-00:57 algo_codegen.py
-00:53 .mypy_cache/3.11/cache.7.db
-00:53 .mypy_cache/3.11/cache.3.db
-00:53 algo_difftest.py
-00:45 docs/STATUS.md
-00:44 synth.py
-00:39 .ruff_cache/0.16.0/1286514413293979089
+07:59 docs/GENERAL_ALGORITHMS.md
+07:58 .mypy_cache/missing_stubs
+07:58 .mypy_cache/3.11/cache.7.db
+07:58 .mypy_cache/3.11/cache.3.db
+07:58 .mypy_cache/3.11/cache.14.db
+07:58 .mypy_cache/3.11/cache.10.db
+07:58 .ruff_cache/0.16.0/7363606932562918290
+07:58 tests/test_algo.py
+07:57 .ruff_cache/0.16.0/2128910586982079947
+07:57 .pytest_cache/v/cache/nodeids
+07:56 tests/test_studio.py
+07:55 studio.py
+07:55 api.py
+07:53 algo.py
+07:53 algo_codegen.py
 ```
 
 ---

@@ -140,7 +140,11 @@ gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が
   規約(`text_to_seq`/`seq_to_text`)で既存 float64 harness に載せ、新 wire 型を足さずに実現。
 - **P4(完了 2026-08-17)**: グラフ op(components/mst_weight/dijkstra、下記 P4 完遂記録)。`graph` は
   `[n, m, (u,v,w)*m]` パックで既存 harness に載せた(新 wire 型不要)。
-- P5 圧縮・数論・暗号(教育用・honest 開示)。
+- **P5(完了 2026-08-17)**: 数論・圧縮・教育用ハッシュ(gcd_seq / sieve_primes / pow_mod / crc32 /
+  rle_encode、下記 P5 完遂記録)。整数を float64 で運ぶ(exact <2^53)ため新 wire 型不要。全 op が
+  **exact**(C bit 一致 かつ Python==独立 oracle tol 0)。**暗号は primitive のみ**(modular
+  exponentiation / CRC)= フル RSA/AES/SHA は bignum/大状態で float64 seq harness に載らないため範囲外
+  と honest 開示。
 
 ## P3 完遂記録 — 文字列 op(2026-08-17, Opus5[1m]/ultracode, `graph-loop-engineering`)
 **文字列アルゴリズム 3 種を algo tier に追加。** 「文字列 = コードポイント列を float64 で運ぶ」(Unicode スカラーは
@@ -272,3 +276,69 @@ breadth は work-graph の difftest ゲート、敵対 findings 採否・push �
   (到達不可ノード未検証←known-answer/sparse テストで被覆)。numeric/oracle 各レンズの他指摘なし。
 - **op 波**: 3 グラフ op も work-graph ゲート化(全 algo op = 15 が 1 op=1 ノードで無人 done)。全スイート緑・ruff clean
   ・mypy 回帰 0。push はセッション(ユーザー承認)。
+
+## P5 完遂記録 — 数論・圧縮・教育用ハッシュ(2026-08-17, Opus5[1m]/ultracode, `graph-loop-engineering`)
+**汎用アルゴリズム 5 種を algo tier に追加し、algo-c ロードマップ(P1→P5)を完遂。** 整数を float64 で運ぶ
+(exact < 2^53)ため新 wire 型不要。ビット/整数演算は C 側で `unsigned long long`/`unsigned int` に cast して行い、
+double へ戻す(結果は < 2^53 で exact)。**全 5 op が exact**(C==Python bit 一致 かつ Python==独立 oracle tol 0)。
+- **op(5)**:
+  - `gcd_seq`(KIND_REDUCE): 非負整数列の GCD(Euclid・列に fold)。oracle=`math.gcd`。
+  - `sieve_primes`(**KIND_MAP**): エラトステネスの篩。入力 `[n]`(長さ 1)→ n 以下の素数昇順=**出力が入力長を
+    大きく超える**代表例。size-probe 上界 `π(n) ≤ n/2 + 1`(2 と奇数の数、log 不要=`math.h` 非依存)。oracle=試し割り(独立経路)。
+  - `pow_mod`(KIND_REDUCE): モジュラー冪 base^exp mod m(square-and-multiply=RSA/DH の primitive・教育用)。oracle=builtin `pow`。
+  - `crc32`(KIND_REDUCE): CRC-32(IEEE 802.3・reflected・poly 0xEDB88320)。**c_func は `crc32_ieee`**(zlib/BSD の
+    `crc32` シンボル衝突を防御的に回避、cf. heapsort_asc)。oracle=`zlib.crc32`(zlib C ライブラリ=完全独立)。
+  - `rle_encode`(**KIND_MAP**): 連長圧縮 →`[value, count, ...]`(**出力最大 2×入力**、全異なると 2n)。可逆・oracle=`itertools.groupby`。
+- **★honest 域の開示(pow_mod)**: uint64 の中間積が溢れないよう **mod ≤ 2^32−1**(積 < mod² < 2^64)、base/exp ≤ 2^53。
+  結果 < mod < 2^53 で float64 exact。域外は fail-soft 0.0(raw guard を int() の前・NaN 安全)。
+- **★暗号は primitive のみ(honest scope)**: フル RSA/AES/SHA は bignum・大状態で float64 seq harness に載らないため
+  範囲外と明記。載る primitive(modular exponentiation / CRC checksum)を**アルゴリズム開示**で提供(cipher ではない)。
+- **★整数性ガード(新規・honest 改善)**: gcd_seq/pow_mod/crc32 は**データ値**ゆえ非整数は malformed → fail-soft。
+  `x == float(int(x))` / `x == (double)(long long)x` を**range チェックの後に short-circuit**(NaN/超過値では cast に到達せず
+  `int(nan)` クラッシュ・C の `(long long)nan` UB を回避)。header 系(sieve の n)は既存 gauss/dijkstra と同じ切り捨て規約。
+- **★KIND_MAP 2 段 size-probe を新 2 op で活用**: sieve(出力≫入力)・rle(出力≤2×入力)とも `if(!out) return <上界>` で
+  driver が上界を問い→確保→実書き込み。専用テストで **C 出力が入力長を超えても heap OOB しない**ことを実 compile/run で固定。
+- **honest gate 実測(5 op とも passed=True・c_verified=true・ziglang cc)**: Python==独立 oracle **diff 0.0(exact)** /
+  codegen **C==Python bit 一致 diff 0.0**。crc32 は `zlib.crc32` と全バイト値・"Hello"・全 256 バイトで一致確認。
+- **work-graph op 波**: 5 P5 op を `algo_gate` ゲートノード化(`1 op=1 ノード`・priority 0・tool capability)→
+  `run-once --available tool:command` で **5 ノード無人 done**(各 `gate_ok.json`=c_verified/bit 一致マーカー生成)。
+  = **全 algo op 20 が work-graph ゲート化**(15→20)。
+- **回帰**: `tests/test_algo.py` に P5 テスト群(既知解・独立 oracle 照合 over-random・fail-soft・整数性・
+  2 段 probe の出力超過・bad-input C-vs-Python parity・no-mutation・python exact・C bit 一致)。全スイート
+  **4700 → 4736 passed / 0 failed**(+36)・私の新規ファイル ruff clean・mypy 新規エラー 0(既存 baseline のみ)。
+
+### P5 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+自作 P5 コードへ独立敵対レビュー Workflow(4 レンズ=algorithm-correctness / C-safety-codegen / gate-honesty /
+integration-focus、各 finding を検証エージェントが**実 compile/実行で再現**、18 agents)。**14 raw → 9 CONFIRMED / 5
+REFUTED**。全 CONFIRMED を私が一次再現(自分で ziglang compile・実行)した上で修正。**特筆すべきは「gate が自作の
+guard を falsify できるか」への深い突き**:
+- **[MED] pow_mod の honest 域(base/exp ≤ 2^53)が holdout で未計測** → exp を uint32 に切り詰める C 変異が gate を
+  通過(base/exp 最大 1e6/1e5 で上位 ~33bit 未計測)。**修正**=holdout に 2^53 境界ケース([2,2^53,7]・[2^53,2^53,2^32-1]
+  等)追加 + random を [0,2^53] 全域に拡大。**再現確認**: 修正後は exp→uint32 変異が `passed=False`。
+- **[LOW] gcd(2^53 guard)/sieve(5,000,000 cap)も同種の未計測境界** → gcd 境界を holdout に追加(変異 falsify 確認)、
+  sieve at-cap は Python 参照が遅い(~7.7s)ため**専用 C-only テスト**で n=5,000,000 受理(π=348513・独立 numpy sieve で検算)
+  ・n=5,000,001 棄却を計測。
+- **[MED] -ffast-math / -ffinite-math-only が NaN ガードを消去** → shipped C artifact を fast-math で compile すると
+  `x >= 0.0` の NaN 棄却が省かれ `(long long)NaN` UB が実行(**自己再現**: `gcd_seq([NaN,6])` が `-ffinite-math-only` で 2.0、
+  gate 既定 `-ffp-contract=off` では 0.0)。**修正**=`algo_codegen.emit_c` に `#if __FAST_MATH__ || __FINITE_MATH_ONLY__ →
+  #error` を注入(artifact が silent miscompile せず**ビルド拒否**=fail-closed)+ C コメントの「UB 到達不可」を IEEE 前提と
+  honest 訂正 + fast-math ビルド拒否テスト追加。
+- **[MED] C の短小入力ガード(pow_mod `n<3` / sieve `n_in<1`)が falsify 不能** → 全 holdout が固定長ゆえガード削除で
+  OOB heap read を admit しても全テスト緑。**修正**=holdout / parity テストに空・短小配列を追加し境界パスを exercise。
+  **honest 開示**: black-box 値比較は safety-guard 削除を**決定的には**捕捉できない(OOB 読み取り値が非決定的)。本来は
+  ASan が正攻法だが **ziglang の ASan は本 Windows 環境でリンク不能**(`__asan_shadow_memory_dynamic_address` 未定義)。
+  Python 側ガードは決定的に falsify 可能・C 側は境界 exercise + サニタイザで捕捉可(環境制約で自動化は保留)。
+- **[MED] pow_mod の `1 % mod` 特殊分岐が falsify 不能**(exp==0 かつ mod==1 の同時ケースがどこにも無い)→ holdout に
+  [7,0,1]・[0,0,1] 追加 + 既知解 assert(**再現確認**: `1%mod→1` 変異が `passed=False`)。
+- **[MED] P5 oracle が域外入力でクラッシュ**(zlib.crc32 / pow() / int(nan) が raise)→ holdout に域外ケースを足すと
+  difftest が例外送出=gate が guard 規約を**構造的に被覆できない**(1 unit test のみが捕捉)。**修正**=各 P5 oracle を
+  **ドメイン認識化**(`_int_in` で op の宣言域を鏡写し→域外は op の fail-soft 値 0.0/[] を返す=クラッシュ回避)。これで
+  gate 自体が guard 発散を falsify 可能に(**再現確認**: crc integrality 削除・gcd guard 縮小の各変異が `passed=False`)。
+- **[LOW] Studio の Operator-help カードが general op に「Two knobs a,b」と虚偽表示**(P1.5b で picker は塞いだが
+  browser 選択の `op_help_html` フォールスルーは未ガード・全 20 algo op に波及)→ `op_help_html` に general 分岐追加
+  (provenance + packed-input 契約 + CLI 実行を表示)+ `_op_row`/`api.algo_rows` に `desc`(op.doc)追加 + 回帰テスト。
+- **[LOW] image-processing skill の YAML frontmatter description(auto-trigger 面)が P1 のみ広告**(body は 20 op 更新済)→
+  description の algo 節を P2–P5 全スコープ + トリガ語(primes/modular exponentiation/CRC-32/RLE/shortest path)に拡張。
+- **REFUTED 5 件**(検証で棄却): いずれも現行コードは正しく、finding が実挙動を誤認(検証エージェントが実行で反証)。
+- レビュー後: 5 P5 op とも difftest = python exact / C bit 一致 / c_verified=true、全スイート **4742 passed / 0 failed**
+  (レビュー修正テスト +6)・私の新規ファイル ruff clean・mypy 新規 0。work-graph 5 ノードも post-fix で再ゲート(done)。

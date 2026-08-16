@@ -479,7 +479,8 @@ def algo_rows() -> list[dict]:
         return []
     return [{"name": op.name, "halcon": None, "in_sort": op.in_sort,
              "out_sort": op.out_sort, "category": "algo:" + op.category,
-             "tier": "z_algo", "backend": "general", "provenance": op.provenance}
+             "tier": "z_algo", "backend": "general", "provenance": op.provenance,
+             "desc": op.doc}          # packed-input contract (surfaced read-only in the UI help card)
             for op in algo.ALGO_REGISTRY]
 
 

@@ -30,8 +30,17 @@ _STRING = ["strfind", "edit_distance", "lcs_length"]
 # P4: graph ops (packed [n, m, (u,v,w)*m]). graph_dijkstra is a KIND_MAP distance vector;
 # graph_components/graph_mst_weight are KIND_REDUCE. Independent oracle = scipy.csgraph.
 _GRAPH = ["graph_components", "graph_mst_weight", "graph_dijkstra"]
+# P5: number theory / compression / hashing (integers carried as float64, exact). gcd_seq /
+# pow_mod / crc32 are KIND_REDUCE; sieve_primes / rle_encode are KIND_MAP (output can exceed
+# the input). All exact (tol 0). Independent oracles = math.gcd / trial division / builtin pow
+# / zlib.crc32 / itertools.groupby.
+_NUMTHEORY = ["gcd_seq", "sieve_primes", "pow_mod"]
+_HASH = ["crc32"]
+_COMPRESS = ["rle_encode"]
+_P5 = _NUMTHEORY + _HASH + _COMPRESS
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
-_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH       # every registered op, in registry order
+# every registered op, in registry order
+_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -65,6 +74,9 @@ def test_categories_grouping():
     assert set(cats["numeric"]) == set(_NUMERIC)
     assert set(cats["string"]) == set(_STRING)
     assert set(cats["graph"]) == set(_GRAPH)
+    assert set(cats["numtheory"]) == set(_NUMTHEORY)
+    assert set(cats["hash"]) == set(_HASH)
+    assert set(cats["compress"]) == set(_COMPRESS)
 
 
 # --------------------------------------------------------------------------- #
@@ -728,6 +740,25 @@ def test_emitted_c_cross_compiles_for_macos(name, tmp_path):
 
 
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", ["gcd_seq", "pow_mod", "crc32"])
+def test_emitted_c_refuses_finite_math_build(name, tmp_path):
+    # -ffast-math / -ffinite-math-only elide the NaN guards (verified: gcd_seq([NaN,6]) -> 2.0
+    # instead of the fail-soft 0.0 when built with -ffinite-math-only). The codegen emits an #error
+    # so the shipped artifact FAILS TO BUILD under that assumption rather than miscompile silently.
+    import subprocess
+    c_path = tmp_path / f"gen_{name}.c"
+    c_path.write_text(algo_codegen.emit_c(algo.ALGO_BY_NAME[name]), encoding="utf-8")
+    o = tmp_path / "o.o"
+    bad = subprocess.run([sys.executable, "-m", "ziglang", "cc", "-std=c99", "-ffinite-math-only",
+                          "-c", str(c_path), "-o", str(o)], capture_output=True, text=True, check=False)
+    assert bad.returncode != 0                                    # the #error fires
+    assert "IEEE semantics" in bad.stderr
+    ok = subprocess.run([sys.executable, "-m", "ziglang", "cc", "-std=c99", "-ffp-contract=off",
+                         "-c", str(c_path), "-o", str(o)], capture_output=True, text=True, check=False)
+    assert ok.returncode == 0, ok.stderr[-400:]                  # the gate's own flag builds clean
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 def test_difftest_catches_semantically_wrong_c(tmp_path, monkeypatch):
     # a C backend that COMPILES but does not actually sort (no-op) must FAIL the
     # gate — proving the bit-for-bit comparison is a meaningful check, not a
@@ -761,6 +792,254 @@ def test_c_gate_helper_semantics():
     assert algo_difftest._c_gate_ok({"status": "skipped", "reason": "x"}) is True
     assert algo_difftest._c_gate_ok({"status": "compile_error"}) is False
     assert algo_difftest._c_gate_ok({"status": "run_error"}) is False
+
+
+# --------------------------------------------------------------------------- #
+# P5 number theory / compression / hashing (gcd, primes, modular exponentiation,
+# CRC-32, run-length encoding). All exact (tol 0); independent oracles.
+# --------------------------------------------------------------------------- #
+def test_p5_ops_are_registered_kinds():
+    assert algo.ALGO_BY_NAME["gcd_seq"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["sieve_primes"].kind == algo.KIND_MAP
+    assert algo.ALGO_BY_NAME["pow_mod"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["crc32"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["rle_encode"].kind == algo.KIND_MAP
+    assert algo.ALGO_BY_NAME["crc32"].c_func == "crc32_ieee"     # BSD/zlib-safe C symbol
+    for name in _P5:                                             # exact: no tolerance
+        assert algo.ALGO_BY_NAME[name].tol == 0.0
+
+
+def test_gcd_seq_known():
+    assert algo.run_algo("gcd_seq", []) == 0.0                  # empty
+    assert algo.run_algo("gcd_seq", [0.0, 0.0]) == 0.0          # gcd(0,0) = 0
+    assert algo.run_algo("gcd_seq", [12.0]) == 12.0
+    assert algo.run_algo("gcd_seq", [12.0, 18.0, 24.0]) == 6.0
+    assert algo.run_algo("gcd_seq", [17.0, 5.0]) == 1.0         # coprime
+    assert algo.run_algo("gcd_seq", [0.0, 7.0]) == 7.0
+
+
+def test_gcd_seq_matches_math_gcd_over_random():
+    rng = random.Random(11)
+    for _ in range(300):
+        vals = [rng.randint(0, 1_000_000) for _ in range(rng.randint(0, 6))]
+        got = algo.run_algo("gcd_seq", [float(v) for v in vals])
+        assert got == float(math.gcd(*vals)) if vals else got == 0.0
+
+
+def test_gcd_seq_fail_soft():
+    assert algo.run_algo("gcd_seq", [12.0, -6.0]) == 0.0        # negative -> fail-soft
+    assert algo.run_algo("gcd_seq", [12.0, 6.5]) == 0.0         # non-integer -> fail-soft
+    assert algo.run_algo("gcd_seq", [float("nan"), 6.0]) == 0.0  # NaN -> fail-soft (no crash)
+    assert algo.run_algo("gcd_seq", [1e300]) == 0.0            # > 2^53 -> fail-soft
+
+
+def test_sieve_primes_known():
+    assert algo.run_algo("sieve_primes", [1.0]) == []
+    assert algo.run_algo("sieve_primes", [2.0]) == [2.0]
+    assert algo.run_algo("sieve_primes", [12.0]) == [2.0, 3.0, 5.0, 7.0, 11.0]
+    assert algo.run_algo("sieve_primes", [30.0])[-1] == 29.0
+
+
+def test_sieve_primes_matches_trial_division_over_random():
+    rng = random.Random(23)
+    for _ in range(60):
+        n = rng.randint(0, 3000)
+        got = algo.run_algo("sieve_primes", [float(n)])
+        ref = [float(p) for p in range(2, n + 1) if algo_difftest._is_prime_trial(p)]
+        assert got == ref
+
+
+def test_sieve_primes_fail_soft():
+    assert algo.run_algo("sieve_primes", []) == []
+    assert algo.run_algo("sieve_primes", [0.0]) == []
+    assert algo.run_algo("sieve_primes", [1.5]) == []          # 1 < n < 2 -> []
+    assert algo.run_algo("sieve_primes", [1e9]) == []          # over the memory cap -> []
+    assert algo.run_algo("sieve_primes", [float("nan")]) == []
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_sieve_primes_c_output_larger_than_input(tmp_path):
+    # KIND_MAP: input [n] is length 1 but the output (pi(n) primes) is far larger — the
+    # two-phase driver (out=NULL -> n/2+1 upper bound, then allocate) must not heap-overflow.
+    op = algo.ALGO_BY_NAME["sieve_primes"]
+    cases = [[97.0], [100.0], [541.0], [2.0], [1.0]]
+    cc = algo_difftest.find_c_compiler()
+    res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
+    assert res["status"] == "ran", res
+    py = [algo.py_fn("sieve_primes")([float(x) for x in c]) for c in cases]
+    assert res["outputs"] == py
+    assert res["outputs"][0][-1] == 97.0                       # primes <= 97, last is 97 (prime)
+    assert len(res["outputs"][2]) == 100                       # pi(541) = 100 (541 is the 100th prime)
+
+
+def test_pow_mod_known():
+    assert algo.run_algo("pow_mod", [2.0, 10.0, 1000.0]) == 24.0     # 1024 mod 1000
+    assert algo.run_algo("pow_mod", [3.0, 0.0, 7.0]) == 1.0         # exp 0 -> 1
+    assert algo.run_algo("pow_mod", [0.0, 5.0, 7.0]) == 0.0
+    assert algo.run_algo("pow_mod", [5.0, 3.0, 1.0]) == 0.0         # mod 1 -> 0
+    # the '1 % mod' special case needs exp == 0 AND mod == 1 TOGETHER (else it is unfalsifiable):
+    assert algo.run_algo("pow_mod", [7.0, 0.0, 1.0]) == 0.0        # pow(7,0,1) = 0, not 1
+    assert algo.run_algo("pow_mod", [0.0, 0.0, 1.0]) == 0.0
+    # at the declared base/exp domain edge (2^53): a C exp->uint32 truncation would give 1.0 here.
+    assert algo.run_algo("pow_mod", [2.0, 9007199254740992.0, 7.0]) == float(pow(2, 2**53, 7))
+    assert algo.run_algo("pow_mod", [123456.0, 65537.0, 1000000007.0]) == float(
+        pow(123456, 65537, 1000000007))
+
+
+def test_pow_mod_matches_builtin_over_random():
+    rng = random.Random(37)
+    for _ in range(400):
+        # draw base/exp across the FULL declared domain [0, 2^53] (values with float(v)==v), not
+        # just small magnitudes, so a C truncation of the upper ~33 bits is exercised (finding 0).
+        b = rng.randint(0, 2**53)
+        e = rng.randint(0, 2**53)
+        m = rng.randint(1, 4294967295)
+        assert algo.run_algo("pow_mod", [float(b), float(e), float(m)]) == float(pow(b, e, m))
+
+
+def test_pow_mod_fail_soft():
+    assert algo.run_algo("pow_mod", [2.0, 3.0]) == 0.0             # too short
+    assert algo.run_algo("pow_mod", [2.0, 3.0, 0.0]) == 0.0        # mod 0 -> fail-soft
+    assert algo.run_algo("pow_mod", [2.0, -1.0, 7.0]) == 0.0       # negative exp -> fail-soft
+    assert algo.run_algo("pow_mod", [2.0, 3.0, 5e9]) == 0.0        # mod > 2^32-1 -> fail-soft
+    assert algo.run_algo("pow_mod", [2.0, 3.0, float("nan")]) == 0.0
+    assert algo.run_algo("pow_mod", [2.5, 3.0, 7.0]) == 0.0        # non-integer base -> fail-soft
+    assert algo.run_algo("pow_mod", [2.0, 3.0, 7.5]) == 0.0        # non-integer mod -> fail-soft
+
+
+def test_crc32_known_matches_zlib():
+    import zlib
+    assert algo.run_algo("crc32", []) == 0.0                       # crc32(b'') = 0
+    for s in (b"", b"a", b"Hello", b"The quick brown fox", bytes(range(256))):
+        got = algo.run_algo("crc32", [float(x) for x in s])
+        assert got == float(zlib.crc32(s) & 0xFFFFFFFF)
+
+
+def test_crc32_fail_soft_on_non_byte():
+    assert algo.run_algo("crc32", [256.0]) == 0.0                  # > 255 -> fail-soft
+    assert algo.run_algo("crc32", [-1.0]) == 0.0
+    assert algo.run_algo("crc32", [1.5]) == 0.0                    # non-integer byte
+    assert algo.run_algo("crc32", [float("nan")]) == 0.0
+
+
+def _rle_decode(pairs):
+    """Decode [val, count, ...] back to the original sequence (losslessness check)."""
+    out = []
+    for i in range(0, len(pairs), 2):
+        out.extend([pairs[i]] * int(pairs[i + 1]))
+    return out
+
+
+def test_rle_encode_known_and_lossless():
+    assert algo.run_algo("rle_encode", []) == []
+    assert algo.run_algo("rle_encode", [5.0]) == [5.0, 1.0]
+    assert algo.run_algo("rle_encode", [7.0, 7.0, 7.0]) == [7.0, 3.0]
+    assert algo.run_algo("rle_encode", [1.0, 2.0, 3.0]) == [1.0, 1.0, 2.0, 1.0, 3.0, 1.0]
+    rng = random.Random(41)
+    for _ in range(200):
+        seq = [float(rng.randint(0, 3)) for _ in range(rng.randint(0, 30))]
+        enc = algo.run_algo("rle_encode", seq)
+        assert _rle_decode(enc) == seq                            # lossless round-trip
+        # matches itertools.groupby (the difftest oracle), independently
+        from itertools import groupby
+        ref = []
+        for v, g in groupby(seq):
+            ref += [float(v), float(sum(1 for _ in g))]
+        assert enc == ref
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_rle_encode_c_output_larger_than_input(tmp_path):
+    # all-distinct input -> output is exactly 2x the input length (2 doubles per run): the
+    # size-probe (out=NULL -> 2*n) must allocate enough that the C write does not overflow.
+    op = algo.ALGO_BY_NAME["rle_encode"]
+    cases = [[1.0, 2.0, 3.0, 4.0, 5.0], [9.0], [], [7.0, 7.0, 8.0]]
+    cc = algo_difftest.find_c_compiler()
+    res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
+    assert res["status"] == "ran", res
+    py = [algo.py_fn("rle_encode")([float(x) for x in c]) for c in cases]
+    assert res["outputs"] == py
+    assert len(res["outputs"][0]) == 10                           # 5 distinct -> 2*5
+
+
+def test_rle_encode_signed_zero_collapses_documented():
+    # Runs use ==, under which -0.0 == +0.0, so a mixed-sign zero run collapses to the FIRST sign.
+    # The tier's equality standard is bit-for-bit, so this is lossy by the tier's own definition —
+    # documented as "lossless up to ==-equality (signed zeros collapse; NaN-free)". Pin it as a
+    # tested contract so the honest limit is deliberate, not accidental (review finding).
+    import math
+    enc = algo.run_algo("rle_encode", [-0.0, 0.0])
+    assert enc == [-0.0, 2.0]                                     # one run of length 2
+    assert math.copysign(1.0, enc[0]) == -1.0                    # surviving value keeps the FIRST sign
+    assert math.copysign(1.0, algo.run_algo("rle_encode", [0.0, -0.0])[0]) == 1.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_sieve_primes_c_accepts_at_cap_rejects_over(tmp_path):
+    # The 5,000,000 memory cap is never reached by the shared holdout (max n = 2000; the Python
+    # reference is slow at the cap), so measure the cap EDGE with the C backend alone: n=5,000,000
+    # is accepted (pi = 348513, verified with an independent numpy sieve), n=5,000,001 is rejected.
+    op = algo.ALGO_BY_NAME["sieve_primes"]
+    cc = algo_difftest.find_c_compiler()
+    res = algo_difftest.run_c_backend(op, [[5000000.0], [5000001.0]], tmp_path, cc)
+    assert res["status"] == "ran", res
+    assert len(res["outputs"][0]) == 348513                      # pi(5_000_000): the cap is ACCEPTED
+    assert res["outputs"][1] == []                               # one past the cap -> fail-soft
+
+
+@pytest.mark.parametrize("name", _P5)
+def test_p5_reference_does_not_mutate_input(name):
+    # a valid, in-domain input for each op (headers already satisfy the raw-value guards)
+    inputs = {
+        "gcd_seq": [12.0, 18.0, 24.0], "sieve_primes": [30.0], "pow_mod": [2.0, 10.0, 1000.0],
+        "crc32": [72.0, 105.0], "rle_encode": [1.0, 1.0, 2.0],
+    }
+    arg = list(inputs[name])
+    before = list(arg)
+    algo.run_algo(name, arg)
+    assert arg == before
+
+
+@pytest.mark.parametrize("name", _P5)
+def test_p5_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0                      # exact vs the independent oracle
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _P5)
+def test_p5_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_p5_c_python_parity_on_out_of_domain(tmp_path):
+    # the oracle-checked holdout uses only IN-DOMAIN inputs, so the raw-value guard boundary
+    # (negative / non-integer / NaN / oversized) is verified HERE directly C-vs-Python: Python
+    # must fail-soft IDENTICALLY to C (the P3 int()-before-guard bug class, for the P5 ops).
+    nan = float("nan")
+    per_op = {
+        "gcd_seq": [[12.0, 6.0], [12.0, -6.0], [12.0, 6.5], [nan, 6.0], [1e300],
+                    [9007199254740992.0, 4503599627370496.0]],       # at 2^53 edge (accepted)
+        # incl. short/empty (the C `n < 3` guard is otherwise never exercised = admits an OOB read):
+        "pow_mod": [[2.0, 3.0, 7.0], [2.0, 3.0, 0.0], [2.0, -1.0, 7.0], [2.0, 3.0, 5e9],
+                    [2.0, 3.0, nan], [2.5, 3.0, 7.0], [7.0, 0.0, 1.0],
+                    [], [2.0], [2.0, 3.0], [2.0, 9007199254740992.0, 7.0]],   # short + 2^53 edge
+        "crc32": [[65.0, 66.0], [256.0], [-1.0], [1.5], [nan]],
+        # incl. empty (the C `n_in < 1` guard) and over-cap (5,000,001):
+        "sieve_primes": [[30.0], [1.5], [5000001.0], [1e9], [nan], [-3.0], []],
+        "rle_encode": [[1.0, 1.0, 2.0], [7.0], [-0.0, 0.0]],         # signed-zero collapse (finding 2)
+    }
+    cc = algo_difftest.find_c_compiler()
+    for name, cases in per_op.items():
+        op = algo.ALGO_BY_NAME[name]
+        res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
+        assert res["status"] == "ran", (name, res)
+        py = [algo.py_fn(name)([float(x) for x in c]) for c in cases]
+        assert res["outputs"] == py, name                        # C fail-softs identically
 
 
 # --------------------------------------------------------------------------- #

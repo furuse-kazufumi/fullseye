@@ -231,6 +231,23 @@ def test_hdev_program_rejects_general_tier_op():
         assert er and not st, f"general op {gop!r} must be rejected by the image code parser"
 
 
+def test_op_help_card_for_general_tier_is_not_knob_text():
+    # Review finding: show_op_help(name) -> op_help_html falls through to the image-op card
+    # ("Two knobs a, b in [0,1] tune this operator") for a general-tier op, which is false — it
+    # is a seq/scalar CLI op whose a/b spinboxes are disabled. The card must instead show the
+    # provenance + packed-input contract + CLI invocation. Verify for every P5 op (and an image op
+    # still gets the knob card).
+    import algo
+    for name in ("gcd_seq", "sieve_primes", "pow_mod", "crc32", "rle_encode"):
+        html = studio.op_help_html(name, "en", studio._op_row(name))
+        assert "Two knobs" not in html, name                 # no false knob claim
+        assert "general-algorithm tier" in html
+        assert f"algo run {name}" in html                    # the real (CLI) way to run it
+        assert algo.ALGO_BY_NAME[name].provenance.split(";")[0][:12] in html   # provenance shown
+    # an image op is unaffected: it still gets the knob card
+    assert "Two knobs" in studio.op_help_html("threshold", "en", studio._op_row("threshold"))
+
+
 def test_program_editor_and_help_exclude_general_tier_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")

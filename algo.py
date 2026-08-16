@@ -37,8 +37,9 @@ silently certifying a divergent result. Later numeric phases (P2) that can
 legitimately produce NaN will define their own convention explicitly.
 
 stdlib only (the Python references use no numpy — they mirror the C index-by-index
-so "re-implemented from spec" is visibly true). P1 scope: seq/scalar + 3 sorts +
-2 reductions. Later phases (numerics/strings/graphs) add sorts and ops here.
+so "re-implemented from spec" is visibly true). P1: seq/scalar + 3 sorts + 2
+reductions. Later phases add ops here: P2 numerics, P3 strings, P4 graphs, P5 number
+theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE).
 """
 from __future__ import annotations
 
@@ -1156,6 +1157,276 @@ int graph_dijkstra(const double* a, int n_in, double* out) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P5 — number theory, compression, hashing (educational; honest disclosure). Each
+# value is an integer carried as float64: exact while < 2^53, so these ride the same
+# binary harness with NO new wire type. Integer/bit work is done in C on unsigned/
+# long-long types (the double is cast in, the integer result cast back), so the
+# raw-value guard MUST run BEFORE the int cast in BOTH Python and C (a fractional /
+# NaN / out-of-range value fail-softs identically — the P3 bug class). Every P5 op is
+# EXACT: C == Python bit-for-bit AND Python == an independent oracle with tol 0.
+#
+# gcd_seq / pow_mod / crc32 fold to one integer (KIND_REDUCE); sieve_primes /
+# rle_encode produce a VARIABLE-LENGTH seq whose length can EXCEED the input length
+# (KIND_MAP, two-phase size-probe). Honest scope: full crypto (RSA/AES/SHA) needs
+# big-integer / large-state that does not fit the float64 seq harness, so this tier
+# ships the *primitives* (modular exponentiation, a CRC checksum) with the algorithm
+# disclosed, not a cipher. See docs/GENERAL_ALGORITHMS.md P5.
+# --------------------------------------------------------------------------- #
+_PY_GCD_SEQ = '''\
+def run(a):
+    """Greatest common divisor of a sequence of non-negative integers (Euclid).
+
+    Folds the Euclidean algorithm across the sequence: gcd(gcd(...gcd(a0,a1)...),a_{k-1}).
+    Empty -> 0.0; gcd(0,0) = 0. Returns the gcd as an exact integer double. Fail-soft 0.0 if
+    any value is negative, non-integer, or > 2^53 (outside the exact-in-float64 / uint64 range
+    the C mirror supports). NaN-free assumed (a NaN fails the >= guard, so it fail-softs)."""
+    g = 0
+    for x in a:
+        # raw-value guard BEFORE int() so Python matches the C guard EXACTLY. The integrality
+        # check (x == float(int(x))) is short-circuited AFTER the range check, so int()/the C
+        # cast is only reached for a finite in-range x (a NaN / oversized value fail-softs first
+        # via >= / <=, never crashing int(nan) or hitting the C (long long)nan UB).
+        if not (x >= 0.0 and x <= 9007199254740992.0 and x == float(int(x))):   # 2^53, integer
+            return 0.0
+        v = int(x)
+        while v != 0:                                       # Euclid: gcd(g, v)
+            g, v = v, g % v
+    return float(g)
+'''
+
+_C_GCD_SEQ = '''\
+/* GCD of a sequence of non-negative integers (Euclid), folded left to right. */
+double gcd_seq(const double* a, int n) {
+    unsigned long long g = 0;
+    for (int i = 0; i < n; i++) {
+        double x = a[i];
+        /* range check first, then integrality: under IEEE semantics (long long)x is only reached
+         * for a finite in-range x (short-circuit), so NaN / oversized values fail-soft without UB.
+         * (-ffast-math would elide the NaN comparison; the codegen #error blocks that build.) */
+        if (!(x >= 0.0 && x <= 9007199254740992.0 && x == (double)(long long)x)) return 0.0;
+        unsigned long long v = (unsigned long long)x;
+        while (v != 0ULL) { unsigned long long t = g % v; g = v; v = t; }
+    }
+    return (double)g;
+}
+'''
+
+_PY_SIEVE_PRIMES = '''\
+def run(a):
+    """Primes <= n by the Sieve of Eratosthenes. Input a = [n]; returns the ascending list
+    of primes in [2, n] — a VARIABLE-LENGTH output that can FAR EXCEED the input length (1).
+
+    Fail-soft [] on malformed input (empty), n < 2 (no primes), or n out of range: n is capped
+    at 5,000,000 to bound the sieve memory (disclosed). The raw-value guard runs before int()."""
+    if len(a) < 1:
+        return []
+    nd = a[0]
+    if not (nd >= 0.0 and nd <= 5000000.0):                 # memory cap; NaN-false
+        return []
+    n = int(nd)
+    if n < 2:
+        return []
+    is_comp = [False] * (n + 1)
+    i = 2
+    while i * i <= n:
+        if not is_comp[i]:
+            j = i * i
+            while j <= n:
+                is_comp[j] = True
+                j = j + i
+        i = i + 1
+    res = []
+    for p in range(2, n + 1):
+        if not is_comp[p]:
+            res.append(float(p))
+    return res
+'''
+
+_C_SIEVE_PRIMES = '''\
+/* Primes <= n (Sieve of Eratosthenes). Input a = [n]; writes the ascending primes to `out`
+ * and returns the count. The output can be LARGER than the input length, so the driver calls
+ * with out=NULL first to get the upper bound pi(n) <= n/2 + 1. Fail-soft 0 on malformed /
+ * n < 2 / n > 5,000,000 (memory cap). */
+int sieve_primes(const double* a, int n_in, double* out) {
+    if (n_in < 1) return 0;
+    double nd = a[0];
+    if (!(nd >= 0.0 && nd <= 5000000.0)) return 0;          /* memory cap; NaN-false */
+    int n = (int)nd;
+    if (n < 2) return 0;
+    if (!out) return n / 2 + 1;                             /* size probe: 2 plus the odds */
+    char* is_comp = (char*)calloc((size_t)n + 1, 1);
+    if (!is_comp) return 0;
+    for (long long i = 2; i * i <= (long long)n; i++) {
+        if (!is_comp[i]) {
+            for (long long j = i * i; j <= (long long)n; j += i) is_comp[j] = 1;
+        }
+    }
+    int cnt = 0;
+    for (int p = 2; p <= n; p++) if (!is_comp[p]) out[cnt++] = (double)p;
+    free(is_comp);
+    return cnt;
+}
+'''
+
+_PY_POW_MOD = '''\
+def run(a):
+    """Modular exponentiation base^exp mod m by right-to-left binary exponentiation
+    (square-and-multiply) — the primitive underlying RSA / Diffie-Hellman (educational).
+
+    Input a = [base, exp, mod]; returns (base**exp) mod m as an exact integer double.
+    Domain (honest, so the C uint64 mirror never overflows): base, exp in [0, 2^53] and
+    mod in [1, 2^32 - 1] — then every intermediate product is < mod^2 < 2^64 and the result
+    is < mod < 2^53 (exact in float64). Fail-soft 0.0 on short input or a value outside the
+    domain. The raw-value guard runs before int() (exact C parity, no int(nan) crash)."""
+    if len(a) < 3:
+        return 0.0
+    bd = a[0]
+    ed = a[1]
+    md = a[2]
+    # integer values only (short-circuited after each range check for NaN safety).
+    if not (bd >= 0.0 and bd <= 9007199254740992.0 and bd == float(int(bd))):        # 2^53
+        return 0.0
+    if not (ed >= 0.0 and ed <= 9007199254740992.0 and ed == float(int(ed))):
+        return 0.0
+    if not (md >= 1.0 and md <= 4294967295.0 and md == float(int(md))):   # 2^32-1: mod^2 < 2^64
+        return 0.0
+    mod = int(md)
+    base = int(bd) % mod
+    exp = int(ed)
+    result = 1 % mod                                        # mod == 1 -> 0
+    while exp > 0:
+        if exp & 1:
+            result = (result * base) % mod
+        exp = exp >> 1
+        base = (base * base) % mod
+    return float(result)
+'''
+
+_C_POW_MOD = '''\
+/* Modular exponentiation base^exp mod m (right-to-left binary), a = [base, exp, mod].
+ * Domain (guarded): base,exp <= 2^53, 1 <= mod <= 2^32-1 so uint64 products never overflow. */
+double pow_mod(const double* a, int n) {
+    if (n < 3) return 0.0;
+    double bd = a[0], ed = a[1], md = a[2];
+    /* range check then integrality; under IEEE the short-circuit keeps (long long)x off NaN /
+     * oversized x (-ffast-math would elide it — the codegen #error blocks that build). */
+    if (!(bd >= 0.0 && bd <= 9007199254740992.0 && bd == (double)(long long)bd)) return 0.0;
+    if (!(ed >= 0.0 && ed <= 9007199254740992.0 && ed == (double)(long long)ed)) return 0.0;
+    if (!(md >= 1.0 && md <= 4294967295.0 && md == (double)(long long)md)) return 0.0;  /* 2^32-1 */
+    unsigned long long mod = (unsigned long long)md;
+    unsigned long long base = (unsigned long long)bd % mod;
+    unsigned long long exp = (unsigned long long)ed;
+    unsigned long long result = 1ULL % mod;                     /* mod == 1 -> 0 */
+    while (exp > 0ULL) {
+        if (exp & 1ULL) result = (result * base) % mod;
+        exp >>= 1;
+        base = (base * base) % mod;
+    }
+    return (double)result;
+}
+'''
+
+# Named crc32_ieee, not crc32: zlib declares crc32() in <zlib.h>. We never include zlib
+# here, so the plain name would compile fine, but the defensive rename (cf. heapsort_asc /
+# mergesort_asc vs BSD <stdlib.h>) keeps the emitted C clash-free on any host.
+_PY_CRC32 = '''\
+def run(a):
+    """CRC-32 checksum (IEEE 802.3 / ITU-T V.42: reflected, polynomial 0xEDB88320, init and
+    final-xor 0xFFFFFFFF) of a byte sequence — the value zlib.crc32 computes.
+
+    Input a = bytes as integer values in [0, 255]; returns the 32-bit CRC as an exact integer
+    double in [0, 2^32 - 1]. Reimplemented bit-by-bit from the spec (not table-copied).
+    Fail-soft 0.0 on any value that is not an integer byte in [0, 255]. The Python ints stay
+    within 32 bits by construction, mirroring the C uint32 exactly."""
+    crc = 0xFFFFFFFF
+    for x in a:
+        # non-byte (out of range / non-integer / NaN) -> fail-soft, identically to C.
+        if not (x >= 0.0 and x <= 255.0 and x == float(int(x))):
+            return 0.0
+        crc = crc ^ int(x)
+        for _ in range(8):
+            if crc & 1:
+                crc = (crc >> 1) ^ 0xEDB88320
+            else:
+                crc = crc >> 1
+    return float(crc ^ 0xFFFFFFFF)
+'''
+
+_C_CRC32 = '''\
+/* CRC-32 (IEEE 802.3, reflected, poly 0xEDB88320) of a byte sequence a[0..n-1] in [0,255]. */
+double crc32_ieee(const double* a, int n) {
+    unsigned int crc = 0xFFFFFFFFu;
+    for (int i = 0; i < n; i++) {
+        double x = a[i];
+        /* not an integer byte in [0,255] -> fail-soft (integrality short-circuited after range;
+         * IEEE-only, the codegen #error blocks the -ffast-math build that would elide it). */
+        if (!(x >= 0.0 && x <= 255.0 && x == (double)(long long)x)) return 0.0;
+        crc ^= (unsigned int)x;
+        for (int k = 0; k < 8; k++) {
+            if (crc & 1u) crc = (crc >> 1) ^ 0xEDB88320u;
+            else crc = crc >> 1;
+        }
+    }
+    return (double)(crc ^ 0xFFFFFFFFu);
+}
+'''
+
+_PY_RLE_ENCODE = '''\
+def run(a):
+    """Run-length encode a sequence: maximal runs of consecutive EQUAL values collapse to
+    (value, count) pairs. Input a = [v0, v1, ...]; returns [val0, count0, val1, count1, ...]
+    (length 2 * number of runs, up to 2 * len(a) when all values differ) — a VARIABLE-LENGTH
+    output that can be LARGER than the input. A decodable compression primitive, lossless UP TO
+    ==-equality of values: because -0.0 == +0.0, a mixed-sign zero run collapses to whichever sign
+    appears first, so the decode is not bit-exact across signed zeros (NaN-free contract assumed).
+
+    Values are compared with == (NaN-free contract); counts are exact integers. Empty -> [].
+    Fail-soft [] if len(a) > 2^30 - 1 (so 2 * len fits int32 in the C mirror's size probe)."""
+    if len(a) < 1 or len(a) > 1073741823:                   # 2^30 - 1: 2*n stays within int32
+        return []
+    res = []
+    cur = a[0]
+    cnt = 1
+    for i in range(1, len(a)):
+        if a[i] == cur:
+            cnt = cnt + 1
+        else:
+            res.append(cur)
+            res.append(float(cnt))
+            cur = a[i]
+            cnt = 1
+    res.append(cur)
+    res.append(float(cnt))
+    return res
+'''
+
+_C_RLE_ENCODE = '''\
+/* Run-length encode a[0..n-1] -> [val, count, val, count, ...]. Output can be up to 2n (all
+ * distinct), so the driver size-probes (out=NULL -> 2*n) then allocates. Fail-soft 0 on empty
+ * or n > 2^30-1 (keeps 2*n within int32). Counts fit int32 (<= n), exact in float64. */
+int rle_encode(const double* a, int n, double* out) {
+    if (n < 1 || n > 1073741823) return 0;                  /* 2^30 - 1 */
+    if (!out) return 2 * n;                                 /* size probe: at most 2 per input */
+    int cnt_out = 0;
+    double cur = a[0];
+    long long run = 1;
+    for (int i = 1; i < n; i++) {
+        if (a[i] == cur) run++;
+        else {
+            out[cnt_out++] = cur;
+            out[cnt_out++] = (double)run;
+            cur = a[i];
+            run = 1;
+        }
+    }
+    out[cnt_out++] = cur;
+    out[cnt_out++] = (double)run;
+    return cnt_out;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -1219,6 +1490,30 @@ ALGO_REGISTRY: list[AlgoOp] = [
            _PY_GRAPH_DIJKSTRA, _C_GRAPH_DIJKSTRA,
            "Single-source shortest distances of [n, m, src, (u,v,w)*m] (Dijkstra; -1=unreachable).",
            "Dijkstra shortest paths; deterministic settle order", tol=1e-9),
+    AlgoOp("gcd_seq", "numtheory", SEQ, SCALAR, KIND_REDUCE, "gcd_seq",
+           _PY_GCD_SEQ, _C_GCD_SEQ,
+           "Greatest common divisor of a sequence of non-negative integers (Euclid).",
+           "Euclidean algorithm (Euclid, Elements VII); folded across the sequence"),
+    AlgoOp("sieve_primes", "numtheory", SEQ, SEQ, KIND_MAP, "sieve_primes",
+           _PY_SIEVE_PRIMES, _C_SIEVE_PRIMES,
+           "Primes <= n by the Sieve of Eratosthenes; input [n] -> ascending primes "
+           "(variable-length seq -> seq, output can exceed the input length).",
+           "Sieve of Eratosthenes"),
+    AlgoOp("pow_mod", "numtheory", SEQ, SCALAR, KIND_REDUCE, "pow_mod",
+           _PY_POW_MOD, _C_POW_MOD,
+           "Modular exponentiation base^exp mod m of [base, exp, mod] "
+           "(the RSA / Diffie-Hellman primitive; educational).",
+           "right-to-left binary exponentiation (square-and-multiply)"),
+    AlgoOp("crc32", "hash", SEQ, SCALAR, KIND_REDUCE, "crc32_ieee",
+           _PY_CRC32, _C_CRC32,
+           "CRC-32 checksum (IEEE 802.3, reflected poly 0xEDB88320) of a byte sequence "
+           "in [0, 255] (matches zlib.crc32).",
+           "CRC-32 (IEEE 802.3 / ITU-T V.42); reflected bit-by-bit, poly 0xEDB88320"),
+    AlgoOp("rle_encode", "compress", SEQ, SEQ, KIND_MAP, "rle_encode",
+           _PY_RLE_ENCODE, _C_RLE_ENCODE,
+           "Run-length encode a sequence -> [value, count, ...] "
+           "(variable-length seq -> seq, output up to 2x the input).",
+           "run-length encoding (lossless)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

@@ -6,6 +6,14 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **★★(2026-08-17 その10, Opus5[1m]/ultracode, `graph-loop-engineering`) = algo-c P5(数論・圧縮・教育用ハッシュ)= algo-c ロードマップ完遂.**
+> 「自律で前回の続きを継続」ゴール。前セッション(その4-9)が P2→P4 を完遂・push 済 → 次候補 (a)P5 を実装。**algo 詳細の正本 = `docs/GENERAL_ALGORITHMS.md`「P5 完遂記録」**。
+> - **op(5)**: `gcd_seq`(Euclid=KIND_REDUCE)/ `sieve_primes`(エラトステネス=**KIND_MAP**・出力≫入力)/ `pow_mod`(square-and-multiply=RSA/DH primitive)/ `crc32`(IEEE 802.3・c_func `crc32_ieee`)/ `rle_encode`(連長圧縮=**KIND_MAP**・出力≤2×入力)。整数を float64 で運ぶ(exact <2^53)ため新 wire 型不要。
+> - **全 op が exact**: C==Python bit 一致 かつ Python==**独立 oracle**(math.gcd / 試し割り / builtin pow / zlib.crc32 / itertools.groupby)tol 0。**honest 域開示**=pow_mod は mod≤2^32−1(uint64 非溢出)、暗号は primitive のみ(フル RSA/AES/SHA は bignum で harness 外)。
+> - **規律適用**: raw-value + **整数性ガードを cast の前**(NaN 安全 short-circuit)/ KIND_MAP 2 段 size-probe(出力超過を実 compile/run で OOB 無し確認)/ 1 op=1 work-graph ノード(`algo_gate` → `run-once` で **5 ノード無人 done**、全 algo op 20 が gate 化)。
+> - **敵対レビュー**(4 レンズ・各 finding を実 compile/実行で検証、18 agents)= **14 raw → 9 CONFIRMED / 5 REFUTED**。全 CONFIRMED を自分で再現の上修正: pow_mod/gcd/sieve の honest 域を holdout 境界で計測(exp→uint32 変異を falsify)/ **-ffast-math が NaN ガードを消す**(gcd_seq([NaN,6])→2.0)を emit_c の `#error` で fail-closed 化 / P5 oracle をドメイン認識化(域外クラッシュ回避=gate が guard を falsify 可能に)/ `1%mod` 特殊分岐の被覆 / 短小入力ガードの exercise(ASan は本環境でリンク不能ゆえ honest 開示)/ Studio op-help の general カード化 / skill frontmatter 拡張。詳細=`docs/GENERAL_ALGORITHMS.md`「P5 敵対レビュー後の強化」。
+> - **検証**: 全スイート **4700 → 4742 passed / 0 failed**(+42)・ruff clean(新規ファイル)・mypy 新規 0。commit + push はこのセッション(push ゲート開放済)。
+>
 > **★★(2026-08-16〜17 その4-9, Opus5[1m]/ultracode, 自律 marathon) = algo-c tier を P2→P3 拡張 + Studio 表示 + synth 多スケール化.**
 > ユーザー承認の無人自律セッション(push ゲート開放)。候補 a/b/c/d を全て前進。**algo 詳細の正本 = `docs/GENERAL_ALGORITHMS.md`**(P2 完遂記録/P3 完遂記録/各敵対レビュー節)。
 > - **algo P2 完遂 = `gauss_solve`**(連立一次 Gauss 消去・部分ピボット)。新 kind **`KIND_MAP`**(可変長 seq→seq)+ `algo_codegen` に `[out_len,values...]` モード。honest gate = Python==`np.linalg.solve` 3.55e-15 / C==Python bit 一致(ziglang cc)。敵対レビュー 4 CONFIRMED 全修正(fail-open/ピボット反証/未検証 C-skip/macOS guard)。push 済 5fd8bb6。
