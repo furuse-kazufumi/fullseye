@@ -26,7 +26,7 @@ def _img():
 # --------------------------------------------------------------------------- #
 # M4 — a dead op must be detectable                                           #
 # --------------------------------------------------------------------------- #
-def test_default_mode_still_degrades_to_the_input(recwarn):
+def test_default_mode_still_degrades_to_the_input():
     """Backward compatibility: the non-strict path is unchanged (identity for image)."""
     v = _img()
     assert np.array_equal(backends._safe(_boom, "image")(v, 0.5, 0.5), v)
