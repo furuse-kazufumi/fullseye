@@ -22,8 +22,11 @@ that share it. Two complementary methods, both from public literature:
       the exemplar's corresponding band (coarse-to-fine), re-imposing the global marginal
       each pass. This captures per-SCALE marginal statistics the single-band ``spectral``
       method cannot (e.g. a texture whose fine-scale detail distribution differs from what
-      its global spectrum + histogram imply). Verify the gain with
-      :func:`pyramid_stat_distance` (smaller for a pyramid than a spectral synthesis).
+      its global spectrum + histogram imply). Measure this with
+      :func:`pyramid_stat_distance` (smaller for a pyramid than a spectral synthesis) —
+      honestly, that metric scores exactly the per-scale marginals the pyramid method
+      optimizes, so it is a DIRECT measurement of this specific claim, not an independent
+      verdict on overall texture quality.
       Honest scope: this is the ISOTROPIC, MARGINAL-only variant — no oriented steerable
       subbands, and NO Portilla-Simoncelli 2000 cross-scale/orientation correlations, so
       it does not reproduce oriented or phase-aligned structure the way the full model or
