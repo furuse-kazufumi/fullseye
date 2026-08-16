@@ -120,6 +120,24 @@ def test_find_op_and_discovery():
     assert all(r["in_sort"] == "region" for r in api.list_ops(sort="region"))
 
 
+def test_list_ops_general_tier_is_opt_in():
+    import algo
+    # default: image focus unchanged — no general-algorithm ops leak in
+    default_names = {r["name"] for r in api.list_ops()}
+    assert not (default_names & set(algo.algo_names()))
+    # opt-in: the general tier appears, tagged backend="general" and category "algo:*"
+    rows = api.list_ops(include_algo=True)
+    algo_rows = [r for r in rows if r.get("backend") == "general"]
+    assert {r["name"] for r in algo_rows} == set(algo.algo_names())
+    assert all(r["category"].startswith("algo:") for r in algo_rows)
+    assert all(r["halcon"] is None and r["provenance"] for r in algo_rows)
+    # general rows sort AFTER the image/nary ops (tier "z_algo")
+    assert all(r["tier"] == "z_algo" for r in algo_rows)
+    assert rows[-len(algo_rows)][ "backend"] == "general"     # tail of the sorted list
+    # api.algo_rows() alone matches
+    assert {r["name"] for r in api.algo_rows()} == set(algo.algo_names())
+
+
 def test_fullseye_facade_reexports_api():
     import fullseye
     f = _img()
