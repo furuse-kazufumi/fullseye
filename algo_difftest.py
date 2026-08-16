@@ -377,6 +377,38 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
             ref = oracle_fn(tuple(arr[1:1 + na]), tuple(arr[1 + na:]))
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
+    if name in ("graph_components", "graph_mst_weight", "graph_dijkstra"):
+        # INDEPENDENT oracle: scipy.sparse.csgraph (a different implementation entirely).
+        from scipy.sparse import csr_matrix
+        from scipy.sparse import csgraph as _csg
+        base = 3 if name == "graph_dijkstra" else 2
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            n, m = int(arr[0]), int(arr[1])
+            rows, cols, data = [], [], []
+            for k in range(m):
+                u, v = int(arr[base + 3 * k]), int(arr[base + 3 * k + 1])
+                w = float(arr[base + 3 * k + 2])
+                rows += [u, v]
+                cols += [v, u]
+                data += [1.0, 1.0] if name == "graph_components" else [w, w]
+            mtx = csr_matrix((data, (rows, cols)), shape=(n, n)) if data else csr_matrix((n, n))
+            if name == "graph_components":
+                ncomp = _csg.connected_components(mtx, directed=False)[0]
+                errs.append(_diff01(float(got), float(ncomp)))
+            elif name == "graph_mst_weight":
+                errs.append(_diff01(float(got), float(_csg.minimum_spanning_tree(mtx).sum())))
+            else:  # graph_dijkstra: my op returns -1.0 for unreachable, scipy inf
+                d = _csg.dijkstra(mtx, directed=False, indices=int(arr[2]))
+                if len(got) != n:
+                    return float("inf")
+                for i in range(n):
+                    reach_g, reach_r = float(got[i]) >= 0.0, math.isfinite(float(d[i]))
+                    if reach_g != reach_r:
+                        return float("inf")            # disagree on reachability
+                    if reach_g:
+                        errs.append(_diff01(float(got[i]), float(d[i])))
+        return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:
         return _max_diff_sort(oracle, py_out)
