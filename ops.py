@@ -21,6 +21,7 @@ stdlib + numpy + scipy.ndimage only. C support is a growing image-sort subset.
 """
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass
 from typing import Callable, Optional
 
