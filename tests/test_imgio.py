@@ -90,3 +90,40 @@ def test_save_load_roundtrip(tmp_path):
     back = imgio.load(str(p))
     assert back.shape == img.shape
     assert np.abs(back - img).max() < 0.02                   # 8-bit quantisation only
+
+
+def test_load_16bit_png_keeps_bit_depth(tmp_path):
+    """A 16-bit raster must not be crushed to 8 bits: load() divides by the true
+    max level (65535), so levels inside one 8-bit bucket stay distinct."""
+    cv2 = imgio._cv2()
+    if cv2 is None:
+        pytest.skip("16-bit decode needs opencv-python")
+    a = np.array([[40000, 40001, 40100], [0, 32768, 65535]], np.uint16)
+    p = tmp_path / "g16.png"
+    assert cv2.imwrite(str(p), a)
+    back = imgio.load(str(p))
+    assert back.dtype == np.float64
+    assert np.allclose(back, a.astype(np.float64) / 65535.0, atol=1e-9)
+    assert abs(back[0, 0] - 40000 / 65535.0) < 1e-9          # not the 8-bit 156/255
+    assert len(np.unique(back[0])) == 3                      # 3 levels in one 8-bit bucket
+    # colour read keeps the depth too
+    c = np.zeros((2, 2, 3), np.uint16); c[..., 2] = 40000    # cv2 writes BGR -> red
+    pc = tmp_path / "c16.png"
+    assert cv2.imwrite(str(pc), c)
+    rgb = imgio.load(str(pc), color=True)
+    assert rgb.shape == (2, 2, 3)
+    assert np.allclose(rgb[..., 0], 40000 / 65535.0, atol=1e-9)
+
+
+def test_load_8bit_png_unchanged(tmp_path):
+    """The 8-bit contract the operator suite depends on must not move."""
+    cv2 = imgio._cv2()
+    if cv2 is None:
+        pytest.skip("needs opencv-python")
+    c = (np.random.default_rng(0).random((9, 7, 3)) * 255).astype(np.uint8)
+    p = str(tmp_path / "c8.png")
+    assert cv2.imwrite(p, c)
+    ref_g = cv2.imread(p, cv2.IMREAD_GRAYSCALE).astype(np.float64) / 255.0
+    ref_c = cv2.imread(p, cv2.IMREAD_COLOR)[:, :, ::-1].astype(np.float64) / 255.0
+    assert np.array_equal(imgio.load(p), ref_g)
+    assert np.array_equal(imgio.load(p, color=True), ref_c)
