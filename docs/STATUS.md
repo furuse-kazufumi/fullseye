@@ -32,7 +32,9 @@
 >   欠落)を honest にユーザー判断へ。
 > - **検証**: 全スイート **4515→4573 passed / 0 failed**(回帰なし)、ruff clean、wheel 実ビルドで algo*
 >   3 モジュール + sample_images 同梱確認、全 op で C bit 一致(zig cc)+ macOS cross-compile OK。
-> - **残(次段)** = P1.5(imgevolve.py サブコマンド + Studio op ブラウザ tier)/ P2 数値計算。honest 限界 =
+> - **★P1.5a 完了**: `imgevolve.py algo <list|run|emit-c|emit-py|difftest>` 統一 CLI サブコマンド追加
+>   (`algo run quicksort --seq 3,1,2` 等)+ CLI 回帰テスト 2 件 + skill CLI 例更新。test_algo **58→60 件**。
+> - **残(次段)** = P1.5b(Studio op ブラウザに general tier 表示・GUI 変更)/ P2 数値計算。honest 限界 =
 >   NaN 除外・累積順序依存 op は P1 非対象・fscript 言語化は別 track。
 >
 > **★★(2026-08-16, Opus5[1m]/ultracode) = 「Fullseye と Fullseye Studio の修正と改善を完了」(ユーザーゴール, 自律).** 全スイート **4426 → 4494 passed / 0 failed**(+68)、studio **82 → 84**、UI ハーネス **192 steps / 0 fail / 0 crash**。全 local(auto-commit hook)・push は human-gate。
