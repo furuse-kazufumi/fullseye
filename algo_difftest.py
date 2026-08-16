@@ -248,7 +248,9 @@ def run_c_backend(op, holdout, wd: Path, cc: list[str]) -> dict:
     c_path.write_text(algo_codegen.emit_c(op), encoding="utf-8")
     exe = wd / (f"algo_{op.name}.exe" if sys.platform == "win32" else f"algo_{op.name}")
     try:
-        subprocess.run(cc + ["-O2", "-std=c99", str(c_path), "-o", str(exe)],
+        # -ffp-contract=off: forbid FMA contraction so the C does the SAME separate
+        # mul+add the Python reference does -> numeric ops stay bit-identical.
+        subprocess.run(cc + ["-O2", "-std=c99", "-ffp-contract=off", str(c_path), "-o", str(exe)],
                        check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         return {"status": "compile_error", "detail": (e.stderr or str(e))[-500:]}
