@@ -220,6 +220,134 @@ class ObjectSet:
 
 
 # --------------------------------------------------------------------------- #
+# Typed control values — the general tier's sorts, carried by the type.
+#
+# These complete the type model: alongside the iconic FImage/Region/ObjectSet,
+# ``Seq`` (a 1-D real sequence) and ``Scalar`` (one real) are the CONTROL values
+# the general-algorithm tier (``algo.py``) and future numeric ops operate on. They
+# follow the same discipline as the iconic types — the sort is carried by the type,
+# the storage is private, values are immutable, and there is no implicit truth
+# value — so "the sort is carried, not guessed" holds for every value in Fullseye.
+#
+# ABI mapping (fullseye_abi.h): ``Seq`` is the Python reflection of a homogeneous
+# FS_ELEM_REAL ``fs_tuple`` (a typed real array crossing the boundary, R-4);
+# ``Scalar`` is a single ``double``. No new ABI operator is introduced.
+# --------------------------------------------------------------------------- #
+@dataclass(frozen=True, eq=False)
+class Seq:
+    """A 1-D sequence of real numbers (the ``seq`` sort).
+
+    Storage is a private float64 1-D array. Has ``__len__``/iteration/indexing (all
+    unambiguous) but NO boolean value — write ``len(seq) > 0``, never ``if seq`` —
+    to keep the no-implicit-truthiness rule the iconic types enforce.
+    """
+
+    _values: np.ndarray
+
+    def __post_init__(self):
+        v = np.asarray(self._values, np.float64)
+        if v.ndim != 1:
+            raise FsTypeError("Seq must be 1-D, got %dD" % v.ndim)
+        object.__setattr__(self, "_values", v)
+
+    @classmethod
+    def of(cls, values) -> "Seq":
+        """Build a Seq from any iterable of numbers (copied to a float64 array)."""
+        arr = values if isinstance(values, np.ndarray) else np.fromiter(
+            (float(x) for x in values), dtype=np.float64)
+        return cls(np.asarray(arr, np.float64).reshape(-1) if arr.size or True else arr)
+
+    @property
+    def sort(self) -> str:
+        return "seq"
+
+    def length(self) -> int:
+        """fs_tuple_length"""
+        return int(self._values.size)
+
+    def values(self) -> np.ndarray:
+        """A COPY of the underlying float64 array (storage stays private, R-2/R-4)."""
+        return self._values.copy()
+
+    def real(self, i: int) -> float:
+        """fs_tuple_get_real — the i-th element as a double."""
+        return float(self._values[i])
+
+    def tolist(self) -> list:
+        return self._values.tolist()
+
+    def __len__(self) -> int:
+        return int(self._values.size)
+
+    def __iter__(self):
+        return iter(self._values.tolist())
+
+    def __getitem__(self, i):
+        return float(self._values[i])
+
+    def __bool__(self):
+        raise FsTypeError("a Seq has no truth value; write `len(seq) > 0`")
+
+
+@dataclass(frozen=True, eq=False)
+class Scalar:
+    """A single real number (the ``scalar`` sort).
+
+    ``float(scalar)`` converts explicitly and unambiguously; there is deliberately
+    NO boolean value (write ``s.value() > 0``), so ``Scalar(0.0)`` can never be
+    mistaken for "empty/false" the way a bare float would.
+    """
+
+    _value: float
+
+    def __post_init__(self):
+        object.__setattr__(self, "_value", float(self._value))
+
+    @classmethod
+    def of(cls, x) -> "Scalar":
+        return cls(float(x))
+
+    @property
+    def sort(self) -> str:
+        return "scalar"
+
+    def value(self) -> float:
+        return self._value
+
+    def __float__(self) -> float:
+        return self._value
+
+    def __bool__(self):
+        raise FsTypeError("a Scalar has no truth value; write `s.value() > 0` or `float(s) != 0`")
+
+
+#: The full sort vocabulary of the Fullseye type model (iconic + control).
+SORTS = ("image", "region", "objectset", "seq", "scalar")
+
+
+def sort_of(value) -> str:
+    """The sort of a Fullseye value, carried by its type (fail-closed on unknown).
+
+    One place that knows every value's sort — so a caller never infers a sort from
+    an array's shape/content. Raises ``FsTypeError`` for anything not a Fullseye
+    typed value (e.g. a bare numpy array, whose sort is genuinely unknown).
+    """
+    if isinstance(value, FImage):
+        return "image"
+    if isinstance(value, Region):
+        return "region"
+    if isinstance(value, ObjectSet):
+        return "objectset"
+    if isinstance(value, Seq):
+        return "seq"
+    if isinstance(value, Scalar):
+        return "scalar"
+    raise FsTypeError(
+        "value of type %s has no Fullseye sort — the sort is carried by the type, "
+        "not inferred from a bare array" % type(value).__name__)
+
+
+# --------------------------------------------------------------------------- #
 # Profiles and backend selection
 # --------------------------------------------------------------------------- #
 #: Ordered backend preference per profile.
