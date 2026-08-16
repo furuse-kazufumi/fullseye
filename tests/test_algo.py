@@ -197,8 +197,9 @@ def test_gauss_does_not_mutate_input():
 def test_gauss_codegen_emits_varlen_driver():
     c = algo_codegen.emit_c(algo.ALGO_BY_NAME["gauss_solve"])
     assert "int gauss_solve(const double* a, int n_in, double* out)" in c
-    assert "int out_len =" in c                             # variable-length wire header
-    assert "out_len < 0 || out_len > len" in c             # fail-closed clamp
+    assert "int cap =" in c and "int out_len =" in c        # two-phase: size probe + fill
+    assert "out_len < 0 || out_len > cap" in c              # fail-closed clamp to the probed cap
+    assert "(double*)0" in c                                # size-probe call (out = NULL)
     assert "int main(" in c
 
 
