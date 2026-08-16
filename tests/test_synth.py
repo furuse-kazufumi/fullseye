@@ -52,7 +52,7 @@ def test_spectral_matches_features_and_is_novel():
 
 def test_spectral_preserves_dominant_frequency():
     h = w = 128
-    yy, xx = np.mgrid[0:h, 0:w]
+    _yy, xx = np.mgrid[0:h, 0:w]
     grating = 0.5 + 0.4 * np.sin(2 * np.pi * 8 * xx / w)
     out = synth.synthesize_like(grating, seed=1, method="spectral")
     fr, ps = synth.radial_power_spectrum(grating)
