@@ -312,20 +312,33 @@ def feature_distance(a, b) -> dict:
             "mean_diff": abs(fa["mean"] - fb["mean"]), "std_diff": abs(fa["std"] - fb["std"])}
 
 
-def patch_novelty(synth, source, block: int = 16, n: int = 48, seed: int = 0) -> float:
+def patch_novelty(synth, source, block: int = 16, n: int = 48, seed: int = 0,
+                  max_source_blocks: int = 20000) -> float:
     """Mean nearest-patch distance from *synth* back to *source* (higher = more novel).
 
     Samples ``n`` random blocks of *synth* and, for each, finds the smallest
-    normalised SSD to any block of *source*. ~0 means large verbatim copying; a
-    clearly positive value means the output is genuinely new, not a crop.
+    **mean-squared** distance to a block of *source*. ~0 means large verbatim
+    copying; a clearly positive value means the output is genuinely new, not a crop.
+
+    Honest limits: (1) it is a raw pixel MSE, **not intensity-normalised** — a copy
+    that was globally brightened/inverted still reads as "novel" (for synthesis
+    outputs, which share the exemplar's histogram, verbatim copying is the relevant
+    mode and is detected). (2) The source blocks are sampled on a stride so the
+    working set stays bounded (``max_source_blocks``); on a huge image the estimate
+    uses a strided subset rather than every pixel offset (so it never allocates GBs).
     """
     s = _gray01(synth)
     src = _gray01(source)
     b = int(min(block, s.shape[0], s.shape[1], src.shape[0], src.shape[1]))
     b = max(2, b)
     rng = np.random.default_rng(seed)
-    sy = list(range(src.shape[0] - b + 1)) or [0]
-    sx = list(range(src.shape[1] - b + 1)) or [0]
+    ny, nx = src.shape[0] - b + 1, src.shape[1] - b + 1
+    # stride the source-block grid so at most ~max_source_blocks are materialised
+    stride = 1
+    if max_source_blocks and (max(1, ny) * max(1, nx)) > max_source_blocks:
+        stride = max(1, int(np.ceil(np.sqrt(max(1, ny) * max(1, nx) / max_source_blocks))))
+    sy = list(range(0, ny, stride)) or [0]
+    sx = list(range(0, nx, stride)) or [0]
     src_blocks = np.stack([src[y:y + b, x:x + b] for y in sy for x in sx]).reshape(len(sy) * len(sx), -1)
     dists = []
     for _ in range(n):
