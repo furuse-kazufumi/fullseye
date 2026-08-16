@@ -172,9 +172,8 @@ def _c_gate_ok(cb: dict) -> bool:
     status = cb.get("status")
     if status == "ran":
         return bool(cb.get("pass"))
-    if status == "skipped":
-        return True
-    return False                              # compile_error / run_error -> fail
+    # 'skipped' = neutral (no toolchain); compile_error / run_error = fail-closed
+    return status == "skipped"
 
 
 def difftest(name: str, wd: Path, seed: int = 0, tol: float = 0.0,
