@@ -2349,6 +2349,7 @@ def build_window(model=None):
     win._op_arg_spins = (op_a_spin, op_b_spin)
     win._op_list = op_list
     win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
+    win._op_list = op_list            # exposed for tests (verify the general tier is read-only)
 
     def _select_var_row(row):
         """Highlight a variable in the Variable window (step-execution sync)."""
