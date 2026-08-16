@@ -2746,15 +2746,43 @@ def build_window(model=None):
 
     _VAR_THUMB = 44
 
+    def _contour_icon(xld):
+        """Thumbnail for an XLD contour set ``{"shape": (H,W), "cs": [Nx2 (row,col)]}``:
+        the polylines scaled into the ``_VAR_THUMB`` box, so a contour variable reads
+        as iconic (its geometry is visible) as HDevelop's Variable window shows XLD —
+        rather than an opaque 'control' with no preview."""
+        cs = xld.get("cs") or []
+        shp = xld.get("shape") or (1, 1)
+        H, W = max(int(shp[0]), 1), max(int(shp[1]), 1)
+        pm = QtGui.QPixmap(_VAR_THUMB, _VAR_THUMB)
+        pm.fill(QtGui.QColor(NAVY_1))                 # match the panel background
+        if cs:
+            p = QtGui.QPainter(pm)
+            p.setRenderHint(QtGui.QPainter.Antialiasing, True)
+            pen = QtGui.QPen(QtGui.QColor(TEAL)); pen.setWidthF(1.2); p.setPen(pen)
+            s = (_VAR_THUMB - 2) / max(H, W)          # uniform scale, keep aspect, 1px margin
+            ox, oy = (_VAR_THUMB - s * W) / 2.0, (_VAR_THUMB - s * H) / 2.0
+            for c in cs:
+                pts = np.asarray(c, float)
+                if pts.ndim != 2 or pts.shape[0] < 2 or pts.shape[1] < 2:
+                    continue
+                poly = QtGui.QPolygonF([QtCore.QPointF(ox + pts[i, 1] * s, oy + pts[i, 0] * s)
+                                        for i in range(pts.shape[0])])   # (row,col)->(x,y)
+                p.drawPolyline(poly)
+            p.end()
+        return QtGui.QIcon(pm)                         # empty XLD -> honest blank thumbnail
+
     def _var_icon(val):
-        """A small thumbnail for an iconic variable (image/region → shows its shape),
-        or None for control variables (scalars/contours have no raster preview)."""
+        """A small thumbnail for an iconic variable: image/region shows its raster
+        shape, a contour (XLD) shows its polylines. None for control scalars."""
         if isinstance(val, np.ndarray) and val.ndim in (2, 3):
             qi = _to_qimage(apply_display(val, display.currentText()), QtGui)
             if qi is not None:
                 pm = QtGui.QPixmap.fromImage(qi).scaled(
                     _VAR_THUMB, _VAR_THUMB, QtCore.Qt.KeepAspectRatio, QtCore.Qt.SmoothTransformation)
                 return QtGui.QIcon(pm)
+        elif isinstance(val, dict) and "cs" in val:
+            return _contour_icon(val)
         return None
 
     def refresh_variables():
