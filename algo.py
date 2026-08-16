@@ -514,6 +514,129 @@ double newton(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P2 — linear solve (variable-length seq -> seq). The whole system is packed into
+# the input seq so no matrix object crosses the boundary; the op still codegens to
+# C exactly like the others, but produces a shorter output (KIND_MAP). Accumulates,
+# so C-vs-Python is bit-exact (same order, -ffp-contract=off) while Python-vs-oracle
+# (np.linalg.solve) uses a tolerance.
+# --------------------------------------------------------------------------- #
+_PY_GAUSS = '''\
+def run(a):
+    """Solve a linear system A x = b by Gaussian elimination with partial pivoting.
+
+    The whole system is packed into the input sequence (no matrix object crosses the
+    boundary, so this codegens to C exactly like the other ops):
+
+        a = [n, row0..., row1..., ..., row_{n-1}...]
+
+    where the augmented matrix is n rows x (n+1) columns in row-major order (each row
+    = n coefficients followed by its right-hand side). Returns the solution vector
+    [x0, ..., x_{n-1}] (length n) — a VARIABLE-LENGTH output, shorter than the input.
+
+    Fail-soft (no exception): returns [] if the input is malformed (n < 1, n out of
+    the int range the C mirror supports, or too few values) or if the matrix is
+    singular (a zero pivot survives partial pivoting = no unique solution). Verify a
+    result with the residual |A x - b| if it matters. NaN-free input assumed (a NaN
+    pivot makes the |pivot| comparison meaningless — see the module docstring)."""
+    if len(a) < 1:
+        return []
+    n_d = a[0]
+    # 1 <= n <= 46340 keeps 1 + n*(n+1) within int32 in the C mirror (46341^2 < 2^31).
+    if not (n_d >= 1.0 and n_d <= 46340.0):        # also rejects NaN
+        return []
+    n = int(n_d)
+    need = 1 + n * (n + 1)
+    if len(a) < need:
+        return []
+    w = n + 1                                       # columns in the augmented matrix
+    # copy the augmented matrix into a mutable n x (n+1) table (row-major -> rows)
+    m = [[a[1 + r * w + c] for c in range(w)] for r in range(n)]
+    for col in range(n):                            # forward elimination, partial pivoting
+        piv = col                                   # row with the largest |entry| in this column
+        best = m[col][col]
+        if best < 0.0:
+            best = -best
+        for r in range(col + 1, n):
+            v = m[r][col]
+            if v < 0.0:
+                v = -v
+            if v > best:
+                best = v
+                piv = r
+        if best == 0.0:
+            return []                               # singular: no unique solution
+        if piv != col:
+            m[col], m[piv] = m[piv], m[col]
+        for r in range(col + 1, n):
+            factor = m[r][col] / m[col][col]
+            m[r][col] = 0.0                         # exact zero (not factor*pivot) -> matches C
+            for c in range(col + 1, w):
+                m[r][c] = m[r][c] - factor * m[col][c]
+    x = [0.0] * n                                   # back substitution
+    for row in range(n - 1, -1, -1):
+        s = m[row][n]
+        for c in range(row + 1, n):
+            s = s - m[row][c] * x[c]
+        x[row] = s / m[row][row]
+    return x
+'''
+
+_C_GAUSS = '''\
+/* Solve A x = b by Gaussian elimination with partial pivoting.
+ * Input a = [n, augmented n x (n+1) matrix, row-major]; writes the length-n solution
+ * to `out` (caller buffer of >= n doubles) and returns n. Returns 0 (empty) on
+ * malformed input (n < 1 / out of range / too short) or a singular matrix
+ * (fail-soft, no crash). NaN-free input assumed. */
+int gauss_solve(const double* a, int n_in, double* out) {
+    if (n_in < 1) return 0;
+    double n_d = a[0];
+    /* 1 <= n <= 46340 keeps 1 + n*(n+1) within int32 (46341^2 < 2^31). */
+    if (!(n_d >= 1.0 && n_d <= 46340.0)) return 0;          /* also rejects NaN */
+    int n = (int)n_d;
+    long long need = 1LL + (long long)n * (n + 1);
+    if ((long long)n_in < need) return 0;
+    int w = n + 1;
+    double* m = (double*)malloc((size_t)n * (size_t)w * sizeof(double));
+    if (!m) return 0;
+    for (int r = 0; r < n; r++)
+        for (int c = 0; c < w; c++)
+            m[r * w + c] = a[1 + r * w + c];
+    for (int col = 0; col < n; col++) {             /* forward elimination, partial pivoting */
+        int piv = col;
+        double best = m[col * w + col];
+        if (best < 0.0) best = -best;
+        for (int r = col + 1; r < n; r++) {
+            double v = m[r * w + col];
+            if (v < 0.0) v = -v;
+            if (v > best) { best = v; piv = r; }
+        }
+        if (best == 0.0) { free(m); return 0; }     /* singular */
+        if (piv != col)
+            for (int c = 0; c < w; c++) {
+                double t = m[col * w + c];
+                m[col * w + c] = m[piv * w + c];
+                m[piv * w + c] = t;
+            }
+        for (int r = col + 1; r < n; r++) {
+            double factor = m[r * w + col] / m[col * w + col];
+            m[r * w + col] = 0.0;                    /* exact zero, matches Python */
+            for (int c = col + 1; c < w; c++)
+                m[r * w + c] = m[r * w + c] - factor * m[col * w + c];
+        }
+    }
+    for (int row = n - 1; row >= 0; row--) {        /* back substitution */
+        double s = m[row * w + n];
+        for (int c = row + 1; c < n; c++)
+            s = s - m[row * w + c] * out[c];
+        out[row] = s / m[row * w + row];
+    }
+    free(m);
+    return n;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
