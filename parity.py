@@ -5,20 +5,27 @@ But many HALCON operators are implemented in imgevolve by TWO OR MORE independen
 backends — scipy vs OpenCV vs scikit-image (e.g. gauss_filter = scipy.gaussian AND
 cv2.GaussianBlur; median_image = scipy AND cv2 AND skimage). If genuinely
 independent libraries compute the SAME result on holdout inputs, that is real,
-falsifiable evidence the operation is faithfully implemented — not a tautology and
-not a claim we can't back.
+falsifiable evidence — but only AT THE OPERATING POINTS TESTED. Agreement here is
+evidence of agreement, NOT a proof the operation is faithfully implemented: this
+harness never sees HALCON, and it samples a handful of knob settings, not the
+whole knob space.
 
 For every HALCON op with >=2 comparable registry implementations, run them all on
-holdout images and measure the max pairwise disagreement:
+holdout images at each KNOBS operating point and measure the max pairwise
+disagreement over all of them (the worst point wins, and is named):
 
-  agree   (<= 0.02)  independent backends match — strong parity evidence
+  agree   (<= 0.02)  independent backends match at every tested point
   close   (<= 0.10)  minor numeric/library differences (interpolation, borders)
   differ  (>  0.10)  genuinely different algorithm behind the same name — DISCLOSED,
                      not hidden (honest: a shared HALCON name is a nearest-analog,
                      not a guarantee two libs implement it identically)
+  incomparable       a backend raised, or the outputs cannot be diffed. Reported as
+                     its own band rather than dropped from the tally — an op we
+                     could not compare is not an op that agreed.
 
-    py -3.11 parity.py                 # summary + docs/PARITY_CROSSBACKEND.md
-    py -3.11 parity.py --list differ   # show the disagreements (honest disclosure)
+    py -3.11 parity.py                        # summary + docs/PARITY_CROSSBACKEND.md
+    py -3.11 parity.py --list differ          # show the disagreements (honest disclosure)
+    py -3.11 parity.py --list incomparable    # show what could not be compared
 """
 from __future__ import annotations
 
