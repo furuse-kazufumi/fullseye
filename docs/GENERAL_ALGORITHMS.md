@@ -167,6 +167,27 @@ breadth は work-graph の difftest ゲート、敵対 findings 採否・push �
 - **work-graph ノード化**: `raptor-worklog add --capability tool --project imgevolve --priority 0`(spec=
   `tools/algo_gate.py --op gauss_solve --out <OUT>`、produces=`<OUT>/gate_ok.json`)→ `run-once --available
   tool:command` で **無人実行 → status=done**(exit0・c_verified=true・bit 一致マーカー生成)。
-- **回帰**: 全スイート **4637→(gauss+C fail-soft テスト後)passed/0 failed**、`tests/test_algo.py` に gauss 9 件
-  + algo_gate 4 件 + C fail-soft 1 件を追加。私の全ファイル **ruff clean**・mypy 回帰 0(既存 baseline=scipy/
-  ziglang stub 欠如と difftest 署名の既存 quirk のみ、私の追加行由来 0)。全 local commit・**未 push=human-gate**。
+- **回帰**: `tests/test_algo.py` に gauss + algo_gate + C fail-soft テスト群を追加。私の全ファイル
+  **ruff clean**・mypy 回帰 0(既存 baseline=scipy/ziglang stub 欠如と difftest 署名の既存 quirk のみ、私の
+  追加行由来 0)。全 local commit・**未 push=human-gate**。
+
+### P2 gauss 敵対レビュー後の強化(2026-08-16, [[feedback_no_solo_ai_judgment]])
+自作 gauss コードへ独立敵対レビュー Workflow(4 レンズ=numeric 正しさ / C 安全 / gate 健全性 / 統合・被覆、
+各 finding を検証エージェントが**実行再現**)。5 findings 中 **4 CONFIRMED** を一次コード検証の上で全修正:
+- **[HIGH] algo_gate の fail-open(未知 op)**: `find_algo` の `SystemExit` が `marker.unlink()` より**前**に
+  あり、旧 pass の `gate_ok.json` が残存 → CommandWorker が produces 存在で **done 誤判定**(op 改名/typo の
+  再実行で顕在)。→ **mkdir + stale-marker unlink を registry チェックの前**へ移動(どの早期 exit でも旧 pass を
+  引き継がない)。回帰テスト追加。
+- **[MED] gate が部分ピボットを反証できない**: holdout が対角優位のみ(exact-zero ピボット無)→ ピボット探索を
+  削除した mutant でも `np.linalg.solve` と 2.2e-14 で一致し **PASS**(pytest は捕捉するが work-graph が走らせる
+  algo_gate は difftest holdout ゆえ捕捉しない)。→ **ピボット必須ケース**(exact-zero(0,0)=`[[0,1],[1,0]]`・
+  微小(0,0)=`[[1e-14,1],[1,1]]`・3×3 ゼロ対角)を holdout に追加=no-pivot mutant を**構造不一致→inf→FAIL** で
+  falsify(自前実測確認済)。誤解を招くコメントも訂正。
+- **[MED] C skip でも pass マーカー**: toolchain 不在で C 半分が skip(honest だが**未検証**)でも
+  `res["passed"]` だけでマーカーを書き、graph はマーカー存在のみ読む → **未 compile の C を certify**。→
+  `require_c`(既定 True)を追加=未検証 pass は `gate_ok.json` を書かず(`gate_unverified.json` に diagnostic)
+  **fail-closed**。`--allow-unverified-c` で明示 opt-out、`--no-c` は Python-only の意図的弱ゲート。
+- **[REFUTED] 「out_len==0 の wire が未テスト」**: 私が先回りで追加した `test_gauss_c_fail_soft_matches_python`
+  が実 C を compile/run して被覆済 → 検証エージェントが mutation で健全性を確認し **棄却**。残る macOS
+  cross-compile guard の軽微 nit(`_ALL`→`_ALL_OPS` で numeric/gauss も被覆)のみ採用。
+レビュー後も gauss difftest = python 3.55e-15 / C bit 一致 / c_verified=true・work-graph ノード(hardened)= done。
