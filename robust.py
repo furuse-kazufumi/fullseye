@@ -116,9 +116,12 @@ def main() -> int:
     if locked is not None:
         print("  LOCKED-holdout spread (seed+20000, scored once): min %.3f / mean %.3f / max %.3f (std %.3f)"
               % (locked.min(), locked.mean(), locked.max(), locked.std()))
-        if hand is not None:
-            print("    seeds beating hand baseline: %d/%d   |   collapses (< trivial %.3f): %d/%d"
-                  % (n_beat_lk, a.seeds, trivial, n_collapse_lk, a.seeds))
+        if hand_lk is not None:
+            print("    seeds beating hand baseline (locked): %d/%d   |   collapses (< trivial %.3f): %d/%d"
+                  % (n_beat_lk, a.seeds, trivial_lk, n_collapse_lk, a.seeds))
+        else:
+            print("    locked beat/collapse tally: null (baseline file has no locked-split "
+                  "scores; the observed-split threshold is NOT substituted)")
     else:
         print("  LOCKED-holdout: not available (champions carry no 'locked_holdout') — not substituted")
     print("  -> honest: best-of-N (train-selected) = %.3f observed / %s locked; variance disclosed above."
