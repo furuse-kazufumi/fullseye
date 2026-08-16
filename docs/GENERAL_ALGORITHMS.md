@@ -251,3 +251,22 @@ breadth は work-graph の difftest ゲート、敵対 findings 採否・push �
   無効・`win._op_names` が general 除外・コードパーサが general 行を拒否。全スイート緑・ruff net-new 0(新規テストは
   clean、studio.py の flash は file の `%`-format idiom に一貫)・mypy 回帰 0。**候補 (d) op 波**も実演=全 12 algo op を
   work-graph に 1 op=1 ノードで載せ `run-once` で無人 done。
+
+## P4 完遂記録 — グラフ op(2026-08-17, Opus5[1m]/ultracode, bonus)
+**グラフアルゴリズム 3 種を algo tier に追加**(候補外だがユーザー「全部進めて」+7-8h 自律に沿うボーナス)。グラフを
+入力 seq にパック(`[n, m, (u,v,w)*m]`、無向; dijkstra は src 前置 `[n, m, src, ...]`)し既存 float64 harness に載せる。
+- **op(3)**: `graph_components`(union-find・連結成分数=KIND_REDUCE 厳密整数)/ `graph_mst_weight`(Kruskal・最小
+  全域森の総重み=KIND_REDUCE)/ `graph_dijkstra`(単一始点最短距離=**KIND_MAP**・-1.0=到達不可)。決定的 union 則 +
+  (weight,index) ソート + 最小距離·最小 index の settle 順で **C==Python bit 一致**。
+- **★KIND_MAP driver を 2 段化(size-probe)**: dijkstra は出力長 n が入力長 3+3m を**超え得る**(疎グラフ)。旧 driver
+  は out を入力長で確保していたため heap OOB になる欠陥 → driver が `f(a,n,NULL)` で out_len 上界を問い、その分だけ確保
+  してから実書き込みする 2 段プロトコルに変更(gauss/strfind/dijkstra に `if(!out) return <bound>`)。
+- **honest gate**: Python == 独立 oracle **scipy.sparse.csgraph**(connected_components/minimum_spanning_tree/dijkstra)。
+  整数重み holdout で **components 厳密(tol 0)/ mst・dijkstra tol 1e-9(実測 0)**。C==Python bit 一致(ziglang cc)。
+  MST/Dijkstra holdout は単純グラフ(csr の重複加算回避)、components は多重辺可(連結性のみ)。
+- **敵対レビュー(3 レンズ・実行検証)= 2 CONFIRMED(共に HIGH・dijkstra メモリ安全)を全修正**:
+  (#2)out バッファが入力長サイズ → n>3+3m で OOB書込 → **2 段化 driver**で解消(発見前に先回り修正済)。
+  (#1)src ガードが生 `sd < nd` → 小数 nd で src==n が通り out[n] OOB → **整数 n で束縛**(`sd < n`)。1 REFUTED
+  (到達不可ノード未検証←known-answer/sparse テストで被覆)。numeric/oracle 各レンズの他指摘なし。
+- **op 波**: 3 グラフ op も work-graph ゲート化(全 algo op = 15 が 1 op=1 ノードで無人 done)。全スイート緑・ruff clean
+  ・mypy 回帰 0。push はセッション(ユーザー承認)。

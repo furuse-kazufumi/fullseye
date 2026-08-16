@@ -461,13 +461,15 @@ def test_graph_dijkstra_c_sparse_output_larger_than_input(tmp_path):
     cases = [
         [5.0, 0.0, 0.0],                                # 5 nodes, no edges: [0, -1, -1, -1, -1]
         [4.0, 1.0, 2.0, 2.0, 3.0, 7.0],                 # src=2, edge 2-3: node 2,3 reached, 0,1 not
+        [3.5, 0.0, 3.0],                                # fractional n_d, src==int(n): fail-soft, no OOB
     ]
     cc = algo_difftest.find_c_compiler()
     res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
-    assert res["status"] == "ran", res
+    assert res["status"] == "ran", res                  # C did NOT crash (no heap OOB write)
     py = [algo.py_fn("graph_dijkstra")([float(x) for x in c]) for c in cases]
     assert res["outputs"] == py
     assert res["outputs"][0] == [0.0, -1.0, -1.0, -1.0, -1.0]
+    assert res["outputs"][2] == []                      # fractional-n_d src rejected -> empty
 
 
 def test_string_ops_fail_soft_on_bad_header_no_crash():
