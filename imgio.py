@@ -283,6 +283,17 @@ def _as_gray_or_color(f, color: bool):
     return a[..., 0]
 
 
+def _to01_by_depth(im):
+    """Normalise a decoded raster to float64 [0, 1] by its *true* max level
+    (uint8 -> /255, uint16 -> /65535), so a 16-bit read keeps its 65536 levels.
+    Float samples are assumed already normalised and merely clipped — the same
+    rule :func:`raster.to01` applies, so both read paths agree."""
+    a = np.asarray(im)
+    if a.dtype.kind in "ui":
+        return a.astype(np.float64) / float(np.iinfo(a.dtype).max)
+    return np.clip(a.astype(np.float64), 0.0, 1.0)
+
+
 def _load_via_fallback(path: str, color: bool):
     """Decode a file OpenCV could *see* but not decode (a 16-bit / float TIFF, a
     PFM, ...) via the bit-depth-preserving `raster` reader, then Pillow. Returns
