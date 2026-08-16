@@ -788,6 +788,26 @@ def test_apply_display_region_margin_vs_fill():
     assert 0 < n_margin < n_fill
 
 
+def test_dev_disp_text_annotation():
+    """dev_disp_text adds text annotations to the current window; a fresh render (or
+    dev_clear_window) clears them, and it is a directive, not a pipeline stage."""
+    from PySide6 import QtGui
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    view = win._current_view()
+    view.set_pixmap(QtGui.QPixmap(48, 48))
+    win._apply_text_directives("dev_disp_text ('OK', 5, 10)\ndev_disp_text ('pass')")
+    assert len(view._text_items) == 2
+    view.set_pixmap(QtGui.QPixmap(48, 48))                  # a fresh render clears stale text
+    assert len(view._text_items) == 0
+    stages, errs = win._program["parse"]("gaussian (0.5, 0.5)\ndev_disp_text ('hi', 2, 2)")
+    assert not errs and [s[0] for s in stages] == ["gaussian"]   # directive, not a stage
+    win._disp_text(3, 3, "x")
+    assert len(view._text_items) == 1
+    view.clear()
+    assert len(view._text_items) == 0
+
+
 def test_mutations_render_exactly_once():
     """C3: refresh_stage_list() used to re-select the row with signals unblocked,
     so every edit rendered twice (currentRowChanged + the caller's show_result)."""
