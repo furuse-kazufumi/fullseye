@@ -64,9 +64,9 @@ def test_seq_construction_copies_the_input_array():
     s = Seq.of(a)
     a[0] = 99.0
     assert s.tolist() == [1.0, 2.0, 3.0]
-    s2 = Seq(a)                                 # direct constructor too
+    s2 = Seq(a)                                 # direct constructor too (a is now [99,2,3])
     a[1] = 77.0
-    assert s2.tolist() == [1.0, 99.0, 3.0]      # sees a[0]=99 (set above) but not a[1]=77
+    assert s2.tolist() == [99.0, 2.0, 3.0]      # snapshot at construction; a[1]=77 not seen
 
 
 def test_seq_is_immutable():
