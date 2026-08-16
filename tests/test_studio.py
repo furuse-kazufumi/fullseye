@@ -235,12 +235,11 @@ def test_program_editor_and_help_exclude_general_tier_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
     import algo
-    from PySide6 import QtWidgets
+    from PySide6 import QtCore, QtWidgets
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
     win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     # the browser SHOWS the general tier (read-only) ...
-    shown = [win._op_list.item(i).data(__import__("PySide6.QtCore", fromlist=["Qt"]).Qt.UserRole)
-             for i in range(win._op_list.count())]
+    shown = [win._op_list.item(i).data(QtCore.Qt.UserRole) for i in range(win._op_list.count())]
     assert set(algo.algo_names()) <= set(shown)
     # ... but the code parser / autocomplete / Help picker names EXCLUDE it
     assert "gaussian" in win._op_names
