@@ -176,6 +176,35 @@ def test_invalid_args_fail_closed():
         synth.synthesize_like(src, method="nope")
 
 
+def test_nonfinite_input_fails_closed():
+    with pytest.raises(ValueError):
+        synth.synthesize_like(np.full((32, 32), np.nan))
+    with pytest.raises(ValueError):
+        synth.synthesize_like(np.full((16, 16), np.inf), method="patch")
+
+
+def test_patch_novelty_detects_verbatim_copy():
+    src = _pink(64, 64, 0)
+    # an exact crop of the source scores ~0; an independent image scores clearly higher
+    crop = src.copy()
+    nov_copy = synth.patch_novelty(crop, src, seed=0)
+    nov_indep = synth.patch_novelty(_pink(64, 64, 123), src, seed=0)
+    assert nov_copy < 1e-9
+    assert nov_indep > 10 * max(nov_copy, 1e-6)
+
+
+def test_patch_quilting_is_bounded_in_time():
+    # the candidate cap bounds the search: a documented call must not hang.
+    import time
+    src = _pink(160, 160, 0)
+    t = time.perf_counter()
+    out = synth.synthesize_like(src, size=(256, 256), seed=0, method="patch",
+                                block=32, overlap=8)
+    dt = time.perf_counter() - t
+    assert out.shape == (256, 256) and np.isfinite(out).all()
+    assert dt < 20.0, f"quilting took {dt:.1f}s (candidate cap should bound it)"
+
+
 # --------------------------------------------------------------------------- #
 # facade
 # --------------------------------------------------------------------------- #
