@@ -248,6 +248,47 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             sb = [float(65 + rng.randint(0, alpha - 1)) for _ in range(nb)]
             cases.append([float(na)] + sa + sb)
         return cases
+    if name in ("graph_components", "graph_mst_weight"):
+        # undirected graphs [n, m, (u,v,w)*m] with integer weights (exact sums). Mix of
+        # isolated / path / multi-component / dense + random (self-loops & multi-edges ok).
+        cases = [
+            [1.0, 0.0],                                        # single isolated node
+            [3.0, 0.0],                                        # 3 isolated
+            [4.0, 3.0, 0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 5.0],   # path (1 component)
+            [6.0, 6.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 0.0, 3.0,    # two triangles
+             3.0, 4.0, 1.0, 4.0, 5.0, 2.0, 5.0, 3.0, 3.0],
+        ]
+        for _ in range(26):
+            n = rng.randint(1, 10)
+            m = rng.randint(0, 16)
+            edges: list[float] = []
+            for _ in range(m):
+                u = rng.randint(0, n - 1)
+                v = rng.randint(0, n - 1)
+                edges += [float(u), float(v), float(rng.randint(1, 20))]
+            cases.append([float(n), float(m)] + edges)
+        return cases
+    if name == "graph_dijkstra":
+        # CONNECTED graphs [n, m, src, (u,v,w)*m] (spanning path + random extra edges) with
+        # non-negative integer weights -> every node reachable, distances exact.
+        cases = [
+            [1.0, 0.0, 0.0],                                   # single node, dist [0]
+            [3.0, 2.0, 0.0, 0.0, 1.0, 5.0, 1.0, 2.0, 3.0],     # path 0-1-2 from src 0
+        ]
+        for _ in range(28):
+            n = rng.randint(1, 9)
+            edges: list[float] = []
+            for i in range(n - 1):                             # spanning path -> connected
+                edges += [float(i), float(i + 1), float(rng.randint(1, 9))]
+            extra = rng.randint(0, 8)
+            for _ in range(extra):
+                u = rng.randint(0, n - 1)
+                v = rng.randint(0, n - 1)
+                edges += [float(u), float(v), float(rng.randint(1, 9))]
+            m = (n - 1) + extra
+            src = rng.randint(0, n - 1)
+            cases.append([float(n), float(m), float(src)] + edges)
+        return cases
     return make_holdout(seed)
 
 
