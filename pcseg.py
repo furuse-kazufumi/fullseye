@@ -144,9 +144,13 @@ def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int 
     5 points and 10% of the cloud, tightened by *min_inliers* / *min_inlier_frac*.
     ``None`` is the single "no model" signal for BOTH no consensus and no valid
     hypothesis (coincident samples); only a precondition violation (``< 4`` points)
-    raises. Honest limit: consensus does not bound the RADIUS — a near-flat patch
-    fits as a huge-radius sphere with genuine consensus, so sanity-check the returned
-    radius against your scene scale if flat surfaces may reach this call."""
+    raises. This REPLACES a prior ``ValueError`` (no-model paths now return ``None``).
+    Honest limits (the default gate is WEAK, not a proof): (1) consensus does not
+    bound the RADIUS — a near-flat patch fits as a huge-radius sphere; (2) the 10%
+    default only rejects a blob when the cloud is large relative to *thresh* — a
+    COMPACT non-primitive blob can still pass with a plausible small radius (see
+    :data:`_DEFAULT_CONSENSUS_FRAC`). Sanity-check the returned radius against your
+    scene scale, and pass a stricter *min_inlier_frac* for compact clouds."""
     P = _pts3(points)
     n = P.shape[0]
     if n < 4:
