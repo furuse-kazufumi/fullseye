@@ -34,8 +34,8 @@ so "re-implemented from spec" is visibly true). P1 scope: seq/scalar + 3 sorts +
 """
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 # --- value sorts for the general tier (distinct from the image sorts) -------- #
 SEQ = "seq"        # a 1-D sequence of real numbers (Python: list[float]; C: double*)
