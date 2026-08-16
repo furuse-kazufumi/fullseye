@@ -217,8 +217,9 @@ def resample(x, rate, new_rate):
 def signal_features(x, rate=1.0):
     """A compact acoustic/vibration feature vector for anomaly detection:
     ``rms``, ``peak``, ``crest_factor``, ``zcr``, ``spectral_centroid`` (Hz),
-    ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite; empty signal -> zeros."""
-    x = np.asarray(x, np.float64)
+    ``peak_freq`` (Hz), ``bandwidth`` (Hz). All finite — a NaN / Inf sample raises
+    ``ValueError`` rather than producing NaN features; empty signal -> zeros."""
+    x = _require_finite(x)
     if x.size == 0:
         return {k: 0.0 for k in ("rms", "peak", "crest_factor", "zcr",
                                  "spectral_centroid", "peak_freq", "bandwidth")}
