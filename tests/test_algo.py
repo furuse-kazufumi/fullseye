@@ -21,7 +21,9 @@ import algo_difftest
 
 _SORTS = ["quicksort", "heapsort", "mergesort"]
 _REDUCES = ["seq_max", "seq_min"]
-_NUMERIC = ["simpson", "bisection", "newton"]      # P2: seq -> scalar, oracle-tolerance
+# P2: oracle-tolerance ops. simpson/bisection/newton are seq -> scalar; gauss_solve
+# is a variable-length seq -> seq map (KIND_MAP).
+_NUMERIC = ["simpson", "bisection", "newton", "gauss_solve"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 _ALL_OPS = _ALL + _NUMERIC
 
