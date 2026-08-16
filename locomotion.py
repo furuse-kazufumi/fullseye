@@ -57,15 +57,48 @@ def com_from_silhouette(mask):
     return (float(ys.mean()), float(xs.mean()))
 
 
-def support_polygon(contacts) -> dict:
+def _ground_contact_mask(C, ground, tol):
+    """Mask of the rows of ``C`` (N,3) touching *ground* within *tol*.
+
+    *ground* is either a floor level ``z`` (scalar, as in :func:`gait_phase`) or a
+    plane ``[a, b, c, d]`` (as in :func:`contact_points`). Airborne feet are
+    dropped, never projected down onto the floor."""
+    if C.shape[1] != 3:                             # no z to test -> cannot honour the
+        raise ValueError("ground filtering needs (N, 3) contacts, got (N, 2)")  # gate
+    g = np.asarray(ground, np.float64).ravel()
+    if g.size == 1:                                 # floor level: |z - ground| <= tol
+        dist = np.abs(C[:, 2] - g[0])
+    elif g.size == 4:                               # plane: same rule as contact_points
+        nrm = np.linalg.norm(g[:3])
+        if nrm < 1e-12:
+            raise ValueError("degenerate ground plane: normal has zero length")
+        dist = np.abs(C @ g[:3] + g[3]) / nrm
+    else:
+        raise ValueError("ground must be a floor level z or a plane [a, b, c, d]")
+    return dist <= float(tol)
+
+
+def support_polygon(contacts, ground=None, contact_tol: float = 0.02) -> dict:
     """Convex support polygon of the ground-contact points (ground x, y plane).
 
     Returns ``{vertices (M,2 CCW), area, perimeter, centroid}``. With <3 distinct
     points it degenerates gracefully (a point or a segment, ``area = 0``). This is
-    the base of support a static-stability check is measured against."""
+    the base of support a static-stability check is measured against.
+
+    ★Precondition — only feet ACTUALLY TOUCHING the floor may take part: every
+    contact is projected to (x, y), so a lifted foot out at some far x/y inflates
+    the polygon and can make a tipping robot read as statically stable.
+
+    * ``ground`` given (recommended for anti-cheat) — a floor level ``z`` or a
+      plane ``[a, b, c, d]``; contacts further than ``contact_tol`` from it are
+      filtered out here, so an airborne foot supports nothing.
+    * ``ground=None`` (default, backward-compatible) — no z check at all; the
+      caller MUST pre-filter with :func:`contact_points`."""
     C = np.asarray(contacts, np.float64)
     if C.ndim != 2 or C.shape[1] not in (2, 3):
         raise ValueError("contacts must be (N, 2) or (N, 3)")
+    if ground is not None:                          # a foot in the air supports nothing
+        C = C[_ground_contact_mask(C, ground, contact_tol)]
     xy = C[:, :2]
     xy = xy[np.isfinite(xy).all(1)]                 # drop inf/NaN contacts (not a foot)
     uniq = np.unique(np.round(xy, 9), axis=0)
