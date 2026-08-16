@@ -6,7 +6,8 @@ right one is to *wrap* what already exists and keep only the differentiating lay
 are installed, `build()` returns typed Op wrappers that the registry appends — so
 op count scales with library coverage and evolution/codegen/catalog pick them up
 for free. Every wrapper is exception-safe (a failing call degrades to identity)
-because these are best-effort adapters over large APIs.
+because these are best-effort adapters over large APIs — see `_safe` for why that
+degradation is a LAST RESORT and how to make it detectable.
 
 Backend ops are prefixed (`sk_`, `cv_`) so they never shadow the always-available
 numpy/scipy core; the core keeps working when neither library is present.
