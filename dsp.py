@@ -202,7 +202,7 @@ def zero_crossing_rate(x):
 def find_peaks(x, height=None, distance=None):
     """Peak indices (scipy.signal.find_peaks) — impacts / defect echoes."""
     from scipy.signal import find_peaks as _fp
-    idx, _ = _fp(np.asarray(x, np.float64), height=height, distance=distance)
+    idx, _ = _fp(_require_finite(x), height=height, distance=distance)
     return idx
 
 
