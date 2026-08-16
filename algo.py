@@ -1118,7 +1118,7 @@ int graph_dijkstra(const double* a, int n_in, double* out) {
     if (!(nd >= 1.0 && nd <= 2147483000.0)) return 0;
     if (!(md >= 0.0 && md <= 2147483000.0)) return 0;
     int n = (int)nd, m = (int)md;
-    if (!(sd >= 0.0 && sd < nd)) return 0;
+    if (!(sd >= 0.0 && sd < (double)n)) return 0;      /* bound src against int n, not raw nd */
     int src = (int)sd;
     if ((long long)n_in < 3LL + 3LL * m) return 0;
     for (int k = 0; k < m; k++) {                      /* validate up front */
