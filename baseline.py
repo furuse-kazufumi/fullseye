@@ -39,6 +39,7 @@ def main() -> int:
     wd = Path(a.workdir); wd.mkdir(parents=True, exist_ok=True)
     tr = prob.make(a.n_train, a.size, a.seed)
     ho = prob.make(a.n_holdout, a.size, a.seed + 10_000)
+    lo = prob.make(a.n_holdout, a.size, a.seed + 20_000)   # LOCKED split (robust.py's *_locked tally)
 
     hand = prob.hand_stages()
     rng = np.random.default_rng(a.seed + 777)
