@@ -666,7 +666,16 @@ def parse_hdev_program(text, names):
 #: See docs/HDEVELOP_DEV_OPS.md.
 _DEV_DIRECTIVES = {"dev_update_window", "dev_update_var", "dev_update_pc",
                    "dev_update_time", "dev_update_off", "dev_update_on", "dev_set_part",
-                   "dev_set_lut", "dev_clear_window"}
+                   "dev_set_lut", "dev_clear_window",
+                   "dev_set_draw", "dev_set_color", "dev_set_line_width"}
+
+#: HALCON colour names -> RGB in [0,1], for dev_set_color.
+_HALCON_COLORS = {
+    "red": (1.0, 0.0, 0.0), "green": (0.0, 1.0, 0.0), "blue": (0.0, 0.0, 1.0),
+    "yellow": (1.0, 1.0, 0.0), "cyan": (0.0, 1.0, 1.0), "magenta": (1.0, 0.0, 1.0),
+    "white": (1.0, 1.0, 1.0), "black": (0.0, 0.0, 0.0), "orange": (0.96, 0.62, 0.14),
+    "gray": (0.5, 0.5, 0.5), "grey": (0.5, 0.5, 0.5),
+}
 
 #: Non-dev_ HALCON config operators Studio honours as program directives (set global
 #: system parameters; not image pipeline stages). See docs/HDEVELOP_DEV_OPS.md (F).
