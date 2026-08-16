@@ -90,6 +90,22 @@ def test_coerce_two_level_grayscale_region_input_is_left_to_internal_bin():
     assert set(np.unique(api._coerce_input(three, op))).issubset({0.0, 1.0})
 
 
+def test_coerce_int_region_mask_becomes_float():
+    # Regression: an int/uint {0,1} mask was left untouched (returned int64) even
+    # though apply() promises float64 — the docstring lead ("not already a float64
+    # {0,1} mask") did not match the code. It is now re-typed to float64, same values.
+    mask = np.zeros((16, 16), np.uint8)
+    mask[3:10, 4:12] = 1
+    op = next(o for o in ops.REGISTRY if o.name == "reg_erode")
+    got = api._coerce_input(mask, op)
+    assert isinstance(got, np.ndarray) and got.dtype == np.float64
+    assert set(np.unique(got)).issubset({0.0, 1.0})
+    assert np.array_equal(got > 0.5, mask > 0)             # re-typed, never re-valued
+    # an int label image (values > 1) is still binarised at 0.5, as before
+    lbl = np.zeros((16, 16), np.int64); lbl[3:10, 4:12] = 5
+    assert set(np.unique(api._coerce_input(lbl, op))).issubset({0.0, 1.0})
+
+
 def test_unknown_op_raises_keyerror():
     with pytest.raises(KeyError):
         api.apply(_img(), "no_such_operator_xyz")
