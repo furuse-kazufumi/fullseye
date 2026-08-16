@@ -56,12 +56,12 @@ def _holdout(n=6, sz=64):
     return imgs
 
 
-def _run(op, v):
+def _run(op, v, a=0.5, b=0.4):
     try:
-        out = ops.RT[op.name](np.asarray(v, np.float64).copy(), 0.5, 0.4)
+        out = ops.RT[op.name](np.asarray(v, np.float64).copy(), a, b)
         return out
     except Exception:
-        return None
+        return None                              # caller bands the group 'incomparable'
 
 
 def _diff(a, b, out_sort):
