@@ -161,15 +161,24 @@ def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int 
 
 
 def fit_cylinder_ransac(points, normals=None, thresh: float = 0.01,
-                        iters: int = 300, seed: int = 0):
+                        iters: int = 300, seed: int = 0,
+                        min_inliers: int | None = None,
+                        min_inlier_frac: float | None = None):
     """Robust cylinder fit by RANSAC from point+normal samples (Rusu 2009).
 
     Two surface points with their normals fix a candidate: the axis direction is
     ``n0 x n1`` and the radius/axis line follow from intersecting the two normals in
     the plane perpendicular to the axis. Returns
-    ``(axis_point (3,), axis_dir (3, unit), radius, inliers)``. Detects pipes, rods
-    and (roughly) limbs — cylindrical things a gripper wraps around. If *normals*
-    is None they are estimated from the cloud."""
+    ``(axis_point (3,), axis_dir (3, unit), radius, inliers)``, or ``None`` when no
+    hypothesis reaches the consensus gate. Detects pipes, rods and (roughly) limbs —
+    cylindrical things a gripper wraps around. If *normals* is None they are
+    estimated from the cloud.
+
+    A 2-sample hypothesis is self-supporting, so without a gate a random blob comes
+    back as a confident axis/radius carried by ~2 points. A model is only returned
+    once it clears :func:`_consensus_floor` — by default 3 points, tightened by
+    *min_inliers* / *min_inlier_frac*; pass a fraction to demand that the cylinder
+    actually explain the cloud rather than just its own samples."""
     P = _pts3(points)
     n = P.shape[0]
     if n < 2:
