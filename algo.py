@@ -50,10 +50,17 @@ SEQ = "seq"        # a 1-D sequence of real numbers (Python: list[float]; C: dou
 SCALAR = "scalar"  # a single real number (Python: float; C: double)
 
 # Kinds tell the codegen/driver how an op is called at the C boundary:
-#   "sort_inplace" : void f(double* a, int n)   — reorders a in place
-#   "reduce"       : double f(const double* a, int n) — folds a to one number
+#   "sort_inplace" : void f(double* a, int n)                 — reorders a in place
+#   "reduce"       : double f(const double* a, int n)         — folds a to one number
+#   "map_varlen"   : int  f(const double* a, int n, double* out)
+#                        — reads n inputs, writes out_len (<= n) doubles to `out`,
+#                          returns out_len (>= 0). A VARIABLE-LENGTH seq -> seq map:
+#                          the input length is NOT the output length (unlike a sort).
+#                          Fail-soft: returns 0 (empty) on malformed / no-solution
+#                          input, so a caller buffer of size n always suffices.
 KIND_SORT = "sort_inplace"
 KIND_REDUCE = "reduce"
+KIND_MAP = "map_varlen"
 
 
 @dataclass(frozen=True)
