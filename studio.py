@@ -1711,7 +1711,12 @@ def build_window(model=None):
 
     # -- program / code editor (HDevelop program window) --------------------- #
     ProgEdit = _program_editor_class(QtWidgets, QtGui, QtCore)
-    op_names = [r["name"] for r in all_ops]
+    # IMAGE ops only for the HDevelop program parser / autocomplete / Operator-Help
+    # picker: the general-algorithm tier is shown READ-ONLY in the browser (all_ops),
+    # but it is a seq/scalar model that must not be a valid image-pipeline token — else
+    # `op (a,b)` code would enter the pipeline via apply_program (which bypasses the
+    # add_stage KeyError backstop) and Help would mislabel it as a knob-tunable op.
+    op_names = [r["name"] for r in all_ops if r.get("backend") != "general"]
     code_edit = ProgEdit(op_names)
     code_edit.setToolTip("Edit the pipeline as HDevelop-style code: `op (a, b)` (or `op a b`), "
                          "`*`/`#` comments, and control flow `for N … endfor` / `if … else … endif`.\n"
