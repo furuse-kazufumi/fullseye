@@ -211,6 +211,10 @@ class ObjectSet:
         """Filter ids — the label image and the measured features are shared."""
         return ObjectSet(self.labels, np.asarray(self.ids)[np.asarray(keep)], self.feats)
 
+    @property
+    def sort(self) -> str:
+        return "objectset"
+
     def __bool__(self):
         raise FsTypeError("an ObjectSet has no truth value; write `|Objects| > 0`")
 
