@@ -15,8 +15,6 @@ Plus the same empty-reference short-circuit `backends_auto.build` had: with
 """
 from __future__ import annotations
 
-import numpy as np
-
 import backends_auto as BA
 import verify_auto as VA
 
