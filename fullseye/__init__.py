@@ -215,4 +215,6 @@ __all__ = [
     "DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks", "signal_features",
+    "algo", "algo_ops", "algo_categories", "find_algo", "run_algo",
+    "algo_to_python", "algo_to_c", "algo_difftest",
 ]
