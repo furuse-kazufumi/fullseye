@@ -56,6 +56,40 @@ def test_coerce_binarizes_input_for_region_op():
     assert out is not None
 
 
+def test_coerce_bool_region_input_becomes_float_mask():
+    # Regression: a bool mask used to bypass coercion entirely (dtype kind "b" was
+    # not in "fiu"), so ops received a bool array even though apply() promises a
+    # float64 mask — and `-`/`sum` on bool raises or changes meaning.
+    mask = np.zeros((24, 24), bool)
+    mask[4:12, 5:15] = True
+    op = next(o for o in ops.REGISTRY if o.name == "reg_erode")
+    got = api._coerce_input(mask, op)
+    assert isinstance(got, np.ndarray) and got.dtype == np.float64
+    assert set(np.unique(got)).issubset({0.0, 1.0})
+    assert np.array_equal(got > 0.5, mask)                 # re-typed, never re-valued
+    # and the op result is unchanged by the coercion
+    assert np.allclose(api.apply(mask, "reg_erode"),
+                       api.apply(mask.astype(np.float64), "reg_erode"))
+
+
+def test_coerce_two_level_grayscale_region_input_is_left_to_internal_bin():
+    # Contract pin: an in-range two-level array ({0.3,0.7}) is NOT rewritten here —
+    # every region op binarises at 0.5 itself, so the mask is identical, while the
+    # label-reading region ops still see their gray levels.
+    mask = np.zeros((24, 24), bool)
+    mask[4:12, 5:15] = True
+    two = np.where(mask, 0.7, 0.3)
+    op = next(o for o in ops.REGISTRY if o.name == "reg_erode")
+    assert api._coerce_input(two, op) is two               # passed through untouched
+    assert np.allclose(api.apply(two, "reg_erode"),
+                       api.apply(mask.astype(np.float64), "reg_erode"))
+    labels = api.apply(two, "r3_label_to_region", a=0.0)   # levels survive coercion
+    assert np.array_equal(labels > 0.5, ~mask)             # 0.3 is the lowest label
+    # 3+ levels or out-of-range values are binarised, as before
+    three = np.where(mask, 0.7, 0.3); three[0, 0] = 0.9
+    assert set(np.unique(api._coerce_input(three, op))).issubset({0.0, 1.0})
+
+
 def test_unknown_op_raises_keyerror():
     with pytest.raises(KeyError):
         api.apply(_img(), "no_such_operator_xyz")
