@@ -71,8 +71,9 @@ def read_wav(path):
 
 
 def write_wav(path, x, rate=44100):
-    """Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib)."""
-    a = np.clip(np.asarray(x, np.float64), -1.0, 1.0)
+    """Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
+    Non-finite samples raise (they would become garbage PCM)."""
+    a = np.clip(_require_finite(x), -1.0, 1.0)
     pcm = np.round(a * 32767.0).astype(np.int16)
     with wave.open(str(path), "wb") as w:
         w.setnchannels(1)
