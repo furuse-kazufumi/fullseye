@@ -667,7 +667,7 @@ def parse_hdev_program(text, names):
 _DEV_DIRECTIVES = {"dev_update_window", "dev_update_var", "dev_update_pc",
                    "dev_update_time", "dev_update_off", "dev_update_on", "dev_set_part",
                    "dev_set_lut", "dev_clear_window",
-                   "dev_set_draw", "dev_set_color", "dev_set_line_width"}
+                   "dev_set_draw", "dev_set_color", "dev_set_line_width", "dev_disp_text"}
 
 #: HALCON colour names -> RGB in [0,1], for dev_set_color.
 _HALCON_COLORS = {
