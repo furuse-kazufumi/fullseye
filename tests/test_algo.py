@@ -221,6 +221,121 @@ def test_gauss_c_fail_soft_matches_python(tmp_path):
     assert res["outputs"][1] == [] and res["outputs"][2] == []   # fail-soft genuinely exercised
 
 
+# --------------------------------------------------------------------------- #
+# P3 string ops — strfind (KMP, KIND_MAP), edit_distance / lcs_length (KIND_REDUCE)
+# --------------------------------------------------------------------------- #
+def _find_pack(pat: str, text: str):
+    return [float(len(pat))] + algo.text_to_seq(pat) + algo.text_to_seq(text)
+
+
+def _pair_pack(a: str, b: str):
+    return [float(len(a))] + algo.text_to_seq(a) + algo.text_to_seq(b)
+
+
+def _naive_find(pat: str, text: str):
+    m = len(pat)
+    return [float(i) for i in range(len(text) - m + 1) if text[i:i + m] == pat]
+
+
+def test_string_ops_are_registered_kinds():
+    assert algo.ALGO_BY_NAME["strfind"].kind == algo.KIND_MAP        # variable-length positions
+    assert algo.ALGO_BY_NAME["edit_distance"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["lcs_length"].kind == algo.KIND_REDUCE
+    assert algo.text_to_seq("AB") == [65.0, 66.0]
+    assert algo.seq_to_text([65.0, 66.0]) == "AB"
+
+
+def test_strfind_known_answers():
+    assert algo.run_algo("strfind", _find_pack("A", "AAA")) == [0.0, 1.0, 2.0]   # overlap
+    assert algo.run_algo("strfind", _find_pack("AB", "ABAB")) == [0.0, 2.0]
+    assert algo.run_algo("strfind", _find_pack("ABC", "xxABCyyABC")) == [2.0, 7.0]
+    assert algo.run_algo("strfind", _find_pack("ABC", "DEF")) == []              # no match
+    assert algo.run_algo("strfind", _find_pack("ABCD", "ABCD")) == [0.0]         # whole text
+
+
+def test_strfind_variable_length_output():
+    seq = _find_pack("A", "AAAAA")                          # in = 1+1+5 = 7, out = 5 matches
+    out = algo.run_algo("strfind", seq)
+    assert len(seq) == 7 and out == [0.0, 1.0, 2.0, 3.0, 4.0]
+
+
+def test_strfind_fail_soft():
+    assert algo.run_algo("strfind", []) == []
+    assert algo.run_algo("strfind", [0.0, 65.0]) == []       # empty pattern (m < 1)
+    assert algo.run_algo("strfind", _find_pack("ABCD", "AB")) == []   # pattern longer than text
+
+
+def test_strfind_matches_naive_over_random():
+    rng = random.Random(4242)
+    for _ in range(400):
+        alpha = "ABCD"[:rng.randint(2, 4)]
+        m = rng.randint(1, 5)
+        pat = "".join(rng.choice(alpha) for _ in range(m))
+        text = "".join(rng.choice(alpha) for _ in range(rng.randint(0, 30)))
+        got = algo.run_algo("strfind", _find_pack(pat, text))
+        assert got == _naive_find(pat, text)
+
+
+def test_edit_distance_known_and_random():
+    assert algo.run_algo("edit_distance", _pair_pack("", "")) == 0.0
+    assert algo.run_algo("edit_distance", _pair_pack("ABC", "ABC")) == 0.0
+    assert algo.run_algo("edit_distance", _pair_pack("ABC", "")) == 3.0
+    assert algo.run_algo("edit_distance", _pair_pack("kitten", "sitting")) == 3.0   # classic
+    assert algo.run_algo("edit_distance", _pair_pack("flaw", "lawn")) == 2.0
+    rng = random.Random(99)
+    for _ in range(300):
+        alpha = "AB"
+        a = "".join(rng.choice(alpha) for _ in range(rng.randint(0, 8)))
+        b = "".join(rng.choice(alpha) for _ in range(rng.randint(0, 8)))
+        got = algo.run_algo("edit_distance", _pair_pack(a, b))
+        assert got == algo_difftest._lev_recursive(tuple(algo.text_to_seq(a)),
+                                                    tuple(algo.text_to_seq(b)))
+
+
+def test_lcs_length_known_and_random():
+    assert algo.run_algo("lcs_length", _pair_pack("ABCBDAB", "BDCAB")) == 4.0   # classic (BCAB/BDAB)
+    assert algo.run_algo("lcs_length", _pair_pack("ABC", "DEF")) == 0.0
+    assert algo.run_algo("lcs_length", _pair_pack("ABC", "ABC")) == 3.0
+    rng = random.Random(101)
+    for _ in range(300):
+        alpha = "ABC"
+        a = "".join(rng.choice(alpha) for _ in range(rng.randint(0, 8)))
+        b = "".join(rng.choice(alpha) for _ in range(rng.randint(0, 8)))
+        got = algo.run_algo("lcs_length", _pair_pack(a, b))
+        assert got == algo_difftest._lcs_recursive(tuple(algo.text_to_seq(a)),
+                                                    tuple(algo.text_to_seq(b)))
+
+
+def test_string_reductions_fail_soft():
+    assert algo.run_algo("edit_distance", []) == 0.0
+    assert algo.run_algo("lcs_length", []) == 0.0
+    assert algo.run_algo("edit_distance", [5.0, 65.0]) == 0.0    # na=5 but too few values
+    assert algo.run_algo("lcs_length", [5.0, 65.0]) == 0.0
+
+
+@pytest.mark.parametrize("name", _STRING)
+def test_string_reference_does_not_mutate_input(name):
+    a = _pair_pack("ABAB", "BABA") if name != "strfind" else _find_pack("AB", "ABAB")
+    snap = list(a)
+    algo.py_fn(name)(a)
+    assert a == snap
+
+
+@pytest.mark.parametrize("name", _STRING)
+def test_string_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0                 # positions/distances are exact integers
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _STRING)
+def test_string_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
 @pytest.mark.parametrize("name", _NUMERIC)
 def test_numeric_difftest_python_half(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc=None)
