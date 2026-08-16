@@ -1366,6 +1366,47 @@ def test_variable_window_thumbnails_and_iconic_control():
     assert any("iconic" in t for t in texts)
 
 
+def test_contour_variable_gets_a_polyline_thumbnail():
+    """A contour (XLD) variable is iconic in HDevelop — it now renders its polylines
+    as a thumbnail instead of reading as an opaque 'control'. Non-null icon for a
+    real contour set, still a (blank) icon for an empty one, and no crash on a
+    degenerate contour (single point / wrong shape)."""
+    import numpy as np
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    ci = win._contour_icon
+    square = np.array([[4, 4], [4, 40], [40, 40], [40, 4], [4, 4]], float)   # (row,col)
+    ic = ci({"shape": (48, 48), "cs": [square]})
+    assert not ic.isNull()
+    assert not ic.pixmap(44, 44).isNull()
+    # empty XLD -> an honest blank thumbnail (still a valid icon, not None)
+    assert not ci({"shape": (10, 10), "cs": []}).isNull()
+    # degenerate contours must not crash the thumbnail
+    assert not ci({"shape": (10, 10), "cs": [np.array([[1, 1]], float), np.zeros((0, 2))]}).isNull()
+
+
+def test_contour_variable_is_tagged_iconic_in_the_list():
+    """End-to-end: a pipeline ending in a contour op yields a variable row that is
+    tagged 'iconic' and carries a (non-null) icon."""
+    from PySide6 import QtCore
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    ol, ins = win._op_list, win._op_buttons["insert"]
+    for op in ("otsu", "sk_find_contours"):
+        idx = next((i for i in range(ol.count())
+                    if ol.item(i).data(QtCore.Qt.UserRole) == op), None)
+        if idx is None:
+            import pytest
+            pytest.skip("op %s not in registry" % op)
+        ol.setCurrentRow(idx); ins.click()
+    win._variables["refresh"]()
+    lst = win._variables["list"]
+    texts = [lst.item(i).text() for i in range(lst.count())]
+    # the last variable is the contour output -> iconic, with an icon
+    assert "iconic" in texts[-1]
+    assert not lst.item(lst.count() - 1).icon().isNull()
+
+
 def test_step_execution_syncs_variable_window():
     """v18.7 P4c: stepping to a stage highlights that stage's output variable in the
     Variable window (row 0 = input, row i+1 = stage i output) — HDevelop step sync."""
