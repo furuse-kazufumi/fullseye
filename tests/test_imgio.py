@@ -127,3 +127,14 @@ def test_load_8bit_png_unchanged(tmp_path):
     ref_c = cv2.imread(p, cv2.IMREAD_COLOR)[:, :, ::-1].astype(np.float64) / 255.0
     assert np.array_equal(imgio.load(p), ref_g)
     assert np.array_equal(imgio.load(p, color=True), ref_c)
+
+
+def test_save_raises_on_unwritable_path(tmp_path):
+    """Regression: cv2.imwrite returns False (never raises) on an unwritable path,
+    so save() used to report a phantom success — a caller's try/except could not
+    see the failure. save() now checks the return value and raises OSError."""
+    if imgio._cv2() is None:
+        pytest.skip("needs opencv-python (the cv2.imwrite-returns-False path)")
+    bad = str(tmp_path / "no_such_subdir" / "x.png")   # parent dir does not exist
+    with pytest.raises(OSError):
+        imgio.save(bad, np.zeros((8, 8), np.float64))

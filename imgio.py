@@ -257,7 +257,11 @@ def save(path: str, arr) -> None:
     cv2 = _cv2()
     if cv2 is not None:
         bgr = u8[:, :, ::-1] if u8.ndim == 3 else u8
-        cv2.imwrite(path, bgr)
+        if not cv2.imwrite(path, bgr):
+            # cv2.imwrite returns False (never raises) on an unwritable path or an
+            # unknown extension, so a caller's try/except would see a phantom success.
+            raise OSError("could not write image to %r (unwritable path or unknown "
+                          "extension?)" % path)
         return
     try:
         from PIL import Image
