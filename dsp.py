@@ -193,7 +193,7 @@ def rms(x, frame=None, hop=None):
 
 def zero_crossing_rate(x):
     """Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue."""
-    x = np.asarray(x, np.float64)
+    x = _require_finite(x)
     if x.size < 2:
         return 0.0
     return float(np.mean(np.abs(np.diff(np.sign(x))) > 0))
