@@ -227,8 +227,8 @@ def test_hdev_program_rejects_general_tier_op():
     stages, errs = studio.parse_hdev_program("gaussian (0.4, 0.5)", names)
     assert not errs and stages[0][0] == "gaussian"
     for gop in ("strfind", "gauss_solve", "quicksort"):
-        st, er = studio.parse_hdev_program("%s (0.5, 0.5)" % gop, names)
-        assert er and not st, "general op %r must be rejected by the image code parser" % gop
+        st, er = studio.parse_hdev_program(f"{gop} (0.5, 0.5)", names)
+        assert er and not st, f"general op {gop!r} must be rejected by the image code parser"
 
 
 def test_program_editor_and_help_exclude_general_tier_offscreen():
