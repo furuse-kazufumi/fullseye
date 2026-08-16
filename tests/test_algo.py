@@ -430,6 +430,10 @@ def test_graph_fail_soft():
     assert algo.run_algo("graph_dijkstra", []) == []
     assert algo.run_algo("graph_dijkstra", [3.0, 0.0, 9.0]) == []          # src out of range
     assert algo.run_algo("graph_dijkstra", [2.0, 1.0, 0.0, 0.0, 1.0, -3.0]) == []   # negative weight
+    # fractional node-count header: src must be bounded by int(n), not raw n_d (else src==n
+    # slips past `sd < n_d` and writes out[n] OOB). n_d=3.5 -> n=3, src_d=3.0 must be rejected.
+    assert algo.run_algo("graph_dijkstra", [3.5, 0.0, 3.0]) == []
+    assert algo.run_algo("graph_dijkstra", [3.5, 0.0, 3.4]) == []
 
 
 @pytest.mark.parametrize("name", _GRAPH)
