@@ -670,6 +670,11 @@ ALGO_REGISTRY: list[AlgoOp] = [
            _PY_NEWTON, _C_NEWTON,
            "Root of a polynomial from x0 [x0,c0..cn] by Newton-Raphson.",
            "Newton-Raphson; simultaneous Horner for p and p'", tol=1e-6),
+    AlgoOp("gauss_solve", "numeric", SEQ, SEQ, KIND_MAP, "gauss_solve",
+           _PY_GAUSS, _C_GAUSS,
+           "Solve a linear system [n, augmented n x (n+1) matrix] by Gaussian "
+           "elimination with partial pivoting (variable-length seq -> seq).",
+           "Gaussian elimination with partial pivoting; back substitution", tol=1e-9),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
