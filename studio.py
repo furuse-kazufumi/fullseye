@@ -3033,6 +3033,62 @@ def build_window(model=None):
     win._display_menu = disp_menu
     win._set_display_mode = _set_display_mode
 
+    # View ▸ Display updates — HDevelop dev_update_{window,var,pc,time}: gate whether the
+    # graphics window / variable window / execution cursor / per-line timings auto-update
+    # while editing or running. Turn all off to make many edits (or a heavy run) without
+    # the display cost, then back on to refresh to the current state (HDevelop updates when
+    # execution stops). This is HDevelop's op-level answer to display cost; see
+    # docs/HDEVELOP_DEV_OPS.md. The same flags back the script ops dev_update_* / dev_update_off|on.
+    menu_view.addSeparator()
+    upd_menu = _menu(menu_view, "Display updates", "display_updates")
+    win._dev_update_actions = {}
+    _UPD_LABELS = {"window": "Graphics window", "var": "Variable window",
+                   "pc": "Program counter", "time": "Operator timings"}
+
+    def _sync_dev_update_actions():
+        for k in ("window", "var", "pc", "time"):
+            a = win._dev_update_actions.get(k)
+            if a is not None:
+                a.blockSignals(True); a.setChecked(state["dev_update"][k]); a.blockSignals(False)
+        tb_a = win._dev_update_actions.get("_toolbar")
+        if tb_a is not None:
+            all_on = all(state["dev_update"].values())
+            tb_a.blockSignals(True); tb_a.setChecked(all_on); tb_a.blockSignals(False)
+
+    def set_dev_update(kind, on):
+        """dev_update_{window,var,pc,time} / dev_update_off|on: set a display-update flag
+        (or ``"all"``); when re-enabled, refresh so the current state becomes visible."""
+        on = bool(on)
+        keys = list(state["dev_update"]) if kind == "all" else [kind]
+        for k in keys:
+            if k in state["dev_update"]:
+                state["dev_update"][k] = on
+        _sync_dev_update_actions()
+        if on:                                    # HDevelop refreshes when updates resume
+            if "window" in keys:
+                show_result()
+            if "var" in keys:
+                refresh_variables()
+        return on
+    win._set_dev_update = set_dev_update
+
+    for _k in ("window", "var", "pc", "time"):
+        _a = QtGui.QAction(_UPD_LABELS[_k], win); _a.setCheckable(True); _a.setChecked(True)
+        _a.triggered.connect(lambda on, k=_k: set_dev_update(k, on))
+        upd_menu.addAction(_a); win._dev_update_actions[_k] = _a
+    upd_menu.addSeparator()
+    _a_off = QtGui.QAction("All off  (dev_update_off)", win)
+    _a_off.triggered.connect(lambda: set_dev_update("all", False))
+    _a_on = QtGui.QAction("All on  (dev_update_on)", win)
+    _a_on.triggered.connect(lambda: set_dev_update("all", True))
+    upd_menu.addAction(_a_off); upd_menu.addAction(_a_on)
+    # Toolbar quick-toggle: on = everything auto-updates, off = display frozen for speed.
+    act_upd = QtGui.QAction("Auto-update", win); act_upd.setCheckable(True); act_upd.setChecked(True)
+    act_upd.setToolTip("Auto-update the display (HDevelop dev_update). Uncheck to edit / run "
+                       "without the display cost, then check to refresh.")
+    act_upd.triggered.connect(lambda on: set_dev_update("all", on))
+    tb.addAction(act_upd); win._dev_update_actions["_toolbar"] = act_upd
+
     def load_frame_b():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open frame B", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
