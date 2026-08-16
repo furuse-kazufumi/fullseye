@@ -19,7 +19,11 @@ from __future__ import annotations
 
 import time
 
-__all__ = ["DigitalIO", "pulse", "signal_result", "wait_input", "capabilities"]
+__all__ = ["DigitalIO", "pulse", "signal_result", "signal_verdict", "wait_input",
+           "capabilities"]
+
+#: Default one-hot coil map for the 4-state Verdict -> PLC handshake.
+_VERDICT_COILS = {"ok": 0, "ng": 1, "error": 2, "timeout": 3}
 
 # Device / actuator catalogue (native DigitalIO backends + optional Physical-AI
 # & motion-control SDKs). (name, module-to-probe, pip, kind, family, one-line desc)
