@@ -129,10 +129,13 @@ def fit_sphere_ransac(points, thresh: float = 0.01, iters: int = 200, seed: int 
 
     The 4 sampled points always lie on their own sphere, so *any* cloud would
     otherwise yield a confident-looking centre/radius backed by 4 points. A model is
-    only returned once it clears :func:`_consensus_floor` — by default 5 points (more
-    than the sample that made it), tightened by *min_inliers* / *min_inlier_frac*.
-    Pass a fraction to demand that the sphere actually explain the cloud; ``None``
-    back means "no sphere here", not "a bad sphere here"."""
+    only returned once it clears :func:`_consensus_floor` — by default the larger of
+    5 points and 10% of the cloud, tightened by *min_inliers* / *min_inlier_frac*.
+    ``None`` is the single "no model" signal for BOTH no consensus and no valid
+    hypothesis (coincident samples); only a precondition violation (``< 4`` points)
+    raises. Honest limit: consensus does not bound the RADIUS — a near-flat patch
+    fits as a huge-radius sphere with genuine consensus, so sanity-check the returned
+    radius against your scene scale if flat surfaces may reach this call."""
     P = _pts3(points)
     n = P.shape[0]
     if n < 4:
