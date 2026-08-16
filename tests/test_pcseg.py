@@ -118,6 +118,30 @@ def test_ransac_consensus_gate_rejects_blob_keeps_real_shapes():
     assert abs(sr - 2.5) < 0.05 and sinl.mean() > 0.9
 
 
+def test_default_consensus_gate_rejects_a_blob():
+    # Regression (R1): the DEFAULT gate — no min_inlier_frac / min_inliers opt-in —
+    # must already reject a non-primitive blob whose only inliers are surface noise
+    # (~5-7% of the cloud), not only reject once the caller opts into a fraction.
+    for seed in range(4):
+        P, N = _blob(seed)                          # 300-pt gaussian blob, default thresh
+        assert pcseg.fit_sphere_ransac(P, thresh=0.01, iters=300, seed=seed) is None
+        assert pcseg.fit_cylinder_ransac(P, N, thresh=0.01, iters=300, seed=seed) is None
+    # a genuine sphere still fits with NO opt-in (consensus far above the 10% floor).
+    rng = np.random.default_rng(7)
+    dirs = rng.normal(size=(400, 3)); dirs /= np.linalg.norm(dirs, axis=1, keepdims=True)
+    Ps = np.array([0.5, 1.0, -1.0]) + 2.0 * dirs + rng.normal(0, 0.003, (400, 3))
+    fit = pcseg.fit_sphere_ransac(Ps, thresh=0.03, iters=300)
+    assert fit is not None and abs(fit[1] - 2.0) < 0.05
+
+
+def test_consensus_floor_coerces_and_clamps_its_thresholds():
+    # R5: a float min_inliers is ceiled (not truncated), and min_inlier_frac is
+    # clamped to [0,1] so a fraction > 1 cannot make the gate permanently unreachable.
+    assert pcseg._consensus_floor(100, 4, 10.9, None) == 11       # ceil, not 10
+    assert pcseg._consensus_floor(100, 4, None, 1.5) == 100       # clamped to 1.0 -> all points
+    assert pcseg._consensus_floor(100, 4, None, -0.5) == 10       # negative ignored -> default 10%
+
+
 def test_height_above_plane_signed_up():
     P = np.array([[0, 0, 0.0], [0, 0, 1.0], [0, 0, 2.0], [1, 1, 0.5]])
     plane = np.array([0.0, 0.0, 1.0, 0.0])         # z = 0
