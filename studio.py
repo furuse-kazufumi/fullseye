@@ -1857,7 +1857,13 @@ def build_window(model=None):
              # editing/execution. Turn off to make many edits (or a heavy run) without the
              # display cost; turning back on refreshes to the current state (as HDevelop
              # updates when execution stops). See docs/HDEVELOP_DEV_OPS.md.
-             "dev_update": {"window": True, "var": True, "pc": True, "time": True}}
+             "dev_update": {"window": True, "var": True, "pc": True, "time": True},
+             # HALCON set_system-style global config (Tools > System settings): OpenCV
+             # worker threads (thread_num, affects interactive op speed) and a SOFT
+             # per-stage operator timeout in ms (0 = off; a slow stage is flagged — native
+             # ops cannot be hard-interrupted, same honest limit as fsruntime). Fullseye's
+             # runtime error mode is always fail-closed. See docs/HDEVELOP_DEV_OPS.md (F).
+             "system": {"threads": 0, "operator_timeout_ms": 0}}
     pmodel = PerceptionModel()
 
     # -- behaviour --
