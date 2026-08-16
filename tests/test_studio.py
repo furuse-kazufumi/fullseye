@@ -175,6 +175,47 @@ def test_op_arg_roles_and_signature_detail():
     assert "knob a" in d2
 
 
+def test_general_tier_row_is_readonly_signature():
+    # P1.5b: the general-algorithm tier (algo.py) shows in the op browser as a
+    # read-only seq/scalar op — _op_row falls back to it, and the signature/tooltip
+    # say "general-algorithm" + provenance + how to run it, not image knobs.
+    row = studio._op_row("gauss_solve")
+    assert row is not None and row["backend"] == "general"
+    assert row["category"] == "algo:numeric" and row["in_sort"] == "seq"
+    detail = studio.op_signature_detail(row)
+    assert "general-algorithm" in detail and "algo run gauss_solve" in detail
+    assert "partial pivoting" in detail          # provenance shown
+    tip = studio.op_tooltip(row)
+    assert "general-algorithm" in tip and "algo run gauss_solve" in tip
+    # an image op is unaffected (no backend key -> the normal image signature)
+    img = studio._op_row("gaussian")
+    assert "backend" not in img and "knob a" in studio.op_signature_detail(img)
+    # a genuinely unknown name is still None
+    assert studio._op_row("no_such_op_xyz") is None
+
+
+def test_op_browser_general_tier_is_readonly_offscreen():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtCore, QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    op_list, btns = win._op_list, win._op_buttons
+    names = [op_list.item(i).data(QtCore.Qt.UserRole) for i in range(op_list.count())]
+    assert "gaussian" in names                   # image ops present
+    assert "strfind" in names and "gauss_solve" in names   # general tier shown in the browser
+    # selecting a general op makes the image-pipeline actions read-only
+    op_list.setCurrentRow(names.index("strfind"))
+    assert not btns["insert"].isEnabled()
+    assert not btns["run_once"].isEnabled() and not btns["help"].isEnabled()
+    # selecting an image op re-enables them
+    op_list.setCurrentRow(names.index("gaussian"))
+    assert btns["insert"].isEnabled() and btns["run_once"].isEnabled()
+    # the pipeline model rejects a general op even if one is forced in by name
+    with pytest.raises(KeyError):
+        _model.add_stage("strfind")              # not an image-pipeline op
+
+
 def test_region_overlay_display_mode():
     """v18.7 P4b: 'region overlay' blends a binary region onto the source image
     (HDevelop's dev_display of a region on the current image)."""
