@@ -49,6 +49,51 @@ def test_categories_grouping():
     cats = algo.algo_categories()
     assert set(cats["sort"]) == set(_SORTS)
     assert set(cats["reduce"]) == set(_REDUCES)
+    assert set(cats["numeric"]) == set(_NUMERIC)
+
+
+# --------------------------------------------------------------------------- #
+# P2 numeric ops (Simpson integration + polynomial root finders)
+# --------------------------------------------------------------------------- #
+def test_numeric_known_answers():
+    import math
+    # integral of x^2 on [0,2] = 8/3 (samples at 0,.5,1,1.5,2, h=0.5)
+    assert algo.run_algo("simpson", [0.5, 0.0, 0.25, 1.0, 2.25, 4.0]) == pytest.approx(8 / 3, abs=1e-9)
+    # root of x^2 - 2 -> sqrt(2), by bisection in [1,2] and Newton from 1.5
+    assert algo.run_algo("bisection", [1.0, 2.0, -2.0, 0.0, 1.0]) == pytest.approx(math.sqrt(2), abs=1e-9)
+    assert algo.run_algo("newton", [1.5, -2.0, 0.0, 1.0]) == pytest.approx(math.sqrt(2), abs=1e-9)
+
+
+def test_simpson_linear_is_exact_and_edges():
+    # Simpson integrates a linear function exactly; integral of y=x on [0,1], h=0.25
+    assert algo.run_algo("simpson", [0.25, 0.0, 0.25, 0.5, 0.75, 1.0]) == pytest.approx(0.5, abs=1e-12)
+    assert algo.run_algo("simpson", []) == 0.0
+    assert algo.run_algo("simpson", [0.5]) == 0.0            # no samples
+    assert algo.run_algo("simpson", [0.5, 3.0]) == 0.0       # single sample -> 0
+
+
+def test_root_finders_fail_soft():
+    # bracket with no sign change -> midpoint (fail-soft, documented), no crash
+    r = algo.run_algo("bisection", [0.0, 1.0, 1.0, 0.0, 1.0])   # p=x^2+1 > 0 everywhere
+    assert r == pytest.approx(0.5, abs=1e-9)
+    # newton with a vanishing derivative at x0 -> returns x0 (no divide-by-zero crash)
+    assert algo.run_algo("newton", [0.0, -1.0, 0.0, 1.0]) == 0.0   # p'=2x=0 at x0=0
+
+
+@pytest.mark.parametrize("name", _NUMERIC)
+def test_numeric_difftest_python_half(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True                        # within the op's tolerance
+    assert res["python_max_abs_diff"] <= algo.ALGO_BY_NAME[name].tol
+
+
+@pytest.mark.skipif(not algo_difftest.find_c_compiler(), reason="no C toolchain")
+@pytest.mark.parametrize("name", _NUMERIC)
+def test_numeric_c_is_bit_identical(name, tmp_path):
+    # same algorithm + -ffp-contract=off -> C matches Python to the bit
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
 
 
 def test_unknown_op_is_fail_closed():
