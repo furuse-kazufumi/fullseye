@@ -711,6 +711,7 @@ int strfind(const double* a, int n_in, double* out) {
     const double* text = a + 1 + m;
     int k = n_in - 1 - m;
     if (m > k) return 0;                                    /* pattern longer than text */
+    if (!out) return k;                                     /* size probe: at most k matches */
     int* fail = (int*)malloc((size_t)m * sizeof(int));
     if (!fail) return 0;
     fail[0] = 0;
