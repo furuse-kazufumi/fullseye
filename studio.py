@@ -2893,6 +2893,16 @@ def build_window(model=None):
             code_status.setText("✕ " + "  ·  ".join(errs[:3]))
             flash("code has %d error(s)" % len(errs))
             return
+        # defense-in-depth: even though op_names excludes the general tier (so the parser
+        # already rejects such a token), never let a general-algorithm op reach the image
+        # pipeline via this path, which writes model.stages directly (no add_stage backstop).
+        general = [s[0] for s in stages if (_op_row(s[0]) or {}).get("backend") == "general"]
+        if general:
+            code_status.setText("✕ general-algorithm op(s) can't run in an image pipeline: "
+                                + ", ".join(general[:3]))
+            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
+                  "imgevolve.py algo run %s" % (general[0], general[0]))
+            return
         push_undo()
         model.stages = list(stages)
         mark_dirty()
