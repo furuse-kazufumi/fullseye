@@ -538,6 +538,11 @@ def op_signature_detail(row) -> str:
 
 def op_tooltip(row) -> str:
     """Multi-line tooltip for an operator list item / stage."""
+    if row.get("backend") == "general":
+        return ("%s\ngeneral-algorithm tier (%s) — seq/scalar, not an image op\n"
+                "sort: %s → %s\nprovenance: %s\nrun via CLI: imgevolve.py algo run %s"
+                % (row["name"], row["category"], row["in_sort"], row["out_sort"],
+                   row.get("provenance") or "(none)", row["name"]))
     a_role, b_role = op_arg_roles(row["name"])
     knobs = ("a: %s\nb: %s" % (a_role or "(op-dependent)", b_role or "(op-dependent)")
              if (a_role or b_role) else "a, b are the two knobs (each 0..1); meaning depends on the op")
