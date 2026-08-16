@@ -464,12 +464,34 @@ def _rows():
     return rows
 
 
-def list_ops(sort: str | None = None, search: str | None = None) -> list[dict]:
+def algo_rows() -> list[dict]:
+    """Rows for the opt-in general-algorithm tier (``algo.py``), shaped like ``_rows()``.
+
+    ``tier`` = ``"z_algo"`` so they sort AFTER the image / nary ops; ``category`` is
+    prefixed ``algo:`` so the op-browser category filter separates them cleanly; and
+    ``backend == "general"`` marks them as a DIFFERENT computational model (seq/scalar,
+    not an image raster) so the UI can show them read-only rather than let them be
+    dropped into an image pipeline. Empty if the algo tier fails to import.
+    """
+    try:
+        import algo
+    except Exception:  # noqa: BLE001 - the general tier is optional; never break the image UI
+        return []
+    return [{"name": op.name, "halcon": None, "in_sort": op.in_sort,
+             "out_sort": op.out_sort, "category": "algo:" + op.category,
+             "tier": "z_algo", "backend": "general", "provenance": op.provenance}
+            for op in algo.ALGO_REGISTRY]
+
+
+def list_ops(sort: str | None = None, search: str | None = None,
+             include_algo: bool = False) -> list[dict]:
     """Every operator as a uniform dict. Filter by input *sort* and/or *search*
-    (substring over name/halcon/category)."""
+    (substring over name/halcon/category). *include_algo* (default False, so the image
+    focus is unchanged for every existing caller) appends the general-algorithm tier."""
     kw = (search or "").lower()
+    rows = _rows() + (algo_rows() if include_algo else [])
     out = []
-    for r in _rows():
+    for r in rows:
         if sort and r["in_sort"] != sort:
             continue
         hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
