@@ -200,6 +200,25 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
             coeffs = arr[2:] if name == "bisection" else arr[1:]
             errs.append(_diff01(_poly_at(coeffs, float(got)), 0.0))
         return max(errs, default=0.0)
+    if name == "gauss_solve":
+        # independent oracle: numpy's LAPACK solve (a different partial-pivot LU).
+        # Both are backward-stable, so on a well-conditioned holdout they agree to
+        # ~1e-13; compare element-wise IN ORDER. Fail-closed on a structural mismatch
+        # or a singular holdout row (LinAlgError -> inf, never tolerance-gated).
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            n = int(arr[0])
+            w = n + 1
+            aug = np.asarray(arr[1:1 + n * w], np.float64).reshape(n, w)
+            try:
+                ref = np.linalg.solve(aug[:, :n], aug[:, n]).tolist()
+            except np.linalg.LinAlgError:
+                return float("inf")                  # singular holdout = a holdout bug
+            if len(got) != len(ref):
+                return float("inf")
+            for x, y in zip(got, ref):
+                errs.append(_diff01(float(x), float(y)))
+        return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:
         return _max_diff_sort(oracle, py_out)
