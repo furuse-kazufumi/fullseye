@@ -730,6 +730,25 @@ def _op_row(name):
             "in_sort": op.in_sort, "out_sort": op.out_sort}
 
 
+#: Sample image the dev_* visualization demo loads (a collected, license-clean image).
+HDEV_VISUAL_DEMO_IMAGE = "coins"
+
+#: An HDevelop-style program that actually USES the dev_* visualization directives:
+#: segment the coins, then draw the region as a coloured outline with a text label.
+HDEV_VISUAL_DEMO = (
+    "* Fullseye Studio - HDevelop dev_* visualization demo (image: coins)\n"
+    "* Segment the coins, then show the region as a cyan outline with a label.\n"
+    "set_system ('thread_num', 0)\n"
+    "gaussian (0.4, 0.5)\n"
+    "otsu (0.5, 0.5)\n"
+    "dev_set_lut ('region overlay')\n"
+    "dev_set_draw ('margin')\n"
+    "dev_set_color ('cyan')\n"
+    "dev_set_line_width (2)\n"
+    "dev_disp_text ('coins segmented', 14, 14)\n"
+)
+
+
 def sample_code(name):
     """``(ops_string, python_source)`` for a sample recipe — the 'Sample Code' view
     (author-in-Studio, run-anywhere). Returns None for an unknown recipe. Qt-free."""
