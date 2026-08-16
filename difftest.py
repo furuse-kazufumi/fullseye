@@ -81,6 +81,8 @@ def main() -> int:
     ap.add_argument("--problem", default="edge")
     ap.add_argument("--workdir", default="out/worklog/imgevolve")
     ap.add_argument("--tol", type=float, default=1e-6)
+    ap.add_argument("--c-tol", type=float, default=1e-3,
+                    help="C-vs-Python tolerance (float32 + kernel rounding); independent of --tol")
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
 
