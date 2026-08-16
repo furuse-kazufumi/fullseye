@@ -116,7 +116,7 @@ def test_reference_is_deterministic(name):
 def test_emitted_python_defines_run_and_matches_reference(name, tmp_path):
     src = algo_codegen.emit_python(algo.ALGO_BY_NAME[name])
     ns: dict = {}
-    exec(compile(src, "<emitted>", "exec"), ns)
+    exec(compile(src, "<emitted>", "exec"), ns)  # noqa: S102 - trusted, generated in-repo
     assert callable(ns.get("run"))
     a = [5.0, 2.0, 9.0, 1.0, 5.0, 3.0]
     assert ns["run"](list(a)) == algo.run_algo(name, a)
