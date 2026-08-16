@@ -1400,6 +1400,18 @@ def build_window(model=None):
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
     m.addAction(act_samples)                                  # sample pipelines + code gallery
+    sample_img_menu = _menu(m, "Sample images", "sample_images")   # collected license-clean images
+    try:
+        import sample_images as _si
+        for _nm in _si.names():
+            _a = QtGui.QAction(_nm, win)
+            _a.triggered.connect(lambda _=False, nm=_nm: win._load_sample_image(nm))
+            sample_img_menu.addAction(_a)
+    except Exception:
+        pass
+    act_visual_demo = QtGui.QAction("dev_* visualization demo", win)   # sample that USES dev_* ops
+    act_visual_demo.triggered.connect(lambda: win._load_visual_demo())
+    m.addAction(act_visual_demo); win._act_visual_demo = act_visual_demo
     m.addSeparator()
     m.addAction(act_save_res)                                 # result out
     m.addSeparator(); m.addAction(act_quit)
