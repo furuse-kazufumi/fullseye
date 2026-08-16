@@ -187,6 +187,36 @@ def test_image_comparison_does_not_silently_reduce_with_any():
         fscript.run("if (Image = 0)\n  C := 1\nendif", images={"Image": _scene()})
 
 
+def test_chained_comparison_is_a_parse_error_not_a_wrong_boolean():
+    # `0 <= X <= 10` would silently parse as `(0<=X)<=10` and be True for X=100.
+    with pytest.raises(fscript.FScriptError):
+        fscript.parse("if (0 <= X <= 10)\n  Y := 1\nendif")
+    assert run("X := 5\nOK := (0 <= X) and (X <= 10)")["OK"] is True
+    assert run("X := 100\nOK := (0 <= X) and (X <= 10)")["OK"] is False
+
+
+def test_not_binds_looser_than_comparison():
+    # `not 1 = 2` must read as `not (1 = 2)` = True, not `(not 1) = 2` = False.
+    assert run("R := not 1 = 2")["R"] is True
+    assert run("A := not (1 = 2) and (3 > 2)")["A"] is True
+
+
+def test_arithmetic_on_an_iconic_value_is_a_type_error():
+    # `-`, `*`, `/`, `%` were unguarded (only `+` was), letting silent pixel math in.
+    for op in ("*", "-", "/"):
+        with pytest.raises(fscript.FScriptError):
+            fscript.run("Y := Image %s 2.0" % op,
+                        images={"Image": np.zeros((4, 4, 3), np.uint8)})
+
+
+def test_empty_body_loop_still_hits_the_step_limit():
+    # An empty body runs zero statements, so the per-iteration tick must bound it.
+    with pytest.raises(fscript.FScriptError):
+        fscript.run("while (1 = 1)\nendwhile", max_steps=5000)
+    with pytest.raises(fscript.FScriptError):
+        fscript.run("repeat\nuntil (1 = 2)", max_steps=5000)
+
+
 def test_binary_valued_image_is_not_mistaken_for_a_region():
     """The sort is carried by the type, not inferred from content: a grey image
     that happens to be binary-valued is still an image, never a Region."""

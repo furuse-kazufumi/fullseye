@@ -389,8 +389,18 @@ class Parser:
     _BINPREC = {"or": 1, "and": 2, "=": 3, "==": 3, "!=": 3, "#": 3, "<": 3,
                 ">": 3, "<=": 3, ">=": 3, "+": 4, "-": 4, "*": 5, "/": 5, "%": 5}
 
+    _COMPARE = frozenset(("=", "==", "!=", "#", "<", ">", "<=", ">="))
+    _NOT_PREC = 3                       # 'not' binds looser than comparison (like Python)
+
     def _parse_expr(self, min_prec=0):
-        left = self._parse_unary()
+        # 'not' is a low-precedence prefix (looser than comparison): `not a = b`
+        # is `not (a = b)`, not `(not a) = b`.  Unary '-' stays tight (_parse_unary).
+        t0 = self._peek()
+        if t0.kind == "kw" and t0.val == "not" and min_prec <= self._NOT_PREC:
+            self._next()
+            left = UnOp("not", self._parse_expr(self._NOT_PREC), t0.line)
+        else:
+            left = self._parse_unary()
         while True:
             t = self._peek()
             op = None
@@ -400,6 +410,12 @@ class Parser:
                 op = t.val
             if op is None or self._BINPREC[op] < min_prec:
                 break
+            # Comparisons do not chain: `0 <= X <= 10` would silently parse as
+            # `(0 <= X) <= 10` and return a wrong boolean — forbidden by the
+            # language's no-silent-wrong rule.  Require parentheses.
+            if op in self._COMPARE and isinstance(left, BinOp) and left.op in self._COMPARE:
+                raise FScriptError("chained comparison '%s' is ambiguous; "
+                                   "parenthesise (e.g. (0 <= X) and (X <= 10))" % op, t.line)
             self._next()
             right = self._parse_expr(self._BINPREC[op] + 1)
             left = BinOp(op, left, right, t.line)
@@ -407,7 +423,7 @@ class Parser:
 
     def _parse_unary(self):
         t = self._peek()
-        if (t.kind == "op" and t.val == "-") or (t.kind == "kw" and t.val == "not"):
+        if t.kind == "op" and t.val == "-":
             self._next()
             return UnOp(t.val, self._parse_unary(), t.line)
         return self._parse_postfix()
@@ -592,6 +608,14 @@ class Interp:
         if node.orelse is not None:
             self.run(node.orelse)
 
+    def _tick(self, line):
+        # Count each loop iteration so an EMPTY-body loop (whose body runs zero
+        # statements, so _exec never increments) is still bounded — otherwise
+        # `while (1 = 1)\nendwhile` hangs forever, bypassing the step limit.
+        self.steps += 1
+        if self.steps > self.max_steps:
+            raise FScriptError("step limit exceeded (possible infinite loop)", line)
+
     def _st_For(self, node):
         start = self._eval(node.start)
         stop = self._eval(node.stop)
@@ -600,6 +624,7 @@ class Interp:
             raise FScriptError("'for' step must not be 0", node.line)
         i = start
         while (step > 0 and i <= stop) or (step < 0 and i >= stop):
+            self._tick(node.line)
             self.env.vars[node.var] = i
             try:
                 self.run(node.body)
@@ -611,6 +636,7 @@ class Interp:
 
     def _st_While(self, node):
         while _truth(self._eval(node.cond)):
+            self._tick(node.line)
             try:
                 self.run(node.body)
             except _Break:
@@ -620,6 +646,7 @@ class Interp:
 
     def _st_Repeat(self, node):
         while True:
+            self._tick(node.line)
             try:
                 self.run(node.body)
             except _Break:
@@ -697,11 +724,15 @@ class Interp:
             raise FScriptError(
                 "cannot compare an iconic value with '%s'; reduce it first "
                 "(e.g. area(R), count_obj(Objects), mean_gray(Image))" % n.op, n.line)
+        if n.op in ("+", "-", "*", "/", "%") and (isinstance(a, _ICONIC) or isinstance(b, _ICONIC)):
+            # Arithmetic on an iconic value (image/region/raw array) is not the
+            # language's business — call an operator.  Previously only '+' was
+            # guarded, so `Image * 0.0` on a raw 3-channel array slipped through
+            # as silent numpy pixel math.
+            raise FScriptError("cannot do arithmetic ('%s') on iconic values in the "
+                               "language; call an operator instead" % n.op, n.line)
         try:
             if n.op == "+":
-                if isinstance(a, _ICONIC) or isinstance(b, _ICONIC):
-                    raise FScriptError("cannot add iconic values in the language; "
-                                       "call an operator instead", n.line)
                 if isinstance(a, list) or isinstance(b, list):
                     return _tuple_add(a, b, n.line)          # HALCON element-wise
                 return a + b

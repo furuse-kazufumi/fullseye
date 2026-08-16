@@ -3,14 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-16 08:58:25
+- **最終更新**: 2026-08-16 09:08:51
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-9feb18a auto: pyproject.toml 編集前 (2026-08-16 08:58)
+61c18ab 全域敵対監査(7 ドメイン WF 27 findings)→ high/certain 3 件を一次検証し修正
 3138e19 敵対検証 second-pass: 残存バイパス 8 件修正 + N1b の overclaim を honest 訂正
 6f1df49 fail-closed ゲート強化: 敵対レビュー(WF 21 findings)を一次検証し 10 件修正
 e0f9d81 常駐 Runtime FullseyeRuntime + N1b 対策の honest 検証
@@ -25,14 +25,16 @@ dc18751 docs: I-2 後続の self-check 実装を FSCRIPT_DECISION §1.6b / STATU
 ## 現在の git status
 
 ```
-M pyproject.toml
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+09:05 backend_safe.py
+09:05 champion_to_macro.py
+08:58 docs/SESSION_SUMMARY.md
 08:58 pyproject.toml
-08:31 docs/SESSION_SUMMARY.md
 08:29 .ruff_cache/0.16.0/16609368734735684653
 08:29 .ruff_cache/0.16.0/12266289973964747922
 08:26 docs/FSCRIPT_DECISION.md
