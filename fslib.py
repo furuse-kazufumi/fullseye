@@ -236,27 +236,42 @@ class ObjectSet:
 # --------------------------------------------------------------------------- #
 @dataclass(frozen=True, eq=False)
 class Seq:
-    """A 1-D sequence of real numbers (the ``seq`` sort).
+    """A 1-D sequence of IEEE-754 float64 values (the ``seq`` sort).
 
-    Storage is a private float64 1-D array. Has ``__len__``/iteration/indexing (all
-    unambiguous) but NO boolean value — write ``len(seq) > 0``, never ``if seq`` —
-    to keep the no-implicit-truthiness rule the iconic types enforce.
+    Storage is a private, **copied and write-protected** float64 array — building a
+    Seq from a numpy array does not alias it, so the value is genuinely immutable
+    even if the caller keeps and mutates the original. Has ``__len__``/iteration/
+    indexing (all unambiguous) and value ``==``/``hash`` (by content), but NO boolean
+    value — write ``len(seq) > 0``, never ``if seq`` — matching the iconic types'
+    no-implicit-truthiness rule. Strings / non-numeric inputs are rejected with
+    ``FsTypeError`` (a str is not a number; the sort is carried, not inferred).
+
+    Values may be non-finite (NaN/inf) — a Seq is a general numeric container. The
+    general-algorithm tier (``algo.py``) is the layer that assumes finite input and
+    enforces it (its difftest is fail-closed on non-finite); the container does not
+    silently drop or reject NaN so a legitimate inf is not lost.
     """
 
     _values: np.ndarray
 
     def __post_init__(self):
-        v = np.asarray(self._values, np.float64)
+        arr = np.asarray(self._values)
+        if arr.dtype.kind in ("U", "S", "O"):          # strings / python objects
+            raise FsTypeError("Seq holds real numbers, not %s values" % arr.dtype)
+        try:
+            v = np.array(arr, dtype=np.float64)        # np.array COPIES (never aliases)
+        except (TypeError, ValueError) as e:
+            raise FsTypeError("Seq values must be real numbers: %s" % e) from e
         if v.ndim != 1:
             raise FsTypeError("Seq must be 1-D, got %dD" % v.ndim)
+        v.setflags(write=False)                        # storage is truly immutable
         object.__setattr__(self, "_values", v)
 
     @classmethod
     def of(cls, values) -> "Seq":
         """Build a Seq from a 1-D iterable of numbers. A 2-D array or nested list is
-        rejected (``FsTypeError``) rather than silently flattened."""
-        arr = np.asarray(values if isinstance(values, np.ndarray) else list(values), np.float64)
-        return cls(arr)                            # __post_init__ enforces 1-D
+        rejected (``FsTypeError``) rather than silently flattened; strings too."""
+        return cls(values if isinstance(values, np.ndarray) else list(values))
 
     @property
     def sort(self) -> str:
@@ -267,7 +282,7 @@ class Seq:
         return int(self._values.size)
 
     def values(self) -> np.ndarray:
-        """A COPY of the underlying float64 array (storage stays private, R-2/R-4)."""
+        """A writable COPY of the underlying float64 array (storage stays private)."""
         return self._values.copy()
 
     def real(self, i: int) -> float:
@@ -285,6 +300,16 @@ class Seq:
 
     def __getitem__(self, i):
         return float(self._values[i])
+
+    def __eq__(self, other) -> bool:
+        # content equality (a numpy field would make the dataclass __eq__ raise on
+        # ambiguous array truth, hence eq=False + this explicit bool-returning form)
+        if not isinstance(other, Seq):
+            return NotImplemented
+        return bool(np.array_equal(self._values, other._values))
+
+    def __hash__(self) -> int:
+        return hash(self._values.tobytes())            # valid: storage is write-protected
 
     def __bool__(self):
         raise FsTypeError("a Seq has no truth value; write `len(seq) > 0`")
