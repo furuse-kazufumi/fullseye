@@ -292,6 +292,26 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
             for x, y in zip(got, ref):
                 errs.append(_diff01(float(x), float(y)))
         return max(errs, default=0.0)
+    if name == "strfind":
+        # independent oracle: a NAIVE all-occurrences scan (no failure function) vs KMP.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            m = int(arr[0])
+            pat, text = arr[1:1 + m], arr[1 + m:]
+            ref = [float(i) for i in range(len(text) - m + 1) if text[i:i + m] == pat]
+            if len(got) != len(ref):
+                return float("inf")
+            for x, y in zip(got, ref):
+                errs.append(_diff01(float(x), float(y)))
+        return max(errs, default=0.0)
+    if name in ("edit_distance", "lcs_length"):
+        oracle_fn = _lev_recursive if name == "edit_distance" else _lcs_recursive
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            na = int(arr[0])
+            ref = oracle_fn(tuple(arr[1:1 + na]), tuple(arr[1 + na:]))
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:
         return _max_diff_sort(oracle, py_out)
