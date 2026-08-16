@@ -2664,6 +2664,11 @@ def build_window(model=None):
         dlg.resize(740, 500); dlg.exec()
 
     def add_op_by_name(n):
+        row = _op_row(n)
+        if row and row.get("backend") == "general":     # palette: general ops are run-via-CLI only
+            flash("‘%s’ is a general-algorithm op (seq/scalar) — run it via CLI: "
+                  "imgevolve.py algo run %s" % (n, n))
+            return
         push_undo()
         model.add_stage(n)
         mark_dirty()
