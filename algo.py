@@ -963,6 +963,195 @@ double graph_components(const double* a, int n_in) {
 }
 '''
 
+_PY_GRAPH_MST_WEIGHT = '''\
+def run(a):
+    """Total weight of the minimum spanning forest of an undirected graph
+    a = [n, m, (u,v,w)*m] (Kruskal + union-find). Edges are sorted by (weight, index) so
+    the choice is deterministic; a disconnected graph yields the spanning FOREST (sum over
+    components). Returns the total as a float. Fail-soft 0.0 on malformed / out-of-range."""
+    if len(a) < 2:
+        return 0.0
+    nd = a[0]
+    md = a[1]
+    if not (nd >= 1.0 and nd <= 2147483000.0):
+        return 0.0
+    if not (md >= 0.0 and md <= 2147483000.0):
+        return 0.0
+    n = int(nd)
+    m = int(md)
+    if len(a) < 2 + 3 * m:
+        return 0.0
+    edges = []
+    for k in range(m):
+        u = int(a[2 + 3 * k])
+        v = int(a[2 + 3 * k + 1])
+        w = a[2 + 3 * k + 2]
+        if u < 0 or u >= n or v < 0 or v >= n:
+            return 0.0
+        edges.append((w, k, u, v))
+    edges.sort(key=lambda e: (e[0], e[1]))             # (weight, index): fully determined order
+    parent = list(range(n))
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    total = 0.0
+    for w, _idx, u, v in edges:
+        ru = find(u)
+        rv = find(v)
+        if ru != rv:
+            parent[ru] = rv
+            total = total + w
+    return total
+'''
+
+_C_GRAPH_MST_WEIGHT = '''\
+/* Minimum-spanning-forest total weight of a = [n, m, (u,v,w)*m] (Kruskal, union-find). */
+static int _uf_find(int* parent, int x) {
+    while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; }
+    return x;
+}
+typedef struct { double w; int idx; int u; int v; } _MstEdge;
+static int _mst_cmp(const void* pa, const void* pb) {
+    const _MstEdge* a = (const _MstEdge*)pa;
+    const _MstEdge* b = (const _MstEdge*)pb;
+    if (a->w < b->w) return -1;
+    if (a->w > b->w) return 1;
+    return (a->idx < b->idx) ? -1 : (a->idx > b->idx ? 1 : 0);   /* unique idx breaks all ties */
+}
+double graph_mst_weight(const double* a, int n_in) {
+    if (n_in < 2) return 0.0;
+    double nd = a[0], md = a[1];
+    if (!(nd >= 1.0 && nd <= 2147483000.0)) return 0.0;
+    if (!(md >= 0.0 && md <= 2147483000.0)) return 0.0;
+    int n = (int)nd, m = (int)md;
+    if ((long long)n_in < 2LL + 3LL * m) return 0.0;
+    int* parent = (int*)malloc((size_t)n * sizeof(int));
+    _MstEdge* edges = (_MstEdge*)malloc((size_t)(m > 0 ? m : 1) * sizeof(_MstEdge));
+    if (!parent || !edges) { free(parent); free(edges); return 0.0; }
+    for (int i = 0; i < n; i++) parent[i] = i;
+    for (int k = 0; k < m; k++) {
+        int u = (int)a[2 + 3 * k], v = (int)a[2 + 3 * k + 1];
+        if (u < 0 || u >= n || v < 0 || v >= n) { free(parent); free(edges); return 0.0; }
+        edges[k].w = a[2 + 3 * k + 2]; edges[k].idx = k; edges[k].u = u; edges[k].v = v;
+    }
+    if (m > 0) qsort(edges, (size_t)m, sizeof(_MstEdge), _mst_cmp);
+    double total = 0.0;
+    for (int k = 0; k < m; k++) {
+        int ru = _uf_find(parent, edges[k].u), rv = _uf_find(parent, edges[k].v);
+        if (ru != rv) { parent[ru] = rv; total = total + edges[k].w; }
+    }
+    free(parent); free(edges);
+    return total;
+}
+'''
+
+_PY_GRAPH_DIJKSTRA = '''\
+def run(a):
+    """Single-source shortest distances (Dijkstra) on an undirected non-negative-weight
+    graph a = [n, m, src, (u,v,w)*m]. Returns the length-n distance vector (src = 0.0),
+    with -1.0 for an unreachable node. Deterministic: settle the reachable unsettled node
+    of least distance (lowest index on ties), then relax all incident edges in input order.
+    Fail-soft []: malformed / out-of-range src or endpoint / a negative edge weight."""
+    if len(a) < 3:
+        return []
+    nd = a[0]
+    md = a[1]
+    sd = a[2]
+    if not (nd >= 1.0 and nd <= 2147483000.0):
+        return []
+    if not (md >= 0.0 and md <= 2147483000.0):
+        return []
+    n = int(nd)
+    m = int(md)
+    if not (sd >= 0.0 and sd < nd):
+        return []
+    src = int(sd)
+    if len(a) < 3 + 3 * m:
+        return []
+    for k in range(m):                                 # validate up front
+        u = int(a[3 + 3 * k])
+        v = int(a[3 + 3 * k + 1])
+        w = a[3 + 3 * k + 2]
+        if u < 0 or u >= n or v < 0 or v >= n or w < 0.0:
+            return []
+    dist = [-1.0] * n
+    settled = [False] * n
+    dist[src] = 0.0
+    for _ in range(n):
+        best = -1
+        bestd = 0.0
+        for x in range(n):
+            if (not settled[x]) and dist[x] >= 0.0 and (best < 0 or dist[x] < bestd):
+                best = x
+                bestd = dist[x]
+        if best < 0:
+            break                                      # remaining nodes unreachable
+        settled[best] = True
+        du = dist[best]
+        for k in range(m):                             # relax edges incident to `best`
+            u = int(a[3 + 3 * k])
+            v = int(a[3 + 3 * k + 1])
+            w = a[3 + 3 * k + 2]
+            if u == best and not settled[v]:
+                cand = du + w
+                if dist[v] < 0.0 or cand < dist[v]:
+                    dist[v] = cand
+            elif v == best and not settled[u]:
+                cand = du + w
+                if dist[u] < 0.0 or cand < dist[u]:
+                    dist[u] = cand
+    return dist
+'''
+
+_C_GRAPH_DIJKSTRA = '''\
+/* Single-source Dijkstra on a = [n, m, src, (u,v,w)*m]; writes the length-n distance
+ * vector to `out` (-1.0 = unreachable) and returns n. Fail-soft 0 on malformed input. */
+int graph_dijkstra(const double* a, int n_in, double* out) {
+    if (n_in < 3) return 0;
+    double nd = a[0], md = a[1], sd = a[2];
+    if (!(nd >= 1.0 && nd <= 2147483000.0)) return 0;
+    if (!(md >= 0.0 && md <= 2147483000.0)) return 0;
+    int n = (int)nd, m = (int)md;
+    if (!(sd >= 0.0 && sd < nd)) return 0;
+    int src = (int)sd;
+    if ((long long)n_in < 3LL + 3LL * m) return 0;
+    for (int k = 0; k < m; k++) {                      /* validate up front */
+        int u = (int)a[3 + 3 * k], v = (int)a[3 + 3 * k + 1];
+        double w = a[3 + 3 * k + 2];
+        if (u < 0 || u >= n || v < 0 || v >= n || w < 0.0) return 0;
+    }
+    char* settled = (char*)calloc((size_t)n, 1);
+    if (!settled) return 0;
+    for (int i = 0; i < n; i++) out[i] = -1.0;
+    out[src] = 0.0;
+    for (int it = 0; it < n; it++) {
+        int best = -1; double bestd = 0.0;
+        for (int x = 0; x < n; x++)
+            if (!settled[x] && out[x] >= 0.0 && (best < 0 || out[x] < bestd)) { best = x; bestd = out[x]; }
+        if (best < 0) break;
+        settled[best] = 1;
+        double du = out[best];
+        for (int k = 0; k < m; k++) {
+            int u = (int)a[3 + 3 * k], v = (int)a[3 + 3 * k + 1];
+            double w = a[3 + 3 * k + 2];
+            if (u == best && !settled[v]) {
+                double cand = du + w;
+                if (out[v] < 0.0 || cand < out[v]) out[v] = cand;
+            } else if (v == best && !settled[u]) {
+                double cand = du + w;
+                if (out[u] < 0.0 || cand < out[u]) out[u] = cand;
+            }
+        }
+    }
+    free(settled);
+    return n;
+}
+'''
+
 
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
