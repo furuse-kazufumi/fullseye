@@ -167,6 +167,73 @@ def _synth_spectral(img: np.ndarray, shape, seed: int, iters: int) -> np.ndarray
     return np.clip(out, 0.0, 1.0)
 
 
+# --- multi-scale (Laplacian pyramid) Heeger-Bergen -------------------------- #
+def _gaussian_pyramid(a: np.ndarray, levels: int) -> list[np.ndarray]:
+    """Coarse-to-fine list [finest, ..., coarsest]; each next level is blur+halve of the
+    previous. Stops early if halving would drop a side below 8 px."""
+    pyr = [a]
+    for _ in range(max(1, levels) - 1):
+        g = pyr[-1]
+        if min(g.shape) < 8:
+            break
+        blur = ndimage.gaussian_filter(g, sigma=1.0, mode="reflect")
+        pyr.append(blur[::2, ::2])
+    return pyr
+
+
+def _upsample_to(g: np.ndarray, shape) -> np.ndarray:
+    """Bilinear-upsample ``g`` to EXACTLY ``shape`` (zoom can be a pixel short → edge-pad)."""
+    shape = tuple(shape)
+    if g.shape == shape:
+        return g
+    up = ndimage.zoom(g, (shape[0] / g.shape[0], shape[1] / g.shape[1]), order=1, mode="reflect")
+    out = np.zeros(shape, np.float64)
+    h, w = min(shape[0], up.shape[0]), min(shape[1], up.shape[1])
+    out[:h, :w] = up[:h, :w]
+    if h < shape[0]:
+        out[h:, :w] = out[h - 1, :w]                       # replicate last row
+    if w < shape[1]:
+        out[:, w:] = out[:, w - 1:w]                       # replicate last col
+    return out
+
+
+def _laplacian_pyramid(a: np.ndarray, levels: int) -> list[np.ndarray]:
+    """Band-pass detail levels [finest, ...] followed by the low-pass residual (last)."""
+    gp = _gaussian_pyramid(a, levels)
+    lap = [gp[i] - _upsample_to(gp[i + 1], gp[i].shape) for i in range(len(gp) - 1)]
+    lap.append(gp[-1])                                     # residual low-pass
+    return lap
+
+
+def _collapse_laplacian(lap: list[np.ndarray]) -> np.ndarray:
+    out = lap[-1]
+    for i in range(len(lap) - 2, -1, -1):
+        out = _upsample_to(out, lap[i].shape) + lap[i]
+    return out
+
+
+def _synth_pyramid(img: np.ndarray, shape, seed: int, iters: int, levels: int) -> np.ndarray:
+    """Heeger & Bergen 1995 multi-scale texture synthesis (Laplacian-pyramid variant).
+
+    Iterate: match the global marginal, then match EACH pyramid band's histogram to the
+    exemplar's corresponding band, then collapse. This imposes per-SCALE marginal
+    statistics the single-band spectral method cannot. Honest scope (see module
+    docstring): isotropic (no oriented steerable subbands) and marginal-only (no
+    Portilla-Simoncelli cross-scale/orientation correlations).
+    """
+    rng = np.random.default_rng(seed)
+    src_lap = _laplacian_pyramid(img, levels)
+    out = match_histogram(rng.standard_normal(tuple(shape)), img)
+    for _ in range(max(1, iters)):
+        out_lap = _laplacian_pyramid(out, levels)
+        matched = list(out_lap)                            # keep out's level count/shapes
+        for i in range(min(len(out_lap), len(src_lap))):
+            matched[i] = match_histogram(out_lap[i], src_lap[i])
+        out = _collapse_laplacian(matched)
+        out = match_histogram(out, img)                    # re-impose the global marginal
+    return np.clip(out, 0.0, 1.0)
+
+
 def _min_cut_mask(err: np.ndarray, axis: int) -> np.ndarray:
     """Boolean mask (True = take the NEW block) for a minimum-error seam through the
     overlap error surface ``err`` (Efros-Freeman). ``axis``: 0 = vertical seam in a
