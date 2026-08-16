@@ -1,0 +1,52 @@
+{
+  "images": [
+    {
+      "name": "gradient",
+      "file": "gradient.png",
+      "source": "synthetic (Fullseye)",
+      "licence": "own work"
+    },
+    {
+      "name": "blobs",
+      "file": "blobs.png",
+      "source": "synthetic (Fullseye)",
+      "licence": "own work"
+    },
+    {
+      "name": "shapes",
+      "file": "shapes.png",
+      "source": "synthetic (Fullseye)",
+      "licence": "own work"
+    },
+    {
+      "name": "checker_noisy",
+      "file": "checker_noisy.png",
+      "source": "synthetic (Fullseye)",
+      "licence": "own work"
+    },
+    {
+      "name": "coins",
+      "file": "coins.png",
+      "source": "skimage.data",
+      "licence": "BSD / public domain (see scikit-image)"
+    },
+    {
+      "name": "camera",
+      "file": "camera.png",
+      "source": "skimage.data",
+      "licence": "BSD / public domain (see scikit-image)"
+    },
+    {
+      "name": "page",
+      "file": "page.png",
+      "source": "skimage.data",
+      "licence": "BSD / public domain (see scikit-image)"
+    },
+    {
+      "name": "cell",
+      "file": "cell.png",
+      "source": "skimage.data",
+      "licence": "BSD / public domain (see scikit-image)"
+    }
+  ]
+}

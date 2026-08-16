@@ -16,11 +16,15 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(os.path.dirname(HERE), "studio_assets", "sample_images")
+_ROOT = os.path.dirname(HERE)
+if _ROOT not in sys.path:
+    sys.path.insert(0, _ROOT)                 # so `import imgio` (repo root) works from tools/
+OUT = os.path.join(_ROOT, "studio_assets", "sample_images")
 
 
 def _synthetic():
