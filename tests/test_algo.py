@@ -336,6 +336,52 @@ def test_string_c_is_bit_identical(name, tmp_path):
     assert res["passed"] is True
 
 
+def test_string_ops_fail_soft_on_bad_header_no_crash():
+    # regression for the P3 review: int(a[0]) once ran BEFORE the range check, so a
+    # fractional-negative header slipped through (int(-0.5)==0) and a NaN header crashed
+    # (int(nan) -> ValueError). The raw-value guard now fail-softs on both, in Python.
+    nan = float("nan")
+    assert algo.run_algo("edit_distance", [-0.5, 65.0, 66.0]) == 0.0     # was int(-0.5)=0 -> 2.0
+    assert algo.run_algo("edit_distance", [nan, 65.0, 66.0]) == 0.0      # was a ValueError crash
+    assert algo.run_algo("edit_distance", [3.0e9, 65.0, 66.0]) == 0.0    # oversized
+    assert algo.run_algo("lcs_length", [-0.5, 65.0, 66.0]) == 0.0
+    assert algo.run_algo("lcs_length", [nan, 65.0, 66.0]) == 0.0
+    assert algo.run_algo("strfind", [-0.5, 65.0, 65.0]) == []
+    assert algo.run_algo("strfind", [nan, 65.0, 65.0]) == []             # was a ValueError crash
+    assert algo.run_algo("strfind", [0.5, 65.0, 65.0]) == []             # 0 < m < 1
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _STRING)
+def test_string_c_python_parity_on_bad_headers(name, tmp_path):
+    # The oracle-checked holdout uses only VALID headers (the recursive oracle would
+    # compute a different value on a truncated-negative header, exactly the bug this pins),
+    # so the raw-value guard boundary (fractional / negative / NaN / oversized a[0]) is
+    # verified HERE directly C-vs-Python — proving Python now fail-softs identically to C.
+    nan = float("nan")
+    if name == "strfind":
+        cases = [
+            [1.0, 65.0, 65.0, 65.0],        # valid control -> [0, 1]
+            [-0.5, 65.0, 65.0],             # fractional-negative -> []
+            [nan, 65.0, 65.0],              # NaN -> [] (was a Python crash)
+            [0.5, 65.0, 65.0],              # 0 < m < 1 -> []
+            [3.0e9, 65.0, 65.0],            # oversized -> []
+        ]
+    else:
+        cases = [
+            [1.0, 65.0, 66.0],              # valid control (edit 1 / lcs 0)
+            [-0.5, 65.0, 66.0],             # fractional-negative -> 0.0 (was Py 2.0 vs C 0.0)
+            [nan, 65.0, 66.0],              # NaN -> 0.0 (was a Python crash)
+            [3.0e9, 65.0, 66.0],            # oversized -> 0.0
+        ]
+    op = algo.ALGO_BY_NAME[name]
+    cc = algo_difftest.find_c_compiler()
+    res = algo_difftest.run_c_backend(op, cases, tmp_path, cc)
+    assert res["status"] == "ran", res
+    py = [algo.py_fn(name)([float(x) for x in c]) for c in cases]
+    assert res["outputs"] == py             # C == Python on every header (incl. NaN / fractional)
+
+
 @pytest.mark.parametrize("name", _NUMERIC)
 def test_numeric_difftest_python_half(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc=None)
