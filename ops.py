@@ -34,8 +34,38 @@ COLOR = "color"                       # multichannel H x W x 3 (RGB); reached vi
 
 # Matching context: the locate problem sets a reference template here before scoring
 # (matching needs a model + a search image; the pipeline threads the image, the model
-# comes from context). Honest coupling — documented, single-threaded.
-_MATCH_CTX: dict = {"template": None}
+# comes from context). Honest coupling — documented.
+class _MatchCtx:
+    """Dict-like matching context whose store is THREAD-LOCAL.
+
+    Two evaluators scoring different models in parallel (evolution sweeps run the
+    scorers on a thread pool) used to share one module-level dict: B's template
+    overwrote A's and A then returned a plausible-but-wrong ``[corr, y, x]`` with no
+    exception. Each thread now sees the template IT set. A thread that never set one
+    inherits the last template set anywhere, so the usual "build the dataset on the
+    main thread, score in workers" flow is unchanged. Dict-like on purpose: callers
+    save/restore via ``ctx["template"]`` / ``ctx.get("template")``.
+    """
+
+    def __init__(self) -> None:
+        self._tl = threading.local()
+        self._shared: dict = {"template": None}   # fallback for threads that never set one
+
+    def __getitem__(self, key: str):
+        try:
+            return getattr(self._tl, key)
+        except AttributeError:
+            return self._shared[key]
+
+    def __setitem__(self, key: str, value) -> None:
+        setattr(self._tl, key, value)
+        self._shared[key] = value
+
+    def get(self, key: str, default=None):
+        return getattr(self._tl, key, self._shared.get(key, default))
+
+
+_MATCH_CTX = _MatchCtx()
 
 
 def set_match_template(t) -> None:
