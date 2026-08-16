@@ -331,7 +331,9 @@ def difftest(name: str, wd: Path, seed: int = 0, tol: float = 0.0,
         cb = run_c_backend(op, holdout, wd, cc)
         if cb["status"] == "ran":
             # C vs Python: true BIT-for-bit (pass criterion) + abs diff for the report.
-            if op.kind == algo.KIND_SORT:
+            # Key on out_sort: any SEQ-producing op (sort or variable-length map) is
+            # compared per-array (the helpers already handle differing array lengths).
+            if op.out_sort == algo.SEQ:
                 bit_ok = _bits_equal_sort(py_out, cb["outputs"])
                 c_diff = _max_diff_sort(py_out, cb["outputs"])
             else:
