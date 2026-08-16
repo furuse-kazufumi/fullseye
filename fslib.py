@@ -315,13 +315,15 @@ class Seq:
         raise FsTypeError("a Seq has no truth value; write `len(seq) > 0`")
 
 
-@dataclass(frozen=True, eq=False)
+@dataclass(frozen=True)
 class Scalar:
-    """A single real number (the ``scalar`` sort).
+    """A single float64 value (the ``scalar`` sort).
 
-    ``float(scalar)`` converts explicitly and unambiguously; there is deliberately
-    NO boolean value (write ``s.value() > 0``), so ``Scalar(0.0)`` can never be
-    mistaken for "empty/false" the way a bare float would.
+    ``float(scalar)`` converts explicitly and unambiguously and ``==``/``hash`` are
+    by value; there is deliberately NO boolean value (write ``s.value() > 0``), so
+    ``Scalar(0.0)`` can never be mistaken for "empty/false" the way a bare float
+    would. May hold a non-finite value (NaN/inf); consumers that require finiteness
+    enforce it (see ``algo.py``).
     """
 
     _value: float
