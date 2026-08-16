@@ -370,6 +370,11 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     chain, like the CLI) **or** a list of ``(name, a, b)`` tuples for per-stage
     knobs — the latter is what you want when different stages need different
     tuning (the CLI cannot do this in a single call).
+
+    ``coerce`` applies to the entry array only: every later value is an op output
+    that already carries its declared sort, and region ops binarise at 0.5
+    themselves, so re-coercing mid-chain would only strip gray levels a stage may
+    still want (see :func:`_coerce_input`).
     """
     v = image
     first = True
