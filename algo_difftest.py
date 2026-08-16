@@ -248,14 +248,14 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             sb = [float(65 + rng.randint(0, alpha - 1)) for _ in range(nb)]
             cases.append([float(na)] + sa + sb)
         return cases
-    if name in ("graph_components", "graph_mst_weight"):
-        # undirected graphs [n, m, (u,v,w)*m] with integer weights (exact sums). Mix of
-        # isolated / path / multi-component / dense + random (self-loops & multi-edges ok).
+    if name == "graph_components":
+        # undirected graphs [n, m, (u,v,w)*m]; connectivity-only, so self-loops & multi-
+        # edges are fine (integer weights, ignored). Mix of isolated / path / 2-component.
         cases = [
             [1.0, 0.0],                                        # single isolated node
-            [3.0, 0.0],                                        # 3 isolated
-            [4.0, 3.0, 0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 5.0],   # path (1 component)
-            [6.0, 6.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 0.0, 3.0,    # two triangles
+            [3.0, 0.0],                                        # 3 isolated -> 3 components
+            [4.0, 3.0, 0.0, 1.0, 2.0, 1.0, 2.0, 3.0, 2.0, 3.0, 5.0],   # path -> 1 component
+            [6.0, 6.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0, 0.0, 3.0,    # two triangles -> 2
              3.0, 4.0, 1.0, 4.0, 5.0, 2.0, 5.0, 3.0, 3.0],
         ]
         for _ in range(26):
@@ -263,31 +263,55 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             m = rng.randint(0, 16)
             edges: list[float] = []
             for _ in range(m):
-                u = rng.randint(0, n - 1)
-                v = rng.randint(0, n - 1)
-                edges += [float(u), float(v), float(rng.randint(1, 20))]
+                edges += [float(rng.randint(0, n - 1)), float(rng.randint(0, n - 1)),
+                          float(rng.randint(1, 20))]
             cases.append([float(n), float(m)] + edges)
         return cases
+
+    def _simple_graph(nn: int):
+        """A random SIMPLE undirected edge set (no self-loops/multi-edges) with DISTINCT
+        integer weights — so a scipy csr matches it exactly (no duplicate-summing) and the
+        MST / shortest paths are unambiguous."""
+        pairs = [(u, v) for u in range(nn) for v in range(u + 1, nn)]
+        rng.shuffle(pairs)
+        mm = rng.randint(0, len(pairs))
+        chosen = pairs[:mm]
+        wts = rng.sample(range(1, 400), len(chosen)) if chosen else []
+        flat: list[float] = []
+        for (u, v), w in zip(chosen, wts):
+            flat += [float(u), float(v), float(w)]
+        return len(chosen), flat
+
+    if name == "graph_mst_weight":
+        cases = [
+            [1.0, 0.0],                                        # single node -> 0
+            [3.0, 0.0],                                        # forest of isolated -> 0
+            [3.0, 3.0, 0.0, 1.0, 1.0, 1.0, 2.0, 2.0, 0.0, 2.0, 3.0],   # triangle -> 1+2 = 3
+        ]
+        for _ in range(26):
+            n = rng.randint(1, 9)
+            m, flat = _simple_graph(n)
+            cases.append([float(n), float(m)] + flat)
+        return cases
     if name == "graph_dijkstra":
-        # CONNECTED graphs [n, m, src, (u,v,w)*m] (spanning path + random extra edges) with
-        # non-negative integer weights -> every node reachable, distances exact.
+        # CONNECTED simple graphs [n, m, src, (u,v,w)*m]: a spanning path guarantees
+        # reachability; extra edges are distinct non-path simple pairs. Integer weights.
         cases = [
             [1.0, 0.0, 0.0],                                   # single node, dist [0]
             [3.0, 2.0, 0.0, 0.0, 1.0, 5.0, 1.0, 2.0, 3.0],     # path 0-1-2 from src 0
         ]
         for _ in range(28):
             n = rng.randint(1, 9)
+            used = {(i, i + 1) for i in range(n - 1)}          # spanning path (connected)
             edges: list[float] = []
-            for i in range(n - 1):                             # spanning path -> connected
+            for i in range(n - 1):
                 edges += [float(i), float(i + 1), float(rng.randint(1, 9))]
-            extra = rng.randint(0, 8)
-            for _ in range(extra):
-                u = rng.randint(0, n - 1)
-                v = rng.randint(0, n - 1)
+            spare = [(u, v) for u in range(n) for v in range(u + 1, n) if (u, v) not in used]
+            rng.shuffle(spare)
+            for (u, v) in spare[:rng.randint(0, min(6, len(spare)))]:
                 edges += [float(u), float(v), float(rng.randint(1, 9))]
-            m = (n - 1) + extra
-            src = rng.randint(0, n - 1)
-            cases.append([float(n), float(m), float(src)] + edges)
+            m = len(edges) // 3
+            cases.append([float(n), float(m), float(rng.randint(0, n - 1))] + edges)
         return cases
     return make_holdout(seed)
 
