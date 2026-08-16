@@ -58,8 +58,40 @@ def fallback(v, out_sort):
     return np.clip(vv, 0, 1) if vv is not None else v
 
 
+def region01(out):
+    """Coerce a `region` result to the declared {0,1} contract.
+
+    ★`sanitize` guaranteed FINITENESS but never RANGE: on the success path a
+    finite float region whose values fell outside {0,1} — or an int/bool one —
+    was returned untouched, so the "sort-valid" half of its promise held only by
+    convention.  Every current region producer `astype`s from a bool mask, so
+    this is an identity for all of them; it closes the contract for any future
+    producer (a label map, a soft mask) that is not already binary.
+
+    Out-of-range values are binarised at 0.5, the same rule `api._coerce_input`
+    applies on the INPUT side.  Non-array / non-numeric outputs are left alone:
+    a region op returning those is a sort bug, not a range one.
+    """
+    if not isinstance(out, np.ndarray) or not out.size or out.dtype.kind not in "biufc":
+        return out
+    r = out.real if out.dtype.kind == "c" else out
+    if out.dtype.kind == "f" and np.all((r == 0) | (r == 1)):
+        return out                              # already {0,1} float -> unchanged
+    return (r > 0.5).astype(np.float64)
+
+
 def sanitize(out, v, out_sort=None):
     """Return a finite, sort-valid result.
+
+    Finiteness is handled by `_finite`; for out_sort=="region" the result is
+    additionally forced onto the {0,1} contract by `region01`.
+    """
+    out = _finite(out, v, out_sort)
+    return region01(out) if out_sort == "region" else out
+
+
+def _finite(out, v, out_sort=None):
+    """Return a finite result of the declared sort.
 
     * out is None (op raised)                 -> sort fallback
     * out is a float/complex array w/ NaN/Inf -> keep finite pixels, patch the
