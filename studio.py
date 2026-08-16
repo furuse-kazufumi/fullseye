@@ -3177,9 +3177,13 @@ def build_window(model=None):
     def apply_dev_directives(text):
         """Apply a program's dev_* display directives (source order): dev_update_* /
         dev_update_off|on set the display-update flags; dev_set_part zooms the current
-        view. Studio's runner batches stage evaluation, so these set the SESSION
-        display state (the last value of each wins) rather than executing inline per
-        line — see docs/HDEVELOP_DEV_OPS.md."""
+        view; dev_set_lut/dev_clear_window drive the current window. Studio's runner
+        batches stage evaluation, so these set the SESSION display state (the last
+        value of each wins) rather than executing inline per line. Honest limit:
+        unlike the pipeline stages (which honour if/for), dev_* directives are applied
+        UNCONDITIONALLY — a dev_* inside a not-taken branch still fires. Put them at
+        top level. The frozen-display state is surfaced by the status-bar indicator.
+        See docs/HDEVELOP_DEV_OPS.md."""
         for name, args in extract_dev_directives(text):
             if name == "dev_update_off":
                 set_dev_update("all", False)
