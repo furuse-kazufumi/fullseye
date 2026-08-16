@@ -104,6 +104,8 @@ with warnings.catch_warnings():
         fit_line, fit_circle, fit_ellipse, fit_rectangle2,
         algo, algo_ops, algo_categories, find_algo, run_algo,
         algo_to_python, algo_to_c, algo_difftest,
+        synth, learn_features, synthesize_like, match_histogram,
+        radial_power_spectrum, feature_distance, patch_novelty,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
