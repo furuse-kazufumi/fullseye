@@ -82,7 +82,10 @@ def _diff(a, b, out_sort):
     a, b = np.asarray(a, np.float64), np.asarray(b, np.float64)
     if a.shape != b.shape or a.ndim != 2:
         return None
-    return float(np.max(np.abs(np.clip(a, 0, 1) - np.clip(b, 0, 1))))
+    # Raw max-abs, NOT clipped to [0,1] first: clipping hid real divergence (measured —
+    # highpass_image reported 0.5 where the backends actually differ by 1.0). Producing
+    # out-of-range values is a disagreement, not a display detail.
+    return float(np.max(np.abs(a - b)))
 
 
 def analyze():
