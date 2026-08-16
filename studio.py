@@ -1538,7 +1538,7 @@ def build_window(model=None):
     slay.addLayout(srow); slay.addWidget(s_hint)
     lv.addWidget(_group(QtWidgets, "SAMPLE PIPELINES", slay))
 
-    all_ops = api.list_ops()
+    all_ops = api.list_ops(include_algo=True)   # + the opt-in general-algorithm tier (read-only)
     cat = QtWidgets.QComboBox(); cat.addItem("all categories")
     cat.addItems(sorted({r["category"] for r in all_ops}))
     cat.setToolTip("Filter operators by category")
