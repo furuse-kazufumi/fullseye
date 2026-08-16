@@ -118,12 +118,12 @@ def test_ransac_consensus_gate_rejects_blob_keeps_real_shapes():
     assert abs(sr - 2.5) < 0.05 and sinl.mean() > 0.9
 
 
-def test_default_consensus_gate_rejects_a_blob():
-    # Regression (R1): the DEFAULT gate — no min_inlier_frac / min_inliers opt-in —
-    # must already reject a non-primitive blob whose only inliers are surface noise
-    # (~5-7% of the cloud), not only reject once the caller opts into a fraction.
+def test_default_consensus_gate_rejects_a_WELL_SCALED_blob():
+    # Regression (R1) — HONEST scope: the DEFAULT gate rejects a non-primitive blob
+    # only when the cloud is LARGE relative to thresh (extent >> thresh). _blob's
+    # default scale=0.5 (~50x thresh) is that regime, and it is correctly rejected.
     for seed in range(4):
-        P, N = _blob(seed)                          # 300-pt gaussian blob, default thresh
+        P, N = _blob(seed)                          # 300-pt gaussian blob, extent ~50x thresh
         assert pcseg.fit_sphere_ransac(P, thresh=0.01, iters=300, seed=seed) is None
         assert pcseg.fit_cylinder_ransac(P, N, thresh=0.01, iters=300, seed=seed) is None
     # a genuine sphere still fits with NO opt-in (consensus far above the 10% floor).
@@ -134,12 +134,35 @@ def test_default_consensus_gate_rejects_a_blob():
     assert fit is not None and abs(fit[1] - 2.0) < 0.05
 
 
-def test_consensus_floor_coerces_and_clamps_its_thresholds():
-    # R5: a float min_inliers is ceiled (not truncated), and min_inlier_frac is
-    # clamped to [0,1] so a fraction > 1 cannot make the gate permanently unreachable.
+def test_default_gate_is_weak_on_a_COMPACT_blob_but_opt_in_rejects_it():
+    # HONEST disclosure (adversarial review): the 10% default is a scale-dependent
+    # heuristic — a COMPACT non-primitive blob (extent ~10x thresh) can still clear it
+    # with a plausible small radius. The default therefore does NOT guarantee blob
+    # rejection; the escape hatch is a stricter min_inlier_frac. This test pins the
+    # ESCAPE HATCH (deterministic), and documents the limitation the default has.
+    P, N = _blob(0, scale=0.10)                     # ~10x thresh: the weak regime
+    # a stricter demand (30% consensus) rejects it regardless of scale
+    assert pcseg.fit_sphere_ransac(P, thresh=0.01, iters=400, min_inlier_frac=0.3) is None
+    assert pcseg.fit_cylinder_ransac(P, N, thresh=0.01, iters=400, min_inlier_frac=0.3) is None
+
+
+def test_consensus_floor_coerces_clamps_and_rejects_non_finite():
+    # R5: a float min_inliers is ceiled (not truncated); min_inlier_frac is clamped to
+    # [0,1]; and (adversarial review) a non-finite override is rejected fail-closed
+    # rather than crashing deep in the fitter with a bare ValueError/OverflowError.
     assert pcseg._consensus_floor(100, 4, 10.9, None) == 11       # ceil, not 10
     assert pcseg._consensus_floor(100, 4, None, 1.5) == 100       # clamped to 1.0 -> all points
     assert pcseg._consensus_floor(100, 4, None, -0.5) == 10       # negative ignored -> default 10%
+    for bad in (float("nan"), float("inf")):
+        with pytest.raises(ValueError):
+            pcseg._consensus_floor(100, 4, bad, None)
+        with pytest.raises(ValueError):
+            pcseg._consensus_floor(100, 4, None, bad)
+    # reachable through the public fitter, and now a clean ValueError:
+    rng = np.random.default_rng(1)
+    Ps = rng.normal(0, 1.0, (50, 3))
+    with pytest.raises(ValueError):
+        pcseg.fit_sphere_ransac(Ps, thresh=0.03, iters=20, min_inlier_frac=float("nan"))
 
 
 def test_height_above_plane_signed_up():
