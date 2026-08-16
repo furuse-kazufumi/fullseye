@@ -280,6 +280,46 @@ def recipe(name):
     """Look up a curated sample pipeline by name (see ``fullseye.recipes``)."""
     return recipes.get(name)
 
+
+# ---- general-algorithm tier (algo-c parity; opt-in, image-focus-safe) ------- #
+# A separate registry from the image REGISTRY: sorts/reductions over 1-D
+# sequences, each shipping a Python reference AND a C reference, verified by
+# algo_difftest (Python==numpy oracle, C==Python bit-for-bit). Does not touch the
+# evolution registry — see ``algo.py`` and ``docs/GENERAL_ALGORITHMS.md``.
+def algo_ops() -> list[str]:
+    """Names of the general-algorithm ops (sorts/reductions), e.g. ``quicksort``."""
+    return algo.algo_names()
+
+
+def algo_categories() -> dict:
+    """General-algorithm ops grouped by category (``sort`` / ``reduce``)."""
+    return algo.algo_categories()
+
+
+def find_algo(name: str):
+    """The :class:`algo.AlgoOp` for *name*, or ``None``."""
+    return algo.find_algo(name)
+
+
+def run_algo(name: str, seq):
+    """Run general algorithm *name* on *seq* (a sort returns a list; a reduction a float)."""
+    return algo.run_algo(name, seq)
+
+
+def algo_to_python(name: str) -> str:
+    """The standalone Python source for general algorithm *name* (defines ``run(a)``)."""
+    return algo_codegen.emit_python(algo.ALGO_BY_NAME[name])
+
+
+def algo_to_c(name: str) -> str:
+    """The standalone C source for general algorithm *name* (function + I/O driver)."""
+    return algo_codegen.emit_c(algo.ALGO_BY_NAME[name])
+
+
+def algo_difftest(name: str, workdir="out/algo", **kw) -> dict:
+    """Run the honest gate for general algorithm *name* (Python==oracle, C==Python)."""
+    return _algo_difftest.difftest(name, workdir, **kw)
+
 __version__ = "0.1.0"
 
 
