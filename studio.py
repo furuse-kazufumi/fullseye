@@ -982,6 +982,7 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                     self.hover_cb(x, y, self._data[y, x])
 
         def clear(self):
+            self.clear_text()
             self._item.setPixmap(QtGui.QPixmap())
             self._data = None
 
