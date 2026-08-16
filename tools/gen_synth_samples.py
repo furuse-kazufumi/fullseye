@@ -58,14 +58,25 @@ def _exemplar_weave(seed: int = 0) -> np.ndarray:
     return _norm01(warp + weft + 0.25 * rng.standard_normal((_N, _N)))
 
 
-def _exemplar_brick() -> np.ndarray:
-    """Brick wall: a STRUCTURED, near-periodic pattern (for quilting)."""
-    img = np.full((_N, _N), 0.35)
-    bh, bw, mortar = 24, 56, 4
+def _exemplar_brick(seed: int = 0) -> np.ndarray:
+    """Brick wall: a STRUCTURED texture with per-brick jitter (for quilting).
+
+    Slight width/offset/shade jitter + grain makes it non-periodic, so quilting
+    produces a genuinely new arrangement (measurable novelty) rather than a
+    verbatim re-tiling of a perfectly regular grid.
+    """
+    rng = np.random.default_rng(seed)
+    img = np.full((_N, _N), 0.32)
+    bh, mortar = 24, 4
     for i, ry in enumerate(range(0, _N, bh)):
-        off = (bw // 2) if (i % 2) else 0
-        for rx in range(-off, _N, bw):
-            img[ry + mortar:ry + bh, rx + mortar:rx + bw] = 0.72
+        off = (28 if (i % 2) else 0) + int(rng.integers(-6, 7))
+        rx = -off
+        while rx < _N:
+            bw = 56 + int(rng.integers(-10, 11))
+            shade = 0.70 + 0.10 * rng.standard_normal()
+            img[ry + mortar:ry + bh, rx + mortar:rx + bw] = shade
+            rx += bw
+    img = img + 0.03 * rng.standard_normal((_N, _N))
     return np.clip(img, 0, 1)
 
 
