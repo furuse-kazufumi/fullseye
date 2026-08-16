@@ -130,7 +130,7 @@ def analyze():
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--list", default="", help="agree|close|differ — print that band")
+    ap.add_argument("--list", default="", help="agree|close|differ|incomparable — print that band")
     a = ap.parse_args()
     rows = analyze()
     bands = {"agree": 0, "close": 0, "differ": 0, "incomparable": 0}
