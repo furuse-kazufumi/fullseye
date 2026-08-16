@@ -80,16 +80,47 @@ def test_sorts_edge_cases(name):
     assert algo.run_algo(name, rev) == sorted(rev)         # reverse sorted
 
 
-def test_mergesort_is_stable():
-    # stability is observable via (key, tag) pairs sharing a key; mergesort must
-    # keep the original relative order of equal keys.
-    pairs = [(1.0, "a"), (0.0, "b"), (1.0, "c"), (0.0, "d"), (1.0, "e")]
+def test_mergesort_is_stable_observable_via_signed_zero():
+    # Stability of a bare-float sort is only OBSERVABLE through equal-but-bit-
+    # distinguishable elements: +0.0 and -0.0 compare equal (<=) yet have different
+    # bit patterns. A stable merge keeps their INPUT order; an unstable `<` merge
+    # would reorder them. This pins stability where the old value-only test could not.
+    import math
     run = algo.py_fn("mergesort")
-    # emulate on the keys but track order: sort indices by key with a stable merge
-    keys = [p[0] for p in pairs]
-    order = sorted(range(len(keys)), key=lambda i: keys[i])   # python sorted is stable
-    # our mergesort on keys must reproduce the stable value order
-    assert run(keys) == [keys[i] for i in order]
+    out = run([0.0, -0.0, 0.0, -0.0])              # all equal under <=, order must survive
+    signs = [math.copysign(1.0, x) for x in out]
+    assert signs == [1.0, -1.0, 1.0, -1.0]         # preserved -> stable; would fail if unstable
+    # and an UNstable merge is genuinely detected here (guards against a `<=`->`<` regression)
+    unstable_src = algo._PY_MERGESORT.replace("if a[i] <= a[j]:", "if a[i] < a[j]:")
+    ns: dict = {}
+    exec(compile(unstable_src, "<unstable>", "exec"), ns)  # noqa: S102 - test fixture
+    bad = [math.copysign(1.0, x) for x in ns["run"]([0.0, -0.0, 0.0, -0.0])]
+    assert bad != [1.0, -1.0, 1.0, -1.0]           # the mutation IS observable
+
+
+@pytest.mark.parametrize("name", _ALL)
+def test_reference_does_not_mutate_input(name):
+    # the "in place on a copy" contract: run(a) must not mutate the caller's list.
+    a = [3.0, 1.0, 2.0, 1.0, 5.0]
+    snapshot = list(a)
+    algo.py_fn(name)(a)
+    assert a == snapshot
+
+
+def test_quicksort_handles_duplicates_in_reasonable_time():
+    # 3-way partition keeps all-equal / few-distinct inputs at O(n log n). A Lomuto
+    # regression would be ~O(n^2): 20000 all-equal elements would take seconds.
+    import time
+    big_equal = [1.0] * 20000
+    t = time.perf_counter()
+    out = algo.run_algo("quicksort", big_equal)
+    dt = time.perf_counter() - t
+    assert out == big_equal
+    assert dt < 2.0, f"quicksort on 20000 equal keys took {dt:.2f}s (expected O(n log n))"
+    binary = [float(i % 2) for i in range(20000)]  # a flattened binary mask
+    t = time.perf_counter()
+    assert algo.run_algo("quicksort", binary) == sorted(binary)
+    assert time.perf_counter() - t < 2.0
 
 
 @pytest.mark.parametrize("name", _REDUCES)
@@ -153,8 +184,82 @@ def test_difftest_c_matches_python_bit_for_bit(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc="auto")
     cb = res["c_backend"]
     assert cb["status"] == "ran", cb
-    assert cb["c_vs_python_max_abs_diff"] == 0.0            # exact: only moves/selects doubles
+    assert cb["c_vs_python_bit_identical"] is True          # true bit-for-bit
+    assert cb["c_vs_python_max_abs_diff"] == 0.0
     assert cb["pass"] is True and res["passed"] is True
+    assert res["c_verified"] is True                        # actually compiled + compared
+
+
+def test_diff_helpers_fail_closed_on_nonfinite():
+    inf, nan = float("inf"), float("nan")
+    # a NaN/inf difference must never silently fold to 0.0 (the old fail-open)
+    assert algo_difftest._diff01(1.0, nan) == inf
+    assert algo_difftest._diff01(1.0, inf) == inf
+    assert algo_difftest._max_diff_sort([[1.0, 2.0]], [[1.0, nan]]) == inf
+    assert algo_difftest._max_diff_scalar([1.0], [nan]) == inf
+    # structural mismatch (wrong length / count) is also inf -> never tol-gated
+    assert algo_difftest._max_diff_sort([[1.0, 2.0]], [[1.0]]) == inf
+    assert algo_difftest._max_diff_sort([[1.0]], [[1.0], [2.0]]) == inf
+
+
+def test_bit_check_catches_what_absdiff_misses():
+    # the bit comparison catches signed-zero and NaN divergences that an abs-diff
+    # of 0.0 would certify as "equal" — exactly the fail-open the review found.
+    assert algo_difftest._max_diff_sort([[0.0]], [[-0.0]]) == 0.0        # abs-diff: blind
+    assert algo_difftest._bits_equal_sort([[0.0]], [[-0.0]]) is False    # bits: caught
+    assert algo_difftest._bits_equal_scalar([1.0], [float("nan")]) is False
+    assert algo_difftest._bits_equal_sort([[1.0, 2.0]], [[1.0, float("nan")]]) is False
+    assert algo_difftest._bits_equal_sort([[1.0, 2.0]], [[1.0, 2.0]]) is True   # match
+
+
+def test_tol_inf_cannot_pass_nonfinite(tmp_path, monkeypatch):
+    # --tol inf must NOT rescue a non-finite / structurally-broken reference.
+    monkeypatch.setattr(algo, "py_fn", lambda name: (lambda a: [float("nan")] * len(a)))
+    res = algo_difftest.difftest("quicksort", tmp_path, tol=float("inf"), cc=None)
+    assert res["python_pass"] is False and res["passed"] is False
+
+
+def test_difftest_reports_c_verified(tmp_path):
+    skipped = algo_difftest.difftest("quicksort", tmp_path, cc=None)
+    assert skipped["c_verified"] is False                    # honest: pass but UNVERIFIED
+    if _HAS_CC:
+        assert algo_difftest.difftest("quicksort", tmp_path, cc="auto")["c_verified"] is True
+
+
+_HAS_ZIG = (algo_difftest.find_c_compiler() is not None
+            and "ziglang" in " ".join(algo_difftest.find_c_compiler() or []))
+
+
+@pytest.mark.skipif(not _HAS_ZIG, reason="needs ziglang cc for cross-target compile")
+@pytest.mark.parametrize("name", _ALL)
+def test_emitted_c_cross_compiles_for_macos(name, tmp_path):
+    # regression guard for the BSD <stdlib.h> name clash: heapsort()/mergesort()
+    # are declared by BSD libc, so the emitted C must not export those plain names.
+    import subprocess
+    c_path = tmp_path / f"gen_{name}.c"
+    c_path.write_text(algo_codegen.emit_c(algo.ALGO_BY_NAME[name]), encoding="utf-8")
+    r = subprocess.run([sys.executable, "-m", "ziglang", "cc", "-target", "x86_64-macos",
+                        "-O2", "-std=c99", "-c", str(c_path), "-o", str(tmp_path / "o.o")],
+                       capture_output=True, text=True, check=False)
+    assert r.returncode == 0, r.stderr[-400:]
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_difftest_catches_semantically_wrong_c(tmp_path, monkeypatch):
+    # a C backend that COMPILES but does not actually sort (no-op) must FAIL the
+    # gate — proving the bit-for-bit comparison is a meaningful check, not a
+    # rubber stamp that any compilable C passes.
+    op = algo.ALGO_BY_NAME["quicksort"]
+    broken = ("#include <stdio.h>\n#include <stdlib.h>\n#include <stdint.h>\n"
+              "void quicksort(double* a, int n) { (void)a; (void)n; }\n"   # no-op: wrong
+              + algo_codegen._driver_c(op))
+    monkeypatch.setattr(algo_codegen, "emit_c", lambda o: broken)
+    res = algo_difftest.difftest("quicksort", tmp_path, cc="auto")
+    assert res["python_pass"] is True                       # Python reference still correct
+    assert res["c_backend"]["status"] == "ran"
+    assert res["c_backend"]["c_vs_python_bit_identical"] is False
+    assert res["c_backend"]["c_vs_python_max_abs_diff"] > 0.0
+    assert res["passed"] is False                           # the wrong C fails the gate
 
 
 def test_difftest_compile_error_fails_closed(tmp_path):
@@ -195,5 +300,5 @@ def test_facade_exposes_algo_tier():
     assert set(fullseye.algo_ops()) == set(_ALL)
     assert fullseye.run_algo("quicksort", [3, 1, 2]) == [1.0, 2.0, 3.0]
     assert fullseye.run_algo("seq_max", [3, 1, 2]) == 3.0
-    assert "void heapsort" in fullseye.algo_to_c("heapsort")
+    assert "void heapsort_asc" in fullseye.algo_to_c("heapsort")   # BSD-safe C symbol
     assert "def run(" in fullseye.algo_to_python("mergesort")

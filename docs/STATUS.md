@@ -17,9 +17,23 @@
 > emit の両方に使用)でテスト oracle と出荷物が drift しない。fail-closed(compile/run 失敗=gate FAIL、
 > toolchain 無し=honest skip)。facade(`fullseye.algo_ops/run_algo/algo_to_c/algo_to_python/
 > algo_difftest`)+ **skill 追記**(`~/.claude/skills/image-processing/SKILL.md`「General algorithms」
-> 節=サブエージェント利用可)。**tests/test_algo.py 42 件**(画像 registry 非汚染も実証)。全 local
-> (auto-commit hook)・push は human-gate。**残(次段)** = P1.5(imgevolve.py サブコマンド + Studio op
-> ブラウザ tier)/ P2 数値計算。honest 限界 = NaN 除外・累積順序依存 op は P1 非対象・fscript 言語化は別 track。
+> 節=サブエージェント利用可)。全 local(auto-commit hook)・push は human-gate。
+> - **★敵対レビュー(4 レンズ Workflow・22 findings・全件一次検証 [[feedback_no_solo_ai_judgment]])→ 真の欠陥を修正**(正本 = `docs/GENERAL_ALGORITHMS.md`「P1 敵対レビュー後の強化」):
+>   (1)**gate の fail-open 是正**=NaN/符号付きゼロを握り潰し「bit 一致」偽証していた `_max_diff_*` を、
+>   Python×oracle=非有限で fail-closed の値比較 / C×Python=**真の bit 比較(IEEE 生バイト)**に分離+
+>   `c_verified` フィールド。(2)**quicksort を 3-way partition 化**(重複多数=binary mask で O(n²)→
+>   O(n log n)、Python/C とも)。(3)**emitted C `heapsort`→`heapsort_asc`**(BSD `<stdlib.h>` 衝突で
+>   macOS compile 不能を修正・全 op macOS cross-compile テスト追加)。(4)C の fail-open/UB=mergesort OOM
+>   fallback(fail-closed)・heapsort int overflow(long long)・driver len 上限(SIZE_MAX)。(5)空虚だった
+>   stability テストを符号付きゼロ観測に・no-mutation テスト・holdout 強化(大 all-equal/二値/重複)。
+>   (6)NaN 規約を docstring 明記。(7)隣接既存 ship-bug=`sample_images` の py-modules 欠落を追加(wheel
+>   実ビルド確認)。**tests/test_algo.py 42→58 件**(画像 registry 非汚染も実証)。**未修正=P1 範囲外の
+>   既存問題**(package-data glob が studio_assets を wheel に載せられない / `fullseye.__all__` の pcseg 18 名
+>   欠落)を honest にユーザー判断へ。
+> - **検証**: 全スイート **4515→4573 passed / 0 failed**(回帰なし)、ruff clean、wheel 実ビルドで algo*
+>   3 モジュール + sample_images 同梱確認、全 op で C bit 一致(zig cc)+ macOS cross-compile OK。
+> - **残(次段)** = P1.5(imgevolve.py サブコマンド + Studio op ブラウザ tier)/ P2 数値計算。honest 限界 =
+>   NaN 除外・累積順序依存 op は P1 非対象・fscript 言語化は別 track。
 >
 > **★★(2026-08-16, Opus5[1m]/ultracode) = 「Fullseye と Fullseye Studio の修正と改善を完了」(ユーザーゴール, 自律).** 全スイート **4426 → 4494 passed / 0 failed**(+68)、studio **82 → 84**、UI ハーネス **192 steps / 0 fail / 0 crash**。全 local(auto-commit hook)・push は human-gate。
 > - **Track 1 = 全域敵対監査(2026-08-15 の 27 findings)の medium/low 残り 17 件を潰す**。12 ファイルグループの Workflow(21 agents=各グループ verify→fix→regression、high-risk は敵対検証段)。**fscript 3 件(not 優先/空ループ/iconic 算術)は前回 60024e8 で修正済み**。confirmed_fixed = honesty-gates(M1 `_real_ops` を data-as-code `halcon_names_data.py` で fail-closed 化+空 real で pass-everything しない / M2 verify_auto・imgops_nary の region ゲートを厳密二値化+identity 非計上)/ camera(M7 recover_pose 退化で honest fail)/ difftest(M9 compile_error=FAIL / L1 C tol を `--c-tol` で可変)/ imgio(M10 16-bit 保持)/ dsp(L3 非有限 guard / L6 Nyquist 超で raise)。**★verify が `incomplete` を出した 4 件は main が residual を精査・追加修正**(feedback_no_solo_ai_judgment 実践): ops-match(M3 スレッドローカル化は到達バグを修正済=OK、非到達の pooled-staleness/cross-thread inherit を docstring で honest 開示)/ pcseg(M6 デフォルト consensus ゲートを実効化=`_DEFAULT_CONSENSUS_FRAC=0.10` で現実的 blob を既定で棄却、R5 の ceil/clamp、R2 半径縮退・R3 None 単一契約・R4 最小点数を docstring 開示)/ api-coerce(L5 int/uint {0,1} も float64 化し契約と docstring 整合)/ reporting-honesty(L4 locked tally を**真の locked-split ベースライン**と突合=`baseline.py` に hand/trivial の locked_holdout を追加、無ければ fail-closed で null)。low-risk(dispatch-safe M4/M5・locomotion M8・fscript-tail L7)は自己検証堅実(strict mode/ error ring / 任意 ground gate / arity guard)。

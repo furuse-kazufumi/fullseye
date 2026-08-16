@@ -28,6 +28,14 @@ strings. The in-process reference callable is compiled from the very same string
 that ``algo_codegen`` emits, so the tested oracle and the shipped artifact can
 never drift apart.
 
+Scope (honest): inputs are assumed **NaN-free**. Comparison sorts have no total
+order on NaN, so quicksort/heapsort/mergesort place a NaN differently from each
+other and from ``numpy.sort``, and ``seq_max``/``seq_min`` become order-dependent
+with a NaN present. NaN is therefore excluded from the difftest holdout and the
+gate is fail-closed on any non-finite value (``algo_difftest``), rather than
+silently certifying a divergent result. Later numeric phases (P2) that can
+legitimately produce NaN will define their own convention explicitly.
+
 stdlib only (the Python references use no numpy — they mirror the C index-by-index
 so "re-implemented from spec" is visibly true). P1 scope: seq/scalar + 3 sorts +
 2 reductions. Later phases (numerics/strings/graphs) add sorts and ops here.
@@ -76,10 +84,15 @@ class AlgoOp:
 # --------------------------------------------------------------------------- #
 _PY_QUICKSORT = '''\
 def run(a):
-    """Quicksort (Hoare/Lomuto partition, median-of-three pivot), iterative.
+    """Quicksort with 3-way (Dutch national flag) partition + median-of-three pivot.
 
-    Median-of-three pivoting keeps sorted / reverse-sorted inputs off the O(n^2)
-    path; an explicit stack avoids Python recursion limits. In place on a copy.
+    Three-way partitioning collects keys EQUAL to the pivot in the middle and
+    recurses only on the strictly-smaller / strictly-greater sides, so runs of
+    equal keys collapse to O(n): all-equal and few-distinct inputs (e.g. a binary
+    mask flattened to a sequence) stay O(n log n), where a plain Lomuto quicksort
+    degrades to O(n^2). Median-of-three additionally protects sorted / reverse
+    inputs. Iterative (explicit stack, larger side pushed first) so stack depth is
+    O(log n). In place on a copy. Assumes NaN-free input (see module docstring).
     """
     a = list(a)
     n = len(a)
@@ -90,8 +103,8 @@ def run(a):
         lo, hi = stack.pop()
         if lo >= hi:
             continue
-        mid = (lo + hi) // 2
-        # median-of-three: order a[lo] <= a[mid] <= a[hi], park median at hi
+        mid = lo + (hi - lo) // 2
+        # median-of-three: order a[lo] <= a[mid] <= a[hi]; use a[mid] as pivot value
         if a[mid] < a[lo]:
             a[lo], a[mid] = a[mid], a[lo]
         if a[hi] < a[lo]:
@@ -99,30 +112,33 @@ def run(a):
         if a[hi] < a[mid]:
             a[mid], a[hi] = a[hi], a[mid]
         pivot = a[mid]
-        a[mid], a[hi] = a[hi], a[mid]      # move pivot to the end (Lomuto)
-        i = lo - 1
-        for j in range(lo, hi):
-            if a[j] <= pivot:
-                i += 1
-                a[i], a[j] = a[j], a[i]
-        i += 1
-        a[i], a[hi] = a[hi], a[i]          # place pivot at its final position
-        # push the larger side first so the stack stays O(log n)
-        if i - lo > hi - i:
-            stack.append((lo, i - 1))
-            stack.append((i + 1, hi))
+        lt, i, gt = lo, lo, hi          # a[lo..lt-1] < pivot, a[gt+1..hi] > pivot
+        while i <= gt:
+            if a[i] < pivot:
+                a[lt], a[i] = a[i], a[lt]; lt += 1; i += 1
+            elif a[i] > pivot:
+                a[i], a[gt] = a[gt], a[i]; gt -= 1
+            else:
+                i += 1                   # a[i] == pivot: leave it in the middle band
+        lsz, rsz = lt - lo, hi - gt      # sizes of the two outer ranges
+        if lsz > rsz:                    # push the larger side first -> stack O(log n)
+            stack.append((lo, lt - 1))
+            stack.append((gt + 1, hi))
         else:
-            stack.append((i + 1, hi))
-            stack.append((lo, i - 1))
+            stack.append((gt + 1, hi))
+            stack.append((lo, lt - 1))
     return a
 '''
 
 _C_QUICKSORT = '''\
-/* Quicksort: median-of-three pivot, Lomuto partition, explicit stack. */
+/* Quicksort: 3-way (Dutch national flag) partition, median-of-three pivot,
+ * explicit stack. Equal keys collect in the middle band, so all-equal /
+ * few-distinct inputs stay O(n log n) (a plain Lomuto scan would be O(n^2)). */
 static void _swap(double* a, int i, int j) { double t = a[i]; a[i] = a[j]; a[j] = t; }
 void quicksort(double* a, int n) {
     if (n < 2) return;
-    /* stack depth <= 2*ceil(log2(n))+2; 128 handles n up to ~2^63. */
+    /* 3-way + push-larger-first bounds depth to ~log2(n); n is a 32-bit int, so
+     * depth <= ~31 and 128 slots are comfortably safe. */
     int lo_st[128], hi_st[128], sp = 0;
     lo_st[sp] = 0; hi_st[sp] = n - 1; sp++;
     while (sp > 0) {
@@ -134,19 +150,19 @@ void quicksort(double* a, int n) {
         if (a[hi] < a[lo]) _swap(a, lo, hi);
         if (a[hi] < a[mid]) _swap(a, mid, hi);
         double pivot = a[mid];
-        _swap(a, mid, hi);
-        int i = lo - 1;
-        for (int j = lo; j < hi; j++) {
-            if (a[j] <= pivot) { i++; _swap(a, i, j); }
+        int lt = lo, i = lo, gt = hi;
+        while (i <= gt) {
+            if (a[i] < pivot) { _swap(a, lt, i); lt++; i++; }
+            else if (a[i] > pivot) { _swap(a, i, gt); gt--; }
+            else i++;
         }
-        i++;
-        _swap(a, i, hi);
-        if (i - lo > hi - i) {
-            lo_st[sp] = lo; hi_st[sp] = i - 1; sp++;
-            lo_st[sp] = i + 1; hi_st[sp] = hi; sp++;
+        int lsz = lt - lo, rsz = hi - gt;
+        if (lsz > rsz) {
+            lo_st[sp] = lo; hi_st[sp] = lt - 1; sp++;
+            lo_st[sp] = gt + 1; hi_st[sp] = hi; sp++;
         } else {
-            lo_st[sp] = i + 1; hi_st[sp] = hi; sp++;
-            lo_st[sp] = lo; hi_st[sp] = i - 1; sp++;
+            lo_st[sp] = gt + 1; hi_st[sp] = hi; sp++;
+            lo_st[sp] = lo; hi_st[sp] = lt - 1; sp++;
         }
     }
 }
@@ -178,20 +194,24 @@ def run(a):
     return a
 '''
 
+# Named heapsort_asc, not heapsort: BSD <stdlib.h> already declares heapsort()
+# (and mergesort()/radixsort()), so the plain name fails to compile on macOS/BSD.
 _C_HEAPSORT = '''\
 /* Heapsort: binary max-heap with sift-down (Williams 1964). */
 static void _sift_down(double* a, int start, int end) {
     int root = start;
-    while (2 * root + 1 <= end) {
-        int child = 2 * root + 1;
-        if (child + 1 <= end && a[child] < a[child + 1]) child++;
-        if (a[root] < a[child]) {
-            double t = a[root]; a[root] = a[child]; a[child] = t;
-            root = child;
+    for (;;) {
+        long long child = 2LL * root + 1;      /* 64-bit: 2*root can exceed INT_MAX */
+        if (child > end) return;
+        int c = (int)child;                    /* child <= end < 2^31, safe to narrow */
+        if (c + 1 <= end && a[c] < a[c + 1]) c++;
+        if (a[root] < a[c]) {
+            double t = a[root]; a[root] = a[c]; a[c] = t;
+            root = c;
         } else return;
     }
 }
-void heapsort(double* a, int n) {
+void heapsort_asc(double* a, int n) {
     for (int start = n / 2 - 1; start >= 0; start--) _sift_down(a, start, n - 1);
     for (int end = n - 1; end > 0; end--) {
         double t = a[0]; a[0] = a[end]; a[end] = t;
@@ -249,10 +269,19 @@ static void _msort(double* a, double* tmp, int lo, int hi) {
     while (j < hi) tmp[k++] = a[j++];
     for (int t = lo; t < hi; t++) a[t] = tmp[t];
 }
+/* Stable in-place fallback so an allocation failure still returns SORTED output
+ * (fail-closed on correctness), not a silently-unsorted array. */
+static void _ins_sort(double* a, int n) {
+    for (int i = 1; i < n; i++) {
+        double key = a[i]; int j = i - 1;
+        while (j >= 0 && a[j] > key) { a[j + 1] = a[j]; j--; }
+        a[j + 1] = key;
+    }
+}
 void mergesort_asc(double* a, int n) {
     if (n < 2) return;
     double* tmp = (double*)malloc((size_t)n * sizeof(double));
-    if (!tmp) return;                          /* out of memory: leave a unsorted */
+    if (!tmp) { _ins_sort(a, n); return; }     /* OOM: correct (stable) but O(n^2) */
     _msort(a, tmp, 0, n);
     free(tmp);
 }
@@ -260,7 +289,7 @@ void mergesort_asc(double* a, int n) {
 
 _PY_SEQ_MAX = '''\
 def run(a):
-    """Maximum of a sequence (order-independent, exact). Empty -> 0.0."""
+    """Maximum of a sequence (exact; order-independent for NaN-free input). Empty -> 0.0."""
     if len(a) == 0:
         return 0.0
     m = a[0]
@@ -271,7 +300,7 @@ def run(a):
 '''
 
 _C_SEQ_MAX = '''\
-/* Maximum of a sequence (order-independent, exact). Empty -> 0.0. */
+/* Maximum of a sequence (exact; order-independent for NaN-free input). Empty -> 0.0. */
 double seq_max(const double* a, int n) {
     if (n <= 0) return 0.0;
     double m = a[0];
@@ -282,7 +311,7 @@ double seq_max(const double* a, int n) {
 
 _PY_SEQ_MIN = '''\
 def run(a):
-    """Minimum of a sequence (order-independent, exact). Empty -> 0.0."""
+    """Minimum of a sequence (exact; order-independent for NaN-free input). Empty -> 0.0."""
     if len(a) == 0:
         return 0.0
     m = a[0]
@@ -293,7 +322,7 @@ def run(a):
 '''
 
 _C_SEQ_MIN = '''\
-/* Minimum of a sequence (order-independent, exact). Empty -> 0.0. */
+/* Minimum of a sequence (exact; order-independent for NaN-free input). Empty -> 0.0. */
 double seq_min(const double* a, int n) {
     if (n <= 0) return 0.0;
     double m = a[0];
@@ -306,9 +335,9 @@ double seq_min(const double* a, int n) {
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
-           "Sort a sequence ascending, in place (average O(n log n)).",
-           "Hoare 1961 quicksort; Lomuto partition; median-of-three pivot"),
-    AlgoOp("heapsort", "sort", SEQ, SEQ, KIND_SORT, "heapsort",
+           "Sort a sequence ascending, in place (O(n log n), robust to duplicates).",
+           "Hoare 1961 quicksort; 3-way (Dutch national flag) partition; median-of-three pivot"),
+    AlgoOp("heapsort", "sort", SEQ, SEQ, KIND_SORT, "heapsort_asc",
            _PY_HEAPSORT, _C_HEAPSORT,
            "Sort a sequence ascending, in place (worst-case O(n log n)).",
            "Williams 1964 heapsort; binary max-heap sift-down"),

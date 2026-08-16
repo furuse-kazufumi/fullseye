@@ -62,7 +62,8 @@ def _driver_c(op: algo.AlgoOp) -> str:
         "    for (int t = 0; t < n_arrays; t++) {\n"
         "        int len = 0;\n"
         "        if (fread(&len, sizeof(int), 1, fi) != 1) return 3;\n"
-        "        if (len < 0) return 5;\n"
+        "        /* reject negative or size_t-overflowing lengths (untrusted in.bin) */\n"
+        "        if (len < 0 || (size_t)len > SIZE_MAX / sizeof(double)) return 5;\n"
         "        double* buf = (double*)malloc((size_t)(len > 0 ? len : 1) * sizeof(double));\n"
         "        if (!buf) return 6;\n"
         "        if (len > 0 && fread(buf, sizeof(double), (size_t)len, fi) != (size_t)len) return 3;\n"
@@ -82,6 +83,7 @@ def emit_c(op: algo.AlgoOp) -> str:
         _HEADER_C,
         "#include <stdio.h>",
         "#include <stdlib.h>",
+        "#include <stdint.h>",     # SIZE_MAX for the driver's length bound check
         "",
         op.c_code.rstrip(),
         "",

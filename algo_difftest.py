@@ -3,16 +3,22 @@
 Two independent checks, both real measurements (not deferred skips) whenever a C
 toolchain is present:
 
-  Python vs oracle : the Python reference (``algo.py_fn``) is compared to a
-                     ground-truth oracle — ``numpy.sort`` for sorts, ``numpy.max`` /
-                     ``numpy.min`` for reductions. These reorder / select the same
-                     values regardless of algorithm, so a correct reference must
-                     agree EXACTLY. Catches a wrong reimplementation.
+  Python vs oracle : the Python reference (``algo.py_fn``) is compared **by value**
+                     to a ground-truth oracle — ``numpy.sort`` for sorts,
+                     ``numpy.max`` / ``numpy.min`` for reductions. Fail-closed: a
+                     structural mismatch or any non-finite value yields ``inf`` and
+                     is never tolerance-gated (so ``--tol inf`` cannot pass a
+                     malformed result). Catches a wrong reimplementation.
   C vs Python      : the codegen C (``algo_codegen.emit_c``) is compiled and run on
-                     the same holdout, then compared **bit-for-bit** to the Python
-                     reference. Catches a codegen / C-reimplementation bug. Because
-                     these ops only move or select existing IEEE-754 doubles, a
-                     correct C backend agrees to the bit (max abs diff 0.0).
+                     the same holdout, then compared **bit-for-bit** (raw IEEE-754
+                     float64 bytes, so +0.0 vs -0.0 and NaN payloads are visible —
+                     an abs-diff of 0.0 would not be). Because C and Python run the
+                     same algorithm, a correct backend is byte-identical; the abs
+                     diff is still reported as a secondary metric.
+
+``c_verified`` in the result is True only when the C artifact was actually
+compiled, run and bit-compared here; a toolchain-less pass is honest but
+UNVERIFIED (surfaced so CI can require verification).
 
 C toolchain: ``gcc`` / ``cc`` / ``clang`` on PATH, else ``python -m ziglang cc``
 (the pip-installable, self-contained clang). If none is found the C half SKIPs
@@ -25,6 +31,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import random
 import shutil
 import subprocess
@@ -82,10 +89,17 @@ def make_holdout(seed: int = 0, n_random: int = 40, max_len: int = 257) -> list[
         [-2.0, 0.0, -1.0, 5.0, -3.0, 4.0],         # signs
         [0.0, -0.0, 1.0, -1.0],                    # +0 / -0 (compare equal)
         [1e-9, 1e9, -1e9, 3.14159, -2.71828],      # wide magnitude
+        [7.0] * 300,                               # large all-equal (3-way partition path)
+        [float(i % 2) for i in range(300)],        # two-valued (a flattened binary mask)
+        [float(rng.randint(0, 3)) for _ in range(300)],   # few-distinct, duplicate-heavy
     ]
     for _ in range(n_random):
         n = rng.randint(0, max_len)
         cases.append([rng.uniform(-1000.0, 1000.0) for _ in range(n)])
+    # a couple of duplicate-heavy larger randoms (small value range -> many ties)
+    for _ in range(3):
+        n = rng.randint(0, max_len)
+        cases.append([float(rng.randint(0, 5)) for _ in range(n)])
     return cases
 
 
@@ -103,22 +117,50 @@ def _oracle(op: algo.AlgoOp, arr: list[float]):
     raise ValueError(f"no oracle for op {op.name!r}")
 
 
+def _diff01(x: float, y: float) -> float:
+    """abs(x-y), but **inf** if either value is non-finite — so a NaN/inf can never
+    silently fold to 0.0 (``max(0.0, nan)`` is 0.0 in Python). Fail-closed."""
+    if not (math.isfinite(x) and math.isfinite(y)):
+        return float("inf")
+    return abs(x - y)
+
+
 def _max_diff_sort(ref: list[list[float]], got: list[list[float]]) -> float:
     if len(ref) != len(got):
-        return float("inf")
+        return float("inf")                      # structural mismatch — never tol-gated
     d = 0.0
     for r, g in zip(ref, got):
         if len(r) != len(g):
             return float("inf")
         for x, y in zip(r, g):
-            d = max(d, abs(float(x) - float(y)))
+            d = max(d, _diff01(float(x), float(y)))
     return d
 
 
 def _max_diff_scalar(ref: list[float], got: list[float]) -> float:
     if len(ref) != len(got):
         return float("inf")
-    return max((abs(float(x) - float(y)) for x, y in zip(ref, got)), default=0.0)
+    return max((_diff01(float(x), float(y)) for x, y in zip(ref, got)), default=0.0)
+
+
+def _bits_equal_sort(ref: list[list[float]], got: list[list[float]]) -> bool:
+    """True iff every output array is **byte-identical** as IEEE-754 float64 — the
+    real bit-for-bit check (catches NaN payloads and +0.0 vs -0.0, which an
+    abs-diff of 0.0 would miss). C and Python run the same algorithm, so a correct
+    backend is byte-identical."""
+    if len(ref) != len(got):
+        return False
+    for r, g in zip(ref, got):
+        ra, ga = np.asarray(r, np.float64), np.asarray(g, np.float64)
+        if ra.shape != ga.shape or ra.tobytes() != ga.tobytes():
+            return False
+    return True
+
+
+def _bits_equal_scalar(ref: list[float], got: list[float]) -> bool:
+    if len(ref) != len(got):
+        return False
+    return np.asarray(ref, np.float64).tobytes() == np.asarray(got, np.float64).tobytes()
 
 
 # --- binary I/O (must mirror algo_codegen._driver_c exactly) ----------------- #
@@ -195,17 +237,20 @@ def difftest(name: str, wd: Path, seed: int = 0, tol: float = 0.0,
     py_out = [ref([float(x) for x in arr]) for arr in holdout]
     oracle = [_oracle(op, arr) for arr in holdout]
 
+    # Python vs oracle: VALUE equality, fail-closed. A structural mismatch or any
+    # non-finite value yields inf, and inf is never tol-gated (so --tol inf cannot
+    # pass a malformed result).
     if op.kind == algo.KIND_SORT:
         py_vs_oracle = _max_diff_sort(oracle, py_out)
     else:
         py_vs_oracle = _max_diff_scalar(oracle, py_out)
-    python_pass = py_vs_oracle <= tol
+    python_pass = math.isfinite(py_vs_oracle) and py_vs_oracle <= tol
 
     result = {
         "op": name, "kind": op.kind, "provenance": op.provenance,
         "n_cases": len(holdout), "tol": tol,
         "python_max_abs_diff": py_vs_oracle, "python_pass": python_pass,
-        "compiler": compiler_label(cc), "c_backend": None,
+        "compiler": compiler_label(cc), "c_verified": False, "c_backend": None,
     }
 
     if cc is None:
@@ -214,13 +259,20 @@ def difftest(name: str, wd: Path, seed: int = 0, tol: float = 0.0,
     else:
         cb = run_c_backend(op, holdout, wd, cc)
         if cb["status"] == "ran":
+            # C vs Python: true BIT-for-bit (pass criterion) + abs diff for the report.
             if op.kind == algo.KIND_SORT:
+                bit_ok = _bits_equal_sort(py_out, cb["outputs"])
                 c_diff = _max_diff_sort(py_out, cb["outputs"])
             else:
+                bit_ok = _bits_equal_scalar(py_out, cb["outputs"])
                 c_diff = _max_diff_scalar(py_out, cb["outputs"])
-            cb = {"status": "ran", "c_vs_python_max_abs_diff": c_diff, "pass": c_diff <= tol}
+            cb = {"status": "ran", "c_vs_python_max_abs_diff": c_diff,
+                  "c_vs_python_bit_identical": bit_ok, "pass": bit_ok}
         result["c_backend"] = cb
 
+    # c_verified = the C artifact was actually compiled, run and bit-compared here
+    # (a 'skipped' pass is honest but UNVERIFIED — surfaced so CI can require it).
+    result["c_verified"] = result["c_backend"].get("status") == "ran"
     result["passed"] = bool(python_pass and _c_gate_ok(result["c_backend"]))
     (wd / f"algo_difftest_{name}.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     return result

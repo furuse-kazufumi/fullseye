@@ -91,6 +91,41 @@ Fullseye の既存資産を汎用へ拡張する。**画像 AI の焦点は薄�
   ③CLI サブコマンド統合(`imgevolve.py algo ...`)と Studio op ブラウザ tier 表示は次段(P1.5)。
   ④fscript の配列/procedure 言語化(設計 doc アーキ項 2)は P1 スコープ外(別 track)。
 
+## P1 敵対レビュー後の強化(2026-08-16, [[feedback_no_solo_ai_judgment]])
+本セッションの自作コードへ独立敵対レビュー(Workflow 4 レンズ=算法正しさ / codegen・C 安全 /
+gate 健全性 / 統合・焦点安全、22 findings)を実施。全件を私が一次コード検証(v11 規律)し、
+真の欠陥を修正:
+- **[HIGH] gate の fail-open(NaN/符号付きゼロ)**: `_max_diff_*` が `max(0.0, nan)=0.0` で NaN 差分を
+  握り潰し「bit 一致」と偽証していた(実測再現)→ **(1)Python×oracle=値比較だが非有限で fail-closed
+  (inf、tol で通さない)、(2)C×Python=真の bit 比較(IEEE float64 生バイト=符号付きゼロ/NaN ペイロード
+  も検出)** に分離。`c_verified` フィールドで「実 compile 検証済 pass」と「toolchain 無し unverified
+  pass」を区別。
+- **[HIGH] quicksort が重複多数入力で O(n²)**(Lomuto `<=` で全等値が片側に。二値=binary mask flatten
+  が現実的入力・実測 quadratic)→ **3-way(Dutch national flag)partition + median-of-three** に Python/C
+  とも書換(全等値 O(n))。性能ガードテスト(20000 全等値 <2s)追加。
+- **[HIGH] emitted C `heapsort` が BSD `<stdlib.h>` の `heapsort()` と衝突**(macOS/BSD で compile 不能。
+  `zig cc -target x86_64-macos` で実測)→ C シンボルを **`heapsort_asc`** に改名(`mergesort_asc` と統一)。
+  **全 op の macOS cross-compile テスト**を追加(回帰ガード)。
+- **[LOW] C の fail-open/UB 3 件**: mergesort の malloc 失敗=無ソート出力→**in-place 挿入ソート
+  fallback(fail-closed・stable 維持)**/ heapsort の `2*root+1` int overflow→**long long** 化 /
+  driver の len が 32-bit で size_t wrap→**`SIZE_MAX/sizeof(double)` 上限チェック + `<stdint.h>`**。
+- **[MED] test_mergesort_is_stable が空虚**(値比較=どのソートも通る)→ **符号付きゼロの順序保存**で
+  安定性を実観測(`<`=不安定への退行を検出)に書換。**no-mutation テスト**(`run(a)` が呼び手の
+  list を破壊しない)も追加。
+- **[MED] holdout が小・重複希薄**→ 大 all-equal(300)/ 二値(300)/ few-distinct(300)+ 重複多め
+  ランダムを追加(C gate が重複・サイズ regime を実検査)。
+- **[MED/honesty] NaN 規約未文書化**→ module docstring と各 op docstring に「NaN-free 前提・非有限は
+  gate で fail-closed」を明記。seq_max/min の「order-independent」→「NaN-free 入力で order-independent」。
+- **隣接の既存 ship-bug**: `sample_images`(studio が runtime import)が `pyproject.toml` py-modules
+  欠落=非 editable wheel で消える → 追加(wheel 実ビルドで確認)。
+- テスト **43→58 件**(bit-check・fail-closed・macOS cross-compile・重複性能・no-mutation・c_verified・
+  安定性観測を追加)。全 op の difftest 再走 = python/C とも diff 0.0・bit 一致・passed=True。
+- **未修正(ユーザー判断・P1 範囲外の既存問題)**: (a)`pyproject.toml` の `[tool.setuptools.package-data]`
+  `"*"` glob が root-level flat の `studio_assets/`・`data/` を wheel に載せられない(studio i18n/op-help/
+  sample 画像が installed wheel で欠落=既存・要 MANIFEST.in か package 化の設計変更)/ (b)`fullseye.__all__`
+  が api の pcseg 系 18 名を欠く(star-import で欠落=既存)。**algo tier は無関係(algo* は py-modules で
+  確実に同梱・facade は整合)**。
+
 ## 次(P2 以降)
 - **P1.5(小)**: `imgevolve.py` に `algo`/`algo-c`/`algo-difftest` サブコマンド、Studio の op ブラウザに
   general tier を出す(design 段階計画「Studio の op ブラウザに新 tier を出す」)。
