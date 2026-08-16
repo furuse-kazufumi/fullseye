@@ -3214,6 +3214,96 @@ def build_window(model=None):
                 _current_view().clear()
     win._apply_dev_directives = apply_dev_directives
 
+    # -- HALCON set_system-style global configuration (Tools > System settings) ----- #
+    def _cv2_mod():
+        try:
+            import cv2
+            return cv2
+        except Exception:
+            return None
+
+    def _persist_system():
+        s = QtCore.QSettings("Fullseye", "Studio"); s.beginGroup("system")
+        s.setValue("threads", int(state["system"]["threads"]))
+        s.setValue("operator_timeout_ms", int(state["system"]["operator_timeout_ms"]))
+        s.endGroup()
+
+    def _get_system_param(name):
+        """get_system: read a HALCON-style system parameter (live where applicable)."""
+        if name in ("thread_num", "threads"):
+            cv2 = _cv2_mod()
+            return int(cv2.getNumThreads()) if cv2 is not None else int(state["system"]["threads"])
+        if name in ("operator_timeout", "operator_timeout_ms"):
+            return int(state["system"]["operator_timeout_ms"])
+        if name in ("check", "error_check"):
+            return "on"            # Fullseye's runtime is fail-closed (industrial refuses degraded ops)
+        raise ValueError("unknown system parameter %r; known: thread_num, operator_timeout, check"
+                         % (name,))
+
+    def _set_system_param(name, value):
+        """set_system: set a HALCON-style system parameter (fail-closed on an unknown name)."""
+        if name in ("thread_num", "threads"):
+            n = int(value)
+            cv2 = _cv2_mod()
+            if cv2 is not None:
+                cv2.setNumThreads(n)            # 0 = OpenCV default (all cores); affects op speed
+            state["system"]["threads"] = n
+            _persist_system()
+            return n
+        if name in ("operator_timeout", "operator_timeout_ms"):
+            ms = int(value)
+            if ms < 0:
+                raise ValueError("operator_timeout must be >= 0 (0 = off)")
+            state["system"]["operator_timeout_ms"] = ms
+            _persist_system()
+            return ms
+        raise ValueError("unknown system parameter %r; known: thread_num, operator_timeout"
+                         % (name,))
+    win._set_system_param = _set_system_param
+    win._get_system_param = _get_system_param
+
+    def open_system_settings():
+        dlg = QtWidgets.QDialog(win)
+        dlg.setWindowTitle("System settings — Fullseye Studio")
+        form = QtWidgets.QFormLayout(dlg)
+        th = QtWidgets.QSpinBox(); th.setRange(0, 256); th.setValue(_get_system_param("thread_num"))
+        th.setToolTip("set_system('thread_num'): OpenCV worker threads (0 = default / all). "
+                      "Affects interactive operator speed.")
+        to = QtWidgets.QSpinBox(); to.setRange(0, 600000); to.setSuffix(" ms")
+        to.setValue(_get_system_param("operator_timeout"))
+        to.setToolTip("set_operator_timeout: SOFT per-stage timeout — a slower stage is flagged "
+                      "in Run status (native ops cannot be hard-interrupted; 0 = off).")
+        chk = QtWidgets.QLabel("fail-closed  (the runtime refuses degraded operators)")
+        chk.setStyleSheet("QLabel{color:%s;}" % MUTED)
+        form.addRow("Threads (thread_num)", th)
+        form.addRow("Operator timeout", to)
+        form.addRow("Error checking (set_check)", chk)
+        bb = QtWidgets.QDialogButtonBox(
+            QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
+        bb.accepted.connect(dlg.accept); bb.rejected.connect(dlg.reject)
+        form.addRow(bb)
+        win._system_dialog = dlg               # for headless tests
+        if dlg.exec() == QtWidgets.QDialog.Accepted:
+            _set_system_param("thread_num", th.value())
+            _set_system_param("operator_timeout", to.value())
+            flash("system settings applied (threads %d, timeout %d ms)" % (th.value(), to.value()))
+    win._open_system_settings = open_system_settings
+
+    # restore persisted system settings (QSettings is in-memory under offscreen)
+    _s_sys = QtCore.QSettings("Fullseye", "Studio"); _s_sys.beginGroup("system")
+    _sv_to, _sv_th = _s_sys.value("operator_timeout_ms"), _s_sys.value("threads")
+    _s_sys.endGroup()
+    if _sv_to is not None:
+        try:
+            state["system"]["operator_timeout_ms"] = int(_sv_to)
+        except (TypeError, ValueError):
+            pass
+    if _sv_th is not None:
+        try:
+            _set_system_param("thread_num", int(_sv_th))
+        except (TypeError, ValueError):
+            pass
+
     def load_frame_b():
         path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open frame B", "",
                                                         "Images (*.png *.jpg *.bmp *.tif)")
