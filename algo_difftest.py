@@ -116,10 +116,15 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
     rng = random.Random(seed + 777)
     if name == "simpson":
         cases = []
-        for _ in range(24):
+        for _ in range(20):
             m = rng.choice([3, 5, 7, 9, 11])                 # odd sample count (clean Simpson)
             h = rng.uniform(0.05, 0.5)
-            coeffs = [rng.uniform(-2.0, 2.0) for _ in range(rng.randint(1, 4))]
+            coeffs = [rng.uniform(-2.0, 2.0) for _ in range(rng.randint(1, 5))]
+            cases.append([h] + [_poly_at(coeffs, i * h) for i in range(m)])
+        for _ in range(6):                                   # EVEN sample count -> trapezoid tail
+            m = rng.choice([4, 6, 8, 10])
+            h = rng.uniform(0.05, 0.5)
+            coeffs = [rng.uniform(-2.0, 2.0) for _ in range(rng.randint(1, 5))]
             cases.append([h] + [_poly_at(coeffs, i * h) for i in range(m)])
         return cases
     if name in ("bisection", "newton"):
@@ -128,6 +133,8 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             root = rng.uniform(-3.0, 3.0)
             other = root + rng.choice([-1.0, 1.0]) * rng.uniform(1.5, 3.0)  # far from root
             c = [root * other, -(root + other), 1.0]         # (x-root)(x-other), ascending
+            if len(cases) % 3 == 0:                          # every 3rd: multiply by (x^2+1)
+                c = [c[0], c[1], c[2] + c[0], c[1], c[2]]    # (a+bx+x^2)(1+x^2), degree 4, same real root
             if name == "bisection":
                 cases.append([root - 0.3, root + 0.3] + c)   # bracket straddles only `root`
             else:
