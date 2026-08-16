@@ -2729,6 +2729,7 @@ def build_window(model=None):
         state["code_dirty"] = False           # the edits are now applied to the pipeline
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
+        apply_dev_directives(code_edit.toPlainText())   # dev_* display directives (update/part)
         show_result()
 
     def run_program(stop_at_breakpoints=True):
