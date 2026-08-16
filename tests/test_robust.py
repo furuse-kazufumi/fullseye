@@ -49,16 +49,20 @@ def _run_robust(wd, champs, monkeypatch):
 
 
 def test_locked_split_is_tallied_separately_from_the_observed_one(tmp_path, monkeypatch):
-    _baseline(tmp_path, hand=20.0, trivial=15.0)
-    # observed: 2 of 3 beat hand, 1 collapses | locked: 1 beats hand, 2 collapse.
-    # The two tallies MUST differ, or the locked number is just the observed one relabelled.
+    # Distinct thresholds per split: the locked tally MUST use the LOCKED-split
+    # baseline (hand_locked=23 / trivial_locked=12), not the observed one (20 / 15).
+    # With the observed thresholds applied to the locked champions you would get
+    # 1 beat / 2 collapse; the honest tally against the locked baseline is 0 / 0.
+    _baseline(tmp_path, hand=20.0, trivial=15.0, hand_locked=23.0, trivial_locked=12.0)
     champs = [_champ(0, 30.0, 25.0, 22.0),
               _champ(1, 20.0, 21.0, 14.0),
               _champ(2, 10.0, 14.0, 13.0)]
     s = _run_robust(tmp_path, champs, monkeypatch)
 
     assert s["n_beat_hand"] == 2 and s["n_collapse_below_trivial"] == 1
-    assert s["n_beat_hand_locked"] == 1 and s["n_collapse_below_trivial_locked"] == 2
+    # locked champions [22,14,13] vs locked baseline hand=23 / trivial=12
+    assert s["n_beat_hand_locked"] == 0 and s["n_collapse_below_trivial_locked"] == 0
+    assert s["baseline_hand_locked"] == 23.0 and s["baseline_trivial_locked"] == 12.0
     assert s["locked_holdout_spread"]["min"] == 13.0
     assert s["locked_holdout_spread"]["max"] == 22.0
     # the train-selected champion carries both numbers, not just the observed one
@@ -66,6 +70,19 @@ def test_locked_split_is_tallied_separately_from_the_observed_one(tmp_path, monk
     assert s["selected_by_train"]["locked_holdout"] == 22.0
     # and the report says which split each field came from
     assert "seed+10000" in s["split_note"] and "seed+20000" in s["split_note"]
+
+
+def test_locked_tally_is_null_without_a_locked_baseline(tmp_path, monkeypatch):
+    """Fail-closed: with champion locked scores but NO locked-split baseline, the
+    locked spread is reported but the beat/collapse tally is null — the observed
+    threshold is never substituted for the missing locked one."""
+    _baseline(tmp_path, hand=20.0, trivial=15.0)          # observed thresholds only
+    champs = [_champ(0, 30.0, 25.0, 22.0), _champ(1, 20.0, 21.0, 14.0)]
+    s = _run_robust(tmp_path, champs, monkeypatch)
+
+    assert s["locked_holdout_spread"] is not None          # champions carry locked scores
+    assert s["n_beat_hand_locked"] is None and s["n_collapse_below_trivial_locked"] is None
+    assert s["baseline_hand_locked"] is None
 
 
 def test_missing_locked_score_leaves_the_locked_fields_null(tmp_path, monkeypatch):
