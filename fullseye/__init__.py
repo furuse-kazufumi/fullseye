@@ -223,4 +223,6 @@ __all__ = [
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks", "signal_features",
     "algo", "algo_ops", "algo_categories", "find_algo", "run_algo",
     "algo_to_python", "algo_to_c", "algo_difftest",
+    "synth", "learn_features", "synthesize_like", "match_histogram",
+    "radial_power_spectrum", "feature_distance", "patch_novelty",
 ]
