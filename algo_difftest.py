@@ -298,10 +298,10 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
         for arr, got in zip(holdout, py_out):
             m = int(arr[0])
             pat, text = arr[1:1 + m], arr[1 + m:]
-            ref = [float(i) for i in range(len(text) - m + 1) if text[i:i + m] == pat]
-            if len(got) != len(ref):
+            naive = [float(i) for i in range(len(text) - m + 1) if text[i:i + m] == pat]
+            if len(got) != len(naive):
                 return float("inf")
-            for x, y in zip(got, ref):
+            for x, y in zip(got, naive):
                 errs.append(_diff01(float(x), float(y)))
         return max(errs, default=0.0)
     if name in ("edit_distance", "lcs_length"):
