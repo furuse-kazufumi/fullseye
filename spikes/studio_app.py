@@ -64,13 +64,19 @@ def box_surface(nx: int = 8, half=(0.15, 0.1, 0.12)) -> np.ndarray:
 
 
 def stereo_pair(h: int = 64, w: int = 96, bg_disp: int = 3, fg_disp: int = 9):
-    """既知視差の合成ステレオ対(前景ブロックほど大きくずれる=近い)。texture 有りで SGM が効く。"""
+    """既知視差の合成ステレオ対(前景ブロックほど大きくずれる=近い)。
+
+    純ランダムだと SGM が誤マッチするので、テクスチャを軽く平滑化して局所的に一意にする
+    (実ステレオでも smooth な自然テクスチャの方が対応が付きやすい)。"""
+    from scipy import ndimage
     rng = np.random.default_rng(1)
-    tex = rng.random((h, w + fg_disp + 4))
-    left = tex[:, fg_disp + 4:fg_disp + 4 + w].copy()
-    right = np.roll(tex, bg_disp, axis=1)[:, fg_disp + 4:fg_disp + 4 + w].copy()
-    fg = (slice(18, 46), slice(30, 66))                       # 近い前景ブロック
-    right[fg] = np.roll(tex, fg_disp, axis=1)[:, fg_disp + 4:fg_disp + 4 + w][fg]
+    pad = fg_disp + 4
+    tex = ndimage.gaussian_filter(rng.random((h, w + pad)), sigma=1.1)  # 平滑テクスチャ
+    tex = (tex - tex.min()) / (tex.ptp() + 1e-9)
+    left = tex[:, pad:pad + w].copy()
+    right = np.roll(tex, bg_disp, axis=1)[:, pad:pad + w].copy()          # 背景=小視差
+    fg = (slice(18, 46), slice(30, 66))                                  # 近い前景ブロック=大視差
+    right[fg] = np.roll(tex, fg_disp, axis=1)[:, pad:pad + w][fg]
     return left, right
 
 
