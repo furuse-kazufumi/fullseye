@@ -623,6 +623,29 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             cases.append([float(rng2.randint(0, n - 1))]
                          + [float(rng2.randint(0, 3)) for _ in range(n)])
         return cases
+    if name in ("count_distinct", "mode_value"):
+        rng2 = random.Random(seed + 808)
+        cases: list[list[float]] = [
+            [],                                              # empty -> 0.0
+            [5.0],                                           # single
+            [3.0, 3.0, 3.0],                                 # all equal
+            [1.0, 2.0, 3.0, 4.0],                            # all distinct
+            [1.0, 1.0, 2.0, 3.0, 3.0, 3.0],                  # a clear mode (3)
+            [2.0, 2.0, 1.0, 1.0],                            # tie -> mode picks the smallest (1)
+            [0.0, -0.0, 0.0],                                # +0/-0 compare equal -> 1 distinct
+            # -0.0 NOT last in the equal run: falsifies dropping mode_value's +0.0 canonicalization
+            # (Python stable sort vs an unstable qsort would return a different zero sign; include both
+            # orderings so at least one diverges regardless of the qsort tie order). Review 2026-08-17.
+            [0.0, -0.0],
+            [-0.0, 0.0],
+        ]
+        for _ in range(30):
+            n = rng2.randint(0, 25)
+            cases.append([float(rng2.randint(0, 5)) for _ in range(n)])   # small alphabet -> ties
+        for _ in range(6):
+            n = rng2.randint(1, 15)
+            cases.append([rng2.uniform(-50.0, 50.0) for _ in range(n)])   # mostly-distinct floats
+        return cases
     return make_holdout(seed)
 
 
@@ -882,6 +905,25 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 n = len(arr) - 1
                 if _int_in(arr[0], 0.0, float(n - 1)):
                     ref = float(sorted(arr[1:])[int(arr[0])])
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "count_distinct":
+        # independent oracle: len(set(...)) (a hash set, a different mechanism from sort+scan).
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            errs.append(_diff01(float(got), float(len(set(arr)))))
+        return max(errs, default=0.0)
+    if name == "mode_value":
+        # independent oracle: collections.Counter, smallest value winning ties.
+        from collections import Counter
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if not arr:
+                ref = 0.0
+            else:
+                counts = Counter(arr)
+                top = max(counts.values())
+                ref = float(min(v for v, c in counts.items() if c == top))
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]

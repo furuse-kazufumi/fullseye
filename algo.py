@@ -42,7 +42,7 @@ reductions. Later phases add ops here: P2 numerics, P3 strings, P4 graphs, P5 nu
 theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE),
 P6 computational geometry (polygon area, point-in-polygon, convex hull, segment
 intersection; integer coords, exact), P8 search / selection (binary search,
-k-th smallest).
+k-th smallest), P9 statistics (distinct count, mode).
 """
 from __future__ import annotations
 
@@ -1894,6 +1894,101 @@ double kth_smallest(const double* a, int n_in) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P9 — statistics / aggregation. Comparison-based over arbitrary (NaN-free) doubles:
+# the result is an exact integer count or an EXISTING element, so exact (tol 0) and
+# C == Python bit-for-bit. Both fold to one number (KIND_REDUCE); both sort a copy and
+# scan runs, and their result is order-independent so C's qsort need not match Python's.
+# --------------------------------------------------------------------------- #
+_PY_COUNT_DISTINCT = '''\
+def run(a):
+    """The number of DISTINCT values in a sequence (exact integer). Values are compared with ==
+    (NaN-free contract; -0.0 and +0.0 count as one value, as they compare equal). Empty -> 0.0.
+    Sorts a copy and counts values differing from the previous, so the result is order-independent
+    and bit-identical to the C backend."""
+    n = len(a)
+    if n == 0:
+        return 0.0
+    v = sorted(a)
+    c = 1
+    for i in range(1, n):
+        if v[i] != v[i - 1]:
+            c = c + 1
+    return float(c)
+'''
+
+_C_COUNT_DISTINCT = '''\
+/* Number of distinct values in a[0..n-1] (sort a copy, count adjacent-distinct). Order-independent
+ * result, bit-identical to Python. Empty -> 0.0. */
+static int _cd_cmp(const void* pa, const void* pb) {
+    double a = *(const double*)pa, b = *(const double*)pb;
+    return (a < b) ? -1 : (a > b ? 1 : 0);
+}
+double count_distinct(const double* a, int n) {
+    if (n <= 0) return 0.0;
+    double* v = (double*)malloc((size_t)n * sizeof(double));
+    if (!v) return 0.0;
+    for (int i = 0; i < n; i++) v[i] = a[i];
+    qsort(v, (size_t)n, sizeof(double), _cd_cmp);
+    int c = 1;
+    for (int i = 1; i < n; i++) if (v[i] != v[i - 1]) c++;
+    free(v);
+    return (double)c;
+}
+'''
+
+_PY_MODE_VALUE = '''\
+def run(a):
+    """The MODE of a sequence: the most frequently occurring value, with the SMALLEST value winning
+    ties (deterministic). Returns an existing element (exact for any NaN-free doubles). Empty -> 0.0.
+    Sorts a copy and scans equal runs; the result (value + tie rule) is order-independent, so it is
+    bit-identical to the C backend. A ZERO mode is canonicalized to +0.0 (adding 0.0 maps -0.0 -> +0.0
+    and is a no-op for every other value) so the sign is not left to the sort's handling of -0.0 == +0.0."""
+    n = len(a)
+    if n == 0:
+        return 0.0
+    v = sorted(a)                                       # ascending -> the first max-run is the smallest
+    best_val = v[0]
+    best_cnt = 1
+    cur_cnt = 1
+    for i in range(1, n):
+        if v[i] == v[i - 1]:
+            cur_cnt = cur_cnt + 1
+        else:
+            cur_cnt = 1
+        if cur_cnt > best_cnt:                          # strictly greater -> earliest (smallest) wins ties
+            best_cnt = cur_cnt
+            best_val = v[i]
+    return float(best_val) + 0.0                        # canonicalize -0.0 -> +0.0 (see docstring)
+'''
+
+_C_MODE_VALUE = '''\
+/* Mode of a[0..n-1] (most frequent; smallest value wins ties). Sort a copy ascending, scan equal runs,
+ * keep the first (smallest) value reaching the max run length. Order-independent, bit-identical. */
+static int _mode_cmp(const void* pa, const void* pb) {
+    double a = *(const double*)pa, b = *(const double*)pb;
+    return (a < b) ? -1 : (a > b ? 1 : 0);
+}
+double mode_value(const double* a, int n) {
+    if (n <= 0) return 0.0;
+    double* v = (double*)malloc((size_t)n * sizeof(double));
+    if (!v) return 0.0;
+    for (int i = 0; i < n; i++) v[i] = a[i];
+    qsort(v, (size_t)n, sizeof(double), _mode_cmp);
+    double best_val = v[0];
+    int best_cnt = 1, cur_cnt = 1;
+    for (int i = 1; i < n; i++) {
+        if (v[i] == v[i - 1]) cur_cnt++;
+        else cur_cnt = 1;
+        if (cur_cnt > best_cnt) { best_cnt = cur_cnt; best_val = v[i]; }
+    }
+    double r = best_val + 0.0;      /* canonicalize -0.0 -> +0.0 so the sign is not qsort-dependent */
+    free(v);
+    return r;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2011,6 +2106,14 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "The k-th smallest element (0-indexed order statistic) of [k, v0..v_{n-1}] "
            "by quickselect.",
            "quickselect order statistic (median-of-three pivot, 3-way Dutch-flag partition)"),
+    AlgoOp("count_distinct", "stat", SEQ, SCALAR, KIND_REDUCE, "count_distinct",
+           _PY_COUNT_DISTINCT, _C_COUNT_DISTINCT,
+           "The number of distinct values in a sequence (exact integer count).",
+           "distinct-value count via sort + adjacent comparison"),
+    AlgoOp("mode_value", "stat", SEQ, SCALAR, KIND_REDUCE, "mode_value",
+           _PY_MODE_VALUE, _C_MODE_VALUE,
+           "The mode (most frequent value; smallest wins ties) of a sequence.",
+           "mode via sort + longest equal run (smallest-value tie-break)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

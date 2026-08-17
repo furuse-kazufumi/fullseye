@@ -45,9 +45,12 @@ _GEOMETRY = ["polygon_area2", "point_in_polygon", "convex_hull", "segments_inter
 # P8: search / selection (comparison-based, exact). binary_search / kth_smallest are KIND_REDUCE.
 # Independent oracles = bisect_left + presence check / full-sort-then-index.
 _SEARCH = ["binary_search", "kth_smallest"]
+# P9: statistics (comparison-based, exact). count_distinct / mode_value are KIND_REDUCE.
+# Independent oracles = len(set(...)) / collections.Counter.
+_STAT = ["count_distinct", "mode_value"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
-_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH
+_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -86,6 +89,7 @@ def test_categories_grouping():
     assert set(cats["compress"]) == set(_COMPRESS)
     assert set(cats["geometry"]) == set(_GEOMETRY)
     assert set(cats["search"]) == set(_SEARCH)
+    assert set(cats["stat"]) == set(_STAT)
 
 
 # --------------------------------------------------------------------------- #
@@ -1361,6 +1365,57 @@ def test_search_difftest_python_half_is_exact(name, tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 @pytest.mark.parametrize("name", _SEARCH)
 def test_search_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P9 statistics (count_distinct, mode_value; comparison-based, exact).
+# --------------------------------------------------------------------------- #
+def test_stat_ops_registered_kinds():
+    assert algo.ALGO_BY_NAME["count_distinct"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["mode_value"].kind == algo.KIND_REDUCE
+    assert set(algo.algo_categories()["stat"]) == set(_STAT)
+    for name in _STAT:
+        assert algo.ALGO_BY_NAME[name].tol == 0.0
+
+
+def test_count_distinct_known_and_random():
+    assert algo.run_algo("count_distinct", []) == 0.0
+    assert algo.run_algo("count_distinct", [3, 3, 3]) == 1.0
+    assert algo.run_algo("count_distinct", [1, 2, 3, 4]) == 4.0
+    assert algo.run_algo("count_distinct", [0.0, -0.0, 0.0]) == 1.0     # +0/-0 are one value
+    rng = random.Random(211)
+    for _ in range(2000):
+        v = [float(rng.randint(0, 6)) for _ in range(rng.randint(0, 25))]
+        assert algo.run_algo("count_distinct", v) == float(len(set(v)))
+
+
+def test_mode_value_known_and_random():
+    from collections import Counter
+    assert algo.run_algo("mode_value", [1, 1, 2, 3, 3, 3]) == 3.0
+    assert algo.run_algo("mode_value", [2, 2, 1, 1]) == 1.0             # tie -> smallest
+    assert algo.run_algo("mode_value", [5]) == 5.0
+    rng = random.Random(233)
+    for _ in range(2000):
+        n = rng.randint(1, 25)
+        v = [float(rng.randint(0, 5)) for _ in range(n)]
+        counts = Counter(v)
+        top = max(counts.values())
+        assert algo.run_algo("mode_value", v) == min(x for x, c in counts.items() if c == top)
+
+
+@pytest.mark.parametrize("name", _STAT)
+def test_stat_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _STAT)
+def test_stat_c_is_bit_identical(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True

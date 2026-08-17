@@ -414,3 +414,19 @@ kth_smallest の quickselect が単一 pivot Lomuto ゆえ **all-equal/低カー
 書換(equal-band で重複を畳む→all-equal を O(n) に・比較のみ+順序非依存で **C==Python==sorted()[k] parity 維持**)。自己再現で
 確認=**all-equal n=40000 が 7.44s → 0.0019s**(O(n) 化)・correctness 5000 cases mism 0・difftest bit 一致。計時テストを
 sorted/reverse/**all_equal/few_distinct** に拡張(退行を実際にガード)。
+
+## P9 完遂記録 — 統計/集計(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**統計 op 2 種を algo tier に追加**: `count_distinct`(distinct 値数=整数 count)/ `mode_value`(最頻値・小さい方が tie 勝ち)。
+比較ベース(任意 NaN-free double)・結果は count or 既存要素ゆえ exact(tol 0)。両 op とも copy を sort → run 走査(結果は
+順序非依存で C の qsort と Python の sorted が違っても bit 一致)。oracle=`len(set())` / `collections.Counter`(独立機構)。
+**★proactive 堅牢化**: mode_value のゼロ mode で ±0.0 混在時、C の unstable qsort と Python の stable sort で返り値の符号が食い違い
+bit 不一致になりうる → **`+ 0.0` で −0.0→+0.0 正準化**(他値は不変)で C==Python を堅牢に(rle_encode の signed-zero 開示と同系)。
+実測: 各 5000 ランダムケースで oracle mismatch 0・difftest passed(python exact / C bit 一致 / c_verified)。全 algo op 28 が gate 化。
+ruff clean・mypy 新規 0。
+
+### P9 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+2 レンズ敵対レビュー(実 compile/実行/変異検証)= **1 raw → 1 CONFIRMED**(MED・gate-safety)。**正しさ不変だが gate coverage gap**:
+mode_value の `+0.0` 正準化を落とす変異を holdout が falsify できない(唯一の signed-zero ケース `[0.0,-0.0,0.0]` が両 backend で
++0.0-last にソート → 正準化削除でも bit 一致)。コメントが担保と主張する bit-check が正準化を一度も実際に駆動しない。**修正**=
+`-0.0` が run 末尾に来ない `[0.0,-0.0]`・`[-0.0,0.0]` を holdout に追加(両順序=qsort tie 順に依らず片方は必ず発散)。自己再現で
+確認=**正準化削除変異が difftest FAIL**・現行(正準化済)コードは追加ケースで bit 一致 pass。全スイート **4787 → 4796 passed / 0 failed**。
