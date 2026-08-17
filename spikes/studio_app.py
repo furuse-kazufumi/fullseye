@@ -180,11 +180,15 @@ ax.set_xlim(0, 0.8); ax.set_ylim(0, 0.6); ax.set_zlim(0.2, 0.9); ax.view_init(24
 
 _STEREO_DEPTH = '''\
 # vision: ステレオ視差(SGM)。左右画像から disparity を計算(近い前景ほど大きい)
+from scipy import ndimage
 left, right = stereo_pair()
 disp = fs.disparity_sgm(left, right, max_disp=max_disp, window=5)
+disp_s = ndimage.median_filter(disp, size=5)              # 実 SGM 同様 speckle 除去
+fg = disp[18:46, 30:66]; bg = np.r_[disp[:14].ravel(), disp[50:].ravel()]
 ax1 = fig.add_subplot(1, 2, 1); ax1.imshow(left, cmap="gray"); ax1.set_title("left", fontsize=9); ax1.axis("off")
 ax2 = fig.add_subplot(1, 2, 2)
-im = ax2.imshow(disp, cmap="turbo"); ax2.set_title("disparity (SGM)", fontsize=9); ax2.axis("off")
+im = ax2.imshow(disp_s, cmap="turbo")
+ax2.set_title(f"disparity  前景 {np.median(fg):.1f} > 背景 {np.median(bg):.1f}", fontsize=9); ax2.axis("off")
 fig.colorbar(im, ax=ax2, fraction=0.046)
 '''
 
