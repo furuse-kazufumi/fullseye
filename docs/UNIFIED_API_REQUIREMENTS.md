@@ -52,8 +52,10 @@ OSS 内部の再実装(PCL/grid_map/OpenCV/MoveIt2 は薄いアダプタで裏�
   honest-gate 状態を機械可読で持つ(Studio と эージェントが同じメタを使う)。**+ 描画ヒント**(出力を
   Studio でどう可視化するか: `image` / `point_cloud` / `pose` / `grid_map_layer` / `scalar` 等)を持ち、
   Studio が RViz2 相当の 3D/2D 描画を自動選択できる。
-- **F4 OSS アダプタ契約**: OSS(PCL/OpenCV/grid_map 等)を裏に持つ op も、F1〜F3 を満たす同一 I/F で見える。
-  OSS 不在時は明示エラー or 自作フォールバック(optional extras 方針)。
+- **F4 OSS/sim アダプタ契約**: OSS(PCL/OpenCV/grid_map 等)を裏に持つ op も、F1〜F3 を満たす同一 I/F で見える。
+  OSS 不在時は明示エラー or 自作フォールバック(optional extras 方針)。**sim ソース**(`sim.MuJoCo`/`sim.Gazebo`/
+  `sim.IsaacSim`)も同一契約で、共通の動詞(`.frames()`/`.depth()`/`.intrinsics()`/`.ground_truth()`)で視覚 op に
+  入力を供給する(入力元を問わず op が組める。ground_truth は honest 評価の真値源)。
 - **F5 合成**: op をパイプライン化して繋げられる(画像チェーン / 知覚の段組み)。
 - **F6 Studio 露出**: 同一メタ(F3)から Studio が op を自動列挙・パラメータ UI 生成・実行できる。
   **Studio = HDevelop(2D 画像処理 IDE)+ RViz2(3D 知覚可視化)の融合**: 2D 画像パネルに加え、
