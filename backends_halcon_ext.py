@@ -505,6 +505,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_shade_height_field", "shade_height_field", IMAGE, IMAGE, _shade_height_field),
         ("hx_plane_deviation", "plane_deviation", IMAGE, IMAGE, _plane_deviation),
         ("hx_detect_edge_segments", "detect_edge_segments", IMAGE, REGION, _detect_edge_segments),
+        # 第 6 バッチ
+        ("hx_gen_image_proto", "gen_image_proto", IMAGE, IMAGE, _gen_image_proto),
+        ("hx_get_domain", "get_domain", IMAGE, REGION, _get_domain),
+        ("hx_region_to_label", "region_to_label", IMAGE, IMAGE, _region_to_label),
+        ("hx_rectangle1_domain", "rectangle1_domain", IMAGE, REGION, _rectangle1_domain),
+        ("hx_lowlands", "lowlands", IMAGE, REGION, _lowlands),
+        ("hx_plateaus_center", "plateaus_center", IMAGE, REGION, _plateaus_center),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
