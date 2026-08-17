@@ -530,6 +530,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_rectangle1_domain", "rectangle1_domain", IMAGE, REGION, _rectangle1_domain),
         ("hx_lowlands", "lowlands", IMAGE, REGION, _lowlands),
         ("hx_plateaus_center", "plateaus_center", IMAGE, REGION, _plateaus_center),
+        # 第 7 バッチ
+        ("hx_move_region", "move_region", REGION, REGION, _move_region),
+        ("hx_split_skeleton_region", "split_skeleton_region", REGION, REGION, _split_skeleton_region),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
