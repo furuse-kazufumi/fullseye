@@ -33,9 +33,34 @@
 | `pose` (3) | silhouette 姿勢記述 | (シルエット由来の簡易記述子。直接の OSS 対応薄い) | **partial gap**(簡易) |
 | `occupancy` | grid, inflate, clearance | `nav2` `costmap_2d` | **reinvents** nav2 |
 
+## マニピュレーション/計画/実行 層(MoveIt2 指摘を反映 — 知覚だけでは片手落ち)
+
+evis が視覚を「使う」完全ループは **perceive → plan → execute**。後半こそ重要部品で、ここは ROS2 に厚い標準がある。
+
+```
+知覚(stereo/PCL)→ 6D grasp pose(GPD/AnyGrasp)→ MoveIt2 MTC(grasp pose→IK→衝突回避軌道
+→ move-to-pick/grasp/lift/place)→ ros2_control(position/velocity/effort I/F)→ ロボット
+```
+
+| 部品 | 役割 | ROS2/OSS 標準(実使用) | 判定 |
+|---|---|---|---|
+| 動作計画/IK/衝突回避 | grasp pose → 衝突なし軌道 | **MoveIt2**(OMPL/STOMP/Pilz、150+ ロボ実績)+ **MoveIt Task Constructor**(pick&place ステージ化) | **use OSS**(自作不可) |
+| grasp 生成 | cloud/RGB-D → 6-DoF grasp 候補+スコア | **GPD** / **AnyGrasp** / SuctionNet(MoveIt 連携)、frontier=deep(GraspNet) | **use OSS** |
+| ハード抽象/低レベル制御 | position/velocity/effort I/F | **ros2_control**(MoveIt2/Nav2 の土台。humanoid の ROS2 露出はほぼここ経由) | **use OSS** |
+| ナビゲーション | 地図/経路/障害回避 | **Nav2**(costmap_2d/BT) | **use OSS**(evis は当面不要) |
+| 把持力/force-closure | antipodal grasp 品質 | GraspIt!/`grasp`(Ferrari-Canny) | partial(既存 grasp op で足りる) |
+
+### ★真の核心ギャップ = 筋駆動 evis のブリッジ(OSS に無い)
+
+MoveIt2/ros2_control は **URDF の位置/トルク関節+標準グリッパ**前提。**evis は MuJoCo の 700 筋(Hill 型)駆動**で、
+箸(グリッパでない道具)を articulated hand で扱う。→ **MoveIt2 が出す関節軌道を 700 筋の活性で実現する層が OSS に存在しない**。
+この「関節計画 → 筋活性実現」= **QP / static optimization / WBC**(あなたが既に持つ `reference_wbc_qp_control` の QP+osqp)こそ、
+OSS/ROS2 では埋まらない evis 固有部品。視覚(6D pose)→ MoveIt2(軌道)→ **筋実現(QP)** の最後の一段が本当のギャップ。
+
 ## 正直な結論
 
 **知覚 op の約 8〜9 割は、成熟した ROS2/OSS(PCL・grid_map・image_pipeline・OpenCV・rtabmap・nav2)の numpy 再実装**。
+**マニピュレーション/実行層(MoveIt2/MTC/GPD/ros2_control)も自作対象ではなく OSS を使う所**。
 教育・自己完結の価値はあるが、evis の視覚を「動かす」目的では、これらを手で書き直すのは
 まさに「OSS で足りるものの再発明」。特に **脚ロボの terrain/foothold は grid_map、
 把持の cloud→segment→pose は PCL** が実robotで使われる本命。
