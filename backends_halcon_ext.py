@@ -389,7 +389,8 @@ def _plane_deviation(v, a, b):
     A = np.stack([np.ones_like(xn).ravel(), xn.ravel(), yn.ravel()], axis=1)
     coef, *_ = np.linalg.lstsq(A, v.ravel(), rcond=None)
     plane = (A @ coef).reshape(v.shape)
-    return _norm01(np.abs(v - plane))
+    # 直接クリップ(min-max 正規化は純平面の浮動小数ノイズを [0,1] に増幅するため不可)。
+    return np.clip(np.abs(v - plane), 0.0, 1.0)
 
 
 def _detect_edge_segments(v, a, b):
