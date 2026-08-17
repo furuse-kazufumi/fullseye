@@ -158,6 +158,21 @@ ax.set_title(f"入力 + 検出領域(sigma={sigma:.2f}, level={level:.2f}) — h
 ax.axis("off")
 '''
 
+_MORPHOLOGY = '''\
+# vision: モルフォロジ(自然 API=下層 scipy 直呼び)。size スライダで構造要素サイズ可変
+img = synthetic_scene()
+noisy = img + (np.random.default_rng(0).random(img.shape) < noise) * 0.6   # 明ノイズを撒く
+stages = [
+    ("noisy input",              noisy),
+    (f"opening({size})=ノイズ除去", Image(noisy).opening(size).array),
+    (f"closing({size})=穴埋め",     Image(img).closing(size).array),
+    (f"morph_gradient({size})=輪郭", Image(img).morph_gradient(size).array),
+]
+for i, (title, arr) in enumerate(stages):
+    ax = fig.add_subplot(2, 2, i + 1)
+    ax.imshow(arr, cmap="gray", vmin=0, vmax=1); ax.set_title(title, fontsize=9); ax.axis("off")
+'''
+
 _POSE_6DOF = '''\
 # vision: PPF で 6-DoF 姿勢推定(evis 把持の核心)。モデル箱を既知回転で置いたシーンに当てる
 model = box_surface()
