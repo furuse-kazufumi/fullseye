@@ -790,6 +790,51 @@ def _select_xld_point(v, a, b):
     return _c_mk((h, w), out)
 
 
+# ── 第 11 バッチ: shape-from-shading の光源推定(3D Reconstruction, image -> feature)── #
+def _img_grads(v):
+    return ndimage.sobel(v, axis=1), ndimage.sobel(v, axis=0)   # Ex, Ey
+
+
+def _estimate_tilt_lr(v, a, b):
+    """Lee-Rosenfeld: 光源方位角 tilt = atan2(<Ey>, <Ex>)(平均勾配方向)。[0,1] 正規化。"""
+    ex, ey = _img_grads(v)
+    tilt = np.arctan2(ey.mean(), ex.mean())
+    return np.float64((tilt / (2 * np.pi)) % 1.0)
+
+
+def _estimate_tilt_zc(v, a, b):
+    """Zheng-Chellappa: 正規化勾配の平均方向で tilt を推定(局所コントラスト非依存)。"""
+    ex, ey = _img_grads(v)
+    mag = np.hypot(ex, ey) + 1e-9
+    tilt = np.arctan2((ey / mag).mean(), (ex / mag).mean())
+    return np.float64((tilt / (2 * np.pi)) % 1.0)
+
+
+def _estimate_slant(v):
+    """slant(光源天頂角)推定: 平均輝度と勾配統計から。Lambertian の <I>=albedo*cos(slant)。"""
+    mu = float(np.clip(v.mean(), 0, 1))
+    return float(np.arccos(np.clip(mu, 0, 1)))          # cos(slant)=<I>/albedo(albedo~1 近似)
+
+
+def _estimate_sl_al_lr(v, a, b):
+    """Lee-Rosenfeld: 光源の slant を推定(天頂角、0=正面〜pi/2=真横)。[0,1] 正規化。"""
+    return np.float64(_estimate_slant(v) / (np.pi / 2))
+
+
+def _estimate_sl_al_zc(v, a, b):
+    """Zheng-Chellappa: slant を勾配エネルギーで補正して推定。"""
+    ex, ey = _img_grads(v)
+    e = float(np.hypot(ex, ey).mean())
+    sl = _estimate_slant(v) * (1.0 + min(e, 1.0))       # 勾配が強い=斜光=slant 大
+    return np.float64(min(sl / (np.pi / 2), 1.0))
+
+
+def _estimate_al_am(v, a, b):
+    """albedo(反射率)と ambient(環境光)の推定: albedo ~ 輝度レンジ、ここでは albedo を返す。"""
+    lo, hi = float(v.min()), float(v.max())
+    return np.float64(np.clip(hi - lo, 0, 1))           # 反射率の代理=輝度ダイナミックレンジ
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
