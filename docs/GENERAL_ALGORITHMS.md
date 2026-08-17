@@ -374,4 +374,22 @@ Python==独立 oracle tol 0。
   非超過上界**(放物線入力で out_len=2n)/ **ASan+UBSan が 1104 hostile cases でクリーン**(out[] 書込 OOB なし・long long 外積
   overflow なし)/ C==Python bit 一致・Python==scipy 頂点集合 全一致 / CCW-from-lex-min 順序も test で担保 / qsort 不安定性は
   (x,y) 全順序比較子 + 隣接 dedup で無影響(=`sorted(set())`)。→ dedup が防御的冗長である旨の説明コメントのみ追記(挙動不変)。
-- **結論**: P6 幾何 3 op に shipped bug なし。commit + push はこのセッション。
+- **結論**: P6 幾何 3 op に shipped bug なし。commit + push はこのセッション(`24bc8ad`)。
+
+## P7 完遂記録 — 線分交差(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**幾何ツールキットを 1 op 拡張**: `segments_intersect`(KIND_REDUCE)= 2 閉線分 `[x1,y1,x2,y2,x3,y3,x4,y4]` が交差するか
+(1.0/0.0)。**画像の直線/輪郭解析への橋渡し**。CLRS 33.1 の整数 orientation 法(proper crossing = 端点が相手の線を厳密に
+またぐ + 4 つの共線 on-segment 特殊ケース)。整数座標 [-100000,100000] で外積は厳密(|cross| ≤ 8e10 が long long に収まる)=
+C bit 一致。**oracle = `sympy.geometry` の Segment 交差**(記号計算=orientation とは全く別手法)。実測: 固定 8 ケース正解 +
+**sympy と 2970 ランダム整数線分ペアで mismatch 0**(共線重複/T 字/端点共有/near-miss を含む)。退化(点)線分は sympy が
+Segment を作れないため holdout から除外(op は一般 orientation ロジックで動くが未 gate=開示)。difftest passed(python exact /
+C bit 一致 / c_verified)、work-graph ノード無人 done(全 algo op 24 が gate 化)。
+
+### P7 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+3 レンズ敵対レビュー(検証エージェントが実 compile/実行で再現)= **1 raw → 1 CONFIRMED**(MED・gate-honesty)。**op 自体は
+正しい**(sympy と全一致)が、**difftest holdout が d1/d3/d4 の on-segment 特殊ケース(端点が相手線分の内部に乗る=共有端点なし)
+を単独理由の 1.0 判定として一度も駆動せず**、その分岐を落とした wrong op を gate が通す(50 holdout の判定が 1 つも変わらない)。
+自己再現で確定(d3+d4 drop 変異が passed=True・`[0,0,10,0,3,0,3,5]`→0.0 誤り)。**修正**=各 on_seg 分岐(d1/d2/d3/d4)を単独理由と
+する固定 holdout ケース(端点が相手内部・軸並行 4 + 対角 2)を追加 → **各分岐を落とすと difftest が FAIL**(d1/d2/d3/d4 すべて
+passed=False)を自前確認。既知解テストにも端点-内部 4 ケースを追加。全スイート **4765 → 4772 passed / 0 failed**(+7)・ruff clean・
+mypy 新規 0。

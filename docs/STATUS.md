@@ -6,6 +6,8 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **★★(2026-08-17 その13, Opus5[1m]/ultracode, 12h 自律) = algo-c P7(線分交差).** 幾何ツールキットを 1 op 拡張 = `segments_intersect`(2 閉線分が交差?1.0/0.0・CLRS 33.1 整数 orientation・oracle sympy.geometry・sympy と 2970 cases mismatch 0)。**敵対レビュー 1 CONFIRMED**(gate-honesty): holdout が on-segment 特殊ケース(端点が相手内部)を単独理由で駆動せず → 分岐削除の wrong op を gate が通す(op は正しい)。自己再現の上、単独理由ケース(軸並行4+対角2)を追加し**各 on_seg 分岐削除で difftest FAIL** を確認。全スイート **4765 → 4772 passed / 0 failed**(+7)。全 algo op 24 が gate 化。commit/push このセッション。
+>
 > **★★(2026-08-17 その12, Opus5[1m]/ultracode, 12h 自律・`graph-loop-engineering`) = algo-c P6(計算幾何).**
 > algo-c ロードマップ P1→P5 完遂後の拡張(当初 TOC の「幾何」)。**画像 tier の輪郭/領域処理への橋渡し**。2-D 点を **整数座標**(≤1e5)でパックし全ての向き判定/靴紐和を厳密な整数化(浮動小数除算なし)= C bit 一致 かつ Python==独立 oracle tol 0。
 > - **op(3)**: `polygon_area2`(靴紐=2×符号付き面積・oracle numpy 靴紐・honest 域 2e15<2^53 実測)/ `point_in_polygon`(交差数・oracle 巻き数・凹多角形 OK・境界は実装依存と開示)/ `convex_hull`(**KIND_MAP**・Andrew monotone chain・lex-min から CCW・共線除外・oracle scipy 頂点集合・2000 cases で mismatch 0)。

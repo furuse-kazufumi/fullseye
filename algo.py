@@ -40,7 +40,8 @@ stdlib only (the Python references use no numpy — they mirror the C index-by-i
 so "re-implemented from spec" is visibly true). P1: seq/scalar + 3 sorts + 2
 reductions. Later phases add ops here: P2 numerics, P3 strings, P4 graphs, P5 number
 theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE),
-P6 computational geometry (polygon area, point-in-polygon; integer coords, exact).
+P6 computational geometry (polygon area, point-in-polygon, convex hull, segment
+intersection; integer coords, exact).
 """
 from __future__ import annotations
 
@@ -1675,6 +1676,85 @@ int convex_hull(const double* a, int n_in, double* out) {
 '''
 
 
+_PY_SEGMENTS_INTERSECT = '''\
+def run(a):
+    """Do two closed line segments intersect (share at least one point)? Input packs both segments:
+    a = [x1, y1, x2, y2, x3, y3, x4, y4] — segment A = (x1,y1)-(x2,y2), segment B = (x3,y3)-(x4,y4).
+    Returns 1.0 if they intersect (a proper crossing, an endpoint touch, or a collinear overlap), else
+    0.0. INTEGER coordinates in [-100000, 100000] make every orientation an exact integer cross product,
+    so C == Python bit-for-bit. Fail-soft 0.0 on malformed / out-of-domain input (CLRS 33.1)."""
+    if len(a) < 8:
+        return 0.0
+    for i in range(8):
+        c = a[i]
+        if not (c >= -100000.0 and c <= 100000.0 and c == float(int(c))):
+            return 0.0
+    x1 = int(a[0]); y1 = int(a[1]); x2 = int(a[2]); y2 = int(a[3])
+    x3 = int(a[4]); y3 = int(a[5]); x4 = int(a[6]); y4 = int(a[7])
+
+    def orient(ax, ay, bx, by, cx, cy):                 # sign of cross((b-a),(c-a)): -1/0/1
+        v = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax)
+        return 0 if v == 0 else (1 if v > 0 else -1)
+
+    def on_seg(ax, ay, bx, by, px, py):                 # (px,py) known collinear: is it on [a,b]?
+        return (min(ax, bx) <= px <= max(ax, bx)) and (min(ay, by) <= py <= max(ay, by))
+
+    d1 = orient(x3, y3, x4, y4, x1, y1)
+    d2 = orient(x3, y3, x4, y4, x2, y2)
+    d3 = orient(x1, y1, x2, y2, x3, y3)
+    d4 = orient(x1, y1, x2, y2, x4, y4)
+    # proper crossing: each segment's endpoints strictly straddle the other's line
+    if ((d1 > 0) != (d2 > 0)) and d1 != 0 and d2 != 0 and \\
+       ((d3 > 0) != (d4 > 0)) and d3 != 0 and d4 != 0:
+        return 1.0
+    if d1 == 0 and on_seg(x3, y3, x4, y4, x1, y1):      # collinear / endpoint-touch special cases
+        return 1.0
+    if d2 == 0 and on_seg(x3, y3, x4, y4, x2, y2):
+        return 1.0
+    if d3 == 0 and on_seg(x1, y1, x2, y2, x3, y3):
+        return 1.0
+    if d4 == 0 and on_seg(x1, y1, x2, y2, x4, y4):
+        return 1.0
+    return 0.0
+'''
+
+_C_SEGMENTS_INTERSECT = '''\
+/* Do two closed segments a = [x1,y1,x2,y2,x3,y3,x4,y4] intersect? 1.0 yes / 0.0 no (CLRS 33.1;
+ * integer coords in [-100000,100000], exact orientation cross products). Fail-soft 0.0 on malformed. */
+static int _seg_orient(long long ax, long long ay, long long bx, long long by,
+                       long long cx, long long cy) {
+    long long v = (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+    return (v == 0) ? 0 : (v > 0 ? 1 : -1);
+}
+static int _seg_on(long long ax, long long ay, long long bx, long long by,
+                   long long px, long long py) {
+    long long minx = ax < bx ? ax : bx, maxx = ax < bx ? bx : ax;
+    long long miny = ay < by ? ay : by, maxy = ay < by ? by : ay;
+    return (minx <= px && px <= maxx && miny <= py && py <= maxy);
+}
+double segments_intersect(const double* a, int n_in) {
+    if (n_in < 8) return 0.0;
+    for (int i = 0; i < 8; i++) {
+        double c = a[i];
+        if (!(c >= -100000.0 && c <= 100000.0 && c == (double)(long long)c)) return 0.0;
+    }
+    long long x1=(long long)a[0], y1=(long long)a[1], x2=(long long)a[2], y2=(long long)a[3];
+    long long x3=(long long)a[4], y3=(long long)a[5], x4=(long long)a[6], y4=(long long)a[7];
+    int d1 = _seg_orient(x3,y3,x4,y4,x1,y1);
+    int d2 = _seg_orient(x3,y3,x4,y4,x2,y2);
+    int d3 = _seg_orient(x1,y1,x2,y2,x3,y3);
+    int d4 = _seg_orient(x1,y1,x2,y2,x4,y4);
+    if (((d1 > 0) != (d2 > 0)) && d1 != 0 && d2 != 0 &&
+        ((d3 > 0) != (d4 > 0)) && d3 != 0 && d4 != 0) return 1.0;
+    if (d1 == 0 && _seg_on(x3,y3,x4,y4,x1,y1)) return 1.0;
+    if (d2 == 0 && _seg_on(x3,y3,x4,y4,x2,y2)) return 1.0;
+    if (d3 == 0 && _seg_on(x1,y1,x2,y2,x3,y3)) return 1.0;
+    if (d4 == 0 && _seg_on(x1,y1,x2,y2,x4,y4)) return 1.0;
+    return 0.0;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -1777,6 +1857,11 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "Convex hull of a 2-D integer point set [n, x0,y0,...] by Andrew's monotone "
            "chain -> hull vertices CCW from the lex-min vertex (variable-length seq -> seq).",
            "Andrew's monotone-chain convex hull (integer orientation cross products)"),
+    AlgoOp("segments_intersect", "geometry", SEQ, SCALAR, KIND_REDUCE, "segments_intersect",
+           _PY_SEGMENTS_INTERSECT, _C_SEGMENTS_INTERSECT,
+           "Do two closed segments [x1,y1,x2,y2,x3,y3,x4,y4] intersect? "
+           "1.0 / 0.0 (orientation test; integer coordinates; handles collinear overlap).",
+           "CLRS 33.1 segment-intersection via integer orientation + on-segment tests"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

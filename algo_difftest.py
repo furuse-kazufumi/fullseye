@@ -554,6 +554,36 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
                 flat += [float(rng2.randint(-3, 3)), float(rng2.randint(-3, 3))]
             cases.append(flat)
         return cases
+    if name == "segments_intersect":
+        rng2 = random.Random(seed + 505)
+        cases = [
+            [0, 0, 4, 4, 0, 4, 4, 0],                        # X crossing -> 1
+            [0, 0, 4, 0, 0, 1, 4, 1],                        # parallel disjoint -> 0
+            [0, 0, 4, 0, 2, 0, 6, 0],                        # collinear overlap -> 1
+            [0, 0, 1, 0, 2, 0, 3, 0],                        # collinear disjoint -> 0
+            [0, 0, 2, 0, 2, 0, 2, 2],                        # T-junction endpoint -> 1
+            [0, 0, 4, 0, 2, 1, 2, 3],                        # near miss -> 0
+            [0, 0, 3, 3, 3, 3, 5, 0],                        # shared endpoint -> 1
+            # each on-segment special case as the SOLE reason for a 1.0 (an endpoint strictly INTERIOR
+            # to the other segment, no shared endpoint, no proper crossing) — so dropping any one of the
+            # four collinear branches flips a holdout verdict and the gate can falsify it (review 2026-08-17):
+            [3, 0, 3, 5, 0, 0, 10, 0],                       # A-endpoint 1 on B interior -> d1
+            [3, 5, 3, 0, 0, 0, 10, 0],                       # A-endpoint 2 on B interior -> d2
+            [0, 0, 10, 0, 3, 0, 3, 5],                       # B-endpoint 1 on A interior -> d3
+            [0, 0, 10, 0, 3, 5, 3, 0],                       # B-endpoint 2 on A interior -> d4
+            [3, 3, 3, 8, 0, 0, 6, 6],                        # diagonal: A-endpoint on B interior -> d1
+            [0, 0, 6, 6, 3, 3, 8, 3],                        # diagonal: B-endpoint on A interior -> d3
+            [0, 0, 4, 4, 0, 4, 4],                           # < 8 values -> fail-soft 0.0
+            [0, 0, 4, 4, 0, 4, 200000, 0],                   # coord out of range -> 0.0
+            [0, 0, 4, 4, 0, 4, 4, 0.5],                      # non-integer -> 0.0
+        ]
+        for _ in range(40):                                  # small coord range -> many crossings/misses
+            while True:
+                p = [rng2.randint(-6, 6) for _ in range(8)]
+                if (p[0], p[1]) != (p[2], p[3]) and (p[4], p[5]) != (p[6], p[7]):
+                    break                                    # non-degenerate segments (sympy needs both)
+            cases.append([float(v) for v in p])
+        return cases
     return make_holdout(seed)
 
 
@@ -772,6 +802,21 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
             got_set = frozenset((int(got[2 * i]), int(got[2 * i + 1])) for i in range(len(got) // 2))
             ok = got_set == ref_set and len(got) // 2 == len(ref_set)   # same vertices, no duplicates
             errs.append(0.0 if ok else float("inf"))
+        return max(errs, default=0.0)
+    if name == "segments_intersect":
+        # independent oracle: sympy.geometry (symbolic exact intersection) — a wholly different method
+        # from the op's integer orientation tests. Domain-aware: malformed / out-of-domain -> op's 0.0.
+        from sympy.geometry import Point, Segment
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if len(arr) < 8 or not all(_int_in(c, -100000.0, 100000.0) for c in arr[:8]):
+                ref = 0.0
+            else:
+                p = [int(arr[i]) for i in range(8)]
+                a_seg = Segment(Point(p[0], p[1]), Point(p[2], p[3]))
+                b_seg = Segment(Point(p[4], p[5]), Point(p[6], p[7]))
+                ref = 1.0 if a_seg.intersection(b_seg) else 0.0
+            errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:

@@ -41,7 +41,7 @@ _P5 = _NUMTHEORY + _HASH + _COMPRESS
 # P6: computational geometry (integer coords, exact). polygon_area2 / point_in_polygon are
 # KIND_REDUCE; convex_hull is a KIND_MAP. Independent oracles = numpy shoelace / the winding-number
 # algorithm / scipy.spatial.ConvexHull (vertex-set comparison).
-_GEOMETRY = ["polygon_area2", "point_in_polygon", "convex_hull"]
+_GEOMETRY = ["polygon_area2", "point_in_polygon", "convex_hull", "segments_intersect"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY
@@ -1054,6 +1054,7 @@ def test_geometry_ops_registered_kinds():
     assert algo.ALGO_BY_NAME["polygon_area2"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["point_in_polygon"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["convex_hull"].kind == algo.KIND_MAP
+    assert algo.ALGO_BY_NAME["segments_intersect"].kind == algo.KIND_REDUCE
     assert set(algo.algo_categories()["geometry"]) == set(_GEOMETRY)
     for name in _GEOMETRY:
         assert algo.ALGO_BY_NAME[name].tol == 0.0
@@ -1194,11 +1195,51 @@ def test_convex_hull_fail_soft():
     assert algo.run_algo("convex_hull", [3.0, 0, 0, 4, 0]) == []             # truncated
 
 
+def test_segments_intersect_known():
+    f = lambda *v: algo.run_algo("segments_intersect", [float(x) for x in v])
+    assert f(0, 0, 4, 4, 0, 4, 4, 0) == 1.0        # X crossing
+    assert f(0, 0, 4, 0, 0, 1, 4, 1) == 0.0        # parallel, disjoint
+    assert f(0, 0, 4, 0, 2, 0, 6, 0) == 1.0        # collinear overlap
+    assert f(0, 0, 1, 0, 2, 0, 3, 0) == 0.0        # collinear, disjoint
+    assert f(0, 0, 2, 0, 2, 0, 2, 2) == 1.0        # T-junction (endpoint touch)
+    assert f(0, 0, 4, 0, 2, 1, 2, 3) == 0.0        # near miss
+    assert f(0, 0, 3, 3, 3, 3, 5, 0) == 1.0        # shared endpoint
+    # an endpoint strictly INTERIOR to the other segment (no shared endpoint, no proper crossing) —
+    # each exercises one of the 4 collinear on-segment special cases (review 2026-08-17):
+    assert f(3, 0, 3, 5, 0, 0, 10, 0) == 1.0       # A-endpoint 1 on B interior (d1)
+    assert f(3, 5, 3, 0, 0, 0, 10, 0) == 1.0       # A-endpoint 2 on B interior (d2)
+    assert f(0, 0, 10, 0, 3, 0, 3, 5) == 1.0       # B-endpoint 1 on A interior (d3)
+    assert f(0, 0, 10, 0, 3, 5, 3, 0) == 1.0       # B-endpoint 2 on A interior (d4)
+
+
+def test_segments_intersect_matches_sympy_over_random():
+    geom = pytest.importorskip("sympy.geometry")
+    rng = random.Random(97)
+    checked = 0
+    for _ in range(400):
+        p = [rng.randint(-6, 6) for _ in range(8)]
+        if (p[0], p[1]) == (p[2], p[3]) or (p[4], p[5]) == (p[6], p[7]):
+            continue                                    # skip degenerate (sympy needs real segments)
+        got = algo.run_algo("segments_intersect", [float(v) for v in p])
+        ref = 1.0 if geom.Segment(geom.Point(p[0], p[1]), geom.Point(p[2], p[3])).intersection(
+            geom.Segment(geom.Point(p[4], p[5]), geom.Point(p[6], p[7]))) else 0.0
+        assert got == ref, p
+        checked += 1
+    assert checked > 200
+
+
+def test_segments_intersect_fail_soft():
+    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 4]) == 0.0        # < 8 values
+    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 200000, 0]) == 0.0  # coord range
+    assert algo.run_algo("segments_intersect", [0, 0, 4, 4, 0, 4, 4, 0.5]) == 0.0   # non-integer
+
+
 @pytest.mark.parametrize("name", _GEOMETRY)
 def test_geometry_reference_does_not_mutate_input(name):
     inputs = {"polygon_area2": [4.0, 0, 0, 4, 0, 4, 4, 0, 4],
               "point_in_polygon": [3.0, 3.0, 4.0, 0, 0, 6, 0, 6, 6, 0, 6],
-              "convex_hull": [5.0, 0, 0, 4, 0, 4, 4, 0, 4, 2, 2]}
+              "convex_hull": [5.0, 0, 0, 4, 0, 4, 4, 0, 4, 2, 2],
+              "segments_intersect": [0.0, 0, 4, 4, 0, 4, 4, 0]}
     arg = [float(x) for x in inputs[name]]
     before = list(arg)
     algo.run_algo(name, arg)
