@@ -899,6 +899,43 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             rr2 = rng2.choice([2, 5, 40, 10 ** 6])           # integer domain; sums stay << 2^52 (all valid)
             cases.append([float(rng2.randint(-rr2, rr2)) for _ in range(m)])
         return cases
+    if name == "longest_palindrome":
+        rng2 = random.Random(seed + 1818)
+        cases = [
+            [], [7.0],                                       # empty -> 0 / single -> 1
+            [1.0, 2.0, 1.0],                                 # odd palindrome -> 3
+            [1.0, 2.0, 2.0, 1.0],                            # even palindrome -> 4
+            [1.0, 2.0, 3.0, 4.0],                            # no repeat -> 1
+            [1.0, 2.0, 3.0, 2.0, 1.0],                       # full odd palindrome -> 5
+            [3.0, 1.0, 2.0, 2.0, 1.0, 4.0],                  # even [1,2,2,1] in the middle -> 4
+            [5.0, 5.0, 5.0],                                 # all equal odd -> 3
+            [5.0, 5.0],                                      # all equal even -> 2
+            [1.0, 2.0, 1.0, 2.0, 1.0],                       # -> 5
+            [2.0, 1.0, 2.0, 1.0],                            # best odd [2,1,2] or [1,2,1] -> 3
+            [0.0, -0.0, 0.0],                                # -0.0 == 0.0 -> palindrome length 3
+            [float("inf"), 1.0, float("inf")],               # infinities compare fine -> 3
+            [-2.5, 3.5, -2.5],                               # floats -> 3
+            [1.0, 2.0, 3.0, 3.0, 2.0, 1.0],                  # even full palindrome -> 6
+            # even beats odd, and offset, as a SOLE reason (odd-only impl would return 1 here):
+            [7.0, 1.0, 1.0, 7.0, 9.0],                       # even [7,1,1,7] length 4 (max odd = 1)
+            [9.0, 7.0, 1.0, 1.0, 7.0],                       # even [7,1,1,7] length 4, offset
+            [4.0, 2.0, 3.0, 2.0, 4.0, 4.0],                  # odd [4,2,3,2,4]=5 vs even [4,4]=2 -> 5
+            # NaN -> -1.0 fail-soft (first / middle / last):
+            [float("nan"), 1.0, 1.0], [1.0, float("nan"), 1.0], [1.0, 1.0, float("nan")],
+        ]
+        for _ in range(30):
+            m = rng2.randint(0, 40)
+            rr2 = rng2.choice([2, 3, 8, 10 ** 9])            # small ranges -> repeats -> real palindromes
+            cases.append([float(rng2.randint(-rr2, rr2)) for _ in range(m)])
+        for _ in range(10):
+            m = rng2.randint(0, 25)
+            cases.append([rng2.uniform(-20.0, 20.0) for _ in range(m)])
+        for _ in range(8):                                   # engineered palindromes exercise mirror reuse
+            m = rng2.randint(1, 12)
+            half = [float(rng2.randint(0, 4)) for _ in range(m)]
+            cases.append(half + half[::-1])                  # even palindrome (length 2m)
+            cases.append(half + [float(rng2.randint(0, 4))] + half[::-1])   # odd palindrome (length 2m+1)
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
