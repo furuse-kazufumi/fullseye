@@ -663,6 +663,12 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             [3.0, 11.0], [10.0, 17.0], [123456.0, 1000000007.0],               # coprime -> inverse
             [6.0, 9.0], [4.0, 8.0], [10.0, 15.0],                              # gcd != 1 -> -1.0
             [0.0, 5.0], [7.0, 1.0], [1.0, 7.0], [2.0, 4.0],                    # edges (a=0, m=1)
+            # 2^53-domain-edge cases: exercise the wide-integer Bezout arithmetic (|q*s| ~ 2m ~ 2^54)
+            # so a long-long->int width narrowing of the C mirror is FALSIFIED by the gate, matching the
+            # pow_mod / gcd_seq discipline (review 2026-08-17):
+            [2.0, 9007199254740991.0],                                        # a=2, m=2^53-1 (coprime) -> inverse
+            [9007199254740891.0, 9007199254740992.0],                         # large coprime near 2^53
+            [4503599627370496.0, 9007199254740992.0],                         # both even (gcd 2^52) -> -1.0
             [3.0], [3.0, 0.0], [2.5, 7.0], [3.0, 1e16], [-1.0, 7.0],           # out-of-domain -> -1.0
         ]
         for _ in range(40):

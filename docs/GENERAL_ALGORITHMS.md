@@ -441,4 +441,12 @@ mode_value の `+0.0` 正準化を落とす変異を holdout が falsify でき�
   floor mod と一致。oracle=builtin `pow(a,−1,m)`。
 - **honest gate 実測**: 両 op passed=True・python exact / C bit 一致 / c_verified。**is_prime を sympy と 8000 random + 2000
   exhaustive(561 Carmichael 含む)で mism 0 / modular_inverse を pow と 8000 で mism 0** を事前実測。全 algo op 30 が gate 化。
-  ruff clean・mypy 新規 0。敵対レビュー実行。
+  ruff clean・mypy 新規 0。
+
+### P10 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+2 レンズ敵対レビュー(実 compile/実行/変異検証)= **1 raw → 1 CONFIRMED**(MED・c-safety-gate)。**op 自体は正しく overflow-safe**
+(353 敵対ケースで検証)だが、**modular_inverse の holdout が宣言域 2^53 を駆動せず**(in-domain m が ~1e9 止まり)、C の
+`long long→int` 幅縮小変異(2^53 域を壊す)が gate を bit 一致で通過。姉妹 pow_mod(base=exp=2^53 をピン)/ gcd_seq(2^53 ガード端)/
+is_prime(near-2^32)は同種変異を捕捉するのに modular_inverse だけ未対応。**修正**=2^53 端ケース(`[2, 2^53−1]` coprime→inverse・
+large coprime near 2^53・`[2^52, 2^53]` both even→−1)を holdout に追加(Bezout 演算が |q·s|~2m~2^54 を駆動)。自己再現で確認=
+**`long long→int` 変異が difftest FAIL**・baseline は bit 一致 pass。oracle(pow)は既に対応済ゆえ holdout のみ追加。全スイート緑。
