@@ -57,6 +57,27 @@ MoveIt2/ros2_control は **URDF の位置/トルク関節+標準グリッパ**�
 この「関節計画 → 筋活性実現」= **QP / static optimization / WBC**(あなたが既に持つ `reference_wbc_qp_control` の QP+osqp)こそ、
 OSS/ROS2 では埋まらない evis 固有部品。視覚(6D pose)→ MoveIt2(軌道)→ **筋実現(QP)** の最後の一段が本当のギャップ。
 
+## 可視化層(RViz2 指摘を反映 — Studio の忠実性参照)
+
+これまでの表はアルゴリズム(PCL/OpenCV/grid_map/MoveIt2)偏重で、**「見て確かめる」層**が抜けていた。
+HDevelop は 2D 画像/BLOB の表示に強いが、Physical AI の視覚は **3D 表示**(点群・depth・6D pose 軸・TF 木・
+grasp マーカー・elevation map)が必須。ここの ROS2 標準が **RViz2**。Fullseye Studio(HDevelop 風 IDE)が
+把握・試験・実用に使えるための **可視化の忠実性/機能参照**であり、アルゴリズムではないので再実装対象ではなく
+**Studio 露出(F6)の要件地図**として使う。
+
+| 対象 | 何を見る | ROS2/OSS 標準(実使用) | fullseye での扱い |
+|---|---|---|---|
+| 点群 | PointCloud2 の色/強度/法線 | **RViz2** PointCloud2 display / Open3D viewer | Studio の 3D viewer 要件参照(F6)。再実装せず既存 viewer 連携 or 薄い描画 |
+| depth/画像 | depth colormap, camera image | RViz2 Image/DepthCloud、`image_view` | Studio の 2D パネル(HDevelop 相当)を 3D と併置 |
+| 6D pose/grasp | pose 軸・grasp 姿勢マーカー | RViz2 Pose/PoseArray/**InteractiveMarker**、`moveit_visual_tools` | ppf/grasp op の出力を Studio で軸表示(evis デバッグ核心) |
+| 座標系 | TF 木・リンク相対姿勢 | RViz2 TF display | camera↔hand↔object の姿勢連鎖確認 |
+| 地形 | elevation/traversability layer | RViz2 + **grid_map_rviz_plugin** | terrain op(hillco 歩行)の foothold 可視化 |
+
+★含意: **Studio = HDevelop(2D 画像処理 IDE)+ RViz2(3D 知覚可視化)の融合**が正しい姿。evis の視覚デバッグ
+(6D pose が合っているか/点群セグメントが妥当か/foothold が地形に載っているか)は 3D 可視化なしに honest に
+判定できない。統一 I/F の各 op は **メタ(F3)に「Studio でどう描くか」(2D image / point cloud / pose / grid_map layer)**
+を持たせ、Studio が RViz2 相当の描画を自動選択できる構造にする。
+
 ## Fullseye の目的(2026-08-17 ユーザー確認 — この分析の前提)
 
 Fullseye = **あらゆる画像処理/視覚アルゴリズムを「スキル」として保持し即使える包括的ライブラリ**(専用 HALCON)。
