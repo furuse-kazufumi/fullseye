@@ -87,12 +87,16 @@ Fullseye = **あらゆる画像処理/視覚アルゴリズムを「スキル」
 
 ## 含意(推奨・要ユーザー承認)
 
-- **知覚プリミティブ・マニピュレーション計画の新規手実装は止める**(PCL/grid_map/OpenCV/MoveIt2/GPD の再発明)。
-  これらは **OSS/ROS2 を使う**(必要なら薄い wrapper)。
-- **evis 固有の本命 = 上の genuine gap のみに投資**、中でも **#1 筋駆動ブリッジ**(視覚→計画までは OSS、
-  最後の「筋で実現」だけが evis 固有で OSS に無い)。次に **#2 sim 視覚 bridge** と **#3 honest 評価**。
-- つまり「evis の視覚部品」の正体は、**新しい CV アルゴリズムではなく、OSS の知覚/計画を evis の筋身体に
-  つなぐ統合層+正直な評価**。ここから先の実装はこの線に絞る。
+fullseye の目的(包括的・即使用・スキル化・Studio 実用)に沿うと、2 つの線を並行:
+
+- **(A) ライブラリ網羅を進める** = PCL/grid_map/image_pipeline/OpenCV の機能セットを**カバレッジ地図**として使い、
+  fullseye の知覚 op の抜けを honest gate 付きで補完し **Studio に露出**(把握・試験・仕事で使える形に)。
+  自己完結 numpy を基本、重量級(GPU SGM/deep pose)のみ薄い wrapper。**HALCON_COVERAGE.md の 13.3% を伸ばす**のと同線。
+- **(B) evis 固有の genuine gap**(OSS に無い所)= 上の優先順で、特に **#1 筋駆動ブリッジ**(視覚→MoveIt2/GPD 計画は
+  OSS 参照、最後の「700 筋で実現」だけが evis 固有)、**#2 MuJoCo sim 視覚 bridge**、**#3 honest 評価**。
+
+要確認: 今夜の自律作業を **(A) 知覚 op の網羅+Studio 露出** に充てるか、**(B) evis 筋駆動ブリッジ/sim 視覚** に充てるか。
+汎用 CS(algo-c)には戻さない。
 
 ## Sources(ROS2 実地調査)
 
