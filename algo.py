@@ -47,7 +47,8 @@ k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
 (xor reduce, population count), P12 extended Euclidean algorithm (Bezout
 coefficients; variable-length seq -> 3-value seq), P13 computational geometry 2
 (closest pair of points by divide & conquer; min squared distance), P14 data
-compression 2 (Huffman optimal-prefix-code cost; tie-invariant, exact integer).
+compression 2 (Huffman optimal-prefix-code cost; tie-invariant, exact integer),
+P15 longest increasing subsequence length (patience sorting; comparison-based).
 """
 from __future__ import annotations
 
@@ -2493,6 +2494,68 @@ double huffman_cost(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P15 — longest strictly-increasing subsequence length (patience sorting, KIND_REDUCE).
+# Input is a sequence of arbitrary NaN-free doubles; output is the LIS length (an exact small
+# integer). Comparison-based (no arithmetic on the values), so the length is order-defined and
+# C == Python bit-for-bit. Patience sorting: tails[k] holds the smallest possible tail of an
+# increasing subsequence of length k+1; each element does a binary search (bisect_left, strict
+# '<') and replaces the first tail >= it (or extends). O(n log n). Fail-soft -1.0 if any value is
+# NaN (comparisons are ill-defined); empty -> 0.0. See docs/GENERAL_ALGORITHMS.md P15.
+# --------------------------------------------------------------------------- #
+_PY_LIS_LENGTH = '''\
+def run(a):
+    """Length of the longest STRICTLY increasing subsequence of a (arbitrary NaN-free doubles),
+    by patience sorting. Returns the length as a float (exact small integer); empty -> 0.0;
+    -1.0 fail-soft if any value is NaN. Comparison-based (bisect_left, strict '<'), so the
+    length is well-defined and C == Python bit-for-bit."""
+    for x in a:
+        if x != x:                                   # NaN -> comparisons ill-defined
+            return -1.0
+    tails = []                                       # tails[k] = smallest tail of an incr. subseq of length k+1
+    for x in a:
+        lo = 0
+        hi = len(tails)
+        while lo < hi:                               # bisect_left: first tails[mid] >= x
+            mid = (lo + hi) // 2
+            if tails[mid] < x:
+                lo = mid + 1
+            else:
+                hi = mid
+        if lo == len(tails):
+            tails.append(x)
+        else:
+            tails[lo] = x
+    return float(len(tails))
+'''
+
+_C_LIS_LENGTH = '''\
+/* Length of the longest STRICTLY increasing subsequence of a[0..n-1] (arbitrary NaN-free doubles),
+ * by patience sorting. Returns the length (exact small integer); empty -> 0.0; -1.0 fail-soft on a
+ * NaN value. Comparison-based, so C == Python bit-for-bit. KIND_REDUCE. */
+double lis_length(const double* a, int n) {
+    for (int k = 0; k < n; k++) {
+        if (a[k] != a[k]) return -1.0;               /* NaN */
+    }
+    double* tails = (double*)malloc((size_t)(n > 0 ? n : 1) * sizeof(double));
+    if (!tails) return -1.0;                          /* fail-soft on OOM */
+    int len = 0;
+    for (int k = 0; k < n; k++) {
+        double x = a[k];
+        int lo = 0, hi = len;
+        while (lo < hi) {                            /* bisect_left: first tails[mid] >= x */
+            int mid = lo + (hi - lo) / 2;
+            if (tails[mid] < x) lo = mid + 1; else hi = mid;
+        }
+        tails[lo] = x;                                /* replace, or extend when lo == len */
+        if (lo == len) len++;
+    }
+    free(tails);
+    return (double)len;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2656,6 +2719,12 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "cost is tie-invariant (exact integer). 0/1 symbols -> 0.0; -1.0 fail-soft "
            "for a bad frequency or a total exceeding 2^53.",
            "Huffman greedy optimal prefix code; two-queue method; tie-invariant cost"),
+    AlgoOp("lis_length", "search", SEQ, SCALAR, KIND_REDUCE, "lis_length",
+           _PY_LIS_LENGTH, _C_LIS_LENGTH,
+           "Length of the longest strictly increasing subsequence of a sequence of "
+           "arbitrary (NaN-free) doubles, by patience sorting (exact integer); "
+           "empty -> 0.0; -1.0 fail-soft on a NaN value.",
+           "patience sorting for the longest increasing subsequence length; binary search on tails"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

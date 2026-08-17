@@ -565,3 +565,23 @@ y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**:
 - **回帰**: `tests/test_algo.py` に P14 群(既知値・heapq 一致 random×5000・fail-soft/overflow・category grouping[compress=P5+P14]・
   difftest python exact・C bit 一致)。全スイート **4841 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
   敵対レビューは background 実行(結果は follow-up で反映)。
+
+## P15 完遂記録 — 最長増加部分列の長さ(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**探索/選択を 1 op 拡張(P8 binary_search/kth_smallest に続く search 第2弾・DP/patience sorting の新アルゴリズム族)**:
+`lis_length`(KIND_REDUCE)= 任意の NaN-free double 列の**最長狭義増加部分列(LIS)の長さ**を **patience sorting** で求める。
+比較のみ(値に算術を施さない)ゆえ長さは配列固有で一意=**C==Python bit 一致**。tails[k] に長さ k+1 の増加部分列の最小末尾を持ち、
+各要素で `tails[mid] < x`(bisect_left・**狭義**)位置を置換 or 末尾拡張(O(n log n))。空→0.0、NaN 混在→-1.0 fail-soft(`x != x` で検出)。
+- **honest gate 実測(passed=True・c_verified=true・ziglang cc)**: python==**独立 O(n²) DP oracle**(`dp[i]=1+max(dp[j]|j<i,a[j]<a[i])`
+  =patience sorting と別コード経路)**diff 0.0(exact)** / codegen **C==Python bit 一致 diff 0.0**。事前実測=**40k ランダム(整数+float・
+  小レンジで tie を大量発生=狭義比較を駆動)で DP と mism 0**。
+- **★ゲート mutation test(自己検証)**: 狭義 `<`→`<=`(非減少=別答)/ NaN ガード削除 / 二分探索方向反転 の 3 変異を**全て捕捉**
+  (passed=False)。全同一 `[2,2,2,2]`→1 と重複交互ケースが狭義比較を単独駆動、NaN holdout がガードを駆動。
+- **holdout**: 既知(`[3,1,2,4]`→3・`[5,4,3,2,1]`→1・全増加→n・空→0・単一→1)+ **全同一→1(狭義で重複非伸長)** + 重複交互 + 
+  -0.0/+0.0 等値 + ±inf + float の tie + NaN を**先頭/中央/末尾**で fail-soft + ランダム(整数 tie 多め + float)。
+- **C 安全**: tails バッファ malloc(n)・書込 tails[lo] は lo≤len<n で OOB なし・n=0 は malloc(1)+ループ非実行で 0.0・malloc 失敗は -1.0・
+  NaN ガードは全比較の前(NaN 安全)。
+- **work-graph op 波**: lis_length を `algo_difftest --op` ゲートノード化(`1 op=1 ノード`)→ `run-once` で無人 done。
+  = **全 algo op 36 が work-graph ゲート化**(35→36)。
+- **回帰**: `tests/test_algo.py` に P15 群(既知値・DP 一致 random×5000・NaN fail-soft[3 位置]・category grouping[search=P8+P15]・
+  difftest python exact・C bit 一致)。全スイート **4848 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
+  敵対レビューは background 実行(結果は follow-up で反映)。

@@ -66,10 +66,14 @@ _GEOMETRY2 = ["closest_pair"]
 # (tie-invariant exact integer), or -1.0 fail-soft. Independent oracle = a heapq min-heap Huffman merge.
 # Shares the "compress" category with P5 (rle_encode).
 _COMPRESS2 = ["huffman_cost"]
+# P15: longest strictly-increasing subsequence length by patience sorting. KIND_REDUCE: arbitrary
+# NaN-free doubles -> LIS length (exact integer), or -1.0 on a NaN. Independent oracle = O(n^2) DP.
+# Shares the "search" category with P8 (binary_search, kth_smallest).
+_SEARCH2 = ["lis_length"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2)
+            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -107,7 +111,7 @@ def test_categories_grouping():
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS) | set(_COMPRESS2)   # P5 + P14
     assert set(cats["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)   # P6/P7 + P13
-    assert set(cats["search"]) == set(_SEARCH)
+    assert set(cats["search"]) == set(_SEARCH) | set(_SEARCH2)   # P8 + P15
     assert set(cats["stat"]) == set(_STAT)
 
 
@@ -1294,7 +1298,7 @@ def test_geometry_c_is_bit_identical(name, tmp_path):
 def test_search_ops_registered_kinds():
     assert algo.ALGO_BY_NAME["binary_search"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["kth_smallest"].kind == algo.KIND_REDUCE
-    assert set(algo.algo_categories()["search"]) == set(_SEARCH)
+    assert set(algo.algo_categories()["search"]) == set(_SEARCH) | set(_SEARCH2)
     for name in _SEARCH:
         assert algo.ALGO_BY_NAME[name].tol == 0.0
 
@@ -1801,6 +1805,75 @@ def test_huffman_cost_difftest_python_half_is_exact(tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 def test_huffman_cost_c_is_bit_identical(tmp_path):
     res = algo_difftest.difftest("huffman_cost", tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P15 longest increasing subsequence length (lis_length; patience sorting, KIND_REDUCE).
+# --------------------------------------------------------------------------- #
+def _dp_lis_length(a):
+    """Independent O(n^2) DP LIS-length oracle (different code path from patience sorting)."""
+    if any(math.isnan(v) for v in a):
+        return -1.0
+    if not a:
+        return 0.0
+    dp = [1] * len(a)
+    for i in range(len(a)):
+        for j in range(i):
+            if a[j] < a[i] and dp[j] + 1 > dp[i]:
+                dp[i] = dp[j] + 1
+    return float(max(dp))
+
+
+def test_lis_length_registered_kind():
+    op = algo.ALGO_BY_NAME["lis_length"]
+    assert op.kind == algo.KIND_REDUCE
+    assert op.out_sort == algo.SCALAR
+    assert op.category == "search"
+    assert op.tol == 0.0
+
+
+def test_lis_length_known_values():
+    assert algo.run_algo("lis_length", [3, 1, 2, 4]) == 3.0        # 1,2,4
+    assert algo.run_algo("lis_length", [5, 4, 3, 2, 1]) == 1.0     # strictly decreasing
+    assert algo.run_algo("lis_length", [1, 2, 3, 4, 5]) == 5.0
+    assert algo.run_algo("lis_length", []) == 0.0
+    assert algo.run_algo("lis_length", [7]) == 1.0
+    assert algo.run_algo("lis_length", [2, 2, 2, 2]) == 1.0        # strict: duplicates don't extend
+    assert algo.run_algo("lis_length", [1, 3, 2, 3, 4]) == 4.0
+    assert algo.run_algo("lis_length", [0.0, -0.0, 1.0]) == 2.0    # -0.0 == 0.0 (not strictly increasing)
+
+
+def test_lis_length_matches_dp_oracle_random():
+    """Patience sorting == O(n^2) DP over integer and float sequences (with ties)."""
+    rng = random.Random(1515)
+    for _ in range(4000):
+        n = rng.randint(0, 40)
+        rr = rng.choice([3, 8, 50, 10 ** 9])
+        a = [float(rng.randint(-rr, rr)) for _ in range(n)]
+        assert algo.run_algo("lis_length", a) == _dp_lis_length(a)
+    for _ in range(1000):
+        n = rng.randint(0, 30)
+        a = [rng.uniform(-100.0, 100.0) for _ in range(n)]
+        assert algo.run_algo("lis_length", a) == _dp_lis_length(a)
+
+
+def test_lis_length_nan_fail_soft():
+    assert algo.run_algo("lis_length", [float("nan"), 1, 2]) == -1.0
+    assert algo.run_algo("lis_length", [1, float("nan"), 2]) == -1.0
+    assert algo.run_algo("lis_length", [1, 2, float("nan")]) == -1.0
+
+
+def test_lis_length_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("lis_length", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_lis_length_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("lis_length", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True
 

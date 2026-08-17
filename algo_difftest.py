@@ -777,6 +777,30 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             rr2 = rng2.choice([1, 3, 10, 1000, 2 ** 40])
             cases.append([float(rng2.randint(0, rr2)) for _ in range(m)])
         return cases
+    if name == "lis_length":
+        rng2 = random.Random(seed + 1515)
+        cases = [
+            [], [7.0],                                       # empty -> 0 / single -> 1
+            [3.0, 1.0, 2.0, 4.0],                            # -> 3
+            [5.0, 4.0, 3.0, 2.0, 1.0],                       # strictly decreasing -> 1
+            [1.0, 2.0, 3.0, 4.0, 5.0],                       # strictly increasing -> n
+            [2.0, 2.0, 2.0, 2.0],                            # all equal -> 1 (strict: dups do NOT extend)
+            [1.0, 3.0, 2.0, 3.0, 4.0],                       # -> 4
+            [1.0, 1.0, 2.0, 2.0, 3.0],                       # dups interleaved (strict) -> 3
+            [0.0, -0.0, 1.0],                                # -0.0 == 0.0 (not strictly increasing) -> 2
+            [float("inf"), float("-inf"), 0.0, 1.0],         # infinities compare fine -> 3
+            [-5.5, -2.25, -2.25, 0.5, 10.75],                # floats with a tie -> 4
+            # NaN -> -1.0 fail-soft (drive NaN in the first / middle / last position):
+            [float("nan"), 1.0, 2.0], [1.0, float("nan"), 2.0], [1.0, 2.0, float("nan")],
+        ]
+        for _ in range(30):
+            m = rng2.randint(0, 40)
+            rr2 = rng2.choice([3, 8, 50, 10 ** 9])           # small ranges -> ties (exercise strict '<')
+            cases.append([float(rng2.randint(-rr2, rr2)) for _ in range(m)])
+        for _ in range(10):
+            m = rng2.randint(0, 25)
+            cases.append([rng2.uniform(-100.0, 100.0) for _ in range(m)])
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
@@ -1183,6 +1207,24 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                         break
                     heapq.heappush(heap, s)
                 ref = -1.0 if over else float(total)
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "lis_length":
+        # independent oracle: the O(n^2) DP (dp[i] = 1 + max over j<i with a[j] < a[i]) — a different
+        # code path from the op's O(n log n) patience sorting. Domain-aware: a NaN value -> the op's -1.0.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if any(math.isnan(v) for v in arr):              # NaN
+                ref = -1.0
+            elif not arr:
+                ref = 0.0
+            else:
+                dp = [1] * len(arr)
+                for ii in range(len(arr)):
+                    for jj in range(ii):
+                        if arr[jj] < arr[ii] and dp[jj] + 1 > dp[ii]:
+                            dp[ii] = dp[jj] + 1
+                ref = float(max(dp))
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
