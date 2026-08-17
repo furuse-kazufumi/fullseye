@@ -683,6 +683,17 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         # 第 7 バッチ
         ("hx_move_region", "move_region", REGION, REGION, _move_region),
         ("hx_split_skeleton_region", "split_skeleton_region", REGION, REGION, _split_skeleton_region),
+        # 第 8 バッチ(XLD contour)
+        ("hx_sort_contours", "sort_contours_xld", CONTOUR, CONTOUR, _sort_contours_xld),
+        ("hx_clip_contours", "clip_contours_xld", CONTOUR, CONTOUR, _clip_contours_xld),
+        ("hx_clip_end_points", "clip_end_points_contours_xld", CONTOUR, CONTOUR, _clip_end_points_contours_xld),
+        ("hx_smallest_circle_xld", "smallest_circle_xld", CONTOUR, FEATURE, _smallest_circle_xld),
+        ("hx_smallest_rect1_xld", "smallest_rectangle1_xld", CONTOUR, FEATURE, _smallest_rectangle1_xld),
+        ("hx_test_closed_xld", "test_closed_xld", CONTOUR, FEATURE, _test_closed_xld),
+        ("hx_regress_contours", "regress_contours_xld", CONTOUR, FEATURE, _regress_contours_xld),
+        ("hx_moments_any_xld", "moments_any_xld", CONTOUR, FEATURE, _moments_any_xld),
+        ("hx_split_contours", "split_contours_xld", CONTOUR, CONTOUR, _split_contours_xld),
+        ("hx_gen_parallel_contour", "gen_parallel_contour_xld", CONTOUR, CONTOUR, _gen_parallel_contour_xld),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
