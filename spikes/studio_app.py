@@ -49,6 +49,31 @@ def synthetic_scene(h: int = 96, w: int = 128) -> np.ndarray:
     return img
 
 
+def box_surface(nx: int = 8, half=(0.15, 0.1, 0.12)) -> np.ndarray:
+    """箱の 6 面に点を撒いた表面点群(PPF 6-DoF pose のモデル/シーン用)。"""
+    u = np.linspace(-1, 1, nx)
+    a, b = np.meshgrid(u, u)
+    a, b, o = a.ravel(), b.ravel(), np.ones(nx * nx)
+    hx, hy, hz = half
+    faces = [
+        np.column_stack([a * hx, b * hy, o * hz]), np.column_stack([a * hx, b * hy, -o * hz]),
+        np.column_stack([a * hx, o * hy, b * hz]), np.column_stack([a * hx, -o * hy, b * hz]),
+        np.column_stack([o * hx, a * hy, b * hz]), np.column_stack([-o * hx, a * hy, b * hz]),
+    ]
+    return np.unique(np.vstack(faces), axis=0)
+
+
+def stereo_pair(h: int = 64, w: int = 96, bg_disp: int = 3, fg_disp: int = 9):
+    """既知視差の合成ステレオ対(前景ブロックほど大きくずれる=近い)。texture 有りで SGM が効く。"""
+    rng = np.random.default_rng(1)
+    tex = rng.random((h, w + fg_disp + 4))
+    left = tex[:, fg_disp + 4:fg_disp + 4 + w].copy()
+    right = np.roll(tex, bg_disp, axis=1)[:, fg_disp + 4:fg_disp + 4 + w].copy()
+    fg = (slice(18, 46), slice(30, 66))                       # 近い前景ブロック
+    right[fg] = np.roll(tex, fg_disp, axis=1)[:, fg_disp + 4:fg_disp + 4 + w][fg]
+    return left, right
+
+
 # ── サンプル(name, domain, 実行可能コード)──────────────────────────────────── #
 # コードは名前空間(fig/np/fs/Image/sim/LidarPattern/SCENE/synthetic_scene)の下で exec され、
 # fig に subplot を足して描画する契約。編集して Run すれば結果が変わる。
