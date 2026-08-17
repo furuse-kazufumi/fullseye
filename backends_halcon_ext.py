@@ -733,11 +733,12 @@ def _test_self_intersection_xld(v, a, b):
         n = len(c)
         if n < 4:
             continue
+        closed = np.hypot(*(c[0] - c[-1])) < 1e-6         # 端点一致=閉曲線
         found = False
         for i in range(n - 1):
             for j in range(i + 2, n - 1):
-                if i == 0 and j == n - 2:
-                    continue                             # 端の隣接をスキップ
+                if closed and i == 0 and j == n - 2:
+                    continue                             # 閉曲線のみ端の隣接をスキップ
                 if _seg_intersect(c[i], c[i + 1], c[j], c[j + 1]):
                     found = True
                     break
