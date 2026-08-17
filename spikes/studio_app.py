@@ -113,9 +113,25 @@ ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(0, 1.2); ax.view_init(28, -6
 ax.set_title(f"sim LiDAR -> 床除去 -> 物体 {len(clusters)}", fontsize=9)
 '''
 
+_IMAGE_HWV = '''\
+# vision (hwv 風): 入力画像に検出領域を重ねて表示(HDevelop の "display object over image")
+# 画像上をマウスで hover するとステータスバーに画素座標と値が出ます(HWindow のピクセル検査)。
+img = synthetic_scene()
+edges = Image(img).gaussian(sigma).sobel().threshold(level).array
+ax = fig.add_subplot(111)
+ax.imshow(img, cmap="gray", vmin=0, vmax=1)
+overlay = np.zeros((*edges.shape, 4))
+overlay[edges > 0] = (1.0, 0.25, 0.1, 0.9)     # 検出エッジ領域を赤で重畳
+ax.imshow(overlay)
+ax.set_title(f"入力 + 検出領域(sigma={sigma:.2f}, level={level:.2f}) — hover で画素値", fontsize=9)
+ax.axis("off")
+'''
+
 # 各サンプル: name, domain, code, params[(name, lo, hi, default, is_int)]
 SAMPLES = [
     {"name": "image.chain", "domain": "vision", "code": _IMAGE_CHAIN,
+     "params": [("sigma", 0.2, 4.0, 1.4, False), ("level", 0.05, 0.6, 0.25, False)]},
+    {"name": "image.hwv", "domain": "vision", "code": _IMAGE_HWV,
      "params": [("sigma", 0.2, 4.0, 1.4, False), ("level", 0.05, 0.6, 0.25, False)]},
     {"name": "cloud.perceive", "domain": "vision", "code": _CLOUD_PERCEIVE,
      "params": [("cluster_tol", 0.05, 0.3, 0.1, False)]},
