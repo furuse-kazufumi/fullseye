@@ -2754,8 +2754,8 @@ def run(a):
         d2[i] = k
         if 2 * k > best:
             best = 2 * k
-        if i + k - 1 > r:
-            l, r = i - k - 1, i + k - 1
+        if i + k - 1 > r:                                # even palindrome spans [i - k, i + k - 1]
+            l, r = i - k, i + k - 1
     return float(best)
 '''
 
