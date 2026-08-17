@@ -133,7 +133,7 @@ class _ParamSlider(QtWidgets.QWidget):
         super().__init__()
         self.name, self.lo, self.hi, default, self.is_int = spec
         self._on_change = on_change
-        self.slider = QtWidgets.QSlider(0x1)  # Qt.Horizontal
+        self.slider = QtWidgets.QSlider(QtCore.Qt.Orientation.Horizontal)
         self.slider.setRange(0, 1000)
         self.slider.setValue(self._to_slider(default))
         self.label = QtWidgets.QLabel()
