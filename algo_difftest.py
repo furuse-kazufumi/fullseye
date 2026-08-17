@@ -753,6 +753,30 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
                 arr.append(float(rng2.randint(-rr, rr)))
             cases.append(arr)
         return cases
+    if name == "huffman_cost":
+        rng2 = random.Random(seed + 1414)
+        cases = [
+            [], [5.0],                                   # 0 / 1 symbol -> 0.0
+            [1.0, 1.0, 1.0, 1.0],                        # -> 8
+            [1.0, 2.0, 3.0],                             # -> 9
+            [3.0, 3.0],                                  # -> 6
+            [0.0, 0.0, 0.0, 5.0],                        # zero frequencies mixed
+            [5.0, 5.0, 5.0, 5.0, 5.0],                   # all equal (odd count)
+            [1.0, 1.0, 2.0, 3.0, 5.0, 8.0, 13.0],        # skewed weights
+            [1099511627776.0, 1.0],                      # 2^40 domain edge
+            [1099511627776.0] * 1024,                    # running total > 2^53 -> -1 (sum 2^50 < 2^53,
+                                                         #   cost ~ 2^53.3): drives the merge-total bail
+            # out-of-domain -> -1.0 fail-soft (each a sole reason):
+            [1.5, 2.0],                                  # non-integer
+            [-1.0, 2.0],                                 # negative
+            [1099511627777.0, 1.0],                      # > 2^40
+            [float("nan"), 2.0],                         # NaN
+        ]
+        for _ in range(30):
+            m = rng2.randint(0, 30)
+            rr2 = rng2.choice([1, 3, 10, 1000, 2 ** 40])
+            cases.append([float(rng2.randint(0, rr2)) for _ in range(m)])
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
@@ -1129,6 +1153,36 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 ref = float(best)
             else:
                 ref = -1.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "huffman_cost":
+        # independent oracle: a binary MIN-HEAP (heapq) Huffman merge — a different code path from the
+        # op's two-queue method, but the optimal cost is tie-invariant so they agree exactly. Domain-aware:
+        # a bad frequency / a total exceeding 2^53 -> the op's -1.0; 0 or 1 symbols -> 0.0.
+        import heapq
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            m = len(arr)
+            if m == 0:
+                ref = 0.0
+            elif (not all(_int_in(v, 0.0, 1099511627776.0) for v in arr)
+                  or sum(int(v) for v in arr) > 9007199254740992):   # short-circuits before int() on bad v
+                ref = -1.0
+            elif m == 1:
+                ref = 0.0
+            else:
+                heap = [int(v) for v in arr]
+                heapq.heapify(heap)
+                total = 0
+                over = False
+                while len(heap) > 1:
+                    s = heapq.heappop(heap) + heapq.heappop(heap)
+                    total += s
+                    if total > 9007199254740992:
+                        over = True
+                        break
+                    heapq.heappush(heap, s)
+                ref = -1.0 if over else float(total)
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]

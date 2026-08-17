@@ -62,10 +62,14 @@ _EXTGCD = ["extended_gcd"]
 # distance (exact integer, coords in [-1e5, 1e5]), or -1.0 fail-soft. Independent oracle = brute-force
 # O(n^2). Shares the "geometry" category with P6 + P7.
 _GEOMETRY2 = ["closest_pair"]
+# P14: Huffman optimal-prefix-code cost. KIND_REDUCE: [f0,f1,...] -> min total weighted code length
+# (tie-invariant exact integer), or -1.0 fail-soft. Independent oracle = a heapq min-heap Huffman merge.
+# Shares the "compress" category with P5 (rle_encode).
+_COMPRESS2 = ["huffman_cost"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2)
+            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -101,7 +105,7 @@ def test_categories_grouping():
     assert set(cats["graph"]) == set(_GRAPH)
     assert set(cats["numtheory"]) == set(_NUMTHEORY) | set(_NUMTHEORY2) | set(_EXTGCD)  # P5 + P10 + P12
     assert set(cats["hash"]) == set(_HASH)
-    assert set(cats["compress"]) == set(_COMPRESS)
+    assert set(cats["compress"]) == set(_COMPRESS) | set(_COMPRESS2)   # P5 + P14
     assert set(cats["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)   # P6/P7 + P13
     assert set(cats["search"]) == set(_SEARCH)
     assert set(cats["stat"]) == set(_STAT)
@@ -1721,6 +1725,82 @@ def test_closest_pair_difftest_python_half_is_exact(tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 def test_closest_pair_c_is_bit_identical(tmp_path):
     res = algo_difftest.difftest("closest_pair", tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P14 Huffman optimal-prefix-code cost (huffman_cost; two-queue, tie-invariant, KIND_REDUCE).
+# --------------------------------------------------------------------------- #
+def _heap_huffman_cost(freqs):
+    """Independent heapq (min-heap) Huffman cost oracle (different code path from two-queue)."""
+    import heapq
+    if len(freqs) == 0:
+        return 0.0
+    if not all(0 <= v <= 1099511627776 and v == int(v) for v in freqs):
+        return -1.0
+    if sum(int(v) for v in freqs) > 9007199254740992:
+        return -1.0
+    if len(freqs) == 1:
+        return 0.0
+    heap = [int(v) for v in freqs]
+    heapq.heapify(heap)
+    total = 0
+    while len(heap) > 1:
+        s = heapq.heappop(heap) + heapq.heappop(heap)
+        total += s
+        if total > 9007199254740992:
+            return -1.0
+        heapq.heappush(heap, s)
+    return float(total)
+
+
+def test_huffman_cost_registered_kind():
+    op = algo.ALGO_BY_NAME["huffman_cost"]
+    assert op.kind == algo.KIND_REDUCE
+    assert op.out_sort == algo.SCALAR
+    assert op.category == "compress"
+    assert op.tol == 0.0
+
+
+def test_huffman_cost_known_values():
+    assert algo.run_algo("huffman_cost", [1, 1, 1, 1]) == 8.0     # 4 equal -> 2 bits each
+    assert algo.run_algo("huffman_cost", [1, 2, 3]) == 9.0
+    assert algo.run_algo("huffman_cost", [3, 3]) == 6.0
+    assert algo.run_algo("huffman_cost", []) == 0.0              # no symbols
+    assert algo.run_algo("huffman_cost", [5]) == 0.0            # single symbol -> 0 cost
+    assert algo.run_algo("huffman_cost", [0, 0, 0, 5]) == 5.0   # zero frequencies
+
+
+def test_huffman_cost_matches_heapq_oracle_random():
+    """Two-queue Huffman == heapq Huffman (the optimal cost is tie-invariant), incl. many equal freqs."""
+    rng = random.Random(1414)
+    for _ in range(5000):
+        n = rng.randint(0, 40)
+        rr = rng.choice([1, 3, 10, 1000, 2 ** 40])
+        freqs = [float(rng.randint(0, rr)) for _ in range(n)]
+        assert algo.run_algo("huffman_cost", freqs) == _heap_huffman_cost(freqs)
+
+
+def test_huffman_cost_fail_soft_and_overflow():
+    assert algo.run_algo("huffman_cost", [1.5, 2]) == -1.0                    # non-integer
+    assert algo.run_algo("huffman_cost", [-1, 2]) == -1.0                     # negative
+    assert algo.run_algo("huffman_cost", [1099511627777.0, 1]) == -1.0        # > 2^40
+    assert algo.run_algo("huffman_cost", [float("nan"), 2]) == -1.0           # NaN
+    assert algo.run_algo("huffman_cost", [1099511627776.0, 1]) == 1099511627777.0   # 2^40 edge, valid
+    # running total exceeds 2^53 (not exactly representable) -> -1.0 fail-soft:
+    assert algo.run_algo("huffman_cost", [1099511627776.0] * 1024) == -1.0
+
+
+def test_huffman_cost_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("huffman_cost", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_huffman_cost_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("huffman_cost", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True
 

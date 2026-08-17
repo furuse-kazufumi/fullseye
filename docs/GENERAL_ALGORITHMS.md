@@ -530,7 +530,8 @@ float64 に厳密表現できず `a·x+b·y==g` が破れる)であり、`b<=2^5
 
 ### P13 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
 3 レンズ敵対レビュー Workflow(correctness / c-safety+gate-honesty / integration、各 finding を検証エージェントが**実 compile/
-実行の mutation で再現**)= **3 レンズが同一根本原因に収束 → 1 CONFIRMED**(MED・gate-cannot-falsify)。**op 自体は正しい**(30k+16k
+実行の mutation で再現**)= **3 レンズが同一根本原因に収束 → 1 CONFIRMED**(severity=私の初期評価 MED / **検証エージェントは HIGH**
+=gate-honesty 失敗[gate が誤 op を green-light]を重く見た。honest 開示として両論併記・修正内容は同一)。**op 自体は正しい**(30k+16k
 敵対ケースで総当りと mism 0)が、**difftest holdout が strip の y-scan を immediate neighbor(j==i+1)より先へ駆動しない** →
 strip 前方走査を **j==i+1 のみに切り詰める regression を gate が falsify できない**(7 近傍定理は「高々 7」であって「1」ではないため、
 y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**: 走査を `range(i+1, min(i+2, sc))` に切り詰めた mutation を _PY/_C 両方に
@@ -540,3 +541,27 @@ y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**:
 再実測で **j==i+1-only mutation が CAUGHT(passed=False, pydiff=12)**・baseline は 61 cases で bit 一致 pass・他 5 mutation も回帰
 なし。既存の 6 mutation(strip 省略/sq y 無視/座標上下限/整数性/空 strip)に加え strip 走査深度も falsify 可能に(P12 の gate-coverage
 教訓を geometry の strip 走査へ拡張)。
+
+## P14 完遂記録 — Huffman 最適プレフィックス符号コスト(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**データ圧縮を 1 op 拡張(P5 rle_encode に続く compress 第2弾)**: `huffman_cost`(KIND_REDUCE)= 記号頻度 `[f0,f1,...]`
+(非負整数 ≤2^40)に対する**最適プレフィックス(Huffman)符号の最小総コスト**=全内部ノードの結合重みの和(=Σ freq×符号長)。
+**★核心=最適コストは tie 不変**(記号ごとの符号長は tie 破りで変わるが、総コストは頻度多重集合で一意)ゆえ C と Python が等重み要素を
+違う順で取り出しても**総和は同一=bit 一致が綺麗に成立**。整数を long long で運ぶ(域ガードで < 2^54 に束縛=overflow なし)。
+- **アルゴリズム=2 キュー法**(Huffman O(n log n)): 頻度を昇順ソートして q1[葉] に、q2[マージ節点]は非減少に生成 → q1/q2 の
+  各先頭から 2 最小を取り出しマージ和 s を total に加え q2 末尾へ(n−1 回)。C も 2 配列 + 2 先頭 index で同一実装(qsort 比較子 hc_cmp)。
+- **域と fail-soft**: 各頻度 0≤f≤2^40(整数)・else -1.0。**merge total が 2^53 を超えたら -1.0**(float64 に厳密表現不可)=**値critical な
+  exactness 分岐(falsify 可能)**。総頻度 total_freq を guard 中に累積し >2^53 で早期 -1.0 = long long safety(各 s≤total_freq≤2^53・
+  total≤2^54<2^63)。n=0/1 → 0.0。★**honest 開示**: 上流 total_freq guard は「頻度合計自体が long long を溢れさせる極端 n(>~4M 記号)」
+  への safety guard で、現実的 n では merge bail と同じ -1.0 を返す=値比較で単独 falsify しにくい(P5 の OOB ガード開示と同型)。exactness を
+  守る merge-total bail は holdout の `[2^40]×1024`(合計 2^50<2^53 で上流通過・コスト~2^53.3 で merge bail)が単独駆動=falsify 可能。
+- **honest gate 実測(passed=True・c_verified=true・ziglang cc）**: python==**独立 heapq(min-heap)版 Huffman コスト**(2 キューと別
+  コード経路)**diff 0.0(exact)** / codegen **C==Python bit 一致 diff 0.0**。事前実測=**50k ランダム(全同一頻度/0 頻度/2^40 域端で
+  tie を駆動)で heapq と mism 0**・**4k 微小ケースで全結合順の総当り最適(true optimum)と mism 0**(=greedy が最適を達成)・**20k で
+  逆 tie 順ヒープと mism 0**(=tie 不変を実証)。
+- **★ゲート mutation test(自己検証)**: 頻度上限削除 / 負ガード削除 / 整数性削除 / **merge-total bail 無効化**(`[2^40]×1024` が
+  falsify) / マージが x2 を落とす / n==1 が 1.0 を返す の 6 値分岐変異を**全て捕捉**(passed=False)。
+- **work-graph op 波**: huffman_cost を `algo_difftest --op` ゲートノード化(`1 op=1 ノード`)→ `run-once` で無人 done。
+  = **全 algo op 35 が work-graph ゲート化**(34→35)。
+- **回帰**: `tests/test_algo.py` に P14 群(既知値・heapq 一致 random×5000・fail-soft/overflow・category grouping[compress=P5+P14]・
+  difftest python exact・C bit 一致)。全スイート **4841 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
+  敵対レビューは background 実行(結果は follow-up で反映)。

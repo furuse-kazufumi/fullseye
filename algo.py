@@ -46,7 +46,8 @@ k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
 (deterministic Miller-Rabin primality, modular inverse), P11 bit manipulation
 (xor reduce, population count), P12 extended Euclidean algorithm (Bezout
 coefficients; variable-length seq -> 3-value seq), P13 computational geometry 2
-(closest pair of points by divide & conquer; min squared distance).
+(closest pair of points by divide & conquer; min squared distance), P14 data
+compression 2 (Huffman optimal-prefix-code cost; tie-invariant, exact integer).
 """
 from __future__ import annotations
 
@@ -2393,6 +2394,105 @@ double closest_pair(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P14 — Huffman coding cost (greedy + two-queue, KIND_REDUCE). Input is a list of symbol
+# frequencies [f0, f1, ...] (non-negative integers <= 2^40); output is the MINIMUM total
+# weighted code length of an optimal prefix code = the sum over all internal nodes of their
+# combined weight (equivalently sum of freq*depth). The optimal COST is INVARIANT to how ties
+# are broken (unlike the per-symbol code lengths), so C == Python bit-for-bit regardless of the
+# extract order. Two-queue O(n log n) method (Huffman): sort once, then merge the two smallest
+# fronts. Fail-soft -1.0 for a negative / non-integer / > 2^40 frequency, or if the running
+# total would exceed 2^53 (not exactly representable). 0 or 1 symbols -> 0.0. Integers are
+# carried in long long (bounded < 2^54 by the total-frequency guard, so no overflow).
+# See docs/GENERAL_ALGORITHMS.md P14.
+# --------------------------------------------------------------------------- #
+_PY_HUFFMAN_COST = '''\
+def run(a):
+    """Minimum total weighted code length of an optimal prefix (Huffman) code for symbol
+    frequencies a = [f0, f1, ...] (non-negative integers <= 2^40). Equals the sum over all
+    internal nodes of their combined weight (= sum of freq * code length). Returns a float
+    (exact integer < 2^53), or -1.0 fail-soft for a negative / non-integer / > 2^40 frequency
+    or if the total would exceed 2^53. 0 or 1 symbols -> 0.0. The optimal cost is INVARIANT to
+    tie-breaking, so C == Python bit-for-bit. Two-queue method (leaves + merged nodes)."""
+    n = len(a)
+    if n == 0:
+        return 0.0
+    total_freq = 0
+    for x in a:
+        if not (x >= 0.0 and x <= 1099511627776.0 and x == float(int(x))):        # 2^40
+            return -1.0
+        total_freq += int(x)
+        if total_freq > 9007199254740992:                                         # 2^53
+            return -1.0
+    if n == 1:
+        return 0.0
+    q1 = sorted(int(x) for x in a)          # leaves, ascending
+    q2 = []                                 # merged nodes, produced non-decreasing
+    i = 0                                   # front of q1
+    j = 0                                   # front of q2
+    total = 0
+    remaining = n
+    while remaining > 1:
+        # pop the smaller of the two queue fronts, twice
+        if j >= len(q2) or (i < len(q1) and q1[i] <= q2[j]):
+            x1 = q1[i]; i += 1
+        else:
+            x1 = q2[j]; j += 1
+        if j >= len(q2) or (i < len(q1) and q1[i] <= q2[j]):
+            x2 = q1[i]; i += 1
+        else:
+            x2 = q2[j]; j += 1
+        s = x1 + x2
+        total += s
+        if total > 9007199254740992:        # 2^53
+            return -1.0
+        q2.append(s)
+        remaining -= 1                       # 2 consumed, 1 produced -> net -1
+    return float(total)
+'''
+
+_C_HUFFMAN_COST = '''\
+/* Minimum total weighted code length of an optimal prefix (Huffman) code for frequencies
+ * [f0,f1,...] (non-negative integers <= 2^40). = sum over internal nodes of combined weight.
+ * The optimal cost is tie-invariant, so C == Python bit-for-bit. Two-queue method. Fail-soft
+ * -1.0 on a bad frequency / total > 2^53; 0 or 1 symbols -> 0.0. KIND_REDUCE. */
+static int hc_cmp(const void* pa, const void* pb) {
+    long long A = *(const long long*)pa, B = *(const long long*)pb;
+    if (A < B) return -1; if (A > B) return 1; return 0;
+}
+double huffman_cost(const double* a, int n) {
+    if (n == 0) return 0.0;
+    long long total_freq = 0;
+    for (int k = 0; k < n; k++) {
+        double x = a[k];
+        if (!(x >= 0.0 && x <= 1099511627776.0 && x == (double)(long long)x)) return -1.0;
+        total_freq += (long long)x;
+        if (total_freq > 9007199254740992LL) return -1.0;   /* 2^53: keeps s,total < 2^54 */
+    }
+    if (n == 1) return 0.0;
+    long long* q1 = (long long*)malloc((size_t)n * sizeof(long long));
+    long long* q2 = (long long*)malloc((size_t)n * sizeof(long long));   /* <= n-1 merged nodes */
+    if (!q1 || !q2) { free(q1); free(q2); return -1.0; }
+    for (int k = 0; k < n; k++) q1[k] = (long long)a[k];
+    qsort(q1, (size_t)n, sizeof(long long), hc_cmp);
+    int i = 0, j = 0, q2len = 0, remaining = n;
+    long long total = 0;
+    while (remaining > 1) {
+        long long x1, x2;
+        if (j >= q2len || (i < n && q1[i] <= q2[j])) { x1 = q1[i++]; } else { x1 = q2[j++]; }
+        if (j >= q2len || (i < n && q1[i] <= q2[j])) { x2 = q1[i++]; } else { x2 = q2[j++]; }
+        long long s = x1 + x2;
+        total += s;
+        if (total > 9007199254740992LL) { free(q1); free(q2); return -1.0; }
+        q2[q2len++] = s;
+        remaining--;
+    }
+    free(q1); free(q2);
+    return (double)total;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2549,6 +2649,13 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "[x0,y0,x1,y1,...] (coords in [-1e5, 1e5]) by divide & conquer; "
            "-1.0 fail-soft for < 2 points / odd length / out-of-domain.",
            "divide-and-conquer closest pair (CLRS 33.4); squared distances, exact integer"),
+    AlgoOp("huffman_cost", "compress", SEQ, SCALAR, KIND_REDUCE, "huffman_cost",
+           _PY_HUFFMAN_COST, _C_HUFFMAN_COST,
+           "Minimum total weighted code length of an optimal prefix (Huffman) code "
+           "for symbol frequencies [f0,f1,...] (non-negative integers <= 2^40); the "
+           "cost is tie-invariant (exact integer). 0/1 symbols -> 0.0; -1.0 fail-soft "
+           "for a bad frequency or a total exceeding 2^53.",
+           "Huffman greedy optimal prefix code; two-queue method; tie-invariant cost"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
