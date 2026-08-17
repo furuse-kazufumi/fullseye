@@ -2078,6 +2078,117 @@ def test_ubsan_pass_catches_nan_slip_through_cast(tmp_path):
 
 
 # --------------------------------------------------------------------------- #
+# P18 longest palindromic contiguous subarray length (longest_palindrome; Manacher, KIND_REDUCE).
+# --------------------------------------------------------------------------- #
+def _brute_longest_palindrome(a):
+    """Independent O(n^2) expand-around-center reference (NaN -> -1.0; empty -> 0.0)."""
+    if any(x != x for x in a):
+        return -1.0
+    n = len(a)
+    if n == 0:
+        return 0.0
+    best = 1
+    for c in range(n):
+        lo, hi = c, c                                       # odd center
+        while lo - 1 >= 0 and hi + 1 < n and a[lo - 1] == a[hi + 1]:
+            lo -= 1
+            hi += 1
+        best = max(best, hi - lo + 1)
+        if c + 1 < n and a[c] == a[c + 1]:                  # even center
+            lo, hi = c, c + 1
+            while lo - 1 >= 0 and hi + 1 < n and a[lo - 1] == a[hi + 1]:
+                lo -= 1
+                hi += 1
+            best = max(best, hi - lo + 1)
+    return float(best)
+
+
+def test_longest_palindrome_registered_kind():
+    op = algo.ALGO_BY_NAME["longest_palindrome"]
+    assert op.kind == algo.KIND_REDUCE
+    assert op.out_sort == algo.SCALAR
+    assert op.category == "search"
+    assert op.tol == 0.0
+
+
+def test_longest_palindrome_known_values():
+    assert algo.run_algo("longest_palindrome", []) == 0.0
+    assert algo.run_algo("longest_palindrome", [7]) == 1.0
+    assert algo.run_algo("longest_palindrome", [1, 2, 3, 4]) == 1.0        # no repeat
+    assert algo.run_algo("longest_palindrome", [1, 2, 1]) == 3.0           # odd
+    assert algo.run_algo("longest_palindrome", [1, 2, 2, 1]) == 4.0        # even
+    assert algo.run_algo("longest_palindrome", [1, 2, 3, 2, 1]) == 5.0     # full odd
+    assert algo.run_algo("longest_palindrome", [1, 2, 3, 3, 2, 1]) == 6.0  # full even
+    assert algo.run_algo("longest_palindrome", [3, 1, 2, 2, 1, 4]) == 4.0  # even in the middle
+    assert algo.run_algo("longest_palindrome", [5, 5, 5]) == 3.0           # all equal
+    assert algo.run_algo("longest_palindrome", [7, 1, 1, 7, 9]) == 4.0     # even beats odd (max odd 1)
+    assert algo.run_algo("longest_palindrome", [0.0, -0.0, 0.0]) == 3.0    # -0.0 == 0.0
+
+
+def test_longest_palindrome_matches_brute_random():
+    """Manacher's O(n) == O(n^2) expand-around-center over sequences with repeats (real palindromes)."""
+    rng = random.Random(1818)
+    for _ in range(5000):
+        n = rng.randint(0, 40)
+        rr = rng.choice([2, 3, 8, 10 ** 9])                 # small ranges -> repeats
+        a = [float(rng.randint(-rr, rr)) for _ in range(n)]
+        assert algo.run_algo("longest_palindrome", a) == _brute_longest_palindrome(a)
+    # engineered palindromes (drive the mirror-radius reuse and the even/odd branches)
+    for _ in range(2000):
+        m = rng.randint(1, 14)
+        half = [float(rng.randint(0, 3)) for _ in range(m)]
+        even = half + half[::-1]
+        odd = half + [float(rng.randint(0, 3))] + half[::-1]
+        assert algo.run_algo("longest_palindrome", even) == _brute_longest_palindrome(even)
+        assert algo.run_algo("longest_palindrome", odd) == _brute_longest_palindrome(odd)
+
+
+def test_longest_palindrome_fail_soft():
+    assert algo.run_algo("longest_palindrome", [float("nan"), 1, 1]) == -1.0    # NaN first
+    assert algo.run_algo("longest_palindrome", [1, float("nan"), 1]) == -1.0    # NaN mid
+    assert algo.run_algo("longest_palindrome", [1, 1, float("nan")]) == -1.0    # NaN last
+    # infinities are ordinary values under ==, so they can form palindromes
+    assert algo.run_algo("longest_palindrome", [float("inf"), 1, float("inf")]) == 3.0
+
+
+def test_longest_palindrome_holdout_falsifies_odd_only():
+    """The even-palindrome holdout cases make an odd-only (no-d2) implementation observably wrong,
+    so the gate can falsify a dropped even-palindrome branch (a symmetric-coverage guard)."""
+    holdout = algo_difftest.holdout_for("longest_palindrome")
+
+    def odd_only(a):                                        # drops the even (d2) pass
+        if any(x != x for x in a):
+            return -1.0
+        if not a:
+            return 0.0
+        best = 1
+        for c in range(len(a)):
+            lo, hi = c, c
+            while lo - 1 >= 0 and hi + 1 < len(a) and a[lo - 1] == a[hi + 1]:
+                lo -= 1
+                hi += 1
+            best = max(best, hi - lo + 1)
+        return float(best)
+
+    disagree = any(odd_only(arr) != algo.run_algo("longest_palindrome", arr) for arr in holdout)
+    assert disagree, "holdout misses even-length palindromes (gate would be blind to a dropped d2)"
+
+
+def test_longest_palindrome_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("longest_palindrome", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_longest_palindrome_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("longest_palindrome", tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["c_backend"].get("ubsan") in ("ok", "unsupported")   # shipped op is UBSan-clean
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
 # image-focus safety: the general tier must not leak into the evolution registry
 # --------------------------------------------------------------------------- #
 def test_general_sorts_do_not_enter_image_registry():
