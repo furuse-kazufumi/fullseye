@@ -564,7 +564,26 @@ y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**:
   = **全 algo op 35 が work-graph ゲート化**(34→35)。
 - **回帰**: `tests/test_algo.py` に P14 群(既知値・heapq 一致 random×5000・fail-soft/overflow・category grouping[compress=P5+P14]・
   difftest python exact・C bit 一致)。全スイート **4841 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
-  敵対レビューは background 実行(結果は follow-up で反映)。
+
+### P14 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+3 レンズ敵対レビュー Workflow(correctness / c-safety+gate-honesty / integration、各 finding を検証エージェントが**実 mutation で再現**)=
+**3 CONFIRMED**(いずれも overflow bail 境界の gate-coverage・op 自体は正しく tie 不変も 50k+4k+20k で確定済)。**correctness 系の指摘 0**
+(tie 不変 claim・two-queue の最適性は堅牢)。CONFIRMED は全て「merge-total>2^53 の fail-soft 境界」の網羅:
+- **[MED] 閾値が ~6 decade 未固定**(merge-total の threshold 2^53 を 2^50 等に絞る変異が gate を通過)= **自己再現で確定**(2^53→2^50
+  変異が passed=True)。**修正**=`[2^40]×837`(cost 8997303650091008 ≈ 2^52.998・VALID・厳密返却)+ `[2^40]×838`(cost > 2^53 → -1.0)を
+  holdout に追加し閾値を **2^53 の ±~1e13 にタイト固定** → 再実測で threshold 絞り変異(2^53→2^50・→8e15)が全て **CAUGHT**。既知値テストにも
+  837/838 を追加。
+- **[MED] cost == exactly 2^53 が holdout に無く `>`→`>=` off-by-one 未捕捉 → WITNESS で修正**: 当初「freq ≤ 2^40 では cost が正確に
+  2^53 にならない」と開示しかけたが、**検証エージェントが construction を発見**=`2^16 個 × freq 2^33`(= 2^33 ≤ 2^40)は各深さ 16 で
+  **cost = 2^16 · 2^33 · 16 = ちょうど 2^53**。2^53 は表現可能ゆえ VALID(2^53 を返す)で、`>=` 変異はこれを誤って -1.0 に落とす。**自分で
+  一次検証**(bignum で cost==2^53 確認・op が 2^53 返却・total_freq=2^49<2^53 で上流通過)の上、この witness ケースを holdout と既知値
+  テストに**採用** → `>`→`>=` off-by-one が falsify 可能に(この 1 値境界を単独で pin)。**敵対レビューが gap だけでなく fix そのものを
+  発見した好例**(私の当初の「到達不能」判断を反証)。
+- **[LOW] 上流 `total_freq > 2^53` guard branch が未駆動/非 falsify** = **honest 開示**: これは「頻度合計自体が long long を溢れさせる極端
+  n(>~4M 記号)」への safety guard。現実的 n では merge bail が同じ -1.0 を返す(削除しても long long overflow せず結果不変)ため値比較で単独
+  falsify できない(P5 の OOB ガード開示と同型)。極端 n の holdout は非現実的に遅いので追加しない。
+- 検証エージェントは 3 件を「gate が特定の誤実装を falsify できない」実欠陥として CONFIRMED。**op の正しさは不変**(誤 op を ship していない)、
+  gate の網羅を #2 で強化し #1/#3 を honest 開示。
 
 ## P15 完遂記録 — 最長増加部分列の長さ(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
 **探索/選択を 1 op 拡張(P8 binary_search/kth_smallest に続く search 第2弾・DP/patience sorting の新アルゴリズム族)**:
@@ -584,4 +603,8 @@ y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**:
   = **全 algo op 36 が work-graph ゲート化**(35→36)。
 - **回帰**: `tests/test_algo.py` に P15 群(既知値・DP 一致 random×5000・NaN fail-soft[3 位置]・category grouping[search=P8+P15]・
   difftest python exact・C bit 一致)。全スイート **4848 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
-  敵対レビューは background 実行(結果は follow-up で反映)。
+
+### P15 敵対レビュー結果(2026-08-17, [[feedback_no_solo_ai_judgment]])
+3 レンズ敵対レビュー Workflow(correctness / c-safety+gate-honesty / integration、mutation 検証)= **findings 0**(全レンズ指摘なし)。
+patience sorting の狭義比較・NaN ガード・tails バッファ安全・O(n²) DP oracle の独立性・holdout の狭義単独駆動を検証し、falsify 可能な
+欠陥は検出されず。事前の mutation 3/3 捕捉(狭義 `<`→`<=`/NaN ガード/二分探索方向)と 40k DP 一致で gate は堅牢。

@@ -764,8 +764,15 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             [5.0, 5.0, 5.0, 5.0, 5.0],                   # all equal (odd count)
             [1.0, 1.0, 2.0, 3.0, 5.0, 8.0, 13.0],        # skewed weights
             [1099511627776.0, 1.0],                      # 2^40 domain edge
-            [1099511627776.0] * 1024,                    # running total > 2^53 -> -1 (sum 2^50 < 2^53,
-                                                         #   cost ~ 2^53.3): drives the merge-total bail
+            # merge-total bail pinned around 2^53 (review 2026-08-17 CONFIRMED the threshold was
+            # under-driven). *837 costs 8997303650091008 (~2^52.998, VALID, returned exactly) and *838
+            # costs just over 2^53 (-> -1.0), so any mis-calibrated threshold (tightened below ~2^53 or
+            # loosened above) is falsified. WITNESS: 2^16 symbols of freq 2^33 cost EXACTLY 2^53
+            # (= 2^16 * 2^33 * 16), which is representable and VALID (returned as 2^53) -> this is the
+            # sole case that pins '>' vs '>=' at the boundary (a '>=' off-by-one wrongly bails on it).
+            [1099511627776.0] * 837,                     # cost 8997303650091008 < 2^53 -> valid (exact)
+            [1099511627776.0] * 838,                     # cost > 2^53 -> -1.0 (merge-total bail)
+            [float(2 ** 33)] * 65536,                    # cost == exactly 2^53 -> valid (pins > vs >=)
             # out-of-domain -> -1.0 fail-soft (each a sole reason):
             [1.5, 2.0],                                  # non-integer
             [-1.0, 2.0],                                 # negative

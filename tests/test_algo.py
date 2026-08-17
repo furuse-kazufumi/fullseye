@@ -1792,8 +1792,13 @@ def test_huffman_cost_fail_soft_and_overflow():
     assert algo.run_algo("huffman_cost", [1099511627777.0, 1]) == -1.0        # > 2^40
     assert algo.run_algo("huffman_cost", [float("nan"), 2]) == -1.0           # NaN
     assert algo.run_algo("huffman_cost", [1099511627776.0, 1]) == 1099511627777.0   # 2^40 edge, valid
-    # running total exceeds 2^53 (not exactly representable) -> -1.0 fail-soft:
-    assert algo.run_algo("huffman_cost", [1099511627776.0] * 1024) == -1.0
+    # merge-total bail pinned around 2^53: *837 is just under (valid, exact), *838 just over:
+    assert algo.run_algo("huffman_cost", [1099511627776.0] * 837) == 8997303650091008.0
+    assert algo.run_algo("huffman_cost", [1099511627776.0] * 838) == -1.0
+    assert algo.run_algo("huffman_cost", [1099511627776.0] * 1024) == -1.0    # larger over-2^53
+    # WITNESS: 2^16 symbols of freq 2^33 cost EXACTLY 2^53 (= 2^16 * 2^33 * 16), which IS representable
+    # and must be returned (not bailed) -> pins the '>' vs '>=' boundary of the merge-total guard:
+    assert algo.run_algo("huffman_cost", [float(2 ** 33)] * 65536) == 9007199254740992.0
 
 
 def test_huffman_cost_difftest_python_half_is_exact(tmp_path):
