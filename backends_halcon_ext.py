@@ -903,6 +903,44 @@ def _disparity_image_to_xyz(v, a, b):
     return _norm01(z)
 
 
+# ── 第 13 バッチ: 点/線と region・contour の距離 + 1D エッジ対 ──────────────────── #
+def _distance_pr(v, a, b):
+    """クエリ点(正規化 a,b)から region までの最小距離(feature)。距離変換で。"""
+    reg = v > 0.5
+    if not reg.any():
+        return np.float64(1.0)
+    dt = ndimage.distance_transform_edt(~reg)
+    h, w = v.shape
+    return np.float64(min(float(dt[min(int(a * h), h - 1), min(int(b * w), w - 1)]) / max(h, w), 1.0))
+
+
+def _distance_sc(v, a, b):
+    """水平線分(行 a*H)から contour までの最小距離(feature)。"""
+    p = _all_pts(v)
+    if len(p) == 0:
+        return np.float64(0.0)
+    h, w = _c_shape(v)
+    return np.float64(min(float(np.abs(p[:, 0] - a * h).min()) / max(h, 1), 1.0))
+
+
+def _fuzzy_measure_pairs(v, a, b):
+    """中央の水平プロファイルに沿ってエッジ対(立上り→立下り)を数える(1D 計測、feature)。"""
+    row = v[v.shape[0] // 2]
+    g = np.gradient(row)
+    thr = (0.05 + 0.4 * a) * (np.abs(g).max() + 1e-9)
+    rises = np.where(g > thr)[0]
+    falls = np.where(g < -thr)[0]
+    pairs = 0
+    fi = 0
+    for r in rises:                                      # 各立上りの後の最初の立下りで 1 対
+        while fi < len(falls) and falls[fi] <= r:
+            fi += 1
+        if fi < len(falls):
+            pairs += 1
+            fi += 1
+    return np.float64(min(pairs / 10.0, 1.0))
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
