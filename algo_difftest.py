@@ -924,6 +924,13 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             # mirror radius and OVERSHOOTS here (true longest [0,1,1,0] = 4; the off-by-one reports
             # 6). This minimal case makes the d2 window-left update a SOLE reason (P18 review).
             [0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],             # -> 4 (pins d2 [l, r] left edge = i - k)
+            # d1 (odd) coverage, symmetric to the d2 pins above (P18 adversarial review):
+            # a wrong d1 mirror `d1[l+r-i+1]` (instead of l+r-i) OVERSHOOTS here (true [0,0,1,0,0]=5,
+            # mutant reports 7); pins the odd-pass mirror index as a SOLE reason.
+            [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],             # -> 5 (pins d1 mirror index l + r - i)
+            # a wrong d1 window-left `l = i-k` (instead of i-k+1) overshoots here (true 7, mutant 9);
+            # pins the odd-pass [l, r] left edge as a SOLE reason.
+            [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],   # -> 7 (pins d1 [l, r] left edge = i - k + 1)
             # NaN -> -1.0 fail-soft (first / middle / last):
             [float("nan"), 1.0, 1.0], [1.0, float("nan"), 1.0], [1.0, 1.0, float("nan")],
         ]
