@@ -248,6 +248,8 @@ SAMPLES = [
      "params": [("max_disp", 8, 24, 16, True)]},
     {"name": "sim.lidar", "domain": "sim-source", "code": _SIM_LIDAR,
      "params": [("h_res", 30, 200, 120, True), ("v_res", 6, 40, 24, True)]},
+    {"name": "sim.grasp_pipeline", "domain": "sim-source", "code": _GRASP_PIPELINE,
+     "params": [("ground_thresh", 0.01, 0.1, 0.03, False), ("axis_scale", 1.0, 4.0, 2.0, False)]},
     {"name": "sim.to_vision", "domain": "sim-source", "code": _SIM_TO_VISION,
      "params": [("ground_thresh", 0.01, 0.1, 0.03, False), ("cluster_tol", 0.1, 0.5, 0.25, False)]},
 ]
