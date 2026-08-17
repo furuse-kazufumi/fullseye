@@ -143,13 +143,16 @@ def hom_mat3d_compose(H1, H2):
 
 
 def hom_mat3d_rotate(H, phi=0.0, axis=2):
+    """軸周りの右手系回転を左乗算(axis 0=x,1=y,2=z、標準の符号規約)。"""
     c, s = np.cos(phi), np.sin(phi)
+    if axis == 0:
+        R3 = np.array([[1, 0, 0], [0, c, -s], [0, s, c]])
+    elif axis == 1:
+        R3 = np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]])   # y は符号が逆(右手系)
+    else:
+        R3 = np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]])
     R = np.eye(4)
-    ax = [(1, 2), (0, 2), (0, 1)][axis]
-    R[ax[0], ax[0]] = c
-    R[ax[1], ax[1]] = c
-    R[ax[0], ax[1]] = -s
-    R[ax[1], ax[0]] = s
+    R[:3, :3] = R3
     return R @ _m(H)
 
 
