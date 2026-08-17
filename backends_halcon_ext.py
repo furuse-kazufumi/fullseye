@@ -1032,6 +1032,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_dist_rect2_points", "dist_rectangle2_contour_points_xld", CONTOUR, FEATURE, _dist_rectangle2_contour_points_xld),
         ("hx_distance_pc", "distance_pc", CONTOUR, FEATURE, _distance_pc),
         ("hx_disparity_to_xyz", "disparity_image_to_xyz", IMAGE, IMAGE, _disparity_image_to_xyz),
+        # 第 13 バッチ
+        ("hx_distance_pr", "distance_pr", REGION, FEATURE, _distance_pr),
+        ("hx_distance_sc", "distance_sc", CONTOUR, FEATURE, _distance_sc),
+        ("hx_fuzzy_measure_pairs", "fuzzy_measure_pairs", IMAGE, FEATURE, _fuzzy_measure_pairs),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
