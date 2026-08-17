@@ -113,3 +113,16 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
 4. **Studio 露出**(F6)。
 5. **OSS アダプタ契約**(F4)を 1 領域で実証(stereo=image_pipeline / pcseg=PCL)。
 6. **網羅を伸ばす**(N4、HALCON/ROS2 地図の抜けを honest gate 付きで補完)。
+
+## 12. 決定ログ
+
+- **2026-08-18 要件定義に合意(ユーザー)**。§9 の 4 判断は既定を採用:
+  ①**混成**(画像=`Image().gaussian()` チェーン / 視覚=`stereo.SGM().compute()` 設定オブジェクト)
+  ②**eager** ③**一般語彙を主 + HALCON エイリアス** ④**Python API 先行**(Studio は次段)。
+- **F1 実現方針 = approach B(単一実装)**: 自然 API は下層(scipy.ndimage 等)を**自然パラメータで直接**呼ぶ
+  (gaussian は `ndimage.gaussian_filter(v, sigma)`= 進化 op と同じ下層ゆえ drift 無し)。進化 registry の
+  汎用 a/b ノブ(探索用の正規化・有界エンコード、例 `sigma=0.3+2.7*a`)は**人間 API のパラメータ範囲に漏らさず**、
+  `Image.op(name, a, b)` エスケープハッチにのみ残して 654 op の長い尾へアクセス。
+- **spike 実証済**: `spikes/unified_api_spike.py`(画像チェーン + 視覚設定オブジェクト + 長い尾エスケープ)。
+  既存 809 op 無変更・additive。pcseg RANSAC が合成平面 400/400 点をインライア検出=実委譲を確認。
+- **次**: 自然画像 op の拡充(canny/morphology/color 等)/ 単一 registry+メタ(F2/F3)/ 既存 op の段階載せ替え。
