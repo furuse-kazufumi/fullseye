@@ -189,6 +189,76 @@ def _region_to_mean(v, a, b):
     return out
 
 
+# ── 第 3 バッチ: セグメンテーション/エッジ/周波数フィルタ生成 ─────────────────── #
+def _nonmax_suppression_dir(v, a, b):
+    """勾配方向に沿った非最大抑制(Canny の NMS 段)。エッジを 1 画素に細線化する。"""
+    gx = ndimage.sobel(v, axis=1)
+    gy = ndimage.sobel(v, axis=0)
+    mag = np.hypot(gx, gy)
+    ang = (np.rad2deg(np.arctan2(gy, gx)) % 180.0)
+    q = (np.round(ang / 45.0).astype(int)) % 4
+    shifts = {0: ((0, -1), (0, 1)), 1: ((-1, 1), (1, -1)),
+              2: ((-1, 0), (1, 0)), 3: ((-1, -1), (1, 1))}
+    out = np.zeros_like(mag)
+    for qi, (s1, s2) in shifts.items():
+        n1 = np.roll(np.roll(mag, s1[0], 0), s1[1], 1)
+        n2 = np.roll(np.roll(mag, s2[0], 0), s2[1], 1)
+        keep = (q == qi) & (mag >= n1) & (mag >= n2)
+        out[keep] = mag[keep]
+    out = _norm01(out)
+    out[out < a * 0.3] = 0.0                              # 弱エッジを a で抑制
+    return out
+
+
+def _char_threshold(v, a, b):
+    """暗い文字を明るい背景から抽出(region): thresh = mean - k*std(k は a)で下側を選ぶ。"""
+    k = 0.2 + 1.8 * a
+    thr = float(v.mean()) - k * float(v.std())
+    return (v < thr).astype(np.float64)
+
+
+def _histo_to_thresh(v, a, b):
+    """ヒストグラムの谷から閾値を決めて二値化(Otsu の分散基準でなく谷検出=別 op)。"""
+    hist, edges = np.histogram(v.ravel(), bins=64, range=(0.0, 1.0))
+    hs = ndimage.gaussian_filter1d(hist.astype(float), 1.5)
+    # 2 つの主ピーク間の最小値(谷)を閾値に
+    peaks = np.argsort(hs)[::-1]
+    p1 = peaks[0]
+    p2 = next((p for p in peaks[1:] if abs(p - p1) > 4), p1)
+    lo, hi = sorted((p1, p2))
+    valley = lo + int(np.argmin(hs[lo:hi + 1])) if hi > lo else 32
+    thr = edges[valley]
+    return (v > thr).astype(np.float64)
+
+
+def _freq_radius(shape):
+    h, w = shape
+    fy = np.fft.fftfreq(h)[:, None]
+    fx = np.fft.fftfreq(w)[None, :]
+    return np.fft.fftshift(np.sqrt(fy ** 2 + fx ** 2))   # 中心=DC の正規化周波数半径
+
+
+def _gen_lowpass(v, a, b):
+    """理想ローパスフィルタ画像(周波数領域の中心円板マスク、遮断半径 a)。"""
+    r = _freq_radius(v.shape)
+    cutoff = 0.05 + 0.45 * a
+    return (r <= cutoff).astype(np.float64)
+
+
+def _gen_highpass(v, a, b):
+    r = _freq_radius(v.shape)
+    cutoff = 0.05 + 0.45 * a
+    return (r > cutoff).astype(np.float64)
+
+
+def _gen_bandpass(v, a, b):
+    """理想バンドパス(周波数領域の円環マスク、内半径 a・帯域幅 b)。"""
+    r = _freq_radius(v.shape)
+    r_lo = 0.05 + 0.4 * a
+    r_hi = r_lo + 0.05 + 0.3 * b
+    return ((r >= r_lo) & (r <= r_hi)).astype(np.float64)
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
