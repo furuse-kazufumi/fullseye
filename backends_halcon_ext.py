@@ -688,6 +688,107 @@ def _smallest_rectangle2_xld(v, a, b):
     return np.float64(min(area / max(h * w, 1), 1.0))
 
 
+# ── 第 10 バッチ: XLD contour 続き ───────────────────────────────────────────── #
+def _crop_contours_xld(v, a, b):
+    """contour を中央の a×b 割合の矩形に crop(範囲内の点のみ残す)。"""
+    h, w = _c_shape(v)
+    hh, ww = (0.3 + 0.6 * a) * h / 2, (0.3 + 0.6 * b) * w / 2
+    cy, cx = h / 2, w / 2
+    out = []
+    for c in _c_cs(v):
+        m = (np.abs(c[:, 0] - cy) <= hh) & (np.abs(c[:, 1] - cx) <= ww)
+        if m.any():
+            out.append(c[m])
+    return _c_mk((h, w), out)
+
+
+def _dist_ellipse_contour_xld(v, a, b):
+    """contour 点の当てはめ楕円境界からの平均距離を返す(小=楕円に近い、feature)。"""
+    p = _all_pts(v)
+    if len(p) < 4:
+        return np.float64(0.0)
+    c = p.mean(0)
+    d = p - c
+    w_, V = np.linalg.eigh(np.cov(d.T))
+    w_ = np.clip(w_, 1e-9, None)
+    loc = d @ V                                          # 主軸系
+    ax = 2 * np.sqrt(w_)                                 # 半軸(≈2σ)
+    rad = np.sqrt((loc[:, 0] / ax[0]) ** 2 + (loc[:, 1] / ax[1]) ** 2)
+    return np.float64(min(float(np.abs(rad - 1.0).mean()), 1.0))
+
+
+def _seg_intersect(p1, p2, p3, p4):
+    def ccw(a, b, c):
+        return (c[1] - a[1]) * (b[0] - a[0]) > (b[1] - a[1]) * (c[0] - a[0])
+    return ccw(p1, p3, p4) != ccw(p2, p3, p4) and ccw(p1, p2, p3) != ccw(p1, p2, p4)
+
+
+def _test_self_intersection_xld(v, a, b):
+    """自己交差する contour の割合を返す(feature)。非隣接セグメント対を判定。"""
+    cs = _c_cs(v)
+    if not cs:
+        return np.float64(0.0)
+    hit = 0
+    for c in cs:
+        n = len(c)
+        if n < 4:
+            continue
+        found = False
+        for i in range(n - 1):
+            for j in range(i + 2, n - 1):
+                if i == 0 and j == n - 2:
+                    continue                             # 端の隣接をスキップ
+                if _seg_intersect(c[i], c[i + 1], c[j], c[j + 1]):
+                    found = True
+                    break
+            if found:
+                break
+        hit += found
+    return np.float64(hit / len(cs))
+
+
+def _union_adjacent_contours_xld(v, a, b):
+    """端点が近い(閾値 a)contour を貪欲に連結する。"""
+    cs = [c for c in _c_cs(v) if len(c) > 0]
+    tol = 1.0 + a * 8.0
+    merged = True
+    while merged and len(cs) > 1:
+        merged = False
+        for i in range(len(cs)):
+            for j in range(i + 1, len(cs)):
+                if np.hypot(*(cs[i][-1] - cs[j][0])) <= tol:
+                    cs[i] = np.vstack([cs[i], cs[j]])
+                    cs.pop(j)
+                    merged = True
+                    break
+            if merged:
+                break
+    return _c_mk(_c_shape(v), cs)
+
+
+def _polar_trans_contour_xld_inv(v, a, b):
+    """contour 点を (radius, angle) とみなし直交座標へ逆変換(polar_trans の逆)。"""
+    h, w = _c_shape(v)
+    cy, cx = h / 2, w / 2
+    out = []
+    for c in _c_cs(v):
+        rad = c[:, 0]
+        ang = c[:, 1] / max(w, 1) * 2 * np.pi
+        out.append(np.column_stack([cy + rad * np.sin(ang), cx + rad * np.cos(ang)]))
+    return _c_mk((h, w), out)
+
+
+def _select_xld_point(v, a, b):
+    """クエリ点(正規化 a,b)を外接矩形に含む contour のみ選ぶ(filter)。"""
+    h, w = _c_shape(v)
+    qy, qx = a * h, b * w
+    out = []
+    for c in _c_cs(v):
+        if c[:, 0].min() <= qy <= c[:, 0].max() and c[:, 1].min() <= qx <= c[:, 1].max():
+            out.append(c)
+    return _c_mk((h, w), out)
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
