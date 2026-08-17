@@ -126,36 +126,77 @@ SAMPLES = [
 ]
 
 
+class _ParamSlider(QtWidgets.QWidget):
+    """float/int を扱う 1 パラメータのスライダ + 現在値ラベル(HDevelop 風の即応 UI)。"""
+
+    def __init__(self, spec, on_change) -> None:
+        super().__init__()
+        self.name, self.lo, self.hi, default, self.is_int = spec
+        self._on_change = on_change
+        self.slider = QtWidgets.QSlider(0x1)  # Qt.Horizontal
+        self.slider.setRange(0, 1000)
+        self.slider.setValue(self._to_slider(default))
+        self.label = QtWidgets.QLabel()
+        self._update_label()
+        self.slider.valueChanged.connect(self._changed)
+        lay = QtWidgets.QHBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.addWidget(QtWidgets.QLabel(self.name), 2)
+        lay.addWidget(self.slider, 5)
+        lay.addWidget(self.label, 2)
+
+    def _to_slider(self, v):
+        return int(round((v - self.lo) / (self.hi - self.lo) * 1000))
+
+    def value(self):
+        v = self.lo + self.slider.value() / 1000 * (self.hi - self.lo)
+        return int(round(v)) if self.is_int else v
+
+    def _update_label(self):
+        v = self.value()
+        self.label.setText(f"{v}" if self.is_int else f"{v:.3f}")
+
+    def _changed(self):
+        self._update_label()
+        self._on_change()
+
+
 class StudioWindow(QtWidgets.QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("Fullseye Studio (prototype)")
-        self.resize(1180, 640)
+        self.resize(1240, 680)
+        self._by_name = {s["name"]: s for s in SAMPLES}
+        self._sliders: list[_ParamSlider] = []
+        self._suspend = False  # スライダ再構築中の連鎖 run 抑止
 
         # 左: サンプル一覧(domain 別ツリー)
         self.tree = QtWidgets.QTreeWidget()
         self.tree.setHeaderLabels(["samples"])
-        self.tree.setMinimumWidth(210)
+        self.tree.setMinimumWidth(200)
         groups: dict[str, QtWidgets.QTreeWidgetItem] = {}
-        for name, domain, code in SAMPLES:
-            if domain not in groups:
-                g = QtWidgets.QTreeWidgetItem(self.tree, [domain])
+        for s in SAMPLES:
+            if s["domain"] not in groups:
+                g = QtWidgets.QTreeWidgetItem(self.tree, [s["domain"]])
                 g.setExpanded(True)
-                groups[domain] = g
-            item = QtWidgets.QTreeWidgetItem(groups[domain], [name])
-            item.setData(0, 0x0100, code)  # Qt.UserRole
+                groups[s["domain"]] = g
+            item = QtWidgets.QTreeWidgetItem(groups[s["domain"]], [s["name"]])
+            item.setData(0, 0x0100, s["name"])  # Qt.UserRole = sample name
         self.tree.itemSelectionChanged.connect(self._on_select)
 
-        # 中: コード編集 + Run
+        # 中: コード編集 + パラメータパネル + Run
         self.editor = QtWidgets.QPlainTextEdit()
         self.editor.setFont(QtGui.QFont("Consolas", 10))
         self.editor.setMinimumWidth(360)
+        self.param_box = QtWidgets.QGroupBox("parameters(動かすと即再描画)")
+        self.param_form = QtWidgets.QVBoxLayout(self.param_box)
         run_btn = QtWidgets.QPushButton("Run  ▶")
         run_btn.clicked.connect(self._run)
         mid = QtWidgets.QWidget()
         ml = QtWidgets.QVBoxLayout(mid)
         ml.addWidget(QtWidgets.QLabel("code(編集して Run)"))
-        ml.addWidget(self.editor)
+        ml.addWidget(self.editor, 3)
+        ml.addWidget(self.param_box)
         ml.addWidget(run_btn)
 
         # 右: matplotlib 描画ペイン
@@ -170,21 +211,40 @@ class StudioWindow(QtWidgets.QMainWindow):
         split.addWidget(self.tree)
         split.addWidget(mid)
         split.addWidget(right)
-        split.setSizes([210, 380, 590])
+        split.setSizes([200, 400, 620])
         self.setCentralWidget(split)
         self.statusBar().showMessage("サンプルを選んで Run")
 
-        # 初期選択
-        first = groups["vision"].child(0)
-        self.tree.setCurrentItem(first)
+        self.tree.setCurrentItem(groups["vision"].child(0))
 
-    def _on_select(self) -> None:
+    def _current_sample(self):
         items = self.tree.selectedItems()
         if items and items[0].data(0, 0x0100):
-            self.editor.setPlainText(items[0].data(0, 0x0100))
+            return self._by_name.get(items[0].data(0, 0x0100))
+        return None
+
+    def _rebuild_params(self, sample) -> None:
+        self._suspend = True
+        for sl in self._sliders:
+            sl.setParent(None)
+        self._sliders.clear()
+        for spec in sample.get("params", []):
+            sl = _ParamSlider(spec, self._run)
+            self.param_form.addWidget(sl)
+            self._sliders.append(sl)
+        self.param_box.setVisible(bool(self._sliders))
+        self._suspend = False
+
+    def _on_select(self) -> None:
+        sample = self._current_sample()
+        if sample:
+            self.editor.setPlainText(sample["code"])
+            self._rebuild_params(sample)
             self._run()
 
     def _run(self) -> None:
+        if self._suspend:
+            return
         code = self.editor.toPlainText()
         self.figure.clear()
         ns = {
@@ -192,10 +252,13 @@ class StudioWindow(QtWidgets.QMainWindow):
             "Image": _vis.Image, "sim": _sim.sim, "LidarPattern": _sim.LidarPattern,
             "SCENE": _sim.SCENE, "synthetic_scene": synthetic_scene,
         }
+        for sl in self._sliders:            # スライダ値を名前空間へ注入
+            ns[sl.name] = sl.value()
         try:
             exec(code, ns)  # noqa: S102 — ローカル GUI・ユーザー自身のコード
             self.canvas.draw()
-            self.statusBar().showMessage("Run OK")
+            self.statusBar().showMessage("Run OK  |  " + "  ".join(
+                f"{sl.name}={sl.value()}" for sl in self._sliders))
         except Exception:
             self.statusBar().showMessage("Run 失敗(下部トレース)")
             self.figure.clear()
