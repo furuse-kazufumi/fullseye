@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-18 08:19:35
+- **最終更新**: 2026-08-18 08:24:27
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+feef3aa auto: backends_halcon_ext.py 編集前 (2026-08-18 08:23)
+e5a6575 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:23)
+8d77714 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:21)
+fd37b31 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:20)
+11db7f7 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:20)
 1a7db58 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:17)
 14a50d1 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:17)
 946424f auto: backends_halcon_ext.py 編集前 (2026-08-18 08:16)
 7ea17da auto: backends_halcon_ext.py 編集前 (2026-08-18 08:16)
 0afc2f4 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:14)
-0f11262 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:14)
-6008438 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:13)
-1036f5b auto: backends_halcon_ext.py 編集前 (2026-08-18 08:13)
-2038249 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:10)
-85e0da2 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:09)
 ```
 
 ## 現在の git status
@@ -32,12 +32,12 @@ M backends_halcon_ext.py
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:18 .pytest_cache/v/cache/nodeids
-08:17 data/halcon_stubs.json
-08:17 docs/HALCON_COVERAGE.md
-08:17 data/halcon_coverage_report.txt
-08:17 backends_halcon_ext.py
-08:12 docs/SESSION_SUMMARY.md
+08:23 .pytest_cache/v/cache/nodeids
+08:23 data/halcon_stubs.json
+08:23 docs/HALCON_COVERAGE.md
+08:23 data/halcon_coverage_report.txt
+08:23 backends_halcon_ext.py
+08:19 docs/SESSION_SUMMARY.md
 08:11 docs/HALCON_COVERAGE_HONEST.md
 07:57 ops.py
 07:54 spikes/out_gallery/studio_grasp_pipeline.png

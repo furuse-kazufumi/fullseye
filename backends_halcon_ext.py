@@ -913,6 +913,12 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_union_adjacent", "union_adjacent_contours_xld", CONTOUR, CONTOUR, _union_adjacent_contours_xld),
         ("hx_polar_trans_inv", "polar_trans_contour_xld_inv", CONTOUR, CONTOUR, _polar_trans_contour_xld_inv),
         ("hx_select_xld_point", "select_xld_point", CONTOUR, CONTOUR, _select_xld_point),
+        # 第 11 バッチ(shape-from-shading 光源推定)
+        ("hx_estimate_tilt_lr", "estimate_tilt_lr", IMAGE, FEATURE, _estimate_tilt_lr),
+        ("hx_estimate_tilt_zc", "estimate_tilt_zc", IMAGE, FEATURE, _estimate_tilt_zc),
+        ("hx_estimate_sl_al_lr", "estimate_sl_al_lr", IMAGE, FEATURE, _estimate_sl_al_lr),
+        ("hx_estimate_sl_al_zc", "estimate_sl_al_zc", IMAGE, FEATURE, _estimate_sl_al_zc),
+        ("hx_estimate_al_am", "estimate_al_am", IMAGE, FEATURE, _estimate_al_am),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]

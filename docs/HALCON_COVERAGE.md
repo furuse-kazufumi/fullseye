@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 372 / 2313 HALCON operators (16.1%)** via `Op.halcon`, from 719 registry ops.
+**imgevolve maps to 377 / 2313 HALCON operators (16.3%)** via `Op.halcon`, from 724 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
@@ -25,7 +25,7 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | Matching | 2 | 96 | 94 |
 | Deep Learning | 2 | 88 | 86 |
 | Image | 29 | 110 | 81 |
-| 3D Reconstruction | 1 | 76 | 75 |
+| 3D Reconstruction | 6 | 76 | 70 |
 | Calibration | 0 | 68 | 68 |
 | Filters | 129 | 196 | 67 |
 | 3D Matching | 0 | 59 | 59 |
@@ -58,12 +58,12 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 - **Matching** (2/96): adapt_shape_model_high_noise, apply_deep_counting_model, clear_deformable_model, clear_descriptor_model, clear_ncc_model, clear_shape_model, create_aniso_shape_model, create_aniso_shape_model_xld, create_calib_descriptor_model, create_deep_counting_model, create_generic_shape_model, create_local_deformable_model
 - **Deep Learning** (2/88): add_dl_pruning_batch, apply_dl_model, clear_dl_model, create_dl_layer_activation, create_dl_layer_affine_grid, create_dl_layer_anchors, create_dl_layer_batch_normalization, create_dl_layer_box_proposals, create_dl_layer_box_targets, create_dl_layer_class_id_conversion, create_dl_layer_concat, create_dl_layer_convolution
 - **Image** (29/110): add_channels, append_channel, area_center_gray, change_domain, channels_to_image, close_framegrabber, complex_to_real, compose2, compose3, compose4, compose5, compose6
-- **3D Reconstruction** (1/76): apply_sheet_of_light_calibration, binocular_disparity, binocular_disparity_mg, binocular_disparity_ms, binocular_distance, binocular_distance_mg, binocular_distance_ms, calibrate_sheet_of_light, clear_sheet_of_light_model, clear_stereo_model, create_sheet_of_light_calib_object, create_sheet_of_light_model
+- **3D Reconstruction** (6/76): apply_sheet_of_light_calibration, binocular_disparity, binocular_disparity_mg, binocular_disparity_ms, binocular_distance, binocular_distance_mg, binocular_distance_ms, calibrate_sheet_of_light, clear_sheet_of_light_model, clear_stereo_model, create_sheet_of_light_calib_object, create_sheet_of_light_model
 
 ## Version awareness (HALCON's op set changes between releases)
 Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
 
-- **363** claimed names exist in **all** scraped releases (stable).
+- **368** claimed names exist in **all** scraped releases (stable).
 - **9 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605)
 - **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 
