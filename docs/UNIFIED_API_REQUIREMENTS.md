@@ -56,6 +56,9 @@ OSS 内部の再実装(PCL/grid_map/OpenCV/MoveIt2 は薄いアダプタで裏�
   OSS 不在時は明示エラー or 自作フォールバック(optional extras 方針)。
 - **F5 合成**: op をパイプライン化して繋げられる(画像チェーン / 知覚の段組み)。
 - **F6 Studio 露出**: 同一メタ(F3)から Studio が op を自動列挙・パラメータ UI 生成・実行できる。
+  **Studio = HDevelop(2D 画像処理 IDE)+ RViz2(3D 知覚可視化)の融合**: 2D 画像パネルに加え、
+  点群 / depth / 6D pose 軸 / TF 木 / grid_map layer を 3D 表示(F3 の描画ヒントで自動選択)。
+  3D viewer は再実装せず既存(Open3D/RViz2 連携 or 薄い描画)を裏に。
 - **F7 後方互換**: 既存 770 op と現 API(`apply`/facade 関数)を壊さない(統一 I/F は上に薄く載せる)。
 
 ## 6. 非機能要件
