@@ -1313,7 +1313,9 @@ def test_search_ops_registered_kinds():
     assert algo.ALGO_BY_NAME["binary_search"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["kth_smallest"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["max_subarray"].kind == algo.KIND_REDUCE
-    assert set(algo.algo_categories()["search"]) == set(_SEARCH) | set(_SEARCH2) | set(_SEARCH3)
+    assert algo.ALGO_BY_NAME["longest_palindrome"].kind == algo.KIND_REDUCE
+    assert (set(algo.algo_categories()["search"])
+            == set(_SEARCH) | set(_SEARCH2) | set(_SEARCH3) | set(_SEARCH4))
     for name in _SEARCH:
         assert algo.ALGO_BY_NAME[name].tol == 0.0
 
