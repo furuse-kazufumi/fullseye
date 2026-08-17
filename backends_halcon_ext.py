@@ -628,6 +628,66 @@ def _gen_parallel_contour_xld(v, a, b):
     return _c_mk(_c_shape(v), out)
 
 
+# ── 第 9 バッチ: XLD contour への形状フィット(contour -> feature)──────────────── #
+def _fit_circle_contour_xld(v, a, b):
+    """Kåsa 代数法で contour 点に円を当て、フィット残差(RMS)を返す(小=円に近い)。"""
+    p = _all_pts(v)
+    if len(p) < 3:
+        return np.float64(0.0)
+    x, y = p[:, 1], p[:, 0]
+    A = np.column_stack([x, y, np.ones_like(x)])
+    bb = x * x + y * y
+    sol, *_ = np.linalg.lstsq(A, bb, rcond=None)
+    cx, cy = sol[0] / 2, sol[1] / 2
+    r = np.sqrt(max(sol[2] + cx * cx + cy * cy, 0))
+    res = np.sqrt(((np.hypot(x - cx, y - cy) - r) ** 2).mean())
+    return np.float64(min(res / max(_c_shape(v)), 1.0))
+
+
+def _fit_ellipse_contour_xld(v, a, b):
+    """2 次モーメントから楕円を当て、軸比(短/長=真円で 1、細長いほど 0)を返す。"""
+    p = _all_pts(v)
+    if len(p) < 3:
+        return np.float64(0.0)
+    d = p - p.mean(0)
+    w_, _ = np.linalg.eigh(np.cov(d.T))
+    w_ = np.clip(w_, 0, None)
+    return np.float64(np.sqrt(w_[0] / w_[1]) if w_[1] > 1e-9 else 0.0)
+
+
+def _min_area_rect_ratio(p):
+    """角度掃引で最小面積外接矩形を求め、(点の広がり充填率, 面積) を返す。"""
+    best = None
+    for deg in range(0, 90, 6):
+        th = np.radians(deg)
+        R = np.array([[np.cos(th), -np.sin(th)], [np.sin(th), np.cos(th)]])
+        q = p @ R.T
+        area = float((q[:, 0].ptp() + 1e-9) * (q[:, 1].ptp() + 1e-9))
+        if best is None or area < best[0]:
+            best = (area, q[:, 0].ptp(), q[:, 1].ptp())
+    return best
+
+
+def _fit_rectangle2_contour_xld(v, a, b):
+    """最小面積外接矩形を当て、そのアスペクト比(短辺/長辺)を返す(feature)。"""
+    p = _all_pts(v)
+    if len(p) < 3:
+        return np.float64(0.0)
+    _, e1, e2 = _min_area_rect_ratio(p)
+    lo, hi = sorted((e1, e2))
+    return np.float64(lo / hi if hi > 1e-9 else 0.0)
+
+
+def _smallest_rectangle2_xld(v, a, b):
+    """最小面積外接矩形の面積比(矩形面積 / 画像面積)を返す(feature)。"""
+    p = _all_pts(v)
+    if len(p) < 3:
+        return np.float64(0.0)
+    area, _, _ = _min_area_rect_ratio(p)
+    h, w = _c_shape(v)
+    return np.float64(min(area / max(h * w, 1), 1.0))
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
