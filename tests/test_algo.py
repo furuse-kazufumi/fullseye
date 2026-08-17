@@ -54,10 +54,14 @@ _NUMTHEORY2 = ["is_prime", "modular_inverse"]
 # P11: bit manipulation (non-negative integers in [0, 2^53-1]). xor_reduce / popcount_total are
 # KIND_REDUCE. Independent oracles = functools.reduce(xor) / sum(bin(x).count('1')).
 _BITS = ["xor_reduce", "popcount_total"]
+# P12: extended Euclidean algorithm (Bezout coefficients). KIND_MAP: [a, b] -> [g, x, y] (exactly 3
+# values, or [] fail-soft). Non-negative integers <= 2^53. Independent oracle = the RECURSIVE extended
+# Euclid (_ext_gcd_rec), element-wise (g, x, y). Shares the "numtheory" category with P5 + P10.
+_EXTGCD = ["extended_gcd"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS)
+            + _NUMTHEORY2 + _BITS + _EXTGCD)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -91,7 +95,7 @@ def test_categories_grouping():
     assert set(cats["numeric"]) == set(_NUMERIC)
     assert set(cats["string"]) == set(_STRING)
     assert set(cats["graph"]) == set(_GRAPH)
-    assert set(cats["numtheory"]) == set(_NUMTHEORY) | set(_NUMTHEORY2)   # P5 + P10 share the category
+    assert set(cats["numtheory"]) == set(_NUMTHEORY) | set(_NUMTHEORY2) | set(_EXTGCD)  # P5 + P10 + P12
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS)
     assert set(cats["geometry"]) == set(_GEOMETRY)
@@ -1562,6 +1566,76 @@ def test_bits_difftest_python_half_is_exact(name, tmp_path):
 @pytest.mark.parametrize("name", _BITS)
 def test_bits_c_is_bit_identical(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P12 extended Euclidean algorithm (extended_gcd; [a, b] -> [g, x, y], KIND_MAP).
+# --------------------------------------------------------------------------- #
+def test_extended_gcd_registered_kind():
+    op = algo.ALGO_BY_NAME["extended_gcd"]
+    assert op.kind == algo.KIND_MAP
+    assert op.out_sort == algo.SEQ
+    assert op.category == "numtheory"
+    assert op.tol == 0.0
+
+
+def test_extended_gcd_known_values():
+    assert algo.run_algo("extended_gcd", [35, 15]) == [5.0, 1.0, -2.0]   # 35*1 + 15*(-2) = 5
+    assert algo.run_algo("extended_gcd", [0, 5]) == [5.0, 0.0, 1.0]
+    assert algo.run_algo("extended_gcd", [5, 0]) == [5.0, 1.0, 0.0]
+    assert algo.run_algo("extended_gcd", [0, 0]) == [0.0, 1.0, 0.0]
+    assert algo.run_algo("extended_gcd", [7, 7]) == [7.0, 0.0, 1.0]
+
+
+def test_extended_gcd_bezout_identity_random():
+    """a*x + b*y == g == gcd(a, b), exactly, over random inputs incl. the 2^53 domain edge."""
+    rng = random.Random(1212)
+    for _ in range(5000):
+        a = rng.randint(0, 2 ** 53)
+        b = rng.randint(0, 2 ** 53)
+        got = algo.run_algo("extended_gcd", [float(a), float(b)])
+        assert len(got) == 3
+        g, x, y = int(got[0]), int(got[1]), int(got[2])
+        assert a * x + b * y == g == math.gcd(a, b)
+
+
+def test_extended_gcd_matches_independent_recursive_oracle():
+    """The iterative op agrees element-wise with the RECURSIVE extended Euclid (different code path)."""
+    rng = random.Random(4848)
+    for _ in range(5000):
+        a = rng.randint(0, 2 ** 53)
+        b = rng.randint(0, 2 ** 53)
+        got = algo.run_algo("extended_gcd", [float(a), float(b)])
+        g, x, y = algo_difftest._ext_gcd_rec(a, b)
+        assert got == [float(g), float(x), float(y)]
+
+
+def test_extended_gcd_fail_soft():
+    assert algo.run_algo("extended_gcd", [3]) == []                     # too short
+    # bad a (first operand):
+    assert algo.run_algo("extended_gcd", [2.5, 7.0]) == []              # a non-integer
+    assert algo.run_algo("extended_gcd", [-1.0, 7.0]) == []             # a negative
+    assert algo.run_algo("extended_gcd", [9007199254740994.0, 3.0]) == []   # a > 2^53
+    # bad b (second operand) — the guard clauses are copy-paste symmetric, so cover both sides:
+    assert algo.run_algo("extended_gcd", [7.0, 2.5]) == []              # b non-integer
+    assert algo.run_algo("extended_gcd", [7.0, -1.0]) == []             # b negative
+    assert algo.run_algo("extended_gcd", [3.0, 9007199254740994.0]) == []   # b > 2^53
+    assert algo.run_algo("extended_gcd", [7.0, float("nan")]) == []     # NaN
+    # 2^53 itself is IN domain (exactly representable; coefficients stay exact):
+    assert algo.run_algo("extended_gcd", [9007199254740992.0, 6.0])[0] == 2.0
+
+
+def test_extended_gcd_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("extended_gcd", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_extended_gcd_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("extended_gcd", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True
 

@@ -44,7 +44,8 @@ P6 computational geometry (polygon area, point-in-polygon, convex hull, segment
 intersection; integer coords, exact), P8 search / selection (binary search,
 k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
 (deterministic Miller-Rabin primality, modular inverse), P11 bit manipulation
-(xor reduce, population count).
+(xor reduce, population count), P12 extended Euclidean algorithm (Bezout
+coefficients; variable-length seq -> 3-value seq).
 """
 from __future__ import annotations
 
@@ -2203,6 +2204,62 @@ double popcount_total(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P12 — extended Euclidean algorithm (KIND_MAP, exactly 3 outputs). Builds on the P5
+# gcd / P10 modular_inverse machinery. Non-negative integers <= 2^53; the Bezout
+# coefficients stay exact (|q*s| = |old_s - new_s| <= 2*max(a,b) <= 2^54, within long
+# long), so C == Python bit-for-bit. See docs/GENERAL_ALGORITHMS.md P12.
+# --------------------------------------------------------------------------- #
+_PY_EXTENDED_GCD = '''\
+def run(a):
+    """Extended Euclidean algorithm. Input a = [a_val, b_val] (non-negative integers <= 2^53). Returns
+    [g, x, y] with a_val * x + b_val * y == g == gcd(a_val, b_val) — a VARIABLE-LENGTH output of exactly
+    3 values (or [] fail-soft on malformed / out-of-domain input). Iterative; the Bezout coefficients
+    stay exact (|q*s| = |old_s - new_s| <= 2*max(a,b) <= 2^54, within the C long long mirror)."""
+    if len(a) < 2:
+        return []
+    ad = a[0]
+    bd = a[1]
+    if not (ad >= 0.0 and ad <= 9007199254740992.0 and ad == float(int(ad))):
+        return []
+    if not (bd >= 0.0 and bd <= 9007199254740992.0 and bd == float(int(bd))):
+        return []
+    old_r, r = int(ad), int(bd)
+    old_s, s = 1, 0
+    old_t, t = 0, 1
+    while r != 0:
+        q = old_r // r
+        old_r, r = r, old_r - q * r
+        old_s, s = s, old_s - q * s
+        old_t, t = t, old_t - q * t
+    return [float(old_r), float(old_s), float(old_t)]        # g = old_r, x = old_s, y = old_t
+'''
+
+_C_EXTENDED_GCD = '''\
+/* Extended Euclidean algorithm of a = [a_val, b_val] -> [g, x, y] with a_val*x + b_val*y = g = gcd.
+ * KIND_MAP with a fixed output length of 3. Non-negative integers <= 2^53 (Bezout coefficients fit
+ * long long). Fail-soft 0 (empty) on malformed / out-of-domain input. */
+int extended_gcd(const double* a, int n_in, double* out) {
+    if (n_in < 2) return 0;
+    double ad = a[0], bd = a[1];
+    if (!(ad >= 0.0 && ad <= 9007199254740992.0 && ad == (double)(long long)ad)) return 0;
+    if (!(bd >= 0.0 && bd <= 9007199254740992.0 && bd == (double)(long long)bd)) return 0;
+    if (!out) return 3;                                      /* size probe: always 3 outputs */
+    long long old_r = (long long)ad, r = (long long)bd;
+    long long old_s = 1, s = 0;
+    long long old_t = 0, t = 1;
+    while (r != 0) {
+        long long q = old_r / r;
+        long long tr = old_r - q * r; old_r = r; r = tr;
+        long long ts = old_s - q * s; old_s = s; s = ts;
+        long long tt = old_t - q * t; old_t = t; t = tt;
+    }
+    out[0] = (double)old_r; out[1] = (double)old_s; out[2] = (double)old_t;
+    return 3;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2347,6 +2404,12 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "Total number of set bits across a sequence of non-negative integers "
            "in [0, 2^53-1] (Kernighan).",
            "population count (Kernighan lowest-bit clearing), summed over the sequence"),
+    AlgoOp("extended_gcd", "numtheory", SEQ, SEQ, KIND_MAP, "extended_gcd",
+           _PY_EXTENDED_GCD, _C_EXTENDED_GCD,
+           "Extended Euclidean algorithm of [a, b] -> [g, x, y] with a*x + b*y = "
+           "g = gcd(a, b) (non-negative integers <= 2^53; variable-length seq -> "
+           "exactly 3 values, or [] fail-soft).",
+           "extended Euclidean algorithm; Bezout coefficients"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

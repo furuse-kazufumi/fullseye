@@ -6,7 +6,9 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
-> **★★(2026-08-17 その15, Opus5[1m]/ultracode, 12h 自律) = algo-c P9(統計).** `count_distinct`(distinct 値数)+ `mode_value`(最頻値・小さい方 tie 勝ち)。比較ベース exact・oracle set/Counter・各 5000 cases mism 0・difftest bit 一致。★mode_value のゼロ mode ±0.0 混在で C(unstable qsort)vs Python(stable)符号食い違い → `+0.0` 正準化で堅牢化。全 algo op 28 が gate 化。全スイート 4787→(P9 で +10 予定)。commit/push このセッション。
+> **★★(2026-08-17 その16, Opus5[1m]/ultracode, 12h 自律) = algo-c P10-P12(数論2/ビット/拡張ユークリッド).** P10 `is_prime`(決定的 Miller-Rabin・oracle sympy・Carmichael 正判定)+ `modular_inverse`(拡張ユークリッド・oracle builtin pow)= `1f22b03`+review `7344322`。P11 `xor_reduce`+`popcount_total`(域 [0,2^53−1]・oracle reduce(xor)/bit_count)= `fed093a`(**敵対レビュー findings 0**・私が mutation test 7 変異を一次検証で全捕捉確認)。**P12 `extended_gcd`**(KIND_MAP・`[a,b]→[g,x,y]`・`a·x+b·y=g=gcd`・域 [0,2^53] inclusive)= 独立**再帰版** oracle `_ext_gcd_rec` で要素一致(Bezout 非一意対策)・200k cases で反復==再帰 mism 0 かつ恒等式失敗 0・C bit 一致・67 cases gate。**全 algo op 33 が work-graph gate 化**。詳細=`docs/GENERAL_ALGORITHMS.md` P10/P11/P12。ruff clean・mypy 新規 0。commit/push このセッション。
+>
+> **★★(2026-08-17 その15, Opus5[1m]/ultracode, 12h 自律) = algo-c P9(統計).** `count_distinct`(distinct 値数)+ `mode_value`(最頻値・小さい方 tie 勝ち)。比較ベース exact・oracle set/Counter・各 5000 cases mism 0・difftest bit 一致。★mode_value のゼロ mode ±0.0 混在で C(unstable qsort)vs Python(stable)符号食い違い → `+0.0` 正準化で堅牢化。全 algo op 28 が gate 化。全スイート 4787→4796。commit/push このセッション。
 >
 > **★★(2026-08-17 その14, Opus5[1m]/ultracode, 12h 自律) = algo-c P8(探索/選択).** `binary_search`(sorted 列の lower bound・oracle bisect_left)+ `kth_smallest`(k 番目最小=quickselect median-of-three・順序非依存で C bit 一致・oracle sorted()[k]・sorted 入力 O(n))。両 op 各 5000 cases で oracle mismatch 0・difftest passed(python exact / C bit 一致 / c_verified)。全 algo op 26 が work-graph gate 化。**敵対レビュー 1 CONFIRMED(LOW)**: kth_smallest が単一 pivot Lomuto で all-equal 大入力 O(n²)(正しさ不変)→ **3-way(Dutch flag)partition に書換で O(n) 化**(n=40000 all-equal 7.44s→0.0019s・parity 維持)・計時テストを all_equal/reverse に拡張。全スイート **4772 → 4787 passed / 0 failed**(+15)。commit/push このセッション。
 >

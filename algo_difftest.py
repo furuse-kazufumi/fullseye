@@ -203,6 +203,18 @@ def _is_prime_trial(p: int) -> bool:
     return True
 
 
+def _ext_gcd_rec(a: int, b: int) -> tuple[int, int, int]:
+    """Extended Euclidean algorithm by RECURSION — an INDEPENDENT oracle for extended_gcd
+    (a wholly different code path from the op's iterative two-variable sweep). Returns the
+    same canonical (g, x, y) with a*x + b*y == g; the recursion unrolls to the iteration,
+    so element-wise equality is a valid check (the coefficients are deterministic here,
+    unlike the non-unique Bezout identity that only an a*x+b*y==g check would allow)."""
+    if b == 0:
+        return (a, 1, 0)
+    g, x1, y1 = _ext_gcd_rec(b, a % b)
+    return (g, y1, x1 - (a // b) * y1)
+
+
 def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
     """Per-op holdout. Numeric ops need VALID structured inputs (samples for
     Simpson, sign-bracketed / near-root polynomials for the root finders)."""
@@ -674,6 +686,36 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
         for _ in range(40):
             cases.append([float(rng2.randint(0, 100000)), float(rng2.randint(1, 100000))])
         return cases
+    if name == "extended_gcd":
+        rng2 = random.Random(seed + 1212)
+        cases = [
+            [35.0, 15.0], [240.0, 46.0], [17.0, 5.0], [1071.0, 462.0],          # ordinary coprime / non-coprime
+            [7.0, 7.0],                                                          # equal -> (7, 0, 1)
+            [0.0, 5.0], [5.0, 0.0], [0.0, 0.0],                                  # zero edges -> (b,0,1)/(a,1,0)/(0,1,0)
+            [1.0, 1.0], [1.0, 999983.0],                                         # a=1 (coprime, x=1)
+            # 2^53-domain-edge cases: the Bezout coefficients (|q*s| ~ 2*max ~ 2^54) exercise the WIDE
+            # long-long arithmetic in the C mirror, so a long-long->int narrowing is FALSIFIED (P10 lesson):
+            [2.0, 9007199254740991.0],                                          # a=2, b=2^53-1 (coprime)
+            [9007199254740891.0, 9007199254740992.0],                           # large coprime near 2^53
+            [4503599627370496.0, 9007199254740992.0],                           # 2^52 and 2^53 -> gcd 2^52
+            [9007199254740992.0, 6.0],                                          # a=2^53 (inclusive upper edge)
+            # out-of-domain -> [] fail-soft: short / >2^53 / non-int / negative / NaN.
+            # BOTH operands' guard clauses must be driven as a SOLE reason (a/b guards are copy-paste
+            # symmetric, so a one-sided b regression is plausible; review 2026-08-17 CONFIRMED the
+            # b-guard was unfalsifiable when only a-side bad cases existed). a-side bad:
+            [3.0], [9007199254740994.0, 3.0], [2.5, 7.0], [-1.0, 7.0], [7.0, float("nan")],
+            # b-side bad (valid a, finite out-of-domain b) — each isolates one b-guard clause:
+            [3.0, 9007199254740994.0],       # b > 2^53 (drives bd <= 2^53: a coefficient > 2^53 would
+                                             #           lose float64 exactness -> a*x+b*y != g)
+            [7.0, -1.0],                     # b < 0     (drives bd >= 0.0)
+            [7.0, 2.5],                      # b non-integer (drives bd == (long long)bd)
+        ]
+        for _ in range(40):
+            cases.append([float(rng2.randint(0, 200000)), float(rng2.randint(0, 200000))])
+        for _ in range(8):                                                       # near the 2^53 edge
+            cases.append([float(rng2.randint(0, 9007199254740992)),
+                          float(rng2.randint(0, 9007199254740992))])
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
@@ -1014,6 +1056,22 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 ref = 0.0
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
+    if name == "extended_gcd":
+        # independent oracle: the RECURSIVE extended Euclid (_ext_gcd_rec), element-wise (g,x,y).
+        # Domain-aware: len<2 or a value outside [0, 2^53] / non-integer -> the op's [] fail-soft.
+        # A structural mismatch (wrong output length) is fail-closed inf, never tol-gated.
+        vec_errs: list[float] = []
+        for arr, got in zip(holdout, py_out):
+            if len(arr) >= 2 and all(_int_in(x, 0.0, 9007199254740992.0) for x in arr[:2]):
+                g, x, y = _ext_gcd_rec(int(arr[0]), int(arr[1]))
+                bezout: list[float] = [float(g), float(x), float(y)]
+            else:
+                bezout = []
+            got_list = got if isinstance(got, list) else [got]
+            if len(got_list) != len(bezout):
+                return float("inf")                              # structural: fail-closed
+            vec_errs.extend(_diff01(float(gv), float(rv)) for gv, rv in zip(got_list, bezout))
+        return max(vec_errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:
         return _max_diff_sort(oracle, py_out)

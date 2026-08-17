@@ -456,4 +456,50 @@ large coprime near 2^53・`[2^52, 2^53]` both even→−1)を holdout に追加(
 非負整数を float64 で運び、域 [0, 2^53−1] で全値を 53 ビットに収める(XOR 結果も < 2^53=exact・popcount は小さい整数)=
 C bit 一致 かつ Python==独立 oracle(`functools.reduce(operator.xor)` / builtin `int.bit_count()`=Kernighan とは別機構)tol 0。
 両 op passed=True・python exact / C bit 一致 / c_verified。各 3000 ランダムケースで oracle mism 0 を事前実測。fail-soft=負/非整数/≥2^53→0.0。
-全 algo op 32 が gate 化。ruff clean(FURB161 で `bin().count('1')`→`.bit_count()` 化)・mypy 新規 0。敵対レビューは background 実行。
+全 algo op 32 が gate 化。ruff clean(FURB161 で `bin().count('1')`→`.bit_count()` 化)・mypy 新規 0。
+
+### P11 敵対レビュー結果(2026-08-17, [[feedback_no_solo_ai_judgment]])
+2 レンズ敵対レビュー Workflow(correctness + gate-safety、`wf_7d130631-c0f`)= **findings 0(欠陥なし)**。レビュアー1 は
+`{findings:[]}`、レビュアー2 は「ゲート mutation testing(実装を壊してゲートが捕まえるか)」の最中に window 圧縮で中断
+(結果未産出)。**規律に従い、死んだ background を蘇生せず、私が同じ mutation test を一次検証で完遂**: xor_reduce/popcount_total
+の代表 7 変異(空初期化 acc=1 / OR 誤用 / 2^53 域境界 off-by-one / 負ガード除去 / Kernighan→shift[popcount≠bitlength] /
++2 誤り / 2^53 admit)を holdout に対し実行 → **全 7 変異を独立 oracle が捕捉**(oracle_err > 0)。**結論=P11 ゲートは
+falsifying・確定欠陥なし**(`fed093a` は正当・follow-up commit 不要)。
+
+## P12 完遂記録 — 拡張ユークリッド互除法(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**数論 op 1 種を追加**(P5 の整数機構 + P10 の Bezout 不変量の上に・category numtheory を共有=P5+P10+P12)。
+`extended_gcd`(**KIND_MAP**): 入力 `[a, b]`(非負整数 ≤ 2^53)→ 出力 `[g, x, y]`(**厳密 3 値**、`a·x + b·y = g = gcd(a,b)`)、
+域外は `[]` fail-soft。反復版 two-variable sweep で係数を計算。**係数は厳密**(不変量 `|q·s| = |old_s − new_s| ≤ 2·max(a,b) ≤ 2^54`
+が C の long long に収まる)ゆえ C == Python bit 一致。domain は **[0, 2^53] inclusive**(2^53 は exact・係数 |x|,|y| ≲ 2^52 も
+float64 で exact)。
+- **★oracle 独立性の要点(P10 の教訓)**: Bezout (x,y) は非一意ゆえ「`a·x+b·y==g`」の**恒等式検証では符号/正準形の食い違いを
+  gate が falsify できない**。→ oracle は**独立な再帰版拡張ユークリッド `_ext_gcd_rec`(別コード経路)で (g,x,y) を計算し要素一致**。
+  反復版と再帰版は同一 canonical 係数を返す(再帰を展開すると反復になる=数学的に一致、`[0,b]`/`[a,0]`/`[0,0]`/等値の全端も一致確認)。
+- **honest gate 実測(passed=True・c_verified=true・ziglang cc・70 cases)**: python==独立再帰 oracle **diff 0.0(exact)** /
+  codegen **C==Python bit 一致 diff 0.0**。事前実測=**200,000 ランダム(2^53 域端含む)で 反復 op == 再帰 oracle mism 0 かつ
+  `a·x+b·y==g==math.gcd(a,b)` 恒等式(bignum で独立検算)失敗 0**。fail-soft=短小/非整数/負/NaN/>2^53 → `[]`。
+- **★ゲート mutation test(自己検証)**: swap x,y / negate x / drop old_s update / widen guard(>2^53 admit)/ wrong-length
+  の 5 終端変異を**全て捕捉**(要素不一致 or 構造不一致 inf)。誤商 q+1 は op 自身が無限ループ(difftest harness の timeout が
+  failure 検出)=終端する誤実装は全て falsify。
+- **holdout(域端と全分岐を単独理由で駆動)**: 既知 `[35,15]→(5,1,-2)` 等 + coprime/非 coprime + 等値 `[7,7]` + 片方 0
+  (`[0,5]`/`[5,0]`/`[0,0]`)+ a=1 + **2^53 域端**(`[2, 2^53−1]` coprime・large coprime near 2^53・`[2^52, 2^53]` gcd 2^52・
+  `[2^53, 6]` inclusive 上端)+ 域外 fail-soft(短小/`>2^53`=`[2^53+2,3]`/非整数/負/NaN)+ random 48。
+- **work-graph op 波**: extended_gcd を `algo_difftest --op` ゲートノード化(`1 op=1 ノード`・priority 0・tool capability・
+  produces=gate JSON)→ `run-once --available tool:command` で **無人 done**(passed:true・c_verified・bit 一致マーカー生成)。
+  = **全 algo op 33 が work-graph ゲート化**(32→33)。
+- **回帰**: `tests/test_algo.py` に P12 群(既知値・Bezout 恒等式 random×5000・独立再帰 oracle 一致 random×5000・fail-soft・
+  category grouping[numtheory=P5+P10+P12]・difftest python exact・C bit 一致)。全スイート **4827 passed / 0 failed**(test_algo.py
+  単体 260)・私の全変更 ruff clean・mypy 新規 0(origin/master=15 と同数=net-new 0)。
+
+### P12 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+3 レンズ敵対レビュー Workflow(correctness / c-safety+gate-honesty / integration、各 finding を検証エージェントが**実 compile/
+実行の mutation で再現**、5 agents・125 tool uses)= **2 raw(同一根本原因)→ 1 CONFIRMED**(MED・gate-cannot-falsify)。**op 自体は
+正しい**(200k + 全端で検証・再帰 oracle と非発散・in-domain で long long overflow なし)が、**difftest holdout の域外ケースが全て
+operand `a` 側**(`[2^53+2,3]`/`[2.5,7]`/`[-1,7]`)で、唯一の bad-`b` ケース `[7,NaN]` は NaN が `bd>=0.0` で短絡し b の 3 ガード節を
+一つも単独駆動しない → **`b` 側ガードの片側退行(a/b はコピペ対称ゆえ plausible)が両ゲート半分を通過**(P5/P7/P9/P10 と同じ gate-coverage
+教訓)。**自己再現で確定**: `bd>=0` / `bd<=2^53` / `bd==int` を _PY/_C 両方から削除 → **全て `passed=True`(MISSED)**、対称な `a` 側削除は
+全て `passed=False`(CAUGHT・a の域端が holdout にあるから)。**修正**=`[valid_a, finite_bad_b]` ケース(`[3, 2^53+2]`・`[7,-1]`・`[7,2.5]`)
+を holdout と fail-soft テストに追加 → 再実測で **b 側 3 削除が全て CAUGHT(passed=False, pydiff=inf)**・baseline は 70 cases で bit 一致
+pass。★**検証エージェントの honest 訂正を採用**(finding の過剰主張を却下): 「`bd<=2^53` 削除は b=2^62 で C long long overflow UB」は
+**不正確** — b=2^62 で C(long long)と Python(bignum)は bit 一致(overflow なし)。真の誤りは**出力の精度損失**(Bezout 係数が > 2^53 で
+float64 に厳密表現できず `a·x+b·y==g` が破れる)であり、`b<=2^53` 上限はこの精度を守る。機構は誤りだが欠陥と remedy は成立=採用。
