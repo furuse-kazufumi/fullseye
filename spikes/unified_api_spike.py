@@ -86,6 +86,26 @@ class Image:
         m = _norm01(np.hypot(ndimage.sobel(g, axis=1), ndimage.sobel(g, axis=0)))
         return self._wrap((m > low).astype(np.float64))
 
+    # --- morphology(自然 API=下層 scipy 直呼び。grey/binary 両対応の grey 版)--- #
+    def erode(self, size: int = 3) -> "Image":
+        return self._wrap(ndimage.grey_erosion(self.array, size=size))
+
+    def dilate(self, size: int = 3) -> "Image":
+        return self._wrap(ndimage.grey_dilation(self.array, size=size))
+
+    def opening(self, size: int = 3) -> "Image":
+        """erode→dilate: 小さな明領域(ノイズ)を除去。"""
+        return self._wrap(ndimage.grey_opening(self.array, size=size))
+
+    def closing(self, size: int = 3) -> "Image":
+        """dilate→erode: 小さな暗穴を埋める。"""
+        return self._wrap(ndimage.grey_closing(self.array, size=size))
+
+    def morph_gradient(self, size: int = 3) -> "Image":
+        """dilate - erode: 輪郭(境界)を抽出。"""
+        return self._wrap(_norm01(ndimage.grey_dilation(self.array, size=size)
+                                  - ndimage.grey_erosion(self.array, size=size)))
+
     # --- 長い尾(654 進化 op)へのエスケープハッチ --- #
     def op(self, name: str, a: float = 0.5, b: float = 0.5) -> "Image":
         """進化 registry の任意 op を汎用 a/b ノブで適用(自然 API 未整備の op 用)。"""
