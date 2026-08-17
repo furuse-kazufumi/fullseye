@@ -88,7 +88,7 @@ def _panel_lidar_perceive(fig) -> None:
         ax.scatter(*cen, s=120, marker="*", color=colors[i], edgecolor="k")
     ax.scatter(0, 0, 1.0, s=80, marker="^", color="red")  # sensor
     ax.set_title(f"sim-source→vision · LiDAR {len(pts)}pt → 物体 {len(clusters)}", fontsize=8)
-    ax.set_zlim(0, 1.2)
+    ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(0, 1.2)
     ax.view_init(elev=28, azim=-60)
 
 
