@@ -1920,6 +1920,9 @@ def test_count_inversions_known_values():
     assert algo.run_algo("count_inversions", [2, 2, 2]) == 0.0          # strict: equal is not an inversion
     assert algo.run_algo("count_inversions", [2, 1, 2, 1]) == 3.0
     assert algo.run_algo("count_inversions", [-0.0, 0.0]) == 0.0        # -0.0 == 0.0
+    assert algo.run_algo("count_inversions", [float("inf"), 1.0, float("-inf")]) == 3.0  # all 3 pairs
+    # long-long width: a strictly-decreasing n=65537 has 65537*65536/2 inversions, just over INT_MAX:
+    assert algo.run_algo("count_inversions", [float(x) for x in range(65537, 0, -1)]) == 2147516416.0
 
 
 def test_count_inversions_matches_brute_random():

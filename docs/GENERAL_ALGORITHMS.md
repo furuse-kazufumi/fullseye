@@ -629,3 +629,16 @@ fail-soft、空/単一→0.0。等値は転倒でない(tie で左を先取り=`
   difftest python exact・C bit 一致)。全スイート **4855 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
   **敵対レビューは worktree 隔離で実行**(P14 で
   レビューエージェントが対象 repo の algo.py を mutate した教訓=commit 後に隔離 worktree でレビュー→結果は follow-up)。
+
+### P16 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+**★worktree 隔離レビューの初適用が成功**: 3 レンズ × 隔離 git worktree(各エージェントが cd76da0 から自分専用の copy を作り mutation)
+→ **本 repo の algo.py は終始 clean**(検証エージェントも「real repo は read only・隔離 worktree で mutation・後始末済」と明記)。P14 の
+汚染問題を構造的に解消。結果=**2 CONFIRMED(両 LOW)**・correctness 系 0(op は正しい):
+- **[LOW gate-coverage] long long 幅が未 falsify**: holdout の最大転倒数が INT_MAX 未満(len ≤ 40 → 最大 ~700)ゆえ、C の累算器を
+  `long long`→`int` に縮小する変異が gate を通過(shipped は正しく long long)。**自己再現で確定**(int 縮小変異が passed=True・
+  n=65537 の狭義降順で真値 2147516416 > INT_MAX を int が -2147450880 に wrap)。**修正**=(1) **独立 Fenwick(BIT)版オラクル
+  `_fenwick_inversions`**(O(n log n)・マージソートと別アルゴリズム=O(n²) 総当りが遅すぎる大 n を検算可)を追加、(2) **狭義降順
+  witness(n=65537, 転倒数 2147516416 > INT_MAX)** を holdout+既知値テストに追加 → 再実測で int 縮小変異が **CAUGHT**(passed=False)。
+- **[LOW annotation] コメント誤り**: `[inf,1,-inf]` に `-> 2` と注記していたが実際は 3(全 3 ペアが転倒)。gate は oracle と比較(3 で
+  一致)ゆえ誤実装は通さない=**注記のみの不正確**。**修正**=コメントを `-> 3` に訂正(op/oracle/Fenwick すべて 3 で一致を確認)。
+- **★運用改善の実証**: これ以降のレビューは worktree 隔離を既定に。全スイート緑・ruff clean・mypy 新規 0。

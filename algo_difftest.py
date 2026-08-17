@@ -203,6 +203,31 @@ def _is_prime_trial(p: int) -> bool:
     return True
 
 
+def _fenwick_inversions(arr: list[float]) -> float:
+    """Inversion count by a Fenwick tree (BIT) — an INDEPENDENT O(n log n) oracle for count_inversions
+    (a wholly different algorithm from the op's divide-and-conquer merge sort). Left-to-right, for each
+    element add the number of already-seen elements STRICTLY greater than it. Handles the large
+    strictly-decreasing witness (n > INT_MAX inversions) that the O(n^2) brute is too slow for."""
+    srt = sorted(set(arr))
+    rank = {v: i + 1 for i, v in enumerate(srt)}     # 1-based ranks; equal values share a rank
+    m = len(srt)
+    bit = [0] * (m + 1)
+    inv = 0
+    for seen, v in enumerate(arr):                   # seen = number already inserted (elements before this one)
+        r = rank[v]
+        s = 0                                        # query prefix sum [1..r] = count seen with value <= v
+        i = r
+        while i > 0:
+            s += bit[i]
+            i -= i & (-i)
+        inv += seen - s                              # seen minus (<= v) = count strictly greater than v
+        i = r                                        # update: insert v
+        while i <= m:
+            bit[i] += 1
+            i += i & (-i)
+    return float(inv)
+
+
 def _ext_gcd_rec(a: int, b: int) -> tuple[int, int, int]:
     """Extended Euclidean algorithm by RECURSION — an INDEPENDENT oracle for extended_gcd
     (a wholly different code path from the op's iterative two-variable sweep). Returns the
@@ -821,7 +846,12 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             [2.0, 1.0, 2.0, 1.0],                            # duplicates with inversions -> 3
             [-0.0, 0.0],                                     # -0.0 == 0.0 (not a strict inversion) -> 0
             [0.0, -0.0],                                     # order swapped, still -> 0
-            [float("inf"), 1.0, float("-inf")],              # infinities compare fine -> 2
+            [float("inf"), 1.0, float("-inf")],              # infinities compare fine -> 3 (all 3 pairs)
+            # long-long width witness (review 2026-08-17 CONFIRMED an int-narrowing regression passed the
+            # gate): a strictly-decreasing array of n = 65537 has 65537*65536/2 = 2147516416 inversions,
+            # just over INT_MAX (2147483647), so an int accumulator overflows to a wrong negative count.
+            # The Fenwick oracle (not the O(n^2) brute) checks it.
+            [float(x) for x in range(65537, 0, -1)],         # count 2147516416 > INT_MAX -> pins long long
             # NaN -> -1.0 fail-soft (first / middle / last):
             [float("nan"), 1.0, 2.0], [1.0, float("nan"), 2.0], [1.0, 2.0, float("nan")],
         ]
@@ -1266,6 +1296,8 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
         for arr, got in zip(holdout, py_out):
             if any(math.isnan(v) for v in arr):
                 ref = -1.0
+            elif len(arr) > 2000:
+                ref = _fenwick_inversions(arr)       # O(n^2) brute is too slow; Fenwick (independent) instead
             else:
                 c = 0
                 for ii in range(len(arr)):
