@@ -25,6 +25,15 @@ matplotlib.use("Agg")  # GUI 不要でファイル保存(headless でも確実)�
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.animation import FuncAnimation, PillowWriter  # noqa: E402
 
+# Windows の日本語フォントを使う(既定 DejaVu Sans は CJK 無しでラベルが豆腐化する)。
+from matplotlib import font_manager  # noqa: E402
+_have = {f.name for f in font_manager.fontManager.ttflist}
+for _jp in ("Yu Gothic", "Meiryo", "MS Gothic", "Yu Gothic UI"):
+    if _jp in _have:
+        matplotlib.rcParams["font.family"] = _jp
+        break
+matplotlib.rcParams["axes.unicode_minus"] = False  # マイナス記号の豆腐化も防ぐ
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lidar_adapter_spike as _sim  # noqa: E402
 import unified_api_spike as _vis  # noqa: E402
