@@ -87,7 +87,12 @@ Fullseye = **あらゆる画像処理/視覚アルゴリズムを「スキル」
 
 ## 含意(推奨・要ユーザー承認)
 
-fullseye の目的(包括的・即使用・スキル化・Studio 実用)に沿うと、2 つの線を並行:
+★**統一インターフェース原則(ユーザー確定 2026-08-17)**: 中身が自作 numpy でも OSS ラッパでも、**使う側は
+fullseye の同一 I/F(facade の op 命名・シグネチャ規約・Studio 露出・honest gate/メタ)で呼べる**こと。
+OSS を使う所も素の PCL/OpenCV を直接叩かず、**fullseye 統一 I/F の裏に薄いアダプタ**として収める(= HALCON が
+多様な内部実装を単一 operator 語彙で提供するのと同じ)。「スキルとして即使える」の実体はこの一貫 I/F。
+
+fullseye の目的(包括的・即使用・スキル化・統一 I/F・Studio 実用)に沿うと、2 つの線を並行:
 
 - **(A) ライブラリ網羅を進める** = PCL/grid_map/image_pipeline/OpenCV の機能セットを**カバレッジ地図**として使い、
   fullseye の知覚 op の抜けを honest gate 付きで補完し **Studio に露出**(把握・試験・仕事で使える形に)。
