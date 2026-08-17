@@ -213,6 +213,8 @@ SAMPLES = [
      "params": [("sigma", 0.2, 4.0, 1.4, False), ("level", 0.05, 0.6, 0.25, False)]},
     {"name": "image.hwv", "domain": "vision", "code": _IMAGE_HWV,
      "params": [("sigma", 0.2, 4.0, 1.4, False), ("level", 0.05, 0.6, 0.25, False)]},
+    {"name": "image.morphology", "domain": "vision", "code": _MORPHOLOGY,
+     "params": [("size", 2, 9, 3, True), ("noise", 0.0, 0.1, 0.03, False)]},
     {"name": "cloud.perceive", "domain": "vision", "code": _CLOUD_PERCEIVE,
      "params": [("cluster_tol", 0.05, 0.3, 0.1, False)]},
     {"name": "pose.6dof", "domain": "vision", "code": _POSE_6DOF,
