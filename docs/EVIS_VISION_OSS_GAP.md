@@ -140,3 +140,5 @@ fullseye の目的(包括的・即使用・スキル化・統一 I/F・Studio �
 - ANYbotics grid_map(脚ロボ elevation/foothold/traversability): <https://github.com/ANYbotics/grid_map> ・ traversability: <https://github.com/leggedrobotics/traversability_estimation>
 - image_pipeline / stereo_image_proc / depth_image_proc: <https://docs.ros.org/en/rolling/p/image_pipeline/>
 - 6-DoF pose / grasp(GPD + MoveIt、frontier=deep): <https://arxiv.org/pdf/2312.03345>
+- 可視化: RViz2 <https://github.com/ros2/rviz> ・ grid_map_rviz_plugin(ANYbotics grid_map 同梱)・ moveit_visual_tools
+- sim ソース: Gazebo/Ignition(ROS2 標準シム, ros_gz bridge) <https://gazebosim.org/> ・ NVIDIA Isaac Sim/Isaac ROS(GPU 合成データ・深層知覚) <https://developer.nvidia.com/isaac/sim> ・ MuJoCo/MJX(evis/hillco 物理本体)
