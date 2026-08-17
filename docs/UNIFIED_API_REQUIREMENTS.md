@@ -49,7 +49,9 @@ OSS 内部の再実装(PCL/grid_map/OpenCV/MoveIt2 は薄いアダプタで裏�
   (進化用 a/b の生露出を使う側に見せない)。
 - **F2 統一発見(registry)**: 層を跨いで op を列挙・検索・カテゴリ分類できる単一の索引。
 - **F3 introspection/メタ**: 各 op が name / 入出力型 / パラメータ(名前・型・既定・範囲)/ doc / provenance /
-  honest-gate 状態を機械可読で持つ(Studio と эージェントが同じメタを使う)。
+  honest-gate 状態を機械可読で持つ(Studio と эージェントが同じメタを使う)。**+ 描画ヒント**(出力を
+  Studio でどう可視化するか: `image` / `point_cloud` / `pose` / `grid_map_layer` / `scalar` 等)を持ち、
+  Studio が RViz2 相当の 3D/2D 描画を自動選択できる。
 - **F4 OSS アダプタ契約**: OSS(PCL/OpenCV/grid_map 等)を裏に持つ op も、F1〜F3 を満たす同一 I/F で見える。
   OSS 不在時は明示エラー or 自作フォールバック(optional extras 方針)。
 - **F5 合成**: op をパイプライン化して繋げられる(画像チェーン / 知覚の段組み)。
