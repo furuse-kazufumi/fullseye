@@ -109,3 +109,62 @@ def select_points_object_model_3d(points, axis: int = 2, lo: float = -np.inf, hi
 def union_object_model_3d(points_a, points_b) -> np.ndarray:
     """2 つの 3D モデルを結合(union_object_model_3d)。"""
     return np.vstack([_pts(points_a), _pts(points_b)])
+
+
+def smooth_object_model_3d(points, k: int = 8) -> np.ndarray:
+    """各点を k 近傍の重心へ移動して平滑化(smooth_object_model_3d)。"""
+    from scipy.spatial import cKDTree
+    p = _pts(points)
+    if len(p) <= k:
+        return p
+    _, idx = cKDTree(p).query(p, k=k)
+    return p[idx].mean(axis=1)
+
+
+def edges_object_model_3d(points, k: int = 12, thresh: float = 0.08) -> np.ndarray:
+    """局所曲率が高い点=3D エッジを抽出(edges_object_model_3d)。近傍 PCA の平面性で判定。"""
+    from scipy.spatial import cKDTree
+    p = _pts(points)
+    if len(p) <= k:
+        return p
+    _, idx = cKDTree(p).query(p, k=k)
+    out = []
+    for i, nb in enumerate(idx):
+        d = p[nb] - p[nb].mean(0)
+        w = np.linalg.eigvalsh(np.cov(d.T))
+        w = np.clip(w, 0, None)
+        curv = w[0] / (w.sum() + 1e-12)                  # 表面変動率(大=エッジ/角)
+        if curv > thresh:
+            out.append(p[i])
+    return np.asarray(out) if out else np.zeros((0, 3))
+
+
+def intersect_plane_object_model_3d(points, plane=(0.0, 0.0, 1.0, 0.0), tol: float = 0.05) -> np.ndarray:
+    """平面(a,b,c,d)の近傍(距離<tol)の点=断面を返す(intersect_plane_object_model_3d)。"""
+    p = _pts(points)
+    a, b, c, d = plane
+    nrm = np.array([a, b, c], float)
+    dist = np.abs(p @ nrm + d) / (np.linalg.norm(nrm) + 1e-12)
+    return p[dist < tol]
+
+
+def triangulate_object_model_3d(points):
+    """主平面へ投影して Delaunay 三角形分割(triangulate_object_model_3d)。三角形頂点 index を返す。"""
+    from scipy.spatial import Delaunay
+    p = _pts(points)
+    if len(p) < 4:
+        return {"points": p, "triangles": np.zeros((0, 3), int)}
+    d = p - p.mean(0)
+    _, V = np.linalg.eigh(np.cov(d.T))
+    proj = d @ V[:, 1:]                                  # 分散最大の 2 主軸へ投影
+    tri = Delaunay(proj).simplices
+    return {"points": p, "triangles": tri}
+
+
+def projective_trans_object_model_3d(points, H=None) -> np.ndarray:
+    """4x4 射影変換を適用(projective_trans_object_model_3d)。既定は恒等。"""
+    p = _pts(points)
+    H = np.eye(4) if H is None else np.asarray(H, float)
+    hom = np.column_stack([p, np.ones(len(p))]) @ H.T
+    w = hom[:, 3:4]
+    return hom[:, :3] / np.where(np.abs(w) < 1e-12, 1.0, w)
