@@ -57,10 +57,20 @@ MoveIt2/ros2_control は **URDF の位置/トルク関節+標準グリッパ**�
 この「関節計画 → 筋活性実現」= **QP / static optimization / WBC**(あなたが既に持つ `reference_wbc_qp_control` の QP+osqp)こそ、
 OSS/ROS2 では埋まらない evis 固有部品。視覚(6D pose)→ MoveIt2(軌道)→ **筋実現(QP)** の最後の一段が本当のギャップ。
 
-## 正直な結論
+## Fullseye の目的(2026-08-17 ユーザー確認 — この分析の前提)
 
-**知覚 op の約 8〜9 割は、成熟した ROS2/OSS(PCL・grid_map・image_pipeline・OpenCV・rtabmap・nav2)の numpy 再実装**。
-**マニピュレーション/実行層(MoveIt2/MTC/GPD/ros2_control)も自作対象ではなく OSS を使う所**。
+Fullseye = **あらゆる画像処理/視覚アルゴリズムを「スキル」として保持し即使える包括的ライブラリ**(専用 HALCON)。
+**HALCON 級網羅が目標**。Fullseye Studio(HDevelop 風)= 機能を把握・試験・仕事で使う IDE。
+→ この doc の ROS2 調査は **「作るな」ではなく「正しく・網羅的に・実用語彙に忠実に作る」ための忠実性/優先度の参照**。
+
+## 正直な結論(目的に沿って訂正)
+
+- ROS2 調査の価値 = **各アルゴリズムの正しい意味論・実用語彙・"何が標準か" の忠実性参照**、および **どの op を優先網羅すべきかの地図**。
+  「PCL/grid_map/OpenCV にあるから作らない」ではない — **包括的に自作保持(自己完結 numpy)してスキル化**が目的。
+- **薄い wrapper で済ます例外** = 理解も即使用性も増えない純粋な重量級依存(例: GPU 加速 SGM、deep 6D pose)。ここは OSS を呼ぶ。
+- **真に止める"変な方向" = 汎用 CS(algo-c: sort/CRC/回文)**。画像処理/視覚の知見でないので fullseye の網羅対象外。
+- **知覚プリミティブ(camera/stereo/pcseg/terrain/features…)は fullseye の中核**。ROS2 の PCL/grid_map/image_pipeline の
+  機能セットを**網羅目標の地図として使い**、抜けている op を honest gate 付きで補完し **Studio に露出(把握・試験・実用)**。
 教育・自己完結の価値はあるが、evis の視覚を「動かす」目的では、これらを手で書き直すのは
 まさに「OSS で足りるものの再発明」。特に **脚ロボの terrain/foothold は grid_map、
 把持の cloud→segment→pose は PCL** が実robotで使われる本命。
