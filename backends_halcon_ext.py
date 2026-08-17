@@ -259,6 +259,116 @@ def _gen_bandpass(v, a, b):
     return ((r >= r_lo) & (r <= r_hi)).astype(np.float64)
 
 
+# ── 第 4 バッチ: Morphology(任意 SE の region 形態)+ Regions 生成 + 周波数フィルタ ── #
+def _disc_bool(r):
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1]
+    return xx * xx + yy * yy <= r * r
+
+
+def _se_radius(a):
+    return 1 + int(a * 4)
+
+
+def _erosion1(v, a, b):
+    from scipy.ndimage import binary_erosion
+    return binary_erosion(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
+
+
+def _dilation1(v, a, b):
+    from scipy.ndimage import binary_dilation
+    return binary_dilation(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
+
+
+def _opening(v, a, b):
+    from scipy.ndimage import binary_opening
+    return binary_opening(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
+
+
+def _closing(v, a, b):
+    from scipy.ndimage import binary_closing
+    return binary_closing(v > 0.5, structure=_disc_bool(_se_radius(a))).astype(np.float64)
+
+
+def _dilation2(v, a, b):
+    """参照点つき dilation: 膨張後に参照点オフセット(b で並進)。"""
+    from scipy.ndimage import binary_dilation
+    d = binary_dilation(v > 0.5, structure=_disc_bool(_se_radius(a)))
+    sh = int((b - 0.5) * 6)
+    return np.roll(d, sh, axis=1).astype(np.float64)
+
+
+def _gen_disc_se(v, a, b):
+    """円板構造要素を region として生成(半径 a)。"""
+    h, w, Y, X = _grid(v.shape)
+    cy, cx = (h - 1) / 2, (w - 1) / 2
+    r = (0.05 + 0.35 * a) * min(h, w)
+    return ((Y - cy) ** 2 + (X - cx) ** 2 <= r * r).astype(np.float64)
+
+
+def _gen_circle_sector(v, a, b):
+    """円のセクタ region(開始角 b*2pi、掃引 a*2pi)。"""
+    h, w, Y, X = _grid(v.shape)
+    cy, cx = (h - 1) / 2, (w - 1) / 2
+    r = 0.42 * min(h, w)
+    rad = np.sqrt((Y - cy) ** 2 + (X - cx) ** 2)
+    ang = np.arctan2(Y - cy, X - cx) % (2 * np.pi)
+    start = b * 2 * np.pi
+    sweep = 0.1 + a * (2 * np.pi - 0.1)
+    rel = (ang - start) % (2 * np.pi)
+    return ((rad <= r) & (rel <= sweep)).astype(np.float64)
+
+
+def _gen_ellipse_sector(v, a, b):
+    h, w, Y, X = _grid(v.shape)
+    cy, cx = (h - 1) / 2, (w - 1) / 2
+    ra, rb = 0.42 * w, 0.30 * h
+    inside = ((X - cx) / ra) ** 2 + ((Y - cy) / rb) ** 2 <= 1.0
+    ang = np.arctan2(Y - cy, X - cx) % (2 * np.pi)
+    rel = (ang - b * 2 * np.pi) % (2 * np.pi)
+    return (inside & (rel <= 0.1 + a * (2 * np.pi - 0.1))).astype(np.float64)
+
+
+def _gen_empty_region(v, a, b):
+    return np.zeros_like(v, dtype=np.float64)
+
+
+def _clip_region_rel(v, a, b):
+    """region をその外接矩形に対し相対的にクリップ(各辺から a の割合を削る)。"""
+    reg = v > 0.5
+    ys, xs = np.nonzero(reg)
+    if ys.size == 0:
+        return reg.astype(np.float64)
+    y0, y1, x0, x1 = ys.min(), ys.max(), xs.min(), xs.max()
+    my = int((y1 - y0) * 0.5 * a)
+    mx = int((x1 - x0) * 0.5 * a)
+    out = np.zeros_like(reg)
+    out[y0 + my:y1 - my + 1, x0 + mx:x1 - mx + 1] = reg[y0 + my:y1 - my + 1, x0 + mx:x1 - mx + 1]
+    return out.astype(np.float64)
+
+
+def _gen_bandfilter(v, a, b):
+    """理想バンドフィルタ画像(周波数円環、中心半径 a・幅 b)。gen_bandpass と別 operator。"""
+    r = _freq_radius(v.shape)
+    c = 0.05 + 0.4 * a
+    half = 0.03 + 0.15 * b
+    return ((r >= c - half) & (r <= c + half)).astype(np.float64)
+
+
+def _gen_derivative_filter(v, a, b):
+    """周波数領域の微分フィルタ(高周波ほど強い=周波数半径に比例)。"""
+    r = _freq_radius(v.shape)
+    return _norm01(r)
+
+
+def _fill_interlace(v, a, b):
+    """2 枚のビデオ半画像を補間(奇数行を隣接偶数行の平均で置換=デインターレース)。"""
+    out = v.copy()
+    up = np.roll(v, 1, axis=0)
+    dn = np.roll(v, -1, axis=0)
+    out[1::2, :] = 0.5 * (up[1::2, :] + dn[1::2, :])
+    return out
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
