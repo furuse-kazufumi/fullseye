@@ -1679,6 +1679,9 @@ def test_closest_pair_known_values():
     assert algo.run_algo("closest_pair", [0, 0, 0, 3, 0, 7, 0, 12]) == 9.0   # collinear
     # the closest pair straddles the divide-and-conquer mid line (exercises the strip):
     assert algo.run_algo("closest_pair", [-5, -5, -1, 0, 1, 0, 5, 5]) == 4.0
+    # closest strip pair is NOT adjacent in the y-sorted strip (a truncated y-scan would miss it):
+    assert algo.run_algo("closest_pair", [0, -6, -2, -2, 4, -3, -5, 3]) == 20.0
+    assert algo.run_algo("closest_pair", [-1, -6, -1, 0, -5, -4, 1, -4, 4, 4]) == 8.0
     # extreme in-domain coords: max squared distance still exact (< 2^53):
     assert algo.run_algo("closest_pair", [100000, 100000, -100000, -100000]) == 80000000000.0
 

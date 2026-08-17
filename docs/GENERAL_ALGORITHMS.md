@@ -526,4 +526,17 @@ float64 に厳密表現できず `a·x+b·y==g` が破れる)であり、`b<=2^5
   = **全 algo op 34 が work-graph ゲート化**(33→34)。
 - **回帰**: `tests/test_algo.py` に P13 群(既知値・総当り一致 random×4000・fail-soft[両座標スロット]・category grouping
   [geometry=P6+P7+P13]・difftest python exact・C bit 一致)。全スイート **4834 passed / 0 failed**(+7)・ruff clean・mypy
-  新規 0(origin/master=15 と同数)。敵対レビューは background 実行(結果は follow-up で反映)。
+  新規 0(origin/master=15 と同数)。敵対レビュー結果=下記(1 CONFIRMED を自己再現・修正)。
+
+### P13 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+3 レンズ敵対レビュー Workflow(correctness / c-safety+gate-honesty / integration、各 finding を検証エージェントが**実 compile/
+実行の mutation で再現**)= **3 レンズが同一根本原因に収束 → 1 CONFIRMED**(MED・gate-cannot-falsify)。**op 自体は正しい**(30k+16k
+敵対ケースで総当りと mism 0)が、**difftest holdout が strip の y-scan を immediate neighbor(j==i+1)より先へ駆動しない** →
+strip 前方走査を **j==i+1 のみに切り詰める regression を gate が falsify できない**(7 近傍定理は「高々 7」であって「1」ではないため、
+y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**: 走査を `range(i+1, min(i+2, sc))` に切り詰めた mutation を _PY/_C 両方に
+適用 → `passed=True`(MISSED)。falsify する最小ケースを整数格子で探索し発見(例 `[0,-6,-2,-2,4,-3,-5,3]`= 最近ペアが y 順で
+2 つ離れる → full/総当り 20 だが j==i+1-only は 25)。**修正**=strip 内で最近ペアが y-sorted で非隣接になる 3 ケース
+(`[0,-6,-2,-2,4,-3,-5,3]`→20 / `[-4,5,-1,-3,0,-1,3,-3]`→5 / `[-1,-6,-1,0,-5,-4,1,-4,4,4]`→8)を holdout と既知値テストに追加 →
+再実測で **j==i+1-only mutation が CAUGHT(passed=False, pydiff=12)**・baseline は 61 cases で bit 一致 pass・他 5 mutation も回帰
+なし。既存の 6 mutation(strip 省略/sq y 無視/座標上下限/整数性/空 strip)に加え strip 走査深度も falsify 可能に(P12 の gate-coverage
+教訓を geometry の strip 走査へ拡張)。

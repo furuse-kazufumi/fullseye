@@ -725,6 +725,12 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             [0.0, 0.0, 0.0, 3.0, 0.0, 7.0, 0.0, 12.0],           # collinear (vertical) -> 9
             [-5.0, -5.0, -1.0, 0.0, 1.0, 0.0, 5.0, 5.0],         # closest pair STRADDLES the mid line -> 4
             [3.0, 0.0, 3.0, 0.0],                                # two identical points (dist 0)
+            # closest strip pair is NOT adjacent in the y-sorted strip (a 3rd point sits between them
+            # in y): forces the y-scan PAST the immediate neighbor. A j==i+1-only scan gives a WRONG,
+            # too-large answer here, so these falsify a truncated strip scan (review 2026-08-17 CONFIRMED).
+            [0.0, -6.0, -2.0, -2.0, 4.0, -3.0, -5.0, 3.0],       # -> 20 (j==i+1-only gives 25)
+            [-4.0, 5.0, -1.0, -3.0, 0.0, -1.0, 3.0, -3.0],       # -> 5  (j==i+1-only gives 13)
+            [-1.0, -6.0, -1.0, 0.0, -5.0, -4.0, 1.0, -4.0, 4.0, 4.0],  # -> 8 (j==i+1-only gives 20)
             # coordinate domain edges (extreme but in-domain; sq dist exact < 2^53):
             [100000.0, 100000.0, -100000.0, -100000.0],          # 8e10 (max sq dist, still exact)
             [100000.0, 0.0, -100000.0, 0.0, 99999.0, 0.0],       # large coords, min = 1
