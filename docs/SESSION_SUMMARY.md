@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-18 08:35:02
+- **最終更新**: 2026-08-18 08:37:47
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+a5876c5 auto: halcon_facade_map.json 編集前 (2026-08-18 08:36)
 c18bcea auto: halcon_facade_map.json 編集前 (2026-08-18 08:34)
 a787052 auto: halcon_coverage.py 編集前 (2026-08-18 08:32)
 550462e auto: backends_halcon_ext.py 編集前 (2026-08-18 08:28)
@@ -19,7 +20,6 @@ d844675 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:27)
 f40b0c3 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:26)
 feef3aa auto: backends_halcon_ext.py 編集前 (2026-08-18 08:23)
 e5a6575 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:23)
-8d77714 auto: backends_halcon_ext.py 編集前 (2026-08-18 08:21)
 ```
 
 ## 現在の git status
@@ -31,14 +31,14 @@ M docs/HALCON_COVERAGE.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:34 data/halcon_stubs.json
-08:34 data/halcon_coverage_report.txt
-08:34 docs/HALCON_COVERAGE.md
-08:34 data/halcon_facade_map.json
+08:36 data/halcon_stubs.json
+08:36 docs/HALCON_COVERAGE.md
+08:36 data/halcon_coverage_report.txt
+08:36 data/halcon_facade_map.json
+08:35 docs/SESSION_SUMMARY.md
 08:32 .pytest_cache/v/cache/nodeids
 08:32 halcon_coverage.py
 08:28 backends_halcon_ext.py
-08:24 docs/SESSION_SUMMARY.md
 08:11 docs/HALCON_COVERAGE_HONEST.md
 07:57 ops.py
 07:54 spikes/out_gallery/studio_grasp_pipeline.png
