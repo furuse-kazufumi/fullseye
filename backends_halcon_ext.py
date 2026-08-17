@@ -754,6 +754,11 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_moments_any_xld", "moments_any_xld", CONTOUR, FEATURE, _moments_any_xld),
         ("hx_split_contours", "split_contours_xld", CONTOUR, CONTOUR, _split_contours_xld),
         ("hx_gen_parallel_contour", "gen_parallel_contour_xld", CONTOUR, CONTOUR, _gen_parallel_contour_xld),
+        # 第 9 バッチ(XLD 形状フィット)
+        ("hx_fit_circle_contour", "fit_circle_contour_xld", CONTOUR, FEATURE, _fit_circle_contour_xld),
+        ("hx_fit_ellipse_contour", "fit_ellipse_contour_xld", CONTOUR, FEATURE, _fit_ellipse_contour_xld),
+        ("hx_fit_rectangle2_contour", "fit_rectangle2_contour_xld", CONTOUR, FEATURE, _fit_rectangle2_contour_xld),
+        ("hx_smallest_rect2_xld", "smallest_rectangle2_xld", CONTOUR, FEATURE, _smallest_rectangle2_xld),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]

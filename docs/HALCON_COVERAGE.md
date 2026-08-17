@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 362 / 2313 HALCON operators (15.7%)** via `Op.halcon`, from 709 registry ops.
+**imgevolve maps to 366 / 2313 HALCON operators (15.8%)** via `Op.halcon`, from 713 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
@@ -29,9 +29,9 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | Calibration | 0 | 68 | 68 |
 | Filters | 129 | 196 | 67 |
 | 3D Matching | 0 | 59 | 59 |
-| XLD | 40 | 97 | 57 |
 | Matrix | 0 | 57 | 57 |
 | Inspection | 0 | 55 | 55 |
+| XLD | 44 | 97 | 53 |
 | File | 0 | 53 | 53 |
 | 3D Object Model | 0 | 51 | 51 |
 | Develop | 0 | 37 | 37 |
@@ -63,7 +63,7 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 ## Version awareness (HALCON's op set changes between releases)
 Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
 
-- **353** claimed names exist in **all** scraped releases (stable).
+- **357** claimed names exist in **all** scraped releases (stable).
 - **9 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605)
 - **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 
