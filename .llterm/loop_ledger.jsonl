@@ -1,0 +1,28 @@
+{"ts": "2026-08-17T13:58:45.385607+00:00", "event": "session_start", "cmd_id": "3df87de9-d45f-476f-b233-affba449869f", "action": "rotate", "detail": "session#1"}
+{"ts": "2026-08-17T13:58:45.385607+00:00", "event": "turn", "cmd_id": "3df87de9-d45f-476f-b233-affba449869f", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.385607+00:00", "event": "turn", "cmd_id": "3df87de9-d45f-476f-b233-affba449869f", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "exit_prep", "cmd_id": "3df87de9-d45f-476f-b233-affba449869f", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "session_start", "cmd_id": "04a97d8c-07dc-4422-8aee-71c18b54f786", "action": "rotate", "detail": "session#2"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "turn", "cmd_id": "04a97d8c-07dc-4422-8aee-71c18b54f786", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "turn", "cmd_id": "04a97d8c-07dc-4422-8aee-71c18b54f786", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "exit_prep", "cmd_id": "04a97d8c-07dc-4422-8aee-71c18b54f786", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "session_start", "cmd_id": "7f761eda-0c31-4f9c-92e6-36beb9adefc9", "action": "rotate", "detail": "session#3"}
+{"ts": "2026-08-17T13:58:45.401656+00:00", "event": "turn", "cmd_id": "7f761eda-0c31-4f9c-92e6-36beb9adefc9", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.417308+00:00", "event": "turn", "cmd_id": "7f761eda-0c31-4f9c-92e6-36beb9adefc9", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.417308+00:00", "event": "exit_prep", "cmd_id": "7f761eda-0c31-4f9c-92e6-36beb9adefc9", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
+{"ts": "2026-08-17T13:58:45.417308+00:00", "event": "session_start", "cmd_id": "1365d93f-32cc-4552-be58-fdbb65a27907", "action": "rotate", "detail": "session#4"}
+{"ts": "2026-08-17T13:58:45.417308+00:00", "event": "turn", "cmd_id": "1365d93f-32cc-4552-be58-fdbb65a27907", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.417308+00:00", "event": "turn", "cmd_id": "1365d93f-32cc-4552-be58-fdbb65a27907", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T13:58:45.433258+00:00", "event": "exit_prep", "cmd_id": "1365d93f-32cc-4552-be58-fdbb65a27907", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
+{"ts": "2026-08-17T14:09:21.192694+00:00", "event": "session_start", "cmd_id": "cf7a483c-c709-44dc-a1d7-8908abedcb69", "action": "rotate", "detail": "session#1"}
+{"ts": "2026-08-17T14:09:21.192694+00:00", "event": "turn", "cmd_id": "cf7a483c-c709-44dc-a1d7-8908abedcb69", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T14:09:21.192694+00:00", "event": "turn", "cmd_id": "cf7a483c-c709-44dc-a1d7-8908abedcb69", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T14:09:21.210966+00:00", "event": "exit_prep", "cmd_id": "cf7a483c-c709-44dc-a1d7-8908abedcb69", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
+{"ts": "2026-08-17T14:09:21.210966+00:00", "event": "session_start", "cmd_id": "4bc1b140-d489-4228-bf46-590e56874355", "action": "rotate", "detail": "session#2"}
+{"ts": "2026-08-17T14:09:21.210966+00:00", "event": "turn", "cmd_id": "4bc1b140-d489-4228-bf46-590e56874355", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T14:09:21.210966+00:00", "event": "turn", "cmd_id": "4bc1b140-d489-4228-bf46-590e56874355", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T14:09:21.225238+00:00", "event": "exit_prep", "cmd_id": "4bc1b140-d489-4228-bf46-590e56874355", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
+{"ts": "2026-08-17T14:09:21.227147+00:00", "event": "session_start", "cmd_id": "fba7e18f-1c58-4877-bc01-364128b52732", "action": "rotate", "detail": "session#3"}
+{"ts": "2026-08-17T14:09:21.227147+00:00", "event": "turn", "cmd_id": "fba7e18f-1c58-4877-bc01-364128b52732", "action": "query-state", "detail": "ctx=10000 used=5% cost=0.0000 err=-"}
+{"ts": "2026-08-17T14:09:21.227147+00:00", "event": "turn", "cmd_id": "fba7e18f-1c58-4877-bc01-364128b52732", "action": "query-state", "detail": "ctx=150000 used=75% cost=0.0000 err=-"}
+{"ts": "2026-08-17T14:09:21.236350+00:00", "event": "exit_prep", "cmd_id": "fba7e18f-1c58-4877-bc01-364128b52732", "action": "rotate", "detail": "used=75% turns=2 → rotate"}
