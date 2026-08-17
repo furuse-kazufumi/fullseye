@@ -924,15 +924,18 @@ def _distance_sc(v, a, b):
 
 
 def _fuzzy_measure_pairs(v, a, b):
-    """中央の水平プロファイルに沿ってエッジ対(立上り→立下り)を数える(1D 計測、feature)。"""
+    """中央の水平プロファイルでエッジ対(明バーの立上り境界→立下り境界)を数える(1D 計測)。
+
+    レベル閾値の交差で境界を 1 回ずつ取る(np.gradient はステップを 2 画素に滲ませ二重計上
+    するため不可)。閾値 lvl は a で可変。返り値は対の数(/10 で正規化した feature)。"""
     row = v[v.shape[0] // 2]
-    g = np.gradient(row)
-    thr = (0.05 + 0.4 * a) * (np.abs(g).max() + 1e-9)
-    rises = np.where(g > thr)[0]
-    falls = np.where(g < -thr)[0]
+    lvl = 0.2 + 0.6 * a
+    hi = row >= lvl
+    rises = np.where(~hi[:-1] & hi[1:])[0]               # low->high 境界
+    falls = np.where(hi[:-1] & ~hi[1:])[0]               # high->low 境界
     pairs = 0
     fi = 0
-    for r in rises:                                      # 各立上りの後の最初の立下りで 1 対
+    for r in rises:
         while fi < len(falls) and falls[fi] <= r:
             fi += 1
         if fi < len(falls):
