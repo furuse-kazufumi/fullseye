@@ -53,13 +53,13 @@ def synthetic_scene(h: int = 96, w: int = 128) -> np.ndarray:
 # コードは名前空間(fig/np/fs/Image/sim/LidarPattern/SCENE/synthetic_scene)の下で exec され、
 # fig に subplot を足して描画する契約。編集して Run すれば結果が変わる。
 _IMAGE_CHAIN = '''\
-# vision: 画像チェーン(編集して Run できます。sigma や threshold を変えてみて)
+# vision: 画像チェーン(sigma / level スライダで即再描画。コード編集も可)
 img = synthetic_scene()
 chain = [
-    ("input",           img),
-    ("gaussian(1.4)",   Image(img).gaussian(1.4).array),
-    ("sobel",           Image(img).gaussian(1.4).sobel().array),
-    ("threshold(0.25)", Image(img).gaussian(1.4).sobel().threshold(0.25).array),
+    ("input",                 img),
+    (f"gaussian({sigma:.2f})", Image(img).gaussian(sigma).array),
+    ("sobel",                 Image(img).gaussian(sigma).sobel().array),
+    (f"threshold({level:.2f})", Image(img).gaussian(sigma).sobel().threshold(level).array),
 ]
 for i, (title, arr) in enumerate(chain):
     ax = fig.add_subplot(2, 2, i + 1)
@@ -68,14 +68,14 @@ for i, (title, arr) in enumerate(chain):
 '''
 
 _CLOUD_PERCEIVE = '''\
-# vision: 点群から床を除去して物体クラスタを取り出す
+# vision: 点群から床を除去して物体クラスタを取り出す(cluster_tol スライダ)
 rng = np.random.default_rng(0)
 xs, ys = np.meshgrid(np.linspace(-1, 1, 30), np.linspace(-1, 1, 30))
 floor = np.column_stack([xs.ravel(), ys.ravel(), np.zeros(xs.size)])
 blob = rng.normal([0.4, 0.4, 0.5], 0.03, (60, 3))
 pts = np.vstack([floor + rng.normal(0, 0.002, floor.shape), blob])
 ng, gmask = fs.remove_ground(pts, thresh=0.03)
-clusters = fs.euclidean_clusters(ng, tol=0.1, min_size=5)
+clusters = fs.euclidean_clusters(ng, tol=cluster_tol, min_size=5)
 ax = fig.add_subplot(111, projection="3d")
 ax.scatter(pts[gmask][:, 0], pts[gmask][:, 1], pts[gmask][:, 2], s=2, c="0.7")
 for idx in clusters:
@@ -85,23 +85,23 @@ ax.set_title(f"床除去 {int(gmask.sum())} 点 -> 物体 {len(clusters)}", font
 '''
 
 _SIM_LIDAR = '''\
-# sim-source: 物理エンジンから LiDAR 1 スキャン(点群を得る)
+# sim-source: 物理エンジンから LiDAR 1 スキャン(h_res / v_res スライダで解像度可変)
 scene = sim.MuJoCo(SCENE)
-pts = scene.lidar(origin=(0, 0, 1.0), pattern=LidarPattern(h_res=120, v_res=24))
+pts = scene.lidar(origin=(0, 0, 1.0), pattern=LidarPattern(h_res=h_res, v_res=v_res))
 ax = fig.add_subplot(111, projection="3d")
-p = ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], s=2, c=pts[:, 2], cmap="viridis")
+ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], s=2, c=pts[:, 2], cmap="viridis")
 ax.scatter(0, 0, 1.0, s=80, marker="^", color="red")
 ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(0, 1.2); ax.view_init(28, -60)
-ax.set_title(f"LiDAR ヒット {len(pts)} 点(真値・GL 不要)", fontsize=9)
+ax.set_title(f"LiDAR {h_res}x{v_res} -> ヒット {len(pts)} 点(真値)", fontsize=9)
 '''
 
 _SIM_TO_VISION = '''\
 # sim-source -> vision: LiDAR 点群を fullseye 知覚 op に渡す分業ループ
 import matplotlib.pyplot as _plt
 scene = sim.MuJoCo(SCENE)
-pts = scene.lidar(origin=(0, 0, 1.0))            # 物理が供給
-ng, gmask = fs.remove_ground(pts, thresh=0.03)   # fullseye が計算
-clusters = fs.euclidean_clusters(ng, tol=0.25, min_size=5)
+pts = scene.lidar(origin=(0, 0, 1.0))                    # 物理が供給
+ng, gmask = fs.remove_ground(pts, thresh=ground_thresh)  # fullseye が計算
+clusters = fs.euclidean_clusters(ng, tol=cluster_tol, min_size=5)
 ax = fig.add_subplot(111, projection="3d")
 ax.scatter(pts[gmask][:, 0], pts[gmask][:, 1], pts[gmask][:, 2], s=1, c="0.7")
 cols = _plt.cm.tab10(np.linspace(0, 1, max(len(clusters), 1)))
@@ -113,11 +113,16 @@ ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(0, 1.2); ax.view_init(28, -6
 ax.set_title(f"sim LiDAR -> 床除去 -> 物体 {len(clusters)}", fontsize=9)
 '''
 
+# 各サンプル: name, domain, code, params[(name, lo, hi, default, is_int)]
 SAMPLES = [
-    ("image.chain", "vision", _IMAGE_CHAIN),
-    ("cloud.perceive", "vision", _CLOUD_PERCEIVE),
-    ("sim.lidar", "sim-source", _SIM_LIDAR),
-    ("sim.to_vision", "sim-source", _SIM_TO_VISION),
+    {"name": "image.chain", "domain": "vision", "code": _IMAGE_CHAIN,
+     "params": [("sigma", 0.2, 4.0, 1.4, False), ("level", 0.05, 0.6, 0.25, False)]},
+    {"name": "cloud.perceive", "domain": "vision", "code": _CLOUD_PERCEIVE,
+     "params": [("cluster_tol", 0.05, 0.3, 0.1, False)]},
+    {"name": "sim.lidar", "domain": "sim-source", "code": _SIM_LIDAR,
+     "params": [("h_res", 30, 200, 120, True), ("v_res", 6, 40, 24, True)]},
+    {"name": "sim.to_vision", "domain": "sim-source", "code": _SIM_TO_VISION,
+     "params": [("ground_thresh", 0.01, 0.1, 0.03, False), ("cluster_tol", 0.1, 0.5, 0.25, False)]},
 ]
 
 
