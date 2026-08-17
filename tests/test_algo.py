@@ -125,7 +125,7 @@ def test_categories_grouping():
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS) | set(_COMPRESS2)   # P5 + P14
     assert set(cats["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)   # P6/P7 + P13
-    assert set(cats["search"]) == set(_SEARCH) | set(_SEARCH2) | set(_SEARCH3)   # P8 + P15 + P17
+    assert set(cats["search"]) == set(_SEARCH) | set(_SEARCH2) | set(_SEARCH3) | set(_SEARCH4)  # P8+P15+P17+P18
     assert set(cats["stat"]) == set(_STAT) | set(_STAT2)   # P9 + P16
 
 
