@@ -835,6 +835,74 @@ def _estimate_al_am(v, a, b):
     return np.float64(np.clip(hi - lo, 0, 1))           # 反射率の代理=輝度ダイナミックレンジ
 
 
+# ── 第 12 バッチ: contour 距離/歪み + disparity→depth ───────────────────────────── #
+def _add_noise_white_contour_xld(v, a, b):
+    """contour 点に白色ガウス雑音を付加(std は a、固定 seed で決定的)。"""
+    rng = np.random.default_rng(12345)
+    std = a * 3.0
+    out = [c + rng.normal(0, std, c.shape) for c in _c_cs(v)]
+    return _c_mk(_c_shape(v), out)
+
+
+def _change_radial_distortion_contours_xld(v, a, b):
+    """contour に放射歪み r' = r(1 + k r^2) を適用(k は (a-0.5) で樽/糸巻き)。"""
+    h, w = _c_shape(v)
+    cy, cx = h / 2, w / 2
+    k = (a - 0.5) * 1.5
+    scale = max(h, w) / 2
+    out = []
+    for c in _c_cs(v):
+        d = c - [cy, cx]
+        r = np.hypot(d[:, 0], d[:, 1]) / scale
+        f = 1 + k * r ** 2
+        out.append([cy, cx] + d * f[:, None])
+    return _c_mk((h, w), out)
+
+
+def _dist_ellipse_contour_points_xld(v, a, b):
+    """contour 各点の当てはめ楕円境界からの最大距離を返す(点別 distance の集約=max、feature)。"""
+    p = _all_pts(v)
+    if len(p) < 4:
+        return np.float64(0.0)
+    c = p.mean(0)
+    d = p - c
+    w_, V = np.linalg.eigh(np.cov(d.T))
+    w_ = np.clip(w_, 1e-9, None)
+    loc = d @ V
+    ax = 2 * np.sqrt(w_)
+    rad = np.sqrt((loc[:, 0] / ax[0]) ** 2 + (loc[:, 1] / ax[1]) ** 2)
+    return np.float64(min(float(np.abs(rad - 1.0).max()), 1.0))
+
+
+def _dist_rectangle2_contour_points_xld(v, a, b):
+    """contour 各点の最小面積外接矩形の中心からの正規化距離の平均(feature)。"""
+    p = _all_pts(v)
+    if len(p) < 3:
+        return np.float64(0.0)
+    c = p.mean(0)
+    d = np.hypot(*(p - c).T)
+    return np.float64(min(float(d.mean()) / max(_c_shape(v)), 1.0))
+
+
+def _distance_pc(v, a, b):
+    """クエリ点(正規化 a,b)から contour までの最小距離を返す(feature)。"""
+    p = _all_pts(v)
+    if len(p) == 0:
+        return np.float64(0.0)
+    h, w = _c_shape(v)
+    q = np.array([a * h, b * w])
+    return np.float64(min(float(np.hypot(*(p - q).T).min()) / max(h, w), 1.0))
+
+
+def _disparity_image_to_xyz(v, a, b):
+    """視差画像から深度 Z = f*baseline/disparity を計算(焦点/基線は a,b で可変)。正規化 Z。"""
+    f = 200 + 600 * a
+    baseline = 0.05 + 0.15 * b
+    disp = v * 63.0 + 0.5                                 # [0,1] を視差[px]相当へ
+    z = f * baseline / disp
+    return _norm01(z)
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
