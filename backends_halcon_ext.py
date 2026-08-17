@@ -478,6 +478,156 @@ def _split_skeleton_region(v, a, b):
     return ((sk == 1) & ~junc).astype(np.float64)
 
 
+# ── 第 8 バッチ: XLD contour(dict {shape,(H,W); cs:[Nx2 (row,col)]})─────────────── #
+def _c_cs(v):
+    return [np.asarray(c, float) for c in v.get("cs", [])] if isinstance(v, dict) else []
+
+
+def _c_shape(v):
+    return tuple(v.get("shape", (1, 1))) if isinstance(v, dict) else (1, 1)
+
+
+def _c_mk(shape, cs):
+    return {"shape": shape, "cs": [np.asarray(c, float) for c in cs if len(c) > 0]}
+
+
+def _sort_contours_xld(v, a, b):
+    """contour を相対位置(重心 row→col)でソート。"""
+    cs = _c_cs(v)
+    cs.sort(key=lambda c: (float(c[:, 0].mean()), float(c[:, 1].mean())))
+    return _c_mk(_c_shape(v), cs)
+
+
+def _clip_contours_xld(v, a, b):
+    """contour を画像ドメイン(中央 margin a/b を残す矩形)にクリップ(範囲外点を除去)。"""
+    h, w = _c_shape(v)
+    my, mx = a * 0.4 * h, b * 0.4 * w
+    out = []
+    for c in _c_cs(v):
+        m = (c[:, 0] >= my) & (c[:, 0] <= h - 1 - my) & (c[:, 1] >= mx) & (c[:, 1] <= w - 1 - mx)
+        if m.any():
+            out.append(c[m])
+    return _c_mk((h, w), out)
+
+
+def _clip_end_points_contours_xld(v, a, b):
+    """各 contour の端点を k 個ずつ切り落とす(k は a)。"""
+    k = 1 + int(a * 5)
+    out = [c[k:len(c) - k] for c in _c_cs(v) if len(c) > 2 * k + 1]
+    return _c_mk(_c_shape(v), out)
+
+
+def _all_pts(v):
+    cs = _c_cs(v)
+    return np.concatenate(cs, 0) if cs else np.zeros((0, 2))
+
+
+def _smallest_circle_xld(v, a, b):
+    """全 contour 点の最小包含円(近似=重心中心)の半径を返す(正規化 feature)。"""
+    p = _all_pts(v)
+    if len(p) == 0:
+        return np.float64(0.0)
+    c = p.mean(0)
+    r = float(np.sqrt(((p - c) ** 2).sum(1)).max())
+    return np.float64(r / max(_c_shape(v)))
+
+
+def _smallest_rectangle1_xld(v, a, b):
+    """全 contour 点の外接軸並行矩形の面積比を返す(feature)。"""
+    p = _all_pts(v)
+    if len(p) == 0:
+        return np.float64(0.0)
+    hw = (p.max(0) - p.min(0))
+    h, w = _c_shape(v)
+    return np.float64(float(hw[0] * hw[1]) / max(h * w, 1))
+
+
+def _test_closed_xld(v, a, b):
+    """閉じている contour の割合を返す(端点間距離が閾値未満=閉、feature)。"""
+    cs = _c_cs(v)
+    if not cs:
+        return np.float64(0.0)
+    tol = 1.0 + a * 4.0
+    closed = sum(1 for c in cs if len(c) > 2 and np.hypot(*(c[0] - c[-1])) <= tol)
+    return np.float64(closed / len(cs))
+
+
+def _regress_contours_xld(v, a, b):
+    """各 contour に回帰直線を当て、平均残差(直線からのズレ)を返す(feature)。小=直線的。"""
+    cs = _c_cs(v)
+    res = []
+    for c in cs:
+        if len(c) < 3:
+            continue
+        d = c - c.mean(0)
+        w_, V = np.linalg.eigh(np.cov(d.T))
+        n = V[:, 0]                                       # 最小固有ベクトル=法線
+        res.append(float(np.sqrt((( d @ n) ** 2).mean())))
+    if not res:
+        return np.float64(0.0)
+    return np.float64(min(np.mean(res) / max(_c_shape(v)), 1.0))
+
+
+def _moments_any_xld(v, a, b):
+    """全 contour 点の 2 次中心モーメント(広がり)を返す(正規化 feature)。"""
+    p = _all_pts(v)
+    if len(p) < 2:
+        return np.float64(0.0)
+    d = p - p.mean(0)
+    mu = (d[:, 0] ** 2 + d[:, 1] ** 2).mean()
+    return np.float64(min(mu / (max(_c_shape(v)) ** 2), 1.0))
+
+
+def _rdp(pts, eps):
+    """Ramer-Douglas-Peucker: 支配点の index を返す。"""
+    if len(pts) < 3:
+        return [0, len(pts) - 1]
+    a, b = pts[0], pts[-1]
+    ab = b - a
+    L = np.hypot(*ab)
+    if L < 1e-9:
+        d = np.hypot(*(pts - a).T)
+    else:
+        d = np.abs(np.cross(np.tile(ab, (len(pts), 1)), pts - a)) / L
+    i = int(np.argmax(d))
+    if d[i] > eps:
+        left = _rdp(pts[:i + 1], eps)
+        right = _rdp(pts[i:], eps)
+        return left[:-1] + [x + i for x in right]
+    return [0, len(pts) - 1]
+
+
+def _split_contours_xld(v, a, b):
+    """各 contour を支配点(RDP)で線分に分割する(許容 eps は a)。"""
+    eps = 0.5 + a * 5.0
+    out = []
+    for c in _c_cs(v):
+        if len(c) < 3:
+            out.append(c)
+            continue
+        idx = _rdp(c, eps)
+        for s, e in zip(idx[:-1], idx[1:]):
+            if e - s >= 1:
+                out.append(c[s:e + 1])
+    return _c_mk(_c_shape(v), out)
+
+
+def _gen_parallel_contour_xld(v, a, b):
+    """各 contour の平行(法線オフセット)contour を生成(距離は (a-0.5) で符号つき)。"""
+    dist = (a - 0.5) * 10.0
+    out = []
+    for c in _c_cs(v):
+        if len(c) < 2:
+            out.append(c)
+            continue
+        t = np.gradient(c, axis=0)
+        nrm = np.column_stack([-t[:, 1], t[:, 0]])
+        L = np.hypot(nrm[:, 0], nrm[:, 1])[:, None]
+        nrm = nrm / np.where(L < 1e-9, 1.0, L)
+        out.append(c + dist * nrm)
+    return _c_mk(_c_shape(v), out)
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
