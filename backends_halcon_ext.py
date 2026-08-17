@@ -412,6 +412,54 @@ def _detect_edge_segments(v, a, b):
     return out
 
 
+# ── 第 6 バッチ: Image ドメイン/ラベル + Segmentation lowlands/plateaus ────────── #
+def _gen_image_proto(v, a, b):
+    """入力と同サイズの定数グレー画像(値 a)を生成。"""
+    return np.full_like(v, float(a), dtype=np.float64)
+
+
+def _get_domain(v, a, b):
+    """画像の定義域を region として取得(既定は全面)。"""
+    return np.ones_like(v, dtype=np.float64)
+
+
+def _region_to_label(v, a, b):
+    """しきい値 a で二値化した領域の連結成分をラベル画像に変換(正規化)。"""
+    from scipy.ndimage import label, generate_binary_structure
+    lab, n = label(v > a, structure=generate_binary_structure(2, 2))
+    return (lab / n).astype(np.float64) if n > 0 else np.zeros_like(v)
+
+
+def _rectangle1_domain(v, a, b):
+    """画像の定義域を軸並行矩形に縮小(中央の a×b の割合)region。"""
+    h, w = v.shape
+    hh, ww = int(h * (0.2 + 0.7 * a)), int(w * (0.2 + 0.7 * b))
+    y0, x0 = (h - hh) // 2, (w - ww) // 2
+    out = np.zeros_like(v, dtype=np.float64)
+    out[y0:y0 + hh, x0:x0 + ww] = 1.0
+    return out
+
+
+def _lowlands(v, a, b):
+    """gray 値の窪地(局所最小の平坦域)を検出: 近傍最小と一致する画素 region。"""
+    size = 3 + int(a * 6)
+    mn = ndimage.minimum_filter(v, size=size, mode="reflect")
+    return ((v <= mn + 1e-6) & (v < float(v.mean()))).astype(np.float64)
+
+
+def _plateaus_center(v, a, b):
+    """gray 値の平坦域(勾配~0)の中心を検出: 平坦連結成分の重心画素を marker region に。"""
+    from scipy.ndimage import label, center_of_mass, generate_binary_structure
+    gmag = np.hypot(ndimage.sobel(v, axis=1), ndimage.sobel(v, axis=0))
+    flat = gmag < (0.01 + 0.1 * a) * (gmag.max() + 1e-9)
+    lab, n = label(flat, structure=generate_binary_structure(2, 2))
+    out = np.zeros_like(v, dtype=np.float64)
+    if n > 0:
+        for cy, cx in center_of_mass(flat, lab, range(1, n + 1)):
+            out[int(round(cy)), int(round(cx))] = 1.0
+    return out
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
