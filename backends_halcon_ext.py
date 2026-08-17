@@ -396,6 +396,20 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_gen_lowpass", "gen_lowpass", IMAGE, IMAGE, _gen_lowpass),
         ("hx_gen_highpass", "gen_highpass", IMAGE, IMAGE, _gen_highpass),
         ("hx_gen_bandpass", "gen_bandpass", IMAGE, IMAGE, _gen_bandpass),
+        # 第 4 バッチ
+        ("hx_erosion1", "erosion1", REGION, REGION, _erosion1),
+        ("hx_dilation1", "dilation1", REGION, REGION, _dilation1),
+        ("hx_opening", "opening", REGION, REGION, _opening),
+        ("hx_closing", "closing", REGION, REGION, _closing),
+        ("hx_dilation2", "dilation2", REGION, REGION, _dilation2),
+        ("hx_gen_disc_se", "gen_disc_se", IMAGE, REGION, _gen_disc_se),
+        ("hx_gen_circle_sector", "gen_circle_sector", IMAGE, REGION, _gen_circle_sector),
+        ("hx_gen_ellipse_sector", "gen_ellipse_sector", IMAGE, REGION, _gen_ellipse_sector),
+        ("hx_gen_empty_region", "gen_empty_region", IMAGE, REGION, _gen_empty_region),
+        ("hx_clip_region_rel", "clip_region_rel", REGION, REGION, _clip_region_rel),
+        ("hx_gen_bandfilter", "gen_bandfilter", IMAGE, IMAGE, _gen_bandfilter),
+        ("hx_gen_derivative_filter", "gen_derivative_filter", IMAGE, IMAGE, _gen_derivative_filter),
+        ("hx_fill_interlace", "fill_interlace", IMAGE, IMAGE, _fill_interlace),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
