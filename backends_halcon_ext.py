@@ -203,6 +203,12 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_fit_surface2", "fit_surface_second_order", IMAGE, IMAGE, _fit_surface_second_order),
         ("hx_cooc_feature", "cooc_feature_image", IMAGE, FEATURE, _cooc_feature_image),
         ("hx_full_domain", "full_domain", IMAGE, REGION, _full_domain),
+        # 第 2 バッチ
+        ("hx_mean_shape", "mean_image_shape", IMAGE, IMAGE, _mean_image_shape),
+        ("hx_close_edges", "close_edges", IMAGE, IMAGE, _close_edges),
+        ("hx_close_edges_length", "close_edges_length", IMAGE, IMAGE, _close_edges_length),
+        ("hx_expand_region", "expand_region", REGION, REGION, _expand_region),
+        ("hx_region_to_mean", "region_to_mean", IMAGE, IMAGE, _region_to_mean),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
