@@ -79,10 +79,15 @@ _STAT2 = ["count_inversions"]
 # integer), or -1.0 fail-soft on a NaN / inf / non-integer / overflow. Independent oracle = the
 # O(n^2) brute over all subarrays. Shares the "search" category with P8 + P15.
 _SEARCH3 = ["max_subarray"]
+# P18: longest palindromic contiguous subarray length by Manacher's O(n) algorithm. KIND_REDUCE:
+# arbitrary NaN-free doubles -> the palindrome length (exact integer), or -1.0 on a NaN. Independent
+# oracle = O(n^2) expand-around-center. Shares the "search" category with P8 + P15 + P17.
+_SEARCH4 = ["longest_palindrome"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2 + _STAT2 + _SEARCH3)
+            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2 + _STAT2 + _SEARCH3
+            + _SEARCH4)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
