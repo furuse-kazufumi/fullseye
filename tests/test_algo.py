@@ -2084,7 +2084,7 @@ def test_ubsan_pass_catches_nan_slip_through_cast(tmp_path):
 # --------------------------------------------------------------------------- #
 def _brute_longest_palindrome(a):
     """Independent O(n^2) expand-around-center reference (NaN -> -1.0; empty -> 0.0)."""
-    if any(x != x for x in a):
+    if any(math.isnan(x) for x in a):
         return -1.0
     n = len(a)
     if n == 0:
@@ -2159,7 +2159,7 @@ def test_longest_palindrome_holdout_falsifies_odd_only():
     holdout = algo_difftest.holdout_for("longest_palindrome")
 
     def odd_only(a):                                        # drops the even (d2) pass
-        if any(x != x for x in a):
+        if any(math.isnan(x) for x in a):
             return -1.0
         if not a:
             return 0.0
