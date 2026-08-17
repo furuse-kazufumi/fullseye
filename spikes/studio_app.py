@@ -339,6 +339,7 @@ class StudioWindow(QtWidgets.QMainWindow):
             "fig": self.figure, "np": np, "fs": fs,
             "Image": _vis.Image, "sim": _sim.sim, "LidarPattern": _sim.LidarPattern,
             "SCENE": _sim.SCENE, "synthetic_scene": synthetic_scene,
+            "box_surface": box_surface, "stereo_pair": stereo_pair,
         }
         for sl in self._sliders:            # スライダ値を名前空間へ注入
             ns[sl.name] = sl.value()
