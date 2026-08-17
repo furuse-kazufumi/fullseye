@@ -2044,7 +2044,32 @@ def test_max_subarray_difftest_python_half_is_exact(tmp_path):
 def test_max_subarray_c_is_bit_identical(tmp_path):
     res = algo_difftest.difftest("max_subarray", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["c_backend"].get("ubsan") in ("ok", "unsupported")   # shipped op is UBSan-clean
     assert res["passed"] is True
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_ubsan_pass_catches_nan_slip_through_cast(tmp_path):
+    """The gate compiles C a 2nd time under -fsanitize=undefined. A domain guard that rejects a
+    NaN only via (long long)NaN UB -- which -O2 may silently accept, but a UBSan/safe build
+    hard-traps -- FAILS the gate. A De Morgan rewrite of max_subarray's C range guard lets NaN slip
+    to the cast: the -O2 bit-compare still matches Python, but the UBSan pass traps. (P17 review.)"""
+    op = algo.ALGO_BY_NAME["max_subarray"]
+    orig = op.c_code
+    mutated = orig.replace("if (!(x >= -LIM && x <= LIM)) return -1.0;",
+                           "if (x < -LIM || x > LIM) return -1.0;")
+    assert mutated != orig, "mutation anchor not found (op C source changed?)"
+    try:
+        object.__setattr__(op, "c_code", mutated)
+        res = algo_difftest.difftest("max_subarray", tmp_path / "mut", cc="auto")
+    finally:
+        object.__setattr__(op, "c_code", orig)
+    cb = res["c_backend"]
+    if cb.get("ubsan") == "unsupported":
+        pytest.skip("toolchain has no UBSan; the -O2 bit-compare cannot pin reject-before-cast")
+    assert cb.get("ubsan") == "trap"            # NaN reached (long long)NaN under UBSan
+    assert cb.get("c_vs_python_bit_identical") is True   # -O2 was fooled...
+    assert res["passed"] is False               # ...but the UBSan pass fails the gate
 
 
 # --------------------------------------------------------------------------- #

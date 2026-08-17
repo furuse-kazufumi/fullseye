@@ -667,3 +667,23 @@ fail-soft、空/単一→0.0。等値は転倒でない(tie で左を先取り=`
   **honest**: 初回フル実行で `test_search_ops_registered_kinds` が 1 failed(search カテゴリ集合の更新を **2 箇所**のうち片方[`test_categories_grouping`]しか
   直していなかった)→ 検知し即修正、再実行で **test_algo.py 295 passed / 0 failed**・ruff clean・mypy 新規 0(origin/master=15 と同数)。
   **敵対レビューは worktree 隔離で実行**(P16 で確立)。
+
+### P17 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+**worktree 隔離レビュー(4 エージェント・3 レンズ + 敵対 verify)= 1 CONFIRMED(LOW・gate-honesty)/ refuted 0**。検証エージェントは
+隔離 worktree で全再現し、本 repo の algo.py 無汚染(`status --porcelain` は auto の SESSION_SUMMARY のみ)を明記。correctness/integration 系 0(op は正しい):
+- **[LOW gate-honesty] C の「NaN をキャスト前に拒否」が gate で falsify 不能**: honest gate は C を `-O2 -std=c99 -ffp-contract=off`(UBSan 無し)でしか
+  compile しない。C の域ガードを **De Morgan 書換** `if (!(x>=-LIM && x<=LIM))` → `if (x<-LIM || x>LIM)`(NaN で両比較 false=NaN がすり抜け)
+  にすると、次行 `x != (double)(long long)x` の **`(long long)NaN` が UB** で、-O2 では偶然 -1.0 相当に落ちて Python と bit 一致 → gate が passed=True。
+  だが同じ変異は **UBSan/ReleaseSafe build で hard-trap**(`panic: nan is outside the range of representable values of type 'long long'`)。
+  **出荷 op は正しい**(ガード `!(x>=-LIM && x<=LIM)` はキャスト前に NaN 拒否)= gate-coverage の穴(production バグではない)。Python 半分は
+  pin 済(域ガード除去で `int(nan)` が ValueError → gate は通さず error)= C 側だけ非対称に未 pin。
+- **一次検証(自己再現)**: standalone probe を gate と同一フラグ `-O2 -std=c99 -ffp-contract=off` で: 出荷 guard=NaN→-1.0 正常 / De Morgan+UBSan=
+  `(long long)NaN` で trap(finding の panic と一致)/ 出荷 guard+UBSan=trap 無し(NaN をキャスト前に弾く=**UBSan-clean**)。**honest な差分**: 私の
+  standalone は De Morgan+-O2 が exit3 で落ちたが、**実ゲート**(`algo_difftest --op`)では検証エージェント報告どおり passed 通過を確認 = -O2 の UB 挙動は
+  不定でどちらにせよ「-O2 だけでは reject-before-cast を確実には pin できない」。
+- **修正(全 op を強化)**: `run_c_backend` に **UBSan pass** 追加 — -O2 bit 比較の後に同 C を `-fsanitize=undefined -fno-sanitize-recover=all` で
+  再 compile+同 holdout 再 run。NaN/inf/域外値が整数キャストに到達すれば trap → **gate fail**(UBSan 非対応 toolchain は `"unsupported"`=neutral で誤検出しない)。
+  **事前実測**: 全 38 op が UBSan-clean(trap 0)= 誤 fail 無しで安全に採用可能。**修正後実測**: 出荷 op=passed=True/ubsan=ok、**De Morgan 変異=
+  passed=False/ubsan=trap**(bit は -O2 で True なのに UBSan で捕捉)、他 op 回帰無し。= **「reject-before-cast」を C でも load-bearing に**(Python の
+  `int(nan)` raise と対称)。回帰 pytest `test_ubsan_pass_catches_nan_slip_through_cast` 追加。全スイート **295→296 passed / 0 failed**・ruff clean・mypy 新規 0。
+- **★これは max_subarray 固有でなく gate 基盤の強化** = 以後の全 algo op で「非有限値がキャストに達する UB」を gate が falsify 可能に。

@@ -15,6 +15,14 @@ toolchain is present:
                      an abs-diff of 0.0 would not be). Because C and Python run the
                      same algorithm, a correct backend is byte-identical; the abs
                      diff is still reported as a secondary metric.
+  C UBSan pass     : the same C is recompiled with ``-fsanitize=undefined
+                     -fno-sanitize-recover=all`` and re-run on the holdout. Any
+                     NaN / inf / out-of-domain value that reaches an integer cast
+                     (or any other UB) TRAPS, so a domain guard that "works" only
+                     via that UB (which -O2 can silently accept) FAILS the gate —
+                     making "reject non-finite BEFORE the cast" load-bearing in C,
+                     as it already is in Python (``int(nan)`` raises). A toolchain
+                     without the sanitizer degrades to ``"unsupported"`` (neutral).
 
 ``c_verified`` in the result is True only when the C artifact was actually
 compiled, run and bit-compared here; a toolchain-less pass is honest but
@@ -1475,7 +1483,30 @@ def run_c_backend(op, holdout, wd: Path, cc: list[str]) -> dict:
         subprocess.run([str(exe), str(fin), str(fout)], check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError as e:
         return {"status": "run_error", "detail": (e.stderr or str(e))[-500:]}
-    return {"status": "ran", "outputs": _read_output(fout, op.kind)}
+    outputs = _read_output(fout, op.kind)
+    # UBSan pass: recompile with -fsanitize=undefined and re-run on the SAME holdout. Any
+    # NaN / inf / out-of-domain value that reaches an integer cast (or any other UB) TRAPS here,
+    # so a domain guard that only "works" by relying on that UB -- e.g. a De Morgan rewrite of a
+    # range check that lets a NaN slip through to (long long)NaN, which -O2 may silently accept --
+    # FAILS the gate even though the -O2 bit-compare above would pass it. This makes the declared
+    # "reject non-finite BEFORE the cast" property load-bearing in C, matching the Python half
+    # (where int(nan) already raises). A toolchain that cannot build the sanitizer degrades to
+    # "unsupported" (neutral), never a false failure. (2026-08-17 P17 review, feedback_no_solo_ai_judgment.)
+    exe_ub = wd / (f"algo_{op.name}_ubsan.exe" if sys.platform == "win32" else f"algo_{op.name}_ubsan")
+    fout_ub = wd / f"out_{op.name}_ubsan.bin"
+    try:
+        subprocess.run(cc + ["-std=c99", "-ffp-contract=off",
+                             "-fsanitize=undefined", "-fno-sanitize-recover=all",
+                             str(c_path), "-o", str(exe_ub)],
+                       check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError:
+        return {"status": "ran", "outputs": outputs, "ubsan": "unsupported"}
+    try:
+        subprocess.run([str(exe_ub), str(fin), str(fout_ub)], check=True, capture_output=True, text=True)
+    except subprocess.CalledProcessError as e:
+        return {"status": "ran", "outputs": outputs,
+                "ubsan": "trap", "ubsan_detail": (e.stderr or str(e))[-400:]}
+    return {"status": "ran", "outputs": outputs, "ubsan": "ok"}
 
 
 # --------------------------------------------------------------------------- #
@@ -1540,8 +1571,15 @@ def difftest(name: str, wd: Path, seed: int = 0, tol: float = 0.0,
             else:
                 bit_ok = _bits_equal_scalar(py_out, cb["outputs"])
                 c_diff = _max_diff_scalar(py_out, cb["outputs"])
-            cb = {"status": "ran", "c_vs_python_max_abs_diff": c_diff,
-                  "c_vs_python_bit_identical": bit_ok, "pass": bit_ok}
+            # UBSan pass folds into the criterion: a trap (a NaN/inf/out-of-domain value
+            # reaching an integer cast, i.e. UB the -O2 bit-compare cannot see) FAILS the gate.
+            ubsan = cb.get("ubsan", "unsupported")
+            cb2 = {"status": "ran", "c_vs_python_max_abs_diff": c_diff,
+                   "c_vs_python_bit_identical": bit_ok, "ubsan": ubsan,
+                   "pass": bool(bit_ok and ubsan != "trap")}
+            if cb.get("ubsan_detail"):
+                cb2["ubsan_detail"] = cb["ubsan_detail"]
+            cb = cb2
         result["c_backend"] = cb
 
     # c_verified = the C artifact was actually compiled, run and bit-compared here
