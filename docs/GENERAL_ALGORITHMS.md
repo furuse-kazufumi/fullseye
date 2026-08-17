@@ -393,3 +393,24 @@ C bit 一致 / c_verified)、work-graph ノード無人 done(全 algo op 24 が 
 する固定 holdout ケース(端点が相手内部・軸並行 4 + 対角 2)を追加 → **各分岐を落とすと difftest が FAIL**(d1/d2/d3/d4 すべて
 passed=False)を自前確認。既知解テストにも端点-内部 4 ケースを追加。全スイート **4765 → 4772 passed / 0 failed**(+7)・ruff clean・
 mypy 新規 0。
+
+## P8 完遂記録 — 探索/選択(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**探索/選択アルゴリズム 2 種を algo tier に追加**(幾何から別ドメインへ移り tier を均等化)。比較ベースで任意の
+(NaN-free)double を扱う=結果は index or 既存要素ゆえ exact(tol 0)・C bit 一致。
+- **op(2)**: `binary_search`(KIND_REDUCE): sorted 列 `[target, v0..v_{n-1}]` の target の**最左 index**(lower bound)、無ければ
+  -1.0。oracle=`bisect_left` + 存在確認(独立)。 / `kth_smallest`(KIND_REDUCE): `[k, v0..]` の k 番目に小さい値(0-indexed order
+  statistic)を **quickselect**(median-of-three pivot・Lomuto)。**k 番目の値は順序非依存**ゆえ pivot 順が違っても C==Python bit
+  一致。oracle=`sorted()[k]`(Timsort=別アルゴリズム)。median-of-three で sorted 入力も O(n)(n=40001 が <2s)。
+- **honest gate 実測**: 両 op とも passed=True・python exact / C bit 一致 / c_verified。**各 5000 ランダムケースで oracle と
+  mismatch 0**を事前実測。fail-soft=binary_search は空/無→-1.0、kth_smallest は k 域外/非整数/空→0.0。
+- **work-graph**: 2 op も `algo_gate` ノード無人 done(全 algo op 26 が gate 化)。回帰=`tests/test_algo.py` に P8 群(既知解・
+  bisect/sorted 照合・O(n²)ガード・fail-soft・no-mutation・python exact・C bit 一致)。ruff clean・mypy 新規 0。
+
+### P8 敵対レビュー後の強化(2026-08-17, [[feedback_no_solo_ai_judgment]])
+2 レンズ敵対レビュー(実 compile/実行検証)= **1 raw → 1 CONFIRMED**(LOW・correctness)。**正しさ不変だが性能欠陥**:
+kth_smallest の quickselect が単一 pivot Lomuto ゆえ **all-equal/低カーディナリティ大入力で O(n²)**(median-of-three は重複を
+保護しない・n=40000 all-equal で 7.44s、sorted/reverse は高速)。テストは holdout n≤30・計時テストが sorted のみで未捕捉。
+姉妹 quicksort は既に 3-way(Dutch flag)partition を使用。**修正**=kth_smallest を **3-way(Dutch national flag)partition** に
+書換(equal-band で重複を畳む→all-equal を O(n) に・比較のみ+順序非依存で **C==Python==sorted()[k] parity 維持**)。自己再現で
+確認=**all-equal n=40000 が 7.44s → 0.0019s**(O(n) 化)・correctness 5000 cases mism 0・difftest bit 一致。計時テストを
+sorted/reverse/**all_equal/few_distinct** に拡張(退行を実際にガード)。

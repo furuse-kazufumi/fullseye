@@ -6,6 +6,8 @@
 
 設計の正本: `C:/dev/tools/raptor/docs/design/imgevolve_s0s1_workgraph.md`
 
+> **★★(2026-08-17 その14, Opus5[1m]/ultracode, 12h 自律) = algo-c P8(探索/選択).** `binary_search`(sorted 列の lower bound・oracle bisect_left)+ `kth_smallest`(k 番目最小=quickselect median-of-three・順序非依存で C bit 一致・oracle sorted()[k]・sorted 入力 O(n))。両 op 各 5000 cases で oracle mismatch 0・difftest passed(python exact / C bit 一致 / c_verified)。全 algo op 26 が work-graph gate 化。**敵対レビュー 1 CONFIRMED(LOW)**: kth_smallest が単一 pivot Lomuto で all-equal 大入力 O(n²)(正しさ不変)→ **3-way(Dutch flag)partition に書換で O(n) 化**(n=40000 all-equal 7.44s→0.0019s・parity 維持)・計時テストを all_equal/reverse に拡張。全スイート **4772 → 4787 passed / 0 failed**(+15)。commit/push このセッション。
+>
 > **★★(2026-08-17 その13, Opus5[1m]/ultracode, 12h 自律) = algo-c P7(線分交差).** 幾何ツールキットを 1 op 拡張 = `segments_intersect`(2 閉線分が交差?1.0/0.0・CLRS 33.1 整数 orientation・oracle sympy.geometry・sympy と 2970 cases mismatch 0)。**敵対レビュー 1 CONFIRMED**(gate-honesty): holdout が on-segment 特殊ケース(端点が相手内部)を単独理由で駆動せず → 分岐削除の wrong op を gate が通す(op は正しい)。自己再現の上、単独理由ケース(軸並行4+対角2)を追加し**各 on_seg 分岐削除で difftest FAIL** を確認。全スイート **4765 → 4772 passed / 0 failed**(+7)。全 algo op 24 が gate 化。commit/push このセッション。
 >
 > **★★(2026-08-17 その12, Opus5[1m]/ultracode, 12h 自律・`graph-loop-engineering`) = algo-c P6(計算幾何).**

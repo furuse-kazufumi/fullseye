@@ -41,7 +41,8 @@ so "re-implemented from spec" is visibly true). P1: seq/scalar + 3 sorts + 2
 reductions. Later phases add ops here: P2 numerics, P3 strings, P4 graphs, P5 number
 theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE),
 P6 computational geometry (polygon area, point-in-polygon, convex hull, segment
-intersection; integer coords, exact).
+intersection; integer coords, exact), P8 search / selection (binary search,
+k-th smallest).
 """
 from __future__ import annotations
 
@@ -1755,6 +1756,144 @@ double segments_intersect(const double* a, int n_in) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P8 — search / selection. Comparison-based over arbitrary (NaN-free) doubles: the
+# result is an index or an EXISTING element, so it is exact (tol 0) and C == Python
+# bit-for-bit. binary_search folds to one index (KIND_REDUCE); kth_smallest folds to
+# one value (KIND_REDUCE) and its result — the k-th smallest — is order-independent, so
+# the quickselect need not partition in the same order in C and Python to match.
+# --------------------------------------------------------------------------- #
+_PY_BINARY_SEARCH = '''\
+def run(a):
+    """Binary search for the FIRST occurrence of a target in a sorted sequence (lower bound). Input
+    a = [target, v0, v1, ..., v_{n-1}] where v0..v_{n-1} is sorted ASCENDING. Returns the 0-based index
+    of the leftmost element equal to target, or -1.0 if the target is absent. Comparison-based (exact
+    for any NaN-free doubles); the index is an exact integer. Empty sequence / missing header -> -1.0.
+    Behaviour is bounded-but-unspecified if the sequence is not sorted (a precondition, not checked)."""
+    if len(a) < 1:
+        return -1.0
+    target = a[0]
+    v = a[1:]
+    n = len(v)
+    lo = 0
+    hi = n                                              # search the half-open range [lo, hi)
+    while lo < hi:
+        mid = lo + (hi - lo) // 2
+        if v[mid] < target:
+            lo = mid + 1
+        else:
+            hi = mid
+    if lo < n and v[lo] == target:
+        return float(lo)
+    return -1.0
+'''
+
+_C_BINARY_SEARCH = '''\
+/* Binary search (lower bound) for the first index of target in a = [target, v0..v_{n-1}] (v sorted
+ * ascending); returns the index as a double, or -1.0 if absent. Comparison-based, bit-identical. */
+double binary_search(const double* a, int n_in) {
+    if (n_in < 1) return -1.0;
+    double target = a[0];
+    const double* v = a + 1;
+    int n = n_in - 1;
+    int lo = 0, hi = n;                                 /* half-open [lo, hi) */
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (v[mid] < target) lo = mid + 1;
+        else hi = mid;
+    }
+    if (lo < n && v[lo] == target) return (double)lo;
+    return -1.0;
+}
+'''
+
+_PY_KTH_SMALLEST = '''\
+def run(a):
+    """The k-th smallest element of a sequence (0-indexed order statistic; k=0 -> minimum). Input
+    a = [k, v0, v1, ..., v_{n-1}]. Returns the k-th smallest value (an existing element, so exact for
+    any NaN-free doubles). Quickselect with a 3-way (Dutch national flag) partition + median-of-three
+    pivot, in place on a copy: the equal-to-pivot band collapses runs of duplicates, so all-equal /
+    few-distinct inputs stay O(n) (a single-pivot Lomuto quickselect degrades to O(n^2) there — the
+    same reason quicksort here uses a 3-way partition). The RESULT is order-independent (the k-th
+    smallest is unique by value), so it is bit-identical to the C backend regardless of pivot order.
+    Fail-soft 0.0 if k is out of [0, n-1] / non-integer / the sequence is empty (n < 1)."""
+    if len(a) < 2:
+        return 0.0
+    kd = a[0]
+    v = list(a[1:])
+    n = len(v)
+    if not (kd >= 0.0 and kd < float(n) and kd == float(int(kd))):
+        return 0.0
+    k = int(kd)
+    lo = 0
+    hi = n - 1
+    while lo < hi:
+        mid = lo + (hi - lo) // 2                        # median-of-three -> order lo <= mid <= hi
+        if v[mid] < v[lo]:
+            v[lo], v[mid] = v[mid], v[lo]
+        if v[hi] < v[lo]:
+            v[lo], v[hi] = v[hi], v[lo]
+        if v[hi] < v[mid]:
+            v[mid], v[hi] = v[hi], v[mid]
+        pivot = v[mid]
+        lt = lo
+        i = lo
+        gt = hi
+        while i <= gt:                                   # 3-way (Dutch national flag) partition
+            if v[i] < pivot:
+                v[lt], v[i] = v[i], v[lt]; lt += 1; i += 1
+            elif v[i] > pivot:
+                v[i], v[gt] = v[gt], v[i]; gt -= 1
+            else:
+                i += 1                                   # v[i] == pivot: leave it in the middle band
+        # [lo, lt-1] < pivot, [lt, gt] == pivot, [gt+1, hi] > pivot
+        if k < lt:
+            hi = lt - 1
+        elif k > gt:
+            lo = gt + 1
+        else:
+            return float(v[k])                           # k in the equal band -> v[k] == pivot
+    return float(v[lo])
+'''
+
+_C_KTH_SMALLEST = '''\
+/* The k-th smallest element of a = [k, v0..v_{n-1}] (0-indexed; quickselect, median-of-three, 3-way
+ * Dutch-flag partition so all-equal/few-distinct stay O(n)). Returns the value; the result is
+ * order-independent so it matches Python bit-for-bit. Fail-soft 0.0. */
+double kth_smallest(const double* a, int n_in) {
+    if (n_in < 2) return 0.0;
+    double kd = a[0];
+    int n = n_in - 1;
+    if (!(kd >= 0.0 && kd < (double)n && kd == (double)(long long)kd)) return 0.0;
+    int k = (int)kd;
+    double* v = (double*)malloc((size_t)n * sizeof(double));
+    if (!v) return 0.0;
+    for (int i = 0; i < n; i++) v[i] = a[1 + i];
+    int lo = 0, hi = n - 1;
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (v[mid] < v[lo]) { double t = v[lo]; v[lo] = v[mid]; v[mid] = t; }
+        if (v[hi] < v[lo]) { double t = v[lo]; v[lo] = v[hi]; v[hi] = t; }
+        if (v[hi] < v[mid]) { double t = v[mid]; v[mid] = v[hi]; v[hi] = t; }
+        double pivot = v[mid];
+        int lt = lo, i = lo, gt = hi;
+        while (i <= gt) {                                   /* 3-way (Dutch national flag) partition */
+            if (v[i] < pivot) { double t = v[lt]; v[lt] = v[i]; v[i] = t; lt++; i++; }
+            else if (v[i] > pivot) { double t = v[i]; v[i] = v[gt]; v[gt] = t; gt--; }
+            else i++;
+        }
+        /* [lo,lt-1] < pivot, [lt,gt] == pivot, [gt+1,hi] > pivot */
+        if (k < lt) hi = lt - 1;
+        else if (k > gt) lo = gt + 1;
+        else { double r = v[k]; free(v); return r; }        /* k in the equal band -> v[k] == pivot */
+    }
+    double r = v[lo];
+    free(v);
+    return r;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -1862,6 +2001,16 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "Do two closed segments [x1,y1,x2,y2,x3,y3,x4,y4] intersect? "
            "1.0 / 0.0 (orientation test; integer coordinates; handles collinear overlap).",
            "CLRS 33.1 segment-intersection via integer orientation + on-segment tests"),
+    AlgoOp("binary_search", "search", SEQ, SCALAR, KIND_REDUCE, "binary_search",
+           _PY_BINARY_SEARCH, _C_BINARY_SEARCH,
+           "First index of a target in a sorted sequence [target, v0..v_{n-1}] "
+           "(lower bound; -1.0 if absent).",
+           "binary search / lower bound on a sorted sequence"),
+    AlgoOp("kth_smallest", "search", SEQ, SCALAR, KIND_REDUCE, "kth_smallest",
+           _PY_KTH_SMALLEST, _C_KTH_SMALLEST,
+           "The k-th smallest element (0-indexed order statistic) of [k, v0..v_{n-1}] "
+           "by quickselect.",
+           "quickselect order statistic (median-of-three pivot, 3-way Dutch-flag partition)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

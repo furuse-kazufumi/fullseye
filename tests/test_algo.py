@@ -42,9 +42,12 @@ _P5 = _NUMTHEORY + _HASH + _COMPRESS
 # KIND_REDUCE; convex_hull is a KIND_MAP. Independent oracles = numpy shoelace / the winding-number
 # algorithm / scipy.spatial.ConvexHull (vertex-set comparison).
 _GEOMETRY = ["polygon_area2", "point_in_polygon", "convex_hull", "segments_intersect"]
+# P8: search / selection (comparison-based, exact). binary_search / kth_smallest are KIND_REDUCE.
+# Independent oracles = bisect_left + presence check / full-sort-then-index.
+_SEARCH = ["binary_search", "kth_smallest"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
-_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY
+_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -82,6 +85,7 @@ def test_categories_grouping():
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS)
     assert set(cats["geometry"]) == set(_GEOMETRY)
+    assert set(cats["search"]) == set(_SEARCH)
 
 
 # --------------------------------------------------------------------------- #
@@ -1256,6 +1260,107 @@ def test_geometry_difftest_python_half_is_exact(name, tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 @pytest.mark.parametrize("name", _GEOMETRY)
 def test_geometry_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P8 search / selection (binary_search, kth_smallest; comparison-based, exact).
+# --------------------------------------------------------------------------- #
+def test_search_ops_registered_kinds():
+    assert algo.ALGO_BY_NAME["binary_search"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["kth_smallest"].kind == algo.KIND_REDUCE
+    assert set(algo.algo_categories()["search"]) == set(_SEARCH)
+    for name in _SEARCH:
+        assert algo.ALGO_BY_NAME[name].tol == 0.0
+
+
+def test_binary_search_known():
+    bs = lambda t, *v: algo.run_algo("binary_search", [float(t)] + [float(x) for x in v])
+    assert bs(3, 1, 2, 3, 4, 5) == 2.0
+    assert bs(2, 1, 2, 2, 2, 3) == 1.0          # FIRST occurrence (lower bound)
+    assert bs(1, 1, 2, 3) == 0.0                # first element
+    assert bs(3, 1, 2, 3) == 2.0               # last element
+    assert bs(9, 1, 2, 3) == -1.0              # absent (above)
+    assert bs(0, 1, 2, 3) == -1.0              # absent (below)
+    assert algo.run_algo("binary_search", [5.0]) == -1.0        # empty sequence
+
+
+def test_binary_search_matches_bisect_over_random():
+    import bisect
+    rng = random.Random(131)
+    for _ in range(2000):
+        n = rng.randint(0, 40)
+        v = sorted(rng.randint(-25, 25) for _ in range(n))
+        t = rng.randint(-27, 27)
+        got = algo.run_algo("binary_search", [float(t)] + [float(x) for x in v])
+        i = bisect.bisect_left(v, t)
+        assert got == (float(i) if i < n and v[i] == t else -1.0)
+
+
+def test_kth_smallest_known():
+    ks = lambda k, *v: algo.run_algo("kth_smallest", [float(k)] + [float(x) for x in v])
+    assert ks(0, 5, 3, 1, 4, 2) == 1.0         # minimum
+    assert ks(2, 5, 3, 1, 4, 2) == 3.0         # median
+    assert ks(4, 5, 3, 1, 4, 2) == 5.0         # maximum
+    assert ks(1, 7, 7, 7) == 7.0               # all equal
+
+
+def test_kth_smallest_matches_sorted_over_random():
+    rng = random.Random(151)
+    for _ in range(2000):
+        n = rng.randint(1, 40)
+        v = [rng.uniform(-100, 100) for _ in range(n)]
+        k = rng.randint(0, n - 1)
+        assert algo.run_algo("kth_smallest", [float(k)] + v) == sorted(v)[k]
+
+
+def test_kth_smallest_fast_on_adversarial_inputs():
+    # median-of-three + a 3-way (Dutch-flag) partition keeps quickselect O(n) on sorted, reverse, AND
+    # all-equal / few-distinct inputs. A single-pivot Lomuto quickselect is O(n^2) on all-equal (review
+    # 2026-08-17), so the all-equal timing is the real guard here.
+    import time
+    n = 40001
+    cases = {
+        "sorted": [float(i) for i in range(n)],
+        "reverse": [float(n - i) for i in range(n)],
+        "all_equal": [7.0] * n,
+        "few_distinct": [float(i % 3) for i in range(n)],
+    }
+    for label, v in cases.items():
+        t0 = time.perf_counter()
+        algo.run_algo("kth_smallest", [float(n // 2)] + v)
+        assert time.perf_counter() - t0 < 2.0, f"{label} took too long (quadratic?)"
+    assert algo.run_algo("kth_smallest", [20000.0] + [7.0] * n) == 7.0
+
+
+def test_kth_smallest_fail_soft():
+    assert algo.run_algo("kth_smallest", [9.0, 1, 2, 3]) == 0.0     # k out of range
+    assert algo.run_algo("kth_smallest", [1.5, 1, 2, 3]) == 0.0     # non-integer k
+    assert algo.run_algo("kth_smallest", [-1.0, 1, 2, 3]) == 0.0    # negative k
+    assert algo.run_algo("kth_smallest", [0.0]) == 0.0             # empty sequence
+
+
+@pytest.mark.parametrize("name", _SEARCH)
+def test_search_reference_does_not_mutate_input(name):
+    inputs = {"binary_search": [3.0, 1, 2, 3, 4, 5], "kth_smallest": [2.0, 5, 3, 1, 4, 2]}
+    arg = [float(x) for x in inputs[name]]
+    before = list(arg)
+    algo.run_algo(name, arg)
+    assert arg == before                        # quickselect works on a COPY, does not reorder the input
+
+
+@pytest.mark.parametrize("name", _SEARCH)
+def test_search_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _SEARCH)
+def test_search_c_is_bit_identical(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True

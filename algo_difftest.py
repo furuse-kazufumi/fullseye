@@ -584,6 +584,45 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
                     break                                    # non-degenerate segments (sympy needs both)
             cases.append([float(v) for v in p])
         return cases
+    if name == "binary_search":
+        rng2 = random.Random(seed + 606)
+        cases = [
+            [3.0, 1, 2, 3, 4, 5],                            # present -> 2
+            [2.0, 1, 2, 2, 2, 3],                            # first of duplicates -> 1
+            [9.0, 1, 2, 3],                                  # absent (above) -> -1
+            [5.0],                                           # empty sequence -> -1
+            [1.0, 1, 2, 3],                                  # first element -> 0
+            [3.0, 1, 2, 3],                                  # last element -> 2
+            [0.0, 1, 2, 3],                                  # below all -> -1
+        ]
+        for _ in range(30):
+            n = rng2.randint(0, 30)
+            seq = sorted(float(rng2.randint(-20, 20)) for _ in range(n))
+            cases.append([float(rng2.randint(-22, 22))] + seq)   # present or not
+        for _ in range(6):                                   # float values (sorted), target present
+            seq = sorted(rng2.uniform(-50.0, 50.0) for _ in range(rng2.randint(1, 15)))
+            cases.append([rng2.choice(seq)] + seq)
+        return cases
+    if name == "kth_smallest":
+        rng2 = random.Random(seed + 707)
+        cases = [
+            [0.0, 5, 3, 1, 4, 2],                            # min -> 1
+            [2.0, 5, 3, 1, 4, 2],                            # median -> 3
+            [4.0, 5, 3, 1, 4, 2],                            # max -> 5
+            [0.0, 7, 7, 7],                                  # all equal -> 7
+            [9.0, 1, 2, 3],                                  # k out of range -> 0.0
+            [1.5, 1, 2, 3],                                  # non-integer k -> 0.0
+            [0.0],                                           # empty -> 0.0
+        ]
+        for _ in range(30):
+            n = rng2.randint(1, 30)
+            cases.append([float(rng2.randint(0, n - 1))]
+                         + [float(rng2.randint(-30, 30)) for _ in range(n)])
+        for _ in range(8):                                   # duplicate-heavy / small alphabet
+            n = rng2.randint(1, 20)
+            cases.append([float(rng2.randint(0, n - 1))]
+                         + [float(rng2.randint(0, 3)) for _ in range(n)])
+        return cases
     return make_holdout(seed)
 
 
@@ -816,6 +855,33 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 a_seg = Segment(Point(p[0], p[1]), Point(p[2], p[3]))
                 b_seg = Segment(Point(p[4], p[5]), Point(p[6], p[7]))
                 ref = 1.0 if a_seg.intersection(b_seg) else 0.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "binary_search":
+        # independent oracle: Python's bisect_left (a different, C-level lower-bound impl) + a presence
+        # check. The holdout sequences are sorted (the op's precondition), so both agree.
+        import bisect
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if not arr:
+                ref = -1.0
+            else:
+                target = arr[0]
+                seq = arr[1:]
+                i = bisect.bisect_left(seq, target)
+                ref = float(i) if (i < len(seq) and seq[i] == target) else -1.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "kth_smallest":
+        # independent oracle: full sort then index (Timsort, a different algorithm from quickselect).
+        # Domain-aware: k out of [0, n-1] / non-integer / empty -> the op's fail-soft 0.0.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref = 0.0
+            if len(arr) >= 2:
+                n = len(arr) - 1
+                if _int_in(arr[0], 0.0, float(n - 1)):
+                    ref = float(sorted(arr[1:])[int(arr[0])])
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
