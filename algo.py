@@ -2787,7 +2787,7 @@ double longest_palindrome(const double* a, int n) {
         while (i - k - 1 >= 0 && i + k < n && a[i - k - 1] == a[i + k]) k++;
         d2[i] = k;
         if (2 * k > best) best = 2 * k;
-        if (i + k - 1 > r) { l = i - k - 1; r = i + k - 1; }
+        if (i + k - 1 > r) { l = i - k; r = i + k - 1; }   /* even palindrome spans [i-k, i+k-1] */
     }
     free(d1); free(d2);
     return (double)best;
