@@ -987,6 +987,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_estimate_sl_al_lr", "estimate_sl_al_lr", IMAGE, FEATURE, _estimate_sl_al_lr),
         ("hx_estimate_sl_al_zc", "estimate_sl_al_zc", IMAGE, FEATURE, _estimate_sl_al_zc),
         ("hx_estimate_al_am", "estimate_al_am", IMAGE, FEATURE, _estimate_al_am),
+        # 第 12 バッチ
+        ("hx_add_noise_contour", "add_noise_white_contour_xld", CONTOUR, CONTOUR, _add_noise_white_contour_xld),
+        ("hx_radial_distort_contour", "change_radial_distortion_contours_xld", CONTOUR, CONTOUR, _change_radial_distortion_contours_xld),
+        ("hx_dist_ellipse_points", "dist_ellipse_contour_points_xld", CONTOUR, FEATURE, _dist_ellipse_contour_points_xld),
+        ("hx_dist_rect2_points", "dist_rectangle2_contour_points_xld", CONTOUR, FEATURE, _dist_rectangle2_contour_points_xld),
+        ("hx_distance_pc", "distance_pc", CONTOUR, FEATURE, _distance_pc),
+        ("hx_disparity_to_xyz", "disparity_image_to_xyz", IMAGE, IMAGE, _disparity_image_to_xyz),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
