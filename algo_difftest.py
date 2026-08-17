@@ -920,6 +920,10 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             [7.0, 1.0, 1.0, 7.0, 9.0],                       # even [7,1,1,7] length 4 (max odd = 1)
             [9.0, 7.0, 1.0, 1.0, 7.0],                       # even [7,1,1,7] length 4, offset
             [4.0, 2.0, 3.0, 2.0, 4.0, 4.0],                  # odd [4,2,3,2,4]=5 vs even [4,4]=2 -> 5
+            # d2 (even) left-edge coverage: a buggy `l = i-k-1` (instead of i-k) corrupts a later
+            # mirror radius and OVERSHOOTS here (true longest [0,1,1,0] = 4; the off-by-one reports
+            # 6). This minimal case makes the d2 window-left update a SOLE reason (P18 review).
+            [0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0],             # -> 4 (pins d2 [l, r] left edge = i - k)
             # NaN -> -1.0 fail-soft (first / middle / last):
             [float("nan"), 1.0, 1.0], [1.0, float("nan"), 1.0], [1.0, 1.0, float("nan")],
         ]
