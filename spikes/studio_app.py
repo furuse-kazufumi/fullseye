@@ -218,6 +218,7 @@ class StudioWindow(QtWidgets.QMainWindow):
         # 右: matplotlib 描画ペイン
         self.figure = Figure(figsize=(5, 4))
         self.canvas = FigureCanvasQTAgg(self.figure)
+        self.canvas.mpl_connect("motion_notify_event", self._on_hover)  # hwv 風ピクセル検査
         right = QtWidgets.QWidget()
         rl = QtWidgets.QVBoxLayout(right)
         rl.addWidget(NavigationToolbar2QT(self.canvas, right))
