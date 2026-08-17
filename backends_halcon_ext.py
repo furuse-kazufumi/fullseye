@@ -133,6 +133,62 @@ def _full_domain(v, a, b):
     return np.ones_like(v, dtype=np.float64)
 
 
+# ── 第 2 バッチ ─────────────────────────────────────────────────────────────── #
+def _disk(r):
+    yy, xx = np.mgrid[-r:r + 1, -r:r + 1]
+    d = (xx * xx + yy * yy <= r * r).astype(np.float64)
+    return d / d.sum()
+
+
+def _mean_image_shape(v, a, b):
+    """任意マスク(円 disk)による平均平滑化。半径 r を a で可変(矩形 mean と別 op)。"""
+    r = 1 + int(a * 4)
+    return ndimage.convolve(v, _disk(r), mode="reflect")
+
+
+def _close_edges(v, a, b):
+    """エッジ振幅画像の隙間を閉じる: しきい値 a で二値化 → morphological closing(半径 b)。"""
+    from scipy.ndimage import binary_closing, generate_binary_structure, iterate_structure
+    edges = v > a
+    it = 1 + int(b * 3)
+    st = iterate_structure(generate_binary_structure(2, 2), it)
+    return binary_closing(edges, structure=st).astype(np.float64)
+
+
+def _close_edges_length(v, a, b):
+    """close_edges に加え、長さ(画素数)が閾値未満の短いエッジ断片を除去する。"""
+    from scipy.ndimage import binary_closing, generate_binary_structure, label
+    edges = binary_closing(v > a, structure=generate_binary_structure(2, 2))
+    lab, n = label(edges)
+    if n == 0:
+        return edges.astype(np.float64)
+    sizes = np.bincount(lab.ravel())
+    min_len = 2 + int(b * 20)
+    keep = np.isin(lab, np.nonzero(sizes >= min_len)[0][1:])   # 0=背景を除く
+    return keep.astype(np.float64)
+
+
+def _expand_region(v, a, b):
+    """領域間の隙間を埋める(region -> region): 二値領域を dilation で膨張して連結を促す。"""
+    from scipy.ndimage import binary_dilation, generate_binary_structure, iterate_structure
+    reg = v > 0.5
+    it = 1 + int(a * 4)
+    st = iterate_structure(generate_binary_structure(2, 1), it)
+    return binary_dilation(reg, structure=st).astype(np.float64)
+
+
+def _region_to_mean(v, a, b):
+    """各連結領域をその平均 gray 値で塗る(image -> image)。閾値 a で前景/背景を分け label 化。"""
+    from scipy.ndimage import label, mean as ndmean
+    fg = v > a
+    lab, n = label(fg)
+    out = np.full_like(v, float(v[~fg].mean()) if (~fg).any() else 0.0)
+    if n > 0:
+        means = ndmean(v, labels=lab, index=np.arange(1, n + 1))
+        out[fg] = np.asarray(means)[lab[fg] - 1]
+    return out
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
