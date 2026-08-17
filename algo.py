@@ -2707,6 +2707,94 @@ double max_subarray(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P18 — longest palindromic contiguous subarray length (Manacher, KIND_REDUCE). Input is a
+# sequence of arbitrary NaN-free doubles; output is the length of the longest palindromic
+# CONTIGUOUS subarray (an exact small integer). Equality-based (a[i] == a[j] only; no arithmetic on
+# the values), so the length is order-defined and C == Python bit-for-bit. Manacher's O(n) two-pass
+# (e-maxx d1/d2): d1[i] = radius of the longest ODD palindrome centered at i (length 2*d1[i]-1),
+# d2[i] = radius of the longest EVEN palindrome centered between i-1 and i (length 2*d2[i]); the
+# running [l, r] tracks the rightmost known palindrome to reuse mirror radii. The length is a safe
+# -1.0 sentinel domain (always >= 0): NaN -> -1.0 fail-soft; empty -> 0.0; single -> 1.0. The
+# independent oracle is the O(n^2) expand-around-center. See docs/GENERAL_ALGORITHMS.md P18.
+# --------------------------------------------------------------------------- #
+_PY_LONGEST_PALINDROME = '''\
+def run(a):
+    """Length of the longest palindromic CONTIGUOUS subarray of a (arbitrary NaN-free doubles), by
+    Manacher's O(n) algorithm. Returns the length as a float (exact small integer); empty -> 0.0;
+    single -> 1.0; -1.0 fail-soft if any value is NaN. Equality-based (a[i] == a[j] only), so the
+    length is well-defined and C == Python bit-for-bit. d1[i] = radius of the longest ODD palindrome
+    centered at i (length 2*d1[i]-1); d2[i] = radius of the longest EVEN palindrome centered between
+    i-1 and i (length 2*d2[i]). The running [l, r] reuses mirror radii inside the rightmost known
+    palindrome (e-maxx)."""
+    for x in a:
+        if x != x:                                       # NaN -> equality ill-defined
+            return -1.0
+    n = len(a)
+    if n == 0:
+        return 0.0
+    best = 1                                             # any single element is a length-1 palindrome
+    d1 = [0] * n                                         # odd-length palindromes
+    l, r = 0, -1
+    for i in range(n):
+        k = 1 if i > r else min(d1[l + r - i], r - i + 1)
+        while 0 <= i - k and i + k < n and a[i - k] == a[i + k]:
+            k += 1
+        d1[i] = k
+        if 2 * k - 1 > best:
+            best = 2 * k - 1
+        if i + k - 1 > r:
+            l, r = i - k + 1, i + k - 1
+    d2 = [0] * n                                         # even-length palindromes
+    l, r = 0, -1
+    for i in range(n):
+        k = 0 if i > r else min(d2[l + r - i + 1], r - i + 1)
+        while 0 <= i - k - 1 and i + k < n and a[i - k - 1] == a[i + k]:
+            k += 1
+        d2[i] = k
+        if 2 * k > best:
+            best = 2 * k
+        if i + k - 1 > r:
+            l, r = i - k - 1, i + k - 1
+    return float(best)
+'''
+
+_C_LONGEST_PALINDROME = '''\
+/* Length of the longest palindromic CONTIGUOUS subarray of a[0..n-1] (arbitrary NaN-free doubles),
+ * by Manacher's O(n) algorithm (e-maxx d1/d2). Returns the length (exact small integer); empty ->
+ * 0.0; single -> 1.0; -1.0 fail-soft on a NaN value or OOM. Equality-based (a[i] == a[j] only), so
+ * C == Python bit-for-bit. KIND_REDUCE. */
+double longest_palindrome(const double* a, int n) {
+    for (int k = 0; k < n; k++) {
+        if (a[k] != a[k]) return -1.0;                   /* NaN */
+    }
+    if (n == 0) return 0.0;
+    int* d1 = (int*)malloc((size_t)n * sizeof(int));
+    int* d2 = (int*)malloc((size_t)n * sizeof(int));
+    if (!d1 || !d2) { free(d1); free(d2); return -1.0; } /* fail-soft on OOM */
+    int best = 1;                                        /* single element is a length-1 palindrome */
+    int l = 0, r = -1;
+    for (int i = 0; i < n; i++) {                        /* odd-length palindromes */
+        int k = (i > r) ? 1 : (d1[l + r - i] < r - i + 1 ? d1[l + r - i] : r - i + 1);
+        while (i - k >= 0 && i + k < n && a[i - k] == a[i + k]) k++;
+        d1[i] = k;
+        if (2 * k - 1 > best) best = 2 * k - 1;
+        if (i + k - 1 > r) { l = i - k + 1; r = i + k - 1; }
+    }
+    l = 0; r = -1;
+    for (int i = 0; i < n; i++) {                        /* even-length palindromes */
+        int k = (i > r) ? 0 : (d2[l + r - i + 1] < r - i + 1 ? d2[l + r - i + 1] : r - i + 1);
+        while (i - k - 1 >= 0 && i + k < n && a[i - k - 1] == a[i + k]) k++;
+        d2[i] = k;
+        if (2 * k > best) best = 2 * k;
+        if (i + k - 1 > r) { l = i - k - 1; r = i + k - 1; }
+    }
+    free(d1); free(d2);
+    return (double)best;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
