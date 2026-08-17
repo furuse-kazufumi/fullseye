@@ -452,6 +452,10 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_gen_bandfilter", "gen_bandfilter", IMAGE, IMAGE, _gen_bandfilter),
         ("hx_gen_derivative_filter", "gen_derivative_filter", IMAGE, IMAGE, _gen_derivative_filter),
         ("hx_fill_interlace", "fill_interlace", IMAGE, IMAGE, _fill_interlace),
+        # 第 5 バッチ
+        ("hx_shade_height_field", "shade_height_field", IMAGE, IMAGE, _shade_height_field),
+        ("hx_plane_deviation", "plane_deviation", IMAGE, IMAGE, _plane_deviation),
+        ("hx_detect_edge_segments", "detect_edge_segments", IMAGE, REGION, _detect_edge_segments),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
