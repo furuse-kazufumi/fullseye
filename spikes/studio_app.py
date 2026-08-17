@@ -152,6 +152,36 @@ ax.set_title(f"入力 + 検出領域(sigma={sigma:.2f}, level={level:.2f}) — h
 ax.axis("off")
 '''
 
+_POSE_6DOF = '''\
+# vision: PPF で 6-DoF 姿勢推定(evis 把持の核心)。モデル箱を既知回転で置いたシーンに当てる
+model = box_surface()
+th = np.radians(rot_deg)
+Rt = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1.0]])
+tt = np.array([0.4, 0.2, 0.5])
+rng = np.random.default_rng(0)
+scene = model @ Rt.T + tt + rng.normal(0, noise, model.shape)
+pose = fs.find_surface_pose(model, scene)                 # {R, t, rmse, votes, inlier_fraction}
+R, t = pose["R"], pose["t"]
+ax = fig.add_subplot(111, projection="3d")
+ax.scatter(scene[:, 0], scene[:, 1], scene[:, 2], s=6, c="0.6")
+for k, col in enumerate("rgb"):                            # 推定フレーム軸を描く
+    v = R @ np.eye(3)[:, k] * 0.25
+    ax.plot([t[0], t[0] + v[0]], [t[1], t[1] + v[1]], [t[2], t[2] + v[2]], color=col, lw=2)
+ang = np.degrees(np.arccos(np.clip((np.trace(R.T @ Rt) - 1) / 2, -1, 1)))
+ax.set_title(f"6-DoF pose  角度誤差 {ang:.1f}deg  inlier {pose['inlier_fraction']:.2f}", fontsize=9)
+ax.set_xlim(0, 0.8); ax.set_ylim(0, 0.6); ax.set_zlim(0.2, 0.9); ax.view_init(24, -60)
+'''
+
+_STEREO_DEPTH = '''\
+# vision: ステレオ視差(SGM)。左右画像から disparity を計算(近い前景ほど大きい)
+left, right = stereo_pair()
+disp = fs.disparity_sgm(left, right, max_disp=max_disp, window=5)
+ax1 = fig.add_subplot(1, 2, 1); ax1.imshow(left, cmap="gray"); ax1.set_title("left", fontsize=9); ax1.axis("off")
+ax2 = fig.add_subplot(1, 2, 2)
+im = ax2.imshow(disp, cmap="turbo"); ax2.set_title("disparity (SGM)", fontsize=9); ax2.axis("off")
+fig.colorbar(im, ax=ax2, fraction=0.046)
+'''
+
 # 各サンプル: name, domain, code, params[(name, lo, hi, default, is_int)]
 SAMPLES = [
     {"name": "image.chain", "domain": "vision", "code": _IMAGE_CHAIN,
