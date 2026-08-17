@@ -369,6 +369,48 @@ def _fill_interlace(v, a, b):
     return out
 
 
+# ── 第 5 バッチ: 高さ場陰影 / 平面偏差 / 直線分検出 ────────────────────────────── #
+def _shade_height_field(v, a, b):
+    """高さ場 v を Lambertian 陰影で描画(法線×光源)。方位 a・仰角 b の光源。"""
+    gy, gx = np.gradient(v)
+    nz = np.ones_like(v)
+    norm = np.sqrt(gx * gx + gy * gy + 1.0)
+    az, el = a * 2 * np.pi, (0.2 + 0.7 * b) * (np.pi / 2)
+    lx, ly, lz = np.cos(el) * np.cos(az), np.cos(el) * np.sin(az), np.sin(el)
+    shade = (-gx * lx - gy * ly + nz * lz) / norm
+    return _norm01(np.clip(shade, 0, None))
+
+
+def _plane_deviation(v, a, b):
+    """gray 値の 1 次平面近似からの偏差 |v - plane|(平坦度/欠陥検査)。"""
+    h, w, Y, X = _grid(v.shape)
+    xn = (X / max(w - 1, 1)) * 2 - 1
+    yn = (Y / max(h - 1, 1)) * 2 - 1
+    A = np.stack([np.ones_like(xn).ravel(), xn.ravel(), yn.ravel()], axis=1)
+    coef, *_ = np.linalg.lstsq(A, v.ravel(), rcond=None)
+    plane = (A @ coef).reshape(v.shape)
+    return _norm01(np.abs(v - plane))
+
+
+def _detect_edge_segments(v, a, b):
+    """直線的なエッジ断片を検出: NMS で細線化 → 連結成分のうち PCA で細長い(直線状)ものを残す。"""
+    from scipy.ndimage import label, generate_binary_structure
+    thin = _nonmax_suppression_dir(v, a, 0) > 0
+    lab, n = label(thin, structure=generate_binary_structure(2, 2))
+    out = np.zeros_like(v)
+    min_ratio = 3.0 + b * 12.0                           # 細長さ閾値(長軸/短軸)
+    for k in range(1, n + 1):
+        ys, xs = np.nonzero(lab == k)
+        if ys.size < 5:
+            continue
+        pts = np.column_stack([ys - ys.mean(), xs - xs.mean()]).astype(float)
+        ev = np.linalg.eigvalsh(np.cov(pts.T)) if pts.shape[0] > 1 else np.array([0.0, 0.0])
+        ratio = (ev[1] / ev[0]) if ev[0] > 1e-9 else np.inf
+        if ratio >= min_ratio:                           # 直線状のみ採用
+            out[ys, xs] = 1.0
+    return out
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
