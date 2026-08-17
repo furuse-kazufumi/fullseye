@@ -608,3 +608,24 @@ y 順で非隣接な最近ペアが実在しうる)。**自己再現で確定**:
 3 レンズ敵対レビュー Workflow(correctness / c-safety+gate-honesty / integration、mutation 検証)= **findings 0**(全レンズ指摘なし)。
 patience sorting の狭義比較・NaN ガード・tails バッファ安全・O(n²) DP oracle の独立性・holdout の狭義単独駆動を検証し、falsify 可能な
 欠陥は検出されず。事前の mutation 3/3 捕捉(狭義 `<`→`<=`/NaN ガード/二分探索方向)と 40k DP 一致で gate は堅牢。
+
+## P16 完遂記録 — 転倒数(マージソート法)(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**統計を 1 op 拡張(P9 count_distinct/mode_value に続く stat 第2弾)**: `count_inversions`(KIND_REDUCE)= 任意の NaN-free double 列の
+**転倒数**(i<j かつ a[i] > a[j] の**狭義**ペア数)を**計数マージソート**で O(n log n)。比較のみ(値に算術なし)ゆえ count は配列固有で一意
+=**C==Python bit 一致**。マージ時に右列を先取りするたび残りの左列数を加算(古典)。count は非負整数ゆえ **-1.0 が safe sentinel**: NaN→-1.0
+fail-soft、空/単一→0.0。等値は転倒でない(tie で左を先取り=`arr[i] <= arr[j]`)。
+- **honest gate 実測(passed=True・c_verified=true・ziglang cc)**: python==**独立 O(n²) 総当り count**(マージソートと別コード経路)
+  **diff 0.0(exact)** / codegen **C==Python bit 一致 diff 0.0**。事前実測=**40k ランダム(整数+float・小レンジで tie 大量=狭義比較を
+  駆動)で総当りと mism 0**。
+- **★ゲート mutation test(自己検証)**: tie 処理 `<=`→`<`(等値を転倒に誤計上)/ inv 計数 off-by-one / NaN ガード削除 / 非計数(inv=0)
+  の 4 変異を**全て捕捉**(passed=False)。全同一 `[2,2,2]`→0 と重複ケースが狭義比較を単独駆動。
+- **holdout**: 既知(sorted→0・reversed→n(n-1)/2・`[2,1,3]`→1・`[3,1,2]`→2・空/単一→0)+ **全同一→0(狭義)** + 重複(sorted→0・
+  `[2,1,2,1]`→3)+ -0.0/+0.0 等値(両順)+ ±inf + NaN を**先頭/中央/末尾**で fail-soft + ランダム(整数 tie 多め + float)。
+- **C 安全**: arr/tmp を malloc(n)・再帰深さ O(log n)・malloc 失敗は -1.0・NaN ガードは全比較の前。count は long long(n(n-1)/2 < 2^63 for
+  n < 4.3e9)、返却 double は n(n-1)/2 < 2^53 で厳密(honest: 極端 n では非厳密になりうるが holdout/実用域では厳密)。
+- **work-graph op 波**: count_inversions を `algo_difftest --op` ゲートノード化(`1 op=1 ノード`)→ `run-once` で無人 done。
+  = **全 algo op 37 が work-graph ゲート化**(36→37)。
+- **回帰**: `tests/test_algo.py` に P16 群(既知値・総当り一致 random×5000・NaN fail-soft[3 位置]・category grouping[stat=P9+P16]・
+  difftest python exact・C bit 一致)。全スイート **4855 passed / 0 failed**(+7)・ruff clean・mypy 新規 0(origin/master=15 と同数)。
+  **敵対レビューは worktree 隔離で実行**(P14 で
+  レビューエージェントが対象 repo の algo.py を mutate した教訓=commit 後に隔離 worktree でレビュー→結果は follow-up)。

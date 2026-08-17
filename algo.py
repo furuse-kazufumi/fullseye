@@ -48,7 +48,8 @@ k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
 coefficients; variable-length seq -> 3-value seq), P13 computational geometry 2
 (closest pair of points by divide & conquer; min squared distance), P14 data
 compression 2 (Huffman optimal-prefix-code cost; tie-invariant, exact integer),
-P15 longest increasing subsequence length (patience sorting; comparison-based).
+P15 longest increasing subsequence length (patience sorting; comparison-based),
+P16 inversion count (counting merge sort; comparison-based, exact integer).
 """
 from __future__ import annotations
 
@@ -2556,6 +2557,87 @@ double lis_length(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P16 — inversion count (merge sort, KIND_REDUCE). Input is a sequence of arbitrary NaN-free
+# doubles; output is the number of inversions = pairs (i, j) with i < j and a[i] > a[j] (a strict
+# comparison, so equal elements are NOT inversions). An exact non-negative integer, computed by a
+# counting merge sort in O(n log n). Comparison-based (no arithmetic on the values), so the count is
+# order-defined and C == Python bit-for-bit. The count is a safe -1.0 sentinel domain (always >= 0):
+# NaN -> -1.0 fail-soft; empty / single -> 0.0. See docs/GENERAL_ALGORITHMS.md P16.
+# --------------------------------------------------------------------------- #
+_PY_COUNT_INVERSIONS = '''\
+def run(a):
+    """Number of inversions of a (pairs i < j with a[i] > a[j], STRICT) by a counting merge sort,
+    for arbitrary NaN-free doubles. Returns the count as a float (exact non-negative integer);
+    empty / single -> 0.0; -1.0 fail-soft if any value is NaN. Comparison-based, so C == Python
+    bit-for-bit. Equal elements are not inversions (merge takes the left on a tie)."""
+    for x in a:
+        if x != x:                                   # NaN -> comparisons ill-defined
+            return -1.0
+    n = len(a)
+    if n < 2:
+        return 0.0
+    arr = list(a)
+    tmp = [0.0] * n
+
+    def sort_count(lo, hi):                          # sort arr[lo:hi] ascending, return its inversions
+        if hi - lo <= 1:
+            return 0
+        mid = (lo + hi) // 2
+        inv = sort_count(lo, mid) + sort_count(mid, hi)
+        i, j, k = lo, mid, lo
+        while i < mid and j < hi:
+            if arr[i] <= arr[j]:                     # tie -> left first (equal is NOT an inversion)
+                tmp[k] = arr[i]; i += 1
+            else:
+                tmp[k] = arr[j]; j += 1
+                inv += mid - i                       # arr[i..mid-1] are all > arr[j]
+            k += 1
+        while i < mid:
+            tmp[k] = arr[i]; i += 1; k += 1
+        while j < hi:
+            tmp[k] = arr[j]; j += 1; k += 1
+        for t in range(lo, hi):
+            arr[t] = tmp[t]
+        return inv
+
+    return float(sort_count(0, n))
+'''
+
+_C_COUNT_INVERSIONS = '''\
+/* Number of inversions of a[0..n-1] (pairs i<j with a[i] > a[j], STRICT) by a counting merge sort,
+ * for arbitrary NaN-free doubles. Returns the count (exact non-negative integer); empty/single -> 0.0;
+ * -1.0 fail-soft on a NaN value. Comparison-based, so C == Python bit-for-bit. KIND_REDUCE. */
+static long long ci_sort_count(double* arr, double* tmp, int lo, int hi) {
+    if (hi - lo <= 1) return 0;
+    int mid = lo + (hi - lo) / 2;
+    long long inv = ci_sort_count(arr, tmp, lo, mid) + ci_sort_count(arr, tmp, mid, hi);
+    int i = lo, j = mid, k = lo;
+    while (i < mid && j < hi) {
+        if (arr[i] <= arr[j]) { tmp[k++] = arr[i++]; }        /* tie -> left first (not an inversion) */
+        else { tmp[k++] = arr[j++]; inv += (long long)(mid - i); }
+    }
+    while (i < mid) tmp[k++] = arr[i++];
+    while (j < hi) tmp[k++] = arr[j++];
+    for (int t = lo; t < hi; t++) arr[t] = tmp[t];
+    return inv;
+}
+double count_inversions(const double* a, int n) {
+    for (int k = 0; k < n; k++) {
+        if (a[k] != a[k]) return -1.0;               /* NaN */
+    }
+    if (n < 2) return 0.0;
+    double* arr = (double*)malloc((size_t)n * sizeof(double));
+    double* tmp = (double*)malloc((size_t)n * sizeof(double));
+    if (!arr || !tmp) { free(arr); free(tmp); return -1.0; }  /* fail-soft on OOM */
+    for (int k = 0; k < n; k++) arr[k] = a[k];
+    long long inv = ci_sort_count(arr, tmp, 0, n);
+    free(arr); free(tmp);
+    return (double)inv;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2725,6 +2807,12 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "arbitrary (NaN-free) doubles, by patience sorting (exact integer); "
            "empty -> 0.0; -1.0 fail-soft on a NaN value.",
            "patience sorting for the longest increasing subsequence length; binary search on tails"),
+    AlgoOp("count_inversions", "stat", SEQ, SCALAR, KIND_REDUCE, "count_inversions",
+           _PY_COUNT_INVERSIONS, _C_COUNT_INVERSIONS,
+           "Number of inversions (pairs i<j with a[i] > a[j], strict) of a sequence of "
+           "arbitrary (NaN-free) doubles, by a counting merge sort (exact integer); "
+           "empty/single -> 0.0; -1.0 fail-soft on a NaN value.",
+           "counting merge sort for the inversion number; O(n log n)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

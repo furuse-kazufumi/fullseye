@@ -808,6 +808,31 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             m = rng2.randint(0, 25)
             cases.append([rng2.uniform(-100.0, 100.0) for _ in range(m)])
         return cases
+    if name == "count_inversions":
+        rng2 = random.Random(seed + 1616)
+        cases = [
+            [], [5.0],                                       # empty / single -> 0
+            [1.0, 2.0, 3.0, 4.0],                            # sorted -> 0
+            [4.0, 3.0, 2.0, 1.0],                            # reversed -> 6 (n(n-1)/2)
+            [2.0, 1.0, 3.0],                                 # -> 1
+            [3.0, 1.0, 2.0],                                 # -> 2
+            [2.0, 2.0, 2.0],                                 # all equal -> 0 (STRICT: equal is not an inversion)
+            [1.0, 1.0, 2.0, 2.0],                            # duplicates, sorted -> 0
+            [2.0, 1.0, 2.0, 1.0],                            # duplicates with inversions -> 3
+            [-0.0, 0.0],                                     # -0.0 == 0.0 (not a strict inversion) -> 0
+            [0.0, -0.0],                                     # order swapped, still -> 0
+            [float("inf"), 1.0, float("-inf")],              # infinities compare fine -> 2
+            # NaN -> -1.0 fail-soft (first / middle / last):
+            [float("nan"), 1.0, 2.0], [1.0, float("nan"), 2.0], [1.0, 2.0, float("nan")],
+        ]
+        for _ in range(30):
+            m = rng2.randint(0, 40)
+            rr2 = rng2.choice([2, 5, 40, 10 ** 9])           # small ranges -> ties (exercise strict '>')
+            cases.append([float(rng2.randint(-rr2, rr2)) for _ in range(m)])
+        for _ in range(10):
+            m = rng2.randint(0, 25)
+            cases.append([rng2.uniform(-50.0, 50.0) for _ in range(m)])
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
@@ -1232,6 +1257,22 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                         if arr[jj] < arr[ii] and dp[jj] + 1 > dp[ii]:
                             dp[ii] = dp[jj] + 1
                 ref = float(max(dp))
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "count_inversions":
+        # independent oracle: the O(n^2) brute-force count (every i<j pair with a[i] > a[j]) — a
+        # different code path from the counting merge sort. Domain-aware: a NaN value -> the op's -1.0.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if any(math.isnan(v) for v in arr):
+                ref = -1.0
+            else:
+                c = 0
+                for ii in range(len(arr)):
+                    for jj in range(ii + 1, len(arr)):
+                        if arr[ii] > arr[jj]:
+                            c += 1
+                ref = float(c)
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]

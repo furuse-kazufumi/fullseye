@@ -70,10 +70,14 @@ _COMPRESS2 = ["huffman_cost"]
 # NaN-free doubles -> LIS length (exact integer), or -1.0 on a NaN. Independent oracle = O(n^2) DP.
 # Shares the "search" category with P8 (binary_search, kth_smallest).
 _SEARCH2 = ["lis_length"]
+# P16: inversion count by a counting merge sort. KIND_REDUCE: arbitrary NaN-free doubles -> the number
+# of inversions (exact integer), or -1.0 on a NaN. Independent oracle = O(n^2) brute count. Shares the
+# "stat" category with P9 (count_distinct, mode_value).
+_STAT2 = ["count_inversions"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2)
+            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2 + _STAT2)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -112,7 +116,7 @@ def test_categories_grouping():
     assert set(cats["compress"]) == set(_COMPRESS) | set(_COMPRESS2)   # P5 + P14
     assert set(cats["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)   # P6/P7 + P13
     assert set(cats["search"]) == set(_SEARCH) | set(_SEARCH2)   # P8 + P15
-    assert set(cats["stat"]) == set(_STAT)
+    assert set(cats["stat"]) == set(_STAT) | set(_STAT2)   # P9 + P16
 
 
 # --------------------------------------------------------------------------- #
@@ -1399,7 +1403,7 @@ def test_search_c_is_bit_identical(name, tmp_path):
 def test_stat_ops_registered_kinds():
     assert algo.ALGO_BY_NAME["count_distinct"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["mode_value"].kind == algo.KIND_REDUCE
-    assert set(algo.algo_categories()["stat"]) == set(_STAT)
+    assert set(algo.algo_categories()["stat"]) == set(_STAT) | set(_STAT2)
     for name in _STAT:
         assert algo.ALGO_BY_NAME[name].tol == 0.0
 
@@ -1879,6 +1883,74 @@ def test_lis_length_difftest_python_half_is_exact(tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 def test_lis_length_c_is_bit_identical(tmp_path):
     res = algo_difftest.difftest("lis_length", tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P16 inversion count (count_inversions; counting merge sort, KIND_REDUCE).
+# --------------------------------------------------------------------------- #
+def _brute_inversions(a):
+    """Independent O(n^2) brute-force inversion count (different code path from merge sort)."""
+    if any(math.isnan(v) for v in a):
+        return -1.0
+    c = 0
+    for i in range(len(a)):
+        for j in range(i + 1, len(a)):
+            if a[i] > a[j]:
+                c += 1
+    return float(c)
+
+
+def test_count_inversions_registered_kind():
+    op = algo.ALGO_BY_NAME["count_inversions"]
+    assert op.kind == algo.KIND_REDUCE
+    assert op.out_sort == algo.SCALAR
+    assert op.category == "stat"
+    assert op.tol == 0.0
+
+
+def test_count_inversions_known_values():
+    assert algo.run_algo("count_inversions", [1, 2, 3, 4]) == 0.0       # sorted
+    assert algo.run_algo("count_inversions", [4, 3, 2, 1]) == 6.0       # reversed: n(n-1)/2
+    assert algo.run_algo("count_inversions", [2, 1, 3]) == 1.0
+    assert algo.run_algo("count_inversions", [3, 1, 2]) == 2.0
+    assert algo.run_algo("count_inversions", []) == 0.0
+    assert algo.run_algo("count_inversions", [5]) == 0.0
+    assert algo.run_algo("count_inversions", [2, 2, 2]) == 0.0          # strict: equal is not an inversion
+    assert algo.run_algo("count_inversions", [2, 1, 2, 1]) == 3.0
+    assert algo.run_algo("count_inversions", [-0.0, 0.0]) == 0.0        # -0.0 == 0.0
+
+
+def test_count_inversions_matches_brute_random():
+    """Counting merge sort == O(n^2) brute over integer and float sequences (with ties)."""
+    rng = random.Random(1616)
+    for _ in range(4000):
+        n = rng.randint(0, 40)
+        rr = rng.choice([2, 5, 40, 10 ** 9])
+        a = [float(rng.randint(-rr, rr)) for _ in range(n)]
+        assert algo.run_algo("count_inversions", a) == _brute_inversions(a)
+    for _ in range(1000):
+        n = rng.randint(0, 30)
+        a = [rng.uniform(-50.0, 50.0) for _ in range(n)]
+        assert algo.run_algo("count_inversions", a) == _brute_inversions(a)
+
+
+def test_count_inversions_nan_fail_soft():
+    assert algo.run_algo("count_inversions", [float("nan"), 1, 2]) == -1.0
+    assert algo.run_algo("count_inversions", [1, float("nan"), 2]) == -1.0
+    assert algo.run_algo("count_inversions", [1, 2, float("nan")]) == -1.0
+
+
+def test_count_inversions_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("count_inversions", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_count_inversions_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("count_inversions", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True
 
