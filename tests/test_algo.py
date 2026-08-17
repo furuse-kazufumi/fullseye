@@ -51,9 +51,13 @@ _STAT = ["count_distinct", "mode_value"]
 # P10: number theory part 2 (category "numtheory", but appended at the END of the registry).
 # is_prime = deterministic Miller-Rabin; modular_inverse = extended Euclid. KIND_REDUCE, exact.
 _NUMTHEORY2 = ["is_prime", "modular_inverse"]
+# P11: bit manipulation (non-negative integers in [0, 2^53-1]). xor_reduce / popcount_total are
+# KIND_REDUCE. Independent oracles = functools.reduce(xor) / sum(bin(x).count('1')).
+_BITS = ["xor_reduce", "popcount_total"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
-_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT + _NUMTHEORY2
+_ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
+            + _NUMTHEORY2 + _BITS)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -1497,6 +1501,66 @@ def test_p10_difftest_python_half_is_exact(name, tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 @pytest.mark.parametrize("name", _NUMTHEORY2)
 def test_p10_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P11 bit manipulation (xor_reduce, popcount_total; non-negative integers, exact).
+# --------------------------------------------------------------------------- #
+def test_bits_ops_registered_kinds():
+    assert algo.ALGO_BY_NAME["xor_reduce"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["popcount_total"].kind == algo.KIND_REDUCE
+    assert set(algo.algo_categories()["bits"]) == set(_BITS)
+    for name in _BITS:
+        assert algo.ALGO_BY_NAME[name].tol == 0.0
+
+
+def test_xor_reduce_known_and_random():
+    import functools
+    import operator
+    assert algo.run_algo("xor_reduce", []) == 0.0
+    assert algo.run_algo("xor_reduce", [7, 3, 1]) == 5.0            # 7^3=4, 4^1=5
+    assert algo.run_algo("xor_reduce", [5, 5]) == 0.0
+    assert algo.run_algo("xor_reduce", [9007199254740991.0, 9007199254740991.0]) == 0.0
+    rng = random.Random(411)
+    for _ in range(3000):
+        v = [rng.randint(0, 2 ** 52) for _ in range(rng.randint(0, 20))]
+        assert algo.run_algo("xor_reduce", [float(x) for x in v]) == float(
+            functools.reduce(operator.xor, v, 0))
+
+
+def test_popcount_total_known_and_random():
+    assert algo.run_algo("popcount_total", []) == 0.0
+    assert algo.run_algo("popcount_total", [255]) == 8.0
+    assert algo.run_algo("popcount_total", [7, 3, 1]) == 6.0        # 3+2+1
+    assert algo.run_algo("popcount_total", [9007199254740991.0]) == 53.0   # 2^53-1 = 53 ones
+    rng = random.Random(433)
+    for _ in range(3000):
+        v = [rng.randint(0, 2 ** 52) for _ in range(rng.randint(0, 20))]
+        assert algo.run_algo("popcount_total", [float(x) for x in v]) == float(
+            sum(x.bit_count() for x in v))
+
+
+@pytest.mark.parametrize("name", _BITS)
+def test_bits_fail_soft(name):
+    assert algo.run_algo(name, [-1.0]) == 0.0
+    assert algo.run_algo(name, [1.5]) == 0.0
+    assert algo.run_algo(name, [float("nan")]) == 0.0
+    assert algo.run_algo(name, [9007199254740992.0]) == 0.0        # 2^53 -> out of domain
+
+
+@pytest.mark.parametrize("name", _BITS)
+def test_bits_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _BITS)
+def test_bits_c_is_bit_identical(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True

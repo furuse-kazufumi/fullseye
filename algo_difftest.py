@@ -674,6 +674,24 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
         for _ in range(40):
             cases.append([float(rng2.randint(0, 100000)), float(rng2.randint(1, 100000))])
         return cases
+    if name in ("xor_reduce", "popcount_total"):
+        rng2 = random.Random(seed + 1111)
+        cases: list[list[float]] = [
+            [],                                              # empty -> 0
+            [0.0], [255.0], [7.0, 3.0, 1.0],
+            [9007199254740991.0],                            # 2^53 - 1 (all 53 bits set)
+            [9007199254740991.0, 9007199254740991.0],        # xor -> 0; popcount -> 106
+            [1099511627776.0, 1.0],                          # 2^40 + 1
+            # out-of-domain -> fail-soft 0.0
+            [-1.0], [1.5], [float("nan")], [9007199254740992.0],  # -1 / non-int / NaN / 2^53
+        ]
+        for _ in range(30):
+            n = rng2.randint(0, 20)
+            cases.append([float(rng2.randint(0, 2 ** 40)) for _ in range(n)])
+        for _ in range(6):                                   # near the 53-bit edge
+            n = rng2.randint(1, 8)
+            cases.append([float(rng2.randint(0, 9007199254740991)) for _ in range(n)])
+        return cases
     return make_holdout(seed)
 
 
@@ -977,6 +995,23 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                         ref = float(pow(int(arr[0]), -1, m))
                     except ValueError:
                         ref = -1.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name in ("xor_reduce", "popcount_total"):
+        # independent oracles: functools.reduce(xor) / sum(bin(x).count('1')). Domain-aware (a negative
+        # / non-integer / >= 2^53 value -> the op's fail-soft 0.0).
+        import functools
+        import operator
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if all(_int_in(x, 0.0, 9007199254740991.0) for x in arr):
+                ints = [int(x) for x in arr]
+                if name == "xor_reduce":
+                    ref = float(functools.reduce(operator.xor, ints, 0))
+                else:
+                    ref = float(sum(v.bit_count() for v in ints))    # builtin popcount, independent of Kernighan
+            else:
+                ref = 0.0
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]

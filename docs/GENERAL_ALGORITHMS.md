@@ -450,3 +450,10 @@ mode_value の `+0.0` 正準化を落とす変異を holdout が falsify でき�
 is_prime(near-2^32)は同種変異を捕捉するのに modular_inverse だけ未対応。**修正**=2^53 端ケース(`[2, 2^53−1]` coprime→inverse・
 large coprime near 2^53・`[2^52, 2^53]` both even→−1)を holdout に追加(Bezout 演算が |q·s|~2m~2^54 を駆動)。自己再現で確認=
 **`long long→int` 変異が difftest FAIL**・baseline は bit 一致 pass。oracle(pow)は既に対応済ゆえ holdout のみ追加。全スイート緑。
+
+## P11 完遂記録 — ビット操作(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**ビット操作 op 2 種を追加**: `xor_reduce`(全要素の bitwise XOR)/ `popcount_total`(全要素の 1 ビット総数=Kernighan)。
+非負整数を float64 で運び、域 [0, 2^53−1] で全値を 53 ビットに収める(XOR 結果も < 2^53=exact・popcount は小さい整数)=
+C bit 一致 かつ Python==独立 oracle(`functools.reduce(operator.xor)` / builtin `int.bit_count()`=Kernighan とは別機構)tol 0。
+両 op passed=True・python exact / C bit 一致 / c_verified。各 3000 ランダムケースで oracle mism 0 を事前実測。fail-soft=負/非整数/≥2^53→0.0。
+全 algo op 32 が gate 化。ruff clean(FURB161 で `bin().count('1')`→`.bit_count()` 化)・mypy 新規 0。敵対レビューは background 実行。

@@ -43,7 +43,8 @@ theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE
 P6 computational geometry (polygon area, point-in-polygon, convex hull, segment
 intersection; integer coords, exact), P8 search / selection (binary search,
 k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
-(deterministic Miller-Rabin primality, modular inverse).
+(deterministic Miller-Rabin primality, modular inverse), P11 bit manipulation
+(xor reduce, population count).
 """
 from __future__ import annotations
 
@@ -2134,6 +2135,74 @@ double modular_inverse(const double* a, int n_in) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P11 — bit manipulation. Non-negative integers carried as float64; the domain
+# [0, 2^53 - 1] keeps every value inside 53 bits, so bitwise XOR stays < 2^53 (exact)
+# and popcounts are exact small integers. Bit work is done on uint64 in C (the double
+# is cast in, the integer result cast back). Both fold to one integer (KIND_REDUCE).
+# See docs/GENERAL_ALGORITHMS.md P11.
+# --------------------------------------------------------------------------- #
+_PY_XOR_REDUCE = '''\
+def run(a):
+    """Bitwise XOR of a sequence of non-negative integers (exact). Each value in [0, 2^53 - 1]
+    (integer), so every value fits in 53 bits and the XOR result stays < 2^53 (exact in float64).
+    Empty -> 0.0. Fail-soft 0.0 if any value is negative / non-integer / >= 2^53. The raw-value +
+    integrality guard runs before the int cast (NaN-safe short-circuit; the codegen #errors under
+    -ffast-math)."""
+    acc = 0
+    for x in a:
+        if not (x >= 0.0 and x <= 9007199254740991.0 and x == float(int(x))):   # 2^53 - 1
+            return 0.0
+        acc = acc ^ int(x)
+    return float(acc)
+'''
+
+_C_XOR_REDUCE = '''\
+/* Bitwise XOR of a[0..n-1] (non-negative integers in [0, 2^53-1]). Result < 2^53, exact. Fail-soft
+ * 0.0 on a negative / non-integer / >= 2^53 value. */
+double xor_reduce(const double* a, int n) {
+    unsigned long long acc = 0;
+    for (int i = 0; i < n; i++) {
+        double x = a[i];
+        if (!(x >= 0.0 && x <= 9007199254740991.0 && x == (double)(long long)x)) return 0.0;
+        acc ^= (unsigned long long)x;
+    }
+    return (double)acc;
+}
+'''
+
+_PY_POPCOUNT_TOTAL = '''\
+def run(a):
+    """Total number of set (1) bits across a sequence of non-negative integers (exact). Each value in
+    [0, 2^53 - 1] (integer). Empty -> 0.0. Fail-soft 0.0 if any value is negative / non-integer /
+    >= 2^53. Counts bits by clearing the lowest set bit (Kernighan), so it mirrors the C exactly."""
+    total = 0
+    for x in a:
+        if not (x >= 0.0 and x <= 9007199254740991.0 and x == float(int(x))):
+            return 0.0
+        v = int(x)
+        while v != 0:
+            v = v & (v - 1)                             # clear the lowest set bit
+            total = total + 1
+    return float(total)
+'''
+
+_C_POPCOUNT_TOTAL = '''\
+/* Total set-bit count across a[0..n-1] (non-negative integers in [0, 2^53-1]), by Kernighan's
+ * lowest-set-bit clearing. Result is a small exact integer. Fail-soft 0.0 on out-of-domain. */
+double popcount_total(const double* a, int n) {
+    unsigned long long total = 0;
+    for (int i = 0; i < n; i++) {
+        double x = a[i];
+        if (!(x >= 0.0 && x <= 9007199254740991.0 && x == (double)(long long)x)) return 0.0;
+        unsigned long long v = (unsigned long long)x;
+        while (v != 0ULL) { v &= (v - 1ULL); total++; }
+    }
+    return (double)total;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2269,6 +2338,15 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "Modular inverse a^-1 mod m of [a, m] by the extended Euclidean algorithm "
            "(-1.0 if gcd != 1).",
            "extended Euclidean algorithm for the modular inverse"),
+    AlgoOp("xor_reduce", "bits", SEQ, SCALAR, KIND_REDUCE, "xor_reduce",
+           _PY_XOR_REDUCE, _C_XOR_REDUCE,
+           "Bitwise XOR of a sequence of non-negative integers in [0, 2^53-1] (exact).",
+           "bitwise XOR reduction"),
+    AlgoOp("popcount_total", "bits", SEQ, SCALAR, KIND_REDUCE, "popcount_total",
+           _PY_POPCOUNT_TOTAL, _C_POPCOUNT_TOTAL,
+           "Total number of set bits across a sequence of non-negative integers "
+           "in [0, 2^53-1] (Kernighan).",
+           "population count (Kernighan lowest-bit clearing), summed over the sequence"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
