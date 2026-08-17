@@ -716,6 +716,37 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             cases.append([float(rng2.randint(0, 9007199254740992)),
                           float(rng2.randint(0, 9007199254740992))])
         return cases
+    if name == "closest_pair":
+        rng2 = random.Random(seed + 1313)
+        cases = [
+            [0.0, 0.0, 3.0, 4.0],                                # 2 points -> 25
+            [0.0, 0.0, 1.0, 0.0, 5.0, 5.0],                      # 3 points -> 1
+            [0.0, 0.0, 5.0, 5.0, 0.0, 0.0],                      # duplicate points -> 0
+            [0.0, 0.0, 0.0, 3.0, 0.0, 7.0, 0.0, 12.0],           # collinear (vertical) -> 9
+            [-5.0, -5.0, -1.0, 0.0, 1.0, 0.0, 5.0, 5.0],         # closest pair STRADDLES the mid line -> 4
+            [3.0, 0.0, 3.0, 0.0],                                # two identical points (dist 0)
+            # coordinate domain edges (extreme but in-domain; sq dist exact < 2^53):
+            [100000.0, 100000.0, -100000.0, -100000.0],          # 8e10 (max sq dist, still exact)
+            [100000.0, 0.0, -100000.0, 0.0, 99999.0, 0.0],       # large coords, min = 1
+            # out-of-domain -> -1.0 fail-soft; each guard clause / coordinate slot as a SOLE reason
+            # (the guard loops over ALL coords, but drive both x and y positions and both bounds):
+            [5.0, 7.0],                                          # 1 point (n<4)
+            [0.0, 0.0, 5.0],                                     # odd length
+            [0.5, 0.0, 1.0, 1.0], [0.0, 0.5, 1.0, 1.0],          # non-integer x / non-integer y
+            [200000.0, 0.0, 1.0, 1.0], [0.0, 200000.0, 1.0, 1.0],   # x > 1e5 / y > 1e5
+            [-200000.0, 0.0, 1.0, 1.0], [0.0, -200000.0, 1.0, 1.0], # x < -1e5 / y < -1e5
+            [float("nan"), 0.0, 1.0, 1.0], [0.0, float("nan"), 1.0, 1.0],  # NaN x / NaN y
+        ]
+        # random point sets; small R clusters points so the strip y-scan depth is exercised
+        for _ in range(40):
+            npn = rng2.randint(2, 40)
+            rr = rng2.choice([3, 8, 30, 100000])
+            arr: list[float] = []
+            for _ in range(npn):
+                arr.append(float(rng2.randint(-rr, rr)))
+                arr.append(float(rng2.randint(-rr, rr)))
+            cases.append(arr)
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
@@ -1072,6 +1103,28 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 return float("inf")                              # structural: fail-closed
             vec_errs.extend(_diff01(float(gv), float(rv)) for gv, rv in zip(got_list, bezout))
         return max(vec_errs, default=0.0)
+    if name == "closest_pair":
+        # independent oracle: brute-force O(n^2) min squared distance (a wholly different code path
+        # from the divide & conquer op — no sorting, no strip). Domain-aware: < 2 points / odd length
+        # / a coordinate outside [-1e5, 1e5] or non-integer -> the op's -1.0 fail-soft.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            n = len(arr)
+            if n >= 4 and n % 2 == 0 and all(_int_in(v, -100000.0, 100000.0) for v in arr):
+                pts = [(int(arr[2 * i]), int(arr[2 * i + 1])) for i in range(n // 2)]
+                best = -1                            # sentinel; the >= 2-point guard sets a real value
+                for i in range(len(pts)):
+                    for j in range(i + 1, len(pts)):
+                        dx = pts[i][0] - pts[j][0]
+                        dy = pts[i][1] - pts[j][1]
+                        dsq = dx * dx + dy * dy
+                        if best < 0 or dsq < best:
+                            best = dsq
+                ref = float(best)
+            else:
+                ref = -1.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:
         return _max_diff_sort(oracle, py_out)

@@ -58,10 +58,14 @@ _BITS = ["xor_reduce", "popcount_total"]
 # values, or [] fail-soft). Non-negative integers <= 2^53. Independent oracle = the RECURSIVE extended
 # Euclid (_ext_gcd_rec), element-wise (g, x, y). Shares the "numtheory" category with P5 + P10.
 _EXTGCD = ["extended_gcd"]
+# P13: closest pair of points by divide & conquer. KIND_REDUCE: [x0,y0,x1,y1,...] -> min squared
+# distance (exact integer, coords in [-1e5, 1e5]), or -1.0 fail-soft. Independent oracle = brute-force
+# O(n^2). Shares the "geometry" category with P6 + P7.
+_GEOMETRY2 = ["closest_pair"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS + _EXTGCD)
+            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -98,7 +102,7 @@ def test_categories_grouping():
     assert set(cats["numtheory"]) == set(_NUMTHEORY) | set(_NUMTHEORY2) | set(_EXTGCD)  # P5 + P10 + P12
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS)
-    assert set(cats["geometry"]) == set(_GEOMETRY)
+    assert set(cats["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)   # P6/P7 + P13
     assert set(cats["search"]) == set(_SEARCH)
     assert set(cats["stat"]) == set(_STAT)
 
@@ -1074,7 +1078,7 @@ def test_geometry_ops_registered_kinds():
     assert algo.ALGO_BY_NAME["point_in_polygon"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["convex_hull"].kind == algo.KIND_MAP
     assert algo.ALGO_BY_NAME["segments_intersect"].kind == algo.KIND_REDUCE
-    assert set(algo.algo_categories()["geometry"]) == set(_GEOMETRY)
+    assert set(algo.algo_categories()["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)
     for name in _GEOMETRY:
         assert algo.ALGO_BY_NAME[name].tol == 0.0
 
@@ -1636,6 +1640,84 @@ def test_extended_gcd_difftest_python_half_is_exact(tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 def test_extended_gcd_c_is_bit_identical(tmp_path):
     res = algo_difftest.difftest("extended_gcd", tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P13 closest pair of points (closest_pair; min squared distance, divide & conquer, KIND_REDUCE).
+# --------------------------------------------------------------------------- #
+def _brute_closest_sq(coords):
+    """Independent brute-force min squared distance oracle (mirrors the difftest oracle)."""
+    n = len(coords)
+    if n < 4 or n % 2 != 0 or not all(
+            -100000 <= v <= 100000 and v == int(v) for v in coords):
+        return -1.0
+    pts = [(int(coords[2 * i]), int(coords[2 * i + 1])) for i in range(n // 2)]
+    best = None
+    for i in range(len(pts)):
+        for j in range(i + 1, len(pts)):
+            dx = pts[i][0] - pts[j][0]
+            dy = pts[i][1] - pts[j][1]
+            d = dx * dx + dy * dy
+            best = d if best is None or d < best else best
+    return float(best)
+
+
+def test_closest_pair_registered_kind():
+    op = algo.ALGO_BY_NAME["closest_pair"]
+    assert op.kind == algo.KIND_REDUCE
+    assert op.out_sort == algo.SCALAR
+    assert op.category == "geometry"
+    assert op.tol == 0.0
+
+
+def test_closest_pair_known_values():
+    assert algo.run_algo("closest_pair", [0, 0, 3, 4]) == 25.0            # single pair
+    assert algo.run_algo("closest_pair", [0, 0, 1, 0, 5, 5]) == 1.0
+    assert algo.run_algo("closest_pair", [0, 0, 5, 5, 0, 0]) == 0.0       # duplicate points
+    assert algo.run_algo("closest_pair", [0, 0, 0, 3, 0, 7, 0, 12]) == 9.0   # collinear
+    # the closest pair straddles the divide-and-conquer mid line (exercises the strip):
+    assert algo.run_algo("closest_pair", [-5, -5, -1, 0, 1, 0, 5, 5]) == 4.0
+    # extreme in-domain coords: max squared distance still exact (< 2^53):
+    assert algo.run_algo("closest_pair", [100000, 100000, -100000, -100000]) == 80000000000.0
+
+
+def test_closest_pair_matches_brute_force_random():
+    """Divide & conquer == brute-force O(n^2), incl. clustered points that stress the strip scan."""
+    rng = random.Random(1313)
+    for _ in range(4000):
+        npn = rng.randint(2, 40)
+        rr = rng.choice([3, 8, 30, 100000])
+        coords = []
+        for _ in range(npn):
+            coords.append(float(rng.randint(-rr, rr)))
+            coords.append(float(rng.randint(-rr, rr)))
+        assert algo.run_algo("closest_pair", coords) == _brute_closest_sq(coords)
+
+
+def test_closest_pair_fail_soft():
+    assert algo.run_algo("closest_pair", [5, 7]) == -1.0                  # 1 point (n < 4)
+    assert algo.run_algo("closest_pair", [0, 0, 5]) == -1.0              # odd length
+    # non-integer / out-of-range in BOTH the x and the y slot (guard covers every coord):
+    assert algo.run_algo("closest_pair", [0.5, 0, 1, 1]) == -1.0         # non-integer x
+    assert algo.run_algo("closest_pair", [0, 0.5, 1, 1]) == -1.0         # non-integer y
+    assert algo.run_algo("closest_pair", [200000, 0, 1, 1]) == -1.0      # x > 1e5
+    assert algo.run_algo("closest_pair", [0, 200000, 1, 1]) == -1.0      # y > 1e5
+    assert algo.run_algo("closest_pair", [-200000, 0, 1, 1]) == -1.0     # x < -1e5
+    assert algo.run_algo("closest_pair", [0, -200000, 1, 1]) == -1.0     # y < -1e5
+    assert algo.run_algo("closest_pair", [float("nan"), 0, 1, 1]) == -1.0
+
+
+def test_closest_pair_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("closest_pair", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_closest_pair_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("closest_pair", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True
 

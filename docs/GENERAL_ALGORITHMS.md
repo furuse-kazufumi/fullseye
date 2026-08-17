@@ -503,3 +503,27 @@ operand `a` 側**(`[2^53+2,3]`/`[2.5,7]`/`[-1,7]`)で、唯一の bad-`b` ケー
 pass。★**検証エージェントの honest 訂正を採用**(finding の過剰主張を却下): 「`bd<=2^53` 削除は b=2^62 で C long long overflow UB」は
 **不正確** — b=2^62 で C(long long)と Python(bignum)は bit 一致(overflow なし)。真の誤りは**出力の精度損失**(Bezout 係数が > 2^53 で
 float64 に厳密表現できず `a·x+b·y==g` が破れる)であり、`b<=2^53` 上限はこの精度を守る。機構は誤りだが欠陥と remedy は成立=採用。
+
+## P13 完遂記録 — 最近点対(分割統治)(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**計算幾何を 1 op 拡張(P6/P7 に続く geometry 第2弾)**: `closest_pair`(KIND_REDUCE)= 2-D 整数点群の**最小 2 乗距離**を
+**分割統治**(CLRS 33.4)で求める。入力 `[x0,y0,x1,y1,...]`(2n 個・整数座標 [-1e5,1e5])→ 出力=最小 2 乗ユークリッド距離
+(整数厳密)。**2 乗距離のみ(sqrt なし)**ゆえ long long/整数 float64 に閉じ、C==Python bit 一致。最大 2 乗距離 = (2e5)²×2 = 8e10
+< 2^53=exact。fail-soft=点 <2(n<4)/ 奇数長 / 座標が非整数・[-1e5,1e5] 域外 → -1.0。
+- **アルゴリズム**: x でソート(タイは y)→ 左右半分を再帰 → d=min(dl,dr) → 中央線から (x−midx)²<d の点でストリップ構築 →
+  ストリップを y でソート → 各点から前方走査(`(yj−yi)²<d` の間だけ=7 近傍上界)。base(m≤3)は総当り。重複点(dist 0)は
+  同一 x が隣接ソートされ、分割線跨ぎでもストリップが拾う。C は `CpPt` 構造体 + `cp_rec` 再帰 + `cp_cmp_x/cp_cmp_y`(qsort)を
+  op.c_code 内に定義(codegen は c_code を verbatim 挿入するため static helper 可)。ストリップバッファは 1 本を再帰間で共有
+  (子が先に完了=post-order ゆえエイリアス無し)。再帰深さ ~log2(n)(n=1e5 で 17)=スタック安全。
+- **honest gate 実測(passed=True・c_verified=true・ziglang cc・58 cases)**: python==**独立総当り O(n²) オラクル**(ソート/ストリップ
+  なしの別コード経路)**diff 0.0(exact)** / codegen **C==Python bit 一致 diff 0.0**。事前実測=**30,000 ランダム(クラスタ R=3/8/30 で
+  ストリップ深度を駆動)+ 16,000 敵対レイアウト(密グリッド/縦横直線[全点が strip 内]/微小クラスタ/境界座標)で総当りと mism 0**。
+- **★ゲート mutation test(自己検証)**: strip スキャン省略 / sq が y 無視 / 座標上限削除 / 座標下限削除 / 整数性削除 / 空 strip の
+  6 変異を**全て捕捉**(passed=False)。cross-strip 最小ケース([-5,-5,-1,0,1,0,5,5]→4)が strip ロジックを、両座標スロットの域外
+  ケースがガードを単独駆動(P12 の片側ガード教訓を反映)。
+- **holdout**: 既知(単一対 25・3 点・重複 dist0・縦一列・**cross-strip 最小**)+ 極端 in-domain 座標(8e10 上端)+ 域外を**両
+  座標スロット**で単独理由化(奇数長/1 点/非整数 x・y/±1e5 超過 x・y/NaN x・y)+ ランダム 40(クラスタ)。
+- **work-graph op 波**: closest_pair を `algo_difftest --op` ゲートノード化(`1 op=1 ノード`)→ `run-once` で無人 done。
+  = **全 algo op 34 が work-graph ゲート化**(33→34)。
+- **回帰**: `tests/test_algo.py` に P13 群(既知値・総当り一致 random×4000・fail-soft[両座標スロット]・category grouping
+  [geometry=P6+P7+P13]・difftest python exact・C bit 一致)。全スイート **4834 passed / 0 failed**(+7)・ruff clean・mypy
+  新規 0(origin/master=15 と同数)。敵対レビューは background 実行(結果は follow-up で反映)。

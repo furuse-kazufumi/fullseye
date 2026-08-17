@@ -45,7 +45,8 @@ intersection; integer coords, exact), P8 search / selection (binary search,
 k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
 (deterministic Miller-Rabin primality, modular inverse), P11 bit manipulation
 (xor reduce, population count), P12 extended Euclidean algorithm (Bezout
-coefficients; variable-length seq -> 3-value seq).
+coefficients; variable-length seq -> 3-value seq), P13 computational geometry 2
+(closest pair of points by divide & conquer; min squared distance).
 """
 from __future__ import annotations
 
@@ -2260,6 +2261,138 @@ int extended_gcd(const double* a, int n_in, double* out) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P13 — closest pair of points (divide & conquer, KIND_REDUCE). Input is 2n interleaved
+# integer coordinates [x0,y0,x1,y1,...] in [-1e5, 1e5]; output is the minimum SQUARED
+# Euclidean distance (an exact integer: max = (2e5)^2 * 2 = 8e10 < 2^53). No sqrt, so the
+# result is exact and C == Python bit-for-bit. Fail-soft -1.0 for < 2 points / odd length /
+# out-of-domain. Squared distances are compared, never a real distance, so the whole thing
+# stays in long long / integer float64. See docs/GENERAL_ALGORITHMS.md P13.
+# --------------------------------------------------------------------------- #
+_PY_CLOSEST_PAIR = '''\
+def run(a):
+    """Minimum squared Euclidean distance among 2-D integer points, by divide & conquer.
+    Input a = [x0, y0, x1, y1, ...] (2n values, coords integer in [-1e5, 1e5]). Returns the
+    minimum squared distance as a float (exact integer < 2^53), or -1.0 fail-soft for < 2
+    points / odd length / out-of-domain. Squared distances only (no sqrt) -> exact."""
+    n = len(a)
+    if n < 4 or (n % 2) != 0:
+        return -1.0
+    for v in a:
+        if not (v >= -100000.0 and v <= 100000.0 and v == float(int(v))):
+            return -1.0
+    pts = [(int(a[2 * i]), int(a[2 * i + 1])) for i in range(n // 2)]
+    pts.sort()                                       # by (x, y)
+
+    def sq(p, q):
+        dx = p[0] - q[0]
+        dy = p[1] - q[1]
+        return dx * dx + dy * dy
+
+    def rec(lo, hi):
+        m = hi - lo
+        if m <= 3:                                   # base: brute force (>= 2 points here)
+            best = -1
+            for i in range(lo, hi):
+                for j in range(i + 1, hi):
+                    d = sq(pts[i], pts[j])
+                    if best < 0 or d < best:
+                        best = d
+            return best
+        mid = lo + m // 2
+        midx = pts[mid][0]
+        dl = rec(lo, mid)
+        dr = rec(mid, hi)
+        d = dl if dl < dr else dr
+        strip = [pts[i] for i in range(lo, hi) if (pts[i][0] - midx) ** 2 < d]
+        strip.sort(key=lambda p: (p[1], p[0]))       # by (y, x)
+        sc = len(strip)
+        for i in range(sc):
+            for j in range(i + 1, sc):
+                dy = strip[j][1] - strip[i][1]
+                if dy * dy >= d:                     # sorted by y -> no closer pair past here
+                    break
+                dd = sq(strip[i], strip[j])
+                if dd < d:
+                    d = dd
+        return d
+
+    return float(rec(0, n // 2))
+'''
+
+_C_CLOSEST_PAIR = '''\
+/* Minimum squared distance among 2-D integer points [x0,y0,x1,y1,...] (coords in [-1e5,1e5]),
+ * by divide & conquer. Returns the min squared distance (exact integer), or -1.0 fail-soft for
+ * < 2 points / odd length / out-of-domain. Squared distances only (long long), so no sqrt and
+ * C == Python bit-for-bit. KIND_REDUCE: double closest_pair(const double*, int). */
+typedef struct { long long x, y; } CpPt;
+
+static int cp_cmp_x(const void* pa, const void* pb) {
+    const CpPt* A = (const CpPt*)pa; const CpPt* B = (const CpPt*)pb;
+    if (A->x < B->x) return -1; if (A->x > B->x) return 1;
+    if (A->y < B->y) return -1; if (A->y > B->y) return 1;
+    return 0;
+}
+static int cp_cmp_y(const void* pa, const void* pb) {
+    const CpPt* A = (const CpPt*)pa; const CpPt* B = (const CpPt*)pb;
+    if (A->y < B->y) return -1; if (A->y > B->y) return 1;
+    if (A->x < B->x) return -1; if (A->x > B->x) return 1;
+    return 0;
+}
+static long long cp_sq(const CpPt* p, const CpPt* q) {
+    long long dx = p->x - q->x, dy = p->y - q->y;
+    return dx * dx + dy * dy;
+}
+static long long cp_rec(const CpPt* pts, int lo, int hi, CpPt* strip) {
+    int m = hi - lo;
+    if (m <= 3) {                                    /* base: brute force (>= 2 points here) */
+        long long best = -1;
+        for (int i = lo; i < hi; i++)
+            for (int j = i + 1; j < hi; j++) {
+                long long d = cp_sq(&pts[i], &pts[j]);
+                if (best < 0 || d < best) best = d;
+            }
+        return best;
+    }
+    int mid = lo + m / 2;
+    long long midx = pts[mid].x;
+    long long dl = cp_rec(pts, lo, mid, strip);
+    long long dr = cp_rec(pts, mid, hi, strip);
+    long long d = (dl < dr) ? dl : dr;
+    int sc = 0;
+    for (int i = lo; i < hi; i++) {
+        long long dxm = pts[i].x - midx;
+        if (dxm * dxm < d) strip[sc++] = pts[i];
+    }
+    qsort(strip, (size_t)sc, sizeof(CpPt), cp_cmp_y);
+    for (int i = 0; i < sc; i++)
+        for (int j = i + 1; j < sc; j++) {
+            long long dy = strip[j].y - strip[i].y;
+            if (dy * dy >= d) break;                  /* sorted by y -> no closer pair past here */
+            long long dd = cp_sq(&strip[i], &strip[j]);
+            if (dd < d) d = dd;
+        }
+    return d;
+}
+double closest_pair(const double* a, int n) {
+    if (n < 4 || (n % 2) != 0) return -1.0;
+    int np = n / 2;
+    for (int i = 0; i < n; i++) {
+        double v = a[i];
+        if (!(v >= -100000.0 && v <= 100000.0 && v == (double)(long long)v)) return -1.0;
+    }
+    CpPt* pts = (CpPt*)malloc((size_t)np * sizeof(CpPt));
+    CpPt* strip = (CpPt*)malloc((size_t)np * sizeof(CpPt));
+    if (!pts || !strip) { free(pts); free(strip); return -1.0; }   /* fail-soft on OOM */
+    for (int i = 0; i < np; i++) { pts[i].x = (long long)a[2 * i]; pts[i].y = (long long)a[2 * i + 1]; }
+    qsort(pts, (size_t)np, sizeof(CpPt), cp_cmp_x);
+    long long best = cp_rec(pts, 0, np, strip);
+    free(pts); free(strip);
+    return (double)best;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2410,6 +2543,12 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "g = gcd(a, b) (non-negative integers <= 2^53; variable-length seq -> "
            "exactly 3 values, or [] fail-soft).",
            "extended Euclidean algorithm; Bezout coefficients"),
+    AlgoOp("closest_pair", "geometry", SEQ, SCALAR, KIND_REDUCE, "closest_pair",
+           _PY_CLOSEST_PAIR, _C_CLOSEST_PAIR,
+           "Minimum squared Euclidean distance among 2-D integer points "
+           "[x0,y0,x1,y1,...] (coords in [-1e5, 1e5]) by divide & conquer; "
+           "-1.0 fail-soft for < 2 points / odd length / out-of-domain.",
+           "divide-and-conquer closest pair (CLRS 33.4); squared distances, exact integer"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
