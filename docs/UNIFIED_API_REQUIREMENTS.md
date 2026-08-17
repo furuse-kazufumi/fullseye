@@ -61,6 +61,13 @@ OSS 内部の再実装(PCL/grid_map/OpenCV/MoveIt2 は薄いアダプタで裏�
   **Studio = HDevelop(2D 画像処理 IDE)+ RViz2(3D 知覚可視化)の融合**: 2D 画像パネルに加え、
   点群 / depth / 6D pose 軸 / TF 木 / grid_map layer を 3D 表示(F3 の描画ヒントで自動選択)。
   3D viewer は再実装せず既存(Open3D/RViz2 連携 or 薄い描画)を裏に。
+  **★ドメインの棲み分け(ユーザー要望 2026-08-18)**: Studio は op/sample を 2 ドメインに**きれいに分けて**
+  提示する ── **vision(視覚 op = fullseye が"計算する")** と **sim-source(物理が"供給する": RGB/depth/
+  LiDAR/真値)**。この分業(fullseye は物理をやらない=F4/gap 分析と同一)を UI 上でも崩さない
+  (タブ/カテゴリ分け)。**どちらのドメインも各エントリに実行可能なサンプルコードを添える**
+  (人間が読んで自然な Qt 風。Studio で「見て・コードを読んで・その場で実行」できる)。
+  種 = `spikes/studio_sample_catalog.py`(vision: image.chain / cloud.perceive、sim-source: sim.lidar /
+  sim.to_vision。各 sample が name/domain/summary/**code**/run を持つ = F3 introspection のミニ版)。
 - **F7 後方互換**: 既存 770 op と現 API(`apply`/facade 関数)を壊さない(統一 I/F は上に薄く載せる)。
 
 ## 6. 非機能要件
