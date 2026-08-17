@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 322 / 2313 HALCON operators (13.9%)** via `Op.halcon`, from 669 registry ops.
+**imgevolve maps to 328 / 2313 HALCON operators (14.2%)** via `Op.halcon`, from 675 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
@@ -26,7 +26,7 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | Image | 24 | 110 | 86 |
 | Deep Learning | 2 | 88 | 86 |
 | 3D Reconstruction | 0 | 76 | 76 |
-| Filters | 123 | 196 | 73 |
+| Filters | 126 | 196 | 70 |
 | Calibration | 0 | 68 | 68 |
 | XLD | 30 | 97 | 67 |
 | 3D Matching | 0 | 59 | 59 |
@@ -39,8 +39,8 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | Control | 0 | 34 | 34 |
 | 2D Metrology | 2 | 32 | 30 |
 | Identification | 1 | 27 | 26 |
-| Segmentation | 28 | 53 | 25 |
 | Image Source | 0 | 25 | 25 |
+| Segmentation | 31 | 53 | 22 |
 | Morphology | 28 | 44 | 16 |
 | 1D Measuring | 5 | 20 | 15 |
 | Object | 1 | 16 | 15 |
@@ -63,7 +63,7 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 ## Version awareness (HALCON's op set changes between releases)
 Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
 
-- **313** claimed names exist in **all** scraped releases (stable).
+- **319** claimed names exist in **all** scraped releases (stable).
 - **9 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605)
 - **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 

@@ -279,6 +279,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_close_edges_length", "close_edges_length", IMAGE, IMAGE, _close_edges_length),
         ("hx_expand_region", "expand_region", REGION, REGION, _expand_region),
         ("hx_region_to_mean", "region_to_mean", IMAGE, IMAGE, _region_to_mean),
+        # 第 3 バッチ
+        ("hx_nonmax_dir", "nonmax_suppression_dir", IMAGE, IMAGE, _nonmax_suppression_dir),
+        ("hx_char_threshold", "char_threshold", IMAGE, REGION, _char_threshold),
+        ("hx_histo_to_thresh", "histo_to_thresh", IMAGE, REGION, _histo_to_thresh),
+        ("hx_gen_lowpass", "gen_lowpass", IMAGE, IMAGE, _gen_lowpass),
+        ("hx_gen_highpass", "gen_highpass", IMAGE, IMAGE, _gen_highpass),
+        ("hx_gen_bandpass", "gen_bandpass", IMAGE, IMAGE, _gen_bandpass),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
