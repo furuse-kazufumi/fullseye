@@ -460,6 +460,24 @@ def _plateaus_center(v, a, b):
     return out
 
 
+# ── 第 7 バッチ: region 平行移動 / skeleton 分割 ──────────────────────────────── #
+def _move_region(v, a, b):
+    """region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。"""
+    reg = v > 0.5
+    dy = int((a - 0.5) * v.shape[0])
+    dx = int((b - 0.5) * v.shape[1])
+    return np.roll(np.roll(reg, dy, 0), dx, 1).astype(np.float64)
+
+
+def _split_skeleton_region(v, a, b):
+    """1 画素幅 skeleton を分岐点で分割: 近傍数>=3 の junction を除いて連結成分に分ける。"""
+    from scipy.ndimage import convolve
+    sk = (v > 0.5).astype(np.uint8)
+    nb = convolve(sk, np.array([[1, 1, 1], [1, 0, 1], [1, 1, 1]]), mode="constant")
+    junc = (sk == 1) & (nb >= 3)                         # 分岐点
+    return ((sk == 1) & ~junc).astype(np.float64)
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
