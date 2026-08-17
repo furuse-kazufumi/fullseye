@@ -668,6 +668,10 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  # (thin-plate spline / B-spline FFD / moving least squares). All
                  # halcon="" new capabilities; numpy/scipy-native, deterministic.
                  "backends_alife2", "backends_deform",
+                 # HALCON coverage 拡充: 未カバーの実 operator を genuine numpy 実装
+                 # (gen_circle/ellipse/rectangle2/checker/grid, convol_gabor,
+                 #  fit_surface_first/second_order, cooc_feature_image, full_domain)。
+                 "backends_halcon_ext",
                  # self-expanding registry: macro ("DNA") ops condensed from evolved
                  # champions (backends_macro.py). LAST, so it can reference any backend
                  # op and minimally perturbs existing registration indices.
