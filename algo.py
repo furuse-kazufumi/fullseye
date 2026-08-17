@@ -2976,6 +2976,12 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "sequence of integer-valued doubles, by Kadane's O(n) reset scan (exact integer); "
            "all-negative -> 0.0; -1.0 fail-soft on a NaN / inf / non-integer / overflow.",
            "Kadane's algorithm (Bentley, Programming Pearls) for the maximum subarray sum; O(n)"),
+    AlgoOp("longest_palindrome", "search", SEQ, SCALAR, KIND_REDUCE, "longest_palindrome",
+           _PY_LONGEST_PALINDROME, _C_LONGEST_PALINDROME,
+           "Length of the longest palindromic contiguous subarray of a sequence of arbitrary "
+           "(NaN-free) doubles, by Manacher's O(n) algorithm (exact integer); empty -> 0.0; "
+           "single -> 1.0; -1.0 fail-soft on a NaN value.",
+           "Manacher's algorithm (e-maxx d1/d2) for the longest palindromic substring length; O(n)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}
