@@ -24,7 +24,7 @@ from matplotlib import font_manager
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 
-from PySide6 import QtWidgets, QtGui
+from PySide6 import QtWidgets, QtGui, QtCore
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lidar_adapter_spike as _sim  # noqa: E402
