@@ -273,12 +273,13 @@ def _smoke() -> int:
     app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
     win = StudioWindow()
     ok = 0
-    for name, _domain, code in SAMPLES:
-        win.editor.setPlainText(code)
+    for s in SAMPLES:
+        win.editor.setPlainText(s["code"])
+        win._rebuild_params(s)
         win._run()
         msg = win.statusBar().currentMessage()
-        print(f"  {name:16s} -> {msg}")
-        ok += msg == "Run OK"
+        print(f"  {s['name']:16s} -> {msg}")
+        ok += msg.startswith("Run OK")
     out = Path(__file__).resolve().parent / "out_gallery" / "studio_app_smoke.png"
     out.parent.mkdir(exist_ok=True)
     win.figure.savefig(out, dpi=110)
