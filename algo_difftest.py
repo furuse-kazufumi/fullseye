@@ -1433,15 +1433,13 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                     while lo - 1 >= 0 and hi + 1 < nn and arr[lo - 1] == arr[hi + 1]:
                         lo -= 1
                         hi += 1
-                    if hi - lo + 1 > bestv:
-                        bestv = hi - lo + 1
+                    bestv = max(bestv, hi - lo + 1)
                     if c + 1 < nn and arr[c] == arr[c + 1]:  # even center between c and c+1
                         lo, hi = c, c + 1
                         while lo - 1 >= 0 and hi + 1 < nn and arr[lo - 1] == arr[hi + 1]:
                             lo -= 1
                             hi += 1
-                        if hi - lo + 1 > bestv:
-                            bestv = hi - lo + 1
+                        bestv = max(bestv, hi - lo + 1)
                 ref = float(bestv)
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
