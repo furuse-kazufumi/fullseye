@@ -234,6 +234,18 @@ class StudioWindow(QtWidgets.QMainWindow):
 
         self.tree.setCurrentItem(groups["vision"].child(0))
 
+    def _on_hover(self, event) -> None:
+        """hwv 風: 画像(AxesImage)上の hover で画素座標と値をステータスバーに表示。"""
+        ax = event.inaxes
+        if ax is None or not ax.images or event.xdata is None:
+            return
+        arr = ax.images[0].get_array()          # 最下層(=元画像)の配列
+        col, row = int(round(event.xdata)), int(round(event.ydata))
+        if 0 <= row < arr.shape[0] and 0 <= col < arr.shape[1]:
+            v = arr[row, col]
+            vs = f"{float(v):.3f}" if np.ndim(v) == 0 else np.array2string(np.asarray(v), precision=2)
+            self.statusBar().showMessage(f"hwv  pixel (x={col}, y={row})  value={vs}")
+
     def _current_sample(self):
         items = self.tree.selectedItems()
         if items and items[0].data(0, 0x0100):
