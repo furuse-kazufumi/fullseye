@@ -642,3 +642,28 @@ fail-soft、空/単一→0.0。等値は転倒でない(tie で左を先取り=`
 - **[LOW annotation] コメント誤り**: `[inf,1,-inf]` に `-> 2` と注記していたが実際は 3(全 3 ペアが転倒)。gate は oracle と比較(3 で
   一致)ゆえ誤実装は通さない=**注記のみの不正確**。**修正**=コメントを `-> 3` に訂正(op/oracle/Fenwick すべて 3 で一致を確認)。
 - **★運用改善の実証**: これ以降のレビューは worktree 隔離を既定に。全スイート緑・ruff clean・mypy 新規 0。
+
+## P17 完遂記録 — 最大部分列和(Kadane 法)(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**検索/最適化を 1 op 拡張(P8 binary_search/kth_smallest・P15 lis_length に続く search 第3弾)**: `max_subarray`(KIND_REDUCE)= 整数値 double 列の
+**連続部分列の最大和**を **Kadane の O(n) リセット走査**(`cur = max(0, cur+x); best = max(best, cur)`)で。**空部分列を許容**(和 0)ゆえ答は**常に ≥ 0**
+(全負→0.0)=**-1.0 が safe sentinel**。整数域(各 `|x| ≤ 2^52` かつ絶対値の走行和 ≤ 2^52)で全ての部分和を厳密整数 < 2^53 に保つ → 答は厳密・
+**C==Python bit 一致**。独立オラクル(全 O(n²) 部分列の総当り最大)は**整数加算の結合律**ゆえ Kadane と厳密一致。fail-soft -1.0 = NaN / inf / 非整数 /
+`|x| > 2^52` / 走行和オーバーフロー。
+- **honest gate 実測(passed=True・c_verified=true・ziglang cc)**: python==**独立 O(n²) 総当り**(Kadane と別コード経路)**diff 0.0(exact)** /
+  codegen **C==Python bit 一致 diff 0.0**。事前実測=**5000 ランダム(整数・混合符号・小レンジで tie/リセット大量に駆動)で総当りと mism 0**。
+- **★ゲート mutation test(自己検証)**: (1) overflow ガード `>`→`>=`(exact-2^52 witness で誤 bail)→**CAUGHT**、(2) リセット `if cur<0: cur=0` 削除
+  (接尾和化=誤り)→**CAUGHT**、(3) 域ガード削除(inf で `int()` クラッシュ)→**CAUGHT**、(4) **真の非空 Kadane**(空オプション無し)→ 全負 holdout
+  `[-1,-2,-3]`(正解 0.0)で**CAUGHT**(err=5.0)、(5) best 更新 `>`→`>=`(等価)→ 想定どおり not-caught。
+- **★設計根拠の裏取り**: 真の非空 Kadane は全負 `[-1,-2,-3]` で最大要素 -1.0 を返す=**fail-soft sentinel -1.0 と衝突**。「空許容ゆえ答 ≥ 0 →
+  -1.0 が安全」という設計が、まさにこの衝突回避として機能することを mutation test が実証(空許容 = sentinel の健全性の前提)。
+- **holdout**: 空/単一正(5)/単一負(0)・**全負→0(空許容を単独 pin)**・古典 Kadane `[-2,1,-3,4,-1,2,1,-5,4]`→6・中央ドロップでリセット・
+  0/-0.0 符号ゼロ・**overflow 境界を 2^52 で pin**(`[2^52]`=走行和 2^52 → **valid**(`>` vs `>=` を単独 pin)/ `[2^52,1]`=2^52+1 → -1.0 /
+  `[2^51,2^51]`=2^52 → valid / 単一 `[2^52+1]` > 2^52 → -1.0)・非整数/±inf(先頭/中央)/NaN(先頭/中央/末尾)を fail-soft・ランダム整数。
+- **C 安全**: 域チェック `x >= -LIM && x <= LIM` が**(long long) キャストの前**に NaN/inf/巨大を弾く(NaN→int は UB)。累算は long long、走行和 ≤ 2^52
+  ゆえ全部分和 < 2^63(オーバーフロー無し)、返却 double は best < 2^53 で厳密。
+- **work-graph op 波**: max_subarray を `algo_difftest --op` ゲートノード化(`1 op=1 ノード`)→ `run-once --available tool:command` で無人 done
+  (gate JSON passed=True・c_verified=true)。= **全 algo op 38 が work-graph ゲート化**(37→38)。
+- **回帰**: `tests/test_algo.py` に P17 群(registered_kind・既知値・総当り一致 random×5000・fail-soft/overflow・difftest python exact・C bit 一致)。
+  **honest**: 初回フル実行で `test_search_ops_registered_kinds` が 1 failed(search カテゴリ集合の更新を **2 箇所**のうち片方[`test_categories_grouping`]しか
+  直していなかった)→ 検知し即修正、再実行で **test_algo.py 295 passed / 0 failed**・ruff clean・mypy 新規 0(origin/master=15 と同数)。
+  **敵対レビューは worktree 隔離で実行**(P16 で確立)。

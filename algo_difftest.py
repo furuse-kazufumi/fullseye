@@ -863,6 +863,34 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             m = rng2.randint(0, 25)
             cases.append([rng2.uniform(-50.0, 50.0) for _ in range(m)])
         return cases
+    if name == "max_subarray":
+        rng2 = random.Random(seed + 1717)
+        cases = [
+            [], [5.0], [-5.0],                               # empty / single pos / single neg -> 0,5,0
+            [1.0, 2.0, 3.0],                                 # -> 6
+            [-1.0, -2.0, -3.0],                              # all-negative -> 0.0 (pins EMPTY-allowed)
+            [-2.0, 1.0, -3.0, 4.0, -1.0, 2.0, 1.0, -5.0, 4.0],   # classic Kadane [4,-1,2,1] -> 6
+            [3.0, -1.0, 4.0],                                # -> 6
+            [2.0, -1.0, 2.0, -1.0, 2.0],                     # whole array -> 4
+            [0.0], [0.0, 0.0],                               # zeros -> 0
+            [-0.0, 5.0],                                     # signed zero -> 5
+            [5.0, -10.0, 5.0],                               # a mid drop resets cur -> 5
+            # overflow boundary pinned at 2^52 (running sum of |x|). Each is a SOLE reason:
+            [4503599627370496.0],                            # sum_abs == 2^52 -> VALID (pins '>' vs '>=')
+            [2251799813685248.0, 2251799813685248.0],        # 2^51 + 2^51 == 2^52 -> VALID -> 2^52
+            [4503599627370496.0, 1.0],                       # sum_abs 2^52+1 -> -1.0 (overflow bail)
+            [2251799813685248.0, 2251799813685248.0, 1.0],   # sum_abs 2^52+1 -> -1.0 (multi-element)
+            [4503599627370497.0],                            # single |x| = 2^52+1 > 2^52 -> -1.0 (per-elem)
+            # out-of-domain -> -1.0 fail-soft (each a sole reason):
+            [1.5, 2.0],                                      # non-integer
+            [float("inf"), 1.0], [1.0, float("-inf")],       # +inf first / -inf mid
+            [float("nan"), 1.0], [1.0, float("nan")], [1.0, 2.0, float("nan")],   # NaN first/mid/last
+        ]
+        for _ in range(30):
+            m = rng2.randint(0, 40)
+            rr2 = rng2.choice([2, 5, 40, 10 ** 6])           # integer domain; sums stay << 2^52 (all valid)
+            cases.append([float(rng2.randint(-rr2, rr2)) for _ in range(m)])
+        return cases
     if name in ("xor_reduce", "popcount_total"):
         rng2 = random.Random(seed + 1111)
         cases: list[list[float]] = [
@@ -1305,6 +1333,37 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                         if arr[ii] > arr[jj]:
                             c += 1
                 ref = float(c)
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "max_subarray":
+        # independent oracle: the O(n^2) brute force (max over ALL contiguous subarrays, empty
+        # allowed) — a different code path from Kadane's O(n) reset scan. Integer addition is
+        # associative, so the two agree exactly. Domain-aware: a NaN / inf / non-integer / |x| > 2^52
+        # value, or a summed magnitude > 2^52 -> the op's -1.0.
+        errs = []
+        lim = 4503599627370496.0                             # 2^52
+        for arr, got in zip(holdout, py_out):
+            bad = False
+            sum_abs = 0
+            for x in arr:
+                if not (-lim <= x <= lim) or x != float(int(x)):   # short-circuits before int() on NaN/inf
+                    bad = True
+                    break
+                v = int(x)
+                sum_abs += -v if v < 0 else v
+                if sum_abs > 4503599627370496:
+                    bad = True
+                    break
+            if bad:
+                ref = -1.0
+            else:
+                best = 0                                     # empty subarray allowed -> best >= 0
+                for ii in range(len(arr)):
+                    s = 0
+                    for jj in range(ii, len(arr)):
+                        s += int(arr[jj])
+                        best = max(best, s)
+                ref = float(best)
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]

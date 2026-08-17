@@ -49,7 +49,8 @@ coefficients; variable-length seq -> 3-value seq), P13 computational geometry 2
 (closest pair of points by divide & conquer; min squared distance), P14 data
 compression 2 (Huffman optimal-prefix-code cost; tie-invariant, exact integer),
 P15 longest increasing subsequence length (patience sorting; comparison-based),
-P16 inversion count (counting merge sort; comparison-based, exact integer).
+P16 inversion count (counting merge sort; comparison-based, exact integer),
+P17 maximum subarray sum (Kadane's reset scan; empty allowed so the result is >= 0).
 """
 from __future__ import annotations
 
@@ -2638,6 +2639,74 @@ double count_inversions(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P17 — maximum subarray sum (Kadane, KIND_REDUCE). Input is a sequence of integer-valued
+# doubles; output is the maximum sum of a CONTIGUOUS subarray, where the empty subarray is
+# allowed (sum 0). So the answer is ALWAYS >= 0 (an all-negative input -> 0.0) and -1.0 is a
+# safe fail-soft sentinel. Kadane's O(n) reset scan: cur = max(0, cur + x); best = max(best, cur).
+# Integer domain (each |x| <= 2^52, and the running sum of absolute values <= 2^52) keeps every
+# partial sum an exact integer < 2^53, so the answer is exact and C == Python bit-for-bit. The
+# independent brute force (max over all O(n^2) subarrays) agrees because integer addition is
+# associative. Fail-soft -1.0 for a NaN / inf / non-integer / |x| > 2^52 value, or if the summed
+# magnitude would exceed 2^52. See docs/GENERAL_ALGORITHMS.md P17.
+# --------------------------------------------------------------------------- #
+_PY_MAX_SUBARRAY = '''\
+def run(a):
+    """Maximum sum of a contiguous subarray of a, with the EMPTY subarray allowed (sum 0), so the
+    result is always >= 0 (all-negative input -> 0.0). Kadane's O(n) reset scan. Integer domain:
+    each |x| <= 2^52 and the running sum of |x| <= 2^52, which keeps every partial sum an exact
+    integer < 2^53, so C == Python bit-for-bit. Returns a float (exact non-negative integer), or
+    -1.0 fail-soft for a NaN / inf / non-integer / |x| > 2^52 value, or a magnitude overflow."""
+    LIM = 4503599627370496.0                              # 2^52
+    sum_abs = 0
+    for x in a:
+        if not (x >= -LIM and x <= LIM):                 # NaN / inf / |x| > 2^52 (guards the int cast)
+            return -1.0
+        if x != float(int(x)):                           # non-integer
+            return -1.0
+        v = int(x)
+        sum_abs += -v if v < 0 else v
+        if sum_abs > 4503599627370496:                   # 2^52: keeps every partial sum exact < 2^53
+            return -1.0
+    best = 0                                             # empty subarray allowed -> best >= 0
+    cur = 0
+    for x in a:
+        cur += int(x)
+        if cur < 0:
+            cur = 0
+        if cur > best:
+            best = cur
+    return float(best)
+'''
+
+_C_MAX_SUBARRAY = '''\
+/* Maximum sum of a contiguous subarray of a[0..n-1], with the EMPTY subarray allowed (sum 0), so
+ * the result is always >= 0 (all-negative input -> 0.0). Kadane's O(n) reset scan. Integer domain
+ * (each |x| <= 2^52, running sum of |x| <= 2^52) keeps every partial sum an exact integer < 2^53,
+ * so C == Python bit-for-bit. Fail-soft -1.0 on a NaN / inf / non-integer / |x| > 2^52 value or a
+ * magnitude overflow. KIND_REDUCE. */
+double max_subarray(const double* a, int n) {
+    const double LIM = 4503599627370496.0;               /* 2^52 */
+    long long sum_abs = 0;
+    for (int k = 0; k < n; k++) {
+        double x = a[k];
+        if (!(x >= -LIM && x <= LIM)) return -1.0;       /* NaN / inf / |x| > 2^52 (guards the cast) */
+        if (x != (double)(long long)x) return -1.0;      /* non-integer */
+        long long v = (long long)x;
+        sum_abs += (v < 0 ? -v : v);
+        if (sum_abs > 4503599627370496LL) return -1.0;   /* 2^52: keeps every partial sum exact < 2^53 */
+    }
+    long long best = 0, cur = 0;                         /* empty subarray allowed -> best >= 0 */
+    for (int k = 0; k < n; k++) {
+        cur += (long long)a[k];
+        if (cur < 0) cur = 0;
+        if (cur > best) best = cur;
+    }
+    return (double)best;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2813,6 +2882,12 @@ ALGO_REGISTRY: list[AlgoOp] = [
            "arbitrary (NaN-free) doubles, by a counting merge sort (exact integer); "
            "empty/single -> 0.0; -1.0 fail-soft on a NaN value.",
            "counting merge sort for the inversion number; O(n log n)"),
+    AlgoOp("max_subarray", "search", SEQ, SCALAR, KIND_REDUCE, "max_subarray",
+           _PY_MAX_SUBARRAY, _C_MAX_SUBARRAY,
+           "Maximum sum of a contiguous subarray (empty allowed, so the result is >= 0) of a "
+           "sequence of integer-valued doubles, by Kadane's O(n) reset scan (exact integer); "
+           "all-negative -> 0.0; -1.0 fail-soft on a NaN / inf / non-integer / overflow.",
+           "Kadane's algorithm (Bentley, Programming Pearls) for the maximum subarray sum; O(n)"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

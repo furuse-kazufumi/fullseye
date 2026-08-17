@@ -74,10 +74,15 @@ _SEARCH2 = ["lis_length"]
 # of inversions (exact integer), or -1.0 on a NaN. Independent oracle = O(n^2) brute count. Shares the
 # "stat" category with P9 (count_distinct, mode_value).
 _STAT2 = ["count_inversions"]
+# P17: maximum subarray sum by Kadane's O(n) reset scan. KIND_REDUCE: integer-valued doubles ->
+# max contiguous subarray sum with the EMPTY subarray allowed (so the result is >= 0, exact
+# integer), or -1.0 fail-soft on a NaN / inf / non-integer / overflow. Independent oracle = the
+# O(n^2) brute over all subarrays. Shares the "search" category with P8 + P15.
+_SEARCH3 = ["max_subarray"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
 _ALL_OPS = (_ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
-            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2 + _STAT2)
+            + _NUMTHEORY2 + _BITS + _EXTGCD + _GEOMETRY2 + _COMPRESS2 + _SEARCH2 + _STAT2 + _SEARCH3)
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -115,7 +120,7 @@ def test_categories_grouping():
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS) | set(_COMPRESS2)   # P5 + P14
     assert set(cats["geometry"]) == set(_GEOMETRY) | set(_GEOMETRY2)   # P6/P7 + P13
-    assert set(cats["search"]) == set(_SEARCH) | set(_SEARCH2)   # P8 + P15
+    assert set(cats["search"]) == set(_SEARCH) | set(_SEARCH2) | set(_SEARCH3)   # P8 + P15 + P17
     assert set(cats["stat"]) == set(_STAT) | set(_STAT2)   # P9 + P16
 
 
@@ -1302,7 +1307,8 @@ def test_geometry_c_is_bit_identical(name, tmp_path):
 def test_search_ops_registered_kinds():
     assert algo.ALGO_BY_NAME["binary_search"].kind == algo.KIND_REDUCE
     assert algo.ALGO_BY_NAME["kth_smallest"].kind == algo.KIND_REDUCE
-    assert set(algo.algo_categories()["search"]) == set(_SEARCH) | set(_SEARCH2)
+    assert algo.ALGO_BY_NAME["max_subarray"].kind == algo.KIND_REDUCE
+    assert set(algo.algo_categories()["search"]) == set(_SEARCH) | set(_SEARCH2) | set(_SEARCH3)
     for name in _SEARCH:
         assert algo.ALGO_BY_NAME[name].tol == 0.0
 
@@ -1954,6 +1960,89 @@ def test_count_inversions_difftest_python_half_is_exact(tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 def test_count_inversions_c_is_bit_identical(tmp_path):
     res = algo_difftest.difftest("count_inversions", tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P17 maximum subarray sum (max_subarray; Kadane's O(n) reset scan, KIND_REDUCE).
+# --------------------------------------------------------------------------- #
+def _brute_max_subarray(a):
+    """Independent O(n^2) brute-force max subarray sum, empty allowed (different code path from
+    Kadane). Same integer domain as the op: NaN / inf / non-integer / |x| > 2^52 / overflow -> -1.0."""
+    lim = 4503599627370496.0                                  # 2^52
+    sum_abs = 0
+    for x in a:
+        if not (-lim <= x <= lim) or x != float(int(x)):      # short-circuits before int() on NaN/inf
+            return -1.0
+        v = int(x)
+        sum_abs += -v if v < 0 else v
+        if sum_abs > 4503599627370496:
+            return -1.0
+    best = 0                                                  # empty subarray allowed
+    for i in range(len(a)):
+        s = 0
+        for j in range(i, len(a)):
+            s += int(a[j])
+            best = max(best, s)
+    return float(best)
+
+
+def test_max_subarray_registered_kind():
+    op = algo.ALGO_BY_NAME["max_subarray"]
+    assert op.kind == algo.KIND_REDUCE
+    assert op.out_sort == algo.SCALAR
+    assert op.category == "search"
+    assert op.tol == 0.0
+
+
+def test_max_subarray_known_values():
+    assert algo.run_algo("max_subarray", [1, 2, 3]) == 6.0
+    assert algo.run_algo("max_subarray", [-1, -2, -3]) == 0.0          # all-negative -> empty subarray
+    assert algo.run_algo("max_subarray", []) == 0.0
+    assert algo.run_algo("max_subarray", [5]) == 5.0
+    assert algo.run_algo("max_subarray", [-5]) == 0.0
+    assert algo.run_algo("max_subarray", [-2, 1, -3, 4, -1, 2, 1, -5, 4]) == 6.0   # classic [4,-1,2,1]
+    assert algo.run_algo("max_subarray", [3, -1, 4]) == 6.0
+    assert algo.run_algo("max_subarray", [2, -1, 2, -1, 2]) == 4.0     # whole array
+    assert algo.run_algo("max_subarray", [0.0, 0.0]) == 0.0
+    assert algo.run_algo("max_subarray", [-0.0, 5.0]) == 5.0           # signed zero
+    assert algo.run_algo("max_subarray", [5, -10, 5]) == 5.0           # a mid drop resets cur
+    # overflow boundary pinned at 2^52 (running sum of |x|): exactly 2^52 is VALID, 2^52+1 bails:
+    assert algo.run_algo("max_subarray", [4503599627370496.0]) == 4503599627370496.0    # sum_abs == 2^52
+    assert algo.run_algo("max_subarray", [2251799813685248.0, 2251799813685248.0]) == 4503599627370496.0
+    assert algo.run_algo("max_subarray", [4503599627370496.0, 1.0]) == -1.0             # 2^52+1 overflow
+
+
+def test_max_subarray_matches_brute_random():
+    """Kadane's O(n) reset scan == O(n^2) brute over integer sequences (mixed signs, ties)."""
+    rng = random.Random(1717)
+    for _ in range(5000):
+        n = rng.randint(0, 40)
+        rr = rng.choice([2, 5, 40, 10 ** 6])
+        a = [float(rng.randint(-rr, rr)) for _ in range(n)]
+        assert algo.run_algo("max_subarray", a) == _brute_max_subarray(a)
+
+
+def test_max_subarray_fail_soft_and_overflow():
+    assert algo.run_algo("max_subarray", [1.5, 2]) == -1.0                          # non-integer
+    assert algo.run_algo("max_subarray", [float("inf"), 1]) == -1.0                 # +inf
+    assert algo.run_algo("max_subarray", [1, float("-inf")]) == -1.0               # -inf
+    assert algo.run_algo("max_subarray", [float("nan"), 1]) == -1.0                # NaN first
+    assert algo.run_algo("max_subarray", [1, float("nan")]) == -1.0               # NaN mid
+    assert algo.run_algo("max_subarray", [4503599627370497.0]) == -1.0            # single |x| = 2^52+1
+    assert algo.run_algo("max_subarray", [2251799813685248.0, 2251799813685248.0, 1.0]) == -1.0  # sum overflow
+
+
+def test_max_subarray_difftest_python_half_is_exact(tmp_path):
+    res = algo_difftest.difftest("max_subarray", tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+def test_max_subarray_c_is_bit_identical(tmp_path):
+    res = algo_difftest.difftest("max_subarray", tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True
 
