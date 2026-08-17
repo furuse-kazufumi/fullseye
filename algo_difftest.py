@@ -1411,6 +1411,36 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 ref = float(best)
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
+    if name == "longest_palindrome":
+        # independent oracle: O(n^2) expand-around-center (a different code path from Manacher's
+        # O(n) d1/d2). For each center — odd (single index) and even (gap between c, c+1) — expand
+        # while a[lo] == a[hi]. Domain-aware: a NaN value -> the op's -1.0.
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            if any(math.isnan(v) for v in arr):
+                ref = -1.0
+            elif not arr:
+                ref = 0.0
+            else:
+                nn = len(arr)
+                bestv = 1
+                for c in range(nn):
+                    lo, hi = c, c                            # odd center at c
+                    while lo - 1 >= 0 and hi + 1 < nn and arr[lo - 1] == arr[hi + 1]:
+                        lo -= 1
+                        hi += 1
+                    if hi - lo + 1 > bestv:
+                        bestv = hi - lo + 1
+                    if c + 1 < nn and arr[c] == arr[c + 1]:  # even center between c and c+1
+                        lo, hi = c, c + 1
+                        while lo - 1 >= 0 and hi + 1 < nn and arr[lo - 1] == arr[hi + 1]:
+                            lo -= 1
+                            hi += 1
+                        if hi - lo + 1 > bestv:
+                            bestv = hi - lo + 1
+                ref = float(bestv)
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
     if op.kind == algo.KIND_SORT:
         return _max_diff_sort(oracle, py_out)
