@@ -860,6 +860,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("hx_fit_ellipse_contour", "fit_ellipse_contour_xld", CONTOUR, FEATURE, _fit_ellipse_contour_xld),
         ("hx_fit_rectangle2_contour", "fit_rectangle2_contour_xld", CONTOUR, FEATURE, _fit_rectangle2_contour_xld),
         ("hx_smallest_rect2_xld", "smallest_rectangle2_xld", CONTOUR, FEATURE, _smallest_rectangle2_xld),
+        # 第 10 バッチ(XLD 続き)
+        ("hx_crop_contours", "crop_contours_xld", CONTOUR, CONTOUR, _crop_contours_xld),
+        ("hx_dist_ellipse_contour", "dist_ellipse_contour_xld", CONTOUR, FEATURE, _dist_ellipse_contour_xld),
+        ("hx_test_self_intersect", "test_self_intersection_xld", CONTOUR, FEATURE, _test_self_intersection_xld),
+        ("hx_union_adjacent", "union_adjacent_contours_xld", CONTOUR, CONTOUR, _union_adjacent_contours_xld),
+        ("hx_polar_trans_inv", "polar_trans_contour_xld_inv", CONTOUR, CONTOUR, _polar_trans_contour_xld_inv),
+        ("hx_select_xld_point", "select_xld_point", CONTOUR, CONTOUR, _select_xld_point),
     ]
     return [Op(name, "halcon_ext", halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
