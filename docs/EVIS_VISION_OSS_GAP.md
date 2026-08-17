@@ -111,8 +111,9 @@ Fullseye = **あらゆる画像処理/視覚アルゴリズムを「スキル」
    - **Isaac Sim(NVIDIA Omniverse)**: GPU・フォトリアル・**合成データ生成 + ドメインランダム化**(RTX 5090 が活きる)。
      GPU 深層知覚は **Isaac ROS**(deep stereo/DNN pose)= 既出「重量級 wrapper」枠。gap #3 の honest 評価と特に相性。
    「evis の目 → 知覚 → 計画 → 筋実現」を閉じる sim bridge の**アダプタ契約**(F4)は app 固有だが、3 シム共通の I/F にする。
-3. **視覚駆動行動の honest 評価**: 「箸で摘めたか/歩行が本物か(滑り/ダイブでないか)」を sim ground-truth と
-   突き合わせて正直に測る評価器(CONSUMER_APPLICATIONS.md の線)。app 固有。
+3. **視覚駆動行動の honest 評価**: 「箸で摘めたか/歩行が本物か(滑り/ダイブでないか)/6D pose が真値と合うか」を
+   **sim ground-truth**(#2 の `sim.*.ground_truth()`: 真の 6D pose・segmentation・接触)と突き合わせて正直に測る
+   評価器(CONSUMER_APPLICATIONS.md の線)。Isaac Sim の合成データ+ランダム化が評価データ源として本職。app 固有。
 4. **locomotion のバランス知覚**(support polygon/COM margin/gait)は部分ギャップだが制御寄り(OCS2/TOWR 等あり)。
 
 ## 含意(推奨・要ユーザー承認)
