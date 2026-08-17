@@ -100,8 +100,17 @@ Fullseye = **あらゆる画像処理/視覚アルゴリズムを「スキル」
 
 1. **★筋駆動ブリッジ(関節計画 → 700 筋活性)**: MoveIt2/GPD の出力(grasp pose・関節軌道)を
    evis の 700 筋で実現する層。QP/static optimization/WBC(`reference_wbc_qp_control`)。**OSS/ROS2 に無い最重要部品**。
-2. **MuJoCo ネイティブの sim 視覚 bridge**: evis の両眼視点 RGB/depth/segmentation は **sim 内なら ground-truth で無料**
-   (実センサ前提の ROS2 スタックの外)。「evis の目 → 知覚 → 計画 → 筋実現」を閉じる sim bridge は app 固有。
+2. **sim ソース視覚 bridge(MuJoCo / Gazebo / Isaac Sim — ユーザー指摘 2026-08-18)**: evis の両眼視点 RGB/depth/
+   segmentation は **sim 内なら ground-truth で無料**(実センサ前提の ROS2 スタックの外)。当初 MuJoCo 限定で書いたが、
+   **sim ソース全般のアダプタに一般化**すべき。統一 I/F に `sim.MuJoCo` / `sim.Gazebo` / `sim.IsaacSim` を**同じ動詞**
+   (`.frames()` / `.depth()` / `.intrinsics()` / `.ground_truth()`)で置き、視覚 op が入力元を問わず組めるようにする。
+   役割の違い =
+   - **MuJoCo/MJX**: evis/hillco の**物理エンジン本体**(700 筋・箸・歩行が実走)。app の中核・変えない。
+   - **Gazebo(Ignition)**: **ROS2 標準シム**。ros2_control / RViz2 / センサープラグイン(camera/depth/lidar→`sensor_msgs`)
+     と直結 = 統一 I/F を **ROS2 実配線**で検証できる入口。
+   - **Isaac Sim(NVIDIA Omniverse)**: GPU・フォトリアル・**合成データ生成 + ドメインランダム化**(RTX 5090 が活きる)。
+     GPU 深層知覚は **Isaac ROS**(deep stereo/DNN pose)= 既出「重量級 wrapper」枠。gap #3 の honest 評価と特に相性。
+   「evis の目 → 知覚 → 計画 → 筋実現」を閉じる sim bridge の**アダプタ契約**(F4)は app 固有だが、3 シム共通の I/F にする。
 3. **視覚駆動行動の honest 評価**: 「箸で摘めたか/歩行が本物か(滑り/ダイブでないか)」を sim ground-truth と
    突き合わせて正直に測る評価器(CONSUMER_APPLICATIONS.md の線)。app 固有。
 4. **locomotion のバランス知覚**(support polygon/COM margin/gait)は部分ギャップだが制御寄り(OCS2/TOWR 等あり)。
