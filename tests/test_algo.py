@@ -48,9 +48,12 @@ _SEARCH = ["binary_search", "kth_smallest"]
 # P9: statistics (comparison-based, exact). count_distinct / mode_value are KIND_REDUCE.
 # Independent oracles = len(set(...)) / collections.Counter.
 _STAT = ["count_distinct", "mode_value"]
+# P10: number theory part 2 (category "numtheory", but appended at the END of the registry).
+# is_prime = deterministic Miller-Rabin; modular_inverse = extended Euclid. KIND_REDUCE, exact.
+_NUMTHEORY2 = ["is_prime", "modular_inverse"]
 _ALL = _SORTS + _REDUCES                            # the EXACT ops (bit/oracle == 0)
 # every registered op, in registry order
-_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT
+_ALL_OPS = _ALL + _NUMERIC + _STRING + _GRAPH + _P5 + _GEOMETRY + _SEARCH + _STAT + _NUMTHEORY2
 
 _HAS_CC = algo_difftest.find_c_compiler() is not None   # gate C-backend tests on a toolchain
 
@@ -84,7 +87,7 @@ def test_categories_grouping():
     assert set(cats["numeric"]) == set(_NUMERIC)
     assert set(cats["string"]) == set(_STRING)
     assert set(cats["graph"]) == set(_GRAPH)
-    assert set(cats["numtheory"]) == set(_NUMTHEORY)
+    assert set(cats["numtheory"]) == set(_NUMTHEORY) | set(_NUMTHEORY2)   # P5 + P10 share the category
     assert set(cats["hash"]) == set(_HASH)
     assert set(cats["compress"]) == set(_COMPRESS)
     assert set(cats["geometry"]) == set(_GEOMETRY)
@@ -1416,6 +1419,84 @@ def test_stat_difftest_python_half_is_exact(name, tmp_path):
 @pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
 @pytest.mark.parametrize("name", _STAT)
 def test_stat_c_is_bit_identical(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc="auto")
+    assert res["c_backend"]["c_vs_python_bit_identical"] is True
+    assert res["passed"] is True
+
+
+# --------------------------------------------------------------------------- #
+# P10 number theory 2 (is_prime deterministic Miller-Rabin, modular_inverse ext. Euclid).
+# --------------------------------------------------------------------------- #
+def test_p10_ops_registered_kinds():
+    assert algo.ALGO_BY_NAME["is_prime"].kind == algo.KIND_REDUCE
+    assert algo.ALGO_BY_NAME["modular_inverse"].kind == algo.KIND_REDUCE
+    assert {"is_prime", "modular_inverse"} <= set(algo.algo_categories()["numtheory"])
+    for name in _NUMTHEORY2:
+        assert algo.ALGO_BY_NAME[name].tol == 0.0
+
+
+def test_is_prime_known():
+    ip = lambda n: algo.run_algo("is_prime", [float(n)])
+    assert [ip(n) for n in (0, 1, 2, 3, 4, 5, 17)] == [0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0]
+    assert ip(561) == 0.0 and ip(1105) == 0.0          # Carmichael numbers (composite; MR must reject)
+    assert ip(7919) == 1.0 and ip(4294967291) == 1.0   # large primes
+    assert ip(4294967295) == 0.0                       # 2^32-1 = 3*5*17*257*65537
+
+
+def test_is_prime_matches_sympy_over_random():
+    isprime = pytest.importorskip("sympy").isprime
+    rng = random.Random(311)
+    for n in range(1500):                               # exhaustive small
+        assert algo.run_algo("is_prime", [float(n)]) == (1.0 if isprime(n) else 0.0), n
+    for _ in range(3000):                               # random incl. near 2^32
+        n = rng.randint(0, 4294967295)
+        assert algo.run_algo("is_prime", [float(n)]) == (1.0 if isprime(n) else 0.0), n
+
+
+def test_is_prime_fail_soft():
+    assert algo.run_algo("is_prime", []) == 0.0
+    assert algo.run_algo("is_prime", [float("nan")]) == 0.0
+    assert algo.run_algo("is_prime", [-3.0]) == 0.0
+    assert algo.run_algo("is_prime", [2.5]) == 0.0
+    assert algo.run_algo("is_prime", [5e9]) == 0.0     # > 2^32-1 -> fail-soft
+
+
+def test_modular_inverse_known_and_random():
+    mi = lambda a, m: algo.run_algo("modular_inverse", [float(a), float(m)])
+    assert mi(3, 11) == 4.0                             # 3*4 = 12 == 1 mod 11
+    assert mi(10, 17) == 12.0                           # 10*12 = 120 == 1 mod 17
+    assert mi(6, 9) == -1.0                             # gcd(6,9)=3 -> no inverse
+    assert mi(0, 5) == -1.0
+    assert mi(7, 1) == 0.0                              # everything is 0 mod 1
+    rng = random.Random(331)
+    for _ in range(3000):
+        m = rng.randint(1, 10 ** 9)
+        a = rng.randint(0, 10 ** 9)
+        got = mi(a, m)
+        try:
+            ref = float(pow(a, -1, m)) if m > 1 else 0.0
+        except ValueError:
+            ref = -1.0
+        assert got == ref, (a, m)
+
+
+def test_modular_inverse_fail_soft():
+    assert algo.run_algo("modular_inverse", [3.0]) == -1.0        # too short
+    assert algo.run_algo("modular_inverse", [3.0, 0.0]) == -1.0   # m < 1
+    assert algo.run_algo("modular_inverse", [2.5, 7.0]) == -1.0   # non-integer a
+    assert algo.run_algo("modular_inverse", [3.0, 1e16]) == -1.0  # m > 2^53
+
+
+@pytest.mark.parametrize("name", _NUMTHEORY2)
+def test_p10_difftest_python_half_is_exact(name, tmp_path):
+    res = algo_difftest.difftest(name, tmp_path, cc=None)
+    assert res["python_pass"] is True
+    assert res["python_max_abs_diff"] == 0.0
+
+
+@pytest.mark.skipif(not _HAS_CC, reason="no C toolchain (gcc/clang or ziglang)")
+@pytest.mark.parametrize("name", _NUMTHEORY2)
+def test_p10_c_is_bit_identical(name, tmp_path):
     res = algo_difftest.difftest(name, tmp_path, cc="auto")
     assert res["c_backend"]["c_vs_python_bit_identical"] is True
     assert res["passed"] is True

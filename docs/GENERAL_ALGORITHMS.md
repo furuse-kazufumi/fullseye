@@ -430,3 +430,15 @@ mode_value の `+0.0` 正準化を落とす変異を holdout が falsify でき�
 +0.0-last にソート → 正準化削除でも bit 一致)。コメントが担保と主張する bit-check が正準化を一度も実際に駆動しない。**修正**=
 `-0.0` が run 末尾に来ない `[0.0,-0.0]`・`[-0.0,0.0]` を holdout に追加(両順序=qsort tie 順に依らず片方は必ず発散)。自己再現で
 確認=**正準化削除変異が difftest FAIL**・現行(正準化済)コードは追加ケースで bit 一致 pass。全スイート **4787 → 4796 passed / 0 failed**。
+
+## P10 完遂記録 — 数論(第2部)(2026-08-17, Opus5[1m]/ultracode, 12h 自律)
+**数論 op 2 種を追加**(P5 の整数機構の上に・category numtheory を共有)。整数を float64 で運ぶ(exact <2^53)・honest 域で全
+モジュラー積が uint64/long long に収まる=C bit 一致 かつ Python==独立 oracle tol 0。
+- **op(2)**: `is_prime`(KIND_REDUCE): **決定的 Miller-Rabin**(witness {2..37})。honest 域 0≤n≤2^32−1(a·a mod n が uint64 に
+  収まり witness set が決定的=n<3.3e24 まで primality 証明)。oracle=`sympy.isprime`。★Carmichael 数(561/1105/1729/2465…)を
+  正しく合成判定。 / `modular_inverse`(KIND_REDUCE): **拡張ユークリッド**で a^−1 mod m(gcd≠1 は −1.0)。域 a≤2^53・m≤2^53(Bezout
+  係数は不変量 |q·s|=|old_s−new_s|≤2m で long long に収まる)・m=1→0。C の truncated mod を [0,m−1] に正規化(+m)して Python の
+  floor mod と一致。oracle=builtin `pow(a,−1,m)`。
+- **honest gate 実測**: 両 op passed=True・python exact / C bit 一致 / c_verified。**is_prime を sympy と 8000 random + 2000
+  exhaustive(561 Carmichael 含む)で mism 0 / modular_inverse を pow と 8000 で mism 0** を事前実測。全 algo op 30 が gate 化。
+  ruff clean・mypy 新規 0。敵対レビュー実行。

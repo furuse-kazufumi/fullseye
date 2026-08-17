@@ -42,7 +42,8 @@ reductions. Later phases add ops here: P2 numerics, P3 strings, P4 graphs, P5 nu
 theory / compression / hashing (gcd, primes, modular exponentiation, CRC-32, RLE),
 P6 computational geometry (polygon area, point-in-polygon, convex hull, segment
 intersection; integer coords, exact), P8 search / selection (binary search,
-k-th smallest), P9 statistics (distinct count, mode).
+k-th smallest), P9 statistics (distinct count, mode), P10 number theory 2
+(deterministic Miller-Rabin primality, modular inverse).
 """
 from __future__ import annotations
 
@@ -1989,6 +1990,150 @@ double mode_value(const double* a, int n) {
 '''
 
 
+# --------------------------------------------------------------------------- #
+# P10 — number theory (part 2): primality and modular inverse, building on the P5
+# integer machinery. Integers ride float64 (exact < 2^53); the honest domains keep
+# every modular product within uint64 in the C mirror, so C == Python bit-for-bit and
+# Python == an independent oracle (sympy.isprime / builtin pow(a,-1,m)). Both fold to
+# one value (KIND_REDUCE). See docs/GENERAL_ALGORITHMS.md P10.
+# --------------------------------------------------------------------------- #
+_PY_IS_PRIME = '''\
+def run(a):
+    """Primality test by deterministic Miller-Rabin. Input a = [n]; returns 1.0 if n is prime, 0.0
+    otherwise. Domain (honest): 0 <= n <= 2^32 - 1 (integer) so the modular squarings a*a mod n fit
+    uint64 in the C mirror and the witness set {2,3,5,7,11,13,17,19,23,29,31,37} is DETERMINISTIC
+    (it certifies primality for every n < 3.3e24, far past the domain). n < 2 and out-of-domain -> 0.0."""
+    if len(a) < 1:
+        return 0.0
+    nd = a[0]
+    if not (nd >= 0.0 and nd <= 4294967295.0 and nd == float(int(nd))):   # 2^32 - 1
+        return 0.0
+    n = int(nd)
+    if n < 2:
+        return 0.0
+    witnesses = (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37)
+    for p in witnesses:
+        if n == p:
+            return 1.0
+        if n % p == 0:
+            return 0.0                                  # a small prime divides n (and n > p)
+    d = n - 1                                           # write n-1 = d * 2^s with d odd
+    s = 0
+    while d % 2 == 0:
+        d = d // 2
+        s = s + 1
+    for w in witnesses:
+        x = pow(w, d, n)                                # w^d mod n (square-and-multiply)
+        if x == 1 or x == n - 1:
+            continue
+        composite = True
+        for _ in range(s - 1):
+            x = (x * x) % n
+            if x == n - 1:
+                composite = False
+                break
+        if composite:
+            return 0.0                                  # w is a witness to compositeness
+    return 1.0
+'''
+
+_C_IS_PRIME = '''\
+/* Deterministic Miller-Rabin primality of a = [n] (0 <= n <= 2^32-1). 1.0 prime / 0.0 not.
+ * Domain keeps a*a mod n within uint64 (n <= 2^32-1 -> n^2 < 2^64). Fail-soft 0.0. */
+static unsigned long long _mr_powmod(unsigned long long b, unsigned long long e, unsigned long long m) {
+    unsigned long long r = 1ULL % m;
+    b %= m;
+    while (e > 0ULL) {
+        if (e & 1ULL) r = (r * b) % m;
+        e >>= 1;
+        b = (b * b) % m;
+    }
+    return r;
+}
+double is_prime(const double* a, int n_in) {
+    if (n_in < 1) return 0.0;
+    double nd = a[0];
+    if (!(nd >= 0.0 && nd <= 4294967295.0 && nd == (double)(long long)nd)) return 0.0;
+    unsigned long long n = (unsigned long long)nd;
+    if (n < 2ULL) return 0.0;
+    static const unsigned long long W[12] = {2,3,5,7,11,13,17,19,23,29,31,37};
+    for (int i = 0; i < 12; i++) {
+        if (n == W[i]) return 1.0;
+        if (n % W[i] == 0ULL) return 0.0;
+    }
+    unsigned long long d = n - 1;
+    int s = 0;
+    while (d % 2ULL == 0ULL) { d /= 2ULL; s++; }
+    for (int i = 0; i < 12; i++) {
+        unsigned long long x = _mr_powmod(W[i], d, n);
+        if (x == 1ULL || x == n - 1) continue;
+        int composite = 1;
+        for (int r = 0; r < s - 1; r++) {
+            x = (x * x) % n;
+            if (x == n - 1) { composite = 0; break; }
+        }
+        if (composite) return 0.0;
+    }
+    return 1.0;
+}
+'''
+
+_PY_MODULAR_INVERSE = '''\
+def run(a):
+    """Modular inverse a^-1 mod m by the extended Euclidean algorithm. Input a = [a_val, m]; returns
+    the inverse in [0, m-1] with a_val * inv == 1 (mod m) if gcd(a_val, m) == 1, else -1.0 (no inverse).
+    Domain: 0 <= a_val <= 2^53, 1 <= m <= 2^53 (integers); the Bezout coefficients stay exact. m == 1 ->
+    0.0 (every residue is 0 mod 1). Fail-soft -1.0 on malformed / out-of-domain input."""
+    if len(a) < 2:
+        return -1.0
+    ad = a[0]
+    md = a[1]
+    if not (ad >= 0.0 and ad <= 9007199254740992.0 and ad == float(int(ad))):
+        return -1.0
+    if not (md >= 1.0 and md <= 9007199254740992.0 and md == float(int(md))):
+        return -1.0
+    m = int(md)
+    if m == 1:
+        return 0.0
+    a_val = int(ad) % m
+    old_r, r = a_val, m                                 # extended Euclid on (a_val, m)
+    old_s, s = 1, 0
+    while r != 0:
+        q = old_r // r
+        old_r, r = r, old_r - q * r
+        old_s, s = s, old_s - q * s
+    if old_r != 1:
+        return -1.0                                     # gcd(a_val, m) != 1 -> no inverse
+    return float(old_s % m)                             # normalize to [0, m-1] (Python floor mod)
+'''
+
+_C_MODULAR_INVERSE = '''\
+/* Modular inverse a_val^-1 mod m of a = [a_val, m] by the extended Euclidean algorithm.
+ * Returns the inverse in [0, m-1], or -1.0 if gcd != 1. Domain: a_val,m in [0, 2^53] / [1, 2^53]
+ * (Bezout coefficients fit long long). Fail-soft -1.0. */
+double modular_inverse(const double* a, int n_in) {
+    if (n_in < 2) return -1.0;
+    double ad = a[0], md = a[1];
+    if (!(ad >= 0.0 && ad <= 9007199254740992.0 && ad == (double)(long long)ad)) return -1.0;
+    if (!(md >= 1.0 && md <= 9007199254740992.0 && md == (double)(long long)md)) return -1.0;
+    long long m = (long long)md;
+    if (m == 1) return 0.0;
+    long long a_val = (long long)ad % m;
+    long long old_r = a_val, r = m;
+    long long old_s = 1, s = 0;
+    while (r != 0) {
+        long long q = old_r / r;
+        long long tr = old_r - q * r; old_r = r; r = tr;
+        long long ts = old_s - q * s; old_s = s; s = ts;
+    }
+    if (old_r != 1) return -1.0;
+    long long inv = old_s % m;                          /* C truncated mod -> normalize to [0, m-1] */
+    if (inv < 0) inv += m;
+    return (double)inv;
+}
+'''
+
+
 ALGO_REGISTRY: list[AlgoOp] = [
     AlgoOp("quicksort", "sort", SEQ, SEQ, KIND_SORT, "quicksort",
            _PY_QUICKSORT, _C_QUICKSORT,
@@ -2114,6 +2259,16 @@ ALGO_REGISTRY: list[AlgoOp] = [
            _PY_MODE_VALUE, _C_MODE_VALUE,
            "The mode (most frequent value; smallest wins ties) of a sequence.",
            "mode via sort + longest equal run (smallest-value tie-break)"),
+    AlgoOp("is_prime", "numtheory", SEQ, SCALAR, KIND_REDUCE, "is_prime",
+           _PY_IS_PRIME, _C_IS_PRIME,
+           "Primality test of [n] by deterministic Miller-Rabin (1.0 prime / 0.0 not; "
+           "0 <= n <= 2^32-1).",
+           "deterministic Miller-Rabin primality (witnesses 2..37)"),
+    AlgoOp("modular_inverse", "numtheory", SEQ, SCALAR, KIND_REDUCE, "modular_inverse",
+           _PY_MODULAR_INVERSE, _C_MODULAR_INVERSE,
+           "Modular inverse a^-1 mod m of [a, m] by the extended Euclidean algorithm "
+           "(-1.0 if gcd != 1).",
+           "extended Euclidean algorithm for the modular inverse"),
 ]
 
 ALGO_BY_NAME: dict[str, AlgoOp] = {op.name: op for op in ALGO_REGISTRY}

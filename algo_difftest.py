@@ -646,6 +646,28 @@ def holdout_for(name: str, seed: int = 0) -> list[list[float]]:
             n = rng2.randint(1, 15)
             cases.append([rng2.uniform(-50.0, 50.0) for _ in range(n)])   # mostly-distinct floats
         return cases
+    if name == "is_prime":
+        rng2 = random.Random(seed + 909)
+        cases = [[float(n)] for n in
+                 (0, 1, 2, 3, 4, 5, 17, 97, 100, 561, 1105, 1729, 2465, 7919,   # incl Carmichael numbers
+                  104729, 4294967291, 4294967295)]                              # large prime / 2^32-1
+        for _ in range(40):
+            cases.append([float(rng2.randint(0, 200000))])
+        for _ in range(10):
+            cases.append([float(rng2.randint(4000000000, 4294967295))])         # near 2^32
+        cases += [[float("nan")], [-3.0], [1.5], [5e9]]                         # out-of-domain -> 0.0
+        return cases
+    if name == "modular_inverse":
+        rng2 = random.Random(seed + 1010)
+        cases = [
+            [3.0, 11.0], [10.0, 17.0], [123456.0, 1000000007.0],               # coprime -> inverse
+            [6.0, 9.0], [4.0, 8.0], [10.0, 15.0],                              # gcd != 1 -> -1.0
+            [0.0, 5.0], [7.0, 1.0], [1.0, 7.0], [2.0, 4.0],                    # edges (a=0, m=1)
+            [3.0], [3.0, 0.0], [2.5, 7.0], [3.0, 1e16], [-1.0, 7.0],           # out-of-domain -> -1.0
+        ]
+        for _ in range(40):
+            cases.append([float(rng2.randint(0, 100000)), float(rng2.randint(1, 100000))])
+        return cases
     return make_holdout(seed)
 
 
@@ -924,6 +946,31 @@ def py_oracle_error(op: algo.AlgoOp, holdout: list[list[float]], py_out: list) -
                 counts = Counter(arr)
                 top = max(counts.values())
                 ref = float(min(v for v, c in counts.items() if c == top))
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "is_prime":
+        # independent oracle: sympy.isprime (a full, different primality implementation).
+        from sympy import isprime
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref = 1.0 if (arr and _int_in(arr[0], 0.0, 4294967295.0) and isprime(int(arr[0]))) else 0.0
+            errs.append(_diff01(float(got), ref))
+        return max(errs, default=0.0)
+    if name == "modular_inverse":
+        # independent oracle: Python's built-in three-arg pow(a, -1, m) (a different, C-level impl).
+        errs = []
+        for arr, got in zip(holdout, py_out):
+            ref = -1.0
+            if (len(arr) >= 2 and _int_in(arr[0], 0.0, 9007199254740992.0)
+                    and _int_in(arr[1], 1.0, 9007199254740992.0)):
+                m = int(arr[1])
+                if m == 1:
+                    ref = 0.0
+                else:
+                    try:
+                        ref = float(pow(int(arr[0]), -1, m))
+                    except ValueError:
+                        ref = -1.0
             errs.append(_diff01(float(got), ref))
         return max(errs, default=0.0)
     oracle = [_oracle(op, arr) for arr in holdout]
