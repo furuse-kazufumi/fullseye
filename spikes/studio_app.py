@@ -126,6 +126,31 @@ ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(0, 1.2); ax.view_init(28, -6
 ax.set_title(f"LiDAR {h_res}x{v_res} -> ヒット {len(pts)} 点(真値)", fontsize=9)
 '''
 
+_GRASP_PIPELINE = '''\
+# sim-source -> vision (evis 知覚パイプライン全体): LiDAR -> 床除去 -> クラスタ -> 各物体の
+# 有向境界箱(OBB)で 6-DoF フレーム=把持候補。物理供給から把持姿勢まで一気通貫。
+import matplotlib.pyplot as _plt
+scene = sim.MuJoCo(SCENE)
+pts = scene.lidar(origin=(0, 0, 1.0))
+ng, gmask = fs.remove_ground(pts, thresh=ground_thresh)
+clusters = fs.euclidean_clusters(ng, tol=0.25, min_size=6)
+ax = fig.add_subplot(111, projection="3d")
+ax.scatter(pts[gmask][:, 0], pts[gmask][:, 1], pts[gmask][:, 2], s=1, c="0.8")
+cols = _plt.cm.tab10(np.linspace(0, 1, max(len(clusters), 1)))
+widths = []
+for i, idx in enumerate(clusters):
+    c = ng[idx]; box = fs.obb(c); ctr = box["center"]
+    ax.scatter(c[:, 0], c[:, 1], c[:, 2], s=7, color=cols[i])
+    for k, ac in enumerate("rgb"):                       # OBB 軸=物体の 6-DoF フレーム
+        v = box["axes"][:, k] * box["extents"][k] * axis_scale
+        ax.plot([ctr[0], ctr[0]+v[0]], [ctr[1], ctr[1]+v[1]], [ctr[2], ctr[2]+v[2]], color=ac, lw=2)
+    widths.append(2 * float(box["extents"].min()))       # 最小差し渡し=把持幅の目安
+ax.scatter(0, 0, 1.0, s=80, marker="^", color="red")
+ax.set_xlim(-3, 3); ax.set_ylim(-3, 3); ax.set_zlim(0, 1.2); ax.view_init(26, -60)
+gw = ", ".join(f"{w:.2f}" for w in widths)
+ax.set_title(f"grasp pipeline: {len(clusters)} 物体  把持幅[m]={gw}", fontsize=9)
+'''
+
 _SIM_TO_VISION = '''\
 # sim-source -> vision: LiDAR 点群を fullseye 知覚 op に渡す分業ループ
 import matplotlib.pyplot as _plt
