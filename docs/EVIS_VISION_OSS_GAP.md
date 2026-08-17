@@ -65,22 +65,24 @@ OSS/ROS2 では埋まらない evis 固有部品。視覚(6D pose)→ MoveIt2(�
 まさに「OSS で足りるものの再発明」。特に **脚ロボの terrain/foothold は grid_map、
 把持の cloud→segment→pose は PCL** が実robotで使われる本命。
 
-## OSS/ROS2 に無い = evis 視覚で自作の価値がある所(genuine gap)
+## OSS/ROS2 に無い = evis で自作の価値がある所(genuine gap、優先順)
 
-1. **MuJoCo ネイティブの sim 視覚**: evis は MuJoCo 内に居る。両眼視点の RGB/depth/segmentation は
-   **シミュ内なら ground-truth で無料**に取れる(実センサ前提の ROS2 スタックの外)。
-   「evis の目からのレンダリング → 知覚 → 制御ループ」の bridge は OSS に無い app 固有部品。
-2. **視覚駆動行動の honest 評価**: 「箸で摘めたか/歩行が本物か(滑り/ダイブでないか)」を
-   sim ground-truth と突き合わせて正直に測る評価器(CONSUMER_APPLICATIONS.md の線)。app 固有。
-3. **locomotion のバランス知覚**(support polygon/COM margin/gait)は部分的にギャップだが制御寄り
-   (OCS2/TOWR 等の枠組みが既にある)。
+1. **★筋駆動ブリッジ(関節計画 → 700 筋活性)**: MoveIt2/GPD の出力(grasp pose・関節軌道)を
+   evis の 700 筋で実現する層。QP/static optimization/WBC(`reference_wbc_qp_control`)。**OSS/ROS2 に無い最重要部品**。
+2. **MuJoCo ネイティブの sim 視覚 bridge**: evis の両眼視点 RGB/depth/segmentation は **sim 内なら ground-truth で無料**
+   (実センサ前提の ROS2 スタックの外)。「evis の目 → 知覚 → 計画 → 筋実現」を閉じる sim bridge は app 固有。
+3. **視覚駆動行動の honest 評価**: 「箸で摘めたか/歩行が本物か(滑り/ダイブでないか)」を sim ground-truth と
+   突き合わせて正直に測る評価器(CONSUMER_APPLICATIONS.md の線)。app 固有。
+4. **locomotion のバランス知覚**(support polygon/COM margin/gait)は部分ギャップだが制御寄り(OCS2/TOWR 等あり)。
 
 ## 含意(推奨・要ユーザー承認)
 
-- 知覚プリミティブの新規手実装は**止める**(PCL/grid_map/OpenCV の再発明)。
-- evis 視覚の本命 = **MuJoCo sim 視覚 bridge + honest 評価**(OSS に無い app 層)。
-  既存の numpy 知覚 op は、必要なら PCL/grid_map/OpenCV の**薄い wrapper**に置換 or それらを直接使う。
-- ここから先の実装対象は、この gap 表の `genuine gap` 行にのみ投資する。
+- **知覚プリミティブ・マニピュレーション計画の新規手実装は止める**(PCL/grid_map/OpenCV/MoveIt2/GPD の再発明)。
+  これらは **OSS/ROS2 を使う**(必要なら薄い wrapper)。
+- **evis 固有の本命 = 上の genuine gap のみに投資**、中でも **#1 筋駆動ブリッジ**(視覚→計画までは OSS、
+  最後の「筋で実現」だけが evis 固有で OSS に無い)。次に **#2 sim 視覚 bridge** と **#3 honest 評価**。
+- つまり「evis の視覚部品」の正体は、**新しい CV アルゴリズムではなく、OSS の知覚/計画を evis の筋身体に
+  つなぐ統合層+正直な評価**。ここから先の実装はこの線に絞る。
 
 ## Sources(ROS2 実地調査)
 
