@@ -88,6 +88,15 @@ def analyze(data, registry, versions_data=None):
         h = (o.halcon or "").strip()
         if h:
             analog.setdefault(h, []).append(o.name)
+    # 知覚 facade(camera/stereo/pcseg/ppf/pointcloud)が genuine 実装する operator も計上。
+    # 進化 registry の Op ではないため data/halcon_facade_map.json から別途マージ(全 smoke 検証済)。
+    facade_path = os.path.join(HERE, "data", "halcon_facade_map.json")
+    if os.path.exists(facade_path):
+        with open(facade_path, encoding="utf-8") as fh:
+            for hname, ref in json.load(fh).items():
+                if hname.startswith("_"):
+                    continue
+                analog.setdefault(hname, []).append("facade:" + ref)
     ours = set(analog)
 
     covered = ours & real_ops
