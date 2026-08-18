@@ -379,8 +379,9 @@ class StudioWindow(QtWidgets.QMainWindow):
         if not _v3d.available():
             self.statusBar().showMessage("Open3D 未導入: pip install open3d")
             return
-        ok = _v3d.show_interactive(self._last3d, title="Fullseye 3D (Open3D)")
-        self.statusBar().showMessage("Open3D ウィンドウを開きました(閉じると戻ります)"
+        # 別プロセスで起動(desktop 常用: Studio を固めない/GL 落ちを隔離/複数窓可)
+        ok = _v3d.launch_detached(self._last3d, title="Fullseye 3D (Open3D)")
+        self.statusBar().showMessage("Open3D ウィンドウを別プロセスで起動(Studio は操作継続可)"
                                      if ok else "Open3D 起動失敗(desktop GL が要る)")
 
     def _on_hover(self, event) -> None:
