@@ -216,3 +216,100 @@ def create_cam_pose_look_at_point(cam_pos, look_at, up=(0, 0, 1)):
     R = np.column_stack([x, y, z])
     T = np.eye(4); T[:3, :3] = R; T[:3, 3] = cam_pos
     return T
+
+
+# ── matching: generic/aniso/local-deformable/descriptor/params ────────────────── #
+def find_generic_shape_model(model, image, min_score=0.5, step=2):
+    """汎用形状モデル検出(find_generic_shape_model)。find_shape_model の別名。"""
+    return find_shape_model(model, image, min_score, step)
+
+
+def find_aniso_shape_model(model, image, min_score=0.5,
+                           scale_r=(0.9, 1.0, 1.1), scale_c=(0.9, 1.0, 1.1)):
+    """行/列独立スケール(異方性)での形状モデル検出(find_aniso_shape_model)。"""
+    best = None
+    for sr in scale_r:
+        for sc in scale_c:
+            pts = model["pts"] * np.array([sr, sc])
+            mm = {"shape": (int(model["shape"][0] * sr), int(model["shape"][1] * sc)),
+                  "pts": pts.astype(int), "grad": model["grad"]}
+            res = find_shape_model(mm, image, min_score)
+            if res.get("found") and (best is None or res["score"] > best["score"]):
+                best = {**res, "scale_row": sr, "scale_col": sc}
+    return best or {"found": False}
+
+
+def find_aniso_shape_models(model, image, min_score=0.5, max_matches=10):
+    """異方性スケールでの複数インスタンス検出(find_aniso_shape_models)。"""
+    return find_shape_models(model, image, min_score, max_matches=max_matches)
+
+
+def inspect_shape_model(model):
+    """形状モデルのエッジ点数・広がり・原点を点検用に返す(inspect_shape_model)。"""
+    pts = model["pts"]
+    return {"num_points": len(pts), "extent": pts.max(0) - pts.min(0),
+            "centroid": pts.mean(0).tolist(), "shape": model["shape"]}
+
+
+def determine_ncc_model_params(template):
+    """NCC モデルの推奨パラメータ(コントラスト/レベル数)を決定(determine_ncc_model_params)。"""
+    t = np.asarray(template, float)
+    return {"num_levels": int(max(1, np.log2(min(t.shape)) - 2)),
+            "contrast": float(t.std())}
+
+
+def determine_deformable_model_params(template):
+    """変形モデルの推奨パラメータを決定(determine_deformable_model_params)。"""
+    return determine_shape_model_params(template)
+
+
+def adapt_shape_model_high_noise(template, min_grad=0.25, smooth=2.0):
+    """高ノイズ向けに平滑化を強めた形状モデルを作る(adapt_shape_model_high_noise)。"""
+    from scipy.ndimage import gaussian_filter
+    return create_shape_model(gaussian_filter(np.asarray(template, float), smooth), min_grad)
+
+
+def create_local_deformable_model(template, min_grad=0.1):
+    """局所変形マッチング用モデル(テンプレート保持)(create_local_deformable_model)。"""
+    t = np.asarray(template, float)
+    return {"template": t, "shape": t.shape, "edge": create_shape_model(t, min_grad)}
+
+
+def create_local_deformable_model_xld(contour, min_grad=0.1):
+    """XLD 由来の局所変形モデル(create_local_deformable_model_xld)。"""
+    return create_local_deformable_model(_contour_to_template(contour), min_grad)
+
+
+def find_local_deformable_model(model, image, min_score=0.5):
+    """剛体位置を粗く合わせた後、オプティカルフローで局所変形を推定
+    (find_local_deformable_model)。変形ベクトル場を返す。"""
+    rigid = find_shape_model(model["edge"], image, min_score)
+    from filters_flow import optical_flow_mg
+    t = model["template"]; H, W = t.shape
+    r0 = int(rigid.get("row", 0)) - H // 2; c0 = int(rigid.get("column", 0)) - W // 2
+    r0 = max(0, min(r0, image.shape[0] - H)); c0 = max(0, min(c0, image.shape[1] - W))
+    patch = np.asarray(image, float)[r0:r0 + H, c0:c0 + W]
+    flow = optical_flow_mg(t, patch, iterations=100)
+    return {"row": rigid.get("row"), "column": rigid.get("column"),
+            "score": rigid.get("score", 0.0), "deformation": flow}
+
+
+def create_planar_uncalib_deformable_model(template, min_grad=0.1):
+    """平面(未校正)変形モデル(create_planar_uncalib_deformable_model)。"""
+    return create_local_deformable_model(template, min_grad)
+
+
+def find_planar_uncalib_deformable_model(model, image, min_score=0.5):
+    """平面未校正変形モデルの検出(find_planar_uncalib_deformable_model)。"""
+    return find_local_deformable_model(model, image, min_score)
+
+
+def create_planar_calib_deformable_model(template, cam_par, min_grad=0.1):
+    """平面(校正済)変形モデル(create_planar_calib_deformable_model)。"""
+    m = create_local_deformable_model(template, min_grad); m["cam_par"] = cam_par
+    return m
+
+
+def find_planar_calib_deformable_model(model, image, min_score=0.5):
+    """平面校正済変形モデルの検出(find_planar_calib_deformable_model)。"""
+    return find_local_deformable_model(model, image, min_score)

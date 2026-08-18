@@ -67,18 +67,26 @@ def shape_histo_point(image, row, col, bins=32):
 
 # ── Regions ─────────────────────────────────────────────────────────────────── #
 def gen_random_region(shape, area=100, seed=0):
-    """ランダムな連結領域を生成(ランダムウォーク膨張)(gen_random_region)。"""
-    from scipy.ndimage import binary_dilation
+    """ランダムな連結領域を生成(境界集積=正確な面積 + 連結性保証)(gen_random_region)。"""
     rng = np.random.default_rng(seed)
-    H, W = shape; m = np.zeros(shape, bool)
-    m[rng.integers(0, H), rng.integers(0, W)] = True
-    while m.sum() < area:
-        m = binary_dilation(m)
-        if m.sum() >= area:
-            ys, xs = np.where(m)
-            drop = rng.choice(len(ys), m.sum() - area, replace=False)
-            m[ys[drop], xs[drop]] = False
-            break
+    H, W = shape
+    m = np.zeros(shape, bool)
+    sr, sc = int(rng.integers(H // 4, 3 * H // 4)), int(rng.integers(W // 4, 3 * W // 4))
+    m[sr, sc] = True
+    frontier = {(sr + dr, sc + dc) for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                if 0 <= sr + dr < H and 0 <= sc + dc < W}
+    count = 1
+    while count < area and frontier:
+        cell = list(frontier)[rng.integers(len(frontier))]
+        frontier.discard(cell)
+        r, c = cell
+        if m[r, c]:
+            continue
+        m[r, c] = True; count += 1
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            rr, cc = r + dr, c + dc
+            if 0 <= rr < H and 0 <= cc < W and not m[rr, cc]:
+                frontier.add((rr, cc))
     return m
 
 
