@@ -21,6 +21,12 @@ sys.path.insert(0, os.path.dirname(__file__))
 
 import matplotlib
 matplotlib.use("Agg")
+from matplotlib import font_manager
+for _jp in ("Yu Gothic", "Meiryo", "MS Gothic"):
+    if _jp in {f.name for f in font_manager.fontManager.ttflist}:
+        matplotlib.rcParams["font.family"] = _jp
+        break
+matplotlib.rcParams["axes.unicode_minus"] = False
 import matplotlib.pyplot as plt  # noqa: E402
 import viewer3d as v3d  # noqa: E402
 import fullseye as fs  # noqa: E402
