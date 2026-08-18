@@ -944,6 +944,24 @@ def _fuzzy_measure_pairs(v, a, b):
     return np.float64(min(pairs / 10.0, 1.0))
 
 
+# ── 第 14 バッチ: region 点包含判定 ──────────────────────────────────────────── #
+def _test_region_point(v, a, b):
+    """region が点(正規化 a=行, b=列)を含むか(1/0、test_region_point)。"""
+    reg = v > 0.5
+    h, w = v.shape
+    r, c = min(int(a * h), h - 1), min(int(b * w), w - 1)
+    return np.float64(1.0 if reg[r, c] else 0.0)
+
+
+def _test_region_points(v, a, b):
+    """格子状の複数点のうち region に含まれる割合(test_region_points)。"""
+    reg = v > 0.5
+    h, w = v.shape
+    step = max(2, int((0.1 + 0.3 * a) * min(h, w)))
+    pts = reg[::step, ::step]
+    return np.float64(float(pts.mean()) if pts.size else 0.0)
+
+
 def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
     """未カバー実 HALCON operator の genuine 実装 tier を返す。"""
     defs = [
