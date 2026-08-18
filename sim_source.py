@@ -80,6 +80,16 @@ class MuJoCo:
             self._renderer = mujoco.Renderer(self._m, height=self.height, width=self.width)
         return self._renderer
 
+    def close(self) -> None:
+        """GL レンダラを明示的に閉じる(glfw 終了順ノイズの回避)。"""
+        r = self._renderer
+        self._renderer = None
+        if r is not None:
+            try:
+                r.close()
+            except Exception:
+                pass
+
     def rgb(self, cam=0) -> np.ndarray:
         r = self._rend()
         r.disable_depth_rendering()
