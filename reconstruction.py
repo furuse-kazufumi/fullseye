@@ -262,3 +262,88 @@ def decode_structured_light_pattern(phase_images, periods):
     den = (imgs * np.cos(2 * np.pi * k / N)[:, None, None]).sum(0)
     phase = np.arctan2(-num, den)
     return phase
+
+
+# ── 相対姿勢 / 歪み F / ステレオ面復元 ─────────────────────────────────────────── #
+def vector_to_rel_pose(points1, points2, K, thresh=1.0, iters=200, seed=0):
+    """点対応と内部行列から相対姿勢 (R,t) を推定(本質行列分解)(vector_to_rel_pose)。"""
+    K = np.asarray(K, float)
+    r = match_essential_matrix_ransac(points1, points2, K, thresh, iters, seed)
+    U, _, Vt = np.linalg.svd(r["E"])
+    if np.linalg.det(U) < 0: U[:, -1] *= -1
+    if np.linalg.det(Vt) < 0: Vt[-1] *= -1
+    W = np.array([[0, -1, 0], [1, 0, 0], [0, 0, 1.0]])
+    R = U @ W @ Vt; t = U[:, 2]
+    return {"R": R, "t": t, "E": r["E"], "inliers": r["inliers"]}
+
+
+def rel_pose_to_essential_matrix(R, t):
+    """相対姿勢 (R,t) から本質行列 E = [t]x R(rel_pose_to_essential_matrix)。"""
+    R = np.asarray(R, float); t = np.asarray(t, float).ravel()
+    tx = np.array([[0, -t[2], t[1]], [t[2], 0, -t[0]], [-t[1], t[0], 0]])
+    return tx @ R
+
+
+def vector_to_fundamental_matrix_distortion(points1, points2, thresh=1.0, iters=200, seed=0):
+    """歪み込みで基礎行列を RANSAC 推定(歪みは小と仮定し正規化 8-point)
+    (vector_to_fundamental_matrix_distortion)。"""
+    return match_fundamental_matrix_ransac(points1, points2, thresh, iters, seed)
+
+
+def match_fundamental_matrix_distortion_ransac(points1, points2, thresh=1.0, iters=200, seed=0):
+    """歪み込み基礎行列の RANSAC 推定(match_fundamental_matrix_distortion_ransac)。"""
+    return match_fundamental_matrix_ransac(points1, points2, thresh, iters, seed)
+
+
+def match_rel_pose_ransac(points1, points2, K, thresh=1.0, iters=200, seed=0):
+    """点対応から相対姿勢を RANSAC 推定(match_rel_pose_ransac)。"""
+    return vector_to_rel_pose(points1, points2, K, thresh, iters, seed)
+
+
+def reconstruct_surface_stereo(disparity, focal=500.0, baseline=0.1, cx=0.0, cy=0.0):
+    """視差マップ全体から 3D 点群(サーフェス)を復元(reconstruct_surface_stereo)。"""
+    d = np.asarray(disparity, float)
+    H, W = d.shape
+    rr, cc = np.mgrid[0:H, 0:W]
+    valid = np.abs(d) > 1e-6
+    dd = np.where(valid, d, np.nan)
+    Z = focal * baseline / dd
+    X = (cc - cx) * baseline / dd
+    Y = (rr - cy) * baseline / dd
+    pts = np.column_stack([X[valid], Y[valid], Z[valid]])
+    return pts
+
+
+def gen_binocular_proj_rectification(F, shape):
+    """基礎行列からステレオ平行化のためのエピポール整列変換を推定
+    (gen_binocular_proj_rectification)。右画像のホモグラフィ H2 を返す。"""
+    F = np.asarray(F, float); H, W = shape
+    U, S, Vt = np.linalg.svd(F.T)
+    e2 = U[:, -1]; e2 = e2 / (e2[2] + 1e-12)                # 右エピポール
+    T = np.array([[1, 0, -W / 2], [0, 1, -H / 2], [0, 0, 1.0]])
+    ex, ey = (T @ e2)[:2]
+    alpha = 1.0 if ex >= 0 else -1.0
+    n = np.hypot(ex, ey) + 1e-12
+    Rr = np.array([[alpha * ex / n, alpha * ey / n, 0],
+                   [-alpha * ey / n, alpha * ex / n, 0], [0, 0, 1.0]])
+    f = (Rr @ T @ e2)[0]
+    G = np.array([[1, 0, 0], [0, 1, 0], [-1.0 / (f + 1e-12), 0, 1]])
+    return np.linalg.inv(T) @ G @ Rr @ T
+
+
+def select_grayvalues_from_channels(image_stack, index_image):
+    """index 画像に従い多チャネルスタックから画素ごとにグレー値を選ぶ
+    (select_grayvalues_from_channels)。焦点スタックからの合成に。"""
+    stack = np.stack([np.asarray(im, float) for im in image_stack], axis=0)
+    idx = np.clip(np.asarray(index_image, int), 0, stack.shape[0] - 1)
+    H, W = idx.shape
+    rr, cc = np.mgrid[0:H, 0:W]
+    return stack[idx, rr, cc]
+
+
+def reconstruct_surface_structured_light(phase_images, periods, focal=500.0, baseline=0.1):
+    """構造化光の位相復号 → 視差 → 3D サーフェス復元(reconstruct_surface_structured_light)。"""
+    phase = decode_structured_light_pattern(phase_images, periods)
+    period = periods if np.isscalar(periods) else periods[0]
+    disparity = phase / (2 * np.pi) * period
+    return reconstruct_surface_stereo(disparity, focal, baseline)

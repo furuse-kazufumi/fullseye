@@ -95,3 +95,124 @@ def find_scaled_shape_model(model, image, scales=(0.8, 1.0, 1.25),
             best = {**r, "scale": sc}
     best["found"] = best["score"] >= min_score
     return best
+
+
+# ── 多インスタンス検出 / XLD 由来モデル / パラメータ決定・アクセサ ────────────── #
+def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10, min_distance=5):
+    """複数インスタンスを非最大抑制つきで検出(find_shape_models)。"""
+    from scipy import ndimage as _ndi
+    img = np.asarray(image, np.float64)
+    gy = _ndi.sobel(img, axis=0); gx = _ndi.sobel(img, axis=1)
+    mag = np.hypot(gx, gy)
+    H, W = img.shape; mh, mw = model["shape"]
+    score_map = np.full((H, W), -1.0)
+    for r0 in range(0, H - mh, step):
+        for c0 in range(0, W - mw, step):
+            score_map[r0, c0] = _score_at(model, gy, gx, mag, r0, c0)
+    matches = []
+    sm = score_map.copy()
+    for _ in range(int(max_matches)):
+        idx = np.unravel_index(np.argmax(sm), sm.shape)
+        s = sm[idx]
+        if s < min_score:
+            break
+        matches.append({"row": int(idx[0]), "column": int(idx[1]), "score": float(s)})
+        r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
+        c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
+        sm[r0:r1, c0:c1] = -1.0
+    return {"matches": matches, "num": len(matches)}
+
+
+def find_ncc_models(model, image, min_score=0.5, max_matches=10, min_distance=5):
+    """NCC モデルの複数インスタンス検出(find_ncc_models)。"""
+    from matching import _ncc_map
+    nccm = _ncc_map(model["template"], np.asarray(image, np.float64))
+    H, W = nccm.shape; matches = []; sm = nccm.copy()
+    for _ in range(int(max_matches)):
+        idx = np.unravel_index(np.argmax(sm), sm.shape)
+        if sm[idx] < min_score:
+            break
+        matches.append({"row": int(idx[0]), "column": int(idx[1]), "score": float(sm[idx])})
+        r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
+        c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
+        sm[r0:r1, c0:c1] = -1.0
+    return {"matches": matches, "num": len(matches)}
+
+
+def find_scaled_shape_models(model, image, scales=(0.8, 1.0, 1.25), min_score=0.5, max_matches=10):
+    """スケール探索つき複数インスタンス検出(find_scaled_shape_models)。"""
+    best = {"matches": [], "num": 0, "scale": 1.0}
+    for s in scales:
+        from scipy.ndimage import zoom
+        pts = model["pts"] * s
+        scaled = {"shape": (int(model["shape"][0] * s), int(model["shape"][1] * s)),
+                  "pts": pts.astype(int), "grad": model["grad"]}
+        res = find_shape_models(scaled, image, min_score, max_matches=max_matches)
+        if res["num"] > best["num"]:
+            best = {**res, "scale": s}
+    return best
+
+
+def _contour_to_template(contour):
+    """XLD 輪郭(dict {shape, cs})をエッジ強度テンプレート画像へラスタライズ。"""
+    H, W = contour["shape"]
+    t = np.zeros((H, W))
+    for a in contour["cs"]:
+        rr = np.clip(a[:, 0].round().astype(int), 0, H - 1)
+        cc = np.clip(a[:, 1].round().astype(int), 0, W - 1)
+        t[rr, cc] = 1.0
+    from scipy.ndimage import gaussian_filter
+    return gaussian_filter(t, 1.0)
+
+
+def create_shape_model_xld(contour, min_grad=0.1):
+    """XLD 輪郭から形状モデルを作る(create_shape_model_xld)。"""
+    return create_shape_model(_contour_to_template(contour), min_grad)
+
+
+def create_scaled_shape_model_xld(contour, min_grad=0.1):
+    """XLD 輪郭からスケール対応形状モデル(create_scaled_shape_model_xld)。"""
+    from shapematch import create_scaled_shape_model
+    return create_scaled_shape_model(_contour_to_template(contour), min_grad)
+
+
+def create_aniso_shape_model_xld(contour, min_grad=0.1):
+    """XLD 輪郭から異方性スケール形状モデル(create_aniso_shape_model_xld)。"""
+    return create_aniso_shape_model(_contour_to_template(contour), min_grad)
+
+
+def determine_shape_model_params(template):
+    """テンプレートから推奨 min_grad/コントラストを自動決定(determine_shape_model_params)。"""
+    t = np.asarray(template, np.float64)
+    gx, gy, mag = _grad_field(t)
+    return {"min_contrast": float(np.percentile(mag, 75) / (mag.max() + 1e-9)),
+            "num_levels": int(max(1, np.log2(min(t.shape)) - 2))}
+
+
+def get_shape_model_contours(model):
+    """形状モデルのエッジ点を輪郭として返す(get_shape_model_contours)。"""
+    return {"shape": model["shape"], "cs": [model["pts"].astype(float)]}
+
+
+def get_shape_model_origin(model):
+    """形状モデルの原点(重心)を返す(get_shape_model_origin)。"""
+    c = model["pts"].mean(0)
+    return {"row": float(c[0]), "column": float(c[1])}
+
+
+def set_shape_model_origin(model, row, col):
+    """形状モデルの参照原点を設定(set_shape_model_origin)。"""
+    model = dict(model); model["origin"] = (float(row), float(col))
+    return model
+
+
+def create_cam_pose_look_at_point(cam_pos, look_at, up=(0, 0, 1)):
+    """カメラ位置と注視点から look-at 姿勢(4x4)を構築(create_cam_pose_look_at_point)。"""
+    cam_pos = np.asarray(cam_pos, float); look_at = np.asarray(look_at, float)
+    up = np.asarray(up, float)
+    z = look_at - cam_pos; z = z / (np.linalg.norm(z) + 1e-12)   # 前方
+    x = np.cross(up, z); x = x / (np.linalg.norm(x) + 1e-12)     # 右
+    y = np.cross(z, x)                                           # 下
+    R = np.column_stack([x, y, z])
+    T = np.eye(4); T[:3, :3] = R; T[:3, 3] = cam_pos
+    return T

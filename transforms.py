@@ -242,3 +242,106 @@ def dual_quat_to_hom_mat3d(dq):
     H[:3, :3] = R
     H[:3, 3] = t
     return H
+
+
+# ── 点対応からの変換推定・分解・pose 変換 ────────────────────────────────────── #
+def vector_to_hom_mat3d(src_points, dst_points):
+    """3D 点対応から剛体/相似変換(4x4)を Umeyama 推定(vector_to_hom_mat3d)。"""
+    P = _m(src_points).reshape(-1, 3); Q = _m(dst_points).reshape(-1, 3)
+    mp = P.mean(0); mq = Q.mean(0)
+    Pc = P - mp; Qc = Q - mq
+    H = Pc.T @ Qc / len(P)
+    U, S, Vt = np.linalg.svd(H)
+    D = np.eye(3)
+    if np.linalg.det(U @ Vt) < 0:
+        D[2, 2] = -1
+    R = Vt.T @ D @ U.T
+    t = mq - R @ mp
+    T = np.eye(4); T[:3, :3] = R; T[:3, 3] = t
+    return T
+
+
+def vector_to_proj_hom_mat2d(src_points, dst_points):
+    """2D 点対応から射影変換(ホモグラフィ 3x3)を DLT 推定(vector_to_proj_hom_mat2d)。"""
+    src = _m(src_points).reshape(-1, 2); dst = _m(dst_points).reshape(-1, 2)
+    A = []
+    for (x, y), (u, v) in zip(src, dst):
+        A.append([-x, -y, -1, 0, 0, 0, u * x, u * y, u])
+        A.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
+    _, _, Vt = np.linalg.svd(_m(A))
+    H = Vt[-1].reshape(3, 3)
+    return H / H[2, 2]
+
+
+def vector_to_aniso(src_points, dst_points):
+    """2D 点対応から異方性(非等方スケール)アフィン変換を推定(vector_to_aniso)。"""
+    src = _m(src_points).reshape(-1, 2); dst = _m(dst_points).reshape(-1, 2)
+    A = np.column_stack([src, np.ones(len(src))])
+    coef, *_ = np.linalg.lstsq(A, dst, rcond=None)
+    H = np.eye(3); H[0, :] = coef[:, 0]; H[1, :] = coef[:, 1]
+    return H
+
+
+def point_line_to_hom_mat2d(p_src, dir_src, p_dst, dir_dst):
+    """点+方向の対応から 2D 剛体変換を推定(point_line_to_hom_mat2d)。"""
+    ds = _m(dir_src); dd = _m(dir_dst)
+    a = np.arctan2(dd[0], dd[1]) - np.arctan2(ds[0], ds[1])
+    c, s = np.cos(a), np.sin(a)
+    R = np.array([[c, -s], [s, c]])
+    t = _m(p_dst) - R @ _m(p_src)
+    H = np.eye(3); H[:2, :2] = R; H[:2, 2] = t
+    return H
+
+
+def proj_hom_mat2d_to_pose(H, K):
+    """ホモグラフィと内部行列から平面の姿勢(R,t)を分解(proj_hom_mat2d_to_pose)。"""
+    H = _m(H); K = _m(K); Kinv = np.linalg.inv(K)
+    L = Kinv @ H
+    lam = 1.0 / (np.linalg.norm(L[:, 0]) + 1e-12)
+    r1 = L[:, 0] * lam; r2 = L[:, 1] * lam; t = L[:, 2] * lam
+    r3 = np.cross(r1, r2)
+    R = np.column_stack([r1, r2, r3])
+    U, _, Vt = np.linalg.svd(R)
+    R = U @ Vt
+    T = np.eye(4); T[:3, :3] = R; T[:3, 3] = t
+    return T
+
+
+def projective_trans_hom_point_3d(points_hom, hom_mat):
+    """同次 3D 点に 4x4 射影変換を適用(projective_trans_hom_point_3d)。"""
+    P = _m(points_hom).reshape(-1, 4)
+    out = P @ _m(hom_mat).T
+    return out / out[:, 3:4]
+
+
+def set_origin_pose(pose, dx, dy, dz):
+    """姿勢の原点を局所オフセットだけ移動(set_origin_pose)。"""
+    T = _m(pose).copy()
+    T[:3, 3] = T[:3, 3] + T[:3, :3] @ np.array([dx, dy, dz], float)
+    return T
+
+
+def vector_field_to_hom_mat2d(vfield_row, vfield_col):
+    """ベクトル場全体に最も合うアフィン変換(2x3)を最小二乗推定(vector_field_to_hom_mat2d)。"""
+    vr = _m(vfield_row); vc = _m(vfield_col)
+    H, W = vr.shape
+    rr, cc = np.mgrid[0:H, 0:W]
+    src = np.column_stack([cc.ravel(), rr.ravel(), np.ones(H * W)])
+    dst_c = (cc + vc).ravel(); dst_r = (rr + vr).ravel()
+    cx, *_ = np.linalg.lstsq(src, dst_c, rcond=None)
+    cy, *_ = np.linalg.lstsq(src, dst_r, rcond=None)
+    M = np.eye(3); M[0] = cx; M[1] = cy
+    return M
+
+
+def get_rectangle_pose(row, col, phi, l1, l2, K):
+    """画像上の矩形から平面姿勢を推定(4 角対応 → homography → pose)(get_rectangle_pose)。"""
+    corners_img = np.array([[row - l2, col - l1], [row - l2, col + l1],
+                            [row + l2, col + l1], [row + l2, col - l1]], float)
+    ca, sa = np.cos(phi), np.sin(phi)
+    R2 = np.array([[ca, -sa], [sa, ca]])
+    rel = corners_img - [row, col]
+    corners_img = (rel @ R2.T) + [row, col]
+    world = np.array([[-l1, -l2], [l1, -l2], [l1, l2], [-l1, l2]], float)
+    H = vector_to_proj_hom_mat2d(world, corners_img[:, ::-1])
+    return proj_hom_mat2d_to_pose(H, K)

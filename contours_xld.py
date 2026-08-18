@@ -92,7 +92,18 @@ def get_polygon_xld(contour, tolerance=2.0):
             left = dp(pts[:idx + 1], eps); right = dp(pts[idx:], eps)
             return np.vstack([left[:-1], right])
         return np.vstack([start, end])
-    return [dp(a, tolerance) for a in contour["cs"]]
+
+    out = []
+    for a in contour["cs"]:
+        closed = len(a) > 2 and np.allclose(a[0], a[-1])
+        if closed:
+            # 閉輪郭は始点から最遠の点で 2 分割してから DP(退化回避)
+            far = int(np.hypot(a[:, 0] - a[0, 0], a[:, 1] - a[0, 1]).argmax())
+            p1 = dp(a[:far + 1], tolerance); p2 = dp(a[far:], tolerance)
+            out.append(np.vstack([p1[:-1], p2]))
+        else:
+            out.append(dp(a, tolerance))
+    return out
 
 
 def moments_any_points_xld(contour):

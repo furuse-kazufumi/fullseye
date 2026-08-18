@@ -195,3 +195,116 @@ def reduce_object_model_3d_by_view(points, axis: int = 2, keep: float = 0.5):
         return p
     thr = np.quantile(p[:, axis], keep)
     return p[p[:, axis] <= thr]
+
+
+# ── 点群 I/O 変換・剛体変換・体積・簡約・分割 ────────────────────────────────── #
+def gen_object_model_3d_from_points(x, y, z):
+    """x,y,z 配列から 3D 点群モデルを作る(gen_object_model_3d_from_points)。"""
+    return np.column_stack([np.ravel(x), np.ravel(y), np.ravel(z)]).astype(np.float64)
+
+
+def xyz_to_object_model_3d(image_x, image_y, image_z, region=None):
+    """X/Y/Z 画像(各 2D)から 3D 点群モデルへ(xyz_to_object_model_3d)。"""
+    X = np.asarray(image_x, float); Y = np.asarray(image_y, float); Z = np.asarray(image_z, float)
+    m = np.ones(X.shape, bool) if region is None else np.asarray(region, bool)
+    return np.column_stack([X[m], Y[m], Z[m]])
+
+
+def object_model_3d_to_xyz(points, shape=None):
+    """3D 点群を X/Y/Z 画像へ(格子順、object_model_3d_to_xyz)。"""
+    p = _pts(points)
+    if shape is None:
+        n = int(np.ceil(np.sqrt(len(p)))); shape = (n, n)
+    H, W = shape; out = np.full((3, H * W), np.nan)
+    out[:, :len(p)] = p.T
+    return {"x": out[0].reshape(H, W), "y": out[1].reshape(H, W), "z": out[2].reshape(H, W)}
+
+
+def gen_empty_object_model_3d():
+    """空の 3D モデル(gen_empty_object_model_3d)。"""
+    return np.zeros((0, 3))
+
+
+def gen_sphere_object_model_3d_center(center, radius=1.0, n=400):
+    """中心指定の球面点群(gen_sphere_object_model_3d_center)。"""
+    return gen_sphere_object_model_3d(radius, n) + np.asarray(center, float)
+
+
+def rigid_trans_object_model_3d(points, hom_mat3d):
+    """4x4 剛体/相似変換を点群へ適用(rigid_trans_object_model_3d)。"""
+    p = _pts(points); Hm = np.asarray(hom_mat3d, float)
+    if Hm.shape == (4, 4):
+        return p @ Hm[:3, :3].T + Hm[:3, 3]
+    return p @ Hm[:3, :3].T
+
+
+def fuse_object_model_3d(models):
+    """複数 3D モデルを 1 つに統合(fuse_object_model_3d)。"""
+    return np.vstack([_pts(m) for m in models]) if models else np.zeros((0, 3))
+
+
+def select_object_model_3d(points, axis=2, lo=-np.inf, hi=np.inf):
+    """属性値域で点を選択(select_object_model_3d)。"""
+    return select_points_object_model_3d(points, axis, lo, hi)
+
+
+def simplify_object_model_3d(points, voxel=0.05):
+    """ボクセルグリッド平均で点群を簡約(simplify_object_model_3d)。"""
+    p = _pts(points)
+    if len(p) == 0:
+        return p
+    keys = np.floor(p / voxel).astype(np.int64)
+    _, idx, inv = np.unique(keys, axis=0, return_index=True, return_inverse=True)
+    out = np.zeros((len(idx), 3))
+    for k in range(len(idx)):
+        out[k] = p[inv == k].mean(0)
+    return out
+
+
+def volume_object_model_3d_relative_to_plane(points, plane=(0, 0, 1, 0)):
+    """平面 (a,b,c,d) より上の点群体積を凸包で近似(volume_object_model_3d_relative_to_plane)。"""
+    from scipy.spatial import ConvexHull
+    p = _pts(points)
+    a, b, c, d = plane; nrm = np.array([a, b, c], float)
+    signed = (p @ nrm + d) / (np.linalg.norm(nrm) + 1e-12)
+    above = p[signed > 0]
+    if len(above) < 4:
+        return 0.0
+    try:
+        return float(ConvexHull(above).volume)
+    except Exception:
+        return 0.0
+
+
+def segment_object_model_3d(points, max_distance=0.1):
+    """近傍距離で点群を連結成分に分割(segment_object_model_3d)。ラベル配列を返す。"""
+    from scipy.spatial import cKDTree
+    from scipy.sparse import csr_matrix
+    from scipy.sparse.csgraph import connected_components
+    p = _pts(points)
+    if len(p) == 0:
+        return np.zeros(0, int)
+    tree = cKDTree(p)
+    pairs = tree.query_pairs(max_distance, output_type="ndarray")
+    n = len(p)
+    if len(pairs) == 0:
+        return np.arange(n)
+    data = np.ones(len(pairs))
+    M = csr_matrix((data, (pairs[:, 0], pairs[:, 1])), shape=(n, n))
+    _, labels = connected_components(M, directed=False)
+    return labels
+
+
+def prepare_object_model_3d(points, k=8):
+    """法線推定つきモデル前処理(近傍 PCA、prepare_object_model_3d)。"""
+    from scipy.spatial import cKDTree
+    p = _pts(points)
+    if len(p) < k:
+        return {"points": p, "normals": np.tile([0, 0, 1.0], (len(p), 1))}
+    _, idx = cKDTree(p).query(p, k=k)
+    normals = np.zeros((len(p), 3))
+    for i, nb in enumerate(idx):
+        d = p[nb] - p[nb].mean(0)
+        w, V = np.linalg.eigh(np.cov(d.T))
+        normals[i] = V[:, 0]
+    return {"points": p, "normals": normals}
