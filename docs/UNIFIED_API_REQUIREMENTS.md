@@ -172,6 +172,18 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     既存 9 サンプル(vision/sim-source 棲み分け)と共存。smoke = 9/9 サンプル OK + 代表 op 経路 + カバレッジ表示。
   - **検証** = テスト `tests/test_studio_ops_browser.py` 7 pass(render_hint 8 種・合成入力・カバレッジ>=300・
     override 反映)。ギャラリー `spikes/out_gallery/studio_f6_render_hints.png`(8 hint の描画一覧)。
-- **次**: 画像 registry 654 + 知覚 facade も同 registry へ段階載せ替え(全 op 1 索引)/ F4 OSS アダプタ契約
-  (stereo=image_pipeline / pcseg=PCL)/ synthesizer の per-op 入力ヒント拡充(自動実行 60%→上げる)/
-  Studio 3D viewer を Open3D/RViz2 連携へ(現状 matplotlib 3D)。
+- **2026-08-18 F2 全 op 1 索引 統合完了(3 層マージ)**: `unified.py` が **3 層を単一 registry に統合**:
+  ①**facade 600**(本セッションの genuine HALCON 実装)②**進化 registry 729**(`fs.REGISTRY`, a/b ノブ、
+  自然 caller `(image, a=0.5, b=0.5)` で長い尾へ、provenance=evolution)③**知覚 facade 240**(`fs.stereo`/
+  `pcseg`/`camera`/`terrain`/… の公開関数、自然シグネチャ、provenance=perception)。**計 1569 op / 57 名前空間**。
+  - **衝突処理**: facade を最初に登録=bare 名衝突は genuine facade 優先(既存挙動維持)。各 op に `provenance`。
+  - **render_hint**: 進化 op は `out_sort`(image/region/contour/feature/match/volume/color)→ hint。知覚 op は
+    モジュール既定 hint。→ Studio(F6)が 3 層すべてを render_hint で自動描画。**自動実行カバレッジ 1129/1569(72%)**。
+  - **循環 import 解消**: fullseye が unified を、unified が fs.REGISTRY/知覚 facade を読むため、遅延構築
+    (PEP 562 `__getattr__`)+ publish-before-load で re-entrancy 安全化。両 import 順で動作。
+  - **検証**: `import fullseye`/`import unified` 双方で 1569 op、`fs.vision.smooth.<op>(img,a,b)`(進化)/
+    `fs.vision.camera.intrinsic_matrix(...)`(知覚)/ `fs.vision.calib.camera_calibration(...)`(facade)が
+    同じ作法で呼べる。テスト `tests/test_unified.py` 9 pass(3 層 provenance 検証)+ browser 7 pass、
+    回帰 `test_op_contracts` 3113 pass 0 fail(F7)。
+- **次**: F4 OSS アダプタ契約(stereo=image_pipeline / pcseg=PCL)/ synthesizer の per-op 入力ヒント拡充
+  (自動実行 72%→上げる)/ Studio 3D viewer を Open3D/RViz2 連携へ(現状 matplotlib 3D)。
