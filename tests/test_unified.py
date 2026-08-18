@@ -11,12 +11,16 @@ warnings.simplefilter("ignore")
 import unified as u  # noqa: E402
 
 
-def test_registry_builds_all_facade_ops():
-    """F2: facade マップの全 op が単一 registry に載る(600 前後)。"""
-    assert len(u.ops) >= 590
+def test_registry_builds_all_layers():
+    """F2: 3 層(facade / 進化 / 知覚)が単一 registry に統合される。"""
+    assert len(u.ops) >= 1400
     st = u.ops.stats()
     assert st["total"] == len(u.ops)
-    assert st["namespaces"] >= 15
+    assert st["namespaces"] >= 30
+    prov = st["by_provenance"]
+    assert prov.get("facade", 0) >= 590
+    assert prov.get("evolution", 0) >= 700
+    assert prov.get("perception", 0) >= 150
 
 
 def test_every_op_has_metadata():
