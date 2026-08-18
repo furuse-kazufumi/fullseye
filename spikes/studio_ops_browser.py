@@ -98,6 +98,53 @@ def _syn_vfield():
     return np.zeros((32, 32))
 
 
+def _syn_video(t=6, h=32, w=40):
+    """時間スタック (T,H,W): 動く明ブロック(video/frame-diff/背景差分系)。"""
+    vid = np.zeros((t, h, w))
+    for k in range(t):
+        vid[k, 8:20, 4 + 3 * k:16 + 3 * k] = 1.0
+    return vid + 0.05 * np.random.default_rng(0).random((t, h, w))
+
+
+def _syn_cube(h=32, w=40, b=8):
+    """ハイパースペクトル cube (H,W,bands)。"""
+    base = _syn_image(h, w)
+    return np.stack([base * (0.5 + 0.1 * i) for i in range(b)], axis=-1)
+
+
+def _syn_volume(d=16, h=24, w=24):
+    """3D スカラー体 (D,H,W): 中央に球(marching_cubes/vol_frangi 系)。"""
+    zz, yy, xx = np.mgrid[0:d, 0:h, 0:w]
+    r = np.sqrt((zz - d / 2) ** 2 + (yy - h / 2) ** 2 + (xx - w / 2) ** 2)
+    return np.clip(1.0 - r / (0.35 * min(d, h, w)), 0, 1)
+
+
+def _syn_mask(h=48, w=64):
+    """二値シルエット (H,W) bool(pose/locomotion の mask 系)。"""
+    yy, xx = np.mgrid[0:h, 0:w]
+    return ((xx - 32) ** 2 / 18 ** 2 + (yy - 24) ** 2 / 14 ** 2) < 1.0
+
+
+def _canonical_mesh():
+    """一貫した小メッシュ (V:(25,3), F:(32,3))。V/F 別々に synth しても整合する。"""
+    gx, gy = np.meshgrid(np.linspace(0, 1, 5), np.linspace(0, 1, 5))
+    V = np.column_stack([gx.ravel(), gy.ravel(), (0.1 * np.sin(gx * 6)).ravel()])
+    F = []
+    for r in range(4):
+        for c in range(4):
+            a = r * 5 + c
+            F.append([a, a + 1, a + 5]); F.append([a + 1, a + 6, a + 5])
+    return V.astype(float), np.asarray(F, dtype=np.int64)
+
+
+def _syn_mesh_V():
+    return _canonical_mesh()[0]
+
+
+def _syn_mesh_F():
+    return _canonical_mesh()[1]
+
+
 _SYN = {
     "image": _syn_image, "image1": _syn_image, "image2": _syn_image,
     "image_1": _syn_image, "image_2": _syn_image, "img": _syn_image,
