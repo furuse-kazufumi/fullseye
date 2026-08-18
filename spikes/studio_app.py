@@ -422,6 +422,13 @@ class StudioWindow(QtWidgets.QMainWindow):
     def _run(self) -> None:
         if self._suspend:
             return
+        # 統一 registry op: 合成入力 + スライダ上書きで自動実行し render_hint 描画(F6)
+        if self._active_op is not None:
+            overrides = {sl.name: sl.value() for sl in self._sliders}
+            status = _browser.render_op_into(self._active_op, self.figure, overrides)
+            self.canvas.draw()
+            self.statusBar().showMessage(f"{self._active_op.namespace}.{self._active_op.name}  |  {status}")
+            return
         code = self.editor.toPlainText()
         self.figure.clear()
         ns = {
