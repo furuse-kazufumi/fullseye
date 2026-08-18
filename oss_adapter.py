@@ -278,12 +278,27 @@ class contour:  # noqa: N801
     FindContours = FindContours
 
 
+class segment:  # noqa: N801
+    Watershed = Watershed
+
+
+class camera:   # noqa: N801
+    SolvePnP = SolvePnP
+
+
+class flow:     # noqa: N801
+    Farneback = Farneback
+
+
 ADAPTERS = [
     ("stereo", "BlockMatching", BlockMatching, "image"),
     ("stereo", "SGBM", SGBM, "image"),
     ("filter", "Bilateral", Bilateral, "image"),
     ("features", "ORB", ORB, "scalar"),
     ("contour", "FindContours", FindContours, "contour"),
+    ("segment", "Watershed", Watershed, "region"),
+    ("camera", "SolvePnP", SolvePnP, "pose"),
+    ("flow", "Farneback", Farneback, "image"),
 ]
 
 

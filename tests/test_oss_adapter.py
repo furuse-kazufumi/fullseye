@@ -19,7 +19,7 @@ def _pair(h=64, w=96, shift=4):
 def test_backends_reported():
     """F4: 各アダプタが実際に使う backend を報告する。"""
     b = O.backends()
-    assert len(b) == 5
+    assert len(b) == 8
     for name, be in b.items():
         assert be in ("opencv", "skimage", "numpy(fallback)")
 
