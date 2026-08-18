@@ -372,6 +372,7 @@ def _ensure() -> Registry:
         _load_facade(reg)
         _load_evolution(reg)
         _load_perception(reg)
+        _load_oss(reg)
     return _registry
 
 
