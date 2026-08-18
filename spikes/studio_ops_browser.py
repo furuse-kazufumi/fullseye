@@ -274,6 +274,64 @@ def run_op(op, fig=None):
     return result, fig
 
 
+def scalar_param_specs(op):
+    """op の scalar param(_SCALAR 既知 or 数値デフォルト)を Studio スライダ spec 化(F3→UI)。"""
+    specs = []
+    for name, default, kind in op.params:
+        if kind == "var" or name in _SYN:
+            continue
+        base = default if isinstance(default, (int, float)) and not isinstance(default, bool) \
+            else _SCALAR.get(name)
+        if isinstance(base, (int, float)) and not isinstance(base, bool):
+            is_int = isinstance(base, int)
+            lo = 0 if base == 0 else min(base * 0.2, base * 2.0)
+            hi = max(base * 2.0, base + 1)
+            specs.append((name, float(lo), float(hi), base, is_int))
+    return specs
+
+
+def render_op_into(op, fig, overrides=None):
+    """op を合成入力(scalar は overrides で上書き)で実行し fig へ render_hint 描画(F6 GUI 用)。
+    戻り値 = ステータス文字列(Run OK / auto-input 不可 / エラー)。"""
+    overrides = overrides or {}
+    args = []
+    for name, default, kind in op.params:
+        if kind == "var":
+            continue
+        if name in _SYN:
+            args.append(_SYN[name]())
+        elif name in overrides:
+            args.append(overrides[name])
+        elif default is not inspect.Parameter.empty:
+            break
+        elif name in _SCALAR:
+            args.append(_SCALAR[name])
+        else:
+            _f3_card(op, fig, reason="専用入力が要る(create_* が生む model 等)")
+            return "auto-input 不可"
+    try:
+        result = op(*args)
+    except Exception as e:  # noqa: BLE001
+        _f3_card(op, fig, reason=f"{type(e).__name__}: {e}")
+        return f"Run 失敗: {type(e).__name__}"
+    render_by_hint(result, op.render_hint, fig, title=f"{op.namespace}.{op.name}")
+    return "Run OK"
+
+
+def _f3_card(op, fig, reason=""):
+    """自動実行できない op は F3 メタ(introspection カード)を描く(発見+把握は 600 全てで効く)。"""
+    fig.clear()
+    ax = fig.add_subplot(111); ax.axis("off")
+    d = op.as_dict()
+    lines = [f"{op.namespace}.{op.name}", "",
+             f"signature: {d['signature']}", f"chapter:   {d['chapter']}",
+             f"render:    {d['render_hint']}", f"provenance:{d['provenance']}", "",
+             d["doc"]]
+    if reason:
+        lines += ["", f"※ {reason}"]
+    ax.text(0.03, 0.97, "\n".join(lines), va="top", ha="left", family="monospace", fontsize=8)
+
+
 def coverage_report():
     """honest な自動実行カバレッジ: 600 op 中いくつが合成入力で走り描けるか。"""
     from matplotlib.figure import Figure
