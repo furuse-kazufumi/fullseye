@@ -18,10 +18,20 @@ from __future__ import annotations
 import numpy as np
 
 
+_VERBOSITY_SET = False
+
+
 def available() -> bool:
-    """Open3D が import できるか(optional extra)。"""
+    """Open3D が import できるか(optional extra)。冗長ログは抑制。"""
+    global _VERBOSITY_SET
     try:
-        import open3d  # noqa: F401
+        import open3d as o3d
+        if not _VERBOSITY_SET:
+            try:
+                o3d.utility.set_verbosity_level(o3d.utility.VerbosityLevel.Error)
+            except Exception:
+                pass
+            _VERBOSITY_SET = True
         return True
     except Exception:
         return False
