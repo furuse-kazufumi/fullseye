@@ -122,6 +122,11 @@ with warnings.catch_warnings():
         read_wav, write_wav, read_audio, spectrum, spectrogram,
         lowpass, highpass, bandpass, envelope, rms, find_peaks, signal_features,
     )
+    # 統一視覚 I/F(要件 F1/F2/F3): 600 の HALCON facade op を単一 registry + 章別名前空間で公開。
+    # 例: fullseye.vision.contour.gen_circle_contour_xld(row=50, col=50, radius=10)
+    #     fullseye.vision_ops.find("stereo") / .describe("camera_calibration")
+    import unified as vision  # noqa: E402,F401
+    vision_ops = vision.ops   # 単一 registry(list/find/describe/stats)
 
 
 def capabilities() -> dict:
