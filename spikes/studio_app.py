@@ -405,10 +405,42 @@ class StudioWindow(QtWidgets.QMainWindow):
         if not _v3d.available():
             self.statusBar().showMessage("Open3D 未導入: pip install open3d")
             return
-        # 別プロセスで起動(desktop 常用: Studio を固めない/GL 落ちを隔離/複数窓可)
-        ok = _v3d.launch_detached(self._last3d, title="Fullseye 3D (Open3D)")
-        self.statusBar().showMessage("Open3D ウィンドウを別プロセスで起動(Studio は操作継続可)"
-                                     if ok else "Open3D 起動失敗(desktop GL が要る)")
+        # 別プロセスで起動し、マネージャで追跡(desktop 常用: 固めない/隔離/複数窓可)
+        title = self._last3d_title or "Fullseye 3D"
+        wid = self.viewer_mgr.launch(self._last3d, title=title)
+        self._refresh_3d_windows()
+        self.statusBar().showMessage(f"3D 窓を起動(#{wid}: {title})— Studio は操作継続可"
+                                     if wid else "Open3D 起動失敗(desktop GL が要る)")
+
+    def _refresh_3d_windows(self) -> None:
+        """開いている 3D 窓の一覧を更新(死活プルーニング込み)+ 環境状態を表示。"""
+        wins = self.viewer_mgr.windows()
+        self.win3d_list.clear()
+        for w in wins:
+            self.win3d_list.addItem(f"#{w['id']}  {w['title']}   (pid {w['pid']})")
+        has = bool(wins)
+        self.win3d_close_btn.setEnabled(has)
+        self.win3d_closeall_btn.setEnabled(has)
+        if not _v3d.available():
+            env = "環境: Open3D 未導入 → PLY 書き出しで外部ビューアへ(pip install open3d)"
+        else:
+            env = f"開いている窓: {len(wins)} 個  |  環境: desktop GL 窓 可(ダブルクリックで閉じる)"
+        self.win3d_status.setText(env)
+
+    def _close_selected_3d(self) -> None:
+        """一覧で選択した 3D 窓を閉じる。"""
+        row = self.win3d_list.currentRow()
+        wins = self.viewer_mgr.windows()
+        if 0 <= row < len(wins):
+            self.viewer_mgr.close(wins[row]["id"])
+            self._refresh_3d_windows()
+            self.statusBar().showMessage("3D 窓を 1 つ閉じました")
+
+    def _close_all_3d(self) -> None:
+        """管理下の 3D 窓を全部閉じる。"""
+        n = self.viewer_mgr.close_all()
+        self._refresh_3d_windows()
+        self.statusBar().showMessage(f"3D 窓を {n} 個閉じました")
 
     def _on_hover(self, event) -> None:
         """hwv 風: 画像(AxesImage)上の hover で画素座標と値をステータスバーに表示。"""
