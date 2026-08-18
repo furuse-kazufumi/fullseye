@@ -178,6 +178,84 @@ def export_ply(geometries, path) -> bool:
     return True
 
 
+def save_scene(geometries, scene_dir) -> str:
+    """geometry リストを scene_dir に PLY バンドル化(clouds/meshes)+ manifest.json。
+    別プロセス起動(desktop 常用)の受け渡し用。返り値 = manifest パス。"""
+    import json
+    import os
+    if not available():
+        return ""
+    import open3d as o3d
+    os.makedirs(scene_dir, exist_ok=True)
+    entries = []
+    for i, g in enumerate(geometries):
+        if isinstance(g, o3d.geometry.PointCloud) and len(g.points):
+            fn = f"g{i}_cloud.ply"
+            o3d.io.write_point_cloud(os.path.join(scene_dir, fn), g)
+            entries.append({"kind": "cloud", "file": fn})
+        elif isinstance(g, o3d.geometry.TriangleMesh) and len(g.vertices):
+            fn = f"g{i}_mesh.ply"
+            o3d.io.write_triangle_mesh(os.path.join(scene_dir, fn), g)
+            entries.append({"kind": "mesh", "file": fn})
+        # LineSet(grid 等)は launcher 側で再生成するので保存しない
+    manifest = os.path.join(scene_dir, "manifest.json")
+    with open(manifest, "w", encoding="utf-8") as fh:
+        json.dump({"entries": entries}, fh)
+    return manifest
+
+
+def load_scene(manifest) -> list:
+    """save_scene の manifest から geometry リストを復元(別プロセスの launcher 用)。"""
+    import json
+    import os
+    if not available():
+        return []
+    import open3d as o3d
+    scene_dir = os.path.dirname(manifest)
+    with open(manifest, encoding="utf-8") as fh:
+        spec = json.load(fh)
+    geoms = []
+    for e in spec.get("entries", []):
+        path = os.path.join(scene_dir, e["file"])
+        if e["kind"] == "cloud":
+            geoms.append(o3d.io.read_point_cloud(path))
+        elif e["kind"] == "mesh":
+            m = o3d.io.read_triangle_mesh(path)
+            m.compute_vertex_normals()
+            geoms.append(m)
+    return geoms
+
+
+def launch_detached(geometries, title="Fullseye 3D") -> bool:
+    """3D ウィンドウを **別プロセス** で起動(desktop 常用: Studio を固めない/GL 落ちを隔離)。
+    geometry を一時 PLY バンドルに保存し、viewer3d_launch.py を detached 起動して即戻る。"""
+    import os
+    import subprocess
+    import sys
+    import tempfile
+    if not available() or not geometries:
+        return False
+    try:
+        scene_dir = tempfile.mkdtemp(prefix="fs3d_")
+        manifest = save_scene(geometries, scene_dir)
+        if not manifest:
+            return False
+        launcher = os.path.join(os.path.dirname(os.path.abspath(__file__)), "viewer3d_launch.py")
+        # console flash 回避: pythonw があれば優先(GUI サブプロセスにコンソール窓を出さない)
+        exe = sys.executable
+        pyw = os.path.join(os.path.dirname(exe), "pythonw.exe")
+        if os.path.exists(pyw):
+            exe = pyw
+        kwargs = {"close_fds": True}
+        if os.name == "nt":
+            # DETACHED_PROCESS | CREATE_NO_WINDOW(コンソール窓を出さず親から独立)
+            kwargs["creationflags"] = 0x00000008 | 0x08000000
+        subprocess.Popen([exe, launcher, manifest, title], **kwargs)
+        return True
+    except Exception:
+        return False
+
+
 def backend_status() -> dict:
     """3D バックエンドの honest な能力レポート(Studio が表示)。"""
     st = {"open3d": available(), "offscreen": False, "interactive": "desktop GL 依存"}
