@@ -183,3 +183,48 @@ def area_intersection_rectangle2(row1, col1, phi1, l1a, l1b,
     both = inside(pts, row1, col1, phi1, l1a, l1b) & inside(pts, row2, col2, phi2, l2a, l2b)
     cell = (hi[0] - lo[0]) * (hi[1] - lo[1]) / (n * n)
     return float(both.sum() * cell)
+
+
+def distance_lc(r1, c1, r2, c2, contour) -> float:
+    """直線から contour までの最小距離(distance_lc)。"""
+    p = _cs_pts(contour)
+    if len(p) == 0:
+        return 0.0
+    return float(min(distance_pl(pt[0], pt[1], r1, c1, r2, c2) for pt in p))
+
+
+def distance_lr(r1, c1, r2, c2, region) -> float:
+    """直線から region(二値)までの最小距離(distance_lr)。"""
+    reg = np.asarray(region) > 0.5
+    ys, xs = np.nonzero(reg)
+    if len(ys) == 0:
+        return 0.0
+    return float(min(distance_pl(y, x, r1, c1, r2, c2) for y, x in zip(ys, xs)))
+
+
+def distance_sr(a1, b1, a2, b2, region) -> float:
+    """線分から region までの最小距離(distance_sr)。"""
+    reg = np.asarray(region) > 0.5
+    ys, xs = np.nonzero(reg)
+    if len(ys) == 0:
+        return 0.0
+    return float(min(distance_ps(y, x, a1, b1, a2, b2) for y, x in zip(ys, xs)))
+
+
+def distance_cc_min_points(contour1, contour2):
+    """2 contour 間の最小距離とその最近点対を返す(distance_cc_min_points)。"""
+    from scipy.spatial import cKDTree
+    a, b = _cs_pts(contour1), _cs_pts(contour2)
+    if len(a) == 0 or len(b) == 0:
+        return {"distance": 0.0}
+    dist, idx = cKDTree(b).query(a, k=1)
+    k = int(np.argmin(dist))
+    return {"distance": float(dist[k]), "p1": a[k], "p2": b[idx[k]]}
+
+
+def distance_point_pluecker_line(px, py, pz, mx, my, mz, lx, ly, lz) -> float:
+    """3D 点から Pluecker 直線(モーメント m, 方向 l)までの距離(distance_point_pluecker_line)。"""
+    l = np.array([lx, ly, lz], float); m = np.array([mx, my, mz], float)
+    p = np.array([px, py, pz], float)
+    ln = np.linalg.norm(l) + 1e-12
+    return float(np.linalg.norm(np.cross(p, l / ln) - m / ln))

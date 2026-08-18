@@ -1017,6 +1017,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         # 第 7 バッチ
         ("hx_move_region", "move_region", REGION, REGION, _move_region),
         ("hx_split_skeleton_region", "split_skeleton_region", REGION, REGION, _split_skeleton_region),
+        ("hx_test_region_point", "test_region_point", REGION, FEATURE, _test_region_point),
+        ("hx_test_region_points", "test_region_points", REGION, FEATURE, _test_region_points),
         # 第 8 バッチ(XLD contour)
         ("hx_sort_contours", "sort_contours_xld", CONTOUR, CONTOUR, _sort_contours_xld),
         ("hx_clip_contours", "clip_contours_xld", CONTOUR, CONTOUR, _clip_contours_xld),

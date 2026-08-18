@@ -168,3 +168,30 @@ def projective_trans_object_model_3d(points, H=None) -> np.ndarray:
     hom = np.column_stack([p, np.ones(len(p))]) @ H.T
     w = hom[:, 3:4]
     return hom[:, :3] / np.where(np.abs(w) < 1e-12, 1.0, w)
+
+
+def area_object_model_3d(points) -> float:
+    """点群を主平面 Delaunay 三角形化し表面積の近似を返す(area_object_model_3d)。"""
+    tri = triangulate_object_model_3d(points)
+    P, T = tri["points"], tri["triangles"]
+    if len(T) == 0:
+        return 0.0
+    a = P[T[:, 1]] - P[T[:, 0]]
+    b = P[T[:, 2]] - P[T[:, 0]]
+    return float(0.5 * np.linalg.norm(np.cross(a, b), axis=1).sum())
+
+
+def get_bounding_box_object_model_3d(points):
+    """軸並行外接箱の (min, max, extent) を返す(get_bounding_box_object_model_3d)。"""
+    p = _pts(points)
+    lo, hi = p.min(0), p.max(0)
+    return {"min": lo, "max": hi, "extent": hi - lo}
+
+
+def reduce_object_model_3d_by_view(points, axis: int = 2, keep: float = 0.5):
+    """指定軸で手前 keep 割合の点のみ残す(視点による簡易間引き、reduce_object_model_3d_by_view)。"""
+    p = _pts(points)
+    if len(p) == 0:
+        return p
+    thr = np.quantile(p[:, axis], keep)
+    return p[p[:, axis] <= thr]
