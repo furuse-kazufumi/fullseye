@@ -177,8 +177,8 @@ def hand_eye_calibration(poses_a, poses_b):
         Mb = np.linalg.inv(B[i]) @ B[i + 1]
         rels.append((Ma, Mb))
         alpha = _rot_to_axis(Ma[:3, :3]); beta = _rot_to_axis(Mb[:3, :3])
-        # Park-Martin: solve Rx by matrix log LS  M += beta alpha^T
-        Msum += np.outer(beta, alpha)
+        # Park-Martin/Procrustes: Rx beta ~= alpha なので M = sum(alpha beta^T)
+        Msum += np.outer(alpha, beta)
     U, S, Vt = np.linalg.svd(Msum)
     d = np.sign(np.linalg.det(U @ Vt))
     Rx = U @ np.diag([1, 1, d]) @ Vt
