@@ -321,13 +321,39 @@ def _load_perception(reg: Registry) -> None:
                                    params=_params_of(fn)))
 
 
+def _load_oss(reg: Registry) -> None:
+    """OSS アダプタ(F4: OpenCV/skimage を裏に、不在時 numpy フォールバック)を統一 registry へ
+    (provenance=oss-adapter)。config オブジェクト class を登録し、backend をメタに記録。"""
+    try:
+        import oss_adapter as oss
+    except Exception:
+        return
+    for ns, name, cls, hint in getattr(oss, "ADAPTERS", []):
+        try:
+            backend = cls().backend
+        except Exception:
+            backend = "?"
+        doc = (cls.__doc__ or "").strip().splitlines()
+        doc = (doc[0].strip() if doc else name) + f"  [backend={backend}]"
+        params = []
+        try:
+            for pn, p in _inspect.signature(cls).parameters.items():
+                params.append((pn, p.default, "arg"))
+        except (ValueError, TypeError):
+            pass
+        reg.register(UnifiedOp(name=name, func=cls, module=f"oss_adapter.{ns}.{name}",
+                               chapter=ns, namespace=ns, doc=doc, provenance="oss-adapter",
+                               render_hint=hint, params=params))
+
+
 def build_registry() -> Registry:
-    """3 層(facade 600 / 進化 735 / 知覚 facade)を 1 索引に統合(F2/F3)。
+    """4 層(facade 600 / 進化 735 / 知覚 facade / OSS アダプタ)を 1 索引に統合(F2/F3/F4)。
     facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。"""
     reg = Registry()
     _load_facade(reg)          # 1. genuine facade(優先)
     _load_evolution(reg)       # 2. 進化 registry(a/b ノブ)
     _load_perception(reg)      # 3. 知覚 facade(自然シグネチャ)
+    _load_oss(reg)             # 4. OSS アダプタ(OpenCV/skimage、numpy フォールバック)
     return reg
 
 
