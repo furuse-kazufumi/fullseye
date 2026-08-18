@@ -337,12 +337,20 @@ class StudioWindow(QtWidgets.QMainWindow):
         self.param_form = QtWidgets.QVBoxLayout(self.param_box)
         run_btn = QtWidgets.QPushButton("Run  ▶")
         run_btn.clicked.connect(self._run)
+        # Open3D 対話 3D ビューア(点群/6D pose を mouse ナビ=RViz2 相当)
+        self.open3d_btn = QtWidgets.QPushButton("Open in 3D (Open3D)  🧊")
+        self.open3d_btn.clicked.connect(self._open3d)
+        self.open3d_btn.setEnabled(False)
+        self._last3d = None  # (result, hint): 直近 op の 3D 化可能な出力
+        btn_row = QtWidgets.QWidget()
+        bl = QtWidgets.QHBoxLayout(btn_row); bl.setContentsMargins(0, 0, 0, 0)
+        bl.addWidget(run_btn, 2); bl.addWidget(self.open3d_btn, 2)
         mid = QtWidgets.QWidget()
         ml = QtWidgets.QVBoxLayout(mid)
         ml.addWidget(QtWidgets.QLabel("code(編集して Run)"))
         ml.addWidget(self.editor, 3)
         ml.addWidget(self.param_box)
-        ml.addWidget(run_btn)
+        ml.addWidget(btn_row)
 
         # 右: matplotlib 描画ペイン
         self.figure = Figure(figsize=(5, 4))
