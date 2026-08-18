@@ -139,4 +139,24 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
   `Image.op(name, a, b)` エスケープハッチにのみ残して 654 op の長い尾へアクセス。
 - **spike 実証済**: `spikes/unified_api_spike.py`(画像チェーン + 視覚設定オブジェクト + 長い尾エスケープ)。
   既存 809 op 無変更・additive。pcseg RANSAC が合成平面 400/400 点をインライア検出=実委譲を確認。
-- **次**: 自然画像 op の拡充(canny/morphology/color 等)/ 単一 registry+メタ(F2/F3)/ 既存 op の段階載せ替え。
+
+- **2026-08-18 F1/F2/F3 実装完了(統一視覚 I/F 本体)= `unified.py`**:
+  本セッションで実装した **600 の HALCON facade op**(genuine numpy、`data/halcon_facade_map.json`)を
+  **単一 registry + introspection メタ + 章別名前空間**に載せた。additive・既存 op / 進化 registry /
+  fullseye パッケージ facade を一切変更せず(F7)。
+  - **F2 統一発見**: `Registry`(`ops`)が 600 op を層横断で索引。`ops.find(q)`(名前/doc/章の全文検索)/
+    `ops.list(namespace=…)` / `ops.stats()`。
+  - **F3 introspection**: 各 op が `UnifiedOp`(name/実装関数の**自然シグネチャ**(inspect)/主 chapter/
+    namespace/doc/**render_hint**(image/region/contour/pose/point_cloud/matches/scalar/matrix)/provenance)。
+    `ops.describe(name)` が機械可読 dict を返す(Studio/エージェント共有)。**描画ヒントは F6(Studio)の 2D/3D
+    自動描画選択メタ**。
+  - **F1 自然呼び出し**: **17 章別名前空間**(`contour`/`calib`/`recon3d`/`region`/`match`/`transform`/
+    `filter`/`image`/`tools`/`object3d`/`match3d`/`segment`/`measure`/`metrology`/`morph`/`matrix`/`inspection`)。
+    例 `u.calib.camera_calibration(obj, views)` が Zhang 校正で真値 K を復元。進化用 a/b は露出しない
+    (各 op は自然な名前付き引数)。
+  - **fullseye 統合**: `fullseye/__init__.py` に additive 露出 → `fs.vision.<ns>.<op>(...)` / `fs.vision_ops`。
+    進化 REGISTRY(735)・知覚 facade(fs.stereo 等)と共存。
+  - **検証**: 動くデモ `spikes/unified_vision_demo.py`(F1/F2/F3/F7 を実走表示)。テスト `tests/test_unified.py`
+    9 件 pass。回帰 `test_op_contracts` 3113 pass 0 fail(F7 確認)。
+- **次**: F6 Studio 露出(render_hint で 2D/3D 自動描画・ドメイン棲み分け)/ 画像 registry 654 + 知覚 facade も
+  同 registry に段階載せ替え(現状 registry は本セッションの 600 HALCON facade op を収容)/ F4 OSS アダプタ契約。
