@@ -421,6 +421,8 @@ class StudioWindow(QtWidgets.QMainWindow):
 
     def _on_select(self) -> None:
         self._active_op = None
+        self._last3d = None
+        self.open3d_btn.setEnabled(False)
         sample = self._current_sample()
         if sample:
             self.editor.setPlainText(sample["code"])
