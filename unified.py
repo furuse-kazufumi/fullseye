@@ -268,15 +268,18 @@ def _load_facade(reg: Registry) -> None:
 
 
 def _make_evolution_caller(fn):
-    """進化 op(v,a,b)を自然な (image, a=0.5, b=0.5) 呼び出しに包む(a/b は探索用ノブ)。"""
-    def call(image, a: float = 0.5, b: float = 0.5):
+    """進化 op(v,a,b)を自然な ``op(image)`` 呼び出しに包む(F1: 探索用ノブ a/b は自然
+    シグネチャに露出しない)。a/b は keyword-only の escape hatch として残す(既定=中立 0.5、
+    power user が ``op(image, a=0.2)`` で調整可=表現力は失わない)。"""
+    def call(image, *, a: float = 0.5, b: float = 0.5):
         return fn(image, a, b)
     return call
 
 
 def _load_evolution(reg: Registry) -> None:
     """進化 registry(fs.REGISTRY, 735 Op)を統一 registry へ(provenance=evolution)。
-    a/b は探索用ノブ。自然 API は escape hatch(Image.op / この caller)で長い尾へアクセス。"""
+    F1 自然 API 化: 自然シグネチャは ``op(image)`` のみ(a/b は隠す)。長い尾へのアクセスは
+    Image チェーン / この caller の keyword-only a/b で確保。"""
     try:
         import fullseye as fs
     except Exception:
@@ -285,8 +288,8 @@ def _load_evolution(reg: Registry) -> None:
         namespace = _CAT_NS.get(op.category, "filter")
         doc = (op.fn.__doc__ or "").strip().splitlines()
         doc = doc[0].strip() if doc else f"{op.category} op(HALCON: {op.halcon or '-'})"
-        params = [("image", _inspect.Parameter.empty, "arg"),
-                  ("a", 0.5, "arg"), ("b", 0.5, "arg")]
+        # F1: 自然シグネチャは image のみ(探索ノブ a/b は非露出、keyword-only で調整可)
+        params = [("image", _inspect.Parameter.empty, "arg")]
         reg.register(UnifiedOp(name=op.name, func=_make_evolution_caller(op.fn),
                                module=f"fs.apply({op.name!r})", chapter=op.category,
                                namespace=namespace, doc=doc, provenance="evolution",
