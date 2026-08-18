@@ -53,22 +53,86 @@ def _syn_points2d(n=30, seed=0):
     return rng.uniform(0, 40, (n, 2))
 
 
+def _syn_matrix(n=3):
+    return np.eye(3) + 0.05 * np.arange(9).reshape(3, 3)
+
+
+def _syn_signal(n=40):
+    return np.sin(np.linspace(0, 6, n)) * 0.5 + 0.5
+
+
+def _syn_images(k=3):
+    return [_syn_image(seed=s) for s in range(k)]
+
+
+def _syn_points2d_n(n=12):
+    t = np.linspace(0, 2 * np.pi, n, endpoint=False)
+    return np.column_stack([20 + 10 * np.sin(t), 20 + 10 * np.cos(t)])
+
+
+def _syn_cam_par():
+    return {"fx": 500.0, "fy": 500.0, "cx": 32.0, "cy": 24.0}
+
+
+def _syn_pose():
+    T = np.eye(4); T[:3, 3] = [0.1, 0.0, 2.0]; return T
+
+
+def _syn_quat():
+    return np.array([1.0, 0.0, 0.0, 0.0])
+
+
+def _syn_dualquat():
+    return np.array([1.0, 0, 0, 0, 0, 0, 0, 0.0])
+
+
+def _syn_se():
+    return np.ones((3, 3), bool)
+
+
+def _syn_line():
+    return (10.0, 5.0, 10.0, 35.0)
+
+
+def _syn_vfield():
+    return np.zeros((32, 32))
+
+
 _SYN = {
     "image": _syn_image, "image1": _syn_image, "image2": _syn_image,
     "image_1": _syn_image, "image_2": _syn_image, "img": _syn_image,
     "source": _syn_image, "ref_image": _syn_image, "reference": _syn_image,
+    "template": _syn_image, "left": _syn_image, "right": _syn_image,
+    "disp": _syn_image, "disparity_image": _syn_image, "depth_image": _syn_image,
+    "vfield_row": _syn_vfield, "vfield_col": _syn_vfield,
+    "grad_row": _syn_vfield, "grad_col": _syn_vfield,
     "region": _syn_region, "seed_region": _syn_region, "ref_region": _syn_region,
-    "contour": _syn_contour,
+    "region1": _syn_region, "region2": _syn_region, "sub": _syn_region,
+    "contour": _syn_contour, "contour1": _syn_contour, "contour2": _syn_contour,
     "points": _syn_cloud, "point_cloud": _syn_cloud, "cloud": _syn_cloud,
     "points_a": _syn_cloud, "points_b": _syn_cloud, "model_points": _syn_cloud,
-    "scene_points": _syn_cloud,
+    "scene_points": _syn_cloud, "src": _syn_cloud,
+    "points1": _syn_points2d_n, "points2": _syn_points2d_n,
+    "src_points": _syn_points2d_n, "dst_points": _syn_points2d_n,
+    "image_points": _syn_points2d_n,
+    "images": _syn_images, "feature_images": _syn_images, "phase_images": _syn_images,
+    "y": _syn_signal, "y1": _syn_signal, "y2": _syn_signal, "hist": _syn_signal,
+    "M": _syn_matrix, "H": _syn_matrix, "A": _syn_matrix, "matrix": _syn_matrix,
+    "homography": _syn_matrix, "hom_mat2d": _syn_matrix, "hom_mat3d": _syn_pose,
+    "cam_par": _syn_cam_par, "K": _syn_matrix, "K1": _syn_matrix,
+    "pose": _syn_pose, "R": _syn_matrix, "quat": _syn_quat, "q": _syn_quat,
+    "dq": _syn_dualquat, "dual_quat": _syn_dualquat, "se": _syn_se,
+    "line": _syn_line, "line1": _syn_line, "line2": _syn_line, "seg": _syn_line,
+    "lut": _syn_signal,
 }
 # スカラー系 param のデフォルト(F3 の default が無い必須引数向け)
 _SCALAR = {"row": 32.0, "col": 32.0, "column": 32.0, "radius": 12.0, "ra": 14.0, "rb": 8.0,
            "phi": 0.3, "length1": 12.0, "length2": 8.0, "sigma": 1.0, "value": 0.5,
            "thresh": 0.3, "tol": 0.1, "size": 12.0, "width": 48, "height": 48,
            "row1": 8, "col1": 8, "row2": 30, "col2": 40, "focal": 500.0, "baseline": 0.1,
-           "disparity": 5.0, "kappa": 1e-4, "level": 0.3}
+           "disparity": 5.0, "kappa": 1e-4, "level": 0.3, "r1": 10.0, "c1": 5.0,
+           "r2": 10.0, "c2": 35.0, "cx": 32.0, "cy": 24.0, "shape": (48, 64),
+           "center": (32.0, 32.0), "t": 0.0, "x": 20.0, "index": 0, "axis": 2}
 
 
 def synthesize_args(op):
