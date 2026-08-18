@@ -4,7 +4,7 @@ Studio(Qt)は ``viewer3d.launch_detached`` からこのスクリプトを detach
 本プロセスが Open3D の GL ウィンドウを所有し run() でブロックする(Studio 側は固まらない)。
 GL クラッシュもこのプロセスに隔離される。
 
-  py -3.11 viewer3d_launch.py <manifest.json> [title]
+  py -3.11 viewer3d_launch.py <manifest.json>
 """
 from __future__ import annotations
 
@@ -17,10 +17,10 @@ import viewer3d  # noqa: E402
 
 def main() -> int:
     if len(sys.argv) < 2:
-        print("usage: viewer3d_launch.py <manifest.json> [title]", file=sys.stderr)
+        print("usage: viewer3d_launch.py <manifest.json>", file=sys.stderr)
         return 2
     manifest = sys.argv[1]
-    title = sys.argv[2] if len(sys.argv) > 2 else "Fullseye 3D"
+    title = viewer3d.scene_title(manifest)   # UTF-8 で manifest から(argv 文字化け回避)
     if not viewer3d.available():
         print("open3d not available", file=sys.stderr)
         return 1

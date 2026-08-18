@@ -245,3 +245,14 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     a/b を非露出)。a/b は keyword-only の escape hatch として保持(`op(image, a=0.2)` で調整可=表現力は不変)。
     `describe('median')['signature']` = `median(image)`。
   - **回帰**: `test_unified`(sim-source を valid provenance に追加)+`test_op_contracts` = 3122 pass。新機能テスト計 40 pass。
+
+- **2026-08-19 Studio 3D の desktop 常用化(F6 3D 側)= `spikes/viewer3d.py` + `viewer3d_launch.py`**:
+  現状 `_open3d` は `draw_geometries` で **Qt をブロック**(3D 窓を閉じるまで Studio が固まる)=常用不可だった。
+  - **別プロセス起動 `launch_detached(geometries, title)`**: geometry を一時 PLY バンドル(`save_scene`/`load_scene`)に
+    書き出し、`viewer3d_launch.py` を **detached 起動**(pythonw + DETACHED|CREATE_NO_WINDOW=console flash なし)。
+    Studio は即戻り**固まらない**/GL 落ちは子プロセスに隔離/複数窓可。実測: 親即終了(exit 0)、子 pythonw が GL 窓を所有・生存。
+  - **常用品質 `show_interactive`**: Visualizer API に更新(暗背景 / point_size 3 / world 原点軸 / 見やすい初期ビュー front-up-zoom)。
+  - **日本語タイトルの文字化け回避**: title を argv でなく **manifest(UTF-8)経由**(`scene_title`)で渡す。
+  - `studio_app._open3d` を `launch_detached` に切替(「別プロセスで起動、Studio 操作継続可」)。
+  - sim→vision→3D の全経路デモ: MuJoCo sim-source 点群 56824 点を desktop 3D 窓で表示(別プロセス)。
+  - テスト `tests/test_viewer3d.py` に save/load 往復・UTF-8 タイトル・empty→False を追加、計 11 pass。

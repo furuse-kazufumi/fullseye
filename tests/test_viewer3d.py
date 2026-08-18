@@ -76,3 +76,31 @@ def test_ground_grid():
     ls = v3d.ground_grid()
     import open3d as o3d
     assert isinstance(ls, o3d.geometry.LineSet) and len(ls.points) > 0
+
+
+@pytest.mark.skipif(o3d_missing, reason="open3d 未導入")
+def test_save_load_scene_round_trip(tmp_path):
+    """desktop 常用: geometry を PLY バンドルに保存し復元できる(別プロセス受け渡し)。"""
+    import open3d as o3d
+    geoms = v3d.to_geometries(np.random.default_rng(0).random((150, 3)), "point_cloud")
+    geoms += v3d.to_geometries(np.eye(4), "pose")
+    man = v3d.save_scene(geoms, str(tmp_path / "scene"), title="テスト 3D")
+    assert man and man.endswith("manifest.json")
+    back = v3d.load_scene(man)
+    npc_in = sum(len(g.points) for g in geoms if isinstance(g, o3d.geometry.PointCloud))
+    npc_out = sum(len(g.points) for g in back if isinstance(g, o3d.geometry.PointCloud))
+    assert npc_in == npc_out == 150
+
+
+@pytest.mark.skipif(o3d_missing, reason="open3d 未導入")
+def test_scene_title_utf8_round_trip(tmp_path):
+    """日本語タイトルが manifest(UTF-8)経由で文字化けせず往復する(argv codepage 回避)。"""
+    geoms = v3d.to_geometries(np.random.default_rng(1).random((30, 3)), "point_cloud")
+    title = "Fullseye 3D — 点群デモ"
+    man = v3d.save_scene(geoms, str(tmp_path / "s"), title=title)
+    assert v3d.scene_title(man) == title
+
+
+def test_launch_detached_empty_is_false():
+    """geometry が無ければ launch_detached は窓を出さず False(安全に劣化)。"""
+    assert v3d.launch_detached([]) is False
