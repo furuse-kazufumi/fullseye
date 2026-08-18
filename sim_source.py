@@ -29,9 +29,14 @@ class MuJoCo:
 
     def __init__(self, model, data=None, width: int = 320, height: int = 240) -> None:
         import mujoco
+        self._xml = None
         if isinstance(model, str):
-            model = (mujoco.MjModel.from_xml_path(model) if model.strip().endswith(".xml")
-                     else mujoco.MjModel.from_xml_string(model))
+            if model.strip().endswith(".xml"):
+                self._xml = open(model, encoding="utf-8").read()
+                model = mujoco.MjModel.from_xml_path(model)
+            else:
+                self._xml = model
+                model = mujoco.MjModel.from_xml_string(model)
         self._m = model
         self._d = data if data is not None else mujoco.MjData(model)
         mujoco.mj_forward(self._m, self._d)
