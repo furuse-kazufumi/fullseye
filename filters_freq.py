@@ -133,3 +133,22 @@ def vector_field_length(vfield_row, vfield_col):
 def energy_gabor(image_real, image_imag):
     """Gabor 実/虚応答からエネルギー(振幅二乗)(energy_gabor)。"""
     return _img(image_real) ** 2 + _img(image_imag) ** 2
+
+
+def gauss_distribution(sigma, n=256):
+    """正規分布の確率密度テーブル(gauss_distribution)。ノイズモデル用。"""
+    x = np.linspace(-4 * sigma, 4 * sigma, int(n))
+    return np.exp(-x ** 2 / (2 * sigma ** 2)) / (np.sqrt(2 * np.pi) * sigma)
+
+
+def sp_distribution(p_salt=0.05, p_pepper=0.05, n=256):
+    """salt-and-pepper ノイズ分布(両端に質量、中央一様)(sp_distribution)。"""
+    d = np.full(int(n), (1 - p_salt - p_pepper) / max(1, n - 2))
+    d[0] = p_pepper; d[-1] = p_salt
+    return d
+
+
+def noise_distribution_mean(images):
+    """複数観測から画素ごとノイズ標準偏差の平均を推定(noise_distribution_mean)。"""
+    stack = np.stack([np.asarray(im, float) for im in images], axis=0)
+    return float(stack.std(axis=0).mean())

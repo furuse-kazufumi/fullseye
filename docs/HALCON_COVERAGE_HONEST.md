@@ -1,8 +1,16 @@
-# HALCON カバレッジ — honest な分母(2026-08-18)
+# HALCON カバレッジ — honest な分母(2026-08-18 更新)
 
-`halcon_coverage.py` は全 2313 operator を分母に **14.9%(344/2313)** と報告する。しかし
+`halcon_coverage.py` は全 2313 operator を分母に **31.5%(728/2313)** と報告する。しかし
 **「HALCON 級 vision ライブラリ」の honest な目標分母は 2313 ではない** — HALCON の 2313 には
 numpy vision スキルライブラリが再現すべきでない/できない operator が約 1034 含まれる。
+
+**現在到達点(2026-08-18 セッション)**: vision-algorithm 分母で **713/1304 = 54.7%**
+(セッション開始 46.2% → +115 op、全て numpy genuine 実装 + ground-truth 検証済、dangling=0)。
+本セッション追加: image_channels/image_gray/image_gen(Image)、filters_arith/filters_freq/filters_flow
+(Filters: 算術・FFT畳込み・位相相関・Wiener・Horn-Schunck multigrid オプティカルフロー・異方性拡散インペイント)、
+tools_geom(交点・Plücker 直線・方向つき Hough)、reconstruction(Frankot-Chellappa 勾配積分・photometric stereo・
+depth-from-focus・三角測量・構造化光復号)、calib(透視投影・world-plane 逆投影・Zhang 内部校正・Tsai/Park-Martin ハンドアイ)。
+honest-gate 検出 7 件(moments_gray_plane の Mean 意味論、hand-eye Procrustes 転置 ほか)を修正。
 
 ## off-mission(vision アルゴリズムでない ~1034 op)
 

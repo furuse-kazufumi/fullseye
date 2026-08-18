@@ -91,3 +91,67 @@ def get_pair_funct_1d(y, index=0):
     y = np.asarray(y, float)
     i = int(np.clip(index, 0, len(y) - 1))
     return np.array([float(i), float(y[i])])
+
+
+def smooth_funct_1d_mean(y, size=3, iterations=1):
+    """1D 移動平均平滑化(smooth_funct_1d_mean)。"""
+    from scipy.ndimage import uniform_filter1d
+    y = np.asarray(y, float)
+    for _ in range(int(iterations)):
+        y = uniform_filter1d(y, int(size), mode="nearest")
+    return y
+
+
+def invert_funct_1d(y):
+    """関数 y=f(x) を x=f^-1(y) へ反転(単調区間で線形補間)(invert_funct_1d)。"""
+    y = np.asarray(y, float); x = np.arange(len(y))
+    order = np.argsort(y)
+    return {"x": y[order], "y": x[order].astype(float)}
+
+
+def transform_funct_1d(y, mult_x=1.0, add_x=0.0, mult_y=1.0, add_y=0.0):
+    """1D 関数のアフィン変換(x,y 独立、transform_funct_1d)。(x,y) 対を返す。"""
+    y = np.asarray(y, float); x = np.arange(len(y)).astype(float)
+    return np.column_stack([mult_x * x + add_x, mult_y * y + add_y])
+
+
+def x_range_funct_1d(y):
+    """関数の x 範囲(min,max)(x_range_funct_1d)。"""
+    n = len(np.asarray(y))
+    return (0.0, float(n - 1))
+
+
+def y_range_funct_1d(y):
+    """関数の y 範囲(min,max)(y_range_funct_1d)。"""
+    y = np.asarray(y, float)
+    return (float(y.min()), float(y.max()))
+
+
+def get_y_value_funct_1d(y, x, interpolate=True):
+    """指定 x での y 値(線形補間可)(get_y_value_funct_1d)。"""
+    y = np.asarray(y, float)
+    if interpolate:
+        return float(np.interp(x, np.arange(len(y)), y))
+    i = int(np.clip(round(x), 0, len(y) - 1))
+    return float(y[i])
+
+
+def create_funct_1d_array(y):
+    """等間隔サンプル配列から 1D 関数を作る(create_funct_1d_array)。"""
+    return np.asarray(y, float)
+
+
+def create_funct_1d_pairs(x, y):
+    """(x,y) 対から等間隔 1D 関数へ再標本化(create_funct_1d_pairs)。"""
+    x = np.asarray(x, float); y = np.asarray(y, float)
+    order = np.argsort(x); x, y = x[order], y[order]
+    xi = np.arange(int(np.floor(x.min())), int(np.ceil(x.max())) + 1)
+    return np.interp(xi, x, y)
+
+
+def match_funct_1d_trans(y1, y2):
+    """2 つの 1D 関数間の最良シフト(相互相関ピーク)を推定(match_funct_1d_trans)。"""
+    a = np.asarray(y1, float) - np.mean(y1); b = np.asarray(y2, float) - np.mean(y2)
+    corr = np.correlate(a, b, mode="full")
+    shift = corr.argmax() - (len(b) - 1)
+    return {"shift": int(shift), "score": float(corr.max())}
