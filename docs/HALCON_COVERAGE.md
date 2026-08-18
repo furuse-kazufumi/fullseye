@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 720 / 2313 HALCON operators (31.1%)** via `Op.halcon`, from 735 registry ops.
+**imgevolve maps to 728 / 2313 HALCON operators (31.5%)** via `Op.halcon`, from 735 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
@@ -31,9 +31,9 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | XLD | 53 | 97 | 44 |
 | Image | 72 | 110 | 38 |
 | Develop | 0 | 37 | 37 |
-| Filters | 161 | 196 | 35 |
 | Control | 0 | 34 | 34 |
 | Transformations | 89 | 118 | 29 |
+| Filters | 169 | 196 | 27 |
 | Identification | 1 | 27 | 26 |
 | 3D Object Model | 26 | 51 | 25 |
 | Image Source | 0 | 25 | 25 |
@@ -63,8 +63,8 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 ## Version awareness (HALCON's op set changes between releases)
 Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
 
-- **684** claimed names exist in **all** scraped releases (stable).
-- **36 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `area_intersection_rectangle2` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `create_generic_shape_model` (in 2311/2411/2505/2605); `crop_rectangle2` (in 2311/2411/2505/2605); `decode_structured_light_pattern` (in 2311/2411/2505/2605); `distance_cc_min_points` (in 2311/2411/2505/2605); `distance_point_line` (in 2311/2411/2505/2605); `distance_point_pluecker_line` (in 2311/2411/2505/2605); `dual_quat_compose` (in 13/2311/2411/2505/2605); `dual_quat_conjugate` (in 13/2311/2411/2505/2605); `dual_quat_interpolate` (in 13/2311/2411/2505/2605); `dual_quat_normalize` (in 13/2311/2411/2505/2605); `dual_quat_to_hom_mat3d` (in 13/2311/2411/2505/2605); `dual_quat_to_pose` (in 13/2311/2411/2505/2605); `dual_quat_to_screw` (in 13/2311/2411/2505/2605); `dual_quat_trans_point_3d` (in 2311/2411/2505/2605); `edges_object_model_3d` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `gen_savitzky_golay_filter` (in 2605); `gen_structured_light_pattern` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `interleave_channels` (in 13/2311/2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `pluecker_line_to_point_direction` (in 2311/2411/2505/2605); `pluecker_line_to_points` (in 2311/2411/2505/2605); `point_direction_to_pluecker_line` (in 2311/2411/2505/2605); `points_to_pluecker_line` (in 2311/2411/2505/2605); `pose_to_dual_quat` (in 13/2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `screw_to_dual_quat` (in 13/2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605); `test_region_points` (in 2411/2505/2605); `uncalibrated_photometric_stereo` (in 2311/2411/2505/2605)
+- **691** claimed names exist in **all** scraped releases (stable).
+- **37 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `area_intersection_rectangle2` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `convol_channels` (in 2605); `create_generic_shape_model` (in 2311/2411/2505/2605); `crop_rectangle2` (in 2311/2411/2505/2605); `decode_structured_light_pattern` (in 2311/2411/2505/2605); `distance_cc_min_points` (in 2311/2411/2505/2605); `distance_point_line` (in 2311/2411/2505/2605); `distance_point_pluecker_line` (in 2311/2411/2505/2605); `dual_quat_compose` (in 13/2311/2411/2505/2605); `dual_quat_conjugate` (in 13/2311/2411/2505/2605); `dual_quat_interpolate` (in 13/2311/2411/2505/2605); `dual_quat_normalize` (in 13/2311/2411/2505/2605); `dual_quat_to_hom_mat3d` (in 13/2311/2411/2505/2605); `dual_quat_to_pose` (in 13/2311/2411/2505/2605); `dual_quat_to_screw` (in 13/2311/2411/2505/2605); `dual_quat_trans_point_3d` (in 2311/2411/2505/2605); `edges_object_model_3d` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `gen_savitzky_golay_filter` (in 2605); `gen_structured_light_pattern` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `interleave_channels` (in 13/2311/2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `pluecker_line_to_point_direction` (in 2311/2411/2505/2605); `pluecker_line_to_points` (in 2311/2411/2505/2605); `point_direction_to_pluecker_line` (in 2311/2411/2505/2605); `points_to_pluecker_line` (in 2311/2411/2505/2605); `pose_to_dual_quat` (in 13/2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `screw_to_dual_quat` (in 13/2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605); `test_region_points` (in 2411/2505/2605); `uncalibrated_photometric_stereo` (in 2311/2411/2505/2605)
 - **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 
 ## Honest reading

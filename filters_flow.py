@@ -13,21 +13,43 @@ def _img(a):
     return np.asarray(a, dtype=np.float64)
 
 
-def optical_flow_mg(image1, image2, alpha=1.0, iterations=100):
-    """Horn-Schunck 密オプティカルフロー(vfield row,col)を推定(optical_flow_mg)。
-    大域平滑化つき。image1->image2 の見かけ運動。"""
-    im1 = _img(image1); im2 = _img(image2)
+def _hs_iterate(im1, im2, u, v, alpha, iterations):
+    """1 スケールの Horn-Schunck 反復(u,v は初期流れ、warp 済み残差に対して更新)。"""
+    from scipy.ndimage import convolve, map_coordinates
+    rr, cc = np.mgrid[0:im1.shape[0], 0:im1.shape[1]].astype(float)
+    warped = map_coordinates(im2, [rr + v, cc + u], order=1, mode="reflect")
     Ix = np.gradient(im1, axis=1); Iy = np.gradient(im1, axis=0)
-    It = im2 - im1
-    u = np.zeros_like(im1); v = np.zeros_like(im1)
+    It = warped - im1
+    du = np.zeros_like(im1); dv = np.zeros_like(im1)
     kernel = np.array([[1 / 12, 1 / 6, 1 / 12], [1 / 6, 0, 1 / 6], [1 / 12, 1 / 6, 1 / 12]])
-    from scipy.ndimage import convolve
     for _ in range(int(iterations)):
-        ubar = convolve(u, kernel, mode="nearest")
-        vbar = convolve(v, kernel, mode="nearest")
+        ubar = convolve(du, kernel, mode="nearest")
+        vbar = convolve(dv, kernel, mode="nearest")
         deriv = (Ix * ubar + Iy * vbar + It) / (alpha ** 2 + Ix ** 2 + Iy ** 2)
-        u = ubar - Ix * deriv
-        v = vbar - Iy * deriv
+        du = ubar - Ix * deriv
+        dv = vbar - Iy * deriv
+    return u + du, v + dv
+
+
+def optical_flow_mg(image1, image2, alpha=1.0, iterations=100, levels=4):
+    """マルチグリッド(粗密ピラミッド + warping)Horn-Schunck 密オプティカルフロー
+    を推定(optical_flow_mg)。大変位も復元。返り値 vfield {row, col}。"""
+    from scipy.ndimage import zoom
+    im1 = _img(image1); im2 = _img(image2)
+    pyr1 = [im1]; pyr2 = [im2]
+    for _ in range(int(levels) - 1):
+        if min(pyr1[-1].shape) < 8:
+            break
+        pyr1.append(zoom(pyr1[-1], 0.5, order=1))
+        pyr2.append(zoom(pyr2[-1], 0.5, order=1))
+    u = np.zeros_like(pyr1[-1]); v = np.zeros_like(pyr1[-1])
+    for lvl in range(len(pyr1) - 1, -1, -1):
+        a, b = pyr1[lvl], pyr2[lvl]
+        if u.shape != a.shape:
+            sr = a.shape[0] / u.shape[0]; sc = a.shape[1] / u.shape[1]
+            u = zoom(u, (sr, sc), order=1) * sc      # 流れは座標スケールに比例
+            v = zoom(v, (sr, sc), order=1) * sr
+        u, v = _hs_iterate(a, b, u, v, alpha, iterations)
     return {"row": v, "col": u}
 
 
