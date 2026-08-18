@@ -104,3 +104,29 @@ def test_scene_geometries_builds_meshes():
         assert isinstance(g, o3d.geometry.TriangleMesh)
         assert len(g.vertices) > 0 and len(g.triangles) > 0
     s.close()
+
+
+def test_save_animation_bundle(tmp_path):
+    """アニメ: モデル XML + qpos 軌道をバンドル化し再構築できる(rollout を動きで見る基盤)。"""
+    import json, os, numpy as np, mujoco
+    s = S.MuJoCo(_XML)                          # XML 由来なので save_animation 可
+    m = s._m
+    traj = np.tile(np.asarray(s._d.qpos), (10, 1))   # 10 フレーム(静止軌道)
+    man = s.save_animation(str(tmp_path / "anim"), traj, fps=20, title="テスト")
+    spec = json.load(open(man, encoding="utf-8"))
+    assert spec["kind"] == "animation" and spec["n_frames"] == 10 and spec["fps"] == 20
+    q = np.load(os.path.join(os.path.dirname(man), spec["frames"]))
+    m2 = mujoco.MjModel.from_xml_string(
+        open(os.path.join(os.path.dirname(man), spec["model"]), encoding="utf-8").read())
+    assert q.shape == (10, m.nq) and m2.nq == m.nq
+    s.close()
+
+
+def test_save_animation_requires_xml():
+    """アニメ: MjModel 直渡し(XML 無し)では save_animation は明示 raise。"""
+    import mujoco, pytest, numpy as np
+    m = mujoco.MjModel.from_xml_string(_XML)
+    s = S.MuJoCo(m)                             # XML を保持しない
+    with pytest.raises(RuntimeError):
+        s.save_animation("x", np.zeros((3, m.nq)))
+    s.close()

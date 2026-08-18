@@ -493,6 +493,37 @@ class StudioWindow(QtWidgets.QMainWindow):
         self._refresh_3d_windows()
         self.statusBar().showMessage(f"3D 窓を {n} 個閉じました")
 
+    def _view_mjcf(self, mode: str) -> None:
+        """MJCF を実形状(mesh)or 点群(cloud)で 3D 窓に表示(sim-source→viewer)。"""
+        import os
+        path = self.sim_path.text().strip().strip('"')
+        if not path or not os.path.exists(path):
+            self.statusBar().showMessage("MJCF (.xml) のパスが不正です")
+            return
+        if not _v3d.available():
+            self.statusBar().showMessage("Open3D 未導入: pip install open3d")
+            return
+        try:
+            src = fs.vision.sim.MuJoCo(path)
+            name = os.path.basename(path)
+            if mode == "mesh":
+                geoms = src.scene_geometries()
+                title = f"Fullseye 3D — {name}(実形状)"
+            else:
+                cloud = src.point_cloud(0) if src.cameras() else None
+                if cloud is None:
+                    self.statusBar().showMessage("このモデルに camera が無く点群にできません(実形状で表示を)")
+                    src.close(); return
+                geoms = _v3d.to_geometries(cloud, "point_cloud")
+                title = f"Fullseye 3D — {name}(点群)"
+            src.close()
+        except Exception as e:  # noqa: BLE001
+            self.statusBar().showMessage(f"MJCF 読み込み失敗: {e}")
+            return
+        wid = self.viewer_mgr.launch(geoms, title=title)
+        self._refresh_3d_windows()
+        self.statusBar().showMessage(f"3D 窓 #{wid}: {title}" if wid else "3D 起動失敗(desktop GL)")
+
     def _on_hover(self, event) -> None:
         """hwv 風: 画像(AxesImage)上の hover で画素座標と値をステータスバーに表示。"""
         ax = event.inaxes
