@@ -181,3 +181,64 @@ def projective_trans_point_3d(H, px, py, pz):
     r = _m(H) @ np.array([px, py, pz, 1.0])
     w = r[3] if abs(r[3]) > 1e-12 else 1.0
     return r[:3] / w
+
+
+# ── local 変種(右乗算)+ 追加 ─────────────────────────────────────────────── #
+def hom_mat2d_slant_local(H, theta=0.0):
+    S = np.array([[1, np.tan(theta), 0], [0, 1, 0], [0, 0, 1.0]])
+    return _m(H) @ S
+
+
+def hom_mat2d_reflect_local(H, axis=0):
+    R = np.diag([-1.0 if axis == 0 else 1.0, -1.0 if axis == 1 else 1.0, 1.0])
+    return _m(H) @ R
+
+
+def hom_mat3d_rotate_local(H, phi=0.0, axis=2):
+    return _m(H) @ hom_mat3d_rotate(np.eye(4), phi, axis)
+
+
+def hom_mat3d_translate_local(H, tx=0.0, ty=0.0, tz=0.0):
+    T = np.eye(4)
+    T[:3, 3] = [tx, ty, tz]
+    return _m(H) @ T
+
+
+def hom_mat3d_scale_local(H, sx=1.0, sy=1.0, sz=1.0):
+    return _m(H) @ np.diag([sx, sy, sz, 1.0])
+
+
+def hom_mat3d_transpose_(H):
+    return _m(H).T
+
+
+def hom_mat3d_project(H, px, py, pz):
+    """4x4 の透視投影行列で 3D 点を 2D 画像点へ(hom_mat3d_project)。"""
+    r = _m(H) @ np.array([px, py, pz, 1.0])
+    w = r[2] if abs(r[2]) > 1e-12 else 1.0
+    return np.array([r[0] / w, r[1] / w])
+
+
+def projective_trans_pixel(H, row, col):
+    """画素 (row,col) に射影変換を適用(HALCON (row,col) 順)。"""
+    r = _m(H) @ np.array([col, row, 1.0])
+    w = r[2] if abs(r[2]) > 1e-12 else 1.0
+    return np.array([r[1] / w, r[0] / w])
+
+
+def dual_quat_to_hom_mat3d(dq):
+    """単位二重四元数 [qr(4), qd(4)] を 4x4 剛体変換に(dual_quat_to_hom_mat3d)。"""
+    dq = np.asarray(dq, dtype=np.float64)
+    qr, qd = dq[:4], dq[4:8]
+    w, x, y, z = qr
+    R = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
+                  [2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)],
+                  [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)]])
+    t = 2 * np.array([
+        -qd[0] * qr[1] + qd[1] * qr[0] - qd[2] * qr[3] + qd[3] * qr[2],
+        -qd[0] * qr[2] + qd[1] * qr[3] + qd[2] * qr[0] - qd[3] * qr[1],
+        -qd[0] * qr[3] - qd[1] * qr[2] + qd[2] * qr[1] + qd[3] * qr[0]])
+    H = np.eye(4)
+    H[:3, :3] = R
+    H[:3, 3] = t
+    return H

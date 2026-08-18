@@ -37,3 +37,17 @@ def essential_to_fundamental_matrix(E, K1, K2=None) -> np.ndarray:
     K1 = np.asarray(K1, dtype=np.float64)
     K2 = K1 if K2 is None else np.asarray(K2, dtype=np.float64)
     return np.linalg.inv(K2).T @ E @ np.linalg.inv(K1)
+
+
+def get_line_of_sight(row, col, K):
+    """画素 (row,col) の視線方向(正規化 3D ベクトル)を返す(get_line_of_sight)。"""
+    Kinv = np.linalg.inv(np.asarray(K, dtype=np.float64))
+    v = Kinv @ np.array([col, row, 1.0])
+    return v / (np.linalg.norm(v) + 1e-12)
+
+
+def gen_structured_light_pattern(width: int = 64, height: int = 48, period: int = 8, phase: float = 0.0):
+    """正弦波の構造化光パターン画像を生成(gen_structured_light_pattern)。"""
+    x = np.arange(int(width))
+    row = 0.5 + 0.5 * np.cos(2 * np.pi * x / period + phase)
+    return np.tile(row, (int(height), 1))
