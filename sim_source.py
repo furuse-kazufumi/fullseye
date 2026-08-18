@@ -189,6 +189,112 @@ class MuJoCo:
         pos = self._d.cam_xpos[cid]
         return cam_pts @ R.T + pos
 
+    def save_animation(self, scene_dir, qpos, fps: int = 30, title: str = "Fullseye 3D") -> str:
+        """モデル XML + qpos 軌道 (T, nq) をアニメバンドルに保存(別プロセス再生用)。
+        rollout の qpos 列を渡すと歩行/着陸を『動き』で見られる。返り値 = manifest パス。
+        XML 由来で構築した MuJoCo にのみ有効(再生側でモデルを再構築するため)。"""
+        import json
+        import os
+        if self._xml is None:
+            raise RuntimeError("save_animation は XML 由来の MuJoCo が要る(MjModel 直渡しは不可)")
+        os.makedirs(scene_dir, exist_ok=True)
+        qpos = np.asarray(qpos, float)
+        with open(os.path.join(scene_dir, "model.xml"), "w", encoding="utf-8") as fh:
+            fh.write(self._xml)
+        np.save(os.path.join(scene_dir, "qpos.npy"), qpos)
+        manifest = os.path.join(scene_dir, "manifest.json")
+        with open(manifest, "w", encoding="utf-8") as fh:
+            json.dump({"kind": "animation", "model": "model.xml", "frames": "qpos.npy",
+                       "fps": int(fps), "title": title, "n_frames": int(len(qpos))},
+                      fh, ensure_ascii=False)
+        return manifest
+
+
+def play_animation(manifest) -> bool:
+    """アニメバンドルを Open3D 窓で再生(別プロセスの launcher が呼ぶ)。
+    毎フレーム qpos を流し込み mj_forward → 各 geom の world 変換だけ更新(メッシュは再利用)。
+    再生後はウィンドウを開いたまま(mouse ナビ可)。desktop GL が要る。"""
+    import json
+    import os
+    import time
+    import mujoco
+    import open3d as o3d
+    d = os.path.dirname(manifest)
+    with open(manifest, encoding="utf-8") as fh:
+        spec = json.load(fh)
+    m = mujoco.MjModel.from_xml_string(open(os.path.join(d, spec["model"]), encoding="utf-8").read())
+    data = mujoco.MjData(m)
+    qpos = np.load(os.path.join(d, spec["frames"]))
+    fps = int(spec.get("fps", 30)); title = spec.get("title", "Fullseye 3D")
+    src = MuJoCo(m, data)
+    # geom ごとに (local メッシュ, local 頂点) を一度だけ作る
+    items = []
+    for g in range(m.ngeom):
+        mesh = src._geom_local_mesh(g)
+        if mesh is not None:
+            items.append((g, mesh, np.asarray(mesh.vertices).copy()))
+    vis = o3d.visualization.Visualizer()
+    vis.create_window(window_name=title, width=1000, height=760)
+    opt = vis.get_render_option()
+    opt.background_color = np.array([0.09, 0.10, 0.12]); opt.point_size = 3.0
+    import sys as _sys
+    _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + "/spikes")
+    try:
+        import viewer3d as _v3d
+        grid = _v3d.ground_grid()
+        if grid is not None:
+            vis.add_geometry(grid)
+    except Exception:
+        pass
+    vis.add_geometry(o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.3))
+    for _, mesh, _v in items:
+        vis.add_geometry(mesh)
+
+    def apply_frame(t):
+        data.qpos[:] = qpos[t]; mujoco.mj_forward(m, data)
+        for g, mesh, base in items:
+            R = np.asarray(data.geom_xmat[g]).reshape(3, 3)
+            pos = np.asarray(data.geom_xpos[g])
+            mesh.vertices = o3d.utility.Vector3dVector(base @ R.T + pos)
+            mesh.compute_vertex_normals()
+            vis.update_geometry(mesh)
+
+    apply_frame(0)
+    vis.reset_view_point(True)
+    dt = 1.0 / max(1, fps)
+    for t in range(len(qpos)):        # 再生
+        apply_frame(t)
+        if not vis.poll_events():
+            vis.destroy_window(); return True
+        vis.update_renderer()
+        time.sleep(dt)
+    vis.run()                          # 再生後は静止表示のまま(閉じるまで)
+    vis.destroy_window()
+    return True
+
+
+def launch_animation(model_xml, qpos, title: str = "Fullseye 3D", fps: int = 30):
+    """アニメを **別プロセス** で再生起動し Popen を返す(失敗時 None)。Studio を固めない。"""
+    import os
+    import subprocess
+    import sys
+    import tempfile
+    try:
+        scene_dir = tempfile.mkdtemp(prefix="fs3danim_")
+        src = MuJoCo(model_xml)
+        manifest = src.save_animation(scene_dir, qpos, fps=fps, title=title)
+        launcher = os.path.join(os.path.dirname(os.path.abspath(__file__)), "spikes", "anim_launch.py")
+        exe = sys.executable
+        pyw = os.path.join(os.path.dirname(exe), "pythonw.exe")
+        if os.path.exists(pyw):
+            exe = pyw
+        kwargs = {"close_fds": True}
+        if os.name == "nt":
+            kwargs["creationflags"] = 0x00000008 | 0x08000000
+        return subprocess.Popen([exe, launcher, manifest], **kwargs)
+    except Exception:
+        return None
+
 
 class _Scaffold:
     """未接続の sim-source(optional-extras の honest scaffold)。動詞は明示 raise。"""
