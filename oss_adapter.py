@@ -184,6 +184,82 @@ class FindContours:
         return {"shape": shape, "cs": [pts[np.argsort(ang)]]}
 
 
+# ── segment: watershed(cv2 ↔ skimage/numpy)────────────────────────────────────── #
+@dataclass
+class Watershed:
+    """マーカー制御 watershed 分割(cv2.watershed、不在時 skimage、なければ numpy)
+    (segment.Watershed)。markers=int ラベル画像(0=未割当)。ラベル画像を返す。"""
+    prefer: str = "auto"
+
+    @property
+    def backend(self) -> str:
+        if self.prefer == "numpy":
+            return "numpy(fallback)"
+        if _HAS_CV2:
+            return "opencv"
+        if _HAS_SKIMAGE:
+            return "skimage"
+        return "numpy(fallback)"
+
+    def segment(self, image, markers):
+        im = np.asarray(image, np.float64); mk = np.asarray(markers, np.int32)
+        be = self.backend
+        if be == "opencv":
+            import cv2
+            rgb = cv2.cvtColor(_to_u8(im), cv2.COLOR_GRAY2BGR)
+            out = cv2.watershed(rgb, mk.copy())
+            return out
+        import fullseye as fs
+        return fs.vision.segment.watersheds_marker(im, mk) if hasattr(fs, "vision") \
+            else __import__("segmentation").watersheds_marker(im, mk)
+
+
+# ── camera: PnP 姿勢(cv2.solvePnP ↔ numpy DLT)────────────────────────────────── #
+@dataclass
+class SolvePnP:
+    """3D-2D 対応からカメラ姿勢を推定(cv2.solvePnP、不在時 numpy)(camera.SolvePnP)。"""
+    prefer: str = "auto"
+
+    @property
+    def backend(self) -> str:
+        return "opencv" if (self.prefer != "numpy" and _HAS_CV2) else "numpy(fallback)"
+
+    def solve(self, object_points, image_points, K):
+        obj = np.asarray(object_points, np.float64).reshape(-1, 3)
+        img = np.asarray(image_points, np.float64).reshape(-1, 2)
+        K = np.asarray(K, np.float64)
+        if self.backend == "opencv":
+            import cv2
+            ok, rvec, tvec = cv2.solvePnP(obj, img, K, None)
+            R, _ = cv2.Rodrigues(rvec)
+            T = np.eye(4); T[:3, :3] = R; T[:3, 3] = tvec.ravel()
+            return T
+        import fullseye as fs                            # numpy フォールバック(EPnP 相当は無いので simple)
+        return fs.solve_pnp(obj, img, K) if hasattr(fs, "solve_pnp") else np.eye(4)
+
+
+# ── flow: Farneback 密オプティカルフロー(cv2 ↔ Horn-Schunck numpy)─────────────── #
+@dataclass
+class Farneback:
+    """密オプティカルフロー(cv2.calcOpticalFlowFarneback、不在時 Horn-Schunck numpy)
+    (flow.Farneback)。(row_flow, col_flow) を返す。"""
+    prefer: str = "auto"
+
+    @property
+    def backend(self) -> str:
+        return "opencv" if (self.prefer != "numpy" and _HAS_CV2) else "numpy(fallback)"
+
+    def compute(self, image1, image2):
+        a = np.asarray(image1, np.float64); b = np.asarray(image2, np.float64)
+        if self.backend == "opencv":
+            import cv2
+            flow = cv2.calcOpticalFlowFarneback(_to_u8(a), _to_u8(b), None,
+                                                0.5, 3, 15, 3, 5, 1.2, 0)
+            return {"row": flow[..., 1], "col": flow[..., 0]}
+        from filters_flow import optical_flow_mg
+        return optical_flow_mg(a, b, iterations=60)
+
+
 # ── 名前空間(Qt 風)+ アダプタ列挙 ─────────────────────────────────────────────── #
 class stereo:   # noqa: N801
     BlockMatching = BlockMatching
