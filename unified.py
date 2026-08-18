@@ -171,8 +171,10 @@ class Registry:
         self._ns: dict[str, dict[str, UnifiedOp]] = {}
 
     def register(self, op: UnifiedOp) -> None:
-        self._ops[op.name] = op
-        self._ns.setdefault(op.namespace, {})[op.name] = op
+        # bare 名は first-wins(facade を最初に登録=genuine を優先、既存挙動維持)
+        self._ops.setdefault(op.name, op)
+        # 名前空間内も first-wins(層跨ぎの同名衝突を安定化)
+        self._ns.setdefault(op.namespace, {}).setdefault(op.name, op)
 
     def __getitem__(self, name: str) -> UnifiedOp:
         return self._ops[name]
