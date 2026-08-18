@@ -299,6 +299,7 @@ class StudioWindow(QtWidgets.QMainWindow):
         self._by_name = {s["name"]: s for s in SAMPLES}
         self._sliders: list[_ParamSlider] = []
         self._suspend = False  # スライダ再構築中の連鎖 run 抑止
+        self._active_op = None  # 統一 registry op を選択中なら UnifiedOp
 
         # 左: サンプル一覧(domain 別ツリー)+ 統一 registry の 600 op 自動列挙(F6/F2)
         self.tree = QtWidgets.QTreeWidget()
