@@ -398,10 +398,24 @@ class StudioWindow(QtWidgets.QMainWindow):
         self._suspend = False
 
     def _on_select(self) -> None:
+        self._active_op = None
         sample = self._current_sample()
         if sample:
             self.editor.setPlainText(sample["code"])
             self._rebuild_params(sample)
+            self._run()
+            return
+        op = self._current_op()
+        if op is not None:
+            self._active_op = op
+            d = op.as_dict()
+            self.editor.setPlainText(
+                f"# {op.namespace}.{op.name}  [render_hint={d['render_hint']}]\n"
+                f"# {d['doc']}\n#\n# 統一 registry から自動実行(F6): 合成入力 + スライダ上書き。\n"
+                f"# シグネチャ: {d['signature']}\n"
+                f"result = fs.vision.{op.namespace}.{op.name}(...)\n"
+                f"# → render_hint '{d['render_hint']}' で自動描画。")
+            self._rebuild_params({"params": _browser.scalar_param_specs(op)})
             self._run()
 
     def _run(self) -> None:
