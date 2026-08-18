@@ -397,6 +397,128 @@ def namespaces() -> dict:
     return {ns: _ns_object(ns) for ns in _ensure().namespaces()}
 
 
+# ── F5 合成: op をパイプライン化して繋ぐ(画像チェーン / 知覚の段組み)──────────── #
+
+def _resolve_op(op) -> "UnifiedOp":
+    """op を UnifiedOp に解決: UnifiedOp / registry の op 名 / 生 callable を受ける。"""
+    if isinstance(op, UnifiedOp):
+        return op
+    if callable(op) and not isinstance(op, str):
+        return UnifiedOp(
+            name=getattr(op, "__name__", "callable"), func=op,
+            module=getattr(op, "__module__", "?"), chapter="Pipeline", namespace="pipeline",
+            doc=((op.__doc__ or "").strip().split("\n")[0]),
+            render_hint="image", params=_params_of(op), provenance="inline")
+    reg = _ensure()
+    found = reg.get(op)
+    if found is None:
+        cand = ", ".join(o.name for o in reg.find(str(op))[:5]) or "(なし)"
+        raise KeyError(f"pipeline: op {op!r} は registry に無い。候補: {cand}")
+    return found
+
+
+class Pipeline:
+    """op を段組みして繋ぐ(F5)。単一 registry(F2)の op を解決し、前段の出力を次段の
+    第 1 引数へ流す。各段は F3 メタで introspection 可能(Studio/エージェント共有)。"""
+
+    def __init__(self, stages=None) -> None:
+        self._stages: list = []          # [(UnifiedOp, kwargs), ...]
+        for s in (stages or []):
+            if isinstance(s, tuple):
+                self.then(s[0], **(s[1] if len(s) > 1 else {}))
+            else:
+                self.then(s)
+
+    def then(self, op, **kwargs) -> "Pipeline":
+        """段を 1 つ追加(fluent)。op = UnifiedOp / op 名 / 生 callable。"""
+        self._stages.append((_resolve_op(op), kwargs))
+        return self
+
+    def run(self, x, *, trace: bool = False):
+        """入力 x を全段に順に流す。trace=True で各段の中間出力も返す。"""
+        vals = [x]
+        for op, kw in self._stages:
+            x = op(x, **kw)
+            vals.append(x)
+        return (x, vals) if trace else x
+
+    __call__ = run
+
+    @property
+    def render_hint(self) -> str:
+        return self._stages[-1][0].render_hint if self._stages else "image"
+
+    @property
+    def steps(self) -> list:
+        return [(op.name, dict(kw)) for op, kw in self._stages]
+
+    def describe(self) -> dict:
+        """F3: パイプライン全体の機械可読メタ(段ごとの op メタ + 束縛 kwargs)。"""
+        return {"n_stages": len(self._stages), "render_hint": self.render_hint,
+                "chain": " → ".join(f"{op.namespace}.{op.name}" for op, _ in self._stages),
+                "stages": [{**op.as_dict(), "bound": {k: repr(v) for k, v in kw.items()}}
+                           for op, kw in self._stages]}
+
+    def __len__(self) -> int:
+        return len(self._stages)
+
+    def __repr__(self) -> str:
+        chain = " → ".join(f"{op.namespace}.{op.name}" for op, _ in self._stages)
+        return f"<Pipeline [{chain or 'empty'}]  ({len(self._stages)} stages)>"
+
+
+def pipeline(*stages) -> "Pipeline":
+    """Pipeline を可変長で作る: pipeline('elevation_map', ('step_edges', {'min_rise': 0.008}))。"""
+    return Pipeline(list(stages))
+
+
+class Image:
+    """画像チェーン(F5・§7 の "文のように読める" 形): Image(arr).<op>(...).<op>(...)。
+    属性は単一 registry の op 名に解決され、現配列へ適用して新しい Image を返す(不変)。
+    タプル出力(例: elevation_map→(grid,extent))は先頭 ndarray を鎖の値にする。"""
+
+    def __init__(self, array, _history=None) -> None:
+        object.__setattr__(self, "_a", array)
+        object.__setattr__(self, "_history", list(_history or []))
+
+    @property
+    def value(self):
+        """鎖の現在値(ndarray など)。"""
+        return object.__getattribute__(self, "_a")
+
+    array = value
+
+    @property
+    def history(self) -> list:
+        """これまでに適用した op 名の列。"""
+        return list(object.__getattribute__(self, "_history"))
+
+    def apply(self, op, **kwargs) -> "Image":
+        uop = _resolve_op(op)
+        res = uop(object.__getattribute__(self, "_a"), **kwargs)
+        arr = res[0] if isinstance(res, tuple) and res and hasattr(res[0], "shape") else res
+        return Image(arr, object.__getattribute__(self, "_history") + [uop.name])
+
+    def __getattr__(self, item):
+        if item.startswith("_"):
+            raise AttributeError(item)
+        reg = _ensure()
+        uop = reg.get(item)
+        if uop is None:
+            cand = ", ".join(o.name for o in reg.find(item)[:6]) or "(なし)"
+            raise AttributeError(f"Image に op '{item}' は無い。候補: {cand}")
+
+        def _bound(**kwargs):
+            return self.apply(uop, **kwargs)
+        _bound.__name__ = item
+        return _bound
+
+    def __repr__(self) -> str:
+        shp = getattr(object.__getattribute__(self, "_a"), "shape", "?")
+        hist = " → ".join(object.__getattribute__(self, "_history")) or "raw"
+        return f"<Image {shp} via [{hist}]>"
+
+
 if __name__ == "__main__":
     print("== Fullseye 統一 I/F registry ==")
     ops = _ensure()
