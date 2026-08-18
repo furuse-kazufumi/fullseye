@@ -127,6 +127,10 @@ with warnings.catch_warnings():
     #     fullseye.vision_ops.find("stereo") / .describe("camera_calibration")
     import unified as vision  # noqa: E402,F401
     vision_ops = vision.ops   # 単一 registry(list/find/describe/stats)
+    # F5 合成: op を段組み/文のように繋ぐ(fs.Image(arr).median().sobel_amp() / fs.pipeline(...))
+    Image = vision.Image          # noqa: F401  画像チェーン(§7)
+    Pipeline = vision.Pipeline    # noqa: F401  汎用パイプライン
+    pipeline = vision.pipeline    # noqa: F401  可変長ビルダ
 
 
 def capabilities() -> dict:
