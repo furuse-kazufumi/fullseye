@@ -185,5 +185,18 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     `fs.vision.camera.intrinsic_matrix(...)`(知覚)/ `fs.vision.calib.camera_calibration(...)`(facade)が
     同じ作法で呼べる。テスト `tests/test_unified.py` 9 pass(3 層 provenance 検証)+ browser 7 pass、
     回帰 `test_op_contracts` 3113 pass 0 fail(F7)。
-- **次**: F4 OSS アダプタ契約(stereo=image_pipeline / pcseg=PCL)/ synthesizer の per-op 入力ヒント拡充
-  (自動実行 72%→上げる)/ Studio 3D viewer を Open3D/RViz2 連携へ(現状 matplotlib 3D)。
+- **2026-08-18 Studio 3D viewer = Open3D 連携 実装(F6 の RViz2 相当 3D)**: `spikes/viewer3d.py` adapter が
+  統一 registry の op 出力(render_hint)を Open3D geometry へ変換し 3 方式で見せる(再実装せず Open3D を裏に):
+  - **`to_geometries(result, hint)`** = point_cloud→PointCloud(z 着色)+ 座標フレーム / pose→座標フレーム
+    (RViz2 の pose 軸相当) / mesh→TriangleMesh。**GL 不要=テスト可**。image/region/contour は空(→ 2D 側で描く)。
+  - **`show_interactive(geoms)`** = Open3D 対話ウィンドウ(mouse ナビ=RViz2 相当)。desktop GL で動く。
+  - **`render_offscreen`** = numpy 画像化(EGL 可なら)。**本 Windows は EGL headless 非対応**
+    ([[reference_mujoco_gl_remote_desktop]])→ None を返し **Studio は matplotlib 3D にフォールバック**(graceful)。
+  - **`export_ply`** = .ply 書き出し(GL 不要=常に可。外部 Open3D/CloudCompare で開ける)。**`ground_grid`**(Grid Display 相当)。
+  - **Studio 統合** = `studio_app.py` に「**Open in 3D (Open3D) 🧊**」ボタン。registry op が point_cloud/pose を
+    出すと有効化 → クリックで対話ウィンドウ。inline は matplotlib 3D 継続(EGL 不可のため)。`compute_op` で結果を保持。
+  - **honest**: Open3D は optional extra(未導入なら graceful 劣化)。**offscreen は本環境 GL 不可、対話ウィンドウは
+    ユーザーの desktop GL で動く**(私の headless 環境では検証不可のため .ply + matplotlib プレビューで代替提示)。
+  - **検証** = `tests/test_viewer3d.py` 8 pass(geometry/PLY/graceful fallback)、デモ `spikes/viewer3d_demo.py`
+    (evis 知覚シーン=点群→物体→6D pose を .ply + プレビュー PNG 生成、`--show` で対話ウィンドウ)。
+- **次**: F4 OSS アダプタ契約(stereo=image_pipeline / pcseg=PCL、§10 受け入れ基準の最後)/ synthesizer 入力ヒント拡充。
