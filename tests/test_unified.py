@@ -27,7 +27,7 @@ def test_every_op_has_metadata():
     """F3: 全 op が name/namespace/chapter/doc/render_hint/provenance/params を持つ。"""
     valid_hints = {"image", "region", "contour", "pose", "point_cloud",
                    "matches", "scalar", "matrix"}
-    valid_prov = {"facade", "evolution", "perception", "oss-adapter"}
+    valid_prov = {"facade", "evolution", "perception", "oss-adapter", "sim-source"}
     for name in u.ops.list():
         d = u.ops.describe(name)
         assert d["name"] == name

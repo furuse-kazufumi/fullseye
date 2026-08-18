@@ -230,3 +230,18 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
   - **検証**: デモ `spikes/unified_pipeline_demo.py`(①画像チェーン ②知覚段組み ③introspection ④Image==Pipeline 一致)。
     テスト `tests/test_unified_pipeline.py` 9 件 pass。回帰 `test_unified`+`test_op_contracts`+`test_oss_adapter` = **3129 pass 0 fail**(F7)。
   - **状態**: F1/F2/F3/F4/F5/F6/F7 = **全機能要件 実装完了**。残りは §11-6 の網羅拡張・磨き込み(sim-source アダプタ / synthesizer 拡充 / 自然 API 化継続)。
+
+- **2026-08-19 §11-6 磨き込み 3 件完了**:
+  - **sim-source アダプタ(F4 未実装側)= `sim_source.py`**: 物理シミュが視覚 op に入力を供給する同一契約
+    (config + 動詞 + `.backend`/`.available` + 不在時 raise)。**MuJoCo は headless で実供給**:
+    `.intrinsics()`(fovy→K)/`.rgb()`/`.depth()`/`.ground_truth()`(真値源)/`.point_cloud()`(深度逆投影→world 点群)。
+    **sim→vision の橋を実証**: `MuJoCo(xml).point_cloud('top')` → `fs.elevation_map` で block 高さを知覚。
+    Gazebo/IsaacSim は honest scaffold(`available=False`、動詞は明示 raise)。統一 registry に namespace `sim`/
+    provenance `sim-source` で登録(`_load_sim`)。テスト `tests/test_sim_source.py` 8 pass。
+  - **synthesizer 拡充(F6 自動実行率↑)= `spikes/studio_ops_browser.py`**: 合成器を追加(video/cube/volume/mask/
+    mesh V,F/grid/dst/uv/対応点/行列リスト/scalar)。**自動実行カバレッジ 72%→79%(1139→1249/1580, +110 op)**。
+    残 ~331 は model(異種: MjModel vs metrology handle)/ path(IO 境界)/ 単文字曖昧(u/B)で **honest に頭打ち**(捏造しない)。
+  - **進化層の自然 API 化(F1)= `unified.py`**: 進化 op(v,a,b)の自然シグネチャを **`op(image)` のみ**に(探索ノブ
+    a/b を非露出)。a/b は keyword-only の escape hatch として保持(`op(image, a=0.2)` で調整可=表現力は不変)。
+    `describe('median')['signature']` = `median(image)`。
+  - **回帰**: `test_unified`(sim-source を valid provenance に追加)+`test_op_contracts` = 3122 pass。新機能テスト計 40 pass。
