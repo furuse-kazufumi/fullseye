@@ -330,13 +330,15 @@ class ViewerManager:
         return len(self._wins)
 
     def close(self, wid) -> bool:
-        """指定 window id の窓を閉じる(プロセス終了)。"""
-        for w in self._wins:
+        """指定 window id の窓を閉じる(プロセス終了)。明示終了したエントリは
+        poll の非同期を待たず直接除去する(terminate 直後は poll がまだ生存判定のため)。"""
+        for w in list(self._wins):
             if w["id"] == wid:
                 try:
                     w["popen"].terminate()
                 except Exception:
                     pass
+                self._wins.remove(w)
                 self._prune()
                 return True
         return False
