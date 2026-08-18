@@ -269,7 +269,7 @@ def launch_detached(geometries, title="Fullseye 3D") -> bool:
         return False
     try:
         scene_dir = tempfile.mkdtemp(prefix="fs3d_")
-        manifest = save_scene(geometries, scene_dir)
+        manifest = save_scene(geometries, scene_dir, title=title)   # title は manifest 経由(UTF-8)
         if not manifest:
             return False
         launcher = os.path.join(os.path.dirname(os.path.abspath(__file__)), "viewer3d_launch.py")
@@ -282,7 +282,7 @@ def launch_detached(geometries, title="Fullseye 3D") -> bool:
         if os.name == "nt":
             # DETACHED_PROCESS | CREATE_NO_WINDOW(コンソール窓を出さず親から独立)
             kwargs["creationflags"] = 0x00000008 | 0x08000000
-        subprocess.Popen([exe, launcher, manifest, title], **kwargs)
+        subprocess.Popen([exe, launcher, manifest], **kwargs)   # title は argv で渡さない
         return True
     except Exception:
         return False
