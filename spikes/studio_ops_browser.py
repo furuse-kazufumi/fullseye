@@ -290,9 +290,9 @@ def scalar_param_specs(op):
     return specs
 
 
-def render_op_into(op, fig, overrides=None):
-    """op を合成入力(scalar は overrides で上書き)で実行し fig へ render_hint 描画(F6 GUI 用)。
-    戻り値 = ステータス文字列(Run OK / auto-input 不可 / エラー)。"""
+def compute_op(op, overrides=None):
+    """op を合成入力(scalar は overrides で上書き)で実行し (status, result) を返す。
+    描画はしない(2D は render_by_hint / 3D は viewer3d へ Studio が振り分ける)。"""
     overrides = overrides or {}
     args = []
     for name, default, kind in op.params:
@@ -307,13 +307,21 @@ def render_op_into(op, fig, overrides=None):
         elif name in _SCALAR:
             args.append(_SCALAR[name])
         else:
-            _f3_card(op, fig, reason="専用入力が要る(create_* が生む model 等)")
-            return "auto-input 不可"
+            return "auto-input 不可", None
     try:
-        result = op(*args)
+        return "Run OK", op(*args)
     except Exception as e:  # noqa: BLE001
-        _f3_card(op, fig, reason=f"{type(e).__name__}: {e}")
-        return f"Run 失敗: {type(e).__name__}"
+        return f"Run 失敗: {type(e).__name__}: {e}", None
+
+
+def render_op_into(op, fig, overrides=None):
+    """op を合成入力で実行し fig へ render_hint 描画(F6 GUI 用)。戻り値 = ステータス文字列。"""
+    status, result = compute_op(op, overrides)
+    if result is None:
+        reason = "専用入力が要る(create_* が生む model 等)" if "auto-input" in status \
+            else status
+        _f3_card(op, fig, reason=reason)
+        return status.split(":")[0]
     render_by_hint(result, op.render_hint, fig, title=f"{op.namespace}.{op.name}")
     return "Run OK"
 
