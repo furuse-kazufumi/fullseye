@@ -346,6 +346,29 @@ def _load_oss(reg: Registry) -> None:
                                render_hint=hint, params=params))
 
 
+def _load_sim(reg: Registry) -> None:
+    """sim-source アダプタ(F4: 物理シミュが視覚 op に入力を供給)を統一 registry へ
+    (provenance=sim-source, namespace=sim)。config class を登録し available をメタに記録。"""
+    try:
+        import sim_source as sim
+    except Exception:
+        return
+    for ns, name, cls, hint in getattr(sim, "SOURCES", []):
+        avail = "available" if getattr(cls, "available", False) else "scaffold"
+        doc = (cls.__doc__ or "").strip().splitlines()
+        doc = (doc[0].strip() if doc else name) + f"  [sim={cls.backend}, {avail}]"
+        params = []
+        try:
+            for pn, p in _inspect.signature(cls).parameters.items():
+                if pn not in ("a", "k", "args", "kwargs"):
+                    params.append((pn, p.default, "arg"))
+        except (ValueError, TypeError):
+            pass
+        reg.register(UnifiedOp(name=name, func=cls, module=f"sim_source.{name}",
+                               chapter="sim-source", namespace=ns, doc=doc,
+                               provenance="sim-source", render_hint=hint, params=params))
+
+
 def build_registry() -> Registry:
     """4 層(facade 600 / 進化 735 / 知覚 facade / OSS アダプタ)を 1 索引に統合(F2/F3/F4)。
     facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。"""
@@ -354,6 +377,7 @@ def build_registry() -> Registry:
     _load_evolution(reg)       # 2. 進化 registry(a/b ノブ)
     _load_perception(reg)      # 3. 知覚 facade(自然シグネチャ)
     _load_oss(reg)             # 4. OSS アダプタ(OpenCV/skimage、numpy フォールバック)
+    _load_sim(reg)             # 5. sim-source(物理→視覚の入力供給、F4)
     return reg
 
 
@@ -373,6 +397,7 @@ def _ensure() -> Registry:
         _load_evolution(reg)
         _load_perception(reg)
         _load_oss(reg)
+        _load_sim(reg)
     return _registry
 
 
