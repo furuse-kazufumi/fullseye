@@ -465,10 +465,25 @@ def _smoke() -> int:
         msg = win.statusBar().currentMessage()
         print(f"  {s['name']:16s} -> {msg}")
         ok += msg.startswith("Run OK")
+    # 統一 registry op 経路(F6): 各名前空間の代表 op を自動実行・描画できるか
+    reg = _browser.ops
+    reg_ok = 0
+    for ns in reg.namespaces():
+        name = reg.list(namespace=ns)[0]
+        win._active_op = reg[name]
+        win._rebuild_params({"params": _browser.scalar_param_specs(reg[name])})
+        win._run()
+        msg = win.statusBar().currentMessage()
+        reg_ok += "Run OK" in msg
+        print(f"  op:{ns:11s} {name:28s} -> {msg.split('|')[-1].strip()}")
+    win._active_op = None
     out = Path(__file__).resolve().parent / "out_gallery" / "studio_app_smoke.png"
     out.parent.mkdir(exist_ok=True)
     win.figure.savefig(out, dpi=110)
-    print(f"[smoke] {ok}/{len(SAMPLES)} OK, last render -> {out}")
+    cov = _browser.coverage_report()
+    print(f"[smoke] samples {ok}/{len(SAMPLES)} OK  |  registry 代表 {reg_ok}/{reg.stats()['namespaces']} ns OK  "
+          f"|  自動実行カバレッジ {cov['auto_ran']}/{cov['total']} ({100*cov['auto_ran']//cov['total']}%)")
+    print(f"  last render -> {out}")
     app.quit()
     return 0 if ok == len(SAMPLES) else 1
 
