@@ -371,6 +371,18 @@ class StudioWindow(QtWidgets.QMainWindow):
 
         self.tree.setCurrentItem(groups["vision"].child(0))
 
+    def _open3d(self) -> None:
+        """直近 op の 3D 出力を Open3D 対話ウィンドウで開く(mouse ナビ=RViz2 相当)。"""
+        if not self._last3d:
+            self.statusBar().showMessage("3D 化できる出力がありません(点群/6D pose を選択)")
+            return
+        if not _v3d.available():
+            self.statusBar().showMessage("Open3D 未導入: pip install open3d")
+            return
+        ok = _v3d.show_interactive(self._last3d, title="Fullseye 3D (Open3D)")
+        self.statusBar().showMessage("Open3D ウィンドウを開きました(閉じると戻ります)"
+                                     if ok else "Open3D 起動失敗(desktop GL が要る)")
+
     def _on_hover(self, event) -> None:
         """hwv 風: 画像(AxesImage)上の hover で画素座標と値をステータスバーに表示。"""
         ax = event.inaxes
