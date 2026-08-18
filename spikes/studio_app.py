@@ -342,6 +342,7 @@ class StudioWindow(QtWidgets.QMainWindow):
         self.open3d_btn.clicked.connect(self._open3d)
         self.open3d_btn.setEnabled(False)
         self._last3d = None  # geometry list: 直近 op の 3D 化可能な出力
+        self._last3d_title = None                # その op 名(3D 窓タイトル用)
         self.viewer_mgr = _v3d.ViewerManager()   # 開いている 3D 窓(別プロセス)を管理
         btn_row = QtWidgets.QWidget()
         bl = QtWidgets.QHBoxLayout(btn_row); bl.setContentsMargins(0, 0, 0, 0)
