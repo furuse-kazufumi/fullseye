@@ -304,12 +304,16 @@ class ViewerManager:
 
     def launch(self, geometries, title="Fullseye 3D"):
         """窓を起動して管理下に置く。返り値 = window id(失敗時 None)。"""
-        p = _spawn_viewer(geometries, title)
-        if p is None:
+        return self.track(_spawn_viewer(geometries, title), title)
+
+    def track(self, popen, title="Fullseye 3D"):
+        """外部で起動した窓プロセス(例: sim_source.launch_animation の Popen)を管理下に置く。
+        返り値 = window id(popen が None なら None)。"""
+        if popen is None:
             return None
         self._counter += 1
         wid = self._counter
-        self._wins.append({"id": wid, "pid": p.pid, "title": title, "popen": p})
+        self._wins.append({"id": wid, "pid": popen.pid, "title": title, "popen": popen})
         return wid
 
     def _prune(self) -> None:
