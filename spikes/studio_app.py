@@ -30,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import lidar_adapter_spike as _sim  # noqa: E402
 import unified_api_spike as _vis  # noqa: E402
 import studio_ops_browser as _browser  # noqa: E402  (統一 registry から 600 op を自動列挙・実行・描画)
+import viewer3d as _v3d  # noqa: E402  (Open3D 連携: 点群/6D pose の対話 3D ビューア=RViz2 相当)
 import fullseye as fs  # noqa: E402
 
 # 日本語フォント(既定 DejaVu Sans は CJK 無し)。
