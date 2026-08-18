@@ -104,6 +104,55 @@ class MuJoCo:
         r.disable_depth_rendering()
         return dep
 
+    def scene_geometries(self, skip_plane: bool = True) -> list:
+        """MuJoCo の geom を **実形状の Open3D メッシュ**に変換(world 変換・色つき)。
+        evis/ロケット等のモデルを 3D 窓で「そのままの姿」で見るための橋。プリミティブ
+        (sphere/box/capsule/cylinder/ellipsoid)と mesh に対応。plane/hfield は既定でスキップ
+        (地面はビューアの grid が担う)。GL 不要=geometry 構築のみ(表示は viewer3d)。"""
+        import mujoco
+        import open3d as o3d
+        m, d = self._m, self._d
+        geoms = []
+        for g in range(m.ngeom):
+            t = int(m.geom_type[g]); size = m.geom_size[g]
+            mesh = None
+            if t == mujoco.mjtGeom.mjGEOM_SPHERE:
+                mesh = o3d.geometry.TriangleMesh.create_sphere(radius=float(size[0]), resolution=12)
+            elif t == mujoco.mjtGeom.mjGEOM_BOX:
+                mesh = o3d.geometry.TriangleMesh.create_box(*(2.0 * size[:3]).tolist())
+                mesh.translate((-size[:3]).tolist())                       # 原点中心へ
+            elif t == mujoco.mjtGeom.mjGEOM_CYLINDER:
+                mesh = o3d.geometry.TriangleMesh.create_cylinder(
+                    radius=float(size[0]), height=float(2.0 * size[1]), resolution=16)
+            elif t == mujoco.mjtGeom.mjGEOM_CAPSULE:
+                mesh = o3d.geometry.TriangleMesh.create_cylinder(
+                    radius=float(size[0]), height=float(2.0 * size[1]), resolution=16)
+                for sgn in (1.0, -1.0):                                    # 両端の半球
+                    cap = o3d.geometry.TriangleMesh.create_sphere(radius=float(size[0]), resolution=12)
+                    cap.translate([0, 0, sgn * float(size[1])]); mesh += cap
+            elif t == mujoco.mjtGeom.mjGEOM_ELLIPSOID:
+                mesh = o3d.geometry.TriangleMesh.create_sphere(radius=1.0, resolution=12)
+                mesh.vertices = o3d.utility.Vector3dVector(np.asarray(mesh.vertices) * size[:3])
+            elif t == mujoco.mjtGeom.mjGEOM_MESH:
+                did = int(m.geom_dataid[g])
+                if did >= 0:
+                    va, vn = int(m.mesh_vertadr[did]), int(m.mesh_vertnum[did])
+                    fa, fn = int(m.mesh_faceadr[did]), int(m.mesh_facenum[did])
+                    V = np.asarray(m.mesh_vert[va:va + vn]).reshape(-1, 3).astype(float)
+                    F = np.asarray(m.mesh_face[fa:fa + fn]).reshape(-1, 3).astype(np.int32)
+                    mesh = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(V),
+                                                     o3d.utility.Vector3iVector(F))
+            if mesh is None:
+                continue                                                  # plane/hfield/未対応はスキップ
+            T = np.eye(4)
+            T[:3, :3] = np.asarray(d.geom_xmat[g]).reshape(3, 3)
+            T[:3, 3] = np.asarray(d.geom_xpos[g])
+            mesh.transform(T)
+            mesh.compute_vertex_normals()
+            mesh.paint_uniform_color(np.asarray(m.geom_rgba[g])[:3].clip(0, 1).tolist())
+            geoms.append(mesh)
+        return geoms
+
     def point_cloud(self, cam=0, stride: int = 2, max_range: float | None = None) -> np.ndarray:
         """深度を逆投影した world 点群 (N,3)。背景(遠クリップ面)は除外。
         視覚 op(``elevation_map`` 等)にそのまま渡せる = sim→vision の橋。"""

@@ -91,3 +91,16 @@ def test_scaffold_raises_clearly():
     assert g.available is False
     with pytest.raises(RuntimeError):
         g.depth("cam")
+
+
+def test_scene_geometries_builds_meshes():
+    """F6: MuJoCo geom を実形状 Open3D メッシュ化(evis/ロケットを窓で見る橋)。"""
+    import pytest
+    o3d = pytest.importorskip("open3d")
+    s = _src()   # floor(box) + block(box) の 2 geom
+    geoms = s.scene_geometries()
+    assert len(geoms) == 2
+    for g in geoms:
+        assert isinstance(g, o3d.geometry.TriangleMesh)
+        assert len(g.vertices) > 0 and len(g.triangles) > 0
+    s.close()

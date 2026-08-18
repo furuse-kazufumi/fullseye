@@ -256,3 +256,12 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
   - `studio_app._open3d` を `launch_detached` に切替(「別プロセスで起動、Studio 操作継続可」)。
   - sim→vision→3D の全経路デモ: MuJoCo sim-source 点群 56824 点を desktop 3D 窓で表示(別プロセス)。
   - テスト `tests/test_viewer3d.py` に save/load 往復・UTF-8 タイトル・empty→False を追加、計 11 pass。
+
+- **2026-08-19 Studio 3D 窓管理 + モデル実形状表示**:
+  - **`viewer3d.ViewerManager`**: 開いている 3D 窓(別プロセス)を追跡・一覧(死活プルーニング)・個別/全終了。
+    Studio に窓マネージャ UI(一覧 QListWidget / 選択を閉じる / 全部閉じる / 更新 / 環境状態ラベル)を追加、
+    `_open3d` は `viewer_mgr.launch` で追跡下に起動。**複数窓の同時管理を実測**(起動→一覧→個別/全終了)。
+  - **`sim_source.MuJoCo.scene_geometries()`**: MuJoCo の geom を **実形状 Open3D メッシュ**化(sphere/box/capsule/
+    cylinder/ellipsoid/mesh を world 変換・色つき、plane/hfield はスキップ)。**evis/ロケット等のモデルを 3D 窓で
+    そのままの姿で見られる**。実測: walker2d 歩行 7 geom / ロケット 7 geom をメッシュ化し別プロセス窓に表示。
+  - テスト: `test_viewer3d`(ViewerManager lifecycle・launch 失敗)+ `test_sim_source`(scene_geometries)追加、計 22 pass。
