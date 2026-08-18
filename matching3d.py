@@ -99,13 +99,13 @@ def find_shape_model_3d(model, image, min_score=0.5):
 
 
 # ── 2D descriptor マッチング(Harris keypoints + patch descriptor)────────────── #
-def _harris_keypoints(img, k=0.04, thresh_rel=0.01, max_pts=200):
+def _harris_keypoints(img, k=0.04, thresh_rel=0.002, max_pts=400):
     from scipy.ndimage import gaussian_filter, maximum_filter
     gy, gx = np.gradient(img)
     Ixx = gaussian_filter(gx * gx, 1.5); Iyy = gaussian_filter(gy * gy, 1.5)
     Ixy = gaussian_filter(gx * gy, 1.5)
     R = (Ixx * Iyy - Ixy ** 2) - k * (Ixx + Iyy) ** 2
-    mx = maximum_filter(R, 5)
+    mx = maximum_filter(R, 3)
     peaks = (R == mx) & (R > thresh_rel * R.max())
     ys, xs = np.where(peaks)
     order = np.argsort(R[ys, xs])[::-1][:max_pts]
