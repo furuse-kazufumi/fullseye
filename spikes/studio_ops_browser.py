@@ -290,10 +290,35 @@ def scalar_param_specs(op):
     return specs
 
 
+def _run_oss_adapter(op, overrides):
+    """OSS アダプタ(config class + 動詞メソッド)を合成入力で実行(F4)。"""
+    # scalar override を渡して config オブジェクト生成
+    kwargs = {n: overrides[n] for n, d, k in op.params if n in overrides}
+    try:
+        obj = op.func(**kwargs)
+    except Exception as e:  # noqa: BLE001
+        return f"Run 失敗: {type(e).__name__}: {e}", None
+    left = _syn_image(seed=0); right = np.roll(left, 4, axis=1)
+    try:
+        if hasattr(obj, "compute"):
+            return "Run OK", obj.compute(left, right)
+        if hasattr(obj, "apply"):
+            return "Run OK", obj.apply(left)
+        if hasattr(obj, "detect"):
+            return "Run OK", obj.detect(left)
+        if hasattr(obj, "find"):
+            return "Run OK", obj.find((left > 0.5).astype(float))
+    except Exception as e:  # noqa: BLE001
+        return f"Run 失敗: {type(e).__name__}: {e}", None
+    return "auto-input 不可", None
+
+
 def compute_op(op, overrides=None):
     """op を合成入力(scalar は overrides で上書き)で実行し (status, result) を返す。
     描画はしない(2D は render_by_hint / 3D は viewer3d へ Studio が振り分ける)。"""
     overrides = overrides or {}
+    if getattr(op, "provenance", "") == "oss-adapter":
+        return _run_oss_adapter(op, overrides)
     args = []
     for name, default, kind in op.params:
         if kind == "var":
