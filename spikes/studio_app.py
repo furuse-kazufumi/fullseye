@@ -380,6 +380,7 @@ class StudioWindow(QtWidgets.QMainWindow):
         ml.addWidget(self.editor, 3)
         ml.addWidget(self.param_box)
         ml.addWidget(btn_row)
+        ml.addWidget(self.sim_box)
         ml.addWidget(self.win3d_box)
         self._refresh_3d_windows()
 
