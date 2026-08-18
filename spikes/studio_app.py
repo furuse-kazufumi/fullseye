@@ -521,6 +521,7 @@ class StudioWindow(QtWidgets.QMainWindow):
             # 3D 化可能(point_cloud/pose)なら Open3D ボタンを有効化
             geoms = _v3d.to_geometries(result, op.render_hint) if result is not None else []
             self._last3d = geoms
+            self._last3d_title = f"Fullseye 3D — {op.namespace}.{op.name}"
             self.open3d_btn.setEnabled(bool(geoms))
             self.canvas.draw()
             tag = "  |  🧊 Open in 3D 可" if geoms else ""

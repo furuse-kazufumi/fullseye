@@ -104,3 +104,36 @@ def test_scene_title_utf8_round_trip(tmp_path):
 def test_launch_detached_empty_is_false():
     """geometry が無ければ launch_detached は窓を出さず False(安全に劣化)。"""
     assert v3d.launch_detached([]) is False
+
+
+class _FakePopen:
+    """poll/terminate だけ持つ疑似プロセス(実窓を出さずマネージャ論理を検証)。"""
+    def __init__(self):
+        self._alive = True
+        self.pid = id(self) % 100000
+    def poll(self):
+        return None if self._alive else 0
+    def terminate(self):
+        self._alive = False
+
+
+def test_viewer_manager_lifecycle(monkeypatch):
+    """3D 窓マネージャ: 起動→一覧→個別/全終了→死活プルーニング(実窓なし)。"""
+    monkeypatch.setattr(v3d, "_spawn_viewer", lambda geoms, title="": _FakePopen())
+    mgr = v3d.ViewerManager()
+    a = mgr.launch(["g"], "窓A"); b = mgr.launch(["g"], "窓B"); c = mgr.launch(["g"], "窓C")
+    assert mgr.count() == 3
+    assert [w["title"] for w in mgr.windows()] == ["窓A", "窓B", "窓C"]
+    assert mgr.close(b) is True and mgr.count() == 2          # 個別終了
+    assert [w["title"] for w in mgr.windows()] == ["窓A", "窓C"]
+    # ユーザーが窓を閉じた(プロセス死)→ 一覧から自動で消える
+    mgr._wins[0]["popen"]._alive = False
+    assert mgr.count() == 1
+    assert mgr.close_all() == 1 and mgr.count() == 0         # 全終了
+
+
+def test_viewer_manager_launch_failure(monkeypatch):
+    """起動失敗(spawn が None)は id を返さず一覧に載せない。"""
+    monkeypatch.setattr(v3d, "_spawn_viewer", lambda geoms, title="": None)
+    mgr = v3d.ViewerManager()
+    assert mgr.launch(["g"], "x") is None and mgr.count() == 0
