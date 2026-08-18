@@ -378,14 +378,59 @@ class StudioWindow(QtWidgets.QMainWindow):
         rl.addWidget(self.canvas)
 
         split = QtWidgets.QSplitter()
-        split.addWidget(self.tree)
+        split.addWidget(left)
         split.addWidget(mid)
         split.addWidget(right)
-        split.setSizes([200, 400, 620])
+        split.setSizes([220, 400, 620])
         self.setCentralWidget(split)
         self.statusBar().showMessage("サンプルを選んで Run")
 
-        self.tree.setCurrentItem(groups["vision"].child(0))
+        if self._first_item is not None:
+            self.tree.setCurrentItem(self._first_item)
+
+    def _populate_tree(self, filt: str = "") -> None:
+        """ツリーを(検索語で絞って)再構築。samples + 統一 registry の op を namespace 別に。"""
+        self.tree.clear()
+        self._reg_ops = {}
+        self._first_item = None
+        q = (filt or "").strip().lower()
+        # サンプル(名前/domain で絞る)
+        groups: dict = {}
+        for s in SAMPLES:
+            if q and q not in s["name"].lower() and q not in s.get("domain", "").lower():
+                continue
+            if s["domain"] not in groups:
+                g = QtWidgets.QTreeWidgetItem(self.tree, [s["domain"]]); g.setExpanded(True)
+                groups[s["domain"]] = g
+            it = QtWidgets.QTreeWidgetItem(groups[s["domain"]], [s["name"]])
+            it.setData(0, 0x0100, s["name"])
+            if self._first_item is None:
+                self._first_item = it
+        # 統一 registry の op(名前/doc/namespace で絞る = reg.find)
+        reg = _browser.ops
+        mset = {o.name for o in reg.find(q)} if q else None
+        vcount = len(mset) if mset is not None else len(reg)
+        vroot = QtWidgets.QTreeWidgetItem(self.tree, [f"vision-ops  ({vcount})"])
+        vroot.setExpanded(bool(q))
+        for ns in reg.namespaces():
+            names = [n for n in reg.list(namespace=ns) if mset is None or n in mset]
+            if not names:
+                continue
+            nsg = QtWidgets.QTreeWidgetItem(vroot, [f"{ns}  ({len(names)})"])
+            nsg.setExpanded(bool(q))
+            for name in names:
+                key = f"op:{name}"
+                self._reg_ops[key] = reg[name]
+                it = QtWidgets.QTreeWidgetItem(nsg, [name])
+                it.setData(0, 0x0100, key)
+                if self._first_item is None:
+                    self._first_item = it
+
+    def _on_search(self, text: str) -> None:
+        """検索語でツリーを絞り込む。"""
+        self._populate_tree(text)
+        n = len(self._reg_ops)
+        self.statusBar().showMessage(f"検索 '{text}': {n} op 該当" if text else "検索クリア")
 
     def _open3d(self) -> None:
         """直近 op の 3D 出力を Open3D 対話ウィンドウで開く(mouse ナビ=RViz2 相当)。"""
