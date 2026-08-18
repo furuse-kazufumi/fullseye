@@ -25,15 +25,15 @@ def section(t):
 
 
 def main():
-    section("F2 統一発見 — 単一 registry で 600 op を層横断で列挙")
+    section("F2 統一発見 — 単一 registry で 3 層(facade/進化/知覚)を横断で列挙")
     st = ops.stats()
     print(f"総 op {st['total']} / 名前空間 {st['namespaces']}")
-    for ns, n in st["by_namespace"].items():
-        print(f"  fs.vision.{ns:11} {n:3} ops   例: {', '.join(ops.list(namespace=ns)[:3])}")
+    print(f"provenance 別: {st['by_provenance']}  "
+          f"(facade=本セッション genuine / evolution=進化 registry a/b / perception=知覚 facade)")
 
-    print("\n検索 ops.find('hand_eye'):")
+    print("\n検索 ops.find('hand_eye')(層を跨いで検索):")
     for o in ops.find("hand_eye"):
-        print(f"  {o.namespace}.{o.name}  — {o.doc}")
+        print(f"  [{o.provenance}] {o.namespace}.{o.name}  — {o.doc}")
 
     section("F3 introspection — 各 op が name/型/params/doc/描画ヒント/provenance を持つ")
     for name in ("camera_calibration", "gen_circle_contour_xld", "photometric_stereo"):
