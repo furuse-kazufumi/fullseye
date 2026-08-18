@@ -373,11 +373,17 @@ class StudioWindow(QtWidgets.QMainWindow):
             vs = f"{float(v):.3f}" if np.ndim(v) == 0 else np.array2string(np.asarray(v), precision=2)
             self.statusBar().showMessage(f"hwv  pixel (x={col}, y={row})  value={vs}")
 
-    def _current_sample(self):
+    def _current_key(self):
         items = self.tree.selectedItems()
-        if items and items[0].data(0, 0x0100):
-            return self._by_name.get(items[0].data(0, 0x0100))
-        return None
+        return items[0].data(0, 0x0100) if items else None
+
+    def _current_sample(self):
+        key = self._current_key()
+        return self._by_name.get(key) if key else None
+
+    def _current_op(self):
+        key = self._current_key()
+        return self._reg_ops.get(key) if key else None
 
     def _rebuild_params(self, sample) -> None:
         self._suspend = True
