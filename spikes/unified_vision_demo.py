@@ -82,12 +82,24 @@ def main():
     inter = vision.region.intersection(a, b)
     print(f"  region.intersection(a, b)  -> 重なり画素 {int(inter.sum())}")
 
-    section("F7 後方互換 — 進化 registry / 知覚 facade と共存(何も壊れていない)")
-    print(f"  進化 registry(fs.REGISTRY)   {len(fs.REGISTRY)} ops   fs.apply(...) 健在")
-    print(f"  知覚 facade(fs.stereo 等)     健在")
-    print(f"  統一視覚 I/F(fs.vision)       {len(ops)} ops  ← 本デモ")
+    # 5) 3 層を同じ作法で呼ぶ(統一の要)
+    print()
+    img = np.random.default_rng(0).random((24, 24))
+    smooth_name = ops.list(namespace="smooth")[0]
+    sm = getattr(vision, "smooth")
+    out = getattr(sm, smooth_name)(img, 0.5, 0.5)          # 進化 op(a/b ノブ)
+    print(f"  [evolution] vision.smooth.{smooth_name}(img, 0.5, 0.5)  -> {out.shape}")
+    if "intrinsic_matrix" in ops:
+        K2 = vision.camera.intrinsic_matrix(fx=500, fy=500, cx=12, cy=12)  # 知覚 facade(自然)
+        print(f"  [perception] vision.camera.intrinsic_matrix(fx=500,…)  -> {np.asarray(K2).shape}")
 
-    print("\n[demo OK] 600 op が単一 I/F で発見でき・メタを持ち・自然に呼べる(F1/F2/F3/F7)")
+    section("F7 後方互換 — 3 層が 1 索引に統合されても既存 API は不変")
+    print(f"  進化 registry(fs.REGISTRY)   {len(fs.REGISTRY)} ops   fs.apply(...) 健在")
+    print(f"  知覚 facade(fs.stereo 等)     健在(名前空間モジュールとしても呼べる)")
+    print(f"  統一 I/F(fs.vision)          {len(ops)} ops = facade+進化+知覚 を 1 索引に  ← 本デモ")
+
+    print("\n[demo OK] 3 層 {} op が単一 I/F で発見でき・メタを持ち・自然に呼べる(F1/F2/F3/F7)"
+          .format(len(ops)))
 
 
 if __name__ == "__main__":
