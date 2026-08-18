@@ -145,6 +145,14 @@ def _syn_mesh_F():
     return _canonical_mesh()[1]
 
 
+def _syn_matrices(k=3):
+    return [_syn_matrix() for _ in range(k)]
+
+
+def _syn_regions(k=2):
+    return [_syn_region() for _ in range(k)]
+
+
 _SYN = {
     "image": _syn_image, "image1": _syn_image, "image2": _syn_image,
     "image_1": _syn_image, "image_2": _syn_image, "img": _syn_image,
@@ -175,6 +183,10 @@ _SYN = {
     "dst": _syn_cloud, "target": _syn_cloud, "moving_cloud": _syn_cloud,
     "uv": _syn_points2d_n, "uv1": _syn_points2d_n, "uv2": _syn_points2d_n,
     "pts": _syn_points2d_n, "pts2d": _syn_points2d_n, "xy": _syn_points2d_n,
+    "nxt": _syn_image, "next": _syn_image, "next_frame": _syn_image,
+    "object_points": _syn_cloud, "p0": _syn_cloud, "scene": _syn_cloud,
+    "homographies": _syn_matrices, "matrices": _syn_matrices, "poses": _syn_matrices,
+    "regions": _syn_regions, "region_list": _syn_regions,
     "y": _syn_signal, "y1": _syn_signal, "y2": _syn_signal, "hist": _syn_signal,
     "M": _syn_matrix, "H": _syn_matrix, "A": _syn_matrix, "matrix": _syn_matrix,
     "homography": _syn_matrix, "hom_mat2d": _syn_matrix, "hom_mat3d": _syn_pose,
@@ -193,7 +205,7 @@ _SCALAR = {"row": 32.0, "col": 32.0, "column": 32.0, "radius": 12.0, "ra": 14.0,
            "r2": 10.0, "c2": 35.0, "cx": 32.0, "cy": 24.0, "shape": (48, 64),
            "center": (32.0, 32.0), "t": 0.0, "x": 20.0, "index": 0, "axis": 2,
            "rows": 32, "cols": 40, "px": 32.0, "py": 24.0, "fx": 500.0, "fy": 500.0,
-           "i": 0, "j": 1, "near": 0.1, "far": 10.0, "scale": 2.0, "k1": 0.0, "k2": 0.0,
+           "i": 0, "j": 1, "near": 0.1, "far": 10.0, "scale": 2.0, "k1": 0.0, "k2": 0.0, "pz": 1.0, "qz": 1.0,
            "n_iter": 5, "iterations": 5, "num": 4, "n": 8, "bins": 16, "eps": 1e-6}
 
 
