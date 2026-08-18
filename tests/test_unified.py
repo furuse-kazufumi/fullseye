@@ -24,15 +24,16 @@ def test_registry_builds_all_layers():
 
 
 def test_every_op_has_metadata():
-    """F3: 全 op が name/namespace/chapter/doc/render_hint/params を持つ。"""
+    """F3: 全 op が name/namespace/chapter/doc/render_hint/provenance/params を持つ。"""
     valid_hints = {"image", "region", "contour", "pose", "point_cloud",
                    "matches", "scalar", "matrix"}
+    valid_prov = {"facade", "evolution", "perception"}
     for name in u.ops.list():
         d = u.ops.describe(name)
         assert d["name"] == name
         assert d["namespace"] and d["chapter"]
         assert d["render_hint"] in valid_hints
-        assert d["provenance"] == "facade"
+        assert d["provenance"] in valid_prov
         assert "signature" in d and d["signature"].startswith(name + "(")
 
 
