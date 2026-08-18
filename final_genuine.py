@@ -162,8 +162,9 @@ def scene_flow_uncalib(img1_l, img1_r, img2_l, img2_r, focal=500.0, baseline=0.1
     from stereo import disparity_map
     from filters_flow import optical_flow_mg
     d1 = disparity_map(img1_l, img1_r); d2 = disparity_map(img2_l, img2_r)
-    Z1 = np.where(d1 > 1e-6, focal * baseline / d1, np.nan)
-    Z2 = np.where(d2 > 1e-6, focal * baseline / d2, np.nan)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        Z1 = np.where(d1 > 1e-6, focal * baseline / d1, np.nan)
+        Z2 = np.where(d2 > 1e-6, focal * baseline / d2, np.nan)
     flow = optical_flow_mg(img1_l, img2_l, iterations=60)
     return {"dZ": Z2 - Z1, "flow_row": flow["row"], "flow_col": flow["col"]}
 
