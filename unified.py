@@ -213,7 +213,11 @@ class Registry:
 
     def stats(self) -> dict:
         by_ns = {ns: len(ops) for ns, ops in sorted(self._ns.items())}
-        return {"total": len(self._ops), "namespaces": len(self._ns), "by_namespace": by_ns}
+        by_prov = {}
+        for o in self._ops.values():
+            by_prov[o.provenance] = by_prov.get(o.provenance, 0) + 1
+        return {"total": len(self._ops), "namespaces": len(self._ns),
+                "by_namespace": by_ns, "by_provenance": by_prov}
 
 
 class _NS:
