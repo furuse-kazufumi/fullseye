@@ -40,14 +40,14 @@ def available() -> bool:
 # ── op 出力(render_hint)→ Open3D geometry(GL 不要)──────────────────────────── #
 def _cloud_geometry(pts, colormap="viridis"):
     import open3d as o3d
-    import matplotlib.cm as cm
+    import matplotlib
     pts = np.asarray(pts, float).reshape(-1, 3)
     pc = o3d.geometry.PointCloud()
     pc.points = o3d.utility.Vector3dVector(pts)
     if len(pts):
         z = pts[:, 2]
         zn = (z - z.min()) / (z.ptp() + 1e-9)
-        pc.colors = o3d.utility.Vector3dVector(cm.get_cmap(colormap)(zn)[:, :3])
+        pc.colors = o3d.utility.Vector3dVector(matplotlib.colormaps[colormap](zn)[:, :3])
     return pc
 
 
