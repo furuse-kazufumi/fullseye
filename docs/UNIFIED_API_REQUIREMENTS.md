@@ -158,5 +158,20 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     進化 REGISTRY(735)・知覚 facade(fs.stereo 等)と共存。
   - **検証**: 動くデモ `spikes/unified_vision_demo.py`(F1/F2/F3/F7 を実走表示)。テスト `tests/test_unified.py`
     9 件 pass。回帰 `test_op_contracts` 3113 pass 0 fail(F7 確認)。
-- **次**: F6 Studio 露出(render_hint で 2D/3D 自動描画・ドメイン棲み分け)/ 画像 registry 654 + 知覚 facade も
-  同 registry に段階載せ替え(現状 registry は本セッションの 600 HALCON facade op を収容)/ F4 OSS アダプタ契約。
+- **2026-08-18 F6 Studio 露出 実装完了**: 統一 registry(`fs.vision_ops`)から Studio が **600 op を
+  自動列挙・パラメータ UI 自動生成・実行・描画自動選択**する 2 プリミティブを `spikes/studio_ops_browser.py` に:
+  - **`render_by_hint(result, hint, fig)`** = F3 の render_hint で **2D/3D 描画を自動選択**(image=imshow /
+    region=マスク / contour=線 / point_cloud=3D 散布 / pose=RGB 軸 / matrix・scalar・matches=カード)。8 種全て検証。
+  - **`synthesize_args(op)` / `scalar_param_specs(op)`** = F3 の**自然な param 名**から合成入力と
+    スライダ spec を作る(param 名が意味を持つ=F1 の設計が効く)。**honest 自動実行カバレッジ = 364/600(60%)**
+    が合成入力だけで即実行・描画。残りは create_* が生む model handle 等の専用入力要(209)+ synthesizer の
+    形状ヒューリスティック外(27)で、いずれも **F3 introspection カード**(signature/doc/params/render_hint)を
+    表示=600 全てが「発見+メタ把握」できる。
+  - **GUI 統合** = `spikes/studio_app.py` のツリーに `vision-ops (600)` を**章別名前空間で自動展開**、
+    op 選択で F3 カード + スライダ自動生成 + `render_op_into`(スライダ override→合成入力→render_hint 描画)。
+    既存 9 サンプル(vision/sim-source 棲み分け)と共存。smoke = 9/9 サンプル OK + 代表 op 経路 + カバレッジ表示。
+  - **検証** = テスト `tests/test_studio_ops_browser.py` 7 pass(render_hint 8 種・合成入力・カバレッジ>=300・
+    override 反映)。ギャラリー `spikes/out_gallery/studio_f6_render_hints.png`(8 hint の描画一覧)。
+- **次**: 画像 registry 654 + 知覚 facade も同 registry へ段階載せ替え(全 op 1 索引)/ F4 OSS アダプタ契約
+  (stereo=image_pipeline / pcseg=PCL)/ synthesizer の per-op 入力ヒント拡充(自動実行 60%→上げる)/
+  Studio 3D viewer を Open3D/RViz2 連携へ(現状 matplotlib 3D)。
