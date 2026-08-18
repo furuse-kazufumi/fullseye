@@ -372,8 +372,9 @@ def namespaces() -> dict:
 
 if __name__ == "__main__":
     print("== Fullseye 統一 I/F registry ==")
+    ops = _ensure()
     st = ops.stats()
-    print(f"総 op {st['total']} / 名前空間 {st['namespaces']}")
+    print(f"総 op {st['total']} / 名前空間 {st['namespaces']}  provenance {st['by_provenance']}")
     for ns, n in st["by_namespace"].items():
         print(f"  fs.{ns:10} {n:3} ops   例: {', '.join(ops.list(namespace=ns)[:3])}")
     print("\n== F2 検索 例: 'circle' ==")
