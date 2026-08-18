@@ -119,18 +119,39 @@ def ground_grid(size=3.0, n=13):
 
 # ── 表示バックエンド ────────────────────────────────────────────────────────── #
 def show_interactive(geometries, title="Fullseye 3D", grid=True) -> bool:
-    """Open3D 対話ウィンドウで表示(mouse ナビ=RViz2 相当)。desktop GL が要る。"""
+    """Open3D 対話ウィンドウで表示(mouse ナビ=RViz2 相当)。desktop GL が要る。
+    Visualizer API で常用品質に: 暗背景 / 点サイズ / world 原点軸 / 見やすい初期ビュー。
+    ★ブロッキング(閉じるまで戻らない)。Studio からは launch_detached を使う(非ブロック)。"""
     if not available() or not geometries:
         return False
     import open3d as o3d
     geoms = list(geometries)
     if grid and (g := ground_grid()) is not None:
         geoms.append(g)
+    geoms.append(o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.3))  # world 原点
     try:
-        o3d.visualization.draw_geometries(geoms, window_name=title, width=960, height=720)
+        vis = o3d.visualization.Visualizer()
+        vis.create_window(window_name=title, width=1000, height=760)
+        for g in geoms:
+            vis.add_geometry(g)
+        opt = vis.get_render_option()
+        opt.background_color = np.array([0.09, 0.10, 0.12])   # 暗背景(点群が映える)
+        opt.point_size = 3.0
+        opt.show_coordinate_frame = False
+        vc = vis.get_view_control()
+        vc.set_front([0.4, -0.7, 0.55]); vc.set_up([0, 0, 1])
+        vc.set_lookat(geoms[0].get_center() if hasattr(geoms[0], "get_center") else [0, 0, 0])
+        vc.set_zoom(0.8)
+        vis.run()
+        vis.destroy_window()
         return True
     except Exception:
-        return False
+        # Visualizer が使えない環境は素の draw_geometries に劣化
+        try:
+            o3d.visualization.draw_geometries(geoms, window_name=title, width=1000, height=760)
+            return True
+        except Exception:
+            return False
 
 
 def render_offscreen(geometries, width=480, height=360):
