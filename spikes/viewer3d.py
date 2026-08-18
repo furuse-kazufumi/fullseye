@@ -258,20 +258,20 @@ def load_scene(manifest) -> list:
     return geoms
 
 
-def launch_detached(geometries, title="Fullseye 3D") -> bool:
-    """3D ウィンドウを **別プロセス** で起動(desktop 常用: Studio を固めない/GL 落ちを隔離)。
-    geometry を一時 PLY バンドルに保存し、viewer3d_launch.py を detached 起動して即戻る。"""
+def _spawn_viewer(geometries, title="Fullseye 3D"):
+    """3D 窓の別プロセスを起動し **Popen を返す**(失敗時 None)。管理用。
+    geometry を一時 PLY バンドルに保存 → viewer3d_launch.py を detached 起動。"""
     import os
     import subprocess
     import sys
     import tempfile
     if not available() or not geometries:
-        return False
+        return None
     try:
         scene_dir = tempfile.mkdtemp(prefix="fs3d_")
         manifest = save_scene(geometries, scene_dir, title=title)   # title は manifest 経由(UTF-8)
         if not manifest:
-            return False
+            return None
         launcher = os.path.join(os.path.dirname(os.path.abspath(__file__)), "viewer3d_launch.py")
         # console flash 回避: pythonw があれば優先(GUI サブプロセスにコンソール窓を出さない)
         exe = sys.executable
@@ -282,10 +282,75 @@ def launch_detached(geometries, title="Fullseye 3D") -> bool:
         if os.name == "nt":
             # DETACHED_PROCESS | CREATE_NO_WINDOW(コンソール窓を出さず親から独立)
             kwargs["creationflags"] = 0x00000008 | 0x08000000
-        subprocess.Popen([exe, launcher, manifest], **kwargs)   # title は argv で渡さない
-        return True
+        return subprocess.Popen([exe, launcher, manifest], **kwargs)   # title は argv で渡さない
     except Exception:
+        return None
+
+
+def launch_detached(geometries, title="Fullseye 3D") -> bool:
+    """3D ウィンドウを **別プロセス** で起動(desktop 常用: Studio を固めない/GL 落ちを隔離)。
+    即戻る。管理不要の単発起動用(追跡は ViewerManager)。"""
+    return _spawn_viewer(geometries, title) is not None
+
+
+class ViewerManager:
+    """開いている 3D 窓(別プロセス)を Studio 側で管理する。
+    起動・一覧(死活プルーニング付き)・個別終了・全終了。親(Studio)が生きている間は
+    detached 窓も Popen 経由で追跡・終了できる(Studio 終了後は窓が残る=意図的)。"""
+
+    def __init__(self) -> None:
+        self._wins: list[dict] = []     # {id, pid, title, popen}
+        self._counter = 0
+
+    def launch(self, geometries, title="Fullseye 3D"):
+        """窓を起動して管理下に置く。返り値 = window id(失敗時 None)。"""
+        p = _spawn_viewer(geometries, title)
+        if p is None:
+            return None
+        self._counter += 1
+        wid = self._counter
+        self._wins.append({"id": wid, "pid": p.pid, "title": title, "popen": p})
+        return wid
+
+    def _prune(self) -> None:
+        """ユーザーが閉じた窓(プロセス終了)を一覧から除く。"""
+        alive = []
+        for w in self._wins:
+            if w["popen"].poll() is None:      # None = まだ生きている
+                alive.append(w)
+        self._wins = alive
+
+    def windows(self) -> list:
+        """開いている窓の一覧 [{id, pid, title}]。呼ぶたび死活プルーニング。"""
+        self._prune()
+        return [{"id": w["id"], "pid": w["pid"], "title": w["title"]} for w in self._wins]
+
+    def count(self) -> int:
+        self._prune()
+        return len(self._wins)
+
+    def close(self, wid) -> bool:
+        """指定 window id の窓を閉じる(プロセス終了)。"""
+        for w in self._wins:
+            if w["id"] == wid:
+                try:
+                    w["popen"].terminate()
+                except Exception:
+                    pass
+                self._prune()
+                return True
         return False
+
+    def close_all(self) -> int:
+        """全ての管理下の窓を閉じる。返り値 = 閉じた数。"""
+        n = 0
+        for w in self._wins:
+            try:
+                w["popen"].terminate(); n += 1
+            except Exception:
+                pass
+        self._wins = []
+        return n
 
 
 def backend_status() -> dict:
