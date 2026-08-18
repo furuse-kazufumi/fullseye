@@ -331,20 +331,43 @@ def build_registry() -> Registry:
     return reg
 
 
-# ── モジュールロード時に registry を構築し、名前空間を公開(F1/F2)──────────────── #
-ops = build_registry()
+# ── 遅延構築 + 名前空間の遅延公開(F1/F2)─────────────────────────────────────── #
+# fullseye パッケージが unified を import し、unified が fullseye.REGISTRY / 知覚 facade を
+# 読むため循環する。遅延構築 + publish-before-load で re-entrancy を安全化する。
+_registry: Registry | None = None
+_ns_cache: dict = {}
 
-# 各名前空間を module 属性として公開: unified.contour, unified.calib, ...
-_namespaces = {}
-for _ns_name in ops.namespaces():
-    _obj = _NS(_ns_name, {o: ops[o] for o in ops.list(namespace=_ns_name)})
-    _namespaces[_ns_name] = _obj
-    globals()[_ns_name] = _obj
+
+def _ensure() -> Registry:
+    global _registry
+    if _registry is None:
+        reg = Registry()
+        _registry = reg                      # 層ロード前に publish(再入時は途中の reg を返す)
+        _load_facade(reg)
+        _load_evolution(reg)
+        _load_perception(reg)
+    return _registry
+
+
+def _ns_object(name: str) -> _NS:
+    reg = _ensure()
+    if name not in _ns_cache:
+        _ns_cache[name] = _NS(name, {o: reg[o] for o in reg.list(namespace=name)})
+    return _ns_cache[name]
+
+
+def __getattr__(name):  # PEP 562: unified.ops / unified.contour を遅延解決
+    if name == "ops":
+        return _ensure()
+    reg = _ensure()
+    if name in reg.namespaces():
+        return _ns_object(name)
+    raise AttributeError(f"module 'unified' has no attribute {name!r}")
 
 
 def namespaces() -> dict:
     """{名前空間名: _NS} を返す(Studio/エージェントの列挙用)。"""
-    return dict(_namespaces)
+    return {ns: _ns_object(ns) for ns in _ensure().namespaces()}
 
 
 if __name__ == "__main__":
