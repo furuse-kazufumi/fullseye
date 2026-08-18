@@ -191,7 +191,10 @@ _SCALAR = {"row": 32.0, "col": 32.0, "column": 32.0, "radius": 12.0, "ra": 14.0,
            "row1": 8, "col1": 8, "row2": 30, "col2": 40, "focal": 500.0, "baseline": 0.1,
            "disparity": 5.0, "kappa": 1e-4, "level": 0.3, "r1": 10.0, "c1": 5.0,
            "r2": 10.0, "c2": 35.0, "cx": 32.0, "cy": 24.0, "shape": (48, 64),
-           "center": (32.0, 32.0), "t": 0.0, "x": 20.0, "index": 0, "axis": 2}
+           "center": (32.0, 32.0), "t": 0.0, "x": 20.0, "index": 0, "axis": 2,
+           "rows": 32, "cols": 40, "px": 32.0, "py": 24.0, "fx": 500.0, "fy": 500.0,
+           "i": 0, "j": 1, "near": 0.1, "far": 10.0, "scale": 2.0, "k1": 0.0, "k2": 0.0,
+           "n_iter": 5, "iterations": 5, "num": 4, "n": 8, "bins": 16, "eps": 1e-6}
 
 
 def synthesize_args(op):
