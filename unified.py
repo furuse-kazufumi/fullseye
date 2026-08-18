@@ -71,6 +71,32 @@ _OFF = {"Graphics", "Tuple", "System", "Develop", "Control", "File", "Object",
         "Deep Learning", "OCR", "Classification", "Legacy", "Identification",
         "Image Source"}
 
+# 進化 registry(fs.REGISTRY, Op)の out_sort → render_hint
+_SORT_RENDER = {"image": "image", "region": "region", "contour": "contour",
+                "feature": "scalar", "match": "matches", "volume": "point_cloud",
+                "color": "image", "any": "image"}
+# 進化 op の category → 名前空間(自然語彙。facade 名前空間と一部共有=同種 op が集まる)
+_CAT_NS = {
+    "smoothing": "smooth", "edges": "edges", "features": "feature", "gray": "gray",
+    "morphology": "morph", "region": "region", "segmentation": "segment",
+    "texture": "texture", "frequency": "frequency", "restoration": "restore",
+    "arithmetic": "arith", "color": "color", "rank": "rank", "geometry": "geometry",
+    "contour": "contour", "xldgeom": "contour", "halcon_ext": "filter",
+    "extra": "misc", "misc": "misc", "artificial-life": "misc", "augmentation": "augment",
+}
+# 知覚 facade モジュール名 → render_hint 既定(モジュール単位のドメイン)
+_PERCEP_RENDER = {
+    "stereo": "image", "camera": "pose", "pcseg": "point_cloud", "pointcloud": "point_cloud",
+    "registration": "pose", "ppf": "pose", "terrain": "image", "locomotion": "scalar",
+    "occupancy": "image", "grasp": "pose", "detect": "region", "features": "scalar",
+    "flow": "image", "motion": "image", "odometry": "pose", "sceneflow": "image",
+    "pose": "pose", "measure": "scalar", "mesh": "point_cloud", "meshrepair": "point_cloud",
+    "render3d": "image", "volops": "image", "complexops": "image", "specops": "image",
+    "deformreg": "image", "events": "image", "videops": "image", "raster": "image",
+}
+# 統一 registry に載せる知覚 facade モジュール(algo=off-mission / io 系 / stdlib は除外)
+_PERCEP_MODULES = list(_PERCEP_RENDER)
+
 
 @dataclass
 class UnifiedOp:
