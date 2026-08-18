@@ -433,10 +433,24 @@ class StudioWindow(QtWidgets.QMainWindow):
             return
         # 統一 registry op: 合成入力 + スライダ上書きで自動実行し render_hint 描画(F6)
         if self._active_op is not None:
+            op = self._active_op
             overrides = {sl.name: sl.value() for sl in self._sliders}
-            status = _browser.render_op_into(self._active_op, self.figure, overrides)
+            status, result = _browser.compute_op(op, overrides)
+            self.figure.clear()
+            if result is None:
+                _browser._f3_card(op, self.figure,
+                                  reason="専用入力が要る(create_* が生む model 等)"
+                                  if "auto-input" in status else status)
+            else:
+                _browser.render_by_hint(result, op.render_hint, self.figure,
+                                        title=f"{op.namespace}.{op.name}")
+            # 3D 化可能(point_cloud/pose)なら Open3D ボタンを有効化
+            geoms = _v3d.to_geometries(result, op.render_hint) if result is not None else []
+            self._last3d = geoms
+            self.open3d_btn.setEnabled(bool(geoms))
             self.canvas.draw()
-            self.statusBar().showMessage(f"{self._active_op.namespace}.{self._active_op.name}  |  {status}")
+            tag = "  |  🧊 Open in 3D 可" if geoms else ""
+            self.statusBar().showMessage(f"{op.namespace}.{op.name}  |  {status.split(':')[0]}{tag}")
             return
         code = self.editor.toPlainText()
         self.figure.clear()
