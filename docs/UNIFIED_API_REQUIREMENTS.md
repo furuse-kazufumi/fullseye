@@ -199,4 +199,21 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     ユーザーの desktop GL で動く**(私の headless 環境では検証不可のため .ply + matplotlib プレビューで代替提示)。
   - **検証** = `tests/test_viewer3d.py` 8 pass(geometry/PLY/graceful fallback)、デモ `spikes/viewer3d_demo.py`
     (evis 知覚シーン=点群→物体→6D pose を .ply + プレビュー PNG 生成、`--show` で対話ウィンドウ)。
-- **次**: F4 OSS アダプタ契約(stereo=image_pipeline / pcseg=PCL、§10 受け入れ基準の最後)/ synthesizer 入力ヒント拡充。
+- **2026-08-18 F4 OSS アダプタ契約 実装完了 → §10 受け入れ基準 全達成**: `oss_adapter.py` が
+  **OSS(OpenCV 4.11 / scikit-image 0.26)を裏に、不在時 genuine numpy へ graceful フォールバック**する
+  同一 I/F(config オブジェクト + 動詞メソッド)を実装。5 アダプタ:
+  - `stereo.BlockMatching` / `stereo.SGBM`(cv2.StereoBM/SGBM ↔ fs.disparity_map/sgm numpy)
+  - `filter.Bilateral`(cv2.bilateralFilter ↔ numpy、フォールバック平均差 0.012)
+  - `features.ORB`(cv2.ORB ↔ Harris numpy)
+  - `contour.FindContours`(cv2.findContours ↔ skimage ↔ numpy、円輪郭 半径 14.3≈15)
+  - **契約**: 各アダプタが (1) 意味ある名前付き引数の config (2) 動詞メソッド(.compute/.apply/.detect/.find)
+    (3) `.backend` プロパティ(opencv/skimage/numpy(fallback))(4) `prefer='numpy'` で強制フォールバック、を満たす。
+  - **統一 registry 統合**: `unified._load_oss` が provenance=oss-adapter で登録 → **計 1574 op / 4 層**
+    (facade 600 / 進化 729 / 知覚 240 / OSS 5)。`fs.vision.stereo.SGBM(max_disp=32).compute(l,r)`(F1)、
+    `find`/`describe` に backend を出す(F3)。Studio(F6)でも config 生成→動詞メソッドで自動実行。
+  - **検証**: `tests/test_oss_adapter.py` 7 pass(両 backend / フォールバック近似 / registry 統合)。
+    回帰 unified 9 + browser 7 + viewer3d 8 + op_contracts 3113 = 全 pass。
+  - **§10 "done" 全項目達成**: ①画像 op と知覚 op を同一作法で ②全 op 単一 registry + F3 メタ
+    ③既存 op 回帰 0 ④OSS アダプタが同一 I/F で動く(stereo/filter/features/contour の 5 例)⑤honest gate 維持。
+- **次**(§11-6 網羅拡張・磨き込み): synthesizer per-op 入力ヒント(Studio 自動実行 72%→上げ)/
+  OSS アダプタ拡充(watershed/SIFT/PnP 等)/ 画像 registry 654 の自然 API 化継続 / Studio 3D を desktop で常用。
