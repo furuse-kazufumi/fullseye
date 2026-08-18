@@ -313,3 +313,15 @@ def create_planar_calib_deformable_model(template, cam_par, min_grad=0.1):
 def find_planar_calib_deformable_model(model, image, min_score=0.5):
     """平面校正済変形モデルの検出(find_planar_calib_deformable_model)。"""
     return find_local_deformable_model(model, image, min_score)
+
+
+def create_planar_uncalib_deformable_model_xld(contour, min_grad=0.1):
+    """XLD 由来の平面未校正変形モデル(create_planar_uncalib_deformable_model_xld)。"""
+    return create_local_deformable_model(_contour_to_template(contour), min_grad)
+
+
+def create_planar_calib_deformable_model_xld(contour, cam_par, min_grad=0.1):
+    """XLD 由来の平面校正済変形モデル(create_planar_calib_deformable_model_xld)。"""
+    m = create_local_deformable_model(_contour_to_template(contour), min_grad)
+    m["cam_par"] = cam_par
+    return m

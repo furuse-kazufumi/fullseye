@@ -63,35 +63,45 @@ def radiometric_self_calibration(images, exposures):
     return {"response": g / (g.max() + 1e-12)}
 
 
+def _sym_basis():
+    """対称 3x3 の 6 基底行列(パラメータ w=[w11,w12,w13,w22,w23,w33] に対応)。"""
+    B = []
+    for (i, j) in [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]:
+        M = np.zeros((3, 3)); M[i, j] = 1; M[j, i] = 1
+        B.append(M)
+    return B
+
+
 def stationary_camera_self_calibration(homographies):
-    """回転のみのカメラ運動(無限遠ホモグラフィ)から内部行列 K を推定
-    (stationary_camera_self_calibration)。H = K R K^-1 の拘束 H ω H^T = ω を解く。"""
+    """回転のみの無限遠ホモグラフィ H = K R K^-1 から内部行列 K を推定
+    (stationary_camera_self_calibration)。DIAC ω*=KK^T は H ω* H^T = ω* を満たす拘束を解く。"""
+    basis = _sym_basis()
+    upper = [(0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2)]
     A = []
     for H in homographies:
         H = np.asarray(H, float)
-        # ω(=K^-T K^-1)の対称成分に対する線形拘束を各 H から構成
-        for (i, j) in [(0, 1), (0, 2), (1, 2)]:
-            hi = H[:, i]; hj = H[:, j]
-            A.append(_omega_constraint(hi, hj))
-        A.append(_omega_constraint(H[:, 0], H[:, 0]) - _omega_constraint(H[:, 1], H[:, 1]))
+        for (i, j) in upper:                                   # 各 H から 6 個の線形拘束
+            row = [((H @ B @ H.T) - B)[i, j] for B in basis]
+            A.append(row)
     _, _, Vt = np.linalg.svd(np.asarray(A))
     w = Vt[-1]
-    W = np.array([[w[0], w[1], w[3]], [w[1], w[2], w[4]], [w[3], w[4], w[5]]])
-    if W[0, 0] < 0:
-        W = -W
+    Ws = np.array([[w[0], w[1], w[2]], [w[1], w[3], w[4]], [w[2], w[4], w[5]]])
+    if Ws[2, 2] < 0:
+        Ws = -Ws
+    Ws = Ws / Ws[2, 2]                                          # ω* = KK^T (最終要素 1 に正規化)
     try:
-        Kinv = np.linalg.cholesky(W).T
-        K = np.linalg.inv(Kinv)
+        K = np.linalg.cholesky(Ws)                             # 下三角 = K(上三角形式へ)
+        # cholesky は下三角 L で Ws=L L^T。K は上三角なので RQ 的に整える
         K = K / K[2, 2]
     except np.linalg.LinAlgError:
         K = np.eye(3)
-    return {"fx": float(K[0, 0]), "fy": float(K[1, 1]),
-            "cx": float(K[0, 2]), "cy": float(K[1, 2]), "K": K}
-
-
-def _omega_constraint(a, b):
-    return np.array([a[0] * b[0], a[0] * b[1] + a[1] * b[0], a[1] * b[1],
-                     a[0] * b[2] + a[2] * b[0], a[1] * b[2] + a[2] * b[1], a[2] * b[2]])
+    # KK^T の Cholesky(下三角)から上三角 K を得るには転置反転が必要 → 直接パラメータ抽出
+    cx = Ws[0, 2]; cy = Ws[1, 2]
+    fx2 = Ws[0, 0] - cx ** 2; fy2 = Ws[1, 1] - cy ** 2
+    fx = float(np.sqrt(fx2)) if fx2 > 0 else float("nan")
+    fy = float(np.sqrt(fy2)) if fy2 > 0 else float("nan")
+    Kmat = np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1.0]])
+    return {"fx": fx, "fy": fy, "cx": float(cx), "cy": float(cy), "K": Kmat}
 
 
 # ── MLP / SVM 分類(小規模 genuine 学習)──────────────────────────────────────── #
