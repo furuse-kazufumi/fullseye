@@ -217,3 +217,16 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     ③既存 op 回帰 0 ④OSS アダプタが同一 I/F で動く(stereo/filter/features/contour の 5 例)⑤honest gate 維持。
 - **次**(§11-6 網羅拡張・磨き込み): synthesizer per-op 入力ヒント(Studio 自動実行 72%→上げ)/
   OSS アダプタ拡充(watershed/SIFT/PnP 等)/ 画像 registry 654 の自然 API 化継続 / Studio 3D を desktop で常用。
+
+- **2026-08-19 F5 合成 実装完了(op のパイプライン化)= `unified.py`**: §7 の 2 形態を単一 registry(F2)+ F3 メタ準拠で実装。
+  - **`Pipeline`**(汎用): `pipeline('median', ('step_edges', {'min_rise':0.008}))` で段を並べ、前段出力を次段の第 1 引数へ流す。
+    op 名/`UnifiedOp`/生 callable を `_resolve_op` で解決。`run(x, trace=True)` で中間出力も返す。
+    **introspection**: `steps` / `render_hint`(最終段)/ `describe()`(段ごとの F3 メタ + 束縛 kwargs)= Studio/エージェント共有。
+  - **`Image`**(§7 "文のように"): `fs.Image(arr).median().sobel_amp().invert()` ―― 属性を registry op 名に解決し
+    現配列へ適用して**新 Image を返す(不変)**。tuple 出力(elevation_map→(grid,extent))は先頭 ndarray を鎖の値に。`history` で適用列。
+  - **知覚の段組み** = 画像チェーンと同一機構(elevation_map→slope_map→step_edges)。walker2d 視覚適応の知覚と同じ流れを合成で表現。
+  - **honest UX**: 未知 op は候補付き明示エラー(`Image`→AttributeError / `Pipeline`→KeyError)。
+  - **F7**: fullseye facade 無改変。`fs.Image`/`fs.Pipeline`/`fs.pipeline` をトップレベル露出(`fs.vision.*` でも可)。
+  - **検証**: デモ `spikes/unified_pipeline_demo.py`(①画像チェーン ②知覚段組み ③introspection ④Image==Pipeline 一致)。
+    テスト `tests/test_unified_pipeline.py` 9 件 pass。回帰 `test_unified`+`test_op_contracts`+`test_oss_adapter` = **3129 pass 0 fail**(F7)。
+  - **状態**: F1/F2/F3/F4/F5/F6/F7 = **全機能要件 実装完了**。残りは §11-6 の網羅拡張・磨き込み(sim-source アダプタ / synthesizer 拡充 / 自然 API 化継続)。

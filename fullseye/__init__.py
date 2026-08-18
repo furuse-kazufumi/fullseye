@@ -234,5 +234,5 @@ __all__ = [
     "algo_to_python", "algo_to_c", "algo_difftest",
     "synth", "learn_features", "synthesize_like", "match_histogram",
     "radial_power_spectrum", "feature_distance", "patch_novelty", "pyramid_stat_distance",
-    "vision", "vision_ops",
+    "vision", "vision_ops", "Image", "Pipeline", "pipeline",
 ]
