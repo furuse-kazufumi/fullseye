@@ -199,9 +199,10 @@ def export_ply(geometries, path) -> bool:
     return True
 
 
-def save_scene(geometries, scene_dir) -> str:
+def save_scene(geometries, scene_dir, title="Fullseye 3D") -> str:
     """geometry リストを scene_dir に PLY バンドル化(clouds/meshes)+ manifest.json。
-    別プロセス起動(desktop 常用)の受け渡し用。返り値 = manifest パス。"""
+    別プロセス起動(desktop 常用)の受け渡し用。返り値 = manifest パス。
+    title は manifest(UTF-8)に入れる(argv 経由の Windows codepage 文字化けを回避)。"""
     import json
     import os
     if not available():
@@ -221,8 +222,18 @@ def save_scene(geometries, scene_dir) -> str:
         # LineSet(grid 等)は launcher 側で再生成するので保存しない
     manifest = os.path.join(scene_dir, "manifest.json")
     with open(manifest, "w", encoding="utf-8") as fh:
-        json.dump({"entries": entries}, fh)
+        json.dump({"title": title, "entries": entries}, fh, ensure_ascii=False)
     return manifest
+
+
+def scene_title(manifest) -> str:
+    """manifest からウィンドウタイトルを読む(UTF-8、文字化けなし)。"""
+    import json
+    try:
+        with open(manifest, encoding="utf-8") as fh:
+            return json.load(fh).get("title", "Fullseye 3D")
+    except Exception:
+        return "Fullseye 3D"
 
 
 def load_scene(manifest) -> list:
