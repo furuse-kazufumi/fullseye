@@ -247,12 +247,11 @@ def _import(ref: str) -> Callable:
     return getattr(importlib.import_module(mod), fn)
 
 
-def build_registry() -> Registry:
-    """facade マップ + stub メタから統一 registry を構築(F2/F3)。"""
+def _load_facade(reg: Registry) -> None:
+    """本セッションの 600 HALCON genuine facade op(provenance=facade)。"""
     facade = json.load(open(_FACADE, encoding="utf-8"))
     facade = {k: v for k, v in facade.items() if not k.startswith("_")}
     stubs = json.load(open(_STUBS, encoding="utf-8"))["operators"]
-    reg = Registry()
     for name, ref in facade.items():
         try:
             func = _import(ref)
@@ -263,10 +262,72 @@ def build_registry() -> Registry:
         namespace = _CHAPTER_NS.get(chapter, "tools")
         doc = (func.__doc__ or meta.get("short_desc", "") or "").strip().splitlines()
         doc = doc[0].strip() if doc else ""
-        op = UnifiedOp(name=name, func=func, module=ref, chapter=chapter,
-                       namespace=namespace, doc=doc,
-                       render_hint=_render_hint(namespace, name), params=_params_of(func))
-        reg.register(op)
+        reg.register(UnifiedOp(name=name, func=func, module=ref, chapter=chapter,
+                               namespace=namespace, doc=doc, provenance="facade",
+                               render_hint=_render_hint(namespace, name), params=_params_of(func)))
+
+
+def _make_evolution_caller(fn):
+    """進化 op(v,a,b)を自然な (image, a=0.5, b=0.5) 呼び出しに包む(a/b は探索用ノブ)。"""
+    def call(image, a: float = 0.5, b: float = 0.5):
+        return fn(image, a, b)
+    return call
+
+
+def _load_evolution(reg: Registry) -> None:
+    """進化 registry(fs.REGISTRY, 735 Op)を統一 registry へ(provenance=evolution)。
+    a/b は探索用ノブ。自然 API は escape hatch(Image.op / この caller)で長い尾へアクセス。"""
+    try:
+        import fullseye as fs
+    except Exception:
+        return
+    for op in getattr(fs, "REGISTRY", []):
+        namespace = _CAT_NS.get(op.category, "filter")
+        doc = (op.fn.__doc__ or "").strip().splitlines()
+        doc = doc[0].strip() if doc else f"{op.category} op(HALCON: {op.halcon or '-'})"
+        params = [("image", _inspect.Parameter.empty, "arg"),
+                  ("a", 0.5, "arg"), ("b", 0.5, "arg")]
+        reg.register(UnifiedOp(name=op.name, func=_make_evolution_caller(op.fn),
+                               module=f"fs.apply({op.name!r})", chapter=op.category,
+                               namespace=namespace, doc=doc, provenance="evolution",
+                               render_hint=_SORT_RENDER.get(op.out_sort, "image"), params=params))
+
+
+def _load_perception(reg: Registry) -> None:
+    """知覚 facade モジュール(fs.stereo/pcseg/camera/…)の公開関数を統一 registry へ
+    (provenance=perception)。自然シグネチャをそのまま introspection。"""
+    try:
+        import fullseye as fs
+    except Exception:
+        return
+    for mod_name in _PERCEP_MODULES:
+        mod = getattr(fs, mod_name, None)
+        if mod is None:
+            continue
+        exported = getattr(mod, "__all__", None)
+        names = exported if exported else [n for n in dir(mod) if not n.startswith("_")]
+        for fn_name in names:
+            fn = getattr(mod, fn_name, None)
+            if not callable(fn) or _inspect.isclass(fn) or _inspect.ismodule(fn):
+                continue
+            if getattr(fn, "__module__", "") not in (mod_name, getattr(mod, "__name__", "")):
+                continue                                   # 再エクスポートされた他モジュール由来は除く
+            doc = (fn.__doc__ or "").strip().splitlines()
+            doc = doc[0].strip() if doc else f"{mod_name} perception op"
+            reg.register(UnifiedOp(name=fn_name, func=fn, module=f"fs.{mod_name}.{fn_name}",
+                                   chapter=mod_name, namespace=mod_name, doc=doc,
+                                   provenance="perception",
+                                   render_hint=_PERCEP_RENDER.get(mod_name, "image"),
+                                   params=_params_of(fn)))
+
+
+def build_registry() -> Registry:
+    """3 層(facade 600 / 進化 735 / 知覚 facade)を 1 索引に統合(F2/F3)。
+    facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。"""
+    reg = Registry()
+    _load_facade(reg)          # 1. genuine facade(優先)
+    _load_evolution(reg)       # 2. 進化 registry(a/b ノブ)
+    _load_perception(reg)      # 3. 知覚 facade(自然シグネチャ)
     return reg
 
 
