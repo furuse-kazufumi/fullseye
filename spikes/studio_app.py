@@ -300,10 +300,10 @@ class StudioWindow(QtWidgets.QMainWindow):
         self._sliders: list[_ParamSlider] = []
         self._suspend = False  # スライダ再構築中の連鎖 run 抑止
 
-        # 左: サンプル一覧(domain 別ツリー)
+        # 左: サンプル一覧(domain 別ツリー)+ 統一 registry の 600 op 自動列挙(F6/F2)
         self.tree = QtWidgets.QTreeWidget()
-        self.tree.setHeaderLabels(["samples"])
-        self.tree.setMinimumWidth(200)
+        self.tree.setHeaderLabels(["samples / vision-ops (600)"])
+        self.tree.setMinimumWidth(220)
         groups: dict[str, QtWidgets.QTreeWidgetItem] = {}
         for s in SAMPLES:
             if s["domain"] not in groups:
@@ -312,6 +312,19 @@ class StudioWindow(QtWidgets.QMainWindow):
                 groups[s["domain"]] = g
             item = QtWidgets.QTreeWidgetItem(groups[s["domain"]], [s["name"]])
             item.setData(0, 0x0100, s["name"])  # Qt.UserRole = sample name
+
+        # 統一 registry: fs.vision_ops を章別名前空間でツリーに自動展開(F2 発見 GUI 版)
+        self._reg_ops = {}
+        reg = _browser.ops
+        vroot = QtWidgets.QTreeWidgetItem(self.tree, [f"vision-ops  ({len(reg)})"])
+        for ns in reg.namespaces():
+            names = reg.list(namespace=ns)
+            nsg = QtWidgets.QTreeWidgetItem(vroot, [f"{ns}  ({len(names)})"])
+            for name in names:
+                key = f"op:{name}"
+                self._reg_ops[key] = reg[name]
+                it = QtWidgets.QTreeWidgetItem(nsg, [name])
+                it.setData(0, 0x0100, key)
         self.tree.itemSelectionChanged.connect(self._on_select)
 
         # 中: コード編集 + パラメータパネル + Run
