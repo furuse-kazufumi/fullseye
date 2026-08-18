@@ -333,9 +333,11 @@ class StudioWindow(QtWidgets.QMainWindow):
         self._last3d = None  # geometry list: 直近 op の 3D 化可能な出力
         self._last3d_title = None                # その op 名(3D 窓タイトル用)
         self.viewer_mgr = _v3d.ViewerManager()   # 開いている 3D 窓(別プロセス)を管理
+        self.export_btn = QtWidgets.QPushButton("保存 💾")
+        self.export_btn.clicked.connect(self._export_result)
         btn_row = QtWidgets.QWidget()
         bl = QtWidgets.QHBoxLayout(btn_row); bl.setContentsMargins(0, 0, 0, 0)
-        bl.addWidget(run_btn, 2); bl.addWidget(self.open3d_btn, 2)
+        bl.addWidget(run_btn, 2); bl.addWidget(self.open3d_btn, 2); bl.addWidget(self.export_btn, 1)
 
         # 3D 窓マネージャ(一覧 / 選択を閉じる / 全部閉じる / 環境状態)
         self.win3d_box = QtWidgets.QGroupBox("3D 窓マネージャ")
