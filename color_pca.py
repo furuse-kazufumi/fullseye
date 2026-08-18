@@ -121,17 +121,27 @@ def inpainting_ced(image, region, iterations=300, sigma=1.0):
     return im
 
 
-def inpainting_mcf(image, region, iterations=300):
-    """平均曲率流(Mean Curvature Flow)インペイント(inpainting_mcf)。"""
+def inpainting_mcf(image, region, iterations=300, dt=0.1):
+    """平均曲率流(Mean Curvature Flow)インペイント(inpainting_mcf)。
+    穴を調和充填で初期化してから曲率流で等値線を滑らかにする(数値安定化)。"""
     im = _img(image).copy(); m = np.asarray(region, bool)
+    # 調和(Laplace)事前充填で sharp 初期不連続を除去
+    for _ in range(400):
+        avg = 0.25 * (np.roll(im, 1, 0) + np.roll(im, -1, 0)
+                      + np.roll(im, 1, 1) + np.roll(im, -1, 1))
+        new = np.where(m, avg, im)
+        if np.abs(new - im)[m].max() < 1e-6:
+            im = new; break
+        im = new
+    # 曲率流(kappa をクランプして発散回避)
     for _ in range(int(iterations)):
         gy, gx = np.gradient(im)
         gxx = np.gradient(gx, axis=1); gyy = np.gradient(gy, axis=0)
         gxy = np.gradient(gx, axis=0)
-        num = gxx * gy ** 2 - 2 * gx * gy * gxy + gyy * gx ** 2
-        den = (gx ** 2 + gy ** 2) ** 1.5 + 1e-6
-        kappa = num / den
-        im = np.where(m, im + 0.15 * kappa, im)
+        den = (gx ** 2 + gy ** 2) ** 1.5
+        kappa = np.where(den > 1e-4, (gxx * gy ** 2 - 2 * gx * gy * gxy + gyy * gx ** 2) / (den + 1e-9), 0.0)
+        kappa = np.clip(kappa, -1.0, 1.0)
+        im = np.where(m, im + dt * kappa, im)
     return im
 
 

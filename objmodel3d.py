@@ -308,3 +308,54 @@ def prepare_object_model_3d(points, k=8):
         w, V = np.linalg.eigh(np.cov(d.T))
         normals[i] = V[:, 0]
     return {"points": p, "normals": normals}
+
+
+# ── 3D 姿勢適用 / 投影 / 検出 / 描画 ────────────────────────────────────────── #
+def trans_pose_shape_model_3d(points, pose):
+    """3D モデルに姿勢(4x4)を適用(trans_pose_shape_model_3d)。"""
+    return rigid_trans_object_model_3d(points, pose)
+
+
+def project_shape_model_3d(points, cam_par, pose=None, shape=(256, 256)):
+    """3D モデルをカメラへ投影しエッジ画像を生成(project_shape_model_3d)。"""
+    from calib import project_3d_point
+    px = project_3d_point(points, cam_par, pose)
+    H, W = shape; img = np.zeros((H, W))
+    rr = np.clip(px[:, 0].round().astype(int), 0, H - 1)
+    cc = np.clip(px[:, 1].round().astype(int), 0, W - 1)
+    img[rr, cc] = 1.0
+    return {"image": img, "projected": px}
+
+
+def find_box_3d(points, min_size=0.05):
+    """点群から軸並行境界箱(OBB 近似=PCA 箱)を検出(find_box_3d)。"""
+    p = _pts(points)
+    if len(p) < 4:
+        return None
+    c = p.mean(0); d = p - c
+    w, V = np.linalg.eigh(np.cov(d.T))
+    proj = d @ V
+    lo = proj.min(0); hi = proj.max(0)
+    extent = hi - lo
+    center = c + V @ ((lo + hi) / 2)
+    return {"center": center, "axes": V, "extent": extent,
+            "volume": float(np.prod(np.maximum(extent, min_size)))}
+
+
+def render_object_model_3d(points, cam_par, pose=None, shape=(256, 256), point_size=1):
+    """3D モデルを画像へレンダリング(深度で明暗、render_object_model_3d)。"""
+    from calib import project_3d_point
+    p = _pts(points)
+    cam = p if pose is None else (p @ np.asarray(pose, float)[:3, :3].T + np.asarray(pose, float)[:3, 3])
+    px = project_3d_point(p, cam_par, pose)
+    H, W = shape; img = np.zeros((H, W)); zbuf = np.full((H, W), np.inf)
+    z = cam[:, 2]
+    zn = (z - z.min()) / (z.ptp() + 1e-9)
+    for (row, col), depth, shade in zip(px, z, 1 - zn):
+        r = int(round(row)); cc = int(round(col))
+        for dr in range(-point_size, point_size + 1):
+            for dc in range(-point_size, point_size + 1):
+                rr = r + dr; ci = cc + dc
+                if 0 <= rr < H and 0 <= ci < W and depth < zbuf[rr, ci]:
+                    zbuf[rr, ci] = depth; img[rr, ci] = shade
+    return img

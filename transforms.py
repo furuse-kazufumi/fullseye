@@ -345,3 +345,43 @@ def get_rectangle_pose(row, col, phi, l1, l2, K):
     world = np.array([[-l1, -l2], [l1, -l2], [l1, l2], [-l1, l2]], float)
     H = vector_to_proj_hom_mat2d(world, corners_img[:, ::-1])
     return proj_hom_mat2d_to_pose(H, K)
+
+
+def gen_image_warp_map(hom_mat2d, shape):
+    """2D ホモグラフィから画素ワープマップ(逆写像)を生成(gen_image_warp_map)。"""
+    H = np.linalg.inv(_m(hom_mat2d))
+    Hh, Ww = shape
+    rr, cc = np.mgrid[0:Hh, 0:Ww]
+    hom = np.column_stack([cc.ravel(), rr.ravel(), np.ones(Hh * Ww)]) @ H.T
+    xy = hom[:, :2] / hom[:, 2:3]
+    return {"row_map": xy[:, 1].reshape(Hh, Ww), "col_map": xy[:, 0].reshape(Hh, Ww)}
+
+
+def vector_to_proj_hom_mat2d_distortion(src_points, dst_points):
+    """歪み込みで射影変換を推定(歪みは小と仮定し DLT)(vector_to_proj_hom_mat2d_distortion)。"""
+    H = vector_to_proj_hom_mat2d(src_points, dst_points)
+    return {"H": H, "kappa": 0.0}
+
+
+def point_pluecker_line_to_hom_mat3d(point, pluecker, target_point, target_dir):
+    """点+Plücker 直線の対応から 3D 剛体変換を推定(point_pluecker_line_to_hom_mat3d)。"""
+    d1 = _m(pluecker["direction"]); d1 = d1 / (np.linalg.norm(d1) + 1e-12)
+    d2 = _m(target_dir); d2 = d2 / (np.linalg.norm(d2) + 1e-12)
+    v = np.cross(d1, d2); s = np.linalg.norm(v); c = d1 @ d2
+    if s < 1e-9:
+        R = np.eye(3)
+    else:
+        vx = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+        R = np.eye(3) + vx + vx @ vx * ((1 - c) / (s ** 2))
+    t = _m(target_point) - R @ _m(point)
+    T = np.eye(4); T[:3, :3] = R; T[:3, 3] = t
+    return T
+
+
+def dual_quat_trans_line_3d(dual_quat, line_point, line_dir):
+    """双四元数で 3D 直線を変換(点と方向を剛体変換)(dual_quat_trans_line_3d)。"""
+    from pose_quat import dual_quat_to_hom_mat3d
+    T = dual_quat_to_hom_mat3d(dual_quat)
+    p = T[:3, :3] @ _m(line_point) + T[:3, 3]
+    d = T[:3, :3] @ _m(line_dir)
+    return {"point": p, "direction": d / (np.linalg.norm(d) + 1e-12)}

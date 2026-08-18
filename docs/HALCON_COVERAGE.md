@@ -3,7 +3,7 @@
 Source: `https://www.mvtec.com/doc/halcon/2605/en/` (version 2605).
 Ground truth: **2313 operators across 30 top-level chapters** (218 TOC pages), mined by `halcon_scrape.py`.
 
-**imgevolve maps to 885 / 2313 HALCON operators (38.3%)** via `Op.halcon`, from 735 registry ops.
+**imgevolve maps to 906 / 2313 HALCON operators (39.2%)** via `Op.halcon`, from 735 registry ops.
 
 One imgevolve op claims one nearest HALCON operator, so coverage counts
 distinct real operators with an analogue. This number is grounded in the
@@ -25,18 +25,18 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 | 3D Matching | 4 | 59 | 55 |
 | File | 0 | 53 | 53 |
 | Inspection | 6 | 55 | 49 |
-| Calibration | 22 | 68 | 46 |
 | Develop | 0 | 37 | 37 |
+| Calibration | 32 | 68 | 36 |
 | Control | 0 | 34 | 34 |
 | 3D Reconstruction | 43 | 76 | 33 |
 | Image | 81 | 110 | 29 |
 | Identification | 1 | 27 | 26 |
 | Image Source | 0 | 25 | 25 |
-| Filters | 172 | 196 | 24 |
 | 2D Metrology | 10 | 32 | 22 |
 | Tools | 88 | 108 | 20 |
 | Transformations | 99 | 118 | 19 |
 | Object | 1 | 16 | 15 |
+| Filters | 183 | 196 | 13 |
 | 3D Object Model | 38 | 51 | 13 |
 | XLD | 85 | 97 | 12 |
 | Matrix | 46 | 57 | 11 |
@@ -58,13 +58,13 @@ registry (each new `Op.halcon` that names a real operator lifts coverage).
 - **3D Matching** (4/59): add_deformable_surface_model_reference_point, add_deformable_surface_model_sample, apply_deep_matching_3d, apply_dl_model, clear_deformable_surface_matching_result, clear_deformable_surface_model, clear_shape_model_3d, clear_surface_matching_result, clear_surface_model, create_deep_matching_3d, create_deformable_surface_model, create_shape_model_3d
 - **File** (0/53): close_file, copy_file, delete_file, deserialize_handle, deserialize_image, deserialize_object, deserialize_region, deserialize_tuple, deserialize_xld, file_exists, fnew_line, fread_bytes
 - **Inspection** (6/55): add_texture_inspection_model_image, apply_bead_inspection_model, apply_texture_inspection_model, clear_bead_inspection_model, clear_structured_light_model, clear_texture_inspection_model, clear_texture_inspection_result, clear_train_data_variation_model, clear_variation_model, close_ocv, create_bead_inspection_model, create_ocv_proj
-- **Calibration** (22/68): binocular_calibration, caltab_points, clear_calib_data, clear_camera_setup_model, create_calib_data, create_caltab, create_camera_setup_model, deserialize_calib_data, deserialize_cam_par, deserialize_camera_setup_model, disp_caltab, find_calib_object
+- **Develop** (0/37): dev_clear_obj, dev_clear_window, dev_close_inspect_ctrl, dev_close_tool, dev_close_window, dev_disp_text, dev_display, dev_error_var, dev_get_exception_data, dev_get_preferences, dev_get_system, dev_get_window
 
 ## Version awareness (HALCON's op set changes between releases)
 Operator counts per scraped release: v12=2147, v13=2176, v2311=2381, v2411=2387, v2505=2411, v2605=2313 (union 2466). Coverage above is vs the primary scrape; the classification below is honest about which claimed `Op.halcon` names are stable vs release-specific.
 
-- **843** claimed names exist in **all** scraped releases (stable).
-- **42 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `area_intersection_rectangle2` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `convol_channels` (in 2605); `create_generic_shape_model` (in 2311/2411/2505/2605); `crop_rectangle2` (in 2311/2411/2505/2605); `decode_structured_light_pattern` (in 2311/2411/2505/2605); `distance_cc_min_points` (in 2311/2411/2505/2605); `distance_point_line` (in 2311/2411/2505/2605); `distance_point_pluecker_line` (in 2311/2411/2505/2605); `dual_quat_compose` (in 13/2311/2411/2505/2605); `dual_quat_conjugate` (in 13/2311/2411/2505/2605); `dual_quat_interpolate` (in 13/2311/2411/2505/2605); `dual_quat_normalize` (in 13/2311/2411/2505/2605); `dual_quat_to_hom_mat3d` (in 13/2311/2411/2505/2605); `dual_quat_to_pose` (in 13/2311/2411/2505/2605); `dual_quat_to_screw` (in 13/2311/2411/2505/2605); `dual_quat_trans_point_3d` (in 2311/2411/2505/2605); `edges_object_model_3d` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `find_ncc_models` (in 13/2311/2411/2505/2605); `fuse_object_model_3d` (in 2311/2411/2505/2605); `gen_savitzky_golay_filter` (in 2605); `gen_structured_light_pattern` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `interleave_channels` (in 13/2311/2411/2505/2605); `intersection_region_contour_xld` (in 2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `pluecker_line_to_point_direction` (in 2311/2411/2505/2605); `pluecker_line_to_points` (in 2311/2411/2505/2605); `point_direction_to_pluecker_line` (in 2311/2411/2505/2605); `points_to_pluecker_line` (in 2311/2411/2505/2605); `pose_to_dual_quat` (in 13/2311/2411/2505/2605); `reconstruct_surface_structured_light` (in 2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `screw_to_dual_quat` (in 13/2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605); `test_region_points` (in 2411/2505/2605); `uncalibrated_photometric_stereo` (in 2311/2411/2505/2605); `watersheds_marker` (in 2311/2411/2505/2605)
+- **863** claimed names exist in **all** scraped releases (stable).
+- **43 version-drift** (real, but only some releases): `add_image_border` (in 2311/2411/2505/2605); `area_intersection_rectangle2` (in 2311/2411/2505/2605); `bilateral_filter` (in 13/2311/2411/2505/2605); `convol_channels` (in 2605); `create_generic_shape_model` (in 2311/2411/2505/2605); `crop_rectangle2` (in 2311/2411/2505/2605); `decode_structured_light_pattern` (in 2311/2411/2505/2605); `distance_cc_min_points` (in 2311/2411/2505/2605); `distance_point_line` (in 2311/2411/2505/2605); `distance_point_pluecker_line` (in 2311/2411/2505/2605); `dual_quat_compose` (in 13/2311/2411/2505/2605); `dual_quat_conjugate` (in 13/2311/2411/2505/2605); `dual_quat_interpolate` (in 13/2311/2411/2505/2605); `dual_quat_normalize` (in 13/2311/2411/2505/2605); `dual_quat_to_hom_mat3d` (in 13/2311/2411/2505/2605); `dual_quat_to_pose` (in 13/2311/2411/2505/2605); `dual_quat_to_screw` (in 13/2311/2411/2505/2605); `dual_quat_trans_point_3d` (in 2311/2411/2505/2605); `edges_object_model_3d` (in 13/2311/2411/2505/2605); `equ_histo_image_rect` (in 2311/2411/2505/2605); `find_ncc_models` (in 13/2311/2411/2505/2605); `fuse_object_model_3d` (in 2311/2411/2505/2605); `gen_canonical_variates_trans` (in 2605); `gen_savitzky_golay_filter` (in 2605); `gen_structured_light_pattern` (in 2311/2411/2505/2605); `guided_filter` (in 13/2311/2411/2505/2605); `height_width_ratio` (in 2311/2411/2505/2605); `height_width_ratio_xld` (in 2311/2411/2505/2605); `interleave_channels` (in 13/2311/2411/2505/2605); `intersection_region_contour_xld` (in 2411/2505/2605); `mean_image_shape` (in 2311/2411/2505/2605); `pluecker_line_to_point_direction` (in 2311/2411/2505/2605); `pluecker_line_to_points` (in 2311/2411/2505/2605); `point_direction_to_pluecker_line` (in 2311/2411/2505/2605); `points_to_pluecker_line` (in 2311/2411/2505/2605); `pose_to_dual_quat` (in 13/2311/2411/2505/2605); `reconstruct_surface_structured_light` (in 2311/2411/2505/2605); `rectangularity_xld` (in 2311/2411/2505/2605); `screw_to_dual_quat` (in 13/2311/2411/2505/2605); `segment_image_mser` (in 13/2311/2411/2505/2605); `test_region_points` (in 2411/2505/2605); `uncalibrated_photometric_stereo` (in 2311/2411/2505/2605); `watersheds_marker` (in 2311/2411/2505/2605)
 - **0** claimed names exist in **no** scraped release — genuine bad names / library-specific / voxel-3D, not version drift.
 
 ## Honest reading
