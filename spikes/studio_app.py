@@ -375,6 +375,8 @@ class StudioWindow(QtWidgets.QMainWindow):
         ml.addWidget(self.editor, 3)
         ml.addWidget(self.param_box)
         ml.addWidget(btn_row)
+        ml.addWidget(self.win3d_box)
+        self._refresh_3d_windows()
 
         # 右: matplotlib 描画ペイン
         self.figure = Figure(figsize=(5, 4))
