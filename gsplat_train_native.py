@@ -221,6 +221,9 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
         img, info = render(vm, K)
         info["means2d"].retain_grad()
         loss = 0.8 * torch.abs(img - rgb).mean() + 0.2 * (1 - ssim(img, rgb))
+        if flatten > 0:                      # SuGaR 風: 各ガウシアンを扁平化(最小軸≪他軸=円盤)
+            sc = torch.exp(params["scales"])
+            loss = loss + flatten * (sc.min(dim=1).values / (sc.max(dim=1).values + 1e-8)).mean()
         strategy.step_pre_backward(params, optimizers, state, it, info)
         for o in optimizers.values():
             o.zero_grad()
