@@ -255,7 +255,9 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
             frames.append((render(_viewmat(c2w, dev), K)[0].detach().cpu().numpy() * 255).astype(np.uint8))
     imgs = [Image.fromarray(f) for f in frames]
     imgs[0].save(os.path.join(out_dir, "turntable.gif"), save_all=True, append_images=imgs[1:], duration=60, loop=0)
-    log(f"saved novelview.png, turntable.gif -> {out_dir}")
+    save_gaussians_ply(os.path.join(out_dir, "gaussians.ply"), params["means"], params["scales"],
+                       params["quats"], params["opacities"], params["sh0"], params["shN"])
+    log(f"saved novelview.png, turntable.gif, gaussians.ply -> {out_dir}")
     return {"test_psnr": tp, "n": nfin, "sec": dt}
 
 
