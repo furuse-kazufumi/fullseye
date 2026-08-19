@@ -28,6 +28,23 @@ _DEMO_XML = (
     '<geom type="capsule" size=".08 .12" pos="-.15 -.2 .2" rgba=".25 .35 .85 1"/>'
     '</worldbody></mujoco>')
 
+
+def _terrain_xml():
+    """バンプ地形(連続面)。SuGaR でメッシュ化しやすく、上を歩かせる合成の土台。"""
+    import math
+    bumps = []
+    rng = [(-1.4, -1.0, 0.28), (-0.6, 0.7, 0.34), (0.1, -0.5, 0.30), (0.8, 0.4, 0.38),
+           (1.3, -0.9, 0.26), (-1.1, 0.3, 0.24), (0.5, 1.1, 0.30), (-0.2, -1.2, 0.28),
+           (1.2, 1.0, 0.24), (-1.3, -0.2, 0.30)]
+    for i, (x, y, r) in enumerate(rng):
+        h = 0.08 + 0.05 * ((i % 3))
+        c = 0.36 + 0.05 * ((i % 4)) / 3.0
+        bumps.append(f'<geom type="ellipsoid" size="{r:.2f} {r*0.9:.2f} {h:.2f}" '
+                     f'pos="{x:.2f} {y:.2f} {h*0.5:.2f}" rgba="{c:.2f} {c*0.86:.2f} {c*0.66:.2f} 1"/>')
+    return ('<mujoco><worldbody><light pos="0 0 4" dir="0 0 -1" diffuse=".8 .8 .8"/>'
+            '<geom name="ground" type="box" size="2 2 .05" pos="0 0 0" rgba=".45 .40 .32 1"/>'
+            + "".join(bumps) + '</worldbody></mujoco>')
+
 # framing = lookat(xyz), radius, elevation_deg。category は表示・gait 適用の目安。
 _CATALOG = {
     "demo":   {"synthetic": _DEMO_XML, "category": "synthetic",
