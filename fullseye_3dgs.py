@@ -140,7 +140,9 @@ def main(argv=None):
                     help="native時: 学習中にガウシアンを増やす(細部↑、floater増の可能性・実験的)")
     ap.add_argument("--motion", action="store_true",
                     help="native時: 静止でなく『動く3DGS』を生成(body リグ+サイン波モーション→motion.gif)")
-    ap.add_argument("--frames", type=int, default=60, help="--motion のフレーム数")
+    ap.add_argument("--frames", type=int, default=60, help="--motion のフレーム数(サイン波時)")
+    ap.add_argument("--motion-file", default=None,
+                    help="--motion時: 実際の qpos 軌道 .npy (F,nq) を再生(歩行など)")
     ap.add_argument("--list", action="store_true", help="使えるシーン一覧")
     a = ap.parse_args(argv)
 
