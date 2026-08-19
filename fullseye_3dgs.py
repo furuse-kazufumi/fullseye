@@ -190,7 +190,8 @@ def main(argv=None):
         print("   (motion: body リグ付け→サイン波モーションで『動く3DGS』を生成します)")
         r = AM.animate(path, out, n_views=n_views, iters=max(800, iters), res=res, radius=radius,
                        elevation_deg=elev, lookat=lookat, n_gauss=max(15000, n_gauss),
-                       n_frames=a.frames, log=lambda m: print("   " + m, flush=True))
+                       n_frames=a.frames, motion_file=getattr(a, "motion_file", None),
+                       log=lambda m: print("   " + m, flush=True))
         gif = os.path.join(out, "motion.gif")
         print(f"\n✓ 完了: 動く3DGS {r['frames']}フレーム / {r['n']}ガウシアン")
         print(f"  motion GIF: {gif}")
