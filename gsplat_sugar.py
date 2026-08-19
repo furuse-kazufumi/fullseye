@@ -196,6 +196,61 @@ def extract_mesh(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3,
             "test_psnr": r.get("test_psnr")}
 
 
+def depth_tsdf_mesh(scene, out_dir, *, n_views=48, res=256, radius=1.3,
+                    elevation_deg=22.0, lookat=(0, 0, 0.18), voxel=0.02,
+                    depth_max=None, log=print):
+    """sim 完全深度を TSDF 体積融合して watertight メッシュ化(SuGaR とは別解)。
+
+    TRIZ 原理28(機械系の置換): 「splat→法線→Poisson」を捨て、sim が各視点で吐く
+    正確な深度マップ(COLMAP 不要のタダ情報)を Open3D ScalableTSDFVolume に直接融合。
+    splat 由来の針状スパイクが出ず、色も RGB から取り込む。CUDA/gsplat 不要(sim のみ)。
+    戻り値: {mesh_ply, vertices, faces, preview, gt_bbox_err}。
+    """
+    import open3d as o3d
+    import sim_source as S
+    os.makedirs(out_dir, exist_ok=True)
+    depth_max = float(radius * 3.0 if depth_max is None else depth_max)
+    Fcv = np.diag([1.0, -1.0, -1.0, 1.0])                  # OpenGL w2c -> OpenCV w2c
+    s, names = S.orbit_scene(scene, n_views=n_views, radius=radius,
+                             elevation_deg=elevation_deg, lookat=lookat,
+                             width=res, height=res, keyframe=0)
+    K = s.intrinsics(names[0])
+    intr = o3d.camera.PinholeCameraIntrinsic(res, res, float(K[0, 0]), float(K[1, 1]),
+                                             float(K[0, 2]), float(K[1, 2]))
+    vol = o3d.pipelines.integration.ScalableTSDFVolume(
+        voxel_length=float(voxel), sdf_trunc=float(voxel * 5),
+        color_type=o3d.pipelines.integration.TSDFVolumeColorType.RGB8)
+    for nm in names:
+        rgb = np.ascontiguousarray(s.rgb(nm).astype(np.uint8))
+        dep = np.ascontiguousarray(np.asarray(s.depth(nm), np.float32))
+        dep[(dep <= 1e-3) | (dep > depth_max)] = 0.0      # 背景/far を除外
+        rgbd = o3d.geometry.RGBDImage.create_from_color_and_depth(
+            o3d.geometry.Image(rgb), o3d.geometry.Image(dep),
+            depth_scale=1.0, depth_trunc=depth_max, convert_rgb_to_intensity=False)
+        vol.integrate(rgbd, intr, Fcv @ s.extrinsics(nm))
+    gt = _gt_mesh_bbox(scene)
+    s.close()
+    mesh = vol.extract_triangle_mesh()
+    mesh.compute_vertex_normals()
+    if gt is not None:                                     # 真値 bbox でクロップ(余分な床を除去)
+        aabb = o3d.geometry.AxisAlignedBoundingBox(gt[0] - 0.02, gt[1] + 0.02)
+        mesh = mesh.crop(aabb)
+    ply = os.path.join(out_dir, "mesh.ply")
+    o3d.io.write_triangle_mesh(ply, mesh)
+    prev = _preview(mesh, os.path.join(out_dir, "mesh_preview.png"))
+    nv, nf = len(mesh.vertices), len(mesh.triangles)
+    err = None
+    if gt is not None and nv:
+        v = np.asarray(mesh.vertices)
+        err = float(np.abs((v.max(0) - v.min(0)) - (gt[1] - gt[0])).max())
+        diag = float(np.linalg.norm(v.max(0) - v.min(0)))
+        log(f"TSDF mesh: {nv} 頂点 / {nf} 面 | bbox差 {err:.3f}m "
+            f"area/bbox2={mesh.get_surface_area()/(diag*diag):.3f}")
+    else:
+        log(f"TSDF mesh: {nv} 頂点 / {nf} 面")
+    return {"mesh_ply": ply, "preview": prev, "vertices": nv, "faces": nf, "gt_bbox_err": err}
+
+
 if __name__ == "__main__":
     import fullseye_3dgs as F
     F.setup_cuda_env()
