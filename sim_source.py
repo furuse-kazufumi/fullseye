@@ -78,6 +78,40 @@ class MuJoCo:
                 out[nm] = (self._d.xpos[b].copy(), self._d.xquat[b].copy())
         return out
 
+    # -- カメラ外部姿勢(3DGS/NeRF データセット用) -----------------------
+    def camera_to_world(self, cam=0) -> np.ndarray:
+        """カメラ→世界の 4x4 変換(OpenGL 規約: -Z 前方 / +Y 上)。
+
+        MuJoCo のカメラ frame はそのまま OpenGL 規約なので `cam_xmat` が c2w 回転、
+        `cam_xpos` が原点になる。nerfstudio/3DGS の `transform_matrix` に直接使える。
+        姿勢推定(COLMAP)が sim では不要 ―― これが sim-source の強み。"""
+        cid = self._cam_id(cam)
+        R = np.asarray(self._d.cam_xmat[cid]).reshape(3, 3)
+        t = np.asarray(self._d.cam_xpos[cid])
+        c2w = np.eye(4)
+        c2w[:3, :3] = R
+        c2w[:3, 3] = t
+        return c2w
+
+    def extrinsics(self, cam=0) -> np.ndarray:
+        """世界→カメラの 4x4(w2c = camera_to_world の逆)。"""
+        return np.linalg.inv(self.camera_to_world(cam))
+
+    def project(self, pts_world: np.ndarray, cam=0):
+        """世界点 (N,3) を画素 (u,v) と視線方向深度に投影(姿勢検証用)。
+
+        戻り値 (uv(N,2), depth(N,)). OpenGL 規約(-Z 前方): 深度 = -z_cam、
+        v は下向き画像座標に合わせて反転。camera_to_world/intrinsics の自己検証に使う。"""
+        pts = np.atleast_2d(np.asarray(pts_world, dtype=float))
+        w2c = self.extrinsics(cam)
+        cam_pts = (w2c[:3, :3] @ pts.T).T + w2c[:3, 3]       # (N,3) カメラ座標
+        z = -cam_pts[:, 2]                                    # -Z 前方 → 前方深度
+        K = self.intrinsics(cam)
+        fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]
+        u = cx + fx * (cam_pts[:, 0] / -cam_pts[:, 2])
+        v = cy - fy * (cam_pts[:, 1] / -cam_pts[:, 2])
+        return np.stack([u, v], axis=1), z
+
     # -- GL 描画 -----------------------------------------------------------
     def _rend(self):
         import mujoco
