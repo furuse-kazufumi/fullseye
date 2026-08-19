@@ -92,35 +92,6 @@ def native_available() -> bool:
         return False
 
 
-_DEMO_XML = (
-    '<mujoco><worldbody><light pos="0 0 3" dir="0 0 -1"/>'
-    '<geom name="floor" type="box" size="1 1 .02" pos="0 0 0" rgba=".4 .45 .5 1"/>'
-    '<geom type="sphere" size=".18" pos=".25 0 .25" rgba=".85 .2 .2 1"/>'
-    '<geom type="box" size=".12 .12 .12" pos="-.2 .2 .18" rgba=".2 .7 .3 1"/>'
-    '<geom type="capsule" size=".08 .12" pos="-.15 -.2 .2" rgba=".25 .35 .85 1"/>'
-    '</worldbody></mujoco>')
-
-
-def _demo_scene_path():
-    """合成デモシーン(外部アセット不要)を temp .xml に書き出しパスを返す。"""
-    import tempfile
-    p = os.path.join(tempfile.gettempdir(), "fullseye_3dgs_demo.xml")
-    if not os.path.isfile(p):
-        with open(p, "w", encoding="utf-8") as f:
-            f.write(_DEMO_XML)
-    return p
-
-
-def resolve_scene(name: str):
-    if name == "demo":
-        return (_demo_scene_path(), (0, 0, 0.2), 1.3, 25)   # 外部アセット不要
-    if name in BUILTIN:
-        return BUILTIN[name]
-    if os.path.isfile(name) and name.endswith(".xml"):
-        return (name, (0, 0, 0.3), 2.0, 20)      # 汎用デフォルト
-    return None
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser(
         description="Fullseye 3DGS ― sim シーンを1コマンドで3D Gaussian Splatting化",
