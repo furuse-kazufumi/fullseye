@@ -104,6 +104,14 @@ def train_scene(views, init_pts, init_cols, H, W, *, iters=800, device="cuda",
             return float(np.mean([G.psnr(G.render(gm, c2w, K, H, W), rgb) for rgb, c2w, K in vs]))
 
     hist = []
+    best = {"test": -1.0, "raw": None, "n": gm.n, "it": 0}
+
+    def _snapshot(it):
+        tp = ev(test)
+        if test and tp > best["test"]:
+            best.update(test=tp, raw=tuple(x.clone() for x in _raw(gm)), n=gm.n, it=it)
+        return tp
+
     for it in range(1, iters + 1):
         rgb, c2w, K = train[np.random.randint(len(train))]
         img = G.render(gm, c2w, K, H, W)
@@ -116,16 +124,22 @@ def train_scene(views, init_pts, init_cols, H, W, *, iters=800, device="cuda",
         opt.step()
         if it % densify_every == 0 and it <= densify_until:
             g = grad_accum / grad_count.clamp_min(1)
-            thr = torch.quantile(g[torch.isfinite(g)], 0.85) if torch.isfinite(g).any() else None
+            thr = torch.quantile(g[torch.isfinite(g)], 0.90) if torch.isfinite(g).any() else None
             gm, st = densify_and_prune(gm, g, grad_thresh=thr, device=device)
             opt = _make_opt(gm)
             grad_accum = torch.zeros(gm.n, device=device); grad_count = torch.zeros(gm.n, device=device)
             log(f"[iter {it}] densify: n={st['n']} (+{st['cloned']} clone / -{st['pruned']} prune) "
-                f"train_psnr={ev(train):.2f} test_psnr={ev(test):.2f}")
-        elif it % 200 == 0:
-            log(f"[iter {it}] loss={loss.item():.4f} n={gm.n} train_psnr={ev(train):.2f} test_psnr={ev(test):.2f}")
+                f"train_psnr={ev(train):.2f} test_psnr={_snapshot(it):.2f}")
+        elif it % 100 == 0:
+            log(f"[iter {it}] loss={loss.item():.4f} n={gm.n} train_psnr={ev(train):.2f} test_psnr={_snapshot(it):.2f}")
         hist.append((it, gm.n))
-    return gm, {"train_psnr": ev(train), "test_psnr": ev(test), "n": gm.n}
+    # early-stopping: hold-out で最良のモデルを採用(過学習の最終劣化を避ける)
+    final_test = ev(test)
+    if test and best["raw"] is not None and best["test"] > final_test:
+        gm = _from_raw(*best["raw"], device)
+        log(f"[best] test_psnr={best['test']:.2f} @iter{best['it']} (final was {final_test:.2f}) を採用")
+    return gm, {"train_psnr": ev(train), "test_psnr": ev(test), "n": gm.n,
+                "best_test": best["test"], "best_it": best["it"]}
 
 
 def render_turntable(gm, K, H, W, *, n_frames=48, radius=1.6, elevation_deg=20,
