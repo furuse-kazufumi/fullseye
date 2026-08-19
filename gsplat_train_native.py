@@ -135,11 +135,13 @@ _SH_C0 = 0.28209479177387814   # SH DC 基底: rgb = C0 * sh0 + 0.5
 
 def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3,
                   elevation_deg=22.0, lookat=(0, 0, 0.18), n_gauss_init=8000,
-                  n_test=3, sh_degree=3, log=print):
+                  n_test=3, sh_degree=3, flatten=0.0, return_gaussians=False, log=print):
     """gsplat DefaultStrategy で densify/prune しながら学習(soft さ改善版)。
 
     点群で少なめに初期化 → 高勾配領域を split/clone、低不透明度を prune。
     sh_degree>0 で view-dependent color(SH、反射/光沢を再現)。hold-out PSNR。
+    flatten>0 で SuGaR 風の表面整列(各ガウシアンを扁平な円盤に→面へ整列)。
+    return_gaussians=True で学習後のパラメータ dict も返す(メッシュ抽出用)。
     """
     import math
     from gsplat.strategy import DefaultStrategy
