@@ -107,16 +107,23 @@ class Scene:
                            n_gauss=ng, **fr)
         return Splat(out, info)
 
-    def mesh(self, quality="balanced", out=None):
-        """SuGaR メッシュ抽出。Mesh を返す。"""
-        _cuda()
+    def mesh(self, quality="balanced", method="tsdf", out=None):
+        """メッシュ抽出。method='tsdf'(既定)=sim 深度を TSDF 融合(GPU 不要・清潔・
+        針無し・XY footprint ほぼ完璧)、method='sugar'=3DGS を表面整列→Poisson(要 GPU)。
+        Mesh を返す。"""
         import unified as u
-        res, ng, iters = {"fast": (200, 8000, 1000), "balanced": (220, 9000, 1400),
-                          "high": (256, 12000, 1800)}[quality]
         out = out or os.path.join(_OUT, f"mesh_{self.name}")
         fr = self._framing()
-        r = u.ops["sugar_mesh"](self.spec["xml"], out, n_views=40, iters=iters, res=res,
-                                n_gauss_init=ng, flatten=0.03, **fr)
+        if method == "tsdf":
+            res = {"fast": 200, "balanced": 240, "high": 300}[quality]
+            vox = {"fast": 0.03, "balanced": 0.02, "high": 0.015}[quality]
+            r = u.ops["tsdf_mesh"](self.spec["xml"], out, n_views=48, res=res, voxel=vox, **fr)
+        else:
+            _cuda()
+            res, ng, iters = {"fast": (200, 8000, 1000), "balanced": (220, 9000, 1400),
+                              "high": (256, 12000, 1800)}[quality]
+            r = u.ops["sugar_mesh"](self.spec["xml"], out, n_views=40, iters=iters, res=res,
+                                    n_gauss_init=ng, flatten=0.03, **fr)
         return Mesh(r["mesh_ply"], r)
 
     def walk(self, motion=None, gait=None, on=None, z_offset=0.16):
