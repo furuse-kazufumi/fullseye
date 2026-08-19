@@ -198,7 +198,7 @@ def extract_mesh(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3,
 
 def depth_tsdf_mesh(scene, out_dir, *, n_views=48, res=256, radius=1.3,
                     elevation_deg=22.0, lookat=(0, 0, 0.18), voxel=0.02,
-                    depth_max=None, log=print):
+                    depth_max=None, smooth_iters=8, log=print):
     """sim 完全深度を TSDF 体積融合して watertight メッシュ化(SuGaR とは別解)。
 
     TRIZ 原理28(機械系の置換): 「splat→法線→Poisson」を捨て、sim が各視点で吐く
