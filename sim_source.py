@@ -377,6 +377,13 @@ def play_animation(manifest) -> bool:
     except Exception:
         pass
     vis.add_geometry(o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.3))
+    if spec.get("static_mesh"):                       # SuGaR 地形など静的メッシュを合成
+        try:
+            terr = o3d.io.read_triangle_mesh(os.path.join(d, spec["static_mesh"]))
+            terr.compute_vertex_normals()
+            vis.add_geometry(terr)
+        except Exception:
+            pass
     for _, mesh, _v in items:
         vis.add_geometry(mesh)
 
