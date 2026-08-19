@@ -1,0 +1,143 @@
+"""SuGaR 風メッシュ抽出 ―― 表面整列した 3DGS からメッシュを取り出す。
+
+  1. flatten 正則つきで 3DGS 学習(各ガウシアンを扁平な円盤=面に整列)
+  2. 各ガウシアンの薄軸(最小スケール軸)を surface normal とし、法線つき点群を作る
+  3. Open3D Poisson でメッシュ再構成 → 低密度をトリム → bbox でクロップ
+  4. mesh.ply 書き出し + プレビュー画像 + sim 真値メッシュとの bbox 比較(honest 検証)
+
+sim ネイティブなので真値メッシュ(scene_geometries)と付き合わせて品質を確認できる。
+実行は fullseye_3dgs.setup_cuda_env() 後(native gsplat)。
+"""
+from __future__ import annotations
+import os
+import sys
+
+import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+_SH_C0 = 0.28209479177387814
+
+
+def _quats_to_R(q):
+    q = q / (np.linalg.norm(q, axis=1, keepdims=True) + 1e-9)
+    w, x, y, z = q[:, 0], q[:, 1], q[:, 2], q[:, 3]
+    R = np.empty((len(q), 3, 3), np.float32)
+    R[:, 0, 0] = 1 - 2 * (y * y + z * z); R[:, 0, 1] = 2 * (x * y - w * z); R[:, 0, 2] = 2 * (x * z + w * y)
+    R[:, 1, 0] = 2 * (x * y + w * z); R[:, 1, 1] = 1 - 2 * (x * x + z * z); R[:, 1, 2] = 2 * (y * z - w * x)
+    R[:, 2, 0] = 2 * (x * z - w * y); R[:, 2, 1] = 2 * (y * z + w * x); R[:, 2, 2] = 1 - 2 * (x * x + y * y)
+    return R
+
+
+def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8, log=print):
+    """学習済みガウシアン dict -> Open3D TriangleMesh(法線つき点群 + Poisson)。"""
+    import open3d as o3d
+    import torch
+    means = g["means"].cpu().numpy().astype(np.float64)
+    scales = torch.exp(g["scales"]).cpu().numpy()
+    quats = g["quats"].cpu().numpy()
+    opac = torch.sigmoid(g["opacities"]).cpu().numpy()
+    dc = g["sh0"].reshape(-1, 3).cpu().numpy()
+    rgb = np.clip(_SH_C0 * dc + 0.5, 0, 1)
+    keep = opac > opacity_thresh
+    means, scales, quats, rgb = means[keep], scales[keep], quats[keep], rgb[keep]
+    R = _quats_to_R(quats)
+    kmin = np.argmin(scales, axis=1)                       # 薄軸 = surface normal
+    normals = R[np.arange(len(R)), :, kmin].astype(np.float64)
+    pcd = o3d.geometry.PointCloud()
+    pcd.points = o3d.utility.Vector3dVector(means)
+    pcd.normals = o3d.utility.Vector3dVector(normals)
+    pcd.colors = o3d.utility.Vector3dVector(rgb.astype(np.float64))
+    pcd.orient_normals_consistent_tangent_plane(20)        # 法線の向きを整合
+    log(f"Poisson 再構成 (点 {len(means)}, depth {poisson_depth}) …")
+    mesh, dens = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
+        pcd, depth=poisson_depth, linear_fit=True)
+    dens = np.asarray(dens)
+    mesh.remove_vertices_by_mask(dens < np.quantile(dens, density_pct / 100.0))  # 低密度=外挿を除去
+    mesh = mesh.crop(pcd.get_axis_aligned_bounding_box())  # 元の範囲へ
+    mesh.compute_vertex_normals()
+    return mesh, pcd
+
+
+def _gt_mesh_bbox(scene_xml):
+    """sim 真値メッシュ(全 geom)の合成 bbox(honest 検証用)。"""
+    import sim_source as S
+    s = S.MuJoCo(scene_xml)
+    try:
+        geoms = s.scene_geometries()
+    finally:
+        s.close()
+    if not geoms:
+        return None
+    import numpy as _np
+    mins, maxs = [], []
+    for g in geoms:
+        v = _np.asarray(g.vertices)
+        if len(v):
+            mins.append(v.min(0)); maxs.append(v.max(0))
+    if not mins:
+        return None
+    return _np.min(mins, 0), _np.max(maxs, 0)
+
+
+def _preview(mesh, path, n=4):
+    """メッシュを数アングルからシェーディング描画して montage 保存(matplotlib, headless 可)。"""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    v = np.asarray(mesh.vertices); f = np.asarray(mesh.triangles)
+    if len(v) == 0 or len(f) == 0:
+        return None
+    fig = plt.figure(figsize=(4 * n, 4))
+    for i in range(n):
+        ax = fig.add_subplot(1, n, i + 1, projection="3d")
+        ax.plot_trisurf(v[:, 0], v[:, 1], f, v[:, 2], color=(0.7, 0.72, 0.78),
+                        edgecolor="none", linewidth=0, antialiased=True, shade=True)
+        ax.view_init(elev=18, azim=90 * i)
+        ax.set_axis_off()
+        try:
+            ax.set_box_aspect((1, 1, 1))
+        except Exception:
+            pass
+    fig.tight_layout(); fig.savefig(path, dpi=90, facecolor="#0f1117"); plt.close(fig)
+    return path
+
+
+def extract_mesh(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3,
+                 elevation_deg=22.0, lookat=(0, 0, 0.18), n_gauss_init=8000,
+                 flatten=0.02, poisson_depth=8, log=print):
+    """シーンを SuGaR 風にメッシュ化。戻り値: {mesh_ply, vertices, faces, gt_bbox, ...}。"""
+    import gsplat_train_native as N
+    os.makedirs(out_dir, exist_ok=True)
+    r = N.train_densify(scene, out_dir, n_views=n_views, iters=iters, res=res, radius=radius,
+                        elevation_deg=elevation_deg, lookat=lookat, n_gauss_init=n_gauss_init,
+                        flatten=flatten, return_gaussians=True, log=log)
+    mesh, pcd = gaussians_to_mesh(r["gaussians"], poisson_depth=poisson_depth, log=log)
+    import open3d as o3d
+    ply = os.path.join(out_dir, "mesh.ply")
+    o3d.io.write_triangle_mesh(ply, mesh)
+    prev = _preview(mesh, os.path.join(out_dir, "mesh_preview.png"))
+    nv, nf = len(mesh.vertices), len(mesh.triangles)
+    # honest 検証: 真値メッシュ bbox と比較
+    gt = _gt_mesh_bbox(scene)
+    if gt is not None and nv:
+        v = np.asarray(mesh.vertices)
+        ext_got = v.max(0) - v.min(0); ext_gt = gt[1] - gt[0]
+        err = float(np.abs(ext_got - ext_gt).max())
+        log(f"mesh: {nv} 頂点 / {nf} 面 | bbox 抽出 {np.round(ext_got,2)} vs 真値 {np.round(ext_gt,2)} "
+            f"(最大差 {err:.3f}m)")
+    else:
+        log(f"mesh: {nv} 頂点 / {nf} 面")
+    return {"mesh_ply": ply, "preview": prev, "vertices": nv, "faces": nf,
+            "test_psnr": r.get("test_psnr")}
+
+
+if __name__ == "__main__":
+    import fullseye_3dgs as F
+    F.setup_cuda_env()
+    sc = sys.argv[1] if len(sys.argv) > 1 else "demo"
+    import scene_registry as R
+    spec = R.resolve(sc)
+    out = sys.argv[2] if len(sys.argv) > 2 else "sugar_out"
+    extract_mesh(spec["xml"], out, lookat=spec["lookat"], radius=spec["radius"],
+                 elevation_deg=spec["elevation_deg"], log=lambda m: print(m, flush=True))

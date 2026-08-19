@@ -265,7 +265,11 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     save_gaussians_ply(os.path.join(out_dir, "gaussians.ply"), params["means"], params["scales"],
                        params["quats"], params["opacities"], params["sh0"], params["shN"])
     log(f"saved novelview.png, turntable.gif, gaussians.ply -> {out_dir}")
-    return {"test_psnr": tp, "n": nfin, "sec": dt}
+    res = {"test_psnr": tp, "n": nfin, "sec": dt}
+    if return_gaussians:
+        res["gaussians"] = {k: params[k].detach() for k in
+                            ("means", "scales", "quats", "opacities", "sh0", "shN")}
+    return res
 
 
 def save_gaussians_ply(path, means, scales_log, quats, opacities_raw, sh0, shN=None):
