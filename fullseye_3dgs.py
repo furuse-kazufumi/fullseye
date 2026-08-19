@@ -33,6 +33,21 @@ PRESETS = {   # name: (res, n_gauss, iters, n_views)
 }
 
 
+def _find_cl_dir():
+    """MSVC cl.exe(Hostx64/x64)のディレクトリを探す(バージョンは自動)。無ければ None。"""
+    import glob
+    bases = [
+        r"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC",
+        r"C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC",
+        r"C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC",
+    ]
+    for base in bases:
+        hits = sorted(glob.glob(os.path.join(base, "*", "bin", "Hostx64", "x64", "cl.exe")))
+        if hits:
+            return os.path.dirname(hits[-1])           # 最新バージョン
+    return None
+
+
 def setup_cuda_env(root: str = ROOT) -> bool:
     """永続 CUDA 12.8(.gsplat-cuda)を in-process で有効化。あれば True。"""
     lib = os.path.join(root, ".gsplat-cuda", "Library")
