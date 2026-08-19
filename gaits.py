@@ -56,6 +56,9 @@ def quadruped_trot(model, home_qpos, *, n_frames=60, cycles=1.5,
             q[adrs["calf"]] = home[adrs["calf"]] + calf_amp * math.sin(ph0 + ph + 1.2)
         if len(q) >= 3:
             q[2] = home[2] + bob * abs(math.sin(2 * ph0))     # 胴体の上下バウンド
+        if travel and len(q) >= 1:
+            frac = i / max(1, n_frames - 1)
+            q[0] = home[0] + travel * (frac - 0.5)            # -travel/2 → +travel/2 前進
         traj.append(q)
     return np.array(traj, dtype=np.float32)
 
