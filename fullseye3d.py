@@ -159,3 +159,15 @@ def demo_world_walk(terrain_name="rolling", **kw):
     """『起伏地形メッシュの上を evis がメッシュで歩く』を1呼び出しで(既定 TSDF=GPU不要)。"""
     terrain = Scene(terrain_name).mesh(**kw)
     return Scene("evis").walk(on=terrain)
+
+
+def walk_gif(out_gif, walker="go2", terrain="rolling", gait="trot", motion=None, **kw):
+    """walker が terrain 上を歩く姿を headless GIF 化(GPU 不要)。パスを返す。
+
+    四足(go2/anymal/spot)は gait='trot'、人型は motion='walk' を渡す。
+    """
+    import world_render as WR
+    if motion:
+        gait = None
+    r = WR.render_walk_gif(out_gif, walker=walker, terrain=terrain, gait=gait, motion=motion, **kw)
+    return r["gif"]
