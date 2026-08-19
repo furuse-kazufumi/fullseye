@@ -392,6 +392,8 @@ _3DGS_OPS = [
      "densify + SH + antialiased つき 3DGS 学習(高品質)", "gaussians"),
     ("sugar_mesh", "gsplat_sugar", "extract_mesh",
      "3DGS を SuGaR 風に表面整列→Poisson でメッシュ抽出(真値 bbox 検証つき)", "mesh"),
+    ("tsdf_mesh", "gsplat_sugar", "depth_tsdf_mesh",
+     "sim 完全深度を TSDF 融合し清潔な watertight メッシュ化(GPU 不要・針無し)", "mesh"),
     ("animate_mesh", "sim_source", "launch_animation",
      "qpos 軌道で真値メッシュをアニメ再生(静的地形メッシュの合成も可)", "animation"),
 ]
