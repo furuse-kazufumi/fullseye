@@ -123,18 +123,37 @@ def _gt_mesh_bbox(scene_xml):
 
 
 def _preview(mesh, path, n=4):
-    """メッシュを数アングルからシェーディング描画して montage 保存(matplotlib, headless 可)。"""
+    """メッシュを数アングルから描画して montage 保存(matplotlib, headless 可)。
+    頂点色があればそれで着色(地形の実際の見た目)、無ければグレーでシェーディング。"""
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d.art3d import Poly3DCollection
     v = np.asarray(mesh.vertices); f = np.asarray(mesh.triangles)
     if len(v) == 0 or len(f) == 0:
         return None
+    vc = np.asarray(mesh.vertex_colors) if mesh.has_vertex_colors() else None
+    facecolors = None
+    if vc is not None and len(vc) == len(v):
+        fc = vc[f].mean(axis=1)                       # 面 = 3 頂点色の平均
+        # 簡易ランバート陰影(法線 z 成分)で立体感を付ける
+        tv = v[f]
+        nrm = np.cross(tv[:, 1] - tv[:, 0], tv[:, 2] - tv[:, 0])
+        nl = np.linalg.norm(nrm, axis=1, keepdims=True)
+        nz = np.abs(nrm[:, 2:3] / np.clip(nl, 1e-9, None))
+        shade = 0.55 + 0.45 * nz                      # 0.55..1.0
+        facecolors = np.clip(fc * shade, 0, 1)
     fig = plt.figure(figsize=(4 * n, 4))
     for i in range(n):
         ax = fig.add_subplot(1, n, i + 1, projection="3d")
-        ax.plot_trisurf(v[:, 0], v[:, 1], f, v[:, 2], color=(0.7, 0.72, 0.78),
-                        edgecolor="none", linewidth=0, antialiased=True, shade=True)
+        if facecolors is not None:
+            tri = Poly3DCollection(v[f], facecolors=facecolors, edgecolor="none", linewidths=0)
+            ax.add_collection3d(tri)
+            ax.set_xlim(v[:, 0].min(), v[:, 0].max()); ax.set_ylim(v[:, 1].min(), v[:, 1].max())
+            ax.set_zlim(v[:, 2].min(), v[:, 2].max())
+        else:
+            ax.plot_trisurf(v[:, 0], v[:, 1], f, v[:, 2], color=(0.7, 0.72, 0.78),
+                            edgecolor="none", linewidth=0, antialiased=True, shade=True)
         ax.view_init(elev=18, azim=90 * i)
         ax.set_axis_off()
         try:
