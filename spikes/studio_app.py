@@ -517,18 +517,20 @@ class StudioWindow(QtWidgets.QMainWindow):
                 self.statusBar().showMessage(f"PNG 保存失敗: {e}")
 
     def _train_3dgs(self) -> None:
-        """MJCF を 3DGS 学習(GPU venv の gsplat_cli を別プロセス起動、完了で全周GIF を開く)。"""
+        """シーンを 3DGS 学習(fullseye_3dgs ランチャを別プロセス起動 → 完了で全周GIF)。
+
+        scene 欄は builtin名(go2/cassie/apollo/anymal/spot)か MJCF パス。backend は
+        ランチャが自動選択(native gsplat があれば高速、無ければ純torch)。"""
         import os, tempfile
-        path = self.sim_path.text().strip().strip('"')
-        if not path or not os.path.exists(path):
-            self.statusBar().showMessage("MJCF (.xml) のパスが不正です")
-            return
+        scene = self.sim_path.text().strip().strip('"') or "go2"
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         vpy = os.path.join(root, ".venv-gsplat", "Scripts", "python.exe")
-        cli = os.path.join(root, "gsplat_cli.py")
-        if not os.path.exists(vpy) or not os.path.exists(cli):
+        launcher = os.path.join(root, "fullseye_3dgs.py")
+        if not os.path.exists(vpy) or not os.path.exists(launcher):
             self.statusBar().showMessage("GPU venv(.venv-gsplat)未構築: 3DGS 学習は不可")
             return
+        quality = getattr(self, "gsplat_quality", None)
+        quality = quality.currentText() if quality is not None else "balanced"
         outdir = tempfile.mkdtemp(prefix="fullseye_3dgs_")
         proc = QtCore.QProcess(self)
         self._gsplat_proc = proc                          # GC 回避
@@ -545,8 +547,9 @@ class StudioWindow(QtWidgets.QMainWindow):
             else:
                 self.statusBar().showMessage(f"3DGS 失敗 (exit {code}): {outdir}")
         proc.finished.connect(_done)
-        proc.start(vpy, [cli, path, outdir, "--views", "36", "--iters", "700", "--res", "128"])
-        self.statusBar().showMessage("3DGS 学習を別プロセスで開始…(数十秒〜。完了で全周GIFを開きます)")
+        proc.start(vpy, [launcher, scene, "--out", outdir, "--quality", quality])
+        self.statusBar().showMessage(
+            f"3DGS 学習開始({scene}, {quality})… 別プロセスで実行中。完了で全周GIFを開きます")
 
     def _view_mjcf(self, mode: str) -> None:
         """MJCF を実形状(mesh)or 点群(cloud)で 3D 窓に表示(sim-source→viewer)。"""
