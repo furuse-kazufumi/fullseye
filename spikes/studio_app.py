@@ -363,7 +363,7 @@ class StudioWindow(QtWidgets.QMainWindow):
         w3l.addWidget(self.win3d_status)
 
         # sim-source パネル: 任意 MuJoCo モデル(MJCF)を 3D で見る(F6 sim ドメイン)
-        self.sim_box = QtWidgets.QGroupBox("sim モデルを 3D で見る(MJCF)")
+        self.sim_box = QtWidgets.QGroupBox("sim モデルを 3D で見る / 3DGS 化(MJCF)")
         sl = QtWidgets.QVBoxLayout(self.sim_box)
         self.sim_path = QtWidgets.QLineEdit()
         self.sim_path.setPlaceholderText("builtin名(go2/cassie/apollo/anymal/spot)か .xml パス …")
