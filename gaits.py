@@ -33,8 +33,11 @@ def _leg_joints(model):
 
 
 def quadruped_trot(model, home_qpos, *, n_frames=60, cycles=1.5,
-                   thigh_amp=0.35, calf_amp=0.35, bob=0.025):
-    """トロット(対角脚が同位相)の qpos 軌道 (F, nq)。検出不可なら None。"""
+                   thigh_amp=0.35, calf_amp=0.35, bob=0.025, travel=0.0):
+    """トロット(対角脚が同位相)の qpos 軌道 (F, nq)。検出不可なら None。
+
+    travel>0 で胴体 root x を -travel/2 → +travel/2 に前進させ、地形を横断させる
+    (視覚デモ用。歩幅と厳密には同期しないが起伏の横断が見える)。"""
     legs = _leg_joints(model)
     need = [("F", "L"), ("F", "R"), ("R", "L"), ("R", "R")]
     if not all(k in legs and "thigh" in legs[k] and "calf" in legs[k] for k in need):
