@@ -143,6 +143,41 @@ class MuJoCo:
         r.disable_depth_rendering()
         return dep
 
+    def save_gsplat_dataset(self, out_dir: str, cams=None, *, with_depth=False) -> str:
+        """named カメラ群を 3DGS/nerfstudio 形式(transforms.json + images/)で書き出す。
+
+        姿勢推定(COLMAP)不要 ―― c2w は camera_to_world() から直接。実写 3DGS に対する
+        sim-source の優位点。多視点が要るときは capture_orbit()(モジュール関数)を使う。
+        戻り値: transforms.json のパス。"""
+        import os, json
+        from PIL import Image as _PILImage
+        cams = list(cams) if cams is not None else self.cameras()
+        if not cams:
+            raise RuntimeError("save_gsplat_dataset: named カメラが無い。capture_orbit() を使う。")
+        img_dir = os.path.join(out_dir, "images")
+        os.makedirs(img_dir, exist_ok=True)
+        K = self.intrinsics(cams[0])
+        meta = {"w": int(self.width), "h": int(self.height),
+                "fl_x": float(K[0, 0]), "fl_y": float(K[1, 1]),
+                "cx": float(K[0, 2]), "cy": float(K[1, 2]),
+                "camera_model": "PINHOLE", "frames": []}
+        for i, cam in enumerate(cams):
+            rgb = self.rgb(cam)
+            fp = f"images/{i:04d}.png"
+            _PILImage.fromarray(rgb).save(os.path.join(out_dir, fp))
+            frame = {"file_path": fp,
+                     "transform_matrix": self.camera_to_world(cam).tolist()}
+            if with_depth:
+                import numpy as _np
+                dp = f"images/{i:04d}_depth.npy"
+                _np.save(os.path.join(out_dir, dp), self.depth(cam))
+                frame["depth_file_path"] = dp
+            meta["frames"].append(frame)
+        path = os.path.join(out_dir, "transforms.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(meta, f, indent=2)
+        return path
+
     def _geom_local_mesh(self, g):
         """geom g を **local 座標**の Open3D メッシュにする(world 変換は呼び手が per-frame で適用)。
         アニメ再生で毎フレーム作り直さないための素材。未対応(plane/hfield)は None。"""
