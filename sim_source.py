@@ -410,8 +410,10 @@ def play_animation(manifest) -> bool:
     return True
 
 
-def launch_animation(model_xml, qpos, title: str = "Fullseye 3D", fps: int = 30):
-    """アニメを **別プロセス** で再生起動し Popen を返す(失敗時 None)。Studio を固めない。"""
+def launch_animation(model_xml, qpos, title: str = "Fullseye 3D", fps: int = 30,
+                     static_mesh=None):
+    """アニメを **別プロセス** で再生起動し Popen を返す(失敗時 None)。Studio を固めない。
+    static_mesh(.ply)を渡すと SuGaR 地形等の静的メッシュも一緒に表示する。"""
     import os
     import subprocess
     import sys
@@ -419,7 +421,8 @@ def launch_animation(model_xml, qpos, title: str = "Fullseye 3D", fps: int = 30)
     try:
         scene_dir = tempfile.mkdtemp(prefix="fs3danim_")
         src = MuJoCo(model_xml)
-        manifest = src.save_animation(scene_dir, qpos, fps=fps, title=title)
+        manifest = src.save_animation(scene_dir, qpos, fps=fps, title=title,
+                                      static_mesh=static_mesh)
         launcher = os.path.join(os.path.dirname(os.path.abspath(__file__)), "spikes", "anim_launch.py")
         exe = sys.executable
         pyw = os.path.join(os.path.dirname(exe), "pythonw.exe")
