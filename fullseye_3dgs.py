@@ -41,6 +41,10 @@ def setup_cuda_env(root: str = ROOT) -> bool:
     os.environ["CUDA_PATH"] = lib
     os.environ["CUDA_HOME"] = lib
     os.environ["TORCH_EXTENSIONS_DIR"] = os.path.join(root, ".gsplat-build")
+    os.environ.setdefault("MAX_JOBS", "8")
+    scripts = os.path.join(root, ".venv-gsplat", "Scripts")   # ninja.exe(検証用)
+    if os.path.isdir(scripts):
+        os.environ["PATH"] = scripts + os.pathsep + os.environ.get("PATH", "")
     for sub in ("bin", "nvvm/bin"):
         p = os.path.join(lib, *sub.split("/"))
         if os.path.isdir(p):
