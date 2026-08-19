@@ -1,0 +1,65 @@
+ninja_required_version = 1.3
+cxx = cl
+nvcc = C:\dev\projects\imgevolve\.gsplat-cuda\Library\bin\nvcc
+
+cflags = -DTORCH_EXTENSION_NAME=gsplat_cuda -DTORCH_API_INCLUDE_EXTENSION_H -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\include -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\third_party\glm -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\torch\include -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\torch\include\torch\csrc\api\include -IC:\dev\projects\imgevolve\.gsplat-cuda\Library\include "-IC:\Program Files\Python311\Include" /std:c++17 -O3 /MD /wd4819 /wd4251 /wd4244 /wd4267 /wd4275 /wd4018 /wd4190 /wd4624 /wd4067 /wd4068 /EHsc
+post_cflags = 
+cuda_cflags = -Xcudafe --diag_suppress=dll_interface_conflict_dllexport_assumed -Xcudafe --diag_suppress=dll_interface_conflict_none_assumed -Xcudafe --diag_suppress=field_without_dll_interface -Xcudafe --diag_suppress=base_class_has_different_dll_interface -Xcompiler /EHsc -Xcompiler /wd4068 -Xcompiler /wd4067 -Xcompiler /wd4624 -Xcompiler /wd4190 -Xcompiler /wd4018 -Xcompiler /wd4275 -Xcompiler /wd4267 -Xcompiler /wd4244 -Xcompiler /wd4251 -Xcompiler /wd4819 -Xcompiler /MD -DTORCH_EXTENSION_NAME=gsplat_cuda -DTORCH_API_INCLUDE_EXTENSION_H -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\include -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\third_party\glm -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\torch\include -IC:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\torch\include\torch\csrc\api\include -IC:\dev\projects\imgevolve\.gsplat-cuda\Library\include "-IC:\Program Files\Python311\Include" -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_BFLOAT16_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr -gencode=arch=compute_120,code=compute_120 -gencode=arch=compute_120,code=sm_120 -std=c++17 -O3 -use_fast_math
+cuda_post_cflags = 
+cuda_dlink_post_cflags = 
+sycl_dlink_post_cflags = 
+ldflags = /DLL c10.lib c10_cuda.lib torch_cpu.lib torch_cuda.lib -INCLUDE:?warp_size@cuda@at@@YAHXZ torch.lib /LIBPATH:C:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\torch\lib torch_python.lib "/LIBPATH:C:\Program Files\Python311\libs" /LIBPATH:C:\dev\projects\imgevolve\.gsplat-cuda\Library\lib\x64 cudart.lib
+
+rule compile
+  command = cl /showIncludes $cflags -c $in /Fo$out $post_cflags
+  deps = msvc
+
+rule cuda_compile
+  depfile = $out.d
+  deps = gcc
+  command = $nvcc -MD -MF $out.d $cuda_cflags -c $in -o $out $cuda_post_cflags
+
+
+
+
+
+rule link
+  command = "C$:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64/link.exe" $in /nologo $ldflags /out:$out
+
+build AdamCUDA.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\AdamCUDA.cu
+build IntersectTile.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\IntersectTile.cu
+build NullCUDA.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\NullCUDA.cu
+build Projection2DGSFused.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Projection2DGSFused.cu
+build Projection2DGSPacked.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Projection2DGSPacked.cu
+build ProjectionEWA3DGSFused.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\ProjectionEWA3DGSFused.cu
+build ProjectionEWA3DGSPacked.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\ProjectionEWA3DGSPacked.cu
+build ProjectionEWASimple.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\ProjectionEWASimple.cu
+build ProjectionUT3DGSFused.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\ProjectionUT3DGSFused.cu
+build QuatScaleToCovarCUDA.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\QuatScaleToCovarCUDA.cu
+build RasterizeToIndices2DGS.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToIndices2DGS.cu
+build RasterizeToIndices3DGS.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToIndices3DGS.cu
+build RasterizeToPixels2DGSBwd.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToPixels2DGSBwd.cu
+build RasterizeToPixels2DGSFwd.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToPixels2DGSFwd.cu
+build RasterizeToPixels3DGSBwd.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToPixels3DGSBwd.cu
+build RasterizeToPixels3DGSFwd.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToPixels3DGSFwd.cu
+build RasterizeToPixelsFromWorld3DGSBwd.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToPixelsFromWorld3DGSBwd.cu
+build RasterizeToPixelsFromWorld3DGSFwd.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RasterizeToPixelsFromWorld3DGSFwd.cu
+build RelocationCUDA.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\RelocationCUDA.cu
+build SphericalHarmonicsCUDA.cuda.o: cuda_compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\SphericalHarmonicsCUDA.cu
+build Adam.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Adam.cpp
+build Intersect.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Intersect.cpp
+build Null.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Null.cpp
+build Projection.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Projection.cpp
+build QuatScaleToCovar.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\QuatScaleToCovar.cpp
+build Rasterization.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Rasterization.cpp
+build Relocation.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\Relocation.cpp
+build SphericalHarmonics.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\csrc\SphericalHarmonics.cpp
+build ext.o: compile C$:\dev\projects\imgevolve\.venv-gsplat\Lib\site-packages\gsplat\cuda\ext.cpp
+
+
+
+
+
+build gsplat_cuda.pyd: link AdamCUDA.cuda.o IntersectTile.cuda.o NullCUDA.cuda.o Projection2DGSFused.cuda.o Projection2DGSPacked.cuda.o ProjectionEWA3DGSFused.cuda.o ProjectionEWA3DGSPacked.cuda.o ProjectionEWASimple.cuda.o ProjectionUT3DGSFused.cuda.o QuatScaleToCovarCUDA.cuda.o RasterizeToIndices2DGS.cuda.o RasterizeToIndices3DGS.cuda.o RasterizeToPixels2DGSBwd.cuda.o RasterizeToPixels2DGSFwd.cuda.o RasterizeToPixels3DGSBwd.cuda.o RasterizeToPixels3DGSFwd.cuda.o RasterizeToPixelsFromWorld3DGSBwd.cuda.o RasterizeToPixelsFromWorld3DGSFwd.cuda.o RelocationCUDA.cuda.o SphericalHarmonicsCUDA.cuda.o Adam.o Intersect.o Null.o Projection.o QuatScaleToCovar.o Rasterization.o Relocation.o SphericalHarmonics.o ext.o
+
+default gsplat_cuda.pyd
