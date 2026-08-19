@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-19 20:30:32
+- **最終更新**: 2026-08-19 20:34:38
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+07992eed auto: _backend.py 編集前 (2026-08-19 20:33)
 a1da0766 auto: studio_app.py 編集前 (2026-08-19 13:05)
 2cd33333 auto: studio_app.py 編集前 (2026-08-19 13:05)
 d56489da auto: gsplat_train.py 編集前 (2026-08-19 13:04)
@@ -19,21 +20,21 @@ d56489da auto: gsplat_train.py 編集前 (2026-08-19 13:04)
 cbb1eb99 auto: sim_source.py 編集前 (2026-08-19 12:45)
 f3fd1edf auto: sim_source.py 編集前 (2026-08-19 12:31)
 be1d1299 auto: sim_source.py 編集前 (2026-08-19 12:26)
-b41f45a4 auto: sim_source.py 編集前 (2026-08-19 12:26)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M docs/UNIFIED_API_REQUIREMENTS.md
- M spikes/studio_app.py
+M .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
+ M docs/SESSION_SUMMARY.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-19:29 docs/SESSION_SUMMARY.md
+20:33 docs/SESSION_SUMMARY.md
+20:33 .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
+20:32 test_gsplat_native.py
 ```
 
 ---
