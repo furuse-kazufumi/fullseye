@@ -154,7 +154,7 @@ def _preview(mesh, path, n=4):
         else:
             ax.plot_trisurf(v[:, 0], v[:, 1], f, v[:, 2], color=(0.7, 0.72, 0.78),
                             edgecolor="none", linewidth=0, antialiased=True, shade=True)
-        ax.view_init(elev=18, azim=90 * i)
+        ax.view_init(elev=(28 if i % 2 == 0 else 52), azim=90 * i)  # プロファイルと上面寄りを交互に
         ax.set_axis_off()
         try:
             ax.set_box_aspect((1, 1, 1))
