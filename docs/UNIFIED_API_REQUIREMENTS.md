@@ -294,3 +294,16 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
 - test: `test_camera_pose_reprojection_exact` / `test_capture_orbit_dataset`(test_sim_source 13 passed)。
 
 **残(GPU 半分・要判断)**: 学習スタック整備。Windows は gsplat の CUDA ビルド摩擦あり(VS build tools+CUDA toolkit)。候補=(A) 専用 venv に torch cu128+gsplat / (B) WSL2 経由 / (C) exporter のみ維持し外部 trainer(`ns-train splatfacto`)に transforms.json を渡す。共有 py -3.11 env への影響回避のため専用環境推奨。
+
+### 後半(GPU 学習)実測 2026-08-19 — 純 torch 3DGS で end-to-end 成功
+
+**gsplat ネイティブ判定**: torch 2.11.0+cu128 で GPU 実働(RTX 5090 / capability(12,0)=sm_120)。gsplat 1.5.3 は import 可だが CUDA kernel は初回 JIT ビルドで **"No CUDA toolkit found. gsplat will be disabled"**。nvcc/cl 不在、cu128 のプリビルド Windows wheel も無し(pt2.7/2.8/2.9/2.11 全滅)。→ gsplat ネイティブは CUDA Toolkit 12.8+VS Build Tools 必須(未導入)。
+
+**回避=純 PyTorch 3DGS(`gsplat_torch.py`)**: コンパイラ不要の参照 splatter(quat→R / 3D共分散→2D Jacobian投影 / 大域深度ソート alpha 合成)。OpenGL c2w を F=diag(1,-1,-1) で CV カメラへ。
+- 単一ガウシアン: 画像中心 ±0px に描画(投影検証)。
+- sim オービット 12 視点(10 train/2 test)を色付き点群 2500 gaussians で初期化 → Adam 300 iter。
+- **新規視点(hold-out)PSNR: init 14.45 → 300iter 26.03 dB**(train 27.33)。**48 it/s、6.2s**。視覚的にも緑箱/青カプセル/赤球を正しく再構成。
+- 姿勢は sim 真値(capture_orbit)=COLMAP 不要。test は未学習カメラ=丸暗記でなく汎化。
+- CPU 回帰 `tests/test_gsplat_torch.py`(4 passed、数式のみ)。GPU 学習は venv `.venv-gsplat`(共有 py -3.11 は非変更)。
+
+**残**: gsplat 高速 backend 化(CUDA Toolkit+VS Build Tools 導入 or WSL2)/ densify・prune / SH 色 / SSIM 損失。純 torch は PoC 用(非 tiled で大規模は遅い)。

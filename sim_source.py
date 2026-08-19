@@ -258,6 +258,29 @@ class MuJoCo:
         pos = self._d.cam_xpos[cid]
         return cam_pts @ R.T + pos
 
+    def point_cloud_rgb(self, cam=0, stride: int = 2, max_range: float | None = None):
+        """色付き world 点群 (points(N,3), colors(N,3) uint8)。3DGS gaussian 初期化用。
+
+        point_cloud と同一の逆投影(検証済み cam_xmat/cam_xpos 経路)+ 同画素の RGB。"""
+        dep = self.depth(cam)
+        cid = self._cam_id(cam)
+        K = self.intrinsics(cam)
+        fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]
+        H, W = dep.shape
+        vs, us = np.mgrid[0:H:stride, 0:W:stride]
+        z = dep[::stride, ::stride]
+        far = float(z.max())
+        keep = z < (max_range if max_range is not None else far * 0.99)
+        X = (us - cx) * z / fx
+        Y = -(vs - cy) * z / fy
+        Z = -z
+        cam_pts = np.stack([X, Y, Z], axis=-1)[keep]
+        R = self._d.cam_xmat[cid].reshape(3, 3)
+        pos = self._d.cam_xpos[cid]
+        pts = cam_pts @ R.T + pos
+        rgb = self.rgb(cam)[::stride, ::stride][keep]
+        return pts, rgb.astype(np.uint8)
+
     def save_animation(self, scene_dir, qpos, fps: int = 30, title: str = "Fullseye 3D") -> str:
         """モデル XML + qpos 軌道 (T, nq) をアニメバンドルに保存(別プロセス再生用)。
         rollout の qpos 列を渡すと歩行/着陸を『動き』で見られる。返り値 = manifest パス。
