@@ -174,8 +174,9 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     optimizers = {k: torch.optim.Adam([{"params": params[k], "lr": lrs[k], "name": k}], eps=1e-15)
                   for k in params}
     strategy = DefaultStrategy(verbose=False, refine_start_iter=int(iters * 0.1),
-                               refine_stop_iter=int(iters * 0.7), reset_every=int(iters * 0.3),
-                               refine_every=max(50, iters // 20))
+                               refine_stop_iter=int(iters * 0.6), reset_every=int(iters * 0.3),
+                               refine_every=max(50, iters // 20),
+                               prune_opa=0.05, grow_grad2d=0.0006, absgrad=True)
     strategy.check_sanity(params, optimizers)
     state = strategy.initialize_state(scene_scale=float(radius))
 
