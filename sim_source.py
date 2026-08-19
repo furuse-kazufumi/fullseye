@@ -258,6 +258,38 @@ class MuJoCo:
         pos = self._d.cam_xpos[cid]
         return cam_pts @ R.T + pos
 
+    def segmentation(self, cam=0):
+        """(H,W) の body id 画像(背景/未対応は -1)。動く 3DGS のリグ付けに使う。"""
+        import mujoco
+        r = self._rend()
+        r.enable_segmentation_rendering()
+        r.update_scene(self._d, camera=cam)
+        seg = r.render().copy()
+        r.disable_segmentation_rendering()
+        gid = seg[..., 0]
+        body = np.full(gid.shape, -1, dtype=np.int64)
+        valid = (gid >= 0) & (gid < self._m.ngeom)
+        body[valid] = self._m.geom_bodyid[gid[valid]]
+        return body
+
+    def point_cloud_seg(self, cam=0, stride: int = 2, max_range: float | None = None):
+        """色付き world 点群 + body 帰属 (points(N,3), colors(N,3)uint8, body_ids(N,))。
+
+        動く 3DGS(リグ付き)用: 各点がどの MuJoCo body 由来かを segmentation で確定。"""
+        pts, cols = self.point_cloud_rgb(cam, stride=stride, max_range=max_range)
+        # point_cloud_rgb と同じ keep マスクを再現して body を対応づける
+        dep = self.depth(cam)
+        z = dep[::stride, ::stride]
+        far = float(z.max())
+        keep = z < (max_range if max_range is not None else far * 0.99)
+        body_img = self.segmentation(cam)[::stride, ::stride]
+        bids = body_img[keep]
+        return pts, cols, bids.astype(np.int64)
+
+    def body_transforms(self):
+        """全 body の (pos(3), quat(4)) を現在の状態で返す(list, index=body id)。"""
+        return [(self._d.xpos[b].copy(), self._d.xquat[b].copy()) for b in range(self._m.nbody)]
+
     def point_cloud_rgb(self, cam=0, stride: int = 2, max_range: float | None = None):
         """色付き world 点群 (points(N,3), colors(N,3) uint8)。3DGS gaussian 初期化用。
 
