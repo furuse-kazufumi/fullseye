@@ -426,6 +426,59 @@ def backends() -> dict:
             for _, name, cls, _ in SOURCES}
 
 
+def _orbit_positions(n_views, radius, elevation_deg, lookat):
+    """リング上の n_views カメラ位置とその lookat を返す。"""
+    import math
+    lookat = tuple(float(x) for x in lookat)
+    el = math.radians(elevation_deg)
+    z = lookat[2] + radius * math.sin(el)
+    r_xy = radius * math.cos(el)
+    out = []
+    for i in range(int(n_views)):
+        az = 2.0 * math.pi * i / float(n_views)
+        out.append((lookat[0] + r_xy * math.cos(az),
+                    lookat[1] + r_xy * math.sin(az), z))
+    return out, lookat
+
+
+def orbit_scene(scene_path: str, *, n_views: int = 24, radius: float = 2.0,
+                elevation_deg: float = 25.0, lookat=(0.0, 0.0, 0.3),
+                fovy: float = 45.0, width: int = 200, height: int = 200,
+                keyframe: int | None = 0):
+    """assets 付き実シーン(.xml)にオービットカメラを MjSpec 注入し MuJoCo を返す。
+
+    from_xml_string ではメッシュ参照が壊れるため、MjSpec でカメラ追加 → compile。
+    戻り値: (MuJoCo instance, cam_names)。姿勢は検証済み cam_xpos/cam_xmat 経路。"""
+    import mujoco
+    spec = mujoco.MjSpec.from_file(scene_path)
+    positions, la = _orbit_positions(n_views, radius, elevation_deg, lookat)
+    names = []
+    for i, pos in enumerate(positions):
+        xy = _look_at_xyaxes(pos, la)
+        xc = np.asarray(xy[:3]); yc = np.asarray(xy[3:]); zc = np.cross(xc, yc)
+        R = np.stack([xc, yc, zc], axis=1)          # 列 = カメラ軸
+        q = np.zeros(4); mujoco.mju_mat2Quat(q, R.reshape(9))
+        cam = spec.worldbody.add_camera()
+        nm = f"orbit{i:04d}"
+        cam.name = nm; cam.pos = list(pos); cam.quat = q.tolist(); cam.fovy = fovy
+        names.append(nm)
+    model = spec.compile()
+    data = mujoco.MjData(model)
+    if keyframe is not None and model.nkey > keyframe:
+        mujoco.mj_resetDataKeyframe(model, data, keyframe)
+    mujoco.mj_forward(model, data)
+    return MuJoCo(model, data, width=width, height=height), names
+
+
+def capture_orbit_scene(scene_path: str, out_dir: str, *, with_depth=False, **kw) -> str:
+    """orbit_scene で実シーンを撮影し 3DGS データセット化。戻り値 transforms.json。"""
+    s, names = orbit_scene(scene_path, **kw)
+    try:
+        return s.save_gsplat_dataset(out_dir, names, with_depth=with_depth)
+    finally:
+        s.close()
+
+
 def _look_at_xyaxes(pos, target, world_up=(0.0, 0.0, 1.0)):
     """カメラ位置 pos から target を見る MuJoCo camera の xyaxes(x,y の 6 値)。
 
