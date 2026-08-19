@@ -80,8 +80,18 @@ def _walk_qpos(walker, motion=None, gait=None, n_frames=90, travel=0.0):
     raise ValueError("motion 名か gait を指定")
 
 
+def _terrain_height(m, d, x, y, geomgroup):
+    """(x,y) 直上から地面へレイを落とし terrain(group3)表面の z を返す(無交差は 0)。"""
+    import mujoco
+    pnt = np.array([float(x), float(y), 3.0]); vec = np.array([0.0, 0.0, -1.0])
+    gid = np.array([-1], np.int32)
+    dist = mujoco.mj_ray(m, d, pnt, vec, geomgroup, True, -1, gid)
+    return (3.0 - dist) if dist >= 0 else 0.0
+
+
 def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, gait=None,
-                    z_offset=0.0, travel=0.0, track=None, n_frames=90, width=640, height=480,
+                    z_offset=0.0, travel=0.0, track=None, ground_follow=None, foot_clear=0.02,
+                    n_frames=90, width=640, height=480,
                     fps=30, max_gif_frames=90, orbit_deg=140.0, elevation=-18.0, distance=None,
                     lookat=(0, 0, 0.25), log=print):
     """walker を terrain 上で歩かせた姿を headless で GIF 保存。戻り値 dict。
