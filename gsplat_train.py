@@ -59,11 +59,15 @@ def _from_raw(means, log_scales, quats, colors, raw_opacity, device):
 
 
 def densify_and_prune(gm, grad_accum, *, prune_opacity=0.02, grad_thresh=None,
-                      max_gaussians=60000, device="cuda"):
-    """低不透明度を prune、高勾配を clone。新しい gm を返す(統計 dict 付き)。"""
+                      max_gaussians=60000, max_scale=0.3, device="cuda"):
+    """低不透明度/巨大を prune、高勾配を clone。新しい gm を返す(統計 dict 付き)。
+
+    max_scale: これより大きい等方スケールのガウシアン(floater)を除去。過学習の
+    hold-out 悪化を抑える。"""
     m, ls, q, c, o = _raw(gm)
     opacity = torch.sigmoid(o)
-    keep = opacity > prune_opacity
+    big = torch.exp(ls).max(dim=1).values > max_scale
+    keep = (opacity > prune_opacity) & (~big)
     m, ls, q, c, o, ga = m[keep], ls[keep], q[keep], c[keep], o[keep], grad_accum[keep]
     n_pruned = int((~keep).sum())
     n_cloned = 0
