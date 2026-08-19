@@ -134,7 +134,7 @@ def train_scene(views, init_pts, init_cols, H, W, *, iters=800, device="cuda",
             log(f"[iter {it}] loss={loss.item():.4f} n={gm.n} train_psnr={ev(train):.2f} test_psnr={_snapshot(it):.2f}")
         hist.append((it, gm.n))
     # early-stopping: hold-out で最良のモデルを採用(過学習の最終劣化を避ける)
-    final_test = ev(test)
+    final_test = _snapshot(iters)
     if test and best["raw"] is not None and best["test"] > final_test:
         gm = _from_raw(*best["raw"], device)
         log(f"[best] test_psnr={best['test']:.2f} @iter{best['it']} (final was {final_test:.2f}) を採用")
