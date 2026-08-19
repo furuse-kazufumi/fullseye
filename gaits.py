@@ -63,8 +63,8 @@ def quadruped_trot(model, home_qpos, *, n_frames=60, cycles=1.5,
     return np.array(traj, dtype=np.float32)
 
 
-def build(model, home_qpos, name, *, n_frames=60):
+def build(model, home_qpos, name, *, n_frames=60, travel=0.0):
     """名前でgait軌道を返す。'trot' 対応。未対応/検出不可は None。"""
     if name == "trot":
-        return quadruped_trot(model, home_qpos, n_frames=n_frames)
+        return quadruped_trot(model, home_qpos, n_frames=n_frames, travel=travel)
     return None
