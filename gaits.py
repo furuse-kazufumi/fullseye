@@ -1,0 +1,54 @@
+"""四足歩行の qpos 軌道を関節名から自動生成(トロット等)。動く 3DGS のモーション源。
+
+関節名 FL/FR/RL/RR + thigh/calf(or knee)を検出して脚を対応づける。検出できない
+モデルでは None を返し、呼び手はサイン波にフォールバックする。
+"""
+from __future__ import annotations
+import math
+import numpy as np
+
+
+def _leg_joints(model):
+    import mujoco
+    legs = {}
+    for j in range(model.njnt):
+        nm = (mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_JOINT, j) or "").upper()
+        adr = int(model.jnt_qposadr[j])
+        for leg in ("FL", "FR", "RL", "RR"):
+            if nm.startswith(leg + "_") or nm.startswith(leg):
+                if "THIGH" in nm or "HFE" in nm:
+                    legs.setdefault(leg, {})["thigh"] = adr
+                elif "CALF" in nm or "KNEE" in nm or "KFE" in nm:
+                    legs.setdefault(leg, {})["calf"] = adr
+    return legs
+
+
+def quadruped_trot(model, home_qpos, *, n_frames=60, cycles=1.5,
+                   thigh_amp=0.35, calf_amp=0.35, bob=0.025):
+    """トロット(対角脚が同位相)の qpos 軌道 (F, nq)。検出不可なら None。"""
+    legs = _leg_joints(model)
+    if not all(k in legs and "thigh" in legs[k] and "calf" in legs[k]
+               for k in ("FL", "FR", "RL", "RR")):
+        return None
+    phase = {"FL": 0.0, "RR": 0.0, "FR": math.pi, "RL": math.pi}
+    home = np.asarray(home_qpos, dtype=np.float32)
+    traj = []
+    for i in range(n_frames):
+        t = i / n_frames * cycles
+        ph0 = 2 * math.pi * t
+        q = home.copy()
+        for leg, adrs in legs.items():
+            ph = phase[leg]
+            q[adrs["thigh"]] = home[adrs["thigh"]] + thigh_amp * math.sin(ph0 + ph)
+            q[adrs["calf"]] = home[adrs["calf"]] + calf_amp * math.sin(ph0 + ph + 1.2)
+        if len(q) >= 3:
+            q[2] = home[2] + bob * abs(math.sin(2 * ph0))     # 胴体の上下バウンド
+        traj.append(q)
+    return np.array(traj, dtype=np.float32)
+
+
+def build(model, home_qpos, name, *, n_frames=60):
+    """名前でgait軌道を返す。'trot' 対応。未対応/検出不可は None。"""
+    if name == "trot":
+        return quadruped_trot(model, home_qpos, n_frames=n_frames)
+    return None

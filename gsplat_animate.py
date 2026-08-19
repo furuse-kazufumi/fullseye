@@ -111,6 +111,19 @@ def animate(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
         pts.append(pp[keep]); cols.append(cc[keep]); bids.append(bb[keep])
     pts = np.concatenate(pts); cols = np.concatenate(cols).astype(np.float32) / 255
     bids = np.concatenate(bids)
+    # 足先ノイズ対策: ロボット足元(footprint 内)の暗い床ガウシアン=焼き込まれた影を除去。
+    # 影は静止するので脚が動くと黒い斑点として残る。明るい床(チェッカー)は残す。
+    robot = bids != 0
+    if robot.any():
+        rxy = pts[robot][:, :2]
+        lo = rxy.min(0) - 0.08; hi = rxy.max(0) + 0.08
+        lum = cols.mean(1)
+        in_fp = (pts[:, 0] > lo[0]) & (pts[:, 0] < hi[0]) & (pts[:, 1] > lo[1]) & (pts[:, 1] < hi[1])
+        shadow = (bids == 0) & in_fp & (lum < 0.28)
+        if shadow.any():
+            k = ~shadow
+            pts, cols, bids = pts[k], cols[k], bids[k]
+            log(f"影ガウシアン {int(shadow.sum())} 個を除去(足先ノイズ低減)")
     if len(pts) > n_gauss:
         sel = np.random.RandomState(0).choice(len(pts), size=n_gauss, replace=False)
         pts, cols, bids = pts[sel], cols[sel], bids[sel]
