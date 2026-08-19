@@ -225,14 +225,19 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
 
     log(f"init {N0} gaussians (densify対象), {n_views} views, res={res}")
     t0 = time.time()
+    dmax = float(radius) * 3.0               # 深度監督のマスク上限(背景/far を除外)
     for it in range(1, iters + 1):
-        rgb, vm, K = train_v[np.random.randint(len(train_v))]
-        img, info = render(vm, K)
+        rgb, vm, K, dep = train_v[np.random.randint(len(train_v))]
+        img, info, dpred = render(vm, K, want_depth=depth_weight > 0)
         info["means2d"].retain_grad()
         loss = 0.8 * torch.abs(img - rgb).mean() + 0.2 * (1 - ssim(img, rgb))
         if flatten > 0:                      # SuGaR 風: 各ガウシアンを扁平化(最小軸≪他軸=円盤)
             sc = torch.exp(params["scales"])
             loss = loss + flatten * (sc.min(dim=1).values / (sc.max(dim=1).values + 1e-8)).mean()
+        if depth_weight > 0 and dep is not None:   # sim 真値深度で幾何監督(前景のみ)
+            mask = (dep > 1e-3) & (dep < dmax)
+            if mask.any():
+                loss = loss + depth_weight * torch.abs(dpred[mask] - dep[mask]).mean()
         strategy.step_pre_backward(params, optimizers, state, it, info)
         for o in optimizers.values():
             o.zero_grad()
@@ -248,7 +253,7 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     log(f"RESULT test_psnr={tp:.2f} train_psnr={ev(train_v):.2f} n={nfin} (init {N0}) in {dt:.1f}s")
 
     from PIL import Image
-    ti = sorted(test_idx)[0]; rgb, vm, K = views[ti]
+    ti = sorted(test_idx)[0]; rgb, vm, K, *_ = views[ti]
     out = (render(vm, K)[0].detach().cpu().numpy() * 255).astype(np.uint8)
     gt = (rgb.cpu().numpy() * 255).astype(np.uint8)
     Image.fromarray(np.concatenate([gt, np.full((res, 8, 3), 255, np.uint8), out], 1)).save(
