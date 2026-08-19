@@ -1,48 +1,81 @@
 """walker(四足/人型)を terrain 上で歩かせた姿を **headless で GIF 化**する。
 
 Open3D の OffscreenRenderer は Windows で EGL 非対応のため、両者を 1 つの MuJoCo
-XML に合成し MuJoCo 自身の offscreen renderer(この環境で headless 動作可)で描画する。
-terrain も walker も MuJoCo geom なので単一モデルに畳める。物理シミュレーションはせず、
-qpos を流し込み mj_forward の運動学だけで各フレームを描く(視覚合成)。
+モデルに合成し MuJoCo 自身の offscreen renderer(この環境で headless 動作可)で描画する。
+合成は MjSpec で行う(walker を from_file でロード=<include>/mesh を解決、terrain の
+geom を worldbody に追加して compile)。物理シミュレーションはせず qpos を流し込み
+mj_forward の運動学だけで各フレームを描く(視覚合成)。
 
   import world_render as WR
   WR.render_walk_gif("out/go2_on_rolling.gif", walker="go2", terrain="rolling", gait="trot")
 """
 from __future__ import annotations
-import math
 import re
 
 import numpy as np
 
+_GEOM_T = {"box": "mjGEOM_BOX", "ellipsoid": "mjGEOM_ELLIPSOID", "sphere": "mjGEOM_SPHERE",
+           "capsule": "mjGEOM_CAPSULE", "cylinder": "mjGEOM_CYLINDER", "plane": "mjGEOM_PLANE"}
 
-def _compose_xml(walker_xml: str, terrain_xml: str) -> str:
-    """terrain の worldbody 内 geom を walker XML の worldbody へ注入(light は walker 側)。"""
+
+def _attr(tag, name):
+    m = re.search(rf'{name}="([^"]*)"', tag)
+    return m.group(1) if m else None
+
+
+def _add_terrain_geoms(spec, terrain_xml, log):
+    """terrain XML の <geom .../> を MjSpec の worldbody に primitive として追加。"""
+    import mujoco
     tbody = terrain_xml.split("<worldbody>", 1)[1].rsplit("</worldbody>", 1)[0]
-    geoms = "".join(re.findall(r"<geom[^>]*/>", tbody))
-    if "</worldbody>" not in walker_xml:
-        raise ValueError("walker XML に </worldbody> が無い")
-    return walker_xml.replace("</worldbody>", geoms + "</worldbody>", 1)
+    wb = spec.worldbody
+    n = 0
+    for tag in re.findall(r"<geom[^>]*/>", tbody):
+        gt = _attr(tag, "type") or "sphere"
+        if gt not in _GEOM_T:
+            continue
+        g = wb.add_geom()
+        g.type = getattr(mujoco.mjtGeom, _GEOM_T[gt])
+        size = _attr(tag, "size"); pos = _attr(tag, "pos"); rgba = _attr(tag, "rgba")
+        sz = [float(x) for x in size.split()] if size else [0.1, 0.1, 0.1]
+        sz = (sz + [0.0, 0.0, 0.0])[:3]                     # MjSpec は size 長 3 を要求
+        g.size = sz
+        if pos:
+            g.pos = [float(x) for x in pos.split()]
+        if rgba:
+            g.rgba = [float(x) for x in rgba.split()]
+        g.contype = 0; g.conaffinity = 0                   # 視覚のみ(衝突不要)
+        n += 1
+    log(f"terrain geoms 注入: {n}")
+    return n
 
 
-def _walk_qpos(walker: str, motion=None, gait=None, n_frames=90):
-    """motion 名(npz)or gait 名から qpos(F, nq)を得る。"""
+def _build_model(walker, terrain, log):
+    import mujoco
+    import scene_registry as R
+    wspec = R.resolve(walker); tspec = R.resolve(terrain)
+    if wspec is None or tspec is None:
+        raise ValueError(f"walker '{walker}' / terrain '{terrain}' の解決に失敗")
+    spec = mujoco.MjSpec.from_file(wspec["xml"])            # include/mesh 解決つき
+    _add_terrain_geoms(spec, open(tspec["xml"], encoding="utf-8").read(), log)
+    return spec.compile(), tspec
+
+
+def _walk_qpos(walker, motion=None, gait=None, n_frames=90):
+    """motion 名(npz)or gait 名から qpos(F, nq)を得る。gait 用モデルは include 解決込み。"""
     import mujoco
     import scene_registry as R
     spec = R.resolve(walker)
-    if spec is None:
-        raise ValueError(f"walker '{walker}' 未登録")
-    xml = open(spec["xml"], encoding="utf-8").read()
     mpath = R.motion(walker, motion) if (motion or not gait) else None
     if mpath:
-        return xml, np.load(mpath).astype(float)
+        return np.load(mpath).astype(float)
     if gait:
         import gaits as G
-        m = mujoco.MjModel.from_xml_string(xml)
+        m = mujoco.MjModel.from_xml_path(spec["xml"])       # from_path=include 解決
         d = mujoco.MjData(m); mujoco.mj_forward(m, d)
         q = G.build(m, np.asarray(d.qpos), gait, n_frames=n_frames)
         if q is None:
             raise ValueError(f"gait '{gait}' はこのモデルで生成不可")
-        return xml, q.astype(float)
+        return q.astype(float)
     raise ValueError("motion 名か gait を指定")
 
 
@@ -56,22 +89,14 @@ def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, ga
     カメラは lookat を中心に orbit_deg だけ周回(歩行と地形の起伏を見せる)。
     """
     import mujoco
-    import scene_registry as R
     from PIL import Image
-    wxml, q = _walk_qpos(walker, motion=motion, gait=gait, n_frames=n_frames)
-    tspec = R.resolve(terrain)
-    if tspec is None:
-        raise ValueError(f"terrain '{terrain}' 未登録")
-    txml = open(tspec["xml"], encoding="utf-8").read()
-    cxml = _compose_xml(wxml, txml)
-    m = mujoco.MjModel.from_xml_string(cxml)
-    d = mujoco.MjData(m)
+    q = _walk_qpos(walker, motion=motion, gait=gait, n_frames=n_frames)
+    m, tspec = _build_model(walker, terrain, log)
     if q.shape[1] != m.nq:
         raise ValueError(f"motion nq={q.shape[1]} が合成モデル nq={m.nq} と不一致")
     q = q.copy(); q[:, 2] += float(z_offset)
-    ext = float(np.max([abs(v) for v in tspec.get("lookat", [0, 0, 0])]) + tspec.get("radius", 3.0))
+    d = mujoco.MjData(m)
     dist = float(distance if distance is not None else max(3.2, tspec.get("radius", 3.0) * 1.35))
-
     ren = mujoco.Renderer(m, height=height, width=width)
     cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
     cam.lookat[:] = list(lookat); cam.distance = dist; cam.elevation = float(elevation)
