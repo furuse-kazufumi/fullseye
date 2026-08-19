@@ -203,14 +203,17 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     train_v = [v for i, v in enumerate(views) if i not in test_idx]
     test_v = [views[i] for i in test_idx]
 
-    def render(vm, Kc):
+    def render(vm, Kc, want_depth=False):
         sh = torch.cat([params["sh0"], params["shN"]], dim=1)      # (N,K,3) SH 係数
         out, _, info = gsplat.rasterization(
             params["means"], params["quats"] / params["quats"].norm(dim=-1, keepdim=True),
             torch.exp(params["scales"]), torch.sigmoid(params["opacities"]),
             sh, vm[None], Kc[None], res, res, sh_degree=sh_degree,
-            packed=False, absgrad=strategy.absgrad, rasterize_mode="antialiased")
-        return out[0].clamp(0, 1), info
+            packed=False, absgrad=strategy.absgrad, rasterize_mode="antialiased",
+            render_mode="RGB+ED" if want_depth else "RGB")
+        rgb = out[0, ..., :3].clamp(0, 1)
+        depth = out[0, ..., 3] if want_depth else None            # 期待深度(world z)
+        return rgb, info, depth
 
     def psnr(a, b):
         mse = torch.mean((a - b) ** 2).item()
@@ -218,7 +221,7 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
 
     def ev(vs):
         with torch.no_grad():
-            return float(np.mean([psnr(render(vm, K)[0], rgb) for rgb, vm, K in vs]))
+            return float(np.mean([psnr(render(vm, K)[0], rgb) for rgb, vm, K, *_ in vs]))
 
     log(f"init {N0} gaussians (densify対象), {n_views} views, res={res}")
     t0 = time.time()
