@@ -184,13 +184,22 @@ def animate(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
             local_quat[idx] = _qmul(_qinv(q0).repeat(idx.numel(), 1), qt_w[idx])
 
     # --- モーション軌道 -> 各フレームを剛体スキニングで描画 ---
+    qtraj = None
     if motion_file:
         arr = np.load(motion_file)
         if arr.ndim != 2 or arr.shape[1] != model.nq:
             raise ValueError(f"motion_file の形が不正: {arr.shape}(期待 (F, {model.nq}))")
         qtraj = [arr[i].astype(np.float64) for i in range(len(arr))]
         log(f"real motion: {len(qtraj)} frames from {os.path.basename(motion_file)}")
-    else:
+    elif gait:
+        import gaits
+        g = gaits.build(model, home_qpos, gait, n_frames=n_frames)
+        if g is not None:
+            qtraj = [g[i].astype(np.float64) for i in range(len(g))]
+            log(f"gait '{gait}': {len(qtraj)} frames")
+        else:
+            log(f"gait '{gait}' はこのモデルで生成不可(脚を検出できず)→ サイン波に切替")
+    if qtraj is None:
         qtraj = _canned_motion(model, home_qpos, n_frames, amp, freq)
     vm = _fixed_camera(lookat, radius, elevation_deg, view_azimuth, dev)
     Kcam = views[0][2]
