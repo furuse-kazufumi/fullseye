@@ -143,6 +143,8 @@ def main(argv=None):
     ap.add_argument("--frames", type=int, default=60, help="--motion のフレーム数(サイン波時)")
     ap.add_argument("--motion-file", default=None,
                     help="--motion時: 実際の qpos 軌道 .npy (F,nq) を再生(歩行など)")
+    ap.add_argument("--gait", default=None, choices=["trot"],
+                    help="--motion時: 四足の歩容を自動生成(trot)。関節名から脚を検出")
     ap.add_argument("--list", action="store_true", help="使えるシーン一覧")
     a = ap.parse_args(argv)
 
