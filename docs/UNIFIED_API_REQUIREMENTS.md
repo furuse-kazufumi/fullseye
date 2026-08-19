@@ -307,3 +307,13 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
 - CPU 回帰 `tests/test_gsplat_torch.py`(4 passed、数式のみ)。GPU 学習は venv `.venv-gsplat`(共有 py -3.11 は非変更)。
 
 **残**: gsplat 高速 backend 化(CUDA Toolkit+VS Build Tools 導入 or WSL2)/ densify・prune / SH 色 / SSIM 損失。純 torch は PoC 用(非 tiled で大規模は遅い)。
+
+### 3DGS 実用化バッチ 2026-08-19 — トレーナ/実シーン/CLI/Studio/記事
+
+- **トレーナ `gsplat_train.py`**: SSIM+L1 損失、適応的 densify(高勾配 clone)/prune(低不透明度+巨大 floater)、hold-out best の early-stopping、ターンテーブル描画。CPU 回帰 `tests/test_gsplat_train.py` 4 passed。
+- **実シーン**: `sim_source.orbit_scene`/`capture_orbit_scene`(MjSpec でカメラ注入=assets 付き実 MJCF 対応)。go2(Menagerie)を **新規視点 PSNR 26.49dB(train 26.99 追随=過学習解消)/7978 gaussians/61.7s** on RTX 5090。
+- **honest な失敗と修正**: 初回 18 視点は test 23.6→19.5 に劣化(過学習)。→ 視点 36 化 + floater prune + early-stopping で 26.5dB に改善。記事に失敗曲線ごと掲載。
+- **CLI `gsplat_cli.py`**: `<scene.xml|builtin> <out>` で capture→train→turntable.gif/novelview.png/gaussians.npz/report.json。builtin: go2/cassie/apollo。end-to-end 実測(exit 0)。
+- **Studio 配線**: sim パネルに「3DGS 学習 🎇」= QProcess で venv の gsplat_cli を別プロセス起動→完了で全周 GIF を開く(Studio 非ブロック)。構文 OK(Qt は headless 非実行)。
+- **gsplat native**: VS BuildTools 導入も VCTools workload(cl.exe)は UAC 昇格が要り無人導入不可。nvcc(CUDA13.3)導入済だが cl 不在 + torch cu128(12.8)と版ズレ。→ native は保留、純 torch で完遂。
+- **記事**: `docs/articles/qiita_3dgs_sim_native.md`(glossary-first/honest/失敗掲載)+ `psnr_curve.svg`(過学習 vs 修正)。

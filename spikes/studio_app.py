@@ -516,6 +516,38 @@ class StudioWindow(QtWidgets.QMainWindow):
             except Exception as e:  # noqa: BLE001
                 self.statusBar().showMessage(f"PNG 保存失敗: {e}")
 
+    def _train_3dgs(self) -> None:
+        """MJCF を 3DGS 学習(GPU venv の gsplat_cli を別プロセス起動、完了で全周GIF を開く)。"""
+        import os, tempfile
+        path = self.sim_path.text().strip().strip('"')
+        if not path or not os.path.exists(path):
+            self.statusBar().showMessage("MJCF (.xml) のパスが不正です")
+            return
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        vpy = os.path.join(root, ".venv-gsplat", "Scripts", "python.exe")
+        cli = os.path.join(root, "gsplat_cli.py")
+        if not os.path.exists(vpy) or not os.path.exists(cli):
+            self.statusBar().showMessage("GPU venv(.venv-gsplat)未構築: 3DGS 学習は不可")
+            return
+        outdir = tempfile.mkdtemp(prefix="fullseye_3dgs_")
+        proc = QtCore.QProcess(self)
+        self._gsplat_proc = proc                          # GC 回避
+        self._gsplat_out = outdir
+
+        def _done(code, _status):
+            gif = os.path.join(outdir, "turntable.gif")
+            if code == 0 and os.path.exists(gif):
+                try:
+                    os.startfile(gif)                     # 既定ビューアで全周GIF
+                except Exception:  # noqa: BLE001
+                    pass
+                self.statusBar().showMessage(f"3DGS 完了: {outdir}")
+            else:
+                self.statusBar().showMessage(f"3DGS 失敗 (exit {code}): {outdir}")
+        proc.finished.connect(_done)
+        proc.start(vpy, [cli, path, outdir, "--views", "36", "--iters", "700", "--res", "128"])
+        self.statusBar().showMessage("3DGS 学習を別プロセスで開始…(数十秒〜。完了で全周GIFを開きます)")
+
     def _view_mjcf(self, mode: str) -> None:
         """MJCF を実形状(mesh)or 点群(cloud)で 3D 窓に表示(sim-source→viewer)。"""
         import os
