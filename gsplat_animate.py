@@ -96,6 +96,12 @@ def animate(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
                              elevation_deg=elevation_deg, lookat=lookat,
                              width=res, height=res, keyframe=0)
     model, data = s._m, s._d
+    # canonical ポーズ: motion_file があればその先頭フレーム(自然な歩行姿勢)で学習する。
+    if motion_file:
+        _arr0 = np.load(motion_file)
+        if _arr0.ndim == 2 and _arr0.shape[1] == model.nq:
+            data.qpos[:] = _arr0[0]
+            mujoco.mj_forward(model, data)
     home_qpos = np.asarray(data.qpos).copy()
     views = []
     for nm in names:
