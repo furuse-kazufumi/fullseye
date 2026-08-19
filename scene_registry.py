@@ -45,6 +45,32 @@ def _terrain_xml():
             '<geom name="ground" type="box" size="2 2 .05" pos="0 0 0" rgba=".45 .40 .32 1"/>'
             + "".join(bumps) + '</worldbody></mujoco>')
 
+def _rolling_xml(n=18, half=1.5):
+    """連続起伏地形(滑らかな height 関数の柱グリッド)。自己完結 XML(外部資産なし)。
+    TSDF 融合で滑らかな歩行面になり、evis が起伏を歩く合成の土台に向く。"""
+    import math
+    cols = []
+    step = 2 * half / n
+    for i in range(n):
+        for j in range(n):
+            x = -half + (i + 0.5) * step
+            y = -half + (j + 0.5) * step
+            # 滑らかな多周波の起伏(振幅 ~0.32m)
+            h = (0.13 * math.sin(1.6 * x) * math.cos(1.4 * y)
+                 + 0.07 * math.sin(2.9 * x + 1.3) * math.sin(2.3 * y)
+                 + 0.05 * math.cos(3.3 * y - 0.7))
+            h = 0.18 + h                                  # 0 付近を避け正の柱高に
+            h = max(0.04, h)
+            t = min(1.0, h / 0.36)                        # 高さ→色(谷=緑、峰=タン)
+            r = 0.30 + 0.34 * t; g = 0.42 - 0.06 * t; b = 0.26 - 0.10 * t
+            cols.append(
+                f'<geom type="box" size="{step*0.62:.3f} {step*0.62:.3f} {h/2:.3f}" '
+                f'pos="{x:.3f} {y:.3f} {h/2:.3f}" rgba="{r:.2f} {max(g,0.05):.2f} {max(b,0.02):.2f} 1"/>')
+    return ('<mujoco><worldbody><light pos="0 0 4" dir="0 0 -1" diffuse=".85 .85 .85"/>'
+            '<geom name="ground" type="box" size="1.8 1.8 .03" pos="0 0 0" rgba=".33 .40 .28 1"/>'
+            + "".join(cols) + '</worldbody></mujoco>')
+
+
 # framing = lookat(xyz), radius, elevation_deg。category は表示・gait 適用の目安。
 _CATALOG = {
     "demo":   {"synthetic": _DEMO_XML, "category": "synthetic",
