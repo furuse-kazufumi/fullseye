@@ -8,18 +8,26 @@ import math
 import numpy as np
 
 
+# 脚コード -> (前後, 左右)。FL/FR/RL/RR と LF/RF/LH/RH(anymal 系)の両方に対応。
+_LEG_CANON = {
+    "FL": ("F", "L"), "FR": ("F", "R"), "RL": ("R", "L"), "RR": ("R", "R"),
+    "LF": ("F", "L"), "RF": ("F", "R"), "LH": ("R", "L"), "RH": ("R", "R"),
+}
+
+
 def _leg_joints(model):
     import mujoco
     legs = {}
     for j in range(model.njnt):
         nm = (mujoco.mj_id2name(model, mujoco.mjtObj.mjOBJ_JOINT, j) or "").upper()
         adr = int(model.jnt_qposadr[j])
-        for leg in ("FL", "FR", "RL", "RR"):
-            if nm.startswith(leg + "_") or nm.startswith(leg):
+        for code, canon in _LEG_CANON.items():
+            if nm.startswith(code + "_") or nm.startswith(code):
                 if "THIGH" in nm or "HFE" in nm:
-                    legs.setdefault(leg, {})["thigh"] = adr
+                    legs.setdefault(canon, {})["thigh"] = adr
                 elif "CALF" in nm or "KNEE" in nm or "KFE" in nm:
-                    legs.setdefault(leg, {})["calf"] = adr
+                    legs.setdefault(canon, {})["calf"] = adr
+                break
     return legs
 
 
@@ -27,10 +35,11 @@ def quadruped_trot(model, home_qpos, *, n_frames=60, cycles=1.5,
                    thigh_amp=0.35, calf_amp=0.35, bob=0.025):
     """トロット(対角脚が同位相)の qpos 軌道 (F, nq)。検出不可なら None。"""
     legs = _leg_joints(model)
-    if not all(k in legs and "thigh" in legs[k] and "calf" in legs[k]
-               for k in ("FL", "FR", "RL", "RR")):
+    need = [("F", "L"), ("F", "R"), ("R", "L"), ("R", "R")]
+    if not all(k in legs and "thigh" in legs[k] and "calf" in legs[k] for k in need):
         return None
-    phase = {"FL": 0.0, "RR": 0.0, "FR": math.pi, "RL": math.pi}
+    # 対角同位相: 前左+後右=0, 前右+後左=π
+    phase = {("F", "L"): 0.0, ("R", "R"): 0.0, ("F", "R"): math.pi, ("R", "L"): math.pi}
     home = np.asarray(home_qpos, dtype=np.float32)
     traj = []
     for i in range(n_frames):
