@@ -434,6 +434,7 @@ def _ensure() -> Registry:
         _load_perception(reg)
         _load_oss(reg)
         _load_sim(reg)
+        _load_3dgs(reg)
     return _registry
 
 
