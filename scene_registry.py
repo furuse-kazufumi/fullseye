@@ -77,6 +77,8 @@ _CATALOG = {
                "lookat": [0, 0, 0.2], "radius": 1.3, "elevation_deg": 25},
     "terrain": {"synthetic": _terrain_xml(), "category": "terrain",
                 "lookat": [0, 0, 0.1], "radius": 3.2, "elevation_deg": 28},
+    "rolling": {"synthetic": _rolling_xml(), "category": "terrain",
+                "lookat": [0, 0, 0.15], "radius": 3.0, "elevation_deg": 30},
     "go2":    {"xml": f"{_MENAGERIE}/unitree_go2/scene.xml", "category": "quadruped",
                "lookat": [0, 0, 0.18], "radius": 1.3, "elevation_deg": 22, "gait": "trot"},
     "anymal": {"xml": f"{_MENAGERIE}/anybotics_anymal_c/scene.xml", "category": "quadruped",
