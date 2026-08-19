@@ -12,6 +12,7 @@ import numpy as np
 _LEG_CANON = {
     "FL": ("F", "L"), "FR": ("F", "R"), "RL": ("R", "L"), "RR": ("R", "R"),
     "LF": ("F", "L"), "RF": ("F", "R"), "LH": ("R", "L"), "RH": ("R", "R"),
+    "HL": ("R", "L"), "HR": ("R", "R"),   # hind-left/right(spot 系)
 }
 
 
