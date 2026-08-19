@@ -72,7 +72,16 @@ def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8,
     mesh, dens = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
         pcd, depth=poisson_depth, linear_fit=True)
     dens = np.asarray(dens)
-    mesh.remove_vertices_by_mask(dens < np.quantile(dens, density_pct / 100.0))  # 低密度=外挿を除去
+    # 低密度トリム(=外挿/スパイクの芯を除去)。ただし XY 境界リングは保護し、
+    # トリムで地形の footprint が縮むのを防ぐ(TRIZ 原理3 局所的性質=空間分離)。
+    low = dens < np.quantile(dens, density_pct / 100.0)
+    if boundary_frac > 0 and mesh.has_vertices():
+        xy = np.asarray(mesh.vertices)[:, :2]
+        lo, hi = xy.min(0), xy.max(0)
+        margin = float((hi - lo).min()) * boundary_frac
+        d_edge = np.minimum(xy - lo, hi - xy).min(axis=1)   # 最寄り XY 縁までの距離
+        low &= d_edge >= margin                              # 境界リングは削らない
+    mesh.remove_vertices_by_mask(low)
     mesh = mesh.crop(pcd.get_axis_aligned_bounding_box())  # 元の範囲へ
     # 後処理: 退化/重複除去 → 小クラスタ(floater)除去 → Taubin スムージング
     mesh.remove_degenerate_triangles(); mesh.remove_duplicated_vertices()
