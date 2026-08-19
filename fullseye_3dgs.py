@@ -114,20 +114,24 @@ def main(argv=None):
     a = ap.parse_args(argv)
 
     if a.list or not a.scene:
-        print("Fullseye 3DGS ― 使えるシーン:")
-        for k, (p, *_ ) in BUILTIN.items():
-            ok = "○" if os.path.isfile(p) else "×(未配置)"
-            print(f"  {k:8s} {ok}  {p}")
+        print("Fullseye 3DGS ― 使えるシーン(モデルレジストリ):")
+        for name, spec, av in scene_registry.list():
+            ok = "○" if av else "×(未配置)"
+            mo = scene_registry.motions(name)
+            extra = f"  motion={mo}" if mo else ""
+            print(f"  {name:8s} {ok}  [{spec.get('category', ''):16s}]{extra}")
         print("  <path.xml>  任意のMJCFファイル")
         print("\n品質プリセット:", ", ".join(f"{k}({v[0]}px/{v[1]}gauss)" for k, v in PRESETS.items()))
-        print("例:  python fullseye_3dgs.py go2 --quality high --open")
+        print("例:  3dgs go2 --quality high --open  /  3dgs evis --motion --open")
         return 0
 
-    scene = resolve_scene(a.scene)
-    if scene is None:
+    spec = scene_registry.resolve(a.scene)
+    if spec is None:
         print(f"[エラー] シーン '{a.scene}' が見つかりません。--list で一覧を確認してください。")
         return 2
-    path, lookat, radius, elev = scene
+    path = spec["xml"]
+    lookat, radius, elev = spec["lookat"], spec["radius"], spec["elevation_deg"]
+    view_azimuth = spec.get("view_azimuth", 0.6)
     if not os.path.isfile(path):
         print(f"[エラー] MJCF が存在しません: {path}")
         return 2
