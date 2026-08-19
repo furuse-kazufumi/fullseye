@@ -135,12 +135,15 @@ _SH_C0 = 0.28209479177387814   # SH DC 基底: rgb = C0 * sh0 + 0.5
 
 def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3,
                   elevation_deg=22.0, lookat=(0, 0, 0.18), n_gauss_init=8000,
-                  n_test=3, sh_degree=3, flatten=0.0, return_gaussians=False, log=print):
+                  n_test=3, sh_degree=3, flatten=0.0, depth_weight=0.0,
+                  return_gaussians=False, log=print):
     """gsplat DefaultStrategy で densify/prune しながら学習(soft さ改善版)。
 
     点群で少なめに初期化 → 高勾配領域を split/clone、低不透明度を prune。
     sh_degree>0 で view-dependent color(SH、反射/光沢を再現)。hold-out PSNR。
     flatten>0 で SuGaR 風の表面整列(各ガウシアンを扁平な円盤に→面へ整列)。
+    depth_weight>0 で sim 真値深度(COLMAP 不要のタダ情報)を幾何監督に使う
+    ―― 期待深度 vs 真値深度の masked L1 を損失に加え、形状を締めて SuGaR 品質を上げる。
     return_gaussians=True で学習後のパラメータ dict も返す(メッシュ抽出用)。
     """
     import math
@@ -155,7 +158,10 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
         rgb = torch.tensor(s.rgb(nm).astype(np.float32) / 255, device=dev)
         c2w = torch.tensor(s.camera_to_world(nm), dtype=torch.float32, device=dev)
         K = torch.tensor(s.intrinsics(nm), dtype=torch.float32, device=dev)
-        views.append((rgb, _viewmat(c2w, dev), K))
+        dep = None
+        if depth_weight > 0:                 # sim 真値深度(world z, m)を幾何監督に
+            dep = torch.tensor(np.asarray(s.depth(nm), np.float32), device=dev)
+        views.append((rgb, _viewmat(c2w, dev), K, dep))
     pts, cols = [], []
     for nm in [names[i] for i in range(0, n_views, max(1, n_views // 12))]:
         pp, cc = s.point_cloud_rgb(nm, stride=2, max_range=3.0)
