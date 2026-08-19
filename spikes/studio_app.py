@@ -383,7 +383,6 @@ class StudioWindow(QtWidgets.QMainWindow):
         self.sim_cloud_btn.clicked.connect(lambda: self._view_mjcf("cloud"))
         self.gsplat_quality = QtWidgets.QComboBox()
         self.gsplat_quality.addItems(["fast", "balanced", "high"])
-        self.gsplat_quality.setCurrentIndex = getattr(self.gsplat_quality, "setCurrentIndex", None)
         self.gsplat_quality.setCurrentText("balanced")
         self.gsplat_quality.setToolTip("3DGS 品質: fast=128px / balanced=256px / high=384px")
         self.sim_gsplat_btn = QtWidgets.QPushButton("3DGS 学習 🎇")
