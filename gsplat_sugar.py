@@ -57,15 +57,18 @@ def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8,
     if sor_std and len(means) > knn:
         pcd, keep_idx = pcd.remove_statistical_outlier(nb_neighbors=knn, std_ratio=sor_std)
         ref = ref[np.asarray(keep_idx)]
-    # 局所近傍 PCA で滑らかな幾何法線を再推定
-    pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=knn))
-    est = np.asarray(pcd.normals)
-    # PCA 法線の符号を薄軸参照に合わせる(裏返り防止)
-    flip = np.sum(est * ref, axis=1) < 0
-    est[flip] *= -1.0
-    pcd.normals = o3d.utility.Vector3dVector(est)
+    if pca:
+        # 局所近傍 PCA で滑らかな幾何法線を再推定
+        pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=knn))
+        est = np.asarray(pcd.normals)
+        flip = np.sum(est * ref, axis=1) < 0               # 符号を薄軸参照に合わせる
+        est[flip] *= -1.0
+        pcd.normals = o3d.utility.Vector3dVector(est)
+    else:
+        pcd.normals = o3d.utility.Vector3dVector(ref)       # 旧法: 薄軸そのまま
     pcd.orient_normals_consistent_tangent_plane(knn)       # 法線の向きを大域整合
-    log(f"Poisson 再構成 (点 {len(pcd.points)}, depth {poisson_depth}, PCA法線 knn={knn}) …")
+    log(f"Poisson 再構成 (点 {len(pcd.points)}, depth {poisson_depth}, "
+        f"{'PCA' if pca else '薄軸'}法線 knn={knn}) …")
     mesh, dens = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
         pcd, depth=poisson_depth, linear_fit=True)
     dens = np.asarray(dens)
