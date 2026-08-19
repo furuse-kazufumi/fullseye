@@ -118,7 +118,9 @@ def train(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
             frames.append((render(_viewmat(c2w, dev), K).detach().cpu().numpy() * 255).astype(np.uint8))
     imgs = [Image.fromarray(f) for f in frames]
     imgs[0].save(os.path.join(out_dir, "turntable.gif"), save_all=True, append_images=imgs[1:], duration=60, loop=0)
-    log(f"saved novelview.png, turntable.gif -> {out_dir}")
+    _sh0 = ((torch.sigmoid(logit_c) - 0.5) / _SH_C0).reshape(-1, 1, 3)      # RGB→SH DC
+    save_gaussians_ply(os.path.join(out_dir, "gaussians.ply"), means, logscales, quats, raw_op, _sh0, None)
+    log(f"saved novelview.png, turntable.gif, gaussians.ply -> {out_dir}")
     return {"test_psnr": tp, "n": len(pts), "sec": dt}
 
 
