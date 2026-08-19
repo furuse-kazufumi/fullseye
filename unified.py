@@ -396,6 +396,8 @@ _3DGS_OPS = [
      "sim 完全深度を TSDF 融合し清潔な watertight メッシュ化(GPU 不要・針無し)", "mesh"),
     ("animate_mesh", "sim_source", "launch_animation",
      "qpos 軌道で真値メッシュをアニメ再生(静的地形メッシュの合成も可)", "animation"),
+    ("render_walk_gif", "world_render", "render_walk_gif",
+     "walker を terrain 上で歩かせた姿を headless で GIF 化(GPU不要・MjSpec 合成)", "animation"),
 ]
 
 

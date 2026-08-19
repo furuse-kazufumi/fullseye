@@ -42,3 +42,24 @@ def test_world_walk_accepts_mesh_method():
     import recipe_world_walk as rw
     sig = inspect.signature(rw.world_walk)
     assert sig.parameters["mesh_method"].default == "tsdf"
+
+
+def test_render_walk_gif_op_registered():
+    import unified as u
+    assert "render_walk_gif" in u.ops
+
+
+def test_render_walk_gif_headless(tmp_path):
+    """headless GIF 生成が go2 トロット×rolling で通る(GPU 不要・MuJoCo offscreen)。"""
+    import importlib.util
+    if importlib.util.find_spec("mujoco") is None:
+        import pytest
+        pytest.skip("mujoco 未インストール")
+    import world_render as WR
+    out = str(tmp_path / "walk.gif")
+    r = WR.render_walk_gif(out, walker="go2", terrain="rolling", gait="trot",
+                           n_frames=6, max_gif_frames=4, width=160, height=120,
+                           log=lambda *_: None)
+    import os
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["frames"] >= 1 and r["nq"] == r["nq"]
