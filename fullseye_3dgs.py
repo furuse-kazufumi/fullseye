@@ -183,6 +183,24 @@ def main(argv=None):
     print(f"  出力先   : {out}")
     print("  学習中 …")
 
+    if backend == "gsplat" and a.motion:
+        import gsplat_animate as AM
+        print("   (motion: body リグ付け→サイン波モーションで『動く3DGS』を生成します)")
+        r = AM.animate(path, out, n_views=n_views, iters=max(800, iters), res=res, radius=radius,
+                       elevation_deg=elev, lookat=lookat, n_gauss=max(15000, n_gauss),
+                       n_frames=a.frames, log=lambda m: print("   " + m, flush=True))
+        gif = os.path.join(out, "motion.gif")
+        print(f"\n✓ 完了: 動く3DGS {r['frames']}フレーム / {r['n']}ガウシアン")
+        print(f"  motion GIF: {gif}")
+        if a.open and os.path.isfile(gif):
+            try:
+                os.startfile(gif)
+            except Exception:
+                pass
+        return 0
+    if backend != "gsplat" and a.motion:
+        print("[警告] --motion は native gsplat 専用です。静止3DGSに切り替えます。")
+
     if backend == "gsplat":
         import gsplat_train_native as N
         if a.densify:
