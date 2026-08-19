@@ -17,22 +17,28 @@ import numpy as np
 
 
 def world_walk(out_dir, *, terrain="terrain", walker="evis", motion="walk",
-               z_offset=0.16, iters=1400, res=220, interactive=True, log=print):
-    import fullseye_3dgs as F
-    F.setup_cuda_env()
+               z_offset=0.16, iters=1400, res=220, mesh_method="tsdf",
+               interactive=True, log=print):
     import unified as u
     import scene_registry as R
     import sim_source as S
+    if mesh_method == "sugar":
+        import fullseye_3dgs as F
+        F.setup_cuda_env()          # SuGaR は GPU 必須(TSDF は sim 深度のみで不要)
     os.makedirs(out_dir, exist_ok=True)
 
-    # --- 手順1: 地形を SuGaR メッシュ化(共通 I/F: sugar_mesh op)---
+    # --- 手順1: 地形をメッシュ化(共通 I/F op)。tsdf=GPU不要・清潔、sugar=3DGS由来 ---
     tspec = R.resolve(terrain)
     if tspec is None:
         raise ValueError(f"terrain '{terrain}' が未登録")
-    tr = u.ops["sugar_mesh"](tspec["xml"], os.path.join(out_dir, "terrain"),
-                             n_views=40, iters=iters, res=res, radius=tspec["radius"],
-                             elevation_deg=tspec["elevation_deg"], lookat=tspec["lookat"],
-                             n_gauss_init=9000, flatten=0.03, log=log)
+    fr = dict(radius=tspec["radius"], elevation_deg=tspec["elevation_deg"], lookat=tspec["lookat"])
+    if mesh_method == "tsdf":
+        tr = u.ops["tsdf_mesh"](tspec["xml"], os.path.join(out_dir, "terrain"),
+                                n_views=48, res=res, voxel=0.02, log=log, **fr)
+    else:
+        tr = u.ops["sugar_mesh"](tspec["xml"], os.path.join(out_dir, "terrain"),
+                                 n_views=40, iters=iters, res=res, n_gauss_init=9000,
+                                 flatten=0.03, log=log, **fr)
     terrain_ply = tr["mesh_ply"]
     log(f"terrain mesh: {tr['vertices']} 頂点 -> {terrain_ply}")
 

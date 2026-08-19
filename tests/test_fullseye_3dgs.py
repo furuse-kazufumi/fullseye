@@ -19,3 +19,26 @@ def test_scene_resolution_via_registry():
 
 def test_builtins_registered():
     assert {"go2", "cassie", "apollo", "evis", "terrain"}.issubset(set(R.names()))
+
+
+def test_tsdf_mesh_op_registered():
+    """TSDF メッシャが共通 I/F(unified)op として登録されている(GPU 不要経路)。"""
+    import unified as u
+    assert "tsdf_mesh" in u.ops
+    assert "sugar_mesh" in u.ops
+
+
+def test_fullseye3d_mesh_accepts_method():
+    """fullseye3d.Scene.mesh(method=...) が tsdf/sugar を受ける(署名の固定)。"""
+    import inspect
+    import fullseye3d as f3d
+    sig = inspect.signature(f3d.Scene.mesh)
+    assert "method" in sig.parameters
+    assert sig.parameters["method"].default == "tsdf"       # 既定は GPU 不要の TSDF
+
+
+def test_world_walk_accepts_mesh_method():
+    import inspect
+    import recipe_world_walk as rw
+    sig = inspect.signature(rw.world_walk)
+    assert sig.parameters["mesh_method"].default == "tsdf"
