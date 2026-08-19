@@ -105,6 +105,8 @@ def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, ga
     q = _walk_qpos(walker, motion=motion, gait=gait, n_frames=n_frames, travel=travel)
     if track is None:
         track = travel > 0
+    if ground_follow is None:
+        ground_follow = travel > 0                          # 横断時は地形に接地させる
     m, tspec = _build_model(walker, terrain, log)
     if q.shape[1] != m.nq:
         raise ValueError(f"motion nq={q.shape[1]} が合成モデル nq={m.nq} と不一致")
