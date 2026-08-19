@@ -1,8 +1,9 @@
 """純 PyTorch 3D Gaussian Splatting(CUDA コンパイル不要)。
 
 gsplat ネイティブは Windows で CUDA Toolkit+MSVC を要するため、コンパイラ無しでも
-RTX 5090 上で 3DGS を end-to-end 実証するための参照実装。tile 分割なし・大域深度ソート
-の簡略版(小シーン/PoC 向け)。学習が進むこと(PSNR 上昇)を honest に測るのが目的。
+RTX 5090 上で 3DGS を end-to-end 実証するための参照実装。`render` は密・大域深度ソートの
+厳密参照、`render_tiled` はタイル分割+3σ カリングでメモリ有界・高速(実測 N=2万/200px で
+密比 263×速・21×省メモリ、パリティ PSNR 53.9dB)。学習は tiled を使う。
 
 規約: transforms.json の transform_matrix は OpenGL c2w(+X右/+Y上/-Z前方)。
 内部で CV カメラ(z 前方正/y 下)へ F=diag(1,-1,-1) 変換して標準 3DGS 数式を使う。

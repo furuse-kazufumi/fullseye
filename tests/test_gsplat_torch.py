@@ -38,3 +38,48 @@ def test_single_gaussian_renders_at_center():
 def test_psnr_identical_is_inf():
     a = torch.rand(8, 8, 3)
     assert G.psnr(a, a) == float("inf")
+
+
+def test_tiled_matches_dense_single_gaussian():
+    """render_tiled は render(密・厳密参照)と一致する(CPU、単一ガウシアン)。"""
+    dev = "cpu"
+    gm = G.GaussianModel(np.array([[0., 0, 0]]), np.array([[1., 0, 0]]),
+                         np.array([[0.05, 0.05, 0.05]]), device=dev)
+    c2w = torch.eye(4); c2w[2, 3] = 2.0
+    K = torch.tensor([[150., 0, 30], [0, 150., 30], [0, 0, 1]])
+    d = G.render(gm, c2w, K, 60, 60)
+    t = G.render_tiled(gm, c2w, K, 60, 60, tile=16)
+    assert t.shape == (60, 60, 3)
+    assert G.psnr(d, t) > 45.0                             # 実質同一(3σ カリング差のみ)
+
+
+def test_tiled_multi_gaussian_parity():
+    """複数ガウシアンでも tiled と dense が高 PSNR で一致(タイル境界の連続性)。"""
+    rng = np.random.RandomState(1)
+    dev = "cpu"
+    N, res = 200, 64
+    means = (rng.rand(N, 3) * 1.2 - 0.6).astype(np.float32)
+    cols = rng.rand(N, 3).astype(np.float32)
+    scales = np.full((N, 3), 0.04, np.float32)
+    gm = G.GaussianModel(means, cols, scales, device=dev)
+    c2w = torch.eye(4); c2w[2, 3] = 3.0
+    K = torch.tensor([[res * 1.2, 0, res / 2], [0, res * 1.2, res / 2], [0, 0, 1.0]])
+    d = G.render(gm, c2w, K, res, res)
+    t = G.render_tiled(gm, c2w, K, res, res, tile=16)
+    assert G.psnr(d, t) > 40.0
+
+
+def test_tiled_backward_flows():
+    """render_tiled で backward が通り、means に有限勾配が乗る(学習可能性)。"""
+    dev = "cpu"
+    rng = np.random.RandomState(2)
+    N, res = 50, 32
+    gm = G.GaussianModel((rng.rand(N, 3) - 0.5).astype(np.float32),
+                         rng.rand(N, 3).astype(np.float32),
+                         np.full((N, 3), 0.05, np.float32), device=dev)
+    c2w = torch.eye(4); c2w[2, 3] = 3.0
+    K = torch.tensor([[res * 1.2, 0, res / 2], [0, res * 1.2, res / 2], [0, 0, 1.0]])
+    img = G.render_tiled(gm, c2w, K, res, res, tile=16)
+    ((img - 0.5) ** 2).mean().backward()
+    g = gm.means.grad
+    assert g is not None and torch.isfinite(g).all()
