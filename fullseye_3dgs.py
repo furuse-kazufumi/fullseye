@@ -161,9 +161,16 @@ def main(argv=None):
 
     if backend == "gsplat":
         import gsplat_train_native as N
-        r = N.train(path, out, n_views=n_views, iters=iters, res=res, radius=radius,
-                    elevation_deg=elev, lookat=lookat, n_gauss=n_gauss,
-                    log=lambda m: print("   " + m, flush=True))
+        if a.densify:
+            print("   (densify: 学習中にガウシアンを増やして細部を上げます)")
+            r = N.train_densify(path, out, n_views=n_views, iters=max(iters, 1200), res=res,
+                                radius=radius, elevation_deg=elev, lookat=lookat,
+                                n_gauss_init=max(4000, n_gauss // 3),
+                                log=lambda m: print("   " + m, flush=True))
+        else:
+            r = N.train(path, out, n_views=n_views, iters=iters, res=res, radius=radius,
+                        elevation_deg=elev, lookat=lookat, n_gauss=n_gauss,
+                        log=lambda m: print("   " + m, flush=True))
     else:
         import gsplat_cli as C
         r = C.run(path, out, n_views=n_views, iters=iters, width=res, height=res,
