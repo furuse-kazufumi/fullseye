@@ -88,7 +88,8 @@ def _fixed_camera(lookat, radius, elevation_deg, view_azimuth, dev):
 
 def animate(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
             elevation_deg=22.0, lookat=(0, 0, 0.18), n_gauss=25000, n_test=2,
-            sh_degree=2, n_frames=60, amp=0.5, freq=1.0, view_azimuth=0.6, log=print):
+            sh_degree=2, n_frames=60, amp=0.5, freq=1.0, view_azimuth=0.6,
+            motion_file=None, log=print):
     dev = "cuda"
     os.makedirs(out_dir, exist_ok=True)
     s, names = S.orbit_scene(scene, n_views=n_views, radius=radius,
