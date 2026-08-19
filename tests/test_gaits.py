@@ -61,3 +61,27 @@ def test_trot_diagonal_in_phase():
 
 def test_build_unknown_is_none():
     assert gaits.build(_model(), np.zeros(_model().nq), "gallop") is None
+
+
+_SPOT_XML = """
+<mujoco><worldbody><body name="b" pos="0 0 .5"><freejoint/><geom type="box" size=".3 .15 .05"/>
+ <body name="fl"><joint name="fl_hx" type="hinge" axis="1 0 0"/><joint name="fl_hy" type="hinge" axis="0 1 0"/>
+   <geom type="capsule" size=".02 .1"/><body name="flk" pos="0 0 -.2"><joint name="fl_kn" type="hinge" axis="0 1 0"/><geom type="capsule" size=".02 .1"/></body></body>
+ <body name="fr"><joint name="fr_hx" type="hinge" axis="1 0 0"/><joint name="fr_hy" type="hinge" axis="0 1 0"/>
+   <geom type="capsule" size=".02 .1"/><body name="frk" pos="0 0 -.2"><joint name="fr_kn" type="hinge" axis="0 1 0"/><geom type="capsule" size=".02 .1"/></body></body>
+ <body name="hl"><joint name="hl_hx" type="hinge" axis="1 0 0"/><joint name="hl_hy" type="hinge" axis="0 1 0"/>
+   <geom type="capsule" size=".02 .1"/><body name="hlk" pos="0 0 -.2"><joint name="hl_kn" type="hinge" axis="0 1 0"/><geom type="capsule" size=".02 .1"/></body></body>
+ <body name="hr"><joint name="hr_hx" type="hinge" axis="1 0 0"/><joint name="hr_hy" type="hinge" axis="0 1 0"/>
+   <geom type="capsule" size=".02 .1"/><body name="hrk" pos="0 0 -.2"><joint name="hr_kn" type="hinge" axis="0 1 0"/><geom type="capsule" size=".02 .1"/></body></body>
+</body></worldbody></mujoco>
+"""
+
+
+def test_spot_naming_detected():
+    """spot 系命名(fl/fr/hl/hr + hy/kn)でも脚を検出しトロット生成できる。"""
+    m = mujoco.MjModel.from_xml_string(_SPOT_XML)
+    legs = gaits._leg_joints(m)
+    assert set(legs) == {("F", "L"), ("F", "R"), ("R", "L"), ("R", "R")}
+    home = np.zeros(m.nq); home[3] = 1.0
+    traj = gaits.quadruped_trot(m, home, n_frames=20)
+    assert traj is not None and traj.shape == (20, m.nq)

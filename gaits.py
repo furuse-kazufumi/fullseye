@@ -24,9 +24,9 @@ def _leg_joints(model):
         adr = int(model.jnt_qposadr[j])
         for code, canon in _LEG_CANON.items():
             if nm.startswith(code + "_") or nm.startswith(code):
-                if "THIGH" in nm or "HFE" in nm:
+                if "THIGH" in nm or "HFE" in nm or nm.endswith("_HY"):
                     legs.setdefault(canon, {})["thigh"] = adr
-                elif "CALF" in nm or "KNEE" in nm or "KFE" in nm:
+                elif "CALF" in nm or "KNEE" in nm or "KFE" in nm or nm.endswith("_KN"):
                     legs.setdefault(canon, {})["calf"] = adr
                 break
     return legs
