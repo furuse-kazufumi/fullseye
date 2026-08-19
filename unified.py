@@ -372,6 +372,38 @@ def _load_sim(reg: Registry) -> None:
                                provenance="sim-source", render_hint=hint, params=params))
 
 
+def _lazy_call(module, func):
+    """build 時に重い依存(gsplat 等)を import しない遅延呼び出し。"""
+    def _call(*a, **k):
+        import importlib
+        return getattr(importlib.import_module(module), func)(*a, **k)
+    _call.__doc__ = f"lazy {module}.{func}"
+    return _call
+
+
+# 3DGS / SuGaR / メッシュ再生を統一 op に(provenance=3dgs, namespace=gsplat)。
+# 実装は重い(gsplat/CUDA)ため遅延。func は importlib で初回呼び出し時に解決する。
+_3DGS_OPS = [
+    ("capture_orbit", "sim_source", "capture_orbit_scene",
+     "sim シーンをオービット撮影し 3DGS データセット(transforms.json)化", "dataset"),
+    ("train_3dgs", "gsplat_train_native", "train",
+     "sim シーンを native gsplat で 3DGS 学習(高速)", "gaussians"),
+    ("train_3dgs_densify", "gsplat_train_native", "train_densify",
+     "densify + SH + antialiased つき 3DGS 学習(高品質)", "gaussians"),
+    ("sugar_mesh", "gsplat_sugar", "extract_mesh",
+     "3DGS を SuGaR 風に表面整列→Poisson でメッシュ抽出(真値 bbox 検証つき)", "mesh"),
+    ("animate_mesh", "sim_source", "launch_animation",
+     "qpos 軌道で真値メッシュをアニメ再生(静的地形メッシュの合成も可)", "animation"),
+]
+
+
+def _load_3dgs(reg: Registry) -> None:
+    for name, mod, fn, doc, hint in _3DGS_OPS:
+        reg.register(UnifiedOp(name=name, func=_lazy_call(mod, fn),
+                               module=f"{mod}.{fn}", chapter="3dgs", namespace="gsplat",
+                               doc=doc, provenance="3dgs", render_hint=hint, params=[]))
+
+
 def build_registry() -> Registry:
     """4 層(facade 600 / 進化 735 / 知覚 facade / OSS アダプタ)を 1 索引に統合(F2/F3/F4)。
     facade を最初に登録=bare 名衝突時は genuine facade を優先(既存挙動維持)。"""
@@ -381,6 +413,7 @@ def build_registry() -> Registry:
     _load_perception(reg)      # 3. 知覚 facade(自然シグネチャ)
     _load_oss(reg)             # 4. OSS アダプタ(OpenCV/skimage、numpy フォールバック)
     _load_sim(reg)             # 5. sim-source(物理→視覚の入力供給、F4)
+    _load_3dgs(reg)            # 6. 3DGS/SuGaR/メッシュ再生(provenance=3dgs)
     return reg
 
 
