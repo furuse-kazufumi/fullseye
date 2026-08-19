@@ -26,7 +26,8 @@ def test_registry_builds_all_layers():
 def test_every_op_has_metadata():
     """F3: 全 op が name/namespace/chapter/doc/render_hint/provenance/params を持つ。"""
     valid_hints = {"image", "region", "contour", "pose", "point_cloud",
-                   "matches", "scalar", "matrix"}
+                   "matches", "scalar", "matrix",
+                   "mesh", "gaussians", "dataset", "animation"}   # 3DGS/SuGaR 出力種別
     valid_prov = {"facade", "evolution", "perception", "oss-adapter", "sim-source", "3dgs"}
     for name in u.ops.list():
         d = u.ops.describe(name)

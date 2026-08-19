@@ -1,0 +1,154 @@
+"""Fullseye 3D ―― 人間が使いやすい、Qt 風の流れるツールキット。
+
+共通 I/F(unified の op)を、決まった手順で気持ちよく呼べるように薄く包んだ facade。
+
+  import fullseye3d as f3d
+
+  f3d.scenes()                                  # 使えるシーン一覧
+  f3d.Scene("go2").splat(quality="high").show() # 3DGS 化して全周プレビュー
+  f3d.Scene("go2").splat().export("go2.ply")    # 3DGS を .ply 書き出し
+  f3d.Scene("go2").walk(gait="trot").show()     # トロットで歩く 3DGS
+  terrain = f3d.Scene("terrain").mesh()         # SuGaR メッシュ抽出
+  f3d.Scene("evis").walk(on=terrain).show()     # evis が地形メッシュ上を歩く
+
+show() は desktop 窓(要 GL)、export()/preview() はファイル。GPU は自動設定。
+"""
+from __future__ import annotations
+import os
+
+_OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "out", "fullseye3d")
+
+
+def _cuda():
+    import fullseye_3dgs as F
+    F.setup_cuda_env()
+
+
+def scenes():
+    """登録シーンの一覧 [(name, category, available)]。"""
+    import scene_registry as R
+    return [(n, s.get("category", ""), av) for n, s, av in R.entries()]
+
+
+def _open(path):
+    try:
+        os.startfile(path)                       # Windows 既定ビューア
+    except Exception:
+        pass
+    return path
+
+
+class Splat:
+    """3DGS 学習の結果(全周GIF / novelview / gaussians.ply)。"""
+
+    def __init__(self, out_dir, info):
+        self.dir = out_dir
+        self.info = info
+        self.psnr = info.get("test_psnr")
+
+    def show(self):
+        return _open(os.path.join(self.dir, "turntable.gif"))
+
+    def export(self, path=None):
+        src = os.path.join(self.dir, "gaussians.ply")
+        if path and os.path.isfile(src):
+            import shutil
+            shutil.copy(src, path)
+            return path
+        return src
+
+
+class Mesh:
+    """SuGaR 抽出メッシュ(.ply)。walk(on=mesh) に渡せる。"""
+
+    def __init__(self, ply, info=None):
+        self.ply = ply
+        self.info = info or {}
+
+    def preview(self):
+        p = os.path.join(os.path.dirname(self.ply), "mesh_preview.png")
+        return _open(p) if os.path.isfile(p) else None
+
+    def export(self, path=None):
+        if path:
+            import shutil
+            shutil.copy(self.ply, path)
+            return path
+        return self.ply
+
+
+class Scene:
+    """1 つの sim シーン。splat()/mesh()/walk() を流れるように呼べる。"""
+
+    def __init__(self, name):
+        import scene_registry as R
+        self.name = name
+        self.spec = R.resolve(name)
+        if self.spec is None:
+            raise ValueError(f"scene '{name}' が見つかりません。f3d.scenes() を確認してください。")
+
+    def _framing(self):
+        return dict(radius=self.spec["radius"], elevation_deg=self.spec["elevation_deg"],
+                    lookat=self.spec["lookat"])
+
+    def splat(self, quality="balanced", densify=False, out=None):
+        """3DGS 化。Splat(.show()/.export()) を返す。"""
+        _cuda()
+        import gsplat_train_native as N
+        res, ng, iters, nv = {"fast": (128, 8000, 600, 24), "balanced": (256, 20000, 1000, 36),
+                              "high": (384, 45000, 1500, 48)}[quality]
+        out = out or os.path.join(_OUT, f"splat_{self.name}")
+        fr = self._framing()
+        if densify:
+            info = N.train_densify(self.spec["xml"], out, n_views=nv, iters=max(iters, 1200),
+                                   res=res, n_gauss_init=max(4000, ng // 3), **fr)
+        else:
+            info = N.train(self.spec["xml"], out, n_views=nv, iters=iters, res=res,
+                           n_gauss=ng, **fr)
+        return Splat(out, info)
+
+    def mesh(self, quality="balanced", out=None):
+        """SuGaR メッシュ抽出。Mesh を返す。"""
+        _cuda()
+        import unified as u
+        res, ng, iters = {"fast": (200, 8000, 1000), "balanced": (220, 9000, 1400),
+                          "high": (256, 12000, 1800)}[quality]
+        out = out or os.path.join(_OUT, f"mesh_{self.name}")
+        fr = self._framing()
+        r = u.ops["sugar_mesh"](self.spec["xml"], out, n_views=40, iters=iters, res=res,
+                                n_gauss_init=ng, flatten=0.03, **fr)
+        return Mesh(r["mesh_ply"], r)
+
+    def walk(self, motion=None, gait=None, on=None, z_offset=0.16):
+        """メッシュのまま歩かせる(散乱ゼロ)。on=Mesh を渡すとその上で歩く。
+
+        launch する Popen を返す(desktop 窓)。GL が無い環境では None。"""
+        _cuda()
+        import numpy as np
+        import scene_registry as R
+        import sim_source as S
+        xml = open(self.spec["xml"], encoding="utf-8").read()
+        mpath = R.motion(self.name, motion) if (motion or not gait) else None
+        if mpath:
+            qpos = np.load(mpath).astype(float)
+        elif gait:
+            import gaits as G
+            import mujoco
+            m = mujoco.MjModel.from_xml_string(xml)
+            d = mujoco.MjData(m); mujoco.mj_forward(m, d)
+            qpos = G.build(m, np.asarray(d.qpos), gait, n_frames=60)
+            if qpos is None:
+                raise ValueError(f"gait '{gait}' はこのモデルで生成不可")
+        else:
+            raise ValueError("motion 名か gait を指定してください(例: walk / trot)")
+        static = None
+        if on is not None:
+            qpos = qpos.copy(); qpos[:, 2] += z_offset
+            static = on.ply if isinstance(on, Mesh) else str(on)
+        return S.launch_animation(xml, qpos, title=f"{self.name}", static_mesh=static)
+
+
+def demo_world_walk(**kw):
+    """『SuGaR 地形の上を evis がメッシュで歩く』を1呼び出しで。"""
+    terrain = Scene("terrain").mesh(**kw)
+    return Scene("evis").walk(on=terrain)

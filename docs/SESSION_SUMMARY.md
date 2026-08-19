@@ -3,49 +3,52 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-19 22:17:28
+- **最終更新**: 2026-08-20 07:05:32
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-359ad33a auto: pyproject.toml 編集前 (2026-08-19 22:15)
-f8f2bda3 auto: pyproject.toml 編集前 (2026-08-19 22:14)
-c3f51d45 auto: pyproject.toml 編集前 (2026-08-19 22:13)
-cf91ef3a auto: gaits.py 編集前 (2026-08-19 22:06)
-72b81be6 auto: gaits.py 編集前 (2026-08-19 22:06)
-c15ae184 auto: gaits.py 編集前 (2026-08-19 22:03)
-499a4d14 auto: fullseye_3dgs.py 編集前 (2026-08-19 22:03)
-b43a5c41 auto: fullseye_3dgs.py 編集前 (2026-08-19 22:02)
-def2bb06 auto: gsplat_animate.py 編集前 (2026-08-19 22:02)
-8e33697f auto: gsplat_animate.py 編集前 (2026-08-19 22:02)
+520b5517 auto: test_unified.py 編集前 (2026-08-20 07:01)
+188ca539 auto: test_unified.py 編集前 (2026-08-20 07:01)
+50e636c2 auto: unified.py 編集前 (2026-08-20 07:00)
+013e77fb auto: unified.py 編集前 (2026-08-20 07:00)
+2e114d4b auto: sim_source.py 編集前 (2026-08-20 06:59)
+392197de auto: sim_source.py 編集前 (2026-08-20 06:59)
+c2b5382f auto: scene_registry.py 編集前 (2026-08-20 06:58)
+af0d5375 auto: scene_registry.py 編集前 (2026-08-20 06:58)
+11243228 auto: gsplat_sugar.py 編集前 (2026-08-20 06:57)
+d97ec96a auto: sim_source.py 編集前 (2026-08-20 06:57)
 ```
 
 ## 現在の git status
 
 ```
-M pyproject.toml
+M tests/test_fullseye_3dgs.py
+ M tests/test_unified.py
+?? fullseye3d.py
+?? recipe_world_walk.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:16 .pytest_cache/v/cache/nodeids
-22:15 .pytest_cache/v/cache/lastfailed
-22:15 pyproject.toml
-22:06 tests/test_gaits.py
-22:06 gaits.py
-22:05 docs/SESSION_SUMMARY.md
-22:04 docs/3DGS_USAGE.md
-22:03 fullseye_3dgs.py
-22:02 gsplat_animate.py
-21:57 docs/articles/qiita_3dgs_sim_native.md
-21:56 spikes/studio_app.py
-21:49 sim_source.py
-21:46 gsplat_train_native.py
-21:37 tests/test_fullseye_3dgs.py
-21:34 3dgs.cmd
+07:05 .pytest_cache/v/cache/nodeids
+07:05 .pytest_cache/v/cache/lastfailed
+07:05 tests/test_fullseye_3dgs.py
+07:03 fullseye3d.py
+07:02 recipe_world_walk.py
+07:01 tests/test_unified.py
+07:00 unified.py
+06:59 sim_source.py
+06:58 .scene_cache/terrain.xml
+06:58 scene_registry.py
+06:57 gsplat_sugar.py
+06:56 .venv-gsplat/Lib/site-packages/matplotlib-3.11.1.dist-info/REQUESTED
+06:56 .venv-gsplat/Lib/site-packages/matplotlib-3.11.1.dist-info/RECORD
+06:56 .venv-gsplat/Lib/site-packages/matplotlib-3.11.1.dist-info/INSTALLER
+06:56 .venv-gsplat/Lib/site-packages/matplotlib/mpl-data/stylelib/tableau-colorblind10.mplstyle
 ```
 
 ---
