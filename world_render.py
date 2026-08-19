@@ -60,7 +60,7 @@ def _build_model(walker, terrain, log):
     return spec.compile(), tspec
 
 
-def _walk_qpos(walker, motion=None, gait=None, n_frames=90):
+def _walk_qpos(walker, motion=None, gait=None, n_frames=90, travel=0.0):
     """motion 名(npz)or gait 名から qpos(F, nq)を得る。gait 用モデルは include 解決込み。"""
     import mujoco
     import scene_registry as R
@@ -72,7 +72,7 @@ def _walk_qpos(walker, motion=None, gait=None, n_frames=90):
         import gaits as G
         m = mujoco.MjModel.from_xml_path(spec["xml"])       # from_path=include 解決
         d = mujoco.MjData(m); mujoco.mj_forward(m, d)
-        q = G.build(m, np.asarray(d.qpos), gait, n_frames=n_frames)
+        q = G.build(m, np.asarray(d.qpos), gait, n_frames=n_frames, travel=travel)
         if q is None:
             raise ValueError(f"gait '{gait}' はこのモデルで生成不可")
         return q.astype(float)
