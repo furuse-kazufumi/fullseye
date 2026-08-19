@@ -130,3 +130,43 @@ def test_save_animation_requires_xml():
     with pytest.raises(RuntimeError):
         s.save_animation("x", np.zeros((3, m.nq)))
     s.close()
+
+
+def test_camera_pose_reprojection_exact():
+    """3DGS: camera_to_world/project が正しい(真値点の再投影が描画深度と一致)。"""
+    s = _src()   # top カメラ(真上)+ block(0.2,0,0.1)
+    p = np.array([[0.2, 0.0, 0.2]])                 # block 上面の world 点
+    uv, zproj = s.project(p, "top")
+    u, v = uv[0]
+    dep = s.depth("top")
+    drend = dep[int(round(v)), int(round(u))]
+    assert abs(float(zproj[0]) - float(drend)) < 1e-3   # 真値深度 == 描画深度
+    c2w = s.camera_to_world("top")
+    assert c2w.shape == (4, 4)
+    assert np.allclose(s.extrinsics("top") @ c2w, np.eye(4), atol=1e-6)
+    s.close()
+
+
+def test_capture_orbit_dataset(tmp_path):
+    """3DGS: オービット多視点 → transforms.json + images(姿勢=sim真値, COLMAP不要)。"""
+    import json, os
+    xml = ('<mujoco><worldbody><light pos="0 0 3"/>'
+           '<geom type="sphere" size=".15" pos="0 0 .25" rgba=".9 .2 .2 1"/>'
+           '</worldbody></mujoco>')
+    path = S.capture_orbit(xml, str(tmp_path), n_views=8, radius=1.5,
+                           elevation_deg=35, lookat=(0, 0, 0.25),
+                           width=200, height=200)
+    meta = json.load(open(path, encoding="utf-8"))
+    assert len(meta["frames"]) == 8
+    assert len([f for f in os.listdir(os.path.join(str(tmp_path), "images"))
+                if f.endswith(".png")]) == 8
+    # 全ビューで lookat が画像中心へ再投影(姿勢の正しさ)
+    K = np.array([[meta["fl_x"], 0, meta["cx"]],
+                  [0, meta["fl_y"], meta["cy"]], [0, 0, 1]])
+    la = np.array([0, 0, 0.25])
+    for fr in meta["frames"]:
+        w2c = np.linalg.inv(np.array(fr["transform_matrix"]))
+        cp = w2c[:3, :3] @ la + w2c[:3, 3]
+        u = K[0, 2] + K[0, 0] * (cp[0] / -cp[2])
+        v = K[1, 2] - K[1, 1] * (cp[1] / -cp[2])
+        assert np.hypot(u - meta["cx"], v - meta["cy"]) < 0.5

@@ -277,3 +277,20 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     3D 窓表示(F6 sim ドメイン、viewer_mgr で管理)。
   - **結果保存**: 3D 出力→PLY、2D 図→PNG(`export_ply`/`savefig`)。
   - 回帰: 全関連 56 pass + op_contracts 込み 3137 pass。studio_app/anim_launch/sim_source 構文 OK。
+
+## 3DGS(3D Gaussian Splatting)対応 — 前半(データ取得)完了 2026-08-19
+
+**問い**: Fullseye/sim-source で 3DGS は出来るか。
+
+**実測環境**: RTX 5090 (32GB) あり / torch=**2.11.0+cpu**(CPU ビルド)/ CUDA toolkit・gsplat・nerfstudio **未導入**。→ 学習(GPU)は現状不可、要スタック整備。
+
+**sim-source の優位**: 3DGS 最大の前段=多視点画像のカメラ姿勢推定(COLMAP)が、sim では **ground-truth 姿勢が直接得られるため不要**。
+
+**実装(GPU 不要・CPU で検証済)**: `sim_source.MuJoCo`
+- `camera_to_world(cam)` / `extrinsics(cam)` — MuJoCo カメラ frame は OpenGL 規約(-Z 前方/+Y 上)= nerfstudio `transform_matrix` と同一。
+- `project(pts, cam)` — 姿勢自己検証。**top カメラ再投影 diff 0.0000**、oblique 0.0034(残差はオクルージョンで説明)。
+- `save_gsplat_dataset(out, cams)` — named カメラ → `transforms.json`(PINHOLE)+ `images/`。
+- モジュール関数 `capture_orbit(base_xml, out, n_views, radius, elevation_deg, lookat, fovy, ...)` — リング多視点を XML 注入し検証済み cam_xpos/cam_xmat 経路で c2w 化。**全 12 ビューで lookat 再投影の中心ズレ 0.000px**、実描画確認、depth 同梱可。
+- test: `test_camera_pose_reprojection_exact` / `test_capture_orbit_dataset`(test_sim_source 13 passed)。
+
+**残(GPU 半分・要判断)**: 学習スタック整備。Windows は gsplat の CUDA ビルド摩擦あり(VS build tools+CUDA toolkit)。候補=(A) 専用 venv に torch cu128+gsplat / (B) WSL2 経由 / (C) exporter のみ維持し外部 trainer(`ns-train splatfacto`)に transforms.json を渡す。共有 py -3.11 env への影響回避のため専用環境推奨。

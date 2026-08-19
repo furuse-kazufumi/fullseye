@@ -403,6 +403,59 @@ def backends() -> dict:
             for _, name, cls, _ in SOURCES}
 
 
+def _look_at_xyaxes(pos, target, world_up=(0.0, 0.0, 1.0)):
+    """カメラ位置 pos から target を見る MuJoCo camera の xyaxes(x,y の 6 値)。
+
+    カメラ frame: +X 右 / +Y 上 / -Z 前方(視線)。z=-forward, x=up×z, y=z×x。"""
+    pos = np.asarray(pos, float); target = np.asarray(target, float)
+    f = target - pos
+    n = np.linalg.norm(f)
+    if n < 1e-9:
+        raise ValueError("_look_at_xyaxes: pos と target が一致")
+    f = f / n
+    up = np.asarray(world_up, float)
+    if abs(float(np.dot(f, up))) > 0.999:                 # 視線が up と平行 → 退避軸
+        up = np.array([0.0, 1.0, 0.0])
+    zc = -f                                               # camera +Z は視線の逆
+    xc = np.cross(up, zc); xc /= np.linalg.norm(xc)       # 右
+    yc = np.cross(zc, xc)                                 # 上(既に正規)
+    return list(xc) + list(yc)
+
+
+def capture_orbit(base_xml: str, out_dir: str, *, n_views: int = 24,
+                  radius: float = 2.0, elevation_deg: float = 30.0,
+                  lookat=(0.0, 0.0, 0.0), fovy: float = 45.0,
+                  width: int = 400, height: int = 400, with_depth: bool = False) -> str:
+    """base シーンをオービット多視点で撮り 3DGS/nerfstudio データセット化する。
+
+    リング上に n_views 台の named カメラを XML 注入 → 検証済みの cam_xpos/cam_xmat 経路で
+    c2w を得る(姿勢は sim ground-truth、COLMAP 不要)。戻り値: transforms.json パス。"""
+    import math
+    lookat = tuple(float(x) for x in lookat)
+    el = math.radians(elevation_deg)
+    z = lookat[2] + radius * math.sin(el)
+    r_xy = radius * math.cos(el)
+    cams_xml = []
+    for i in range(int(n_views)):
+        az = 2.0 * math.pi * i / float(n_views)
+        px = lookat[0] + r_xy * math.cos(az)
+        py = lookat[1] + r_xy * math.sin(az)
+        xy = _look_at_xyaxes((px, py, z), lookat)
+        cams_xml.append(
+            f'<camera name="orbit{i:04d}" pos="{px:.6f} {py:.6f} {z:.6f}" '
+            f'fovy="{fovy}" xyaxes="{" ".join(f"{v:.6f}" for v in xy)}"/>')
+    inject = "".join(cams_xml)
+    if "</worldbody>" not in base_xml:
+        raise ValueError("capture_orbit: base_xml に </worldbody> が無い")
+    xml = base_xml.replace("</worldbody>", inject + "</worldbody>", 1)
+    s = MuJoCo(xml, width=width, height=height)
+    try:
+        cams = [f"orbit{i:04d}" for i in range(int(n_views))]
+        return s.save_gsplat_dataset(out_dir, cams, with_depth=with_depth)
+    finally:
+        s.close()
+
+
 if __name__ == "__main__":
     xml = ('<mujoco><worldbody><light pos="0 0 2"/>'
            '<geom type="box" size=".1 .1 .1" pos="0 0 .5"/>'
