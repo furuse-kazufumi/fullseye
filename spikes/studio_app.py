@@ -495,6 +495,24 @@ class StudioWindow(QtWidgets.QMainWindow):
         self._refresh_3d_windows()
         self.statusBar().showMessage(f"3D 窓を {n} 個閉じました")
 
+    def _export_result(self) -> None:
+        """現在の結果を保存: 3D 出力があれば .ply、なければ 2D 図を .png。"""
+        if self._last3d:                                   # 3D 出力 → PLY
+            path, _ = QtWidgets.QFileDialog.getSaveFileName(
+                self, "3D を PLY で保存", "fullseye_scene.ply", "PLY (*.ply)")
+            if path:
+                ok = _v3d.export_ply(self._last3d, path)
+                self.statusBar().showMessage(f"PLY 保存: {path}" if ok else "PLY 保存失敗")
+            return
+        path, _ = QtWidgets.QFileDialog.getSaveFileName(     # 2D 図 → PNG
+            self, "図を PNG で保存", "fullseye_figure.png", "PNG (*.png)")
+        if path:
+            try:
+                self.figure.savefig(path, dpi=140, bbox_inches="tight")
+                self.statusBar().showMessage(f"PNG 保存: {path}")
+            except Exception as e:  # noqa: BLE001
+                self.statusBar().showMessage(f"PNG 保存失敗: {e}")
+
     def _view_mjcf(self, mode: str) -> None:
         """MJCF を実形状(mesh)or 点群(cloud)で 3D 窓に表示(sim-source→viewer)。"""
         import os

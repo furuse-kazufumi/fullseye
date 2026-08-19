@@ -265,3 +265,15 @@ Qt から借りる: **名前空間モジュール**(`fs.stereo`/`fs.camera` = Qt
     cylinder/ellipsoid/mesh を world 変換・色つき、plane/hfield はスキップ)。**evis/ロケット等のモデルを 3D 窓で
     そのままの姿で見られる**。実測: walker2d 歩行 7 geom / ロケット 7 geom をメッシュ化し別プロセス窓に表示。
   - テスト: `test_viewer3d`(ViewerManager lifecycle・launch 失敗)+ `test_sim_source`(scene_geometries)追加、計 22 pass。
+
+- **2026-08-19 ゴール「Studio 機能拡充」バッチ**:
+  - **姿勢アニメ再生**(rollout の qpos 軌道を動きで見る)= `sim_source.save_animation/play_animation/launch_animation`
+    + `spikes/anim_launch.py`。毎フレーム qpos→mj_forward→各 geom の world 変換のみ更新(メッシュ再利用)で
+    Open3D 窓に再生。**ロケット着陸(400 フレーム, soft 0.83m/s)を別プロセス窓で再生** 実測。`ViewerManager.track`
+    で外部起動プロセスも管理下に。
+  - **op 検索/絞り込み**: Studio 左に検索ボックス、`_populate_tree(filter)` が名前/doc/namespace(`reg.find`)で
+    1580 op を即絞り込み(namespace 展開合計 = 該当数、実測一致)。
+  - **sim-source パネル**: 任意 MJCF を「実形状で見る(scene_geometries)」/「点群で見る(point_cloud)」で
+    3D 窓表示(F6 sim ドメイン、viewer_mgr で管理)。
+  - **結果保存**: 3D 出力→PLY、2D 図→PNG(`export_ply`/`savefig`)。
+  - 回帰: 全関連 56 pass + op_contracts 込み 3137 pass。studio_app/anim_launch/sim_source 構文 OK。
