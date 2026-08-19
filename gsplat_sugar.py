@@ -29,8 +29,14 @@ def _quats_to_R(q):
     return R
 
 
-def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8, log=print):
-    """学習済みガウシアン dict -> Open3D TriangleMesh(法線つき点群 + Poisson)。"""
+def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8,
+                      knn=30, sor_std=2.0, log=print):
+    """学習済みガウシアン dict -> Open3D TriangleMesh(法線つき点群 + Poisson)。
+
+    法線: 薄軸(最小スケール軸)を「向きの参照」としてだけ使い、実際の法線は局所近傍
+    PCA で再推定する。円盤ごとに独立してばらつく薄軸をそのまま Poisson に渡すと表面が
+    スパイク状になるため、幾何的に滑らかな PCA 法線へ置換し符号だけ薄軸に合わせる。
+    """
     import open3d as o3d
     import torch
     means = g["means"].cpu().numpy().astype(np.float64)
@@ -42,14 +48,24 @@ def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8,
     keep = opac > opacity_thresh
     means, scales, quats, rgb = means[keep], scales[keep], quats[keep], rgb[keep]
     R = _quats_to_R(quats)
-    kmin = np.argmin(scales, axis=1)                       # 薄軸 = surface normal
-    normals = R[np.arange(len(R)), :, kmin].astype(np.float64)
+    kmin = np.argmin(scales, axis=1)                       # 薄軸 = 向きの参照のみ
+    ref = R[np.arange(len(R)), :, kmin].astype(np.float64)
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(means)
-    pcd.normals = o3d.utility.Vector3dVector(normals)
     pcd.colors = o3d.utility.Vector3dVector(rgb.astype(np.float64))
-    pcd.orient_normals_consistent_tangent_plane(20)        # 法線の向きを整合
-    log(f"Poisson 再構成 (点 {len(means)}, depth {poisson_depth}) …")
+    # floater(疎な外れ点)は Poisson で長いスパイクの芯になるため先に統計的に除去
+    if sor_std and len(means) > knn:
+        pcd, keep_idx = pcd.remove_statistical_outlier(nb_neighbors=knn, std_ratio=sor_std)
+        ref = ref[np.asarray(keep_idx)]
+    # 局所近傍 PCA で滑らかな幾何法線を再推定
+    pcd.estimate_normals(search_param=o3d.geometry.KDTreeSearchParamKNN(knn=knn))
+    est = np.asarray(pcd.normals)
+    # PCA 法線の符号を薄軸参照に合わせる(裏返り防止)
+    flip = np.sum(est * ref, axis=1) < 0
+    est[flip] *= -1.0
+    pcd.normals = o3d.utility.Vector3dVector(est)
+    pcd.orient_normals_consistent_tangent_plane(knn)       # 法線の向きを大域整合
+    log(f"Poisson 再構成 (点 {len(pcd.points)}, depth {poisson_depth}, PCA法線 knn={knn}) …")
     mesh, dens = o3d.geometry.TriangleMesh.create_from_point_cloud_poisson(
         pcd, depth=poisson_depth, linear_fit=True)
     dens = np.asarray(dens)
