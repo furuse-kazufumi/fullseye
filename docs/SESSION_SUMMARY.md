@@ -3,52 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-19 21:28:31
+- **最終更新**: 2026-08-19 21:43:22
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-c8060e6b auto: qiita_3dgs_sim_native.md 編集前 (2026-08-19 21:22)
-f4a16e8e auto: _backend.py 編集前 (2026-08-19 21:15)
-548eebed auto: CUDACachingAllocator.h 編集前 (2026-08-19 21:14)
-15dba429 auto: _backend.py 編集前 (2026-08-19 20:40)
-110f6569 auto: _backend.py 編集前 (2026-08-19 20:40)
-7f58d317 auto: _backend.py 編集前 (2026-08-19 20:37)
-07992eed auto: _backend.py 編集前 (2026-08-19 20:33)
-a1da0766 auto: studio_app.py 編集前 (2026-08-19 13:05)
-2cd33333 auto: studio_app.py 編集前 (2026-08-19 13:05)
-d56489da auto: gsplat_train.py 編集前 (2026-08-19 13:04)
+0203741e auto: 3DGS_USAGE.md 編集前 (2026-08-19 21:42)
+0db1dd04 auto: fullseye_3dgs.py 編集前 (2026-08-19 21:41)
+8d8336ca auto: fullseye_3dgs.py 編集前 (2026-08-19 21:41)
+666794e5 auto: gsplat_train_native.py 編集前 (2026-08-19 21:40)
+da101fa5 auto: studio_app.py 編集前 (2026-08-19 21:36)
+b8bbd8b7 auto: studio_app.py 編集前 (2026-08-19 21:36)
+077331af auto: studio_app.py 編集前 (2026-08-19 21:36)
+a76d15ff auto: studio_app.py 編集前 (2026-08-19 21:35)
+d3f0134f auto: fullseye_3dgs.py 編集前 (2026-08-19 21:33)
+8b06b086 auto: fullseye_3dgs.py 編集前 (2026-08-19 21:33)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M docs/articles/qiita_3dgs_sim_native.md
-?? .gsplat-cuda/
-?? run_gsplat.bat
+M docs/3DGS_USAGE.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:27 run_gsplat.bat
-21:22 docs/SESSION_SUMMARY.md
-21:22 docs/articles/qiita_3dgs_sim_native.md
-21:19 gsplat_train_native.py
-21:17 docs/GSPLAT_NATIVE_WINDOWS.md
-21:15 .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
-21:14 .venv-gsplat/Lib/site-packages/torch/include/c10/cuda/CUDACachingAllocator.h
-21:12 .gsplat-cuda/Library/lib/x64/nvrtc.lib
-21:12 .gsplat-cuda/Library/lib/x64/nvptxcompiler_static.lib
-21:12 .gsplat-cuda/Library/lib/x64/cudart_static.lib
-21:12 .gsplat-cuda/Library/lib/x64/cudart.lib
-21:12 .gsplat-cuda/Library/lib/x64/cudadevrt.lib
-21:12 .gsplat-cuda/Library/lib/x64/cuda.lib
-21:11 .gsplat-cuda/conda-meta/history
-21:11 .gsplat-cuda/conda-meta/vc14_runtime-14.51.36247-habf1de7_41.json
+21:42 .pytest_cache/v/cache/nodeids
+21:42 docs/3DGS_USAGE.md
+21:41 fullseye_3dgs.py
+21:40 gsplat_train_native.py
+21:37 tests/test_fullseye_3dgs.py
+21:36 spikes/studio_app.py
+21:34 3dgs.cmd
+21:31 .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
+21:29 .gsplat-build/gsplat_cuda/.ninja_log
+21:29 .gsplat-build/gsplat_cuda/gsplat_cuda.pyd
+21:29 .gsplat-build/gsplat_cuda/gsplat_cuda.lib
+21:29 .gsplat-build/gsplat_cuda/gsplat_cuda.exp
+21:29 .gsplat-build/gsplat_cuda/.ninja_deps
+21:29 .gsplat-build/gsplat_cuda/RasterizeToPixelsFromWorld3DGSBwd.cuda.o
+21:29 .gsplat-build/gsplat_cuda/RasterizeToPixels2DGSBwd.cuda.o
 ```
 
 ---

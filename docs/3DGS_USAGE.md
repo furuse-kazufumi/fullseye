@@ -24,6 +24,14 @@ imgevolve フォルダで:
 3dgs go2 --quality high       :: 384px / 4.5万ガウシアン(いちばん綺麗)
 ```
 
+## もっと綺麗に(densify)
+
+```bat
+3dgs go2 --quality high --densify --open
+```
+
+`--densify` を付けると、学習中に**ガウシアンを自動で増やして細部を上げます**(native gsplat 時のみ)。go2 で 8千 → 5万個ほどに成長し、胴体・脚がより滑らかに。数秒〜十数秒で完了します。
+
 ## backend は自動
 
 - **native gsplat**(タイル CUDA)が使えれば自動でそれ(高速・高精細、数百 it/s)
@@ -49,3 +57,5 @@ imgevolve フォルダで:
 
 - GPU 学習用 venv `.venv-gsplat`(torch cu128)
 - native を使うなら `.gsplat-cuda`(CUDA 12.8)+ VS BuildTools の C++ ツール。詳細と再現手順は `docs/GSPLAT_NATIVE_WINDOWS.md`
+
+> honest な注記: `--densify` の効き目はシーン依存です。go2 のような塊は綺麗になりますが、cassie のような細い二足では学習視点に過学習して hold-out がやや softになることがあります。まずは付けずに試し、物足りなければ付けるのがおすすめです。
