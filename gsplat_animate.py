@@ -236,8 +236,8 @@ def animate(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
     gif = os.path.join(out_dir, "motion.gif")
     imgs[0].save(gif, save_all=True, append_images=imgs[1:], duration=1000 // 30, loop=0)
     save_gaussians_ply(os.path.join(out_dir, "gaussians.ply"), means, logscales, quats, raw_op, sh0, shN)
-    log(f"saved motion.gif ({n_frames} frames), gaussians.ply -> {out_dir}")
-    return {"n": N, "frames": n_frames, "gif": gif}
+    log(f"saved motion.gif ({len(frames)} frames), gaussians.ply -> {out_dir}")
+    return {"n": N, "frames": len(frames), "gif": gif}
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@
 付随モーション軌道を 1 か所で持つ。外部メッシュが要るモデル(evis 等)は meshdir を注入
 した自己完結 XML を `.scene_cache/` に生成して返すので、呼び手はパスを渡すだけでよい。
 
-  scene_registry.list()             -> [(name, spec, available)]
+  scene_registry.entries()          -> [(name, spec, available)]
   scene_registry.resolve("evis")    -> {xml(ロード可能), lookat, radius, elevation_deg, ...}
   scene_registry.motion("evis","walk") -> qpos 軌道 .npy パス(無ければ None)
 
