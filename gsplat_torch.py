@@ -47,9 +47,9 @@ class GaussianModel:
         return self.means.shape[0]
 
 
-def render(gm: GaussianModel, c2w: torch.Tensor, K: torch.Tensor, H: int, W: int,
-           bg=(0.29, 0.30, 0.31)):
-    """1 ビューをレンダリング(大域ソート alpha 合成)。戻り値 (H,W,3) in [0,1]。"""
+def _project(gm: GaussianModel, c2w: torch.Tensor, K: torch.Tensor, H: int, W: int):
+    """全ガウシアンを画面へ射影。u,v(中心)/inv(2D 逆共分散)/opacity/color/z/valid/
+    radius(3σ 画面半径)を返す(render / render_tiled 共通)。"""
     dev = gm.device
     Fm = _F.to(dev)
     w2c = torch.linalg.inv(c2w)
@@ -61,48 +61,97 @@ def render(gm: GaussianModel, c2w: torch.Tensor, K: torch.Tensor, H: int, W: int
     fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]
     u = fx * mu_cam[:, 0] / z.clamp_min(1e-3) + cx
     v = fy * mu_cam[:, 1] / z.clamp_min(1e-3) + cy
-    # 3D 共分散 -> 2D
     Rg = quat_to_rotmat(gm.quats)
     S = torch.exp(gm.log_scales)
     M = Rg * S[:, None, :]                        # R @ diag(S)
     Sigma = M @ M.transpose(1, 2)                # (N,3,3) world 共分散
-    Wm = Rcv                                      # world->CV
-    SigmaCam = Wm @ Sigma @ Wm.T
+    SigmaCam = Rcv @ Sigma @ Rcv.T
     zc = z.clamp_min(1e-3)
     J = torch.zeros(gm.n, 2, 3, device=dev)
     J[:, 0, 0] = fx / zc; J[:, 0, 2] = -fx * mu_cam[:, 0] / (zc * zc)
     J[:, 1, 1] = fy / zc; J[:, 1, 2] = -fy * mu_cam[:, 1] / (zc * zc)
     cov2d = J @ SigmaCam @ J.transpose(1, 2)     # (N,2,2)
     cov2d[:, 0, 0] += 0.2; cov2d[:, 1, 1] += 0.2  # anti-alias blur
-    det = cov2d[:, 0, 0] * cov2d[:, 1, 1] - cov2d[:, 0, 1] * cov2d[:, 1, 0]
-    det = det.clamp_min(1e-9)
-    inv = torch.stack([cov2d[:, 1, 1], -cov2d[:, 0, 1], -cov2d[:, 1, 0], cov2d[:, 0, 0]], -1).reshape(-1, 2, 2) / det[:, None, None]
+    a, b, d = cov2d[:, 0, 0], cov2d[:, 0, 1], cov2d[:, 1, 1]
+    det = (a * d - b * b).clamp_min(1e-9)
+    inv = torch.stack([d, -b, -cov2d[:, 1, 0], a], -1).reshape(-1, 2, 2) / det[:, None, None]
+    # 最大固有値 -> 3σ 画面半径(タイル選別・カリング用)
+    tr = a + d
+    lam = 0.5 * tr + torch.sqrt((0.5 * tr) ** 2 - det).clamp_min(0.0)
+    radius = 3.0 * torch.sqrt(lam.clamp_min(1e-6))
     opacity = torch.sigmoid(gm.raw_opacity)
     color = torch.sigmoid(gm.colors)
-    # 有効ガウシアンのみ
     valid = front & (u > -50) & (u < W + 50) & (v > -50) & (v < H + 50)
-    idx = torch.nonzero(valid, as_tuple=True)[0]
-    if idx.numel() == 0:
-        return torch.tensor(bg, device=dev).expand(H, W, 3).clone()
-    order = torch.argsort(z[idx])                # near->far
-    idx = idx[order]
-    uu, vv, invv, oo, cc = u[idx], v[idx], inv[idx], opacity[idx], color[idx]
-    ys, xs = torch.meshgrid(torch.arange(H, device=dev, dtype=torch.float32),
-                            torch.arange(W, device=dev, dtype=torch.float32), indexing="ij")
-    px = torch.stack([xs.reshape(-1), ys.reshape(-1)], -1)   # (P,2)
+    return u, v, inv, opacity, color, z, valid, radius
+
+
+def _composite(uu, vv, invv, oo, cc, px):
+    """ソート済みガウシアン(near->far)を画素群 px(P,2)へ front->back 合成。
+    戻り値 (img(P,3), Tfinal(P,))。bg は呼び出し側で Tfinal に掛ける。"""
     dx = px[None, :, 0] - uu[:, None]            # (K,P)
     dy = px[None, :, 1] - vv[:, None]
     a = invv[:, 0, 0][:, None]; b = invv[:, 0, 1][:, None]; c = invv[:, 1, 1][:, None]
     power = -0.5 * (a * dx * dx + 2 * b * dx * dy + c * dy * dy)
     alpha = (oo[:, None] * torch.exp(power.clamp(max=0.0))).clamp(0, 0.999)   # (K,P)
-    # front->back 合成: T_i = prod_{j<i}(1-alpha_j)
     log1m = torch.log((1 - alpha).clamp_min(1e-6))
-    Tacc = torch.cumsum(log1m, dim=0) - log1m    # 排他 prefix
+    cum = torch.cumsum(log1m, dim=0)
+    Tacc = cum - log1m                           # 排他 prefix = prod_{j<i}(1-a_j)
     weight = alpha * torch.exp(Tacc)             # (K,P)
     img = (weight[:, :, None] * cc[:, None, :]).sum(0)      # (P,3)
-    Tfinal = torch.exp(torch.cumsum(log1m, dim=0)[-1])       # (P,)
+    Tfinal = torch.exp(cum[-1])                  # (P,)
+    return img, Tfinal
+
+
+def render(gm: GaussianModel, c2w: torch.Tensor, K: torch.Tensor, H: int, W: int,
+           bg=(0.29, 0.30, 0.31)):
+    """1 ビューをレンダリング(密・大域ソート alpha 合成=厳密参照)。戻り値 (H,W,3)。"""
+    dev = gm.device
+    u, v, inv, opacity, color, z, valid, _ = _project(gm, c2w, K, H, W)
+    idx = torch.nonzero(valid, as_tuple=True)[0]
+    if idx.numel() == 0:
+        return torch.tensor(bg, device=dev).expand(H, W, 3).clone()
+    idx = idx[torch.argsort(z[idx])]             # near->far
+    ys, xs = torch.meshgrid(torch.arange(H, device=dev, dtype=torch.float32),
+                            torch.arange(W, device=dev, dtype=torch.float32), indexing="ij")
+    px = torch.stack([xs.reshape(-1), ys.reshape(-1)], -1)   # (P,2)
+    img, Tfinal = _composite(u[idx], v[idx], inv[idx], opacity[idx], color[idx], px)
     img = img + Tfinal[:, None] * torch.tensor(bg, device=dev)
     return img.reshape(H, W, 3).clamp(0, 1)
+
+
+def render_tiled(gm: GaussianModel, c2w: torch.Tensor, K: torch.Tensor, H: int, W: int,
+                 bg=(0.29, 0.30, 0.31), tile: int = 32):
+    """タイル分割レンダラ(TRIZ 原理1 分割)。各タイルに 3σ で重なるガウシアンだけ
+    合成するため、密行列 (K,P) を全画面ではなくタイル局所に限定 → メモリ有界・高速。
+    数式は render と同一(大域深度ソートの部分列をタイルで使う=カリング近似)。"""
+    dev = gm.device
+    bgt = torch.tensor(bg, device=dev)
+    u, v, inv, opacity, color, z, valid, radius = _project(gm, c2w, K, H, W)
+    idx = torch.nonzero(valid, as_tuple=True)[0]
+    if idx.numel() == 0:
+        return bgt.expand(H, W, 3).clone()
+    idx = idx[torch.argsort(z[idx])]             # near->far(大域)
+    u_, v_, inv_, o_, c_, r_ = u[idx], v[idx], inv[idx], opacity[idx], color[idx], radius[idx]
+    rows = []
+    for ty0 in range(0, H, tile):
+        ty1 = min(ty0 + tile, H)
+        cols = []
+        for tx0 in range(0, W, tile):
+            tx1 = min(tx0 + tile, W)
+            m = (u_ + r_ >= tx0) & (u_ - r_ < tx1) & (v_ + r_ >= ty0) & (v_ - r_ < ty1)
+            sub = torch.nonzero(m, as_tuple=True)[0]
+            ys, xs = torch.meshgrid(torch.arange(ty0, ty1, device=dev, dtype=torch.float32),
+                                    torch.arange(tx0, tx1, device=dev, dtype=torch.float32),
+                                    indexing="ij")
+            px = torch.stack([xs.reshape(-1), ys.reshape(-1)], -1)
+            if sub.numel() == 0:
+                timg = bgt.expand(px.shape[0], 3)
+            else:
+                im, Tf = _composite(u_[sub], v_[sub], inv_[sub], o_[sub], c_[sub], px)
+                timg = im + Tf[:, None] * bgt
+            cols.append(timg.reshape(ty1 - ty0, tx1 - tx0, 3))
+        rows.append(torch.cat(cols, dim=1))
+    return torch.cat(rows, dim=0).clamp(0, 1)
 
 
 def psnr(a: torch.Tensor, b: torch.Tensor) -> float:

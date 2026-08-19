@@ -101,7 +101,7 @@ def train_scene(views, init_pts, init_cols, H, W, *, iters=800, device="cuda",
         if not vs:
             return float("nan")
         with torch.no_grad():
-            return float(np.mean([G.psnr(G.render(gm, c2w, K, H, W), rgb) for rgb, c2w, K in vs]))
+            return float(np.mean([G.psnr(G.render_tiled(gm, c2w, K, H, W), rgb) for rgb, c2w, K in vs]))
 
     hist = []
     best = {"test": -1.0, "raw": None, "n": gm.n, "it": 0}
@@ -114,7 +114,7 @@ def train_scene(views, init_pts, init_cols, H, W, *, iters=800, device="cuda",
 
     for it in range(1, iters + 1):
         rgb, c2w, K = train[np.random.randint(len(train))]
-        img = G.render(gm, c2w, K, H, W)
+        img = G.render_tiled(gm, c2w, K, H, W)
         l1 = torch.abs(img - rgb).mean()
         loss = (1 - lambda_ssim) * l1 + lambda_ssim * (1 - ssim(img, rgb))
         opt.zero_grad(); loss.backward()
@@ -164,6 +164,6 @@ def render_turntable(gm, K, H, W, *, n_frames=48, radius=1.6, elevation_deg=20,
         c2w[:3, 2] = torch.tensor(zc, dtype=torch.float32, device=device)
         c2w[:3, 3] = torch.tensor(pos, dtype=torch.float32, device=device)
         with torch.no_grad():
-            img = (G.render(gm, c2w, K, H, W).detach().cpu().numpy() * 255).astype(np.uint8)
+            img = (G.render_tiled(gm, c2w, K, H, W).detach().cpu().numpy() * 255).astype(np.uint8)
         frames.append(img)
     return np.stack(frames)

@@ -62,7 +62,7 @@ def run(scene: str, out_dir: str, *, n_views=36, iters=700, width=128, height=12
                             densify_until=int(iters * 0.43), log=log)
     # 出力
     rgb, c2w, K = views[test_idx[0]]
-    out = (G.render(gm, c2w, K, height, width).detach().cpu().numpy() * 255).astype(np.uint8)
+    out = (G.render_tiled(gm, c2w, K, height, width).detach().cpu().numpy() * 255).astype(np.uint8)
     gt = (rgb.cpu().numpy() * 255).astype(np.uint8)
     Image.fromarray(np.concatenate([gt, np.full((height, 6, 3), 255, np.uint8), out], 1)).save(
         os.path.join(out_dir, "novelview.png"))
