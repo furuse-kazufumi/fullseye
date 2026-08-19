@@ -115,6 +115,8 @@ def main(argv=None):
     ap.add_argument("--backend", choices=["auto", "gsplat", "torch"], default="auto")
     ap.add_argument("--out", default=None, help="出力先(既定: out/3dgs_<scene>)")
     ap.add_argument("--open", action="store_true", help="完了後に全周GIFを開く")
+    ap.add_argument("--densify", action="store_true",
+                    help="native時: 学習中にガウシアンを増やす(細部↑、floater増の可能性・実験的)")
     ap.add_argument("--list", action="store_true", help="使えるシーン一覧")
     a = ap.parse_args(argv)
 
