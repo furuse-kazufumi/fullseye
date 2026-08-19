@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-20 07:09:22
+- **最終更新**: 2026-08-20 07:11:08
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+aa6c821f auto: code_editor.py 編集前 (2026-08-20 07:09)
 2148b6a8 auto: studio_app.py 編集前 (2026-08-20 07:08)
 79e183c4 auto: studio_app.py 編集前 (2026-08-20 07:08)
 520b5517 auto: test_unified.py 編集前 (2026-08-20 07:01)
@@ -19,21 +20,20 @@
 2e114d4b auto: sim_source.py 編集前 (2026-08-20 06:59)
 392197de auto: sim_source.py 編集前 (2026-08-20 06:59)
 c2b5382f auto: scene_registry.py 編集前 (2026-08-20 06:58)
-af0d5375 auto: scene_registry.py 編集前 (2026-08-20 06:58)
 ```
 
 ## 現在の git status
 
 ```
-M spikes/studio_app.py
+M spikes/code_editor.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+07:10 spikes/code_editor.py
+07:09 docs/SESSION_SUMMARY.md
 07:08 spikes/studio_app.py
-07:08 spikes/code_editor.py
-07:05 docs/SESSION_SUMMARY.md
 07:05 .pytest_cache/v/cache/nodeids
 07:05 .pytest_cache/v/cache/lastfailed
 07:05 tests/test_fullseye_3dgs.py

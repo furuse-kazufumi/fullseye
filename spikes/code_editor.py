@@ -323,6 +323,12 @@ class CodeEditor(QtWidgets.QPlainTextEdit):
             self.goto_definition(); return
         if ctrl and key == QtCore.Qt.Key.Key_Space:
             self._trigger_completion(); return
+        if ctrl and key == QtCore.Qt.Key.Key_Slash:
+            self._toggle_comment(); return
+        if ctrl and key == QtCore.Qt.Key.Key_D:
+            self._duplicate_line(); return
+        if key == QtCore.Qt.Key.Key_Backtab:                # Shift+Tab
+            self._dedent(); return
         # Tab = 4 スペース
         if key == QtCore.Qt.Key.Key_Tab and not (mods & QtCore.Qt.KeyboardModifier.ShiftModifier):
             self.insertPlainText("    "); return
@@ -347,3 +353,158 @@ class CodeEditor(QtWidgets.QPlainTextEdit):
                 self._trigger_completion()
             else:
                 popup.hide()
+
+    # ---- 右クリック コンテキストメニュー(Notepad++ 級)----
+    def contextMenuEvent(self, ev):
+        cur = self.cursorForPosition(ev.pos())
+        line = cur.blockNumber() + 1
+        col = cur.positionInBlock()
+        wc = QtGui.QTextCursor(cur); wc.select(QtGui.QTextCursor.SelectionType.WordUnderCursor)
+        word = wc.selectedText()
+        menu = QtWidgets.QMenu(self)
+        if word:
+            a_def = menu.addAction(f"定義へジャンプ  «{word}»")
+            a_def.triggered.connect(lambda: (self.setTextCursor(cur), self.goto_definition()))
+            a_help = menu.addAction(f"ヘルプを表示  «{word}»")
+            a_help.triggered.connect(lambda: self._show_help(line, col, ev.globalPos()))
+            a_ref = menu.addAction(f"使用箇所を検索  «{word}»")
+            a_ref.triggered.connect(lambda: self._show_references(line, col))
+            menu.addSeparator()
+        std = self.createStandardContextMenu()          # cut/copy/paste/select-all/undo
+        for act in std.actions():
+            menu.addAction(act)
+        menu.addSeparator()
+        menu.addAction("コメント切替  Ctrl+/", self._toggle_comment)
+        menu.addAction("インデント  Tab", self._indent)
+        menu.addAction("逆インデント  Shift+Tab", self._dedent)
+        menu.addAction("行を複製  Ctrl+D", self._duplicate_line)
+        menu.addAction("大文字化", lambda: self._change_case(True))
+        menu.addAction("小文字化", lambda: self._change_case(False))
+        menu.exec(ev.globalPos())
+
+    def _jedi_names(self, kind, line, col):
+        if jedi is None:
+            return []
+        try:
+            sc = jedi.Script(code=self.toPlainText())
+            return getattr(sc, kind)(line, col) if kind != "help" else sc.help(line, col)
+        except Exception:
+            return []
+
+    def _show_help(self, line, col, gpos):
+        names = self._jedi_names("help", line, col)
+        if not names:
+            QtWidgets.QToolTip.showText(gpos, "ヘルプ情報がありません", self)
+            return
+        n = names[0]
+        parts = [f"<b>{n.name}</b>  <i>({n.type})</i>"]
+        try:
+            sig = n.get_signatures()
+            if sig:
+                parts.append("<code>" + sig[0].to_string() + "</code>")
+        except Exception:
+            pass
+        doc = (n.docstring() or "").strip()
+        # 小さな非モーダル ポップアップ(スクロール可)で表示
+        dlg = QtWidgets.QDialog(self)
+        dlg.setWindowTitle(f"ヘルプ: {n.name}")
+        dlg.setWindowFlags(dlg.windowFlags() | QtCore.Qt.WindowType.Tool)
+        v = QtWidgets.QVBoxLayout(dlg)
+        head = QtWidgets.QLabel("<br>".join(parts)); head.setTextFormat(QtCore.Qt.TextFormat.RichText)
+        head.setWordWrap(True); v.addWidget(head)
+        body = QtWidgets.QPlainTextEdit(doc); body.setReadOnly(True)
+        body.setFont(QtGui.QFont("Consolas", 9)); v.addWidget(body)
+        dlg.resize(560, 380); dlg.show()
+
+    def _show_references(self, line, col):
+        refs = self._jedi_names("get_references", line, col)
+        if not refs:
+            QtWidgets.QToolTip.showText(self.mapToGlobal(self.cursorRect().bottomRight()),
+                                        "使用箇所が見つかりません", self)
+            return
+        dlg = QtWidgets.QDialog(self); dlg.setWindowTitle("使用箇所")
+        dlg.setWindowFlags(dlg.windowFlags() | QtCore.Qt.WindowType.Tool)
+        v = QtWidgets.QVBoxLayout(dlg)
+        lst = QtWidgets.QListWidget()
+        for r in refs:
+            path = str(r.module_path or "(このバッファ)")
+            lst.addItem(f"{r.line}:{r.column}  {r.description}   [{path}]")
+        v.addWidget(lst)
+
+        def _jump(item):
+            r = refs[lst.row(item)]
+            if not r.module_path:                        # 同一バッファのみ移動
+                self._move_to_line(int(r.line), int(r.column or 0))
+        lst.itemActivated.connect(_jump)
+        dlg.resize(620, 320); dlg.show()
+
+    # ---- 編集ヘルパ ----
+    def _selected_line_range(self):
+        c = self.textCursor()
+        a, b = sorted((c.selectionStart(), c.selectionEnd()))
+        l0 = self.document().findBlock(a).blockNumber()
+        l1 = self.document().findBlock(b).blockNumber()
+        return l0, l1
+
+    def _toggle_comment(self):
+        l0, l1 = self._selected_line_range()
+        blocks = [self.document().findBlockByNumber(n) for n in range(l0, l1 + 1)]
+        all_com = all(b.text().lstrip().startswith("#") for b in blocks if b.text().strip())
+        cur = self.textCursor(); cur.beginEditBlock()
+        for b in blocks:
+            t = b.text()
+            c = QtGui.QTextCursor(b)
+            if all_com:                                  # 解除
+                i = t.find("#")
+                if i >= 0:
+                    c.movePosition(QtGui.QTextCursor.MoveOperation.Right,
+                                   QtGui.QTextCursor.MoveMode.MoveAnchor, i)
+                    c.deleteChar()
+                    if b.text()[i:i + 1] == " ":
+                        c.deleteChar()
+            elif t.strip():                              # 付与
+                indent = len(t) - len(t.lstrip())
+                c.movePosition(QtGui.QTextCursor.MoveOperation.Right,
+                               QtGui.QTextCursor.MoveMode.MoveAnchor, indent)
+                c.insertText("# ")
+        cur.endEditBlock()
+
+    def _indent(self):
+        l0, l1 = self._selected_line_range()
+        cur = self.textCursor(); cur.beginEditBlock()
+        for n in range(l0, l1 + 1):
+            c = QtGui.QTextCursor(self.document().findBlockByNumber(n))
+            c.insertText("    ")
+        cur.endEditBlock()
+
+    def _dedent(self):
+        l0, l1 = self._selected_line_range()
+        cur = self.textCursor(); cur.beginEditBlock()
+        for n in range(l0, l1 + 1):
+            b = self.document().findBlockByNumber(n); t = b.text()
+            strip = len(t) - len(t.lstrip())
+            rm = min(4, strip) if strip else (4 if t.startswith("\t") else 0)
+            if rm:
+                c = QtGui.QTextCursor(b)
+                c.movePosition(QtGui.QTextCursor.MoveOperation.Right,
+                               QtGui.QTextCursor.MoveMode.KeepAnchor, rm)
+                if c.selectedText().strip() == "":
+                    c.removeSelectedText()
+        cur.endEditBlock()
+
+    def _duplicate_line(self):
+        c = self.textCursor()
+        if c.hasSelection():
+            txt = c.selectedText()
+            c.setPosition(c.selectionEnd()); c.insertText(txt)
+        else:
+            blk = c.block()
+            nc = QtGui.QTextCursor(blk)
+            nc.movePosition(QtGui.QTextCursor.MoveOperation.EndOfBlock)
+            nc.insertText("\n" + blk.text())
+
+    def _change_case(self, upper):
+        c = self.textCursor()
+        if c.hasSelection():
+            t = c.selectedText()
+            c.insertText(t.upper() if upper else t.lower())
