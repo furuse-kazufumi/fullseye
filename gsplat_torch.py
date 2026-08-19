@@ -73,7 +73,7 @@ def render(gm: GaussianModel, c2w: torch.Tensor, K: torch.Tensor, H: int, W: int
     J[:, 0, 0] = fx / zc; J[:, 0, 2] = -fx * mu_cam[:, 0] / (zc * zc)
     J[:, 1, 1] = fy / zc; J[:, 1, 2] = -fy * mu_cam[:, 1] / (zc * zc)
     cov2d = J @ SigmaCam @ J.transpose(1, 2)     # (N,2,2)
-    cov2d[:, 0, 0] += 0.3; cov2d[:, 1, 1] += 0.3  # anti-alias blur
+    cov2d[:, 0, 0] += 0.2; cov2d[:, 1, 1] += 0.2  # anti-alias blur
     det = cov2d[:, 0, 0] * cov2d[:, 1, 1] - cov2d[:, 0, 1] * cov2d[:, 1, 0]
     det = det.clamp_min(1e-9)
     inv = torch.stack([cov2d[:, 1, 1], -cov2d[:, 0, 1], -cov2d[:, 1, 0], cov2d[:, 0, 0]], -1).reshape(-1, 2, 2) / det[:, None, None]
