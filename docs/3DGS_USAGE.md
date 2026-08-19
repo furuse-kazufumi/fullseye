@@ -50,7 +50,8 @@ imgevolve フォルダで:
 `out/3dgs_<scene>/`(または `--out` 指定先)に:
 - `turntable.gif` … 全周プレビュー
 - `novelview.png` … 左=正解 / 右=新規視点レンダ
-- `gaussians.npz` … 学習済みガウシアン
+- `gaussians.npz` … 学習済みガウシアン(npz)
+- `gaussians.ply` … 3DGS 標準 .ply(native 時)。**SuperSplat 等の Web ビューアにドラッグ&ドロップ**で開けます
 - `report.json` … PSNR 等の指標
 
 ## 必要環境
