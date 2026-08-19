@@ -323,7 +323,7 @@ class StudioWindow(QtWidgets.QMainWindow):
         left_l.addWidget(self.search); left_l.addWidget(self.tree)
 
         # 中: コード編集 + パラメータパネル + Run
-        self.editor = QtWidgets.QPlainTextEdit()
+        self.editor = _code_editor.CodeEditor() if _code_editor else QtWidgets.QPlainTextEdit()
         self.editor.setFont(QtGui.QFont("Consolas", 10))
         self.editor.setMinimumWidth(360)
         self.param_box = QtWidgets.QGroupBox("parameters(動かすと即再描画)")
