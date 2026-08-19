@@ -44,7 +44,7 @@ def _add_terrain_geoms(spec, terrain_xml, log):
         if rgba:
             g.rgba = [float(x) for x in rgba.split()]
         g.contype = 0; g.conaffinity = 0                   # 視覚のみ(衝突不要)
-        g.group = 3                                        # 地形専用 group(接地レイキャスト用)
+        g.group = 1                                        # 地形専用 group(接地レイキャスト用)
         n += 1
     log(f"terrain geoms 注入: {n}")
     return n
@@ -81,7 +81,7 @@ def _walk_qpos(walker, motion=None, gait=None, n_frames=90, travel=0.0):
 
 
 def _terrain_height(m, d, x, y, geomgroup):
-    """(x,y) 直上から地面へレイを落とし terrain(group3)表面の z を返す(無交差は 0)。"""
+    """(x,y) 直上から地面へレイを落とし terrain(group1)表面の z を返す(無交差は 0)。"""
     import mujoco
     pnt = np.array([float(x), float(y), 3.0]); vec = np.array([0.0, 0.0, -1.0])
     gid = np.array([-1], np.int32)
@@ -121,8 +121,14 @@ def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, ga
     idxs = list(range(0, N, step))
     frames = []
     base_lx = float(lookat[0])
+    ggroup = np.zeros(6, np.uint8); ggroup[1] = 1           # terrain(group1)のみレイ対象
+    mujoco.mj_forward(m, d)                                 # static geom 位置を確定
     for k, t in enumerate(idxs):
-        d.qpos[:] = q[t]; mujoco.mj_forward(m, d)
+        d.qpos[:] = q[t]
+        if ground_follow:                                  # 地形高さ分だけ root z を持ち上げ接地
+            hz = _terrain_height(m, d, q[t, 0], q[t, 1], ggroup)
+            d.qpos[2] = q[t, 2] + hz + float(foot_clear)
+        mujoco.mj_forward(m, d)
         cam.azimuth = 90.0 + orbit_deg * (k / max(1, len(idxs) - 1))
         if track:
             cam.lookat[0] = base_lx + float(q[t, 0])       # 移動する root x を追従
