@@ -44,6 +44,7 @@ def _add_terrain_geoms(spec, terrain_xml, log):
         if rgba:
             g.rgba = [float(x) for x in rgba.split()]
         g.contype = 0; g.conaffinity = 0                   # 視覚のみ(衝突不要)
+        g.group = 3                                        # 地形専用 group(接地レイキャスト用)
         n += 1
     log(f"terrain geoms 注入: {n}")
     return n
