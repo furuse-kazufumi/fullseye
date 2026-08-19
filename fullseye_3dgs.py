@@ -18,13 +18,7 @@ import sys
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, ROOT)
 
-BUILTIN = {
-    "go2":     ("C:/dev/projects/mujoco_menagerie/unitree_go2/scene.xml", (0, 0, 0.18), 1.3, 22),
-    "cassie":  ("C:/dev/projects/mujoco_menagerie/agility_cassie/scene.xml", (0, 0, 0.6), 2.2, 18),
-    "apollo":  ("C:/dev/projects/mujoco_menagerie/apptronik_apollo/scene.xml", (0, 0, 0.8), 2.6, 15),
-    "anymal":  ("C:/dev/projects/mujoco_menagerie/anybotics_anymal_c/scene.xml", (0, 0, 0.4), 1.8, 20),
-    "spot":    ("C:/dev/projects/mujoco_menagerie/boston_dynamics_spot/scene.xml", (0, 0, 0.4), 1.8, 20),
-}
+import scene_registry   # モデル(シーン)は一元レジストリで管理
 
 PRESETS = {   # name: (res, n_gauss, iters, n_views)
     "fast":     (128, 8000, 600, 24),
