@@ -313,12 +313,15 @@ class MuJoCo:
         rgb = self.rgb(cam)[::stride, ::stride][keep]
         return pts, rgb.astype(np.uint8)
 
-    def save_animation(self, scene_dir, qpos, fps: int = 30, title: str = "Fullseye 3D") -> str:
+    def save_animation(self, scene_dir, qpos, fps: int = 30, title: str = "Fullseye 3D",
+                       static_mesh=None) -> str:
         """モデル XML + qpos 軌道 (T, nq) をアニメバンドルに保存(別プロセス再生用)。
         rollout の qpos 列を渡すと歩行/着陸を『動き』で見られる。返り値 = manifest パス。
-        XML 由来で構築した MuJoCo にのみ有効(再生側でモデルを再構築するため)。"""
+        XML 由来で構築した MuJoCo にのみ有効(再生側でモデルを再構築するため)。
+        static_mesh(.ply パス)を渡すと、その静的メッシュ(SuGaR 地形等)も一緒に表示する。"""
         import json
         import os
+        import shutil
         if self._xml is None:
             raise RuntimeError("save_animation は XML 由来の MuJoCo が要る(MjModel 直渡しは不可)")
         os.makedirs(scene_dir, exist_ok=True)
@@ -326,11 +329,14 @@ class MuJoCo:
         with open(os.path.join(scene_dir, "model.xml"), "w", encoding="utf-8") as fh:
             fh.write(self._xml)
         np.save(os.path.join(scene_dir, "qpos.npy"), qpos)
+        spec = {"kind": "animation", "model": "model.xml", "frames": "qpos.npy",
+                "fps": int(fps), "title": title, "n_frames": int(len(qpos))}
+        if static_mesh and os.path.isfile(static_mesh):
+            shutil.copy(static_mesh, os.path.join(scene_dir, "static.ply"))
+            spec["static_mesh"] = "static.ply"
         manifest = os.path.join(scene_dir, "manifest.json")
         with open(manifest, "w", encoding="utf-8") as fh:
-            json.dump({"kind": "animation", "model": "model.xml", "frames": "qpos.npy",
-                       "fps": int(fps), "title": title, "n_frames": int(len(qpos))},
-                      fh, ensure_ascii=False)
+            json.dump(spec, fh, ensure_ascii=False)
         return manifest
 
 
