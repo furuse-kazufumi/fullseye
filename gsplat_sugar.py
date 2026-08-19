@@ -29,7 +29,7 @@ def _quats_to_R(q):
     return R
 
 
-def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8,
+def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=6,
                       knn=30, sor_std=0.0, pca=True, boundary_frac=0.08, log=print):
     """学習済みガウシアン dict -> Open3D TriangleMesh(法線つき点群 + Poisson)。
 
