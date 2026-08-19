@@ -55,6 +55,20 @@ def gaussians_to_mesh(g, *, opacity_thresh=0.25, poisson_depth=8, density_pct=8,
     dens = np.asarray(dens)
     mesh.remove_vertices_by_mask(dens < np.quantile(dens, density_pct / 100.0))  # 低密度=外挿を除去
     mesh = mesh.crop(pcd.get_axis_aligned_bounding_box())  # 元の範囲へ
+    # 後処理: 退化/重複除去 → 小クラスタ(floater)除去 → Taubin スムージング
+    mesh.remove_degenerate_triangles(); mesh.remove_duplicated_vertices()
+    mesh.remove_duplicated_triangles(); mesh.remove_non_manifold_edges()
+    try:
+        idx, counts, _ = mesh.cluster_connected_triangles()
+        idx = np.asarray(idx); counts = np.asarray(counts)
+        if len(counts):
+            big = counts.max()
+            small = np.where(counts < max(50, big * 0.02))[0]     # 総面の 2% 未満は除去
+            mesh.remove_triangles_by_mask(np.isin(idx, small))
+            mesh.remove_unreferenced_vertices()
+    except Exception:
+        pass
+    mesh = mesh.filter_smooth_taubin(number_of_iterations=6)       # スパイク低減
     mesh.compute_vertex_normals()
     return mesh, pcd
 
