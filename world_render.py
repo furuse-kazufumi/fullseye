@@ -80,17 +80,20 @@ def _walk_qpos(walker, motion=None, gait=None, n_frames=90, travel=0.0):
 
 
 def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, gait=None,
-                    z_offset=0.0, n_frames=90, width=640, height=480, fps=30,
-                    max_gif_frames=90, orbit_deg=140.0, elevation=-18.0, distance=None,
+                    z_offset=0.0, travel=0.0, track=None, n_frames=90, width=640, height=480,
+                    fps=30, max_gif_frames=90, orbit_deg=140.0, elevation=-18.0, distance=None,
                     lookat=(0, 0, 0.25), log=print):
     """walker を terrain 上で歩かせた姿を headless で GIF 保存。戻り値 dict。
 
     motion(npz 名)か gait(trot 等)のどちらかを指定。z_offset で walker を地形上へ持ち上げる。
-    カメラは lookat を中心に orbit_deg だけ周回(歩行と地形の起伏を見せる)。
+    travel>0 で gait を前進させ地形を横断(root x を移動)。track で True にするとカメラ lookat が
+    root x を追従(既定は travel>0 のとき自動追従)。カメラは lookat 中心に orbit_deg 周回。
     """
     import mujoco
     from PIL import Image
-    q = _walk_qpos(walker, motion=motion, gait=gait, n_frames=n_frames)
+    q = _walk_qpos(walker, motion=motion, gait=gait, n_frames=n_frames, travel=travel)
+    if track is None:
+        track = travel > 0
     m, tspec = _build_model(walker, terrain, log)
     if q.shape[1] != m.nq:
         raise ValueError(f"motion nq={q.shape[1]} が合成モデル nq={m.nq} と不一致")
