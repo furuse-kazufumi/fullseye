@@ -45,6 +45,11 @@ def setup_cuda_env(root: str = ROOT) -> bool:
     scripts = os.path.join(root, ".venv-gsplat", "Scripts")   # ninja.exe(検証用)
     if os.path.isdir(scripts):
         os.environ["PATH"] = scripts + os.pathsep + os.environ.get("PATH", "")
+    # torch は cached build でも ninja 生成時に `where cl` を実行するため、cl.exe の
+    # ディレクトリを PATH に通す(実コンパイルはしない=up-to-date なら no-op)。
+    cl_dir = _find_cl_dir()
+    if cl_dir:
+        os.environ["PATH"] = cl_dir + os.pathsep + os.environ.get("PATH", "")
     for sub in ("bin", "nvvm/bin"):
         p = os.path.join(lib, *sub.split("/"))
         if os.path.isdir(p):
