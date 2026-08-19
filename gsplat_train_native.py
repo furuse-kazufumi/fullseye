@@ -193,12 +193,13 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     train_v = [v for i, v in enumerate(views) if i not in test_idx]
     test_v = [views[i] for i in test_idx]
 
-    def render(vm, K):
+    def render(vm, Kc):
+        sh = torch.cat([params["sh0"], params["shN"]], dim=1)      # (N,K,3) SH 係数
         out, _, info = gsplat.rasterization(
             params["means"], params["quats"] / params["quats"].norm(dim=-1, keepdim=True),
             torch.exp(params["scales"]), torch.sigmoid(params["opacities"]),
-            torch.sigmoid(params["colors"]), vm[None], K[None], res, res,
-            packed=False, absgrad=strategy.absgrad)
+            sh, vm[None], Kc[None], res, res, sh_degree=sh_degree,
+            packed=False, absgrad=strategy.absgrad, rasterize_mode="antialiased")
         return out[0].clamp(0, 1), info
 
     def psnr(a, b):
@@ -256,3 +257,39 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     imgs[0].save(os.path.join(out_dir, "turntable.gif"), save_all=True, append_images=imgs[1:], duration=60, loop=0)
     log(f"saved novelview.png, turntable.gif -> {out_dir}")
     return {"test_psnr": tp, "n": nfin, "sec": dt}
+
+
+def save_gaussians_ply(path, means, scales_log, quats, opacities_raw, sh0, shN=None):
+    """3DGS 標準 .ply(INRIA 形式)で書き出す。SuperSplat 等の Web ビューアで開ける。
+
+    means(N,3) / scales_log(N,3, log) / quats(N,4, wxyz) / opacities_raw(N, logit) /
+    sh0(N,1,3, SH DC) / shN(N,K-1,3, 高次SH or None)。ビューアが exp/sigmoid を適用。
+    """
+    import numpy as _np
+    m = means.detach().cpu().numpy().astype(_np.float32)
+    sc = scales_log.detach().cpu().numpy().astype(_np.float32)
+    q = quats.detach().cpu().numpy().astype(_np.float32)
+    q = q / (_np.linalg.norm(q, axis=1, keepdims=True) + 1e-9)
+    op = opacities_raw.detach().cpu().numpy().astype(_np.float32).reshape(-1, 1)
+    dc = sh0.detach().cpu().numpy().astype(_np.float32).reshape(len(m), 3)      # (N,3)
+    N = len(m)
+    cols = [("x", m[:, 0]), ("y", m[:, 1]), ("z", m[:, 2]),
+            ("nx", _np.zeros(N, _np.float32)), ("ny", _np.zeros(N, _np.float32)),
+            ("nz", _np.zeros(N, _np.float32)),
+            ("f_dc_0", dc[:, 0]), ("f_dc_1", dc[:, 1]), ("f_dc_2", dc[:, 2])]
+    if shN is not None and shN.shape[1] > 0:
+        rest = shN.detach().cpu().numpy().astype(_np.float32)                    # (N,K-1,3)
+        rest = _np.transpose(rest, (0, 2, 1)).reshape(N, -1)                     # channel-major
+        for i in range(rest.shape[1]):
+            cols.append((f"f_rest_{i}", rest[:, i]))
+    cols.append(("opacity", op[:, 0]))
+    cols += [("scale_0", sc[:, 0]), ("scale_1", sc[:, 1]), ("scale_2", sc[:, 2])]
+    cols += [("rot_0", q[:, 0]), ("rot_1", q[:, 1]), ("rot_2", q[:, 2]), ("rot_3", q[:, 3])]
+    names = [c[0] for c in cols]
+    data = _np.stack([c[1] for c in cols], axis=1).astype(_np.float32)
+    header = ["ply", "format binary_little_endian 1.0", f"element vertex {N}"]
+    header += [f"property float {n}" for n in names] + ["end_header"]
+    with open(path, "wb") as f:
+        f.write(("\n".join(header) + "\n").encode("ascii"))
+        f.write(data.tobytes())
+    return path
