@@ -1,0 +1,1 @@
+<mujoco><worldbody><light pos="0 0 3" dir="0 0 -1"/><geom name="floor" type="box" size="1 1 .02" pos="0 0 0" rgba=".4 .45 .5 1"/><geom type="sphere" size=".18" pos=".25 0 .25" rgba=".85 .2 .2 1"/><geom type="box" size=".12 .12 .12" pos="-.2 .2 .18" rgba=".2 .7 .3 1"/><geom type="capsule" size=".08 .12" pos="-.15 -.2 .2" rgba=".25 .35 .85 1"/></worldbody></mujoco>

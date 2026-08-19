@@ -158,11 +158,18 @@ def main(argv=None):
 
     if backend == "gsplat" and a.motion:
         import gsplat_animate as AM
-        print("   (motion: body リグ付け→サイン波モーションで『動く3DGS』を生成します)")
+        mfile = getattr(a, "motion_file", None)
+        mgait = getattr(a, "gait", None)
+        # 明示指定が無ければ、シーンに登録された既定モーション(evis の walk 等)を自動使用
+        if not mfile and not mgait:
+            mfile = scene_registry.motion(a.scene)
+            if mfile:
+                print(f"   (motion: このシーンの登録モーション {os.path.basename(mfile)} を再生します)")
+        if not mfile and not mgait:
+            print("   (motion: body リグ付け→サイン波モーションで『動く3DGS』を生成します)")
         r = AM.animate(path, out, n_views=n_views, iters=max(800, iters), res=res, radius=radius,
                        elevation_deg=elev, lookat=lookat, n_gauss=max(15000, n_gauss),
-                       n_frames=a.frames, motion_file=getattr(a, "motion_file", None),
-                       gait=getattr(a, "gait", None),
+                       n_frames=a.frames, motion_file=mfile, gait=mgait, view_azimuth=view_azimuth,
                        log=lambda m: print("   " + m, flush=True))
         gif = os.path.join(out, "motion.gif")
         print(f"\n✓ 完了: 動く3DGS {r['frames']}フレーム / {r['n']}ガウシアン")
