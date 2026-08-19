@@ -166,15 +166,20 @@ def train_densify(scene, out_dir, *, n_views=36, iters=1500, res=256, radius=1.3
     scl = float(knn_scale(pts[:min(len(pts), 4000)], k=3).mean())
 
     N0 = len(pts)
+    K = (sh_degree + 1) ** 2
+    sh0 = ((torch.tensor(cols, device=dev) - 0.5) / _SH_C0).reshape(N0, 1, 3)   # DC=点群色
+    shN = torch.zeros(N0, K - 1, 3, device=dev)
     params = torch.nn.ParameterDict({
         "means": torch.nn.Parameter(torch.tensor(pts, dtype=torch.float32, device=dev)),
         "scales": torch.nn.Parameter(torch.full((N0, 3), float(np.log(scl)), device=dev)),
         "quats": torch.nn.Parameter(torch.tensor(np.tile([1., 0, 0, 0], (N0, 1)),
                                                  dtype=torch.float32, device=dev)),
         "opacities": torch.nn.Parameter(torch.full((N0,), 2.0, device=dev)),
-        "colors": torch.nn.Parameter(torch.logit(torch.tensor(cols, device=dev).clamp(1e-4, 1 - 1e-4))),
+        "sh0": torch.nn.Parameter(sh0),
+        "shN": torch.nn.Parameter(shN),
     }).to(dev)
-    lrs = {"means": 1.6e-3, "scales": 5e-3, "quats": 1e-3, "opacities": 3e-2, "colors": 1e-2}
+    lrs = {"means": 1.6e-3, "scales": 5e-3, "quats": 1e-3, "opacities": 3e-2,
+           "sh0": 2.5e-3, "shN": 2.5e-3 / 20}
     optimizers = {k: torch.optim.Adam([{"params": params[k], "lr": lrs[k], "name": k}], eps=1e-15)
                   for k in params}
     strategy = DefaultStrategy(verbose=False, refine_start_iter=int(iters * 0.1),
