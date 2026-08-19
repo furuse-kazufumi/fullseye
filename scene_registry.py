@@ -45,7 +45,7 @@ _CATALOG = {
     "evis":   {"xml": f"{_ONO}/loco/humanoid_muscle_mjxfeet.xml", "meshdir": _LOCO_MESHES,
                "category": "musculo-skeleton", "lookat": [-0.3, 0.13, 0.85],
                "radius": 2.2, "elevation_deg": 12, "view_azimuth": 0.5,
-               "motions": {"walk": f"{_ONO}/loco/mjx_loco_cpg1_view_qpos.npy"}},
+               "motions": {"walk": f"{_ONO}/loco/mjx_loco_free2_view_qpos.npy", "getup": f"{_ONO}/loco/mjx_loco_cpg1_view_qpos.npy"}},
 }
 
 
@@ -79,7 +79,7 @@ def names():
     return list(_CATALOG)
 
 
-def list():  # noqa: A003
+def entries():
     """[(name, spec, available)] を返す。"""
     return [(n, s, _available(s)) for n, s in _CATALOG.items()]
 

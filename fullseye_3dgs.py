@@ -115,7 +115,7 @@ def main(argv=None):
 
     if a.list or not a.scene:
         print("Fullseye 3DGS ― 使えるシーン(モデルレジストリ):")
-        for name, spec, av in scene_registry.list():
+        for name, spec, av in scene_registry.entries():
             ok = "○" if av else "×(未配置)"
             mo = scene_registry.motions(name)
             extra = f"  motion={mo}" if mo else ""

@@ -10,7 +10,7 @@ def test_list_has_builtins():
 
 
 def test_list_shape():
-    rows = R.list()
+    rows = R.entries()
     assert all(len(t) == 3 for t in rows)          # (name, spec, available)
 
 
