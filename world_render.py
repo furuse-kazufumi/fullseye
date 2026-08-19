@@ -107,9 +107,12 @@ def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, ga
     step = max(1, N // int(max_gif_frames))
     idxs = list(range(0, N, step))
     frames = []
+    base_lx = float(lookat[0])
     for k, t in enumerate(idxs):
         d.qpos[:] = q[t]; mujoco.mj_forward(m, d)
         cam.azimuth = 90.0 + orbit_deg * (k / max(1, len(idxs) - 1))
+        if track:
+            cam.lookat[0] = base_lx + float(q[t, 0])       # 移動する root x を追従
         ren.update_scene(d, camera=cam)
         frames.append(Image.fromarray(ren.render()))
     ren.close()
