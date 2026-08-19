@@ -178,9 +178,12 @@ def main(argv=None):
                   log=lambda m: print("   " + m, flush=True))
 
     gif = os.path.join(out, "turntable.gif")
+    ply = os.path.join(out, "gaussians.ply")
     print(f"\n✓ 完了: hold-out PSNR ≈ {r.get('test_psnr', r.get('best_test_psnr', 0)):.2f} dB")
     print(f"  全周GIF : {gif}")
     print(f"  新規視点: {os.path.join(out, 'novelview.png')}")
+    if backend == "gsplat" and os.path.isfile(ply):
+        print(f"  3DGS ply: {ply}  (SuperSplat 等の Web ビューアで開けます)")
     if a.open and os.path.isfile(gif):
         try:
             os.startfile(gif)  # Windows 既定ビューア
