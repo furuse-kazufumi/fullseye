@@ -231,10 +231,12 @@ def depth_tsdf_mesh(scene, out_dir, *, n_views=48, res=256, radius=1.3,
     gt = _gt_mesh_bbox(scene)
     s.close()
     mesh = vol.extract_triangle_mesh()
-    mesh.compute_vertex_normals()
     if gt is not None:                                     # 真値 bbox でクロップ(余分な床を除去)
         aabb = o3d.geometry.AxisAlignedBoundingBox(gt[0] - 0.02, gt[1] + 0.02)
         mesh = mesh.crop(aabb)
+    if smooth_iters > 0:                                   # ボクセル/グリッドの階段状を平滑化
+        mesh = mesh.filter_smooth_taubin(number_of_iterations=int(smooth_iters))
+    mesh.compute_vertex_normals()
     ply = os.path.join(out_dir, "mesh.ply")
     o3d.io.write_triangle_mesh(ply, mesh)
     prev = _preview(mesh, os.path.join(out_dir, "mesh_preview.png"))
