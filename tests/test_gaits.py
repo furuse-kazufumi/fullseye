@@ -85,3 +85,20 @@ def test_spot_naming_detected():
     home = np.zeros(m.nq); home[3] = 1.0
     traj = gaits.quadruped_trot(m, home, n_frames=20)
     assert traj is not None and traj.shape == (20, m.nq)
+
+
+def test_trot_travel_advances_root_x():
+    """travel>0 で root x が単調前進する(地形横断デモ用)。"""
+    import numpy as np
+    import mujoco
+    import scene_registry as R
+    import gaits as G
+    spec = R.resolve("go2")
+    m = mujoco.MjModel.from_xml_path(spec["xml"])
+    d = mujoco.MjData(m); mujoco.mj_forward(m, d)
+    q0 = G.build(m, np.asarray(d.qpos), "trot", n_frames=40, travel=0.0)
+    q1 = G.build(m, np.asarray(d.qpos), "trot", n_frames=40, travel=2.0)
+    assert q0 is not None and q1 is not None
+    assert abs(q0[-1, 0] - q0[0, 0]) < 1e-6              # travel=0 は x 不変
+    assert q1[-1, 0] - q1[0, 0] > 1.5                    # travel=2 は前進
+    assert np.all(np.diff(q1[:, 0]) >= -1e-9)            # 単調
