@@ -155,7 +155,7 @@ class Scene:
         return S.launch_animation(xml, qpos, title=f"{self.name}", static_mesh=static)
 
 
-def demo_world_walk(**kw):
-    """『SuGaR 地形の上を evis がメッシュで歩く』を1呼び出しで。"""
-    terrain = Scene("terrain").mesh(**kw)
+def demo_world_walk(terrain_name="rolling", **kw):
+    """『起伏地形メッシュの上を evis がメッシュで歩く』を1呼び出しで(既定 TSDF=GPU不要)。"""
+    terrain = Scene(terrain_name).mesh(**kw)
     return Scene("evis").walk(on=terrain)
