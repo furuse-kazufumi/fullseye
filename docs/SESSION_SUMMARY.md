@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-19 20:34:38
+- **最終更新**: 2026-08-19 20:39:01
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+7f58d317 auto: _backend.py 編集前 (2026-08-19 20:37)
 07992eed auto: _backend.py 編集前 (2026-08-19 20:33)
 a1da0766 auto: studio_app.py 編集前 (2026-08-19 13:05)
 2cd33333 auto: studio_app.py 編集前 (2026-08-19 13:05)
@@ -19,7 +20,6 @@ d56489da auto: gsplat_train.py 編集前 (2026-08-19 13:04)
 01ef5c50 auto: gsplat_train.py 編集前 (2026-08-19 12:57)
 cbb1eb99 auto: sim_source.py 編集前 (2026-08-19 12:45)
 f3fd1edf auto: sim_source.py 編集前 (2026-08-19 12:31)
-be1d1299 auto: sim_source.py 編集前 (2026-08-19 12:26)
 ```
 
 ## 現在の git status
@@ -32,9 +32,21 @@ M .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:33 docs/SESSION_SUMMARY.md
-20:33 .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
-20:32 test_gsplat_native.py
+20:37 docs/SESSION_SUMMARY.md
+20:37 .venv-gsplat/Lib/site-packages/gsplat/cuda/_backend.py
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/RECORD
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/REQUESTED
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/INSTALLER
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/top_level.txt
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/WHEEL
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/METADATA
+20:35 .venv-gsplat/Lib/site-packages/nvidia_cuda_cccl_cu12-12.8.90.dist-info/License.txt
+20:35 .venv-gsplat/Lib/site-packages/nvidia/cuda_cccl/lib/cmake/thrust/thrust-header-search.cmake
+20:35 .venv-gsplat/Lib/site-packages/nvidia/cuda_cccl/lib/cmake/thrust/thrust-config.cmake
+20:35 .venv-gsplat/Lib/site-packages/nvidia/cuda_cccl/lib/cmake/thrust/thrust-config-version.cmake
+20:35 .venv-gsplat/Lib/site-packages/nvidia/cuda_cccl/lib/cmake/thrust/README.md
+20:35 .venv-gsplat/Lib/site-packages/nvidia/cuda_cccl/lib/cmake/thrust/FindTBB.cmake
+20:35 .venv-gsplat/Lib/site-packages/nvidia/cuda_cccl/lib/cmake/libcudacxx/libcudacxx-header-search.cmake
 ```
 
 ---
