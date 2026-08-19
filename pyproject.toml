@@ -69,6 +69,7 @@ py-modules = [
   "backends_macro", "macro_champions_data", "auto_specs_data", "halcon_names_data",
   "imgops_nary", "scale", "stereo", "terrain", "locomotion", "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "pose",
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
+  "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
   "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp",
   "recipes", "measure", "studio", "sample_images", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
