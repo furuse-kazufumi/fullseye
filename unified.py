@@ -409,6 +409,14 @@ _3DGS_OPS = [
     ("hurdle_physics", "walk_physics", "run_hurdle_physics",
      "go2 が助走→爆発跳躍で障害物(バリア)を越え向こう側へ着地する本物の物理の走幅跳を"
      "GIF＋軌道テレメトリ化(越えたか/自立かを実測、GPU不要)", "animation"),
+    ("long_route", "walk_physics", "run_long_route",
+     "go2 が粗さの変化する長い起伏地形を本物の物理で長距離(既定100m)歩き切る"
+     "(距離/自立を実測、GPU不要)", "animation"),
+    ("route_planning", "walk_physics", "run_route_planning",
+     "go2 が障害物をレイキャストで先読みし候補方位をピラミッド探索(粗→細)で選び差動旋回で"
+     "回避してゴール到達する本物の物理ナビ(俯瞰プラン付き、GPU不要)", "animation"),
+    ("figure8", "walk_physics", "run_figure8",
+     "差動旋回で 8 の字系の曲線を各サイズで描く旋回制御の練習/較正(俯瞰トラック、GPU不要)", "animation"),
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
