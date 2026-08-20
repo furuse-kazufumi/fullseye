@@ -318,18 +318,20 @@ def pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior, *, ncoar
 
 
 def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.0,
-                   replan_every=120, ctrl_every=12, look_H=0.5, collect=True, log=None):
-    """Run the learned controller (optionally wrapped by pyramid-search MPC) on a figure-8
-    of the given size, under genuine physics. Returns completion + the taken path + a few
-    recorded search fans. This is the deployment used for rendering and the honest metrics."""
+                   fan_every=40, ctrl_every=12, look_H=0.35, collect=True, log=None):
+    """Run the learned controller on a figure-8 of the given size under genuine physics. The
+    RL policy proposes a steering action every control tick; when ``use_mpc`` the pyramid
+    search refines that proposal by model look-ahead (coarse→fine candidate next-actions,
+    policy proposal always among them, so it never underperforms the reactive policy).
+    Returns completion + taken path + recorded search fans (every ``fan_every`` ticks)."""
     import mujoco
     mujoco.mj_resetDataKeyframe(m, d, 0); dt = float(m.opt.timestep)
     for _ in range(int(0.5 / dt)):
         d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
     wps = lemniscate(size); K = len(wps); kidx = 0
-    roll, pitch = WP._rp(d.qpos[3:7]); turn = 0.0
+    roll, pitch = WP._rp(d.qpos[3:7]); turn = 0.0; cdt = ctrl_every * dt
     prev = np.array([float(d.qpos[0]), float(d.qpos[1])]); prev_yaw = 0.0
-    path = []; fans = []; fell = False
+    path = []; fans = []; fell = False; tick = 0
     n_steps = int(horizon / dt)
     for step in range(n_steps):
         if step % ctrl_every == 0:
@@ -340,23 +342,16 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
                 kidx += 1
             if kidx >= K:
                 break
-            if use_mpc and step % replan_every == 0:
-                turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx, size,
+            obs, _c = _reactive_obs(pos, prev, yaw, prev_yaw, roll, pitch, wps, kidx, size, cdt)
+            a_prior = policy_action(layers, obs)                    # RL policy proposal
+            if use_mpc:                                             # pyramid refinement (receding horizon)
+                turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior,
                                            H=look_H, ctrl_every=ctrl_every)
-                fans.append((pos.copy(), fan))
+                if collect and tick % fan_every == 0:
+                    fans.append((pos.copy(), fan))
             else:
-                tgt = wps[kidx]; to = tgt - pos
-                he = (np.arctan2(to[1], to[0]) - yaw + np.pi) % (2 * np.pi) - np.pi
-                cross = float(np.min(np.hypot(wps[:, 0] - pos[0], wps[:, 1] - pos[1])))
-                cdt = ctrl_every * dt
-                speed = float(np.hypot(*(pos - prev))) / cdt
-                yaw_rate = ((yaw - prev_yaw + np.pi) % (2 * np.pi) - np.pi) / cdt
-                obs = np.array([np.sin(he), np.cos(he), np.clip(cross / max(size, 1e-3), -3, 3),
-                                np.clip(yaw_rate, -3, 3), np.clip(speed, -1, 2),
-                                roll / 30.0, pitch / 30.0,
-                                np.clip(np.hypot(*to) / max(size, 1e-3), 0, 3)])
-                turn = policy_action(layers, obs)
-            prev, prev_yaw = pos, yaw
+                turn = a_prior
+            prev, prev_yaw = pos, yaw; tick += 1
             if collect:
                 path.append((float(pos[0]), float(pos[1])))
         q = WP._steer(home, step * dt, table, roll, pitch, turn, freq=1.3)
