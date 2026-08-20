@@ -51,7 +51,12 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     qpos = np.load(qpos_npy)
     if qpos.ndim != 2:
         raise ValueError(f"qpos npy must be (T, nq); got {qpos.shape}")
-    m = mujoco.MjModel.from_xml_path(xml)
+    # The training XML bakes WSL-absolute asset paths (/mnt/c/...). On Windows py311 those don't
+    # resolve, so rewrite them to their C:/ drive equivalents and load from the patched string.
+    with open(xml, encoding="utf-8") as f:
+        xml_text = f.read()
+    xml_text = xml_text.replace("/mnt/c/", "C:/").replace("/mnt/d/", "D:/")
+    m = mujoco.MjModel.from_xml_string(xml_text)
     if qpos.shape[1] != m.nq:
         raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq} (wrong xml for this rollout)")
     d = mujoco.MjData(m)
