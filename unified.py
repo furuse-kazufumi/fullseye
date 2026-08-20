@@ -406,6 +406,9 @@ _3DGS_OPS = [
     ("jump_physics", "walk_physics", "run_jump_physics",
      "go2 をしゃがみ→爆発伸展→弾道飛行(全足離地=接触0を実測)→着地させる本物の物理ジャンプを"
      "GIF＋高さテレメトリ化(跳躍高/滞空を実測、摩擦・重力込み、GPU不要)", "animation"),
+    ("hurdle_physics", "walk_physics", "run_hurdle_physics",
+     "go2 が助走→爆発跳躍で障害物(バリア)を越え向こう側へ着地する本物の物理の走幅跳を"
+     "GIF＋軌道テレメトリ化(越えたか/自立かを実測、GPU不要)", "animation"),
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
