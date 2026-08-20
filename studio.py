@@ -1964,11 +1964,21 @@ def build_window(model=None):
     win.resizeDocks([dock_code], [300], QtCore.Qt.Vertical)         # wide bottom code strip = 2nd largest
     win._docks = {"operators": dock_ops, "pipeline": dock_pipe, "display": dock_disp,
                   "program": dock_code, "variables": dock_vars}
-    # Quick-access toggles on the toolbar for the on-demand panels (each toggle's text
-    # is the panel name; checking it shows the panel, unchecking hides it again).
+    # On-demand panels + less-common actions live behind ONE small popup menu button
+    # (per user direction: prefer popup menus, keep buttons small) instead of a row of
+    # wide toggles. Each panel toggle's text is the panel name; checking it shows it.
     tb.addSeparator()
-    for _d in (dock_vars, dock_disp, dock_pipe):
-        tb.addAction(_d.toggleViewAction())
+    _more_menu = QtWidgets.QMenu("More", win)
+    win._more_menu = _more_menu                          # retain (shiboken ownership)
+    _panels_sub = QtWidgets.QMenu("Panels", _more_menu); win._more_menu_panels = _panels_sub
+    for _d in (dock_vars, dock_disp, dock_pipe, dock_ops, dock_code):
+        _panels_sub.addAction(_d.toggleViewAction())
+    _more_menu.addMenu(_panels_sub)
+    _more_menu.addSeparator()
+    for _a in (act_palette, act_holdout, act_samples, act_op_help, act_shortcuts, act_about):
+        _more_menu.addAction(_a)
+    b_more = _tbtn("more", "More — panels, command palette, help", menu=_more_menu)
+    tb.addWidget(b_more)
 
     # ---- central graphics workspace: the primary image window ------------------ #
     gsub = mdi.addSubWindow(image_panel)
