@@ -187,25 +187,45 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
     rim_z = _TABLE_TOP + _WALL_H + 2 * _CUBE
     picked = 0
     picked_flags = [False] * len(box_qadrs)
-    for _ in range(n_picks):
-        # vision: choose the highest still-in-bin cube (topmost graspable candidate)
-        cand, best_z = None, -1.0
-        for ci, qa in enumerate(box_qadrs):
+    def positions():
+        return [(float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])) for qa in box_qadrs]
+
+    def score_candidates():
+        """Score every graspable cube and return them best-first — a coarse grasp-
+        candidate search (isolation + accessibility), not just "grab the tallest".
+        The tallest cube is often perched on others and topples when touched; an
+        **isolated, well-settled** cube is the reliable pick. Score rewards clearance
+        to the nearest neighbour (fingers need room) and mild proudness, penalises
+        cubes jammed against a wall."""
+        ps = positions()
+        cands = []
+        for ci, (cx, cy, cz) in enumerate(ps):
             if picked_flags[ci]:
                 continue
-            cx, cy, cz = d.qpos[qa], d.qpos[qa + 1], d.qpos[qa + 2]
-            in_bin = abs(cx - _BIN_C[0]) < _BIN_HALF + 0.03 and abs(cy - _BIN_C[1]) < _BIN_HALF + 0.03
-            if in_bin and cz > best_z:
-                cand, best_z, cand_i = (cx, cy, cz), cz, ci
-        if cand is None:
+            if abs(cx - _BIN_C[0]) > _BIN_HALF + 0.03 or abs(cy - _BIN_C[1]) > _BIN_HALF + 0.03:
+                continue                                          # already out of the bin
+            nbr = min([np.hypot(cx - ox, cy - oy) for cj, (ox, oy, oz) in enumerate(ps)
+                       if cj != ci and not picked_flags[cj]] or [1.0])
+            wall = min(_BIN_HALF - abs(cx - _BIN_C[0]), _BIN_HALF - abs(cy - _BIN_C[1]))
+            score = nbr + 0.3 * min(wall, 0.05) + 0.15 * (cz - _TABLE_TOP)
+            cands.append((score, ci, (cx, cy, cz)))
+        cands.sort(reverse=True)
+        return cands
+
+    for _ in range(n_picks):
+        cands = score_candidates()
+        if not cands:
             break
+        _, cand_i, cand = cands[0]                              # best-scoring grasp candidate
         cx, cy, cz = cand
-        goto((cx, cy, cz + 0.14), _GRIP_OPEN, 1.1)             # hover above the cube
-        # re-read the cube after the hover (the pile may have shifted), then descend
-        # closed-loop so the fingers actually reach the cube in the clutter.
+        goto((cx, cy, cz + 0.16), _GRIP_OPEN, 1.1)             # hover above the chosen cube
+        # re-read after the hover, then a two-stage descent that re-aims at the
+        # (possibly settled) cube so the fingers straddle it rather than plough it.
         qa = box_qadrs[cand_i]
         cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
-        goto((cx, cy, cz + 0.05), _GRIP_OPEN, 1.0, iters=3)    # finger midpoint around the cube
+        goto((cx, cy, cz + 0.06), _GRIP_OPEN, 0.9, iters=2)    # coarse descend
+        cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
+        goto((cx, cy, cz + 0.045), _GRIP_OPEN, 0.5, iters=3)   # fine: finger midpoint around cube
         settle(int(0.3 / dt), _GRIP_OPEN)                      # arrive before closing
         move_to(d.ctrl[:7].copy(), _GRIP_SHUT, 0.8)           # close on the cube
         goto((cx, cy, rim_z + 0.22), _GRIP_SHUT, 1.1)         # lift clear of rim
