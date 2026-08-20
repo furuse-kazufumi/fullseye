@@ -181,3 +181,13 @@ def pick_gif(out_gif="out/panda_pick.gif", **kw):
     """
     import pick_render as PR
     return PR.render_pick_gif(out_gif, **kw)
+
+
+def sensor_fusion(out_png="out/sensor_fusion.png", **kw):
+    """カメラ/GPS 相当の位置センサと IMU 相当の速度センサを Kalman フィルタで融合し、
+    投射体を追跡した結果を図化(GPU 不要)。戻り値 dict(各手法の RMSE と fused_wins)。
+
+    融合 RMSE は各センサ単体と正直に比較する — 勝てなければ fused_wins=False を返す。
+    """
+    import sensor_fusion as SF
+    return SF.run_fusion_demo(out_png, **kw)
