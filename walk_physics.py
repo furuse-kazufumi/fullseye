@@ -63,12 +63,15 @@ def _build(terrain="bumps", amp=0.05, n=14, half=2.2, roll_scale=1.0):
 
 
 def _trot(home, t, *, freq=1.8, a_th=0.35, a_cf=0.5, lift=0.3):
-    """PD position targets for a trot gait around the standing pose *home* (12-vec)."""
+    """PD position targets for a trot gait around the standing pose *home* (12-vec).
+
+    The thigh's fore-aft swing sign is negated so the robot walks **head-first (+x**,
+    where FL/FR are) rather than rump-first."""
     q = home.copy()
     for leg, b in _LEGS.items():
         ph = 2 * np.pi * freq * t + _PHASE[leg]
         s = np.sin(ph); sw = max(0.0, s)                  # swing during the positive half
-        q[b + 1] = home[b + 1] + a_th * s + lift * sw     # thigh: swing + lift on swing
+        q[b + 1] = home[b + 1] - a_th * s + lift * sw     # thigh: swing (fwd) + lift on swing
         q[b + 2] = home[b + 2] - a_cf * sw                # calf: tuck on swing
     return q
 
