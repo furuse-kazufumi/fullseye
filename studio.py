@@ -1814,24 +1814,28 @@ def build_window(model=None):
     # -- right: image view + display + perception + analysis ------------------ #
     right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right); rv.setSpacing(6)
     rv.setContentsMargins(6, 6, 6, 6)
-    b_load = QtWidgets.QPushButton("Load image…"); b_demo = QtWidgets.QPushButton("Synthetic demo")
-    b_save = QtWidgets.QPushButton("Save result…")
-    b_load.setToolTip("Open an image file (Ctrl+O)")
-    b_demo.setToolTip("Load the synthetic demo scene (Ctrl+D)")
-    b_save.setToolTip("Save the displayed result (Ctrl+S)")
+    b_load = _tbtn("open", "Open an image file (Ctrl+O)")
+    b_demo = _tbtn("demo", "Load the synthetic demo scene (Ctrl+D)")
+    b_save = _tbtn("save", "Save the displayed result (Ctrl+S)")
     ImageView = _image_view_class(QtWidgets, QtGui, QtCore)
     view = ImageView()
-    b_zin = QtWidgets.QPushButton("Zoom +"); b_zout = QtWidgets.QPushButton("Zoom −")
-    b_fit = QtWidgets.QPushButton("Fit"); b_11 = QtWidgets.QPushButton("1:1")
-    for _b, _t in ((b_zin, "Zoom in (Ctrl+=)"), (b_zout, "Zoom out (Ctrl+-)"),
-                   (b_fit, "Fit to window (Ctrl+0)"), (b_11, "Actual size (Ctrl+1)")):
-        _b.setToolTip(_t)
+    b_zin = _tbtn("zin", "Zoom in (Ctrl+=)")
+    b_zout = _tbtn("zout", "Zoom out (Ctrl+-)")
+    b_fit = _tbtn("fit", "Fit to window (Ctrl+0)")
+    b_11 = _tbtn("actual", "Actual size 1:1 (Ctrl+1)")
     ilay = QtWidgets.QVBoxLayout()
-    itop = QtWidgets.QHBoxLayout(); itop.addWidget(b_load); itop.addWidget(b_demo); itop.addWidget(b_save)
-    izoom = QtWidgets.QHBoxLayout()
+    # One thin icon strip above the view: file I/O · | · zoom — so the image itself
+    # owns almost all of the panel (roomy display, per user direction).
+    itop = QtWidgets.QHBoxLayout()
+    for w_ in (b_load, b_demo, b_save):
+        itop.addWidget(w_)
+    itop.addSpacing(8)
+    _vline = QtWidgets.QFrame(); _vline.setFrameShape(QtWidgets.QFrame.VLine)
+    _vline.setStyleSheet("color:%s;" % LINE); itop.addWidget(_vline); itop.addSpacing(8)
     for w_ in (b_zin, b_zout, b_fit, b_11):
-        izoom.addWidget(w_)
-    ilay.addLayout(itop); ilay.addWidget(view, 1); ilay.addLayout(izoom)
+        itop.addWidget(w_)
+    itop.addStretch(1)
+    ilay.addLayout(itop); ilay.addWidget(view, 1)
     ilay.setContentsMargins(4, 4, 4, 4); ilay.setSpacing(4)
     image_panel = QtWidgets.QWidget(); image_panel.setLayout(ilay)
     image_panel.setObjectName("graphics_primary")
