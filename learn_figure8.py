@@ -344,7 +344,7 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
                 break
             obs, _c = _reactive_obs(pos, prev, yaw, prev_yaw, roll, pitch, wps, kidx, size, cdt)
             a_prior = policy_action(layers, obs)                    # RL policy proposal
-            if use_mpc:                                             # pyramid refinement (receding horizon)
+            if use_mpc and tick % search_every == 0:                # pyramid refinement (receding horizon)
                 turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior,
                                            H=look_H, ctrl_every=ctrl_every)
                 if collect and tick % fan_every == 0:
