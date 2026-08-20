@@ -191,3 +191,13 @@ def sensor_fusion(out_png="out/sensor_fusion.png", **kw):
     """
     import sensor_fusion as SF
     return SF.run_fusion_demo(out_png, **kw)
+
+
+def bin_pick_gif(out_gif="out/bin_pick.gif", n_cubes=8, n_picks=3, **kw):
+    """バラ積みされた部品を候補スコアリングで選び、6DoF IK で上面把持して bin から
+    取り出す bin-picking を headless GIF 化(GPU 不要)。戻り値 dict(n_picked など、実測値)。
+
+    グルー無し。成功数は「部品が実際に bin を出たか」で数える(誇張なし)。
+    """
+    import bin_pick as BP
+    return BP.render_bin_pick_gif(out_gif, n_cubes=n_cubes, n_picks=n_picks, **kw)
