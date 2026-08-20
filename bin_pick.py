@@ -236,8 +236,8 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
         # up *higher* — so aim the geometric target once and let it settle.)
         qa = box_qadrs[cand_i]
         cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
-        q_grasp = solve((cx, cy, cz + _FINGER_DROP), d.qpos[:7])
-        move_to(q_grasp, _GRIP_OPEN, 1.1)                      # descend around the cube
+        q_grasp = solve((cx, cy, cz), d.qpos[:7])              # pads at the part centre
+        move_to(q_grasp, _GRIP_OPEN, 1.1)                      # descend around the part
         settle(int(0.35 / dt), _GRIP_OPEN)                     # let the arm arrive
         move_to(d.ctrl[:7].copy(), _GRIP_SHUT, 0.8)           # close on the cube
         goto((cx, cy, rim_z + 0.22), _GRIP_SHUT, 1.1)         # lift clear of rim
