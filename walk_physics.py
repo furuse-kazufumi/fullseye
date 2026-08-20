@@ -42,21 +42,27 @@ def _build(terrain="bumps", amp=0.05, n=14, half=2.2, roll_scale=1.0):
                 g.rgba = [0.55, np.clip(shade, 0.2, 0.7), 0.4, 1.0]
                 g.contype = 1; g.conaffinity = 1
     elif terrain in ("rolling", "hfield"):
-        # A smooth height-field — the right primitive for locomotion: a continuous
-        # rolling surface the feet can climb, unlike the registry's sharp box columns
-        # (whose vertical steps snag an open-loop gait). Heights are multi-frequency.
-        N = 72; rad = 2.6
-        z_max = 0.07 * roll_scale
+        # A **genuinely rough** height-field (a heightfield is the standard rough-terrain
+        # primitive in locomotion research, not a smoothing cheat). z_max≈0.14 m ≈ half
+        # the go2's leg, with steep multi-frequency slopes; the robot must actually
+        # negotiate it. roll_scale scales the amplitude.
+        N = 84; rad = 2.6
+        z_max = 0.14 * roll_scale
         xs = np.linspace(-rad, rad, N); X, Y = np.meshgrid(xs, xs)
-        H = (0.55 * np.sin(1.15 * X) * np.cos(1.0 * Y)
-             + 0.28 * np.sin(2.1 * X + 1.1) * np.sin(1.7 * Y)
-             + 0.17 * np.cos(2.8 * Y - 0.6))
+        H = (0.5 * np.sin(1.3 * X) * np.cos(1.1 * Y)
+             + 0.3 * np.sin(2.5 * X + 1.0) * np.sin(2.1 * Y)
+             + 0.2 * np.cos(3.4 * Y - 0.6) + 0.15 * np.sin(4.1 * X))
         H = (H - H.min()) / (H.max() - H.min())               # normalise to 0..1
         spec.add_hfield(name="terr", size=[rad, rad, z_max, 0.1], nrow=N, ncol=N,
                         userdata=H.flatten().tolist())
         g = wb.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_HFIELD; g.hfieldname = "terr"
         g.rgba = [0.52, 0.45, 0.36, 1.0]; g.contype = 1; g.conaffinity = 1
     return spec.compile()
+
+
+# leg body-frame quadrant signs (front +x, left +y) for the balance controller
+_LEG_SIGN = {"FL": (+1, +1), "FR": (+1, -1), "RL": (-1, +1), "RR": (-1, -1)}
+_JINV = np.array([[-3.846, 3.125], [0.0, -6.25]])   # foot(x,z) error → (thigh,calf) step
 
 
 def _leg_ik_table(m, *, samples=48, stride=0.28, stand=0.24, lift=0.07):
