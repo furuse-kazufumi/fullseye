@@ -41,24 +41,21 @@ def _build(terrain="bumps", amp=0.05, n=14, half=2.2, roll_scale=1.0):
                 shade = 0.5 - 1.2 * float(h)
                 g.rgba = [0.55, np.clip(shade, 0.2, 0.7), 0.4, 1.0]
                 g.contype = 1; g.conaffinity = 1
-    elif terrain == "rolling":
-        import re
-        import scene_registry as R
-        xml = R.resolve("rolling")["xml"]
-        body = open(xml, encoding="utf-8").read().split("<worldbody>", 1)[1].rsplit("</worldbody>", 1)[0]
-        for tag in re.findall(r"<geom[^>]*/>", body):
-            def at(nm, d=None):
-                mm = re.search(rf'{nm}="([^"]*)"', tag)
-                return mm.group(1) if mm else d
-            if (at("type") or "box") != "box":
-                continue
-            sz = [float(v) for v in at("size", "0.05 0.05 0.05").split()]
-            po = [float(v) for v in at("pos", "0 0 0").split()]
-            rg = [float(v) for v in at("rgba", "0.4 0.4 0.4 1").split()]
-            g = wb.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_BOX
-            g.size = [sz[0], sz[1], max(0.01, sz[2] * roll_scale)]
-            g.pos = [po[0], po[1], po[2] * roll_scale]        # scale height (keep footprint)
-            g.rgba = rg; g.contype = 1; g.conaffinity = 1     # collidable (real contact)
+    elif terrain in ("rolling", "hfield"):
+        # A smooth height-field — the right primitive for locomotion: a continuous
+        # rolling surface the feet can climb, unlike the registry's sharp box columns
+        # (whose vertical steps snag an open-loop gait). Heights are multi-frequency.
+        N = 72; rad = 2.6
+        z_max = 0.07 * roll_scale
+        xs = np.linspace(-rad, rad, N); X, Y = np.meshgrid(xs, xs)
+        H = (0.55 * np.sin(1.15 * X) * np.cos(1.0 * Y)
+             + 0.28 * np.sin(2.1 * X + 1.1) * np.sin(1.7 * Y)
+             + 0.17 * np.cos(2.8 * Y - 0.6))
+        H = (H - H.min()) / (H.max() - H.min())               # normalise to 0..1
+        spec.add_hfield(name="terr", size=[rad, rad, z_max, 0.1], nrow=N, ncol=N,
+                        userdata=H.flatten().tolist())
+        g = wb.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_HFIELD; g.hfieldname = "terr"
+        g.rgba = [0.52, 0.45, 0.36, 1.0]; g.contype = 1; g.conaffinity = 1
     return spec.compile()
 
 
@@ -122,7 +119,7 @@ def _rp(quat):
     return np.degrees(roll), np.degrees(pitch)
 
 
-def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_scale=1.0,
+def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="rolling", roll_scale=1.0,
                      secs=6.0, kp=60.0, kd=3.0, freq=1.6, width=640, height=480, fps=30,
                      max_gif_frames=110, log=print):
     """Simulate a genuine-physics trot and save a GIF + a telemetry plot next to it.
