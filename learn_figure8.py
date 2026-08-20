@@ -293,8 +293,8 @@ def _lookahead(m, d, table, home, layers, wps, kidx, size, first_turn, *, H=0.5,
     return score, (float(pos[0]), float(pos[1]))
 
 
-def pyramid_action(m, d, table, home, layers, wps, kidx, *, ncoarse=5, nfine=5,
-                   H=0.6, ctrl_every=12):
+def pyramid_action(m, d, table, home, layers, wps, kidx, size, *, ncoarse=5, nfine=4,
+                   H=0.5, ctrl_every=12):
     """Coarse→fine (pyramid) search over the next steering action: evaluate a coarse fan of
     candidate turns by look-ahead, then refine around the best. Returns the chosen turn and
     the coarse candidate end-points (for visualising the search fan)."""
@@ -302,13 +302,13 @@ def pyramid_action(m, d, table, home, layers, wps, kidx, *, ncoarse=5, nfine=5,
     coarse = np.linspace(-_TURN_MAX, _TURN_MAX, ncoarse)
     fan = []; best_c, best_s = 0.0, -1e9
     for c in coarse:
-        sc, end = _lookahead(m, d, table, home, layers, wps, kidx, float(c), H=H, ctrl_every=ctrl_every)
-        fan.append(end); _restore(m, d, s0)
+        sc, end = _lookahead(m, d, table, home, layers, wps, kidx, size, float(c), H=H, ctrl_every=ctrl_every)
+        fan.append((float(c), end, float(sc))); _restore(m, d, s0)
         if sc > best_s:
             best_s, best_c = sc, float(c)
     fine = np.linspace(best_c - 0.3, best_c + 0.3, nfine)
     for c in fine:
-        sc, _e = _lookahead(m, d, table, home, layers, wps, kidx, float(c), H=H, ctrl_every=ctrl_every)
+        sc, _e = _lookahead(m, d, table, home, layers, wps, kidx, size, float(c), H=H, ctrl_every=ctrl_every)
         _restore(m, d, s0)
         if sc > best_s:
             best_s, best_c = sc, float(c)
