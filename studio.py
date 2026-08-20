@@ -1650,10 +1650,10 @@ def build_window(model=None):
     tb.addWidget(spacer)
     # Primary actions get a themed icon so the icon-only toolbar reads at a glance;
     # tooltips (already set on each action) name them.
-    for _act, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
-                      (act_export, "export")):
-        _act.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
-        tb.addAction(_act)
+    for _a, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
+                    (act_export, "export")):
+        _a.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
+        tb.addAction(_a)
 
     # Central document area = an MDI workspace of graphics windows (HDevelop-style:
     # multiple image/result windows the user can open, tile, cascade and float).
