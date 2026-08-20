@@ -1082,6 +1082,131 @@ def _group(QtWidgets, title, inner_layout):
     return g
 
 
+_ICON_CACHE = {}
+
+
+def _icon(QtGui, QtCore, name, color=TEXT, px=40):
+    """Crisp monochrome line-icon (no asset files) drawn on a 20×20 grid.
+
+    Returns a themed :class:`QIcon` so the toolbars can be **icon-only** (no text
+    labels — tooltips carry the meaning). Rendered at 2× and marked HiDPI so it
+    stays sharp when Qt scales it down to an 18 px button icon. Cached per
+    (name, color, px) since the same glyph is reused across many buttons."""
+    key = (name, color, px)
+    hit = _ICON_CACHE.get(key)
+    if hit is not None:
+        return hit
+    r = 2
+    pm = QtGui.QPixmap(px * r, px * r)
+    pm.setDevicePixelRatio(r)
+    pm.fill(QtCore.Qt.transparent)
+    p = QtGui.QPainter(pm)
+    p.setRenderHint(QtGui.QPainter.Antialiasing, True)
+    s = px / 20.0
+    col = QtGui.QColor(color)
+    pen = QtGui.QPen(col); pen.setWidthF(1.8 * s)
+    pen.setCapStyle(QtCore.Qt.RoundCap); pen.setJoinStyle(QtCore.Qt.RoundJoin)
+    p.setPen(pen); p.setBrush(QtCore.Qt.NoBrush)
+
+    def P(x, y):
+        return QtCore.QPointF(x * s, y * s)
+
+    def L(x1, y1, x2, y2):
+        p.drawLine(P(x1, y1), P(x2, y2))
+
+    def rect(x, y, w, h, rad=0.0):
+        rr = QtCore.QRectF(x * s, y * s, w * s, h * s)
+        p.drawRoundedRect(rr, rad * s, rad * s) if rad else p.drawRect(rr)
+
+    def ell(x, y, w, h, fill=False):
+        if fill:
+            p.setBrush(col)
+        p.drawEllipse(QtCore.QRectF(x * s, y * s, w * s, h * s))
+        p.setBrush(QtCore.Qt.NoBrush)
+
+    def poly(pts, fill=False, close=False):
+        pp = QtGui.QPolygonF([P(a, b) for a, b in pts])
+        if fill:
+            p.setBrush(col); p.drawPolygon(pp); p.setBrush(QtCore.Qt.NoBrush)
+        elif close:
+            p.drawPolygon(pp)
+        else:
+            p.drawPolyline(pp)
+
+    def arc(x, y, w, h, start, span):
+        p.drawArc(QtCore.QRectF(x * s, y * s, w * s, h * s), int(start * 16), int(span * 16))
+
+    def glyph(txt, size=11):
+        f = p.font(); f.setPixelSize(int(size * s)); f.setBold(True); p.setFont(f)
+        p.drawText(QtCore.QRectF(0, 0, px, px), QtCore.Qt.AlignCenter, txt)
+
+    if name == "open":                                   # folder
+        poly([(3, 15), (3, 7), (8, 7), (9.5, 9), (17, 9), (17, 15)], close=True)
+    elif name == "save":                                 # floppy disk
+        rect(4, 4, 12, 12, 1.2); rect(7, 4, 4.5, 3.6); rect(6.5, 10.5, 7, 4.5)
+    elif name == "image":                                # framed picture
+        rect(4, 5, 12, 10, 1.2); ell(6.3, 7, 2.2, 2.2)
+        poly([(5, 14), (9, 9.5), (11, 12), (13, 10), (15, 14)])
+    elif name == "demo":                                 # sparkle (synthetic)
+        poly([(8, 3), (9.2, 6.8), (13, 8), (9.2, 9.2), (8, 13), (6.8, 9.2), (3, 8), (6.8, 6.8)], fill=True)
+        poly([(15, 12), (15.7, 14.3), (18, 15), (15.7, 15.7), (15, 18), (14.3, 15.7), (12, 15), (14.3, 14.3)], fill=True)
+    elif name == "play":                                 # single triangle
+        poly([(7, 5), (7, 15), (15, 10)], fill=True)
+    elif name == "playplay":                             # run-all: two triangles
+        poly([(5, 5), (5, 15), (11, 10)], fill=True); poly([(11, 5), (11, 15), (17, 10)], fill=True)
+    elif name == "playone":                              # run-once: play in circle
+        ell(3, 3, 14, 14); poly([(8, 7), (8, 13), (13.5, 10)], fill=True)
+    elif name == "step":                                 # skip-forward: play + bar
+        poly([(6, 5), (6, 15), (13, 10)], fill=True); L(15, 5, 15, 15)
+    elif name == "reset":                                # skip-back: bar + left triangle
+        L(5, 5, 5, 15); poly([(15, 5), (15, 15), (8, 10)], fill=True)
+    elif name == "up":                                   # chevron up
+        poly([(5, 12.5), (10, 7), (15, 12.5)])
+    elif name == "down":                                 # chevron down
+        poly([(5, 7.5), (10, 13), (15, 7.5)])
+    elif name == "trash":                                # trash can
+        L(4, 6, 16, 6); rect(8, 3.6, 4, 2.2, 0.6)
+        poly([(5.6, 6), (6.6, 16.2), (13.4, 16.2), (14.4, 6)])
+        L(8.6, 8.4, 8.6, 14); L(11.4, 8.4, 11.4, 14)
+    elif name == "zin":                                  # magnifier +
+        ell(4, 4, 9, 9); L(12, 12, 16.5, 16.5); L(8.5, 6, 8.5, 11); L(6, 8.5, 11, 8.5)
+    elif name == "zout":                                 # magnifier −
+        ell(4, 4, 9, 9); L(12, 12, 16.5, 16.5); L(6, 8.5, 11, 8.5)
+    elif name == "fit":                                  # frame corners (fit to window)
+        L(4, 7, 4, 4); L(4, 4, 7, 4); L(16, 7, 16, 4); L(16, 4, 13, 4)
+        L(4, 13, 4, 16); L(4, 16, 7, 16); L(16, 13, 16, 16); L(16, 16, 13, 16)
+    elif name == "actual":                               # 1:1 = square + centre pixel
+        rect(6, 6, 8, 8, 1.0); ell(9.2, 9.2, 1.6, 1.6, fill=True)
+    elif name == "export":                               # up-out of tray (share/export)
+        poly([(4, 11), (4, 16), (16, 16), (16, 11)]); L(10, 3.5, 10, 12)
+        poly([(7, 6.5), (10, 3.5), (13, 6.5)])
+    elif name == "apply":                                # check mark
+        poly([(4.5, 10.5), (8.5, 14.5), (16, 5)])
+    elif name == "sync":                                 # circular arrows
+        arc(5, 5, 10, 10, 55, 250); poly([(14.5, 4.5), (15.2, 8), (11.8, 7)])
+    elif name == "cube":                                 # isometric cube (3-D)
+        poly([(10, 3.5), (16, 7), (10, 10.5), (4, 7)], close=True)
+        L(4, 7, 4, 13.5); L(16, 7, 16, 13.5); L(10, 10.5, 10, 16.5)
+        L(4, 13.5, 10, 16.5); L(16, 13.5, 10, 16.5)
+    elif name == "plus":                                 # add
+        L(10, 5, 10, 15); L(5, 10, 15, 10)
+    elif name == "help":                                 # circled question mark
+        ell(4, 4, 12, 12); glyph("?", 10)
+    elif name == "eye":                                  # perception / view
+        poly([(4, 10), (7, 6.5), (13, 6.5), (16, 10)]); poly([(4, 10), (7, 13.5), (13, 13.5), (16, 10)])
+        ell(8.3, 8, 3.4, 3.4, fill=True)
+    elif name == "more":                                 # vertical ellipsis (popup menu)
+        ell(9.2, 4.2, 1.7, 1.7, fill=True); ell(9.2, 9.2, 1.7, 1.7, fill=True); ell(9.2, 14.2, 1.7, 1.7, fill=True)
+    elif name == "grid":                                 # sample gallery
+        rect(4, 4, 5, 5, 0.8); rect(11, 4, 5, 5, 0.8); rect(4, 11, 5, 5, 0.8); rect(11, 11, 5, 5, 0.8)
+    else:                                                # honest fallback: a dot
+        ell(8.5, 8.5, 3, 3, fill=True)
+    p.end()
+    ic = QtGui.QIcon(pm)
+    _ICON_CACHE[key] = ic
+    return ic
+
+
 # --------------------------------------------------------------------------- #
 # Tooltip / hint + guide localisation, and per-operator HTML help.              #
 # The DATA lives in files under studio_assets/ (edit there, not here):          #
