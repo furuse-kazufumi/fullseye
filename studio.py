@@ -1804,13 +1804,12 @@ def build_window(model=None):
     klay.addWidget(lb); klay.addWidget(sb)
     mv.addWidget(_group(QtWidgets, "SELECTED STAGE · KNOBS", klay))
 
-    b_export = QtWidgets.QPushButton("Export (ops string + Python)…")
-    b_savep = QtWidgets.QPushButton("Save pipeline…"); b_openp = QtWidgets.QPushButton("Open pipeline…")
-    b_export.setToolTip("Copy this pipeline as an --ops string and Python (Ctrl+E)")
-    xlay = QtWidgets.QVBoxLayout(); xlay.addWidget(b_export)
-    xrow = QtWidgets.QHBoxLayout(); xrow.addWidget(b_savep); xrow.addWidget(b_openp)
-    xlay.addLayout(xrow)
-    mv.addWidget(_group(QtWidgets, "EXPORT & I/O", xlay))
+    b_export = _tbtn("export", "Export this pipeline as an --ops string and Python (Ctrl+E)")
+    b_savep = _tbtn("save", "Save pipeline to JSON (Ctrl+Shift+S)")
+    b_openp = _tbtn("open", "Open a pipeline from JSON (Ctrl+Shift+O)")
+    xrow = QtWidgets.QHBoxLayout()
+    xrow.addWidget(b_openp); xrow.addWidget(b_savep); xrow.addWidget(b_export); xrow.addStretch(1)
+    mv.addWidget(_group(QtWidgets, "EXPORT & I/O", xrow))
 
     # -- right: image view + display + perception + analysis ------------------ #
     right = QtWidgets.QWidget(); rv = QtWidgets.QVBoxLayout(right); rv.setSpacing(6)
