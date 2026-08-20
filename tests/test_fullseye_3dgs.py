@@ -88,3 +88,27 @@ def test_pick_gif_headless_grasps(tmp_path):
     r = PR.render_pick_gif(out, width=160, height=120, max_gif_frames=8, log=lambda *_: None)
     assert os.path.isfile(out) and os.path.getsize(out) > 0
     assert r["grasped"] is True and r["lift_m"] > 0.10       # cube genuinely cleared the table
+
+
+def test_sensor_fusion_op_registered():
+    import unified as u
+    assert "sensor_fusion" in u.ops
+
+
+def test_sensor_fusion_beats_single_sensors(tmp_path):
+    """Kalman 融合が位置センサ単体・IMU 単体の RMSE を実測で下回る(GPU 不要)。
+
+    誇張防止: 融合が勝てなければ fused_wins=False になる設計なので、テストは実測の勝ちを要求。"""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        import pytest
+        pytest.skip("mujoco 未インストール")
+    import sensor_fusion as SF
+    out = str(tmp_path / "fuse.png")
+    r = SF.run_fusion_demo(out, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    rmse = r["rmse_m"]
+    assert r["fused_wins"] is True
+    assert rmse["kalman_fused"] < rmse["position_sensor_only"]
+    assert rmse["kalman_fused"] < rmse["imu_dead_reckoning"]
