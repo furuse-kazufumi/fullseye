@@ -410,6 +410,9 @@ _3DGS_OPS = [
     ("lidar_scan", "lidar_sim", "run_lidar_demo",
      "スピニング LIDAR を mj_ray の実レイキャストでシミュレートし点群を生成・可視化"
      "(GPU不要・命中率など実測)", "perception"),
+    ("focus_stack", "focus_stack", "run_focus_stack_demo",
+     "真値深度から被写界深度ボケの焦点スタックを生成し局所シャープネス最大で全焦点合成"
+     "(焦点由来深度も復元、GPU不要)", "perception"),
 ]
 
 
