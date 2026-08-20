@@ -135,10 +135,10 @@ def run_polar_demo(out_png="out/polarization.png", *, log=print):
     os.makedirs(os.path.dirname(out_png) or ".", exist_ok=True)
     fig.tight_layout(); fig.savefig(out_png, dpi=115, facecolor=bg); plt.close(fig)
     log(f"polarization: {out_png} | mean_DoLP={float(dolp_rec[fg].mean()):.3f} "
-        f"aolp↔normal_corr={cc:.2f} polarized_px={int(mask.sum())}")
-    return {"png": out_png, "aolp_normal_corr": float(cc),
+        f"stokes_roundtrip={cc:.2f} polarized_px={int(mask.sum())}")
+    return {"png": out_png, "stokes_roundtrip": float(cc),
             "mean_dolp": float(dolp_rec[fg].mean()) if fg.any() else 0.0,
-            "encodes_orientation": bool(cc > 0.7)}
+            "reconstruction_ok": bool(cc > 0.9)}
 
 
 if __name__ == "__main__":
