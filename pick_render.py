@@ -33,13 +33,23 @@ def _cube_z(d, a):
     return float(d.qpos[a + 2])
 
 
-def _ik_step(mujoco, m, d, hand_id, goal, *, gain=0.6, damp=0.06, clamp=0.04):
-    """One damped-least-squares IK step: nudge the 7 arm joints so the hand body
-    moves toward *goal* (position only). Returns the 7 target joint angles."""
-    jacp = np.zeros((3, m.nv))
-    mujoco.mj_jacBody(m, d, jacp, None, hand_id)
-    J = jacp[:, :7]
-    err = (np.asarray(goal) - d.xpos[hand_id]) * gain
+def _tcp(d, ids):
+    """World position of the grasp point = midpoint of the two finger bodies."""
+    return np.mean([d.xpos[i] for i in ids], axis=0)
+
+
+def _ik_step(mujoco, m, d, ids, goal, *, gain=0.6, damp=0.06, clamp=0.04):
+    """One damped-least-squares IK step so the **grasp point** (finger midpoint,
+    not the hand frame — they differ by ~5 cm) moves toward *goal*. The Jacobian of
+    the midpoint is the mean of the two finger-body Jacobians. Returns 7 arm angles."""
+    jac = np.zeros((3, m.nv))
+    tmp = np.zeros((3, m.nv))
+    for i in ids:
+        mujoco.mj_jacBody(m, d, tmp, None, i)
+        jac += tmp
+    jac /= len(ids)
+    J = jac[:, :7]
+    err = (np.asarray(goal) - _tcp(d, ids)) * gain
     dq = J.T @ np.linalg.solve(J @ J.T + damp * np.eye(3), err)
     dq = np.clip(dq, -clamp, clamp)
     return d.qpos[:7] + dq
