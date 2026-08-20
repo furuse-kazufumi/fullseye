@@ -229,6 +229,131 @@ def _center_eval(pool, theta, panel):
     return float(pool.map(_weval, [(theta, panel)])[0])
 
 
+# ------------------------------------------------------------------ pyramid-search MPC
+def _snap(d):
+    return (d.qpos.copy(), d.qvel.copy(), d.act.copy() if d.act.size else None, float(d.time))
+
+
+def _restore(m, d, s):
+    import mujoco
+    d.qpos[:] = s[0]; d.qvel[:] = s[1]
+    if s[2] is not None:
+        d.act[:] = s[2]
+    d.time = s[3]
+    mujoco.mj_forward(m, d)
+
+
+def _lookahead(m, d, table, home, layers, wps, kidx, first_turn, *, H=0.6, ctrl_every=12):
+    """Roll the model forward from the *current* state: hold ``first_turn`` for one control
+    interval, then let the **learned policy** drive for the rest of horizon H. Score by how
+    many figure-8 waypoints get passed (+ partial progress), upright, low cross-track. This
+    is the value a candidate next-action buys — the simulator is the predictive model."""
+    import mujoco
+    dt = float(m.opt.timestep); K = len(wps)
+    k = kidx; roll, pitch = WP._rp(d.qpos[3:7]); turn = first_turn
+    n = int(H / dt); cross_acc = 0.0; cn = 0; fell = False
+    for step in range(n):
+        if step > 0 and step % ctrl_every == 0:                # after the committed first action
+            pos = np.array([float(d.qpos[0]), float(d.qpos[1])])
+            w, x, y, z = d.qpos[3:7]
+            yaw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
+            while k < K and np.hypot(*(wps[k] - pos)) < 0.38:
+                k += 1
+            tgt = wps[min(k, K - 1)]; to = tgt - pos
+            he = (np.arctan2(to[1], to[0]) - yaw + np.pi) % (2 * np.pi) - np.pi
+            cross = float(np.min(np.hypot(wps[:, 0] - pos[0], wps[:, 1] - pos[1])))
+            cross_acc += cross; cn += 1
+            obs = np.array([np.sin(he), np.cos(he), np.clip(cross, -3, 3), 0.0, 0.3,
+                            roll / 30.0, pitch / 30.0, np.clip(np.hypot(*to), 0, 3)])
+            turn = policy_action(layers, obs)
+        q = WP._steer(home, float(d.time), table, roll, pitch, turn, freq=1.3)
+        d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+        mujoco.mj_step(m, d); roll, pitch = WP._rp(d.qpos[3:7])
+        if d.qpos[2] < 0.12:
+            fell = True; break
+    pos = np.array([float(d.qpos[0]), float(d.qpos[1])])
+    while k < K and np.hypot(*(wps[k] - pos)) < 0.38:
+        k += 1
+    partial = 0.0
+    if k < K:
+        partial = np.clip((0.38 - np.hypot(*(wps[k] - pos))) / 0.38 + 1.0, 0, 1.2)
+    score = (k - kidx) + partial - (2.0 if fell else 0.0) - 0.05 * (cross_acc / max(cn, 1))
+    return score, (float(pos[0]), float(pos[1]))
+
+
+def pyramid_action(m, d, table, home, layers, wps, kidx, *, ncoarse=5, nfine=5,
+                   H=0.6, ctrl_every=12):
+    """Coarse→fine (pyramid) search over the next steering action: evaluate a coarse fan of
+    candidate turns by look-ahead, then refine around the best. Returns the chosen turn and
+    the coarse candidate end-points (for visualising the search fan)."""
+    s0 = _snap(d)
+    coarse = np.linspace(-_TURN_MAX, _TURN_MAX, ncoarse)
+    fan = []; best_c, best_s = 0.0, -1e9
+    for c in coarse:
+        sc, end = _lookahead(m, d, table, home, layers, wps, kidx, float(c), H=H, ctrl_every=ctrl_every)
+        fan.append(end); _restore(m, d, s0)
+        if sc > best_s:
+            best_s, best_c = sc, float(c)
+    fine = np.linspace(best_c - 0.3, best_c + 0.3, nfine)
+    for c in fine:
+        sc, _e = _lookahead(m, d, table, home, layers, wps, kidx, float(c), H=H, ctrl_every=ctrl_every)
+        _restore(m, d, s0)
+        if sc > best_s:
+            best_s, best_c = sc, float(c)
+    return float(np.clip(best_c, -_TURN_MAX, _TURN_MAX)), fan
+
+
+def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.0,
+                   replan_every=48, ctrl_every=12, look_H=0.6, collect=True, log=None):
+    """Run the learned controller (optionally wrapped by pyramid-search MPC) on a figure-8
+    of the given size, under genuine physics. Returns completion + the taken path + a few
+    recorded search fans. This is the deployment used for rendering and the honest metrics."""
+    import mujoco
+    mujoco.mj_resetDataKeyframe(m, d, 0); dt = float(m.opt.timestep)
+    for _ in range(int(0.5 / dt)):
+        d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
+    wps = lemniscate(size); K = len(wps); kidx = 0
+    roll, pitch = WP._rp(d.qpos[3:7]); turn = 0.0
+    prev = np.array([float(d.qpos[0]), float(d.qpos[1])]); prev_yaw = 0.0
+    path = []; fans = []; fell = False
+    n_steps = int(horizon / dt)
+    for step in range(n_steps):
+        if step % ctrl_every == 0:
+            pos = np.array([float(d.qpos[0]), float(d.qpos[1])])
+            w, x, y, z = d.qpos[3:7]
+            yaw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
+            while kidx < K and np.hypot(*(wps[kidx] - pos)) < 0.38:
+                kidx += 1
+            if kidx >= K:
+                break
+            if use_mpc and step % replan_every == 0:
+                turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx,
+                                           H=look_H, ctrl_every=ctrl_every)
+                fans.append((pos.copy(), fan))
+            else:
+                tgt = wps[kidx]; to = tgt - pos
+                he = (np.arctan2(to[1], to[0]) - yaw + np.pi) % (2 * np.pi) - np.pi
+                cross = float(np.min(np.hypot(wps[:, 0] - pos[0], wps[:, 1] - pos[1])))
+                cdt = ctrl_every * dt
+                speed = float(np.hypot(*(pos - prev))) / cdt
+                yaw_rate = ((yaw - prev_yaw + np.pi) % (2 * np.pi) - np.pi) / cdt
+                obs = np.array([np.sin(he), np.cos(he), np.clip(cross / max(size, 1e-3), -3, 3),
+                                np.clip(yaw_rate, -3, 3), np.clip(speed, -1, 2),
+                                roll / 30.0, pitch / 30.0,
+                                np.clip(np.hypot(*to) / max(size, 1e-3), 0, 3)])
+                turn = policy_action(layers, obs)
+            prev, prev_yaw = pos, yaw
+            if collect:
+                path.append((float(pos[0]), float(pos[1])))
+        q = WP._steer(home, step * dt, table, roll, pitch, turn, freq=1.3)
+        d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+        mujoco.mj_step(m, d); roll, pitch = WP._rp(d.qpos[3:7])
+        if d.qpos[2] < 0.12:
+            fell = True; break
+    return {"completed": kidx / K, "kidx": kidx, "K": K, "fell": fell,
+            "path": path, "fans": fans, "wps": wps}
+
+
 if __name__ == "__main__":
     import sys
     out = sys.argv[2] if len(sys.argv) > 2 else "out/fig8_policy.npz"
