@@ -1781,9 +1781,13 @@ def build_window(model=None):
     problems_list.setToolTip("Pipeline problems (unknown op / sort mismatch / runtime error).\n"
                              "Double-click to jump to the offending stage.")
     play = QtWidgets.QVBoxLayout(); play.addWidget(stage_list, 1)
-    erow = QtWidgets.QHBoxLayout(); erow.addWidget(b_rm); erow.addWidget(b_up); erow.addWidget(b_dn)
-    srow = QtWidgets.QHBoxLayout(); srow.addWidget(b_reset); srow.addWidget(b_step); srow.addWidget(b_runall)
-    play.addLayout(erow); play.addLayout(srow)
+    erow = QtWidgets.QHBoxLayout()                       # one compact icon strip: edit | run
+    for _b in (b_rm, b_up, b_dn):
+        erow.addWidget(_b)
+    erow.addSpacing(10); erow.addStretch(1)
+    for _b in (b_reset, b_step, b_runall):
+        erow.addWidget(_b)
+    play.addLayout(erow)
     problems_label = QtWidgets.QLabel("Problems"); problems_label.setProperty("muted", True)
     play.addWidget(problems_label); play.addWidget(problems_list)
     mv.addWidget(_group(QtWidgets, "PIPELINE", play), 1)
