@@ -401,6 +401,9 @@ _3DGS_OPS = [
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
+    ("sensor_fusion", "sensor_fusion", "run_fusion_demo",
+     "位置センサ(カメラ/GPS)と速度センサ(IMU)を Kalman フィルタで融合し投射体を追跡。"
+     "融合 RMSE を各センサ単体と正直に比較した図を生成(GPU不要)", "perception"),
 ]
 
 
