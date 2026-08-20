@@ -209,15 +209,13 @@ _SCALAR = {"row": 32.0, "col": 32.0, "column": 32.0, "radius": 12.0, "ra": 14.0,
            "n_iter": 5, "iterations": 5, "num": 4, "n": 8, "bins": 16, "eps": 1e-6}
 
 
-_RENDER_OUT = {"out_png", "out_gif", "out"}
-
-
 def synthesize_args(op):
     """op の F3 param 名から合成入力を作る。作れない必須引数があれば None(=自動実行不可)。"""
-    # 出力パスを先頭引数に持つ op は「ファイルへ描画するデモ」(GIF/図を生成する
-    # animation/perception 系。MuJoCo シーン等の専用入力が要る)。合成画像では走らせず、
-    # 副作用(重いレンダリング/ファイル書き込み)も避けるため自動実行対象外にする。
-    if op.params and op.params[0][0] in _RENDER_OUT:
+    # gsplat namespace の op は「シーンからファイルへ描画するデモ」(3DGS メッシュ化 /
+    # 歩行・ピッキング GIF / LIDAR・焦点合成・偏光などのセンサ模倣)。画像 pipeline op では
+    # なく MuJoCo シーン等の専用入力が要るので、合成画像では走らせない(重いレンダリング/
+    # ファイル書き込みの副作用も避け、自動実行対象外=needs_input に分類する)。
+    if getattr(op, "namespace", "") == "gsplat":
         return None
     args = []
     for name, default, kind in op.params:

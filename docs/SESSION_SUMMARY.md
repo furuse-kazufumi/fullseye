@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-20 08:55:36
+- **最終更新**: 2026-08-20 13:37:38
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-1a46fdbb auto: world_render.py 編集前 (2026-08-20 08:53)
-913d319b auto: world_render.py 編集前 (2026-08-20 08:50)
-9fc98a88 auto: world_render.py 編集前 (2026-08-20 08:50)
-d5fa9308 auto: world_render.py 編集前 (2026-08-20 08:50)
-fa01dbd2 auto: world_render.py 編集前 (2026-08-20 08:50)
-4825129e auto: _gen.py 編集前 (2026-08-20 08:48)
-cfb1eb54 auto: world_render.py 編集前 (2026-08-20 08:47)
-764a5847 auto: world_render.py 編集前 (2026-08-20 08:47)
-3f11ee29 auto: world_render.py 編集前 (2026-08-20 08:47)
-82baac58 auto: gaits.py 編集前 (2026-08-20 08:47)
+74fa5e31 auto: studio_ops_browser.py 編集前 (2026-08-20 13:33)
+b28cdee9 auto: studio_ops_browser.py 編集前 (2026-08-20 13:31)
+9b5cea25 auto: fullseye3d.py 編集前 (2026-08-20 13:27)
+10d7e7af auto: unified.py 編集前 (2026-08-20 13:27)
+8006083d auto: polar_cam.py 編集前 (2026-08-20 13:27)
+c6ba4d4e auto: polar_cam.py 編集前 (2026-08-20 13:27)
+7b5be647 auto: fullseye3d.py 編集前 (2026-08-20 13:24)
+eb2763b2 auto: unified.py 編集前 (2026-08-20 13:24)
+b705eacf auto: stereo_sim.py 編集前 (2026-08-20 13:24)
+60ac5cc4 auto: stereo_sim.py 編集前 (2026-08-20 13:24)
 ```
 
 ## 現在の git status
 
 ```
-M world_render.py
-?? docs/TERRAIN_WALK.md
+M spikes/studio_ops_browser.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-08:55 docs/TERRAIN_WALK.md
-08:53 .pytest_cache/v/cache/nodeids
-08:53 world_render.py
-08:49 tests/test_gaits.py
-08:47 gaits.py
-08:40 fullseye3d.py
-08:40 tests/test_fullseye_3dgs.py
-08:40 unified.py
-08:34 .scene_cache/rolling.xml
-08:34 scene_registry.py
-08:33 gsplat_sugar.py
-08:29 recipe_world_walk.py
-08:19 gsplat_train_native.py
-08:15 tests/test_gsplat_torch.py
-08:15 gsplat_torch.py
+13:35 .pytest_cache/v/cache/nodeids
+13:34 .pytest_cache/v/cache/lastfailed
+13:33 spikes/studio_ops_browser.py
+13:27 tests/test_sensor_sims.py
+13:27 fullseye3d.py
+13:27 unified.py
+13:27 polar_cam.py
+13:24 stereo_sim.py
+13:19 event_camera.py
+13:16 focus_stack.py
+13:14 lidar_sim.py
+13:13 tests/test_fullseye_3dgs.py
+13:13 bin_pick.py
+12:50 sensor_fusion.py
+12:46 pick_render.py
 ```
 
 ---
