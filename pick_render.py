@@ -38,22 +38,32 @@ def _tcp(d, ids):
     return np.mean([d.xpos[i] for i in ids], axis=0)
 
 
-def _ik_step(mujoco, m, d, hand_id, goal_hand, quat_target, *,
-             pos_gain=0.8, ori_gain=0.8, damp=0.08, clamp=0.05):
-    """One damped-least-squares **6-DOF** IK step on the hand body: drive its
-    position to *goal_hand* AND its orientation to *quat_target* (kept pointing
-    straight down so the fingers can reach a low cube instead of tilting off it).
-    Solving position+orientation together over the 7 arm joints. Returns 7 angles."""
-    jacp = np.zeros((3, m.nv)); jacr = np.zeros((3, m.nv))
-    mujoco.mj_jacBody(m, d, jacp, jacr, hand_id)
-    J = np.vstack([jacp[:, :7], jacr[:, :7]])                     # 6×7
-    perr = (np.asarray(goal_hand) - d.xpos[hand_id]) * pos_gain
-    oerr = np.zeros(3)
-    mujoco.mju_subQuat(oerr, np.asarray(quat_target), d.xquat[hand_id])   # target ⊖ current
-    err = np.concatenate([perr, oerr * ori_gain])
-    dq = J.T @ np.linalg.solve(J @ J.T + damp * np.eye(6), err)
-    dq = np.clip(dq, -clamp, clamp)
-    return d.qpos[:7] + dq
+def _ik_solve(mujoco, m, dk, hand_id, goal_hand, quat_target, seed, *,
+              iters=120, damp=0.12, step_clamp=0.10, tol=1e-3):
+    """**Kinematic** 6-DOF IK: solve for the 7 arm-joint angles that put the hand
+    body at *goal_hand* with orientation *quat_target* (gripper pointing down). Runs
+    on a scratch ``MjData`` with damped-least-squares Newton steps (no dynamics), so
+    it converges cleanly; the physics loop then just servos to the answer. Returns
+    the 7 target angles (falls back to the last iterate if it doesn't fully converge)."""
+    dk.qpos[:7] = seed
+    q = np.array(seed, dtype=float)
+    for _ in range(iters):
+        dk.qpos[:7] = q
+        mujoco.mj_kinematics(m, dk); mujoco.mj_comPos(m, dk)
+        perr = np.asarray(goal_hand) - dk.xpos[hand_id]
+        oerr = np.zeros(3)
+        mujoco.mju_subQuat(oerr, np.asarray(quat_target), dk.xquat[hand_id])
+        if np.linalg.norm(perr) < tol and np.linalg.norm(oerr) < 10 * tol:
+            break
+        jacp = np.zeros((3, m.nv)); jacr = np.zeros((3, m.nv))
+        mujoco.mj_jacBody(m, dk, jacp, jacr, hand_id)
+        J = np.vstack([jacp[:, :7], jacr[:, :7]])
+        err = np.concatenate([perr, oerr])
+        dq = J.T @ np.linalg.solve(J @ J.T + damp * np.eye(6), err)
+        q = q + np.clip(dq, -step_clamp, step_clamp)
+        lo, hi = m.jnt_range[:7, 0], m.jnt_range[:7, 1]
+        q = np.clip(q, lo, hi)                                    # respect joint limits
+    return q
 
 
 def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=120,
