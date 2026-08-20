@@ -174,13 +174,18 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
             break
         cx, cy, cz = cand
         approach = (cx, cy, cz + 0.14)
-        grasp = (cx, cy, cz + 0.045)                            # finger midpoint straddles the cube
+        q_app = solve(approach, d.qpos[:7]); move_to(q_app, _GRIP_OPEN, 1.1)
+        # re-read the cube after the hover (the pile may have shifted), then descend
+        # deeper than the target to beat the position-servo droop, and let the arm
+        # arrive before closing — grasping a cube in clutter is unforgiving.
+        qa = box_qadrs[cand_i]
+        cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
+        grasp = (cx, cy, cz + 0.02)                             # finger midpoint down around the cube
         clear = (cx, cy, rim_z + 0.22)
         drop = (place[0], place[1], rim_z + 0.22)
-        q_app = solve(approach, d.qpos[:7]); move_to(q_app, _GRIP_OPEN, 1.1)
-        q_gr = solve(grasp, d.qpos[:7]); move_to(q_gr, _GRIP_OPEN, 0.9)
-        settle(int(0.2 / dt), _GRIP_OPEN)
-        move_to(q_gr, _GRIP_SHUT, 0.7)                          # close
+        q_gr = solve(grasp, d.qpos[:7]); move_to(q_gr, _GRIP_OPEN, 1.1)
+        settle(int(0.35 / dt), _GRIP_OPEN)                      # arrive before closing
+        move_to(q_gr, _GRIP_SHUT, 0.8)                          # close
         q_cl = solve(clear, d.qpos[:7]); move_to(q_cl, _GRIP_SHUT, 1.1)  # lift clear of rim
         q_dr = solve(drop, d.qpos[:7]); move_to(q_dr, _GRIP_SHUT, 1.2)   # carry to drop zone
         move_to(q_dr, _GRIP_OPEN, 0.5)                          # release
