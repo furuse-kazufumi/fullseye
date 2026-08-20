@@ -221,14 +221,15 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
         _, cand_i, cand = cands[0]                              # best-scoring grasp candidate
         cx, cy, cz = cand
         goto((cx, cy, cz + 0.16), _GRIP_OPEN, 1.1)             # hover above the chosen cube
-        # re-read after the hover, then a two-stage descent that re-aims at the
-        # (possibly settled) cube so the fingers straddle it rather than plough it.
+        # Descend to the sweet spot: finger midpoint = cube centre + finger-drop, so
+        # the pads sit at the cube's mid-height. (A closed-loop "push lower" DIVERGES
+        # here — lowering the IK goal drives the arm into a droopier config that ends
+        # up *higher* — so aim the geometric target once and let it settle.)
         qa = box_qadrs[cand_i]
         cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
-        goto((cx, cy, cz + 0.06), _GRIP_OPEN, 0.9, iters=2)    # coarse descend
-        cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
-        goto((cx, cy, cz + 0.045), _GRIP_OPEN, 0.5, iters=3)   # fine: finger midpoint around cube
-        settle(int(0.3 / dt), _GRIP_OPEN)                      # arrive before closing
+        q_grasp = solve((cx, cy, cz + _FINGER_DROP), d.qpos[:7])
+        move_to(q_grasp, _GRIP_OPEN, 1.1)                      # descend around the cube
+        settle(int(0.35 / dt), _GRIP_OPEN)                     # let the arm arrive
         move_to(d.ctrl[:7].copy(), _GRIP_SHUT, 0.8)           # close on the cube
         goto((cx, cy, rim_z + 0.22), _GRIP_SHUT, 1.1)         # lift clear of rim
         goto((place[0], place[1], rim_z + 0.22), _GRIP_SHUT, 1.2)  # carry to drop zone
