@@ -123,7 +123,7 @@ def _ground_snap(m, d, foot_ids, ggroup):
 
 
 def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, gait=None,
-                    z_offset=0.0, travel=0.0, track=None, ground_follow=None, foot_clear=0.02,
+                    z_offset=0.0, travel=0.0, track=None, ground_follow=None, foot_clear=0.0,
                     n_frames=90, width=640, height=480,
                     fps=30, max_gif_frames=90, orbit_deg=140.0, elevation=-18.0, distance=None,
                     lookat=(0, 0, 0.25), log=print):
@@ -155,12 +155,18 @@ def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, ga
     frames = []
     base_lx = float(lookat[0])
     ggroup = np.zeros(6, np.uint8); ggroup[1] = 1           # terrain(group1)のみレイ対象
+    foot_ids = _foot_geoms(m)
     mujoco.mj_forward(m, d)                                 # static geom 位置を確定
     for k, t in enumerate(idxs):
         d.qpos[:] = q[t]
-        if ground_follow:                                  # 地形高さ分だけ root z を持ち上げ接地
+        if ground_follow:
+            # まず root 直下の地形高さで概算リフト → forward → 各足直下の地形を見て、最も低い
+            # 足がちょうど接地するよう root z を微修正(起伏に沿って全足が地形に触れる)。
             hz = _terrain_height(m, d, q[t, 0], q[t, 1], ggroup)
-            d.qpos[2] = q[t, 2] + hz + float(foot_clear)
+            d.qpos[2] = q[t, 2] + hz
+            mujoco.mj_forward(m, d)
+            gap = _ground_snap(m, d, foot_ids, ggroup)     # 最下足と地形の隙間
+            d.qpos[2] -= (gap - float(foot_clear))         # 隙間を詰めて接地(foot_clear=余裕)
         mujoco.mj_forward(m, d)
         cam.azimuth = 90.0 + orbit_deg * (k / max(1, len(idxs) - 1))
         if track:
