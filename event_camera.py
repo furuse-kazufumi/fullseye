@@ -89,9 +89,11 @@ def run_event_demo(out_png="out/event_camera.png", *, n_frames=24, C=0.15, log=p
     ev[..., 2] += np.clip(off / max(1, off.max()), 0, 1)
     ev = np.clip(ev, 0, 1)
 
-    edges = _grad_mag(frames[n_frames // 2].mean(axis=2))
+    # Events fire wherever an edge *passed* during the pan, so score against the
+    # union (max over frames) of the per-frame edge maps — not one still frame.
+    edges_swept = np.max([_grad_mag(f.mean(axis=2)) for f in frames], axis=0)
     dens = (on + off)
-    corr = float(np.corrcoef(dens.ravel(), edges.ravel())[0, 1])
+    corr = float(np.corrcoef(dens.ravel(), edges_swept.ravel())[0, 1])
     ev_per_frame = total / max(1, n_frames - 1)
 
     bg, fgc = "#0c0e13", "#e2e5ec"
