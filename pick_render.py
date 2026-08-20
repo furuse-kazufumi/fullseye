@@ -81,25 +81,34 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=12
     d.qvel[:] = 0.0
     d.ctrl[:7] = _HOME_ARM; d.ctrl[7] = _GRIP_OPEN
     mujoco.mj_forward(m, d)
+    hand_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "hand")
     lf = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "left_finger")
     rf = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "right_finger")
     ids = [lf, rf]
     rest_z = _cube_z(d, box_qadr)
     bx, by = float(d.qpos[box_qadr]), float(d.qpos[box_qadr + 1])
+    # Lock the gripper to its home orientation (fingers pointing down). The grasp
+    # point (finger midpoint) sits at a fixed offset below the hand frame in that
+    # orientation, so hand_goal = grasp_goal − offset reaches the cube cleanly.
+    quat_target = d.xquat[hand_id].copy()
+    offset = _tcp(d, ids) - d.xpos[hand_id]
+
+    def hg(gx, gy, gz):
+        return np.array([gx, gy, gz]) - offset                    # grasp-point goal → hand-body goal
 
     dt = float(m.opt.timestep)
-    lift_top = 0.40
-    grasp_z = rest_z + 0.015                                       # finger midpoint straddles the cube
+    lift_top = 0.38
+    grasp_z = rest_z + 0.005                                       # finger midpoint at cube centre
     # (grasp-point goal, gripper, seconds).
     phases = [
-        ((bx, by, 0.22), _GRIP_OPEN, 1.2),                        # move above cube
-        ((bx, by, grasp_z), _GRIP_OPEN, 1.3),                     # descend around it
-        ((bx, by, grasp_z), _GRIP_OPEN, 0.3),                     # settle
-        ((bx, by, grasp_z), _GRIP_SHUT, 0.8),                     # close (grasp)
-        ((bx, by, lift_top), _GRIP_SHUT, 1.4),                    # lift straight up
-        ((bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_SHUT, 1.5),  # carry aside
-        ((bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_SHUT, 0.3),  # steady
-        ((bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_OPEN, 0.7),  # release
+        (hg(bx, by, 0.16), _GRIP_OPEN, 1.3),                      # move above cube
+        (hg(bx, by, grasp_z), _GRIP_OPEN, 1.4),                   # descend around it
+        (hg(bx, by, grasp_z), _GRIP_OPEN, 0.3),                   # settle
+        (hg(bx, by, grasp_z), _GRIP_SHUT, 0.9),                   # close (grasp)
+        (hg(bx, by, lift_top), _GRIP_SHUT, 1.4),                  # lift straight up
+        (hg(bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_SHUT, 1.5),  # carry aside
+        (hg(bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_SHUT, 0.3),  # steady
+        (hg(bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_OPEN, 0.7),  # release
     ]
     n_steps = int(round(sum(p[2] for p in phases) / dt))
     frame_every = max(1, n_steps // int(max_gif_frames))
