@@ -400,9 +400,94 @@ def run_hurdle_physics(out_gif="out/hurdle_physics.gif", *, barrier_h=0.20, barr
             "upright": bool(upright), "success": success, "final_x": float(d.qpos[0]), "peak_z": peak}
 
 
+def run_long_route(out_gif="out/long_route.gif", *, target_m=100.0, max_s=360.0, freq=2.0,
+                   width=720, height=420, fps=30, max_gif_frames=140, log=print, max_s_override=None):
+    """A **long, varied route**: build a ~120 m strip of undulating terrain (flat and
+    rolling sections) and have the rule-based go2 walk it under genuine physics until it
+    covers *target_m* metres (or falls / times out). Rendered as a tracking GIF plus a
+    distance-vs-time plot. Everything is mj_step + friction + gravity + contact; the
+    controller is analytical (hand-designed gait + PD + proportional balance), no learning."""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        raise RuntimeError("mujoco 未インストール")
+    import mujoco
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    Lx, Wy = 124.0, 6.0
+    spec = mujoco.MjSpec.from_file(_GO2)
+    spec.visual.global_.offwidth = 1280; spec.visual.global_.offheight = 960
+    NX, NY = 620, 40
+    xs = np.linspace(-4, Lx, NX); ys = np.linspace(-Wy, Wy, NY)
+    X, Y = np.meshgrid(xs, ys, indexing="ij")
+    rough = 0.5 + 0.5 * np.sin(0.05 * X)                  # roughness varies along the route (complex)
+    H = rough * (0.5 * np.sin(0.5 * X) * np.cos(0.7 * Y) + 0.3 * np.sin(0.9 * X + 1)) + 0.2 * np.cos(1.1 * Y)
+    H = (H - H.min()) / (H.max() - H.min())
+    cx = (Lx - 4) / 2
+    spec.add_hfield(name="terr", size=[(Lx + 4) / 2, Wy, 0.07, 0.1], nrow=NY, ncol=NX,
+                    userdata=H.T.flatten().tolist())
+    g = spec.worldbody.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_HFIELD; g.hfieldname = "terr"
+    g.pos = [cx, 0, 0]; g.rgba = [0.52, 0.45, 0.36, 1.0]; g.contype = 1; g.conaffinity = 1
+    m = spec.compile(); d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
+    home = m.key_qpos[0][7:].copy(); d.qpos[2] = 0.07 + 0.34
+    table = _leg_ik_table(m); dt = float(m.opt.timestep)
+    for _ in range(int(0.6 / dt)):
+        d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
+
+    n_steps = int(max_s / dt); frame_every = max(1, n_steps // int(max_gif_frames))
+    ren = mujoco.Renderer(m, height=height, width=width)
+    cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+    cam.distance = 3.0; cam.elevation = -12.0; cam.azimuth = 90.0
+    frames = []; ts, dist = [], []
+    roll, pitch = _rp(d.qpos[3:7]); upright = True; reached = False
+    for step in range(n_steps):
+        q = _control(home, step * dt, table, roll, pitch, freq=freq)
+        d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+        mujoco.mj_step(m, d)
+        roll, pitch = _rp(d.qpos[3:7])
+        x = float(d.qpos[0])
+        if step % 40 == 0:
+            ts.append(step * dt); dist.append(x)
+        if d.qpos[2] < 0.12:
+            upright = False; break
+        if step % frame_every == 0:
+            cam.lookat[:] = [x, 0, 0.25]; cam.azimuth = 90.0 + 8.0 * np.sin(step * 0.002)
+            ren.update_scene(d, camera=cam); frames.append(Image.fromarray(ren.render()))
+        if x >= target_m:
+            reached = True; break
+    ren.close()
+    travelled = float(d.qpos[0]); sim_t = step * dt
+
+    png = os.path.splitext(out_gif)[0] + "_telemetry.png"
+    bg, fgc, teal = "#12141b", "#e2e5ec", "#22d3bf"
+    fig, ax = plt.subplots(figsize=(9, 3.4), facecolor=bg)
+    ax.set_facecolor(bg); ax.tick_params(colors="#8b91a0"); ax.grid(True, color="#2c313f", lw=0.5)
+    for s in ax.spines.values():
+        s.set_color("#2c313f")
+    ax.plot(ts, dist, color=teal, lw=2.0)
+    ax.axhline(target_m, color="#f5a524", ls="--", lw=1.2, label=f"target {target_m:.0f} m")
+    ax.set_xlabel("time (s)", color=fgc); ax.set_ylabel("distance travelled (m)", color=fgc)
+    ax.set_title(f"Long route — {travelled:.0f} m in {sim_t:.0f} s ({travelled/max(sim_t,1e-6):.2f} m/s), upright={upright}", color=fgc)
+    ax.legend(facecolor=bg, edgecolor="#2c313f", labelcolor=fgc, fontsize=9)
+    fig.tight_layout(); fig.savefig(png, dpi=115, facecolor=bg); plt.close(fig)
+    frames[0].save(out_gif, save_all=True, append_images=frames[1:],
+                   duration=int(1000 / max(1, fps)), loop=0)
+    log(f"long route: {out_gif} (+{os.path.basename(png)}) | travelled={travelled:.1f}m "
+        f"in {sim_t:.0f}s sim ({travelled/max(sim_t,1e-6):.2f}m/s) reached_{target_m:.0f}m={reached} upright={upright}")
+    return {"gif": out_gif, "telemetry": png, "distance_m": travelled, "sim_s": sim_t,
+            "reached_target": reached, "upright": upright, "speed_mps": travelled / max(sim_t, 1e-6)}
+
+
 if __name__ == "__main__":
     import sys
     mode = sys.argv[1] if len(sys.argv) > 1 else "walk"
+    if mode == "long":
+        print(run_long_route(sys.argv[2] if len(sys.argv) > 2 else "out/long_route.gif",
+                             log=lambda s: print(s, flush=True)))
+        raise SystemExit(0)
     if mode == "hurdle":
         print(run_hurdle_physics(sys.argv[2] if len(sys.argv) > 2 else "out/hurdle_physics.gif",
                                  log=lambda s: print(s, flush=True)))
