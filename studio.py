@@ -3694,6 +3694,40 @@ def build_window(model=None):
             flash("system settings applied (threads %d, timeout %d ms)" % (th.value(), to.value()))
     win._open_system_settings = open_system_settings
 
+    def _latest_evis_perception():
+        """Newest evis Fullseye-perception GIF (out/evis_fullseye*.gif), or None."""
+        import glob
+        cands = sorted(glob.glob(os.path.join("out", "evis_fullseye*.gif")), key=os.path.getmtime)
+        return cands[-1] if cands else None
+
+    def open_physical_ai_viewer():
+        """Play the GPU-learned evis walk as Fullseye perceives it (RGB | depth | DVS events).
+        The control policy is trained on the GPU (MJX-PPO torque twin); Fullseye supplies the
+        vision. Non-modal; shows a hint if no perception GIF has been generated yet."""
+        gif = _latest_evis_perception()
+        dlg = QtWidgets.QDialog(win)
+        dlg.setWindowTitle("Physical AI — evis RL walk, perceived by Fullseye")
+        lay = QtWidgets.QVBoxLayout(dlg)
+        cap = QtWidgets.QLabel("GPU-learned evis (MJX-PPO torque policy) → Fullseye vision: "
+                               "RGB · depth · DVS events")
+        cap.setWordWrap(True); cap.setProperty("hint", True); lay.addWidget(cap)
+        view = QtWidgets.QLabel(); view.setAlignment(QtCore.Qt.AlignCenter)
+        view.setMinimumSize(880, 320); lay.addWidget(view)
+        if gif and os.path.exists(gif):
+            mv = QtGui.QMovie(gif)
+            view.setMovie(mv); mv.start()
+            dlg._movie = mv                     # keep a reference so the animation is not GC'd
+            cap.setText(cap.text() + f"   —   {os.path.basename(gif)}")
+        else:
+            view.setText("知覚 GIF は未生成です。\n学習チェックポイントから "
+                         "fullseye3d.evis_rl_perceive(qpos_npy) を実行すると生成されます。")
+        win._physical_ai_dialog = dlg            # for headless tests
+        dlg.resize(920, 430)
+        dlg.show()                               # non-modal so Studio stays usable
+        return dlg
+    win._open_physical_ai_viewer = open_physical_ai_viewer
+    win._latest_evis_perception = _latest_evis_perception
+
     # restore persisted system settings (QSettings is in-memory under offscreen)
     _s_sys = QtCore.QSettings("Fullseye", "Studio"); _s_sys.beginGroup("system")
     _sv_to, _sv_th = _s_sys.value("operator_timeout_ms"), _s_sys.value("threads")
