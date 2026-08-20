@@ -1632,9 +1632,10 @@ def build_window(model=None):
     m.addSeparator()
     m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
-    # ---- branded toolbar ---------------------------------------------------- #
+    # ---- branded toolbar (icon-only; tooltips carry the meaning) ------------- #
     tb = QtWidgets.QToolBar(); tb.setMovable(False); tb.setFloatable(False)
-    tb.setToolButtonStyle(QtCore.Qt.ToolButtonTextOnly)
+    tb.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+    tb.setIconSize(QtCore.QSize(18, 18))
     win.addToolBar(tb)
     if os.path.exists(_ICON_PATH):
         brand = QtWidgets.QLabel()
@@ -1644,13 +1645,15 @@ def build_window(model=None):
     title = QtWidgets.QLabel("Fullseye Studio")
     title.setStyleSheet("font-size:15px; font-weight:800; color:%s; padding:0 4px;" % AMBER)
     tb.addWidget(title)
-    subtitle = QtWidgets.QLabel("image pipeline workbench")
-    subtitle.setProperty("muted", True); subtitle.setStyleSheet("color:%s; padding-top:3px;" % MUTED)
-    tb.addWidget(subtitle)
     spacer = QtWidgets.QWidget()
     spacer.setSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
     tb.addWidget(spacer)
-    tb.addAction(act_demo); tb.addAction(act_open_img); tb.addAction(act_runall); tb.addAction(act_export)
+    # Primary actions get a themed icon so the icon-only toolbar reads at a glance;
+    # tooltips (already set on each action) name them.
+    for _act, _ic in ((act_demo, "demo"), (act_open_img, "open"), (act_runall, "playplay"),
+                      (act_export, "export")):
+        _act.setIcon(_icon(QtGui, QtCore, _ic, TEXT))
+        tb.addAction(_act)
 
     # Central document area = an MDI workspace of graphics windows (HDevelop-style:
     # multiple image/result windows the user can open, tile, cascade and float).
