@@ -128,13 +128,18 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=12
     cam.lookat[:] = list(lookat); cam.distance = float(distance)
     cam.elevation = float(elevation)
 
+    dk = mujoco.MjData(m)                                          # scratch for kinematic IK
     frames = []
     peak_z = rest_z
     step_i = 0
+    q_prev = _HOME_ARM.copy()                                     # current commanded arm target
     for goal, grip, secs in phases:
+        dk.qpos[:] = d.qpos                                        # seed IK from the live state
+        q_target = _ik_solve(mujoco, m, dk, hand_id, goal, quat_target, d.qpos[:7])
         seg_steps = max(1, int(round(secs / dt)))
-        for _ in range(seg_steps):
-            d.ctrl[:7] = _ik_step(mujoco, m, d, hand_id, goal, quat_target)
+        for k in range(seg_steps):
+            frac = (k + 1) / seg_steps
+            d.ctrl[:7] = q_prev + (q_target - q_prev) * frac      # smooth servo to the IK answer
             d.ctrl[7] = grip
             mujoco.mj_step(m, d)
             peak_z = max(peak_z, _cube_z(d, box_qadr))
@@ -143,6 +148,7 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=12
                 ren.update_scene(d, camera=cam)
                 frames.append(Image.fromarray(ren.render()))
             step_i += 1
+        q_prev = q_target.copy()
     ren.close()
 
     final_z = _cube_z(d, box_qadr)
