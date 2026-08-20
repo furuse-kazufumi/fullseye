@@ -60,10 +60,8 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=11
                                 "(needs the MuJoCo Menagerie checkout)")
     m = mujoco.MjModel.from_xml_path(_PANDA_CUBE)
     d = mujoco.MjData(m)
-    mujoco.mj_resetDataKeyframe(m, d, 0)                           # 'home' pose
-    mujoco.mj_forward(m, d)
+    mujoco.mj_resetDataKeyframe(m, d, 0)                           # 'home' arm pose
 
-    box_jid = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_JOINT, "")  # box is the lone free joint
     # Locate the free joint's qpos address robustly (jnt_type FREE == 0).
     box_qadr = None
     for j in range(m.njnt):
@@ -71,6 +69,11 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=11
             box_qadr = int(m.jnt_qposadr[j]); break
     if box_qadr is None:
         raise RuntimeError("no free joint (cube) found in the scene")
+    # The 'home' keyframe parks the cube at x=0.7, but the 'pickup' pose reaches to
+    # x≈0.5 — put the cube where the gripper actually descends, or it grasps thin air.
+    d.qpos[box_qadr:box_qadr + 7] = [0.5, 0.0, 0.03, 1.0, 0.0, 0.0, 0.0]
+    d.qvel[:] = 0.0
+    mujoco.mj_forward(m, d)
     z0 = _cube_z(d, box_qadr)
     z_rest = z0                                                    # table-rest height
 
