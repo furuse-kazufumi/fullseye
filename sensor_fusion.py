@@ -39,7 +39,7 @@ _BALL_XML = _BALL_XML.replace(
     '<site name="ball_site" pos="0 0 0"/>\n      <geom name="ball" type="sphere"')
 
 
-def _simulate(seed=0, throw=(2.6, 0.35, 4.6), n_steps=520, substep=4):
+def _simulate(seed=0, throw=(2.2, 0.3, 7.2), n_steps=1100, substep=4):
     """Run the MuJoCo ground truth and return true + sensed (declared-sensor) traces."""
     import mujoco
     m = mujoco.MjModel.from_xml_string(_BALL_XML)
