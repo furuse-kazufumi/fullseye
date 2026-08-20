@@ -134,7 +134,10 @@ def run_focus_stack_demo(out_png="out/focus_stack.png", *, n_focus=7, coc_gain=7
     log(f"focus stack: {out_png} | n_focus={n_focus} fused_sharpness×{gain:.2f} "
         f"depth-from-focus_corr={corr:.2f}")
     return {"png": out_png, "sharpness_gain": gain, "depth_focus_corr": corr,
-            "n_focus": n_focus, "beats_all_frames": bool(gain > 1.0)}
+            "n_focus": n_focus,
+            # weak metric by construction (argmax fusion nearly always beats any single
+            # frame) — depth_focus_corr is the substantive validation, this is auxiliary
+            "beats_all_frames": bool(gain > 1.0)}
 
 
 if __name__ == "__main__":

@@ -87,7 +87,10 @@ def _kalman(true_p, true_v, dt, *, pos_std=0.13, vel_std=0.10, vel_bias=0.11, se
     x = np.concatenate([meas_p[0], meas_v[0]])                    # init from first reading
     P = np.eye(6) * 0.5
     fused = np.zeros((N, 3))
-    for k in range(N):
+    fused[0] = x[:3]
+    # start at k=1: z[0] already seeded the state — reusing it as the first update would
+    # count the same reading twice (and one predict step out of phase)
+    for k in range(1, N):
         x = F @ x + Bu                                            # predict
         P = F @ P @ F.T + Q
         z = np.concatenate([meas_p[k], meas_v[k]])

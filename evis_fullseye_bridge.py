@@ -27,7 +27,7 @@ def _colormap(x, lo, hi):
 
 
 def _dvs(prev_log, cur_log, C=0.18):
-    """Per-frame DVS events: red = brightening (ON), blue = darkening (OFF), grey ground."""
+    """Per-frame DVS events: teal = brightening (ON), amber-red = darkening (OFF), dark ground."""
     h, w = cur_log.shape
     img = np.full((h, w, 3), 22, np.uint8)
     diff = cur_log - prev_log
@@ -51,6 +51,8 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     qpos = np.load(qpos_npy)
     if qpos.ndim != 2:
         raise ValueError(f"qpos npy must be (T, nq); got {qpos.shape}")
+    if len(qpos) == 0:
+        raise ValueError(f"empty rollout: {qpos_npy} has 0 frames (nothing to perceive)")
     # The training XML bakes WSL-absolute asset paths (/mnt/c/...). On Windows py311 those don't
     # resolve, so rewrite them to their C:/ drive equivalents and load from the patched string.
     with open(xml, encoding="utf-8") as f:

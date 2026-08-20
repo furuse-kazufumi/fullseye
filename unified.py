@@ -417,30 +417,32 @@ _3DGS_OPS = [
      "回避してゴール到達する本物の物理ナビ(俯瞰プラン付き、GPU不要)", "animation"),
     ("figure8", "walk_physics", "run_figure8",
      "差動旋回で 8 の字系の曲線を各サイズで描く旋回制御の練習/較正(俯瞰トラック、GPU不要)", "animation"),
+    ("evis_perceive", "evis_fullseye_bridge", "perceive_evis_walk",
+     "GPU学習evisのロールアウト(qpos npy)をFullseyeで知覚: RGB|深度|DVSの3面GIF", "animation"),
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
     ("sensor_fusion", "sensor_fusion", "run_fusion_demo",
      "位置センサ(カメラ/GPS)と速度センサ(IMU)を Kalman フィルタで融合し投射体を追跡。"
-     "融合 RMSE を各センサ単体と正直に比較した図を生成(GPU不要)", "perception"),
+     "融合 RMSE を各センサ単体と正直に比較した図を生成(GPU不要)", "image"),
     ("bin_pick_gif", "bin_pick", "render_bin_pick_gif",
      "バラ積みされた部品を候補スコアリングで選び 6DoF IK で上面把持し bin から取り出す "
      "bin-picking を headless で GIF 化(GPU不要・成功数は部品が bin を出たかで実測)", "animation"),
     ("lidar_scan", "lidar_sim", "run_lidar_demo",
      "スピニング LIDAR を mj_ray の実レイキャストでシミュレートし点群を生成・可視化"
-     "(GPU不要・命中率など実測)", "perception"),
+     "(GPU不要・命中率など実測)", "image"),
     ("focus_stack", "focus_stack", "run_focus_stack_demo",
      "真値深度から被写界深度ボケの焦点スタックを生成し局所シャープネス最大で全焦点合成"
-     "(焦点由来深度も復元、GPU不要)", "perception"),
+     "(焦点由来深度も復元、GPU不要)", "image"),
     ("event_camera", "event_camera", "run_event_demo",
      "イベントカメラ(DVS)を対数輝度変化モデルで模倣し ON/OFF イベント列を生成。"
-     "動くエッジに発火することを実測(GPU不要)", "perception"),
+     "動くエッジに発火することを実測(GPU不要)", "image"),
     ("stereo_depth", "stereo_sim", "run_stereo_demo",
      "平行2カメラのステレオペアを描画しブロックマッチングで深度推定、真値深度と誤差比較"
-     "(既存 stereo.py 使用、GPU不要)", "perception"),
+     "(既存 stereo.py 使用、GPU不要)", "image"),
     ("polarization", "polar_cam", "run_polar_demo",
      "偏光カメラを Fresnel 順モデル(法線→DoLP/AoLP→4偏光画像→Stokes)で模倣。"
-     "無テクスチャ面でも表面方位を偏光が符号化(透過/鏡面把持向け、GPU不要)", "perception"),
+     "無テクスチャ面でも表面方位を偏光が符号化(透過/鏡面把持向け、GPU不要)", "image"),
 ]
 
 

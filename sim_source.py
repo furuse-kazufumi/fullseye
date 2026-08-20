@@ -432,7 +432,10 @@ def launch_animation(model_xml, qpos, title: str = "Fullseye 3D", fps: int = 30,
         if os.name == "nt":
             kwargs["creationflags"] = 0x00000008 | 0x08000000
         return subprocess.Popen([exe, launcher, manifest], **kwargs)
-    except Exception:
+    except Exception as e:
+        # None is documented as "no GL" — but a bad motion npy / missing mesh lands here too,
+        # so leave a trace instead of erasing the difference (still fail-soft for callers).
+        print(f"[launch_animation] suppressed {type(e).__name__}: {e}", flush=True)
         return None
 
 

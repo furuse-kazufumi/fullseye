@@ -187,7 +187,7 @@ def train_figure8(out_npz="out/fig8_policy.npz", *, iters=40, pop=24, sigma=0.15
             tasks = [(batch[i], panel) for i in range(2 * pop)]
             R = np.array(pool.map(_weval, tasks))
             rp, rm = R[:pop], R[pop:]
-            # rank-normalise the mirrored pairs → robust ES gradient
+            # z-score the mirrored differences → scale-free ES gradient
             adv = rp - rm
             if np.std(adv) > 1e-8:
                 adv = (adv - adv.mean()) / (adv.std() + 1e-8)
@@ -203,7 +203,7 @@ def train_figure8(out_npz="out/fig8_policy.npz", *, iters=40, pop=24, sigma=0.15
         pool.close(); pool.join()
 
     os.makedirs(os.path.dirname(out_npz) or ".", exist_ok=True)
-    np.savez(out_npz, theta=theta, layers=np.array([_OBS, _HID, _ACT]),
+    np.savez(out_npz, theta=theta, layers=np.array([_OBS, _HID, _HID, _ACT]),
              panel=np.array(panel), hist_center=np.array(hist_center),
              hist_best=np.array(hist_best), hist_mean=np.array(hist_mean))
     # learning curve
@@ -256,7 +256,7 @@ def _reactive_obs(pos, prev, yaw, prev_yaw, roll, pitch, wps, k, size, cdt):
     return obs, cross
 
 
-def _lookahead(m, d, table, home, layers, wps, kidx, size, first_turn, *, H=0.5, ctrl_every=12):
+def _lookahead(m, d, table, home, layers, wps, kidx, size, first_turn, t_gait, *, H=0.5, ctrl_every=12):
     """Roll the model forward from the *current* state: hold ``first_turn`` for one control
     interval, then let the **learned policy** (faithful obs) drive for the rest of horizon H.
     Score = figure-8 waypoints passed (+ partial) − fall − cross-track. The simulator is the
@@ -278,7 +278,11 @@ def _lookahead(m, d, table, home, layers, wps, kidx, size, first_turn, *, H=0.5,
             cross_acc += cross; cn += 1
             turn = policy_action(layers, obs)
             prev, prev_yaw = pos, yaw
-        q = WP._steer(home, float(d.time), table, roll, pitch, turn, freq=1.3)
+        # gait clock continuity: deploy indexes the trot by its own clock (step*dt from the
+        # walk start), NOT by d.time (which includes the 0.5 s settle) — using d.time here put
+        # the imagined legs 0.65 cycles out of phase with the real future, so candidate scores
+        # predicted a different robot. Continue the caller's clock instead.
+        q = WP._steer(home, t_gait + step * dt, table, roll, pitch, turn, freq=1.3)
         d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
         mujoco.mj_step(m, d); roll, pitch = WP._rp(d.qpos[3:7])
         if d.qpos[2] < 0.12:
@@ -293,7 +297,7 @@ def _lookahead(m, d, table, home, layers, wps, kidx, size, first_turn, *, H=0.5,
     return score, (float(pos[0]), float(pos[1]))
 
 
-def pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior, *, ncoarse=5, nfine=4,
+def pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior, t_gait, *, ncoarse=5, nfine=4,
                    spread=0.7, H=0.35, ctrl_every=12):
     """Coarse→fine (pyramid) search over the next steering action, **centred on the RL
     policy's proposal** ``a_prior`` (always included as a candidate, so the search can only
@@ -304,13 +308,17 @@ def pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior, *, ncoar
                      -_TURN_MAX, _TURN_MAX)
     fan = []; best_c, best_s = float(a_prior), -1e9
     for c in coarse:
-        sc, end = _lookahead(m, d, table, home, layers, wps, kidx, size, float(c), H=H, ctrl_every=ctrl_every)
+        sc, end = _lookahead(m, d, table, home, layers, wps, kidx, size, float(c), t_gait,
+                             H=H, ctrl_every=ctrl_every)
         fan.append((float(c), end, float(sc))); _restore(m, d, s0)
         if sc > best_s:
             best_s, best_c = sc, float(c)
-    fine = np.linspace(best_c - 0.25, best_c + 0.25, nfine)
+    # clip BEFORE scoring: an out-of-range candidate would be scored at its raw value but
+    # executed clipped — the score would then describe an action we never take.
+    fine = np.clip(np.linspace(best_c - 0.25, best_c + 0.25, nfine), -_TURN_MAX, _TURN_MAX)
     for c in fine:
-        sc, _e = _lookahead(m, d, table, home, layers, wps, kidx, size, float(c), H=H, ctrl_every=ctrl_every)
+        sc, _e = _lookahead(m, d, table, home, layers, wps, kidx, size, float(c), t_gait,
+                            H=H, ctrl_every=ctrl_every)
         _restore(m, d, s0)
         if sc > best_s:
             best_s, best_c = sc, float(c)
@@ -330,7 +338,9 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
         d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
     wps = lemniscate(size); K = len(wps); kidx = 0
     roll, pitch = WP._rp(d.qpos[3:7]); turn = 0.0; cdt = ctrl_every * dt
-    prev = np.array([float(d.qpos[0]), float(d.qpos[1])]); prev_yaw = 0.0
+    prev = np.array([float(d.qpos[0]), float(d.qpos[1])])
+    w0, x0, y0, z0 = d.qpos[3:7]                          # measured, matching training's init
+    prev_yaw = float(np.arctan2(2 * (w0 * z0 + x0 * y0), 1 - 2 * (y0 * y0 + z0 * z0)))
     path = []; fans = []; fell = False; tick = 0
     n_steps = int(horizon / dt)
     for step in range(n_steps):
@@ -346,7 +356,7 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
             a_prior = policy_action(layers, obs)                    # RL policy proposal
             if use_mpc and tick % search_every == 0:                # pyramid refinement (receding horizon)
                 turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior,
-                                           H=look_H, ctrl_every=ctrl_every)
+                                           step * dt, H=look_H, ctrl_every=ctrl_every)
                 if collect and tick % fan_every == 0:
                     fans.append((pos.copy(), fan))
             else:
@@ -380,7 +390,15 @@ def eval_figure8(out_gif="out/fig8_learned.gif", weights="out/fig8_policy.npz", 
     import matplotlib.pyplot as plt
     from PIL import Image
 
-    z = np.load(weights); layers = _unpack(z["theta"])
+    z = np.load(weights)
+    assert int(z["theta"].size) == n_params(), \
+        f"weights {weights} have {z['theta'].size} params but the current net needs {n_params()}"
+    layers = _unpack(z["theta"])
+    if train_panel is None:
+        # honesty guard: the train/held-out split MUST come from the panel the weights were
+        # actually trained on (stored in the npz) — a hardcoded default here once disagreed with
+        # the training default and would have mislabelled the generalisation chart.
+        train_panel = tuple(float(x) for x in z["panel"])
     m = WP._build("flat"); d = mujoco.MjData(m)
     home = m.key_qpos[0][7:].copy(); table = WP._leg_ik_table(m); dt = float(m.opt.timestep)
 
@@ -402,7 +420,9 @@ def eval_figure8(out_gif="out/fig8_learned.gif", weights="out/fig8_policy.npz", 
         d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
     wps = lemniscate(render_size); K = len(wps); kidx = 0
     roll, pitch = WP._rp(d.qpos[3:7]); turn = 0.0; cdt = 12 * dt
-    prev = np.array([float(d.qpos[0]), float(d.qpos[1])]); prev_yaw = 0.0
+    prev = np.array([float(d.qpos[0]), float(d.qpos[1])])
+    w0, x0, y0, z0 = d.qpos[3:7]
+    prev_yaw = float(np.arctan2(2 * (w0 * z0 + x0 * y0), 1 - 2 * (y0 * y0 + z0 * z0)))
     ren = mujoco.Renderer(m, height=height, width=width)
     cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
     cam.elevation = -55.0; cam.azimuth = 90.0; cam.distance = 2.2 + 1.6 * render_size

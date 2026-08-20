@@ -711,10 +711,12 @@ def _parse_dev_args(line):
         parts = line.split(None, 1)
         body = parts[1] if len(parts) > 1 else ""
     args = []
-    for tok in re.split(r"[,\s]+", body.strip()):
-        if not tok:
-            continue
+    # quoted strings are single tokens — 'coins segmented' must NOT split into two args
+    # (the shipped dev_* demo passes a two-word caption; splitting broke its text + row)
+    for tok in re.findall(r"'[^']*'|\"[^\"]*\"|[^,\s]+", body.strip()):
         t = tok.strip("'\"")
+        if not t:
+            continue
         try:
             args.append(float(t))
         except ValueError:
@@ -2401,6 +2403,10 @@ def build_window(model=None):
         dragging a slider costs one pipeline evaluation per tick instead of n + 2."""
         i = selected_index()
         if 0 <= i < len(model.stages):
+            if getattr(win, "_knob_drag_base", None) is None:
+                # first tick of a drag: capture the PRE-drag pipeline once; the settled
+                # handler turns it into a single undo entry (drags coalesce)
+                win._knob_drag_base = [list(st) for st in model.stages]
             model.set_knobs(i, a=sa.value() / 100.0, b=sb.value() / 100.0)
             la.setText(f"a: {sa.value()/100:.2f}"); lb.setText(f"b: {sb.value()/100:.2f}")
             mark_dirty()
@@ -2408,9 +2414,17 @@ def build_window(model=None):
             knob_timer.start(KNOB_DEBOUNCE_MS)
 
     def on_knob_settled():
-        """Debounce tail: refresh the stage summaries once the drag has stopped."""
+        """Debounce tail: refresh the summaries + commit ONE undo entry for the drag."""
         i = selected_index()
         refresh_stage_list(select=i if 0 <= i < len(model.stages) else None)
+        base = getattr(win, "_knob_drag_base", None)
+        win._knob_drag_base = None
+        if base is not None and base != [list(st) for st in model.stages]:
+            win._undo_stack.append(base)
+            if len(win._undo_stack) > _UNDO_CAP:
+                del win._undo_stack[0]
+            win._redo_stack.clear()
+            _sync_undo_actions()
 
     knob_timer = QtCore.QTimer(win)
     knob_timer.setSingleShot(True)
@@ -2420,24 +2434,32 @@ def build_window(model=None):
     # History of pipeline snapshots (each = a list of (op, a, b) tuples). Every
     # mutating action snapshots the CURRENT pipeline via push_undo() *before*
     # changing it; undo/redo swap between the stacks. A fresh edit forks history
-    # (clears redo). Knob drags coalesce (one snapshot per settled drag).
+    # (clears redo). Knob drags coalesce: the pre-drag state is captured on the
+    # first tick and committed as one entry when the drag settles.
     win._undo_stack = []
     win._redo_stack = []
+    win._knob_drag_base = None
     _UNDO_CAP = 100
 
     def _sync_undo_actions():
         act_undo.setEnabled(bool(win._undo_stack))
         act_redo.setEnabled(bool(win._redo_stack))
 
+    def _snapshot():
+        # DEEP copy: each stage is a mutable [op, a, b] list that set_knobs edits in
+        # place — a shallow list(model.stages) shared the inner lists, so dragging a
+        # knob silently rewrote every snapshot already in the undo/redo stacks.
+        return [list(st) for st in model.stages]
+
     def push_undo():
-        win._undo_stack.append(list(model.stages))
+        win._undo_stack.append(_snapshot())
         if len(win._undo_stack) > _UNDO_CAP:
             del win._undo_stack[0]
         win._redo_stack.clear()
         _sync_undo_actions()
 
     def _restore_stages(stages):
-        model.stages = list(stages)
+        model.stages = [list(st) for st in stages]
         mark_dirty()
         refresh_stage_list(select=(len(model.stages) - 1) if model.stages else None)
         show_result()
@@ -2446,14 +2468,14 @@ def build_window(model=None):
     def undo():
         if not win._undo_stack:
             return
-        win._redo_stack.append(list(model.stages))
+        win._redo_stack.append(_snapshot())
         _restore_stages(win._undo_stack.pop())
         flash("undo (%d more)" % len(win._undo_stack))
 
     def redo():
         if not win._redo_stack:
             return
-        win._undo_stack.append(list(model.stages))
+        win._undo_stack.append(_snapshot())
         _restore_stages(win._redo_stack.pop())
         flash("redo (%d more)" % len(win._redo_stack))
     win._undo = undo
@@ -2561,11 +2583,15 @@ def build_window(model=None):
         if not confirm_discard("Load sample pipeline"):
             samples.blockSignals(True); samples.setCurrentIndex(0); samples.blockSignals(False)
             return
-        push_undo()
         try:
+            snap = [list(st) for st in model.stages]
             model.load_recipe(samples.itemText(idx))
         except Exception as e:
             report_error("Sample pipeline", e); return
+        win._undo_stack.append(snap)          # only a SUCCESSFUL load forks history
+        if len(win._undo_stack) > _UNDO_CAP:
+            del win._undo_stack[0]
+        win._redo_stack.clear(); _sync_undo_actions()
         mark_dirty()
         refresh_stage_list(select=len(model.stages) - 1)
         show_result()
@@ -3429,7 +3455,7 @@ def build_window(model=None):
             flash("load an image first — 3-D surface needs a height/depth map")
             return
         g = raw if raw.ndim == 2 else imgio.ensure_gray(raw)
-        surf = show_3d_surface(g, None)
+        surf = show_3d_surface(g, win)
         win._surf = surf
         if surf is None:                 # GL-less env (offscreen / Remote Desktop / no GPU)
             flash("3-D surface needs OpenGL — unavailable in this display session")
@@ -3702,9 +3728,15 @@ def build_window(model=None):
     win._open_system_settings = open_system_settings
 
     def _latest_evis_perception():
-        """Newest evis Fullseye-perception GIF (out/evis_fullseye*.gif), or None."""
+        """Newest evis Fullseye-perception GIF (<module>/out/evis_fullseye*.gif), or None."""
         import glob
-        cands = sorted(glob.glob(os.path.join("out", "evis_fullseye*.gif")), key=os.path.getmtime)
+        base = os.path.dirname(os.path.abspath(__file__))     # cwd-independent, like every asset
+        cands = glob.glob(os.path.join(base, "out", "evis_fullseye*.gif"))
+        try:
+            cands.sort(key=os.path.getmtime)
+        except OSError:                                       # a file vanished mid-sort
+            cands = [c for c in cands if os.path.exists(c)]
+            cands.sort(key=os.path.getmtime)
         return cands[-1] if cands else None
 
     def open_physical_ai_viewer():
@@ -3712,7 +3744,14 @@ def build_window(model=None):
         The control policy is trained on the GPU (MJX-PPO torque twin); Fullseye supplies the
         vision. Non-modal; shows a hint if no perception GIF has been generated yet."""
         gif = _latest_evis_perception()
+        prev = getattr(win, "_physical_ai_dialog", None)
+        if prev is not None:
+            try:
+                prev.close(); prev.deleteLater()             # one live viewer at a time
+            except RuntimeError:
+                pass                                          # already deleted by Qt
         dlg = QtWidgets.QDialog(win)
+        dlg.setAttribute(QtCore.Qt.WA_DeleteOnClose)          # closing frees dialog + movie
         dlg.setWindowTitle("Physical AI — evis RL walk, perceived by Fullseye")
         lay = QtWidgets.QVBoxLayout(dlg)
         cap = QtWidgets.QLabel("GPU-learned evis (MJX-PPO torque policy) → Fullseye vision: "
@@ -3724,6 +3763,7 @@ def build_window(model=None):
             mv = QtGui.QMovie(gif)
             view.setMovie(mv); mv.start()
             dlg._movie = mv                     # keep a reference so the animation is not GC'd
+            dlg.finished.connect(mv.stop)       # a closed viewer must stop decoding frames
             cap.setText(cap.text() + f"   —   {os.path.basename(gif)}")
         else:
             view.setText("知覚 GIF は未生成です。\n学習チェックポイントから "
@@ -3735,7 +3775,9 @@ def build_window(model=None):
     win._open_physical_ai_viewer = open_physical_ai_viewer
     win._latest_evis_perception = _latest_evis_perception
 
-    # restore persisted system settings (QSettings is in-memory under offscreen)
+    # restore persisted system settings. QSettings is NOT in-memory under offscreen —
+    # it always hits the real user store; the test suite redirects QSettings to a
+    # temporary INI (conftest fixture) so tests stay hermetic.
     _s_sys = QtCore.QSettings("Fullseye", "Studio"); _s_sys.beginGroup("system")
     _sv_to, _sv_th = _s_sys.value("operator_timeout_ms"), _s_sys.value("threads")
     _s_sys.endGroup()
@@ -3810,8 +3852,12 @@ def build_window(model=None):
         try:
             with open(path, encoding="utf-8") as fh:          # missing / permission
                 data = json.loads(fh.read())                  # malformed JSON
-            push_undo()
+            snap = [list(st) for st in model.stages]
             model.load_dict(data)                             # schema + op-name validation
+            win._undo_stack.append(snap)                      # fork history only on success
+            if len(win._undo_stack) > _UNDO_CAP:
+                del win._undo_stack[0]
+            win._redo_stack.clear(); _sync_undo_actions()
         except Exception as e:
             # load_dict validates into a temporary list before assigning, so the
             # pipeline currently on screen survives a bad file untouched.

@@ -162,7 +162,11 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
             if step_counter[0] % settle.every == 0:
                 grab()
             step_counter[0] += 1
-    settle.every = 8
+    # capture cadence: the run simulates ~21 s (~10.5k steps); grabbing every 8th step used to
+    # buffer ~1300 full-res PIL frames (~1.3 GB peak) and throw most of them away at save time.
+    # Estimate the total step count and thin AT CAPTURE so the buffer stays ~2x the GIF length.
+    est_steps = int((n_picks * 7.0 + 2.0) / dt)
+    settle.every = max(8, est_steps // max(1, int(2 * max_gif_frames)))
 
     def move_to(q_target, grip, secs):
         seg = max(1, int(secs / dt))

@@ -167,7 +167,9 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="rolling", roll_
         if int(m.geom_bodyid[g]) != 0:
             continue
         if int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_BOX:
-            terr_top = max(terr_top, float(d.geom_xpos[g][2] + m.geom_size[g][2]))
+            # static geoms: use the MODEL pose — d.geom_xpos is all-zero before mj_forward,
+            # which silently turned this branch into the constant 0.15
+            terr_top = max(terr_top, float(m.geom_pos[g][2] + m.geom_size[g][2]))
         elif int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_HFIELD:
             terr_top = max(terr_top, float(m.hfield_size[m.geom_dataid[g]][2]))   # hfield z_max
     d.qpos[2] = terr_top + 0.34                           # start clear of the terrain, then settle
@@ -343,7 +345,7 @@ def run_hurdle_physics(out_gif="out/hurdle_physics.gif", *, barrier_h=0.20, barr
     cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
     cam.distance = 2.6; cam.elevation = -14.0; cam.azimuth = 90.0
     frames = []; ts, base_x, base_z, ncons = [], [], [], []
-    step_i = [0]; peak = 0.30; cleared = False
+    step_i = [0]; peak = 0.30; cleared = False; prev_x = [float('nan')]
 
     def grab():
         cam.lookat[:] = [max(0.0, float(d.qpos[0])), 0, 0.25]
@@ -355,8 +357,14 @@ def run_hurdle_physics(out_gif="out/hurdle_physics.gif", *, barrier_h=0.20, barr
             d.ctrl[:] = get_ctrl()
             mujoco.mj_step(m, d)
             peak = max(peak, float(d.qpos[2]))
-            if float(d.qpos[0]) > barrier_x + 0.1:
-                cleared = True
+            x_now = float(d.qpos[0])
+            # 'cleared' = at the moment the base crosses the barrier plane it is inside the
+            # barrier's y-span (no sidestepping around the 0.6 m half-width) AND well above its
+            # top (genuinely over, not scraping). x>barrier_x alone also passed a walk-around.
+            if prev_x[0] == prev_x[0] and prev_x[0] <= barrier_x < x_now:
+                if abs(float(d.qpos[1])) < 0.55 and float(d.qpos[2]) > barrier_h + 0.15:
+                    cleared = True
+            prev_x[0] = x_now
             ts.append(step_i[0] * dt); base_x.append(float(d.qpos[0]))
             base_z.append(float(d.qpos[2])); ncons.append(int(d.ncon))
             if step_i[0] % max(1, int(3.6 / dt / max_gif_frames)) == 0:
@@ -464,7 +472,9 @@ def run_route_planning(out_gif="out/route_planning.gif", *, max_s=60.0, freq=1.8
         def score(ang):
             cl = clearance(px, py, ang)
             # reward clearance + alignment to goal; penalise sharp turns
-            return cl + 1.5 * np.cos(ang - goal_ang) - 0.3 * abs(ang - yaw)
+            # wrap the turn cost: yaw≈+π vs candidate≈−π is the SAME direction, not a 2π turn
+            dturn = abs((ang - yaw + np.pi) % (2 * np.pi) - np.pi)
+            return cl + 1.5 * np.cos(ang - goal_ang) - 0.3 * dturn
         # pyramid: coarse fan, then refine around the best
         coarse = np.linspace(goal_ang - 1.4, goal_ang + 1.4, 9)
         best = max(coarse, key=score)
@@ -479,30 +489,30 @@ def run_route_planning(out_gif="out/route_planning.gif", *, max_s=60.0, freq=1.8
     for _ in range(int(0.5 / dt)):
         d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
     roll, pitch = _rp(d.qpos[3:7]); reached = False; chosen = 0.0
-    path = []
-    for step in range(n_steps):
-        px, py = float(d.qpos[0]), float(d.qpos[1])
-        w_, x_, y_, z_ = d.qpos[3:7]; yaw = np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ * y_ + z_ * z_))
-        if step % 60 == 0:
-            chosen, goal_ang = plan(px, py, yaw)         # replan the route (perceive + pyramid search)
-        turn = np.clip(2.2 * ((chosen - yaw + np.pi) % (2 * np.pi) - np.pi), -1.2, 1.2)
-        q = _steer(home, step * dt, table, roll, pitch, turn, freq=freq)
-        d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
-        mujoco.mj_step(m, d); roll, pitch = _rp(d.qpos[3:7])
-        if step % 20 == 0:
-            path.append((px, py))
-        if d.qpos[2] < 0.12:
-            break
-        if np.hypot(goal[0] - px, goal[1] - py) < 0.4:
-            reached = True; break
-        if step % frame_every == 0:
-            cam.lookat[:] = [px * 0.5 + 3.0, py * 0.4, 0.2]
-            ren.update_scene(d, camera=cam)
-            _accum_frame(ren.render())
-    ren.close()
+    path = []; imgs = []
+    try:
+        for step in range(n_steps):
+            px, py = float(d.qpos[0]), float(d.qpos[1])
+            w_, x_, y_, z_ = d.qpos[3:7]; yaw = np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ * y_ + z_ * z_))
+            if step % 60 == 0:
+                chosen, goal_ang = plan(px, py, yaw)     # replan the route (perceive + pyramid search)
+            turn = np.clip(2.2 * ((chosen - yaw + np.pi) % (2 * np.pi) - np.pi), -1.2, 1.2)
+            q = _steer(home, step * dt, table, roll, pitch, turn, freq=freq)
+            d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+            mujoco.mj_step(m, d); roll, pitch = _rp(d.qpos[3:7])
+            if step % 20 == 0:
+                path.append((px, py))
+            if d.qpos[2] < 0.12:
+                break
+            if np.hypot(goal[0] - px, goal[1] - py) < 0.4:
+                reached = True; break
+            if step % frame_every == 0:
+                cam.lookat[:] = [px * 0.5 + 3.0, py * 0.4, 0.2]
+                ren.update_scene(d, camera=cam)
+                imgs.append(Image.fromarray(ren.render()))   # local — a crashed run can't leak
+    finally:
+        ren.close()                                      # release the GL context even on a blow-up
     reached_d = float(np.hypot(goal[0] - d.qpos[0], goal[1] - d.qpos[1]))
-
-    imgs = _ROUTE_FRAMES[:]; _ROUTE_FRAMES.clear()
     # top-down plan figure (obstacles, goal, taken path)
     png = os.path.splitext(out_gif)[0] + "_plan.png"
     bg, fgc, teal = "#12141b", "#e2e5ec", "#22d3bf"
@@ -589,14 +599,6 @@ def run_figure8(out_gif="out/figure8.gif", *, sizes=(3.0, 5.0), freq=1.3, width=
     spans = {round(a, 2): round(float(np.ptp(p[:, 0]) + np.ptp(p[:, 1])), 2) for a, p in tracks.items() if len(p)}
     log(f"figure-8: {out_gif} (+{os.path.basename(png)}) | sizes={list(tracks)} track_spans={spans}")
     return {"gif": out_gif, "tracks": png, "sizes": list(tracks), "track_spans": spans}
-
-
-_ROUTE_FRAMES = []
-
-
-def _accum_frame(arr):
-    from PIL import Image
-    _ROUTE_FRAMES.append(Image.fromarray(arr))
 
 
 def run_long_route(out_gif="out/long_route.gif", *, target_m=100.0, max_s=360.0, freq=2.0,

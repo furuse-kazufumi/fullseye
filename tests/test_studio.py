@@ -808,6 +808,18 @@ def test_dev_set_lut_and_clear_window_directives():
     assert view._item.pixmap().isNull()
 
 
+@pytest.fixture(autouse=True)
+def _hermetic_qsettings(tmp_path, monkeypatch):
+    """Point QSettings at a throwaway INI: without this, offscreen tests write the USER'S
+    real registry (measured residue: Fullseye/Studio/system/operator_timeout_ms=300) and a
+    later real Studio start restores a timeout nobody chose."""
+    from PySide6 import QtCore
+    QtCore.QSettings.setDefaultFormat(QtCore.QSettings.IniFormat)
+    QtCore.QSettings.setPath(QtCore.QSettings.IniFormat, QtCore.QSettings.UserScope,
+                             str(tmp_path / "qsettings"))
+    yield
+
+
 def test_system_settings_get_set_persist_and_fail_closed():
     """HALCON set_system-style config: thread_num applies to OpenCV, operator_timeout
     is stored, an unknown parameter is fail-closed, and the settings persist."""
@@ -827,7 +839,7 @@ def test_system_settings_get_set_persist_and_fail_closed():
         win._set_system_param("bogus_param", 1)
     with pytest.raises(ValueError):
         win._get_system_param("bogus_param")
-    # persistence: a fresh window restores the stored timeout (offscreen QSettings = in-memory)
+    # persistence: a fresh window restores the stored timeout (redirected to a temp INI by the fixture)
     win2, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
     assert win2._get_system_param("operator_timeout") == 250
 

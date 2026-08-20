@@ -54,9 +54,12 @@ def quadruped_trot(model, home_qpos, *, n_frames=60, cycles=1.5,
             ph = phase[leg]
             q[adrs["thigh"]] = home[adrs["thigh"]] + thigh_amp * math.sin(ph0 + ph)
             q[adrs["calf"]] = home[adrs["calf"]] + calf_amp * math.sin(ph0 + ph + 1.2)
-        if len(q) >= 3:
+        # root writes are only meaningful when the model actually HAS a floating base —
+        # on a fixed-base model q[0]/q[2] are joint angles and bob/travel would corrupt them.
+        has_free = model.njnt > 0 and int(model.jnt_type[0]) == 0    # mjJNT_FREE == 0
+        if has_free and len(q) >= 3:
             q[2] = home[2] + bob * abs(math.sin(2 * ph0))     # 胴体の上下バウンド
-        if travel and len(q) >= 1:
+        if has_free and travel and len(q) >= 1:
             frac = i / max(1, n_frames - 1)
             q[0] = home[0] + travel * (frac - 0.5)            # -travel/2 → +travel/2 前進
         traj.append(q)

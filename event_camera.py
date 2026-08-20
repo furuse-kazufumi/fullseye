@@ -48,8 +48,13 @@ def _render_pan(n_frames=24, res=360, az0=110, az1=170):
 
 
 def _events(frames, C=0.15):
-    """Standard DVS: threshold the per-pixel log-intensity change each step. Returns
-    accumulated (on_count, off_count) images and the total event count."""
+    """Simplified DVS: threshold the per-pixel log-intensity change each step. Returns
+    accumulated (on_count, off_count) images and the total event count.
+
+    Model simplifications vs real DVS hardware (kept deliberately, noted for honesty):
+    the reference resets to the CURRENT level (real pixels reset to the crossed
+    threshold, ref±C) and each step emits at most one event per pixel however large
+    the change — both make the event counts a systematic UNDER-estimate."""
     logs = [np.log(f.mean(axis=2) + 0.02) for f in frames]
     on = np.zeros_like(logs[0]); off = np.zeros_like(logs[0])
     ref = logs[0]                                                      # last-fired reference

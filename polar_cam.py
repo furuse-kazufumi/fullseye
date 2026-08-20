@@ -125,7 +125,7 @@ def run_polar_demo(out_png="out/polarization.png", *, log=print):
     ax[0, 0].imshow(np.clip(rgb, 0, 1)); ax[0, 0].set_title("intensity (ordinary camera)", color=fgc)
     im = ax[0, 1].imshow(np.where(fg, dolp_rec, np.nan), cmap="viridis", vmin=0, vmax=0.6)
     ax[0, 1].set_title("DoLP — degree of polarization (bright = grazing/specular)", color=fgc)
-    ax[1, 0].imshow(aolp_rgb); ax[1, 0].set_title(f"AoLP ⊗ DoLP (hue=angle) — matches the true azimuth →", color="#22d3bf")
+    ax[1, 0].imshow(aolp_rgb); ax[1, 0].set_title(f"AoLP ⊗ DoLP (hue=angle) — Stokes round-trip recovers the encoding →", color="#22d3bf")
     ax[1, 1].imshow(np.where(fg, np.mod(normal_az, 2 * np.pi), np.nan), cmap="twilight")
     ax[1, 1].set_title(f"true surface-normal azimuth — Stokes round-trip {cc:.2f}", color=fgc)
     fig.suptitle("Polarization camera — DoLP/AoLP reveal surface orientation without texture "

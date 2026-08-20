@@ -16,7 +16,9 @@ import warnings
 
 import numpy as np
 
-warnings.simplefilter("ignore")
+# (review 2026-08-21) do NOT silence warnings process-wide at import time —
+# the GUI imports this module, and a global ignore hid every legitimate
+# deprecation from the whole app. Suppression now happens only around op runs.
 
 import fullseye as fs                       # noqa: E402
 ops = fs.vision_ops                          # 統一 registry(F2/F3)
@@ -397,6 +399,10 @@ def compute_op(op, overrides=None):
     """op を合成入力(scalar は overrides で上書き)で実行し (status, result) を返す。
     描画はしない(2D は render_by_hint / 3D は viewer3d へ Studio が振り分ける)。"""
     overrides = overrides or {}
+    if getattr(op, "namespace", "") == "gsplat":
+        # heavy MuJoCo / 3DGS demo ops: never auto-run from a browser click — they render
+        # for minutes and write files. Same policy as synthesize_args (needs_input there).
+        return "gsplat デモ op は自動実行対象外(専用コマンドから実行)", None
     if getattr(op, "provenance", "") == "oss-adapter":
         return _run_oss_adapter(op, overrides)
     args = []
@@ -414,7 +420,9 @@ def compute_op(op, overrides=None):
         else:
             return "auto-input 不可", None
     try:
-        return "Run OK", op(*args)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")          # noisy numpy/scipy inside ops only
+            return "Run OK", op(*args)
     except Exception as e:  # noqa: BLE001
         return f"Run 失敗: {type(e).__name__}: {e}", None
 

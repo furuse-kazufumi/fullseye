@@ -134,14 +134,17 @@ class Scene:
         import numpy as np
         import scene_registry as R
         import sim_source as S
-        xml = open(self.spec["xml"], encoding="utf-8").read()
+        # load by PATH, not by text: menagerie scenes are <include>-based with relative
+        # assets, and from_xml_string cannot resolve either (measured: go2 scene fails with
+        # "Error opening file 'go2.xml'"). sim_source.MuJoCo accepts an .xml path directly.
+        xml = self.spec["xml"]
         mpath = R.motion(self.name, motion) if (motion or not gait) else None
         if mpath:
             qpos = np.load(mpath).astype(float)
         elif gait:
             import gaits as G
             import mujoco
-            m = mujoco.MjModel.from_xml_string(xml)
+            m = mujoco.MjModel.from_xml_path(xml)
             d = mujoco.MjData(m); mujoco.mj_forward(m, d)
             qpos = G.build(m, np.asarray(d.qpos), gait, n_frames=60)
             if qpos is None:

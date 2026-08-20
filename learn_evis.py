@@ -12,6 +12,14 @@ Honesty by construction: the reward terminates on a fall (absorbing state), so a
 topples scores low; the metric we report is the measured number of upright steps and metres
 walked by the *learned* policy versus the passive/random baseline — no kinematic replay.
 
+Method caveat (review 2026-08-21): ``random_start`` re-seeds every episode from a different
+mocap frame, so the mirrored pairs R(θ+σε) / R(θ−σε) are evaluated on DIFFERENT initial
+states — the antithetic variance reduction is diluted by start noise (the go2 figure-8
+trainer resets deterministically, where the trick is sound). The negative result reported
+from this file (CPU-ES never beat the passive baseline with any of 3 reward designs) stands
+on the shared-fate of all three runs plus the passive-collapse analysis, but a future retry
+should share the episode seed within each ± pair (common random numbers).
+
     # in the loco venv:
     py learn_evis.py train   out/evis_policy.npz --iters 60
     py learn_evis.py render  out/evis_walk.gif out/evis_policy.npz

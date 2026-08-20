@@ -96,7 +96,6 @@ def run_stereo_demo(out_png="out/stereo.png", *, max_disp=48, block=9, log=print
     reliable = valid & fin & (disp > 3) & (true_disp < max_disp)     # skip the 1/d blow-up tail
     corr = float(np.corrcoef(disp[reliable].ravel(), true_disp[reliable].ravel())[0, 1]) if reliable.sum() > 50 else 0.0
     med_err = float(np.median(np.abs(depth_est[reliable] - depth_gt[reliable]))) if reliable.sum() > 50 else float("nan")
-    good = valid
     coverage = float(reliable.sum() / max(1, fin.sum()))
 
     bg, fgc = "#12141b", "#e2e5ec"
@@ -108,7 +107,7 @@ def run_stereo_demo(out_png="out/stereo.png", *, max_disp=48, block=9, log=print
     ax[0, 0].imshow(np.clip(lr, 0, 1)); ax[0, 0].set_title("stereo pair (L=red, R=cyan)", color=fgc)
     dd = np.where(valid, disp, np.nan)
     im1 = ax[0, 1].imshow(dd, cmap="turbo"); ax[0, 1].set_title(f"disparity (block matching, ≤{max_disp}px)", color=fgc)
-    im2 = ax[1, 0].imshow(np.where(good | valid, depth_est, np.nan), cmap="turbo_r")
+    im2 = ax[1, 0].imshow(np.where(valid, depth_est, np.nan), cmap="turbo_r")
     ax[1, 0].set_title(f"estimated depth  Z=f·b/d  (corr {corr:.2f})", color="#22d3bf")
     ax[1, 1].imshow(np.where(np.isfinite(depth_gt), depth_gt, np.nan), cmap="turbo_r")
     ax[1, 1].set_title(f"true depth (MuJoCo) — median err {med_err*100:.1f} cm", color=fgc)
