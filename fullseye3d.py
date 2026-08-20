@@ -193,6 +193,15 @@ def jump_physics(out_gif="out/jump_physics.gif", **kw):
     return WP.run_jump_physics(out_gif, **kw)
 
 
+def hurdle_physics(out_gif="out/hurdle_physics.gif", **kw):
+    """go2 が助走→爆発跳躍で障害物(バリア)を越え向こう側へ着地する本物の物理の走幅跳。
+    摩擦・重力・接触を mj_step で解く。GIF＋軌道テレメトリ(GPU 不要)。
+    戻り値 dict(cleared / success / final_x / peak_z、実測値)。
+    """
+    import walk_physics as WP
+    return WP.run_hurdle_physics(out_gif, **kw)
+
+
 def pick_gif(out_gif="out/panda_pick.gif", **kw):
     """ロボットアームが実接触・摩擦でキューブを把持し別位置へ置く pick-and-place を
     headless GIF 化(GPU 不要)。戻り値 dict(lift_m / grasped / placed_z など、実測値)。

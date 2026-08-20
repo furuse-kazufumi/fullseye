@@ -189,3 +189,25 @@ def test_jump_physics_leaves_ground(tmp_path):
     assert os.path.isfile(out) and os.path.getsize(out) > 0
     assert r["left_ground"] is True                          # genuine ballistic flight
     assert r["airtime_s"] > 0.1 and r["jump_height_m"] > 0.1
+
+
+def test_hurdle_physics_op_registered():
+    import unified as u
+    assert "hurdle_physics" in u.ops
+
+
+def test_hurdle_physics_clears_barrier(tmp_path):
+    """go2 が助走→物理ジャンプで障害物を越え、向こう側に自立着地する(実測)。"""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        import pytest
+        pytest.skip("mujoco 未インストール")
+    import walk_physics as WP
+    if not os.path.exists(WP._GO2):
+        import pytest
+        pytest.skip("mujoco_menagerie(go2)未取得")
+    out = str(tmp_path / "hurdle.gif")
+    r = WP.run_hurdle_physics(out, width=200, height=150, max_gif_frames=20, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["success"] is True and r["cleared"] is True and r["upright"] is True
