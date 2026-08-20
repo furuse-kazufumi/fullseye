@@ -62,17 +62,56 @@ def _build(terrain="bumps", amp=0.05, n=14, half=2.2, roll_scale=1.0):
     return spec.compile()
 
 
-def _trot(home, t, *, freq=1.8, a_th=0.35, a_cf=0.5, lift=0.3):
-    """PD position targets for a trot gait around the standing pose *home* (12-vec).
+def _leg_ik_table(m, *, samples=48, stride=0.12, stand=0.27, lift=0.06):
+    """Pre-solve (thigh, calf) joint targets for one foot cycle by 2-link IK so the
+    foot follows a proper walking trajectory: planted and **retracting front→back
+    during stance** (propels the body forward, +x), lifted and swinging back→front
+    during swing. Solved against the real model FK (a scratch MjData) with a fixed
+    local inverse-Jacobian Newton step — so the robot walks **head-first**, not by a
+    paddling artifact. Returns thigh[samples], calf[samples] indexed by phase."""
+    import mujoco
+    dk = mujoco.MjData(m)
+    hip = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "FL_thigh")
+    knee = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "FL_calf")
+    fg = [g for g in range(m.ngeom) if int(m.geom_bodyid[g]) == knee
+          and int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_SPHERE][0]
+    th_adr, cf_adr = 8, 9                                          # FL thigh / calf qpos indices
 
-    The thigh's fore-aft swing sign is negated so the robot walks **head-first (+x**,
-    where FL/FR are) rather than rump-first."""
+    def foot_rel(th, cf):
+        mujoco.mj_resetDataKeyframe(m, dk, 0)
+        dk.qpos[th_adr] = th; dk.qpos[cf_adr] = cf
+        mujoco.mj_kinematics(m, dk); mujoco.mj_comPos(m, dk)
+        r = dk.geom_xpos[fg] - dk.xpos[hip]
+        return np.array([float(r[0]), float(r[2])])               # (x fwd, z up)
+
+    Jinv = np.array([[-3.846, 3.125], [0.0, -6.25]])              # local inverse Jacobian (calibrated)
+    th0, cf0 = 0.9, -1.8
+    thigh = np.zeros(samples); calf = np.zeros(samples)
+    for i in range(samples):
+        ph = 2 * np.pi * i / samples
+        if ph < np.pi:                                            # stance: front → back, foot down
+            u = ph / np.pi; px = stride / 2 - stride * u; pz = -stand
+        else:                                                     # swing: back → front, foot lifts
+            u = (ph - np.pi) / np.pi; px = -stride / 2 + stride * u; pz = -stand + lift * np.sin(np.pi * u)
+        th, cf = th0, cf0
+        for _ in range(6):                                        # Newton IK against real FK
+            err = np.array([px, pz]) - foot_rel(th, cf)
+            d = Jinv @ err
+            th += float(np.clip(d[0], -0.4, 0.4)); cf += float(np.clip(d[1], -0.4, 0.4))
+        thigh[i], calf[i] = th, cf
+    return thigh, calf
+
+
+def _trot(home, t, table, *, freq=1.8):
+    """PD position targets: index the pre-solved IK gait table by each leg's phase
+    (diagonal pairs share a phase). Hips held at the stance value."""
+    thigh, calf = table
+    ns = len(thigh)
     q = home.copy()
     for leg, b in _LEGS.items():
-        ph = 2 * np.pi * freq * t + _PHASE[leg]
-        s = np.sin(ph); sw = max(0.0, s)                  # swing during the positive half
-        q[b + 1] = home[b + 1] - a_th * s + lift * sw     # thigh: swing (fwd) + lift on swing
-        q[b + 2] = home[b + 2] - a_cf * sw                # calf: tuck on swing
+        ph = (2 * np.pi * freq * t + _PHASE[leg]) % (2 * np.pi)
+        idx = int(ph / (2 * np.pi) * ns) % ns
+        q[b + 1] = thigh[idx]; q[b + 2] = calf[idx]
     return q
 
 
