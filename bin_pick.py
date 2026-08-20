@@ -34,6 +34,8 @@ def _build(n_cubes, seed):
     """Panda + a walled bin + n free cubes, composed with MjSpec. Returns (model, box_qadrs)."""
     import mujoco
     spec = mujoco.MjSpec.from_file(_PANDA_SCENE)
+    spec.visual.global_.offwidth = 1280                          # allow larger offscreen frames
+    spec.visual.global_.offheight = 960
     wb = spec.worldbody
     cx, cy = _BIN_C
     t = 0.006                                                     # wall thickness
