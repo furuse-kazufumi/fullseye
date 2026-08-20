@@ -164,9 +164,13 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="rolling", roll_
     # it settle onto the surface before walking (rolling is tall, so drop from higher).
     terr_top = 0.0
     for g in range(m.ngeom):
-        if int(m.geom_bodyid[g]) == 0 and int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_BOX:
+        if int(m.geom_bodyid[g]) != 0:
+            continue
+        if int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_BOX:
             terr_top = max(terr_top, float(d.geom_xpos[g][2] + m.geom_size[g][2]))
-    d.qpos[2] = terr_top + 0.32
+        elif int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_HFIELD:
+            terr_top = max(terr_top, float(m.hfield_size[m.geom_dataid[g]][2]))   # hfield z_max
+    d.qpos[2] = terr_top + 0.34                           # start clear of the terrain, then settle
     dt = float(m.opt.timestep)
     table = _leg_ik_table(m)                              # pre-solve the forward-walk gait
     for _ in range(int(0.6 / dt)):                        # settle onto the terrain (hold stance)
