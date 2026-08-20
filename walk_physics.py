@@ -20,14 +20,16 @@ _LEGS = {"FL": 0, "FR": 3, "RL": 6, "RR": 9}          # index of each leg's hip 
 _PHASE = {"FL": 0.0, "RR": 0.0, "FR": np.pi, "RL": np.pi}   # trot: diagonal pairs in phase
 
 
-def _build(terrain="bumps", amp=0.05, n=14, half=2.2):
-    """Go2 + a collidable terrain (real contact). ``terrain='flat'`` uses the plain floor."""
+def _build(terrain="bumps", amp=0.05, n=14, half=2.2, roll_scale=1.0):
+    """Go2 + a collidable terrain (real contact). ``terrain='flat'`` uses the plain floor,
+    ``'bumps'`` a gentle procedural field, ``'rolling'`` the registry's steep undulating
+    terrain (heights scaled by *roll_scale*; the raw amplitude is ~0.3 m = very rough)."""
     import mujoco
     spec = mujoco.MjSpec.from_file(_GO2)
     spec.visual.global_.offwidth = 1280
     spec.visual.global_.offheight = 960
+    wb = spec.worldbody
     if terrain == "bumps":
-        wb = spec.worldbody
         cell = 2 * half / n
         for i in range(n):
             for j in range(n):
@@ -39,6 +41,24 @@ def _build(terrain="bumps", amp=0.05, n=14, half=2.2):
                 shade = 0.5 - 1.2 * float(h)
                 g.rgba = [0.55, np.clip(shade, 0.2, 0.7), 0.4, 1.0]
                 g.contype = 1; g.conaffinity = 1
+    elif terrain == "rolling":
+        import re
+        import scene_registry as R
+        xml = R.resolve("rolling")["xml"]
+        body = open(xml, encoding="utf-8").read().split("<worldbody>", 1)[1].rsplit("</worldbody>", 1)[0]
+        for tag in re.findall(r"<geom[^>]*/>", body):
+            def at(nm, d=None):
+                mm = re.search(rf'{nm}="([^"]*)"', tag)
+                return mm.group(1) if mm else d
+            if (at("type") or "box") != "box":
+                continue
+            sz = [float(v) for v in at("size", "0.05 0.05 0.05").split()]
+            po = [float(v) for v in at("pos", "0 0 0").split()]
+            rg = [float(v) for v in at("rgba", "0.4 0.4 0.4 1").split()]
+            g = wb.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_BOX
+            g.size = [sz[0], sz[1], max(0.01, sz[2] * roll_scale)]
+            g.pos = [po[0], po[1], po[2] * roll_scale]        # scale height (keep footprint)
+            g.rgba = rg; g.contype = 1; g.conaffinity = 1     # collidable (real contact)
     return spec.compile()
 
 
