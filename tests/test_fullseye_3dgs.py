@@ -112,3 +112,28 @@ def test_sensor_fusion_beats_single_sensors(tmp_path):
     assert r["fused_wins"] is True
     assert rmse["kalman_fused"] < rmse["position_sensor_only"]
     assert rmse["kalman_fused"] < rmse["imu_dead_reckoning"]
+
+
+def test_bin_pick_op_registered():
+    import unified as u
+    assert "bin_pick_gif" in u.ops
+
+
+def test_bin_pick_headless_picks(tmp_path):
+    """バラ積みピッキングが headless で通り、実際に部品を bin から取り出す(グルー無し)。
+
+    成功数は部品が bin を出たかで数える実測値。Menagerie/mujoco 不在なら skip。"""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        import pytest
+        pytest.skip("mujoco 未インストール")
+    import bin_pick as BP
+    if not os.path.exists(BP._PANDA_SCENE):
+        import pytest
+        pytest.skip("mujoco_menagerie(panda)未取得")
+    out = str(tmp_path / "bin.gif")
+    r = BP.render_bin_pick_gif(out, n_cubes=8, n_picks=3, width=320, height=240,
+                               max_gif_frames=40, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["n_picked"] >= 2                                 # at least 2 of 3 attempts succeed
