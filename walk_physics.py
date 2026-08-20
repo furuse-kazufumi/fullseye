@@ -235,7 +235,83 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="rolling", roll_
             "dynamic": bool((pr[1] - pr[0]) > 2.0 and upright)}
 
 
+def run_jump_physics(out_gif="out/jump_physics.gif", *, terrain="flat", width=640, height=480,
+                     fps=30, max_gif_frames=90, log=print):
+    """Genuine-physics vertical jump: crouch → explosive leg extension → **ballistic
+    flight** (all four feet leave the ground — verified by zero contacts) → landing.
+    Torque-actuated, friction + gravity resolved by mj_step. Returns the measured jump
+    height and airtime (a real leap, not a scripted hop)."""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        raise RuntimeError("mujoco 未インストール")
+    import mujoco
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    m = _build(terrain); d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
+    stand = m.key_qpos[0][7:].copy()
+    crouch = stand.copy(); extend = stand.copy()
+    for b in (0, 3, 6, 9):
+        crouch[b + 1] = 1.5; crouch[b + 2] = -2.6            # deep fold (load the legs)
+        extend[b + 1] = 0.3; extend[b + 2] = -0.6            # near-full extension (push off)
+    dt = float(m.opt.timestep)
+    stand_z = 0.27
+    # phase schedule: (target, kp, kd, seconds)
+    phases = [(stand, 60, 3, 0.4), (crouch, 60, 3, 0.5), (extend, 250, 2, 0.12),
+              (stand, 80, 4, 1.4)]
+    n_steps = int(sum(p[3] for p in phases) / dt)
+    frame_every = max(1, n_steps // int(max_gif_frames))
+    ren = mujoco.Renderer(m, height=height, width=width)
+    cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+    cam.lookat[:] = [0, 0, 0.3]; cam.distance = 2.1; cam.elevation = -12.0; cam.azimuth = 90.0
+
+    frames = []; ts, base_z, ncons = [], [], []
+    peak = stand_z; airborne = 0; step_i = 0
+    for target, pkp, pkd, secs in phases:
+        for _ in range(int(secs / dt)):
+            d.ctrl[:] = pkp * (target - d.qpos[7:]) - pkd * d.qvel[6:]
+            mujoco.mj_step(m, d)
+            z = float(d.qpos[2]); peak = max(peak, z)
+            ts.append(step_i * dt); base_z.append(z); ncons.append(int(d.ncon))
+            if d.ncon == 0:
+                airborne += 1
+            if step_i % frame_every == 0:
+                cam.lookat[2] = 0.3 + 0.5 * (z - stand_z)     # tilt up to follow the leap
+                ren.update_scene(d, camera=cam)
+                frames.append(Image.fromarray(ren.render()))
+            step_i += 1
+    ren.close()
+
+    jump_h = peak - stand_z; airtime = airborne * dt
+    png = os.path.splitext(out_gif)[0] + "_telemetry.png"
+    bg, fgc, teal = "#12141b", "#e2e5ec", "#22d3bf"
+    fig, ax = plt.subplots(figsize=(9, 3.6), facecolor=bg)
+    ax.set_facecolor(bg); ax.tick_params(colors="#8b91a0"); ax.grid(True, color="#2c313f", lw=0.5)
+    for s in ax.spines.values():
+        s.set_color("#2c313f")
+    ax.plot(ts, base_z, color=teal, lw=2.0)
+    air = np.array(ncons) == 0
+    ax.fill_between(ts, 0, base_z, where=air, color="#f5a524", alpha=0.35, label=f"airborne (0 contacts) {airtime:.2f}s")
+    ax.axhline(stand_z, color="#8b91a0", ls=":", lw=1)
+    ax.set_xlabel("time (s)", color=fgc); ax.set_ylabel("base height (m)", color=fgc)
+    ax.set_title(f"Genuine-physics jump — peak {peak:.2f} m (leap {jump_h*100:.0f} cm), airtime {airtime:.2f} s", color=fgc)
+    ax.legend(facecolor=bg, edgecolor="#2c313f", labelcolor=fgc, fontsize=9)
+    fig.tight_layout(); fig.savefig(png, dpi=115, facecolor=bg); plt.close(fig)
+
+    frames[0].save(out_gif, save_all=True, append_images=frames[1:],
+                   duration=int(1000 / max(1, fps)), loop=0)
+    log(f"jump physics: {out_gif} (+{os.path.basename(png)}) | peak_z={peak:.3f} "
+        f"jump_height={jump_h*100:.0f}cm airtime={airtime:.2f}s (0-contact flight)")
+    return {"gif": out_gif, "telemetry": png, "peak_z": peak, "jump_height_m": jump_h,
+            "airtime_s": airtime, "left_ground": bool(airtime > 0.1)}
+
+
 if __name__ == "__main__":
     import sys
-    out = sys.argv[1] if len(sys.argv) > 1 else "out/walk_physics.gif"
-    print(run_walk_physics(out, log=lambda s: print(s, flush=True)))
+    mode = sys.argv[1] if len(sys.argv) > 1 else "walk"
+    out = sys.argv[2] if len(sys.argv) > 2 else f"out/{'jump' if mode=='jump' else 'walk'}_physics.gif"
+    fn = run_jump_physics if mode == "jump" else run_walk_physics
+    print(fn(out, log=lambda s: print(s, flush=True)))
