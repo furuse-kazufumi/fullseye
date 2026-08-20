@@ -150,6 +150,7 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_sc
             terr_top = max(terr_top, float(d.geom_xpos[g][2] + m.geom_size[g][2]))
     d.qpos[2] = terr_top + 0.32
     dt = float(m.opt.timestep)
+    table = _leg_ik_table(m)                              # pre-solve the forward-walk gait
     for _ in range(int(0.6 / dt)):                        # settle onto the terrain (hold stance)
         d.ctrl[:] = kp * (home - d.qpos[7:]) - kd * d.qvel[6:]
         mujoco.mj_step(m, d)
