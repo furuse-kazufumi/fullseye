@@ -80,9 +80,9 @@ def _rp(quat):
     return np.degrees(roll), np.degrees(pitch)
 
 
-def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", secs=6.0, kp=40.0,
-                     kd=2.0, freq=1.8, width=640, height=480, fps=30, max_gif_frames=110,
-                     log=print):
+def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_scale=1.0,
+                     secs=6.0, kp=40.0, kd=2.0, freq=1.8, width=640, height=480, fps=30,
+                     max_gif_frames=110, log=print):
     """Simulate a genuine-physics trot and save a GIF + a telemetry plot next to it.
     Returns honest dynamics stats (upright, forward distance, pitch/roll range)."""
     import importlib.util
