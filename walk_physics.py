@@ -498,9 +498,7 @@ def run_route_planning(out_gif="out/route_planning.gif", *, max_s=60.0, freq=1.8
         if step % frame_every == 0:
             cam.lookat[:] = [px * 0.5 + 3.0, py * 0.4, 0.2]
             ren.update_scene(d, camera=cam)
-            frames_img = ren.render(); frames = globals().setdefault("_rp_frames", None)
-            (path and None)
-            _accum_frame(frames_img)
+            _accum_frame(ren.render())
     ren.close()
     reached_d = float(np.hypot(goal[0] - d.qpos[0], goal[1] - d.qpos[1]))
 
