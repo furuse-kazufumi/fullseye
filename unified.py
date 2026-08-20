@@ -404,6 +404,9 @@ _3DGS_OPS = [
     ("sensor_fusion", "sensor_fusion", "run_fusion_demo",
      "位置センサ(カメラ/GPS)と速度センサ(IMU)を Kalman フィルタで融合し投射体を追跡。"
      "融合 RMSE を各センサ単体と正直に比較した図を生成(GPU不要)", "perception"),
+    ("bin_pick_gif", "bin_pick", "render_bin_pick_gif",
+     "バラ積みされた部品を候補スコアリングで選び 6DoF IK で上面把持し bin から取り出す "
+     "bin-picking を headless で GIF 化(GPU不要・成功数は部品が bin を出たかで実測)", "animation"),
 ]
 
 
