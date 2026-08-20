@@ -155,6 +155,16 @@ class Scene:
         return S.launch_animation(xml, qpos, title=f"{self.name}", static_mesh=static)
 
 
+def evis_rl_perceive(qpos_npy, xml="C:/dev/projects/ms_human_700_jaw/scene_full_mjx.xml",
+                     out_gif="out/evis_fullseye.gif", **kw):
+    """Fullseye leverages the GPU-learned evis: take its physics rollout (a qpos trajectory
+    from the MJX-PPO policy) and PERCEIVE it with Fullseye's unified vision — RGB, metric
+    depth, and DVS events side by side. The control is learned on the GPU; the *seeing* is
+    Fullseye's job. Returns honest perception stats. See ``evis_fullseye_bridge``."""
+    import evis_fullseye_bridge as B
+    return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, **kw)
+
+
 def demo_world_walk(terrain_name="rolling", **kw):
     """『起伏地形メッシュの上を evis がメッシュで歩く』を1呼び出しで(既定 TSDF=GPU不要)。"""
     terrain = Scene(terrain_name).mesh(**kw)
