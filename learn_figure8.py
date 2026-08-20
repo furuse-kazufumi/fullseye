@@ -339,7 +339,7 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
             if kidx >= K:
                 break
             if use_mpc and step % replan_every == 0:
-                turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx,
+                turn, fan = pyramid_action(m, d, table, home, layers, wps, kidx, size,
                                            H=look_H, ctrl_every=ctrl_every)
                 fans.append((pos.copy(), fan))
             else:
