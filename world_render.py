@@ -89,6 +89,39 @@ def _terrain_height(m, d, x, y, geomgroup):
     return (3.0 - dist) if dist >= 0 else 0.0
 
 
+_FOOT_HINTS = ("foot", "calf", "shank", "lower_leg", "lowerleg", "toe", "wheel")
+
+
+def _foot_geoms(m):
+    """歩行体の接地点になりうる geom(足先/下腿)の id を返す。名前で拾えないモデルでは
+    「地形(group1)以外の全 geom」にフォールバック(=最下点で接地判定)。"""
+    import mujoco
+    ids = []
+    for g in range(m.ngeom):
+        b = int(m.geom_bodyid[g])
+        nm = (mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_BODY, b) or "").lower()
+        if any(h in nm for h in _FOOT_HINTS):
+            ids.append(g)
+    if not ids:                                            # 名前で拾えない→terrain以外を全部
+        ids = [g for g in range(m.ngeom) if int(m.geom_group[g]) != 1]
+    return ids
+
+
+def _ground_snap(m, d, foot_ids, ggroup):
+    """各足 geom 直下の terrain 高さにレイを落とし、最も低い足がちょうど接地するのに必要な
+    root z の下げ量(=足底と地形の最小ギャップ)を返す。d は事前に mj_forward 済みのこと。"""
+    import mujoco
+    min_gap = None
+    for g in foot_ids:
+        fx, fy, fz = d.geom_xpos[g]
+        bottom = float(fz) - float(m.geom_rbound[g])       # 足 geom の最下点(外接球半径)
+        tz = _terrain_height(m, d, fx, fy, ggroup)
+        gap = bottom - tz
+        if min_gap is None or gap < min_gap:
+            min_gap = gap
+    return min_gap if min_gap is not None else 0.0
+
+
 def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, gait=None,
                     z_offset=0.0, travel=0.0, track=None, ground_follow=None, foot_clear=0.02,
                     n_frames=90, width=640, height=480,
