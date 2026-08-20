@@ -80,18 +80,21 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=12
     d.qvel[:] = 0.0
     d.ctrl[:7] = _HOME_ARM; d.ctrl[7] = _GRIP_OPEN
     mujoco.mj_forward(m, d)
-    hand_id = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "hand")
+    lf = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "left_finger")
+    rf = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "right_finger")
+    ids = [lf, rf]
     rest_z = _cube_z(d, box_qadr)
     bx, by = float(d.qpos[box_qadr]), float(d.qpos[box_qadr + 1])
 
     dt = float(m.opt.timestep)
-    lift_top = 0.42
-    # (hand-goal, gripper, seconds). None goal → hold last goal (settle).
+    lift_top = 0.40
+    grasp_z = rest_z + 0.015                                       # finger midpoint straddles the cube
+    # (grasp-point goal, gripper, seconds).
     phases = [
-        ((bx, by, 0.32), _GRIP_OPEN, 1.2),                        # move above cube
-        ((bx, by, rest_z + _GRASP_H), _GRIP_OPEN, 1.2),           # descend around it
-        ((bx, by, rest_z + _GRASP_H), _GRIP_OPEN, 0.3),           # settle
-        ((bx, by, rest_z + _GRASP_H), _GRIP_SHUT, 0.8),           # close (grasp)
+        ((bx, by, 0.22), _GRIP_OPEN, 1.2),                        # move above cube
+        ((bx, by, grasp_z), _GRIP_OPEN, 1.3),                     # descend around it
+        ((bx, by, grasp_z), _GRIP_OPEN, 0.3),                     # settle
+        ((bx, by, grasp_z), _GRIP_SHUT, 0.8),                     # close (grasp)
         ((bx, by, lift_top), _GRIP_SHUT, 1.4),                    # lift straight up
         ((bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_SHUT, 1.5),  # carry aside
         ((bx + place_offset[0], by + place_offset[1], lift_top), _GRIP_SHUT, 0.3),  # steady
