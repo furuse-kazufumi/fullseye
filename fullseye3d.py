@@ -201,3 +201,11 @@ def bin_pick_gif(out_gif="out/bin_pick.gif", n_cubes=8, n_picks=3, **kw):
     """
     import bin_pick as BP
     return BP.render_bin_pick_gif(out_gif, n_cubes=n_cubes, n_picks=n_picks, **kw)
+
+
+def lidar_scan(out_png="out/lidar.png", **kw):
+    """スピニング LIDAR を mj_ray の実レイキャストでシミュレートし点群を可視化
+    (GPU 不要)。戻り値 dict(n_points / hit_ratio / mean_range_m、実測値)。
+    """
+    import lidar_sim as LS
+    return LS.run_lidar_demo(out_png, **kw)
