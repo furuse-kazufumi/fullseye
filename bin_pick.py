@@ -190,22 +190,17 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
         if cand is None:
             break
         cx, cy, cz = cand
-        approach = (cx, cy, cz + 0.14)
-        q_app = solve(approach, d.qpos[:7]); move_to(q_app, _GRIP_OPEN, 1.1)
+        goto((cx, cy, cz + 0.14), _GRIP_OPEN, 1.1)             # hover above the cube
         # re-read the cube after the hover (the pile may have shifted), then descend
-        # deeper than the target to beat the position-servo droop, and let the arm
-        # arrive before closing — grasping a cube in clutter is unforgiving.
+        # closed-loop so the fingers actually reach the cube in the clutter.
         qa = box_qadrs[cand_i]
         cx, cy, cz = float(d.qpos[qa]), float(d.qpos[qa + 1]), float(d.qpos[qa + 2])
-        grasp = (cx, cy, cz + 0.02)                             # finger midpoint down around the cube
-        clear = (cx, cy, rim_z + 0.22)
-        drop = (place[0], place[1], rim_z + 0.22)
-        q_gr = solve(grasp, d.qpos[:7]); move_to(q_gr, _GRIP_OPEN, 1.1)
-        settle(int(0.35 / dt), _GRIP_OPEN)                      # arrive before closing
-        move_to(q_gr, _GRIP_SHUT, 0.8)                          # close
-        q_cl = solve(clear, d.qpos[:7]); move_to(q_cl, _GRIP_SHUT, 1.1)  # lift clear of rim
-        q_dr = solve(drop, d.qpos[:7]); move_to(q_dr, _GRIP_SHUT, 1.2)   # carry to drop zone
-        move_to(q_dr, _GRIP_OPEN, 0.5)                          # release
+        goto((cx, cy, cz + 0.05), _GRIP_OPEN, 1.0, iters=3)    # finger midpoint around the cube
+        settle(int(0.3 / dt), _GRIP_OPEN)                      # arrive before closing
+        move_to(d.ctrl[:7].copy(), _GRIP_SHUT, 0.8)           # close on the cube
+        goto((cx, cy, rim_z + 0.22), _GRIP_SHUT, 1.1)         # lift clear of rim
+        goto((place[0], place[1], rim_z + 0.22), _GRIP_SHUT, 1.2)  # carry to drop zone
+        move_to(d.ctrl[:7].copy(), _GRIP_OPEN, 0.5)           # release
         # earned success: cube left the bin (moved to the place zone / cleared rim)
         fx, fy, fz = d.qpos[box_qadrs[cand_i]], d.qpos[box_qadrs[cand_i] + 1], d.qpos[box_qadrs[cand_i] + 2]
         out_of_bin = abs(fx - _BIN_C[0]) > _BIN_HALF or abs(fy - _BIN_C[1]) > _BIN_HALF
