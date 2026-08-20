@@ -316,7 +316,7 @@ def pyramid_action(m, d, table, home, layers, wps, kidx, size, *, ncoarse=5, nfi
 
 
 def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.0,
-                   replan_every=48, ctrl_every=12, look_H=0.6, collect=True, log=None):
+                   replan_every=120, ctrl_every=12, look_H=0.5, collect=True, log=None):
     """Run the learned controller (optionally wrapped by pyramid-search MPC) on a figure-8
     of the given size, under genuine physics. Returns completion + the taken path + a few
     recorded search fans. This is the deployment used for rendering and the honest metrics."""
