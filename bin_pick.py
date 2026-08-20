@@ -176,7 +176,7 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
         return _ik_solve(mujoco, m, dk, hand_id, hand_goal_for(grasp_pt), quat_t, seed_q)
 
     def fmid():
-        return 0.5 * (d.xpos[lf] + d.xpos[rf])
+        return grasp_center()
 
     def goto(grasp_pt, grip, secs, iters=1):
         """Move the **grasp point** (finger midpoint) to *grasp_pt*, closed-loop: the
