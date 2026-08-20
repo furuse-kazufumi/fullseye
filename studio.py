@@ -1624,6 +1624,13 @@ def build_window(model=None):
     menu_tools.addAction(act_system_settings)
     win._act_system_settings = act_system_settings
     menu_tools.addSeparator()
+    act_physical_ai = QtGui.QAction("Physical AI: evis RL walk (Fullseye perception)…", win)
+    act_physical_ai.setToolTip("Play the GPU-learned evis walk as Fullseye perceives it "
+                               "(RGB · depth · DVS events)")
+    act_physical_ai.triggered.connect(lambda: win._open_physical_ai_viewer())
+    menu_tools.addAction(act_physical_ai)
+    win._act_physical_ai = act_physical_ai
+    menu_tools.addSeparator()
     lang_menu = _menu(menu_tools, "Language / 言語 / 语言", "language")  # UI/help language = a preference, not Help
     m = _menu(mb, "&Help", "help")
     m.addAction(act_op_help); m.addAction(act_samples); m.addSeparator()
