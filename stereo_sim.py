@@ -88,11 +88,16 @@ def run_stereo_demo(out_png="out/stereo.png", *, max_disp=48, block=9, log=print
     depth_est = np.full_like(disp, np.nan)
     depth_est[valid] = f_px * _BASELINE / disp[valid]
 
-    # score where we have both an estimate and finite ground truth (ignore sky/floor-far)
-    good = valid & np.isfinite(depth_gt) & (depth_gt > 0) & (depth_gt < depth_gt[np.isfinite(depth_gt)].max() * 0.98)
-    corr = float(np.corrcoef(depth_est[good].ravel(), depth_gt[good].ravel())[0, 1]) if good.sum() > 50 else 0.0
-    med_err = float(np.median(np.abs(depth_est[good] - depth_gt[good]))) if good.sum() > 50 else float("nan")
-    coverage = float(good.sum() / max(1, (np.isfinite(depth_gt) & (depth_gt > 0)).sum()))
+    # Correlate in DISPARITY space (bounded 0..max_disp) rather than depth: depth = f·b/d
+    # blows up as d→0, and a handful of far-outlier pixels would otherwise crush a
+    # depth-space Pearson r even when the disparity map is clearly correct.
+    fin = np.isfinite(depth_gt) & (depth_gt > 0)
+    true_disp = np.where(fin, f_px * _BASELINE / np.where(fin, depth_gt, 1), 0)
+    reliable = valid & fin & (disp > 3) & (true_disp < max_disp)     # skip the 1/d blow-up tail
+    corr = float(np.corrcoef(disp[reliable].ravel(), true_disp[reliable].ravel())[0, 1]) if reliable.sum() > 50 else 0.0
+    med_err = float(np.median(np.abs(depth_est[reliable] - depth_gt[reliable]))) if reliable.sum() > 50 else float("nan")
+    good = valid
+    coverage = float(reliable.sum() / max(1, fin.sum()))
 
     bg, fgc = "#12141b", "#e2e5ec"
     fig, ax = plt.subplots(2, 2, figsize=(11, 9.4), facecolor=bg)
