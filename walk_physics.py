@@ -183,9 +183,11 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="rolling", roll_
     frames = []
     ts, base_z, rolls, pitches, ncons = [], [], [], [], []
     upright = True
+    roll, pitch = _rp(d.qpos[3:7])
     for step in range(n_steps):
         t = step * dt
-        d.ctrl[:] = kp * (_trot(home, t, table, freq=freq) - d.qpos[7:]) - kd * d.qvel[6:]
+        tgt = _control(home, t, table, roll, pitch, freq=freq)   # balance feedback (prev attitude)
+        d.ctrl[:] = kp * (tgt - d.qpos[7:]) - kd * d.qvel[6:]
         mujoco.mj_step(m, d)
         roll, pitch = _rp(d.qpos[3:7])
         ts.append(t); base_z.append(float(d.qpos[2])); rolls.append(roll); pitches.append(pitch)
