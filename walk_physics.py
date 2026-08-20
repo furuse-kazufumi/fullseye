@@ -99,15 +99,18 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_sc
         raise FileNotFoundError(f"go2 scene not found: {_GO2} (needs MuJoCo Menagerie)")
     m = _build(terrain, roll_scale=roll_scale)
     d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
-    mujoco.mj_forward(m, d)
-    # start the base above the terrain directly under it (raycast down), then settle
-    gid = np.array([-1], np.int32)
-    dist = mujoco.mj_ray(m, d, np.array([0.0, 0.0, 3.0]), np.array([0.0, 0.0, -1.0]),
-                         None, 1, 0, gid)                  # exclude the robot's own body(0=base)
-    tz = (3.0 - dist) if dist >= 0 else 0.0
-    d.qpos[2] = tz + 0.30                                  # stand height above local terrain
-    mujoco.mj_forward(m, d)
     home = m.key_qpos[0][7:].copy()
+    # terrain top height (from the added terrain geoms) → start the base above it and let
+    # it settle onto the surface before walking (rolling is tall, so drop from higher).
+    terr_top = 0.0
+    for g in range(m.ngeom):
+        if int(m.geom_bodyid[g]) == 0 and int(m.geom_type[g]) == mujoco.mjtGeom.mjGEOM_BOX:
+            terr_top = max(terr_top, float(d.geom_xpos[g][2] + m.geom_size[g][2]))
+    d.qpos[2] = terr_top + 0.32
+    dt = float(m.opt.timestep)
+    for _ in range(int(0.6 / dt)):                        # settle onto the terrain (hold stance)
+        d.ctrl[:] = kp * (home - d.qpos[7:]) - kd * d.qvel[6:]
+        mujoco.mj_step(m, d)
 
     dt = float(m.opt.timestep)
     n_steps = int(secs / dt)
