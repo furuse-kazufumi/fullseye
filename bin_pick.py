@@ -192,6 +192,9 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
         move_to(_HOME_ARM, _GRIP_OPEN, 0.9)                     # back home, rescan
 
     ren.close()
+    if len(frames) > max_gif_frames:                            # subsample to a sane GIF length
+        idx = np.linspace(0, len(frames) - 1, int(max_gif_frames)).round().astype(int)
+        frames = [frames[i] for i in idx]
     frames[0].save(out_gif, save_all=True, append_images=frames[1:],
                    duration=int(1000 / max(1, fps)), loop=0)
     log(f"bin pick GIF: {len(frames)} frames -> {out_gif} | "
