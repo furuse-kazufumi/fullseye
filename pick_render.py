@@ -38,19 +38,20 @@ def _tcp(d, ids):
     return np.mean([d.xpos[i] for i in ids], axis=0)
 
 
-def _ik_step(mujoco, m, d, ids, goal, *, gain=0.6, damp=0.06, clamp=0.04):
-    """One damped-least-squares IK step so the **grasp point** (finger midpoint,
-    not the hand frame — they differ by ~5 cm) moves toward *goal*. The Jacobian of
-    the midpoint is the mean of the two finger-body Jacobians. Returns 7 arm angles."""
-    jac = np.zeros((3, m.nv))
-    tmp = np.zeros((3, m.nv))
-    for i in ids:
-        mujoco.mj_jacBody(m, d, tmp, None, i)
-        jac += tmp
-    jac /= len(ids)
-    J = jac[:, :7]
-    err = (np.asarray(goal) - _tcp(d, ids)) * gain
-    dq = J.T @ np.linalg.solve(J @ J.T + damp * np.eye(3), err)
+def _ik_step(mujoco, m, d, hand_id, goal_hand, quat_target, *,
+             pos_gain=0.8, ori_gain=0.8, damp=0.08, clamp=0.05):
+    """One damped-least-squares **6-DOF** IK step on the hand body: drive its
+    position to *goal_hand* AND its orientation to *quat_target* (kept pointing
+    straight down so the fingers can reach a low cube instead of tilting off it).
+    Solving position+orientation together over the 7 arm joints. Returns 7 angles."""
+    jacp = np.zeros((3, m.nv)); jacr = np.zeros((3, m.nv))
+    mujoco.mj_jacBody(m, d, jacp, jacr, hand_id)
+    J = np.vstack([jacp[:, :7], jacr[:, :7]])                     # 6×7
+    perr = (np.asarray(goal_hand) - d.xpos[hand_id]) * pos_gain
+    oerr = np.zeros(3)
+    mujoco.mju_subQuat(oerr, np.asarray(quat_target), d.xquat[hand_id])   # target ⊖ current
+    err = np.concatenate([perr, oerr * ori_gain])
+    dq = J.T @ np.linalg.solve(J @ J.T + damp * np.eye(6), err)
     dq = np.clip(dq, -clamp, clamp)
     return d.qpos[:7] + dq
 
