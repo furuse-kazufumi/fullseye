@@ -164,3 +164,28 @@ def test_walk_physics_is_dynamic(tmp_path):
     assert r["upright"] is True                              # stayed up under real dynamics
     assert r["dynamic"] is True                              # body genuinely tilts (CoM shifts)
     assert r["mean_contacts"] > 1.0                          # real foot–terrain contacts
+
+
+def test_jump_physics_op_registered():
+    import unified as u
+    assert "jump_physics" in u.ops
+
+
+def test_jump_physics_leaves_ground(tmp_path):
+    """go2 が本物の物理でジャンプし、全足が地面を離れる弾道飛行(接触0)を実測で示す。
+
+    honest: 跳べなければ left_ground=False。摩擦・重力・接触は mj_step が解く。"""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        import pytest
+        pytest.skip("mujoco 未インストール")
+    import walk_physics as WP
+    if not os.path.exists(WP._GO2):
+        import pytest
+        pytest.skip("mujoco_menagerie(go2)未取得")
+    out = str(tmp_path / "jump.gif")
+    r = WP.run_jump_physics(out, width=200, height=150, max_gif_frames=20, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["left_ground"] is True                          # genuine ballistic flight
+    assert r["airtime_s"] > 0.1 and r["jump_height_m"] > 0.1

@@ -184,6 +184,15 @@ def walk_physics(out_gif="out/walk_physics.gif", **kw):
     return WP.run_walk_physics(out_gif, **kw)
 
 
+def jump_physics(out_gif="out/jump_physics.gif", **kw):
+    """go2 をしゃがみ→爆発的伸展→弾道飛行(全足離地=接触0)→着地させる本物の物理ジャンプ。
+    摩擦・重力・接触を mj_step で解く。GIF＋高さテレメトリ(GPU 不要)。
+    戻り値 dict(jump_height_m / airtime_s / left_ground、実測値)。
+    """
+    import walk_physics as WP
+    return WP.run_jump_physics(out_gif, **kw)
+
+
 def pick_gif(out_gif="out/panda_pick.gif", **kw):
     """ロボットアームが実接触・摩擦でキューブを把持し別位置へ置く pick-and-place を
     headless GIF 化(GPU 不要)。戻り値 dict(lift_m / grasped / placed_z など、実測値)。
