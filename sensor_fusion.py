@@ -65,13 +65,16 @@ def _simulate(seed=0, throw=(2.6, 0.35, 4.6), n_steps=520, substep=4):
     return (np.array(true_p), np.array(true_v), np.array(ts), dt)
 
 
-def _kalman(true_p, true_v, dt, *, pos_std=0.12, vel_std=0.35, seed=0):
-    """6-state constant-acceleration KF fusing a noisy position + noisy velocity
-    reading each step. Returns (measured_pos, deadreckon_pos, fused_pos)."""
+def _kalman(true_p, true_v, dt, *, pos_std=0.13, vel_std=0.10, vel_bias=0.11, seed=0):
+    """6-state constant-acceleration KF fusing a noisy **unbiased** position sensor
+    with a low-noise but **biased** velocity sensor — the textbook reason fusion
+    exists: an IMU drifts (bias integrates), an absolute sensor is noisy but doesn't.
+    Returns (measured_pos, deadreckon_pos, fused_pos)."""
     rng = np.random.default_rng(seed)
     N = len(true_p)
-    meas_p = true_p + rng.normal(0, pos_std, true_p.shape)        # camera / GPS proxy
-    meas_v = true_v + rng.normal(0, vel_std, true_v.shape)        # IMU proxy
+    meas_p = true_p + rng.normal(0, pos_std, true_p.shape)        # camera / GPS proxy (noisy, unbiased)
+    bias = np.array([vel_bias, 0.0, -vel_bias])                   # a fixed IMU bias (unknown to the filter)
+    meas_v = true_v + bias + rng.normal(0, vel_std, true_v.shape)  # IMU proxy (low noise, biased)
 
     g = np.array([0.0, 0.0, -9.81])
     F = np.eye(6); F[:3, 3:] = np.eye(3) * dt
