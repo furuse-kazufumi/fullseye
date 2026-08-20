@@ -173,6 +173,17 @@ def walk_gif(out_gif, walker="go2", terrain="rolling", gait="trot", motion=None,
     return r["gif"]
 
 
+def walk_physics(out_gif="out/walk_physics.gif", **kw):
+    """go2 をトルク PD 制御＋mj_step の本物の物理(重力・接触・慣性)で衝突地形上を歩かせる。
+    重心移動で胴体が pitch/roll しながら歩く様子を GIF＋テレメトリ図に(GPU 不要)。
+    戻り値 dict(upright / forward_m / pitch_range_deg / roll_range_deg、実測値)。
+
+    運動学プレビュー([[walk_gif]])と違い接触・慣性を解く=足は接地し、不安定なら転倒する。
+    """
+    import walk_physics as WP
+    return WP.run_walk_physics(out_gif, **kw)
+
+
 def pick_gif(out_gif="out/panda_pick.gif", **kw):
     """ロボットアームが実接触・摩擦でキューブを把持し別位置へ置く pick-and-place を
     headless GIF 化(GPU 不要)。戻り値 dict(lift_m / grasped / placed_z など、実測値)。

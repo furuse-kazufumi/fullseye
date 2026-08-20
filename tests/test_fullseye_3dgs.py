@@ -137,3 +137,30 @@ def test_bin_pick_headless_picks(tmp_path):
                                max_gif_frames=40, log=lambda *_: None)
     assert os.path.isfile(out) and os.path.getsize(out) > 0
     assert r["n_picked"] >= 2                                 # at least 2 of 3 attempts succeed
+
+
+def test_walk_physics_op_registered():
+    import unified as u
+    assert "walk_physics" in u.ops
+
+
+def test_walk_physics_is_dynamic(tmp_path):
+    """go2 が本物の物理(mj_step+接触+重力)で自立して歩き、胴体が動的に傾く(運動学でない)。
+
+    honest: 転倒すれば upright=False、傾きが出なければ dynamic=False を返す設計。"""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        import pytest
+        pytest.skip("mujoco 未インストール")
+    import walk_physics as WP
+    if not os.path.exists(WP._GO2):
+        import pytest
+        pytest.skip("mujoco_menagerie(go2)未取得")
+    out = str(tmp_path / "walk.gif")
+    r = WP.run_walk_physics(out, secs=3.0, width=200, height=150, max_gif_frames=20,
+                            log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["upright"] is True                              # stayed up under real dynamics
+    assert r["dynamic"] is True                              # body genuinely tilts (CoM shifts)
+    assert r["mean_contacts"] > 1.0                          # real foot–terrain contacts
