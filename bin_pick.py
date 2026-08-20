@@ -121,13 +121,19 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
     lf = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "left_finger")
     rf = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, "right_finger")
 
+    pad_geoms = [gi for gi in range(m.ngeom) if m.geom_bodyid[gi] in (lf, rf)]
+
+    def grasp_center():
+        return np.mean([d.geom_xpos[gi] for gi in pad_geoms], axis=0)
+
     d.ctrl[:7] = _HOME_ARM; d.ctrl[7] = _GRIP_OPEN
     for j in range(7):
         d.qpos[m.jnt_qposadr[j]] = _HOME_ARM[j] if j < 7 else d.qpos[m.jnt_qposadr[j]]
     mujoco.mj_forward(m, d)
     quat_t = d.xquat[hand_id].copy()                             # top-down grasp orientation
-    tcp = 0.5 * (d.xpos[lf] + d.xpos[rf])
-    offset = tcp - d.xpos[hand_id]                               # hand→grasp-point offset
+    # grasp point = the finger PAD centre (≈9.5 cm below the hand frame, not the
+    # finger-body origin), so the pads land on the part instead of below it.
+    offset = grasp_center() - d.xpos[hand_id]                    # hand→grasp-point offset
 
     dt = float(m.opt.timestep)
     frames = []
