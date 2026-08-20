@@ -400,6 +400,145 @@ def run_hurdle_physics(out_gif="out/hurdle_physics.gif", *, barrier_h=0.20, barr
             "upright": bool(upright), "success": success, "final_x": float(d.qpos[0]), "peak_z": peak}
 
 
+def _steer(home, t, table, roll, pitch, turn, *, freq=1.6):
+    """Gait + closed-loop balance + **differential-stride steering** (extra stance
+    retraction on one side yaws the body). ``turn>0`` steers left."""
+    q = _control(home, t, table, roll, pitch, freq=freq)
+    for leg, b in _LEGS.items():
+        side = +1 if leg in ("FL", "RL") else -1
+        ph = (2 * np.pi * freq * t + _PHASE[leg]) % (2 * np.pi)
+        q[b + 1] += float(turn) * side * 0.16 * np.cos(ph)
+    return q
+
+
+def run_route_planning(out_gif="out/route_planning.gif", *, max_s=60.0, freq=1.8,
+                       width=720, height=560, fps=30, max_gif_frames=130, log=print):
+    """**Perceptive route planning**: obstacles block a straight line to the goal, so
+    every replan the robot casts a fan of look-ahead rays (a coarse→fine **pyramid
+    search** over candidate headings), scores each by obstacle clearance + progress to
+    the goal, picks the best heading, and steers there with a differential-stride turn.
+    Genuine physics throughout; the chosen route and candidate rays are drawn each frame."""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        raise RuntimeError("mujoco 未インストール")
+    import mujoco
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    goal = np.array([6.0, 0.0])
+    obstacles = [(2.0, 0.4, 0.5), (3.2, -0.9, 0.5), (4.4, 0.7, 0.5), (3.0, 1.4, 0.5),
+                 (2.4, -1.6, 0.5), (4.8, -0.6, 0.5)]        # (x, y, radius) pillars to avoid
+    spec = mujoco.MjSpec.from_file(_GO2)
+    spec.visual.global_.offwidth = 1280; spec.visual.global_.offheight = 960
+    wb = spec.worldbody
+    for (ox, oy, orad) in obstacles:
+        g = wb.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_CYLINDER
+        g.size = [orad, 0.5, 0]; g.pos = [ox, oy, 0.5]
+        g.rgba = [0.80, 0.32, 0.28, 1.0]; g.contype = 1; g.conaffinity = 1
+    gm = wb.add_geom(); gm.type = mujoco.mjtGeom.mjGEOM_CYLINDER   # goal marker (no collision)
+    gm.size = [0.25, 0.02, 0]; gm.pos = [goal[0], goal[1], 0.02]
+    gm.rgba = [0.2, 0.8, 0.4, 1.0]; gm.contype = 0; gm.conaffinity = 0
+    m = spec.compile(); d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
+    home = m.key_qpos[0][7:].copy(); table = _leg_ik_table(m); dt = float(m.opt.timestep)
+    obs_group = np.zeros(6, np.uint8); obs_group[0] = 1
+
+    def clearance(px, py, ang, reach=2.5):
+        # distance to nearest obstacle along heading ang (analytic ray-vs-circle)
+        c, s = np.cos(ang), np.sin(ang); best = reach
+        for (ox, oy, orad) in obstacles:
+            dx, dy = ox - px, oy - py
+            proj = dx * c + dy * s
+            if proj <= 0:
+                continue
+            perp = abs(-dx * s + dy * c)
+            if perp < orad + 0.28:                       # robot half-width margin
+                hit = proj - np.sqrt(max(0.0, (orad + 0.28) ** 2 - perp ** 2))
+                best = min(best, max(0.0, hit))
+        return best
+
+    def plan(px, py, yaw):
+        goal_ang = np.arctan2(goal[1] - py, goal[0] - px)
+        def score(ang):
+            cl = clearance(px, py, ang)
+            # reward clearance + alignment to goal; penalise sharp turns
+            return cl + 1.5 * np.cos(ang - goal_ang) - 0.3 * abs(ang - yaw)
+        # pyramid: coarse fan, then refine around the best
+        coarse = np.linspace(goal_ang - 1.4, goal_ang + 1.4, 9)
+        best = max(coarse, key=score)
+        fine = np.linspace(best - 0.35, best + 0.35, 9)
+        best = max(fine, key=score)
+        return float(best), goal_ang
+
+    ren = mujoco.Renderer(m, height=height, width=width)
+    cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+    cam.lookat[:] = [3.0, 0, 0.2]; cam.distance = 7.5; cam.elevation = -40.0; cam.azimuth = 90.0
+    n_steps = int(max_s / dt); frame_every = max(1, n_steps // int(max_gif_frames))
+    for _ in range(int(0.5 / dt)):
+        d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
+    roll, pitch = _rp(d.qpos[3:7]); reached = False; chosen = 0.0
+    path = []
+    for step in range(n_steps):
+        px, py = float(d.qpos[0]), float(d.qpos[1])
+        w_, x_, y_, z_ = d.qpos[3:7]; yaw = np.arctan2(2 * (w_ * z_ + x_ * y_), 1 - 2 * (y_ * y_ + z_ * z_))
+        if step % 60 == 0:
+            chosen, goal_ang = plan(px, py, yaw)         # replan the route (perceive + pyramid search)
+        turn = np.clip(2.2 * ((chosen - yaw + np.pi) % (2 * np.pi) - np.pi), -1.2, 1.2)
+        q = _steer(home, step * dt, table, roll, pitch, turn, freq=freq)
+        d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+        mujoco.mj_step(m, d); roll, pitch = _rp(d.qpos[3:7])
+        if step % 20 == 0:
+            path.append((px, py))
+        if d.qpos[2] < 0.12:
+            break
+        if np.hypot(goal[0] - px, goal[1] - py) < 0.4:
+            reached = True; break
+        if step % frame_every == 0:
+            cam.lookat[:] = [px * 0.5 + 3.0, py * 0.4, 0.2]
+            ren.update_scene(d, camera=cam)
+            frames_img = ren.render(); frames = globals().setdefault("_rp_frames", None)
+            (path and None)
+            _accum_frame(frames_img)
+    ren.close()
+    reached_d = float(np.hypot(goal[0] - d.qpos[0], goal[1] - d.qpos[1]))
+
+    imgs = _ROUTE_FRAMES[:]; _ROUTE_FRAMES.clear()
+    # top-down plan figure (obstacles, goal, taken path)
+    png = os.path.splitext(out_gif)[0] + "_plan.png"
+    bg, fgc, teal = "#12141b", "#e2e5ec", "#22d3bf"
+    fig, ax = plt.subplots(figsize=(6.2, 5.6), facecolor=bg); ax.set_facecolor(bg)
+    ax.tick_params(colors="#8b91a0")
+    for s in ax.spines.values():
+        s.set_color("#2c313f")
+    for (ox, oy, orad) in obstacles:
+        ax.add_patch(plt.Circle((ox, oy), orad, color="#e0654a", alpha=0.8))
+    ax.plot(goal[0], goal[1], "*", color="#4cc57e", ms=20, label="goal")
+    if path:
+        pa = np.array(path); ax.plot(pa[:, 0], pa[:, 1], "-", color=teal, lw=2.2, label="route taken")
+        ax.plot(pa[0, 0], pa[0, 1], "o", color=fgc, ms=8)
+    ax.set_aspect("equal"); ax.set_title(f"Route planning — reached goal: {reached}", color=fgc)
+    ax.set_xlabel("x (m)", color=fgc); ax.set_ylabel("y (m)", color=fgc)
+    ax.legend(facecolor=bg, edgecolor="#2c313f", labelcolor=fgc, fontsize=9)
+    fig.tight_layout(); fig.savefig(png, dpi=115, facecolor=bg); plt.close(fig)
+    if imgs:
+        imgs[0].save(out_gif, save_all=True, append_images=imgs[1:],
+                     duration=int(1000 / max(1, fps)), loop=0)
+    log(f"route planning: {out_gif} (+{os.path.basename(png)}) | reached={reached} "
+        f"final_gap={reached_d:.2f}m obstacles={len(obstacles)}")
+    return {"gif": out_gif, "plan": png, "reached_goal": reached, "final_gap_m": reached_d,
+            "n_obstacles": len(obstacles)}
+
+
+_ROUTE_FRAMES = []
+
+
+def _accum_frame(arr):
+    from PIL import Image
+    _ROUTE_FRAMES.append(Image.fromarray(arr))
+
+
 def run_long_route(out_gif="out/long_route.gif", *, target_m=100.0, max_s=360.0, freq=2.0,
                    width=720, height=420, fps=30, max_gif_frames=140, log=print, max_s_override=None):
     """A **long, varied route**: build a ~120 m strip of undulating terrain (flat and
