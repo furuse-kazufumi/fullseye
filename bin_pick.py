@@ -154,6 +154,23 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
     def solve(grasp_pt, seed_q):
         return _ik_solve(mujoco, m, dk, hand_id, hand_goal_for(grasp_pt), quat_t, seed_q)
 
+    def fmid():
+        return 0.5 * (d.xpos[lf] + d.xpos[rf])
+
+    def goto(grasp_pt, grip, secs, iters=1):
+        """Move the **grasp point** (finger midpoint) to *grasp_pt*, closed-loop: the
+        position servos droop under gravity, so we measure the residual and push the
+        goal down by it for a couple of corrections. Precise enough to enter clutter."""
+        target = np.array(grasp_pt, float)
+        for it in range(iters):
+            q = solve(target, d.qpos[:7])
+            move_to(q, grip, secs if it == 0 else 0.45)
+            resid = target - fmid()
+            if np.linalg.norm(resid) < 0.008:
+                break
+            target = target + resid                              # droop compensation
+        return np.linalg.norm(target - fmid())
+
     # let the pile settle
     settle(int(1.6 / dt), _GRIP_OPEN)
 
