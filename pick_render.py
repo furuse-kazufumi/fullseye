@@ -124,7 +124,7 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=12
     for goal, grip, secs in phases:
         seg_steps = max(1, int(round(secs / dt)))
         for _ in range(seg_steps):
-            d.ctrl[:7] = _ik_step(mujoco, m, d, ids, goal)
+            d.ctrl[:7] = _ik_step(mujoco, m, d, hand_id, goal, quat_target)
             d.ctrl[7] = grip
             mujoco.mj_step(m, d)
             peak_z = max(peak_z, _cube_z(d, box_qadr))
