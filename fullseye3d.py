@@ -217,3 +217,11 @@ def focus_stack(out_png="out/focus_stack.png", **kw):
     """
     import focus_stack as FS
     return FS.run_focus_stack_demo(out_png, **kw)
+
+
+def event_camera(out_png="out/event_camera.png", **kw):
+    """イベントカメラ(DVS)を対数輝度変化モデルで模倣し ON/OFF イベント列を生成
+    (GPU 不要)。戻り値 dict(n_events / edge_corr、動くエッジ発火を実測)。
+    """
+    import event_camera as EC
+    return EC.run_event_demo(out_png, **kw)

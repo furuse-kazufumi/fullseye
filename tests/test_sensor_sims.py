@@ -43,3 +43,19 @@ def test_focus_stack_beats_single_frames(tmp_path):
     assert os.path.isfile(out) and os.path.getsize(out) > 0
     assert r["beats_all_frames"] is True and r["sharpness_gain"] > 1.0
     assert r["depth_focus_corr"] > 0.5                        # focus cue tracks true depth
+
+
+def test_event_camera_op_registered():
+    import unified as u
+    assert "event_camera" in u.ops
+
+
+def test_event_camera_fires_on_edges(tmp_path):
+    """DVS イベントが生成され、動くエッジに集中する(掃引エッジと相関)。"""
+    _need_mujoco()
+    import event_camera as EC
+    out = str(tmp_path / "ev.png")
+    r = EC.run_event_demo(out, n_frames=16, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["n_events"] > 0 and r["fires_on_edges"] is True
+    assert r["edge_corr"] > 0.3
