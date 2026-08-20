@@ -141,6 +141,20 @@ def test_qt_window_builds_offscreen():
     assert win is not None and model2 is not None
 
 
+def test_physical_ai_viewer_action_and_open():
+    """Studio exposes the Physical-AI (evis RL walk, Fullseye perception) viewer and it opens
+    without a perception GIF present (shows a hint) — a defensive, always-available entry."""
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    from PySide6 import QtWidgets
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window()
+    assert hasattr(win, "_act_physical_ai") and "evis" in win._act_physical_ai.text()
+    assert hasattr(win, "_open_physical_ai_viewer") and hasattr(win, "_latest_evis_perception")
+    dlg = win._open_physical_ai_viewer()          # must not raise whether or not a GIF exists
+    assert dlg.windowTitle().startswith("Physical AI")
+
+
 def test_op_detail_and_tooltip():
     row = {"name": "gaussian", "halcon": "gauss_filter", "category": "filter",
            "in_sort": "image", "out_sort": "image"}
