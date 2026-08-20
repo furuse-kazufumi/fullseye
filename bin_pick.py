@@ -24,35 +24,45 @@ _PANDA_SCENE = f"{_MENAGERIE}/franka_emika_panda/scene.xml"
 
 _HOME_ARM = np.array([0.0, 0.3, 0.0, -1.57079, 0.0, 2.0, -0.7853])
 _GRIP_OPEN, _GRIP_SHUT = 0.04, 0.0
-_BIN_C = (0.5, 0.0)            # bin centre (x, y) within panda reach
-_BIN_HALF = 0.13              # bin inner half-width
-_WALL_H = 0.07
-_CUBE = 0.022                 # cube half-size
+_BIN_C = (0.48, 0.0)          # bin centre (x, y) within panda reach
+_BIN_HALF = 0.14              # bin inner half-width
+_TABLE_TOP = 0.13            # bin sits on a table → grasp height is in the arm's comfort zone
+_WALL_H = 0.055
+_CUBE = 0.018                 # cube half-size (roomy vs the 0.04 gripper opening)
 
 
 def _build(n_cubes, seed):
-    """Panda + a walled bin + n free cubes, composed with MjSpec. Returns (model, box_qadrs)."""
+    """Panda + a table-mounted walled bin + n free cubes (MjSpec). Returns (model, box_qadrs).
+
+    The bin is raised on a table so top-down grasps land in the panda's comfortable
+    workspace instead of near the floor (where it can't push the fingers down)."""
     import mujoco
     spec = mujoco.MjSpec.from_file(_PANDA_SCENE)
     spec.visual.global_.offwidth = 1280                          # allow larger offscreen frames
     spec.visual.global_.offheight = 960
     wb = spec.worldbody
     cx, cy = _BIN_C
+    tt = _TABLE_TOP
+    # table slab under the bin
+    tg = wb.add_geom()
+    tg.type = mujoco.mjtGeom.mjGEOM_BOX
+    tg.size = [_BIN_HALF + 0.05, _BIN_HALF + 0.05, tt / 2]; tg.pos = [cx, cy, tt / 2]
+    tg.rgba = [0.30, 0.32, 0.38, 1.0]; tg.contype = 1; tg.conaffinity = 1
     t = 0.006                                                     # wall thickness
     walls = [(cx, cy + _BIN_HALF, _BIN_HALF + t, t), (cx, cy - _BIN_HALF, _BIN_HALF + t, t),
              (cx + _BIN_HALF, cy, t, _BIN_HALF), (cx - _BIN_HALF, cy, t, _BIN_HALF)]
     for (wx, wy, sx, sy) in walls:
         g = wb.add_geom()
         g.type = mujoco.mjtGeom.mjGEOM_BOX
-        g.size = [sx, sy, _WALL_H]; g.pos = [wx, wy, _WALL_H]
-        g.rgba = [0.55, 0.57, 0.62, 0.45]; g.contype = 1; g.conaffinity = 1
+        g.size = [sx, sy, _WALL_H / 2]; g.pos = [wx, wy, tt + _WALL_H / 2]
+        g.rgba = [0.55, 0.57, 0.62, 0.4]; g.contype = 1; g.conaffinity = 1
     rng = np.random.default_rng(seed)
     palette = [[0.90, 0.30, 0.24], [0.25, 0.70, 0.45], [0.30, 0.55, 0.9],
                [0.95, 0.75, 0.20], [0.70, 0.40, 0.85], [0.35, 0.78, 0.75]]
     for i in range(n_cubes):
-        bx = cx + rng.uniform(-0.07, 0.07)
-        by = cy + rng.uniform(-0.07, 0.07)
-        bz = 0.10 + 0.055 * i                                    # stacked column → drops into a pile
+        bx = cx + rng.uniform(-0.08, 0.08)
+        by = cy + rng.uniform(-0.08, 0.08)
+        bz = tt + 0.04 + 0.05 * i                                # drop onto the table → loose pile
         b = wb.add_body()
         b.pos = [bx, by, bz]
         b.add_freejoint()
@@ -60,7 +70,7 @@ def _build(n_cubes, seed):
         g.type = mujoco.mjtGeom.mjGEOM_BOX
         g.size = [_CUBE, _CUBE, _CUBE]
         g.rgba = palette[i % len(palette)] + [1.0]
-        g.condim = 3; g.friction = [1.0, 0.03, 0.003]; g.mass = 0.05
+        g.condim = 3; g.friction = [1.0, 0.03, 0.003]; g.mass = 0.04
     model = spec.compile()
     box_qadrs = []
     for j in range(model.njnt):
@@ -92,7 +102,7 @@ def _ik_solve(mujoco, m, dk, hand_id, goal, quat_t, seed, *, iters=160, damp=0.1
 
 def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, height=480, fps=30,
                         max_gif_frames=150, azimuth=150.0, elevation=-22.0, distance=1.35,
-                        lookat=(0.5, 0.0, 0.12), log=print):
+                        lookat=(0.47, 0.0, 0.17), log=print):
     """Drop cubes into a bin, then pick the top cube *n_picks* times. Returns a dict
     with ``n_picked`` (cubes whose measured height cleared the rim) — an earned count."""
     import mujoco
@@ -174,7 +184,7 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
     # let the pile settle
     settle(int(1.6 / dt), _GRIP_OPEN)
 
-    rim_z = _WALL_H + 2 * _CUBE
+    rim_z = _TABLE_TOP + _WALL_H + 2 * _CUBE
     picked = 0
     picked_flags = [False] * len(box_qadrs)
     for _ in range(n_picks):
