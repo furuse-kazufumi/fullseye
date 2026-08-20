@@ -141,7 +141,7 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_sc
             frames.append(Image.fromarray(ren.render()))
     ren.close()
 
-    fwd = float(np.hypot(d.qpos[0], d.qpos[1]))
+    fwd = float(d.qpos[0])                                # signed forward progress (+x = head-first)
     pr = (round(min(pitches), 1), round(max(pitches), 1))
     rr = (round(min(rolls), 1), round(max(rolls), 1))
     frames[0].save(out_gif, save_all=True, append_images=frames[1:],
