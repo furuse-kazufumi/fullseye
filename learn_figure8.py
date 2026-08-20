@@ -363,9 +363,130 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
             "path": path, "fans": fans, "wps": wps}
 
 
+def eval_figure8(out_gif="out/fig8_learned.gif", weights="out/fig8_policy.npz", *,
+                 sizes=(1.0, 1.4, 1.8, 2.1, 2.5), train_panel=(1.1, 1.6, 2.1),
+                 render_size=1.8, width=680, height=560, fps=30, max_gif_frames=130, log=print):
+    """Render the **learned** figure-8 controller: a 3D GIF of the go2 tracing a figure-8, a
+    top-down panel of the tracks + target curves for several sizes (train and held-out), a
+    generalisation bar of completion vs size, and a snapshot of the pyramid look-ahead fan.
+    Honest metrics throughout (completion is measured under physics)."""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        raise RuntimeError("mujoco 未インストール")
+    import mujoco
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    z = np.load(weights); layers = _unpack(z["theta"])
+    m = WP._build("flat"); d = mujoco.MjData(m)
+    home = m.key_qpos[0][7:].copy(); table = WP._leg_ik_table(m); dt = float(m.opt.timestep)
+
+    # 1) generalisation sweep (policy-only, fast) — completion per size + tracks
+    tracks = {}; comp = {}
+    for sz in sizes:
+        r = deploy_rollout(m, d, table, home, layers, sz, use_mpc=False, horizon=24.0)
+        tracks[sz] = np.array(r["path"]); comp[sz] = r["completed"]
+        log(f"  size {sz}: completed {r['completed']*100:.0f}% ({r['kidx']}/{r['K']})")
+
+    # 2) one pyramid-search rollout at render_size to capture the candidate fans
+    rr = deploy_rollout(m, d, table, home, layers, render_size, use_mpc=True, horizon=24.0,
+                        search_every=3, fan_every=18)
+    fans = rr["fans"]
+
+    # 3) render a 3D GIF of the learned policy tracing render_size (reset + replay policy-only)
+    mujoco.mj_resetDataKeyframe(m, d, 0)
+    for _ in range(int(0.5 / dt)):
+        d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
+    wps = lemniscate(render_size); K = len(wps); kidx = 0
+    roll, pitch = WP._rp(d.qpos[3:7]); turn = 0.0; cdt = 12 * dt
+    prev = np.array([float(d.qpos[0]), float(d.qpos[1])]); prev_yaw = 0.0
+    ren = mujoco.Renderer(m, height=height, width=width)
+    cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+    cam.elevation = -55.0; cam.azimuth = 90.0; cam.distance = 2.2 + 1.6 * render_size
+    n_steps = int(24.0 / dt); frame_every = max(1, n_steps // int(max_gif_frames)); frames = []
+    for step in range(n_steps):
+        if step % 12 == 0:
+            pos = np.array([float(d.qpos[0]), float(d.qpos[1])])
+            w, x, y, zz = d.qpos[3:7]; yaw = np.arctan2(2 * (w * zz + x * y), 1 - 2 * (y * y + zz * zz))
+            while kidx < K and np.hypot(*(wps[kidx] - pos)) < 0.38:
+                kidx += 1
+            if kidx >= K:
+                break
+            obs, _c = _reactive_obs(pos, prev, yaw, prev_yaw, roll, pitch, wps, kidx, render_size, cdt)
+            turn = policy_action(layers, obs); prev, prev_yaw = pos, yaw
+        q = WP._steer(home, step * dt, table, roll, pitch, turn, freq=1.3)
+        d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+        mujoco.mj_step(m, d); roll, pitch = WP._rp(d.qpos[3:7])
+        if step % frame_every == 0:
+            cam.lookat[:] = [0.0, 0.0, 0.2]
+            ren.update_scene(d, camera=cam); frames.append(Image.fromarray(ren.render()))
+    ren.close()
+    if frames:
+        frames[0].save(out_gif, save_all=True, append_images=frames[1:],
+                       duration=int(1000 / max(1, fps)), loop=0)
+
+    # 4) analysis figure: tracks (with target curves) | generalisation bar + fan inset
+    png = os.path.splitext(out_gif)[0] + "_analysis.png"
+    bg, fgc, teal, amber, red, mut = "#12141b", "#e2e5ec", "#22d3bf", "#f5a524", "#e0654a", "#8b91a0"
+    pal = ["#22d3bf", "#5aa9e6", "#f5a524", "#e0654a", "#b57edc"]
+    fig = plt.figure(figsize=(12, 5.4), facecolor=bg)
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.15, 1.0])
+    ax = fig.add_subplot(gs[0]); ax.set_facecolor(bg)
+    for i, sz in enumerate(sizes):
+        tp = lemniscate(sz, k=200)
+        ax.plot(tp[:, 0], tp[:, 1], ":", color=pal[i % len(pal)], lw=1.0, alpha=0.55)
+        pa = tracks[sz]
+        if len(pa):
+            ax.plot(pa[:, 0], pa[:, 1], "-", color=pal[i % len(pal)], lw=2.0,
+                    label=f"size {sz}{'*' if sz not in train_panel else ''}: {comp[sz]*100:.0f}%")
+    # pyramid fan snapshot (candidate look-ahead endpoints at one decision point)
+    if fans:
+        pos0, fan = fans[len(fans) // 2]
+        for (c, end, sc) in fan:
+            ax.plot([pos0[0], end[0]], [pos0[1], end[1]], "-", color=mut, lw=0.8, alpha=0.5)
+            ax.plot(end[0], end[1], ".", color=mut, ms=5)
+        best = max(fan, key=lambda f: f[2])
+        ax.plot([pos0[0], best[1][0]], [pos0[1], best[1][1]], "-", color=amber, lw=2.0,
+                label="pyramid look-ahead (chosen)")
+    ax.set_aspect("equal"); ax.tick_params(colors=mut)
+    for s in ax.spines.values():
+        s.set_color("#2c313f")
+    ax.set_title("Learned figure-8 tracking (* = held-out size)", color=fgc)
+    ax.set_xlabel("x (m)", color=fgc); ax.set_ylabel("y (m)", color=fgc)
+    ax.legend(facecolor=bg, edgecolor="#2c313f", labelcolor=fgc, fontsize=8, loc="upper right")
+
+    ax2 = fig.add_subplot(gs[1]); ax2.set_facecolor(bg); ax2.tick_params(colors=mut)
+    for s in ax2.spines.values():
+        s.set_color("#2c313f")
+    xs = np.arange(len(sizes))
+    cols = [teal if sz in train_panel else amber for sz in sizes]
+    ax2.bar(xs, [comp[sz] * 100 for sz in sizes], color=cols, width=0.62)
+    for i, sz in enumerate(sizes):
+        ax2.text(i, comp[sz] * 100 + 2, f"{comp[sz]*100:.0f}%", ha="center", color=fgc, fontsize=9)
+    ax2.set_xticks(xs); ax2.set_xticklabels([f"{s}" for s in sizes])
+    ax2.set_ylim(0, 105); ax2.grid(True, axis="y", color="#2c313f", lw=0.5)
+    ax2.set_ylabel("figure-8 completed (%)", color=fgc); ax2.set_xlabel("figure-8 size (m)", color=fgc)
+    ax2.set_title("Generalisation: teal=train panel, amber=held-out", color=fgc)
+    fig.tight_layout(); fig.savefig(png, dpi=115, facecolor=bg); plt.close(fig)
+
+    mean_train = float(np.mean([comp[s] for s in sizes if s in train_panel]))
+    held = [s for s in sizes if s not in train_panel]
+    mean_held = float(np.mean([comp[s] for s in held])) if held else 0.0
+    log(f"eval figure-8: {out_gif} (+{os.path.basename(png)}) | "
+        f"mean_train={mean_train*100:.0f}% mean_heldout={mean_held*100:.0f}% sizes={list(sizes)}")
+    return {"gif": out_gif, "analysis": png, "completion": comp,
+            "mean_train": mean_train, "mean_heldout": mean_held, "n_fans": len(fans)}
+
+
 if __name__ == "__main__":
     import sys
     out = sys.argv[2] if len(sys.argv) > 2 else "out/fig8_policy.npz"
+    if len(sys.argv) > 1 and sys.argv[1] == "eval":
+        print(eval_figure8(log=lambda s: print(s, flush=True)))
+        raise SystemExit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "smoke":
         # quick single-rollout sanity check (untrained policy)
         import mujoco
