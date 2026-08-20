@@ -72,7 +72,7 @@ def _build(n_cubes, seed):
         g.type = mujoco.mjtGeom.mjGEOM_BOX
         g.size = [_CUBE, _CUBE, _CUBE]
         g.rgba = palette[i % len(palette)] + [1.0]
-        g.condim = 3; g.friction = [1.0, 0.03, 0.003]; g.mass = 0.04
+        g.condim = 3; g.friction = [1.0, 0.03, 0.003]; g.mass = 0.06
     model = spec.compile()
     box_qadrs = []
     for j in range(model.njnt):
