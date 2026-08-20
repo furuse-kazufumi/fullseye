@@ -93,16 +93,21 @@ _FOOT_HINTS = ("foot", "calf", "shank", "lower_leg", "lowerleg", "toe", "wheel")
 
 
 def _foot_geoms(m):
-    """歩行体の接地点になりうる geom(足先/下腿)の id を返す。名前で拾えないモデルでは
-    「地形(group1)以外の全 geom」にフォールバック(=最下点で接地判定)。"""
+    """接地点になる **足先 geom** の id を返す。足先は小さい球/カプセル(下腿末端)で、
+    calf 全体の可視メッシュ(外接球 ~0.16m)を最下点に使うと足が地形からズレるため、
+    足名 body 上の **小半径(rbound<0.06)geom のみ**を選ぶ。拾えなければ小半径 geom 全般→
+    最終手段で地形(group1)以外の全 geom。"""
     import mujoco
     ids = []
     for g in range(m.ngeom):
         b = int(m.geom_bodyid[g])
         nm = (mujoco.mj_id2name(m, mujoco.mjtObj.mjOBJ_BODY, b) or "").lower()
-        if any(h in nm for h in _FOOT_HINTS):
+        if any(h in nm for h in _FOOT_HINTS) and float(m.geom_rbound[g]) < 0.06:
             ids.append(g)
-    if not ids:                                            # 名前で拾えない→terrain以外を全部
+    if not ids:
+        ids = [g for g in range(m.ngeom)
+               if int(m.geom_group[g]) != 1 and float(m.geom_rbound[g]) < 0.06]
+    if not ids:
         ids = [g for g in range(m.ngeom) if int(m.geom_group[g]) != 1]
     return ids
 
