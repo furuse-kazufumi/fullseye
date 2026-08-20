@@ -145,5 +145,8 @@ if __name__ == "__main__":
     import sys
     walker = sys.argv[1] if len(sys.argv) > 1 else "go2"
     out = sys.argv[2] if len(sys.argv) > 2 else f"out/{walker}_on_rolling.gif"
-    kw = dict(gait="trot") if walker in ("go2", "anymal", "spot") else dict(motion="walk", z_offset=0.16)
+    if walker in ("go2", "anymal", "spot"):
+        kw = dict(gait="trot", travel=2.2, ground_follow=True)   # 地形を接地しながら横断
+    else:
+        kw = dict(motion="walk", z_offset=0.16)
     render_walk_gif(out, walker=walker, terrain="rolling", log=lambda m: print(m, flush=True), **kw)
