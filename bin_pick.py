@@ -23,7 +23,7 @@ _MENAGERIE = "C:/dev/projects/mujoco_menagerie"
 _PANDA_SCENE = f"{_MENAGERIE}/franka_emika_panda/scene.xml"
 
 _HOME_ARM = np.array([0.0, 0.3, 0.0, -1.57079, 0.0, 2.0, -0.7853])
-_GRIP_OPEN, _GRIP_SHUT = 0.04, 0.0
+_GRIP_OPEN, _GRIP_SHUT = 255.0, 0.0   # panda hand actuator ctrlrange is [0,255] (255 = fully open)
 _BIN_C = (0.48, 0.0)          # bin centre (x, y) within panda reach
 _BIN_HALF = 0.14              # bin inner half-width
 _TABLE_TOP = 0.13            # bin sits on a table → grasp height is in the arm's comfort zone
