@@ -398,6 +398,9 @@ _3DGS_OPS = [
      "qpos 軌道で真値メッシュをアニメ再生(静的地形メッシュの合成も可)", "animation"),
     ("render_walk_gif", "world_render", "render_walk_gif",
      "walker を terrain 上で歩かせた姿を headless で GIF 化(GPU不要・MjSpec 合成)", "animation"),
+    ("pick_gif", "pick_render", "render_pick_gif",
+     "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
+     "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
 ]
 
 
