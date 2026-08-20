@@ -118,6 +118,21 @@ def _trot(home, t, table, *, freq=1.8):
     return q
 
 
+def _control(home, t, table, roll_deg, pitch_deg, *, freq=1.6, k_att=0.010):
+    """Open-loop trot **+ closed-loop balance feedback**: measure the torso roll/pitch
+    and lengthen the legs on the low side to keep the body level over rough terrain —
+    the feedback a blind gait lacks. Per-leg foot-z correction is mapped to (thigh,
+    calf) via the calibrated inverse Jacobian. This is what lets it negotiate the
+    height-field instead of relying on a smoothed surface."""
+    q = _trot(home, t, table, freq=freq)
+    for leg, b in _LEGS.items():
+        sx, sy = _LEG_SIGN[leg]
+        dz = -k_att * (pitch_deg * sx + roll_deg * sy)    # low corner → foot pushed down (extend)
+        dj = _JINV @ np.array([0.0, dz])
+        q[b + 1] += float(dj[0]); q[b + 2] += float(dj[1])
+    return q
+
+
 def _rp(quat):
     w, x, y, z = quat
     roll = np.arctan2(2 * (w * x + y * z), 1 - 2 * (x * x + y * y))
