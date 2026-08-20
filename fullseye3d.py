@@ -225,3 +225,11 @@ def event_camera(out_png="out/event_camera.png", **kw):
     """
     import event_camera as EC
     return EC.run_event_demo(out_png, **kw)
+
+
+def stereo_depth(out_png="out/stereo.png", **kw):
+    """平行2カメラのステレオペアを描画し、ブロックマッチング(既存 stereo.py)で深度推定して
+    真値深度と誤差比較(GPU 不要)。戻り値 dict(depth_corr / median_err_m、実測値)。
+    """
+    import stereo_sim as SS
+    return SS.run_stereo_demo(out_png, **kw)

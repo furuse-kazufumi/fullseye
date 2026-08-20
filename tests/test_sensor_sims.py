@@ -59,3 +59,19 @@ def test_event_camera_fires_on_edges(tmp_path):
     assert os.path.isfile(out) and os.path.getsize(out) > 0
     assert r["n_events"] > 0 and r["fires_on_edges"] is True
     assert r["edge_corr"] > 0.3
+
+
+def test_stereo_op_registered():
+    import unified as u
+    assert "stereo_depth" in u.ops
+
+
+def test_stereo_depth_matches_truth(tmp_path):
+    """ブロックマッチングのステレオ深度が真値深度と一致する(中央誤差<5cm)。"""
+    _need_mujoco()
+    import stereo_sim as SS
+    out = str(tmp_path / "st.png")
+    r = SS.run_stereo_demo(out, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["matches_truth"] is True
+    assert r["median_err_m"] < 0.05 and r["depth_corr"] > 0.4
