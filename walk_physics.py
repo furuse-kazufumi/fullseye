@@ -309,9 +309,104 @@ def run_jump_physics(out_gif="out/jump_physics.gif", *, terrain="flat", width=64
             "airtime_s": airtime, "left_ground": bool(airtime > 0.1)}
 
 
+def run_hurdle_physics(out_gif="out/hurdle_physics.gif", *, barrier_h=0.20, barrier_x=0.85,
+                       run_s=1.5, push_kp=300, width=640, height=480, fps=30, max_gif_frames=110,
+                       log=print):
+    """Genuine-physics **running long-jump over a barrier**: the go2 trots up to speed,
+    crouches, launches forward+up off its legs (feet driven back → body forward), sails
+    over a barrier of height *barrier_h*, and lands beyond it — all mj_step, gravity,
+    friction, contact. Reports whether it actually cleared the barrier (measured)."""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        raise RuntimeError("mujoco 未インストール")
+    import mujoco
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    spec = mujoco.MjSpec.from_file(_GO2)
+    spec.visual.global_.offwidth = 1280; spec.visual.global_.offheight = 960
+    g = spec.worldbody.add_geom(); g.type = mujoco.mjtGeom.mjGEOM_BOX
+    g.size = [0.04, 0.6, barrier_h / 2]; g.pos = [barrier_x, 0, barrier_h / 2]
+    g.rgba = [0.85, 0.3, 0.28, 1.0]; g.contype = 1; g.conaffinity = 1
+    m = spec.compile(); d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
+    home = m.key_qpos[0][7:].copy(); d.qpos[2] = 0.30
+    table = _leg_ik_table(m); dt = float(m.opt.timestep)
+    crouch = home.copy(); extend = home.copy()
+    for b in (0, 3, 6, 9):
+        crouch[b + 1] = 1.4; crouch[b + 2] = -2.5
+        extend[b + 1] = 1.2; extend[b + 2] = -0.5         # thigh back + straighten → forward+up thrust
+
+    ren = mujoco.Renderer(m, height=height, width=width)
+    cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+    cam.distance = 2.6; cam.elevation = -14.0; cam.azimuth = 90.0
+    frames = []; ts, base_x, base_z, ncons = [], [], [], []
+    step_i = [0]; peak = 0.30; cleared = False
+
+    def grab():
+        cam.lookat[:] = [max(0.0, float(d.qpos[0])), 0, 0.25]
+        ren.update_scene(d, camera=cam); frames.append(Image.fromarray(ren.render()))
+
+    def phase(get_ctrl, secs):
+        nonlocal peak, cleared
+        for _ in range(int(secs / dt)):
+            d.ctrl[:] = get_ctrl()
+            mujoco.mj_step(m, d)
+            peak = max(peak, float(d.qpos[2]))
+            if float(d.qpos[0]) > barrier_x + 0.1:
+                cleared = True
+            ts.append(step_i[0] * dt); base_x.append(float(d.qpos[0]))
+            base_z.append(float(d.qpos[2])); ncons.append(int(d.ncon))
+            if step_i[0] % max(1, int(3.6 / dt / max_gif_frames)) == 0:
+                grab()
+            step_i[0] += 1
+
+    roll = [0.0]; pitch = [0.0]
+    def run_ctrl():
+        q = _control(home, step_i[0] * dt, table, roll[0], pitch[0], freq=2.2)
+        roll[0], pitch[0] = _rp(d.qpos[3:7])
+        return 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+    mujoco.mj_forward(m, d)
+    phase(lambda: 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:], 0.4)   # settle
+    phase(run_ctrl, run_s)                                          # run up to speed
+    phase(lambda: 70 * (crouch - d.qpos[7:]) - 3 * d.qvel[6:], 0.18)  # crouch
+    phase(lambda: push_kp * (extend - d.qpos[7:]) - 2 * d.qvel[6:], 0.14)  # explosive launch
+    phase(lambda: 90 * (home - d.qpos[7:]) - 4 * d.qvel[6:], 1.3)   # flight + land
+    ren.close()
+
+    upright = float(d.qpos[2]) > 0.15
+    success = bool(cleared and upright)
+    airtime = sum(1 for c in ncons if c == 0) * dt
+    png = os.path.splitext(out_gif)[0] + "_telemetry.png"
+    bg, fgc, teal = "#12141b", "#e2e5ec", "#22d3bf"
+    fig, ax = plt.subplots(figsize=(9, 3.6), facecolor=bg)
+    ax.set_facecolor(bg); ax.tick_params(colors="#8b91a0"); ax.grid(True, color="#2c313f", lw=0.5)
+    for s in ax.spines.values():
+        s.set_color("#2c313f")
+    ax.plot(base_x, base_z, color=teal, lw=2.0)
+    ax.axvline(barrier_x, color="#e0654a", lw=3, alpha=0.7, label=f"barrier ({barrier_h*100:.0f} cm)")
+    ax.axhline(barrier_h, xmin=0, xmax=1, color="#e0654a", ls=":", lw=1)
+    ax.set_xlabel("forward x (m)", color=fgc); ax.set_ylabel("base height z (m)", color=fgc)
+    ax.set_title(f"Running long-jump — trajectory (cleared {barrier_h*100:.0f} cm barrier: {success})", color=fgc)
+    ax.legend(facecolor=bg, edgecolor="#2c313f", labelcolor=fgc, fontsize=9)
+    fig.tight_layout(); fig.savefig(png, dpi=115, facecolor=bg); plt.close(fig)
+    frames[0].save(out_gif, save_all=True, append_images=frames[1:],
+                   duration=int(1000 / max(1, fps)), loop=0)
+    log(f"hurdle physics: {out_gif} (+{os.path.basename(png)}) | barrier={barrier_h*100:.0f}cm "
+        f"final_x={float(d.qpos[0]):.2f} peak_z={peak:.2f} cleared={cleared} upright={upright}")
+    return {"gif": out_gif, "telemetry": png, "barrier_h": barrier_h, "cleared": bool(cleared),
+            "upright": bool(upright), "success": success, "final_x": float(d.qpos[0]), "peak_z": peak}
+
+
 if __name__ == "__main__":
     import sys
     mode = sys.argv[1] if len(sys.argv) > 1 else "walk"
+    if mode == "hurdle":
+        print(run_hurdle_physics(sys.argv[2] if len(sys.argv) > 2 else "out/hurdle_physics.gif",
+                                 log=lambda s: print(s, flush=True)))
+        raise SystemExit(0)
     out = sys.argv[2] if len(sys.argv) > 2 else f"out/{'jump' if mode=='jump' else 'walk'}_physics.gif"
     fn = run_jump_physics if mode == "jump" else run_walk_physics
     print(fn(out, log=lambda s: print(s, flush=True)))
