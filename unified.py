@@ -407,6 +407,9 @@ _3DGS_OPS = [
     ("bin_pick_gif", "bin_pick", "render_bin_pick_gif",
      "バラ積みされた部品を候補スコアリングで選び 6DoF IK で上面把持し bin から取り出す "
      "bin-picking を headless で GIF 化(GPU不要・成功数は部品が bin を出たかで実測)", "animation"),
+    ("lidar_scan", "lidar_sim", "run_lidar_demo",
+     "スピニング LIDAR を mj_ray の実レイキャストでシミュレートし点群を生成・可視化"
+     "(GPU不要・命中率など実測)", "perception"),
 ]
 
 
