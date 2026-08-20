@@ -416,6 +416,9 @@ _3DGS_OPS = [
     ("event_camera", "event_camera", "run_event_demo",
      "イベントカメラ(DVS)を対数輝度変化モデルで模倣し ON/OFF イベント列を生成。"
      "動くエッジに発火することを実測(GPU不要)", "perception"),
+    ("stereo_depth", "stereo_sim", "run_stereo_demo",
+     "平行2カメラのステレオペアを描画しブロックマッチングで深度推定、真値深度と誤差比較"
+     "(既存 stereo.py 使用、GPU不要)", "perception"),
 ]
 
 
