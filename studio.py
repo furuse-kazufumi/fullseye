@@ -1744,7 +1744,7 @@ def build_window(model=None):
     argrow.addWidget(lbl_b); argrow.addWidget(op_b_spin, 1)
     olay.addLayout(argrow)
     oprow = QtWidgets.QHBoxLayout()
-    oprow.addWidget(b_insert, 1); oprow.addWidget(b_run_once); oprow.addWidget(b_help)
+    oprow.addWidget(b_insert); oprow.addWidget(b_run_once); oprow.addWidget(b_help); oprow.addStretch(1)
     olay.addLayout(oprow); olay.addWidget(op_hint)
     lv.addWidget(_group(QtWidgets, "OPERATORS", olay), 1)
 
