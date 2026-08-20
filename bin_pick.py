@@ -28,8 +28,11 @@ _BIN_C = (0.48, 0.0)          # bin centre (x, y) within panda reach
 _BIN_HALF = 0.14              # bin inner half-width
 _TABLE_TOP = 0.13            # bin sits on a table → grasp height is in the arm's comfort zone
 _WALL_H = 0.055
-_CUBE = 0.025                 # cube half-size — tall enough that the finger pads
-                              # overlap it vertically despite servo droop
+# Parts are tall thin pegs, not cubes: NARROW so the open gripper (0.08 span) has
+# real side clearance (0.032 wide → 0.024/side), yet TALL so the pads overlap them
+# vertically despite servo droop. This is the shape that grasps reliably.
+_PART_W = 0.016               # peg half-width (footprint)
+_PART_H = 0.028               # peg half-height
 _FINGER_DROP = 0.056         # finger-pad tip below the finger-body origin (measured)
 
 
@@ -70,7 +73,7 @@ def _build(n_cubes, seed):
         b.add_freejoint()
         g = b.add_geom()
         g.type = mujoco.mjtGeom.mjGEOM_BOX
-        g.size = [_CUBE, _CUBE, _CUBE]
+        g.size = [_PART_W, _PART_W, _PART_H]
         g.rgba = palette[i % len(palette)] + [1.0]
         g.condim = 3; g.friction = [1.0, 0.03, 0.003]; g.mass = 0.06
     model = spec.compile()
@@ -186,7 +189,7 @@ def render_bin_pick_gif(out_gif, *, n_cubes=8, n_picks=3, seed=1, width=680, hei
     # let the pile settle
     settle(int(1.6 / dt), _GRIP_OPEN)
 
-    rim_z = _TABLE_TOP + _WALL_H + 2 * _CUBE
+    rim_z = _TABLE_TOP + _WALL_H + 2 * _PART_H
     picked = 0
     picked_flags = [False] * len(box_qadrs)
     def positions():
