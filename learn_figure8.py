@@ -243,14 +243,28 @@ def _restore(m, d, s):
     mujoco.mj_forward(m, d)
 
 
-def _lookahead(m, d, table, home, layers, wps, kidx, first_turn, *, H=0.6, ctrl_every=12):
+def _reactive_obs(pos, prev, yaw, prev_yaw, roll, pitch, wps, k, size, cdt):
+    """Build the policy observation exactly as training/deploy do (so look-ahead is faithful)."""
+    tgt = wps[min(k, len(wps) - 1)]; to = tgt - pos
+    he = (np.arctan2(to[1], to[0]) - yaw + np.pi) % (2 * np.pi) - np.pi
+    cross = float(np.min(np.hypot(wps[:, 0] - pos[0], wps[:, 1] - pos[1])))
+    speed = float(np.hypot(*(pos - prev))) / cdt
+    yaw_rate = ((yaw - prev_yaw + np.pi) % (2 * np.pi) - np.pi) / cdt
+    obs = np.array([np.sin(he), np.cos(he), np.clip(cross / max(size, 1e-3), -3, 3),
+                    np.clip(yaw_rate, -3, 3), np.clip(speed, -1, 2), roll / 30.0, pitch / 30.0,
+                    np.clip(np.hypot(*to) / max(size, 1e-3), 0, 3)])
+    return obs, cross
+
+
+def _lookahead(m, d, table, home, layers, wps, kidx, size, first_turn, *, H=0.5, ctrl_every=12):
     """Roll the model forward from the *current* state: hold ``first_turn`` for one control
-    interval, then let the **learned policy** drive for the rest of horizon H. Score by how
-    many figure-8 waypoints get passed (+ partial progress), upright, low cross-track. This
-    is the value a candidate next-action buys — the simulator is the predictive model."""
+    interval, then let the **learned policy** (faithful obs) drive for the rest of horizon H.
+    Score = figure-8 waypoints passed (+ partial) − fall − cross-track. The simulator is the
+    predictive model; this is the value a candidate next-action buys."""
     import mujoco
-    dt = float(m.opt.timestep); K = len(wps)
+    dt = float(m.opt.timestep); K = len(wps); cdt = ctrl_every * dt
     k = kidx; roll, pitch = WP._rp(d.qpos[3:7]); turn = first_turn
+    prev = np.array([float(d.qpos[0]), float(d.qpos[1])]); prev_yaw = None
     n = int(H / dt); cross_acc = 0.0; cn = 0; fell = False
     for step in range(n):
         if step > 0 and step % ctrl_every == 0:                # after the committed first action
@@ -259,13 +273,11 @@ def _lookahead(m, d, table, home, layers, wps, kidx, first_turn, *, H=0.6, ctrl_
             yaw = np.arctan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z))
             while k < K and np.hypot(*(wps[k] - pos)) < 0.38:
                 k += 1
-            tgt = wps[min(k, K - 1)]; to = tgt - pos
-            he = (np.arctan2(to[1], to[0]) - yaw + np.pi) % (2 * np.pi) - np.pi
-            cross = float(np.min(np.hypot(wps[:, 0] - pos[0], wps[:, 1] - pos[1])))
+            obs, cross = _reactive_obs(pos, prev, yaw, prev_yaw if prev_yaw is not None else yaw,
+                                       roll, pitch, wps, k, size, cdt)
             cross_acc += cross; cn += 1
-            obs = np.array([np.sin(he), np.cos(he), np.clip(cross, -3, 3), 0.0, 0.3,
-                            roll / 30.0, pitch / 30.0, np.clip(np.hypot(*to), 0, 3)])
             turn = policy_action(layers, obs)
+            prev, prev_yaw = pos, yaw
         q = WP._steer(home, float(d.time), table, roll, pitch, turn, freq=1.3)
         d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
         mujoco.mj_step(m, d); roll, pitch = WP._rp(d.qpos[3:7])
@@ -276,8 +288,8 @@ def _lookahead(m, d, table, home, layers, wps, kidx, first_turn, *, H=0.6, ctrl_
         k += 1
     partial = 0.0
     if k < K:
-        partial = np.clip((0.38 - np.hypot(*(wps[k] - pos))) / 0.38 + 1.0, 0, 1.2)
-    score = (k - kidx) + partial - (2.0 if fell else 0.0) - 0.05 * (cross_acc / max(cn, 1))
+        partial = np.clip((0.38 - np.hypot(*(wps[k] - pos))) / 0.38, 0, 1.0)
+    score = (k - kidx) + partial - (3.0 if fell else 0.0) - 0.1 * (cross_acc / max(cn, 1)) / max(size, 1e-3)
     return score, (float(pos[0]), float(pos[1]))
 
 
