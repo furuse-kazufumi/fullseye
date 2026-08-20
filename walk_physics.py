@@ -62,7 +62,7 @@ def _build(terrain="bumps", amp=0.05, n=14, half=2.2, roll_scale=1.0):
     return spec.compile()
 
 
-def _leg_ik_table(m, *, samples=48, stride=0.12, stand=0.27, lift=0.06):
+def _leg_ik_table(m, *, samples=48, stride=0.28, stand=0.24, lift=0.07):
     """Pre-solve (thigh, calf) joint targets for one foot cycle by 2-link IK so the
     foot follows a proper walking trajectory: planted and **retracting front→back
     during stance** (propels the body forward, +x), lifted and swinging back→front
@@ -123,7 +123,7 @@ def _rp(quat):
 
 
 def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_scale=1.0,
-                     secs=6.0, kp=40.0, kd=2.0, freq=1.8, width=640, height=480, fps=30,
+                     secs=6.0, kp=60.0, kd=3.0, freq=1.6, width=640, height=480, fps=30,
                      max_gif_frames=110, log=print):
     """Simulate a genuine-physics trot and save a GIF + a telemetry plot next to it.
     Returns honest dynamics stats (upright, forward distance, pitch/roll range)."""
@@ -167,7 +167,7 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_sc
     upright = True
     for step in range(n_steps):
         t = step * dt
-        d.ctrl[:] = kp * (_trot(home, t, freq=freq) - d.qpos[7:]) - kd * d.qvel[6:]
+        d.ctrl[:] = kp * (_trot(home, t, table, freq=freq) - d.qpos[7:]) - kd * d.qvel[6:]
         mujoco.mj_step(m, d)
         roll, pitch = _rp(d.qpos[3:7])
         ts.append(t); base_z.append(float(d.qpos[2])); rolls.append(roll); pitches.append(pitch)
