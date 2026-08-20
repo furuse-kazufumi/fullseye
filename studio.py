@@ -1690,12 +1690,11 @@ def build_window(model=None):
         samples.addItem(nm)
     samples.setToolTip("Pick a ready-made sample — it loads into the pipeline and its code appears "
                        "in the Program panel")
-    b_browse_samples = QtWidgets.QPushButton("Browse with code…")
-    b_browse_samples.setToolTip("Open the sample gallery — preview each sample's code before loading it")
-    s_hint = QtWidgets.QLabel("pick one → loads into the pipeline + Program panel · or browse with code")
+    b_browse_samples = _tbtn("grid", "Browse the sample gallery — preview each sample's code before loading it")
+    s_hint = QtWidgets.QLabel("pick one → loads into the pipeline + Program panel")
     s_hint.setProperty("muted", True); s_hint.setWordWrap(True)
-    slay = QtWidgets.QVBoxLayout(); slay.addWidget(samples)
-    srow = QtWidgets.QHBoxLayout(); srow.addWidget(b_browse_samples); srow.addStretch(1)
+    slay = QtWidgets.QVBoxLayout()
+    srow = QtWidgets.QHBoxLayout(); srow.addWidget(samples, 1); srow.addWidget(b_browse_samples)
     slay.addLayout(srow); slay.addWidget(s_hint)
     lv.addWidget(_group(QtWidgets, "SAMPLE PIPELINES", slay))
 
