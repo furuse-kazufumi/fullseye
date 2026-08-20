@@ -120,7 +120,7 @@ def run_stereo_demo(out_png="out/stereo.png", *, max_disp=48, block=9, log=print
     log(f"stereo: {out_png} | corr={corr:.2f} median_err={med_err*100:.1f}cm "
         f"coverage={coverage*100:.0f}% f={f_px:.0f}px baseline={_BASELINE}m")
     return {"png": out_png, "depth_corr": corr, "median_err_m": med_err,
-            "coverage": coverage, "matches_truth": bool(corr > 0.7)}
+            "coverage": coverage, "matches_truth": bool(med_err < 0.05 and corr > 0.4)}
 
 
 if __name__ == "__main__":
