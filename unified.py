@@ -400,8 +400,12 @@ _3DGS_OPS = [
      "walker を terrain 上に配置した運動学プレビューを headless で GIF 化(接触なし・"
      "motion/gait を可視化。物理歩行は walk_physics を使う)", "animation"),
     ("walk_physics", "walk_physics", "run_walk_physics",
-     "go2 をトルク PD 制御＋mj_step の本物の物理(重力・接触・慣性)で衝突地形上を歩かせ、"
-     "重心移動で胴体が傾く様子を GIF＋テレメトリ化(自立/前進/傾きを実測、GPU不要)", "animation"),
+     "go2 をトルク PD 制御＋閉ループバランス＋mj_step の本物の物理(重力・摩擦・接触・慣性)で"
+     "ラフな height field 上を歩かせ、胴体が傾く様子を GIF＋テレメトリ化"
+     "(自立/前進/傾きを実測、GPU不要)", "animation"),
+    ("jump_physics", "walk_physics", "run_jump_physics",
+     "go2 をしゃがみ→爆発伸展→弾道飛行(全足離地=接触0を実測)→着地させる本物の物理ジャンプを"
+     "GIF＋高さテレメトリ化(跳躍高/滞空を実測、摩擦・重力込み、GPU不要)", "animation"),
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
