@@ -529,6 +529,68 @@ def run_route_planning(out_gif="out/route_planning.gif", *, max_s=60.0, freq=1.8
             "n_obstacles": len(obstacles)}
 
 
+def run_figure8(out_gif="out/figure8.gif", *, sizes=(3.0, 5.0), freq=1.3, width=680, height=560,
+                fps=30, max_gif_frames=130, log=print):
+    """Steering practice: drive the differential-stride turn with a sinusoid to trace
+    **figure-8 loops of several sizes**, exercising left+right turns at varying radii.
+    Plots the top-down tracks — a clean calibration of the turn controller."""
+    import importlib.util
+    import os
+    if importlib.util.find_spec("mujoco") is None:
+        raise RuntimeError("mujoco 未インストール")
+    import mujoco
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from PIL import Image
+
+    m = _build("flat"); dt = float(mujoco.MjModel.from_xml_path(_GO2).opt.timestep)
+    tracks = {}; frames = []
+    bg, fgc = "#12141b", "#e2e5ec"
+    palette = ["#22d3bf", "#f5a524", "#e0654a"]
+    ren = mujoco.Renderer(m, height=height, width=width)
+    cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+    cam.elevation = -50.0; cam.azimuth = 90.0; cam.distance = 5.0
+    for si, amp in enumerate(sizes):
+        d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
+        home = m.key_qpos[0][7:].copy(); table = _leg_ik_table(m)
+        for _ in range(int(0.5 / dt)):
+            d.ctrl[:] = 60 * (home - d.qpos[7:]) - 3 * d.qvel[6:]; mujoco.mj_step(m, d)
+        roll, pitch = _rp(d.qpos[3:7]); T = 16.0; path = []
+        for step in range(int(T / dt)):
+            tt = step * dt
+            turn = amp * np.sin(2 * np.pi * tt / T * 2)   # two loops → figure-8
+            q = _steer(home, tt, table, roll, pitch, turn, freq=freq)
+            d.ctrl[:] = 60 * (q - d.qpos[7:]) - 3 * d.qvel[6:]
+            mujoco.mj_step(m, d); roll, pitch = _rp(d.qpos[3:7])
+            if step % 15 == 0:
+                path.append((float(d.qpos[0]), float(d.qpos[1])))
+            if si == len(sizes) - 1 and step % max(1, int(T / dt / max_gif_frames)) == 0:
+                cam.lookat[:] = [float(d.qpos[0]), float(d.qpos[1]), 0.2]
+                ren.update_scene(d, camera=cam); frames.append(Image.fromarray(ren.render()))
+        tracks[amp] = np.array(path)
+    ren.close()
+
+    png = os.path.splitext(out_gif)[0] + "_tracks.png"
+    fig, ax = plt.subplots(figsize=(6.2, 5.6), facecolor=bg); ax.set_facecolor(bg)
+    ax.tick_params(colors="#8b91a0")
+    for s in ax.spines.values():
+        s.set_color("#2c313f")
+    for i, (amp, pa) in enumerate(tracks.items()):
+        if len(pa):
+            ax.plot(pa[:, 0], pa[:, 1], "-", color=palette[i % len(palette)], lw=2.0, label=f"turn amp {amp}")
+    ax.set_aspect("equal"); ax.set_title("Figure-8 steering practice (various sizes)", color=fgc)
+    ax.set_xlabel("x (m)", color=fgc); ax.set_ylabel("y (m)", color=fgc)
+    ax.legend(facecolor=bg, edgecolor="#2c313f", labelcolor=fgc, fontsize=9)
+    fig.tight_layout(); fig.savefig(png, dpi=115, facecolor=bg); plt.close(fig)
+    if frames:
+        frames[0].save(out_gif, save_all=True, append_images=frames[1:],
+                       duration=int(1000 / max(1, fps)), loop=0)
+    spans = {round(a, 2): round(float(np.ptp(p[:, 0]) + np.ptp(p[:, 1])), 2) for a, p in tracks.items() if len(p)}
+    log(f"figure-8: {out_gif} (+{os.path.basename(png)}) | sizes={list(tracks)} track_spans={spans}")
+    return {"gif": out_gif, "tracks": png, "sizes": list(tracks), "track_spans": spans}
+
+
 _ROUTE_FRAMES = []
 
 
