@@ -419,6 +419,9 @@ _3DGS_OPS = [
     ("stereo_depth", "stereo_sim", "run_stereo_demo",
      "平行2カメラのステレオペアを描画しブロックマッチングで深度推定、真値深度と誤差比較"
      "(既存 stereo.py 使用、GPU不要)", "perception"),
+    ("polarization", "polar_cam", "run_polar_demo",
+     "偏光カメラを Fresnel 順モデル(法線→DoLP/AoLP→4偏光画像→Stokes)で模倣。"
+     "無テクスチャ面でも表面方位を偏光が符号化(透過/鏡面把持向け、GPU不要)", "perception"),
 ]
 
 
