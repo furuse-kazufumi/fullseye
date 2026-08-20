@@ -318,7 +318,7 @@ def pyramid_action(m, d, table, home, layers, wps, kidx, size, a_prior, *, ncoar
 
 
 def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.0,
-                   fan_every=40, ctrl_every=12, look_H=0.35, collect=True, log=None):
+                   fan_every=16, search_every=3, ctrl_every=12, look_H=0.35, collect=True, log=None):
     """Run the learned controller on a figure-8 of the given size under genuine physics. The
     RL policy proposes a steering action every control tick; when ``use_mpc`` the pyramid
     search refines that proposal by model look-ahead (coarse→fine candidate next-actions,
