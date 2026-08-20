@@ -171,3 +171,13 @@ def walk_gif(out_gif, walker="go2", terrain="rolling", gait="trot", motion=None,
         gait = None
     r = WR.render_walk_gif(out_gif, walker=walker, terrain=terrain, gait=gait, motion=motion, **kw)
     return r["gif"]
+
+
+def pick_gif(out_gif="out/panda_pick.gif", **kw):
+    """ロボットアームが実接触・摩擦でキューブを把持し別位置へ置く pick-and-place を
+    headless GIF 化(GPU 不要)。戻り値 dict(lift_m / grasped / placed_z など、実測値)。
+
+    グルーは一切使わず、把持成否は箱の実測高さで報告する(誇張なし)。
+    """
+    import pick_render as PR
+    return PR.render_pick_gif(out_gif, **kw)
