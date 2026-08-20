@@ -67,16 +67,19 @@ def render_pick_gif(out_gif, *, width=640, height=480, fps=30, max_gif_frames=12
     mujoco.mj_forward(m, d)
     rest_z = _cube_z(d, box_qadr)
 
-    carry_arm = home_arm.copy(); carry_arm[0] += float(carry_yaw)  # swing the base aside
+    carry_arm = home_arm.copy(); carry_arm[0] += float(carry_yaw)  # swing the base aside (raised)
+    place_arm = pick_arm.copy(); place_arm[0] += float(carry_yaw)  # same reach-down pose, rotated aside
     # (arm_from, arm_to, gripper, seconds)
     phases = [
         (home_arm, pick_arm, _GRIP_OPEN, 1.5),                    # reach down to the cube
         (pick_arm, pick_arm, _GRIP_OPEN, 0.3),                    # settle
         (pick_arm, pick_arm, _GRIP_SHUT, 0.8),                    # close the gripper (grasp)
         (pick_arm, home_arm, _GRIP_SHUT, 1.5),                    # lift straight up
-        (home_arm, carry_arm, _GRIP_SHUT, 1.4),                   # carry it aside
-        (carry_arm, carry_arm, _GRIP_SHUT, 0.3),                  # steady
-        (carry_arm, carry_arm, _GRIP_OPEN, 0.8),                  # release
+        (home_arm, carry_arm, _GRIP_SHUT, 1.3),                   # carry it aside (still high)
+        (carry_arm, place_arm, _GRIP_SHUT, 1.4),                  # lower it to the new spot
+        (place_arm, place_arm, _GRIP_SHUT, 0.3),                  # steady
+        (place_arm, place_arm, _GRIP_OPEN, 0.6),                  # release (set down, not dropped)
+        (place_arm, carry_arm, _GRIP_OPEN, 0.8),                  # retreat, leaving the cube placed
     ]
     dt = float(m.opt.timestep)
     n_steps = int(round(sum(p[3] for p in phases) / dt))
