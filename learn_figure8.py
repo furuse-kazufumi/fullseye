@@ -364,7 +364,7 @@ def deploy_rollout(m, d, table, home, layers, size, *, use_mpc=True, horizon=26.
 
 
 def eval_figure8(out_gif="out/fig8_learned.gif", weights="out/fig8_policy.npz", *,
-                 sizes=(1.0, 1.4, 1.8, 2.1, 2.5), train_panel=(1.1, 1.6, 2.1),
+                 sizes=(1.0, 1.4, 1.8, 2.1, 2.5), train_panel=None,
                  render_size=1.8, width=680, height=560, fps=30, max_gif_frames=130, log=print):
     """Render the **learned** figure-8 controller: a 3D GIF of the go2 tracing a figure-8, a
     top-down panel of the tracks + target curves for several sizes (train and held-out), a
