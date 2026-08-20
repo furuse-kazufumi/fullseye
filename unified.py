@@ -413,6 +413,9 @@ _3DGS_OPS = [
     ("focus_stack", "focus_stack", "run_focus_stack_demo",
      "真値深度から被写界深度ボケの焦点スタックを生成し局所シャープネス最大で全焦点合成"
      "(焦点由来深度も復元、GPU不要)", "perception"),
+    ("event_camera", "event_camera", "run_event_demo",
+     "イベントカメラ(DVS)を対数輝度変化モデルで模倣し ON/OFF イベント列を生成。"
+     "動くエッジに発火することを実測(GPU不要)", "perception"),
 ]
 
 
