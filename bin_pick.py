@@ -28,7 +28,9 @@ _BIN_C = (0.48, 0.0)          # bin centre (x, y) within panda reach
 _BIN_HALF = 0.14              # bin inner half-width
 _TABLE_TOP = 0.13            # bin sits on a table → grasp height is in the arm's comfort zone
 _WALL_H = 0.055
-_CUBE = 0.018                 # cube half-size (roomy vs the 0.04 gripper opening)
+_CUBE = 0.025                 # cube half-size — tall enough that the finger pads
+                              # overlap it vertically despite servo droop
+_FINGER_DROP = 0.056         # finger-pad tip below the finger-body origin (measured)
 
 
 def _build(n_cubes, seed):
