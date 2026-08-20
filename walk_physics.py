@@ -97,9 +97,15 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="bumps", roll_sc
 
     if not os.path.exists(_GO2):
         raise FileNotFoundError(f"go2 scene not found: {_GO2} (needs MuJoCo Menagerie)")
-    m = _build(terrain)
+    m = _build(terrain, roll_scale=roll_scale)
     d = mujoco.MjData(m); mujoco.mj_resetDataKeyframe(m, d, 0)
-    d.qpos[2] += 0.06                                     # start just above the bumps
+    mujoco.mj_forward(m, d)
+    # start the base above the terrain directly under it (raycast down), then settle
+    gid = np.array([-1], np.int32)
+    dist = mujoco.mj_ray(m, d, np.array([0.0, 0.0, 3.0]), np.array([0.0, 0.0, -1.0]),
+                         None, 1, 0, gid)                  # exclude the robot's own body(0=base)
+    tz = (3.0 - dist) if dist >= 0 else 0.0
+    d.qpos[2] = tz + 0.30                                  # stand height above local terrain
     mujoco.mj_forward(m, d)
     home = m.key_qpos[0][7:].copy()
 
