@@ -191,8 +191,8 @@ def train_figure8(out_npz="out/fig8_policy.npz", *, iters=40, pop=24, sigma=0.15
             adv = rp - rm
             if np.std(adv) > 1e-8:
                 adv = (adv - adv.mean()) / (adv.std() + 1e-8)
-            grad = (eps.T @ adv) / pop
-            theta = theta + lr * grad / (sigma + 1e-8) * sigma      # step
+            grad = (eps.T @ adv) / pop                             # ES gradient estimate
+            theta = theta + lr * grad / (sigma + 1e-8)             # OpenAI-ES step
             # honest progress: evaluate the *current center* policy on the panel
             center_f = _center_eval(pool, theta, panel)
             hist_best.append(float(R.max())); hist_mean.append(float(R.mean()))
