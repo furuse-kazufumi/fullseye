@@ -102,7 +102,7 @@ def run_event_demo(out_png="out/event_camera.png", *, n_frames=24, C=0.15, log=p
         a.axis("off")
     ax[0].imshow(np.clip(frames[n_frames // 2], 0, 1)); ax[0].set_title("reference frame (panning)", color=fgc)
     ax[1].imshow(ev); ax[1].set_title(f"DVS events — ON=teal / OFF=magenta ({total:,} events)", color=fgc)
-    ax[2].imshow(edges, cmap="magma"); ax[2].set_title(f"spatial edges — event↔edge corr {corr:.2f}", color=fgc)
+    ax[2].imshow(edges_swept, cmap="magma"); ax[2].set_title(f"edges swept by the pan — event↔edge corr {corr:.2f}", color=fgc)
     fig.suptitle("Event camera (DVS) — log-intensity change fires per-pixel events on motion", color=fgc, fontsize=13)
 
     import os
