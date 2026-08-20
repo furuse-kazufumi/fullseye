@@ -1,15 +1,21 @@
 """Bin picking (バラ積みピッキング), rendered **headless** as a GIF (genuine physics).
 
-Cubes are dropped into a bin and settle into a random pile. A simple "vision"
-step picks the **topmost graspable** cube (highest centre — what a 3-D bin-picking
-camera would surface first), the arm solves 6-DOF IK to a top-down grasp over it,
-closes, lifts it clear of the rim and drops it in a place zone — then re-scans and
-repeats. Nothing is glued; a cube counts as picked only if its measured height
-clears the bin rim, so the success count is earned.
+Parts are dropped into a table-mounted bin and settle into a loose pile. Instead of
+"grab the tallest" (the tallest is usually perched on others and topples when
+touched), a **grasp-candidate search** scores every part by clearance to its nearest
+neighbour + accessibility and picks the best — a coarse-to-fine selection like a
+real bin-picking planner. The arm solves 6-DOF IK to a top-down grasp on the chosen
+part, closes, lifts it clear of the rim and drops it in a place zone, then re-scans
+and repeats. Nothing is glued; a part counts as picked only if it actually leaves
+the bin, so the success count is earned.
 
-The arm is a Franka Panda (Menagerie). IK is damped-least-squares on the hand body
-with the orientation error rotated into the world frame (the fix that makes 6-DOF
-IK converge here). Rendering is MuJoCo offscreen (headless on Windows).
+The arm is a Franka Panda (Menagerie). Two calibrations make it work: the gripper
+actuator's ctrlrange is [0,255] (255 = open, not 0.04), and the grasp point is the
+finger-PAD centre (~9.5 cm below the hand), not the finger-body origin. IK is damped
+least-squares on the hand with the orientation error rotated into the world frame
+(the fix that makes 6-DOF IK converge). Parts are tall thin pegs so the open gripper
+clears them sideways yet the pads overlap them vertically. Rendering is MuJoCo
+offscreen (headless on Windows).
 
     import bin_pick as BP
     BP.render_bin_pick_gif("out/bin_pick.gif", n_cubes=8, n_picks=3)   # -> dict incl. n_picked
