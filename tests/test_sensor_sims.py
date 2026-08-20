@@ -75,3 +75,19 @@ def test_stereo_depth_matches_truth(tmp_path):
     assert os.path.isfile(out) and os.path.getsize(out) > 0
     assert r["matches_truth"] is True
     assert r["median_err_m"] < 0.05 and r["depth_corr"] > 0.4
+
+
+def test_polarization_op_registered():
+    import unified as u
+    assert "polarization" in u.ops
+
+
+def test_polarization_roundtrip_and_dolp(tmp_path):
+    """偏光の Fresnel 順モデル→Stokes 復元が往復整合し、DoLP が有意な範囲に出る。"""
+    _need_mujoco()
+    import polar_cam as PC
+    out = str(tmp_path / "pol.png")
+    r = PC.run_polar_demo(out, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["reconstruction_ok"] is True and r["stokes_roundtrip"] > 0.9
+    assert 0.05 < r["mean_dolp"] < 1.0                        # meaningful, physical polarization

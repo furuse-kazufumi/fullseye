@@ -233,3 +233,11 @@ def stereo_depth(out_png="out/stereo.png", **kw):
     """
     import stereo_sim as SS
     return SS.run_stereo_demo(out_png, **kw)
+
+
+def polarization(out_png="out/polarization.png", **kw):
+    """偏光カメラを Fresnel 順モデルで模倣し DoLP/AoLP を可視化(GPU 不要)。無テクスチャ・
+    鏡面・透過面でも表面方位を偏光が符号化することを示す。戻り値 dict(mean_dolp など)。
+    """
+    import polar_cam as PC
+    return PC.run_polar_demo(out_png, **kw)
