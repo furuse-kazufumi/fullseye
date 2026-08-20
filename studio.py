@@ -1474,6 +1474,25 @@ def build_window(model=None):
     Image/Perception/Inspector column."""
     from PySide6 import QtWidgets, QtGui, QtCore
 
+    def _tbtn(icon_name, tip, *, accent=False, menu=None, w=30):
+        """A compact **icon-only** tool button (no text label — the tooltip and
+        accessibleName carry the meaning). ``menu`` attaches a popup so rarely-used
+        actions live behind one small button instead of a row of wide ones."""
+        b = QtWidgets.QToolButton()
+        b.setIcon(_icon(QtGui, QtCore, icon_name, INK if accent else TEXT))
+        b.setIconSize(QtCore.QSize(18, 18))
+        b.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)
+        b.setToolTip(tip); b.setAccessibleName(tip)
+        b.setCursor(QtCore.Qt.PointingHandCursor)
+        b.setFixedSize(w, 28)
+        if accent:
+            b.setProperty("accent", True)
+        if menu is not None:
+            b.setMenu(menu)
+            b.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+            b.setFixedSize(w + 8, 28)                     # room for the ▾ arrow
+        return b
+
     model = model or PipelineModel(demo_image())
 
     class StudioWindow(QtWidgets.QMainWindow):
