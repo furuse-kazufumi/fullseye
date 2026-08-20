@@ -27,3 +27,19 @@ def test_lidar_returns_points(tmp_path):
     assert r["n_points"] > 100                                # beams actually hit geometry
     assert 0.05 < r["hit_ratio"] < 0.95                       # not all-miss, not all-hit
     assert r["mean_range_m"] > 0
+
+
+def test_focus_stack_op_registered():
+    import unified as u
+    assert "focus_stack" in u.ops
+
+
+def test_focus_stack_beats_single_frames(tmp_path):
+    """全焦点合成が各単フレームよりシャープで、焦点由来深度が真値と相関する。"""
+    _need_mujoco()
+    import focus_stack as FS
+    out = str(tmp_path / "fs.png")
+    r = FS.run_focus_stack_demo(out, n_focus=6, log=lambda *_: None)
+    assert os.path.isfile(out) and os.path.getsize(out) > 0
+    assert r["beats_all_frames"] is True and r["sharpness_gain"] > 1.0
+    assert r["depth_focus_corr"] > 0.5                        # focus cue tracks true depth

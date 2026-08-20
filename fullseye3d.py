@@ -209,3 +209,11 @@ def lidar_scan(out_png="out/lidar.png", **kw):
     """
     import lidar_sim as LS
     return LS.run_lidar_demo(out_png, **kw)
+
+
+def focus_stack(out_png="out/focus_stack.png", **kw):
+    """真値深度から被写界深度ボケの焦点スタックを合成し、局所シャープネス最大で全焦点画像に
+    融合(焦点由来深度も復元、GPU 不要)。戻り値 dict(sharpness_gain / depth_focus_corr)。
+    """
+    import focus_stack as FS
+    return FS.run_focus_stack_demo(out_png, **kw)
