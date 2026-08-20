@@ -202,6 +202,26 @@ def hurdle_physics(out_gif="out/hurdle_physics.gif", **kw):
     return WP.run_hurdle_physics(out_gif, **kw)
 
 
+def long_route(out_gif="out/long_route.gif", **kw):
+    """go2 が粗さの変化する長い起伏地形を本物の物理で長距離(既定100m)歩き切る(GPU 不要)。
+    戻り値 dict(distance_m / reached_target / upright / speed_mps、実測値)。"""
+    import walk_physics as WP
+    return WP.run_long_route(out_gif, **kw)
+
+
+def route_planning(out_gif="out/route_planning.gif", **kw):
+    """障害物をレイキャストで先読みし、候補方位をピラミッド探索(粗→細)で選んで差動旋回で回避し
+    ゴール到達する本物の物理ナビ(俯瞰プラン付き、GPU 不要)。戻り値 dict(reached_goal など)。"""
+    import walk_physics as WP
+    return WP.run_route_planning(out_gif, **kw)
+
+
+def figure8(out_gif="out/figure8.gif", **kw):
+    """差動旋回で 8 の字系の曲線を各サイズで描く旋回制御の練習/較正(GPU 不要)。"""
+    import walk_physics as WP
+    return WP.run_figure8(out_gif, **kw)
+
+
 def pick_gif(out_gif="out/panda_pick.gif", **kw):
     """ロボットアームが実接触・摩擦でキューブを把持し別位置へ置く pick-and-place を
     headless GIF 化(GPU 不要)。戻り値 dict(lift_m / grasped / placed_z など、実測値)。
