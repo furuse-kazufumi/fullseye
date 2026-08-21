@@ -148,9 +148,11 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     stats = {"gif": out_gif, "frames": len(frames), "forward_m": fwd,
              "mean_events_per_frame": mean_ev,
              "depth_near_m": float(np.median(dmins)), "depth_far_m": float(np.median(dmaxs))}
+    layout = "3rd-person RGB | robot's-eye RGB | robot's-eye depth | robot's-eye DVS" \
+        if ego >= 0 else "RGB | depth | events"
     log(f"Fullseye perceives evis: {out_gif} | frames={len(frames)} rollout_fwd={fwd:.2f}m "
         f"DVS~{mean_ev:.0f} ev/frame depth[{stats['depth_near_m']:.2f},{stats['depth_far_m']:.2f}]m "
-        f"(panels: RGB | depth | events)")
+        f"(panels: {layout})")
     return stats
 
 
