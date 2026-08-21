@@ -243,7 +243,7 @@ def perceive_g1_real(qpos_npy, xml, out_gif="out/g1_real_sensors.gif", *, height
         # Mid-360: real ray-cast scan from the head top
         origin = (tp + R @ OFF_LIDAR).astype(np.float64)
         geomid = np.full(NRAY, -1, np.int32); dist = np.zeros(NRAY)
-        mujoco.mj_multiRay(m, d, origin, VEC.ravel(), None, 1, -1, geomid, dist, NRAY, L_MAX)
+        mujoco.mj_multiRay(m, d, origin, VEC.ravel(), None, 1, -1, geomid, dist, None, NRAY, L_MAX)
         hit = (geomid >= 0) & (dist > 0) & (dist <= L_MAX)
         pts = origin[None, :] + dist[hit, None] * VEC[hit]
         keep = np.hypot(pts[:, 0] - origin[0], pts[:, 1] - origin[1]) > 0.45   # self-return filter
