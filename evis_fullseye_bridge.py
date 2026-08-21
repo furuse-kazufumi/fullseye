@@ -38,9 +38,15 @@ def _dvs(prev_log, cur_log, C=0.18):
 
 
 def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=360, height=360,
-                       max_frames=110, fps=25, body="pelvis", log=print):
+                       max_frames=110, fps=25, body="pelvis", ego_body=None, ego_h=0.35,
+                       ego_dist=2.5, log=print):
     """Render the learned evis rollout and perceive it (RGB | depth | DVS). Returns honest stats
-    (frames, forward distance in the rollout, mean event rate, depth span)."""
+    (frames, forward distance in the rollout, mean event rate, depth span).
+
+    With ``ego_body`` set (e.g. ``"torso_link"`` for the G1), the sensors are MOUNTED ON THE
+    ROBOT: a first-person camera rides ``ego_h`` above that body, faces the body's yaw heading,
+    and the depth + DVS panels are computed from THAT view — the panel layout becomes
+    third-person RGB | robot's-eye RGB | robot's-eye depth | robot's-eye DVS."""
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
