@@ -194,10 +194,27 @@ def perceive_g1_real(qpos_npy, xml, out_gif="out/g1_real_sensors.gif", *, height
     qpos = np.load(qpos_npy)
     if qpos.ndim != 2 or len(qpos) == 0:
         raise ValueError(f"bad rollout {qpos_npy}: shape {qpos.shape}")
-    m = mujoco.MjModel.from_xml_path(xml)
+    # With obstacles=True, STATIC scenery geoms are injected off the walking path — nq is
+    # unchanged so the replay stays honest (the robot was blind during control anyway; the
+    # props exist so the spec-matched sensors have something to return). Temp variant is
+    # written next to the original so relative <include>/assets still resolve.
+    xml_load, tmp = xml, None
+    if obstacles:
+        txt = open(xml, encoding="utf-8").read()
+        if "<worldbody>" not in txt:
+            raise ValueError(f"{xml}: no <worldbody> to inject obstacles into")
+        tmp = os.path.join(os.path.dirname(xml) or ".", "._fs_g1_obstacles.xml")
+        with open(tmp, "w", encoding="utf-8") as f:
+            f.write(txt.replace("<worldbody>", "<worldbody>" + _G1_OBSTACLES, 1))
+        xml_load = tmp
+    try:
+        m = mujoco.MjModel.from_xml_path(xml_load)
+        me = mujoco.MjModel.from_xml_path(xml_load)   # second model: D435i optics (58° FOV)
+    finally:
+        if tmp:
+            os.unlink(tmp)
     if qpos.shape[1] != m.nq:
         raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq}")
-    me = mujoco.MjModel.from_xml_path(xml)      # second model: D435i optics (58° vertical FOV)
     me.vis.global_.fovy = 58.0
     d = mujoco.MjData(m)
     de = mujoco.MjData(me)
