@@ -80,6 +80,25 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     dep = mujoco.Renderer(m, height=height, width=width); dep.enable_depth_rendering()
     cam = mujoco.MjvCamera(); cam.type = mujoco.mjtCamera.mjCAMERA_FREE
     cam.distance = 3.2; cam.elevation = -10.0; cam.azimuth = 120.0
+    ego = mujoco.mj_name2id(m, mujoco.mjtObj.mjOBJ_BODY, ego_body) if ego_body else -1
+    if ego_body and ego < 0:
+        raise ValueError(f"ego_body {ego_body!r} not found in model")
+    ecam = mujoco.MjvCamera(); ecam.type = mujoco.mjtCamera.mjCAMERA_FREE
+
+    def _ego_cam(dd):
+        """Place the free camera AT the robot's head, looking along its yaw heading.
+        MuJoCo's free camera sits at lookat - distance*dir(azimuth, elevation), so putting
+        lookat one distance AHEAD of the eye along that direction puts the camera on the eye."""
+        import math
+        qw, qx, qy, qz = dd.qpos[3:7]
+        yaw = math.atan2(2.0 * (qw * qz + qx * qy), 1.0 - 2.0 * (qy * qy + qz * qz))
+        el = math.radians(-5.0)                       # look slightly down, like a walking human
+        dv = np.array([math.cos(el) * math.cos(yaw), math.cos(el) * math.sin(yaw), math.sin(el)])
+        eye = dd.xpos[ego].copy(); eye[2] += ego_h    # head-mounted: ride above the torso body
+        ecam.lookat[:] = eye + dv * ego_dist
+        ecam.distance = ego_dist
+        ecam.azimuth = math.degrees(yaw)
+        ecam.elevation = -5.0
 
     T = len(qpos); stride = max(1, T // max_frames)
     frames = []; prev_log = None; ev_counts = []; dmins = []; dmaxs = []
