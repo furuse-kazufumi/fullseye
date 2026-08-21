@@ -156,8 +156,19 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     return stats
 
 
+_G1_OBSTACLES = """
+    <geom name="fs_p1" type="cylinder" pos="3.0 1.5 0.6" size="0.15 0.6" rgba="0.85 0.5 0.3 1"/>
+    <geom name="fs_p2" type="cylinder" pos="2.0 -1.8 0.5" size="0.18 0.5" rgba="0.4 0.7 0.5 1"/>
+    <geom name="fs_b1" type="box" pos="-2.5 1.6 0.4" size="0.3 0.3 0.4" rgba="0.4 0.55 0.9 1"/>
+    <geom name="fs_b2" type="box" pos="4.0 -0.6 0.5" size="0.25 0.25 0.5" rgba="0.8 0.75 0.3 1"/>
+    <geom name="fs_s1" type="sphere" pos="-1.0 -2.4 0.35" size="0.35" rgba="0.75 0.4 0.8 1"/>
+    <geom name="fs_wall" type="box" pos="5.5 0 1.0" size="0.1 4.0 1.0" rgba="0.5 0.52 0.6 1"/>
+    <geom name="fs_p3" type="cylinder" pos="-4.0 -1.5 0.9" size="0.2 0.9" rgba="0.6 0.6 0.65 1"/>
+"""
+
+
 def perceive_g1_real(qpos_npy, xml, out_gif="out/g1_real_sensors.gif", *, height=300,
-                     max_frames=110, fps=25, log=print):
+                     max_frames=110, fps=25, obstacles=False, log=print):
     """Perceive a G1 rollout through the robot's REAL head-sensor suite, spec-matched:
 
     * **Livox Mid-360 LiDAR** (head top): 360° azimuth, vertical FOV −7°..+52°, 15 m clip
