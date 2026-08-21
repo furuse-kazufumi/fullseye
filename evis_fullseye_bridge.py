@@ -111,22 +111,33 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
             fwd0 = cx
         cam.lookat[:] = [cx, cy, 0.9]
         rgb.update_scene(d, camera=cam); rimg = rgb.render().copy()
-        dep.update_scene(d, camera=cam); dimg = dep.render().copy()
+        if ego >= 0:
+            # robot's-eye sensors: RGB + depth + DVS all from the head-mounted camera
+            _ego_cam(d)
+            rgb.update_scene(d, camera=ecam); eimg = rgb.render().copy()
+            dep.update_scene(d, camera=ecam); dimg = dep.render().copy()
+            sens = eimg
+        else:
+            dep.update_scene(d, camera=cam); dimg = dep.render().copy()
+            sens = rimg
         # depth: clip to a sensible band around the body, colormap
         finite = dimg[np.isfinite(dimg)]
         near, far = (np.percentile(finite, 3), np.percentile(finite, 92)) if finite.size else (0.0, 5.0)
         dmins.append(float(near)); dmaxs.append(float(far))
         dcol = _colormap(np.clip(dimg, near, far), near, far)
-        # DVS from RGB luminance (log intensity)
-        lum = np.log((0.299 * rimg[..., 0] + 0.587 * rimg[..., 1] + 0.114 * rimg[..., 2]) / 255.0 + 0.02)
+        # DVS from the sensor view's luminance (log intensity)
+        lum = np.log((0.299 * sens[..., 0] + 0.587 * sens[..., 1] + 0.114 * sens[..., 2]) / 255.0 + 0.02)
         if prev_log is None:
-            evimg = np.full_like(rimg, 22); ev = 0
+            evimg = np.full_like(sens, 22); ev = 0
         else:
             evimg, ev = _dvs(prev_log, lum)
         prev_log = lum; ev_counts.append(ev)
-        # composite: RGB | depth | events, with a thin separator
+        # composite with thin separators: 3rd-person | (ego) | depth | events
         sep = np.full((height, 3, 3), 60, np.uint8)
-        panel = np.concatenate([rimg, sep, dcol, sep, evimg], axis=1)
+        panels = [rimg] + ([eimg] if ego >= 0 else []) + [dcol, evimg]
+        panel = panels[0]
+        for pnl in panels[1:]:
+            panel = np.concatenate([panel, sep, pnl], axis=1)
         frames.append(Image.fromarray(panel))
 
     os.makedirs(os.path.dirname(out_gif) or ".", exist_ok=True)
