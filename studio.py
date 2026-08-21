@@ -784,7 +784,9 @@ def sample_code(name):
     if st is None:
         return None
     eng = engine.FullseyeEngine([(op, a, b) for (op, a, b) in st], name=name)
-    return eng.to_ops(), eng.to_python()
+    # two-tier rule: every sample ships BOTH forms - one-shot AND staged
+    # (copy a single stage / branch between stages with your own if/for)
+    return eng.to_ops(), eng.to_python() + chr(10) + chr(10) + eng.to_python_staged()
 
 
 def shortcut_table(items):
@@ -1765,7 +1767,21 @@ def build_window(model=None):
         for r in all_ops:
             if c != "all categories" and r["category"] != c:
                 continue
-            hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
+            hay = r.get("_search")
+            if hay is None:
+                # search the same vocabulary the generated sample comments use
+                # (category, HALCON counterpart, signal sorts) PLUS the op docstring,
+                # so a word seen in any sample comment finds the related operators
+                doc = ""
+                try:
+                    _fn = getattr(api.find_op(r["name"]), "fn", None)
+                    doc = " ".join(((getattr(_fn, "__doc__", "") or "").split())[:40])
+                except Exception:
+                    pass
+                hay = r["_search"] = " ".join(
+                    [r["name"], r.get("halcon") or "", r["category"],
+                     r.get("in_sort", ""), r.get("out_sort", ""), r.get("tier", ""),
+                     doc]).lower()
             if kw and kw not in hay:
                 continue
             it = QtWidgets.QListWidgetItem(f"{r['name']}   [{r['in_sort']} → {r['out_sort']}]")
@@ -2809,7 +2825,21 @@ def build_window(model=None):
         def refill(_=None):
             kw = srch.text().lower(); lst.clear()
             for r in rows:
-                hay = (r["name"] + " " + (r["halcon"] or "") + " " + r["category"]).lower()
+                hay = r.get("_search")
+                if hay is None:
+                    # search the same vocabulary the generated sample comments use
+                    # (category, HALCON counterpart, signal sorts) PLUS the op docstring,
+                    # so a word seen in any sample comment finds the related operators
+                    doc = ""
+                    try:
+                        _fn = getattr(api.find_op(r["name"]), "fn", None)
+                        doc = " ".join(((getattr(_fn, "__doc__", "") or "").split())[:40])
+                    except Exception:
+                        pass
+                    hay = r["_search"] = " ".join(
+                        [r["name"], r.get("halcon") or "", r["category"],
+                         r.get("in_sort", ""), r.get("out_sort", ""), r.get("tier", ""),
+                         doc]).lower()
                 if kw and kw not in hay:
                     continue
                 it = QtWidgets.QListWidgetItem(op_detail(r)); it.setData(QtCore.Qt.UserRole, r)
@@ -2827,12 +2857,68 @@ def build_window(model=None):
         v.addWidget(ok, 0, QtCore.Qt.AlignRight)
         dlg.resize(560, 580); dlg.exec()
 
+    def persist_dialog_geometry(dlg, key, default_size=(820, 540)):
+        # Remember a dialog's position/size across close/reopen AND across sessions
+        # (user spec — on multi-display setups the second screen placement must stick).
+        # Same QSettings store as the main window; the test suite redirects it to a
+        # temp INI, so this stays hermetic under pytest.
+        sset = QtCore.QSettings("Fullseye", "Studio")
+        geo = sset.value("dialogs/%s_geometry" % key)
+        if geo is not None:
+            dlg.restoreGeometry(geo)
+            # a remembered position can be OFF-SCREEN today (monitor unplugged,
+            # resolution changed) — pull it back into the visible area (user spec):
+            # "visible" means a usable slab of the title bar, not a 1-px sliver
+            fg = dlg.frameGeometry()
+            vis = any(sc.availableGeometry().intersected(fg).width() >= 80
+                      and sc.availableGeometry().intersected(fg).height() >= 40
+                      for sc in QtGui.QGuiApplication.screens())
+            if not vis:
+                avail = QtGui.QGuiApplication.primaryScreen().availableGeometry()
+                dlg.resize(min(fg.width(), avail.width()),
+                           min(fg.height(), avail.height()))
+                dlg.move(avail.center() - dlg.rect().center())
+        else:
+            dlg.resize(*default_size)
+        orig_close = dlg.closeEvent
+
+        def _close(ev):
+            QtCore.QSettings("Fullseye", "Studio").setValue(
+                "dialogs/%s_geometry" % key, dlg.saveGeometry())
+            orig_close(ev)
+        dlg.closeEvent = _close
+
     def show_samples():
+        # Sequential-browsing gallery (user spec): open samples one after another,
+        # filter by word, close what you don't need, COPY the code you do — in either
+        # form (one-shot function or the staged, stage-by-stage twin). Non-modal on
+        # purpose: on a multi-display setup it can stay open on another screen while
+        # Studio keeps working (same idea as "Float all panels").
+        if getattr(win, "_samples_dlg", None) is not None:
+            win._samples_dlg.show(); win._samples_dlg.raise_(); win._samples_dlg.activateWindow()
+            return
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Samples & code")
+        dlg.setModal(False)                        # lives beside Studio, not on top of it
         h = QtWidgets.QHBoxLayout(dlg)
+        filt = QtWidgets.QLineEdit()
+        filt.setPlaceholderText("filter samples… (name or ops words)")
         lst = QtWidgets.QListWidget()
-        for nm in recipes.names():
-            lst.addItem(nm)
+
+        def refill(_=None):
+            # filter by recipe NAME or by words in its ops string, so "otsu" or
+            # "bilateral" finds every sample that uses that operator
+            kw = filt.text().lower()
+            lst.clear()
+            for nm in recipes.names():
+                ops = (sample_code(nm) or ("", ""))[0].lower()
+                if not kw or kw in nm.lower() or kw in ops:
+                    lst.addItem(nm)
+            if lst.count():
+                lst.setCurrentRow(0)
+            else:
+                code.setPlainText("")
+        filt.textChanged.connect(refill)
+
         code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
         code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
 
@@ -2840,10 +2926,27 @@ def build_window(model=None):
             it = lst.currentItem()
             if it is not None:
                 sc = sample_code(it.text())
-                code.setPlainText(('--ops "%s"\n\n%s' % sc) if sc else "")
+                code.setPlainText(('--ops "%s"' % sc[0] + chr(10) * 2 + sc[1]) if sc else "")
         lst.currentRowChanged.connect(lambda _=None: preview())
 
-        def load_and_close():
+        def copy_code(staged):
+            # clipboard hand-off is the point of the gallery: browse -> copy -> use.
+            # staged=False copies the one-shot function, True the *_staged twin.
+            it = lst.currentItem()
+            if it is None:
+                return
+            sc = sample_code(it.text())
+            if not sc:
+                return
+            cut = sc[1].rindex("import fullseye")   # the staged form's own header
+            text = (sc[1][cut:] if staged else sc[1][:cut].rstrip() + chr(10))
+            QtWidgets.QApplication.clipboard().setText(text)
+            flash("copied %s form of '%s' to the clipboard"
+                  % ("staged" if staged else "one-shot", it.text()))
+
+        def load_sample():
+            # keep the dialog OPEN after loading — sequential browsing means the user
+            # may load one, look at Studio, come back and try the next
             it = lst.currentItem()
             if it is None:
                 return
@@ -2855,19 +2958,30 @@ def build_window(model=None):
                 report_error("Sample pipeline", e); return
             mark_dirty()
             refresh_stage_list(select=len(model.stages) - 1); show_result()
-            dlg.accept()
+            flash("loaded sample '%s' — the gallery stays open" % it.text())
+
         left = QtWidgets.QVBoxLayout()
         lbl = QtWidgets.QLabel("Sample pipelines"); lbl.setProperty("muted", True)
         b_load = QtWidgets.QPushButton("Load into Studio"); b_load.setProperty("accent", True)
-        b_load.clicked.connect(load_and_close)
-        left.addWidget(lbl); left.addWidget(lst, 1); left.addWidget(b_load)
+        b_load.clicked.connect(load_sample)
+        left.addWidget(lbl); left.addWidget(filt); left.addWidget(lst, 1); left.addWidget(b_load)
         right = QtWidgets.QVBoxLayout()
-        clbl = QtWidgets.QLabel("Code (ops string + Python)"); clbl.setProperty("muted", True)
-        right.addWidget(clbl); right.addWidget(code, 1)
+        clbl = QtWidgets.QLabel("Code (ops string + one-shot + staged)")
+        clbl.setProperty("muted", True)
+        row = QtWidgets.QHBoxLayout()
+        b_copy1 = QtWidgets.QPushButton("Copy one-shot")
+        b_copy2 = QtWidgets.QPushButton("Copy staged")
+        b_copy1.setToolTip("Copy the single-call pipeline function to the clipboard")
+        b_copy2.setToolTip("Copy the stage-by-stage form (splice single stages, add if/for)")
+        b_copy1.clicked.connect(lambda: copy_code(False))
+        b_copy2.clicked.connect(lambda: copy_code(True))
+        row.addWidget(b_copy1); row.addWidget(b_copy2); row.addStretch(1)
+        right.addWidget(clbl); right.addWidget(code, 1); right.addLayout(row)
         h.addLayout(left, 1); h.addLayout(right, 2)
-        if lst.count():
-            lst.setCurrentRow(0)
-        dlg.resize(740, 500); dlg.exec()
+        refill()
+        persist_dialog_geometry(dlg, "samples")    # position remembered across sessions
+        win._samples_dlg = dlg                     # reuse; hidden on close, shown on reopen
+        dlg.show()
 
     def add_op_by_name(n):
         row = _op_row(n)

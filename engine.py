@@ -236,6 +236,25 @@ class FullseyeEngine:
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
 
+    def to_python_staged(self) -> str:
+        """The pipeline as STEP-BY-STEP Python — the staged twin of ``to_python``.
+
+        One call per stage with its generated comment above it and the running signal
+        in ``x``, so a single stage can be copied out on its own, or your own if/for
+        can branch BETWEEN stages (the two-tier interface rule: every sample exists
+        both as a one-liner and as a staged form)."""
+        fn = _py_ident(self.name)
+        lines = ["import fullseye, numpy as np", "",
+                 "# pipeline %r - STAGED form: x is the running signal; copy any single" % self.name,
+                 "# stage on its own, or insert your own if/for between stages.",
+                 "def %s_staged(frame):" % fn,
+                 "    x = frame"]
+        for name, a, b in self.stages:
+            lines.append("    # %s" % _stage_comment(name))
+            lines.append("    x = fullseye.run_pipeline(x, [(%r, %.3f, %.3f)])" % (name, a, b))
+        lines += ["    return x"]
+        return chr(10).join(lines) + chr(10)
+
     def save(self, path: str) -> None:
         path = os.fspath(path)
         with open(path, "w", encoding="utf-8") as f:
