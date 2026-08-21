@@ -53,12 +53,18 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
         raise ValueError(f"qpos npy must be (T, nq); got {qpos.shape}")
     if len(qpos) == 0:
         raise ValueError(f"empty rollout: {qpos_npy} has 0 frames (nothing to perceive)")
-    # The training XML bakes WSL-absolute asset paths (/mnt/c/...). On Windows py311 those don't
-    # resolve, so rewrite them to their C:/ drive equivalents and load from the patched string.
+    # Two loading regimes, chosen by inspecting the file (measured, both real):
+    #  * evis scene_full_mjx.xml bakes WSL-absolute asset paths (/mnt/c/...) that Windows
+    #    py311 can't resolve -> rewrite to drive letters and load from the patched STRING;
+    #  * menagerie scenes (G1 etc.) are <include>-based with relative assets, which
+    #    from_xml_string can NEVER resolve -> load by PATH.
     with open(xml, encoding="utf-8") as f:
         xml_text = f.read()
-    xml_text = xml_text.replace("/mnt/c/", "C:/").replace("/mnt/d/", "D:/")
-    m = mujoco.MjModel.from_xml_string(xml_text)
+    if "/mnt/" in xml_text:
+        xml_text = xml_text.replace("/mnt/c/", "C:/").replace("/mnt/d/", "D:/")
+        m = mujoco.MjModel.from_xml_string(xml_text)
+    else:
+        m = mujoco.MjModel.from_xml_path(xml)
     if qpos.shape[1] != m.nq:
         raise ValueError(f"qpos nq {qpos.shape[1]} != model nq {m.nq} (wrong xml for this rollout)")
     d = mujoco.MjData(m)
