@@ -28,3 +28,4 @@ studio_ui_crash.log
 out/ui_harness_shots/
 .venv-gsplat/
 .venv*/
+.gsplat-cuda/
