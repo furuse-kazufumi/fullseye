@@ -2691,6 +2691,7 @@ def build_window(model=None):
 
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
+        tag_dialog(dlg, "editor")
         te = QtWidgets.QPlainTextEdit()
         te.setPlainText('--ops "' + model.ops_string() + '"\n\n' + model.export_python())
         te.setReadOnly(True); v.addWidget(te); dlg.resize(560, 360); dlg.exec()
@@ -2708,6 +2709,7 @@ def build_window(model=None):
 
     def _show_holdout_report(summary):
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Holdout validation")
+        tag_dialog(dlg, "editor")
         v = QtWidgets.QVBoxLayout(dlg)
         head = "%d image(s): %d ran, %d failed · mean %.1f ms" % (
             summary["n"], summary["n_ok"], summary["n_err"], summary["mean_ms"])
@@ -2775,6 +2777,7 @@ def build_window(model=None):
 
     def show_about():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("About Fullseye Studio")
+        tag_dialog(dlg, "system")
         v = QtWidgets.QVBoxLayout(dlg)
         row = QtWidgets.QHBoxLayout()
         if os.path.exists(_ICON_PATH):
@@ -2796,6 +2799,7 @@ def build_window(model=None):
     def show_shortcuts():
         rows = shortcut_table([(a.text(), a.shortcut().toString()) for a in win._actions.values()])
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Keyboard shortcuts")
+        tag_dialog(dlg, "reference")
         v = QtWidgets.QVBoxLayout(dlg)
         tbl = QtWidgets.QTableWidget(len(rows), 2)
         tbl.setHorizontalHeaderLabels(["Action", "Shortcut"])
@@ -2814,6 +2818,7 @@ def build_window(model=None):
 
     def show_op_reference():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Operator reference")
+        tag_dialog(dlg, "reference")
         v = QtWidgets.QVBoxLayout(dlg)
         srch = QtWidgets.QLineEdit(); srch.setPlaceholderText("search operators…")
         srch.setClearButtonEnabled(True)
@@ -2857,6 +2862,29 @@ def build_window(model=None):
         v.addWidget(ok, 0, QtCore.Qt.AlignRight)
         dlg.resize(560, 580); dlg.exec()
 
+    # dialog frame colors by FUNCTION (user spec: tell windows apart at a glance).
+    # One hue per category — viewers teal, references amber, editors violet, system gray.
+    _DLG_KIND_COLORS = {
+        "viewer": "#2dd4bf",      # 表示系(3D/アニメ/Physical AI)
+        "reference": "#f59e0b",   # リファレンス(op help / shortcuts / samples)
+        "editor": "#a78bfa",      # 編集・実行系(export / holdout / palette)
+        "system": "#64748b",      # 設定・情報系(settings / about)
+    }
+
+    def tag_dialog(dlg, kind, backend=None):
+        """Mark a dialog's FUNCTION with a colored frame and, for display windows,
+        state WHAT the view is based on in the title (user spec: the title must say
+        MuJoCo / matplotlib / ... — the habit matters once RViz/Gazebo sources join).
+        Unknown kind falls back to the system gray; never raises."""
+        try:
+            color = _DLG_KIND_COLORS.get(kind, _DLG_KIND_COLORS["system"])
+            dlg.setStyleSheet((dlg.styleSheet() or "")
+                              + "QDialog { border: 2px solid %s; }" % color)
+            if backend:
+                dlg.setWindowTitle(dlg.windowTitle() + "  [%s]" % backend)
+        except Exception:
+            pass                                   # cosmetics must never break a dialog
+
     def persist_dialog_geometry(dlg, key, default_size=(820, 540)):
         # Remember a dialog's position/size across close/reopen AND across sessions
         # (user spec — on multi-display setups the second screen placement must stick).
@@ -2898,6 +2926,7 @@ def build_window(model=None):
             win._samples_dlg.show(); win._samples_dlg.raise_(); win._samples_dlg.activateWindow()
             return
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Samples & code")
+        tag_dialog(dlg, "reference")
         dlg.setModal(False)                        # lives beside Studio, not on top of it
         h = QtWidgets.QHBoxLayout(dlg)
         filt = QtWidgets.QLineEdit()
@@ -3002,6 +3031,7 @@ def build_window(model=None):
         items += [("op: " + r["name"], (lambda n=r["name"]: add_op_by_name(n))) for r in all_ops]
         labels = [lbl for lbl, _ in items]
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
+        tag_dialog(dlg, "editor")
         v = QtWidgets.QVBoxLayout(dlg)
         ed = QtWidgets.QLineEdit(); ed.setPlaceholderText("type an action or operator…  (Enter to run)")
         lst = QtWidgets.QListWidget()
@@ -3817,6 +3847,7 @@ def build_window(model=None):
     def open_system_settings():
         dlg = QtWidgets.QDialog(win)
         dlg.setWindowTitle("System settings — Fullseye Studio")
+        tag_dialog(dlg, "system")
         form = QtWidgets.QFormLayout(dlg)
         th = QtWidgets.QSpinBox(); th.setRange(0, 256); th.setValue(_get_system_param("thread_num"))
         th.setToolTip("set_system('thread_num'): OpenCV worker threads (0 = default / all). "
@@ -3867,6 +3898,7 @@ def build_window(model=None):
         dlg = QtWidgets.QDialog(win)
         dlg.setAttribute(QtCore.Qt.WA_DeleteOnClose)          # closing frees dialog + movie
         dlg.setWindowTitle("Physical AI — evis RL walk, perceived by Fullseye")
+        tag_dialog(dlg, "viewer", backend="MuJoCo offscreen render")
         lay = QtWidgets.QVBoxLayout(dlg)
         cap = QtWidgets.QLabel("GPU-learned evis (MJX-PPO torque policy) → Fullseye vision: "
                                "RGB · depth · DVS events")
