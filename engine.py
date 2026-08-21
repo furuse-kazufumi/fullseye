@@ -225,9 +225,13 @@ class FullseyeEngine:
 
     def to_python(self) -> str:
         """The pipeline as a standalone Python function (same as Studio export)."""
-        lines = ["import fullseye, numpy as np", "", "def %s(frame):" % _py_ident(self.name),
+        lines = ["import fullseye, numpy as np", "", "# pipeline %r - %d stage(s); rows run top to bottom, each op reads the "
+                 "previous op's output (a/b = that op's two knobs)" % (
+                     self.name, len(self.stages)),
+                 "def %s(frame):" % _py_ident(self.name),
                  "    return fullseye.run_pipeline(frame, ["]
         for name, a, b in self.stages:
+            lines.append("        # %s" % _stage_comment(name))
             lines.append("        (%r, %.3f, %.3f)," % (name, a, b))
         lines += ["    ])"]
         return "\n".join(lines) + "\n"
@@ -240,6 +244,22 @@ class FullseyeEngine:
     def __repr__(self):
         return "FullseyeEngine(%r, %d stages: %s)" % (
             self.name, len(self.stages), self.to_ops() or "<empty>")
+
+
+def _stage_comment(name: str) -> str:
+    """One generated comment line describing pipeline op *name* (category, HALCON
+    counterpart, signal sorts, and the op's one-line doc). Studio's sample code must
+    explain itself, so the GENERATOR emits the comments and every recipe, sample and
+    export gets them for free. Fail-safe: lookup trouble degrades to a generic note."""
+    try:
+        op = api.find_op(name)
+        doc = (getattr(op.fn, "__doc__", "") or "").strip().splitlines()
+        doc1 = doc[0].strip() if doc else ""
+        halcon = " (HALCON: %s)" % op.halcon if getattr(op, "halcon", None) else ""
+        sorts = "%s -> %s" % (op.in_sort, op.out_sort)
+        return " | ".join(x for x in ("%s%s" % (op.category, halcon), sorts, doc1) if x)
+    except Exception:
+        return "pipeline op"
 
 
 def _py_ident(name: str) -> str:

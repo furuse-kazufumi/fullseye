@@ -418,7 +418,15 @@ _3DGS_OPS = [
     ("figure8", "walk_physics", "run_figure8",
      "差動旋回で 8 の字系の曲線を各サイズで描く旋回制御の練習/較正(俯瞰トラック、GPU不要)", "animation"),
     ("evis_perceive", "evis_fullseye_bridge", "perceive_evis_walk",
-     "GPU学習evisのロールアウト(qpos npy)をFullseyeで知覚: RGB|深度|DVSの3面GIF", "animation"),
+     "GPU学習evisのロールアウト(qpos npy)をFullseyeで知覚: RGB|深度|DVSの3面GIF"
+     "(ego_body=でロボット視点=頭部搭載RGB/深度/DVSの4面)", "animation"),
+    ("g1_perceive_real", "evis_fullseye_bridge", "perceive_g1_real",
+     "G1実機センサ仕様で知覚: Livox Mid-360(頭頂360°/-7..+52°)BEV点群 + RealSense D435i"
+     "(87°×58°, 0.3-6m帯)RGB/深度の4面GIF。obstacles=Trueで静的障害物注入(qpos再生は正直なまま)",
+     "animation"),
+    ("pseudo_lidar", "evis_fullseye_bridge", "pseudo_lidar_rays",
+     "平面疑似LiDARスキャン(前方弧K本の正規化距離)。歩行方策G1VisionWalkの観測と同一ジオメトリ"
+     "のnumpy parity — 方策が食べる入力をツールとして単体計算", "array"),
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),

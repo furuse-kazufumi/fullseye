@@ -156,6 +156,205 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     return stats
 
 
+def pseudo_lidar_rays(p_xy, yaw, obstacles, *, rays=16, fov_deg=180.0, ray_max=4.0):
+    """Planar pseudo-LiDAR scan — the SAME geometry the ``G1VisionWalk`` policy consumes
+    in training (onocollo-complete mjx_humanoid_walk.py; numpy parity of its ``_rays``).
+    ``p_xy``=(2,) sensor position, ``yaw``=heading [rad], ``obstacles``=(N,3) rows [x,y,r].
+    Returns (rays,) distances normalised to [0,1] over a forward ``fov_deg`` arc — what the
+    walking policy "sees", exposed as a toolkit op so perception and control share one truth."""
+    obstacles = np.asarray(obstacles, float).reshape(-1, 3)
+    ang = np.linspace(-fov_deg / 2, fov_deg / 2, int(rays)) * np.pi / 180.0 + float(yaw)
+    d = np.stack([np.cos(ang), np.sin(ang)], axis=1)               # (K,2)
+    rel = obstacles[:, :2] - np.asarray(p_xy, float)[None, :]      # (N,2)
+    t_c = rel @ d.T                                                # (N,K)
+    per2 = (rel * rel).sum(1)[:, None] - t_c ** 2
+    r2 = obstacles[:, 2][:, None] ** 2
+    hit = (per2 <= r2) & (t_c > 0.0)
+    t_hit = np.where(hit, t_c - np.sqrt(np.maximum(r2 - per2, 0.0)), ray_max)
+    return np.clip(t_hit.min(axis=0) if len(obstacles) else np.full(int(rays), ray_max),
+                   0.0, ray_max) / ray_max
+
+
+class PerceptionSession:
+    """STAGED perception API — the one-line toolkit facades answer "give me the GIF"; this
+    class opens the same machinery one operator at a time, so you can interleave YOUR OWN
+    control flow (if/for) between stages and see what each one contributes:
+
+        with PerceptionSession("out/g1_walk9_37M_qpos.npy", xml) as ps:
+            for k in range(0, len(ps), 10):
+                ps.seek(k)                        # kinematics only — cheap
+                rays = ps.lidar(obstacles)        # numeric distance field first
+                if rays.min() < 0.3:              # YOUR condition decides what to sense next
+                    rgb = ps.ego_rgb()            # render only when it matters
+                    ev, n = ps.dvs()              # event frame vs the previous ego view
+                pts = ps.mid360()                 # real ray-cast point cloud when needed
+
+    Stages: ``seek(k)`` pose the model | ``pose()`` root x,y,z,yaw | ``lidar(obst)`` planar
+    pseudo-LiDAR (policy-input parity) | ``mid360()`` real mj_multiRay scan -> (M,3) points |
+    ``third_person()`` / ``ego_rgb()`` / ``ego_depth()`` renders | ``dvs()`` events vs the
+    previous ego frame. Renderers are built lazily; use as a context manager to close them."""
+
+    def __init__(self, qpos_npy, xml, *, width=320, height=240, ego_body="torso_link",
+                 ego_h=0.35, ego_dist=2.0, fovy_ego=58.0):
+        import mujoco
+        self._mj = mujoco
+        self.qpos = np.load(qpos_npy) if isinstance(qpos_npy, str) else np.asarray(qpos_npy)
+        if self.qpos.ndim != 2:
+            raise ValueError(f"qpos must be (T, nq); got {self.qpos.shape}")
+        with open(xml, encoding="utf-8") as f:
+            txt = f.read()
+        if "/mnt/" in txt:
+            txt = txt.replace("/mnt/c/", "C:/").replace("/mnt/d/", "D:/")
+            self._m = mujoco.MjModel.from_xml_string(txt)
+            self._me = mujoco.MjModel.from_xml_string(txt)
+        else:
+            self._m = mujoco.MjModel.from_xml_path(xml)
+            self._me = mujoco.MjModel.from_xml_path(xml)
+        if self.qpos.shape[1] != self._m.nq:
+            raise ValueError(f"qpos nq {self.qpos.shape[1]} != model nq {self._m.nq}")
+        self._me.vis.global_.fovy = float(fovy_ego)
+        self._d = mujoco.MjData(self._m)
+        self._de = mujoco.MjData(self._me)
+        self._wh = (int(width), int(height))
+        self._ego_body = mujoco.mj_name2id(self._m, mujoco.mjtObj.mjOBJ_BODY, ego_body)
+        if self._ego_body < 0:
+            raise ValueError(f"ego_body {ego_body!r} not found in model")
+        self._ego_h = float(ego_h)
+        self._ego_dist = float(ego_dist)
+        self._r3 = self._re = self._rd = None
+        self._prev_log = None
+        self._k = -1
+        self.seek(0)
+
+    def __len__(self):
+        return len(self.qpos)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        self.close()
+
+    def close(self):
+        for r in (self._r3, self._re, self._rd):
+            if r is not None:
+                r.close()
+        self._r3 = self._re = self._rd = None
+
+    # ---- stage 1: kinematics -------------------------------------------------
+    def seek(self, k):
+        """Pose the model at rollout frame ``k`` (mj_forward only — no rendering)."""
+        self._k = int(k)
+        self._d.qpos[:] = self.qpos[self._k]
+        self._mj.mj_forward(self._m, self._d)
+        self._de.qpos[:] = self.qpos[self._k]
+        self._mj.mj_forward(self._me, self._de)
+        return self
+
+    def pose(self):
+        """Root pose of the current frame: dict(x, y, z, yaw)."""
+        import math
+        q = self._d.qpos
+        yaw = math.atan2(2.0 * (q[3] * q[6] + q[4] * q[5]),
+                         1.0 - 2.0 * (q[5] * q[5] + q[6] * q[6]))
+        return {"x": float(q[0]), "y": float(q[1]), "z": float(q[2]), "yaw": yaw}
+
+    # ---- stage 2: numeric sensing (cheap, no GL) -----------------------------
+    def lidar(self, obstacles, **kw):
+        """Planar pseudo-LiDAR against ``obstacles`` (N,3)=[x,y,r] — numpy parity of what
+        the G1VisionWalk policy observes. Returns normalised distances (K,)."""
+        p = self.pose()
+        return pseudo_lidar_rays((p["x"], p["y"]), p["yaw"], obstacles, **kw)
+
+    def mid360(self, *, channels=16, az_steps=180, fov=(-7.0, 52.0), rmax=15.0,
+               mount=(0.004, 0.0, 0.496), self_filter=0.45):
+        """REAL ray-cast Mid-360 scan (mj_multiRay against everything in the scene).
+        Returns hit points (M,3) in world frame, self-returns filtered."""
+        mj = self._mj
+        R = self._d.xmat[self._ego_body].reshape(3, 3)
+        origin = (self._d.xpos[self._ego_body] + R @ np.asarray(mount)).astype(np.float64)
+        el = np.deg2rad(np.linspace(fov[0], fov[1], channels))
+        az = np.linspace(0.0, 2 * np.pi, az_steps, endpoint=False)
+        vec = np.stack([np.outer(np.cos(el), np.cos(az)).ravel(),
+                        np.outer(np.cos(el), np.sin(az)).ravel(),
+                        np.repeat(np.sin(el), az_steps)], axis=1)
+        n = len(vec)
+        geomid = np.full(n, -1, np.int32)
+        dist = np.zeros(n)
+        mj.mj_multiRay(self._m, self._d, origin, vec.ravel(), None, 1, -1,
+                       geomid, dist, None, n, rmax)
+        ok = (geomid >= 0) & (dist > 0) & (dist <= rmax)
+        pts = origin[None, :] + dist[ok, None] * vec[ok]
+        keep = np.hypot(pts[:, 0] - origin[0], pts[:, 1] - origin[1]) > self_filter
+        return pts[keep]
+
+    # ---- stage 3: rendered sensing (GL, lazily built) ------------------------
+    def _ego_cam(self):
+        import math
+        mj = self._mj
+        R = self._d.xmat[self._ego_body].reshape(3, 3)
+        fwd = R @ np.array([1.0, 0.0, 0.0])
+        yaw = math.atan2(fwd[1], fwd[0])
+        el = math.asin(float(np.clip(fwd[2], -1.0, 1.0)))
+        eye = self._d.xpos[self._ego_body].copy()
+        eye[2] += self._ego_h
+        cam = mj.MjvCamera()
+        cam.type = mj.mjtCamera.mjCAMERA_FREE
+        dv = np.array([math.cos(el) * math.cos(yaw), math.cos(el) * math.sin(yaw), math.sin(el)])
+        cam.lookat[:] = eye + dv * self._ego_dist
+        cam.distance = self._ego_dist
+        cam.azimuth = math.degrees(yaw)
+        cam.elevation = math.degrees(el)
+        return cam
+
+    def third_person(self, *, distance=3.2, elevation=-10.0, azimuth=120.0):
+        """Follow-camera RGB of the current frame (H,W,3)."""
+        mj = self._mj
+        w, h = self._wh
+        if self._r3 is None:
+            self._r3 = mj.Renderer(self._m, height=h, width=w)
+        cam = mj.MjvCamera()
+        cam.type = mj.mjtCamera.mjCAMERA_FREE
+        cam.distance, cam.elevation, cam.azimuth = distance, elevation, azimuth
+        p = self.pose()
+        cam.lookat[:] = [p["x"], p["y"], 0.9]
+        self._r3.update_scene(self._d, camera=cam)
+        return self._r3.render().copy()
+
+    def ego_rgb(self):
+        """Head-mounted RGB (H,W,3)."""
+        mj = self._mj
+        w, h = self._wh
+        if self._re is None:
+            self._re = mj.Renderer(self._me, height=h, width=w)
+        self._re.update_scene(self._de, camera=self._ego_cam())
+        return self._re.render().copy()
+
+    def ego_depth(self, band=(0.3, 6.0)):
+        """Head-mounted metric depth, clipped to ``band`` and colormapped (H,W,3)."""
+        mj = self._mj
+        w, h = self._wh
+        if self._rd is None:
+            self._rd = mj.Renderer(self._me, height=h, width=w)
+            self._rd.enable_depth_rendering()
+        self._rd.update_scene(self._de, camera=self._ego_cam())
+        dimg = self._rd.render().copy()
+        return _colormap(np.clip(dimg, band[0], band[1]), band[0], band[1])
+
+    def dvs(self, C=0.18):
+        """Event frame between the PREVIOUS ``dvs()``/first call and the current frame.
+        Returns (event_image, n_events); the first call is the empty baseline."""
+        img = self.ego_rgb()
+        lum = np.log((0.299 * img[..., 0] + 0.587 * img[..., 1]
+                      + 0.114 * img[..., 2]) / 255.0 + 0.02)
+        if self._prev_log is None:
+            self._prev_log = lum
+            return np.full_like(img, 22), 0
+        ev, n = _dvs(self._prev_log, lum, C)
+        self._prev_log = lum
+        return ev, n
+
+
 _G1_OBSTACLES = """
     <geom name="fs_p1" type="cylinder" pos="3.0 1.5 0.6" size="0.15 0.6" rgba="0.85 0.5 0.3 1"/>
     <geom name="fs_p2" type="cylinder" pos="2.0 -1.8 0.5" size="0.18 0.5" rgba="0.4 0.7 0.5 1"/>

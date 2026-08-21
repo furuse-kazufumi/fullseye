@@ -168,6 +168,28 @@ def evis_rl_perceive(qpos_npy, xml="C:/dev/projects/ms_human_700_jaw/scene_full_
     return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, **kw)
 
 
+def robot_pov(qpos_npy, xml, ego_body="torso_link", out_gif="out/robot_pov.gif", **kw):
+    """ロボット視点の知覚を1行で: 頭部搭載カメラの RGB|深度|DVS(+三人称)4面 GIF。
+    ``ego_body`` にセンサを載せる body 名(G1="torso_link", evis="pelvis" 等)。"""
+    import evis_fullseye_bridge as B
+    return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, ego_body=ego_body, **kw)
+
+
+def g1_real_sensors(qpos_npy, xml="C:/dev/projects/mujoco_menagerie/unitree_g1/scene.xml",
+                    out_gif="out/g1_real_sensors.gif", obstacles=True, **kw):
+    """G1 実機センサ仕様の知覚を1行で: Livox Mid-360 BEV 点群 + RealSense D435i RGB/深度。
+    仕様・取付位置は実測ベース(詳細 ``evis_fullseye_bridge.perceive_g1_real``)。"""
+    import evis_fullseye_bridge as B
+    return B.perceive_g1_real(qpos_npy, xml, out_gif=out_gif, obstacles=obstacles, **kw)
+
+
+def pseudo_lidar(p_xy, yaw, obstacles, **kw):
+    """歩行方策 G1VisionWalk が観測として食べるものと同一ジオメトリの平面疑似 LiDAR を
+    単体計算(前方弧 K 本の正規化距離)。知覚と制御が同じ真実を共有するための toolkit 入口。"""
+    import evis_fullseye_bridge as B
+    return B.pseudo_lidar_rays(p_xy, yaw, obstacles, **kw)
+
+
 def demo_world_walk(terrain_name="rolling", **kw):
     """『起伏地形メッシュの上を evis がメッシュで歩く』を1呼び出しで(既定 TSDF=GPU不要)。"""
     terrain = Scene(terrain_name).mesh(**kw)
