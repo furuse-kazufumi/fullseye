@@ -64,7 +64,7 @@ def policy_action(pol, obs):
     for k, (W, b) in enumerate(pol["layers"]):
         h = h @ W + b
         if k < n - 1:
-            h = h / (1.0 + np.exp(-h)) * 1.0 + 0.0 if False else h * (1.0 / (1.0 + np.exp(-h)))
+            h = h * (1.0 / (1.0 + np.exp(-h)))        # swish(x) = x * sigmoid(x)
     loc = h[: pol["act_size"]]
     return np.tanh(loc)
 
