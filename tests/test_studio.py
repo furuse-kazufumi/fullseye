@@ -538,6 +538,17 @@ def test_sample_code_helper():
     assert studio.sample_code("no such recipe") is None
 
 
+def test_sample_thumb_path_helper():
+    # every shipped recipe has a pre-rendered result thumbnail (input -> output PNG)
+    # under studio_assets/sample_thumbs/ — regenerate with tools/gen_sample_thumbs.py
+    import recipes
+    for name in recipes.names():
+        p = studio.sample_thumb_path(name)
+        assert p is not None and os.path.exists(p), name
+        assert os.path.basename(os.path.dirname(p)) == "sample_thumbs"
+    assert studio.sample_thumb_path("no such recipe") is None
+
+
 def test_help_op_reference_and_samples_wired():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
