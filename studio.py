@@ -2961,12 +2961,27 @@ def build_window(model=None):
 
         code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
         code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        thumb = QtWidgets.QLabel()                 # pre-rendered result (input -> output)
+        thumb.setAlignment(QtCore.Qt.AlignCenter)
+        thumb.setToolTip("Pre-rendered result of this sample on a bundled sample image "
+                         "(left: input, right: output) — regenerate with "
+                         "tools/gen_sample_thumbs.py")
+        thumb.setVisible(False)
 
         def preview(_=None):
             it = lst.currentItem()
             if it is not None:
                 sc = sample_code(it.text())
                 code.setPlainText(('--ops "%s"' % sc[0] + chr(10) * 2 + sc[1]) if sc else "")
+                tp = sample_thumb_path(it.text())  # show the result image when we have one
+                if tp:
+                    pm = QtGui.QPixmap(tp)
+                    if not pm.isNull():
+                        thumb.setPixmap(pm.scaledToWidth(
+                            min(520, pm.width()), QtCore.Qt.SmoothTransformation))
+                        thumb.setVisible(True)
+                        return
+                thumb.clear(); thumb.setVisible(False)
         lst.currentRowChanged.connect(lambda _=None: preview())
 
         def copy_code(staged):
