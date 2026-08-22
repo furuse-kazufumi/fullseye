@@ -1,0 +1,164 @@
+{
+  "thumbs": [
+    {
+      "name": "Denoise — bilateral + unsharp",
+      "input": "checker_noisy",
+      "slug": "denoise_bilateral_unsharp",
+      "kind": "image",
+      "label": null,
+      "file": "denoise_bilateral_unsharp.png"
+    },
+    {
+      "name": "Denoise — total variation",
+      "input": "checker_noisy",
+      "slug": "denoise_total_variation",
+      "kind": "image",
+      "label": null,
+      "file": "denoise_total_variation.png"
+    },
+    {
+      "name": "Denoise — median",
+      "input": "grain_synth",
+      "slug": "denoise_median",
+      "kind": "image",
+      "label": null,
+      "file": "denoise_median.png"
+    },
+    {
+      "name": "Edge — Sobel + Otsu",
+      "input": "coins",
+      "slug": "edge_sobel_otsu",
+      "kind": "region",
+      "label": null,
+      "file": "edge_sobel_otsu.png"
+    },
+    {
+      "name": "Edge — Canny",
+      "input": "coins",
+      "slug": "edge_canny",
+      "kind": "region",
+      "label": null,
+      "file": "edge_canny.png"
+    },
+    {
+      "name": "Segment — blob / coin",
+      "input": "coins",
+      "slug": "segment_blob_coin",
+      "kind": "region",
+      "label": null,
+      "file": "segment_blob_coin.png"
+    },
+    {
+      "name": "Count — blobs",
+      "input": "coins",
+      "slug": "count_blobs",
+      "kind": "feature",
+      "label": "count_obj = 26",
+      "file": "count_blobs.png"
+    },
+    {
+      "name": "Binarize — document (adaptive)",
+      "input": "page",
+      "slug": "binarize_document_adaptive",
+      "kind": "region",
+      "label": null,
+      "file": "binarize_document_adaptive.png"
+    },
+    {
+      "name": "Enhance — CLAHE contrast",
+      "input": "camera",
+      "slug": "enhance_clahe_contrast",
+      "kind": "image",
+      "label": null,
+      "file": "enhance_clahe_contrast.png"
+    },
+    {
+      "name": "Enhance — histogram equalize",
+      "input": "camera",
+      "slug": "enhance_histogram_equalize",
+      "kind": "image",
+      "label": null,
+      "file": "enhance_histogram_equalize.png"
+    },
+    {
+      "name": "Enhance — gamma",
+      "input": "camera",
+      "slug": "enhance_gamma",
+      "kind": "image",
+      "label": null,
+      "file": "enhance_gamma.png"
+    },
+    {
+      "name": "Sharpen — unsharp mask",
+      "input": "camera",
+      "slug": "sharpen_unsharp_mask",
+      "kind": "image",
+      "label": null,
+      "file": "sharpen_unsharp_mask.png"
+    },
+    {
+      "name": "Sharpen — highpass",
+      "input": "camera",
+      "slug": "sharpen_highpass",
+      "kind": "image",
+      "label": null,
+      "file": "sharpen_highpass.png"
+    },
+    {
+      "name": "Texture — Gabor",
+      "input": "brick_quilt",
+      "slug": "texture_gabor",
+      "kind": "image",
+      "label": null,
+      "file": "texture_gabor.png"
+    },
+    {
+      "name": "Texture — local std",
+      "input": "brick_quilt",
+      "slug": "texture_local_std",
+      "kind": "image",
+      "label": null,
+      "file": "texture_local_std.png"
+    },
+    {
+      "name": "Keypoints — Harris corners",
+      "input": "checker_noisy",
+      "slug": "keypoints_harris_corners",
+      "kind": "image",
+      "label": null,
+      "file": "keypoints_harris_corners.png"
+    },
+    {
+      "name": "Blobs — Difference of Gaussians",
+      "input": "blobs",
+      "slug": "blobs_difference_of_gaussians",
+      "kind": "image",
+      "label": null,
+      "file": "blobs_difference_of_gaussians.png"
+    },
+    {
+      "name": "Morphology — gradient",
+      "input": "coins",
+      "slug": "morphology_gradient",
+      "kind": "image",
+      "label": null,
+      "file": "morphology_gradient.png"
+    },
+    {
+      "name": "Shape — distance transform",
+      "input": "coins",
+      "slug": "shape_distance_transform",
+      "kind": "image",
+      "label": null,
+      "file": "shape_distance_transform.png"
+    },
+    {
+      "name": "Spots — local maxima",
+      "input": "cell",
+      "slug": "spots_local_maxima",
+      "kind": "region",
+      "label": null,
+      "file": "spots_local_maxima.png"
+    }
+  ]
+}
