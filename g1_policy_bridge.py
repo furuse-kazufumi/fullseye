@@ -35,16 +35,45 @@ _REF_DEFAULT = "C:/dev/projects/onocollo-complete/out/humanoid/g1_walk_cycle_str
 
 
 # ------------------------------------------------------------------ policy (numpy)
+class _Stub:
+    """Duck-typed stand-in for brax/flax container classes referenced by the checkpoint
+    pickle — only the attribute payload matters (jax.Array leaves + dicts), so brax does
+    NOT need to be installed on the Fullseye side."""
+
+    def __init__(self, *a, **k):
+        self.__dict__.update(k)
+
+    def __setstate__(self, state):
+        if isinstance(state, dict):
+            self.__dict__.update(state)
+        elif isinstance(state, tuple):
+            for s in state:
+                if isinstance(s, dict):
+                    self.__dict__.update(s)
+
+
+class _CkptUnpickler:
+    def __new__(cls, f):
+        import pickle
+
+        class U(pickle.Unpickler):
+            def find_class(self, module, name):
+                try:
+                    return super().find_class(module, name)
+                except (ImportError, AttributeError):
+                    return type(name, (_Stub,), {})
+        return U(f)
+
+
 def load_policy(pkl_path):
     """brax PPO checkpoint -> plain numpy dict {mean, std, layers=[(W,b),...], act_size}.
 
-    The pickle holds (normalizer_state, policy_params[, value_params]); its leaves are
-    jax.Arrays, so jax must be importable here (CPU build is enough) — after this call
-    nothing touches jax again.
+    The pickle holds (normalizer_state, policy_params[, value_params]); its jax.Array
+    leaves need CPU jax to deserialize, and missing brax/flax classes are stubbed —
+    after this call nothing touches jax again.
     """
-    import pickle
     with open(pkl_path, "rb") as f:
-        params = pickle.load(f)
+        params = _CkptUnpickler(f).load()
     norm, pol = params[0], params[1]
     mean = np.asarray(norm.mean, dtype=np.float64)
     std = np.asarray(norm.std, dtype=np.float64)
