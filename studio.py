@@ -3023,6 +3023,7 @@ def build_window(model=None):
         right = QtWidgets.QVBoxLayout()
         clbl = QtWidgets.QLabel("Code (ops string + one-shot + staged)")
         clbl.setProperty("muted", True)
+        right.addWidget(thumb)                    # result preview sits above the code
         row = QtWidgets.QHBoxLayout()
         b_copy1 = QtWidgets.QPushButton("Copy one-shot")
         b_copy2 = QtWidgets.QPushButton("Copy staged")
