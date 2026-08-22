@@ -92,4 +92,5 @@ py-modules = [
 # (`halcon_names_data` / `auto_specs_data` / `macro_champions_data`) instead, which
 # always ship as .py modules.
 "studio_assets" = ["*.json", "op_help/*.html", "op_help/*.md",
-                   "sample_images/*.png", "sample_images/*.json"]
+                   "sample_images/*.png", "sample_images/*.json",
+                   "sample_thumbs/*.png", "sample_thumbs/*.json"]
