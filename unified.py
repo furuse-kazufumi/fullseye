@@ -426,7 +426,14 @@ _3DGS_OPS = [
      "animation"),
     ("pseudo_lidar", "evis_fullseye_bridge", "pseudo_lidar_rays",
      "平面疑似LiDARスキャン(前方弧K本の正規化距離)。歩行方策G1VisionWalkの観測と同一ジオメトリ"
-     "のnumpy parity — 方策が食べる入力をツールとして単体計算", "array"),
+     "のnumpy parity — 方策が食べる入力をツールとして単体計算", "matrix"),
+    ("g1_walk_policy", "g1_policy_bridge", "g1_walk_policy",
+     "GPU学習済みG1歩行方策(brax ckpt)をWindowsのみで実行: numpy推論(brax数値一致検証済)"
+     "+ネイティブMuJoCoロールアウト→距離/生存/横ずれRMS実測+追従カメラ動画。"
+     "vision=Trueで疑似LiDAR+障害物。段階API=G1PolicySession", "animation"),
+    ("g1_training_curves", "g1_policy_bridge", "training_curves",
+     "G1学習ログの進捗行(step/reward/ep_len/perr/crash…)を配列辞書へパース — "
+     "GPU機に触れず学習曲線をStudioでプロット", "matrix"),
     ("pick_gif", "pick_render", "render_pick_gif",
      "ロボットアーム(Panda)が実接触・摩擦でキューブを把持し別位置へ設置する pick-and-place を "
      "headless で GIF 化(GPU不要・把持成否は箱の実測高さで判定)", "animation"),
