@@ -789,6 +789,17 @@ def sample_code(name):
     return eng.to_ops(), eng.to_python() + chr(10) + chr(10) + eng.to_python_staged()
 
 
+def sample_thumb_path(name):
+    """Absolute path to the pre-rendered result thumbnail (input -> output PNG) for
+    sample recipe *name*, or ``None`` if absent. Files live in
+    ``studio_assets/sample_thumbs/<slug>.png`` — regenerate with
+    ``py -3.11 tools/gen_sample_thumbs.py``. Qt-free -> unit-tested."""
+    slug = re.sub(r"[^a-z0-9]+", "_", str(name).lower()).strip("_")
+    p = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                     "studio_assets", "sample_thumbs", slug + ".png")
+    return p if os.path.exists(p) else None
+
+
 def shortcut_table(items):
     """``[(label, shortcut_str), ...]`` -> the non-empty, de-duplicated rows for a
     keyboard-shortcut reference (label trimmed of trailing ellipsis). Qt-free ->
