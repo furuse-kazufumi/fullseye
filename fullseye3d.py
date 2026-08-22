@@ -190,6 +190,24 @@ def pseudo_lidar(p_xy, yaw, obstacles, **kw):
     return B.pseudo_lidar_rays(p_xy, yaw, obstacles, **kw)
 
 
+def g1_walk_policy(params_pkl, ref_npy=None, **kw):
+    """GPU 学習済み G1 歩行方策(brax ckpt)を Windows だけで実行する 1 行入口: numpy 推論
+    (brax と数値一致を検証済み)+ネイティブ MuJoCo で歩かせ、距離/生存/横ずれ RMS を実測し
+    追従カメラ動画を書き出す。vision=True で疑似 LiDAR+障害物版。段階 API は
+    ``g1_policy_bridge.G1PolicySession``(load→reset→step→run→render を個別に呼べる)。"""
+    import g1_policy_bridge as G
+    if ref_npy is None:
+        return G.g1_walk_policy(params_pkl, **kw)
+    return G.g1_walk_policy(params_pkl, ref_npy, **kw)
+
+
+def g1_training_curves(log_path):
+    """G1 学習ログの進捗行を配列辞書に(step/reward/ep_len/perr/crash…)— GPU 機に触れず
+    Studio 側で学習曲線をプロットするための toolkit 入口。"""
+    import g1_policy_bridge as G
+    return G.training_curves(log_path)
+
+
 def demo_world_walk(terrain_name="rolling", **kw):
     """『起伏地形メッシュの上を evis がメッシュで歩く』を1呼び出しで(既定 TSDF=GPU不要)。"""
     terrain = Scene(terrain_name).mesh(**kw)
