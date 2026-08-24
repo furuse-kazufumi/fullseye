@@ -53,6 +53,7 @@ except ImportError:                                    # optional-extras 契約
 XML = """
 <mujoco model="vloop">
   <option timestep="0.001"/>
+  <visual><global offwidth="1024" offheight="1024"/></visual>
   <worldbody>
     <light pos="0 0 3" dir="0 0 -1" diffuse="1 1 1"/>
     <geom name="floor" type="plane" size="1.5 1.5 .1" rgba=".12 .12 .15 1"/>
