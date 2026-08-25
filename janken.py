@@ -111,7 +111,7 @@ def build_xml() -> str:
        目標角(1.45)まで届かず 1.24 で止まり、較正した姿と試合中の姿がずれた
        (面積検出器が遅延 0 でも勝率 0.33 になった原因) -->
   <default><geom contype="0" conaffinity="0"/></default>
-  <visual><global offwidth="512" offheight="512"/></visual>
+  <visual><global offwidth="2048" offheight="2048"/></visual>
   <worldbody>
     <light pos="0 -1 2" dir="0 .4 -1" diffuse="1 1 1"/>
     <geom name="back" type="box" pos="0 .25 .3" size="2 .02 1"
@@ -136,6 +136,8 @@ class JCfg:
     arc_r: float = 1.40        # 円弧の半径(**握った拳の半幅** に対する比)
     arc_px: float = 0.0        # 較正済みの絶対半径 [px]。0 なら init で決める
     area_th: tuple = ()        # 面積検出器のしきい値。空なら init で較正する
+    prom: float = 0.45         # プロファイル版: 山と認める突出の割合
+    prom_min: float = 0.0      # 突出の下限。0 なら init で較正する
     arc_n: int = 64            # 円周の標本点数
 
 
@@ -248,6 +250,60 @@ def detect_arc_win(img, cfg: JCfg):
     return _classify_from_fingers(runs)
 
 
+def detect_arc_profile(img, cfg: JCfg):
+    """**半径方向プロファイル版の円弧** — 各方向への手の広がりを測り、山を数える。
+
+    ユーザーの説明は「円弧状の **プロファイル取得後** の指の本数カウント」だった。
+    プロファイルは **信号** であって二値ではない。最初に実装した `detect_arc` は
+    「固定半径の円周を横切るか」という最も過酷な二値版で、
+    **指が円周を越えるまで何も起きない**(実測 判別 129 ms)。
+
+    こちらは各方向 theta について「手が存在する最大半径」を測って 1 次元の
+    プロファイルにし、突出(prominence)が閾値を超える山を指として数える。
+    指が伸び始めた瞬間から連続的に反応するはず。
+    費用は O(方向数 x 半径方向の標本数) で **画面の大きさに依らない** のは同じ。
+    """
+    st = _TRACK.get("yx")
+    H, W = img.shape[0], img.shape[1]
+    if st is None:
+        p0 = _palm(_skin(img))
+        if p0 is None:
+            return None
+        cy, cx = p0[0], p0[1]
+    else:
+        cy, cx = st
+    n_th, n_r = cfg.arc_n, 40
+    R_max = cfg.arc_px * 1.9
+    th = np.arange(n_th) * (2 * np.pi / n_th)
+    rr = np.linspace(0.15 * R_max, R_max, n_r)
+    yy = np.clip((cy + rr[None, :] * np.sin(th)[:, None]).astype(int), 0, H - 1)
+    xx = np.clip((cx + rr[None, :] * np.cos(th)[:, None]).astype(int), 0, W - 1)
+    px = img[yy, xx]
+    r_ = px[:, :, 0].astype(np.int16)
+    g_ = px[:, :, 1].astype(np.int16)
+    b_ = px[:, :, 2].astype(np.int16)
+    hit = (r_ > 110) & (r_ - b_ > 40) & (g_ > b_)
+    idx = np.where(hit.any(1), n_r - 1 - np.argmax(hit[:, ::-1], axis=1), 0)
+    prof = rr[idx]                                   # 各方向の手の広がり
+    # 重心も更新しておく(追跡)
+    if st is not None:
+        m = _skin(img[max(0, int(cy) - int(cfg.arc_px)):int(cy) + int(cfg.arc_px),
+                      max(0, int(cx) - int(cfg.arc_px)):int(cx) + int(cfg.arc_px)])
+        pm = _palm(m)
+        if pm is not None:
+            _TRACK["yx"] = (pm[0] + max(0, int(cy) - int(cfg.arc_px)),
+                            pm[1] + max(0, int(cx) - int(cfg.arc_px)))
+    else:
+        _TRACK["yx"] = (cy, cx)
+    base = float(np.median(prof))
+    thr = base + cfg.prom * (prof.max() - base) if prof.max() > base else np.inf
+    if not np.isfinite(thr) or prof.max() - base < cfg.prom_min * cfg.arc_px:
+        return ROCK
+    up = prof > thr
+    runs = int(((up) & (~np.roll(up, 1))).sum())
+    return _classify_from_fingers(runs)
+
+
 def detect_area(img, cfg: JCfg):
     """充実度で分類。しきい値は 3 姿勢の完成形から較正する(円弧と同じ較正予算)。"""
     f = area_fill(img)
@@ -290,6 +346,7 @@ def _classify_from_fingers(n: int):
 
 
 DETECTORS = {"arc": detect_arc, "arc_win": detect_arc_win,
+             "arc_prof": detect_arc_profile,
              "area": detect_area, "template": detect_template}
 
 
@@ -307,10 +364,43 @@ class Janken:
         self.hj = [self.model.actuator(f"human_a{i}").id for i in range(5)]
         self.rj = [self.model.actuator(f"robot_a{i}").id for i in range(5)]
         self.rq = [self.model.joint(f"robot_j{i}").qposadr[0] for i in range(5)]
-        if cfg.arc_px <= 0 or not cfg.area_th:
+        if cfg.arc_px <= 0 or not cfg.area_th or cfg.prom_min <= 0:
             from dataclasses import replace as _rep
             self.cfg = _rep(cfg, arc_px=self._calibrate_arc(cfg.arc_r),
                             area_th=self._calibrate_area())
+            self.cfg = _rep(self.cfg, prom_min=self._calibrate_prom())
+
+    def _profile(self, img, cy=None, cx=None):
+        """各方向への手の広がり(半径方向プロファイル)。"""
+        c = self.cfg
+        if cy is None:
+            p0 = _palm(_skin(img))
+            if p0 is None:
+                return None
+            cy, cx = p0[0], p0[1]
+        H, W = img.shape[0], img.shape[1]
+        n_r, R = 40, c.arc_px * 1.9
+        th = np.arange(c.arc_n) * (2 * np.pi / c.arc_n)
+        rr = np.linspace(0.15 * R, R, n_r)
+        yy = np.clip((cy + rr[None, :] * np.sin(th)[:, None]).astype(int), 0, H - 1)
+        xx = np.clip((cx + rr[None, :] * np.cos(th)[:, None]).astype(int), 0, W - 1)
+        px = img[yy, xx]
+        r_ = px[:, :, 0].astype(np.int16)
+        g_ = px[:, :, 1].astype(np.int16)
+        b_ = px[:, :, 2].astype(np.int16)
+        hit = (r_ > 110) & (r_ - b_ > 40) & (g_ > b_)
+        idx = np.where(hit.any(1), n_r - 1 - np.argmax(hit[:, ::-1], axis=1), 0)
+        return rr[idx]
+
+    def _calibrate_prom(self) -> float:
+        """握り拳と、チョキ・パーの突出の中点をしきい値にする。"""
+        pr = {}
+        for pose in POSES:
+            v = self._profile(self._pose_image(pose))
+            pr[pose] = (v.max() - float(np.median(v))) / self.cfg.arc_px
+        lo = pr[ROCK]
+        hi = min(pr[SCISSORS], pr[PAPER])
+        return float((lo + hi) / 2)
 
     def _pose_image(self, pose: int):
         mujoco.mj_resetData(self.model, self.data)
