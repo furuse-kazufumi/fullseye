@@ -108,6 +108,10 @@ def solve_physarum(graph: Graph, source: int, sink: int, *,
     E = len(graph.edges)
     if E == 0:
         return PhysarumResult(np.zeros(0), np.zeros(0), 0, True, [])
+    # **源と吸込が別成分なら、縮約ラプラシアンが特異になって解けない。**
+    # 物理的にも「道が無い = 流れない」なので、全管を 0 にして即返す。
+    if bfs_shortest_len(graph, source, sink) < 0:
+        return PhysarumResult(np.zeros(E), np.zeros(E), 0, True, [])
     ii = graph.edges[:, 0]
     jj = graph.edges[:, 1]
     L = graph.length
