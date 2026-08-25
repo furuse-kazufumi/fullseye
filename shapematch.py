@@ -438,13 +438,15 @@ def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12,
 
 def find_scaled_shape_model(model, image, scales=(0.8, 1.0, 1.25),
                             min_score: float = 0.5, step: int = 2,
-                            n_cand: int = 12) -> dict:
+                            n_cand: int = 12, device: str = "cpu") -> dict:
     """スケールを変えながら最良一致を探索(find_scaled_shape_model)。
 
     scale ごとに **テンプレートを zoom してモデルを作り直す** ので、各 scale も
     ピラミッドサーチに乗る(以前は点だけ伸縮していたため必ず平坦走査だった)。
+    ``device="cuda"`` で全 scale を GPU の conv2d バッチとして同時評価。
     """
-    b = _search_scales(model, image, [(s, s) for s in scales], min_score, step, n_cand)
+    b = _search_scales(model, image, [(s, s) for s in scales], min_score, step,
+                       n_cand, device=device)
     if b is None:
         return {"row": -1, "col": -1, "column": -1, "score": 0.0,
                 "found": False, "scale": 1.0, "levels": 1}
