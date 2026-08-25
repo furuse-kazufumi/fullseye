@@ -144,10 +144,13 @@ def _median(t, a, b, dev):
 
 
 def _percentile(t, a, b, dev):
+    # scipy percentile_filter は rank_filter(rank = int(p/100*(n-1)))で並べ替え第 rank 位。
+    # torch.quantile の補間法とはずれるので、同じ rank 規則で sort して取り出す。
     k = _k(a)
-    q = int(5 + 90 * b) / 100.0
-    u = _unfold_reflect(t, k)
-    return torch.quantile(u, q, dim=1, keepdim=True, interpolation="lower")
+    n = k * k
+    rank = int(int(5 + 90 * b) / 100.0 * (n - 1))
+    u = _unfold_reflect(t, k)                       # (B, n, H, W)
+    return u.sort(dim=1).values[:, rank:rank + 1]
 
 
 def _prewitt(t, a, b, dev):
