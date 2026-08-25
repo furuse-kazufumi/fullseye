@@ -1,0 +1,96 @@
+"""粘菌ソルバの回帰テスト —— 答えの分かっている迷路で最短路に収束するか。
+
+正本の構想 = afterman/docs/SUBSTRATE_REDESIGN.md「2. 粘菌」。
+モデル = Tero ら 2010(Science)、収束証明 = Bonifaci ら 2012(mu>=1)。
+
+ここで固定する性質:
+- 短い道と長い遠回りがある迷路で、**短い道を太らせ長い道を細らせる**
+- 生き残った管を辿った道が BFS の最短ホップ数と一致する
+- numpy 経路と torch(cpu)経路が同じ答えを出す(GPU へ載せる前提)
+- 左右対称のタイでは両方が等しく残る(縮退の扱いが暴れない)
+"""
+import numpy as np
+import pytest
+
+import physarum_search as P
+
+
+def _short_vs_long():
+    """上段=直通(6 ホップ)、下段=遠回り(10 ホップ)。唯一の最短路は上段。"""
+    free = np.array([
+        [1, 1, 1, 1, 1, 1, 1],
+        [1, 0, 0, 0, 0, 0, 1],
+        [1, 1, 1, 1, 1, 1, 1],
+    ], bool)
+    return free, (0, 0), (0, 6)
+
+
+def _median_D_on_rows(g, res, rows):
+    vals = [d for (i, j), d in zip(g.edges, res.D)
+            if g.coords[i, 0] in rows and g.coords[j, 0] in rows]
+    return float(np.median(vals)) if vals else float("nan")
+
+
+@pytest.mark.parametrize("mu", [1.0, 1.5, 2.0])
+def test_finds_the_shortest_path(mu):
+    free, s_rc, t_rc = _short_vs_long()
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+    res = P.solve_physarum(g, s, t, mu=mu, dt=0.2, max_iters=5000)
+    assert res.converged
+    path = P.surviving_path(g, res, s, t, frac=0.5)
+    assert len(path) - 1 == P.bfs_shortest_len(g, s, t) == 6
+    # 道は全部上段(row 0)を通る
+    assert all(g.coords[u, 0] == 0 for u in path)
+
+
+def test_long_detour_is_pruned():
+    """下段(遠回り)の管が上段(最短)より桁で細る = 軟らかい枝刈り。"""
+    free, s_rc, t_rc = _short_vs_long()
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+    res = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, max_iters=5000)
+    top = _median_D_on_rows(g, res, {0})
+    bot = _median_D_on_rows(g, res, {2})
+    assert top > 0.9
+    assert bot < 0.01
+    assert top / max(bot, 1e-12) > 100
+
+
+def test_numpy_and_torch_agree():
+    free, s_rc, t_rc = _short_vs_long()
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+    a = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, device="numpy")
+    if not P._HAS_TORCH:
+        pytest.skip("torch 不在")
+    b = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, device="cpu")
+    # 同じ式なので最終 D はほぼ一致
+    assert np.allclose(np.sort(a.D), np.sort(b.D), atol=1e-6)
+
+
+def test_symmetric_tie_keeps_both_routes():
+    """ロの字(左右対称)。両ルートが等長なので両方 D=0.5 で残る。"""
+    H = W = 7
+    free = np.zeros((H, W), bool)
+    free[0, :] = free[-1, :] = free[:, 0] = free[:, -1] = True
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, 0, 0), P.node_at(g, H - 1, W - 1)
+    res = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, max_iters=5000)
+    assert res.converged
+    # 経路上の辺は全部同じ太さ(タイ)。ばらつきが小さいことを確認。
+    assert res.D.std() < 1e-3
+    path = P.surviving_path(g, res, s, t, frac=0.5)
+    assert len(path) - 1 == P.bfs_shortest_len(g, s, t)
+
+
+def test_disconnected_sink_returns_no_path():
+    free = np.array([
+        [1, 1, 1, 0, 1, 1, 1],   # 中央が壁で源側と吸込側が分断
+    ], bool)
+    g = P.maze_to_graph(free)
+    s = P.node_at(g, 0, 0)
+    t = P.node_at(g, 0, 6)
+    assert P.bfs_shortest_len(g, s, t) == -1
+    res = P.solve_physarum(g, s, t, mu=1.0, max_iters=500)
+    assert P.surviving_path(g, res, s, t) == []
