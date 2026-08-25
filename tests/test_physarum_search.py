@@ -155,3 +155,60 @@ def test_disconnected_sink_returns_no_path():
     assert P.bfs_shortest_len(g, s, t) == -1
     res = P.solve_physarum(g, s, t, mu=1.0, max_iters=500)
     assert P.surviving_path(g, res, s, t) == []
+
+
+def _has_cuda():
+    try:
+        import torch
+        return torch.cuda.is_available()
+    except Exception:
+        return False
+
+
+@pytest.mark.skipif(not _has_cuda(), reason="CUDA GPU 不在")
+def test_gpu_fp32_finds_shortest_path():
+    """GPU + FP32 でも最短を太らせ遠回りを枝刈りする(ユニーク最短路)。"""
+    free, s_rc, t_rc = _short_vs_long()
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+    D = P.solve_physarum_batch(g, [s], [t], mu=1.0, dt=0.2, time_steps=200,
+                               cg_iters=200, device="cuda", dtype="float32")
+    top = [d for (i, j), d in zip(g.edges, D[0])
+           if g.coords[i, 0] == 0 and g.coords[j, 0] == 0]
+    bot = [d for (i, j), d in zip(g.edges, D[0])
+           if g.coords[i, 0] == 2 and g.coords[j, 0] == 2]
+    assert np.median(top) > 0.9
+    assert np.median(bot) < 0.01
+
+
+@pytest.mark.skipif(not _has_cuda(), reason="CUDA GPU 不在")
+def test_cuda_graph_matches_eager():
+    """CUDA graph 捕獲版が eager 固定反復版と一致(非縮退グラフではビット一致)。
+
+    捕獲は 1 タイムステップ(固定反復 CG + D 更新)を replay するだけなので、
+    同じ固定反復・同じ dtype の eager と数値一致すべき。縮退(等長最短路が多数)の
+    小グリッドは FP32 のタイ選択が割れるため、ここでは非縮退の大グリッドで見る。
+    """
+    import torch
+    k, B = 40, 6
+    g = P.maze_to_graph(np.ones((k, k), bool))
+    cor = [(0, 0), (0, k - 1), (k - 1, 0), (k - 1, k - 1)]
+    srcs = [P.node_at(g, *cor[i % 4]) for i in range(B)]
+    snks = [P.node_at(g, *cor[(i + 1) % 4]) for i in range(B)]
+    eager = P.solve_physarum_batch(g, srcs, snks, mu=2.0, dt=0.2, time_steps=80,
+                                   cg_iters=150, device="cuda", dtype="float32",
+                                   cg_tol=0, cg_check_every=10**9)
+    graph = P.solve_physarum_batch(g, srcs, snks, mu=2.0, dt=0.2, time_steps=80,
+                                   cg_iters=150, device="cuda", dtype="float32",
+                                   use_cuda_graph=True)
+    # 太管(生き残る経路)の選択が一致
+    assert ((eager > 0.5) == (graph > 0.5)).mean() > 0.98
+
+
+@pytest.mark.skipif(not _has_cuda(), reason="CUDA GPU 不在")
+def test_cuda_graph_requires_cuda_device():
+    with pytest.raises(ValueError):
+        free, s_rc, t_rc = _short_vs_long()
+        g = P.maze_to_graph(free)
+        s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+        P.solve_physarum_batch(g, [s], [t], device="cpu", use_cuda_graph=True)

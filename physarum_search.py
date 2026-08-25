@@ -440,3 +440,89 @@ def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
         Q = g * (x.index_select(1, src) - x.index_select(1, dst))
         D = D + dt * (torch.abs(Q) ** mu - D)
     return D.cpu().numpy()
+
+
+def _solve_batch_cudagraph(graph: Graph, sources, sinks, *, I0, mu, dt,
+                           time_steps, cg_iters, D_init, dev, dtype):
+    """CUDA graph 捕獲版。1 タイムステップ(固定反復 CG + D 更新)を捕獲し replay。
+
+    捕獲の条件: 静的形状・in-place 更新・host 同期なし。よって CG は **固定反復**
+    (収束の早期打ち切りをしない)。永続バッファ D_buf/x_buf を in-place で回し、
+    graph はその番地の上で同じ演算列を再実行する。
+    """
+    ftype = torch.float32 if dtype == "float32" else torch.float64
+    E = len(graph.edges)
+    n = graph.n
+    sources = list(sources)
+    sinks = list(sinks)
+    B = len(sources)
+
+    src = torch.as_tensor(graph.edges[:, 0], device=dev, dtype=torch.long)
+    dst = torch.as_tensor(graph.edges[:, 1], device=dev, dtype=torch.long)
+    si = src.unsqueeze(0).expand(B, -1)
+    di = dst.unsqueeze(0).expand(B, -1)
+    L = torch.as_tensor(graph.length, device=dev, dtype=ftype)
+    b = torch.zeros(B, n, device=dev, dtype=ftype)
+    free_mask = torch.ones(B, n, device=dev, dtype=ftype)
+    for k, (s, t) in enumerate(zip(sources, sinks)):
+        b[k, s] = I0
+        b[k, t] = -I0
+        free_mask[k, t] = 0.0
+    b = b * free_mask
+
+    D_init_t = (torch.ones(B, E, device=dev, dtype=ftype) if D_init is None
+                else torch.as_tensor(D_init, device=dev, dtype=ftype).reshape(B, E))
+    D_buf = D_init_t.clone()
+    x_buf = torch.zeros(B, n, device=dev, dtype=ftype)   # warm start(step 間で持越し)
+
+    def matvec(vec, g):
+        diff = vec.index_select(1, src) - vec.index_select(1, dst)
+        flow = g * diff
+        y = torch.zeros_like(vec)
+        y.scatter_add_(1, si, flow)
+        y.scatter_add_(1, di, -flow)
+        return y * free_mask
+
+    def one_step(D, x0):
+        g = D / L
+        x = x0 * free_mask
+        r = (b - matvec(x, g)) * free_mask
+        p = r.clone()
+        rs = (r * r).sum(1, keepdim=True)
+        for _ in range(cg_iters):                # 固定反復(同期なし)
+            Ap = matvec(p, g)
+            alpha = rs / (p * Ap).sum(1, keepdim=True).clamp_min(1e-30)
+            x = x + alpha * p
+            r = r - alpha * Ap
+            rs_new = (r * r).sum(1, keepdim=True)
+            p = r + (rs_new / rs.clamp_min(1e-30)) * p
+            rs = rs_new
+        Q = g * (x.index_select(1, src) - x.index_select(1, dst))
+        D_new = D + dt * (torch.abs(Q) ** mu - D)
+        return D_new, x
+
+    # --- warmup(副ストリーム。捕獲前に allocator/カーネルを温める)---
+    s = torch.cuda.Stream()
+    s.wait_stream(torch.cuda.current_stream())
+    with torch.cuda.stream(s):
+        for _ in range(3):
+            Dn, xn = one_step(D_buf, x_buf)
+            D_buf.copy_(Dn)
+            x_buf.copy_(xn)
+    torch.cuda.current_stream().wait_stream(s)
+
+    # --- 捕獲(初期状態へ戻してから)---
+    D_buf.copy_(D_init_t)
+    x_buf.zero_()
+    gr = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(gr):
+        Dn, xn = one_step(D_buf, x_buf)
+        D_buf.copy_(Dn)
+        x_buf.copy_(xn)
+
+    # --- replay(初期状態から time_steps 回)---
+    D_buf.copy_(D_init_t)
+    x_buf.zero_()
+    for _ in range(time_steps):
+        gr.replay()
+    return D_buf.cpu().numpy()
