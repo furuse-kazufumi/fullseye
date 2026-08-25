@@ -345,26 +345,32 @@ def _laplacian_matvec(x, g, src, dst, free_mask):
     return y * free_mask
 
 
-def _cg_batched(g, b, src, dst, free_mask, x0, iters=200, tol=1e-10):
+def _cg_batched(g, b, src, dst, free_mask, x0, iters=200, tol=1e-10,
+                check_every=1):
     """バッチ共役勾配。全問題を同時に回す(matrix-free)。
 
     A(=L(D)) は SPD(縮約後)。free_mask で sink をディリクレ固定。
-    収束判定は **バッチ全体の最大残差** を 1 スカラーに畳んで見る(同期は反復ごと
-    1 回で済み、GPU でも軽い)。x0 = 前ステップ解(warm start)。
+    x0 = 前ステップ解(warm start)。
+
+    収束判定 = **バッチ全体の最大残差** を 1 スカラーに畳んで見る。ただし
+    ``float(rs.max())`` は device→host 同期を起こし、GPU では 1 反復ごとにやると
+    4 万回の同期でパイプラインが直列化する(実測でここが律速)。``check_every`` で
+    間引き、その間は非同期に反復を回す(GPU 向け。CPU は既定 1 のまま)。
     """
     x = x0 * free_mask
     r = (b - _laplacian_matvec(x, g, src, dst, free_mask)) * free_mask
     p = r.clone()
     rs = (r * r).sum(1, keepdim=True)             # (B,1)
-    for _ in range(iters):
+    for i in range(iters):
         Ap = _laplacian_matvec(p, g, src, dst, free_mask)
         denom = (p * Ap).sum(1, keepdim=True)
         alpha = rs / denom.clamp_min(1e-30)
         x = x + alpha * p
         r = r - alpha * Ap
         rs_new = (r * r).sum(1, keepdim=True)
-        if float(rs_new.max()) < tol:             # 反復あたり 1 回だけ同期
-            break
+        if tol > 0 and (i + 1) % check_every == 0:
+            if float(rs_new.max()) < tol:         # ここでだけ同期
+                break
         p = r + (rs_new / rs.clamp_min(1e-30)) * p
         rs = rs_new
     return x
