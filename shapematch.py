@@ -682,13 +682,14 @@ def find_generic_shape_model(model, image, min_score=0.5, step=2):
 
 
 def find_aniso_shape_model(model, image, min_score=0.5,
-                           scale_r=(0.9, 1.0, 1.1), scale_c=(0.9, 1.0, 1.1)):
+                           scale_r=(0.9, 1.0, 1.1), scale_c=(0.9, 1.0, 1.1),
+                           device: str = "cpu"):
     """行/列独立スケール(異方性)での形状モデル検出(find_aniso_shape_model)。"""
     combos = [(sr, sc) for sr in scale_r for sc in scale_c]
     # 行と列を別々に zoom したテンプレートからモデルを作り直す。**異方 scale では
     # エッジ法線の向きが実際に変わる** ので、点だけ伸縮して勾配を流用するのは
     # 近似ですらない(細長く潰した円の法線は元の円の法線と違う向きを向く)。
-    b = _search_scales(model, image, combos, min_score)
+    b = _search_scales(model, image, combos, min_score, device=device)
     # 見つからない時も **同じ鍵** を返す。以前は {"found": False} だけだったので
     # 呼び出し側の res["row"] が KeyError で落ちた。
     if b is None:
