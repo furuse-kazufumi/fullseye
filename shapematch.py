@@ -211,7 +211,8 @@ def _search_with_pyramid(models, pyr, fields, n_cand: int = 12):
 
 
 def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
-                     num_levels="auto", n_cand: int = 12, angles=None) -> dict:
+                     num_levels="auto", n_cand: int = 12, angles=None,
+                     device: str = "cpu") -> dict:
     """モデルを画像中で探索し最良一致(行/列/角度/スコア)を返す(find_shape_model)。
 
     ``num_levels="auto"`` で **粗密探索(ピラミッドサーチ)** を使う。
