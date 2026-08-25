@@ -218,6 +218,32 @@ def _sigmoid(t, a, b, dev):
     return 1.0 / (1.0 + torch.exp(-(4.0 + 12.0 * a) * (t.clamp(0, 1) - (0.2 + 0.6 * b))))
 
 
+def _signed01_b(t):
+    """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。"""
+    m = t.abs().amax(dim=(2, 3), keepdim=True)
+    return torch.where(m > 1e-8, (t / (2 * m) + 0.5).clamp(0, 1),
+                       torch.full_like(t, 0.5))
+
+
+def _fft_mask_b(t, cutoff, high):
+    """core _fft_mask のバッチ版。半径 cutoff で低/高域マスクし逆変換の実部。"""
+    H, W = t.shape[2], t.shape[3]
+    fy = torch.fft.fftfreq(H, device=t.device)
+    fx = torch.fft.fftfreq(W, device=t.device)
+    rad = torch.sqrt(fy[:, None] ** 2 + fx[None, :] ** 2)      # (H,W)
+    mask = (rad > cutoff) if high else (rad <= cutoff)
+    F = torch.fft.fft2(t)
+    return torch.fft.ifft2(F * mask.to(F.dtype)).real
+
+
+def _lowpass(t, a, b, dev):
+    return _fft_mask_b(t, 0.05 + 0.4 * a, False).clamp(0, 1)
+
+
+def _highpass(t, a, b, dev):
+    return _signed01_b(_fft_mask_b(t, 0.02 + 0.3 * a, True))
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
