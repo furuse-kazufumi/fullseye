@@ -157,34 +157,100 @@ def solve_physarum(graph: Graph, source: int, sink: int, *,
         return PhysarumResult(D.cpu().numpy(), Q.cpu().numpy(), it + 1,
                               converged, history)
 
-    # ── numpy 経路 ──
+    if device == "numpy_dense":
+        return _solve_numpy_dense(graph, source, sink, I0=I0, mu=mu, dt=dt,
+                                  max_iters=max_iters, tol=tol, D_init=D_init)
+    return _solve_numpy_sparse(graph, source, sink, I0=I0, mu=mu, dt=dt,
+                               max_iters=max_iters, tol=tol, D_init=D_init)
+
+
+def _solve_numpy_dense(graph, source, sink, *, I0, mu, dt, max_iters, tol, D_init):
+    """dense な O(n^3) 参照実装。疎版の答え合わせ用に残す。"""
+    ii, jj, L, n = graph.edges[:, 0], graph.edges[:, 1], graph.length, graph.n
+    E = len(graph.edges)
     D = np.ones(E) if D_init is None else np.asarray(D_init, float).copy()
-    b = np.zeros(n)
-    b[source] = I0
-    b[sink] = -I0
+    b = np.zeros(n); b[source] = I0; b[sink] = -I0
     keep = np.array([k for k in range(n) if k != sink])
-    history = []
-    converged = False
-    Q = np.zeros(E)
+    history = []; converged = False; Q = np.zeros(E)
     for it in range(max_iters):
         g = D / L
         A = np.zeros((n, n))
-        np.add.at(A, (ii, jj), -g)
-        np.add.at(A, (jj, ii), -g)
-        np.add.at(A, (ii, ii), g)
-        np.add.at(A, (jj, jj), g)
-        Ar = A[np.ix_(keep, keep)]
-        pr = np.linalg.solve(Ar, b[keep])
-        p = np.zeros(n)
-        p[keep] = pr
+        np.add.at(A, (ii, jj), -g); np.add.at(A, (jj, ii), -g)
+        np.add.at(A, (ii, ii), g); np.add.at(A, (jj, jj), g)
+        pr = np.linalg.solve(A[np.ix_(keep, keep)], b[keep])
+        p = np.zeros(n); p[keep] = pr
         Q = g * (p[ii] - p[jj])
         newD = D + dt * (np.abs(Q) ** mu - D)
-        d = float(np.max(np.abs(newD - D)))
-        history.append(d)
-        D = newD
+        d = float(np.max(np.abs(newD - D))); history.append(d); D = newD
         if d < tol:
-            converged = True
-            break
+            converged = True; break
+    return PhysarumResult(D, Q, it + 1, converged, history)
+
+
+def _solve_numpy_sparse(graph, source, sink, *, I0, mu, dt, max_iters, tol, D_init):
+    """疎ラプラシアン + 共役勾配 + warm start。
+
+    GPU 調査と実測の一致した結論(``docs/GPU_OPTIMIZATION_PATTERNS.md``):
+    律速は毎反復の dense 解 O(n^3) で、per-iter の 97% を占めていた。3 つ直す:
+
+    1. **疎化** —— ラプラシアンは 4 近傍で 1 行 5 要素。dense n×n を組むのをやめ、
+       疎パターンを **1 回だけ** 作って毎反復 data だけ差し替える
+    2. **反復法(CG)** —— 縮約ラプラシアンは SPD なので共役勾配が使える。
+       直接解の O(n^3) を、疎行列ベクトル積 × 反復回数に落とす
+    3. **warm start** —— D は 1 反復で少ししか動かない(実測: 収束まで ~100 反復で
+       max|dD| が単調減少)。前反復の圧力 p を CG の初期値にすると反復が数回で済む
+       (Taming Preconditioner Drift 2602.19271 と同じ発想。ここは前解の使い回し)
+    """
+    from scipy.sparse import csr_matrix
+    from scipy.sparse.linalg import cg
+
+    ii, jj, L, n = graph.edges[:, 0], graph.edges[:, 1], graph.length, graph.n
+    E = len(graph.edges)
+    D = np.ones(E) if D_init is None else np.asarray(D_init, float).copy()
+
+    # ゲージ: p_sink = 0。sink 以外を並べ替える index を 1 回だけ作る。
+    keep = np.array([k for k in range(n) if k != sink])
+    remap = -np.ones(n, dtype=int); remap[keep] = np.arange(n - 1)
+    b = np.zeros(n); b[source] = I0; b[sink] = -I0
+    br = b[keep]
+
+    # **疎パターンは固定**。各辺は縮約系で (ri,rj) の off-diag 2 つと
+    # (ri,ri)/(rj,rj) の diag に効く。sink に触れる辺は該当行/列が消える。
+    ri, rj = remap[ii], remap[jj]
+    rows, cols, tag = [], [], []      # tag: この (row,col) にどの辺が符号どちらで効くか
+    for e in range(E):
+        a, c = ri[e], rj[e]
+        if a >= 0 and c >= 0:
+            rows += [a, c, a, c]; cols += [c, a, a, c]; tag.append(("both", e))
+        elif a >= 0:                  # c は sink(消える列)。a の diag だけ
+            rows += [a]; cols += [a]; tag.append(("a", e))
+        elif c >= 0:
+            rows += [c]; cols += [c]; tag.append(("c", e))
+        else:
+            tag.append(("none", e))
+    rows = np.asarray(rows); cols = np.asarray(cols)
+
+    history = []; converged = False; Q = np.zeros(E)
+    p = np.zeros(n)                   # warm start 用に前反復の圧力を持ち越す
+    x0 = np.zeros(n - 1)
+    for it in range(max_iters):
+        g = D / L
+        data = []
+        for kind, e in tag:
+            ge = g[e]
+            if kind == "both":
+                data += [-ge, -ge, ge, ge]
+            elif kind in ("a", "c"):
+                data += [ge]
+        A = csr_matrix((np.asarray(data), (rows, cols)), shape=(n - 1, n - 1))
+        pr, info = cg(A, br, x0=x0, rtol=1e-10, atol=0.0, maxiter=1000)
+        x0 = pr                       # 次反復の初期値(warm start)
+        p = np.zeros(n); p[keep] = pr
+        Q = g * (p[ii] - p[jj])
+        newD = D + dt * (np.abs(Q) ** mu - D)
+        d = float(np.max(np.abs(newD - D))); history.append(d); D = newD
+        if d < tol:
+            converged = True; break
     return PhysarumResult(D, Q, it + 1, converged, history)
 
 
