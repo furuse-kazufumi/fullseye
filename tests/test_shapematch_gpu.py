@@ -2,8 +2,8 @@
 
 この回で入れたこと: Steger 流の勾配方向スコアは「モデルを勾配カーネルに描いた
 cross-correlation」= conv2d そのもの。変換(角度×スケール)をカーネルのバッチ軸に
-積めば全変換を 2 回の conv2d で同時評価できる。HALCON は matching を CPU に留めて
-いるので、ここは GPU 化そのものが差別化(docs/HIGHSPEED_VISION.md)。
+積めば全変換を 2 回の conv2d で同時評価できる。実測 34-88x(docs/ARTICLE_GPU_SHAPEMATCH.md)。
+※「HALCON が matching を GPU 化していない」は未検証の推測なので断定しない(§2 参照)。
 
 CUDA GPU が無い環境では skip(CPU CI を壊さない)。
 """
