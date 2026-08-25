@@ -1336,3 +1336,51 @@ aniso では、作り直すと探索本体より縮小のほうが高くつく�
   を見分けるには、その閾値が効かない側へ振ってみるしかない。
 - **既定は「一番緩い設定」にしない。** `ignore_local_polarity` は HALCON でも
   「偽陽性が増える」と注意書きのある選択肢だった。一族の既定がそこに座っていた。
+
+---
+
+## op の GPU 化 = E2E の本丸(2026-08-26、RTX 5090 で初実測)
+
+ユーザー方針「op の GPU 化は E2E の本丸。他プロジェクトの土台としても効く」。imgevolve は
+既に `accel.py`(GPU バッチ backend + parity difftest)と `backends_kornia.py`(torch GPU)を
+持つが、**この環境が CPU-only だったので一度も実 GPU で回っていなかった**。loco venv
+(torch 2.11.0+cu128 / RTX 5090)で初めて実測した。
+
+### 単発 op(`run_batch`)は転送律速 —— per-op GPU 化は必ずしも勝たない
+`bench.py --device cuda`(500枚 @512²):batch スループットが **op によらず ~750 img/s で
+一定** = **host↔device 転送(500MB)が律速で演算ではない**。だから:
+- 重い op は勝つ: gray_range 7.72x / sobel 4.11x / morphology ~3x
+- 安い op は負ける: **threshold 0.46x / invert 0.81x**(CPU が既に速く、転送が食う)
+- 集計 2.56x
+
+**教訓**: 「op を1つずつ GPU に投げる」だけでは E2E で勝てない。転送が本体を超える。
+
+### E2E の本丸 = 常駐パイプライン(`run_pipeline`、転送1回で op 連鎖)
+現実の検査は op の**列**。転送を1回に償却し、間の op は GPU 常駐で回す(`accel.run_pipeline`)。
+5-op 検査チェーン(gauss→sobel→dilate→erode→threshold)、500枚 @512²:
+
+| 方式 | 時間 | スループット | 対 CPU |
+|---|---|---|---|
+| CPU 逐次(per-image×per-op) | 9,096 ms | 55 img/s | 1.0x |
+| GPU per-op(転送5回) | 3,420 ms | 146 img/s | 2.7x |
+| **GPU 常駐(転送1回)** | **719 ms** | **695 img/s** | **12.6x** |
+
+- **常駐 vs per-op = 4.9x**(転送償却の正味の効き)。この 4.9x は **accel 内部の比較
+  (両方 accel = 同一演算)なので parity 懸念ゼロ**。`run_pipeline` は run_batch を逐次
+  適用したのと **ビット一致**(test_accel_pipeline.py、CPU torch でも成立)。
+
+### honest な parity: 単発は忠実、チェーンはドリフトする
+- **単発 op**: accel は core registry と **内部 <5e-3 で一致**(端は reflect/pool 規約差)。
+- **多段チェーン**: 段階累積の CPU(core)vs GPU(accel)内部差 = gauss 0.000 → sobel
+  **0.035** → dilate 0.059 → erode **0.19**。原因は (1) sobel/laplace の per-image-max
+  正規化 `_norm_b` が **端の reflect 規約差(scipy reflect ≠ torch reflect)を全体スケール
+  に広げる** (2) 末尾のハード threshold がドリフトを**二値反転に増幅**(mean 差 1.0)。
+- だから **「GPU パイプラインは CPU と同じ結果」とは主張しない**。主張するのは
+  「単発は忠実」「常駐 vs per-op はビット一致で 4.9x」「chain は忠実な近似(ドリフト定量済)」。
+  bit-faithful なチェーンが要るなら float64 + チェーン途中の per-image-max 再正規化を避ける
+  (今後の課題)。
+
+### 他プロジェクトの土台
+この `_to_batch → 常駐 op 連鎖 → _from_batch` の形は、evis 視覚・Afterman の集団評価・
+物理 AI の画像前処理など **バッチ画像を GPU 常駐で流す全用途の土台**。E2E の骨格を
+accel の常駐パイプラインに統一していく。

@@ -154,6 +154,26 @@ def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
     return _from_batch(out)
 
 
+def run_pipeline(steps, imgs, device="cpu"):
+    """Run a CHAIN of accel ops keeping the batch RESIDENT on the device.
+
+    ``steps`` = [(op_name, a, b), ...]. Transfer host->device once, apply every op
+    on the GPU without round-tripping, transfer back once.
+
+    This is the E2E lever: per-op ``run_batch`` re-transfers the whole batch each
+    call, so a single cheap op is dominated by PCIe transfer (measured: batch
+    throughput is flat across ops = transfer-bound, and trivial ops like threshold
+    LOSE to the CPU). A real inspection pipeline is a *sequence* of ops; keeping
+    the data resident amortises the one transfer over the whole chain, which is
+    where the GPU actually wins end-to-end. Same math as the CPU chain (parity via
+    ``pipeline_parity``); the only difference is border conventions (reflect/pool).
+    """
+    t = _to_batch(imgs, device)
+    for name, a, b in steps:
+        t = ACCEL[name][0](t, a, b, device).clamp(0, 1)
+    return _from_batch(t)
+
+
 def _interior_max(ref, got, m=3):
     """Max abs diff ignoring an m-px border (pooling/reflect borders differ)."""
     return float(np.max(np.abs(ref[m:-m, m:-m] - got[m:-m, m:-m]))) if ref.shape[0] > 2 * m else \
