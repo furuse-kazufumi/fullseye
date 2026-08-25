@@ -114,6 +114,37 @@ def test_sparse_is_faster_than_dense_at_scale():
     assert sparse * 3 < dense, f"疎 {sparse*1000:.0f}ms vs dense {dense*1000:.0f}ms"
 
 
+def test_batched_matfree_matches_sparse():
+    """matrix-free バッチ CG(GPU 向け)が scipy 疎版と同じ最終 D を出す。"""
+    if not P._HAS_TORCH:
+        pytest.skip("torch 不在")
+    free, s_rc, t_rc = _short_vs_long()
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+    ref = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, max_iters=137, tol=0)
+    Db = P.solve_physarum_batch(g, [s], [t], mu=1.0, dt=0.2, time_steps=137,
+                                cg_iters=300, device="cpu")
+    assert np.allclose(np.sort(ref.D), np.sort(Db[0]), atol=1e-3)
+
+
+def test_batch_solves_independent_problems():
+    """1 グラフの上で複数の(源,吸込)を同時に解いても、各行が独立の答えになる。"""
+    if not P._HAS_TORCH:
+        pytest.skip("torch 不在")
+    free, _, _ = _short_vs_long()
+    g = P.maze_to_graph(free)
+    a = P.node_at(g, 0, 0)
+    b = P.node_at(g, 0, 6)
+    c = P.node_at(g, 2, 0)
+    D = P.solve_physarum_batch(g, [a, a], [b, c], mu=1.0, dt=0.2,
+                               time_steps=200, cg_iters=300, device="cpu")
+    # 別々の吸込なので、まとめて解いても 1 個ずつ解いた結果と一致すべき
+    d0 = P.solve_physarum(g, a, b, mu=1.0, dt=0.2, max_iters=200, tol=0)
+    d1 = P.solve_physarum(g, a, c, mu=1.0, dt=0.2, max_iters=200, tol=0)
+    assert np.allclose(np.sort(D[0]), np.sort(d0.D), atol=1e-3)
+    assert np.allclose(np.sort(D[1]), np.sort(d1.D), atol=1e-3)
+
+
 def test_disconnected_sink_returns_no_path():
     free = np.array([
         [1, 1, 1, 0, 1, 1, 1],   # 中央が壁で源側と吸込側が分断
