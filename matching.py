@@ -40,11 +40,18 @@ def find_ncc_model(model, image, min_score: float = 0.5) -> dict:
     t = model["template"] if isinstance(model, dict) else _f(model)
     m = _ncc_map(t, image)
     if m.size == 0:
-        return {"row": -1, "col": -1, "score": 0.0}
+        return {"row": -1, "col": -1, "column": -1, "score": 0.0, "found": False}
     idx = np.unravel_index(int(np.argmax(m)), m.shape)
     score = float(m[idx])
-    return {"row": int(idx[0]), "col": int(idx[1]), "score": score,
-            "found": score >= min_score}
+    # **基準点はテンプレート中心**。_ncc_map の添字は左上なので中心へ直す。
+    # HALCON の find_ncc_model が返すのはモデルの原点(既定 = 中心)であり、
+    # 同じ物を探しても形状マッチ側 (find_shape_model) とテンプレート半分だけ
+    # 座標がずれていた(実測: 中心 (60,150) に対し (40,130) を返していた)。
+    # 左上が要る呼び出しのために row_tl/col_tl も併記する。
+    r0, c0 = int(idx[0]), int(idx[1])
+    r, c = r0 + t.shape[0] // 2, c0 + t.shape[1] // 2
+    return {"row": r, "col": c, "column": c, "row_tl": r0, "col_tl": c0,
+            "score": score, "found": score >= min_score}
 
 
 def best_match(template, image) -> dict:
@@ -60,8 +67,11 @@ def best_match(template, image) -> dict:
             if best is None or d < best[0]:
                 best = (d, i, j)
     if best is None:
-        return {"row": -1, "col": -1, "error": np.inf}
-    return {"row": best[1], "col": best[2], "error": best[0]}
+        return {"row": -1, "col": -1, "column": -1, "error": np.inf}
+    # 基準点は find_ncc_model / find_shape_model と同じ **テンプレート中心**。
+    r, c = best[1] + h // 2, best[2] + w // 2
+    return {"row": r, "col": c, "column": c, "row_tl": best[1], "col_tl": best[2],
+            "error": best[0]}
 
 
 def exhaustive_match(template, image) -> dict:

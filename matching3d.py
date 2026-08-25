@@ -94,8 +94,16 @@ def find_shape_model_3d(model, image, min_score=0.5):
         s = nccm.max()
         if best is None or s > best["score"]:
             idx = np.unravel_index(np.argmax(nccm), nccm.shape)
-            best = {"score": float(s), "phi": float(phi), "row": int(idx[0]), "column": int(idx[1])}
-    return best or {"found": False}
+            best = {"score": float(s), "phi": float(phi), "found": True,
+                    "row": int(idx[0]) + tmpl.shape[0] // 2,
+                    "column": int(idx[1]) + tmpl.shape[1] // 2,
+                    "col": int(idx[1]) + tmpl.shape[1] // 2}
+    # 見つからない時も同じ鍵を返す(以前は {"found": False} だけで KeyError の元)。
+    if best is None:
+        return {"row": -1, "col": -1, "column": -1, "score": 0.0,
+                "phi": 0.0, "found": False}
+    best["found"] = best["score"] >= min_score
+    return best
 
 
 # ── 2D descriptor マッチング(Harris keypoints + patch descriptor)────────────── #

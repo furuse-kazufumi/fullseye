@@ -32,7 +32,13 @@ def create_shape_model(template, min_grad: float = 0.1) -> dict:
             # **ピラミッドを作るのは画像であってモデルではない**(一次資料で確認、
             # docs/HIGHSPEED_VISION.md「ピラミッドの正体」)ので、粗い階層のモデルは
             # 縮小したテンプレートから抽出し直す。モデル点を間引くのとは別物。
-            "template": t.copy(), "min_grad": float(min_grad)}
+            "template": t.copy(), "min_grad": float(min_grad),
+            # **MinContrast**(HALCON の同名パラメータ)。これが無いと、勾配が
+            # 雑音しかない場所でも m で割った時点で単位ベクトルに化けるので、
+            # |cos| の平均が 2/pi = 0.637 に張り付く。実測でも純雑音の画像で
+            # 最良スコアが 0.73-0.75 出ており、**既定の min_score=0.5 では
+            # 何も棄却できなかった**。閾値未満の点は 0 点として数える。
+            "min_contrast": float(thr)}
 
 
 def create_generic_shape_model(template, min_grad: float = 0.1) -> dict:
@@ -56,10 +62,16 @@ def _score_at(model, gy_img, gx_img, mag_img, r0, c0):
     if ok.sum() < 3:
         return 0.0
     ys, xs = ys[ok], xs[ok]
-    m = mag_img[ys, xs] + 1e-9
-    ig = np.column_stack([gy_img[ys, xs] / m, gx_img[ys, xs] / m])
+    m = mag_img[ys, xs]
+    md = m + 1e-9
+    ig = np.column_stack([gy_img[ys, xs] / md, gx_img[ys, xs] / md])
     dots = np.abs((ig * model["grad"][ok]).sum(1))       # 方向一致(反転許容=abs)
-    return float(dots.mean())
+    mc = float(model.get("min_contrast", 0.0))
+    if mc > 0.0:
+        dots = np.where(m >= mc, dots, 0.0)              # 低コントラスト点は 0 点
+    # **画像外へ出た点も 0 点**として全点数で割る。見えている点だけの平均だと、
+    # 端で model が半分はみ出た位置が数点の平均で高得点になった(実測)。
+    return float(dots.sum() / len(pts))
 
 
 def pyr_down(a):
@@ -121,8 +133,8 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
                 s = _score_at(model, gy, gx, mag, r0, c0)
                 if s > best[0]:
                     best = (s, r0, c0)
-        return {"row": best[1], "col": best[2], "score": best[0],
-                "found": best[0] >= min_score, "levels": 1}
+        return {"row": best[1], "col": best[2], "column": best[2],
+                "score": best[0], "found": best[0] >= min_score, "levels": 1}
 
     nl = None if num_levels == "auto" else int(num_levels)
     models = build_model_pyramid(model, nl)
@@ -164,7 +176,10 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
         cand = nxt[:n_cand]
 
     sc, r, c = cand[0]
-    return {"row": int(r), "col": int(c), "score": float(sc),
+    # "col" と "column" の両方を返す。この家族は片方しか返しておらず、
+    # find_local_deformable_model が rigid.get("column") を読んで **常に None**
+    # を得ていた(実測で発覚)。HALCON の名前は Column なので両方載せる。
+    return {"row": int(r), "col": int(c), "column": int(c), "score": float(sc),
             "found": sc >= min_score, "levels": len(models)}
 
 
@@ -201,8 +216,14 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10, min_d
     mag = np.hypot(gx, gy)
     H, W = img.shape; mh, mw = model["shape"]
     score_map = np.full((H, W), -1.0)
-    for r0 in range(0, H - mh, step):
-        for c0 in range(0, W - mw, step):
+    # **_score_at は (r0,c0) を中心として解釈する。** ここは以前 range(0, H-mh)
+    # と左上規約で走査していたため 2 つ壊れていた(実測):
+    #   (a) 右下の帯 [H-mh, H-mh//2) を一度も見ない -> 端の物体を丸ごと取り逃す
+    #   (b) 上/左では model の半分が画像外に出て、見えている数点だけの平均が
+    #       0.73 と出る -> min_score 0.5 を平気で超える偽陽性
+    # 中心の有効範囲だけを走査すれば、model は常に全部画像内に入り両方消える。
+    for r0 in range(mh // 2, H - mh // 2, step):
+        for c0 in range(mw // 2, W - mw // 2, step):
             score_map[r0, c0] = _score_at(model, gy, gx, mag, r0, c0)
     matches = []
     sm = score_map.copy()
@@ -211,7 +232,8 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10, min_d
         s = sm[idx]
         if s < min_score:
             break
-        matches.append({"row": int(idx[0]), "column": int(idx[1]), "score": float(s)})
+        matches.append({"row": int(idx[0]), "column": int(idx[1]),
+                        "col": int(idx[1]), "score": float(s)})
         r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
         c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
         sm[r0:r1, c0:c1] = -1.0
@@ -221,30 +243,41 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10, min_d
 def find_ncc_models(model, image, min_score=0.5, max_matches=10, min_distance=5):
     """NCC モデルの複数インスタンス検出(find_ncc_models)。"""
     from matching import _ncc_map
-    nccm = _ncc_map(model["template"], np.asarray(image, np.float64))
+    t = np.asarray(model["template"], np.float64)
+    nccm = _ncc_map(t, np.asarray(image, np.float64))
+    # find_ncc_model と同じく **中心** を返す(_ncc_map の添字は左上)。
+    oh, ow = t.shape[0] // 2, t.shape[1] // 2
     H, W = nccm.shape; matches = []; sm = nccm.copy()
     for _ in range(int(max_matches)):
         idx = np.unravel_index(np.argmax(sm), sm.shape)
         if sm[idx] < min_score:
             break
-        matches.append({"row": int(idx[0]), "column": int(idx[1]), "score": float(sm[idx])})
+        matches.append({"row": int(idx[0]) + oh, "column": int(idx[1]) + ow,
+                        "col": int(idx[1]) + ow, "row_tl": int(idx[0]),
+                        "col_tl": int(idx[1]), "score": float(sm[idx])})
         r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
         c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
         sm[r0:r1, c0:c1] = -1.0
     return {"matches": matches, "num": len(matches)}
 
 
-def find_scaled_shape_models(model, image, scales=(0.8, 1.0, 1.25), min_score=0.5, max_matches=10):
+def find_scaled_shape_models(model, image, scales=(0.8, 1.0, 1.25), min_score=0.5,
+                             max_matches=10, step=2):
     """スケール探索つき複数インスタンス検出(find_scaled_shape_models)。"""
-    best = {"matches": [], "num": 0, "scale": 1.0}
+    # **scale は最良スコアで選ぶ。件数では選ばない。**
+    # 以前は res["num"] > best["num"] で選んでいたので、合っていない scale が
+    # 偽陽性を 1 件多く出しただけで勝ってしまった(実測: 真の scale 1.0 に対し
+    # 0.8 が選ばれ、スコアも 0.80 に落ちた)。
+    best = {"matches": [], "num": 0, "scale": 1.0, "score": -1.0}
     for s in scales:
-        from scipy.ndimage import zoom
         pts = model["pts"] * s
         scaled = {"shape": (int(model["shape"][0] * s), int(model["shape"][1] * s)),
                   "pts": pts.astype(int), "grad": model["grad"]}
-        res = find_shape_models(scaled, image, min_score, max_matches=max_matches)
-        if res["num"] > best["num"]:
-            best = {**res, "scale": s}
+        res = find_shape_models(scaled, image, min_score, step=step,
+                                max_matches=max_matches)
+        top = max((m["score"] for m in res["matches"]), default=-1.0)
+        if top > best["score"]:
+            best = {**res, "scale": s, "score": top}
     return best
 
 
@@ -331,7 +364,10 @@ def find_aniso_shape_model(model, image, min_score=0.5,
             res = find_shape_model(mm, image, min_score)
             if res.get("found") and (best is None or res["score"] > best["score"]):
                 best = {**res, "scale_row": sr, "scale_col": sc}
-    return best or {"found": False}
+    # 見つからない時も **同じ鍵** を返す。以前は {"found": False} だけだったので
+    # 呼び出し側の res["row"] が KeyError で落ちた。
+    return best or {"row": -1, "col": -1, "column": -1, "score": 0.0,
+                    "found": False, "scale_row": 1.0, "scale_col": 1.0}
 
 
 def find_aniso_shape_models(model, image, min_score=0.5, max_matches=10):
@@ -381,11 +417,14 @@ def find_local_deformable_model(model, image, min_score=0.5):
     rigid = find_shape_model(model["edge"], image, min_score)
     from filters_flow import optical_flow_mg
     t = model["template"]; H, W = t.shape
-    r0 = int(rigid.get("row", 0)) - H // 2; c0 = int(rigid.get("column", 0)) - W // 2
+    # find_shape_model は "col" を返す。ここは "column" を読んでいたので既定値 0 に
+    # 落ち、**常に画像の左端 [0:W] を切り出してフローを取っていた**(実測)。
+    col = rigid.get("col", rigid.get("column", 0)) or 0
+    r0 = int(rigid.get("row", 0)) - H // 2; c0 = int(col) - W // 2
     r0 = max(0, min(r0, image.shape[0] - H)); c0 = max(0, min(c0, image.shape[1] - W))
     patch = np.asarray(image, float)[r0:r0 + H, c0:c0 + W]
     flow = optical_flow_mg(t, patch, iterations=100)
-    return {"row": rigid.get("row"), "column": rigid.get("column"),
+    return {"row": rigid.get("row"), "column": int(col), "col": int(col),
             "score": rigid.get("score", 0.0), "deformation": flow}
 
 
