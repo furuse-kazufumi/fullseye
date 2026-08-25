@@ -211,17 +211,34 @@ def _search_with_pyramid(models, pyr, fields, n_cand: int = 12):
 
 
 def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
-                     num_levels="auto", n_cand: int = 12) -> dict:
-    """モデルを画像中で探索し最良一致(行/列/スコア)を返す(find_shape_model)。
+                     num_levels="auto", n_cand: int = 12, angles=None) -> dict:
+    """モデルを画像中で探索し最良一致(行/列/角度/スコア)を返す(find_shape_model)。
 
     ``num_levels="auto"`` で **粗密探索(ピラミッドサーチ)** を使う。
     ``num_levels=0`` で従来どおりの平坦な全走査。
+
+    ``angles`` に角度の並び(度、例 ``range(-30, 31, 10)``)を渡すと **回転も探索**する。
+    HALCON の find_shape_model は Angle を返すが、この一族は角度 0 固定だった。回転は
+    テンプレートを回してモデルを作り直す(点も勾配も一緒に回る)ことで各角度もピラミッドに
+    乗る。``angles=None``(既定)は従来どおり角度 0 のみ(後方互換)。
     """
     img = np.asarray(image, dtype=np.float64)
 
+    # 角度探索: テンプレートを各角度に回して掃引(scale と同じ機構)。
+    if angles is not None and model.get("template") is not None:
+        combos = [(float(a), 1.0, 1.0) for a in angles]
+        b = _search_transforms(model, img, combos, min_score, step, n_cand)
+        if b is None:
+            return {"row": -1, "col": -1, "column": -1, "angle": 0.0,
+                    "score": 0.0, "found": False, "levels": 1}
+        score, r, c, ang, _sr, _sc, lv = b
+        return {"row": int(r), "col": int(c), "column": int(c),
+                "angle": float(ang), "score": float(score),
+                "found": score >= min_score, "levels": lv}
+
     if num_levels == 0 or model.get("template") is None:
         sc, r, c = _scan_flat(model, _grad_field(img), step)
-        return {"row": r, "col": c, "column": c,
+        return {"row": r, "col": c, "column": c, "angle": 0.0,
                 "score": sc, "found": sc >= min_score, "levels": 1}
 
     nl = None if num_levels == "auto" else int(num_levels)
@@ -239,8 +256,8 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
     # "col" と "column" の両方を返す。この家族は片方しか返しておらず、
     # find_local_deformable_model が rigid.get("column") を読んで **常に None**
     # を得ていた(実測で発覚)。HALCON の名前は Column なので両方載せる。
-    return {"row": int(r), "col": int(c), "column": int(c), "score": float(sc),
-            "found": sc >= min_score, "levels": len(models)}
+    return {"row": int(r), "col": int(c), "column": int(c), "angle": 0.0,
+            "score": float(sc), "found": sc >= min_score, "levels": len(models)}
 
 
 def zoom_model(model, scale_row: float, scale_col: float = None):
