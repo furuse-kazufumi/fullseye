@@ -420,13 +420,14 @@ def _search_transforms(model, image, combos, min_score=0.5, step=2, n_cand=12,
     return best
 
 
-def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12):
+def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12,
+                   device="cpu"):
     """scale のみ掃引(後方互換)。内部は _search_transforms(angle=0)。
 
     返り値は従来どおり (score, row, col, scale_row, scale_col, levels)。
     """
     b = _search_transforms(model, image, [(0.0, sr, sc) for sr, sc in combos],
-                           min_score, step, n_cand)
+                           min_score, step, n_cand, device=device)
     if b is None:
         return None
     score, r, c, _ang, sr, sc, lv = b
