@@ -125,3 +125,51 @@ def test_gpu_dispatch_is_silent_without_cuda():
     img = _scene(tpl, 130, 120, 0)
     r = S.find_shape_model(m, img, angles=range(-30, 31, 15), device="cuda")
     assert r["row"] > 0            # CUDA 有無どちらでも位置が返る
+
+
+def _multi_scene(tpl, centers, size=384, seed=0):
+    rng = np.random.default_rng(seed)
+    img = rng.normal(0.5, 0.02, (size, size))
+    h, w = tpl.shape
+    for (r, c) in centers:
+        img[r - h // 2:r - h // 2 + h, c - w // 2:c - w // 2 + w] += tpl
+    return img
+
+
+@skip_gpu
+def test_gpu_multi_instance_matches_cpu():
+    """複数インスタンス検出が CPU と同じ位置・個数を返す(スコアマップ GPU / NMS CPU)。"""
+    tpl = _L(40)
+    m = S.create_shape_model(tpl)
+    centers = [(80, 90), (80, 220), (200, 150), (300, 300), (150, 320)]
+    img = _multi_scene(tpl, centers)
+    cpu = S.find_shape_models(m, img, min_score=0.5, max_matches=8,
+                              min_distance=20, device="cpu")
+    gpu = S.find_shape_models(m, img, min_score=0.5, max_matches=8,
+                              min_distance=20, device="cuda")
+    assert gpu["num"] == cpu["num"] == 5
+    cs = sorted((x["row"], x["col"]) for x in cpu["matches"])
+    gs = sorted((x["row"], x["col"]) for x in gpu["matches"])
+    for (r, c), (r2, c2) in zip(cs, gs):
+        assert abs(r - r2) <= 2 and abs(c - c2) <= 2
+
+
+@skip_gpu
+def test_gpu_multi_instance_no_false_positive_on_noise():
+    tpl = _L(40)
+    m = S.create_shape_model(tpl)
+    rng = np.random.default_rng(3)
+    noise = rng.normal(0.5, 0.15, (384, 384))
+    gpu = S.find_shape_models(m, noise, min_score=0.5, max_matches=8,
+                              min_distance=20, device="cuda")
+    assert gpu["num"] == 0
+
+
+def test_gpu_multi_instance_silent_fallback():
+    """CUDA 無しでも device='cuda' で落ちず CPU で複数検出する。"""
+    tpl = _L(40)
+    m = S.create_shape_model(tpl)
+    img = _multi_scene(tpl, [(80, 90), (200, 200)], size=320)
+    r = S.find_shape_models(m, img, min_score=0.5, max_matches=4,
+                            min_distance=20, device="cuda")
+    assert r["num"] == 2

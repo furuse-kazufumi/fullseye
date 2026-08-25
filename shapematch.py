@@ -491,15 +491,59 @@ def _scan_level(model, field, step=1):
     return score_map
 
 
+def _find_shape_models_gpu(model, image, min_score, max_matches, min_distance,
+                           device):
+    """GPU で使えるなら {"matches":..., "num":..., "levels":1} を返す。無理なら None。
+
+    スコアマップ(重い)を GPU の conv2d で 1 発で作り、NMS(安い)は CPU の
+    ``_nms_from_map`` を使い回す。ピラミッドの粗密は要らない —— conv が密で速く、
+    全解像度のマップをそのまま NMS にかけられる。フォールバック条件は
+    _search_transforms_gpu と同じ(cuda/GPU/template/metric)。
+    """
+    if device != "cuda":
+        return None
+    try:
+        import shapematch_gpu as _g
+    except Exception:
+        return None
+    if not _g.gpu_available():
+        return None
+    if model.get("template") is None:
+        return None
+    if model.get("metric", "use_polarity") == "ignore_local_polarity":
+        return None
+    sm = _g.score_maps([model], image, metric=model.get("metric", "use_polarity"),
+                       mc=float(model.get("min_contrast", 0.0)),
+                       device="cuda")[0]
+    # CPU の _scan_level と同じ中心規約: model が全部画像内に入る内部だけを残し、
+    # 端の部分被覆(偽陽性)を番兵 -1 で弾く。
+    h, w = model["shape"]
+    hh, ww = h // 2, w // 2
+    guarded = np.full_like(sm, -1.0)
+    guarded[hh:sm.shape[0] - hh, ww:sm.shape[1] - ww] = \
+        sm[hh:sm.shape[0] - hh, ww:sm.shape[1] - ww]
+    hits = _nms_from_map(guarded, min_score, max_matches, min_distance)
+    return {"matches": [{"row": r, "column": c, "col": c, "score": s}
+                        for s, r, c in hits], "num": len(hits), "levels": 1}
+
+
 def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
-                      min_distance=5, num_levels="auto", n_cand=None):
+                      min_distance=5, num_levels="auto", n_cand=None,
+                      device="cpu"):
     """複数インスタンスを非最大抑制つきで検出(find_shape_models)。
 
     ``num_levels="auto"`` で **粗密探索**。最粗階層を全走査して NMS で候補を
     拾い、各候補を独立に階層を下りて精密化する。単一インスタンス版と違い
     候補は 1 個に絞らない —— 絞ると 2 個目以降が消えるため。
     ``num_levels=0`` で従来どおりの平坦な全走査。
+
+    ``device="cuda"`` で **スコアマップを GPU の conv2d で作り**、NMS は CPU で
+    行う(GPU が使えない条件では静かに CPU の粗密探索へ戻る)。
     """
+    gpu = _find_shape_models_gpu(model, image, min_score, max_matches,
+                                 min_distance, device)
+    if gpu is not None:
+        return gpu
     img = np.asarray(image, np.float64)
     use_pyr = num_levels != 0 and model.get("template") is not None
     models = build_model_pyramid(
