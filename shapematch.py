@@ -1,7 +1,11 @@
 """形状ベースマッチング(HALCON "Matching" chapter の genuine core, numpy).
 
 Steger 流の勾配方向マッチング: モデル=テンプレートのエッジ点の正規化勾配ベクトル、
-スコア=対応位置での勾配方向の一致(内積平均)。輝度変化やコントラスト反転に頑健。
+スコア=対応位置での勾配方向の一致(内積平均)。輝度変化に頑健。
+コントラスト反転を許すかは ``metric``(HALCON と同名)で選ぶ —— 既定の
+``"use_polarity"`` は許さない。**点ごとに絶対値を取る "ignore_local_polarity" を
+既定にしていた頃は、向きが乱数でも E[|cos|] = 2/pi = 0.637 の下駄が残り、
+雑音の強い画像で min_score が何も棄却できなかった**(実測、docs/HIGHSPEED_VISION.md)。
 handle でなく軽量 dict。画像/テンプレートは [0,1] の 2D float64。
 """
 from __future__ import annotations
@@ -17,8 +21,19 @@ def _grad_field(img):
     return gx, gy, mag
 
 
-def create_shape_model(template, min_grad: float = 0.1) -> dict:
-    """テンプレートのエッジ点(|grad|>min_grad)の正規化勾配ベクトルをモデル化(create_shape_model)。"""
+def create_shape_model(template, min_grad: float = 0.1,
+                       metric: str = "use_polarity") -> dict:
+    """テンプレートのエッジ点(|grad|>min_grad)の正規化勾配ベクトルをモデル化(create_shape_model)。
+
+    ``metric`` は HALCON の同名パラメータ:
+
+    - ``"use_polarity"``(既定、HALCON も既定) —— 勾配の **符号つき** cos を平均。
+      向きが揃っていないと点が加点されないので、明暗が反転した物体は一致しない。
+    - ``"ignore_global_polarity"`` —— 符号つきで足してから絶対値。物体全体の
+      明暗が反転していても一致する(部分ごとの反転は許さない)。
+    - ``"ignore_local_polarity"`` —— 点ごとに絶対値。**最も緩く、偽陽性が出やすい**
+      (HALCON の説明も同じ警告をしている)。
+    """
     t = np.asarray(template, dtype=np.float64)
     gx, gy, mag = _grad_field(t)
     thr = min_grad * (mag.max() + 1e-9)
@@ -38,17 +53,19 @@ def create_shape_model(template, min_grad: float = 0.1) -> dict:
             # |cos| の平均が 2/pi = 0.637 に張り付く。実測でも純雑音の画像で
             # 最良スコアが 0.73-0.75 出ており、**既定の min_score=0.5 では
             # 何も棄却できなかった**。閾値未満の点は 0 点として数える。
-            "min_contrast": float(thr)}
+            "min_contrast": float(thr), "metric": str(metric)}
 
 
-def create_generic_shape_model(template, min_grad: float = 0.1) -> dict:
+def create_generic_shape_model(template, min_grad: float = 0.1,
+                               metric: str = "use_polarity") -> dict:
     """汎用形状モデル(create_generic_shape_model、create_shape_model と同核)。"""
-    return create_shape_model(template, min_grad)
+    return create_shape_model(template, min_grad, metric)
 
 
-def create_aniso_shape_model(template, min_grad: float = 0.1) -> dict:
+def create_aniso_shape_model(template, min_grad: float = 0.1,
+                             metric: str = "use_polarity") -> dict:
     """異方性スケール形状モデル(create_aniso_shape_model、モデル自体は同一、find で異方 scale 探索)。"""
-    m = create_shape_model(template, min_grad)
+    m = create_shape_model(template, min_grad, metric)
     m["aniso"] = True
     return m
 
@@ -65,13 +82,25 @@ def _score_at(model, gy_img, gx_img, mag_img, r0, c0):
     m = mag_img[ys, xs]
     md = m + 1e-9
     ig = np.column_stack([gy_img[ys, xs] / md, gx_img[ys, xs] / md])
-    dots = np.abs((ig * model["grad"][ok]).sum(1))       # 方向一致(反転許容=abs)
+    dots = (ig * model["grad"][ok]).sum(1)               # 符号つき方向一致
     mc = float(model.get("min_contrast", 0.0))
     if mc > 0.0:
         dots = np.where(m >= mc, dots, 0.0)              # 低コントラスト点は 0 点
     # **画像外へ出た点も 0 点**として全点数で割る。見えている点だけの平均だと、
     # 端で model が半分はみ出た位置が数点の平均で高得点になった(実測)。
-    return float(dots.sum() / len(pts))
+    n = len(pts)
+    metric = model.get("metric", "use_polarity")
+    if metric == "ignore_local_polarity":
+        # 点ごとに絶対値を取る。**これが雑音の下駄の正体**。向きが乱数でも
+        # E[|cos|] = 2/pi = 0.637 が残るので、雑音の強い画像では min_score が
+        # 何も棄却できない(実測: 雑音 sd 0.15 で 0.57、sd 0.30 で 0.65)。
+        return float(np.abs(dots).sum() / n)
+    if metric == "ignore_global_polarity":
+        # 符号つきで足してから絶対値。乱数なら和は 0 のまわりに散るだけなので
+        # 下駄は履かない(標準偏差 1/sqrt(n) 相当)。
+        return float(abs(dots.sum()) / n)
+    # use_polarity(既定)。負は一致していないので 0 で止める。
+    return float(max(0.0, dots.sum() / n))
 
 
 def pyr_down(a):
@@ -97,13 +126,14 @@ def build_model_pyramid(model, num_levels=None, min_pts: int = 12) -> list:
     if tuple(t.shape) != tuple(model["shape"]):
         return [model]
     mg = model.get("min_grad", 0.1)
+    mt = model.get("metric", "use_polarity")
     out = [model]
     cur = t
     while num_levels is None or len(out) < num_levels:
         nxt = pyr_down(cur)
         if min(nxt.shape) < 6:
             break
-        m = create_shape_model(nxt, mg)
+        m = create_shape_model(nxt, mg, mt)
         if len(m["pts"]) < min_pts:
             break
         out.append(m)
@@ -113,39 +143,40 @@ def build_model_pyramid(model, num_levels=None, min_pts: int = 12) -> list:
     return out
 
 
-def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
-                     num_levels="auto", n_cand: int = 12) -> dict:
-    """モデルを画像中で探索し最良一致(行/列/スコア)を返す(find_shape_model)。
+def image_pyramid(image, n_levels: int) -> list:
+    """画像を n_levels 段に縮小して返す(先頭が原寸)。
 
-    ``num_levels="auto"`` で **粗密探索(ピラミッドサーチ)** を使う。
-    最粗階層を全走査して候補を n_cand 個残し、階層を下りながら近傍だけ精密化する。
-    ``num_levels=0`` で従来どおりの平坦な全走査。
+    **scale を何通り試しても画像階層は 1 回作れば足りる。**
+    find_aniso_shape_model は scale を 9 通り見るので、毎回作り直すと
+    探索本体より縮小のほうが高くつく。
     """
-    img = np.asarray(image, dtype=np.float64)
-    H, W = img.shape
-    h, w = model["shape"]
-
-    if num_levels == 0 or model.get("template") is None:
-        gx, gy, mag = _grad_field(img)
-        best = (-1.0, -1, -1)
-        for r0 in range(h // 2, H - h // 2, step):
-            for c0 in range(w // 2, W - w // 2, step):
-                s = _score_at(model, gy, gx, mag, r0, c0)
-                if s > best[0]:
-                    best = (s, r0, c0)
-        return {"row": best[1], "col": best[2], "column": best[2],
-                "score": best[0], "found": best[0] >= min_score, "levels": 1}
-
-    nl = None if num_levels == "auto" else int(num_levels)
-    models = build_model_pyramid(model, nl)
-    if len(models) == 1:
-        return find_shape_model(model, image, min_score, step, num_levels=0)
-
-    pyr = [img]
-    for _ in range(len(models) - 1):
+    pyr = [np.asarray(image, dtype=np.float64)]
+    for _ in range(max(0, int(n_levels) - 1)):
         pyr.append(pyr_down(pyr[-1]))
-    fields = [_grad_field(a) for a in pyr]
+    return pyr
 
+
+def _scan_flat(model, field, step: int):
+    """1 階層を全走査して最良の (score, row, col) を返す。"""
+    gx, gy, mag = field
+    H, W = mag.shape
+    h, w = model["shape"]
+    best = (-1.0, -1, -1)
+    for r0 in range(h // 2, H - h // 2, step):
+        for c0 in range(w // 2, W - w // 2, step):
+            s = _score_at(model, gy, gx, mag, r0, c0)
+            if s > best[0]:
+                best = (s, r0, c0)
+    return best
+
+
+def _search_with_pyramid(models, pyr, fields, n_cand: int = 12):
+    """モデル階層と画像階層を突き合わせ、最良の (score, row, col) を返す。
+
+    models[i] は pyr[i] と同じ解像度。最粗階層を全走査して候補を n_cand 個残し、
+    階層を下りながら近傍 5x5 だけ精密化する。**画像階層は呼び出し側の持ち物**
+    なので、scale を変えて何度呼んでも縮小はやり直さない。
+    """
     top = len(models) - 1
     mh, mw = models[top]["shape"]
     gxT, gyT, magT = fields[top]
@@ -154,6 +185,8 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
     for r0 in range(mh // 2, max(mh // 2 + 1, Ht - mh // 2)):
         for c0 in range(mw // 2, max(mw // 2 + 1, Wt - mw // 2)):
             cand.append((_score_at(models[top], gyT, gxT, magT, r0, c0), r0, c0))
+    if not cand:
+        return None
     cand.sort(key=lambda z: -z[0])
     cand = cand[:n_cand]
 
@@ -171,11 +204,38 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
                         continue
                     nxt.append((_score_at(models[L], gyL, gxL, magL, r, c), r, c))
         if not nxt:
-            return find_shape_model(model, image, min_score, step, num_levels=0)
+            return None
         nxt.sort(key=lambda z: -z[0])
         cand = nxt[:n_cand]
+    return cand[0]
 
-    sc, r, c = cand[0]
+
+def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
+                     num_levels="auto", n_cand: int = 12) -> dict:
+    """モデルを画像中で探索し最良一致(行/列/スコア)を返す(find_shape_model)。
+
+    ``num_levels="auto"`` で **粗密探索(ピラミッドサーチ)** を使う。
+    ``num_levels=0`` で従来どおりの平坦な全走査。
+    """
+    img = np.asarray(image, dtype=np.float64)
+
+    if num_levels == 0 or model.get("template") is None:
+        sc, r, c = _scan_flat(model, _grad_field(img), step)
+        return {"row": r, "col": c, "column": c,
+                "score": sc, "found": sc >= min_score, "levels": 1}
+
+    nl = None if num_levels == "auto" else int(num_levels)
+    models = build_model_pyramid(model, nl)
+    if len(models) == 1:
+        return find_shape_model(model, image, min_score, step, num_levels=0)
+
+    pyr = image_pyramid(img, len(models))
+    fields = [_grad_field(a) for a in pyr]
+    hit = _search_with_pyramid(models, pyr, fields, n_cand)
+    if hit is None:
+        return find_shape_model(model, image, min_score, step, num_levels=0)
+
+    sc, r, c = hit
     # "col" と "column" の両方を返す。この家族は片方しか返しておらず、
     # find_local_deformable_model が rigid.get("column") を読んで **常に None**
     # を得ていた(実測で発覚)。HALCON の名前は Column なので両方載せる。
@@ -183,38 +243,132 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
             "found": sc >= min_score, "levels": len(models)}
 
 
-def create_scaled_shape_model(template, min_grad: float = 0.1) -> dict:
+def zoom_model(model, scale_row: float, scale_col: float = None):
+    """**テンプレートを拡大縮小してから、その解像度でモデルを作り直す**。
+
+    以前この一族は ``model["pts"] * s`` と点の座標だけ伸縮した dict を組んでいた。
+    それだと 3 つが同時に起きる:
+
+    1. ``template`` を持たないのでピラミッドに乗れず、必ず平坦な全走査へ落ちる
+    2. 勾配方向が元の解像度のまま。**異方 scale では法線の向きは実際に変わる**
+       (座標を A で写すと法線は A^-T で写る)のに、変わらないままだった
+    3. 縮めても点数が減らないので、小さい scale でも速くならない
+
+    テンプレート側を zoom すれば HALCON の作り方(scale ごとにモデルを作る)と
+    一致し、3 つとも消える。縮めすぎて意味を失う scale では None を返す。
+    """
+    if scale_col is None:
+        scale_col = scale_row
+    sr, sc = float(scale_row), float(scale_col)
+    t = model.get("template")
+    if t is None:
+        # template を持たないモデル。従来どおり点だけ伸縮する(ピラミッドには乗らない)。
+        pts = model["pts"] * np.array([sr, sc])
+        return {"shape": (int(model["shape"][0] * sr), int(model["shape"][1] * sc)),
+                "pts": pts.astype(int), "grad": model["grad"],
+                "min_contrast": model.get("min_contrast", 0.0),
+                "metric": model.get("metric", "use_polarity"),
+                "scale_row": sr, "scale_col": sc}
+    if abs(sr - 1.0) < 1e-9 and abs(sc - 1.0) < 1e-9:
+        out = dict(model)
+    else:
+        z = ndimage.zoom(np.asarray(t, dtype=np.float64), (sr, sc), order=1)
+        if min(z.shape) < 6:
+            return None                      # 縮めすぎ。この scale は捨てる
+        out = create_shape_model(z, model.get("min_grad", 0.1),
+                                 model.get("metric", "use_polarity"))
+    out["scale_row"], out["scale_col"] = sr, sc
+    return out
+
+
+def create_scaled_shape_model(template, min_grad: float = 0.1,
+                              metric: str = "use_polarity") -> dict:
     """等方スケール形状モデル(create_scaled_shape_model)。"""
-    m = create_shape_model(template, min_grad)
+    m = create_shape_model(template, min_grad, metric)
     m["scaled"] = True
     return m
 
 
-def find_scaled_shape_model(model, image, scales=(0.8, 1.0, 1.25),
-                            min_score: float = 0.5, step: int = 2) -> dict:
-    """スケールを変えながら最良一致を探索(find_scaled_shape_model)。"""
-    best = {"row": -1, "col": -1, "score": -1.0, "scale": 1.0}
-    base_pts = model["pts"].astype(float)
-    center = np.array(model["shape"]) / 2
-    for sc in scales:
-        m2 = dict(model)
-        m2["pts"] = ((base_pts - center) * sc + center).round().astype(int)
-        m2["shape"] = (int(model["shape"][0] * sc), int(model["shape"][1] * sc))
-        r = find_shape_model(m2, image, min_score=-1.0, step=step)
-        if r["score"] > best["score"]:
-            best = {**r, "scale": sc}
-    best["found"] = best["score"] >= min_score
+def _scale_pyramids(model, combos):
+    """(scale_row, scale_col) ごとに **zoom したテンプレートからモデル階層を作る**。
+
+    返り値は [(sr, sc, [models...]), ...]。縮めすぎた scale は落とす。
+    """
+    per = []
+    for sr, sc in combos:
+        zm = zoom_model(model, sr, sc)
+        if zm is None:
+            continue
+        per.append((sr, sc, build_model_pyramid(zm)))
+    return per
+
+
+def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12):
+    """scale を掃引して最良の (score, row, col, scale_row, scale_col, levels)。
+
+    **画像階層は必要な深さぶん 1 回だけ作り、全 scale で使い回す。**
+    scale ごとに作り直すと、探索より縮小のほうが高くつく(実測 3 割ほど)。
+    """
+    img = np.asarray(image, dtype=np.float64)
+    per = _scale_pyramids(model, combos)
+    if not per:
+        return None
+    depth = max(len(m) for _, _, m in per)
+    pyr = image_pyramid(img, depth)
+    fields = [_grad_field(a) for a in pyr]
+    best = None
+    for sr, sc, models in per:
+        if len(models) == 1:
+            hit = _scan_flat(models[0], fields[0], step)
+        else:
+            hit = _search_with_pyramid(models, pyr, fields, n_cand)
+        if hit is None or hit[1] < 0:
+            continue
+        if best is None or hit[0] > best[0]:
+            best = (hit[0], hit[1], hit[2], sr, sc, len(models))
     return best
 
 
+def find_scaled_shape_model(model, image, scales=(0.8, 1.0, 1.25),
+                            min_score: float = 0.5, step: int = 2,
+                            n_cand: int = 12) -> dict:
+    """スケールを変えながら最良一致を探索(find_scaled_shape_model)。
+
+    scale ごとに **テンプレートを zoom してモデルを作り直す** ので、各 scale も
+    ピラミッドサーチに乗る(以前は点だけ伸縮していたため必ず平坦走査だった)。
+    """
+    b = _search_scales(model, image, [(s, s) for s in scales], min_score, step, n_cand)
+    if b is None:
+        return {"row": -1, "col": -1, "column": -1, "score": 0.0,
+                "found": False, "scale": 1.0, "levels": 1}
+    score, r, c, sr, _sc, lv = b
+    return {"row": int(r), "col": int(c), "column": int(c), "score": float(score),
+            "found": score >= min_score, "scale": sr, "levels": lv}
+
+
 # ── 多インスタンス検出 / XLD 由来モデル / パラメータ決定・アクセサ ────────────── #
-def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10, min_distance=5):
-    """複数インスタンスを非最大抑制つきで検出(find_shape_models)。"""
-    from scipy import ndimage as _ndi
-    img = np.asarray(image, np.float64)
-    gy = _ndi.sobel(img, axis=0); gx = _ndi.sobel(img, axis=1)
-    mag = np.hypot(gx, gy)
-    H, W = img.shape; mh, mw = model["shape"]
+def _nms_from_map(score_map, min_score, max_matches, min_distance):
+    """スコア地図から非最大抑制で上位を拾う。返り値は [(score, r, c), ...]。"""
+    H, W = score_map.shape
+    sm = score_map.copy()
+    out = []
+    for _ in range(int(max_matches)):
+        idx = np.unravel_index(np.argmax(sm), sm.shape)
+        s = float(sm[idx])
+        if s < min_score:
+            break
+        out.append((s, int(idx[0]), int(idx[1])))
+        r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
+        c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
+        sm[r0:r1, c0:c1] = -1.0
+    return out
+
+
+def _scan_level(model, field, step=1):
+    """1 階層を全走査してスコア地図を返す(中心規約)。"""
+    gx, gy, mag = field
+    H, W = mag.shape
+    mh, mw = model["shape"]
     score_map = np.full((H, W), -1.0)
     # **_score_at は (r0,c0) を中心として解釈する。** ここは以前 range(0, H-mh)
     # と左上規約で走査していたため 2 つ壊れていた(実測):
@@ -225,19 +379,83 @@ def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10, min_d
     for r0 in range(mh // 2, H - mh // 2, step):
         for c0 in range(mw // 2, W - mw // 2, step):
             score_map[r0, c0] = _score_at(model, gy, gx, mag, r0, c0)
-    matches = []
-    sm = score_map.copy()
-    for _ in range(int(max_matches)):
-        idx = np.unravel_index(np.argmax(sm), sm.shape)
-        s = sm[idx]
+    return score_map
+
+
+def find_shape_models(model, image, min_score=0.5, step=2, max_matches=10,
+                      min_distance=5, num_levels="auto", n_cand=None):
+    """複数インスタンスを非最大抑制つきで検出(find_shape_models)。
+
+    ``num_levels="auto"`` で **粗密探索**。最粗階層を全走査して NMS で候補を
+    拾い、各候補を独立に階層を下りて精密化する。単一インスタンス版と違い
+    候補は 1 個に絞らない —— 絞ると 2 個目以降が消えるため。
+    ``num_levels=0`` で従来どおりの平坦な全走査。
+    """
+    img = np.asarray(image, np.float64)
+    use_pyr = num_levels != 0 and model.get("template") is not None
+    models = build_model_pyramid(
+        model, None if num_levels == "auto" else int(num_levels)) if use_pyr else [model]
+
+    if len(models) == 1:
+        sm = _scan_level(model, _grad_field(img), step)
+        hits = _nms_from_map(sm, min_score, max_matches, min_distance)
+        return {"matches": [{"row": r, "column": c, "col": c, "score": s}
+                            for s, r, c in hits], "num": len(hits), "levels": 1}
+
+    pyr = image_pyramid(img, len(models))
+    fields = [_grad_field(a) for a in pyr]
+    top = len(models) - 1
+
+    # 最粗階層: 全走査 -> NMS。**候補は多めに残す**。粗い階層の順位は当てにせず、
+    # 「真の上位が候補集合に残るか」だけを頼りにする(docs/HIGHSPEED_VISION.md
+    # の関門の結論。粗い階層の rho は 0.6 前後しかないが上位残存は 1.00)。
+    k = int(n_cand) if n_cand else max(4 * int(max_matches), 20)
+    md_top = max(1, int(min_distance) >> top)
+    # 走査しなかった位置は -1 の番兵。0.0 を下限にして番兵だけ弾く
+    # (実スコアは 0 以上なので、これで候補を減らしすぎることはない)。
+    coarse = _nms_from_map(_scan_level(models[top], fields[top]), 0.0, k, md_top)
+
+    # 各候補を独立に下ろす。単一版のように上位 n_cand で足切りすると、
+    # 2 個目以降のインスタンスがここで消える。
+    cand = [(s, r, c) for s, r, c in coarse]
+    for L in range(top - 1, -1, -1):
+        HL, WL = pyr[L].shape
+        mhL, mwL = models[L]["shape"]
+        gxL, gyL, magL = fields[L]
+        nxt = []
+        for _, r0, c0 in cand:
+            b = None
+            for dr in (-2, -1, 0, 1, 2):
+                for dc in (-2, -1, 0, 1, 2):
+                    r, c = r0 * 2 + dr, c0 * 2 + dc
+                    if not (mhL // 2 <= r < HL - mhL // 2
+                            and mwL // 2 <= c < WL - mwL // 2):
+                        continue
+                    v = _score_at(models[L], gyL, gxL, magL, r, c)
+                    if b is None or v > b[0]:
+                        b = (v, r, c)
+            if b is not None:
+                nxt.append(b)
+        if not nxt:
+            return find_shape_models(model, image, min_score, step, max_matches,
+                                     min_distance, num_levels=0)
+        cand = nxt
+
+    # 原寸での最終 NMS。階層を下りた先で候補どうしが同じ場所へ寄ることがある。
+    cand.sort(key=lambda z: -z[0])
+    matches, taken = [], []
+    for s, r, c in cand:
         if s < min_score:
             break
-        matches.append({"row": int(idx[0]), "column": int(idx[1]),
-                        "col": int(idx[1]), "score": float(s)})
-        r0 = max(0, idx[0] - min_distance); r1 = min(H, idx[0] + min_distance + 1)
-        c0 = max(0, idx[1] - min_distance); c1 = min(W, idx[1] + min_distance + 1)
-        sm[r0:r1, c0:c1] = -1.0
-    return {"matches": matches, "num": len(matches)}
+        if any(abs(r - rr) <= min_distance and abs(c - cc) <= min_distance
+               for rr, cc in taken):
+            continue
+        taken.append((r, c))
+        matches.append({"row": int(r), "column": int(c), "col": int(c),
+                        "score": float(s)})
+        if len(matches) >= int(max_matches):
+            break
+    return {"matches": matches, "num": len(matches), "levels": len(models)}
 
 
 def find_ncc_models(model, image, min_score=0.5, max_matches=10, min_distance=5):
@@ -270,9 +488,11 @@ def find_scaled_shape_models(model, image, scales=(0.8, 1.0, 1.25), min_score=0.
     # 0.8 が選ばれ、スコアも 0.80 に落ちた)。
     best = {"matches": [], "num": 0, "scale": 1.0, "score": -1.0}
     for s in scales:
-        pts = model["pts"] * s
-        scaled = {"shape": (int(model["shape"][0] * s), int(model["shape"][1] * s)),
-                  "pts": pts.astype(int), "grad": model["grad"]}
+        # **テンプレートを zoom してモデルを作り直す**(点だけ伸縮しない)。
+        # これで各 scale もピラミッドに乗る。
+        scaled = zoom_model(model, s)
+        if scaled is None:
+            continue
         res = find_shape_models(scaled, image, min_score, step=step,
                                 max_matches=max_matches)
         top = max((m["score"] for m in res["matches"]), default=-1.0)
@@ -355,24 +575,42 @@ def find_generic_shape_model(model, image, min_score=0.5, step=2):
 def find_aniso_shape_model(model, image, min_score=0.5,
                            scale_r=(0.9, 1.0, 1.1), scale_c=(0.9, 1.0, 1.1)):
     """行/列独立スケール(異方性)での形状モデル検出(find_aniso_shape_model)。"""
-    best = None
-    for sr in scale_r:
-        for sc in scale_c:
-            pts = model["pts"] * np.array([sr, sc])
-            mm = {"shape": (int(model["shape"][0] * sr), int(model["shape"][1] * sc)),
-                  "pts": pts.astype(int), "grad": model["grad"]}
-            res = find_shape_model(mm, image, min_score)
-            if res.get("found") and (best is None or res["score"] > best["score"]):
-                best = {**res, "scale_row": sr, "scale_col": sc}
+    combos = [(sr, sc) for sr in scale_r for sc in scale_c]
+    # 行と列を別々に zoom したテンプレートからモデルを作り直す。**異方 scale では
+    # エッジ法線の向きが実際に変わる** ので、点だけ伸縮して勾配を流用するのは
+    # 近似ですらない(細長く潰した円の法線は元の円の法線と違う向きを向く)。
+    b = _search_scales(model, image, combos, min_score)
     # 見つからない時も **同じ鍵** を返す。以前は {"found": False} だけだったので
     # 呼び出し側の res["row"] が KeyError で落ちた。
-    return best or {"row": -1, "col": -1, "column": -1, "score": 0.0,
-                    "found": False, "scale_row": 1.0, "scale_col": 1.0}
+    if b is None:
+        return {"row": -1, "col": -1, "column": -1, "score": 0.0,
+                "found": False, "scale_row": 1.0, "scale_col": 1.0}
+    score, r, c, sr, sc, lv = b
+    return {"row": int(r), "col": int(c), "column": int(c), "score": float(score),
+            "found": score >= min_score, "scale_row": sr, "scale_col": sc,
+            "levels": lv}
 
 
-def find_aniso_shape_models(model, image, min_score=0.5, max_matches=10):
-    """異方性スケールでの複数インスタンス検出(find_aniso_shape_models)。"""
-    return find_shape_models(model, image, min_score, max_matches=max_matches)
+def find_aniso_shape_models(model, image, min_score=0.5, max_matches=10,
+                            scale_r=(0.9, 1.0, 1.1), scale_c=(0.9, 1.0, 1.1)):
+    """異方性スケールでの複数インスタンス検出(find_aniso_shape_models)。
+
+    **以前は scale を一切見ずに find_shape_models を素通ししていた**(名前が
+    嘘をついていた)。scale ごとに zoom したモデルで検出し、最良スコアの
+    scale を採る。
+    """
+    best = {"matches": [], "num": 0, "scale_row": 1.0, "scale_col": 1.0,
+            "score": -1.0}
+    for sr in scale_r:
+        for sc in scale_c:
+            zm = zoom_model(model, sr, sc)
+            if zm is None:
+                continue
+            res = find_shape_models(zm, image, min_score, max_matches=max_matches)
+            top = max((m["score"] for m in res["matches"]), default=-1.0)
+            if top > best["score"]:
+                best = {**res, "scale_row": sr, "scale_col": sc, "score": top}
+    return best
 
 
 def inspect_shape_model(model):
