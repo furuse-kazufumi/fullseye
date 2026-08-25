@@ -57,6 +57,9 @@ POP = 8
 GENS = 8
 N_STATIC = 24             # 静止画の評価に使うフレーム数
 COST_CAP_MS = 80.0        # これを超える個体は閉ループを回さず失格にする(時間の保護)
+SPEED = 1.0               # 目標の速さ倍率。**静止画の適応度は原理的にこれに反応できない**
+                          #   (静止画評価に対象の速さが入らないため)。時間予算つきだけが
+                          #   作動点に適応できる、というのがこの軸を置く理由
 NOISE_P = 0.0             # 偽の赤画素の割合。**0 だと支配解ができて適応度が分岐しない**
                           #   実測(交換の前線): p=0.001 で静止画 1 位 = テンプレート、
                           #   閉ループ 1 位 = 窓重心 と割れる。そこが検定になる作動点
@@ -227,7 +230,8 @@ def loop_score(g: dict, ms: float, res: int = RES, phase: float = 0.0) -> float:
     if ms > COST_CAP_MS:
         return float("inf")
     lat = int(round(ms))
-    c = VLoopCfg(res=res, steps=STEPS, n_compute=lat)
+    c = VLoopCfg(res=res, steps=STEPS, n_compute=lat,
+                 f1=0.7 * SPEED, f2=1.9 * SPEED)
     lp = loop_for(res)
     m, d = lp.model, lp.data
     vloop.mujoco.mj_resetData(m, d)
