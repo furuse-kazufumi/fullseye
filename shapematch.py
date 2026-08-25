@@ -27,7 +27,12 @@ def create_shape_model(template, min_grad: float = 0.1) -> dict:
         ys, xs = np.array([t.shape[0] // 2]), np.array([t.shape[1] // 2])
     n = np.hypot(gx[ys, xs], gy[ys, xs]) + 1e-9
     return {"shape": t.shape, "pts": np.column_stack([ys, xs]),
-            "grad": np.column_stack([gy[ys, xs] / n, gx[ys, xs] / n])}
+            "grad": np.column_stack([gy[ys, xs] / n, gx[ys, xs] / n]),
+            # 各階層でモデルを作り直すためにテンプレートを保持する。
+            # **ピラミッドを作るのは画像であってモデルではない**(一次資料で確認、
+            # docs/HIGHSPEED_VISION.md「ピラミッドの正体」)ので、粗い階層のモデルは
+            # 縮小したテンプレートから抽出し直す。モデル点を間引くのとは別物。
+            "template": t.copy(), "min_grad": float(min_grad)}
 
 
 def create_generic_shape_model(template, min_grad: float = 0.1) -> dict:
@@ -57,20 +62,110 @@ def _score_at(model, gy_img, gx_img, mag_img, r0, c0):
     return float(dots.mean())
 
 
-def find_shape_model(model, image, min_score: float = 0.5, step: int = 2) -> dict:
-    """モデルを画像中で探索し最良一致(行/列/スコア)を返す(find_shape_model)。"""
+def pyr_down(a):
+    """平滑化してから 1/2 に間引く。**平滑化を省くと細い構造が丸ごと消える**
+    (実測: 1 px の線で上位残存 0.33。docs/HIGHSPEED_VISION.md)。"""
+    return ndimage.gaussian_filter(np.asarray(a, dtype=np.float64), 1.0)[::2, ::2]
+
+
+def build_model_pyramid(model, num_levels=None, min_pts: int = 12) -> list:
+    """階層ごとにテンプレートを縮小し、**その階層でモデルを作り直す**。
+
+    num_levels=None なら自動で決める。打ち切りの基準は **粗い階層で残るモデル点数**。
+    実測では「細さ」そのものではなくこの点数が効いていた
+    (1 px の細線でもテンプレートが長ければ点は十分残る。
+     壊れたのは点数が 9 まで落ちた小さいモデルのほうだった)。
+    """
+    t = model.get("template")
+    if t is None:
+        return [model]
+    # **防御**: dict(model) で複製して pts/shape だけ差し替える呼び出しが在る
+    # (find_scaled_shape_model 等)。その場合 template は元のままで shape と
+    # 食い違うので、作り直すと誤った結果になる。食い違いを見たら平坦探索へ落とす。
+    if tuple(t.shape) != tuple(model["shape"]):
+        return [model]
+    mg = model.get("min_grad", 0.1)
+    out = [model]
+    cur = t
+    while num_levels is None or len(out) < num_levels:
+        nxt = pyr_down(cur)
+        if min(nxt.shape) < 6:
+            break
+        m = create_shape_model(nxt, mg)
+        if len(m["pts"]) < min_pts:
+            break
+        out.append(m)
+        cur = nxt
+        if len(out) >= 6:
+            break
+    return out
+
+
+def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
+                     num_levels="auto", n_cand: int = 12) -> dict:
+    """モデルを画像中で探索し最良一致(行/列/スコア)を返す(find_shape_model)。
+
+    ``num_levels="auto"`` で **粗密探索(ピラミッドサーチ)** を使う。
+    最粗階層を全走査して候補を n_cand 個残し、階層を下りながら近傍だけ精密化する。
+    ``num_levels=0`` で従来どおりの平坦な全走査。
+    """
     img = np.asarray(image, dtype=np.float64)
-    gx, gy, mag = _grad_field(img)
     H, W = img.shape
     h, w = model["shape"]
-    best = (-1.0, -1, -1)
-    for r0 in range(h // 2, H - h // 2, step):
-        for c0 in range(w // 2, W - w // 2, step):
-            s = _score_at(model, gy, gx, mag, r0, c0)
-            if s > best[0]:
-                best = (s, r0, c0)
-    return {"row": best[1], "col": best[2], "score": best[0],
-            "found": best[0] >= min_score}
+
+    if num_levels == 0 or model.get("template") is None:
+        gx, gy, mag = _grad_field(img)
+        best = (-1.0, -1, -1)
+        for r0 in range(h // 2, H - h // 2, step):
+            for c0 in range(w // 2, W - w // 2, step):
+                s = _score_at(model, gy, gx, mag, r0, c0)
+                if s > best[0]:
+                    best = (s, r0, c0)
+        return {"row": best[1], "col": best[2], "score": best[0],
+                "found": best[0] >= min_score, "levels": 1}
+
+    nl = None if num_levels == "auto" else int(num_levels)
+    models = build_model_pyramid(model, nl)
+    if len(models) == 1:
+        return find_shape_model(model, image, min_score, step, num_levels=0)
+
+    pyr = [img]
+    for _ in range(len(models) - 1):
+        pyr.append(pyr_down(pyr[-1]))
+    fields = [_grad_field(a) for a in pyr]
+
+    top = len(models) - 1
+    mh, mw = models[top]["shape"]
+    gxT, gyT, magT = fields[top]
+    Ht, Wt = pyr[top].shape
+    cand = []
+    for r0 in range(mh // 2, max(mh // 2 + 1, Ht - mh // 2)):
+        for c0 in range(mw // 2, max(mw // 2 + 1, Wt - mw // 2)):
+            cand.append((_score_at(models[top], gyT, gxT, magT, r0, c0), r0, c0))
+    cand.sort(key=lambda z: -z[0])
+    cand = cand[:n_cand]
+
+    for L in range(top - 1, -1, -1):
+        gxL, gyL, magL = fields[L]
+        HL, WL = pyr[L].shape
+        mhL, mwL = models[L]["shape"]
+        nxt = []
+        for _, r0, c0 in cand:
+            for dr in (-2, -1, 0, 1, 2):
+                for dc in (-2, -1, 0, 1, 2):
+                    r, c = r0 * 2 + dr, c0 * 2 + dc
+                    if not (mhL // 2 <= r < HL - mhL // 2
+                            and mwL // 2 <= c < WL - mwL // 2):
+                        continue
+                    nxt.append((_score_at(models[L], gyL, gxL, magL, r, c), r, c))
+        if not nxt:
+            return find_shape_model(model, image, min_score, step, num_levels=0)
+        nxt.sort(key=lambda z: -z[0])
+        cand = nxt[:n_cand]
+
+    sc, r, c = cand[0]
+    return {"row": int(r), "col": int(c), "score": float(sc),
+            "found": sc >= min_score, "levels": len(models)}
 
 
 def create_scaled_shape_model(template, min_grad: float = 0.1) -> dict:
