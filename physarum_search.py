@@ -378,21 +378,28 @@ def _cg_batched(g, b, src, dst, free_mask, x0, iters=200, tol=1e-10,
 
 def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
                          dt=0.1, time_steps=200, cg_iters=200,
-                         D_init=None, device="cpu"):
+                         D_init=None, device="cpu",
+                         dtype="float64", cg_tol=1e-10, cg_check_every=25):
     """**同じグラフ構造の上で、多数の(源, 吸込)を一度に**解く(バッチ)。
 
     形状マッチングの複数スケール掃引と同じ発想 —— 変わらないもの(辺の index)は
     共有し、変わるもの(境界条件 b、必要なら D_init)だけ (B, ...) に積む。
     Tero らの多端子ネットワーク設計やパラメータ sweep がこの形。
 
-    ``device="cuda"`` にすれば **同じコードがそのまま GPU で走る**(いまは torch が
-    CPU ビルドなので cpu で動作確認。CUDA ビルドを入れれば device 切替のみ)。
+    ``device="cuda"`` で **同じコードがそのまま GPU で走る**。GPU 向けの効率化:
+
+    - ``dtype="float32"`` —— コンシューマ GPU(RTX 50 系)は FP64 が FP32 の
+      1/64 しか出ない。経路探索の粘菌は FP32 で十分な精度が出るので既定より速い。
+    - ``cg_check_every`` —— CG の収束チェック(``rs.max()`` の host 同期)を間引く。
+      GPU では 1 反復ごとの同期が最大の直列化要因。FP64 参照一致テストでは
+      ``cg_tol=0`` を渡して固定反復にする(同期ゼロ)。
 
     返り値: D (B, E) の numpy。各行が対応する(源, 吸込)の最終伝導率。
     """
     if not _HAS_TORCH:
         raise RuntimeError("torch が要ります")
     dev = torch.device(device)
+    ftype = torch.float32 if dtype == "float32" else torch.float64
     E = len(graph.edges)
     n = graph.n
     sources = list(sources)
@@ -401,22 +408,23 @@ def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
 
     src = torch.as_tensor(graph.edges[:, 0], device=dev, dtype=torch.long)
     dst = torch.as_tensor(graph.edges[:, 1], device=dev, dtype=torch.long)
-    L = torch.as_tensor(graph.length, device=dev, dtype=torch.float64)
+    L = torch.as_tensor(graph.length, device=dev, dtype=ftype)
 
-    D = (torch.ones(B, E, device=dev, dtype=torch.float64) if D_init is None
-         else torch.as_tensor(D_init, device=dev, dtype=torch.float64).reshape(B, E))
-    b = torch.zeros(B, n, device=dev, dtype=torch.float64)
-    free_mask = torch.ones(B, n, device=dev, dtype=torch.float64)
+    D = (torch.ones(B, E, device=dev, dtype=ftype) if D_init is None
+         else torch.as_tensor(D_init, device=dev, dtype=ftype).reshape(B, E))
+    b = torch.zeros(B, n, device=dev, dtype=ftype)
+    free_mask = torch.ones(B, n, device=dev, dtype=ftype)
     for k, (s, t) in enumerate(zip(sources, sinks)):
         b[k, s] = I0
         b[k, t] = -I0
         free_mask[k, t] = 0.0          # p_sink = 0(ディリクレ)
     b = b * free_mask
 
-    x = torch.zeros(B, n, device=dev, dtype=torch.float64)   # warm start 用
+    x = torch.zeros(B, n, device=dev, dtype=ftype)   # warm start 用
     for _ in range(time_steps):
         g = D / L                       # (B, E)
-        x = _cg_batched(g, b, src, dst, free_mask, x, iters=cg_iters)
+        x = _cg_batched(g, b, src, dst, free_mask, x, iters=cg_iters,
+                        tol=cg_tol, check_every=cg_check_every)
         Q = g * (x.index_select(1, src) - x.index_select(1, dst))
         D = D + dt * (torch.abs(Q) ** mu - D)
     return D.cpu().numpy()
