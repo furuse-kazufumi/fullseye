@@ -250,6 +250,30 @@ def _grad_dir(t, a, b, dev):
     return (torch.atan2(gy, gx) + np.pi) / (2 * np.pi)
 
 
+def _equalize(t, a, b, dev):
+    """core _equalize のバッチ版: 256-bin ヒストグラム平坦化(bin 中心で線形補間)。
+
+    core = np.interp(x, bin_centers, cdf)。bin_centers は一様なので、x を bin index に
+    写して cdf を線形補間する(端は np.interp と同じくクランプ)。
+    """
+    x = t.clamp(0, 1)
+    B = x.shape[0]
+    flat = x.view(B, -1)
+    hists = torch.stack([torch.histc(flat[i], bins=256, min=0.0, max=1.0)
+                         for i in range(B)])          # (B,256)
+    cdf = hists.cumsum(1)
+    cdf = cdf / cdf[:, -1:].clamp_min(1e-12)          # (B,256) in [0,1]
+    pos = (x * 256.0 - 0.5).clamp(0, 255)             # bin 中心 = (2i+1)/512
+    lo = pos.floor().long()
+    hi = (lo + 1).clamp(max=255)
+    frac = pos - lo.float()
+    lo_f = lo.view(B, -1)
+    hi_f = hi.view(B, -1)
+    clo = torch.gather(cdf, 1, lo_f).view_as(x)
+    chi = torch.gather(cdf, 1, hi_f).view_as(x)
+    return clo + frac * (chi - clo)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
