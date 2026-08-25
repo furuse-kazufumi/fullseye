@@ -316,3 +316,101 @@ def bfs_shortest_len(graph: Graph, source: int, sink: int) -> int:
                 dist[v] = dist[u] + 1
                 dq.append(v)
     return dist.get(sink, -1)
+
+
+# ── GPU 向け: matrix-free バッチ CG ───────────────────────────────────────── #
+# 効率の要点(docs/GPU_OPTIMIZATION_PATTERNS.md の P18/P9/P20/P7):
+#   - **行列を作らない**(matrix-free): L(D)x は「各辺で g*(x_i-x_j) を両端へ
+#     scatter する」だけ。dense n×n も疎行列の組み立ても要らない。gather/scatter
+#     だけなので GPU のバンド幅で走る。
+#   - **バッチ軸**(P9): 多数のグラフ/パラメータを 1 本の (B, ...) テンソルに畳んで
+#     1 カーネルで回す。1 個ずつ GPU に投げると起動と転送で CPU より遅い(P7 の罠)。
+#   - **warm start**(P20): 時間反復で D は少ししか動かないので、前ステップの圧力を
+#     CG の初期値にする。反復が数回で済む。
+#   - **host 同期を出さない**(P7): 収束判定を毎反復 float() で CPU に降ろさない。
+#     固定反復数で回し、結果(最終 D)だけ最後に 1 回返す。
+def _laplacian_matvec(x, g, src, dst, free_mask):
+    """matrix-free な L(D)x(バッチ)。x:(B,n) g:(B,E) src/dst:(E,) 返り:(B,n)。
+
+    ゲージ(p_sink=0)は free_mask:(B,n) の False 位置を 0 に落として課す。
+    """
+    diff = x.index_select(1, src) - x.index_select(1, dst)   # (B, E)
+    flow = g * diff
+    y = torch.zeros_like(x)
+    B = x.shape[0]
+    si = src.unsqueeze(0).expand(B, -1)
+    di = dst.unsqueeze(0).expand(B, -1)
+    y.scatter_add_(1, si, flow)
+    y.scatter_add_(1, di, -flow)
+    return y * free_mask
+
+
+def _cg_batched(g, b, src, dst, free_mask, x0, iters=200, tol=1e-10):
+    """バッチ共役勾配。全問題を同時に回す(matrix-free)。
+
+    A(=L(D)) は SPD(縮約後)。free_mask で sink をディリクレ固定。
+    収束判定は **バッチ全体の最大残差** を 1 スカラーに畳んで見る(同期は反復ごと
+    1 回で済み、GPU でも軽い)。x0 = 前ステップ解(warm start)。
+    """
+    x = x0 * free_mask
+    r = (b - _laplacian_matvec(x, g, src, dst, free_mask)) * free_mask
+    p = r.clone()
+    rs = (r * r).sum(1, keepdim=True)             # (B,1)
+    for _ in range(iters):
+        Ap = _laplacian_matvec(p, g, src, dst, free_mask)
+        denom = (p * Ap).sum(1, keepdim=True)
+        alpha = rs / denom.clamp_min(1e-30)
+        x = x + alpha * p
+        r = r - alpha * Ap
+        rs_new = (r * r).sum(1, keepdim=True)
+        if float(rs_new.max()) < tol:             # 反復あたり 1 回だけ同期
+            break
+        p = r + (rs_new / rs.clamp_min(1e-30)) * p
+        rs = rs_new
+    return x
+
+
+def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
+                         dt=0.1, time_steps=200, cg_iters=200,
+                         D_init=None, device="cpu"):
+    """**同じグラフ構造の上で、多数の(源, 吸込)を一度に**解く(バッチ)。
+
+    形状マッチングの複数スケール掃引と同じ発想 —— 変わらないもの(辺の index)は
+    共有し、変わるもの(境界条件 b、必要なら D_init)だけ (B, ...) に積む。
+    Tero らの多端子ネットワーク設計やパラメータ sweep がこの形。
+
+    ``device="cuda"`` にすれば **同じコードがそのまま GPU で走る**(いまは torch が
+    CPU ビルドなので cpu で動作確認。CUDA ビルドを入れれば device 切替のみ)。
+
+    返り値: D (B, E) の numpy。各行が対応する(源, 吸込)の最終伝導率。
+    """
+    if not _HAS_TORCH:
+        raise RuntimeError("torch が要ります")
+    dev = torch.device(device)
+    E = len(graph.edges)
+    n = graph.n
+    sources = list(sources)
+    sinks = list(sinks)
+    B = len(sources)
+
+    src = torch.as_tensor(graph.edges[:, 0], device=dev, dtype=torch.long)
+    dst = torch.as_tensor(graph.edges[:, 1], device=dev, dtype=torch.long)
+    L = torch.as_tensor(graph.length, device=dev, dtype=torch.float64)
+
+    D = (torch.ones(B, E, device=dev, dtype=torch.float64) if D_init is None
+         else torch.as_tensor(D_init, device=dev, dtype=torch.float64).reshape(B, E))
+    b = torch.zeros(B, n, device=dev, dtype=torch.float64)
+    free_mask = torch.ones(B, n, device=dev, dtype=torch.float64)
+    for k, (s, t) in enumerate(zip(sources, sinks)):
+        b[k, s] = I0
+        b[k, t] = -I0
+        free_mask[k, t] = 0.0          # p_sink = 0(ディリクレ)
+    b = b * free_mask
+
+    x = torch.zeros(B, n, device=dev, dtype=torch.float64)   # warm start 用
+    for _ in range(time_steps):
+        g = D / L                       # (B, E)
+        x = _cg_batched(g, b, src, dst, free_mask, x, iters=cg_iters)
+        Q = g * (x.index_select(1, src) - x.index_select(1, dst))
+        D = D + dt * (torch.abs(Q) ** mu - D)
+    return D.cpu().numpy()
