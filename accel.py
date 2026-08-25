@@ -244,6 +244,12 @@ def _highpass(t, a, b, dev):
     return _signed01_b(_fft_mask_b(t, 0.02 + 0.3 * a, True))
 
 
+def _grad_dir(t, a, b, dev):
+    gx = _conv(t, np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32), dev)
+    gy = _conv(t, np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], np.float32), dev)
+    return (torch.atan2(gy, gx) + np.pi) / (2 * np.pi)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
