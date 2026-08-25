@@ -246,6 +246,128 @@ def _run_with(loop: VLoop, c: VLoopCfg, fn, phase: float) -> float:
     return float(np.sqrt((err[w:] ** 2).mean()))
 
 
+_LOOP_CACHE: dict[int, VLoop] = {}
+
+
+def _loop_for(res: int) -> VLoop:
+    """GL コンテキストは解像度ごとに 1 つだけ作って使い回す。"""
+    if res not in _LOOP_CACHE:
+        _LOOP_CACHE[res] = VLoop(VLoopCfg(res=res, steps=LOOP_STEPS))
+    return _LOOP_CACHE[res]
+
+
+# --------------------------------------------------------------------------
+# 3. 雑音を入れて「精度が効く領域」まで課題を難しくする -> 交換の前線
+# --------------------------------------------------------------------------
+def add_noise(img, rng, p_bad: float, sigma: float = 8.0):
+    """センサ雑音。**赤い偽画素** を撒くのがしきい値 + 重心には効く。
+
+    現実の対応物 = ホットピクセル、反射、赤い別物。全画面の重心は遠くの外れ値に
+    引きずられるが、小窓しか見ない Self-Windowing は構造的にそれを見ない。
+    """
+    if p_bad <= 0.0 and sigma <= 0.0:
+        return img
+    out = img.astype(np.int16)
+    if sigma > 0.0:
+        out += rng.normal(0.0, sigma, out.shape).astype(np.int16)
+    if p_bad > 0.0:
+        n = int(p_bad * img.shape[0] * img.shape[1])
+        if n:
+            yy = rng.integers(0, img.shape[0], n)
+            xx = rng.integers(0, img.shape[1], n)
+            out[yy, xx, 0] = 255
+            out[yy, xx, 1] = 20
+            out[yy, xx, 2] = 20
+    return np.clip(out, 0, 255).astype(np.uint8)
+
+
+def bench_static_noise(p_bad: float, n_frames: int = 40, res: int = RES,
+                       seed: int = 0) -> dict:
+    rng = np.random.default_rng(seed)
+    loop = _loop_for(res)
+    xs = np.linspace(-0.42, 0.42, n_frames)
+    frames, truth = [], []
+    for x in xs:
+        loop.data.qpos[loop.tx] = float(x)
+        vloop.mujoco.mj_forward(loop.model, loop.data)
+        loop.renderer.update_scene(loop.data, camera="top")
+        frames.append(add_noise(loop.renderer.render(), rng, p_bad))
+        truth.append(float(x))
+    truth = np.array(truth)
+    out = {}
+    for name, (fn, _) in DETECTORS.items():
+        st, est = {}, []
+        for img in frames:
+            u, st = fn(img, st)
+            est.append(np.nan if u is None else loop.pix_to_x(u))
+        est = np.array(est, dtype=float)
+        ok = np.isfinite(est)
+        out[name] = float(np.abs(est[ok] - truth[ok]).mean() * 1000.0)             if ok.any() else float("nan")
+    return out
+
+
+def run_in_loop_noise(name: str, latency_ms: int, p_bad: float,
+                      res: int = RES, steps: int = 800,
+                      phase: float = 0.0, seed: int = 0) -> float:
+    fn = DETECTORS[name][0]
+    c = VLoopCfg(res=res, steps=steps, n_compute=int(latency_ms))
+    loop = _loop_for(res)
+    rng = np.random.default_rng(seed)
+    m, d = loop.model, loop.data
+    vloop.mujoco.mj_resetData(m, d)
+    meas_buf: list[float | None] = [None] * (c.n_compute + 1)
+    cmd_buf: list[float] = [0.0]
+    err = np.zeros(steps)
+    st: dict = {}
+    for k in range(steps):
+        xt = float(vloop.target_x(k, c, phase))
+        d.qpos[loop.tx] = xt
+        d.qvel[loop.tx] = 0.0
+        vloop.mujoco.mj_forward(m, d)
+        loop.renderer.update_scene(d, camera="top")
+        img = add_noise(loop.renderer.render(), rng, p_bad)
+        u, st = fn(img, st)
+        meas_buf.append(None if u is None else float(loop.pix_to_x(u)))
+        ready = meas_buf.pop(0)
+        cmd = ready if ready is not None else cmd_buf[-1]
+        cmd_buf.append(float(np.clip(cmd, -1.0, 1.0)))
+        d.ctrl[0] = cmd_buf.pop(0)
+        vloop.mujoco.mj_step(m, d)
+        err[k] = abs(float(d.qpos[loop.px]) - xt)
+    w = int(steps * c.warmup_frac)
+    return float(np.sqrt((err[w:] ** 2).mean()))
+
+
+def frontier(levels=(0.0, 0.0002, 0.001, 0.005), lat: dict | None = None):
+    """雑音を上げながら、静止画の精度と閉ループ RMSE の両方を追う。"""
+    print("")
+    print("  3. 雑音を入れる — 精度が効く領域まで難しくする")
+    print(f"     偽の赤画素を p の割合で撒く(ホットピクセル / 反射 / 赤い別物)")
+    print(f"\n静止画の誤差 mm")
+    hdr = "".join(f"{n:>16}" for n in DETECTORS)
+    print(f"     {'p':>8}{hdr}")
+    stat = {}
+    for p_bad in levels:
+        stat[p_bad] = bench_static_noise(p_bad)
+        print(f"     {p_bad:>8.4f}" + "".join(
+            f"{stat[p_bad][n]:16.2f}" for n in DETECTORS))
+    print(f"\n閉ループ RMSE m(実行時間を遅延として食わせたまま)")
+    print(f"     {'p':>8}{hdr}")
+    loop_r = {}
+    for p_bad in levels:
+        loop_r[p_bad] = {n: run_in_loop_noise(n, lat[n], p_bad)
+                         for n in DETECTORS}
+        print(f"     {p_bad:>8.4f}" + "".join(
+            f"{loop_r[p_bad][n]:16.4f}" for n in DETECTORS), flush=True)
+    print(f"\n各雑音水準での閉ループ 1 位")
+    for p_bad in levels:
+        best = min(loop_r[p_bad], key=lambda n: loop_r[p_bad][n])
+        sbest = min(stat[p_bad], key=lambda n: stat[p_bad][n])
+        print(f"     p={p_bad:.4f}  閉ループ 1 位 {best:<16}"
+              f"静止画 1 位 {sbest}")
+    return stat, loop_r
+
+
 def main():
     if not vloop.available():
         print("mujoco が無い")
@@ -289,6 +411,8 @@ def main():
     for n in sorted(zero, key=lambda x: zero[x]):
         print(f"   {n:<18}{zero[n]:10.4f}")
     print(f"  遅延 0 の順位:    {' > '.join(sorted(zero, key=lambda n: zero[n]))}")
+
+    frontier(lat={n: int(round(st[n]["ms"])) for n in DETECTORS})
 
 
 if __name__ == "__main__":
