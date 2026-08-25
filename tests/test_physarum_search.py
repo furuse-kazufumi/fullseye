@@ -84,6 +84,36 @@ def test_symmetric_tie_keeps_both_routes():
     assert len(path) - 1 == P.bfs_shortest_len(g, s, t)
 
 
+def test_sparse_matches_dense_on_a_unique_shortest_path():
+    """疎+CG+warm start が dense 参照実装と同じ最終 D を出す(ユニーク最短路)。
+
+    縮退(等長最短路が多数)では CG と直接解が違うタイを選ぶので一致しない。
+    ユニークなら完全一致すべき、というのがここの契約。
+    """
+    free, s_rc, t_rc = _short_vs_long()
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, *s_rc), P.node_at(g, *t_rc)
+    rd = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, device="numpy_dense")
+    rs = P.solve_physarum(g, s, t, mu=1.0, dt=0.2, device="numpy")
+    assert rd.iters == rs.iters
+    assert np.allclose(np.sort(rd.D), np.sort(rs.D), atol=1e-5)
+
+
+def test_sparse_is_faster_than_dense_at_scale():
+    """疎版は dense O(n^3) より速い。倍率は機械依存なので緩めに 3x を下限に。"""
+    import time
+    free = np.ones((21, 21), bool)
+    g = P.maze_to_graph(free)
+    s, t = P.node_at(g, 0, 0), P.node_at(g, 20, 20)
+    t0 = time.perf_counter()
+    P.solve_physarum(g, s, t, mu=2.0, dt=0.2, max_iters=1000, device="numpy_dense")
+    dense = time.perf_counter() - t0
+    t0 = time.perf_counter()
+    P.solve_physarum(g, s, t, mu=2.0, dt=0.2, max_iters=1000, device="numpy")
+    sparse = time.perf_counter() - t0
+    assert sparse * 3 < dense, f"疎 {sparse*1000:.0f}ms vs dense {dense*1000:.0f}ms"
+
+
 def test_disconnected_sink_returns_no_path():
     free = np.array([
         [1, 1, 1, 0, 1, 1, 1],   # 中央が壁で源側と吸込側が分断
