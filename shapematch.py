@@ -289,35 +289,75 @@ def create_scaled_shape_model(template, min_grad: float = 0.1,
     return m
 
 
-def _scale_pyramids(model, combos):
-    """(scale_row, scale_col) ごとに **zoom したテンプレートからモデル階層を作る**。
+def rotate_model(model, angle_deg: float):
+    """**テンプレートを回してから、その向きでモデルを作り直す**(create_shape_model)。
 
-    返り値は [(sr, sc, [models...]), ...]。縮めすぎた scale は落とす。
+    zoom_model と同じ思想。回転で変わるのは点の座標だけではない —— **エッジの
+    法線(勾配)も一緒に回る**。点だけ回して元の勾配を流用すると 45 度で
+    score 0.688、テンプレを回して作り直すと 0.961(実測)。回転行列 R は直交だから
+    R^-T = R で、法線も点と同じ R で回る(異方 scale の A^-T が R では A に一致する)。
+
+    ``ndimage.rotate(reshape=False)`` で外形サイズは保つ。角度 0 は素通し。
+    """
+    a = float(angle_deg)
+    t = model.get("template")
+    if t is None or abs(a) < 1e-9:
+        out = dict(model)
+        out["angle"] = a
+        return out
+    tr = ndimage.rotate(np.asarray(t, dtype=np.float64), a, reshape=False)
+    out = create_shape_model(tr, model.get("min_grad", 0.1),
+                             model.get("metric", "use_polarity"))
+    out["angle"] = a
+    return out
+
+
+def transform_model(model, angle: float = 0.0, scale_row: float = 1.0,
+                    scale_col: float = 1.0):
+    """回転 + スケールをまとめてテンプレートに施し、モデルを作り直す。
+
+    順序は **回転 -> スケール**。テンプレートを一度だけ変換して作り直すので、
+    点も勾配も正しく一緒に動く(zoom_model / rotate_model と同核)。
+    縮めすぎた場合は None。
+    """
+    m = rotate_model(model, angle)
+    if abs(scale_row - 1.0) > 1e-9 or abs(scale_col - 1.0) > 1e-9:
+        m = zoom_model(m, scale_row, scale_col)
+        if m is None:
+            return None
+        m["angle"] = float(angle)
+    return m
+
+
+def _transform_pyramids(model, combos):
+    """(angle, sr, sc) ごとに **変換したテンプレートからモデル階層を作る**。
+
+    返り値は [((angle, sr, sc), [models...]), ...]。潰れた変換は落とす。
     """
     per = []
-    for sr, sc in combos:
-        zm = zoom_model(model, sr, sc)
-        if zm is None:
+    for (ang, sr, sc) in combos:
+        tm = transform_model(model, ang, sr, sc)
+        if tm is None:
             continue
-        per.append((sr, sc, build_model_pyramid(zm)))
+        per.append(((ang, sr, sc), build_model_pyramid(tm)))
     return per
 
 
-def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12):
-    """scale を掃引して最良の (score, row, col, scale_row, scale_col, levels)。
+def _search_transforms(model, image, combos, min_score=0.5, step=2, n_cand=12):
+    """(angle, sr, sc) を掃引して最良の (score, row, col, angle, sr, sc, levels)。
 
-    **画像階層は必要な深さぶん 1 回だけ作り、全 scale で使い回す。**
-    scale ごとに作り直すと、探索より縮小のほうが高くつく(実測 3 割ほど)。
+    **画像階層は必要な深さぶん 1 回だけ作り、全変換で使い回す。**
+    変換ごとに縮小し直すと、探索より縮小のほうが高くつく(実測、scale で 3 割)。
     """
     img = np.asarray(image, dtype=np.float64)
-    per = _scale_pyramids(model, combos)
+    per = _transform_pyramids(model, combos)
     if not per:
         return None
-    depth = max(len(m) for _, _, m in per)
+    depth = max(len(m) for _, m in per)
     pyr = image_pyramid(img, depth)
     fields = [_grad_field(a) for a in pyr]
     best = None
-    for sr, sc, models in per:
+    for (ang, sr, sc), models in per:
         if len(models) == 1:
             hit = _scan_flat(models[0], fields[0], step)
         else:
@@ -325,8 +365,21 @@ def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12):
         if hit is None or hit[1] < 0:
             continue
         if best is None or hit[0] > best[0]:
-            best = (hit[0], hit[1], hit[2], sr, sc, len(models))
+            best = (hit[0], hit[1], hit[2], ang, sr, sc, len(models))
     return best
+
+
+def _search_scales(model, image, combos, min_score=0.5, step=2, n_cand=12):
+    """scale のみ掃引(後方互換)。内部は _search_transforms(angle=0)。
+
+    返り値は従来どおり (score, row, col, scale_row, scale_col, levels)。
+    """
+    b = _search_transforms(model, image, [(0.0, sr, sc) for sr, sc in combos],
+                           min_score, step, n_cand)
+    if b is None:
+        return None
+    score, r, c, _ang, sr, sc, lv = b
+    return (score, r, c, sr, sc, lv)
 
 
 def find_scaled_shape_model(model, image, scales=(0.8, 1.0, 1.25),
