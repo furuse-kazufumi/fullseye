@@ -281,6 +281,8 @@ ACCEL = {
     # wave 3: 周波数(torch.fft は numpy.fft を厳密に写す)
     "lowpass_image": (_lowpass, "lowpass", "lowpass_image"),
     "highpass_image": (_highpass, "highpass", "highpass_image"),
+    # wave 5(先行): grad_dir(atan2 of sobel)
+    "gradient_direction": (_grad_dir, "grad_dir", "grad_dir"),
 }
 
 
