@@ -148,7 +148,7 @@ def _percentile(t, a, b, dev):
     # torch.quantile の補間法とはずれるので、同じ rank 規則で sort して取り出す。
     k = _k(a)
     n = k * k
-    rank = int(int(5 + 90 * b) / 100.0 * (n - 1))
+    rank = min(n - 1, int(int(5 + 90 * b) / 100.0 * n))   # scipy: int(p/100*n)
     u = _unfold_reflect(t, k)                       # (B, n, H, W)
     return u.sort(dim=1).values[:, rank:rank + 1]
 
