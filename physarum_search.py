@@ -103,7 +103,15 @@ def solve_physarum(graph: Graph, source: int, sink: int, *,
                    D_init=None, device: str = "numpy") -> PhysarumResult:
     """1 源 1 吸込で粘菌方程式を回し、収束した伝導率/流量を返す。
 
-    ``device="numpy"`` は numpy、``"cpu"``/``"cuda"`` は torch。**式は同一**。
+    ``device`` の選択:
+
+    - ``"numpy"``(既定) —— 疎ラプラシアン + 共役勾配 + warm start。実測で
+      dense の 14-34 倍(``docs/GPU_OPTIMIZATION_PATTERNS.md``)。
+    - ``"numpy_dense"`` —— dense な O(n^3) 参照実装。疎版の答え合わせ用。
+    - ``"cpu"`` / ``"cuda"`` —— torch(GPU へ載せる前提の同一式。今は CPU ビルドのみ)。
+
+    **式はどれも同一。** ユニーク最短路では疎版と dense 版は完全一致し、等長最短路が
+    多数ある縮退では違うタイ(等価な最短路)を選ぶ。
     """
     E = len(graph.edges)
     if E == 0:
