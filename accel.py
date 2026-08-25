@@ -272,6 +272,9 @@ ACCEL = {
     "std_image": (_std_filter, "std_filter", "deviation_image"),
     "unsharp_masking": (_unsharp, "unsharp", "unsharp_masking"),
     "sigmoid_image": (_sigmoid, "sigmoid", "sigmoid"),
+    # wave 3: 周波数(torch.fft は numpy.fft を厳密に写す)
+    "lowpass_image": (_lowpass, "lowpass", "lowpass_image"),
+    "highpass_image": (_highpass, "highpass", "highpass_image"),
 }
 
 
