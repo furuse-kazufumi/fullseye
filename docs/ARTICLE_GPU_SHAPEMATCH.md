@@ -41,22 +41,31 @@ metric(HALCON 同名):
 
 ---
 
-## 2. 差別化(記事の主張)—— 王者がやっていないこと
+## 2. 差別化(記事の主張)—— ★★未検証。断定禁止★★
 
-**HALCON(MVTec)は看板の shape-based matching を GPU 化していない。** HALCON の GPU
-(OpenCL ベースの "compute device")が加速するのは point-wise 演算・フィルタ
-(convol/gauss/mean)・FFT・アフィン変換・一部の色/テクスチャ変換など「密な画素並列」系。
-`find_shape_model` / NCC / deformable matching は高度に SIMD・マルチコア最適化された
-**CPU** で回る。
+> **⚠️ 重要(2026-08-26、ユーザー指摘)**: 「HALCON が shape/NCC matching を GPU 化して
+> いない」は **現時点で未検証の推測にすぎない**。特に **NCC(find_ncc_model)は GPU 実装
+> されている可能性が高い**(ユーザーの見立て)。一次情報(MVTec 公式の各オペレータ
+> "Execution Information" 節 = compute device 対応可否)の確認が web 枯渇/404 で今回
+> 取れていない。**この主張を確信を持って記事に書いてはいけない。** 検証できるまで、
+> 記事の骨格は「HALCON が〜していない」ではなく、下の検証済み事実だけで組むこと。
 
-> ★検証状態: 「matching が HALCON GPU 非対応」は MVTec の compute-device 対応
-> オペレータ一覧に基づく理解。**記事化前に現行版の MVTec ドキュメントで一覧を再確認**
-> すること(バージョンで増減しうる)。「correlation=convolution」「Steger スコア」は
-> 確立知識。実測(§4)はこのリポジトリで再現可能。
+**確実に言えること(検証済み・断定可)**:
+- Steger 流の勾配方向スコア = conv2d で厳密再現できる(§1、§4 でビット一致を実測)。
+- その conv2d 定式化で **変換を out_channels に積むと CPU ピラミッド探索比 34–88x**(§4、
+  RTX 5090 で再現可能)。
+- 同じ GPU で粘菌(起動律速)と形状マッチ(計算律速)のボトルネックが真逆(§5)。
 
-だから「shape matching を conv2d で GPU 化」は新規研究ではなく、**古典アルゴリズムを、
-インカンベントが CPU に留めている領域で素直に GPU に落とす**という工学的差別化。
-Fullseye(evis の統一視覚 I/F / HALCON パリティ toolkit)の文脈にちょうど合う。
+**未検証・要一次情報(記事に書くなら「調べたら〜だった」と検証してから)**:
+- HALCON/MVTec の compute device がどのオペレータを GPU 加速するか(filter/FFT/affine
+  系という理解も未確認)。`find_shape_model` / `find_ncc_model` / deformable の GPU 対応可否。
+- 確認方法: MVTec 公式ドキュメントの各オペレータページ "Execution Information" 節、または
+  `query_available_compute_devices` / compute device 対応オペレータ一覧の章。
+
+だから記事の芯は **「勾配方向マッチングは conv2d に落ちる → GPU で 88x + ボトルネック
+の見極め」** という**自分で実測した事実**に置く。HALCON との比較は、一次情報で裏を取れた
+場合にのみ、取れた範囲で添える(取れなければ書かない)。Fullseye(evis の統一視覚 I/F /
+HALCON パリティ toolkit)の文脈には、比較なしでも「GPU で速い視覚 algo」として乗る。
 
 ---
 
