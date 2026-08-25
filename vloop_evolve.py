@@ -57,6 +57,9 @@ POP = 8
 GENS = 8
 N_STATIC = 24             # 静止画の評価に使うフレーム数
 COST_CAP_MS = 80.0        # これを超える個体は閉ループを回さず失格にする(時間の保護)
+NOISE_P = 0.0             # 偽の赤画素の割合。**0 だと支配解ができて適応度が分岐しない**
+                          #   実測(交換の前線): p=0.001 で静止画 1 位 = テンプレート、
+                          #   閉ループ 1 位 = 窓重心 と割れる。そこが検定になる作動点
 
 
 # --------------------------------------------------------------------------
@@ -168,19 +171,35 @@ _FRAMES: dict[int, tuple] = {}
 
 
 def frames_for(res: int):
-    """静止画の評価用フレーム(真値つき)。1 度だけ作って使い回す。"""
-    if res in _FRAMES:
-        return _FRAMES[res]
+    """静止画の評価用フレーム(真値つき)。雑音も込みで 1 度だけ作って使い回す
+    (全個体が同じフレームを見る = 公平)。"""
+    key = (res, NOISE_P)
+    if key in _FRAMES:
+        return _FRAMES[key]
     lp = loop_for(res)
+    rng = np.random.default_rng(1234)
     xs = np.linspace(-0.42, 0.42, N_STATIC)
     imgs = []
     for x in xs:
         lp.data.qpos[lp.tx] = float(x)
         vloop.mujoco.mj_forward(lp.model, lp.data)
         lp.renderer.update_scene(lp.data, camera="top")
-        imgs.append(lp.renderer.render().copy())
-    _FRAMES[res] = (imgs, np.array(xs, dtype=float))
-    return _FRAMES[res]
+        imgs.append(_noise(lp.renderer.render().copy(), rng))
+    _FRAMES[key] = (imgs, np.array(xs, dtype=float))
+    return _FRAMES[key]
+
+
+def _noise(img, rng, sigma: float = 8.0):
+    """偽の赤画素 + ガウス雑音。NOISE_P = 0 なら素通し。"""
+    if NOISE_P <= 0.0:
+        return img
+    out = img.astype(np.int16) + rng.normal(0.0, sigma, img.shape).astype(np.int16)
+    n = int(NOISE_P * img.shape[0] * img.shape[1])
+    if n:
+        yy = rng.integers(0, img.shape[0], n)
+        xx = rng.integers(0, img.shape[1], n)
+        out[yy, xx, 0], out[yy, xx, 1], out[yy, xx, 2] = 255, 20, 20
+    return np.clip(out, 0, 255).astype(np.uint8)
 
 
 def static_score(g: dict, res: int = RES) -> tuple[float, float]:
@@ -212,6 +231,7 @@ def loop_score(g: dict, ms: float, res: int = RES, phase: float = 0.0) -> float:
     lp = loop_for(res)
     m, d = lp.model, lp.data
     vloop.mujoco.mj_resetData(m, d)
+    rng = np.random.default_rng(4321)
     meas: list[float | None] = [None] * (lat + 1)
     cmd_buf = [0.0]
     err = np.zeros(STEPS)
@@ -222,7 +242,7 @@ def loop_score(g: dict, ms: float, res: int = RES, phase: float = 0.0) -> float:
         d.qvel[lp.tx] = 0.0
         vloop.mujoco.mj_forward(m, d)
         lp.renderer.update_scene(d, camera="top")
-        u, st = detect(lp.renderer.render(), st, g)
+        u, st = detect(_noise(lp.renderer.render(), rng), st, g)
         meas.append(None if u is None else float(lp.pix_to_x(u)))
         ready = meas.pop(0)
         cmd = ready if ready is not None else cmd_buf[-1]
@@ -274,7 +294,8 @@ def main():
         print("mujoco が無い")
         return
     print("§4b — 時間予算つきの適応度は「安いが十分」を自力で見つけるか")
-    print(f"  解像度 {RES} / 個体 {POP} x 世代 {GENS} / 1 評価 {STEPS} 歩")
+    print(f"  解像度 {RES} / 個体 {POP} x 世代 {GENS} / 1 評価 {STEPS} 歩"
+          f" / 雑音 p={NOISE_P}")
     out = {}
     for fit in ("static", "loop"):
         name = "適応度 A(精度だけ)" if fit == "static" else "適応度 B(時間予算)"
@@ -312,4 +333,7 @@ def main():
 
 
 if __name__ == "__main__":
+    import sys
+    if len(sys.argv) > 1:
+        NOISE_P = float(sys.argv[1])
     main()
