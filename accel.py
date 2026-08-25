@@ -130,6 +130,91 @@ def _range_rect(t, a, b, dev):
                    + F.max_pool2d(-t, k, stride=1, padding=k // 2))
 
 
+# ── wave 1: 密画素並列で core と <5e-3 一致する追加 op(2026-08-26)───────────── #
+def _unfold_reflect(t, k):
+    """(B,1,H,W) を reflect パディングして k×k 近傍を (B, k*k, H, W) に展開。"""
+    r = k // 2
+    p = F.pad(t, (r, r, r, r), mode="reflect")
+    return F.unfold(p, kernel_size=k).view(t.shape[0], k * k, t.shape[2], t.shape[3])
+
+
+def _median(t, a, b, dev):
+    k = _k(a)
+    return _unfold_reflect(t, k).median(dim=1, keepdim=True).values
+
+
+def _percentile(t, a, b, dev):
+    k = _k(a)
+    q = int(5 + 90 * b) / 100.0
+    u = _unfold_reflect(t, k)
+    return torch.quantile(u, q, dim=1, keepdim=True, interpolation="lower")
+
+
+def _prewitt(t, a, b, dev):
+    gx = _conv(t, np.array([[-1, 0, 1], [-1, 0, 1], [-1, 0, 1]], np.float32), dev)
+    gy = _conv(t, np.array([[-1, -1, -1], [0, 0, 0], [1, 1, 1]], np.float32), dev)
+    return _norm_b(torch.hypot(gx, gy))
+
+
+def _shift(t, dy, dx):
+    """_shift_edge(v,dy,dx) の torch 版(replicate パディングで端を複製)。"""
+    py0, py1 = max(dy, 0), max(-dy, 0)
+    px0, px1 = max(dx, 0), max(-dx, 0)
+    p = F.pad(t, (px0, px1, py0, py1), mode="replicate")
+    H, W = t.shape[2], t.shape[3]
+    return p[:, :, py1:py1 + H, px1:px1 + W]
+
+
+def _roberts(t, a, b, dev):
+    d1 = t - _shift(t, -1, -1)
+    d2 = _shift(t, 0, -1) - _shift(t, -1, 0)
+    return _norm_b(torch.hypot(d1, d2))
+
+
+def _dog(t, a, b, dev):
+    g1 = _sep_conv(t, _gauss_kernel(0.5 + 2.0 * a, dev))
+    g2 = _sep_conv(t, _gauss_kernel(1.0 + 4.0 * b, dev))
+    return _norm_b((g1 - g2).abs())
+
+
+def _open_rect(t, a, b, dev):
+    k = _k(a)
+    e = -F.max_pool2d(-t, k, stride=1, padding=k // 2)
+    return F.max_pool2d(e, k, stride=1, padding=k // 2)
+
+
+def _close_rect(t, a, b, dev):
+    k = _k(a)
+    d = F.max_pool2d(t, k, stride=1, padding=k // 2)
+    return -F.max_pool2d(-d, k, stride=1, padding=k // 2)
+
+
+def _tophat(t, a, b, dev):
+    return _norm_b((t - _open_rect(t, a, b, dev)).clamp_min(0))
+
+
+def _bothat(t, a, b, dev):
+    return _norm_b((_close_rect(t, a, b, dev) - t).clamp_min(0))
+
+
+def _std_filter(t, a, b, dev):
+    k = _k(a)
+    ker = torch.ones(1, 1, k, k, device=dev) / (k * k)
+    r = k // 2
+    m = F.conv2d(F.pad(t, (r, r, r, r), mode="reflect"), ker)
+    m2 = F.conv2d(F.pad(t * t, (r, r, r, r), mode="reflect"), ker)
+    return _norm_b(torch.sqrt((m2 - m * m).clamp_min(0.0)))
+
+
+def _unsharp(t, a, b, dev):
+    g = _sep_conv(t, _gauss_kernel(0.5 + 1.5 * b, dev))
+    return t + (1.5 * a) * (t - g)
+
+
+def _sigmoid(t, a, b, dev):
+    return 1.0 / (1.0 + torch.exp(-(4.0 + 12.0 * a) * (t.clamp(0, 1) - (0.2 + 0.6 * b))))
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
@@ -143,6 +228,19 @@ ACCEL = {
     "gray_erosion_rect": (_erode_rect, "min_filter", "gray_erosion_rect"),
     "gray_dilation_rect": (_dilate_rect, "max_filter", "gray_dilation_rect"),
     "gray_range_rect": (_range_rect, "morph_grad", "gray_range_rect"),
+    # wave 1
+    "median_image": (_median, "median", "median_image"),
+    "rank_percentile": (_percentile, "percentile", "rank_image"),
+    "prewitt_amp": (_prewitt, "prewitt_mag", "prewitt_amp"),
+    "roberts_amp": (_roberts, "roberts_mag", "roberts"),
+    "diff_of_gauss": (_dog, "dog", "diff_of_gauss"),
+    "gray_opening_rect": (_open_rect, "gopen", "gray_opening_rect"),
+    "gray_closing_rect": (_close_rect, "gclose", "gray_closing_rect"),
+    "gray_tophat": (_tophat, "tophat", "gray_tophat"),
+    "gray_bothat": (_bothat, "bothat", "gray_bottomhat"),
+    "std_image": (_std_filter, "std_filter", "deviation_image"),
+    "unsharp_masking": (_unsharp, "unsharp", "unsharp_masking"),
+    "sigmoid_image": (_sigmoid, "sigmoid", "sigmoid"),
 }
 
 
