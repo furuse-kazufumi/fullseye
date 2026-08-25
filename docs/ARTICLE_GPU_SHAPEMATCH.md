@@ -150,7 +150,9 @@ $loco = "C:\dev\venvs\loco\Scripts\python.exe"   # torch cu128 / RTX 5090
 
 ## 7. 記事の骨格候補(4言語=別記事、`feedback_articles_per_language_separate`)
 
-1. つかみ: 「HALCON が20年 CPU に置いてきた看板機能を、conv2d 3行で GPU に載せたら 88 倍だった」
+1. つかみ(案A・検証不要): 「勾配方向の形状マッチングは conv2d に落ちる。全変換を
+   カーネルの束にして GPU に投げたら CPU ピラミッド探索の 88 倍だった」
+   / つかみ(案B・HALCON 比較は**一次情報で裏が取れた場合のみ**): 断定形にしない。
 2. かみ砕き3段(`feedback_kamikudaki_chugakusei`): マッチング=型紙の重ね合わせ → 型紙の
    輪郭の"向き"を見る → 向きの一致度は畳み込みで一発
 3. 数式(§1)を最小限で。用語は「日本語(English)」表記(`feedback_term_format_jp_en`)
