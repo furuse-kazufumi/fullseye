@@ -228,7 +228,8 @@ def find_shape_model(model, image, min_score: float = 0.5, step: int = 2,
     # 角度探索: テンプレートを各角度に回して掃引(scale と同じ機構)。
     if angles is not None and model.get("template") is not None:
         combos = [(float(a), 1.0, 1.0) for a in angles]
-        b = _search_transforms(model, img, combos, min_score, step, n_cand)
+        b = _search_transforms(model, img, combos, min_score, step, n_cand,
+                               device=device)
         if b is None:
             return {"row": -1, "col": -1, "column": -1, "angle": 0.0,
                     "score": 0.0, "found": False, "levels": 1}
