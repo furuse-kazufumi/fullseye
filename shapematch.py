@@ -360,12 +360,46 @@ def _transform_pyramids(model, combos):
     return per
 
 
-def _search_transforms(model, image, combos, min_score=0.5, step=2, n_cand=12):
+def _search_transforms_gpu(model, image, combos, device):
+    """GPU で使えるなら (score, row, col, angle, sr, sc, 1) を返す。無理なら None。
+
+    無理な条件(→ CPU にフォールバック): device が cuda でない / torch/GPU 不在 /
+    テンプレート無し(点だけのモデルは変換を作り直せない) / metric が
+    ``ignore_local_polarity``(点ごと abs は conv で表現できない)。
+    """
+    if device != "cuda":
+        return None
+    try:
+        import shapematch_gpu as _g
+    except Exception:
+        return None
+    if not _g.gpu_available():
+        return None
+    if model.get("template") is None:
+        return None
+    if model.get("metric", "use_polarity") == "ignore_local_polarity":
+        return None
+    b = _g.search_transforms(model, image, combos,
+                             build_transform=transform_model, device="cuda")
+    if b is None:
+        return None
+    score, r, c, ang, sr, sc = b
+    return (score, r, c, ang, sr, sc, 1)   # GPU は全解像度なので levels=1
+
+
+def _search_transforms(model, image, combos, min_score=0.5, step=2, n_cand=12,
+                       device="cpu"):
     """(angle, sr, sc) を掃引して最良の (score, row, col, angle, sr, sc, levels)。
 
     **画像階層は必要な深さぶん 1 回だけ作り、全変換で使い回す。**
     変換ごとに縮小し直すと、探索より縮小のほうが高くつく(実測、scale で 3 割)。
+
+    ``device="cuda"`` なら全変換を conv2d のバッチとして GPU で同時評価する
+    (実測 34-88x、位置は CPU と一致)。GPU が使えない条件では静かに CPU へ戻る。
     """
+    gpu = _search_transforms_gpu(model, image, combos, device)
+    if gpu is not None:
+        return gpu
     img = np.asarray(image, dtype=np.float64)
     per = _transform_pyramids(model, combos)
     if not per:
