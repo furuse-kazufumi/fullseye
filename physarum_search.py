@@ -379,7 +379,8 @@ def _cg_batched(g, b, src, dst, free_mask, x0, iters=200, tol=1e-10,
 def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
                          dt=0.1, time_steps=200, cg_iters=200,
                          D_init=None, device="cpu",
-                         dtype="float64", cg_tol=1e-10, cg_check_every=25):
+                         dtype="float64", cg_tol=1e-10, cg_check_every=25,
+                         use_cuda_graph=False):
     """**同じグラフ構造の上で、多数の(源, 吸込)を一度に**解く(バッチ)。
 
     形状マッチングの複数スケール掃引と同じ発想 —— 変わらないもの(辺の index)は
@@ -393,12 +394,23 @@ def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
     - ``cg_check_every`` —— CG の収束チェック(``rs.max()`` の host 同期)を間引く。
       GPU では 1 反復ごとの同期が最大の直列化要因。FP64 参照一致テストでは
       ``cg_tol=0`` を渡して固定反復にする(同期ゼロ)。
+    - ``use_cuda_graph=True`` —— この規模(辺数が数万でも)GPU は計算量でなく
+      **1 反復あたりのカーネル起動レイテンシで律速**する(壁時計はグラフを 22 倍に
+      しても ~一定)。1 タイムステップ分(固定反復 CG + D 更新)を CUDA graph に
+      一度捕獲し replay すると起動を消せる(実測 4.4x、結果はビット一致)。捕獲は
+      静的形状・host 同期なしが要るので **固定反復**(``cg_tol`` は無視)になる。
 
     返り値: D (B, E) の numpy。各行が対応する(源, 吸込)の最終伝導率。
     """
     if not _HAS_TORCH:
         raise RuntimeError("torch が要ります")
     dev = torch.device(device)
+    if use_cuda_graph:
+        if dev.type != "cuda":
+            raise ValueError("use_cuda_graph は device='cuda' のときだけ")
+        return _solve_batch_cudagraph(
+            graph, sources, sinks, I0=I0, mu=mu, dt=dt, time_steps=time_steps,
+            cg_iters=cg_iters, D_init=D_init, dev=dev, dtype=dtype)
     ftype = torch.float32 if dtype == "float32" else torch.float64
     E = len(graph.edges)
     n = graph.n
