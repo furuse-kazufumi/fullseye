@@ -181,9 +181,34 @@ def matching_axes(n_cand: int = 60, size: int = 128, seed: int = 0,
         r, c = rc
         return ncc(img[r:r + th, c:c + tw], tpl)
 
+    def _box2(a):
+        """2x2 の面積平均で縮小。**面積は平均に対して閉じている**ので
+        1 px の細線も「半分の濃さの線」として残る。"""
+        h, w = a.shape[0] // 2 * 2, a.shape[1] // 2 * 2
+        return a[:h, :w].reshape(h // 2, 2, w // 2, 2).mean((1, 3))
+
     def coarse_res(rc):
+        """**単純な間引き**。1 px の細線は運が悪いと丸ごと消える。"""
         r, c = rc
         return ncc(img[r:r + th:2, c:c + tw:2], tpl[::2, ::2])
+
+    def coarse_area(rc):
+        """**面積平均で縮小**(本来のピラミッドの作り方)。"""
+        r, c = rc
+        return ncc(_box2(img[r:r + th, c:c + tw]), _box2(tpl))
+
+    def coarse_region(rc):
+        """**一度 2 値の領域にしてから面積平均**(= 被覆率のピラミッド)。
+
+        ユーザーの観察(2026-08-25): HALCON の find_shape 系は一度カクカクした
+        領域にしているように見える、縮小構造を画像に近い扱いにするためでは。
+        原理としては、点の有無を **面積の被覆率** に変換すると、平均に対して
+        閉じるので縮小しても壊れない。
+        """
+        r, c = rc
+        b = (img[r:r + th, c:c + tw] > 0.7).astype(float)
+        m = (tpl > 0.7 * (tpl.std() + 1e-9)).astype(float)
+        return ncc(_box2(b), _box2(m))
 
     def coarse_bits(rc):
         r, c = rc
@@ -201,7 +226,9 @@ def matching_axes(n_cand: int = 60, size: int = 128, seed: int = 0,
         d = np.sqrt((p ** 2).sum() * (t ** 2).sum())
         return float((p * t).sum() / d) if d > 1e-12 else 0.0
 
-    return {"解像度 1/2": check(coarse_res, fine, pos),
+    return {"解像度 1/2(間引き)": check(coarse_res, fine, pos),
+            "解像度 1/2(面積平均)": check(coarse_area, fine, pos),
+            "領域化してから面積平均": check(coarse_region, fine, pos),
             "ビット幅を粗く": check(coarse_bits, fine, pos),
             "モデル点数 1/16": check(coarse_pts, fine, pos)}
 
