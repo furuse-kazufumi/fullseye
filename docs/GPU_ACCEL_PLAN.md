@@ -27,7 +27,7 @@
 - [ ] **wave2 幾何変換**(grid_sample): rotate_img, rescale_img, affine_warp。要注意 = 補間規約
       (order/mode)を core(ndimage.rotate/zoom/affine_transform)に合わせる。
 - [x] **wave3 周波数**: lowpass, highpass(core は FFT マスク)。torch.fft で直移植、parity 高い見込み。
-- [ ] **wave4 ヒストグラム/テクスチャ**(kornia GPU へ経路): equalize, clahe, gabor, bilateral,
+- [~] **wave4 ヒストグラム/テクスチャ**(kornia GPU へ経路): equalize, clahe, gabor, bilateral,
       corner_response。`backends_kornia.py`(torch GPU)を device=cuda で使う。core と近似一致を確認。
 - [~] **wave5 grad_dir / log / dog 系**: grad_dir(atan2) 済(interior 完全一致)。log(gaussian_laplace は近似要検討)、dog は _norm 問題の
       回避法(faithful 化)を検討してから。

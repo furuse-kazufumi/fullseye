@@ -307,6 +307,8 @@ ACCEL = {
     "highpass_image": (_highpass, "highpass", "highpass_image"),
     # wave 5(先行): grad_dir(atan2 of sobel)
     "gradient_direction": (_grad_dir, "grad_dir", "grad_dir"),
+    # wave 4: ヒストグラム(equalize は core を torch で厳密再現)
+    "equalize_image": (_equalize, "equalize", "equalize_histo"),
 }
 
 
