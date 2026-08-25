@@ -117,7 +117,7 @@ def solve_physarum(graph: Graph, source: int, sink: int, *,
     L = graph.length
     n = graph.n
 
-    use_torch = device != "numpy" and _HAS_TORCH
+    use_torch = device in ("cpu", "cuda") and _HAS_TORCH
     if use_torch:
         dev = torch.device(device)
         tii = torch.as_tensor(ii, device=dev, dtype=torch.long)
