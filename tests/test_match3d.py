@@ -563,3 +563,61 @@ def test_geometry_fitting():
 
 def _unit(v):
     v = np.asarray(v, float); return v / np.linalg.norm(v)
+
+
+# ── 曲面近似 / 曲座標系 / 光学 ──────────────────────────────────────────
+def test_surface_fit_and_form_error():
+    """曲面近似 z=f(x,y): 2次曲面の係数回復、平面度で局所バンプを form error に。"""
+    H = W = 40
+    yy, xx = np.mgrid[0:H, 0:W].astype(float)
+    ztrue = 1.5 + 0.3 * xx - 0.2 * yy + 0.01 * xx * yy - 0.008 * xx ** 2 + 0.005 * yy ** 2
+    m = X.fit_poly_surface(xx, yy, ztrue + np.random.default_rng(0).normal(0, 0.01, (H, W)), 2)
+    assert m["rms"] < 0.02
+    assert np.abs(X.eval_poly_surface(m, xx, yy) - ztrue).max() < 0.02
+    flat = 0.2 * xx - 0.1 * yy + 3.0
+    flat[18:22, 18:22] += 0.5
+    r, rms, pv = X.surface_form_error(flat, degree=1)
+    assert pv > 0.4 and abs(r[5, 5]) < 0.02                # バンプ検出・平坦部零
+
+
+def test_polar_unwrap_and_zernike():
+    """曲座標系: 極アンラップで角度周期を復元、Zernike で tilt を (1,±1) に。"""
+    N = 64
+    yy, xx = np.mgrid[0:N, 0:N]; c = N / 2
+    ang = np.arctan2(yy - c, xx - c); rad = np.sqrt((yy - c) ** 2 + (xx - c) ** 2)
+    ring = (np.abs(rad - 20) < 6) * (0.5 + 0.5 * np.sin(6 * ang))
+    un = X.polar_unwrap(ring, ntheta=180, nr=40)
+    prof = un[:, 20]
+    assert np.argmax(np.abs(np.fft.rfft(prof - prof.mean()))) == 6   # 6 セクタ
+    disk = xx - c
+    coefs = X.fit_zernike(disk, n_max=4)
+    top = max(coefs.items(), key=lambda kv: abs(kv[1]))[0]
+    assert top in [(1, 1), (1, -1)]                        # tilt 項が支配
+
+
+def test_optics_reflection_refraction():
+    """光学: 反射・Snell 屈折・Fresnel・deflectometry 法線復元が厳密。"""
+    assert np.allclose(X.reflect([1, 0, -1], [0, 0, 1]), np.array([1, 0, 1]) / np.sqrt(2))
+    assert abs(X.snell_angle(45, 1.0, 1.5) - 28.13) < 0.05
+    assert abs(X.fresnel_reflectance(1.0, 1.0, 1.5) - 0.04) < 1e-3
+    assert X.fresnel_reflectance(0.3, 1.5, 1.0) == 1.0     # 全反射
+    inc = np.array([0, 0, -1.0]); n_true = np.array([1, 0, 1.0]) / np.sqrt(2)
+    assert np.allclose(X.normal_from_reflection(inc, X.reflect(inc, n_true)), n_true, atol=1e-6)
+
+
+# ── 射影 / レンダリング(3D → 2D 合成)────────────────────────────────────
+def test_projection_and_rendering():
+    """射影/レンダリング: ピンホール投影・点群深度・ボリューム投影・陰影が妥当。"""
+    K = np.array([[100, 0, 32], [0, 100, 32], [0, 0, 1]], float)
+    uv, z = X.project_points(np.array([[1, 2, 10.0]]), K)
+    assert np.allclose(uv[0], [42, 52]) and abs(z[0] - 10) < 1e-6
+    xx, yy = np.meshgrid(np.linspace(-2, 2, 80), np.linspace(-2, 2, 80))
+    pts = np.stack([xx.ravel(), yy.ravel(), np.full(6400, 5.0)], 1)
+    dm = X.render_point_depth(pts, K, (64, 64))
+    assert abs(dm[dm > 0].mean() - 5.0) < 0.1              # 深度回復
+    N = 48; c = N // 2
+    zz, yy2, xx2 = np.mgrid[0:N, 0:N, 0:N]
+    ball = (np.sqrt((zz - c) ** 2 + (yy2 - c) ** 2 + (xx2 - c) ** 2) < 15).astype(np.float32)
+    xr = X.render_volume_projection(ball, 0, 0, "xray")
+    assert xr[c, c] > 10 * (xr[2, 2] + 1e-6)               # 中心が厚い(球)
+    assert X.render_volume_projection(ball, 45, 30, "xray").shape == (N, N)   # 任意視点

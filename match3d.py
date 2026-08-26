@@ -1796,3 +1796,250 @@ def fit_circle_3d(points):
     A = np.hstack([2 * xy, np.ones((len(xy), 1))]); b = (xy ** 2).sum(1)
     s, *_ = np.linalg.lstsq(A, b, rcond=None); cc = s[:2]
     return c + cc[0] * e1 + cc[1] * e2, float(np.sqrt(max(s[2] + cc @ cc, 0.0))), n
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 曲面近似 z=f(x,y)(2変数→1変数、最小二乗)= 画像の背景/シェーディング補正・
+# 計測の平面度/形状誤差。多数の観測を少数係数で表す情報圧縮。
+# ═══════════════════════════════════════════════════════════════════════════
+def _poly_terms(x, y, degree):
+    """{x^i y^j : i+j<=degree} の基底行列 (N,T) とべき指数。"""
+    x = np.asarray(x, float).ravel(); y = np.asarray(y, float).ravel()
+    cols, powers = [], []
+    for d in range(degree + 1):
+        for i in range(d + 1):
+            cols.append(x ** i * y ** (d - i)); powers.append((i, d - i))
+    return np.stack(cols, 1), powers
+
+
+def fit_poly_surface(x, y, z, degree=2):
+    """散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。"""
+    A, powers = _poly_terms(x, y, degree); zz = np.asarray(z, float).ravel()
+    coef, *_ = np.linalg.lstsq(A, zz, rcond=None)
+    resid = zz - A @ coef
+    return {"coef": coef, "powers": powers, "degree": degree,
+            "rms": float(np.sqrt(np.mean(resid ** 2))), "pv": float(resid.max() - resid.min())}
+
+
+def eval_poly_surface(model, x, y):
+    """model を (x,y) で評価 → z(x の shape で返す)。"""
+    A, _ = _poly_terms(x, y, model["degree"])
+    return (A @ model["coef"]).reshape(np.asarray(x).shape)
+
+
+def surface_form_error(height, degree=1):
+    """高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。"""
+    H, W = np.asarray(height).shape; yy, xx = np.mgrid[0:H, 0:W]
+    m = fit_poly_surface(xx, yy, height, degree)
+    r = np.asarray(height, float) - eval_poly_surface(m, xx, yy)
+    return r, float(np.sqrt(np.mean(r ** 2))), float(r.max() - r.min())
+
+
+def background_flatten(image, degree=2):
+    """画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。"""
+    H, W = np.asarray(image).shape; yy, xx = np.mgrid[0:H, 0:W]
+    m = fit_poly_surface(xx, yy, image, degree)
+    return np.asarray(image, float) - eval_poly_surface(m, xx, yy)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 曲座標系への展開(デカルトに限らない)= 極/円筒アンラップ検査・Zernike(円板の
+# 直交基底=極座標の曲面近似、光学/波面計測)
+# ═══════════════════════════════════════════════════════════════════════════
+def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, device="cpu"):
+    """画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。
+
+    円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。
+    """
+    img = np.asarray(image, np.float32); H, W = img.shape
+    cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
+    if r_out is None:
+        r_out = min(H, W) / 2 - 1
+    th = torch.linspace(0, 2 * float(np.pi), ntheta, device=device)
+    rr = torch.linspace(r_in, r_out, nr, device=device)
+    ys = cy + rr[None, :] * torch.sin(th[:, None])
+    xs = cx + rr[None, :] * torch.cos(th[:, None])
+    grid = torch.stack([xs / (W - 1) * 2 - 1, ys / (H - 1) * 2 - 1], -1)[None]
+    t = torch.as_tensor(img, device=device)[None, None]
+    return F.grid_sample(t, grid, align_corners=True, mode="bilinear")[0, 0].detach().cpu().numpy()
+
+
+def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device="cpu"):
+    """voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。"""
+    v = np.asarray(vol, np.float32); D, H, W = v.shape
+    cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
+    if r_out is None:
+        r_out = min(H, W) / 2 - 1
+    th = torch.linspace(0, 2 * float(np.pi), ntheta, device=device)
+    rr = torch.linspace(r_in, r_out, nr, device=device)
+    zz = torch.arange(D, device=device, dtype=torch.float32)
+    Z = zz[:, None, None]; TH = th[None, :, None]; RR = rr[None, None, :]
+    ys = cy + RR * torch.sin(TH) + 0 * Z
+    xs = cx + RR * torch.cos(TH) + 0 * Z
+    zs = Z + 0 * TH + 0 * RR
+    grid = torch.stack([xs / (W - 1) * 2 - 1, ys / (H - 1) * 2 - 1,
+                        zs / (D - 1) * 2 - 1], -1)[None]
+    t = torch.as_tensor(v, device=device)[None, None]
+    return F.grid_sample(t, grid, align_corners=True, mode="bilinear")[0, 0].detach().cpu().numpy()
+
+
+def _zernike_basis(nr, nt, n_max):
+    """円板上 Zernike 多項式基底(ρ,θ)。radial R_n^m × 角度。返り (nz, nr*nt), 添字, ρ。"""
+    from math import factorial
+    rho = np.linspace(0, 1, nr); theta = np.linspace(0, 2 * np.pi, nt, endpoint=False)
+    R, T = np.meshgrid(rho, theta, indexing="ij")
+    rows, idx = [], []
+    for n in range(n_max + 1):
+        for m in range(-n, n + 1, 2):
+            am = abs(m); Rnm = np.zeros_like(R)
+            for k in range((n - am) // 2 + 1):
+                c = ((-1) ** k * factorial(n - k)
+                     / (factorial(k) * factorial((n + am) // 2 - k)
+                        * factorial((n - am) // 2 - k)))
+                Rnm += c * R ** (n - 2 * k)
+            Z = Rnm * (np.cos(am * T) if m >= 0 else np.sin(am * T))
+            rows.append(Z.ravel()); idx.append((n, m))
+    return np.stack(rows, 0), idx, R.ravel()
+
+
+def fit_zernike(disk_image, n_max=6, device="cpu"):
+    """円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。
+
+    直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/
+    coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。
+    """
+    img = np.asarray(disk_image, np.float32); H, W = img.shape
+    nr, nt = 48, 72
+    B, idx, rho = _zernike_basis(nr, nt, n_max)
+    cy, cx = (H - 1) / 2, (W - 1) / 2; rad = min(H, W) / 2 - 1
+    rr = np.linspace(0, 1, nr); th = np.linspace(0, 2 * np.pi, nt, endpoint=False)
+    Rg, Tg = np.meshgrid(rr, th, indexing="ij")
+    ys = cy + Rg * rad * np.sin(Tg); xs = cx + Rg * rad * np.cos(Tg)
+    grid = torch.stack([torch.as_tensor(xs / (W - 1) * 2 - 1, dtype=torch.float32),
+                        torch.as_tensor(ys / (H - 1) * 2 - 1, dtype=torch.float32)], -1)[None]
+    samp = F.grid_sample(torch.as_tensor(img, device=device)[None, None], grid.to(device),
+                         align_corners=True)[0, 0].detach().cpu().numpy().ravel()
+    mask = rho <= 1.0
+    coef, *_ = np.linalg.lstsq(B[:, mask].T, samp[mask], rcond=None)
+    return {idx[i]: float(coef[i]) for i in range(len(idx))}
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 光学プリミティブ: 反射(鏡面)/ 屈折(Snell、透明体+屈折率)/ Fresnel /
+# deflectometry(反射で鏡面法線を測る)。鏡面計測・透明体(ガラス/レンズ)検査。
+# ═══════════════════════════════════════════════════════════════════════════
+def _uo(v):
+    v = np.asarray(v, float)
+    return v / np.linalg.norm(v, axis=-1, keepdims=True).clip(1e-12)
+
+
+def reflect(d, n):
+    """入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。"""
+    d = _uo(d); n = _uo(n)
+    return d - 2 * np.sum(d * n, -1, keepdims=True) * n
+
+
+def refract(d, n, eta1=1.0, eta2=1.5):
+    """Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。
+
+    透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。
+    """
+    d = _uo(d); n = _uo(n); eta = eta1 / eta2
+    cosi = -np.sum(d * n, -1, keepdims=True)
+    sin2t = eta * eta * (1 - cosi * cosi)
+    if np.any(sin2t > 1):
+        return None
+    cost = np.sqrt(1 - sin2t)
+    return eta * d + (eta * cosi - cost) * n
+
+
+def fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5):
+    """Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。
+
+    垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。
+    """
+    ci = abs(float(cos_i)); s2 = (eta1 / eta2) ** 2 * (1 - ci * ci)
+    if s2 > 1:
+        return 1.0
+    ct = float(np.sqrt(1 - s2))
+    rs = ((eta1 * ci - eta2 * ct) / (eta1 * ci + eta2 * ct)) ** 2
+    rp = ((eta1 * ct - eta2 * ci) / (eta1 * ct + eta2 * ci)) ** 2
+    return float(0.5 * (rs + rp))
+
+
+def normal_from_reflection(incident, reflected):
+    """入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。
+
+    既知パターンの反射を観測 → 面法線 → 積分して鏡面形状。鏡面(反射)物体の形状計測の要。
+    """
+    d = _uo(incident); r = _uo(reflected); n = _uo(r - d)
+    if np.sum(n * d) > 0:                                # 入射側(外向き)へ向ける
+        n = -n
+    return n
+
+
+def snell_angle(theta_i_deg, eta1=1.0, eta2=1.5):
+    """入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。"""
+    st = eta1 / eta2 * np.sin(np.radians(theta_i_deg))
+    return float(np.degrees(np.arcsin(np.clip(st, -1, 1)))) if abs(st) <= 1 else float("nan")
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 射影 / レンダリング(3D → 2D 合成)= 変換の逆向きでループを閉じる。
+# 世界モデルの観測合成・外観検査のサンプル生成・3D 計測のサンプル空間生成。
+# ═══════════════════════════════════════════════════════════════════════════
+def project_points(points, K, R=None, t=None):
+    """3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。
+
+    K=カメラ内部行列 [[fx,0,cx],[0,fy,cy],[0,0,1]]。R,t で外部姿勢。世界モデルの観測写像。
+    """
+    P = np.asarray(points, float)
+    if R is not None:
+        P = (np.asarray(R) @ P.T).T
+    if t is not None:
+        P = P + np.asarray(t)
+    z = P[:, 2].clip(1e-6)
+    u = K[0, 0] * P[:, 0] / z + K[0, 2]
+    v = K[1, 1] * P[:, 1] / z + K[1, 2]
+    return np.stack([u, v], 1), P[:, 2]
+
+
+def render_point_depth(points, K, size, R=None, t=None):
+    """点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。"""
+    H, W = size
+    uv, z = project_points(points, K, R, t)
+    ui = np.round(uv[:, 0]).astype(int); vi = np.round(uv[:, 1]).astype(int)
+    ok = (ui >= 0) & (ui < W) & (vi >= 0) & (vi < H) & (z > 0)
+    ui, vi, z = ui[ok], vi[ok], z[ok]
+    depth = np.full((H, W), np.inf)
+    order = np.argsort(-z)                                   # 遠い順に書く→近点で上書き
+    depth[vi[order], ui[order]] = z[order]
+    depth[~np.isfinite(depth)] = 0
+    return depth
+
+
+def render_volume_projection(vol, azimuth=0.0, elevation=0.0, mode="xray", device="cpu"):
+    """voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
+
+    view 方向へ volume を grid_sample で回して軸投影。voxel_to_mips の任意視点版。
+    """
+    v = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
+    az = np.radians(azimuth); el = np.radians(elevation)
+    Ry = np.array([[np.cos(az), 0, np.sin(az)], [0, 1, 0], [-np.sin(az), 0, np.cos(az)]])
+    Rx = np.array([[1, 0, 0], [0, np.cos(el), -np.sin(el)], [0, np.sin(el), np.cos(el)]])
+    Rm = (Rx @ Ry).astype(np.float32)
+    theta = torch.tensor(np.hstack([Rm, np.zeros((3, 1))])[None], dtype=torch.float32,
+                         device=device)
+    grid = F.affine_grid(theta, v.shape, align_corners=False)
+    rot = F.grid_sample(v, grid, align_corners=False, mode="bilinear", padding_mode="zeros")
+    if mode == "mip":
+        return rot[0, 0].max(0)[0].detach().cpu().numpy()
+    return rot[0, 0].sum(0).detach().cpu().numpy()          # xray=Beer-Lambert 近似の積算
+
+
+def render_shaded(normals_img, light=(0, 0, 1), ambient=0.1):
+    """法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。"""
+    n = np.asarray(normals_img, float); L = np.asarray(light, float)
+    L = L / np.linalg.norm(L)
+    ndl = np.clip((n * L).sum(-1), 0, 1)
+    return np.clip(ambient + (1 - ambient) * ndl, 0, 1)
