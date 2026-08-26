@@ -149,6 +149,44 @@ _CATALOG = {
         ("render_volume_projection", "match3d", ["voxel"], "image2d", True),
         ("render_shaded", "match3d", ["normals"], "image2d", False),
     ],
+    "photometric": [  # フォトメトリックステレオ・法線積分(既知光源 → 法線 → 高さ)
+        ("photometric_stereo", "photometric", ["images"], "normals", False),
+        ("surface_normals", "photometric", ["image2d"], "normals", False),
+        ("integrate_normals", "photometric", ["normals"], "image2d", False),
+        ("render_lambertian", "photometric", ["normals"], "image2d", False),
+    ],
+    "range_image": [  # organized 深度画像(depth camera → 特徴の橋渡し)
+        ("depth_to_organized_points", "range_image", ["depth"], "points", False),
+        ("normals_from_depth", "range_image", ["depth"], "normals", False),
+        ("occlusion_edges", "range_image", ["depth"], "image2d", False),
+        ("bearing_angle_image", "range_image", ["depth"], "image2d", False),
+    ],
+    "preprocess": [  # 点群前処理(pointcloud.py に正準版あり・mls_smooth が固有の新機能)
+        ("statistical_outlier_removal", "pcl_filter", ["points"], "points", False),
+        ("radius_outlier_removal", "pcl_filter", ["points"], "points", False),
+        ("voxel_grid_downsample", "pcl_filter", ["points"], "points", False),
+        ("mls_smooth", "pcl_filter", ["points"], "points", False),
+    ],
+    "structured_light": [  # 構造化光・位相シフト profilometry(縞 → 位相 → 高さ)
+        ("wrapped_phase", "fringe", ["images"], "image2d", False),
+        ("unwrap_phase_2d", "fringe", ["image2d"], "image2d", False),
+        ("graycode_decode", "fringe", ["images"], "image2d", False),
+        ("decode_fringe", "fringe", ["images"], "depth", False),
+        ("synthesize_fringes", "fringe", ["image2d"], "images", False),
+    ],
+    "deform": [  # 3D 非剛体・変形登録(TPS / non-rigid ICP / CPD)
+        ("tps_fit", "deform3d", ["points", "points"], "deformation", False),
+        ("tps_warp", "deform3d", ["deformation", "points"], "points", False),
+        ("register_nonrigid", "deform3d", ["points", "points"], "points", False),
+        ("register_cpd_rigid", "deform3d", ["points", "points"], "pose", False),
+    ],
+    "medial": [  # TRIZ 線→面: medial surface / 3D 骨格(位相不変照合)
+        ("distance_ridge", "medial", ["voxel"], "voxel", False),
+        ("skeletonize_vol", "medial", ["voxel"], "voxel", False),
+        ("medial_axis_points", "medial", ["voxel"], "points", False),
+        ("topology_signature", "medial", ["voxel"], "descriptor", False),
+        ("medial_match", "medial", ["voxel", "voxel"], "measurement", False),
+    ],
 }
 
 
