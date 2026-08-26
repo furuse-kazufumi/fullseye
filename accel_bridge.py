@@ -152,9 +152,9 @@ def coverage(stages_or_genome, start=ops.IMAGE) -> dict:
     """accel カバレッジ + 区間構造(転送回数 = GPU 区間数)。"""
     stages = _as_stages(stages_or_genome, start)
     segs = plan(stages)
-    summary = [(k, [it[0] for it in items]) if k in ("gpu", "vol")
+    summary = [(k, [it[0] for it in items]) if k in ("gpu", "vol", "match")
                else ("cpu", [s.op for s in items]) for k, items in segs]
-    n_gpu = sum(len(v) for k, v in summary if k in ("gpu", "vol"))
+    n_gpu = sum(len(v) for k, v in summary if k in ("gpu", "vol", "match"))
     uncovered = [s.op for s in stages if not _gpu_ok(s)]
     return {
         "n_total": len(stages),
