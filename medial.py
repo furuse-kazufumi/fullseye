@@ -49,31 +49,16 @@ def _as_binary_volume(vol, name="vol"):
     return np.ascontiguousarray(arr).astype(bool)
 
 
-# 26 近傍のうち、対になる 13 方向(第 1 非ゼロ成分が正になる代表)。リッジ判定で
-# 「中心が (+o, -o) の両隣以上か」を数えるのに使う。
-_AXIS_PAIRS = [
-    (dz, dy, dx)
-    for dz in (-1, 0, 1)
-    for dy in (-1, 0, 1)
-    for dx in (-1, 0, 1)
-    if (dz, dy, dx) > (0, 0, 0)
-]
-
-
-def _neighbor(padded, off, shape):
-    """0 パディング済み配列 padded から、中心ブロックを off だけずらした近傍ビューを返す。"""
-    dz, dy, dx = off
-    D, H, W = shape
-    return padded[1 + dz : 1 + dz + D, 1 + dy : 1 + dy + H, 1 + dx : 1 + dx + W]
-
-
 def distance_ridge(vol, min_radius=0.0):
-    """EDT のリッジ(勾配方向の極大)を medial として抽出。返り値 (ridge_mask, edt)。
+    """EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。
 
-    各前景 voxel の EDT を計算し、13 の格子軸ペアのいずれかで「中心が両隣以上(かつ少なくとも
-    片側は真に大)」= 局所的な尾根になっている voxel を medial とみなす。塊の芯では複数軸で峰に
-    なり面/線状の集合が、細管では 2 軸(半径方向)で峰になり軸線が残る。境界 voxel は内側の隣が
-    必ず大きいため尾根にならず、外殻は自然に除かれる。
+    各前景 voxel の EDT を計算し、**26 近傍の局所極大**(自分の EDT が周囲 26 voxel の最大以上)を
+    medial とみなす。この基準は物体の局所次元に応じて自然に次元を出し分ける:
+        塊(球)  -> EDT が単峰 -> 点状の medial(中心 1 点)。
+        管(円柱)-> 軸方向に平坦・半径方向に単峰 -> 線状の medial(軸線)。
+        板(スラブ)-> 面内で平坦・厚み方向に単峰 -> 面状の medial(中心面)。
+    境界 voxel は内側の隣が必ず大きいため極大にならず、外殻は自然に除かれる。平坦な尾根
+    (軸/面)は同値の隣接を許容(>=)することで連続した線/面として残る。
 
     Args:
         vol: バイナリ voxel(bool / 0-1 の 3D)。
@@ -87,18 +72,10 @@ def distance_ridge(vol, min_radius=0.0):
     if float(min_radius) < 0.0:
         raise ValueError(f"min_radius は非負(実際: {min_radius})")
     edt = distance_transform_edt(mask).astype(np.float64)
-    shape = mask.shape
-    # 外側 = 背景 = 距離 0 として 0 パディング(格子端の偽尾根を防ぐ自然な連続化)。
-    padded = np.pad(edt, 1, mode="constant", constant_values=0.0)
-    n_crest = np.zeros(shape, dtype=np.int16)
-    for off in _AXIS_PAIRS:
-        neg = tuple(-c for c in off)
-        d_plus = _neighbor(padded, off, shape)
-        d_minus = _neighbor(padded, neg, shape)
-        # 両隣以上、かつ片側は真に大(平坦なプラトー内部を尾根にしない)。
-        crest = (edt >= d_plus) & (edt >= d_minus) & ((edt > d_plus) | (edt > d_minus))
-        n_crest += crest.astype(np.int16)
-    ridge_mask = mask & (n_crest >= 1) & (edt > float(min_radius))
+    # 3x3x3 の最大値フィルタ(外側 = 背景 = 0)。自分自身を含むので edt >= local_max は
+    # 「26 近傍で最大(タイ許容)」= 局所極大を意味する。
+    local_max = maximum_filter(edt, size=3, mode="constant", cval=0.0)
+    ridge_mask = mask & (edt >= local_max) & (edt > float(min_radius))
     return ridge_mask, edt
 
 
