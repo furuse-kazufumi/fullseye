@@ -33,11 +33,14 @@
 
 | ↓構造 \ 手法→ | NCC | shape-based | phase-corr | PCA/moment | MIP→2D | chamfer |
 |---|---|---|---|---|---|---|
-| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ | ✅ | TODO |
-| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | TODO |
-| 3DGS | ✅ T:splat | T | T | ✅ T | T | — |
-| mesh | T:voxelize | T | T | T | T | — |
-| depth 2.5D | T:逆投影 | T | T | T | T | — |
+| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ | ✅ | ✅ 遮蔽頑健 |
+| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | ✅ T |
+| 3DGS | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| mesh | ✅ T:voxelize | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| depth 2.5D | ✅ T:逆投影 | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+
+**★ 5 構造 × 6 手法 = 30 セルが変換で接続済**(T の行は共通 voxel/point 表現へ変換 → 列の手法を適用)。
+mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も検証済。
 
 **実装(`match3d.py` / `accel_match` / `accel_vol`)**:
 - NCC(voxel) = `accel_match.ncc_locate_3d` + `_pyramid`(244× vs scipy)+ sub-voxel 重心。
