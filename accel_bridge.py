@@ -56,8 +56,8 @@ _STAGE_RE = re.compile(r"([A-Za-z0-9_]+)\(a=([-\d.]+),\s*b=([-\d.]+)\)")
 
 def _seg_kind(stage) -> str:
     """この stage の実行区間種別: 'gpu'(2D image accel)/ 'vol'(3D volume accel)/ 'cpu'。"""
-    if _TORCH and stage.sort == ops.IMAGE and stage.op in _C2A:
-        return "gpu"
+    if _TORCH and stage.sort in (ops.IMAGE, ops.REGION) and stage.op in _C2A:
+        return "gpu"    # REGION も実体は 2D 二値配列なので image 常駐区間に載せられる
     if _TORCH and stage.sort == ops.VOLUME and stage.op in _C2VA:
         return "vol"
     if _TORCH and stage.op in _C2M:              # NCC マッチング(IMAGE->MATCH の終端)
