@@ -27,6 +27,7 @@ from collections import Counter
 import numpy as np
 
 import accel
+import accel_match
 import accel_vol
 import ops
 
