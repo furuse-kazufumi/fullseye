@@ -111,6 +111,8 @@ def plan(stages) -> list:
             item = (_C2A[st.op], st.a, st.b)
         elif kind == "vol":
             item = (_C2VA[st.op], st.a, st.b)
+        elif kind == "match":
+            item = (_C2M[st.op], st.a, st.b)
         else:
             item = st
         if segs and segs[-1][0] == kind:
