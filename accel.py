@@ -304,6 +304,77 @@ def _equalize(t, a, b, dev):
     return clo + frac * (chi - clo)
 
 
+# ── 領域(2値)モルフォロジ: conv2d カウント + 閾値で ndimage.binary_* を bit 一致再現 ── #
+# region も実体は 2D 二値配列。dilation = (近傍カウント>0)、erosion = (カウント==footprint 和)。
+# zero-pad conv = ndimage の border_value=0 と一致(champion の binarize/count 用)。
+# footprint: reg_* は cross(generate_binary_structure(2,1))で iterations=_it(a)、
+# *_circle / erosion_golay は disk(_rad(a))(skimage.disk と同式 x²+y²≤r²)を単回適用。
+def _disk_kernel(r, device):
+    if r <= 0:
+        return torch.ones(1, 1, 1, 1, device=device)
+    ys = torch.arange(-r, r + 1, dtype=torch.float32, device=device)
+    yy, xx = torch.meshgrid(ys, ys, indexing="ij")
+    return ((xx * xx + yy * yy) <= r * r).float().view(1, 1, 2 * r + 1, 2 * r + 1)
+
+
+def _cross_kernel(device):
+    return torch.tensor([[0, 1, 0], [1, 1, 1], [0, 1, 0]],
+                        dtype=torch.float32, device=device).view(1, 1, 3, 3)
+
+
+def _bin_t(t):
+    return (t > 0.5).float()
+
+
+def _bdilate(x, fp):
+    r0, r1 = fp.shape[2] // 2, fp.shape[3] // 2
+    c = F.conv2d(F.pad(x, (r1, r1, r0, r0)), fp)     # zero-pad = border_value 0
+    return (c > 0.5).float()                          # 近傍に 1 が一つでも → True
+
+
+def _berode(x, fp):
+    r0, r1 = fp.shape[2] // 2, fp.shape[3] // 2
+    c = F.conv2d(F.pad(x, (r1, r1, r0, r0)), fp)
+    return (c >= float(fp.sum()) - 0.5).float()       # footprint 全てが 1 → True
+
+
+def _it_n(a):
+    return 1 + int(a * 3)                             # core _it(a)
+
+
+def _reg_dilate(t, a, b, dev):
+    fp = _cross_kernel(dev)
+    x = _bin_t(t)
+    for _ in range(_it_n(a)):
+        x = _bdilate(x, fp)
+    return x
+
+
+def _reg_erode(t, a, b, dev):
+    fp = _cross_kernel(dev)
+    x = _bin_t(t)
+    for _ in range(_it_n(a)):
+        x = _berode(x, fp)
+    return x
+
+
+def _erosion_golay(t, a, b, dev):                     # = binary_erosion(disk(_rad(a)))
+    return _berode(_bin_t(t), _disk_kernel(_it_n(a), dev))
+
+
+def _erosion_circle(t, a, b, dev):
+    return _berode(_bin_t(t), _disk_kernel(_it_n(a), dev))
+
+
+def _dilation_circle(t, a, b, dev):
+    return _bdilate(_bin_t(t), _disk_kernel(_it_n(a), dev))
+
+
+def _opening_circle(t, a, b, dev):                    # erosion → dilation(disk 単回)
+    fp = _disk_kernel(_it_n(a), dev)
+    return _bdilate(_berode(_bin_t(t), fp), fp)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
