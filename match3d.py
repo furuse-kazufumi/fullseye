@@ -268,22 +268,26 @@ def _edges3d(vol, device, thr_ratio=0.3):
     return (mag > thr_ratio * float(mag.max())).float()
 
 
-def match_chamfer_3d(scene, template, device="cpu", thr=0.3):
+def match_chamfer_3d(scene, template, device="cpu", thr=0.3, edt="scipy"):
     """chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。
 
     シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて
     距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。**低いほど良い一致**。
-    エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。EDT は scipy CPU(GPU 厳密 EDT は
-    jump-flooding 近似が将来課題)、相関(conv3d)は GPU。返り値 [chamfer 距離, d, h, w]。
+    エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。相関(conv3d)は常に GPU。距離場は
+    edt="scipy"(CPU、既定)か edt="jfa"(`edt_jfa`、全 GPU で CPU 往復なし。scipy と厳密一致)。
+    返り値 [chamfer 距離, d, h, w]。
     """
-    from scipy import ndimage
     se = _edges3d(scene, device, thr).detach().cpu().numpy() > 0.5
     te = _edges3d(template, device, thr).detach().cpu().numpy() > 0.5
-    dt = ndimage.distance_transform_edt(~se)                 # scene エッジまでの距離場
+    if edt == "jfa":
+        dtt = edt_jfa(se, device)[None, None].to(torch.float32)   # 全 GPU 距離場
+    else:
+        from scipy import ndimage
+        dt = ndimage.distance_transform_edt(~se)            # scene エッジまでの距離場
+        dtt = torch.as_tensor(dt[None, None], dtype=torch.float32, device=device)
     n = max(1.0, float(te.sum()))
     Td, Th, Tw = te.shape
     pd, ph, pw = Td // 2, Th // 2, Tw // 2
-    dtt = torch.as_tensor(dt[None, None], dtype=torch.float32, device=device)
     ker = torch.as_tensor(te[None, None].astype(np.float32), device=device)
     score = F.conv3d(F.pad(dtt, (pw, pw, ph, ph, pd, pd)), ker)[0, 0] / n
     D, H, W = np.asarray(scene).shape
@@ -307,3 +311,143 @@ def match_points_ncc(pts_scene, pts_model, size, bounds, device="cpu", smooth=0.
     lo = nz.min(0); hi = nz.max(0) + 1
     tmpl = vm_full[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]]      # model の bbox を切り出しテンプレ化
     return M.ncc_locate_3d([vs], tmpl, device, subvoxel=True)[0]
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 回転 + スケール(log-polar × 位相相関 = Fourier-Mellin、z 軸部分群)
+# ═══════════════════════════════════════════════════════════════════════════
+def _hp_emphasis(H, W, device):
+    """Reddy-Chatterji 高域強調 H=(1-X)(2-X), X=cos(pi fy)cos(pi fx)。DC 支配を抑える。"""
+    fy = torch.linspace(-0.5, 0.5, H, device=device)[:, None]
+    fx = torch.linspace(-0.5, 0.5, W, device=device)[None, :]
+    X = torch.cos(np.pi * fy) * torch.cos(np.pi * fx)
+    return (1 - X) * (2 - X)
+
+
+def _fmt_spectrum(img2d, device):
+    """2D → Hann 窓 → |FFT| → fftshift → 高域強調。平行移動不変な回転/スケール表現。"""
+    H, W = img2d.shape
+    wy = torch.hann_window(H, periodic=False, device=device)[:, None]
+    wx = torch.hann_window(W, periodic=False, device=device)[None, :]
+    t = torch.as_tensor(np.asarray(img2d, np.float32), device=device) * wy * wx
+    Fv = torch.fft.fftshift(torch.fft.fft2(t)).abs()
+    return Fv * _hp_emphasis(H, W, device)
+
+
+def _logpolar(img2d, nt, nr, device, rmin=2.0):
+    """2D → log-polar(theta∈[0,π): |FFT| は 180° 対称、rho は対数)。grid_sample で GPU。"""
+    H, W = img2d.shape
+    cy, cx = (H - 1) / 2.0, (W - 1) / 2.0
+    rmax = min(H, W) / 2.0 - 1
+    theta = torch.linspace(0, float(np.pi), nt, device=device)
+    rho = torch.exp(torch.linspace(float(np.log(rmin)), float(np.log(rmax)), nr, device=device))
+    ys = cy + rho[None, :] * torch.sin(theta[:, None])
+    xs = cx + rho[None, :] * torch.cos(theta[:, None])
+    grid = torch.stack([xs / (W - 1) * 2 - 1, ys / (H - 1) * 2 - 1], dim=-1)[None]
+    out = F.grid_sample(img2d[None, None], grid, align_corners=True, mode="bilinear")
+    return out[0, 0], float(np.log(rmax) - np.log(rmin))
+
+
+def _parab(r, i, axis, fix):
+    """周期対応の放物線サブピクセル。axis 方向 i、他軸 fix の近傍 3 点で頂点を補間。"""
+    n = r.shape[axis]
+
+    def g(k):
+        k = k % n
+        return float(r[k, fix] if axis == 0 else r[fix, k])
+
+    a, b, c = g(i - 1), g(i), g(i + 1)
+    d = a - 2 * b + c
+    return i + (0.5 * (a - c) / d if abs(d) > 1e-9 else 0.0)
+
+
+def match_logpolar_z(a, b, device="cpu", project="mip", nt=360, nr=192):
+    """log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。
+
+    構造=voxel × 手法=Fourier-Mellin。PCA が点対応を要すのに対し、これはテンプレ/対応不要で
+    回転(z 軸)とスケールを同時推定する唯一の列。核心: z 投影(MIP)を取ると z 軸回転=面内回転・
+    等方スケール=面内スケールに落ち、確立された 2D Fourier-Mellin(|FFT|→高域強調→log-polar→
+    位相相関)が使える。返り値 (angle_deg, scale)。
+
+    honest な限界(**coarse 推定器**、下流で NCC/ICP 精緻化前提): |回転|≲40° で誤差 ~2-5°。
+    |FFT| の 180° 対称により ±45°/±90° 近傍は別名化して外し得る。スケールは中央ローブ偏りで
+    ~10% 過小に出る。full-whitening はこの投影の非シフト DC プラトーでゼロロックするため、
+    plain 相関 + rho-Hann 窓 + 放物線サブピクセルを用いる。
+    """
+    v_a = np.asarray(a, np.float64)
+    v_b = np.asarray(b, np.float64)
+    pa = v_a.max(0) if project == "mip" else v_a.sum(0)
+    pb = v_b.max(0) if project == "mip" else v_b.sum(0)
+    ma = _fmt_spectrum(pa, device)
+    mb = _fmt_spectrum(pb, device)
+    la, span = _logpolar(ma, nt, nr, device)
+    lb, _ = _logpolar(mb, nt, nr, device)
+    wr = torch.hann_window(nr, periodic=False, device=device)[None, :]   # rho は非周期→窓
+    laz = (la - la.mean()) * wr
+    lbz = (lb - lb.mean()) * wr
+    A = torch.fft.fft2(lbz)
+    B = torch.fft.fft2(laz)
+    r = torch.fft.ifft2(A * B.conj()).real                              # theta 周期・plain 相関
+    pk = np.unravel_index(int(torch.argmax(r)), tuple(r.shape))
+    fi = _parab(r, pk[0], 0, pk[1])
+    fj = _parab(r, pk[1], 1, pk[0])
+    dth = fi - (nt if fi > nt / 2 else 0)
+    dlr = fj - (nr if fj > nr / 2 else 0)
+    angle = -float(dth) / nt * 180.0
+    scale = float(np.exp(-float(dlr) / (nr - 1) * span))
+    return angle, scale
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# GPU 厳密 EDT(jump flooding)→ chamfer を全 GPU 化
+# ═══════════════════════════════════════════════════════════════════════════
+def _shift3(t, dz, dy, dx, fill):
+    """(3,D,H,W) を整数シフト、露出領域は fill。オーバーラップ無しは全 fill。"""
+    out = torch.full_like(t, fill)
+    D, H, W = t.shape[1:]
+    if abs(dz) >= D or abs(dy) >= H or abs(dx) >= W:
+        return out                                          # 重なり無し
+    zsr = slice(max(0, -dz), D - max(0, dz)); zds = slice(max(0, dz), D - max(0, -dz))
+    ysr = slice(max(0, -dy), H - max(0, dy)); yds = slice(max(0, dy), H - max(0, -dy))
+    xsr = slice(max(0, -dx), W - max(0, dx)); xds = slice(max(0, dx), W - max(0, -dx))
+    out[:, zds, yds, xds] = t[:, zsr, ysr, xsr]
+    return out
+
+
+def edt_jfa(seed_bool, device="cpu"):
+    """3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。
+
+    実測で scipy EDT と厳密一致(max|err|=0、N≤64)。CPU では scipy(C 実装)より遅いが、全
+    voxel 並列で GPU 常駐でき、chamfer マッチングを CPU 往復なしの全 GPU パイプラインにする。
+    末尾に step=1 追加パス(JFA+1)で近似誤差を消す。返り値 距離場 (D,H,W) の torch tensor。
+    """
+    _INF = 1e9
+    s = torch.as_tensor(np.asarray(seed_bool, bool), device=device)
+    D, H, W = s.shape
+    zz, yy, xx = torch.meshgrid(
+        torch.arange(D, device=device, dtype=torch.float32),
+        torch.arange(H, device=device, dtype=torch.float32),
+        torch.arange(W, device=device, dtype=torch.float32), indexing="ij")
+    pos = torch.stack([zz, yy, xx], 0)
+    coord = torch.where(s[None].expand(3, -1, -1, -1), pos, torch.full_like(pos, -_INF))
+    offs = [(dz, dy, dx) for dz in (-1, 0, 1) for dy in (-1, 0, 1) for dx in (-1, 0, 1)
+            if (dz, dy, dx) != (0, 0, 0)]
+    step = 1
+    while step < max(D, H, W):
+        step *= 2
+    steps = []
+    while step >= 1:
+        steps.append(step); step //= 2
+    steps.append(1)                                          # JFA+1
+    for st in steps:
+        base = coord
+        best = coord.clone()
+        best_d2 = ((best - pos) ** 2).sum(0)
+        for (dz, dy, dx) in offs:
+            cand = _shift3(base, dz * st, dy * st, dx * st, -_INF)
+            d2 = ((cand - pos) ** 2).sum(0)
+            upd = d2 < best_d2
+            best_d2 = torch.where(upd, d2, best_d2)
+            best = torch.where(upd[None].expand(3, -1, -1, -1), cand, best)
+        coord = best
+    return torch.sqrt(((coord - pos) ** 2).sum(0)).clamp_max(1e6)

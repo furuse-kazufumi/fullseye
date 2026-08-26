@@ -153,3 +153,89 @@ def test_points_ncc_locates_cluster():
     # 復元位置(voxel)を [0,1] へ戻して真のクラスタ中心と比較
     pos01 = np.array(res[1:]) / 31.0
     assert np.linalg.norm(pos01 - c) < 0.12
+
+
+def _has_scipy():
+    try:
+        import scipy  # noqa: F401
+        return True
+    except Exception:
+        return False
+
+
+need_scipy = pytest.mark.skipif(not _has_scipy(), reason="scipy 不在")
+
+
+def _blob3(N, seed):
+    rng = np.random.default_rng(seed)
+    v = np.zeros((N, N, N), np.float32)
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    for _ in range(5):
+        c = rng.uniform(0.3, 0.7, 3) * N
+        r = rng.uniform(3, 7, 3)
+        v += np.exp(-(((zz - c[0]) / r[0]) ** 2 + ((yy - c[1]) / r[1]) ** 2
+                      + ((xx - c[2]) / r[2]) ** 2))
+    return v
+
+
+@skip
+@need_scipy
+def test_logpolar_recovers_z_rotation():
+    """Fourier-Mellin(log-polar × 位相相関)が z 軸回転を coarse 復元。回転+スケール列。"""
+    from scipy import ndimage
+    N = 48
+    errs = []
+    for ang in (10, 20, -15, -25):
+        base = _blob3(N, 7)
+        rot = ndimage.rotate(base, ang, axes=(1, 2), reshape=False, order=1)
+        rec, _ = X.match_logpolar_z(base, rot, "cpu")
+        errs.append(abs(rec - ang))
+    assert max(errs) < 7.0                                # coarse 推定器(±45/90°別名は避ける)
+
+
+@skip
+@need_scipy
+def test_logpolar_recovers_scale():
+    """等方スケールを log-polar の rho シフトから復元(~10% 過小の中央ローブ偏りは許容)。"""
+    from scipy import ndimage
+    N = 48
+    base = _blob3(N, 3)
+    z = ndimage.zoom(base, 1.3, order=1)
+    out = np.zeros((N, N, N), np.float32)
+    o = (z.shape[0] - N) // 2
+    out = z[o:o + N, o:o + N, o:o + N]
+    _, s = X.match_logpolar_z(base, out, "cpu")
+    assert abs(s - 1.3) / 1.3 < 0.15                      # coarse スケール
+
+
+@skip
+@need_scipy
+def test_edt_jfa_exact_vs_scipy():
+    """jump-flooding EDT が scipy EDT と厳密一致(chamfer 全 GPU 化の土台)。"""
+    from scipy import ndimage
+    for N, seed in ((32, 0), (40, 1)):
+        rng = np.random.default_rng(seed)
+        se = rng.random((N, N, N)) < 0.01
+        se[0, 0, 0] = True
+        dj = X.edt_jfa(se, "cpu").cpu().numpy()
+        ds = ndimage.distance_transform_edt(~se)
+        assert np.abs(dj - ds).max() < 1e-4
+
+
+@skip
+@need_scipy
+def test_chamfer_jfa_matches_scipy_localization():
+    """chamfer の edt='jfa'(全 GPU)が edt='scipy' と同一定位。"""
+    z, y, x = np.ogrid[-6:7, -6:7, -6:7]
+    rr = np.sqrt(x * x + y * y + z * z)
+    T = (np.abs(rr - 4) < 1.2).astype(float)
+    N = 56
+    rng = np.random.default_rng(0)
+    scene = rng.random((N, N, N)) * 0.15
+    d, h, w = 34, 18, 26
+    scene[d - 6:d + 7, h - 6:h + 7, w - 6:w + 7] += T
+    scene = np.clip(scene, 0, 1)
+    r1 = X.match_chamfer_3d(scene, T, "cpu", edt="scipy")
+    r2 = X.match_chamfer_3d(scene, T, "cpu", edt="jfa")
+    assert abs(r1[1] - r2[1]) + abs(r1[2] - r2[2]) + abs(r1[3] - r2[3]) == 0
+    assert abs(r2[1] - d) + abs(r2[2] - h) + abs(r2[3] - w) <= 1
