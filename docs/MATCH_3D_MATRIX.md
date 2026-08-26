@@ -60,6 +60,38 @@ mesh → points(`mesh_to_points`)、voxel ⇄ SDF ⇄ occupancy、depth → {poi
 - **交差**: `intersect_line_plane`(→点)/ `intersect_planes`(→線)
 - **フィッティング**(最小二乗): `fit_line_3d` / `fit_plane_3d`(法線+残差)/ `fit_sphere_3d`(中心+半径)/ `fit_circle_3d`
 
+## 疎特徴登録(keypoint + 記述子 + RANSAC)= 初期推定なしの大回転+部分重なり
+密マッチ(NCC/Hough)が扱えない領域。Workflow で 4 手法を並行探索・統合後に一次検証(実測 rot_err):
+| 手法 | モジュール | 実測(60° 回転+70% 重なり) |
+|---|---|---|
+| Harris3D keypoint(mineig) | `feat_harris.harris3d_keypoints` | repeatability 85%(2D の k=0.04 は 3D で 0 検出 → mineig 採用) |
+| Spin Image + RANSAC | `feat_spin.register_spin` | rot_err **1.84°**、MC 100% 成功 |
+| FPFH + RANSAC | `feat_fpfh.register_fpfh` | rot_err **0.83°** |
+| SHOT + RANSAC + ICP | `feat_shot.register_shot` | rot_err **0.00°**(ICP 精緻化込み) |
+
+honest 限界: overlap <60% で急劣化(誤 basin ロック)、無特徴形状(球単体)不可、法線符号依存。→ 出力を ICP の coarse init に。
+
+## 曲面近似 z=f(x,y)(2変数→1変数、情報圧縮)
+`fit_poly_surface`/`eval_poly_surface`(多項式最小二乗)/ `surface_form_error`(平面度/球面度=理想曲面残差)/
+`background_flatten`(照明ムラ=低次曲面を減算=シェーディング補正)。画像処理でも計測でも多用。
+
+## 曲座標系への展開(デカルトに限らない)
+`polar_unwrap`(円環/円板→θ×r、リング/ラベル検査)/ `cylinder_unwrap`(円筒面→height×θ×r、配管検査)/
+`fit_zernike`(円板の直交基底=極座標曲面近似、光学/波面計測。tilt/defocus/astigmatism が (n,m) に対応)。
+
+## 光学プリミティブ(鏡面/透明体、全て厳密検証)
+`reflect`(鏡面反射)/ `refract`(Snell 屈折、透明体+屈折率、TIR 処理)/ `fresnel_reflectance`(反射/透過比、垂直入射 0.04)/
+`normal_from_reflection`(**deflectometry**=反射で鏡面法線を測る)/ `snell_angle`。ガラス/レンズ/鏡面の検査・計測に。
+
+## 射影 / レンダリング(3D → 2D 合成、ループを閉じる)
+変換(2D→3D)の逆向き = **観測合成・外観検査サンプル生成・3D 計測サンプル空間生成**(Physical AI/シミュレーション直結):
+`project_points`(ピンホール投影)/ `render_point_depth`(点群→深度、z-buffer)/
+`render_volume_projection`(任意視点 xray=DRR / mip)/ `render_shaded`(法線+光源→Lambertian、光学と接続)。
+
+## データ形式の変換グラフ(構造間を繋ぐ)= 追加分
+`signed_distance_field`(voxel→SDF)/ `sdf_to_occupancy` / `estimate_point_normals`(点群→法線=PCA)/
+`mesh_to_points` / `voxel_to_mesh`(marching cubes)/ `tsdf_from_depth`(RGB-D→TSDF)。**任意形式を共通表現へ寄せて全手法適用**。
+
 ## マトリクス(手法モード別 × データ構造)
 全 5 構造(voxel / point cloud / 3DGS / mesh / depth 2.5D)は共通 voxel/point 表現へ**変換 T**で載るので、
 下の各手法はどの構造にも適用できる(= 5 構造 × 手法数のセル)。手法は「何を出すか(モード)」で整理:
