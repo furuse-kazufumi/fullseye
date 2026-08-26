@@ -53,9 +53,11 @@
       回避法(faithful 化)を検討してから。
 
 ## E2E 統合(本丸の仕上げ)
-- [ ] **進化 champion → 常駐 GPU パイプライン**: evolution が出す op 列(champion_*.json)を
-      `accel.run_pipeline` の steps に写像するブリッジ。accel 未対応 op が混ざる列は CPU 併用 or
-      その op を wave に追加。E2E スループットを CPU パイプライン比で計測。
+- [x] **進化 champion → 常駐 GPU パイプライン**(`accel_bridge.py`): champion(genome/pipeline)を
+      `accel.run_pipeline` の steps へ写像。accel 未対応 op が混ざる列は CPU 区間として併用、
+      連続 accel op は 1 転送に償却。metric 保存(±0.01 dB)を検証済。未対応 op 頻度が上の
+      wave 優先度を出す(`report_champions`)。**残: 実 champion での E2E スループット計測は、
+      champion の GPU カバレッジが上がってから(現状 4/38 段では転送償却の効きが薄い)**。
 - [ ] **fullseye API から device 指定**: 公開 API(api.py / fslib)で device="cuda" を通す。
 
 ## Afterman トラック(集団評価を GPU バッチで)
