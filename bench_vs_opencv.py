@@ -137,28 +137,107 @@ def bench_pipeline(size, B):
     return ("binarize pipeline (5-op resident)", tc * 1e3, tg * 1e3, tc / tg, B / tg, B / tc)
 
 
+def bench_breakdown(size=512, B=32):
+    """GPU 時間の内訳: 転送 vs 実計算。単発 op が遅い真因を数値で示す。"""
+    from accel import _gauss_kernel, _sep_conv_sym
+    ims = _imgs(size, B)
+    t_xfer = _timed(lambda: accel._from_batch(accel._to_batch(ims, DEV)))
+    tb = accel._to_batch(ims, DEV); _sync()
+    t_comp = _timed(lambda: _sep_conv_sym(tb, _gauss_kernel(2.0, DEV)))
+    return t_xfer * 1e3, t_comp * 1e3
+
+
+def bench_resident_scaling(size=512, B=32):
+    """N-op を「cv2 逐次」vs「GPU 常駐(転送1回)」で。転送償却の交差点を示す。"""
+    ims = _imgs(size, B, seed=5)
+    rows = []
+    for n in (1, 3, 5, 10, 20):
+        steps = [("gauss_filter", 0.63, 0.4)] * n
+
+        def cv():
+            out = []
+            for x in ims:
+                y = x.astype(np.float32)
+                for _ in range(n):
+                    y = cv2.GaussianBlur(y, (0, 0), 2.0)
+                out.append(y)
+            return out
+        tc = _timed(cv, reps=5)
+        tg = _timed(lambda s=steps: accel.run_pipeline(s, ims, DEV), reps=7)
+        rows.append((n, tc * 1e3, tg * 1e3, tc / tg))
+    return rows
+
+
+def bench_volume():
+    """3D は cv2 に無いので scipy 比。GPU の本領(voxel 数が大)。"""
+    from scipy import ndimage
+    import accel_vol as V
+    rng = np.random.default_rng(0)
+    rows = []
+    for size, B in [(32, 32), (64, 16), (128, 4)]:
+        vols = [np.clip(rng.random((size, size, size)), 0, 1) for _ in range(B)]
+
+        def sp():
+            out = []
+            for v in vols:
+                x = np.clip(ndimage.median_filter(v, 3), 0, 1)
+                x = np.clip(ndimage.median_filter(x, 3), 0, 1)
+                x = np.clip(ndimage.grey_erosion(x, size=3), 0, 1)
+                x = np.clip(ndimage.grey_dilation(x, size=3), 0, 1)
+                out.append(x)
+            return out
+        steps = [("vol_median_g", 0.83, 0.04), ("vol_median_g", 0.51, 0.73),
+                 ("vol_erode_g", 0.51, 1.0), ("vol_dilate_g", 0.89, 0.26)]
+        ts = _timed(sp, reps=3)
+        tg = _timed(lambda s=steps, vv=vols: V.run_pipeline_vol(s, vv, DEV), reps=5)
+        rows.append((f"{size}³×{B}", ts * 1e3, tg * 1e3, ts / tg))
+    return rows
+
+
 def main():
-    lines = []
-    lines.append(f"# imgevolve GPU op vs OpenCV(CPU)処理速度ベンチ\n")
-    lines.append(f"- GPU: **{torch.cuda.get_device_name(0) if DEV=='cuda' else 'CPU'}** / torch {torch.__version__}")
-    lines.append(f"- OpenCV: cv2 {cv2.__version__}(CPU、単画像 API をバッチループ)")
-    lines.append(f"- 計測: warmup 後 中央値、CUDA synchronize。speedup = cv2CPU / GPU。\n")
-    lines.append("honest: **小さい単発画像は cv2 CPU が速い**(GPU は転送/起動律速)。"
-                 "GPU が効くのは**バッチ・大画像・常駐パイプライン**。以下は勝ち負け両方を出す。\n")
+    L = []
+    L.append("# imgevolve GPU op vs OpenCV(CPU)処理速度ベンチ\n")
+    L.append(f"- GPU: **{torch.cuda.get_device_name(0) if DEV=='cuda' else 'CPU'}** / torch {torch.__version__}")
+    L.append(f"- OpenCV: cv2 {cv2.__version__}(CPU、単画像 API をバッチループ)")
+    L.append("- 計測: warmup 後 中央値、CUDA synchronize。speedup = cv2CPU / GPU。\n")
+
+    xfer, comp = bench_breakdown()
+    L.append("## 結論(honest)\n")
+    L.append(f"- **単発の軽量 2D フィルタは OpenCV CPU が速い**。cv2 は SIMD/多スレッドで極限まで最適化されており、"
+             f"GPU 側は **host↔device 転送が律速**(512²×32 で転送のみ **{xfer:.0f} ms**、対して gaussian の"
+             f"実計算は **{comp:.2f} ms** = 転送の約 {xfer/comp:.0f} 分の 1)。データが一度 GPU に載れば計算は桁違いに速いが、"
+             f"1 op だけでは転送を取り戻せない。")
+    L.append("- **GPU が OpenCV に勝つのは 3 条件**: (1) 計算が重い op(NCC テンプレートマッチング)、"
+             "(2) **多 op を常駐で連鎖**して転送を償却(= E2E 本丸 `accel.run_pipeline`)、(3) **3D**(cv2 に無い)。")
+    L.append("- imgevolve の設計(常駐パイプライン + 進化 champion を丸ごと GPU)はまさに (2) を突く。"
+             "以前の「64x/3-5x」は **scipy 比**であり、最強 CPU=cv2 比では上記の通り条件付き。正直に開示する。\n")
+
+    L.append("## 常駐パイプラインの転送償却(N-op、512²×32)\n")
+    L.append("同じ gaussian を N 回。cv2 は逐次、GPU は転送1回で N op 連鎖。**N が増えるほど GPU 有利**。\n")
+    L.append("| N op | cv2 CPU (ms) | GPU 常駐 (ms) | speedup |")
+    L.append("|---:|---:|---:|---:|")
+    for n, tc, tg, sp in bench_resident_scaling():
+        mark = "**GPU**" if sp >= 1 else "cv2"
+        L.append(f"| {n} | {tc:.1f} | {tg:.1f} | {sp:.1f}× ({mark}) |")
+
+    L.append("\n## 3D volume(cv2 に 3D 無し → scipy 比)\n")
+    L.append("| size×batch | scipy CPU (ms) | GPU (ms) | speedup |")
+    L.append("|---|---:|---:|---:|")
+    for name, ts, tg, sp in bench_volume():
+        L.append(f"| {name} | {ts:.0f} | {tg:.1f} | **{sp:.0f}×** |")
 
     for size, B in [(512, 32), (1024, 16), (256, 1)]:
-        lines.append(f"\n## {size}×{size}, batch={B}\n")
-        lines.append("| op | cv2 CPU (ms) | GPU (ms) | speedup | GPU img/s | cv2 img/s |")
-        lines.append("|---|---:|---:|---:|---:|---:|")
+        L.append(f"\n## 単発 op 比較 {size}×{size}, batch={B}\n")
+        L.append("| op | cv2 CPU (ms) | GPU (ms) | speedup | GPU img/s | cv2 img/s |")
+        L.append("|---|---:|---:|---:|---:|---:|")
         rows = bench_ops(size, B)
         rows.append(bench_template(size, B))
         rows.append(bench_pipeline(size, B))
         for name, tc, tg, sp, gips, cips in rows:
             mark = "**GPU**" if sp >= 1 else "cv2"
-            lines.append(f"| {name} | {tc:.2f} | {tg:.2f} | {sp:.1f}× ({mark}) | "
-                         f"{gips:.0f} | {cips:.0f} |")
+            L.append(f"| {name} | {tc:.2f} | {tg:.2f} | {sp:.1f}× ({mark}) | {gips:.0f} | {cips:.0f} |")
 
-    out = "\n".join(lines) + "\n"
+    out = "\n".join(L) + "\n"
     with open(r"C:\dev\projects\imgevolve\docs\BENCH_VS_OPENCV.md", "w", encoding="utf-8") as f:
         f.write(out)
     print(out)
