@@ -167,10 +167,11 @@ def ncc_locate_3d_pyramid(volumes, template, device="cpu", levels=2, win=3,
         vc = _downsample3d(v, f, device)
         cm = ncc_map_3d([vc], Tc, device)[0]                  # 粗全探索
         ci = np.unravel_index(int(np.argmax(cm)), cm.shape)
-        # 全解像度へ写像(粗 voxel c → 全解像度 [c*f, c*f+f) の中心)+ その周りの窓を精密化
+        # 全解像度へ写像(粗 voxel c → 全解像度 [c*f, c*f+f) の中心)+ その周りの窓を精密化。
+        # ★窓はテンプレより大きくないと full-overlap 位置がゼロになる → r = T//2 + f(粗誤差) + win。
         center = [min(s - 1, max(0, c * f + f // 2)) for c, s in zip(ci, v.shape)]
-        r = f + win
-        sl = tuple(slice(max(0, c - r), min(s, c + r + 1)) for c, s in zip(center, v.shape))
+        sl = tuple(slice(max(0, c - (ts // 2 + f + win)), min(s, c + ts // 2 + f + win + 1))
+                   for c, ts, s in zip(center, T.shape, v.shape))
         crop = v[sl]
         fm = ncc_map_3d([crop], T, device)[0]                 # 局所全 NCC
         fi = np.unravel_index(int(np.argmax(fm)), fm.shape)
