@@ -339,6 +339,8 @@ ACCEL = {
     "gradient_direction": (_grad_dir, "grad_dir", "grad_dir"),
     # wave 4: ヒストグラム(equalize は core を torch で厳密再現)
     "equalize_image": (_equalize, "equalize", "equalize_histo"),
+    # wave: illuminate(大 σ unsharp、symmetric conv で scipy と bit 一致)。champion 頻出
+    "illuminate": (_illuminate, "illuminate", "illuminate"),
 }
 
 
