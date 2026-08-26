@@ -85,6 +85,21 @@
       (bit-exact ゆえ)。tests/test_accel_region.py(20)。
 - **champion GPU カバレッジ: 4/38 → 26/38 段。4 champion が 100% GPU**(locate/locate_rot/
   vol_count/vol_denoise)、**binarize/count は 5/6**(残 projective のみ)。
+- [x] **残 op(gdilate/gerode/cv_sharpen/projective_trans_region)完了**(2026-08-26):
+      gdilate/gerode=grey_dilation/erosion(size=_k(a))は maxpool/minpool の rect 版流用(exact)。
+      cv_sharpen=3x3 conv(cv2.filter2D 既定 border=reflect と一致、exact)。projective_trans_region=
+      透視ワープを grid_sample(bilinear/reflection)で近似 —— bit 一致でないが **binarize/count の
+      指標(IoU/count)を Δ=0 で保存**(採否は指標で判定。honest に「metric-faithful, not bit-faithful」)。
+      → **binarize/count が 6/6=100% GPU、単一常駐区間**に。sk_tv(Chambolle 反復)/simulate_defocus/
+      xsitk_*/xcv_*/decode_barcode は backend 固有・各 1 champion=低レバレッジで CPU 残置(honest)。
+- [x] **OpenCV(cv2)比ベンチ 完了**(`bench_vs_opencv.py` → `docs/BENCH_VS_OPENCV.md`、2026-08-26):
+      ★honest な結論 = **単発の軽量 2D フィルタは cv2 CPU が速い**(GPU は転送律速: 512²×32 で転送
+      40ms vs gaussian 実計算 0.51ms = 約 79 倍差)。**GPU が cv2 に勝つのは 3 条件**: (1) NCC マッチング
+      1.7-1.9×、(2) **多 op 常駐チェーン**(3op で交差、20op で **5.1×**)、(3) **3D**(cv2 に無い→scipy 比
+      65-71×)。以前の「64x/3-5x」は scipy 比。cv2 は SIMD で極限最適化。**imgevolve の常駐設計は (2) を突く**
+      = 進化 champion を丸ごと GPU に載せる時に効く。
+- [x] **転送床の最適化**: `_to_batch` を float32 直積み(float64 中間を除去)。42→40ms(残りは実 PCIe +
+      from_batch の float64 出力変換)。parity 不変。
 - [x] **fullseye API から device 指定 完了**(2026-08-26): `api.run_pipeline(..., device="cuda")` /
       `api.apply(..., device="cuda")` を追加。device!="cpu" は accel_bridge の GPU 常駐経路(未対応 op
       は CPU、torch/GPU 不在は静かに CPU フォールバック)。既定 device="cpu" は挙動不変(回帰テスト)。
