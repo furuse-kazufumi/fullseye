@@ -65,6 +65,39 @@ def gaussians_to_voxel(means, scales, opacities, size, bounds, device="cpu"):
     return vol.detach().cpu().numpy().astype(np.float64)
 
 
+def mesh_to_voxel(vertices, faces, size, bounds=None, samples=40000,
+                  device="cpu", smooth=0.8):
+    """mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。
+
+    三角形上の一様点は barycentric(sqrt トリック)。占有 voxel が要るなら閾値化する。
+    """
+    V = np.asarray(vertices, np.float64)
+    Fc = np.asarray(faces, np.int64)
+    tri = V[Fc]                                          # (F,3,3)
+    areas = 0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0],
+                                          tri[:, 2] - tri[:, 0]), axis=1)
+    p = areas / areas.sum()
+    rng = np.random.default_rng(0)
+    pick = rng.choice(len(Fc), size=samples, p=p)
+    u = rng.random(samples); v = rng.random(samples)
+    over = u + v > 1
+    u[over] = 1 - u[over]; v[over] = 1 - v[over]
+    t = tri[pick]
+    pts = t[:, 0] + u[:, None] * (t[:, 1] - t[:, 0]) + v[:, None] * (t[:, 2] - t[:, 0])
+    return points_to_voxel(pts, size, bounds, device, smooth)
+
+
+def depth_to_points(depth, fx, fy, cx, cy, stride=1):
+    """深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。"""
+    d = np.asarray(depth, np.float64)[::stride, ::stride]
+    vv, uu = np.mgrid[0:d.shape[0], 0:d.shape[1]]
+    z = d.reshape(-1)
+    ok = z > 0
+    u = (uu.reshape(-1)[ok] * stride - cx) * z[ok] / fx
+    v = (vv.reshape(-1)[ok] * stride - cy) * z[ok] / fy
+    return np.stack([u, v, z[ok]], axis=1)
+
+
 def voxel_to_mips(vol):
     """3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。"""
     v = np.asarray(vol, np.float64)
