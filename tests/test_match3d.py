@@ -451,3 +451,30 @@ def test_icp_point2plane_recovers_pose():
     src = (Rz.T @ (sph - ctr).T).T + ctr - np.array([0.3, 0.2, 0.0])
     _, _, _, rmse, _ = X.icp_point2plane(src, sph, nrm, iters=30)
     assert rmse < 1e-2
+
+
+@skip
+@need_scipy
+def test_scene_flow_recovers_motion():
+    """scene flow(3D optical flow): 一様並進を密運動場で回復、拡大場で発散を検出。"""
+    from scipy import ndimage
+    N = 48
+    rng = np.random.default_rng(0)
+    base = np.zeros((N, N, N), np.float32)
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    for _ in range(5):
+        c = rng.uniform(0.3, 0.7, 3) * N; r = rng.uniform(4, 7, 3)
+        base += np.exp(-(((zz - c[0]) / r[0]) ** 2 + ((yy - c[1]) / r[1]) ** 2
+                         + ((xx - c[2]) / r[2]) ** 2))
+    true = np.array([1.5, -2.0, 1.0])
+    moved = ndimage.shift(base, true, order=3, mode="nearest")
+    flow = X.scene_flow_lk(base, moved, "cpu")
+    ctr = flow[:, 12:36, 12:36, 12:36].reshape(3, -1).mean(1)
+    assert np.linalg.norm(ctr - true) < 0.2                # 密運動場で並進回復
+    big = ndimage.zoom(base, 1.08, order=3)
+    o = (big.shape[0] - N) // 2; big = big[o:o + N, o:o + N, o:o + N]
+    flow2 = X.scene_flow_lk(base, big, "cpu")
+    c = N / 2
+    radial = flow2[0] * (zz - c) + flow2[1] * (yy - c) + flow2[2] * (xx - c)
+    m = np.abs(zz - c) + np.abs(yy - c) + np.abs(xx - c) > 6
+    assert radial[m].mean() > 0                            # 拡大=外向き発散
