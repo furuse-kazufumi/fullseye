@@ -56,11 +56,11 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 **pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(対応あり明示復元)+ Fourier-Mellin(対応なし回転+スケール)の 3 系統で対応。**
 
 ## 次に埋めるセル(TODO)
-- **chamfer / 距離場**(部分・遮蔽に頑健): EDT + model エッジ点の相関。
-- **mesh → voxel**(voxelize: 面の占有ラスタライズ or SDF)→ 全手法へ接続。
-- **depth 2.5D → point cloud**(逆投影)→ 全手法へ。
-- **log-polar × phase-corr**(回転+スケールを FFT で)。
-- **generalized Hough 3D**(勾配→R-table 投票)。
+- **generalized Hough 3D**(勾配→R-table 投票): 部分形状・複数インスタンスに強い。回転は R-table を回して対応。
+- **feature descriptor**(spin image / FPFH + RANSAC): 疎な keypoint 対応で大回転・部分重なりに。
+- **anisotropic 3DGS 厳密 splat**(現状は等方近似)+ **ICP 精緻化**(Fourier-Mellin / PCA の coarse 解を仕上げる）。
+- **log-polar の大回転対応**(±45/90° 別名の解消: 複数投影軸の投票 or 球面調和)。
 
 ## 進捗ログ
 - 2026-08-26: voxel×{NCC, pyramid, sub-voxel, region-morph, shape-based, phase-corr, PCA, MIP} 実装・検証・GPU 速度実測。point cloud / 3DGS を splat 変換で接続。test_match3d(7)+ test_accel_3d_toolkit(10)。
+- 2026-08-27: **Fourier-Mellin(`match_logpolar_z`)= 回転+スケール列を追加**(z 投影 2D FMT、GPU 30×、回転誤差 mean 3°/max 5.4°、honest な ±45/90° 別名限界を明記)。**GPU 厳密 EDT(`edt_jfa`、JFA+2)で chamfer を全 GPU 化**(`edt="jfa"`、scipy と max|err|=0 @N≤160、N≥96 で追い抜き 96→2.6×/128→4.7×)。5×7=35 セル。test_match3d 12(+logpolar 回転/スケール, edt_jfa 厳密, chamfer jfa=scipy)。速度: PCA 0.2ms / MIP 1.3× も実測。

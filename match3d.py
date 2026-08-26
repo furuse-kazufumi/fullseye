@@ -452,3 +452,75 @@ def edt_jfa(seed_bool, device="cpu"):
             best = torch.where(upd[None].expand(3, -1, -1, -1), cand, best)
         coord = best
     return torch.sqrt(((coord - pos) ** 2).sum(0)).clamp_max(1e6)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# generalized Hough 3D(勾配方向 R-table 投票)= 向きビンごとの相関の総和
+# ═══════════════════════════════════════════════════════════════════════════
+def _sphere_dirs(ndir, device):
+    """ndir 個の参照単位方向。ndir≤26 は正規化 26 近傍、超えたら fibonacci 球。"""
+    if ndir <= 26:
+        d = [(a, b, c) for a in (-1, 0, 1) for b in (-1, 0, 1) for c in (-1, 0, 1)
+             if (a, b, c) != (0, 0, 0)]
+        v = torch.tensor(d[:ndir], dtype=torch.float32, device=device)
+    else:
+        i = torch.arange(ndir, dtype=torch.float32, device=device)
+        ga = float(np.pi * (3 - np.sqrt(5.0)))
+        z = 1 - 2 * (i + 0.5) / ndir
+        rr = torch.sqrt(torch.clamp(1 - z * z, min=0.0))
+        th = ga * i
+        v = torch.stack([z, rr * torch.sin(th), rr * torch.cos(th)], 1)
+    return v / v.norm(dim=1, keepdim=True)
+
+
+def match_hough_3d(scene, template, device="cpu", ndir=26, mc=0.05,
+                   topk=1, nms=3, subvoxel=True):
+    """generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。
+
+    GHT を **向きビンごとの相関の総和** として GPU ネイティブに定式化:
+    accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、
+    欠けたエッジはピークを下げるだけ(**遮蔽・クラッタに頑健**)。shape-based(連続内積の単一解)
+    と違い **投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス** を取れるのが差別化。
+    返り値 (topk,4) の [votes, d, h, w](votes 降順)。
+    """
+    sz, sy, sx, sm = _unit_grad3d(scene, device, mc)
+    tz, ty, tx, tm = _unit_grad3d(np.asarray(template, np.float64), device, mc)
+    dirs = _sphere_dirs(ndir, device)                       # (ndir,3)
+    sg = torch.stack([sz[0, 0], sy[0, 0], sx[0, 0]], 0)     # (3,D,H,W)
+    tg = torch.stack([tz[0, 0], ty[0, 0], tx[0, 0]], 0)
+    sbin = torch.argmax(torch.einsum("kd,dzyx->kzyx", dirs, sg), 0)   # (D,H,W)
+    tbin = torch.argmax(torch.einsum("kd,dzyx->kzyx", dirs, tg), 0)
+    smask = sm[0, 0] > 0.5
+    tmask = tm[0, 0] > 0.5
+    Td, Th, Tw = np.asarray(template).shape
+    pd, ph, pw = Td // 2, Th // 2, Tw // 2
+    acc = None
+    ntempl = 0.0
+    for i in range(ndir):
+        tind = ((tbin == i) & tmask).float()
+        c = float(tind.sum())
+        if c < 0.5:
+            continue
+        ntempl += c
+        sind = ((sbin == i) & smask).float()[None, None]
+        corr = F.conv3d(F.pad(sind, (pw, pw, ph, ph, pd, pd)), tind[None, None])
+        acc = corr if acc is None else acc + corr
+    if acc is None:
+        return np.zeros((topk, 4))
+    acc = (acc / max(1.0, ntempl))[0, 0]
+    D, H, W = np.asarray(scene).shape
+    lo = (pd, ph, pw); hi = (D - (Td - 1 - pd), H - (Th - 1 - ph), W - (Tw - 1 - pw))
+    mask = torch.zeros_like(acc)
+    if all(h > l for l, h in zip(lo, hi)):
+        mask[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = 1.0
+    a = (acc * mask).detach().cpu().numpy()
+    peaks = []
+    for _ in range(topk):
+        idx = np.unravel_index(int(np.argmax(a)), a.shape)
+        pos = M._subvoxel_com(a, idx, 2) if subvoxel else [float(i) for i in idx]
+        peaks.append([float(a[idx])] + list(pos))
+        z0, z1 = max(0, idx[0] - nms), idx[0] + nms + 1
+        y0, y1 = max(0, idx[1] - nms), idx[1] + nms + 1
+        x0, x1 = max(0, idx[2] - nms), idx[2] + nms + 1
+        a[z0:z1, y0:y1, x0:x1] = -1.0
+    return np.array(peaks)

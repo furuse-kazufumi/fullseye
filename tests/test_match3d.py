@@ -239,3 +239,41 @@ def test_chamfer_jfa_matches_scipy_localization():
     r2 = X.match_chamfer_3d(scene, T, "cpu", edt="jfa")
     assert abs(r1[1] - r2[1]) + abs(r1[2] - r2[2]) + abs(r1[3] - r2[3]) == 0
     assert abs(r2[1] - d) + abs(r2[2] - h) + abs(r2[3] - w) <= 1
+
+
+def _shell_template(rad=3.5, half=1.0, r=5):
+    z, y, x = np.ogrid[-r:r + 1, -r:r + 1, -r:r + 1]
+    rr = np.sqrt(x * x + y * y + z * z)
+    return (np.abs(rr - rad) < half).astype(float)
+
+
+@skip
+def test_hough_multi_instance():
+    """generalized Hough 3D: 投票 accumulator の NMS で **複数インスタンス**を検出。"""
+    T = _shell_template()
+    N = 64
+    rng = np.random.default_rng(0)
+    scene = rng.random((N, N, N)) * 0.1
+    locs = [(20, 18, 22), (44, 40, 38)]
+    for (d, h, w) in locs:
+        scene[d - 5:d + 6, h - 5:h + 6, w - 5:w + 6] += T
+    scene = np.clip(scene, 0, 1)
+    ps = X.match_hough_3d(scene, T, "cpu", topk=2, nms=6)
+    found = sum(any(abs(p[1] - d) + abs(p[2] - h) + abs(p[3] - w) <= 2 for p in ps)
+                for (d, h, w) in locs)
+    assert found == 2                                    # 両インスタンス検出
+
+
+@skip
+def test_hough_robust_to_occlusion():
+    """Hough 投票は欠けたエッジがピークを下げるだけ = 半分遮蔽でも定位(頑健)。"""
+    T = _shell_template()
+    N = 64
+    rng = np.random.default_rng(1)
+    scene = rng.random((N, N, N)) * 0.1
+    d, h, w = 30, 28, 34
+    scene[d - 5:d + 6, h - 5:h + 6, w - 5:w + 6] += T
+    scene = np.clip(scene, 0, 1)
+    Tocc = T.copy(); Tocc[:, :, 6:] = 0                  # 半分遮蔽
+    p = X.match_hough_3d(scene, Tocc, "cpu", topk=1)
+    assert abs(p[0][1] - d) + abs(p[0][2] - h) + abs(p[0][3] - w) <= 2
