@@ -23,14 +23,15 @@
 
 | 未対応 op(群) | 登場 champion | GPU 化の効き | 難度 |
 |---|---|---|---|
-| **volume 群** vol_median/vol_gaussian/vol_erode/vol_dilate/vol_threshold | vol_count, vol_denoise を **0%→~100%** | 最大(2 champion を丸ごと) | 中(3D pool/conv、要 volume sort) |
+| ~~**volume 群** vol_median/vol_gaussian/vol_erode/vol_dilate/vol_threshold~~ **完了 2026-08-26** | vol_count 5/5・vol_denoise 4/4(**100% GPU**、~64x) | 済 | 済(`accel_vol.py`) |
 | **illuminate** | edge, locate, locate_rot(3) | 高(3 champion に共通) | 中 |
 | **領域モルフォロジ** reg_dilate/erosion_golay/opening_circle/gdilate | binarize, count, edge | 中(projective_trans_region が残る) | 中 |
 | **ncc_locate**(NCC) | locate, locate_rot(2) | 中(shapematch_gpu の conv2d を流用可) | 低 |
 | backend 固有 sk_tv/cv_sharpen/simulate_defocus/xsitk_*/xcv_*/sk_scharr | 各 1 | 低 | 高 |
 | projective_trans_region(幾何) | binarize, count | — | wave2(order3 spline でブロック中) |
 
-→ **次波 = volume 群**(最ROI・2 champion を丸ごと GPU 化、既存 2D op の 3D 版)。
+→ **次波候補 = illuminate(3 champion 共通・単 op)or ncc_locate(shapematch_gpu の conv2d 流用可)**。
+  領域モルフォロジは projective_trans_region が同 champion に残るため部分効果。
 
 ## 設計原則(honest parity gate)
 - accel op は **core registry と interior <5e-3 一致(faithful)** を満たすものだけ載せる。
