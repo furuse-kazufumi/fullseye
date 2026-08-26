@@ -52,9 +52,18 @@ _TORCH = getattr(accel, "_HAS_TORCH", False)
 _STAGE_RE = re.compile(r"([A-Za-z0-9_]+)\(a=([-\d.]+),\s*b=([-\d.]+)\)")
 
 
+def _seg_kind(stage) -> str:
+    """この stage の実行区間種別: 'gpu'(2D image accel)/ 'vol'(3D volume accel)/ 'cpu'。"""
+    if _TORCH and stage.sort == ops.IMAGE and stage.op in _C2A:
+        return "gpu"
+    if _TORCH and stage.sort == accel_vol._VOLUME_SORT and stage.op in _C2VA:
+        return "vol"
+    return "cpu"
+
+
 def _gpu_ok(stage) -> bool:
-    """この stage を accel(GPU 常駐)で実行できるか。accel は 2D image op のみ。"""
-    return stage.sort == ops.IMAGE and stage.op in _C2A
+    """この stage を GPU(image or volume)で実行できるか。"""
+    return _seg_kind(stage) in ("gpu", "vol")
 
 
 def stages_from_pipeline_str(s: str) -> list:
