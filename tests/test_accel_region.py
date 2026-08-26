@@ -46,16 +46,18 @@ def test_region_op_bit_exact(core_op, a):
 
 
 @skip
-def test_bridge_routes_binarize_count_5of6():
+def test_bridge_routes_binarize_count_full():
+    """projective_trans_region(grid_sample 近似)も含め binarize/count は 6/6 単一常駐区間。
+    projective は bit 一致でないが champion 指標(IoU/count)は保存(下の metric テストで固定)。"""
     for prob in ("binarize", "count"):
         p = pathlib.Path(f"out/accuracy_bench/champion_{prob}.json")
         if not p.exists():
             pytest.skip(f"champion_{prob}.json 不在")
         champ = B.load_champion(p)
         cov = B.coverage(champ["pipeline"])
-        assert cov["n_gpu"] == 5 and cov["n_cpu"] == 1
+        assert cov["n_gpu"] == 6 and cov["n_cpu"] == 0
         assert cov["n_gpu_segments"] == 1                       # 単一常駐区間
-        assert cov["uncovered_ops"] == ["projective_trans_region"]
+        assert cov["uncovered_ops"] == []
 
 
 @skip
