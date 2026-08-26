@@ -60,6 +60,8 @@ def _seg_kind(stage) -> str:
         return "gpu"
     if _TORCH and stage.sort == ops.VOLUME and stage.op in _C2VA:
         return "vol"
+    if _TORCH and stage.op in _C2M:              # NCC マッチング(IMAGE->MATCH の終端)
+        return "match"
     return "cpu"
 
 
