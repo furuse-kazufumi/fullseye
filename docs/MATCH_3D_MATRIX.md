@@ -32,15 +32,15 @@
 ## マトリクス(セル = 実現済 / TODO)
 行 = データ構造、列 = 手法。**T** = 変換で接続。GPU 速度(vs CPU)を併記。
 
-| ↓構造 \ 手法→ | NCC | shape-based | phase-corr | Fourier-Mellin | PCA/moment | MIP→2D | chamfer |
-|---|---|---|---|---|---|---|---|
-| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ 回転+スケール **30×** | ✅ | ✅ | ✅ 遮蔽頑健・全GPU |
-| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | ✅ T |
-| 3DGS | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
-| mesh | ✅ T:voxelize | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
-| depth 2.5D | ✅ T:逆投影 | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| ↓構造 \ 手法→ | NCC | shape-based | phase-corr | Fourier-Mellin | PCA/moment | MIP→2D | chamfer | gen. Hough |
+|---|---|---|---|---|---|---|---|---|
+| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ 回転+スケール **30×** | ✅ | ✅ | ✅ 遮蔽頑健・全GPU | ✅ 複数体・**8×** |
+| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | ✅ T | ✅ T |
+| 3DGS | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| mesh | ✅ T:voxelize | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| depth 2.5D | ✅ T:逆投影 | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
 
-**★ 5 構造 × 7 手法 = 35 セルが変換で接続済**(T の行は共通 voxel/point 表現へ変換 → 列の手法を適用)。
+**★ 5 構造 × 8 手法 = 40 セルが変換で接続済**(T の行は共通 voxel/point 表現へ変換 → 列の手法を適用)。
 mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も検証済。
 
 **実装(`match3d.py` / `accel_match` / `accel_vol`)**:
