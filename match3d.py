@@ -417,9 +417,10 @@ def _shift3(t, dz, dy, dx, fill):
 def edt_jfa(seed_bool, device="cpu"):
     """3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。
 
-    実測で scipy EDT と厳密一致(max|err|=0、N≤64)。CPU では scipy(C 実装)より遅いが、全
-    voxel 並列で GPU 常駐でき、chamfer マッチングを CPU 往復なしの全 GPU パイプラインにする。
-    末尾に step=1 追加パス(JFA+1)で近似誤差を消す。返り値 距離場 (D,H,W) の torch tensor。
+    実測で scipy EDT と厳密一致(max|err|=0、N≤160・JFA+2)。scipy(C 実装)は小さい N では
+    速いが、GPU-JFA は N≥96 で追い抜く(RTX5090 実測 96→2.6× / 128→4.7×)。全 voxel 並列で
+    GPU 常駐でき、chamfer を CPU 往復なしの全 GPU パイプラインにするのが本質。末尾の step=1 を
+    2 パス(JFA+2)にして大 N の近似誤差も消す。返り値 距離場 (D,H,W) の torch tensor。
     """
     _INF = 1e9
     s = torch.as_tensor(np.asarray(seed_bool, bool), device=device)
