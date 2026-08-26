@@ -74,8 +74,9 @@
 |---|---|---|
 | ★球面調和記述子 | (半径×周波数)帯域エネルギー | 3D 回転で不変(sim 0.999)、形状識別 |
 
-**★ 現在 11 手法(定位6 / 姿勢4 / 検出1 / 記述1)× 5 構造。★=線→面リフト(曲率・SH)。**
-mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も検証済。
+**★ 現在 11 手法(定位6 / 姿勢3 / 検出1 / 記述1)+ 精緻化6手法 × 5 構造。★=線→面リフト(曲率・SH)。**
+mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も検証済。**粗推定→精緻化のパイプライン**が成立
+(例: Fourier-Mellin で回転 ±3° → `refine_rotation_z` で 0.01° / Hough で球中心整数 → `refine_peak_newton` でサブボクセル)。
 
 **実装(`match3d.py` / `accel_match` / `accel_vol`)**:
 - NCC(voxel) = `accel_match.ncc_locate_3d` + `_pyramid`(244× vs scipy)+ sub-voxel 重心。
