@@ -519,6 +519,8 @@ ACCEL = {
     "projective_trans_region": (_projective_region, "projective_trans_region", "projective_trans_region"),
     # simulate_defocus = uniform_filter(_k(a)) = box mean。_mean 流用(interior faithful)。denoise champion
     "simulate_defocus": (_mean, "simulate_defocus", "simulate_defocus"),
+    # sk_tv = Chambolle TV(計算重・GPU 向き)。skimage を忠実に写す。bit でなく指標保存で採否
+    "sk_tv": (_sk_tv, "sk_tv", ""),
 }
 
 
