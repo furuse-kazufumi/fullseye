@@ -56,7 +56,7 @@ def _seg_kind(stage) -> str:
     """この stage の実行区間種別: 'gpu'(2D image accel)/ 'vol'(3D volume accel)/ 'cpu'。"""
     if _TORCH and stage.sort == ops.IMAGE and stage.op in _C2A:
         return "gpu"
-    if _TORCH and stage.sort == accel_vol._VOLUME_SORT and stage.op in _C2VA:
+    if _TORCH and stage.sort == ops.VOLUME and stage.op in _C2VA:
         return "vol"
     return "cpu"
 
