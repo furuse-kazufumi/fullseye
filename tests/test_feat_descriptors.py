@@ -78,3 +78,37 @@ def test_harris3d_detects_keypoints():
     vol = X.points_to_voxel((src - src.min(0)) / (src.max(0) - src.min(0)) * 44 + 2, 48)
     kp, resp = feat_harris.harris3d_keypoints(vol, topn=40)
     assert len(kp) >= 20                                    # コーナーを検出
+
+
+# ── 異種構造の統合(TRIZ 統合: 全5構造を組み合わせる)──────────────────
+def _box_mesh(lo, hi):
+    from itertools import product
+    v = np.array(list(product(*zip(lo, hi))), float)
+    f = np.array([[0, 1, 3], [0, 3, 2], [4, 6, 7], [4, 7, 5], [0, 4, 5], [0, 5, 1],
+                  [2, 3, 7], [2, 7, 6], [0, 2, 6], [0, 6, 4], [1, 5, 7], [1, 7, 3]])
+    return v, f
+
+
+def test_cross_structure_registration_mesh_vs_points():
+    """異種構造間登録: CAD mesh vs 点群スキャン(50° 回転+部分)= Physical AI の CAD-to-scan。"""
+    import fuse3d
+    v1, f1 = _box_mesh([0, 0, 0], [10, 4, 4]); v2, f2 = _box_mesh([0, 0, 0], [4, 10, 4])
+    verts = np.vstack([v1, v2]); faces = np.vstack([f1, f2 + len(v1)])
+    full = X.mesh_to_points(verts, faces, 8000)
+    Rg = _rot_axis([1, 0.4, 0.2], 50.0); tg = np.array([3.0, -2.0, 1.0])
+    scan = ((Rg @ full.T).T + tg)[full[:, 0] < 8]          # 回転 + 部分
+    R, t = fuse3d.register_cross((verts, faces), "mesh", scan, "points",
+                                 method="fpfh", samples=8000)
+    assert _rot_err(R, Rg) < 8.0                            # 異種構造でも登録成功
+
+
+def test_fuse_multiple_structures_to_voxel():
+    """多構造フュージョン: mesh + points + depth → 1 密度 voxel(TRIZ 統合)。"""
+    import fuse3d
+    v1, f1 = _box_mesh([0, 0, 0], [10, 4, 4])
+    pts = np.random.default_rng(0).uniform([2, 2, 4], [8, 8, 7], (2000, 3))
+    yy, xx = np.mgrid[0:32, 0:32]; depth = 8.0 + 0.05 * xx
+    vol, bnd = fuse3d.fuse_to_voxel(
+        [((v1, f1), "mesh", {}), (pts, "points", {}),
+         (depth, "depth", {"fx": 30, "fy": 30, "cx": 16, "cy": 16})], size=48)
+    assert vol.shape == (48, 48, 48) and (vol > 0.01).sum() > 1000   # 3 構造が融合
