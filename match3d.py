@@ -438,7 +438,7 @@ def edt_jfa(seed_bool, device="cpu"):
     steps = []
     while step >= 1:
         steps.append(step); step //= 2
-    steps.append(1)                                          # JFA+1
+    steps += [1, 1]                                          # JFA+2(N≤160 で厳密 max|err|=0)
     for st in steps:
         base = coord
         best = coord.clone()
