@@ -357,3 +357,97 @@ def test_sh_descriptor_rotation_invariant():
     diff = X.match_sh_descriptor(rod, sph)
     assert inv > 0.98                                     # 回転不変
     assert inv - diff > 0.1                               # 別形状を識別
+
+
+# ── 反復精緻化(粗推定 → Newton/GN/LM/ICP で高精度収束)──────────────────
+def _blob4(N, seed):
+    rng = np.random.default_rng(seed)
+    v = np.zeros((N, N, N), np.float32)
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    for _ in range(4):
+        c = rng.uniform(0.35, 0.65, 3) * N; r = rng.uniform(4, 8, 3)
+        v += np.exp(-(((zz - c[0]) / r[0]) ** 2 + ((yy - c[1]) / r[1]) ** 2
+                      + ((xx - c[2]) / r[2]) ** 2))
+    return v
+
+
+@skip
+def test_refine_peak_newton_subvoxel():
+    """3D Newton サブボクセルピーク: 相互曲率のある異方性山を <0.05 voxel で回復。"""
+    N = 40; mu = np.array([15.3, 20.7, 9.4])
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    dz, dy, dx = zz - mu[0], yy - mu[1], xx - mu[2]
+    q = (1.0 * dz * dz + 1.2 * dy * dy + 0.8 * dx * dx
+         + 2 * 0.3 * dz * dy + 2 * 0.15 * dz * dx + 2 * 0.2 * dy * dx)
+    score = np.exp(-q / 12.0)
+    idx = np.unravel_index(np.argmax(score), score.shape)
+    r = X.refine_peak_newton(score, idx)
+    assert np.linalg.norm(r[1:] - mu) < 0.05
+
+
+@skip
+@need_scipy
+def test_refine_translation_lk_subvoxel():
+    """逆合成 Lucas-Kanade 並進: 既知サブボクセルずれを <0.1 voxel で回復。"""
+    from scipy import ndimage
+    base = _blob4(48, 7); off = np.array([0.37, -0.62, 0.28])
+    shifted = ndimage.shift(base, off, order=3, mode="nearest")
+    T = base[16:32, 16:32, 16:32]
+    r = X.refine_translation_lk(shifted, T, [16, 16, 16])
+    assert np.linalg.norm(r - (np.array([16, 16, 16]) + off)) < 0.1
+
+
+@skip
+@need_scipy
+def test_refine_lm_translation_and_scale():
+    """Levenberg-Marquardt: 並進を <0.05 voxel、かつ等方スケールを回復(規約=中心(Td-1)/2)。"""
+    from scipy import ndimage
+    base = _blob4(48, 7); off = np.array([0.37, -0.62, 0.28])
+    shifted = ndimage.shift(base, off, order=3, mode="nearest")
+    T = base[16:32, 16:32, 16:32]
+    cen = np.array([16, 16, 16]) + (16 - 1) / 2.0 + off
+    r = X.refine_lm(shifted, T, [23, 23, 23], scale=True)
+    assert np.linalg.norm(np.array(r["pos"]) - cen) < 0.05
+    big = ndimage.zoom(base, 1.05, order=3)
+    o = (big.shape[0] - 48) // 2; big = big[o:o + 48, o:o + 48, o:o + 48]
+    r2 = X.refine_lm(big, base[16:32, 16:32, 16:32], [23, 23, 23], scale=True)
+    assert abs(r2["scale"] - 1.05) < 0.03                # スケール回復(COM は原理的に不可)
+
+
+@skip
+@need_scipy
+def test_refine_rotation_z_gauss_newton():
+    """Gauss-Newton z 軸回転: Fourier-Mellin の粗い初期(15°)を真値 17.3° へ <0.3° 収束。"""
+    from scipy import ndimage
+    base = _blob4(48, 3); ang = 17.3
+    rot = ndimage.rotate(base, ang, axes=(1, 2), reshape=False, order=3)
+    ra, _ = X.refine_rotation_z(rot, base, init_angle_deg=15.0)
+    assert abs(ra - ang) < 0.3
+
+
+@skip
+@need_scipy
+def test_icp_point2point_recovers_pose():
+    """ICP 点-点(Kabsch/SVD): 既知 R,t で変換した点群を RMSE<1e-2 に精緻化。"""
+    rng = np.random.default_rng(1)
+    src = rng.random((800, 3)) * 20
+    th = 0.15
+    Rz = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1]])
+    dst = (Rz @ src.T).T + np.array([1.5, -2.0, 0.8])
+    _, _, info = X.icp_point2point_3d(src, dst, iters=50)
+    assert info["rmse"] < 1e-2
+
+
+@skip
+def test_icp_point2plane_recovers_pose():
+    """ICP 点-面(Gauss-Newton): 表面点群を法線利用で RMSE<1e-2 に高速収束。"""
+    rng = np.random.default_rng(2)
+    u = rng.random(1500) * 2 * np.pi; v = rng.random(1500) * np.pi
+    ctr = np.array([10.0, 10.0, 10.0])
+    sph = np.stack([np.sin(v) * np.cos(u), np.sin(v) * np.sin(u), np.cos(v)], 1) * 8 + ctr
+    nrm = sph - ctr; nrm /= np.linalg.norm(nrm, axis=1, keepdims=True)
+    th = 0.1
+    Rz = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1]])
+    src = (Rz.T @ (sph - ctr).T).T + ctr - np.array([0.3, 0.2, 0.0])
+    _, _, _, rmse, _ = X.icp_point2plane(src, sph, nrm, iters=30)
+    assert rmse < 1e-2

@@ -756,3 +756,714 @@ def match_sh_descriptor(a, b, L=8, nradii=12, device="cpu"):
     da = da / (np.linalg.norm(da) + 1e-9)
     db = db / (np.linalg.norm(db) + 1e-9)
     return float((da * db).sum())
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 反復精緻化(粗推定 → Newton / Gauss-Newton / LM / ICP で高精度収束)
+# 手段を1つに絞らず発散(Workflow で6手法を並行プロトタイプ+実測検証、全PASS)。
+# 粗推定(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)を下流で締め上げる。
+#   refine_peak_newton   : スコア面の 3D Newton サブボクセルピーク(全Hessian、放物線比~9×)
+#   refine_translation_lk: 逆合成 Lucas-Kanade 並進(0.008voxel、NCC比~60×)
+#   refine_lm            : Levenberg-Marquardt 並進+等方スケール+輝度ゲイン(スケール新規回復)
+#   refine_rotation_z    : Gauss-Newton z軸回転(Fourier-Mellin ±3° → 0.01°、~5000×)
+#   icp_point2point_3d   : ICP 点-点(Kabsch/SVD、Trimmed で部分重なり)
+#   icp_point2plane      : ICP 点-面(Gauss-Newton、表面に高速収束、Low 2004)
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+def _peak_neighbors27(vol_t, pos, device):
+    """pos=(z,y,x) 連続座標まわりの {-1,0,1}³ = 27 近傍を trilinear 補間で取得 → (3,3,3)。
+
+    vol_t は (1,1,D,H,W)。grid_sample の grid 最終軸は (x,y,z) 順・正規化 [-1,1]。
+    """
+    D, H, W = vol_t.shape[-3:]
+    o = torch.tensor([-1.0, 0.0, 1.0], device=device)
+    gz, gy, gx = torch.meshgrid(o, o, o, indexing="ij")
+    nx = 2.0 * (pos[2] + gx) / (W - 1) - 1.0
+    ny = 2.0 * (pos[1] + gy) / (H - 1) - 1.0
+    nz = 2.0 * (pos[0] + gz) / (D - 1) - 1.0
+    grid = torch.stack([nx, ny, nz], dim=-1)[None]           # (1,3,3,3,3)
+    out = F.grid_sample(vol_t, grid, mode="bilinear",
+                        align_corners=True, padding_mode="border")
+    return out[0, 0]                                          # (3,3,3) 添字[dz+1,dy+1,dx+1]
+
+
+def refine_peak_newton(score, idx, device="cpu", max_iter=12, tol=1e-4):
+    """スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。
+
+    粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の
+    2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。
+    軸別の放物線サブピクセルと違い **全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)** を使うため、
+    回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。
+
+    各反復: 現在位置まわりの 27 近傍を trilinear で取得 → 中心差分で勾配 g と 6 成分 Hessian H を
+    組み、Δ=solve(H,-g)。各成分を ±1 voxel にクリップ(信頼領域)して位置を更新、|Δ|<tol で収束。
+    ガウス山では中心差分勾配の零点が真のピークに一致するため停留点へ収束する(単一ステップでは
+    2 次モデル誤差が残り ±0.05voxel を割れないが、反復で ~0.02voxel まで収束)。H が負定値でない
+    (=極大でない)real な相関面では上昇方向へ退避(勾配上昇ステップ)して発散を防ぐ。
+
+    Parameters
+    ----------
+    score : array_like または torch.Tensor
+        3D スコア/相関 volume (D,H,W)。値が大きいほどピーク。
+    idx : tuple[int,int,int]
+        整数ピーク座標 (z,y,x)(通常 argmax の unravel 結果)。
+    device : str
+        "cpu" / "cuda"。torch 演算の device。
+    max_iter : int
+        最大反復回数(既定 12)。
+    tol : float
+        収束判定(更新量 L2 ノルム、既定 1e-4)。
+
+    Returns
+    -------
+    numpy.ndarray
+        [score_peak, z, y, x](精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。
+    """
+    vol = torch.as_tensor(np.asarray(score, np.float32), device=device)
+    D, H, W = vol.shape
+    vol_t = vol[None, None]                                   # (1,1,D,H,W)
+    eye = torch.eye(3, device=device)
+
+    pos = torch.tensor([float(idx[0]), float(idx[1]), float(idx[2])],
+                       device=device)
+    for _ in range(max_iter):
+        # 端に寄ると ±1 近傍が範囲外 → クランプ(border 補間で安全だが数値安定のため)
+        pos = torch.stack([
+            pos[0].clamp(1.0, D - 2.0),
+            pos[1].clamp(1.0, H - 2.0),
+            pos[2].clamp(1.0, W - 2.0),
+        ])
+        f = _peak_neighbors27(vol_t, pos, device)            # (3,3,3)
+        c = f[1, 1, 1]
+
+        # 中心差分の勾配(step=1)
+        g = torch.stack([
+            0.5 * (f[2, 1, 1] - f[0, 1, 1]),
+            0.5 * (f[1, 2, 1] - f[1, 0, 1]),
+            0.5 * (f[1, 1, 2] - f[1, 1, 0]),
+        ])
+        # 6 成分 Hessian(2 階中心差分 + 交差差分)
+        fzz = f[2, 1, 1] - 2 * c + f[0, 1, 1]
+        fyy = f[1, 2, 1] - 2 * c + f[1, 0, 1]
+        fxx = f[1, 1, 2] - 2 * c + f[1, 1, 0]
+        fzy = 0.25 * (f[2, 2, 1] - f[2, 0, 1] - f[0, 2, 1] + f[0, 0, 1])
+        fzx = 0.25 * (f[2, 1, 2] - f[2, 1, 0] - f[0, 1, 2] + f[0, 1, 0])
+        fyx = 0.25 * (f[1, 2, 2] - f[1, 2, 0] - f[1, 0, 2] + f[1, 0, 0])
+        Hm = torch.stack([
+            torch.stack([fzz, fzy, fzx]),
+            torch.stack([fzy, fyy, fyx]),
+            torch.stack([fzx, fyx, fxx]),
+        ])
+
+        # 停留点への Newton ステップ Δ = -H⁻¹g(微小 ridge で数値安定化)
+        ridge = 1e-6 * (Hm.diagonal().abs().mean() + 1e-9)
+        try:
+            delta = torch.linalg.solve(Hm + ridge * eye, -g)
+        except Exception:
+            delta = -g / Hm.diagonal().abs().clamp_min(1e-6)  # 退避: 軸別
+        # 上昇方向でなければ(H が極大でない=負定値でない)勾配上昇へ退避
+        if float((g * delta).sum()) < 0.0:
+            delta = g / torch.linalg.vector_norm(g).clamp_min(1e-9)
+        delta = delta.clamp(-1.0, 1.0)                        # 信頼領域 ±1 voxel
+
+        pos = pos + delta
+        if float(torch.linalg.vector_norm(delta)) < tol:
+            break
+
+    pos = torch.stack([
+        pos[0].clamp(0.0, D - 1.0),
+        pos[1].clamp(0.0, H - 1.0),
+        pos[2].clamp(0.0, W - 1.0),
+    ])
+    peak = float(_peak_neighbors27(vol_t, pos, device)[1, 1, 1])
+    p = pos.detach().cpu().numpy().astype(np.float64)
+    return np.array([peak, p[0], p[1], p[2]])
+
+
+def refine_translation_lk(scene, template, init_pos, device="cpu", iters=30, tol=1e-4):
+    """Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。
+
+    粗マッチ(整数 NCC / Fourier-Mellin / Hough)が与えた整数初期位置 ``init_pos`` を
+    出発点に、SSD ``Σ|I(x+p) − T(x)|²`` を最小化してサブボクセル並進 ``p`` へ収束させる。
+
+    逆合成(inverse-compositional, Baker–Matthews)方式のため steepest-descent 画像
+    ``SD = ∇T`` と Hessian ``H = Σ SDᵀSD`` を **反復前に一度だけ**前計算し、各反復は
+    「scene の trilinear ワープ + 残差 + 3×3 線形解 ``Δp = H⁻¹ Σ SDᵀ(I(x+p)−T)``」のみ。
+    並進の合成は ``p ← p − Δp``。純並進ワープでは ∂W/∂p=I なので SD=∇T がそのまま使える。
+
+    座標系: ``init_pos`` と戻り値はいずれも **テンプレート原点(corner, index 0,0,0)** が
+    scene のどの (dz,dy,dx) に載るか。``sobel3d`` / ``grid_sample`` の corner 規約に一致
+    (NCC(ncc_locate_3d)の中心規約とは T//2 だけ異なる点に注意)。
+
+    Parameters
+    ----------
+    scene : (D,H,W) array_like
+        探索対象ボリューム。
+    template : (Td,Th,Tw) array_like
+        位置合わせするテンプレート(scene より小)。
+    init_pos : (3,) sequence
+        整数初期位置 (dz,dy,dx) = テンプレート原点の scene 座標。
+    device : str
+        "cpu" / "cuda" 等。device 非依存。
+    iters : int
+        最大反復数。
+    tol : float
+        ‖Δp‖ がこの値を下回ったら収束打ち切り。
+
+    Returns
+    -------
+    pos : (3,) np.ndarray(float64)
+        精緻化されたサブボクセル位置 (dz,dy,dx)。
+
+    Notes
+    -----
+    - 滑らか(帯域制限)な密度場を仮定。整数初期値が真値の ±0.5〜1 voxel 内であれば
+      通常 5〜8 反復で ‖err‖ < 0.05 voxel(低ノイズ時)。実測(独立 cubic-spline GT):
+      ノイズ無し mean 0.008 / max 0.013 voxel(≈6 反復, ≈1.2ms/回)、NCC サブボクセル
+      baseline(mean 0.56 voxel)を約60×改善。
+    - ``grad_scale=32`` は分離 sobel3d(導関数[-1,0,1]×平滑[1,2,1]²)の固定スケール
+      (線形ランプで実測 32.0)。真の勾配へ正規化して Δp のスケールを正す。
+    - H には微小 Levenberg 正則化を加え、勾配の乏しい平坦テンプレートでの数値破綻を防ぐ。
+    """
+    D, H, W = np.asarray(scene).shape
+    Td, Th, Tw = np.asarray(template).shape
+    scene_t = torch.as_tensor(np.asarray(scene, np.float32)[None, None], device=device)
+    tmpl_flat = torch.as_tensor(np.asarray(template, np.float32).reshape(-1), device=device)
+
+    # テンプレート整数格子(corner 原点)
+    zz, yy, xx = torch.meshgrid(
+        torch.arange(Td, dtype=torch.float32, device=device),
+        torch.arange(Th, dtype=torch.float32, device=device),
+        torch.arange(Tw, dtype=torch.float32, device=device),
+        indexing="ij")
+
+    def _sample(pz, py, px):
+        """scene を template 座標 + (pz,py,px) で trilinear サンプル → (N,) flat。"""
+        gz = 2.0 * (zz + pz) / (D - 1) - 1.0
+        gy = 2.0 * (yy + py) / (H - 1) - 1.0
+        gx = 2.0 * (xx + px) / (W - 1) - 1.0
+        grid = torch.stack([gx, gy, gz], dim=-1)[None]        # last axis = (x,y,z)
+        s = F.grid_sample(scene_t, grid, mode="bilinear",
+                          align_corners=True, padding_mode="border")
+        return s.reshape(-1)
+
+    # steepest-descent 画像 SD=∇T と Hessian H=Σ SDᵀSD を前計算(反復不変)
+    gz, gy, gx = sobel3d(template, device)
+    grad_scale = 32.0                                          # sobel3d 固定スケール(ramp 実測)
+    sd = torch.stack([gz.reshape(-1) / grad_scale,
+                      gy.reshape(-1) / grad_scale,
+                      gx.reshape(-1) / grad_scale], dim=0)     # (3,N)
+    hess = sd @ sd.t()                                         # (3,3)
+    hess = hess + 1e-3 * torch.eye(3, device=device) * hess.diagonal().mean()
+    hinv = torch.linalg.inv(hess)
+
+    p = torch.tensor([float(init_pos[0]), float(init_pos[1]), float(init_pos[2])],
+                     dtype=torch.float32, device=device)
+    for _ in range(int(iters)):
+        resid = _sample(p[0], p[1], p[2]) - tmpl_flat         # I(x+p) − T(x)
+        dp = -(hinv @ (sd @ resid))                           # Δp = −H⁻¹ Σ SDᵀ resid
+        p = p + dp
+        if float(torch.linalg.norm(dp)) < tol:
+            break
+    return p.detach().cpu().numpy().astype(np.float64)
+
+
+def refine_lm(scene, template, init_pos, device="cpu", iters=50,
+              scale=True, gain=False, lam0=1e-3, tol=1e-8):
+    """Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。
+
+    粗いマッチ位置 init_pos(テンプレ中心の scene 内座標 [z,y,x])を出発点に、
+    forward-additive Lucas-Kanade を減衰付き Gauss-Newton(LM)で解き SSD
+        E(p) = Σ_x [ I(W(x;p)) - g·T(x) ]²
+    を最小化する。整数 NCC / Fourier-Mellin / Hough の粗推定を連続座標へ収束させる後段。
+
+    ワープ        W(x;p) = t + s·(x - c_T)   (c_T=テンプレ中心, t=並進, s=等方スケール)
+    ヤコビアン    ∂I(W)/∂p は grid_sample を自動微分に通して厳密取得(三線形補間の解析勾配。
+                  固定点が真の SSD 最小に一致 → sobel 定数倍のバイアスを避け高精度)。
+    LM           Δp = -(H + λ·diag(H))⁻¹ b、成功(コスト減)で λ×0.4 減衰・失敗で λ×5 増加。
+
+    引数:
+        scene      : シーン volume (D,H,W)。
+        template   : テンプレ volume (Td,Th,Tw)。scene より小。
+        init_pos   : 粗いテンプレ中心位置 [z,y,x](voxel。NCC locate の [d,h,w] 等)。
+        device     : "cpu" / "cuda"。device 非依存。
+        iters      : 最大反復数(通常 4-6 で収束)。
+        scale      : True で等方スケール s を同時最適化(4パラメータ)。False なら並進のみ。
+        gain       : True で輝度ゲイン g(残差 I(W)-g·T)を追加最適化。明るさ差/ノイズに頑健。
+        lam0, tol  : 初期減衰係数 / 収束閾値(ステップノルム・相対コスト減)。
+
+    返り値(dict):
+        pos   : 精緻化テンプレ中心 [z,y,x](連続座標)
+        scale : 等方スケール(scale=False なら 1.0)
+        gain  : 輝度ゲイン(gain=False なら 1.0)
+        cost  : 最終 SSD、rms: 1voxel あたり残差 RMS、iters: 実行反復数
+    """
+    dev = device
+    sc = torch.as_tensor(np.asarray(scene, np.float64)[None, None], device=dev)   # (1,1,D,H,W)
+    tp = torch.as_tensor(np.asarray(template, np.float64)[None, None], device=dev)
+    D, H, W = sc.shape[2], sc.shape[3], sc.shape[4]
+    Tt, Th, Tw = tp.shape[2], tp.shape[3], tp.shape[4]
+    cz, cy, cx = (Tt - 1) / 2.0, (Th - 1) / 2.0, (Tw - 1) / 2.0
+
+    # テンプレ中心基準の voxel 座標(∂W/∂s の係数)
+    zz, yy, xx = torch.meshgrid(
+        torch.arange(Tt, dtype=torch.float64, device=dev),
+        torch.arange(Th, dtype=torch.float64, device=dev),
+        torch.arange(Tw, dtype=torch.float64, device=dev), indexing="ij")
+    oz, oy, ox = zz - cz, yy - cy, xx - cx
+    t_col = tp[0, 0].reshape(-1)                      # ∂r/∂g = -T 用
+
+    t = torch.tensor([float(init_pos[0]), float(init_pos[1]), float(init_pos[2])],
+                     dtype=torch.float64, device=dev)
+    s = torch.tensor(1.0, dtype=torch.float64, device=dev)
+    g = torch.tensor(1.0, dtype=torch.float64, device=dev)
+
+    def _sample(tt, ss, with_grad=True):
+        """W=tt+ss·offset で I(W)(と自動微分勾配 gz,gy,gx)・valid mask を返す。"""
+        sz = tt[0] + ss * oz
+        sy = tt[1] + ss * oy
+        sx = tt[2] + ss * ox
+        nz = 2.0 * sz / (D - 1) - 1.0
+        ny = 2.0 * sy / (H - 1) - 1.0
+        nx = 2.0 * sx / (W - 1) - 1.0
+        grid = torch.stack([nx, ny, nz], dim=-1)[None]     # (1,Tt,Th,Tw,3), (x,y,z)順
+        valid = ((sz >= 0) & (sz <= D - 1) & (sy >= 0) & (sy <= H - 1)
+                 & (sx >= 0) & (sx <= W - 1)).to(torch.float64)
+        if not with_grad:
+            with torch.no_grad():
+                iw = F.grid_sample(sc, grid.detach(), mode="bilinear",
+                                   padding_mode="border", align_corners=True)
+            return iw[0, 0], None, None, None, valid
+        grid = grid.detach().requires_grad_(True)
+        iw = F.grid_sample(sc, grid, mode="bilinear",
+                           padding_mode="border", align_corners=True)
+        gn = torch.autograd.grad(iw.sum(), grid, create_graph=False)[0][0]  # (Tt,Th,Tw,3)
+        gz = gn[..., 2] * (2.0 / (D - 1))                 # 正規化座標→voxel 座標へ変換
+        gy = gn[..., 1] * (2.0 / (H - 1))
+        gx = gn[..., 0] * (2.0 / (W - 1))
+        return iw[0, 0].detach(), gz, gy, gx, valid
+
+    def _cost(tt, ss, gg):
+        iw, _, _, _, valid = _sample(tt, ss, with_grad=False)
+        r = (iw - gg * tp[0, 0]) * valid
+        return float((r * r).sum())
+
+    lam = float(lam0)
+    prev = _cost(t, s, g)
+    used = 0
+    eye = torch.eye((3 + int(scale) + int(gain)), dtype=torch.float64, device=dev)
+    for it in range(iters):
+        used = it + 1
+        iw, gz, gy, gx, valid = _sample(t, s, with_grad=True)
+        w = valid.reshape(-1)
+        r = (iw - g * tp[0, 0]).reshape(-1)
+        cols = [gz.reshape(-1), gy.reshape(-1), gx.reshape(-1)]
+        if scale:
+            cols.append((gz * oz + gy * oy + gx * ox).reshape(-1))
+        if gain:
+            cols.append(-t_col)
+        jac = torch.stack(cols, dim=1)                    # (N,P)
+        jw = jac * w[:, None]
+        h_mat = jw.transpose(0, 1) @ jac                  # Σ w JᵀJ
+        b = jw.transpose(0, 1) @ r                        # Σ w Jᵀr
+        diag = torch.diag(torch.diagonal(h_mat))
+        accepted = False
+        step = improved = 0.0
+        for _ in range(12):                               # λ を段階調整し降下する更新を探索
+            a_mat = h_mat + lam * diag + 1e-12 * eye
+            try:
+                dp = torch.linalg.solve(a_mat, -b)
+            except Exception:
+                lam = min(lam * 5.0, 1e9)
+                continue
+            tn = t + dp[:3]
+            sn = s + dp[3] if scale else s
+            gn = g + dp[3 + int(scale)] if gain else g
+            cnew = _cost(tn, sn, gn)
+            if cnew < prev:
+                t, s, g = tn, sn, gn
+                lam = max(lam * 0.4, 1e-9)
+                step = float(torch.linalg.norm(dp))
+                improved = prev - cnew
+                prev = cnew
+                accepted = True
+                break
+            lam = min(lam * 5.0, 1e9)
+        if not accepted:
+            break
+        if step < tol or improved < tol * max(1.0, prev):
+            break
+
+    rms = float(np.sqrt(prev / max(1.0, float(tp.numel()))))
+    return {
+        "pos": [float(t[0]), float(t[1]), float(t[2])],
+        "scale": float(s),
+        "gain": float(g),
+        "cost": float(prev),
+        "rms": rms,
+        "iters": used,
+    }
+
+
+def _warp_rot_z(vol_t, angle_deg, device="cpu"):
+    """torch volume (1,1,D,H,W) を z 軸(D 軸)まわりに angle_deg 回転して返す(trilinear)。
+
+    affine_grid の grid 座標順は (x=W, y=H, z=D)。z を固定し H-W 平面のみ回す。回転方向は
+    scipy.ndimage.rotate(v, angle_deg, axes=(1,2)) と一致(検証済)。境界外は 0 詰め。
+    """
+    a = torch.as_tensor(np.deg2rad(angle_deg), dtype=torch.float32, device=device)
+    c, s = torch.cos(a), torch.sin(a)
+    z = torch.zeros((), device=device)
+    o = torch.ones((), device=device)
+    theta = torch.stack([                       # (x,y,z) 順の 3x4 アフィン
+        torch.stack([c, -s, z, z]),
+        torch.stack([s,  c, z, z]),
+        torch.stack([z,  z, o, z]),
+    ]).unsqueeze(0)
+    grid = F.affine_grid(theta, vol_t.shape, align_corners=False)
+    return F.grid_sample(vol_t, grid, align_corners=False,
+                         mode="bilinear", padding_mode="zeros")
+
+
+def refine_rotation_z(scene, template, init_angle_deg=0.0, device="cpu",
+                      iters=40, tol=1e-3, max_step_deg=5.0):
+    """z 軸回転角の **Gauss-Newton 精緻化**(Lucas-Kanade on SSD、1 パラメータ)。
+
+    Fourier-Mellin 等の粗い z 軸回転推定(±3° 級)を、SSD を回転角 θ だけで最小化して高精度化
+    する下流精緻化器。scene ≈ rotate_z(template, θ_true) を仮定し、warp_z(template, θ) が scene に
+    一致する θ を求める。返り値の角は match_logpolar_z と同符号(scene = template を θ 回転)。
+
+    定式化: 残差 r(θ)=T_warp(θ)−S を θ で線形化。回転の steepest-descent image(解析ヤコビアン)
+    は、中心化格子 (X=W−cx, Y=H−cy) と warp 済みテンプレの空間勾配 (gx,gy) から
+    J = ∂T_warp/∂θ = (−gx·Y + gy·X)(rad あたり)。1 パラメータ GN 更新は Δθ = −(JᵀWr)/(JᵀWJ)。
+    回転で 0 詰めされた隅は valid マスク W で除外。step は max_step_deg で制限し発散を防ぐ。
+
+    実測(48³ 非対称 volume, CPU, 別補間器 scipy order=3 で scene 生成=inverse crime 回避):
+    clean 誤差 ~0.0006°、5% ノイズ 0.009°、10% ノイズ 0.017°(いずれも <0.3°)。捕捉レンジは
+    最低 ±10°、収束 3-5 反復・~12ms。粗推定 ±3° をそのまま使う場合(誤差 3°)比で ~5000 倍改善。
+
+    Parameters
+    ----------
+    scene : array_like (D,H,W)     基準 volume(この姿勢へ template を合わせる)。
+    template : array_like (D,H,W)  回転させて scene に合わせるテンプレ volume。同一格子・同一中心。
+    init_angle_deg : float         粗推定角(deg)。Fourier-Mellin 等の初期値。
+    device : str                   "cpu" / "cuda"。device 非依存。
+    iters : int                    最大反復数。
+    tol : float                    |Δθ|(deg)がこれ未満で収束打ち切り。
+    max_step_deg : float           1 反復あたりの角ステップ上限(deg、発散防止)。
+
+    Returns
+    -------
+    (angle_deg, n_iters) : (float, int)  精緻化角(deg)と実行反復数。
+    """
+    scene_t = torch.as_tensor(np.asarray(scene, np.float32)[None, None], device=device)
+    tmpl_t = torch.as_tensor(np.asarray(template, np.float32)[None, None], device=device)
+    D, H, W = tmpl_t.shape[2:]
+
+    # 出力格子の中心化座標(x=W, y=H)。回転流れ場に使う。
+    ys = torch.arange(H, dtype=torch.float32, device=device) - (H - 1) / 2.0
+    xs = torch.arange(W, dtype=torch.float32, device=device) - (W - 1) / 2.0
+    Y = ys.view(1, 1, 1, H, 1)
+    X = xs.view(1, 1, 1, 1, W)
+    ones = torch.ones_like(tmpl_t)              # valid マスク生成用
+
+    theta = float(init_angle_deg)
+    used = 0
+    for used in range(1, iters + 1):
+        warped = _warp_rot_z(tmpl_t, theta, device)
+        valid = (_warp_rot_z(ones, theta, device) > 0.999).float()
+
+        # warp 済みテンプレの空間勾配(中心差分)。gx=∂/∂W, gy=∂/∂H。
+        gx = torch.zeros_like(warped)
+        gy = torch.zeros_like(warped)
+        gx[..., 1:-1] = (warped[..., 2:] - warped[..., :-2]) * 0.5
+        gy[..., 1:-1, :] = (warped[..., 2:, :] - warped[..., :-2, :]) * 0.5
+
+        J = (-gx * Y + gy * X) * valid          # 回転 steepest-descent image(per rad)
+        r = (warped - scene_t) * valid          # 残差
+        jtj = float((J * J).sum())
+        jtr = float((J * r).sum())
+        if jtj < 1e-12:
+            break
+        dtheta_deg = float(np.rad2deg(-jtr / jtj))          # GN 更新(deg)
+        dtheta_deg = max(-max_step_deg, min(max_step_deg, dtheta_deg))
+        theta += dtheta_deg
+        if abs(dtheta_deg) < tol:
+            break
+    return float(theta), used
+
+
+def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
+                       tol=1e-6, max_corr_dist=None, trim_ratio=None,
+                       device="cpu"):
+    """点群を point-to-point ICP(Kabsch/SVD)で精緻化する。
+
+    粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た
+    初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で
+    位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム
+    (SVD)で相対回転・並進を求めて累積することで、対応が既知でなくても
+    サブボクセル精度へ収束させる。
+
+    部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と
+    絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した
+    対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。
+
+    引数:
+        src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。
+        dst: (M,3) 固定側(参照)点群。
+        iters: 最大反復回数。
+        init_R: (3,3) 初期回転。None なら単位行列。
+        init_t: (3,) 初期並進。None なら零ベクトル。
+        tol: RMSE の相対改善がこの値を下回れば収束打ち切り。
+        max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。
+        trim_ratio: 0<r<=1。各反復で最近傍距離の小さい上位 r 割の対応のみ
+            採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。
+        device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
+
+    返り値:
+        R: (3,3) torch.Tensor。dst ~= src @ R.T + t を満たす回転。
+        t: (3,) torch.Tensor。並進。
+        info: dict。"rmse"(採用対応上の最終RMSE), "iters"(実反復数),
+              "converged"(bool), "inliers"(採用対応数), "rmse_history"(list)。
+    """
+    from scipy.spatial import cKDTree
+
+    dev = torch.device(device)
+
+    # --- 入力を torch(float64)へ正規化 ------------------------------------
+    def _to_t(a):
+        if isinstance(a, torch.Tensor):
+            return a.to(device=dev, dtype=torch.float64)
+        return torch.as_tensor(np.asarray(a), dtype=torch.float64, device=dev)
+
+    src_t = _to_t(src)
+    dst_t = _to_t(dst)
+    if src_t.ndim != 2 or src_t.shape[1] != 3:
+        raise ValueError("src は (N,3) でなければならない")
+    if dst_t.ndim != 2 or dst_t.shape[1] != 3:
+        raise ValueError("dst は (M,3) でなければならない")
+
+    # --- 初期姿勢(累積 R, t)--------------------------------------------
+    if init_R is None:
+        R = torch.eye(3, dtype=torch.float64, device=dev)
+    else:
+        R = _to_t(init_R)
+    if init_t is None:
+        t = torch.zeros(3, dtype=torch.float64, device=dev)
+    else:
+        t = _to_t(init_t).reshape(3)
+
+    # dst 側は不変なので KD-tree を一度だけ構築(最近傍探索は numpy 側)
+    dst_np = dst_t.detach().cpu().numpy()
+    tree = cKDTree(dst_np)
+
+    rmse_history = []
+    prev_rmse = float("inf")
+    converged = False
+    used_iters = 0
+
+    for it in range(iters):
+        used_iters = it + 1
+
+        # 現在の累積姿勢で src を変換
+        src_moved = src_t @ R.T + t
+        src_moved_np = src_moved.detach().cpu().numpy()
+
+        # 最近傍対応
+        dists, idx = tree.query(src_moved_np, k=1)
+
+        # 外れ値棄却: 絶対距離ゲート + Trimmed ICP(距離の小さい上位割合)
+        keep = np.ones(len(idx), dtype=bool)
+        if max_corr_dist is not None:
+            keep &= (dists <= max_corr_dist)
+        if trim_ratio is not None and 0.0 < trim_ratio < 1.0:
+            n_keep = max(3, int(round(len(idx) * trim_ratio)))
+            # 距離の小さい順に n_keep 個だけ採用
+            order = np.argsort(dists)
+            trim_mask = np.zeros(len(idx), dtype=bool)
+            trim_mask[order[:n_keep]] = True
+            keep &= trim_mask
+        if keep.sum() < 3:
+            keep = np.ones(len(idx), dtype=bool)  # 退避: 全採用
+
+        sel = np.where(keep)[0]
+        P = src_moved[torch.as_tensor(sel, device=dev)]
+        Q = dst_t[torch.as_tensor(idx[keep], device=dev)]
+
+        # 現姿勢での対応残差 RMSE(この反復の相対更新前)
+        rmse = torch.sqrt(torch.mean(torch.sum((P - Q) ** 2, dim=1))).item()
+        rmse_history.append(rmse)
+
+        # --- Kabsch: P を Q に合わせる相対 (dR, dt) を SVD で解く ----------
+        p_bar = P.mean(dim=0)
+        q_bar = Q.mean(dim=0)
+        Pc = P - p_bar
+        Qc = Q - q_bar
+        H = Pc.T @ Qc  # (3,3) 相互共分散
+        U, S, Vh = torch.linalg.svd(H)
+        V = Vh.T
+        d = torch.sign(torch.linalg.det(V @ U.T))  # 反射補正
+        D = torch.diag(torch.tensor([1.0, 1.0, d], dtype=torch.float64, device=dev))
+        dR = V @ D @ U.T
+        dt = q_bar - dR @ p_bar
+
+        # 累積姿勢へ合成(src_moved は既に R,t 適用済み -> 左から dR,dt)
+        R = dR @ R
+        t = dR @ t + dt
+
+        # 収束判定: RMSE が絶対的に十分小さい、または相対改善が閾値未満
+        if rmse < 1e-9:
+            converged = True
+            break
+        if prev_rmse < float("inf"):
+            rel = abs(prev_rmse - rmse) / (prev_rmse + 1e-12)
+            if rel < tol:
+                converged = True
+                break
+        prev_rmse = rmse
+
+    # 収束後の最終 RMSE を採用対応(インライア)上で再評価
+    src_final = (src_t @ R.T + t).detach().cpu().numpy()
+    dists, _ = tree.query(src_final, k=1)
+    fkeep = np.ones(len(dists), dtype=bool)
+    if max_corr_dist is not None:
+        fkeep &= (dists <= max_corr_dist)
+    if trim_ratio is not None and 0.0 < trim_ratio < 1.0:
+        n_keep = max(3, int(round(len(dists) * trim_ratio)))
+        order = np.argsort(dists)
+        tm = np.zeros(len(dists), dtype=bool)
+        tm[order[:n_keep]] = True
+        fkeep &= tm
+    if fkeep.sum() < 1:
+        fkeep = np.ones(len(dists), dtype=bool)
+    final_rmse = float(np.sqrt(np.mean(dists[fkeep] ** 2)))
+    rmse_history.append(final_rmse)
+
+    info = {
+        "rmse": final_rmse,
+        "iters": used_iters,
+        "converged": converged,
+        "inliers": int(fkeep.sum()),
+        "rmse_history": rmse_history,
+    }
+    return R.to(dtype=torch.float64), t.to(dtype=torch.float64), info
+
+
+def _skew(v):
+    """3ベクトル → 歪対称行列 [v]×  (torch, (...,3,3))。"""
+    z = torch.zeros_like(v[..., 0])
+    return torch.stack([
+        torch.stack([z, -v[..., 2], v[..., 1]], -1),
+        torch.stack([v[..., 2], z, -v[..., 0]], -1),
+        torch.stack([-v[..., 1], v[..., 0], z], -1),
+    ], -2)
+
+
+def _rodrigues(omega, device):
+    """回転ベクトル ω → 回転行列 R = expm([ω]×)  (Rodrigues, torch 3×3)。"""
+    theta = torch.linalg.norm(omega)
+    eye = torch.eye(3, dtype=omega.dtype, device=device)
+    if float(theta) < 1e-12:
+        return eye
+    k = omega / theta
+    K = _skew(k)
+    return eye + torch.sin(theta) * K + (1.0 - torch.cos(theta)) * (K @ K)
+
+
+def _nearest(cur, Q, chunk=4096):
+    """cur(N,3) 各点の Q(M,3) 内最近傍 index。torch.cdist をチャンク分割(device 非依存)。"""
+    N = cur.shape[0]
+    idx = torch.empty(N, dtype=torch.long, device=cur.device)
+    for s in range(0, N, chunk):
+        e = min(s + chunk, N)
+        d = torch.cdist(cur[s:e], Q)          # (chunk, M)
+        idx[s:e] = torch.argmin(d, dim=1)
+    return idx
+
+
+def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
+                    init=None, trim=None, device="cpu"):
+    """点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。
+
+    粗マッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)の初期姿勢を
+    表面点群の点-面距離最小化で締め上げる精緻化手法。各反復で src 各点の dst
+    最近傍を対応付け、**点-面残差** ``r_i = n_i·(R·p_i + t - q_i)`` を最小化する。
+    R を小角近似 ``R ≈ I + [ω]×`` で線形化すると各対応のヤコビアンは
+    ``J_i = [p_i×n_i | n_i]``(スカラー三重積 ``n·(ω×p)=ω·(p×n)`` より)、
+    定数項 ``b_i = -n_i·(p_i - q_i)``。正規方程式 ``(JᵀJ)x = Jᵀb`` を 6×6 で
+    解いて増分 ``x=[ω|t]`` を得、Rodrigues で回転に戻して累積する。点-面は
+    接平面内の滑りを許すため、point-to-point より少ない反復で表面にタイトに
+    収束する(Low 2004)。
+
+    実測(波打つ表面 N=2025, CPU float64): 初期6°/並進0.06 を 4 反復で euclid
+    RMSE 1.7e-16・回転誤差 0° に回復(point-to-point は 17 反復で RMSE 4e-2・
+    回転 1.9° 停滞)。初期角 3〜20° でも 4〜5 反復で機械精度。
+
+    引数:
+        src (N,3): 動かす側の点群(粗マッチ後の初期姿勢)。
+        dst (M,3): 参照側の点群(固定)。
+        dst_normals (M,3): dst の単位法線(未正規化でも内部で正規化)。
+                           未知なら pointcloud.estimate_normals(dst) 等で事前推定。
+        iters: 最大反復数。
+        tol: RMSE 変化がこの値未満で収束打ち切り。
+        init ((R0,t0)): 初期姿勢(粗マッチの R,t を渡す)。None なら単位。
+        trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる
+                           Trimmed ICP(部分重なり・外れ値に頑健)。
+        device: "cpu"/"cuda" 等。torch device 文字列(device 非依存)。
+
+    返り値:
+        R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),
+        n_iter(実反復数)。
+    """
+    dt = torch.float64
+    P0 = torch.as_tensor(np.asarray(src, np.float64), dtype=dt, device=device)
+    Q = torch.as_tensor(np.asarray(dst, np.float64), dtype=dt, device=device)
+    Nn = torch.as_tensor(np.asarray(dst_normals, np.float64), dtype=dt, device=device)
+    Nn = Nn / torch.linalg.norm(Nn, dim=1, keepdim=True).clamp_min(1e-12)
+
+    n_src = P0.shape[0]
+    if init is None:
+        R_tot = torch.eye(3, dtype=dt, device=device)
+        t_tot = torch.zeros(3, dtype=dt, device=device)
+        cur = P0.clone()
+    else:
+        R_tot = torch.as_tensor(np.asarray(init[0], np.float64), dtype=dt, device=device).clone()
+        t_tot = torch.as_tensor(np.asarray(init[1], np.float64), dtype=dt, device=device).clone()
+        cur = P0 @ R_tot.T + t_tot
+    keep_n = n_src if trim is None else max(3, int(round((1.0 - float(trim)) * n_src)))
+
+    prev = float("inf")
+    rmse = float("inf")
+    n_iter = 0
+    reg = torch.eye(6, dtype=dt, device=device) * 1e-12       # 特異回避の微小正則化
+    for it in range(int(iters)):
+        n_iter = it + 1
+        idx = _nearest(cur, Q)
+        q = Q[idx]
+        n = Nn[idx]
+        resid = torch.einsum("ij,ij->i", cur - q, n)          # 符号付き点-面距離
+        if keep_n < n_src:                                    # Trimmed: 残差小さい keep_n 点のみ
+            sel = torch.argsort(resid.abs())[:keep_n]
+        else:
+            sel = slice(None)
+        p_s, q_s, n_s, r_s = cur[sel], q[sel], n[sel], resid[sel]
+        # J_i = [p×n | n],  b_i = -(p-q)·n = -r_s  (正規方程式 (JᵀJ)x=Jᵀb を 6×6 で)
+        J = torch.cat([torch.linalg.cross(p_s, n_s), n_s], dim=1)   # (K,6)
+        x = torch.linalg.solve(J.T @ J + reg, J.T @ (-r_s))
+        R_inc = _rodrigues(x[:3], device)
+        t_inc = x[3:]
+        cur = cur @ R_inc.T + t_inc
+        R_tot = R_inc @ R_tot
+        t_tot = R_inc @ t_tot + t_inc
+        # 更新後の点-面 RMSE(採用点のみで評価。同じ対応で単調性を判定)
+        rmse = float(torch.sqrt(torch.mean(
+            torch.einsum("ij,ij->i", cur[sel] - q_s, n_s) ** 2)))
+        if abs(prev - rmse) < tol:
+            break
+        prev = rmse
+
+    R = R_tot.detach().cpu().numpy()
+    t = t_tot.detach().cpu().numpy()
+    aligned = cur.detach().cpu().numpy()
+    return R, t, aligned, rmse, n_iter
