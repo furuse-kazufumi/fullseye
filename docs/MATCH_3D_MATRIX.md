@@ -11,8 +11,9 @@
 |---|---|---|---|
 | **NCC / template** | 正規化相互相関 | conv3d + box3d 正規化 | (直接) |
 | **shape-based / 勾配方向** | Steger / HALCON | 3D 勾配の方向相関(3 成分 conv3d) | sobel3d |
-| **phase correlation** | Reddy & Chatterji | 3D FFT の相互パワースペクトル | FFT |
-| **chamfer / 距離場** | Barrow 1977 | エッジの EDT で chamfer スコア | 距離変換 |
+| **phase correlation** | Reddy & Chatterji | 3D FFT の相互パワースペクトル(平行移動) | FFT |
+| **Fourier-Mellin / log-polar** | Reddy & Chatterji | z 投影の |FFT|→log-polar→位相相関(回転+スケール) | FFT→log-polar |
+| **chamfer / 距離場** | Barrow 1977 | エッジの EDT で chamfer スコア(全 GPU=JFA) | 距離変換(GPU-JFA) |
 | **moment / PCA 軸** | 主軸整列 | 慣性テンソル固有ベクトルで姿勢 | PCA 正準化 |
 | **generalized Hough** | Ballard | 3D R-table 投票 | 勾配→投票 |
 | **projection(次元削減)** | — | 直交 MIP/シルエットで 2D 手法を適用 | 3D→2D 投影 |
