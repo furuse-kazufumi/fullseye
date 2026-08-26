@@ -56,6 +56,37 @@ def test_points_to_voxel_and_mip():
 
 
 @skip
+def test_pca_recovers_rotation():
+    """異方性雲を既知の回転+並進 → PCA 主軸整列で復元(残差≈0)。回転を扱う列。"""
+    rng = np.random.default_rng(0)
+    model = rng.normal(0, 1, (800, 3)) * np.array([3.0, 1.0, 0.4])
+    th, th2 = 0.6, 0.3
+    Rz = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1]])
+    Ry = np.array([[np.cos(th2), 0, np.sin(th2)], [0, 1, 0], [-np.sin(th2), 0, np.cos(th2)]])
+    Rt = Rz @ Ry
+    scene = (Rt @ model.T).T + np.array([2.0, 1.0, -1.0])
+    R, t = X.match_pca(scene, model)
+    resid = np.mean(np.linalg.norm(scene - ((R @ model.T).T + t), axis=1))
+    assert resid < 0.05
+
+
+@skip
+def test_mip_2d_locates():
+    """MIP 投影 → 2D NCC で 3D 位置を冗長推定(変換=直交 MIP、次元削減)。"""
+    z, y, x = np.ogrid[-4:5, -4:5, -4:5]
+    T = np.exp(-(x * x + y * y + z * z) / 8.0)
+    N = 48
+    rng = np.random.default_rng(1)
+    scene = rng.random((N, N, N)) * 0.2
+    d, h, w = 30, 14, 20
+    scene[d - 4:d + 5, h - 4:h + 5, w - 4:w + 5] += T
+    mvol = np.zeros((N, N, N))
+    mvol[N // 2 - 4:N // 2 + 5, N // 2 - 4:N // 2 + 5, N // 2 - 4:N // 2 + 5] = T
+    pos = X.match_mip_2d(np.clip(scene, 0, 1), mvol, "cpu")
+    assert abs(pos[0] - d) + abs(pos[1] - h) + abs(pos[2] - w) < 2
+
+
+@skip
 def test_points_ncc_locates_cluster():
     """構造ある点群: 疎な背景 + 既知位置の密クラスタ。model=クラスタ点で定位。"""
     rng = np.random.default_rng(3)
