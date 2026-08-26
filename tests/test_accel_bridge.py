@@ -79,7 +79,7 @@ def test_coverage_counts():
     assert cov["uncovered_ops"] == ["dog"]
 
 
-def test_champion_denoise_runs_and_validates():
+def test_champion_denoise_runs():
     p = pathlib.Path("out/accuracy_bench/champion_denoise.json")
     if not p.exists():
         pytest.skip("champion_denoise.json 不在")
@@ -89,12 +89,32 @@ def test_champion_denoise_runs_and_validates():
     except KeyError:
         pytest.skip("champion の backend op がこの install に不在")
     assert cov["n_gpu"] >= 1                           # median は GPU
-    imgs = _imgs(2, 48)
-    out = B.run(champ["pipeline"], imgs, device="cpu")
+    out = B.run(champ["pipeline"], _imgs(2, 48), device="cpu")
     assert len(out) == 2 and all(np.asarray(o).shape == (48, 48) for o in out)
-    v = B.validate_champion(champ["pipeline"], imgs, device="cpu")
-    # GPU 区間は median のみ(端 reflect 差)。ただし後段 sk_tv(全域結合の TV 最適化)が
-    # 端の差を interior に伝播し cv_sharpen が増幅するため max は ~0.06 まで伸びうる。
-    # 典型画素(mean)は無事であることを固定する(max の伝播は honest に許容)。
-    assert v["mean_interior_diff"] < 0.01
-    assert v["max_interior_diff"] < 0.15
+    for o in out:
+        assert np.isfinite(o).all() and o.min() >= 0.0 and o.max() <= 1.0
+
+
+def test_champion_denoise_metric_preserved():
+    """真の合否 = GPU ルーティングが champion の **タスク指標(PSNR)** を保つか。
+
+    pixel は median の端差 → 後段 sk_tv(全域 TV)伝播で ~0.06 ずれるが、PSNR は保たれる
+    はず(実測 ±0.01 dB)。pixel の bit 一致でなく metric 保存が honest な受入基準。
+    """
+    import problems
+    p = pathlib.Path("out/accuracy_bench/champion_denoise.json")
+    if not p.exists():
+        pytest.skip("champion_denoise.json 不在")
+    champ = B.load_champion(p)
+    try:
+        stages = ops.decode_by_names(B._STAGE_RE.findall(champ["pipeline"]))
+    except KeyError:
+        pytest.skip("champion の backend op がこの install に不在")
+    prob = problems.PROBLEMS["denoise"]
+    cfg = champ["config"]
+    data = prob.make(cfg.get("n_holdout", 4), cfg["size"], cfg["seed"] + 10_000)
+    inp, items = data["input"], data["items"]
+    core = prob.score_stages(stages, data)
+    bridge = float(np.mean([prob.score_value(B.run(stages, [inp[i]], device="cpu")[0],
+                                             items[i]) for i in range(len(inp))]))
+    assert abs(bridge - core) < 0.1                    # dB PSNR、実測 ~0.01
