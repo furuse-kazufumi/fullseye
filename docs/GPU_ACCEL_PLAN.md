@@ -7,10 +7,30 @@
 ## 到達点(2026-08-26)
 - **形状マッチング一族 GPU 化 完了**: 勾配方向スコア = conv2d。単一/回転/スケール/異方/
   複数インスタンス。34-88x、位置は CPU 一致。`shapematch_gpu.py`。
-- **accel(密画素並列 op)wave1 完了**: 11→22 op。median 60x / percentile 46.6x、集計 9.50x。
+- **accel(密画素並列 op)wave1/3/4 完了**: 11→26 op。median 60x / percentile 46.6x、集計 9.50x。
 - **E2E 常駐パイプライン `accel.run_pipeline`**: 転送1回で op 連鎖。5-op で per-op 比 4.9x、
   CPU 比 12.6x。run_batch 逐次適用とビット一致。
+- **E2E ブリッジ `accel_bridge.py` 完了**: 進化 champion(genome/pipeline)を GPU 常駐区間
+  (accel 対応)+ CPU 区間(未対応)へ自動分割して実行。連続 accel op は 1 転送に償却。
+  **honest metric 検証**: GPU ルーティングは denoise champion の **PSNR を ±0.01 dB で保存**
+  (holdout −0.006 / locked −0.011 dB)。pixel は median 端差 → 後段 sk_tv(全域 TV)伝播で
+  ~0.06 ずれるが、**タスク指標は不変** = GPU 化は champion を壊さない。tests/test_accel_bridge.py。
 - **粘菌ソルバ GPU 化**: matrix-free バッチ CG + CUDA graph、最大 162x(参考=起動律速の逆例)。
+
+## ★データ駆動の wave 優先度(2026-08-26、accel_bridge.report_champions 実測)
+現状 champion 実 op のうち GPU 稼働は **4/38 段のみ**(threshold×2 / median / percentile)。
+残りは全て CPU。ランダムに op を足すのでなく、進化が実際に選ぶ op を頻度順で GPU 化する:
+
+| 未対応 op(群) | 登場 champion | GPU 化の効き | 難度 |
+|---|---|---|---|
+| **volume 群** vol_median/vol_gaussian/vol_erode/vol_dilate/vol_threshold | vol_count, vol_denoise を **0%→~100%** | 最大(2 champion を丸ごと) | 中(3D pool/conv、要 volume sort) |
+| **illuminate** | edge, locate, locate_rot(3) | 高(3 champion に共通) | 中 |
+| **領域モルフォロジ** reg_dilate/erosion_golay/opening_circle/gdilate | binarize, count, edge | 中(projective_trans_region が残る) | 中 |
+| **ncc_locate**(NCC) | locate, locate_rot(2) | 中(shapematch_gpu の conv2d を流用可) | 低 |
+| backend 固有 sk_tv/cv_sharpen/simulate_defocus/xsitk_*/xcv_*/sk_scharr | 各 1 | 低 | 高 |
+| projective_trans_region(幾何) | binarize, count | — | wave2(order3 spline でブロック中) |
+
+→ **次波 = volume 群**(最ROI・2 champion を丸ごと GPU 化、既存 2D op の 3D 版)。
 
 ## 設計原則(honest parity gate)
 - accel op は **core registry と interior <5e-3 一致(faithful)** を満たすものだけ載せる。
