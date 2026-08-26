@@ -36,7 +36,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def _to_batch(imgs, device):
-    x = np.stack([np.asarray(i, np.float64) for i in imgs])[:, None, :, :]
+    # float32 で直に積む(最終テンソルは float32 なので float64 中間は純粋な無駄=転送床の主因)。
+    # 値は float64→float32 と float32 直変換で同一(単一丸め)なので parity は不変。
+    x = np.stack([np.asarray(i, np.float32) for i in imgs])[:, None, :, :]
     return torch.as_tensor(x, dtype=torch.float32, device=device)
 
 
