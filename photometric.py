@@ -18,11 +18,13 @@ def _as_stack(images):
     return a
 
 
-def photometric_stereo(images, lights, mask=None):
+def photometric_stereo(images, lights, mask=None, normalize=True):
     """Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。
 
     I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、
     albedo=|g|, normal=g/|g|。N>=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。
+    normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。
+    強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。
     """
     I = _as_stack(images)                       # (N,H,W)
     L = np.asarray(lights, dtype=np.float64)    # (N,3)
@@ -33,6 +35,8 @@ def photometric_stereo(images, lights, mask=None):
         raise ValueError("images と lights の枚数が不一致")
     if N < 3:
         raise ValueError("光源は 3 方向以上必要")
+    if normalize:
+        L = L / (np.linalg.norm(L, axis=1, keepdims=True) + 1e-12)
     Iv = I.reshape(N, H * W)                     # (N,P)
     Lpinv = np.linalg.pinv(L)                    # (3,N)  最小二乗
     g = Lpinv @ Iv                              # (3,P)  = albedo*normal

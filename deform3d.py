@@ -1,0 +1,385 @@
+"""deform3d — 3D 非剛体・変形レジストレーション(点群 in / 点群 out)。
+
+cv2 / HALCON は 2D の変形照合(可変形テンプレート・光学的流れ)は持つが、**3D 点群の
+非剛体位置合わせ**は手薄。ここを fullseye の差別化点として埋める。
+
+提供する op:
+    - ``tps_fit`` / ``tps_warp``     : 3D Thin-Plate-Spline(TPS)の当てはめと適用。
+    - ``register_nonrigid``          : 非剛体 ICP(反復最近傍対応 → TPS 再当てはめ)。
+    - ``register_cpd_rigid``         : Coherent Point Drift(CPD)剛体版(EM で軟対応)。
+
+すべて numpy ``(N,3)`` を入出力とする。重い依存(torch 等)は使わず、
+``scipy.spatial.cKDTree``(最近傍)と ``numpy.linalg``(線形代数)だけで完結する。
+
+数学メモ(3D TPS):
+    変形写像 f(x) = c + A·x + Σ_i w_i·U(‖x − p_i‖) を制御点対応から解く。
+    3D の TPS(biharmonic)基底は U(r) = r。制御点 p_i(=移動側)を固定し、
+    目標 v_i(=固定側)へ写す係数 (w, a=[c;A]) を鞍点系
+        [ K+λI   P ] [ w ]   [ v ]
+        [ P^T    0 ] [ a ] = [ 0 ]
+    から求める。K_ij = U(‖p_i − p_j‖)、P_i = [1, p_i]。λ は平滑化(0 で厳密内挿)。
+"""
+from __future__ import annotations
+
+import numpy as np
+
+__all__ = [
+    "tps_kernel",
+    "tps_fit",
+    "tps_warp",
+    "register_nonrigid",
+    "register_cpd_rigid",
+]
+
+
+# --------------------------------------------------------------------------- #
+# 入力正規化ヘルパ                                                            #
+# --------------------------------------------------------------------------- #
+def _as_points(a, name="points"):
+    """array-like を float64 の ``(N,3)`` 配列へ正規化する。
+
+    長さ 3 の 1 次元入力は単一点として ``(1,3)`` に昇格する。形状が不正なら
+    ``ValueError`` を送出する(型チェックだけで済ませず実際の次元を検証)。
+    """
+    arr = np.asarray(a, dtype=np.float64)
+    if arr.ndim == 1:
+        if arr.shape[0] != 3:
+            raise ValueError(f"{name} は長さ3の1次元、または (N,3) でなければならない "
+                             f"(受領: shape={arr.shape})")
+        arr = arr.reshape(1, 3)
+    if arr.ndim != 2 or arr.shape[1] != 3:
+        raise ValueError(f"{name} は (N,3) 形状でなければならない(受領: shape={arr.shape})")
+    if not np.all(np.isfinite(arr)):
+        raise ValueError(f"{name} に非有限値(NaN/Inf)が含まれる")
+    return arr
+
+
+def _pairwise_dist(a, b):
+    """``a`` (M,3) と ``b`` (N,3) の総当たりユークリッド距離 (M,N) を返す。
+
+    ``scipy.spatial.distance.cdist`` があれば使い、無ければ numpy broadcasting で
+    計算する(graceful degradation)。
+    """
+    try:
+        from scipy.spatial.distance import cdist
+        return cdist(a, b, metric="euclidean")
+    except Exception:  # scipy が無い/失敗 → numpy にフォールバック
+        diff = a[:, None, :] - b[None, :, :]
+        d2 = np.einsum("mnk,mnk->mn", diff, diff)
+        return np.sqrt(np.maximum(d2, 0.0))
+
+
+# --------------------------------------------------------------------------- #
+# Thin-Plate-Spline(3D)                                                      #
+# --------------------------------------------------------------------------- #
+def tps_kernel(r):
+    """3D TPS の放射基底関数 U(r) = r を返す(要素ごと)。
+
+    3 次元の thin-plate(biharmonic)Green 関数は U(r) = r。2D の r²·log r とは
+    異なり原点で特異性を持たないため、制御点が一致(r=0)しても安定。
+    """
+    return np.asarray(r, dtype=np.float64)
+
+
+def tps_fit(src_ctrl, dst_ctrl, lam=0.0):
+    """3D Thin-Plate-Spline を制御点対応から当てはめる。
+
+    移動側の制御点 ``src_ctrl`` を固定側 ``dst_ctrl`` へ写す TPS 係数を、鞍点系
+    を最小二乗(``numpy.linalg.lstsq``)で解いて求める。λ=0 なら制御点上で厳密に
+    内挿(``tps_warp(model, src_ctrl) == dst_ctrl``)、λ>0 で平滑化する。
+
+    引数:
+        src_ctrl: (K,3) 制御点(変形の始点、TPS のカーネル中心 p_i)。
+        dst_ctrl: (K,3) 対応する目標点(変形の終点 v_i)。
+        lam: 正則化係数 λ≥0。カーネル行列 K の対角へ λ を加える。大きいほど
+            変形は滑らか(制御点への当てはめは緩む)。
+
+    返り値:
+        model: dict。キーは
+            "ctrl" (K,3) カーネル中心 p_i、
+            "w"    (K,3) 非線形(曲げ)係数、
+            "a"    (4,3) アフィン係数([平行移動; 線形部]、a[0]=c, a[1:4]=Aᵀ)、
+            "lam"  使用した λ。
+
+    例外:
+        ValueError: 形状不一致、制御点数不足、非有限値。
+    """
+    p = _as_points(src_ctrl, "src_ctrl")
+    v = _as_points(dst_ctrl, "dst_ctrl")
+    if p.shape[0] != v.shape[0]:
+        raise ValueError(f"src_ctrl と dst_ctrl の点数が不一致 "
+                         f"({p.shape[0]} vs {v.shape[0]})")
+    n = p.shape[0]
+    if n < 4:
+        # 3D のアフィン部(4 係数)を決めるには最低 4 点必要。
+        raise ValueError(f"3D TPS には制御点が4点以上必要(受領: {n})")
+    if lam < 0:
+        raise ValueError(f"lam は非負でなければならない(受領: {lam})")
+
+    # カーネル行列 K (n,n) と多項式部 P (n,4)
+    K = tps_kernel(_pairwise_dist(p, p))
+    if lam > 0:
+        K = K + lam * np.eye(n)
+    P = np.hstack([np.ones((n, 1)), p])  # [1, x, y, z]
+
+    # 鞍点系 L (n+4, n+4) と右辺 Y (n+4, 3)
+    L = np.zeros((n + 4, n + 4), dtype=np.float64)
+    L[:n, :n] = K
+    L[:n, n:] = P
+    L[n:, :n] = P.T
+    Y = np.zeros((n + 4, 3), dtype=np.float64)
+    Y[:n, :] = v
+
+    # 数値安定のため最小二乗で解く(鞍点系の階数落ちにも最小ノルム解で対処)。
+    params, *_ = np.linalg.lstsq(L, Y, rcond=None)
+    w = params[:n, :]      # (n,3)
+    a = params[n:, :]      # (4,3)
+    return {"ctrl": p, "w": w, "a": a, "lam": float(lam)}
+
+
+def tps_warp(model, points):
+    """TPS モデルで点群を変形する。
+
+    f(x) = [1,x,y,z]·a + Σ_i w_i·U(‖x − p_i‖) を評価する。
+
+    引数:
+        model: ``tps_fit`` が返した dict。
+        points: (M,3)(または長さ3の1次元)。変形したい点群。
+
+    返り値:
+        (M,3) 変形後の点群(入力が1次元なら (3,) を返す)。
+
+    例外:
+        ValueError: model の形式不正、または points の形状不正。
+    """
+    for key in ("ctrl", "w", "a"):
+        if key not in model:
+            raise ValueError(f"model に必須キー '{key}' が無い(tps_fit の出力を渡すこと)")
+    ctrl = np.asarray(model["ctrl"], dtype=np.float64)
+    w = np.asarray(model["w"], dtype=np.float64)
+    a = np.asarray(model["a"], dtype=np.float64)
+
+    was_1d = np.asarray(points).ndim == 1
+    x = _as_points(points, "points")
+
+    U = tps_kernel(_pairwise_dist(x, ctrl))       # (M,K)
+    Phi = np.hstack([np.ones((x.shape[0], 1)), x])  # (M,4)
+    out = Phi @ a + U @ w                          # (M,3)
+    return out[0] if was_1d else out
+
+
+# --------------------------------------------------------------------------- #
+# 非剛体 ICP(TPS ベース)                                                     #
+# --------------------------------------------------------------------------- #
+def register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None):
+    """非剛体 ICP で ``src`` を ``dst`` へ寄せる。
+
+    各反復で「現在の変形後 src」から ``dst`` への最近傍対応を張り直し、その対応を
+    制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を
+    変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。
+
+    引数:
+        src: (N,3) 移動側点群。
+        dst: (M,3) 固定側(参照)点群。
+        iters: 最大反復回数。
+        lam: TPS 正則化 λ。大きいほど変形が滑らか(外れ対応に頑健、当てはめは緩い)。
+        k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると
+            ``dst`` 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。
+
+    返り値:
+        warped_src: (N,3) 最終変形後の src。
+        model: 最終 TPS モデル(制御中心 = 元 src)。恒等(反復0)なら None。
+        info: dict。"rms"(最終の対応 RMS)、"rms_init"(初期の対応 RMS)、
+              "rms_history"(list)、"iters"(実反復数)、"converged"(bool)。
+
+    例外:
+        ValueError: 形状不正、点数不足、k_smooth 不正。
+    """
+    from scipy.spatial import cKDTree
+
+    S0 = _as_points(src, "src")
+    D = _as_points(dst, "dst")
+    if S0.shape[0] < 4:
+        raise ValueError(f"src は4点以上必要(TPS 制御点)(受領: {S0.shape[0]})")
+    if D.shape[0] < 1:
+        raise ValueError("dst が空")
+    if iters < 1:
+        raise ValueError(f"iters は1以上(受領: {iters})")
+    if k_smooth is not None:
+        if not isinstance(k_smooth, (int, np.integer)) or k_smooth < 1:
+            raise ValueError(f"k_smooth は正の整数か None(受領: {k_smooth})")
+        k_smooth = int(min(k_smooth, D.shape[0]))
+
+    tree = cKDTree(D)
+
+    def _targets(moved):
+        """変形後 src 各点に対する dst 側の目標点(ハード or k平均)を返す。"""
+        if k_smooth is None or k_smooth == 1:
+            _, idx = tree.query(moved, k=1)
+            return D[idx], _
+        dists, idx = tree.query(moved, k=k_smooth)
+        # idx: (N,k) → k 近傍の平均
+        return D[idx].mean(axis=1), dists
+
+    warped = S0.copy()
+    model = None
+    rms_history = []
+    prev_rms = np.inf
+    converged = False
+    used = 0
+
+    # 初期(恒等)の対応 RMS
+    tgt0, _ = _targets(warped)
+    rms_init = float(np.sqrt(np.mean(np.sum((warped - tgt0) ** 2, axis=1))))
+
+    for it in range(iters):
+        used = it + 1
+        targets, _ = _targets(warped)
+
+        # 制御中心は「元の src」、目標は現在の最近傍。これで写像 src→dst を学習。
+        model = tps_fit(S0, targets, lam=lam)
+        warped = tps_warp(model, S0)
+
+        rms = float(np.sqrt(np.mean(np.sum((warped - targets) ** 2, axis=1))))
+        rms_history.append(rms)
+
+        # 収束: 相対改善が小さくなったら打ち切り。
+        if prev_rms < np.inf:
+            rel = abs(prev_rms - rms) / max(prev_rms, 1e-12)
+            if rel < 1e-4:
+                converged = True
+                prev_rms = rms
+                break
+        prev_rms = rms
+
+    info = {
+        "rms": float(prev_rms),
+        "rms_init": rms_init,
+        "rms_history": rms_history,
+        "iters": used,
+        "converged": converged,
+    }
+    return warped, model, info
+
+
+# --------------------------------------------------------------------------- #
+# Coherent Point Drift(剛体)                                                 #
+# --------------------------------------------------------------------------- #
+def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
+    """Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。
+
+    ``src``(移動側 Y, M点)を ``dst``(固定側 X, N点)へ剛体変換で合わせる。CPD は
+    dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応
+    (posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応を
+    ハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。
+
+    参考: Myronenko & Song, "Point Set Registration: Coherent Point Drift", 2010。
+
+    引数:
+        src: (M,3) 移動側点群。
+        dst: (N,3) 固定側点群。
+        iters: 最大 EM 反復回数。
+        w: 外れ値(一様分布)混合比 0≤w<1。0 で外れ無し。
+        tol: 分散 σ² の相対変化がこの値未満で収束打ち切り。
+
+    返り値:
+        R: (3,3) 回転(``dst ≈ src @ R.T + t``)。
+        t: (3,) 並進。
+        info: dict。"sigma2"(最終分散)、"iters"、"converged"、"rmse"
+              (変換後 src の最近傍 RMSE)。
+
+    例外:
+        ValueError: 形状不正、点数不足、w 範囲外。
+    """
+    from scipy.spatial import cKDTree
+
+    Y = _as_points(src, "src")   # 移動側 (M,3)
+    X = _as_points(dst, "dst")   # 固定側 (N,3)
+    if not (0.0 <= w < 1.0):
+        raise ValueError(f"w は 0≤w<1(受領: {w})")
+    if Y.shape[0] < 1 or X.shape[0] < 1:
+        raise ValueError("src / dst が空")
+    if iters < 1:
+        raise ValueError(f"iters は1以上(受領: {iters})")
+
+    M, D = Y.shape
+    N = X.shape[0]
+
+    R = np.eye(D, dtype=np.float64)
+    t = np.zeros(D, dtype=np.float64)
+
+    # 初期分散 σ² = (1/(D N M)) Σ_{m,n} ‖x_n − y_m‖²
+    sigma2 = _pairwise_dist(X, Y).__pow__(2).sum() / (D * N * M)
+    sigma2 = max(float(sigma2), 1e-12)
+
+    converged = False
+    used = 0
+    c_const = (2.0 * np.pi) ** (D / 2.0) * (w / max(1.0 - w, 1e-12)) * (M / N)
+
+    for it in range(iters):
+        used = it + 1
+
+        # --- E ステップ: posterior P (M,N) -------------------------------- #
+        TY = Y @ R.T + t                       # 変換後の移動側 (M,3)
+        d2 = _pairwise_dist(X, TY) ** 2        # (N,M): ‖x_n − T(y_m)‖²
+        P = np.exp(-d2.T / (2.0 * sigma2))     # (M,N)
+        denom = P.sum(axis=0, keepdims=True) + c_const * (2.0 * np.pi * sigma2) ** (D / 2.0)
+        denom = np.maximum(denom, 1e-300)
+        P = P / denom                          # 列(=各 x_n)で正規化
+
+        # --- M ステップ: 剛体変換の最尤更新 ------------------------------ #
+        P1 = P.sum(axis=1)        # (M,) 各 y_m の総重み
+        Pt1 = P.sum(axis=0)       # (N,) 各 x_n の総重み
+        Np = P.sum()
+        if Np < 1e-12:
+            break
+
+        mu_x = (X.T @ Pt1) / Np   # (3,)
+        mu_y = (Y.T @ P1) / Np    # (3,)
+        Xh = X - mu_x
+        Yh = Y - mu_y
+
+        A = Xh.T @ P.T @ Yh       # (3,3)
+        U, _S, Vt = np.linalg.svd(A)
+        C = np.eye(D)
+        C[-1, -1] = np.linalg.det(U @ Vt)
+        R = U @ C @ Vt
+        t = mu_x - R @ mu_y
+
+        # σ² 更新
+        trAtR = np.trace(A.T @ R)
+        trXhPX = float(np.sum(Pt1 * np.sum(Xh ** 2, axis=1)))
+        new_sigma2 = (trXhPX - trAtR) / (Np * D)
+        new_sigma2 = max(float(new_sigma2), 1e-12)
+
+        if abs(new_sigma2 - sigma2) / max(sigma2, 1e-12) < tol:
+            sigma2 = new_sigma2
+            converged = True
+            break
+        sigma2 = new_sigma2
+
+    # 変換後 src の最近傍 RMSE(品質指標)
+    TY = Y @ R.T + t
+    dmin, _ = cKDTree(X).query(TY, k=1)
+    rmse = float(np.sqrt(np.mean(dmin ** 2)))
+
+    info = {"sigma2": float(sigma2), "iters": used,
+            "converged": converged, "rmse": rmse}
+    return R, t, info
+
+
+if __name__ == "__main__":
+    rng = np.random.default_rng(0)
+    src = rng.random((80, 3))
+    # 滑らかな曲げを既知変形として掛ける
+    warp = src + 0.12 * np.stack(
+        [np.sin(np.pi * src[:, 1]),
+         0.5 * np.sin(np.pi * src[:, 2]),
+         0.3 * np.sin(np.pi * src[:, 0])], axis=1)
+    w_src, model, info = register_nonrigid(src, warp, iters=30, lam=0.02)
+    print("nonrigid rms_init -> rms:", round(info["rms_init"], 5),
+          "->", round(info["rms"], 5), "iters", info["iters"])
+    R0 = np.array([[np.cos(0.3), -np.sin(0.3), 0], [np.sin(0.3), np.cos(0.3), 0], [0, 0, 1]])
+    dst = src @ R0.T + np.array([0.2, -0.1, 0.05])
+    R, t, cinfo = register_cpd_rigid(src, dst, iters=80)
+    print("cpd rmse:", round(cinfo["rmse"], 6), "iters", cinfo["iters"])
