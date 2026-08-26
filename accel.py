@@ -61,6 +61,29 @@ def _sep_conv(t, k):
     return F.conv2d(t, kv)
 
 
+def _sym_idx(n, r, device):
+    """symmetric(半標本)反射の gather index。scipy.ndimage の既定 mode='reflect'
+    (= numpy 'symmetric'、端サンプルを複製 (d c b a | a b c d))を torch で再現する。
+    torch の F.pad 'reflect' は端非複製の鏡映(numpy 'reflect' = scipy 'mirror')で別物。
+    r>n でも周期 2n の折り返しで正しく反射する(大 σ gaussian で必須)。"""
+    j = torch.arange(-r, n + r, device=device)
+    m = torch.remainder(j, 2 * n)
+    return torch.where(m >= n, 2 * n - 1 - m, m)
+
+
+def _pad_sym(t, r, axis):
+    """(B,1,H,W) の axis(2=H / 3=W)を symmetric で両側 r パディング(index_select)。"""
+    return t.index_select(axis, _sym_idx(t.shape[axis], r, t.device))
+
+
+def _sep_conv_sym(t, k):
+    """symmetric パディング版の分離可能 conv。scipy gaussian_filter と bit 一致(全サイズ)。"""
+    r = (k.numel() - 1) // 2
+    t = F.conv2d(_pad_sym(t, r, 3), k.view(1, 1, 1, -1))
+    t = F.conv2d(_pad_sym(t, r, 2), k.view(1, 1, -1, 1))
+    return t
+
+
 def _conv(t, ker, device):
     k = torch.as_tensor(ker, dtype=torch.float32, device=device).view(1, 1, *ker.shape)
     r0, r1 = ker.shape[0] // 2, ker.shape[1] // 2
