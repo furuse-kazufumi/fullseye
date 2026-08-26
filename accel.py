@@ -470,6 +470,8 @@ ACCEL = {
     "cv_sharpen": (_cv_sharpen, "cv_sharpen", "emphasize"),
     # projective_trans_region(透視ワープ、grid_sample 近似)。bit 一致でなく指標保存で採否判定
     "projective_trans_region": (_projective_region, "projective_trans_region", "projective_trans_region"),
+    # simulate_defocus = uniform_filter(_k(a)) = box mean。_mean 流用(interior faithful)。denoise champion
+    "simulate_defocus": (_mean, "simulate_defocus", "simulate_defocus"),
 }
 
 
