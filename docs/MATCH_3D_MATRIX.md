@@ -94,6 +94,59 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 
 **pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(対応あり明示復元)+ Fourier-Mellin(対応なし回転+スケール)の 3 系統で対応。**
 
+## 処理時間(実測 N=64³、CPU=py3.11 torch cpu / GPU=RTX5090 torch cu128、median ms)
+発散した手法群を計測して**使い分けの土台**にする。★=GPU が明確に有利、▲=CPU の方が速い/同等(小問題は転送・起動overhead が勝つ)。
+
+| 手法 | CPU ms | GPU ms | GPU/CPU | 備考 |
+|---|---|---|---|---|
+| phase_3d ★ | 37.7 | **0.49** | 77× | FFT、最速の姿勢(並進) |
+| logpolar_z ★ | 96.2 | **2.84** | 34× | FFT、回転+スケール |
+| hough_plane ★ | 16.8 | 3.62 | 4.6× | 平面検出 |
+| refine_rot_z ★ | 33.2 | 3.87 | 8.6× | 回転精緻化 |
+| NCC(locate) ★ | 189 | 9.07 | 21× | 定位の基準 |
+| shape_3d ★ | 69.7 | 9.23 | 7.6× | コントラスト不変定位 |
+| curvature ★ | 58 | 10.4 | 5.6× | 形状定位 |
+| hough_sphere ★ | 21.5 | 10.2 | 2.1× | 球検出 |
+| chamfer(scipy) | 36.1 | 16.7 | 2.2× | 遮蔽頑健(EDT は CPU) |
+| scene_flow_lk ★ | 65.2 | 17.5 | 3.7× | 運動場 |
+| chamfer(jfa) | 89.5 | 23.3 | 3.8× | 全 GPU 距離場(大 N で有利) |
+| edt_jfa | 64.7 | 27.8 | 2.3× | N≥96 で scipy 超え |
+| hough_3d(vote) ★ | 527 | 63.0 | 8.4× | 複数インスタンス、重い |
+| mip_2d ▲ | 50.6 | 46.6 | 1.1× | 転送律速、GPU 恩恵薄 |
+| sh_descriptor ▲ | **27.5** | 60.3 | 0.5× | per-radius ループ、CPU 優位 |
+| refine_newton ▲ | **1.3** | 6.5 | 0.2× | 小問題、CPU で十分 |
+| refine_lk ▲ | **1.02** | 2.2 | 0.5× | 小問題、CPU で十分 |
+| refine_lm ▲ | **3.86** | 10.3 | 0.4× | autograd、CPU 優位 |
+| pca(点群) ▲ | **0.21** | — | — | numpy eigh、CPU 完結 |
+| icp_p2p(点群) ▲ | **15.3** | — | — | scipy cKDTree、CPU |
+| icp_p2plane(点群) ▲ | **19.0** | — | — | torch/CPU |
+
+**使い分け(計算資源)**: FFT系(phase/logpolar)・NCC・voting・flow・curvature は **GPU**。小さな反復精緻化(newton/lk/lm)・点群系(pca/icp)・SH は **CPU** の方が速い(GPU 起動/転送 overhead が問題規模を上回る)。
+
+## 使い分け(状況 → 手法)。発散した手法を収束させる決定ガイド
+| 状況・要件 | 推す手法 | 理由 |
+|---|---|---|
+| 平行移動のみ、テンプレ有 | **NCC** or **phase_3d** | phase はテンプレ不要・最速(0.5ms) |
+| コントラスト/照明が変わる | **shape_3d**(勾配方向) | 強度不変 |
+| 局所の**形が違う**同強度物体を区別 | **curvature**(shape index) | 曲面型で照合 |
+| **遮蔽・部分**が入る | **chamfer** or **gen. Hough** | 欠損はピークを下げるだけ |
+| **複数インスタンス** | **gen. Hough**(NMS ピーク) | 投票 accumulator |
+| **z 回転+スケール**、対応なし | **logpolar_z**(粗)→ **refine_rot_z**(精) | FMT で当て GN で締める |
+| **任意回転**、対応あり点群 | **PCA**(粗)→ **ICP**(精) | 主軸整列 → 点-面 ICP |
+| **任意回転**、対応なし点群・部分重なり | **feature descriptor**(FPFH/SHOT、進行中)→ RANSAC → ICP | 初期推定なし大域登録 |
+| **原始形状検出**(地面/壁/ボール) | **パラメトリック Hough**(平面/球) | テンプレ不要 |
+| **回転不変な検索/照合** | **SH 記述子** | 帯域エネルギー不変 |
+| **運動・変形**の推定 | **scene_flow_lk** | 密運動場 |
+| 粗推定を**高精度化** | Newton/LK/LM/ICP(パラメータ別) | 下表 |
+
+## 粗 → 精のパイプライン(coarse を fine で締める対応)
+| 粗推定(出力) | 精緻化 | 到達精度 |
+|---|---|---|
+| NCC/shape/Hough の整数ピーク | `refine_peak_newton` | 0.01 voxel |
+| 整数並進 | `refine_translation_lk` / `refine_lm`(+スケール) | 0.008 voxel |
+| Fourier-Mellin 回転 ±3° | `refine_rotation_z` | 0.01° |
+| PCA / 記述子 RANSAC の粗姿勢 | `icp_point2point_3d` / `icp_point2plane` | RMSE 1e-10 |
+
 ## 次に埋めるセル(TODO)。方針=手段を1つに絞らず発散(ノウハウは幅に蓄積)
 - **feature descriptor**(Harris3D/ISS keypoint + FPFH/SHOT/spin image + RANSAC): 疎対応で大回転・部分重なり。
 - **scene flow**(2D optical flow の 3D 版): voxel 運動場、変形/動体。
