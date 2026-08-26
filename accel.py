@@ -397,7 +397,9 @@ def _tv_chambolle(img, weight, eps=2.0e-4, max_iter=200):
     d = torch.zeros_like(img)
     tau = 0.25                                        # 1/(2*ndim), ndim=2
     npix = float(img.shape[2] * img.shape[3])
-    out = img
+    B = img.shape[0]
+    out_final = img.clone()
+    done = torch.zeros(B, dtype=torch.bool, device=img.device)
     E_init = E_prev = None
     for i in range(max_iter):
         if i > 0:
@@ -407,6 +409,9 @@ def _tv_chambolle(img, weight, eps=2.0e-4, max_iter=200):
             out = img + d
         else:
             out = img
+        # 画像ごと停止(skimage は per-image に eps 停止)。未収束の画像だけ out を更新し、
+        # 収束済みは freeze(全画像を全反復回すと早期停止すべき画像を過剰平滑化して非faithful)。
+        out_final = torch.where(done.view(B, 1, 1, 1), out_final, out)
         E = (d * d).sum(dim=(1, 2, 3))                # per-image
         g0 = torch.zeros_like(img)
         g1 = torch.zeros_like(img)
@@ -422,10 +427,11 @@ def _tv_chambolle(img, weight, eps=2.0e-4, max_iter=200):
             E_init = E.clamp_min(1e-12)
             E_prev = E
         else:
-            if bool((torch.abs(E_prev - E) < eps * E_init).all()):
-                break
+            done = done | (torch.abs(E_prev - E) < eps * E_init)
             E_prev = E
-    return out
+            if bool(done.all()):
+                break
+    return out_final
 
 
 def _sk_tv(t, a, b, dev):
