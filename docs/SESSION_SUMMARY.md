@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-26 13:24:13
+- **最終更新**: 2026-08-26 19:12:21
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+403deb19 auto: GPU_ACCEL_PLAN.md 編集前 (2026-08-26 19:11)
+5eaf013b auto: api.py 編集前 (2026-08-26 19:08)
+985b7643 auto: api.py 編集前 (2026-08-26 19:08)
+8e6ca3c6 auto: GPU_ACCEL_PLAN.md 編集前 (2026-08-26 19:05)
+3bd98ee5 auto: GPU_ACCEL_PLAN.md 編集前 (2026-08-26 19:05)
+8f22fee0 auto: accel_bridge.py 編集前 (2026-08-26 19:02)
+43bee141 auto: accel.py 編集前 (2026-08-26 18:58)
+3d0b71d1 auto: accel.py 編集前 (2026-08-26 18:58)
 7bf9f414 auto: GPU_ACCEL_PLAN.md 編集前 (2026-08-26 13:22)
 194ffdbf auto: GPU_ACCEL_PLAN.md 編集前 (2026-08-26 13:21)
-cfe5e1c5 auto: accel_bridge.py 編集前 (2026-08-26 13:18)
-ff92007c auto: accel_bridge.py 編集前 (2026-08-26 13:17)
-5e3bd5d3 auto: accel_bridge.py 編集前 (2026-08-26 13:17)
-e7278e26 auto: accel_bridge.py 編集前 (2026-08-26 13:17)
-e8f80c67 auto: accel_bridge.py 編集前 (2026-08-26 13:16)
-bdd5c4d3 auto: accel_bridge.py 編集前 (2026-08-26 13:16)
-92ef5810 auto: accel_bridge.py 編集前 (2026-08-26 13:16)
-7d1eccc9 auto: accel_bridge.py 編集前 (2026-08-26 13:16)
 ```
 
 ## 現在の git status
@@ -31,16 +31,13 @@ M docs/GPU_ACCEL_PLAN.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-13:23 .pytest_cache/v/cache/nodeids
-13:22 docs/GPU_ACCEL_PLAN.md
-13:19 tests/test_accel_match.py
-13:18 accel_bridge.py
-13:15 accel_match.py
-13:12 accel_vol.py
-13:11 accel.py
-13:02 tests/test_accel_vol.py
-12:52 tests/test_accel_bridge.py
-12:49 .pytest_cache/v/cache/lastfailed
+19:11 docs/GPU_ACCEL_PLAN.md
+19:10 .pytest_cache/v/cache/nodeids
+19:10 tests/test_api_device.py
+19:08 api.py
+19:03 tests/test_accel_region.py
+19:02 accel_bridge.py
+18:58 accel.py
 ```
 
 ---

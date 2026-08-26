@@ -85,7 +85,12 @@
       (bit-exact ゆえ)。tests/test_accel_region.py(20)。
 - **champion GPU カバレッジ: 4/38 → 26/38 段。4 champion が 100% GPU**(locate/locate_rot/
   vol_count/vol_denoise)、**binarize/count は 5/6**(残 projective のみ)。
-- [ ] **fullseye API から device 指定**: 公開 API(api.py / fslib)で device="cuda" を通す。
+- [x] **fullseye API から device 指定 完了**(2026-08-26): `api.run_pipeline(..., device="cuda")` /
+      `api.apply(..., device="cuda")` を追加。device!="cpu" は accel_bridge の GPU 常駐経路(未対応 op
+      は CPU、torch/GPU 不在は静かに CPU フォールバック)。既定 device="cpu" は挙動不変(回帰テスト)。
+      **CUDA vs CPU-torch 実結果照合**(loco venv): region/volume は **bit 一致(0.0)**、illuminate/ncc は
+      float32 epsilon(5.96e-08)、ncc 位置は完全一致 → GPU が正しく計算していることを確認。
+      tests/test_api_device.py(4)。**これで公開層から GPU 経路が通り、他プロジェクトの土台になる。**
 
 ## Afterman トラック(集団評価を GPU バッチで)
 - [ ] 構造進化の population 評価を GPU バッチ化(loco venv)。世代あたりの評価が集団サイズぶん
