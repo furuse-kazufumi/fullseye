@@ -277,3 +277,83 @@ def test_hough_robust_to_occlusion():
     Tocc = T.copy(); Tocc[:, :, 6:] = 0                  # 半分遮蔽
     p = X.match_hough_3d(scene, Tocc, "cpu", topk=1)
     assert abs(p[0][1] - d) + abs(p[0][2] - h) + abs(p[0][3] - w) <= 2
+
+
+@skip
+def test_curvature_shape_index_sphere_vs_cylinder():
+    """線→面リフト: shape index が球=cap(≈+1)・円柱=ridge(≈+0.5)を正しく分類。"""
+    N = 48; c = N // 2
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    r = np.sqrt((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2)
+    sphere = 1 / (1 + np.exp((r - 12) / 1.5))
+    S, _, _, _ = X.curvature_maps(sphere, "cpu", mc=0.01)
+    Ss = S.cpu().numpy()[np.abs(r - 12) < 1.5]
+    assert abs(Ss.mean() - 1.0) < 0.1                    # 球殻 = cap
+    rc = np.sqrt((yy - c) ** 2 + (xx - c) ** 2)
+    cyl = 1 / (1 + np.exp((rc - 10) / 1.5))
+    S2, _, _, _ = X.curvature_maps(cyl, "cpu", mc=0.01)
+    Sc = S2.cpu().numpy()[(np.abs(rc - 10) < 1.5) & (np.abs(zz - c) < 12)]
+    assert abs(Sc.mean() - 0.5) < 0.1                    # 円柱 = ridge
+
+
+@skip
+def test_curvature_matches_by_shape_not_intensity():
+    """曲率マッチングは強度でなく形状で一致 = 同強度の球/円柱から球を選ぶ。"""
+    ct = 8
+    zt, yt, xt = np.mgrid[0:2 * ct + 1, 0:2 * ct + 1, 0:2 * ct + 1]
+    rt = np.sqrt((zt - ct) ** 2 + (yt - ct) ** 2 + (xt - ct) ** 2)
+    Tsph = 1 / (1 + np.exp((rt - 5) / 1.2))
+    Ns = 56
+    sc = np.zeros((Ns, Ns, Ns))
+    Z, Y, Xx = np.mgrid[0:Ns, 0:Ns, 0:Ns]
+    ra = np.sqrt((Z - 16) ** 2 + (Y - 16) ** 2 + (Xx - 16) ** 2)
+    sc += 1 / (1 + np.exp((ra - 5) / 1.2))               # 球 A
+    rcB = np.sqrt((Y - 40) ** 2 + (Xx - 40) ** 2)
+    sc += 1 / (1 + np.exp((rcB - 5) / 1.2)) * (np.abs(Z - 40) < 6)   # 円柱 B(同強度)
+    r = X.match_curvature_3d(np.clip(sc, 0, 1), Tsph, "cpu", mc=0.01)
+    assert abs(r[1] - 16) + abs(r[2] - 16) + abs(r[3] - 16) <= 3     # 球を選ぶ
+
+
+@skip
+def test_hough_plane_detects_normal_and_offset():
+    """パラメトリック Hough: テンプレなしで平面 (法線 n, 距離 d) を検出。"""
+    N = 48
+    Z, Y, Xx = np.mgrid[0:N, 0:N, 0:N]
+    ntrue = np.array([0.3, 0.5, 0.8]); ntrue /= np.linalg.norm(ntrue)
+    dtrue = 25.0
+    vol = 1 / (1 + np.exp((ntrue[0] * Z + ntrue[1] * Y + ntrue[2] * Xx - dtrue) / 1.0))
+    nrm, dval, inl, tot = X.hough_plane_3d(vol, "cpu")
+    assert abs(abs(np.dot(nrm, ntrue)) - 1.0) < 0.02     # 法線方向を復元
+    assert abs(dval - dtrue) < 1.5                        # 距離(isosurface 位置)
+    assert inl > 0.7 * tot                                # 大半が inlier
+
+
+@skip
+def test_hough_sphere_detects_center_and_radius():
+    """パラメトリック Hough: テンプレなしで球 (中心 c, 半径 r) を検出。"""
+    N = 48
+    Z, Y, Xx = np.mgrid[0:N, 0:N, 0:N]
+    ctrue = (24, 22, 26); rtrue = 9
+    r = np.sqrt((Z - ctrue[0]) ** 2 + (Y - ctrue[1]) ** 2 + (Xx - ctrue[2]) ** 2)
+    ball = (r < rtrue).astype(float)
+    res = X.hough_sphere_3d(ball, "cpu", radii=range(5, 14))
+    votes, rad, center = res
+    assert abs(center[0] - ctrue[0]) + abs(center[1] - ctrue[1]) + abs(center[2] - ctrue[2]) <= 1
+    assert abs(rad - rtrue) < 1.5                         # 半径(isosurface 位置)
+
+
+@skip
+@need_scipy
+def test_sh_descriptor_rotation_invariant():
+    """線→面リフト: 球面調和記述子が 3D 回転で不変・別形状は識別(rod vs sphere)。"""
+    from scipy import ndimage
+    N = 48; c = N // 2
+    Z, Y, Xx = np.mgrid[0:N, 0:N, 0:N]
+    rod = np.exp(-(((Z - c) / 12.0) ** 2 + ((Y - c) / 3.0) ** 2 + ((Xx - c) / 3.0) ** 2))
+    sph = np.exp(-(((Z - c) / 7.0) ** 2 + ((Y - c) / 7.0) ** 2 + ((Xx - c) / 7.0) ** 2))
+    rod_r = ndimage.rotate(rod, 40, axes=(1, 2), reshape=False, order=1)
+    rod_r = ndimage.rotate(rod_r, 25, axes=(0, 2), reshape=False, order=1)
+    inv = X.match_sh_descriptor(rod, rod_r)
+    diff = X.match_sh_descriptor(rod, sph)
+    assert inv > 0.98                                     # 回転不変
+    assert inv - diff > 0.1                               # 別形状を識別

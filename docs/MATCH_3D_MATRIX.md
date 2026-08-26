@@ -65,3 +65,4 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 ## 進捗ログ
 - 2026-08-26: voxel×{NCC, pyramid, sub-voxel, region-morph, shape-based, phase-corr, PCA, MIP} 実装・検証・GPU 速度実測。point cloud / 3DGS を splat 変換で接続。test_match3d(7)+ test_accel_3d_toolkit(10)。
 - 2026-08-27: **Fourier-Mellin(`match_logpolar_z`)= 回転+スケール列を追加**(z 投影 2D FMT、GPU 30×、回転誤差 mean 3°/max 5.4°、honest な ±45/90° 別名限界を明記)。**GPU 厳密 EDT(`edt_jfa`、JFA+2)で chamfer を全 GPU 化**(`edt="jfa"`、scipy と max|err|=0 @N≤160、N≥96 で追い抜き 96→2.6×/128→4.7×)。5×7=35 セル。test_match3d 12(+logpolar 回転/スケール, edt_jfa 厳密, chamfer jfa=scipy)。速度: PCA 0.2ms / MIP 1.3× も実測。
+- 2026-08-27b: **generalized Hough(`match_hough_3d`)= 投票列を追加**(向きビン相関の総和、複数インスタンス 2/2 検出・遮蔽頑健、GPU 8×)。5×8=40 セル。test_match3d 14(+hough 複数体/遮蔽)。次段は TRIZ 発想(2D→3D 次元リフト・線→面)で「2D にあって 3D に無い手法」を体系的に増やす。

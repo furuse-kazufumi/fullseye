@@ -524,3 +524,235 @@ def match_hough_3d(scene, template, device="cpu", ndir=26, mc=0.05,
         x0, x1 = max(0, idx[2] - nms), idx[2] + nms + 1
         a[z0:z1, y0:y1, x0:x1] = -1.0
     return np.array(peaks)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 線→面リフト: 曲面曲率(主曲率 κ1,κ2 / shape index)= 2 次の曲面固有量
+# ═══════════════════════════════════════════════════════════════════════════
+def hessian3d(vol, device="cpu"):
+    """3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。"""
+    t = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
+    d2 = torch.tensor([1.0, -2.0, 1.0], device=device)
+    d1 = torch.tensor([-0.5, 0.0, 0.5], device=device)
+    sm = torch.tensor([1.0, 2.0, 1.0], device=device) / 4.0
+
+    def sep(k0, k1, k2):
+        out = t
+        for ax, k in enumerate((k0, k1, k2)):
+            shp = [1, 1, 1, 1, 1]; shp[2 + ax] = 3
+            pad = [0, 0, 0, 0, 0, 0]; pad[(2 - ax) * 2] = 1; pad[(2 - ax) * 2 + 1] = 1
+            out = F.conv3d(F.pad(out, tuple(pad), mode="replicate"), k.view(*shp))
+        return out
+
+    fzz = sep(d2, sm, sm); fyy = sep(sm, d2, sm); fxx = sep(sm, sm, d2)
+    fzy = sep(d1, d1, sm); fzx = sep(d1, sm, d1); fyx = sep(sm, d1, d1)
+    return [x[0, 0] for x in (fzz, fyy, fxx, fzy, fzx, fyx)]
+
+
+def curvature_maps(vol, device="cpu", mc=0.02):
+    """level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。
+
+    2D 輪郭の曲率(スカラー 1 個)の **線→面リフト**: 曲面は主曲率 κ1,κ2 の 2 個を持つ。
+    mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³、Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。
+    S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] は **強度・回転に不変な局所曲面型**(cup−1/rut/saddle0/
+    ridge+.5/cap+1)。外向き法線規約で明凸 blob=cap(+1)。返り値 (S, curvedness, mask, |g|)、全 torch。
+    """
+    gz, gy, gx = sobel3d(vol, device)
+    gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
+    a, b, c, d, e, f = hessian3d(vol, device)               # a=Hzz b=Hyy c=Hxx d=Hzy e=Hzx f=Hyx
+    g2 = gz * gz + gy * gy + gx * gx
+    gmag = torch.sqrt(g2.clamp_min(1e-12))
+    trH = a + b + c
+    gHg = (gz * gz * a + gy * gy * b + gx * gx * c
+           + 2 * gz * gy * d + 2 * gz * gx * e + 2 * gy * gx * f)
+    ksum = -(g2 * trH - gHg) / (g2 * gmag).clamp_min(1e-12)  # κ1+κ2(外向き法線)
+    A11 = b * c - f * f; A22 = a * c - e * e; A33 = a * b - d * d
+    A12 = e * f - d * c; A13 = d * f - b * e; A23 = d * e - a * f
+    gAg = (gz * gz * A11 + gy * gy * A22 + gx * gx * A33
+           + 2 * gz * gy * A12 + 2 * gz * gx * A13 + 2 * gy * gx * A23)
+    K = gAg / (g2 * g2).clamp_min(1e-12)                    # Gauss 曲率 κ1κ2
+    Hm = ksum * 0.5
+    disc = torch.sqrt((Hm * Hm - K).clamp_min(0.0))
+    k1 = Hm + disc; k2 = Hm - disc
+    S = (2 / float(np.pi)) * torch.atan2(k1 + k2, (k1 - k2).clamp_min(1e-9))
+    curv = torch.sqrt(((k1 * k1 + k2 * k2) * 0.5).clamp_min(0.0))
+    mask = (gmag > mc).float()
+    return S, curv, mask, gmag
+
+
+def match_curvature_3d(scene, template, device="cpu", mc=0.02, subvoxel=True):
+    """曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。
+
+    scene/template を **curvedness で重み付けした shape-index 場**へ変換 → 既存 3D NCC で定位。
+    強度でなく **局所曲面形状**で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を
+    区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。
+    """
+    Ss, Cs, Ms, _ = curvature_maps(scene, device, mc)
+    St, Ct, Mt, _ = curvature_maps(template, device, mc)
+    ws = (Ss * Cs * Ms).detach().cpu().numpy()
+    wt = (St * Ct * Mt).detach().cpu().numpy()
+    nz = np.argwhere(np.abs(wt) > np.abs(wt).max() * 0.1)
+    if len(nz) == 0:
+        return np.array([0.0, 0.0, 0.0, 0.0])
+    lo = nz.min(0); hi = nz.max(0) + 1
+    tmpl = wt[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]]         # 曲率テンプレの bbox
+    return M.ncc_locate_3d([ws], tmpl, device, subvoxel=subvoxel)[0]
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# パラメトリック Hough(2D 直線/円 → 3D 平面/球)= テンプレ不要の原始形状検出
+# ═══════════════════════════════════════════════════════════════════════════
+def _thin_surface(vol, device, iso=0.5):
+    """薄い境界面(1 voxel)= (vol>iso) と、その erosion の差。厚い勾配帯を排除。"""
+    t = torch.as_tensor(np.asarray(vol, np.float32), device=device)
+    b = (t > iso).float()[None, None]
+    er = -F.max_pool3d(-b, 3, stride=1, padding=1)       # min-pool = erosion
+    return ((b > 0.5) & (er < 0.5))[0, 0]
+
+
+def hough_plane_3d(vol, device="cpu", ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0):
+    """平面検出(2D Hough 直線の 3D リフト)。勾配=法線を使い (法線 n, 距離 d) 空間へ投票。
+
+    薄い境界面の各 voxel が自分の法線方向ビンと d=n·p に投票 → ピーク=支配平面。法線は勝ちビン内
+    の実法線平均で精緻化、d は投影のモード。点群/voxel の地面・壁の抽出に。返り値 (n(3,), d, inliers, total)。
+    """
+    gz, gy, gx, _ = _unit_grad3d(vol, device, mc)
+    gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
+    surf = _thin_surface(vol, device, iso)
+    idx = torch.nonzero(surf, as_tuple=False).float()
+    if len(idx) < 10:
+        return None
+    P = idx
+    n = torch.stack([gz[surf], gy[surf], gx[surf]], 1)
+    flip = n[:, 0] < 0
+    n[flip] *= -1                                        # 半球に畳む(n と -n は同一平面)
+    d = (n * P).sum(1)
+    dirs = _sphere_dirs(ndir, device)
+    dirs = dirs * torch.sign(dirs[:, 0:1] + 1e-9)
+    bins = torch.argmax(n @ dirs.T, 1)
+    dmin, dmax = float(d.min()), float(d.max())
+    dbin = torch.clamp(((d - dmin) / (dmax - dmin + 1e-9) * (nd - 1)).long(), 0, nd - 1)
+    acc = torch.zeros(ndir * nd, device=device)
+    acc.scatter_add_(0, bins * nd + dbin, torch.ones(len(bins), device=device))
+    pk = int(torch.argmax(acc)); bi = pk // nd
+    ncoarse = dirs[bi]
+    inbin = (n @ ncoarse) > 0.98
+    nrm = n[inbin].mean(0) if int(inbin.sum()) >= 5 else ncoarse
+    nrm = nrm / nrm.norm().clamp_min(1e-9)
+    proj = P @ nrm
+    hist = torch.histc(proj, bins=nd, min=dmin, max=dmax)
+    hb = int(torch.argmax(hist))
+    dc = dmin + (hb + 0.5) / nd * (dmax - dmin)
+    near = proj[(proj - dc).abs() < (dmax - dmin) / nd * 2]
+    dval = float(near.median()) if len(near) > 0 else float(dc)
+    inl = int(((P @ nrm) - dval).abs().lt(tol).sum())
+    return nrm.detach().cpu().numpy(), dval, inl, int(len(idx))
+
+
+def hough_sphere_3d(vol, device="cpu", radii=None, mc=0.0, iso=0.5, subvoxel=True):
+    """球検出(2D Hough 円の 3D リフト)。中心 = p + sgn·r·n を半径 r ごとに投票。
+
+    薄い境界面の各 voxel が法線 n に沿って中心へ投票(符号は明/暗どちらの球でも拾えるよう両方試す)。
+    半径ごとの中心ピーク投票の最大 = 検出球。votes-vs-radius を放物線補間で sub-voxel 半径。
+    産業: ボール・球状部品・点群中の球面。返り値 (votes, radius, center(3,))。
+    """
+    gz, gy, gx, _ = _unit_grad3d(vol, device, mc)
+    gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
+    surf = _thin_surface(vol, device, iso)
+    idx = torch.nonzero(surf, as_tuple=False).float()
+    if len(idx) < 10:
+        return None
+    n = torch.stack([gz[surf], gy[surf], gx[surf]], 1)
+    D, H, W = surf.shape
+    dims = torch.tensor([D, H, W], device=device)
+    radii = list(radii) if radii is not None else list(range(4, 16))
+    vote_r = {}
+    best = None
+    for r in radii:
+        rbest = 0.0; rcenter = (0, 0, 0)
+        for sgn in (1.0, -1.0):
+            ci = torch.round(idx + sgn * r * n).long()
+            ok = ((ci >= 0) & (ci < dims)).all(1)
+            cj = ci[ok]
+            if len(cj) < 5:
+                continue
+            acc = torch.zeros(D * H * W, device=device)
+            acc.scatter_add_(0, (cj[:, 0] * H + cj[:, 1]) * W + cj[:, 2],
+                             torch.ones(len(cj), device=device))
+            v, pk = torch.max(acc, 0)
+            if float(v) > rbest:
+                rbest = float(v); rcenter = np.unravel_index(int(pk), (D, H, W))
+        vote_r[r] = rbest
+        if best is None or rbest > best[0]:
+            best = (rbest, r, rcenter)
+    rr = best[1]                                         # 放物線で sub-voxel 半径
+    if subvoxel and (rr - 1) in vote_r and (rr + 1) in vote_r:
+        a, b, c = vote_r[rr - 1], vote_r[rr], vote_r[rr + 1]
+        den = a - 2 * b + c
+        off = 0.5 * (a - c) / den if abs(den) > 1e-9 else 0.0
+        rr = rr + float(np.clip(off, -1, 1))
+    return best[0], rr, tuple(int(x) for x in best[2])
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 線→面リフト: 球面調和記述子(2D 輪郭 Fourier 記述子 → 3D 曲面 SH、回転不変)
+# ═══════════════════════════════════════════════════════════════════════════
+def _sh_basis(L, ntheta, nphi):
+    """実装用 SH 基底 Y_lm(θ,φ) 行列と帯域ラベル・面積重み。scipy 版差を吸収。"""
+    from scipy import special
+    th = np.linspace(0, np.pi, ntheta)
+    ph = np.linspace(0, 2 * np.pi, nphi, endpoint=False)
+    TH, PH = np.meshgrid(th, ph, indexing="ij")
+    if hasattr(special, "sph_harm_y"):
+        def Y(l, m):
+            return special.sph_harm_y(l, m, TH, PH)      # 新 API: (l,m,theta,phi)
+    else:
+        def Y(l, m):
+            return special.sph_harm(m, l, PH, TH)        # 旧 API: (m,l,phi,theta)
+    rows, bands = [], []
+    for l in range(L + 1):
+        for m in range(-l, l + 1):
+            rows.append(Y(l, m).reshape(-1)); bands.append(l)
+    return np.stack(rows, 0), np.array(bands), np.sin(TH).reshape(-1), TH, PH
+
+
+def sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device="cpu"):
+    """球面調和記述子。同心球 shell の SH 帯域エネルギー ‖f_l(r)‖ を (半径 × 周波数) で返す。
+
+    2D 閉輪郭を 1D Fourier 記述子で表す **線→面リフト**: 3D 閉曲面は SH で表し、帯域エネルギーは
+    回転で m を帯域内に混ぜるだけ=**回転不変**(Kazhdan 2003)。全 shell を grid_sample で取り、
+    固定 SH 基底との内積 → 帯域二乗和。retrieval/verification 用の大域シグネチャ。返り値 (nradii,L+1)。
+    """
+    v = np.asarray(vol, np.float64)
+    N = v.shape[0]
+    c = (N - 1) / 2.0
+    B, bands, w, TH, PH = _sh_basis(L, ntheta, nphi)
+    Bt = torch.as_tensor(B, dtype=torch.complex64, device=device)
+    wt = torch.as_tensor(w, dtype=torch.float32, device=device)
+    t = torch.as_tensor(v, dtype=torch.float32, device=device)[None, None]
+    rmax = N / 2.0 - 1
+    radii = np.linspace(rmax * 0.2, rmax, nradii)
+    dirz = torch.as_tensor(np.cos(TH).reshape(-1), dtype=torch.float32, device=device)
+    diry = torch.as_tensor((np.sin(TH) * np.sin(PH)).reshape(-1), dtype=torch.float32, device=device)
+    dirx = torch.as_tensor((np.sin(TH) * np.cos(PH)).reshape(-1), dtype=torch.float32, device=device)
+    band_masks = [torch.as_tensor(bands == l, device=device) for l in range(L + 1)]
+    desc = torch.zeros(nradii, L + 1, device=device)
+    for ri, r in enumerate(radii):
+        zz = c + r * dirz; yy = c + r * diry; xx = c + r * dirx
+        grid = torch.stack([xx / (N - 1) * 2 - 1, yy / (N - 1) * 2 - 1,
+                            zz / (N - 1) * 2 - 1], dim=-1)[None, None, None]
+        shell = F.grid_sample(t, grid, align_corners=True, mode="bilinear")[0, 0, 0, 0]
+        coeff = Bt @ (shell * wt).to(torch.complex64) * (4 * float(np.pi) / (ntheta * nphi))
+        p2 = (coeff.conj() * coeff).real
+        for l in range(L + 1):
+            desc[ri, l] = p2[band_masks[l]].sum()
+    return desc.detach().cpu().numpy()
+
+
+def match_sh_descriptor(a, b, L=8, nradii=12, device="cpu"):
+    """SH 記述子同士のコサイン類似度(回転不変な形状照合)。1 に近いほど同形状。voxel × SH 列。"""
+    da = sh_descriptor(a, L, nradii, device=device).reshape(-1)
+    db = sh_descriptor(b, L, nradii, device=device).reshape(-1)
+    da = da / (np.linalg.norm(da) + 1e-9)
+    db = db / (np.linalg.norm(db) + 1e-9)
+    return float((da * db).sum())
