@@ -161,6 +161,74 @@ def match_shape_3d(vol, template, device="cpu", mc=0.05, subvoxel=True):
     return np.array([float(score[idx])] + pos)
 
 
+def moment_axes(points, weights=None):
+    """点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。
+
+    返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))。固有値降順。回転の正準化に使う。
+    """
+    P = np.asarray(points, np.float64)
+    w = np.ones(len(P)) if weights is None else np.asarray(weights, np.float64)
+    w = w / w.sum()
+    c = (P * w[:, None]).sum(0)
+    Q = P - c
+    cov = (Q * w[:, None]).T @ Q
+    vals, vecs = np.linalg.eigh(cov)
+    order = np.argsort(vals)[::-1]
+    return c, vecs[:, order], vals[order]
+
+
+def match_pca(pts_scene, pts_model):
+    """PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。
+
+    両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない
+    **回転**をここで担う(符号の 4 通り曖昧性は最小二乗で解消)。返り値 (R(3,3), t(3,))。
+    """
+    cs, As, _ = moment_axes(pts_scene)
+    cm, Am, _ = moment_axes(pts_model)
+    best = None
+    Qs = np.asarray(pts_scene, np.float64) - cs
+    Qm = np.asarray(pts_model, np.float64) - cm
+    # 主軸の符号 4 通り(det=+1 の回転のみ)を試し、残差最小を選ぶ
+    for sx in (1, -1):
+        for sy in (1, -1):
+            S = np.diag([sx, sy, sx * sy])
+            R = As @ S @ Am.T
+            if np.linalg.det(R) < 0:
+                continue
+            resid = float(np.mean(np.linalg.norm(
+                Qs[:min(len(Qs), len(Qm))] - (R @ Qm[:min(len(Qs), len(Qm))].T).T, axis=1)))
+            if best is None or resid < best[0]:
+                best = (resid, R)
+    R = best[1] if best else np.eye(3)
+    t = cs - R @ cm
+    return R, t
+
+
+def match_mip_2d(scene_vol, model_vol, device="cpu"):
+    """MIP 投影 → 2D NCC(構造=voxel → 2D × 手法=NCC、変換=直交 MIP)。
+
+    3 直交方向の最大値投影で 3 枚の 2D 問題に落とし、既存の 2D NCC で定位 → 3 枚から 3D 座標を
+    冗長推定。全 3D NCC より安く coarse alignment に。回転が無い平行移動探索向き。
+    """
+    sm = voxel_to_mips(scene_vol)
+    mm = voxel_to_mips(model_vol)
+    # 各投影で model MIP の bbox を切り出しテンプレ化 → 2D NCC
+    axis_coords = {0: (1, 2), 1: (0, 2), 2: (0, 1)}   # 投影 ax が捨てる軸→残る 2 軸
+    acc = {0: [], 1: [], 2: []}
+    for ax in (0, 1, 2):
+        s2, m2 = sm[ax], mm[ax]
+        nz = np.argwhere(m2 > m2.max() * 0.05)
+        if len(nz) == 0:
+            continue
+        lo = nz.min(0); hi = nz.max(0) + 1
+        tmpl = m2[lo[0]:hi[0], lo[1]:hi[1]]
+        r = M.ncc_locate_batch([s2], tmpl, device)[0]     # [score,row,col]=残る 2 軸の座標
+        a0, a1 = axis_coords[ax]
+        acc[a0].append(r[1]); acc[a1].append(r[2])
+    pos = [float(np.mean(acc[k])) if acc[k] else 0.0 for k in (0, 1, 2)]
+    return np.array(pos)
+
+
 def match_points_ncc(pts_scene, pts_model, size, bounds, device="cpu", smooth=0.8):
     """点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。"""
     vs = points_to_voxel(pts_scene, size, bounds, device, smooth)
