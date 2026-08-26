@@ -29,8 +29,8 @@ except Exception:  # pragma: no cover
 
 
 def _to_vol_batch(vols, device):
-    """list[(D,H,W)] -> (B,1,D,H,W) float32 tensor。"""
-    x = np.stack([np.asarray(v, np.float64) for v in vols])[:, None]
+    """list[(D,H,W)] -> (B,1,D,H,W) float32 tensor(float32 直積み=転送床を下げる)。"""
+    x = np.stack([np.asarray(v, np.float32) for v in vols])[:, None]
     return torch.as_tensor(x, dtype=torch.float32, device=device)
 
 
