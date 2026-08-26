@@ -412,6 +412,14 @@ ACCEL = {
     "equalize_image": (_equalize, "equalize", "equalize_histo"),
     # wave: illuminate(大 σ unsharp、symmetric conv で scipy と bit 一致)。champion 頻出
     "illuminate": (_illuminate, "illuminate", "illuminate"),
+    # wave: 領域(2値)モルフォロジ(conv2d カウント + 閾値、ndimage.binary_* と bit 一致)。
+    #   binarize/count champion 用。REGION sort だが実体は 2D 二値配列なので gpu 常駐区間に載る。
+    "reg_dilate": (_reg_dilate, "reg_dilate", "dilation_circle"),
+    "reg_erode": (_reg_erode, "reg_erode", "erosion_circle"),
+    "erosion_golay": (_erosion_golay, "erosion_golay", "erosion_golay"),
+    "erosion_circle": (_erosion_circle, "erosion_circle", "erosion_circle"),
+    "dilation_circle": (_dilation_circle, "dilation_circle", "dilation_circle"),
+    "opening_circle": (_opening_circle, "opening_circle", "opening_circle"),
 }
 
 
