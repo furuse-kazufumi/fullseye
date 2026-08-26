@@ -51,6 +51,7 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 - PCA/moment(主軸整列、**回転**の明示復元)= `match_pca` / `moment_axes`。異方性雲の回転+並進を残差 0・角度差 0° で復元(0.2ms、numpy eigh)。
 - MIP→2D(直交投影で 2D 手法に落とす、安い coarse)= `match_mip_2d`。定位 |Δ|=0。GPU 1.3×(transfer-bound)。
 - chamfer(距離場、遮蔽頑健)= `match_chamfer_3d(edt="scipy"|"jfa")`。**`edt="jfa"` = GPU 厳密 EDT(`edt_jfa`、jump-flooding+JFA+2)で CPU 往復なしの全 GPU パイプライン。scipy C-EDT と max|err|=0(N≤160)、N≥96 で追い抜く(96→2.6× / 128→4.7×)。**
+- generalized Hough(勾配 R-table 投票)= `match_hough_3d`。GHT を「向きビンごとの相関の総和」で GPU ネイティブ化(A(t)=Σ_bin scene_bin⋆template_bin)。shape-based の単一解と違い**投票 accumulator を返し、NMS で複数ピーク=複数インスタンスを検出**(2/2 実証)。欠けたエッジはピークを下げるだけ=遮蔽頑健。GPU 8×(26 conv3d が compute-heavy、CPU 233→28ms)。
 - 変換: `points_to_voxel`(splat)/ `gaussians_to_voxel`(3DGS)/ `mesh_to_voxel` / `depth_to_points` / `voxel_to_mips` / `sobel3d` / `edt_jfa`(GPU 距離場)。
 
 **pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(対応あり明示復元)+ Fourier-Mellin(対応なし回転+スケール)の 3 系統で対応。**
