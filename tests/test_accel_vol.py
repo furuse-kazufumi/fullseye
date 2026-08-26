@@ -34,6 +34,8 @@ def _vols(n=2, s=32, seed=0):
 @pytest.mark.parametrize("name", list(V.VOL_ACCEL))
 def test_parity_interior(name):
     core = V.VOL_ACCEL[name][1]
+    if core not in ops.RT:            # 3D region op は core 相当が無い新規機能(bit 一致は test_accel_3d_toolkit)
+        pytest.skip(f"{core} は core RT に無い(新規 3D op)")
     a, b = 0.53, 0.49
     vols = _vols()
     m = V._op_margin(name, a)
