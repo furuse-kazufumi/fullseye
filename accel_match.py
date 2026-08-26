@@ -153,8 +153,13 @@ def ncc_locate_3d_pyramid(volumes, template, device="cpu", levels=2, win=3,
     重心で sub-voxel。HALCON/OpenCV の画像ピラミッドマッチングの voxel 版。全探索 NCC と同じ
     位置を出しつつ、探索コストを「粗全探索(voxel 1/8^levels)+ 微小窓」に落とす。
     """
-    f = 2 ** levels
     T = np.asarray(template, np.float64)
+    # 粗テンプレートが小さくなりすぎない様に level を自動制限(coarse T >= ~3vox)
+    max_lv = max(0, int(np.floor(np.log2(min(T.shape) / 3.0))))
+    levels = min(levels, max_lv)
+    if levels <= 0:
+        return ncc_locate_3d(volumes, template, device, subvoxel, win)
+    f = 2 ** levels
     Tc = _downsample3d(T, f, device)
     out = []
     for vol in volumes:
@@ -162,8 +167,8 @@ def ncc_locate_3d_pyramid(volumes, template, device="cpu", levels=2, win=3,
         vc = _downsample3d(v, f, device)
         cm = ncc_map_3d([vc], Tc, device)[0]                  # 粗全探索
         ci = np.unravel_index(int(np.argmax(cm)), cm.shape)
-        # 全解像度へ写像し、その周りの窓を切って局所精密化
-        center = [min(s - 1, max(0, c * f)) for c, s in zip(ci, v.shape)]
+        # 全解像度へ写像(粗 voxel c → 全解像度 [c*f, c*f+f) の中心)+ その周りの窓を精密化
+        center = [min(s - 1, max(0, c * f + f // 2)) for c, s in zip(ci, v.shape)]
         r = f + win
         sl = tuple(slice(max(0, c - r), min(s, c + r + 1)) for c, s in zip(center, v.shape))
         crop = v[sl]
