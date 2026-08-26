@@ -65,6 +65,18 @@
       単一 GPU 常駐区間**に。RTX 5090 実測 **対 CPU ~64x**(32³B32:549→8.5ms / 128³B4:4547→70.7ms)、
       **常駐は per-op の 2.8x**(4段で転送 4→1 償却)。指標保存 = vol_count 完全一致・vol_denoise ±0.15 dB。
       tests/test_accel_vol.py(10 tests)。
+- [x] **symmetric padding fix + illuminate GPU 化 完了**(2026-08-26): scipy.ndimage の既定
+      mode='reflect' は **numpy 'symmetric'(端複製)** で torch 'reflect'(鏡映・端非複製)と別物。
+      `_sym_idx`/`_pad_sym`/`_sep_conv_sym`(index_select、r>n も可)で symmetric conv を実装し、
+      **大 σ gaussian が全サイズ bit 一致**(illuminate=大 σ unsharp は **exact**、gauss_filter/
+      vol_gaussian も端まで faithful 化)。illuminate は edge/locate/locate_rot(3 champion)頻出。
+- [x] **NCC マッチング ncc_locate GPU 化 完了**(`accel_match.py`、2026-08-26): normxcorr2 =
+      correlate(mean-free T)+ uniform_filter(box)= conv2d/avg で GPU 化(shapematch_gpu と同機構)。
+      core と score |Δ|~1e-6・**argmax 位置は完全一致**。bridge に MATCH 終端区間を追加し、
+      **locate/locate_rot が 100% GPU**(illuminate+ncc)。RTX 5090 実測 **対 CPU 4-6x**
+      (256²B8:38→6.2ms)、**タスク指標(位置誤差)は Δ=0 で完全一致**。tests/test_accel_match.py(5)。
+- **champion GPU カバレッジ: 4/38 → 18/38 段。4 champion が 100% GPU**(locate/locate_rot/
+  vol_count/vol_denoise)。
 - [ ] **fullseye API から device 指定**: 公開 API(api.py / fslib)で device="cuda" を通す。
 
 ## Afterman トラック(集団評価を GPU バッチで)
