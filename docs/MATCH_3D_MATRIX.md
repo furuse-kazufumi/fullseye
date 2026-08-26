@@ -214,7 +214,7 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 | PCA / 記述子 RANSAC の粗姿勢 | `icp_point2point_3d` / `icp_point2plane` | RMSE 1e-10 |
 
 ## 次に埋めるセル(TODO)。方針=手段を1つに絞らず発散(ノウハウは幅に蓄積)
-- **medial surface / 3D skeleton**(2D skeleton=1D medial axis の線→面版): 位相ベース照合。
+- ~~**medial surface / 3D skeleton**(線→面版)~~ → **2026-08-27h 実装済**(`medial.py`、球=中心1点/円柱=軸線)。
 - **anisotropic 3DGS 厳密 splat**(現状は等方近似)。
 - **log-polar の大回転対応**(±45/90° 別名の解消: 複数投影軸の投票 or 球面調和)。
 - **ISS keypoint 単体**(Workflow で 1 件 schema 失敗、feat_shot 内には実装あり → 独立公開)。
