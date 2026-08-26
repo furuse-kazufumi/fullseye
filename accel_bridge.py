@@ -48,6 +48,7 @@ def core_to_vol_accel() -> dict:
 
 _C2A = core_to_accel()
 _C2VA = core_to_vol_accel()
+_C2M = dict(accel_match.MATCH_ACCEL)        # core match op 名 -> match accel(現状 ncc_locate のみ)
 _TORCH = getattr(accel, "_HAS_TORCH", False)
 
 _STAGE_RE = re.compile(r"([A-Za-z0-9_]+)\(a=([-\d.]+),\s*b=([-\d.]+)\)")
