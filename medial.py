@@ -22,7 +22,7 @@ medial surface に、細い管は線状の骨格に潰れる——同じ抽出�
 from __future__ import annotations
 
 import numpy as np
-from scipy.ndimage import convolve, distance_transform_edt
+from scipy.ndimage import convolve, distance_transform_edt, maximum_filter
 
 __all__ = [
     "distance_ridge",
