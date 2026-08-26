@@ -395,16 +395,19 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
 
 
 if __name__ == "__main__":
-    rng = np.random.default_rng(0)
-    src = rng.random((80, 3))
-    # 滑らかな曲げを既知変形として掛ける
-    warp = src + 0.12 * np.stack(
+    # 構造格子に滑らかな曲げを既知変形として掛け、回復を確認。
+    g = np.linspace(0.1, 0.9, 6)
+    gx, gy, gz = np.meshgrid(g, g, g, indexing="ij")
+    src = np.stack([gx.ravel(), gy.ravel(), gz.ravel()], axis=1)
+    warp = src + 0.08 * np.stack(
         [np.sin(np.pi * src[:, 1]),
          0.5 * np.sin(np.pi * src[:, 2]),
          0.3 * np.sin(np.pi * src[:, 0])], axis=1)
-    w_src, model, info = register_nonrigid(src, warp, iters=30, lam=0.02)
-    print("nonrigid rms_init -> rms:", round(info["rms_init"], 5),
-          "->", round(info["rms"], 5), "iters", info["iters"])
+    init_true = float(np.sqrt(np.mean(np.sum((src - warp) ** 2, axis=1))))
+    w_src, model, info = register_nonrigid(src, warp, iters=40, lam=0.02)
+    final_true = float(np.sqrt(np.mean(np.sum((w_src - warp) ** 2, axis=1))))
+    print("nonrigid true RMS:", round(init_true, 5), "->", round(final_true, 5),
+          f"({init_true / max(final_true, 1e-12):.0f}x)  iters", info["iters"])
     R0 = np.array([[np.cos(0.3), -np.sin(0.3), 0], [np.sin(0.3), np.cos(0.3), 0], [0, 0, 1]])
     dst = src @ R0.T + np.array([0.2, -0.1, 0.05])
     R, t, cinfo = register_cpd_rigid(src, dst, iters=80)
