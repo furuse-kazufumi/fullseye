@@ -26,11 +26,12 @@
 | ~~**volume 群** vol_median/vol_gaussian/vol_erode/vol_dilate/vol_threshold~~ **完了 2026-08-26** | vol_count 5/5・vol_denoise 4/4(**100% GPU**、~64x) | 済 | 済(`accel_vol.py`) |
 | ~~**illuminate**~~ **完了** | edge, locate, locate_rot | 済(bit-exact) | 済(`accel.py` symmetric conv) |
 | ~~**ncc_locate**~~ **完了** | locate, locate_rot(**100% GPU**、4-6x) | 済(位置 Δ=0) | 済(`accel_match.py`) |
-| **領域モルフォロジ** reg_dilate/erosion_golay/opening_circle | binarize, count(各 2) | 中(GPU 化しても末尾 projective が残り 5/6 止まり) | 中(binary_dilation=反復十字 SE) |
+| ~~**領域モルフォロジ** reg_dilate/erosion_golay/opening_circle~~ **完了** | binarize/count **5/6 GPU**(3-5x、Δ=0) | 済(bit-exact) | 済(`accel.py` conv2d 二値) |
 | backend 固有 sk_tv/cv_sharpen/simulate_defocus/xsitk_*/xcv_*/sk_scharr/gdilate | 各 1 | 低 | 高 |
-| projective_trans_region(幾何) | binarize, count | — | wave2(order3 spline でブロック中) |
+| projective_trans_region(幾何) | binarize, count | 5/6→6/6 の最後の 1 | wave2(order3 spline でブロック中) |
+| decode_barcode / xcv2_lap_var / xsitk_closing_by_recon | 各 1(barcode/classify) | 低(feature 終端) | 中〜高 |
 
-**教訓(honest)**: 「champion 頻度」≠「E2E レバレッジ」。illuminate は 3 champion 頻出だが edge では CPU op に挟まれた 1-op 島(低レバレッジ)。**pipeline を丸ごと GPU にできる塊(volume / locate 一族)が高レバレッジ**。次候補 = 領域モルフォロジ(binarize/count を 5/6 まで、ただし projective が残る)or fullseye API device 引数。
+**教訓(honest)**: 「champion 頻度」≠「E2E レバレッジ」。**pipeline を丸ごと GPU にできる塊(volume / locate / binarize-count 一族)が高レバレッジ**。illuminate は edge では CPU op 島で低レバレッジだった。**高レバレッジな塊はほぼ回収済**。残りは (a) projective_trans_region(幾何=wave2 の order3 spline を解けば binarize/count が 6/6)、(b) backend 固有 op(各 1 champion=低レバレッジ・高難度)、(c) **fullseye API device 引数**(公開層で GPU 経路を通す=横展開)。次の実質前進は (c) or (a)。
 
 ## 設計原則(honest parity gate)
 - accel op は **core registry と interior <5e-3 一致(faithful)** を満たすものだけ載せる。
