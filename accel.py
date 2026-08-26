@@ -107,10 +107,11 @@ def _gaussian(t, a, b, dev):
 
 
 def _mean(t, a, b, dev):
+    # box mean。scipy uniform_filter 既定 mode='reflect'=symmetric に合わせる(全サイズ bit 一致)。
     k = _k(a)
     ker = torch.ones(1, 1, k, k, device=dev) / (k * k)
     r = k // 2
-    return F.conv2d(F.pad(t, (r, r, r, r), mode="reflect"), ker)
+    return F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
 
 
 def _sobel(t, a, b, dev):
