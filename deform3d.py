@@ -178,19 +178,30 @@ def register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None):
     制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を
     変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。
 
+    実装上の要点(頑健性):
+        - **スケール不変**: λ は dst の重心まわり RMS 半径に対する相対値として扱う
+          (内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。
+        - **発散ガード**: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。
+          反復ごとの対応 RMS を監視し、**最良反復**(最小 RMS)の変形とモデルを返す。
+          これにより悪い λ でも「初期より悪い」結果を返さない。
+        - λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、
+          大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。
+
     引数:
         src: (N,3) 移動側点群。
         dst: (M,3) 固定側(参照)点群。
         iters: 最大反復回数。
-        lam: TPS 正則化 λ。大きいほど変形が滑らか(外れ対応に頑健、当てはめは緩い)。
+        lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、
+            当てはめは緩い)。小さいほど密着(細かい変形を回復)。
         k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると
             ``dst`` 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。
 
     返り値:
-        warped_src: (N,3) 最終変形後の src。
-        model: 最終 TPS モデル(制御中心 = 元 src)。恒等(反復0)なら None。
-        info: dict。"rms"(最終の対応 RMS)、"rms_init"(初期の対応 RMS)、
-              "rms_history"(list)、"iters"(実反復数)、"converged"(bool)。
+        warped_src: (N,3) 最良反復での変形後 src。
+        model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま
+            ``tps_warp`` に渡せる)。1回も当てはめできなければ None。
+        info: dict。"rms"(最良の対応 RMS)、"rms_init"(初期=恒等時の対応 RMS)、
+              "rms_history"(list)、"iters"(実反復数)、"best_iter"、"converged"(bool)。
 
     例外:
         ValueError: 形状不正、点数不足、k_smooth 不正。
@@ -210,56 +221,71 @@ def register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None):
             raise ValueError(f"k_smooth は正の整数か None(受領: {k_smooth})")
         k_smooth = int(min(k_smooth, D.shape[0]))
 
+    # スケール(dst の重心まわり RMS 半径)→ λ をスケール相対に。
+    scale = float(np.sqrt(np.mean(np.sum((D - D.mean(axis=0)) ** 2, axis=1))))
+    scale = max(scale, 1e-12)
+    lam_eff = lam * scale
+
     tree = cKDTree(D)
 
     def _targets(moved):
         """変形後 src 各点に対する dst 側の目標点(ハード or k平均)を返す。"""
         if k_smooth is None or k_smooth == 1:
             _, idx = tree.query(moved, k=1)
-            return D[idx], _
-        dists, idx = tree.query(moved, k=k_smooth)
-        # idx: (N,k) → k 近傍の平均
-        return D[idx].mean(axis=1), dists
+            return D[idx]
+        _, idx = tree.query(moved, k=k_smooth)
+        return D[idx].mean(axis=1)  # idx:(N,k) → k 近傍平均
 
     warped = S0.copy()
-    model = None
     rms_history = []
-    prev_rms = np.inf
     converged = False
     used = 0
 
     # 初期(恒等)の対応 RMS
-    tgt0, _ = _targets(warped)
+    tgt0 = _targets(warped)
     rms_init = float(np.sqrt(np.mean(np.sum((warped - tgt0) ** 2, axis=1))))
+
+    best_rms = np.inf
+    best_warped = warped.copy()
+    best_model = None
+    best_iter = 0
+    prev_rms = np.inf
 
     for it in range(iters):
         used = it + 1
-        targets, _ = _targets(warped)
+        targets = _targets(warped)
 
         # 制御中心は「元の src」、目標は現在の最近傍。これで写像 src→dst を学習。
-        model = tps_fit(S0, targets, lam=lam)
+        model = tps_fit(S0, targets, lam=lam_eff)
         warped = tps_warp(model, S0)
 
         rms = float(np.sqrt(np.mean(np.sum((warped - targets) ** 2, axis=1))))
         rms_history.append(rms)
 
-        # 収束: 相対改善が小さくなったら打ち切り。
+        # 発散ガード: 最良反復を保持。
+        if rms < best_rms:
+            best_rms = rms
+            best_warped = warped.copy()
+            best_model = model
+            best_iter = used
+
+        # 収束: 相対改善が十分小さくなったら打ち切り。
         if prev_rms < np.inf:
             rel = abs(prev_rms - rms) / max(prev_rms, 1e-12)
-            if rel < 1e-4:
+            if rel < 1e-5:
                 converged = True
-                prev_rms = rms
                 break
         prev_rms = rms
 
     info = {
-        "rms": float(prev_rms),
+        "rms": float(best_rms),
         "rms_init": rms_init,
         "rms_history": rms_history,
         "iters": used,
+        "best_iter": best_iter,
         "converged": converged,
     }
-    return warped, model, info
+    return best_warped, best_model, info
 
 
 # --------------------------------------------------------------------------- #
