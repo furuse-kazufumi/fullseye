@@ -213,7 +213,7 @@ def test_logpolar_recovers_scale():
 def test_edt_jfa_exact_vs_scipy():
     """jump-flooding EDT が scipy EDT と厳密一致(chamfer 全 GPU 化の土台)。"""
     from scipy import ndimage
-    for N, seed in ((32, 0), (40, 1)):
+    for N, seed in ((32, 0), (40, 1), (72, 2)):        # 72>64: JFA+2 が大 N でも厳密
         rng = np.random.default_rng(seed)
         se = rng.random((N, N, N)) < 0.01
         se[0, 0, 0] = True
