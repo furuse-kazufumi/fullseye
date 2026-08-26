@@ -123,23 +123,34 @@ def _interior_max(ref, got, m=2):
     return float(np.max(np.abs(ref - got)))
 
 
+def _op_margin(name, a):
+    """faithful を測る interior margin。gaussian は端の reflect 規約差がカーネル半径ぶん
+    内側まで届くので、その半径を除外する(median/morph/threshold は端 2px で十分)。"""
+    if name == "vol_gaussian_g":
+        sigma = 0.3 + 2.7 * a
+        return max(2, int(4.0 * sigma + 0.5))        # = カーネル半径
+    return 2
+
+
 def main(device="cpu") -> int:
     import ops
     rng = np.random.default_rng(0)
-    vols = [np.clip(rng.random((16, 16, 16)), 0, 1) for _ in range(3)]
-    print(f"=== accel_vol parity (device={device}, interior 端2除外) ===")
+    # 実 champion サイズ(32³)。小さすぎる volume だと大カーネル gaussian が端支配になる。
+    vols = [np.clip(rng.random((32, 32, 32)), 0, 1) for _ in range(3)]
+    print(f"=== accel_vol parity (device={device}, 32³, interior=端からカーネル半径除外) ===")
     ok = 0
     for name, (fn, core) in VOL_ACCEL.items():
         a, b = 0.53, 0.49
+        m = _op_margin(name, a)
         got = run_batch_vol(name, vols, a, b, device)
         worst = 0.0
         for v, g in zip(vols, got):
             ref = np.clip(np.asarray(ops.RT[core](np.asarray(v, np.float64), a, b),
                                      np.float64), 0, 1)
-            worst = max(worst, _interior_max(ref, np.asarray(g, np.float64)))
+            worst = max(worst, _interior_max(ref, np.asarray(g, np.float64), m))
         faithful = worst < 5e-3
         ok += faithful
-        print(f"  {name:18s} <- {core:14s} interior_max={worst:.2e} "
+        print(f"  {name:18s} <- {core:14s} interior_max(m={m:2d})={worst:.2e} "
               f"{'faithful' if faithful else 'DRIFT'}")
     print(f"faithful: {ok}/{len(VOL_ACCEL)}")
     return 0 if ok == len(VOL_ACCEL) else 1
