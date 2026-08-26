@@ -241,6 +241,13 @@ def _sigmoid(t, a, b, dev):
     return 1.0 / (1.0 + torch.exp(-(4.0 + 12.0 * a) * (t.clamp(0, 1) - (0.2 + 0.6 * b))))
 
 
+def _illuminate(t, a, b, dev):
+    # core(backends_auto _sh_lut "illuminate")= x + gain*(x - blur(x)) の大 σ unsharp。
+    # blur は scipy gaussian_filter(mode='reflect'=symmetric)なので symmetric conv で bit 一致。
+    sm = _sep_conv_sym(t, _gauss_kernel(3.0 + 12.0 * a, dev))
+    return (t + (0.3 + 0.7 * b) * (t - sm)).clamp(0, 1)
+
+
 def _signed01_b(t):
     """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。"""
     m = t.abs().amax(dim=(2, 3), keepdim=True)
