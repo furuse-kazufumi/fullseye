@@ -66,8 +66,8 @@ def _seg_kind(stage) -> str:
 
 
 def _gpu_ok(stage) -> bool:
-    """この stage を GPU(image or volume)で実行できるか。"""
-    return _seg_kind(stage) in ("gpu", "vol")
+    """この stage を GPU(image / volume / match)で実行できるか。"""
+    return _seg_kind(stage) in ("gpu", "vol", "match")
 
 
 def stages_from_pipeline_str(s: str) -> list:
