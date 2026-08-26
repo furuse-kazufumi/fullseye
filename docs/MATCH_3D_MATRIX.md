@@ -84,10 +84,12 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 
 **pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(対応あり明示復元)+ Fourier-Mellin(対応なし回転+スケール)の 3 系統で対応。**
 
-## 次に埋めるセル(TODO)
-- **generalized Hough 3D**(勾配→R-table 投票): 部分形状・複数インスタンスに強い。回転は R-table を回して対応。
-- **feature descriptor**(spin image / FPFH + RANSAC): 疎な keypoint 対応で大回転・部分重なりに。
-- **anisotropic 3DGS 厳密 splat**(現状は等方近似)+ **ICP 精緻化**(Fourier-Mellin / PCA の coarse 解を仕上げる）。
+## 次に埋めるセル(TODO)。方針=手段を1つに絞らず発散(ノウハウは幅に蓄積)
+- **反復精緻化(進行中、Workflow で複数並行)**: Newton サブボクセルピーク / Gauss-Newton(Lucas-Kanade)並進 / Levenberg-Marquardt 並進+スケール / ICP point-to-point / ICP point-to-plane / GN 回転角精緻化。粗推定(FMT ±3°/Hough ±0.5vox/NCC整数)を高精度へ収束。
+- **feature descriptor**(Harris3D/ISS keypoint + FPFH/SHOT/spin image + RANSAC): 疎対応で大回転・部分重なり。
+- **scene flow**(2D optical flow の 3D 版): voxel 運動場、変形/動体。
+- **medial surface / 3D skeleton**(2D skeleton=1D medial axis の線→面版): 位相ベース照合。
+- **anisotropic 3DGS 厳密 splat**(現状は等方近似)。
 - **log-polar の大回転対応**(±45/90° 別名の解消: 複数投影軸の投票 or 球面調和)。
 
 ## 進捗ログ
