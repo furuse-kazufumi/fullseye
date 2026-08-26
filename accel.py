@@ -466,6 +466,8 @@ ACCEL = {
     "gerode": (_erode_rect, "gerode", "gray_erosion"),
     # cv_sharpen(3x3 conv、cv2.filter2D 既定 border=reflect と一致)。denoise champion 末尾
     "cv_sharpen": (_cv_sharpen, "cv_sharpen", "emphasize"),
+    # projective_trans_region(透視ワープ、grid_sample 近似)。bit 一致でなく指標保存で採否判定
+    "projective_trans_region": (_projective_region, "projective_trans_region", "projective_trans_region"),
 }
 
 
