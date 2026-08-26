@@ -364,20 +364,28 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
             axis = best_axis
     else:
         axis = best_axis
-    # best inlier だけで円をフィット(外れ値は既に除外済み)→ 中心/半径/mask を確定
-    res = circle_refit(axis)
-    if res is None:
-        res = circle_refit(best_axis)
-    mask, axis, point3d, r = res
-    # inlier を確定してもう一度円だけリフィット
-    if int(mask.sum()) >= 3:
-        e1, e2 = _perp_basis(axis)
-        q = np.stack([P[mask] @ e1, P[mask] @ e2], 1)
-        fit = _fit_circle_2d(q)
-        if fit is not None:
-            c2, r = fit
-            point3d = c2[0] * e1 + c2[1] * e2
-            dist = np.abs(np.linalg.norm(np.stack([P @ e1, P @ e2], 1) - c2, axis=1) - r)
-            mask = dist < thresh
+    axis = _unit(axis)
+
+    # 円のリフィットは「inlier だけ」で行う(外れ値で中心/半径を汚さない)。
+    # 全点で fit すると外れ値バイアスが戻るので circle_refit(全点)は使わない。
+    e1, e2 = _perp_basis(axis)
+    q_all = np.stack([P @ e1, P @ e2], 1)
+    fit = _fit_circle_2d(q_all[best_mask])
+    if fit is None:                          # 縮退時は全点フォールバック
+        res = circle_refit(axis)
+        mask, axis, point3d, r = res
+    else:
+        c2, r = fit
+        point3d = c2[0] * e1 + c2[1] * e2
+        dist = np.abs(np.linalg.norm(q_all - c2, axis=1) - r)
+        mask = dist < thresh
+        # 更新後 inlier でもう一度だけ収束(1 回)
+        if int(mask.sum()) >= 3:
+            fit2 = _fit_circle_2d(q_all[mask])
+            if fit2 is not None:
+                c2, r = fit2
+                point3d = c2[0] * e1 + c2[1] * e2
+                dist = np.abs(np.linalg.norm(q_all - c2, axis=1) - r)
+                mask = dist < thresh
     params = {"axis": _unit(axis), "point": point3d, "radius": float(r)}
     return params, mask, _info(mask, iters)
