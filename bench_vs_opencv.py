@@ -168,6 +168,22 @@ def bench_resident_scaling(size=512, B=32):
     return rows
 
 
+def bench_compute_heavy(size=512, B=32):
+    """計算が重い op(GPU の本領)。転送を計算が上回るので単発でも GPU が有利になりうる。"""
+    rows = []
+    ims = _imgs(size, B, seed=7)
+    # 大 σ gaussian(σ=8、kernel ~65): cv2 も分離可能だが GPU の並列が効く
+    tc = _timed(lambda: [cv2.GaussianBlur(x.astype(np.float32), (0, 0), 8.0) for x in ims], reps=5)
+    tg = _timed(lambda: accel.run_batch("gauss_filter", ims, (8.0 - 0.3) / 2.7, 0.4, DEV), reps=7)
+    rows.append(("gaussian σ=8 (大kernel)", "cv2", tc * 1e3, tg * 1e3, tc / tg))
+    # sk_tv(Chambolle TV、~200 反復): cv2 に同一 TV は無いので GPU vs CPU-torch(同一実装)
+    ims2 = _imgs(size, min(B, 8), seed=8)
+    tc2 = _timed(lambda: accel.run_batch("sk_tv", ims2, 0.5, 0.0, "cpu"), reps=3)
+    tg2 = _timed(lambda: accel.run_batch("sk_tv", ims2, 0.5, 0.0, DEV), reps=5)
+    rows.append((f"sk_tv TV denoise (B={len(ims2)})", "CPU-torch", tc2 * 1e3, tg2 * 1e3, tc2 / tg2))
+    return rows
+
+
 def bench_volume():
     """3D は cv2 に無いので scipy 比。GPU の本領(voxel 数が大)。"""
     from scipy import ndimage
