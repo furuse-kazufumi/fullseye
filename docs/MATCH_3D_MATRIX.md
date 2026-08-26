@@ -32,26 +32,28 @@
 ## マトリクス(セル = 実現済 / TODO)
 行 = データ構造、列 = 手法。**T** = 変換で接続。GPU 速度(vs CPU)を併記。
 
-| ↓構造 \ 手法→ | NCC | shape-based | phase-corr | PCA/moment | MIP→2D | chamfer |
-|---|---|---|---|---|---|---|
-| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ | ✅ | ✅ 遮蔽頑健 |
-| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | ✅ T |
-| 3DGS | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
-| mesh | ✅ T:voxelize | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
-| depth 2.5D | ✅ T:逆投影 | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| ↓構造 \ 手法→ | NCC | shape-based | phase-corr | Fourier-Mellin | PCA/moment | MIP→2D | chamfer |
+|---|---|---|---|---|---|---|---|
+| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ 回転+スケール **30×** | ✅ | ✅ | ✅ 遮蔽頑健・全GPU |
+| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | ✅ T |
+| 3DGS | ✅ T:splat | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| mesh | ✅ T:voxelize | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
+| depth 2.5D | ✅ T:逆投影 | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T | ✅ T |
 
-**★ 5 構造 × 6 手法 = 30 セルが変換で接続済**(T の行は共通 voxel/point 表現へ変換 → 列の手法を適用)。
+**★ 5 構造 × 7 手法 = 35 セルが変換で接続済**(T の行は共通 voxel/point 表現へ変換 → 列の手法を適用)。
 mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も検証済。
 
 **実装(`match3d.py` / `accel_match` / `accel_vol`)**:
 - NCC(voxel) = `accel_match.ncc_locate_3d` + `_pyramid`(244× vs scipy)+ sub-voxel 重心。
 - shape-based(勾配方向 = 輪郭マッチング、**コントラスト不変**)= `match3d.match_shape_3d`。0.4× 弱コントラストでも sub-voxel 定位。GPU 68-89×。
 - phase-corr(FFT、平行移動、テンプレ不要)= `match_phase_3d`。GPU 18-28×。
-- PCA/moment(**回転**を扱う唯一の列。主軸整列)= `match_pca` / `moment_axes`。異方性雲の回転+並進を残差 0・角度差 0° で復元。
-- MIP→2D(直交投影で 2D 手法に落とす、安い coarse)= `match_mip_2d`。定位 |Δ|=0。
-- 変換: `points_to_voxel`(splat)/ `gaussians_to_voxel`(3DGS)/ `voxel_to_mips` / `sobel3d`。
+- **Fourier-Mellin(log-polar、回転+スケール)= `match_logpolar_z`。z 軸回転+等方スケールをテンプレ/対応なしで同時推定(PCA は対応が要る)。z 投影(MIP)で 2D Fourier-Mellin に落とす。回転誤差 ~3°(mean)/ 5.4°(max)、スケール ~10% 過小。GPU 2.8ms=CPU 比 30×(FFT 系の本領)。honest な限界: |FFT| の 180° 対称で ±45/90° 近傍は別名化、coarse 推定器(下流で NCC/ICP 精緻化)。**
+- PCA/moment(主軸整列、**回転**の明示復元)= `match_pca` / `moment_axes`。異方性雲の回転+並進を残差 0・角度差 0° で復元(0.2ms、numpy eigh)。
+- MIP→2D(直交投影で 2D 手法に落とす、安い coarse)= `match_mip_2d`。定位 |Δ|=0。GPU 1.3×(transfer-bound)。
+- chamfer(距離場、遮蔽頑健)= `match_chamfer_3d(edt="scipy"|"jfa")`。**`edt="jfa"` = GPU 厳密 EDT(`edt_jfa`、jump-flooding+JFA+2)で CPU 往復なしの全 GPU パイプライン。scipy C-EDT と max|err|=0(N≤160)、N≥96 で追い抜く(96→2.6× / 128→4.7×)。**
+- 変換: `points_to_voxel`(splat)/ `gaussians_to_voxel`(3DGS)/ `mesh_to_voxel` / `depth_to_points` / `voxel_to_mips` / `sobel3d` / `edt_jfa`(GPU 距離場)。
 
-**pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(明示復元)で対応。**
+**pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(対応あり明示復元)+ Fourier-Mellin(対応なし回転+スケール)の 3 系統で対応。**
 
 ## 次に埋めるセル(TODO)
 - **chamfer / 距離場**(部分・遮蔽に頑健): EDT + model エッジ点の相関。
