@@ -71,6 +71,13 @@ mesh → points(`mesh_to_points`)、voxel ⇄ SDF ⇄ occupancy、depth → {poi
 
 honest 限界: overlap <60% で急劣化(誤 basin ロック)、無特徴形状(球単体)不可、法線符号依存。→ 出力を ICP の coarse init に。
 
+## 異種構造の統合(TRIZ 統合/複合: 全5構造を組み合わせる)= `fuse3d`
+マトリクスの「行」を掛け合わせる。どの構造も**共通表現(点群/voxel)へ変換**して寄せれば相互に扱える:
+- `to_points(data, kind)` — 全5構造(points/mesh/depth/voxel/3dgs)を点群へ統一する 1 入口。
+- `register_cross(src, src_kind, dst, dst_kind, method)` — **異種構造間の剛体登録**。例: **CAD mesh vs 点群スキャン**
+  (50° 回転+部分)を FPFH で rot_err **0.15°**(= Physical AI の CAD-to-scan 整合)。
+- `fuse_to_voxel(items)` — **多構造フュージョン**(mesh[topology] + points[sample] + depth[観測]→ 1 密度 voxel)。
+
 ## 曲面近似 z=f(x,y)(2変数→1変数、情報圧縮)
 `fit_poly_surface`/`eval_poly_surface`(多項式最小二乗)/ `surface_form_error`(平面度/球面度=理想曲面残差)/
 `background_flatten`(照明ムラ=低次曲面を減算=シェーディング補正)。画像処理でも計測でも多用。
