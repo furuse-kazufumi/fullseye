@@ -135,6 +135,31 @@ def coverage(stages_or_genome, start=ops.IMAGE) -> dict:
     }
 
 
+def validate_champion(stages_or_genome, imgs, device="cpu", start=ops.IMAGE, m=3) -> dict:
+    """bridge 出力 vs 純 core 出力の interior 画素差(端 m px 除外)。
+
+    accel の reflect/pool 規約が scipy と端で違うので bit 一致はしない。faithful op だけを
+    GPU に載せているので **interior は小さい**はず。これが「GPU 化が champion を壊していない」
+    ことの実データ根拠(honest 検証)。画像出力の champion 用(feature 出力段は無視)。
+    """
+    stages = _as_stages(stages_or_genome, start)
+    bridge_out = run(stages, imgs, device=device, start=start)
+    core_out = [ops.run_stages(stages, np.asarray(im, np.float64)) for im in imgs]
+    diffs = []
+    for b, c in zip(bridge_out, core_out):
+        b = np.asarray(b, np.float64)
+        c = np.asarray(c, np.float64)
+        if b.ndim != 2 or b.shape != c.shape:
+            continue
+        if b.shape[0] > 2 * m and b.shape[1] > 2 * m:
+            diffs.append(float(np.max(np.abs(b[m:-m, m:-m] - c[m:-m, m:-m]))))
+        else:
+            diffs.append(float(np.max(np.abs(b - c))))
+    return {"n": len(diffs),
+            "max_interior_diff": max(diffs) if diffs else 0.0,
+            "mean_interior_diff": float(np.mean(diffs)) if diffs else 0.0}
+
+
 def load_champion(path) -> dict:
     return json.loads(pathlib.Path(path).read_text(encoding="utf-8"))
 
