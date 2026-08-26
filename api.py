@@ -398,7 +398,8 @@ def _coerce_input(v, op):
 
 
 # ---- run ------------------------------------------------------------------- #
-def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True):
+def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True,
+          device: str = "cpu"):
     """Apply one operator to *image* and return its raw output.
 
     image  -> image/region  : returns a float64 ndarray
@@ -410,9 +411,20 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True)
     see :func:`_coerce_input` for the exact rule (an in-range two-level array is
     left to the op's own 0.5 binarisation). Pass ``coerce=False`` to feed the
     array through untouched.
+
+    ``device`` (default ``"cpu"``): ``"cuda"`` で accel が GPU 化した op を GPU 実行(未対応 op や
+    torch/GPU 不在時は静かに CPU)。単発 op は転送律速なので効果は薄い(連鎖は run_pipeline を推奨)。
     """
     op = _resolve(name)
     v = _coerce_input(image, op) if coerce else image
+    if device != "cpu":
+        try:
+            import accel
+            accel_name = {c: k for k, (_f, c, _h) in accel.ACCEL.items()}.get(op.name)
+            if accel_name is not None:
+                return accel.run_batch(accel_name, [v], a, b, device)[0]
+        except Exception:
+            pass
     out = _ops.RT[op.name](v, a, b)
     if op.out_sort == "feature":
         return float(np.asarray(out).reshape(-1)[0])
