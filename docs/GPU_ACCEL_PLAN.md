@@ -83,9 +83,10 @@
       reg_dilate+erosion_golay+reg_dilate、projective_trans_region のみ CPU)。RTX 5090 実測 **対 CPU
       3-5x**(256²B8:16.7→3.4ms)、常駐は per-op の 4.2x。**指標(IoU/count)完全一致 Δ=0**
       (bit-exact ゆえ)。tests/test_accel_region.py(20)。
-- **champion GPU カバレッジ: 4/38 → 30/38 段。6 champion が 100% GPU**(binarize/count/locate/
-  locate_rot/vol_count/vol_denoise)。残 CPU = denoise の sk_tv/simulate_defocus、edge/classify の
-  xsitk_*/xcv_*/sk_scharr、barcode の decode_barcode(いずれも backend 固有・低レバレッジ)。
+- **champion GPU カバレッジ: 4/38 → 32/38 段。7 champion が 100% GPU**(binarize/count/**denoise**/
+  locate/locate_rot/vol_count/vol_denoise)。残 CPU = edge/classify の xsitk_*/xcv_*/sk_scharr、
+  barcode の decode_barcode(SimpleITK/OpenCV 固有・feature 終端で低レバレッジ)。
+- **cv2 ≒ HALCON 級最適化 CPU** なので本ベンチは HALCON との性能差予測にもなる(ユーザー観点 2026-08-26)。
 - [x] **残 op(gdilate/gerode/cv_sharpen/projective_trans_region)完了**(2026-08-26):
       gdilate/gerode=grey_dilation/erosion(size=_k(a))は maxpool/minpool の rect 版流用(exact)。
       cv_sharpen=3x3 conv(cv2.filter2D 既定 border=reflect と一致、exact)。projective_trans_region=
