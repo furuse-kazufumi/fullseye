@@ -169,6 +169,12 @@ VOL_ACCEL = {
     "vol_erode_g": (_vol_erode, "vol_erode"),
     "vol_dilate_g": (_vol_dilate, "vol_dilate"),
     "vol_threshold_g": (_vol_threshold, "vol_threshold"),
+    # 3D 領域(2値)モルフォロジ(ndimage.binary_* と bit 一致)。core 名は無い新規 3D op
+    "vol_reg_dilate_g": (_vol_reg_dilate, "vol_reg_dilate"),
+    "vol_reg_erode_g": (_vol_reg_erode, "vol_reg_erode"),
+    "vol_erosion_ball_g": (_vol_erosion_ball, "vol_erosion_ball"),
+    "vol_dilation_ball_g": (_vol_dilation_ball, "vol_dilation_ball"),
+    "vol_opening_ball_g": (_vol_opening_ball, "vol_opening_ball"),
 }
 
 
