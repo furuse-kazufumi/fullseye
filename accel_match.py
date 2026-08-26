@@ -112,14 +112,31 @@ def ncc_map_3d(volumes, template, device="cpu"):
     return [o[0] for o in out.detach().cpu().numpy().astype(np.float64)]
 
 
-def ncc_locate_3d(volumes, template, device="cpu"):
-    """各 volume の [max_corr, argmax_d, argmax_h, argmax_w]。"""
+def _subvoxel_com(m, idx, win=2):
+    """相関ピーク近傍(±win)の正値を重みにした空間重心(center of mass)= sub-voxel 定位。
+
+    argmax は整数量子化で ±0.5vox の誤差を持つ。応答マップの COM を取ると連続座標で
+    ピークを精密化できる(位相相関の sub-pixel と同系)。HALCON area_center 的な重心も同原理。
+    """
+    slices = tuple(slice(max(0, i - win), min(s, i + win + 1)) for i, s in zip(idx, m.shape))
+    w = np.clip(m[slices], 0.0, None)
+    tot = float(w.sum())
+    if tot <= 1e-12:
+        return [float(i) for i in idx]
+    axes = [np.arange(sl.start, sl.stop) for sl in slices]
+    grids = np.meshgrid(*axes, indexing="ij")
+    return [float((g * w).sum() / tot) for g in grids]
+
+
+def ncc_locate_3d(volumes, template, device="cpu", subvoxel=True, win=2):
+    """各 volume の [max_corr, d, h, w]。subvoxel=True なら重心で連続座標に精密化。"""
     if template is None:
         return [np.array([0.0, 0.0, 0.0, 0.0]) for _ in volumes]
     out = []
     for m in ncc_map_3d(volumes, template, device):
         idx = np.unravel_index(int(np.argmax(m)), m.shape)
-        out.append(np.array([float(m[idx]), float(idx[0]), float(idx[1]), float(idx[2])]))
+        pos = _subvoxel_com(m, idx, win) if subvoxel else [float(i) for i in idx]
+        out.append(np.array([float(m[idx])] + pos))
     return out
 
 
