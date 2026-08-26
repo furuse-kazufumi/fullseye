@@ -27,6 +27,7 @@ from collections import Counter
 import numpy as np
 
 import accel
+import accel_vol
 import ops
 
 
@@ -39,7 +40,14 @@ def core_to_accel() -> dict:
     return {core: name for name, (_fn, core, _hal) in accel.ACCEL.items()}
 
 
+def core_to_vol_accel() -> dict:
+    """core の volume op 名 -> accel_vol op 名(VOL_ACCEL の 2 要素目から逆引き)。"""
+    return {core: name for name, (_fn, core) in accel_vol.VOL_ACCEL.items()}
+
+
 _C2A = core_to_accel()
+_C2VA = core_to_vol_accel()
+_TORCH = getattr(accel, "_HAS_TORCH", False)
 
 _STAGE_RE = re.compile(r"([A-Za-z0-9_]+)\(a=([-\d.]+),\s*b=([-\d.]+)\)")
 
