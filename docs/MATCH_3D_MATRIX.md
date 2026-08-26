@@ -23,15 +23,36 @@
 | **feature descriptor**(TODO) | Harris/SIFT | 3D corner + 記述子(spin image/FPFH/SHOT) | 局所形状 |
 | **反復精緻化**(進行中) | LK / ICP / GN | 粗推定を Newton/Gauss-Newton/ICP で高精度収束 | Jacobian/Hessian |
 
-## データ構造行(入力) × 共通表現への変換
-| 構造 | → 共通表現 | 変換 |
+## データ構造行(入力形式)× 変換グラフ
+「3D データを手法が効く表現へ**変換**する」がマトリクスの核。形式は多様 → **変換で相互に繋ぐ**。
+
+| 構造/形式 | 説明 | 主な変換(実装) |
 |---|---|---|
-| **voxel grid**(dense) | そのまま | — |
-| **point cloud** | 密度 voxel | splat(scatter_add、任意で平滑) |
-| **3DGS**(異方性ガウス) | 密度 voxel | Gaussian splat(means+scale+opacity) |
-| **mesh**(頂点+面) | 占有 voxel / SDF | voxelize |
-| **depth / range**(2.5D) | point cloud → voxel | 逆投影 |
-| **binary voxel** | 距離場(SDF) | EDT |
+| **voxel grid**(dense) | 密な格子 | 中心表現 |
+| **point cloud** | 点集合 | `points_to_voxel`(splat) / `estimate_point_normals`(法線=PCA) |
+| **3DGS**(異方性ガウス) | means+scale+opacity | `gaussians_to_voxel`(splat) |
+| **mesh**(頂点+面) | 三角メッシュ | `mesh_to_voxel`(占有) / `mesh_to_points`(面サンプル) |
+| **depth / range**(2.5D) | 深度マップ | `depth_to_points`(逆投影) / `tsdf_from_depth`(TSDF) |
+| **SDF / TSDF** | 符号付き距離場 | `signed_distance_field`(voxel→SDF) / `sdf_to_occupancy` |
+| **occupancy / binary** | 占有 0/1 | 閾値 ↔ voxel ↔ SDF |
+| **normals**(点/面法線) | 向き | `estimate_point_normals`(FPFH/ICP-p2plane 用) |
+
+**変換グラフ(→=実装済)**: points ⇄ voxel(splat / marching cubes)、voxel → mesh(`voxel_to_mesh`=marching cubes)、
+mesh → points(`mesh_to_points`)、voxel ⇄ SDF ⇄ occupancy、depth → {points, TSDF}、3DGS → voxel、points → normals。
+**任意の入力形式を共通 voxel/point/SDF へ寄せれば全手法が使える**(= 行 × 列の全セルが変換で接続)。
+
+## 3D モルフォロジー(2D の 3D リフト。グレー & バイナリ)
+`accel_vol.py`: グレー erode/dilate/median/gaussian + バイナリ region(ball/cross、opening)。
+`match3d.py` 追加(前処理/特徴抽出):`morph_gradient3d`(dilation−erosion=**境界抽出**、sobel 代替)/
+`morph_tophat3d`(**小明構造抽出**、keypoint 前処理)/ `morph_blackhat3d`(暗構造)/ `morph_dilate3d`/`morph_erode3d`。GPU(max_pool3d)。
+
+## 幾何プリミティブ / メトロロジー(2点→線・3点→面/角度、2D/3D 共通)
+検出/マッチを**「計測」**に変える層(HALCON 2D/3D metrology 相当)。全て閉形式・厳密検証済:
+- **構成**: `line_from_2points`(2点→線)/ `plane_from_3points`(3点→面)
+- **角度**: `angle_3points`(∠ABC)/ `angle_between_lines` / `angle_between_planes`(二面角)/ `angle_line_plane`
+- **距離**: `distance_point_plane` / `distance_point_line` / `distance_line_line`(ねじれ位置も)
+- **交差**: `intersect_line_plane`(→点)/ `intersect_planes`(→線)
+- **フィッティング**(最小二乗): `fit_line_3d` / `fit_plane_3d`(法線+残差)/ `fit_sphere_3d`(中心+半径)/ `fit_circle_3d`
 
 ## マトリクス(手法モード別 × データ構造)
 全 5 構造(voxel / point cloud / 3DGS / mesh / depth 2.5D)は共通 voxel/point 表現へ**変換 T**で載るので、
