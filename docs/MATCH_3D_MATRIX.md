@@ -29,18 +29,32 @@
 | **binary voxel** | 距離場(SDF) | EDT |
 
 ## マトリクス(セル = 実現済 / TODO)
-行 = データ構造、列 = 手法。**T** = 変換で接続。
+行 = データ構造、列 = 手法。**T** = 変換で接続。GPU 速度(vs CPU)を併記。
 
-| ↓構造 \ 手法→ | NCC | shape-based | phase-corr | chamfer | PCA/moment | MIP→2D |
+| ↓構造 \ 手法→ | NCC | shape-based | phase-corr | PCA/moment | MIP→2D | chamfer |
 |---|---|---|---|---|---|---|
-| voxel grid | ✅ | ✅ | ✅ | TODO | TODO | ✅ |
-| point cloud | ✅(T:splat) | ✅(T) | ✅(T) | TODO | TODO | TODO |
-| 3DGS | ✅(T:splat) | T | T | — | T | — |
-| mesh | T:voxelize | T | T | — | T | — |
-| depth 2.5D | T | T | T | — | T | — |
+| voxel grid | ✅ 46× | ✅ 68-89× | ✅ 18-28× | ✅ | ✅ | TODO |
+| point cloud | ✅ T:splat | ✅ T | ✅ T | ✅ 回転復元 | ✅ T | TODO |
+| 3DGS | ✅ T:splat | T | T | ✅ T | T | — |
+| mesh | T:voxelize | T | T | T | T | — |
+| depth 2.5D | T:逆投影 | T | T | T | T | — |
 
-- **pyramid**(coarse-to-fine)と **sub-voxel 重心**は全 NCC 系に横断適用(既存)。
-- **rotation 対応**: shape-based(勾配方向)/ PCA 正準化 / log-polar(将来)で扱う。
+**実装(`match3d.py` / `accel_match` / `accel_vol`)**:
+- NCC(voxel) = `accel_match.ncc_locate_3d` + `_pyramid`(244× vs scipy)+ sub-voxel 重心。
+- shape-based(勾配方向 = 輪郭マッチング、**コントラスト不変**)= `match3d.match_shape_3d`。0.4× 弱コントラストでも sub-voxel 定位。GPU 68-89×。
+- phase-corr(FFT、平行移動、テンプレ不要)= `match_phase_3d`。GPU 18-28×。
+- PCA/moment(**回転**を扱う唯一の列。主軸整列)= `match_pca` / `moment_axes`。異方性雲の回転+並進を残差 0・角度差 0° で復元。
+- MIP→2D(直交投影で 2D 手法に落とす、安い coarse)= `match_mip_2d`。定位 |Δ|=0。
+- 変換: `points_to_voxel`(splat)/ `gaussians_to_voxel`(3DGS)/ `voxel_to_mips` / `sobel3d`。
+
+**pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(明示復元)で対応。**
+
+## 次に埋めるセル(TODO)
+- **chamfer / 距離場**(部分・遮蔽に頑健): EDT + model エッジ点の相関。
+- **mesh → voxel**(voxelize: 面の占有ラスタライズ or SDF)→ 全手法へ接続。
+- **depth 2.5D → point cloud**(逆投影)→ 全手法へ。
+- **log-polar × phase-corr**(回転+スケールを FFT で)。
+- **generalized Hough 3D**(勾配→R-table 投票)。
 
 ## 進捗ログ
-- 2026-08-26: voxel×{NCC, pyramid, sub-voxel, region-morph} 実装済(`accel_match`/`accel_vol`)。
+- 2026-08-26: voxel×{NCC, pyramid, sub-voxel, region-morph, shape-based, phase-corr, PCA, MIP} 実装・検証・GPU 速度実測。point cloud / 3DGS を splat 変換で接続。test_match3d(7)+ test_accel_3d_toolkit(10)。
