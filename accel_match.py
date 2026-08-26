@@ -140,6 +140,41 @@ def ncc_locate_3d(volumes, template, device="cpu", subvoxel=True, win=2):
     return out
 
 
+def _downsample3d(vol, factor, device):
+    t = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
+    return F.avg_pool3d(t, factor)[0, 0].cpu().numpy().astype(np.float64)
+
+
+def ncc_locate_3d_pyramid(volumes, template, device="cpu", levels=2, win=3,
+                          subvoxel=True):
+    """3D voxel ピラミッドサーチ(coarse-to-fine)。大 volume で全探索より速い。
+
+    粗解像度(1/2^levels)で全 NCC → 概略位置 → 全解像度でその周り ±win を局所 NCC で精密化 →
+    重心で sub-voxel。HALCON/OpenCV の画像ピラミッドマッチングの voxel 版。全探索 NCC と同じ
+    位置を出しつつ、探索コストを「粗全探索(voxel 1/8^levels)+ 微小窓」に落とす。
+    """
+    f = 2 ** levels
+    T = np.asarray(template, np.float64)
+    Tc = _downsample3d(T, f, device)
+    out = []
+    for vol in volumes:
+        v = np.asarray(vol, np.float64)
+        vc = _downsample3d(v, f, device)
+        cm = ncc_map_3d([vc], Tc, device)[0]                  # 粗全探索
+        ci = np.unravel_index(int(np.argmax(cm)), cm.shape)
+        # 全解像度へ写像し、その周りの窓を切って局所精密化
+        center = [min(s - 1, max(0, c * f)) for c, s in zip(ci, v.shape)]
+        r = f + win
+        sl = tuple(slice(max(0, c - r), min(s, c + r + 1)) for c, s in zip(center, v.shape))
+        crop = v[sl]
+        fm = ncc_map_3d([crop], T, device)[0]                 # 局所全 NCC
+        fi = np.unravel_index(int(np.argmax(fm)), fm.shape)
+        pos = _subvoxel_com(fm, fi, min(win, 2)) if subvoxel else [float(i) for i in fi]
+        pos = [p + sl[k].start for k, p in enumerate(pos)]    # 窓オフセットを戻す
+        out.append(np.array([float(fm[fi])] + pos))
+    return out
+
+
 # match accel op 名 -> 再現する core op 名
 MATCH_ACCEL = {"ncc_locate": "ncc_locate"}
 
