@@ -192,6 +192,34 @@ _CATALOG = {
         ("topology_signature", "medial", ["voxel"], "descriptor", False),
         ("medial_match", "medial", ["voxel", "voxel"], "measurement", False),
     ],
+    "metrics": [  # 評価メトリクス(進化探索の fitness 土台 = 一致度を数値化)
+        ("chamfer_distance", "metrics3d", ["points", "points"], "measurement", False),
+        ("hausdorff_distance", "metrics3d", ["points", "points"], "measurement", False),
+        ("fscore", "metrics3d", ["points", "points"], "measurement", False),
+        ("rmse_correspondence", "metrics3d", ["points", "points"], "measurement", False),
+        ("normal_consistency", "metrics3d", ["points", "normals"], "measurement", False),
+        ("voxel_iou", "metrics3d", ["voxel", "voxel"], "measurement", False),
+        ("pose_error", "metrics3d", ["pose", "pose"], "measurement", False),
+    ],
+    "robust_fit": [  # RANSAC 頑健プリミティブ適合(外れ値に強い、最小二乗の上位)
+        ("ransac_plane", "ransac_fit", ["points"], "primitive", False),
+        ("ransac_sphere", "ransac_fit", ["points"], "primitive", False),
+        ("ransac_line", "ransac_fit", ["points"], "primitive", False),
+        ("ransac_cylinder", "ransac_fit", ["points", "normals"], "primitive", False),
+    ],
+    "edges": [  # 3D エッジ抽出(Canny/LoG の 3D 版・検出/照合の前処理)
+        ("gradient3d", "edges3d", ["voxel"], "gradient", False),
+        ("canny3d", "edges3d", ["voxel"], "voxel", False),
+        ("log_zero_crossings", "edges3d", ["voxel"], "voxel", False),
+        ("link_edges", "edges3d", ["voxel"], "voxel", False),
+        ("edge_points", "edges3d", ["voxel"], "points", False),
+    ],
+    "reconstruct": [  # 点群 → 表面再構成(voxel を介さず直接メッシュ/境界)
+        ("poisson_lite", "recon3d", ["points"], "mesh", False),
+        ("alpha_shape_mesh", "recon3d", ["points"], "mesh", False),
+        ("alpha_shape_boundary", "recon3d", ["points"], "points", False),
+        ("estimate_alpha", "recon3d", ["points"], "measurement", False),
+    ],
 }
 
 
