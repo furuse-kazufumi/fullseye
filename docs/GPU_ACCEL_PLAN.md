@@ -74,8 +74,16 @@
       core と score |Δ|~1e-6・**argmax 位置は完全一致**。bridge に MATCH 終端区間を追加し、
       **locate/locate_rot が 100% GPU**(illuminate+ncc)。RTX 5090 実測 **対 CPU 4-6x**
       (256²B8:38→6.2ms)、**タスク指標(位置誤差)は Δ=0 で完全一致**。tests/test_accel_match.py(5)。
-- **champion GPU カバレッジ: 4/38 → 18/38 段。4 champion が 100% GPU**(locate/locate_rot/
-  vol_count/vol_denoise)。
+- [x] **領域(2値)モルフォロジ GPU 化 完了**(2026-08-26): reg_dilate/reg_erode(cross×iter)、
+      erosion_golay/erosion_circle/dilation_circle/opening_circle(disk footprint)を conv2d カウント
+      +閾値で実装。**ndimage.binary_* と bit 一致**(zero-pad = border_value=0、dilation=count>0 /
+      erosion=count==footprint 和)。disk は skimage 非依存で再現(x²+y²≤r²、loco venv に skimage 無し
+      でも動く)。**binarize/count が 1/6 → 5/6 段を単一 GPU 常駐区間**に(threshold+opening_circle+
+      reg_dilate+erosion_golay+reg_dilate、projective_trans_region のみ CPU)。RTX 5090 実測 **対 CPU
+      3-5x**(256²B8:16.7→3.4ms)、常駐は per-op の 4.2x。**指標(IoU/count)完全一致 Δ=0**
+      (bit-exact ゆえ)。tests/test_accel_region.py(20)。
+- **champion GPU カバレッジ: 4/38 → 26/38 段。4 champion が 100% GPU**(locate/locate_rot/
+  vol_count/vol_denoise)、**binarize/count は 5/6**(残 projective のみ)。
 - [ ] **fullseye API から device 指定**: 公開 API(api.py / fslib)で device="cuda" を通す。
 
 ## Afterman トラック(集団評価を GPU バッチで)
