@@ -420,7 +420,7 @@ def apply(image, name: str, a: float = 0.5, b: float = 0.5, coerce: bool = True)
 
 
 def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
-                 coerce: bool = True):
+                 coerce: bool = True, device: str = "cpu"):
     """Apply a sequence of operators, threading the array through each.
 
     *stages* is either a list of names (one shared ``a``/``b`` for the whole
@@ -432,14 +432,33 @@ def run_pipeline(image, stages: Iterable, a: float = 0.5, b: float = 0.5,
     that already carries its declared sort, and region ops binarise at 0.5
     themselves, so re-coercing mid-chain would only strip gray levels a stage may
     still want (see :func:`_coerce_input`).
+
+    ``device`` (default ``"cpu"``): ``"cuda"`` (or any non-cpu) で GPU に載る op を
+    ``accel_bridge`` の **常駐パイプライン**で実行(未対応 op は CPU に自動フォールバック、
+    連続 accel op は転送 1 回に償却)。GPU/torch 不在時は静かに CPU 経路へ。既定の CPU 経路は
+    従来どおり core を鎖状適用する(挙動不変)。GPU 経路は ``ops.run_stages`` と同じ clip 付き
+    意味論(進化 champion と同じ)で、faithful op のみ GPU に載せるため **タスク指標は保存**
+    される(検証: tests/test_accel_bridge.py ほか)。
     """
-    v = image
-    first = True
+    norm = []
     for st in stages:
         if isinstance(st, (tuple, list)):
             name, sa, sb = (list(st) + [a, b])[:3]
         else:
             name, sa, sb = st, a, b
+        norm.append((name, float(sa), float(sb)))
+
+    if device != "cpu":                                   # GPU 経路(accel_bridge 常駐)
+        try:
+            import accel_bridge as _bridge
+            v = _coerce_input(image, _resolve(norm[0][0])) if (coerce and norm) else image
+            return _bridge.run(norm, [v], device=device)[0]
+        except Exception:
+            pass                                          # GPU/torch 不在等は CPU にフォールバック
+
+    v = image
+    first = True
+    for name, sa, sb in norm:
         op = _resolve(name)
         if first:
             v = _coerce_input(v, op) if coerce else v
