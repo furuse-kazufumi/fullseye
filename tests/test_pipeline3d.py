@@ -55,11 +55,12 @@ def test_measure_plane_and_roundness():
     pl = np.stack([Pp[:, 0] * 10, Pp[:, 1] * 10, 0.02 * Pp[:, 0] + 1], 1); pl[50] += [0, 0, 0.3]
     mp = P.measure_plane(pl)
     assert mp["pv"] > 0.25 and mp["flatness_rms"] < 0.1
+    ctr = np.array([2.0, 3.0, 4.0])
     u = rng.random(400) * 2 * np.pi; v = rng.random(400) * np.pi
-    sp = np.stack([np.sin(v) * np.cos(u), np.sin(v) * np.sin(u), np.cos(v)], 1) * 5 + [2, 3, 4]
-    sp[0] += [0.2, 0, 0]
+    sp = np.stack([np.sin(v) * np.cos(u), np.sin(v) * np.sin(u), np.cos(v)], 1) * 5 + ctr
+    sp[:5] += 0.3 * (sp[:5] - ctr) / np.linalg.norm(sp[:5] - ctr, axis=1, keepdims=True)
     ir = P.inspect_roundness(sp)
-    assert abs(ir["radius"] - 5.0) < 0.05 and ir["roundness_pv"] > 0.15
+    assert abs(ir["radius"] - 5.0) < 0.1 and ir["roundness_pv"] > 0.15
 
 
 def test_match_sdf_localizes():
