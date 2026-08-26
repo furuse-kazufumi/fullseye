@@ -123,8 +123,16 @@ def _gauss3d(t, sigma):
 
 
 def sobel3d(vol, device="cpu"):
-    """3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。"""
-    t = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
+    """3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。
+
+    vol は numpy でも torch tensor(GPU 上でも可)でも受ける(scene_flow 等の device 常駐用)。
+    """
+    if torch.is_tensor(vol):
+        t = vol.to(device=device, dtype=torch.float32)
+        if t.ndim == 3:
+            t = t[None, None]
+    else:
+        t = torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
     deriv = torch.tensor([-1.0, 0.0, 1.0], device=device)
     smooth = torch.tensor([1.0, 2.0, 1.0], device=device)
     grads = []
