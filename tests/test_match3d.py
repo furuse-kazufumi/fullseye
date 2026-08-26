@@ -86,6 +86,25 @@ def test_mip_2d_locates():
     assert abs(pos[0] - d) + abs(pos[1] - h) + abs(pos[2] - w) < 2
 
 
+@skip
+def test_chamfer_robust_to_occlusion():
+    """chamfer/距離場: 球殻テンプレで定位。テンプレ半分遮蔽でも定位(部分・遮蔽頑健)。"""
+    z, y, x = np.ogrid[-6:7, -6:7, -6:7]
+    rr = np.sqrt(x * x + y * y + z * z)
+    T = (np.abs(rr - 4) < 1.2).astype(float)
+    N = 56
+    rng = np.random.default_rng(0)
+    scene = rng.random((N, N, N)) * 0.15
+    d, h, w = 34, 18, 26
+    scene[d - 6:d + 7, h - 6:h + 7, w - 6:w + 7] += T
+    scene = np.clip(scene, 0, 1)
+    r = X.match_chamfer_3d(scene, T, "cpu", thr=0.3)
+    assert abs(r[1] - d) + abs(r[2] - h) + abs(r[3] - w) <= 1
+    Tp = T.copy(); Tp[:, :, 7:] = 0                       # 半分遮蔽
+    r2 = X.match_chamfer_3d(scene, Tp, "cpu", thr=0.3)
+    assert abs(r2[1] - d) + abs(r2[2] - h) + abs(r2[3] - w) <= 2
+
+
 def _box(center, sz):
     c = np.array(center, float); s = np.array(sz, float) / 2
     v = np.array([[cx, cy, cz]
