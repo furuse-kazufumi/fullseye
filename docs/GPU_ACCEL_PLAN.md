@@ -56,8 +56,14 @@
 - [x] **進化 champion → 常駐 GPU パイプライン**(`accel_bridge.py`): champion(genome/pipeline)を
       `accel.run_pipeline` の steps へ写像。accel 未対応 op が混ざる列は CPU 区間として併用、
       連続 accel op は 1 転送に償却。metric 保存(±0.01 dB)を検証済。未対応 op 頻度が上の
-      wave 優先度を出す(`report_champions`)。**残: 実 champion での E2E スループット計測は、
-      champion の GPU カバレッジが上がってから(現状 4/38 段では転送償却の効きが薄い)**。
+      wave 優先度を出す(`report_champions`)。bridge は image(`accel`)/ volume(`accel_vol`)/
+      CPU の 3 種区間を自動分割。
+- [x] **volume 群 GPU 化 完了**(`accel_vol.py`、2026-08-26): vol_median/vol_gaussian/vol_erode/
+      vol_dilate/vol_threshold の 3D 版(conv3d/max_pool3d/reflect)。core と **5/5 faithful**
+      (interior<5e-3、gaussian は端からカーネル半径内側)。**vol_count 5/5・vol_denoise 4/4 段が
+      単一 GPU 常駐区間**に。RTX 5090 実測 **対 CPU ~64x**(32³B32:549→8.5ms / 128³B4:4547→70.7ms)、
+      **常駐は per-op の 2.8x**(4段で転送 4→1 償却)。指標保存 = vol_count 完全一致・vol_denoise ±0.15 dB。
+      tests/test_accel_vol.py(10 tests)。
 - [ ] **fullseye API から device 指定**: 公開 API(api.py / fslib)で device="cuda" を通す。
 
 ## Afterman トラック(集団評価を GPU バッチで)
