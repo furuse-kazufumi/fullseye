@@ -93,6 +93,12 @@
       指標(IoU/count)を Δ=0 で保存**(採否は指標で判定。honest に「metric-faithful, not bit-faithful」)。
       → **binarize/count が 6/6=100% GPU、単一常駐区間**に。sk_tv(Chambolle 反復)/simulate_defocus/
       xsitk_*/xcv_*/decode_barcode は backend 固有・各 1 champion=低レバレッジで CPU 残置(honest)。
+- [x] **denoise を 100% GPU 化 完了**(2026-08-26): simulate_defocus=uniform_filter(_k(a))は `_mean`
+      流用(_mean を symmetric padding に修正=box も bit 一致に)。**sk_tv=Chambolle TV** を skimage
+      `denoise_tv_chambolle` 忠実移植(tau=1/(2ndim)、勾配/発散、E 停止)。★バッチは **per-image freeze**
+      (収束画像を凍結、全反復回すと早期停止画像を過剰平滑化する非faithful を回避)→ **bit-exact**。
+      → denoise が median>sk_tv>simulate_defocus>cv_sharpen の **4/4 単一常駐区間**、PSNR Δ~0.01 dB。
+      sk_tv は計算重(~200 反復)= GPU の本領(CPU-torch 比 5.9×)。
 - [x] **OpenCV(cv2)比ベンチ 完了**(`bench_vs_opencv.py` → `docs/BENCH_VS_OPENCV.md`、2026-08-26):
       ★honest な結論 = **単発の軽量 2D フィルタは cv2 CPU が速い**(GPU は転送律速: 512²×32 で転送
       40ms vs gaussian 実計算 0.51ms = 約 79 倍差)。**GPU が cv2 に勝つのは 3 条件**: (1) NCC マッチング
