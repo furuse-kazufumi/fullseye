@@ -207,11 +207,11 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 | PCA / 記述子 RANSAC の粗姿勢 | `icp_point2point_3d` / `icp_point2plane` | RMSE 1e-10 |
 
 ## 次に埋めるセル(TODO)。方針=手段を1つに絞らず発散(ノウハウは幅に蓄積)
-- **feature descriptor**(Harris3D/ISS keypoint + FPFH/SHOT/spin image + RANSAC): 疎対応で大回転・部分重なり。
-- **scene flow**(2D optical flow の 3D 版): voxel 運動場、変形/動体。
 - **medial surface / 3D skeleton**(2D skeleton=1D medial axis の線→面版): 位相ベース照合。
 - **anisotropic 3DGS 厳密 splat**(現状は等方近似)。
 - **log-polar の大回転対応**(±45/90° 別名の解消: 複数投影軸の投票 or 球面調和)。
+- **ISS keypoint 単体**(Workflow で 1 件 schema 失敗、feat_shot 内には実装あり → 独立公開)。
+- **微分可能レンダリング**(render_* を autograd 対応 → 逆問題/世界モデル学習)。
 
 ## 進捗ログ
 - 2026-08-26: voxel×{NCC, pyramid, sub-voxel, region-morph, shape-based, phase-corr, PCA, MIP} 実装・検証・GPU 速度実測。point cloud / 3DGS を splat 変換で接続。test_match3d(7)+ test_accel_3d_toolkit(10)。
