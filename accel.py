@@ -383,6 +383,39 @@ def _cv_sharpen(t, a, b, dev):
     return F.conv2d(F.pad(t, (1, 1, 1, 1), mode="reflect"), k).clamp(0, 1)
 
 
+def _persp_matrix(src, dst):
+    """4 点対応から透視変換 3x3(cv2.getPerspectiveTransform 相当、numpy 求解)。"""
+    A, rhs = [], []
+    for (sx, sy), (dx, dy) in zip(src, dst):
+        A.append([sx, sy, 1, 0, 0, 0, -sx * dx, -sy * dx]); rhs.append(dx)
+        A.append([0, 0, 0, sx, sy, 1, -sx * dy, -sy * dy]); rhs.append(dy)
+    m = np.linalg.solve(np.asarray(A, np.float64), np.asarray(rhs, np.float64))
+    return np.array([[m[0], m[1], m[2]], [m[3], m[4], m[5]], [m[6], m[7], 1.0]])
+
+
+def _projective_region(t, a, b, dev):
+    # core = cv2.warpPerspective(getPerspectiveTransform(src,dst), INTER_LINEAR, BORDER_REFLECT)。
+    # grid_sample(bilinear, reflection)で近似。cv2 の warp 規約と bit 一致はしないため、
+    # 採否は IoU/count 指標の保存で判定(bridge の validate)。
+    Bn, _, H, W = t.shape
+    d = 0.06 + 0.12 * a
+    src = [[0, 0], [W, 0], [W, H], [0, H]]
+    dst = [[W * d * b, H * d], [W * (1 - d * b), 0], [W, H], [0, H * (1 - d)]]
+    Minv = np.linalg.inv(_persp_matrix(src, dst))       # dst->src(サンプリング用)
+    ys, xs = torch.meshgrid(torch.arange(H, dtype=torch.float32, device=dev),
+                            torch.arange(W, dtype=torch.float32, device=dev), indexing="ij")
+    hom = torch.stack([xs, ys, torch.ones_like(xs)], dim=-1)          # (H,W,3)
+    Mi = torch.as_tensor(Minv, dtype=torch.float32, device=dev)
+    s = hom @ Mi.T
+    sx = s[..., 0] / s[..., 2]
+    sy = s[..., 1] / s[..., 2]
+    gx = (2.0 * sx + 1.0) / W - 1.0                      # align_corners=False の画素中心写像
+    gy = (2.0 * sy + 1.0) / H - 1.0
+    grid = torch.stack([gx, gy], dim=-1).unsqueeze(0).expand(Bn, H, W, 2)
+    return F.grid_sample(t, grid, mode="bilinear", padding_mode="reflection",
+                         align_corners=False).clamp(0, 1)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
