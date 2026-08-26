@@ -226,7 +226,18 @@ def main():
     L.append("- **GPU が OpenCV に勝つのは 3 条件**: (1) 計算が重い op(NCC テンプレートマッチング)、"
              "(2) **多 op を常駐で連鎖**して転送を償却(= E2E 本丸 `accel.run_pipeline`)、(3) **3D**(cv2 に無い)。")
     L.append("- imgevolve の設計(常駐パイプライン + 進化 champion を丸ごと GPU)はまさに (2) を突く。"
-             "以前の「64x/3-5x」は **scipy 比**であり、最強 CPU=cv2 比では上記の通り条件付き。正直に開示する。\n")
+             "以前の「64x/3-5x」は **scipy 比**であり、最強 CPU=cv2 比では上記の通り条件付き。正直に開示する。")
+    L.append("- **cv2 ≒ HALCON 級の最適化 CPU** なので、この比較は fullseye が目標とする HALCON との"
+             "性能差の予測にもなる(単発は HALCON 級 CPU が速い / 常駐多op・NCC・3D で GPU が上回る、と読める)。\n")
+
+    ch = bench_compute_heavy()
+    L.append("## 計算が重い op(GPU の本領、単発でも勝ちうる)\n")
+    L.append("| op | baseline | baseline (ms) | GPU (ms) | speedup |")
+    L.append("|---|---|---:|---:|---:|")
+    for name, base, tc, tg, sp in ch:
+        mark = "**GPU**" if sp >= 1 else base
+        L.append(f"| {name} | {base} | {tc:.1f} | {tg:.1f} | {sp:.1f}× ({mark}) |")
+    L.append("")
 
     L.append("## 常駐パイプラインの転送償却(N-op、512²×32)\n")
     L.append("同じ gaussian を N 回。cv2 は逐次、GPU は転送1回で N op 連鎖。**N が増えるほど GPU 有利**。\n")
