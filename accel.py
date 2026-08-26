@@ -375,6 +375,14 @@ def _opening_circle(t, a, b, dev):                    # erosion → dilation(dis
     return _bdilate(_berode(_bin_t(t), fp), fp)
 
 
+def _cv_sharpen(t, a, b, dev):
+    # core = cv2.filter2D(v, kernel=[[0,-a,0],[-a,1+4a,-a],[0,-a,0]]), clip[0,1]。
+    # cv2.filter2D 既定 border=BORDER_REFLECT_101 = torch 'reflect'。相関(非反転)= conv2d。
+    k = torch.tensor([[0.0, -a, 0.0], [-a, 1.0 + 4.0 * a, -a], [0.0, -a, 0.0]],
+                     dtype=torch.float32, device=dev).view(1, 1, 3, 3)
+    return F.conv2d(F.pad(t, (1, 1, 1, 1), mode="reflect"), k).clamp(0, 1)
+
+
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
 ACCEL = {
     "gauss_filter": (_gaussian, "gaussian", "gauss_filter"),
