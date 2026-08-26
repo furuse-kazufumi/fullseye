@@ -262,6 +262,41 @@ def match_mip_2d(scene_vol, model_vol, device="cpu"):
     return np.array(pos)
 
 
+def _edges3d(vol, device, thr_ratio=0.3):
+    gz, gy, gx = sobel3d(vol, device)
+    mag = torch.sqrt(gz * gz + gy * gy + gx * gx)[0, 0]
+    return (mag > thr_ratio * float(mag.max())).float()
+
+
+def match_chamfer_3d(scene, template, device="cpu", thr=0.3):
+    """chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。
+
+    シーンのエッジの EDT(各 voxel から最近エッジまでの距離)に、テンプレのエッジ点を載せて
+    距離和を最小化。score(pos)=Σ_{template edge} DT_scene(pos+edge)/n。**低いほど良い一致**。
+    エッジ点の一部が欠けても効く(NCC より遮蔽に強い)。EDT は scipy CPU(GPU 厳密 EDT は
+    jump-flooding 近似が将来課題)、相関(conv3d)は GPU。返り値 [chamfer 距離, d, h, w]。
+    """
+    from scipy import ndimage
+    se = _edges3d(scene, device, thr).detach().cpu().numpy() > 0.5
+    te = _edges3d(template, device, thr).detach().cpu().numpy() > 0.5
+    dt = ndimage.distance_transform_edt(~se)                 # scene エッジまでの距離場
+    n = max(1.0, float(te.sum()))
+    Td, Th, Tw = te.shape
+    pd, ph, pw = Td // 2, Th // 2, Tw // 2
+    dtt = torch.as_tensor(dt[None, None], dtype=torch.float32, device=device)
+    ker = torch.as_tensor(te[None, None].astype(np.float32), device=device)
+    score = F.conv3d(F.pad(dtt, (pw, pw, ph, ph, pd, pd)), ker)[0, 0] / n
+    D, H, W = np.asarray(scene).shape
+    big = float(score.max()) + 1.0
+    lo = (pd, ph, pw); hi = (D - (Td - 1 - pd), H - (Th - 1 - ph), W - (Tw - 1 - pw))
+    mask = torch.full_like(score, big)
+    if all(h > l for l, h in zip(lo, hi)):
+        mask[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = 0.0
+    s = (score + mask).detach().cpu().numpy()                # 無効位置は大 → argmin で除外
+    idx = np.unravel_index(int(np.argmin(s)), s.shape)
+    return np.array([float(s[idx]), float(idx[0]), float(idx[1]), float(idx[2])])
+
+
 def match_points_ncc(pts_scene, pts_model, size, bounds, device="cpu", smooth=0.8):
     """点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。"""
     vs = points_to_voxel(pts_scene, size, bounds, device, smooth)
