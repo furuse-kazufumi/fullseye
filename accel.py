@@ -385,6 +385,53 @@ def _cv_sharpen(t, a, b, dev):
     return F.conv2d(F.pad(t, (1, 1, 1, 1), mode="reflect"), k).clamp(0, 1)
 
 
+def _tv_chambolle(img, weight, eps=2.0e-4, max_iter=200):
+    """skimage.restoration.denoise_tv_chambolle(2D)のバッチ GPU 版(Rudin-Osher-Fatemi)。
+
+    skimage `_denoise_tv_chambolle_nd` を忠実に写す(tau=1/(2·ndim)=0.25、勾配=前進差分、
+    d=p の負の発散、E ベース停止)。バッチは per-image の E を追い、全画像が収束したら打ち切る
+    (収束後の追加反復は不動点なので結果を変えない=faithful)。計算重なので転送律速でなく GPU が効く。
+    """
+    px = torch.zeros_like(img)
+    py = torch.zeros_like(img)
+    d = torch.zeros_like(img)
+    tau = 0.25                                        # 1/(2*ndim), ndim=2
+    npix = float(img.shape[2] * img.shape[3])
+    out = img
+    E_init = E_prev = None
+    for i in range(max_iter):
+        if i > 0:
+            d = -(px + py)
+            d[:, :, 1:, :] += px[:, :, :-1, :]        # ax=0(H)の後退差分
+            d[:, :, :, 1:] += py[:, :, :, :-1]        # ax=1(W)
+            out = img + d
+        else:
+            out = img
+        E = (d * d).sum(dim=(1, 2, 3))                # per-image
+        g0 = torch.zeros_like(img)
+        g1 = torch.zeros_like(img)
+        g0[:, :, :-1, :] = out[:, :, 1:, :] - out[:, :, :-1, :]
+        g1[:, :, :, :-1] = out[:, :, :, 1:] - out[:, :, :, :-1]
+        norm = torch.sqrt(g0 * g0 + g1 * g1)
+        E = E + weight * norm.sum(dim=(1, 2, 3))
+        norm = norm * (tau / weight) + 1.0
+        px = (px - tau * g0) / norm
+        py = (py - tau * g1) / norm
+        E = E / npix
+        if i == 0:
+            E_init = E.clamp_min(1e-12)
+            E_prev = E
+        else:
+            if bool((torch.abs(E_prev - E) < eps * E_init).all()):
+                break
+            E_prev = E
+    return out
+
+
+def _sk_tv(t, a, b, dev):
+    return _tv_chambolle(t, weight=0.02 + 0.3 * a)
+
+
 def _persp_matrix(src, dst):
     """4 点対応から透視変換 3x3(cv2.getPerspectiveTransform 相当、numpy 求解)。"""
     A, rhs = [], []
