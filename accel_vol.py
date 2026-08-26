@@ -45,17 +45,24 @@ def _gauss_kernel(sigma, device):
     return k / k.sum()
 
 
+def _sym_idx(n, r, device):
+    """symmetric(半標本)反射 gather index。scipy.ndimage 既定 mode='reflect'(端複製)を
+    torch で再現。torch の 'reflect' は端非複製の鏡映で別物。r>n でも周期 2n で正しく折る。"""
+    j = torch.arange(-r, n + r, device=device)
+    m = torch.remainder(j, 2 * n)
+    return torch.where(m >= n, 2 * n - 1 - m, m)
+
+
 def _sep_conv3d(t, k):
-    """3 軸で分離可能 1D conv(reflect パディング)。t=(B,1,D,H,W)。"""
+    """3 軸で分離可能 1D conv(symmetric パディング)。t=(B,1,D,H,W)。
+    scipy gaussian_filter(mode='reflect'=symmetric)と bit 一致(全サイズ)。"""
     r = (k.numel() - 1) // 2
     for axis in range(3):                             # 0=D, 1=H, 2=W
+        dim = 2 + axis
+        t = t.index_select(dim, _sym_idx(t.shape[dim], r, t.device))
         shape = [1, 1, 1, 1, 1]
-        shape[2 + axis] = k.numel()
-        ker = k.view(*shape)
-        pad = [0, 0, 0, 0, 0, 0]                      # (w0,w1,h0,h1,d0,d1)
-        pad[(2 - axis) * 2] = r
-        pad[(2 - axis) * 2 + 1] = r
-        t = F.conv3d(F.pad(t, tuple(pad), mode="reflect"), ker)
+        shape[dim] = k.numel()
+        t = F.conv3d(t, k.view(*shape))
     return t
 
 
