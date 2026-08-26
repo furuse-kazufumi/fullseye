@@ -97,6 +97,71 @@ def _vol_threshold(t, a, b, dev):
     return (t > a).float()
 
 
+# ── 3D 領域(2値)モルフォロジ: conv3d カウント+閾値で ndimage.binary_* を bit 一致再現 ── #
+# 2D region(accel.py)の voxel 版。cv2/HALCON が GPU で手薄な領域。
+# footprint: ball(x²+y²+z²≤r²、skimage.morphology.ball と同式)or cross3d(6 近傍=
+# generate_binary_structure(3,1))。dilation=(近傍カウント>0)、erosion=(カウント==footprint 和)。
+def _ball_kernel(r, device):
+    if r <= 0:
+        return torch.ones(1, 1, 1, 1, 1, device=device)
+    a = torch.arange(-r, r + 1, dtype=torch.float32, device=device)
+    zz, yy, xx = torch.meshgrid(a, a, a, indexing="ij")
+    return ((xx * xx + yy * yy + zz * zz) <= r * r).float().view(1, 1, 2 * r + 1, 2 * r + 1, 2 * r + 1)
+
+
+def _cross3d_kernel(device):
+    k = torch.zeros(3, 3, 3, dtype=torch.float32, device=device)
+    k[1, 1, :] = 1; k[1, :, 1] = 1; k[:, 1, 1] = 1     # 中心 + 6 面近傍
+    return k.view(1, 1, 3, 3, 3)
+
+
+def _bin3(t):
+    return (t > 0.5).float()
+
+
+def _bdil3(x, fp):
+    r = [s // 2 for s in fp.shape[2:]]
+    c = F.conv3d(F.pad(x, (r[2], r[2], r[1], r[1], r[0], r[0])), fp)   # zero-pad=border_value 0
+    return (c > 0.5).float()
+
+
+def _ber3(x, fp):
+    r = [s // 2 for s in fp.shape[2:]]
+    c = F.conv3d(F.pad(x, (r[2], r[2], r[1], r[1], r[0], r[0])), fp)
+    return (c >= float(fp.sum()) - 0.5).float()
+
+
+def _rad3(a):
+    return 1 + int(a * 3)                              # core _rad / _it 相当
+
+
+def _vol_reg_dilate(t, a, b, dev):                     # cross 6 近傍 × iterations
+    fp = _cross3d_kernel(dev); x = _bin3(t)
+    for _ in range(_rad3(a)):
+        x = _bdil3(x, fp)
+    return x
+
+
+def _vol_reg_erode(t, a, b, dev):
+    fp = _cross3d_kernel(dev); x = _bin3(t)
+    for _ in range(_rad3(a)):
+        x = _ber3(x, fp)
+    return x
+
+
+def _vol_erosion_ball(t, a, b, dev):
+    return _ber3(_bin3(t), _ball_kernel(_rad3(a), dev))
+
+
+def _vol_dilation_ball(t, a, b, dev):
+    return _bdil3(_bin3(t), _ball_kernel(_rad3(a), dev))
+
+
+def _vol_opening_ball(t, a, b, dev):                   # erosion → dilation(ball 単回)
+    fp = _ball_kernel(_rad3(a), dev)
+    return _bdil3(_ber3(_bin3(t), fp), fp)
+
+
 # vol accel op 名 -> (fn, 再現する core op 名)
 VOL_ACCEL = {
     "vol_gaussian_g": (_vol_gaussian, "vol_gaussian"),
