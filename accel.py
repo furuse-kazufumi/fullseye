@@ -101,7 +101,7 @@ def _k(a):
 
 # each: (batch tensor, a, b, device) -> batch tensor
 def _gaussian(t, a, b, dev):
-    return _sep_conv(t, _gauss_kernel(0.3 + 2.7 * a, dev))
+    return _sep_conv_sym(t, _gauss_kernel(0.3 + 2.7 * a, dev))
 
 
 def _mean(t, a, b, dev):
