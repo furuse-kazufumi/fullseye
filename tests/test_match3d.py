@@ -478,3 +478,88 @@ def test_scene_flow_recovers_motion():
     radial = flow2[0] * (zz - c) + flow2[1] * (yy - c) + flow2[2] * (xx - c)
     m = np.abs(zz - c) + np.abs(yy - c) + np.abs(xx - c) > 6
     assert radial[m].mean() > 0                            # 拡大=外向き発散
+
+
+# ── データ形式の変換 + 3D モルフォロジー ────────────────────────────────
+@skip
+def test_signed_distance_field():
+    """occupancy → SDF: 中心が最も負・表面で 0 交差・外側が正。"""
+    N = 48; c = N // 2
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    ball = (np.sqrt((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2) < 12).astype(float)
+    sdf = X.signed_distance_field(ball, "cpu")
+    assert sdf[c, c, c] < -8                              # 中心=深い内側
+    assert abs(sdf[c, c, c + 12]) < 2                     # 表面 ~0
+    assert sdf[0, 0, 0] > 5                               # 端=外側
+    assert np.array_equal(X.sdf_to_occupancy(sdf, 0.0), ball)   # 往復
+
+
+@skip
+@need_scipy
+def test_estimate_point_normals_sphere():
+    """点群法線: 球面の法線が放射方向に一致(FPFH/ICP-p2plane の前段)。"""
+    rng = np.random.default_rng(1)
+    u = rng.random(2000) * 2 * np.pi; v = rng.random(2000) * np.pi
+    sph = np.stack([np.sin(v) * np.cos(u), np.sin(v) * np.sin(u), np.cos(v)], 1) * 8
+    nrm = X.estimate_point_normals(sph, k=20, viewpoint=np.array([0, 0, 100.0]))
+    radial = sph / np.linalg.norm(sph, axis=1, keepdims=True)
+    assert np.abs(np.einsum("ni,ni->n", nrm, radial)).mean() > 0.95
+
+
+@skip
+def test_morph_gradient_extracts_boundary():
+    """3D モルフォロジー勾配 = dilation-erosion が境界のみ抽出(内部は零)。"""
+    N = 40; c = N // 2
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    r = np.sqrt((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2)
+    ball = (r < 12).astype(float)
+    grad = X.morph_gradient3d(ball, 1, "cpu")
+    assert (grad > 0.5).sum() > 100                       # 境界に応答
+    assert np.allclose(grad[r < 10], 0)                   # 内部は零
+
+
+@skip
+def test_morph_tophat_isolates_small_feature():
+    """3D white top-hat が SE より小さい明構造を抽出、大構造内部は零。"""
+    N = 40; c = N // 2
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    big = (np.sqrt((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2) < 12).astype(np.float32)
+    big[8:11, 8:11, 8:11] += 1.0
+    th = X.morph_tophat3d(big, 3, "cpu")
+    assert th[9, 9, 9] > 0.5                              # 小突起を抽出
+    assert abs(th[c, c, c]) < 0.1                         # 大球内部は零
+
+
+# ── 幾何プリミティブ / メトロロジー(2点→線・3点→面/角度)──────────────
+def test_geometry_angles_and_distances():
+    """角度(3点/面/線-面)と距離(点-面/ねじれ線間)が閉形式で厳密。"""
+    assert abs(X.angle_3points([1, 0, 0], [0, 0, 0], [0, 1, 0]) - 90) < 1e-6
+    assert abs(X.angle_between_planes([0, 0, 1], [0, 1, 0]) - 90) < 1e-6
+    assert abs(X.angle_line_plane([0, 0, 1], [0, 0, 1]) - 90) < 1e-6
+    assert abs(X.distance_point_plane([1, 2, 3], [0, 0, 0], [0, 0, 1]) - 3) < 1e-6
+    assert abs(X.distance_line_line([0, 0, 0], [1, 0, 0], [0, 0, 5], [0, 1, 0]) - 5) < 1e-6
+
+
+def test_geometry_intersections():
+    """交差: 直線∩平面 → 点、平面∩平面 → 直線。"""
+    p = X.intersect_line_plane([0, 0, -5], [0, 0, 1], [0, 0, 0], [0, 0, 1])
+    assert np.allclose(p, [0, 0, 0])
+    pt, d = X.intersect_planes([0, 0, 0], [0, 0, 1], [0, 0, 0], [0, 1, 0])
+    assert abs(abs(d[0]) - 1) < 1e-6 and abs(d[1]) < 1e-6 and abs(d[2]) < 1e-6   # ±x 方向
+
+
+def test_geometry_fitting():
+    """フィッティング: 球(中心/半径)・平面(法線/残差)・円を最小二乗で厳密回復。"""
+    rng = np.random.default_rng(0)
+    u = rng.random(500) * 2 * np.pi; v = rng.random(500) * np.pi
+    sp = np.stack([np.sin(v) * np.cos(u), np.sin(v) * np.sin(u), np.cos(v)], 1) * 7 + np.array([3, 4, 5])
+    c, r = X.fit_sphere_3d(sp)
+    assert np.linalg.norm(c - [3, 4, 5]) < 1e-6 and abs(r - 7) < 1e-6
+    P = rng.random((300, 2))
+    pts = np.stack([P[:, 0], P[:, 1], 0.3 * P[:, 0] + 0.2 * P[:, 1] + 1], 1)
+    _, n, resid = X.fit_plane_3d(pts)
+    assert resid < 1e-6 and abs(abs(n @ _unit([0.3, 0.2, -1])) - 1) < 1e-6
+
+
+def _unit(v):
+    v = np.asarray(v, float); return v / np.linalg.norm(v)

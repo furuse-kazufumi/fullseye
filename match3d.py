@@ -1549,3 +1549,250 @@ def scene_flow_lk(vol0, vol1, device="cpu", win=3, levels=3, iters=3, reg=1e-3):
             upd = torch.stack([dz[0, 0], dy[0, 0], dx[0, 0]], 0)
             flow = flow + upd.clamp(-2, 2)
     return flow.detach().cpu().numpy()
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# データ形式の変換グラフ拡張(構造=行を増やす)+ 3D モルフォロジー
+# 「3D データを手法が効く表現へ変換する」= マトリクスの核。形式間を繋ぐ。
+# ═══════════════════════════════════════════════════════════════════════════
+def signed_distance_field(vol, device="cpu", iso=0.5):
+    """occupancy/密度 voxel → 符号付き距離場 SDF(内側<0・外側>0)。edt_jfa を両側に。
+
+    SDF はマッチングに優れた表現(滑らか・勾配=法線・0 等値面=表面)。inside/outside の
+    ユークリッド距離差で作る。GPU native。voxel↔SDF↔occupancy を相互変換できる。
+    """
+    occ = np.asarray(vol) > iso
+    d_out = edt_jfa(occ, device)                            # 外側→最近表面
+    d_in = edt_jfa(~occ, device)                            # 内側→最近外側
+    sdf = d_out - d_in
+    return sdf.detach().cpu().numpy() if torch.is_tensor(sdf) else np.asarray(sdf)
+
+
+def sdf_to_occupancy(sdf, iso=0.0):
+    """SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。"""
+    return (np.asarray(sdf) <= iso).astype(np.float64)
+
+
+def estimate_point_normals(points, k=16, viewpoint=None):
+    """点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。
+
+    FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きは viewpoint(既定=重心)基準で
+    一貫化(外向き)。返り値 normals (N,3)。points→(points+normals) の変換。
+    """
+    from scipy.spatial import cKDTree
+    P = np.asarray(points, np.float64)
+    tree = cKDTree(P)
+    _, idx = tree.query(P, k=min(k, len(P)))
+    nn = P[idx]
+    Q = nn - nn.mean(1, keepdims=True)
+    cov = np.einsum("nki,nkj->nij", Q, Q) / Q.shape[1]
+    _, v = np.linalg.eigh(cov)
+    nrm = v[:, :, 0]                                        # 最小固有値の固有ベクトル
+    vp = P.mean(0) if viewpoint is None else np.asarray(viewpoint, np.float64)
+    flip = np.einsum("ni,ni->n", nrm, vp - P) > 0
+    nrm[flip] *= -1
+    return nrm / np.linalg.norm(nrm, axis=1, keepdims=True).clip(1e-12)
+
+
+def mesh_to_points(vertices, faces, samples=20000, seed=0):
+    """mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。"""
+    V = np.asarray(vertices, np.float64); Fc = np.asarray(faces, np.int64)
+    tri = V[Fc]
+    areas = 0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0],
+                                          tri[:, 2] - tri[:, 0]), axis=1)
+    rng = np.random.default_rng(seed)
+    pick = rng.choice(len(Fc), size=samples, p=areas / areas.sum())
+    u = rng.random(samples); v = rng.random(samples); over = u + v > 1
+    u[over] = 1 - u[over]; v[over] = 1 - v[over]
+    t = tri[pick]
+    return t[:, 0] + u[:, None] * (t[:, 1] - t[:, 0]) + v[:, None] * (t[:, 2] - t[:, 0])
+
+
+def voxel_to_mesh(vol, iso=0.5):
+    """voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。"""
+    from skimage import measure
+    v, f, n, _ = measure.marching_cubes(np.asarray(vol, np.float64), level=iso)
+    return v, f, n
+
+
+def tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0):
+    """深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。
+
+    各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納
+    (表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。
+    """
+    d = np.asarray(depth, np.float64); H, W = d.shape
+    pts = depth_to_points(d, fx, fy, cx, cy)
+    if bounds is None:
+        lo, hi = pts.min(0) - 2, pts.max(0) + 2
+    else:
+        lo, hi = np.asarray(bounds[0], float), np.asarray(bounds[1], float)
+    span = np.maximum(hi - lo, 1e-9)
+    zz, yy, xx = np.mgrid[0:size, 0:size, 0:size]
+    wz = lo[2] + (zz + 0.5) / size * span[2]
+    wy = lo[1] + (yy + 0.5) / size * span[1]
+    wx = lo[0] + (xx + 0.5) / size * span[0]
+    ui = np.clip((wx * fx / np.maximum(wz, 1e-6) + cx).round().astype(int), 0, W - 1)
+    vi = np.clip((wy * fy / np.maximum(wz, 1e-6) + cy).round().astype(int), 0, H - 1)
+    dz = d[vi, ui]
+    tsdf = np.clip((dz - wz) / trunc, -1, 1)
+    tsdf[~((dz > 0) & (wz > 0))] = 1.0
+    return tsdf.astype(np.float32)
+
+
+# ── 3D モルフォロジー(グレースケール、cube SE、max_pool3d=dilation)──────────
+def _mdil(t, r):
+    return F.max_pool3d(t, 2 * r + 1, stride=1, padding=r)
+
+
+def _mero(t, r):
+    return -F.max_pool3d(-t, 2 * r + 1, stride=1, padding=r)
+
+
+def _morph_in(vol, device):
+    return torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
+
+
+def morph_dilate3d(vol, r=1, device="cpu"):
+    """3D グレースケール dilation(cube SE 半径 r の局所 max)。明領域を膨張。"""
+    return _mdil(_morph_in(vol, device), r)[0, 0].detach().cpu().numpy()
+
+
+def morph_erode3d(vol, r=1, device="cpu"):
+    """3D グレースケール erosion(cube SE の局所 min)。明領域を収縮。"""
+    return _mero(_morph_in(vol, device), r)[0, 0].detach().cpu().numpy()
+
+
+def morph_gradient3d(vol, r=1, device="cpu"):
+    """3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。"""
+    t = _morph_in(vol, device)
+    return (_mdil(t, r) - _mero(t, r))[0, 0].detach().cpu().numpy()
+
+
+def morph_tophat3d(vol, r=1, device="cpu"):
+    """3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。"""
+    t = _morph_in(vol, device)
+    return (t - _mdil(_mero(t, r), r))[0, 0].detach().cpu().numpy()
+
+
+def morph_blackhat3d(vol, r=1, device="cpu"):
+    """3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。"""
+    t = _morph_in(vol, device)
+    return (_mero(_mdil(t, r), r) - t)[0, 0].detach().cpu().numpy()
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 幾何プリミティブ / メトロロジー(2点→線・3点→面/角度、2D/3D 共通)
+# 検出/マッチを「計測」に変える層(HALCON の 2D/3D metrology 相当)。全て閉形式。
+# ═══════════════════════════════════════════════════════════════════════════
+def _u(v):
+    """単位ベクトル化。"""
+    v = np.asarray(v, float)
+    return v / np.linalg.norm(v).clip(1e-12)
+
+
+def line_from_2points(a, b):
+    """2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。"""
+    a = np.asarray(a, float)
+    return a, _u(np.asarray(b, float) - a)
+
+
+def plane_from_3points(a, b, c):
+    """3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。"""
+    a = np.asarray(a, float); b = np.asarray(b, float); c = np.asarray(c, float)
+    return a, _u(np.cross(b - a, c - a))
+
+
+def angle_3points(a, b, c):
+    """3 点のなす角(頂点 b、度)。∠ABC。"""
+    return float(np.degrees(np.arccos(np.clip(
+        _u(np.asarray(a, float) - np.asarray(b, float))
+        @ _u(np.asarray(c, float) - np.asarray(b, float)), -1, 1))))
+
+
+def angle_between_lines(d1, d2):
+    """2 直線方向のなす鋭角(度)。"""
+    return float(np.degrees(np.arccos(np.clip(abs(_u(d1) @ _u(d2)), -1, 1))))
+
+
+def angle_between_planes(n1, n2):
+    """2 平面の二面角(法線 n1,n2、度)。"""
+    return float(np.degrees(np.arccos(np.clip(abs(_u(n1) @ _u(n2)), -1, 1))))
+
+
+def angle_line_plane(d, n):
+    """直線(方向 d)と平面(法線 n)のなす角(度)。"""
+    return float(90.0 - np.degrees(np.arccos(np.clip(abs(_u(d) @ _u(n)), -1, 1))))
+
+
+def distance_point_plane(p, plane_pt, n):
+    """点-平面距離(符号なし)。"""
+    return float(abs((np.asarray(p, float) - np.asarray(plane_pt, float)) @ _u(n)))
+
+
+def distance_point_line(p, line_pt, d):
+    """点-直線距離。"""
+    d = _u(d); w = np.asarray(p, float) - np.asarray(line_pt, float)
+    return float(np.linalg.norm(w - (w @ d) * d))
+
+
+def distance_line_line(p1, d1, p2, d2):
+    """2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。"""
+    d1 = _u(d1); d2 = _u(d2); n = np.cross(d1, d2); ln = np.linalg.norm(n)
+    if ln < 1e-9:
+        return distance_point_line(p2, p1, d1)
+    return float(abs((np.asarray(p2, float) - np.asarray(p1, float)) @ (n / ln)))
+
+
+def intersect_line_plane(line_pt, d, plane_pt, n):
+    """直線 ∩ 平面 → 点(平行なら None)。"""
+    d = np.asarray(d, float); n = _u(n); dn = d @ n
+    if abs(dn) < 1e-9:
+        return None
+    t = (np.asarray(plane_pt, float) - np.asarray(line_pt, float)) @ n / dn
+    return np.asarray(line_pt, float) + t * d
+
+
+def intersect_planes(p1, n1, p2, n2):
+    """平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。"""
+    n1 = _u(n1); n2 = _u(n2); d = np.cross(n1, n2); ld = np.linalg.norm(d)
+    if ld < 1e-9:
+        return None
+    d = d / ld
+    A = np.array([n1, n2, d]); bb = np.array([n1 @ np.asarray(p1, float),
+                                              n2 @ np.asarray(p2, float), 0.0])
+    return np.linalg.solve(A, bb), d
+
+
+def fit_line_3d(points):
+    """点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。"""
+    P = np.asarray(points, float); c = P.mean(0)
+    _, v = np.linalg.eigh((P - c).T @ (P - c))
+    return c, v[:, -1]
+
+
+def fit_plane_3d(points):
+    """点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。"""
+    P = np.asarray(points, float); c = P.mean(0)
+    w, v = np.linalg.eigh((P - c).T @ (P - c))
+    return c, v[:, 0], float(np.sqrt(w[0] / len(P)))
+
+
+def fit_sphere_3d(points):
+    """点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。"""
+    P = np.asarray(points, float)
+    A = np.hstack([2 * P, np.ones((len(P), 1))]); b = (P ** 2).sum(1)
+    sol, *_ = np.linalg.lstsq(A, b, rcond=None)
+    c = sol[:3]
+    return c, float(np.sqrt(max(sol[3] + c @ c, 0.0)))
+
+
+def fit_circle_3d(points):
+    """点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。"""
+    P = np.asarray(points, float); c, n, _ = fit_plane_3d(P)
+    e1 = _u(np.cross(n, [1, 0, 0]) if abs(n[0]) < 0.9 else np.cross(n, [0, 1, 0]))
+    e2 = np.cross(n, e1)
+    xy = np.stack([(P - c) @ e1, (P - c) @ e2], 1)
+    A = np.hstack([2 * xy, np.ones((len(xy), 1))]); b = (xy ** 2).sum(1)
+    s, *_ = np.linalg.lstsq(A, b, rcond=None); cc = s[:2]
+    return c + cc[0] * e1 + cc[1] * e2, float(np.sqrt(max(s[2] + cc @ cc, 0.0))), n
