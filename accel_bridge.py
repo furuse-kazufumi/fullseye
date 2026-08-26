@@ -93,34 +93,35 @@ def _as_stages(x, start=ops.IMAGE) -> list:
 
 
 def plan(stages) -> list:
-    """Stage 列を GPU 常駐区間 / CPU 区間の交互列に分割。
+    """Stage 列を GPU(image)/ VOL(volume)/ CPU 区間の連なりに分割。
 
-    返り値 = ``[("gpu", [(accel名,a,b), ...]) | ("cpu", [Stage, ...]), ...]``。
-    連続する GPU 可能 op は 1 区間にまとまり、``accel.run_pipeline`` で転送 1 回に償却される。
-    sort が IMAGE を外れた時点以降は image op でないので自然に CPU 区間へ落ちる。
+    返り値 = ``[("gpu", [(accel名,a,b),...]) | ("vol", [(vol_accel名,a,b),...]) |
+    ("cpu", [Stage,...]), ...]``。連続する同種 GPU op は 1 区間にまとまり、
+    ``accel.run_pipeline`` / ``accel_vol.run_pipeline_vol`` で転送 1 回に償却される。
+    sort が image/volume を外れた op は自然に CPU 区間へ落ちる。
     """
     segs: list = []
     for st in stages:
-        if _gpu_ok(st):
+        kind = _seg_kind(st)
+        if kind == "gpu":
             item = (_C2A[st.op], st.a, st.b)
-            if segs and segs[-1][0] == "gpu":
-                segs[-1][1].append(item)
-            else:
-                segs.append(("gpu", [item]))
+        elif kind == "vol":
+            item = (_C2VA[st.op], st.a, st.b)
         else:
-            if segs and segs[-1][0] == "cpu":
-                segs[-1][1].append(st)
-            else:
-                segs.append(("cpu", [st]))
+            item = st
+        if segs and segs[-1][0] == kind:
+            segs[-1][1].append(item)
+        else:
+            segs.append((kind, [item]))
     return segs
 
 
 def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE):
-    """champion を GPU/CPU 混在で実行。
+    """champion を GPU(image/volume)/CPU 混在で実行。
 
-    accel 対応区間は ``accel.run_pipeline``(常駐)、未対応区間は core ``RT``(CPU)。
-    ``imgs`` = list[2D ndarray](0..1)。返り値は最終区間の出力(通常 list[2D ndarray]、
-    末尾が feature op なら list[float/dict])。
+    image accel 区間は ``accel.run_pipeline``、volume accel 区間は
+    ``accel_vol.run_pipeline_vol``(いずれも常駐=転送 1 回)、未対応区間は core ``RT``(CPU)。
+    ``imgs`` = list[2D or 3D ndarray](0..1)。返り値は最終区間の出力。
     """
     stages = _as_stages(stages_or_genome, start)
     cur = [np.asarray(im, np.float64) for im in imgs]
@@ -128,6 +129,9 @@ def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE):
         if kind == "gpu":
             cur = [np.asarray(im, np.float64)
                    for im in accel.run_pipeline(items, cur, device=device)]
+        elif kind == "vol":
+            cur = [np.asarray(v, np.float64)
+                   for v in accel_vol.run_pipeline_vol(items, cur, device=device)]
         else:
             cur = [ops.run_stages(items, im) for im in cur]
     return cur
