@@ -364,9 +364,10 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
             axis = best_axis
     else:
         axis = best_axis
-    res = evaluate(axis)
+    # best inlier だけで円をフィット(外れ値は既に除外済み)→ 中心/半径/mask を確定
+    res = circle_refit(axis)
     if res is None:
-        res = evaluate(best_axis)
+        res = circle_refit(best_axis)
     mask, axis, point3d, r = res
     # inlier を確定してもう一度円だけリフィット
     if int(mask.sum()) >= 3:
