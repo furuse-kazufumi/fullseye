@@ -68,10 +68,11 @@ def test_voxel_iou_dice():
 
 
 def test_accuracy_completeness_subset():
-    """b が a の部分集合 → completeness<1 だが accuracy(部分集合→全体)=1。"""
+    """b が a の部分集合(400/1000)→ b は完全に a に含まれ、a は b に部分的にしか含まれない。"""
     a = _cloud(6, n=1000)
     b = a[:400]  # a の部分
-    # b の各点は a に厳密に存在 → accuracy(b,a)=1
+    # b の各点は a に厳密に存在 → accuracy(b→a)=1, completeness(a←b が b をカバー)=1
     assert M.accuracy(b, a, tau=1e-6) == 1.0
-    # a の点で b の近くにあるのは一部 → completeness(a,b)<1
-    assert M.completeness(a, b, tau=1e-6) < 1.0
+    assert M.completeness(a, b, tau=1e-6) == 1.0
+    # a の点のうち b(部分集合)に近いのは 400/1000 のみ → accuracy(a→b)<1
+    assert abs(M.accuracy(a, b, tau=1e-6) - 0.4) < 1e-9
