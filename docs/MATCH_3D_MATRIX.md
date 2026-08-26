@@ -53,7 +53,16 @@
 | phase-corr | 並進 | テンプレ不要、FFT、18-28× |
 | PCA/moment | 回転+並進 | 対応あり、残差0、0.2ms |
 | Fourier-Mellin | 回転+スケール | 対応なし、30×、coarse(±45/90°別名) |
-| 反復精緻化(進行中) | 高精度収束 | Newton/GN/ICP で粗推定を仕上げ |
+
+**⑤ 反復精緻化(粗推定 → 高精度収束)。手段を1つに絞らず発散(Workflow で6手法を並行検証・全PASS、統合後に一次再検証済)**
+| 手法 | 収束精度(実測) | 反復/時間 | baseline 比 |
+|---|---|---|---|
+| Newton サブボクセルピーク `refine_peak_newton` | 0.011 voxel(全 Hessian で交差曲率) | 7 / 1.5ms | 放物線比 ~9× |
+| Gauss-Newton 並進(逆合成 LK)`refine_translation_lk` | 0.008-0.023 voxel | 6 / 1.2ms | NCC-COM 比 ~60× |
+| Levenberg-Marquardt 並進+スケール `refine_lm` | 並進 0.007 voxel + **スケール回復** | 4 / 6ms | COM 比 ~40-70×(スケールは新規) |
+| Gauss-Newton z 回転 `refine_rotation_z` | 0.002-0.017° | 4 / 12ms | Fourier-Mellin ±3° を **~5000×** |
+| ICP 点-点(Kabsch)`icp_point2point_3d` | RMSE 1e-14、Trimmed で部分重なり | 6 / 2.5ms | 粗 ±0.5vox を機械精度へ |
+| ICP 点-面(GN)`icp_point2plane` | RMSE 1e-10、表面に高速収束 | 4-16 / 8ms | 点-点より少反復(Low 2004) |
 
 **③ 検出(テンプレ不要で原始形状を出す)**
 | 手法 | 出力 | 特徴 |
