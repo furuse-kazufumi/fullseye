@@ -77,7 +77,10 @@ mesh→voxel の平行移動を phase-corr で完全復元、depth 逆投影も�
 - MIP→2D(直交投影で 2D 手法に落とす、安い coarse)= `match_mip_2d`。定位 |Δ|=0。GPU 1.3×(transfer-bound)。
 - chamfer(距離場、遮蔽頑健)= `match_chamfer_3d(edt="scipy"|"jfa")`。**`edt="jfa"` = GPU 厳密 EDT(`edt_jfa`、jump-flooding+JFA+2)で CPU 往復なしの全 GPU パイプライン。scipy C-EDT と max|err|=0(N≤160)、N≥96 で追い抜く(96→2.6× / 128→4.7×)。**
 - generalized Hough(勾配 R-table 投票)= `match_hough_3d`。GHT を「向きビンごとの相関の総和」で GPU ネイティブ化(A(t)=Σ_bin scene_bin⋆template_bin)。shape-based の単一解と違い**投票 accumulator を返し、NMS で複数ピーク=複数インスタンスを検出**(2/2 実証)。欠けたエッジはピークを下げるだけ=遮蔽頑健。GPU 8×(26 conv3d が compute-heavy、CPU 233→28ms)。
-- 変換: `points_to_voxel`(splat)/ `gaussians_to_voxel`(3DGS)/ `mesh_to_voxel` / `depth_to_points` / `voxel_to_mips` / `sobel3d` / `edt_jfa`(GPU 距離場)。
+- ★**曲率 / shape index(線→面リフト)= `curvature_maps` / `match_curvature_3d`。** 2D 輪郭の曲率(スカラー1個)を 3D 曲面の**主曲率 κ1,κ2**(2個)へリフト。level-set 閉形式(Kindlmann 2003、Hessian から conv3d)で per-voxel、shape index S∈[-1,1](cup/rut/saddle/ridge/cap)。球=+1・円柱=+0.5 と文献一致。**強度でなく局所曲面形状**で照合(同強度の球 vs 円柱を区別)。GPU 6×。
+- ★**球面調和記述子(線→面リフト)= `sh_descriptor` / `match_sh_descriptor`。** 2D 閉輪郭の Fourier 記述子 → 3D 閉曲面の SH。同心球 shell の SH 帯域エネルギー ‖f_l(r)‖ は**回転不変**(Kazhdan 2003)。3D 2軸回転で自己類似度 0.999、rod vs sphere 0.847 で識別。retrieval/verification 用。
+- **パラメトリック Hough(平面/球)= `hough_plane_3d` / `hough_sphere_3d`。** 2D Hough 直線/円の 3D リフト。勾配=法線を使い平面 (n,d) / 球 (c,r) を parameter 空間へ投票(テンプレ不要=RANSAC 系)。薄い境界面抽出で厚い勾配帯を排除。平面 法線exact・inlier93%、球 中心exact・半径 sub-voxel。GPU 4.9×(平面)/2×(球)。点群の地面/壁/ボール分割に。
+- 変換: `points_to_voxel`(splat)/ `gaussians_to_voxel`(3DGS)/ `mesh_to_voxel` / `depth_to_points` / `voxel_to_mips` / `sobel3d` / `edt_jfa`(GPU 距離場)/ `hessian3d`(曲率)/ `_thin_surface`(薄面抽出)。
 
 **pyramid / sub-voxel 重心は全 NCC 系に横断適用。回転は shape-based(不変)+ PCA(対応あり明示復元)+ Fourier-Mellin(対応なし回転+スケール)の 3 系統で対応。**
 
