@@ -86,6 +86,42 @@ def test_mip_2d_locates():
     assert abs(pos[0] - d) + abs(pos[1] - h) + abs(pos[2] - w) < 2
 
 
+def _box(center, sz):
+    c = np.array(center, float); s = np.array(sz, float) / 2
+    v = np.array([[cx, cy, cz]
+                  for cx in (c[0] - s[0], c[0] + s[0])
+                  for cy in (c[1] - s[1], c[1] + s[1])
+                  for cz in (c[2] - s[2], c[2] + s[2])])
+    f = np.array([[0, 1, 3], [0, 3, 2], [4, 6, 7], [4, 7, 5], [0, 4, 5], [0, 5, 1],
+                  [2, 3, 7], [2, 7, 6], [0, 2, 6], [0, 6, 4], [1, 5, 7], [1, 7, 3]])
+    return v, f
+
+
+@skip
+def test_mesh_to_voxel_matches_translation():
+    """mesh 行を接続: box を voxelize → 平行移動を phase-corr で復元。"""
+    b = (np.zeros(3), np.ones(3))
+    v1, f = _box([0.4, 0.5, 0.5], [0.3, 0.15, 0.15])
+    v2, _ = _box([0.5, 0.55, 0.45], [0.3, 0.15, 0.15])
+    vol1 = X.mesh_to_voxel(v1, f, 40, b)
+    vol2 = X.mesh_to_voxel(v2, f, 40, b)
+    sh = tuple(-x for x in X.match_phase_3d(vol1, vol2, "cpu"))
+    true = tuple(int(round((c2 - c1) * 39))
+                 for c1, c2 in zip([0.4, 0.5, 0.5], [0.5, 0.55, 0.45]))
+    assert sum(abs(a - t) for a, t in zip(sh, true)) <= 2
+
+
+@skip
+def test_depth_to_points_backprojection():
+    """depth 行を接続: 傾き平面の逆投影が妥当な point cloud を出す。"""
+    H = W = 64
+    yy, xx = np.mgrid[0:H, 0:W]
+    depth = 0.5 + 0.3 * (xx / W)
+    pts = X.depth_to_points(depth, fx=50, fy=50, cx=W / 2, cy=H / 2)
+    assert len(pts) == H * W
+    assert 0.49 < pts[:, 2].min() < 0.51 and 0.79 < pts[:, 2].max() < 0.81
+
+
 @skip
 def test_points_ncc_locates_cluster():
     """構造ある点群: 疎な背景 + 既知位置の密クラスタ。model=クラスタ点で定位。"""
