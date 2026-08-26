@@ -206,7 +206,8 @@ def _circumradii(P, simplices):
     R = np.full(len(T), np.inf, dtype=np.float64)
     good = np.abs(det) > 1e-12
     if good.any():
-        centers = np.linalg.solve(A[good], rhs[good])   # バッチ 3x3 solve
+        # numpy>=2.0 は 2D の b を「行列」とみなすため、列ベクトル (K,3,1) にして解く
+        centers = np.linalg.solve(A[good], rhs[good][..., None])[..., 0]
         R[good] = np.linalg.norm(centers - p0[good], axis=1)
     return R
 
