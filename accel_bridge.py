@@ -161,7 +161,7 @@ def coverage(stages_or_genome, start=ops.IMAGE) -> dict:
         "n_gpu": n_gpu,
         "n_cpu": len(stages) - n_gpu,
         "gpu_frac": (n_gpu / len(stages)) if stages else 0.0,
-        "n_gpu_segments": sum(1 for k, _ in summary if k in ("gpu", "vol")),
+        "n_gpu_segments": sum(1 for k, _ in summary if k in ("gpu", "vol", "match")),
         "uncovered_ops": uncovered,
         "segments": summary,
     }
