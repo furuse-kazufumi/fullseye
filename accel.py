@@ -428,6 +428,11 @@ ACCEL = {
     "erosion_circle": (_erosion_circle, "erosion_circle", "erosion_circle"),
     "dilation_circle": (_dilation_circle, "dilation_circle", "dilation_circle"),
     "opening_circle": (_opening_circle, "opening_circle", "opening_circle"),
+    # gray morphology(grey_dilation/erosion size=_k(a)= maxpool/minpool)= rect 版と同一機構
+    "gdilate": (_dilate_rect, "gdilate", "gray_dilation"),
+    "gerode": (_erode_rect, "gerode", "gray_erosion"),
+    # cv_sharpen(3x3 conv、cv2.filter2D 既定 border=reflect と一致)。denoise champion 末尾
+    "cv_sharpen": (_cv_sharpen, "cv_sharpen", "emphasize"),
 }
 
 
