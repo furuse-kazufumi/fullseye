@@ -6,7 +6,7 @@
 
 差別化根拠: cv2 に 3D matchTemplate は無く、HALCON も 3D は表面/形状ベースに限られる。**GPU voxel マッチング一式**はツールとして空いている(RTX5090、torch cu128)。
 
-## 手法列(2D で確立 → 3D へ持ち上げる)
+## 手法列(2D で確立 → 3D へ持ち上げる)。★=TRIZ 原理17(多次元化)/ 線→面リフト
 | 手法 | 2D の出自 | 3D 化の要点 | 変換 |
 |---|---|---|---|
 | **NCC / template** | 正規化相互相関 | conv3d + box3d 正規化 | (直接) |
@@ -15,9 +15,13 @@
 | **Fourier-Mellin / log-polar** | Reddy & Chatterji | z 投影の |FFT|→log-polar→位相相関(回転+スケール) | FFT→log-polar |
 | **chamfer / 距離場** | Barrow 1977 | エッジの EDT で chamfer スコア(全 GPU=JFA) | 距離変換(GPU-JFA) |
 | **moment / PCA 軸** | 主軸整列 | 慣性テンソル固有ベクトルで姿勢 | PCA 正準化 |
-| **generalized Hough** | Ballard | 3D R-table 投票 | 勾配→投票 |
+| **generalized Hough** | Ballard | 3D R-table 投票(向きビン相関の総和) | 勾配→投票 |
 | **projection(次元削減)** | — | 直交 MIP/シルエットで 2D 手法を適用 | 3D→2D 投影 |
-| **feature descriptor** | Harris/SIFT | 3D corner + 記述子(spin image/FPFH) | 局所形状 |
+| ★**曲率 / shape index** | 輪郭の曲率(スカラー1) | **主曲率 κ1,κ2**(2個=曲面固有)Koenderink shape index | Hessian(2次) |
+| ★**球面調和記述子** | Fourier 記述子(輪郭の1D FFT) | 曲面 SH の帯域エネルギー=**回転不変**(Kazhdan) | SH(球面 FFT) |
+| **パラメトリック Hough** | Hough 直線/円 | **平面/球**を parameter 空間へ投票(テンプレ不要=RANSAC 系) | 勾配→param 投票 |
+| **feature descriptor**(TODO) | Harris/SIFT | 3D corner + 記述子(spin image/FPFH/SHOT) | 局所形状 |
+| **反復精緻化**(進行中) | LK / ICP / GN | 粗推定を Newton/Gauss-Newton/ICP で高精度収束 | Jacobian/Hessian |
 
 ## データ構造行(入力) × 共通表現への変換
 | 構造 | → 共通表現 | 変換 |
