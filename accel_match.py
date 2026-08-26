@@ -74,6 +74,55 @@ def ncc_locate_batch(images, template, device="cpu"):
     return out
 
 
+def ncc_map_3d(volumes, template, device="cpu"):
+    """3D 正規化相互相関マップ(list[3D])。2D `ncc_map_batch` の voxel 版。
+
+    cv2 に 3D matchTemplate は無い。num=correlate(mean-free T)、m1/m2=box3d(局所平均/二乗平均)、
+    den=sqrt(max(m2-m1²,0)*T.size)*||Tz|| を conv3d で GPU 実行。full-overlap 位置のみ有効。
+    """
+    T = np.asarray(template, np.float64)
+    vols = [np.asarray(v, np.float64) for v in volumes]
+    D, H, W = vols[0].shape
+    if T.ndim != 3:
+        return [np.zeros((D, H, W)) for _ in vols]
+    Tz = T - float(T.mean())
+    tnorm = float(np.sqrt(np.sum(Tz * Tz)))
+    if tnorm < 1e-12:
+        return [np.zeros((D, H, W)) for _ in vols]
+    Td, Th, Tw = T.shape
+    pd, ph, pw = Td // 2, Th // 2, Tw // 2
+    v = torch.as_tensor(np.stack(vols)[:, None], dtype=torch.float32, device=device)
+    ker = torch.as_tensor(Tz[None, None], dtype=torch.float32, device=device)
+    ones = torch.ones(1, 1, Td, Th, Tw, dtype=torch.float32, device=device)
+
+    def corr(x, k):                                   # zero-pad 相関(conv3d は非反転)
+        return F.conv3d(F.pad(x, (pw, pw, ph, ph, pd, pd)), k)
+
+    num = corr(v, ker)
+    m1 = corr(v, ones) / (Td * Th * Tw)
+    m2 = corr(v * v, ones) / (Td * Th * Tw)
+    den = torch.sqrt(torch.clamp(m2 - m1 * m1, min=0.0) * float(T.size)) * tnorm
+    out = torch.where(den > 1e-12, num / den, torch.zeros_like(num)).clamp(-1.0, 1.0)
+    lo = (Td // 2, Th // 2, Tw // 2)
+    hi = (D - (Td - 1 - Td // 2), H - (Th - 1 - Th // 2), W - (Tw - 1 - Tw // 2))
+    mask = torch.zeros_like(out)
+    if all(h > l for l, h in zip(lo, hi)):
+        mask[:, :, lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = 1.0
+    out = out * mask
+    return [o[0] for o in out.detach().cpu().numpy().astype(np.float64)]
+
+
+def ncc_locate_3d(volumes, template, device="cpu"):
+    """各 volume の [max_corr, argmax_d, argmax_h, argmax_w]。"""
+    if template is None:
+        return [np.array([0.0, 0.0, 0.0, 0.0]) for _ in volumes]
+    out = []
+    for m in ncc_map_3d(volumes, template, device):
+        idx = np.unravel_index(int(np.argmax(m)), m.shape)
+        out.append(np.array([float(m[idx]), float(idx[0]), float(idx[1]), float(idx[2])]))
+    return out
+
+
 # match accel op 名 -> 再現する core op 名
 MATCH_ACCEL = {"ncc_locate": "ncc_locate"}
 
