@@ -138,6 +138,11 @@ def run(stages_or_genome, imgs, device="cpu", start=ops.IMAGE):
         elif kind == "vol":
             cur = [np.asarray(v, np.float64)
                    for v in accel_vol.run_pipeline_vol(items, cur, device=device)]
+        elif kind == "match":
+            # NCC は終端(MATCH)。テンプレートは ops._MATCH_CTX(呼び出し側が set 済み)。
+            T = ops._MATCH_CTX.get("template")
+            for _name, _a, _b in items:                 # 実際は ncc_locate 1 個
+                cur = accel_match.ncc_locate_batch(cur, T, device=device)
         else:
             cur = [ops.run_stages(items, im) for im in cur]
     return cur
