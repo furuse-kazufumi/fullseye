@@ -300,8 +300,9 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
     rng = np.random.default_rng(seed)
     N = len(P)
 
-    def evaluate(axis):
-        """軸から投影円をフィットし (mask, axis, point3d, r) を返す。失敗時 None。"""
+    def circle_refit(axis):
+        """軸に直交な平面で「全投影点」に円を最小二乗フィットし (mask,axis,point3d,r)。
+        外れ値を含む全点で円を張るのでリフィット/フォールバック専用(仮説評価には使わない)。"""
         e1, e2 = _perp_basis(axis)
         q = np.stack([P @ e1, P @ e2], 1)
         fit = _fit_circle_2d(q)
@@ -309,9 +310,7 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
             return None
         c2, r = fit
         dist = np.abs(np.linalg.norm(q - c2, axis=1) - r)
-        mask = dist < thresh
-        point3d = c2[0] * e1 + c2[1] * e2
-        return mask, _unit(axis), point3d, r
+        return dist < thresh, _unit(axis), c2[0] * e1 + c2[1] * e2, r
 
     best_mask = None
     best_n = -1
@@ -319,20 +318,38 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
     for _ in range(iters):
         i, j = rng.choice(N, size=2, replace=False)
         axis = np.cross(Nn[i], Nn[j])
-        if np.linalg.norm(axis) < 1e-6:      # 法線が平行 → 軸不定、スキップ
+        la = np.linalg.norm(axis)
+        if la < 1e-6:                        # 法線が平行 → 軸不定、スキップ
             continue
-        res = evaluate(axis)
-        if res is None:
+        axis = axis / la
+        e1, e2 = _perp_basis(axis)
+        # 仮説の円中心は「最小サンプルのみ」から決める(外れ値で仮説を汚さない):
+        # 2 点を投影平面に落とし、各点の投影法線が張る 2 直線の交点 = 中心。
+        qi = np.array([P[i] @ e1, P[i] @ e2]); qj = np.array([P[j] @ e1, P[j] @ e2])
+        mi = np.array([Nn[i] @ e1, Nn[i] @ e2]); mj = np.array([Nn[j] @ e1, Nn[j] @ e2])
+        lmi = np.linalg.norm(mi); lmj = np.linalg.norm(mj)
+        if lmi < 1e-9 or lmj < 1e-9:         # 法線が軸とほぼ平行 → 投影が消える、スキップ
             continue
-        mask, _, _, _ = res
+        mi /= lmi; mj /= lmj
+        A2 = np.array([[mi[0], -mj[0]], [mi[1], -mj[1]]])
+        if abs(np.linalg.det(A2)) < 1e-9:    # 2 法線が投影平面で平行 → 交点不定、スキップ
+            continue
+        t = np.linalg.solve(A2, qj - qi)
+        center2d = qi + t[0] * mi
+        r = 0.5 * (abs(t[0]) + abs(t[1]))
+        if not np.isfinite(r) or r <= 1e-9:
+            continue
+        q_all = np.stack([P @ e1, P @ e2], 1)
+        dist = np.abs(np.linalg.norm(q_all - center2d, axis=1) - r)
+        mask = dist < thresh
         cnt = int(mask.sum())
         if cnt > best_n:
-            best_n, best_mask, best_axis = cnt, mask, _unit(axis)
+            best_n, best_mask, best_axis = cnt, mask, axis
 
     if best_mask is None:                    # 有効仮説なし → 法線 SVD で全点フォールバック
         _, _, vt = np.linalg.svd(Nn, full_matrices=False)
         best_axis = vt[-1]
-        res = evaluate(best_axis)
+        res = circle_refit(best_axis)
         if res is None:
             raise ValueError("ransac_cylinder: 円筒フィット不能(投影円が縮退)")
         best_mask = res[0]
