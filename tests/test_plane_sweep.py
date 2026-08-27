@@ -149,40 +149,61 @@ def test_warp_translation_exact_on_linear_ramp():
 @pytest.mark.parametrize("d_scale", [1.0, 8.0])
 def test_recover_frontoparallel_depth_two_scales(d_scale):
     """既知深度のフロント平行平面を復元(相対誤差 < 数%)。スケール相対で 2 値検証。"""
-    img_ref, img_src, K, R, t, normal, d0, depth_ref = _scene(d_scale=d_scale)
-    cands = _candidates(0.5 * d0, 1.8 * d0, 80)
-    est = plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=5)
-    est_c = _crop(est)
-    gt_c = _crop(depth_ref)
-    assert np.all(np.isfinite(est_c))
-    rel = np.abs(est_c - gt_c) / gt_c
-    # 系統誤差の上限は候補間隔(離散化)。中央値/90%tile で honest に評価。
-    assert np.median(rel) < 0.03, f"median rel={np.median(rel):.4f}"
-    assert np.percentile(rel, 90) < 0.06, f"p90 rel={np.percentile(rel, 90):.4f}"
+    img_ref, img_src, K, R, t, normal, d0, depth_ref, X_ref = _scene(d_scale=d_scale)
+    cands = _candidates(0.5 * d0, 1.8 * d0, 100)
+    est = plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=1)
+    vis = _visible_mask(K, R, t, X_ref, img_ref.shape)
+    assert vis.mean() > 0.3                          # 照合可能領域が十分ある
+    rel = np.abs(est - depth_ref) / depth_ref
+    r = rel[vis & np.isfinite(est)]
+    # 系統誤差の上限は候補間隔(離散化)。可視領域で honest に評価。
+    assert np.median(r) < 0.02, f"median rel={np.median(r):.4f}"
+    assert np.percentile(r, 90) < 0.03, f"p90 rel={np.percentile(r, 90):.4f}"
 
 
 def test_recover_depth_value_is_uniform_frontoparallel():
     """フロント平行なら真深度は全域一定 → 推定も概ね一定(平面の性質を確認)。"""
-    img_ref, img_src, K, R, t, normal, d0, depth_ref = _scene(d_scale=1.0)
+    img_ref, img_src, K, R, t, normal, d0, depth_ref, X_ref = _scene(d_scale=1.0)
     assert np.allclose(depth_ref, d0, atol=1e-9)     # GT 自体の健全性
-    cands = _candidates(0.5 * d0, 1.8 * d0, 80)
-    est = _crop(plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=5))
-    assert np.median(np.abs(est - d0) / d0) < 0.03
+    cands = _candidates(0.5 * d0, 1.8 * d0, 100)
+    est = plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=1)
+    vis = _visible_mask(K, R, t, X_ref, img_ref.shape)
+    r = np.abs(est[vis] - d0) / d0
+    assert np.median(r) < 0.02
+
+
+def test_recover_window_aggregation_interior():
+    """window>1(SAD 集約)でも内部可視領域でフロント平行深度を復元。"""
+    img_ref, img_src, K, R, t, normal, d0, depth_ref, X_ref = _scene(d_scale=1.0)
+    cands = _candidates(0.5 * d0, 1.8 * d0, 100)
+    est = plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=5)
+    # window 半径分だけ内側に収縮した可視マスク(境界の無効混入を避ける)
+    vis = _visible_mask(K, R, t, X_ref, img_ref.shape, margin=6.0)
+    from scipy import ndimage
+    vis = ndimage.binary_erosion(vis, iterations=4)
+    assert vis.mean() > 0.15
+    r = np.abs(est[vis] - d0) / d0
+    assert np.median(r) < 0.03, f"median rel={np.median(r):.4f}"
+    assert np.percentile(r, 90) < 0.05, f"p90 rel={np.percentile(r, 90):.4f}"
 
 
 # ---- 深度復元 GT(傾いた平面, per-pixel 深度が変化) ------------------------
 
 def test_recover_tilted_plane_varying_depth():
     """傾いた平面の per-pixel 深度(画像内で変化)をフロント平行掃引で復元。"""
-    img_ref, img_src, K, R, t, normal, d0, depth_ref = _scene(tilt_deg=20.0)
-    gt_c = _crop(depth_ref)
+    img_ref, img_src, K, R, t, normal, d0, depth_ref, X_ref = _scene(tilt_deg=35.0)
+    vis = _visible_mask(K, R, t, X_ref, img_ref.shape)
+    assert vis.mean() > 0.3
+    gt_v = depth_ref[vis]
     # 深度が実際に変化していること(自明な一定深度でない判別ケース)
-    assert (gt_c.max() - gt_c.min()) / gt_c.mean() > 0.15
-    cands = _candidates(0.7 * gt_c.min(), 1.3 * gt_c.max(), 120)
-    est = _crop(plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=5))
-    rel = np.abs(est - gt_c) / gt_c
-    assert np.median(rel) < 0.04, f"median rel={np.median(rel):.4f}"
-    assert np.percentile(rel, 85) < 0.08, f"p85 rel={np.percentile(rel, 85):.4f}"
+    assert (gt_v.max() - gt_v.min()) / gt_v.mean() > 0.15, \
+        f"depth spread={(gt_v.max() - gt_v.min()) / gt_v.mean():.3f}"
+    cands = _candidates(0.7 * depth_ref[vis].min(), 1.3 * depth_ref[vis].max(), 160)
+    est = plane_sweep.plane_sweep_depth(img_ref, img_src, K, R, t, cands, window=1)
+    rel = np.abs(est - depth_ref) / depth_ref
+    r = rel[vis & np.isfinite(est)]
+    assert np.median(r) < 0.03, f"median rel={np.median(r):.4f}"
+    assert np.percentile(r, 85) < 0.06, f"p85 rel={np.percentile(r, 85):.4f}"
 
 
 # ---- fail-closed ------------------------------------------------------------
