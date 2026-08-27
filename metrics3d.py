@@ -75,18 +75,35 @@ def normal_consistency(points_a, normals_a, points_b, normals_b):
 
 
 def voxel_iou(vol_a, vol_b, iso=0.5):
-    """voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。"""
-    a = np.asarray(vol_a) >= iso
-    b = np.asarray(vol_b) >= iso
+    """voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。
+
+    両 volume は同一 shape が必須。異形状は numpy broadcasting で見かけ上一致し
+    誤った IoU(例: (10,1,10) vs (1,10,10) → 1.0)を静かに返すので、fail-closed で
+    shape 不一致は ValueError で拒否する。"""
+    a = np.asarray(vol_a)
+    b = np.asarray(vol_b)
+    if a.shape != b.shape:
+        raise ValueError(
+            f"voxel_iou: 両 volume は同一 shape が必要(得た {a.shape} と {b.shape})")
+    a = a >= iso
+    b = b >= iso
     inter = int(np.logical_and(a, b).sum())
     union = int(np.logical_or(a, b).sum())
     return float(inter / union) if union > 0 else 1.0
 
 
 def voxel_dice(vol_a, vol_b, iso=0.5):
-    """voxel 占有の Dice 係数 = 2|A∩B|/(|A|+|B|)。→ [0,1]。医用でよく使う。"""
-    a = np.asarray(vol_a) >= iso
-    b = np.asarray(vol_b) >= iso
+    """voxel 占有の Dice 係数 = 2|A∩B|/(|A|+|B|)。→ [0,1]。医用でよく使う。
+
+    voxel_iou と同じく、異形状は broadcasting で無意味な値(Dice>1 すら起こる)を
+    返すため fail-closed で shape 不一致は ValueError。"""
+    a = np.asarray(vol_a)
+    b = np.asarray(vol_b)
+    if a.shape != b.shape:
+        raise ValueError(
+            f"voxel_dice: 両 volume は同一 shape が必要(得た {a.shape} と {b.shape})")
+    a = a >= iso
+    b = b >= iso
     sa, sb = int(a.sum()), int(b.sum())
     inter = int(np.logical_and(a, b).sum())
     return float(2 * inter / (sa + sb)) if (sa + sb) > 0 else 1.0
