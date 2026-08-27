@@ -185,6 +185,24 @@ def test_alpha_shape_boundary_rejects_bad_alpha():
         R.alpha_shape_boundary(pts, alpha=0.0)
 
 
+def test_alpha_shape_boundary_scale_invariant():
+    """相似(uniform scale)な点群は**スケールに依らず同数・同一の境界点**を返す。
+
+    回帰([2]): _circumradii の退化判定が絶対閾値 |det(A)|>1e-12 だったため、det ∝ L³ が
+    小座標(scale≲1e-4)で閾値を下回り、正常な四面体まで特異(R=∞)扱いになって境界が黙って
+    空(0 点)になっていた。退化判定をエッジ長で正規化した無次元量にした修正後、境界点は
+    座標を一様スケールしても不変になる。旧挙動では scale=1e-4 で 0 点になり FAIL。
+    """
+    base = _solid_ball(1500, RADIUS, CENTER, seed=2)
+    b_unit = R.alpha_shape_boundary(base, R.estimate_alpha(base) * 0.5)
+    assert len(b_unit) > 0                                  # baseline は非空
+    for s in (1e-2, 1e-4, 1e-5):
+        P = base * s
+        b = R.alpha_shape_boundary(P, R.estimate_alpha(P) * 0.5)
+        assert len(b) == len(b_unit)                       # 境界点数が scale 不変
+        assert np.array_equal(b, b_unit)                   # 選ばれる点 index も同一
+
+
 # --------------------------------------------------------------------------- #
 # alpha_shape_mesh: (V,3)/(F,3)・面 index 範囲内                              #
 # --------------------------------------------------------------------------- #
