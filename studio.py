@@ -2839,6 +2839,7 @@ def build_window(model=None):
             report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
         state["image_path"] = os.path.abspath(path)
+        state["fit_next"] = True                      # a new image should fit the view
         _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
         show_result()
