@@ -58,7 +58,9 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "moments3d": moments3d, "geodesic3d": geodesic3d,
         "visualhull": visualhull, "superquadric": superquadric,
         "bundle3d": bundle3d, "tsdf_fusion": tsdf_fusion, "pcl_augment": pcl_augment,
-        "gicp": gicp, "segment3d": segment3d}
+        "gicp": gicp, "segment3d": segment3d,
+        "pose_graph": pose_graph, "normals_orient": normals_orient,
+        "scene_flow3d": scene_flow3d, "occupancy": occupancy}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
