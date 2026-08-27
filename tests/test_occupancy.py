@@ -307,3 +307,32 @@ def test_3d_fail_closed_on_degenerate_input():
         occupancy.query_distance(E, BOUNDS, RES, np.zeros((2, 2)))     # query 形状不正
     with pytest.raises(ValueError):
         occupancy.query_distance(E, BOUNDS, RES, np.zeros((1, 3)), mode="foo")  # 不明 mode
+
+
+def test_occupancy_grid_2d_rejects_degenerate_bounds():
+    """2-D occupancy_grid_2d: 明示された退化/反転 bounds は fail-closed(3-D と一貫)。"""
+    pt = [[0.5, 0.5, 0.3]]
+    with pytest.raises(ValueError):
+        occupancy.occupancy_grid_2d(pt, cell=0.1, bounds=(1.0, 0.0, 0.0, 1.0))  # xmax<xmin
+    with pytest.raises(ValueError):
+        occupancy.occupancy_grid_2d(pt, cell=0.1, bounds=(0.0, 1.0, 1.0, 0.0))  # ymax<ymin
+    with pytest.raises(ValueError):
+        occupancy.occupancy_grid_2d(pt, cell=0.1, bounds=(0.0, 0.0, 0.0, 1.0))  # xmax==xmin
+    # 正常な bounds は不変(単一 in-bounds 点が占有)
+    occ, extent = occupancy.occupancy_grid_2d(pt, cell=0.1, bounds=(0, 1, 0, 1))
+    assert occ.sum() == 1 and extent == (0, 1, 0, 1)
+
+
+def test_inflate_validates_voxel_size_before_shortcut():
+    """inflate: radius==0 / 空占有の短絡パスでも voxel_size<=0 は ValueError(短絡前に検証)。"""
+    full = np.ones((3, 3, 3), bool)
+    empty = np.zeros((3, 3, 3), bool)
+    with pytest.raises(ValueError):
+        occupancy.inflate(full, radius=0, voxel_size=0)          # radius==0 短絡でも検証
+    with pytest.raises(ValueError):
+        occupancy.inflate(empty, radius=5, voxel_size=-3)        # 空占有短絡でも検証
+    with pytest.raises(ValueError):
+        occupancy.inflate(full, radius=0, voxel_size=(1.0, -1.0, 1.0))  # 異方の負成分も
+    # 正常な短絡は恒等のまま(回帰なし)
+    assert np.array_equal(occupancy.inflate(full, radius=0, voxel_size=1.0), full)
+    assert np.array_equal(occupancy.inflate(empty, radius=5, voxel_size=1.0), empty)
