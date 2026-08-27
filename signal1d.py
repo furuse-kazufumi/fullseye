@@ -188,8 +188,8 @@ def spline_resample(x, y, n, smooth=0.0):
 # 点列は 2D でも 3D でもよい(D=2 は輪郭、D=3 は空間曲線)。
 def _as_ptsND(points, name="points"):
     p = np.asarray(points, dtype=np.float64)
-    if p.ndim != 2 or p.shape[1] < 2 or p.shape[1] > 3:
-        raise ValueError(f"{name} は (N, 2) か (N, 3) の曲線点列が必要(受領: {p.shape})")
+    if p.ndim != 2 or p.shape[1] < 2:
+        raise ValueError(f"{name} は (N, D>=2) の曲線点列が必要(受領: {p.shape})")
     if p.shape[0] < 4:
         raise ValueError(f"{name} は4点以上必要(3次スプライン, 受領: {p.shape[0]})")
     if not np.all(np.isfinite(p)):
