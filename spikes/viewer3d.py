@@ -46,7 +46,7 @@ def _cloud_geometry(pts, colormap="viridis"):
     pc.points = o3d.utility.Vector3dVector(pts)
     if len(pts):
         z = pts[:, 2]
-        zn = (z - z.min()) / (z.ptp() + 1e-9)
+        zn = (z - z.min()) / (np.ptp(z) + 1e-9)
         pc.colors = o3d.utility.Vector3dVector(matplotlib.colormaps[colormap](zn)[:, :3])
     return pc
 
