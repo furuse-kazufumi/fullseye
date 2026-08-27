@@ -55,3 +55,44 @@ def test_valid_mask():
     depth = np.array([[1.0, 0.0], [np.nan, 3.0]])
     m = RI.valid_mask(depth)
     assert m.tolist() == [[True, False], [False, True]]
+
+
+def test_occlusion_edges_continuous_slope_not_flagged():
+    """[bug5] 完全連続の傾斜面(遮蔽なし)は遮蔽エッジとして検出してはならない。
+
+    旧実装は一階勾配(=slope)を rel_thresh*median_depth と比較する次元不整合で、
+    傾斜が median に対し大きい(=深度が小さい)と傾斜面全体を誤検出していた
+    (この入力で旧挙動は occ_rate=1.000)。正しくは二階差分 ≈ 0 で occ_rate=0。
+    """
+    uu, vv = np.meshgrid(np.arange(30), np.arange(30))
+    depth = 0.15 * uu + 0.5  # 完全連続な傾斜、全画素 depth>0
+    e = RI.occlusion_edges(depth, rel_thresh=0.05)
+    assert not e.any(), f"連続傾斜面は非遮蔽であるべき(occ_rate={e.mean():.3f})"
+
+
+def test_occlusion_edges_fronto_parallel_step_detected():
+    """[bug5] 正対の深度段差(fronto-parallel step)は段差位置で検出される。
+
+    傾斜と段差を分離しても、真の不連続は取りこぼさないこと(行方向の段差)。
+    """
+    depth = np.full((20, 20), 8.0)
+    depth[10:, :] = 25.0  # 行 9/10 の間に段差
+    e = RI.occlusion_edges(depth, rel_thresh=0.05)
+    assert e[9:11, :].any(), "段差位置(行9/10)が検出されるべき"
+    assert not e[:5, :].any() and not e[15:, :].any(), "平坦部は非検出"
+
+
+def test_normals_from_depth_degenerate_shape_rejected():
+    """[bug10] 単一行(H=1)/単一列(W=1)は法線が定義できず ValueError で拒否。
+
+    旧実装は np.gradient が要素不足で不親切な例外を投げていた。縮退軸の勾配を
+    0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を静かに返すため、fail-closed で拒否する。
+    """
+    import pytest
+
+    for shp in [(1, 10), (10, 1), (1, 1)]:
+        with pytest.raises(ValueError):
+            RI.normals_from_depth(np.full(shp, 5.0))
+    # 2x2 以上は従来どおり通ること(回帰の下限確認)
+    n = RI.normals_from_depth(np.full((2, 2), 5.0), orient_to_camera=False)
+    assert n.shape == (2, 2, 3)
