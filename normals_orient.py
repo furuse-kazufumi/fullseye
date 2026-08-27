@@ -215,7 +215,7 @@ def orient_normals(points, normals, k: int = 20, seed_dir=None) -> np.ndarray:
             nv = np.linalg.norm(v)
             refdir = v / nv if nv > 1e-12 else None                # 重心から外向き
         _orient_seed(N, seed, refdir)
-        # 木を BFS/DFS で辿り、親と逆向きの子を反転
+        # 木を BFS/DFS で辿り、親と逆向きの子を反転(成分を内部一貫にする)
         stack = [seed]
         visited[seed] = True
         while stack:
@@ -226,6 +226,10 @@ def orient_normals(points, normals, k: int = 20, seed_dir=None) -> np.ndarray:
                     if np.dot(N[u], N[w]) < 0.0:
                         N[w] = -N[w]
                     stack.append(int(w))
+        # seed_dir 指定時は、内部一貫化した成分の大域符号を bulk で seed_dir に整合。
+        # 単一 seed が seed_dir と近直交でも堅牢(finding [5] の根本原因を除去)。
+        if ref is not None:
+            _align_component_sign(N, members, ref)
     return N
 
 
