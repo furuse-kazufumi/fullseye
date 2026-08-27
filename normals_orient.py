@@ -118,6 +118,39 @@ def _orient_seed(N: np.ndarray, seed: int, refdir) -> None:
         N[seed] = -ns
 
 
+def _align_component_sign(N: np.ndarray, members: np.ndarray, ref: np.ndarray) -> None:
+    """伝播で内部一貫にした 1 連結成分の大域符号を基準方向 ``ref`` に合わせる(in-place)。
+
+    成分は BFS 伝播で内部一貫(全体の符号だけが未定)になっている前提。単一 seed の
+    ``|cos|`` に頼ると、seed 点の法線が ``ref`` と近直交のとき符号情報が捨てられ、
+    ``ref`` と ``-ref`` が同じ大域符号を返してしまう(finding [5] の根本原因)。そこで
+    成分**全点**の ``ref`` 射影を集約して符号を決める。集約の一貫度で場合分け:
+
+      - **coherent** (``|mean|/mean|.| >= _COHERENCE``): 単一の大域符号が定義できる面
+        (平面・開いた面や、``ref`` に沿った seed_dir)。総和が負なら成分全体を反転し、
+        法線群を ``ref`` と正の向きへ揃える。seed の ``|cos|`` が ``_PERP_COS`` 未満でも
+        射影の符号は多数点の集約で確実に決まる。
+      - **balanced** (coherent でなく ``mean|.| >= _PERP_COS``): 閉曲面(球など)で
+        ``ref`` が全法線と平均的に直交=大域符号が一意でない。seed(最突出点)基準の
+        外向き向き付けをそのまま残す(反転しない)。
+      - **degenerate** (``mean|.| < _PERP_COS``): ``ref`` が成分の全法線と(ほぼ)直交し
+        射影に情報が無い(例: 面内の seed_dir)。fail-closed で ``ValueError``。
+    """
+    proj = N[members] @ ref
+    info = float(np.mean(np.abs(proj)))       # ref の平均的な情報量(単位法線ゆえ無次元)
+    net = float(np.mean(proj))                # 符号つき集約
+    coherence = abs(net) / info if info > 1e-12 else 0.0
+    if coherence >= _COHERENCE:               # 大域符号が定義できる → bulk で確実に整合
+        if net < 0.0:
+            N[members] = -N[members]
+    elif info < _PERP_COS:                    # ref ⊥ 全法線: 情報が無い → fail-closed
+        raise ValueError(
+            "seed_dir is (near) orthogonal to all surface normals in a connected "
+            "component; the global sign cannot be controlled by seed_dir"
+        )
+    # balanced(閉曲面): seed 基準の向き付けを保持(反転しない)
+
+
 def orient_normals(points, normals, k: int = 20, seed_dir=None) -> np.ndarray:
     """Hoppe 法で法線を**大域一貫**に向き付け(MST 伝播)。→ (N,3)。
 
