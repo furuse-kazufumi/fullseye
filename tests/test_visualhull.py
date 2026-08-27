@@ -38,12 +38,23 @@ def _fibonacci_cameras(n: int, dist: float):
     return Ks, Rs, ts
 
 
-def _solid_ball(radius: float, n: int = 48) -> np.ndarray:
-    """半径 radius の中身の詰まった球点群(決定的な格子サンプル)。"""
+def _solid_ball(radius: float, n: int = 48, n_surf: int = 20000) -> np.ndarray:
+    """半径 radius の中身の詰まった球点群(内部=格子 + 表面=fibonacci 殻)。
+
+    内部格子だけだと limb 方向の最外サンプルが radius にわずかに届かず、射影シルエットが
+    真球より内側に痩せて境界 voxel を取りこぼす。物体の実表面は radius ちょうどなので、
+    半径ぴったりの表面殻を明示的に密サンプルして本来の輪郭(limb)まで覆わせる。"""
     g = np.linspace(-radius, radius, n)
     X, Y, Z = np.meshgrid(g, g, g, indexing="ij")
-    P = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)
-    return P[np.linalg.norm(P, axis=1) <= radius]
+    inner = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)
+    inner = inner[np.linalg.norm(inner, axis=1) <= radius]
+    # fibonacci-sphere で単位球面を準等間隔サンプル -> radius 倍した表面殻
+    i = np.arange(n_surf) + 0.5
+    z = 1.0 - 2.0 * i / n_surf
+    r = np.sqrt(np.clip(1.0 - z * z, 0.0, None))
+    phi = np.pi * (3.0 - np.sqrt(5.0)) * i
+    surf = radius * np.stack([r * np.cos(phi), r * np.sin(phi), z], axis=1)
+    return np.vstack([inner, surf])
 
 
 def _solid_box(hx: float, hy: float, hz: float, n: int = 40) -> np.ndarray:
