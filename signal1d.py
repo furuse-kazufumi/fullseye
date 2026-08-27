@@ -29,6 +29,9 @@ __all__ = [
     "spline_fit",
     "spline_eval",
     "spline_resample",
+    "spline_curve_fit",
+    "spline_curve_eval",
+    "spline_curve_resample",
 ]
 
 

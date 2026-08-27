@@ -153,6 +153,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_fit(x, y, smooth=0.0)` — 点列 (x, y) を3次スプラインで補間/平滑化し、評価可能な spline object を返す。
 - `spline_eval(spline, x)` — spline object を点 x で評価する。
 - `spline_resample(x, y, n, smooth=0.0)` — 点列を n 点に等間隔で滑らかに再サンプルし ``(x_new, y_new)`` を返す。
+- `spline_curve_fit(points, closed=False, smooth=0.0)` — 点列を **弧長パラメトリック3次スプライン** で当てはめる(2D 輪郭 / 3D 空間曲線)。
+- `spline_curve_eval(model, t)` — 曲線スプライン model をパラメータ t∈[0,1] で評価し (M,D) 点を返す(D=2 or 3)。
+- `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
 _計 230 ops / 53 categories。_
