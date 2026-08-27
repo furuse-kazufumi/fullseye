@@ -232,6 +232,30 @@ def test_shape_distance_zero_for_identical_transformed():
     assert M.shape_distance(a, b) < 1e-8
 
 
+def test_shape_distance_discriminates_cube_vs_sphere():
+    """[回帰] solid cube と solid sphere は 2 次モーメントが共に等方(λ̂≈(1/3,1/3,1/3))
+    なので固有値ベースの不変量だけでは同形状に潰れる。高次半径モーメント m4 が
+    両者を分離し、shape_distance が同形状しきい値(0.02)を超えることを保証する。
+
+    旧実装(不変量が 2 次モーメントのみ)では cube vs sphere ≈ 0.001 < 0.02 で
+    『同形状』と誤判定していた(FAIL)。m4 追加後は明確に分離する(PASS)。
+    """
+    # 同形状の基準: 別サンプル・別スケールの球どうしはほぼ 0(m4 もスケール不変)。
+    sphere = M.moment_invariants(_solid_sphere(n=20000, r=1.0, seed=301))
+    sphere2 = M.moment_invariants(_solid_sphere(n=20000, r=4.0, seed=302))
+    cube = M.moment_invariants(_solid_cube(n=20000, half=1.0, seed=303))
+
+    d_same = M.shape_distance(sphere, sphere2)
+    d_cube = M.shape_distance(sphere, cube)
+
+    # 同形状(球どうし・スケール違い)は同形状しきい値 0.02 未満のまま。
+    assert d_same < 0.02, f"同形状の球どうしが分離してしまった: {d_same:.4f}"
+    # 2 次が等方でも cube ≠ sphere は 0.02 を明確に超える(高次で分離)。
+    assert d_cube > 0.02, f"cube と sphere を同形状と誤判定: {d_cube:.4f}"
+    # 高次モーメントが効いている確認: cube 差は同形状ノイズより一桁大きい。
+    assert d_cube > 5.0 * d_same, f"分離が弱い: d_cube={d_cube:.4f} d_same={d_same:.4f}"
+
+
 # --------------------------------------------------------------------------- #
 # 5. 入力検証(fail-closed)                                                   #
 # --------------------------------------------------------------------------- #
