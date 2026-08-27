@@ -233,7 +233,7 @@ def evolve(task, pop=24, gens=12, elite=3, seed=0, max_len=4):
             def pick():
                 cand = [population[int(rng.integers(len(population)))] for _ in range(3)]
                 return max(cand, key=lambda c: evaluate(c, task, cache))
-            child = crossover(pick(), pick(), rng)
+            child = crossover(pick(), pick(), rng, max_len)
             if rng.random() < 0.6:
                 child = mutate(child, rng, task)
             # 型不正(goal に終わらない)は破棄して親を採用
