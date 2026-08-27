@@ -33,6 +33,10 @@ import pnp3d
 import regionprops3d
 import twoview
 import curvature3d
+import moments3d
+import geodesic3d
+import visualhull
+import superquadric
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
@@ -41,7 +45,9 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "metrics3d": metrics3d, "ransac_fit": ransac_fit, "edges3d": edges3d, "recon3d": recon3d,
         "curve3d": curve3d, "descriptors3d": descriptors3d, "bspline_surf": bspline_surf,
         "pnp3d": pnp3d, "regionprops3d": regionprops3d,
-        "twoview": twoview, "curvature3d": curvature3d}
+        "twoview": twoview, "curvature3d": curvature3d,
+        "moments3d": moments3d, "geodesic3d": geodesic3d,
+        "visualhull": visualhull, "superquadric": superquadric}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
