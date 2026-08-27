@@ -200,11 +200,15 @@ def segment_rigid_motions(pts0, pts1, thresh, max_bodies: int = 5,
             res = np.linalg.norm(apply_transform(rem_pts, R, t) - rem_tgt, axis=1)
             inl = res < thresh
             c = int(inl.sum())
-            if c > best_count:
+            # 有意性ゲートを選択に織り込む: inlier 残差中央値が thresh の一定割合
+            # 未満(= 真の剛体らしく残差が 0 近傍に集中)の仮説のみ候補にする。ノイズの
+            # 大きな緩い塊が best_count を吊り上げて小さく tight な真の物体を隠すのを防ぐ
+            # (loose 仮説では best_count を更新しない)。
+            if c > best_count and np.median(res[inl]) < _SIGNIF_MEDIAN_FRAC * thresh:
                 best_count = c
                 best_inl = inl
 
-        if best_inl is None:                   # min_inliers 以上の仮説なし -> 終了
+        if best_inl is None:                   # 有意 (tight) かつ min_inliers 以上の仮説なし -> 終了
             break
 
         # 最良 inlier で剛体を再フィット(refine)し、inlier を確定し直す。
@@ -213,6 +217,9 @@ def segment_rigid_motions(pts0, pts1, thresh, max_bodies: int = 5,
         res = np.linalg.norm(apply_transform(rem_pts, R, t) - rem_tgt, axis=1)
         inl = res < thresh
         if int(inl.sum()) < min_inliers:       # refine 後に痩せたら偽物 -> 終了
+            break
+        # refine で残差が緩み無相関水準へ広がっていないか再検証(偽の剛体を捏造しない)。
+        if np.median(res[inl]) >= _SIGNIF_MEDIAN_FRAC * thresh:
             break
 
         body_id = len(motions)
