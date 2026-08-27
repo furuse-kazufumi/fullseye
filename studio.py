@@ -1714,7 +1714,7 @@ def build_window(model=None):
                                "(real Itokawa / skeleton-CT / synthetic) and copy their code")
     m.addAction(act_3d_examples); win._act_3d_examples = act_3d_examples
     m.addSeparator()
-    m.addAction(act_save_res)                                 # result out
+    m.addAction(act_save_res); m.addAction(act_copy_res)      # result out
     m.addSeparator(); m.addAction(act_quit)
     m = _menu(mb, "&Edit", "edit")
     m.addAction(act_undo); m.addAction(act_redo)
