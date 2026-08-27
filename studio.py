@@ -3423,7 +3423,7 @@ def build_window(model=None):
                 e = EX.get(i); meta[i] = e
                 rows.append((i, task, "[%s] %s" % (task, e["name"])))
         left = QtWidgets.QVBoxLayout()
-        lbl = QtWidgets.QLabel("2-D examples (%d) — morph / shape descriptors / drawing" % len(EX.names()))
+        lbl = QtWidgets.QLabel("2-D examples (%d) — morph / shape / drawing / signal / spline" % len(EX.names()))
         lbl.setProperty("muted", True)
         filt = QtWidgets.QLineEdit(); filt.setPlaceholderText("filter by name / task / data…")
         filt.setClearButtonEnabled(True)
