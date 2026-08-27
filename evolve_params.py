@@ -7,7 +7,10 @@ genome を **(op 名, スカラ強度 param) の列**にして、**並びと par
 
 fitness は pipeline_evolve と同じ metrics3d.chamfer(点群デノイズタスクを共用)。honest 規律:
 進化(param 共進化)を identity / hand-designed / **固定 param 進化(pipeline_evolve.evolve)** と比較し、
-固定 param 版**以上**であることを GT 検証する(param 共進化が探索を深めた証拠)。
+固定 param 版**以上**であることを GT 検証する(param 共進化が探索を深めた証拠)。ただし固定 param 版は
+連続 param が無く cache が効くため同 pop/gens だと評価数が少ない(param 版は ~1.47 倍多く評価する)。
+公正な比較のため **固定 param 版に param 版と同数以上の評価予算を与えて** 検証する(test 参照)。
+固定は離散 op 空間を探索し尽くすと頭打ちになり、連続 param の微調整がその上限を超える。
 """
 import numpy as np
 
