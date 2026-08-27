@@ -60,7 +60,7 @@ def _knn_index(P: np.ndarray, k: int):
 # 1. 法線領域成長(normal region growing)
 # ═══════════════════════════════════════════════════════════════════════════
 def region_growing(points, normals=None, angle_thresh_deg: float = 15.0,
-                   k: int = 20) -> np.ndarray:
+                   k: int = 20, min_region_size: int = 3) -> np.ndarray:
     """法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。
 
     各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が
@@ -75,8 +75,8 @@ def region_growing(points, normals=None, angle_thresh_deg: float = 15.0,
         k: 近傍数(kNN グラフの次数)。
 
     Returns:
-        labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与(全点いずれかに割当。
-        孤立点や粗い点は単独領域になり得る=断片化する。領域サイズで下流フィルタ推奨)。
+        labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。**min_region_size 未満の
+        小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)** = 統一契約(-1=ノイズ)に従う。
         空入力は shape (0,) を返す。
     """
     P = _pts3(points, "region_growing")
@@ -121,6 +121,16 @@ def region_growing(points, normals=None, angle_thresh_deg: float = 15.0,
                 labels[q] = cur
                 stack.append(q)
         cur += 1
+    # 統一契約(-1=ノイズ/未割当)を守る: min_region_size 未満の小領域(孤立点・ゴミ)は -1 に。
+    if int(min_region_size) > 1 and cur > 0:
+        counts = np.bincount(labels, minlength=cur)
+        remap = np.full(cur, -1, np.int64)
+        nxt = 0
+        for r in range(cur):
+            if counts[r] >= int(min_region_size):
+                remap[r] = nxt
+                nxt += 1
+        labels = remap[labels]
     return labels
 
 

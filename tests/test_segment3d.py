@@ -247,3 +247,13 @@ def test_normals_shape_mismatch_raises():
     P = fib_sphere(30, 0.5, (0, 0, 0))
     with pytest.raises(ValueError):
         S.region_growing(P, normals=np.zeros((30, 2)))
+
+
+def test_region_growing_marks_isolated_points_as_noise():
+    """統一契約: 孤立ゴミ点は -1(ノイズ)。旧実装は非負ラベル化し -1 を返さなかった。"""
+    import numpy as np, segment3d
+    pl = np.column_stack([np.stack(np.meshgrid(np.linspace(0, 1, 10), np.linspace(0, 1, 10)), -1).reshape(-1, 2), np.zeros(100)])
+    junk = np.vstack([pl, [[50., 0, 0], [52, 0, 0], [0, 50, 0]]])
+    lab = segment3d.region_growing(junk, min_region_size=3)
+    assert (lab == -1).any()          # 孤立点がノイズに
+    assert (lab[:100] >= 0).all()     # 平面本体は有効ラベル

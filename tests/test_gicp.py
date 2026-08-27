@@ -199,3 +199,21 @@ def test_gicp_fail_closed_on_bad_shape():
         gicp.gicp(np.zeros((10, 2)), np.zeros((10, 3)))
     with pytest.raises(ValueError):
         gicp.gicp(np.zeros((2, 3)), np.zeros((10, 3)))
+
+
+def test_gicp_scale_invariant_extreme():
+    """極端スケール(1e6)でも剛体復元が破綻しない(Marquardt対角減衰=回転/並進の単位差を吸収)。"""
+    import numpy as np, gicp
+    def wavy(s):
+        rng = np.random.default_rng(s); xy = rng.uniform(-1, 1, (400, 2)); x, y = xy[:, 0], xy[:, 1]
+        return np.stack([x, y, 0.2 * np.sin(3 * x) * np.cos(3 * y)], 1)
+    def aa(ax, deg):
+        ax = np.array(ax, float); ax /= np.linalg.norm(ax); th = np.deg2rad(deg)
+        K = np.array([[0, -ax[2], ax[1]], [ax[2], 0, -ax[0]], [-ax[1], ax[0], 0]])
+        return np.eye(3) + np.sin(th) * K + (1 - np.cos(th)) * (K @ K)
+    Rg = aa([0.2, 0.9, -0.3], 8)
+    for sc in (1.0, 1e6):
+        Q = wavy(0) * sc; tg = np.array([0.05, -0.04, 0.03]) * sc; source = (Q - tg) @ Rg
+        out = gicp.gicp(source, Q)
+        c = np.clip((np.trace(out["R"].T @ Rg) - 1) / 2, -1, 1)
+        assert np.degrees(np.arccos(c)) < 0.5, (sc, np.degrees(np.arccos(c)))

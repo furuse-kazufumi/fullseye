@@ -346,6 +346,27 @@ _CATALOG = {
         ("euclidean_cluster", "segment3d", ["points"], "labels", False),
         ("plane_segmentation", "segment3d", ["points"], "labels", False),
     ],
+    "pose_graph": [  # 姿勢グラフ最適化(SLAM back-end: 相対姿勢+ループ閉じ→大域姿勢)
+        ("optimize_pose_graph", "pose_graph", ["pose"], "pose", False),
+        ("relative_pose", "pose_graph", ["pose", "pose"], "pose", False),
+        ("mean_edge_error", "pose_graph", ["pose"], "measurement", False),
+    ],
+    "normals_orient": [  # 一貫向き付き点群法線(MST伝播、curvature3d の凹/凸符号を正す)
+        # 注: estimate_normals は curvature3d に既存名があるため衝突回避で未登録
+        ("estimate_oriented_normals", "normals_orient", ["points"], "normals", False),
+        ("orient_normals", "normals_orient", ["points", "normals"], "normals", False),
+    ],
+    "scene_flow3d": [  # 点群ベース3Dシーンフロー(剛体/非剛体分解、match3dのvoxel版と別)
+        ("nearest_neighbor_flow", "scene_flow3d", ["points", "points"], "flow", False),
+        ("rigid_flow", "scene_flow3d", ["points", "points"], "pose", False),
+        ("smooth_flow", "scene_flow3d", ["points", "points"], "flow", False),
+    ],
+    "occupancy": [  # 占有グリッド + ESDF + 膨張(ロボット計画用、3D)
+        ("occupancy_grid", "occupancy", ["points"], "voxel", False),
+        ("esdf", "occupancy", ["voxel"], "sdf", False),
+        ("inflate", "occupancy", ["voxel"], "voxel", False),
+        ("query_distance", "occupancy", ["sdf", "points"], "measurement", False),
+    ],
 }
 
 

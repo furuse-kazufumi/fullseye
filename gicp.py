@@ -214,8 +214,13 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
 
         # スケール相対な微小正則化(縮退=平面などで H が特異になっても解ける)。
         # 未拘束 DOF(平面内の滑り/法線回り回転)には ~0 の更新を返し発散を防ぐ。
-        lam = 1e-9 * (np.trace(H) / 6.0 + 1e-30)
-        Hr = H + lam * np.eye(6, dtype=np.float64)
+        # Marquardt 対角スケーリング: 減衰を各パラメータの H 対角に比例させる。単一スカラ×I だと
+        # 回転ブロック(∝座標スケール²)と並進ブロック(∝スケール⁰)の単位差で、スケールが 1 から大きく
+        # 離れると小さい方が過減衰され剛体復元が静かに失敗する(極端スケール bug)。対角比例なら各方向が
+        # 自分の単位で減衰=スケール不変。null 方向(縮退)は最大対角の相対 floor で最小限だけ正則化。
+        dH = np.diag(H).copy()
+        floor = 1e-12 * (float(dH.max()) + 1e-30)
+        Hr = H + 1e-9 * np.diag(np.maximum(dH, floor))
         try:
             x = np.linalg.solve(Hr, g)
         except np.linalg.LinAlgError:
