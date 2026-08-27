@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-28 07:01:47
+- **最終更新**: 2026-08-28 07:58:17
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-b3a39c8c 2D幾何opサンプルをStudioから発見可能に: imagedraw + examples2d + 2-D Examplesギャラリー
-aa363e88 auto: studio.py 編集前 (2026-08-28 06:57)
-8ff4ead5 auto: studio.py 編集前 (2026-08-28 06:57)
-9333a793 auto: studio.py 編集前 (2026-08-28 06:56)
-d65c02a1 auto: examples2d.py 編集前 (2026-08-28 06:54)
-2f72c0e2 Studio UX round2-A: Ctrl+D衝突修正/キーボードop挿入/パレット拡張/ズーム保持/結果コピー
-7de7e029 auto: studio.py 編集前 (2026-08-28 06:40)
-02b0fe86 auto: studio.py 編集前 (2026-08-28 06:36)
-a6f29b7f auto: studio.py 編集前 (2026-08-28 06:35)
-9535256a auto: studio.py 編集前 (2026-08-28 06:35)
+d9d31066 AI向けopカタログ(LLM台帳)を生成・インストーラー同梱 + 新モジュールをpy-modules登録
+a5fe1da0 auto: signal1d.py 編集前 (2026-08-28 07:52)
+6534ae98 auto: gen_op_catalog.py 編集前 (2026-08-28 07:51)
+c4c128f5 auto: pyproject.toml 編集前 (2026-08-28 07:51)
+8da0857a auto: pyproject.toml 編集前 (2026-08-28 07:51)
+0f6adb8d auto: pyproject.toml 編集前 (2026-08-28 07:49)
+a1a25718 3D例バッチ2登録: sensing/registration/reconstruction 8件(無人ループ)
+127f7bd8 3D例: 断層輪郭→3D曲面/地形DEM(表現変換+3D展開、ユーザー発案)
+a10145b6 auto: examples3d.py 編集前 (2026-08-28 07:42)
+68006f68 auto: nonrigid_deform.py 編集前 (2026-08-28 07:40)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+?? examples_3d/oriented_normals.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:00 .pytest_cache/v/cache/nodeids
-06:59 tests/test_examples2d.py
-06:59 tests/test_studio.py
-06:57 studio.py
-06:54 examples2d.py
-06:54 tests/test_imagedraw.py
-06:53 examples/draw_annotate.py
-06:52 imagedraw.py
-06:43 docs/SESSION_SUMMARY.md
-06:12 examples/contour_fourier.py
-06:11 tests/test_fourierdesc.py
-06:10 fourierdesc.py
-06:00 examples/image_morph.py
-05:59 tests/test_imagemorph.py
-05:53 imagemorph.py
+07:58 examples_3d/oriented_normals.py
+07:53 .pytest_cache/v/cache/nodeids
+07:52 fullseye/OP_CATALOG.md
+07:52 docs/OP_CATALOG.md
+07:52 signal1d.py
+07:51 tools/gen_op_catalog.py
+07:51 pyproject.toml
+07:50 examples/__init__.py
+07:45 examples3d.py
+07:41 examples_3d/contours_to_terrain.py
+07:40 examples_3d/nonrigid_deform.py
+07:40 examples_3d/range_image.py
+07:40 examples_3d/gicp_register.py
+07:39 examples_3d/structured_light.py
+07:37 examples_3d/contours_to_surface.py
 ```
 
 ---
