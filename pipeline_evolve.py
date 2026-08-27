@@ -199,7 +199,7 @@ def mutate(chain, rng, task):
             chain[i] = cands[int(rng.integers(len(cands)))]
     elif kind == 1 and loops and len(chain) < 5:  # 挿入(self-loop op を任意位置)
         i = int(rng.integers(len(chain) + 1))
-        chain.insert(i, loops[int(rng.integers(len(loops))))])
+        chain.insert(i, loops[int(rng.integers(len(loops)))])
     elif kind == 2 and chain:                     # 削除
         del chain[int(rng.integers(len(chain)))]
     return tuple(chain)
