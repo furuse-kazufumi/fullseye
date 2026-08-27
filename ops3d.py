@@ -282,6 +282,30 @@ _CATALOG = {
         ("shape_index", "curvature3d", ["points"], "descriptor", False),
         ("estimate_normals", "curvature3d", ["points"], "normals", False),
     ],
+    "moment_invariant": [  # 3D モーメント不変量(並進/回転/スケール不変な形状シグネチャ)
+        # 注: shape_distance は descriptors3d に既存のため衝突回避で未登録(descriptor 距離はそちらを使う)
+        ("moment_invariants", "moments3d", ["points"], "descriptor", False),
+        ("principal_moments", "moments3d", ["points"], "descriptor", False),
+        ("central_moments", "moments3d", ["points"], "descriptor", False),
+        ("inertia_tensor", "moments3d", ["points"], "matrix", False),
+    ],
+    "geodesic": [  # 曲面上の測地距離(TRIZ 線→面: EDT の曲面版)
+        ("geodesic_distances", "geodesic3d", ["points"], "measurement", False),
+        ("geodesic_mesh", "geodesic3d", ["mesh"], "measurement", False),
+        ("farthest_point_sampling", "geodesic3d", ["points"], "keypoints", False),
+        ("knn_graph", "geodesic3d", ["points"], "graph", False),
+    ],
+    "space_carving": [  # シルエットからの空間彫刻/visual hull(多視点 → voxel)
+        ("carve", "visualhull", ["images"], "voxel", False),
+        ("visual_hull", "visualhull", ["images"], "voxel", False),
+        ("synthesize_silhouette", "visualhull", ["points"], "image2d", False),
+    ],
+    "superquadric": [  # スーパー2次曲面フィット(把持・物体モデリングの汎用形状族)
+        ("fit_superquadric", "superquadric", ["points"], "primitive", False),
+        ("sample_surface", "superquadric", ["primitive"], "points", False),
+        ("inside_outside", "superquadric", ["points"], "measurement", False),
+        ("superquadric_residual", "superquadric", ["points"], "measurement", False),
+    ],
 }
 
 
