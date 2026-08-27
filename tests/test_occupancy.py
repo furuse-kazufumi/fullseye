@@ -86,6 +86,26 @@ def test_line_of_sight_no_corner_cutting():
     assert occupancy.line_of_sight(np.zeros((7, 7), bool), (1, 1), (5, 5))
 
 
+def test_line_of_sight_is_symmetric():
+    # line_of_sight must be undirected for a planner's visibility graph:
+    # los(a, b) == los(b, a) for every pair of free cells. Direction-dependent
+    # Bresenham stepping + corner-cut used to disagree on a grazing tie.
+    repro = np.zeros((3, 3), bool)
+    repro[0, 1] = True                                     # the confirmed regression case
+    assert occupancy.line_of_sight(repro, (0, 0), (1, 2)) == \
+        occupancy.line_of_sight(repro, (1, 2), (0, 0))
+    assert not occupancy.line_of_sight(repro, (0, 0), (1, 2))   # grazing -> blocked (fail-closed)
+
+    rng = np.random.default_rng(0)
+    for _ in range(20):                                    # many random obstacle fields
+        occ = rng.random((7, 7)) < 0.2
+        free = np.argwhere(~occ)
+        for a in free:                                     # every ordered pair of free cells
+            for b in free:
+                assert occupancy.line_of_sight(occ, tuple(a), tuple(b)) == \
+                    occupancy.line_of_sight(occ, tuple(b), tuple(a))
+
+
 def test_frontier_between_free_and_unknown():
     free = np.zeros((10, 10), bool)
     unknown = np.zeros((10, 10), bool)
