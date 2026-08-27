@@ -89,11 +89,12 @@ def test_extracted_points_lie_on_sphere(radius):
     assert pts.shape[0] > 500, "十分な表面点が抽出されるべき"
     err = _radius_error_median(pts, sc["center"], radius)
     # 交点は voxel 辺の線形補間 + 画素量子化(0.5px)由来の系統誤差。閾値は voxel サイズに相対。
-    assert err < 2.0 * sc["voxel"], f"radius median err {err:.4g} vs voxel {sc['voxel']:.4g}"
-    # 分布の広がり(percentile)も voxel の数倍以内であること。
+    # 実測 median ≈ 0.08 voxel(2 スケールで同一比)。0.5*voxel は破損投影/符号誤りを弾く判別閾。
+    assert err < 0.5 * sc["voxel"], f"radius median err {err:.4g} vs voxel {sc['voxel']:.4g}"
+    # 分布の広がり(percentile)も voxel サイズ以内であること(silhouette 近傍が最悪、実測 p90≈0.24)。
     r = np.linalg.norm(pts - sc["center"], axis=1)
     p90 = float(np.percentile(np.abs(r - radius), 90))
-    assert p90 < 4.0 * sc["voxel"], f"p90 err {p90:.4g} vs voxel {sc['voxel']:.4g}"
+    assert p90 < 1.0 * sc["voxel"], f"p90 err {p90:.4g} vs voxel {sc['voxel']:.4g}"
 
 
 # ──────────────────────────────────────────────────────────────────────────
