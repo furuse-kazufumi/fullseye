@@ -77,9 +77,20 @@ def geodesic_mesh(vertices: np.ndarray, faces: np.ndarray, source: int) -> np.nd
             out[int(source)] = 0.0
         return out
     e = np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=0)
-    seg = np.linalg.norm(V[e[:, 0]] - V[e[:, 1]], axis=1)
+    # 無向エッジを (min,max) で一意化してから重みを与える。csr_matrix は重複 (i,j) の
+    # 重みを黙って加算するため、重複面・非多様体・不整合ワインディングでは同一エッジが
+    # 複数回積まれ測地距離が膨張する(重複面で最大 2 倍)。弦長は重複でも同値なので、
+    # 一意エッジに 1 つだけ与えれば正しい。退化エッジ(i==j)は自己ループなので除去。
+    lo = np.minimum(e[:, 0], e[:, 1])
+    hi = np.maximum(e[:, 0], e[:, 1])
+    pairs = np.stack([lo, hi], axis=1)
+    nondegen = pairs[:, 0] != pairs[:, 1]
+    pairs = pairs[nondegen]
+    uniq = np.unique(pairs, axis=0)
+    seg = np.linalg.norm(V[uniq[:, 0]] - V[uniq[:, 1]], axis=1)
     n = V.shape[0]
-    g = csr_matrix((seg, (e[:, 0], e[:, 1])), shape=(n, n))
+    # 片方向のみ格納(dijkstra は directed=False で無向化)。重複加算はもう起きない。
+    g = csr_matrix((seg, (uniq[:, 0], uniq[:, 1])), shape=(n, n))
     d = dijkstra(g, directed=False, indices=int(source))
     return np.asarray(d, dtype=float)
 
