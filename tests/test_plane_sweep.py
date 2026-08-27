@@ -97,11 +97,6 @@ def _candidates(zmin, zmax, num):
     return (1.0 / inv)[::-1].copy()
 
 
-def _crop(a):
-    """視野外/端の影響を避ける中央領域。"""
-    return a[25:-25, 30:-30]
-
-
 # ---- homography / warp の GT -----------------------------------------------
 
 def test_plane_homography_matches_geometry():
