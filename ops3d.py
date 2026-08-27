@@ -50,6 +50,10 @@ import occupancy
 import symmetry3d
 import spherical_proj
 import motion_seg3d
+import plane_sweep
+import sdf_ops
+import depth_bilateral
+import registration_eval
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
@@ -66,7 +70,9 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "pose_graph": pose_graph, "normals_orient": normals_orient,
         "scene_flow3d": scene_flow3d, "occupancy": occupancy,
         "symmetry3d": symmetry3d, "spherical_proj": spherical_proj,
-        "motion_seg3d": motion_seg3d}
+        "motion_seg3d": motion_seg3d,
+        "plane_sweep": plane_sweep, "sdf_ops": sdf_ops,
+        "depth_bilateral": depth_bilateral, "registration_eval": registration_eval}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
@@ -388,6 +394,30 @@ _CATALOG = {
         ("segment_rigid_motions", "motion_seg3d", ["points", "points"], "labels", False),
         ("estimate_flow", "motion_seg3d", ["points", "points"], "flow", False),
         ("fit_rigid", "motion_seg3d", ["points", "points"], "pose", False),
+    ],
+    "plane_sweep_stereo": [  # 平面掃引ステレオ(2視点 image + カメラ→密深度、多視点 MVS の基本)
+        ("plane_sweep_depth", "plane_sweep", ["image2d", "image2d"], "depth", False),
+        ("warp_by_plane", "plane_sweep", ["image2d"], "image2d", False),
+    ],
+    "sdf_csg": [  # 符号付き距離場の CSG 合成(陰関数ソリッドモデリング、marching cubes へ橋渡し)
+        ("sphere_sdf", "sdf_ops", ["points"], "sdf", False),
+        ("box_sdf", "sdf_ops", ["points"], "sdf", False),
+        ("sdf_union", "sdf_ops", ["sdf", "sdf"], "sdf", False),
+        ("sdf_intersect", "sdf_ops", ["sdf", "sdf"], "sdf", False),
+        ("sdf_subtract", "sdf_ops", ["sdf", "sdf"], "sdf", False),
+        ("sdf_smooth_union", "sdf_ops", ["sdf", "sdf"], "sdf", False),
+        ("sdf_offset", "sdf_ops", ["sdf"], "sdf", False),
+    ],
+    "depth_denoise": [  # 深度画像のエッジ保存デノイズ/穴埋め(段差を跨がず平滑、joint は guide 誘導)
+        ("bilateral_filter_depth", "depth_bilateral", ["depth"], "depth", False),
+        ("joint_bilateral", "depth_bilateral", ["depth", "image2d"], "depth", False),
+        ("fill_holes", "depth_bilateral", ["depth"], "depth", False),
+    ],
+    "registration_metrics": [  # 登録品質の定量評価(inlier/RMSE/recall/回転並進誤差、GT 比較)
+        ("inlier_ratio", "registration_eval", ["points", "points"], "measurement", False),
+        ("rmse_inliers", "registration_eval", ["points", "points"], "measurement", False),
+        ("registration_recall", "registration_eval", ["points", "points"], "measurement", False),
+        ("rotation_translation_error", "registration_eval", ["pose", "pose"], "measurement", False),
     ],
 }
 

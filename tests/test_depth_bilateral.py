@@ -208,10 +208,32 @@ def test_fill_holes_tilted_plane(scale):
     d[hole] = 0.0
     out = DB.fill_holes(d, max_radius=12.0)
     assert not np.any(np.isnan(out))
-    rel = np.max(np.abs(out[hole] - truth[hole])) / float(np.median(truth))
+    # 正規化は平面自身の変動幅(ptp)で行う。median(truth)=DC で割ると DC 依存の早期収束
+    # バグに構造的に盲目になる(勾配が 50% ずれても DC が大きければ rel≈0 で緑になる)。
+    rel = np.max(np.abs(out[hole] - truth[hole])) / float(np.ptp(truth[hole]))
     assert rel < 1e-3, f"scale={scale}: 平面復元の相対誤差 {rel} が大きすぎる"
     # 有効画素は不変(Dirichlet 境界)。
     assert np.allclose(out[~hole], truth[~hole], atol=1e-9 * scale)
+
+
+def test_fill_holes_large_offset_small_slope():
+    """[GT 回帰] 大 DC + 小勾配(遠距離センサの実態)で平面を厳密復元する。
+
+    収束 tol を DC(median|d|)基準にすると tol が勾配信号を超過し Jacobi が 1 歩で停止 →
+    EDT 階段のまま 50% 誤差になる。変動幅(ptp)基準なら任意 DC で収束する。判定は平面の
+    変動幅相対(DC で割らない)。offset を 1e6 まで振っても勾配 0.03/px を厳密復元できること。
+    """
+    H = W = 40
+    uu, vv = np.meshgrid(np.arange(W), np.arange(H))
+    truth = 1.0e6 + 0.03 * uu            # 大 DC・小勾配(DC/変動幅 ~ 1e6)
+    d = truth.copy()
+    hole = np.zeros((H, W), bool)
+    hole[16:23, 16:23] = True
+    d[hole] = 0.0
+    out = DB.fill_holes(d, max_radius=12.0)
+    assert not np.any(np.isnan(out[hole]))
+    rel = np.max(np.abs(out[hole] - truth[hole])) / float(np.ptp(truth[hole]))
+    assert rel < 1e-3, f"大 DC 平面の復元誤差 {rel}(変動幅相対)が大きすぎる=早期収束バグ"
 
 
 def test_fill_holes_deep_hole_fail_closed():

@@ -131,7 +131,10 @@ def cost_volume(img_ref: np.ndarray, img_src: np.ndarray, K: np.ndarray,
             cnt = ndimage.uniform_filter(valid, size=window, mode="constant",
                                          cval=0.0) * (window * window)
             with np.errstate(invalid="ignore", divide="ignore"):
-                cost = np.where(cnt > 0, ksum / np.maximum(cnt, 1.0), np.inf)
+                # cnt は窓内の有効画素数(整数)。uniform_filter の分離和で ~1e-16 の丸め残差が
+                # 乗るため cnt>0 だと全無効窓(真の cnt=0)が finite/負の捏造コストを得て argmin を
+                # 汚す。有効 1 画素で cnt≈1 なので整数境界 0.5 でガード(丸め残差は 0.5 未満)。
+                cost = np.where(cnt >= 0.5, ksum / np.maximum(cnt, 1.0), np.inf)
         else:
             cost = np.where(invalid, invalid_cost, cost)
         vol[i] = cost

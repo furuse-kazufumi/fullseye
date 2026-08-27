@@ -202,8 +202,10 @@ def fill_holes(
     if fillable.any():
         out[fillable] = d[iy[fillable], ix[fillable]]
 
-        # スケール相対の収束閾値。
-        scale = float(np.median(np.abs(d[valid])))
+        # スケール相対の収束閾値。解こうとする調和場の**変動幅**(ptp)基準にする。DC オフセット
+        # 基準(median|d|)だと遠距離センサ(depth~1e8)で tol が勾配信号を超過し Jacobi が 1 歩で
+        # 停止 → EDT 階段のまま返る(平面を厳密復元できない)。変動幅基準なら任意 DC で収束する。
+        scale = float(np.ptp(d[valid]))
         if not np.isfinite(scale) or scale == 0.0:
             scale = 1.0
         tol = rel_tol * scale

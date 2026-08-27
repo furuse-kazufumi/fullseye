@@ -74,7 +74,7 @@ py-modules = [
   "recipes", "measure", "studio", "sample_images", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
-  "samples", "references", "codegen", "difftest", "parity", "accel", "bench",
+  "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",
   "algo", "algo_codegen", "algo_difftest", "synth",
   "sweep", "graph", "graph_seed", "lib_coverage",
   "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
@@ -93,4 +93,5 @@ py-modules = [
 # always ship as .py modules.
 "studio_assets" = ["*.json", "op_help/*.html", "op_help/*.md",
                    "sample_images/*.png", "sample_images/*.json",
-                   "sample_thumbs/*.png", "sample_thumbs/*.json"]
+                   "sample_thumbs/*.png", "sample_thumbs/*.json",
+                   "sample_sources_ai/*.png", "sample_sources_ai/*.jpg"]

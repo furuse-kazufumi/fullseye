@@ -218,6 +218,11 @@ def test_grid_coords_center_alignment_and_extent():
 def test_grid_coords_anisotropic_res():
     coords, _ = sdf_ops.grid_coords([[0, 1], [0, 1], [0, 1]], [2, 3, 4])
     assert coords.shape == (2, 3, 4, 3)
+    # [GT] 軸ごとに res が異なる → 中心間隔も軸ごとに (i+0.5)/res。shape だけ見ると
+    # 分母に別軸の res を使う実装バグ(等 res では正しく異方 res で崩れる)を見逃す。
+    assert np.allclose(coords[:, 0, 0, 0], (np.arange(2) + 0.5) / 2)   # x: res 2
+    assert np.allclose(coords[0, :, 0, 1], (np.arange(3) + 0.5) / 3)   # y: res 3
+    assert np.allclose(coords[0, 0, :, 2], (np.arange(4) + 0.5) / 4)   # z: res 4
 
 
 def test_grid_sphere_zero_crossing_radius():
