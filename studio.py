@@ -1531,8 +1531,30 @@ def build_window(model=None):
                 pass
             ev.accept()
 
+        # -- drag-and-drop: drop an image or a pipeline .json onto the window to load it --
+        drop_handler = None
+
+        def dragEnterEvent(self, ev):
+            md = ev.mimeData()
+            if self.drop_handler is not None and md.hasUrls() \
+                    and any(u.isLocalFile() for u in md.urls()):
+                ev.acceptProposedAction()
+            else:
+                ev.ignore()
+
+        def dropEvent(self, ev):
+            md = ev.mimeData()
+            paths = ([u.toLocalFile() for u in md.urls() if u.isLocalFile()]
+                     if md.hasUrls() else [])
+            if self.drop_handler is not None and paths:
+                self.drop_handler(paths)
+                ev.acceptProposedAction()
+            else:
+                ev.ignore()
+
     win = StudioWindow()
     win.setWindowTitle("Fullseye Studio")
+    win.setAcceptDrops(True)
     win.resize(1320, 860)
     win.setStyleSheet(THEME)
     if os.path.exists(_ICON_PATH):
@@ -2652,18 +2674,21 @@ def build_window(model=None):
             model.move_stage(i, j); mark_dirty()
             refresh_stage_list(select=j); show_result()
 
-    def load_image():
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open image", "",
-                                                        "Images (*.png *.jpg *.bmp *.tif)")
-        if not path:
-            return
+    def _load_image_path(path):
         try:
             arr = imgio.load(path)                # missing / undecodable / permission
         except Exception as e:
-            report_error("Could not open image", "%s\n\n%s" % (path, e)); return
+            report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
         flash("loaded " + os.path.basename(path))
         show_result()
+        return True
+
+    def load_image():
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open image", "",
+                                                        "Images (*.png *.jpg *.bmp *.tif)")
+        if path:
+            _load_image_path(path)
 
     def use_demo():
         model.set_image(demo_image()); show_result()
@@ -4145,11 +4170,8 @@ def build_window(model=None):
         state["dirty"] = False                                # now matches a file on disk
         flash("saved " + os.path.basename(path))
 
-    def open_pipe():
+    def _open_pipe_path(path):
         import json
-        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
-        if not path:
-            return
         if not confirm_discard("Open pipeline"):
             return
         try:
@@ -4168,6 +4190,27 @@ def build_window(model=None):
         mark_dirty()
         refresh_stage_list(select=len(model.stages) - 1); show_result()
         flash("loaded " + os.path.basename(path))
+
+    def open_pipe():
+        path, _ = QtWidgets.QFileDialog.getOpenFileName(win, "Open pipeline", "", "JSON (*.json)")
+        if path:
+            _open_pipe_path(path)
+
+    # drag-and-drop dispatcher: image file -> base frame, .json -> pipeline.
+    _DROP_IMG_EXTS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
+
+    def _handle_drop(paths):
+        f = paths[0]
+        ext = os.path.splitext(f)[1].lower()
+        if ext in _DROP_IMG_EXTS:
+            _load_image_path(f)
+        elif ext == ".json":
+            _open_pipe_path(f)
+        else:
+            flash("drop: unsupported file '%s' — drop an image or a .json pipeline"
+                  % os.path.basename(f))
+    win.drop_handler = _handle_drop
+
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
     act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
 

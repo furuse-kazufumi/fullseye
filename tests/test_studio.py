@@ -1854,3 +1854,41 @@ def test_3d_examples_dialog_filter_and_run_wiring():
             or "itokawa" in lst.item(i).text().lower()
     filt.clear()
     assert lst.count() == len(EX.names())
+
+
+def test_drag_and_drop_loads_image_and_pipeline(tmp_path):
+    """Usability: dropping a file onto the window loads it — an image becomes the base
+    frame, a .json becomes the pipeline, anything else flashes a hint (no crash). Covers
+    the dispatcher and the real QDropEvent path."""
+    import io, json
+    import numpy as np
+    from PySide6 import QtWidgets, QtCore, QtGui
+    _app()
+    import imgio
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win.acceptDrops() is True and getattr(win, "drop_handler", None) is not None
+
+    img = (np.arange(32 * 32).reshape(32, 32) % 255).astype(np.uint8)
+    imgp = str(tmp_path / "drop.png"); imgio.save(imgp, img)
+    win.drop_handler([imgp])
+    assert model.image.shape == (32, 32)
+
+    pj = str(tmp_path / "pipe.json")
+    io.open(pj, "w", encoding="utf-8").write(json.dumps({"stages": [["gaussian", 0.5, 0.5]]}))
+    win.drop_handler([pj])
+    assert len(model.stages) == 1 and model.stages[0][0] == "gaussian"
+
+    bad = str(tmp_path / "x.zip"); io.open(bad, "w").write("x")
+    win.drop_handler([bad])          # unsupported -> no exception
+
+    # real drag-enter/drop events flow through to the handler
+    mime = QtCore.QMimeData(); mime.setUrls([QtCore.QUrl.fromLocalFile(imgp)])
+    de = QtGui.QDragEnterEvent(QtCore.QPoint(5, 5), QtCore.Qt.CopyAction, mime,
+                               QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+    win.dragEnterEvent(de)
+    assert de.isAccepted()
+    model.set_image(studio.demo_image(48))
+    drop = QtGui.QDropEvent(QtCore.QPointF(5, 5), QtCore.Qt.CopyAction, mime,
+                            QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
+    win.dropEvent(drop)
+    assert model.image.shape == (32, 32)
