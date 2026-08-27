@@ -282,8 +282,11 @@ def inflate(occupancy, radius, voxel_size=1.0):
     最近占有距離なので、``ESDF<=radius`` は「占有(負)∪ 障害物から radius 以内の自由」を
     捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。
 
-    Raises ValueError for radius<0 (voxel_size<=0 は esdf 経由で ValueError)."""
+    Raises ValueError for radius<0 or voxel_size<=0 (both validated up-front, before
+    the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size
+    slips through unchecked when esdf is never reached)."""
     occ = np.asarray(occupancy, bool)
+    _sampling(voxel_size)                        # fail-closed on voxel_size<=0 before any short-circuit
     r = float(radius)
     if r < 0:                                   # fail-closed
         raise ValueError("radius must be non-negative")
