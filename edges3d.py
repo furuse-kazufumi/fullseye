@@ -210,12 +210,28 @@ def log_zero_crossings(vol, sigma: float = 1.5, rel_thresh: float = 1e-3) -> np.
         sl_b[axis] = slice(1, None)
         a = L[tuple(sl_a)]
         b = L[tuple(sl_b)]
-        cross = (a * b < 0.0) & (np.abs(a - b) > tol)  # 符号反転かつ有意な変化
+        cross = (a * b < 0.0) & (np.abs(a - b) > tol)  # 格子間: 厳密な符号反転かつ有意な変化
         # ゼロに近い側(|.| が小さい側)へ割り当て → 薄いエッジ
         pick_a = cross & (np.abs(a) <= np.abs(b))
         pick_b = cross & (np.abs(b) < np.abs(a))
         edges[tuple(sl_a)] |= pick_a
         edges[tuple(sl_b)] |= pick_b
+
+        # 格子整列: 中央 voxel が厳密ゼロで両隣が異符号(符号がゼロを通過)する交差。
+        # a*b<0 では常に 0 積となり取りこぼすため、当該 voxel を直接立てる。定数ゼロ領域は
+        # 隣も 0 → Lm*Lp==0 で除外、数値ノイズは |Lm - Lp| > tol で抑制。
+        if L.shape[axis] >= 3:
+            sl_c = [slice(None)] * 3  # 中央 i
+            sl_m = [slice(None)] * 3  # i-1
+            sl_p = [slice(None)] * 3  # i+1
+            sl_c[axis] = slice(1, -1)
+            sl_m[axis] = slice(0, -2)
+            sl_p[axis] = slice(2, None)
+            Lc = L[tuple(sl_c)]
+            Lm = L[tuple(sl_m)]
+            Lp = L[tuple(sl_p)]
+            on_grid = (Lc == 0.0) & (Lm * Lp < 0.0) & (np.abs(Lm - Lp) > tol)
+            edges[tuple(sl_c)] |= on_grid
 
     return edges
 
