@@ -4,7 +4,7 @@
 元と重なるか」、回転対称は「軸まわり 2π/order 回転で重なるか」を **chamfer 距離** で採点する
 (小さいほど対称)。候補平面/軸は PCA 主軸(重心を通る)から取る — 多くの対称形状は対称面が主軸に整列する。
 
-スコアは RMS 半径で正規化してスケール不変。GT: 楕円体は主軸平面で反射対称(スコア小)、非対称形状は
+スコアは中央値最近傍間隔で正規化してスケール不変(=反射/回転が点間隔の何倍ずれるか)。GT: 楕円体は主軸平面で反射対称(スコア小)、非対称形状は
 スコア大、円柱は軸まわり回転対称(任意 order)。metrics3d.chamfer_distance を fitness と同じ土台で流用。
 
 用途: 対称性による形状補完(欠損側を鏡映で埋める)、正準姿勢、左右差検査(Physical AI/検査)。
@@ -36,9 +36,12 @@ def rotate_points(points, axis_point, axis_dir, angle):
     return rot + a
 
 
-def _rms_radius(points):
+def _median_spacing(points):
+    """点群の中央値最近傍間隔(スケール相対な対称残差の基準長)。→ float。"""
+    from scipy.spatial import cKDTree
     p = np.asarray(points, float)
-    return float(np.sqrt(np.mean(np.sum((p - p.mean(axis=0)) ** 2, axis=1)))) + 1e-12
+    d, _ = cKDTree(p).query(p, k=2)
+    return float(np.median(d[:, 1])) + 1e-12
 
 
 def _pca_axes(points):
@@ -50,10 +53,10 @@ def _pca_axes(points):
 
 
 def reflection_symmetry_score(points, plane_point, plane_normal):
-    """反射対称スコア = chamfer(鏡映, 元) / RMS半径(小さいほど対称、スケール不変)。→ float。"""
+    """反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。"""
     p = np.asarray(points, float)
     refl = reflect_points(p, plane_point, plane_normal)
-    return float(metrics3d.chamfer_distance(refl, p) / _rms_radius(p))
+    return float(metrics3d.chamfer_distance(refl, p) / _median_spacing(p))
 
 
 def detect_reflection_symmetry(points):
@@ -73,10 +76,10 @@ def detect_reflection_symmetry(points):
 
 
 def rotational_symmetry_score(points, axis_point, axis_dir, order):
-    """回転対称スコア = chamfer(2π/order 回転, 元) / RMS半径(小さいほど対称)。→ float。"""
+    """回転対称スコア = chamfer(2π/order 回転, 元) / 中央値最近傍間隔(小さいほど対称)。→ float。"""
     p = np.asarray(points, float)
     rot = rotate_points(p, axis_point, axis_dir, 2 * np.pi / order)
-    return float(metrics3d.chamfer_distance(rot, p) / _rms_radius(p))
+    return float(metrics3d.chamfer_distance(rot, p) / _median_spacing(p))
 
 
 def detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8)):
