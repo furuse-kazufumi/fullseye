@@ -128,27 +128,20 @@ def test_warp_identity():
     assert np.allclose(out, img, atol=1e-9)
 
 
-def test_warp_roundtrip_inverse():
-    """H で前進→H^{-1} で戻すと内部領域が一致(homography ワープの整合)。"""
-    K = np.array([[300.0, 0, 60], [0, 300.0, 45], [0, 0, 1.0]])
-    R = _rot([0, 1, 0], 5.0)
-    t = np.array([0.2, 0.0, 0.02])
-    H = plane_sweep.plane_homography(K, R, t, 6.0)
-    rng = np.random.default_rng(2)
-    img = ndi_smooth(rng.random((90, 120)))
-    fwd = plane_sweep.warp_by_plane(img, H)
-    back = plane_sweep.warp_by_plane(fwd, np.linalg.inv(H))
-    m = np.isfinite(back)
-    c = np.zeros_like(m)
-    c[20:-20, 25:-25] = True
-    sel = m & c
-    assert np.nanmax(np.abs(back[sel] - img[sel])) < 1e-2
-
-
-def ndi_smooth(a):
-    """テスト補助: 軽い平滑化(補間往復の誤差を抑える)。"""
-    from scipy import ndimage
-    return ndimage.gaussian_filter(a, 1.0)
+def test_warp_translation_exact_on_linear_ramp():
+    """平行移動 homography は線形ランプを厳密にシフト(bilinear が線形を厳密再現)。"""
+    tx, ty = 3.0, -2.0
+    H = np.array([[1.0, 0, tx], [0, 1.0, ty], [0, 0, 1.0]])  # ref→src の平行移動
+    h, w = 60, 80
+    yy, xx = np.mgrid[0:h, 0:w]
+    a, b, c = 0.37, -0.21, 1.5
+    img = a * xx + b * yy + c                    # 線形ランプ
+    out = plane_sweep.warp_by_plane(img, H)
+    # out[y,x] = img(x+tx, y+ty) = a(x+tx)+b(y+ty)+c
+    expect = a * (xx + tx) + b * (yy + ty) + c
+    sel = np.isfinite(out)
+    assert sel.sum() > 0.7 * out.size
+    assert np.max(np.abs(out[sel] - expect[sel])) < 1e-9
 
 
 # ---- 深度復元 GT(フロント平行, 2 スケール) --------------------------------
