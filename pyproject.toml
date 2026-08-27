@@ -87,6 +87,9 @@ py-modules = [
 ]
 
 [tool.setuptools.package-data]
+# The AI-facing operator catalog (LLM ledger) is generated into the `fullseye`
+# package by tools/gen_op_catalog.py and shipped so an installed wheel carries it.
+"fullseye" = ["OP_CATALOG.md"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).
