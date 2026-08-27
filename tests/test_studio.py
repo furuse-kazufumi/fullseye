@@ -2084,3 +2084,83 @@ def test_per_stage_timing_is_accurate_and_shown(tmp_path):
     win.drop_handler([pj])
     rows = [win._stage_list.item(i).text() for i in range(win._stage_list.count())]
     assert rows and all("ms" in r for r in rows)
+
+
+# --------------------------------------------------------------------------- #
+# UX round-2 batch A: shortcuts, keyboard op insertion, palette, clipboard,   #
+# zoom preservation.                                                          #
+# --------------------------------------------------------------------------- #
+def test_no_ambiguous_shortcuts_and_ctrl_d_duplicate():
+    """Ctrl+D used to be on BOTH Synthetic-demo and Duplicate-stage (ambiguous ->
+    neither fired when the stage list had focus). Duplicate keeps Ctrl+D; demo is freed."""
+    from collections import Counter
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    acts = win._actions
+    assert acts["demo"].shortcut().toString() == ""
+    assert acts["duplicate_stage"].shortcut().toString() == "Ctrl+D"
+    scs = [a.shortcut().toString() for a in acts.values() if a.shortcut().toString()]
+    dups = [s for s, c in Counter(scs).items() if c > 1]
+    assert not dups, "ambiguous shortcuts across actions: %s" % dups
+
+
+def test_op_list_activated_inserts_single_stage():
+    """Enter (and double-click) on the op list inserts exactly one stage via itemActivated."""
+    from PySide6 import QtCore
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    op_list = win._op_list
+    names = [op_list.item(i).data(QtCore.Qt.UserRole) for i in range(op_list.count())]
+    op_list.setCurrentRow(names.index("gaussian"))
+    before = len(model.stages)
+    op_list.itemActivated.emit(op_list.currentItem())      # what Enter / dbl-click delivers
+    assert len(model.stages) == before + 1                 # exactly one, no double-insert
+
+
+def test_search_enter_inserts_first_match():
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    before = len(model.stages)
+    win._search.setText("invert")                          # filters the op list
+    win._search.returnPressed.emit()                       # Enter -> insert first match
+    assert len(model.stages) == before + 1
+
+
+def test_copy_result_action_puts_image_on_clipboard():
+    from PySide6 import QtWidgets
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert "copy_result" in win._actions
+    QtWidgets.QApplication.clipboard().clear()
+    win._actions["copy_result"].trigger()
+    assert not QtWidgets.QApplication.clipboard().image().isNull()
+
+
+def test_palette_lists_samples_and_skips_disabled_actions():
+    from PySide6 import QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert not win._actions["undo"].isEnabled()            # nothing to undo on a fresh window
+    orig = QtWidgets.QDialog.exec
+    QtWidgets.QDialog.exec = lambda self: None
+    try:
+        win._actions["palette"].trigger()
+    finally:
+        QtWidgets.QDialog.exec = orig
+    labels = win._palette["labels"]
+    assert any(l.startswith("sample: ") for l in labels)   # sample pipelines runnable by name
+    assert not any(l.startswith("▸ Undo") for l in labels)  # disabled action skipped
+
+
+def test_image_view_preserves_zoom_on_same_size_repaint():
+    """A re-render (knob tweak) keeps zoom/pan; only a size change asks the caller to refit."""
+    from PySide6 import QtWidgets, QtGui, QtCore
+    _app()
+    IV = studio._image_view_class(QtWidgets, QtGui, QtCore)
+    v = IV()
+    pm1 = QtGui.QPixmap(100, 80); pm1.fill(QtGui.QColor("black"))
+    pm2 = QtGui.QPixmap(100, 80); pm2.fill(QtGui.QColor("white"))
+    pm3 = QtGui.QPixmap(50, 40); pm3.fill(QtGui.QColor("black"))
+    assert v.set_pixmap_keep_view(pm1) is False            # first paint (was empty) -> fit
+    assert v.set_pixmap_keep_view(pm2) is True             # same size -> zoom/pan preserved
+    assert v.set_pixmap_keep_view(pm3) is False            # size changed -> caller refits

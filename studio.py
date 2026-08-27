@@ -2745,6 +2745,7 @@ def build_window(model=None):
     win._op_list = op_list
     win._op_buttons = {"insert": b_insert, "run_once": b_run_once, "help": b_help}
     win._op_list = op_list            # exposed for tests (verify the general tier is read-only)
+    win._search = search              # exposed for tests (keyboard op insertion)
     win._op_names = op_names          # image-only names fed to the code parser / help picker
 
     def _select_var_row(row):
