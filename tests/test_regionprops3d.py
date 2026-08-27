@@ -111,7 +111,10 @@ def test_sphericity_sphere_high_box_low():
     shape = (40, 40, 40)
     ball = _ball(shape, (20, 20, 20), 10)
     ball_prop = R.region_props(ball)[0]
-    assert ball_prop["sphericity"] > 0.7, ball_prop["sphericity"]
+    # 面カウント表面積は滑らかな凸面を ~1.5 倍に過大評価するため、球の真球度は
+    # 半径に依らず理論上 ~2/3 が上限(実測 ~0.66)。よって「球 = 1 近傍」は
+    # 0.6 超で確認する(離散化 + 近似法の honest な帰結)。
+    assert ball_prop["sphericity"] > 0.6, ball_prop["sphericity"]
 
     # 細長い箱(1x1x20 相当)。表面積が体積に対して大きく真球度は低い。
     box = np.zeros(shape, dtype=bool)
