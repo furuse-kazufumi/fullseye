@@ -196,15 +196,25 @@ def _circumradii(P, simplices):
 
     2·(p_i − p_0)·c = |p_i|² − |p_0|²(i=1,2,3)を解いて中心 c、R=|c − p_0|。
     退化(共面 → 係数行列が特異)四面体は R=+∞ とし、alpha 剪定で自然に除外する。
-    返り値 R(M,)。
+    退化判定は |det(A)| を四面体自身のエッジ長の積で正規化した**無次元**量で行うため、座標
+    スケールに依存しない(相似な点群は同じ判定・同数の境界点を返す)。絶対しきい値だと
+    det ∝ L³ が小座標(L≲1e-4)で閾値を下回り、正常な四面体まで特異扱いになって境界/メッシュが
+    黙って空になる(スケール依存バグ)。返り値 R(M,)。
     """
     T = P[simplices]                                    # (M,4,3)
     p0 = T[:, 0]
-    A = 2.0 * (T[:, 1:] - p0[:, None, :])               # (M,3,3)
+    A = 2.0 * (T[:, 1:] - p0[:, None, :])               # (M,3,3); 各行 = 2·(p_i − p_0)
     rhs = (T[:, 1:] ** 2).sum(2) - (p0 ** 2).sum(1)[:, None]   # (M,3)
     det = np.linalg.det(A)
+
+    # スケール不変の退化判定。rel = |det(A)| / Π|A_row| = |det(edges)| / (|e1||e2||e3|)
+    #     = |単位エッジベクトルの三重積| ∈ [0,1](無次元)。共面で潰れた四面体でのみ ≈0 になり、
+    # uniform scale で不変(A = 2·edge のため係数 8 は分子分母で相殺)。
+    edge_norm_prod = np.prod(np.linalg.norm(A, axis=2), axis=1)   # (M,) = 8·|e1||e2||e3|
+    rel = np.divide(np.abs(det), edge_norm_prod,
+                    out=np.zeros_like(det), where=edge_norm_prod > 0)
     R = np.full(len(T), np.inf, dtype=np.float64)
-    good = np.abs(det) > 1e-12
+    good = rel > 1e-9                                    # 無次元しきい値(座標スケール非依存)
     if good.any():
         # numpy>=2.0 は 2D の b を「行列」とみなすため、列ベクトル (K,3,1) にして解く
         centers = np.linalg.solve(A[good], rhs[good][..., None])[..., 0]
