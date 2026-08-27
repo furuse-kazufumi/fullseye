@@ -216,12 +216,7 @@ def extract_surface_points(tsdf: np.ndarray, weight: np.ndarray,
         ta = a[ia, ja, ka]
         tb = b[ia, ja, ka]
         alpha = ta / (ta - tb)                                # 0..1: a→b のどこで 0 交差か
-        # a 側 voxel 中心(world)
-        pa = np.stack([xs[ia] if axis != 0 else xs[ia],
-                       ys[ja] if axis != 1 else ys[ja],
-                       zs[ka] if axis != 2 else zs[ka]], axis=1)
-        # ↑ 上は可読性優先の冗長表現。実際の a 中心は下で正しく組む:
-        pa = np.stack([xs[ia], ys[ja], zs[ka]], axis=1)
+        pa = np.stack([xs[ia], ys[ja], zs[ka]], axis=1)       # a 側 voxel 中心(world)
         step = coords[1] - coords[0]                          # 当該軸の voxel サイズ(均一)
         pa[:, axis] = pa[:, axis] + alpha * step
         out.append(pa)
