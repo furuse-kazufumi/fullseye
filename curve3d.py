@@ -40,14 +40,26 @@ def frenet_frame(curve):
 
 
 def curvature_torsion(curve):
-    """各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。"""
+    """各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。
+
+    座標の一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする。0 割り防止の epsilon は
+    **相対化**する: 絶対 1e-12 は cross_norm²(~s⁴)・r1_norm³(~s³)を小座標スケールで支配し、
+    κ/τ を破壊するため、代表スケール L=median‖r'‖(座標スケール s に線形)で各分母と同次元に
+    正規化した相対 eps を使う。これは曲線を L で正規化してから計算し 1/L で戻すのと厳密に等価。
+    """
     r1, r2, r3 = _d(curve)
     cross = np.cross(r1, r2)
     cross_norm = np.linalg.norm(cross, axis=1)
     r1_norm = np.linalg.norm(r1, axis=1)
-    kappa = cross_norm / (r1_norm ** 3 + 1e-12)
+    # 代表スケール L(典型 ‖r'‖, index param)。座標スケール s に線形に伴走する。
+    L = float(np.median(r1_norm))
+    if not np.isfinite(L) or L <= 0.0:
+        raise ValueError("degenerate curve: 全点が一致/重複し ‖r'‖=0 のため κ/τ を計算不能")
+    eps_k = 1e-12 * L ** 3   # r1_norm³ と同次元(~s³)
+    eps_t = 1e-12 * L ** 4   # cross_norm² と同次元(~s⁴)
+    kappa = cross_norm / (r1_norm ** 3 + eps_k)
     triple = np.sum(cross * r3, axis=1)
-    tau = triple / (cross_norm ** 2 + 1e-12)
+    tau = triple / (cross_norm ** 2 + eps_t)
     return kappa, tau
 
 
