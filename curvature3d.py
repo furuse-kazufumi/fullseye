@@ -105,15 +105,23 @@ def _curvatures(points, k, normals=None):
     return K1, K2, NRM
 
 
-def principal_curvatures(points, k=25):
-    """各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。凸(外向き法線)を正。"""
-    K1, K2, _ = _curvatures(points, k)
+def principal_curvatures(points, k=25, normals=None):
+    """各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。
+
+    normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。
+    向き付き法線を渡すと大域向きに整合し正しい符号(凹=負, 凸=正)。
+    """
+    K1, K2, _ = _curvatures(points, k, normals)
     return K1, K2
 
 
-def mean_curvature(points, k=25):
-    """平均曲率 H=(k1+k2)/2。→ (N,)。外向き法線で凸=正。"""
-    K1, K2, _ = _curvatures(points, k)
+def mean_curvature(points, k=25, normals=None):
+    """平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。
+
+    normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。
+    向き付き法線を渡すと大域向きに整合し正しい符号を出す。
+    """
+    K1, K2, _ = _curvatures(points, k, normals)
     return (K1 + K2) / 2.0
 
 
