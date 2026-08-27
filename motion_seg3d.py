@@ -119,8 +119,13 @@ def segment_rigid_motions(pts0, pts1, thresh, max_bodies: int = 5,
 
       1. 空間的に近い ``k_sample`` 点(seed + その最近傍)を種に Kabsch で剛体仮説を立て、
       2. フロー整合 ``|| (R·s + t) - target(s) || < thresh`` を満たす inlier を数え、
-      3. ``n_iter`` 試行で最良仮説を選び、その inlier で Kabsch 再フィット(refine)、
-      4. inlier 数が ``min_inliers`` 以上ならそれを 1 剛体として確定・除去。
+      3. ``n_iter`` 試行で **有意性ゲートを満たす** 最良仮説を選び(inlier 残差中央値が
+         ``thresh`` の一定割合未満 = 真の剛体らしく残差が 0 近傍に集中。無相関/ノイズの
+         偶然適合は許容球を満たし残差 ≈ 0.6*thresh なので弾かれる)、その inlier で Kabsch
+         再フィット(refine)、
+      4. inlier 数が ``min_inliers`` 以上 **かつ** refine 後も有意性を保つならそれを 1 剛体
+         として確定・除去。満たさなければ body を作らず残余は -1 のまま終了(偽の剛体を捏造
+         しない)。
 
     を ``max_bodies`` 個または残り点が閾値を下回るまで繰り返す。どの剛体にも属さない残り点は
     ``labels = -1``(outlier / 未対応、詐称しない)。近傍種サンプリングは空間的に連続な物体を
