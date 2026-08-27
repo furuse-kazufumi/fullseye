@@ -210,8 +210,8 @@ def spline_curve_fit(points, closed=False, smooth=0.0):
     per = 1 if closed else 0
     if closed and np.allclose(p[0], p[-1]):
         p = p[:-1]                                       # 周期化: シームの重複点は落とす
-    tck, _u = splprep([p[:, 0], p[:, 1]], s=float(smooth), per=per, k=3)
-    return {"points": p, "closed": bool(closed), "tck": tck}
+    tck, u = splprep([p[:, 0], p[:, 1]], s=float(smooth), per=per, k=3)
+    return {"points": p, "closed": bool(closed), "tck": tck, "u": np.asarray(u, dtype=np.float64)}
 
 
 def spline_curve_eval(model, t):
