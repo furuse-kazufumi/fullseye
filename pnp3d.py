@@ -120,9 +120,27 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
             best_count = c
             best_inliers = inliers
     if best_inliers is None or best_count < 6:
-        R, t = dlt_pose(X, x, K)
-        mask = np.ones(n, bool)
-        return R, t, mask, {"n_inliers": n, "inlier_ratio": 1.0, "iters": iters, "fallback": True}
+        # RANSAC が最小合意(6 inlier)に届かず → 全点 DLT で fallback。
+        # 旧実装は inlier_ratio=1.0・n_inliers=n を無条件で載せ「100% コンセンサス」を
+        # 詐称していた。ここでは実測の再投影誤差で inlier を数え直し honest に報告する。
+        try:
+            R, t = dlt_pose(X, x, K)
+        except (ValueError, np.linalg.LinAlgError) as e:
+            # 共平面など DLT 不能。姿勢を捏造せず fail-closed で失敗を明示する。
+            raise ValueError(
+                f"pnp_ransac: RANSAC 合意不十分かつ全点 DLT fallback も不能: {e}"
+            ) from e
+        proj = _project(X, K, R, t)
+        err = np.linalg.norm(proj - x, axis=1)
+        mask = err < thresh
+        info = {
+            "n_inliers": int(mask.sum()),
+            "inlier_ratio": float(mask.mean()),
+            "iters": iters,
+            "fallback": True,
+            "rms": reprojection_error(X, x, K, R, t),
+        }
+        return R, t, mask, info
     R, t = dlt_pose(X[best_inliers], x[best_inliers], K)
     info = {"n_inliers": best_count, "inlier_ratio": best_count / n, "iters": iters,
             "rms": reprojection_error(X[best_inliers], x[best_inliers], K, R, t)}

@@ -119,6 +119,39 @@ def test_log_zero_crossings_flat_is_empty():
     assert not zc.any()
 
 
+def _tanh_step(center, n=33, axis=2):
+    """axis 方向に tanh(x-center) で符号反転する SDF 風の場(n,n,n)。"""
+    coords = np.indices((n, n, n), dtype=np.float64)
+    return np.tanh(coords[axis] - center)
+
+
+def test_log_zero_crossings_on_grid_edge_not_dropped():
+    """格子整列面(LoG がちょうど格子点上で 0)でも取りこぼさない。
+
+    対称ステップの中心を格子点 x=16 に置くと LoG は x=16 で厳密に 0 になり、隣接ペアの
+    符号積は常に 0(a*b<0 が成立しない)。旧実装はこの真のエッジを丸ごと落としていた。
+    格子間 x=16.5 と同程度に検出され、しかも交差面は x=16 の 1 voxel 厚であること。
+    """
+    on_grid = E.log_zero_crossings(_tanh_step(16.0), sigma=1.5)
+    off_grid = E.log_zero_crossings(_tanh_step(16.5), sigma=1.5)
+
+    assert on_grid.any(), "格子整列エッジ(x=16)を落としてはならない(旧挙動=0)"
+    # off-grid と同程度の検出量(planar な交差面なので概ね一致するはず)。
+    assert on_grid.sum() >= 0.9 * off_grid.sum(), (
+        f"on-grid={int(on_grid.sum())} が off-grid={int(off_grid.sum())} に比べ過少"
+    )
+    # 交差は格子点 x=16 の 1 voxel 面に集中(厚くならない)。
+    xs = np.unique(np.argwhere(on_grid)[:, 2])
+    assert xs.tolist() == [16], f"格子整列交差は x=16 の 1 voxel 面のはず: {xs.tolist()}"
+
+
+def test_log_zero_crossings_constant_zero_no_false_positive():
+    """定数ゼロ場は交差ではない — L==0 を含める修正で誤検出しないこと。"""
+    v = np.zeros((16, 16, 16), dtype=np.float64)
+    zc = E.log_zero_crossings(v, sigma=1.5)
+    assert not zc.any(), "定数ゼロ場を交差として立ててはならない"
+
+
 # --------------------------------------------------------------------------- #
 # 4. link_edges: 分離した 2 箱で n>=2                                          #
 # --------------------------------------------------------------------------- #
