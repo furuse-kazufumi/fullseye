@@ -74,6 +74,16 @@ reconstruct/curve/shape_descriptor/freeform/pose_estimation/regionprops の 15 �
 3. op を足すたびに `ops3d._CATALOG` に登録 → 組み合わせ空間が自動で広がる(指数的候補が増える)。
 4. コードレビュー/検証は数回に分割(Fable リセット後に全 op 再確認予定)。
 
-## 現状の op 在庫(`ops3d.py`、82 op / 16 カテゴリ)
-transform 12 / geometry 15 / feature_register 7 / match_localize 6 / refine 6 / optics 5 / morphology 5 /
-render 4 / surface_fit 4 / feature 4 / match_pose 4 / curvilinear 3 / detect 2 / describe 2 / fusion 2 / motion 1。
+## 現状の op 在庫(`ops3d.py`、150 op / 31 カテゴリ、`py -3.11 ops3d.py` 実測)
+geometry 15 / transform 12 / feature_register 7 / metrics 7 / match_localize 6 / refine 6 /
+morphology 5 / optics 5 / structured_light 5 / medial 5 / edges 5 / curve 5 / shape_descriptor 5 / freeform 5 /
+feature 4 / match_pose 4 / render 4 / surface_fit 4 / photometric 4 / range_image 4 / preprocess 4 /
+deform 4 / robust_fit 4 / reconstruct 4 / regionprops 4 /
+curvilinear 3 / pose_estimation 3 / detect 2 / describe 2 / fusion 2 / motion 1。
+
+**第2〜5波の新規 15 カテゴリ・68 op**: photometric(フォトメトリックステレオ・法線積分)/ range_image(organized
+深度画像)/ preprocess(点群フィルタ)/ structured_light(縞投影 profilometry)/ deform(3D 非剛体登録)/
+medial(medial surface・3D 骨格)/ metrics(再構成・登録の評価指標、進化探索 fitness の土台)/ robust_fit(RANSAC
+頑健プリミティブ適合)/ edges(3D エッジ抽出)/ reconstruct(点群からの直接表面再構成)/ curve(空間曲線の微分幾何)/
+shape_descriptor(統計ベース大域形状記述子)/ freeform(B スプライン自由曲面・曲線)/ pose_estimation(PnP)/
+regionprops(3D 連結成分・多物体計測)。
