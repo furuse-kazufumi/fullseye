@@ -51,6 +51,17 @@ def _solid_sphere(n=6000, r=1.0, seed=5):
     return _solid_ellipsoid(n=n, axes=(r, r, r), seed=seed)
 
 
+def _solid_cube(n=6000, half=1.0, seed=9):
+    """半辺 half の立方体内部を一様充填した点群 (n,3)。
+
+    solid sphere と 2 次モーメントが等方(共分散固有値 ≈ 等値)で一致するため、
+    固有値ベースの不変量だけでは球と区別できない。高次の半径モーメントでのみ
+    分離できる形状ペアのテスト用。
+    """
+    rng = np.random.default_rng(seed)
+    return rng.uniform(-half, half, size=(n, 3))
+
+
 def _rot_matrix(seed=7):
     """QR 分解で作る決定論的な回転行列(det=+1 に補正)。"""
     rng = np.random.default_rng(seed)
