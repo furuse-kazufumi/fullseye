@@ -48,6 +48,20 @@ CENTER = np.array([0.2, 0.1, -0.3])
 RADIUS = 1.0
 
 
+def _count_radial_shells(verts, center, bins=40, min_frac=0.005):
+    """再構成頂点の半径分布から**同心殻の本数**を数える。
+
+    中心からの半径ヒストグラムで、頂点が十分載っている bin(全体の min_frac 超)の
+    連続した塊の数を返す。単一殻なら 1、同心二重殻(内側/外側に分かれ radius に空白帯が
+    できる)なら 2 以上。二重殻バグ([8])を捕捉するための構造的判定。
+    """
+    r = np.linalg.norm(np.asarray(verts) - np.asarray(center), axis=1)
+    hist, _ = np.histogram(r, bins=bins)
+    occupied = hist > (min_frac * len(r))
+    padded = np.concatenate([[0], occupied.astype(int), [0]])
+    return int((np.diff(padded) == 1).sum())
+
+
 # --------------------------------------------------------------------------- #
 # poisson_lite: 占有モード(球面サンプル → 球面近傍メッシュ)                  #
 # --------------------------------------------------------------------------- #
