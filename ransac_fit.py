@@ -204,12 +204,14 @@ def ransac_sphere(points, thresh, iters=500, seed=0):
         if cnt > best_n:
             best_n, best_mask = cnt, mask
 
-    if best_mask is None or best_n < 4:
+    fallback = best_mask is None or best_n < 4
+    if fallback:
         best_mask = np.ones(N, bool)
 
     fit = _fit_sphere_ls(P[best_mask])
     if fit is None:
         fit = _fit_sphere_ls(P)              # 最終フォールバック
+        fallback = True
     if fit is None:
         raise ValueError("ransac_sphere: 球フィット不能(点が同一平面上など)")
     c, r = fit
@@ -219,10 +221,12 @@ def ransac_sphere(points, thresh, iters=500, seed=0):
         fit2 = _fit_sphere_ls(P[mask])
         if fit2 is not None:
             c, r = fit2
-    else:
+    elif not fallback:
+        # 実仮説はあったがリフィット後に縮退 → 実測 consensus(best_mask)を保持。
         mask = best_mask
+    # フォールバック時は実測 mask を honest に返す(all-True の満点詐称をしない)。
     params = {"center": c, "radius": float(r)}
-    return params, mask, _info(mask, iters)
+    return params, mask, _info(mask, iters, degenerate=fallback)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
