@@ -1,5 +1,6 @@
 """curvature3d の GT 検証: 球/円柱/平面の閉形式曲率と一致するか。"""
 import numpy as np
+import pytest
 
 import curvature3d
 
