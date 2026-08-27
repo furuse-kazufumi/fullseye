@@ -52,6 +52,12 @@ def occupancy_grid_2d(points, cell: float = 0.05, z_range=None, bounds=None,
         xmin, xmax, ymin, ymax = x.min(), x.max(), y.min(), y.max()
     else:
         xmin, xmax, ymin, ymax = bounds
+        if not (xmax > xmin and ymax > ymin):   # degenerate/inverted bounds -> fail-closed
+            # silently accepting these drops every point (in-bounds mask is empty)
+            # and returns a phantom all-free grid with an inverted extent; the 3-D
+            # occupancy_grid rejects the same condition, so match it here.
+            raise ValueError(
+                "degenerate 2-D bounds: require xmax > xmin and ymax > ymin")
     nx = max(1, int(np.ceil((xmax - xmin) / cell)))
     ny = max(1, int(np.ceil((ymax - ymin) / cell)))
     counts = np.zeros((ny, nx), np.int64)
