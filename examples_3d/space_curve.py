@@ -156,6 +156,8 @@ def main():
     t_cv = float(np.std(t_in) / np.mean(t_in))
 
     # --- 2) Frenet標構の正規直交性(構成上 全点で成立するはず) ---
+    # 注意: B=T×N より T·B, N·B は恒等的に 0(どんな T,N でも成立)。単位長も構成上満たされる。
+    # つまりこの節だけでは「曲線と無関係な定数の正規直交枠」も通る → 2b/2c で幾何一致を要求する。
     dot_tn = float(np.max(np.abs(np.sum(T * N, axis=1))))
     dot_tb = float(np.max(np.abs(np.sum(T * B, axis=1))))
     dot_nb = float(np.max(np.abs(np.sum(N * B, axis=1))))
@@ -166,6 +168,22 @@ def main():
             np.max(np.abs(np.linalg.norm(B, axis=1) - 1.0)),
         )
     )
+
+    # --- 2b) Frenet標構の曲線依存の幾何一致(一様ヘリックス) ---
+    # 各点で向きが回る解析的 T,N と一致するか。定数枠や無関係な枠なら O(1) で外れる。
+    theta_uniform = np.linspace(0.0, turns * 2.0 * np.pi, n)   # make_helix と同じ角度列
+    T_gt, N_gt = helix_frame_analytic(radius, pitch, theta_uniform)
+    frame_T_err = float(np.max(np.linalg.norm(interior(T - T_gt), axis=1)))
+    frame_N_err = float(np.max(np.linalg.norm(interior(N - N_gt), axis=1)))
+
+    # --- 2c) Gram-Schmidt 射影を試す: 変速(非一様)ヘリックス(r''⊥r' でない) ---
+    theta_var = variable_speed_theta(turns=turns, n=n)
+    helix_var = make_helix(radius, pitch, theta=theta_var)
+    Tv, Nv, Bv = frenet_frame(helix_var)
+    Tv_gt, Nv_gt = helix_frame_analytic(radius, pitch, theta_var)
+    frame_T_err_v = float(np.max(np.linalg.norm(interior(Tv - Tv_gt), axis=1)))
+    frame_N_err_v = float(np.max(np.linalg.norm(interior(Nv - Nv_gt), axis=1)))
+    dot_tn_v = float(np.max(np.abs(np.sum(interior(Tv * Nv), axis=1))))
 
     # --- 3) 弧長 ---
     arclen_relerr = abs(total - arclen_gt) / arclen_gt
