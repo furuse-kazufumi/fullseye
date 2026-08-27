@@ -115,7 +115,7 @@ def main():
     # --- 3) register_nonrigid: 対応未知の前提で template を target へ非剛体で寄せる ---
     #   λ は小さめ(細かい曲げを回復)。返る warped は src=template と同じ並びなので
     #   clean_bent[i] が各 warped[i] の真の対応先になる(GT が測れる)。
-    warped, model, info = register_nonrigid(template, target, iters=40, lam=0.02)
+    warped, model, info = register_nonrigid(template, target, iters=40, lam=0.01)
 
     # beat-the-null: 対応既知の最良剛体(Kabsch)= 剛体位置合わせの上限性能。
     rigid_null = kabsch_rigid(template, target)
