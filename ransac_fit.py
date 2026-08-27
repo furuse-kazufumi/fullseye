@@ -149,7 +149,8 @@ def ransac_plane(points, thresh, iters=500, seed=0):
         if cnt > best_n:
             best_n, best_mask = cnt, mask
 
-    if best_mask is None or best_n < 3:      # 有効仮説なし → 全点フォールバック
+    fallback = best_mask is None or best_n < 3
+    if fallback:                             # 有効仮説なし → 全点フォールバック
         best_mask = np.ones(N, bool)
 
     normal, point = _fit_plane_ls(P[best_mask])
@@ -158,10 +159,13 @@ def ransac_plane(points, thresh, iters=500, seed=0):
     mask = dist < thresh
     if int(mask.sum()) >= 3:
         normal, point = _fit_plane_ls(P[mask])
-    else:
+    elif not fallback:
+        # 実仮説はあったがリフィット後に縮退 → 実測 consensus(best_mask)を保持。
         mask = best_mask
+    # フォールバック時は実測 mask(dist<thresh)を honest に返す。
+    # 全点フォールバックの all-True mask を「満点(ratio=1.0)」と詐称しない。
     params = {"normal": normal, "d": float(-normal @ point), "point": point}
-    return params, mask, _info(mask, iters)
+    return params, mask, _info(mask, iters, degenerate=fallback)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
