@@ -96,13 +96,13 @@ def main():
     rng = np.random.default_rng(7)
 
     # --- 1) 既知の 3D 点と真のカメラ姿勢・内部行列 ---
-    pts_3d = known_box(dims=(1.5, 1.0, 0.8))          # 寸法既知の箱(世界座標)
+    pts_3d = known_box(dims=(2.0, 1.4, 1.0))          # 寸法既知の箱(世界座標)
     n = len(pts_3d)
     K = np.array([[800.0, 0.0, 320.0],
                   [0.0, 800.0, 240.0],
                   [0.0, 0.0, 1.0]])                    # 640x480, f=800px
-    R_gt = rotation_matrix([0.3, 1.0, 0.2], 30.0)      # 真のカメラの向き(30度回転)
-    t_gt = np.array([0.4, -0.3, 8.0])                  # 真のカメラ位置(箱は前方 z~8)
+    R_gt = rotation_matrix([0.3, 1.0, 0.2], 55.0)      # 真のカメラの向き(55度回転)
+    t_gt = np.array([0.4, -0.3, 6.0])                  # 真のカメラ位置(箱は前方 z~6)
 
     # coplanarity_ratio: DLT は非共平面点を要する。箱は明確に立体なので比が大きい。
     cop = pnp3d.coplanarity_ratio(pts_3d)
