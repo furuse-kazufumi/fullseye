@@ -2852,7 +2852,7 @@ def build_window(model=None):
             _load_image_path(path)
 
     def use_demo():
-        model.set_image(demo_image()); show_result()
+        model.set_image(demo_image()); state["fit_next"] = True; show_result()
 
     def load_sample_image(name):
         """Load one of the collected, license-clean sample images (sample_images.py)."""
