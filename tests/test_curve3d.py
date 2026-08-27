@@ -37,8 +37,33 @@ def test_frenet_orthonormal():
     T, N, B = C.frenet_frame(curve)
     i = slice(5, -5)
     assert np.allclose(np.linalg.norm(T[i], axis=1), 1.0, atol=1e-6)
+    assert np.allclose(np.linalg.norm(N[i], axis=1), 1.0, atol=1e-6)
+    assert np.allclose(np.linalg.norm(B[i], axis=1), 1.0, atol=1e-6)
     assert np.abs(np.sum(T[i] * N[i], axis=1)).max() < 1e-6
-    assert np.allclose(np.cross(T[i], N[i]), B[i], atol=1e-6)
+    assert np.abs(np.sum(T[i] * B[i], axis=1)).max() < 1e-6
+    assert np.abs(np.sum(N[i] * B[i], axis=1)).max() < 1e-6
+
+
+def test_frenet_matches_analytic_helix():
+    """Frenet 標構を螺旋の**解析的 Frenet 標構**と数値一致で検証(独立 GT)。
+
+    r(t)=(a cos t, a sin t, b t) の解析標構:
+      T=(-a sin t, a cos t, b)/√(a²+b²)、N=(-cos t, -sin t, 0)、
+      B=(b sin t, -b cos t, a)/√(a²+b²)。
+    B=cross(T,N) という定義から従う恒真式ではなく、既知 GT との一致を要求する
+    (誤った B は cross(T,N)==B を通しても、この GT 検証で必ず落ちる)。
+    """
+    a, b = 2.0, 1.0
+    curve, t = _helix(a, b)
+    T, N, B = C.frenet_frame(curve)
+    den = np.sqrt(a ** 2 + b ** 2)
+    T_gt = np.stack([-a * np.sin(t), a * np.cos(t), b * np.ones_like(t)], axis=1) / den
+    N_gt = np.stack([-np.cos(t), -np.sin(t), np.zeros_like(t)], axis=1)
+    B_gt = np.stack([b * np.sin(t), -b * np.cos(t), a * np.ones_like(t)], axis=1) / den
+    i = slice(5, -5)
+    assert np.abs(T[i] - T_gt[i]).max() < 1e-3, f"T max err {np.abs(T[i]-T_gt[i]).max():.2e}"
+    assert np.abs(N[i] - N_gt[i]).max() < 1e-3, f"N max err {np.abs(N[i]-N_gt[i]).max():.2e}"
+    assert np.abs(B[i] - B_gt[i]).max() < 1e-3, f"B max err {np.abs(B[i]-B_gt[i]).max():.2e}"
 
 
 def test_straight_line_zero_curvature():

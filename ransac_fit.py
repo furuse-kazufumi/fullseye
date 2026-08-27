@@ -98,11 +98,16 @@ def _fit_circle_2d(q):
     return c2, float(np.sqrt(r2))
 
 
-def _info(mask, iters):
-    """共通 info dict を組む。"""
+def _info(mask, iters, degenerate=False):
+    """共通 info dict を組む。
+
+    ``degenerate=True`` は「有効な RANSAC 仮説が得られず、フォールバック(全点 or
+    法線 SVD)から params を作った」ことを示す honest フラグ。この場合でも
+    ``n_inliers`` / ``inlier_ratio`` はフォールバック params の下で実際に
+    ``dist < thresh`` を満たす点の実測値であり、縮退を満点(ratio=1.0)と詐称しない。"""
     n = int(mask.sum())
     return {"n_inliers": n, "inlier_ratio": float(n) / len(mask), "iters": int(iters),
-            "n_points": int(len(mask))}
+            "n_points": int(len(mask)), "degenerate": bool(degenerate)}
 
 
 # ═══════════════════════════════════════════════════════════════════════════
