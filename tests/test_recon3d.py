@@ -85,6 +85,25 @@ def test_poisson_lite_occupancy_sphere_geometry():
     assert np.percentile(resid, 90) < 0.15 * RADIUS
 
 
+def test_poisson_lite_occupancy_single_shell():
+    """占有モードは**単一殻**を返す(同心二重殻でない)。
+
+    回帰([8]): 占有(unsigned)場は内外対称なので、平滑した薄い球殻の 0.5 等値面は内スロープ・
+    外スロープの二か所を通り、半径 ~0.93 と ~1.06 の**二重殻**になっていた(中央値残差しか見ない
+    既存テストはこれを見逃す)。内部充填で内外対称性を破り単一の外殻を得る修正後、半径分布は
+    ひとつの連続した殻になる。旧挙動では殻数=2 で FAIL、新挙動では殻数=1 で PASS。
+    """
+    pts, _ = _fib_sphere(4000, RADIUS, CENTER)
+    verts, faces = R.poisson_lite(pts, size=64, sigma=1.5, iso=0.5)
+
+    assert len(verts) > 0 and len(faces) > 0
+    # 単一殻: 半径ヒストグラムの塊はちょうど 1 つ(二重殻なら 2 になり FAIL)
+    assert _count_radial_shells(verts, CENTER) == 1
+    # 単一殻なので radius 幅は薄い(二重殻だと内外に跨り幅が広がる)
+    r = np.linalg.norm(verts - CENTER, axis=1)
+    assert (r.max() - r.min()) < 0.20 * RADIUS
+
+
 def test_poisson_lite_normals_winding_sphere_geometry():
     pts, normals = _fib_sphere(4000, RADIUS, CENTER)
     verts, faces = R.poisson_lite(pts, size=64, sigma=1.5, iso=0.5, normals=normals)
