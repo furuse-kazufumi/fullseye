@@ -269,3 +269,30 @@ def test_input_validation():
         M.moment_invariants(np.zeros((10, 3)))         # 全点一致 → RMS=0 で縮退
     with pytest.raises(ValueError):
         M.shape_distance(np.zeros(5), np.zeros(4))     # 長さ不一致
+
+
+def test_degeneracy_check_is_scale_relative():
+    """[回帰] 縮退判定はスケール相対。座標が極小(1e-13 倍)なだけの非縮退点群は
+    弾かず、通常スケールと同一の不変量を返す。
+
+    旧実装は絶対しきい値 rms<1e-12 で判定していたため、真は非縮退でも座標が
+    極小だと ValueError を投げていた(同一形状で挙動が食い違う = FAIL)。
+    スケール相対化後は 1e-13 倍でも 1 倍と一致する(PASS)。
+    """
+    base = _solid_ellipsoid(n=3000, axes=(3.0, 1.5, 0.8), seed=401)
+
+    inv_1 = M.moment_invariants(base)
+    # 座標を 1e-13 倍(RMS ≈ 1e-13、絶対しきい値 1e-12 を下回るが非縮退)。
+    inv_tiny = M.moment_invariants(base * 1e-13)
+
+    # スケール不変なので極小スケールでも通常スケールと厳密に一致(丸め ~1e-9)。
+    assert _rel_err(inv_tiny, inv_1) < 1e-9, (
+        f"極小スケールで不変量がずれた: {inv_tiny} vs {inv_1}"
+    )
+    # さらに極端な 1e-20 倍でも定義される(真に全点一致でなければ縮退でない)。
+    inv_extreme = M.moment_invariants(base * 1e-20)
+    assert _rel_err(inv_extreme, inv_1) < 1e-9
+
+    # 一方、真に全点一致(広がり 0)は依然として ValueError で弾く(fail-closed 維持)。
+    with pytest.raises(ValueError):
+        M.moment_invariants(np.full((8, 3), 5.0))
