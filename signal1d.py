@@ -26,6 +26,9 @@ __all__ = [
     "highpass",
     "bandpass",
     "smooth",
+    "spline_fit",
+    "spline_eval",
+    "spline_resample",
 ]
 
 
