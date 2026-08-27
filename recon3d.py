@@ -17,7 +17,7 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import gaussian_filter, binary_fill_holes
 from scipy.signal import fftconvolve
 from scipy.spatial import Delaunay, cKDTree
 from skimage.measure import marching_cubes
