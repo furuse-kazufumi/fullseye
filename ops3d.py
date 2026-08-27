@@ -248,6 +248,17 @@ _CATALOG = {
         ("fit_bspline_curve", "bspline_surf", ["points"], "surface", False),
         ("eval_bspline_curve", "bspline_surf", ["surface"], "points", False),
     ],
+    "pose_estimation": [  # PnP: 3D-2D 対応 → カメラ姿勢(射影の逆問題)
+        ("dlt_pose", "pnp3d", ["points", "image2d"], "pose", False),
+        ("pnp_ransac", "pnp3d", ["points", "image2d"], "pose", False),
+        ("reprojection_error", "pnp3d", ["points", "pose"], "measurement", False),
+    ],
+    "regionprops": [  # 3D 連結成分の多物体計測(検査で複数部品を一括)
+        ("label_components", "regionprops3d", ["voxel"], "voxel", False),
+        ("region_props", "regionprops3d", ["voxel"], "measurement", False),
+        ("largest_component", "regionprops3d", ["voxel"], "voxel", False),
+        ("filter_by_volume", "regionprops3d", ["voxel"], "voxel", False),
+    ],
 }
 
 
