@@ -119,14 +119,47 @@ def reconstruct(model, n_points=300, n_harmonics=None):
     return np.column_stack([x, y])
 
 
+def _amplitudes(coeffs):
+    """各高調波の 2×2 係数行列の特異値 (長軸 L, 短軸 W) を返す((N,2), L≥W≥0)。
+
+    第 n 高調波が描く楕円 (a cosφ+b sinφ, c cosφ+d sinφ) の半長軸・半短軸は行列
+    [[a,b],[c,d]] の特異値に一致する。特異値は **空間回転(左からの直交変換)** と
+    **始点シフト(右からの位相回転)** の両方で不変なので、KG 正規化(第1高調波の
+    位相合わせ)が第1高調波が円形のとき悪条件になる問題を避けられる。
+    """
+    coeffs = np.asarray(coeffs, dtype=np.float64)
+    out = np.empty((coeffs.shape[0], 2), dtype=np.float64)
+    for n in range(coeffs.shape[0]):
+        sv = np.linalg.svd(coeffs[n].reshape(2, 2), compute_uv=False)  # 降順
+        out[n] = sv
+    return out
+
+
+def invariants(model, scale_invariant=True):
+    """回転・平行移動・始点・(任意で)スケールに不変な形状記述子((N,2))。
+
+    各高調波の楕円の (長軸, 短軸) = 特異値を並べたもの。DC を含まないので平行移動に
+    不変、特異値なので空間回転と始点シフトに不変、第1高調波の長軸で割ればスケール
+    不変。形状マッチング(:func:`descriptor_distance`)の土台。
+    """
+    amp = _amplitudes(model["coeffs"])
+    if scale_invariant:
+        L1 = amp[0, 0]
+        if L1 > 1e-12:
+            amp = amp / L1
+    return amp
+
+
 def normalize(model, size_invariant=True):
-    """EFD 係数を回転・始点・(任意で)スケールに不変な正規形へ変換する。
+    """EFD 係数を「正準ポーズ」の係数へ変換する(第1高調波を基準に整列)。
 
-    Kuhl–Giardina の正規化: (1) 第1高調波の位相を合わせて **始点** の任意性を除去、
-    (2) 第1楕円の長軸を基準軸に回して **回転** 不変化、(3) 第1高調波の長軸長で割って
-    **スケール** 不変化。DC(a0,c0)は落とすので **平行移動** にも不変。
+    Kuhl–Giardina の正準化: (1) 第1高調波の位相で **始点** の任意性を除去、(2) 第1
+    楕円の長軸を基準軸へ回して **向き** を揃え、(3) 第1高調波の長軸長で割って **大きさ**
+    を揃える。複数形状を重ねる/平均する等の「正準ポーズ再構成」向け。
 
-    返り値: (N,4) の正規化係数。形状マッチングは :func:`descriptor_distance` を使う。
+    注意(honest): 第1高調波がほぼ **円形**(長軸≈短軸)の形状では位相 (theta/psi) が
+    悪条件で不安定になる。**不変マッチングには本関数でなく** :func:`invariants` /
+    :func:`descriptor_distance`(特異値ベース)を使うこと。
     """
     coeffs = np.array(model["coeffs"], dtype=np.float64, copy=True)
     a1, b1, c1, d1 = coeffs[0]
