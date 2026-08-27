@@ -157,7 +157,7 @@ def spline_fit(x, y, smooth=0.0):
     if s < 0:
         raise ValueError(f"smooth は非負(受領: {smooth})")
     if s > 0:
-        return UnivariateSpline(xs, ys, s=s * xs.size)     # 平滑化(s はスケール)
+        return UnivariateSpline(xs, ys, s=s)               # 平滑化(s=scipy 平滑化係数)
     return CubicSpline(xs, ys)                              # 補間(全点を通る)
 
 
