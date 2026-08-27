@@ -66,20 +66,29 @@ def test_first_node_fixed():
 
 
 def test_loop_closure_beats_open_chain():
-    # ループ閉じ有り vs 無し: 有りの方が終端ノードの誤差が小さい(ドリフト補正)
-    poses, edges = _loop_scene(n=8, seed=4)
-    open_edges = [e for e in edges if not (e[0] == 7 and e[1] == 0)]  # ループ閉じを除く
-    init = poses.copy()
-    rng = np.random.default_rng(6)
-    drift = np.zeros(3)
-    for i in range(1, len(poses)):
-        drift = drift + rng.normal(0, 0.12, 3)
-        init[i, 3:] += drift
-    closed = pg.optimize_pose_graph(init, edges, fix_first=True)
-    opened = pg.optimize_pose_graph(init, open_edges, fix_first=True)
-    err_closed = np.linalg.norm(closed["poses"][4, 3:] - poses[4, 3:])
+    # ノイズ付き相対姿勢制約: open chain はドリフトが積算、ループ閉じが補正する(back-end の存在意義)。
+    # 旧テストは exact エッジで open も真値回復し性質を検証していなかった(甘いテスト)。
+    poses, _ = _loop_scene(n=8, seed=4)
+    n = len(poses)
+    rng = np.random.default_rng(11)
+    odo = []
+    for i in range(n - 1):                            # ノイズ付きオドメトリ(連続エッジ)
+        rv, t = pg.relative_pose(poses[i], poses[i + 1])
+        odo.append((i, i + 1, rv + rng.normal(0, 0.02, 3), t + rng.normal(0, 0.03, 3), 1.0, 1.0))
+    rvc, tc = pg.relative_pose(poses[n - 1], poses[0])   # ループ閉じ(単一ノイズ)
+    closure = (n - 1, 0, rvc + rng.normal(0, 0.02, 3), tc + rng.normal(0, 0.03, 3), 1.0, 1.0)
+    init = np.zeros_like(poses)                       # 初期: node0=真値、以降はノイズ付きオドメトリ積分=ドリフト積算
+    init[0] = poses[0]
+    for i in range(n - 1):
+        Ri = pg.rvec_to_R(init[i][:3]); ti = init[i][3:]
+        Rr = pg.rvec_to_R(odo[i][2]); tr = odo[i][3]
+        Rj = Ri @ Rr; tj = Ri @ tr + ti
+        init[i + 1] = np.concatenate([pg.R_to_rvec(Rj), tj])
+    opened = pg.optimize_pose_graph(init, odo, fix_first=True)
+    closed = pg.optimize_pose_graph(init, odo + [closure], fix_first=True)
     err_open = np.linalg.norm(opened["poses"][4, 3:] - poses[4, 3:])
-    assert err_closed < err_open                          # ループ閉じが誤差を減らす
+    err_closed = np.linalg.norm(closed["poses"][4, 3:] - poses[4, 3:])
+    assert err_closed < err_open, (err_closed, err_open)   # ループ閉じがドリフトを減らす
 
 
 def test_guards():
@@ -88,3 +97,12 @@ def test_guards():
         pg.optimize_pose_graph(poses[:1], edges)          # <2 ノード
     with pytest.raises(ValueError):
         pg.optimize_pose_graph(poses, [])                 # エッジ空
+
+
+def test_edge_index_out_of_range_fails_closed():
+    """fail-closed: 範囲外/負のエッジ index は ValueError(負の silent wrap を防ぐ)。"""
+    poses, edges = _loop_scene(n=4)
+    with pytest.raises(ValueError):
+        pg.optimize_pose_graph(poses, [(0, -1, np.zeros(3), np.zeros(3), 1.0, 1.0)])
+    with pytest.raises(ValueError):
+        pg.optimize_pose_graph(poses, [(0, 9, np.zeros(3), np.zeros(3), 1.0, 1.0)])

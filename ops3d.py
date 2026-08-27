@@ -372,6 +372,22 @@ _CATALOG = {
         ("inflate", "occupancy", ["voxel"], "voxel", False),
         ("query_distance", "occupancy", ["sdf", "points"], "measurement", False),
     ],
+    "symmetry": [  # 対称性検出(反射面/回転軸、chamfer で採点=形状補完・正準姿勢・左右差検査)
+        ("detect_reflection_symmetry", "symmetry3d", ["points"], "primitive", False),
+        ("detect_rotational_symmetry", "symmetry3d", ["points"], "primitive", False),
+        ("reflect_points", "symmetry3d", ["points"], "points", False),
+        ("reflection_symmetry_score", "symmetry3d", ["points"], "measurement", False),
+    ],
+    "lidar_projection": [  # 回転式 LiDAR の球面/円柱レンジ画像(点群⇄レンジ画像)
+        ("project_spherical", "spherical_proj", ["points"], "image2d", False),
+        ("unproject_spherical", "spherical_proj", ["image2d"], "points", False),
+        ("project_cylindrical", "spherical_proj", ["points"], "image2d", False),
+    ],
+    "motion_segment": [  # 剛体運動セグメンテーション(2点群→運動が一致する剛体ごとに分割、動的シーン)
+        ("segment_rigid_motions", "motion_seg3d", ["points", "points"], "labels", False),
+        ("estimate_flow", "motion_seg3d", ["points", "points"], "flow", False),
+        ("fit_rigid", "motion_seg3d", ["points", "points"], "pose", False),
+    ],
 }
 
 
