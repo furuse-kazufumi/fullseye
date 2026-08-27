@@ -208,8 +208,8 @@ def spline_curve_fit(points, closed=False, smooth=0.0):
     from scipy.interpolate import splprep
     p = _as_pts2(points)
     per = 1 if closed else 0
-    if closed and np.allclose(p[0], p[-1]):
-        p = p[:-1]                                       # 周期化: シームの重複点は落とす
+    if closed and not np.allclose(p[0], p[-1]):
+        p = np.vstack([p, p[0]])                         # splprep periodic は先頭==末尾を期待
     tck, u = splprep([p[:, 0], p[:, 1]], s=float(smooth), per=per, k=3)
     return {"points": p, "closed": bool(closed), "tck": tck, "u": np.asarray(u, dtype=np.float64)}
 
