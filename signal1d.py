@@ -177,3 +177,54 @@ def spline_resample(x, y, n, smooth=0.0):
     spl = spline_fit(xa, y, smooth=smooth)
     x_new = np.linspace(float(xa.min()), float(xa.max()), int(n))
     return x_new, spline_eval(spl, x_new)
+
+
+# --------------------------------------------------------------------------- #
+# パラメトリック曲線スプライン(開曲線 / 閉曲線)                                #
+# --------------------------------------------------------------------------- #
+# 曲線は「大枠 Polygon(点列)と同じ」= 点列に closed 属性が付いただけ、と捉える。
+# spline_curve_fit は {"points","closed","tck"}(= 点列 + 属性)を返す。閉曲線は
+# 周期境界(接線がシームで連続)、開曲線は端点自由、という使い分けを closed で行う。
+def _as_pts2(points, name="points"):
+    p = np.asarray(points, dtype=np.float64).reshape(-1, 2)
+    if p.shape[0] < 4:
+        raise ValueError(f"{name} は (N>=4, 2) の曲線点列が必要(受領: {p.shape})")
+    if not np.all(np.isfinite(p)):
+        raise ValueError(f"{name} に非有限値がある")
+    return p
+
+
+def spline_curve_fit(points, closed=False, smooth=0.0):
+    """2D 点列を **弧長パラメトリック3次スプライン** x(t),y(t) で当てはめる。
+
+    ``closed=False`` は**開曲線**(端点自由)、``closed=True`` は**閉曲線**(周期境界で
+    シームの接線が連続=ループが滑らかに閉じる)。輪郭/ポリゴンと同じ点列表現に closed
+    属性を足しただけの軽い object を返す(新しい重い型は作らない):
+
+        {"points": (N,2) 制御点, "closed": bool, "tck": スプライン係数}
+
+    ``smooth`` は scipy の平滑化係数(0=全点を通る補間、>0=ノイズ許容の近似)。
+    """
+    from scipy.interpolate import splprep
+    p = _as_pts2(points)
+    per = 1 if closed else 0
+    if closed and np.allclose(p[0], p[-1]):
+        p = p[:-1]                                       # 周期化: シームの重複点は落とす
+    tck, _u = splprep([p[:, 0], p[:, 1]], s=float(smooth), per=per, k=3)
+    return {"points": p, "closed": bool(closed), "tck": tck}
+
+
+def spline_curve_eval(model, t):
+    """曲線スプライン model をパラメータ t∈[0,1] で評価し (M,2) 点を返す。"""
+    from scipy.interpolate import splev
+    x, y = splev(np.asarray(t, dtype=np.float64), model["tck"])
+    return np.column_stack([np.asarray(x, dtype=np.float64), np.asarray(y, dtype=np.float64)])
+
+
+def spline_curve_resample(points, n, closed=False, smooth=0.0):
+    """曲線点列を n 点に滑らかに再サンプルして (n,2) を返す(閉曲線はシームを重複させない)。"""
+    if int(n) < 4:
+        raise ValueError(f"n は4以上(受領: {n})")
+    m = spline_curve_fit(points, closed=closed, smooth=smooth)
+    t = np.linspace(0.0, 1.0, int(n), endpoint=not closed)
+    return spline_curve_eval(m, t)
