@@ -1,20 +1,19 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""draw_annotate — 画像に直接マーカー/線/円/輪郭を焼くラスタ描画(imagedraw)。
+"""draw_annotate — ラスタ描画で合成GTシーンを作り、検出器で回収して結果を描き返す。
 
     py -3.11 examples/draw_annotate.py
     py -3.11 examples/draw_annotate.py --save out.png
 
-【この例が示すこと】
-作業者が指定した対応点(ランドマーク)を画像そのものに描き込む。これは
-:mod:`imagemorph` のモーフに渡す対応点を『見て確認する』のに必要な作業で、
-Fullseye の既定(gen_*_xld + dev_display オーバーレイ)とは別に、ピクセルへ直接
-焼くラスタ描画 op(cv2.line/circle/drawMarker 相当を numpy で)を提供する。
+【用途(分かりやすく)】
+``imagedraw`` で **既知の位置・大きさの部品(円)を描いた合成シーン**を作り、それを
+検出パイプライン(``detect.segment_objects``)に渡して部品を回収する。描いた真値と
+検出結果を突き合わせれば、検出器を「答えの分かるテスト画像」で検証できる。最後に
+検出した重心へ ``imagedraw`` で十字を描き返す=**描画→検出→注釈**の一連の流れ。
 
-【グラウンドトゥルース】
-1. 描画は入力を破壊しない(元画像は不変)。
-2. 指定した N 個のランドマークに描いたマーカーは、連結成分 N 個として、各々
-   指定座標の近傍に現れる(=座標どおりに描けている)。
-3. 線分は端点で確かに塗られ、線外は塗られない。
+【グラウンドトゥルース(beat-the-null)】
+1. 描いた円の数 == 検出された部品の数(白紙なら 0=偽陽性を出さない)。
+2. 各検出重心は、描いた真の中心の近傍にある。
+3. 検出された部品は「円」なので circularity が高い(1.0 近傍)。
 """
 from __future__ import annotations
 
@@ -22,59 +21,49 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from scipy import ndimage
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import imagedraw as D          # noqa: E402
-import contours_xld as X       # noqa: E402
+import detect                  # noqa: E402  (fullseye の連結成分・領域特徴)
 
-H = W = 200
+H, W = 180, 240
 
 
 def main(save=None):
-    # 背景(なだらかなグラデーション)
-    yy, xx = np.mgrid[0:H, 0:W].astype(float)
-    base = (0.15 + 0.5 * xx / W).clip(0, 1)
-    base = np.stack([base, base, base], axis=-1)      # RGB
+    # --- 1) 描画: 既知の部品(円)を合成シーンに焼く ---
+    scene = np.zeros((H, W))
+    parts = [(40, 45, 16), (120, 55, 20), (190, 60, 14), (90, 130, 18)]  # (x, y, r)
+    for x, y, r in parts:
+        scene = D.draw_circle(scene, (x, y), r, color=1.0, fill=True)
+    print(f"描画: 既知の円 {len(parts)} 個を合成シーンに焼き込み(中心・半径は真値)。")
 
-    # 作業者が指定した対応点(モーフに渡すのと同じ形式の (x,y) 点列)
-    landmarks = np.array([[60, 80], [140, 80], [100, 120], [70, 155], [130, 155]], float)
+    # --- 2) 別の画像処理がその結果を消費: 部品を検出 ---
+    objs = detect.segment_objects(scene, threshold="none", min_area=20)
+    print(f"検出: detect.segment_objects が部品 {len(objs)} 個を回収。")
 
-    img = D.draw_markers(base, landmarks, color=(0, 1, 0), size=6, shape="cross", width=2)
-    img = D.draw_polyline(img, [[40, 60], [160, 60], [165, 170], [35, 170]],
-                          color=(1, 0.9, 0), width=2, closed=True)      # 顔枠
-    img = D.draw_circle(img, (100, 100), 55, color=(1, 0, 0), width=2)  # 注目円
-    ring = X.gen_circle_contour_xld(100, 100, 30, n=80, shape=(H, W))   # XLD 輪郭
-    img = D.draw_contour(img, ring, color=(0.2, 0.4, 1.0), width=1)
+    # --- 3) GT: 数・位置・形の一致(白紙は0=偽陽性なし) ---
+    assert len(objs) == len(parts), f"部品数が不一致(検出 {len(objs)} != 真値 {len(parts)})"
+    assert len(detect.segment_objects(np.zeros((H, W)), threshold="none", min_area=20)) == 0, \
+        "白紙から偽陽性を検出した"
+    det = sorted((o["centroid"][1], o["centroid"][0], o) for o in objs)  # (x, y, obj)
+    want = sorted(parts)
+    for (dx, dy, o), (wx, wy, wr) in zip(det, want):
+        assert abs(dx - wx) < 3 and abs(dy - wy) < 3, f"重心ズレ ({dx:.0f},{dy:.0f}) vs ({wx},{wy})"
+        assert o["circularity"] > 0.85, f"円らしくない circularity={o['circularity']:.2f}"
+    print("GT: 数・重心・circularity すべて真値と一致(白紙は0)。")
 
-    print(f"背景 {base.shape} に、指定ランドマーク {len(landmarks)} 点 + 顔枠 + 円 + XLD輪郭を描画。")
+    # --- 4) 検出結果を描き返す(描画→検出→注釈の環)---
+    vis = np.stack([scene, scene, scene], axis=-1)
+    for o in objs:
+        cy, cx = o["centroid"]
+        vis = D.draw_markers(vis, [(cx, cy)], color=(0, 1, 0), size=8, shape="cross", width=2)
 
-    # --- GT1: 入力を破壊していない ---
-    assert np.abs(base - np.stack([(0.15 + 0.5 * xx / W).clip(0, 1)] * 3, -1)).max() < 1e-12, \
-        "元画像が破壊されている"
-
-    # --- GT2: マーカーが座標どおり N 個 ---
-    green = (img[..., 1] > 0.6) & (img[..., 0] < 0.4) & (img[..., 2] < 0.4)
-    lab, n = ndimage.label(green)
-    print(f"緑マーカーの連結成分 = {n}(指定 {len(landmarks)} 点)")
-    assert n == len(landmarks), f"マーカー数が一致しない({n} != {len(landmarks)})"
-    # 各マーカーは対応ランドマークの近傍にある
-    centers = ndimage.center_of_mass(green, lab, range(1, n + 1))     # (row,col)
-    got = sorted((c, r) for r, c in centers)
-    want = sorted((x, y) for x, y in landmarks)
-    for (gx, gy), (wx, wy) in zip(got, want):
-        assert abs(gx - wx) < 4 and abs(gy - wy) < 4, f"マーカー位置ズレ {gx,gy} vs {wx,wy}"
-
-    # --- GT3: 線分の端点は塗られ、線外は塗られない ---
-    L = D.draw_line(np.zeros((60, 60)), (5, 5), (50, 50), 1.0, 1)
-    assert L[5, 5] > 0.5 and L[50, 50] > 0.5 and L[5, 55] < 0.5
-
-    print("\nPASS: ラスタ描画は入力を壊さず、指定座標どおりにマーカー/線/円/輪郭を焼き込む。"
-          "これで imagemorph に渡す対応点を画像上で確認できる。")
+    print("\nPASS: 描いた既知シーンを検出器が正しく回収し(数・位置・形が一致)、"
+          "検出重心を描き返した。draw は検出パイプラインのGTテスト画像生成と結果注釈に使える。")
 
     if save:
         from PIL import Image
-        Image.fromarray((img * 255).astype(np.uint8)).save(save)
+        Image.fromarray((vis * 255).astype(np.uint8)).save(save)
         print(f"saved: {save}")
     return 0
 
