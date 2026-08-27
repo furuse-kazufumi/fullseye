@@ -232,10 +232,16 @@ def main() -> int:
     ap.add_argument("--out", default=os.path.join(_REPO, "docs", "OP_CATALOG.md"))
     args = ap.parse_args()
     md = build_catalog()
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
-    with open(args.out, "w", encoding="utf-8") as f:
-        f.write(md)
-    print(f"wrote {args.out} ({len(md):,} bytes, {md.count(chr(10))} lines)")
+    # docs/ の人間向けコピーと、fullseye/ 配下の同梱コピー(wheel に載る)の両方に書く。
+    targets = [args.out]
+    shipped = os.path.join(_REPO, "fullseye", "OP_CATALOG.md")
+    if os.path.isdir(os.path.dirname(shipped)) and os.path.abspath(shipped) != os.path.abspath(args.out):
+        targets.append(shipped)
+    for path in targets:
+        os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(md)
+        print(f"wrote {path} ({len(md):,} bytes, {md.count(chr(10))} lines)")
     return 0
 
 
