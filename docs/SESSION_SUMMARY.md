@@ -3,35 +3,44 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-28 05:42:38
+- **最終更新**: 2026-08-28 06:43:29
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-000fd95b Studio 使い勝手 batch5: pipeline リストにステージ毎の実行時間を表示
-9479f7e1 Studio 使い勝手 batch4: ノブの数値直接入力(QDoubleSpinBox)
-89a2b42a Studio 使い勝手 batch3: 状態バー画像情報 + Op Help署名コピー + Export改善
-1f61ee09 Studio 使い勝手 batch2: ウィンドウタイトル(file+未保存*)と最近使ったファイル
-35bb5bf3 Studio 使い勝手 batch1: 編集ジェスチャ + focus検索 + 空状態ヒント
-fd90d562 Studio: 画像/pipeline のドラッグ&ドロップ読込を追加
-ee5887b3 Studio 3-D Examples: 実行(Run)・フィルタ・Output タブを追加
-b7e2636d 3D事例監査 v1: 弱い自己検証3件を判別的検査に是正(乱数/出鱈目を弾く)
-0f0bb5b6 auto: cad_to_scan.py 編集前 (2026-08-27 23:46)
-43a01d9a auto: cad_to_scan.py 編集前 (2026-08-27 23:46)
+2f72c0e2 Studio UX round2-A: Ctrl+D衝突修正/キーボードop挿入/パレット拡張/ズーム保持/結果コピー
+7de7e029 auto: studio.py 編集前 (2026-08-28 06:40)
+02b0fe86 auto: studio.py 編集前 (2026-08-28 06:36)
+a6f29b7f auto: studio.py 編集前 (2026-08-28 06:35)
+9535256a auto: studio.py 編集前 (2026-08-28 06:35)
+0f868348 auto: studio.py 編集前 (2026-08-28 06:34)
+41309336 auto: studio.py 編集前 (2026-08-28 06:34)
+db9d1bbe auto: studio.py 編集前 (2026-08-28 06:33)
+1183c96e auto: studio.py 編集前 (2026-08-28 06:32)
+f365a3ce auto: studio.py 編集前 (2026-08-28 06:32)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-05:40 .pytest_cache/v/cache/nodeids
+06:41 .pytest_cache/v/cache/nodeids
+06:41 tests/test_studio.py
+06:40 studio.py
+06:12 examples/contour_fourier.py
+06:11 tests/test_fourierdesc.py
+06:10 fourierdesc.py
+06:00 examples/image_morph.py
+05:59 tests/test_imagemorph.py
+05:53 imagemorph.py
+05:42 docs/SESSION_SUMMARY.md
 ```
 
 ---
