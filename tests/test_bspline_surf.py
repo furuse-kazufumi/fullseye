@@ -92,7 +92,54 @@ def test_surface_residual_keys_and_types():
     for k in ("rms", "max", "pv"):
         assert isinstance(res[k], float)
         assert np.isfinite(res[k])
-    assert res["pv"] >= res["max"] >= res["rms"] >= 0.0
+    # 普遍的に成立する不変条件のみを検証する(データ依存で自明通過しないもの)。
+    # max_abs >= rms >= 0: RMS は絶対値の二乗平均平方根なので必ず最大絶対値以下。
+    assert res["max"] >= res["rms"] >= 0.0
+    # pv(符号付き残差レンジ)は非負で、かつ 2*max_abs 以下
+    # (min/max とも絶対値が max_abs を超えないため)。
+    # 注: pv >= max は残差が 0 を跨ぐ時しか成立しないので不変条件にしない
+    #     (片側逸脱=純凸/純凹では pv < max。下の専用テストで検証)。
+    assert 0.0 <= res["pv"] <= 2.0 * res["max"] + 1e-12
+    # 返り値が定義どおりの値であることを独立再計算で確認。
+    zhat = bs.eval_bspline_surface(tck, x, y, grid=False).ravel()
+    resid = np.asarray(z, float).ravel() - zhat
+    assert res["rms"] == pytest.approx(float(np.sqrt(np.mean(resid ** 2))))
+    assert res["max"] == pytest.approx(float(np.max(np.abs(resid))))
+    assert res["pv"] == pytest.approx(float(resid.max() - resid.min()))
+
+
+def test_surface_residual_one_sided_deviation_allows_pv_below_max():
+    """片側逸脱場(全残差が同符号=打痕/欠肉のような本来の検査シナリオ)では
+    pv < max が起こり得ることを明示的に許容/検証する。
+
+    かつては res["pv"] >= res["max"] を不変条件として主張していたが、これは
+    残差が 0 を跨ぐデータでしか成立しない甘い(データ依存で自明通過する)条件。
+    ここでは名目曲面から一様に正方向へずらした観測を作って全残差を同符号にし、
+    surface_residual が正しい値を返すこと・pv < max が実際に起きることを示す。
+    """
+    f = lambda x, y: np.sin(x) * np.cos(y)
+    x, y, z = _scatter_grid(f, n=22, noise=0.0)
+    tck = bs.fit_bspline_surface(x, y, z, smooth=0.0)
+    zhat = bs.eval_bspline_surface(tck, x, y, grid=False).ravel()
+
+    # 名目曲面から一様に持ち上げ、位置で緩やかに変化させた観測(全残差 > 0 を保証)。
+    # residual = z_obs - zhat = 0.5 + 0.05*(x+y) ∈ [0.5, 0.8]（x,y∈[0,3]）。
+    z_obs = zhat + 0.5 + 0.05 * (np.asarray(x, float) + np.asarray(y, float))
+    res = bs.surface_residual(x, y, z_obs, tck)
+
+    resid = np.asarray(z_obs, float).ravel() - zhat
+    assert np.all(resid > 0.0)  # 片側逸脱(同符号)であることを明示。
+
+    # 定義どおりの値を独立再計算で確認。
+    assert res["rms"] == pytest.approx(float(np.sqrt(np.mean(resid ** 2))))
+    assert res["max"] == pytest.approx(float(np.max(np.abs(resid))))
+    assert res["pv"] == pytest.approx(float(resid.max() - resid.min()))
+
+    # 本題: 片側逸脱では pv < max が成立し得る(旧不変条件なら FAIL するケース)。
+    assert res["pv"] < res["max"]
+    # それでも普遍不変条件は保持されている。
+    assert res["max"] >= res["rms"] >= 0.0
+    assert 0.0 <= res["pv"] <= 2.0 * res["max"] + 1e-12
 
 
 def test_surface_residual_increases_with_noise():
