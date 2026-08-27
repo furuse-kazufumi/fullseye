@@ -1709,6 +1709,10 @@ def build_window(model=None):
     act_visual_demo = QtGui.QAction("dev_* visualization demo", win)   # sample that USES dev_* ops
     act_visual_demo.triggered.connect(lambda: win._load_visual_demo())
     m.addAction(act_visual_demo); win._act_visual_demo = act_visual_demo
+    act_2d_examples = QtGui.QAction("2-D Examples…", win)   # 2D 幾何op 事例ギャラリー
+    act_2d_examples.setToolTip("Browse the 2-D geometric-vision worked examples "
+                               "(morph / shape descriptors / drawing), run and copy their code")
+    m.addAction(act_2d_examples); win._act_2d_examples = act_2d_examples
     act_3d_examples = QtGui.QAction("3-D Examples…", win)   # ops3d 事例ギャラリー(実データ)
     act_3d_examples.setToolTip("Browse the 3-D vision worked examples "
                                "(real Itokawa / skeleton-CT / synthetic) and copy their code")
