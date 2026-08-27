@@ -313,6 +313,33 @@ _CATALOG = {
         ("inside_outside", "superquadric", ["points"], "measurement", False),
         ("superquadric_residual", "superquadric", ["points"], "measurement", False),
     ],
+    "bundle_adjust": [  # N視点バンドル調整(全カメラ姿勢+3D構造を再投影誤差最小で同時最適化)
+        ("bundle_adjust", "bundle3d", ["pose", "points"], "pose", False),
+        ("mean_reprojection_error", "bundle3d", ["pose", "points"], "measurement", False),
+        ("project", "bundle3d", ["points"], "image2d", False),
+    ],
+    "tsdf_fusion": [  # 多フレーム TSDF 体積融合(KinectFusion 核・複数深度→表面)
+        ("fuse", "tsdf_fusion", ["depth"], "sdf", False),
+        ("integrate", "tsdf_fusion", ["sdf", "depth"], "sdf", False),
+        ("extract_surface_points", "tsdf_fusion", ["sdf"], "points", False),
+    ],
+    "augment": [  # 3D 点群データ拡張(Physical AI 学習支援)
+        ("jitter", "pcl_augment", ["points"], "points", False),
+        ("random_rotation", "pcl_augment", ["points"], "points", False),
+        ("random_scale", "pcl_augment", ["points"], "points", False),
+        ("random_dropout", "pcl_augment", ["points"], "points", False),
+        ("elastic_deform", "pcl_augment", ["points"], "points", False),
+        ("cutout", "pcl_augment", ["points"], "points", False),
+    ],
+    "gicp": [  # Generalized-ICP(plane-to-plane 共分散重み ICP、平面的点群で優位)
+        ("gicp", "gicp", ["points", "points"], "pose", False),
+        ("estimate_covariances", "gicp", ["points"], "descriptor", False),
+    ],
+    "segment": [  # 点群セグメンテーション(法線領域成長/Euclidean/平面抽出)
+        ("region_growing", "segment3d", ["points"], "labels", False),
+        ("euclidean_cluster", "segment3d", ["points"], "labels", False),
+        ("plane_segmentation", "segment3d", ["points"], "labels", False),
+    ],
 }
 
 
