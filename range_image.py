@@ -33,8 +33,22 @@ def normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_came
     """organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。
 
     fx,fy 指定で透視、未指定で正射。orient_to_camera=True で法線をカメラ(原点)向きに符号統一。
+
+    法線は隣接画素の外積で出すため両軸に近傍が要る。H<2 or W<2 は第2の接線方向が無く
+    法線が定義できない(その軸の勾配を 0 とみなすと cross(dPx,0)=[0,0,0] の縮退法線を
+    静かに返してしまう)。fail-closed で明示的に ValueError 拒否する。
     """
-    P = depth_to_organized_points(depth, fx, fy, cx, cy)
+    d = np.asarray(depth, float)
+    if d.ndim != 2:
+        raise ValueError(f"normals_from_depth expects a 2D depth image, got shape {d.shape}")
+    H, W = d.shape
+    if H < 2 or W < 2:
+        raise ValueError(
+            f"normals_from_depth requires a depth image of at least 2x2 to estimate "
+            f"surface normals via neighbor cross-products; got {H}x{W}. A single "
+            f"row/column has no second tangent direction, so the normal is undefined."
+        )
+    P = depth_to_organized_points(d, fx, fy, cx, cy)
     dPy, dPx = np.gradient(P, axis=0), np.gradient(P, axis=1)  # (H,W,3) each
     n = np.cross(dPx, dPy)
     nrm = np.linalg.norm(n, axis=-1, keepdims=True)
