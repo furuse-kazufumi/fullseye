@@ -24,6 +24,7 @@ __all__ = [
     "elliptic_fourier",
     "reconstruct",
     "normalize",
+    "invariants",
     "descriptor_distance",
     "fourier_smooth",
     "from_xld",
