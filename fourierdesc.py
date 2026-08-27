@@ -91,13 +91,12 @@ def elliptic_fourier(points, n_harmonics=10):
         coeffs[n - 1, 2] = const * np.sum(d[:, 1] / dt * cos_d)  # c_n
         coeffs[n - 1, 3] = const * np.sum(d[:, 1] / dt * sin_d)  # d_n
 
-    # DC 成分(Kuhl–Giardina)
-    prev_x = np.concatenate([[0.0], np.cumsum(d[:, 0])[:-1]])   # Σ_{j<i} dx_j
-    prev_y = np.concatenate([[0.0], np.cumsum(d[:, 1])[:-1]])
-    xi = prev_x - (d[:, 0] / dt) * t[:-1]
-    delta = prev_y - (d[:, 1] / dt) * t[:-1]
-    a0 = (1.0 / T) * np.sum(d[:, 0] / (2.0 * dt) * (t[1:] ** 2 - t[:-1] ** 2) + xi * dt)
-    c0 = (1.0 / T) * np.sum(d[:, 1] / (2.0 * dt) * (t[1:] ** 2 - t[:-1] ** 2) + delta * dt)
+    # DC 成分(Kuhl–Giardina)。ξ は包含累積和 − (dx/dt)·t_end、最後に先頭点座標を加える
+    # (KG の A0/C0 は先頭点を原点とした相対量なので絶対位置へ戻す)。
+    xi = np.cumsum(d[:, 0]) - (d[:, 0] / dt) * t[1:]
+    delta = np.cumsum(d[:, 1]) - (d[:, 1] / dt) * t[1:]
+    a0 = p[0, 0] + (1.0 / T) * np.sum(d[:, 0] / (2.0 * dt) * (t[1:] ** 2 - t[:-1] ** 2) + xi * dt)
+    c0 = p[0, 1] + (1.0 / T) * np.sum(d[:, 1] / (2.0 * dt) * (t[1:] ** 2 - t[:-1] ** 2) + delta * dt)
     return {"coeffs": coeffs, "a0": float(a0), "c0": float(c0), "n_harmonics": int(n_harmonics)}
 
 
