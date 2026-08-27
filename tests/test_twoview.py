@@ -92,6 +92,55 @@ def test_min_points_guard():
         twoview.fundamental_8point(np.zeros((5, 2)), np.zeros((5, 2)))
 
 
+def _coplanar_scene(n=40, seed=0, Z=6.0):
+    """全点が Z=const 平面上に載る合成 2 カメラ(本質行列分解の退化配置)。"""
+    rng = np.random.default_rng(seed)
+    K = np.array([[800.0, 0, 320], [0, 800.0, 240], [0, 0, 1.0]])
+    R_true = _rot([0.2, 1.0, 0.1], 18.0)
+    t_true = np.array([1.0, 0.15, 0.1])
+    X = []
+    while len(X) < n:
+        p = np.array([rng.uniform(-2, 2), rng.uniform(-2, 2), Z])
+        if (R_true @ p + t_true)[2] > 0.5:
+            X.append(p)
+    X = np.array(X)
+    P1, P2 = twoview._projection_matrices(R_true, t_true, K, K)
+    h1 = (P1 @ np.hstack([X, np.ones((len(X), 1))]).T).T
+    h2 = (P2 @ np.hstack([X, np.ones((len(X), 1))]).T).T
+    return X, h1[:, :2] / h1[:, 2:3], h2[:, :2] / h2[:, 2:3], K, R_true, t_true
+
+
+def test_recover_pose_rejects_coplanar_degenerate_scene():
+    """共平面 3D 点は 8 点法/本質行列の退化配置。旧実装は Sampson~0 のまま誤った並進方向
+    (t_dot~0.5=約 60°誤り)を黙って返した。fail-closed で ValueError を要求する。"""
+    _, pts1, pts2, K, _, _ = _coplanar_scene(n=40, seed=0, Z=6.0)
+    # 退化にもかかわらず見かけの適合は「完璧」(Sampson~0)であることを明示 — だからこそ危険
+    F = twoview.fundamental_8point(pts1, pts2)
+    assert np.max(twoview.sampson_distance(F, pts1, pts2)) < 1e-6
+    with pytest.raises(ValueError):
+        twoview.recover_pose(pts1, pts2, K)
+
+
+def test_planar_degeneracy_ratio_separates_planar_from_general_3d():
+    """スケール不変な平面度指標が平面シーン(小)と一般 3D(大)を明確に分離すること。"""
+    _, cp1, cp2, _, _, _ = _coplanar_scene(n=40, seed=0)
+    _, gp1, gp2, _, _, _ = _scene(n=40)
+    r_plane = twoview._planar_degeneracy_ratio(cp1, cp2)
+    r_3d = twoview._planar_degeneracy_ratio(gp1, gp2)
+    assert r_plane < 1e-2, r_plane
+    assert r_3d > 1e-1, r_3d
+
+
+def test_recover_pose_accepts_noncoplanar_scene_not_falsely_rejected():
+    """非共平面(一般 3D)は退化検出で誤って拒否せず、従来通り姿勢を復元できること。"""
+    X, pts1, pts2, K, R_true, t_true = _scene(n=40)
+    R_est, t_est, Xr = twoview.recover_pose(pts1, pts2, K)  # ValueError を投げないこと
+    assert _rot_angle_deg(R_est, R_true) < 1.0, _rot_angle_deg(R_est, R_true)
+    u_est = t_est / np.linalg.norm(t_est)
+    u_true = t_true / np.linalg.norm(t_true)
+    assert np.dot(u_est, u_true) > 0.999, np.dot(u_est, u_true)
+
+
 def test_recover_pose_robust_to_small_pixel_noise():
     # 0.3px 相当の観測ノイズでも姿勢が破綻しないこと(正規化 8 点法の安定性)
     X, pts1, pts2, K, R_true, t_true = _scene(n=80, seed=3)
