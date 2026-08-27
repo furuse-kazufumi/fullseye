@@ -9,15 +9,26 @@ import pipeline_evolve as pe
 import evolve_params as ep
 
 
-def test_param_coevolution_matches_or_beats_fixed():
+def test_param_coevolution_matches_or_beats_fixed_same_budget():
+    # honest 規律: 固定 param 版は連続 param が無く cache が効くため同 pop/gens だと評価数が少ない
+    # (param 版は連続値で cache が外れ ~1.47 倍多く評価する)。同 pop/gens 比較は param 版に有利で
+    # 不公正。ここでは固定 param 進化に param 版と『同数以上』の評価予算を与えて公正に比較する。
     task = pe.make_denoise_task(seed=0)
-    fixed = pe.evolve(task, pop=24, gens=12, seed=0)
     par = ep.evolve_params(task, pop=24, gens=12, seed=0)
+    budget = par["n_evals"]
+    # 固定 param 進化の評価数が param 版の予算に到達するまで世代を増やす(fixed を不利にしない)。
+    fixed = pe.evolve(task, pop=24, gens=12, seed=0)
+    for gens in range(16, 81, 4):
+        if fixed["n_evals"] >= budget:
+            break
+        fixed = pe.evolve(task, pop=24, gens=gens, seed=0)
+    assert fixed["n_evals"] >= budget, (fixed["n_evals"], budget)  # 同予算前提を満たす
+    # 同予算(むしろ fixed に多め)でも param 共進化 ≥ 固定 param 進化。
+    # 固定は離散 op 空間を探索し尽くすと頭打ち(saturate)し、連続 param 微調整が上限を超える。
+    assert par["fitness"] >= fixed["fitness"] - 1e-3, (par["fitness"], fixed["fitness"], budget, fixed["n_evals"])
+    # baseline を上回る
     ident = pe.evaluate((), task)
     hand = pe.evaluate(pe.hand_designed_chain(), task)
-    # param 共進化は固定 param 進化以上(param 探索が探索を深める)
-    assert par["fitness"] >= fixed["fitness"] - 1e-3, (par["fitness"], fixed["fitness"])
-    # baseline を上回る
     assert par["fitness"] > ident and par["fitness"] > hand
     # 無処理を大きく改善
     assert -par["fitness"] < 0.6 * (-ident)
