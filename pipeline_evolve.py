@@ -156,8 +156,10 @@ _PENALTY = -1e9
 
 
 def execute(chain, x):
-    """op-chain を順に適用。失敗/空は None。→ 出力配列 or None。"""
+    """op-chain を順に適用。入力/中間/出力が空、または失敗は None。→ 出力配列 or None。"""
     cur = np.asarray(x, float)
+    if len(cur) == 0:                # 空入力は identity でも素通しさせず fail-closed
+        return None
     for op in chain:
         try:
             cur = VOCAB[op]["fn"](cur)
@@ -169,11 +171,12 @@ def execute(chain, x):
 
 
 def evaluate(chain, task, cache=None):
-    """fitness = -metric(出力, 目標)(大きいほど良い)。失敗は大ペナルティ。"""
+    """fitness = -metric(出力, 目標)(大きいほど良い)。失敗/空出力は大ペナルティ(nan 詐称禁止)。"""
     if cache is not None and chain in cache:
         return cache[chain]
     out = execute(chain, task.x)
-    if out is None or _chain_out_type(chain, task.input_type) != task.goal_type:
+    # 空出力(len==0)も None と同列に扱う: metric を呼ばず _PENALTY(evolve_params と一致)。
+    if out is None or len(out) == 0 or _chain_out_type(chain, task.input_type) != task.goal_type:
         fit = _PENALTY
     else:
         fit = -float(task.metric(out, task.target))
