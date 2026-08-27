@@ -68,13 +68,50 @@ def _validate_curve(curve, min_pts=16):
     return c
 
 
-def make_helix(radius, pitch, turns=3, n=600):
-    """半径 radius・ピッチ pitch のヘリックスを turns 周ぶん n 点でサンプル。→ (n,3)。"""
-    theta = np.linspace(0.0, turns * 2.0 * np.pi, n)
+def make_helix(radius, pitch, turns=3, n=600, theta=None):
+    """半径 radius・ピッチ pitch のヘリックスをサンプル。→ (n,3)。
+
+    theta=None なら 0..turns·2π を等角(一定速)で n 点サンプル。theta(角度列)を渡すと
+    任意の角度でサンプルでき、非一様(変速)パラメータ化を作れる(Frenet の Gram-Schmidt
+    射影を試すのに使う)。
+    """
+    if theta is None:
+        theta = np.linspace(0.0, turns * 2.0 * np.pi, n)
+    else:
+        theta = np.asarray(theta, float)
     curve = np.stack(
         [radius * np.cos(theta), radius * np.sin(theta), pitch * theta], axis=1
     )
     return _validate_curve(curve)
+
+
+def variable_speed_theta(turns=3, n=600):
+    """変速(非一様)角度列 θ(u)=turns·π·(u+u²), u∈[0,1] を等間隔 index でサンプル。→ (n,)。
+
+    θ'(u)=turns·π·(1+2u)>0(単調で退化なし)、θ''(u)=2·turns·π≠0(変速)、θ(1)=turns·2π
+    (turns 周を完全にカバー)。変速だと r'=θ'·(接線)、r''=θ''·(接線)+θ'²·(主法線方向)
+    となり r'' が r'(=接線)に**直交しない**接線成分 θ'' を持つ。frenet_frame がこの成分を
+    Gram-Schmidt で除かないと主法線 N が汚れる ⇒ 射影の正しさを判別的に試せる。
+    """
+    u = np.linspace(0.0, 1.0, n)
+    return turns * np.pi * (u + u ** 2)
+
+
+def helix_frame_analytic(radius, pitch, theta):
+    """ヘリックス r=(R cosθ, R sinθ, cθ) の解析的な単位接線 T と主法線 N(各点 θ で)。
+
+    T=(-R sinθ, R cosθ, c)/√(R²+c²)(進行方向)、N=-(cosθ, sinθ, 0)(らせん軸を向く主法線)。
+    どちらも再パラメータ化不変な**向き**なので、等角でも変速でも同じ式で表せる。
+    → (T, N) 各 (len(theta),3) 単位ベクトル。
+    """
+    theta = np.asarray(theta, float)
+    s = np.sqrt(radius ** 2 + pitch ** 2)
+    T = np.stack(
+        [-radius * np.sin(theta), radius * np.cos(theta), np.full_like(theta, pitch)],
+        axis=1,
+    ) / s
+    N = np.stack([-np.cos(theta), -np.sin(theta), np.zeros_like(theta)], axis=1)
+    return T, N
 
 
 def make_straight_line(n=600):
