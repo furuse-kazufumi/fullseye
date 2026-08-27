@@ -56,7 +56,7 @@ fullseye-studio = "studio:main"
 # `studio_assets` is a data-only package (i18n / op help / sample images) — it is
 # declared here so package-data below carries its files into the wheel; the Studio
 # loads them by path relative to studio.py, which resolves to the shipped copy.
-packages = ["fullseye", "studio_assets", "examples_3d"]
+packages = ["fullseye", "studio_assets", "examples_3d", "examples"]
 py-modules = [
   "api", "ops", "backend_safe",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
