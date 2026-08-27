@@ -37,6 +37,11 @@ import moments3d
 import geodesic3d
 import visualhull
 import superquadric
+import bundle3d
+import tsdf_fusion
+import pcl_augment
+import gicp
+import segment3d
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
@@ -47,7 +52,9 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "pnp3d": pnp3d, "regionprops3d": regionprops3d,
         "twoview": twoview, "curvature3d": curvature3d,
         "moments3d": moments3d, "geodesic3d": geodesic3d,
-        "visualhull": visualhull, "superquadric": superquadric}
+        "visualhull": visualhull, "superquadric": superquadric,
+        "bundle3d": bundle3d, "tsdf_fusion": tsdf_fusion, "pcl_augment": pcl_augment,
+        "gicp": gicp, "segment3d": segment3d}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
