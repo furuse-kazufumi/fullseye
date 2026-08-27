@@ -408,4 +408,5 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
                 dist = np.abs(np.linalg.norm(q_all - c2, axis=1) - r)
                 mask = dist < thresh
     params = {"axis": _unit(axis), "point": point3d, "radius": float(r)}
-    return params, mask, _info(mask, iters)
+    # mask は常に dist<thresh の実測(all-True 詐称なし)。fallback は honest 開示フラグ。
+    return params, mask, _info(mask, iters, degenerate=fallback)

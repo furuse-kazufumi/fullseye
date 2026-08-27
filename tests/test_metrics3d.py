@@ -76,3 +76,24 @@ def test_accuracy_completeness_subset():
     assert M.completeness(a, b, tau=1e-6) == 1.0
     # a の点のうち b(部分集合)に近いのは 400/1000 のみ → accuracy(a→b)<1
     assert abs(M.accuracy(a, b, tau=1e-6) - 0.4) < 1e-9
+
+
+def test_voxel_shape_mismatch_raises():
+    """形状不一致の volume は broadcasting で偽の一致を返さず ValueError(fail-closed)。
+
+    旧挙動: voxel_iou((10,1,10),(1,10,10)) が broadcast で (10,10,10) 化し 1.0、
+    voxel_dice は 10.0(Dice>1 は定義上あり得ない)を静かに返していた。"""
+    a = np.ones((10, 1, 10))
+    b = np.ones((1, 10, 10))
+    with pytest.raises(ValueError):
+        M.voxel_iou(a, b)
+    with pytest.raises(ValueError):
+        M.voxel_dice(a, b)
+    # 別 ndim(2D vs 3D)も拒否
+    with pytest.raises(ValueError):
+        M.voxel_iou(np.ones((8, 8)), np.ones((8, 8, 8)))
+    # 同形状なら従来どおり計算できる(回帰でないこと)
+    x = np.zeros((4, 4, 4)); x[:2] = 1.0
+    y = np.zeros((4, 4, 4)); y[1:3] = 1.0
+    assert 0.0 <= M.voxel_iou(x, y) <= 1.0
+    assert 0.0 <= M.voxel_dice(x, y) <= 1.0
