@@ -46,6 +46,11 @@ EXAMPLES = [
      "name": "輪郭の楕円フーリエ記述子(平滑化・不変マッチング)",
      "summary": "閉輪郭をフーリエ級数で表し、高調波打ち切りで平滑化、回転/拡大/移動/始点に不変な"
                 "記述子で形状検索する(EFD, Kuhl-Giardina)。"},
+    # -- drawing / annotation ---------------------------------------------------- #
+    {"id": "draw_annotate", "task": "drawing", "data": "synthetic",
+     "name": "画像にマーカー/線/円/輪郭を直接描く(ラスタ描画)",
+     "summary": "作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。"
+                "モーフに渡す対応点を画像上で確認するのに使う(cv2.line/circle 相当を numpy で)。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
