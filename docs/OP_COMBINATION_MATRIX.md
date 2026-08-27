@@ -1,7 +1,7 @@
 # fullseye 3D op × op 組み合わせマトリクス(実現性 × 差別化で優先度化)
 
-**核心**: 192 個の 3D op(`ops3d.py` レジストリ、42 カテゴリ)は、出力種別 = 別 op の入力種別が合えば連結できる。
-型整合な op→op 連結は **4,271 通り(2 段、`ops3d.compatible()` 実測)**、3 段以上で **指数的**に増える
+**核心**: 214 個の 3D op(`ops3d.py` レジストリ、49 カテゴリ)は、出力種別 = 別 op の入力種別が合えば連結できる。
+型整合な op→op 連結は **5,246 通り(2 段、`ops3d.compatible()` 実測)**、3 段以上で **指数的**に増える
 (第2〜5波で photometric/range_image/preprocess/structured_light/deform/medial/metrics/robust_fit/edges/
 reconstruct/curve/shape_descriptor/freeform/pose_estimation/regionprops の 15 モジュール・68 op を追加し、
 82 op/16 カテゴリ→150 op/31 カテゴリへほぼ倍増)。この空間から
@@ -84,6 +84,18 @@ reconstruct/curve/shape_descriptor/freeform/pose_estimation/regionprops の 15 �
 | 51 | `plane_segmentation / region_growing(segment3d) → region_props(regionprops3d)` | **シーン分割→各セグメント計測**(地面/壁/物体を分けて個別計測) | 5 | 4 | 20 | ○ |
 | 52 | `euclidean_cluster(segment3d) → 各クラスタに fit_superquadric(superquadric)` | **多物体シーン→各物体を superquadric 近似**(把持プリミティブ抽出) | 4 | 5 | 20 | △ 要クラスタ→フィット接続 |
 
+### 第8〜9波(7 モジュール追加)で開く新チェーン(SLAM/知覚/対称/LiDAR/動的)
+
+| # | op チェーン | 何ができる | F | D | 優先 | 状態 |
+|---|---|---|---|---|---|---|
+| 53 | `recover_pose(twoview)×N → optimize_pose_graph(pose_graph)` | **SLAM 軌跡最適化**(2視点相対姿勢を姿勢グラフでループ閉じ補正、front-end→back-end) | 4 | 4 | 16 | ○ |
+| 54 | `estimate_oriented_normals(normals_orient) → shape_index(curvature3d)` | **向き付き法線→正しい凹/凸判定**(wave7 監査で判明した curvature3d の概念欠陥を解消) | 5 | 5 | 25 | ○ |
+| 55 | `project_spherical(spherical_proj) → 2D 検査/CNN` | **LiDAR 点群を球面レンジ画像化**(全方位、確立した 2D 手法を 3D LiDAR へ橋渡し) | 5 | 4 | 20 | ○ |
+| 56 | `segment_rigid_motions(motion_seg3d) → 各剛体に fit_superquadric(superquadric)` | **動的シーン→剛体分離→物体近似**(動く各物体を把持プリミティブ化) | 4 | 5 | 20 | △ 接続要 |
+| 57 | `occupancy_grid → esdf → inflate(occupancy)` | **点群→ESDF→安全余裕付き経路計画**(ロボット航法の距離場土台) | 5 | 4 | 20 | ○ |
+| 58 | `detect_reflection_symmetry(symmetry3d) → reflect_points で欠損補完` | **対称性で片側欠損を鏡映補完**(スキャンの隠れ面を対称性で埋める) | 4 | 5 | 20 | △ 接続要 |
+| 59 | `fuse(tsdf_fusion) → occupancy_grid → esdf(occupancy)` | **多フレーム融合→占有→距離場**(SLAM 地図 + 計画を閉ループ) | 4 | 4 | 16 | ○ |
+
 ## カテゴリ間連結(どの出力→どの入力が多いか、型整合上位)
 `geometry→geometry`(55, 計測の連鎖)/ `transform→*`(構造変換が全 op の入口)/ `morphology→match_localize`(前処理→照合)/
 `transform→feature_register`(点群化→疎登録)。→ **transform(変換グラフ)が全連結のハブ**、geometry が計測の終端。
@@ -100,14 +112,16 @@ reconstruct/curve/shape_descriptor/freeform/pose_estimation/regionprops の 15 �
 3. op を足すたびに `ops3d._CATALOG` に登録 → 組み合わせ空間が自動で広がる(指数的候補が増える)。
 4. コードレビュー/検証は数回に分割(Fable リセット後に全 op 再確認予定)。
 
-## 現状の op 在庫(`ops3d.py`、192 op / 42 カテゴリ、`py -3.11 ops3d.py` 実測)
+## 現状の op 在庫(`ops3d.py`、214 op / 49 カテゴリ、`py -3.11 ops3d.py` 実測)
 geometry 15 / transform 12 / feature_register 7 / metrics 7 / augment 6 / match_localize 6 / refine 6 /
 morphology 5 / optics 5 / structured_light 5 / medial 5 / edges 5 / curve 5 / shape_descriptor 5 / freeform 5 /
 two_view 5 / curvature 5 /
 feature 4 / match_pose 4 / render 4 / surface_fit 4 / photometric 4 / range_image 4 / preprocess 4 /
 deform 4 / robust_fit 4 / reconstruct 4 / regionprops 4 / moment_invariant 4 / geodesic 4 / superquadric 4 /
+occupancy 4 / symmetry 4 /
 curvilinear 3 / pose_estimation 3 / space_carving 3 / bundle_adjust 3 / tsdf_fusion 3 / segment 3 /
-detect 2 / describe 2 / fusion 2 / gicp 2 / motion 1。
+pose_graph 3 / scene_flow3d 3 / lidar_projection 3 / motion_segment 3 /
+detect 2 / describe 2 / fusion 2 / gicp 2 / normals_orient 2 / motion 1。
 
 **第2〜5波の新規 15 カテゴリ・68 op**: photometric(フォトメトリックステレオ・法線積分)/ range_image(organized
 深度画像)/ preprocess(点群フィルタ)/ structured_light(縞投影 profilometry)/ deform(3D 非剛体登録)/

@@ -127,6 +127,45 @@ def test_seed_dir_controls_global_sign():
     assert np.mean((Nneg @ nrm) < 0) >= 0.99            # −基準 → 全て −側
 
 
+def test_seed_dir_below_perp_threshold_controls_sign():
+    # 回帰(finding [5]): seed_dir の法線成分が _PERP_COS 未満でも、その符号は情報を持つ。
+    # 旧実装は seed 点単独の |cos| < _PERP_COS で「退化」とみなし fallback するため、
+    # +d と -d が同じ大域符号を返していた(BUG)。伝播後に bulk(成分全点の射影集約)で
+    # 符号を決めることで、±d が確実に**逆の大域符号**を返す。
+    P, nrm = _plane(1500, 3.0, normal=(0.0, 0.0, 1.0))      # 真法線 +z
+    comp = 0.09
+    assert comp < no._PERP_COS                              # seed 単独では捨てられる領域
+    d = np.array([1.0, 0.0, comp])                          # 法線成分は小さいが符号は明確
+    Npos = no.estimate_oriented_normals(P, k=20, seed_dir=d)
+    Nneg = no.estimate_oriented_normals(P, k=20, seed_dir=-d)
+    assert np.mean((Npos @ nrm) > 0) >= 0.99                # +d(法線成分 +z)→ 全て +側
+    assert np.mean((Nneg @ nrm) < 0) >= 0.99                # −d(法線成分 −z)→ 全て −側
+    # 明示: ±d は逆の大域符号(旧実装では同符号で FAIL)
+    assert np.sign(np.median(Npos @ nrm)) == -np.sign(np.median(Nneg @ nrm))
+
+
+def test_seed_dir_orthogonal_to_normals_is_fail_closed():
+    # 回帰(finding [5]): seed_dir が面内(全法線と直交)= 大域符号は原理的に決まらない。
+    # 旧実装は無警告で max 成分 fallback に縮退した。fail-closed で ValueError を要求する。
+    P, nrm = _plane(1500, 3.0, normal=(0.0, 0.0, 1.0))      # 真法線 +z
+    with pytest.raises(ValueError):
+        no.estimate_oriented_normals(P, k=20, seed_dir=[1.0, 0.0, 0.0])  # 面内 x
+    with pytest.raises(ValueError):
+        no.estimate_oriented_normals(P, k=20, seed_dir=[0.0, 1.0, 0.0])  # 面内 y
+
+
+def test_seed_dir_on_closed_surface_stays_outward():
+    # 閉曲面(球)は seed_dir が平均的に法線と直交(bulk 射影≈0)。大域符号は一意でないので
+    # ValueError で落とさず、最突出点=外向き基準の向き付けを保持する(退化と誤判定しない)。
+    center = np.array([0.5, -1.0, 2.0])
+    P = _fib_sphere(1600, 2.0, center=center)
+    outward = P - center
+    for sd in ([0.0, 0.0, 1.0], [1.0, 2.0, -1.0]):
+        N = no.estimate_oriented_normals(P, k=20, seed_dir=sd)  # raise しない
+        frac_out = np.mean(np.sum(N * outward, axis=1) > 0)
+        assert frac_out >= 0.99, f"seed_dir={sd}: outward fraction {frac_out:.4f}"
+
+
 # ---------- end-to-end: shape_index の凹/凸符号(wave7 監査 [2] のギャップ) ----------
 def test_shape_index_convex_sign_with_oriented_normals():
     import curvature3d
