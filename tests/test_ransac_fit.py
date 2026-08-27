@@ -190,3 +190,48 @@ def test_insufficient_points_raises():
         R.ransac_cylinder(np.zeros((1, 3)), np.zeros((1, 3)), 0.05)
     with pytest.raises(ValueError):                     # 形状不一致
         R.ransac_cylinder(np.zeros((5, 3)), np.zeros((4, 3)), 0.05)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# フォールバック honest 開示(有効仮説なし → 満点詐称の禁止)
+# ═══════════════════════════════════════════════════════════════════════════
+def test_fallback_reports_honest_ratio_not_one():
+    """有効仮説が無い縮退時、fallback は inlier_ratio を実測し満点(1.0)と詐称しない。
+
+    thresh=0 では dist<thresh を満たす点が構造上ゼロ → ratio≈0・mask 全 False・
+    info['degenerate']=True になるべき。旧実装は plane/sphere/line で全点フォール
+    バックの all-True mask をそのまま返し ratio=1.0(縮退を満点と誤認)していた。"""
+    rng = np.random.default_rng(0)
+    P = rng.uniform(-5, 5, (100, 3))                    # 平面/球/直線/円筒いずれでもない一般点群
+    Nrm = rng.normal(0, 1, (100, 3)); Nrm /= np.linalg.norm(Nrm, axis=1, keepdims=True)
+
+    cases = [
+        ("plane",    R.ransac_plane(P, thresh=0.0)),
+        ("sphere",   R.ransac_sphere(P, thresh=0.0)),
+        ("line",     R.ransac_line(P, thresh=0.0)),
+        ("cylinder", R.ransac_cylinder(P, Nrm, thresh=0.0)),
+    ]
+    for name, (params, mask, info) in cases:
+        assert info["inlier_ratio"] < 0.5, f"{name}: 縮退で満点詐称 ratio={info['inlier_ratio']}"
+        assert not bool(mask.all()), f"{name}: 縮退で mask 全 True 詐称"
+        assert info["n_inliers"] == int(mask.sum()), f"{name}: n_inliers と mask 不整合"
+        assert info["degenerate"] is True, f"{name}: honest な degenerate フラグが立っていない"
+
+
+def test_valid_fit_not_flagged_degenerate():
+    """真のプリミティブ(強い consensus)では degenerate=False かつ ratio が高い。"""
+    Pp, *_ = _plane_cloud(0)
+    _, _, ip = R.ransac_plane(Pp, thresh=0.05)
+    assert ip["degenerate"] is False and ip["inlier_ratio"] > 0.6
+
+    Ps, *_ = _sphere_cloud(0)
+    _, _, isph = R.ransac_sphere(Ps, thresh=0.05)
+    assert isph["degenerate"] is False and isph["inlier_ratio"] > 0.6
+
+    Pl, *_ = _line_cloud(0)
+    _, _, il = R.ransac_line(Pl, thresh=0.05)
+    assert il["degenerate"] is False and il["inlier_ratio"] > 0.6
+
+    Pc, Nc, *_ = _cylinder_cloud(0)
+    _, _, ic = R.ransac_cylinder(Pc, Nc, thresh=0.05)
+    assert ic["degenerate"] is False and ic["inlier_ratio"] > 0.5

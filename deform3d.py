@@ -340,7 +340,13 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
 
     converged = False
     used = 0
-    c_const = (2.0 * np.pi) ** (D / 2.0) * (w / max(1.0 - w, 1e-12)) * (M / N)
+    # Myronenko & Song (2010) の外れ値定数。E ステップ分母に加える一様項は
+    #   c = (2πσ²)^(D/2) · (w/(1-w)) · (M/N)
+    # で、(2πσ²)^(D/2) は σ² 依存のため下のループ内で毎回掛ける。ここでは
+    # σ² 非依存の係数 (w/(1-w))·(M/N) のみを保持する。以前は (2π)^(D/2) を
+    # 二重に含めており、外れ値オッズが (2π)^(D/2)≈15.75 倍(D=3)に化けて
+    # w の意味(外れ値割合)が壊れていた。
+    c_const = (w / max(1.0 - w, 1e-12)) * (M / N)
 
     for it in range(iters):
         used = it + 1
