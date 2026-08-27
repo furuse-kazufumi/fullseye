@@ -296,6 +296,27 @@ def inspect_result(val):
     return {"kind": "feature", "value": round(float(np.asarray(val).reshape(-1)[0]), 6)}
 
 
+def image_info_summary(d):
+    """One-line status-bar summary of a pipeline result (shape / dtype / value range).
+
+    Always-visible orientation about what is on screen, complementing the fuller
+    Inspector panel. Headless + testable (mirrors inspect_result's dict)."""
+    k = d.get("kind")
+    if k in ("image", "color", "region"):
+        shp = "×".join(str(v) for v in d.get("shape", ()))
+        out = "%s %s [%.3g, %.3g]" % (shp, d.get("dtype", "?"), d.get("min"), d.get("max"))
+        if k == "region":
+            out += " · %d obj" % d.get("regions", 0)
+        if d.get("nonfinite"):
+            out += " · %d non-finite" % d["nonfinite"]
+        return out
+    if k == "feature":
+        return "scalar = %s" % d.get("value")
+    if k == "contour":
+        return "contours ×%d" % d.get("n_contours", 0)
+    return "no image"
+
+
 def format_inspection(d):
     return "\n".join(f"{k}: {v}" for k, v in d.items())
 
@@ -1738,6 +1759,10 @@ def build_window(model=None):
     readout = QtWidgets.QLabel("hover over the image for pixel coordinates + value")
     readout.setProperty("hint", True)
     status.addWidget(readout)
+    win._img_info = QtWidgets.QLabel("")                 # always-visible shape/dtype/range
+    win._img_info.setProperty("hint", True)
+    win._img_info.setToolTip("current result: shape · dtype · value range")
+    status.addPermanentWidget(win._img_info)
 
     def flash(msg):
         status.showMessage(msg, 6000)
@@ -2354,9 +2379,11 @@ def build_window(model=None):
         except Exception as e:                        # a bad/unknown op in the chain
             view.set_message("Pipeline error\n\n%s\n\n(see the Problems list)" % str(e))
             inspector.setPlainText("pipeline error: %s" % e)
+            win._img_info.setText("pipeline error")
             hist_view.clear(); state["result"] = None; state["raw"] = None
             return
         d = inspect_result(val)
+        win._img_info.setText(image_info_summary(d))
         insp = format_inspection(d)
         if isinstance(val, np.ndarray) and val.ndim == 2 and _is_binary(val) and val.any():
             try:
@@ -2780,9 +2807,34 @@ def build_window(model=None):
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
         tag_dialog(dlg, "editor")
-        te = QtWidgets.QPlainTextEdit()
-        te.setPlainText('--ops "' + model.ops_string() + '"\n\n' + model.export_python())
-        te.setReadOnly(True); v.addWidget(te); dlg.resize(560, 360); dlg.exec()
+        text = '--ops "' + model.ops_string() + '"\n\n' + model.export_python()
+        te = QtWidgets.QPlainTextEdit(); te.setPlainText(text); te.setReadOnly(True)
+        te.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        v.addWidget(te)
+        row = QtWidgets.QHBoxLayout(); row.addStretch(1)
+        b_copy = QtWidgets.QPushButton("Copy"); b_copy.setToolTip("Copy the export text to the clipboard")
+        b_savepy = QtWidgets.QPushButton("Save .py…"); b_savepy.setProperty("accent", True)
+        b_savepy.setToolTip("Save the runnable pipeline as a Python file")
+        row.addWidget(b_copy); row.addWidget(b_savepy); v.addLayout(row)
+
+        def _copy_export():
+            QtWidgets.QApplication.clipboard().setText(text)
+            flash("copied export to the clipboard")
+
+        def _save_py():
+            path, _ = QtWidgets.QFileDialog.getSaveFileName(dlg, "Save pipeline as Python",
+                                                            "pipeline.py", "Python (*.py)")
+            if not path:
+                return
+            try:
+                with open(path, "w", encoding="utf-8") as fh:
+                    fh.write(model.export_python())
+            except Exception as e:
+                report_error("Could not save Python", "%s\n\n%s" % (path, e)); return
+            flash("saved " + os.path.basename(path))
+        b_copy.clicked.connect(_copy_export); b_savepy.clicked.connect(_save_py)
+        dlg.setModal(False); win._export_dlg = dlg    # non-modal: keep working while it is open
+        dlg.resize(560, 400); dlg.show()
 
     def clear_pipe():
         if not confirm_discard("Clear pipeline"):
@@ -3722,7 +3774,9 @@ def build_window(model=None):
     hd_fwd = QtWidgets.QPushButton("▶"); hd_fwd.setToolTip("Forward")
     help_pick = QtWidgets.QComboBox(); help_pick.setEditable(True)
     help_pick.addItems(op_names); help_pick.setToolTip("Jump to any operator's help")
-    _htop.addWidget(hd_back); _htop.addWidget(hd_fwd); _htop.addWidget(help_pick, 1)
+    hd_copy = QtWidgets.QPushButton("Copy sig")
+    hd_copy.setToolTip("Copy this operator's signature to the clipboard")
+    _htop.addWidget(hd_back); _htop.addWidget(hd_fwd); _htop.addWidget(help_pick, 1); _htop.addWidget(hd_copy)
     _hdl.addLayout(_htop); _hdl.addWidget(help_browser, 1)
 
     def show_op_help(name):
@@ -3754,6 +3808,12 @@ def build_window(model=None):
 
     help_browser.anchorClicked.connect(_help_anchor)
     help_pick.currentTextChanged.connect(lambda t: show_op_help(t) if t in set(op_names) else None)
+    def _copy_help_sig():
+        row = _op_row(help_pick.currentText())
+        if row:
+            QtWidgets.QApplication.clipboard().setText(op_signature_detail(row))
+            flash("copied signature: " + help_pick.currentText())
+    hd_copy.clicked.connect(_copy_help_sig)
     hd_back.clicked.connect(help_browser.backward)
     hd_fwd.clicked.connect(help_browser.forward)
     b_help.clicked.connect(

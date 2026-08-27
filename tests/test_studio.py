@@ -1962,3 +1962,45 @@ def test_window_title_and_recent_files(tmp_path):
         assert win._recent_menu.actions()[0].text() == "(no recent files)"
     finally:
         S.setValue("recent_files", saved)
+
+
+def test_image_info_summary_pure():
+    """The status-bar one-liner mirrors inspect_result across result kinds."""
+    f = studio.image_info_summary
+    assert f({"kind": "image", "shape": (256, 256), "dtype": "float64",
+              "min": 0.0, "max": 1.0, "nonfinite": 0}) == "256×256 float64 [0, 1]"
+    assert "3 obj" in f({"kind": "region", "shape": (32, 32), "dtype": "bool",
+                         "min": 0, "max": 1, "regions": 3, "nonfinite": 0})
+    assert "non-finite" in f({"kind": "image", "shape": (8, 8), "dtype": "float64",
+                              "min": 0.0, "max": 1.0, "nonfinite": 5})
+    assert f({"kind": "feature", "value": 3.14}) == "scalar = 3.14"
+    assert f({"kind": "none"}) == "no image"
+
+
+def test_status_info_help_copy_and_export_buttons():
+    """Usability batch3: a permanent status read-out of the current result, a Copy-signature
+    button in Operator Help, and Copy / Save-.py buttons in the (now non-modal) Export dialog."""
+    from PySide6 import QtWidgets, QtCore
+    import api
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    # status read-out populated after the first render
+    assert "48" in win._img_info.text() and "float" in win._img_info.text().lower()
+    # Operator Help carries a Copy-signature button that copies a non-empty signature
+    op = next(o for i in range(win._op_list.count())
+              for o in [win._op_list.item(i).data(QtCore.Qt.UserRole)]
+              if isinstance(o, str) and api.find_op(o) is not None)
+    win._help["show"](op)
+    hb = win._help["dialog"].findChildren(QtWidgets.QPushButton)
+    assert "Copy sig" in [b.text() for b in hb]
+    next(b for b in hb if b.text() == "Copy sig").click()
+    assert QtWidgets.QApplication.clipboard().text()
+    # Export dialog is non-modal and offers Copy + Save .py
+    model.add_stage(op)
+    a = win._actions["export"]; a.setEnabled(True); a.trigger()
+    btns = [b.text() for b in win._export_dlg.findChildren(QtWidgets.QPushButton)]
+    assert "Copy" in btns and "Save .py…" in btns
+    next(b for b in win._export_dlg.findChildren(QtWidgets.QPushButton)
+         if b.text() == "Copy").click()
+    clip = QtWidgets.QApplication.clipboard().text()
+    assert "--ops" in clip and "def pipeline" in clip
