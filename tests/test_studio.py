@@ -2036,3 +2036,51 @@ def test_precise_numeric_knob_entry(tmp_path):
     sldr = next(w for w in win.findChildren(QtWidgets.QSlider) if w.isEnabled())
     sldr.setValue(70)
     assert abs(sa_spin.value() - 0.70) < 1e-9
+
+
+def test_per_stage_timing_is_accurate_and_shown(tmp_path):
+    """Usability: the pipeline list shows each stage's own wall-clock cost. step_times
+    applies each stage once to the previous result (O(n)); the honesty guarantee is that
+    this incremental result equals the full-pipeline result, so the per-stage number is
+    the stage's real marginal work — not a noisy delta of two independent re-runs."""
+    import io, json
+    import numpy as np
+    from PySide6 import QtWidgets, QtCore
+    import api
+    _app()
+    img = studio.demo_image(64)
+    # find 3 ops that produce an image so we can compare arrays
+    picked = []
+    win, _ = studio.build_window(studio.PipelineModel(img))
+    for i in range(win._op_list.count()):
+        n = win._op_list.item(i).data(QtCore.Qt.UserRole)
+        if not (isinstance(n, str) and api.find_op(n) is not None):
+            continue
+        try:
+            out = api.run_pipeline(img, [(n, 0.5, 0.5)])
+        except Exception:
+            continue
+        if isinstance(out, np.ndarray) and out.ndim in (2, 3):
+            picked.append(n)
+        if len(picked) == 3:
+            break
+    assert len(picked) == 3
+    m = studio.PipelineModel(img)
+    for n in picked:
+        m.add_stage(n)
+    # honesty: incremental (timing path) == full pipeline
+    full = api.run_pipeline(img, [tuple(s) for s in m.stages])
+    incr = img
+    for s in m.stages:
+        incr = api.run_pipeline(incr, [tuple(s)])
+    if isinstance(full, np.ndarray) and isinstance(incr, np.ndarray):
+        assert full.shape == incr.shape and np.allclose(full, incr, atol=1e-9)
+    times = m.step_times()
+    assert len(times) == 3 and all(isinstance(t, float) for t in times)
+    # rows display the per-stage ms
+    pj = str(tmp_path / "p.json")
+    io.open(pj, "w", encoding="utf-8").write(
+        json.dumps({"stages": [[picked[0], 0.5, 0.5], [picked[1], 0.5, 0.5]]}))
+    win.drop_handler([pj])
+    rows = [win._stage_list.item(i).text() for i in range(win._stage_list.count())]
+    assert rows and all("ms" in r for r in rows)

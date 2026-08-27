@@ -163,6 +163,30 @@ class PipelineModel:
             out.append({"index": i, "op": op, "a": a, "b": b, "state": state})
         return out
 
+    def step_times(self):
+        """Accurate per-stage wall-clock in ms, aligned with self.stages.
+
+        Applies each stage once to the previous stage's result (O(n)), so each number
+        is that stage's own cost — a bottleneck read-out for the pipeline list. Kept
+        separate from step_states (which owns the inspection states) so the correctness
+        path is untouched; a stage that raises records None and stops the timing.
+        """
+        import time
+        if self.image is None or not self.stages:
+            return []
+        out = []
+        img = self.image
+        for st in self.stages:
+            if img is None:
+                out.append(None); continue
+            t0 = time.perf_counter()
+            try:
+                img = api.run_pipeline(img, [tuple(st)])
+                out.append(round((time.perf_counter() - t0) * 1000.0, 1))
+            except Exception:
+                out.append(None); img = None
+        return out
+
     def ops_string(self):
         return ",".join(s[0] for s in self.stages)
 
@@ -2307,10 +2331,16 @@ def build_window(model=None):
             states = model.step_states()
         except Exception:
             states = []
+        try:
+            times = model.step_times()
+        except Exception:
+            times = []
         for i, (name, a, b) in enumerate(model.stages):
             st = states[i]["state"] if i < len(states) else {}
             summ = step_summary(st) if st else ""
-            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}")
+            ms = times[i] if i < len(times) else None
+            tstr = ("  ·  %.1f ms" % ms) if isinstance(ms, (int, float)) else ""
+            it = QtWidgets.QListWidgetItem(f"{i + 1}. {name} (a={a:.2f},b={b:.2f})  ->  {summ}{tstr}")
             it.setData(QtCore.Qt.UserRole, i)         # model index, for drag-reorder mapping
             row = _op_row(name)
             it.setToolTip(op_tooltip(row) if row else name)
