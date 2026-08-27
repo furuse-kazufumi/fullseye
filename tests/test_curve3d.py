@@ -22,6 +22,48 @@ def test_curvature_torsion_helix():
     assert abs(ti.mean() - t_gt) / t_gt < 0.02, f"tau {ti.mean():.4f} vs {t_gt:.4f}"
 
 
+def test_curvature_torsion_scale_invariance():
+    """一様スケール s に対し κ→κ/s, τ→τ/s と正しくスケールする(相対 epsilon)。
+
+    絶対 epsilon だと cross_norm²(~s⁴)を小スケールで支配し τ が全滅する(旧挙動 FAIL)。
+    小座標スケールでも解析値 κ=a/(a²+b²)/s, τ=b/(a²+b²)/s を回復すること。
+    """
+    a, b = 2.0, 1.0
+    k_gt = a / (a ** 2 + b ** 2)
+    t_gt = b / (a ** 2 + b ** 2)
+    for s in (1.0, 1e-1, 1e-2, 1e-3):
+        curve, _ = _helix(a, b, scale=s)
+        kappa, tau = C.curvature_torsion(curve)
+        ki = kappa[5:-5].mean(); ti = tau[5:-5].mean()
+        assert abs(ki - k_gt / s) / (k_gt / s) < 0.02, f"scale={s} kappa {ki:.5g} vs {k_gt/s:.5g}"
+        assert abs(ti - t_gt / s) / (t_gt / s) < 0.02, f"scale={s} tau {ti:.5g} vs {t_gt/s:.5g}"
+
+
+def test_curvature_torsion_degenerate_raises():
+    """全点が一致(‖r'‖=0)は fail-closed で ValueError(静かに誤値を返さない)。"""
+    degenerate = np.zeros((50, 3))
+    with pytest.raises(ValueError):
+        C.curvature_torsion(degenerate)
+
+
+def test_total_curvature_scale_invariance():
+    """全曲率 ∫κ ds は座標の一様スケールに不変(κ→κ/s, ds→s·ds で相殺)。
+
+    旧挙動: 絶対 epsilon が κ を小スケールで潰し ∫κ ds が半減以下に崩壊(FAIL)。
+    螺旋の解析全曲率 = κ·L = a/(a²+b²) · turns·2π·√(a²+b²) をスケール不変に回復。
+    """
+    a, b, turns = 2.0, 1.0, 4
+    gt = (a / (a ** 2 + b ** 2)) * (turns * 2 * np.pi * np.sqrt(a ** 2 + b ** 2))
+    vals = []
+    for s in (1.0, 1e-2, 1e-3):
+        curve, _ = _helix(a, b, turns, scale=s)
+        vals.append(C.total_curvature(curve))
+    for s, v in zip((1.0, 1e-2, 1e-3), vals):
+        assert abs(v - gt) / gt < 0.02, f"scale={s} total_curvature {v:.5g} vs GT {gt:.5g}"
+    # 相互一致(スケール間の相対差)も厳しく確認。
+    assert (max(vals) - min(vals)) / vals[0] < 1e-3, f"scale-variance across scales: {vals}"
+
+
 def test_arc_length_helix():
     """螺旋の全長 = turns*2π*sqrt(a²+b²) と一致。"""
     a, b, turns = 2.0, 1.0, 4
