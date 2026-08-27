@@ -1614,6 +1614,10 @@ def build_window(model=None):
     act_visual_demo = QtGui.QAction("dev_* visualization demo", win)   # sample that USES dev_* ops
     act_visual_demo.triggered.connect(lambda: win._load_visual_demo())
     m.addAction(act_visual_demo); win._act_visual_demo = act_visual_demo
+    act_3d_examples = QtGui.QAction("3-D Examples…", win)   # ops3d 事例ギャラリー(実データ)
+    act_3d_examples.setToolTip("Browse the 3-D vision worked examples "
+                               "(real Itokawa / skeleton-CT / synthetic) and copy their code")
+    m.addAction(act_3d_examples); win._act_3d_examples = act_3d_examples
     m.addSeparator()
     m.addAction(act_save_res)                                 # result out
     m.addSeparator(); m.addAction(act_quit)
@@ -3039,6 +3043,62 @@ def build_window(model=None):
         win._samples_dlg = dlg                     # reuse; hidden on close, shown on reopen
         dlg.show()
 
+    def show_3d_examples():
+        # 3-D toolkit gallery: browse the ops3d worked examples (real Itokawa / skeleton-CT /
+        # synthetic data), read each one's ground-truth-checked code, copy to run standalone
+        # (py -3.11 examples_3d/<id>.py). The 3-D ops are a different modality (point clouds /
+        # meshes / volumes) than the 2-D image pipeline, so these are code samples, not loaded
+        # into the pipeline. Sourced from the examples3d registry (validate()-checked).
+        if getattr(win, "_ex3d_dlg", None) is not None:
+            win._ex3d_dlg.show(); win._ex3d_dlg.raise_(); win._ex3d_dlg.activateWindow()
+            return
+        try:
+            import examples3d as EX
+        except Exception as e:
+            report_error("3-D examples", e); return
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("3-D Examples — Fullseye 3D vision")
+        tag_dialog(dlg, "reference"); dlg.setModal(False)
+        h = QtWidgets.QHBoxLayout(dlg)
+        lst = QtWidgets.QListWidget(); meta = {}
+        for task, ids in EX.by_task().items():
+            for i in ids:
+                e = EX.get(i)
+                it = QtWidgets.QListWidgetItem("[%s] %s" % (task, e["name"]))
+                it.setData(QtCore.Qt.UserRole, i); lst.addItem(it); meta[i] = e
+        code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
+        code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        summ = QtWidgets.QLabel(); summ.setWordWrap(True); summ.setProperty("muted", True)
+        def preview(_=None):
+            it = lst.currentItem()
+            if it is None: return
+            i = it.data(QtCore.Qt.UserRole); e = meta[i]
+            _nl = chr(10)
+            summ.setText(e["name"] + "  ·  data: " + e["data"] + _nl + e["summary"]
+                         + _nl + _nl + "実行: py -3.11 examples_3d/" + i + ".py")
+            try: code.setPlainText(EX.code(i))
+            except Exception: code.setPlainText("")
+        lst.currentRowChanged.connect(lambda _=None: preview())
+        def copy_code():
+            it = lst.currentItem()
+            if it is None: return
+            i = it.data(QtCore.Qt.UserRole)
+            try:
+                QtWidgets.QApplication.clipboard().setText(EX.code(i))
+                flash("copied 3-D example '%s' to the clipboard" % i)
+            except Exception as e:
+                report_error("copy", e)
+        left = QtWidgets.QVBoxLayout()
+        lbl = QtWidgets.QLabel("3-D examples (%d) — real Itokawa / skeleton-CT / synthetic" % len(EX.names()))
+        lbl.setProperty("muted", True)
+        left.addWidget(lbl); left.addWidget(lst, 1)
+        right = QtWidgets.QVBoxLayout()
+        b_copy = QtWidgets.QPushButton("Copy code"); b_copy.setProperty("accent", True)
+        b_copy.clicked.connect(copy_code)
+        right.addWidget(summ); right.addWidget(code, 1); right.addWidget(b_copy)
+        h.addLayout(left, 1); h.addLayout(right, 2)
+        if lst.count(): lst.setCurrentRow(0)
+        persist_dialog_geometry(dlg, "ex3d"); win._ex3d_dlg = dlg; dlg.show()
+
     def add_op_by_name(n):
         row = _op_row(n)
         if row and row.get("backend") == "general":     # palette: general ops are run-via-CLI only
@@ -3614,6 +3674,7 @@ def build_window(model=None):
         lambda: show_op_help((op_list.currentItem().data(QtCore.Qt.UserRole))
                              if op_list.currentItem() else (op_names[0] if op_names else "")))
     act_samples.triggered.connect(show_samples)
+    act_3d_examples.triggered.connect(show_3d_examples)
     b_browse_samples.clicked.connect(show_samples)       # sample gallery reachable from the panel
     win._samples = samples
     win._browse_samples = b_browse_samples
