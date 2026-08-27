@@ -125,8 +125,8 @@ def main():
     d_before = mean_corr_dist(template, clean_bent)     # 位置合わせ前(平ら vs 曲げ)
 
     print(f"点数(template/target)     : {template.shape[0]} / {target.shape[0]}")
-    print(f"物体スケール(対角長)       : {scale:.3f}")
-    print(f"注入ノイズ σ               : {noise_sigma:.4f}  (スケールの1%)")
+    print(f"カード寸法(対角長)         : {scale:.3f}")
+    print(f"注入ノイズ σ               : {noise_sigma:.4f}  (カード寸法の0.5%)")
     print(f"ノイズ床(距離の期待値)     : {noise_floor:.4f}")
     print(f"制御点での tps_warp 誤差    : {ctrl_exact_err:.2e}  (λ=0 内挿→ほぼ0)")
     print(f"位置合わせ前の対応点距離    : {d_before:.4f}  (平ら vs 曲げ)")
