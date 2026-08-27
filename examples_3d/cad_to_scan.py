@@ -66,9 +66,12 @@ rerr = rotation_error_deg(R_est, R_gt)
 print(f"物体スケール(対角長)     : {scale:.3f}")
 print(f"注入ノイズ(標準偏差)     : {noise:.3f}  (スケールの1%)")
 print(f"回転誤差 (度)             : {rerr:.3f}")
-print(f"登録RMSE                  : {rmse:.4f}  (≒ノイズ水準なら成功)")
+print(f"登録RMSE                  : {rmse:.4f}  (注入ノイズ {noise:.4f} と同水準なら成功)")
 
-# GT: 姿勢が正しく復元できていれば回転誤差は小さく、RMSEはノイズ程度に収まる
+# GT: 姿勢が正しく復元できていれば回転誤差は小さく、RMSE は注入ノイズの水準まで
+# 下がる(それ以上は下がらない=ノイズ床)。ノイズ床の 2 倍未満を要求することで
+# 「大まかに合っただけ」や破綻(単位行列を返す等 ~35度)を判別的に弾く。
 assert rerr < 2.0, f"回転誤差が大きすぎる: {rerr:.3f} 度"
-assert rmse < 0.05 * scale, f"RMSEが大きすぎる: {rmse:.4f}"
-print("PASS: 回転誤差 < 2度 かつ RMSE < スケールの5%")
+assert rmse < 2.0 * noise, \
+    f"RMSE がノイズ床まで収束していない: {rmse:.4f} vs ノイズ {noise:.4f}"
+print(f"PASS: 回転誤差 {rerr:.2f}度 < 2度、RMSE {rmse:.4f} がノイズ床 {noise:.4f} の水準まで収束")
