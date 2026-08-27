@@ -29,13 +29,16 @@ import recon3d
 import curve3d
 import descriptors3d
 import bspline_surf
+import pnp3d
+import regionprops3d
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
         "photometric": photometric, "range_image": range_image, "pcl_filter": pcl_filter,
         "fringe": fringe, "deform3d": deform3d, "medial": medial,
         "metrics3d": metrics3d, "ransac_fit": ransac_fit, "edges3d": edges3d, "recon3d": recon3d,
-        "curve3d": curve3d, "descriptors3d": descriptors3d, "bspline_surf": bspline_surf}
+        "curve3d": curve3d, "descriptors3d": descriptors3d, "bspline_surf": bspline_surf,
+        "pnp3d": pnp3d, "regionprops3d": regionprops3d}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
