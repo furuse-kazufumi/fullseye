@@ -206,6 +206,8 @@ def main():
     print(f"弧長         : 推定 {total:.4f}  理論 {arclen_gt:.4f}  相対誤差 {arclen_relerr:.2e}")
     print(f"Frenet直交性 : max|T·N|={dot_tn:.2e} max|T·B|={dot_tb:.2e} max|N·B|={dot_nb:.2e}")
     print(f"Frenet単位長 : max|‖·‖-1|={norm_err:.2e}")
+    print(f"Frenet幾何一致(一様) : max‖T-T*‖={frame_T_err:.2e}  max‖N-N*‖={frame_N_err:.2e}  (定数枠なら O(1))")
+    print(f"Frenet幾何一致(変速) : max‖T-T*‖={frame_T_err_v:.2e}  max‖N-N*‖={frame_N_err_v:.2e}  max|T·N|={dot_tn_v:.2e}  (射影欠落なら ≈0.23)")
     print(f"beat-null(κ) : 直線ヌル {line_kappa_null:.2e} → ヘリックス {helix_kappa:.4f}  超過 {kappa_margin:.4f}")
     print(f"beat-null(τ) : 平面円ヌル {circle_tau_null:.2e} → ヘリックス {helix_tau:.4f}  超過 {tau_margin:.4f}")
     print(f"参考         : 平面円の曲率 {circle_kappa:.4f} (1/R={1.0/radius:.4f} と一致)")
