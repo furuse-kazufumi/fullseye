@@ -1125,6 +1125,23 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             if not self._item.pixmap().isNull():
                 self.fitInView(self._item, QtCore.Qt.KeepAspectRatio)
 
+        def set_pixmap_keep_view(self, pm):
+            """Swap the pixmap but KEEP the current zoom/pan when the image geometry is
+            unchanged (a re-render after a knob tweak). Returns True if the view was
+            preserved, False if the size changed (the caller should then fit())."""
+            same = (not self._item.pixmap().isNull()
+                    and self._item.pixmap().size() == pm.size())
+            t = self.transform()
+            hs = self.horizontalScrollBar().value()
+            vs = self.verticalScrollBar().value()
+            self.set_pixmap(pm)
+            if same:
+                self.setTransform(t)
+                self.horizontalScrollBar().setValue(hs)
+                self.verticalScrollBar().setValue(vs)
+                return True
+            return False
+
         def set_part(self, r1, c1, r2, c2):
             """dev_set_part: show the image part with corners (Row1,Col1)-(Row2,Col2)
             in HALCON (row, col) order. Any negative value fits the whole image (a
