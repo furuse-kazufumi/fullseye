@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-28 08:01:18
+- **最終更新**: 2026-08-28 08:06:29
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+96ae5b53 auto: detect_primitives_3d.py 編集前 (2026-08-28 08:03)
 06036081 auto: shape_descriptor.py 編集前 (2026-08-28 07:59)
 d9d31066 AI向けopカタログ(LLM台帳)を生成・インストーラー同梱 + 新モジュールをpy-modules登録
 a5fe1da0 auto: signal1d.py 編集前 (2026-08-28 07:52)
@@ -19,26 +20,26 @@ c4c128f5 auto: pyproject.toml 編集前 (2026-08-28 07:51)
 0f6adb8d auto: pyproject.toml 編集前 (2026-08-28 07:49)
 a1a25718 3D例バッチ2登録: sensing/registration/reconstruction 8件(無人ループ)
 127f7bd8 3D例: 断層輪郭→3D曲面/地形DEM(表現変換+3D展開、ユーザー発案)
-a10145b6 auto: examples3d.py 編集前 (2026-08-28 07:42)
 ```
 
 ## 現在の git status
 
 ```
-M examples_3d/shape_descriptor.py
-?? examples_3d/morphology_3d.py
-?? examples_3d/space_curve.py
+M examples_3d/detect_primitives_3d.py
+?? examples_3d/edges_3d.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+08:04 examples_3d/edges_3d.py
+08:03 examples_3d/detect_primitives_3d.py
+08:01 docs/SESSION_SUMMARY.md
 08:00 examples_3d/morphology_3d.py
 07:59 examples_3d/space_curve.py
 07:59 examples_3d/shape_descriptor.py
 07:59 examples_3d/region_props_3d.py
 07:59 examples_3d/augment_pointcloud.py
-07:58 docs/SESSION_SUMMARY.md
 07:58 examples_3d/oriented_normals.py
 07:53 .pytest_cache/v/cache/nodeids
 07:52 fullseye/OP_CATALOG.md
@@ -46,8 +47,6 @@ M examples_3d/shape_descriptor.py
 07:52 signal1d.py
 07:51 tools/gen_op_catalog.py
 07:51 pyproject.toml
-07:50 examples/__init__.py
-07:45 examples3d.py
 ```
 
 ---
