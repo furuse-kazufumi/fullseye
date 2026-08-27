@@ -30,20 +30,29 @@ def _knn_idx(points, k):
     return np.atleast_2d(idx)
 
 
-def _principal_at(local):
-    """クエリ点を原点にした近傍 (m,3) → 主曲率 (k1>=k2) と外向き法線。
+def _principal_at(local, orient=None):
+    """クエリ点を原点にした近傍 (m,3) → 主曲率 (k1>=k2) と法線。
 
     PCA で法線(最小固有ベクトル)を推定 → 接線基底で Monge 形 w=du+ev+au²+buv+cv² を
-    フィット → 第一/第二基本形式の shape operator 固有値で k1,k2。凸(外向き)を正に符号統一。
+    フィット → 第一/第二基本形式の shape operator 固有値で k1,k2。
+
+    `orient`(向き付き参照法線, 3,)を与えると PCA 法線をそれに整合(dot>0)させ、大域的な
+    凹/凸の符号を正しく出す。未指定なら近傍重心から離れる向き(凸側)へ揃えるヒューリスティクス
+    (開面では常に凸側=符号は凸マグニチュードで不定)。いずれも凸(法線から遠ざかる曲がり)を正。
     """
     if len(local) < 5:
         return 0.0, 0.0, np.array([0.0, 0.0, 1.0])
     C = local.T @ local
     w_eig, V = np.linalg.eigh(C)
     normal = V[:, 0]                 # 最小固有値方向 = 法線
-    centroid = local.mean(axis=0)
-    if np.dot(centroid, normal) > 0:  # 近傍の重心から離れる向き(外向き)へ
-        normal = -normal
+    if orient is not None:
+        # 向き付き参照法線(視点/range image 由来の大域向き)へ整合
+        if np.dot(normal, orient) < 0:
+            normal = -normal
+    else:
+        centroid = local.mean(axis=0)
+        if np.dot(centroid, normal) > 0:  # 近傍の重心から離れる向き(凸側)へ
+            normal = -normal
     t1 = V[:, 2] - np.dot(V[:, 2], normal) * normal
     t1 /= np.linalg.norm(t1) + 1e-12
     t2 = np.cross(normal, t1)
