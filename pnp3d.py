@@ -64,6 +64,14 @@ def dlt_pose(points_3d, points_2d, K):
         raise ValueError("DLT 姿勢推定は 6 点以上必要")
     if len(x) != n:
         raise ValueError("3D と 2D の点数が不一致")
+    # 共平面性ガード(fail-closed): 共平面な 3D 点では DLT の係数行列が縮退し、
+    # 例外も警告も無く巨大誤差の姿勢を返す。平面ターゲット(チェッカーボード等)は
+    # DLT でなくホモグラフィ/IPPE を使うべきなので、ここで明示拒否する。
+    if coplanarity_ratio(X) < _COPLANAR_TOL:
+        raise ValueError(
+            "DLT 姿勢推定には非共平面の 3D 点が必要(共平面入力は係数行列が縮退)。"
+            "平面ターゲットにはホモグラフィ/IPPE を使うこと"
+        )
     A = np.zeros((2 * n, 12))
     for i in range(n):
         Xi = np.append(X[i], 1.0)
