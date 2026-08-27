@@ -8,6 +8,25 @@ import numpy as np
 import pipeline_evolve as pe
 
 
+def test_empty_input_is_penalty_not_nan():
+    # 空点群タスク: identity(無処理)でも空出力になる → fail-closed で _PENALTY(nan 詐称禁止)。
+    # metric は「呼ばれたら 0.0」= もし空を有効扱いすれば fitness=-0.0(>_PENALTY)になる判別ケース。
+    empty = np.zeros((0, 3))
+    task = pe.Task(empty, empty, "points", "points", metric=lambda out, tgt: 0.0)
+    assert pe.execute((), task.x) is None                 # 空入力は素通しせず None
+    assert pe.evaluate((), task) == pe._PENALTY           # metric 未呼び出しで大ペナルティ(nan にしない)
+    # 非空入力でも「出力が空になる」ケースは同様に _PENALTY(dropout ratio→全消去を強制して検証)
+    n_task = pe.make_denoise_task(seed=0)
+    wipe = lambda p: p[:0]                                 # 出力を必ず空にする op
+    orig = pe.VOCAB["random_dropout"]["fn"]
+    pe.VOCAB["random_dropout"]["fn"] = wipe
+    try:
+        assert pe.execute(("random_dropout",), n_task.x) is None
+        assert pe.evaluate(("random_dropout",), n_task) == pe._PENALTY
+    finally:
+        pe.VOCAB["random_dropout"]["fn"] = orig
+
+
 def test_evolution_beats_identity_and_matches_hand():
     task = pe.make_denoise_task(seed=0)
     ev = pe.evolve(task, pop=24, gens=12, seed=0)
