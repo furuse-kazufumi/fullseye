@@ -1639,6 +1639,7 @@ def build_window(model=None):
     act_open_img = _act("Open image…", "Ctrl+O", "Load an image file as the base frame")
     act_demo = _act("Synthetic demo", None, "Load the built-in synthetic demo scene")
     act_save_res = _act("Save result…", "Ctrl+S", "Save the displayed result as a PNG")
+    act_copy_res = _act("Copy result image", None, "Copy the displayed result image to the clipboard")
     act_open_pipe = _act("Open pipeline…", "Ctrl+Shift+O", "Load a pipeline from JSON")
     act_save_pipe = _act("Save pipeline…", "Ctrl+Shift+S", "Save the pipeline to JSON")
     act_export = _act("Export…", "Ctrl+E", "Export as an --ops string and Python code")
