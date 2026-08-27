@@ -2164,3 +2164,27 @@ def test_image_view_preserves_zoom_on_same_size_repaint():
     assert v.set_pixmap_keep_view(pm1) is False            # first paint (was empty) -> fit
     assert v.set_pixmap_keep_view(pm2) is True             # same size -> zoom/pan preserved
     assert v.set_pixmap_keep_view(pm3) is False            # size changed -> caller refits
+
+
+def test_2d_examples_dialog_lists_geometric_samples():
+    """2-D Examples gallery (discoverability layer): the dialog lists every registered
+    examples2d entry (morph / shape descriptors / drawing) with Run + Copy, and the filter
+    narrows the list. The 3-D gallery is unaffected."""
+    from PySide6 import QtWidgets, QtCore
+    _app()
+    import examples2d as EX
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_2d_examples.trigger()
+    dlg = win._ex2d_dlg
+    assert dlg is not None
+    lst = dlg.findChildren(QtWidgets.QListWidget)[0]
+    filt = dlg.findChildren(QtWidgets.QLineEdit)[0]
+    btns = {b.text() for b in dlg.findChildren(QtWidgets.QPushButton)}
+    assert lst.count() == len(EX.names()) and len(EX.names()) >= 3
+    assert {"Run", "Copy code"} <= btns
+    ids = [lst.item(i).data(QtCore.Qt.UserRole) for i in range(lst.count())]
+    assert "image_morph" in ids and "draw_annotate" in ids
+    filt.setText("morph")
+    assert 0 < lst.count() < len(EX.names())
+    filt.clear()
+    assert lst.count() == len(EX.names())

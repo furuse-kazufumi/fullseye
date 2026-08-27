@@ -4117,6 +4117,7 @@ def build_window(model=None):
                              if op_list.currentItem() else (op_names[0] if op_names else "")))
     act_samples.triggered.connect(show_samples)
     act_3d_examples.triggered.connect(show_3d_examples)
+    act_2d_examples.triggered.connect(show_2d_examples)
     b_browse_samples.clicked.connect(show_samples)       # sample gallery reachable from the panel
     win._samples = samples
     win._browse_samples = b_browse_samples
