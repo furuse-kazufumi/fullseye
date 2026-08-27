@@ -85,3 +85,25 @@ def test_gaussian_sign_invariant_to_normal_flip():
     pts = _fib_sphere(400, 2.0)
     K = curvature3d.gaussian_curvature(pts, k=25)
     assert np.median(K) > 0  # 球は常に正の K
+
+
+def _saddle(n, a, L, seed=0):
+    """双曲放物面 z=(x²-y²)/(2a): 原点で主曲率 ±1/a(鞍点、K<0)。"""
+    rng = np.random.default_rng(seed)
+    xy = rng.uniform(-L, L, size=(n, 2))
+    x, y = xy[:, 0], xy[:, 1]
+    z = (x ** 2 - y ** 2) / (2 * a)
+    return np.stack([x, y, z], axis=1)
+
+
+def test_saddle_negative_gaussian_and_zero_shape_index():
+    # 鞍点(双曲放物面): K<0、shape index ≈ 0(k1≈-k2)。中央付近でロバスト評価。
+    a = 2.0
+    pts = _saddle(1200, a, L=1.5)
+    # 原点近傍の点だけ評価(端は曲率が変化)
+    r = np.linalg.norm(pts[:, :2], axis=1)
+    core = r < 0.7
+    K = curvature3d.gaussian_curvature(pts, k=30)
+    s = curvature3d.shape_index(pts, k=30)
+    assert np.median(K[core]) < 0, np.median(K[core])          # 鞍点は負のガウス曲率
+    assert abs(np.median(s[core])) < 0.35, np.median(s[core])  # k1≈-k2 → shape index ~0
