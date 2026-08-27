@@ -130,15 +130,17 @@ def _helix(n=120, turns=3.0):
 def test_curve_recovers_known_helix():
     pts = _helix(n=140, turns=3.0)
     tck = bs.fit_bspline_curve(pts, smooth=0.0, k=3)
-    curve = bs.eval_bspline_curve(tck, n=600)
-    assert curve.shape == (600, 3)
+    # 曲線側は密に評価する(疎だと最近傍距離が弧長サンプル間隔に支配され、
+    # フィット精度でなく離散化を測ってしまう。弧長 ~19 なので n=4000 で間隔 ~5e-3)。
+    curve = bs.eval_bspline_curve(tck, n=4000)
+    assert curve.shape == (4000, 3)
 
     # 元頂点の各点について、評価曲線上の最近傍距離が小さいこと。
     from scipy.spatial import cKDTree
 
     tree = cKDTree(curve)
     d, _ = tree.query(pts, k=1)
-    # 螺旋半径 ~1、ピッチ ~0.94。最近傍残差はそのスケールに対して十分小。
+    # 螺旋半径 ~1。s=0 は補間なので残差は曲線サンプル間隔(~2.5e-3 半分)まで縮む。
     assert float(np.max(d)) < 5e-3
     assert float(np.sqrt(np.mean(d ** 2))) < 2e-3
 
