@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """moments3d — 3D モーメント不変量(並進・回転・スケール不変な形状特徴)。
 
 点群(numpy 配列 (N,3))から、剛体変換(平行移動 + 回転)と一様スケールに

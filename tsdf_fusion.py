@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """多フレーム TSDF 体積融合(KinectFusion 核)= 深度列 → 重み付き符号付き距離場 → 表面点。
 
 各 voxel 中心を各フレームの (K,R,t) で射影し、観測深度との投影的符号付き距離

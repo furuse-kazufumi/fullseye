@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """twoview — 2視点エピポーラ幾何(基礎行列 F・本質行列 E・三角測量・相対姿勢復元)。
 
 pnp3d が単視点(既知 3D → 姿勢)なら、twoview は**2 枚の画像の対応点だけ**から相対姿勢と

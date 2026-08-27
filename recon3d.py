@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """recon3d — 点群(point cloud)から**直接**の表面再構成(surface reconstruction)。
 
 差別化点: match3d.py の marching cubes は **voxel 入力**(すでに密度場がある前提)なのに対し、

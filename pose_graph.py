@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """pose_graph — 姿勢グラフ最適化(SLAM back-end: 相対姿勢制約 + ループ閉じ → 大域姿勢)。
 
 bundle3d が「カメラ姿勢 + 3D 点」を再投影で最適化するのに対し、pose_graph は **3D 点を持たず

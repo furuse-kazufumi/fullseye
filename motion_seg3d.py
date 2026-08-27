@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """剛体運動セグメンテーション — 2 点群を運動が一致する剛体ごとに分割(numpy + scipy)。
 
 観測 2 時刻の**非構造点群** ``pts0`` -> ``pts1`` を、それぞれが独立の剛体運動を

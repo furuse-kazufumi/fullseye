@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """pcl_augment — 3D 点群 (N,3) のデータ拡張(Physical AI 学習支援, numpy+scipy)。
 
 学習用の点群を「もっともらしくランダムに崩した variant」へ増やすための拡張群。

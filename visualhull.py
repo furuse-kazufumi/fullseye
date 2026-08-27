@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """多視点シルエットからの空間彫刻(visual hull / space carving)で voxel 占有を復元する。
 
 Physical AI 向けの「形が先、テクスチャは後」の 3-D 再構成プリミティブ。既知の

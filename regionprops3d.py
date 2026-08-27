@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """regionprops3d — 3D 連結成分ラベリング + リージョンプロパティ(多物体計測)。
 
 二値ボクセル(bool または 0/1 の 3D numpy 配列)を入力に、連結成分ごとの

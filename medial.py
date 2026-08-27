@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """medial — 3D medial surface / 3D 骨格(TRIZ 原理 #17「多次元化(線→面)」)。
 
 2D の形状照合は「輪郭(1D 境界)→ 2D スケルトン(中心線)」で位相を捉える。これを 1 次元

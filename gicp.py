@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """Generalized-ICP(plane-to-plane 共分散重み ICP)による剛体位置合わせ。
 
 point-to-point ICP(``match3d.icp_point2point_3d``, Kabsch/SVD)は各対応を等方な

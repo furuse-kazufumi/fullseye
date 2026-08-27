@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """photometric — フォトメトリックステレオと法線積分(Physical AI 外観検査・形状復元)。
 
 既知の複数光源方向で撮った Lambertian 画像から画素ごとに法線 + アルベドを復元し、

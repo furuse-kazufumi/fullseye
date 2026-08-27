@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """edges3d — 3D エッジ抽出(2D Canny / LoG のボリューム版)。
 
 グレー voxel(3D numpy float、軸順 (D,H,W) = (depth, height, width))を入力に、

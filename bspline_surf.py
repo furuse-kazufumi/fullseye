@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """B スプライン自由曲面 / 自由曲線フィッティング(scipy FITPACK, numpy in/out)。
 
 match3d.fit_poly_surface(多項式最小二乗)は大域基底なので低次のうねりしか

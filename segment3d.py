@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """点群セグメンテーション: 法線領域成長 / Euclidean 距離クラスタ / 反復平面抽出。
 
 生の 3D 点群を「連結した意味のある部分」へ分割する解析層。:mod:`pointcloud`

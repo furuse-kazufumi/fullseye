@@ -9,7 +9,7 @@ description = "Evolvable image-processing operator library and honest pipeline d
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "Apache-2.0" }
-authors = [{ name = "furuse-kazufumi" }]
+authors = [{ name = "Kazufumi Furuse", email = "kazufumi@furuse.work" }]
 keywords = ["image-processing", "computer-vision", "evolutionary-algorithm", "pipeline", "operators"]
 # The core (75 ops) runs on numpy + scipy alone. Everything else is optional and
 # only its own operators are affected when a backend is absent (graceful degradation).

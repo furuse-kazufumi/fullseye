@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """range_image — organized(格子構造)深度画像の処理(深度センサ → 特徴の橋渡し)。
 
 depth camera(RGB-D / ToF / structured-light)の出力は画素格子に整列した organized な

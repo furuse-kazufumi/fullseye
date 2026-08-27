@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """spherical_proj — 回転式 LiDAR の球面/円柱レンジ画像(点群 ⇄ レンジ画像)。
 
 Velodyne/Ouster のような**回転式(spinning)LiDAR** は、水平に 360° 回りながら

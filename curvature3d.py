@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """curvature3d — 点群の主曲率・平均/ガウス曲率・shape index(局所二次曲面フィット)。
 
 match3d.curvature_maps は voxel 場の曲率だが、ここは**非構造点群**の各点で局所 Monge パッチ

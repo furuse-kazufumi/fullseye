@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """pipeline_evolve — 3D op-chain の進化探索 PoC(発散の収束: 手動 op×op 採点 → fitness 自動探索)。
 
 **核心**: これまでの発散(ops3d = 192 op)で「手で op×op を並べ実現性 F × 差別化 D で採点し優先度化」

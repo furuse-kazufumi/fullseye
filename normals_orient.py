@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """非構造点群の法線を大域一貫に向き付け(Hoppe の MST 伝播)。
 
 各点の PCA 法線(近傍共分散の最小固有ベクトル)は**符号未定**で、隣接点どうしの向きが

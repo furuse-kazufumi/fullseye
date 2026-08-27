@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """bundle3d — N 視点バンドル調整(全カメラ姿勢 + 3D 構造を再投影誤差最小で同時最適化)。
 
 twoview が 2 視点の相対姿勢初期化なら、bundle3d はその N 視点版 = SfM/VO の仕上げ。

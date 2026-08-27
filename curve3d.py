@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """curve3d — 空間曲線の計測(Frenet 標構・曲率・捩率・弧長・スプライン平滑)。
 
 match3d.fit_line_3d / fit_circle_3d は直線・円だが、ここは**一般の 3D 曲線**(シーム・エッジ・

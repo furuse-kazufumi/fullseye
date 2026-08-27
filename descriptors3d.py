@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """descriptors3d — 点群の大域形状記述子(統計ベース shape distribution)。
 
 点群(numpy 配列 (N,3))から、**平行移動・回転・スケールに不変**な大域記述子

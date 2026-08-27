@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """deform3d — 3D 非剛体・変形レジストレーション(点群 in / 点群 out)。
 
 cv2 / HALCON は 2D の変形照合(可変形テンプレート・光学的流れ)は持つが、**3D 点群の

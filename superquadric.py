@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """スーパー2次曲面フィット(把持・物体モデリング用の陰関数体積プリミティブ)。
 
 スーパー2次曲面(superquadric / superellipsoid)は 5 個の形状パラメータ

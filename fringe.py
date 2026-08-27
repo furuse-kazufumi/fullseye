@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """fringe — 構造化光による位相シフト・プロファイロメトリ(3D 形状計測)。
 
 産業 3D スキャンの中核となる「縞投影(fringe projection)」の復号一式を提供する。プロジェクタが

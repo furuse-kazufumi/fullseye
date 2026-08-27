@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """symmetry3d — 点群の対称性検出(反射面・回転軸)。metrics3d.chamfer を対称スコアに使う。
 
 対称性は形状補完・姿勢正準化・検査(左右差=欠陥)に効く。反射対称は「点群を候補平面で鏡映して

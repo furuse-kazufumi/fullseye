@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """metrics3d — 3D 再構成 / 登録の評価メトリクス(進化探索の fitness 土台)。
 
 点群・voxel・法線・姿勢の一致度を数値化する: chamfer / Hausdorff / F-score /

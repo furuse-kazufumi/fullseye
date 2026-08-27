@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """pcl_filter — 点群 (N,3) の前処理フィルタ群(numpy in / numpy out, scipy KD-Tree)。
 
 深度・ステレオ・LiDAR から起こした生の点群は、まばらな外れ値・密度ムラ・センサノイズ

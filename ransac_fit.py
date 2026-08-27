@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """外れ値に頑健な RANSAC プリミティブ適合(平面/球/直線/円筒)。
 
 match3d.py の ``fit_*`` は全点の最小二乗(代数フィット)で、外れ値が数 % 混じると

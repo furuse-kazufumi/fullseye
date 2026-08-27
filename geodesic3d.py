@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """geodesic3d — 曲面/点群上の測地距離(EDT の線→面拡張: kNN・メッシュグラフ上 Dijkstra + FPS)。
 
 距離変換(EDT)は「格子上の直線距離」だが、Physical AI では**曲面に沿った距離**が要る

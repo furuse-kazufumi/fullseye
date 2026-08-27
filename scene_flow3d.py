@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """点群ベース 3D シーンフロー — 最近傍フロー + 剛体/非剛体分解(numpy + scipy)。
 
 観測 2 時刻の**非構造点群** ``pts0`` -> ``pts1`` の間の 3-D 運動を、

@@ -1,3 +1,4 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
 """pnp3d — Perspective-n-Point: 3D-2D 対応からカメラ姿勢を復元(射影の逆問題)。
 
 match3d.project_points が順方向(3D → 2D)なら、pnp3d はその逆(既知の 3D 点とその 2D 投影 +
