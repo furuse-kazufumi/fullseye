@@ -267,7 +267,8 @@ def ransac_line(points, thresh, iters=300, seed=0):
         if cnt > best_n:
             best_n, best_mask = cnt, mask
 
-    if best_mask is None or best_n < 2:
+    fallback = best_mask is None or best_n < 2
+    if fallback:
         best_mask = np.ones(N, bool)
 
     point, direction = _fit_line_ls(P[best_mask])
@@ -275,10 +276,12 @@ def ransac_line(points, thresh, iters=300, seed=0):
     mask = dist < thresh
     if int(mask.sum()) >= 2:
         point, direction = _fit_line_ls(P[mask])
-    else:
+    elif not fallback:
+        # 実仮説はあったがリフィット後に縮退 → 実測 consensus(best_mask)を保持。
         mask = best_mask
+    # フォールバック時は実測 mask を honest に返す(all-True の満点詐称をしない)。
     params = {"point": point, "direction": direction}
-    return params, mask, _info(mask, iters)
+    return params, mask, _info(mask, iters, degenerate=fallback)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
