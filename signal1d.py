@@ -131,3 +131,49 @@ def smooth(y, window=5):
     ap = np.pad(a, pad, mode="edge")
     kern = np.ones(w) / w
     return np.convolve(ap, kern, mode="valid")
+
+
+# --------------------------------------------------------------------------- #
+# スプライン補間(専用の spline object を返す)                                 #
+# --------------------------------------------------------------------------- #
+def spline_fit(x, y, smooth=0.0):
+    """点列 (x, y) を3次スプラインで補間/平滑化し、評価可能な spline object を返す。
+
+    smooth=0 なら **全点を通る補間スプライン**(C2 連続、区分多項式より滑らか)、
+    smooth>0 なら **平滑化スプライン**(ノイズを許容し全点を通らない)。返り値は
+    :func:`spline_eval` / :func:`spline_resample` に渡せる(scipy の呼び出し可能オブジェクト)。
+    x は昇順でなくてよい(内部でソートする)。
+    """
+    from scipy.interpolate import CubicSpline, UnivariateSpline
+    xa = _as_1d(x, "x")
+    ya = _as_1d(y, "y")
+    if xa.shape != ya.shape:
+        raise ValueError(f"x と y の長さが不一致({xa.shape} vs {ya.shape})")
+    order = np.argsort(xa)
+    xs, ys = xa[order], ya[order]
+    if np.any(np.diff(xs) <= 0):
+        raise ValueError("x に重複値があり補間できない(単調増加に整列できない)")
+    s = float(smooth)
+    if s < 0:
+        raise ValueError(f"smooth は非負(受領: {smooth})")
+    if s > 0:
+        return UnivariateSpline(xs, ys, s=s * xs.size)     # 平滑化(s はスケール)
+    return CubicSpline(xs, ys)                              # 補間(全点を通る)
+
+
+def spline_eval(spline, x):
+    """spline object を点 x で評価する。"""
+    return np.asarray(spline(np.asarray(x, dtype=np.float64)), dtype=np.float64)
+
+
+def spline_resample(x, y, n, smooth=0.0):
+    """点列を n 点に等間隔で滑らかに再サンプルし ``(x_new, y_new)`` を返す。
+
+    まばら/不揃いな点列を、スプラインで補間して密で等間隔な曲線に直すのに使う。
+    """
+    xa = _as_1d(x, "x")
+    if int(n) < 2:
+        raise ValueError(f"n は2以上(受領: {n})")
+    spl = spline_fit(xa, y, smooth=smooth)
+    x_new = np.linspace(float(xa.min()), float(xa.max()), int(n))
+    return x_new, spline_eval(spl, x_new)
