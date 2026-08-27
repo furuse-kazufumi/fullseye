@@ -88,10 +88,20 @@ def test_closed_curve_stays_on_the_circle():
 
 def test_curve_model_is_polygon_plus_attributes():
     m = S.spline_curve_fit(_circle(), closed=True)
-    assert set(m) == {"points", "closed", "tck", "u"}          # ポリゴン点列 + closed 等の属性
-    assert m["closed"] is True
+    assert set(m) == {"points", "closed", "tck", "u", "dim"}    # ポリゴン点列 + closed 等の属性
+    assert m["closed"] is True and m["dim"] == 2
     # 制御点の parameter u で評価すると制御点に戻る(補間)
     assert np.abs(S.spline_curve_eval(m, m["u"]) - m["points"]).max() < 1e-6
+
+
+def test_spline_curve_works_in_3d():
+    t = np.linspace(0, 4 * np.pi, 40)
+    helix = np.column_stack([np.cos(t), np.sin(t), t / 6.0])
+    m = S.spline_curve_fit(helix, closed=False)
+    assert m["dim"] == 3
+    rs = S.spline_curve_resample(helix, 300, closed=False)
+    assert rs.shape == (300, 3)
+    assert np.hypot(rs[:, 0], rs[:, 1]).std() < 0.05           # ヘリックス上に乗る(半径一定)
 
 
 def test_invalid_inputs_raise():
