@@ -2459,7 +2459,13 @@ def build_window(model=None):
                                   draw=state["draw"])                            # dev_set_draw/color/line_width
             qi = _to_qimage(shown, QtGui)
             if qi is not None:
-                view.set_pixmap(QtGui.QPixmap.fromImage(qi)); view.fit()
+                pm = QtGui.QPixmap.fromImage(qi)
+                # keep the user's zoom/pan across re-renders (knob tweaks / stage steps);
+                # only refit when a NEW image was loaded (state['fit_next']) or the size changed.
+                if state.pop("fit_next", False):
+                    view.set_pixmap(pm); view.fit()
+                elif not view.set_pixmap_keep_view(pm):
+                    view.fit()
             view.set_data(val)
             state["result"] = shown
             state["raw"] = val
