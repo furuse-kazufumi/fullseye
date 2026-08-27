@@ -50,7 +50,16 @@ EXAMPLES = [
     {"id": "draw_annotate", "task": "drawing", "data": "synthetic",
      "name": "画像にマーカー/線/円/輪郭を直接描く(ラスタ描画)",
      "summary": "作業者が指定した対応点を画像そのものに焼き込むラスタ描画op(imagedraw)。"
-                "モーフに渡す対応点を画像上で確認するのに使う(cv2.line/circle 相当を numpy で)。"},
+                "描いた既知シーンを検出器が回収し結果を描き返す(描画→検出→注釈)。"},
+    # -- signal / point-sequence math -------------------------------------------- #
+    {"id": "signal_filter", "task": "signal_processing", "data": "synthetic",
+     "name": "点列の多項式近似・フーリエ・ローパス/ハイパス",
+     "summary": "計測1D列をトレンド抽出(多項式)・周波数分析(FFT)・平滑化(ローパス)・"
+                "細部抽出(ハイパス)する(signal1d)。各処理に beat-the-null のGT付き。"},
+    {"id": "spline_curve", "task": "interpolation", "data": "synthetic",
+     "name": "スプライン補間(開/閉曲線・2D/3D・時間変形)",
+     "summary": "疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、"
+                "軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
