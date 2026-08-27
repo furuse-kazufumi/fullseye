@@ -130,6 +130,34 @@ EXAMPLES = [
     {"id": "itokawa_symmetry_honest", "task": "features", "data": "itokawa",
      "name": "対称性検出(正直な結果:小惑星は非対称)",
      "summary": "反射対称スコアを小惑星と対称な楕円体で比較。ラブルパイル小惑星は非対称=検出器が正しく低スコアを返す。"},
+    # -- pose estimation --------------------------------------------------------- #
+    {"id": "pose_estimation", "task": "pose_estimation", "data": "synthetic",
+     "name": "外れ値ありの3D-2D対応からカメラ6自由度姿勢を推定(PnP+RANSAC)",
+     "summary": "既知寸法の箱の3D-2D対応(30%外れ値・0.5px雑音)から pnp_ransac で姿勢復元。回転<2度・並進<2%で、恒等姿勢や素のDLTを明確に上回る。"},
+    # -- segmentation ------------------------------------------------------------ #
+    {"id": "object_segmentation", "task": "segmentation", "data": "synthetic",
+     "name": "ビンピッキング: 台平面除去→物体クラスタリング",
+     "summary": "地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。"},
+    # -- mapping ----------------------------------------------------------------- #
+    {"id": "occupancy_esdf", "task": "mapping", "data": "synthetic",
+     "name": "占有格子+ESDFで連続クリアランスを問い合わせ",
+     "summary": "部屋点群から occupancy_grid→esdf を作り、自由空間点で最近接障害物までの連続距離を query_distance。占有0/1のみの零点を約39倍上回る(衝突回避マージン判定)。"},
+    # -- shape fitting ----------------------------------------------------------- #
+    {"id": "superquadric_fit", "task": "shape_fitting", "data": "synthetic",
+     "name": "点群から角丸ブロックをスーパー楕円体で当てはめ",
+     "summary": "既知スーパー楕円体からの雑音点群を fit_superquadric で復元(半径5%以内・内外分類>95%)。球1個を当てた残差を大きく下回る(把持点判定向け)。"},
+    # -- motion ------------------------------------------------------------------ #
+    {"id": "scene_flow_rigid", "task": "motion", "data": "synthetic",
+     "name": "剛体シーンフロー(既知R,tと密フィールドの復元)",
+     "summary": "点群を既知剛体変換で動かし rigid_flow で復元(回転<1度・並進<1voxel)。smooth_flow が生NN流のEPEを約半分に、residual_flow は剛体部でノイズ床。"},
+    # -- shape descriptors ------------------------------------------------------- #
+    {"id": "moment_invariants", "task": "shape_descriptors", "data": "synthetic",
+     "name": "3Dモーメント不変量(剛体+一様スケールに不変)",
+     "summary": "点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。"},
+    # -- shape analysis ---------------------------------------------------------- #
+    {"id": "medial_topology", "task": "shape_analysis", "data": "synthetic",
+     "name": "中軸骨格と位相署名で形状を区別",
+     "summary": "中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
