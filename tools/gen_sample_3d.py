@@ -97,15 +97,22 @@ def gen_skeleton_ct(res: int = 96, seed: int = 0):
     allV = np.vstack([v for v, _ in placed])
     lo, hi = allV.min(0), allV.max(0)
     pitch = float((hi - lo).max()) / res
-    vol = None
+    # voxelise each bone once, record its (occupancy, integer grid offset). Sizing the
+    # shared grid from max(offset + extent) guarantees every paste is in-bounds — an
+    # earlier "+4" pad was fragile (a bone reaching past it truncates the slice and the
+    # `|= occ` shape-mismatches). occ is (z,y,x); off is (x,y,z) from voxelize_solid.
+    tiles = []
     for V, F in placed:
         occ, origin = render3d.voxelize_solid(V, F, pitch=pitch)
-        # paste each bone's occupancy into the shared grid by integer offset.
-        off = np.round((origin - lo) / pitch).astype(int)
-        if vol is None:
-            dims = np.ceil((hi - lo) / pitch).astype(int)[::-1] + occ.shape  # generous
-            vol = np.zeros(np.ceil((hi - lo) / pitch).astype(int)[::-1] + 4, dtype=bool)
-        oz, oy, ox = off[2], off[1], off[0]
+        occ = np.asarray(occ)
+        off = np.maximum(np.round((origin - lo) / pitch).astype(int), 0)
+        tiles.append((occ, off))
+    gz = max(int(off[2]) + occ.shape[0] for occ, off in tiles)
+    gy = max(int(off[1]) + occ.shape[1] for occ, off in tiles)
+    gx = max(int(off[0]) + occ.shape[2] for occ, off in tiles)
+    vol = np.zeros((gz, gy, gx), dtype=bool)
+    for occ, off in tiles:
+        oz, oy, ox = int(off[2]), int(off[1]), int(off[0])
         dz, dy2, dx2 = occ.shape
         vol[oz:oz + dz, oy:oy + dy2, ox:ox + dx2] |= occ
     dens = vol.astype(np.float32)
