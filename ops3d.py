@@ -46,6 +46,9 @@ import pose_graph
 import normals_orient
 import scene_flow3d
 import occupancy
+import symmetry3d
+import spherical_proj
+import motion_seg3d
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
