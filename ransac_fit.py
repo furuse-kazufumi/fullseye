@@ -389,7 +389,10 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
     q_all = np.stack([P @ e1, P @ e2], 1)
     fit = _fit_circle_2d(q_all[best_mask])
     if fit is None:                          # 縮退時は全点フォールバック
+        fallback = True
         res = circle_refit(axis)
+        if res is None:
+            raise ValueError("ransac_cylinder: 円筒フィット不能(投影円が縮退)")
         mask, axis, point3d, r = res
     else:
         c2, r = fit
