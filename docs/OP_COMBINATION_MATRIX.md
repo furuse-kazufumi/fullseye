@@ -62,6 +62,12 @@ reconstruct/curve/shape_descriptor/freeform/pose_estimation/regionprops の 15 �
 `geometry→geometry`(55, 計測の連鎖)/ `transform→*`(構造変換が全 op の入口)/ `morphology→match_localize`(前処理→照合)/
 `transform→feature_register`(点群化→疎登録)。→ **transform(変換グラフ)が全連結のハブ**、geometry が計測の終端。
 
+**第2〜5波(15 モジュール)で追加された連結パターン**: **metrics が新しい評価終端**(points/voxel/normals/pose を
+受けて measurement へ収束し、chamfer/fscore/medial_match は進化探索の fitness にそのまま転用できる)。
+**reconstruct/photometric/structured_light は depth・points への新しい入口**(点群のみの再構成、単眼複数光源の
+フォトメトリックステレオ、縞投影 profilometry の 3 経路がそれぞれ独立に transform ハブへ合流し、depth/points/mesh
+の生成源が増える)。
+
 ## 運用(今後の進め方)
 1. `ops3d.compatible(name)` で後続候補を機械列挙 → 上表の規準で F/D 採点 → 優先度順に着手。
 2. **○(接着で即)を先に刈り取る**(F5×D4 群 = #3,4,6 等)。△(新 op 要)は差別化が高いもの(#21)を選抜。
