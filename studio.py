@@ -2861,6 +2861,7 @@ def build_window(model=None):
             model.set_image(sample_images.load(name))
         except Exception as e:
             report_error("Could not load sample image", "%s\n\n%s" % (name, e)); return
+        state["fit_next"] = True
         flash("loaded sample image: " + name); show_result()
     win._load_sample_image = load_sample_image
 
