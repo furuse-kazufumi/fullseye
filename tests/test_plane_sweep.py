@@ -49,7 +49,9 @@ def _render(K, R, t, normal, d0, shape):
     denom = n @ dir_ref
     s = (d0 - n @ C) / denom
     X = C[:, None] + s[None, :] * dir_ref            # (3,N) 基準系 3D 点
-    img = _texture(X[0], X[1]).reshape(h, w)
+    # テクスチャは平面固定の関数。引数を d0 で正規化し、画像空間の空間周波数を
+    # 深度スケールに依らず一定に保つ(大スケールでのエイリアシング/多義性を排除)。
+    img = _texture(X[0] / d0, X[1] / d0).reshape(h, w)
     depth = X[2].reshape(h, w)          # 基準系での深度 Z
     return img, depth, X.T.reshape(h, w, 3)
 
