@@ -158,6 +158,13 @@ EXAMPLES = [
     {"id": "medial_topology", "task": "shape_analysis", "data": "synthetic",
      "name": "中軸骨格と位相署名で形状を区別",
      "summary": "中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。"},
+    # -- surface from contours(表現変換 2D輪郭→3D)------------------------------ #
+    {"id": "contours_to_surface", "task": "reconstruction", "data": "synthetic",
+     "name": "複数断層の2D輪郭を積層して3D曲面(メッシュ)に",
+     "summary": "各スライスの閉輪郭を塗って voxel 積層→marching cubes で曲面メッシュ化。頂点は球面に乗り体積も一致(断面一定=円柱仮定は1.5倍過大)。輪郭→領域→voxel→メッシュの表現変換。"},
+    {"id": "contours_to_terrain", "task": "reconstruction", "data": "synthetic",
+     "name": "等高線(標高付き輪郭)から地形の高さ場(DEM)を復元",
+     "summary": "等高線点(x,y,標高)を fit_poly_surface でサーフェス当てはめし DEM 格子へ展開。線の間も内挿し全域RMSEが最近傍等高線の階段近似を桁違いに下回る(GIS/測量)。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
