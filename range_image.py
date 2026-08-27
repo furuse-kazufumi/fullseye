@@ -50,13 +50,30 @@ def normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_came
 def occlusion_edges(depth, rel_thresh=0.05):
     """深度の不連続(前景/背景境界 = 遮蔽エッジ)を検出。→ bool HxW。
 
-    近傍との深度差が rel_thresh*median_depth を超える画素を境界とする(range image 特有の边缘)。
+    遮蔽エッジは深度の**不連続(step)**であって傾斜(slope)ではない。一様な傾斜面は
+    連続で遮蔽を含まないため flag してはならない。一階勾配(=深度/画素)は傾斜そのもので、
+    段差か斜面かを区別できない(かつ絶対深度の割合と比較するのは次元不整合)。
+
+    そこで軸ごとの**二階差分(離散ラプラシアン相当)** ``d[i+1]-2*d[i]+d[i-1]`` を使う。
+    一様傾斜(深度が近傍で線形)なら二階差分 ≈ 0、fronto-parallel な段差では両側で大きな値。
+    これを局所深度で正規化した相対的な深度ジャンプが rel_thresh を超える画素を境界とする。
     """
     d = np.asarray(depth, float)
-    gy, gx = np.gradient(d)
-    grad = np.hypot(gx, gy)
-    med = np.median(d[d > 0]) if np.any(d > 0) else 1.0
-    return grad > (rel_thresh * med)
+    if d.ndim != 2:
+        raise ValueError(f"occlusion_edges expects a 2D depth image, got shape {d.shape}")
+    # 軸ごとの二階差分。境界は中心差分が取れないので 0(=傾斜/平坦なら非エッジ)。
+    lap_y = np.zeros_like(d)
+    lap_x = np.zeros_like(d)
+    lap_y[1:-1, :] = d[2:, :] - 2.0 * d[1:-1, :] + d[:-2, :]
+    lap_x[:, 1:-1] = d[:, 2:] - 2.0 * d[:, 1:-1] + d[:, :-2]
+    # いずれかの軸方向の不連続を拾う(和にすると角で符号相殺し得るため軸別の絶対値の最大)。
+    jump = np.maximum(np.abs(lap_x), np.abs(lap_y))
+    # 局所深度で正規化(相対的な深度ジャンプ)。無効/ゼロ深度は中央値でフォールバック。
+    valid = np.isfinite(d) & (d > 0)
+    med = np.median(d[valid]) if np.any(valid) else 1.0
+    denom = np.where(valid & (np.abs(d) > 1e-12), np.abs(d), med)
+    rel_jump = jump / denom
+    return np.isfinite(rel_jump) & (rel_jump > rel_thresh)
 
 
 def bearing_angle_image(depth, direction="down"):
