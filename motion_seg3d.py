@@ -34,6 +34,16 @@ from registration import kabsch, apply_transform
 
 __all__ = ["estimate_flow", "fit_rigid", "segment_rigid_motions"]
 
+# 有意性ゲート: 採用する剛体の inlier フロー残差 **中央値** が thresh のこの割合を
+# 下回ることを要求する(scale-relative — 絶対 epsilon ではなく thresh との比)。
+# 根拠: 真の剛体は全 inlier が同一 (R, t) に厳密従うため残差 ≈ 0(<< thresh)。対して
+# 無相関/ノイズ点群に 6DOF 剛体を当てた「偶然適合」の inlier は、単に半径 thresh の
+# 3-D 許容球へ落ちただけなので残差がその球を満たす — 一様充填の中央値半径は
+# 0.5**(1/3)*thresh ≈ 0.79*thresh、count 最大化バイアス下でも実測 ≈ 0.57-0.65*thresh。
+# 真(≈0)と偶然(≈0.6)の広いギャップの中央に 1/3 を置く。inlier 割合ベースの null 検定は
+# 一様並進の物体を偽陽性排除で誤って弾く(並進フローは permute しても残るため)ので採らない。
+_SIGNIF_MEDIAN_FRAC = 1.0 / 3.0
+
 
 def _as_points(a, name: str) -> np.ndarray:
     """(N, 3) float64 に検証変換(不正形状・非有限は fail-closed で ValueError)。"""
