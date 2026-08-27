@@ -121,6 +121,14 @@ def main():
     for name, vol in canon.items():
         validate_volume(f"canon/{name}", vol, n)
 
+    # 記述子そのものを一度明示的に計算して形と中身を確認(この (nradii,L+1) 行列を
+    # match_sh_descriptor が内部で作り、正規化コサインで照合する = 2 op の連鎖)。
+    desc_sphere = X.sh_descriptor(canon["sphere"], L=8, nradii=12)
+    if desc_sphere.shape != (12, 9):        # (nradii, L+1)
+        raise ValueError(f"sh_descriptor の返り形が異常: {desc_sphere.shape}")
+    print(f"sh_descriptor(sphere) 形 = {desc_sphere.shape} (半径 x 帯域), "
+          f"帯域エネルギー総和 = {float(desc_sphere.sum()):.4f}")
+
     # --- 2) 各形状を大きく回転したコピー = クエリ(向き未知の 3D スキャン相当) ---
     query_angles = {
         "sphere": (37.0, 24.0, 51.0),
