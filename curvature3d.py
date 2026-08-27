@@ -73,17 +73,35 @@ def _principal_at(local, orient=None):
     return k1, k2, normal
 
 
-def _curvatures(points, k):
-    """全点の (k1, k2, normals)。→ (N,), (N,), (N,3)。"""
+def _validate_normals(normals, n):
+    """向き付き参照法線を検証 → (n,3) float。fail-closed(不正形状/非有限/ゼロ長は ValueError)。"""
+    nrm = np.asarray(normals, float)
+    if nrm.shape != (n, 3):
+        raise ValueError(f"normals must have shape ({n}, 3), got {nrm.shape}")
+    if not np.all(np.isfinite(nrm)):
+        raise ValueError("normals must be finite")
+    if np.any(np.linalg.norm(nrm, axis=1) < 1e-12):
+        raise ValueError("normals must be nonzero (each row needs an orientation)")
+    return nrm
+
+
+def _curvatures(points, k, normals=None):
+    """全点の (k1, k2, normals)。→ (N,), (N,), (N,3)。
+
+    normals(向き付き参照法線, (N,3))を渡すと各点の局所法線をそれへ整合させ凹/凸符号を正しく出す。
+    """
     p = np.asarray(points, float)
-    idx = _knn_idx(p, k)
     n = len(p)
+    if normals is not None:
+        normals = _validate_normals(normals, n)
+    idx = _knn_idx(p, k)
     K1 = np.zeros(n)
     K2 = np.zeros(n)
     NRM = np.zeros((n, 3))
     for i in range(n):
         local = p[idx[i]] - p[i]     # クエリ点を原点に
-        K1[i], K2[i], NRM[i] = _principal_at(local)
+        orient = None if normals is None else normals[i]
+        K1[i], K2[i], NRM[i] = _principal_at(local, orient)
     return K1, K2, NRM
 
 
