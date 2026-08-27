@@ -1922,3 +1922,43 @@ def test_stage_editing_gestures_and_empty_hint():
     assert win._actions["focus_search"] in win.actions()          # app-wide
     for k in ("duplicate_stage", "move_top", "move_bottom"):
         assert win._actions[k] in win._stage_list.actions()       # scoped to pipeline list
+
+
+def test_window_title_and_recent_files(tmp_path):
+    """Usability: the title bar names the current pipeline/image with an unsaved-changes
+    star, and File > Open Recent (QSettings-backed) remembers loaded/saved files."""
+    import io, json
+    import numpy as np
+    from PySide6 import QtWidgets, QtCore
+    import imgio, api
+    _app()
+    S = QtCore.QSettings("Fullseye", "Studio")
+    saved = S.value("recent_files", []); S.setValue("recent_files", [])
+    try:
+        win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+        assert win.windowTitle() == "untitled — Fullseye Studio"
+        op = next(o for i in range(win._op_list.count())
+                  for o in [win._op_list.item(i).data(QtCore.Qt.UserRole)]
+                  if isinstance(o, str) and api.find_op(o) is not None)
+        imgp = str(tmp_path / "cell.png")
+        imgio.save(imgp, (np.arange(32 * 32).reshape(32, 32) % 255).astype(np.uint8))
+        pj = str(tmp_path / "myflow.json")
+        io.open(pj, "w", encoding="utf-8").write(json.dumps({"stages": [[op, 0.5, 0.5]]}))
+
+        win.drop_handler([imgp])
+        assert "cell.png" in win.windowTitle()
+        win.drop_handler([pj])
+        t = win.windowTitle()
+        assert t.startswith("myflow.json") and "cell.png" in t and "*" not in t.split("—")[0]
+
+        win._stage_list.setCurrentRow(0)
+        win._actions["duplicate_stage"].trigger()          # an edit -> unsaved star
+        assert win.windowTitle().startswith("myflow.json*")
+
+        labels = [a.text() for a in win._recent_menu.actions()]
+        assert any("myflow.json" in l for l in labels) and any("cell.png" in l for l in labels)
+        assert "Clear recent" in labels
+        next(a for a in win._recent_menu.actions() if a.text() == "Clear recent").trigger()
+        assert win._recent_menu.actions()[0].text() == "(no recent files)"
+    finally:
+        S.setValue("recent_files", saved)

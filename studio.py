@@ -1632,6 +1632,7 @@ def build_window(model=None):
     m.addAction(act_open_img); m.addAction(act_demo)          # image in
     m.addSeparator()
     m.addAction(act_open_pipe); m.addAction(act_save_pipe); m.addAction(act_export)  # pipeline docs
+    win._recent_menu = _menu(m, "Open Recent", "recent")     # populated by _rebuild_recent_menu()
     m.addAction(act_samples)                                  # sample pipelines + code gallery
     sample_img_menu = _menu(m, "Sample images", "sample_images")   # collected license-clean images
     try:
@@ -2195,7 +2196,7 @@ def build_window(model=None):
     win._reset_layout = reset_layout
     state = {"result": None, "raw": None, "view_raw": False, "reordering": False,
              "dirty": False, "code_dirty": False, "errors": [], "perception_error": None,
-             "renders": 0,
+             "renders": 0, "image_path": None, "pipe_path": None,
              # HDevelop dev_update_{window,var,pc,time}: whether the graphics window,
              # variable window, execution cursor and per-line timings auto-update during
              # editing/execution. Turn off to make many edits (or a heavy run) without the
@@ -2220,6 +2221,17 @@ def build_window(model=None):
     def mark_dirty():
         """Record that the in-memory pipeline no longer matches anything on disk."""
         state["dirty"] = True
+        _set_title()
+
+    def _set_title():
+        """Window title = <pipeline>* — <image> — Fullseye Studio (star = unsaved)."""
+        pp = state.get("pipe_path"); ip = state.get("image_path")
+        star = "*" if (state.get("dirty") and model.stages) else ""
+        seg = (os.path.basename(pp) if pp else "untitled") + star
+        if ip:
+            seg += " — " + os.path.basename(ip)
+        win.setWindowTitle(seg + " — Fullseye Studio")
+    win._set_title = _set_title
 
     def report_error(title, text):
         """Surface a recoverable failure: status bar + a modal via ERROR_HOOK.
@@ -2714,6 +2726,8 @@ def build_window(model=None):
         except Exception as e:
             report_error("Could not open image", "%s\n\n%s" % (path, e)); return False
         model.set_image(arr)
+        state["image_path"] = os.path.abspath(path)
+        _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
         show_result()
         return True
@@ -2775,6 +2789,7 @@ def build_window(model=None):
             return
         push_undo()
         model.stages = []
+        state["pipe_path"] = None
         mark_dirty()
         refresh_stage_list(); show_result()
         flash("pipeline cleared")
@@ -4206,6 +4221,8 @@ def build_window(model=None):
         except Exception as e:
             report_error("Could not save pipeline", "%s\n\n%s" % (path, e)); return
         state["dirty"] = False                                # now matches a file on disk
+        state["pipe_path"] = os.path.abspath(path)
+        _push_recent(path); _set_title()
         flash("saved " + os.path.basename(path))
 
     def _open_pipe_path(path):
@@ -4225,8 +4242,10 @@ def build_window(model=None):
             # load_dict validates into a temporary list before assigning, so the
             # pipeline currently on screen survives a bad file untouched.
             report_error("Could not open pipeline", "%s\n\n%s" % (path, e)); return
-        mark_dirty()
+        state["pipe_path"] = os.path.abspath(path)
+        state["dirty"] = False                            # freshly loaded == matches the file
         refresh_stage_list(select=len(model.stages) - 1); show_result()
+        _push_recent(path); _set_title()
         flash("loaded " + os.path.basename(path))
 
     def open_pipe():
@@ -4248,6 +4267,46 @@ def build_window(model=None):
             flash("drop: unsupported file '%s' — drop an image or a .json pipeline"
                   % os.path.basename(f))
     win.drop_handler = _handle_drop
+
+    # -- recent files (QSettings-backed): File > Open Recent ------------------- #
+    _RECENT_KEY = "recent_files"
+    _RECENT_MAX = 10
+
+    def _recent_paths():
+        v = QtCore.QSettings("Fullseye", "Studio").value(_RECENT_KEY, [])
+        return [x for x in (v or []) if isinstance(x, str)]
+
+    def _save_recent(paths):
+        QtCore.QSettings("Fullseye", "Studio").setValue(_RECENT_KEY, paths[:_RECENT_MAX])
+        _rebuild_recent_menu()
+
+    def _push_recent(path):
+        ap = os.path.abspath(path)
+        keep = [x for x in _recent_paths() if os.path.normcase(x) != os.path.normcase(ap)]
+        _save_recent([ap] + keep)
+
+    def _open_recent(path):
+        if not os.path.exists(path):
+            flash("recent file no longer exists: " + os.path.basename(path))
+            _save_recent([x for x in _recent_paths()
+                          if os.path.normcase(x) != os.path.normcase(os.path.abspath(path))])
+            return
+        _handle_drop([path])
+
+    def _rebuild_recent_menu():
+        menu = getattr(win, "_recent_menu", None)
+        if menu is None:
+            return
+        menu.clear()
+        paths = _recent_paths()
+        if not paths:
+            a = menu.addAction("(no recent files)"); a.setEnabled(False); return
+        for pth in paths:
+            a = menu.addAction(os.path.basename(pth)); a.setToolTip(pth)
+            a.triggered.connect(lambda _=False, x=pth: _open_recent(x))
+        menu.addSeparator()
+        menu.addAction("Clear recent").triggered.connect(lambda: _save_recent([]))
+    win._rebuild_recent_menu = _rebuild_recent_menu
 
     b_savep.clicked.connect(save_pipe); b_openp.clicked.connect(open_pipe)
     act_save_pipe.triggered.connect(save_pipe); act_open_pipe.triggered.connect(open_pipe)
@@ -4567,6 +4626,8 @@ def build_window(model=None):
     except Exception:
         pass
     _rebuild_layouts_menu()
+    _rebuild_recent_menu()
+    _set_title()
 
     # -- tooltip / help localisation (en / ja / zh) --------------------------- #
     win._tt_en = {w: w.toolTip() for w in win.findChildren(QtWidgets.QWidget) if w.toolTip()}
