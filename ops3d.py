@@ -42,6 +42,10 @@ import tsdf_fusion
 import pcl_augment
 import gicp
 import segment3d
+import pose_graph
+import normals_orient
+import scene_flow3d
+import occupancy
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
