@@ -116,6 +116,11 @@ class PipelineModel:
     def move_stage(self, i, j):
         self.stages.insert(j, self.stages.pop(i))
 
+    def duplicate_stage(self, i):
+        """Insert a copy of stage i right after it; return the new stage's index."""
+        self.stages.insert(i + 1, list(self.stages[i]))
+        return i + 1
+
     def set_knobs(self, i, a=None, b=None):
         if a is not None:
             self.stages[i][1] = float(a)
@@ -1580,6 +1585,10 @@ def build_window(model=None):
     act_up = _act("Move stage up", "Ctrl+Up", "Move the selected stage earlier")
     act_down = _act("Move stage down", "Ctrl+Down", "Move the selected stage later")
     act_clear = _act("Clear pipeline", "Ctrl+Shift+Backspace", "Remove all stages")
+    act_dup = _act("Duplicate stage", "Ctrl+D", "Insert a copy of the selected stage after it")
+    act_top = _act("Move stage to top", "Ctrl+Shift+Up", "Move the selected stage to the front")
+    act_bottom = _act("Move stage to bottom", "Ctrl+Shift+Down", "Move the selected stage to the end")
+    act_focus_search = _act("Focus operator search", "Ctrl+F", "Jump to the operator search box")
     act_undo = _act("Undo", "Ctrl+Z", "Undo the last pipeline edit")
     act_redo = _act("Redo", "Ctrl+Shift+Z", "Redo the last undone pipeline edit")
     act_undo.setEnabled(False); act_redo.setEnabled(False)
@@ -1646,7 +1655,9 @@ def build_window(model=None):
     m = _menu(mb, "&Edit", "edit")
     m.addAction(act_undo); m.addAction(act_redo)
     m.addSeparator()
-    m.addAction(act_remove); m.addAction(act_up); m.addAction(act_down)
+    m.addAction(act_remove); m.addAction(act_dup)
+    m.addAction(act_up); m.addAction(act_down)
+    m.addAction(act_top); m.addAction(act_bottom)
     m.addSeparator(); m.addAction(act_clear)
     menu_view = _menu(mb, "&View", "view")
     menu_view.addAction(act_zin); menu_view.addAction(act_zout)
@@ -1922,7 +1933,7 @@ def build_window(model=None):
     prow = QtWidgets.QHBoxLayout()
     prow.addWidget(b_loadb); prow.addWidget(percep_mode, 1); prow.addWidget(b_percep)
     dlay.addLayout(drow); dlay.addLayout(prow)
-    rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION (v14)", dlay))
+    rv.addWidget(_group(QtWidgets, "DISPLAY & PERCEPTION", dlay))
 
     hist_view = QtWidgets.QLabel(); hist_view.setFixedHeight(64)
     hist_view.setStyleSheet("background:#12141b; border:1px solid #262b38; border-radius:6px;")
@@ -2262,6 +2273,12 @@ def build_window(model=None):
                 it.setForeground(QtGui.QColor(AMBER))
                 it.setToolTip("runtime error: " + truncate(st.get("message", "")))
             stage_list.addItem(it)
+        if stage_list.count() == 0:                     # onboarding: guide the empty state
+            hint = QtWidgets.QListWidgetItem(
+                "— empty — double-click an operator, or drop an image/.json here, to start —")
+            hint.setFlags(QtCore.Qt.NoItemFlags)        # non-selectable hint
+            hint.setForeground(QtGui.QColor(MUTED))
+            stage_list.addItem(hint)
         if select is not None and 0 <= select < len(model.stages):
             stage_list.setCurrentRow(select)           # still blocked -> no extra render
         stage_list.blockSignals(False)
@@ -2670,6 +2687,23 @@ def build_window(model=None):
     def move(delta):
         i = selected_index(); j = i + delta
         if 0 <= i < len(model.stages) and 0 <= j < len(model.stages):
+            push_undo()
+            model.move_stage(i, j); mark_dirty()
+            refresh_stage_list(select=j); show_result()
+
+    def duplicate_stage_ui():
+        i = selected_index()
+        if 0 <= i < len(model.stages):
+            push_undo()
+            j = model.duplicate_stage(i); mark_dirty()
+            refresh_stage_list(select=j); show_result()
+
+    def move_to_end(to_top):
+        i = selected_index(); n = len(model.stages)
+        if not (0 <= i < n):
+            return
+        j = 0 if to_top else n - 1
+        if j != i:
             push_undo()
             model.move_stage(i, j); mark_dirty()
             refresh_stage_list(select=j); show_result()
@@ -3349,6 +3383,10 @@ def build_window(model=None):
     act_remove.triggered.connect(remove)
     act_up.triggered.connect(lambda: move(-1)); act_down.triggered.connect(lambda: move(1))
     act_clear.triggered.connect(clear_pipe)
+    act_dup.triggered.connect(duplicate_stage_ui)
+    act_top.triggered.connect(lambda: move_to_end(True))
+    act_bottom.triggered.connect(lambda: move_to_end(False))
+    act_focus_search.triggered.connect(lambda: (search.setFocus(), search.selectAll()))
     act_undo.triggered.connect(undo); act_redo.triggered.connect(redo)
     act_zin.triggered.connect(lambda: view.zoom(1.25)); act_zout.triggered.connect(lambda: view.zoom(0.8))
     act_fit.triggered.connect(view.fit); act_11.triggered.connect(view.reset_zoom)
@@ -4228,7 +4266,7 @@ def build_window(model=None):
     # the operator list. Binding them to the pipeline list with
     # WidgetWithChildrenShortcut keeps the *menu items*, the toolbar and the
     # buttons working exactly as before — only the bare key press is now scoped.
-    for _a in (act_remove, act_up, act_down, act_step, act_reset):
+    for _a in (act_remove, act_dup, act_up, act_down, act_top, act_bottom, act_step, act_reset):
         _a.setShortcutContext(QtCore.Qt.WidgetWithChildrenShortcut)
         stage_list.addAction(_a)
 
@@ -4278,7 +4316,10 @@ def build_window(model=None):
         "run_all": act_runall, "holdout": act_holdout, "palette": act_palette, "shortcuts": act_shortcuts,
         "op_reference": act_op_help, "samples": act_samples, "about": act_about,
         "dbg_run": act_dbg_run, "dbg_step": act_dbg_step, "dbg_reset": act_dbg_reset,
+        "duplicate_stage": act_dup, "move_top": act_top, "move_bottom": act_bottom,
+        "focus_search": act_focus_search,
     }
+    win.addAction(act_focus_search)          # app-wide Ctrl+F -> operator search
     # -- multi-monitor: pop every tool panel out as its own top-level window --- #
     def float_all_panels(floating=True):
         for d in win._docks.values():

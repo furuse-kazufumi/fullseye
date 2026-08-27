@@ -1892,3 +1892,33 @@ def test_drag_and_drop_loads_image_and_pipeline(tmp_path):
                             QtCore.Qt.LeftButton, QtCore.Qt.NoModifier)
     win.dropEvent(drop)
     assert model.image.shape == (32, 32)
+
+
+def test_stage_editing_gestures_and_empty_hint():
+    """Usability: duplicate-stage + move-to-top/bottom editing gestures, an app-wide
+    Ctrl+F focus-search shortcut, and an onboarding hint row on the empty pipeline."""
+    from PySide6 import QtCore
+    import api
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    # empty state shows a non-selectable onboarding hint
+    sl = win._stage_list
+    assert sl.count() == 1 and "empty" in sl.item(0).text().lower()
+    assert not (sl.item(0).flags() & QtCore.Qt.ItemIsSelectable)
+    # model duplicate inserts a copy right after
+    ops = []
+    for i in range(win._op_list.count()):
+        n = win._op_list.item(i).data(QtCore.Qt.UserRole)
+        if isinstance(n, str) and api.find_op(n) is not None:
+            ops.append(n)
+        if len(ops) == 3:
+            break
+    for op in ops:
+        model.add_stage(op)
+    j = model.duplicate_stage(1)
+    assert j == 2 and model.stages[1][0] == model.stages[2][0] == ops[1]
+    # actions exist, are registered, and the stage-edit ones are scoped to the list
+    assert win._actions["focus_search"].shortcut().toString() == "Ctrl+F"
+    assert win._actions["focus_search"] in win.actions()          # app-wide
+    for k in ("duplicate_stage", "move_top", "move_bottom"):
+        assert win._actions[k] in win._stage_list.actions()       # scoped to pipeline list
