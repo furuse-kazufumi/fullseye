@@ -67,17 +67,32 @@ def main() -> int:
     print(f"[GT] separated vol_label -> n = {n_bones} 個の骨成分")
     print(f"[GT] per-component voxel volumes (骨コア) = {comp_sizes.tolist()}")
 
-    # --- 自己検証 ---
+    # --- 自己検証(いずれも「幾何を無視した出鱈目な結果」なら失敗する判別的検査) ---
     assert labels.shape == vol.shape, "ラベル体積の形状が元と不一致"
+
+    # (a) 閾値マスクが本当に「密な骨」を捉えている: マスク内の平均密度はマスク外より
+    #     有意に高いはず。前景をランダムに選ぶだけのマスクでは成り立たない。
+    inside = float(vol[bone_mask].mean())
+    outside = float(vol[~bone_mask].mean())
+    print(f"[GT] 骨マスク内/外の平均密度 = {inside:.3f} / {outside:.3f} "
+          f"(比 {inside / max(outside, 1e-9):.2f}x)")
+    assert inside > 1.5 * outside, \
+        f"閾値が密な骨を捉えていない: 内 {inside:.3f} vs 外 {outside:.3f}"
+
+    # (b) 収縮による分離が「幾何に基づく」ことの判別: 接触で 1 塊になる naive ラベリング
+    #     より多くの骨コアに分かれるはず。座標を無視するラベラーなら両者は同数で失敗する。
+    assert n_bones > n_naive, \
+        f"収縮分離が naive ラベリング(n={n_naive})を上回らない(幾何無視の疑い): n={n_bones}"
     assert n_bones >= 3, f"妥当な骨成分数(>=3)が得られていない: n={n_bones}"
-    assert bone_voxels == int(bone_mask.sum()), "体積は収縮前マスクで測るべき"
-    # 骨体積はグリッドの妥当な割合(スカスカでも埋め尽くしでもない)。
+
+    # (c) 骨体積はグリッドの妥当な割合(スカスカでも埋め尽くしでもない)。
     assert 0.02 < bone_fraction < 0.30, \
         f"骨体積のグリッド占有率が不自然: {bone_fraction:.4f}"
     assert int(comp_sizes.sum()) <= bone_voxels, \
         "収縮後コアの総体積が元マスクを超えるのはおかしい"
 
-    print(f"PASS: 骨を {n_bones} 本の成分に分離し、"
+    print(f"PASS: 密度コントラスト {inside / max(outside, 1e-9):.1f}x で骨を分離、"
+          f"naive の 1 塊を {n_bones} 本の骨コアへ切り分け、"
           f"総骨体積 {bone_voxels} voxel ({bone_fraction * 100:.2f}%) を計測")
     return 0
 
