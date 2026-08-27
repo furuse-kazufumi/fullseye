@@ -205,13 +205,16 @@ def mutate(chain, rng, task):
     return tuple(chain)
 
 
-def crossover(a, b, rng):
-    """型が一致する切断点で 2 chain をスプライス(このタスクは全点 points なので任意点)。→ tuple。"""
+def crossover(a, b, rng, max_len=5):
+    """型が一致する切断点で 2 chain をスプライス(このタスクは全点 points なので任意点)。→ tuple。
+
+    max_len で切り詰めて genome の肥大化(bloat、GP 定番の問題)を抑える。
+    """
     if not a or not b:
-        return a or b
+        return (a or b)[:max_len]
     ca = int(rng.integers(len(a) + 1))
     cb = int(rng.integers(len(b) + 1))
-    return tuple(list(a[:ca]) + list(b[cb:]))
+    return tuple((list(a[:ca]) + list(b[cb:]))[:max_len])
 
 
 # ---- 進化ループ + baseline --------------------------------------------------------------
