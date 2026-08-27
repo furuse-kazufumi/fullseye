@@ -94,7 +94,7 @@ def main():
     # --- 1) tps_fit: 既知のなめらかな曲げTPSを「制御点対応」から作る ---
     #   制御点=粗い格子。その平らな位置(src)→ 解析的に曲げた位置(dst)。
     ctrl_src = flat_sheet(nx=4, ny=4, size=size)       # 制御点 16 点(>=4 必須)
-    ctrl_dst = analytic_bend(ctrl_src, size=size, amp=3.0)
+    ctrl_dst = analytic_bend(ctrl_src, size=size, amp=1.5)
     bend_model = tps_fit(ctrl_src, ctrl_dst, lam=0.0)  # λ=0 → 制御点で厳密内挿
 
     # 制御点上で tps_warp が厳密に写ることの確認(TPS 内挿性)。
@@ -103,8 +103,10 @@ def main():
 
     # --- 2) tps_warp: 曲げをテンプレート全点へ適用 → clean な標的、+ノイズ ---
     clean_bent = tps_warp(bend_model, template)        # ノイズ無しの真の対応先
-    scale = float(np.linalg.norm(clean_bent.max(0) - clean_bent.min(0)))  # 対角長
-    noise_sigma = 0.01 * scale                         # センサノイズ = スケールの1%
+    # ノイズはカード自体の大きさ(平らなテンプレートの対角長)に対する相対量とする。
+    # 曲げ量で床が動かないよう、曲げ後ではなく元のカード寸法を基準にする。
+    scale = float(np.linalg.norm(template.max(0) - template.min(0)))  # カード対角長 ~14.1
+    noise_sigma = 0.005 * scale                        # センサノイズ = カード寸法の0.5%
     target = clean_bent + rng.normal(0.0, noise_sigma, clean_bent.shape)
 
     # ノイズ床(3Dガウスの距離の期待値 ≈ σ·1.596、χ分布 df=3 の平均)。

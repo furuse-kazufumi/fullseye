@@ -70,8 +70,13 @@ def main():
     height_range = float(true_height.max() - true_height.min())
 
     # --- 2) synthesize_fringes: 既知高さ -> 位相シフト縞画像 N 枚(対象と参照) ---
-    obj_images = synthesize_fringes(true_height, n_steps=4, freq=freq, phase_gain=phase_gain)
-    ref_images = synthesize_fringes(flat, n_steps=4, freq=freq, phase_gain=phase_gain)
+    #     わずかなセンサノイズを載せる(無ノイズだと実質厳密で「サンプル」として不自然)。
+    #     対象と参照でシードを変え、独立ノイズにする。
+    noise = 0.01
+    obj_images = synthesize_fringes(true_height, n_steps=4, freq=freq,
+                                    phase_gain=phase_gain, noise=noise, seed=0)
+    ref_images = synthesize_fringes(flat, n_steps=4, freq=freq,
+                                    phase_gain=phase_gain, noise=noise, seed=1)
 
     # --- 3) wrapped_phase: N 枚 -> 巻き込み位相 (-π,π](搬送波のせいで 2π 跳びだらけ) ---
     wrapped_obj = wrapped_phase(obj_images)
