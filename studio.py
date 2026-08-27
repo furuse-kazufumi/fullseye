@@ -1901,9 +1901,17 @@ def build_window(model=None):
     sa.setToolTip("Knob a (0..1) — meaning depends on the selected op")
     sb.setToolTip("Knob b (0..1) — meaning depends on the selected op")
     la = QtWidgets.QLabel("a: 0.50"); lb = QtWidgets.QLabel("b: 0.50")
+    spin_a = QtWidgets.QDoubleSpinBox(); spin_a.setRange(0.0, 1.0)
+    spin_a.setSingleStep(0.01); spin_a.setDecimals(3); spin_a.setEnabled(False)
+    spin_a.setToolTip("Knob a — type an exact value (0..1)")
+    spin_b = QtWidgets.QDoubleSpinBox(); spin_b.setRange(0.0, 1.0)
+    spin_b.setSingleStep(0.01); spin_b.setDecimals(3); spin_b.setEnabled(False)
+    spin_b.setToolTip("Knob b — type an exact value (0..1)")
+    _ra = QtWidgets.QHBoxLayout(); _ra.addWidget(sa, 1); _ra.addWidget(spin_a)
+    _rb = QtWidgets.QHBoxLayout(); _rb.addWidget(sb, 1); _rb.addWidget(spin_b)
     klay = QtWidgets.QVBoxLayout()
-    klay.addWidget(stage_detail); klay.addWidget(la); klay.addWidget(sa)
-    klay.addWidget(lb); klay.addWidget(sb)
+    klay.addWidget(stage_detail); klay.addWidget(la); klay.addLayout(_ra)
+    klay.addWidget(lb); klay.addLayout(_rb)
     mv.addWidget(_group(QtWidgets, "SELECTED STAGE · KNOBS", klay))
 
     b_export = _tbtn("export", "Export this pipeline as an --ops string and Python (Ctrl+E)")
@@ -2483,11 +2491,15 @@ def build_window(model=None):
         if valid:
             state["view_raw"] = False                 # selecting a stage leaves the raw view
         sa.setEnabled(valid); sb.setEnabled(valid)
+        spin_a.setEnabled(valid); spin_b.setEnabled(valid)
         if valid:
             name, a, b = model.stages[i]
             sa.blockSignals(True); sb.blockSignals(True)
             sa.setValue(int(a * 100)); sb.setValue(int(b * 100))
             sa.blockSignals(False); sb.blockSignals(False)
+            spin_a.blockSignals(True); spin_b.blockSignals(True)
+            spin_a.setValue(a); spin_b.setValue(b)
+            spin_a.blockSignals(False); spin_b.blockSignals(False)
             row = _op_row(name)
             a_role, b_role = op_arg_roles(name)
             la.setText("a: %.2f%s" % (a, ("  ·  " + a_role) if a_role else ""))
@@ -2518,6 +2530,26 @@ def build_window(model=None):
                 win._knob_drag_base = [list(st) for st in model.stages]
             model.set_knobs(i, a=sa.value() / 100.0, b=sb.value() / 100.0)
             la.setText(f"a: {sa.value()/100:.2f}"); lb.setText(f"b: {sb.value()/100:.2f}")
+            spin_a.blockSignals(True); spin_a.setValue(sa.value() / 100.0); spin_a.blockSignals(False)
+            spin_b.blockSignals(True); spin_b.setValue(sb.value() / 100.0); spin_b.blockSignals(False)
+            mark_dirty()
+            show_result()
+            knob_timer.start(KNOB_DEBOUNCE_MS)
+
+    def on_spin(_=None):
+        """Precise numeric knob entry: the spin boxes are the exact source and the
+        coarse sliders follow (without re-triggering on_knob). Shares on_knob's
+        drag-coalescing undo + debounced-summary tail."""
+        i = selected_index()
+        if 0 <= i < len(model.stages):
+            a, b = spin_a.value(), spin_b.value()
+            sa.blockSignals(True); sb.blockSignals(True)
+            sa.setValue(int(round(a * 100))); sb.setValue(int(round(b * 100)))
+            sa.blockSignals(False); sb.blockSignals(False)
+            if getattr(win, "_knob_drag_base", None) is None:
+                win._knob_drag_base = [list(st) for st in model.stages]
+            model.set_knobs(i, a=a, b=b)
+            la.setText(f"a: {a:.3f}"); lb.setText(f"b: {b:.3f}")
             mark_dirty()
             show_result()
             knob_timer.start(KNOB_DEBOUNCE_MS)
@@ -3432,6 +3464,7 @@ def build_window(model=None):
     samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
     sa.valueChanged.connect(on_knob); sb.valueChanged.connect(on_knob)
+    spin_a.valueChanged.connect(on_spin); spin_b.valueChanged.connect(on_spin)
     display.currentIndexChanged.connect(lambda _=None: show_result())
     # buttons
     b_rm.clicked.connect(remove); b_up.clicked.connect(lambda: move(-1)); b_dn.clicked.connect(lambda: move(1))

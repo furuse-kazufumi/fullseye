@@ -2004,3 +2004,35 @@ def test_status_info_help_copy_and_export_buttons():
          if b.text() == "Copy").click()
     clip = QtWidgets.QApplication.clipboard().text()
     assert "--ops" in clip and "def pipeline" in clip
+
+
+def test_precise_numeric_knob_entry(tmp_path):
+    """Usability batch4: each selected stage exposes two spin boxes for exact knob entry.
+    The spin box is the precise source (the coarse 0.01 slider would round); typing 0.375
+    keeps 0.375 in the model, survives reselection, and slider drags sync the spin box back."""
+    import io, json
+    from PySide6 import QtWidgets, QtCore
+    import api
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    op = next(o for i in range(win._op_list.count())
+              for o in [win._op_list.item(i).data(QtCore.Qt.UserRole)]
+              if isinstance(o, str) and api.find_op(o) is not None)
+    pj = str(tmp_path / "p.json")
+    io.open(pj, "w", encoding="utf-8").write(
+        json.dumps({"stages": [[op, 0.5, 0.5], [op, 0.5, 0.5]]}))
+    win.drop_handler([pj])
+    sl = win._stage_list
+    sl.setCurrentRow(0)
+    spins = [w for w in win.findChildren(QtWidgets.QDoubleSpinBox)
+             if "type an exact value" in (w.toolTip() or "")]
+    assert len(spins) == 2 and all(w.isEnabled() for w in spins)
+    sa_spin = next(w for w in spins if "Knob a" in w.toolTip())
+    sa_spin.setValue(0.375)
+    assert abs(model.stages[0][1] - 0.375) < 1e-9          # precise, not rounded to 0.38
+    sl.setCurrentRow(1); sl.setCurrentRow(0)
+    assert abs(sa_spin.value() - 0.375) < 1e-9             # survives reselection
+    # a coarse slider drag flows back into the spin box (two-way, no signal loop)
+    sldr = next(w for w in win.findChildren(QtWidgets.QSlider) if w.isEnabled())
+    sldr.setValue(70)
+    assert abs(sa_spin.value() - 0.70) < 1e-9
