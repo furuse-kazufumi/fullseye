@@ -131,17 +131,39 @@ def gaussian_curvature(points, k=25):
     return K1 * K2
 
 
-def shape_index(points, k=25):
-    """Koenderink の shape index s∈[-1,1](凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。"""
-    K1, K2, _ = _curvatures(points, k)
-    diff = K1 - K2
+def shape_index(points, k=25, normals=None):
+    """Koenderink の shape index s∈[-1,1](凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。
+
+    umbilic/平面判定は**曲率スケール相対**(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は
+    符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。
+
+    normals(向き付き参照法線, (N,3))未指定時は開面の凹/凸符号が不定(凸マグニチュードで報告)。
+    向き付き法線を渡すと大域向きに整合し正しい符号(凹球=cup → -1)を出す。
+    """
+    K1, K2, _ = _curvatures(points, k, normals)
     ssum = K1 + K2
+    diff = K1 - K2                        # k1>=k2 なので diff>=0
+    mag = np.abs(K1) + np.abs(K2)         # 局所曲率の大きさ
+    curv = np.sqrt((K1 ** 2 + K2 ** 2) / 2.0)  # curvedness(各点)
+    scale = float(np.median(curv))        # データ全体の曲率スケール(robust)
+
+    rel_umbilic = 1e-2                    # |k1-k2| がこの割合未満 → 臍点扱い(符号のみ)
+    rel_flat = 1e-3                       # curvedness がスケールのこの割合未満 → 平面(s=0)
+
     s = np.zeros_like(K1)
-    flat = np.abs(diff) < 1e-9
-    s[~flat] = (2.0 / np.pi) * np.arctan(ssum[~flat] / diff[~flat])
-    # k1≈k2(臍点): 曲率が有意なら sign、無ければ 0(平面)
-    umb = flat & (np.abs(ssum) > 1e-6)
+    # 平面: データ曲率スケールに対して相対的に 0 の点のみ(scale>0 が前提。信号ゼロなら全面平面)
+    if scale > 0.0:
+        flat_plane = curv < rel_flat * scale
+    else:
+        flat_plane = np.ones_like(K1, dtype=bool)  # 曲率信号なし → 不定(平面=0)
+
+    # 臍点(k1≈k2): |k1-k2| が曲率の大きさに対して相対的に小 → 符号 sign(k1+k2) で凹凸を保つ
+    umbilic = (diff < rel_umbilic * mag) & (mag > 0.0)
+
+    umb = umbilic & ~flat_plane          # 臍点かつ非平面 → 符号(緩くても凹凸を保存)
     s[umb] = np.sign(ssum[umb])
+    general = ~umbilic & ~flat_plane     # 一般(異方性)→ Koenderink arctan
+    s[general] = (2.0 / np.pi) * np.arctan(ssum[general] / diff[general])
     return s
 
 
