@@ -220,6 +220,17 @@ def main():
     assert arclen_relerr < 0.05, f"弧長が理論値と不一致: 相対誤差 {arclen_relerr:.3e}"
     assert max(dot_tn, dot_tb, dot_nb) < 1e-6, "Frenet標構が直交していない"
     assert norm_err < 1e-6, "Frenet標構が単位ベクトルでない"
+    # 曲線依存の幾何一致(定数枠・無関係な枠は O(1)≈√2 で外れる)。真の誤差は ~1e-4、許容 1e-2。
+    _FRAME_TOL = 1e-2
+    assert frame_T_err < _FRAME_TOL, f"接線Tが解析値と不一致(一様): {frame_T_err:.3e}"
+    assert frame_N_err < _FRAME_TOL, f"主法線Nが解析値と不一致(一様): {frame_N_err:.3e}"
+    # 変速では r''⊥r' でないため、Gram-Schmidt 射影(r'' の T 成分除去)を省くと N が汚れ、
+    # T·N も 0 でなくなる(射影欠落時 実測: ‖N-N*‖≈0.23, |T·N|≈0.23)。射影の正しさを判別検証。
+    assert frame_T_err_v < _FRAME_TOL, f"接線Tが解析値と不一致(変速): {frame_T_err_v:.3e}"
+    assert frame_N_err_v < _FRAME_TOL, \
+        f"主法線Nが解析値と不一致(変速=Gram-Schmidt射影が不正/欠落): {frame_N_err_v:.3e}"
+    assert dot_tn_v < 1e-6, \
+        f"変速でT·N≠0(Gram-Schmidt射影が効いていない): {dot_tn_v:.3e}"
     # beat-the-null: 直線・平面ヌルを理論値の半分ぶん以上 上回ること(判別的)
     assert kappa_margin > 0.5 * kappa_gt, \
         f"曲率が直線ヌルを有意に上回らない: 超過 {kappa_margin:.3e}"
