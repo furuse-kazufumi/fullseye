@@ -38,6 +38,13 @@ __all__ = ["estimate_normals", "orient_normals", "estimate_oriented_normals"]
 # コサインしきい値。単位法線どうしの内積は無次元(コサイン)なのでスケール不変。
 _PERP_COS = 0.1
 
+# 連結成分の大域符号を seed_dir で決めるときの「一貫度」しきい値。成分全法線の
+# seed_dir 射影について ``|mean(proj)| / mean(|proj|)`` を測り、これ以上なら「単一の
+# 大域符号が定義できる面(平面・開いた面, あるいは seed_dir に沿った向き)」とみなして
+# bulk の符号で一括整合する。未満なら閉曲面(球など)で符号が一意でないと判断する。
+# 平面=1.0 / 球≈0 と大きく分離するので 0.5 で頑健に弁別できる(単位法線ゆえスケール不変)。
+_COHERENCE = 0.5
+
 
 def _as_points(points) -> np.ndarray:
     """入力を (N,3) の float 配列へ検証。fail-closed(形状不正/非有限は ValueError)。"""
