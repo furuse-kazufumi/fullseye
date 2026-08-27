@@ -102,7 +102,15 @@ def line_of_sight(occ, start, end) -> bool:
     both cells flanking the corner are occupied, so the line cannot tunnel between two
     diagonally-touching obstacles. The collision test a planner runs to add an edge or
     shortcut a path. Endpoints outside the grid, or either endpoint occupied, return
-    False."""
+    False.
+
+    **Undirected (symmetric):** Bresenham's error stepping and the corner-cut test
+    both depend on the traversal direction, so a single scan can disagree with itself
+    when the two argument orders quantise the same segment onto different cells (a
+    grazing tie). To keep ``line_of_sight(a, b) == line_of_sight(b, a)`` for a
+    planner's visibility graph — and to stay fail-closed — the segment is scanned in
+    **both** directions and reported clear only when both agree; a segment that grazes
+    an obstacle from either end is blocked."""
     occ = np.asarray(occ, bool)
     H, W = occ.shape
     r0, c0 = int(start[0]), int(start[1])
@@ -111,29 +119,35 @@ def line_of_sight(occ, start, end) -> bool:
         return False
     if occ[r0, c0] or occ[r1, c1]:
         return False
-    dr = abs(r1 - r0)
-    dc = abs(c1 - c0)
-    sr = 1 if r1 > r0 else -1
-    sc = 1 if c1 > c0 else -1
-    r, c = r0, c0
-    err = dr - dc
-    while True:
-        if occ[r, c]:
-            return False
-        if r == r1 and c == c1:
-            return True
-        e2 = 2 * err
-        moved_r = moved_c = False
-        if e2 > -dc:
-            err -= dc
-            r += sr
-            moved_r = True
-        if e2 < dr:
-            err += dr
-            c += sc
-            moved_c = True
-        if moved_r and moved_c and occ[r - sr, c] and occ[r, c - sc]:
-            return False                            # diagonal step would cut a corner
+
+    def _scan(ra, ca, rb, cb):
+        """Directed Bresenham scan ra→rb with corner-cut rejection (True = clear)."""
+        dr = abs(rb - ra)
+        dc = abs(cb - ca)
+        sr = 1 if rb > ra else -1
+        sc = 1 if cb > ca else -1
+        r, c = ra, ca
+        err = dr - dc
+        while True:
+            if occ[r, c]:
+                return False
+            if r == rb and c == cb:
+                return True
+            e2 = 2 * err
+            moved_r = moved_c = False
+            if e2 > -dc:
+                err -= dc
+                r += sr
+                moved_r = True
+            if e2 < dr:
+                err += dr
+                c += sc
+                moved_c = True
+            if moved_r and moved_c and occ[r - sr, c] and occ[r, c - sc]:
+                return False                        # diagonal step would cut a corner
+
+    # scan both directions and require both clear -> symmetric and fail-closed
+    return _scan(r0, c0, r1, c1) and _scan(r1, c1, r0, c0)
 
 
 def frontier_cells(free, unknown, min_cluster: int = 1):
