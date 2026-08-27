@@ -3045,10 +3045,11 @@ def build_window(model=None):
 
     def show_3d_examples():
         # 3-D toolkit gallery: browse the ops3d worked examples (real Itokawa / skeleton-CT /
-        # synthetic data), read each one's ground-truth-checked code, copy to run standalone
-        # (py -3.11 examples_3d/<id>.py). The 3-D ops are a different modality (point clouds /
-        # meshes / volumes) than the 2-D image pipeline, so these are code samples, not loaded
-        # into the pipeline. Sourced from the examples3d registry (validate()-checked).
+        # synthetic data), read each one's ground-truth-checked code, RUN it in place to see the
+        # ground-truth output, or copy it to run standalone (py -3.11 examples_3d/<id>.py). The
+        # 3-D ops are a different modality (point clouds / meshes / volumes) than the 2-D image
+        # pipeline, so these are runnable code samples, not loaded into the pipeline. Sourced
+        # from the examples3d registry (validate()-checked).
         if getattr(win, "_ex3d_dlg", None) is not None:
             win._ex3d_dlg.show(); win._ex3d_dlg.raise_(); win._ex3d_dlg.activateWindow()
             return
@@ -3056,28 +3057,66 @@ def build_window(model=None):
             import examples3d as EX
         except Exception as e:
             report_error("3-D examples", e); return
+        repo_root = os.path.dirname(os.path.abspath(EX.__file__))
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("3-D Examples — Fullseye 3D vision")
         tag_dialog(dlg, "reference"); dlg.setModal(False)
         h = QtWidgets.QHBoxLayout(dlg)
-        lst = QtWidgets.QListWidget(); meta = {}
+
+        # -- left: filter + list (grouped by task) --
+        meta = {}
+        rows = []
         for task, ids in EX.by_task().items():
             for i in ids:
-                e = EX.get(i)
-                it = QtWidgets.QListWidgetItem("[%s] %s" % (task, e["name"]))
-                it.setData(QtCore.Qt.UserRole, i); lst.addItem(it); meta[i] = e
+                e = EX.get(i); meta[i] = e
+                rows.append((i, task, "[%s] %s" % (task, e["name"])))
+        left = QtWidgets.QVBoxLayout()
+        lbl = QtWidgets.QLabel("3-D examples (%d) — real Itokawa / skeleton-CT / synthetic" % len(EX.names()))
+        lbl.setProperty("muted", True)
+        filt = QtWidgets.QLineEdit(); filt.setPlaceholderText("filter by name / task / data…")
+        filt.setClearButtonEnabled(True)
+        lst = QtWidgets.QListWidget()
+        def refill_list(_=None):
+            q = filt.text().strip().lower()
+            lst.clear()
+            for i, task, disp in rows:
+                e = meta[i]
+                hay = (disp + " " + e["data"] + " " + e["summary"]).lower()
+                if q and q not in hay:
+                    continue
+                it = QtWidgets.QListWidgetItem(disp)
+                it.setData(QtCore.Qt.UserRole, i); lst.addItem(it)
+            if lst.count(): lst.setCurrentRow(0)
+        filt.textChanged.connect(refill_list)
+        left.addWidget(lbl); left.addWidget(filt); left.addWidget(lst, 1)
+
+        # -- right: summary + Code/Output tabs + Run/Copy --
+        right = QtWidgets.QVBoxLayout()
+        summ = QtWidgets.QLabel(); summ.setWordWrap(True); summ.setProperty("muted", True)
+        tabs = QtWidgets.QTabWidget()
         code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
         code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
-        summ = QtWidgets.QLabel(); summ.setWordWrap(True); summ.setProperty("muted", True)
+        out = QtWidgets.QPlainTextEdit(); out.setReadOnly(True)
+        out.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        out.setPlaceholderText("press Run to execute this example and see its ground-truth output here")
+        tabs.addTab(code, "Code"); tabs.addTab(out, "Output")
+        status = QtWidgets.QLabel("ready"); status.setProperty("hint", True)
+        b_run = QtWidgets.QPushButton("Run"); b_run.setProperty("accent", True)
+        b_copy = QtWidgets.QPushButton("Copy code")
+        btnrow = QtWidgets.QHBoxLayout()
+        btnrow.addWidget(status, 1); btnrow.addWidget(b_copy); btnrow.addWidget(b_run)
+        right.addWidget(summ); right.addWidget(tabs, 1); right.addLayout(btnrow)
+
         def preview(_=None):
             it = lst.currentItem()
             if it is None: return
             i = it.data(QtCore.Qt.UserRole); e = meta[i]
             _nl = chr(10)
             summ.setText(e["name"] + "  ·  data: " + e["data"] + _nl + e["summary"]
-                         + _nl + _nl + "実行: py -3.11 examples_3d/" + i + ".py")
+                         + _nl + "実行: py -3.11 examples_3d/" + i + ".py")
             try: code.setPlainText(EX.code(i))
             except Exception: code.setPlainText("")
         lst.currentRowChanged.connect(lambda _=None: preview())
+
         def copy_code():
             it = lst.currentItem()
             if it is None: return
@@ -3087,16 +3126,46 @@ def build_window(model=None):
                 flash("copied 3-D example '%s' to the clipboard" % i)
             except Exception as e:
                 report_error("copy", e)
-        left = QtWidgets.QVBoxLayout()
-        lbl = QtWidgets.QLabel("3-D examples (%d) — real Itokawa / skeleton-CT / synthetic" % len(EX.names()))
-        lbl.setProperty("muted", True)
-        left.addWidget(lbl); left.addWidget(lst, 1)
-        right = QtWidgets.QVBoxLayout()
-        b_copy = QtWidgets.QPushButton("Copy code"); b_copy.setProperty("accent", True)
         b_copy.clicked.connect(copy_code)
-        right.addWidget(summ); right.addWidget(code, 1); right.addWidget(b_copy)
+
+        def run_example():
+            # Run the selected example in a subprocess (QProcess = non-blocking; the GUI stays
+            # responsive) and stream its ground-truth output into the Output tab. Uses the same
+            # interpreter that runs Studio, with the repo on PYTHONPATH.
+            it = lst.currentItem()
+            if it is None or getattr(dlg, "_proc", None) is not None:
+                return
+            i = it.data(QtCore.Qt.UserRole)
+            tabs.setCurrentWidget(out)
+            out.setPlainText("$ py examples_3d/%s.py%s%s" % (i, chr(10), chr(10)))
+            status.setText("running…")
+            proc = QtCore.QProcess(dlg)
+            proc.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            proc.setWorkingDirectory(repo_root)
+            env = QtCore.QProcessEnvironment.systemEnvironment()
+            env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
+            env.insert("PYTHONUTF8", "1")
+            proc.setProcessEnvironment(env)
+            def on_out():
+                out.moveCursor(QtGui.QTextCursor.End)
+                out.insertPlainText(bytes(proc.readAll()).decode("utf-8", "replace"))
+                out.moveCursor(QtGui.QTextCursor.End)
+            def on_done(code_, _st=None):
+                on_out()
+                ok = (code_ == 0)
+                status.setText("PASS ✓" if ok else "FAIL (exit %d)" % code_)
+                dlg._proc = None
+                b_run.setEnabled(True); b_run.setText("Run")
+            proc.readyRead.connect(on_out)
+            proc.finished.connect(on_done)
+            dlg._proc = proc
+            b_run.setEnabled(False); b_run.setText("running…")
+            proc.start(sys.executable, [EX.path(i)])
+        b_run.clicked.connect(run_example)
+
         h.addLayout(left, 1); h.addLayout(right, 2)
-        if lst.count(): lst.setCurrentRow(0)
+        refill_list()
+        if lst.count(): lst.setCurrentRow(0); preview()
         persist_dialog_geometry(dlg, "ex3d"); win._ex3d_dlg = dlg; dlg.show()
 
     def add_op_by_name(n):

@@ -1825,3 +1825,32 @@ def test_tools_menu_holds_palette_and_language():
     assert any("Language" in t for t in ttexts)
     assert not any("palette" in a.text().lower() for a in win._menus["run"].actions())
     assert not any("Language" in a.text() for a in win._menus["help"].actions())
+
+
+def test_3d_examples_dialog_filter_and_run_wiring():
+    """3-D Examples gallery (discoverability layer): the dialog lists every registered
+    example, the filter box narrows the list, and a Run button + Output tab are wired so
+    a user can execute an example in place (QProcess) — not just read it. The subprocess
+    run itself is exercised by a separate offscreen smoke, kept out of the fast suite."""
+    from PySide6 import QtWidgets, QtCore
+    _app()
+    import examples3d as EX
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_3d_examples.trigger()
+    dlg = win._ex3d_dlg
+    assert dlg is not None
+    lst = dlg.findChildren(QtWidgets.QListWidget)[0]
+    filt = dlg.findChildren(QtWidgets.QLineEdit)[0]
+    tabs = dlg.findChildren(QtWidgets.QTabWidget)
+    btns = {b.text() for b in dlg.findChildren(QtWidgets.QPushButton)}
+    assert lst.count() == len(EX.names()) >= 20
+    assert len(tabs) == 1 and {"Run", "Copy code"} <= btns
+    # filter narrows to the itokawa subset and clearing restores the full list
+    filt.setText("itokawa")
+    n = lst.count()
+    assert 0 < n < len(EX.names())
+    for i in range(n):
+        assert "itokawa" in EX.get(lst.item(i).data(QtCore.Qt.UserRole))["data"].lower() \
+            or "itokawa" in lst.item(i).text().lower()
+    filt.clear()
+    assert lst.count() == len(EX.names())
