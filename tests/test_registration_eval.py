@@ -52,14 +52,15 @@ def test_rte_equals_translation_norm():
     gt = re.make_transform(R, [1.0, 1.0, 1.0])
     est = re.make_transform(R, np.array([1.0, 1.0, 1.0]) + delta)
     rre, rte = re.rotation_translation_error(gt, est)
-    assert rre == pytest.approx(0.0, abs=1e-6)
+    # arccos((tr-1)/2) は θ≈0 で条件数 ~1/θ(mantissa 半分喪失)→ 系統的に ~1e-6 deg 残る
+    assert rre == pytest.approx(0.0, abs=1e-4)
     assert rte == pytest.approx(13.0, abs=1e-9)
 
 
 def test_error_zero_when_identical():
     T = _gt()
     rre, rte = re.rotation_translation_error(T, T)
-    assert rre == pytest.approx(0.0, abs=1e-7)
+    assert rre == pytest.approx(0.0, abs=1e-4)  # θ≈0 の arccos 条件数(上記)
     assert rte == pytest.approx(0.0, abs=1e-12)
 
 

@@ -50,8 +50,15 @@ def _mls(p):
     return _pts(pcl_filter.mls_smooth(p, radius=3.0 * res, order=2))
 
 
+# jitter の sigma は点群解像度に相対的(sigma_mult * estimate_resolution)。他の op(ror/voxel/mls)は
+# 既に k*resolution で scale 適応するのに対し、絶対 sigma だと大スケールで無害化・小スケールで破壊的になり
+# 「jitter=有害ノイズ」という文法前提が崩れる。res 相対なら任意スケールで一定強度の有害ノイズになる。
+_JITTER_SIGMA_MULT = 0.28                                     # R=1 デノイズタスクで従来 sigma≈0.03 相当
+
+
 def _jitter(p):
-    return pcl_augment.jitter(p, sigma=0.03, seed=0)          # 有害(ノイズ付加)
+    sigma = _JITTER_SIGMA_MULT * pcl_filter.estimate_resolution(p)
+    return pcl_augment.jitter(p, sigma=sigma, seed=0)         # 有害(解像度相対のノイズ付加)
 
 
 def _dropout(p):

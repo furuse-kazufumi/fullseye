@@ -49,6 +49,21 @@ def test_evolution_at_least_matches_random_same_budget():
     assert ev["fitness"] >= rs["fitness"] - 1e-3, (ev["fitness"], rs["fitness"])
 
 
+def test_jitter_sigma_is_resolution_relative():
+    # 回帰(スケール脆弱性): jitter の sigma は点群解像度に相対(sigma_mult*estimate_resolution)。
+    # → 点群を s 倍すると付加ノイズ変位も厳密に s 倍(scale 共変)。他 op(ror/voxel/mls)と同じ
+    # scale 適応。絶対 sigma だと変位が s に依らず一定になり大スケールで無害化・小スケールで破壊的。
+    task = pe.make_denoise_task(seed=0)
+    p = task.x
+    d1 = np.linalg.norm(pe._jitter(p) - p, axis=1).mean()
+    assert d1 > 0.0                                            # ノイズは実際に付加される(無害でない)
+    for s in (1e-6, 1e6):                                      # 微小〜巨大の両端(≥2 スケール)
+        ps = p * s
+        ds = np.linalg.norm(pe._jitter(ps) - ps, axis=1).mean()
+        # 同 seed でノイズ z は不変・sigma だけ s 倍 → ds == s*d1(機械精度)。相対許容で honest。
+        assert abs(ds - s * d1) <= 1e-9 * s * d1, (s, ds, s * d1)
+
+
 def test_grammar_type_valid_and_prunes_deadends():
     # normals は袋小路(VOCAB に normals→ op が無い)→ 後続候補は空
     assert pe.valid_successors("normals") == []

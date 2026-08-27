@@ -30,7 +30,10 @@ _PSPACE = {
     "mls": (1.5, 5.0, lambda a, p: pe._pts(pcl_filter.mls_smooth(p, radius=a * _res(p), order=2))),
     "voxel": (0.5, 3.0, lambda a, p: pe._pts(pcl_filter.voxel_grid_downsample(p, voxel_size=a * _res(p)))),
     "ror": (1.5, 4.0, lambda a, p: pe._pts(pcl_filter.radius_outlier_removal(p, radius=a * _res(p), min_neighbors=6))),
-    "jitter": (0.01, 0.06, lambda a, p: pcl_augment.jitter(p, sigma=a, seed=0)),
+    # jitter の param a は「解像度倍率(sigma_mult)」で sigma=a*estimate_resolution。他 op は既に
+    # k*res で scale 適応するのに絶対 sigma だと大スケールで無害化し「有害ノイズ」前提が崩れる。
+    # 倍率境界 (0.1,0.5) は R=1 デノイズタスク(res≈0.12)で従来の絶対 sigma≈(0.012,0.06) 相当。
+    "jitter": (0.1, 0.5, lambda a, p: pcl_augment.jitter(p, sigma=a * _res(p), seed=0)),
     "dropout": (0.05, 0.4, lambda a, p: pe._pts(pcl_augment.random_dropout(p, ratio=a, seed=0))),
 }
 _OPS = list(_PSPACE)

@@ -42,7 +42,15 @@ def _median_spacing(points):
     from scipy.spatial import cKDTree
     p = np.asarray(points, float)
     d, _ = cKDTree(p).query(p, k=2)
-    return float(np.median(d[:, 1])) + 1e-12
+    spacing = float(np.median(d[:, 1]))
+    # ゼロ割ガードを座標スケールに相対化する。絶対 epsilon(+1e-12)だと ~1e-9 スケールの
+    # 座標では正規化(chamfer/spacing)を歪めてスケール不変性が崩れる(diff ~1e-3)。
+    # 特徴長 = 重心からの RMS 半径。実データ(spacing>0)ではフロアは事実上発火せず、
+    # 重複点(spacing≈0)のみを相対フロアで持ち上げる。
+    scale = float(np.sqrt(np.mean(np.sum((p - p.mean(axis=0)) ** 2, axis=1))))
+    if scale == 0.0:                                  # 全点一致=正規化不能: 詐称せず fail-closed
+        raise ValueError("退化点群(全点一致)は対称正規化の基準長を定義できない")
+    return max(spacing, 1e-12 * scale)
 
 
 def _pca_axes(points):

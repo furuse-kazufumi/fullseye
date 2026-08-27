@@ -64,3 +64,21 @@ def test_scale_invariance_of_score():
     s1 = S.detect_reflection_symmetry(pts)["score"]
     s2 = S.detect_reflection_symmetry(pts * 1000.0)["score"]   # 座標 1000 倍 → 正規化で不変
     assert abs(s1 - s2) < 1e-6, (s1, s2)
+
+
+def test_scale_invariance_extreme_scales():
+    # 回帰(スケール脆弱性): _median_spacing の絶対 epsilon(+1e-12)は ~1e-9 座標で
+    # 分母 spacing(~1e-10)を歪め正規化を崩す(修正前 diff ~4e-3)。相対フロアで小/大両端とも不変。
+    pts = _ellipsoid(800)
+    s0 = S.detect_reflection_symmetry(pts)["score"]
+    for scale in (1e-9, 1e-6, 1e6, 1e9):                      # 微小〜巨大の両端(≥2 スケール)
+        s = S.detect_reflection_symmetry(pts * scale)["score"]
+        assert abs(s - s0) < 1e-6, (scale, s, s0)
+
+
+def test_degenerate_all_identical_is_fail_closed():
+    # 縮退(全点一致)は正規化基準長を定義できない → 詐称せず fail-closed(ValueError)。
+    import pytest
+    pts = np.zeros((5, 3))
+    with pytest.raises(ValueError):
+        S.detect_reflection_symmetry(pts)
