@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_shape_3d <span style="color:#8b91a0;font-size:11px">· match_localize · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>voxel × voxel → position</b></p>
+<p>3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.match_shape_3d(vol, template, device=&#x27;cpu&#x27;, mc=0.05, subvoxel=True)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = position)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_peak_newton">refine_peak_newton</a> · <a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (match_localize)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_chamfer_3d">match_chamfer_3d</a> · <a style="color:#22d3bf" href="op3d:match_curvature_3d">match_curvature_3d</a> · <a style="color:#22d3bf" href="op3d:match_hough_3d">match_hough_3d</a> · <a style="color:#22d3bf" href="op3d:match_mip_2d">match_mip_2d</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

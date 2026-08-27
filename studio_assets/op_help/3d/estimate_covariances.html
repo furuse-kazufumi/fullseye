@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">estimate_covariances <span style="color:#8b91a0;font-size:11px">· gicp · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → descriptor</b></p>
+<p>各点の局所共分散を固有値 (ε,1,1) に置換した plane-to-plane 共分散 (N,3,3)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">gicp.estimate_covariances(points, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = descriptor)</h3>
+<p><a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (gicp)</h3>
+<p><a style="color:#22d3bf" href="op3d:gicp">gicp</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: gicp.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

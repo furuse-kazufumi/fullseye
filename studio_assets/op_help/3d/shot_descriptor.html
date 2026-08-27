@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">shot_descriptor <span style="color:#8b91a0;font-size:11px">· feature_register · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × normals → descriptor</b></p>
+<p>SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">feat_shot.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = descriptor)</h3>
+<p><a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (feature_register)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a> · <a style="color:#22d3bf" href="op3d:register_shot">register_shot</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: feat_shot.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

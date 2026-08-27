@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">tsdf_from_depth <span style="color:#8b91a0;font-size:11px">· transform · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>depth → sdf</b></p>
+<p>深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = sdf)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (transform)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

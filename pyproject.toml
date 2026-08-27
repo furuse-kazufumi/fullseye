@@ -30,6 +30,7 @@ raster = ["imageio>=2.28", "tifffile>=2023.1"]    # bit-depth-preserving raster 
 gltf = ["pygltflib>=1.16"]                        # glTF 2.0 / GLB object import
 lidar = ["laspy>=2.5", "lazrs>=0.5"]              # LAS / LAZ LiDAR point clouds
 pcd = ["pypcd4>=1.4"]                             # PCD binary / binary_compressed point clouds
+threed = ["torch>=2.0", "scikit-image>=0.20", "SimpleITK>=2.2"]   # 3-D toolkit: GPU descriptors (feat_*), marching cubes, DICOM/volume I/O
 # --- connectivity (device control / industrial + Physical-AI comms) ---
 # The native transports (TCP/UDP/Modbus-TCP/HTTP) need nothing beyond stdlib;
 # these extras add optional protocol/device adapters.
@@ -55,7 +56,7 @@ fullseye-studio = "studio:main"
 # `studio_assets` is a data-only package (i18n / op help / sample images) — it is
 # declared here so package-data below carries its files into the wheel; the Studio
 # loads them by path relative to studio.py, which resolves to the shipped copy.
-packages = ["fullseye", "studio_assets"]
+packages = ["fullseye", "studio_assets", "examples_3d"]
 py-modules = [
   "api", "ops", "backend_safe",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
@@ -79,6 +80,8 @@ py-modules = [
   "sweep", "graph", "graph_seed", "lib_coverage",
   "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
   "fscript", "fslib", "fsruntime",
+  # --- 3-D vision toolkit (ops3d registry + method modules) + examples gallery ---
+  "examples3d", "ops3d", "pipeline3d", "pipeline_evolve", "evolve_params", "metrics3d", "match3d", "bspline_surf", "bundle3d", "curvature3d", "curve3d", "deform3d", "depth_bilateral", "descriptors3d", "edges3d", "feat_fpfh", "feat_harris", "feat_shot", "feat_spin", "fringe", "fuse3d", "geodesic3d", "gicp", "medial", "moments3d", "motion_seg3d", "normals_orient", "pcl_augment", "pcl_filter", "photometric", "plane_sweep", "pnp3d", "pose_graph", "range_image", "ransac_fit", "recon3d", "regionprops3d", "registration_eval", "scene_flow3d", "sdf_ops", "segment3d", "spherical_proj", "superquadric", "symmetry3d", "tsdf_fusion", "twoview", "visualhull",
 ]
 
 [tool.setuptools.package-data]
@@ -94,4 +97,6 @@ py-modules = [
 "studio_assets" = ["*.json", "op_help/*.html", "op_help/*.md",
                    "sample_images/*.png", "sample_images/*.json",
                    "sample_thumbs/*.png", "sample_thumbs/*.json",
-                   "sample_sources_ai/*.png", "sample_sources_ai/*.jpg"]
+                   "sample_sources_ai/*.png", "sample_sources_ai/*.jpg",
+                   "sample_3d/*.npy", "sample_3d/*.md",
+                   "op_help/3d/*.html"]

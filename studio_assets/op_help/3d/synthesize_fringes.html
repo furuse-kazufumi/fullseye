@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_fringes <span style="color:#8b91a0;font-size:11px">· structured_light · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d → images</b></p>
+<p>既知の height map から N-step 位相シフト縞画像列を合成する(テスト/サンプル生成用)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">fringe.synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0, bias=0.5, amplitude=0.5, axis=1, noise=0.0, seed=None, return_phase=False)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = images)</h3>
+<p><a style="color:#22d3bf" href="op3d:photometric_stereo">photometric_stereo</a> · <a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:carve">carve</a> · <a style="color:#22d3bf" href="op3d:visual_hull">visual_hull</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (structured_light)</h3>
+<p><a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: fringe.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

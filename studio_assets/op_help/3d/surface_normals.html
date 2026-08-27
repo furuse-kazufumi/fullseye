@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_normals <span style="color:#8b91a0;font-size:11px">· photometric · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d → normals</b></p>
+<p>高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">photometric.surface_normals(z)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = normals)</h3>
+<p><a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (photometric)</h3>
+<p><a style="color:#22d3bf" href="op3d:photometric_stereo">photometric_stereo</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a> · <a style="color:#22d3bf" href="op3d:render_lambertian">render_lambertian</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: photometric.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

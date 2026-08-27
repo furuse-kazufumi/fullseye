@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">dlt_pose <span style="color:#8b91a0;font-size:11px">· pose_estimation · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × image2d → pose</b></p>
+<p>DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">pnp3d.dlt_pose(points_3d, points_2d, K)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (pose_estimation)</h3>
+<p><a style="color:#22d3bf" href="op3d:pnp_ransac">pnp_ransac</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: pnp3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

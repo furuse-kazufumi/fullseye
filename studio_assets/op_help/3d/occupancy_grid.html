@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">occupancy_grid <span style="color:#8b91a0;font-size:11px">· occupancy · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → voxel</b></p>
+<p>点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">occupancy.occupancy_grid(points, bounds, res)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = voxel)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (occupancy)</h3>
+<p><a style="color:#22d3bf" href="op3d:esdf">esdf</a> · <a style="color:#22d3bf" href="op3d:inflate">inflate</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: occupancy.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

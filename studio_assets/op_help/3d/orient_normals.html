@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">orient_normals <span style="color:#8b91a0;font-size:11px">· normals_orient · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × normals → normals</b></p>
+<p>Hoppe 法で法線を**大域一貫**に向き付け(MST 伝播)。→ (N,3)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">normals_orient.orient_normals(points, normals, k: &#x27;int&#x27; = 20, seed_dir=None) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = normals)</h3>
+<p><a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (normals_orient)</h3>
+<p><a style="color:#22d3bf" href="op3d:estimate_oriented_normals">estimate_oriented_normals</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: normals_orient.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

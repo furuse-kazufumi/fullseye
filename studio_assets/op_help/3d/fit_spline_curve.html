@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_spline_curve <span style="color:#8b91a0;font-size:11px">· curve · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → points</b></p>
+<p>順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">curve3d.fit_spline_curve(points, smooth=0.0, k=3, n=None)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = points)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (curve)</h3>
+<p><a style="color:#22d3bf" href="op3d:curvature_torsion">curvature_torsion</a> · <a style="color:#22d3bf" href="op3d:frenet_frame">frenet_frame</a> · <a style="color:#22d3bf" href="op3d:arc_length">arc_length</a> · <a style="color:#22d3bf" href="op3d:resample_uniform">resample_uniform</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: curve3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

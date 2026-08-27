@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">plane_sweep_depth <span style="color:#8b91a0;font-size:11px">· plane_sweep_stereo · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d × image2d → depth</b></p>
+<p>plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">plane_sweep.plane_sweep_depth(img_ref: &#x27;np.ndarray&#x27;, img_src: &#x27;np.ndarray&#x27;, K: &#x27;np.ndarray&#x27;, R: &#x27;np.ndarray&#x27;, t: &#x27;np.ndarray&#x27;, depth_candidates, window: &#x27;int&#x27; = 1, normal=(0.0, 0.0, 1.0)) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = depth)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (plane_sweep_stereo)</h3>
+<p><a style="color:#22d3bf" href="op3d:warp_by_plane">warp_by_plane</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: plane_sweep.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

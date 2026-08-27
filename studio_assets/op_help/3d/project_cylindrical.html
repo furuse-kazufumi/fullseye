@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">project_cylindrical <span style="color:#8b91a0;font-size:11px">· lidar_projection · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → image2d</b></p>
+<p>円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">spherical_proj.project_cylindrical(points, h_res: &#x27;int&#x27; = 1024, z_bins: &#x27;int&#x27; = 64, z_range=None) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = image2d)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (lidar_projection)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_spherical">project_spherical</a> · <a style="color:#22d3bf" href="op3d:unproject_spherical">unproject_spherical</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: spherical_proj.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

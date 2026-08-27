@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_logpolar_z <span style="color:#8b91a0;font-size:11px">· match_pose · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>voxel × voxel → rot_scale</b></p>
+<p>log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.match_logpolar_z(a, b, device=&#x27;cpu&#x27;, project=&#x27;mip&#x27;, nt=360, nr=192)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = rot_scale)</h3>
+<p><span style="color:#8b91a0">—</span></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (match_pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_phase_3d">match_phase_3d</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

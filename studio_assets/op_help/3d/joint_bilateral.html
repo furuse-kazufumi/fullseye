@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">joint_bilateral <span style="color:#8b91a0;font-size:11px">· depth_denoise · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>depth × image2d → depth</b></p>
+<p>joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">depth_bilateral.joint_bilateral(depth: &#x27;np.ndarray&#x27;, guide: &#x27;np.ndarray&#x27;, spatial_sigma: &#x27;float&#x27;, range_sigma: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, truncate: &#x27;float&#x27; = 3.0) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = depth)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (depth_denoise)</h3>
+<p><a style="color:#22d3bf" href="op3d:bilateral_filter_depth">bilateral_filter_depth</a> · <a style="color:#22d3bf" href="op3d:fill_holes">fill_holes</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: depth_bilateral.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">visual_hull <span style="color:#8b91a0;font-size:11px">· space_carving · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>images → voxel</b></p>
+<p>多視点シルエットの visual hull を voxel 占有として返す(:func:`carve` の別名)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">visualhull.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = voxel)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (space_carving)</h3>
+<p><a style="color:#22d3bf" href="op3d:carve">carve</a> · <a style="color:#22d3bf" href="op3d:synthesize_silhouette">synthesize_silhouette</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: visualhull.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

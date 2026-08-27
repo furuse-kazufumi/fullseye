@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">points_to_voxel <span style="color:#8b91a0;font-size:11px">· transform · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → voxel</b></p>
+<p>点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.points_to_voxel(points, size, bounds=None, device=&#x27;cpu&#x27;, smooth=0.0)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = voxel)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (transform)</h3>
+<p><a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

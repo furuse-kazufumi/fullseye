@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">render_point_depth <span style="color:#8b91a0;font-size:11px">· render · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → depth</b></p>
+<p>点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.render_point_depth(points, K, size, R=None, t=None)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = depth)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (render)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_points">project_points</a> · <a style="color:#22d3bf" href="op3d:render_volume_projection">render_volume_projection</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

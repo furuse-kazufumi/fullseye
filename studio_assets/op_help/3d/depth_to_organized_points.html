@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_organized_points <span style="color:#8b91a0;font-size:11px">· range_image · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>depth → points</b></p>
+<p>organized 深度画像 → 格子整列 3D 点 (H,W,3)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = points)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (range_image)</h3>
+<p><a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: range_image.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

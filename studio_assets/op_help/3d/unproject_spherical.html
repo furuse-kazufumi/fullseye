@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">unproject_spherical <span style="color:#8b91a0;font-size:11px">· lidar_projection · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d → points</b></p>
+<p>球面レンジ画像 → 3D 点 (M, 3)。range&gt;0 のセルのみをビン中心角で逆投影。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">spherical_proj.unproject_spherical(range_img, v_fov=(-25.0, 15.0)) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = points)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (lidar_projection)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_spherical">project_spherical</a> · <a style="color:#22d3bf" href="op3d:project_cylindrical">project_cylindrical</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: spherical_proj.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

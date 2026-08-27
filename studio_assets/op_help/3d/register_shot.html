@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_shot <span style="color:#8b91a0;font-size:11px">· feature_register · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × points → pose</b></p>
+<p>SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (feature_register)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: feat_shot.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

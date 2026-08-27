@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">region_growing <span style="color:#8b91a0;font-size:11px">· segment · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → labels</b></p>
+<p>法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = labels)</h3>
+<p><span style="color:#8b91a0">—</span></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (segment)</h3>
+<p><a style="color:#22d3bf" href="op3d:euclidean_cluster">euclidean_cluster</a> · <a style="color:#22d3bf" href="op3d:plane_segmentation">plane_segmentation</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: segment3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">estimate_flow <span style="color:#8b91a0;font-size:11px">· motion_segment · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × points → flow</b></p>
+<p>pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">motion_seg3d.estimate_flow(pts0, pts1) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = flow)</h3>
+<p><span style="color:#8b91a0">—</span></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (motion_segment)</h3>
+<p><a style="color:#22d3bf" href="op3d:segment_rigid_motions">segment_rigid_motions</a> · <a style="color:#22d3bf" href="op3d:fit_rigid">fit_rigid</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: motion_seg3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

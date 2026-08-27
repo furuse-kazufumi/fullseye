@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">estimate_normals <span style="color:#8b91a0;font-size:11px">· curvature · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → normals</b></p>
+<p>外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">curvature3d.estimate_normals(points, k=25)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = normals)</h3>
+<p><a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (curvature)</h3>
+<p><a style="color:#22d3bf" href="op3d:principal_curvatures">principal_curvatures</a> · <a style="color:#22d3bf" href="op3d:mean_curvature">mean_curvature</a> · <a style="color:#22d3bf" href="op3d:gaussian_curvature">gaussian_curvature</a> · <a style="color:#22d3bf" href="op3d:shape_index">shape_index</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: curvature3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">chamfer_distance <span style="color:#8b91a0;font-size:11px">· metrics · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × points → measurement</b></p>
+<p>対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">metrics3d.chamfer_distance(a, b, squared=False)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
+<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (metrics)</h3>
+<p><a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: metrics3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">refine_peak_newton <span style="color:#8b91a0;font-size:11px">· refine · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>score × position → position</b></p>
+<p>スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = position)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (refine)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:refine_rotation_z">refine_rotation_z</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a> · <a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_zernike <span style="color:#8b91a0;font-size:11px">· curvilinear · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d → descriptor</b></p>
+<p>円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = descriptor)</h3>
+<p><a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (curvilinear)</h3>
+<p><a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:cylinder_unwrap">cylinder_unwrap</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">rotation_translation_error <span style="color:#8b91a0;font-size:11px">· registration_metrics · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>pose × pose → measurement</b></p>
+<p>2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">registration_eval.rotation_translation_error(gt, est)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
+<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (registration_metrics)</h3>
+<p><a style="color:#22d3bf" href="op3d:inlier_ratio">inlier_ratio</a> · <a style="color:#22d3bf" href="op3d:rmse_inliers">rmse_inliers</a> · <a style="color:#22d3bf" href="op3d:registration_recall">registration_recall</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: registration_eval.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">random_scale <span style="color:#8b91a0;font-size:11px">· augment · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → points</b></p>
+<p>一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">pcl_augment.random_scale(points, lo: &#x27;float&#x27;, hi: &#x27;float&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;Tuple[np.ndarray, float]&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = points)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (augment)</h3>
+<p><a style="color:#22d3bf" href="op3d:jitter">jitter</a> · <a style="color:#22d3bf" href="op3d:random_rotation">random_rotation</a> · <a style="color:#22d3bf" href="op3d:random_dropout">random_dropout</a> · <a style="color:#22d3bf" href="op3d:elastic_deform">elastic_deform</a> · <a style="color:#22d3bf" href="op3d:cutout">cutout</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: pcl_augment.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

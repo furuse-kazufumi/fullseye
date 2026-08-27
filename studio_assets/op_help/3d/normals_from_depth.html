@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">normals_from_depth <span style="color:#8b91a0;font-size:11px">· range_image · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>depth → normals</b></p>
+<p>organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = normals)</h3>
+<p><a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (range_image)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: range_image.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">render_lambertian <span style="color:#8b91a0;font-size:11px">· photometric · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>normals → image2d</b></p>
+<p>法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">photometric.render_lambertian(normals, albedo, light, ambient=0.0)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = image2d)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (photometric)</h3>
+<p><a style="color:#22d3bf" href="op3d:photometric_stereo">photometric_stereo</a> · <a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: photometric.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

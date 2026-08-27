@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">query_distance <span style="color:#8b91a0;font-size:11px">· occupancy · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>sdf × points → measurement</b></p>
+<p>任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``=&#x27;trilinear&#x27; 補間 or &#x27;nearest&#x27;)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">occupancy.query_distance(esdf_grid, bounds, res, query_points, mode=&#x27;trilinear&#x27;)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
+<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (occupancy)</h3>
+<p><a style="color:#22d3bf" href="op3d:occupancy_grid">occupancy_grid</a> · <a style="color:#22d3bf" href="op3d:esdf">esdf</a> · <a style="color:#22d3bf" href="op3d:inflate">inflate</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: occupancy.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

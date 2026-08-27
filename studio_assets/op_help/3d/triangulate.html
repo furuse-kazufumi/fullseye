@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">triangulate <span style="color:#8b91a0;font-size:11px">· two_view · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d × image2d → points</b></p>
+<p>DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">twoview.triangulate(pts1, pts2, P1, P2)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = points)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (two_view)</h3>
+<p><a style="color:#22d3bf" href="op3d:fundamental_8point">fundamental_8point</a> · <a style="color:#22d3bf" href="op3d:essential_8point">essential_8point</a> · <a style="color:#22d3bf" href="op3d:recover_pose">recover_pose</a> · <a style="color:#22d3bf" href="op3d:sampson_distance">sampson_distance</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: twoview.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

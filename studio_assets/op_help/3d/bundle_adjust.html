@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">bundle_adjust <span style="color:#8b91a0;font-size:11px">· bundle_adjust · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>pose × points → pose</b></p>
+<p>再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (bundle_adjust)</h3>
+<p><a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:project">project</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: bundle3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

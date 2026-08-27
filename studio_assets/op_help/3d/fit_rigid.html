@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_rigid <span style="color:#8b91a0;font-size:11px">· motion_segment · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × points → pose</b></p>
+<p>対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -&gt; pts_to[i])。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">motion_seg3d.fit_rigid(pts_from, pts_to)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (motion_segment)</h3>
+<p><a style="color:#22d3bf" href="op3d:segment_rigid_motions">segment_rigid_motions</a> · <a style="color:#22d3bf" href="op3d:estimate_flow">estimate_flow</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: motion_seg3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

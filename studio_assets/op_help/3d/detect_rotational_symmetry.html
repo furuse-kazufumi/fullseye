@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">detect_rotational_symmetry <span style="color:#8b91a0;font-size:11px">· symmetry · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points → primitive</b></p>
+<p>PCA 主軸を候補軸として最良の回転対称(軸 × order)を選ぶ。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">symmetry3d.detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8))</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = primitive)</h3>
+<p><a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (symmetry)</h3>
+<p><a style="color:#22d3bf" href="op3d:detect_reflection_symmetry">detect_reflection_symmetry</a> · <a style="color:#22d3bf" href="op3d:reflect_points">reflect_points</a> · <a style="color:#22d3bf" href="op3d:reflection_symmetry_score">reflection_symmetry_score</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: symmetry3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

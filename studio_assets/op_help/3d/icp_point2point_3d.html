@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">icp_point2point_3d <span style="color:#8b91a0;font-size:11px">· refine · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × points → pose</b></p>
+<p>点群を point-to-point ICP(Kabsch/SVD)で精緻化する。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (refine)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_peak_newton">refine_peak_newton</a> · <a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:refine_rotation_z">refine_rotation_z</a> · <a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

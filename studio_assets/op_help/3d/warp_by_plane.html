@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">warp_by_plane <span style="color:#8b91a0;font-size:11px">· plane_sweep_stereo · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d → image2d</b></p>
+<p>homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">plane_sweep.warp_by_plane(img: &#x27;np.ndarray&#x27;, H: &#x27;np.ndarray&#x27;, order: &#x27;int&#x27; = 1, cval: &#x27;float&#x27; = nan) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = image2d)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (plane_sweep_stereo)</h3>
+<p><a style="color:#22d3bf" href="op3d:plane_sweep_depth">plane_sweep_depth</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: plane_sweep.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

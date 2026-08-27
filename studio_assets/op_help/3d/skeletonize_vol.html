@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">skeletonize_vol <span style="color:#8b91a0;font-size:11px">· medial · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>voxel → voxel</b></p>
+<p>3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">medial.skeletonize_vol(vol)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = voxel)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (medial)</h3>
+<p><a style="color:#22d3bf" href="op3d:distance_ridge">distance_ridge</a> · <a style="color:#22d3bf" href="op3d:medial_axis_points">medial_axis_points</a> · <a style="color:#22d3bf" href="op3d:topology_signature">topology_signature</a> · <a style="color:#22d3bf" href="op3d:medial_match">medial_match</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: medial.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

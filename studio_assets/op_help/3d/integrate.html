@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">integrate <span style="color:#8b91a0;font-size:11px">· tsdf_fusion · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>sdf × depth → sdf</b></p>
+<p>深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tsdf_fusion.integrate(tsdf: &#x27;np.ndarray&#x27;, weight: &#x27;np.ndarray&#x27;, depth: &#x27;np.ndarray&#x27;, K, R, t, trunc: &#x27;float&#x27;, bounds: &#x27;Optional[Bounds]&#x27; = None) -&gt; &#x27;None&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = sdf)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (tsdf_fusion)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse">fuse</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: tsdf_fusion.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

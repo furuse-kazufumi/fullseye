@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_mesh <span style="color:#8b91a0;font-size:11px">· geodesic · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>mesh → measurement</b></p>
+<p>三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
+<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (geodesic)</h3>
+<p><a style="color:#22d3bf" href="op3d:geodesic_distances">geodesic_distances</a> · <a style="color:#22d3bf" href="op3d:farthest_point_sampling">farthest_point_sampling</a> · <a style="color:#22d3bf" href="op3d:knn_graph">knn_graph</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: geodesic3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>

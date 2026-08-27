@@ -1,0 +1,14 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid <span style="color:#8b91a0;font-size:11px">· deform · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>points × points → pose</b></p>
+<p>Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
+<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (deform)</h3>
+<p><a style="color:#22d3bf" href="op3d:tps_fit">tps_fit</a> · <a style="color:#22d3bf" href="op3d:tps_warp">tps_warp</a> · <a style="color:#22d3bf" href="op3d:register_nonrigid">register_nonrigid</a></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: deform3d.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>
