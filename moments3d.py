@@ -163,7 +163,7 @@ def principal_moments(points) -> np.ndarray:
 # 並進+回転+スケール不変な特徴ベクトル                                        #
 # --------------------------------------------------------------------------- #
 def moment_invariants(points) -> np.ndarray:
-    """並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流)。
+    """並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。
 
     処方:
         1. 重心中心化(並進を除去)。
@@ -174,27 +174,42 @@ def moment_invariants(points) -> np.ndarray:
                                     Σλ̂ = 1、回転不変)
              J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 第 2 不変量 = 2×2 主小行列和)
              J3 = λ̂1λ̂2λ̂3               (第 3 不変量 = det C̃)
+        4. 正規化 4 次半径モーメント m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²)。
+           r = 重心からの距離なので回転+並進不変、RMS 正規化済でスケール不変。
 
-    返すベクトルは [λ̂1, λ̂2, λ̂3, J2, J3](長さ 5)。
+    返すベクトルは [λ̂1, λ̂2, λ̂3, J2, J3, m4](長さ 6)。
     第 1 不変量 J1 = Σλ̂ は正規化で常に 1 になり識別に寄与しないため省く。
     J2,J3 は固有値の対称式(冗長)だが、Sadjadi–Hall の代数不変量シグネチャとの
-    互換のため併記する(距離での重み付けにしかならず、識別性は主に固有値比が担う)。
+    互換のため併記する。
 
-    球なら概ね (1/3, 1/3, 1/3, 1/3, 1/27)、細長い棒なら (≈1, ≈0, ≈0, ≈0, ≈0) に近づく。
+    識別性の内訳(honest):
+        - λ̂1,λ̂2,λ̂3(と対称式 J2,J3)は **2 次モーメント(共分散固有値)のみ** に
+          由来し、独立自由度は主軸アスペクト比の 2 つだけ。これだけでは 2 次が
+          等方な形状(solid cube と solid sphere は共に λ̂≈(1/3,1/3,1/3))を区別
+          できない。
+        - m4 は **半径分布の 4 次モーメント** で、2 次では潰れる高次の形状差を
+          捉える。一様 solid sphere は m4=75/63≈1.190、一様 solid cube は
+          m4=19/15≈1.267 と異なるため、両者を分離できる。
+    球なら概ね (1/3, 1/3, 1/3, 1/3, 1/27, 1.190)、
+    細長い棒なら (≈1, ≈0, ≈0, ≈0, ≈0, 大) に近づく。
 
     Returns
     -------
-    np.ndarray, shape (5,)
+    np.ndarray, shape (6,)
         並進・回転・スケール不変な特徴ベクトル。
     """
     p = _check_points(points, min_points=2)
     centered = p - p.mean(axis=0, keepdims=True)
 
-    # スケール正規化: RMS 半径で割る。R が 0 = 全点が一致 → 形状が定義できない。
-    rms = float(np.sqrt(np.mean(np.einsum("ij,ij->i", centered, centered))))
-    if rms < _EPS:
+    # スケール正規化: RMS 半径で割る。
+    r2 = np.einsum("ij,ij->i", centered, centered)   # 各点の重心距離²
+    rms = float(np.sqrt(np.mean(r2)))
+    # 縮退判定は **スケール相対** で行う(絶対しきい値だと座標が極小 1e-13 なだけの
+    # 非縮退点群を誤って弾く)。真に全点が一致 = 中心化後の広がりが 0 のときのみ拒否。
+    max_abs = float(np.max(np.abs(centered))) if centered.size else 0.0
+    if max_abs <= 0.0 or rms <= _EPS * max_abs:
         raise ValueError(
-            "点群が縮退しています(全点がほぼ一致、RMS 半径 ≈ 0)。"
+            "点群が縮退しています(全点が一致、広がり ≈ 0)。"
             "スケール正規化ができないため不変量は定義されません"
         )
     normalized = centered / rms
@@ -206,7 +221,13 @@ def moment_invariants(points) -> np.ndarray:
 
     j2 = float(lam[0] * lam[1] + lam[0] * lam[2] + lam[1] * lam[2])
     j3 = float(lam[0] * lam[1] * lam[2])
-    return np.array([lam[0], lam[1], lam[2], j2, j3], dtype=np.float64)
+
+    # 高次半径不変量: 正規化座標の 4 次半径モーメント。mean(‖normalized‖²)=1 なので
+    # m4 = mean(r̂⁴) = mean(r⁴)/mean(r²)²(回転・並進・スケール不変)。等方な 2 次を
+    # 持つ形状(cube vs sphere)を高次で分離する。
+    rn2 = r2 / (rms * rms)                          # = ‖normalized‖²(各点)
+    m4 = float(np.mean(rn2 * rn2))
+    return np.array([lam[0], lam[1], lam[2], j2, j3, m4], dtype=np.float64)
 
 
 # --------------------------------------------------------------------------- #
