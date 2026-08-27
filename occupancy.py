@@ -25,7 +25,9 @@ import numpy as np
 from scipy import ndimage
 
 __all__ = ["occupancy_grid_2d", "inflate_obstacles", "clearance_map",
-           "line_of_sight", "frontier_cells"]
+           "line_of_sight", "frontier_cells",
+           # 3-D voxel occupancy + ESDF (robot motion planning; see section below)
+           "occupancy_grid", "esdf", "inflate", "query_distance"]
 
 
 def occupancy_grid_2d(points, cell: float = 0.05, z_range=None, bounds=None,
