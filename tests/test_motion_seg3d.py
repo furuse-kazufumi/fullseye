@@ -196,6 +196,31 @@ def test_outliers_are_labeled_minus_one(scale):
 
 
 # ---------------------------------------------------------------------------
+# 5b. 判別(honest / negative): 剛体構造ゼロの無相関 2 点群からは剛体を捏造しない
+#     P1 = P0 + N(0, sigma) は真の対応が無い(各点独立変位)。単純な下限 min_inliers
+#     しか無いと 6DOF 剛体が偶然数点に適合して偽の剛体を返す(旧挙動)。有意性ゲート
+#     (inlier 残差が許容球を満たすだけの偶然適合を弾く)で bodies=0・全点 -1 になる。
+#     GT は独立: 乱数から剛体構造をゼロで構成(実装の再導出でない)。
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize("scale", SCALES)
+@pytest.mark.parametrize("seed", [0, 3, 7])
+def test_uncorrelated_cloud_fabricates_no_rigid_body(scale, seed):
+    rng = np.random.default_rng(seed)
+    P0 = rng.uniform(size=(40, 3)) * scale
+    # 各点に独立な等方ガウス変位 -> 剛体的相関ゼロ。sigma < thresh でノイズ点も
+    # 個々には許容球内に入りうる(= 偶然適合の温床)が、集団として剛体ではない。
+    P1 = P0 + rng.normal(0.0, 0.3, size=(40, 3)) * scale
+
+    out = ms.segment_rigid_motions(P0, P1, thresh=0.35 * scale, max_bodies=5)
+    labels, motions = out["labels"], out["motions"]
+
+    # 偽の剛体を 1 つも作らない(旧挙動はここで複数 body / 大量割当を返して FAIL)。
+    assert len(motions) == 0
+    assert np.all(labels == -1)                    # 全点 outlier(honest)
+    assert labels.shape == (40,)
+
+
+# ---------------------------------------------------------------------------
 # 6. 縮退 / 不正入力は fail-closed(ValueError)
 # ---------------------------------------------------------------------------
 def test_fail_closed_on_degenerate_inputs():
