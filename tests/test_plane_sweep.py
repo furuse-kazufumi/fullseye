@@ -31,10 +31,10 @@ def _texture(x, y):
 
 
 def _render(K, R, t, normal, d0, shape):
-    """カメラ P=K[R|t] で平面 n^T X = d0(基準系)を撮像。→ (画像, 各画素の真の深度 Z)。
+    """カメラ P=K[R|t] で平面 n^T X = d0(基準系)を撮像。→ (画像, 深度 Z, 3D 点 X)。
 
-    画素 p の ray を平面と交差→3D 点 X→_texture(X_x,X_y) をサンプル、X の基準系深度も返す。
-    R,t は基準カメラ([I|0])に対する姿勢。基準系での ray を組み立てて交差を解く。
+    画素 p の ray を平面と交差→3D 点 X→_texture(X_x,X_y) をサンプル。X の基準系深度と
+    3D 点(H,W,3)も返す。R,t は基準カメラ([I|0])に対する姿勢。基準系で ray を組み立て交差を解く。
     """
     h, w = shape
     Kinv = np.linalg.inv(K)
@@ -51,25 +51,42 @@ def _render(K, R, t, normal, d0, shape):
     X = C[:, None] + s[None, :] * dir_ref            # (3,N) 基準系 3D 点
     img = _texture(X[0], X[1]).reshape(h, w)
     depth = X[2].reshape(h, w)          # 基準系での深度 Z
-    return img, depth
+    return img, depth, X.T.reshape(h, w, 3)
 
 
-def _scene(d_scale=1.0, tilt_deg=0.0, seed=0):
-    """合成 2 視点シーン。→ (img_ref, img_src, K, R, t, normal, d0, ref 真深度)。"""
+def _visible_mask(K, R, t, X_ref, shape, margin=2.0):
+    """ref の各 3D 点を source に投影し、画像内(margin 付)に落ちる画素の可視マスク。→ (H,W) bool。
+
+    真の 3D 点の src 投影が FOV 外/背面の画素は(オクルージョン相当で)照合不能。評価から除外する。
+    """
+    h, w = shape
+    Xf = X_ref.reshape(-1, 3).T
+    proj = K @ (R @ Xf + t.reshape(3, 1))
+    z = proj[2]
+    with np.errstate(invalid="ignore", divide="ignore"):
+        u = proj[0] / z
+        v = proj[1] / z
+    ok = (z > 1e-6) & (u >= margin) & (u <= w - 1 - margin) \
+        & (v >= margin) & (v <= h - 1 - margin)
+    return ok.reshape(h, w)
+
+
+def _scene(d_scale=1.0, tilt_deg=0.0):
+    """合成 2 視点シーン。→ (img_ref, img_src, K, R, t, normal, d0, ref 真深度, ref 3D 点)。"""
     shape = (140, 180)
     K = np.array([[500.0, 0, 90.0], [0, 500.0, 70.0], [0, 0, 1.0]])
-    R = _rot([0.15, 1.0, 0.1], 7.0)                  # source の相対回転
-    t = np.array([0.35, 0.05, 0.04]) * d_scale       # baseline(深度スケールに比例)
+    R = _rot([0.15, 1.0, 0.1], 5.0)                  # source の相対回転
+    t = np.array([0.14, 0.03, 0.02]) * d_scale       # baseline(深度スケールに比例)
     d0 = 5.0 * d_scale                               # 平面パラメータ(距離)
     if tilt_deg == 0.0:
         normal = np.array([0.0, 0.0, 1.0])
     else:
-        # X 軸まわりに傾けた法線(単位)
-        th = np.deg2rad(tilt_deg)
-        normal = np.array([0.0, np.sin(th), np.cos(th)])
-    img_ref, depth_ref = _render(K, np.eye(3), np.zeros(3), normal, d0, shape)
-    img_src, _ = _render(K, R, t, normal, d0, shape)
-    return img_ref, img_src, K, R, t, normal, d0, depth_ref
+        th = np.deg2rad(tilt_deg)                     # 法線を傾け per-pixel 深度を変化させる
+        normal = np.array([np.sin(th) * 0.4, np.sin(th), np.cos(th)])
+        normal = normal / np.linalg.norm(normal)
+    img_ref, depth_ref, X_ref = _render(K, np.eye(3), np.zeros(3), normal, d0, shape)
+    img_src, _, _ = _render(K, R, t, normal, d0, shape)
+    return img_ref, img_src, K, R, t, normal, d0, depth_ref, X_ref
 
 
 def _candidates(zmin, zmax, num):
