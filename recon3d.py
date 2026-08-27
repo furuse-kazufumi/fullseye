@@ -170,7 +170,23 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
         mx = float(grid.max())
         if mx <= 0.0:
             raise ValueError("占有場が空です(点が格子に載っていません)")
-        field = grid / mx
+        occ = grid / mx
+
+        # 占有(unsigned)場は内外対称なので、薄い表面サンプルでは任意の等値面が内・外スロープの
+        # 二か所を通り同心二重殻になる。内部を充填して内外対称性を破り、単一の外殻を得る:
+        #   1) occ を iso で二値化して表面バンドを得る(平滑がボクセル化の隙間を橋渡しし watertight 化)
+        #   2) binary_fill_holes で内部空洞を充填 → 中実インジケータ(閉曲面のみ充填/開曲面は不変)
+        #   3) 再平滑・正規化して単一の境界場にする
+        # 充填が実際に内部を埋めた(バンドと中実で差が出た=閉曲面が watertight だった)時のみ採用。
+        # 埋まらなければ(開曲面/疎すぎ)occ のまま返す — その場合の二重殻性は honest な縮退。
+        level = float(iso)
+        solid = binary_fill_holes(occ >= level)
+        if solid.any() and int(solid.sum()) > int((occ >= level).sum()):
+            filled = gaussian_filter(solid.astype(np.float64), sigma)
+            fmx = float(filled.max())
+            if fmx > 0.0:
+                occ = filled / fmx
+        field = occ
     else:
         field = _winding_indicator(gp, normals, size, sigma, idx)
 

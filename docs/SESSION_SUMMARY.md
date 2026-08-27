@@ -3,49 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-27 12:39:07
+- **最終更新**: 2026-08-27 12:59:53
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-6a053838 auto: test_twoview.py 編集前 (2026-08-27 12:38)
-f21491a3 auto: test_curvature3d.py 編集前 (2026-08-27 12:38)
-3ef25086 auto: ops3d.py 編集前 (2026-08-27 12:37)
-8f3b9d59 auto: ops3d.py 編集前 (2026-08-27 12:36)
-7c68d407 auto: test_visualhull.py 編集前 (2026-08-27 12:35)
-3d244ba9 auto: test_visualhull.py 編集前 (2026-08-27 12:34)
-3454fd56 3D vision divergence wave 5 (final): PnP pose estimation + region props
-d38e17f8 auto: MATCH_3D_MATRIX.md 編集前 (2026-08-27 09:10)
-eeda0a59 auto: ops3d.py 編集前 (2026-08-27 09:09)
-ce97c5ce auto: ops3d.py 編集前 (2026-08-27 09:09)
+45c66cd5 auto: recon3d.py 編集前 (2026-08-27 12:58)
+d1798ad7 auto: recon3d.py 編集前 (2026-08-27 12:58)
+39818dd6 auto: recon3d.py 編集前 (2026-08-27 12:58)
+ad1d8964 auto: recon3d.py 編集前 (2026-08-27 12:57)
+18fb3c1b auto: test_deform3d.py 編集前 (2026-08-27 12:56)
+df1bfb6e auto: deform3d.py 編集前 (2026-08-27 12:56)
+6e67ec88 auto: ransac_fit.py 編集前 (2026-08-27 12:55)
+3e4e3fa0 auto: ransac_fit.py 編集前 (2026-08-27 12:55)
+49c17782 auto: ransac_fit.py 編集前 (2026-08-27 12:55)
+2a214078 auto: ransac_fit.py 編集前 (2026-08-27 12:55)
 ```
 
 ## 現在の git status
 
 ```
-M tests/test_twoview.py
+M recon3d.py
+ M tests/test_visualhull.py
+ M visualhull.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-12:38 .pytest_cache/v/cache/nodeids
-12:38 tests/test_twoview.py
-12:38 tests/test_curvature3d.py
-12:37 ops3d.py
-12:35 .pytest_cache/v/cache/lastfailed
-12:35 curvature3d.py
-12:35 tests/test_visualhull.py
-12:34 twoview.py
-12:33 tests/test_moments3d.py
-12:33 tests/test_superquadric.py
-12:33 tests/test_geodesic3d.py
-12:32 moments3d.py
-12:32 superquadric.py
-12:32 visualhull.py
-12:30 geodesic3d.py
+12:59 .pytest_cache/v/cache/nodeids
+12:59 visualhull.py
+12:59 tests/test_visualhull.py
+12:58 recon3d.py
+12:57 .pytest_cache/v/cache/lastfailed
+12:57 deform3d.py
+12:56 tests/test_deform3d.py
+12:56 tests/test_ransac_fit.py
+12:56 tests/test_metrics3d.py
+12:56 docs/OP_COMBINATION_MATRIX.md
+12:56 ransac_fit.py
+12:55 tests/test_curve3d.py
+12:54 metrics3d.py
+12:54 tests/test_range_image.py
+12:54 curve3d.py
 ```
 
 ---

@@ -185,3 +185,11 @@ def test_single_camera_is_not_tight():
     assert int(recon1.sum()) > 2 * int(recon_all.sum())  # 多視点解よりずっと緩い(実測 ~2.5x)
     assert _iou(recon1, truth) < 0.4                 # tight でない(多視点は >0.6)
     assert _iou(recon_all, truth) > _iou(recon1, truth)
+
+
+def test_carve_zero_cameras_fails_closed():
+    """カメラ0台は fail-closed(全 voxel 占有の詐称ブロックを返さず ValueError)。"""
+    import pytest
+    bounds = ((-1.0, 1.0), (-1.0, 1.0), (-1.0, 1.0))
+    with pytest.raises(ValueError):
+        vh.carve([], [], [], [], bounds, 8)

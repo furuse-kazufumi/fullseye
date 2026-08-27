@@ -155,6 +155,10 @@ def carve(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
     M = len(silhouettes)
     if not (M == len(Ks) == len(Rs) == len(ts)):
         raise ValueError("silhouettes/Ks/Rs/ts must have the same length")
+    if M == 0:
+        # fail-closed: カメラ0台では視錐制約が皆無 = visual hull は未定義。
+        # 全 voxel 占有(中身の詰まったブロック)を「復元結果」と偽って返さない(note_15 Class B)。
+        raise ValueError("carve requires at least one camera; visual hull is undefined with zero views")
     if res <= 0:
         raise ValueError("res must be positive, got %r" % (res,))
     (xmin, xmax), (ymin, ymax), (zmin, zmax) = bounds
@@ -169,10 +173,6 @@ def carve(silhouettes: Sequence[np.ndarray], Ks: Sequence[np.ndarray],
     centers = np.stack([X.ravel(), Y.ravel(), Z.ravel()], axis=1)   # (res^3, 3)
 
     occ = np.ones(centers.shape[0], dtype=bool)
-    if M == 0:
-        # 制約カメラなし: bounds 全体が hull(全 voxel keep)
-        return occ.reshape(res, res, res)
-
     for sil, K, R, t in zip(silhouettes, Ks, Rs, ts):
         sil = np.asarray(sil, dtype=bool)
         H, W = sil.shape
