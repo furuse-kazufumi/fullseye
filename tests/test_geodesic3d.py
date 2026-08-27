@@ -157,6 +157,44 @@ def test_geodesic_mesh_empty_faces():
     assert np.all(np.isinf(np.delete(d, 2)))
 
 
+def test_geodesic_mesh_duplicate_faces_no_weight_inflation():
+    """重複面・不整合ワインディングでもエッジ重みが二重加算されない(測地距離が膨張しない)。
+
+    GT(厳密): 単一の三角形 (0,1,2) では頂点 1 は source(0) と長さ 1 のエッジで直結 →
+      d[1] は厳密に 1.0。同じ面を何枚重ねても、巻き方を逆にしても、無向エッジは 1 本なので
+      測地距離は不変。旧実装は csr_matrix が重複 (i,j) の重みを黙って加算し、重複面 1 枚で
+      d[1]=2.0 と 2 倍に膨張していた(Class B 詐称)。
+    """
+    V = np.array([[0.0, 0.0, 0.0],
+                  [1.0, 0.0, 0.0],
+                  [0.5, np.sqrt(3.0) / 2.0, 0.0]])
+    d_single = G.geodesic_mesh(V, np.array([[0, 1, 2]], int), 0)
+    # source→頂点 1 は直結エッジ(長さ 1)なので厳密に 1.0
+    assert abs(d_single[1] - 1.0) < 1e-9
+
+    # 重複面(同一 (i,j) が複数回)でも重みは加算されず不変
+    d_dup = G.geodesic_mesh(V, np.array([[0, 1, 2], [0, 1, 2]], int), 0)
+    assert abs(d_dup[1] - 1.0) < 1e-9, f"duplicate face inflated d[1]={d_dup[1]:.6f}"
+    assert np.allclose(d_dup, d_single)
+
+    # 不整合ワインディング + 重複が混在しても不変
+    d_mixed = G.geodesic_mesh(V, np.array([[0, 1, 2], [2, 1, 0], [0, 1, 2]], int), 0)
+    assert np.allclose(d_mixed, d_single), "inconsistent winding inflated distances"
+
+
+def test_geodesic_mesh_grid_invariant_to_face_duplication():
+    """整合メッシュに面を重複させても閉形式 GT(行=m*h, 対角=m*√2*h)が不変。"""
+    m, h = 8, 0.5
+    V, F, vid = _tri_grid(m, h)
+    src = vid(0, 0)
+    d_ref = G.geodesic_mesh(V, F, src)
+    # 全面を 2 枚ずつに複製
+    d_dup = G.geodesic_mesh(V, np.concatenate([F, F], axis=0), src)
+    assert np.allclose(d_ref, d_dup, equal_nan=True)
+    assert abs(d_dup[vid(0, m)] - m * h) < 1e-9
+    assert abs(d_dup[vid(m, m)] - m * np.sqrt(2.0) * h) < 1e-9
+
+
 # ----------------------------------------------------------------------------
 # Farthest point sampling: 単純ランダムより均等に散らばる
 # ----------------------------------------------------------------------------
