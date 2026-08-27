@@ -119,8 +119,11 @@ def main():
     is_outlier[outlier_idx] = True
 
     # --- 3) RANSAC で頑健に姿勢復元(op を連鎖: 出力を後段の入力へ) ---
+    # thresh=3px: 0.5px 雑音の inlier は真姿勢で再投影 ~0.5px なので余裕で入り、
+    # 外れ値(数十px ずれ)は確実に外れる。最小 6 点サンプル DLT は雑音に敏感なので
+    # 反復を厚めに取り良い合意集合を引く。
     R_est, t_est, inlier_mask, info = pnp3d.pnp_ransac(
-        pts_3d, pts_2d, K, thresh=2.0, iters=500, seed=0)
+        pts_3d, pts_2d, K, thresh=3.0, iters=2000, seed=0)
 
     # 素の dlt_pose(全点・外れ値込み)= null-ish な素朴解: 破綻を見る
     R_naive, t_naive = pnp3d.dlt_pose(pts_3d, pts_2d, K)
