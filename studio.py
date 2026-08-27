@@ -3484,13 +3484,24 @@ def build_window(model=None):
     b_insert.clicked.connect(
         lambda: add_op(op_list.currentItem()) if op_list.currentItem() is not None else None)
     b_run_once.clicked.connect(run_op_once)
-    op_list.itemDoubleClicked.connect(add_op)
+    # itemActivated fires on BOTH Enter and double-click (one signal), so keyboard-only
+    # pipeline building works and there is no double-insert from wiring two signals.
+    op_list.itemActivated.connect(add_op)
+
+    def _insert_searched_op():
+        """Enter in the search box inserts the highlighted (or first) filtered op."""
+        it = op_list.currentItem() or (op_list.item(0) if op_list.count() else None)
+        if it is not None:
+            add_op(it)
+    search.returnPressed.connect(_insert_searched_op)
 
     def jump_to_problem(item):
         idx = item.data(QtCore.Qt.UserRole)
         if idx is not None and 0 <= idx < len(model.stages):
             stage_list.setCurrentRow(idx)
-    problems_list.itemDoubleClicked.connect(jump_to_problem)
+    # single-click as well as double-click / Enter navigates to the failing stage.
+    problems_list.itemClicked.connect(jump_to_problem)
+    problems_list.itemActivated.connect(jump_to_problem)
     samples.currentIndexChanged.connect(load_sample)
     stage_list.currentRowChanged.connect(lambda _=None: on_stage_selected())
     sa.valueChanged.connect(on_knob); sb.valueChanged.connect(on_knob)
