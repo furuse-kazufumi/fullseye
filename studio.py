@@ -4547,6 +4547,7 @@ def build_window(model=None):
                     "run_all": b_runall, "reset": b_reset, "save_pipeline": b_savep}
     win._actions = {
         "open_image": act_open_img, "demo": act_demo, "save_result": act_save_res,
+        "copy_result": act_copy_res,
         "open_pipeline": act_open_pipe, "save_pipeline": act_save_pipe, "export": act_export,
         "quit": act_quit, "remove": act_remove, "move_up": act_up, "move_down": act_down,
         "clear": act_clear, "undo": act_undo, "redo": act_redo,
