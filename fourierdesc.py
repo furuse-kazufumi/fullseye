@@ -188,20 +188,20 @@ def normalize(model, size_invariant=True):
     return coeffs
 
 
-def descriptor_distance(m1, m2, n_harmonics=None, size_invariant=True):
-    """2 つの形状の EFD 正規化記述子間の L2 距離(小さいほど似た形)。
+def descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True):
+    """2 つの形状間の距離(小さいほど似た形)。回転/平行移動/始点/(任意で)スケール不変。
 
-    m1, m2 は :func:`elliptic_fourier` の出力 dict。第1高調波は正規化で自明化
-    (a=1,b=c=0)するため距離計算から除外し、第2高調波以降を比較する。
+    各高調波の楕円 (長軸, 短軸) 特異値不変量(:func:`invariants`)の L2 距離。
+    m1, m2 は :func:`elliptic_fourier` の出力 dict。
     """
-    n1 = normalize(m1, size_invariant=size_invariant)
-    n2 = normalize(m2, size_invariant=size_invariant)
-    N = min(n1.shape[0], n2.shape[0])
+    a = invariants(m1, scale_invariant=scale_invariant)
+    b = invariants(m2, scale_invariant=scale_invariant)
+    N = min(a.shape[0], b.shape[0])
     if n_harmonics is not None:
         N = min(N, int(n_harmonics))
-    if N < 2:
-        raise ValueError("比較には2高調波以上必要")
-    return float(np.linalg.norm(n1[1:N] - n2[1:N]))
+    if N < 1:
+        raise ValueError("比較には1高調波以上必要")
+    return float(np.linalg.norm(a[:N] - b[:N]))
 
 
 # --------------------------------------------------------------------------- #
