@@ -4,9 +4,10 @@ import pytest
 import curve3d as C
 
 
-def _helix(a=2.0, b=1.0, turns=4, n=600):
+def _helix(a=2.0, b=1.0, turns=4, n=600, scale=1.0):
     t = np.linspace(0, turns * 2 * np.pi, n)
-    return np.stack([a * np.cos(t), a * np.sin(t), b * t], axis=1), t
+    c = np.stack([a * np.cos(t), a * np.sin(t), b * t], axis=1) * scale
+    return c, t
 
 
 def test_curvature_torsion_helix():

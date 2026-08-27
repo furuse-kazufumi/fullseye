@@ -90,8 +90,10 @@ def test_normals_from_depth_degenerate_shape_rejected():
     """
     import pytest
 
+    # 明示的で分かりやすいメッセージ(旧 numpy 内部の "Shape of array too small" ではなく
+    # 2x2 未満は法線が定義できない旨)を要求 → 旧挙動では FAIL、新挙動で PASS。
     for shp in [(1, 10), (10, 1), (1, 1)]:
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r"2x2"):
             RI.normals_from_depth(np.full(shp, 5.0))
     # 2x2 以上は従来どおり通ること(回帰の下限確認)
     n = RI.normals_from_depth(np.full((2, 2), 5.0), orient_to_camera=False)
