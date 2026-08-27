@@ -1,7 +1,10 @@
 # fullseye 3D op × op 組み合わせマトリクス(実現性 × 差別化で優先度化)
 
-**核心**: 82 個の 3D op(`ops3d.py` レジストリ)は、出力種別 = 別 op の入力種別が合えば連結できる。
-型整合な op→op 連結は **721 通り(2 段)**、3 段以上で **指数的**に増える。この空間から
+**核心**: 150 個の 3D op(`ops3d.py` レジストリ、31 カテゴリ)は、出力種別 = 別 op の入力種別が合えば連結できる。
+型整合な op→op 連結は **2,843 通り(2 段、`ops3d.compatible()` 実測)**、3 段以上で **指数的**に増える
+(第2〜5波で photometric/range_image/preprocess/structured_light/deform/medial/metrics/robust_fit/edges/
+reconstruct/curve/shape_descriptor/freeform/pose_estimation/regionprops の 15 モジュール・68 op を追加し、
+82 op/16 カテゴリ→150 op/31 カテゴリへほぼ倍増)。この空間から
 **実現しやすさ(F: 1–5)× 差別化(D: 1–5)= 優先度スコア** で手を付ける順を決める。
 
 スコア規準:
