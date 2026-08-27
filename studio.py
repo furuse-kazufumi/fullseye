@@ -2890,7 +2890,20 @@ def build_window(model=None):
             imgio.save(path, state["result"])     # permission / bad extension / full disk
         except Exception as e:
             report_error("Could not save result", "%s\n\n%s" % (path, e)); return
-        flash("saved " + os.path.basename(path))
+        # Ctrl+S saves a PNG of the RESULT; the dirty '*' tracks the PIPELINE. If the
+        # pipeline has unsaved edits, say which key saves it so the star isn't a mystery.
+        if state.get("dirty") and model.stages:
+            flash("saved %s  ·  (Ctrl+Shift+S saves the pipeline itself)" % os.path.basename(path))
+        else:
+            flash("saved " + os.path.basename(path))
+
+    def copy_result():
+        if state.get("result") is None:
+            flash("nothing to copy — run the pipeline first"); return
+        qi = _to_qimage(state["result"], QtGui)
+        if qi is not None:
+            QtWidgets.QApplication.clipboard().setImage(qi)
+            flash("copied result image to clipboard")
 
     def export():
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Export"); v = QtWidgets.QVBoxLayout(dlg)
