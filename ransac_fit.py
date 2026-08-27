@@ -362,6 +362,7 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
         if cnt > best_n:
             best_n, best_mask, best_axis = cnt, mask, axis
 
+    fallback = best_mask is None or best_n < 2
     if best_mask is None:                    # 有効仮説なし → 法線 SVD で全点フォールバック
         _, _, vt = np.linalg.svd(Nn, full_matrices=False)
         best_axis = vt[-1]
