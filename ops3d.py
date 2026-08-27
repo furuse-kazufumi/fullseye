@@ -262,6 +262,20 @@ _CATALOG = {
         ("largest_component", "regionprops3d", ["voxel"], "voxel", False),
         ("filter_by_volume", "regionprops3d", ["voxel"], "voxel", False),
     ],
+    "two_view": [  # 2視点エピポーラ幾何(対応点 → 相対姿勢 + 構造、単眼 SfM/VO の核)
+        ("fundamental_8point", "twoview", ["image2d", "image2d"], "matrix", False),
+        ("essential_8point", "twoview", ["image2d", "image2d"], "matrix", False),
+        ("recover_pose", "twoview", ["image2d", "image2d"], "pose", False),
+        ("triangulate", "twoview", ["image2d", "image2d"], "points", False),
+        ("sampson_distance", "twoview", ["image2d", "image2d"], "measurement", False),
+    ],
+    "curvature": [  # 点群の主曲率/shape index(把持アフォーダンス・凸凹鞍点分類)
+        ("principal_curvatures", "curvature3d", ["points"], "curvature", False),
+        ("mean_curvature", "curvature3d", ["points"], "measurement", False),
+        ("gaussian_curvature", "curvature3d", ["points"], "measurement", False),
+        ("shape_index", "curvature3d", ["points"], "descriptor", False),
+        ("estimate_normals", "curvature3d", ["points"], "normals", False),
+    ],
 }
 
 
