@@ -3369,9 +3369,15 @@ def build_window(model=None):
         show_result()
 
     def show_palette():
-        # actions first, then every operator — run by name, keyboard-only.
+        # actions first, then samples, recent files, then every operator — run by name,
+        # keyboard-only. Disabled (context-unavailable) actions are skipped so the palette
+        # never offers a command that would silently no-op.
         items = [("▸ " + a.text().replace("…", "").strip(), a.trigger)
-                 for a in win._actions.values() if a is not act_palette]
+                 for a in win._actions.values() if a is not act_palette and a.isEnabled()]
+        items += [("sample: " + nm, (lambda idx=i + 1: load_sample(idx)))
+                  for i, nm in enumerate(recipes.names())]
+        items += [("recent: " + os.path.basename(p), (lambda p=p: _open_recent(p)))
+                  for p in _recent_paths()]
         items += [("op: " + r["name"], (lambda n=r["name"]: add_op_by_name(n))) for r in all_ops]
         labels = [lbl for lbl, _ in items]
         dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("Command palette")
