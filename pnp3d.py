@@ -31,6 +31,27 @@ def _orthonormalize(M3):
     return U @ D @ Vt, S
 
 
+def coplanarity_ratio(points_3d):
+    """3D 点集合の非平面度 = 共分散の最小/最大固有値比の平方根
+    (= RMS 垂直偏差 / RMS 面内広がり、スケール不変)。
+
+    0 に近いほど共平面(全点が 1 平面に載る)。DLT は非共平面点を要するため
+    この比が小さい入力は縮退する。→ float(>= 0)。全点一致(退化)なら 0。
+    """
+    X = np.asarray(points_3d, float)
+    Xc = X - X.mean(axis=0)
+    cov = (Xc.T @ Xc) / len(Xc)          # 3x3 共分散(主軸方向の分散)
+    w = np.clip(np.linalg.eigvalsh(cov), 0.0, None)   # 昇順・非負
+    if w[-1] <= 0.0:
+        return 0.0                        # 面内の広がりも 0 = 全点一致
+    return float(np.sqrt(w[0] / w[-1]))
+
+
+# DLT が縮退する共平面性の閾値。coplanar は理論上 0、非共平面の 6 点最小標本でも
+# 実測 >= 0.07 なので、両者を安全に分離する。
+_COPLANAR_TOL = 1e-6
+
+
 def dlt_pose(points_3d, points_2d, K):
     """DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。
 
