@@ -224,6 +224,27 @@ _CATALOG = {
         ("alpha_shape_boundary", "recon3d", ["points"], "points", False),
         ("estimate_alpha", "recon3d", ["points"], "measurement", False),
     ],
+    "curve": [  # 空間曲線の微分幾何(曲率・捩率・Frenet・弧長・スプライン平滑)
+        ("curvature_torsion", "curve3d", ["points"], "measurement", False),
+        ("frenet_frame", "curve3d", ["points"], "frame", False),
+        ("arc_length", "curve3d", ["points"], "measurement", False),
+        ("resample_uniform", "curve3d", ["points"], "points", False),
+        ("fit_spline_curve", "curve3d", ["points"], "points", False),
+    ],
+    "shape_descriptor": [  # 統計ベース大域形状記述子(検索/分類、回転+スケール不変)
+        ("d2_distribution", "descriptors3d", ["points"], "descriptor", False),
+        ("a3_distribution", "descriptors3d", ["points"], "descriptor", False),
+        ("extent_signature", "descriptors3d", ["points"], "descriptor", False),
+        ("describe", "descriptors3d", ["points"], "descriptor", False),
+        ("shape_distance", "descriptors3d", ["descriptor", "descriptor"], "measurement", False),
+    ],
+    "freeform": [  # B スプライン自由曲面/曲線(多項式より柔軟な自由形状計測)
+        ("fit_bspline_surface", "bspline_surf", ["points"], "surface", False),
+        ("eval_bspline_surface", "bspline_surf", ["surface"], "image2d", False),
+        ("surface_residual", "bspline_surf", ["points", "surface"], "measurement", False),
+        ("fit_bspline_curve", "bspline_surf", ["points"], "surface", False),
+        ("eval_bspline_curve", "bspline_surf", ["surface"], "points", False),
+    ],
 }
 
 
