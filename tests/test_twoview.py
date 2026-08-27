@@ -90,3 +90,17 @@ def test_recovered_structure_reprojects():
 def test_min_points_guard():
     with pytest.raises(ValueError):
         twoview.fundamental_8point(np.zeros((5, 2)), np.zeros((5, 2)))
+
+
+def test_recover_pose_robust_to_small_pixel_noise():
+    # 0.3px 相当の観測ノイズでも姿勢が破綻しないこと(正規化 8 点法の安定性)
+    X, pts1, pts2, K, R_true, t_true = _scene(n=80, seed=3)
+    rng = np.random.default_rng(7)
+    pts1n = pts1 + rng.normal(0, 0.3, pts1.shape)
+    pts2n = pts2 + rng.normal(0, 0.3, pts2.shape)
+    R_est, t_est, _ = twoview.recover_pose(pts1n, pts2n, K)
+    # ノイズ有りでも回転誤差は数度以内、並進方向も概ね一致
+    assert _rot_angle_deg(R_est, R_true) < 3.0, _rot_angle_deg(R_est, R_true)
+    u_est = t_est / np.linalg.norm(t_est)
+    u_true = t_true / np.linalg.norm(t_true)
+    assert np.dot(u_est, u_true) > 0.98, np.dot(u_est, u_true)
