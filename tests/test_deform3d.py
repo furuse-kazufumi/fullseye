@@ -210,6 +210,45 @@ def test_register_cpd_rigid_improves_from_misalignment():
     assert info["rmse"] < init / 10.0
 
 
+def test_register_cpd_rigid_outlier_constant_myronenko_scale():
+    """外れ値定数が Myronenko&Song 標準形か(w の意味が正しく効くか)。
+
+    root cause 回帰: E ステップ分母の一様(外れ値)項は
+        c = (2πσ²)^(D/2) · (w/(1-w)) · (M/N)
+    でなければならない。以前の実装は c_const に余分な (2π)^(D/2) を含み、
+    D=3 では外れ値オッズ w/(1-w) が (2π)^1.5 ≈ 15.75 倍に化けていた
+    (例: w=0.3 → 実効 w≈0.871)。
+
+    その 15.75x 誤スケールを検出する決定的テスト:
+    完全対応(厳密一致)のクリーン点群では、σ² が反復で 0 へ縮み真の対応が
+    支配的になるため、1 未満の高い w(外れ値割合を高く見積もった事前)でも
+    剛体変換は厳密に回復されねばならない。バグ版は外れ値項が 15.75x 過大で
+    高 w 域が崩壊(σ² が縮まず恒等変換のまま停滞 → rmse が初期ズレ級に残る)。
+    正しい標準形なら w=0.97/0.99 でも rmse≈0 に回復する。
+    """
+    g = _grid(n=5)                       # 125 点、厳密対応(ノイズ・外れ値なし)
+    R0 = _rot_xyz(0.15, -0.2, 0.3)
+    t0 = np.array([0.3, -0.2, 0.15])
+    dst = g @ R0.T + t0                  # dst[i] は src[i] の厳密な像
+    init = _rms(g, dst)
+
+    # w が「外れ値割合」なら、実データが 100% inlier(厳密一致)である限り
+    # 1 に近い高 w でも σ² 収縮で真の対応が勝ち、変換を厳密回復できる。
+    for w in (0.97, 0.99):
+        R, t, info = d3.register_cpd_rigid(g, dst, iters=400, w=w)
+        rec = _rms(g @ R.T + t, dst)
+        # 旧(バグ)挙動: rec ~ init 級(崩壊)。新(正)挙動: rec ≈ 0。
+        assert rec < init / 1e3, (
+            f"w={w} で回復失敗 rec={rec:.3e} init={init:.3e} "
+            f"(外れ値定数の 15.75x 誤スケール回帰の疑い)")
+        assert np.max(np.abs(R - R0)) < 1e-3
+        assert np.max(np.abs(t - t0)) < 1e-3
+
+    # w=0(外れ値項ゼロ)は誤スケールの影響を受けない基準として厳密回復する。
+    R0i, t0i, _ = d3.register_cpd_rigid(g, dst, iters=400, w=0.0)
+    assert _rms(g @ R0i.T + t0i, dst) < init / 1e3
+
+
 # --------------------------------------------------------------------------- #
 # エラー処理                                                                  #
 # --------------------------------------------------------------------------- #
