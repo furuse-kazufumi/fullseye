@@ -118,6 +118,24 @@ def _decimate(V: np.ndarray, F: np.ndarray, target_faces: int):
     return Vd.astype(np.float64), Fd.astype(np.int64)
 
 
+def _orient_outward(V: np.ndarray, F: np.ndarray) -> np.ndarray:
+    """面の巻き方向を **外向き** に揃える(必要なら全面を反転)→ 揃えた F を返す。
+
+    ``render_mesh`` の陰影法線は毎ピクセルでカメラ向きに反転されるため巻き方向に依らないが、
+    ``render_ao`` の頂点半球は面の巻き方向由来の頂点法線で決まる。巻きが内向きだと半球が物体
+    内部を向き、全レイが即命中して AO≈0(=真っ黒)になる。skimage marching cubes の巻きは
+    場の符号規約(SDF=内負 / occupancy=内正)で反転しうるので、面重心が bbox 中心から外を
+    向くか(面積重み付き符号和)で判定して内向きなら反転する。凸に近い閉曲面で確実。"""
+    c = 0.5 * (V.min(axis=0) + V.max(axis=0))
+    A, B, C = V[F[:, 0]], V[F[:, 1]], V[F[:, 2]]
+    n = np.cross(B - A, C - A)                            # 面積重み付き法線(未正規化)
+    fc = (A + B + C) / 3.0 - c[None, :]
+    signed = float(np.einsum("ij,ij->i", n, fc).sum())   # >0 = 多数が外向き
+    if signed < 0.0:
+        return F[:, ::-1].copy()
+    return F
+
+
 # --------------------------------------------------------------------------- #
 # 被写体メッシュの構築(すべて Fullseye 実 op)                                   #
 # --------------------------------------------------------------------------- #
