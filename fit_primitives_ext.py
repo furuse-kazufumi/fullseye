@@ -125,7 +125,6 @@ def fit_cone(points) -> dict:
     P = _as_points(points, 6, "fit_cone")
     centroid = P.mean(0)
     Q = P - centroid
-    diag = float(np.linalg.norm(P.max(0) - P.min(0))) + 1e-12
 
     # --- 初期化: PCA 軸 + 半径の線形回帰 ---
     d0 = _symmetry_axis(Q)
