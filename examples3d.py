@@ -234,6 +234,16 @@ EXAMPLES = [
     {"id": "fit_primitives_ext", "task": "shape_fitting", "data": "synthetic",
      "name": "プリミティブ当てはめ拡張(円錐/トーラス/楕円体)",
      "summary": "点群に円錐(半角誤差0.008°)・トーラス(R,r誤差~3e-4)・楕円体(半径相対誤差<0.2%)を当てはめ。誤モデル(球/平面)の残差をそれぞれ38x/64x/50x下回る。漏斗/配管/細胞・慣性の寸法検査。"},
+    # -- decimation family / procedural modeling(間引き3種 + 手続き生成)---------- #
+    {"id": "pointcloud_downsampling", "task": "decimation", "data": "synthetic",
+     "name": "点群の間引き(voxel grid / farthest-point)で密度を均す",
+     "summary": "6万点の密度ムラ点群をvoxel格子(重心集約, カバレッジ0.134<=理論0.260)とFPS(0.097)で間引き。同数のランダム間引き(0.310, 穴あり)を判別的に上回る。LiDAR/深度カメラの前処理でICP・特徴計算を軽くする。"},
+    {"id": "volume_downsampling", "task": "decimation", "data": "synthetic",
+     "name": "ボリューム(3D CT)の間引き — max/mean プールの使い分け",
+     "summary": "260^3=1758万ボクセル(Frangi上限超過で拒否)を4倍間引きして上限内へ。既知8欠陥をmaxプールは8/8保持・meanプールは0/8にwashout。微小欠陥検出にはmaxが正しいことを計数で判別的に示す。工業CT/ラミノグラフィの前処理。"},
+    {"id": "procedural_hand", "task": "modeling", "data": "procedural",
+     "name": "手続き的に手全体の骨格を組む(27骨のカプセルSDF→メッシュ)",
+     "summary": "手根骨8+中手骨5+指骨14をカプセルSDFで解剖学配置しmarching cubesでメッシュ化。指先バンドの連結成分=四指(>=4)・細長さ4.66で「手」と判別。同体積の球null(指1本)を上回る。教材/デモ/合成データの自前生成。"},
     # -- rendering quality(Wave B・映える静止3D)---------------------------------- #
     {"id": "render_ao", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)",

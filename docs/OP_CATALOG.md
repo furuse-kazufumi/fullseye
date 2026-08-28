@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(64 例)
+### 3-D 点群/体積/曲面(67 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -67,6 +67,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **CTボリュームから骨をセグメンテーションし、接触骨を分離して計数・体積計測** — 骨を閾値化し、関節で繋がる指骨を収縮で分離してから連結成分で数え、体積を測る(閾値内外の密度コントラストで検証)。 `py -3.11 examples_3d/ct_bone_segmentation.py`
 - **CTボリュームから骨表面メッシュを抽出(marching cubes)** — CTボリュームに marching cubes をかけ、骨表面を三角メッシュ化する(3Dプリント/FEA向け)。 `py -3.11 examples_3d/ct_surface_extraction.py`
 - **3Dモルフォロジ(opening/closing/gradient/top-hat)で体積を整える** — closingで空洞8→0(本体は不変)、openingでトゲ3→0、gradientは境界殻のみ、top-hatはトゲだけ抽出。素のdilate/erodeが本体まで膨張/収縮する差で判別。 `py -3.11 examples_3d/morphology_3d.py`
+- **手続き的に手全体の骨格を組む(27骨のカプセルSDF→メッシュ)** — 手根骨8+中手骨5+指骨14をカプセルSDFで解剖学配置しmarching cubesでメッシュ化。指先バンドの連結成分=四指(>=4)・細長さ4.66で「手」と判別。同体積の球null(指1本)を上回る。教材/デモ/合成データの自前生成。 `py -3.11 examples_3d/procedural_hand.py`
 
 **features**
 - **主曲率・形状指数による把持アフォーダンス** — 点群の主曲率と形状指数から、球・円柱・鞍点を識別する(把持面の当たり判定)。 `py -3.11 examples_3d/curvature_grasp.py`
@@ -128,6 +129,10 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **メッシュ簡略化(QEM edge-collapse)で目標面数へ軽量化** — 球1280面→384面(目標厳密)、頂点は球面上・watertight維持・対称Hausdorff 3.3%R。同数までランダム間引くnullは穴792本・Hausdorff 21.3%Rで6.4倍劣る。スキャン/CADの軽量化。 `py -3.11 examples_3d/mesh_decimate.py`
 - **メッシュの法線・表面積・平均曲率(接続情報から)** — 面/頂点法線・表面積・cotangent平均曲率を面の巻き順とラプラシアンから測る。球(R2.5)で面積誤差0.12%・曲率0.4000(1/R)・法線外向き率1.00。面積null(49.7%誤差)・平面曲率nullを判別的に上回る。 `py -3.11 examples_3d/mesh_props.py`
 
+**decimation**
+- **点群の間引き(voxel grid / farthest-point)で密度を均す** — 6万点の密度ムラ点群をvoxel格子(重心集約, カバレッジ0.134<=理論0.260)とFPS(0.097)で間引き。同数のランダム間引き(0.310, 穴あり)を判別的に上回る。LiDAR/深度カメラの前処理でICP・特徴計算を軽くする。 `py -3.11 examples_3d/pointcloud_downsampling.py`
+- **ボリューム(3D CT)の間引き — max/mean プールの使い分け** — 260^3=1758万ボクセル(Frangi上限超過で拒否)を4倍間引きして上限内へ。既知8欠陥をmaxプールは8/8保持・meanプールは0/8にwashout。微小欠陥検出にはmaxが正しいことを計数で判別的に示す。工業CT/ラミノグラフィの前処理。 `py -3.11 examples_3d/volume_downsampling.py`
+
 **rendering**
 - **レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)** — 物体空間AOで半球到達性を[0,1]化。平面に載る球で頂上AO1.00/接触部0.06(高さとSpearman1.00)、溝は深さに単調低下。一様AO=1(null)は凹凸を判別不能。拡散のみのLambertianに乗算し立体感を出す。 `py -3.11 examples_3d/render_ao.py`
 - **レンダリング品質: キャスト/ソフトシャドウ(接地影)** — shadow mappingで接地影。球を床に載せ解析GTだ円とIoU 0.978。影なし(従来陰影)はIoU 0.00(接地影を全く当てられない)を判別的に上回る。半影は光源角サイズで単調に拡大。 `py -3.11 examples_3d/render_shadow.py`
@@ -184,7 +189,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 255 ops / 55 categories。_
+_計 256 ops / 55 categories。_
 
 
 ### augment(6)
@@ -406,11 +411,12 @@ _計 255 ops / 55 categories。_
 - `relative_pose` (`pose, pose → pose`) — T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。
 - `mean_edge_error` (`pose → measurement`) — エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。
 
-### preprocess(4)
+### preprocess(5)
 - `statistical_outlier_removal` (`points → points`) — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。
 - `radius_outlier_removal` (`points → points`) — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。
 - `voxel_grid_downsample` (`points → points`) — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。
 - `mls_smooth` (`points → points`) — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。
+- `volume_downsample` (`voxel → voxel`) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き).
 
 ### range_image(4)
 - `depth_to_organized_points` (`depth → points`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。
