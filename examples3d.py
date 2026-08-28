@@ -215,6 +215,25 @@ EXAMPLES = [
     {"id": "augment_pointcloud", "task": "augmentation", "data": "synthetic",
      "name": "点群データ拡張(回転/スケール/ドロップアウト/ジッタ)",
      "summary": "学習用の点群拡張4種を指定パラメータどおり適用(回転=距離不変・向き変化、scale倍率、dropout点数、jitter std)。恒等nullを判別的に上回り、連鎖でも複合性質を保つ。"},
+    # -- bounds / mesh processing / primitive fit(Wave A)------------------------- #
+    {"id": "hull_bounds", "task": "metrology", "data": "synthetic",
+     "name": "点群のバウンディング(凸包/OBB/AABB/最小包含球)",
+     "summary": "生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。"},
+    {"id": "mesh_smooth", "task": "mesh_process", "data": "synthetic",
+     "name": "三角形メッシュの平滑化(Laplacian/Taubin・非収縮)",
+     "summary": "ノイズメッシュを接続グラフ上で平滑化。RMS 0.627→Laplacian 0.306/Taubin 0.215。Taubin は平均半径ズレ0.025で Laplacian 0.298 の約1/12=非収縮。marching cubes/スキャン後処理向け。"},
+    {"id": "mesh_decimate", "task": "mesh_process", "data": "synthetic",
+     "name": "メッシュ簡略化(QEM edge-collapse)で目標面数へ軽量化",
+     "summary": "球1280面→384面(目標厳密)、頂点は球面上・watertight維持・対称Hausdorff 3.3%R。同数までランダム間引くnullは穴792本・Hausdorff 21.3%Rで6.4倍劣る。スキャン/CADの軽量化。"},
+    {"id": "mesh_props", "task": "mesh_process", "data": "synthetic",
+     "name": "メッシュの法線・表面積・平均曲率(接続情報から)",
+     "summary": "面/頂点法線・表面積・cotangent平均曲率を面の巻き順とラプラシアンから測る。球(R2.5)で面積誤差0.12%・曲率0.4000(1/R)・法線外向き率1.00。面積null(49.7%誤差)・平面曲率nullを判別的に上回る。"},
+    {"id": "watershed3d", "task": "segmentation", "data": "synthetic",
+     "name": "接触物体の分離(距離変換ベース3D watershed)",
+     "summary": "接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。"},
+    {"id": "fit_primitives_ext", "task": "shape_fitting", "data": "synthetic",
+     "name": "プリミティブ当てはめ拡張(円錐/トーラス/楕円体)",
+     "summary": "点群に円錐(半角誤差0.008°)・トーラス(R,r誤差~3e-4)・楕円体(半径相対誤差<0.2%)を当てはめ。誤モデル(球/平面)の残差をそれぞれ38x/64x/50x下回る。漏斗/配管/細胞・慣性の寸法検査。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}

@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(52 例)
+### 3-D 点群/体積/曲面(58 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -47,6 +47,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
+- **点群のバウンディング(凸包/OBB/AABB/最小包含球)** — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。 `py -3.11 examples_3d/hull_bounds.py`
 
 **depth**
 - **2視点プレーンスイープ・ステレオ深度** — 既知カメラの2画像から、深度平面を掃引して photo-consistency 最小の深度を画素ごとに選ぶ。 `py -3.11 examples_3d/plane_sweep_depth.py`
@@ -88,6 +89,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **segmentation**
 - **ビンピッキング: 台平面除去→物体クラスタリング** — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。 `py -3.11 examples_3d/object_segmentation.py`
 - **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。 `py -3.11 examples_3d/region_props_3d.py`
+- **接触物体の分離(距離変換ベース3D watershed)** — 接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。 `py -3.11 examples_3d/watershed3d.py`
 
 **mapping**
 - **占有格子+ESDFで連続クリアランスを問い合わせ** — 部屋点群から occupancy_grid→esdf を作り、自由空間点で最近接障害物までの連続距離を query_distance。占有0/1のみの零点を約39倍上回る(衝突回避マージン判定)。 `py -3.11 examples_3d/occupancy_esdf.py`
@@ -95,6 +97,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **shape_fitting**
 - **点群から角丸ブロックをスーパー楕円体で当てはめ** — 既知スーパー楕円体からの雑音点群を fit_superquadric で復元(半径5%以内・内外分類>95%)。球1個を当てた残差を大きく下回る(把持点判定向け)。 `py -3.11 examples_3d/superquadric_fit.py`
 - **3D Houghで平面・球のプリミティブを検出** — 投票ベースの hough_plane_3d/hough_sphere_3d で平面(法線誤差0.55度)・球(中心誤差0voxel)を復元。素朴PCA(80度)や重心(22voxel)の零点を明確に上回る。 `py -3.11 examples_3d/detect_primitives_3d.py`
+- **プリミティブ当てはめ拡張(円錐/トーラス/楕円体)** — 点群に円錐(半角誤差0.008°)・トーラス(R,r誤差~3e-4)・楕円体(半径相対誤差<0.2%)を当てはめ。誤モデル(球/平面)の残差をそれぞれ38x/64x/50x下回る。漏斗/配管/細胞・慣性の寸法検査。 `py -3.11 examples_3d/fit_primitives_ext.py`
 
 **shape_descriptors**
 - **3Dモーメント不変量(剛体+一様スケールに不変)** — 点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。 `py -3.11 examples_3d/moment_invariants.py`
@@ -119,6 +122,11 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **augmentation**
 - **点群データ拡張(回転/スケール/ドロップアウト/ジッタ)** — 学習用の点群拡張4種を指定パラメータどおり適用(回転=距離不変・向き変化、scale倍率、dropout点数、jitter std)。恒等nullを判別的に上回り、連鎖でも複合性質を保つ。 `py -3.11 examples_3d/augment_pointcloud.py`
+
+**mesh_process**
+- **三角形メッシュの平滑化(Laplacian/Taubin・非収縮)** — ノイズメッシュを接続グラフ上で平滑化。RMS 0.627→Laplacian 0.306/Taubin 0.215。Taubin は平均半径ズレ0.025で Laplacian 0.298 の約1/12=非収縮。marching cubes/スキャン後処理向け。 `py -3.11 examples_3d/mesh_smooth.py`
+- **メッシュ簡略化(QEM edge-collapse)で目標面数へ軽量化** — 球1280面→384面(目標厳密)、頂点は球面上・watertight維持・対称Hausdorff 3.3%R。同数までランダム間引くnullは穴792本・Hausdorff 21.3%Rで6.4倍劣る。スキャン/CADの軽量化。 `py -3.11 examples_3d/mesh_decimate.py`
+- **メッシュの法線・表面積・平均曲率(接続情報から)** — 面/頂点法線・表面積・cotangent平均曲率を面の巻き順とラプラシアンから測る。球(R2.5)で面積誤差0.12%・曲率0.4000(1/R)・法線外向き率1.00。面積null(49.7%誤差)・平面曲率nullを判別的に上回る。 `py -3.11 examples_3d/mesh_props.py`
 
 ## スタンドアロン幾何/数学モジュール(関数 API)
 
@@ -168,7 +176,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 230 ops / 53 categories。_
+_計 245 ops / 55 categories。_
 
 
 ### augment(6)
@@ -178,6 +186,12 @@ _計 230 ops / 53 categories。_
 - `random_dropout` (`points → points`) — 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。
 - `elastic_deform` (`points → points`) — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。
 - `cutout` (`points → points`) — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。
+
+### bounds(4)
+- `convex_hull` (`points → mesh`) — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles.
+- `aabb` (`points → primitive`) — Axis-aligned bounding box. Returns ``(min (3,), max (3,))``.
+- `obb` (`points → primitive`) — Oriented bounding box by PCA.
+- `min_enclosing_sphere` (`points → primitive`) — 点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。
 
 ### bundle_adjust(3)
 - `bundle_adjust` (`pose, points → pose`) — 再投影誤差最小でカメラ姿勢と 3D 点を同時最適化。→ dict{cameras, points, rmse, cost}。
@@ -308,6 +322,15 @@ _計 230 ops / 53 categories。_
 - `topology_signature` (`voxel → descriptor`) — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。
 - `medial_match` (`voxel, voxel → measurement`) — 2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。
 
+### mesh_process(7)
+- `laplacian_smooth` (`mesh → mesh`) — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。
+- `taubin_smooth` (`mesh → mesh`) — Taubin λ|μ フィルタによる **非収縮** 平滑化。→ (verts, faces)。
+- `decimate_qem` (`mesh → mesh`) — Quadric-error-metric edge-collapse decimation toward *target_faces*.
+- `face_normals` (`mesh → normals`) — 三角形メッシュの**面法線**(各三角形の単位法線ベクトル)。→ (M,3)。
+- `vertex_normals` (`mesh → normals`) — 三角形メッシュの**頂点法線**(面積重み付きで集約した単位法線)。→ (N,3)。
+- `mesh_area` (`mesh → measurement`) — 三角形メッシュの**表面積**(全三角形面積の総和)。→ float。
+- `vertex_curvature` (`mesh → curvature`) — 三角形メッシュの各頂点の**平均曲率の大きさ**(mean curvature magnitude)。→ (N,)。
+
 ### metrics(7)
 - `chamfer_distance` (`points, points → measurement`) — 対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。
 - `hausdorff_distance` (`points, points → measurement`) — 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。
@@ -419,11 +442,14 @@ _計 230 ops / 53 categories。_
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
 - `render_shaded` (`normals → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。
 
-### robust_fit(4)
+### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。
 - `ransac_sphere` (`points → primitive`) — 外れ値に頑健な RANSAC 球適合。
 - `ransac_line` (`points → primitive`) — 外れ値に頑健な RANSAC 直線適合。
 - `ransac_cylinder` (`points, normals → primitive`) — 外れ値に頑健な RANSAC 円筒適合(点法線が必要)。
+- `fit_cone` (`points → primitive`) — 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。
+- `fit_torus` (`points → primitive`) — 点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。
+- `fit_ellipsoid` (`points → primitive`) — 点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。
 
 ### scene_flow3d(3)
 - `nearest_neighbor_flow` (`points, points → flow`) — 各点 pts0 から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す。
@@ -439,10 +465,11 @@ _計 230 ops / 53 categories。_
 - `sdf_smooth_union` (`sdf, sdf → sdf`) — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。
 - `sdf_offset` (`sdf → sdf`) — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。
 
-### segment(3)
+### segment(4)
 - `region_growing` (`points → labels`) — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。
 - `euclidean_cluster` (`points → labels`) — 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。
 - `plane_segmentation` (`points → labels`) — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。
+- `vol_watershed` (`voxel → labels`) — Marker-controlled 3-D watershed segmentation (**optional — scikit-image**).
 
 ### shape_descriptor(5)
 - `d2_distribution` (`points → descriptor`) — ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。
