@@ -341,8 +341,9 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         log("[render] showcase_turntable_itokawa.gif  (rock/plastic)")
         frames_i = render_turntable(
             Vi, Fi, frames=frames, size=size, ss=ss, material="plastic",
-            albedo=(0.46, 0.43, 0.39), light=(0.55, 0.35, 0.80),
-            background=(0.02, 0.02, 0.04), elev_deg=12.0, tonemap="aces", log=log)
+            albedo=(0.55, 0.50, 0.44), light=(0.55, 0.35, 0.80),
+            background=(0.03, 0.03, 0.05), elev_deg=13.0, tonemap="aces",
+            ambient=0.13, log=log)
         p = os.path.join(out_dir, "showcase_turntable_itokawa.gif")
         sb = save_gif(frames_i, p, fps=fps, log=log)
         n, shp = verify_gif(p, log=log)
