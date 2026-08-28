@@ -108,8 +108,13 @@ alpha = recon3d.estimate_alpha(pts) * 0.5
 Va, Fa = recon3d.alpha_shape_mesh(pts, alpha)
 
 # --- 3) null: 同じ点群の凸包(穴を埋める)---------------------------------
+# 面が参照する頂点だけに詰め直す(χ を凸包表面=球位相として正しく数えるため)。
 hull = ConvexHull(pts)
-Vh, Fh = pts, hull.simplices.astype(np.int64)
+used = np.unique(hull.simplices)
+remap = -np.ones(len(pts), dtype=np.int64)
+remap[used] = np.arange(len(used))
+Vh = pts[used]
+Fh = remap[hull.simplices].astype(np.int64)
 
 # --- 4) 穴プローブ: z 軸(ρ=0)上、|z|<r で凸包内・穴の中の点列 -----------
 zprobe = np.linspace(-0.25, 0.25, 41)
