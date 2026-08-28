@@ -341,21 +341,23 @@ def fit_ellipsoid(points) -> dict:
     except (np.linalg.LinAlgError, ValueError) as exc:
         raise ValueError(f"fit_ellipsoid: 一般化固有問題が解けない({exc})")
 
+    # 各一般化固有ベクトルを楕円体へ復元し、正定値(= 実在する楕円体)に復元できた解のうち
+    # 残差 RMS 最小を採用する。楕円体拘束の符号(vᵀCv の正負)は係数ベクトルのスケール規約に
+    # 依存して真の楕円体でも負になりうる(vᵀCv=4J−I² はスケール不変だが、この C 規約では実
+    # 楕円体の解が負値を取る)。復元(A_norm の正定値検査)そのものが厳密な楕円体判定なので、
+    # 符号ゲートは使わず「正定値に復元でき残差最小」を選ぶ(honest かつ堅牢)。復元・残差は
+    # 係数ベクトルのスケール/符号に不変なので、正規化なしで v2 = −S22⁻¹ S12ᵀ v1 を作れば良い。
     best = None
     best_rms = np.inf
     for i in range(evecs.shape[1]):
         v1 = np.real(evecs[:, i])
-        if not np.all(np.isfinite(v1)):
+        if not np.all(np.isfinite(v1)) or np.linalg.norm(v1) < 1e-12:
             continue
-        con = float(v1 @ _ELLIPSOID_C @ v1)     # v1ᵀ C v1(> 0 が楕円体条件)
-        if con <= 1e-12:
-            continue
-        v1 = v1 / np.sqrt(con)                   # 拘束 v1ᵀ C v1 = 1 へ正規化
         v2 = -S22inv @ (S12.T @ v1)
         v = np.concatenate([v1, v2])
         params = _ellipsoid_from_coeffs(v, centroid, scale)
         if params is None:
-            continue
+            continue                             # 正定値でない(双曲面等)→ 楕円体でない
         rms = float(np.sqrt(np.mean(
             _ellipsoid_taubin_distance(P, params["center"], params["axes"],
                                        params["radii"]) ** 2)))
