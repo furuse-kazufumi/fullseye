@@ -624,770 +624,770 @@ _計 735 ops / 46 categories。_
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
 ### 3d(7)
-- `vol_gaussian` `volume → volume` · 例: なし
-- `vol_median` `volume → volume` · 例: なし
-- `vol_erode` `volume → volume` · 例: なし
-- `vol_dilate` `volume → volume` · 例: なし
-- `vol_threshold` `volume → volume` · 例: なし
-- `vol_mip` `volume → image` · 例: なし
-- `vol_slice` `volume → image` · 例: なし
+- `vol_gaussian` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_median` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_erode` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_dilate` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_threshold` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_mip` `volume → image` · 例: `gallery2d_physics_alife_3d`
+- `vol_slice` `volume → image` · 例: `gallery2d_physics_alife_3d`
 
 ### arithmetic(10)
-- `abs_image` (halcon: `abs_image`) `image → image` · 例: なし
-- `sqrt_image` (halcon: `sqrt_image`) `image → image` · 例: なし
-- `exp_image` (halcon: `exp_image`) `image → image` · 例: なし
-- `log_image` (halcon: `log_image`) `image → image` · 例: なし
-- `sin_image` (halcon: `sin_image`) `image → image` · 例: なし
-- `cos_image` (halcon: `cos_image`) `image → image` · 例: なし
-- `asin_image` (halcon: `asin_image`) `image → image` · 例: なし
-- `acos_image` (halcon: `acos_image`) `image → image` · 例: なし
-- `atan_image` (halcon: `atan_image`) `image → image` · 例: なし
-- `tan_image` (halcon: `tan_image`) `image → image` · 例: なし
+- `abs_image` (halcon: `abs_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `sqrt_image` (halcon: `sqrt_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `exp_image` (halcon: `exp_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `log_image` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `sin_image` (halcon: `sin_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `cos_image` (halcon: `cos_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `asin_image` (halcon: `asin_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `acos_image` (halcon: `acos_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `atan_image` (halcon: `atan_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `tan_image` (halcon: `tan_image`) `image → image` · 例: `gallery2d_gray_arith`
 
 ### artificial-life(12)
-- `alife_gray_scott` `image → image` · 例: なし
-- `alife_turing` `image → image` · 例: `sim2real_and_alife`
-- `alife_life_step` `image → image` · 例: `sim2real_and_alife`
-- `alife_cyclic_ca` `image → image` · 例: `sim2real_and_alife`
-- `alife_perona_malik` `image → image` · 例: なし
-- `alife_curvature_flow` `image → image` · 例: なし
-- `alife_dla` `image → image` · 例: `sim2real_and_alife`
-- `alife_reaction_bz` `image → image` · 例: `sim2real_and_alife`
-- `alife_wolfram1d` `image → image` · 例: なし
-- `alife_langton_ant` `image → image` · 例: なし
-- `alife_lenia` `image → image` · 例: なし
-- `alife_sandpile` `image → image` · 例: なし
+- `alife_gray_scott` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `alife_turing` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_life_step` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_cyclic_ca` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_perona_malik` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `alife_curvature_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `alife_dla` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_reaction_bz` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `alife_wolfram1d` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `alife_langton_ant` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `alife_lenia` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `alife_sandpile` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### artistic(3)
-- `xcv_stylization` `image → image` · 例: なし
-- `xcv_pencil_sketch` `image → image` · 例: なし
-- `xpil_emboss` `image → image` · 例: なし
+- `xcv_stylization` `image → image` · 例: `gallery2d_color_artistic`
+- `xcv_pencil_sketch` `image → image` · 例: `gallery2d_color_artistic`
+- `xpil_emboss` `image → image` · 例: `gallery2d_color_artistic`
 
 ### augmentation(10)
-- `aug_shot_noise` `image → image` · 例: `sim2real_and_alife`
-- `aug_read_noise` `image → image` · 例: なし
-- `aug_fixed_pattern` `image → image` · 例: `sim2real_and_alife`
-- `aug_motion_blur` `image → image` · 例: なし
-- `aug_vignette` `image → image` · 例: `sim2real_and_alife`
-- `aug_chromatic` `image → image` · 例: なし
-- `aug_rolling_shutter` `image → image` · 例: `sim2real_and_alife`
-- `aug_jpeg_blocks` `image → image` · 例: `sim2real_and_alife`
-- `aug_cutout` `image → image` · 例: なし
-- `aug_barrel` `image → image` · 例: `sim2real_and_alife`
+- `aug_shot_noise` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_read_noise` `image → image` · 例: `gallery2d_color_artistic`
+- `aug_fixed_pattern` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_motion_blur` `image → image` · 例: `gallery2d_color_artistic`
+- `aug_vignette` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_chromatic` `image → image` · 例: `gallery2d_color_artistic`
+- `aug_rolling_shutter` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_jpeg_blocks` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
+- `aug_cutout` `image → image` · 例: `gallery2d_color_artistic`
+- `aug_barrel` `image → image` · 例: `gallery2d_color_artistic`, `sim2real_and_alife`
 
 ### barcode(1)
-- `decode_barcode` (halcon: `find_bar_code`) `image → feature` · 例: なし
+- `decode_barcode` (halcon: `find_bar_code`) `image → feature` · 例: `gallery2d_physics_alife_3d`
 
 ### classification(1)
-- `classify_shape` `region → feature` · 例: なし
+- `classify_shape` `region → feature` · 例: `gallery2d_features`
 
 ### color(8)
-- `cfa_to_rgb` (halcon: `cfa_to_rgb`) `image → color` · 例: なし
-- `trans_from_rgb` (halcon: `trans_from_rgb`) `color → color` · 例: なし
-- `trans_to_rgb` (halcon: `trans_to_rgb`) `color → color` · 例: なし
-- `linear_trans_color` (halcon: `linear_trans_color`) `color → color` · 例: なし
-- `principal_comp` (halcon: `principal_comp`) `color → color` · 例: なし
-- `rgb1_to_gray` (halcon: `rgb1_to_gray`) `color → image` · 例: なし
-- `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: なし
-- `access_channel` (halcon: `access_channel`) `color → image` · 例: なし
+- `cfa_to_rgb` (halcon: `cfa_to_rgb`) `image → color` · 例: `gallery2d_color_artistic`
+- `trans_from_rgb` (halcon: `trans_from_rgb`) `color → color` · 例: `gallery2d_color_artistic`
+- `trans_to_rgb` (halcon: `trans_to_rgb`) `color → color` · 例: `gallery2d_color_artistic`
+- `linear_trans_color` (halcon: `linear_trans_color`) `color → color` · 例: `gallery2d_color_artistic`
+- `principal_comp` (halcon: `principal_comp`) `color → color` · 例: `gallery2d_color_artistic`
+- `rgb1_to_gray` (halcon: `rgb1_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
+- `rgb3_to_gray` (halcon: `rgb3_to_gray`) `color → image` · 例: `gallery2d_color_artistic`
+- `access_channel` (halcon: `access_channel`) `color → image` · 例: `gallery2d_color_artistic`
 
 ### contour(26)
-- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `quickstart`
-- `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `quickstart`
-- `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: なし
-- `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: なし
-- `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `quickstart`
-- `sk_find_contours` `image → contour` · 例: なし
-- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `quickstart`
-- `lines_gauss` (halcon: `lines_gauss`) `image → contour` · 例: なし
-- `select_contours_xld` (halcon: `select_contours_xld`) `contour → contour` · 例: なし
-- `smooth_contours_xld` (halcon: `smooth_contours_xld`) `contour → contour` · 例: なし
-- `gen_region_contour_xld` (halcon: `gen_region_contour_xld`) `contour → region` · 例: なし
-- `close_contours_xld` (halcon: `close_contours_xld`) `contour → contour` · 例: なし
-- `affine_trans_contour_xld` (halcon: `affine_trans_contour_xld`) `contour → contour` · 例: なし
-- `projective_trans_contour_xld` (halcon: `projective_trans_contour_xld`) `contour → contour` · 例: なし
-- `polar_trans_contour_xld` (halcon: `polar_trans_contour_xld`) `contour → contour` · 例: なし
-- `shape_trans_xld` (halcon: `shape_trans_xld`) `contour → contour` · 例: なし
-- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` · 例: なし
-- `zero_crossing_sub_pix` (halcon: `zero_crossing_sub_pix`) `image → contour` · 例: なし
-- `lines_facet` (halcon: `lines_facet`) `image → contour` · 例: なし
-- `gen_region_polygon_xld` (halcon: `gen_region_polygon_xld`) `contour → region` · 例: なし
-- `affine_trans_polygon_xld` (halcon: `affine_trans_polygon_xld`) `contour → contour` · 例: なし
-- `gen_contour_region_xld` (halcon: `gen_contour_region_xld`) `region → contour` · 例: なし
-- `select_shape_xld` (halcon: `select_shape_xld`) `contour → contour` · 例: なし
-- `contour_point_num_xld` (halcon: `contour_point_num_xld`) `contour → feature` · 例: なし
-- `edges_color_sub_pix` (halcon: `edges_color_sub_pix`) `color → contour` · 例: なし
-- `lines_color` (halcon: `lines_color`) `color → contour` · 例: なし
+- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
+- `select_contours` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`, `quickstart`
+- `smooth_contours` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `fit_line_contours` (halcon: `fit_line_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `contours_to_region` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`, `quickstart`
+- `sk_find_contours` `image → contour` · 例: `gallery2d_contour_measure`
+- `edges_sub_pix` (halcon: `edges_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`, `quickstart`
+- `lines_gauss` (halcon: `lines_gauss`) `image → contour` · 例: `gallery2d_contour_measure`
+- `select_contours_xld` (halcon: `select_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `smooth_contours_xld` (halcon: `smooth_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `gen_region_contour_xld` (halcon: `gen_region_contour_xld`) `contour → region` · 例: `gallery2d_contour_measure`
+- `close_contours_xld` (halcon: `close_contours_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `affine_trans_contour_xld` (halcon: `affine_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `projective_trans_contour_xld` (halcon: `projective_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `polar_trans_contour_xld` (halcon: `polar_trans_contour_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `shape_trans_xld` (halcon: `shape_trans_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `threshold_sub_pix` (halcon: `threshold_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`
+- `zero_crossing_sub_pix` (halcon: `zero_crossing_sub_pix`) `image → contour` · 例: `gallery2d_contour_measure`
+- `lines_facet` (halcon: `lines_facet`) `image → contour` · 例: `gallery2d_contour_measure`
+- `gen_region_polygon_xld` (halcon: `gen_region_polygon_xld`) `contour → region` · 例: `gallery2d_contour_measure`
+- `affine_trans_polygon_xld` (halcon: `affine_trans_polygon_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `gen_contour_region_xld` (halcon: `gen_contour_region_xld`) `region → contour` · 例: `gallery2d_contour_measure`
+- `select_shape_xld` (halcon: `select_shape_xld`) `contour → contour` · 例: `gallery2d_contour_measure`
+- `contour_point_num_xld` (halcon: `contour_point_num_xld`) `contour → feature` · 例: `gallery2d_contour_measure`
+- `edges_color_sub_pix` (halcon: `edges_color_sub_pix`) `color → contour` · 例: `gallery2d_contour_measure`
+- `lines_color` (halcon: `lines_color`) `color → contour` · 例: `gallery2d_contour_measure`
 
 ### decomposition(7)
-- `dc_structure_texture` `image → image` · 例: なし
-- `dc_texture_residual` `image → image` · 例: なし
-- `dc_rpca_lowrank` `image → image` · 例: なし
-- `dc_rpca_sparse` `image → image` · 例: なし
-- `dc_retinex` `image → image` · 例: なし
-- `dc_local_contrast_norm` `image → image` · 例: なし
-- `dc_homomorphic` `image → image` · 例: なし
+- `dc_structure_texture` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_texture_residual` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_rpca_lowrank` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_rpca_sparse` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_retinex` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_local_contrast_norm` `image → image` · 例: `gallery2d_texture_freq`
+- `dc_homomorphic` `image → image` · 例: `gallery2d_texture_freq`
 
 ### deformation(3)
-- `deform_tps` `image → image` · 例: なし
-- `deform_ffd` `image → image` · 例: なし
-- `deform_mls` `image → image` · 例: なし
+- `deform_tps` `image → image` · 例: `gallery2d_geometry`
+- `deform_ffd` `image → image` · 例: `gallery2d_geometry`
+- `deform_mls` `image → image` · 例: `gallery2d_geometry`
 
 ### domain(2)
-- `it_full_domain` `image → image` · 例: なし
-- `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: なし
+- `it_full_domain` `image → image` · 例: `gallery2d_gray_arith`
+- `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
 
 ### edges(57)
-- `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: なし
-- `laplace` (halcon: `laplace`) `image → image` · 例: なし
-- `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: なし
-- `roberts_mag` (halcon: `roberts`) `image → image` · 例: なし
-- `dog` (halcon: `diff_of_gauss`) `image → image` · 例: なし
-- `grad_dir` `image → image` · 例: なし
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: なし
-- `corner_response` (halcon: `points_harris`) `image → image` · 例: なし
-- `sk_scharr` (halcon: `edges_image`) `image → image` · 例: なし
-- `sk_farid` (halcon: `edges_image`) `image → image` · 例: なし
-- `sk_dog` (halcon: `diff_of_gauss`) `image → image` · 例: なし
-- `sk_hessian_det` `image → image` · 例: なし
-- `sk_corner_harris` (halcon: `points_harris`) `image → image` · 例: なし
-- `cv_scharr` (halcon: `edges_image`) `image → image` · 例: なし
-- `cv_laplacian` (halcon: `laplace`) `image → image` · 例: なし
-- `cv_corner_harris` (halcon: `points_harris`) `image → image` · 例: なし
-- `cv_min_eigen` (halcon: `points_harris`) `image → image` · 例: なし
-- `cv_precorner` (halcon: `corner_response`) `image → image` · 例: なし
-- `derivate_gauss` (halcon: `derivate_gauss`) `image → image` · 例: なし
-- `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` · 例: なし
-- `diff_of_gauss` (halcon: `diff_of_gauss`) `image → image` · 例: なし
-- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: なし
-- `sobel_dir` (halcon: `sobel_dir`) `image → image` · 例: なし
-- `prewitt_amp` (halcon: `prewitt_amp`) `image → image` · 例: なし
-- `prewitt_dir` (halcon: `prewitt_dir`) `image → image` · 例: なし
-- `roberts` (halcon: `roberts`) `image → image` · 例: なし
-- `kirsch_amp` (halcon: `kirsch_amp`) `image → image` · 例: なし
-- `kirsch_dir` (halcon: `kirsch_dir`) `image → image` · 例: なし
-- `frei_amp` (halcon: `frei_amp`) `image → image` · 例: なし
-- `robinson_amp` (halcon: `robinson_amp`) `image → image` · 例: なし
-- `laplace` (halcon: `laplace`) `image → image` · 例: なし
-- `points_foerstner` (halcon: `points_foerstner`) `image → image` · 例: なし
-- `points_harris_binomial` (halcon: `points_harris_binomial`) `image → image` · 例: なし
-- `dots_image` (halcon: `dots_image`) `image → image` · 例: なし
-- `frei_dir` (halcon: `frei_dir`) `image → image` · 例: なし
-- `robinson_dir` (halcon: `robinson_dir`) `image → image` · 例: なし
-- `edges_color` (halcon: `edges_color`) `color → image` · 例: なし
-- `xsk_hessian_eig` `image → image` · 例: なし
-- `xpil_contour` `image → image` · 例: なし
-- `xpil_find_edges` `image → image` · 例: なし
-- `xsp_morph_laplace` `image → image` · 例: なし
-- `xsp_gauss_grad_mag` `image → image` · 例: なし
-- `xsk2_corner_kr` `image → image` · 例: なし
-- `xsk2_inv_gauss_grad` `image → image` · 例: なし
-- `xwt_hf_reconstruct` `image → image` · 例: なし
-- `xwt_directional_detail` `image → image` · 例: なし
-- `xsk3_corner_moravec` `image → image` · 例: なし
-- `xsk3_corner_fast` `image → image` · 例: なし
-- `xkor_laplacian` `image → image` · 例: なし
-- `xkor_harris` `image → image` · 例: なし
-- `xkor_gftt` `image → image` · 例: なし
-- `xkor_hessian` `image → image` · 例: なし
-- `xkor_dog` `image → image` · 例: なし
-- `f2_shock` (halcon: `shock_filter`) `image → image` · 例: なし
-- `f2_topographic` (halcon: `topographic_sketch`) `image → image` · 例: なし
-- `tf_steerable_filter` `image → image` · 例: なし
-- `tf_phase_congruency` `image → image` · 例: なし
+- `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
+- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`
+- `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
+- `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
+- `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `grad_dir` `image → image` · 例: `gallery2d_edges`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
+- `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
+- `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
+- `sk_dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `sk_hessian_det` `image → image` · 例: `gallery2d_edges`
+- `sk_corner_harris` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
+- `cv_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
+- `cv_laplacian` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`
+- `cv_corner_harris` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
+- `cv_min_eigen` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
+- `cv_precorner` (halcon: `corner_response`) `image → image` · 例: `gallery2d_edges`
+- `derivate_gauss` (halcon: `derivate_gauss`) `image → image` · 例: `gallery2d_edges`
+- `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `diff_of_gauss` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
+- `sobel_dir` (halcon: `sobel_dir`) `image → image` · 例: `gallery2d_edges`
+- `prewitt_amp` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
+- `prewitt_dir` (halcon: `prewitt_dir`) `image → image` · 例: `gallery2d_edges`
+- `roberts` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
+- `kirsch_amp` (halcon: `kirsch_amp`) `image → image` · 例: `gallery2d_edges`
+- `kirsch_dir` (halcon: `kirsch_dir`) `image → image` · 例: `gallery2d_edges`
+- `frei_amp` (halcon: `frei_amp`) `image → image` · 例: `gallery2d_edges`
+- `robinson_amp` (halcon: `robinson_amp`) `image → image` · 例: `gallery2d_edges`
+- `laplace` (halcon: `laplace`) `image → image` · 例: `gallery2d_edges`
+- `points_foerstner` (halcon: `points_foerstner`) `image → image` · 例: `gallery2d_edges`
+- `points_harris_binomial` (halcon: `points_harris_binomial`) `image → image` · 例: `gallery2d_edges`
+- `dots_image` (halcon: `dots_image`) `image → image` · 例: `gallery2d_edges`
+- `frei_dir` (halcon: `frei_dir`) `image → image` · 例: `gallery2d_edges`
+- `robinson_dir` (halcon: `robinson_dir`) `image → image` · 例: `gallery2d_edges`
+- `edges_color` (halcon: `edges_color`) `color → image` · 例: `gallery2d_edges`
+- `xsk_hessian_eig` `image → image` · 例: `gallery2d_edges`
+- `xpil_contour` `image → image` · 例: `gallery2d_edges`
+- `xpil_find_edges` `image → image` · 例: `gallery2d_edges`
+- `xsp_morph_laplace` `image → image` · 例: `gallery2d_edges`
+- `xsp_gauss_grad_mag` `image → image` · 例: `gallery2d_edges`
+- `xsk2_corner_kr` `image → image` · 例: `gallery2d_edges`
+- `xsk2_inv_gauss_grad` `image → image` · 例: `gallery2d_edges`
+- `xwt_hf_reconstruct` `image → image` · 例: `gallery2d_edges`
+- `xwt_directional_detail` `image → image` · 例: `gallery2d_edges`
+- `xsk3_corner_moravec` `image → image` · 例: `gallery2d_edges`
+- `xsk3_corner_fast` `image → image` · 例: `gallery2d_edges`
+- `xkor_laplacian` `image → image` · 例: `gallery2d_edges`
+- `xkor_harris` `image → image` · 例: `gallery2d_edges`
+- `xkor_gftt` `image → image` · 例: `gallery2d_edges`
+- `xkor_hessian` `image → image` · 例: `gallery2d_edges`
+- `xkor_dog` `image → image` · 例: `gallery2d_edges`
+- `f2_shock` (halcon: `shock_filter`) `image → image` · 例: `gallery2d_edges`
+- `f2_topographic` (halcon: `topographic_sketch`) `image → image` · 例: `gallery2d_edges`
+- `tf_steerable_filter` `image → image` · 例: `gallery2d_edges`
+- `tf_phase_congruency` `image → image` · 例: `gallery2d_edges`
 
 ### extra(14)
-- `xsitk_curvature_flow` `image → image` · 例: なし
-- `xsitk_minmax_curv_flow` `image → image` · 例: なし
-- `xsitk_curv_aniso_diff` `image → image` · 例: なし
-- `xsitk_laplacian_sharpen` `image → image` · 例: なし
-- `xsitk_grayscale_fillhole` `image → image` · 例: なし
-- `xsitk_grayscale_grindpeak` `image → image` · 例: なし
-- `xsitk_opening_by_recon` `image → image` · 例: なし
-- `xsitk_closing_by_recon` `image → image` · 例: なし
-- `xsitk_signed_maurer_dist` `region → image` · 例: なし
-- `xsitk_connected_threshold` `image → region` · 例: なし
-- `xsitk_confidence_connected` `image → region` · 例: なし
-- `xsitk_maxentropy_thresh` `image → region` · 例: なし
-- `xsitk_moments_thresh` `image → region` · 例: なし
-- `xsitk_huang_thresh` `image → region` · 例: なし
+- `xsitk_curvature_flow` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_minmax_curv_flow` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_curv_aniso_diff` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_laplacian_sharpen` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_grayscale_fillhole` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_grayscale_grindpeak` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_opening_by_recon` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_closing_by_recon` `image → image` · 例: `gallery2d_color_artistic`
+- `xsitk_signed_maurer_dist` `region → image` · 例: `gallery2d_color_artistic`
+- `xsitk_connected_threshold` `image → region` · 例: `gallery2d_color_artistic`
+- `xsitk_confidence_connected` `image → region` · 例: `gallery2d_color_artistic`
+- `xsitk_maxentropy_thresh` `image → region` · 例: `gallery2d_color_artistic`
+- `xsitk_moments_thresh` `image → region` · 例: `gallery2d_color_artistic`
+- `xsitk_huang_thresh` `image → region` · 例: `gallery2d_color_artistic`
 
 ### features(71)
-- `blob_count` (halcon: `count_obj`) `region → feature` · 例: `quickstart`
-- `area_frac` (halcon: `area_center`) `region → feature` · 例: なし
-- `count_contours` (halcon: `count_obj`) `contour → feature` · 例: なし
-- `total_length` (halcon: `length_xld`) `contour → feature` · 例: なし
-- `vol_count` `volume → feature` · 例: なし
-- `sk_euler` (halcon: `euler_number`) `region → feature` · 例: なし
-- `sk_entropy_feat` (halcon: `entropy_gray`) `image → feature` · 例: なし
-- `sk_blur_effect` `image → feature` · 例: なし
-- `cv_cc_count` (halcon: `connection`) `region → feature` · 例: なし
-- `cv_hough_lines` (halcon: `hough_lines`) `image → feature` · 例: なし
-- `cv_hough_circles` (halcon: `hough_circles`) `image → feature` · 例: なし
-- `cv_good_features` `image → feature` · 例: なし
-- `area_center` (halcon: `area_center`) `region → feature` · 例: なし
-- `count_obj` (halcon: `count_obj`) `region → feature` · 例: なし
-- `circularity` (halcon: `circularity`) `region → feature` · 例: `draw_annotate`
-- `compactness` (halcon: `compactness`) `region → feature` · 例: なし
-- `convexity` (halcon: `convexity`) `region → feature` · 例: なし
-- `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: なし
-- `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: なし
-- `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: なし
-- `roundness` (halcon: `roundness`) `region → feature` · 例: なし
-- `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: なし
-- `euler_number` (halcon: `euler_number`) `region → feature` · 例: なし
-- `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: なし
-- `intensity` (halcon: `intensity`) `image → feature` · 例: なし
-- `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: なし
-- `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: なし
-- `length_xld` (halcon: `length_xld`) `contour → feature` · 例: なし
-- `contlength` (halcon: `contlength`) `region → feature` · 例: なし
-- `area_holes` (halcon: `area_holes`) `region → feature` · 例: なし
-- `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` · 例: なし
-- `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` · 例: なし
-- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` · 例: なし
-- `area_center_xld` (halcon: `area_center_xld`) `contour → feature` · 例: なし
-- `circularity_xld` (halcon: `circularity_xld`) `contour → feature` · 例: なし
-- `compactness_xld` (halcon: `compactness_xld`) `contour → feature` · 例: なし
-- `convexity_xld` (halcon: `convexity_xld`) `contour → feature` · 例: なし
-- `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` · 例: なし
-- `moments_region_central` (halcon: `moments_region_central`) `region → feature` · 例: なし
-- `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` · 例: なし
-- `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` · 例: なし
-- `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` · 例: なし
-- `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: なし
-- `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → feature` · 例: なし
-- `orientation_xld` (halcon: `orientation_xld`) `contour → feature` · 例: なし
-- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → feature` · 例: なし
-- `diameter_xld` (halcon: `diameter_xld`) `contour → feature` · 例: なし
-- `rectangularity_xld` (halcon: `rectangularity_xld`) `contour → feature` · 例: なし
-- `moments_xld` (halcon: `moments_xld`) `contour → feature` · 例: なし
-- `hough_line_trans` (halcon: `hough_line_trans`) `image → image` · 例: なし
-- `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` · 例: なし
-- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` · 例: なし
-- `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` · 例: なし
-- `elliptic_axis` (halcon: `elliptic_axis`) `region → feature` · 例: なし
-- `count_channels` (halcon: `count_channels`) `color → feature` · 例: なし
-- `xsk_blob_log` `image → feature` · 例: なし
-- `xsk_blob_dog` `image → feature` · 例: なし
-- `xsk_blob_doh` `image → feature` · 例: なし
-- `xsk_orb_count` `image → feature` · 例: なし
-- `xcv_orb_count` `image → feature` · 例: なし
-- `xcv2_lap_var` `image → feature` · 例: なし
-- `xcv2_fast_count` `image → feature` · 例: なし
-- `xwt_detail_energy` `image → feature` · 例: なし
-- `xwt_packet_entropy` `image → feature` · 例: なし
-- `xsk3_is_low_contrast` `image → feature` · 例: なし
-- `xsk3_estimate_sigma` `image → feature` · 例: なし
-- `xcv3_gray_hu1` `image → feature` · 例: なし
-- `xcv3_sift_count` `image → feature` · 例: なし
-- `xcv3_brisk_count` `image → feature` · 例: なし
-- `xcv3_agast_count` `image → feature` · 例: なし
-- `xcv3_lsd_count` `image → feature` · 例: なし
+- `blob_count` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`, `quickstart`
+- `area_frac` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`
+- `count_contours` (halcon: `count_obj`) `contour → feature` · 例: `gallery2d_features`
+- `total_length` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
+- `vol_count` `volume → feature` · 例: `gallery2d_features`
+- `sk_euler` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
+- `sk_entropy_feat` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
+- `sk_blur_effect` `image → feature` · 例: `gallery2d_features`
+- `cv_cc_count` (halcon: `connection`) `region → feature` · 例: `gallery2d_features`
+- `cv_hough_lines` (halcon: `hough_lines`) `image → feature` · 例: `gallery2d_features`
+- `cv_hough_circles` (halcon: `hough_circles`) `image → feature` · 例: `gallery2d_features`
+- `cv_good_features` `image → feature` · 例: `gallery2d_features`
+- `area_center` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`
+- `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
+- `circularity` (halcon: `circularity`) `region → feature` · 例: `draw_annotate`, `gallery2d_features`
+- `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`
+- `convexity` (halcon: `convexity`) `region → feature` · 例: `gallery2d_features`
+- `rectangularity` (halcon: `rectangularity`) `region → feature` · 例: `gallery2d_features`
+- `eccentricity` (halcon: `eccentricity`) `region → feature` · 例: `gallery2d_features`
+- `orientation_region` (halcon: `orientation_region`) `region → feature` · 例: `gallery2d_features`
+- `roundness` (halcon: `roundness`) `region → feature` · 例: `gallery2d_features`
+- `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
+- `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
+- `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
+- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_features`
+- `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
+- `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
+- `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
+- `contlength` (halcon: `contlength`) `region → feature` · 例: `gallery2d_features`
+- `area_holes` (halcon: `area_holes`) `region → feature` · 例: `gallery2d_features`
+- `height_width_ratio` (halcon: `height_width_ratio`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_2nd` (halcon: `moments_region_2nd`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_2nd_invar` (halcon: `moments_region_2nd_invar`) `region → feature` · 例: `gallery2d_features`
+- `area_center_xld` (halcon: `area_center_xld`) `contour → feature` · 例: `gallery2d_features`
+- `circularity_xld` (halcon: `circularity_xld`) `contour → feature` · 例: `gallery2d_features`
+- `compactness_xld` (halcon: `compactness_xld`) `contour → feature` · 例: `gallery2d_features`
+- `convexity_xld` (halcon: `convexity_xld`) `contour → feature` · 例: `gallery2d_features`
+- `moments_region_3rd` (halcon: `moments_region_3rd`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_central` (halcon: `moments_region_central`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_central_invar` (halcon: `moments_region_central_invar`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_2nd_rel_invar` (halcon: `moments_region_2nd_rel_invar`) `region → feature` · 例: `gallery2d_features`
+- `moments_region_3rd_invar` (halcon: `moments_region_3rd_invar`) `region → feature` · 例: `gallery2d_features`
+- `estimate_noise` (halcon: `estimate_noise`) `image → feature` · 例: `gallery2d_features`
+- `eccentricity_xld` (halcon: `eccentricity_xld`) `contour → feature` · 例: `gallery2d_features`
+- `orientation_xld` (halcon: `orientation_xld`) `contour → feature` · 例: `gallery2d_features`
+- `elliptic_axis_xld` (halcon: `elliptic_axis_xld`) `contour → feature` · 例: `gallery2d_features`
+- `diameter_xld` (halcon: `diameter_xld`) `contour → feature` · 例: `gallery2d_features`
+- `rectangularity_xld` (halcon: `rectangularity_xld`) `contour → feature` · 例: `gallery2d_features`
+- `moments_xld` (halcon: `moments_xld`) `contour → feature` · 例: `gallery2d_features`
+- `hough_line_trans` (halcon: `hough_line_trans`) `image → image` · 例: `gallery2d_features`
+- `hough_circle_trans` (halcon: `hough_circle_trans`) `image → image` · 例: `gallery2d_features`
+- `get_region_thickness` (halcon: `get_region_thickness`) `region → feature` · 例: `gallery2d_features`
+- `connect_and_holes` (halcon: `connect_and_holes`) `region → feature` · 例: `gallery2d_features`
+- `elliptic_axis` (halcon: `elliptic_axis`) `region → feature` · 例: `gallery2d_features`
+- `count_channels` (halcon: `count_channels`) `color → feature` · 例: `gallery2d_features`
+- `xsk_blob_log` `image → feature` · 例: `gallery2d_features`
+- `xsk_blob_dog` `image → feature` · 例: `gallery2d_features`
+- `xsk_blob_doh` `image → feature` · 例: `gallery2d_features`
+- `xsk_orb_count` `image → feature` · 例: `gallery2d_features`
+- `xcv_orb_count` `image → feature` · 例: `gallery2d_features`
+- `xcv2_lap_var` `image → feature` · 例: `gallery2d_features`
+- `xcv2_fast_count` `image → feature` · 例: `gallery2d_features`
+- `xwt_detail_energy` `image → feature` · 例: `gallery2d_features`
+- `xwt_packet_entropy` `image → feature` · 例: `gallery2d_features`
+- `xsk3_is_low_contrast` `image → feature` · 例: `gallery2d_features`
+- `xsk3_estimate_sigma` `image → feature` · 例: `gallery2d_features`
+- `xcv3_gray_hu1` `image → feature` · 例: `gallery2d_features`
+- `xcv3_sift_count` `image → feature` · 例: `gallery2d_features`
+- `xcv3_brisk_count` `image → feature` · 例: `gallery2d_features`
+- `xcv3_agast_count` `image → feature` · 例: `gallery2d_features`
+- `xcv3_lsd_count` `image → feature` · 例: `gallery2d_features`
 
 ### filtering(1)
-- `tf_gradient_domain_reintegrate` `image → image` · 例: なし
+- `tf_gradient_domain_reintegrate` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### frequency(19)
-- `lowpass` `image → image` · 例: `signal_filter`
-- `highpass` (halcon: `highpass_image`) `image → image` · 例: `signal_filter`
-- `sk_butterworth` `image → image` · 例: なし
-- `fft_image` (halcon: `fft_image`) `image → image` · 例: なし
-- `power_real` (halcon: `power_real`) `image → image` · 例: なし
-- `power_byte` (halcon: `power_byte`) `image → image` · 例: なし
-- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: なし
-- `highpass_image` (halcon: `highpass_image`) `image → image` · 例: なし
-- `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: なし
-- `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: なし
-- `fft_generic` (halcon: `fft_generic`) `image → image` · 例: なし
-- `power_ln` (halcon: `power_ln`) `image → image` · 例: なし
-- `rft_generic` (halcon: `rft_generic`) `image → image` · 例: なし
-- `phase_deg` (halcon: `phase_deg`) `image → image` · 例: なし
-- `xsp_dct` `image → image` · 例: なし
-- `xsp_dct_lowpass` `image → image` · 例: なし
-- `xsk2_radon` `image → image` · 例: なし
-- `xwt_subband_tile` `image → image` · 例: なし
-- `xwt_mra_component` `image → image` · 例: なし
+- `lowpass` `image → image` · 例: `gallery2d_texture_freq`, `signal_filter`
+- `highpass` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`, `signal_filter`
+- `sk_butterworth` `image → image` · 例: `gallery2d_texture_freq`
+- `fft_image` (halcon: `fft_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
+- `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
+- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `gallery2d_texture_freq`
+- `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: `gallery2d_texture_freq`
+- `fft_generic` (halcon: `fft_generic`) `image → image` · 例: `gallery2d_texture_freq`
+- `power_ln` (halcon: `power_ln`) `image → image` · 例: `gallery2d_texture_freq`
+- `rft_generic` (halcon: `rft_generic`) `image → image` · 例: `gallery2d_texture_freq`
+- `phase_deg` (halcon: `phase_deg`) `image → image` · 例: `gallery2d_texture_freq`
+- `xsp_dct` `image → image` · 例: `gallery2d_texture_freq`
+- `xsp_dct_lowpass` `image → image` · 例: `gallery2d_texture_freq`
+- `xsk2_radon` `image → image` · 例: `gallery2d_texture_freq`
+- `xwt_subband_tile` `image → image` · 例: `gallery2d_texture_freq`
+- `xwt_mra_component` `image → image` · 例: `gallery2d_texture_freq`
 
 ### geometry(28)
-- `rotate_img` (halcon: `rotate_image`) `image → image` · 例: なし
-- `rescale_img` (halcon: `zoom_image_size`) `image → image` · 例: なし
-- `affine_warp` (halcon: `affine_trans_image`) `image → image` · 例: なし
-- `sk_swirl` (halcon: `polar_trans_image`) `image → image` · 例: なし
-- `mirror_image` (halcon: `mirror_image`) `image → image` · 例: なし
-- `transpose_region` (halcon: `transpose_region`) `region → region` · 例: なし
-- `rotate_image` (halcon: `rotate_image`) `image → image` · 例: なし
-- `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` · 例: なし
-- `zoom_image_size` (halcon: `zoom_image_size`) `image → image` · 例: なし
-- `affine_trans_image` (halcon: `affine_trans_image`) `image → image` · 例: なし
-- `polar_trans_image` (halcon: `polar_trans_image`) `image → image` · 例: なし
-- `projective_trans_image` (halcon: `projective_trans_image`) `image → image` · 例: なし
-- `projective_trans_image_size` (halcon: `projective_trans_image_size`) `image → image` · 例: なし
-- `projective_trans_region` (halcon: `projective_trans_region`) `region → region` · 例: なし
-- `polar_trans_image_inv` (halcon: `polar_trans_image_inv`) `image → image` · 例: なし
-- `affine_trans_image_size` (halcon: `affine_trans_image_size`) `image → image` · 例: なし
-- `polar_trans_image_ext` (halcon: `polar_trans_image_ext`) `image → image` · 例: なし
-- `affine_trans_region` (halcon: `affine_trans_region`) `region → region` · 例: なし
-- `mirror_region` (halcon: `mirror_region`) `region → region` · 例: なし
-- `zoom_region` (halcon: `zoom_region`) `region → region` · 例: なし
-- `polar_trans_region_inv` (halcon: `polar_trans_region_inv`) `region → region` · 例: なし
-- `xpil_offset` `image → image` · 例: なし
-- `xcv2_warp_logpolar` `image → image` · 例: なし
-- `it_add_image_border` (halcon: `add_image_border`) `image → image` · 例: なし
-- `it_crop_part` (halcon: `crop_part`) `image → image` · 例: なし
-- `it_crop_rectangle1` (halcon: `crop_rectangle1`) `image → image` · 例: なし
-- `it_change_format` (halcon: `change_format`) `image → image` · 例: なし
-- `tf_log_polar` `image → image` · 例: なし
+- `rotate_img` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
+- `rescale_img` (halcon: `zoom_image_size`) `image → image` · 例: `gallery2d_geometry`
+- `affine_warp` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`
+- `sk_swirl` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`
+- `mirror_image` (halcon: `mirror_image`) `image → image` · 例: `gallery2d_geometry`
+- `transpose_region` (halcon: `transpose_region`) `region → region` · 例: `gallery2d_geometry`
+- `rotate_image` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
+- `zoom_image_factor` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`
+- `zoom_image_size` (halcon: `zoom_image_size`) `image → image` · 例: `gallery2d_geometry`
+- `affine_trans_image` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`
+- `polar_trans_image` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`
+- `projective_trans_image` (halcon: `projective_trans_image`) `image → image` · 例: `gallery2d_geometry`
+- `projective_trans_image_size` (halcon: `projective_trans_image_size`) `image → image` · 例: `gallery2d_geometry`
+- `projective_trans_region` (halcon: `projective_trans_region`) `region → region` · 例: `gallery2d_geometry`
+- `polar_trans_image_inv` (halcon: `polar_trans_image_inv`) `image → image` · 例: `gallery2d_geometry`
+- `affine_trans_image_size` (halcon: `affine_trans_image_size`) `image → image` · 例: `gallery2d_geometry`
+- `polar_trans_image_ext` (halcon: `polar_trans_image_ext`) `image → image` · 例: `gallery2d_geometry`
+- `affine_trans_region` (halcon: `affine_trans_region`) `region → region` · 例: `gallery2d_geometry`
+- `mirror_region` (halcon: `mirror_region`) `region → region` · 例: `gallery2d_geometry`
+- `zoom_region` (halcon: `zoom_region`) `region → region` · 例: `gallery2d_geometry`
+- `polar_trans_region_inv` (halcon: `polar_trans_region_inv`) `region → region` · 例: `gallery2d_geometry`
+- `xpil_offset` `image → image` · 例: `gallery2d_geometry`
+- `xcv2_warp_logpolar` `image → image` · 例: `gallery2d_geometry`
+- `it_add_image_border` (halcon: `add_image_border`) `image → image` · 例: `gallery2d_geometry`
+- `it_crop_part` (halcon: `crop_part`) `image → image` · 例: `gallery2d_geometry`
+- `it_crop_rectangle1` (halcon: `crop_rectangle1`) `image → image` · 例: `gallery2d_geometry`
+- `it_change_format` (halcon: `change_format`) `image → image` · 例: `gallery2d_geometry`
+- `tf_log_polar` `image → image` · 例: `gallery2d_geometry`
 
 ### gray(41)
-- `gamma` (halcon: `pow_image`) `image → image` · 例: なし
-- `invert` (halcon: `invert_image`) `image → image` · 例: なし
-- `scale_clip` (halcon: `scale_image`) `image → image` · 例: なし
-- `equalize` (halcon: `equ_histo_image`) `image → image` · 例: なし
-- `sigmoid` (halcon: `scale_image_max`) `image → image` · 例: なし
-- `clahe` `image → image` · 例: なし
-- `sk_adapthist` `image → image` · 例: なし
-- `sk_enhance_contrast` `image → image` · 例: なし
-- `sk_autolevel` (halcon: `scale_image_max`) `image → image` · 例: なし
-- `sk_adjust_log` (halcon: `log_image`) `image → image` · 例: なし
-- `cv_clahe` `image → image` · 例: なし
-- `cv_trunc` (halcon: `scale_image`) `image → image` · 例: なし
-- `gamma_image` (halcon: `gamma_image`) `image → image` · 例: なし
-- `pow_image` (halcon: `pow_image`) `image → image` · 例: なし
-- `invert_image` (halcon: `invert_image`) `image → image` · 例: なし
-- `scale_image` (halcon: `scale_image`) `image → image` · 例: なし
-- `equ_histo_image` (halcon: `equ_histo_image`) `image → image` · 例: なし
-- `illuminate` (halcon: `illuminate`) `image → image` · 例: なし
-- `scale_image_max` (halcon: `scale_image_max`) `image → image` · 例: なし
-- `equ_histo_image_rect` (halcon: `equ_histo_image_rect`) `image → image` · 例: なし
-- `bit_not` (halcon: `bit_not`) `image → image` · 例: なし
-- `monotony` (halcon: `monotony`) `image → image` · 例: なし
-- `xcv_detail_enhance` `image → image` · 例: なし
-- `xpil_edge_enhance` `image → image` · 例: なし
-- `xpil_detail` `image → image` · 例: なし
-- `xpil_posterize` `image → image` · 例: なし
-- `xpil_solarize` `image → image` · 例: なし
-- `xpil_autocontrast` `image → image` · 例: なし
-- `xpil_contrast` `image → image` · 例: なし
-- `xsp_detrend_flatten` `image → image` · 例: なし
-- `xsk3_rank_subtract_mean` `image → image` · 例: なし
-- `xsk3_rank_equalize` `image → image` · 例: なし
-- `xsk3_integral_image` `image → image` · 例: なし
-- `xkor_clahe` `image → image` · 例: なし
-- `f2_lut_trans` (halcon: `lut_trans`) `image → image` · 例: なし
-- `f2_expand_domain` (halcon: `expand_domain_gray`) `image → image` · 例: なし
-- `f2_bit_slice` (halcon: `bit_slice`) `image → image` · 例: なし
-- `it_bit_lshift` (halcon: `bit_lshift`) `image → image` · 例: なし
-- `it_bit_rshift` (halcon: `bit_rshift`) `image → image` · 例: なし
-- `it_bit_mask` (halcon: `bit_mask`) `image → image` · 例: なし
-- `it_convert_image_type` (halcon: `convert_image_type`) `image → image` · 例: なし
+- `gamma` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `invert` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `scale_clip` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `equalize` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `sigmoid` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
+- `clahe` `image → image` · 例: `gallery2d_gray_arith`
+- `sk_adapthist` `image → image` · 例: `gallery2d_gray_arith`
+- `sk_enhance_contrast` `image → image` · 例: `gallery2d_gray_arith`
+- `sk_autolevel` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
+- `sk_adjust_log` (halcon: `log_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `cv_clahe` `image → image` · 例: `gallery2d_gray_arith`
+- `cv_trunc` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `gamma_image` (halcon: `gamma_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `pow_image` (halcon: `pow_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `invert_image` (halcon: `invert_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `scale_image` (halcon: `scale_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `equ_histo_image` (halcon: `equ_histo_image`) `image → image` · 例: `gallery2d_gray_arith`
+- `illuminate` (halcon: `illuminate`) `image → image` · 例: `gallery2d_gray_arith`
+- `scale_image_max` (halcon: `scale_image_max`) `image → image` · 例: `gallery2d_gray_arith`
+- `equ_histo_image_rect` (halcon: `equ_histo_image_rect`) `image → image` · 例: `gallery2d_gray_arith`
+- `bit_not` (halcon: `bit_not`) `image → image` · 例: `gallery2d_gray_arith`
+- `monotony` (halcon: `monotony`) `image → image` · 例: `gallery2d_gray_arith`
+- `xcv_detail_enhance` `image → image` · 例: `gallery2d_gray_arith`
+- `xpil_edge_enhance` `image → image` · 例: `gallery2d_gray_arith`
+- `xpil_detail` `image → image` · 例: `gallery2d_gray_arith`
+- `xpil_posterize` `image → image` · 例: `gallery2d_gray_arith`
+- `xpil_solarize` `image → image` · 例: `gallery2d_gray_arith`
+- `xpil_autocontrast` `image → image` · 例: `gallery2d_gray_arith`
+- `xpil_contrast` `image → image` · 例: `gallery2d_gray_arith`
+- `xsp_detrend_flatten` `image → image` · 例: `gallery2d_gray_arith`
+- `xsk3_rank_subtract_mean` `image → image` · 例: `gallery2d_gray_arith`
+- `xsk3_rank_equalize` `image → image` · 例: `gallery2d_gray_arith`
+- `xsk3_integral_image` `image → image` · 例: `gallery2d_gray_arith`
+- `xkor_clahe` `image → image` · 例: `gallery2d_gray_arith`
+- `f2_lut_trans` (halcon: `lut_trans`) `image → image` · 例: `gallery2d_gray_arith`
+- `f2_expand_domain` (halcon: `expand_domain_gray`) `image → image` · 例: `gallery2d_gray_arith`
+- `f2_bit_slice` (halcon: `bit_slice`) `image → image` · 例: `gallery2d_gray_arith`
+- `it_bit_lshift` (halcon: `bit_lshift`) `image → image` · 例: `gallery2d_gray_arith`
+- `it_bit_rshift` (halcon: `bit_rshift`) `image → image` · 例: `gallery2d_gray_arith`
+- `it_bit_mask` (halcon: `bit_mask`) `image → image` · 例: `gallery2d_gray_arith`
+- `it_convert_image_type` (halcon: `convert_image_type`) `image → image` · 例: `gallery2d_gray_arith`
 
 ### halcon_ext(81)
-- `hx_gen_circle` (halcon: `gen_circle`) `image → region` · 例: なし
-- `hx_gen_ellipse` (halcon: `gen_ellipse`) `image → region` · 例: なし
-- `hx_gen_rectangle2` (halcon: `gen_rectangle2`) `image → region` · 例: なし
-- `hx_gen_checker_region` (halcon: `gen_checker_region`) `image → region` · 例: なし
-- `hx_gen_grid_region` (halcon: `gen_grid_region`) `image → region` · 例: なし
-- `hx_gabor` (halcon: `convol_gabor`) `image → image` · 例: なし
-- `hx_fit_surface1` (halcon: `fit_surface_first_order`) `image → image` · 例: なし
-- `hx_fit_surface2` (halcon: `fit_surface_second_order`) `image → image` · 例: なし
-- `hx_cooc_feature` (halcon: `cooc_feature_image`) `image → feature` · 例: なし
-- `hx_full_domain` (halcon: `full_domain`) `image → region` · 例: なし
-- `hx_mean_shape` (halcon: `mean_image_shape`) `image → image` · 例: なし
-- `hx_close_edges` (halcon: `close_edges`) `image → image` · 例: なし
-- `hx_close_edges_length` (halcon: `close_edges_length`) `image → image` · 例: なし
-- `hx_expand_region` (halcon: `expand_region`) `region → region` · 例: なし
-- `hx_region_to_mean` (halcon: `region_to_mean`) `image → image` · 例: なし
-- `hx_nonmax_dir` (halcon: `nonmax_suppression_dir`) `image → image` · 例: なし
-- `hx_char_threshold` (halcon: `char_threshold`) `image → region` · 例: なし
-- `hx_histo_to_thresh` (halcon: `histo_to_thresh`) `image → region` · 例: なし
-- `hx_gen_lowpass` (halcon: `gen_lowpass`) `image → image` · 例: なし
-- `hx_gen_highpass` (halcon: `gen_highpass`) `image → image` · 例: なし
-- `hx_gen_bandpass` (halcon: `gen_bandpass`) `image → image` · 例: なし
-- `hx_erosion1` (halcon: `erosion1`) `region → region` · 例: なし
-- `hx_dilation1` (halcon: `dilation1`) `region → region` · 例: なし
-- `hx_opening` (halcon: `opening`) `region → region` · 例: なし
-- `hx_closing` (halcon: `closing`) `region → region` · 例: なし
-- `hx_dilation2` (halcon: `dilation2`) `region → region` · 例: なし
-- `hx_gen_disc_se` (halcon: `gen_disc_se`) `image → region` · 例: なし
-- `hx_gen_circle_sector` (halcon: `gen_circle_sector`) `image → region` · 例: なし
-- `hx_gen_ellipse_sector` (halcon: `gen_ellipse_sector`) `image → region` · 例: なし
-- `hx_gen_empty_region` (halcon: `gen_empty_region`) `image → region` · 例: なし
-- `hx_clip_region_rel` (halcon: `clip_region_rel`) `region → region` · 例: なし
-- `hx_gen_bandfilter` (halcon: `gen_bandfilter`) `image → image` · 例: なし
-- `hx_gen_derivative_filter` (halcon: `gen_derivative_filter`) `image → image` · 例: なし
-- `hx_fill_interlace` (halcon: `fill_interlace`) `image → image` · 例: なし
-- `hx_shade_height_field` (halcon: `shade_height_field`) `image → image` · 例: なし
-- `hx_plane_deviation` (halcon: `plane_deviation`) `image → image` · 例: なし
-- `hx_detect_edge_segments` (halcon: `detect_edge_segments`) `image → region` · 例: なし
-- `hx_gen_image_proto` (halcon: `gen_image_proto`) `image → image` · 例: なし
-- `hx_get_domain` (halcon: `get_domain`) `image → region` · 例: なし
-- `hx_region_to_label` (halcon: `region_to_label`) `image → image` · 例: なし
-- `hx_rectangle1_domain` (halcon: `rectangle1_domain`) `image → region` · 例: なし
-- `hx_lowlands` (halcon: `lowlands`) `image → region` · 例: なし
-- `hx_plateaus_center` (halcon: `plateaus_center`) `image → region` · 例: なし
-- `hx_move_region` (halcon: `move_region`) `region → region` · 例: なし
-- `hx_split_skeleton_region` (halcon: `split_skeleton_region`) `region → region` · 例: なし
-- `hx_test_region_point` (halcon: `test_region_point`) `region → feature` · 例: なし
-- `hx_test_region_points` (halcon: `test_region_points`) `region → feature` · 例: なし
-- `hx_sort_contours` (halcon: `sort_contours_xld`) `contour → contour` · 例: なし
-- `hx_clip_contours` (halcon: `clip_contours_xld`) `contour → contour` · 例: なし
-- `hx_clip_end_points` (halcon: `clip_end_points_contours_xld`) `contour → contour` · 例: なし
-- `hx_smallest_circle_xld` (halcon: `smallest_circle_xld`) `contour → feature` · 例: なし
-- `hx_smallest_rect1_xld` (halcon: `smallest_rectangle1_xld`) `contour → feature` · 例: なし
-- `hx_test_closed_xld` (halcon: `test_closed_xld`) `contour → feature` · 例: なし
-- `hx_regress_contours` (halcon: `regress_contours_xld`) `contour → feature` · 例: なし
-- `hx_moments_any_xld` (halcon: `moments_any_xld`) `contour → feature` · 例: なし
-- `hx_split_contours` (halcon: `split_contours_xld`) `contour → contour` · 例: なし
-- `hx_gen_parallel_contour` (halcon: `gen_parallel_contour_xld`) `contour → contour` · 例: なし
-- `hx_fit_circle_contour` (halcon: `fit_circle_contour_xld`) `contour → feature` · 例: なし
-- `hx_fit_ellipse_contour` (halcon: `fit_ellipse_contour_xld`) `contour → feature` · 例: なし
-- `hx_fit_rectangle2_contour` (halcon: `fit_rectangle2_contour_xld`) `contour → feature` · 例: なし
-- `hx_smallest_rect2_xld` (halcon: `smallest_rectangle2_xld`) `contour → feature` · 例: なし
-- `hx_crop_contours` (halcon: `crop_contours_xld`) `contour → contour` · 例: なし
-- `hx_dist_ellipse_contour` (halcon: `dist_ellipse_contour_xld`) `contour → feature` · 例: なし
-- `hx_test_self_intersect` (halcon: `test_self_intersection_xld`) `contour → feature` · 例: なし
-- `hx_union_adjacent` (halcon: `union_adjacent_contours_xld`) `contour → contour` · 例: なし
-- `hx_polar_trans_inv` (halcon: `polar_trans_contour_xld_inv`) `contour → contour` · 例: なし
-- `hx_select_xld_point` (halcon: `select_xld_point`) `contour → contour` · 例: なし
-- `hx_estimate_tilt_lr` (halcon: `estimate_tilt_lr`) `image → feature` · 例: なし
-- `hx_estimate_tilt_zc` (halcon: `estimate_tilt_zc`) `image → feature` · 例: なし
-- `hx_estimate_sl_al_lr` (halcon: `estimate_sl_al_lr`) `image → feature` · 例: なし
-- `hx_estimate_sl_al_zc` (halcon: `estimate_sl_al_zc`) `image → feature` · 例: なし
-- `hx_estimate_al_am` (halcon: `estimate_al_am`) `image → feature` · 例: なし
-- `hx_add_noise_contour` (halcon: `add_noise_white_contour_xld`) `contour → contour` · 例: なし
-- `hx_radial_distort_contour` (halcon: `change_radial_distortion_contours_xld`) `contour → contour` · 例: なし
-- `hx_dist_ellipse_points` (halcon: `dist_ellipse_contour_points_xld`) `contour → feature` · 例: なし
-- `hx_dist_rect2_points` (halcon: `dist_rectangle2_contour_points_xld`) `contour → feature` · 例: なし
-- `hx_distance_pc` (halcon: `distance_pc`) `contour → feature` · 例: なし
-- `hx_disparity_to_xyz` (halcon: `disparity_image_to_xyz`) `image → image` · 例: なし
-- `hx_distance_pr` (halcon: `distance_pr`) `region → feature` · 例: なし
-- `hx_distance_sc` (halcon: `distance_sc`) `contour → feature` · 例: なし
-- `hx_fuzzy_measure_pairs` (halcon: `fuzzy_measure_pairs`) `image → feature` · 例: なし
+- `hx_gen_circle` (halcon: `gen_circle`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_ellipse` (halcon: `gen_ellipse`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_rectangle2` (halcon: `gen_rectangle2`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_checker_region` (halcon: `gen_checker_region`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_grid_region` (halcon: `gen_grid_region`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gabor` (halcon: `convol_gabor`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_fit_surface1` (halcon: `fit_surface_first_order`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_fit_surface2` (halcon: `fit_surface_second_order`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_cooc_feature` (halcon: `cooc_feature_image`) `image → feature` · 例: `gallery2d_halcon_ext`
+- `hx_full_domain` (halcon: `full_domain`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_mean_shape` (halcon: `mean_image_shape`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_close_edges` (halcon: `close_edges`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_close_edges_length` (halcon: `close_edges_length`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_expand_region` (halcon: `expand_region`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_region_to_mean` (halcon: `region_to_mean`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_nonmax_dir` (halcon: `nonmax_suppression_dir`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_char_threshold` (halcon: `char_threshold`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_histo_to_thresh` (halcon: `histo_to_thresh`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_lowpass` (halcon: `gen_lowpass`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_gen_highpass` (halcon: `gen_highpass`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_gen_bandpass` (halcon: `gen_bandpass`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_erosion1` (halcon: `erosion1`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_dilation1` (halcon: `dilation1`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_opening` (halcon: `opening`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_closing` (halcon: `closing`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_dilation2` (halcon: `dilation2`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_disc_se` (halcon: `gen_disc_se`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_circle_sector` (halcon: `gen_circle_sector`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_ellipse_sector` (halcon: `gen_ellipse_sector`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_empty_region` (halcon: `gen_empty_region`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_clip_region_rel` (halcon: `clip_region_rel`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_bandfilter` (halcon: `gen_bandfilter`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_gen_derivative_filter` (halcon: `gen_derivative_filter`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_fill_interlace` (halcon: `fill_interlace`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_shade_height_field` (halcon: `shade_height_field`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_plane_deviation` (halcon: `plane_deviation`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_detect_edge_segments` (halcon: `detect_edge_segments`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_gen_image_proto` (halcon: `gen_image_proto`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_get_domain` (halcon: `get_domain`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_region_to_label` (halcon: `region_to_label`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_rectangle1_domain` (halcon: `rectangle1_domain`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_lowlands` (halcon: `lowlands`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_plateaus_center` (halcon: `plateaus_center`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_move_region` (halcon: `move_region`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_split_skeleton_region` (halcon: `split_skeleton_region`) `region → region` · 例: `gallery2d_halcon_ext`
+- `hx_test_region_point` (halcon: `test_region_point`) `region → feature` · 例: `gallery2d_halcon_ext`
+- `hx_test_region_points` (halcon: `test_region_points`) `region → feature` · 例: `gallery2d_halcon_ext`
+- `hx_sort_contours` (halcon: `sort_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_clip_contours` (halcon: `clip_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_clip_end_points` (halcon: `clip_end_points_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_smallest_circle_xld` (halcon: `smallest_circle_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_smallest_rect1_xld` (halcon: `smallest_rectangle1_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_test_closed_xld` (halcon: `test_closed_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_regress_contours` (halcon: `regress_contours_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_moments_any_xld` (halcon: `moments_any_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_split_contours` (halcon: `split_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_gen_parallel_contour` (halcon: `gen_parallel_contour_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_fit_circle_contour` (halcon: `fit_circle_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_fit_ellipse_contour` (halcon: `fit_ellipse_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_fit_rectangle2_contour` (halcon: `fit_rectangle2_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_smallest_rect2_xld` (halcon: `smallest_rectangle2_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_crop_contours` (halcon: `crop_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_dist_ellipse_contour` (halcon: `dist_ellipse_contour_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_test_self_intersect` (halcon: `test_self_intersection_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_union_adjacent` (halcon: `union_adjacent_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_polar_trans_inv` (halcon: `polar_trans_contour_xld_inv`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_select_xld_point` (halcon: `select_xld_point`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_estimate_tilt_lr` (halcon: `estimate_tilt_lr`) `image → feature` · 例: `gallery2d_halcon_ext`
+- `hx_estimate_tilt_zc` (halcon: `estimate_tilt_zc`) `image → feature` · 例: `gallery2d_halcon_ext`
+- `hx_estimate_sl_al_lr` (halcon: `estimate_sl_al_lr`) `image → feature` · 例: `gallery2d_halcon_ext`
+- `hx_estimate_sl_al_zc` (halcon: `estimate_sl_al_zc`) `image → feature` · 例: `gallery2d_halcon_ext`
+- `hx_estimate_al_am` (halcon: `estimate_al_am`) `image → feature` · 例: `gallery2d_halcon_ext`
+- `hx_add_noise_contour` (halcon: `add_noise_white_contour_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_radial_distort_contour` (halcon: `change_radial_distortion_contours_xld`) `contour → contour` · 例: `gallery2d_halcon_ext`
+- `hx_dist_ellipse_points` (halcon: `dist_ellipse_contour_points_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_dist_rect2_points` (halcon: `dist_rectangle2_contour_points_xld`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_distance_pc` (halcon: `distance_pc`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_disparity_to_xyz` (halcon: `disparity_image_to_xyz`) `image → image` · 例: `gallery2d_halcon_ext`
+- `hx_distance_pr` (halcon: `distance_pr`) `region → feature` · 例: `gallery2d_halcon_ext`
+- `hx_distance_sc` (halcon: `distance_sc`) `contour → feature` · 例: `gallery2d_halcon_ext`
+- `hx_fuzzy_measure_pairs` (halcon: `fuzzy_measure_pairs`) `image → feature` · 例: `gallery2d_halcon_ext`
 
 ### intensity-transform(1)
-- `xmh_soft` `image → image` · 例: なし
+- `xmh_soft` `image → image` · 例: `gallery2d_gray_arith`
 
 ### macro(4)
-- `macro_denoise` `image → image` · 例: `sim2real_and_alife`
-- `macro_edge` `image → region` · 例: なし
-- `macro_binarize` `image → image` · 例: なし
-- `macro_vol_denoise` `volume → volume` · 例: なし
+- `macro_denoise` `image → image` · 例: `gallery2d_physics_alife_3d`, `sim2real_and_alife`
+- `macro_edge` `image → region` · 例: `gallery2d_physics_alife_3d`
+- `macro_binarize` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `macro_vol_denoise` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 
 ### matching(2)
-- `ncc_locate` (halcon: `find_ncc_model`) `image → match` · 例: なし
-- `shape_locate` (halcon: `find_shape_model`) `image → match` · 例: なし
+- `ncc_locate` (halcon: `find_ncc_model`) `image → match` · 例: `gallery2d_contour_measure`
+- `shape_locate` (halcon: `find_shape_model`) `image → match` · 例: `gallery2d_contour_measure`
 
 ### measure1d(5)
-- `m1_measure_projection` (halcon: `measure_projection`) `image → feature` · 例: なし
-- `m1_measure_pos` (halcon: `measure_pos`) `image → contour` · 例: なし
-- `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` · 例: なし
-- `m1_measure_pairs` (halcon: `measure_pairs`) `image → feature` · 例: なし
-- `m1_fuzzy_measure_pos` (halcon: `fuzzy_measure_pos`) `image → contour` · 例: なし
+- `m1_measure_projection` (halcon: `measure_projection`) `image → feature` · 例: `gallery2d_contour_measure`
+- `m1_measure_pos` (halcon: `measure_pos`) `image → contour` · 例: `gallery2d_contour_measure`
+- `m1_measure_thresh` (halcon: `measure_thresh`) `image → feature` · 例: `gallery2d_contour_measure`
+- `m1_measure_pairs` (halcon: `measure_pairs`) `image → feature` · 例: `gallery2d_contour_measure`
+- `m1_fuzzy_measure_pos` (halcon: `fuzzy_measure_pos`) `image → contour` · 例: `gallery2d_contour_measure`
 
 ### misc(1)
 - `identity` (halcon: `copy_image`) `any → any` · 例: なし
 
 ### morphology(33)
-- `gerode` (halcon: `gray_erosion`) `image → image` · 例: なし
-- `gdilate` (halcon: `gray_dilation`) `image → image` · 例: なし
-- `gopen` (halcon: `gray_opening`) `image → image` · 例: なし
-- `gclose` (halcon: `gray_closing`) `image → image` · 例: なし
-- `tophat` (halcon: `gray_tophat`) `image → image` · 例: なし
-- `bothat` (halcon: `gray_bothat`) `image → image` · 例: なし
-- `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: なし
-- `sk_area_opening` `image → image` · 例: なし
-- `cv_open` (halcon: `gray_opening`) `image → image` · 例: なし
-- `cv_close` (halcon: `gray_closing`) `image → image` · 例: なし
-- `cv_tophat` (halcon: `gray_tophat`) `image → image` · 例: なし
-- `cv_gradient` (halcon: `gray_range_rect`) `image → image` · 例: なし
-- `cv_blackhat` (halcon: `gray_bothat`) `image → image` · 例: なし
-- `cv_erode` (halcon: `gray_erosion`) `image → image` · 例: なし
-- `cv_dilate` (halcon: `gray_dilation`) `image → image` · 例: なし
-- `gray_erosion` (halcon: `gray_erosion`) `image → image` · 例: なし
-- `gray_dilation` (halcon: `gray_dilation`) `image → image` · 例: なし
-- `gray_opening` (halcon: `gray_opening`) `image → image` · 例: なし
-- `gray_closing` (halcon: `gray_closing`) `image → image` · 例: なし
-- `gray_opening_shape` (halcon: `gray_opening_shape`) `image → image` · 例: なし
-- `gray_closing_shape` (halcon: `gray_closing_shape`) `image → image` · 例: なし
-- `gray_tophat` (halcon: `gray_tophat`) `image → image` · 例: なし
-- `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: なし
-- `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` · 例: なし
-- `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` · 例: なし
-- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: なし
-- `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` · 例: なし
-- `xsk2_reconstruction` `image → image` · 例: なし
-- `xsk2_diameter_opening` `image → image` · 例: なし
-- `xsk3_area_closing` `image → image` · 例: なし
-- `xsk3_diameter_closing` `image → image` · 例: なし
-- `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` · 例: なし
-- `f2_gray_inside` (halcon: `gray_inside`) `image → image` · 例: なし
+- `gerode` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
+- `gdilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
+- `gopen` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
+- `gclose` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
+- `tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
+- `bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`
+- `morph_grad` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
+- `sk_area_opening` `image → image` · 例: `gallery2d_morphology`
+- `cv_open` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
+- `cv_close` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
+- `cv_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
+- `cv_gradient` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_morphology`
+- `cv_blackhat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`
+- `cv_erode` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
+- `cv_dilate` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
+- `gray_erosion` (halcon: `gray_erosion`) `image → image` · 例: `gallery2d_morphology`
+- `gray_dilation` (halcon: `gray_dilation`) `image → image` · 例: `gallery2d_morphology`
+- `gray_opening` (halcon: `gray_opening`) `image → image` · 例: `gallery2d_morphology`
+- `gray_closing` (halcon: `gray_closing`) `image → image` · 例: `gallery2d_morphology`
+- `gray_opening_shape` (halcon: `gray_opening_shape`) `image → image` · 例: `gallery2d_morphology`
+- `gray_closing_shape` (halcon: `gray_closing_shape`) `image → image` · 例: `gallery2d_morphology`
+- `gray_tophat` (halcon: `gray_tophat`) `image → image` · 例: `gallery2d_morphology`
+- `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`
+- `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` · 例: `gallery2d_morphology`
+- `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` · 例: `gallery2d_morphology`
+- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: `gallery2d_morphology`
+- `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` · 例: `gallery2d_morphology`
+- `xsk2_reconstruction` `image → image` · 例: `gallery2d_morphology`
+- `xsk2_diameter_opening` `image → image` · 例: `gallery2d_morphology`
+- `xsk3_area_closing` `image → image` · 例: `gallery2d_morphology`
+- `xsk3_diameter_closing` `image → image` · 例: `gallery2d_morphology`
+- `f2_gray_skeleton` (halcon: `gray_skeleton`) `image → image` · 例: `gallery2d_morphology`
+- `f2_gray_inside` (halcon: `gray_inside`) `image → image` · 例: `gallery2d_morphology`
 
 ### morphology/markers(1)
-- `xmh_regmin` `image → region` · 例: なし
+- `xmh_regmin` `image → region` · 例: `gallery2d_segmentation`
 
 ### noise(2)
-- `add_noise_white` (halcon: `add_noise_white`) `image → image` · 例: なし
-- `add_noise_distribution` (halcon: `add_noise_distribution`) `image → image` · 例: なし
+- `add_noise_white` (halcon: `add_noise_white`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `add_noise_distribution` (halcon: `add_noise_distribution`) `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### physics(6)
-- `ph_perona_malik` `image → image` · 例: なし
-- `ph_coherence_enhancing_diffusion` `image → image` · 例: なし
-- `ph_reaction_diffusion` `image → image` · 例: なし
-- `ph_heat_flow` `image → image` · 例: なし
-- `ph_mean_curvature_motion` `image → image` · 例: なし
-- `ph_total_variation_flow` `image → image` · 例: なし
+- `ph_perona_malik` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `ph_coherence_enhancing_diffusion` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `ph_reaction_diffusion` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `ph_heat_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `ph_mean_curvature_motion` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `consumer_onocollo`, `perception_pipeline`, `quickstart`
-- `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: なし
-- `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: なし
-- `percentile` (halcon: `rank_image`) `image → image` · 例: なし
-- `sk_median_disk` (halcon: `median_image`) `image → image` · 例: なし
-- `cv_median` (halcon: `median_image`) `image → image` · 例: なし
-- `median_image` (halcon: `median_image`) `image → image` · 例: なし
-- `median_rect` (halcon: `median_rect`) `image → image` · 例: なし
-- `median_separate` (halcon: `median_separate`) `image → image` · 例: なし
-- `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` · 例: なし
-- `gray_dilation_rect` (halcon: `gray_dilation_rect`) `image → image` · 例: なし
-- `gray_range_rect` (halcon: `gray_range_rect`) `image → image` · 例: なし
-- `rank_image` (halcon: `rank_image`) `image → image` · 例: なし
-- `rank_rect` (halcon: `rank_rect`) `image → image` · 例: なし
-- `trimmed_mean` (halcon: `trimmed_mean`) `image → image` · 例: なし
-- `eliminate_min_max` (halcon: `eliminate_min_max`) `image → image` · 例: なし
-- `median_weighted` (halcon: `median_weighted`) `image → image` · 例: なし
-- `mean_sp` (halcon: `mean_sp`) `image → image` · 例: なし
-- `eliminate_sp` (halcon: `eliminate_sp`) `image → image` · 例: なし
-- `dual_rank` (halcon: `dual_rank`) `image → image` · 例: なし
-- `xpil_mode_filter` `image → image` · 例: なし
-- `xsk2_rank_geomean` `image → image` · 例: なし
-- `xkor_median` `image → image` · 例: なし
+- `median` (halcon: `median_image`) `image → image` · 例: `consumer_onocollo`, `gallery2d_smoothing_rank`, `perception_pipeline`, `quickstart`
+- `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `median_rect` (halcon: `median_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `median_separate` (halcon: `median_separate`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `gray_dilation_rect` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `gray_range_rect` (halcon: `gray_range_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `rank_image` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `rank_rect` (halcon: `rank_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `trimmed_mean` (halcon: `trimmed_mean`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `eliminate_min_max` (halcon: `eliminate_min_max`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `median_weighted` (halcon: `median_weighted`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `mean_sp` (halcon: `mean_sp`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `eliminate_sp` (halcon: `eliminate_sp`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `dual_rank` (halcon: `dual_rank`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `xpil_mode_filter` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsk2_rank_geomean` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xkor_median` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### region(76)
-- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: なし
-- `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: なし
-- `reg_open` (halcon: `opening_circle`) `region → region` · 例: なし
-- `reg_close` (halcon: `closing_circle`) `region → region` · 例: なし
-- `fill_holes` (halcon: `fill_up`) `region → region` · 例: なし
-- `select_largest` (halcon: `select_shape_std`) `region → region` · 例: なし
-- `remove_small` (halcon: `select_shape`) `region → region` · 例: `quickstart`
-- `invert_region` (halcon: `complement`) `region → region` · 例: なし
-- `dist_transform` (halcon: `distance_transform`) `region → image` · 例: なし
-- `region_boundary` (halcon: `boundary`) `region → region` · 例: なし
-- `convex_fill` (halcon: `shape_trans`) `region → region` · 例: なし
-- `sk_skeleton` (halcon: `skeleton`) `region → region` · 例: なし
-- `sk_medial` (halcon: `skeleton`) `region → region` · 例: なし
-- `sk_convex` (halcon: `shape_trans`) `region → region` · 例: なし
-- `sk_thin` (halcon: `thinning`) `region → region` · 例: なし
-- `sk_remove_holes` (halcon: `fill_up`) `region → region` · 例: なし
-- `sk_clear_border` `region → region` · 例: なし
-- `sk_find_boundaries` (halcon: `boundary`) `region → region` · 例: なし
-- `cv_dist` (halcon: `distance_transform`) `region → image` · 例: なし
-- `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: なし
-- `dilation_circle` (halcon: `dilation_circle`) `region → region` · 例: なし
-- `opening_circle` (halcon: `opening_circle`) `region → region` · 例: なし
-- `closing_circle` (halcon: `closing_circle`) `region → region` · 例: なし
-- `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` · 例: なし
-- `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` · 例: なし
-- `opening_rectangle1` (halcon: `opening_rectangle1`) `region → region` · 例: なし
-- `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` · 例: なし
-- `fill_up` (halcon: `fill_up`) `region → region` · 例: なし
-- `boundary` (halcon: `boundary`) `region → region` · 例: なし
-- `skeleton` (halcon: `skeleton`) `region → region` · 例: なし
-- `thinning` (halcon: `thinning`) `region → region` · 例: なし
-- `shape_trans` (halcon: `shape_trans`) `region → region` · 例: なし
-- `select_shape_std` (halcon: `select_shape_std`) `region → region` · 例: なし
-- `select_shape` (halcon: `select_shape`) `region → region` · 例: なし
-- `distance_transform` (halcon: `distance_transform`) `region → image` · 例: なし
-- `pruning` (halcon: `pruning`) `region → region` · 例: なし
-- `closest_point_transform` (halcon: `closest_point_transform`) `region → image` · 例: なし
-- `junctions_skeleton` (halcon: `junctions_skeleton`) `region → region` · 例: なし
-- `erosion_golay` (halcon: `erosion_golay`) `region → region` · 例: なし
-- `dilation_golay` (halcon: `dilation_golay`) `region → region` · 例: なし
-- `opening_golay` (halcon: `opening_golay`) `region → region` · 例: なし
-- `closing_golay` (halcon: `closing_golay`) `region → region` · 例: なし
-- `erosion_seq` (halcon: `erosion_seq`) `region → region` · 例: なし
-- `dilation_seq` (halcon: `dilation_seq`) `region → region` · 例: なし
-- `morph_skeleton` (halcon: `morph_skeleton`) `region → region` · 例: なし
-- `thinning_golay` (halcon: `thinning_golay`) `region → region` · 例: なし
-- `thinning_seq` (halcon: `thinning_seq`) `region → region` · 例: なし
-- `fill_up_shape` (halcon: `fill_up_shape`) `region → region` · 例: なし
-- `remove_noise_region` (halcon: `remove_noise_region`) `region → region` · 例: なし
-- `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` · 例: なし
-- `get_region_contour` (halcon: `get_region_contour`) `region → region` · 例: なし
-- `get_region_convex` (halcon: `get_region_convex`) `region → region` · 例: なし
-- `xsp_chamfer_dist` `region → image` · 例: なし
-- `xsk2_isotropic_close` `region → region` · 例: なし
-- `xcv2_hitmiss` `region → region` · 例: なし
-- `xsk3_rank_majority` `region → region` · 例: なし
-- `r2_inner_circle` (halcon: `inner_circle`) `region → region` · 例: なし
-- `r2_inner_rectangle1` (halcon: `inner_rectangle1`) `region → region` · 例: なし
-- `r2_smallest_rectangle1` `region → region` · 例: なし
-- `r2_smallest_circle` (halcon: `smallest_circle`) `region → region` · 例: なし
-- `r2_smallest_rectangle2` (halcon: `smallest_rectangle2`) `region → region` · 例: なし
-- `r2_sort_region` (halcon: `sort_region`) `region → region` · 例: なし
-- `r2_union1` (halcon: `union1`) `region → region` · 例: なし
-- `r2_partition_rectangle` (halcon: `partition_rectangle`) `region → region` · 例: なし
-- `r2_runlength_features` (halcon: `runlength_features`) `region → feature` · 例: なし
-- `r2_split_skeleton_lines` (halcon: `split_skeleton_lines`) `region → region` · 例: なし
-- `r3_background_seg` (halcon: `background_seg`) `region → region` · 例: なし
-- `r3_clip_region` (halcon: `clip_region`) `region → region` · 例: なし
-- `r3_eliminate_runs` (halcon: `eliminate_runs`) `region → region` · 例: なし
-- `r3_rank_region` (halcon: `rank_region`) `region → region` · 例: なし
-- `r3_region_features` (halcon: `region_features`) `region → feature` · 例: なし
-- `r3_runlength_distribution` (halcon: `runlength_distribution`) `region → feature` · 例: なし
-- `r3_select_region_point` (halcon: `select_region_point`) `region → region` · 例: なし
-- `r3_partition_dynamic` (halcon: `partition_dynamic`) `region → region` · 例: なし
-- `r3_polar_trans_region` (halcon: `polar_trans_region`) `region → region` · 例: なし
-- `r3_label_to_region` (halcon: `label_to_region`) `region → region` · 例: なし
+- `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
+- `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
+- `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
+- `reg_close` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`
+- `fill_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`
+- `select_largest` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`
+- `remove_small` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`, `quickstart`
+- `invert_region` (halcon: `complement`) `region → region` · 例: `gallery2d_region`
+- `dist_transform` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
+- `region_boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
+- `convex_fill` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
+- `sk_skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`
+- `sk_medial` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`
+- `sk_convex` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
+- `sk_thin` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`
+- `sk_remove_holes` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`
+- `sk_clear_border` `region → region` · 例: `gallery2d_region`
+- `sk_find_boundaries` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
+- `cv_dist` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
+- `erosion_circle` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
+- `dilation_circle` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
+- `opening_circle` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
+- `closing_circle` (halcon: `closing_circle`) `region → region` · 例: `gallery2d_region`
+- `erosion_rectangle1` (halcon: `erosion_rectangle1`) `region → region` · 例: `gallery2d_region`
+- `dilation_rectangle1` (halcon: `dilation_rectangle1`) `region → region` · 例: `gallery2d_region`
+- `opening_rectangle1` (halcon: `opening_rectangle1`) `region → region` · 例: `gallery2d_region`
+- `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` · 例: `gallery2d_region`
+- `fill_up` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`
+- `boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
+- `skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`
+- `thinning` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`
+- `shape_trans` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
+- `select_shape_std` (halcon: `select_shape_std`) `region → region` · 例: `gallery2d_region`
+- `select_shape` (halcon: `select_shape`) `region → region` · 例: `gallery2d_region`
+- `distance_transform` (halcon: `distance_transform`) `region → image` · 例: `gallery2d_region`
+- `pruning` (halcon: `pruning`) `region → region` · 例: `gallery2d_region`
+- `closest_point_transform` (halcon: `closest_point_transform`) `region → image` · 例: `gallery2d_region`
+- `junctions_skeleton` (halcon: `junctions_skeleton`) `region → region` · 例: `gallery2d_region`
+- `erosion_golay` (halcon: `erosion_golay`) `region → region` · 例: `gallery2d_region`
+- `dilation_golay` (halcon: `dilation_golay`) `region → region` · 例: `gallery2d_region`
+- `opening_golay` (halcon: `opening_golay`) `region → region` · 例: `gallery2d_region`
+- `closing_golay` (halcon: `closing_golay`) `region → region` · 例: `gallery2d_region`
+- `erosion_seq` (halcon: `erosion_seq`) `region → region` · 例: `gallery2d_region`
+- `dilation_seq` (halcon: `dilation_seq`) `region → region` · 例: `gallery2d_region`
+- `morph_skeleton` (halcon: `morph_skeleton`) `region → region` · 例: `gallery2d_region`
+- `thinning_golay` (halcon: `thinning_golay`) `region → region` · 例: `gallery2d_region`
+- `thinning_seq` (halcon: `thinning_seq`) `region → region` · 例: `gallery2d_region`
+- `fill_up_shape` (halcon: `fill_up_shape`) `region → region` · 例: `gallery2d_region`
+- `remove_noise_region` (halcon: `remove_noise_region`) `region → region` · 例: `gallery2d_region`
+- `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` · 例: `gallery2d_region`
+- `get_region_contour` (halcon: `get_region_contour`) `region → region` · 例: `gallery2d_region`
+- `get_region_convex` (halcon: `get_region_convex`) `region → region` · 例: `gallery2d_region`
+- `xsp_chamfer_dist` `region → image` · 例: `gallery2d_region`
+- `xsk2_isotropic_close` `region → region` · 例: `gallery2d_region`
+- `xcv2_hitmiss` `region → region` · 例: `gallery2d_region`
+- `xsk3_rank_majority` `region → region` · 例: `gallery2d_region`
+- `r2_inner_circle` (halcon: `inner_circle`) `region → region` · 例: `gallery2d_region`
+- `r2_inner_rectangle1` (halcon: `inner_rectangle1`) `region → region` · 例: `gallery2d_region`
+- `r2_smallest_rectangle1` `region → region` · 例: `gallery2d_region`
+- `r2_smallest_circle` (halcon: `smallest_circle`) `region → region` · 例: `gallery2d_region`
+- `r2_smallest_rectangle2` (halcon: `smallest_rectangle2`) `region → region` · 例: `gallery2d_region`
+- `r2_sort_region` (halcon: `sort_region`) `region → region` · 例: `gallery2d_region`
+- `r2_union1` (halcon: `union1`) `region → region` · 例: `gallery2d_region`
+- `r2_partition_rectangle` (halcon: `partition_rectangle`) `region → region` · 例: `gallery2d_region`
+- `r2_runlength_features` (halcon: `runlength_features`) `region → feature` · 例: `gallery2d_region`
+- `r2_split_skeleton_lines` (halcon: `split_skeleton_lines`) `region → region` · 例: `gallery2d_region`
+- `r3_background_seg` (halcon: `background_seg`) `region → region` · 例: `gallery2d_region`
+- `r3_clip_region` (halcon: `clip_region`) `region → region` · 例: `gallery2d_region`
+- `r3_eliminate_runs` (halcon: `eliminate_runs`) `region → region` · 例: `gallery2d_region`
+- `r3_rank_region` (halcon: `rank_region`) `region → region` · 例: `gallery2d_region`
+- `r3_region_features` (halcon: `region_features`) `region → feature` · 例: `gallery2d_region`
+- `r3_runlength_distribution` (halcon: `runlength_distribution`) `region → feature` · 例: `gallery2d_region`
+- `r3_select_region_point` (halcon: `select_region_point`) `region → region` · 例: `gallery2d_region`
+- `r3_partition_dynamic` (halcon: `partition_dynamic`) `region → region` · 例: `gallery2d_region`
+- `r3_polar_trans_region` (halcon: `polar_trans_region`) `region → region` · 例: `gallery2d_region`
+- `r3_label_to_region` (halcon: `label_to_region`) `region → region` · 例: `gallery2d_region`
 
 ### region-morphology(1)
-- `xmh_majority` `region → region` · 例: なし
+- `xmh_majority` `region → region` · 例: `gallery2d_region`
 
 ### region-transform(1)
-- `xmh_bwperim` `region → region` · 例: なし
+- `xmh_bwperim` `region → region` · 例: `gallery2d_region`
 
 ### restoration(12)
-- `xsk_inpaint` `image → image` · 例: なし
-- `xsk_richardson_lucy` `image → image` · 例: なし
-- `xsk_unwrap_phase` `image → image` · 例: なし
-- `xcv_inpaint` `image → image` · 例: なし
-- `xsk2_wiener` `image → image` · 例: なし
-- `xcv3_inpaint_ns` `image → image` · 例: なし
-- `iv_richardson_lucy` `image → image` · 例: なし
-- `iv_wiener_deconv_spatial` `image → image` · 例: なし
-- `iv_unsharp_deblur` `image → image` · 例: なし
-- `iv_motion_deblur` `image → image` · 例: なし
-- `iv_backproject_superres` `image → image` · 例: なし
-- `iv_gradient_inpaint` `image → image` · 例: なし
+- `xsk_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsk_richardson_lucy` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsk_unwrap_phase` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xcv_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsk2_wiener` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xcv3_inpaint_ns` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_richardson_lucy` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_wiener_deconv_spatial` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_unsharp_deblur` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_motion_deblur` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_backproject_superres` `image → image` · 例: `gallery2d_smoothing_rank`
+- `iv_gradient_inpaint` `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### segment(7)
-- `sg_slic_superpixels` `image → region` · 例: なし
-- `sg_felzenszwalb` `image → region` · 例: なし
-- `sg_gmm_segment` `image → region` · 例: なし
-- `sg_kmeans_intensity` `image → region` · 例: なし
-- `sg_region_growing_seeded` `image → region` · 例: なし
-- `sg_normalized_cut_2` `image → region` · 例: なし
-- `sg_watershed_gradient` `image → region` · 例: なし
+- `sg_slic_superpixels` `image → region` · 例: `gallery2d_segmentation`
+- `sg_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`
+- `sg_gmm_segment` `image → region` · 例: `gallery2d_segmentation`
+- `sg_kmeans_intensity` `image → region` · 例: `gallery2d_segmentation`
+- `sg_region_growing_seeded` `image → region` · 例: `gallery2d_segmentation`
+- `sg_normalized_cut_2` `image → region` · 例: `gallery2d_segmentation`
+- `sg_watershed_gradient` `image → region` · 例: `gallery2d_segmentation`
 
 ### segmentation(56)
-- `threshold` (halcon: `threshold`) `image → region` · 例: なし
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `quickstart`, `segment_and_classify`
-- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: なし
-- `canny` (halcon: `edges_image`) `image → region` · 例: なし
-- `local_max` (halcon: `local_max_sub_pix`) `image → region` · 例: なし
-- `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: なし
-- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: なし
-- `sk_li` (halcon: `binary_threshold`) `image → region` · 例: なし
-- `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: なし
-- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: なし
-- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: なし
-- `sk_canny` (halcon: `edges_image`) `image → region` · 例: なし
-- `sk_felzenszwalb` `image → region` · 例: なし
-- `sk_slic` `image → region` · 例: なし
-- `sk_chan_vese` `image → region` · 例: なし
-- `sk_local_maxima` (halcon: `local_max`) `image → region` · 例: なし
-- `sk_hysteresis` (halcon: `hysteresis_threshold`) `image → region` · 例: なし
-- `cv_otsu` (halcon: `binary_threshold`) `image → region` · 例: なし
-- `cv_adaptive_mean` (halcon: `dyn_threshold`) `image → region` · 例: なし
-- `cv_adaptive_gauss` (halcon: `local_threshold`) `image → region` · 例: なし
-- `cv_canny` (halcon: `edges_image`) `image → region` · 例: なし
-- `h_threshold` (halcon: `threshold`) `image → region` · 例: なし
-- `binary_threshold` (halcon: `binary_threshold`) `image → region` · 例: なし
-- `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: なし
-- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: なし
-- `var_threshold` (halcon: `var_threshold`) `image → region` · 例: なし
-- `local_threshold` (halcon: `local_threshold`) `image → region` · 例: なし
-- `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` · 例: なし
-- `edges_image` (halcon: `edges_image`) `image → region` · 例: なし
-- `watersheds` (halcon: `watersheds`) `image → region` · 例: なし
-- `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` · 例: なし
-- `regiongrowing` (halcon: `regiongrowing`) `image → region` · 例: なし
-- `local_max` (halcon: `local_max`) `image → region` · 例: なし
-- `dual_threshold` (halcon: `dual_threshold`) `image → region` · 例: なし
-- `segment_image_mser` (halcon: `segment_image_mser`) `image → region` · 例: なし
-- `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` · 例: なし
-- `zero_crossing` (halcon: `zero_crossing`) `image → region` · 例: なし
-- `local_min` (halcon: `local_min`) `image → region` · 例: なし
-- `bin_threshold` (halcon: `bin_threshold`) `image → region` · 例: なし
-- `fast_threshold` (halcon: `fast_threshold`) `image → region` · 例: なし
-- `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` · 例: なし
-- `pouring` (halcon: `pouring`) `image → region` · 例: なし
-- `xsk_random_walker` `image → region` · 例: なし
-- `xsk_flood` `image → region` · 例: なし
-- `xcv_grabcut` `image → region` · 例: なし
-- `xcv_watershed_markers` (halcon: `watersheds`) `image → region` · 例: なし
-- `xsk2_multiotsu` `image → image` · 例: なし
-- `xsk2_h_maxima` `image → region` · 例: なし
-- `xcv2_meanshift` `image → image` · 例: なし
-- `xmh_bernsen` `image → region` · 例: なし
-- `xsk3_rank_otsu` `image → region` · 例: なし
-- `xsk3_h_minima` `image → region` · 例: なし
-- `xsk3_threshold_local_median` `image → region` · 例: なし
-- `xsk3_peak_local_max` `image → region` · 例: なし
-- `xkor_canny` `image → region` · 例: なし
-- `it_region_to_bin` (halcon: `region_to_bin`) `image → image` · 例: なし
+- `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `gallery2d_segmentation`, `quickstart`, `segment_and_classify`
+- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
+- `local_max` (halcon: `local_max_sub_pix`) `image → region` · 例: `gallery2d_segmentation`
+- `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_li` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`
+- `sk_slic` `image → region` · 例: `gallery2d_segmentation`
+- `sk_chan_vese` `image → region` · 例: `gallery2d_segmentation`
+- `sk_local_maxima` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
+- `sk_hysteresis` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `cv_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `cv_adaptive_mean` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `cv_adaptive_gauss` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `cv_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
+- `h_threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `binary_threshold` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `auto_threshold` (halcon: `auto_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `dyn_threshold` (halcon: `dyn_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `var_threshold` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `edges_image` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
+- `watersheds` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`
+- `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `regiongrowing` (halcon: `regiongrowing`) `image → region` · 例: `gallery2d_segmentation`
+- `local_max` (halcon: `local_max`) `image → region` · 例: `gallery2d_segmentation`
+- `dual_threshold` (halcon: `dual_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `segment_image_mser` (halcon: `segment_image_mser`) `image → region` · 例: `gallery2d_segmentation`
+- `regiongrowing_mean` (halcon: `regiongrowing_mean`) `image → region` · 例: `gallery2d_segmentation`
+- `zero_crossing` (halcon: `zero_crossing`) `image → region` · 例: `gallery2d_segmentation`
+- `local_min` (halcon: `local_min`) `image → region` · 例: `gallery2d_segmentation`
+- `bin_threshold` (halcon: `bin_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `fast_threshold` (halcon: `fast_threshold`) `image → region` · 例: `gallery2d_segmentation`
+- `nonmax_suppression_amp` (halcon: `nonmax_suppression_amp`) `image → region` · 例: `gallery2d_segmentation`
+- `pouring` (halcon: `pouring`) `image → region` · 例: `gallery2d_segmentation`
+- `xsk_random_walker` `image → region` · 例: `gallery2d_segmentation`
+- `xsk_flood` `image → region` · 例: `gallery2d_segmentation`
+- `xcv_grabcut` `image → region` · 例: `gallery2d_segmentation`
+- `xcv_watershed_markers` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`
+- `xsk2_multiotsu` `image → image` · 例: `gallery2d_segmentation`
+- `xsk2_h_maxima` `image → region` · 例: `gallery2d_segmentation`
+- `xcv2_meanshift` `image → image` · 例: `gallery2d_segmentation`
+- `xmh_bernsen` `image → region` · 例: `gallery2d_segmentation`
+- `xsk3_rank_otsu` `image → region` · 例: `gallery2d_segmentation`
+- `xsk3_h_minima` `image → region` · 例: `gallery2d_segmentation`
+- `xsk3_threshold_local_median` `image → region` · 例: `gallery2d_segmentation`
+- `xsk3_peak_local_max` `image → region` · 例: `gallery2d_segmentation`
+- `xkor_canny` `image → region` · 例: `gallery2d_segmentation`
+- `it_region_to_bin` (halcon: `region_to_bin`) `image → image` · 例: `gallery2d_segmentation`
 
 ### self-similarity(1)
-- `xmh_selfmatch` `image → image` · 例: なし
+- `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `ct_inspection`, `quickstart`
-- `mean_box` (halcon: `mean_image`) `image → image` · 例: なし
-- `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `quickstart`
-- `unsharp` (halcon: `emphasize`) `image → image` · 例: なし
-- `sk_tv` `image → image` · 例: なし
-- `sk_wavelet` `image → image` · 例: なし
-- `sk_rolling_ball` `image → image` · 例: なし
-- `sk_nlm` `image → image` · 例: なし
-- `sk_tv_bregman` `image → image` · 例: なし
-- `cv_bilateral` (halcon: `bilateral_filter`) `image → image` · 例: なし
-- `cv_box` (halcon: `mean_image`) `image → image` · 例: なし
-- `cv_gaussian` (halcon: `gauss_filter`) `image → image` · 例: なし
-- `cv_nlmeans` `image → image` · 例: なし
-- `cv_sharpen` (halcon: `emphasize`) `image → image` · 例: なし
-- `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: なし
-- `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: なし
-- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: なし
-- `gauss_image` (halcon: `gauss_image`) `image → image` · 例: なし
-- `mean_image` (halcon: `mean_image`) `image → image` · 例: なし
-- `binomial_filter` (halcon: `binomial_filter`) `image → image` · 例: なし
-- `smooth_image` (halcon: `smooth_image`) `image → image` · 例: なし
-- `mean_curvature_flow` (halcon: `mean_curvature_flow`) `image → image` · 例: なし
-- `sigma_image` (halcon: `sigma_image`) `image → image` · 例: なし
-- `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: なし
-- `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` · 例: なし
-- `coherence_enhancing_diff` (halcon: `coherence_enhancing_diff`) `image → image` · 例: なし
-- `bilateral_filter` (halcon: `bilateral_filter`) `image → image` · 例: なし
-- `guided_filter` (halcon: `guided_filter`) `image → image` · 例: なし
-- `simulate_motion` (halcon: `simulate_motion`) `image → image` · 例: なし
-- `simulate_defocus` (halcon: `simulate_defocus`) `image → image` · 例: なし
-- `xcv_edge_preserving` `image → image` · 例: なし
-- `xpil_smooth_more` `image → image` · 例: なし
-- `xpil_unsharp_mask` `image → image` · 例: なし
-- `xsp_wiener` `image → image` · 例: なし
-- `xsp_savgol` `image → image` · 例: なし
-- `xsp_dct_denoise` `image → image` · 例: なし
-- `xsp_cspline_smooth` `image → image` · 例: なし
-- `xwt_visushrink` `image → image` · 例: なし
-- `xwt_firm_denoise` `image → image` · 例: なし
-- `xwt_lf_reconstruct` `image → image` · 例: なし
-- `xsk3_rank_mean_bilateral` `image → image` · 例: なし
-- `xcv3_denoise_tvl1` `image → image` · 例: なし
-- `xcv3_pyr_laplacian` `image → image` · 例: なし
-- `xkor_gaussian` `image → image` · 例: なし
-- `xkor_bilateral` `image → image` · 例: なし
-- `xkor_unsharp` `image → image` · 例: なし
-- `xkor_motion_blur` `image → image` · 例: なし
-- `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` · 例: なし
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `ct_inspection`, `gallery2d_smoothing_rank`, `quickstart`
+- `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
+- `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_tv` `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_wavelet` `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_rolling_ball` `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_nlm` `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_tv_bregman` `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_gaussian` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_nlmeans` `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_sharpen` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `gauss_filter` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `gauss_image` (halcon: `gauss_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `mean_image` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `binomial_filter` (halcon: `binomial_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `smooth_image` (halcon: `smooth_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `mean_curvature_flow` (halcon: `mean_curvature_flow`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `sigma_image` (halcon: `sigma_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `anisotropic_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `isotropic_diffusion` (halcon: `isotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `coherence_enhancing_diff` (halcon: `coherence_enhancing_diff`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `bilateral_filter` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `simulate_motion` (halcon: `simulate_motion`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `simulate_defocus` (halcon: `simulate_defocus`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `xcv_edge_preserving` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xpil_smooth_more` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xpil_unsharp_mask` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsp_wiener` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsp_savgol` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsp_dct_denoise` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsp_cspline_smooth` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xwt_visushrink` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xwt_firm_denoise` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xwt_lf_reconstruct` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xsk3_rank_mean_bilateral` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xcv3_denoise_tvl1` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xcv3_pyr_laplacian` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xkor_gaussian` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xkor_bilateral` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xkor_unsharp` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xkor_motion_blur` `image → image` · 例: `gallery2d_smoothing_rank`
+- `f2_gauss_pyramid` (halcon: `gen_gauss_pyramid`) `image → image` · 例: `gallery2d_smoothing_rank`
 
 ### subpix(6)
-- `sp_local_max_sub_pix` `image → contour` · 例: なし
-- `sp_local_min_sub_pix` (halcon: `local_min_sub_pix`) `image → contour` · 例: なし
-- `sp_saddle_points_sub_pix` (halcon: `saddle_points_sub_pix`) `image → contour` · 例: なし
-- `sp_critical_points_sub_pix` (halcon: `critical_points_sub_pix`) `image → contour` · 例: なし
-- `sp_plateaus` (halcon: `plateaus`) `image → contour` · 例: なし
-- `sp_lowlands_center` (halcon: `lowlands_center`) `image → contour` · 例: なし
+- `sp_local_max_sub_pix` `image → contour` · 例: `gallery2d_geometry`
+- `sp_local_min_sub_pix` (halcon: `local_min_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
+- `sp_saddle_points_sub_pix` (halcon: `saddle_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
+- `sp_critical_points_sub_pix` (halcon: `critical_points_sub_pix`) `image → contour` · 例: `gallery2d_geometry`
+- `sp_plateaus` (halcon: `plateaus`) `image → contour` · 例: `gallery2d_geometry`
+- `sp_lowlands_center` (halcon: `lowlands_center`) `image → contour` · 例: `gallery2d_geometry`
 
 ### tactile(5)
 - `tac_contact_mask` `image → region` · 例: `sim2real_and_alife`
@@ -1397,58 +1397,58 @@ _計 735 ops / 46 categories。_
 - `tac_shear_field` `image → image` · 例: `sim2real_and_alife`
 
 ### texture(22)
-- `std_filter` (halcon: `deviation_image`) `image → image` · 例: なし
-- `gabor` (halcon: `gen_gabor`) `image → image` · 例: なし
-- `sk_frangi` (halcon: `lines_gauss`) `image → image` · 例: なし
-- `sk_meijering` (halcon: `lines_gauss`) `image → image` · 例: なし
-- `sk_hessian` (halcon: `lines_gauss`) `image → image` · 例: なし
-- `sk_gabor` (halcon: `gen_gabor`) `image → image` · 例: なし
-- `sk_lbp` `image → image` · 例: なし
-- `sk_entropy` (halcon: `entropy_image`) `image → image` · 例: なし
-- `sk_shape_index` `image → image` · 例: なし
-- `deviation_image` (halcon: `deviation_image`) `image → image` · 例: なし
-- `texture_laws` (halcon: `texture_laws`) `image → image` · 例: なし
-- `entropy_image` (halcon: `entropy_image`) `image → image` · 例: なし
-- `gen_gabor` (halcon: `gen_gabor`) `image → image` · 例: なし
-- `cooc_feature_matrix` (halcon: `cooc_feature_matrix`) `image → feature` · 例: なし
-- `xsk_struct_coherence` `image → image` · 例: なし
-- `xsk_meijering` `image → image` · 例: なし
-- `xsk_sato` `image → image` · 例: なし
-- `xsp_hilbert_env` `image → image` · 例: なし
-- `xsk2_hog` `image → image` · 例: なし
-- `f2_symmetry` (halcon: `symmetry`) `image → image` · 例: なし
-- `tf_census_transform` `image → image` · 例: なし
-- `tf_rank_transform` `image → image` · 例: なし
+- `std_filter` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
+- `sk_frangi` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
+- `sk_meijering` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
+- `sk_hessian` (halcon: `lines_gauss`) `image → image` · 例: `gallery2d_texture_freq`
+- `sk_gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
+- `sk_lbp` `image → image` · 例: `gallery2d_texture_freq`
+- `sk_entropy` (halcon: `entropy_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `sk_shape_index` `image → image` · 例: `gallery2d_texture_freq`
+- `deviation_image` (halcon: `deviation_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `texture_laws` (halcon: `texture_laws`) `image → image` · 例: `gallery2d_texture_freq`
+- `entropy_image` (halcon: `entropy_image`) `image → image` · 例: `gallery2d_texture_freq`
+- `gen_gabor` (halcon: `gen_gabor`) `image → image` · 例: `gallery2d_texture_freq`
+- `cooc_feature_matrix` (halcon: `cooc_feature_matrix`) `image → feature` · 例: `gallery2d_texture_freq`
+- `xsk_struct_coherence` `image → image` · 例: `gallery2d_texture_freq`
+- `xsk_meijering` `image → image` · 例: `gallery2d_texture_freq`
+- `xsk_sato` `image → image` · 例: `gallery2d_texture_freq`
+- `xsp_hilbert_env` `image → image` · 例: `gallery2d_texture_freq`
+- `xsk2_hog` `image → image` · 例: `gallery2d_texture_freq`
+- `f2_symmetry` (halcon: `symmetry`) `image → image` · 例: `gallery2d_texture_freq`
+- `tf_census_transform` `image → image` · 例: `gallery2d_texture_freq`
+- `tf_rank_transform` `image → image` · 例: `gallery2d_texture_freq`
 
 ### texture-feature(1)
-- `xmh_pftas` `image → feature` · 例: なし
+- `xmh_pftas` `image → feature` · 例: `gallery2d_features`
 
 ### texture/shape-feature(1)
-- `xmh_zernike` `image → feature` · 例: なし
+- `xmh_zernike` `image → feature` · 例: `gallery2d_features`
 
 ### tomography(5)
-- `tm_radon_forward` `image → image` · 例: なし
-- `tm_fbp_reconstruct` `image → image` · 例: なし
-- `tm_sart_reconstruct` `image → image` · 例: なし
-- `tm_backproject_unfiltered` `image → image` · 例: なし
-- `tm_sinogram_denoise` `image → image` · 例: なし
+- `tm_radon_forward` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `tm_fbp_reconstruct` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `tm_sart_reconstruct` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `tm_backproject_unfiltered` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `tm_sinogram_denoise` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### transform(3)
-- `xmh_haar` `image → image` · 例: なし
-- `xmh_daubechies` `image → image` · 例: なし
-- `tf_radon_sinogram` `image → image` · 例: なし
+- `xmh_haar` `image → image` · 例: `gallery2d_geometry`
+- `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
+- `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
 ### xldgeom(10)
-- `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: なし
-- `xg_area_center` (halcon: `area_center_points_xld`) `contour → feature` · 例: なし
-- `xg_eccentricity` (halcon: `eccentricity_points_xld`) `contour → feature` · 例: なし
-- `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` · 例: なし
-- `xg_elliptic_axis` (halcon: `elliptic_axis_points_xld`) `contour → feature` · 例: なし
-- `xg_height_width_ratio` (halcon: `height_width_ratio_xld`) `contour → feature` · 例: なし
-- `xg_regress_contours` `contour → feature` · 例: なし
-- `xg_clip_contours` `contour → contour` · 例: なし
-- `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` · 例: なし
-- `xg_crop_contours` `contour → contour` · 例: なし
+- `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
+- `xg_area_center` (halcon: `area_center_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
+- `xg_eccentricity` (halcon: `eccentricity_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
+- `xg_orientation` (halcon: `orientation_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
+- `xg_elliptic_axis` (halcon: `elliptic_axis_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
+- `xg_height_width_ratio` (halcon: `height_width_ratio_xld`) `contour → feature` · 例: `gallery2d_geometry`
+- `xg_regress_contours` `contour → feature` · 例: `gallery2d_geometry`
+- `xg_clip_contours` `contour → contour` · 例: `gallery2d_geometry`
+- `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` · 例: `gallery2d_geometry`
+- `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`
 
 ## References(アルゴリズムの一次情報・further reading)
 
