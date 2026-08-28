@@ -169,30 +169,6 @@ def _sample_dirs(ldir, penumbra_rad: float, samples: int):
     return dirs
 
 
-def _occluded_by_light(Pw, n_world, light_pose, light_K, light_dist, texel_world,
-                       bias_world) -> np.ndarray:
-    """1 つの光源(方向)について、受光面点 Pw が影かどうかの真偽 (H,W) を返す。"""
-    h, w = Pw.shape[:2]
-    R_L = light_pose[:3, :3]
-    t_L = light_pose[:3, 3]
-    fx, fy = float(light_K[0, 0]), float(light_K[1, 1])
-    cx, cy = float(light_K[0, 2]), float(light_K[1, 2])
-
-    valid = np.all(np.isfinite(Pw), axis=-1)
-    Pc = (Pw.reshape(-1, 3) @ R_L.T + t_L).reshape(h, w, 3)   # 光源カメラ空間
-    dL = -Pc[..., 2]                                          # 光源からの距離(前方>0)
-    front = valid & (dL > _EPS)
-    dsafe = np.where(front, dL, np.nan)
-    uL = fx * (Pc[..., 0] / dsafe) + cx
-    vL = cy - fy * (Pc[..., 1] / dsafe)
-
-    # shadow map をレンダ(光源から見た最近面の深度)
-    # 光源方向は pose に織り込まれているので通常の render_mesh で良い。
-    res = int(light_K[0, 2] * 2.0)                            # cx = res/2
-    # 実際の描画は呼び出し側から depth を渡す方が速いが、単一責務のためここで受け取る:
-    raise RuntimeError("internal: use _occluded_with_depth")  # 使わない(下の実装を使用)
-
-
 def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
                 height: int = 256, directional: bool = True, penumbra: float = 0.0,
                 samples: int = 16, shadow_res: int = 512, bias=None) -> np.ndarray:
