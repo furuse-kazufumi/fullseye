@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-28 22:57:03
+- **最終更新**: 2026-08-28 23:15:01
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+23eaa64d feat(3d): +5 scene/real-data examples (dino symmetry / stereo / LiDAR / partial ICP / cylinder)
+8e0953f7 auto: examples3d.py 編集前 (2026-08-28 23:12)
+a64f3593 auto: partial_overlap_icp.py 編集前 (2026-08-28 23:09)
+60d6baf3 auto: dl_mesh_symmetry.py 編集前 (2026-08-28 23:06)
+e3b6cbe8 auto: partial_overlap_icp.py 編集前 (2026-08-28 23:04)
 08ac00d2 feat(3d): +5 varied-shape examples (torus knot / gear / molecule / dragon / terrain)
 1f085629 auto: examples3d.py 編集前 (2026-08-28 22:53)
 1b3a7070 auto: dl_mesh_curvature.py 編集前 (2026-08-28 22:50)
 bb01dbc9 feat(3d): +5 worked examples across pose/optics/structured-light/symmetry/LOD
 24ae20c0 auto: examples3d.py 編集前 (2026-08-28 22:41)
-aafc9053 auto: examples3d.py 編集前 (2026-08-28 22:41)
-72b87050 auto: graycode_structured_light.py 編集前 (2026-08-28 22:30)
-3e7fecc2 auto: graycode_structured_light.py 編集前 (2026-08-28 22:29)
-b9bd65fd auto: graycode_structured_light.py 編集前 (2026-08-28 22:29)
-8eb7b5ba auto: snell_refraction.py 編集前 (2026-08-28 22:28)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ b9bd65fd auto: graycode_structured_light.py 編集前 (2026-08-28 22:29)
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:54 fullseye/OP_CATALOG.md
-22:54 docs/OP_CATALOG.md
-22:53 examples3d.py
-22:51 docs/SESSION_SUMMARY.md
-22:51 examples_3d/torus_knot_curve.py
-22:50 examples_3d/dl_mesh_curvature.py
-22:49 examples_3d/gear_metrology.py
-22:49 examples_3d/molecule_atom_count.py
-22:49 examples_3d/terrain_traversability.py
-22:38 examples_3d/mesh_lod_download.py
-22:30 examples_3d/graycode_structured_light.py
-22:29 examples_3d/reflection_symmetry.py
-22:28 examples_3d/snell_refraction.py
-22:27 examples_3d/pnp_pose_outliers.py
-22:18 examples_3d/_gallery/showcase_hand.gif
+23:14 examples_3d/_gallery/render_ao.png
+23:14 examples_3d/_gallery/fit_primitives_ext.png
+23:14 examples_3d/_gallery/watershed3d.png
+23:14 examples_3d/_gallery/mesh_props.png
+23:14 examples_3d/_gallery/mesh_decimate.png
+23:14 examples_3d/_gallery/mesh_smooth.png
+23:14 examples_3d/_gallery/hull_bounds.png
+23:12 fullseye/OP_CATALOG.md
+23:12 docs/OP_CATALOG.md
+23:12 examples3d.py
+23:09 examples_3d/partial_overlap_icp.py
+23:06 examples_3d/dl_mesh_symmetry.py
+23:01 examples_3d/cylinder_axis_metrology.py
+23:01 examples_3d/stereo_depth_scene.py
+23:00 examples_3d/lidar_scene_segmentation.py
 ```
 
 ---
