@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(82 例)
+### 3-D 点群/体積/曲面(87 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -65,6 +65,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **複数断層の2D輪郭を積層して3D曲面(メッシュ)に** — 各スライスの閉輪郭を塗って voxel 積層→marching cubes で曲面メッシュ化。頂点は球面に乗り体積も一致(断面一定=円柱仮定は1.5倍過大)。輪郭→領域→voxel→メッシュの表現変換。 `py -3.11 examples_3d/contours_to_surface.py`
 - **等高線(標高付き輪郭)から地形の高さ場(DEM)を復元** — 等高線点(x,y,標高)を fit_poly_surface でサーフェス当てはめし DEM 格子へ展開。線の間も内挿し全域RMSEが最近傍等高線の階段近似を桁違いに下回る(GIS/測量)。 `py -3.11 examples_3d/contours_to_terrain.py`
 - **多視点シルエットから visual hull を彫る** — 既知形状を複数の既知視点で synthesize_silhouette→carve し visual_hull を得る(recall 1.0)。1視点は柱状に過大、多視点で真形状へ収束。 `py -3.11 examples_3d/space_carving.py`
+- **トーラス点群のalpha shape再構成で穴(genus1)を保持** — 中実トーラス(主R1.0/管r0.35)9000点をestimate_alpha+alpha_shape_meshで再構成。z軸穴プローブ41点の内包率がalpha=0.000(穴を保持)、凸包null=1.000(穴を充填・厳密Delaunayでも1.000)。オイラー標数χ_alpha=0(トーラス)対χ_hull=2(球)でも判別的。 `py -3.11 examples_3d/alpha_shape_topology.py`
+- **Poisson軽量表面再構成(向き付き点群→水密メッシュ)** — でこぼこ閉曲面(外向き法線を勾配で厳密算出)の向き付き点群6000点をrecon3d.poisson_liteで水密メッシュ(V11788/F23572)へ。真曲面との正規化chamfer0.01006が外接球null(0.081=8倍)・乱数法線null(0.041=4倍)より桁違いに小さい。 `py -3.11 examples_3d/poisson_surface_recon.py`
 
 **modeling**
 - **SDFのCSG合成(和/差)でソリッドを作りメッシュ化** — 符号付き距離場の集合演算(球∪箱−小球)で陰関数ソリッドを作り、等値面をメッシュへ。 `py -3.11 examples_3d/sdf_csg.py`
@@ -84,6 +86,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **球面調和記述子による回転不変な3D形状検索** — 向き未知の形状(球/箱/円柱の回転コピー)を SH 帯域エネルギー記述子で照合。検索3/3正解・分離マージン>0で、回転で全マスが入れ替わる素ボクセル占有の1/3を上回る。 `py -3.11 examples_3d/shape_descriptor.py`
 - **3Dボリュームのエッジ検出(canny3d: NMS+ヒステリシス)** — なだらかな内部を持つ中実ボールの外周だけを1ボクセルに細線化。オンシェル率1.000・内部誤検出0で、生勾配の固定しきい値null(0.464・誤検出4012)を+0.536上回る。 `py -3.11 examples_3d/edges_3d.py`
 - **実メッシュ曲率が詳細形状を判別(Stanford Dragon)** — DL実データStanford Dragon(87万面)をread_mesh→vertex_curvature(cotangent Laplace-Beltrami)。正規化曲率はmedian9.2・MAD6.2・|Hn|>2が88%と広く分布し、同スケールの滑球null(median1.00・0%)をMAD比1.4e7倍で判別。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_curvature.py`
+- **FPFH記述子で部分ビュー間の点対応を張る** — 同一物体の2部分ビュー(58度回転+並進・重なり1514点)で法線推定→FPFH記述子(33次元)を計算し記述子最近傍で対応。幾何正答率0.633がランダム対応0.0034・記述子シャッフル0.0020(チャンス率)を約185倍上回る。register全体でなく記述子マッチ品質を直接測る。 `py -3.11 examples_3d/fpfh_correspondence.py`
 
 **motion**
 - **動的シーンの剛体運動セグメンテーション** — 2時刻の点群から、別々に動く剛体ごとに分割する。無相関ノイズでは剛体を捏造しない。 `py -3.11 examples_3d/motion_seg.py`
@@ -111,6 +114,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **shape_descriptors**
 - **3Dモーメント不変量(剛体+一様スケールに不変)** — 点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。 `py -3.11 examples_3d/moment_invariants.py`
+- **球面調和記述子による回転不変な3D形状検索** — 球/立方体/トーラス/円柱/円錐の5クラスをボクセル化しsh_descriptor化。一様ランダム3D回転したクエリをmatch_sh_descriptorで検索→30/30=100%正解・分離マージン0.312。非回転不変null(軸周辺分布)は回転で100%→37%に崩れSHが+63pt上回る。 `py -3.11 examples_3d/sh_descriptor_retrieval.py`
 
 **shape_analysis**
 - **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。 `py -3.11 examples_3d/medial_topology.py`
@@ -119,6 +123,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **点群の鏡映対称面の復元** — 既知平面で鏡映対称な点群から初期推定なしにdetect_reflection_symmetryが対称面を復元: 法線誤差0.0度・鏡映残差1.5e-11。非対称null(残差1.14)は約7.8e10倍大きく、でたらめ平面(最良1.27)も桁違いで判別的。 `py -3.11 examples_3d/reflection_symmetry.py`
 - **トーラス結び目の弧長・捩率計測(非平面曲線)** — (2,3)トーラス結び目を密ポリラインで生成しcurve3dのarc_length/curvature_torsionを検証。弧長は台形積分と相対7.6e-7一致・中央|τ|0.283は同長の平面円(捩率6e-10)の5.1e8倍で非平面を判別。円のκ=1/rも誤差7e-13で正確。 `py -3.11 examples_3d/torus_knot_curve.py`
 - **恐竜骨格の左右対称面(矢状面)の復元** — スミソニアン三角竜骨格(CC0,10万頂点→4090点stride)をdetect_reflection_symmetryに渡し矢状面を残差2.48で復元(最薄主軸=左右方向に一致)。他2主平面4.28/4.30と区別、片側20%破壊で15.87(6.4倍)へ悪化=左右対称を判別的に検出。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_symmetry.py`
+- **回転対称位数の復元(6枚歯スパーギア)** — 歯数6の平歯車リム2160点を生成。detect_rotational_symmetryで対称軸z(|z|=1.000)、約数構造(rotational_symmetry_score)から位数N=6を復元。約数{2,3,6}残差~1e-11・非約数{4,5,7,9,12}>0.5、位数6残差4.3e-11が無対称ランダム1.52の3.5e10倍。 `py -3.11 examples_3d/rotational_symmetry_fold.py`
 
 **range_sensing**
 - **360度点群⇄距離画像の往復(球面投影)** — project_spherical→unproject_spherical の往復で形状を保存(誤差<voxel)。奥行きを潰す平面正射影より55倍良い。 `py -3.11 examples_3d/lidar_projection.py`
