@@ -86,15 +86,14 @@ def fit_plane3(points) -> dict:
     ``ValueError`` on < 3 points or a collinear set (the normal is undefined)."""
     p = _as_points3(points, 3, "points")
     c = p.mean(0)
-    cov = (p - c).T @ (p - c)
-    w, v = np.linalg.eigh(cov)                        # ascending eigenvalues
-    # collinear <=> only one non-negligible spread axis (2nd eigenvalue ~ 0).
-    scale = max(w[2], 1e-300)
-    if w[1] <= 1e-18 * scale:
+    # SVD of the centred points (not eigh of the covariance — forming P^T P squares
+    # the condition number and floors the residual at ~1e-8; SVD keeps it ~1e-14).
+    _, s, vt = np.linalg.svd(p - c, full_matrices=False)
+    if s[1] <= 1e-9 * s[0]:                           # only one spread axis -> collinear
         raise ValueError("points are collinear; no plane normal is defined")
-    n = v[:, 0]
+    n = vt[-1]                                        # smallest singular direction
     n = n / np.linalg.norm(n)
-    rms = float(np.sqrt(max(w[0], 0.0) / len(p)))
+    rms = float(s[-1] / np.sqrt(len(p)))
     return {**_center_keys(c), "normal": n, "rms": rms}
 
 
