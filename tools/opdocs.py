@@ -556,10 +556,30 @@ def md_to_html(md: str) -> str:
     return "\n".join(out) + "\n"
 
 
+def _write_generated(path: str, body: str) -> bool:
+    """Write a generated help page, but never clobber a hand-authored override.
+
+    Studio's ``op_help_html`` reads ``op_help/<name>.html`` from the root, so the
+    generated 2-D pages must live there too. A file counts as hand-authored (and is
+    preserved) unless it carries the generated marker. This lets the 3 rich hand-written
+    pages (gaussian/otsu/sobel_mag) win while every other op still gets a linked card."""
+    if os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                head = f.read(len(_GEN_MARK) + 4)
+        except OSError:
+            head = ""
+        if _GEN_MARK not in head:
+            return False  # hand-authored override — leave it
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(_GEN_MARK + "\n" + body)
+    return True
+
+
 def cmd_html():
-    os.makedirs(HELP2D, exist_ok=True)
-    n = 0
-    # per-op 2-D pages from their Markdown notes
+    os.makedirs(HELP_ROOT, exist_ok=True)
+    n = skipped = 0
+    # per-op 2-D pages from their Markdown notes -> op_help/<name>.html (Studio's lookup dir)
     for cat in sorted(os.listdir(os.path.join(DOCS, "2d"))):
         cdir = os.path.join(DOCS, "2d", cat)
         if not os.path.isdir(cdir) or cat == "guides":
@@ -570,10 +590,11 @@ def cmd_html():
             with open(os.path.join(cdir, f), encoding="utf-8") as fh:
                 md = fh.read()
             op = f[:-3]
-            with open(os.path.join(HELP2D, op + ".html"), "w", encoding="utf-8") as fh:
-                fh.write(md_to_html(md))
-            n += 1
-    # family guides -> guide_<family>.html
+            if _write_generated(os.path.join(HELP_ROOT, op + ".html"), md_to_html(md)):
+                n += 1
+            else:
+                skipped += 1
+    # family guides -> guide_<family>.html (always generated from guide md)
     g = 0
     gdir = os.path.join(DOCS, "2d", "guides")
     if os.path.isdir(gdir):
@@ -582,10 +603,10 @@ def cmd_html():
                 continue
             with open(os.path.join(gdir, f), encoding="utf-8") as fh:
                 md = fh.read()
-            with open(os.path.join(HELP2D, "guide_" + f[:-3] + ".html"), "w", encoding="utf-8") as fh:
-                fh.write(md_to_html(md))
+            _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), md_to_html(md))
             g += 1
-    print(f"opdocs html: wrote {n} op pages + {g} family guides to {HELP2D}")
+    print(f"opdocs html: wrote {n} op pages ({skipped} hand-authored preserved) "
+          f"+ {g} family guides to {HELP_ROOT}")
 
 
 def main(argv):
