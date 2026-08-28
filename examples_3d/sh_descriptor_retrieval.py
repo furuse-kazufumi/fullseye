@@ -155,25 +155,28 @@ def voxelize(P):
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# null(回転不変でない記述子)= 各軸の座標分布を並べた軸別 Wasserstein 距離
+# null(回転不変でない記述子)= 各軸の座標分布(周辺分布)を並べた符号つき分位点ベクトル
 # ═══════════════════════════════════════════════════════════════════════════
 K_Q = 64
 
 
 def null_signature(P):
-    """正準化した点群の各軸の周辺分布を分位点 K_Q 個で表す(3*K_Q 次元)。
+    """正準化した点群の各軸の周辺分布を符号つき分位点 K_Q 個で並べた 3*K_Q 次元ベクトル。
 
-    周辺分布(x,y,z の値のヒストグラム相当)は物体の向きに強く依存する=回転不変でない。
-    立方体を回すと角が別の軸へ伸び、各軸の分布が総入れ替わる → 同一形状でも遠くなる。
+    x,y,z それぞれの値の分布(=物体を各軸へ射影した「影」の形)は向きに強く依存し、
+    回転不変ではない。立方体を回すと角が別の軸へ伸び、各軸の分布が総入れ替わって
+    符号つきベクトルの向きが大きくずれる → 同一形状でも(回転後は)遠くなる。
     """
     Q = normalize_cloud(P)
     xs = np.linspace(0.0, 1.0, K_Q)
-    return np.stack([np.quantile(np.sort(Q[:, a]), xs) for a in range(3)], axis=0)
+    return np.concatenate([np.quantile(np.sort(Q[:, a]), xs) for a in range(3)])
 
 
 def null_distance(sig_a, sig_b):
-    """軸別の1次元 Wasserstein 距離(=分位点関数の L1)の和。小さいほど同形状。"""
-    return float(np.abs(sig_a - sig_b).mean(axis=1).sum())
+    """周辺分布ベクトルのコサイン距離 (1 - cos)。小さいほど同形状(向きが揃っていれば)。"""
+    na = np.linalg.norm(sig_a) + 1e-12
+    nb = np.linalg.norm(sig_b) + 1e-12
+    return 1.0 - float((sig_a * sig_b).sum() / (na * nb))
 
 
 def sh_distance_vol(vol_q, vol_db):

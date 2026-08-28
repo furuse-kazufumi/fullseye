@@ -83,11 +83,9 @@ maskB = (dirn @ axB) > -0.35                         # B に写る点(別向き�
 idxA = np.where(maskA)[0]                             # A の各行が指す物体点の global index
 idxB = np.where(maskB)[0]
 
-res_probe = float(np.median(cKDTree(obj).query(obj, k=2)[0][:, -1]))  # 点間隔(解像度)
-rng = np.random.default_rng(42)
-# ビュー A は物体座標のまま、ビュー B は真の (R,t) で置き直す。両者に独立なセンサノイズ。
-viewA = obj[idxA] + rng.normal(0.0, 0.25 * res_probe, (len(idxA), 3))
-viewB = obj[idxB] @ R_gt.T + t_gt + rng.normal(0.0, 0.25 * res_probe, (len(idxB), 3))
+# ビュー A は物体座標のまま、ビュー B は真の (R,t) で置き直す(同一サーフェスの清浄サンプル)。
+viewA = obj[idxA]
+viewB = obj[idxB] @ R_gt.T + t_gt
 
 # 重なり点の真の対応: 同一 global index g が A・B 双方に写る点。
 overlap_g = np.intersect1d(idxA, idxB)               # 重なり領域の global index
