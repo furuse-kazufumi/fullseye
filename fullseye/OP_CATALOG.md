@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(87 例)
+### 3-D 点群/体積/曲面(88 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -124,6 +124,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **トーラス結び目の弧長・捩率計測(非平面曲線)** — (2,3)トーラス結び目を密ポリラインで生成しcurve3dのarc_length/curvature_torsionを検証。弧長は台形積分と相対7.6e-7一致・中央|τ|0.283は同長の平面円(捩率6e-10)の5.1e8倍で非平面を判別。円のκ=1/rも誤差7e-13で正確。 `py -3.11 examples_3d/torus_knot_curve.py`
 - **恐竜骨格の左右対称面(矢状面)の復元** — スミソニアン三角竜骨格(CC0,10万頂点→4090点stride)をdetect_reflection_symmetryに渡し矢状面を残差2.48で復元(最薄主軸=左右方向に一致)。他2主平面4.28/4.30と区別、片側20%破壊で15.87(6.4倍)へ悪化=左右対称を判別的に検出。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_symmetry.py`
 - **回転対称位数の復元(6枚歯スパーギア)** — 歯数6の平歯車リム2160点を生成。detect_rotational_symmetryで対称軸z(|z|=1.000)、約数構造(rotational_symmetry_score)から位数N=6を復元。約数{2,3,6}残差~1e-11・非約数{4,5,7,9,12}>0.5、位数6残差4.3e-11が無対称ランダム1.52の3.5e10倍。 `py -3.11 examples_3d/rotational_symmetry_fold.py`
+- **ガウス曲率の符号で表面をドーム/鞍点に分類** — トーラス(R1.0/r0.35)密点群にgaussian_curvatureを当て、外周(楕円K>0)/内周(双曲K<0)を符号で分離精度1.000で分類(解析真値K=cos v/(r(R+r cos v))と一致)。このR,rは外周も内周もH>0なので平均曲率符号null=0.500(分離不能)を判別的に上回る。把持点選び/欠陥判定。 `py -3.11 examples_3d/curvature_shape_index.py`
 
 **range_sensing**
 - **360度点群⇄距離画像の往復(球面投影)** — project_spherical→unproject_spherical の往復で形状を保存(誤差<voxel)。奥行きを潰す平面正射影より55倍良い。 `py -3.11 examples_3d/lidar_projection.py`

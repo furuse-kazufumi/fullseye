@@ -313,6 +313,9 @@ EXAMPLES = [
     {"id": "rotational_symmetry_fold", "task": "shape_analysis", "data": "procedural",
      "name": "回転対称位数の復元(6枚歯スパーギア)",
      "summary": "歯数6の平歯車リム2160点を生成。detect_rotational_symmetryで対称軸z(|z|=1.000)、約数構造(rotational_symmetry_score)から位数N=6を復元。約数{2,3,6}残差~1e-11・非約数{4,5,7,9,12}>0.5、位数6残差4.3e-11が無対称ランダム1.52の3.5e10倍。"},
+    {"id": "curvature_shape_index", "task": "shape_analysis", "data": "procedural",
+     "name": "ガウス曲率の符号で表面をドーム/鞍点に分類",
+     "summary": "トーラス(R1.0/r0.35)密点群にgaussian_curvatureを当て、外周(楕円K>0)/内周(双曲K<0)を符号で分離精度1.000で分類(解析真値K=cos v/(r(R+r cos v))と一致)。このR,rは外周も内周もH>0なので平均曲率符号null=0.500(分離不能)を判別的に上回る。把持点選び/欠陥判定。"},
     # -- rendering quality(Wave B・映える静止3D)---------------------------------- #
     {"id": "render_ao", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)",
