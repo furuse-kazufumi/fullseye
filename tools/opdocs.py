@@ -171,6 +171,7 @@ def _op_md(rec, path, by_name):
     fm.append("examples: [" + ", ".join(rec["examples"]) + "]")
     fm.append(f"author: {_AUTHOR}")
     fm.append(f"license: {_LICENSE}")
+    fm.append(f"version: {_VERSION}  # fullseye lib version this note was generated for")
     lines.append("---")
     lines.extend(fm)
     lines.append("---")
