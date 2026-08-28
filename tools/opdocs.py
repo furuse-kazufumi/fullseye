@@ -260,6 +260,57 @@ def cmd_md():
 
 
 # ------------------------------------------------------------------ #
+# sample-data catalog  (real download URLs / licences)
+# ------------------------------------------------------------------ #
+
+def cmd_samples():
+    out = ["# Fullseye サンプルデータ カタログ", "",
+           "op の動作確認・デバッグに使える**実在**のサンプルデータ源(DL URL / ライセンス / 取得法)。"
+           "同梱はせず**ユーザー DL 方式**(`fullseye` の `sample_data` / `sample_images`)。fail-closed"
+           "(未取得なら明示エラー、捏造しない)。", ""]
+    # 3-D / volume: real download URLs from sample_data.MANIFEST
+    try:
+        import sample_data as sd
+        out.append("## 3-D / ボリューム(実 DL URL)")
+        out.append("")
+        out.append("| id | 種別 | アクセス | 出典 / DL URL |")
+        out.append("|----|------|----------|----------------|")
+        for e in sd.catalog():
+            url = e.get("url") or e.get("source_page") or ""
+            out.append(f"| `{e.get('id','')}` | {e.get('category','')} | {e.get('access','')} "
+                       f"| <{url}> |")
+        out.append("")
+        out.append("取得: `py -3.11 -c \"import sample_data; sample_data.download('bunny', yes=True)\"` "
+                   "(`access=direct` のみ自動 DL、`gated`/`info` は出典ページから手動)。", )
+        out.append("")
+    except Exception as e:
+        out.append(f"(sample_data 利用不可: {e})\n")
+    # 2-D images: skimage.data (BSD/public) + synthetic own-work
+    try:
+        import sample_images as si
+        entries = si.entries() if hasattr(si, "entries") else [{"name": n} for n in si.names()]
+        out.append("## 2-D 画像(skimage.data(BSD/public)+ 合成)")
+        out.append("")
+        out.append("| name | 出典 | ライセンス |")
+        out.append("|------|------|-----------|")
+        for e in entries:
+            out.append(f"| `{e.get('name','')}` | {e.get('source','')} | {e.get('licence', e.get('license',''))} |")
+        out.append("")
+        out.append("2-D は外部 DL 不要(`skimage.data` は pip 導入済、合成は自作)。"
+                   "`import sample_images; sample_images.load('<name>')` で取得。", )
+        out.append("")
+    except Exception as e:
+        out.append(f"(sample_images 利用不可: {e})\n")
+    out.append("---")
+    out.append(_COPYRIGHT)
+    out.append("")
+    os.makedirs(DOCS, exist_ok=True)
+    with open(os.path.join(DOCS, "SAMPLES.md"), "w", encoding="utf-8") as f:
+        f.write("\n".join(out))
+    print(f"opdocs samples: wrote {os.path.join(DOCS, 'SAMPLES.md')}")
+
+
+# ------------------------------------------------------------------ #
 # auto TOC  (walks the folder hierarchy)
 # ------------------------------------------------------------------ #
 
