@@ -389,6 +389,9 @@ def cmd_toc():
             out.append("")
             out.append(" · ".join(f"[{op}]({cat}/{op}.md)" for op in cats[cat]))
             out.append("")
+        out.append("---")
+        out.append(_COPYRIGHT)
+        out.append("")
         with open(os.path.join(DOCS, dim, "INDEX.md"), "w", encoding="utf-8") as f:
             f.write("\n".join(out))
         written += 1
