@@ -22,12 +22,19 @@ cotangent Laplace-Beltrami)で全頂点の平均曲率の大きさ H を求め�
 (未ダウンロード時は SKIP して exit 0。実データ取得は下記コマンドで opt-in)。
 """
 import sys
+from pathlib import Path
 
 import numpy as np
 
-import sample_data
-import mesh
-import mesh_props
+# このファイルは examples_3d/ 内。ルートの mesh_props.py 等と同名の例ファイルがあるため、
+# リポジトリルートを sys.path の**先頭**に置き、`import mesh_props` が例自身でなくルートの
+# モジュールへ解決されるようにする(examples_3d/mesh_props.py の先取りを防ぐ)。
+_REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(_REPO_ROOT))
+
+import sample_data  # noqa: E402  (sys.path 調整後に import)
+import mesh  # noqa: E402
+import mesh_props  # noqa: E402
 
 
 # --- 0) 実データ取得(opt-in ダウンローダ)。無ければ SKIP して exit 0 -----------
