@@ -119,9 +119,10 @@ t_unit = t_true / base
 E_true = skew(t_unit) @ R_true
 cos_E = float(np.sum(E_est * E_true) / (np.linalg.norm(E_est) * np.linalg.norm(E_true)))
 
-# beat-null: 誤った回転で作った E とは方向が合わない
+# beat-null: 誤った姿勢(並進を直交方向へ + 回転 40 度)で作った E とは方向が合わない
+t_perp = np.cross(t_unit, [0.0, 0.0, 1.0]); t_perp /= np.linalg.norm(t_perp)
 R_wrong = rot([0.0, 1.0, 0.0], 40.0)
-E_wrong = skew(t_unit) @ R_wrong
+E_wrong = skew(t_perp) @ R_wrong
 cos_Ew = float(np.sum(E_est * E_wrong) / (np.linalg.norm(E_est) * np.linalg.norm(E_wrong)))
 
 # 正規化エピポーラ残差 x̂2ᵀ E x̂1(x̂ = K⁻¹ x)。真の E_est ≈0 / 誤 E_wrong は大きい。
