@@ -360,9 +360,9 @@ def main() -> int:
     # 描画(結果を PNG に)
     # ============================================================
     out_png = _REPO_ROOT / "examples_3d" / "_gallery" / "hull_bounds.png"
-    drew = render_png(out_png, box_pts, obb, ab, hv2 if False else
-                      convex_hull_3d(box_pts)[0], convex_hull_3d(box_pts)[1],
-                      clu, mes_c, naive_c, naive_r)
+    box_hull_v, box_hull_f = convex_hull_3d(box_pts)     # 回転箱の凸包メッシュ(描画用)
+    drew = render_png(out_png, box_pts, obb, ab,
+                      box_hull_v, box_hull_f, clu, mes_c, naive_c, naive_r)
     if drew:
         print(f"[draw] gallery PNG 保存: {out_png}")
     else:
