@@ -1,0 +1,17 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">phong_shade <span style="color:#8b91a0;font-size:11px">· render · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>normals → image2d</b></p>
+<p>Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + **鏡面**)。→ ``(H, W)``。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = image2d)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (render)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_points">project_points</a> · <a style="color:#22d3bf" href="op3d:render_point_depth">render_point_depth</a> · <a style="color:#22d3bf" href="op3d:render_volume_projection">render_volume_projection</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
+<p><a style="color:#f5a524" href="example3d:render_beauty">render_beauty</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/render_beauty.py)</span> · <a style="color:#f5a524" href="example3d:render_shade">render_shade</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/render_shade.py)</span></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: render_shade.py (3-D operator registry ops3d).</p>

@@ -1,0 +1,17 @@
+<h2 style="color:#f5a524;margin:0 0 4px 0">edge_alias_energy <span style="color:#8b91a0;font-size:11px">· render · 3D</span></h2>
+<p style="color:#8b91a0;margin:2px 0"><b>image2d → measurement</b></p>
+<p>エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。</p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">render_ssaa.edge_alias_energy(img) -&gt; &#x27;float&#x27;</pre>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
+<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (render)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_points">project_points</a> · <a style="color:#22d3bf" href="op3d:render_point_depth">render_point_depth</a> · <a style="color:#22d3bf" href="op3d:render_volume_projection">render_volume_projection</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a></p>
+
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
+<p><a style="color:#f5a524" href="example3d:render_beauty">render_beauty</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/render_beauty.py)</span> · <a style="color:#f5a524" href="example3d:render_ssaa">render_ssaa</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/render_ssaa.py)</span></p>
+
+<p style="color:#8b91a0;font-size:11px">Provenance: render_ssaa.py (3-D operator registry ops3d).</p>

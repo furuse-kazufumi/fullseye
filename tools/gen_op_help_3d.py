@@ -35,7 +35,7 @@ def _signature(fn) -> str:
         return "(...)"
 
 
-def _card(name, info, reg) -> str:
+def _card(name, info, reg, examples=None) -> str:
     cat = info["category"]
     ins = " × ".join(info["in"]) if isinstance(info["in"], (list, tuple)) else str(info["in"])
     out = info["out"]
@@ -53,6 +53,14 @@ def _card(name, info, reg) -> str:
     nxt = [n for n in nxt if n != name][:6]
     # same-category siblings
     sib = [n for n in reg if reg[n]["category"] == cat and n != name][:6]
+
+    def _exlinks(ids):
+        if not ids:
+            return '<span style="color:%s">まだありません(この op を使う worked example 未整備)</span>' % _MUTE
+        return " · ".join(
+            f'<a style="color:#f5a524" href="example3d:{html.escape(i)}">{html.escape(i)}</a>'
+            f' <span style="color:{_MUTE};font-size:11px">(examples_3d/{html.escape(i)}.py)</span>'
+            for i in ids)
 
     def _oplinks(names):
         return " · ".join(
@@ -72,18 +80,26 @@ def _card(name, info, reg) -> str:
 <h3 style="color:{_TEAL};margin:8px 0 2px 0">Same category ({html.escape(cat)})</h3>
 <p>{_oplinks(sib)}</p>
 
-<p style="color:{_MUTE};font-size:11px">Provenance: {html.escape(module)}.py (3-D operator registry ops3d). See docs/EXAMPLES_3D.md for worked examples.</p>
+<h3 style="color:{_TEAL};margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
+<p>{_exlinks(examples or [])}</p>
+
+<p style="color:{_MUTE};font-size:11px">Provenance: {html.escape(module)}.py (3-D operator registry ops3d).</p>
 """
 
 
 def main():
     import ops3d
+    try:
+        from op_example_index import build_index
+        _idx3d, _ = build_index(split=True)
+    except Exception:
+        _idx3d = {}
     os.makedirs(_OUT, exist_ok=True)
     reg = ops3d.OPS3D
     n = 0
     for name, info in sorted(reg.items()):
         with open(os.path.join(_OUT, name + ".html"), "w", encoding="utf-8") as f:
-            f.write(_card(name, info, reg))
+            f.write(_card(name, info, reg, _idx3d.get(name, [])))
         n += 1
     # a small index the docs / Studio can enumerate
     cats = {}
