@@ -319,11 +319,12 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         log(f"    pod mesh V{Vp.shape} F{Fp.shape}")
 
     if "pod" in subjects:
-        log("[render] showcase_turntable_pod.gif  (metal)")
+        log("[render] showcase_turntable_pod.gif  (polished gold metal)")
         frames_pod = render_turntable(
             Vp, Fp, frames=frames, size=size, ss=ss, material="metal",
-            albedo=(0.85, 0.60, 0.24), light=(0.45, 0.55, 0.90),
-            background=(0.07, 0.08, 0.10), elev_deg=18.0, tonemap="aces", log=log)
+            albedo=(0.98, 0.74, 0.34), light=(0.45, 0.55, 0.90),
+            background=(0.15, 0.16, 0.19), elev_deg=20.0, tonemap="aces",
+            ambient=0.30, exposure=1.15, log=log)
         p = os.path.join(out_dir, "showcase_turntable_pod.gif")
         sb = save_gif(frames_pod, p, fps=fps, log=log)
         n, shp = verify_gif(p, log=log)
