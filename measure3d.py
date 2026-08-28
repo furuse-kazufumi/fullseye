@@ -73,8 +73,8 @@ def fit_line3(points) -> dict:
     d = vt[0]
     d = d / np.linalg.norm(d)
     diff = p - c
-    perp2 = (diff ** 2).sum(1) - (diff @ d) ** 2
-    rms = float(np.sqrt(np.mean(np.maximum(perp2, 0.0))))
+    perp = diff - np.outer(diff @ d, d)              # stable: no large-value cancellation
+    rms = float(np.sqrt(np.mean((perp ** 2).sum(1))))
     return {**_center_keys(c), "direction": d, "rms": rms}
 
 

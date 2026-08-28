@@ -71,6 +71,8 @@ import render_shade
 import render_ssaa
 import render_tonemap
 import render_beauty  # capstone: 全品質層を一発合成する hero レンダラ
+# --- Wave C: 3-D metrology fits (measure.py の (depth,row,col) 版) ---
+import measure3d
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
@@ -95,7 +97,8 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "pcseg": pcseg, "volops": volops,
         "render_ao": render_ao, "render_shadow": render_shadow, "render_shade": render_shade,
         "render_ssaa": render_ssaa, "render_tonemap": render_tonemap,
-        "render_beauty": render_beauty}
+        "render_beauty": render_beauty,
+        "measure3d": measure3d}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
@@ -193,6 +196,16 @@ _CATALOG = {
         ("fit_plane_3d", "match3d", ["points"], "primitive", False),
         ("fit_sphere_3d", "match3d", ["points"], "primitive", False),
         ("fit_circle_3d", "match3d", ["points"], "primitive", False),
+        # measure3d: (depth,row,col) 版 fit + box/sphere 境界。真のギャップ=
+        # smallest_box3(最小体積 OBB=smallest_rectangle2 の 3-D 版)/ smallest_sphere3(最小包含球)。
+        ("fit_line3", "measure3d", ["points"], "primitive", False),
+        ("fit_plane3", "measure3d", ["points"], "primitive", False),
+        ("fit_sphere3", "measure3d", ["points"], "primitive", False),
+        ("fit_circle3", "measure3d", ["points"], "primitive", False),
+        ("smallest_box3_axis", "measure3d", ["points"], "primitive", False),
+        ("fit_box3", "measure3d", ["points"], "primitive", False),
+        ("smallest_box3", "measure3d", ["points"], "primitive", False),
+        ("smallest_sphere3", "measure3d", ["points"], "primitive", False),
     ],
     "surface_fit": [  # 曲面近似 z=f(x,y)
         ("fit_poly_surface", "match3d", ["image2d"], "surface", False),
