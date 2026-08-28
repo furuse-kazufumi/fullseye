@@ -204,7 +204,8 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
     ax1.quiver(P[:, 0], P[:, 1], P[:, 2], Nn[:, 0], Nn[:, 1], Nn[:, 2],
                length=L, color="crimson", linewidth=0.8, normalize=True)
     ax1.set_title(t_sphere, fontsize=10)
-    _equal_3d(ax1, Vs)
+    ax1.view_init(elev=18, azim=-58)
+    _equal_3d(ax1, Vs, margin=L)                      # 矢印が枠外に切れないよう余白
     ax1.set_axis_off()
 
     # --- 中: トーラス、頂点曲率でカラーマップ(面ごとに頂点平均) ---
@@ -213,9 +214,13 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
     collec = ax2.plot_trisurf(Vt[:, 0], Vt[:, 1], Vt[:, 2], triangles=Ft,
                               cmap="viridis", linewidth=0.0, antialiased=True)
     collec.set_array(face_scalar)
+    # plot_trisurf は既定で z 値から色域を決めるため、曲率の実値域へ張り直す
+    # (これをしないと色域が z=±r_minor になり、曲率の尾根/喉が潰れて一様色に見える)。
+    collec.set_clim(float(face_scalar.min()), float(face_scalar.max()))
     cbar = fig.colorbar(collec, ax=ax2, shrink=0.62, pad=0.02)
     cbar.set_label(t_cbar, fontsize=9)
     ax2.set_title(t_torus, fontsize=10)
+    ax2.view_init(elev=58, azim=-58)                 # 上から見て喉(内側)まで見せる
     _equal_3d(ax2, Vt)
     ax2.set_axis_off()
 
