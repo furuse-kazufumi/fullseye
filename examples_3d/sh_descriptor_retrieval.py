@@ -210,7 +210,7 @@ def main():
     print("-" * 72)
 
     # --- 2) クエリ: 各クラスを別サンプル(別 seed)し直し、(a)回転なし (b)ランダム回転 ---
-    ROT_PER_CLASS = 3
+    ROT_PER_CLASS = 6
     sh_ok_rot = 0
     null_ok_rot = 0
     null_ok_norot = 0
