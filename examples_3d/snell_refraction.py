@@ -88,7 +88,7 @@ print(f"Fresnel grazing {graze_angles} : {[round(r, 4) for r in r_graze]}")
 print(f"Fresnel 値域                 : [{min(r_all):.4f}, {max(r_all):.4f}]")
 
 # --- 3) 全反射(TIR): ガラス → 空気で臨界角(~41.8度)を超えると全反射 ---------
-crit = np.degrees(np.arcsin(ETA2 / ETA1))                       # ETA1=1.5,ETA2=1.0 の臨界角
+crit = np.degrees(np.arcsin(1.0 / 1.5))                         # glass→air の臨界角 ~41.8度
 thi_tir = 50.0                                                  # 臨界角超
 tir_snell = match3d.snell_angle(thi_tir, 1.5, 1.0)             # NaN のはず
 tir_refract = match3d.refract(incident_dir(thi_tir), N, 1.5, 1.0)  # None のはず
