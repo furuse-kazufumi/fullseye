@@ -591,11 +591,13 @@ def main(argv):
     cmd = argv[1] if len(argv) > 1 else "all"
     if cmd in ("md", "all"):
         cmd_md()
+    if cmd in ("samples", "all"):
+        cmd_samples()
     if cmd in ("toc", "all"):
         cmd_toc()
     if cmd in ("html", "all"):
         cmd_html()
-    if cmd not in ("md", "toc", "html", "all"):
+    if cmd not in ("md", "samples", "toc", "html", "all"):
         print(__doc__)
         return 2
     return 0

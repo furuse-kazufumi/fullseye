@@ -1,0 +1,192 @@
+# 2D operator help — 731 ops in 46 categories
+
+自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
+
+## カテゴリ
+
+### 3d (7)
+
+[vol_dilate](3d/vol_dilate.md) · [vol_erode](3d/vol_erode.md) · [vol_gaussian](3d/vol_gaussian.md) · [vol_median](3d/vol_median.md) · [vol_mip](3d/vol_mip.md) · [vol_slice](3d/vol_slice.md) · [vol_threshold](3d/vol_threshold.md)
+
+### arithmetic (10)
+
+[abs_image](arithmetic/abs_image.md) · [acos_image](arithmetic/acos_image.md) · [asin_image](arithmetic/asin_image.md) · [atan_image](arithmetic/atan_image.md) · [cos_image](arithmetic/cos_image.md) · [exp_image](arithmetic/exp_image.md) · [log_image](arithmetic/log_image.md) · [sin_image](arithmetic/sin_image.md) · [sqrt_image](arithmetic/sqrt_image.md) · [tan_image](arithmetic/tan_image.md)
+
+### artificial_life (12)
+
+[alife_curvature_flow](artificial_life/alife_curvature_flow.md) · [alife_cyclic_ca](artificial_life/alife_cyclic_ca.md) · [alife_dla](artificial_life/alife_dla.md) · [alife_gray_scott](artificial_life/alife_gray_scott.md) · [alife_langton_ant](artificial_life/alife_langton_ant.md) · [alife_lenia](artificial_life/alife_lenia.md) · [alife_life_step](artificial_life/alife_life_step.md) · [alife_perona_malik](artificial_life/alife_perona_malik.md) · [alife_reaction_bz](artificial_life/alife_reaction_bz.md) · [alife_sandpile](artificial_life/alife_sandpile.md) · [alife_turing](artificial_life/alife_turing.md) · [alife_wolfram1d](artificial_life/alife_wolfram1d.md)
+
+### artistic (3)
+
+[xcv_pencil_sketch](artistic/xcv_pencil_sketch.md) · [xcv_stylization](artistic/xcv_stylization.md) · [xpil_emboss](artistic/xpil_emboss.md)
+
+### augmentation (10)
+
+[aug_barrel](augmentation/aug_barrel.md) · [aug_chromatic](augmentation/aug_chromatic.md) · [aug_cutout](augmentation/aug_cutout.md) · [aug_fixed_pattern](augmentation/aug_fixed_pattern.md) · [aug_jpeg_blocks](augmentation/aug_jpeg_blocks.md) · [aug_motion_blur](augmentation/aug_motion_blur.md) · [aug_read_noise](augmentation/aug_read_noise.md) · [aug_rolling_shutter](augmentation/aug_rolling_shutter.md) · [aug_shot_noise](augmentation/aug_shot_noise.md) · [aug_vignette](augmentation/aug_vignette.md)
+
+### barcode (1)
+
+[decode_barcode](barcode/decode_barcode.md)
+
+### classification (1)
+
+[classify_shape](classification/classify_shape.md)
+
+### color (8)
+
+[access_channel](color/access_channel.md) · [cfa_to_rgb](color/cfa_to_rgb.md) · [linear_trans_color](color/linear_trans_color.md) · [principal_comp](color/principal_comp.md) · [rgb1_to_gray](color/rgb1_to_gray.md) · [rgb3_to_gray](color/rgb3_to_gray.md) · [trans_from_rgb](color/trans_from_rgb.md) · [trans_to_rgb](color/trans_to_rgb.md)
+
+### contour (25)
+
+[affine_trans_contour_xld](contour/affine_trans_contour_xld.md) · [affine_trans_polygon_xld](contour/affine_trans_polygon_xld.md) · [close_contours_xld](contour/close_contours_xld.md) · [contour_point_num_xld](contour/contour_point_num_xld.md) · [contours_to_region](contour/contours_to_region.md) · [edges_color_sub_pix](contour/edges_color_sub_pix.md) · [edges_sub_pix](contour/edges_sub_pix.md) · [fit_line_contours](contour/fit_line_contours.md) · [gen_contour_region_xld](contour/gen_contour_region_xld.md) · [gen_region_contour_xld](contour/gen_region_contour_xld.md) · [gen_region_polygon_xld](contour/gen_region_polygon_xld.md) · [lines_color](contour/lines_color.md) · [lines_facet](contour/lines_facet.md) · [lines_gauss](contour/lines_gauss.md) · [polar_trans_contour_xld](contour/polar_trans_contour_xld.md) · [projective_trans_contour_xld](contour/projective_trans_contour_xld.md) · [select_contours](contour/select_contours.md) · [select_contours_xld](contour/select_contours_xld.md) · [select_shape_xld](contour/select_shape_xld.md) · [shape_trans_xld](contour/shape_trans_xld.md) · [sk_find_contours](contour/sk_find_contours.md) · [smooth_contours](contour/smooth_contours.md) · [smooth_contours_xld](contour/smooth_contours_xld.md) · [threshold_sub_pix](contour/threshold_sub_pix.md) · [zero_crossing_sub_pix](contour/zero_crossing_sub_pix.md)
+
+### decomposition (7)
+
+[dc_homomorphic](decomposition/dc_homomorphic.md) · [dc_local_contrast_norm](decomposition/dc_local_contrast_norm.md) · [dc_retinex](decomposition/dc_retinex.md) · [dc_rpca_lowrank](decomposition/dc_rpca_lowrank.md) · [dc_rpca_sparse](decomposition/dc_rpca_sparse.md) · [dc_structure_texture](decomposition/dc_structure_texture.md) · [dc_texture_residual](decomposition/dc_texture_residual.md)
+
+### deformation (3)
+
+[deform_ffd](deformation/deform_ffd.md) · [deform_mls](deformation/deform_mls.md) · [deform_tps](deformation/deform_tps.md)
+
+### domain (2)
+
+[it_crop_domain](domain/it_crop_domain.md) · [it_full_domain](domain/it_full_domain.md)
+
+### edges (56)
+
+[corner_response](edges/corner_response.md) · [cv_corner_harris](edges/cv_corner_harris.md) · [cv_laplacian](edges/cv_laplacian.md) · [cv_min_eigen](edges/cv_min_eigen.md) · [cv_precorner](edges/cv_precorner.md) · [cv_scharr](edges/cv_scharr.md) · [derivate_gauss](edges/derivate_gauss.md) · [diff_of_gauss](edges/diff_of_gauss.md) · [dog](edges/dog.md) · [dots_image](edges/dots_image.md) · [edges_color](edges/edges_color.md) · [f2_shock](edges/f2_shock.md) · [f2_topographic](edges/f2_topographic.md) · [frei_amp](edges/frei_amp.md) · [frei_dir](edges/frei_dir.md) · [grad_dir](edges/grad_dir.md) · [kirsch_amp](edges/kirsch_amp.md) · [kirsch_dir](edges/kirsch_dir.md) · [laplace](edges/laplace.md) · [laplace_of_gauss](edges/laplace_of_gauss.md) · [log](edges/log.md) · [points_foerstner](edges/points_foerstner.md) · [points_harris_binomial](edges/points_harris_binomial.md) · [prewitt_amp](edges/prewitt_amp.md) · [prewitt_dir](edges/prewitt_dir.md) · [prewitt_mag](edges/prewitt_mag.md) · [roberts](edges/roberts.md) · [roberts_mag](edges/roberts_mag.md) · [robinson_amp](edges/robinson_amp.md) · [robinson_dir](edges/robinson_dir.md) · [sk_corner_harris](edges/sk_corner_harris.md) · [sk_dog](edges/sk_dog.md) · [sk_farid](edges/sk_farid.md) · [sk_hessian_det](edges/sk_hessian_det.md) · [sk_scharr](edges/sk_scharr.md) · [sobel_amp](edges/sobel_amp.md) · [sobel_dir](edges/sobel_dir.md) · [sobel_mag](edges/sobel_mag.md) · [tf_phase_congruency](edges/tf_phase_congruency.md) · [tf_steerable_filter](edges/tf_steerable_filter.md) · [xkor_dog](edges/xkor_dog.md) · [xkor_gftt](edges/xkor_gftt.md) · [xkor_harris](edges/xkor_harris.md) · [xkor_hessian](edges/xkor_hessian.md) · [xkor_laplacian](edges/xkor_laplacian.md) · [xpil_contour](edges/xpil_contour.md) · [xpil_find_edges](edges/xpil_find_edges.md) · [xsk2_corner_kr](edges/xsk2_corner_kr.md) · [xsk2_inv_gauss_grad](edges/xsk2_inv_gauss_grad.md) · [xsk3_corner_fast](edges/xsk3_corner_fast.md) · [xsk3_corner_moravec](edges/xsk3_corner_moravec.md) · [xsk_hessian_eig](edges/xsk_hessian_eig.md) · [xsp_gauss_grad_mag](edges/xsp_gauss_grad_mag.md) · [xsp_morph_laplace](edges/xsp_morph_laplace.md) · [xwt_directional_detail](edges/xwt_directional_detail.md) · [xwt_hf_reconstruct](edges/xwt_hf_reconstruct.md)
+
+### extra (14)
+
+[xsitk_closing_by_recon](extra/xsitk_closing_by_recon.md) · [xsitk_confidence_connected](extra/xsitk_confidence_connected.md) · [xsitk_connected_threshold](extra/xsitk_connected_threshold.md) · [xsitk_curv_aniso_diff](extra/xsitk_curv_aniso_diff.md) · [xsitk_curvature_flow](extra/xsitk_curvature_flow.md) · [xsitk_grayscale_fillhole](extra/xsitk_grayscale_fillhole.md) · [xsitk_grayscale_grindpeak](extra/xsitk_grayscale_grindpeak.md) · [xsitk_huang_thresh](extra/xsitk_huang_thresh.md) · [xsitk_laplacian_sharpen](extra/xsitk_laplacian_sharpen.md) · [xsitk_maxentropy_thresh](extra/xsitk_maxentropy_thresh.md) · [xsitk_minmax_curv_flow](extra/xsitk_minmax_curv_flow.md) · [xsitk_moments_thresh](extra/xsitk_moments_thresh.md) · [xsitk_opening_by_recon](extra/xsitk_opening_by_recon.md) · [xsitk_signed_maurer_dist](extra/xsitk_signed_maurer_dist.md)
+
+### features (71)
+
+[area_center](features/area_center.md) · [area_center_xld](features/area_center_xld.md) · [area_frac](features/area_frac.md) · [area_holes](features/area_holes.md) · [blob_count](features/blob_count.md) · [circularity](features/circularity.md) · [circularity_xld](features/circularity_xld.md) · [compactness](features/compactness.md) · [compactness_xld](features/compactness_xld.md) · [connect_and_holes](features/connect_and_holes.md) · [contlength](features/contlength.md) · [convexity](features/convexity.md) · [convexity_xld](features/convexity_xld.md) · [count_channels](features/count_channels.md) · [count_contours](features/count_contours.md) · [count_obj](features/count_obj.md) · [cv_cc_count](features/cv_cc_count.md) · [cv_good_features](features/cv_good_features.md) · [cv_hough_circles](features/cv_hough_circles.md) · [cv_hough_lines](features/cv_hough_lines.md) · [diameter_region](features/diameter_region.md) · [diameter_xld](features/diameter_xld.md) · [eccentricity](features/eccentricity.md) · [eccentricity_xld](features/eccentricity_xld.md) · [elliptic_axis](features/elliptic_axis.md) · [elliptic_axis_xld](features/elliptic_axis_xld.md) · [entropy_gray](features/entropy_gray.md) · [estimate_noise](features/estimate_noise.md) · [euler_number](features/euler_number.md) · [get_region_thickness](features/get_region_thickness.md) · [gray_histo_abs](features/gray_histo_abs.md) · [height_width_ratio](features/height_width_ratio.md) · [hough_circle_trans](features/hough_circle_trans.md) · [hough_line_trans](features/hough_line_trans.md) · [intensity](features/intensity.md) · [length_xld](features/length_xld.md) · [min_max_gray](features/min_max_gray.md) · [moments_region_2nd](features/moments_region_2nd.md) · [moments_region_2nd_invar](features/moments_region_2nd_invar.md) · [moments_region_2nd_rel_invar](features/moments_region_2nd_rel_invar.md) · [moments_region_3rd](features/moments_region_3rd.md) · [moments_region_3rd_invar](features/moments_region_3rd_invar.md) · [moments_region_central](features/moments_region_central.md) · [moments_region_central_invar](features/moments_region_central_invar.md) · [moments_xld](features/moments_xld.md) · [orientation_region](features/orientation_region.md) · [orientation_xld](features/orientation_xld.md) · [rectangularity](features/rectangularity.md) · [rectangularity_xld](features/rectangularity_xld.md) · [roundness](features/roundness.md) · [sk_blur_effect](features/sk_blur_effect.md) · [sk_entropy_feat](features/sk_entropy_feat.md) · [sk_euler](features/sk_euler.md) · [total_length](features/total_length.md) · [vol_count](features/vol_count.md) · [xcv2_fast_count](features/xcv2_fast_count.md) · [xcv2_lap_var](features/xcv2_lap_var.md) · [xcv3_agast_count](features/xcv3_agast_count.md) · [xcv3_brisk_count](features/xcv3_brisk_count.md) · [xcv3_gray_hu1](features/xcv3_gray_hu1.md) · [xcv3_lsd_count](features/xcv3_lsd_count.md) · [xcv3_sift_count](features/xcv3_sift_count.md) · [xcv_orb_count](features/xcv_orb_count.md) · [xsk3_estimate_sigma](features/xsk3_estimate_sigma.md) · [xsk3_is_low_contrast](features/xsk3_is_low_contrast.md) · [xsk_blob_dog](features/xsk_blob_dog.md) · [xsk_blob_doh](features/xsk_blob_doh.md) · [xsk_blob_log](features/xsk_blob_log.md) · [xsk_orb_count](features/xsk_orb_count.md) · [xwt_detail_energy](features/xwt_detail_energy.md) · [xwt_packet_entropy](features/xwt_packet_entropy.md)
+
+### filtering (1)
+
+[tf_gradient_domain_reintegrate](filtering/tf_gradient_domain_reintegrate.md)
+
+### frequency (19)
+
+[bandpass_image](frequency/bandpass_image.md) · [fft_generic](frequency/fft_generic.md) · [fft_image](frequency/fft_image.md) · [fft_image_inv](frequency/fft_image_inv.md) · [highpass](frequency/highpass.md) · [highpass_image](frequency/highpass_image.md) · [lowpass](frequency/lowpass.md) · [phase_deg](frequency/phase_deg.md) · [phase_rad](frequency/phase_rad.md) · [power_byte](frequency/power_byte.md) · [power_ln](frequency/power_ln.md) · [power_real](frequency/power_real.md) · [rft_generic](frequency/rft_generic.md) · [sk_butterworth](frequency/sk_butterworth.md) · [xsk2_radon](frequency/xsk2_radon.md) · [xsp_dct](frequency/xsp_dct.md) · [xsp_dct_lowpass](frequency/xsp_dct_lowpass.md) · [xwt_mra_component](frequency/xwt_mra_component.md) · [xwt_subband_tile](frequency/xwt_subband_tile.md)
+
+### geometry (28)
+
+[affine_trans_image](geometry/affine_trans_image.md) · [affine_trans_image_size](geometry/affine_trans_image_size.md) · [affine_trans_region](geometry/affine_trans_region.md) · [affine_warp](geometry/affine_warp.md) · [it_add_image_border](geometry/it_add_image_border.md) · [it_change_format](geometry/it_change_format.md) · [it_crop_part](geometry/it_crop_part.md) · [it_crop_rectangle1](geometry/it_crop_rectangle1.md) · [mirror_image](geometry/mirror_image.md) · [mirror_region](geometry/mirror_region.md) · [polar_trans_image](geometry/polar_trans_image.md) · [polar_trans_image_ext](geometry/polar_trans_image_ext.md) · [polar_trans_image_inv](geometry/polar_trans_image_inv.md) · [polar_trans_region_inv](geometry/polar_trans_region_inv.md) · [projective_trans_image](geometry/projective_trans_image.md) · [projective_trans_image_size](geometry/projective_trans_image_size.md) · [projective_trans_region](geometry/projective_trans_region.md) · [rescale_img](geometry/rescale_img.md) · [rotate_image](geometry/rotate_image.md) · [rotate_img](geometry/rotate_img.md) · [sk_swirl](geometry/sk_swirl.md) · [tf_log_polar](geometry/tf_log_polar.md) · [transpose_region](geometry/transpose_region.md) · [xcv2_warp_logpolar](geometry/xcv2_warp_logpolar.md) · [xpil_offset](geometry/xpil_offset.md) · [zoom_image_factor](geometry/zoom_image_factor.md) · [zoom_image_size](geometry/zoom_image_size.md) · [zoom_region](geometry/zoom_region.md)
+
+### gray (41)
+
+[bit_not](gray/bit_not.md) · [clahe](gray/clahe.md) · [cv_clahe](gray/cv_clahe.md) · [cv_trunc](gray/cv_trunc.md) · [equ_histo_image](gray/equ_histo_image.md) · [equ_histo_image_rect](gray/equ_histo_image_rect.md) · [equalize](gray/equalize.md) · [f2_bit_slice](gray/f2_bit_slice.md) · [f2_expand_domain](gray/f2_expand_domain.md) · [f2_lut_trans](gray/f2_lut_trans.md) · [gamma](gray/gamma.md) · [gamma_image](gray/gamma_image.md) · [illuminate](gray/illuminate.md) · [invert](gray/invert.md) · [invert_image](gray/invert_image.md) · [it_bit_lshift](gray/it_bit_lshift.md) · [it_bit_mask](gray/it_bit_mask.md) · [it_bit_rshift](gray/it_bit_rshift.md) · [it_convert_image_type](gray/it_convert_image_type.md) · [monotony](gray/monotony.md) · [pow_image](gray/pow_image.md) · [scale_clip](gray/scale_clip.md) · [scale_image](gray/scale_image.md) · [scale_image_max](gray/scale_image_max.md) · [sigmoid](gray/sigmoid.md) · [sk_adapthist](gray/sk_adapthist.md) · [sk_adjust_log](gray/sk_adjust_log.md) · [sk_autolevel](gray/sk_autolevel.md) · [sk_enhance_contrast](gray/sk_enhance_contrast.md) · [xcv_detail_enhance](gray/xcv_detail_enhance.md) · [xkor_clahe](gray/xkor_clahe.md) · [xpil_autocontrast](gray/xpil_autocontrast.md) · [xpil_contrast](gray/xpil_contrast.md) · [xpil_detail](gray/xpil_detail.md) · [xpil_edge_enhance](gray/xpil_edge_enhance.md) · [xpil_posterize](gray/xpil_posterize.md) · [xpil_solarize](gray/xpil_solarize.md) · [xsk3_integral_image](gray/xsk3_integral_image.md) · [xsk3_rank_equalize](gray/xsk3_rank_equalize.md) · [xsk3_rank_subtract_mean](gray/xsk3_rank_subtract_mean.md) · [xsp_detrend_flatten](gray/xsp_detrend_flatten.md)
+
+### halcon_ext (81)
+
+[hx_add_noise_contour](halcon_ext/hx_add_noise_contour.md) · [hx_char_threshold](halcon_ext/hx_char_threshold.md) · [hx_clip_contours](halcon_ext/hx_clip_contours.md) · [hx_clip_end_points](halcon_ext/hx_clip_end_points.md) · [hx_clip_region_rel](halcon_ext/hx_clip_region_rel.md) · [hx_close_edges](halcon_ext/hx_close_edges.md) · [hx_close_edges_length](halcon_ext/hx_close_edges_length.md) · [hx_closing](halcon_ext/hx_closing.md) · [hx_cooc_feature](halcon_ext/hx_cooc_feature.md) · [hx_crop_contours](halcon_ext/hx_crop_contours.md) · [hx_detect_edge_segments](halcon_ext/hx_detect_edge_segments.md) · [hx_dilation1](halcon_ext/hx_dilation1.md) · [hx_dilation2](halcon_ext/hx_dilation2.md) · [hx_disparity_to_xyz](halcon_ext/hx_disparity_to_xyz.md) · [hx_dist_ellipse_contour](halcon_ext/hx_dist_ellipse_contour.md) · [hx_dist_ellipse_points](halcon_ext/hx_dist_ellipse_points.md) · [hx_dist_rect2_points](halcon_ext/hx_dist_rect2_points.md) · [hx_distance_pc](halcon_ext/hx_distance_pc.md) · [hx_distance_pr](halcon_ext/hx_distance_pr.md) · [hx_distance_sc](halcon_ext/hx_distance_sc.md) · [hx_erosion1](halcon_ext/hx_erosion1.md) · [hx_estimate_al_am](halcon_ext/hx_estimate_al_am.md) · [hx_estimate_sl_al_lr](halcon_ext/hx_estimate_sl_al_lr.md) · [hx_estimate_sl_al_zc](halcon_ext/hx_estimate_sl_al_zc.md) · [hx_estimate_tilt_lr](halcon_ext/hx_estimate_tilt_lr.md) · [hx_estimate_tilt_zc](halcon_ext/hx_estimate_tilt_zc.md) · [hx_expand_region](halcon_ext/hx_expand_region.md) · [hx_fill_interlace](halcon_ext/hx_fill_interlace.md) · [hx_fit_circle_contour](halcon_ext/hx_fit_circle_contour.md) · [hx_fit_ellipse_contour](halcon_ext/hx_fit_ellipse_contour.md) · [hx_fit_rectangle2_contour](halcon_ext/hx_fit_rectangle2_contour.md) · [hx_fit_surface1](halcon_ext/hx_fit_surface1.md) · [hx_fit_surface2](halcon_ext/hx_fit_surface2.md) · [hx_full_domain](halcon_ext/hx_full_domain.md) · [hx_fuzzy_measure_pairs](halcon_ext/hx_fuzzy_measure_pairs.md) · [hx_gabor](halcon_ext/hx_gabor.md) · [hx_gen_bandfilter](halcon_ext/hx_gen_bandfilter.md) · [hx_gen_bandpass](halcon_ext/hx_gen_bandpass.md) · [hx_gen_checker_region](halcon_ext/hx_gen_checker_region.md) · [hx_gen_circle](halcon_ext/hx_gen_circle.md) · [hx_gen_circle_sector](halcon_ext/hx_gen_circle_sector.md) · [hx_gen_derivative_filter](halcon_ext/hx_gen_derivative_filter.md) · [hx_gen_disc_se](halcon_ext/hx_gen_disc_se.md) · [hx_gen_ellipse](halcon_ext/hx_gen_ellipse.md) · [hx_gen_ellipse_sector](halcon_ext/hx_gen_ellipse_sector.md) · [hx_gen_empty_region](halcon_ext/hx_gen_empty_region.md) · [hx_gen_grid_region](halcon_ext/hx_gen_grid_region.md) · [hx_gen_highpass](halcon_ext/hx_gen_highpass.md) · [hx_gen_image_proto](halcon_ext/hx_gen_image_proto.md) · [hx_gen_lowpass](halcon_ext/hx_gen_lowpass.md) · [hx_gen_parallel_contour](halcon_ext/hx_gen_parallel_contour.md) · [hx_gen_rectangle2](halcon_ext/hx_gen_rectangle2.md) · [hx_get_domain](halcon_ext/hx_get_domain.md) · [hx_histo_to_thresh](halcon_ext/hx_histo_to_thresh.md) · [hx_lowlands](halcon_ext/hx_lowlands.md) · [hx_mean_shape](halcon_ext/hx_mean_shape.md) · [hx_moments_any_xld](halcon_ext/hx_moments_any_xld.md) · [hx_move_region](halcon_ext/hx_move_region.md) · [hx_nonmax_dir](halcon_ext/hx_nonmax_dir.md) · [hx_opening](halcon_ext/hx_opening.md) · [hx_plane_deviation](halcon_ext/hx_plane_deviation.md) · [hx_plateaus_center](halcon_ext/hx_plateaus_center.md) · [hx_polar_trans_inv](halcon_ext/hx_polar_trans_inv.md) · [hx_radial_distort_contour](halcon_ext/hx_radial_distort_contour.md) · [hx_rectangle1_domain](halcon_ext/hx_rectangle1_domain.md) · [hx_region_to_label](halcon_ext/hx_region_to_label.md) · [hx_region_to_mean](halcon_ext/hx_region_to_mean.md) · [hx_regress_contours](halcon_ext/hx_regress_contours.md) · [hx_select_xld_point](halcon_ext/hx_select_xld_point.md) · [hx_shade_height_field](halcon_ext/hx_shade_height_field.md) · [hx_smallest_circle_xld](halcon_ext/hx_smallest_circle_xld.md) · [hx_smallest_rect1_xld](halcon_ext/hx_smallest_rect1_xld.md) · [hx_smallest_rect2_xld](halcon_ext/hx_smallest_rect2_xld.md) · [hx_sort_contours](halcon_ext/hx_sort_contours.md) · [hx_split_contours](halcon_ext/hx_split_contours.md) · [hx_split_skeleton_region](halcon_ext/hx_split_skeleton_region.md) · [hx_test_closed_xld](halcon_ext/hx_test_closed_xld.md) · [hx_test_region_point](halcon_ext/hx_test_region_point.md) · [hx_test_region_points](halcon_ext/hx_test_region_points.md) · [hx_test_self_intersect](halcon_ext/hx_test_self_intersect.md) · [hx_union_adjacent](halcon_ext/hx_union_adjacent.md)
+
+### intensity_transform (1)
+
+[xmh_soft](intensity_transform/xmh_soft.md)
+
+### macro (4)
+
+[macro_binarize](macro/macro_binarize.md) · [macro_denoise](macro/macro_denoise.md) · [macro_edge](macro/macro_edge.md) · [macro_vol_denoise](macro/macro_vol_denoise.md)
+
+### matching (2)
+
+[ncc_locate](matching/ncc_locate.md) · [shape_locate](matching/shape_locate.md)
+
+### measure1d (5)
+
+[m1_fuzzy_measure_pos](measure1d/m1_fuzzy_measure_pos.md) · [m1_measure_pairs](measure1d/m1_measure_pairs.md) · [m1_measure_pos](measure1d/m1_measure_pos.md) · [m1_measure_projection](measure1d/m1_measure_projection.md) · [m1_measure_thresh](measure1d/m1_measure_thresh.md)
+
+### misc (1)
+
+[identity](misc/identity.md)
+
+### morphology (33)
+
+[bothat](morphology/bothat.md) · [cv_blackhat](morphology/cv_blackhat.md) · [cv_close](morphology/cv_close.md) · [cv_dilate](morphology/cv_dilate.md) · [cv_erode](morphology/cv_erode.md) · [cv_gradient](morphology/cv_gradient.md) · [cv_open](morphology/cv_open.md) · [cv_tophat](morphology/cv_tophat.md) · [f2_gray_inside](morphology/f2_gray_inside.md) · [f2_gray_skeleton](morphology/f2_gray_skeleton.md) · [gclose](morphology/gclose.md) · [gdilate](morphology/gdilate.md) · [gerode](morphology/gerode.md) · [gopen](morphology/gopen.md) · [gray_bothat](morphology/gray_bothat.md) · [gray_closing](morphology/gray_closing.md) · [gray_closing_rect](morphology/gray_closing_rect.md) · [gray_closing_shape](morphology/gray_closing_shape.md) · [gray_dilation](morphology/gray_dilation.md) · [gray_dilation_shape](morphology/gray_dilation_shape.md) · [gray_erosion](morphology/gray_erosion.md) · [gray_erosion_shape](morphology/gray_erosion_shape.md) · [gray_opening](morphology/gray_opening.md) · [gray_opening_rect](morphology/gray_opening_rect.md) · [gray_opening_shape](morphology/gray_opening_shape.md) · [gray_tophat](morphology/gray_tophat.md) · [morph_grad](morphology/morph_grad.md) · [sk_area_opening](morphology/sk_area_opening.md) · [tophat](morphology/tophat.md) · [xsk2_diameter_opening](morphology/xsk2_diameter_opening.md) · [xsk2_reconstruction](morphology/xsk2_reconstruction.md) · [xsk3_area_closing](morphology/xsk3_area_closing.md) · [xsk3_diameter_closing](morphology/xsk3_diameter_closing.md)
+
+### morphology_markers (1)
+
+[xmh_regmin](morphology_markers/xmh_regmin.md)
+
+### noise (2)
+
+[add_noise_distribution](noise/add_noise_distribution.md) · [add_noise_white](noise/add_noise_white.md)
+
+### physics (6)
+
+[ph_coherence_enhancing_diffusion](physics/ph_coherence_enhancing_diffusion.md) · [ph_heat_flow](physics/ph_heat_flow.md) · [ph_mean_curvature_motion](physics/ph_mean_curvature_motion.md) · [ph_perona_malik](physics/ph_perona_malik.md) · [ph_reaction_diffusion](physics/ph_reaction_diffusion.md) · [ph_total_variation_flow](physics/ph_total_variation_flow.md)
+
+### rank (23)
+
+[cv_median](rank/cv_median.md) · [dual_rank](rank/dual_rank.md) · [eliminate_min_max](rank/eliminate_min_max.md) · [eliminate_sp](rank/eliminate_sp.md) · [gray_dilation_rect](rank/gray_dilation_rect.md) · [gray_erosion_rect](rank/gray_erosion_rect.md) · [gray_range_rect](rank/gray_range_rect.md) · [max_filter](rank/max_filter.md) · [mean_sp](rank/mean_sp.md) · [median](rank/median.md) · [median_image](rank/median_image.md) · [median_rect](rank/median_rect.md) · [median_separate](rank/median_separate.md) · [median_weighted](rank/median_weighted.md) · [min_filter](rank/min_filter.md) · [percentile](rank/percentile.md) · [rank_image](rank/rank_image.md) · [rank_rect](rank/rank_rect.md) · [sk_median_disk](rank/sk_median_disk.md) · [trimmed_mean](rank/trimmed_mean.md) · [xkor_median](rank/xkor_median.md) · [xpil_mode_filter](rank/xpil_mode_filter.md) · [xsk2_rank_geomean](rank/xsk2_rank_geomean.md)
+
+### region (76)
+
+[boundary](region/boundary.md) · [closest_point_transform](region/closest_point_transform.md) · [closing_circle](region/closing_circle.md) · [closing_golay](region/closing_golay.md) · [closing_rectangle1](region/closing_rectangle1.md) · [convex_fill](region/convex_fill.md) · [cv_dist](region/cv_dist.md) · [dilation_circle](region/dilation_circle.md) · [dilation_golay](region/dilation_golay.md) · [dilation_rectangle1](region/dilation_rectangle1.md) · [dilation_seq](region/dilation_seq.md) · [dist_transform](region/dist_transform.md) · [distance_transform](region/distance_transform.md) · [erosion_circle](region/erosion_circle.md) · [erosion_golay](region/erosion_golay.md) · [erosion_rectangle1](region/erosion_rectangle1.md) · [erosion_seq](region/erosion_seq.md) · [fill_holes](region/fill_holes.md) · [fill_up](region/fill_up.md) · [fill_up_shape](region/fill_up_shape.md) · [get_region_contour](region/get_region_contour.md) · [get_region_convex](region/get_region_convex.md) · [invert_region](region/invert_region.md) · [junctions_skeleton](region/junctions_skeleton.md) · [morph_skeleton](region/morph_skeleton.md) · [opening_circle](region/opening_circle.md) · [opening_golay](region/opening_golay.md) · [opening_rectangle1](region/opening_rectangle1.md) · [pruning](region/pruning.md) · [r2_inner_circle](region/r2_inner_circle.md) · [r2_inner_rectangle1](region/r2_inner_rectangle1.md) · [r2_partition_rectangle](region/r2_partition_rectangle.md) · [r2_runlength_features](region/r2_runlength_features.md) · [r2_smallest_circle](region/r2_smallest_circle.md) · [r2_smallest_rectangle1](region/r2_smallest_rectangle1.md) · [r2_smallest_rectangle2](region/r2_smallest_rectangle2.md) · [r2_sort_region](region/r2_sort_region.md) · [r2_split_skeleton_lines](region/r2_split_skeleton_lines.md) · [r2_union1](region/r2_union1.md) · [r3_background_seg](region/r3_background_seg.md) · [r3_clip_region](region/r3_clip_region.md) · [r3_eliminate_runs](region/r3_eliminate_runs.md) · [r3_label_to_region](region/r3_label_to_region.md) · [r3_partition_dynamic](region/r3_partition_dynamic.md) · [r3_polar_trans_region](region/r3_polar_trans_region.md) · [r3_rank_region](region/r3_rank_region.md) · [r3_region_features](region/r3_region_features.md) · [r3_runlength_distribution](region/r3_runlength_distribution.md) · [r3_select_region_point](region/r3_select_region_point.md) · [reg_close](region/reg_close.md) · [reg_dilate](region/reg_dilate.md) · [reg_erode](region/reg_erode.md) · [reg_open](region/reg_open.md) · [region_boundary](region/region_boundary.md) · [remove_noise_region](region/remove_noise_region.md) · [remove_small](region/remove_small.md) · [select_largest](region/select_largest.md) · [select_shape](region/select_shape.md) · [select_shape_std](region/select_shape_std.md) · [shape_trans](region/shape_trans.md) · [sk_clear_border](region/sk_clear_border.md) · [sk_convex](region/sk_convex.md) · [sk_find_boundaries](region/sk_find_boundaries.md) · [sk_medial](region/sk_medial.md) · [sk_remove_holes](region/sk_remove_holes.md) · [sk_skeleton](region/sk_skeleton.md) · [sk_thin](region/sk_thin.md) · [skeleton](region/skeleton.md) · [smallest_rectangle1](region/smallest_rectangle1.md) · [thinning](region/thinning.md) · [thinning_golay](region/thinning_golay.md) · [thinning_seq](region/thinning_seq.md) · [xcv2_hitmiss](region/xcv2_hitmiss.md) · [xsk2_isotropic_close](region/xsk2_isotropic_close.md) · [xsk3_rank_majority](region/xsk3_rank_majority.md) · [xsp_chamfer_dist](region/xsp_chamfer_dist.md)
+
+### region_morphology (1)
+
+[xmh_majority](region_morphology/xmh_majority.md)
+
+### region_transform (1)
+
+[xmh_bwperim](region_transform/xmh_bwperim.md)
+
+### restoration (12)
+
+[iv_backproject_superres](restoration/iv_backproject_superres.md) · [iv_gradient_inpaint](restoration/iv_gradient_inpaint.md) · [iv_motion_deblur](restoration/iv_motion_deblur.md) · [iv_richardson_lucy](restoration/iv_richardson_lucy.md) · [iv_unsharp_deblur](restoration/iv_unsharp_deblur.md) · [iv_wiener_deconv_spatial](restoration/iv_wiener_deconv_spatial.md) · [xcv3_inpaint_ns](restoration/xcv3_inpaint_ns.md) · [xcv_inpaint](restoration/xcv_inpaint.md) · [xsk2_wiener](restoration/xsk2_wiener.md) · [xsk_inpaint](restoration/xsk_inpaint.md) · [xsk_richardson_lucy](restoration/xsk_richardson_lucy.md) · [xsk_unwrap_phase](restoration/xsk_unwrap_phase.md)
+
+### segment (7)
+
+[sg_felzenszwalb](segment/sg_felzenszwalb.md) · [sg_gmm_segment](segment/sg_gmm_segment.md) · [sg_kmeans_intensity](segment/sg_kmeans_intensity.md) · [sg_normalized_cut_2](segment/sg_normalized_cut_2.md) · [sg_region_growing_seeded](segment/sg_region_growing_seeded.md) · [sg_slic_superpixels](segment/sg_slic_superpixels.md) · [sg_watershed_gradient](segment/sg_watershed_gradient.md)
+
+### segmentation (54)
+
+[adaptive_gauss_thresh](segmentation/adaptive_gauss_thresh.md) · [auto_threshold](segmentation/auto_threshold.md) · [bin_threshold](segmentation/bin_threshold.md) · [binary_threshold](segmentation/binary_threshold.md) · [canny](segmentation/canny.md) · [cv_adaptive_gauss](segmentation/cv_adaptive_gauss.md) · [cv_adaptive_mean](segmentation/cv_adaptive_mean.md) · [cv_canny](segmentation/cv_canny.md) · [cv_otsu](segmentation/cv_otsu.md) · [dual_threshold](segmentation/dual_threshold.md) · [dyn_threshold](segmentation/dyn_threshold.md) · [edges_image](segmentation/edges_image.md) · [fast_threshold](segmentation/fast_threshold.md) · [h_threshold](segmentation/h_threshold.md) · [hysteresis_threshold](segmentation/hysteresis_threshold.md) · [it_region_to_bin](segmentation/it_region_to_bin.md) · [local_max](segmentation/local_max.md) · [local_min](segmentation/local_min.md) · [local_threshold](segmentation/local_threshold.md) · [nonmax_suppression_amp](segmentation/nonmax_suppression_amp.md) · [otsu](segmentation/otsu.md) · [pouring](segmentation/pouring.md) · [regiongrowing](segmentation/regiongrowing.md) · [regiongrowing_mean](segmentation/regiongrowing_mean.md) · [segment_image_mser](segmentation/segment_image_mser.md) · [sk_canny](segmentation/sk_canny.md) · [sk_chan_vese](segmentation/sk_chan_vese.md) · [sk_felzenszwalb](segmentation/sk_felzenszwalb.md) · [sk_hysteresis](segmentation/sk_hysteresis.md) · [sk_li](segmentation/sk_li.md) · [sk_local_maxima](segmentation/sk_local_maxima.md) · [sk_niblack](segmentation/sk_niblack.md) · [sk_otsu](segmentation/sk_otsu.md) · [sk_sauvola](segmentation/sk_sauvola.md) · [sk_slic](segmentation/sk_slic.md) · [sk_yen](segmentation/sk_yen.md) · [threshold](segmentation/threshold.md) · [var_threshold](segmentation/var_threshold.md) · [watersheds](segmentation/watersheds.md) · [watersheds_threshold](segmentation/watersheds_threshold.md) · [xcv2_meanshift](segmentation/xcv2_meanshift.md) · [xcv_grabcut](segmentation/xcv_grabcut.md) · [xcv_watershed_markers](segmentation/xcv_watershed_markers.md) · [xkor_canny](segmentation/xkor_canny.md) · [xmh_bernsen](segmentation/xmh_bernsen.md) · [xsk2_h_maxima](segmentation/xsk2_h_maxima.md) · [xsk2_multiotsu](segmentation/xsk2_multiotsu.md) · [xsk3_h_minima](segmentation/xsk3_h_minima.md) · [xsk3_peak_local_max](segmentation/xsk3_peak_local_max.md) · [xsk3_rank_otsu](segmentation/xsk3_rank_otsu.md) · [xsk3_threshold_local_median](segmentation/xsk3_threshold_local_median.md) · [xsk_flood](segmentation/xsk_flood.md) · [xsk_random_walker](segmentation/xsk_random_walker.md) · [zero_crossing](segmentation/zero_crossing.md)
+
+### self_similarity (1)
+
+[xmh_selfmatch](self_similarity/xmh_selfmatch.md)
+
+### smoothing (48)
+
+[anisotropic_diffusion](smoothing/anisotropic_diffusion.md) · [bilateral](smoothing/bilateral.md) · [bilateral_filter](smoothing/bilateral_filter.md) · [binomial_filter](smoothing/binomial_filter.md) · [coherence_enhancing_diff](smoothing/coherence_enhancing_diff.md) · [cv_bilateral](smoothing/cv_bilateral.md) · [cv_box](smoothing/cv_box.md) · [cv_gaussian](smoothing/cv_gaussian.md) · [cv_nlmeans](smoothing/cv_nlmeans.md) · [cv_sharpen](smoothing/cv_sharpen.md) · [dl_aniso_diffusion](smoothing/dl_aniso_diffusion.md) · [dl_guided_filter](smoothing/dl_guided_filter.md) · [f2_gauss_pyramid](smoothing/f2_gauss_pyramid.md) · [gauss_filter](smoothing/gauss_filter.md) · [gauss_image](smoothing/gauss_image.md) · [gaussian](smoothing/gaussian.md) · [guided_filter](smoothing/guided_filter.md) · [isotropic_diffusion](smoothing/isotropic_diffusion.md) · [mean_box](smoothing/mean_box.md) · [mean_curvature_flow](smoothing/mean_curvature_flow.md) · [mean_image](smoothing/mean_image.md) · [sigma_image](smoothing/sigma_image.md) · [simulate_defocus](smoothing/simulate_defocus.md) · [simulate_motion](smoothing/simulate_motion.md) · [sk_nlm](smoothing/sk_nlm.md) · [sk_rolling_ball](smoothing/sk_rolling_ball.md) · [sk_tv](smoothing/sk_tv.md) · [sk_tv_bregman](smoothing/sk_tv_bregman.md) · [sk_wavelet](smoothing/sk_wavelet.md) · [smooth_image](smoothing/smooth_image.md) · [unsharp](smoothing/unsharp.md) · [xcv3_denoise_tvl1](smoothing/xcv3_denoise_tvl1.md) · [xcv3_pyr_laplacian](smoothing/xcv3_pyr_laplacian.md) · [xcv_edge_preserving](smoothing/xcv_edge_preserving.md) · [xkor_bilateral](smoothing/xkor_bilateral.md) · [xkor_gaussian](smoothing/xkor_gaussian.md) · [xkor_motion_blur](smoothing/xkor_motion_blur.md) · [xkor_unsharp](smoothing/xkor_unsharp.md) · [xpil_smooth_more](smoothing/xpil_smooth_more.md) · [xpil_unsharp_mask](smoothing/xpil_unsharp_mask.md) · [xsk3_rank_mean_bilateral](smoothing/xsk3_rank_mean_bilateral.md) · [xsp_cspline_smooth](smoothing/xsp_cspline_smooth.md) · [xsp_dct_denoise](smoothing/xsp_dct_denoise.md) · [xsp_savgol](smoothing/xsp_savgol.md) · [xsp_wiener](smoothing/xsp_wiener.md) · [xwt_firm_denoise](smoothing/xwt_firm_denoise.md) · [xwt_lf_reconstruct](smoothing/xwt_lf_reconstruct.md) · [xwt_visushrink](smoothing/xwt_visushrink.md)
+
+### subpix (6)
+
+[sp_critical_points_sub_pix](subpix/sp_critical_points_sub_pix.md) · [sp_local_max_sub_pix](subpix/sp_local_max_sub_pix.md) · [sp_local_min_sub_pix](subpix/sp_local_min_sub_pix.md) · [sp_lowlands_center](subpix/sp_lowlands_center.md) · [sp_plateaus](subpix/sp_plateaus.md) · [sp_saddle_points_sub_pix](subpix/sp_saddle_points_sub_pix.md)
+
+### tactile (5)
+
+[tac_contact_mask](tactile/tac_contact_mask.md) · [tac_height_from_shading](tactile/tac_height_from_shading.md) · [tac_pressure_proxy](tactile/tac_pressure_proxy.md) · [tac_shear_field](tactile/tac_shear_field.md) · [tac_surface_normal](tactile/tac_surface_normal.md)
+
+### texture (22)
+
+[cooc_feature_matrix](texture/cooc_feature_matrix.md) · [deviation_image](texture/deviation_image.md) · [entropy_image](texture/entropy_image.md) · [f2_symmetry](texture/f2_symmetry.md) · [gabor](texture/gabor.md) · [gen_gabor](texture/gen_gabor.md) · [sk_entropy](texture/sk_entropy.md) · [sk_frangi](texture/sk_frangi.md) · [sk_gabor](texture/sk_gabor.md) · [sk_hessian](texture/sk_hessian.md) · [sk_lbp](texture/sk_lbp.md) · [sk_meijering](texture/sk_meijering.md) · [sk_shape_index](texture/sk_shape_index.md) · [std_filter](texture/std_filter.md) · [texture_laws](texture/texture_laws.md) · [tf_census_transform](texture/tf_census_transform.md) · [tf_rank_transform](texture/tf_rank_transform.md) · [xsk2_hog](texture/xsk2_hog.md) · [xsk_meijering](texture/xsk_meijering.md) · [xsk_sato](texture/xsk_sato.md) · [xsk_struct_coherence](texture/xsk_struct_coherence.md) · [xsp_hilbert_env](texture/xsp_hilbert_env.md)
+
+### texture_feature (1)
+
+[xmh_pftas](texture_feature/xmh_pftas.md)
+
+### texture_shape_feature (1)
+
+[xmh_zernike](texture_shape_feature/xmh_zernike.md)
+
+### tomography (5)
+
+[tm_backproject_unfiltered](tomography/tm_backproject_unfiltered.md) · [tm_fbp_reconstruct](tomography/tm_fbp_reconstruct.md) · [tm_radon_forward](tomography/tm_radon_forward.md) · [tm_sart_reconstruct](tomography/tm_sart_reconstruct.md) · [tm_sinogram_denoise](tomography/tm_sinogram_denoise.md)
+
+### transform (3)
+
+[tf_radon_sinogram](transform/tf_radon_sinogram.md) · [xmh_daubechies](transform/xmh_daubechies.md) · [xmh_haar](transform/xmh_haar.md)
+
+### xldgeom (10)
+
+[xg_area_center](xldgeom/xg_area_center.md) · [xg_clip_contours](xldgeom/xg_clip_contours.md) · [xg_crop_contours](xldgeom/xg_crop_contours.md) · [xg_eccentricity](xldgeom/xg_eccentricity.md) · [xg_elliptic_axis](xldgeom/xg_elliptic_axis.md) · [xg_gen_polygons](xldgeom/xg_gen_polygons.md) · [xg_height_width_ratio](xldgeom/xg_height_width_ratio.md) · [xg_moments](xldgeom/xg_moments.md) · [xg_orientation](xldgeom/xg_orientation.md) · [xg_regress_contours](xldgeom/xg_regress_contours.md)
+
+---
+© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.
