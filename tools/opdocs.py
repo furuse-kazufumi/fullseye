@@ -418,17 +418,27 @@ def md_to_html(md: str) -> str:
         lines = lines[j + 1:]
     out = []
     in_code = False
+    code_lang = ""
     code_buf = []
     for line in lines:
         st = line.strip()
         if st.startswith("```"):
             if in_code:
-                out.append(f'<pre style="background:#12141b;border:1px solid #2c313f;'
+                # mermaid / math: QTextBrowser can't render these, so we keep the source
+                # in a labelled block (Markdown-native viewers — GitHub/Obsidian/RAD — do render).
+                label = ""
+                if code_lang in ("mermaid", "math"):
+                    kind = "Mermaid 図" if code_lang == "mermaid" else "数式(LaTeX)"
+                    label = (f'<p style="color:{_MUTE};font-size:11px;margin:6px 0 0 0">'
+                             f'{kind}(ソース):</p>')
+                out.append(label + f'<pre style="background:#12141b;border:1px solid #2c313f;'
                            f'padding:6px;color:{_CODE}">' + _html.escape("\n".join(code_buf)) + "</pre>")
                 code_buf = []
                 in_code = False
+                code_lang = ""
             else:
                 in_code = True
+                code_lang = st[3:].strip().lower()
             continue
         if in_code:
             code_buf.append(line)
