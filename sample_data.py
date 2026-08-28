@@ -117,6 +117,7 @@ MANIFEST = [
         category="mesh", fmt="stl",
         url=None, archive="gz", member=None, dest="itokawa.stl",
         sha256="6c0a6f2f158b95e33df35d3ab939a70e18701e840ca8106edc50711cea4a1967",
+        sha256_out="c2f704839c15d305e80782c22acbca4d026ff230aa9da42387b10547ad4f9f31",
         bytes=1248214,
         license="Public Domain (JAXA/NASA PDS)", commercial="yes", access="info",
         source_page="https://sbn.psi.edu/pds/resource/itokawashape.html",
