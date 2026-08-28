@@ -76,9 +76,6 @@ s_second = float(min(other))                      # 非対称な残り2主平面
 _w, _vec = np.linalg.eigh(Pn.T @ Pn)              # eigh は昇順 → 列0 が最小固有値=最も薄い軸
 narrow_axis = _vec[:, 0]
 narrow_align = abs(float(normal @ narrow_axis))   # 1.0 に近ければ矢状面=最薄軸
-axis_rank = {0: "体長方向", 1: "体高方向", 2: "左右方向(最薄)"}
-# PCA 主軸(降順)での best_idx のランク名
-pca_desc_rank = 2 - best_idx if False else best_idx  # all_scores は _pca_axes(降順)順
 
 # --- 4) beat-null: 片側だけを体幅の 20% 押し出して左右対称を壊す --------------------
 signed = (Pn - plane_pt) @ normal                 # 矢状面からの符号付き距離
