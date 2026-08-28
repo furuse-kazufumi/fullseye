@@ -426,5 +426,11 @@ def download(sample_id: str, *, yes: bool = False, quiet: bool = False,
                 os.remove(p)
         raise
 
+    # verify the extracted/placed artifact (fail-closed).
+    out_want = e.get("sha256_out")
+    if out_want and _sha256(target) != out_want:
+        os.remove(target)
+        raise ValueError("[%s] extracted-file sha256 mismatch - deleted." % e["id"])
+
     say("  -> %s" % target)
     return target
