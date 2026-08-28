@@ -54,6 +54,16 @@ import plane_sweep
 import sdf_ops
 import depth_bilateral
 import registration_eval
+# --- Wave A: mesh processing / bounds / extended primitive fits ---
+# 新規 op(hull3d/mesh_smooth/mesh_props/fit_primitives_ext)に加え、実在するが
+# レジストリ未登録だった正統 op(meshrepair/pcseg/volops)も surface して発見可能にする。
+import hull3d
+import mesh_smooth
+import mesh_props
+import fit_primitives_ext
+import meshrepair
+import pcseg
+import volops
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
