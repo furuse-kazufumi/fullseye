@@ -378,6 +378,77 @@ def main() -> int:
     assert w_soft_l > w_soft_s, \
         f"半影が角半径で広がっていない: 6°={w_soft_l} <= 3°={w_soft_s}"
 
+    # ═══════════════════════════════════════════════════════════════════
+    # 点光源 (directional=False) の検証 — fixed した dist_c 経路を実際に走らせる
+    #   directional=True しか叩いていなかったため、点光源の NameError が検出漏れしていた。
+    #   ここで hard(penumbra=0)と面光源(penumbra>0)の両方を走らせ、透視投影の解析 GT
+    #   (アルゴリズムとは独立)と照合し、beat-null と半影単調性まで確認する。
+    # ═══════════════════════════════════════════════════════════════════
+    Lpt = np.array([3.0, 2.0, 6.5])                      # 床の上方・斜めの点光源(位置)
+    sh_pt_hard = cast_shadow(V, F, Lpt, pose=pose, intrinsics=K, width=W, height=H,
+                             directional=False, penumbra=0.0, shadow_res=512)
+    sh_pt_soft_s = cast_shadow(V, F, Lpt, pose=pose, intrinsics=K, width=W, height=H,
+                               directional=False, penumbra=3.0, samples=16, shadow_res=384)
+    sh_pt_soft_l = cast_shadow(V, F, Lpt, pose=pose, intrinsics=K, width=W, height=H,
+                               directional=False, penumbra=6.0, samples=16, shadow_res=384)
+
+    if sh_pt_hard.shape != (H, W):
+        raise ValueError(f"point-light shadow shape {sh_pt_hard.shape} != {(H, W)}")
+    if not (np.all(sh_pt_hard >= 0.0) and np.all(sh_pt_hard <= 1.0)):
+        raise ValueError("point-light shadow map の値域が [0,1] を外れた")
+
+    gt_pt = analytic_ground_shadow_point(Pw, ground, center_sph, R, Lpt)
+    meas_pt = ground & (sh_pt_hard < 0.5)                # 点光源ハード影の暗部(床上)
+    inter_pt = int((gt_pt & meas_pt).sum())
+    union_pt = int((gt_pt | meas_pt).sum())
+    iou_pt = inter_pt / max(union_pt, 1)
+    fp_pt = int((meas_pt & ~gt_pt).sum())
+    fn_pt = int((gt_pt & ~meas_pt).sum())
+    gt_pt_c = centroid2d(gt_pt)
+    meas_pt_c = centroid2d(meas_pt)
+    cdist_pt = float(np.linalg.norm(gt_pt_c - meas_pt_c))
+
+    # beat-null: 影なし(全面 lit)は点光源でも接地影を作れない → IoU 0(空集合)
+    null_pt_meas = ground & (null_shadow < 0.5)
+    iou_pt_null = int((gt_pt & null_pt_meas).sum()) / max(int((gt_pt | null_pt_meas).sum()), 1)
+
+    # 判別性(透視投影が効いているか): 点光源方向を平行光として近似した GT では、点光源影
+    # の拡大・シフトを再現できず一致が落ちる。点光源影は自分の点光源 GT の方をよく当てる。
+    ldir_from_pt = (Lpt - center_sph) / np.linalg.norm(Lpt - center_sph)
+    gt_pt_as_parallel = analytic_ground_shadow(Pw, ground, center_sph, R, ldir_from_pt)
+    iou_pt_vs_par = int((gt_pt_as_parallel & meas_pt).sum()) / \
+        max(int((gt_pt_as_parallel | meas_pt).sum()), 1)
+
+    def partial_px_pt(sh):
+        return int((ground & (sh > 0.05) & (sh < 0.95)).sum())
+    wp_hard = partial_px_pt(sh_pt_hard)
+    wp_soft_s = partial_px_pt(sh_pt_soft_s)
+    wp_soft_l = partial_px_pt(sh_pt_soft_l)
+
+    print(f"[point] 解析影(床,umbra)={int(gt_pt.sum())} px  IoU(hard vs 点光源GT)={iou_pt:.4f}  "
+          f"(fp={fp_pt}, fn={fn_pt}, 重心ずれ={cdist_pt:.4f} / R={R})")
+    print(f"[point] beat-null: 影なし IoU={iou_pt_null:.4f} / 平行光近似GTでの IoU={iou_pt_vs_par:.4f} "
+          f"(< 点光源GT {iou_pt:.4f} = 透視投影を実際に計算)")
+    print(f"[point] 半影の幅(中間画素) hard={wp_hard}  面光源3°={wp_soft_s}  面光源6°={wp_soft_l}")
+
+    # ── 点光源 GT アサーション(独立 GT に対して判別的)─────────────────
+    assert int(gt_pt.sum()) > 50, f"点光源の解析影が小さすぎ(シーン設定を確認): {int(gt_pt.sum())}"
+    assert iou_pt >= 0.90, f"点光源の接地影 IoU が低い(GT と不一致): {iou_pt:.4f}"
+    assert cdist_pt < 0.25 * R, f"点光源の接地影の重心が GT からずれすぎ: {cdist_pt:.4f} (R={R})"
+    assert fp_pt < 0.1 * max(int(gt_pt.sum()), 1), f"点光源の床の偽影(acne)が多すぎ: fp={fp_pt}"
+    assert iou_pt_null == 0.0, f"影なし null が点光源の接地影を当ててしまう: {iou_pt_null:.4f}"
+    assert iou_pt - iou_pt_null > 0.8, \
+        f"点光源の接地影が影なし null を判別的に上回れていない: {iou_pt:.3f} vs {iou_pt_null:.3f}"
+    assert iou_pt > iou_pt_vs_par, \
+        f"点光源影が平行光近似 GT と同等以上に一致(透視投影が効いていない疑い): " \
+        f"点GT={iou_pt:.3f} 平行GT={iou_pt_vs_par:.3f}"
+
+    # ── 点光源でも半影が角半径で単調に広がる ─────────────────────────────
+    assert wp_hard <= 80, f"点光源ハード影なのに中間画素が多すぎ(縁が甘い): {wp_hard}"
+    assert wp_soft_s > wp_hard, f"点光源(面光源小)で半影が広がっていない: {wp_soft_s} <= {wp_hard}"
+    assert wp_soft_l > wp_soft_s, \
+        f"点光源の半影が角半径で広がっていない: 6°={wp_soft_l} <= 3°={wp_soft_s}"
+
     # ── デモ PNG(before=影なし / after=ソフトシャドウ)────────────────
     before_rgb = _shade_rgb(view, pose, ldir, ground, sphere, null_shadow)
     after_rgb = _shade_rgb(view, pose, ldir, ground, sphere, sh_soft_l)
