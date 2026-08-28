@@ -290,11 +290,13 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
         Pc = (Pw.reshape(-1, 3) @ R_L.T + t_L).reshape(h, w, 3)
         dL = -Pc[..., 2]
         front = surf & (dL > _EPS)
-        dsafe = np.where(front, dL, np.nan)
-        uL = fx * (Pc[..., 0] / dsafe) + cx
-        vL = cy - fy * (Pc[..., 1] / dsafe)
-        iu = np.floor(uL).astype(np.int64)
-        iv = np.floor(vL).astype(np.int64)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            dsafe = np.where(front, dL, np.nan)
+            uL = fx * (Pc[..., 0] / dsafe) + cx
+            vL = cy - fy * (Pc[..., 1] / dsafe)
+            # NaN(非受光/光源背後)は下の inb マスクで捨てるので、cast 前に有限値へ置換。
+            iu = np.floor(np.where(np.isfinite(uL), uL, -1.0)).astype(np.int64)
+            iv = np.floor(np.where(np.isfinite(vL), vL, -1.0)).astype(np.int64)
         inb = front & (iu >= 0) & (iu < sres) & (iv >= 0) & (iv < sres)
         iu_c = np.clip(iu, 0, sres - 1)
         iv_c = np.clip(iv, 0, sres - 1)
