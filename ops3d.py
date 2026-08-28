@@ -226,6 +226,7 @@ _CATALOG = {
         ("edge_alias_energy", "render_ssaa", ["image2d"], "measurement", False),
         ("tonemap_reinhard", "render_tonemap", ["image2d"], "image2d", False),
         ("tonemap_aces", "render_tonemap", ["image2d"], "image2d", False),
+        ("render_beauty", "render_beauty", ["mesh"], "image2d", False),
     ],
     "photometric": [  # フォトメトリックステレオ・法線積分(既知光源 → 法線 → 高さ)
         ("photometric_stereo", "photometric", ["images"], "normals", False),
