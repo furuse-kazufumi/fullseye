@@ -94,7 +94,8 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "fit_primitives_ext": fit_primitives_ext, "meshrepair": meshrepair,
         "pcseg": pcseg, "volops": volops,
         "render_ao": render_ao, "render_shadow": render_shadow, "render_shade": render_shade,
-        "render_ssaa": render_ssaa, "render_tonemap": render_tonemap}
+        "render_ssaa": render_ssaa, "render_tonemap": render_tonemap,
+        "render_beauty": render_beauty}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
 #   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
