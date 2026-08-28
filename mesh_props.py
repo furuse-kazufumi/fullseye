@@ -69,6 +69,12 @@ def _as_mesh(mesh) -> tuple[np.ndarray, np.ndarray]:
         raise ValueError(
             f"faces に範囲外の頂点 index があります(許容 [0,{len(V)}))"
             f": min={int(F.min())}, max={int(F.max())}")
+    # 構造検証: 三角形は 3 頂点が相異なる必要がある(index 重複 = 退化した接続)。
+    degen_conn = (F[:, 0] == F[:, 1]) | (F[:, 1] == F[:, 2]) | (F[:, 0] == F[:, 2])
+    if np.any(degen_conn):
+        raise ValueError(
+            f"{int(degen_conn.sum())} 個の face が同一頂点を重複参照しています"
+            "(三角形は 3 頂点が相異なる必要があります)")
     return V, F
 
 
