@@ -194,7 +194,7 @@ def render_gallery(img1, img4, ss_list, energies, mids, out_path: Path) -> bool:
                     ha="center", va="bottom", fontsize=9)
     ax.set_ylim(0, max(mids) * 100 * 1.35 + 0.5)
 
-    fig.tight_layout(rect=(0, 0, 1, 0.95))
+    fig.subplots_adjust(left=0.03, right=0.96, top=0.9, bottom=0.08)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=125)
     plt.close(fig)
