@@ -153,28 +153,48 @@ def build_pod(res: int = 72, target_faces: int = 2600):
     nose = sdf_ops.sphere_sdf(g, (0.0, 0.55, 0.82), 0.16)     # 「目」の張り出し
     pod = sdf_ops.sdf_smooth_union(pod, nose, 0.10)
     V, F = render3d.marching_cubes(pod, level=0.0)
+    F = _orient_outward(V, F)
     V = _center(V)
     return _decimate(V, F, target_faces)
 
 
-def build_itokawa(target_faces: int = 2600):
-    """Itokawa 点群 (N,3) → ``recon3d.poisson_lite`` で水密メッシュ化(占有モード)。
+def _pointcloud_to_occupancy_mesh(P: np.ndarray, *, res: int = 72,
+                                  dilate: int = 2, sigma: float = 1.5):
+    """疎な表面点群 → 等方 voxel 占有 → 穴埋め → 平滑 → ``render3d.marching_cubes``。
 
-    失敗時は ``alpha_shape_mesh`` にフォールバック。戻り値 (V, F, method)。"""
+    Itokawa の点群は 3000 点と疎で、``recon3d.poisson_lite`` / ``alpha_shape_mesh`` は
+    watertight 化に失敗して同心二重殻や断片群へ縮退する(点間隔 > voxel でシェルが塞がらない
+    ため。poisson_lite の docstring が述べる honest な縮退)。そこで点を等方格子へ splat し、
+    ``binary_dilation`` で点間を橋渡しして watertight にしてから ``binary_fill_holes`` で中実化、
+    ガウス平滑して単一等値面を ``render3d.marching_cubes`` で抜く。実データ点群 → 実 op メッシュ。"""
+    lo, hi = P.min(axis=0), P.max(axis=0)
+    span = hi - lo
+    vs = float(span.max()) / max(res - 1, 1)                 # 等方 voxel サイズ
+    pad = 4
+    dims = np.maximum(np.ceil(span / vs).astype(int) + 1 + 2 * pad, 8)
+    idx = np.rint((P - lo) / vs).astype(int) + pad
+    idx = np.clip(idx, 0, dims - 1)
+    grid = np.zeros(tuple(dims), bool)
+    grid[idx[:, 0], idx[:, 1], idx[:, 2]] = True
+    grid = binary_fill_holes(binary_dilation(grid, iterations=int(dilate)))
+    field = gaussian_filter(grid.astype(np.float64), float(sigma))
+    field /= max(float(field.max()), 1e-12)
+    V, F = render3d.marching_cubes(field, level=0.5)
+    V = V * vs                                               # voxel index → 元スケールへ
+    return V, F
+
+
+def build_itokawa(target_faces: int = 2600):
+    """Itokawa 実点群 (N,3) → 水密メッシュ → 外向き整列 → 減面。戻り値 (V, F, method)。
+
+    honest: 疎点群のため ``poisson_lite`` / ``alpha_shape_mesh`` は二重殻/断片へ縮退する
+    (実測で確認)。占有 voxel + 穴埋め + ``render3d.marching_cubes`` で確実に単一の水密殻を得る。"""
     P = np.load(os.path.join(_ASSETS, "itokawa_points.npy")).astype(np.float64)
-    method = "poisson_lite(occupancy)"
-    try:
-        V, F = recon3d.poisson_lite(P, size=72, sigma=1.5, iso=0.5)
-    except Exception as e_p:                                  # noqa: BLE001
-        try:
-            alpha = recon3d.estimate_alpha(P)
-            V, F = recon3d.alpha_shape_mesh(P, alpha)
-            method = f"alpha_shape_mesh(alpha={alpha:.3g})"
-        except Exception as e_a:                              # noqa: BLE001
-            raise RuntimeError(
-                f"Itokawa mesh reconstruction failed: poisson={e_p!r} alpha={e_a!r}")
+    V, F = _pointcloud_to_occupancy_mesh(P, res=72, dilate=2, sigma=1.5)
+    F = _orient_outward(V, F)
     V = _center(V)
     Vd, Fd = _decimate(V, F, target_faces)
+    method = "occupancy voxelize + fill_holes -> render3d.marching_cubes"
     return Vd, Fd, method
 
 
