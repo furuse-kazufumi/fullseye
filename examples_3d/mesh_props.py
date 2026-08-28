@@ -174,8 +174,7 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
     Vs, Fs = sphere
     Vt, Ft = torus
     fig = plt.figure(figsize=(16.5, 5.4))
-    fig.suptitle("mesh_props: メッシュの法線・表面積・平均曲率(GT=球, 可視化=トーラス)",
-                 fontsize=13, fontweight="bold")
+    fig.suptitle(t_title, fontsize=13, fontweight="bold")
 
     # --- 左: 球 + 一貫した外向き頂点法線 ---
     ax1 = fig.add_subplot(1, 3, 1, projection="3d")
@@ -188,7 +187,7 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
     L = 0.42 * float(np.linalg.norm(Vs, axis=1).mean())
     ax1.quiver(P[:, 0], P[:, 1], P[:, 2], Nn[:, 0], Nn[:, 1], Nn[:, 2],
                length=L, color="crimson", linewidth=0.8, normalize=True)
-    ax1.set_title("球: 面の巻き順から\n一貫して外向きの頂点法線", fontsize=10)
+    ax1.set_title(t_sphere, fontsize=10)
     _equal_3d(ax1, Vs)
     ax1.set_axis_off()
 
@@ -199,26 +198,26 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
                               cmap="viridis", linewidth=0.0, antialiased=True)
     collec.set_array(face_scalar)
     cbar = fig.colorbar(collec, ax=ax2, shrink=0.62, pad=0.02)
-    cbar.set_label("平均曲率 |H|", fontsize=9)
-    ax2.set_title("トーラス: 頂点曲率\n(外周の尾根=高, 内側の喉=低)", fontsize=10)
+    cbar.set_label(t_cbar, fontsize=9)
+    ax2.set_title(t_torus, fontsize=10)
     _equal_3d(ax2, Vt)
     ax2.set_axis_off()
 
     # --- 右: 実手法 vs null の GT 誤差(対数軸、小さいほど良い) ---
     ax3 = fig.add_subplot(1, 3, 3)
-    labels, real_err, null_err = bars
-    xpos = np.arange(len(labels))
+    _, real_err, null_err = bars
+    xpos = np.arange(len(t_labels))
     w = 0.38
     floor = 1e-5                                      # log 表示用の下駄(0 を潰さない)
     r_disp = np.maximum(real_err, floor)
     n_disp = np.maximum(null_err, floor)
-    b1 = ax3.bar(xpos - w / 2, r_disp, w, label="実手法", color="#2c7fb8")
-    b2 = ax3.bar(xpos + w / 2, n_disp, w, label="null(素朴基準)", color="#d95f0e")
+    b1 = ax3.bar(xpos - w / 2, r_disp, w, label=t_real, color="#2c7fb8")
+    b2 = ax3.bar(xpos + w / 2, n_disp, w, label=t_null, color="#d95f0e")
     ax3.set_yscale("log")
-    ax3.set_ylabel("GT からの相対誤差(小さいほど良い)", fontsize=9)
+    ax3.set_ylabel(t_ylabel, fontsize=9)
     ax3.set_xticks(xpos)
-    ax3.set_xticklabels(labels, fontsize=9)
-    ax3.set_title("beat-the-null: 実手法は素朴基準を桁で凌駕", fontsize=10)
+    ax3.set_xticklabels(t_labels, fontsize=9)
+    ax3.set_title(t_bar_title, fontsize=10)
     ax3.legend(fontsize=9, loc="upper left")
     for bars_, vals in ((b1, real_err), (b2, null_err)):
         for rect, val in zip(bars_, vals):
