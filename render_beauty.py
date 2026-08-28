@@ -152,8 +152,8 @@ def _ground_quad(Vmesh: np.ndarray, light_world: np.ndarray, drop: float,
             b = i * n + (j + 1)
             c = (i + 1) * n + (j + 1)
             d = (i + 1) * n + j
-            faces.append([a, b, c])                     # CCW(上から見て) → +Z 外向き
-            faces.append([a, c, d])
+            faces.append([a, c, b])                     # +Z 外向き法線(上向き)
+            faces.append([a, d, c])
     Fg = np.asarray(faces, np.int64)
     eps_ground = 1e-4 * scene
     return Vg, Fg, ground_z, eps_ground
