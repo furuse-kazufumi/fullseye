@@ -324,6 +324,13 @@ def fit_ellipsoid(points) -> dict:
     scale = float(np.sqrt(np.mean(np.sum(d ** 2, axis=1))))   # RMS 半径
     if scale < 1e-12:
         raise ValueError("fit_ellipsoid: 点が 1 点に縮退している(スケール 0)")
+    # 平面状の退化ガード(honest): 点が(ほぼ)同一平面/直線上だと面外の広がりが決まらず
+    # 3D 楕円体は一意に定まらない。中心化共分散の最小/最大固有値比で検出して fail-closed。
+    # (真に薄い楕円体を「表面」からサンプルすれば上下面で面外にも広がるので比は 0 にならない。)
+    cov_evals = np.linalg.eigvalsh(d.T @ d)
+    if cov_evals[0] <= 1e-9 * cov_evals[-1]:
+        raise ValueError(
+            "fit_ellipsoid: 点が(ほぼ)同一平面/直線上=面外の広がりが不定(退化)")
     Pn = d / scale
     x, y, z = Pn[:, 0], Pn[:, 1], Pn[:, 2]
     # 設計行列 D(列 = χ = [x²,y²,z²,2yz,2xz,2xy,2x,2y,2z,1])
