@@ -662,9 +662,9 @@ def _min_area_rect_ratio(p):
         th = np.radians(deg)
         R = np.array([[np.cos(th), -np.sin(th)], [np.sin(th), np.cos(th)]])
         q = p @ R.T
-        area = float((q[:, 0].ptp() + 1e-9) * (q[:, 1].ptp() + 1e-9))
+        area = float((np.ptp(q[:, 0]) + 1e-9) * (np.ptp(q[:, 1]) + 1e-9))
         if best is None or area < best[0]:
-            best = (area, q[:, 0].ptp(), q[:, 1].ptp())
+            best = (area, np.ptp(q[:, 0]), np.ptp(q[:, 1]))
     return best
 
 

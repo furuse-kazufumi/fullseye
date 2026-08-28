@@ -192,7 +192,7 @@ def fit_rectangle2(points) -> dict:
         u = edge / norm                                # a candidate rectangle axis
         v = np.array([-u[1], u[0]])
         pu, pv = h @ u, h @ v
-        w, ht = float(pu.ptp()), float(pv.ptp())
+        w, ht = float(np.ptp(pu)), float(np.ptp(pv))
         area = w * ht
         if best is None or area < best[0]:
             centre = ((pu.max() + pu.min()) / 2.0) * u + ((pv.max() + pv.min()) / 2.0) * v

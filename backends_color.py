@@ -107,7 +107,7 @@ def _principal_comp(v, a, b):                     # color -> color : PCA over th
     w, vec = np.linalg.eigh(cov)
     order = np.argsort(w)[::-1]
     proj = Xm @ vec[:, order]
-    proj = (proj - proj.min(0)) / (proj.ptp(0) + 1e-8)
+    proj = (proj - proj.min(0)) / (np.ptp(proj, axis=0) + 1e-8)
     return proj.reshape(H, W, 3)
 
 

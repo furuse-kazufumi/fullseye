@@ -34,7 +34,7 @@ def emit(problem: str, wd: Path) -> dict:
         if s.op == "identity":
             py.append("    # identity")
         else:
-            call = f"ops.RT[{s.op!r}](x, {s.a:.6f}, {s.b:.6f})"
+            call = f"ops.RT[{s.op!r}](x, {float(s.a)!r}, {float(s.b)!r})"
             # Mirror the runtime (ops._apply) EXACTLY: clip only when the result
             # is a pixel array (2-D image/region, 3-D color/volume). A feature
             # (scalar) or contour (dict) final must pass through raw — clipping a

@@ -350,7 +350,7 @@ def render_object_model_3d(points, cam_par, pose=None, shape=(256, 256), point_s
     px = project_3d_point(p, cam_par, pose)
     H, W = shape; img = np.zeros((H, W)); zbuf = np.full((H, W), np.inf)
     z = cam[:, 2]
-    zn = (z - z.min()) / (z.ptp() + 1e-9)
+    zn = (z - z.min()) / (np.ptp(z) + 1e-9)
     for (row, col), depth, shade in zip(px, z, 1 - zn):
         r = int(round(row)); cc = int(round(col))
         for dr in range(-point_size, point_size + 1):
