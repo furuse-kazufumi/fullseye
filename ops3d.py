@@ -373,6 +373,7 @@ _CATALOG = {
         ("region_growing", "segment3d", ["points"], "labels", False),
         ("euclidean_cluster", "segment3d", ["points"], "labels", False),
         ("plane_segmentation", "segment3d", ["points"], "labels", False),
+        ("vol_watershed", "volops", ["voxel"], "labels", False),
     ],
     "pose_graph": [  # 姿勢グラフ最適化(SLAM back-end: 相対姿勢+ループ閉じ→大域姿勢)
         ("optimize_pose_graph", "pose_graph", ["pose"], "pose", False),
