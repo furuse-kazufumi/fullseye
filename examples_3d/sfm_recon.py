@@ -271,7 +271,8 @@ shell = ball[bidx]
 # 復元した半径 R の球を解析 SDF で表し、オフセットで殻に厚みを付ける。
 lo = C_SPHERE - (R_SPHERE + 1.0)
 hi = C_SPHERE + (R_SPHERE + 1.0)
-grid = sdf_ops.grid_coords(lo, hi, 32)                      # (32,32,32,3)
+bounds = np.stack([lo, hi], axis=1)                        # ((xmin,xmax),(ymin,ymax),(zmin,zmax))
+grid, _extent = sdf_ops.grid_coords(bounds, 32)           # coords (32,32,32,3)
 sdf_R = sdf_ops.sphere_sdf(grid, C_SPHERE, R_SPHERE)        # 半径 R の球 SDF
 
 delta = 0.4                                                 # 付ける厚み(r>0=膨張)
