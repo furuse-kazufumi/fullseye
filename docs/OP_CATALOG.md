@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(44 例)
+### 3-D 点群/体積/曲面(52 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -65,6 +65,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **SDFのCSG合成(和/差)でソリッドを作りメッシュ化** — 符号付き距離場の集合演算(球∪箱−小球)で陰関数ソリッドを作り、等値面をメッシュへ。 `py -3.11 examples_3d/sdf_csg.py`
 - **CTボリュームから骨をセグメンテーションし、接触骨を分離して計数・体積計測** — 骨を閾値化し、関節で繋がる指骨を収縮で分離してから連結成分で数え、体積を測る(閾値内外の密度コントラストで検証)。 `py -3.11 examples_3d/ct_bone_segmentation.py`
 - **CTボリュームから骨表面メッシュを抽出(marching cubes)** — CTボリュームに marching cubes をかけ、骨表面を三角メッシュ化する(3Dプリント/FEA向け)。 `py -3.11 examples_3d/ct_surface_extraction.py`
+- **3Dモルフォロジ(opening/closing/gradient/top-hat)で体積を整える** — closingで空洞8→0(本体は不変)、openingでトゲ3→0、gradientは境界殻のみ、top-hatはトゲだけ抽出。素のdilate/erodeが本体まで膨張/収縮する差で判別。 `py -3.11 examples_3d/morphology_3d.py`
 
 **features**
 - **主曲率・形状指数による把持アフォーダンス** — 点群の主曲率と形状指数から、球・円柱・鞍点を識別する(把持面の当たり判定)。 `py -3.11 examples_3d/curvature_grasp.py`
@@ -73,6 +74,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **小惑星表面の曲率解析(尾根・クレーターの検出)** — 表面の主曲率・曲率度・形状指数を求め、平坦部と尾根/窪みを仕分ける(値が実在表面の幾何であることを近傍相関で確認)。 `py -3.11 examples_3d/itokawa_curvature.py`
 - **chamfer距離による形状照合** — chamfer 距離で「同一の天体か別物か」を数値判定する(自身の回転コピーは近く・同大の球は遠い)。 `py -3.11 examples_3d/itokawa_shape_match.py`
 - **対称性検出(正直な結果:小惑星は非対称)** — 反射対称スコアを小惑星と対称な楕円体で比較。ラブルパイル小惑星は非対称=検出器が正しく低スコアを返す。 `py -3.11 examples_3d/itokawa_symmetry_honest.py`
+- **点群に大域整合した外向き法線を付与(PCA推定→MST向き伝播)** — 符号未定のPCA法線を Hoppe MST で外向きに揃える。球面サンプルで生法線の外向き一致0.50(コイン投げ)を向き付け1.00へ改善、接平面精度1.00。退化入力は捏造せず拒否。 `py -3.11 examples_3d/oriented_normals.py`
+- **球面調和記述子による回転不変な3D形状検索** — 向き未知の形状(球/箱/円柱の回転コピー)を SH 帯域エネルギー記述子で照合。検索3/3正解・分離マージン>0で、回転で全マスが入れ替わる素ボクセル占有の1/3を上回る。 `py -3.11 examples_3d/shape_descriptor.py`
+- **3Dボリュームのエッジ検出(canny3d: NMS+ヒステリシス)** — なだらかな内部を持つ中実ボールの外周だけを1ボクセルに細線化。オンシェル率1.000・内部誤検出0で、生勾配の固定しきい値null(0.464・誤検出4012)を+0.536上回る。 `py -3.11 examples_3d/edges_3d.py`
 
 **motion**
 - **動的シーンの剛体運動セグメンテーション** — 2時刻の点群から、別々に動く剛体ごとに分割する。無相関ノイズでは剛体を捏造しない。 `py -3.11 examples_3d/motion_seg.py`
@@ -83,12 +87,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **segmentation**
 - **ビンピッキング: 台平面除去→物体クラスタリング** — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。 `py -3.11 examples_3d/object_segmentation.py`
+- **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。 `py -3.11 examples_3d/region_props_3d.py`
 
 **mapping**
 - **占有格子+ESDFで連続クリアランスを問い合わせ** — 部屋点群から occupancy_grid→esdf を作り、自由空間点で最近接障害物までの連続距離を query_distance。占有0/1のみの零点を約39倍上回る(衝突回避マージン判定)。 `py -3.11 examples_3d/occupancy_esdf.py`
 
 **shape_fitting**
 - **点群から角丸ブロックをスーパー楕円体で当てはめ** — 既知スーパー楕円体からの雑音点群を fit_superquadric で復元(半径5%以内・内外分類>95%)。球1個を当てた残差を大きく下回る(把持点判定向け)。 `py -3.11 examples_3d/superquadric_fit.py`
+- **3D Houghで平面・球のプリミティブを検出** — 投票ベースの hough_plane_3d/hough_sphere_3d で平面(法線誤差0.55度)・球(中心誤差0voxel)を復元。素朴PCA(80度)や重心(22voxel)の零点を明確に上回る。 `py -3.11 examples_3d/detect_primitives_3d.py`
 
 **shape_descriptors**
 - **3Dモーメント不変量(剛体+一様スケールに不変)** — 点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。 `py -3.11 examples_3d/moment_invariants.py`
@@ -96,6 +102,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **shape_analysis**
 - **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。 `py -3.11 examples_3d/medial_topology.py`
 - **曲面上の測地距離と最遠点サンプリング** — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。 `py -3.11 examples_3d/geodesic_distance.py`
+- **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
 
 **range_sensing**
 - **360度点群⇄距離画像の往復(球面投影)** — project_spherical→unproject_spherical の往復で形状を保存(誤差<voxel)。奥行きを潰す平面正射影より55倍良い。 `py -3.11 examples_3d/lidar_projection.py`
@@ -109,6 +116,9 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **deformable_registration**
 - **TPSベースの非剛体位置合わせ** — 既知TPS曲げ変形をかけた標的へ register_nonrigid で位置合わせし残差をノイズ床へ。剛体ICPは曲げを吸収できず残差が大きい(制御点で tps_warp が厳密に写ることも確認)。 `py -3.11 examples_3d/nonrigid_deform.py`
+
+**augmentation**
+- **点群データ拡張(回転/スケール/ドロップアウト/ジッタ)** — 学習用の点群拡張4種を指定パラメータどおり適用(回転=距離不変・向き変化、scale倍率、dropout点数、jitter std)。恒等nullを判別的に上回り、連鎖でも複合性質を保つ。 `py -3.11 examples_3d/augment_pointcloud.py`
 
 ## スタンドアロン幾何/数学モジュール(関数 API)
 
