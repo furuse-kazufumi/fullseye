@@ -4040,6 +4040,38 @@ def build_window(model=None):
             except Exception:
                 pass
             flash("loaded sample pipeline from help")
+        elif s.startswith("guide2d:"):          # family usage guide (generated from docs/ops/2d/guides)
+            fam = s.split(":", 1)[1]
+            p = os.path.join(_ASSETS, "op_help", "guide_%s.html" % fam)
+            if os.path.exists(p):
+                try:
+                    with open(p, encoding="utf-8") as f:
+                        help_browser.setHtml(f.read())
+                    flash("opened family guide: " + fam)
+                except Exception:
+                    pass
+            else:
+                flash("guide not built: run `py -3.11 tools/opdocs.py html`")
+        elif s.startswith("example2d:") or s.startswith("example3d:"):   # worked-example source
+            scheme, ex = s.split(":", 1)
+            sub = "examples_3d" if scheme == "example3d" else "examples"
+            p = os.path.join(os.path.dirname(_ASSETS), sub, ex + ".py")
+            if os.path.exists(p):
+                try:
+                    with open(p, encoding="utf-8") as f:
+                        src = f.read()
+                    esc = src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                    help_browser.setHtml(
+                        "<h2 style='color:#f5a524'>%s</h2>"
+                        "<p style='color:#8b91a0'>実行できる検証済みサンプル · "
+                        "<code>py -3.11 %s/%s.py</code></p>"
+                        "<pre style='background:#12141b;border:1px solid #2c313f;padding:6px;"
+                        "color:#22d3bf'>%s</pre>" % (ex, sub, ex, esc))
+                    flash("opened example source: " + ex)
+                except Exception:
+                    pass
+            else:
+                flash("example source not found: %s/%s.py" % (sub, ex))
 
     help_browser.anchorClicked.connect(_help_anchor)
     help_pick.currentTextChanged.connect(lambda t: show_op_help(t) if t in set(op_names) else None)

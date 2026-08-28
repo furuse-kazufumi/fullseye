@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hx_lowlands — 2D <code style="color:#22d3bf">halcon_ext</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_lowlands&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">lowlands</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>gray 値の窪地(局所最小の平坦域)を検出: 近傍最小と一致する画素 region。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="op:SAMPLES">サンプルデータ カタログ(DL URL / ライセンス)</a> — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="op:REFERENCES">演算子の来歴・参考文献</a> — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">region</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">halcon_ext</code>)</h3>
+<p><a style="color:#22d3bf" href="op:hx_gen_circle">hx_gen_circle</a> · <a style="color:#22d3bf" href="op:hx_gen_ellipse">hx_gen_ellipse</a> · <a style="color:#22d3bf" href="op:hx_gen_rectangle2">hx_gen_rectangle2</a> · <a style="color:#22d3bf" href="op:hx_gen_checker_region">hx_gen_checker_region</a> · <a style="color:#22d3bf" href="op:hx_gen_grid_region">hx_gen_grid_region</a> · <a style="color:#22d3bf" href="op:hx_gabor">hx_gabor</a> · <a style="color:#22d3bf" href="op:hx_fit_surface1">hx_fit_surface1</a> · <a style="color:#22d3bf" href="op:hx_fit_surface2">hx_fit_surface2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
