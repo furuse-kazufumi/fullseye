@@ -1,25 +1,40 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""hull3d — 凸包(convex hull)とバウンディングボリューム(bounding volumes)。
+"""hull3d — 最小包含球(minimum enclosing sphere)。
 
-点群 (N,3) を「囲む」最小限のプリミティブを起こす基本メトロロジー群。検査・衝突判定・
-把持計画・粗い占有見積りで最初に欲しくなる「その物体はどこに・どれだけの向きと大きさで
-存在するか」を、テンプレート不要・データ駆動で返す。
+点群 (N,3) を「囲む」プリミティブのうち、**fullseye にまだ存在しなかった 1 つ**だけを足す
+モジュール。検査・衝突判定・把持計画・粗い占有見積りで最初に欲しくなる「その物体はどこに・
+どれだけの大きさで存在するか」のうち、他の外接プリミティブは既に公開 API で揃っているため、
+ここではそれらを**再実装せず**、欠けていた最小包含球のみを提供する。
 
-- ``convex_hull_3d`` — Qhull(scipy.spatial.ConvexHull)で凸包メッシュ (verts, faces) を張る。
-  凸包は「その点群を含む最小の凸多面体」で、体積/表面積/凸性の基準になる。
-- ``oriented_bounding_box`` — 共分散 PCA で主軸を取り、点を主軸系へ回して各軸の幅を測る
-  向き付きバウンディングボックス(OBB)。回転した物体でも密着する(軸整列の AABB より小さい)。
-- ``aabb`` — 軸整列バウンディングボックス(axis-aligned bounding box)。座標軸に沿った最小箱。
-  計算は最速だが、物体が座標軸に対し傾いていると過大になる。
-- ``min_enclosing_sphere`` — 全点を含む(近似)最小包含球(Ritter 法)。重心中心の素朴球より
-  中心を寄せて半径を詰める。全点内包を保証(構成上、各点を含むよう膨らませる)。
+正直な新規性の開示(既存公開 API との関係)
+--------------------------------------------------
+点群の外接プリミティブは、その多くが既に fullseye の公開 API として存在する。本モジュールは
+それらを置き換えず、**唯一 repo に無かった最小包含球だけ**を追加する:
 
-すべて numpy in / numpy(+dict) out。凸包のみ scipy.spatial.ConvexHull(Qhull)に依存し、
-他は numpy だけで動く。入力検証は fail-closed(形状不正・非有限・点数不足・縮退は例外)。
+- **凸包**       — 既存: ``fs.convex_hull``(実体 ``meshrepair.convex_hull``)。同じ
+  ``scipy.spatial.ConvexHull``(Qhull)ラッパで、さらに各三角面を重心から外向きに巻き直す
+  **上位互換**(inertia_tensor / MuJoCo convex collider にそのまま渡せる)。→ そちらを使う。
+- **AABB**       — 既存: ``fs.aabb``(実体 ``pcseg.aabb``)。軸整列の min/max。→ そちらを使う。
+- **OBB**        — 既存: ``fs.obb``(実体 ``pcseg.obb``)。共分散 PCA による向き付き箱
+  (``axes`` は列ベクトル・``extents`` は半幅の規約)。→ そちらを使う。
+- **球フィット** — 既存だが**別問題**: ``match3d.fit_sphere_3d``(点が球**面上**にある前提の
+  最小二乗代数フィット)/ ``ransac_sphere`` / ``match3d.hough_sphere_3d``(球の検出)。
+  いずれも「全点を内包する最小の球」ではない。
+
+したがって本モジュールが実際に足す新規 op は ``min_enclosing_sphere`` の 1 本のみ。
+「全点を含む最小の球」は最小二乗フィットや検出とは異なる最適化問題(最小包含球, MEB)で、
+把持前のクリアランス確保・衝突球・視錐台カリング等で「取りこぼしゼロで最小の余白」を欲しい
+場面に対応する。凸包 / AABB / OBB が要るときは上記の既存公開 API を呼ぶこと。
+
+- ``min_enclosing_sphere`` — 全点を含む(近似)最小包含球(Ritter 初期化 + Bădoiu–Clarkson
+  精緻化)。重心中心の素朴球より中心を寄せて半径を詰める。全点内包を保証(構成上、各点を
+  含むよう最後に半径を確定する安全側)。
+
+numpy in / numpy(+dict) out、numpy だけで動く(scipy 不要)。入力検証は fail-closed
+(形状不正・非有限・点数不足は例外)。
 
 Reference (public): J. Ritter, "An efficient bounding sphere", Graphics Gems (1990);
-C. B. Barber, D. P. Dobkin, H. Huhdanpaa, "The Quickhull Algorithm for Convex Hulls",
-ACM TOMS 22(4) 1996 (Qhull)。
+M. Bădoiu, K. L. Clarkson, "Smaller core-sets for balls", SODA (2003)。
 """
 from __future__ import annotations
 
@@ -28,9 +43,6 @@ from typing import Dict
 import numpy as np
 
 __all__ = [
-    "convex_hull_3d",
-    "oriented_bounding_box",
-    "aabb",
     "min_enclosing_sphere",
 ]
 
@@ -48,161 +60,18 @@ def _as_points(points, min_n: int = 1) -> np.ndarray:
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# 1. convex_hull_3d: 点群 → 凸包メッシュ(verts, faces)
-# ═══════════════════════════════════════════════════════════════════════════
-def convex_hull_3d(points):
-    """点群 (N,3) → 凸包の三角形メッシュ (vertices(V,3), faces(F,3))。
-
-    scipy.spatial.ConvexHull(Qhull)で凸包を計算し、hull を構成する頂点だけに詰め直した
-    三角形メッシュとして返す。頂点は入力点の部分集合(凸包上の点)、面は三角形へ分割済み
-    (Qhull の Qt トライアンギュレーション)で、``faces`` は ``vertices`` を参照する 0 始まり
-    インデックス。表現は recon3d / match3d のメッシュ規約(verts float, faces int)を踏襲する。
-
-    Parameters
-    ----------
-    points : array_like (N,3)
-        入力点群(>= 4 点かつ非共面)。
-
-    Returns
-    -------
-    vertices : numpy.ndarray (V,3) float64
-        凸包を構成する頂点(入力点の部分集合、詰め直し済み)。
-    faces : numpy.ndarray (F,3) int64
-        vertices を参照する三角形インデックス。
-
-    Raises
-    ------
-    ValueError
-        点数不足(<4)、非有限、または共面/共線などで 3D 凸包が退化して張れないとき
-        (fail-closed。Qhull の失敗を握りつぶさず明示エラーにする)。
-    """
-    P = _as_points(points, min_n=4)
-    try:
-        from scipy.spatial import ConvexHull
-        from scipy.spatial.qhull import QhullError  # type: ignore
-    except ImportError:  # pragma: no cover - scipy レイアウト差異のフォールバック
-        from scipy.spatial import ConvexHull
-        try:
-            from scipy.spatial import QhullError  # type: ignore
-        except ImportError:  # 最終手段: 汎用例外で捕捉
-            QhullError = Exception  # type: ignore
-
-    try:
-        hull = ConvexHull(P)
-    except QhullError as e:  # 共面/共線/重複などで 3D 包が張れない
-        raise ValueError(
-            f"凸包を張れませんでした(共面/共線/退化した点群?): {e}"
-        )
-
-    used = np.unique(hull.simplices)          # 凸包に実際に使われた頂点 index
-    remap = -np.ones(len(P), dtype=np.int64)
-    remap[used] = np.arange(len(used))
-    vertices = P[used]
-    faces = remap[hull.simplices].astype(np.int64)
-    return vertices.astype(np.float64), faces
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 2. oriented_bounding_box: 共分散 PCA による向き付きバウンディングボックス
-# ═══════════════════════════════════════════════════════════════════════════
-def oriented_bounding_box(points) -> Dict[str, np.ndarray]:
-    """点群 (N,3) → 向き付きバウンディングボックス(OBB)。
-
-    重心を引いた点群の共分散行列を固有分解して主軸(principal axes)を得(``eigh``、
-    分散の大きい順)、点を主軸系へ回して各軸方向の最小/最大から幅(extent)と中心を測る。
-    軸整列の AABB と違い物体の向きに追従するため、傾いた/回転した物体に密着する。
-
-    Parameters
-    ----------
-    points : array_like (N,3)
-        入力点群(>= 2 点)。
-
-    Returns
-    -------
-    dict
-        - ``center`` : (3,) float64 — OBB 中心(世界座標)。
-        - ``axes``   : (3,3) float64 — 各行が主軸の単位ベクトル(分散降順、右手系に整える)。
-        - ``extents``: (3,) float64 — 各主軸方向の**全幅**(= max − min、辺の長さ)。
-        - ``corners``: (8,3) float64 — 8 頂点(世界座標)。
-
-    Raises
-    ------
-    ValueError
-        点数不足(<2)、非有限、または全点が一致してスプレッドが無い(向きが定義不能)とき。
-    """
-    P = _as_points(points, min_n=2)
-    c0 = P.mean(axis=0)
-    X = P - c0
-    if not np.any(np.abs(X) > 1e-12):
-        raise ValueError("全点が一致しています(OBB の向きが定義できません)")
-
-    cov = (X.T @ X) / len(P)                   # 共分散(スケール因子は固有ベクトルに不変)
-    _, V = np.linalg.eigh(cov)                 # 昇順固有値、列が固有ベクトル
-    axes = V.T[::-1].copy()                    # 各行=主軸、分散降順に並べ替え
-    # 右手系(det=+1)に整える(反転しても extents/corners は不変だが向きを決定的に)
-    if np.linalg.det(axes) < 0:
-        axes[2] = -axes[2]
-
-    proj = X @ axes.T                          # 主軸系へ射影 (N,3)、列 k = axes[k] 方向
-    mn = proj.min(axis=0)
-    mx = proj.max(axis=0)
-    extents = mx - mn
-    mid = (mx + mn) / 2.0
-    center = c0 + mid @ axes                   # 世界座標の箱中心
-
-    signs = np.array([[sx, sy, sz]
-                      for sx in (-1.0, 1.0)
-                      for sy in (-1.0, 1.0)
-                      for sz in (-1.0, 1.0)])   # (8,3) の ±1 組合せ
-    corners = center + (signs * (extents / 2.0)) @ axes
-
-    return {
-        "center": center.astype(np.float64),
-        "axes": axes.astype(np.float64),
-        "extents": extents.astype(np.float64),
-        "corners": corners.astype(np.float64),
-    }
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 3. aabb: 軸整列バウンディングボックス
-# ═══════════════════════════════════════════════════════════════════════════
-def aabb(points) -> Dict[str, np.ndarray]:
-    """点群 (N,3) → 軸整列バウンディングボックス(AABB)。
-
-    各座標軸に沿った最小・最大を取るだけの最速の外接箱。物体が座標軸に対して傾いていると
-    過大になる(OBB との差 = 向き適合の効き)。
-
-    Parameters
-    ----------
-    points : array_like (N,3)
-        入力点群(>= 1 点)。
-
-    Returns
-    -------
-    dict
-        - ``min``: (3,) float64 — 各軸の最小座標。
-        - ``max``: (3,) float64 — 各軸の最大座標。
-
-    Raises
-    ------
-    ValueError
-        形状不正・非有限・点数 0 のとき(fail-closed)。
-    """
-    P = _as_points(points, min_n=1)
-    return {
-        "min": P.min(axis=0).astype(np.float64),
-        "max": P.max(axis=0).astype(np.float64),
-    }
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# 4. min_enclosing_sphere: 全点を含む(近似)最小包含球(Ritter 法)
+# min_enclosing_sphere: 全点を含む(近似)最小包含球(Ritter + Bădoiu–Clarkson)
+#
+# 新規性: 「全点を内包する最小の球」= 最小包含球(MEB)。既存の fit_sphere_3d(点が球面上に
+# ある前提の最小二乗フィット)/ ransac_sphere / hough_sphere_3d(球の検出)とは別の最適化問題で、
+# repo に不在だった。凸包/AABB/OBB は既存の fs.convex_hull / fs.aabb / fs.obb を使うこと。
 # ═══════════════════════════════════════════════════════════════════════════
 def min_enclosing_sphere(points, refine_iters: int = 1000) -> Dict[str, object]:
     """点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。
 
-    2 段構成で「全点内包」を厳守しつつ半径を詰める:
+    ``fit_sphere_3d``(球面フィット)や ``ransac_sphere`` / ``hough_sphere_3d``(球検出)とは
+    異なり、**全点を内包する最小の球**(minimum enclosing ball, MEB)を解く。2 段構成で
+    「全点内包」を厳守しつつ半径を詰める:
 
     1. **Ritter (1990) 初期化** — 最遠の点対を粗く取り初期球にし、各点を走査して球外の点が
        あれば「その点と既存球の両方を含む」最小の球へ 1 回膨らませる(膨張式
@@ -214,7 +83,7 @@ def min_enclosing_sphere(points, refine_iters: int = 1000) -> Dict[str, object]:
        **必ず全点を内包**(近似ゆえ半径が過小になり点が漏れることはない、安全側)。
 
     精緻化した中心が Ritter より外接半径を縮められたときのみ採用する(常に Ritter 以下)。
-    真の最小球(NP ではないが厳密解は Welzl)ではなく高速な (1+ε) 近似。
+    真の最小球(厳密解は Welzl の乱択線形時間法)ではなく高速な (1+ε) 近似。
 
     Parameters
     ----------
