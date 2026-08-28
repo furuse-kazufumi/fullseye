@@ -243,7 +243,7 @@ def main() -> int:
 
     # 外部シード経路(watershed_vol に markers を直接渡す)も一貫することを確認。
     lab_ext = watershed_vol(vol, markers=markers, method="auto")
-    _, ext_count, ext_cen, _ = evaluate(lab_ext, centers, fg, single_vox)
+    ext_count, ext_cen, _ = evaluate(lab_ext, centers, fg, single_vox)
     print(f"[watershed:auto+markers] count = {ext_count}, max centroid err = {ext_cen:.4f} voxel")
 
     # --- GT アサーション(両バックエンド)---
