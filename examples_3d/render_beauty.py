@@ -322,7 +322,7 @@ def main() -> int:
     rein_mono = bool(np.all(np.diff(rein) > 0))          # 全域で狭義単調(順位保持)
     clip_ties = int(np.sum(np.diff(clip) <= 1e-12))      # クリップは >1 で同点多発
     rein_max = float(rein.max())
-    tm_out_max = float(img_gs.max())                     # render_beauty(reinhard) 出力
+    tm_out_max = float(img1.max())                       # render_beauty(reinhard) 出力
     print(f"[e] reinhard strictly-monotonic={rein_mono} max={rein_max:.3f} ; "
           f"naive-clip ties={clip_ties} ; render_beauty(reinhard) max={tm_out_max:.3f}")
 
