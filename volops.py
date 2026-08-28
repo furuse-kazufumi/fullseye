@@ -597,3 +597,70 @@ def vol_watershed(vol, markers, mask=None):
     msk = None if mask is None else (_require_volume(mask, "mask", check_finite=False) > 0.5)
     labels = watershed(v, markers=mk.astype(np.int32), mask=msk)
     return labels.astype(np.int32, copy=False)
+
+
+def volume_downsample(vol, factor, mode="mean"):
+    """Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き).
+
+    Large CT / laminography / simulation volumes must be thinned before the
+    heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see
+    ``MAX_EIGEN_VOXELS``). This is the volume analogue of the point-cloud
+    ``voxel_grid_downsample`` and the mesh ``decimate_qem`` — the third leg of
+    Fullseye's *間引き* (decimation) family, one per 3-D data sort.
+
+    Parameters
+    ----------
+    vol : array_like, shape (D, H, W)
+        Input volume (coerced to float64; NaN/Inf rejected).
+    factor : int or (fz, fy, fx)
+        Block size per axis, each ``>= 1``. The output shape is
+        ``(D//fz, H//fy, W//fx)``; a trailing partial block that cannot fill a
+        full factor is dropped (deterministic, no edge bias).
+    mode : {'mean', 'max', 'stride'}
+        * ``'mean'`` — average-pool. Band-limits before subsampling (the
+          anti-aliasing choice); the right default for grey CT / MRI.
+        * ``'max'``  — max-pool. Preserves thin bright structures (bone, vessel,
+          defect voxels) that averaging would wash out.
+        * ``'stride'`` — plain subsample ``vol[::fz, ::fy, ::fx]`` (fastest,
+          but aliases — no pre-filter).
+
+    Returns
+    -------
+    ndarray, shape (D//fz, H//fy, W//fx), float64
+        The downsampled volume. Spacing scales by the same factor: an input
+        spacing ``(sz, sy, sx)`` mm becomes ``(sz*fz, sy*fy, sx*fx)`` mm.
+
+    Raises
+    ------
+    ValueError
+        Non-3-D input, a factor component ``< 1`` or larger than its axis, or an
+        unknown *mode* (fail-closed).
+    """
+    v = _require_volume(vol)
+    _check_voxels(v, MAX_VOXELS, "volume_downsample", "MAX_VOXELS")
+    if mode not in ("mean", "max", "stride"):
+        raise ValueError("mode must be 'mean', 'max' or 'stride', got %r" % (mode,))
+    f = np.atleast_1d(np.asarray(factor))
+    if f.size == 1:
+        f = np.repeat(f, 3)
+    if f.size != 3:
+        raise ValueError("factor must be an int or a length-3 (fz, fy, fx), got %r"
+                         % (factor,))
+    try:
+        fz, fy, fx = (int(x) for x in f)
+    except (TypeError, ValueError):
+        raise ValueError("factor components must be integers, got %r" % (factor,)) from None
+    if min(fz, fy, fx) < 1:
+        raise ValueError("factor components must be >= 1, got (%d, %d, %d)" % (fz, fy, fx))
+    D, H, W = v.shape
+    if fz > D or fy > H or fx > W:
+        raise ValueError("factor (%d, %d, %d) exceeds volume shape %r"
+                         % (fz, fy, fx, v.shape))
+    if fz == fy == fx == 1:
+        return v.copy()
+    if mode == "stride":
+        return np.ascontiguousarray(v[::fz, ::fy, ::fx])
+    d, h, w = D // fz, H // fy, W // fx
+    vt = v[:d * fz, :h * fy, :w * fx].reshape(d, fz, h, fy, w, fx)
+    out = vt.mean(axis=(1, 3, 5)) if mode == "mean" else vt.max(axis=(1, 3, 5))
+    return np.ascontiguousarray(out)
