@@ -1,30 +1,39 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""事例: 点群を「囲む」プリミティブ — 凸包 / OBB / AABB / 最小包含球 (hull & bounds).
+"""事例: 点群を「囲む」プリミティブ — 新規 op = 最小包含球 (hull & bounds).
 
-実世界の問題:
-    ロボットの把持計画や衝突判定・検査では、まず「その物体はどこに・どんな向きで・
-    どれだけの大きさで存在するか」を粗く一発で掴みたい。テンプレートも学習も要らず、
-    生の点群 (N,3) だけから「囲む形」を返す 4 つの基本メトロロジーを検証する:
+正直な新規性の開示(重要):
+    点群の外接プリミティブの大半は、既に fullseye の公開 API として存在する。この事例が
+    実際に検証する**新規 op は最小包含球 ``min_enclosing_sphere`` の 1 本だけ**であり、
+    残りの外接プリミティブは既存の公開関数をそのまま呼んで「家族の文脈」として並べて示す
+    (新規ではないことを明示する):
 
-      - convex_hull_3d(points)        -> (verts, faces)         凸包メッシュ
-      - oriented_bounding_box(points) -> {center,axes,extents,corners}  向き付き箱(OBB)
-      - aabb(points)                  -> {min,max}              軸整列箱(AABB)
-      - min_enclosing_sphere(points)  -> {center,radius}        最小包含球
+      - convex_hull(points)  = fs.convex_hull(実体 meshrepair.convex_hull)  ★既存公開op
+      - aabb(points)         = fs.aabb(実体 pcseg.aabb)                       ★既存公開op
+      - obb(points)          = fs.obb(実体 pcseg.obb)                         ★既存公開op
+      - min_enclosing_sphere(points) -> {center,radius}   ← ★この事例で足す唯一の新規 op
+
+    「全点を内包する最小の球」(minimum enclosing ball, MEB)は、既存の
+    ``match3d.fit_sphere_3d``(点が球**面上**にある前提の最小二乗フィット)や
+    ``ransac_sphere`` / ``match3d.hough_sphere_3d``(球の検出)とは**別の最適化問題**で、
+    repo に不在だった。把持前クリアランス・衝突球・視錐台カリング等、「取りこぼしゼロで
+    最小の余白」を欲しい場面に対応する。
 
 なぜ検証できるか(GT):
-    - 単位立方体の 8 頂点の凸包は「一辺 1 の立方体」そのもの。体積=1.0・頂点=8・三角面=12 が
-      幾何だけで厳密に決まる(メッシュから独立に体積を再計算して確かめる)。
-    - 既知寸法 (a,b,c) の箱を既知回転 R で回した点群なら、OBB が復元する extents(ソート後)は
-      (a,b,c) のソートに一致し、中心も箱中心に一致するはずだ。
-    - 既知の球面上の点なら、最小包含球の半径は球半径 r0(= 直径/2)に一致し、全点を内包する。
+    - [新規 op] 既知の球面上の点なら、最小包含球の半径は球半径 r0(= 直径/2)に一致し、
+      全点を内包する。さらに「中心からの最遠点対」で測った直径の半分は理論下界
+      (r >= 直径/2)であり、近似解がこの下界のごく近傍にあることで「ほぼ最小」を裏付ける
+      (弱い素朴基準に勝つだけの見せかけでないことを示す)。
+    - [既存 op(参考)] 単位立方体の 8 頂点の凸包は「一辺 1 の立方体」(体積=1・頂点8・面12)。
+      既知寸法 (a,b,c) を既知回転で回した点群なら OBB extents(全幅・ソート後)は (a,b,c) に、
+      中心は箱中心に一致する。
 
-beat-the-null(下駄を履かせない基準):
-    - OBB vs AABB: 座標軸に対して**傾いた**箱では、軸整列の AABB は必ず過大になる。OBB は
-      物体の向きに追従して密着するので、OBB 体積 < AABB 体積 を判別的に示す(向き適合の効き)。
-    - 最小包含球 vs 素朴球: 「重心中心 + 最遠点半径」の素朴球は、重心が密集塊に引かれる非対称な
-      点群(塊 + 遠い外れ点)では中心が偏り半径が過大になる。最小包含球は中心を寄せて半径を詰める
-      (常に素朴球以下、かつ全点内包)。さらに「重心中心 + 平均距離半径」の“詰めすぎ”素朴球は
-      外れ点を**取りこぼす**(内包に失敗)ことを示し、安全側での優位も確かめる。
+beat-the-null(新規 op に下駄を履かせない基準):
+    - 最小包含球 vs 素朴球: 「重心中心 + 最遠点半径」の素朴球は、重心が密集塊に引かれる
+      非対称な点群(塊 + 遠い外れ点)では中心が偏り半径が過大になる。最小包含球は中心を
+      寄せて半径を詰める(常に素朴球以下、かつ全点内包)。優位が本物である証拠として、
+      最小包含球の半径が **直径/2(理論下界)のごく近傍=ほぼ最小**である一方、素朴球は
+      その 1.7 倍以上に膨らむことを判別的に示す。さらに「重心中心 + 平均距離半径」の
+      “詰めすぎ”素朴球は外れ点を**取りこぼす**(内包に失敗)ことを示し、安全側の優位も確かめる。
 """
 from __future__ import annotations
 
@@ -37,12 +46,11 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from hull3d import (  # noqa: E402  (sys.path 調整後に import)
-    aabb,
-    convex_hull_3d,
-    min_enclosing_sphere,
-    oriented_bounding_box,
-)
+# --- 新規 op(この事例の検証対象)-------------------------------------------
+from hull3d import min_enclosing_sphere  # noqa: E402
+# --- 既存の公開 op(新規ではない。家族の文脈として実体モジュールから直接呼ぶ)-----
+from meshrepair import convex_hull  # noqa: E402  = fs.convex_hull(外向き面付き上位互換)
+from pcseg import aabb, obb          # noqa: E402  = fs.aabb / fs.obb
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -121,6 +129,22 @@ def mesh_volume(verts: np.ndarray, faces: np.ndarray) -> float:
     return abs(float(vol))
 
 
+def obb_corners_bitorder(center, axes_cols, half_extents) -> np.ndarray:
+    """pcseg.obb の {center, axes(列=主軸), extents(半幅)} → ビット順の 8 隅 (8,3)。
+
+    box_edges / aabb_corners と同じ ±順序(index の各ビットが x/y/z の符号)に揃えるので、
+    OBB と AABB を同じ辺接続で描ける。世界座標 = center + (signs*half) @ axes.T。
+    """
+    center = np.asarray(center, float)
+    axes_cols = np.asarray(axes_cols, float)          # 列 k = 主軸 k
+    half = np.asarray(half_extents, float)
+    signs = np.array([[sx, sy, sz]
+                      for sx in (-1.0, 1.0)
+                      for sy in (-1.0, 1.0)
+                      for sz in (-1.0, 1.0)])          # (8,3) ビット順
+    return center + (signs * half) @ axes_cols.T
+
+
 def box_edges(corners: np.ndarray):
     """8 隅 (8,3) → 12 辺の (始点, 終点) 対リスト。隅 index が 1 ビットだけ違う対を結ぶ。"""
     edges = []
@@ -145,10 +169,23 @@ def vol3(extents) -> float:
     return float(e[0] * e[1] * e[2])
 
 
+def double_farthest_diameter(P: np.ndarray) -> float:
+    """点群の直径(最遠点対距離)の下界近似: 任意点→最遠点→さらに最遠点。
+
+    全ペア(O(N^2))を避けた 2 パス近似。真の直径以下だが最小包含球の理論下界
+    (r >= 直径/2)を評価するのに十分(下界を過大評価しない安全側)。
+    """
+    d0 = np.linalg.norm(P - P[0], axis=1)
+    j = int(np.argmax(d0))
+    dj = np.linalg.norm(P - P[j], axis=1)
+    k = int(np.argmax(dj))
+    return float(np.linalg.norm(P[j] - P[k]))
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # 描画(matplotlib Agg、無ければスキップ)
 # ═══════════════════════════════════════════════════════════════════════════
-def render_png(path: Path, box_pts, obb, ab, hull_verts, hull_faces,
+def render_png(path: Path, box_pts, obb_d, ab_min, ab_max, hull_verts, hull_faces,
                clu_pts, mes, naive_c, naive_r) -> bool:
     """凸包 / OBB vs AABB / 最小包含球 vs 素朴球 の 3 パネル図を保存。成功で True。"""
     try:
@@ -169,33 +206,35 @@ def render_png(path: Path, box_pts, obb, ab, hull_verts, hull_faces,
 
     fig = plt.figure(figsize=(16.5, 5.4))
 
-    # --- パネル A: 凸包メッシュ(回転箱の点群 → 8 隅の凸包)---
+    obb_full = 2.0 * np.asarray(obb_d["extents"])   # pcseg.obb は半幅 → 全幅
+    obb_c8 = obb_corners_bitorder(obb_d["center"], obb_d["axes"], obb_d["extents"])
+
+    # --- パネル A: 凸包メッシュ(既存 fs.convex_hull)---
     axA = fig.add_subplot(1, 3, 1, projection="3d")
     axA.scatter(box_pts[:, 0], box_pts[:, 1], box_pts[:, 2],
                 s=6, c="#3b6ea5", alpha=0.35, label="点群 (N=%d)" % len(box_pts))
     axA.plot_trisurf(hull_verts[:, 0], hull_verts[:, 1], hull_verts[:, 2],
                      triangles=hull_faces, color="#e08a1e", alpha=0.28,
                      edgecolor="#b5670c", linewidth=0.6)
-    axA.set_title("convex_hull_3d\n凸包 = 頂点 %d・三角面 %d(内部点を除外)"
+    axA.set_title("fs.convex_hull(既存)\n凸包 = 頂点 %d・三角面 %d(内部点を除外)"
                   % (len(hull_verts), len(hull_faces)), fontsize=10)
     axA.legend(loc="upper left", fontsize=8)
 
-    # --- パネル B: OBB(密着)vs AABB(過大)---
+    # --- パネル B: OBB(密着)vs AABB(過大)いずれも既存 op ---
     axB = fig.add_subplot(1, 3, 2, projection="3d")
     axB.scatter(box_pts[:, 0], box_pts[:, 1], box_pts[:, 2],
                 s=6, c="#3b6ea5", alpha=0.5)
-    for p, q in box_edges(ab_corners := aabb_corners(ab["min"], ab["max"])):
+    for p, q in box_edges(aabb_corners(ab_min, ab_max)):
         axB.plot(*zip(p, q), c="#9aa7b0", lw=1.0, ls="--")
-    for p, q in box_edges(obb["corners"]):
+    for p, q in box_edges(obb_c8):
         axB.plot(*zip(p, q), c="#c0392b", lw=2.0)
-    axB.set_title("oriented_bounding_box vs aabb\nOBB 体積 %.2f  <  AABB 体積 %.2f"
-                  % (vol3(obb["extents"]),
-                     vol3(ab["max"] - ab["min"])), fontsize=10)
+    axB.set_title("fs.obb vs fs.aabb(いずれも既存)\nOBB 体積 %.2f  <  AABB 体積 %.2f"
+                  % (vol3(obb_full), vol3(ab_max - ab_min)), fontsize=10)
     axB.plot([], [], c="#c0392b", lw=2.0, label="OBB(密着)")
     axB.plot([], [], c="#9aa7b0", lw=1.0, ls="--", label="AABB(過大)")
     axB.legend(loc="upper left", fontsize=8)
 
-    # --- パネル C: 最小包含球(密着)vs 素朴球(過大)---
+    # --- パネル C: ★新規 min_enclosing_sphere(密着)vs 素朴球(過大)---
     axC = fig.add_subplot(1, 3, 3, projection="3d")
     axC.scatter(clu_pts[:, 0], clu_pts[:, 1], clu_pts[:, 2],
                 s=7, c="#3b6ea5", alpha=0.6)
@@ -210,13 +249,13 @@ def render_png(path: Path, box_pts, obb, ab, hull_verts, hull_faces,
     axC.plot_wireframe(naive_c[0] + naive_r * su, naive_c[1] + naive_r * sv,
                        naive_c[2] + naive_r * sw, color="#9aa7b0",
                        linewidth=0.4, rstride=3, cstride=3)
-    axC.set_title("min_enclosing_sphere vs 素朴球\n最小 r=%.2f  <  素朴 r=%.2f"
+    axC.set_title("★min_enclosing_sphere(新規)vs 素朴球\n最小 r=%.2f  <  素朴 r=%.2f"
                   % (mr, naive_r), fontsize=10)
-    axC.plot([], [], c="#27865a", label="最小包含球")
+    axC.plot([], [], c="#27865a", label="最小包含球(新規)")
     axC.plot([], [], c="#9aa7b0", label="素朴球(重心+最遠)")
     axC.legend(loc="upper left", fontsize=8)
 
-    fig.suptitle("hull3d — 凸包・バウンディングボリューム(点群を囲む基本メトロロジー)",
+    fig.suptitle("hull3d — 新規 op = 最小包含球(既存の凸包/OBB/AABB を文脈として併置)",
                  fontsize=12)
     fig.tight_layout(rect=(0, 0, 1, 0.96))
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -226,93 +265,11 @@ def render_png(path: Path, box_pts, obb, ab, hull_verts, hull_faces,
 
 
 # ═══════════════════════════════════════════════════════════════════════════
-# メイン: GT 検証 + beat-null + 描画
+# メイン: 新規 op の GT + beat-null(load-bearing)+ 既存 op の文脈提示 + 描画
 # ═══════════════════════════════════════════════════════════════════════════
 def main() -> int:
-    # ---- 入力の健全性(退化データで偽の成功を出さない)----
-    cube = unit_cube_corners()
-    if cube.shape != (8, 3):
-        raise ValueError("単位立方体の生成に失敗(退化入力)。")
-
     # ============================================================
-    # (1) convex_hull_3d — 単位立方体の凸包 = 立方体(体積1・頂点8・面12)
-    # ============================================================
-    hv, hf = convex_hull_3d(cube)
-    if hv.ndim != 2 or hv.shape[1] != 3 or hf.ndim != 2 or hf.shape[1] != 3:
-        raise ValueError(f"凸包メッシュの形が不正: verts {hv.shape}, faces {hf.shape}")
-    hull_vol = mesh_volume(hv, hf)                       # メッシュから独立に体積再計算
-    # 返された 8 頂点が立方体の 8 隅集合と一致するか(集合として)
-    corner_set = {tuple(np.round(p, 9)) for p in cube}
-    hv_set = {tuple(np.round(p, 9)) for p in hv}
-
-    print(f"[GT] convex_hull_3d(unit cube): verts={len(hv)} faces={len(hf)} "
-          f"mesh_volume={hull_vol:.10f}")
-
-    assert len(hv) == 8, f"凸包頂点数が 8 でない: {len(hv)}"
-    assert len(hf) == 12, f"凸包三角面数が 12 でない: {len(hf)}"
-    assert hv_set == corner_set, "凸包頂点が立方体 8 隅と一致しない"
-    assert abs(hull_vol - 1.0) < 1e-9, f"凸包体積が 1.0 でない: {hull_vol:.10f}"
-
-    # ============================================================
-    # (2) OBB — 既知寸法の箱を既知回転で回した点群から寸法・中心を復元
-    # ============================================================
-    dims = (4.0, 2.5, 1.2)
-    R = euler_rotation(0.6, 0.4, 0.3)
-    center_true = np.array([5.0, 3.0, 2.0])
-    box_pts = box_grid(dims, R, center_true, per_axis=(7, 6, 5))
-
-    obb = oriented_bounding_box(box_pts)
-    ext_sorted = np.sort(obb["extents"])
-    dims_sorted = np.sort(dims)
-    ext_err = float(np.max(np.abs(ext_sorted - dims_sorted)))
-    center_err = float(np.linalg.norm(obb["center"] - center_true))
-    obb_vol = vol3(obb["extents"])
-
-    print(f"[GT] OBB extents(sorted)={np.round(ext_sorted, 6)} "
-          f"true(sorted)={np.round(dims_sorted, 6)} max_err={ext_err:.2e}")
-    print(f"[GT] OBB center={np.round(obb['center'], 6)} "
-          f"true={center_true} err={center_err:.2e}  volume={obb_vol:.4f} "
-          f"(true {vol3(dims):.4f})")
-
-    # OBB の隅が全点を内包(バウンディングボリュームの定義)
-    axes = obb["axes"]
-    proj = (box_pts - obb["center"]) @ axes.T            # 主軸系へ射影
-    half = obb["extents"] / 2.0
-    obb_contains = bool(np.all(np.abs(proj) <= half[None, :] + 1e-9))
-
-    assert ext_err < 1e-6, f"OBB extents 復元誤差が大きい: {ext_err:.2e}"
-    assert center_err < 1e-6, f"OBB center 復元誤差が大きい: {center_err:.2e}"
-    assert abs(obb_vol - vol3(dims)) < 1e-6, f"OBB 体積が真値と不一致: {obb_vol:.6f}"
-    assert obb_contains, "OBB が全点を内包していない"
-
-    # 凸包の beat-null(おまけ): 回転箱 210 点でも凸包頂点は 8(内部点を除外)。
-    # 「全点が境界」という素朴基準(N 頂点)を判別的に下回る。
-    hv2, _ = convex_hull_3d(box_pts)
-    print(f"[GT] convex_hull_3d(rotated box, N={len(box_pts)}) -> hull verts={len(hv2)}")
-    assert len(hv2) == 8, f"回転箱の凸包頂点が 8 でない: {len(hv2)}"
-    assert len(hv2) < len(box_pts), "凸包が内部点を除外できていない(全点が頂点)"
-
-    # ============================================================
-    # (3) AABB + beat-null: 回転箱では AABB 体積 > OBB 体積(軸整列は過大)
-    # ============================================================
-    ab = aabb(box_pts)
-    aabb_ext = ab["max"] - ab["min"]
-    aabb_vol = vol3(aabb_ext)
-    # AABB は自明に全点内包(定義)/ OBB より緩いことを判別的に示す
-    aabb_contains = bool(np.all(box_pts >= ab["min"] - 1e-9) and
-                         np.all(box_pts <= ab["max"] + 1e-9))
-    print(f"[null] AABB extents={np.round(aabb_ext, 4)} volume={aabb_vol:.4f}")
-    print(f"[beat] OBB volume {obb_vol:.4f}  <  AABB volume {aabb_vol:.4f}  "
-          f"(比 {obb_vol / aabb_vol:.3f})")
-
-    assert aabb_contains, "AABB が全点を内包していない(実装バグ)"
-    assert obb_vol < aabb_vol, \
-        f"OBB が AABB より小さくない(beat-null 失敗): {obb_vol:.4f} vs {aabb_vol:.4f}"
-    assert obb_vol < 0.9 * aabb_vol, \
-        f"OBB の AABB に対する優位が小さすぎる: 比 {obb_vol / aabb_vol:.3f}"
-
-    # ============================================================
-    # (4) min_enclosing_sphere — 既知球で半径復元 + 全点内包
+    # ★(1) 新規 op — min_enclosing_sphere: 既知球で半径復元 + 全点内包 + ほぼ最小
     # ============================================================
     r0 = 3.0
     sph_center = np.array([1.0, 2.0, 3.0])
@@ -321,30 +278,29 @@ def main() -> int:
     ms_c, ms_r = np.asarray(mes_s["center"]), float(mes_s["radius"])
     ds = np.linalg.norm(sph_pts - ms_c, axis=1)
     all_in_s = bool(np.all(ds <= ms_r + 1e-9))
-    diam = 0.0
-    # 直径(最遠点対)は球面サンプルでは ~2*r0。r <= 直径/2 * (1+微小) で「≈直径/2」を確認。
-    # 全ペアは重いので、最小球中心からの最遠点とそのまた最遠点で近似(下界として十分)。
-    j = int(np.argmax(ds)); k = int(np.argmax(np.linalg.norm(sph_pts - sph_pts[j], axis=1)))
-    diam = float(np.linalg.norm(sph_pts[j] - sph_pts[k]))
+    diam_s = double_farthest_diameter(sph_pts)      # 理論下界 r >= diam/2 の評価用
     print(f"[GT] min_enclosing_sphere(sphere r0={r0}): center={np.round(ms_c, 4)} "
-          f"(true {sph_center}) r={ms_r:.5f}  diam/2={diam / 2:.5f}  all_inside={all_in_s}")
+          f"(true {sph_center}) r={ms_r:.5f}  diam/2={diam_s / 2:.5f}  all_inside={all_in_s}")
 
     assert all_in_s, "最小包含球が全点を内包していない(球面 GT)"
     assert np.linalg.norm(ms_c - sph_center) < 5e-3, \
         f"最小包含球の中心が球中心とずれている: {np.linalg.norm(ms_c - sph_center):.4f}"
     assert abs(ms_r - r0) < 1e-2, f"最小包含球の半径が r0 と不一致: {ms_r:.5f} vs {r0}"
-    # 直径/2 は理論下界(r >= 直径/2)。近似解が下界の (1+1%) 以内 = ほぼ最小(≈直径/2)。
-    assert ms_r <= diam / 2.0 * 1.01, \
-        f"半径が直径/2 を有意に超過(過大): r={ms_r:.5f} > diam/2={diam / 2:.5f}"
+    # 直径/2 は理論下界(r >= 直径/2)。近似解が下界の (1+1%) 以内 = ほぼ最小(見せかけでない)。
+    assert ms_r <= diam_s / 2.0 * 1.01, \
+        f"半径が直径/2 を有意に超過(過大): r={ms_r:.5f} > diam/2={diam_s / 2:.5f}"
+    assert ms_r >= diam_s / 2.0 * 0.999, \
+        f"半径が直径/2(理論下界)を下回った=全点内包に矛盾: r={ms_r:.5f} < diam/2={diam_s / 2:.5f}"
 
     # ============================================================
-    # (5) 最小包含球の beat-null: 非対称点群で素朴球より小さく、かつ安全側
+    # ★(2) 新規 op の beat-null — 非対称点群で素朴球より小さく・ほぼ最小・安全側
     # ============================================================
     clu = cluster_with_outlier(seed=1)
     mes_c = min_enclosing_sphere(clu)
     mc, mr = np.asarray(mes_c["center"]), float(mes_c["radius"])
     dc = np.linalg.norm(clu - mc, axis=1)
     mes_all_in = bool(np.all(dc <= mr + 1e-9))
+    diam_c = double_farthest_diameter(clu)          # 理論下界
 
     # null-1(過大): 重心中心 + 最遠点半径。全点内包はするが半径が過大。
     naive_c = clu.mean(axis=0)
@@ -353,23 +309,75 @@ def main() -> int:
     tight_r = float(np.linalg.norm(clu - naive_c, axis=1).mean())
     tight_uncovered = int(np.sum(np.linalg.norm(clu - naive_c, axis=1) > tight_r + 1e-9))
 
-    print(f"[beat] cluster+outlier: MES r={mr:.4f} (all_in={mes_all_in})  "
-          f"素朴(重心+最遠) r={naive_r:.4f}  素朴(重心+平均) r={tight_r:.4f} "
-          f"取りこぼし {tight_uncovered} 点")
+    print(f"[beat] cluster+outlier: MES r={mr:.4f} (all_in={mes_all_in}) "
+          f"diam/2={diam_c / 2:.4f}  素朴(重心+最遠) r={naive_r:.4f}  "
+          f"素朴(重心+平均) r={tight_r:.4f} 取りこぼし {tight_uncovered} 点")
+    print(f"[beat] MES/素朴(最遠) 比={mr / naive_r:.3f}  MES/(直径/2)={mr / (diam_c / 2):.4f}")
 
     assert mes_all_in, "最小包含球が全点を内包していない(非対称 GT)"
-    assert mr < naive_r, \
-        f"最小包含球が素朴球(重心+最遠)を上回れていない: {mr:.4f} vs {naive_r:.4f}"
-    assert mr <= naive_r, "最小包含球は素朴球以下であるべき(理論)"
+    # (a) 素朴球より判別的に小さい(僅差でなく明確なマージン)
+    assert mr < 0.7 * naive_r, \
+        f"最小包含球の素朴球(重心+最遠)に対する優位が小さすぎる: 比 {mr / naive_r:.3f}"
+    # (b) その勝利が「弱い相手に勝っただけ」でない証拠: MES は理論下界(直径/2)のごく近傍=ほぼ最小
+    assert mr <= diam_c / 2.0 * 1.01, \
+        f"MES が直径/2(理論下界)を有意に超過し最小といえない: r={mr:.4f} > {diam_c / 2:.4f}"
+    assert mr >= diam_c / 2.0 * 0.999, \
+        f"MES が直径/2(理論下界)未満=全点内包に矛盾: r={mr:.4f} < {diam_c / 2:.4f}"
+    # (c) 素朴球は下界から明確に膨らんでいる(strawman でなく、詰める余地が実在した)
+    assert naive_r >= diam_c / 2.0 * 1.5, \
+        f"素朴球が下界近傍で、詰める余地が無い=beat-null が無意味: {naive_r:.4f} vs {diam_c / 2:.4f}"
+    # (d) 詰めすぎ素朴球は安全側でない(外れ点を取りこぼす)
     assert tight_uncovered > 0, \
         "詰めすぎ素朴球が取りこぼしを起こす構成になっていない(シーン設計を見直す)"
+
+    # ============================================================
+    # (3) 既存の公開 op(参考・新規ではない)— 凸包 / OBB / AABB を GT で健全性確認
+    #     ※ min_enclosing_sphere の家族の文脈として併置するだけで、この事例の貢献ではない。
+    # ============================================================
+    # 3a. fs.convex_hull(= meshrepair.convex_hull): 単位立方体 → 体積1・頂点8・面12
+    cube = unit_cube_corners()
+    hv, hf = convex_hull(cube)
+    hull_vol = mesh_volume(hv, hf)
+    corner_set = {tuple(np.round(p, 9)) for p in cube}
+    hv_set = {tuple(np.round(p, 9)) for p in hv}
+    print(f"[ref] fs.convex_hull(unit cube): verts={len(hv)} faces={len(hf)} "
+          f"mesh_volume={hull_vol:.10f}  (既存公開 op)")
+    assert len(hv) == 8 and len(hf) == 12, f"既存 convex_hull 健全性: verts {len(hv)} faces {len(hf)}"
+    assert hv_set == corner_set, "既存 convex_hull 頂点が立方体 8 隅と不一致"
+    assert abs(hull_vol - 1.0) < 1e-9, f"既存 convex_hull 体積が 1.0 でない: {hull_vol:.10f}"
+
+    # 3b. fs.obb / fs.aabb: 既知寸法の回転箱で寸法・中心を復元、OBB < AABB(既存 op の性質)
+    dims = (4.0, 2.5, 1.2)
+    R = euler_rotation(0.6, 0.4, 0.3)
+    center_true = np.array([5.0, 3.0, 2.0])
+    box_pts = box_grid(dims, R, center_true, per_axis=(7, 6, 5))
+
+    obb_d = obb(box_pts)
+    obb_full = 2.0 * np.asarray(obb_d["extents"])     # pcseg.obb は半幅 → 全幅
+    ext_sorted = np.sort(obb_full)
+    dims_sorted = np.sort(dims)
+    ext_err = float(np.max(np.abs(ext_sorted - dims_sorted)))
+    center_err = float(np.linalg.norm(np.asarray(obb_d["center"]) - center_true))
+    obb_vol = vol3(obb_full)
+
+    ab_min, ab_max = aabb(box_pts)
+    aabb_ext = ab_max - ab_min
+    aabb_vol = vol3(aabb_ext)
+
+    print(f"[ref] fs.obb extents(全幅,sorted)={np.round(ext_sorted, 6)} "
+          f"true={np.round(dims_sorted, 6)} err={ext_err:.2e} center_err={center_err:.2e}  (既存公開 op)")
+    print(f"[ref] fs.obb 体積 {obb_vol:.4f}  <  fs.aabb 体積 {aabb_vol:.4f}  "
+          f"(比 {obb_vol / aabb_vol:.3f}) — 既存 op の性質(軸整列は傾いた箱で過大)")
+    assert ext_err < 1e-6, f"既存 obb extents 復元誤差: {ext_err:.2e}"
+    assert center_err < 1e-6, f"既存 obb center 復元誤差: {center_err:.2e}"
+    assert obb_vol < aabb_vol, f"既存 obb < aabb でない: {obb_vol:.4f} vs {aabb_vol:.4f}"
 
     # ============================================================
     # 描画(結果を PNG に)
     # ============================================================
     out_png = _REPO_ROOT / "examples_3d" / "_gallery" / "hull_bounds.png"
-    box_hull_v, box_hull_f = convex_hull_3d(box_pts)     # 回転箱の凸包メッシュ(描画用)
-    drew = render_png(out_png, box_pts, obb, ab,
+    box_hull_v, box_hull_f = convex_hull(box_pts)     # 回転箱の凸包メッシュ(描画用・既存 op)
+    drew = render_png(out_png, box_pts, obb_d, ab_min, ab_max,
                       box_hull_v, box_hull_f, clu, mes_c, naive_c, naive_r)
     if drew:
         print(f"[draw] gallery PNG 保存: {out_png}")
@@ -377,15 +385,15 @@ def main() -> int:
         print("[draw] matplotlib 不在のため PNG はスキップ(GT アサートは全て実施済み)")
 
     print(
-        "PASS: 単位立方体の凸包=体積 %.4f・頂点 %d・面 %d を厳密復元。"
-        "回転箱で OBB extents 誤差 %.1e・中心誤差 %.1e、"
-        "OBB 体積 %.2f が AABB 体積 %.2f を判別的に下回った(比 %.2f)。"
-        "球面から最小包含球 r=%.3f(真値 %.1f・全点内包)。"
-        "非対称点群で最小包含球 r=%.3f が素朴球 r=%.3f を下回り(beat-null 差 %.3f)、"
+        "PASS: 新規 op min_enclosing_sphere を検証 — 球面から r=%.3f(真値 %.1f・全点内包・"
+        "直径/2=%.3f のごく近傍でほぼ最小)。非対称点群で r=%.3f が素朴球 r=%.3f を "
+        "比 %.3f で判別的に下回り(理論下界 直径/2=%.3f のほぼ上、素朴は下界の %.2f 倍)、"
         "詰めすぎ素朴球は %d 点を取りこぼした。"
-        % (hull_vol, len(hv), len(hf), ext_err, center_err,
-           obb_vol, aabb_vol, obb_vol / aabb_vol,
-           ms_r, r0, mr, naive_r, naive_r - mr, tight_uncovered)
+        "参考として既存公開 op も併置: fs.convex_hull(立方体 体積 %.4f・頂点 %d・面 %d)、"
+        "fs.obb 体積 %.2f < fs.aabb 体積 %.2f(比 %.2f)。"
+        % (ms_r, r0, diam_s / 2,
+           mr, naive_r, mr / naive_r, diam_c / 2, naive_r / (diam_c / 2), tight_uncovered,
+           hull_vol, len(hv), len(hf), obb_vol, aabb_vol, obb_vol / aabb_vol)
     )
     return 0
 
