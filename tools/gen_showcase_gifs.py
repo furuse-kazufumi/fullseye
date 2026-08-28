@@ -139,19 +139,21 @@ def _orient_outward(V: np.ndarray, F: np.ndarray) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 被写体メッシュの構築(すべて Fullseye 実 op)                                   #
 # --------------------------------------------------------------------------- #
-def build_pod(res: int = 72, target_faces: int = 2600):
-    """SDF プリミティブ(球 + 球の smooth-union に翼の box)→ marching cubes で hero pod。
+def build_pod(res: int = 104, target_faces: int = 4200):
+    """SDF プリミティブの smooth-union で「hero pod」を生成 → ``render3d.marching_cubes``。
 
-    ``sdf_ops`` の解析 SDF を ``grid_coords`` 上で評価し ``sdf_smooth_union`` で合成、
-    ``render3d.marching_cubes`` で三角形化する(すべて Fullseye 実 op)。Z が鉛直(頭が上)。"""
-    g, _ = sdf_ops.grid_coords(((-1.6, 1.6),) * 3, res)
-    body = sdf_ops.sphere_sdf(g, (0.0, 0.0, -0.05), 0.90)
-    head = sdf_ops.sphere_sdf(g, (0.0, 0.0, 0.82), 0.55)
-    pod = sdf_ops.sdf_smooth_union(body, head, 0.35)
-    wing = sdf_ops.box_sdf(g, (0.0, 0.0, -0.35), (1.15, 0.10, 0.30))
-    pod = sdf_ops.sdf_smooth_union(pod, wing, 0.22)
-    nose = sdf_ops.sphere_sdf(g, (0.0, 0.55, 0.82), 0.16)     # 「目」の張り出し
-    pod = sdf_ops.sdf_smooth_union(pod, nose, 0.10)
+    ``render_beauty`` の hero と同系の、清潔で左右対称な 2 ローブ形(胴の球 + 頭の球を
+    ``sdf_smooth_union`` で滑らかに接ぎ、赤道に薄い belt を smooth-union して造形の芯を作る)。
+    ``sdf_ops`` の解析 SDF を ``grid_coords`` 上で評価して合成する(すべて Fullseye 実 op)。
+    Z が鉛直(頭が上)。高めの ``res`` + やや多めの面数で、金属陰影のファセットを抑える。"""
+    g, _ = sdf_ops.grid_coords(((-1.5, 1.5),) * 3, res)
+    body = sdf_ops.sphere_sdf(g, (0.0, 0.0, -0.12), 0.86)
+    head = sdf_ops.sphere_sdf(g, (0.0, 0.0, 0.74), 0.52)
+    pod = sdf_ops.sdf_smooth_union(body, head, 0.42)         # 滑らかな首
+    # 赤道の薄い belt(扁平な球)で「設計された」造形感を出す(左右対称)。
+    belt = sdf_ops.sphere_sdf(g * np.array([1.0, 1.0, 3.2]),
+                              (0.0, 0.0, -0.12 * 3.2), 0.98)
+    pod = sdf_ops.sdf_smooth_union(pod, belt, 0.16)
     V, F = render3d.marching_cubes(pod, level=0.0)
     F = _orient_outward(V, F)
     V = _center(V)
