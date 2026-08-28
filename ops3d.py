@@ -64,6 +64,12 @@ import fit_primitives_ext
 import meshrepair
 import pcseg
 import volops
+# --- Wave B: rendering quality ops(AO/shadow/matcap-Phong/SSAA/tonemap = 映える静止3D)---
+import render_ao
+import render_shadow
+import render_shade
+import render_ssaa
+import render_tonemap
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
