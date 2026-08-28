@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(77 例)
+### 3-D 点群/体積/曲面(82 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -42,6 +42,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **小惑星の姿勢を主成分で正準化** — 不明な向きで届いた小惑星形状を、慣性主軸で形状固有の正準姿勢へ整える(カタログ化・比較用)。 `py -3.11 examples_3d/itokawa_pose_canonical.py`
 - **未知姿勢で置かれた小惑星スキャンの位置合わせ** — 未知の探査機姿勢で撮った小惑星スキャンを ICP で基準形状に戻す。不規則形状は球と違い登録できる。 `py -3.11 examples_3d/itokawa_self_register.py`
 - **平面主体スキャンのGICP位置合わせ** — 床+直交2壁のコーナーを既知変換で動かし gicp(共分散重みマハラノビス)で復元。回転<1度、平面が滑る状況で点対点ICPを約6.5倍上回る。 `py -3.11 examples_3d/gicp_register.py`
+- **部分重なりスキャンの登録(FPFH+ICP)** — 非対称ブロブを別方向2視点で部分スキャン(幾何重なり56%)。scan Bに55度回転+並進を掛け、register_pointclouds(FPFH+RANSAC→ICP)でAへ登録。回転誤差0.86度<4・RMSE0.150が床0.148水準。PCA主軸103度/単位行列ICP58度のnullを桁違いに下回る。 `py -3.11 examples_3d/partial_overlap_icp.py`
 
 **metrology**
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
@@ -49,12 +50,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
 - **点群のバウンディング(凸包/OBB/AABB/最小包含球)** — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。 `py -3.11 examples_3d/hull_bounds.py`
 - **平歯車の歯数をSDFジオメトリから逆計測** — sdf_opsのCSGで平歯車を手続き生成し、歯先帯r=0.44の占有を角度サンプルしてラン計数で歯数N=12→12/20→20を厳密復元(0.2度ジッタでも不変)。歯なし円板null=0本・誤半径 内1/外0本で判別的。 `py -3.11 examples_3d/gear_metrology.py`
+- **円筒軸メトロロジー(30%外れ値ロバスト)** — 汚れた産業スキャン(30%グロス外れ値・2000点)からパイプの軸方向と半径を計測。fit_cylinder_ransacで半径誤差1.27%・軸誤差0.78°・面残差0.00165m。非ロバスト全点フィット(半径誤差101%)と誤プリミティブ平面RANSAC(残差0.058m)を5倍超マージンで判別的に上回る。 `py -3.11 examples_3d/cylinder_axis_metrology.py`
 
 **depth**
 - **2視点プレーンスイープ・ステレオ深度** — 既知カメラの2画像から、深度平面を掃引して photo-consistency 最小の深度を画素ごとに選ぶ。 `py -3.11 examples_3d/plane_sweep_depth.py`
 - **エッジ保存の深度デノイズ+穴埋め** — 段差を跨がずにノイズを平滑化し、浅い穴を調和補間で埋める(深い穴はNaNのまま残す)。 `py -3.11 examples_3d/depth_denoise.py`
 - **骨格CTからX線ラジオグラフ(DRR)を合成** — 手骨のCT密度ボリュームを厚み方向に積算し、2次元の手のX線像(DRR)を合成する。 `py -3.11 examples_3d/ct_hand_radiograph.py`
 - **低線量スパースビューCT再構成(radon→SART)** — 指の断面をX線投影し、SART(反復)とFBPで再構成する。低線量ゆえの控えめな品質を正直に評価。 `py -3.11 examples_3d/ct_sparse_view_recon.py`
+- **ステレオ視差からの多深度パッチ奥行き復元** — 校正済みステレオ対(f*B=96)に近8/中16/遠32mの3テクスチャパッチを視差12/6/3pxで合成し、disparity_map→depth_from_disparityで復元。パッチ内部の相対誤差0.00%・near>mid>far順序も正。最良定数null63.9%・視差ゼロnull(∞)を判別的に上回る。 `py -3.11 examples_3d/stereo_depth_scene.py`
 
 **reconstruction**
 - **進化探索で見つけた点群デノイズ・パイプライン** — 外れ値除去・平滑化・間引きの順番を遺伝的アルゴリズムに探させ、無処理と人手の定番を上回る。 `py -3.11 examples_3d/denoise_evolution.py`
@@ -95,6 +98,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。 `py -3.11 examples_3d/region_props_3d.py`
 - **接触物体の分離(距離変換ベース3D watershed)** — 接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。 `py -3.11 examples_3d/watershed3d.py`
 - **分子の接触原子カウント(距離変換+マーカ分水嶺)** — シクロヘキサンC6椅子型を6原子球の和集合(41万voxel・1連結成分)にボクセル化。距離変換+マーカ分水嶺で接触原子を6個に分離・重心を真値へ最大0.52voxel。素朴な連結成分null=1個に融合(43voxelずれ)を個数6vs1で上回る。 `py -3.11 examples_3d/molecule_atom_count.py`
+- **屋外LiDARシーンの地面除去→物体分割** — 傾斜地面(~5.4度)上の4物体(球/箱/円柱/円錐)のLiDAR点群5316点を、fit_plane_ransac+height_above_planeで地面除去→euclidean_clustersで分割。検出4==K=4・重心を真物体へ全単射(最大0.128m)。地面除去なしnullは全物体癒着で1クラスタ。 `py -3.11 examples_3d/lidar_scene_segmentation.py`
 
 **mapping**
 - **占有格子+ESDFで連続クリアランスを問い合わせ** — 部屋点群から occupancy_grid→esdf を作り、自由空間点で最近接障害物までの連続距離を query_distance。占有0/1のみの零点を約39倍上回る(衝突回避マージン判定)。 `py -3.11 examples_3d/occupancy_esdf.py`
@@ -114,6 +118,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
 - **点群の鏡映対称面の復元** — 既知平面で鏡映対称な点群から初期推定なしにdetect_reflection_symmetryが対称面を復元: 法線誤差0.0度・鏡映残差1.5e-11。非対称null(残差1.14)は約7.8e10倍大きく、でたらめ平面(最良1.27)も桁違いで判別的。 `py -3.11 examples_3d/reflection_symmetry.py`
 - **トーラス結び目の弧長・捩率計測(非平面曲線)** — (2,3)トーラス結び目を密ポリラインで生成しcurve3dのarc_length/curvature_torsionを検証。弧長は台形積分と相対7.6e-7一致・中央|τ|0.283は同長の平面円(捩率6e-10)の5.1e8倍で非平面を判別。円のκ=1/rも誤差7e-13で正確。 `py -3.11 examples_3d/torus_knot_curve.py`
+- **恐竜骨格の左右対称面(矢状面)の復元** — スミソニアン三角竜骨格(CC0,10万頂点→4090点stride)をdetect_reflection_symmetryに渡し矢状面を残差2.48で復元(最薄主軸=左右方向に一致)。他2主平面4.28/4.30と区別、片側20%破壊で15.87(6.4倍)へ悪化=左右対称を判別的に検出。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_symmetry.py`
 
 **range_sensing**
 - **360度点群⇄距離画像の往復(球面投影)** — project_spherical→unproject_spherical の往復で形状を保存(誤差<voxel)。奥行きを潰す平面正射影より55倍良い。 `py -3.11 examples_3d/lidar_projection.py`
