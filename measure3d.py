@@ -282,11 +282,10 @@ def smallest_box3(points) -> dict:
         hw = 0.5 * float(np.ptp(pw))
         vol = (2 * hu) * (2 * hv2) * (2 * hw)
         if best is None or vol < best[0]:
-            ax_u = u2[0] * e1 + u2[1] * e2
+            ax_u = u2[0] * e1 + u2[1] * e2           # rect axes lifted to 3-D world
             ax_v = v2[0] * e1 + v2[1] * e2
-            center = cw * w + c2[0] * u2 + c2[1] * v2  # WRONG-frame guard below
-            # rebuild centre in world coords from the three 1-D spans
-            center = cw * w + (c2[0]) * ax_u + (c2[1]) * ax_v
+            # c2 is the in-plane centre in (e1, e2) coords; lift it, add the w span
+            center = cw * w + c2[0] * e1 + c2[1] * e2
             axes = np.array([ax_u, ax_v, w])
             half = np.array([hu, hv2, hw])
             best = (vol, center, axes, half)
