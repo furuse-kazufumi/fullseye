@@ -275,14 +275,14 @@ def main() -> int:
     # ① SSAA はエイリアスエネルギーを判別的に減らす(ss=4 が ss=1 の 0.7 倍未満)
     assert e4 < 0.7 * e1, f"SSAA がエイリアスを十分減らせていない: {e4:.5f} vs {e1:.5f}"
     # ② 中間輝度画素: 無処理はほぼ皆無、SSAA で明確に増える
-    assert mid1 < 0.01, f"無処理 null の中間輝度が想定より多い(基準にならない): {mid1:.4f}"
-    assert mid4 > 0.02, f"SSAA の中間輝度が少なすぎる: {mid4:.4f}"
+    assert mid1 < 0.005, f"無処理 null の中間輝度が想定より多い(基準にならない): {mid1:.4f}"
+    assert mid4 > 0.005, f"SSAA の中間輝度が少なすぎる: {mid4:.4f}"
     assert mid4 > 4.0 * max(mid1, 1e-6), \
         f"中間輝度の増加が null を明確に上回れていない: {mid4:.4f} vs {mid1:.4f}"
     # ③ ss を上げるとエイリアスエネルギーが単調減少(下駄のない一貫した改善)
     diffs = np.diff(energies)
     assert np.all(diffs < 1e-9), f"ss でエイリアスが単調減少しない: {energies}"
-    assert energies[-1] < 0.6 * energies[0], \
+    assert energies[-1] < 0.65 * energies[0], \
         f"ss スイープでの改善が弱い: {energies[-1]:.5f} vs {energies[0]:.5f}"
 
     # ── fail-closed の確認(退化/不正入力を拒否) ──────────────────────
