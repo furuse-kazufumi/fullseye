@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-29 07:06:05
+- **最終更新**: 2026-08-29 07:29:10
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-db0de0df feat(docs): op -> worked-example index + HDevelop-style example links in OP_CATALOG
-25400000 feat(facade): expose the 3-D metrology surface on `fullseye`; keep torch optional
-7277005a feat(3d): inner_box3 — largest inscribed axis-aligned box in a voxel region (inner_rectangle1 3-D)
-53978f8a fix(3d): smallest_box3 was not minimal on O'Rourke case-b shapes (adversarial review)
-77d0c895 auto: test_measure3d.py 編集前 (2026-08-29 05:55)
-5dea5339 auto: measure3d.py 編集前 (2026-08-29 05:55)
-ec46b8b4 auto: measure3d.py 編集前 (2026-08-29 05:55)
-ebe60a20 feat(3d): measure3d — 3-D metrology fits on (depth,row,col) + true minimum-volume OBB
-2d8e7ace auto: measure3d.py 編集前 (2026-08-29 05:33)
-34593041 auto: measure3d.py 編集前 (2026-08-29 05:28)
+1b4d7538 feat(3d): 100% ops3d example coverage — 14 coherent multi-op GT examples (all 265 ops)
+5ecefa7d auto: transforms_repr.py 編集前 (2026-08-29 07:18)
+2671e61c auto: sfm_recon.py 編集前 (2026-08-29 07:15)
+c9fb7dd9 auto: sfm_recon.py 編集前 (2026-08-29 07:15)
+ca0f1e8f auto: sfm_recon.py 編集前 (2026-08-29 07:14)
+ec687e83 auto: pcl_geodesic.py 編集前 (2026-08-29 07:14)
+3d147cfc auto: sfm_recon.py 編集前 (2026-08-29 07:14)
+ae28943d auto: sensor_seg.py 編集前 (2026-08-29 07:14)
+9b86b24d auto: sensor_seg.py 編集前 (2026-08-29 07:13)
+eb4756e6 auto: geometry_metrology.py 編集前 (2026-08-29 07:13)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ ebe60a20 feat(3d): measure3d — 3-D metrology fits on (depth,row,col) + true mi
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:01 docs/EXAMPLES_3D.md
-07:01 fullseye/OP_CATALOG.md
-07:01 docs/OP_CATALOG.md
-07:01 tools/gen_op_catalog.py
-06:59 tools/op_example_index.py
-06:56 examples3d.py
-06:55 examples_3d/primitive_fitting_3d.py
-06:35 docs/SESSION_SUMMARY.md
-06:25 tests/test_public_api.py
-06:22 fullseye/__init__.py
-06:21 api.py
-06:17 examples_3d/inner_box_inspection.py
-06:16 tests/test_regionprops3d.py
-06:15 ops3d.py
-06:14 regionprops3d.py
+07:24 fullseye/OP_CATALOG.md
+07:24 docs/OP_CATALOG.md
+07:23 docs/EXAMPLES_3D.md
+07:22 examples3d.py
+07:19 examples_3d/transforms_repr.py
+07:17 examples_3d/shape_desc_pose.py
+07:16 examples_3d/matching_localize.py
+07:15 examples_3d/sfm_recon.py
+07:15 examples_3d/motion_scene.py
+07:14 examples_3d/diff_features.py
+07:14 examples_3d/pcl_geodesic.py
+07:14 examples_3d/sensor_seg.py
+07:13 examples_3d/geometry_metrology.py
+07:13 examples_3d/feature_register.py
+07:12 examples_3d/refinement.py
 ```
 
 ---
