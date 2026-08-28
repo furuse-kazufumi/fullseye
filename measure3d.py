@@ -3,7 +3,7 @@
 
 Fit a line / plane / sphere / circle to a set of 3-D points, and bound a point
 set with an axis-aligned box (``smallest_box3_axis`` — the 3-D
-``smallest_rectangle1``), a **minimum-volume oriented box**
+``smallest_rectangle1``), a **near-minimum-volume oriented box**
 (``smallest_box3`` — the 3-D ``smallest_rectangle2``), or a **minimum enclosing
 sphere** (``smallest_sphere3`` — the 3-D ``smallest_circle``). Each returns a
 plain dict of geometric parameters plus an honest RMS residual where one is
