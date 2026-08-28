@@ -40,9 +40,14 @@ from pathlib import Path
 
 import numpy as np
 
+# この例ファイル名 (mesh_smooth.py) はルートのモジュール名 (mesh_smooth) と衝突する。
+# 実行時、スクリプト自身のディレクトリ (examples_3d) が sys.path 先頭に入るため、
+# 何もしないと `import mesh_smooth` が自分自身を指して circular import になる。
+# 対策: (1) examples_3d を sys.path から除き (2) リポジトリルートを先頭に差し込む。
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+_HERE = Path(__file__).resolve().parent
+sys.path[:] = [p for p in sys.path if p and Path(p).resolve() != _HERE]
+sys.path.insert(0, str(_REPO_ROOT))
 
 import match3d  # noqa: E402  (voxel_to_mesh; sys.path 調整後に import)
 from mesh_smooth import laplacian_smooth, taubin_smooth  # noqa: E402
