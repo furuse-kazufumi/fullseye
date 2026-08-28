@@ -180,13 +180,6 @@ def vertex_occlusion(V, F, n_dirs: int = 64, max_dist: float | None = None,
             np.add.at(vn, Ff[:, k], fnorm)           # 面積重み付き集約
         mag = np.linalg.norm(vn, axis=1, keepdims=True)
         vn = np.divide(vn, mag, out=np.zeros_like(vn), where=mag > 1e-12)
-        # 巻き順が内向きに一貫したメッシュ(occupancy marching-cubes 等)だと、面法線から
-        # 作った頂点法線が内側を向き、AO 半球が内部へ向いて全遮蔽=真っ黒になる沈黙失敗をする。
-        # 大域的に外向きへ揃える(頂点→重心方向と法線の符号が内向き優勢なら全反転)。
-        ctr = Vv.mean(axis=0)
-        sgn = np.einsum("ij,ij->i", vn, Vv - ctr)
-        if np.count_nonzero(sgn < 0) > np.count_nonzero(sgn > 0):
-            vn = -vn
     else:
         vn = np.asarray(normals, np.float64)
         if vn.shape != (nv, 3):
