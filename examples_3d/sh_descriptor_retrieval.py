@@ -50,10 +50,8 @@ def cube_points(n, rng):
     cols = np.array([[1, 2], [0, 2], [0, 1]])      # 面ごとの自由2軸
     for a in range(3):
         m = ax == a
-        P[m[:, None] & (np.arange(3) == a)[None, :]] = 0  # placeholder
-        P[np.ix_(m, [a])] = sign[m][:, None]
-        free = cols[a]
-        P[np.ix_(m, free)] = uv[m]
+        P[np.ix_(m, [a])] = sign[m][:, None]       # 固定軸を面(±1)へ貼り付け
+        P[np.ix_(m, cols[a])] = uv[m]              # 残り2軸は面上一様
     return P
 
 
