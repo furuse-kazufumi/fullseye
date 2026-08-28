@@ -381,8 +381,8 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         frames_h = render_turntable(
             Vp, Fp, frames=frames, size=size, ss=ss, material="plastic",
             albedo=(0.8, 0.8, 0.8), light=(0.45, 0.55, 0.90),
-            background=(0.06, 0.07, 0.09), elev_deg=18.0, tonemap="reinhard",
-            albedo_fn=albedo_fn, log=log)
+            background=(0.06, 0.07, 0.09), elev_deg=20.0, tonemap="reinhard",
+            ambient=0.14, albedo_fn=albedo_fn, log=log)
         p = os.path.join(out_dir, "showcase_hue_cycle.gif")
         sb = save_gif(frames_h, p, fps=fps, log=log)
         n, shp = verify_gif(p, log=log)
