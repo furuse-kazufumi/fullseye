@@ -245,6 +245,7 @@ _CATALOG = {
         ("radius_outlier_removal", "pcl_filter", ["points"], "points", False),
         ("voxel_grid_downsample", "pcl_filter", ["points"], "points", False),
         ("mls_smooth", "pcl_filter", ["points"], "points", False),
+        ("volume_downsample", "volops", ["voxel"], "voxel", False),
     ],
     "structured_light": [  # 構造化光・位相シフト profilometry(縞 → 位相 → 高さ)
         ("wrapped_phase", "fringe", ["images"], "image2d", False),
