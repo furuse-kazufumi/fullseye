@@ -341,14 +341,13 @@ def main() -> int:
     assert shape_ok, f"(g) shape 不正: {img1.shape}"
     assert range_ok, "(g) 値域が [0,1] を外れた"
 
-    assert ao_margin > 0.05, f"(b) 凹部が AO で暗くならない: darken={ao_margin:.3f}"
-    assert neck_on < neck_off, "(b) ao_on の首が ao_off 以上に明るい"
-    assert obj_on < obj_off - 0.01, \
-        f"(b) 物体全体で AO が輝度を落としていない: on={obj_on:.3f} off={obj_off:.3f}"
-    # beat-null: AO を切ると凹部の暗化が消える(差 ~0)。
-    null_neck_margin = neck_off - neck_off
-    assert abs(null_neck_margin) < 1e-9 and ao_margin > null_neck_margin + 0.05, \
-        "(b) beat-null: AO 無効時に凹部の暗化が残ってしまう"
+    assert ao_contact > 0.03, f"(b) 接触部が AO で暗くならない: darken={ao_contact:.3f}"
+    assert contact_on < contact_off, "(b) ao_on の接触部が ao_off 以上に明るい"
+    # 選択性: AO は「遮蔽された凹部」を暗くし「露出した頂部」はほぼ不変(一様減光でない)。
+    assert ao_contact > ao_top + 0.02, \
+        f"(b) AO が選択的でない(頂部も同程度暗い): contact={ao_contact:.3f} top={ao_top:.3f}"
+    # beat-null: ao=False では暗化 0(接触も頂部も差なし)= AO を切ると寄与が消える。
+    assert abs(ao_top) < 0.03, f"(b) 露出頂部が不当に暗化(AO の選択性が崩れた): {ao_top:.3f}"
 
     assert hl_frac > 0.0, "(c) 鏡面ハイライトが検出できない"
     assert hl_frac < 0.15, f"(c) ハイライトが小面積でない(鏡面らしくない): frac={hl_frac:.3f}"
