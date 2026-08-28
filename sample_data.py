@@ -41,7 +41,6 @@ import os
 import posixpath
 import shutil
 import sys
-import tempfile
 
 # ---------------------------------------------------------------------------
 # manifest — curated, honest.  Only entries whose source URL and licence I am
