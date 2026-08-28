@@ -246,6 +246,7 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
         if nv < _EPS:
             raise ValueError("point light coincides with the scene centre")
         ldir_c = -v / nv
+        dist_c = nv                                   # 光源→中心の距離(点光源の面光源近似で使う)
 
     # texel のワールドサイズ(平行光近似の枠から)と傾斜スケールのバイアス。
     # 光源カメラの縦視野は fov=2*atan(radius*margin/dist) なので枠の縦幅は
