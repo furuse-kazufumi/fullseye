@@ -41,8 +41,10 @@ from pathlib import Path
 import numpy as np
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+# この例ファイルは import 対象モジュール mesh_decimate.py と同名(basename 衝突)。
+# スクリプト実行時 sys.path[0] は examples_3d/ になり自分自身を import してしまうため、
+# リポジトリルートを無条件で最前へ挿入して root 側 mesh_decimate.py を優先させる。
+sys.path.insert(0, str(_REPO_ROOT))
 
 from match3d import mesh_to_points          # noqa: E402  (sys.path 調整後に import)
 from mesh_decimate import decimate_mesh      # noqa: E402

@@ -42,9 +42,11 @@ from pathlib import Path
 
 import numpy as np
 
+# このファイル名(examples_3d/mesh_props.py)はルートのモジュール mesh_props.py と同名なので、
+# リポジトリルートを sys.path の**先頭**に置き、`import mesh_props` が例自身でなくルートの
+# モジュールに解決されるようにする(PYTHONPATH=. で既にルートが末尾にある場合の先取りも兼ねる)。
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+sys.path.insert(0, str(_REPO_ROOT))
 
 from mesh_props import (  # noqa: E402  (sys.path 調整後に import)
     face_normals,
