@@ -8,14 +8,19 @@ ground-truth check and asserts it. Studio's "3-D Examples" gallery and
 ``docs/EXAMPLES_3D.md`` both source their list from here, and :func:`validate`
 runs every script so the gallery only ever advertises examples that actually work.
 
-Three data provenances, so the examples run on genuine shapes, not just spheres:
+Varied data provenances, so the examples run on genuine shapes, not just spheres:
 
   * ``synthetic``     — controllable synthetic data with exact ground truth.
+  * ``procedural``    — shapes built from the toolkit's own generators (e.g. a
+                        27-bone hand from capsule SDFs) — no data file, always runs.
   * ``skeleton_ct``   — a hand-skeleton X-ray-CT phantom voxelised from the real
                         MS-Human-700 anatomical bone meshes (volumetric / tomography).
   * ``itokawa``       — a decimated surface cloud of asteroid 25143 Itokawa from the
                         public-domain Gaskell shape model (JAXA Hayabusa; see
                         ``studio_assets/sample_3d/ATTRIBUTION.md``).
+  * ``download``      — a real mesh fetched on demand by the opt-in downloader
+                        (``fullseye samples``); the example SKIPs (exit 0) until the
+                        user downloads it, so ``validate`` stays network-free.
 
 Usage::
 

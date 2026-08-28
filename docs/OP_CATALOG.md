@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(67 例)
+### 3-D 点群/体積/曲面(72 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -86,6 +86,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **pose_estimation**
 - **外れ値ありの3D-2D対応からカメラ6自由度姿勢を推定(PnP+RANSAC)** — 既知寸法の箱の3D-2D対応(30%外れ値・0.5px雑音)から pnp_ransac で姿勢復元。回転<2度・並進<2%で、恒等姿勢や素のDLTを明確に上回る。 `py -3.11 examples_3d/pose_estimation.py`
+- **誤対応4割下のカメラ姿勢推定(PnP+RANSAC)** — 200点の3D-2D対応の40%が誤対応でもpnp_ransacが姿勢復元: 回転誤差0.11度・inlier再投影0.66px・inlier適合率100%。同じ汚染データの素dlt_pose(RANSACなし)は33.7度に破綻し319倍判別的に上回る。 `py -3.11 examples_3d/pnp_pose_outliers.py`
 
 **segmentation**
 - **ビンピッキング: 台平面除去→物体クラスタリング** — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。 `py -3.11 examples_3d/object_segmentation.py`
@@ -107,6 +108,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。 `py -3.11 examples_3d/medial_topology.py`
 - **曲面上の測地距離と最遠点サンプリング** — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。 `py -3.11 examples_3d/geodesic_distance.py`
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
+- **点群の鏡映対称面の復元** — 既知平面で鏡映対称な点群から初期推定なしにdetect_reflection_symmetryが対称面を復元: 法線誤差0.0度・鏡映残差1.5e-11。非対称null(残差1.14)は約7.8e10倍大きく、でたらめ平面(最良1.27)も桁違いで判別的。 `py -3.11 examples_3d/reflection_symmetry.py`
 
 **range_sensing**
 - **360度点群⇄距離画像の往復(球面投影)** — project_spherical→unproject_spherical の往復で形状を保存(誤差<voxel)。奥行きを潰す平面正射影より55倍良い。 `py -3.11 examples_3d/lidar_projection.py`
@@ -117,6 +119,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **structured_light**
 - **位相シフト縞投影で高さを復元** — 縞合成→wrapped_phase→unwrap_phase_2d→decode で高さ(RMSE 0.63%)。位相アンラップ無しは2π跳びで88%誤る。 `py -3.11 examples_3d/structured_light.py`
+- **Gray code 構造化光の絶対デコード** — 物体で湾曲した投影機コラム番号(0..127)をGray codeビット面7枚からgraycode_decodeで絶対復号。全12288画素で整数厳密一致(100%)。極性反転(0%)/面順取り違え(13%)/最頻値決め打ち(2%)のnullを判別的に上回る。撮影ノイズ42%まで厳密。 `py -3.11 examples_3d/graycode_structured_light.py`
 
 **deformable_registration**
 - **TPSベースの非剛体位置合わせ** — 既知TPS曲げ変形をかけた標的へ register_nonrigid で位置合わせし残差をノイズ床へ。剛体ICPは曲げを吸収できず残差が大きい(制御点で tps_warp が厳密に写ることも確認)。 `py -3.11 examples_3d/nonrigid_deform.py`
@@ -128,10 +131,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **三角形メッシュの平滑化(Laplacian/Taubin・非収縮)** — ノイズメッシュを接続グラフ上で平滑化。RMS 0.627→Laplacian 0.306/Taubin 0.215。Taubin は平均半径ズレ0.025で Laplacian 0.298 の約1/12=非収縮。marching cubes/スキャン後処理向け。 `py -3.11 examples_3d/mesh_smooth.py`
 - **メッシュ簡略化(QEM edge-collapse)で目標面数へ軽量化** — 球1280面→384面(目標厳密)、頂点は球面上・watertight維持・対称Hausdorff 3.3%R。同数までランダム間引くnullは穴792本・Hausdorff 21.3%Rで6.4倍劣る。スキャン/CADの軽量化。 `py -3.11 examples_3d/mesh_decimate.py`
 - **メッシュの法線・表面積・平均曲率(接続情報から)** — 面/頂点法線・表面積・cotangent平均曲率を面の巻き順とラプラシアンから測る。球(R2.5)で面積誤差0.12%・曲率0.4000(1/R)・法線外向き率1.00。面積null(49.7%誤差)・平面曲率nullを判別的に上回る。 `py -3.11 examples_3d/mesh_props.py`
+- **DL実データメッシュの多段LOD間引き(QEM)** — DL版Stanford Bunny(6.9万面)をQEMで50/25/10%へ間引き。面数34725→17361→6944と単調減少・Hausdorff/diag<=0.020・Chamfer/diag<=0.0024(1/10面でも平均誤差一定)。同面数ランダムドロップ(0.0034)に平均誤差で勝ち、片側クロップnullはHausdorff0.59=30倍で帯外。未取得時はSKIPしexit0。 `py -3.11 examples_3d/mesh_lod_download.py`
 
 **decimation**
 - **点群の間引き(voxel grid / farthest-point)で密度を均す** — 6万点の密度ムラ点群をvoxel格子(重心集約, カバレッジ0.134<=理論0.260)とFPS(0.097)で間引き。同数のランダム間引き(0.310, 穴あり)を判別的に上回る。LiDAR/深度カメラの前処理でICP・特徴計算を軽くする。 `py -3.11 examples_3d/pointcloud_downsampling.py`
 - **ボリューム(3D CT)の間引き — max/mean プールの使い分け** — 260^3=1758万ボクセル(Frangi上限超過で拒否)を4倍間引きして上限内へ。既知8欠陥をmaxプールは8/8保持・meanプールは0/8にwashout。微小欠陥検出にはmaxが正しいことを計数で判別的に示す。工業CT/ラミノグラフィの前処理。 `py -3.11 examples_3d/volume_downsampling.py`
+
+**optics**
+- **スネル屈折とフレネル反射(解析GT検証)** — match3dの光線光学opを閉じた式で検証。Snell残差1e-16・屈折角一致3.9e-14度、Fresnel垂直入射0.040=解析値・grazing→1・臨界角超で全反射(NaN/None/1.0)。無屈折null(屈折角が平均20.5度ずれ)を判別的に棄却。 `py -3.11 examples_3d/snell_refraction.py`
 
 **rendering**
 - **レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)** — 物体空間AOで半球到達性を[0,1]化。平面に載る球で頂上AO1.00/接触部0.06(高さとSpearman1.00)、溝は深さに単調低下。一様AO=1(null)は凹凸を判別不能。拡散のみのLambertianに乗算し立体感を出す。 `py -3.11 examples_3d/render_ao.py`
