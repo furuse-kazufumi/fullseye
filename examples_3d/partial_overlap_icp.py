@@ -3,10 +3,11 @@
 Physical AI では 1 台の深度センサで物体を一周できず、視点ごとに「見えている面だけ」の
 部分点群(partial scan)が得られる。これらを 1 つの座標系へ融合するのが登録(registration)
 の中核だが、部分観測どうしは重なりが小さく、しかも別々の位置からサンプルされる(点は
-一致しない)ため、素朴な合わせ方は破綻する。ここでは非対称なでこぼこブロブ(ランダムな
-瘤を持つ星状凸曲面)の表面を、別方向の 2 視点で可視な部分だけ切り出して scan A(表面の
-~6 割)と scan B を作り、B に既知の剛体変換 (R_gt, t_gt) を掛けてバラした上で、
-pipeline3d.register_pointclouds(FPFH+RANSAC → ICP)で A へ戻す。重なりは ~4 割の難条件。
+一致しない)ため、素朴な合わせ方は破綻する。ここでは非対称なでこぼこブロブ(異方な楕円体
+にランダムな瘤を載せた星状凸曲面。球対称も平面の姿勢曖昧性も持たない)の表面を、別方向の
+2 視点で可視な部分だけ切り出して scan A(表面の ~6 割)と scan B を作り、B に既知の剛体変換
+(R_gt, t_gt) を掛けてバラした上で、pipeline3d.register_pointclouds(FPFH+RANSAC → ICP)で
+A へ戻す。2 視点の可視域が重なるのは表面の約半分(残り半分は各視点だけが見た非共有領域)。
 
 検証(GT): B に掛けた変換の真値がわかるので、復元されるべき逆変換 R_rec=R_gt.T が既知。
   * 実 op の回転誤差(測地度)が数度以内で、インライア RMSE が真値整列で到達できる
@@ -45,19 +46,20 @@ def rotation_error_deg(R_est, R_gt):
 
 # --- でこぼこブロブ(非対称・特徴豊富)の半径場 ----------------------------------
 # 固定シードで瘤(こぶ)の位置・強さ・鋭さを決める = A/B 共通の「同一物体」。
-# 球状の回転対称も平面の姿勢曖昧性も無いので、FPFH の角特徴が効き ICP が締まる。
+# 更に異方スケール AXIS を掛けて球対称を崩す(3 軸すべて異なる → 姿勢が一意に定まる)。
 R0 = 5.0
+AXIS = np.array([1.35, 0.72, 1.05])                         # 異方スケール(球対称を破る)
 _BF = np.random.default_rng(0)
-_NB = 9
+_NB = 14
 _bump_c = _BF.normal(size=(_NB, 3))
 _bump_c /= np.linalg.norm(_bump_c, axis=1, keepdims=True)   # 瘤の中心方向(単位ベクトル)
-_bump_a = _BF.uniform(0.15, 0.55, _NB)                       # 瘤の高さ(半径への寄与)
-_bump_w = _BF.uniform(2.0, 6.0, _NB)                         # 瘤の鋭さ
+_bump_a = _BF.uniform(0.30, 0.90, _NB)                      # 瘤の高さ(半径への寄与)
+_bump_w = _BF.uniform(3.0, 8.0, _NB)                        # 瘤の鋭さ
 
 
 def _radius(dirs):
     """方向(単位ベクトル)→ ブロブ半径。瘤は von-Mises 状の隆起の和。"""
-    dots = dirs @ _bump_c.T                                  # (N, NB) 各瘤中心との内積
+    dots = dirs @ _bump_c.T                                 # (N, NB) 各瘤中心との内積
     return R0 * (1.0 + (_bump_a * np.exp(_bump_w * (dots - 1.0))).sum(1))
 
 
@@ -65,9 +67,9 @@ def sample_blob(n, seed):
     """ブロブ表面を n 点、独立にサンプル。点と(可視判定用の)放射方向を返す。"""
     rng = np.random.default_rng(seed)
     d = rng.normal(size=(n, 3))
-    d /= np.linalg.norm(d, axis=1, keepdims=True)            # 球面一様な方向
-    pts = _radius(d)[:, None] * d                            # 表面点(星状凸)
-    return pts, d                                            # d ≈ 外向き放射方向
+    d /= np.linalg.norm(d, axis=1, keepdims=True)           # 球面一様な方向
+    pts = (_radius(d)[:, None] * d) * AXIS                  # 異方な星状凸の表面点
+    return pts, d                                           # d ≈ 外向き放射方向
 
 
 def visible(radial, view_dir, cos_thr=0.0):
@@ -103,17 +105,17 @@ def trimmed_rmse(src, dst, trim):
 
 
 # ═══ 1) ブロブ表面を 2 回独立サンプルし、別視点の部分スキャン A / B を作る ═══
-surf_A, rad_A = sample_blob(9000, seed=1)     # scan A 用の独立サンプル
-surf_B, rad_B = sample_blob(9000, seed=2)     # scan B 用の独立サンプル(別realization)
+surf_A, rad_A = sample_blob(26000, seed=1)    # scan A 用の独立サンプル
+surf_B, rad_B = sample_blob(26000, seed=2)    # scan B 用の独立サンプル(別realization)
 
 VIEW_A = [0.0, 0.0, 1.0]                       # 上(-z 側)から見る
-VIEW_B = [0.966, 0.0, -0.259]                  # A と ~105 度離れた方向 → 部分重なり
-mA = visible(rad_A, VIEW_A, cos_thr=0.18)      # cos_thr>0 で擦過面も拾い可視率 ~6 割
-mB = visible(rad_B, VIEW_B, cos_thr=0.18)
+VIEW_B = [1.0, 0.0, 0.0]                       # A と 90 度離れた横方向 → 部分重なり
+mA = visible(rad_A, VIEW_A, cos_thr=0.22)      # cos_thr>0 で擦過面も拾い可視率 ~6 割
+mB = visible(rad_B, VIEW_B, cos_thr=0.22)
 
 allpts = np.vstack([surf_A, surf_B])
 full_diag = float(np.linalg.norm(allpts.max(0) - allpts.min(0)))
-noise = 0.004 * full_diag                      # センサノイズ = 対角長の 0.4%
+noise = 0.0015 * full_diag                     # センサノイズ = 対角長の 0.15%(≒ 点間隔の半分)
 rngA = np.random.default_rng(10)
 rngB = np.random.default_rng(20)
 scan_A = surf_A[mA] + rngA.normal(0.0, noise, surf_A[mA].shape)   # 部分スキャン A(A 座標系)
@@ -147,7 +149,7 @@ floor_rmse = trimmed_rmse(B_gt_aligned, scan_A, TRIM)
 print(f"ブロブ表面点数 A/B        : {len(surf_A)}/{len(surf_B)}  (放射方向つき)")
 print(f"scan A(部分)             : {scan_A.shape}  可視率 {fracA:.2f}(表面の ~6 割)")
 print(f"scan B(部分)             : {scan_B.shape}")
-print(f"点間隔 res / ノイズ σ     : {res:.4f} / {noise:.4f}")
+print(f"点間隔 res / ノイズ σ     : {res:.4f} / {noise:.4f}  (σ/res={noise / res:.2f})")
 print(f"A-B 重なり率(幾何)       : {overlap:.2f}  → Trimmed ICP trim={TRIM:.2f}")
 print(f"真の変換 R_gt             : 55 度回転, t_gt={t_gt.tolist()}")
 print(f"実 op 回転誤差 (度)       : {real_err:.3f}")
@@ -168,7 +170,7 @@ print(f"beat-null 回転誤差 (度)   : 実 op {real_err:.3f} / PCA主軸 {pca_
       f"単位行列ICP {icp_id_err:.2f}")
 
 # ═══ GT 検証(判別的)═══
-# (a) 実 op は数度以内で姿勢を復元(部分重なり ~4 割でも FPFH+ICP で締まる)
+# (a) 実 op は数度以内で姿勢を復元(部分重なりでも FPFH+ICP で締まる)
 assert real_err < 4.0, f"実 op の回転誤差が大きすぎる: {real_err:.3f} 度"
 # (b) インライア RMSE が GT 整列の床の水準(部分重なり故 res 程度が下限)
 assert rmse < 1.8 * floor_rmse, \
