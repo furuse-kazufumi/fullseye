@@ -358,6 +358,64 @@ def cmd_synth(a):
     return 0
 
 
+def cmd_samples(a):
+    """Opt-in sample datasets: list URLs / open the save folder / (optionally) fetch.
+
+    Nothing is bundled in the wheel — you fetch each dataset from its own source,
+    so fullseye never redistributes third-party data.
+    """
+    import sample_data as sd
+    act = a.action
+    if act == "where":
+        print(sd.data_dir()); return 0
+    if act == "open":
+        print("samples folder: %s" % sd.open_dir()); return 0
+    if act == "list":
+        print("Sample data is NOT bundled - fetch it from the source URL below.")
+        print("folder: %s   (open it with: fullseye samples open)\n" % sd.data_dir())
+        for e in sd.catalog():
+            if a.category and e["category"] != a.category:
+                continue
+            have = "[have]" if sd.verify(e["id"]) else "[    ]"
+            size = ("%.0f MB" % (e["bytes"] / 1e6)) if e.get("bytes") else "?"
+            print("%s %-15s %-8s %s" % (have, e["id"], e["category"], e["name"]))
+            print("        %s  commercial=%s  %s" % (e["license"], e["commercial"], size))
+            print("        url : %s"
+                  % (e["url"] or ("(no direct URL - source page) " + e["source_page"])))
+            if e.get("attribution"):
+                print("        cite: %s" % e["attribution"])
+        return 0
+    if act == "verify":
+        ids = list(sd._BY_ID) if a.all else ([a.id] if a.id else [])
+        if not ids:
+            print("give a sample id or --all"); return 2
+        rc = 0
+        for i in ids:
+            ok = sd.verify(i)
+            print("%-15s %s" % (i, "OK" if ok else "missing/mismatch"))
+            rc = rc or (0 if ok else 1)
+        return rc
+    if act == "download":
+        if a.all:
+            ids = [e["id"] for e in sd.catalog() if e["access"] == "direct"]
+        elif a.category:
+            ids = [e["id"] for e in sd.catalog()
+                   if e["category"] == a.category and e["access"] == "direct"]
+        elif a.id:
+            ids = [a.id]
+        else:
+            print("give a sample id, --all, or --category <cat>"); return 2
+        for i in ids:
+            try:
+                sd.download(i, yes=a.yes)
+            except Exception as ex:  # fail-closed: report and move on
+                print("[%s] error: %s" % (i, ex))
+        if not a.yes:
+            print("\n(nothing downloaded - add --yes to opt in)")
+        return 0
+    print("unknown action %r" % act); return 2
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
