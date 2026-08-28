@@ -41,6 +41,9 @@ GOLDEN = [
     "read_envi", "spec_index",
     # I/O + visualization
     "read_image", "write_image", "to_float01", "colorize_depth", "save", "load",
+    # 3-D metrology fits — (depth,row,col) analogue of the 2-D fits (numpy-only, always present)
+    "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3",
+    "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
 ]
 
 
@@ -84,3 +87,40 @@ def test_op_library_still_works():
     out = fullseye.apply(frame, "gaussian", 0.6, 0.5)
     assert out.shape == frame.shape
     assert len(fullseye.op_names()) > 300           # the catalog is non-trivial and intact
+
+
+def test_facade_imports_without_torch():
+    """The facade must stay importable on a numpy-only install — torch is optional.
+    The numpy-only 3-D metrology (measure3d fits + inner_box3) works, and the
+    torch-backed op registry (ops3d / pipeline3d) degrades to None instead of
+    crashing the import. This is the contract that keeps `pip install fullseye`
+    (no extras) usable."""
+    import os
+    import subprocess
+    import sys
+    import textwrap
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    code = textwrap.dedent(
+        """
+        import sys, importlib.abc
+        class _Block(importlib.abc.MetaPathFinder):
+            def find_spec(self, name, path, target=None):
+                if name.split('.')[0] in ('torch', 'kornia'):
+                    raise ImportError('blocked ' + name)
+                return None
+        sys.meta_path.insert(0, _Block())
+        import numpy as np
+        import fullseye as fs
+        T = np.array([[0., 0, 0], [1, 1, 0], [1, 0, 1], [0, 1, 1]])
+        assert abs(fs.smallest_box3(T)['volume'] - 1.0) < 1e-6, 'smallest_box3 broken w/o torch'
+        V = np.zeros((6, 7, 8), bool); V[1:5, 1:6, 1:7] = True
+        assert fs.inner_box3(V)['volume'] == 4 * 5 * 6, 'inner_box3 broken w/o torch'
+        assert callable(fs.fit_plane3), 'fit_plane3 missing w/o torch'
+        assert fs.ops3d is None and fs.pipeline3d is None, 'torch-backed toolkit did not degrade'
+        print('OK')
+        """
+    )
+    env = dict(os.environ, PYTHONPATH=root, PYTHONUTF8="1")
+    r = subprocess.run([sys.executable, "-c", code], cwd=root, env=env,
+                       capture_output=True, text=True, timeout=120)
+    assert r.returncode == 0 and "OK" in r.stdout, f"stdout={r.stdout!r}\nstderr={r.stderr!r}"

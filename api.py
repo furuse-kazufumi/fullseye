@@ -88,6 +88,20 @@ from stereo import (  # noqa: E402,F401
 )
 from measure import (line_profile, distance, angle,  # noqa: E402,F401
                      fit_line, fit_circle, fit_ellipse, fit_rectangle2)
+# 3-D metrology fits — the (depth, row, col) analogue of the 2-D fits above.
+# numpy-only (no torch), so always available; the torch-backed op registry below is guarded.
+from measure3d import (  # noqa: E402,F401
+    fit_line3, fit_plane3, fit_sphere3, fit_circle3,
+    smallest_box3, smallest_box3_axis, fit_box3, smallest_sphere3)
+from regionprops3d import inner_box3  # noqa: E402,F401  (3-D inner_rectangle1)
+import measure3d          # noqa: E402,F401
+import regionprops3d      # noqa: E402,F401
+try:                      # full typed 3-D op registry + composite pipelines
+    import ops3d          # noqa: E402,F401  (needs the `threed` extra — torch)
+    import pipeline3d     # noqa: E402,F401
+except Exception:         # keep the facade importable on a numpy-only install
+    ops3d = None
+    pipeline3d = None
 from registration import (  # noqa: E402,F401
     kabsch, icp, point_to_plane_icp, apply_transform, pca_align, register, feature_register,
 )
@@ -278,6 +292,9 @@ __all__ = [
     "video", "read_frames", "iter_frames", "frame_pairs", "write_video", "probe",
     "recipes", "recipe", "measure", "line_profile", "distance", "angle",
     "fit_line", "fit_circle", "fit_ellipse", "fit_rectangle2",
+    "fit_line3", "fit_plane3", "fit_sphere3", "fit_circle3",
+    "smallest_box3", "smallest_box3_axis", "fit_box3", "smallest_sphere3", "inner_box3",
+    "measure3d", "regionprops3d", "ops3d", "pipeline3d",
     "algo", "algo_ops", "algo_categories", "find_algo", "run_algo",
     "algo_to_python", "algo_to_c", "algo_difftest",
     "synth", "learn_features", "synthesize_like", "match_histogram",
