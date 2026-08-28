@@ -149,6 +149,8 @@ def _op_md(rec, path, by_name):
     if rec.get("gpu"):
         fm.append("gpu: true")
     fm.append("examples: [" + ", ".join(rec["examples"]) + "]")
+    fm.append(f"author: {_AUTHOR}")
+    fm.append(f"license: {_LICENSE}")
     lines.append("---")
     lines.extend(fm)
     lines.append("---")
