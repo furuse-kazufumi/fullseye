@@ -361,7 +361,8 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         frames_s = render_turntable(
             Vs, Fs, frames=frames, size=size, ss=ss, material="plastic",
             albedo=(0.87, 0.83, 0.72), light=(0.40, 0.45, 0.85),
-            background=(0.06, 0.07, 0.09), elev_deg=6.0, tonemap="reinhard", log=log)
+            background=(0.06, 0.07, 0.09), elev_deg=7.0, tonemap="reinhard",
+            ambient=0.15, log=log)
         p = os.path.join(out_dir, "showcase_turntable_skeleton.gif")
         sb = save_gif(frames_s, p, fps=fps, log=log)
         n, shp = verify_gif(p, log=log)
