@@ -16,11 +16,13 @@ already reports. Centres are returned both as a 3-vector ``center`` and as scala
 component order.
 
 Honest provenance — what is genuinely new here vs. a consistency wrapper:
-  * ``smallest_box3`` (minimum-VOLUME oriented box) is the genuine gap this module
-    fills. ``pcseg.obb`` already fits a **PCA-aligned** box, but a PCA box is not
-    minimal on an asymmetric object; ``smallest_box3`` searches hull-face
-    orientations for the true minimum, exactly as 2-D ``smallest_rectangle2``
-    improves on a PCA rectangle.
+  * ``smallest_box3`` (near-minimum-VOLUME oriented box) is the genuine gap this
+    module fills. ``pcseg.obb`` only fits a **PCA-aligned** box, which is not minimal
+    on an asymmetric object; ``smallest_box3`` seeds from the hull-face orientations
+    and PCA and refines by local search, reaching the true minimum on box-like AND
+    case-b shapes (e.g. a tetrahedron, where a PCA box is ~2x too large). It is not a
+    *proof* of global minimality for every convex shape — see its docstring for the
+    honest limit.
   * ``smallest_sphere3`` computes the minimum enclosing sphere by **exact Welzl**;
     ``hull3d.min_enclosing_sphere`` already offers an *approximate* (iterative
     refinement) one, so this is an exactness upgrade rather than a brand-new
