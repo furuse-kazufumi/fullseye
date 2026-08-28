@@ -49,6 +49,26 @@ _COPYRIGHT = f"© 2026 {_AUTHOR} — Fullseye operator documentation. Licensed u
 # registry access
 # ------------------------------------------------------------------ #
 
+def _lib_version() -> str:
+    try:
+        import fullseye
+        return getattr(fullseye, "__version__", "0")
+    except Exception:
+        return "0"
+
+
+_VERSION = _lib_version()
+
+
+def _registry_fingerprint(recs) -> str:
+    """Deterministic sha256 over op metadata — connects docs to the exact op set."""
+    import hashlib
+    payload = "\n".join(
+        f"{r['dim']}|{r['name']}|{r['category']}|{r['in']}|{r['out']}|{r['halcon']}"
+        for r in sorted(recs, key=lambda r: (r["dim"], r["name"])))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:16]
+
+
 def _catslug(cat: str) -> str:
     """Filesystem-safe category folder name (categories may contain '/' or '-')."""
     return re.sub(r"[^0-9a-zA-Z]+", "_", cat).strip("_").lower() or "misc"
