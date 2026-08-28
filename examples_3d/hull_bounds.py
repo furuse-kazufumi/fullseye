@@ -155,9 +155,17 @@ def render_png(path: Path, box_pts, obb, ab, hull_verts, hull_faces,
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d.art3d import Line3DCollection  # noqa: F401
+        import matplotlib.font_manager as fm
     except Exception:
         return False
+
+    # 日本語フォントを選ぶ(無ければ既定のまま=英字は出る)。tofu(□)回避。
+    have = {f.name for f in fm.fontManager.ttflist}
+    for cand in ("Yu Gothic", "Meiryo", "MS Gothic", "Noto Sans JP", "Malgun Gothic"):
+        if cand in have:
+            plt.rcParams["font.family"] = cand
+            break
+    plt.rcParams["axes.unicode_minus"] = False
 
     fig = plt.figure(figsize=(16.5, 5.4))
 
