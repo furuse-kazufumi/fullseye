@@ -167,9 +167,8 @@ def fit_cone(points) -> dict:
 
     r = resid(sol.x)
     residual = float(np.sqrt(np.mean(r ** 2)))
-    # スケール非依存の妥当性: 残差が形状スケールに対して大きすぎたら honest に開示(例外にはしない)
     return {"apex": apex, "axis": axis, "half_angle": half_angle,
-            "residual": residual, "scale": diag}
+            "residual": residual}
 
 
 # ═══════════════════════════════════════════════════════════════════════════
