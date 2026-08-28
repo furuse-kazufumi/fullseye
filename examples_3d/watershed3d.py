@@ -148,8 +148,17 @@ def render_png(vol, dist_mip, markers, ws_labels, centers, out_path) -> bool:
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
         from matplotlib.colors import ListedColormap
+        import matplotlib.font_manager as fm
     except ImportError:
         return False
+
+    # 日本語ラベルが tofu(□)にならないよう、環境にある日本語対応フォントを先頭に置く。
+    installed = {f.name for f in fm.fontManager.ttflist}
+    for jp in ("Yu Gothic", "Meiryo", "Noto Sans JP", "MS Gothic", "BIZ UDGothic"):
+        if jp in installed:
+            plt.rcParams["font.family"] = jp
+            break
+    plt.rcParams["axes.unicode_minus"] = False
 
     # x 軸を投影(axis=2)→ (z,y) 断面 MIP。2 球は z 方向に並ぶので両方写る。
     bin_mip = vol.max(axis=2)
