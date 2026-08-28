@@ -436,6 +436,21 @@ _CATALOG = {
         ("registration_recall", "registration_eval", ["points", "points"], "measurement", False),
         ("rotation_translation_error", "registration_eval", ["pose", "pose"], "measurement", False),
     ],
+    "bounds": [  # 凸包・バウンディングボリューム(位置/向き/大きさの基本メトロロジー)
+        ("convex_hull", "meshrepair", ["points"], "mesh", False),
+        ("aabb", "pcseg", ["points"], "primitive", False),
+        ("obb", "pcseg", ["points"], "primitive", False),
+        ("min_enclosing_sphere", "hull3d", ["points"], "primitive", False),
+    ],
+    "mesh_process": [  # 三角形メッシュの処理(平滑化/簡略化/法線・面積・曲率)
+        ("laplacian_smooth", "mesh_smooth", ["mesh"], "mesh", False),
+        ("taubin_smooth", "mesh_smooth", ["mesh"], "mesh", False),
+        ("decimate_qem", "meshrepair", ["mesh"], "mesh", False),
+        ("face_normals", "mesh_props", ["mesh"], "normals", False),
+        ("vertex_normals", "mesh_props", ["mesh"], "normals", False),
+        ("mesh_area", "mesh_props", ["mesh"], "measurement", False),
+        ("vertex_curvature", "mesh_props", ["mesh"], "curvature", False),
+    ],
 }
 
 
