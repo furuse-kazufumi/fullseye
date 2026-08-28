@@ -182,7 +182,7 @@ assert coh_big > 0.9 and coh_zero < 0.4 and coh_big > coh_zero + 0.4, \
     "σ大の coherent 変位が σ=0 独立 null を上回れていない"
 
 # 5b) cutout: 空間的に局所なボックス欠損。除去点は辺長 extent のボックス内に必ず収まる。
-extent = 0.15
+extent = 0.3
 kept, kept_idx = AUG.cutout(corner, extent=extent, seed=3)
 removed_mask = np.ones(len(corner), bool); removed_mask[kept_idx] = False
 removed = corner[removed_mask]
