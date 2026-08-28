@@ -294,31 +294,22 @@ def main() -> int:
     print(f"[c] highlight(spec>diff+0.15) frac={hl_frac:.4f} peak={hl_peak:.3f} ; "
           f"render_beauty hot-pixel frac={hot_frac:.4f} (small bright cluster)")
 
-    # ── (d) 接地影(render_beauty と同一の地面で cast_shadow の面積 GT)──────
-    Vg, Fg, gz, epsg = rb._ground_quad(Vp, np.array(light) / np.linalg.norm(light),
-                                       drop=0.01, span_scale=2.4)
-    V_all = np.vstack([Vp, Vg])
-    F_all = np.vstack([Fp, Fg + len(Vp)])
-    dview = render3d.render_mesh(V_all, F_all, pose=pose, intrinsics=Kgt, width=88, height=88)
-    Pw_all = render_shadow.unproject_to_world(dview["depth"], pose, Kgt)
-    with np.errstate(invalid="ignore"):
-        ground_px = (dview["silhouette"] > 0) & np.isfinite(Pw_all[..., 2]) \
-            & (np.abs(Pw_all[..., 2] - gz) < epsg)
+    # ── (d) 接地影(render_beauty と同一シーンで cast_shadow の面積 GT + 地面の明暗)──
     sm_full = render_shadow.cast_shadow(V_all, F_all, np.array(light), pose=pose,
-                                        intrinsics=Kgt, width=88, height=88,
+                                        intrinsics=Kgt, width=96, height=96,
                                         directional=True, penumbra=0.0, samples=1,
                                         shadow_res=256)
+    # beat-null: 遮蔽物(球)を外し地面のみ → 影は出ない。
     sm_null = render_shadow.cast_shadow(Vg, Fg, np.array(light), pose=pose,
-                                        intrinsics=Kgt, width=88, height=88,
+                                        intrinsics=Kgt, width=96, height=96,
                                         directional=True, penumbra=0.0, samples=1,
                                         shadow_res=256)
-    area_full = int((ground_px & (sm_full < 0.5)).sum())
-    area_null = int((ground_px & (sm_null < 0.5)).sum())
-    # render_beauty(ground_shadow=True) の地面: 影側が明側より暗い。
-    img_gs = rb.render_beauty(Vp, Fp, **{**base, "ao": True})
-    gimg = img_gs.mean(axis=2)
-    lit_ground = ground_px & (sm_full >= 0.5)
-    sh_ground = ground_px & (sm_full < 0.5)
+    area_full = int((is_ground & (sm_full < 0.5)).sum())
+    area_null = int((is_ground & (sm_null < 0.5)).sum())
+    # render_beauty(ground_shadow=True) の地面: 影側が明側より暗い(img1 を再利用)。
+    gimg = img1.mean(axis=2)
+    lit_ground = is_ground & (sm_full >= 0.5)
+    sh_ground = is_ground & (sm_full < 0.5)
     lit_b = float(gimg[lit_ground].mean()) if lit_ground.any() else float("nan")
     sh_b = float(gimg[sh_ground].mean()) if sh_ground.any() else float("nan")
     print(f"[d] cast-shadow area: with-mesh={area_full}px  ground-only(null)={area_null}px ; "
