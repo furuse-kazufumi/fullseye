@@ -74,6 +74,7 @@ MANIFEST = [
         archive="tar.gz", member="bunny/reconstruction/bun_zipper.ply",
         dest="bunny.ply",
         sha256="a5720bd96d158df403d153381b8411a727a1d73cff2f33dc9b212d6f75455b84",
+        sha256_out="b1acc63bece78444aa2e15bdcc72371a201279b98c6f5d4b74c993d02f0566fe",
         bytes=4894286,
         license="Stanford 3DSR (research courtesy)", commercial="check",
         access="direct",
