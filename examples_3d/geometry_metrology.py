@@ -10,8 +10,9 @@
 
 検証(GT): 直交フレーム R と設計角(二面角 β=35°, 稜角 γ=40°, 線-面角 δ=25°)から
 解析的な真値を作り、以下を assert する。
-    - 当てはめ: fit_plane_3d/fit_line_3d/fit_sphere_3d/fit_circle_3d が法線・方向・中心・
-      半径を機械精度で復元し、平面フィット残差 ~0。
+    - 当てはめ: fit_line_3d/fit_sphere_3d/fit_circle_3d はノイズ無し点で法線・方向・中心・
+      半径を機械精度で復元。fit_plane_3d は実測ノイズ付き面で法線をノイズ限界復元し、
+      その残差 RMS が注入ノイズ床を復元する(GT: 残差 ≈ σ)。
     - 基本要素: line_from_2points/plane_from_3points が 2 点/3 点から方向・法線を厳密に復元。
     - 角度: angle_3points=γ, angle_between_lines=γ, angle_between_planes=β, angle_line_plane=δ。
     - 距離: distance_point_plane/point_line/line_line が既知の隙間・垂線長を厳密復元。
