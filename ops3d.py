@@ -260,6 +260,9 @@ _CATALOG = {
         ("ransac_sphere", "ransac_fit", ["points"], "primitive", False),
         ("ransac_line", "ransac_fit", ["points"], "primitive", False),
         ("ransac_cylinder", "ransac_fit", ["points", "normals"], "primitive", False),
+        ("fit_cone", "fit_primitives_ext", ["points"], "primitive", False),
+        ("fit_torus", "fit_primitives_ext", ["points"], "primitive", False),
+        ("fit_ellipsoid", "fit_primitives_ext", ["points"], "primitive", False),
     ],
     "edges": [  # 3D エッジ抽出(Canny/LoG の 3D 版・検出/照合の前処理)
         ("gradient3d", "edges3d", ["voxel"], "gradient", False),
