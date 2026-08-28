@@ -249,7 +249,7 @@ EXAMPLES = [
      "summary": "ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。"},
     {"id": "render_tonemap", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済",
-     "summary": "鏡面HDR(max5.41)をReinhール/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。"},
+     "summary": "鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。"},
     {"id": "render_beauty", "task": "rendering", "data": "synthetic",
      "name": "レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)",
      "summary": "ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。"},

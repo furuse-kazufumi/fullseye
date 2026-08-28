@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(63 例)
+### 3-D 点群/体積/曲面(64 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -134,6 +134,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **レンダリング品質: matcap/Phong鏡面シェーディング** — 拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。 `py -3.11 examples_3d/render_shade.py`
 - **レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去** — ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。 `py -3.11 examples_3d/render_ssaa.py`
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。 `py -3.11 examples_3d/render_tonemap.py`
+- **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。 `py -3.11 examples_3d/render_beauty.py`
 
 ## スタンドアロン幾何/数学モジュール(関数 API)
 
@@ -183,7 +184,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 254 ops / 55 categories。_
+_計 255 ops / 55 categories。_
 
 
 ### augment(6)
@@ -443,7 +444,7 @@ _計 254 ops / 55 categories。_
 - `registration_recall` (`points, points → measurement`) — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。
 - `rotation_translation_error` (`pose, pose → measurement`) — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。
 
-### render(13)
+### render(14)
 - `project_points` (`points → image2d`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。
 - `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
@@ -457,6 +458,7 @@ _計 254 ops / 55 categories。_
 - `edge_alias_energy` (`image2d → measurement`) — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。
 - `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。
 - `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。
+- `render_beauty` (`mesh → image2d`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。
 
 ### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。
