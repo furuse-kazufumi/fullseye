@@ -397,8 +397,8 @@ def main() -> int:
 
     print(
         f"PASS: render_beauty が全品質層(ラスタライズ/鏡面/AO/接地影/SSAA/トーンマップ)を"
-        f"1 本に合成。決定的={det_equal}、AO は凹部を {neck_off:.2f}→{neck_on:.2f} と暗くし"
-        f"(darken {ao_margin:.2f}, beat-null で消失)、鏡面は小面積ハイライト(frac {hl_frac:.3f}, "
+        f"1 本に合成。決定的={det_equal}、AO は接触凹部を {contact_off:.2f}→{contact_on:.2f} と暗くし"
+        f"(darken {ao_contact:.2f}, 露出頂部は {ao_top:.2f} でほぼ不変=選択的)、鏡面は小面積ハイライト(frac {hl_frac:.3f}, "
         f"peak {hl_peak:.2f})を生み、接地影は with-mesh {area_full}px vs null {area_null}px で"
         f"地面を暗く(lit {lit_b:.2f}→影 {sh_b:.2f})、reinhard は単調(max {rein_max:.2f})で"
         f"クリップの潰し({clip_ties} 同点)を回避、SSAA は edge energy {e1:.3f}→{e2:.3f} と低減。"
