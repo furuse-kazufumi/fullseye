@@ -10,6 +10,14 @@ honest 規律: 進化が見つけた best パイプラインが「無処理(そ�
 「人が手で組んだ定番パイプライン」を本当に上回るかを chamfer 距離で検証する。
 上回らなければ探索の価値はない(beat-the-null)。
 """
+import sys
+from pathlib import Path
+
+# repo root first on sys.path, so transitive imports (pipeline_evolve -> ops3d ->
+# ``import range_image``) resolve to the TOP-LEVEL modules, not the same-named
+# example files sitting in this directory (which would otherwise shadow them).
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 import numpy as np
 import pipeline_evolve as pe
 
