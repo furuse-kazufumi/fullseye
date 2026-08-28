@@ -70,6 +70,7 @@ import render_shadow
 import render_shade
 import render_ssaa
 import render_tonemap
+import render_beauty  # capstone: 全品質層を一発合成する hero レンダラ
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
