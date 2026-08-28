@@ -158,6 +158,10 @@ def fit_cone(points) -> dict:
     apex = np.asarray(sol.x[0:3], dtype=np.float64)
     axis = _unit(sol.x[3:6])
     half_angle = float(sol.x[6])
+    # 縮退ガード(honest): 半角 ~0 の円錐は円柱/直線と区別できず頂点も定まらない → 拒否。
+    if half_angle < np.deg2rad(0.5):
+        raise ValueError(
+            "fit_cone: 半角が ~0(円柱/直線へ縮退)。円錐として当てはめられない")
 
     # 開く向きの正規化(点は +axis 側の nappe にあるはず): 平均軸成分が負なら向き付けを直す。
     a, _ = _axial_radial(P, apex, axis)
