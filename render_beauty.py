@@ -118,12 +118,14 @@ def _as_light(x) -> np.ndarray:
 # 地面(pedestal)ステージ                                                       #
 # --------------------------------------------------------------------------- #
 def _ground_quad(Vmesh: np.ndarray, light_world: np.ndarray, drop: float,
-                 span_scale: float) -> tuple[np.ndarray, np.ndarray, float, float]:
-    """メッシュ真下の水平地面 quad(2 三角形, +Z 法線)を作る。
+                 span_scale: float, subdiv: int = 12
+                 ) -> tuple[np.ndarray, np.ndarray, float, float]:
+    """メッシュ真下の水平地面 grid(``subdiv``×``subdiv`` セル, +Z 法線)を作る。
 
     地面の高さはメッシュ最下点のわずか下、広さはメッシュ XY 半径 × ``span_scale``。影が落ちる
-    側(光と反対の XY 方向)へ中心をずらして、接地影が枠内の地面に確実に載るようにする。
-    返り値 ``(Vg, Fg, ground_z, eps_ground)``。"""
+    側(光と反対の XY 方向)へ中心をずらして、接地影が枠内の地面に確実に載るようにする。細分割
+    することで AO(接地の柔らかい暗化リング)が頂点間で滑らかに補間され、2 三角形のときの
+    まだら模様を避ける。返り値 ``(Vg, Fg, ground_z, eps_ground)``。"""
     lo = Vmesh.min(axis=0)
     hi = Vmesh.max(axis=0)
     center_xy = 0.5 * (lo[:2] + hi[:2])
@@ -137,16 +139,22 @@ def _ground_quad(Vmesh: np.ndarray, light_world: np.ndarray, drop: float,
     ln = float(np.linalg.norm(lxy))
     shift = (-lxy / ln) * half * 0.45 if ln > 1e-9 else np.zeros(2)
     cx, cy = center_xy + shift
-    xs = np.array([cx - half, cx + half], np.float64)
-    ys = np.array([cy - half, cy + half], np.float64)
-    Vg = np.array([
-        [xs[0], ys[0], ground_z],
-        [xs[1], ys[0], ground_z],
-        [xs[1], ys[1], ground_z],
-        [xs[0], ys[1], ground_z],
-    ], np.float64)
-    # CCW(上から見て反時計) → +Z 外向き法線。
-    Fg = np.array([[0, 1, 2], [0, 2, 3]], np.int64)
+    n = max(int(subdiv), 1) + 1                          # 頂点数 = セル数 + 1
+    xs = np.linspace(cx - half, cx + half, n)
+    ys = np.linspace(cy - half, cy + half, n)
+    X, Y = np.meshgrid(xs, ys, indexing="ij")
+    Vg = np.column_stack([X.ravel(), Y.ravel(),
+                          np.full(X.size, ground_z, np.float64)])
+    faces = []
+    for i in range(n - 1):
+        for j in range(n - 1):
+            a = i * n + j
+            b = i * n + (j + 1)
+            c = (i + 1) * n + (j + 1)
+            d = (i + 1) * n + j
+            faces.append([a, b, c])                     # CCW(上から見て) → +Z 外向き
+            faces.append([a, c, d])
+    Fg = np.asarray(faces, np.int64)
     eps_ground = 1e-4 * scene
     return Vg, Fg, ground_z, eps_ground
 
