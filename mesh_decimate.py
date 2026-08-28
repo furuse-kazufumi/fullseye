@@ -1,26 +1,44 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""mesh_decimate — 三角メッシュの簡略化(mesh decimation)を **quadric error metric**
-(QEM, Garland & Heckbert, SIGGRAPH 1997)の edge-collapse で行う。
+"""mesh_decimate — 三角メッシュ簡略化(mesh decimation)の **境界保存・多様体厳格** な
+quadric error metric(QEM, Garland & Heckbert, SIGGRAPH 1997)edge-collapse 実装
+``decimate_qem_manifold``。
 
-高ポリ(high-poly)メッシュを、形をできるだけ保ったまま目標面数へ落とす基本操作。
-素朴に「面をランダムに間引く」と穴(hole)や非多様体(non-manifold)を作って形が
-壊れるが、QEM は「各頂点を、これまで消してきた面群の平面からの二乗距離の和(=誤差
-二次形式 Q)」で評価し、**誤差が最小になる辺から順に縮約(collapse)**する。縮約後の
-頂点は Q を最小化する最適位置へ寄せるので、平坦部は大胆に、曲率の高い所は保守的に
-間引かれ、元表面への Hausdorff 距離が小さく保たれる。
+関係する既存 op(重複ではなく変種であることの明示 / honest disclosure):
+    fullseye には既に **``meshrepair.decimate_qem(V, F, target_faces)``**(``fullseye.decimate_qem``
+    として公開・テスト済み)があり、同じ Garland & Heckbert 1997 の QEM edge-collapse を
+    「実用(practical)」水準で実装している(正しい per-vertex quadric・最小コスト collapse・
+    法線反転ガード)。本モジュールはそれを置き換える「新規で唯一の簡略化 op」ではない。
+    ``decimate_qem`` が **明示的に持たない** 3 点を足した **姉妹 op(sibling variant)** である:
+      (1) **境界エッジ拘束二次形式**(Garland の boundary term)。``decimate_qem`` は
+          "no boundary-preservation term" と自認しており、開いたメッシュの境界(穴の縁・
+          切り口の rim)を保てない。本 op は境界頂点が rim から離れる動きを強く罰する。
+      (2) **link condition による多様体保存**(Dey+ 1999)。``decimate_qem`` の法線反転
+          ヒューリスティックより厳密にトポロジー(2-manifold)を保つ。
+      (3) **4×4 拘束系での最適縮約位置**と、病的な外れ位置を棄却する
+          ``_FALLBACK_DIST_RATIO`` 外れ値除去。
+    使い分け:安価な衝突プロキシ=``decimate_qem`` / 開境界の保存と厳密 2-manifold が要る=本 op。
+    (differentiation は examples_3d/mesh_decimate.py が両者を実測比較して裏付ける — 開半球の
+    rim で本 op は境界を rim 上に保つが ``decimate_qem`` は rim を内側へ引き込む。)
+
+原理:高ポリ(high-poly)メッシュを形をできるだけ保ったまま目標面数へ落とす。素朴に
+「面をランダムに間引く」と穴(hole)や非多様体(non-manifold)を作って形が壊れるが、QEM は
+「各頂点を、これまで消してきた面群の平面からの二乗距離の和(=誤差二次形式 Q)」で評価し、
+**誤差が最小になる辺から順に縮約(collapse)**する。縮約後の頂点は Q を最小化する最適位置へ
+寄せるので、平坦部は大胆に・曲率の高い所は保守的に間引かれ、元表面への Hausdorff 距離が小さく保たれる。
 
 このモジュールが行うこと(honest な範囲):
   * 誤差二次形式 Q を面の基本二次形式(fundamental quadric K = p·pᵀ, p=平面 [a,b,c,d])の
     和として頂点ごとに積む。
   * 開いた面の**境界エッジ(boundary edge)**には Garland 流の垂直拘束二次形式を重み付きで
-    足し、境界が内側へ崩れるのを防ぐ(閉曲面では境界が無く無影響)。
+    足し、境界が内側へ崩れるのを防ぐ(閉曲面では境界が無く無影響=そこでは ``decimate_qem`` と
+    差が出ないのが正しい挙動)。
   * 縮約の可否は **link condition**(Dey+ 1999)で判定し、非多様体を生む縮約は拒否する。
   * 縮約先頂点は Q を最小化する 4×4 線形系で解く(特異なら端点/中点から最小コストを採る)。
   * lazy-deletion な最小ヒープでコスト最小の辺から縮約し、面数が目標に達したら停止する。
 
-mesh 表現は recon3d / match3d と同一:頂点 ``vertices`` (N,3) float、面 ``faces`` (M,3) int
-(三角形の頂点インデックス)。入力は fail-closed に検証(形状・インデックス範囲・非有限)。
-numpy + scipy(spatial のみ)で完結し、重い依存は使わない。
+mesh 表現は recon3d / match3d / meshrepair と同一:頂点 ``vertices`` (N,3) float、面
+``faces`` (M,3) int(三角形の頂点インデックス)。入力は fail-closed に検証(形状・
+インデックス範囲・非有限)。numpy + scipy(spatial のみ)で完結し、重い依存は使わない。
 
 Reference (public): M. Garland and P. S. Heckbert, "Surface Simplification Using
 Quadric Error Metrics", SIGGRAPH 1997.  Link condition: T. K. Dey, H. Edelsbrunner,
@@ -32,7 +50,7 @@ import heapq
 
 import numpy as np
 
-__all__ = ["decimate_mesh"]
+__all__ = ["decimate_qem_manifold"]
 
 # 境界エッジ拘束二次形式の重み。境界頂点が境界線から離れるのを強く罰する
 # (面の基本二次形式は単位法線由来で O(1) なので、境界を「効かせる」には十分大きく取る)。
