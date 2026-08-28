@@ -104,8 +104,8 @@ def save_png(verts_list, faces, titles, path: Path) -> bool:
         ax.set_xticks([]); ax.set_yticks([]); ax.set_zticks([])
         ax.view_init(elev=18, azim=35)
     fig.suptitle("Mesh smoothing: Laplacian shrinks, Taubin preserves radius",
-                 fontsize=13)
-    fig.tight_layout()
+                 fontsize=13, y=1.02)
+    fig.tight_layout(rect=(0, 0, 1, 0.94))
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(path, dpi=95, bbox_inches="tight")
     plt.close(fig)
