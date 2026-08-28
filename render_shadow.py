@@ -275,9 +275,10 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
         if directional:
             light_k = d_k                                # 方向そのもの
         else:
-            # 点光源: 中心位置を円錐に対応する円盤上へずらす(面光源近似)
-            offset = (d_k - ldir_c)
-            light_k = np.asarray(light, np.float64) - offset * dist_c
+            # 点光源(面光源近似): 光源を「中心→光源」軸まわりの角半径 penumbra の円錐に沿って
+            # 光源距離 dist_c の球帽上へばらまく。penumbra=0 では d_k=ldir_c なので light_k=light
+            # (元の点光源)に戻る。dist_c は上の else 分岐で光源→中心距離として定義済み。
+            light_k = center + d_k * dist_c
         Lpose, LK, _, _ = _light_camera(center, radius, light_k, directional, sres)
         lview = render3d.render_mesh(Vv, Ff, pose=Lpose, intrinsics=LK,
                                      width=sres, height=sres)
