@@ -149,11 +149,7 @@ def build_pod(res: int = 104, target_faces: int = 4200):
     g, _ = sdf_ops.grid_coords(((-1.5, 1.5),) * 3, res)
     body = sdf_ops.sphere_sdf(g, (0.0, 0.0, -0.12), 0.86)
     head = sdf_ops.sphere_sdf(g, (0.0, 0.0, 0.74), 0.52)
-    pod = sdf_ops.sdf_smooth_union(body, head, 0.42)         # 滑らかな首
-    # 赤道の薄い belt(扁平な球)で「設計された」造形感を出す(左右対称)。
-    belt = sdf_ops.sphere_sdf(g * np.array([1.0, 1.0, 3.2]),
-                              (0.0, 0.0, -0.12 * 3.2), 0.98)
-    pod = sdf_ops.sdf_smooth_union(pod, belt, 0.16)
+    pod = sdf_ops.sdf_smooth_union(body, head, 0.42)         # 滑らかな首の 2 ローブ形
     V, F = render3d.marching_cubes(pod, level=0.0)
     F = _orient_outward(V, F)
     V = _center(V)
