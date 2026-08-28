@@ -313,9 +313,6 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
         # 地面は matcap を貼らずマット拡散で(pedestal の質感)。
         if ground_shadow and is_ground.any():
             diff, _ = _lobes(normals, view_cam, light_cam, _GROUND_SHININESS)
-            gbody = ka + _GROUND_ALBEDO[None, None, :] * (diff * shadow_map)[..., None]
-            gbody = gbody * ao_map[..., None] * _GROUND_ALBEDO[None, None, :] / \
-                np.maximum(_GROUND_ALBEDO, 1e-6)[None, None, :]
             gcol = _GROUND_ALBEDO[None, None, :] * (
                 ka * ao_map[..., None]
                 + diff[..., None] * shadow_map[..., None] * ao_map[..., None])
