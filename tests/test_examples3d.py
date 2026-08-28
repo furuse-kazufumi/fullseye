@@ -42,7 +42,7 @@ def test_every_entry_has_required_metadata():
     for e in E.EXAMPLES:
         for field in ("id", "name", "task", "summary", "data"):
             assert e.get(field), f"{e.get('id')}: missing/empty {field}"
-        assert e["data"] in ("synthetic", "skeleton_ct", "itokawa"), (e["id"], e["data"])
+        assert e["data"] in ("synthetic", "procedural", "skeleton_ct", "itokawa", "download"), (e["id"], e["data"])
 
 
 def test_every_example_script_compiles():
