@@ -318,7 +318,7 @@ def render_beauty(V, F, *, pose=None, intrinsics=None, size: int = 512, ss: int 
                 + diff[..., None] * shadow_map[..., None] * ao_map[..., None])
             hdr = np.where(is_ground[..., None], gcol, hdr)
     else:
-        diff, spec = _lobes(normals, view_cam, view_cam * 0 + light_cam, sh)
+        diff, spec = _lobes(normals, view_cam, light_cam, sh)
         kd = float(mat["diffuse"])
         ks = float(mat["specular"])
         is_metal = bool(mat["metal"])
