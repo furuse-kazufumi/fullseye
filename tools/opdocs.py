@@ -41,6 +41,10 @@ _TEAL = "#17b8a6"
 _MUTE = "#8b91a0"
 _CODE = "#22d3bf"
 
+_AUTHOR = "Kazufumi Furuse"
+_LICENSE = "Apache-2.0"
+_COPYRIGHT = f"© 2026 {_AUTHOR} — Fullseye operator documentation. Licensed under {_LICENSE}."
+
 # ------------------------------------------------------------------ #
 # registry access
 # ------------------------------------------------------------------ #
