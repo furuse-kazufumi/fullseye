@@ -139,6 +139,22 @@ def _unit(v: np.ndarray) -> np.ndarray:
 # ═══════════════════════════════════════════════════════════════════════════
 # デモ描画(matplotlib があれば PNG を保存、無ければ静かにスキップ)
 # ═══════════════════════════════════════════════════════════════════════════
+def _use_jp_font(fm, plt) -> bool:
+    """インストール済みの日本語フォントを rcParams に設定。見つかれば True。
+
+    見つからなければ False を返し、呼び出し側は英語ラベルへ退避する(tofu 回避)。
+    """
+    candidates = ["Yu Gothic", "Meiryo", "MS Gothic", "Noto Sans CJK JP",
+                  "Noto Sans JP", "BIZ UDGothic", "Yu Mincho", "MS Mincho"]
+    available = {f.name for f in fm.fontManager.ttflist}
+    for name in candidates:
+        if name in available:
+            plt.rcParams["font.family"] = name
+            plt.rcParams["axes.unicode_minus"] = False   # マイナス記号の tofu 回避
+            return True
+    return False
+
+
 def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> bool:
     """球(法線矢印)+ トーラス(曲率カラーマップ)+ 誤差棒グラフを 1 枚に描く。成功で True。"""
     try:
