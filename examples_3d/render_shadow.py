@@ -468,6 +468,12 @@ def main() -> int:
         f"全く当てられない)を、実手法は {iou_real:.2f} へ。"
         f"半影は角半径とともに中間画素 {w_hard}→{w_soft_s}→{w_soft_l} と単調に拡大。"
     )
+    print(
+        f"PASS(点光源): directional=False の点光源影が透視投影の解析 GT(umbra)と IoU "
+        f"{iou_pt:.3f}(重心ずれ {cdist_pt:.3f}, fp={fp_pt}/fn={fn_pt})で一致。平行光近似 GT では "
+        f"{iou_pt_vs_par:.3f} までしか合わず、点光源の拡大・シフトを正しく計算。beat-null 影なし "
+        f"{iou_pt_null:.2f}。半影は中間画素 {wp_hard}→{wp_soft_s}→{wp_soft_l} と単調に拡大。"
+    )
     return 0
 
 
