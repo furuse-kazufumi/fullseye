@@ -238,7 +238,7 @@ def solid_ball(n, c, R, seed):
     d = g.standard_normal((n, 3))
     d /= np.linalg.norm(d, axis=1, keepdims=True)
     rad = R * np.cbrt(g.uniform(0.0, 1.0, n))                # 体積一様(半径 CDF ∝ r³)
-    return c + rad * d
+    return c + rad[:, None] * d
 
 N_BALL = 4000
 ball = solid_ball(N_BALL, C_SPHERE, R_SPHERE, seed=3)
