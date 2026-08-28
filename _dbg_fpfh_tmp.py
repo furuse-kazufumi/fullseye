@@ -21,26 +21,46 @@ def lumpy(n=3000):
         th=np.arccos(np.clip(d@c,-1,1)); r=r+amp*np.exp(-th**2/(2*w**2))
     return d*r[:,None]
 
-obj=lumpy(3000)
-R=rot([0.3,1,0.2],58.0); t=np.array([2.,-1.,0.5])
-A=obj.copy()
-B=obj@R.T+t
-nA=feat_fpfh.estimate_point_normals(A,k=16,orient_ref=[0,0,0])
-nB=feat_fpfh.estimate_point_normals(B,k=16,orient_ref=t)
-nB_pred=(nA@R.T)
-cos=np.einsum('ij,ij->i',nB,nB_pred)
-print("normal consistency cos (mean,min,frac>0.9):",round(cos.mean(),4),round(cos.min(),4),round(float((cos>0.9).mean()),4))
+def run(noise_scale, thr, feat_k=60, normal_k=16, tag=""):
+    obj=lumpy(3000)
+    R=rot([0.3,1,0.2],58.0); t=np.array([2.,-1.,0.5])
+    dirn=obj/np.linalg.norm(obj,axis=1,keepdims=True)
+    axA=np.array([1.,0.2,0.1]); axA/=np.linalg.norm(axA)
+    axB=np.array([0.2,1.,0.3]); axB/=np.linalg.norm(axB)
+    maskA=(dirn@axA)>thr; maskB=(dirn@axB)>thr
+    idxA=np.where(maskA)[0]; idxB=np.where(maskB)[0]
+    res0=float(np.median(cKDTree(obj).query(obj,k=2)[0][:,-1]))
+    rng=np.random.default_rng(42)
+    viewA=obj[idxA]+rng.normal(0,noise_scale*res0,(len(idxA),3))
+    viewB=obj[idxB]@R.T+t+rng.normal(0,noise_scale*res0,(len(idxB),3))
+    overlap_g=np.intersect1d(idxA,idxB)
+    posA={g:r for r,g in enumerate(idxA)}; posB={g:r for r,g in enumerate(idxB)}
+    a_rows=np.array([posA[g] for g in overlap_g])
+    gt_pos=obj[overlap_g]
+    res=float(np.median(cKDTree(viewA).query(viewA,k=2)[0][:,-1]))
+    tol=1.5*res
+    nA=feat_fpfh.estimate_point_normals(viewA,k=normal_k,orient_ref=[0,0,0])
+    nB=feat_fpfh.estimate_point_normals(viewB,k=normal_k,orient_ref=t)
+    fA=feat_fpfh.compute_fpfh(viewA,nA,k=feat_k,n_bins=11)
+    fB=feat_fpfh.compute_fpfh(viewB,nB,k=feat_k,n_bins=11)
+    # true B row for each overlap g:
+    b_rows_true=np.array([posB[g] for g in overlap_g])
+    # descriptor dist between true correspondences
+    dtrue=np.linalg.norm(fA[a_rows]-fB[b_rows_true],axis=1)
+    # NN match
+    _,nn=cKDTree(fB).query(fA[a_rows],k=1)
+    b_back=(viewB[nn]-t)@R
+    err=np.linalg.norm(b_back-gt_pos,axis=1)
+    rate=float((err<tol).mean())
+    # how often NN == true b row
+    exact=float((nn==b_rows_true).mean())
+    print(f"[{tag}] noise={noise_scale} thr={thr} fk={feat_k} nk={normal_k}: "
+          f"nA={len(idxA)} nB={len(idxB)} ov={len(overlap_g)} res={res:.4f} "
+          f"dtrue={dtrue.mean():.4f} exact-Brow={exact:.3f} geomrate={rate:.3f}")
 
-for fk in (33, 60, 100):
-    fA=feat_fpfh.compute_fpfh(A,nA,k=fk,n_bins=11)
-    fB=feat_fpfh.compute_fpfh(B,nB,k=fk,n_bins=11)
-    dtrue=np.linalg.norm(fA-fB,axis=1)
-    rng=np.random.default_rng(0); perm=rng.permutation(len(fB))
-    drand=np.linalg.norm(fA-fB[perm],axis=1)
-    _,nn=cKDTree(fB).query(fA,k=1)
-    res=float(np.median(cKDTree(A).query(A,k=2)[0][:,-1]))
-    correct_idx=(nn==np.arange(len(A))).mean()
-    b_back=(B[nn]-t)@R
-    err=np.linalg.norm(b_back-A,axis=1)
-    print(f"fk={fk}: dtrue={dtrue.mean():.4f} drand={drand.mean():.4f} | exact-idx={correct_idx:.3f} geom(1.5res)={float((err<1.5*res).mean()):.3f} geom(3res)={float((err<3*res).mean()):.3f}")
-print("res=",round(res,4))
+run(0.0, -0.35, tag="noNoise")
+run(0.25, -0.35, tag="noise0.25")
+run(0.0, -0.35, feat_k=100, tag="noNoise fk100")
+run(0.0, 0.0, tag="noNoise thr0")   # bigger overlap interior
+run(0.1, -0.35, tag="noise0.1")
+run(0.0, -0.35, normal_k=24, feat_k=80, tag="noNoise nk24 fk80")
