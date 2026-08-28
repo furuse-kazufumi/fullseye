@@ -204,52 +204,63 @@ def save_png(img: np.ndarray, path: Path) -> bool:
 def main() -> int:
     t0 = time.time()
 
-    # ── GT 用シーン: 地面に載る peanut(凹形状)。小さめ・粗めで高速に ─────────
-    Vp, Fp = peanut(res=24)
-    Vp = sit_on_ground(Vp)
-    tri = Vp[Fp]
+    # ── GT 用シーン: 地面に載る球。接触部(mesh 底×地面)が AO の強い凹部になる ──
+    #   (render_ao の実証済み GT「平面に載る球の接触は AO→0、頂上は AO→1」を踏襲)
+    Vsp, Fsp = icosphere(1.0, subdiv=3)
+    Vsp = sit_on_ground(Vsp)
+    tri = Vsp[Fsp]
     area = 0.5 * np.linalg.norm(np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0]), axis=1)
     if not np.all(area > 0):
-        raise ValueError("peanut にゼロ面積三角形(退化入力)")
-    print(f"[scene] peanut 頂点 {len(Vp)} / 面 {len(Fp)}")
+        raise ValueError("sphere にゼロ面積三角形(退化入力)")
+    print(f"[scene] sphere-on-ground 頂点 {len(Vsp)} / 面 {len(Fsp)}")
 
-    pose = render3d.look_at([3.4, -3.8, 2.5], [0.0, 0.0, 0.55], up=(0.0, 0.0, 1.0))
-    Kgt = render3d.intrinsics_from_fov(40.0, 88, 88)
+    pose = render3d.look_at([3.0, -3.6, 2.2], [0.0, 0.0, 0.9], up=(0.0, 0.0, 1.0))
+    Kgt = render3d.intrinsics_from_fov(40.0, 96, 96)
     light = (0.35, 0.45, 0.85)                          # ワールド光源方向(上・前寄り)
-    base = dict(pose=pose, intrinsics=Kgt, size=88, ss=1, material="plastic",
-                albedo=(0.85, 0.55, 0.35), light=light, ao_samples=16,
-                shadow_res=220, penumbra=0.0, shadow_samples=1)
+    light_u = np.asarray(light, float) / np.linalg.norm(light)
+    base = dict(pose=pose, intrinsics=Kgt, size=96, ss=1, material="plastic",
+                albedo=(0.85, 0.55, 0.35), light=light, ao_samples=24,
+                shadow_res=256, penumbra=0.0, shadow_samples=1)
+
+    # render_beauty が内部で足す地面と同一 quad を再構成し、地面/物体/接触/頂上マスクを得る。
+    Vg, Fg, gz, epsg = rb._ground_quad(Vsp, light_u, drop=0.01, span_scale=2.4)
+    V_all = np.vstack([Vsp, Vg])
+    F_all = np.vstack([Fsp, Fg + len(Vsp)])
+    cview = render3d.render_mesh(V_all, F_all, pose=pose, intrinsics=Kgt, width=96, height=96)
+    sil_all = cview["silhouette"] > 0
+    Pw_all = render_shadow.unproject_to_world(cview["depth"], pose, Kgt)
+    with np.errstate(invalid="ignore"):
+        is_ground = sil_all & np.isfinite(Pw_all[..., 2]) & (np.abs(Pw_all[..., 2] - gz) < epsg)
+        is_obj = sil_all & ~is_ground
+        zc = Pw_all[..., 2]
+        contact = is_obj & np.isfinite(zc) & (zc < 0.45)     # 地面と接する凹部
+        topband = is_obj & np.isfinite(zc) & (zc > 1.4)      # 露出した頂部
 
     # ── (a) 決定的 ────────────────────────────────────────────────────────
-    img1 = rb.render_beauty(Vp, Fp, **base)
-    img2 = rb.render_beauty(Vp, Fp, **base)
+    img1 = rb.render_beauty(Vsp, Fsp, **base)
+    img2 = rb.render_beauty(Vsp, Fsp, **base)
     det_equal = bool(np.array_equal(img1, img2))
     print(f"[a] deterministic (2 calls pixel-identical): {det_equal}")
 
     # ── (g) 形 / 値域 ─────────────────────────────────────────────────────
-    shape_ok = img1.shape == (88, 88, 3)
+    shape_ok = img1.shape == (96, 96, 3)
     range_ok = bool(img1.min() >= 0.0 and img1.max() <= 1.0)
     print(f"[g] shape {img1.shape} in-range [{img1.min():.3f},{img1.max():.3f}] -> {shape_ok and range_ok}")
 
-    # ── (b) AO 寄与(peanut の首=凹部が ao=True で暗い)────────────────────
-    img_noao = rb.render_beauty(Vp, Fp, **{**base, "ao": False})
-    # 物体(非地面)画素 & 首(ワールド x≈0)の抽出。
-    view = render3d.render_mesh(np.vstack([Vp]), np.vstack([Fp]), pose=pose,
-                                intrinsics=Kgt, width=88, height=88)
-    sil_m = view["silhouette"] > 0
-    Pw = render_shadow.unproject_to_world(view["depth"], pose, Kgt)
-    with np.errstate(invalid="ignore"):
-        neck = sil_m & np.isfinite(Pw[..., 0]) & (np.abs(Pw[..., 0]) < 0.35) \
-            & (Pw[..., 2] > 0.15)
-    g_on = img1[..., :].mean(axis=2)
-    g_off = img_noao.mean(axis=2)
-    neck_on = float(g_on[neck].mean())
-    neck_off = float(g_off[neck].mean())
-    obj_on = float(g_on[sil_m].mean())
-    obj_off = float(g_off[sil_m].mean())
-    ao_margin = neck_off - neck_on
-    print(f"[b] neck(凹) brightness ao_on={neck_on:.3f} ao_off={neck_off:.3f} "
-          f"darken={ao_margin:.3f} ; object mean on={obj_on:.3f} off={obj_off:.3f}")
+    # ── (b) AO 寄与(接触=凹部は AO で暗化、頂部=露出はほぼ不変=選択的)────────
+    #   tonemap='none' で線形に測る(reinhard の圧縮を避け寄与を素直に見る)。
+    ao_on = rb.render_beauty(Vsp, Fsp, **{**base, "ao": True, "tonemap": "none"})
+    ao_off = rb.render_beauty(Vsp, Fsp, **{**base, "ao": False, "tonemap": "none"})
+    g_on = ao_on.mean(axis=2)
+    g_off = ao_off.mean(axis=2)
+    contact_on = float(g_on[contact].mean())
+    contact_off = float(g_off[contact].mean())
+    top_on = float(g_on[topband].mean())
+    top_off = float(g_off[topband].mean())
+    ao_contact = contact_off - contact_on               # 接触部の AO 暗化
+    ao_top = top_off - top_on                           # 頂部の AO 暗化(≈0 のはず)
+    print(f"[b] AO darken  contact(凹)={ao_contact:.3f} (on {contact_on:.3f}/off {contact_off:.3f})  "
+          f"top(露出)={ao_top:.3f}  selective={ao_contact - ao_top:.3f}")
 
     # ── (c) 鏡面寄与(convex 球で単一ハイライトを分離)── fast(ao/影なし)───
     Vs, Fs = icosphere(1.0, subdiv=3)
