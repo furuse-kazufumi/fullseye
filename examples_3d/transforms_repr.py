@@ -140,12 +140,7 @@ assert med_true < 0.1 * med_null, "誤中心nullを判別的に上回れてい�
 p_depth = fuse3d.to_points(depth0, "depth", fx=focal, fy=focal, cx=cxp, cy=cyp)
 p_mesh = fuse3d.to_points((V, Fc), "mesh", samples=8000)
 p_gs = fuse3d.to_points(means, "3dgs")
-# occupancy voxel(solid 球)→ 点群(voxel index)。§4 で作る occ_solid を使う
-zz, yy, xx = np.mgrid[0:size, 0:size, 0:size]
-wx = lo[0] + xx / (size - 1) * span             # points_to_voxel は idx0→x,1→y,2→z
-wy = lo[1] + yy / (size - 1) * span
-wz = lo[2] + zz / (size - 1) * span
-# 注: mgrid 軸と x/y/z の対応は idx0→x のため、grid を (i=x,j=y,k=z) として組み直す
+# occupancy voxel(solid 球)→ 点群。points_to_voxel の割当に合わせ idx0→x, idx1→y, idx2→z
 gi, gj, gk = np.mgrid[0:size, 0:size, 0:size]
 wxx = lo[0] + gi / (size - 1) * span
 wyy = lo[1] + gj / (size - 1) * span

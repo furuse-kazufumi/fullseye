@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(91 例)
+### 3-D 点群/体積/曲面(105 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -42,12 +42,15 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **小惑星の姿勢を主成分で正準化** — 不明な向きで届いた小惑星形状を、慣性主軸で形状固有の正準姿勢へ整える(カタログ化・比較用)。 `py -3.11 examples_3d/itokawa_pose_canonical.py`
 - **未知姿勢で置かれた小惑星スキャンの位置合わせ** — 未知の探査機姿勢で撮った小惑星スキャンを ICP で基準形状に戻す。不規則形状は球と違い登録できる。 `py -3.11 examples_3d/itokawa_self_register.py`
 - **平面主体スキャンのGICP位置合わせ** — 床+直交2壁のコーナーを既知変換で動かし gicp(共分散重みマハラノビス)で復元。回転<1度、平面が滑る状況で点対点ICPを約6.5倍上回る。 `py -3.11 examples_3d/gicp_register.py`
+- **疎特徴による3D点群レジストレーション(Harris/ISS + SHOT/Spin/FPFH)** — 初期推定なしで57度回転した2点群を合わせる「疎特徴レジストレーション」道具箱の6opを1本で通し、各段を実測の真値で検証する。harris3d_keypointsは立方体密度場の解析的な8頂点(唯一の3Dコーナー)を狙い、上位8検出が8頂点と1対1対応(平均1.73voxel、無作為null 9.16を判別的に下回る)。iss_keypointsは回転不変性を真値とし、同一点群を既知(R,t)で回した雲でも選ばれる163点のindex配列が完全一致。sh… `py -3.11 examples_3d/feature_register.py`
 - **部分重なりスキャンの登録(FPFH+ICP)** — 非対称ブロブを別方向2視点で部分スキャン(幾何重なり56%)。scan Bに55度回転+並進を掛け、register_pointclouds(FPFH+RANSAC→ICP)でAへ登録。回転誤差0.86度<4・RMSE0.150が床0.148水準。PCA主軸103度/単位行列ICP58度のnullを桁違いに下回る。 `py -3.11 examples_3d/partial_overlap_icp.py`
 
 **metrology**
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
+- **曲座標展開: 極/円筒/Zernike/LiDAR円筒投影で回転体の m 回対称を一貫復元** — 回転体(3枚羽根=m=3回対称)の検査を、中心を原点にした曲座標へ展開する4つのopで横断検証する事例。fit_zernikeは既知の波面係数(piston/tilt/defocus/astigmatism)で合成した円板を極座標直交基底(n,m)へ分解し、各係数を誤差5e-5で復元(非点収差=m=2角モードが立つ)。polar_unwrapは2D画像の円板を(θ×r)へ展開しθ軸FFTでm=3を検出(power@m=179で他ビンを圧倒)、回転対称画像は… `py -3.11 examples_3d/curvilinear_proj.py`
+- **幾何メトロロジー: 直線/平面/球/円の当てはめ→角度・距離・交線計測** — 1 個の機械加工ブロック(2 面が稜線で交わり、面上に球と円穴が乗る)を舞台に、当てはめ op(fit_line_3d/fit_plane_3d/fit_sphere_3d/fit_circle_3d/ransac_line)の出力を計測 op(angle_3points/angle_between_lines/angle_between_planes/angle_line_plane/distance_point_plane/distance_point… `py -3.11 examples_3d/geometry_metrology.py`
 - **3-D プリミティブ当てはめ(直線/平面/球/円/最小包含球)** — 点群から直線・平面・球・円を最小二乗で当て、中心/半径/向き/残差を (depth,row,col) で復元(機械精度)。各残差は『わざと外した』null を桁違いに下回る。measure3d.fit_line3/fit_plane3/fit_sphere3/fit_circle3/smallest_sphere3。2-D fit_line/fit_circle の 3-D 版。 `py -3.11 examples_3d/primitive_fitting_3d.py`
 - **最大内接ボックス(inner_rectangle1 の 3-D 版)** — 空洞のある部品(二値ボクセル)に内接する最大の軸平行ボックス=「保証できる最大の中実ブロック」を厳密に求める(総当たりと完全一致)。深さ区間の論理積×2-D最大内接長方形。空洞をまたぐ前景bbox(非中実)を判別的に下回る。regionprops3d.inner_box3。 `py -3.11 examples_3d/inner_box_inspection.py`
 - **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。 `py -3.11 examples_3d/oriented_bounding_box.py`
@@ -68,6 +71,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **複数断層の2D輪郭を積層して3D曲面(メッシュ)に** — 各スライスの閉輪郭を塗って voxel 積層→marching cubes で曲面メッシュ化。頂点は球面に乗り体積も一致(断面一定=円柱仮定は1.5倍過大)。輪郭→領域→voxel→メッシュの表現変換。 `py -3.11 examples_3d/contours_to_surface.py`
 - **等高線(標高付き輪郭)から地形の高さ場(DEM)を復元** — 等高線点(x,y,標高)を fit_poly_surface でサーフェス当てはめし DEM 格子へ展開。線の間も内挿し全域RMSEが最近傍等高線の階段近似を桁違いに下回る(GIS/測量)。 `py -3.11 examples_3d/contours_to_terrain.py`
 - **多視点シルエットから visual hull を彫る** — 既知形状を複数の既知視点で synthesize_silhouette→carve し visual_hull を得る(recall 1.0)。1視点は柱状に過大、多視点で真形状へ収束。 `py -3.11 examples_3d/space_carving.py`
+- **評価指標4種の真値検証(F-score/RMSE対応/法線一致/voxel IoU)** — 単位球点群(放射法線)と占有ボクセルを正解として合成し、metrics3d の 4 評価指標を解析真値と 1e-9 で照合する。fscore は 120 点厳密コピー+60 外れ点の再構成で precision=120/180・recall=120/150 を厳密に作り込み f=0.72727 を検証(完全コピー=1.0、無作為点 null≈0)。rmse_correspondence は恒等=0・既知オフセット |v|=0.1 の残差を厳密照合し、対応数… `py -3.11 examples_3d/metrics_eval.py`
+- **2視点SfMから表面再構成まで一つの球で通す** — 中心[0,0,6]・半径1.5の単一の球を題材に、2視点SfMから表面再構成・観測合成までを6つのopで鎖状に接続し、すべて既知真値と照合する(ノイズ無し合成)。essential_8pointは球面上の対応点+Kから本質行列Eを復元し、真のE=[t]×Rと符号/スケールを除き|cos|=1.000000で一致・正規化エピポーラ残差1.1e-15を確認(直交並進+40度回転の誤E nullは|cos|=0.002・残差0.35)。triangulateは真… `py -3.11 examples_3d/sfm_recon.py`
 - **トーラス点群のalpha shape再構成で穴(genus1)を保持** — 中実トーラス(主R1.0/管r0.35)9000点をestimate_alpha+alpha_shape_meshで再構成。z軸穴プローブ41点の内包率がalpha=0.000(穴を保持)、凸包null=1.000(穴を充填・厳密Delaunayでも1.000)。オイラー標数χ_alpha=0(トーラス)対χ_hull=2(球)でも判別的。 `py -3.11 examples_3d/alpha_shape_topology.py`
 - **Poisson軽量表面再構成(向き付き点群→水密メッシュ)** — でこぼこ閉曲面(外向き法線を勾配で厳密算出)の向き付き点群6000点をrecon3d.poisson_liteで水密メッシュ(V11788/F23572)へ。真曲面との正規化chamfer0.01006が外接球null(0.081=8倍)・乱数法線null(0.041=4倍)より桁違いに小さい。 `py -3.11 examples_3d/poisson_surface_recon.py`
 
@@ -88,6 +93,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **点群に大域整合した外向き法線を付与(PCA推定→MST向き伝播)** — 符号未定のPCA法線を Hoppe MST で外向きに揃える。球面サンプルで生法線の外向き一致0.50(コイン投げ)を向き付け1.00へ改善、接平面精度1.00。退化入力は捏造せず拒否。 `py -3.11 examples_3d/oriented_normals.py`
 - **球面調和記述子による回転不変な3D形状検索** — 向き未知の形状(球/箱/円柱の回転コピー)を SH 帯域エネルギー記述子で照合。検索3/3正解・分離マージン>0で、回転で全マスが入れ替わる素ボクセル占有の1/3を上回る。 `py -3.11 examples_3d/shape_descriptor.py`
 - **3Dボリュームのエッジ検出(canny3d: NMS+ヒステリシス)** — なだらかな内部を持つ中実ボールの外周だけを1ボクセルに細線化。オンシェル率1.000・内部誤検出0で、生勾配の固定しきい値null(0.464・誤検出4012)を+0.536上回る。 `py -3.11 examples_3d/edges_3d.py`
+- **3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)** — 球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps(内部で s… `py -3.11 examples_3d/diff_features.py`
 - **実メッシュ曲率が詳細形状を判別(Stanford Dragon)** — DL実データStanford Dragon(87万面)をread_mesh→vertex_curvature(cotangent Laplace-Beltrami)。正規化曲率はmedian9.2・MAD6.2・|Hn|>2が88%と広く分布し、同スケールの滑球null(median1.00・0%)をMAD比1.4e7倍で判別。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_curvature.py`
 - **FPFH記述子で部分ビュー間の点対応を張る** — 同一物体の2部分ビュー(58度回転+並進・重なり1514点)で法線推定→FPFH記述子(33次元)を計算し記述子最近傍で対応。幾何正答率0.633がランダム対応0.0034・記述子シャッフル0.0020(チャンス率)を約185倍上回る。register全体でなく記述子マッチ品質を直接測る。 `py -3.11 examples_3d/fpfh_correspondence.py`
 
@@ -102,6 +108,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **segmentation**
 - **ビンピッキング: 台平面除去→物体クラスタリング** — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。 `py -3.11 examples_3d/object_segmentation.py`
 - **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。 `py -3.11 examples_3d/region_props_3d.py`
+- **センサ幾何と領域処理パイプライン(角シーンの denoise→傾き→面分割→計画格子)** — 深度センサが捉えた「2つの傾いた面が稜線で出会う角」の1シーンを、実際の知覚パイプラインの順に8opで連結処理する例。清浄ガイドで joint_bilateral して段差を残しつつノイズを削り(RMS 0.112→0.019、素のGaussianぼかしnullは稜線段差を-5.8→-1.16に潰すが本opは-5.79を保存)、bearing_angle_image で各面の傾きを degrees(atan(s)) と厳密一致で数値化(左26.565°/右… `py -3.11 examples_3d/sensor_seg.py`
 - **接触物体の分離(距離変換ベース3D watershed)** — 接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。 `py -3.11 examples_3d/watershed3d.py`
 - **分子の接触原子カウント(距離変換+マーカ分水嶺)** — シクロヘキサンC6椅子型を6原子球の和集合(41万voxel・1連結成分)にボクセル化。距離変換+マーカ分水嶺で接触原子を6個に分離・重心を真値へ最大0.52voxel。素朴な連結成分null=1個に融合(43voxelずれ)を個数6vs1で上回る。 `py -3.11 examples_3d/molecule_atom_count.py`
 - **屋外LiDARシーンの地面除去→物体分割** — 傾斜地面(~5.4度)上の4物体(球/箱/円柱/円錐)のLiDAR点群5316点を、fit_plane_ransac+height_above_planeで地面除去→euclidean_clustersで分割。検出4==K=4・重心を真物体へ全単射(最大0.128m)。地面除去なしnullは全物体癒着で1クラスタ。 `py -3.11 examples_3d/lidar_scene_segmentation.py`
@@ -117,12 +124,14 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **shape_descriptors**
 - **3Dモーメント不変量(剛体+一様スケールに不変)** — 点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。 `py -3.11 examples_3d/moment_invariants.py`
+- **大域形状記述子と姿勢照合** — 3D 部品を姿勢に依らず「形」で同定し、次に実際の姿勢を復元する一連の流れを、大域形状記述子(D2 距離分布・A3 角度分布・PCA 広がり比 extent・主慣性モーメント)と姿勢照合(PCA 主軸整列・FFT 位相相関・log-polar/Fourier-Mellin)で示す。記述子側は厳密な数学則で検証: extent_signature と principal_moments は同一共分散の別表現なので、principal_moments から共分… `py -3.11 examples_3d/shape_desc_pose.py`
 - **球面調和記述子による回転不変な3D形状検索** — 球/立方体/トーラス/円柱/円錐の5クラスをボクセル化しsh_descriptor化。一様ランダム3D回転したクエリをmatch_sh_descriptorで検索→30/30=100%正解・分離マージン0.312。非回転不変null(軸周辺分布)は回転で100%→37%に崩れSHが+63pt上回る。 `py -3.11 examples_3d/sh_descriptor_retrieval.py`
 
 **shape_analysis**
 - **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。 `py -3.11 examples_3d/medial_topology.py`
 - **曲面上の測地距離と最遠点サンプリング** — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。 `py -3.11 examples_3d/geodesic_distance.py`
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
+- **円柱点群の前処理と測地距離・中心軸復元(SOR/radius/MLS + kNN/測地/距離リッジ)** — 円柱(半径R=1, 高さ2)を「側面点群」と「中身入りvoxel」の2通りで合成し、6つのopを鎖にして数値的真値で検証する。側面点群(面2400点+遠方の飛び点40点)に対し statistical_outlier_removal と radius_outlier_removal がいずれも飛び点40/40を除去し面の点2400を1つも誤除去せず(SOR→radius合成で面のみ2400点が残存)。mls_smooth が各点の軸までの距離の真値Rからの… `py -3.11 examples_3d/pcl_geodesic.py`
 - **点群の鏡映対称面の復元** — 既知平面で鏡映対称な点群から初期推定なしにdetect_reflection_symmetryが対称面を復元: 法線誤差0.0度・鏡映残差1.5e-11。非対称null(残差1.14)は約7.8e10倍大きく、でたらめ平面(最良1.27)も桁違いで判別的。 `py -3.11 examples_3d/reflection_symmetry.py`
 - **トーラス結び目の弧長・捩率計測(非平面曲線)** — (2,3)トーラス結び目を密ポリラインで生成しcurve3dのarc_length/curvature_torsionを検証。弧長は台形積分と相対7.6e-7一致・中央|τ|0.283は同長の平面円(捩率6e-10)の5.1e8倍で非平面を判別。円のκ=1/rも誤差7e-13で正確。 `py -3.11 examples_3d/torus_knot_curve.py`
 - **恐竜骨格の左右対称面(矢状面)の復元** — スミソニアン三角竜骨格(CC0,10万頂点→4090点stride)をdetect_reflection_symmetryに渡し矢状面を残差2.48で復元(最薄主軸=左右方向に一致)。他2主平面4.28/4.30と区別、片側20%破壊で15.87(6.4倍)へ悪化=左右対称を判別的に検出。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_symmetry.py`
@@ -145,6 +154,21 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 **augmentation**
 - **点群データ拡張(回転/スケール/ドロップアウト/ジッタ)** — 学習用の点群拡張4種を指定パラメータどおり適用(回転=距離不変・向き変化、scale倍率、dropout点数、jitter std)。恒等nullを判別的に上回り、連鎖でも複合性質を保つ。 `py -3.11 examples_3d/augment_pointcloud.py`
+
+**freeform_geometry**
+- **B スプライン自由曲線・自由曲面の復元と計測** — 直線・平面・円のような大域基底では表せない「くねる曲線」「うねる曲面」を区分多項式(B スプライン)で復元し、再サンプル・平滑・残差計測まで 1 本に通す事例。曲面側は既知の f(x,y)=0.7 sin(1.6x)cos(1.3y)+0.3xy を散布 600 点から fit_bspline_surface で双三次フィットし、学習外の内部格子で eval_bspline_surface した値が解析真値と RMS 1.5e-3(大域平均 null 0.… `py -3.11 examples_3d/bspline_freeform.py`
+
+**match_localize**
+- **3-D テンプレート定位(NCC/形状/chamfer/Hough/MIP/曲率)** — 同一の合成シーン(滑らかな充実球=ターゲット と、球と同一ピーク濃度の立方体=おとり を離して配置)に対し、match3d の 6 定位手法を全て当てて、球テンプレートの中心を真値±2 voxel(実測の 6 手法合議 spread は 0.87vox)で復元できることを検証する事例。球は表面点群(match_points_ncc 用)と解析的 smooth 占有場(voxel 5 手法用)を同一幾何から生成し(bounds=(0,N-1) で world… `py -3.11 examples_3d/matching_localize.py`
+
+**scene_flow**
+- **動く物体のシーンフローを点群・ボクセル・画像平面の3表現で復元** — 2時刻の同一物体を3つの見え方から観測し、既知の真値(剛体運動 R_gt=2度・t_gt<0.3、ボクセル並進 shift=[1.5,-2,1]、画素並進)を握って合成し、5つの op を鎖でつないで運動を復元・検証する。表現1(点群): estimate_flow が小運動で最近傍対応恒等(実測 1.000)となりフローが真の変位と機械精度一致(誤差 0.0)、その対応から fit_rigid が Kabsch で (R,t) を復元(回転誤差 1.7e… `py -3.11 examples_3d/motion_scene.py`
+
+**pose_refinement**
+- **姿勢・ピーク精緻化(Newton/LM/LK/回転GN/点-面ICP)** — 粗いマッチ(整数ボクセル/±3度級)を連続座標・連続角へ締め上げる 5 種の精緻化器を、既知真値の合成データで一括検証する。帯域制限した滑らかな解析場 F を整数格子(scene)と既知の分数オフセット格子(template)からサンプルし、「同一の真の並進」を refine_peak_newton(相関スコア山の整数ピーク→サブボクセル)・refine_translation_lk(逆合成 LK, corner 規約)・refine_lm(LM, cen… `py -3.11 examples_3d/refinement.py`
+
+**representation**
+- **3-D データ表現の相互変換ハブ(点群↔ボクセル↔メッシュ↔SDF↔深度↔TSDF)** — 半径・中心が既知の球(と、登録用に非対称な段付きブロック)を共通の被写体に、fullseye の 3-D 表現変換 op を 1 本の鎖に繋いで「表現を変えても物体の幾何が保たれる」ことを解析真値で検証する事例。depth→depth_to_points で球面点を厳密復元(median|d-R|=6.7e-16)、mesh_to_voxel と gaussians_to_voxel が同一格子上に同じ殻を作り occupancy IoU=0.454(ずら… `py -3.11 examples_3d/transforms_repr.py`
 
 **mesh_process**
 - **三角形メッシュの平滑化(Laplacian/Taubin・非収縮)** — ノイズメッシュを接続グラフ上で平滑化。RMS 0.627→Laplacian 0.306/Taubin 0.215。Taubin は平均半径ズレ0.025で Laplacian 0.298 の約1/12=非収縮。marching cubes/スキャン後処理向け。 `py -3.11 examples_3d/mesh_smooth.py`
@@ -223,8 +247,8 @@ _計 265 ops / 55 categories。_
 - `random_rotation` (`points → points`) — ランダム回転を適用し ``(rotated, R)`` を返す(視点変化の模倣)。 · 例: `augment_pointcloud`, `sh_descriptor_retrieval`, `shape_retrieval`
 - `random_scale` (`points → points`) — 一様スケール ``s ~ U(lo, hi)`` を原点まわりに適用し ``(scaled, s)`` を返す。 · 例: `augment_pointcloud`
 - `random_dropout` (`points → points`) — 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。 · 例: `augment_pointcloud`
-- `elastic_deform` (`points → points`) — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。 · 例: なし
-- `cutout` (`points → points`) — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。 · 例: なし
+- `elastic_deform` (`points → points`) — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。 · 例: `sensor_seg`
+- `cutout` (`points → points`) — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。 · 例: `sensor_seg`
 
 ### bounds(4)
 - `convex_hull` (`points → mesh`) — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · 例: `hull_bounds`
@@ -242,29 +266,29 @@ _計 265 ops / 55 categories。_
 - `mean_curvature` (`points → measurement`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`
 - `gaussian_curvature` (`points → measurement`) — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
 - `shape_index` (`points → descriptor`) — Koenderink の shape index s∈[-1,1](凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
-- `estimate_normals` (`points → normals`) — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `oriented_normals`
+- `estimate_normals` (`points → normals`) — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `feature_register`, `oriented_normals`
 
 ### curve(5)
 - `curvature_torsion` (`points → measurement`) — 各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。 · 例: `space_curve`, `torus_knot_curve`
 - `frenet_frame` (`points → frame`) — Frenet 標構(接線 T, 主法線 N, 陪法線 B)を各点で。→ (T, N, B) 各 (Npts,3) 単位ベクトル。 · 例: `space_curve`, `torus_knot_curve`
 - `arc_length` (`points → measurement`) — 曲線の累積弧長と全長。→ (cumulative (N,), total float)。 · 例: `space_curve`, `torus_knot_curve`
-- `resample_uniform` (`points → points`) — 弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。 · 例: なし
-- `fit_spline_curve` (`points → points`) — 順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。 · 例: なし
+- `resample_uniform` (`points → points`) — 弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。 · 例: `bspline_freeform`
+- `fit_spline_curve` (`points → points`) — 順序付き 3D 点列を B スプラインで平滑し再サンプル。→ (M,3)。ノイズのある軌跡/エッジの平滑化。 · 例: `bspline_freeform`
 
 ### curvilinear(3)
-- `polar_unwrap` (`image2d → image2d`) — 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。 · 例: なし
-- `cylinder_unwrap` (`voxel → image2d`) — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: なし
-- `fit_zernike` (`image2d → descriptor`) — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: なし
+- `polar_unwrap` (`image2d → image2d`) — 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。 · 例: `curvilinear_proj`
+- `cylinder_unwrap` (`voxel → image2d`) — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: `curvilinear_proj`
+- `fit_zernike` (`image2d → descriptor`) — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: `curvilinear_proj`
 
 ### deform(4)
 - `tps_fit` (`points, points → deformation`) — 3D Thin-Plate-Spline を制御点対応から当てはめる。 · 例: `nonrigid_deform`
 - `tps_warp` (`deformation, points → points`) — TPS モデルで点群を変形する。 · 例: `nonrigid_deform`
 - `register_nonrigid` (`points, points → points`) — 非剛体 ICP で ``src`` を ``dst`` へ寄せる。 · 例: `nonrigid_deform`
-- `register_cpd_rigid` (`points, points → pose`) — Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。 · 例: なし
+- `register_cpd_rigid` (`points, points → pose`) — Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。 · 例: `motion_scene`
 
 ### depth_denoise(3)
 - `bilateral_filter_depth` (`depth → depth`) — 深度画像の bilateral filter(段差保存デノイズ)。→ float64 (H,W)。 · 例: `depth_denoise`
-- `joint_bilateral` (`depth, image2d → depth`) — joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。 · 例: なし
+- `joint_bilateral` (`depth, image2d → depth`) — joint / cross bilateral: 平滑対象は depth、range 重みは guide の差で作る。→ float64 (H,W)。 · 例: `sensor_seg`
 - `fill_holes` (`depth → depth`) — 無効画素(穴)を近傍有効画素から調和(ラプラス)緩和で補間。→ float64 (H,W)。 · 例: `depth_denoise`
 
 ### describe(2)
@@ -279,57 +303,57 @@ _計 265 ops / 55 categories。_
 - `gradient3d` (`voxel → gradient`) — ガウス平滑後の中心差分勾配を計算する。 · 例: `edges_3d`
 - `canny3d` (`voxel → voxel`) — 3D Canny エッジ検出(非最大抑制 + ヒステリシス)。 · 例: `edges_3d`
 - `log_zero_crossings` (`voxel → voxel`) — Laplacian-of-Gaussian のゼロ交差エッジ。 · 例: `edges_3d`
-- `link_edges` (`voxel → voxel`) — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: なし
+- `link_edges` (`voxel → voxel`) — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: `sensor_seg`
 - `edge_points` (`voxel → points`) — エッジ mask を (M,3) の座標点群にする(下流の chamfer / Hough 用)。 · 例: `edges_3d`
 
 ### feature(4)
-- `sobel3d` (`voxel → gradient`) — 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。 · 例: なし
-- `hessian3d` (`voxel → hessian`) — 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。 · 例: なし
-- `curvature_maps` (`voxel → curvature`) — level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。 · 例: なし
-- `edt_jfa` (`voxel → sdf`) — 3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。 · 例: なし
+- `sobel3d` (`voxel → gradient`) — 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。 · 例: `diff_features`
+- `hessian3d` (`voxel → hessian`) — 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。 · 例: `diff_features`
+- `curvature_maps` (`voxel → curvature`) — level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。 · 例: `diff_features`
+- `edt_jfa` (`voxel → sdf`) — 3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。 · 例: `diff_features`
 
 ### feature_register(7)
-- `harris3d_keypoints` (`voxel → keypoints`) — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: なし
-- `iss_keypoints` (`points → keypoints`) — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: なし
+- `harris3d_keypoints` (`voxel → keypoints`) — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: `feature_register`
+- `iss_keypoints` (`points → keypoints`) — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: `feature_register`
 - `compute_fpfh` (`points, normals → descriptor`) — FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。 · 例: `fpfh_correspondence`
-- `shot_descriptor` (`points, normals → descriptor`) — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を · 例: なし
-- `register_spin` (`points, points → pose`) — Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。 · 例: なし
-- `register_fpfh` (`points, points → pose`) — FPFH 記述子 + RANSAC で **初期推定なし** の剛体位置合わせ (R,t) を推定する。 · 例: なし
-- `register_shot` (`points, points → pose`) — SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。 · 例: なし
+- `shot_descriptor` (`points, normals → descriptor`) — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を · 例: `feature_register`
+- `register_spin` (`points, points → pose`) — Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。 · 例: `feature_register`
+- `register_fpfh` (`points, points → pose`) — FPFH 記述子 + RANSAC で **初期推定なし** の剛体位置合わせ (R,t) を推定する。 · 例: `feature_register`
+- `register_shot` (`points, points → pose`) — SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。 · 例: `feature_register`
 
 ### freeform(5)
-- `fit_bspline_surface` (`points → surface`) — 散布 (x, y, z) に双三次(既定)B スプライン曲面を最小二乗フィット(bisplrep)。 · 例: なし
-- `eval_bspline_surface` (`surface → image2d`) — フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。 · 例: なし
-- `surface_residual` (`points, surface → measurement`) — 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。 · 例: なし
-- `fit_bspline_curve` (`points → surface`) — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: なし
-- `eval_bspline_curve` (`surface → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: なし
+- `fit_bspline_surface` (`points → surface`) — 散布 (x, y, z) に双三次(既定)B スプライン曲面を最小二乗フィット(bisplrep)。 · 例: `bspline_freeform`
+- `eval_bspline_surface` (`surface → image2d`) — フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。 · 例: `bspline_freeform`
+- `surface_residual` (`points, surface → measurement`) — 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。 · 例: `bspline_freeform`
+- `fit_bspline_curve` (`points → surface`) — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: `bspline_freeform`
+- `eval_bspline_curve` (`surface → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
 
 ### fusion(2)
-- `register_cross` (`any, any → pose`) — 異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。 · 例: なし
-- `fuse_to_voxel` (`any → voxel`) — 複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。 · 例: なし
+- `register_cross` (`any, any → pose`) — 異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。 · 例: `transforms_repr`
+- `fuse_to_voxel` (`any → voxel`) — 複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。 · 例: `transforms_repr`
 
 ### geodesic(4)
 - `geodesic_distances` (`points → measurement`) — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: `geodesic_distance`
-- `geodesic_mesh` (`mesh → measurement`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: なし
+- `geodesic_mesh` (`mesh → measurement`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
 - `farthest_point_sampling` (`points → keypoints`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
-- `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: なし
+- `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: `pcl_geodesic`
 
 ### geometry(23)
-- `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: なし
-- `plane_from_3points` (`points → primitive`) — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。 · 例: なし
-- `angle_3points` (`points → measurement`) — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: なし
-- `angle_between_lines` (`primitive → measurement`) — 2 直線方向のなす鋭角(度)。 · 例: なし
-- `angle_between_planes` (`primitive → measurement`) — 2 平面の二面角(法線 n1,n2、度)。 · 例: なし
-- `angle_line_plane` (`primitive → measurement`) — 直線(方向 d)と平面(法線 n)のなす角(度)。 · 例: なし
-- `distance_point_plane` (`points, primitive → measurement`) — 点-平面距離(符号なし)。 · 例: なし
-- `distance_point_line` (`points, primitive → measurement`) — 点-直線距離。 · 例: なし
-- `distance_line_line` (`primitive → measurement`) — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: なし
-- `intersect_line_plane` (`primitive → position`) — 直線 ∩ 平面 → 点(平行なら None)。 · 例: なし
-- `intersect_planes` (`primitive → primitive`) — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: なし
-- `fit_line_3d` (`points → primitive`) — 点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。 · 例: なし
-- `fit_plane_3d` (`points → primitive`) — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: なし
-- `fit_sphere_3d` (`points → primitive`) — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: なし
-- `fit_circle_3d` (`points → primitive`) — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: なし
+- `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
+- `plane_from_3points` (`points → primitive`) — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
+- `angle_3points` (`points → measurement`) — 3 点のなす角(頂点 b、度)。∠ABC。 · 例: `geometry_metrology`
+- `angle_between_lines` (`primitive → measurement`) — 2 直線方向のなす鋭角(度)。 · 例: `geometry_metrology`
+- `angle_between_planes` (`primitive → measurement`) — 2 平面の二面角(法線 n1,n2、度)。 · 例: `geometry_metrology`
+- `angle_line_plane` (`primitive → measurement`) — 直線(方向 d)と平面(法線 n)のなす角(度)。 · 例: `geometry_metrology`
+- `distance_point_plane` (`points, primitive → measurement`) — 点-平面距離(符号なし)。 · 例: `geometry_metrology`
+- `distance_point_line` (`points, primitive → measurement`) — 点-直線距離。 · 例: `geometry_metrology`
+- `distance_line_line` (`primitive → measurement`) — 2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。 · 例: `geometry_metrology`
+- `intersect_line_plane` (`primitive → position`) — 直線 ∩ 平面 → 点(平行なら None)。 · 例: `geometry_metrology`
+- `intersect_planes` (`primitive → primitive`) — 平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。 · 例: `geometry_metrology`
+- `fit_line_3d` (`points → primitive`) — 点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。 · 例: `geometry_metrology`
+- `fit_plane_3d` (`points → primitive`) — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。 · 例: `geometry_metrology`
+- `fit_sphere_3d` (`points → primitive`) — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。 · 例: `geometry_metrology`
+- `fit_circle_3d` (`points → primitive`) — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: `geometry_metrology`
 - `fit_line3` (`points → primitive`) — Total-least-squares 3-D line fit to ``(depth, row, col)`` points — the · 例: `primitive_fitting_3d`
 - `fit_plane3` (`points → primitive`) — Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane · 例: `primitive_fitting_3d`
 - `fit_sphere3` (`points → primitive`) — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`
@@ -346,24 +370,24 @@ _計 265 ops / 55 categories。_
 ### lidar_projection(3)
 - `project_spherical` (`points → image2d`) — 回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。 · 例: `lidar_projection`
 - `unproject_spherical` (`image2d → points`) — 球面レンジ画像 → 3D 点 (M, 3)。range>0 のセルのみをビン中心角で逆投影。 · 例: `lidar_projection`
-- `project_cylindrical` (`points → image2d`) — 円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。 · 例: なし
+- `project_cylindrical` (`points → image2d`) — 円柱レンジ画像へ投影 (z_bins, h_res)。方位角(列)× z(行)、画素=水平半径 ρ=hypot(x,y)。 · 例: `curvilinear_proj`
 
 ### match_localize(6)
-- `match_shape_3d` (`voxel, voxel → position`) — 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。 · 例: なし
-- `match_chamfer_3d` (`voxel, voxel → position`) — chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。 · 例: なし
-- `match_curvature_3d` (`voxel, voxel → position`) — 曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。 · 例: なし
-- `match_hough_3d` (`voxel, voxel → position`) — generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。 · 例: なし
-- `match_mip_2d` (`voxel, voxel → position`) — MIP 投影 → 2D NCC(構造=voxel → 2D × 手法=NCC、変換=直交 MIP)。 · 例: なし
-- `match_points_ncc` (`points, points → position`) — 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。 · 例: なし
+- `match_shape_3d` (`voxel, voxel → position`) — 3D 形状ベース(勾配方向)マッチング = 2D shapematch_gpu の voxel 版(「輪郭マッチング」)。 · 例: `matching_localize`
+- `match_chamfer_3d` (`voxel, voxel → position`) — chamfer / 距離場マッチング(部分・遮蔽に頑健)。voxel × chamfer 列。 · 例: `matching_localize`
+- `match_curvature_3d` (`voxel, voxel → position`) — 曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。 · 例: `matching_localize`
+- `match_hough_3d` (`voxel, voxel → position`) — generalized Hough 3D(Ballard R-table 投票)。voxel × Hough 列。 · 例: `matching_localize`
+- `match_mip_2d` (`voxel, voxel → position`) — MIP 投影 → 2D NCC(構造=voxel → 2D × 手法=NCC、変換=直交 MIP)。 · 例: `matching_localize`
+- `match_points_ncc` (`points, points → position`) — 点群同士マッチング(構造=point cloud × 手法=NCC、変換=splat)。model を scene 内で定位。 · 例: `matching_localize`
 
 ### match_pose(4)
-- `match_phase_3d` (`voxel, voxel → shift`) — 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。 · 例: なし
-- `match_pca` (`points, points → pose`) — PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。 · 例: なし
+- `match_phase_3d` (`voxel, voxel → shift`) — 3D 位相相関(FFT)。b を a に合わせる整数シフト (dz,dy,dx) を返す。 · 例: `shape_desc_pose`
+- `match_pca` (`points, points → pose`) — PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。 · 例: `shape_desc_pose`
 - `moment_axes` (`points → axes`) — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
-- `match_logpolar_z` (`voxel, voxel → rot_scale`) — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: なし
+- `match_logpolar_z` (`voxel, voxel → rot_scale`) — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
 
 ### medial(5)
-- `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: なし
+- `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
 - `skeletonize_vol` (`voxel → voxel`) — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
 - `medial_axis_points` (`voxel → points`) — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
 - `topology_signature` (`voxel → descriptor`) — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。 · 例: `medial_topology`
@@ -381,15 +405,15 @@ _計 265 ops / 55 categories。_
 ### metrics(7)
 - `chamfer_distance` (`points, points → measurement`) — 対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。 · 例: `itokawa_pose_canonical`, `itokawa_shape_match`, `mesh_lod_download`, `poisson_surface_recon`
 - `hausdorff_distance` (`points, points → measurement`) — 対称 Hausdorff 距離 = max(max_a min_b, max_b min_a)。→ scalar。最悪ケースの乖離。 · 例: `mesh_lod_download`, `pointcloud_downsampling`, `poisson_surface_recon`
-- `fscore` (`points, points → measurement`) — F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。 · 例: なし
-- `rmse_correspondence` (`points, points → measurement`) — 対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。 · 例: なし
-- `normal_consistency` (`points, normals → measurement`) — 最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。 · 例: なし
-- `voxel_iou` (`voxel, voxel → measurement`) — voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。 · 例: なし
+- `fscore` (`points, points → measurement`) — F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。 · 例: `metrics_eval`
+- `rmse_correspondence` (`points, points → measurement`) — 対応既知(同 index)の RMSE = sqrt(mean |a_i - b_i|^2)。→ scalar。登録残差の評価。 · 例: `metrics_eval`
+- `normal_consistency` (`points, normals → measurement`) — 最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。 · 例: `metrics_eval`
+- `voxel_iou` (`voxel, voxel → measurement`) — voxel 占有の IoU(intersection over union)。→ [0,1]。体積一致度。 · 例: `metrics_eval`
 - `pose_error` (`pose, pose → measurement`) — 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。 · 例: `itokawa_self_register`
 
 ### moment_invariant(4)
 - `moment_invariants` (`points → descriptor`) — 並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。 · 例: `moment_invariants`
-- `principal_moments` (`points → descriptor`) — 慣性テンソルの固有値(主慣性モーメント、降順ソート、回転不変)。 · 例: なし
+- `principal_moments` (`points → descriptor`) — 慣性テンソルの固有値(主慣性モーメント、降順ソート、回転不変)。 · 例: `shape_desc_pose`
 - `central_moments` (`points → descriptor`) — 重心中心化した中心モーメント μ_{pqr}(並進不変、キー=(p,q,r))を返す。 · 例: `moment_invariants`
 - `inertia_tensor` (`points → matrix`) — 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。 · 例: `moment_invariants`
 
@@ -397,16 +421,16 @@ _計 265 ops / 55 categories。_
 - `morph_dilate3d` (`voxel → voxel`) — 3D グレースケール dilation(cube SE 半径 r の局所 max)。明領域を膨張。 · 例: `morphology_3d`
 - `morph_erode3d` (`voxel → voxel`) — 3D グレースケール erosion(cube SE の局所 min)。明領域を収縮。 · 例: `morphology_3d`
 - `morph_gradient3d` (`voxel → voxel`) — 3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。 · 例: `morphology_3d`
-- `morph_tophat3d` (`voxel → voxel`) — 3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。 · 例: `morphology_3d`
-- `morph_blackhat3d` (`voxel → voxel`) — 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。 · 例: なし
+- `morph_tophat3d` (`voxel → voxel`) — 3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。 · 例: `diff_features`, `morphology_3d`
+- `morph_blackhat3d` (`voxel → voxel`) — 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。 · 例: `diff_features`
 
 ### motion(1)
-- `scene_flow_lk` (`voxel, voxel → flow`) — Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。 · 例: なし
+- `scene_flow_lk` (`voxel, voxel → flow`) — Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。 · 例: `motion_scene`
 
 ### motion_segment(3)
 - `segment_rigid_motions` (`points, points → labels`) — 2 点群を運動が一致する剛体ごとに分割する(反復 RANSAC による multi-body 分割)。 · 例: `motion_seg`
-- `estimate_flow` (`points, points → flow`) — pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。 · 例: なし
-- `fit_rigid` (`points, points → pose`) — 対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -> pts_to[i])。 · 例: なし
+- `estimate_flow` (`points, points → flow`) — pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。 · 例: `motion_scene`
+- `fit_rigid` (`points, points → pose`) — 対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -> pts_to[i])。 · 例: `motion_scene`
 
 ### normals_orient(2)
 - `estimate_oriented_normals` (`points → normals`) — PCA 法線推定 + Hoppe 大域向き付けの合成。→ (N,3) の向き付き単位法線。 · 例: `oriented_normals`
@@ -415,14 +439,14 @@ _計 265 ops / 55 categories。_
 ### occupancy(4)
 - `occupancy_grid` (`points → voxel`) — 点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。 · 例: `occupancy_esdf`
 - `esdf` (`voxel → sdf`) — 占有格子 → Euclidean 符号付き距離場 (ESDF)(外=+ 最近占有まで, 内=- 最近自由まで)。 · 例: `occupancy_esdf`
-- `inflate` (`voxel → voxel`) — 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。 · 例: なし
+- `inflate` (`voxel → voxel`) — 障害物を ``radius``(world 単位)膨張した占有格子 bool(= ESDF<=radius を占有)。 · 例: `sensor_seg`
 - `query_distance` (`sdf, points → measurement`) — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。 · 例: `occupancy_esdf`
 
 ### optics(5)
-- `reflect` (`vector, normals → vector`) — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `snell_refraction`
+- `reflect` (`vector, normals → vector`) — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `sensor_seg`, `snell_refraction`
 - `refract` (`vector, normals → vector`) — Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。 · 例: `snell_refraction`
 - `fresnel_reflectance` (`measurement → measurement`) — Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。 · 例: `snell_refraction`
-- `normal_from_reflection` (`vector, vector → normals`) — 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。 · 例: なし
+- `normal_from_reflection` (`vector, vector → normals`) — 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。 · 例: `sensor_seg`
 - `snell_angle` (`measurement → measurement`) — 入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。 · 例: `snell_refraction`
 
 ### photometric(4)
@@ -433,7 +457,7 @@ _計 265 ops / 55 categories。_
 
 ### plane_sweep_stereo(2)
 - `plane_sweep_depth` (`image2d, image2d → depth`) — plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。 · 例: `plane_sweep_depth`
-- `warp_by_plane` (`image2d → image2d`) — homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。 · 例: なし
+- `warp_by_plane` (`image2d → image2d`) — homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。 · 例: `motion_scene`
 
 ### pose_estimation(3)
 - `dlt_pose` (`points, image2d → pose`) — DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。 · 例: `pnp_pose_outliers`, `pose_estimation`
@@ -442,35 +466,35 @@ _計 265 ops / 55 categories。_
 
 ### pose_graph(3)
 - `optimize_pose_graph` (`pose → pose`) — 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。 · 例: `pose_graph_slam`
-- `relative_pose` (`pose, pose → pose`) — T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。 · 例: `pose_graph_slam`
-- `mean_edge_error` (`pose → measurement`) — エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。 · 例: なし
+- `relative_pose` (`pose, pose → pose`) — T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij (3,), t_ij (3,))。 · 例: `pose_graph_slam`, `sfm_recon`
+- `mean_edge_error` (`pose → measurement`) — エッジ残差の RMS(姿勢グラフの整合度)。→ scalar。 · 例: `sfm_recon`
 
 ### preprocess(5)
-- `statistical_outlier_removal` (`points → points`) — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。 · 例: なし
-- `radius_outlier_removal` (`points → points`) — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: なし
+- `statistical_outlier_removal` (`points → points`) — 各点の k 近傍平均距離が大域的に外れる点を除去する(統計的外れ値除去)。 · 例: `pcl_geodesic`
+- `radius_outlier_removal` (`points → points`) — 半径 radius 内の近傍数が min_neighbors 未満の点を除去する(孤立点除去)。 · 例: `pcl_geodesic`
 - `voxel_grid_downsample` (`points → points`) — 辺 voxel_size の格子で点群を間引き、各セルを重心 1 点に集約する(決定論的)。 · 例: `pointcloud_downsampling`
-- `mls_smooth` (`points → points`) — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: なし
+- `mls_smooth` (`points → points`) — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: `pcl_geodesic`
 - `volume_downsample` (`voxel → voxel`) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き). · 例: `volume_downsampling`
 
 ### range_image(4)
 - `depth_to_organized_points` (`depth → points`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
 - `normals_from_depth` (`depth → normals`) — organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。 · 例: `range_image`
 - `occlusion_edges` (`depth → image2d`) — 深度の不連続(前景/背景境界 = 遮蔽エッジ)を検出。→ bool HxW。 · 例: `range_image`
-- `bearing_angle_image` (`depth → image2d`) — bearing-angle 画像: 走査方向に沿った視線と局所面のなす角(range image の古典記述子)。→ HxW(度)。 · 例: なし
+- `bearing_angle_image` (`depth → image2d`) — bearing-angle 画像: 走査方向に沿った視線と局所面のなす角(range image の古典記述子)。→ HxW(度)。 · 例: `sensor_seg`
 
 ### reconstruct(4)
 - `poisson_lite` (`points → mesh`) — 点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。 · 例: `poisson_surface_recon`
 - `alpha_shape_mesh` (`points → mesh`) — alpha shapes による**表面三角形メッシュ**(点群 → (vertices, faces))。 · 例: `alpha_shape_topology`
-- `alpha_shape_boundary` (`points → points`) — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: なし
-- `estimate_alpha` (`points → measurement`) — 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。 · 例: `alpha_shape_topology`
+- `alpha_shape_boundary` (`points → points`) — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: `sfm_recon`
+- `estimate_alpha` (`points → measurement`) — 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。 · 例: `alpha_shape_topology`, `sfm_recon`
 
 ### refine(6)
-- `refine_peak_newton` (`score, position → position`) — スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。 · 例: なし
-- `refine_translation_lk` (`voxel, voxel, position → position`) — Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。 · 例: なし
-- `refine_lm` (`voxel, voxel, position → pose`) — Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。 · 例: なし
-- `refine_rotation_z` (`voxel, voxel, angle → angle`) — z 軸回転角の **Gauss-Newton 精緻化**(Lucas-Kanade on SSD、1 パラメータ)。 · 例: なし
+- `refine_peak_newton` (`score, position → position`) — スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。 · 例: `refinement`
+- `refine_translation_lk` (`voxel, voxel, position → position`) — Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。 · 例: `refinement`
+- `refine_lm` (`voxel, voxel, position → pose`) — Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。 · 例: `refinement`
+- `refine_rotation_z` (`voxel, voxel, angle → angle`) — z 軸回転角の **Gauss-Newton 精緻化**(Lucas-Kanade on SSD、1 パラメータ)。 · 例: `refinement`
 - `icp_point2point_3d` (`points, points → pose`) — 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。 · 例: `gicp_register`, `itokawa_self_register`, `itokawa_shape_match`, `partial_overlap_icp`
-- `icp_point2plane` (`points, points, normals → pose`) — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。 · 例: なし
+- `icp_point2plane` (`points, points, normals → pose`) — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。 · 例: `refinement`
 
 ### regionprops(5)
 - `label_components` (`voxel → voxel`) — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
@@ -487,7 +511,7 @@ _計 265 ops / 55 categories。_
 
 ### render(14)
 - `project_points` (`points → image2d`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
-- `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: なし
+- `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: `sfm_recon`
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。 · 例: `ct_hand_radiograph`
 - `render_shaded` (`normals → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。 · 例: `render_ao`
 - `ambient_occlusion` (`mesh → image2d`) — メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。 · 例: `render_ao`
@@ -504,7 +528,7 @@ _計 265 ops / 55 categories。_
 ### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。 · 例: `ransac_prim`
 - `ransac_sphere` (`points → primitive`) — 外れ値に頑健な RANSAC 球適合。 · 例: `ransac_prim`
-- `ransac_line` (`points → primitive`) — 外れ値に頑健な RANSAC 直線適合。 · 例: なし
+- `ransac_line` (`points → primitive`) — 外れ値に頑健な RANSAC 直線適合。 · 例: `geometry_metrology`
 - `ransac_cylinder` (`points, normals → primitive`) — 外れ値に頑健な RANSAC 円筒適合(点法線が必要)。 · 例: `ransac_prim`
 - `fit_cone` (`points → primitive`) — 点群に無限円錐を当てはめ ``{apex, axis, half_angle, residual}`` を返す。 · 例: `fit_primitives_ext`
 - `fit_torus` (`points → primitive`) — 点群にトーラスを当てはめ ``{center, axis, R, r, residual}`` を返す。 · 例: `fit_primitives_ext`
@@ -516,26 +540,26 @@ _計 265 ops / 55 categories。_
 - `smooth_flow` (`points, points → flow`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
 ### sdf_csg(7)
-- `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`
+- `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
 - `box_sdf` (`points → sdf`) — 軸平行直方体の**厳密**な符号付き距離場(内側負・外側正)。 · 例: `gear_metrology`, `sdf_csg`
 - `sdf_union` (`sdf, sdf → sdf`) — 2 SDF の和集合 A∪B = 要素ごとの min(a, b)(内側=負がどちらかにあれば内側)。 · 例: `gear_metrology`, `sdf_csg`
 - `sdf_intersect` (`sdf, sdf → sdf`) — 2 SDF の積集合 A∩B = 要素ごとの max(a, b)(両方の内側でのみ内側)。 · 例: `gear_metrology`
 - `sdf_subtract` (`sdf, sdf → sdf`) — 差集合 A\B = max(a, -b)(A の内側 かつ B の外側 = ``-b`` の内側)。 · 例: `sdf_csg`
 - `sdf_smooth_union` (`sdf, sdf → sdf`) — 滑らかに丸めた和集合(polynomial smooth-min)。``k>0`` で継ぎ目を半径 ~k で丸める。 · 例: `render_beauty`
-- `sdf_offset` (`sdf → sdf`) — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: なし
+- `sdf_offset` (`sdf → sdf`) — SDF のゼロ等値面を距離 ``r`` だけ法線方向へ動かす = ``sdf - r``(r>0 膨張, r<0 収縮)。 · 例: `sfm_recon`
 
 ### segment(4)
-- `region_growing` (`points → labels`) — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。 · 例: なし
+- `region_growing` (`points → labels`) — 法線類似で領域成長し連結した平滑領域へ同ラベルを付す(曲率ゲート無し変種)。 · 例: `sensor_seg`
 - `euclidean_cluster` (`points → labels`) — 半径 tol の近接グラフの連結成分で距離クラスタリング(-1=ノイズ)。 · 例: `object_segmentation`
 - `plane_segmentation` (`points → labels`) — 反復 RANSAC で最大 max_planes 枚の平面を逐次抽出(残差点 -1)。 · 例: `object_segmentation`
 - `vol_watershed` (`voxel → labels`) — Marker-controlled 3-D watershed segmentation (**optional — scikit-image**). · 例: `molecule_atom_count`, `watershed3d`
 
 ### shape_descriptor(5)
-- `d2_distribution` (`points → descriptor`) — ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。 · 例: なし
-- `a3_distribution` (`points → descriptor`) — ランダムな 3 点 (A, B, C) が頂点 B で作る角の分布(Osada 2002 の A3)。 · 例: なし
-- `extent_signature` (`points → descriptor`) — PCA 主軸(共分散の固有ベクトル)方向の広がりの比を返す。 · 例: なし
-- `describe` (`points → descriptor`) — D2 + A3 + extent を連結した大域形状記述子を返す。 · 例: `denoise_evolution`, `shape_retrieval`
-- `shape_distance` (`descriptor, descriptor → measurement`) — 2 つの記述子間の距離。小さいほど同形状。 · 例: `moment_invariants`, `shape_retrieval`
+- `d2_distribution` (`points → descriptor`) — ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。 · 例: `shape_desc_pose`
+- `a3_distribution` (`points → descriptor`) — ランダムな 3 点 (A, B, C) が頂点 B で作る角の分布(Osada 2002 の A3)。 · 例: `shape_desc_pose`
+- `extent_signature` (`points → descriptor`) — PCA 主軸(共分散の固有ベクトル)方向の広がりの比を返す。 · 例: `shape_desc_pose`
+- `describe` (`points → descriptor`) — D2 + A3 + extent を連結した大域形状記述子を返す。 · 例: `denoise_evolution`, `shape_desc_pose`, `shape_retrieval`
+- `shape_distance` (`descriptor, descriptor → measurement`) — 2 つの記述子間の距離。小さいほど同形状。 · 例: `moment_invariants`, `shape_desc_pose`, `shape_retrieval`
 
 ### space_carving(3)
 - `carve` (`images → voxel`) — bounds を res^3 voxel に離散化し、全シルエット内に射影される voxel を残す(空間彫刻)。 · 例: `space_carving`
@@ -558,8 +582,8 @@ _計 265 ops / 55 categories。_
 ### surface_fit(4)
 - `fit_poly_surface` (`image2d → surface`) — 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。 · 例: `contours_to_terrain`
 - `eval_poly_surface` (`surface → image2d`) — model を (x,y) で評価 → z(x の shape で返す)。 · 例: `contours_to_terrain`
-- `surface_form_error` (`image2d → measurement`) — 高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。 · 例: なし
-- `background_flatten` (`image2d → image2d`) — 画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。 · 例: なし
+- `surface_form_error` (`image2d → measurement`) — 高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。 · 例: `geometry_metrology`
+- `background_flatten` (`image2d → image2d`) — 画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。 · 例: `geometry_metrology`
 
 ### symmetry(4)
 - `detect_reflection_symmetry` (`points → primitive`) — PCA 主軸を法線とする候補平面(重心通過)から最良の反射対称面を選ぶ。 · 例: `dl_mesh_symmetry`, `itokawa_symmetry_honest`, `reflection_symmetry`, `symmetry`
@@ -568,29 +592,29 @@ _計 265 ops / 55 categories。_
 - `reflection_symmetry_score` (`points → measurement`) — 反射対称スコア = chamfer(鏡映, 元) / 中央値最近傍間隔(小さいほど対称、スケール不変)。→ float。 · 例: `dl_mesh_symmetry`, `reflection_symmetry`
 
 ### transform(12)
-- `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`
-- `gaussians_to_voxel` (`gaussians → voxel`) — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: なし
-- `mesh_to_voxel` (`mesh → voxel`) — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: なし
+- `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`
+- `gaussians_to_voxel` (`gaussians → voxel`) — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: `transforms_repr`
+- `mesh_to_voxel` (`mesh → voxel`) — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: `transforms_repr`
 - `mesh_to_points` (`mesh → points`) — mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。 · 例: `mesh_decimate`
-- `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: なし
-- `voxel_to_mips` (`voxel → image2d`) — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: なし
+- `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `transforms_repr`
+- `voxel_to_mips` (`voxel → image2d`) — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: `transforms_repr`
 - `voxel_to_mesh` (`voxel → mesh`) — voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。 · 例: `mesh_smooth`
-- `tsdf_from_depth` (`depth → sdf`) — 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。 · 例: なし
-- `signed_distance_field` (`voxel → sdf`) — occupancy/密度 voxel → 符号付き距離場 SDF(内側<0・外側>0)。edt_jfa を両側に。 · 例: なし
-- `sdf_to_occupancy` (`sdf → voxel`) — SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。 · 例: なし
+- `tsdf_from_depth` (`depth → sdf`) — 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。 · 例: `transforms_repr`
+- `signed_distance_field` (`voxel → sdf`) — occupancy/密度 voxel → 符号付き距離場 SDF(内側<0・外側>0)。edt_jfa を両側に。 · 例: `transforms_repr`
+- `sdf_to_occupancy` (`sdf → voxel`) — SDF → occupancy voxel(iso 以下=内側=1)。SDF から voxel へ戻す。 · 例: `transforms_repr`
 - `estimate_point_normals` (`points → normals`) — 点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。 · 例: `fpfh_correspondence`
-- `to_points` (`voxel, points, mesh, depth, gaussians → points`) — 任意の 3D 構造 → 点群(共通表現)。全5構造を 1 本の入口へ統合。 · 例: なし
+- `to_points` (`voxel, points, mesh, depth, gaussians → points`) — 任意の 3D 構造 → 点群(共通表現)。全5構造を 1 本の入口へ統合。 · 例: `transforms_repr`
 
 ### tsdf_fusion(3)
 - `fuse` (`depth → sdf`) — 深度列を new_volume + integrate で 1 つの TSDF volume に融合。返り値 (tsdf, weight)。 · 例: `tsdf_fusion_demo`
-- `integrate` (`sdf, depth → sdf`) — 深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。 · 例: なし
-- `extract_surface_points` (`sdf → points`) — TSDF ゼロ交差から表面点 (M,3) を抽出(marching cubes 不要、線形補間)。 · 例: `tsdf_fusion_demo`
+- `integrate` (`sdf, depth → sdf`) — 深度 1 枚を投影的 TSDF で volume に統合(in-place、重み付き移動平均)。 · 例: `transforms_repr`
+- `extract_surface_points` (`sdf → points`) — TSDF ゼロ交差から表面点 (M,3) を抽出(marching cubes 不要、線形補間)。 · 例: `transforms_repr`, `tsdf_fusion_demo`
 
 ### two_view(5)
 - `fundamental_8point` (`image2d, image2d → matrix`) — 正規化 8 点法で基礎行列 F を推定(rank-2 強制)。→ F (3,3)。8 点以上必要。 · 例: `two_view_pose`
-- `essential_8point` (`image2d, image2d → matrix`) — 対応点 + K から本質行列 E を直接。→ E (3,3)。 · 例: なし
+- `essential_8point` (`image2d, image2d → matrix`) — 対応点 + K から本質行列 E を直接。→ E (3,3)。 · 例: `sfm_recon`
 - `recover_pose` (`image2d, image2d → pose`) — 対応点 + K から相対姿勢 (R,t) と 3D 構造を復元(cheirality で一意化)。→ (R, t_unit, points3d)。 · 例: `two_view_pose`
-- `triangulate` (`image2d, image2d → points`) — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: なし
+- `triangulate` (`image2d, image2d → points`) — DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。 · 例: `sfm_recon`
 - `sampson_distance` (`image2d, image2d → measurement`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category

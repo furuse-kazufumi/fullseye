@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 265 の型付き op)を、**実問題を解く実行可能な事例**（全 91 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 265 の型付き op)を、**実問題を解く実行可能な事例**（全 105 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 65 事例
+- **合成データ(制御GT)** — 79 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 5 事例
@@ -42,6 +42,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **小惑星の姿勢を主成分で正準化** (`itokawa_pose_canonical`, itokawa) — 不明な向きで届いた小惑星形状を、慣性主軸で形状固有の正準姿勢へ整える(カタログ化・比較用)。
 - **未知姿勢で置かれた小惑星スキャンの位置合わせ** (`itokawa_self_register`, itokawa) — 未知の探査機姿勢で撮った小惑星スキャンを ICP で基準形状に戻す。不規則形状は球と違い登録できる。
 - **平面主体スキャンのGICP位置合わせ** (`gicp_register`, synthetic) — 床+直交2壁のコーナーを既知変換で動かし gicp(共分散重みマハラノビス)で復元。回転<1度、平面が滑る状況で点対点ICPを約6.5倍上回る。
+- **疎特徴による3D点群レジストレーション(Harris/ISS + SHOT/Spin/FPFH)** (`feature_register`, synthetic) — 初期推定なしで57度回転した2点群を合わせる「疎特徴レジストレーション」道具箱の6opを1本で通し、各段を実測の真値で検証する。harris3d_keypointsは立方体密度場の解析的な8頂点(唯一の3Dコーナー)を狙い、上位8検出が8頂点と1対1対応(平均1.73voxel、無作為null 9.16を判別的に下回る)。iss_keypointsは回転不変性を真値とし、同一点群を既知(R,t)で回した雲でも選ばれる163点のindex配列が完全一致。sh…
 - **部分重なりスキャンの登録(FPFH+ICP)** (`partial_overlap_icp`, procedural) — 非対称ブロブを別方向2視点で部分スキャン(幾何重なり56%)。scan Bに55度回転+並進を掛け、register_pointclouds(FPFH+RANSAC→ICP)でAへ登録。回転誤差0.86度<4・RMSE0.150が床0.148水準。PCA主軸103度/単位行列ICP58度のnullを桁違いに下回る。
 
 ### 再構成
@@ -51,6 +52,8 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **複数断層の2D輪郭を積層して3D曲面(メッシュ)に** (`contours_to_surface`, synthetic) — 各スライスの閉輪郭を塗って voxel 積層→marching cubes で曲面メッシュ化。頂点は球面に乗り体積も一致(断面一定=円柱仮定は1.5倍過大)。輪郭→領域→voxel→メッシュの表現変換。
 - **等高線(標高付き輪郭)から地形の高さ場(DEM)を復元** (`contours_to_terrain`, synthetic) — 等高線点(x,y,標高)を fit_poly_surface でサーフェス当てはめし DEM 格子へ展開。線の間も内挿し全域RMSEが最近傍等高線の階段近似を桁違いに下回る(GIS/測量)。
 - **多視点シルエットから visual hull を彫る** (`space_carving`, synthetic) — 既知形状を複数の既知視点で synthesize_silhouette→carve し visual_hull を得る(recall 1.0)。1視点は柱状に過大、多視点で真形状へ収束。
+- **評価指標4種の真値検証(F-score/RMSE対応/法線一致/voxel IoU)** (`metrics_eval`, synthetic) — 単位球点群(放射法線)と占有ボクセルを正解として合成し、metrics3d の 4 評価指標を解析真値と 1e-9 で照合する。fscore は 120 点厳密コピー+60 外れ点の再構成で precision=120/180・recall=120/150 を厳密に作り込み f=0.72727 を検証(完全コピー=1.0、無作為点 null≈0)。rmse_correspondence は恒等=0・既知オフセット |v|=0.1 の残差を厳密照合し、対応数…
+- **2視点SfMから表面再構成まで一つの球で通す** (`sfm_recon`, synthetic) — 中心[0,0,6]・半径1.5の単一の球を題材に、2視点SfMから表面再構成・観測合成までを6つのopで鎖状に接続し、すべて既知真値と照合する(ノイズ無し合成)。essential_8pointは球面上の対応点+Kから本質行列Eを復元し、真のE=[t]×Rと符号/スケールを除き|cos|=1.000000で一致・正規化エピポーラ残差1.1e-15を確認(直交並進+40度回転の誤E nullは|cos|=0.002・残差0.35)。triangulateは真…
 - **トーラス点群のalpha shape再構成で穴(genus1)を保持** (`alpha_shape_topology`, procedural) — 中実トーラス(主R1.0/管r0.35)9000点をestimate_alpha+alpha_shape_meshで再構成。z軸穴プローブ41点の内包率がalpha=0.000(穴を保持)、凸包null=1.000(穴を充填・厳密Delaunayでも1.000)。オイラー標数χ_alpha=0(トーラス)対χ_hull=2(球)でも判別的。
 - **Poisson軽量表面再構成(向き付き点群→水密メッシュ)** (`poisson_surface_recon`, procedural) — でこぼこ閉曲面(外向き法線を勾配で厳密算出)の向き付き点群6000点をrecon3d.poisson_liteで水密メッシュ(V11788/F23572)へ。真曲面との正規化chamfer0.01006が外接球null(0.081=8倍)・乱数法線null(0.041=4倍)より桁違いに小さい。
 
@@ -73,6 +76,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **点群に大域整合した外向き法線を付与(PCA推定→MST向き伝播)** (`oriented_normals`, synthetic) — 符号未定のPCA法線を Hoppe MST で外向きに揃える。球面サンプルで生法線の外向き一致0.50(コイン投げ)を向き付け1.00へ改善、接平面精度1.00。退化入力は捏造せず拒否。
 - **球面調和記述子による回転不変な3D形状検索** (`shape_descriptor`, synthetic) — 向き未知の形状(球/箱/円柱の回転コピー)を SH 帯域エネルギー記述子で照合。検索3/3正解・分離マージン>0で、回転で全マスが入れ替わる素ボクセル占有の1/3を上回る。
 - **3Dボリュームのエッジ検出(canny3d: NMS+ヒステリシス)** (`edges_3d`, synthetic) — なだらかな内部を持つ中実ボールの外周だけを1ボクセルに細線化。オンシェル率1.000・内部誤検出0で、生勾配の固定しきい値null(0.464・誤検出4012)を+0.536上回る。
+- **3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)** (`diff_features`, synthetic) — 球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps(内部で s…
 - **実メッシュ曲率が詳細形状を判別(Stanford Dragon)** (`dl_mesh_curvature`, download) — DL実データStanford Dragon(87万面)をread_mesh→vertex_curvature(cotangent Laplace-Beltrami)。正規化曲率はmedian9.2・MAD6.2・|Hn|>2が88%と広く分布し、同スケールの滑球null(median1.00・0%)をMAD比1.4e7倍で判別。未取得時はSKIPしexit0。
 - **FPFH記述子で部分ビュー間の点対応を張る** (`fpfh_correspondence`, procedural) — 同一物体の2部分ビュー(58度回転+並進・重なり1514点)で法線推定→FPFH記述子(33次元)を計算し記述子最近傍で対応。幾何正答率0.633がランダム対応0.0034・記述子シャッフル0.0020(チャンス率)を約185倍上回る。register全体でなく記述子マッチ品質を直接測る。
 
@@ -81,6 +85,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **中軸骨格と位相署名で形状を区別** (`medial_topology`, synthetic) — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。
 - **曲面上の測地距離と最遠点サンプリング** (`geodesic_distance`, synthetic) — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** (`space_curve`, synthetic) — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。
+- **円柱点群の前処理と測地距離・中心軸復元(SOR/radius/MLS + kNN/測地/距離リッジ)** (`pcl_geodesic`, synthetic) — 円柱(半径R=1, 高さ2)を「側面点群」と「中身入りvoxel」の2通りで合成し、6つのopを鎖にして数値的真値で検証する。側面点群(面2400点+遠方の飛び点40点)に対し statistical_outlier_removal と radius_outlier_removal がいずれも飛び点40/40を除去し面の点2400を1つも誤除去せず(SOR→radius合成で面のみ2400点が残存)。mls_smooth が各点の軸までの距離の真値Rからの…
 - **点群の鏡映対称面の復元** (`reflection_symmetry`, synthetic) — 既知平面で鏡映対称な点群から初期推定なしにdetect_reflection_symmetryが対称面を復元: 法線誤差0.0度・鏡映残差1.5e-11。非対称null(残差1.14)は約7.8e10倍大きく、でたらめ平面(最良1.27)も桁違いで判別的。
 - **トーラス結び目の弧長・捩率計測(非平面曲線)** (`torus_knot_curve`, procedural) — (2,3)トーラス結び目を密ポリラインで生成しcurve3dのarc_length/curvature_torsionを検証。弧長は台形積分と相対7.6e-7一致・中央|τ|0.283は同長の平面円(捩率6e-10)の5.1e8倍で非平面を判別。円のκ=1/rも誤差7e-13で正確。
 - **恐竜骨格の左右対称面(矢状面)の復元** (`dl_mesh_symmetry`, download) — スミソニアン三角竜骨格(CC0,10万頂点→4090点stride)をdetect_reflection_symmetryに渡し矢状面を残差2.48で復元(最薄主軸=左右方向に一致)。他2主平面4.28/4.30と区別、片側20%破壊で15.87(6.4倍)へ悪化=左右対称を判別的に検出。未取得時はSKIPしexit0。
@@ -96,6 +101,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 ### 形状記述子
 
 - **3Dモーメント不変量(剛体+一様スケールに不変)** (`moment_invariants`, synthetic) — 点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。
+- **大域形状記述子と姿勢照合** (`shape_desc_pose`, synthetic) — 3D 部品を姿勢に依らず「形」で同定し、次に実際の姿勢を復元する一連の流れを、大域形状記述子(D2 距離分布・A3 角度分布・PCA 広がり比 extent・主慣性モーメント)と姿勢照合(PCA 主軸整列・FFT 位相相関・log-polar/Fourier-Mellin)で示す。記述子側は厳密な数学則で検証: extent_signature と principal_moments は同一共分散の別表現なので、principal_moments から共分…
 - **球面調和記述子による回転不変な3D形状検索** (`sh_descriptor_retrieval`, procedural) — 球/立方体/トーラス/円柱/円錐の5クラスをボクセル化しsh_descriptor化。一様ランダム3D回転したクエリをmatch_sh_descriptorで検索→30/30=100%正解・分離マージン0.312。非回転不変null(軸周辺分布)は回転で100%→37%に崩れSHが+63pt上回る。
 
 ### 陰影からの形状復元
@@ -107,6 +113,8 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **平面度メトロロジー(基準面からの偏差)** (`plane_flatness`, synthetic) — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。
 - **真球度/丸さ検査** (`roundness`, synthetic) — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。
 - **30%外れ値下での頑健プリミティブ適合** (`ransac_prim`, synthetic) — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。
+- **曲座標展開: 極/円筒/Zernike/LiDAR円筒投影で回転体の m 回対称を一貫復元** (`curvilinear_proj`, synthetic) — 回転体(3枚羽根=m=3回対称)の検査を、中心を原点にした曲座標へ展開する4つのopで横断検証する事例。fit_zernikeは既知の波面係数(piston/tilt/defocus/astigmatism)で合成した円板を極座標直交基底(n,m)へ分解し、各係数を誤差5e-5で復元(非点収差=m=2角モードが立つ)。polar_unwrapは2D画像の円板を(θ×r)へ展開しθ軸FFTでm=3を検出(power@m=179で他ビンを圧倒)、回転対称画像は…
+- **幾何メトロロジー: 直線/平面/球/円の当てはめ→角度・距離・交線計測** (`geometry_metrology`, synthetic) — 1 個の機械加工ブロック(2 面が稜線で交わり、面上に球と円穴が乗る)を舞台に、当てはめ op(fit_line_3d/fit_plane_3d/fit_sphere_3d/fit_circle_3d/ransac_line)の出力を計測 op(angle_3points/angle_between_lines/angle_between_planes/angle_line_plane/distance_point_plane/distance_point…
 - **3-D プリミティブ当てはめ(直線/平面/球/円/最小包含球)** (`primitive_fitting_3d`, synthetic) — 点群から直線・平面・球・円を最小二乗で当て、中心/半径/向き/残差を (depth,row,col) で復元(機械精度)。各残差は『わざと外した』null を桁違いに下回る。measure3d.fit_line3/fit_plane3/fit_sphere3/fit_circle3/smallest_sphere3。2-D fit_line/fit_circle の 3-D 版。
 - **最大内接ボックス(inner_rectangle1 の 3-D 版)** (`inner_box_inspection`, synthetic) — 空洞のある部品(二値ボクセル)に内接する最大の軸平行ボックス=「保証できる最大の中実ブロック」を厳密に求める(総当たりと完全一致)。深さ区間の論理積×2-D最大内接長方形。空洞をまたぐ前景bbox(非中実)を判別的に下回る。regionprops3d.inner_box3。
 - **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** (`oriented_bounding_box`, synthetic) — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。
@@ -126,6 +134,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 - **ビンピッキング: 台平面除去→物体クラスタリング** (`object_segmentation`, synthetic) — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。
 - **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** (`region_props_3d`, synthetic) — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。
+- **センサ幾何と領域処理パイプライン(角シーンの denoise→傾き→面分割→計画格子)** (`sensor_seg`, synthetic) — 深度センサが捉えた「2つの傾いた面が稜線で出会う角」の1シーンを、実際の知覚パイプラインの順に8opで連結処理する例。清浄ガイドで joint_bilateral して段差を残しつつノイズを削り(RMS 0.112→0.019、素のGaussianぼかしnullは稜線段差を-5.8→-1.16に潰すが本opは-5.79を保存)、bearing_angle_image で各面の傾きを degrees(atan(s)) と厳密一致で数値化(左26.565°/右…
 - **接触物体の分離(距離変換ベース3D watershed)** (`watershed3d`, synthetic) — 接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。
 - **分子の接触原子カウント(距離変換+マーカ分水嶺)** (`molecule_atom_count`, procedural) — シクロヘキサンC6椅子型を6原子球の和集合(41万voxel・1連結成分)にボクセル化。距離変換+マーカ分水嶺で接触原子を6個に分離・重心を真値へ最大0.52voxel。素朴な連結成分null=1個に融合(43voxelずれ)を個数6vs1で上回る。
 - **屋外LiDARシーンの地面除去→物体分割** (`lidar_scene_segmentation`, procedural) — 傾斜地面(~5.4度)上の4物体(球/箱/円柱/円錐)のLiDAR点群5316点を、fit_plane_ransac+height_above_planeで地面除去→euclidean_clustersで分割。検出4==K=4・重心を真物体へ全単射(最大0.128m)。地面除去なしnullは全物体癒着で1クラスタ。
@@ -187,4 +196,24 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去** (`render_ssaa`, synthetic) — ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。
 - **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** (`render_tonemap`, synthetic) — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。
 - **レンダリング品質: hero レンダラ render_beauty(全層合成の映える静止3D)** (`render_beauty`, synthetic) — ラスタライズ/Phong鏡面/AO/接地影/SSAA/トーンマップを1本に合成。sphere-on-groundで各層を実測: AOは接触凹部を0.07→0.02と選択的に暗化(露出頂部0.01は不変)、鏡面は小面積ハイライト(frac0.018)、接地影はwith-mesh993px vs null0px、reinhardは単調(clip34段潰しを回避)、SSAAはedge0.040→0.026。sdf_ops生成メッシュでhero画像を出力。
+
+### freeform_geometry
+
+- **B スプライン自由曲線・自由曲面の復元と計測** (`bspline_freeform`, synthetic) — 直線・平面・円のような大域基底では表せない「くねる曲線」「うねる曲面」を区分多項式(B スプライン)で復元し、再サンプル・平滑・残差計測まで 1 本に通す事例。曲面側は既知の f(x,y)=0.7 sin(1.6x)cos(1.3y)+0.3xy を散布 600 点から fit_bspline_surface で双三次フィットし、学習外の内部格子で eval_bspline_surface した値が解析真値と RMS 1.5e-3(大域平均 null 0.…
+
+### match_localize
+
+- **3-D テンプレート定位(NCC/形状/chamfer/Hough/MIP/曲率)** (`matching_localize`, synthetic) — 同一の合成シーン(滑らかな充実球=ターゲット と、球と同一ピーク濃度の立方体=おとり を離して配置)に対し、match3d の 6 定位手法を全て当てて、球テンプレートの中心を真値±2 voxel(実測の 6 手法合議 spread は 0.87vox)で復元できることを検証する事例。球は表面点群(match_points_ncc 用)と解析的 smooth 占有場(voxel 5 手法用)を同一幾何から生成し(bounds=(0,N-1) で world…
+
+### pose_refinement
+
+- **姿勢・ピーク精緻化(Newton/LM/LK/回転GN/点-面ICP)** (`refinement`, synthetic) — 粗いマッチ(整数ボクセル/±3度級)を連続座標・連続角へ締め上げる 5 種の精緻化器を、既知真値の合成データで一括検証する。帯域制限した滑らかな解析場 F を整数格子(scene)と既知の分数オフセット格子(template)からサンプルし、「同一の真の並進」を refine_peak_newton(相関スコア山の整数ピーク→サブボクセル)・refine_translation_lk(逆合成 LK, corner 規約)・refine_lm(LM, cen…
+
+### representation
+
+- **3-D データ表現の相互変換ハブ(点群↔ボクセル↔メッシュ↔SDF↔深度↔TSDF)** (`transforms_repr`, synthetic) — 半径・中心が既知の球(と、登録用に非対称な段付きブロック)を共通の被写体に、fullseye の 3-D 表現変換 op を 1 本の鎖に繋いで「表現を変えても物体の幾何が保たれる」ことを解析真値で検証する事例。depth→depth_to_points で球面点を厳密復元(median|d-R|=6.7e-16)、mesh_to_voxel と gaussians_to_voxel が同一格子上に同じ殻を作り occupancy IoU=0.454(ずら…
+
+### scene_flow
+
+- **動く物体のシーンフローを点群・ボクセル・画像平面の3表現で復元** (`motion_scene`, synthetic) — 2時刻の同一物体を3つの見え方から観測し、既知の真値(剛体運動 R_gt=2度・t_gt<0.3、ボクセル並進 shift=[1.5,-2,1]、画素並進)を握って合成し、5つの op を鎖でつないで運動を復元・検証する。表現1(点群): estimate_flow が小運動で最近傍対応恒等(実測 1.000)となりフローが真の変位と機械精度一致(誤差 0.0)、その対応から fit_rigid が Kabsch で (R,t) を復元(回転誤差 1.7e…
 
