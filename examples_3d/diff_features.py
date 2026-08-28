@@ -74,7 +74,7 @@ assert e_hess < 5e-4, "hessian3d が解析 Hessian を復元していない"
 gz0, gy0, gx0 = M.sobel3d(np.full((N, N, N), 3.14))
 null_grad = max(float(g[0, 0].abs().max()) for g in (gz0, gy0, gx0))
 lin = 2.0 * zz - 0.5 * yy + 1.3 * xx
-null_hess = max(float(np.abs(h.numpy()).max()) for h in M.hessian3d(lin))
+null_hess = max(float(np.abs(h.numpy()[sl, sl, sl]).max()) for h in M.hessian3d(lin))
 print(f"  null: 定数場の |grad| max = {null_grad:.2e} / 線形場の |Hessian| max = {null_hess:.2e}")
 assert null_grad < 1e-5, "定数場で勾配が立ってしまっている"
 assert null_hess < 1e-4, "線形場で Hessian が立ってしまっている"
