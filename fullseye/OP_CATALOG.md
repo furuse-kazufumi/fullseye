@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(89 例)
+### 3-D 点群/体積/曲面(90 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -48,6 +48,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
+- **最大内接ボックス(inner_rectangle1 の 3-D 版)** — 空洞のある部品(二値ボクセル)に内接する最大の軸平行ボックス=「保証できる最大の中実ブロック」を厳密に求める(総当たりと完全一致)。深さ区間の論理積×2-D最大内接長方形。空洞をまたぐ前景bbox(非中実)を判別的に下回る。regionprops3d.inner_box3。 `py -3.11 examples_3d/inner_box_inspection.py`
 - **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。 `py -3.11 examples_3d/oriented_bounding_box.py`
 - **点群のバウンディング(凸包/OBB/AABB/最小包含球)** — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。 `py -3.11 examples_3d/hull_bounds.py`
 - **平歯車の歯数をSDFジオメトリから逆計測** — sdf_opsのCSGで平歯車を手続き生成し、歯先帯r=0.44の占有を角度サンプルしてラン計数で歯数N=12→12/20→20を厳密復元(0.2度ジッタでも不変)。歯なし円板null=0本・誤半径 内1/外0本で判別的。 `py -3.11 examples_3d/gear_metrology.py`
@@ -213,7 +214,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 264 ops / 55 categories。_
+_計 265 ops / 55 categories。_
 
 
 ### augment(6)
@@ -470,11 +471,12 @@ _計 264 ops / 55 categories。_
 - `icp_point2point_3d` (`points, points → pose`) — 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。
 - `icp_point2plane` (`points, points, normals → pose`) — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。
 
-### regionprops(4)
+### regionprops(5)
 - `label_components` (`voxel → voxel`) — 3D 二値ボリュームを連結成分にラベリングする。
 - `region_props` (`voxel → measurement`) — 各連結成分のリージョンプロパティ一覧を返す。
 - `largest_component` (`voxel → voxel`) — 最大(最多ボクセル)連結成分の bool マスクを返す。
 - `filter_by_volume` (`voxel → voxel`) — min_voxels 未満の連結成分を除去した bool マスクを返す。
+- `inner_box3` (`voxel → primitive`) — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の
 
 ### registration_metrics(4)
 - `inlier_ratio` (`points, points → measurement`) — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。

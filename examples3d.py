@@ -221,6 +221,9 @@ EXAMPLES = [
      "name": "点群データ拡張(回転/スケール/ドロップアウト/ジッタ)",
      "summary": "学習用の点群拡張4種を指定パラメータどおり適用(回転=距離不変・向き変化、scale倍率、dropout点数、jitter std)。恒等nullを判別的に上回り、連鎖でも複合性質を保つ。"},
     # -- bounds / mesh processing / primitive fit(Wave A)------------------------- #
+    {"id": "inner_box_inspection", "task": "metrology", "data": "synthetic",
+     "name": "最大内接ボックス(inner_rectangle1 の 3-D 版)",
+     "summary": "空洞のある部品(二値ボクセル)に内接する最大の軸平行ボックス=「保証できる最大の中実ブロック」を厳密に求める(総当たりと完全一致)。深さ区間の論理積×2-D最大内接長方形。空洞をまたぐ前景bbox(非中実)を判別的に下回る。regionprops3d.inner_box3。"},
     {"id": "oriented_bounding_box", "task": "metrology", "data": "synthetic",
      "name": "最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)",
      "summary": "傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。"},

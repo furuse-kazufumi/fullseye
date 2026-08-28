@@ -342,6 +342,7 @@ _CATALOG = {
         ("region_props", "regionprops3d", ["voxel"], "measurement", False),
         ("largest_component", "regionprops3d", ["voxel"], "voxel", False),
         ("filter_by_volume", "regionprops3d", ["voxel"], "voxel", False),
+        ("inner_box3", "regionprops3d", ["voxel"], "primitive", False),  # 最大内接ボックス(inner_rectangle1 の 3D 版)
     ],
     "two_view": [  # 2視点エピポーラ幾何(対応点 → 相対姿勢 + 構造、単眼 SfM/VO の核)
         ("fundamental_8point", "twoview", ["image2d", "image2d"], "matrix", False),

@@ -47,6 +47,7 @@ __all__ = [
     "region_props",
     "largest_component",
     "filter_by_volume",
+    "inner_box3",
 ]
 
 # connectivity 値 -> generate_binary_structure(rank=3, connectivity=?) の対応。
@@ -277,3 +278,80 @@ def filter_by_volume(vol, min_voxels: int, connectivity: int = 26) -> np.ndarray
     keep[keep_labels] = True
     keep[0] = False
     return keep[labels]
+
+
+# --------------------------------------------------------------------------- #
+# 最大内接ボックス(inner_rectangle1 の 3-D 版)                                #
+# --------------------------------------------------------------------------- #
+def _max_all_ones_rect(m: np.ndarray):
+    """2-D bool 配列の中で全 True の最大軸平行長方形を返す (top,left,bottom,right)。
+    ヒストグラム/スタック法 = 2-D ``inner_rectangle1`` と同じコア(O(H*W))。前景無しは None。"""
+    h, w = m.shape
+    if not m.any():
+        return None
+    height = np.zeros(w, dtype=np.int64)
+    best = None                                           # (area, top, left, bottom, right)
+    for r in range(h):
+        height = np.where(m[r], height + 1, 0)
+        stack = []                                        # (start_col, bar_height)
+        for i in range(w + 1):
+            cur = int(height[i]) if i < w else 0
+            start = i
+            while stack and stack[-1][1] > cur:
+                idx, hgt = stack.pop()
+                area = hgt * (i - idx)
+                if hgt > 0 and (best is None or area > best[0]):
+                    best = (area, r - hgt + 1, idx, r, i - 1)
+                start = idx
+            stack.append((start, cur))
+    if best is None:
+        return None
+    return (best[1], best[2], best[3], best[4])
+
+
+def inner_box3(vol) -> dict:
+    """二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の
+    3-D 版)。
+
+    厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の **論理積**
+    (全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形
+    (ヒストグラム法 = ``inner_rectangle1`` と同じコア)× 区間長 が候補ボックスで、全区間に
+    ついての最大が厳密な最大内接ボックスになる。O(D^2 * H * W)。
+
+    Returns
+    -------
+    dict
+        (depth,row,col) 軸順で ``min`` / ``max`` 隅、``center`` (+ ``cd/cr/cc``)、
+        全幅 ``size``、ボクセル数の ``volume``。
+
+    Raises
+    ------
+    ValueError
+        非 3-D 入力、または前景ゼロの領域(内接ボックス無し)。
+    """
+    m = _as_binary_3d(vol)
+    D = m.shape[0]
+    if not m.any():
+        raise ValueError("領域が空です(前景ゼロ)。内接ボックスは定義できません。")
+    best = None                                           # (vol, z0, z1, top, left, bottom, right)
+    for z0 in range(D):
+        acc = m[z0].copy()
+        for z1 in range(z0, D):
+            if z1 > z0:
+                acc &= m[z1]
+            rect = _max_all_ones_rect(acc)
+            if rect is None:                              # 積が空 → これ以上伸ばしても空
+                break
+            top, left, bottom, right = rect
+            hh, ww, dd = bottom - top + 1, right - left + 1, z1 - z0 + 1
+            v = dd * hh * ww
+            if best is None or v > best[0]:
+                best = (v, z0, z1, top, left, bottom, right)
+    v, z0, z1, top, left, bottom, right = best
+    mn = np.array([z0, top, left], float)
+    mx = np.array([z1, bottom, right], float)
+    size = mx - mn + 1.0
+    center = 0.5 * (mn + mx)
+    return {"min": mn, "max": mx, "center": center,
+            "cd": float(center[0]), "cr": float(center[1]), "cc": float(center[2]),
+            "size": size, "volume": float(np.prod(size))}

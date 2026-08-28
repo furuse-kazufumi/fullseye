@@ -175,3 +175,70 @@ def test_filter_by_volume_removes_small():
     assert not R.filter_by_volume(vol, v_large + 1, connectivity=26).any()
     # 十分小さい閾値 -> 両方残る。
     assert R.label_components(R.filter_by_volume(vol, 1, connectivity=26))[1] == 2
+
+
+# --------------------------------------------------------------------------- #
+# inner_box3 — 最大内接軸平行ボックス(inner_rectangle1 の 3-D 版)             #
+# --------------------------------------------------------------------------- #
+def test_inner_box3_recovers_a_known_solid_box():
+    V = np.zeros((20, 24, 28), bool)
+    V[3:11, 5:15, 7:19] = True                       # size (8,10,12) at (depth,row,col)=(3,5,7)
+    r = R.inner_box3(V)
+    assert np.allclose(r["size"], [8, 10, 12])
+    assert np.allclose(r["min"], [3, 5, 7]) and np.allclose(r["max"], [10, 14, 18])
+    assert r["volume"] == 8 * 10 * 12
+    assert np.allclose(r["center"], [6.5, 9.5, 12.5])
+
+
+def test_inner_box3_beats_the_bounding_box_of_all_foreground():
+    # a solid box plus scattered isolated voxels: the inscribed box is still the box,
+    # while the naive bbox-of-all-foreground would be far larger yet not all-foreground.
+    V = np.zeros((20, 24, 28), bool)
+    V[3:11, 5:15, 7:19] = True
+    rng = np.random.default_rng(0)
+    for _ in range(60):
+        V[rng.integers(0, 20), rng.integers(0, 24), rng.integers(0, 28)] = True
+    r = R.inner_box3(V)
+    assert np.allclose(r["size"], [8, 10, 12])                     # still the solid box
+    z0, y0, x0 = r["min"].astype(int)
+    dz, dy, dx = r["size"].astype(int)
+    assert V[z0:z0 + dz, y0:y0 + dy, x0:x0 + dx].all()             # genuinely all-foreground
+    bbox_vol = float(np.prod(np.ptp(np.argwhere(V), axis=0) + 1))
+    assert r["volume"] < bbox_vol                                  # tighter than the null
+
+
+def test_inner_box3_matches_brute_force_on_a_notched_region():
+    V = np.zeros((6, 8, 8), bool)
+    V[1:5, 1:7, 1:7] = True
+    V[2:4, 3:5, 3:5] = False                                       # interior notch
+    r = R.inner_box3(V)
+    D, H, W = V.shape
+    P = np.zeros((D + 1, H + 1, W + 1), np.int64)
+    P[1:, 1:, 1:] = np.cumsum(np.cumsum(np.cumsum(V.astype(np.int64), 0), 1), 2)
+
+    def bsum(z0, z1, y0, y1, x0, x1):
+        return int(P[z1 + 1, y1 + 1, x1 + 1] - P[z0, y1 + 1, x1 + 1] - P[z1 + 1, y0, x1 + 1]
+                   - P[z1 + 1, y1 + 1, x0] + P[z0, y0, x1 + 1] + P[z0, y1 + 1, x0]
+                   + P[z1 + 1, y0, x0] - P[z0, y0, x0])
+    best = 0
+    for z0 in range(D):
+        for z1 in range(z0, D):
+            for y0 in range(H):
+                for y1 in range(y0, H):
+                    for x0 in range(W):
+                        for x1 in range(x0, W):
+                            vv = (z1 - z0 + 1) * (y1 - y0 + 1) * (x1 - x0 + 1)
+                            if vv > best and bsum(z0, z1, y0, y1, x0, x1) == vv:
+                                best = vv
+    assert r["volume"] == best
+
+
+def test_inner_box3_all_foreground_is_the_whole_volume():
+    r = R.inner_box3(np.ones((6, 7, 8), bool))
+    assert r["volume"] == 6 * 7 * 8 and np.allclose(r["size"], [6, 7, 8])
+
+
+@pytest.mark.parametrize("bad", [np.zeros((4, 4, 4), bool), np.ones((4, 4), bool)])
+def test_inner_box3_fail_closed(bad):
+    with pytest.raises(ValueError):
+        R.inner_box3(bad)
