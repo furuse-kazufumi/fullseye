@@ -266,19 +266,34 @@ def _sha256(path: str) -> str:
     return h.hexdigest()
 
 
+def _final_sha(e) -> str:
+    """The sha256 the on-disk artifact should have.
+
+    ``sha256`` pins the *downloaded* bytes (the archive, verified at transfer
+    time); ``sha256_out`` pins the *extracted / decompressed* file.  For a direct
+    (non-archive) entry the download IS the artifact, so ``sha256`` applies.
+    """
+    if e.get("sha256_out"):
+        return e["sha256_out"]
+    if e["archive"] is None:
+        return e.get("sha256") or ""
+    return ""  # archived but no extracted-file pin -> existence only
+
+
 def verify(sample_id: str) -> bool:
-    """True iff the local file exists and matches the pinned sha256.
+    """True iff the local file exists and matches its pinned final sha256.
 
     Returns False (never raises) when the file is missing.  An entry with no
-    pinned sha256 counts as verified once the file simply exists.
+    pinned final sha counts as verified once the file simply exists.
     """
     e = entry(sample_id)
     p = local_path(sample_id)
     if p is None:
         return False
-    if not e.get("sha256"):
+    want = _final_sha(e)
+    if not want:
         return True
-    return _sha256(p) == e["sha256"]
+    return _sha256(p) == want
 
 
 # ---------------------------------------------------------------------------
