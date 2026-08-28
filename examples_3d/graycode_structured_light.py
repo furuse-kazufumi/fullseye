@@ -62,19 +62,23 @@ def encode_graycode_bitplanes(code, k, bright=0.8, dark=0.2,
     重み (k-1-i) のビットを i 番目の面に置く。撮影ノイズを ±noise_clip で頭打ちにして
     載せる: bright-noise_clip > thresh かつ dark+noise_clip < thresh を保てば二値化は
     絶対に反転しない(= 復号は厳密なまま)。この頑健さも同時に示す。
+
+    返り値: (planes, max_abs_noise)。max_abs_noise は実際に載ったノイズの最大振幅。
     """
     gray = binary_to_gray(code)                     # 各画素の Gray 整数
     rng = np.random.default_rng(seed)
     H, W = code.shape
     planes = np.empty((k, H, W), dtype=np.float64)
+    max_abs_noise = 0.0
     for i in range(k):
         weight = k - 1 - i                          # MSB first: 面 0 が最上位
         bit = (gray >> weight) & 1                  # そのビット面(0/1)
         base = np.where(bit == 1, bright, dark)     # 明=bright / 暗=dark
         noise = np.clip(rng.normal(0.0, noise_std, size=base.shape),
                         -noise_clip, noise_clip)    # ノイズを頭打ち(反転させない)
+        max_abs_noise = max(max_abs_noise, float(np.max(np.abs(noise))))
         planes[i] = np.clip(base + noise, 0.0, 1.0)
-    return planes
+    return planes, max_abs_noise
 
 
 def match_fraction(a, b):
