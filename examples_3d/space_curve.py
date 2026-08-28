@@ -179,7 +179,7 @@ def main():
     # --- 2c) Gram-Schmidt 射影を試す: 変速(非一様)ヘリックス(r''⊥r' でない) ---
     theta_var = variable_speed_theta(turns=turns, n=n)
     helix_var = make_helix(radius, pitch, theta=theta_var)
-    Tv, Nv, Bv = frenet_frame(helix_var)
+    Tv, Nv, _ = frenet_frame(helix_var)
     Tv_gt, Nv_gt = helix_frame_analytic(radius, pitch, theta_var)
     frame_T_err_v = float(np.max(np.linalg.norm(interior(Tv - Tv_gt), axis=1)))
     frame_N_err_v = float(np.max(np.linalg.norm(interior(Nv - Nv_gt), axis=1)))
