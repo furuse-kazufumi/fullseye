@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 265 の型付き op)を、**実問題を解く実行可能な事例**（全 90 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 265 の型付き op)を、**実問題を解く実行可能な事例**（全 91 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 64 事例
+- **合成データ(制御GT)** — 65 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 5 事例
@@ -107,6 +107,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **平面度メトロロジー(基準面からの偏差)** (`plane_flatness`, synthetic) — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。
 - **真球度/丸さ検査** (`roundness`, synthetic) — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。
 - **30%外れ値下での頑健プリミティブ適合** (`ransac_prim`, synthetic) — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。
+- **3-D プリミティブ当てはめ(直線/平面/球/円/最小包含球)** (`primitive_fitting_3d`, synthetic) — 点群から直線・平面・球・円を最小二乗で当て、中心/半径/向き/残差を (depth,row,col) で復元(機械精度)。各残差は『わざと外した』null を桁違いに下回る。measure3d.fit_line3/fit_plane3/fit_sphere3/fit_circle3/smallest_sphere3。2-D fit_line/fit_circle の 3-D 版。
 - **最大内接ボックス(inner_rectangle1 の 3-D 版)** (`inner_box_inspection`, synthetic) — 空洞のある部品(二値ボクセル)に内接する最大の軸平行ボックス=「保証できる最大の中実ブロック」を厳密に求める(総当たりと完全一致)。深さ区間の論理積×2-D最大内接長方形。空洞をまたぐ前景bbox(非中実)を判別的に下回る。regionprops3d.inner_box3。
 - **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** (`oriented_bounding_box`, synthetic) — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。
 - **点群のバウンディング(凸包/OBB/AABB/最小包含球)** (`hull_bounds`, synthetic) — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。

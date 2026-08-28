@@ -27,6 +27,28 @@ if _REPO not in sys.path:
     sys.path.insert(0, _REPO)
 
 
+# op -> worked-example index (HDevelop-style "この op を使うサンプル"リンク)。壊れても台帳は出す。
+_EX3D, _EX2D = None, None
+
+
+def _ex_index():
+    global _EX3D, _EX2D
+    if _EX3D is None:
+        try:
+            from op_example_index import build_index
+            _EX3D, _EX2D = build_index(split=True)
+        except Exception:
+            _EX3D, _EX2D = {}, {}
+    return _EX3D, _EX2D
+
+
+def _ex_link(exs) -> str:
+    """例 id のリストを ' · 例: `a`, `b`'(無ければ ' · 例: なし')に整形。"""
+    if exs:
+        return " · 例: " + ", ".join(f"`{e}`" for e in exs)
+    return " · 例: なし"
+
+
 def _doc1(obj) -> str:
     """オブジェクトの docstring 先頭行(無ければ空文字)。"""
     try:
@@ -146,7 +168,7 @@ def _ops3d_section() -> list[str]:
                 info = ops3d.info(name)
                 io = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
                 doc = info.get("doc", "") or ""
-                out.append(f"- `{name}` (`{io}`) — {doc}")
+                out.append(f"- `{name}` (`{io}`) — {doc}{_ex_link(_ex_index()[0].get(name))}")
                 total += 1
             except Exception as ex:
                 out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
@@ -178,7 +200,7 @@ def _ops2d_section() -> list[str]:
             try:
                 hal = f" (halcon: `{o.halcon}`)" if getattr(o, "halcon", None) else ""
                 io = f"`{getattr(o, 'in_sort', '?')} → {getattr(o, 'out_sort', '?')}`"
-                out.append(f"- `{o.name}`{hal} {io}")
+                out.append(f"- `{o.name}`{hal} {io}{_ex_link(_ex_index()[1].get(o.name))}")
             except Exception as ex:
                 out.append(f"- `{getattr(o, 'name', '?')}` (introspection failed: {ex})")
         out.append("")
