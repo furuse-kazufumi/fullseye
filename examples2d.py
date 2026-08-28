@@ -60,6 +60,50 @@ EXAMPLES = [
      "name": "スプライン補間(開/閉曲線・2D/3D・時間変形)",
      "summary": "疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、"
                 "軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。"},
+    # -- family coverage galleries (exercise & GT-validate every op in a category family) -- #
+    # Breadth exercisers: each drives its whole op family with finite/out_sort/determinism
+    # checks plus beat-the-null GT on representative ops. They keep op→example coverage at
+    # 100% (see tests/test_op_example_coverage.py) and double as runnable family demos.
+    {"id": "gallery2d_smoothing_rank", "task": "family_coverage", "data": "synthetic",
+     "name": "平滑化・ランク・復元フィルタ族を総なめ", "summary":
+         "gaussian/median/bilateral/rank/restoration など平滑化フィルタ族の全 op を実行し、"
+         "有限性・out_sort・決定性を機械検証(代表 op は beat-the-null GT)。"},
+    {"id": "gallery2d_edges", "task": "family_coverage", "data": "synthetic",
+     "name": "エッジ・微分・コーナー演算子族を総なめ", "summary":
+         "sobel/laplace/canny/harris などエッジ・勾配・コーナー検出族の全 op を GT 検証。"},
+    {"id": "gallery2d_morphology", "task": "family_coverage", "data": "synthetic",
+     "name": "モルフォロジー(形態学)op 族を総なめ", "summary":
+         "収縮/膨張/開閉/tophat/skeleton などグレー・二値形態学の全 op を GT 検証。"},
+    {"id": "gallery2d_region", "task": "family_coverage", "data": "synthetic",
+     "name": "領域(region)op 族を総なめ", "summary":
+         "穴埋め/最大成分/距離変換/外接内接/RLE など region・region-morphology・region-transform を GT 検証。"},
+    {"id": "gallery2d_segmentation", "task": "family_coverage", "data": "synthetic",
+     "name": "セグメンテーション演算子族を総なめ", "summary":
+         "otsu/dyn_threshold/watershed/local_max などしきい値・領域分割族の全 op を GT 検証。"},
+    {"id": "gallery2d_features", "task": "family_coverage", "data": "synthetic",
+     "name": "特徴抽出・テクスチャ・形状記述子族を総なめ", "summary":
+         "特徴点/テクスチャ/形状記述/自己相似の全 op を有限性・決定性で GT 検証。"},
+    {"id": "gallery2d_geometry", "task": "family_coverage", "data": "synthetic",
+     "name": "2-D 幾何オペレータ族を総なめ", "summary":
+         "アフィン/射影/回転/リサンプル/座標変換など幾何変換族の全 op を GT 検証。"},
+    {"id": "gallery2d_gray_arith", "task": "family_coverage", "data": "synthetic",
+     "name": "濃淡・階調変換・算術・定義域 op 族を総なめ", "summary":
+         "gamma/contrast/算術演算/domain(定義域)など濃淡・階調族の全 op を GT 検証。"},
+    {"id": "gallery2d_contour_measure", "task": "family_coverage", "data": "synthetic",
+     "name": "輪郭・1次元計測・テンプレート照合族を総なめ", "summary":
+         "輪郭抽出/subpix/1D 計測/テンプレートマッチ族の全 op を GT 検証。"},
+    {"id": "gallery2d_texture_freq", "task": "family_coverage", "data": "synthetic",
+     "name": "テクスチャ・周波数・分解 op 族を総なめ", "summary":
+         "FFT/gabor/wavelet/分解(decomposition)などテクスチャ・周波数族の全 op を GT 検証。"},
+    {"id": "gallery2d_color_artistic", "task": "family_coverage", "data": "synthetic",
+     "name": "色・芸術・拡張(sim2real)op 族を総なめ", "summary":
+         "色空間変換/芸術効果/augmentation など色・拡張族の全 op を GT 検証。"},
+    {"id": "gallery2d_halcon_ext", "task": "family_coverage", "data": "synthetic",
+     "name": "HALCON 拡充 tier(hx_ 一族)を総なめ", "summary":
+         "HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。"},
+    {"id": "gallery2d_physics_alife_3d", "task": "family_coverage", "data": "synthetic",
+     "name": "物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ", "summary":
+         "拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}
