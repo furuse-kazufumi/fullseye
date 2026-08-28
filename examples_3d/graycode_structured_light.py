@@ -101,11 +101,8 @@ def main():
     print(f"Gray code ビット面枚数 K    : {k}  (復号値域 0..{2**k - 1})")
 
     # --- 2) 自前合成: binary->Gray -> ビット面 K 枚(MSB first・明暗+頭打ちノイズ) ---
-    bit_images = encode_graycode_bitplanes(code_gt, k, bright=0.8, dark=0.2,
-                                           noise_std=0.12, noise_clip=0.25, seed=1)
-    max_noise = float(np.max(np.abs(bit_images - np.where(
-        (binary_to_gray(code_gt)[None] >> (k - 1 - np.arange(k))[:, None, None]) & 1 == 1,
-        0.8, 0.2))))
+    bit_images, max_noise = encode_graycode_bitplanes(
+        code_gt, k, bright=0.8, dark=0.2, noise_std=0.12, noise_clip=0.25, seed=1)
     contrast = 0.8 - 0.2
     print(f"ビット面 明/暗 コントラスト : {contrast:.2f}  (載せた撮影ノイズ最大 {max_noise:.3f} "
           f"= コントラストの {100 * max_noise / contrast:.0f}%)")
