@@ -486,6 +486,18 @@ def main() -> int:
     p.add_argument("--seed", type=int, default=0)
     p.set_defaults(fn=cmd_synth)
 
+    p = sub.add_parser("samples",
+                       help="opt-in sample datasets (not bundled): list URLs / open folder / fetch")
+    p.add_argument("action", choices=["list", "open", "where", "download", "verify"],
+                   help="list: show datasets+URLs; open: open the save folder; "
+                        "download/verify: optional convenience")
+    p.add_argument("id", nargs="?", default=None, help="a sample id (see `samples list`)")
+    p.add_argument("--all", action="store_true", help="apply to all direct-download entries")
+    p.add_argument("--category", default="", help="filter by category (mesh/volume/image/...)")
+    p.add_argument("--yes", action="store_true",
+                   help="opt in to actually download (otherwise only prints what would be fetched)")
+    p.set_defaults(fn=cmd_samples)
+
     a = ap.parse_args()
     return a.fn(a)
 
