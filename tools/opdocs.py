@@ -234,6 +234,8 @@ def _op_md(rec, path, by_name):
     lines.append(f"*Provenance: {rec['module']}.py — {dim.upper()} operator registry. "
                  "この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*")
     lines.append("")
+    lines.append(_COPYRIGHT)
+    lines.append("")
     return "\n".join(lines)
 
 
