@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-29 00:00:23
+- **最終更新**: 2026-08-29 05:44:08
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+ebe60a20 feat(3d): measure3d — 3-D metrology fits on (depth,row,col) + true minimum-volume OBB
+2d8e7ace auto: measure3d.py 編集前 (2026-08-29 05:33)
+34593041 auto: measure3d.py 編集前 (2026-08-29 05:28)
+95d4168f auto: measure3d.py 編集前 (2026-08-29 05:23)
+ef703e11 auto: measure3d.py 編集前 (2026-08-29 05:21)
+85447126 fix: full test suite green (6108 passed) — numpy2 ptp, codegen precision, packaging, provenance
+8da31b8f auto: pyproject.toml 編集前 (2026-08-29 05:03)
 dabcb8eb docs: auto-generate EXAMPLES_3D.md from the registry (was stale at 230 ops/27 ex)
 48158139 feat(3d): +curvature_shape_index — Gaussian-curvature sign splits dome vs saddle
 1c718100 auto: examples3d.py 編集前 (2026-08-28 23:42)
-03ae88be feat(3d): +5 recon/descriptor/symmetry examples (alpha-shape/Poisson/SH/FPFH/rot-sym)
-4cfe7c22 auto: examples3d.py 編集前 (2026-08-28 23:37)
-bb20be9c auto: sh_descriptor_retrieval.py 編集前 (2026-08-28 23:35)
-2aa87976 auto: sh_descriptor_retrieval.py 編集前 (2026-08-28 23:34)
-35e81a55 auto: sh_descriptor_retrieval.py 編集前 (2026-08-28 23:34)
-0a3c0bb3 auto: sh_descriptor_retrieval.py 編集前 (2026-08-28 23:34)
-f2b56eb3 auto: fpfh_correspondence.py 編集前 (2026-08-28 23:34)
 ```
 
 ## 現在の git status
 
 ```
 M docs/SESSION_SUMMARY.md
-?? examples_3d/_gallery/gear_hero.png
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-23:59 examples_3d/_gallery/gear_hero.png
-23:46 docs/SESSION_SUMMARY.md
-23:46 examples_3d/_gallery/render_beauty_hero.png
-23:45 examples_3d/_gallery/render_tonemap.png
-23:45 examples_3d/_gallery/render_ssaa.png
-23:45 examples_3d/_gallery/render_shade.png
-23:45 examples_3d/_gallery/render_shadow.png
-23:45 examples_3d/_gallery/render_ao.png
-23:44 docs/EXAMPLES_3D.md
-23:44 tools/gen_examples3d_doc.py
-23:44 examples_3d/_gallery/fit_primitives_ext.png
-23:44 examples_3d/_gallery/watershed3d.png
-23:44 examples_3d/_gallery/mesh_props.png
-23:44 examples_3d/_gallery/mesh_decimate.png
-23:44 examples_3d/_gallery/mesh_smooth.png
+05:41 docs/SESSION_SUMMARY.md
+05:35 fullseye/OP_CATALOG.md
+05:35 docs/OP_CATALOG.md
+05:35 docs/EXAMPLES_3D.md
+05:34 examples3d.py
+05:33 measure3d.py
+05:31 examples_3d/oriented_bounding_box.py
+05:29 pyproject.toml
+05:27 tests/test_measure3d.py
+05:26 ops3d.py
+05:04 tests/test_examples3d.py
+04:58 codegen.py
+04:54 backends_color.py
+04:54 objmodel3d.py
+04:54 backends_halcon_ext.py
 ```
 
 ---

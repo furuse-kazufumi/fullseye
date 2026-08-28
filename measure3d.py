@@ -212,90 +212,107 @@ def _box_surface_rms(p, center, axes, half) -> float:
     return float(np.sqrt(np.mean(d ** 2)))
 
 
-def _min_area_rect_2d(pts2d: np.ndarray):
-    """Minimum-area oriented rectangle of 2-D points (rotating calipers on the
-    convex hull). Returns (center(2,), u(2,), v(2,), half_u, half_v, area) with u, v
-    orthonormal. Assumes >= 3 non-degenerate points (caller guarantees)."""
-    from scipy.spatial import ConvexHull
-    try:
-        h = pts2d[ConvexHull(pts2d).vertices]
-    except Exception:
-        # collinear projection: rectangle collapses to a segment
-        d = pts2d.max(0) - pts2d.min(0)
-        c = 0.5 * (pts2d.max(0) + pts2d.min(0))
-        u = d / (np.linalg.norm(d) + 1e-300)
-        v = np.array([-u[1], u[0]])
-        return c, u, v, 0.5 * np.linalg.norm(d), 0.0, 0.0
-    best = None
-    n = len(h)
-    for i in range(n):
-        edge = h[(i + 1) % n] - h[i]
-        L = float(np.hypot(edge[0], edge[1]))
-        if L < 1e-12:
-            continue
-        u = edge / L
-        v = np.array([-u[1], u[0]])
-        pu, pv = h @ u, h @ v
-        area = float(np.ptp(pu) * np.ptp(pv))
-        if best is None or area < best[0]:
-            cu = 0.5 * (pu.max() + pu.min())
-            cv = 0.5 * (pv.max() + pv.min())
-            best = (area, u, v, 0.5 * np.ptp(pu), 0.5 * np.ptp(pv), cu, cv)
-    area, u, v, hu, hv, cu, cv = best
-    center = cu * u + cv * v
-    return center, u, v, hu, hv, area
+def _rot_about(axis, ang):
+    """Rotation matrix by angle ``ang`` about a unit ``axis`` (Rodrigues)."""
+    a = axis / (np.linalg.norm(axis) + 1e-300)
+    c, sn = np.cos(ang), np.sin(ang)
+    x, y, z = a
+    return np.array([[c + x * x * (1 - c), x * y * (1 - c) - z * sn, x * z * (1 - c) + y * sn],
+                     [y * x * (1 - c) + z * sn, c + y * y * (1 - c), y * z * (1 - c) - x * sn],
+                     [z * x * (1 - c) - y * sn, z * y * (1 - c) + x * sn, c + z * z * (1 - c)]])
+
+
+def _box_axes_volume(P, axes):
+    """Volume of the box bounding ``P`` when aligned to the orthonormal ROW frame
+    ``axes``; also returns the per-axis extents (lo, hi)."""
+    loc = P @ axes.T
+    lo, hi = loc.min(0), loc.max(0)
+    return float(np.prod(hi - lo)), lo, hi
+
+
+def _refine_box_axes(P, axes, iters=64, step0=0.35):
+    """Coordinate-descent polish of a box orientation: rotate the frame about each
+    of its own axes and accept any rotation that shrinks the bounding volume,
+    halving the step when a sweep makes no progress. Local search — it drives a seed
+    into the O'Rourke case-b regime a hull-face-only search misses."""
+    best_ax = axes.copy()
+    best_v, _, _ = _box_axes_volume(P, best_ax)
+    step = step0
+    for _ in range(iters):
+        improved = False
+        for k in range(3):
+            for sgn in (1.0, -1.0):
+                cand = best_ax @ _rot_about(best_ax[k], sgn * step).T
+                v, _, _ = _box_axes_volume(P, cand)
+                if v < best_v - 1e-15:
+                    best_v, best_ax, improved = v, cand, True
+        if not improved:
+            step *= 0.5
+            if step < 1e-10:
+                break
+    return best_v, best_ax
 
 
 def smallest_box3(points) -> dict:
-    """Minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``).
+    """Near-minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``).
 
-    Exact up to the convex-hull resolution: the optimal box has at least one face
-    flush with a face of the convex hull (a 3-D analogue of the rotating-calipers
-    theorem), so we try every hull-face normal as one box axis, solve the 2-D
-    minimum-area rectangle in the plane perpendicular to it for the other two axes,
-    and keep the orientation of least volume. Unlike a PCA box (``fit_box3`` /
-    ``pcseg.obb``) this is genuinely minimal, so on a rotated object its volume is
-    strictly smaller.
+    Found by multi-start local refinement: seed the orientation from every convex-
+    hull face normal (the O'Rourke *case a* candidates — a box face flush with a
+    hull face), from the PCA axes, and from a fixed set of deterministic random
+    frames, then polish each by coordinate descent and keep the least-volume result.
+    This is **exact for box-like objects** (a rotated cuboid is recovered to machine
+    precision) and, unlike a PCA box (``fit_box3`` / ``pcseg.obb``), reaches the true
+    minimum on shapes whose optimum has no face flush with a hull face — e.g. a
+    regular tetrahedron, where the PCA / hull-face box is ~2x too large.
+
+    Honest limit: this is not a *proof* of global minimality for every convex shape.
+    The exact guarantee needs O'Rourke's full *case b* (two box faces each flush with
+    a hull **edge**), which is not enumerated here; local refinement drives seeds into
+    that regime instead. Empirically the result is at or below a dense brute-force
+    rotation search, but a pathological shape could leave a small gap.
 
     Returns ``center`` (``cd/cr/cc``), ``axes`` (3, 3 — unit ROW vectors), sorted
     half-extents ``l1 >= l2 >= l3``, full ``size``, ``volume``, and ``corners``
-    (8, 3). Raises ``ValueError`` on < 4 points or a coplanar/degenerate set (no
-    3-D hull)."""
+    (8, 3). Deterministic (fixed random seeds). Raises ``ValueError`` on < 4 points
+    or a coplanar/degenerate set (no 3-D hull)."""
     from scipy.spatial import ConvexHull
     p = _as_points3(points, 4, "points")
     try:
         hull = ConvexHull(p)
     except Exception:
         raise ValueError("points are coplanar or degenerate; no 3-D bounding box") from None
-    hv = p[np.unique(hull.simplices)]                # hull vertices only
-    normals = hull.equations[:, :3]                  # outward unit face normals
-    best = None                                      # (volume, center, axes(3,3), half(3,))
+    hv = p[np.unique(hull.simplices)]                # the box is set by hull vertices
+    seeds = []
+    # case-a seeds: an orthonormal frame with one axis along each hull-face normal
     seen = []
-    for w in normals:
+    for w in hull.equations[:, :3]:
         w = w / (np.linalg.norm(w) + 1e-300)
-        # skip near-duplicate face normals (parallel faces give the same box)
-        if any(abs(abs(w @ s)) > 1.0 - 1e-9 for s in seen):
+        if any(abs(w @ sv) > 1.0 - 1e-9 for sv in seen):
             continue
         seen.append(w)
-        # in-plane orthonormal basis
         ref = np.array([1.0, 0.0, 0.0]) if abs(w[0]) < 0.9 else np.array([0.0, 1.0, 0.0])
         e1 = np.cross(w, ref); e1 = e1 / np.linalg.norm(e1)
-        e2 = np.cross(w, e1)
-        proj = np.column_stack([hv @ e1, hv @ e2])
-        c2, u2, v2, hu, hv2, _ = _min_area_rect_2d(proj)
-        pw = hv @ w
-        cw = 0.5 * (pw.max() + pw.min())
-        hw = 0.5 * float(np.ptp(pw))
-        vol = (2 * hu) * (2 * hv2) * (2 * hw)
-        if best is None or vol < best[0]:
-            ax_u = u2[0] * e1 + u2[1] * e2           # rect axes lifted to 3-D world
-            ax_v = v2[0] * e1 + v2[1] * e2
-            # c2 is the in-plane centre in (e1, e2) coords; lift it, add the w span
-            center = cw * w + c2[0] * e1 + c2[1] * e2
-            axes = np.array([ax_u, ax_v, w])
-            half = np.array([hu, hv2, hw])
-            best = (vol, center, axes, half)
-    vol, center, axes, half = best
+        seeds.append(np.array([e1, np.cross(w, e1), w]))
+    # PCA + identity + deterministic random frames (case-b coverage)
+    _, _, vt = np.linalg.svd(hv - hv.mean(0), full_matrices=False)
+    seeds.append(vt)
+    seeds.append(np.eye(3))
+    rng = np.random.default_rng(0)
+    for _ in range(12):
+        q, _ = np.linalg.qr(rng.standard_normal((3, 3)))
+        seeds.append(q)
+    best_v, best_ax = np.inf, np.eye(3)
+    for sd in seeds:
+        v, ax = _refine_box_axes(hv, sd)
+        if v < best_v:
+            best_v, best_ax = v, ax
+    # re-orthonormalise (guard against drift) and read off the box
+    uu, _, vv = np.linalg.svd(best_ax)
+    axes = uu @ vv
+    loc = hv @ axes.T
+    lo, hi = loc.min(0), loc.max(0)
+    half = 0.5 * (hi - lo)
+    center = (0.5 * (hi + lo)) @ axes
     order = np.argsort(-half)
     half, axes = half[order], axes[order]
     return {**_center_keys(center), "axes": axes,
