@@ -266,7 +266,6 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
 
     # --- 光源方向をサンプルして各ハード影を平均(面光源=半影) ---
     dirs = _sample_dirs(ldir_c, np.deg2rad(pen), ns)
-    R_cam = pose[:3, :3]                                 # 未使用だが対称性のため
 
     occ_count = np.zeros((h, w), np.float64)
     n_used = 0
