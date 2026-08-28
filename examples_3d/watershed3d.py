@@ -40,8 +40,11 @@ from pathlib import Path
 import numpy as np
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+# この例のファイル名 (watershed3d.py) はモジュール watershed3d.py と同名のため、
+# リポジトリルートを sys.path の**先頭**に必ず置き、スクリプトディレクトリ
+# (examples_3d/) より優先させる。さもないと `import watershed3d` が自分自身を
+# 拾って循環 import になる(PYTHONPATH に repo が入っていても位置が後ろだと負ける)。
+sys.path.insert(0, str(_REPO_ROOT))
 
 from regionprops3d import label_components  # noqa: E402  (null 基準線)
 from watershed3d import (  # noqa: E402  (sys.path 調整後に import)
