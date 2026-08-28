@@ -34,7 +34,8 @@ sys.path.insert(0, _ROOT)
 sys.path.insert(0, os.path.join(_ROOT, "tools"))
 
 DOCS = os.path.join(_ROOT, "docs", "ops")
-HELP2D = os.path.join(_ROOT, "studio_assets", "op_help", "2d")
+HELP_ROOT = os.path.join(_ROOT, "studio_assets", "op_help")
+_GEN_MARK = "<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->"
 
 _AMBER = "#f5a524"
 _TEAL = "#17b8a6"
