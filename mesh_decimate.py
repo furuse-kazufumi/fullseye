@@ -152,8 +152,14 @@ def _optimal_placement(Qsum: np.ndarray, pi: np.ndarray, pj: np.ndarray):
     return max(cost, 0.0), pos.copy()
 
 
-def decimate_mesh(vertices, faces, target_faces: int):
-    """三角メッシュを目標面数へ簡略化する(QEM edge-collapse)。mesh→mesh。
+def decimate_qem_manifold(vertices, faces, target_faces: int):
+    """三角メッシュを目標面数へ簡略化する(境界保存・多様体厳格な QEM edge-collapse)。mesh→mesh。
+
+    ``meshrepair.decimate_qem`` の姉妹 op。同じ QEM edge-collapse だが、境界エッジ拘束
+    (Garland boundary term)・link condition(Dey 1999)・4×4 拘束解・外れ位置棄却を足して、
+    **開いたメッシュの境界を保存**し **厳密な 2-manifold** を保つ(``decimate_qem`` はこれらを
+    持たない — module docstring 参照)。閉曲面では境界が無いので ``decimate_qem`` と挙動が
+    近づくのが正しい(差が出るのは開境界を持つメッシュ)。
 
     形をできるだけ保ったまま面数を減らす。誤差二次形式(quadric error metric)で評価した
     縮約コスト最小の辺から順に collapse し、有効面数が ``target_faces`` 以下になったら停止する。
