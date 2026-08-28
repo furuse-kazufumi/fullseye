@@ -40,7 +40,7 @@ def binary_to_gray(n):
     return n ^ (n >> 1)
 
 
-def make_column_code_map(rows, cols, warp_amp=6.0, seed=0):
+def make_column_code_map(rows, cols, warp_amp=6.0):
     """既知の「投影機コラム番号」GT マップを作る(物体深度で湾曲した 0..cols-1 の整数場)。
 
     素の値は列インデックス x のランプ。物体の凸凹があると、同じ画素でも見えている投影機
