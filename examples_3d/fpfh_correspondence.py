@@ -129,11 +129,12 @@ rand_rates = [correct_rate(rng_null.integers(0, len(viewB), len(a_rows)))
               for _ in range(30)]
 null_random = float(np.mean(rand_rates))
 
-# --- 5) null-B: 記述子をシャッフルしてから同じ最近傍マッチ(信号を壊した同一手続き)---
+# --- 5) null-B: 各 B 点に別の点の記述子を付け替え(位置↔記述子の対応を破壊)てから
+#         同じ最近傍マッチ。選ばれた「位置」は偽の記述子経由なので真の対応とは無相関=チャンス。
 perm = np.random.default_rng(11).permutation(len(fB))
-tB_shuf = cKDTree(fB[perm])                           # 位置と記述子の対応を破壊
-_, nn_shuf_local = tB_shuf.query(fA[a_rows], k=1)
-null_shuffled = correct_rate(perm[nn_shuf_local])     # 実際に選ばれた B 行へ戻す
+fB_shuf = fB[perm]                                    # 点 i に perm[i] の記述子を割当(=偽装)
+_, nn_shuf = cKDTree(fB_shuf).query(fA[a_rows], k=1)  # 最近傍の「位置」index を採用
+null_shuffled = correct_rate(nn_shuf)                 # viewB[位置] で幾何正誤を評価
 
 print(f"物体点数 / 解像度(点間隔)     : {len(obj)} 点 / res={res:.4f}")
 print(f"ビュー A / B / 重なり点数        : {len(viewA)} / {len(viewB)} / {len(overlap_g)}")

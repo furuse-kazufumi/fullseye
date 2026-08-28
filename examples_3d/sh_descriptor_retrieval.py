@@ -264,16 +264,17 @@ def main():
     print(f"SH 分離マージン     : {margin:.4f} (>0 なら回転しても自クラスが最近傍)")
 
     # --- 3) GT 検証(beat-the-null) ---
-    # (a) SH は回転クエリでほぼ全問正解(回転不変な検索が成立)。
-    assert sh_acc >= 0.90, f"SH の回転あり正解率が低い: {sh_acc:.2%}"
+    # (a) SH は回転クエリで(ほぼ)全問正解(回転不変な検索が成立)。
+    assert sh_acc >= 0.95, f"SH の回転あり正解率が低い: {sh_acc:.2%}"
     # (b) SH は同形状(回転)距離 < 異形状距離。マージン>0 = 判別的に分離。
     assert margin > 0.0, f"SH の同形状/異形状が分離できていない: margin={margin:.4f}"
-    # (c) beat-the-null: SH の回転あり正解率が null の回転あり正解率を明確に上回る。
-    assert sh_acc >= null_acc_rot + 0.30, \
+    # (c) beat-the-null: SH の回転あり正解率が null の回転あり正解率を大きく上回る
+    #     (実測 ~+0.60。0.40 で余裕をもって判別的に要求。非不変な手法なら詰まる)。
+    assert sh_acc - null_acc_rot >= 0.40, \
         (f"SH が null を十分に上回っていない: SH={sh_acc:.2%} null={null_acc_rot:.2%}")
-    # (d) 勝因は回転不変性: null は「回転なし」なら引けるのに「回転あり」で崩れる。
-    assert null_acc_norot > null_acc_rot, \
-        (f"null が回転で崩れていない(勝因が回転不変性でない疑い): "
+    # (d) 勝因は回転不変性: null は「回転なし」なら 100% 引けるのに「回転あり」で崩れる。
+    assert null_acc_norot - null_acc_rot >= 0.30, \
+        (f"null が回転で十分に崩れていない(勝因が回転不変性でない疑い): "
          f"norot={null_acc_norot:.2%} rot={null_acc_rot:.2%}")
 
     print(f"PASS: SH 回転不変検索 {sh_ok_rot}/{total}={sh_acc:.0%}・分離マージン {margin:.3f}>0。"
