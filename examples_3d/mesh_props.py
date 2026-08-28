@@ -255,15 +255,21 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
     return True
 
 
-def _equal_3d(ax, V: np.ndarray) -> None:
-    """3D 軸のアスペクト比を等方にする(球/トーラスが歪まないように)。"""
-    c = V.mean(axis=0)
-    r = float(np.abs(V - c).max())
-    ax.set_xlim(c[0] - r, c[0] + r)
-    ax.set_ylim(c[1] - r, c[1] + r)
-    ax.set_zlim(c[2] - r, c[2] + r)
+def _equal_3d(ax, V: np.ndarray, margin: float = 0.0) -> None:
+    """軸の単位長を等方に保ちつつ、データ範囲に比例した箱で無駄な余白を詰める。
+
+    各軸の実データ範囲に ``margin`` を足した幅で lim を張り、box_aspect をその幅に比例
+    させる。こうすると単位長は等方(球やトーラスが歪まない)なまま、平たいトーラスが
+    立方体の箱で上下スカスカにならずパネルを充填する。
+    """
+    lo = V.min(axis=0) - margin
+    hi = V.max(axis=0) + margin
+    span = hi - lo
+    ax.set_xlim(lo[0], hi[0])
+    ax.set_ylim(lo[1], hi[1])
+    ax.set_zlim(lo[2], hi[2])
     try:
-        ax.set_box_aspect((1, 1, 1))
+        ax.set_box_aspect(tuple(span))               # 単位長=等方 + 範囲比でパネル充填
     except Exception:
         pass
 
