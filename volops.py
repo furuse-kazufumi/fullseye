@@ -85,6 +85,7 @@ __all__ = [
     "vol_frangi", "vol_sato", "vol_hessian_blobness",
     "vol_distance_transform", "vol_label", "vol_region_props",
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
+    "volume_downsample",
     "VOLOPS", "MAX_VOXELS", "MAX_EIGEN_VOXELS",
 ]
 
@@ -93,6 +94,7 @@ VOLOPS = [
     "vol_frangi", "vol_sato", "vol_hessian_blobness",
     "vol_distance_transform", "vol_label", "vol_region_props",
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
+    "volume_downsample",
 ]
 
 #: Refuse a volume larger than this for the *cheap* N-D ops (label / EDT /
