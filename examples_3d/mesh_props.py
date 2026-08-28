@@ -145,10 +145,31 @@ def render_gallery(sphere, sph_vn, torus, tor_curv, bars, out_path: Path) -> boo
         import matplotlib
         matplotlib.use("Agg")
         import matplotlib.pyplot as plt
-        from matplotlib import cm
+        from matplotlib import font_manager as fm
     except Exception as exc:  # matplotlib 不在など
         print(f"[note] matplotlib が無いため PNG をスキップ: {exc}")
         return False
+
+    # 日本語ラベルが tofu(□)にならないよう CJK フォントを選ぶ。無ければ英語ラベルへ退避。
+    jp_ok = _use_jp_font(fm, plt)
+    if jp_ok:
+        t_title = "mesh_props: メッシュの法線・表面積・平均曲率(GT=球, 可視化=トーラス)"
+        t_sphere = "球: 面の巻き順から\n一貫して外向きの頂点法線"
+        t_torus = "トーラス: 頂点曲率\n(外周の尾根=高, 内側の喉=低)"
+        t_cbar = "平均曲率 |H|"
+        t_bar_title = "beat-the-null: 実手法は素朴基準を桁で凌駕"
+        t_ylabel = "GT からの相対誤差(小さいほど良い)"
+        t_real, t_null = "実手法", "null(素朴基準)"
+        t_labels = ["表面積", "平均曲率", "法線向き"]
+    else:
+        t_title = "mesh_props: mesh normals / surface area / mean curvature (GT=sphere, viz=torus)"
+        t_sphere = "Sphere: consistent outward\nvertex normals (from winding)"
+        t_torus = "Torus: vertex curvature\n(outer ridge high, inner throat low)"
+        t_cbar = "mean curvature |H|"
+        t_bar_title = "beat-the-null: real method beats naive by orders"
+        t_ylabel = "relative error vs GT (lower is better)"
+        t_real, t_null = "real", "null (naive)"
+        t_labels = ["area", "curvature", "normal dir"]
 
     Vs, Fs = sphere
     Vt, Ft = torus
