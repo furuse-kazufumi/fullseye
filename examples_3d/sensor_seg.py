@@ -51,7 +51,7 @@ rows = np.arange(H)[:, None].astype(float)
 truth = np.empty((H, W), float)
 truth[:, :CB] = 3.0 + sL * rows             # 左 facet(急な傾き)
 truth[:, CB:] = 5.0 + sR * rows             # 右 facet(緩い傾き, 深度オフセットで稜線=段差)
-guide = np.where(np.arange(W)[None, :] < CB, 0.2, 0.8)  # 清浄な輝度ガイド(列境界に鋭いエッジ)
+guide = np.where(np.broadcast_to(np.arange(W)[None, :], (H, W)) < CB, 0.2, 0.8).astype(float)  # 清浄な輝度ガイド(列境界に鋭いエッジ)
 noisy = truth + np.random.default_rng(7).normal(0.0, 0.08, size=truth.shape)  # センサノイズ
 
 # 内部領域(画像端・列境界を避けた各 facet 中央)= 解析 GT を素直に測れる窓
