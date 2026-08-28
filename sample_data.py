@@ -103,6 +103,7 @@ MANIFEST = [
         url=_STANFORD + "/armadillo/Armadillo.ply.gz",
         archive="gz", member=None, dest="armadillo.ply",
         sha256="8b9b56cc36e66d54429b1e1e75bd89e833645bfe0dc7c1afd1205877a7356a3f",
+        sha256_out="483563fca686b66168e1e45339c50e71a5dc8a526a04a545a16b9237d5eaa023",
         bytes=3874291,
         license="Stanford 3DSR (research courtesy)", commercial="check",
         access="direct",
