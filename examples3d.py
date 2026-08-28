@@ -221,6 +221,9 @@ EXAMPLES = [
      "name": "点群データ拡張(回転/スケール/ドロップアウト/ジッタ)",
      "summary": "学習用の点群拡張4種を指定パラメータどおり適用(回転=距離不変・向き変化、scale倍率、dropout点数、jitter std)。恒等nullを判別的に上回り、連鎖でも複合性質を保つ。"},
     # -- bounds / mesh processing / primitive fit(Wave A)------------------------- #
+    {"id": "oriented_bounding_box", "task": "metrology", "data": "synthetic",
+     "name": "最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)",
+     "summary": "傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。"},
     {"id": "hull_bounds", "task": "metrology", "data": "synthetic",
      "name": "点群のバウンディング(凸包/OBB/AABB/最小包含球)",
      "summary": "生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。"},

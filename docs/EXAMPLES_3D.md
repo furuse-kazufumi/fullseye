@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 256 の型付き op)を、**実問題を解く実行可能な事例**（全 88 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 264 の型付き op)を、**実問題を解く実行可能な事例**（全 89 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 62 事例
+- **合成データ(制御GT)** — 63 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 5 事例
@@ -107,6 +107,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **平面度メトロロジー(基準面からの偏差)** (`plane_flatness`, synthetic) — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。
 - **真球度/丸さ検査** (`roundness`, synthetic) — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。
 - **30%外れ値下での頑健プリミティブ適合** (`ransac_prim`, synthetic) — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。
+- **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** (`oriented_bounding_box`, synthetic) — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。
 - **点群のバウンディング(凸包/OBB/AABB/最小包含球)** (`hull_bounds`, synthetic) — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。
 - **平歯車の歯数をSDFジオメトリから逆計測** (`gear_metrology`, procedural) — sdf_opsのCSGで平歯車を手続き生成し、歯先帯r=0.44の占有を角度サンプルしてラン計数で歯数N=12→12/20→20を厳密復元(0.2度ジッタでも不変)。歯なし円板null=0本・誤半径 内1/外0本で判別的。
 - **円筒軸メトロロジー(30%外れ値ロバスト)** (`cylinder_axis_metrology`, procedural) — 汚れた産業スキャン(30%グロス外れ値・2000点)からパイプの軸方向と半径を計測。fit_cylinder_ransacで半径誤差1.27%・軸誤差0.78°・面残差0.00165m。非ロバスト全点フィット(半径誤差101%)と誤プリミティブ平面RANSAC(残差0.058m)を5倍超マージンで判別的に上回る。

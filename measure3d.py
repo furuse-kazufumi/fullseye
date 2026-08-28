@@ -15,15 +15,22 @@ already reports. Centres are returned both as a 3-vector ``center`` and as scala
 ``cd`` (depth), ``cr`` (row), ``cc`` (col); directions and normals carry the same
 component order.
 
-Cousins, kept distinct on purpose:
-  * ``pcseg.obb`` fits a **PCA-aligned** box (fast, but its volume can exceed the
-    true minimum — that is exactly what ``smallest_box3`` improves on, the way 2-D
-    ``smallest_rectangle2`` improves on a PCA box).
-  * ``match3d.fit_line_3d`` / ``fit_plane_3d`` / ``fit_sphere_3d`` return bare
-    tuples for the GPU pipeline.
-This module is the lightweight (numpy-only fits), fail-closed, dict-returning
-metrology surface, and it uniquely provides the minimum-volume oriented box and
-the 3-D minimum enclosing sphere.
+Honest provenance — what is genuinely new here vs. a consistency wrapper:
+  * ``smallest_box3`` (minimum-VOLUME oriented box) is the genuine gap this module
+    fills. ``pcseg.obb`` already fits a **PCA-aligned** box, but a PCA box is not
+    minimal on an asymmetric object; ``smallest_box3`` searches hull-face
+    orientations for the true minimum, exactly as 2-D ``smallest_rectangle2``
+    improves on a PCA rectangle.
+  * ``smallest_sphere3`` computes the minimum enclosing sphere by **exact Welzl**;
+    ``hull3d.min_enclosing_sphere`` already offers an *approximate* (iterative
+    refinement) one, so this is an exactness upgrade rather than a brand-new
+    capability.
+  * The remaining functions re-present capability that also exists elsewhere, under
+    one fail-closed ``(depth, row, col)`` dict convention: ``smallest_box3_axis``
+    ~ ``pcseg.aabb``; ``fit_box3`` ~ ``pcseg.obb`` (PCA); the line/plane/sphere/
+    circle fits mirror ``match3d.fit_*_3d`` (which return bare tuples for the GPU
+    pipeline). They are re-implemented numpy-only so this module stays lightweight
+    (no torch), and to give the metrology surface a single, uniform, validated API.
 """
 from __future__ import annotations
 

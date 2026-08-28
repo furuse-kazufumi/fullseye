@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(88 例)
+### 3-D 点群/体積/曲面(89 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -48,6 +48,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
+- **最小体積の有向境界箱(OBB=smallest_rectangle2 の 3-D 版)** — 傾いた直方体の実寸を最小体積 OBB で復元(半径 (5,2,1)・中心・体積 80 を機械精度)。軸平行 AABB は回転で ~1.8 倍に膨張し、PCA 箱(pcseg.obb)は非対称形状で最小にならない — min-volume OBB(凸包面×回転キャリパー, measure3d.smallest_box3)が両者を判別的に下回る。把持/梱包の寸法検査。 `py -3.11 examples_3d/oriented_bounding_box.py`
 - **点群のバウンディング(凸包/OBB/AABB/最小包含球)** — 生点群から凸包・向き付き箱(OBB)・軸整列箱(AABB)・最小包含球を起こす。新規 min_enclosing_sphere は素朴球 r=9.95→5.63(比0.57・全点内包)、OBB体積は回転箱で AABB の0.20倍。把持/衝突/寸法検査の基本メトロロジー。 `py -3.11 examples_3d/hull_bounds.py`
 - **平歯車の歯数をSDFジオメトリから逆計測** — sdf_opsのCSGで平歯車を手続き生成し、歯先帯r=0.44の占有を角度サンプルしてラン計数で歯数N=12→12/20→20を厳密復元(0.2度ジッタでも不変)。歯なし円板null=0本・誤半径 内1/外0本で判別的。 `py -3.11 examples_3d/gear_metrology.py`
 - **円筒軸メトロロジー(30%外れ値ロバスト)** — 汚れた産業スキャン(30%グロス外れ値・2000点)からパイプの軸方向と半径を計測。fit_cylinder_ransacで半径誤差1.27%・軸誤差0.78°・面残差0.00165m。非ロバスト全点フィット(半径誤差101%)と誤プリミティブ平面RANSAC(残差0.058m)を5倍超マージンで判別的に上回る。 `py -3.11 examples_3d/cylinder_axis_metrology.py`
@@ -212,7 +213,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 256 ops / 55 categories。_
+_計 264 ops / 55 categories。_
 
 
 ### augment(6)
@@ -311,7 +312,7 @@ _計 256 ops / 55 categories。_
 - `farthest_point_sampling` (`points → keypoints`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。
 - `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。
 
-### geometry(15)
+### geometry(23)
 - `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。
 - `plane_from_3points` (`points → primitive`) — 3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。
 - `angle_3points` (`points → measurement`) — 3 点のなす角(頂点 b、度)。∠ABC。
@@ -327,6 +328,14 @@ _計 256 ops / 55 categories。_
 - `fit_plane_3d` (`points → primitive`) — 点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。
 - `fit_sphere_3d` (`points → primitive`) — 点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。
 - `fit_circle_3d` (`points → primitive`) — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。
+- `fit_line3` (`points → primitive`) — Total-least-squares 3-D line fit to ``(depth, row, col)`` points — the
+- `fit_plane3` (`points → primitive`) — Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane
+- `fit_sphere3` (`points → primitive`) — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points:
+- `fit_circle3` (`points → primitive`) — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane,
+- `smallest_box3_axis` (`points → primitive`) — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the
+- `fit_box3` (`points → primitive`) — Oriented box fit by PCA (fast, noise-tolerant; the same construction as
+- `smallest_box3` (`points → primitive`) — Minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``).
+- `smallest_sphere3` (`points → primitive`) — Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact
 
 ### gicp(2)
 - `gicp` (`points, points → pose`) — Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。
