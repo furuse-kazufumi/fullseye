@@ -72,7 +72,7 @@ py-modules = [
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
   "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
   "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp",
-  "recipes", "measure", "studio", "sample_images", "accuracy_bench",
+  "recipes", "measure", "studio", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",
   "samples", "references", "codegen", "difftest", "parity", "accel", "accel_bridge", "accel_match", "accel_vol", "bench",
