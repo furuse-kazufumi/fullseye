@@ -329,8 +329,12 @@ def main() -> int:
         f"球で null を判別的に上回れていない: {real_margin:.3f} vs {null_margin:.3f}"
     assert deep_margin > null_deep_margin + 0.3, \
         f"溝で null を判別的に上回れていない: {deep_margin:.3f} vs {null_deep_margin:.3f}"
-    # null は定数ゆえ順序相関が定義できない(Spearman=NaN)→ 実手法の相関が有意
-    null_rho = spearmanr(zc, null_ao).correlation
+    # null は定数ゆえ順序相関が定義できない(Spearman=NaN)→ 実手法の相関が有意。
+    # 定数入力の ConstantInputWarning は「相関が定義できない」= まさに beat-null の証拠なので抑制。
+    import warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        null_rho = spearmanr(zc, null_ao).correlation
     assert not np.isfinite(null_rho) or abs(null_rho) < 0.1, \
         f"null が高さ順序と相関してしまっている: {null_rho}"
     assert real_rho - (0.0 if not np.isfinite(null_rho) else abs(null_rho)) > 0.7, \
