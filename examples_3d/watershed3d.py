@@ -18,6 +18,16 @@
     を使う。バックエンドは skimage 分水嶺と純 scipy(最近傍マーカ = ボロノイ分割)の 2 系統で、
     凸物体の接触分離では両者ほぼ一致する(本例で両方を検証する)。座標系は numpy 軸順 (z,y,x)。
 
+正直な開示(genuinely-new のスコープ):
+    「距離変換シードで接触物体を割る」機能そのものは fullseye 公開 API に既存で、watershed3d は
+    それを**薄く合成**しているだけ(ゼロから再実装ではない)。EDT=volops.vol_distance_transform、
+    極大検出=volops.vol_local_maxima、分水嶺=volops.vol_watershed(その docstring 自身が
+    「negated distance transform for splitting touching blobs」とこの用途を明記)を呼ぶ。
+    watershed3d が真に足すのは (A) skimage 不在でも動く純 scipy ボロノイ・フォールバック
+    (公開 vol_watershed は skimage 必須で ImportError)と、(B) 距離変換→極大→分水嶺を 1 コールに
+    畳んだ separate_touching の 2 点のみ=増分。本例はその増分(両バックエンド一致・skimage 無しでも
+    分離できること)を検証する位置づけ。
+
 検証(GT):
     半径 r の 2 球を、中心間隔 < 2r で**僅かに重ねて**配置する(→ 1 連結成分に融合)。真値は
       1) 個数 = 2
