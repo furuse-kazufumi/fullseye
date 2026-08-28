@@ -38,6 +38,7 @@ import time
 from typing import Callable, Optional
 
 import numpy as np
+from scipy.ndimage import binary_dilation, binary_fill_holes, gaussian_filter
 
 # --- Fullseye 実 op(imgevolve ルートを PYTHONPATH に置いて実行)------------------
 import sdf_ops
