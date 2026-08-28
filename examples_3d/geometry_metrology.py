@@ -198,7 +198,7 @@ Pcir = cc + BORE_R * (np.cos(th)[:, None] * e0 + np.sin(th)[:, None] * e1)
 ccenter, cr, cnorm = m3.fit_circle_3d(Pcir)
 assert np.allclose(ccenter, cc, atol=1e-6) and abs(cr - BORE_R) < 1e-6
 assert ang_deg(cnorm, n1) < 1e-6                    # 円軸 ∥ 面1 法線(円は面内)
-assert m3.distance_point_plane(ccenter, c1, fn1) < 1e-6   # 円中心は面1 上
+assert m3.distance_point_plane(ccenter, c0, n1) < 1e-6   # 円中心は面1(設計面)上
 print(f"fit_circle_3d      : 中心誤差 {np.linalg.norm(ccenter - cc):.2e}, 半径誤差 {abs(cr - BORE_R):.2e}, 軸-面法線 {ang_deg(cnorm, n1):.2e} deg")
 
 # ══════════════════════════════════════════════════════════════════════════
