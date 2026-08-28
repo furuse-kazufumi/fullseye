@@ -209,6 +209,7 @@ def build_skeleton(target_faces: int = 2600):
     level = 0.5
     V, F = render3d.marching_cubes(volp, level=level)
     V = V[:, [0, 2, 1]]                                       # 指の長軸を鉛直(Z)へ
+    F = _orient_outward(V, F)
     V = _center(V)
     Vd, Fd = _decimate(V, F, target_faces)
     return Vd, Fd, f"marching_cubes(level={level}, padded)"
