@@ -101,6 +101,18 @@ def test_smallest_box3_recovers_rotated_box_and_beats_aabb():
     assert obb["l1"] >= obb["l2"] >= obb["l3"]                          # sorted
 
 
+def test_smallest_box3_reaches_case_b_minimum_on_a_tetrahedron():
+    # regression guard (O'Rourke case b): a regular tetrahedron's minimum box has NO
+    # face flush with a hull face, so a hull-face-only search returns ~2.0. The unit
+    # cube (volume 1.0) encloses these 4 alternating cube corners, so the true min is
+    # 1.0; multi-start refinement must reach it, not the 2.0 hull-face box.
+    T = np.array([[0., 0, 0], [1, 1, 0], [1, 0, 1], [0, 1, 1]])
+    obb = m3.smallest_box3(T)
+    axes, half = obb["axes"], np.array([obb["l1"], obb["l2"], obb["l3"]])
+    assert np.all(np.abs((T - obb["center"]) @ axes.T) <= half + 1e-9)   # encloses all 4
+    assert obb["volume"] <= 1.05, f"did not reach the case-b optimum: {obb['volume']}"
+
+
 def test_smallest_box3_never_larger_than_pca_box():
     # a regular tetrahedron: PCA axes are NOT the minimum-volume orientation
     tet = np.array([[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]], float) * 3

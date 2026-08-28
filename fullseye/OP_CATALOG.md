@@ -334,7 +334,7 @@ _計 264 ops / 55 categories。_
 - `fit_circle3` (`points → primitive`) — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane,
 - `smallest_box3_axis` (`points → primitive`) — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the
 - `fit_box3` (`points → primitive`) — Oriented box fit by PCA (fast, noise-tolerant; the same construction as
-- `smallest_box3` (`points → primitive`) — Minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``).
+- `smallest_box3` (`points → primitive`) — Near-minimum-volume oriented bounding box (the 3-D ``smallest_rectangle2``).
 - `smallest_sphere3` (`points → primitive`) — Minimum enclosing sphere of ``(depth, row, col)`` points (Welzl's exact
 
 ### gicp(2)
