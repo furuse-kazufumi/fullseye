@@ -200,6 +200,26 @@ def data_dir() -> str:
     return os.path.abspath(base)
 
 
+def open_dir() -> str:
+    """Create the samples folder if needed and open it in the OS file manager.
+
+    Returns the path (with a note appended if it could not be auto-opened).
+    """
+    d = data_dir()
+    os.makedirs(d, exist_ok=True)
+    import subprocess
+    try:
+        if os.name == "nt":
+            os.startfile(d)  # type: ignore[attr-defined]  # noqa: E501 (Windows only)
+        elif sys.platform == "darwin":
+            subprocess.Popen(["open", d])
+        else:
+            subprocess.Popen(["xdg-open", d])
+    except Exception as ex:  # headless / no file manager: still return the path
+        return "%s  (could not auto-open: %s)" % (d, ex)
+    return d
+
+
 def _target(entry) -> str:
     """Absolute path for *entry*'s local file, proven to stay under data_dir()."""
     root = data_dir()
