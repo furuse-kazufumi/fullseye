@@ -199,20 +199,29 @@ def aabb(points) -> Dict[str, np.ndarray]:
 # ═══════════════════════════════════════════════════════════════════════════
 # 4. min_enclosing_sphere: 全点を含む(近似)最小包含球(Ritter 法)
 # ═══════════════════════════════════════════════════════════════════════════
-def min_enclosing_sphere(points) -> Dict[str, object]:
+def min_enclosing_sphere(points, refine_iters: int = 1000) -> Dict[str, object]:
     """点群 (N,3) → 全点を含む(近似)最小包含球 {center(3), radius}。
 
-    Ritter (1990) 法: (1) 任意点から最遠の点対を粗く取り初期球にする → (2) 各点を走査し、
-    球外の点があれば「その点と既存球の両方を含む」最小の球へ 1 回だけ膨らませる。膨張式
-    ``new_r = (r+d)/2`` / 中心を点方向へ ``(d-r)/(2d)`` 進める、は新球が旧球を完全に含む
-    ので、1 パスで**全点内包を保証**する(処理済みの点が後から外へ出ない)。重心中心の
-    素朴球より中心を偏らせて半径を詰められる。真の最小球ではない(近似)が、近似ゆえに
-    半径が過小になって点が漏れることはない(常に外接、安全側)。
+    2 段構成で「全点内包」を厳守しつつ半径を詰める:
+
+    1. **Ritter (1990) 初期化** — 最遠の点対を粗く取り初期球にし、各点を走査して球外の点が
+       あれば「その点と既存球の両方を含む」最小の球へ 1 回膨らませる(膨張式
+       ``new_r=(r+d)/2`` / 中心を点方向へ ``(d-r)/(2d)`` 進める)。新球が旧球を完全に含むため、
+       1 パスで全点内包を保証する。
+    2. **Bădoiu–Clarkson (2003) core-set 反復による精緻化** — 反復 ``i`` で最遠点 ``q`` へ
+       中心を ``1/(i+2)`` だけ寄せる。真の最小包含球へ単調収束する(半径過大な Ritter の
+       ドリフトを詰める)。最後に半径を「中心からの最大距離」で確定するので、精緻化後も
+       **必ず全点を内包**(近似ゆえ半径が過小になり点が漏れることはない、安全側)。
+
+    精緻化した中心が Ritter より外接半径を縮められたときのみ採用する(常に Ritter 以下)。
+    真の最小球(NP ではないが厳密解は Welzl)ではなく高速な (1+ε) 近似。
 
     Parameters
     ----------
     points : array_like (N,3)
         入力点群(>= 1 点)。
+    refine_iters : int
+        Bădoiu–Clarkson 精緻化の反復数(既定 1000)。0 で Ritter のみ。
 
     Returns
     -------
@@ -223,20 +232,20 @@ def min_enclosing_sphere(points) -> Dict[str, object]:
     Raises
     ------
     ValueError
-        形状不正・非有限・点数 0 のとき(fail-closed)。
+        形状不正・非有限・点数 0、または ``refine_iters`` が負のとき(fail-closed)。
     """
     P = _as_points(points, min_n=1)
+    if refine_iters < 0:
+        raise ValueError("refine_iters は非負である必要があります")
     if len(P) == 1:
         return {"center": P[0].astype(np.float64), "radius": 0.0}
 
-    # --- 初期球: 最遠点対ヒューリスティック(x→最遠 y→最遠 z の中点)---
+    # --- 1) Ritter 初期化: 最遠点対 → 中心/半径、球外の点ごとに最小膨張 ---
     x = P[0]
     y = P[int(np.argmax(np.linalg.norm(P - x, axis=1)))]
     z = P[int(np.argmax(np.linalg.norm(P - y, axis=1)))]
     c = (y + z) / 2.0
     r = float(np.linalg.norm(y - z) / 2.0)
-
-    # --- Ritter 拡張パス: 球外の点ごとに最小膨張(1 パスで全点内包を保証)---
     for p in P:
         diff = p - c
         d = float(np.linalg.norm(diff))
@@ -244,5 +253,18 @@ def min_enclosing_sphere(points) -> Dict[str, object]:
             r_new = (r + d) / 2.0
             c = c + ((d - r_new) / d) * diff   # (d - r_new)/d == (d - r)/(2d)
             r = r_new
+    c_ritter, r_ritter = c.copy(), r
 
-    return {"center": c.astype(np.float64), "radius": float(r)}
+    # --- 2) Bădoiu–Clarkson 精緻化: 最遠点へ 1/(i+2) だけ中心を寄せる ---
+    c_bc = c_ritter.copy()
+    for it in range(refine_iters):
+        d = np.linalg.norm(P - c_bc, axis=1)
+        j = int(np.argmax(d))
+        c_bc = c_bc + (P[j] - c_bc) / (it + 2)
+    # 半径は「中心からの最大距離」で確定 → 全点内包を厳守(過小にならない安全側)
+    r_bc = float(np.linalg.norm(P - c_bc, axis=1).max())
+
+    # Ritter を上回る(半径を縮める)ときのみ採用 → 常に Ritter 以下を保証
+    if r_bc < r_ritter:
+        return {"center": c_bc.astype(np.float64), "radius": r_bc}
+    return {"center": c_ritter.astype(np.float64), "radius": float(r_ritter)}
