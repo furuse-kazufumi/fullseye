@@ -124,6 +124,29 @@ def analytic_ground_shadow(Pw, ground_mask, sphere_center, radius, ldir) -> np.n
     return ground_mask & (dist <= radius)
 
 
+def analytic_ground_shadow_point(Pw, ground_mask, sphere_center, radius,
+                                 light_pos) -> np.ndarray:
+    """点光源での球の投影影(床上, umbra)の解析マスク。
+
+    平行光 GT (``analytic_ground_shadow``) の点光源版。光源 ``L`` から床点 ``S`` への線分が
+    球(中心 ``C``, 半径 ``R``)を貫き、かつ球が ``L`` と ``S`` の間にあるとき ``S`` は影。
+    判定は光線と球の交差(点→直線の垂直距離 <= R かつ入射点が線分内)で、shadow-mapping
+    アルゴリズムとは独立に導く。点光源なので影は透視投影で拡大・シフトする(平行光と別解)。"""
+    L = np.asarray(light_pos, np.float64).reshape(3)
+    C = np.asarray(sphere_center, np.float64).reshape(3)
+    d = Pw - L[None, None, :]                             # L -> S
+    seg = np.linalg.norm(d, axis=-1)                      # |S - L|
+    with np.errstate(invalid="ignore", divide="ignore"):
+        u = d / seg[..., None]                            # 単位方向(背景 NaN)
+    w = C - L                                             # L -> C(全画素共通)
+    s = np.einsum("ijk,k->ij", u, w)                     # L から最近接点までの距離
+    perp = np.linalg.norm(w[None, None, :] - s[..., None] * u, axis=-1)
+    half = np.sqrt(np.clip(radius * radius - perp * perp, 0.0, None))
+    t_near = s - half                                     # 球への入射点(L からの距離)
+    hit = np.isfinite(perp) & (perp <= radius) & (s > 0.0) & (t_near < seg)
+    return ground_mask & hit
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # デモ描画
 # ═══════════════════════════════════════════════════════════════════════════
