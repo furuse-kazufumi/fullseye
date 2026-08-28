@@ -223,6 +223,7 @@ def _to_u8(img: np.ndarray) -> np.ndarray:
 def render_turntable(V: np.ndarray, F: np.ndarray, *, frames: int, size: int,
                      ss: int, material: str, albedo, light, background,
                      elev_deg: float, azim_deg: float = 0.0, tonemap: str = "aces",
+                     ambient: float = 0.12, exposure: float = 1.0,
                      ao_samples: int = 16, shadow_samples: int = 8,
                      albedo_fn: Optional[Callable[[int], tuple]] = None,
                      log: Callable[[str], None] = print) -> list[np.ndarray]:
@@ -241,7 +242,8 @@ def render_turntable(V: np.ndarray, F: np.ndarray, *, frames: int, size: int,
         img = rb.render_beauty(
             Vr, F, pose=pose, intrinsics=K, size=size, ss=ss,
             material=material, albedo=alb, light=light, background=background,
-            tonemap=tonemap, ao=True, ground_shadow=True,
+            tonemap=tonemap, ambient=ambient, exposure=exposure,
+            ao=True, ground_shadow=True,
             ao_samples=ao_samples, shadow_samples=shadow_samples)
         dt = time.time() - t0
         t_sum += dt
