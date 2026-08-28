@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-28 19:34:52
+- **最終更新**: 2026-08-28 20:06:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-115c5666 センサー別 op プレイブック追加: sensor→推奨パイプラインのAI台帳
-c52e34d3 auto: pyproject.toml 編集前 (2026-08-28 19:16)
-67873ef7 render_beauty(hero合成レンダラ)登録: 全品質層を一発合成(ops3d 254→255)
-c9850d15 auto: examples3d.py 編集前 (2026-08-28 14:38)
-68ccfba6 auto: examples3d.py 編集前 (2026-08-28 14:38)
-c6ccc5d2 auto: ops3d.py 編集前 (2026-08-28 14:37)
-536e5fbd auto: ops3d.py 編集前 (2026-08-28 14:37)
-71831abd auto: ops3d.py 編集前 (2026-08-28 14:37)
-8965438e auto: render_beauty.py 編集前 (2026-08-28 14:31)
-415163c3 auto: render_beauty.py 編集前 (2026-08-28 14:31)
+fe20f020 GIFショーケース追加: render_beauty ターンテーブル+色相回し(Qiita向け)
+e085bb68 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:50)
+0d7d6539 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:50)
+83826d6f auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:50)
+23ae6c90 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:50)
+2affb166 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:50)
+50d971f5 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:49)
+51077da7 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:46)
+68209cdd auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:46)
+734f8838 auto: gen_showcase_gifs.py 編集前 (2026-08-28 19:45)
 ```
 
 ## 現在の git status
@@ -31,7 +31,12 @@ M docs/SESSION_SUMMARY.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-19:25 docs/SESSION_SUMMARY.md
+20:03 examples_3d/_gallery/showcase_turntable_itokawa.gif
+20:01 examples_3d/_gallery/showcase_hue_cycle.gif
+20:00 examples_3d/_gallery/showcase_turntable_pod.gif
+19:59 examples_3d/_gallery/showcase_turntable_skeleton.gif
+19:55 docs/SESSION_SUMMARY.md
+19:50 tools/gen_showcase_gifs.py
 19:16 pyproject.toml
 19:15 fullseye/SENSOR_PLAYBOOK.md
 19:15 docs/SENSOR_PLAYBOOK.md
