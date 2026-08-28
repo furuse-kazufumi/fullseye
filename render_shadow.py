@@ -247,10 +247,11 @@ def cast_shadow(V, F, light, *, pose=None, intrinsics=None, width: int = 256,
             raise ValueError("point light coincides with the scene centre")
         ldir_c = -v / nv
 
-    # texel のワールドサイズ(平行光近似の枠から)と傾斜スケールのバイアス
-    _, _, _, dist_c = _light_camera(center, radius, light, directional, sres)
-    texel_world = 2.0 * dist_c * np.tan(np.deg2rad(
-        2.0 * np.degrees(np.arctan((radius * 1.3) / max(dist_c, _EPS)))) * 0.5) / sres
+    # texel のワールドサイズ(平行光近似の枠から)と傾斜スケールのバイアス。
+    # 光源カメラの縦視野は fov=2*atan(radius*margin/dist) なので枠の縦幅は
+    # 2*dist*tan(fov/2) = 2*radius*margin。texel = それ / shadow_res。
+    margin_L = 1.3
+    texel_world = 2.0 * radius * margin_L / sres
     if bias is None:
         # 傾斜(法線と光の角)に比例して増やす。受光面が斜めなほど texel 内の深度変化が大きい。
         ndl = np.abs(np.einsum("ijk,k->ij", n_world, ldir_c))
