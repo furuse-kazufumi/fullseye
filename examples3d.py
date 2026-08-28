@@ -234,6 +234,22 @@ EXAMPLES = [
     {"id": "fit_primitives_ext", "task": "shape_fitting", "data": "synthetic",
      "name": "プリミティブ当てはめ拡張(円錐/トーラス/楕円体)",
      "summary": "点群に円錐(半角誤差0.008°)・トーラス(R,r誤差~3e-4)・楕円体(半径相対誤差<0.2%)を当てはめ。誤モデル(球/平面)の残差をそれぞれ38x/64x/50x下回る。漏斗/配管/細胞・慣性の寸法検査。"},
+    # -- rendering quality(Wave B・映える静止3D)---------------------------------- #
+    {"id": "render_ao", "task": "rendering", "data": "synthetic",
+     "name": "レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)",
+     "summary": "物体空間AOで半球到達性を[0,1]化。平面に載る球で頂上AO1.00/接触部0.06(高さとSpearman1.00)、溝は深さに単調低下。一様AO=1(null)は凹凸を判別不能。拡散のみのLambertianに乗算し立体感を出す。"},
+    {"id": "render_shadow", "task": "rendering", "data": "synthetic",
+     "name": "レンダリング品質: キャスト/ソフトシャドウ(接地影)",
+     "summary": "shadow mappingで接地影。球を床に載せ解析GTだ円とIoU 0.978。影なし(従来陰影)はIoU 0.00(接地影を全く当てられない)を判別的に上回る。半影は光源角サイズで単調に拡大。"},
+    {"id": "render_shade", "task": "rendering", "data": "synthetic",
+     "name": "レンダリング品質: matcap/Phong鏡面シェーディング",
+     "summary": "拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。"},
+    {"id": "render_ssaa", "task": "rendering", "data": "synthetic",
+     "name": "レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去",
+     "summary": "ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。"},
+    {"id": "render_tonemap", "task": "rendering", "data": "synthetic",
+     "name": "レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済",
+     "summary": "鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。"},
 ]
 
 _BY_ID = {e["id"]: e for e in EXAMPLES}

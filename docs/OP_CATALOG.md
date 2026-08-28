@@ -30,7 +30,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(58 例)
+### 3-D 点群/体積/曲面(63 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -128,6 +128,13 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **メッシュ簡略化(QEM edge-collapse)で目標面数へ軽量化** — 球1280面→384面(目標厳密)、頂点は球面上・watertight維持・対称Hausdorff 3.3%R。同数までランダム間引くnullは穴792本・Hausdorff 21.3%Rで6.4倍劣る。スキャン/CADの軽量化。 `py -3.11 examples_3d/mesh_decimate.py`
 - **メッシュの法線・表面積・平均曲率(接続情報から)** — 面/頂点法線・表面積・cotangent平均曲率を面の巻き順とラプラシアンから測る。球(R2.5)で面積誤差0.12%・曲率0.4000(1/R)・法線外向き率1.00。面積null(49.7%誤差)・平面曲率nullを判別的に上回る。 `py -3.11 examples_3d/mesh_props.py`
 
+**rendering**
+- **レンダリング品質: アンビエントオクルージョン(接触影・凹部の環境影)** — 物体空間AOで半球到達性を[0,1]化。平面に載る球で頂上AO1.00/接触部0.06(高さとSpearman1.00)、溝は深さに単調低下。一様AO=1(null)は凹凸を判別不能。拡散のみのLambertianに乗算し立体感を出す。 `py -3.11 examples_3d/render_ao.py`
+- **レンダリング品質: キャスト/ソフトシャドウ(接地影)** — shadow mappingで接地影。球を床に載せ解析GTだ円とIoU 0.978。影なし(従来陰影)はIoU 0.00(接地影を全く当てられない)を判別的に上回る。半影は光源角サイズで単調に拡大。 `py -3.11 examples_3d/render_shadow.py`
+- **レンダリング品質: matcap/Phong鏡面シェーディング** — 拡散のみに鏡面を追加。Phongハイライトのピークが反射方向N=norm(L+V)と0.63px一致。Lambertianの最輝点は反射方向を54px外す(nullを約85倍上回る)。matcapはlit-sphere転写で素材感を持ち込む。 `py -3.11 examples_3d/render_shade.py`
+- **レンダリング品質: スーパーサンプリング(SSAA)でジャギー除去** — ss倍レンダ→面積平均縮小。傾き22°エッジでエイリアスエネルギー0.275→0.164(0.59倍)・中間輝度画素0%→0.95%、ss=1..6で単調減少。z-bufferの階段状シルエットを滑らかに。 `py -3.11 examples_3d/render_ssaa.py`
+- **レンダリング品質: トーンマップ(HDR→LDR)で白飛び救済** — 鏡面HDR(max5.41)をReinhard/ACESで[0,1]へ。全域Spearman1.00で単調、素朴クリップがハイライト域を1段に潰す(分散0)のに対し順位相関1.0・194段の階調を保持。 `py -3.11 examples_3d/render_tonemap.py`
+
 ## スタンドアロン幾何/数学モジュール(関数 API)
 
 1画像パイプラインに乗らない op(2画像・点列・可変引数)。関数として呼ぶ。
@@ -176,7 +183,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 245 ops / 55 categories。_
+_計 254 ops / 55 categories。_
 
 
 ### augment(6)
@@ -436,11 +443,20 @@ _計 245 ops / 55 categories。_
 - `registration_recall` (`points, points → measurement`) — 3DMatch 流の per-pair 登録成否 = 1.0(成功)/ 0.0(失敗)。
 - `rotation_translation_error` (`pose, pose → measurement`) — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。
 
-### render(4)
+### render(13)
 - `project_points` (`points → image2d`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。
 - `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。
 - `render_shaded` (`normals → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。
+- `ambient_occlusion` (`mesh → image2d`) — メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。
+- `cast_shadow` (`mesh, vector → image2d`) — メッシュのキャスト影 / ソフトシャドウを計算し、可視性マップ (H,W) ∈ [0,1] を返す。
+- `phong_shade` (`normals → image2d`) — Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + **鏡面**)。→ ``(H, W)``。
+- `matcap_shade` (`normals, image2d → image2d`) — MatCap: 視空間法線を lit-sphere テクスチャに写して素材の見えを転写。→ ``(H, W[, C])``。
+- `supersample_mesh` (`mesh → image2d`) — メッシュを SSAA でアンチエイリアス描画 -> float 画像 ``(H, W)`` (or ``(H, W, C)``)。
+- `antialias` (`image2d → image2d`) — 高解像画像を整数倍 ``ss`` で縮小(area-average anti-aliasing)。
+- `edge_alias_energy` (`image2d → measurement`) — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。
+- `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。
+- `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。
 
 ### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。
