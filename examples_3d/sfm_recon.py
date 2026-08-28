@@ -105,9 +105,7 @@ X = np.array(X)
 
 P1_true = projection(K, np.eye(3), np.zeros(3))               # cam1 = K[I|0]
 P2_true = projection(K, R_true, t_true)                      # cam2 = K[R|t]
-h1 = (P1_true @ homog(X[:, :2] * 0 + X).T)  # placeholder (下で正しく投影)
-# 正しい投影(同次 4 次): [X;1]
-Xh = np.hstack([X, np.ones((len(X), 1))])
+Xh = np.hstack([X, np.ones((len(X), 1))])                    # 同次 4 次 [X;1]
 u1 = (P1_true @ Xh.T).T
 u2 = (P2_true @ Xh.T).T
 pts1 = u1[:, :2] / u1[:, 2:3]                                 # 1 枚目の観測画素
