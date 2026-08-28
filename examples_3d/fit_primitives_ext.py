@@ -43,8 +43,11 @@ from pathlib import Path
 import numpy as np
 
 _REPO_ROOT = Path(__file__).resolve().parents[1]
-if str(_REPO_ROOT) not in sys.path:
-    sys.path.insert(0, str(_REPO_ROOT))
+# この例のファイル名はモジュール ``fit_primitives_ext.py`` と同名。直接実行するとスクリプトの
+# 置き場所(examples_3d/)が sys.path 先頭に入り自分自身を import して循環するので、リポジトリ
+# ルートを **無条件で先頭へ** 挿入して本物のモジュールを優先させる(PYTHONPATH=. が既に
+# ルートを含む場合でも順序を確実にするため guard 無しで insert)。
+sys.path.insert(0, str(_REPO_ROOT))
 
 from fit_primitives_ext import fit_cone, fit_ellipsoid, fit_torus  # noqa: E402
 
