@@ -89,6 +89,7 @@ MANIFEST = [
         archive="tar.gz", member="dragon_recon/dragon_vrip.ply",
         dest="dragon.ply",
         sha256="74ac1d90989c9b1732edee82d57e9ce71452144cf4355f108d8c9c616d28d02f",
+        sha256_out="fea87ff48f2aba22fb53e7b67c3ff3f7b8c2a3b3a0653af62c48bba67c6d5744",
         bytes=11197764,
         license="Stanford 3DSR (research courtesy)", commercial="check",
         access="direct",
