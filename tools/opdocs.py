@@ -179,6 +179,17 @@ def _op_md(rec, path, by_name):
         lines.append("")
         lines.append(f"- [{rec['family']} ファミリ ガイド]({_rel(path, gp)})")
         lines.append("")
+    # sample data + references (honest pointers to the curated catalogs)
+    sp = os.path.join(DOCS, "SAMPLES.md")
+    rp = os.path.join(_ROOT, "docs", "REFERENCES.md")
+    lines.append("## 参考(サンプルデータ・文献)")
+    lines.append("")
+    lines.append(f"- [サンプルデータ カタログ(DL URL / ライセンス)]({_rel(path, sp)}) "
+                 "— 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。")
+    lines.append(f"- [演算子の来歴・参考文献]({_rel(path, rp)}) — この op 族の元になった研究/手法の出典。")
+    if rec.get("family"):
+        lines.append("- アルゴリズムの正典(著者・年)と用途は上記**ファミリ使い方ガイド**に記載。")
+    lines.append("")
     # worked examples
     lines.append("## 実行できる例(この op を実際に呼ぶ検証済みサンプル)")
     lines.append("")
