@@ -224,7 +224,7 @@ def fit_torus(points) -> dict:
     r = float(sol.x[7])
     residual = float(np.sqrt(np.mean(resid(sol.x) ** 2)))
     return {"center": center, "axis": axis, "R": R, "r": r,
-            "residual": residual, "scale": diag}
+            "residual": residual}
 
 
 # ═══════════════════════════════════════════════════════════════════════════
