@@ -180,6 +180,29 @@ def test_topographic_sketch_labels_peak_pit_and_flat():
     assert code[12, 12] > code[30, 30] > code[2, 2]
 
 
+def test_topographic_is_transpose_equivariant():
+    """The Hessian must be symmetric: its off-diagonal is the mixed partial d2I/dxdy,
+    so the topographic class of a surface is the same whether you view it or its
+    transpose (swapping the x and y axes) — f(I.T) == f(I).T exactly.
+
+    Regression for a real bug: the cross term was taken as d/dy(gy) (a duplicate of the
+    yy second derivative) instead of d/dx(gy), because np.gradient returns
+    [d/d(row=y), d/d(col=x)] and the wrong element was unpacked. That made the eigenvalues
+    wrong (halved / sign-flipped) for any non-axis-aligned structure and broke this
+    equivariance — e.g. a saddle I=x*y got off=0.5 instead of 1, det -0.25 instead of -1."""
+    yy, xx = np.mgrid[0:24, 0:24].astype(float)
+    # deterministic, ASYMMETRIC surface with diagonal structure (x*y term) so the
+    # off-diagonal Hessian entry actually matters and the axis asymmetry would show.
+    surf = (xx * yy) / 100.0 + 0.3 * (xx ** 2) / 100.0 \
+        + 0.1 * np.sin(xx * 0.5) * np.cos(yy * 0.4)
+    a, b = 0.5, 0.5
+    out = F.f2_topographic(surf, a, b)
+    out_t = F.f2_topographic(surf.T, a, b)
+    assert np.allclose(out_t, out.T, atol=1e-9), \
+        "topographic classification is not transpose-equivariant — the Hessian off-diagonal " \
+        "(mixed partial) is being computed from the wrong np.gradient component"
+
+
 def test_expand_domain_grows_border_by_width():
     im = np.zeros((30, 30))
     im[12:18, 12:18] = 0.7                      # domain block

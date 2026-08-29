@@ -146,10 +146,11 @@ def f2_topographic(v, a, b):
     xs = ndimage.gaussian_filter(x, sigma)
     gy, gx = np.gradient(xs)
     gmag = np.hypot(gx, gy)
-    hyy, _ = np.gradient(gy)
-    hxy, hxx = np.gradient(gx)      # hxx = d/dx(gx), hxy = d/dy(gx)
-    hyx, _hyy2 = np.gradient(gy)    # unused second; keep symmetric term below
-    off = 0.5 * (hxy + hyx)         # symmetric off-diagonal
+    # np.gradient(arr) -> [d/d(axis0=row=y), d/d(axis1=col=x)], so the SECOND unpacked
+    # element is the d/dx component. hyx must be d/dx(gy) (the cross term), not d/dy(gy).
+    hyy, hyx = np.gradient(gy)      # hyy = d/dy(gy) = d2/dy2, hyx = d/dx(gy) = d2/dxdy
+    hxy, hxx = np.gradient(gx)      # hxy = d/dy(gx) = d2/dydx, hxx = d/dx(gx) = d2/dx2
+    off = 0.5 * (hxy + hyx)         # symmetric off-diagonal (avg of the two mixed-partial estimates)
     tr = hxx + hyy
     disc = np.sqrt(np.maximum(tr * tr / 4.0 - (hxx * hyy - off * off), 0.0))
     l1 = tr / 2.0 + disc            # larger eigenvalue
