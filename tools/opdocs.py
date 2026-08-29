@@ -144,6 +144,15 @@ def _records():
             })
     except Exception as e:  # ops3d needs torch-soft deps; corpus still builds for 2-D
         print(f"  (3-D registry unavailable: {e})", file=sys.stderr)
+    # mark ops whose name is registered more than once in their dim: a backend override
+    # (e.g. backends_auto's _safe wrapper) shadows a core fallback of the same op. The note
+    # for such a name describes the winner; flag it so the override is stated, not hidden.
+    from collections import Counter
+    for dim in ("2d", "3d"):
+        cnt = Counter(r["name"] for r in recs if r["dim"] == dim)
+        for r in recs:
+            if r["dim"] == dim and cnt[r["name"]] > 1:
+                r["override"] = True
     return recs, idx2d, op_fam, fam_ops
 
 
