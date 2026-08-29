@@ -101,8 +101,9 @@ def test_guide_is_well_formed(guide):
     assert "Kazufumi Furuse" in md, f"{guide}: missing author/copyright"
     assert "```mermaid" in md, f"{guide}: missing a mermaid pipeline diagram"
     assert "```python" in md, f"{guide}: missing a runnable python snippet"
-    # every op name the guide claims to cover must be a real registry op
+    # the guide must actually name real ops from its own family (grounded, not generic prose)
     real = {r["name"] for r in _RECS if r["dim"] == "2d"}
-    claimed = set(re.findall(r"`([a-z][a-z0-9_]{2,})`", md))
-    bogus = [c for c in claimed if c in {g[:-2] for g in []}]  # placeholder; see behavioural check below
-    assert not bogus
+    fam_ops = {o["name"] for o in _FAM_OPS.get(guide, [])}
+    claimed = set(re.findall(r"`([a-z][a-z0-9_]{2,})`", md)) & real
+    hit = claimed & fam_ops
+    assert len(hit) >= 3, f"{guide}: names too few of its own family ops ({len(hit)})"

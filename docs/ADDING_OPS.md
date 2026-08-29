@@ -52,3 +52,18 @@ crashes or returns the wrong sort is not counted — coverage stays honest.
 
 Each operator is reimplemented from a published algorithm or an open-source library;
 record the source in the code comment (see `docs/PROVENANCE.md`).
+
+## Regenerate the docs (required)
+
+Operator help/usage docs are single-sourced from Markdown under `docs/ops/` and
+bulk-converted to Studio HTML. After adding or changing an op, regenerate:
+
+```
+py -3.11 tools/opdocs.py all      # per-op notes + auto TOC + SAMPLES + op_help HTML
+```
+
+`tests/test_opdocs.py` fails if the committed notes drift from the registry, so the
+docs stay pinned to the current op set (image-processing behaviour is spec-sensitive —
+docs must not lag the code). A new op with no worked example also fails
+`tests/test_op_example_coverage.py`, so add an example (or extend a `gallery2d_*`
+family gallery) and, if it starts a new family, author `docs/ops/2d/guides/<family>.md`.
