@@ -133,7 +133,7 @@ def gaussian_curvature(points, k=25):
 
 
 def shape_index(points, k=25, normals=None):
-    """Koenderink の shape index s∈[-1,1](凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。
+    """Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。
 
     umbilic/平面判定は**曲率スケール相対**(絶対しきい値なし)。緩やかな凸/凹(曲率が微小でも)は
     符号=凹凸を保ち、平面はデータ全体の曲率スケールに対して相対的に 0 の点のみ s=0 とする。

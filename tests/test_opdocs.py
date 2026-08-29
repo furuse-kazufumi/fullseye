@@ -184,3 +184,30 @@ def test_3d_help_pages_carry_marker_and_have_no_stray_2d_anchors():
             stray.append(r["name"])
     assert not unmarked, f"3-D help pages missing the generated marker: {unmarked[:20]}"
     assert not stray, f"3-D help pages carry bare 2-D op: anchors (should be op3d:): {stray[:20]}"
+
+
+def test_no_dangling_relative_links_in_corpus():
+    """Every relative Markdown link under docs/ops resolves. This guards against an op
+    docstring accidentally forming a link — e.g. a range 's∈[-1,1](凸球+1・...)' parses as
+    [-1,1](凸球+1・...), a bogus target that becomes a broken anchor once converted to HTML.
+    External http(s)/mailto and pure #anchor links are skipped."""
+    import re as _re
+    docs = os.path.join(ROOT, "docs", "ops")
+    link = _re.compile(r"\[[^\]]*\]\(([^)]+)\)")
+    dangling = []
+    for dp, _dirs, fs in os.walk(docs):
+        for fn in fs:
+            if not fn.endswith(".md"):
+                continue
+            p = os.path.join(dp, fn)
+            with open(p, encoding="utf-8") as f:
+                txt = f.read()
+            for m in link.finditer(txt):
+                tgt = m.group(1).strip().split("#", 1)[0]
+                if not tgt or tgt.startswith(("http://", "https://", "mailto:")):
+                    continue
+                if not os.path.exists(os.path.normpath(os.path.join(dp, tgt))):
+                    dangling.append(os.path.relpath(p, ROOT) + " -> " + tgt)
+    assert not dangling, ("dangling relative links in the op-docs corpus "
+                          "(often a docstring with an accidental [x](y) — add a space, e.g. "
+                          "'[-1,1] (...)'):\n" + "\n".join(dangling[:30]))

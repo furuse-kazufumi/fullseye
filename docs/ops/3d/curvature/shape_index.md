@@ -17,7 +17,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-Koenderink の shape index s∈[-1,1](凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。
+Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。
 
 ## 参考(サンプルデータ・文献)
 
