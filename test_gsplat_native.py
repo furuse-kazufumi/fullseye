@@ -1,5 +1,11 @@
 import warnings; warnings.simplefilter("ignore")
-import torch, gsplat, time
+# Manual GPU smoke script (run directly: `py -3.11 test_gsplat_native.py`), not a unit test.
+# Skip-guard so a plain `pytest` at the repo root doesn't fail collection on CPU-only /
+# no-gsplat environments (the real suite lives under tests/).
+import pytest  # noqa: E402
+pytest.importorskip("gsplat", reason="gsplat (native CUDA) not installed — GPU-only smoke")
+pytest.importorskip("torch", reason="torch not installed")
+import torch, gsplat, time  # noqa: E402
 print("torch", torch.__version__, "cuda", torch.cuda.is_available(), torch.cuda.get_device_name(0))
 print("gsplat", gsplat.__version__)
 N=2000
