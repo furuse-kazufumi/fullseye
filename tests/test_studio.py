@@ -316,6 +316,19 @@ def test_main_help_reference_is_dim_aware_offscreen():
         win._help["show"]("fill_holes", "3d"); h3 = win._help["browser"].toHtml()
         win._help["show"]("fill_holes", "2d"); h2 = win._help["browser"].toHtml()
         assert h3 != h2
+
+    # Selecting through the ACTUAL dropdown (currentTextChanged -> show_op_help) must render the
+    # chosen op — not a swapped-argument fallback. Regression: the picker lambda unpacked the
+    # (dim, name) entry straight into show_op_help(name, dim), swapping them, so every dropdown
+    # pick showed a bogus card for an op literally named "2d"/"3d". Exercise the signal, not
+    # show() directly (calling show() with correct args hid the bug).
+    pick = win._help["pick"]
+    pick.setCurrentText("threshold")
+    ht = win._help["browser"].toHtml()
+    assert "threshold" in ht, "dropdown-selecting a 2-D op must render that op's help"
+    pick.setCurrentText("points_to_voxel  (3D)")
+    hv = win._help["browser"].toHtml()
+    assert "points_to_voxel" in hv, "dropdown-selecting a 3-D op must render that op's help"
     win._help["dialog"].close()
 
 

@@ -4234,8 +4234,10 @@ def build_window(model=None):
                 flash("example source not found: %s/%s.py" % (sub, ex))
 
     help_browser.anchorClicked.connect(_help_anchor)
+    # entries map display-text -> (dim, name); show_op_help takes (name, dim), so pass them
+    # in that order (unpacking the tuple directly would swap them: name<-dim, dim<-name).
     help_pick.currentTextChanged.connect(
-        lambda t: show_op_help(*_help_entries[t]) if t in _help_entries else None)
+        lambda t: show_op_help(_help_entries[t][1], _help_entries[t][0]) if t in _help_entries else None)
     def _copy_help_sig():
         t = help_pick.currentText()
         entry = _help_entries.get(t)
