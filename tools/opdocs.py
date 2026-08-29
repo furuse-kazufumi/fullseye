@@ -441,9 +441,15 @@ _BOLD = re.compile(r"\*\*([^*]+)\*\*")
 
 
 def _rewrite_link(text: str, target: str) -> str:
-    """Map a Markdown link target to a Studio QTextBrowser scheme."""
+    """Map a Markdown link target to a Studio QTextBrowser scheme.
+
+    Corpus-navigation docs (SAMPLES/REFERENCES/INDEX) have no Studio handler and would
+    mis-route to a bogus op card, so they render as plain text (their working relative
+    links live on in the Markdown corpus for GitHub/Obsidian/RAD)."""
     t = target
     stem = os.path.splitext(os.path.basename(t))[0]
+    if t.endswith(".md") and stem in ("SAMPLES", "REFERENCES", "INDEX"):
+        return _html.escape(text)
     if t.endswith(".py") and "examples_3d/" in t:
         href = "example3d:" + stem
     elif t.endswith(".py") and "examples/" in t:

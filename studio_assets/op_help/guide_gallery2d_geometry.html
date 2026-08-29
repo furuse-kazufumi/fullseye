@@ -156,12 +156,12 @@ print(&quot;PASS&quot;)</pre>
 <p>$z=a_0+a_1x+a_2y+a_3x^2+a_4y^2+a_5xy$ を最小二乗で当て、$\nabla z=0$ を解いて</p>
 <p>オフセット $\Delta=-H^{-1}g$(勾配 $g$、Hessian $H$)を得る。$\det H&lt;0$ は鞍点。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
-<p>デバッグ用の 2-D 画像源は <a style="color:#22d3bf" href="op:SAMPLES">サンプルデータ カタログ</a> を参照。</p>
+<p>デバッグ用の 2-D 画像源は サンプルデータ カタログ を参照。</p>
 <p><code style="color:#22d3bf">import sample_images; sample_images.load(&quot;checker_noisy&quot;)</code> の合成市松や <code style="color:#22d3bf">&quot;coins&quot;</code>/<code style="color:#22d3bf">&quot;camera&quot;</code></p>
 <p>(skimage.data、BSD/public)は回転・極座標・サブピクセル臨界点の効果確認に向く。回転対称な</p>
 <p><code style="color:#22d3bf">&quot;blobs&quot;</code> は <code style="color:#22d3bf">tf_radon_sinogram</code> の行一定性、偏心した円板は正弦軌跡の確認に使える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
-<p>台帳は <a style="color:#22d3bf" href="op:REFERENCES">../../../REFERENCES.md</a>。この族のアルゴリズムの古典:</p>
+<p>台帳は ../../../REFERENCES.md。この族のアルゴリズムの古典:</p>
 <p style="margin:2px 0 2px 12px">• Wolberg, G. (1990). *Digital Image Warping*. IEEE Computer Society Press. — 回転・ズーム・アフィン/射影の画像ワップとリサンプリング。</p>
 <p style="margin:2px 0 2px 12px">• Bookstein, F. L. (1989). &quot;Principal Warps: Thin-Plate Splines and the Decomposition of Deformations&quot;. *IEEE TPAMI* 11(6). — <code style="color:#22d3bf">deform_tps</code>。</p>
 <p style="margin:2px 0 2px 12px">• Rueckert, D., et al. (1999). &quot;Nonrigid Registration Using Free-Form Deformations&quot;. *IEEE TMI* 18(8). — <code style="color:#22d3bf">deform_ffd</code>。</p>
