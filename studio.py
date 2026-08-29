@@ -1315,13 +1315,20 @@ def _load_i18n():
 LANGUAGES, TOOLTIPS_I18N, HELP_I18N = _load_i18n()
 
 
-def op_help_html(name, lang="en", meta=None):
+def op_help_html(name, lang="en", meta=None, dim="2d"):
     """Rich HTML help for one operator. Lookup order (see studio_assets/op_help/):
       1. op_help/<name>.<lang>.html   language-specific
       2. op_help/<name>.html          default (English)
       3. a generated card from the op's registry metadata (no file needed).
     The HTML may use anchors ``op:<name>`` (jump to a related op) and
-    ``sample:<url-encoded ops>`` / ``run:<...>`` (load/run a sample pipeline)."""
+    ``sample:<url-encoded ops>`` / ``run:<...>`` (load/run a sample pipeline).
+
+    ``dim="3d"`` delegates to :func:`op_help_html_3d` (point-cloud / mesh / volume
+    modality, looked up under op_help/3d/) so a single dim-aware entry point serves
+    both operator registries — 2-D and 3-D op names can collide (e.g. ``fill_holes``),
+    so the modality must be passed, not inferred from the name."""
+    if dim == "3d":
+        return op_help_html_3d(name, meta)
     base = os.path.join(_ASSETS, "op_help")
     for fn in ("%s.%s.html" % (name, lang), "%s.html" % name):
         p = os.path.join(base, fn)
@@ -4136,25 +4143,50 @@ def build_window(model=None):
     hd_back = QtWidgets.QPushButton("◀"); hd_back.setToolTip("Back")
     hd_fwd = QtWidgets.QPushButton("▶"); hd_fwd.setToolTip("Forward")
     help_pick = QtWidgets.QComboBox(); help_pick.setEditable(True)
-    help_pick.addItems(op_names); help_pick.setToolTip("Jump to any operator's help")
+    # "Jump to any operator's help" spans BOTH registries. 3-D ops are suffixed "  (3D)" so a
+    # name shared by a 2-D and a 3-D op (e.g. fill_holes) stays unambiguous; the display text
+    # maps back to (dim, name) for dim-aware help dispatch via show_op_help.
+    _help_entries = {n: ("2d", n) for n in op_names}
+    _help_d3 = []
+    try:
+        import ops3d as _o3
+        for _n in sorted(_o3.OPS3D):
+            _disp = "%s  (3D)" % _n
+            _help_entries[_disp] = ("3d", _n); _help_d3.append(_disp)
+    except Exception:
+        pass
+    help_pick.addItems(list(op_names) + _help_d3)
+    help_pick.setToolTip("Jump to any operator's help (2-D image ops + 3-D point/mesh/volume ops)")
     hd_copy = QtWidgets.QPushButton("Copy sig")
     hd_copy.setToolTip("Copy this operator's signature to the clipboard")
     _htop.addWidget(hd_back); _htop.addWidget(hd_fwd); _htop.addWidget(help_pick, 1); _htop.addWidget(hd_copy)
     _hdl.addLayout(_htop); _hdl.addWidget(help_browser, 1)
 
-    def show_op_help(name):
+    def show_op_help(name, dim="2d"):
         if not name:
             return
-        row = _op_row(name) or {"in_sort": "?", "out_sort": "?"}
-        help_browser.setHtml(op_help_html(name, getattr(win, "_lang", "en"), row))
-        i = help_pick.findText(name)
+        if dim == "3d":
+            try:
+                import ops3d as _o3
+                row = _o3.OPS3D.get(name)
+            except Exception:
+                row = None
+            help_browser.setHtml(op_help_html(name, dim="3d", meta=row))
+            disp = "%s  (3D)" % name
+        else:
+            row = _op_row(name) or {"in_sort": "?", "out_sort": "?"}
+            help_browser.setHtml(op_help_html(name, getattr(win, "_lang", "en"), row))
+            disp = name
+        i = help_pick.findText(disp)
         if i >= 0:
             help_pick.blockSignals(True); help_pick.setCurrentIndex(i); help_pick.blockSignals(False)
         help_dialog.show(); help_dialog.raise_(); help_dialog.activateWindow()
 
     def _help_anchor(url):
         s = url.toString()
-        if s.startswith("op:"):                # related-operator link
+        if s.startswith("op3d:"):              # related 3-D operator link
+            show_op_help(s[5:], "3d")
+        elif s.startswith("op:"):              # related-operator link (2-D)
             show_op_help(s[3:])
         elif s.startswith("sample:") or s.startswith("run:"):   # load a sample pipeline
             import urllib.parse as _up
@@ -4202,18 +4234,33 @@ def build_window(model=None):
                 flash("example source not found: %s/%s.py" % (sub, ex))
 
     help_browser.anchorClicked.connect(_help_anchor)
-    help_pick.currentTextChanged.connect(lambda t: show_op_help(t) if t in set(op_names) else None)
+    help_pick.currentTextChanged.connect(
+        lambda t: show_op_help(*_help_entries[t]) if t in _help_entries else None)
     def _copy_help_sig():
-        row = _op_row(help_pick.currentText())
+        t = help_pick.currentText()
+        entry = _help_entries.get(t)
+        if entry and entry[0] == "3d":         # 3-D op: signature from the ops3d registry
+            try:
+                import ops3d as _o3, inspect as _insp
+                info = _o3.OPS3D.get(entry[1]) or {}
+                fn = info.get("func")
+                sig = str(_insp.signature(fn)) if fn is not None else "(...)"
+                QtWidgets.QApplication.clipboard().setText("%s.%s%s" % (info.get("module", ""), entry[1], sig))
+                flash("copied signature: " + entry[1] + " (3D)")
+            except Exception:
+                pass
+            return
+        row = _op_row(t)
         if row:
             QtWidgets.QApplication.clipboard().setText(op_signature_detail(row))
-            flash("copied signature: " + help_pick.currentText())
+            flash("copied signature: " + t)
     hd_copy.clicked.connect(_copy_help_sig)
     hd_back.clicked.connect(help_browser.backward)
     hd_fwd.clicked.connect(help_browser.forward)
     b_help.clicked.connect(
         lambda: show_op_help(op_list.currentItem().data(QtCore.Qt.UserRole)) if op_list.currentItem() else None)
-    win._help = {"dialog": help_dialog, "browser": help_browser, "show": show_op_help}
+    win._help = {"dialog": help_dialog, "browser": help_browser, "show": show_op_help,
+                 "pick": help_pick, "entries": _help_entries}
 
     def sync_panels():
         sync_program(); refresh_variables()

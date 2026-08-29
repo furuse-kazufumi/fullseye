@@ -285,6 +285,40 @@ def test_op_help_html_3d_reads_generated_and_falls_back():
     assert "opdocs:generated" not in f
 
 
+def test_op_help_html_dim_param_delegates_to_3d():
+    # op_help_html(dim="3d") is the single dim-aware entry point — it delegates to the 3-D
+    # resolver so the shared help dialog can render either modality without the caller
+    # reaching into two functions.
+    import ops3d
+    h3 = studio.op_help_html("points_to_voxel", dim="3d", meta=ops3d.OPS3D.get("points_to_voxel"))
+    assert h3 == studio.op_help_html_3d("points_to_voxel", ops3d.OPS3D.get("points_to_voxel"))
+    assert "points_to_voxel" in h3
+
+
+def test_main_help_reference_is_dim_aware_offscreen():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    import ops3d
+    from PySide6 import QtWidgets
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    entries = win._help["entries"]
+    # the "jump to any operator" picker spans BOTH registries (2-D image + 3-D modality)
+    d3 = [k for k, v in entries.items() if v[0] == "3d"]
+    assert len(d3) == len(ops3d.OPS3D), "3-D ops missing from the operator help picker"
+    assert all(k.endswith("(3D)") for k in d3)
+    # dim-aware dispatch renders the 3-D help in the shared browser
+    win._help["show"]("points_to_voxel", "3d")
+    assert "points_to_voxel" in win._help["browser"].toHtml()
+    # a name shared by a 2-D and a 3-D op resolves to the requested modality (no collision)
+    if "fill_holes" in ops3d.OPS3D:
+        win._help["show"]("fill_holes", "3d"); h3 = win._help["browser"].toHtml()
+        win._help["show"]("fill_holes", "2d"); h2 = win._help["browser"].toHtml()
+        assert h3 != h2
+    win._help["dialog"].close()
+
+
 def test_studio_exposes_3d_operator_reference_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
