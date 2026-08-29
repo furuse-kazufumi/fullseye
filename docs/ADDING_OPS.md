@@ -62,6 +62,10 @@ bulk-converted to Studio HTML. After adding or changing an op, regenerate:
 py -3.11 tools/opdocs.py all      # per-op notes + auto TOC + SAMPLES + op_help HTML
 ```
 
+This covers both 2-D ops (`op_help/<name>.html`) and 3-D ops (`op_help/3d/<name>.html`)
+from the one Markdown corpus — the old `tools/gen_op_help_3d.py` is retired (now a thin
+shim that just calls `opdocs html`).
+
 `tests/test_opdocs.py` fails if the committed notes drift from the registry, so the
 docs stay pinned to the current op set (image-processing behaviour is spec-sensitive —
 docs must not lag the code). A new op with no worked example also fails

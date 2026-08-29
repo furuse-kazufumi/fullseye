@@ -614,6 +614,29 @@ def cmd_html():
                 n += 1
             else:
                 skipped += 1
+    # per-op 3-D pages from their Markdown notes -> op_help/3d/<name>.html (a namespaced
+    # subdir: 2-D and 3-D op names can collide, e.g. fill_holes, so 3-D help is kept apart).
+    # Same md=source-of-truth path as 2-D — this supersedes the old standalone
+    # tools/gen_op_help_3d.py (retired), so 3-D help is no longer double-authored. A 3-D note's
+    # sibling / next-op links target 3-D ops, so their op: anchors are rewritten to op3d: for a
+    # future 3-D operator browser (2-D op: anchors are left untouched).
+    n3 = 0
+    d3out = os.path.join(HELP_ROOT, "3d")
+    d3src = os.path.join(DOCS, "3d")
+    if os.path.isdir(d3src):
+        os.makedirs(d3out, exist_ok=True)
+        for cat in sorted(os.listdir(d3src)):
+            cdir = os.path.join(d3src, cat)
+            if not os.path.isdir(cdir):
+                continue
+            for f in sorted(os.listdir(cdir)):
+                if not f.endswith(".md"):
+                    continue
+                with open(os.path.join(cdir, f), encoding="utf-8") as fh:
+                    md = fh.read()
+                html3d = md_to_html(md).replace('href="op:', 'href="op3d:')
+                if _write_generated(os.path.join(d3out, f[:-3] + ".html"), html3d):
+                    n3 += 1
     # family guides -> guide_<family>.html (always generated from guide md)
     g = 0
     gdir = os.path.join(DOCS, "2d", "guides")
@@ -625,8 +648,8 @@ def cmd_html():
                 md = fh.read()
             _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), md_to_html(md))
             g += 1
-    print(f"opdocs html: wrote {n} op pages ({skipped} hand-authored preserved) "
-          f"+ {g} family guides to {HELP_ROOT}")
+    print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
+          f"+ {n3} 3-D op pages + {g} family guides to {HELP_ROOT}")
 
 
 def main(argv):

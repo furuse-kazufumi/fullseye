@@ -1,17 +1,18 @@
-<h2 style="color:#f5a524;margin:0 0 4px 0">occupancy_grid <span style="color:#8b91a0;font-size:11px">· occupancy · 3D</span></h2>
-<p style="color:#8b91a0;margin:2px 0"><b>points → voxel</b></p>
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">occupancy_grid — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import occupancy; occupancy.occupancy_grid(points, bounds, res)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;occupancy_grid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群 (N,3) → 3-D 占有ボクセル格子 (res,res,res) bool(点の落ちた voxel を占有)。</p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">occupancy.occupancy_grid(points, bounds, res)</pre>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = voxel)</h3>
-<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (occupancy)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:occupancy_esdf">occupancy_esdf</a> — <code style="color:#22d3bf">py -3.11 examples_3d/occupancy_esdf.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">voxel</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">occupancy</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:esdf">esdf</a> · <a style="color:#22d3bf" href="op3d:inflate">inflate</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
-<p><a style="color:#f5a524" href="example3d:occupancy_esdf">occupancy_esdf</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/occupancy_esdf.py)</span></p>
-
-<p style="color:#8b91a0;font-size:11px">Provenance: occupancy.py (3-D operator registry ops3d).</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: occupancy.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

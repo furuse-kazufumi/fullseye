@@ -1,17 +1,18 @@
-<h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_lines <span style="color:#8b91a0;font-size:11px">· geometry · 3D</span></h2>
-<p style="color:#8b91a0;margin:2px 0"><b>primitive → measurement</b></p>
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">angle_between_lines — 3D <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">primitive</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.angle_between_lines(d1, d2)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;angle_between_lines&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>2 直線方向のなす鋭角(度)。</p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">match3d.angle_between_lines(d1, d2)</pre>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
-<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (geometry)</h3>
-<p><a style="color:#22d3bf" href="op3d:line_from_2points">line_from_2points</a> · <a style="color:#22d3bf" href="op3d:plane_from_3points">plane_from_3points</a> · <a style="color:#22d3bf" href="op3d:angle_3points">angle_3points</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
-<p><a style="color:#f5a524" href="example3d:geometry_metrology">geometry_metrology</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/geometry_metrology.py)</span></p>
-
-<p style="color:#8b91a0;font-size:11px">Provenance: match3d.py (3-D operator registry ops3d).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geometry_metrology">geometry_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geometry_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:line_from_2points">line_from_2points</a> · <a style="color:#22d3bf" href="op3d:plane_from_3points">plane_from_3points</a> · <a style="color:#22d3bf" href="op3d:angle_3points">angle_3points</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

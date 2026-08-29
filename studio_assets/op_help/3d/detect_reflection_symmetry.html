@@ -1,17 +1,21 @@
-<h2 style="color:#f5a524;margin:0 0 4px 0">detect_reflection_symmetry <span style="color:#8b91a0;font-size:11px">· symmetry · 3D</span></h2>
-<p style="color:#8b91a0;margin:2px 0"><b>points → primitive</b></p>
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">detect_reflection_symmetry — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>PCA 主軸を法線とする候補平面(重心通過)から最良の反射対称面を選ぶ。</p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">symmetry3d.detect_reflection_symmetry(points)</pre>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = primitive)</h3>
-<p><a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (symmetry)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:dl_mesh_symmetry">dl_mesh_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/dl_mesh_symmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_symmetry_honest">itokawa_symmetry_honest</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_symmetry_honest.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:reflection_symmetry">reflection_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/reflection_symmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:symmetry">symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/symmetry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">primitive</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:intersect_line_plane">intersect_line_plane</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">symmetry</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:detect_rotational_symmetry">detect_rotational_symmetry</a> · <a style="color:#22d3bf" href="op3d:reflect_points">reflect_points</a> · <a style="color:#22d3bf" href="op3d:reflection_symmetry_score">reflection_symmetry_score</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
-<p><a style="color:#f5a524" href="example3d:dl_mesh_symmetry">dl_mesh_symmetry</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/dl_mesh_symmetry.py)</span> · <a style="color:#f5a524" href="example3d:itokawa_symmetry_honest">itokawa_symmetry_honest</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/itokawa_symmetry_honest.py)</span> · <a style="color:#f5a524" href="example3d:reflection_symmetry">reflection_symmetry</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/reflection_symmetry.py)</span> · <a style="color:#f5a524" href="example3d:symmetry">symmetry</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/symmetry.py)</span></p>
-
-<p style="color:#8b91a0;font-size:11px">Provenance: symmetry3d.py (3-D operator registry ops3d).</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

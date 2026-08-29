@@ -1,17 +1,18 @@
-<h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid <span style="color:#8b91a0;font-size:11px">· deform · 3D</span></h2>
-<p style="color:#8b91a0;margin:2px 0"><b>points × points → pose</b></p>
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Coherent Point Drift(CPD)剛体版で回転+並進を EM 推定する。</p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</pre>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = pose)</h3>
-<p><a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (deform)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:motion_scene">motion_scene</a> — <code style="color:#22d3bf">py -3.11 examples_3d/motion_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pose</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">deform</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:tps_fit">tps_fit</a> · <a style="color:#22d3bf" href="op3d:tps_warp">tps_warp</a> · <a style="color:#22d3bf" href="op3d:register_nonrigid">register_nonrigid</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
-<p><a style="color:#f5a524" href="example3d:motion_scene">motion_scene</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/motion_scene.py)</span></p>
-
-<p style="color:#8b91a0;font-size:11px">Provenance: deform3d.py (3-D operator registry ops3d).</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deform3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

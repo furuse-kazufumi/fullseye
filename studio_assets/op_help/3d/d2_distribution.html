@@ -1,17 +1,18 @@
-<h2 style="color:#f5a524;margin:0 0 4px 0">d2_distribution <span style="color:#8b91a0;font-size:11px">· shape_descriptor · 3D</span></h2>
-<p style="color:#8b91a0;margin:2px 0"><b>points → descriptor</b></p>
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">d2_distribution — 3D <code style="color:#22d3bf">shape_descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import descriptors3d; descriptors3d.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;d2_distribution&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ランダムな 2 点対のユークリッド距離分布(Osada 2002 の D2)。</p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">descriptors3d.d2_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</pre>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = descriptor)</h3>
-<p><a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (shape_descriptor)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_desc_pose">shape_desc_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_desc_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">descriptor</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">shape_descriptor</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:a3_distribution">a3_distribution</a> · <a style="color:#22d3bf" href="op3d:extent_signature">extent_signature</a> · <a style="color:#22d3bf" href="op3d:describe">describe</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
-<p><a style="color:#f5a524" href="example3d:shape_desc_pose">shape_desc_pose</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/shape_desc_pose.py)</span></p>
-
-<p style="color:#8b91a0;font-size:11px">Provenance: descriptors3d.py (3-D operator registry ops3d).</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: descriptors3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

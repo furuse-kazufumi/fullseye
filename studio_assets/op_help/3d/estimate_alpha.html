@@ -1,17 +1,19 @@
-<h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha <span style="color:#8b91a0;font-size:11px">· reconstruct · 3D</span></h2>
-<p style="color:#8b91a0;margin:2px 0"><b>points → measurement</b></p>
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">estimate_alpha — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import recon3d; recon3d.estimate_alpha(points)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;estimate_alpha&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。</p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Call signature</h3>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">recon3d.estimate_alpha(points)</pre>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Type-compatible next ops (out = measurement)</h3>
-<p><a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Same category (reconstruct)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:alpha_shape_topology">alpha_shape_topology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/alpha_shape_topology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">reconstruct</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:poisson_lite">poisson_lite</a> · <a style="color:#22d3bf" href="op3d:alpha_shape_mesh">alpha_shape_mesh</a> · <a style="color:#22d3bf" href="op3d:alpha_shape_boundary">alpha_shape_boundary</a></p>
-
-<h3 style="color:#17b8a6;margin:8px 0 2px 0">Worked examples(この op を使う実行可能サンプル)</h3>
-<p><a style="color:#f5a524" href="example3d:alpha_shape_topology">alpha_shape_topology</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/alpha_shape_topology.py)</span> · <a style="color:#f5a524" href="example3d:sfm_recon">sfm_recon</a> <span style="color:#8b91a0;font-size:11px">(examples_3d/sfm_recon.py)</span></p>
-
-<p style="color:#8b91a0;font-size:11px">Provenance: recon3d.py (3-D operator registry ops3d).</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: recon3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

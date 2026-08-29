@@ -129,3 +129,58 @@ def test_intentional_op_name_overrides_are_pinned():
             f"({ops.RT[n].__module__}.{getattr(ops.RT[n], '__qualname__', '?')})")
         # a core fallback of the same op still exists behind the override
         assert sum(1 for o in ops.REGISTRY if o.name == n) == 2, f"{n}: expected core+override"
+
+
+# --------------------------------------------------------------------------- #
+# 3-D help pages: same md=source-of-truth pipeline as 2-D, bulk-converted into
+# op_help/3d/<name>.html (supersedes the retired tools/gen_op_help_3d.py).
+# --------------------------------------------------------------------------- #
+_3D_RECS = [r for r in _RECS if r["dim"] == "3d"]
+_HELP3D = os.path.join(ROOT, "studio_assets", "op_help", "3d")
+
+
+def test_every_3d_op_has_a_studio_help_page():
+    """3-D help is generated into op_help/3d/<name>.html (namespaced so 2-D/3-D name
+    collisions like fill_holes don't clobber each other)."""
+    missing = [r["name"] for r in _3D_RECS
+               if not os.path.exists(os.path.join(_HELP3D, r["name"] + ".html"))]
+    assert not missing, f"{len(missing)} 3-D ops lack an op_help/3d page: {missing[:20]}"
+
+
+def test_3d_help_is_generated_from_markdown_no_drift():
+    """Each 3-D help page == md_to_html of its committed note (md is the single source of
+    truth), with 3-D op-jump links namespaced op: -> op3d:. If a 3-D op's spec changes, the
+    note drifts and so does this page, forcing `py -3.11 tools/opdocs.py html`."""
+    drift = []
+    for r in _3D_RECS:
+        html_path = os.path.join(_HELP3D, r["name"] + ".html")
+        md_path = OD._op_path(r)
+        if not (os.path.exists(html_path) and os.path.exists(md_path)):
+            continue
+        with open(html_path, encoding="utf-8") as f:
+            on_disk = f.read()
+        with open(md_path, encoding="utf-8") as f:
+            md = f.read()
+        expected = OD._GEN_MARK + "\n" + OD.md_to_html(md).replace('href="op:', 'href="op3d:')
+        if on_disk != expected:
+            drift.append(os.path.relpath(html_path, ROOT))
+    assert not drift, ("3-D help pages are stale — run `py -3.11 tools/opdocs.py html`:\n"
+                       + "\n".join(drift[:30]))
+
+
+def test_3d_help_pages_carry_marker_and_have_no_stray_2d_anchors():
+    """Every 3-D page is machine-generated (carries the marker) and only links to 3-D ops
+    (all op-jump anchors are op3d:, never a bare 2-D op:)."""
+    unmarked, stray = [], []
+    for r in _3D_RECS:
+        p = os.path.join(_HELP3D, r["name"] + ".html")
+        if not os.path.exists(p):
+            continue
+        with open(p, encoding="utf-8") as f:
+            txt = f.read()
+        if OD._GEN_MARK not in txt:
+            unmarked.append(r["name"])
+        if 'href="op:' in txt:
+            stray.append(r["name"])
+    assert not unmarked, f"3-D help pages missing the generated marker: {unmarked[:20]}"
+    assert not stray, f"3-D help pages carry bare 2-D op: anchors (should be op3d:): {stray[:20]}"
