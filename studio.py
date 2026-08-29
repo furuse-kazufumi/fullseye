@@ -1362,6 +1362,36 @@ def op_help_html(name, lang="en", meta=None):
             % (name, m.get("category", "operator"), halcon, sorts, name))
 
 
+def op_help_html_3d(name, meta=None):
+    """Rich HTML help for one 3-D operator (point-cloud / mesh / volume modality).
+
+    Reads ``op_help/3d/<name>.html`` — bulk-generated from the Markdown corpus
+    (``docs/ops/3d/**/*.md``) by ``tools/opdocs.py`` — and falls back to a small card
+    built from the ops3d registry metadata if that file is absent. Kept separate from
+    :func:`op_help_html` because 2-D and 3-D op names can collide (e.g. ``fill_holes``),
+    so the two help sets live in different directories and are looked up by modality."""
+    p = os.path.join(_ASSETS, "op_help", "3d", "%s.html" % name)
+    if os.path.exists(p):
+        try:
+            with open(p, encoding="utf-8") as f:
+                return f.read()
+        except Exception:
+            pass
+
+    def _e(s):
+        return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    m = meta or {}
+    ins = m.get("in", "?")
+    ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else ins
+    return ("<h2 style='color:#f5a524;margin:0 0 4px 0'>%s "
+            "<span style='color:#8b91a0;font-size:11px'>· %s · 3D</span></h2>"
+            "<p style='color:#8b91a0'><b>%s → %s</b></p>"
+            "<p>%s</p>"
+            "<p style='color:#8b91a0;font-size:11px'>No authored help yet — run "
+            "<code>py -3.11 tools/opdocs.py html</code> to generate 3-D help from "
+            "<code>docs/ops/3d/</code>.</p>"
+            % (_e(name), _e(m.get("category", "operator")), _e(ins),
+               _e(m.get("out", "?")), _e(m.get("doc") or "")))
 
 
 def _program_editor_class(QtWidgets, QtGui, QtCore):
@@ -1717,6 +1747,10 @@ def build_window(model=None):
     act_3d_examples.setToolTip("Browse the 3-D vision worked examples "
                                "(real Itokawa / skeleton-CT / synthetic) and copy their code")
     m.addAction(act_3d_examples); win._act_3d_examples = act_3d_examples
+    act_3d_ops = QtGui.QAction("3-D Operators…", win)   # ops3d リファレンス(help ページ閲覧)
+    act_3d_ops.setToolTip("Browse all 3-D operators (point-cloud / mesh / volume) with their "
+                          "generated help pages and type-compatible neighbours")
+    m.addAction(act_3d_ops); win._act_3d_ops = act_3d_ops
     m.addSeparator()
     m.addAction(act_save_res); m.addAction(act_copy_res)      # result out
     m.addSeparator(); m.addAction(act_quit)
@@ -3275,6 +3309,100 @@ def build_window(model=None):
         win._samples_dlg = dlg                     # reuse; hidden on close, shown on reopen
         dlg.show()
 
+    def show_3d_ops():
+        # 3-D operator reference: browse all ops3d operators (point-cloud / mesh / volume) with
+        # their generated help pages (op_help/3d/<name>.html, single-sourced from the
+        # docs/ops/3d Markdown corpus by tools/opdocs.py). Separate from the 2-D op reference
+        # because the two modalities carry different sorts and 2-D/3-D op names can collide
+        # (e.g. fill_holes). Related-op links (op3d:) navigate within this dialog; example3d:
+        # links show the worked-example source.
+        if getattr(win, "_ops3d_dlg", None) is not None:
+            win._ops3d_dlg.show(); win._ops3d_dlg.raise_(); win._ops3d_dlg.activateWindow()
+            return
+        try:
+            import ops3d as O3
+        except Exception as e:
+            report_error("3-D operators", e); return
+        reg = O3.OPS3D
+        names = sorted(reg.keys())
+        dlg = QtWidgets.QDialog(win); dlg.setWindowTitle("3-D Operators — Fullseye 3D vision")
+        tag_dialog(dlg, "reference"); dlg.setModal(False)
+        h = QtWidgets.QHBoxLayout(dlg)
+
+        def _kind(v):
+            return " × ".join(v) if isinstance(v, (list, tuple)) else str(v)
+
+        left = QtWidgets.QVBoxLayout()
+        lbl = QtWidgets.QLabel("3-D operators (%d) — point-cloud / mesh / volume" % len(names))
+        lbl.setProperty("muted", True)
+        filt = QtWidgets.QLineEdit(); filt.setPlaceholderText("filter by name / category / kind…")
+        filt.setClearButtonEnabled(True)
+        lst = QtWidgets.QListWidget()
+
+        def refill(_=None):
+            q = filt.text().strip().lower(); lst.clear()
+            for n in names:
+                info = reg[n]
+                hay = (n + " " + info["category"] + " " + _kind(info["in"]) + " "
+                       + str(info["out"]) + " " + (info.get("doc") or "")).lower()
+                if q and q not in hay:
+                    continue
+                it = QtWidgets.QListWidgetItem("[%s] %s  ·  %s → %s"
+                                               % (info["category"], n, _kind(info["in"]), info["out"]))
+                it.setData(QtCore.Qt.UserRole, n); lst.addItem(it)
+            if lst.count():
+                lst.setCurrentRow(0)
+        filt.textChanged.connect(refill)
+        left.addWidget(lbl); left.addWidget(filt); left.addWidget(lst, 1)
+
+        br = QtWidgets.QTextBrowser(); br.setOpenLinks(False); br.setOpenExternalLinks(False)
+
+        def show3d(n):
+            if n:
+                br.setHtml(op_help_html_3d(n, reg.get(n)))
+
+        def _select(n):
+            for row in range(lst.count()):
+                if lst.item(row).data(QtCore.Qt.UserRole) == n:
+                    lst.blockSignals(True); lst.setCurrentRow(row); lst.blockSignals(False)
+                    break
+
+        def _anchor(url):
+            s = url.toString()
+            if s.startswith("op3d:"):            # jump to a type-compatible / same-category 3-D op
+                n = s[5:]
+                if n in reg:
+                    _select(n); show3d(n)
+            elif s.startswith("example3d:"):     # show a worked-example's source
+                ex = s.split(":", 1)[1]
+                p = os.path.join(os.path.dirname(_ASSETS), "examples_3d", ex + ".py")
+                if os.path.exists(p):
+                    try:
+                        with open(p, encoding="utf-8") as f:
+                            src = f.read()
+                        esc = src.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                        br.setHtml("<h2 style='color:#f5a524'>%s</h2>"
+                                   "<p style='color:#8b91a0'>実行できる検証済みサンプル · "
+                                   "<code>py -3.11 examples_3d/%s.py</code></p>"
+                                   "<pre style='background:#12141b;border:1px solid #2c313f;"
+                                   "padding:6px;color:#22d3bf'>%s</pre>" % (ex, ex, esc))
+                    except Exception:
+                        pass
+                else:
+                    flash("example source not found: examples_3d/%s.py" % ex)
+        br.anchorClicked.connect(_anchor)
+        lst.currentRowChanged.connect(
+            lambda _=None: show3d(lst.currentItem().data(QtCore.Qt.UserRole)) if lst.currentItem() else None)
+
+        h.addLayout(left, 1); h.addWidget(br, 2)
+        refill()
+        if lst.count():
+            show3d(lst.currentItem().data(QtCore.Qt.UserRole))
+        dlg.resize(940, 620)
+        win._ops3d_dlg = dlg
+        win._ops3d = {"dialog": dlg, "list": lst, "browser": br, "show": show3d}
+        dlg.show(); dlg.raise_(); dlg.activateWindow()
+
     def show_3d_examples():
         # 3-D toolkit gallery: browse the ops3d worked examples (real Itokawa / skeleton-CT /
         # synthetic data), read each one's ground-truth-checked code, RUN it in place to see the
@@ -4149,6 +4277,7 @@ def build_window(model=None):
                              if op_list.currentItem() else (op_names[0] if op_names else "")))
     act_samples.triggered.connect(show_samples)
     act_3d_examples.triggered.connect(show_3d_examples)
+    act_3d_ops.triggered.connect(show_3d_ops)
     act_2d_examples.triggered.connect(show_2d_examples)
     b_browse_samples.clicked.connect(show_samples)       # sample gallery reachable from the panel
     win._samples = samples

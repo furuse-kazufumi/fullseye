@@ -267,6 +267,42 @@ def test_op_help_card_for_general_tier_is_not_knob_text():
     assert "<h2" in th and "threshold" in th
 
 
+def test_op_help_html_3d_reads_generated_and_falls_back():
+    # 3-D op help is looked up by modality (op_help/3d/<name>.html), single-sourced from the
+    # docs/ops/3d Markdown corpus, so it does not collide with the 2-D help of the same name.
+    import ops3d
+    h = studio.op_help_html_3d("points_to_voxel", ops3d.OPS3D.get("points_to_voxel"))
+    assert "points_to_voxel" in h and "opdocs:generated" in h   # the generated 3-D page
+    if "fill_holes" in ops3d.OPS3D:   # a name that exists in BOTH registries
+        h3d = studio.op_help_html_3d("fill_holes", ops3d.OPS3D.get("fill_holes"))
+        h2d = studio.op_help_html("fill_holes", "en", studio._op_row("fill_holes"))
+        assert h3d != h2d, "3-D and 2-D help for a colliding op name must be distinct pages"
+    # unknown op -> escaped registry-metadata fallback card, no generated marker
+    f = studio.op_help_html_3d("__no_such_3d_op__", {"category": "x", "in": "points",
+                                                     "out": "voxel", "doc": "a & <b>"})
+    assert "· 3D" in f and "tools/opdocs.py html" in f
+    assert "&amp;" in f and "&lt;b&gt;" in f
+    assert "opdocs:generated" not in f
+
+
+def test_studio_exposes_3d_operator_reference_offscreen():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    pytest.importorskip("PySide6")
+    import ops3d
+    from PySide6 import QtWidgets
+
+    app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])  # noqa: F841
+    win, _model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert hasattr(win, "_act_3d_ops"), "the '3-D Operators…' menu action is missing"
+    win._act_3d_ops.trigger()                       # opens the 3-D operator reference dialog
+    assert getattr(win, "_ops3d", None) is not None
+    assert win._ops3d["list"].count() == len(ops3d.OPS3D), \
+        "the 3-D op reference must list every ops3d operator"
+    win._ops3d["show"]("points_to_voxel")           # selecting an op renders its help
+    assert "points_to_voxel" in win._ops3d["browser"].toHtml()
+    win._ops3d["dialog"].close()
+
+
 def test_program_editor_and_help_exclude_general_tier_offscreen():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     pytest.importorskip("PySide6")
