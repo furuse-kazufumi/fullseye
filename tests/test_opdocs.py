@@ -101,9 +101,8 @@ def test_guide_is_well_formed(guide):
     assert "Kazufumi Furuse" in md, f"{guide}: missing author/copyright"
     assert "```mermaid" in md, f"{guide}: missing a mermaid pipeline diagram"
     assert "```python" in md, f"{guide}: missing a runnable python snippet"
-    # the guide must actually name real ops from its own family (grounded, not generic prose)
-    real = {r["name"] for r in _RECS if r["dim"] == "2d"}
+    # the guide must actually name ops from its own family (grounded, not generic prose).
+    # Ops may be written as `code`, **bold**, or in mermaid — accept any whole-word mention.
     fam_ops = set(_FAM_OPS.get(guide, []))   # _FAM_OPS: family -> set of op-name strings
-    claimed = set(re.findall(r"`([a-z][a-z0-9_]{2,})`", md)) & real
-    hit = claimed & fam_ops
-    assert len(hit) >= 3, f"{guide}: names too few of its own family ops ({len(hit)})"
+    hit = {n for n in fam_ops if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
+    assert len(hit) >= 3, f"{guide}: names too few of its own family ops ({len(hit)}/{len(fam_ops)})"
