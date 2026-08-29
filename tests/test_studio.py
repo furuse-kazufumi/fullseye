@@ -258,8 +258,13 @@ def test_op_help_card_for_general_tier_is_not_knob_text():
         assert "general-algorithm tier" in html
         assert f"algo run {name}" in html                    # the real (CLI) way to run it
         assert algo.ALGO_BY_NAME[name].provenance.split(";")[0][:12] in html   # provenance shown
-    # an image op is unaffected: it still gets the knob card
-    assert "Two knobs" in studio.op_help_html("threshold", "en", studio._op_row("threshold"))
+    # an image op is unaffected by the general-tier branch: it shows its own image-op help,
+    # never the general-tier card. (Every image op now has a generated op_help/<name>.html
+    # card from docs/ops via tools/opdocs.py, so it no longer falls through to the bare
+    # "Two knobs" registry fallback — the property under test is that it isn't general-tier.)
+    th = studio.op_help_html("threshold", "en", studio._op_row("threshold"))
+    assert "general-algorithm tier" not in th
+    assert "<h2" in th and "threshold" in th
 
 
 def test_program_editor_and_help_exclude_general_tier_offscreen():
