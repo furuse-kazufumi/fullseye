@@ -1,0 +1,177 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">テクスチャ・周波数・分解 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>この族は「<b>模様・周期・照明/反射の分離</b>」を測るための 2-D オペレータ 48 本の道具箱です。入力は一枚のグレー画像(float64、<code style="color:#22d3bf">[0,1]</code>)、つまみは 2 つのスカラ <code style="color:#22d3bf">a,b ∈ [0,1]</code>。出力は用途に応じて次の 3 種になります。<b>画像→画像</b>(スペクトル、フィルタ済み画像、テクスチャ応答マップ、分解した各層)が大半で、<code style="color:#22d3bf">cooc_feature_matrix</code> だけは <b>画像→特徴スカラ</b>(<code style="color:#22d3bf">[0,1]</code> の GLCM Haralick 値)を返します。</p>
+<p>大きく 3 つのカテゴリに分かれます。<b>texture</b>(局所統計・エントロピ・Gabor/LBP/Laws・リッジ強調・census/rank)は「そこに模様があるか、どの向きか」を画素ごとに応答へ変える。<b>frequency</b>(FFT/DCT/wavelet のスペクトル、ローパス/ハイパス/バンドパス、Radon)は画像を周波数の言葉に置き換えて、帯域で通したり落としたりする。<b>decomposition</b>(構造+テクスチャ、RPCA の低ランク+疎、Retinex、homomorphic、局所コントラスト正規化)は一枚の画像を「滑らかな背景/照明」と「その上のディテール/欠陥」に分ける。工業表面検査では *欠陥* とはまさに背景モデルに属さない残差のことなので、この分解層がそのまま検査対象になります。値域は <code style="color:#22d3bf">[0,1]</code> に固定されません — ハイパス/バンドパス/逆FFT は負のディテールを持つのが正しく、実装は零点を 0.5 に写す <code style="color:#22d3bf">signed01</code> 正規化で負の半分を保存します(グラウンドトゥルース検査済み: <code style="color:#22d3bf">examples/gallery2d_texture_freq.py</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>周波数側は「スペクトルを覗く」経路と「帯域で空間フィルタする」経路に分かれます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    I[&quot;image&lt;br/&gt;gray [0,1]&quot;] --&gt; FFT[&quot;fft_image / power_ln&lt;br/&gt;log パワースペクトル&quot;] --&gt; SPEC[&quot;image&lt;br/&gt;(スペクトル表示)&quot;]
+    I --&gt; LP[&quot;lowpass&quot;] --&gt; B[&quot;image&lt;br/&gt;(ぼかし=低域)&quot;]
+    I --&gt; HP[&quot;highpass&quot;] --&gt; D[&quot;image&lt;br/&gt;(エッジ=高域, 零点0.5)&quot;]
+    I --&gt; BP[&quot;bandpass_image&quot;] --&gt; M[&quot;image&lt;br/&gt;(中域のみ)&quot;]</pre>
+<p>テクスチャ・分解側は「背景と残差に割る → 残差のエネルギを測る → しきい値で欠陥領域にする」と繋がり、下流の segmentation 族へ橋渡しされます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    I[&quot;image&quot;] --&gt; ST[&quot;dc_structure_texture&quot;] --&gt; S[&quot;image&lt;br/&gt;(構造/cartoon)&quot;]
+    I --&gt; TR[&quot;dc_texture_residual&quot;] --&gt; T[&quot;image&lt;br/&gt;(テクスチャ層 @0.5)&quot;]
+    T --&gt; SF[&quot;std_filter / entropy_image&quot;] --&gt; MAP[&quot;image&lt;br/&gt;(テクスチャ・エネルギ地図)&quot;]
+    MAP --&gt; TH[&quot;threshold&lt;br/&gt;(segmentation 族)&quot;] --&gt; R[&quot;region&lt;br/&gt;(欠陥マスク)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>呼び出しは全 op 共通で <code style="color:#22d3bf">fullseye.apply(img, &quot;&lt;name&gt;&quot;, a, b)</code>。<code style="color:#22d3bf">a,b</code> 省略時は 0.5。以下、各 op を「名前 — 何をするか — 呼び出し例」で。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">周波数変換とスペクトル(FFT / DCT / wavelet / Radon)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fft_image</code> — 2-D FFT の対数パワースペクトル <code style="color:#22d3bf">log(1+|F|)</code> を <code style="color:#22d3bf">[0,1]</code> 表示。<code style="color:#22d3bf">fullseye.apply(img, &quot;fft_image&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fft_generic</code> — <code style="color:#22d3bf">fft_image</code> と同じ対数パワースペクトル(HALCON <code style="color:#22d3bf">fft_generic</code> 別名)。<code style="color:#22d3bf">fullseye.apply(img, &quot;fft_generic&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_ln</code> — 対数パワースペクトル(HALCON <code style="color:#22d3bf">power_ln</code>、<code style="color:#22d3bf">fft_image</code> と同経路)。<code style="color:#22d3bf">fullseye.apply(img, &quot;power_ln&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_real</code> — スペクトル実部の絶対値 <code style="color:#22d3bf">|Re(F)|</code> を正規化(HALCON <code style="color:#22d3bf">power_real</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;power_real&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rft_generic</code> — <code style="color:#22d3bf">power_real</code> と同じ実部スペクトル(HALCON <code style="color:#22d3bf">rft_generic</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;rft_generic&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">power_byte</code> — パワースペクトル(対数パワー、byte 表示相当、HALCON <code style="color:#22d3bf">power_byte</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;power_byte&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_rad</code> — スペクトルの位相角を <code style="color:#22d3bf">(angle+π)/2π</code> で <code style="color:#22d3bf">[0,1]</code> へ(HALCON <code style="color:#22d3bf">phase_rad</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;phase_rad&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_deg</code> — <code style="color:#22d3bf">phase_rad</code> と同じ位相マップ(HALCON <code style="color:#22d3bf">phase_deg</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;phase_deg&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fft_image_inv</code> — 逆 FFT の実部を正規化(HALCON <code style="color:#22d3bf">fft_image_inv</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;fft_image_inv&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_dct</code> — 2-D DCT の対数振幅スペクトル。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xwt_subband_tile</code> — Haar DWT の 4 サブバンド(LL/LH/HL/HH)を 2×2 に敷き詰めたモザイク。<code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_subband_tile&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xwt_mra_component</code> — 多重解像度解析(MRA, db2, 3 レベル)の 1 成分を <code style="color:#22d3bf">a</code> で選択。<code style="color:#22d3bf">fullseye.apply(img, &quot;xwt_mra_component&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk2_radon</code> — Radon 変換のサイノグラム(0..180°)を入力サイズへリサイズ。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_radon&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">周波数フィルタ(帯域で通す/落とす)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lowpass</code> — FFT の円形マスクで半径 <code style="color:#22d3bf">≤ 0.05+0.4a</code> を残す(高周波を落とす=ぼかし)。<code style="color:#22d3bf">fullseye.apply(img, &quot;lowpass&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">highpass</code> — FFT の高周波側を通す(エッジ検出、零点 0.5 の <code style="color:#22d3bf">signed01</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;highpass&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">highpass_image</code> — <code style="color:#22d3bf">highpass</code> 同等(HALCON <code style="color:#22d3bf">highpass_image</code> 別名)。<code style="color:#22d3bf">fullseye.apply(img, &quot;highpass_image&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bandpass_image</code> — 半径 <code style="color:#22d3bf">a</code> 下限〜<code style="color:#22d3bf">b</code> 上限の帯域だけを通す(HALCON <code style="color:#22d3bf">bandpass_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;bandpass_image&quot;, 0.3, 0.7)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_butterworth</code> — Butterworth 低域通過(<code style="color:#22d3bf">a</code> = カットオフ比)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_butterworth&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_dct_lowpass</code> — DCT 係数の左上ブロックだけ残す低域通過(周波数領域のぼかし)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_dct_lowpass&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_homomorphic</code> — <code style="color:#22d3bf">log(I)</code> を Fourier 領域で高域強調し照明を平坦化(<code style="color:#22d3bf">a</code> = カットオフ、<code style="color:#22d3bf">b</code> = 高/低ゲイン差)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_homomorphic&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">テクスチャ記述(局所統計・エントロピ・対称性)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">std_filter</code> — 局所窓の標準偏差 <code style="color:#22d3bf">√(⟨I²⟩−⟨I⟩²)</code> を正規化(平坦部≈0、模様部で大)。<code style="color:#22d3bf">fullseye.apply(img, &quot;std_filter&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">deviation_image</code> — 局所標準偏差(HALCON <code style="color:#22d3bf">deviation_image</code>、<code style="color:#22d3bf">std_filter</code> と同族)。<code style="color:#22d3bf">fullseye.apply(img, &quot;deviation_image&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">texture_laws</code> — 局所分散ベースのテクスチャエネルギ(Laws、HALCON <code style="color:#22d3bf">texture_laws</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;texture_laws&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">entropy_image</code> — 局所ヒストグラムのエントロピ(定数≈0、ノイズ/模様で高、HALCON <code style="color:#22d3bf">entropy_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;entropy_image&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_entropy</code> — skimage rank エントロピによる局所エントロピ(<code style="color:#22d3bf">entropy_image</code> の別実装)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_entropy&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cooc_feature_matrix</code> — GLCM(共起行列)の Haralick 特徴 energy を <b>スカラ</b> <code style="color:#22d3bf">[0,1]</code> で返す(HALCON <code style="color:#22d3bf">cooc_feature_matrix</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;cooc_feature_matrix&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_symmetry</code> — 行方向の局所左右対称性(非対称度、低値=対称、HALCON <code style="color:#22d3bf">symmetry</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_symmetry&quot;, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">方向性・リッジ・畳み込み系テクスチャフィルタ</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gabor</code> — DC を除いた Gabor カーネルで畳み込み帯域応答(<code style="color:#22d3bf">a</code>=向き θ、<code style="color:#22d3bf">b</code>=周波数)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gabor&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gen_gabor</code> — <code style="color:#22d3bf">gabor</code> と同じ Gabor 帯域応答(HALCON <code style="color:#22d3bf">gen_gabor</code> 別名)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gen_gabor&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_gabor</code> — skimage Gabor 実部の振幅(<code style="color:#22d3bf">a</code>=周波数)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_gabor&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_frangi</code> — Frangi vesselness(多スケール Hessian で管状/リッジ構造を強調)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_frangi&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_meijering</code> — Meijering neuriteness(神経突起状の線構造を強調)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_meijering&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_meijering</code> — <code style="color:#22d3bf">sk_meijering</code> 同等の Meijering 線フィルタ。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_meijering&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_hessian</code> — Hessian ベースのリッジ/ブロブ強調フィルタ。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_hessian&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_sato</code> — Sato tubeness(多スケール Hessian の管状構造フィルタ)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_sato&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_shape_index</code> — Koenderink 形状インデックス(局所曲面の形、<code style="color:#22d3bf">signed01</code>、<code style="color:#22d3bf">a</code>=σ)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_shape_index&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_struct_coherence</code> — 構造テンソル固有値のコヒーレンス <code style="color:#22d3bf">(λ1−λ2)/(λ1+λ2)</code>(異方性の強さ)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk_struct_coherence&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk2_hog</code> — HOG(勾配方向ヒストグラム)の可視化画像。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_hog&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_lbp</code> — Local Binary Pattern のコード画像(<code style="color:#22d3bf">a</code>=半径)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_lbp&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_hilbert_env</code> — 行方向の解析信号(Hilbert 変換)の包絡振幅。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_hilbert_env&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">順序不変(census / rank、照明ゲインに頑健)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tf_census_transform</code> — 3×3 近傍との大小比較 8 ビットの census 署名(正のゲインで不変)。<code style="color:#22d3bf">fullseye.apply(img, &quot;tf_census_transform&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tf_rank_transform</code> — 局所窓で自分より小さい近傍の割合=順位(正のゲインで不変)。<code style="color:#22d3bf">fullseye.apply(img, &quot;tf_rank_transform&quot;, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">構造+テクスチャ / 低ランク+疎の分解(検査向け)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_structure_texture</code> — TV-L2(ROF, Chambolle 双対)で構造/cartoon 層を抽出(<code style="color:#22d3bf">a</code>=平滑重み)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_structure_texture&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_texture_residual</code> — テクスチャ層 = 入力 − 構造(0.5 中心)。<code style="color:#22d3bf">structure + (texture−0.5) == input</code>(飽和しない範囲で)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_texture_residual&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_rpca_lowrank</code> — Robust PCA(Principal Component Pursuit)の低ランク(背景)層(<code style="color:#22d3bf">a</code>=疎/ランクしきい)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_rpca_lowrank&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_rpca_sparse</code> — RPCA の疎(欠陥/異常)残差 = 入力 − 低ランク(0.5 中心)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_rpca_sparse&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_retinex</code> — 単一スケール Retinex <code style="color:#22d3bf">log(I)−log(G_σ*I)</code>(照明不変な反射率、<code style="color:#22d3bf">a</code>=スケール、<code style="color:#22d3bf">b</code>=ゲイン)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_retinex&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_local_contrast_norm</code> — 局所コントラスト正規化 <code style="color:#22d3bf">(I−μ_w)/(σ_w+ε)</code>(0.5 中心、<code style="color:#22d3bf">a</code>=窓、<code style="color:#22d3bf">b</code>=std 下限)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_local_contrast_norm&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_texture_freq から)</h3>
+<p>repo 直下(<code style="color:#22d3bf">C:/dev/projects/imgevolve</code>)で <code style="color:#22d3bf">py -3.11 &lt;保存名&gt;.py</code> を実行すると、周波数フィルタ・テクスチャ統計・順序不変性・分解の再構成をグラウンドトゥルースで検証し、最後に <code style="color:#22d3bf">PASS</code> を出力します。検証済みギャラリー <code style="color:#22d3bf">examples/gallery2d_texture_freq.py</code> の GT を土台にした自己完結コードです。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import os, sys
+sys.path.insert(0, os.getcwd())          # imgevolve リポジトリ直下から実行する
+import numpy as np
+import fullseye
+
+
+def lapvar(z):
+    &quot;&quot;&quot;高周波エネルギの近似: 4 近傍ラプラシアンの分散。&quot;&quot;&quot;
+    lap = z[2:, 1:-1] + z[:-2, 1:-1] + z[1:-1, 2:] + z[1:-1, :-2] - 4 * z[1:-1, 1:-1]
+    return float((lap ** 2).mean())
+
+
+# --- テスト画像を合成(勾配 + 円盤 + 市松 + 微小ノイズ)と補助パターン ---
+n = 64
+yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+rng = np.random.default_rng(20260812)
+disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) &lt; (n * 0.18) ** 2
+checker = ((xx.astype(int) // 6 + yy.astype(int) // 6) % 2) * 0.15
+img = np.clip(0.35 * (xx / (n - 1)) + 0.45 * disk + checker
+              + 0.03 * rng.standard_normal((n, n)), 0, 1)
+step = np.where(xx &lt; n / 2, 0.2, 0.8)          # 中央に鋭い縦エッジ
+flat = np.full((n, n), 0.4)                    # 平坦
+tex = np.clip(0.4 + 0.25 * rng.standard_normal((n, n)), 0, 1)  # テクスチャ
+
+# 1) lowpass は高周波エネルギを半分未満に落とす(ぼかし)
+assert lapvar(fullseye.apply(img, &quot;lowpass&quot;, 0.5, 0.5)) &lt; 0.5 * lapvar(img)
+
+# 2) highpass はエッジ上で平坦部よりはるかに強く応答する(0.5 = ディテール無し)
+hp = fullseye.apply(step, &quot;highpass&quot;, 0.5, 0.5)
+col = n // 2
+edge = float(np.abs(hp[:, col - 1:col + 1] - 0.5).mean())
+flat_e = float(np.abs(hp[:, 2:6] - 0.5).mean())
+assert edge &gt; 3.0 * flat_e
+
+# 3) std_filter: 平坦部の局所標準偏差 ≈ 0、テクスチャ部で大
+assert float(fullseye.apply(flat, &quot;std_filter&quot;, 0.5, 0.5).mean()) &lt; 1e-3
+assert float(fullseye.apply(tex, &quot;std_filter&quot;, 0.5, 0.5).mean()) &gt; 0.1
+
+# 4) entropy_image: 定数画像 ≈ 0、ノイズ/テクスチャで高い
+assert float(fullseye.apply(flat, &quot;entropy_image&quot;, 0.5, 0.5).mean()) &lt; 1e-6
+assert float(fullseye.apply(tex, &quot;entropy_image&quot;, 0.5, 0.5).mean()) &gt; 0.3
+
+# 5) tf_rank_transform: 正のゲインに不変(順序のみ依存)、コントラスト反転では変化
+r1 = fullseye.apply(img, &quot;tf_rank_transform&quot;, 0.5, 0.0)
+assert np.array_equal(r1, fullseye.apply(0.6 * img, &quot;tf_rank_transform&quot;, 0.5, 0.0))
+assert not np.array_equal(r1, fullseye.apply(1.0 - img, &quot;tf_rank_transform&quot;, 0.5, 0.0))
+
+# 6) xsp_dct_lowpass も高周波エネルギを半減以下にする(周波数領域のぼかし)
+assert lapvar(fullseye.apply(img, &quot;xsp_dct_lowpass&quot;, 0.5, 0.5)) &lt; 0.5 * lapvar(img)
+
+# 7) 構造 + (テクスチャ - 0.5) は入力を再構成する(飽和しない画素で厳密)
+s = fullseye.apply(img, &quot;dc_structure_texture&quot;, 0.5, 0.5)
+t = fullseye.apply(img, &quot;dc_texture_residual&quot;, 0.5, 0.5)
+unsat = (t &gt; 1e-9) &amp; (t &lt; 1 - 1e-9)
+assert np.allclose((s + (t - 0.5))[unsat], img[unsat], atol=1e-6)
+
+# 8) cooc_feature_matrix は [0,1] のスカラ特徴を返す(画像 → 特徴)
+c = float(fullseye.apply(img, &quot;cooc_feature_matrix&quot;, 0.5, 0.5))
+assert 0.0 &lt;= c &lt;= 1.0
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>パワースペクトル(<code style="color:#22d3bf">fft_image</code> / <code style="color:#22d3bf">fft_generic</code> / <code style="color:#22d3bf">power_ln</code> / <code style="color:#22d3bf">power_byte</code>)は FFT の対数振幅で、$S(u,v) = \log\!\bigl(1 + |\mathcal{F}\{I\}(u,v)|\bigr)$。位相(<code style="color:#22d3bf">phase_rad</code> / <code style="color:#22d3bf">phase_deg</code>)は $\phi = \dfrac{\angle \mathcal{F}\{I\} + \pi}{2\pi} \in [0,1]$。</p>
+<p>周波数フィルタ(<code style="color:#22d3bf">lowpass</code> / <code style="color:#22d3bf">highpass</code> / <code style="color:#22d3bf">bandpass_image</code>)は放射周波数 $r=\sqrt{f_u^2+f_v^2}$ のマスク乗算と逆変換:</p>
+<p>$$\hat{I} = \mathcal{F}^{-1}\!\bigl\{ \mathcal{F}\{I\}\cdot M(r) \bigr\},\quad</p>
+<p>M_{\text{lp}}(r)=\mathbb{1}[r\le r_0],\;\;</p>
+<p>M_{\text{hp}}(r)=\mathbb{1}[r&gt; r_0],\;\;</p>
+<p>M_{\text{bp}}(r)=\mathbb{1}[r_{\text{lo}}&lt;r&lt;r_{\text{hi}}].$$</p>
+<p>局所標準偏差(<code style="color:#22d3bf">std_filter</code> / <code style="color:#22d3bf">deviation_image</code>)は窓 $w$ 上で $\sigma_w=\sqrt{\overline{I^2}-\bar{I}^2}$。局所コントラスト正規化(<code style="color:#22d3bf">dc_local_contrast_norm</code>)は $\dfrac{I-\mu_w}{\sigma_w+\epsilon}$ を 0.5 中心へ。</p>
+<p>局所エントロピ(<code style="color:#22d3bf">entropy_image</code> / <code style="color:#22d3bf">sk_entropy</code>)は局所ヒストグラム $\{p_k\}$ に対し $H=-\sum_k p_k\log_2 p_k$。GLCM energy(<code style="color:#22d3bf">cooc_feature_matrix</code>)は正規化共起行列 $P$ の角二次モーメント $E=\sum_{i,j} P(i,j)^2$。</p>
+<p>Gabor カーネル(<code style="color:#22d3bf">gabor</code> / <code style="color:#22d3bf">gen_gabor</code>)は $g(x,y)=e^{-(x^2+y^2)/2\sigma^2}\cos\!\bigl(2\pi f\,x_\theta\bigr)$($x_\theta=x\cos\theta+y\sin\theta$)を <b>DC 除去</b> $g\leftarrow g-\bar{g}$ して帯域通過にしたもの。構造テンソルのコヒーレンス(<code style="color:#22d3bf">xsk_struct_coherence</code>)は固有値 $\lambda_1\ge\lambda_2$ から $C=\dfrac{\lambda_1-\lambda_2}{\lambda_1+\lambda_2}$。</p>
+<p>Retinex 反射率(<code style="color:#22d3bf">dc_retinex</code>)は $R=\log I-\log(G_\sigma * I)$。構造/テクスチャ分解(<code style="color:#22d3bf">dc_structure_texture</code> / <code style="color:#22d3bf">dc_texture_residual</code>)は ROF の TV-L2 問題 $\min_u \dfrac{1}{2\lambda}\lVert u-I\rVert_2^2+\mathrm{TV}(u)$ の解 $u$(構造)と残差 $I-u$(テクスチャ)。Robust PCA(<code style="color:#22d3bf">dc_rpca_lowrank</code> / <code style="color:#22d3bf">dc_rpca_sparse</code>)は Principal Component Pursuit $\min_{L,S}\lVert L\rVert_*+\lambda\lVert S\rVert_1 \ \text{s.t.}\ L+S=I$ の低ランク $L$ と疎 $S$。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグには <code style="color:#22d3bf">../../SAMPLES.md</code> の 2-D 画像源を使えます。合成の <code style="color:#22d3bf">checker_noisy</code>・<code style="color:#22d3bf">grain_synth</code>・<code style="color:#22d3bf">weave_synth</code>・<code style="color:#22d3bf">brick_quilt</code> は周期/テクスチャ応答(Gabor/LBP/<code style="color:#22d3bf">std_filter</code>/<code style="color:#22d3bf">cooc_feature_matrix</code>)や帯域フィルタの確認に、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">camera</code>・<code style="color:#22d3bf">coins</code>(BSD/public domain)は構造+テクスチャ分解や FFT スペクトルの確認に向きます。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;&lt;name&gt;&quot;)</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳 <code style="color:#22d3bf">../../../REFERENCES.md</code>。DOI は付さず Author Year, &quot;Title&quot; 形式。</p>
+<p style="margin:2px 0 2px 12px">• Cooley, J. W. &amp; Tukey, J. W. (1965). &quot;An Algorithm for the Machine Calculation of Complex Fourier Series.&quot; *Mathematics of Computation.* — <code style="color:#22d3bf">fft_image</code> / <code style="color:#22d3bf">fft_generic</code> / <code style="color:#22d3bf">power_*</code> / <code style="color:#22d3bf">phase_*</code> / <code style="color:#22d3bf">fft_image_inv</code></p>
+<p style="margin:2px 0 2px 12px">• Ahmed, N., Natarajan, T. &amp; Rao, K. R. (1974). &quot;Discrete Cosine Transform.&quot; *IEEE Transactions on Computers.* — <code style="color:#22d3bf">xsp_dct</code> / <code style="color:#22d3bf">xsp_dct_lowpass</code></p>
+<p style="margin:2px 0 2px 12px">• Mallat, S. (1989). &quot;A Theory for Multiresolution Signal Decomposition: The Wavelet Representation.&quot; *IEEE TPAMI.* — <code style="color:#22d3bf">xwt_subband_tile</code> / <code style="color:#22d3bf">xwt_mra_component</code></p>
+<p style="margin:2px 0 2px 12px">• Radon, J. (1917). &quot;Über die Bestimmung von Funktionen durch ihre Integralwerte längs gewisser Mannigfaltigkeiten.&quot; — <code style="color:#22d3bf">xsk2_radon</code></p>
+<p style="margin:2px 0 2px 12px">• Gonzalez, R. C. &amp; Woods, R. E. &quot;Digital Image Processing.&quot; — 周波数領域フィルタ <code style="color:#22d3bf">lowpass</code> / <code style="color:#22d3bf">highpass</code> / <code style="color:#22d3bf">bandpass_image</code> / <code style="color:#22d3bf">sk_butterworth</code>(Butterworth 1930)</p>
+<p style="margin:2px 0 2px 12px">• Oppenheim, A. V., Schafer, R. W. &amp; Stockham, T. G. (1968). &quot;Nonlinear Filtering of Multiplied and Convolved Signals.&quot; *Proceedings of the IEEE.* — <code style="color:#22d3bf">dc_homomorphic</code></p>
+<p style="margin:2px 0 2px 12px">• Gabor, D. (1946). &quot;Theory of Communication.&quot; *Journal of the IEE.* — 解析信号包絡 <code style="color:#22d3bf">xsp_hilbert_env</code></p>
+<p style="margin:2px 0 2px 12px">• Daugman, J. G. (1985). &quot;Uncertainty Relation for Resolution in Space, Spatial Frequency, and Orientation Optimized by Two-Dimensional Visual Cortical Filters.&quot; *JOSA A.* — <code style="color:#22d3bf">gabor</code> / <code style="color:#22d3bf">gen_gabor</code> / <code style="color:#22d3bf">sk_gabor</code></p>
+<p style="margin:2px 0 2px 12px">• Haralick, R. M., Shanmugam, K. &amp; Dinstein, I. (1973). &quot;Textural Features for Image Classification.&quot; *IEEE Transactions on Systems, Man, and Cybernetics.* — <code style="color:#22d3bf">cooc_feature_matrix</code></p>
+<p style="margin:2px 0 2px 12px">• Laws, K. I. (1980). &quot;Textured Image Segmentation.&quot; *Ph.D. Dissertation, University of Southern California.* — <code style="color:#22d3bf">texture_laws</code></p>
+<p style="margin:2px 0 2px 12px">• Ojala, T., Pietikäinen, M. &amp; Mäenpää, T. (2002). &quot;Multiresolution Gray-Scale and Rotation Invariant Texture Classification with Local Binary Patterns.&quot; *IEEE TPAMI.* — <code style="color:#22d3bf">sk_lbp</code></p>
+<p style="margin:2px 0 2px 12px">• Frangi, A. F., Niessen, W. J., Vincken, K. L. &amp; Viergever, M. A. (1998). &quot;Multiscale Vessel Enhancement Filtering.&quot; *MICCAI.* — <code style="color:#22d3bf">sk_frangi</code></p>
+<p style="margin:2px 0 2px 12px">• Meijering, E. et al. (2004). &quot;Design and Validation of a Tool for Neurite Tracing and Analysis in Fluorescence Microscopy Images.&quot; *Cytometry Part A.* — <code style="color:#22d3bf">sk_meijering</code> / <code style="color:#22d3bf">xsk_meijering</code></p>
+<p style="margin:2px 0 2px 12px">• Sato, Y. et al. (1998). &quot;Three-Dimensional Multi-Scale Line Filter for Segmentation and Visualization of Curvilinear Structures in Medical Images.&quot; *Medical Image Analysis.* — <code style="color:#22d3bf">xsk_sato</code></p>
+<p style="margin:2px 0 2px 12px">• Koenderink, J. J. &amp; van Doorn, A. J. (1992). &quot;Surface Shape and Curvature Scales.&quot; *Image and Vision Computing.* — <code style="color:#22d3bf">sk_shape_index</code></p>
+<p style="margin:2px 0 2px 12px">• Bigün, J. &amp; Granlund, G. H. (1987). &quot;Optimal Orientation Detection of Linear Symmetry.&quot; *ICCV.* — <code style="color:#22d3bf">xsk_struct_coherence</code></p>
+<p style="margin:2px 0 2px 12px">• Dalal, N. &amp; Triggs, B. (2005). &quot;Histograms of Oriented Gradients for Human Detection.&quot; *CVPR.* — <code style="color:#22d3bf">xsk2_hog</code></p>
+<p style="margin:2px 0 2px 12px">• Zabih, R. &amp; Woodfill, J. (1994). &quot;Non-Parametric Local Transforms for Computing Visual Correspondence.&quot; *ECCV.* — <code style="color:#22d3bf">tf_census_transform</code> / <code style="color:#22d3bf">tf_rank_transform</code></p>
+<p style="margin:2px 0 2px 12px">• Rudin, L. I., Osher, S. &amp; Fatemi, E. (1992). &quot;Nonlinear Total Variation Based Noise Removal Algorithms.&quot; *Physica D.* — <code style="color:#22d3bf">dc_structure_texture</code> / <code style="color:#22d3bf">dc_texture_residual</code></p>
+<p style="margin:2px 0 2px 12px">• Chambolle, A. (2004). &quot;An Algorithm for Total Variation Minimization and Applications.&quot; *Journal of Mathematical Imaging and Vision.* — <code style="color:#22d3bf">dc_structure_texture</code>(双対射影)</p>
+<p style="margin:2px 0 2px 12px">• Candès, E. J., Li, X., Ma, Y. &amp; Wright, J. (2011). &quot;Robust Principal Component Analysis?&quot; *Journal of the ACM.* — <code style="color:#22d3bf">dc_rpca_lowrank</code> / <code style="color:#22d3bf">dc_rpca_sparse</code></p>
+<p style="margin:2px 0 2px 12px">• Land, E. H. &amp; McCann, J. J. (1971). &quot;Lightness and Retinex Theory.&quot; *JOSA.* — <code style="color:#22d3bf">dc_retinex</code></p>
+<p style="margin:2px 0 2px 12px">• Jobson, D. J., Rahman, Z. &amp; Woodell, G. A. (1997). &quot;Properties and Performance of a Center/Surround Retinex.&quot; *IEEE Transactions on Image Processing.* — <code style="color:#22d3bf">dc_retinex</code>(単一スケール)</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -2,6 +2,22 @@
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
+## ファミリ使い方ガイド(用途→op の教材)
+
+- [gallery2d_color_artistic](guides/gallery2d_color_artistic.md) — 色・芸術・拡張 — 使い方ガイド
+- [gallery2d_contour_measure](guides/gallery2d_contour_measure.md) — 輪郭・1次元計測・テンプレート照合 — 使い方ガイド
+- [gallery2d_edges](guides/gallery2d_edges.md) — エッジ・微分・コーナー — 使い方ガイド
+- [gallery2d_features](guides/gallery2d_features.md) — 特徴抽出・テクスチャ・形状記述 — 使い方ガイド
+- [gallery2d_geometry](guides/gallery2d_geometry.md) — 2-D 幾何変換 — 使い方ガイド
+- [gallery2d_gray_arith](guides/gallery2d_gray_arith.md) — 濃淡・階調・算術・定義域 — 使い方ガイド
+- [gallery2d_halcon_ext](guides/gallery2d_halcon_ext.md) — HALCON 拡充 tier（hx_） — 使い方ガイド
+- [gallery2d_morphology](guides/gallery2d_morphology.md) — モルフォロジー(形態学) — 使い方ガイド
+- [gallery2d_physics_alife_3d](guides/gallery2d_physics_alife_3d.md) — 物理PDE・人工生命・トモグラフィ・3D — 使い方ガイド
+- [gallery2d_region](guides/gallery2d_region.md) — 領域(region)処理 — 使い方ガイド
+- [gallery2d_segmentation](guides/gallery2d_segmentation.md) — セグメンテーション — 使い方ガイド
+- [gallery2d_smoothing_rank](guides/gallery2d_smoothing_rank.md) — 平滑化・ランク・復元フィルタ — 使い方ガイド
+- [gallery2d_texture_freq](guides/gallery2d_texture_freq.md) — テクスチャ・周波数・分解 — 使い方ガイド
+
 ## カテゴリ
 
 ### 3d (7)

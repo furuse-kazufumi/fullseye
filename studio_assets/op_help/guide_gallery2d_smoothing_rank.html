@@ -1,0 +1,183 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">平滑化・ランク・復元フィルタ — 使い方ガイド</h2>
+<p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code>∈[0,1]」。</p>
+<p>&gt; <code style="color:#22d3bf">out = fullseye.apply(img, &quot;&lt;op名&gt;&quot;, a, b)</code>。すべて <b>image → image</b>(2-D float、入力と同形状)。</p>
+<p>&gt; 検証済みサンプル: [<code style="color:#22d3bf">examples/gallery2d_smoothing_rank.py</code>](../../../../examples/gallery2d_smoothing_rank.py)(この族 86 op を全数、有限性・型・決定性・効果 GT で assert)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>画像を <b>「均す / 直す / 汚す」</b> ための道具箱です。入力も出力も 2-D の濃淡画像(grayscale)で、撮像・計測の前処理の中核を担います。用途は 4 つに分かれます。</p>
+<p style="margin:2px 0 2px 12px">• <b>平滑化(smoothing)</b> — ぼかしてノイズを消す。線形(Gaussian・箱型平均)、エッジを残す非線形(bilateral・sigma フィルタ・拡散 PDE)、強力な非局所/変分/変換ドメイン denoiser(NLM・全変動 TV・ウェーブレット収縮)まで段階がある。</p>
+<p style="margin:2px 0 2px 12px">• <b>ランク(rank)</b> — 近傍画素を並べ替えて順位統計を取り、外れ値を叩く。中央値(median、salt-pepper に強い)/ 最小・最大(= グレー erosion・dilation)/ 任意の p 分位・トリム平均など。</p>
+<p style="margin:2px 0 2px 12px">• <b>復元(restoration)</b> — 劣化した画像を逆問題として直す。逆畳み込み(Richardson-Lucy・Wiener)、欠損補間(inpaint)、超解像、位相アンラップ。</p>
+<p style="margin:2px 0 2px 12px">• <b>ノイズ注入(noise)</b> — 逆にノイズやブレを<b>人工的に加える</b>。学習データ拡張やロバスト性評価の入力を作るための劣化シミュレータ。</p>
+<p>つまみ <code style="color:#22d3bf">a</code>,<code style="color:#22d3bf">b</code> の割り当ては op ごとに違いますが、多くの近傍フィルタで **<code style="color:#22d3bf">a</code> = 窓の大きさや平滑化強度**、<code style="color:#22d3bf">b</code> = 二次パラメータ(分位・レンジ幅・ノイズ強度など)です。出力は設計上 [0,1] を超えることを許容します(先鋭化・逆畳み込みはレンジを越えうる。クリップはパイプライン境界側の責任)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>前処理の王道は「均す → 先鋭化 → 次段(閾値・エッジ)」。データ種は image のまま繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  raw[&quot;生画像&lt;br/&gt;image(2-D)&quot;] --&gt; den[&quot;除去/平滑化&lt;br/&gt;gaussian · median · bilateral&quot;]
+  den --&gt; shp[&quot;先鋭化&lt;br/&gt;unsharp · cv_sharpen&quot;]
+  shp --&gt; out[&quot;整えた画像&lt;br/&gt;image(2-D)&quot;]
+  out -.-&gt;|次段へ| seg[&quot;閾値 / エッジ&lt;br/&gt;(別ファミリ)&quot;]</pre>
+<p>もう一つの典型は「劣化を人工付加 → 復元」。学習・ロバスト性評価の骨格で、<code style="color:#22d3bf">examples</code> の GT もこの往復(ぼかし/ノイズ → 中央値・先鋭化で戻す)を検証しています。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  clean[&quot;clean image&quot;] --&gt; deg[&quot;劣化を付加&lt;br/&gt;add_noise_white · simulate_motion · simulate_defocus&quot;]
+  deg --&gt; rest[&quot;復元&lt;br/&gt;median · sk_tv · iv_richardson_lucy&quot;]
+  rest --&gt; ev[&quot;復元画像&lt;br/&gt;→ 品質評価&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>各 op は <code style="color:#22d3bf">fullseye.apply(img, &quot;&lt;名前&gt;&quot;, a, b)</code> で呼びます。HALCON 相当名がある op は末尾に添えます。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">線形平滑化(ぼかす)— smoothing</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gaussian</code> — Gaussian 畳み込み。<code style="color:#22d3bf">a</code> が σ(=0.3+2.7·a)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gaussian&quot;, 0.6, 0.0)</code>(HALCON: gauss_filter)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mean_box</code> — 箱型(一様)平均。<code style="color:#22d3bf">a</code> が窓辺 3/5/7/9。<code style="color:#22d3bf">fullseye.apply(img, &quot;mean_box&quot;, 0.5, 0.0)</code>(HALCON: mean_image)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">binomial_filter</code> — 二項係数カーネルの分離畳み込み(Gaussian の整数近似)。<code style="color:#22d3bf">a</code> が窓。(HALCON: binomial_filter)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gauss_filter</code> / <code style="color:#22d3bf">gauss_image</code> / <code style="color:#22d3bf">cv_gaussian</code> — Gaussian の別実装(HALCON / OpenCV 経路)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mean_image</code> / <code style="color:#22d3bf">cv_box</code> — 箱型平均の別実装(HALCON: mean_image)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth_image</code> — 汎用平滑(Gaussian、<code style="color:#22d3bf">a</code> が σ)。(HALCON: smooth_image)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">simulate_defocus</code> — デフォーカス(円形ボケ)を平均フィルタで模擬。(HALCON: simulate_defocus)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_gauss_pyramid</code> — Gaussian ピラミッド(縮小→再拡大で低域のみ残す)。(HALCON: gen_gauss_pyramid)</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">xkor_gaussian</code>(Kornia), <code style="color:#22d3bf">xpil_smooth_more</code>(PIL), <code style="color:#22d3bf">xsp_cspline_smooth</code>(3次スプライン平滑)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">エッジ保存平滑化(均すが輪郭は残す)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bilateral</code> — 空間 Gaussian × 輝度差 Gaussian の二重重み。<code style="color:#22d3bf">a</code> が空間 σ、<code style="color:#22d3bf">b</code> が値域 σ。<code style="color:#22d3bf">fullseye.apply(img, &quot;bilateral&quot;, 0.5, 0.5)</code>(HALCON: bilateral_filter)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bilateral_filter</code> / <code style="color:#22d3bf">cv_bilateral</code> / <code style="color:#22d3bf">xkor_bilateral</code> — bilateral の別実装(HALCON/OpenCV/Kornia)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">guided_filter</code> / <code style="color:#22d3bf">dl_guided_filter</code> — ガイド画像の局所線形回帰で平滑化(He 2010)。(HALCON: guided_filter)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma_image</code> — 局所平均から ±σ 以内の近傍だけを平均(σ フィルタ、Lee 1983)。<code style="color:#22d3bf">b</code> が σ 幅。(HALCON: sigma_image)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv_edge_preserving</code> — OpenCV edge-preserving filter。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_rank_mean_bilateral</code> — ランク→平均→bilateral の合成 denoiser。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">拡散平滑化(PDE)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">anisotropic_diffusion</code> — Perona-Malik 異方性拡散。勾配が大きい所(エッジ)で伝導を止める反復。<code style="color:#22d3bf">a</code> が反復数、<code style="color:#22d3bf">b</code> がコントラスト係数 K。(HALCON: anisotropic_diffusion)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dl_aniso_diffusion</code> / <code style="color:#22d3bf">coherence_enhancing_diff</code> — 異方性拡散の変種(方向性強調系)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">isotropic_diffusion</code> — 等方拡散(= Gaussian スケール空間、<code style="color:#22d3bf">a</code> が拡散時間)。(HALCON: isotropic_diffusion)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mean_curvature_flow</code> — 平均曲率流的な反復平滑(輪郭を縮める向きに均す)。(HALCON: mean_curvature_flow)</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">非局所 / 変分 / 変換ドメイン除去(強い denoiser)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_nlm</code> / <code style="color:#22d3bf">cv_nlmeans</code> — 非局所平均。似たパッチを画像全体から集めて平均(Buades 2005)。<code style="color:#22d3bf">a</code> がフィルタ強度 h。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_tv</code> / <code style="color:#22d3bf">sk_tv_bregman</code> / <code style="color:#22d3bf">xcv3_denoise_tvl1</code> — 全変動(TV)最小化。区分的に平坦な復元(ROF、Rudin 1992)。<code style="color:#22d3bf">a</code> が正則化重み。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_wavelet</code> / <code style="color:#22d3bf">xwt_visushrink</code> / <code style="color:#22d3bf">xwt_firm_denoise</code> / <code style="color:#22d3bf">xwt_lf_reconstruct</code> — ウェーブレット係数の収縮/再構成(Donoho &amp; Johnstone 1994)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_wiener</code> — 適応 Wiener フィルタ(局所平均・分散でノイズを抑える、<code style="color:#22d3bf">a</code> が窓)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_savgol</code> — Savitzky-Golay 2-D 多項式平滑(<code style="color:#22d3bf">a</code> が窓幅)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_dct_denoise</code> — DCT 係数の閾値化で高周波ノイズを削る。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">先鋭化(sharpen)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">unsharp</code> — アンシャープマスク。ぼかし版との差を足し戻す。<code style="color:#22d3bf">a</code> が強調量 amount、<code style="color:#22d3bf">b</code> がマスクの Gaussian σ。<code style="color:#22d3bf">fullseye.apply(img, &quot;unsharp&quot;, 0.6, 0.5)</code>(HALCON: emphasize)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_sharpen</code> — 3×3 シャープ化カーネルの畳み込み。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_unsharp_mask</code> / <code style="color:#22d3bf">xkor_unsharp</code> — PIL / Kornia のアンシャープ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv3_pyr_laplacian</code> — Laplacian ピラミッドで高域を強調。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">背景 / 劣化シミュレーション</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_rolling_ball</code> — ローリングボール法で背景(低周波の陰影)を推定して除去(Sternberg 1983)。<code style="color:#22d3bf">a</code> が球半径。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">simulate_motion</code> — 直線モーションブラー。<code style="color:#22d3bf">a</code> が方向、<code style="color:#22d3bf">b</code> が長さ。(HALCON: simulate_motion)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xkor_motion_blur</code> — Kornia のモーションブラー。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">ランク(順位統計)— rank</h3>
+<p>中央値系:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">median</code> — 中央値フィルタ。salt-pepper 除去の定番(Tukey 1977)。<code style="color:#22d3bf">a</code> が窓辺。<code style="color:#22d3bf">fullseye.apply(img, &quot;median&quot;, 0.5, 0.0)</code>(HALCON: median_image)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">median_image</code> / <code style="color:#22d3bf">cv_median</code> / <code style="color:#22d3bf">sk_median_disk</code> / <code style="color:#22d3bf">xkor_median</code> — 中央値の別実装(HALCON / OpenCV / skimage 円形窓 / Kornia)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">median_rect</code> — 矩形窓の中央値(<code style="color:#22d3bf">a</code> が縦、<code style="color:#22d3bf">b</code> が横)。(HALCON: median_rect)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">median_separate</code> — 分離型中央値(HALCON: median_separate)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">median_weighted</code> — 重み付き中央値(HALCON: median_weighted)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eliminate_min_max</code> — 近傍の最小/最大に当たる外れ値を叩く(中央値系、HALCON: eliminate_min_max)。</p>
+<p>最小 / 最大 / レンジ:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">min_filter</code> — 局所最小(= グレー erosion)。<code style="color:#22d3bf">fullseye.apply(img, &quot;min_filter&quot;, 0.5, 0.0)</code>(HALCON: gray_erosion_rect)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_filter</code> — 局所最大(= グレー dilation)。(HALCON: gray_dilation_rect)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gray_erosion_rect</code> / <code style="color:#22d3bf">gray_dilation_rect</code> — 矩形窓の最小 / 最大(min_filter / max_filter と同義)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gray_range_rect</code> — 局所レンジ(最大−最小 = モルフォロジ勾配)。(HALCON: gray_range_rect)</p>
+<p>分位 / ランク:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">percentile</code> — p 分位フィルタ。<code style="color:#22d3bf">a</code> が窓、<code style="color:#22d3bf">b</code> が分位(5〜95%)。<code style="color:#22d3bf">fullseye.apply(img, &quot;percentile&quot;, 0.5, 0.9)</code>(HALCON: rank_image)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rank_image</code> / <code style="color:#22d3bf">rank_rect</code> / <code style="color:#22d3bf">dual_rank</code> — 分位ランクフィルタの別実装(HALCON: rank_image / rank_rect / dual_rank)。</p>
+<p>トリム / salt-pepper / 幾何平均 / 最頻値:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">trimmed_mean</code> — トリム平均(両端の外れ値を落として平均、実装は 20/80 分位の中点)。(HALCON: trimmed_mean)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mean_sp</code> — salt-pepper 向けのトリム平均(HALCON: mean_sp)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eliminate_sp</code> — σ フィルタで salt-pepper を除去(HALCON: eliminate_sp)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk2_rank_geomean</code> — 幾何平均型のランクフィルタ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_mode_filter</code> — 最頻値(mode)フィルタ。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">復元(逆問題)— restoration</h3>
+<p>逆畳み込み:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iv_richardson_lucy</code> / <code style="color:#22d3bf">xsk_richardson_lucy</code> — Richardson-Lucy 反復逆畳み込み。想定 PSF(小さな Gaussian)で乗算的に鮮鋭化。<code style="color:#22d3bf">a</code> が反復数(1〜15)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iv_wiener_deconv_spatial</code> / <code style="color:#22d3bf">xsk2_wiener</code> — Wiener 逆畳み込み。<code style="color:#22d3bf">a</code> が想定ボケ σ、<code style="color:#22d3bf">b</code> がノイズ対信号比(大きいほど穏やか)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iv_unsharp_deblur</code> — 反復アンシャープによる近似デブラー。<code style="color:#22d3bf">a</code> が反復数、<code style="color:#22d3bf">b</code> が毎回の強調量。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iv_motion_deblur</code> — モーションブラーの逆畳み込み。</p>
+<p>欠損補間(inpaint):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_inpaint</code> / <code style="color:#22d3bf">xcv_inpaint</code> / <code style="color:#22d3bf">xcv3_inpaint_ns</code> / <code style="color:#22d3bf">iv_gradient_inpaint</code> — マスク/欠損領域を近傍から補間(<code style="color:#22d3bf">iv_gradient_inpaint</code> は既知画素を固定した調和補間 = ラプラシアン反復。<code style="color:#22d3bf">xcv*</code> は OpenCV inpaint)。</p>
+<p>超解像 / 位相:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iv_backproject_superres</code> — 反復逆投影による超解像。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_unwrap_phase</code> — 位相アンラップ(2π の巻き戻しを解く)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">ノイズ注入(学習 / 評価用)— noise</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">add_noise_white</code> — 白色 Gaussian ノイズを加える。<code style="color:#22d3bf">b</code> が強度(σ=0.02+0.2·b)。<code style="color:#22d3bf">fullseye.apply(img, &quot;add_noise_white&quot;, 0.5, 0.5)</code>(HALCON: add_noise_white)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">add_noise_distribution</code> — 分布ベースのノイズを加える(HALCON: add_noise_distribution)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">一般フィルタ — filtering</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tf_gradient_domain_reintegrate</code> — 勾配ドメインで処理して Poisson 的に再積分(勾配→画像の逆変換)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_smoothing_rank から)</h3>
+<p>repo 直下に保存して <code style="color:#22d3bf">py -3.11 &lt;file&gt;</code> で実行できます(<code style="color:#22d3bf">import fullseye</code> が通る位置 = repo 直下)。汚した段差エッジを作り、この族の効果 GT(中央値の salt-pepper 除去 / Gaussian の分散低減 / ランクの順序保存 / unsharp の勾配増大 / 型契約)を assert します。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># -*- coding: utf-8 -*-
+&quot;&quot;&quot;平滑化・ランク・復元フィルタ族の効果 GT(examples/gallery2d_smoothing_rank.py 準拠)。&quot;&quot;&quot;
+import numpy as np
+import fullseye
+
+# --- 汚した段差エッジ(左 0.2 / 右 0.8 + salt-pepper)と Gaussian ノイズ場 --------
+n = 64
+rng = np.random.default_rng(7)
+_, xx = np.mgrid[0:n, 0:n]
+clean = np.where(xx &gt;= n // 2, 0.8, 0.2).astype(np.float64)
+sp = clean.copy()
+m = rng.random((n, n))
+sp[m &lt; 0.05] = 0.0            # salt
+sp[m &gt; 0.95] = 1.0           # pepper
+noisy = np.clip(0.5 + 0.15 * rng.standard_normal((n, n)), 0.0, 1.0)
+
+mae = lambda a, c: float(np.mean(np.abs(a - c)))
+grad_energy = lambda a: float(np.sum(np.diff(a, axis=1) ** 2) + np.sum(np.diff(a, axis=0) ** 2))
+
+# (1) median(rank): salt-pepper を除去 → clean への誤差が半減以下(null=何もしない を圧倒)
+med = fullseye.apply(sp, &quot;median&quot;, 0.5, 0.0)
+assert mae(med, clean) &lt; 0.5 * mae(sp, clean), &quot;median が salt-pepper を除去していない&quot;
+
+# (2) gaussian(smoothing): ノイズ場の分散を下げる
+assert float(np.var(fullseye.apply(noisy, &quot;gaussian&quot;, 0.5, 0.0))) &lt; float(np.var(noisy))
+
+# (3) rank の順序保存: min_filter &lt;= 入力 &lt;= max_filter(各画素)
+mn = fullseye.apply(noisy, &quot;min_filter&quot;, 0.5, 0.0)
+mx = fullseye.apply(noisy, &quot;max_filter&quot;, 0.5, 0.0)
+assert np.all(mn &lt;= noisy + 1e-9) and np.all(mx &gt;= noisy - 1e-9), &quot;min&lt;=in&lt;=max が壊れている&quot;
+
+# (4) unsharp(smoothing): ぼけを先鋭化 → 勾配エネルギー増
+blur = fullseye.apply(clean, &quot;gaussian&quot;, 0.6, 0.0)
+sharp = fullseye.apply(blur, &quot;unsharp&quot;, 0.6, 0.5)
+assert grad_energy(sharp) &gt; grad_energy(blur), &quot;unsharp が先鋭化していない&quot;
+
+# (5) 型契約(image -&gt; image): 2-D float、同形状、有限。復元/エッジ保存系も含めて確認
+for name in (&quot;bilateral&quot;, &quot;sigma_image&quot;, &quot;anisotropic_diffusion&quot;, &quot;iv_richardson_lucy&quot;):
+    out = np.asarray(fullseye.apply(noisy, name, 0.5, 0.5))
+    assert out.ndim == 2 and out.shape == noisy.shape
+    assert np.issubdtype(out.dtype, np.floating) and np.all(np.isfinite(out))
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>**Gaussian(<code style="color:#22d3bf">gaussian</code>, <code style="color:#22d3bf">gauss_filter</code>)** — 分離 Gaussian カーネルとの畳み込み。σ はつまみ <code style="color:#22d3bf">a</code> で決まる($\sigma = 0.3 + 2.7a$)。</p>
+<p>$$G_\sigma(x,y)=\frac{1}{2\pi\sigma^2}\exp\!\left(-\frac{x^2+y^2}{2\sigma^2}\right),\qquad I&#x27;=G_\sigma * I$$</p>
+<p>**Bilateral(<code style="color:#22d3bf">bilateral</code>)** — 空間の近さと輝度の近さの積を重みにする(エッジを跨いだ平均を避ける)。</p>
+<p>$$I&#x27;(p)=\frac{1}{W_p}\sum_{q\in\Omega} \exp\!\left(-\frac{\lVert p-q\rVert^2}{2\sigma_s^2}\right)\exp\!\left(-\frac{(I(p)-I(q))^2}{2\sigma_r^2}\right) I(q)$$</p>
+<p>ここで $\sigma_s$ は空間つまみ <code style="color:#22d3bf">a</code>、$\sigma_r$ は値域つまみ <code style="color:#22d3bf">b</code>、$W_p$ は重みの総和。</p>
+<p>**Unsharp mask(<code style="color:#22d3bf">unsharp</code>)** — 元画像に「元 − ぼかし」(高域)を足し戻す。$\text{amount}=1.5a$、マスクの $\sigma=0.5+1.5b$。</p>
+<p>$$I&#x27; = I + \text{amount}\,\bigl(I - G_\sigma * I\bigr)$$</p>
+<p>**σ フィルタ(<code style="color:#22d3bf">sigma_image</code>, <code style="color:#22d3bf">eliminate_sp</code>)** — 局所平均 $\mu$ から $\pm\sigma$ 以内の近傍だけで平均を取る(外れ値を混ぜない、Lee 1983)。</p>
+<p>$$I&#x27;(p)=\frac{\sum_{q:\,|I(q)-\mu(p)|&lt;\sigma} I(q)}{\#\{q:\,|I(q)-\mu(p)|&lt;\sigma\}}$$</p>
+<p>**Perona-Malik 異方性拡散(<code style="color:#22d3bf">anisotropic_diffusion</code>)** — 伝導率 $c$ を勾配で抑え、エッジを保ちながら平坦部だけ拡散させる反復 PDE($K$ はつまみ <code style="color:#22d3bf">b</code>)。</p>
+<p>$$\frac{\partial u}{\partial t}=\operatorname{div}\!\bigl(c(\lVert\nabla u\rVert)\,\nabla u\bigr),\qquad c(s)=\exp\!\left(-\left(\frac{s}{K}\right)^2\right)$$</p>
+<p>**Richardson-Lucy 逆畳み込み(<code style="color:#22d3bf">iv_richardson_lucy</code>)** — 観測 $d=\text{psf}\otimes u$ を満たすよう推定 $u$ を乗算的に更新(反復数はつまみ <code style="color:#22d3bf">a</code>)。</p>
+<p>$$u^{(t+1)} = u^{(t)}\cdot\left(\text{psf}^{\!*} \otimes \frac{d}{\text{psf}\otimes u^{(t)}}\right)$$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグ・動作確認には [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) の 2-D 画像源が使えます(外部 DL 不要)。合成の <code style="color:#22d3bf">checker_noisy</code> / <code style="color:#22d3bf">blobs</code>(<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;checker_noisy&quot;)</code>)は平滑化・ランク除去の効果を見るのに向き、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code>(BSD/public domain)はエッジ保存や先鋭化・復元(逆畳み込み・inpaint)の題材になります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳 [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md) に op ごとの出典を収録。この族の中核アルゴリズムの古典は以下。</p>
+<p style="margin:2px 0 2px 12px">• Tukey, J. W. (1977). &quot;Exploratory Data Analysis&quot;(running median smoothing). — <code style="color:#22d3bf">median</code> ほかランク中央値系</p>
+<p style="margin:2px 0 2px 12px">• Serra, J. (1982). &quot;Image Analysis and Mathematical Morphology&quot;(Matheron 1975). — <code style="color:#22d3bf">min_filter</code>/<code style="color:#22d3bf">max_filter</code>/<code style="color:#22d3bf">gray_range_rect</code>(グレー erosion/dilation/勾配)</p>
+<p style="margin:2px 0 2px 12px">• Lee, J.-S. (1983). &quot;Digital image smoothing and the sigma filter&quot;. Computer Vision, Graphics, and Image Processing. — <code style="color:#22d3bf">sigma_image</code>/<code style="color:#22d3bf">eliminate_sp</code></p>
+<p style="margin:2px 0 2px 12px">• Sternberg, S. R. (1983). &quot;Biomedical Image Processing&quot;(rolling-ball background). IEEE Computer. — <code style="color:#22d3bf">sk_rolling_ball</code></p>
+<p style="margin:2px 0 2px 12px">• Perona, P. &amp; Malik, J. (1990). &quot;Scale-space and edge detection using anisotropic diffusion&quot;. IEEE TPAMI. — <code style="color:#22d3bf">anisotropic_diffusion</code></p>
+<p style="margin:2px 0 2px 12px">• Rudin, L., Osher, S. &amp; Fatemi, E. (1992). &quot;Nonlinear total variation based noise removal algorithms&quot;(ROF). Physica D. — <code style="color:#22d3bf">sk_tv</code>/<code style="color:#22d3bf">sk_tv_bregman</code>/<code style="color:#22d3bf">xcv3_denoise_tvl1</code></p>
+<p style="margin:2px 0 2px 12px">• Donoho, D. &amp; Johnstone, I. (1994). &quot;Ideal spatial adaptation by wavelet shrinkage&quot;. Biometrika. — <code style="color:#22d3bf">sk_wavelet</code>/<code style="color:#22d3bf">xwt_visushrink</code></p>
+<p style="margin:2px 0 2px 12px">• Tomasi, C. &amp; Manduchi, R. (1998). &quot;Bilateral filtering for gray and color images&quot;. ICCV. — <code style="color:#22d3bf">bilateral</code>/<code style="color:#22d3bf">cv_bilateral</code></p>
+<p style="margin:2px 0 2px 12px">• Buades, A., Coll, B. &amp; Morel, J.-M. (2005). &quot;A non-local algorithm for image denoising&quot;. CVPR. — <code style="color:#22d3bf">sk_nlm</code>/<code style="color:#22d3bf">cv_nlmeans</code></p>
+<p style="margin:2px 0 2px 12px">• He, K., Sun, J. &amp; Tang, X. (2010). &quot;Guided image filtering&quot;. ECCV. — <code style="color:#22d3bf">guided_filter</code>/<code style="color:#22d3bf">dl_guided_filter</code></p>
+<p style="margin:2px 0 2px 12px">• Richardson, W. H. (1972). &quot;Bayesian-based iterative method of image restoration&quot;. JOSA; Lucy, L. B. (1974). &quot;An iterative technique for the rectification of observed distributions&quot;. Astronomical Journal. — <code style="color:#22d3bf">iv_richardson_lucy</code></p>
+<p style="margin:2px 0 2px 12px">• Wiener, N. (1949). &quot;Extrapolation, Interpolation, and Smoothing of Stationary Time Series&quot;. — <code style="color:#22d3bf">iv_wiener_deconv_spatial</code>/<code style="color:#22d3bf">xsp_wiener</code></p>
+<p style="margin:2px 0 2px 12px">• Savitzky, A. &amp; Golay, M. J. E. (1964). &quot;Smoothing and Differentiation of Data by Simplified Least Squares Procedures&quot;. Analytical Chemistry. — <code style="color:#22d3bf">xsp_savgol</code></p>
+<p style="margin:2px 0 2px 12px">• Weickert, J. (1999). &quot;Coherence-enhancing diffusion filtering&quot;. IJCV. — <code style="color:#22d3bf">coherence_enhancing_diff</code></p>
+<p style="margin:2px 0 2px 12px">• Telea, A. (2004). &quot;An Image Inpainting Technique Based on the Fast Marching Method&quot;. Journal of Graphics Tools; Bertalmío, M., Sapiro, G., Caselles, V. &amp; Ballester, C. (2000). &quot;Image Inpainting&quot;. SIGGRAPH. — <code style="color:#22d3bf">xcv_inpaint</code>/<code style="color:#22d3bf">xsk_inpaint</code>/<code style="color:#22d3bf">iv_gradient_inpaint</code></p>
+<p style="margin:2px 0 2px 12px">• Pérez, P., Gangnet, M. &amp; Blake, A. (2003). &quot;Poisson Image Editing&quot;. SIGGRAPH. — <code style="color:#22d3bf">tf_gradient_domain_reintegrate</code>(勾配ドメイン再積分)</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

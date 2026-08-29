@@ -1,0 +1,150 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">濃淡・階調・算術・定義域 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>画像の「明るさ・コントラスト・階調(トーン)」そのものを作り替える、<b>1 枚 → 1 枚</b>の単項変換をまとめた族です。入力はいずれも 2-D の濃淡画像(<code style="color:#22d3bf">float64</code>, おおむね <code style="color:#22d3bf">[0,1]</code>)で、出力も同じ形の濃淡画像です(この族は<b>形状を保存</b>します)。中身は大きく 4 系統に分かれます。</p>
+<p style="margin:2px 0 2px 12px">• <b>階調曲線(gray / intensity-transform)</b>: ガンマ・反転・シグモイド・ヒストグラム平坦化・CLAHE など、画素値を写す「トーンカーブ」。露出やコントラストを整える。</p>
+<p style="margin:2px 0 2px 12px">• <b>画素算術(arithmetic)</b>: <code style="color:#22d3bf">sqrt</code> / <code style="color:#22d3bf">log</code> / <code style="color:#22d3bf">exp</code> / <code style="color:#22d3bf">sin</code>・<code style="color:#22d3bf">cos</code> など、画素値そのものに数学関数を掛けるポイント演算。ダイナミックレンジの圧縮・伸張や非線形強調に使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>ビット面・量子化(gray)</b>: 8-bit 量子化を介したビットシフト・ビットマスク・ビット面抽出・階調数削減。</p>
+<p style="margin:2px 0 2px 12px">• <b>定義域 domain(domain)</b>: 画像の有効領域(HALCON でいう Region of Definition)を切り出す/広げる。</p>
+<p>呼び出しは 1 枚の画像に 2 つのスカラつまみ <code style="color:#22d3bf">a, b ∈ [0,1]</code> を添える形に統一されています。<code style="color:#22d3bf">fullseye.apply(img, &quot;op名&quot;, a, b)</code> で 1 op、<code style="color:#22d3bf">fullseye.run_pipeline(img, [...])</code> で連鎖できます。多くの op は <code style="color:#22d3bf">a</code> を主効き(ガンマ量・閾値・平坦化の局所ブロック数など)、<code style="color:#22d3bf">b</code> を副次(バイアス・ピボットなど)に割り当てます。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> を無視する op もあります(各 op 行に明記)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>この族は「トーンを整える前処理」として、後段の segmentation / edges と繋がります。族内は「点変換 → コントラスト強調 → 反転/量子化」と重ねるのが典型です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[濃淡画像 image] --&gt; STRETCH[scale_clip&lt;br/&gt;コントラスト伸張]
+    STRETCH --&gt; TONE[gamma / sk_adjust_log&lt;br/&gt;暗部を持ち上げ]
+    TONE --&gt; EQ[equ_histo_image / clahe&lt;br/&gt;ヒストグラム平坦化]
+    EQ --&gt; OUT[整えた image]
+    OUT -.後段.-&gt; SEG[（別族）threshold / canny]</pre>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[濃淡画像 image] --&gt; ARI[log_image / sqrt_image&lt;br/&gt;レンジ圧縮]
+    ARI --&gt; INV[invert&lt;br/&gt;1 - x]
+    INV --&gt; BIT[it_convert_image_type&lt;br/&gt;階調数削減]
+    BIT --&gt; DOM[it_crop_domain&lt;br/&gt;中央窓を残す]
+    DOM --&gt; OUT[image]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>各 op は「op名 — 何をするか — 呼び出し例」の 1 行。効果は実装で確認済み。挙動が実装依存で微妙なものは型契約(image→image)+サンプル参照に留めます。HALCON 別名がある場合は文末に併記。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">A. 階調曲線・点 LUT(トーンカーブ)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma</code> — ガンマ補正 <code style="color:#22d3bf">x**(0.3+2.5a)</code>。<code style="color:#22d3bf">a</code> 小=暗部を持ち上げ、<code style="color:#22d3bf">a</code> 大=暗く締める(HALCON <code style="color:#22d3bf">pow_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gamma&quot;, 0.7, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma_image</code> — 同じくガンマ LUT(HALCON <code style="color:#22d3bf">gamma_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gamma_image&quot;, 0.6, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pow_image</code> — ガンマ(べき)LUT(HALCON <code style="color:#22d3bf">pow_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;pow_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">invert</code> — 点反転 <code style="color:#22d3bf">1 - x</code>(ネガ化, HALCON <code style="color:#22d3bf">invert_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;invert&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">invert_image</code> — 反転 <code style="color:#22d3bf">1 - x</code>(HALCON <code style="color:#22d3bf">invert_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;invert_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bit_not</code> — ビット反転。強度画像では <code style="color:#22d3bf">invert</code> と同じ <code style="color:#22d3bf">1 - x</code>(HALCON <code style="color:#22d3bf">bit_not</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;bit_not&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scale_clip</code> — アフィン <code style="color:#22d3bf">clip((0.5+1.5a)x + (b-0.5), 0, 1)</code>。<code style="color:#22d3bf">a</code>=ゲイン(コントラスト)、<code style="color:#22d3bf">b</code>=バイアス(明るさ)。飽和で実質フルレンジ化(HALCON <code style="color:#22d3bf">scale_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;scale_clip&quot;, 0.6, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scale_image</code> — <code style="color:#22d3bf">scale_clip</code> と同じアフィン+クリップ(HALCON <code style="color:#22d3bf">scale_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;scale_image&quot;, 0.6, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigmoid</code> — S 字トーンカーブ <code style="color:#22d3bf">1/(1+e^{-(4+12a)(x-(0.2+0.6b))})</code>。<code style="color:#22d3bf">a</code>=傾き、<code style="color:#22d3bf">b</code>=しきい(ピボット)(HALCON 近縁 <code style="color:#22d3bf">scale_image_max</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sigmoid&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">illuminate</code> — アンシャープ的な局所コントラスト強調 <code style="color:#22d3bf">x + k(x - blur(x))</code>。<code style="color:#22d3bf">a</code>=平滑スケール、<code style="color:#22d3bf">b</code>=強さ(HALCON <code style="color:#22d3bf">illuminate</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;illuminate&quot;, 0.4, 0.6)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_lut_trans</code> — 単調シグモイド LUT(端点を [0,1] へ正規化)を 8-bit 量子化値に table lookup。<code style="color:#22d3bf">a</code>=ゲイン、<code style="color:#22d3bf">b</code>=ピボット(HALCON <code style="color:#22d3bf">lut_trans</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_lut_trans&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_trunc</code> — 閾値での頭刈り <code style="color:#22d3bf">min(x, a)</code>(飽和した明部を平らに)。<code style="color:#22d3bf">a</code>=閾値、<code style="color:#22d3bf">b</code>=無視(HALCON 近縁 <code style="color:#22d3bf">scale_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_trunc&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">B. ヒストグラム平坦化・局所コントラスト</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">equalize</code> — ヒストグラム平坦化(CDF を LUT に)。順位を保ちコントラストを均す(HALCON <code style="color:#22d3bf">equ_histo_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;equalize&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">equ_histo_image</code> — 大域ヒストグラム平坦化(HALCON <code style="color:#22d3bf">equ_histo_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;equ_histo_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">equ_histo_image_rect</code> — 矩形ブロックごとの局所ヒストグラム平坦化。<code style="color:#22d3bf">a</code>=ブロック分割数(HALCON <code style="color:#22d3bf">equ_histo_image_rect</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;equ_histo_image_rect&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clahe</code> — タイル分割してブロックごとに平坦化(コントラスト制限つき適応平坦化)。<code style="color:#22d3bf">a</code>=タイル数。<code style="color:#22d3bf">fullseye.apply(img, &quot;clahe&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_clahe</code> — OpenCV CLAHE。<code style="color:#22d3bf">a</code>=clipLimit。<code style="color:#22d3bf">fullseye.apply(img, &quot;cv_clahe&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_adapthist</code> — skimage の適応ヒストグラム平坦化(CLAHE)。<code style="color:#22d3bf">a</code>=clip_limit。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_adapthist&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xkor_clahe</code> — kornia の CLAHE。<code style="color:#22d3bf">a</code>=clip_limit。<code style="color:#22d3bf">fullseye.apply(img, &quot;xkor_clahe&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scale_image_max</code> — 最小-最大伸張でフルレンジ [0,1] へ(<code style="color:#22d3bf">(x-lo)/(hi-lo)</code>, HALCON <code style="color:#22d3bf">scale_image_max</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;scale_image_max&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_autolevel</code> — 局所(円板近傍)オートレベル。近傍の min-max で伸張(HALCON 近縁 <code style="color:#22d3bf">scale_image_max</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_autolevel&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_enhance_contrast</code> — 局所コントラスト強調(近傍 min/max のうち近い方へ寄せる)。<code style="color:#22d3bf">a</code>=近傍半径。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_enhance_contrast&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_autocontrast</code> — PIL autocontrast(端を cutoff して伸張)。<code style="color:#22d3bf">a</code>=cutoff%。<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_autocontrast&quot;, 0.2, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_contrast</code> — 画像平均まわりのコントラスト調整(PIL <code style="color:#22d3bf">ImageEnhance.Contrast</code>)。<code style="color:#22d3bf">a</code>=係数。<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_contrast&quot;, 0.7, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_rank_equalize</code> — 局所(円板)ランク平坦化。<code style="color:#22d3bf">a</code>=近傍半径。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_equalize&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_rank_subtract_mean</code> — 近傍平均を引く局所コントラスト(平坦化/ハイパス的)。<code style="color:#22d3bf">a</code>=近傍半径。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_rank_subtract_mean&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">monotony</code> — 各画素を 8 近傍中でのランク(自分より小さい隣接の割合 /8)に置換する局所順位変換(HALCON <code style="color:#22d3bf">monotony</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;monotony&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">C. 画素算術(数学関数のポイント演算)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">abs_image</code> — 絶対値 <code style="color:#22d3bf">|x|</code>(HALCON <code style="color:#22d3bf">abs_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;abs_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sqrt_image</code> — 平方根 <code style="color:#22d3bf">sqrt(x)</code>。暗部を持ち上げレンジ圧縮(HALCON <code style="color:#22d3bf">sqrt_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sqrt_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">exp_image</code> — 指数 <code style="color:#22d3bf">(e^x - 1)/(e - 1)</code>([0,1] 正規化, HALCON <code style="color:#22d3bf">exp_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;exp_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">log_image</code> — 対数 <code style="color:#22d3bf">log2(1 + x)</code>。ダイナミックレンジ圧縮(HALCON <code style="color:#22d3bf">log_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;log_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_adjust_log</code> — 対数補正(暗部を持ち上げ全体を明るく)。<code style="color:#22d3bf">a</code>=gain(HALCON <code style="color:#22d3bf">log_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_adjust_log&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sin_image</code> — 正弦 <code style="color:#22d3bf">(sin(2πx)+1)/2</code>([0,1] 化, HALCON <code style="color:#22d3bf">sin_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sin_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cos_image</code> — 余弦 <code style="color:#22d3bf">(cos(2πx)+1)/2</code>(HALCON <code style="color:#22d3bf">cos_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;cos_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tan_image</code> — 中間調まわりの急峻な S 字(<code style="color:#22d3bf">tan((x-0.5)·0.9π)</code> を [0,1] へ, HALCON <code style="color:#22d3bf">tan_image</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;tan_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• 他(逆三角の [0,1] 正規化, いずれも点変換): <code style="color:#22d3bf">asin_image</code>=<code style="color:#22d3bf">arcsin(x)/(π/2)</code>、<code style="color:#22d3bf">acos_image</code>=<code style="color:#22d3bf">arccos(x)/π</code>(単調減少)、<code style="color:#22d3bf">atan_image</code>=<code style="color:#22d3bf">arctan(x)/(π/2)</code>。例: <code style="color:#22d3bf">fullseye.apply(img, &quot;atan_image&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">D. ビット面・量子化・型変換</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_bit_lshift</code> — 8-bit 量子化して左シフト <code style="color:#22d3bf">round(7a)</code> ビット(8-bit マスクで wrap, HALCON <code style="color:#22d3bf">bit_lshift</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_lshift&quot;, 0.3, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_bit_rshift</code> — 8-bit 量子化して右シフト <code style="color:#22d3bf">round(7a)</code>(= <code style="color:#22d3bf">2**shift</code> で整数除算 → 粗く・暗く, HALCON <code style="color:#22d3bf">bit_rshift</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_rshift&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_bit_mask</code> — 定数マスク <code style="color:#22d3bf">round(255a)</code> と 8-bit AND(下位ビットを落とす, HALCON <code style="color:#22d3bf">bit_mask</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;it_bit_mask&quot;, 0.75, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_bit_slice</code> — 8-bit 量子化後の 1 ビット面を抽出({0,1} 画像)。<code style="color:#22d3bf">a</code>=面(0=LSB..7=MSB, HALCON <code style="color:#22d3bf">bit_slice</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_bit_slice&quot;, 1.0, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_convert_image_type</code> — <code style="color:#22d3bf">round(2+254a)</code> レベルへ均等量子化(ビット深度削減/ポスタライズ, HALCON <code style="color:#22d3bf">convert_image_type</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;it_convert_image_type&quot;, 0.1, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_posterize</code> — PIL posterize(<code style="color:#22d3bf">1+6a</code> ビットへ階調削減)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_posterize&quot;, 0.3, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_solarize</code> — PIL solarize(閾値 <code style="color:#22d3bf">64+160a</code> を超える画素を反転)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_solarize&quot;, 0.5, 0.0)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">E. 定義域(domain)・境界</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_full_domain</code> — 定義域を全矩形に拡張。素の numpy 配列は既に全域なので恒等(<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 無視, HALCON <code style="color:#22d3bf">full_domain</code> 相当)。<code style="color:#22d3bf">fullseye.apply(img, &quot;it_full_domain&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_crop_domain</code> — 定義域を中央 <code style="color:#22d3bf">a</code> 窓に制限し、窓外を 0 に(HALCON <code style="color:#22d3bf">crop_domain</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;it_crop_domain&quot;, 0.6, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_expand_domain</code> — 有効域(非ゼロ)を最近傍グレー値で外側へ <code style="color:#22d3bf">1..7</code> px 拡張。<code style="color:#22d3bf">a</code>=マージン幅(HALCON <code style="color:#22d3bf">expand_domain_gray</code>)。<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_expand_domain&quot;, 0.4, 0.0)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">F. 詳細強調・平坦化(拡張バックエンド)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv_detail_enhance</code> — OpenCV <code style="color:#22d3bf">detailEnhance</code>(エッジ保存の局所詳細強調)。<code style="color:#22d3bf">a</code>=sigma_s, <code style="color:#22d3bf">b</code>=sigma_r。<code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_detail_enhance&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_detail</code> — PIL DETAIL フィルタ(軽い先鋭化)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_detail&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_edge_enhance</code> — PIL EDGE_ENHANCE_MORE(エッジ強調)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_edge_enhance&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xmh_soft</code> — mahotas ソフト閾値(小振幅を抑える収縮, <code style="color:#22d3bf">a</code>=閾値)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_soft&quot;, 0.3, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_detrend_flatten</code> — 行方向・列方向に線形トレンド除去(平面照明ムラの平坦化)、[0,1] へ再正規化。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsp_detrend_flatten&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_integral_image</code> — 積分画像(各画素=左上からの累積和)を max 正規化。前置平滑・高速ボックス統計の基礎。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk3_integral_image&quot;, 0.5, 0.5)</code></p>
+<p>&gt; 注: この族の全 op は <code style="color:#22d3bf">in_sort=image → out_sort=image</code>。有限・非負・形状保存・決定的(同一入力→ビット同一出力)は <code style="color:#22d3bf">examples/gallery2d_gray_arith.py</code> が全 op について機械検証しています。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_gray_arith から)</h3>
+<p><code style="color:#22d3bf">examples/gallery2d_gray_arith.py</code> の代表 op に課した強い GT(単に「動く」でなく beat-the-null)を、<code style="color:#22d3bf">fullseye.apply</code> ファサードで最短化したもの。repo 直下で <code style="color:#22d3bf">py -3.11</code> 実行可。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下で: py -3.11 this_snippet.py
+import numpy as np
+import fullseye
+
+# --- 検証済みの代表画像(勾配 + 円板 + 市松 + 微小ノイズ, 決定的) ---
+n = 48
+rng = np.random.default_rng(20260812)
+yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+grad = xx / (n - 1)
+disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) &lt; (n * 0.18) ** 2
+checker = ((xx.astype(int) // 6 + yy.astype(int) // 6) % 2) * 0.15
+img = np.clip(0.35 * grad + 0.45 * disk + checker + 0.03 * rng.standard_normal((n, n)), 0, 1)
+
+# 1) invert: 点反転 1 - x（null=恒等コピーは +1 相関、反転は -1）
+o = np.asarray(fullseye.apply(img, &quot;invert&quot;, 0.5, 0.5))
+assert np.allclose(o, 1.0 - img, atol=1e-9)
+assert np.corrcoef(o.ravel(), img.ravel())[0, 1] &lt; -0.99
+
+# 2) cv_trunc: 頭刈り min(x, a)（値を増やさない・実際に刈る）
+o = np.asarray(fullseye.apply(img, &quot;cv_trunc&quot;, 0.5, 0.5))
+assert np.all(o &lt;= img + 1e-9)
+assert float(o.max()) &lt; float(img.max()) - 0.05
+
+# 3) equ_histo_image: ヒストグラム平坦化 = 単調 + コントラスト増
+o = np.asarray(fullseye.apply(img, &quot;equ_histo_image&quot;, 0.5, 0.5))
+order = np.argsort(img, axis=None, kind=&quot;stable&quot;)
+assert np.all(np.diff(o.ravel()[order]) &gt;= -1e-9)          # 順位保存
+assert o.std() &gt; 1.2 * img.std()                            # コントラスト増
+
+# 4) scale_clip: アフィン伸張 → フルレンジ [0,1]
+o = np.asarray(fullseye.apply(img, &quot;scale_clip&quot;, 0.5, 0.5))
+assert o.min() &lt; 0.01 and o.max() &gt; 0.99
+
+# 5) it_bit_rshift: 右シフトは暗くする（平均が半減未満）
+o = np.asarray(fullseye.apply(img, &quot;it_bit_rshift&quot;, 0.5, 0.5))
+assert np.all(o &lt;= img + 1e-9) and o.mean() &lt; 0.5 * img.mean()
+
+# 6) 連鎖: 伸張 → 平坦化 → 反転（image を保つ）
+o = np.asarray(fullseye.run_pipeline(
+    img, [(&quot;scale_clip&quot;, 0.5, 0.5), (&quot;equ_histo_image&quot;, 0.5, 0.5), (&quot;invert&quot;, 0.5, 0.5)]))
+assert o.shape == img.shape and np.isfinite(o).all()
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>いずれも点変換(画素 $r\in[0,1]$ → 出力 $s$)。つまみ <code style="color:#22d3bf">a,b</code> は上の各 op 行の割当。</p>
+<p style="margin:2px 0 2px 12px">• ガンマ(<code style="color:#22d3bf">gamma</code>/<code style="color:#22d3bf">gamma_image</code>/<code style="color:#22d3bf">pow_image</code>): $s = r^{\gamma},\quad \gamma = 0.3 + 2.5a$</p>
+<p style="margin:2px 0 2px 12px">• 反転(<code style="color:#22d3bf">invert</code>/<code style="color:#22d3bf">invert_image</code>/<code style="color:#22d3bf">bit_not</code>): $s = 1 - r$</p>
+<p style="margin:2px 0 2px 12px">• アフィン伸張(<code style="color:#22d3bf">scale_clip</code>/<code style="color:#22d3bf">scale_image</code>): $s = \mathrm{clip}\big((0.5+1.5a)\,r + (b-0.5),\ 0,\ 1\big)$</p>
+<p style="margin:2px 0 2px 12px">• シグモイド(<code style="color:#22d3bf">sigmoid</code>): $s = \dfrac{1}{1 + e^{-(4+12a)\,(r-(0.2+0.6b))}}$</p>
+<p style="margin:2px 0 2px 12px">• 対数 / 指数(<code style="color:#22d3bf">log_image</code> / <code style="color:#22d3bf">exp_image</code>): $s = \log_2(1+r)\ \ /\ \ s = \dfrac{e^{r}-1}{e-1}$</p>
+<p style="margin:2px 0 2px 12px">• ヒストグラム平坦化(<code style="color:#22d3bf">equalize</code>/<code style="color:#22d3bf">equ_histo_image</code>): $s = \mathrm{CDF}(r),\quad \mathrm{CDF}(r) = \frac{1}{N}\sum_{i \le r} h(i)$</p>
+<p style="margin:2px 0 2px 12px">• 最小-最大伸張(<code style="color:#22d3bf">scale_image_max</code>): $s = \dfrac{r - r_{\min}}{r_{\max} - r_{\min}}$</p>
+<p style="margin:2px 0 2px 12px">• 局所順位(<code style="color:#22d3bf">monotony</code>): $\displaystyle s(p) = \frac{1}{8}\sum_{q\in \mathcal{N}_8(p)} \mathbf{1}\!\left[\,I(q) &lt; I(p)\,\right]$</p>
+<p style="margin:2px 0 2px 12px">• ビット面抽出(<code style="color:#22d3bf">f2_bit_slice</code>): $b_k(p) = \big(\lfloor 255\,I(p)\rceil \gg k\big)\ \&amp;\ 1,\quad k = \mathrm{round}(7a)$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグには <code style="color:#22d3bf">../../SAMPLES.md</code> の 2-D 画像源が使えます。低コントラストの <code style="color:#22d3bf">coins</code> や文書画像 <code style="color:#22d3bf">page</code> はヒストグラム平坦化・オートレベルの効き確認に、<code style="color:#22d3bf">camera</code> は階調曲線(ガンマ/シグモイド)の見た目確認に向きます。合成の <code style="color:#22d3bf">gradient</code> / <code style="color:#22d3bf">checker_noisy</code> は本ガイドの最小例と同系で、伸張・反転・ビット面の GT を数値で確かめやすい入力です(<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;coins&quot;)</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳 <code style="color:#22d3bf">../../../REFERENCES.md</code> に準拠。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• Gonzalez, R.C. &amp; Woods, R.E. (2018). *Digital Image Processing* (4th ed.) — intensity transformations（ガンマ・反転・アフィン伸張・シグモイド・ヒストグラム平坦化・ビット面スライス・対数/指数変換の標準テキスト）.</p>
+<p style="margin:2px 0 2px 12px">• Pizer, S.M., et al. (1987). &quot;Adaptive Histogram Equalization and Its Variations.&quot; *Computer Vision, Graphics, and Image Processing*, 39(3), 355–368.</p>
+<p style="margin:2px 0 2px 12px">• Zuiderveld, K. (1994). &quot;Contrast Limited Adaptive Histogram Equalization.&quot; *Graphics Gems IV*, Academic Press（CLAHE）.</p>
+<p style="margin:2px 0 2px 12px">• Zabih, R. &amp; Woodfill, J. (1994). &quot;Non-parametric Local Transforms for Computing Visual Correspondence.&quot; *ECCV*（局所順位/ランク変換 = <code style="color:#22d3bf">monotony</code> の系譜）.</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

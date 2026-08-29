@@ -1,0 +1,139 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">輪郭・1次元計測・テンプレート照合 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>この族は、画像から <b>輪郭(contour)</b> を下位画素(sub-pixel)精度で取り出し、それを選別・平滑・変換・領域化する XLD 系(HALCON 流の *eXtended Line Description*)の道具に、<b>1 次元キャリパ計測(measure1d)</b> と <b>テンプレート照合(matching)</b> を加えた計測寄りのファミリです。入力は基本的に 1 枚のグレースケール画像(<code style="color:#22d3bf">[0,1]</code> の 2 次元 float。一部はカラー <code style="color:#22d3bf">H×W×3</code> や、既に得た輪郭 dict / 領域マスク)で、出力は用途に応じて 4 種に分かれます — <b>輪郭</b>(<code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [ (N,2) 点列, ... ]}</code>、点は <code style="color:#22d3bf">(row, col)</code>)、<b>領域</b>(<code style="color:#22d3bf">[0,1]</code> の 2 値マスク)、<b>特徴</b>(有限スカラ)、<b>照合結果</b>(<code style="color:#22d3bf">[score, row, col, ...]</code> の配列)。</p>
+<p>平たく言えば「エッジや線をきれいな点列として取り出し → 短いゴミを捨て・平滑し・座標変換し → 領域に焼く/点数や長さを測る」という輪郭の一生と、「計測線 1 本に沿ってエッジ位置・本数・しきい値交差を測る」キャリパ、「テンプレートを画像内で探す」照合を、すべて同じ <code style="color:#22d3bf">fullseye.apply(img, &quot;op名&quot;, a, b)</code> の呼び出しモデルで扱えるようにしたものです。2-D パイプライン op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a, b ∈ [0,1]</code>」で、<code style="color:#22d3bf">a</code> は多くの場合しきい値/スケール、<code style="color:#22d3bf">b</code> は op ごとの二次パラメータ(計測線の閾値・オフセットなど)です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>輪郭の抽出 → 整形 → 領域化/計測という典型的な連鎖です。データ種(image / contour / region / feature)が op をまたいで繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[image&lt;br/&gt;グレー画像] --&gt;|edges_sub_pix| C0[contour&lt;br/&gt;下位画素エッジ]
+    IMG --&gt;|threshold_sub_pix| C0
+    IMG --&gt;|lines_gauss| C0
+    C0 --&gt;|select_contours&lt;br/&gt;短い輪郭を捨てる| C1[contour]
+    C1 --&gt;|smooth_contours&lt;br/&gt;移動平均| C2[contour]
+    C2 --&gt;|fit_line_contours&lt;br/&gt;直線当てはめ| C3[contour]
+    C2 --&gt;|contours_to_region| REG[region&lt;br/&gt;2値マスク]
+    C2 --&gt;|contour_point_num_xld| F1[feature&lt;br/&gt;点数スカラ]
+    REG --&gt;|gen_contour_region_xld| C0</pre>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[image] --&gt;|m1_measure_pos| CP[contour&lt;br/&gt;エッジ位置]
+    IMG --&gt;|m1_measure_thresh| FT[feature&lt;br/&gt;交差回数]
+    IMG --&gt;|m1_measure_pairs| FP[feature&lt;br/&gt;エッジ対の数]
+    TPL[template&lt;br/&gt;set_match_template] -.-&gt; IMG
+    IMG --&gt;|ncc_locate| M1[match&lt;br/&gt;score,row,col]
+    IMG --&gt;|shape_locate| M2[match&lt;br/&gt;score,row,col,angle]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>呼び出しは一律 <code style="color:#22d3bf">fullseye.apply(入力, &quot;op名&quot;, a, b)</code>。カッコ内の *HALCON:* は対応する HALCON オペレータ名です。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">A. 画像 → 下位画素輪郭(image -&gt; contour 抽出)</h3>
+<p style="margin:2px 0 2px 12px">• <b>edges_sub_pix</b> — Sobel 勾配振幅を <code style="color:#22d3bf">0.15+0.5a</code> で閾値化し、連結成分を点列輪郭にする(*HALCON: edges_sub_pix*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;edges_sub_pix&quot;, 0.4, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>threshold_sub_pix</b> — marching-squares で輝度レベル <code style="color:#22d3bf">0.2+0.5a</code> の等値線を下位画素輪郭にする(*HALCON: threshold_sub_pix*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;threshold_sub_pix&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>zero_crossing_sub_pix</b> — Gauss ラプラシアン(LoG)のゼロ交差を輪郭にする。<code style="color:#22d3bf">a</code> が平滑スケール(*HALCON: zero_crossing_sub_pix*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;zero_crossing_sub_pix&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>lines_gauss</b> — Frangi(Hessian リッジ)応答を閾値化して線状構造を抽出する Steger 流の線検出(*HALCON: lines_gauss*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;lines_gauss&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>lines_facet</b> — facet モデル系の線抽出(実装はリッジ応答ベース)(*HALCON: lines_facet*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;lines_facet&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>sk_find_contours</b> — skimage の marching-squares で等値線(既定 <code style="color:#22d3bf">0.2+0.5a</code>)を輪郭化する(HALCON 別名なし)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_find_contours&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>edges_color_sub_pix</b> — カラー入力の Di Zenzo 色勾配振幅を閾値化した輪郭(*HALCON: edges_color_sub_pix*、入力は color)。<code style="color:#22d3bf">fullseye.apply(color, &quot;edges_color_sub_pix&quot;, 0.4, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>lines_color</b> — カラーを輝度化し、その上のリッジ(LoG)線を抽出する(*HALCON: lines_color*、入力は color)。<code style="color:#22d3bf">fullseye.apply(color, &quot;lines_color&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">B. 輪郭の選別・平滑・当てはめ(contour -&gt; contour)</h3>
+<p style="margin:2px 0 2px 12px">• <b>select_contours</b> — 点数(≒長さ)が <code style="color:#22d3bf">3+40a</code> 未満の輪郭を捨てる(*HALCON: select_contours_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;select_contours&quot;, 0.1, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>select_contours_xld</b> — 上と同じ点数しきい値による XLD 選別(*HALCON: select_contours_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;select_contours_xld&quot;, 0.1, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>select_shape_xld</b> — 形状特徴で輪郭を選別(実装は点数ベースの選別)(*HALCON: select_shape_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;select_shape_xld&quot;, 0.1, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>smooth_contours</b> — 幅 <code style="color:#22d3bf">1+3a</code> の移動平均で点列を平滑化する(*HALCON: smooth_contours_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;smooth_contours&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>smooth_contours_xld</b> — 上と同じ移動平均平滑の XLD 版(*HALCON: smooth_contours_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;smooth_contours_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>fit_line_contours</b> — 各輪郭を SVD の第 1 主方向へ直線当てはめし、端点間の直線点列に置き換える(*HALCON: fit_line_contour_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;fit_line_contours&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>close_contours_xld</b> — 開いた輪郭を先頭点で閉じる(末尾に始点を付け足す)(*HALCON: close_contours_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;close_contours_xld&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">C. 輪郭の幾何変換(contour -&gt; contour, XLD)</h3>
+<p style="margin:2px 0 2px 12px">• <b>affine_trans_contour_xld</b> — 画像中心まわりに角度 <code style="color:#22d3bf">-20°+40a°</code> の回転アフィンを掛ける(*HALCON: affine_trans_contour_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;affine_trans_contour_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>affine_trans_polygon_xld</b> — 多角形(輪郭)への同種アフィン変換(*HALCON: affine_trans_polygon_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;affine_trans_polygon_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>projective_trans_contour_xld</b> — 列方向に依存する遠近スケールを掛ける射影(ホモグラフィ)変換(*HALCON: projective_trans_contour_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;projective_trans_contour_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>polar_trans_contour_xld</b> — 中心基準で直交座標を極座標 <code style="color:#22d3bf">(r, θ)</code> へ写す(*HALCON: polar_trans_contour_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;polar_trans_contour_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>shape_trans_xld</b> — 形状変換(凸包など。cv2 があれば凸包)(*HALCON: shape_trans_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;shape_trans_xld&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">D. 輪郭 ↔ 領域 の相互変換</h3>
+<p style="margin:2px 0 2px 12px">• <b>contours_to_region</b> — 輪郭画素を 2 値マスクに描き、<code style="color:#22d3bf">1+2a</code> 回 dilation して領域化する(*HALCON: gen_region_contour_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;contours_to_region&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>gen_region_contour_xld</b> — 上と同じ輪郭→領域(2 値)(*HALCON: gen_region_contour_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;gen_region_contour_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>gen_region_polygon_xld</b> — 輪郭を多角形とみて塗りつぶし領域を作る(*HALCON: gen_region_polygon_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;gen_region_polygon_xld&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>gen_contour_region_xld</b> — 領域(マスク)の境界を下位画素輪郭に戻す(*HALCON: gen_contour_region_xld*、入力は region)。<code style="color:#22d3bf">fullseye.apply(reg, &quot;gen_contour_region_xld&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">E. 輪郭の計測(contour -&gt; feature)</h3>
+<p style="margin:2px 0 2px 12px">• <b>contour_point_num_xld</b> — 最大輪郭の点数を <code style="color:#22d3bf">min(1, N/500)</code> に正規化して返す(*HALCON: contour_point_num_xld*)。<code style="color:#22d3bf">fullseye.apply(cs, &quot;contour_point_num_xld&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">F. 1 次元キャリパ計測(image -&gt; feature / contour, measure1d)</h3>
+<p>計測線は画像中心を通り、向きは <code style="color:#22d3bf">θ = a·π</code>。線に沿ってバイリニアで輝度プロファイルを取り、その上でエッジ(勾配ピーク)を下位画素に refine します。<code style="color:#22d3bf">b</code> の意味は op ごとに違います。</p>
+<p style="margin:2px 0 2px 12px">• <b>m1_measure_projection</b> — 計測帯を線に垂直に平均した射影の平均輝度を返す。<code style="color:#22d3bf">b</code> は線の垂直オフセット(0.5=中央)(*HALCON: measure_projection*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_projection&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>m1_measure_pos</b> — 中央線上の下位画素エッジ位置を輪郭(1 点/エッジ)で返す。<code style="color:#22d3bf">b</code> は相対最小振幅(*HALCON: measure_pos*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_pos&quot;, 0.5, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>m1_measure_thresh</b> — 生プロファイルが輝度レベル <code style="color:#22d3bf">b</code> を横切る回数を返す(*HALCON: measure_thresh*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_thresh&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>m1_measure_pairs</b> — 立上り→立下りのエッジ対(明るい対象)の数を返す。<code style="color:#22d3bf">b</code> は相対振幅しきい値(*HALCON: measure_pairs*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_measure_pairs&quot;, 0.5, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>m1_fuzzy_measure_pos</b> — 各エッジにファジー振幅スコア <code style="color:#22d3bf">∈[0,1]</code> を与え、<code style="color:#22d3bf">b</code> 以上のエッジ位置を輪郭で返す(*HALCON: fuzzy_measure_pos*)。<code style="color:#22d3bf">fullseye.apply(img, &quot;m1_fuzzy_measure_pos&quot;, 0.5, 0.3)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">G. テンプレート照合(image -&gt; match, matching)</h3>
+<p>照合系は先に <code style="color:#22d3bf">ops.set_match_template(t)</code> で探すテンプレート(<code style="color:#22d3bf">[0,1]</code> の 2 次元 float)を <b>同じスレッドで</b> 設定してから呼びます。未設定なら 0 スコアの配列を返します(fail-safe)。</p>
+<p style="margin:2px 0 2px 12px">• <b>ncc_locate</b> — 正規化相互相関(NCC)の最大位置を <code style="color:#22d3bf">[score, row, col]</code> で返す。<code style="color:#22d3bf">row, col</code> はテンプレート中心(*HALCON: find_ncc_model*)。<code style="color:#22d3bf">ops.set_match_template(t); fullseye.apply(img, &quot;ncc_locate&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>shape_locate</b> — テンプレートを 30° 刻みで回して各回転の NCC 最大を取り、最良の <code style="color:#22d3bf">[score, row, col, angle]</code> を返す(回転不変)(*HALCON: find_shape_model*)。<code style="color:#22d3bf">ops.set_match_template(t); fullseye.apply(img, &quot;shape_locate&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_contour_measure から)</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11</code> で実行すると <code style="color:#22d3bf">PASS</code> を出力します(輪郭パイプライン・計測・照合の 3 系統を、既知の真値で確認する自己完結テスト)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye
+import ops  # matching ops read their template from a context set here
+
+# --- structured test image + a flat control --------------------------------
+n = 48
+yy, xx = np.mgrid[0:n, 0:n].astype(float)
+disk = ((yy - 24.0) ** 2 + (xx - 30.0) ** 2) &lt; 5.0 ** 2
+img = np.clip(0.2 + 0.2 * (xx / (n - 1)) + 0.7 * disk, 0, 1)   # gradient bg + bright disk
+flat = np.full((n, n), 0.42)
+
+# 1) contour pipeline: sub-pixel edges -&gt; select -&gt; smooth -&gt; region
+edges = fullseye.apply(img, &quot;edges_sub_pix&quot;, 0.4, 0.5)          # image  -&gt; contour
+assert isinstance(edges, dict) and &quot;cs&quot; in edges and &quot;shape&quot; in edges
+assert len(edges[&quot;cs&quot;]) &gt; 0                                    # structure =&gt; contours
+assert len(fullseye.apply(flat, &quot;edges_sub_pix&quot;, 0.4, 0.5)[&quot;cs&quot;]) == 0   # beat-the-null
+
+kept = fullseye.apply(edges, &quot;select_contours&quot;, 0.1, 0.5)      # contour -&gt; contour
+assert len(kept[&quot;cs&quot;]) &lt;= len(edges[&quot;cs&quot;])                     # selection never adds
+smoothed = fullseye.apply(kept, &quot;smooth_contours&quot;, 0.5, 0.5)   # contour -&gt; contour
+region = np.asarray(fullseye.apply(smoothed, &quot;contours_to_region&quot;, 0.5, 0.5))  # -&gt; region
+assert set(np.unique(region).tolist()).issubset({0.0, 1.0})    # binary region
+assert region.sum() &gt; 0                                        # non-empty
+
+# 2) 1-D caliper measurement: the projection recovers a constant profile
+lo = fullseye.apply(np.full((n, n), 0.2), &quot;m1_measure_projection&quot;, 0.5, 0.5)
+hi = fullseye.apply(np.full((n, n), 0.8), &quot;m1_measure_projection&quot;, 0.5, 0.5)
+assert abs(lo - 0.2) &lt; 0.05 and abs(hi - 0.8) &lt; 0.05
+assert fullseye.apply(flat, &quot;m1_measure_thresh&quot;, 0.5, 0.5) == 0   # no crossings on flat
+
+# 3) template matching: locate a known patch (structured, not flat)
+tmpl = img[18:30, 24:36].copy()          # 12x12 crop around the disk (has structure)
+ops.set_match_template(tmpl)             # NCC/shape ops read this template
+score, row, col = fullseye.apply(img, &quot;ncc_locate&quot;, 0.5, 0.5)     # image -&gt; match
+assert score &gt; 0.99                      # a crop matches itself near-perfectly
+assert abs(row - 24.0) &lt; 2 and abs(col - 30.0) &lt; 2               # at the disk centre
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p><b>正規化相互相関(ncc_locate / shape_locate の核)</b> — 位置 <code style="color:#22d3bf">(y,x)</code> のスコアは、テンプレート <code style="color:#22d3bf">T</code> とそこに重なる同サイズ窓 <code style="color:#22d3bf">I_w</code> の Pearson 相関で、輝度・コントラスト不変(完全一致で <code style="color:#22d3bf">1</code>):</p>
+<p>$$</p>
+<p>\mathrm{NCC}(y,x) = \frac{\sum_w \big(I_w - \bar I_w\big)\big(T - \bar T\big)}{\sqrt{\sum_w (I_w - \bar I_w)^2}\ \sqrt{\sum_w (T - \bar T)^2}}\ \in [-1, 1]</p>
+<p>$$</p>
+<p>分母のテンプレート側エネルギーが 0(平坦テンプレート)だとスコアは 0 になります — 照合には構造のあるテンプレートが必要です。</p>
+<p><b>下位画素エッジの放物線 refine(measure1d のエッジ位置)</b> — 勾配振幅 <code style="color:#22d3bf">g</code> のピーク近傍 3 点に放物線を当て、頂点オフセット <code style="color:#22d3bf">δ</code> でサブ画素位置 <code style="color:#22d3bf">i+δ</code> を得ます:</p>
+<p>$$</p>
+<p>\delta = \frac{1}{2}\cdot\frac{g_{i-1} - g_{i+1}}{g_{i-1} - 2g_i + g_{i+1}}, \qquad \delta \in [-1, 1]</p>
+<p>$$</p>
+<p><b>輪郭のアフィン変換(affine_trans_contour_xld)</b> — 画像中心 <code style="color:#22d3bf">c=(y_c,x_c)</code> まわりに回転 <code style="color:#22d3bf">R(φ)</code>(<code style="color:#22d3bf">φ = -20°+40a°</code>)を掛けます:</p>
+<p>$$</p>
+<p>q = R(\varphi)\,(p - c) + c, \qquad R(\varphi) = \begin{bmatrix} \cos\varphi &amp; -\sin\varphi \\ \sin\varphi &amp; \cos\varphi \end{bmatrix}</p>
+<p>$$</p>
+<p><b>ファジー振幅メンバシップ(m1_fuzzy_measure_pos)</b> — 振幅 <code style="color:#22d3bf">amp</code> を下限 <code style="color:#22d3bf">lo=0.05\,g_{\max}</code> と最大 <code style="color:#22d3bf">g_{\max}</code> の間で正規化したスコアが <code style="color:#22d3bf">b</code> 以上のエッジを残します:</p>
+<p>$$</p>
+<p>\mu = \mathrm{clip}\!\left(\frac{amp - lo}{g_{\max} - lo},\ 0,\ 1\right), \qquad \text{keep if } \mu \ge b</p>
+<p>$$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>この族のデバッグには 2-D 画像が使えます(外部 DL 不要)。輪郭・エッジ抽出には skimage の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code> / <code style="color:#22d3bf">page</code>(境界がはっきりした自然画像)、キャリパ計測とテンプレート照合には合成の <code style="color:#22d3bf">shapes</code> / <code style="color:#22d3bf">checker_noisy</code>(既知の段差・矩形を持つ)が向きます。取得法とライセンスは [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) を参照(<code style="color:#22d3bf">import sample_images; sample_images.load(&#x27;coins&#x27;)</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• Steger, C. (1998). &quot;An Unbiased Detector of Curvilinear Structures.&quot; IEEE TPAMI. — 下位画素エッジ・線抽出(edges_sub_pix / lines_gauss / lines_facet)。</p>
+<p style="margin:2px 0 2px 12px">• Lorensen, W. &amp; Cline, H. (1987). &quot;Marching Cubes: A High Resolution 3D Surface Construction Algorithm.&quot; SIGGRAPH. — 等値線抽出 marching-squares の基礎(threshold_sub_pix / sk_find_contours)。</p>
+<p style="margin:2px 0 2px 12px">• Marr, D. &amp; Hildreth, E. (1980). &quot;Theory of Edge Detection.&quot; Proc. R. Soc. Lond. B. — LoG ゼロ交差(zero_crossing_sub_pix)。</p>
+<p style="margin:2px 0 2px 12px">• Frangi, A. et al. (1998). &quot;Multiscale Vessel Enhancement Filtering.&quot; MICCAI. — Hessian リッジによる線強調(lines_gauss)。</p>
+<p style="margin:2px 0 2px 12px">• Di Zenzo, S. (1986). &quot;A Note on the Gradient of a Multi-Image.&quot; CVGIP. — 多チャネル色勾配(edges_color_sub_pix)。</p>
+<p style="margin:2px 0 2px 12px">• Lewis, J. P. (1995). &quot;Fast Normalized Cross-Correlation.&quot; Vision Interface. — 正規化相互相関(ncc_locate)。</p>
+<p style="margin:2px 0 2px 12px">• Steger, C. (2002). &quot;Occlusion-, Clutter-, and Illumination-Invariant Object Recognition (Shape-Based Matching).&quot; — 形状ベース照合(shape_locate)。</p>
+<p style="margin:2px 0 2px 12px">• Serra, J. (1982). &quot;Image Analysis and Mathematical Morphology.&quot; — 領域化の膨張(contours_to_region の dilation)。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

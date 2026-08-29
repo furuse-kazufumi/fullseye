@@ -1,0 +1,177 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">2-D 幾何変換 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><code style="color:#22d3bf">gallery2d_geometry</code> は「画素・点をどこへ動かすか(写像)」を担う族で、視覚パイプラインの</p>
+<p><b>前処理・姿勢正規化・データ拡張・計測</b> の土台になる。入力は 3 種類 —</p>
+<p>濃淡画像 <code style="color:#22d3bf">image</code>(<code style="color:#22d3bf">[0,1]</code> の 2-D float64)、二値領域 <code style="color:#22d3bf">region</code>(同じ形の 0/1 マスク)、</p>
+<p>XLD 輪郭 <code style="color:#22d3bf">contour</code>(<code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [Nx2 の (row,col) 点列]}</code>)— で、出力は</p>
+<p>入力を写した <code style="color:#22d3bf">image</code>/<code style="color:#22d3bf">region</code>、抽出した点集合 <code style="color:#22d3bf">contour</code>、または計測スカラ <code style="color:#22d3bf">feature</code>。</p>
+<p>中身は 5 カテゴリに分かれる: <b>geometry</b>(回転・拡大縮小・鏡映・アフィン/射影/極座標変換)、</p>
+<p><b>transform</b>(ラドン変換サイノグラム・Haar/Daubechies ウェーブレット)、</p>
+<p><b>subpix</b>(濃淡曲面の臨界点をサブピクセルで抽出)、</p>
+<p><b>xldgeom</b>(輪郭点集合の幾何量と整形)、<b>deformation</b>(制御点ベースの自由変形)。</p>
+<p>呼び出しモデルは族全体で統一されている: **1 入力 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code>** で</p>
+<p><code style="color:#22d3bf">fullseye.apply(x, &quot;op_name&quot;, a, b)</code>。慣習として <code style="color:#22d3bf">a</code> が変形の主強度(回転角・倍率・</p>
+<p>変形振幅・検出しきい値)、<code style="color:#22d3bf">b</code> が副パラメータ(せん断量・空間周波数・角度オフセット等)を担う。</p>
+<p><code style="color:#22d3bf">a=0</code> を恒等写像に寄せた op(<code style="color:#22d3bf">deform_*</code>)もあり、変形量をゼロから連続的に上げられる。</p>
+<p>つまみの具体的な割り当ては各 op で異なるので、下の「使い方」節と検証済みサンプルを見てほしい。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>幾何正規化で姿勢を整え、サブピクセル臨界点を輪郭として取り出し、XLD 幾何量で計測する</p>
+<p>「正規化 → 抽出 → 計測」の縦串(<code style="color:#22d3bf">image → image → contour → feature</code>):</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[image&lt;br/&gt;生画像] --&gt;|rotate_image / affine_trans_image / zoom_image_factor| B[image&lt;br/&gt;姿勢正規化済み]
+    B --&gt;|sp_local_max_sub_pix / sp_saddle_points_sub_pix| C[contour&lt;br/&gt;サブピクセル臨界点]
+    C --&gt;|xg_gen_polygons / xg_crop_contours| D[contour&lt;br/&gt;整形済み点列]
+    D --&gt;|xg_area_center / xg_orientation / xg_height_width_ratio| E[feature&lt;br/&gt;計測スカラ]</pre>
+<p>座標系変換・自由変形の系統(すべて <code style="color:#22d3bf">image → image</code>。極座標は往復でき、変形は拡張に使う):</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    I[image] --&gt;|polar_trans_image| P[image&lt;br/&gt;極座標]
+    P --&gt;|polar_trans_image_inv| I2[image&lt;br/&gt;直交座標に復元]
+    I --&gt;|tf_log_polar / xcv2_warp_logpolar| LP[image&lt;br/&gt;対数極座標]
+    I --&gt;|tf_radon_sinogram| S[image&lt;br/&gt;サイノグラム]
+    I --&gt;|deform_tps / deform_ffd / deform_mls| W[image&lt;br/&gt;自由変形・データ拡張]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">A. 剛体・相似・アフィン変換(<code style="color:#22d3bf">image → image</code>)</h3>
+<p style="margin:2px 0 2px 12px">• <b>rotate_image</b> — 画像中心まわりに回転(角度 <code style="color:#22d3bf">= -45° + 90°·a</code>、反射境界)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;rotate_image&quot;, 0.5, 0.5)</code>(<code style="color:#22d3bf">a=0.5</code> で 0°)</p>
+<p style="margin:2px 0 2px 12px">• <b>rotate_img</b> — <code style="color:#22d3bf">rotate_image</code> と同型の回転(コア registry 版、HALCON <code style="color:#22d3bf">rotate_image</code> 相当)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;rotate_img&quot;, 0.7, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>zoom_image_factor</b> — 中心固定で拡大縮小(倍率 <code style="color:#22d3bf">s = 0.7 + 0.6·a</code>)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_factor&quot;, 0.8, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>zoom_image_size</b> — サイズ指定ズームの型(挙動は中心スケーリング、HALCON <code style="color:#22d3bf">zoom_image_size</code> 相当)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;zoom_image_size&quot;, 0.3, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>rescale_img</b> — コア版の再スケール(<code style="color:#22d3bf">zoom_image_size</code> と同系、Wolberg の画像ワープ)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;rescale_img&quot;, 0.6, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>affine_trans_image</b> — 回転+せん断のアフィン写像(回転 <code style="color:#22d3bf">-20°+40°·a</code>、せん断 <code style="color:#22d3bf">(b-0.5)·0.4</code>)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_image&quot;, 0.5, 0.7)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>affine_trans_image_size</b> — 出力サイズ指定型のアフィン(同じアフィン核)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_trans_image_size&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>affine_warp</b> — コア版のアフィンワープ(<code style="color:#22d3bf">affine_trans_image</code> と同核)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;affine_warp&quot;, 0.5, 0.6)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>mirror_image</b> — 鏡映(<code style="color:#22d3bf">a&lt;0.34</code>=行反転 / <code style="color:#22d3bf">a&lt;0.67</code>=列反転 / それ以上=転置)。画素の多重集合を保存する置換。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;mirror_image&quot;, 0.2, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xpil_offset</b> — トーラス状(巻き戻し)平行移動(横シフト量 <code style="color:#22d3bf">≈ a·W</code>)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_offset&quot;, 0.25, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">B. 射影・極座標・非線形ワープ(<code style="color:#22d3bf">image → image</code>)</h3>
+<p style="margin:2px 0 2px 12px">• <b>projective_trans_image</b> — 透視(射影)変換。台形ゆがみを与える(強度 <code style="color:#22d3bf">a</code>、非対称度 <code style="color:#22d3bf">b</code>)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;projective_trans_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>polar_trans_image</b> — 直交座標 → 極座標へリサンプル(中心 <code style="color:#22d3bf">(W/2,H/2)</code>、最大半径 <code style="color:#22d3bf">min(H,W)/2</code>)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>polar_trans_image_inv</b> — 極座標 → 直交座標の逆変換(<code style="color:#22d3bf">polar_trans_image</code> の相棒)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;polar_trans_image_inv&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>tf_log_polar</b> — 対数極座標へリサンプル。<b>中心まわりのスケール変化=行シフト、回転=列シフト</b>になる(<code style="color:#22d3bf">a</code>=最大半径、<code style="color:#22d3bf">b</code>=角度オフセット)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;tf_log_polar&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>sk_swirl</b> — 中心まわりの角度ねじれ(strength <code style="color:#22d3bf">= 1 + 4·a</code>、半径 30)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_swirl&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <b>projective_trans_image_size</b>(出力サイズ指定の射影)· <b>polar_trans_image_ext</b>(拡張極座標)· <b>xcv2_warp_logpolar</b>(OpenCV 実装の対数極座標ワープ)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">C. 領域の幾何変換(<code style="color:#22d3bf">region → region</code>)</h3>
+<p>同じ幾何写像を二値マスクへ適用する。<code style="color:#22d3bf">fullseye.apply</code> はグレー配列を 0.5 で二値化してから渡す。</p>
+<p style="margin:2px 0 2px 12px">• <b>transpose_region</b> — 行列転置(対合: 2 回で元に戻る、1 回では入れ替わる)。 — <code style="color:#22d3bf">fullseye.apply(reg, &quot;transpose_region&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>mirror_region</b> — 領域の鏡映。 — <code style="color:#22d3bf">fullseye.apply(reg, &quot;mirror_region&quot;, 0.2, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>zoom_region</b> — 領域の拡大縮小。 — <code style="color:#22d3bf">fullseye.apply(reg, &quot;zoom_region&quot;, 0.7, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <b>affine_trans_region</b>(アフィン)· <b>projective_trans_region</b>(射影)· <b>polar_trans_region_inv</b>(逆極座標)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">D. キャンバス整形(<code style="color:#22d3bf">image → image</code>)</h3>
+<p style="margin:2px 0 2px 12px">• <b>it_add_image_border</b> — 反射境界を幅 <code style="color:#22d3bf">≈a</code> で追加(パディング)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;it_add_image_border&quot;, 0.3, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>it_crop_part</b> — 中央 <code style="color:#22d3bf">a</code> 割合を切り出して元サイズへ再サンプル(中央ズーム)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;it_crop_part&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>it_crop_rectangle1</b> — <code style="color:#22d3bf">[a … 1-a]</code> の中央矩形を切り出す。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;it_crop_rectangle1&quot;, 0.2, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>it_change_format</b> — 行列サイズを最大辺の正方形へ整形(正方形入力は素通し)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;it_change_format&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">E. 座標系変換 / ウェーブレット(<code style="color:#22d3bf">image → image</code>)</h3>
+<p style="margin:2px 0 2px 12px">• <b>tf_radon_sinogram</b> — ラドン変換をサイノグラム画像として描く(各行=角度 <code style="color:#22d3bf">θ</code> のパラレルビーム投影、角度スパン <code style="color:#22d3bf">= 180°·(0.25+0.75·a)</code>)。回転対称物は行が一定、偏心点は正弦を描く。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;tf_radon_sinogram&quot;, 0.8, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xmh_haar</b> — Haar ウェーブレット変換(mahotas 実装、<code style="color:#22d3bf">[0,1]</code> へ再スケール)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_haar&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xmh_daubechies</b> — Daubechies ウェーブレット変換(<code style="color:#22d3bf">a</code> で D2/D4/D6/D8 を選択)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;xmh_daubechies&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">F. 制御点ベース自由変形(<code style="color:#22d3bf">image → image</code>)</h3>
+<p><code style="color:#22d3bf">a</code>=変形振幅、<code style="color:#22d3bf">b</code>=空間周波数/格子解像度/局所性。いずれも <code style="color:#22d3bf">a=0</code> はサブピクセル補間誤差を除いて恒等。</p>
+<p style="margin:2px 0 2px 12px">• <b>deform_tps</b> — 薄板スプライン変形(5×5 制御格子、内側 3×3 を平滑な決定的場で変位、外枠は固定)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_tps&quot;, 0.8, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>deform_ffd</b> — 3 次 B-spline 自由形状変形(FFD、各制御点が 4 スパンにコンパクト支持、振幅は単射条件に沿って上限)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_ffd&quot;, 0.8, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>deform_mls</b> — Moving Least Squares(アフィン版)変形(画素ごとに重み付き最小二乗アフィンを解く)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;deform_mls&quot;, 0.8, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">G. サブピクセル臨界点抽出(<code style="color:#22d3bf">image → contour</code>)</h3>
+<p>濃淡曲面の臨界点を、3×3 近傍への 2 次多項式フィット <code style="color:#22d3bf">grad z = 0</code> でサブピクセル精度に絞る。</p>
+<p>出力は各点を 1 点のサブ輪郭にした XLD dict(<code style="color:#22d3bf">count_contours</code> で個数が取れる)。<code style="color:#22d3bf">a</code>=顕著度/しきい値、<code style="color:#22d3bf">b</code>=未使用。</p>
+<p style="margin:2px 0 2px 12px">• <b>sp_local_max_sub_pix</b> — 局所極大(8 近傍より厳密に大)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_local_max_sub_pix&quot;, 0.2, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>sp_local_min_sub_pix</b> — 局所極小。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_local_min_sub_pix&quot;, 0.2, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>sp_saddle_points_sub_pix</b> — 鞍点(フィット Hessian が不定 <code style="color:#22d3bf">det H&lt;0</code>、臨界オフセットがセル内)。 — <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_saddle_points_sub_pix&quot;, 0.2, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <b>sp_critical_points_sub_pix</b>(極大・極小・鞍点をまとめて)· <b>sp_plateaus</b>(等値の連結平坦領域の重心)· <b>sp_lowlands_center</b>(領域極小=盆地の中心)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">H. XLD 輪郭の幾何量・整形(<code style="color:#22d3bf">contour → feature</code> / <code style="color:#22d3bf">contour → contour</code>)</h3>
+<p>点集合の共分散・中心モーメント(標準的な 2-D 定義)から不変量を測り、あるいは点列を整形する。</p>
+<p style="margin:2px 0 2px 12px">• <b>xg_area_center</b> — シューレース公式による多角形面積。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_area_center&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_moments</b> — 正規化 2 次中心モーメントのトレース <code style="color:#22d3bf">μ20+μ02</code>(回転不変スカラ)。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_moments&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_orientation</b> — 主軸方位を <code style="color:#22d3bf">[0,180)</code> 度に畳んで <code style="color:#22d3bf">/180</code> 正規化(対角線→0.25、水平→0.0)。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_orientation&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_eccentricity</b> — 点共分散からの離心率 <code style="color:#22d3bf">sqrt(1 - λmin/λmax)</code>。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_eccentricity&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_elliptic_axis</b> — 長軸/短軸比 <code style="color:#22d3bf">sqrt(λmax/λmin)</code>。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_elliptic_axis&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_height_width_ratio</b> — 軸平行バウンディングボックスの縦横比。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_height_width_ratio&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_regress_contours</b> — 全最小二乗(直交回帰)残差 RMS(=最小共分散固有値の平方根)。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_regress_contours&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_gen_polygons</b> — Douglas–Peucker による折れ線簡略化(許容誤差 <code style="color:#22d3bf">eps = a·bbox 対角長</code>)。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_gen_polygons&quot;, 0.3, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_clip_contours</b> — 折れ線長が <code style="color:#22d3bf">a·最大長</code> 未満の輪郭を除去。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_clip_contours&quot;, 0.2, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>xg_crop_contours</b> — 中央 <code style="color:#22d3bf">a</code> 割合の窓に入る点だけ残す。 — <code style="color:#22d3bf">fullseye.apply(cont, &quot;xg_crop_contours&quot;, 0.5, 0.5)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_geometry から)</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11 &lt;file&gt;.py</code>(または <code style="color:#22d3bf">PYTHONPATH=. py -3.11 …</code>)として実行できる自己完結例。</p>
+<p><code style="color:#22d3bf">examples/gallery2d_geometry.py</code> の GT を土台に、族の 5 カテゴリを 1 本で叩いて既知効果を assert する。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye
+
+# --- 合成 [0,1] 濃淡画像: 勾配 + 明るい円板 + 市松 + 微小ノイズ ---
+n = 48
+yy, xx = np.mgrid[0:n, 0:n].astype(float)
+grad = xx / (n - 1)
+disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) &lt; (n * 0.18) ** 2
+checker = ((xx.astype(int) // 6 + yy.astype(int) // 6) % 2) * 0.15
+noise = 0.03 * np.random.default_rng(20260812).standard_normal((n, n))
+img = np.clip(0.35 * grad + 0.45 * disk + checker + noise, 0.0, 1.0)
+
+# (1) mirror_image (a&lt;0.34 -&gt; 行反転): 画素の置換なので値の多重集合は不変、かつ恒等ではない
+mir = fullseye.apply(img, &quot;mirror_image&quot;, 0.2, 0.5)
+assert np.array_equal(np.sort(mir.ravel()), np.sort(img.ravel()))
+assert not np.array_equal(mir, img)
+
+# (2) transpose_region は対合(2 回適用で元へ戻る / 1 回では入れ替わる)
+reg = (((yy - 24) ** 2 + (xx - 19) ** 2) &lt; 10 ** 2).astype(float)   # 偏心した円板
+t1 = fullseye.apply(reg, &quot;transpose_region&quot;, 0.5, 0.5)
+t2 = fullseye.apply(t1,  &quot;transpose_region&quot;, 0.5, 0.5)
+assert np.array_equal(t1, reg.T) and np.array_equal(t2, reg)
+
+# (3) deform_tps: a=0 は恒等写像、a=0.8 では明確に変形する
+o0 = fullseye.apply(img, &quot;deform_tps&quot;, 0.0, 0.5)
+o8 = fullseye.apply(img, &quot;deform_tps&quot;, 0.8, 0.5)
+assert np.abs(o0 - img).max() &lt; 1e-6
+assert np.abs(o8 - img).mean() &gt; 1e-2
+
+# (4) sp_local_max_sub_pix: 単峰ガウスの峰をサブピクセルで検出(出力は XLD dict)
+bump = np.exp(-(((yy - 20) ** 2 + (xx - 28) ** 2) / (2 * 3.0 ** 2)))
+peaks = fullseye.apply(bump, &quot;sp_local_max_sub_pix&quot;, 0.2, 0.0)
+pts = np.array([c[0] for c in peaks[&quot;cs&quot;]])
+assert len(pts) &gt;= 1 and float(np.min(np.hypot(pts[:, 0] - 20, pts[:, 1] - 28))) &lt; 1.0
+
+# (5) xg_area_center: 一辺 20 の正方形輪郭のシューレース面積 = 400(出力は float)
+square = {&quot;shape&quot;: (50, 50),
+          &quot;cs&quot;: [np.array([[10., 10.], [10., 30.], [30., 30.], [30., 10.], [10., 10.]])]}
+area = fullseye.apply(square, &quot;xg_area_center&quot;, 0.5, 0.5)
+assert abs(area - 400.0) &lt; 1e-6
+
+print(&quot;PASS&quot;)</pre>
+<p>族の *全 op* を契約(有限・型・決定性)+ 既知効果(GT + beat-the-null)で検証する完全版は</p>
+<p><code style="color:#22d3bf">examples/gallery2d_geometry.py</code>(<code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p><b>回転・アフィン写像</b>(<code style="color:#22d3bf">rotate_image</code> / <code style="color:#22d3bf">affine_trans_image</code> / <code style="color:#22d3bf">affine_warp</code>)— 出力画素 <code style="color:#22d3bf">p</code> を</p>
+<p>逆写像 <code style="color:#22d3bf">M^{-1}</code> で入力座標へ引き戻して補間する。回転角は <code style="color:#22d3bf">θ = -45° + 90°a</code>(アフィンは <code style="color:#22d3bf">-20°+40°a</code>):</p>
+<p>$$M(\theta)=\begin{pmatrix}\cos\theta &amp; -\sin\theta\\ \sin\theta &amp; \cos\theta\end{pmatrix},\qquad</p>
+<p>M_{\text{affine}}=\begin{pmatrix}\cos\theta &amp; -\sin\theta+(b-0.5)\cdot0.4\\ \sin\theta &amp; \cos\theta\end{pmatrix}$$</p>
+<p><b>シューレース面積</b>(<code style="color:#22d3bf">xg_area_center</code>)— 閉多角形 $\{(x_i,y_i)\}$ について</p>
+<p>$A=\tfrac12\left|\sum_i \left(x_i y_{i+1}-x_{i+1}y_i\right)\right|$。</p>
+<p><b>主軸方位・中心モーメント</b>(<code style="color:#22d3bf">xg_orientation</code> / <code style="color:#22d3bf">xg_moments</code>)— 点集合の 2 次中心モーメント</p>
+<p>$\mu_{20},\mu_{02},\mu_{11}$ から共分散行列を作り、その主固有ベクトルの角度が方位:</p>
+<p>$\theta=\operatorname{atan2}(v_y,v_x)\bmod 180^\circ$。<code style="color:#22d3bf">xg_moments</code> はトレース $\mu_{20}+\mu_{02}$(回転不変)を返す。</p>
+<p><b>薄板スプライン</b>(<code style="color:#22d3bf">deform_tps</code>)— 放射基底関数 $U(r)=r^2\log r$ を用い、制御点で</p>
+<p>$\sum_i w_i=0,\ \sum_i w_i \mathbf{p}_i=\mathbf 0$ の側条件つき線形系を解いて滑らかな変位場を作る。</p>
+<p><b>ラドン変換</b>(<code style="color:#22d3bf">tf_radon_sinogram</code>)— 角度 $\theta$・検出器位置 $s$ に対する線積分:</p>
+<p>$R(\theta,s)=\iint f(x,y)\,\delta(x\cos\theta+y\sin\theta-s)\,dx\,dy$。サイノグラムは行が $\theta$、列が $s$。</p>
+<p><b>対数極座標</b>(<code style="color:#22d3bf">tf_log_polar</code>)— 中心からの半径 $r$ と角度 $\phi$ を</p>
+<p>$\rho=\log r,\ \phi=\operatorname{atan2}(y,x)$ に写す。スケール変化は $\rho$(行)の平行移動、</p>
+<p>回転は $\phi$(列)の平行移動になり、スケール・回転が加法的シフトに線形化される。</p>
+<p><b>サブピクセル臨界点</b>(<code style="color:#22d3bf">sp_*</code>)— 3×3 近傍に 2 次曲面</p>
+<p>$z=a_0+a_1x+a_2y+a_3x^2+a_4y^2+a_5xy$ を最小二乗で当て、$\nabla z=0$ を解いて</p>
+<p>オフセット $\Delta=-H^{-1}g$(勾配 $g$、Hessian $H$)を得る。$\det H&lt;0$ は鞍点。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグ用の 2-D 画像源は <a style="color:#22d3bf" href="op:SAMPLES">サンプルデータ カタログ</a> を参照。</p>
+<p><code style="color:#22d3bf">import sample_images; sample_images.load(&quot;checker_noisy&quot;)</code> の合成市松や <code style="color:#22d3bf">&quot;coins&quot;</code>/<code style="color:#22d3bf">&quot;camera&quot;</code></p>
+<p>(skimage.data、BSD/public)は回転・極座標・サブピクセル臨界点の効果確認に向く。回転対称な</p>
+<p><code style="color:#22d3bf">&quot;blobs&quot;</code> は <code style="color:#22d3bf">tf_radon_sinogram</code> の行一定性、偏心した円板は正弦軌跡の確認に使える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳は <a style="color:#22d3bf" href="op:REFERENCES">../../../REFERENCES.md</a>。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• Wolberg, G. (1990). *Digital Image Warping*. IEEE Computer Society Press. — 回転・ズーム・アフィン/射影の画像ワップとリサンプリング。</p>
+<p style="margin:2px 0 2px 12px">• Bookstein, F. L. (1989). &quot;Principal Warps: Thin-Plate Splines and the Decomposition of Deformations&quot;. *IEEE TPAMI* 11(6). — <code style="color:#22d3bf">deform_tps</code>。</p>
+<p style="margin:2px 0 2px 12px">• Rueckert, D., et al. (1999). &quot;Nonrigid Registration Using Free-Form Deformations&quot;. *IEEE TMI* 18(8). — <code style="color:#22d3bf">deform_ffd</code>。</p>
+<p style="margin:2px 0 2px 12px">• Schaefer, S., McPhail, T., &amp; Warren, J. (2006). &quot;Image Deformation Using Moving Least Squares&quot;. *ACM TOG (SIGGRAPH)* 25(3). — <code style="color:#22d3bf">deform_mls</code>。</p>
+<p style="margin:2px 0 2px 12px">• Radon, J. (1917). &quot;Über die Bestimmung von Funktionen durch ihre Integralwerte längs gewisser Mannigfaltigkeiten&quot;. — ラドン変換 / <code style="color:#22d3bf">tf_radon_sinogram</code>。</p>
+<p style="margin:2px 0 2px 12px">• Reddy, B. S., &amp; Chatterji, B. N. (1996). &quot;An FFT-Based Technique for Translation, Rotation, and Scale-Invariant Image Registration&quot;. *IEEE TIP* 5(8). — 対数極座標(<code style="color:#22d3bf">tf_log_polar</code> / <code style="color:#22d3bf">xcv2_warp_logpolar</code>)。</p>
+<p style="margin:2px 0 2px 12px">• Daubechies, I. (1988). &quot;Orthonormal Bases of Compactly Supported Wavelets&quot;. *Comm. Pure Appl. Math.* 41(7). — <code style="color:#22d3bf">xmh_daubechies</code>。</p>
+<p style="margin:2px 0 2px 12px">• Mallat, S. (1989). &quot;A Theory for Multiresolution Signal Decomposition: The Wavelet Representation&quot;. *IEEE TPAMI* 11(7). — Haar/多重解像度(<code style="color:#22d3bf">xmh_haar</code>)。</p>
+<p style="margin:2px 0 2px 12px">• Hu, M.-K. (1962). &quot;Visual Pattern Recognition by Moment Invariants&quot;. *IRE Trans. Information Theory* 8(2). — <code style="color:#22d3bf">xg_moments</code> / <code style="color:#22d3bf">xg_orientation</code>。</p>
+<p style="margin:2px 0 2px 12px">• Douglas, D., &amp; Peucker, T. (1973). &quot;Algorithms for the Reduction of the Number of Points Required to Represent a Digitized Line or its Caricature&quot;. *Cartographica* 10(2). — <code style="color:#22d3bf">xg_gen_polygons</code>。</p>
+<p style="margin:2px 0 2px 12px">• Steger, C. (1998). &quot;An Unbiased Detector of Curvilinear Structures&quot;. *IEEE TPAMI* 20(2). — サブピクセル輪郭抽出(<code style="color:#22d3bf">sp_*</code>)の系譜。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

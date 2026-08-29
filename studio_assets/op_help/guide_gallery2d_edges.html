@@ -1,0 +1,156 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">エッジ・微分・コーナー — 使い方ガイド</h2>
+<p>&gt; 呼び出しモデル: 2-D op は「1 画像 + 2 つのつまみ <code style="color:#22d3bf">a,b ∈ [0,1]</code>」。</p>
+<p>&gt; <code style="color:#22d3bf">out = fullseye.apply(img, &quot;sobel_amp&quot;, a, b)</code>。連鎖は <code style="color:#22d3bf">fullseye.run_pipeline(img, [&quot;gaussian&quot;, &quot;sobel_amp&quot;, &quot;otsu&quot;], a, b)</code>。</p>
+<p>&gt; 入力は <code style="color:#22d3bf">image</code>（HxW float, 値域 [0,1]）、<code style="color:#22d3bf">edges_color</code> だけ <code style="color:#22d3bf">color</code>（HxWx3）。出力はすべて <code style="color:#22d3bf">image</code>（HxW float, 値域 [0,1]）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>この族（<code style="color:#22d3bf">category == &quot;edges&quot;</code>、57 エントリ／ユニーク 56 名。<code style="color:#22d3bf">laplace</code> が素の実装と <code style="color:#22d3bf">_safe</code> ラップ版で 2 回登録されるため 1 名だけ重複）は、<b>画像の明るさが急に変わる場所（＝輪郭・エッジ）と、二方向に曲がる場所（＝コーナー特徴点）を取り出す</b>フィルタ群です。入力はグレースケール画像 1 枚（<code style="color:#22d3bf">edges_color</code> のみカラー）、出力はどれも同じ大きさの強度マップ（値域 [0,1]）で、「そのピクセルがどれだけエッジ／コーナーらしいか」あるいは「勾配がどちらを向いているか」を表します。用途は、物体の輪郭抽出、トラッキング／マッチング用の特徴点検出、欠陥・キズのエッジ強調、後段のしきい値化・細線化の前処理です。</p>
+<p>中身は挙動で 4 系統に分かれます。<b>(1) 一次微分（勾配）</b>は明るさの傾きの大きさ（<code style="color:#22d3bf">*_amp</code>/<code style="color:#22d3bf">*_mag</code>）や向き（<code style="color:#22d3bf">*_dir</code>）を返し、段差で強く・平坦部でゼロに応答します。<b>(2) 二次微分・帯域通過</b>（Laplacian / LoG / DoG / Hessian）はゼロ交差でエッジを、点・線状構造でピークを出し、直流成分（一様な明るさ）には応答しません。<b>(3) コーナー／特徴点</b>（Harris・min-eigen・Förstner・FAST・Moravec・Kitchen-Rosenfeld）は直線エッジではなく「角」でだけ強く応答します。<b>(4) 拡張系</b>（<code style="color:#22d3bf">x*</code>/<code style="color:#22d3bf">f2_*</code>/<code style="color:#22d3bf">tf_*</code>）は PIL・scipy・kornia・wavelet や、位相合同性（phase congruency）・shock filter・topographic sketch など別バックエンド由来のエッジ／コーナー表現です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン（op の繋がり）</h3>
+<p>エッジ強度マップを作って輪郭領域に落とす典型（<code style="color:#22d3bf">gauss</code>→勾配→しきい値化）と、コーナー強度マップから特徴点を拾う典型（<code style="color:#22d3bf">gauss</code>→コーナー応答→局所最大）です。<code style="color:#22d3bf">otsu</code>/<code style="color:#22d3bf">nonmax_suppression_amp</code>/<code style="color:#22d3bf">local_max</code> は隣の segmentation 族の下流 op（データ種 image→region で接続）。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  A[image&lt;br/&gt;HxW float 0..1] --&gt;|gaussian| B[smoothed&lt;br/&gt;image]
+  B --&gt;|sobel_amp / prewitt_mag / cv_scharr| C[gradient magnitude&lt;br/&gt;image 0..1]
+  B --&gt;|grad_dir / sobel_dir| D[gradient orientation&lt;br/&gt;image 0..1]
+  C --&gt;|otsu / nonmax_suppression_amp| E[edge region&lt;br/&gt;region]
+  C -.向きで細線化.-&gt; D</pre>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  A[image&lt;br/&gt;HxW float 0..1] --&gt;|gaussian| B[smoothed&lt;br/&gt;image]
+  B --&gt;|corner_response / points_foerstner / cv_min_eigen| C[corner strength&lt;br/&gt;image 0..1]
+  B --&gt;|log / laplace_of_gauss / dog| F[blob / zero-cross&lt;br/&gt;image 0..1]
+  C --&gt;|local_max| G[corner points&lt;br/&gt;region]
+  F --&gt;|zero_crossing| H[edge region&lt;br/&gt;region]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方（op グループ別）</h3>
+<p>つまみ <code style="color:#22d3bf">a,b</code> は多くの固定カーネル系（Sobel/Prewitt/Roberts/Scharr/Frei/Kirsch/Robinson の <code style="color:#22d3bf">*_amp</code>・<code style="color:#22d3bf">*_dir</code>）では<b>未使用</b>です（カーネルが固定）。スケールを持つ op では下に意味を添えました。実在の op 名のみ。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. 一次微分の輪郭検出 — 勾配の強さ（<code style="color:#22d3bf">*_amp</code> / <code style="color:#22d3bf">*_mag</code>）</h3>
+<p><code style="color:#22d3bf">out ∈ [0,1]</code>、段差で大・平坦部で ~0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sobel_amp</code> / <code style="color:#22d3bf">sobel_mag</code> — Sobel 勾配 <code style="color:#22d3bf">√(Gx²+Gy²)</code> を最大値で正規化。<code style="color:#22d3bf">fullseye.apply(img, &quot;sobel_amp&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">prewitt_amp</code> / <code style="color:#22d3bf">prewitt_mag</code> — Prewitt 勾配（Sobel と同型・重み違い）。<code style="color:#22d3bf">fullseye.apply(img, &quot;prewitt_mag&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">roberts</code> / <code style="color:#22d3bf">roberts_mag</code> — Roberts の 2×2 斜め差分（対角勾配）。<code style="color:#22d3bf">fullseye.apply(img, &quot;roberts_mag&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_scharr</code> / <code style="color:#22d3bf">sk_scharr</code> — Scharr（Sobel より回転等方性の良い 3×3）。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_scharr&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_farid</code> — Farid–Simoncelli の最適化微分フィルタ。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_farid&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">frei_amp</code> — Frei–Chen（<code style="color:#22d3bf">√2</code> 重みの等方カーネル対の勾配）。<code style="color:#22d3bf">fullseye.apply(img, &quot;frei_amp&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kirsch_amp</code> — Kirsch コンパス（8 方向カーネルの絶対応答の最大）。<code style="color:#22d3bf">fullseye.apply(img, &quot;kirsch_amp&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">robinson_amp</code> — Robinson コンパス（回転 8 方向の最大応答）。<code style="color:#22d3bf">fullseye.apply(img, &quot;robinson_amp&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">derivate_gauss</code> — ガウス一次微分の勾配強度。<code style="color:#22d3bf">a</code> = ガウス σ（<code style="color:#22d3bf">0.5+2.5a</code>）。<code style="color:#22d3bf">fullseye.apply(img, &quot;derivate_gauss&quot;, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsp_gauss_grad_mag</code> — scipy の gaussian-gradient-magnitude。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tf_steerable_filter</code> — steerable G1（方向 <code style="color:#22d3bf">θ=a·π</code> の DoG 一次微分応答、<code style="color:#22d3bf">b</code>=σ）。0.5 が零・そこからの偏差が指定方向のエッジで最大。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges_color</code> — <b>入力は color</b>。Di Zenzo の多チャンネル構造テンソル最大固有値＝カラー勾配振幅。<code style="color:#22d3bf">fullseye.apply(rgb, &quot;edges_color&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• 他（PIL カーネル系）: <code style="color:#22d3bf">xpil_find_edges</code>, <code style="color:#22d3bf">xpil_contour</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 勾配の向き（orientation, <code style="color:#22d3bf">*_dir</code>）</h3>
+<p><code style="color:#22d3bf">out</code> は角度を [0,1] に写した「向きマップ」（強度ではない）。勾配が 0 の平坦部では向きは未定義になる点に注意。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grad_dir</code> — <code style="color:#22d3bf">atan2(Gy,Gx)</code> を [0,1] に。<code style="color:#22d3bf">fullseye.apply(img, &quot;grad_dir&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">sobel_dir</code>, <code style="color:#22d3bf">prewitt_dir</code>, <code style="color:#22d3bf">frei_dir</code>, <code style="color:#22d3bf">kirsch_dir</code>（最良応答カーネルの index）, <code style="color:#22d3bf">robinson_dir</code>（同）</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 二次微分・帯域通過（ゼロ交差・点／線）</h3>
+<p>一様な明るさ（DC）には応答せず、段差・点・線でピーク。<code style="color:#22d3bf">signed01</code> 系は 0.5 が零。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">laplace</code> — <code style="color:#22d3bf">|∇²I|</code>（Marr–Hildreth の Laplacian）。<code style="color:#22d3bf">fullseye.apply(img, &quot;laplace&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_laplacian</code> / <code style="color:#22d3bf">xkor_laplacian</code> / <code style="color:#22d3bf">xsp_morph_laplace</code> — OpenCV / kornia / scipy 形態学版の Laplacian。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">log</code> / <code style="color:#22d3bf">laplace_of_gauss</code> — LoG（Gaussian で平滑してから Laplacian）。<code style="color:#22d3bf">a</code> = σ。<code style="color:#22d3bf">log</code> は絶対値、<code style="color:#22d3bf">laplace_of_gauss</code> は符号付き（<code style="color:#22d3bf">signed01</code>）。<code style="color:#22d3bf">fullseye.apply(img, &quot;log&quot;, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dots_image</code> — LoG ベースの点／ブロブ強調（HALCON <code style="color:#22d3bf">dots_image</code>）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dog</code> / <code style="color:#22d3bf">diff_of_gauss</code> / <code style="color:#22d3bf">sk_dog</code> / <code style="color:#22d3bf">xkor_dog</code> — DoG（<code style="color:#22d3bf">|G(σ₁)−G(σ₂)|</code>、LoG の近似の帯域通過）。<code style="color:#22d3bf">a</code> = 内側 σ、<code style="color:#22d3bf">b</code> = 外側 σ。<code style="color:#22d3bf">fullseye.apply(img, &quot;dog&quot;, 0.2, 0.6)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_hessian_det</code> / <code style="color:#22d3bf">xkor_hessian</code> / <code style="color:#22d3bf">xsk_hessian_eig</code> — Hessian 行列式／固有値（ブロブ・線状構造の強調）。<code style="color:#22d3bf">a</code> = σ。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. コーナー／特徴点（二方向に曲がる角）</h3>
+<p>直線エッジ・平坦部より「角」で強い。<code style="color:#22d3bf">a</code> は積分（平滑）スケール。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">corner_response</code> — 純 numpy の Harris 応答 <code style="color:#22d3bf">det(M) − 0.04·trace(M)²</code>。<code style="color:#22d3bf">fullseye.apply(img, &quot;corner_response&quot;, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_corner_harris</code> / <code style="color:#22d3bf">sk_corner_harris</code> / <code style="color:#22d3bf">xkor_harris</code> — OpenCV / skimage / kornia の Harris。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points_harris_binomial</code> — 二項平滑した画像への Harris。<code style="color:#22d3bf">a</code>=Harris σ、<code style="color:#22d3bf">b</code>=前平滑 σ。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_min_eigen</code> / <code style="color:#22d3bf">xkor_gftt</code> — Shi–Tomasi の最小固有値（Good-Features-To-Track）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_precorner</code> — OpenCV <code style="color:#22d3bf">preCornerDetect</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points_foerstner</code> — Förstner 作用素（精密点位置）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk2_corner_kr</code> — Kitchen–Rosenfeld コーナー検出。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_corner_moravec</code> — Moravec 作用素。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_corner_fast</code> — FAST コーナー。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">5. 拡張・位相／幾何／波形（別バックエンド由来）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tf_phase_congruency</code> — 位相合同性（monogenic／log-Gabor）。照明変化に不変なエッジ・線特徴。<code style="color:#22d3bf">a</code>=ノイズ閾、<code style="color:#22d3bf">b</code>=基本波長。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_shock</code> — Osher–Rudin の shock filter（零交差で衝突させ、ぼけたエッジを鋭くする）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">f2_topographic</code> — Haralick の topographic primal sketch（peak/pit/ridge/ravine/saddle/flat/hillside に分類し gray code 化）。<code style="color:#22d3bf">a</code>=平滑スケール、<code style="color:#22d3bf">b</code>=平坦許容。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk2_inv_gauss_grad</code> — inverse Gaussian gradient（エッジで小さくなる edge-stopping マップ、level-set 用）。<code style="color:#22d3bf">a</code>=α。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xwt_hf_reconstruct</code> / <code style="color:#22d3bf">xwt_directional_detail</code> — wavelet の高周波再構成／方向別ディテール帯（エッジ成分）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例（検証済み gallery2d_edges から）</h3>
+<p>段差・定数・塗り正方形という「答えが分かる」合成画像で、3 系統の<b>性質</b>を数値で確かめる自己完結スクリプト（repo 直下で <code style="color:#22d3bf">py -3.11</code> 実行可）。gallery2d_edges.py の GT ロジックを <code style="color:#22d3bf">fullseye.apply</code> 呼び出しに移したもの。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下で: py -3.11 this.py
+import numpy as np
+import fullseye
+
+n = 48
+step  = np.zeros((n, n)); step[:, n // 2:] = 1.0   # 縦エッジ（左0/右1）
+const = np.full((n, n), 0.4)                        # 勾配ゼロの一様画像
+sq    = np.zeros((n, n)); sq[14:34, 14:34] = 1.0    # 4隅を持つ塗り正方形
+
+# (1) 一次微分の強度: 段差で大きく、平坦部・一様画像では ~0
+m = fullseye.apply(step, &quot;sobel_amp&quot;, 0.5, 0.5)
+edge = float(m[:, n // 2 - 1:n // 2 + 1].mean())
+flat = float(m[:, 4:8].mean())
+assert edge &gt; flat + 0.3, (edge, flat)
+assert float(fullseye.apply(const, &quot;sobel_amp&quot;).std()) &lt; 1e-6   # 一様→応答ゼロ
+
+# (2) Laplacian（二次微分）は DC 成分なし: 一様画像に沈黙し、段差で応答
+lap_const = fullseye.apply(const, &quot;laplace&quot;)
+lap_step  = fullseye.apply(step,  &quot;laplace&quot;)
+assert float(np.abs(lap_const).mean()) &lt; 1e-6
+assert float(lap_step.max()) &gt; 0.1
+
+# (3) Harris コーナー応答は「角」で最大、直線エッジ・平坦部では弱い
+r = fullseye.apply(sq, &quot;corner_response&quot;, 0.5, 0.5)
+corner   = float(r[12:17, 12:17].max())   # 角 (14,14) 近傍
+straight = float(r[12:17, 22:27].max())   # 上辺中央（直線エッジ）
+flat_in  = float(r[22:27, 22:27].mean())  # 内部平坦
+assert corner &gt; straight + 0.1 and corner &gt; flat_in + 0.1, (corner, straight, flat_in)
+
+print(&quot;PASS&quot;)</pre>
+<p>つまみ（向き）と連鎖の感触をつかむ 2 つ目の例（同じく <code style="color:#22d3bf">py -3.11</code> で実行可）。<code style="color:#22d3bf">*_amp</code> は「強さ」・<code style="color:#22d3bf">*_dir</code> は「向き」で、縦エッジと横エッジは強さは同じでも向きが違うこと、そして <code style="color:#22d3bf">run_pipeline</code> で平滑→勾配→Otsu を一気に繋げられることを示す。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下で: py -3.11 this.py
+import numpy as np
+import fullseye
+
+n = 64
+vert = np.zeros((n, n)); vert[:, n // 2:] = 1.0   # 縦エッジ（勾配は +x 方向）
+horz = np.zeros((n, n)); horz[n // 2:, :] = 1.0   # 横エッジ（勾配は +y 方向）
+
+# amp（強さ）は両者とも強い
+assert fullseye.apply(vert, &quot;sobel_amp&quot;).max() &gt; 0.9
+assert fullseye.apply(horz, &quot;sobel_amp&quot;).max() &gt; 0.9
+
+# dir（向き）はエッジ画素上で異なる（平坦部は勾配0で未定義なのでエッジ上だけ読む）
+dv = fullseye.apply(vert, &quot;sobel_dir&quot;); dh = fullseye.apply(horz, &quot;sobel_dir&quot;)
+ev = float(np.median(dv[:, n // 2 - 1:n // 2 + 1]))
+eh = float(np.median(dh[n // 2 - 1:n // 2 + 1, :]))
+assert abs(ev - eh) &gt; 0.15, (ev, eh)
+
+# 連鎖: 平滑 -&gt; 勾配強度 -&gt; Otsu 二値化（各段 1 つの共有つまみ）
+seg = fullseye.run_pipeline(vert, [&quot;gaussian&quot;, &quot;sobel_amp&quot;, &quot;otsu&quot;], 0.3, 0.5)
+assert set(np.unique(seg)) &lt;= {0.0, 1.0} and 0.0 &lt; seg.mean() &lt; 0.5
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式（必要な op のみ）</h3>
+<p>一次微分の勾配強度（<code style="color:#22d3bf">sobel_amp</code>/<code style="color:#22d3bf">prewitt_mag</code>/<code style="color:#22d3bf">cv_scharr</code> ほか、実装は最大絶対値で [0,1] に正規化）:</p>
+<p>$$g = \sqrt{G_x^2 + G_y^2}, \qquad \hat g = \frac{g}{\max|g|}$$</p>
+<p>勾配の向き（<code style="color:#22d3bf">grad_dir</code>/<code style="color:#22d3bf">sobel_dir</code>、角度を [0,1] に写像）:</p>
+<p>$$\theta = \frac{\operatorname{atan2}(G_y, G_x) + \pi}{2\pi} \in [0,1]$$</p>
+<p>Laplacian of Gaussian（<code style="color:#22d3bf">log</code>/<code style="color:#22d3bf">laplace_of_gauss</code>）と Difference of Gaussians 近似（<code style="color:#22d3bf">dog</code>/<code style="color:#22d3bf">diff_of_gauss</code>）:</p>
+<p>$$\mathrm{LoG}_\sigma(I) = \nabla^2\!\big(G_\sigma * I\big), \qquad \mathrm{DoG} = \big|\,G_{\sigma_1}*I - G_{\sigma_2}*I\,\big|,\ \ \sigma_1&lt;\sigma_2$$</p>
+<p>Harris/Förstner のコーナー判定に使う構造テンソル（<code style="color:#22d3bf">corner_response</code>。$M$ は勾配積をガウス窓 $w$ で平滑した 2×2 行列、$k=0.04$）:</p>
+<p>$$M = \begin{bmatrix} \langle G_x^2\rangle_w &amp; \langle G_x G_y\rangle_w \\ \langle G_x G_y\rangle_w &amp; \langle G_y^2\rangle_w \end{bmatrix}, \qquad R = \det(M) - k\,\operatorname{tr}(M)^2$$</p>
+<p>Shi–Tomasi（<code style="color:#22d3bf">cv_min_eigen</code>/<code style="color:#22d3bf">xkor_gftt</code>）は同じ $M$ の最小固有値 $\min(\lambda_1,\lambda_2)$ をコーナー強度に使う。<code style="color:#22d3bf">edges_color</code> は各チャンネルの勾配から作る構造テンソルの最大固有値の平方根（Di Zenzo カラー勾配）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグ用の 2-D 画像源は [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) 参照。この族は輪郭・角のはっきりした画像が向く: 合成の <code style="color:#22d3bf">shapes</code>・<code style="color:#22d3bf">checker_noisy</code>（明確な段差と角）、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code>・<code style="color:#22d3bf">camera</code>（自然なエッジと特徴点）。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;shapes&quot;)</code>（外部 DL 不要）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献（正典）</h3>
+<p>台帳: [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。</p>
+<p style="margin:2px 0 2px 12px">• Roberts, L. G. (1965), &quot;Machine Perception of Three-Dimensional Solids&quot; — Roberts cross。</p>
+<p style="margin:2px 0 2px 12px">• Sobel, I. &amp; Feldman, G. (1968), &quot;A 3×3 Isotropic Gradient Operator for Image Processing&quot; — Sobel。</p>
+<p style="margin:2px 0 2px 12px">• Prewitt, J. M. S. (1970), &quot;Object Enhancement and Extraction&quot; (Picture Processing and Psychopictorics) — Prewitt。</p>
+<p style="margin:2px 0 2px 12px">• Kirsch, R. A. (1971), &quot;Computer Determination of the Constituent Structure of Biological Images&quot; — Kirsch コンパス。</p>
+<p style="margin:2px 0 2px 12px">• Frei, W. &amp; Chen, C.-C. (1977), &quot;Fast Boundary Detection: A Generalization and a New Algorithm&quot; — Frei–Chen。</p>
+<p style="margin:2px 0 2px 12px">• Marr, D. &amp; Hildreth, E. (1980), &quot;Theory of Edge Detection&quot; (Proc. R. Soc. Lond. B) — Laplacian / LoG / DoG。</p>
+<p style="margin:2px 0 2px 12px">• Moravec, H. P. (1980), &quot;Obstacle Avoidance and Navigation in the Real World by a Seeing Robot Rover&quot; — Moravec コーナー。</p>
+<p style="margin:2px 0 2px 12px">• Kitchen, L. &amp; Rosenfeld, A. (1982), &quot;Gray-Level Corner Detection&quot; — Kitchen–Rosenfeld。</p>
+<p style="margin:2px 0 2px 12px">• Haralick, R. M., Watson, L. T. &amp; Laffey, T. J. (1983), &quot;The Topographic Primal Sketch&quot; — topographic sketch。</p>
+<p style="margin:2px 0 2px 12px">• Förstner, W. &amp; Gülch, E. (1987), &quot;A Fast Operator for Detection and Precise Location of Distinct Points, Corners and Centres of Circular Features&quot; — Förstner。</p>
+<p style="margin:2px 0 2px 12px">• Harris, C. &amp; Stephens, M. (1988), &quot;A Combined Corner and Edge Detector&quot; (Alvey Vision Conf.) — Harris。</p>
+<p style="margin:2px 0 2px 12px">• Osher, S. &amp; Rudin, L. I. (1990), &quot;Feature-Oriented Image Enhancement Using Shock Filters&quot; (SIAM J. Numer. Anal.) — shock filter。</p>
+<p style="margin:2px 0 2px 12px">• Freeman, W. T. &amp; Adelson, E. H. (1991), &quot;The Design and Use of Steerable Filters&quot; (IEEE TPAMI) — steerable filter。</p>
+<p style="margin:2px 0 2px 12px">• Shi, J. &amp; Tomasi, C. (1994), &quot;Good Features to Track&quot; (CVPR) — 最小固有値 / GFTT。</p>
+<p style="margin:2px 0 2px 12px">• Kovesi, P. (1999), &quot;Image Features from Phase Congruency&quot; — phase congruency。</p>
+<p style="margin:2px 0 2px 12px">• Farid, H. &amp; Simoncelli, E. P. (2004), &quot;Differentiation of Discrete Multidimensional Signals&quot; (IEEE TIP) — Farid 微分フィルタ。</p>
+<p style="margin:2px 0 2px 12px">• Rosten, E. &amp; Drummond, T. (2006), &quot;Machine Learning for High-Speed Corner Detection&quot; (ECCV) — FAST。</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

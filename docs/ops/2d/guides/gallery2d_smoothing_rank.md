@@ -179,7 +179,7 @@ sp[m > 0.95] = 1.0           # pepper
 noisy = np.clip(0.5 + 0.15 * rng.standard_normal((n, n)), 0.0, 1.0)
 
 mae = lambda a, c: float(np.mean(np.abs(a - c)))
-grad_energy = lambda a: float(np.sum(np.diff(a, 1) ** 2) + np.sum(np.diff(a, 0) ** 2))
+grad_energy = lambda a: float(np.sum(np.diff(a, axis=1) ** 2) + np.sum(np.diff(a, axis=0) ** 2))
 
 # (1) median(rank): salt-pepper を除去 → clean への誤差が半減以下(null=何もしない を圧倒)
 med = fullseye.apply(sp, "median", 0.5, 0.0)

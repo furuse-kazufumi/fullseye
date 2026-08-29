@@ -1,0 +1,168 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">特徴抽出・テクスチャ・形状記述 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>この族は「画像を別の画像に変える」フィルタ群とは目的が違う。<b>入力（region / contour(XLD) / image / color / volume）を受け取り、数えて測った“数値”を返す</b>——「いくつ物体があるか」「どれだけ丸いか／細長いか」「明るさの平均・分散・エントロピー」「モーメント不変量」「キーポイントや直線・円の本数」「ざらつき（テクスチャ）記述子」——を一括で扱う計測・記述レイヤである。ほとんどの op は <code style="color:#22d3bf">feature</code>（有限スカラ、<code style="color:#22d3bf">fullseye.apply</code> は Python の <code style="color:#22d3bf">float</code> を返す）を出力し、Hough 変換系の 2 つ（<code style="color:#22d3bf">hough_line_trans</code> / <code style="color:#22d3bf">hough_circle_trans</code>）と自己相似の <code style="color:#22d3bf">xmh_selfmatch</code> だけは投票空間／相似マップという <code style="color:#22d3bf">image</code> を返す。</p>
+<p>前段（2値化・領域分割・輪郭抽出）は別の族が担い、この族はその出力に対して「言い当てる」役に回る。典型的には <code style="color:#22d3bf">gallery2d_segmentation</code> の閾値・分割 op で <code style="color:#22d3bf">image → region</code> を作り、そこへ本族の region 計測をかける。あるいは <code style="color:#22d3bf">edges_sub_pix</code> などで <code style="color:#22d3bf">image → contour(XLD)</code> を作り、本族の <code style="color:#22d3bf">*_xld</code> 計測をかける。<code style="color:#22d3bf">image</code> を直接受けるグレー統計・キーポイント計数系はその前処理すら要らない。HALCON の <code style="color:#22d3bf">count_obj</code> / <code style="color:#22d3bf">circularity</code> / <code style="color:#22d3bf">moments_region_*</code> / <code style="color:#22d3bf">*_xld</code> / gray feature 群に対応し、加えて scikit-image・OpenCV・mahotas・PyWavelets 由来の blob/コーナー/ウェーブレット記述子を同じ registry に載せている。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン（op の繋がり）</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[image 濃淡画像] --&gt;|&quot;別族: threshold / otsu / watersheds&quot;| REG[region 2値マスク]
+    REG --&gt;|count_obj / blob_count / euler_number| N[feature 個数・トポロジ]
+    REG --&gt;|circularity / eccentricity / roundness| S[feature 形状スカラ]
+    REG --&gt;|moments_region_2nd_invar / moments_region_central_invar| M[feature モーメント不変量]
+    IMG --&gt;|&quot;別族: edges_sub_pix&quot;| XLD[contour XLD 輪郭]
+    XLD --&gt;|total_length / circularity_xld / moments_xld| SC[feature 輪郭計測]
+    IMG --&gt;|intensity / entropy_gray / estimate_noise| G[feature グレー統計]</pre>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[image 濃淡画像] --&gt;|xcv3_sift_count / xcv2_fast_count / xsk_blob_log| K[feature キーポイント数]
+    IMG --&gt;|cv_hough_lines / cv_hough_circles| Hn[feature 直線・円の本数]
+    IMG --&gt;|hough_line_trans / hough_circle_trans| ACC[image 投票空間]
+    IMG --&gt;|xmh_zernike / xmh_pftas / xwt_detail_energy| D[feature テクスチャ・形状記述子]</pre>
+<p>呼び出しモデルはこの族でも 2-D パイプラインと同じ「1 入力 + 2 つのつまみ <code style="color:#22d3bf">a,b∈[0,1]</code>」: <code style="color:#22d3bf">fullseye.apply(x, &quot;op名&quot;, a, b)</code>。region op に濃淡画像を渡すと 0.5 で自動 2 値化される（<code style="color:#22d3bf">coerce=True</code>）。contour は <code style="color:#22d3bf">{&#x27;shape&#x27;:(H,W), &#x27;cs&#x27;:[ (N,2) 配列 ... ]}</code>、color は <code style="color:#22d3bf">HxWx3</code>、volume は <code style="color:#22d3bf">Zx(H)x(W)</code> をそのまま渡す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方（op グループ別）</h3>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">1. 数える・トポロジ（region / contour / volume → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">count_obj</code> — 連結成分の個数（<code style="color:#22d3bf">scipy.ndimage.label</code>）。3 つに分かれた領域なら厳密に 3。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;count_obj&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">blob_count</code> — <code style="color:#22d3bf">count_obj</code> と同義の blob 計数。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;blob_count&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_cc_count</code> — OpenCV <code style="color:#22d3bf">connectedComponents</code> による連結成分数（cv2 が要る）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;cv_cc_count&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">connect_and_holes</code> — 連結成分の個数を返す（metric=<code style="color:#22d3bf">count</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;connect_and_holes&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">euler_number</code> / <code style="color:#22d3bf">sk_euler</code> — オイラー数（連結成分数 − 穴の数、<code style="color:#22d3bf">skimage.measure.euler_number</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;euler_number&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_holes</code> — 穴の面積比 <code style="color:#22d3bf">(穴埋め面積 − 面積)/穴埋め面積</code>。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;area_holes&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_frac</code> / <code style="color:#22d3bf">area_center</code> — マスクの面積比（前景画素の割合 = <code style="color:#22d3bf">mean(mask)</code>）。HALCON の <code style="color:#22d3bf">area_center</code> は重心も返すが本実装は面積割合のみ。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;area_frac&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">count_contours</code> — 輪郭リスト <code style="color:#22d3bf">cs</code> の本数。呼び出し: <code style="color:#22d3bf">fullseye.apply(contour, &quot;count_contours&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vol_count</code> — 3-D ボリューム内の連結成分数（<code style="color:#22d3bf">&gt; 0.5</code> を 3-D ラベリング）。呼び出し: <code style="color:#22d3bf">fullseye.apply(volume, &quot;vol_count&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 形の丸み・細長さ（region → feature、<code style="color:#22d3bf">skimage.regionprops</code> ベース、最大領域について測る）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity</code> — 円形度 <code style="color:#22d3bf">min(1, 4πA/P²)</code>（円盤 ≈ 1、細長い棒は桁違いに小さい）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;circularity&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">compactness</code> — コンパクトさ <code style="color:#22d3bf">min(1, (P²/4πA)/10)</code>（<code style="color:#22d3bf">circularity</code> の逆向き指標、1/10 に正規化）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;compactness&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">convexity</code> — 凸性 <code style="color:#22d3bf">面積 / 凸包面積</code>（≤1、凸なら 1）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;convexity&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rectangularity</code> — 矩形度 <code style="color:#22d3bf">extent = 面積 / bbox 面積</code>。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;rectangularity&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">roundness</code> — 真円度 <code style="color:#22d3bf">min(1, 4A/(π·長軸²))</code>。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;roundness&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eccentricity</code> — 離心率 <code style="color:#22d3bf">√(1−(短軸/長軸)²)</code>（円=0、細長いほど→1）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;eccentricity&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">orientation_region</code> — 長軸の向きを <code style="color:#22d3bf">[0,1]</code> に正規化（<code style="color:#22d3bf">(θ+π/2)/π</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;orientation_region&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">elliptic_axis</code> — 異方度 <code style="color:#22d3bf">長軸/短軸/10</code>（近似楕円の軸比）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;elliptic_axis&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">diameter_region</code> — 等価円直径を画像サイズで正規化。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;diameter_region&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height_width_ratio</code> — bbox の縦横比 <code style="color:#22d3bf">min(1, 高さ/幅)</code>。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;height_width_ratio&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contlength</code> — 周長を <code style="color:#22d3bf">2(H+W)</code> で正規化。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;contlength&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">get_region_thickness</code> — 最大内接距離の 2 倍（EDT の最大値×2）を正規化。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;get_region_thickness&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3. モーメント（region → feature、正規化中心モーメント／Hu 不変量）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">classify_shape</code> — 最大領域の円形度 <code style="color:#22d3bf">min(1, 4πA/P²)</code>（形の“丸さ”による簡易分類量）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;classify_shape&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_2nd</code> — 2 次正規化中心モーメント <code style="color:#22d3bf">|η₂₀+η₀₂|</code>（広がり）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;moments_region_2nd&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_3rd</code> — 3 次 <code style="color:#22d3bf">|η₃₀+η₀₃|</code>（歪み）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_central</code> — <code style="color:#22d3bf">|η₂₀+η₁₁+η₀₂|</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_2nd_invar</code> — Hu 第 1 不変量 <code style="color:#22d3bf">|φ₁|</code>（回転・スケール不変）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;moments_region_2nd_invar&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_central_invar</code> — Hu 第 2 不変量 <code style="color:#22d3bf">|φ₂|</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_2nd_rel_invar</code> — Hu 第 3 不変量 <code style="color:#22d3bf">|φ₃|</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_region_3rd_invar</code> — Hu 第 4 不変量 <code style="color:#22d3bf">|φ₄|</code>。</p>
+<p style="margin:2px 0 2px 12px">• （いずれも <code style="color:#22d3bf">skimage.measure.moments_central / moments_normalized / moments_hu</code> に基づき、<code style="color:#22d3bf">min(1, ·)</code> でクリップ）</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">4. 輪郭（XLD）計測（contour → feature、最長輪郭について測る）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">total_length</code> / <code style="color:#22d3bf">length_xld</code> — 折れ線の総長 <code style="color:#22d3bf">Σ√(Δx²+Δy²)</code>（閉じる最終辺は加えない。円輪郭で ≈ 2πR）。呼び出し: <code style="color:#22d3bf">fullseye.apply(contour, &quot;total_length&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_center_xld</code> — シューレース公式の面積を画像面積で正規化。呼び出し: <code style="color:#22d3bf">fullseye.apply(contour, &quot;area_center_xld&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">circularity_xld</code> — 輪郭の円形度 <code style="color:#22d3bf">min(1, 4πA/P²)</code>（円 ≈ 1 &gt; 正方形）。呼び出し: <code style="color:#22d3bf">fullseye.apply(contour, &quot;circularity_xld&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">compactness_xld</code> — 輪郭コンパクトさ（<code style="color:#22d3bf">circularity_xld</code> の逆向き、1/10 正規化）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">convexity_xld</code> — 輪郭面積 / 凸包面積（cv2 が要る、無ければ 1.0）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">eccentricity_xld</code> — 当てはめ楕円の離心率 <code style="color:#22d3bf">√(1−(b/a)²)</code>（cv2 <code style="color:#22d3bf">fitEllipse</code>、要 5 点以上）。呼び出し: <code style="color:#22d3bf">fullseye.apply(contour, &quot;eccentricity_xld&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">orientation_xld</code> — 当てはめ楕円の角度 <code style="color:#22d3bf">(θ mod 180)/180</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">elliptic_axis_xld</code> — 楕円の軸比 <code style="color:#22d3bf">短軸/長軸</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">diameter_xld</code> — 最小外接円の直径を正規化（<code style="color:#22d3bf">minEnclosingCircle</code>）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rectangularity_xld</code> — 面積 / 最小外接矩形面積（<code style="color:#22d3bf">minAreaRect</code>）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">moments_xld</code> — <code style="color:#22d3bf">(μ₂₀+μ₀₂)/m₀₀²</code>（cv2 <code style="color:#22d3bf">moments</code>）。</p>
+<p style="margin:2px 0 2px 12px">• （<code style="color:#22d3bf">*_xld</code> の楕円・矩形・凸包系は OpenCV があるときのみ genuine 計算、無ければ 0.0/1.0 に degrade する）</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">5. グレー値統計（image → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">intensity</code> — 平均輝度（定数画像なら厳密にその値）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;intensity&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">min_max_gray</code> — <code style="color:#22d3bf">[0,1]</code> にクリップした最大値（HALCON は min/max/range、本実装は max）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;min_max_gray&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gray_histo_abs</code> — 標準偏差（ヒストグラムの広がりを 1 スカラで要約）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;gray_histo_abs&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">entropy_gray</code> — 64 ビンヒストグラムの Shannon エントロピー <code style="color:#22d3bf">/6</code>（平坦画像 ≈ 0、ノイズ画像で大）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;entropy_gray&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_entropy_feat</code> — <code style="color:#22d3bf">skimage.measure.shannon_entropy</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">estimate_noise</code> — ラプラシアンの MAD による頑健ノイズ σ（ノイズが増えると上がる）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;estimate_noise&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_estimate_sigma</code> — <code style="color:#22d3bf">skimage.restoration.estimate_sigma</code> を <code style="color:#22d3bf">×5</code> 正規化。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_is_low_contrast</code> — 低コントラスト判定フラグ（0/1）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv2_lap_var</code> — ラプラシアンの分散（ピント／ぼけ指標、<code style="color:#22d3bf">min(1, ·×20)</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;xcv2_lap_var&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_blur_effect</code> — <code style="color:#22d3bf">skimage.measure.blur_effect</code> によるぼけ度。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">6. キーポイント・直線・円を数える（image → feature、Hough 2 つのみ → image）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_good_features</code> — Shi–Tomasi の <code style="color:#22d3bf">goodFeaturesToTrack</code> 検出点数。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;cv_good_features&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_hough_lines</code> — 確率的 Hough（<code style="color:#22d3bf">HoughLinesP</code>）で検出した線分本数。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;cv_hough_lines&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_hough_circles</code> — <code style="color:#22d3bf">HoughCircles</code> で検出した円の個数。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hough_line_trans</code> — Hough 直線変換の投票空間（<code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">[0,1]</code> 正規化）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;hough_line_trans&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hough_circle_trans</code> — Hough 円変換の投票空間（<code style="color:#22d3bf">image</code>、半径方向 max 投影）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv2_fast_count</code> / <code style="color:#22d3bf">xcv3_agast_count</code> — FAST / AGAST コーナー数。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_orb_count</code> / <code style="color:#22d3bf">xcv_orb_count</code> — ORB キーポイント数（skimage / cv2）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv3_sift_count</code> — SIFT 検出点数。<code style="color:#22d3bf">xcv3_brisk_count</code> — BRISK 検出点数。<code style="color:#22d3bf">xcv3_lsd_count</code> — 線分検出器（LSD）の線分数。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code> — LoG / DoG / DoH スケール空間 blob の個数。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;xsk_blob_log&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">7. テクスチャ・形状記述子・自己相似（image → feature、<code style="color:#22d3bf">xmh_selfmatch</code> のみ image）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xmh_zernike</code> — Zernike モーメントの総和（回転不変な形状記述子、mahotas）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;xmh_zernike&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xmh_pftas</code> — parameter-free Threshold Adjacency Statistics の平均（mahotas のテクスチャ記述子）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv3_gray_hu1</code> — 濃淡画像そのものの第 1 Hu モーメント。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xwt_detail_energy</code> — ウェーブレット詳細係数のエネルギー比（全詳細/(詳細+近似)、PyWavelets）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;xwt_detail_energy&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xwt_packet_entropy</code> — ウェーブレットパケットのサブバンドエネルギー分布の正規化エントロピー。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xmh_selfmatch</code> — 中心パッチを自分自身にテンプレートマッチした自己相似マップ（<code style="color:#22d3bf">image</code> 出力、mahotas <code style="color:#22d3bf">template_match</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;xmh_selfmatch&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">8. カラー（color → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">count_channels</code> — チャネル数（<code style="color:#22d3bf">HxWx3</code> なら 3）。呼び出し: <code style="color:#22d3bf">fullseye.apply(color, &quot;count_channels&quot;)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例（検証済み gallery2d_features から）</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11</code> 実行可。個数・円形度・輪郭長・チャネル数・平均輝度の“零点を上回る”GT を確認する。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye
+
+n = 64
+yy, xx = np.mgrid[0:n, 0:n]
+
+# (a) 3 つに分かれた領域（2-D {0,1} float マスク）-&gt; 個数はちょうど 3
+three = np.zeros((n, n), np.float64)
+for cy, cx in [(16, 16), (16, 48), (48, 32)]:
+    three[((yy - cy) ** 2 + (xx - cx) ** 2) &lt; 25] = 1.0
+assert fullseye.apply(three, &quot;count_obj&quot;) == 3.0
+assert fullseye.apply(three, &quot;blob_count&quot;) == 3.0
+
+# (b) 円盤は細長い棒より桁違いに「丸い」
+disk = (((yy - n // 2) ** 2 + (xx - n // 2) ** 2) &lt; (n * 0.22) ** 2).astype(np.float64)
+bar = np.zeros((n, n), np.float64); bar[28:36, 6:58] = 1.0
+c_disk = fullseye.apply(disk, &quot;circularity&quot;)
+c_bar = fullseye.apply(bar, &quot;circularity&quot;)
+assert c_disk &gt; 0.8 and c_disk &gt; 2.0 * c_bar
+
+# (c) 閉じた円輪郭（XLD dict）-&gt; 総周長 ~= 2*pi*R
+R = n * 0.28
+t = np.linspace(0, 2 * np.pi, 200, endpoint=False)
+circle = {&quot;shape&quot;: (n, n),
+          &quot;cs&quot;: [np.column_stack([n / 2 + R * np.sin(t), n / 2 + R * np.cos(t)])]}
+L = fullseye.apply(circle, &quot;total_length&quot;)
+assert abs(L - 2 * np.pi * R) &lt; 0.02 * (2 * np.pi * R)
+
+# (d) HxWx3 カラー画像はチャネル数ちょうど 3
+color = np.stack([disk, 0.7 * disk + 0.1, 1 - disk], -1)
+assert fullseye.apply(color, &quot;count_channels&quot;) == 3.0
+
+# (e) グレー統計: 明るい定数画像は暗い定数画像より平均が高い
+assert fullseye.apply(np.full((n, n), 0.8), &quot;intensity&quot;) &gt; \
+       fullseye.apply(np.full((n, n), 0.1), &quot;intensity&quot;) + 0.5
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式（必要な op のみ）</h3>
+<p>円形度（<code style="color:#22d3bf">circularity</code> / <code style="color:#22d3bf">classify_shape</code> / <code style="color:#22d3bf">circularity_xld</code>）。面積 $A$、周長 $P$:</p>
+<p>$$C = \min\!\left(1,\ \frac{4\pi A}{P^2}\right)$$</p>
+<p>真円度（<code style="color:#22d3bf">roundness</code>）と離心率（<code style="color:#22d3bf">eccentricity</code> / <code style="color:#22d3bf">eccentricity_xld</code>）。長軸 $a$、短軸 $b$:</p>
+<p>$$\mathrm{roundness} = \min\!\left(1,\ \frac{4A}{\pi a^2}\right), \qquad e = \sqrt{1 - \left(\tfrac{b}{a}\right)^2}$$</p>
+<p>Hu 第 1 不変量（<code style="color:#22d3bf">moments_region_2nd_invar</code>）。$\eta_{pq}$ は正規化中心モーメント:</p>
+<p>$$\phi_1 = \eta_{20} + \eta_{02}$$</p>
+<p>Shannon エントロピー（<code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">xwt_packet_entropy</code>）。ビン確率 $p_i$:</p>
+<p>$$H = -\sum_i p_i \log_2 p_i$$</p>
+<p>頑健ノイズ推定（<code style="color:#22d3bf">estimate_noise</code>）。ラプラシアン $L$ の MAD:</p>
+<p>$$\hat{\sigma} \approx 1.4826 \cdot \mathrm{median}\big|\,L - \mathrm{median}(L)\,\big|$$</p>
+<p>折れ線長（<code style="color:#22d3bf">total_length</code> / <code style="color:#22d3bf">length_xld</code>）。頂点列 $(x_i, y_i)$:</p>
+<p>$$L = \sum_i \sqrt{(x_{i+1}-x_i)^2 + (y_{i+1}-y_i)^2}$$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>この族のデバッグには 2 値化しやすい合成図形と実写グレー画像が向く。<code style="color:#22d3bf">../../SAMPLES.md</code> の <code style="color:#22d3bf">shapes</code> / <code style="color:#22d3bf">blobs</code>（合成・個数と形状の GT が明快）、<code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code>（<code style="color:#22d3bf">skimage.data</code>、キーポイント・Hough・グレー統計の実写確認）を使う（<code style="color:#22d3bf">import sample_images; sample_images.load(&#x27;&lt;name&gt;&#x27;)</code>）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献（正典）</h3>
+<p style="margin:2px 0 2px 12px">• Rosenfeld, A. &amp; Pfaltz, J. (1966). &quot;Sequential Operations in Digital Picture Processing.&quot; — 連結成分ラベリング（<code style="color:#22d3bf">count_obj</code> / <code style="color:#22d3bf">blob_count</code> / <code style="color:#22d3bf">cv_cc_count</code> / <code style="color:#22d3bf">euler_number</code>）</p>
+<p style="margin:2px 0 2px 12px">• Hu, M.-K. (1962). &quot;Visual Pattern Recognition by Moment Invariants.&quot; — Hu モーメント不変量（<code style="color:#22d3bf">moments_region_*_invar</code> / <code style="color:#22d3bf">xcv3_gray_hu1</code>）</p>
+<p style="margin:2px 0 2px 12px">• Danielsson, P.-E. (1978). &quot;A New Shape Factor.&quot; — 円形度（<code style="color:#22d3bf">circularity</code> / <code style="color:#22d3bf">classify_shape</code>）</p>
+<p style="margin:2px 0 2px 12px">• Teague, M. R. (1980). &quot;Image Analysis via the General Theory of Moments.&quot; — Zernike モーメント（<code style="color:#22d3bf">xmh_zernike</code>）</p>
+<p style="margin:2px 0 2px 12px">• Shannon, C. E. (1948). &quot;A Mathematical Theory of Communication.&quot; — エントロピー（<code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">xwt_packet_entropy</code>）</p>
+<p style="margin:2px 0 2px 12px">• Immerkær, J. (1996). &quot;Fast Noise Variance Estimation.&quot; — ラプラシアンによるノイズ推定（<code style="color:#22d3bf">estimate_noise</code>）</p>
+<p style="margin:2px 0 2px 12px">• Duda, R. O. &amp; Hart, P. E. (1972). &quot;Use of the Hough Transformation to Detect Lines and Curves in Pictures.&quot; — Hough 変換（<code style="color:#22d3bf">hough_line_trans</code> / <code style="color:#22d3bf">hough_circle_trans</code> / <code style="color:#22d3bf">cv_hough_lines</code> / <code style="color:#22d3bf">cv_hough_circles</code>）</p>
+<p style="margin:2px 0 2px 12px">• Harris, C. &amp; Stephens, M. (1988). &quot;A Combined Corner and Edge Detector.&quot; — コーナー検出（<code style="color:#22d3bf">cv_good_features</code> の系譜）</p>
+<p style="margin:2px 0 2px 12px">• Rosten, E. &amp; Drummond, T. (2006). &quot;Machine Learning for High-Speed Corner Detection.&quot; — FAST/AGAST（<code style="color:#22d3bf">xcv2_fast_count</code> / <code style="color:#22d3bf">xcv3_agast_count</code>）</p>
+<p style="margin:2px 0 2px 12px">• Lowe, D. G. (2004). &quot;Distinctive Image Features from Scale-Invariant Keypoints.&quot; — SIFT（<code style="color:#22d3bf">xcv3_sift_count</code>）</p>
+<p style="margin:2px 0 2px 12px">• Lindeberg, T. (1998). &quot;Feature Detection with Automatic Scale Selection.&quot; — スケール空間 blob（<code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code>）</p>
+<p style="margin:2px 0 2px 12px">• Mallat, S. (1989). &quot;A Theory for Multiresolution Signal Decomposition: The Wavelet Representation.&quot; — ウェーブレット記述子（<code style="color:#22d3bf">xwt_detail_energy</code> / <code style="color:#22d3bf">xwt_packet_entropy</code>）</p>
+<p style="margin:2px 0 2px 12px">• Steger, C. (1998). &quot;An Unbiased Detector of Curvilinear Structures.&quot; — 部分画素輪郭長（<code style="color:#22d3bf">total_length</code> / <code style="color:#22d3bf">length_xld</code>）</p>
+<p>（台帳: <code style="color:#22d3bf">../../../REFERENCES.md</code>）</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

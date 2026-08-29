@@ -1,0 +1,152 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">物理PDE・人工生命・トモグラフィ・3D — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>この族は、画像を「絵」ではなく <b>力学系・物理場・投影データ</b> として扱う op を集めた道具箱です。入力の 2-D 画像を <b>PDE(偏微分方程式)の初期条件</b>とみなして数ステップ積分する物理フロー(<code style="color:#22d3bf">ph_*</code>: 熱拡散・Perona-Malik・平均曲率流・TV 流)、<b>パターン形成モデルの初期状態</b>とみなす生成 op(<code style="color:#22d3bf">alife_*</code>: 反応拡散・セルオートマトン・励起媒質・Lenia・砂山)、そして <b>CT のサイノグラム(生投影)</b> とみなして再構成する断層撮影 op(<code style="color:#22d3bf">tm_*</code>: Radon 前方投影 / フィルタ補正逆投影 / 代数再構成)が中心です。加えて、<code style="color:#22d3bf">scipy.ndimage</code> が N 次元であることを活かした <b>3-D ボリューム</b> op(<code style="color:#22d3bf">vol_*</code>: CT/MRI/深度スタックの平滑・モルフォロジ・しきい値・投影)、進化探索が発見したチャンピオン pipeline を 1 op に凍結した <b>マクロ op</b>(<code style="color:#22d3bf">macro_*</code>)、中央走査線の暗バーを数える <b>バーコード</b>(<code style="color:#22d3bf">decode_barcode</code>)が入っています。</p>
+<p>用途をひとことで言うと「ノイズ除去・エッジ保存平滑(physics/macro)」「テクスチャ・模様の生成(alife)」「疎ビュー/限定角 CT の再構成(tomography)」「3-D スタックの前処理と投影(3d)」です。入出力の型は op ごとに異なり、image→image が大半ですが、断層の前方投影は image(スライス)→image(サイノグラム)、ボリューム投影は volume→image、<code style="color:#22d3bf">macro_edge</code> は image→region、<code style="color:#22d3bf">decode_barcode</code> は image→feature(スカラ)になります。挙動はすべて決定的(同一入力→ビット一致)で、<code style="color:#22d3bf">examples/gallery2d_physics_alife_3d.py</code> が全 op を叩いて契約(有限・型・[0,1]・決定性)と既知挙動 GT を検証済みです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>断層撮影は「スライス→サイノグラム→スライス」のデータ変換が明確な連鎖です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  slice[&quot;スライス画像&lt;br/&gt;(image)&quot;] --&gt;|tm_radon_forward| sino[&quot;サイノグラム&lt;br/&gt;(image: 行=角度, 列=検出器)&quot;]
+  sino --&gt;|tm_sinogram_denoise| sino2[&quot;平滑サイノグラム&lt;br/&gt;(image)&quot;]
+  sino2 --&gt;|tm_fbp_reconstruct| rec[&quot;再構成スライス&lt;br/&gt;(image)&quot;]
+  sino2 --&gt;|tm_backproject_unfiltered| blur[&quot;ぼけた逆投影&lt;br/&gt;(image, 対照)&quot;]
+  sino2 --&gt;|tm_sart_reconstruct| rec2[&quot;代数再構成&lt;br/&gt;(image)&quot;]</pre>
+<p>PDE 平滑と 3-D 前処理は「場を整えてから測る/投影する」連鎖になります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  noisy[&quot;ノイズ画像&lt;br/&gt;(image)&quot;] --&gt;|ph_perona_malik / ph_total_variation_flow| clean[&quot;エッジ保存平滑&lt;br/&gt;(image)&quot;]
+  clean --&gt;|macro_edge| reg[&quot;エッジ領域&lt;br/&gt;(region 0/1)&quot;]
+  vol[&quot;ボリューム&lt;br/&gt;(volume)&quot;] --&gt;|vol_gaussian| vols[&quot;平滑ボリューム&lt;br/&gt;(volume)&quot;]
+  vols --&gt;|vol_threshold| volb[&quot;二値ボリューム&lt;br/&gt;(volume)&quot;]
+  volb --&gt;|vol_mip| proj[&quot;最大値投影&lt;br/&gt;(image)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>2-D image op は「1 画像 + 2 つのつまみ a,b∈[0,1]」で呼びます: <code style="color:#22d3bf">fullseye.apply(img, &quot;name&quot;, a, b)</code>。volume op は 3-D 配列を同じ形で渡します: <code style="color:#22d3bf">fullseye.apply(vol, &quot;name&quot;, a, b)</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">物理 PDE フロー(<code style="color:#22d3bf">ph_*</code>, image→image)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ph_heat_flow</code> — 線形熱方程式(等方拡散)を数ステップ陽解法で積分。ガウス平滑と等価で分散を下げる。a=拡散時間(ステップ数)、b は未使用。HALCON 別名: <code style="color:#22d3bf">isotropic_diffusion</code>。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;ph_heat_flow&quot;, 0.6, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ph_perona_malik</code> — Perona-Malik 異方性拡散。伝導度 g=1/(1+(|∇|/k)²) で平坦部は拡散、強エッジは保存。a=ステップ数、b=エッジ閾値 k。HALCON 別名: <code style="color:#22d3bf">anisotropic_diffusion</code>。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;ph_perona_malik&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ph_total_variation_flow</code> — Rudin-Osher-Fatemi TV 勾配降下。エッジを保ちつつノイズを平坦化(忠実度項で入力に係留)。a=ステップ数、b=忠実度重み λ。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;ph_total_variation_flow&quot;, 0.5, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">ph_coherence_enhancing_diffusion</code>(Weickert 構造テンソル拡散、線に沿って平滑・HALCON <code style="color:#22d3bf">coherence_enhancing_diff</code>)、<code style="color:#22d3bf">ph_mean_curvature_motion</code>(平均曲率流、レベル曲線を曲率で内向きに動かす・HALCON <code style="color:#22d3bf">mean_curvature_flow</code>)、<code style="color:#22d3bf">ph_reaction_diffusion</code>(Gray-Scott 反応拡散、a→feed / b→kill)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">人工生命 / 生成場(<code style="color:#22d3bf">alife_*</code>, image→image)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alife_life_step</code> — Conway 系ライフゲーム(トーラス格子)。入力を 0.5 でしきい値化して初期盤面にする。a=ルールプリセット(Conway/HighLife/Day&amp;Night/Seeds)、b=世代数。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_life_step&quot;, 0.0, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alife_gray_scott</code> — Gray-Scott 反応拡散。明るい画素を核にスポット/縞/迷路模様が育つ。a=feed とステップ数、b=kill。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_gray_scott&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alife_lenia</code> — Lenia 連続セルオートマトン。ガウス環カーネルの畳み込みと成長関数を連続時間で積分(二値化しない)。a=成長中心 μ/幅 σ/dt、b=ステップ数。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_lenia&quot;, 0.4, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alife_sandpile</code> — Abelian 砂山(Bak-Tang-Wiesenfeld、自己組織化臨界)。整数の粒高に量子化し 4 粒以上のセルを崩す。a=初期粒スケール、b=緩和スイープ数。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;alife_sandpile&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">alife_turing</code>(Gierer-Meinhardt 活性化-抑制)、<code style="color:#22d3bf">alife_cyclic_ca</code>(巡回 CA、螺旋波)、<code style="color:#22d3bf">alife_reaction_bz</code>(Greenberg-Hastings 励起媒質)、<code style="color:#22d3bf">alife_wolfram1d</code>(1-D 素朴 CA の時空図)、<code style="color:#22d3bf">alife_langton_ant</code>(Langton のアリ)、<code style="color:#22d3bf">alife_dla</code>(拡散律速凝集の決定的近似)、<code style="color:#22d3bf">alife_perona_malik</code> / <code style="color:#22d3bf">alife_curvature_flow</code>(<code style="color:#22d3bf">ph_*</code> と同族の evolver パラメータ版)。</p>
+<p>&gt; 正直な限界: <code style="color:#22d3bf">alife_*</code> は「フィルタ」ではなく <b>生成 op</b> です。入力を初期条件としてのみ消費し、その後は自前の力学を固定ステップ回します。平坦/一様な入力では対称性が破れず、いくつかの op は平坦な出力を返します(モデルの正しい挙動であって失敗ではありません)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">断層撮影(<code style="color:#22d3bf">tm_*</code>, image↔サイノグラム)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tm_radon_forward</code> — 入力をスライス画像とみなし平行線に沿って積分してサイノグラム(行=角度, 列=検出器)を作る。a=取得角数(疎ビュー)、b=角度スパン(&lt;1 は限定角 CT)。呼び出し例: <code style="color:#22d3bf">fullseye.apply(img, &quot;tm_radon_forward&quot;, 0.7, 1.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tm_fbp_reconstruct</code> — 入力をサイノグラムとみなしフィルタ補正逆投影で再構成。b&lt;0.5→Ram-Lak(ランプ)、b≥0.5→Shepp-Logan。a は未使用。呼び出し例: <code style="color:#22d3bf">fullseye.apply(sino, &quot;tm_fbp_reconstruct&quot;, 0.0, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">tm_sinogram_denoise</code> — サイノグラムを <b>角度方向(行)</b> に平滑(隣接角はほぼ同じ物体を見るという整合性事前分布)。a=角度軸 σ、b=検出器軸 σ。呼び出し例: <code style="color:#22d3bf">fullseye.apply(sino, &quot;tm_sinogram_denoise&quot;, 1.0, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">tm_sart_reconstruct</code>(SART/SIRT 代数再構成、a=反復数 / b=緩和係数)、<code style="color:#22d3bf">tm_backproject_unfiltered</code>(ランプ無しの素朴逆投影 = FBP のフィルタが必要な理由を示すぼけた対照、a/b 未使用)。scikit-image があれば本物の <code style="color:#22d3bf">radon</code>/<code style="color:#22d3bf">iradon</code>/<code style="color:#22d3bf">iradon_sart</code> を、無ければ自己完結 NumPy 実装(回転加算 Radon + FFT ランプ)を使う。HALCON に対応 op は無い(全 <code style="color:#22d3bf">halcon=&quot;&quot;</code>)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">3-D ボリューム(<code style="color:#22d3bf">vol_*</code>, volume→volume|image)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vol_threshold</code> — ボリュームを閾値 a で二値化(volume→binary volume)。呼び出し例: <code style="color:#22d3bf">fullseye.apply(vol, &quot;vol_threshold&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vol_gaussian</code> — 3-D ガウス平滑。a=σ(0.3+2.7a)。呼び出し例: <code style="color:#22d3bf">fullseye.apply(vol, &quot;vol_gaussian&quot;, 0.4, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vol_mip</code> — z 軸(axis 0)最大値投影して 2-D 画像化(volume→image、正規化)。呼び出し例: <code style="color:#22d3bf">fullseye.apply(vol, &quot;vol_mip&quot;, 0.0, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">vol_median</code>(3×3×3 メディアン)、<code style="color:#22d3bf">vol_erode</code> / <code style="color:#22d3bf">vol_dilate</code>(グレースケール収縮/膨張、a で size)、<code style="color:#22d3bf">vol_slice</code>(z=int(a·Z) の断面を 2-D 画像として取り出す)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">マクロ(進化チャンピオンの凍結 op)</h3>
+<p>進化探索が発見した pipeline を名前固定ステージ列として凍結した「DNA op」。a,b は凍結済み(不使用)で、ステージを逐次実行するのとビット一致します。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">macro_denoise</code> — bilateral ×3(ノイズの std と clean 基準 MSE を下げる)。image→image。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">macro_edge</code> — gamma → bilateral → sobel_mag → scale_clip → otsu(構造画像は 2 クラスの二値領域、平坦画像は 1 クラスに潰れる)。image→region。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">macro_binarize</code> — bilateral → unsharp → bilateral → lowpass → gopen → unsharp。image→image。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">macro_vol_denoise</code> — vol_threshold → vol_gaussian。volume→volume。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">バーコード</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">decode_barcode</code> — 中央走査線上で暗バー(&lt;0.3+0.4a)の本数を数える簡易デコーダ。image→feature(スカラ)。HALCON 別名: <code style="color:#22d3bf">find_bar_code</code>。呼び出し例: <code style="color:#22d3bf">fullseye.apply(bars, &quot;decode_barcode&quot;, 0.5, 0.0)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_physics_alife_3d から)</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11 &lt;file&gt;.py</code> として実行できます(<code style="color:#22d3bf">examples/gallery2d_physics_alife_3d.py</code> の検証済みコードを土台に短縮)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># -*- coding: utf-8 -*-
+&quot;&quot;&quot;物理PDE・トモグラフィ・3D・alife・バーコード族の最小 GT 例(repo 直下で実行)。&quot;&quot;&quot;
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parents[0]))  # repo root
+
+import numpy as np
+import fullseye
+import ops
+
+# --- 構造のある 2-D 画像とボリュームを合成(examples と同じ作り) --------------- #
+n = 48
+yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+grad = xx / (n - 1)
+disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) &lt; (n * 0.18) ** 2
+noise = 0.03 * np.random.default_rng(20260812).standard_normal((n, n))
+img = np.clip(0.35 * grad + 0.45 * disk + noise, 0.0, 1.0)
+
+zz, vy, vx = np.mgrid[0:8, 0:24, 0:24]
+vol = np.clip(0.5 + 0.3 * np.sin(vx / 3.0) * np.cos(vy / 4.0) * (zz / 8.0), 0.0, 1.0)
+
+# --- GT1: 熱拡散は分散を下げる(ぼかし)。null=何もしない は分散を保つ ---------- #
+heat = fullseye.apply(img, &quot;ph_heat_flow&quot;, 1.0, 0.0)
+assert heat.shape == img.shape and np.isfinite(heat).all()
+assert heat.var() &lt; img.var() * 0.9, (heat.var(), img.var())
+
+# --- GT2: サイノグラム角度方向平滑は隣接行差を下げる ---------------------------- #
+sino = fullseye.apply(img, &quot;tm_radon_forward&quot;, 0.7, 1.0)      # image -&gt; サイノグラム
+den = fullseye.apply(sino, &quot;tm_sinogram_denoise&quot;, 1.0, 0.0)   # 角度軸(行)平滑
+d_before = float(np.abs(np.diff(sino, axis=0)).mean())
+d_after = float(np.abs(np.diff(den, axis=0)).mean())
+assert d_after &lt; d_before, (d_after, d_before)
+rec = fullseye.apply(sino, &quot;tm_fbp_reconstruct&quot;, 0.0, 0.3)    # FBP 再構成
+assert rec.shape == img.shape and np.isfinite(rec).all()
+
+# --- GT3: vol_threshold は厳密二値・両クラスを含む / vol_mip は 2-D 画像 ------- #
+vt = fullseye.apply(vol, &quot;vol_threshold&quot;, 0.5, 0.5)
+assert set(np.unique(vt).tolist()) &lt;= {0.0, 1.0}
+assert vt.min() == 0.0 and vt.max() == 1.0
+mip = fullseye.apply(vol, &quot;vol_mip&quot;, 0.0, 0.0)
+assert mip.ndim == 2 and 0.0 - 1e-9 &lt;= mip.min() and mip.max() &lt;= 1.0 + 1e-9
+
+# --- GT4: decode_barcode は仕込んだ 5 本を正確に数える(a=0.5 -&gt; 暗閾値 0.5) --- #
+bar = np.ones((10, 40), np.float64)
+for k in range(5):
+    s = 3 + k * 7
+    bar[5, s:s + 3] = 0.0
+cnt = float(fullseye.apply(bar, &quot;decode_barcode&quot;, 0.5, 0.0))
+assert cnt == 5.0, cnt
+
+# --- GT5: macro_edge は構造画像を 2 クラス、平坦画像を 1 クラスに(エッジのみ分割) - #
+me = fullseye.apply(img, &quot;macro_edge&quot;, 0.5, 0.5)
+assert set(np.unique(me).tolist()) &lt;= {0.0, 1.0} and np.unique(me).size == 2
+flat = fullseye.apply(np.full((n, n), 0.42), &quot;macro_edge&quot;, 0.5, 0.5)
+assert np.unique(flat).size == 1
+
+# --- 決定性: 同一入力 -&gt; ビット一致(alife も含め全 op が満たす契約) ---------- #
+assert np.array_equal(fullseye.apply(img, &quot;alife_life_step&quot;, 0.0, 0.5),
+                      fullseye.apply(img, &quot;alife_life_step&quot;, 0.0, 0.5))
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>熱方程式 / 等方拡散(<code style="color:#22d3bf">ph_heat_flow</code>)は 5 点ラプラシアンの陽解法(FTCS):</p>
+<p>$$I_t = \nabla^2 I,\qquad I^{k+1} = I^k + \Delta t\,\big(I_{i-1,j}+I_{i+1,j}+I_{i,j-1}+I_{i,j+1}-4I_{i,j}\big).$$</p>
+<p>Perona-Malik 異方性拡散(<code style="color:#22d3bf">ph_perona_malik</code>)は伝導度 $g$ でエッジを保つ:</p>
+<p>$$I_t = \operatorname{div}\!\big(g(|\nabla I|)\,\nabla I\big),\qquad g(s) = \frac{1}{1+(s/k)^2}.$$</p>
+<p>平均曲率流(<code style="color:#22d3bf">ph_mean_curvature_motion</code> / <code style="color:#22d3bf">alife_curvature_flow</code>)は数値安定な代数形で:</p>
+<p>$$I_t = |\nabla I|\,\operatorname{div}\!\frac{\nabla I}{|\nabla I|} = \frac{I_{xx}I_y^2 - 2I_xI_yI_{xy} + I_{yy}I_x^2}{I_x^2 + I_y^2 + \varepsilon}.$$</p>
+<p>Total Variation(ROF)流(<code style="color:#22d3bf">ph_total_variation_flow</code>)はエネルギー $\mathrm{TV}(I) + \tfrac{\lambda}{2}\lVert I-I_0\rVert^2$ の勾配降下:</p>
+<p>$$I_t = \operatorname{div}\!\frac{\nabla I}{|\nabla I|} - \lambda\,(I - I_0).$$</p>
+<p>Gray-Scott 反応拡散(<code style="color:#22d3bf">ph_reaction_diffusion</code> / <code style="color:#22d3bf">alife_gray_scott</code>)は 2 種 $u,v$ の連立:</p>
+<p>$$u_t = D_u\nabla^2 u - uv^2 + F(1-u),\qquad v_t = D_v\nabla^2 v + uv^2 - (F+\kappa)v.$$</p>
+<p>FBP(<code style="color:#22d3bf">tm_fbp_reconstruct</code>)は各角度 $\theta$ の投影 $p_\theta$ をランプフィルタ後に逆投影:</p>
+<p>$$f(x,y) = \int_0^\pi \big(p_\theta * h\big)\big(x\cos\theta + y\sin\theta\big)\,d\theta,\qquad \hat h(\omega) = |\omega|.$$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p><code style="color:#22d3bf">../../SAMPLES.md</code> を参照。この族のデバッグには 2-D の合成画像 <code style="color:#22d3bf">checker_noisy</code> / <code style="color:#22d3bf">blobs</code>(<code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>)や <code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">cell</code>(PDE 平滑・断層の入力スライスに好適)が使えます。3-D <code style="color:#22d3bf">vol_*</code> の検証には <code style="color:#22d3bf">open-scivis</code>(open-scivis-datasets、SAMPLES.md 参照)のボリュームや、上例のような合成ボリュームを使います。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳 <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• Perona, P. &amp; Malik, J. (1990). &quot;Scale-space and edge detection using anisotropic diffusion.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Weickert, J. (1999). &quot;Coherence-enhancing diffusion filtering.&quot; International Journal of Computer Vision.</p>
+<p style="margin:2px 0 2px 12px">• Rudin, L., Osher, S. &amp; Fatemi, E. (1992). &quot;Nonlinear total variation based noise removal algorithms.&quot; Physica D.</p>
+<p style="margin:2px 0 2px 12px">• Osher, S. &amp; Sethian, J.A. (1988). &quot;Fronts propagating with curvature-dependent speed: algorithms based on Hamilton-Jacobi formulations.&quot; Journal of Computational Physics.</p>
+<p style="margin:2px 0 2px 12px">• Pearson, J.E. (1993). &quot;Complex patterns in a simple system.&quot; Science.</p>
+<p style="margin:2px 0 2px 12px">• Turing, A.M. (1952). &quot;The chemical basis of morphogenesis.&quot; Phil. Trans. R. Soc. B.</p>
+<p style="margin:2px 0 2px 12px">• Gierer, A. &amp; Meinhardt, H. (1972). &quot;A theory of biological pattern formation.&quot; Kybernetik.</p>
+<p style="margin:2px 0 2px 12px">• Gardner, M. (1970). &quot;Mathematical Games: The fantastic combinations of John Conway&#x27;s new solitaire game &#x27;life&#x27;.&quot; Scientific American.</p>
+<p style="margin:2px 0 2px 12px">• Wolfram, S. (1983). &quot;Statistical mechanics of cellular automata.&quot; Reviews of Modern Physics.</p>
+<p style="margin:2px 0 2px 12px">• Langton, C.G. (1986). &quot;Studying artificial life with cellular automata.&quot; Physica D.</p>
+<p style="margin:2px 0 2px 12px">• Chan, B.W.-C. (2019). &quot;Lenia: Biology of Artificial Life.&quot; Complex Systems.</p>
+<p style="margin:2px 0 2px 12px">• Bak, P., Tang, C. &amp; Wiesenfeld, K. (1987). &quot;Self-organized criticality: an explanation of 1/f noise.&quot; Physical Review Letters.</p>
+<p style="margin:2px 0 2px 12px">• Witten, T.A. &amp; Sander, L.M. (1981). &quot;Diffusion-limited aggregation, a kinetic critical phenomenon.&quot; Physical Review Letters.</p>
+<p style="margin:2px 0 2px 12px">• Greenberg, J.M. &amp; Hastings, S.P. (1978). &quot;Spatial patterns for discrete models of diffusion in excitable media.&quot; SIAM Journal on Applied Mathematics.</p>
+<p style="margin:2px 0 2px 12px">• Radon, J. (1917). &quot;Über die Bestimmung von Funktionen durch ihre Integralwerte längs gewisser Mannigfaltigkeiten.&quot;</p>
+<p style="margin:2px 0 2px 12px">• Shepp, L.A. &amp; Logan, B.F. (1974). &quot;The Fourier reconstruction of a head section.&quot; IEEE Transactions on Nuclear Science.</p>
+<p style="margin:2px 0 2px 12px">• Andersen, A.H. &amp; Kak, A.C. (1984). &quot;Simultaneous algebraic reconstruction technique (SART).&quot; Ultrasonic Imaging.</p>
+<p style="margin:2px 0 2px 12px">• Kak, A.C. &amp; Slaney, M. (1988). Principles of Computerized Tomographic Imaging. IEEE Press.</p>
+<p style="margin:2px 0 2px 12px">• Serra, J. (1982). Image Analysis and Mathematical Morphology. Academic Press.</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

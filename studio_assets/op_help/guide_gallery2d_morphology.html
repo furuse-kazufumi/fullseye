@@ -1,0 +1,119 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">モルフォロジー(形態学) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>モルフォロジー(数理形態学)は、画像の明るい塊・暗い塊の「形」を <b>構造要素(SE, structuring element = 近傍窓)</b> で削る・盛る演算の一族です。土台は二つだけ — <b>erosion(収縮 = SE 内の局所 min)</b> と <b>dilation(膨張 = SE 内の局所 max)</b>。この二つを合成すると <b>opening(SE より小さい明点を消す)</b> と <b>closing(SE より小さい暗穴を埋める)</b> になり、元画像との差分をとると <b>top-hat(SE より小さい明ディテール抽出)/ black-hat(暗ディテール抽出)/ morphological gradient(境界 = エッジ応答)</b> になります。</p>
+<p>入力はすべて <code style="color:#22d3bf">image</code>(グレースケール [0,1] 配列)、出力もすべて <code style="color:#22d3bf">image</code>。つまり「画像を入れると画像が返る」前処理・特徴抽出の一族で、<b>特定サイズの構造だけ残す/消す</b> のが仕事です。典型用途は照明ムラ補正、粒径解析、欠陥検出、文字・血管など細い構造の強調。SE のサイズはつまみ <code style="color:#22d3bf">a</code> で決まり(基本 op は 3→5→7→9 px の正方 SE)、どのつまみでも必ず効果が出る(恒等ではない)よう最小 3 px から始まります。この族には基本 4 演算に加え、SE 形状(正方/円盤)を変えた変種、OpenCV/skimage/scipy 由来の実装、そして SE ではなく <b>面積・直径・再構成</b> で成分を選ぶ属性フィルタ(粒径解析の本命)、骨格・穴埋めまで含みます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>明るい欠陥を背景ムラごと拾って数える定番の流れ。モルフォロジーが前処理を担い、下流の segmentation・features 族へデータ種が <code style="color:#22d3bf">image → region → feature</code> と繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[image 元画像] --&gt;|gopen 小明ノイズ除去| B[image]
+    B --&gt;|tophat 背景ムラ除去 / 明欠陥抽出| C[image]
+    C --&gt;|otsu 2値化| D[region 欠陥領域]
+    D --&gt;|blob_count 計数| E[feature 個数]</pre>
+<p>この族の内部代数(すべてコード上の定義そのもの)。erosion / dilation という二演算から opening / closing / top-hat / black-hat / gradient が導かれます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TB
+    IN[&quot;image f&quot;] --&gt; E[&quot;gerode ε(収縮)&quot;]
+    IN --&gt; D[&quot;gdilate δ(膨張)&quot;]
+    E --&gt;|&quot;δ∘ε&quot;| O[&quot;gopen γ(開)&quot;]
+    D --&gt;|&quot;ε∘δ&quot;| C[&quot;gclose φ(閉)&quot;]
+    O --&gt;|&quot;f − γf&quot;| TH[&quot;tophat 明ディテール&quot;]
+    C --&gt;|&quot;φf − f&quot;| BH[&quot;bothat 暗ディテール&quot;]
+    E --&gt; G[&quot;morph_grad δf − εf 境界応答&quot;]
+    D --&gt; G</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>呼び出しは 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code>: <code style="color:#22d3bf">fullseye.apply(img, &quot;&lt;name&gt;&quot;, a, b)</code>。基本 op では <code style="color:#22d3bf">a</code> が SE サイズ(<code style="color:#22d3bf">(3,5,7,9)[min(3,int(a*4))]</code> px の正方 SE)、<code style="color:#22d3bf">b</code> は基本 4 演算では未使用。<b>HALCON 別名</b>は括弧で併記。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">基本4演算(erosion / dilation / opening / closing)</h3>
+<p>同じ挙動を「scipy 系(正方 SE)/ HALCON 名 / OpenCV(楕円 SE)」の 3 実装で提供します。順序律 <code style="color:#22d3bf">erosion ≤ opening ≤ 入力 ≤ closing ≤ dilation</code> が全画素で成立(examples で数値検証済み)。</p>
+<p style="margin:2px 0 2px 12px">• <b>gerode</b> / <b>gray_erosion</b>(HALCON <code style="color:#22d3bf">gray_erosion</code>)/ <b>cv_erode</b> — 収縮。SE 内の最小値を返す(明部を削り暗部を広げる。出力 ≤ 入力)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gerode&quot;, a, b)</code>。cv_erode は SE が楕円(<code style="color:#22d3bf">3+2·int(3a)</code> px)。</p>
+<p style="margin:2px 0 2px 12px">• <b>gdilate</b> / <b>gray_dilation</b>(HALCON <code style="color:#22d3bf">gray_dilation</code>)/ <b>cv_dilate</b> — 膨張。SE 内の最大値(明部を広げ暗部を削る。出力 ≥ 入力)。<code style="color:#22d3bf">fullseye.apply(img, &quot;gdilate&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>gopen</b> / <b>gray_opening</b>(HALCON <code style="color:#22d3bf">gray_opening</code>)/ <b>cv_open</b> — 開演算(収縮→膨張)。SE より小さい <b>明</b> の突起・スパイクを除去し、面は残す。<code style="color:#22d3bf">fullseye.apply(img, &quot;gopen&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>gclose</b> / <b>gray_closing</b>(HALCON <code style="color:#22d3bf">gray_closing</code>)/ <b>cv_close</b> — 閉演算(膨張→収縮)。SE より小さい <b>暗</b> の穴・隙間を埋める。<code style="color:#22d3bf">fullseye.apply(img, &quot;gclose&quot;, a, b)</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">SE 形状バリアント(円盤 disk / 矩形 rect)</h3>
+<p>基本 4 演算と同じ演算を、SE の形を明示的に選んで実行します。円盤 SE は半径 <code style="color:#22d3bf">1+int(3a)</code>(1〜4 px, skimage.disk)、矩形 SE は <code style="color:#22d3bf">(3,5,7,9)</code> px の正方。円盤は方向依存の少ない等方な削り/盛りに向きます。</p>
+<p style="margin:2px 0 2px 12px">• <b>gray_erosion_shape</b> / <b>gray_dilation_shape</b>(HALCON <code style="color:#22d3bf">gray_erosion_shape</code> / <code style="color:#22d3bf">gray_dilation_shape</code>)— 円盤 SE の収縮 / 膨張。<code style="color:#22d3bf">fullseye.apply(img, &quot;gray_erosion_shape&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>gray_opening_shape</b> / <b>gray_closing_shape</b>(HALCON <code style="color:#22d3bf">gray_opening_shape</code> / <code style="color:#22d3bf">gray_closing_shape</code>)— 円盤 SE の開 / 閉。</p>
+<p style="margin:2px 0 2px 12px">• <b>gray_opening_rect</b> / <b>gray_closing_rect</b>(HALCON <code style="color:#22d3bf">gray_opening_rect</code> / <code style="color:#22d3bf">gray_closing_rect</code>)— 矩形(正方)SE の開 / 閉。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">差分演算(ディテール抽出・境界応答)</h3>
+<p>元画像と opening/closing の差、あるいは dilation と erosion の差。いずれも出力は絶対値の最大で正規化され [0,1] に収まります。</p>
+<p style="margin:2px 0 2px 12px">• <b>tophat</b> / <b>gray_tophat</b>(HALCON <code style="color:#22d3bf">gray_tophat</code>)/ <b>cv_tophat</b> — white top-hat = 入力 − opening。SE より小さい <b>明</b> ディテールと背景ムラを抽出(照明ムラ補正の定番)。<code style="color:#22d3bf">fullseye.apply(img, &quot;tophat&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>bothat</b> / <b>gray_bothat</b>(HALCON <code style="color:#22d3bf">gray_bothat</code>)/ <b>cv_blackhat</b> — black top-hat = closing − 入力。SE より小さい <b>暗</b> ディテールを抽出。<code style="color:#22d3bf">fullseye.apply(img, &quot;bothat&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>morph_grad</b>(HALCON <code style="color:#22d3bf">gray_range_rect</code>)/ <b>cv_gradient</b> — 形態学的勾配 = dilation − erosion。境界(エッジ)で強く応答し平坦部はゼロ。<code style="color:#22d3bf">fullseye.apply(img, &quot;morph_grad&quot;, a, b)</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">属性フィルタ(面積・直径による成分選択)</h3>
+<p>SE ではなく <b>接続成分の属性(面積/直径)</b> で残す・消すを決めます。SE 演算が形を丸めるのに対し、こちらは <b>残す成分の形を保ったまま</b> 小さいものだけ消せる(粒径解析・小欠陥除去の本命)。しきい値はつまみ <code style="color:#22d3bf">a</code> に連動。</p>
+<p style="margin:2px 0 2px 12px">• <b>sk_area_opening</b> — 面積オープニング。面積が <code style="color:#22d3bf">int(16+100a)</code> px 未満の <b>明</b> 成分を除去(大きい明領域は無傷)。<code style="color:#22d3bf">fullseye.apply(img, &quot;sk_area_opening&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>xsk2_diameter_opening</b> — 直径オープニング。外接直径が <code style="color:#22d3bf">4+int(30a)</code> px 未満の <b>明</b> 成分を除去。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_diameter_opening&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>xsk3_area_closing</b> — 面積クロージング。面積が <code style="color:#22d3bf">int(16+100a)</code> px 未満の <b>暗</b> 成分(穴)を埋める。</p>
+<p style="margin:2px 0 2px 12px">• <b>xsk3_diameter_closing</b> — 直径クロージング。直径が <code style="color:#22d3bf">4+int(30a)</code> px 未満の <b>暗</b> 成分を埋める。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">再構成・骨格・穴埋め</h3>
+<p style="margin:2px 0 2px 12px">• <b>xsk2_reconstruction</b> — 膨張による形態学的再構成。入力を高さ <code style="color:#22d3bf">0.05+0.25a</code> 下げたマーカーから、元画像を上限として再構成(小さな明ピークを均しつつ、生き残る構造の形と縁は SE 開のように丸めない)。<code style="color:#22d3bf">fullseye.apply(img, &quot;xsk2_reconstruction&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>f2_gray_skeleton</b>(HALCON <code style="color:#22d3bf">gray_skeleton</code>)— しきい値 <code style="color:#22d3bf">0.15+0.60a</code> で明領域を2値化 → 1 px 幅に細線化(Zhang–Suen)→ 元のグレー値を載せ直した中軸。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">fullseye.apply(img, &quot;f2_gray_skeleton&quot;, a, b)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>f2_gray_inside</b>(HALCON <code style="color:#22d3bf">gray_inside</code>)— グレースケール穴埋め。各画素で「境界へ至る任意経路上の最小グレー値」= 縁アンカーのマーカーからの erosion 再構成。明るい壁に囲まれた暗い窪みを壁の高さへ持ち上げる。<code style="color:#22d3bf">a</code> が最大埋め深さ、<code style="color:#22d3bf">b</code> は未使用。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_morphology から)</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11</code> で実行可。基本 4 演算の順序律、top-hat の明点抽出、面積オープニングの「形保存」を数値で確認して <code style="color:#22d3bf">PASS</code> を出します。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye
+
+# GT 画像: 平坦 + 縦エッジ + SE より小さい明点/暗点(決定的・ノイズ無し)
+g = np.full((48, 48), 0.3)
+g[:, 24:] = 0.7            # 列24に縦エッジ(0.3 -&gt; 0.7)
+g[8:11, 8:11] = 0.95      # 左平坦域の小さな明点(3x3 &lt; SE7)
+g[38:41, 38:41] = 0.05    # 右平坦域の小さな暗点(3x3)
+EPS = 1e-9
+
+# --- 基本4演算(同一 SE=3x3: a=0.0 -&gt; _k=3)---
+er = np.asarray(fullseye.apply(g, &quot;gerode&quot;,  0.0, 0.0))
+di = np.asarray(fullseye.apply(g, &quot;gdilate&quot;, 0.0, 0.0))
+op = np.asarray(fullseye.apply(g, &quot;gopen&quot;,   0.0, 0.0))
+cl = np.asarray(fullseye.apply(g, &quot;gclose&quot;,  0.0, 0.0))
+
+# 1) erosion は anti-extensive(&lt;=入力)/ dilation は extensive(&gt;=入力)
+assert (er &lt;= g + EPS).all() and er.mean() &lt; g.mean() - 1e-4
+assert (di &gt;= g - EPS).all() and di.mean() &gt; g.mean() + 1e-4
+
+# 2) 順序律: erosion &lt;= opening &lt;= 入力 &lt;= closing &lt;= dilation(全画素)
+assert (er &lt;= op + EPS).all() and (op &lt;= g + EPS).all()
+assert (g &lt;= cl + EPS).all() and (cl &lt;= di + EPS).all()
+
+# 3) white top-hat(SE 7x7 &gt; 3x3 明点)は SE より小さい明点を強く拾う
+th = np.asarray(fullseye.apply(g, &quot;tophat&quot;, 0.5, 0.0))
+assert th[8:11, 8:11].mean() &gt; th[18:30, 30:40].mean() + 0.1
+
+# 4) 面積オープニング: SE と違い「形」を保ったまま小面積の明成分だけ消す
+ao = np.asarray(fullseye.apply(g, &quot;sk_area_opening&quot;, 0.9, 0.0))
+assert ao[8:11, 8:11].mean() &lt; g[8:11, 8:11].mean() - 0.1   # 明点(面積9)は除去
+assert abs(ao[:, 24:].mean() - g[:, 24:].mean()) &lt; 0.05      # 大面積の明領域は保持
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>構造要素 $B$ とグレースケール画像 $f$ に対し、この族の中核は次の通り(コード上は erosion/dilation が SE 内の min/max、他はその合成・差分)。</p>
+<p>$$</p>
+<p>(\varepsilon_B f)(x) = \min_{s\in B} f(x+s), \qquad</p>
+<p>(\delta_B f)(x) = \max_{s\in B} f(x+s)</p>
+<p>$$</p>
+<p>$$</p>
+<p>\gamma_B f = \delta_B(\varepsilon_B f)\ \text{(opening)}, \qquad</p>
+<p>\phi_B f = \varepsilon_B(\delta_B f)\ \text{(closing)}</p>
+<p>$$</p>
+<p>$$</p>
+<p>\mathrm{WTH}(f) = f - \gamma_B f, \qquad</p>
+<p>\mathrm{BTH}(f) = \phi_B f - f, \qquad</p>
+<p>g_B f = \delta_B f - \varepsilon_B f</p>
+<p>$$</p>
+<p>これらから、同一 SE のもとで常に成り立つ <b>順序律</b>(examples の GT でも検証):</p>
+<p>$$</p>
+<p>\varepsilon_B f \ \le\ \gamma_B f \ \le\ f \ \le\ \phi_B f \ \le\ \delta_B f</p>
+<p>$$</p>
+<p>なお <code style="color:#22d3bf">tophat</code>/<code style="color:#22d3bf">bothat</code>/<code style="color:#22d3bf">morph_grad</code> の出力は実装上 $\max|\cdot|$ で割って [0,1] に正規化されます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグには合成画像が扱いやすい: <code style="color:#22d3bf">blobs</code>(大小の塊 → opening/面積フィルタで粒径選別)、<code style="color:#22d3bf">shapes</code>(境界が明快 → morph_grad で確認)。文字・線構造なら <code style="color:#22d3bf">page</code>(skimage.data、細線 → f2_gray_skeleton / bothat 向き)。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;blobs&quot;)</code>。一覧・ライセンスは [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• Matheron, G. (1975), *Random Sets and Integral Geometry*.</p>
+<p style="margin:2px 0 2px 12px">• Serra, J. (1982), *Image Analysis and Mathematical Morphology*.</p>
+<p style="margin:2px 0 2px 12px">• Sternberg, S. R. (1986), &quot;Grayscale Morphology&quot;, *Computer Vision, Graphics, and Image Processing*.</p>
+<p style="margin:2px 0 2px 12px">• Soille, P. (2004), *Morphological Image Analysis: Principles and Applications* (2nd ed.), Springer.</p>
+<p style="margin:2px 0 2px 12px">• Vincent, L. (1993), &quot;Morphological Grayscale Reconstruction in Image Analysis: Applications and Efficient Algorithms&quot;, *IEEE Transactions on Image Processing* — 再構成・面積オープニング。</p>
+<p style="margin:2px 0 2px 12px">• Breen, E. J. &amp; Jones, R. (1996), &quot;Attribute Openings, Thinnings, and Granulometries&quot;, *Computer Vision and Image Understanding* — 面積/直径による属性フィルタ。</p>
+<p style="margin:2px 0 2px 12px">• Zhang, T. Y. &amp; Suen, C. Y. (1984), &quot;A Fast Parallel Algorithm for Thinning Digital Patterns&quot;, *Communications of the ACM* — 骨格(細線化)。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

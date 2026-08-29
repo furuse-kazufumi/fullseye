@@ -1,0 +1,218 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">セグメンテーション — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>このファミリは <b>「グレー画像 → 領域(region)」への分割</b> を担う演算子群です。入力はどの op も</p>
+<p><code style="color:#22d3bf">in_sort = image</code>(2 次元 <code style="color:#22d3bf">float64</code>、値域 <code style="color:#22d3bf">[0,1]</code>)、出力はほぼすべて <code style="color:#22d3bf">out_sort = region</code></p>
+<p>(入力と同じ形の 2 次元 <code style="color:#22d3bf">float64</code> で、値は <code style="color:#22d3bf">{0, 1}</code> の <b>二値マスク</b>)。つまり「各画素は前景か</p>
+<p>背景か / どの区画に属するか」を決めて、後段の領域モルフォロジや計測が扱える形に落とす道具です。</p>
+<p>やり方の系統は幅広く、大域しきい値(Otsu / Li / Yen)、局所適応しきい値(Sauvola / Niblack /</p>
+<p>適応ガウス)、エッジ抽出(Canny / LoG ゼロ交差)、局所ピーク・極値のマーカー検出、領域成長・</p>
+<p>分水嶺(watershed / pouring)、特徴空間クラスタリング(k-means / GMM / mean-shift)、グラフ分割</p>
+<p>(normalized-cut / GrabCut / random-walker)、過分割スーパーピクセル(SLIC / Felzenszwalb)、</p>
+<p>能動輪郭(Chan-Vese)までを一列に並べています。どれも同じ呼び出し形 <code style="color:#22d3bf">fullseye.apply(img, &quot;name&quot;, a, b)</code></p>
+<p>で叩けて、つまみ <code style="color:#22d3bf">a, b ∈ [0,1]</code> が各手法の主要パラメータ(しきい値・平滑量・窓サイズ・粗さ)へ</p>
+<p>写像されます。</p>
+<p><b>出力型の例外(正直に)</b>: 次の 3 op だけは <code style="color:#22d3bf">out_sort = image</code>(二値マスクではなく多値/連続の画像)を</p>
+<p>返します — <code style="color:#22d3bf">xsk2_multiotsu</code>(多値ラベル画像、≥3 階調)、<code style="color:#22d3bf">xcv2_meanshift</code>(mean-shift 平滑画像)、</p>
+<p><code style="color:#22d3bf">it_region_to_bin</code>(領域を二値画像へレンダリング)。残りはすべて <code style="color:#22d3bf">{0,1}</code> の region です。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>セグメンテーション op は多くが「image を受けて region を出す」終端です。したがって典型的な連鎖は</p>
+<p><b>前段の平滑化(smoothing 族)→ 本族の 1 手法 → 後段の region モルフォロジ/計測(region・features 族)</b></p>
+<p>というデータ種の受け渡しになります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  IMG[&quot;grayscale image&lt;br/&gt;2-D float in [0,1]&quot;] --&gt; PRE[&quot;pre-smoothing&lt;br/&gt;gauss_filter / median&lt;br/&gt;(smoothing 族)&quot;]
+  PRE --&gt; SEG{&quot;segmentation&lt;br/&gt;この族&quot;}
+  SEG --&gt;|&quot;大域しきい値&lt;br/&gt;otsu / threshold / sk_li&quot;| REG[&quot;binary region&lt;br/&gt;2-D {0,1} mask&quot;]
+  SEG --&gt;|&quot;局所しきい値&lt;br/&gt;sk_sauvola / dyn_threshold&quot;| REG
+  SEG --&gt;|&quot;エッジ&lt;br/&gt;canny / edges_image / zero_crossing&quot;| BND[&quot;edge / boundary region&quot;]
+  SEG --&gt;|&quot;分水嶺・過分割&lt;br/&gt;watersheds / sg_slic_superpixels&quot;| BND
+  REG --&gt; POST[&quot;region モルフォロジ・計測&lt;br/&gt;(region / features 族)&quot;]
+  BND --&gt; POST</pre>
+<p>同じ入力でも手法で頑健性が変わる、という「使い分け」の連鎖:</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  A[&quot;不均一照明の文書画像&quot;] --&gt;|&quot;otsu(大域)&quot;| B[&quot;割れやすい二値領域&quot;]
+  A --&gt;|&quot;sk_sauvola(局所適応)&quot;| C[&quot;照明ムラに強い二値領域&quot;]
+  D[&quot;二峰性の物体画像&quot;] --&gt;|&quot;otsu&quot;| E[&quot;前景 = 物体マスク&quot;]
+  E --&gt;|&quot;fill_holes → blob_count&lt;br/&gt;(下流 region 族)&quot;| F[&quot;個数・面積などの計測値&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>呼び出しは全 op 共通で <code style="color:#22d3bf">fullseye.apply(img, &quot;&lt;name&gt;&quot;, a, b)</code>(<code style="color:#22d3bf">a, b ∈ [0,1]</code>、既定 0.5)。</p>
+<p><code style="color:#22d3bf">region</code> 出力は入力と同形の <code style="color:#22d3bf">{0,1}</code> 二値 <code style="color:#22d3bf">float64</code>。HALCON 別名がある場合は「≈ HALCON名」で併記。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">大域しきい値(1 つの閾値で前景/背景)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code> — 固定しきい値 <code style="color:#22d3bf">v &gt; a</code>(<code style="color:#22d3bf">a</code> が閾値そのもの)。≈ HALCON <code style="color:#22d3bf">threshold</code>。 <code style="color:#22d3bf">fullseye.apply(img, &quot;threshold&quot;, 0.5, 0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">otsu</code> — ヒストグラムのクラス間分散最大で自動閾値(つまみ不使用)。≈ <code style="color:#22d3bf">binary_threshold</code>。 <code style="color:#22d3bf">fullseye.apply(img, &quot;otsu&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">binary_threshold</code> / <code style="color:#22d3bf">auto_threshold</code> / <code style="color:#22d3bf">bin_threshold</code> — いずれも Otsu 自動二値化(登録別名)。≈ 同名 HALCON。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fast_threshold</code> — 固定バンド <code style="color:#22d3bf">a &lt; v &lt; a+0.5+0.5b</code>(区間しきい値)。≈ HALCON <code style="color:#22d3bf">fast_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">h_threshold</code> — しきい値系 image→region(≈ HALCON <code style="color:#22d3bf">threshold</code>)。 <code style="color:#22d3bf">fullseye.apply(img, &quot;h_threshold&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dual_threshold</code> — 中央からの偏差 <code style="color:#22d3bf">|v-0.5| &gt; (0.1+0.35a)</code> で両側を前景化。≈ <code style="color:#22d3bf">dual_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_li</code> — Li の最小交差エントロピー閾値(skimage)。≈ <code style="color:#22d3bf">binary_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_yen</code> — Yen の最大相関基準閾値(skimage)。≈ <code style="color:#22d3bf">binary_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_otsu</code> — OpenCV の Otsu 二値化。≈ <code style="color:#22d3bf">binary_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• 他(多値/局所 Otsu): <code style="color:#22d3bf">xsk2_multiotsu</code>(<b>出力 image</b>、多値ラベル ≥3 階調)、<code style="color:#22d3bf">xsk3_rank_otsu</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">局所適応しきい値(照明ムラ・文書に強い)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dyn_threshold</code> — 局所平均 + オフセット <code style="color:#22d3bf">v &gt; mean_W(v) + (b-0.5)·0.4</code>(窓は <code style="color:#22d3bf">a</code>)。≈ <code style="color:#22d3bf">dyn_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">local_threshold</code> / <code style="color:#22d3bf">adaptive_gauss_thresh</code> — 局所ガウス平均に対する差分でしきい。≈ <code style="color:#22d3bf">local_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">var_threshold</code> — Sauvola 局所しきい値(窓 = <code style="color:#22d3bf">2·⌊6a⌋+3</code>)。≈ <code style="color:#22d3bf">var_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_sauvola</code> — Sauvola 適応二値化(skimage、文書 OCR 前処理の定番)。 <code style="color:#22d3bf">fullseye.apply(img, &quot;sk_sauvola&quot;, 0.5, 0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_niblack</code> — Niblack 適応二値化(局所平均 + <code style="color:#22d3bf">k·</code> 局所標準偏差)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_adaptive_mean</code> / <code style="color:#22d3bf">cv_adaptive_gauss</code> — OpenCV の適応平均/適応ガウスしきい(ブロック = <code style="color:#22d3bf">2·⌊6a⌋+3</code>、定数 <code style="color:#22d3bf">⌊10b⌋</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hysteresis_threshold</code> / <code style="color:#22d3bf">sk_hysteresis</code> — 2 段しきい(低 <code style="color:#22d3bf">0.2+0.3a</code>、高 <code style="color:#22d3bf">0.5+0.3b</code>)で高値の種から連結を残す。≈ <code style="color:#22d3bf">hysteresis_threshold</code>。</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">xmh_bernsen</code>(Bernsen 局所コントラスト)、<code style="color:#22d3bf">xsk3_threshold_local_median</code>(局所中央値しきい)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">エッジ → 領域(境界を前景化)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">canny</code> — ガウス平滑(σ = <code style="color:#22d3bf">0.5+1.5a</code>)後の Sobel 勾配強度がしきい <code style="color:#22d3bf">0.1+0.5b</code> を超えた画素。≈ <code style="color:#22d3bf">edges_image</code>。 <code style="color:#22d3bf">fullseye.apply(img, &quot;canny&quot;, 0.3, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_canny</code> — skimage の Canny(非最大抑制 + ヒステリシス込み、σ = <code style="color:#22d3bf">0.5+2a</code>)。≈ <code style="color:#22d3bf">edges_image</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cv_canny</code> — OpenCV Canny(下限 <code style="color:#22d3bf">50+100a</code>、上限 <code style="color:#22d3bf">100+150b</code>)。≈ <code style="color:#22d3bf">edges_image</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges_image</code> — skimage Canny を薄くラップした登録別名。≈ <code style="color:#22d3bf">edges_image</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xkor_canny</code> — kornia(GPU 対応)版 Canny。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zero_crossing</code> — LoG(ガウス・ラプラシアン、σ = <code style="color:#22d3bf">0.5+2a</code>)の符号反転位置。≈ <code style="color:#22d3bf">zero_crossing</code>。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">局所ピーク / 極値(マーカー検出)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">local_max</code> — 局所最大かつ <code style="color:#22d3bf">v &gt; 0.3+0.4b</code> の画素だけ(窓 = <code style="color:#22d3bf">a</code>)。明るい点状ターゲット向け。≈ <code style="color:#22d3bf">local_max</code>。 <code style="color:#22d3bf">fullseye.apply(img, &quot;local_max&quot;, 0.3, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">local_min</code> — 局所最小かつ <code style="color:#22d3bf">v &lt; 0.7-0.4b</code>(暗い極小)。≈ <code style="color:#22d3bf">local_min</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_local_maxima</code> — skimage の regional maxima。≈ <code style="color:#22d3bf">local_max</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nonmax_suppression_amp</code> — 非最大抑制的な局所ピーク抽出(local_max 系)。≈ <code style="color:#22d3bf">nonmax_suppression_amp</code>。</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">xsk3_peak_local_max</code>、<code style="color:#22d3bf">xsk2_h_maxima</code>(h-maxima)、<code style="color:#22d3bf">xsk3_h_minima</code>(h-minima)、<code style="color:#22d3bf">xmh_regmin</code>(regional minima マーカー)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">領域成長 / 分水嶺(連結で塗り広げる)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">regiongrowing</code> — 種(<code style="color:#22d3bf">v &gt; 0.5+0.3a</code>)を <code style="color:#22d3bf">1+⌊4b⌋</code> 回膨張して成長。≈ <code style="color:#22d3bf">regiongrowing</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">regiongrowing_mean</code> — 平均基準の領域成長(登録別名、regiongrow 系)。≈ <code style="color:#22d3bf">regiongrowing_mean</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_region_growing_seeded</code> — 中心画素の種から <code style="color:#22d3bf">±a</code> の均質性で連結成分を成長(<code style="color:#22d3bf">b&gt;0.5</code> で 8 近傍)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_flood</code> — flood-fill 型の領域塗り。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">watersheds</code> / <code style="color:#22d3bf">watersheds_threshold</code> — 勾配上のマーカー分水嶺の境界(dam)を返す。≈ <code style="color:#22d3bf">watersheds</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pouring</code> — 分水嶺系の登録別名。≈ HALCON <code style="color:#22d3bf">pouring</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv_watershed_markers</code> — OpenCV のマーカー制御分水嶺。≈ <code style="color:#22d3bf">watersheds</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_watershed_gradient</code> — Sobel 勾配 + h-minima(深さ <code style="color:#22d3bf">0.02+0.3a</code>)マーカーの分水嶺境界。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">特徴空間クラスタリング / グラフ分割</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_kmeans_intensity</code> — 輝度の k-means(<code style="color:#22d3bf">k = 2+round(4a)</code>)、最も明るいクラスタ領域を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_gmm_segment</code> — 2 成分ガウス混合を EM で当て、明るいクラスの事後確率 <code style="color:#22d3bf">≥ 0.25+0.5a</code> を前景化。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_normalized_cut_2</code> — 縮小グリッド上の親和グラフの Fiedler ベクトル(Shi &amp; Malik)を中央値で 2 分割。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv_grabcut</code> — GrabCut(グラフカット + GMM)前景抽出。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk_random_walker</code> — random-walker(ラプラシアン確率伝播)分割。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv2_meanshift</code> — mean-shift(<b>出力 image</b>、色/輝度空間で平滑・分割)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">過分割スーパーピクセル / 能動輪郭</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_slic_superpixels</code> / <code style="color:#22d3bf">sk_slic</code> — SLIC スーパーピクセルの境界格子(<code style="color:#22d3bf">a</code> で個数/コンパクトさ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sg_felzenszwalb</code> / <code style="color:#22d3bf">sk_felzenszwalb</code> — Felzenszwalb グラフ分割の領域境界(<code style="color:#22d3bf">a</code>=スケール、<code style="color:#22d3bf">b</code>=最小サイズ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">segment_image_mser</code> — MSER(最大安定極値領域)の境界。≈ <code style="color:#22d3bf">segment_image_mser</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_chan_vese</code> — Chan-Vese 能動輪郭(領域ベース、エッジ不要、<code style="color:#22d3bf">mu = 0.1+0.4a</code>)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">変換(領域 ↔ 画像)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">it_region_to_bin</code> — 領域を二値画像へレンダリング(<b>出力 image</b>)。≈ HALCON <code style="color:#22d3bf">region_to_bin</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_segmentation から)</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11 &lt;this&gt;.py</code> として実行可能。検証済み例 <code style="color:#22d3bf">examples/gallery2d_segmentation.py</code> の</p>
+<p>GT(ground truth)チェックを公開ファサード <code style="color:#22d3bf">fullseye.apply</code> で書き直した自己完結コード。各 op が</p>
+<p>「動く」ではなく「正しく効く」ことを beat-the-null で確かめ、最後に <code style="color:#22d3bf">PASS</code> を印字する。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下(C:/dev/projects/imgevolve)で: py -3.11 this_file.py
+import warnings
+import numpy as np
+import fullseye
+
+warnings.filterwarnings(&quot;ignore&quot;)  # 各バックエンドの境界警告は本題ではない
+
+# --- GT1: threshold は v&gt;a。閾値 a を上げると前景が単調に減る(横勾配画像) ---
+grad = np.tile(np.linspace(0, 1, 48), (48, 1))
+fg_lo = fullseye.apply(grad, &quot;threshold&quot;, 0.25, 0.0)
+fg_hi = fullseye.apply(grad, &quot;threshold&quot;, 0.75, 0.0)
+assert set(np.unique(fg_lo).tolist()) &lt;= {0.0, 1.0}          # region は二値
+assert fg_lo.sum() &gt; fg_hi.sum()                             # 単調(無関係なら差 0 = beat-the-null)
+assert float(grad[fg_lo == 1].min()) &gt; 0.25                  # 前景は必ず a 超
+
+# --- GT2: otsu は二峰性を谷で分離。前景平均&gt;背景平均、真円との IoU≈1 ---
+n = 48
+yy, xx = np.mgrid[0:n, 0:n]
+disk = ((yy - 24) ** 2 + (xx - 24) ** 2) &lt; 12 ** 2
+rng = np.random.default_rng(1)
+bim = np.clip(np.where(disk, 0.8, 0.2) + 0.02 * rng.standard_normal((n, n)), 0, 1)
+reg = fullseye.apply(bim, &quot;otsu&quot;, 0.0, 0.0)
+fg_mean, bg_mean = float(bim[reg == 1].mean()), float(bim[reg == 0].mean())
+iou = np.logical_and(reg == 1, disk).sum() / np.logical_or(reg == 1, disk).sum()
+assert fg_mean - bg_mean &gt; 0.4                               # ランダム分割なら ≈0
+assert iou &gt; 0.9                                             # 真の物体をほぼ復元
+
+# --- GT3: canny は鋭いエッジ近傍だけ応答。平坦部は 0 ---
+edge = np.full((48, 48), 0.1)
+edge[:, 24:] = 0.9
+ce = fullseye.apply(edge, &quot;canny&quot;, 0.2, 0.2)
+band = float(ce[:, 22:27].sum())                             # 境界列の帯
+flat = float(ce[5:15, 3:13].sum())                           # 平坦パッチ
+assert band &gt; 0 and flat == 0.0 and band &gt; 10 * (flat + 1)
+
+# --- GT4: local_max は明るいピークだけ検出、平坦背景は拾わない ---
+peak = np.full((48, 48), 0.2)
+peak[24, 24] = 1.0
+lm = fullseye.apply(peak, &quot;local_max&quot;, 0.3, 0.5)             # 閾値 = 0.3 + 0.4*0.5 = 0.5
+assert lm[24, 24] == 1.0                                     # ピークは検出
+assert float(lm[0:10, 0:10].sum()) == 0.0                    # 平坦背景は 0
+assert float(lm.sum()) &lt; 5                                   # 疎な検出
+
+# --- GT5: 系統ごとの代表 op が有限・同形・二値 region を返す(一般契約) ---
+for name in [&quot;binary_threshold&quot;, &quot;sk_li&quot;, &quot;sk_yen&quot;, &quot;sk_sauvola&quot;, &quot;dyn_threshold&quot;,
+             &quot;sk_canny&quot;, &quot;edges_image&quot;, &quot;watersheds&quot;, &quot;regiongrowing&quot;,
+             &quot;sg_slic_superpixels&quot;, &quot;sg_kmeans_intensity&quot;, &quot;sg_watershed_gradient&quot;]:
+    out = fullseye.apply(bim, name, 0.5, 0.5)
+    assert out.shape == bim.shape, name
+    assert np.all(np.isfinite(out)), name
+    assert set(np.unique(np.round(out, 6)).tolist()) &lt;= {0.0, 1.0}, name
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>**Otsu(<code style="color:#22d3bf">otsu</code> / <code style="color:#22d3bf">binary_threshold</code> / <code style="color:#22d3bf">sk_otsu</code> / <code style="color:#22d3bf">cv_otsu</code>)** — しきい値 $t$ で二分したときの</p>
+<p>クラス間分散を最大化する:</p>
+<p>$$</p>
+<p>t^\star = \arg\max_{t}\; \sigma_B^2(t),\qquad</p>
+<p>\sigma_B^2(t) = \omega_0(t)\,\omega_1(t)\,\bigl[\mu_0(t) - \mu_1(t)\bigr]^2</p>
+<p>$$</p>
+<p>ここで $\omega_0(t)=\sum_{i\le t} p_i$ は背景の画素比率、$\mu_0,\mu_1$ は各クラスの平均輝度。</p>
+<p>実装は等価な形 $\sigma_B^2(t) = \dfrac{\bigl[\mu_T\,\omega(t) - \mu(t)\bigr]^2}{\omega(t)\,\bigl(1-\omega(t)\bigr)}$</p>
+<p>を全 $t$ で評価して最大の $t$ を選ぶ。</p>
+<p><b>固定/適応しきい値</b> — 前景領域は集合として定義される。固定 <code style="color:#22d3bf">threshold</code>:</p>
+<p>$$</p>
+<p>R = \{\,x : v(x) &gt; a\,\}</p>
+<p>$$</p>
+<p>局所適応(<code style="color:#22d3bf">dyn_threshold</code> / <code style="color:#22d3bf">cv_adaptive_mean</code>)は局所平均 $\bar v_W$ に対する差分:</p>
+<p>$$</p>
+<p>R = \{\,x : v(x) &gt; (\bar v_W * v)(x) + c\,\}</p>
+<p>$$</p>
+<p>**Sauvola / Niblack(<code style="color:#22d3bf">sk_sauvola</code> / <code style="color:#22d3bf">sk_niblack</code> / <code style="color:#22d3bf">var_threshold</code>)** — 窓ごとの平均 $m(x)$ と</p>
+<p>標準偏差 $s(x)$ から局所しきい値を作る:</p>
+<p>$$</p>
+<p>T_{\text{Niblack}}(x) = m(x) + k\,s(x),\qquad</p>
+<p>T_{\text{Sauvola}}(x) = m(x)\left[\,1 + k\left(\frac{s(x)}{R} - 1\right)\right]</p>
+<p>$$</p>
+<p>$R$ は標準偏差のダイナミックレンジ。照明ムラのある文書で大域 Otsu より頑健。</p>
+<p>**Canny / LoG(<code style="color:#22d3bf">canny</code> / <code style="color:#22d3bf">zero_crossing</code>)** — ガウス平滑後の勾配強度をしきい、あるいは</p>
+<p>ガウス・ラプラシアンのゼロ交差を取る:</p>
+<p>$$</p>
+<p>g = \bigl\lVert \nabla (G_\sigma * I) \bigr\rVert,\quad R=\{x: g(x)&gt;\tau\};</p>
+<p>\qquad</p>
+<p>\text{zero-crossing of }\; \nabla^2 (G_\sigma * I)</p>
+<p>$$</p>
+<p>**ヒステリシス(<code style="color:#22d3bf">hysteresis_threshold</code> / <code style="color:#22d3bf">sk_hysteresis</code>)** — 2 つのしきい値 $t_\text{low}&lt;t_\text{high}$。</p>
+<p>$v&gt;t_\text{high}$ の種を残し、そこから $v&gt;t_\text{low}$ で連結する画素だけを前景に加える(弱いエッジの</p>
+<p>断片化を防ぐ)。</p>
+<p>**Normalized cut(<code style="color:#22d3bf">sg_normalized_cut_2</code>)** — 親和行列 $W$、次数対角行列 $D$ の一般化固有問題</p>
+<p>$(D-W)\,y = \lambda\,D\,y$ の第 2 固有ベクトル(Fiedler ベクトル)を中央値でしきって 2 分割する</p>
+<p>(Shi &amp; Malik)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグ・動作確認には [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) の 2-D 画像源が使える。二峰性/勾配/</p>
+<p>チェッカの合成画像(<code style="color:#22d3bf">gradient</code> / <code style="color:#22d3bf">blobs</code> / <code style="color:#22d3bf">shapes</code> / <code style="color:#22d3bf">checker_noisy</code>)はしきい値・エッジの GT 検証に、</p>
+<p><code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code>(硬貨=Otsu/watershed)・<code style="color:#22d3bf">page</code>(文書=Sauvola/Niblack 適応二値化)・<code style="color:#22d3bf">cell</code></p>
+<p>(細胞=領域成長/分水嶺)は実データでの挙動確認に向く。取得は <code style="color:#22d3bf">import sample_images; sample_images.load(&#x27;coins&#x27;)</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳 [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md) に準拠。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• Otsu, N. (1979). &quot;A threshold selection method from gray-level histograms.&quot; IEEE Trans. SMC.</p>
+<p style="margin:2px 0 2px 12px">• Canny, J. (1986). &quot;A computational approach to edge detection.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Marr, D. &amp; Hildreth, E. (1980). &quot;Theory of edge detection.&quot; Proc. R. Soc. Lond. B. (LoG ゼロ交差)</p>
+<p style="margin:2px 0 2px 12px">• Li, C.H. &amp; Lee, C.K. (1993). &quot;Minimum cross entropy thresholding.&quot; Pattern Recognition.</p>
+<p style="margin:2px 0 2px 12px">• Yen, J.C., Chang, F.J. &amp; Chang, S. (1995). &quot;A new criterion for automatic multilevel thresholding.&quot; IEEE TIP.</p>
+<p style="margin:2px 0 2px 12px">• Niblack, W. (1986). &quot;An Introduction to Digital Image Processing.&quot; Prentice Hall.</p>
+<p style="margin:2px 0 2px 12px">• Sauvola, J. &amp; Pietikäinen, M. (2000). &quot;Adaptive document image binarization.&quot; Pattern Recognition.</p>
+<p style="margin:2px 0 2px 12px">• Vincent, L. &amp; Soille, P. (1991). &quot;Watersheds in digital spaces: an efficient algorithm based on immersion simulations.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Adams, R. &amp; Bischof, L. (1994). &quot;Seeded region growing.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Achanta, R. et al. (2012). &quot;SLIC superpixels compared to state-of-the-art superpixel methods.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Felzenszwalb, P. &amp; Huttenlocher, D. (2004). &quot;Efficient graph-based image segmentation.&quot; IJCV.</p>
+<p style="margin:2px 0 2px 12px">• Shi, J. &amp; Malik, J. (2000). &quot;Normalized cuts and image segmentation.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Chan, T. &amp; Vese, L. (2001). &quot;Active contours without edges.&quot; IEEE TIP.</p>
+<p style="margin:2px 0 2px 12px">• Comaniciu, D. &amp; Meer, P. (2002). &quot;Mean shift: a robust approach toward feature space analysis.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Rother, C., Kolmogorov, V. &amp; Blake, A. (2004). &quot;GrabCut: interactive foreground extraction using iterated graph cuts.&quot; ACM SIGGRAPH.</p>
+<p style="margin:2px 0 2px 12px">• Grady, L. (2006). &quot;Random walks for image segmentation.&quot; IEEE TPAMI.</p>
+<p style="margin:2px 0 2px 12px">• Matas, J. et al. (2002). &quot;Robust wide-baseline stereo from maximally stable extremal regions.&quot; BMVC. (MSER)</p>
+<p style="margin:2px 0 2px 12px">• Dempster, A., Laird, N. &amp; Rubin, D. (1977). &quot;Maximum likelihood from incomplete data via the EM algorithm.&quot; J. Royal Stat. Soc. B. (GMM)</p>
+<p style="margin:2px 0 2px 12px">• Lloyd, S. (1982). &quot;Least squares quantization in PCM.&quot; IEEE Trans. Information Theory. (k-means)</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

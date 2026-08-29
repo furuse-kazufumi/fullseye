@@ -1,0 +1,179 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">HALCON 拡充 tier（hx_） — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><code style="color:#22d3bf">hx_</code> 族は、Fullseye の既存 registry では未カバーだった <b>実在の HALCON operator</b>（<code style="color:#22d3bf">data/halcon_operators.json</code> に載るもの）を、外部 HALCON に依存せず自作 numpy で genuine に再実装した「拡充 tier」です。1 つのファイルに複数分野が同居する寄せ集めですが、全 op が Fullseye 共通の進化契約 <code style="color:#22d3bf">fn(v, a, b)</code> を守ります — 入力 <code style="color:#22d3bf">v</code>（1 枚の 2-D 画像 or 二値 region、あるいは XLD 輪郭 dict）と 2 つのスカラつまみ <code style="color:#22d3bf">a, b ∈ [0,1]</code> を受け取り、1 つの「種（sort）」を別の種へ写します。呼び出しは全 op 共通で <code style="color:#22d3bf">fullseye.apply(v, &quot;&lt;op名&gt;&quot;, a, b)</code> です。</p>
+<p>扱う入出力の「種」は 4 つ — <b>image</b>（<code style="color:#22d3bf">[0,1]</code> の 2-D float 配列）、<b>region</b>（<code style="color:#22d3bf">{0,1}</code> の 2-D マスク）、<b>contour</b>（XLD 輪郭 <code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [Nx2 の (row,col) 配列, ...]}</code>）、<b>feature</b>（有限スカラ）。この族は「幾何 region を作る（gen_*）」「region を形態変換する（erosion1/dilation1/…）」「グレー画像を照明面近似・陰影・周波数マスクで加工する（fit_surface/shade/gen_lowpass/…）」「画像を region へ切り出す（char_threshold/lowlands/…）」「XLD 輪郭を整形しフィットして 1 つのスカラ計測値を出す（sort/split/fit_circle/…）」「陰影から光源方向・アルベドを推定する（estimate_*）」といった、産業ビジョンの前処理〜計測〜復元の断片を横断的に供給します。</p>
+<p>&gt; 契約の根拠: 検証済みサンプル <code style="color:#22d3bf">examples/gallery2d_halcon_ext.py</code> が全 81 op を叩き、(1) 出力に NaN/Inf が無い (2) 宣言 <code style="color:#22d3bf">out_sort</code> と型が一致 (3) 同じ入力・ノブなら 2 回の呼び出しがビット一致（乱数 op も固定 seed）、を機械検証します。以下の説明はすべて実装 <code style="color:#22d3bf">backends_halcon_ext.py</code> を読んだ挙動に基づきます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン（op の繋がり）</h3>
+<p><code style="color:#22d3bf">hx_</code> 族は「種を写す」ので、ある op の出力の種が次の op の入力の種と一致すれば繋がります。産業計測で頻出する 2 本の鎖:</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    IMG[image&lt;br/&gt;入力画像]
+    R1[region&lt;br/&gt;合成マスク]
+    R2[region&lt;br/&gt;膨張後]
+    F1[feature&lt;br/&gt;点→region 距離]
+
+    IMG --&gt;|hx_gen_circle a=半径| R1
+    R1 --&gt;|hx_dilation1 a=SE半径| R2
+    R2 --&gt;|hx_expand_region 隙間結合| R2
+    R2 --&gt;|hx_distance_pr a,b=クエリ点| F1</pre>
+<p>*region を「作って（gen）→ 形態で整えて（dilation/expand）→ 計測する（distance）」流れ。全ステージが region を受け渡し、最後に 1 スカラへ落ちます。*</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    C0[contour&lt;br/&gt;XLD 入力]
+    C1[contour&lt;br/&gt;ソート後]
+    C2[contour&lt;br/&gt;ドメイン内]
+    C3[contour&lt;br/&gt;線分分割]
+    FC[feature&lt;br/&gt;円フィット残差]
+
+    C0 --&gt;|hx_sort_contours 重心順| C1
+    C1 --&gt;|hx_clip_contours a,b=margin| C2
+    C2 --&gt;|hx_split_contours a=RDP eps| C3
+    C2 --&gt;|hx_fit_circle_contour Kåsa| FC</pre>
+<p>*XLD 輪郭を「整列（sort）→ 定義域でクリップ（clip）→ 支配点で分割（split）」と整形し、別経路で形状フィット（fit_circle）に掛けて丸さの残差を得る流れ。整形系（→contour）と計測系（→feature）が同じ contour を共有します。*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方（op グループ別）</h3>
+<p>呼び出しは全て <code style="color:#22d3bf">fullseye.apply(v, &quot;&lt;name&gt;&quot;, a, b)</code>。<code style="color:#22d3bf">v</code> の種は各グループの見出しに記載。<code style="color:#22d3bf">feature</code> 出力は Python <code style="color:#22d3bf">float</code>、<code style="color:#22d3bf">region</code>/<code style="color:#22d3bf">image</code> 出力は <code style="color:#22d3bf">float64</code> の 2-D 配列、<code style="color:#22d3bf">contour</code> 出力は <code style="color:#22d3bf">{&quot;shape&quot;,&quot;cs&quot;}</code> dict が返ります。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">A. 幾何 region の生成（image → region、<code style="color:#22d3bf">v</code> は画布サイズの参照にのみ使う）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_circle</code> — 中心に半径 <code style="color:#22d3bf">a</code> の充実円 region を描く。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_circle&quot;, 0.6, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_ellipse</code> — 半軸 <code style="color:#22d3bf">a</code>（横）・<code style="color:#22d3bf">b</code>（縦）の楕円 region。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_ellipse&quot;, 0.5, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_rectangle2</code> — 角度 <code style="color:#22d3bf">b·π</code> 回転・幅高 <code style="color:#22d3bf">a</code> の矩形 region。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_rectangle2&quot;, 0.5, 0.25)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_circle_sector</code> — 開始角 <code style="color:#22d3bf">b·2π</code>・掃引角 <code style="color:#22d3bf">a·2π</code> の扇形（円セクタ）region。</p>
+<p style="margin:2px 0 2px 12px">• 他（同型・<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> が幾何パラメータ）: <code style="color:#22d3bf">hx_gen_ellipse_sector</code>（楕円セクタ）, <code style="color:#22d3bf">hx_gen_checker_region</code>（市松、セル幅 <code style="color:#22d3bf">a</code>）, <code style="color:#22d3bf">hx_gen_grid_region</code>（格子線、間隔 <code style="color:#22d3bf">a</code>）, <code style="color:#22d3bf">hx_gen_disc_se</code>（円板構造要素、半径 <code style="color:#22d3bf">a</code>）, <code style="color:#22d3bf">hx_gen_empty_region</code>（全 0 の空 region）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">B. 画像の定義域を region 化（image → region）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_full_domain</code> — 定義域を全面に広げた region（全 1）を返す。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_full_domain&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_get_domain</code> — 画像の現在の定義域 region を取得（既定は全面 = 全 1）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_rectangle1_domain</code> — 定義域を中央の <code style="color:#22d3bf">a</code>（縦）×<code style="color:#22d3bf">b</code>（横）割合の軸並行矩形に縮小した region。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">C. Region の形態・移動（region → region、<code style="color:#22d3bf">v</code> は 0.5 で二値化）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_erosion1</code> — 半径 <code style="color:#22d3bf">a</code> の円板 SE で侵食（前景を痩せさせ、面積を減らす）。 例: <code style="color:#22d3bf">fullseye.apply(reg, &quot;hx_erosion1&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_dilation1</code> — 同 SE で膨張（前景を太らせ、面積を増やす）。 例: <code style="color:#22d3bf">fullseye.apply(reg, &quot;hx_dilation1&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_opening</code> / <code style="color:#22d3bf">hx_closing</code> — 侵食→膨張 / 膨張→侵食で細突起除去 / 隙間充填（SE 半径 <code style="color:#22d3bf">a</code>）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_expand_region</code> — region を膨張して近接領域間の隙間を埋め連結を促す（反復回数 <code style="color:#22d3bf">a</code>）。 例: <code style="color:#22d3bf">fullseye.apply(reg, &quot;hx_expand_region&quot;, 0.4, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">hx_dilation2</code>（膨張後に参照点オフセット <code style="color:#22d3bf">b</code> で並進）, <code style="color:#22d3bf">hx_clip_region_rel</code>（外接矩形に対し各辺から <code style="color:#22d3bf">a</code> 割合を削る）, <code style="color:#22d3bf">hx_move_region</code>（<code style="color:#22d3bf">dy=a, dx=b</code> を中心 0 として平行移動）, <code style="color:#22d3bf">hx_split_skeleton_region</code>（1 画素幅骨格を分岐点で切り連結成分に分ける）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">D. Region の点包含・距離（region → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_test_region_point</code> — 正規化点 <code style="color:#22d3bf">(a=行, b=列)</code> が region 内なら 1、外なら 0。 例: <code style="color:#22d3bf">fullseye.apply(reg, &quot;hx_test_region_point&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_test_region_points</code> — 間隔 <code style="color:#22d3bf">a</code> の格子点のうち region に含まれる割合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_distance_pr</code> — 正規化クエリ点 <code style="color:#22d3bf">(a,b)</code> から region までの最小距離（距離変換ベース、<code style="color:#22d3bf">max(H,W)</code> 正規化）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">E. グレー画像の空間フィルタ・照明/形状加工（image → image）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gabor</code> — 方位 <code style="color:#22d3bf">a·π</code>・周波数 <code style="color:#22d3bf">b</code> の Gabor フィルタ応答の大きさ（DC 除去済みで平坦部は 0）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gabor&quot;, 0.3, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_fit_surface1</code> / <code style="color:#22d3bf">hx_fit_surface2</code> — グレー値を 1 次 / 2 次多項式面で最小二乗近似（照明・背景の緩やかな傾きを推定）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface2&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_plane_deviation</code> — 1 次平面近似からの偏差 <code style="color:#22d3bf">|v − plane|</code>（平坦度・欠陥検査）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_shade_height_field</code> — 高さ場 <code style="color:#22d3bf">v</code> を方位 <code style="color:#22d3bf">a</code>・仰角 <code style="color:#22d3bf">b</code> の Lambertian 陰影で描画。</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">hx_mean_shape</code>（半径 <code style="color:#22d3bf">a</code> の円板マスク平均平滑化）, <code style="color:#22d3bf">hx_nonmax_dir</code>（勾配方向に沿う非最大抑制でエッジを 1 画素へ細線化、弱エッジ抑制 <code style="color:#22d3bf">a</code>）, <code style="color:#22d3bf">hx_close_edges</code>（<code style="color:#22d3bf">a</code> で二値化 → 形態 closing で隙間閉じ、半径 <code style="color:#22d3bf">b</code>）, <code style="color:#22d3bf">hx_close_edges_length</code>（さらに長さ <code style="color:#22d3bf">b</code> 未満の短断片を除去）, <code style="color:#22d3bf">hx_fill_interlace</code>（奇数行を隣接偶数行平均で置換するデインターレース）, <code style="color:#22d3bf">hx_region_to_mean</code>（閾値 <code style="color:#22d3bf">a</code> で連結領域化し各領域を平均グレーで塗る）, <code style="color:#22d3bf">hx_region_to_label</code>（閾値 <code style="color:#22d3bf">a</code> の連結成分を正規化ラベル画像へ）, <code style="color:#22d3bf">hx_gen_image_proto</code>（値 <code style="color:#22d3bf">a</code> の定数グレー画像を生成）, <code style="color:#22d3bf">hx_disparity_to_xyz</code>（視差 <code style="color:#22d3bf">v</code> から深度 <code style="color:#22d3bf">Z=f·baseline/disp</code> を計算、焦点 <code style="color:#22d3bf">a</code>・基線 <code style="color:#22d3bf">b</code>）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">F. 周波数マスク画像の生成（image → image、<code style="color:#22d3bf">v</code> は形状の参照にのみ使う）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_lowpass</code> — 遮断半径 <code style="color:#22d3bf">a</code> の理想ローパス円板マスク（中心 = DC を通す）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_lowpass&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_highpass</code> — 同遮断半径 <code style="color:#22d3bf">a</code> のハイパス（DC を殺す）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_bandpass</code> — 内半径 <code style="color:#22d3bf">a</code>・帯域幅 <code style="color:#22d3bf">b</code> の円環バンドパス。</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">hx_gen_bandfilter</code>（中心半径 <code style="color:#22d3bf">a</code>・幅 <code style="color:#22d3bf">b</code> の円環バンドフィルタ、bandpass と別 operator）, <code style="color:#22d3bf">hx_gen_derivative_filter</code>（周波数半径に比例する微分フィルタ）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">G. 画像 → region のセグメンテーション（image → region）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_char_threshold</code> — 暗い文字を明背景から抽出。閾値 <code style="color:#22d3bf">thr = mean − k·std</code>（<code style="color:#22d3bf">k = 0.2+1.8a</code>）で下側を選ぶ。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_char_threshold&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_histo_to_thresh</code> — ヒストグラムの 2 主ピーク間の谷を閾値に二値化（Otsu の分散基準ではなく谷検出）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_lowlands</code> — グレー値の窪地（近傍最小に一致し全体平均未満の平坦域）を region に。</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">hx_plateaus_center</code>（勾配≈0 の平坦連結成分の重心をマーカー region に）, <code style="color:#22d3bf">hx_detect_edge_segments</code>（NMS 細線化 → PCA で細長い＝直線状の成分のみ残す、細長さ閾値 <code style="color:#22d3bf">b</code>）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">H. テクスチャ特徴（image → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_cooc_feature</code> — 8 階調に量子化した距離 <code style="color:#22d3bf">d=1+3a</code> の共起行列（GLCM）から Haralick contrast を返す（<code style="color:#22d3bf">b&lt;0.5</code> で水平, ≥0.5 で垂直）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_cooc_feature&quot;, 0.3, 0.0)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">I. 陰影からの光源推定・1D 計測（image → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_estimate_tilt_lr</code> — Lee–Rosenfeld 法。平均勾配方向 <code style="color:#22d3bf">atan2(⟨Ey⟩,⟨Ex⟩)</code> から光源方位角 tilt を推定（<code style="color:#22d3bf">[0,1]</code> 正規化）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_estimate_tilt_lr&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_estimate_tilt_zc</code> — Zheng–Chellappa 法。正規化勾配の平均方向で tilt を推定（局所コントラスト非依存）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> / <code style="color:#22d3bf">hx_estimate_sl_al_zc</code> — 光源の slant（天頂角、0=正面〜π/2=真横）を Lambertian の <code style="color:#22d3bf">⟨I⟩=albedo·cos(slant)</code> から / 勾配エネルギー補正付きで推定。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_estimate_al_am</code> — アルベド（反射率）の代理として輝度ダイナミックレンジ <code style="color:#22d3bf">max−min</code> を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_fuzzy_measure_pairs</code> — 中央水平プロファイルでレベル <code style="color:#22d3bf">a</code> を横切るエッジ対（立上り→立下り境界）を数える 1D 計測（<code style="color:#22d3bf">/10</code> 正規化）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">J. XLD 輪郭の整形（contour → contour、<code style="color:#22d3bf">v</code> は <code style="color:#22d3bf">{&quot;shape&quot;,&quot;cs&quot;}</code> dict）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_sort_contours</code> — 各輪郭を重心の <code style="color:#22d3bf">(row, col)</code> 順にソート。 例: <code style="color:#22d3bf">fullseye.apply(cnt, &quot;hx_sort_contours&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_clip_contours</code> — 中央 margin <code style="color:#22d3bf">a</code>（縦）/<code style="color:#22d3bf">b</code>（横）を残す矩形へクリップ（範囲外点を除去）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_split_contours</code> — 各輪郭を Ramer–Douglas–Peucker の支配点（許容 <code style="color:#22d3bf">eps=0.5+5a</code>）で線分に分割。 例: <code style="color:#22d3bf">fullseye.apply(cnt, &quot;hx_split_contours&quot;, 0.4, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gen_parallel_contour</code> — 各輪郭の法線オフセット平行輪郭を生成（符号つき距離 <code style="color:#22d3bf">(a−0.5)·10</code>）。</p>
+<p style="margin:2px 0 2px 12px">• 他: <code style="color:#22d3bf">hx_clip_end_points</code>（両端を <code style="color:#22d3bf">k=1+5a</code> 点ずつ切る）, <code style="color:#22d3bf">hx_crop_contours</code>（中央 <code style="color:#22d3bf">a</code>×<code style="color:#22d3bf">b</code> 割合矩形で crop）, <code style="color:#22d3bf">hx_union_adjacent</code>（端点間距離 <code style="color:#22d3bf">a</code> 未満の輪郭を貪欲連結）, <code style="color:#22d3bf">hx_select_xld_point</code>（正規化点 <code style="color:#22d3bf">(a,b)</code> を外接矩形に含む輪郭のみ選ぶ）, <code style="color:#22d3bf">hx_polar_trans_inv</code>（点を <code style="color:#22d3bf">(radius, angle)</code> とみなし直交座標へ逆変換）, <code style="color:#22d3bf">hx_add_noise_contour</code>（点に白色ガウス雑音 std <code style="color:#22d3bf">a</code> を付加、固定 seed）, <code style="color:#22d3bf">hx_radial_distort_contour</code>（放射歪み <code style="color:#22d3bf">r&#x27;=r(1+k·r²)</code>、<code style="color:#22d3bf">k=(a−0.5)·1.5</code> で樽/糸巻き）。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">K. XLD 輪郭の計測・形状フィット（contour → feature）</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_fit_circle_contour</code> — Kåsa 代数法で点群に円を当て、フィット残差 RMS を返す（小＝円に近い）。 例: <code style="color:#22d3bf">fullseye.apply(cnt, &quot;hx_fit_circle_contour&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_fit_ellipse_contour</code> — 2 次モーメントから楕円を当て軸比（短/長、真円=1）を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_fit_rectangle2_contour</code> — 角度掃引で最小面積外接矩形を当て、そのアスペクト比（短辺/長辺）を返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_regress_contours</code> — 各輪郭に回帰直線を当て平均残差を返す（小＝直線的）。</p>
+<p style="margin:2px 0 2px 12px">• 他（すべて正規化スカラ）: <code style="color:#22d3bf">hx_smallest_circle_xld</code>（点群の最小包含円半径）, <code style="color:#22d3bf">hx_smallest_rect1_xld</code>（外接軸並行矩形の面積比）, <code style="color:#22d3bf">hx_smallest_rect2_xld</code>（最小面積外接矩形の面積比）, <code style="color:#22d3bf">hx_test_closed_xld</code>（端点近接で閉曲線と判定した割合）, <code style="color:#22d3bf">hx_moments_any_xld</code>（2 次中心モーメントの広がり）, <code style="color:#22d3bf">hx_dist_ellipse_contour</code>（当てはめ楕円境界からの平均距離）, <code style="color:#22d3bf">hx_dist_ellipse_points</code>（同・最大距離）, <code style="color:#22d3bf">hx_dist_rect2_points</code>（矩形中心からの平均正規化距離）, <code style="color:#22d3bf">hx_test_self_intersect</code>（自己交差する輪郭の割合）, <code style="color:#22d3bf">hx_distance_pc</code>（正規化点 <code style="color:#22d3bf">(a,b)</code> から輪郭までの最小距離）, <code style="color:#22d3bf">hx_distance_sc</code>（行 <code style="color:#22d3bf">a·H</code> の水平線から輪郭までの最小距離）。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例（検証済み gallery2d_halcon_ext から）</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11 &lt;file&gt;.py</code> として実行可。<code style="color:#22d3bf">examples/gallery2d_halcon_ext.py</code> の GT チェックを <code style="color:#22d3bf">fullseye.apply</code> 経由に落とした自己完結版で、3 種（生成・形態・輪郭フィット）を横断します。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下で: py -3.11 this_file.py  → 最後に PASS を印字
+import numpy as np
+import fullseye
+
+
+def image_normal(n=48):
+    &quot;&quot;&quot;勾配 + 円板 + 市松 + 微小ノイズ（gallery の &#x27;normal&#x27; 入力と同構成）。&quot;&quot;&quot;
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    grad = xx / (n - 1)
+    disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) &lt; (n * 0.18) ** 2
+    checker = ((xx.astype(int) // 6 + yy.astype(int) // 6) % 2) * 0.15
+    rng = np.random.default_rng(20260812)
+    return np.clip(0.35 * grad + 0.45 * disk + checker + 0.03 * rng.standard_normal((n, n)), 0, 1)
+
+
+def region_disk(n=48):
+    yy, xx = np.mgrid[0:n, 0:n]
+    return (((yy - n // 2) ** 2 + (xx - n // 2) ** 2) &lt; (n * 0.25) ** 2).astype(np.float64)
+
+
+img = image_normal()
+reg = region_disk()
+n = img.shape[0]
+
+# 1) hx_gen_circle は二値 region を作り、半径ノブ a が面積を単調に増やす（beat-the-null）。
+small = fullseye.apply(img, &quot;hx_gen_circle&quot;, 0.0, 0.0)   # image -&gt; region (ndarray)
+big = fullseye.apply(img, &quot;hx_gen_circle&quot;, 1.0, 0.0)
+assert set(np.unique(big)) &lt;= {0.0, 1.0}, &quot;生成 region が二値でない&quot;
+assert big[n // 2, n // 2] == 1.0 and big[0, 0] == 0.0, &quot;中心内/隅外が不成立&quot;
+assert big.sum() &gt; small.sum() * 3, &quot;半径ノブが面積を増やさない&quot;
+
+# 2) region 形態の単調性: 侵食 &lt; 原面積 &lt; 膨張。
+ar_orig = float(reg.sum())
+ar_er = float(fullseye.apply(reg, &quot;hx_erosion1&quot;, 0.5, 0.0).sum())   # region -&gt; region
+ar_di = float(fullseye.apply(reg, &quot;hx_dilation1&quot;, 0.5, 0.0).sum())
+assert ar_er &lt; ar_orig &lt; ar_di, f&quot;morphology 単調性が破れた {ar_er}&lt;{ar_orig}&lt;{ar_di}&quot;
+
+# 3) hx_fit_circle_contour: 円周点への残差≈0、四角の点には大きい残差（beat-the-null）。
+t = np.linspace(0.0, 2 * np.pi, 60, endpoint=False)
+circ = {&quot;shape&quot;: (n, n), &quot;cs&quot;: [np.column_stack([24 + 15 * np.sin(t), 24 + 15 * np.cos(t)])]}
+lo, hi = n * 0.2, n * 0.8
+ts = np.linspace(0.0, 1.0, 12, endpoint=False)
+top = np.column_stack([np.full_like(ts, lo), lo + (hi - lo) * ts])
+right = np.column_stack([lo + (hi - lo) * ts, np.full_like(ts, hi)])
+bot = np.column_stack([np.full_like(ts, hi), hi - (hi - lo) * ts])
+left = np.column_stack([hi - (hi - lo) * ts, np.full_like(ts, lo)])
+square = {&quot;shape&quot;: (n, n), &quot;cs&quot;: [np.vstack([top, right, bot, left, top[:1]])]}
+res_circ = fullseye.apply(circ, &quot;hx_fit_circle_contour&quot;, 0.5, 0.5)     # contour -&gt; feature (float)
+res_sq = fullseye.apply(square, &quot;hx_fit_circle_contour&quot;, 0.5, 0.5)
+assert res_circ &lt; 1e-3, f&quot;円周点への円フィット残差が大きすぎ {res_circ}&quot;
+assert res_sq &gt; res_circ * 20 + 1e-3, f&quot;円モデルが四角にも当たっている {res_circ} vs {res_sq}&quot;
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式（必要な op のみ）</h3>
+<p><b>Kåsa 代数円フィット</b>（<code style="color:#22d3bf">hx_fit_circle_contour</code>）— 点 $(x_i,y_i)$ に対し $x^2+y^2 = 2c_x x + 2c_y y + (r^2 - c_x^2 - c_y^2)$ を線形最小二乗で解き、中心 $(c_x,c_y)$・半径 $r=\sqrt{c_z + c_x^2 + c_y^2}$ を得て、残差を返す:</p>
+<p>$$</p>
+<p>\mathrm{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\bigl(\sqrt{(x_i-c_x)^2+(y_i-c_y)^2}\; - \; r\bigr)^2}</p>
+<p>$$</p>
+<p><b>Gabor カーネル</b>（<code style="color:#22d3bf">hx_gabor</code>）— 方位 $\theta=a\pi$、周波数 $f=0.08+0.35b$、包絡 $\sigma=2.2$。回転座標 $x_\theta = x\cos\theta + y\sin\theta$ に対し DC 除去した実 Gabor（応答の大きさを正規化して返す）:</p>
+<p>$$</p>
+<p>g(x,y) = \exp\!\Bigl(-\tfrac{x_\theta^2 + y_\theta^2}{2\sigma^2}\Bigr)\,\cos\!\bigl(2\pi f\, x_\theta\bigr)</p>
+<p>$$</p>
+<p><b>Lambertian 光源方位</b>（<code style="color:#22d3bf">hx_estimate_tilt_lr</code>）— 画像勾配 $E_x,E_y$ の平均から光源 tilt を推定（$[0,1]$ 正規化）:</p>
+<p>$$</p>
+<p>\mathrm{tilt} = \operatorname{atan2}\bigl(\langle E_y\rangle,\ \langle E_x\rangle\bigr)</p>
+<p>$$</p>
+<p><b>視差→深度</b>（<code style="color:#22d3bf">hx_disparity_to_xyz</code>）— 焦点距離 $f$・基線 $B$ の平行ステレオで、視差 $d$（画素）から深度 $Z$:</p>
+<p>$$</p>
+<p>Z = \frac{f\,B}{d}</p>
+<p>$$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグ用の 2-D 画像源は <code style="color:#22d3bf">../../SAMPLES.md</code>（Fullseye サンプルカタログ）を参照。外部 DL 不要で使える合成画像 <code style="color:#22d3bf">gradient</code>/<code style="color:#22d3bf">blobs</code>/<code style="color:#22d3bf">shapes</code>/<code style="color:#22d3bf">checker_noisy</code>（Fullseye 自作）と、<code style="color:#22d3bf">skimage.data</code> 由来の <code style="color:#22d3bf">coins</code>/<code style="color:#22d3bf">camera</code>/<code style="color:#22d3bf">page</code>/<code style="color:#22d3bf">cell</code>（BSD / public domain）が <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;&lt;name&gt;&quot;)</code> で取得できます。この族なら文字抽出（<code style="color:#22d3bf">hx_char_threshold</code>）に <code style="color:#22d3bf">page</code>、形態・生成 region の重畳確認に <code style="color:#22d3bf">blobs</code>/<code style="color:#22d3bf">shapes</code> が向きます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献（正典）</h3>
+<p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族のアルゴリズムに対応する古典:</p>
+<p style="margin:2px 0 2px 12px">• Haralick, R.M., Shanmugam, K. &amp; Dinstein, I. (1973). &quot;Textural Features for Image Classification.&quot; IEEE Trans. Systems, Man, and Cybernetics. — <code style="color:#22d3bf">hx_cooc_feature</code>（GLCM contrast）</p>
+<p style="margin:2px 0 2px 12px">• Kåsa, I. (1976). &quot;A circle fitting procedure and its error analysis.&quot; IEEE Trans. Instrumentation and Measurement. — <code style="color:#22d3bf">hx_fit_circle_contour</code>（代数円フィット）</p>
+<p style="margin:2px 0 2px 12px">• Douglas, D.H. &amp; Peucker, T.K. (1973). &quot;Algorithms for the reduction of the number of points required to represent a digitized line or its caricature.&quot; The Canadian Cartographer. — <code style="color:#22d3bf">hx_split_contours</code>（RDP 分割）</p>
+<p style="margin:2px 0 2px 12px">• Serra, J. (1982). &quot;Image Analysis and Mathematical Morphology.&quot; Academic Press (Matheron 1975). — <code style="color:#22d3bf">hx_erosion1</code>/<code style="color:#22d3bf">hx_dilation1</code>/<code style="color:#22d3bf">hx_opening</code>/<code style="color:#22d3bf">hx_closing</code></p>
+<p style="margin:2px 0 2px 12px">• Daugman, J.G. (1985). &quot;Uncertainty relation for resolution in space, spatial frequency, and orientation optimized by two-dimensional visual cortical filters.&quot; JOSA A. — <code style="color:#22d3bf">hx_gabor</code></p>
+<p style="margin:2px 0 2px 12px">• Canny, J. (1986). &quot;A computational approach to edge detection.&quot; IEEE TPAMI. — <code style="color:#22d3bf">hx_nonmax_dir</code>/<code style="color:#22d3bf">hx_close_edges</code>/<code style="color:#22d3bf">hx_detect_edge_segments</code></p>
+<p style="margin:2px 0 2px 12px">• Hu, M.-K. (1962). &quot;Visual pattern recognition by moment invariants.&quot; IRE Trans. Information Theory. — <code style="color:#22d3bf">hx_fit_ellipse_contour</code>/<code style="color:#22d3bf">hx_moments_any_xld</code>（2 次モーメント）</p>
+<p style="margin:2px 0 2px 12px">• Horn, B.K.P. (1975). &quot;Obtaining shape from shading information.&quot; In The Psychology of Computer Vision (P.H. Winston, ed.). — shape-from-shading の土台（<code style="color:#22d3bf">hx_estimate_*</code>）</p>
+<p style="margin:2px 0 2px 12px">• Lee, C.H. &amp; Rosenfeld, A. (1985). &quot;Improved methods of estimating shape from shading using the light source coordinate system.&quot; Artificial Intelligence. — <code style="color:#22d3bf">hx_estimate_tilt_lr</code>/<code style="color:#22d3bf">hx_estimate_sl_al_lr</code></p>
+<p style="margin:2px 0 2px 12px">• Zheng, Q. &amp; Chellappa, R. (1991). &quot;Estimation of illuminant direction, albedo, and shape from shading.&quot; IEEE TPAMI. — <code style="color:#22d3bf">hx_estimate_tilt_zc</code>/<code style="color:#22d3bf">hx_estimate_sl_al_zc</code></p>
+<p style="margin:2px 0 2px 12px">• Brown, D.C. (1971). &quot;Close-range camera calibration.&quot; Photogrammetric Engineering. — <code style="color:#22d3bf">hx_radial_distort_contour</code>（Brown–Conrady 放射歪み）</p>
+<p style="margin:2px 0 2px 12px">• Rosenfeld, A. &amp; Pfaltz, J.L. (1966). &quot;Sequential operations in digital picture processing.&quot; JACM. — <code style="color:#22d3bf">hx_distance_pr</code>（距離変換）</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

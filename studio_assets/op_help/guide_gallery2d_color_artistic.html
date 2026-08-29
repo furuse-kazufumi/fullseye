@@ -1,0 +1,153 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">色・芸術・拡張 — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>この族は「白黒 1 枚」の外側に踏み出す 4 系統の 2-D オペレータ箱です。(1) <b>color</b> は 1 チャンネルの <code style="color:#22d3bf">image (H×W)</code> を第一級の <code style="color:#22d3bf">color (H×W×3, RGB, [0,1])</code> sort に持ち上げて扱う HALCON 由来の色オペ群 — 色空間変換・3×3 チャンネル混合・チャンネル PCA・輝度化・チャンネル取り出し。gray から color への橋渡しは <code style="color:#22d3bf">cfa_to_rgb</code>(Bayer デモザイク)が一手に担い、<code style="color:#22d3bf">rgb1_to_gray</code> / <code style="color:#22d3bf">access_channel</code> が color を gray に戻します。(2) <b>artistic</b> は非写実(NPR)フィルタ(OpenCV の stylization / pencil sketch、PIL の emboss)。(3) <b>augmentation</b>(<code style="color:#22d3bf">aug_</code>)は理想画像を「実カメラが吐く画像」に劣化させる sim-to-real / ドメインランダム化 — ショット/読み出し/固定パターンノイズ、モーションブラー、周辺減光、色収差、ローリングシャッター、JPEG ブロック、cutout、レンズ歪み。(4) <b>extra</b>(<code style="color:#22d3bf">xsitk_</code>)は SimpleITK 由来で HALCON に無い曲率フロー拡散・再構成モルフォロジ・領域拡張/エントロピー閾値・符号付き距離場。</p>
+<p>呼び出しは全 op 共通で「1 枚の配列 + 2 つのスカラつまみ <code style="color:#22d3bf">a, b ∈ [0,1]</code>」: <code style="color:#22d3bf">fullseye.apply(img, &quot;op名&quot;, a, b)</code>。ただし <b>sort(型)は繋げると変わります</b> — <code style="color:#22d3bf">image → color</code>(<code style="color:#22d3bf">cfa_to_rgb</code>)、<code style="color:#22d3bf">color → image</code>(<code style="color:#22d3bf">rgb1_to_gray</code>)、<code style="color:#22d3bf">image → region</code>(<code style="color:#22d3bf">xsitk_maxentropy_thresh</code>)、<code style="color:#22d3bf">region → image</code>(<code style="color:#22d3bf">xsitk_signed_maurer_dist</code>)。augmentation は入出力とも <code style="color:#22d3bf">image</code>。augmentation/extra のノイズ・パターン・位置は <b>つまみ (a,b) からシードされた固定実現</b>で、同一入力なら 2 回呼んでも bit 完全一致します(再現可能ホールドアウト評価のための registry 契約。1 回の呼び出しは 1 つの固定実現なので、ノイズ集合を見たければつまみを掃引します)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>色 sort への持ち上げ → 色空間で加工 → gray へ戻す、という色の道筋:</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  I[&quot;image (H×W)&quot;] --&gt;|cfa_to_rgb| C1[&quot;color (H×W×3)&quot;]
+  C1 --&gt;|trans_from_rgb| C2[&quot;color (HSV/Lab/YUV/XYZ)&quot;]
+  C2 --&gt;|trans_to_rgb| C3[&quot;color (RGB)&quot;]
+  C1 --&gt;|linear_trans_color / principal_comp| C4[&quot;color (混合 / PCA)&quot;]
+  C3 --&gt;|rgb1_to_gray| G[&quot;image (輝度)&quot;]
+  C4 --&gt;|access_channel| G2[&quot;image (1ch)&quot;]</pre>
+<p>理想画像を実カメラ風に劣化させ(sim-to-real)、拡張スムージングで整え、閾値で前景を切り、距離場にする道筋:</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  S[&quot;image (理想 / 合成)&quot;] --&gt;|aug_motion_blur| A1[&quot;image&quot;]
+  A1 --&gt;|aug_shot_noise| A2[&quot;image&quot;]
+  A2 --&gt;|aug_vignette| A3[&quot;image (実カメラ風)&quot;]
+  A3 --&gt;|xsitk_curvature_flow| E1[&quot;image (エッジ保存平滑)&quot;]
+  E1 --&gt;|xsitk_maxentropy_thresh| R[&quot;region (二値前景)&quot;]
+  R --&gt;|xsitk_signed_maurer_dist| D[&quot;image (符号付き距離)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>各行 = op名 — 何をするか — 呼び出し例。つまみの意味は grounded(実装準拠)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">color(8): image ⇄ color の橋渡しと色加工</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cfa_to_rgb</code> — 1 枚のグレー画像を Bayer デモザイクして <code style="color:#22d3bf">color</code> に持ち上げる橋渡し(<code style="color:#22d3bf">a</code> が BG/GB/RG/GR の並びを選択、<code style="color:#22d3bf">b</code> 未使用) — <code style="color:#22d3bf">fullseye.apply(img, &quot;cfa_to_rgb&quot;, 0.0, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">trans_from_rgb</code> — RGB を HSV/Lab/YUV/XYZ へ色空間変換(<code style="color:#22d3bf">a</code> が行き先を選択)、結果は選んだ空間の H×W×3 を [0,1] に正規化 — <code style="color:#22d3bf">fullseye.apply(col, &quot;trans_from_rgb&quot;, 0.25, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">trans_to_rgb</code> — HSV → RGB の逆変換で色空間から RGB に戻す — <code style="color:#22d3bf">fullseye.apply(col, &quot;trans_to_rgb&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">linear_trans_color</code> — 3×3 チャンネル混合行列を掛ける(<code style="color:#22d3bf">a=πθ</code> で対角の混合係数を回す、行和で正規化) — <code style="color:#22d3bf">fullseye.apply(col, &quot;linear_trans_color&quot;, 0.6, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_comp</code> — 3 チャンネルの共分散を固有分解し主成分軸へ射影(成分ごと min-max 正規化)= 色の脱相関 — <code style="color:#22d3bf">fullseye.apply(col, &quot;principal_comp&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rgb1_to_gray</code> — BT.601 輝度 <code style="color:#22d3bf">0.299R+0.587G+0.114B</code> で gray 化(<code style="color:#22d3bf">color → image</code>) — <code style="color:#22d3bf">fullseye.apply(col, &quot;rgb1_to_gray&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rgb3_to_gray</code> — <code style="color:#22d3bf">rgb1_to_gray</code> と同一の輝度化(HALCON 別名エントリ) — <code style="color:#22d3bf">fullseye.apply(col, &quot;rgb3_to_gray&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">access_channel</code> — 1 チャンネルを取り出す(<code style="color:#22d3bf">a</code> で 0/1/2 を選択、<code style="color:#22d3bf">color → image</code>) — <code style="color:#22d3bf">fullseye.apply(col, &quot;access_channel&quot;, 1.0, 0.0)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">artistic(3): 非写実(NPR)フィルタ</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv_stylization</code> — OpenCV の edge-aware stylization(カートゥーン調の平滑化、<code style="color:#22d3bf">a=sigma_s</code>・<code style="color:#22d3bf">b=sigma_r</code>)を gray で返す — <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_stylization&quot;, 0.6, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv_pencil_sketch</code> — OpenCV の pencil sketch(鉛筆デッサン調、gray 出力) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv_pencil_sketch&quot;, 0.6, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xpil_emboss</code> — PIL の EMBOSS(3×3 エンボス畳み込み)で平坦面は一様・エッジは浮き彫りになる — <code style="color:#22d3bf">fullseye.apply(img, &quot;xpil_emboss&quot;, 0.5, 0.4)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">augmentation(10): 実カメラ劣化の合成(sim-to-real)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_shot_noise</code> — ポアソン(光子)ショットノイズ <code style="color:#22d3bf">Poisson(vK)/K</code>、光子スケール <code style="color:#22d3bf">K=5+250(1−a)</code>(a=0 で near-clean、a=1 で光子欠乏)、<code style="color:#22d3bf">b</code> は暗電流ペデスタル — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_shot_noise&quot;, 0.5, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_read_noise</code> — 加算ガウス読み出しノイズ <code style="color:#22d3bf">σ=0.005+0.15a</code>、<code style="color:#22d3bf">b</code> で行相関成分(水平バンディング)を混合 — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_read_noise&quot;, 0.4, 0.2)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_fixed_pattern</code> — 固定パターンノイズ(FPN/PRNU)= フレーム間で不変な列+行オフセット(<code style="color:#22d3bf">a</code> 振幅、<code style="color:#22d3bf">b</code> がどのパターンか) — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_fixed_pattern&quot;, 0.5, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_motion_blur</code> — 線形モーションブラー(正規化ライン核との畳み込み、<code style="color:#22d3bf">a</code> が streak 長 <code style="color:#22d3bf">L=3+20a</code>、<code style="color:#22d3bf">b</code> が角度) — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_motion_blur&quot;, 0.6, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_vignette</code> — cos⁴ 周辺減光(<code style="color:#22d3bf">a</code> 強度、<code style="color:#22d3bf">b</code> 減光半径 R)、中心が最も明るく隅が暗い — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_vignette&quot;, 1.0, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_chromatic</code> — 横色収差プロキシ(ハイパス成分を <code style="color:#22d3bf">1+int(4a)</code> px ずらして加算)、平坦部は不変でエッジのみフリンジ — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_chromatic&quot;, 0.5, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_rolling_shutter</code> — ローリングシャッター歪み(行番号に比例した水平シアー、<code style="color:#22d3bf">a</code> 最大シフト、<code style="color:#22d3bf">b</code> 向き) — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_rolling_shutter&quot;, 0.5, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_jpeg_blocks</code> — JPEG ブロック/リンギング(8×8 DCT を標準 Annex-K 輝度量子化表で量子化、<code style="color:#22d3bf">a</code> 量子化強度、<code style="color:#22d3bf">b</code> ブロック格子位相) — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_jpeg_blocks&quot;, 0.6, 0.0)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_cutout</code> — cutout / random erasing(1 辺 <code style="color:#22d3bf">a·min(H,W)</code> の矩形を消去、<code style="color:#22d3bf">b≤0.5</code> で黒・<code style="color:#22d3bf">b&gt;0.5</code> で中間灰) — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_cutout&quot;, 0.4, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aug_barrel</code> — 樽型/糸巻き型レンズ歪み <code style="color:#22d3bf">r&#x27;=r(1+k r²)</code>、<code style="color:#22d3bf">k=0.6a</code>(<code style="color:#22d3bf">b&lt;0.5</code> 樽型・<code style="color:#22d3bf">b≥0.5</code> 糸巻き型) — <code style="color:#22d3bf">fullseye.apply(img, &quot;aug_barrel&quot;, 0.5, 0.2)</code></p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">extra(14): SimpleITK 由来(HALCON に無い拡張)</h3>
+<p>エッジ保存平滑・再構成モルフォロジ(<code style="color:#22d3bf">image → image</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_curvature_flow</code> — 曲率フロー平滑化(レベルセット、<code style="color:#22d3bf">a</code> が反復数)、エッジを残しつつ平滑 — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_curvature_flow&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_minmax_curv_flow</code> — min/max 曲率フロー(小構造を選択的に抑える、<code style="color:#22d3bf">a</code> 反復・<code style="color:#22d3bf">b</code> 半径) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_minmax_curv_flow&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_curv_aniso_diff</code> — 曲率型異方性拡散(<code style="color:#22d3bf">a</code> conductance・<code style="color:#22d3bf">b</code> 反復)、エッジ保存平滑の Perona-Malik 系 — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_curv_aniso_diff&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_laplacian_sharpen</code> — ラプラシアン鮮鋭化(結果を min-max 正規化) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_laplacian_sharpen&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_grayscale_fillhole</code> — グレースケール穴埋め(周囲より暗い極小領域を埋める再構成) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_grayscale_fillhole&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_grayscale_grindpeak</code> — グレースケールピーク削り(周囲より明るい極大を削る、fillhole の双対) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_grayscale_grindpeak&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_opening_by_recon</code> — 再構成オープニング(<code style="color:#22d3bf">a</code> の SE より小さい明構造を除去しつつ形状を保存) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_opening_by_recon&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_closing_by_recon</code> — 再構成クロージング(opening の双対、暗構造側) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_closing_by_recon&quot;, 0.5, 0.4)</code></p>
+<p>閾値・領域拡張(<code style="color:#22d3bf">image → region</code>)と距離場(<code style="color:#22d3bf">region → image</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_maxentropy_thresh</code> — 最大エントロピー閾値(Kapur、<code style="color:#22d3bf">a</code> で探索上限)で二値前景を切る — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_maxentropy_thresh&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_moments_thresh</code> — モーメント保存閾値(Tsai、原画の 1〜3 次モーメントを保つ閾値) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_moments_thresh&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_huang_thresh</code> — Huang 閾値(ファジィ度最小化) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_huang_thresh&quot;, 0.5, 0.4)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_connected_threshold</code> — 連結閾値領域拡張(中心画素をシードに、その値 ±(a,b) の帯で連結成長) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_connected_threshold&quot;, 0.3, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_confidence_connected</code> — 信頼度連結領域拡張(シード近傍の平均±k·標準偏差で成長、<code style="color:#22d3bf">a</code> 反復・<code style="color:#22d3bf">b</code> 乗数 k) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_confidence_connected&quot;, 0.4, 0.3)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_signed_maurer_dist</code> — 符号付き Maurer 距離場(<code style="color:#22d3bf">region → image</code>)、領域内が負(→0.5 未満)・外が正(→0.5 超)、<code style="color:#22d3bf">a</code> が tanh 圧縮スケール — <code style="color:#22d3bf">fullseye.apply(reg, &quot;xsitk_signed_maurer_dist&quot;, 0.5, 0.4)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_color_artistic から)</h3>
+<p>repo 直下(<code style="color:#22d3bf">C:/dev/projects/imgevolve</code>)で <code style="color:#22d3bf">py -3.11 this.py</code>。検証済みギャラリーの GT を凝縮した自己完結・GT アサート付きスニペット(sort の橋渡し・BT.601 輝度の厳密一致・チャンネル選択・cos⁴ 減光・cutout・最大エントロピー閾値を確認):</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下(C:/dev/projects/imgevolve)で: py -3.11 this.py
+import numpy as np
+import fullseye
+
+_N = 48
+
+def make_image(n=_N):
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float64)
+    grad = xx / (n - 1)
+    disk = ((yy - n * 0.35) ** 2 + (xx - n * 0.4) ** 2) &lt; (n * 0.18) ** 2
+    checker = ((xx.astype(int) // 6 + yy.astype(int) // 6) % 2) * 0.15
+    return np.clip(0.35 * grad + 0.45 * disk + checker, 0.0, 1.0)
+
+def make_color(n=_N):
+    g = make_image(n)
+    return np.clip(np.stack([g, 0.7 * g + 0.1, 1.0 - g], -1), 0.0, 1.0)
+
+img = make_image()
+col = make_color()
+
+# 1) cfa_to_rgb: 1 枚のグレー画像 (H,W) から色 sort (H,W,3) への橋渡し
+rgb = fullseye.apply(img, &quot;cfa_to_rgb&quot;, 0.0, 0.0)
+assert rgb.ndim == 3 and rgb.shape[-1] == 3, &quot;cfa_to_rgb must yield H x W x 3&quot;
+assert rgb.min() &gt;= -1e-6 and rgb.max() &lt;= 1 + 1e-6, &quot;color stays in [0,1]&quot;
+
+# 2) rgb1_to_gray: 輝度 0.299R + 0.587G + 0.114B に厳密一致 (BT.601)
+gray = fullseye.apply(col, &quot;rgb1_to_gray&quot;, 0.5, 0.4)
+expected = 0.299 * col[..., 0] + 0.587 * col[..., 1] + 0.114 * col[..., 2]
+assert np.allclose(gray, expected, atol=1e-12), &quot;luminance must be exact BT.601&quot;
+
+# 3) access_channel: つまみ a でチャンネルを選ぶ (a=0-&gt;ch0, a=1-&gt;ch2)
+ch0 = fullseye.apply(col, &quot;access_channel&quot;, 0.0, 0.0)
+ch2 = fullseye.apply(col, &quot;access_channel&quot;, 1.0, 0.0)
+assert np.array_equal(ch0, col[..., 0]) and np.array_equal(ch2, col[..., 2])
+assert not np.array_equal(ch0, ch2), &quot;different channels must differ&quot;
+
+# 4) aug_vignette: cos^4 減光 — 隅は中心よりはっきり暗い(一様入力で透過率を可視化)
+one = np.ones((_N, _N), np.float64)
+vig = fullseye.apply(one, &quot;aug_vignette&quot;, 1.0, 0.5)
+center, corner = float(vig[_N // 2, _N // 2]), float(vig[0, 0])
+assert corner &lt; 0.5 * center, &quot;vignette corner must be darker than centre&quot;
+
+# 5) aug_cutout: 矩形オクルージョンで零画素が増える(b&lt;=0.5 -&gt; 黒で消去)
+cut = fullseye.apply(img, &quot;aug_cutout&quot;, 0.4, 0.3)
+assert int((cut == 0.0).sum()) &gt; int((img == 0.0).sum()) + 100
+
+# 6) xsitk_maxentropy_thresh: 二値かつ前景/背景を分離(自明な全0/全1でない)
+seg = fullseye.apply(img, &quot;xsitk_maxentropy_thresh&quot;, 0.5, 0.4)
+uniq = np.unique(seg)
+assert np.all((uniq == 0.0) | (uniq == 1.0)), &quot;threshold output must be binary&quot;
+assert 0.0 &lt; float(seg.mean()) &lt; 1.0, &quot;must separate foreground from background&quot;
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>輝度化 <code style="color:#22d3bf">rgb1_to_gray</code> / <code style="color:#22d3bf">rgb3_to_gray</code>(BT.601)。ギャラリーは <code style="color:#22d3bf">atol=1e-12</code> で厳密一致を課します:</p>
+<p>$$Y = 0.299\,R + 0.587\,G + 0.114\,B$$</p>
+<p>周辺減光 <code style="color:#22d3bf">aug_vignette</code>。正規化半径 $r$(中心 0・隅 1)と減光半径 $R=0.35+1.15b$ で、透過率は自然な cos⁴ 則、これを強度 $a$ でブレンド:</p>
+<p>$$t(r) = \cos^4\!\big(\arctan(r/R)\big) = \frac{1}{\big(1+(r/R)^2\big)^2}, \qquad \text{out} = v\,\big(1 - a + a\,t(r)\big)$$</p>
+<p>ショットノイズ <code style="color:#22d3bf">aug_shot_noise</code>。画像を光子率とみなし、光子スケール $K=5+250(1-a)$ でポアソン標本化して戻す(SNR $\sim\sqrt{K}$):</p>
+<p>$$\tilde v = \frac{\mathrm{Poisson}(vK)}{K}$$</p>
+<p>レンズ歪み <code style="color:#22d3bf">aug_barrel</code>。正規化半径 $r$(隅 1)に多項式歪み、$k=0.6a$($b&lt;0.5$ で $+k$= 樽型、$b\ge0.5$ で $-k$= 糸巻き型):</p>
+<p>$$r_{\text{src}} = r\,\big(1 + k\,r^2\big)$$</p>
+<p>符号付き距離場 <code style="color:#22d3bf">xsitk_signed_maurer_dist</code>。符号付き Euclidean 距離 $d$(領域内で負)を tanh で [0,1] に圧縮(スケール $a$)、内部 $&lt;0.5&lt;$ 外部:</p>
+<p>$$\text{out} = 0.5 + 0.5\,\tanh\!\Big(\frac{d}{1 + 9a}\Big)$$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>デバッグ用の 2-D 画像源は [<code style="color:#22d3bf">../../SAMPLES.md</code>](../../SAMPLES.md) を参照(同梱せずユーザー DL 方式、fail-closed)。この族には合成の <code style="color:#22d3bf">checker_noisy</code> / <code style="color:#22d3bf">gradient</code>(色の橋渡しやノイズ拡張の効きを可視化しやすい)と、<code style="color:#22d3bf">skimage.data</code> の <code style="color:#22d3bf">coins</code> / <code style="color:#22d3bf">camera</code>(NPR フィルタ・閾値・領域拡張の実写題材)が向きます — <code style="color:#22d3bf">import sample_images; sample_images.load(&quot;camera&quot;)</code>。cfa_to_rgb 以降の color op は 1 枚の gray からその場で色 sort を作れるので、追加素材なしでも動きます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳は [<code style="color:#22d3bf">../../../REFERENCES.md</code>](../../../REFERENCES.md)。この族のアルゴリズムの古典:</p>
+<p style="margin:2px 0 2px 12px">• <b>色空間・輝度</b>: ITU-R Recommendation BT.601 (1982), &quot;Studio encoding parameters of digital television for standard 4:3 and wide-screen 16:9 aspect ratios.&quot;(<code style="color:#22d3bf">rgb1_to_gray</code> / <code style="color:#22d3bf">rgb3_to_gray</code> の 0.299/0.587/0.114 荷重)</p>
+<p style="margin:2px 0 2px 12px">• <b>Bayer デモザイク</b>: Bayer, B. E. (1976), &quot;Color Imaging Array,&quot; U.S. Patent 3,971,065.(<code style="color:#22d3bf">cfa_to_rgb</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>主成分分析</b>: Pearson, K. (1901), &quot;On Lines and Planes of Closest Fit to Systems of Points in Space,&quot; Philosophical Magazine.(<code style="color:#22d3bf">principal_comp</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>エッジ保存 NPR</b>: Gastal, E. S. L. &amp; Oliveira, M. M. (2011), &quot;Domain Transform for Edge-Aware Image and Video Processing,&quot; ACM SIGGRAPH.(<code style="color:#22d3bf">xcv_stylization</code> / <code style="color:#22d3bf">xcv_pencil_sketch</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>エンボス/画像復元モデル</b>: Gonzalez, R. C. &amp; Woods, R. E., &quot;Digital Image Processing.&quot;(<code style="color:#22d3bf">xpil_emboss</code> の畳み込み、<code style="color:#22d3bf">aug_motion_blur</code> の PSF 劣化モデル)</p>
+<p style="margin:2px 0 2px 12px">• <b>センサーノイズ</b>: Healey, G. &amp; Kondepudy, R. (1994), &quot;Radiometric CCD Camera Calibration and Noise Estimation,&quot; IEEE TPAMI.(<code style="color:#22d3bf">aug_shot_noise</code> / <code style="color:#22d3bf">aug_read_noise</code> / <code style="color:#22d3bf">aug_fixed_pattern</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>周辺減光</b>: Goldman, D. B. (2010), &quot;Vignette and Exposure Calibration and Compensation,&quot; IEEE TPAMI.(<code style="color:#22d3bf">aug_vignette</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>ローリングシャッター</b>: Liang, C.-K., Chang, L.-W. &amp; Chen, H. H. (2008), &quot;Analysis and Compensation of Rolling Shutter Effect,&quot; IEEE Transactions on Image Processing.(<code style="color:#22d3bf">aug_rolling_shutter</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>JPEG</b>: Wallace, G. K. (1992), &quot;The JPEG Still Picture Compression Standard,&quot; IEEE Transactions on Consumer Electronics.(<code style="color:#22d3bf">aug_jpeg_blocks</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>レンズ歪み</b>: Brown, D. C. (1966), &quot;Decentering Distortion of Lenses,&quot; Photogrammetric Engineering.(<code style="color:#22d3bf">aug_barrel</code> の Brown–Conrady 半径歪み)</p>
+<p style="margin:2px 0 2px 12px">• <b>Cutout / Random Erasing</b>: DeVries, T. &amp; Taylor, G. W. (2017), &quot;Improved Regularization of Convolutional Neural Networks with Cutout,&quot; arXiv:1708.04552; Zhong, Z. et al. (2020), &quot;Random Erasing Data Augmentation,&quot; AAAI.(<code style="color:#22d3bf">aug_cutout</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>曲率フロー / 異方性拡散</b>: Malladi, R. &amp; Sethian, J. A. (1995), &quot;Image Processing via Level Set Curvature Flow,&quot; PNAS; Perona, P. &amp; Malik, J. (1990), &quot;Scale-Space and Edge Detection Using Anisotropic Diffusion,&quot; IEEE TPAMI.(<code style="color:#22d3bf">xsitk_curvature_flow</code> / <code style="color:#22d3bf">xsitk_minmax_curv_flow</code> / <code style="color:#22d3bf">xsitk_curv_aniso_diff</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>グレースケール再構成モルフォロジ</b>: Vincent, L. (1993), &quot;Morphological Grayscale Reconstruction in Image Analysis,&quot; IEEE Transactions on Image Processing.(<code style="color:#22d3bf">xsitk_grayscale_fillhole</code> / <code style="color:#22d3bf">xsitk_grayscale_grindpeak</code> / <code style="color:#22d3bf">xsitk_opening_by_recon</code> / <code style="color:#22d3bf">xsitk_closing_by_recon</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>距離変換</b>: Maurer, C. R., Qi, R. &amp; Raghavan, V. (2003), &quot;A Linear Time Algorithm for Computing Exact Euclidean Distance Transforms,&quot; IEEE TPAMI.(<code style="color:#22d3bf">xsitk_signed_maurer_dist</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>領域拡張</b>: Adams, R. &amp; Bischof, L. (1994), &quot;Seeded Region Growing,&quot; IEEE TPAMI.(<code style="color:#22d3bf">xsitk_connected_threshold</code> / <code style="color:#22d3bf">xsitk_confidence_connected</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>閾値法</b>: Kapur, J. N., Sahoo, P. K. &amp; Wong, A. K. C. (1985), &quot;A New Method for Gray-Level Picture Thresholding Using the Entropy of the Histogram,&quot; CVGIP; Tsai, W.-H. (1985), &quot;Moment-Preserving Thresholding,&quot; CVGIP; Huang, L.-K. &amp; Wang, M.-J. J. (1995), &quot;Image Thresholding by Minimizing the Measures of Fuzziness,&quot; Pattern Recognition.(<code style="color:#22d3bf">xsitk_maxentropy_thresh</code> / <code style="color:#22d3bf">xsitk_moments_thresh</code> / <code style="color:#22d3bf">xsitk_huang_thresh</code>)</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
