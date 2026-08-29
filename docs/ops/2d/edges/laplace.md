@@ -16,6 +16,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - **データ種**: `image` → `image`
 - **呼び出し**: `fullseye.apply(img, "laplace", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `laplace`(意味・パラメータは HALCON リファレンスが参考になる)
+- **上書き登録**: この名前は 2 回登録されている(core 実装 + backend の安全ラッパ)。`apply` が実行するのは**後勝ちの安全版**(fail-closed ラッパ)。core 版は backend 不在時のフォールバックとして残る(登録順=Wave0 stable slot は不変、`tests/test_opdocs.py` が上書き集合を pin)。
 
 ## 使い方
 

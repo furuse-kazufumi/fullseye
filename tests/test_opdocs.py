@@ -106,3 +106,26 @@ def test_guide_is_well_formed(guide):
     fam_ops = set(_FAM_OPS.get(guide, []))   # _FAM_OPS: family -> set of op-name strings
     hit = {n for n in fam_ops if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
     assert len(hit) >= 3, f"{guide}: names too few of its own family ops ({len(hit)}/{len(fam_ops)})"
+
+
+def test_intentional_op_name_overrides_are_pinned():
+    """The only duplicate 2-D op names are the 4 deliberate backend safe-wrap overrides.
+
+    These names are registered twice on purpose: a core ``ops._<name>`` fallback plus a
+    ``backends_auto`` fail-closed ``_safe`` wrapper that wins (RT/last). Physically removing
+    the core entry would break the Wave0 stable-slot invariant (tests/test_wave0.py) and the
+    no-backend fallback, so instead we PIN the override set — a new *accidental* collision
+    (a backend shadowing a core op unintentionally) makes this fail.
+    """
+    import ops
+    from collections import Counter
+    dups = sorted(n for n, c in Counter(o.name for o in ops.REGISTRY).items() if c > 1)
+    assert dups == ["dyn_threshold", "edges_sub_pix", "laplace", "local_max"], (
+        f"op-name duplicate set changed to {dups} — if this is a new intentional backend "
+        "override, add it here (and confirm it wins in ops.RT); if accidental, rename it.")
+    for n in dups:
+        assert "_safe" in getattr(ops.RT[n], "__qualname__", ""), (
+            f"{n}: the winning impl is no longer the backends_auto _safe wrapper "
+            f"({ops.RT[n].__module__}.{getattr(ops.RT[n], '__qualname__', '?')})")
+        # a core fallback of the same op still exists behind the override
+        assert sum(1 for o in ops.REGISTRY if o.name == n) == 2, f"{n}: expected core+override"

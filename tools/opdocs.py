@@ -199,6 +199,11 @@ def _op_md(rec, path, by_name):
         lines.append(f"- **HALCON 相当**: `{rec['halcon']}`(意味・パラメータは HALCON リファレンスが参考になる)")
     if rec.get("gpu"):
         lines.append("- **GPU**: この op は GPU 経路あり(`device=\"cuda\"`)")
+    if rec.get("override"):
+        lines.append(f"- **上書き登録**: この名前は 2 回登録されている(core 実装 + backend の安全ラッパ)。"
+                     "`apply` が実行するのは**後勝ちの安全版**(fail-closed ラッパ)。core 版は backend "
+                     "不在時のフォールバックとして残る(登録順=Wave0 stable slot は不変、`tests/test_opdocs.py` "
+                     "が上書き集合を pin)。")
     lines.append("")
     # usage / behaviour — honest: docstring if present, else typed contract only
     lines.append("## 使い方")
