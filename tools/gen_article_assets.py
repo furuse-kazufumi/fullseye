@@ -988,8 +988,9 @@ def _build_feature_tile_specs(img, log=print) -> dict:
         score, row, col = fullseye.apply(img, "ncc_locate")
     finally:
         ops_mod.set_match_template(None)          # 他 op へ波及させない
-    assert score > 0.99 and abs(row - cy) <= 2 and abs(col - cx) <= 2, (
-        f"ncc_locate found ({score:.3f}, {row}, {col}), expected ~(1.0, {cy}, {cx})")
+    if not (score > 0.99 and abs(row - cy) <= 2 and abs(col - cx) <= 2):
+        raise AssertionError(
+            f"ncc_locate found ({score:.3f}, {row}, {col}), expected ~(1.0, {cy}, {cx})")
     specs["ncc_locate"] = {
         "display": img,
         "boxes": [(row - h, col - h, 2 * h, 2 * h)],
