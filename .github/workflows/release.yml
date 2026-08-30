@@ -1,0 +1,32 @@
+# Fullseye CD — タグ push で PyPI へ公開(clean checkout からビルド)
+# Tag vX.Y.Z → sdist+wheel build → PyPI upload. Building from a clean checkout
+# is deliberate: the 2026-08-30 audit showed in-place builds can pick up stale
+# local caches (.pyc) that a clean tree never ships.
+name: Release to PyPI
+
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Guard - tag matches pyproject version
+        run: |
+          V=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          [ "v$V" = "$GITHUB_REF_NAME" ] || { echo "tag $GITHUB_REF_NAME != pyproject v$V"; exit 1; }
+      - name: Build sdist + wheel
+        run: |
+          pip install build
+          python -m build
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}

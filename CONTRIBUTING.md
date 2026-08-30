@@ -40,8 +40,14 @@ input. The fastest routes:
 
 ```bash
 git clone <repo> && cd fullseye
-pip install -e ".[all]"
+pip install -e ".[all,dev]"
 py -3.11 -m pytest -q          # full suite (~6200 tests)
+py -3.11 -m pytest -q --cov    # + coverage (what CI reports)
 py -3.11 -m ruff check .       # style — match the surrounding code
 py -3.11 studio.py             # the IDE
 ```
+
+CI (GitHub Actions) runs on every push/PR: a **minimal numpy+scipy job** that
+executes the "core runs without extras" claim, plus the full suite with coverage
+on Python 3.10–3.12. Tags `vX.Y.Z` build from a clean checkout and publish to
+PyPI automatically.

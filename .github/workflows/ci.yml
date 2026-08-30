@@ -1,0 +1,69 @@
+# Fullseye CI — テスト+カバレッジ(すべて実測、主張しない)
+# Two guards: (1) the "core runs on numpy+scipy alone" claim is EXECUTED on a
+# minimal install every run (this exact class of bug — a clean-install import
+# crash — was caught in the 2026-08-30 release audit); (2) the full suite with
+# optional backends + coverage, across the supported Python range.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  core-minimal:
+    name: core (numpy+scipy only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install core only (no extras)
+        run: pip install -e .
+      - name: Import + registry smoke (the README claim, executed)
+        run: |
+          python -c "import fullseye, fsi18n; print('import ok')"
+          python -c "import fullseye; n=len(fullseye.op_names()); print(n, 'ops'); assert n > 500"
+      - name: Packaging invariants
+        run: |
+          pip install pytest
+          pytest tests/test_unified_packaging.py tests/test_packaging_foundation.py -q
+
+  test:
+    name: full suite (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    env:
+      QT_QPA_PLATFORM: offscreen
+      PYTHONUTF8: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Qt offscreen system libraries
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q libegl1 libgl1 libxkbcommon-x11-0 libdbus-1-3
+      # torch/kornia は CI では入れない(サイズと時間 — 対応テストは graceful skip)。
+      # GPU 系の数字は実機で測る(CPU の数字を GPU の数字と偽らない、の CI 版)。
+      - name: Install with optional backends (no torch)
+        run: pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume]" pytest pytest-cov
+      - name: Run tests with coverage
+        run: pytest -q --cov --cov-report=xml --cov-report=term
+      - name: Coverage summary (job summary page)
+        if: matrix.python-version == '3.11'
+        run: |
+          pip install coverage
+          echo '## Coverage' >> "$GITHUB_STEP_SUMMARY"
+          coverage report --format=markdown --skip-covered --sort=cover | tail -40 >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.11'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
