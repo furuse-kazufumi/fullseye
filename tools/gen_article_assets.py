@@ -952,7 +952,8 @@ def _build_feature_tile_specs(img, log=print) -> dict:
 
     # --- blob_count: 前処理済み region への実適用で 24(=コイン枚数)---------- #
     count = fullseye.apply(region, "blob_count")
-    assert count == 24.0, f"blob_count on preprocessed region = {count}, expected 24 coins"
+    if count != 24.0:  # 明示 raise(-O で消える assert 文にしない)
+        raise AssertionError(f"blob_count on preprocessed region = {count}, expected 24 coins")
     # ラベル彩色オーバーレイ(暗背景 + blob ごとに色)
     vis = np.full((*lab.shape, 3), 0.05)
     colors = colormaps["tab20"](np.linspace(0, 1, 20))[:, :3]
