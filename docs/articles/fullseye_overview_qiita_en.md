@@ -156,7 +156,7 @@ flowchart TB
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
         EVO["② Design a pipeline by evolution<br/>evolve / robust (evaluated honestly on held-out data)"]
     end
-    subgraph L2["Application: Physical AI perception stack"]
+    subgraph L2["Application: robot eyes"]
         PERC["stereo → depth → point cloud →<br/>6-DoF pose → muscle actuation (evis)"]
     end
     STUDIO["Fullseye Studio (HDevelop-style IDE)<br/>look, try, and work"]
