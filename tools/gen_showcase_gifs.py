@@ -17,10 +17,12 @@ honest: これは GT アサートのある op ではなく **視覚ショーケ�
 すべて Fullseye の実 op が実データ / 生成メッシュから作った本物のレンダである。
 決定的(乱数を使わない。AO / 影の下位 op は決定的サンプリング)。
 
-各 GIF と**同一フレーム**から H.264 mp4(imageio-ffmpeg)も
+各 GIF と**同一ソースフレーム**から H.264 mp4(imageio-ffmpeg)も
 ``docs/articles/assets/media/{pod,itokawa,skeleton,hue_cycle}.mp4`` へ書き出す
 (GIF を撮り直さず ``frames_pod``/``frames_i``/``frames_s``/``frames_h`` をそのまま
-``save_mp4()`` に渡すので、GIF と mp4 は完全に同じ内容 — でっち上げ禁止)。
+``save_mp4()`` に渡す — でっち上げ禁止)。ただし GIF はパレット減色、mp4 は H.264
+非可逆圧縮を経るため、**画素値までは厳密一致しない**(同一なのはエンコード前の
+入力フレーム)。フレーム数は書き出し後に読み戻して期待数との一致を強制検証する。
 
 技法メモ:
   * 速度: ``render_beauty`` の AO は **頂点ごと**の半球レイキャスト(頂点 × 方向 × 面)なので、
