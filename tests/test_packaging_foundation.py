@@ -56,9 +56,15 @@ def _all_of(relpath: str) -> set[str]:
 def test_every_runtime_root_module_is_in_py_modules():
     """A root .py imported by a shipped module must ship too (py-modules)."""
     declared = _py_modules()
+    # examples/ examples_3d/ もパッケージとして ship されるため走査対象に含める
+    # (公開前監査 2026-08-30: ここを見ていなかったため、サンプルが import する
+    # root モジュール 4 件の py-modules 漏れをこのガードが見逃していた)。
     shipped_sources = ["api.py", "imgevolve.py", "studio.py", "engine.py",
                        "graphengine.py", "comm.py", "device.py", "dsp.py", "acquire.py",
                        os.path.join("fullseye", "__init__.py")] + [n + ".py" for n in declared]
+    for pkg in ("examples", "examples_3d"):
+        shipped_sources += [os.path.relpath(p, ROOT)
+                            for p in glob.glob(os.path.join(ROOT, pkg, "*.py"))]
     root_mods = {os.path.basename(p)[:-3] for p in glob.glob(os.path.join(ROOT, "*.py"))}
     missing = []
     for mod in sorted(root_mods - declared - _DEV_TOOLS):

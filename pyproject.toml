@@ -47,6 +47,7 @@ serial = ["pyserial>=3.5"]
 modbus = ["pymodbus>=3.0"]            # Modbus RTU (Modbus TCP is built-in)
 mqtt = ["paho-mqtt>=1.6"]
 opcua = ["asyncua>=1.0"]
+dev = ["pytest>=7", "pytest-cov>=4", "ruff>=0.4"]   # contributor toolchain (CI mirror)
 # `all` = the full desktop app (image libs + GPU + GUI + video). Industrial/robotics
 # adapters stay opt-in (a desktop user does not need pymodbus/asyncua by default).
 all = [
@@ -96,6 +97,9 @@ py-modules = [
   "examples3d", "ops3d", "measure3d", "pipeline3d", "pipeline_evolve", "evolve_params", "metrics3d", "match3d", "bspline_surf", "bundle3d", "curvature3d", "curve3d", "deform3d", "depth_bilateral", "descriptors3d", "edges3d", "feat_fpfh", "feat_harris", "feat_shot", "feat_spin", "fringe", "fuse3d", "geodesic3d", "gicp", "medial", "moments3d", "motion_seg3d", "normals_orient", "pcl_augment", "pcl_filter", "photometric", "plane_sweep", "pnp3d", "pose_graph", "range_image", "ransac_fit", "recon3d", "regionprops3d", "registration_eval", "scene_flow3d", "sdf_ops", "segment3d", "spherical_proj", "superquadric", "symmetry3d", "tsdf_fusion", "twoview", "visualhull",
   # 3-D mesh / rendering support (imported by ops3d.py + render_beauty.py)
   "fit_primitives_ext", "hull3d", "mesh_props", "mesh_smooth", "render_ao", "render_beauty", "render_shade", "render_shadow", "render_ssaa", "render_tonemap",
+  # imported by shipped examples/examples_3d (release audit 2026-08-30: these were
+  # missing, so the corresponding samples ImportError'd on a pip install)
+  "mesh_decimate", "watershed3d", "g1_policy_bridge", "evis_fullseye_bridge",
 ]
 
 [tool.setuptools.package-data]
@@ -109,7 +113,10 @@ py-modules = [
               "skill_template/SKILL.md",
               # fsi18n shipped message tables (English template -> translation);
               # user tables in FULLSEYE_I18N_DIR override these (docs/I18N.md).
-              "i18n/*.json"]
+              "i18n/*.json",
+              # Canonical facade data (unified.py reads these; the root-level
+              # data/ dir is only a dev-cache fallback and never ships).
+              "data/halcon_facade_map.json", "data/halcon_stubs.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).
@@ -125,3 +132,11 @@ py-modules = [
                    "sample_sources_ai/*.png", "sample_sources_ai/*.jpg",
                    "sample_3d/*.npy", "sample_3d/*.md",
                    "op_help/3d/*.html"]
+
+[tool.coverage.run]
+# ライブラリ本体のカバレッジを測る(テスト・開発ツール・研究スクラッチは対象外)。
+omit = ["tests/*", "tools/*", "spikes/*", "setup.py", "conftest.py",
+        "vloop*", "janken*", "fullseye_3dgs*", "gsplat_*", "examples/*", "examples_3d/*"]
+
+[tool.coverage.report]
+skip_empty = true

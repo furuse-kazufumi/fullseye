@@ -26,8 +26,23 @@ from dataclasses import dataclass, field
 from typing import Callable
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-_FACADE = os.path.join(_HERE, "data", "halcon_facade_map.json")
-_STUBS = os.path.join(_HERE, "data", "halcon_stubs.json")
+
+
+def _data_file(name: str) -> str:
+    """facade データの解決: 同梱正本 fullseye/data/ → 開発キャッシュ data/ の順。
+    Resolve facade data: shipped fullseye/data/ first, then the dev cache data/.
+
+    fullseye/data/ は git 追跡+wheel 同梱の正本(クリーン checkout / pip install
+    でも動く)。data/ は再生成される開発キャッシュで、存在すればフォールバック。"""
+    for d in (os.path.join(_HERE, "fullseye", "data"), os.path.join(_HERE, "data")):
+        p = os.path.join(d, name)
+        if os.path.exists(p):
+            return p
+    return os.path.join(_HERE, "fullseye", "data", name)   # 不在時も正本パスを返す
+
+
+_FACADE = _data_file("halcon_facade_map.json")
+_STUBS = _data_file("halcon_stubs.json")
 
 # HALCON chapter → fullseye 名前空間(短く自然な語彙)。off-mission は無視。
 _CHAPTER_NS = {
@@ -248,10 +263,22 @@ def _import(ref: str) -> Callable:
 
 
 def _load_facade(reg: Registry) -> None:
-    """本セッションの 600 HALCON genuine facade op(provenance=facade)。"""
-    facade = json.load(open(_FACADE, encoding="utf-8"))
+    """本セッションの 600 HALCON genuine facade op(provenance=facade)。
+
+    データファイル欠落時は警告して facade 層だけをスキップする(進化/知覚/OSS の
+    各層は影響を受けない — graceful degradation)。`import fullseye` を殺さない。
+    Missing data files degrade gracefully: warn once, skip only the facade layer."""
+    try:
+        facade = json.load(open(_FACADE, encoding="utf-8"))
+        stubs = json.load(open(_STUBS, encoding="utf-8"))["operators"]
+    except Exception as e:
+        import warnings
+        warnings.warn(
+            f"fullseye facade layer disabled ({type(e).__name__}: {e}); "
+            "HALCON-named facade ops are unavailable in this install",
+            RuntimeWarning, stacklevel=2)
+        return
     facade = {k: v for k, v in facade.items() if not k.startswith("_")}
-    stubs = json.load(open(_STUBS, encoding="utf-8"))["operators"]
     for name, ref in facade.items():
         try:
             func = _import(ref)
