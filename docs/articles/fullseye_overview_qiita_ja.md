@@ -1144,6 +1144,12 @@ GPU 化については、「性能の正直な話（GPU）」の節に書いた�
 
 ## 次回に続く
 
+次回の主役の顔見せをひとつ（クリックで動画再生）：
+
+[![evis の 700 筋活性ヒートマップ ―― 実物理再シミュレーション中の実活性で腱の色が変わる（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_muscle_heatmap_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_muscle_heatmap.mp4)
+
+*↑ ▶ Fullseye の"お客さん第一号" evis の体そのもの ―― 700 本の腱の色を実物理再シミュレーション中の実活性（d.act）で毎フレーム更新した筋活性ヒートマップ（腕挙上→歩行追従）。**これは evis 側プロジェクトの実験映像の再エンコードで、Fullseye の処理は入っていません** ―― この体に「目」を供給するのが Fullseye 層③の役割です。*
+
 この記事は"地図"でした。次はこの地図の各所を歩きます。候補は：
 
 - **op を1つ足すと何が起きるか** ―― レジストリ・進化・コード生成・ドキュメントが自動で追従する仕組みの中身。
