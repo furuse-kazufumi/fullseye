@@ -860,6 +860,7 @@ def _moore_boundaries(mask):
         # pixel examined (start: the West neighbour, guaranteed background).
         back = 6
         cy, cx, cb = sy, sx, back
+        seen_at_start = {back}                  # Jacob's criterion, state-based
         limit = 4 * int(comp.sum()) + 8         # hard cap: boundary <= 4*area
         for _ in range(limit):
             step = None
