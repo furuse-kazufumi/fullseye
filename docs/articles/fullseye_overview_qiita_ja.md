@@ -898,6 +898,10 @@ Fullseye が「ただの関数の寄せ集め」にならないための背骨�
 
 **「重い依存はぜんぶオプション」**は、地味に見えて実は一番 honest disclosure と近い場所にある柱です。「torch が無いと動かない」と正直に言うのではなく、「torch が無くても numpy 経路で動く。torch があればもっと速い経路が使える」という**段階的な正直さ**を選んでいます。これは「公開前夜」の章で語った CI のバグの多くが、この柱の**運用の甘さ**（optional 依存のガード漏れ）から生まれたことの裏返しでもあります。柱として掲げるのは簡単ですが、**掲げた柱を実際に守れているかを検証する**のは、また別の仕事だということを、あの CI の一件で思い知らされました。
 
+[![コア numpy+scipy と optional extras の依存マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_optional_extras_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_optional_extras.png)
+
+*↑ この柱を絵にした依存マップ ―― 必須依存は numpy + scipy の 2 つだけで、OpenCV / scikit-image / torch / GUI / 点群 I/O / 産業 I/O はすべて opt-in の extras。`pyproject.toml` の実定義から機械生成しています（extras が増えたのに図が古いままなら生成スクリプトが fail する作り）。*
+
 **「公開知識からの再実装」**は、一番地味ですが一番譲れない一線です。産業用の商用ソフトウェアからコードを持ってくれば、表面的にはもっと早く"追いつく"ことができたかもしれません。それをしないのは、**倫理的な一線**であると同時に、**長期的に見て自分の理解が深まる道**でもあるからです。論文を読み、アルゴリズムを自分の手で書き直すという工程を飛ばさないことで、「なぜこの op がこの結果を返すのか」を**本当に説明できる**状態を保っています。
 
 ---
