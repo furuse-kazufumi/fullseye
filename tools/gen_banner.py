@@ -176,7 +176,7 @@ MOSAIC_TILES = [
     ("academic_space_mars.png",     (0.780, 0.000, 1.000, 1.000), "real"),
     ("industrial_blobs.png",        (0.340, 0.000, 0.660, 0.850), "demo"),
     ("academic_met_supercell.png",  (0.672, 0.000, 1.000, 1.000), "ai"),
-    ("science_fourier_stars.png",   (0.050, 0.060, 0.500, 0.940), "demo"),
+    ("science_fourier_stars.png",   (0.520, 0.520, 0.980, 0.980), "demo"),
     ("academic_paleo_feathered.png", (0.672, 0.000, 1.000, 1.000), "ai"),
     ("industrial_barcode.png",      (0.000, 0.000, 1.000, 0.850), "demo"),
     ("evis_stereo_fullseye_still.png", (0.500, 0.000, 1.000, 1.000), "demo"),
