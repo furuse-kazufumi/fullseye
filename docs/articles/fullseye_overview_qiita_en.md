@@ -656,6 +656,32 @@ From there, **dragging the mouse swings the viewpoint around** and **the wheel z
 
 *↑ The Ctrl+3 3D surface view — the relief of a depth render of asteroid Itokawa's real shape model (JAXA Hayabusa / Gaskell model). In the app you rotate this very scene by mouse drag and zoom with the wheel (the image is a `renderToImage` still of the same GL scene).*
 
+### Meshes and Point Clouds You Can Spin — the Interactive 3D Viewer (Ctrl+4)
+
+The 3D surface (Ctrl+3) was height-fields only. In the final stretch of this compilation's work I added an **interactive 3D viewer that lets you spin meshes and point clouds directly with the mouse** (`Ctrl+4`, or the View menu): left-drag orbits, wheel zooms, Shift+drag pans, R resets, W toggles wireframe.
+
+[![Studio's interactive 3D viewer — the 49,152-face Itokawa mesh](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_viewer_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_viewer.png)
+
+*↑ The interactive 3D viewer showing the real Itokawa mesh (24,578 vertices, 49,152 faces). You turn it with the mouse and read the relief from how the Lambert lighting falls.*
+
+Honestly stated, the implementation is a **software rasterizer — no GPU**. The choice was made by measurement, not resignation: a GL implementation's test path dies completely in CI's offscreen environment and is fragile over remote desktop, while the software path means **tests and the real machine share one code path**. Measured: 66 ms at 200k points, 349 ms at 1M (480px) — 1M points is not interactive at full resolution, so during drag/zoom the viewer shows a uniform 250k-point decimated preview (honestly labeled in the HUD) and re-renders in full the moment you release. Mesh drawing is a Lambert splat of vertices + face centroids, not filled-triangle rendering (high-quality stills remain the job of the existing `render3d.render_mesh`).
+
+One more honest disclosure — the first version of this viewer had a **hidden occlusion bug: the depth sort ran backwards, so far points painted over near points**. Worse, the camera-math test itself had pinned the reversed convention as "correct," so it sailed through. The pre-publication adversarial review (two independent AI reviewers) proved it with a sphere painted red on the near hemisphere and blue on the far one (before the fix: 20 visible red pixels vs 22,222 blue; after: 22,229 red vs 13 blue), and it was fixed together with a regression test that actually verifies occlusion. "Having tests" and "having tests that verify the right convention" are different things — a lesson this article keeps repeating, and it showed up one more time right before publication.
+
+### Crossing Between Regions and Features — Feature Inspection (Ctrl+F5)
+
+One of HDevelop's staple tools inspects the features of multiple labeled regions in a table. Studio now has the same (`Ctrl+F5`, Tools menu).
+
+[![Feature Inspection — bidirectional region-and-feature-table navigation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection.png)
+
+*↑ 2D Feature Inspection — pick features from the checklist (area, centroid, circularity, eccentricity, gray statistics and more — reusing the existing regionprops / gray_features implementations) and get a sortable table of rows = regions, columns = features. **Select a row and the matching region lights up amber in the image; click the image and the table jumps to that region's row.** CSV copy included.*
+
+[![3D Feature Inspection — per-cluster features + viewer highlight](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection_3d_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection_3d.png)
+
+*↑ The same dialog's 3D tab — cluster a point cloud with `euclidean_clusters` and tabulate per-cluster point counts, centroid, extents, and OBB dimensions (strictly what the existing ops3d ops provide). **Selecting a row highlights that cluster in the embedded interactive 3D viewer.***
+
+The same idiom works from scripts too. A **disp directive family** matching HDevelop's `disp_image` / `disp_object_model_3d` (`disp_image (n)` / `disp_region (n)` / `disp_points3d ('file')` / `disp_mesh3d ('file')`) now rides the dev-window system, so a program can lay out "input, intermediate, result in separate windows" in 3D as well as 2D (Python API: `studio.disp_points3d(P)` etc. Being side-effecting display operators, they are deliberately kept out of the pure-transform op registry — and out of the HALCON coverage count).
+
 ### System Settings — the Settings Tree
 
 `Tools ▸ System settings…` (`Ctrl+,`) is a category-tree settings screen. **Execution** (worker thread count, operator timeout), **Windows** (the cap on graphics windows), **Display** (default colormap, region drawing mode), **Editor** (font size, the Python Editor's interpreter) — the settings corresponding to HDevelop's `set_system`, gathered on one screen. The **Command palette** on `Ctrl+P` fuzzy-searches any action or any operator by name and runs it immediately, so a full session's worth of operations can stay on the keyboard without walking menus.

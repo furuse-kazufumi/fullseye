@@ -17,7 +17,17 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Adaptive (tiled) histogram equalization with inter-tile bilinear blending.
+
+    Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the
+    H % nb / W % nb remainder), each tile's normalised CDF is its local tone map,
+    and every pixel blends the maps of its (up to) 4 nearest tile centres with
+    bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).
+
+    2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化
+    しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の
+    近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の
+    連続版になっている。
 
 ## 詳しい使い方ガイド
 
