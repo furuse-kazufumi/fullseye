@@ -107,9 +107,10 @@
     "title": "ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ",
     "ops": [
       "disparity_subpixel (stereo)",
+      "disparity_confidence (stereo)",
       "colorize_disparity",
       "euclidean_clusters",
-      "obb"
+      "fit_rectangle2"
     ],
     "data": "MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)",
     "synthetic": true,

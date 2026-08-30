@@ -923,8 +923,8 @@ def subject_stereo_obstacles(log=print) -> dict:
     return {
         "file": "phai_stereo_obstacles.png",
         "title": "ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ",
-        "ops": ["disparity_subpixel (stereo)", "colorize_disparity",
-                "euclidean_clusters", "obb"],
+        "ops": ["disparity_subpixel (stereo)", "disparity_confidence (stereo)",
+                "colorize_disparity", "euclidean_clusters", "fit_rectangle2"],
         "data": "MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)",
         "synthetic": True,
         "caption": ("2 台のカメラ画像のズレ(視差)をブロックマッチングで求め、"
