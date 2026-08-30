@@ -62,12 +62,15 @@ AB = [(0.3, 0.4), (0.6, 0.7), (0.15, 0.85)]
 def test_registry_names_unique_and_prefixed():
     names = [o.name for o in OPS]
     assert len(names) == len(set(names)), "duplicate op names"
-    assert all(n.startswith("r2_") for n in names)
+    # em_skeleton はアルゴリズム名(Eckhardt-Maderlechner)を冠する意図的な例外
+    assert all(n.startswith("r2_") or n == "em_skeleton" for n in names)
     # halcon is always a str; it MAY be "" for a genuine op that does not claim a
     # HALCON name (e.g. r2_smallest_rectangle1 duplicates a core op's coverage, so
-    # it carries no name to avoid a double coverage-claim).
+    # it carries no name to avoid a double coverage-claim; em_skeleton likewise —
+    # `skeleton` coverage is already claimed by the core skeleton op).
     assert all(isinstance(o.halcon, str) for o in OPS)
-    assert {o.name for o in OPS if not o.halcon} == {"r2_smallest_rectangle1"}
+    assert ({o.name for o in OPS if not o.halcon}
+            == {"r2_smallest_rectangle1", "em_skeleton"})
     # contlength is honestly skipped, not silently faked
     assert "contlength" in R2.SKIPPED
     assert "contlength" not in {o.halcon for o in OPS}
