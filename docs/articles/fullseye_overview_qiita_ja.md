@@ -1,5 +1,7 @@
 # 説明できる古典画像処理を「スキル」として1000個持ち歩く ―― Physical AI のための自作ビジョン工房 **Fullseye** をつくっている話
 
+> English version: [fullseye_overview_qiita_en.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_en.md)
+
 ![小惑星イトカワの実点群を、自作レンダラでターンテーブル表示(全部 numpy 自前実装)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif)
 
 これは小惑星 **25143 イトカワ**の実データ点群(はやぶさ探査機の観測から作られた Gaskell 形状モデル、JAXA DARTS アーカイブ公開)を、本記事の主役 **Fullseye** の自作 3D レンダラで回しているところです。点群の読み込みからレンダリング・岩石マテリアル・影まで、**すべて numpy の自前実装**。この「目」をどう作ってきたかの話をします。
