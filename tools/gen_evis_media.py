@@ -226,8 +226,10 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
     wr.close()
     print(f"track -> {out}  ({out.stat().st_size/1e6:.1f} MB)")
     n = len(frames[::step])
+    n_vis = sum(1 for f in frames[::step] if f.get("tip_n", 0) >= 10)
     print(f"  VALIDATION: bean detected {n_det}/{n} frames "
-          f"({100*n_det/n:.1f}%)  centroid err vs truth: "
+          f"({100*n_det/n:.1f}%); visible in tip cam on {n_vis} frames "
+          f"-> {100*n_det/max(n_vis,1):.1f}% of visible;  centroid err vs truth: "
           f"median {np.median(px_errs):.2f}px  max {np.max(px_errs):.2f}px"
           if px_errs else "  VALIDATION: no ground-truth comparisons")
     if rep is not None:
