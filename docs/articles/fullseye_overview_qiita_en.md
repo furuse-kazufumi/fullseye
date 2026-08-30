@@ -34,6 +34,18 @@ First, one image. This is output from Fullseye's 3D renderer (hand-written numpy
 
 Expect roughly 20 minutes of reading. It's long, so feel free to jump from the table of contents to whichever layer interests you.
 
+### Sorting the Claims by Maturity, Up Front
+
+This is a long article, so let me sort **which claims sit at which stage** before we start. The same Status labels appear at the top of the relevant chapters.
+
+| Tier | Status label | What it covers in this article |
+|---|---|---|
+| **Implemented & reproducible** | `Production-ready / Verified` | The 731 2-D + 265 3-D ops, type contracts and the unified interface, Studio, the PyPI release, 6,238 tests, the machine-tallied 982/2,313 HALCON mapping, and the real outputs behind every exhibit and demo |
+| **Under validation** | `PoC / Research prototype` | Evolutionary pipeline design (hold-out evaluated, bounded settings), natural-language-to-pipeline via RAG, and the Physical AI perception stack (validated in simulation; real hardware and sim-to-real are untouched) |
+| **Future vision** | `Roadmap / Design proposal` | A comprehensive op foundation for robots, an AI autonomously selecting and running the ~1,000 ops, and a shared perception base for industrial inspection and Physical AI |
+
+Every number is a real measurement. This sorting is itself one of the mechanisms for not overselling.
+
 ---
 
 ## Getting Started (Installation, Up Front)
