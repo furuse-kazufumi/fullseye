@@ -833,10 +833,78 @@ def _sh_img_feat(p):
 
 
 # ---- image -> contour (XLD) and contour ops -------------------------------- #
+# Clockwise ring of 8-neighbour offsets: N, NE, E, SE, S, SW, W, NW.
+_RING8 = ((-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1), (0, -1), (-1, -1))
+_RING8_IDX = {d: i for i, d in enumerate(_RING8)}
+
+
+def _moore_boundaries(mask):
+    """Outer boundary of every 8-connected component, in **trace order**.
+
+    Moore-neighbour tracing with Jacob's stopping criterion (pure numpy/scipy —
+    the no-skimage fallback for `gen_contour_region_xld`). Each returned array is
+    (N, 2) float64 (row, col) pixel coordinates walking the component's outer
+    boundary; the loop is closed (last point == first point) so downstream
+    arc-length consumers (elliptic Fourier, perimeter) see a closed curve.
+    Adjacent points are 8-neighbours, so consecutive distances are <= sqrt(2).
+    """
+    H, W = mask.shape
+    lab, n = ndimage.label(mask, structure=np.ones((3, 3), bool))
+    out = []
+    for i in range(1, n + 1):
+        comp = lab == i
+        ys, xs = np.nonzero(comp)
+        sy, sx = int(ys[0]), int(xs[0])         # raster-first pixel: W neighbour is bg
+        pts = [(sy, sx)]
+        # backtrack direction: from the current pixel toward the last background
+        # pixel examined (start: the West neighbour, guaranteed background).
+        back = 6
+        cy, cx, cb = sy, sx, back
+        limit = 4 * int(comp.sum()) + 8         # hard cap: boundary <= 4*area
+        for _ in range(limit):
+            step = None
+            for k in range(1, 9):               # clockwise sweep after the backtrack
+                j = (cb + k) % 8
+                ny, nx = cy + _RING8[j][0], cx + _RING8[j][1]
+                if 0 <= ny < H and 0 <= nx < W and comp[ny, nx]:
+                    step = (j, ny, nx)
+                    break
+            if step is None:
+                break                            # isolated single pixel
+            j, ny, nx = step
+            # new backtrack = the (background) neighbour examined just before the
+            # hit, re-expressed as a direction from the NEW pixel. Adjacent ring
+            # cells are 8-neighbours of each other, so the delta is a ring index.
+            py, px = cy + _RING8[(j - 1) % 8][0], cx + _RING8[(j - 1) % 8][1]
+            nb = _RING8_IDX[(py - ny, px - nx)]
+            cy, cx, cb = ny, nx, nb
+            if (cy, cx) == (sy, sx) and cb == back:
+                break                            # Jacob: start re-entered same way
+            pts.append((cy, cx))
+        pts.append((sy, sx))                     # close the loop
+        out.append(np.asarray(pts, np.float64))
+    return out
+
+
 def _sh_xld(p):
     kind = p["kind"]
 
     def fn(v, a, b):
+        if kind == "region_boundary":
+            # gen_contour_region_xld: region -> boundary contours in TRACE order.
+            # 2026-08-30 (KNOWN_ISSUES #3): this op used the generic
+            # "edges_sub_pix" path, whose points come from np.where (raster
+            # order), silently breaking order-dependent consumers
+            # (fourierdesc.elliptic_fourier collapsed to one axis). skimage
+            # find_contours yields sub-pixel traced loops; the Moore tracer is
+            # the numpy-only fallback (trace order, pixel resolution).
+            m = _bin(v)
+            if _HAS_SK:
+                pm = np.pad(m.astype(np.float64), 1)     # close border-touching loops
+                cs = [c - 1.0 for c in skmeasure.find_contours(pm, 0.5) if len(c) >= 3]
+            else:
+                cs = [c for c in _moore_boundaries(m) if len(c) >= 3]
+            return {"shape": m.shape, "cs": cs}
         if kind == "edges_sub_pix":
             x = np.asarray(v, np.float64)
             m = _norm(np.hypot(ndimage.sobel(x, 1), ndimage.sobel(x, 0)))

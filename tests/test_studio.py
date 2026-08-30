@@ -3005,3 +3005,273 @@ def test_suggest_cluster_tol_scales_with_spacing():
     t2 = studio.suggest_cluster_tol(g * 10.0)               # 10x spacing -> 10x tol
     assert abs(t2 / t1 - 10.0) < 0.5
     assert studio.suggest_cluster_tol(np.zeros((1, 3))) == 0.05
+
+
+# --------------------------------------------------------------------------- #
+# Regression tests for the 2026-08-30 adversarial review (3-D viewer / disp_*)
+# --------------------------------------------------------------------------- #
+def _uv_sphere_red_near_blue_far():
+    """UV sphere whose NEAR hemisphere (y < 0 at yaw=0/pitch=0, camera looks
+    along +y) is red and whose far hemisphere is blue."""
+    u = np.linspace(0, 2 * np.pi, 200, endpoint=False)
+    v = np.linspace(1e-3, np.pi - 1e-3, 100)
+    uu, vv = np.meshgrid(u, v)
+    P = np.stack([np.sin(vv) * np.cos(uu), np.sin(vv) * np.sin(uu),
+                  np.cos(vv)], axis=-1).reshape(-1, 3)
+    C = np.where((P[:, 1] < 0)[:, None], [[1.0, 0.0, 0.0]], [[0.0, 0.0, 1.0]])
+    return P, C
+
+
+def test_render_points_frame_occlusion_near_over_far():
+    """Painter's-algorithm regression (2026-08-30 finding: depth sort was
+    inverted, far points overwrote near ones): on a red-near / blue-far UV
+    sphere the visible pixels must be overwhelmingly red."""
+    P, C = _uv_sphere_red_near_blue_far()
+    img = studio.render_points_frame(P, colors=C, yaw=0.0, pitch=0.0, size=240,
+                                     center=(0, 0, 0), radius=1.0)
+    red = int(((img[:, :, 0] > 0.9) & (img[:, :, 2] < 0.1)).sum())
+    blue = int(((img[:, :, 2] > 0.9) & (img[:, :, 0] < 0.1)).sum())
+    assert red > 10 * max(blue, 1), "near hemisphere must occlude the far one"
+
+
+def test_render_points_frame_nan_vertices_silent_and_filtered():
+    """Non-finite vertices are dropped up front - no per-frame RuntimeWarning
+    from the float->int splat cast, and finite points still render."""
+    import warnings
+    P = np.array([[0.0, 0.0, 0.0], [np.nan, 0.0, 0.0], [0.0, np.inf, 0.0]])
+    C = np.array([[1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        img = studio.render_points_frame(P, colors=C, size=64,
+                                         center=(0, 0, 0), radius=1.0)
+    assert img[32, 32, 0] == 1.0                            # finite red point survived
+    # all-NaN cloud renders the empty background without warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        empty = studio.render_points_frame(np.full((4, 3), np.nan), size=32)
+    assert np.allclose(empty, empty[0, 0])
+
+
+def test_validate_mesh_faces_contract():
+    V = np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 1.0, 0]])
+    Vv, Ff = studio.validate_mesh_faces(V, np.array([[0, 1, 2]]))
+    assert Vv.shape == (3, 3) and Ff.shape == (1, 3)
+    with pytest.raises(ValueError):
+        studio.validate_mesh_faces(V, np.array([[0, 1, 99]]))   # out of range
+    with pytest.raises(ValueError):
+        studio.validate_mesh_faces(V, np.array([[0, 1, -7]]))   # negative
+    with pytest.raises(ValueError):
+        studio.validate_mesh_faces(V, np.array([[0, 1]]))       # wrong shape
+
+
+def test_disp_mesh3d_corrupt_faces_fail_soft(tmp_path):
+    """A mesh file whose faces reference nonexistent vertices must log+flash
+    (ok=False) instead of crashing the directive pass (2026-08-30 finding)."""
+    _app()
+    bad = tmp_path / "bad.obj"
+    bad.write_text("v 0 0 0\nv 1 0 0\nv 0 1 0\nf 1 2 100\n")
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._apply_dev_directives("disp_mesh3d ('%s')" % str(bad).replace("\\", "/"))
+    rec = win._state["disp_log"][-1]
+    assert rec["op"] == "disp_mesh3d" and rec["ok"] is False
+    assert "error" in rec
+
+
+def test_disp_image_zero_means_final_result():
+    """Contract fix (2026-08-30): 'disp_image (0)' = the FINAL result exactly
+    like an omitted argument (0-1=-1 used to show the raw input image)."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    model.add_stage("gaussian")
+    model.add_stage("otsu")
+    win._apply_dev_directives("disp_image (0)")
+    win._apply_dev_directives("disp_image")
+    win._apply_dev_directives("disp_image (1)")
+    zero, omitted, one = win._state["disp_log"][-3:]
+    assert zero["ok"] and omitted["ok"] and one["ok"]
+    assert zero["stage"] == omitted["stage"] == len(model.stages)   # final
+    assert one["stage"] == 1
+
+
+def test_disp3d_relative_path_resolves_from_cwd(tmp_path, monkeypatch):
+    """Relative disp_* paths resolve against the process cwd first (2026-08-30
+    finding: they used to resolve only against the studio.py directory)."""
+    _app()
+    P = studio.demo_cluster_cloud(n_per=25)[0]
+    (tmp_path / "cloud.xyz").write_text(
+        "\n".join("%f %f %f" % tuple(p) for p in P))
+    monkeypatch.chdir(tmp_path)
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._apply_dev_directives("disp_points3d ('cloud.xyz')")
+    rec = win._state["disp_log"][-1]
+    assert rec["op"] == "disp_points3d" and rec["ok"] is True
+    assert rec["n_points"] == P.shape[0]
+
+
+def test_disp3d_can_create_app_judgment(monkeypatch):
+    """Headless judgment (2026-08-30 finding: QT_QPA_PLATFORM=='offscreen' was
+    the only check; a display-less Linux would abort in QApplication())."""
+    import sys as _sys
+    monkeypatch.delenv("QT_QPA_PLATFORM", raising=False)
+    monkeypatch.delenv("DISPLAY", raising=False)
+    monkeypatch.delenv("WAYLAND_DISPLAY", raising=False)
+    monkeypatch.setattr(_sys, "platform", "linux")
+    assert studio._disp3d_can_create_app() is False         # no display -> unsafe
+    monkeypatch.setenv("DISPLAY", ":0")
+    assert studio._disp3d_can_create_app() is True          # X11 display
+    monkeypatch.delenv("DISPLAY")
+    monkeypatch.setenv("WAYLAND_DISPLAY", "wayland-0")
+    assert studio._disp3d_can_create_app() is True          # wayland display
+    monkeypatch.delenv("WAYLAND_DISPLAY")
+    monkeypatch.setenv("QT_QPA_PLATFORM", "minimal")
+    assert studio._disp3d_can_create_app() is True          # explicit platform
+    monkeypatch.delenv("QT_QPA_PLATFORM")
+    monkeypatch.setattr(_sys, "platform", "win32")
+    assert studio._disp3d_can_create_app() is True          # Windows has a display
+
+
+def test_disp3d_keepalive_registry_and_block_param():
+    """Public API contract (2026-08-30 finding): under an existing QApplication
+    a discarded return value must NOT let GC close the window - the viewer is
+    registered in a module keepalive and released on close. block= is accepted."""
+    _app()
+    P = studio.demo_cluster_cloud(n_per=20)[0]
+    w = studio.disp_points3d(P, block=False)
+    assert w in studio._DISP3D_KEEPALIVE
+    w.close()
+    assert w not in studio._DISP3D_KEEPALIVE                # close releases the ref
+    w.deleteLater()
+    V = np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    F = np.array([[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]])
+    m = studio.disp_mesh3d(V, F)
+    assert m in studio._DISP3D_KEEPALIVE
+    m.close(); m.deleteLater()
+    assert m not in studio._DISP3D_KEEPALIVE
+
+
+def test_viewer3d_wheel_event_zooms_and_resize_invalidates():
+    """Real-event coverage (2026-08-30 gap): a QWheelEvent through the widget
+    changes _zoom; a QResizeEvent invalidates the cached frame."""
+    _app()
+    from PySide6 import QtCore, QtGui, QtWidgets
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(300, 300)
+    v.set_points(studio.demo_cluster_cloud(n_per=30)[0])
+    z0 = v._zoom
+    ev = QtGui.QWheelEvent(
+        QtCore.QPointF(150, 150), QtCore.QPointF(150, 150),
+        QtCore.QPoint(0, 0), QtCore.QPoint(0, 120),
+        QtCore.Qt.NoButton, QtCore.Qt.NoModifier,
+        QtCore.Qt.ScrollUpdate, False)
+    QtWidgets.QApplication.sendEvent(v, ev)
+    assert v._zoom > z0                                     # wheel-up zooms in
+    ev2 = QtGui.QWheelEvent(
+        QtCore.QPointF(150, 150), QtCore.QPointF(150, 150),
+        QtCore.QPoint(0, 0), QtCore.QPoint(0, -120),
+        QtCore.Qt.NoButton, QtCore.Qt.NoModifier,
+        QtCore.Qt.ScrollUpdate, False)
+    QtWidgets.QApplication.sendEvent(v, ev2)
+    assert abs(v._zoom - z0) < 1e-9                         # wheel-down zooms back out
+    v._frame = np.zeros((4, 4, 3))
+    QtWidgets.QApplication.sendEvent(
+        v, QtGui.QResizeEvent(QtCore.QSize(320, 320), QtCore.QSize(300, 300)))
+    assert v._frame is None                                 # resize invalidates the frame
+    v.deleteLater()
+
+
+def test_viewer3d_interaction_decimation_hits_budget():
+    """Decimation honesty (2026-08-30 finding: stride thinning drew far fewer
+    points than the advertised budget - 500,001 -> 166,667). The uniform pick
+    must draw exactly DRAG_BUDGET points during a drag AND a wheel burst,
+    and the full count at rest."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(300, 300)
+    rng = np.random.default_rng(0)
+    v.set_points(rng.normal(size=(5001, 3)))
+    v.DRAG_BUDGET = 1000                                    # instance override for speed
+    v._drag = ("orbit", None)
+    v.frame_rgb()
+    assert v._n_drawn == 1000                               # exactly the budget
+    v._drag = None
+    v._wheeling = True                                      # wheel burst decimates too
+    v.frame_rgb()
+    assert v._n_drawn == 1000
+    v._wheeling = False
+    v.frame_rgb()
+    assert v._n_drawn == 5001                               # full res at rest
+    v.deleteLater()
+
+
+def test_feature_inspection_reopen_releases_old_dialog():
+    """Leak regression (2026-08-30 finding): Ctrl+F5 reopen must destroy the
+    previous dialog (WA_DeleteOnClose + deleteLater), not stack hidden copies
+    holding their feature dicts."""
+    _app()
+    import shiboken6
+    from PySide6 import QtCore
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    model.add_stage("otsu")
+    win._actions["run_all"].trigger()
+    d1 = win._feature_inspection["open"]()
+    d2 = win._feature_inspection["open"]()
+    assert win._feature_inspection["dialog"]() is d2
+    QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
+    assert not shiboken6.isValid(d1), "reopen must destroy the previous dialog"
+    assert shiboken6.isValid(d2)
+    d2.close()                                              # WA_DeleteOnClose set
+    QtCore.QCoreApplication.sendPostedEvents(None, QtCore.QEvent.DeferredDelete)
+    assert not shiboken6.isValid(d2)
+    assert win._feature_inspection["dialog"]() is None      # stale ref cleared
+
+
+def _qt_descending():
+    from PySide6 import QtCore
+    return QtCore.Qt.DescendingOrder
+
+
+def test_feature_inspection_sorted_table_keeps_region_mapping():
+    """Row<->region integrity after a column sort (2026-08-30 gap, previously
+    verified by hand): sorting the table must keep every row's UserRole obj
+    index, the amber highlight must land on the SELECTED region's pixels, and
+    an image click must select the matching (sorted) row."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(64)))
+    model.add_stage("otsu")
+    win._actions["run_all"].trigger()
+    win._feature_inspection["open"]()
+    dlg = win._feature_inspection["dialog"]()
+    f = dlg._feat
+    table, feat = f["table"], f["state"]
+    assert table.rowCount() >= 2
+    area_col = feat["headers"].index("area")
+    table.sortItems(area_col, _qt_descending())             # sort by area, descending
+    # every row still maps to the right object: the row's area cell must equal
+    # the mapped object's area
+    for r in range(table.rowCount()):
+        idx = table.item(r, 0).data(_qt_userrole())
+        assert float(table.item(r, area_col).data(_qt_editrole())) == pytest.approx(
+            float(feat["objs"][idx]["area"]), rel=1e-4)
+    table.selectRow(table.rowCount() - 1)                   # smallest region
+    sel = table.item(table.rowCount() - 1, 0).data(_qt_userrole())
+    rgb = f["view"]._data
+    cy, cx = (int(c) for c in feat["objs"][sel]["centroid"])
+    # amber highlight actually rendered on the selected region (not just any render)
+    assert rgb is not None and rgb[cy, cx, 0] > rgb[cy, cx, 2]
+    other = next(i for i in range(len(feat["objs"])) if i != sel)
+    oy, ox = (int(c) for c in feat["objs"][other]["centroid"])
+    assert rgb[oy, ox, 1] >= rgb[oy, ox, 0]                 # others stay teal-ish
+    # image click selects the sorted row that carries this obj index
+    table.clearSelection()
+    f["click"](cx, cy)
+    rows = {i.row() for i in table.selectedIndexes()}
+    assert len(rows) == 1
+    assert table.item(rows.pop(), 0).data(_qt_userrole()) == sel
+    dlg.close()
+
+
+def _qt_editrole():
+    from PySide6 import QtCore
+    return QtCore.Qt.EditRole
