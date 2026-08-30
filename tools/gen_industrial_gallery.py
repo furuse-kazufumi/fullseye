@@ -962,14 +962,24 @@ def subject_stereo_obstacles(log=print) -> dict:
     ax[0].imshow(np.clip(left, 0, 1))
     ax[0].axis("off")
     ax[0].set_title("左カメラ (MuJoCo, 物体 4 個)", color=fg, fontsize=12)
-    dd = np.where(valid, disp, np.nan)
-    ax[1].imshow(fs.colorize_disparity(np.nan_to_num(dd)), interpolation="nearest")
+    # 「使う視差」だけを見せる: 無効画素 (低信頼/スペックル/縁) は無彩色でマスク
+    dvis = fs.colorize_disparity(np.where(valid, disp, 0.0))
+    dvis = np.where(valid[..., None], dvis, 0.16)
+    ax[1].imshow(np.clip(dvis, 0, 1), interpolation="nearest")
     ax[1].axis("off")
-    ax[1].set_title("視差 (block matching, サブピクセル)", color=fg, fontsize=12)
+    ax[1].set_title("視差 (block matching + speckle/信頼度ゲート後)", color=fg,
+                    fontsize=12)
     ax[2].set_facecolor(bg)
-    gnd = P[P[:, 2] <= 0.10]
-    sub = gnd[:: max(1, len(gnd) // 4000)]
-    ax[2].scatter(sub[:, 0], sub[:, 1], s=1, c="#2a2e3a")
+    # 視野扇形 (カメラの見える範囲) を薄く敷く
+    from matplotlib.patches import Wedge
+    hfov = math.degrees(math.atan2(res / 2, f_px))
+    ax[2].add_patch(Wedge((cam_pos[0], cam_pos[1]), 4.2, 90 - hfov, 90 + hfov,
+                          facecolor="#232733", edgecolor="#3a3f4e", lw=0.8,
+                          zorder=0))
+    # 背景 (地面) 点は主役でないので、地面らしい点だけを暗く小さく
+    gnd = P[np.abs(P[:, 2]) <= 0.05]
+    sub = gnd[:: max(1, len(gnd) // 3000)]
+    ax[2].scatter(sub[:, 0], sub[:, 1], s=0.8, c="#343a49", alpha=0.5, zorder=1)
     cmapo = plt.get_cmap("turbo")
     for i, idx in enumerate(clusters):
         c = cmapo(0.15 + 0.7 * i / max(1, len(clusters) - 1))
