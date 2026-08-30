@@ -1007,7 +1007,8 @@ def _build_feature_tile_specs(img, log=print) -> dict:
         bar_img[60:240, x:x + w] = 0.05
         x += w + 10 + (k * 7) % 12
     bars = fullseye.apply(bar_img, "decode_barcode")
-    assert bars == float(n_bars), f"decode_barcode = {bars}, expected {n_bars} bars"
+    if bars != float(n_bars):
+        raise AssertionError(f"decode_barcode = {bars}, expected {n_bars} bars")
     specs["decode_barcode"] = {
         "display": bar_img,
         "value_text": f"bars = {int(bars)}",
