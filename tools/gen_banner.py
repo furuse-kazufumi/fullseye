@@ -171,7 +171,7 @@ MOSAIC_TILES = [
     ("academic_paleo_trex.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
     ("phai_focus_stack.png",        (0.670, 0.000, 1.000, 0.500), "demo"),
     ("academic_bio_neuron.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
-    ("3d:watershed3d.png",          (0.620, 0.150, 0.950, 0.950), "demo"),
+    ("3d:watershed3d.png",          (0.660, 0.250, 0.930, 0.900), "demo"),
     # -- row 7 ------------------------------------------------------------
     ("academic_space_mars.png",     (0.780, 0.000, 1.000, 1.000), "real"),
     ("industrial_blobs.png",        (0.340, 0.000, 0.660, 0.850), "demo"),
