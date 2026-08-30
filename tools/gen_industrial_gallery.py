@@ -614,7 +614,8 @@ def subject_blob_pellets(log=print) -> dict:
                     "距離変換ピークを種にしたマーカー式 watershed で接触粒を切り分けて"
                     "計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・"
                     "大粒(橙)に色分け。粉粒体の品質検査の型。"),
-        "verify": f"配置 60 粒 (接触 6 組込み) に対し計数 {len(objs)} (一致を assert 済)",
+        "verify": (f"配置 60 粒 (接触 6 組込み) に対し計数 {len(objs)} 一致 + 真値センターとの"
+                   f" 1:1 重心照合 max {float(dists.max()):.2f}px ≤2px (双方 assert 済)"),
     }
 
 
