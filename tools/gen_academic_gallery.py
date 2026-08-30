@@ -475,7 +475,7 @@ def rec_edges(col):
 def rec_filaments(col):
     g = gray(col)
     c = ap(g, "cv_clahe", 0.6, 0.5)
-    f = norm01(ap(c, "sk_frangi", 0.5, 0.5))
+    f = norm01(ap(c, "sk_frangi", 0.5, 0.5)) ** 0.5  # gamma: lift faint filaments
     return ([("original", col), ("cv_clahe", c), ("sk_frangi filaments", heat(f))],
             ["rgb1_to_gray", "cv_clahe", "sk_frangi"])
 
@@ -644,8 +644,8 @@ EXHIBITS = [
     # ----- 宇宙 (real, NASA public domain)
     ("space", "space_carina", ("nasa", "carina nebula cosmic cliffs webb"), "filaments",
      "星雲のフィラメント構造を sk_frangi(血管強調フィルタ)で抽出"),
-    ("space", "space_mars", ("nasa", "mars surface curiosity rover rocks"), "texture",
-     "火星表面の岩石テクスチャを std_filter / texture_laws で解析"),
+    ("space", "space_mars", ("nasa", "mars dunes hirise nili patera"), "texture",
+     "火星 Nili Patera 砂丘のテクスチャを std_filter / texture_laws で解析"),
     ("space", "space_galaxy", ("nasa", "spiral galaxy hubble messier 51"), "fft",
      "渦巻銀河の周波数構造を cx_fft スペクトルで可視化"),
     # ----- 地質学 (real NASA + AI)
