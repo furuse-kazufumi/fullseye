@@ -105,6 +105,86 @@ TILES = [
     ("phai_lidar_clusters.png",    (0.620, 0.120, 0.920, 0.830)),
 ]
 
+# ---------------------------------------------------------------------------
+# Mosaic variant (LinkedIn): 1200x1200, 7x7 = 49 tiles + slim brand band.
+# Each entry: (source key, fractional crop box, provenance)
+#   source key   "name.png" -> docs/articles/assets/, "3d:name.png" ->
+#                examples_3d/_gallery/
+#   provenance   "real" = real-world data, "demo" = Fullseye-rendered
+#                synthetic scene/figure, "ai" = AI-generated simulated source
+#                (processed panel only; capped below 1/3 of the grid).
+# Order = left-to-right, top-to-bottom; hand-interleaved for colour variety.
+# ---------------------------------------------------------------------------
+MOSAIC_W = MOSAIC_H = 1200
+MOSAIC_BAND_H = 96
+MOSAIC_MARGIN = 8
+MOSAIC_GAP = 5
+MOSAIC_COLS = MOSAIC_ROWS = 7
+MOSAIC_CORNER_R = 5
+MOSAIC_OUT = ASSETS / "fullseye_mosaic.png"
+
+MOSAIC_TILES = [
+    # -- row 1 ------------------------------------------------------------
+    ("itokawa_montage.png",         (0.655, 0.155, 0.860, 0.460), "real"),
+    ("science_edge_compass.png",    (0.505, 0.000, 1.000, 0.915), "demo"),
+    ("academic_med_blood_smear.png", (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("science_dino_xray.png",       (0.020, 0.400, 0.980, 0.920), "demo"),
+    ("academic_geo_mineral.png",    (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("phai_lidar_clusters.png",     (0.620, 0.120, 0.920, 0.830), "demo"),
+    ("academic_bot_fern.png",       (0.672, 0.000, 1.000, 1.000), "ai"),
+    # -- row 2 ------------------------------------------------------------
+    ("academic_space_carina.png",   (0.670, 0.000, 1.000, 0.930), "real"),
+    ("industrial_metrology.png",    (0.635, 0.020, 0.950, 0.800), "demo"),
+    ("science_distance_ripple.png", (0.670, 0.000, 1.000, 0.850), "demo"),
+    ("academic_arch_amphora.png",   (0.670, 0.000, 1.000, 0.940), "real"),
+    ("phai_stereo_obstacles.png",   (0.340, 0.000, 0.660, 1.000), "demo"),
+    ("academic_bio_diatoms.png",    (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("science_watershed_foam.png",  (0.505, 0.000, 1.000, 0.830), "demo"),
+    # -- row 3 ------------------------------------------------------------
+    ("academic_paleo_triceratops.png", (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("3d:render_beauty_hero.png",   (0.050, 0.050, 0.950, 0.950), "demo"),
+    ("academic_met_hurricane.png",  (0.800, 0.000, 1.000, 1.000), "real"),
+    ("physical_ai_montage.png",     (0.765, 0.200, 0.875, 0.445), "demo"),
+    ("academic_geo_thin_section.png", (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("evis_muscle_heatmap_still.png", (0.000, 0.000, 1.000, 1.000), "demo"),
+    ("academic_arch_cave_painting.png", (0.339, 0.000, 0.661, 1.000), "ai"),
+    # -- row 4 ------------------------------------------------------------
+    ("phai_binpick.png",            (0.670, 0.000, 1.000, 0.910), "demo"),
+    ("academic_bio_butterfly.png",  (0.339, 0.000, 0.661, 1.000), "ai"),
+    ("industrial_defect.png",       (0.370, 0.040, 0.540, 0.450), "demo"),
+    ("gear_hero.png",               (0.000, 0.000, 1.000, 1.000), "demo"),
+    ("academic_ocean_coral.png",    (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("science_alife_worlds.png",    (0.500, 0.080, 1.000, 0.900), "demo"),
+    ("academic_paleo_ammonite_real.png", (0.800, 0.000, 1.000, 1.000), "real"),
+    # -- row 5 ------------------------------------------------------------
+    ("academic_med_histology.png",  (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("science_dragon_anaglyph.png", (0.100, 0.100, 0.900, 0.900), "demo"),
+    ("academic_geo_earth.png",      (0.672, 0.000, 1.000, 1.000), "real"),
+    ("3d:fit_primitives_ext.png",   (0.020, 0.050, 0.480, 0.950), "demo"),
+    ("academic_med_chest_xray.png", (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("hand_hero.png",               (0.000, 0.000, 1.000, 1.000), "demo"),
+    ("academic_bot_pollen.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
+    # -- row 6 ------------------------------------------------------------
+    ("evis_bean_track_fullseye_still.png", (0.500, 0.000, 1.000, 1.000), "demo"),
+    ("academic_space_galaxy.png",   (0.339, 0.000, 0.661, 1.000), "real"),
+    ("op_taxonomy.png",             (0.680, 0.520, 1.000, 1.000), "demo"),
+    ("academic_paleo_trex.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("phai_focus_stack.png",        (0.670, 0.000, 1.000, 0.500), "demo"),
+    ("academic_bio_neuron.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("3d:watershed3d.png",          (0.500, 0.000, 1.000, 0.950), "demo"),
+    # -- row 7 ------------------------------------------------------------
+    ("academic_space_mars.png",     (0.780, 0.000, 1.000, 1.000), "real"),
+    ("industrial_blobs.png",        (0.340, 0.000, 0.660, 1.000), "demo"),
+    ("academic_met_supercell.png",  (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("science_fourier_stars.png",   (0.050, 0.060, 0.500, 0.940), "demo"),
+    ("academic_paleo_feathered.png", (0.672, 0.000, 1.000, 1.000), "ai"),
+    ("industrial_barcode.png",      (0.000, 0.000, 1.000, 0.850), "demo"),
+    ("evis_stereo_fullseye_still.png", (0.500, 0.000, 1.000, 1.000), "demo"),
+]
+
+MOSAIC_TAGLINE = ("~1,000 explainable classical vision ops "
+                  "(731 2-D + 265 3-D) · pure numpy")
+
 TITLE = "Fullseye"
 TAGLINE = ("~1,000 explainable classical vision ops "
            "(731 2-D + 265 3-D)  \u00b7  Physical AI sensing  \u00b7  pure numpy")
