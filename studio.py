@@ -6420,7 +6420,16 @@ def build_window(model=None):
         def _disp_3d(name, args, slot):
             path = str(args[0]) if args else ""
             if path and not os.path.isabs(path):
-                path = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+                # a relative path in a user's program means "relative to where I
+                # ran Studio" (process cwd) — resolve there first; fall back to
+                # the studio.py directory only when the cwd candidate is missing
+                # (keeps shipped demo programs working from any cwd).
+                cand = os.path.abspath(path)
+                if not os.path.exists(cand):
+                    alt = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+                    if os.path.exists(alt):
+                        cand = alt
+                path = cand
             sub = next((s for s in win._graphics_windows
                         if s in mdi.subWindowList()
                         and getattr(s, "_fs_disp3d_slot", None) == slot), None)
@@ -6429,32 +6438,35 @@ def build_window(model=None):
                     raise ValueError("%s needs a file path argument" % name)
                 if name == "disp_mesh3d":
                     import mesh as meshmod
-                    V, F = meshmod.read_mesh(path)[:2]
-                    data = ("mesh", np.asarray(V, np.float64), np.asarray(F, int), None)
+                    V, F = validate_mesh_faces(*meshmod.read_mesh(path)[:2])
+                    data = ("mesh", V, F, None)
                 elif name == "disp_points3d":
                     import mesh as meshmod
                     P, C = meshmod.read_points(path, with_colors=True)
                     data = ("points", P, None, C)
                 else:                              # disp_object_model_3d: dispatch on file
                     data = _load_3d_file(path)
+                # showing is inside the try too: a mesh that passed loading but
+                # still breaks the viewer (degenerate arrays etc.) must fail
+                # soft (log+flash), never crash the whole directive pass.
+                if sub is not None:                # re-Apply: reuse the slot's window
+                    v3 = getattr(sub, "_fs_viewer3d", None)
+                    if v3 is not None:
+                        (v3.set_mesh(data[1], data[2]) if data[0] == "mesh"
+                         else v3.set_points(data[1], colors=data[3]))
+                    win._current_gfx = sub
+                    _update_current_indicator()
+                else:
+                    sub = open_viewer3d_window(
+                        data, title="3D viewer (program %d)" % slot)
+                    if sub is None:                # window cap — already flashed
+                        _log_disp(name, args, False, error="graphics window limit")
+                        return
+                    sub._fs_disp3d_slot = slot
             except Exception as e:
                 _log_disp(name, args, False, error=truncate(e, 100))
                 flash("%s: %s" % (name, truncate(e, 100)))
                 return
-            if sub is not None:                    # re-Apply: reuse the slot's window
-                v3 = getattr(sub, "_fs_viewer3d", None)
-                if v3 is not None:
-                    (v3.set_mesh(data[1], data[2]) if data[0] == "mesh"
-                     else v3.set_points(data[1], colors=data[3]))
-                win._current_gfx = sub
-                _update_current_indicator()
-            else:
-                sub = open_viewer3d_window(
-                    data, title="3D viewer (program %d)" % slot)
-                if sub is None:                    # window cap — already flashed
-                    _log_disp(name, args, False, error="graphics window limit")
-                    return
-                sub._fs_disp3d_slot = slot
             _log_disp(name, args, True, kind=data[0],
                       n_points=int(np.asarray(data[1]).shape[0]))
 
