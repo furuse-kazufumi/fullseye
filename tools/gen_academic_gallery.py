@@ -58,7 +58,6 @@ DATA = os.path.join(ROOT, "data", "academic_samples")
 ASSETS = os.path.join(ROOT, "docs", "articles", "assets")
 RAW_BASE = "https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets"
 UA = "fullseye-academic-gallery/1.0 (open-data sample fetch; polite, low volume)"
-API_KEYS_PATH = r"C:\dev\api-keys.json"
 AI_MAX = 40  # hard cap on AI generations per full run (billing guard)
 
 FINDINGS: list[str] = []          # op bugs / oddities discovered while processing
