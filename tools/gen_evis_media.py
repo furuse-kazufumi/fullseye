@@ -13,7 +13,7 @@ and renders honest, verifiable videos for the Qiita overview article:
            disparity), compared per-frame against the simulator ground truth
            stored in chop_vision_meta.json (validation printed at end).
   track  : chopstick-tip camera -> green-margin channel -> fs.segment_objects
-           -> fs.draw_objects, with the tracked bean centroid trail.  Validated
+           -> fs.draw_objects (bbox + mask tint following the bean).  Validated
            against the ground-truth bean pixel centroid in the meta file.
   legacy : re-encode one existing evis gif (700-muscle activation heatmap) to
            H.264 mp4 for the article (no Fullseye processing - honest label).
