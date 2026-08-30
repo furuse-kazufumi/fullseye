@@ -245,8 +245,8 @@ def fetch_nasa(query: str, slug: str) -> tuple[str, dict] | None:
         data0 = item["data"][0]
         # asset manifest -> prefer ~large, else ~orig, else first jpg
         assets = json.loads(http_get(item["href"]))
-        urls = [u for u in assets["collection"]["items"]] if isinstance(assets["collection"]["items"][0], dict) else []
-        hrefs = [u["href"] for u in assets["collection"]["items"]]
+        raw_items = assets["collection"]["items"]
+        hrefs = [u["href"] if isinstance(u, dict) else str(u) for u in raw_items]
         pick = (next((u for u in hrefs if "~large" in u), None)
                 or next((u for u in hrefs if "~orig" in u and u.lower().endswith((".jpg", ".png"))), None)
                 or next((u for u in hrefs if u.lower().endswith(".jpg")), None))
