@@ -139,7 +139,7 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 
 [![evis の箸先カメラ映像に Fullseye の segment_objects → draw_objects を毎フレーム適用して豆を追跡（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
 
-*↑ ▶ ChopMimic 実験（evis_chopstick プロジェクトの実験素材）の箸先カメラ映像に、Fullseye の `segment_objects → draw_objects` を毎フレーム適用して豆を追跡した実出力。左=三人称視点（文脈用、無加工）、右=Fullseye が検出した豆の bbox。豆が写っている 163 フレームすべてで検出（可視フレーム検出率 100%、重心誤差は真値比で中央値 0.10px）。隠れて見えない 78 フレームは検出なし ―― 捏造はありません。*
+*↑ ▶ ChopMimic 実験（evis_chopstick プロジェクトの実験素材）の箸先カメラ映像に、Fullseye の `segment_objects → draw_objects` を毎フレーム適用して豆を追跡した実出力。左=三人称視点（文脈用、無加工）、右=Fullseye が検出した豆の bbox。豆が写っている 163 フレームすべてで検出（可視フレーム検出率 100%、重心誤差は真値比で中央値 0.10px・最大 14.5px＝部分遮蔽フレーム）。隠れて見えない 78 フレームは検出なし ―― 捏造はありません。*
 
 ---
 
