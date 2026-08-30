@@ -38,3 +38,5 @@
 | `academic_space_mars.png` | 宇宙 | The Active Dunes of Nili Patera | No | [NASA/JPL-Caltech/Univ. of Arizona](https://images.nasa.gov/details/PIA18244) — Public domain (NASA) | rgb1_to_gray, std_filter, texture_laws |
 
 生成日: 2026-08-30 / スクリプト: `tools/gen_academic_gallery.py`
+
+2026-08-30: BBBC001(HT29 細胞)展示はライセンス確認の結果 CC BY-NC-SA 3.0 と判明したため除去(当初 CC-BY 3.0 と誤記)。NC/SA 条項が本リポジトリの Apache-2.0+商用デュアルライセンスと非両立。
