@@ -716,6 +716,7 @@ def main() -> int:
         print(f"[run ] {name}")
         try:
             meta = fn()
+            meta["subject"] = name
             results.append(meta)
             print(f"[done] {name} -> {meta['file']}")
         except Exception as e:  # honest: 失敗は隠さずログ
