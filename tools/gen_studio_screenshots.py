@@ -192,7 +192,7 @@ def shot_ops3d(out_path: str) -> None:
     dlg = win._ops3d["dialog"]
     # show a representative op's generated help page (registration/ICP family)
     lst = win._ops3d["list"]
-    prefer = ("icp_register", "icp", "register_icp", "fpfh", "curvature3d")
+    prefer = ("icp_point2plane", "icp_point2point_3d", "principal_curvatures", "gicp")
     names = {}
     from PySide6 import QtCore
     for r in range(lst.count()):
