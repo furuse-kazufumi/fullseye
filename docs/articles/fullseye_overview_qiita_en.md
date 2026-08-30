@@ -797,7 +797,7 @@ Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, 
 
 [![Blood-cell counting on a blood-smear-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear.png)
 
-*↑ Blood cells in a blood-smear-**style** image segmented and counted (131 detected). **AI-generated simulated data**. Ops used: `segment_objects(otsu)`, `count_obj`, `colorize_labels`.*
+*↑ Blood cells in a blood-smear-**style** image segmented and counted (131 detected). **AI-generated simulated data**. Ops used: `segment_objects(otsu)`, `colorize_labels`.*
 
 [![Contour extraction of an anatomical-illustration-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart.png)
 
