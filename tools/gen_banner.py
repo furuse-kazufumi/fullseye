@@ -182,8 +182,8 @@ MOSAIC_TILES = [
     ("evis_stereo_fullseye_still.png", (0.500, 0.000, 1.000, 0.850), "demo"),
 ]
 
-MOSAIC_TAGLINE = ("~1,000 explainable classical vision ops "
-                  "(731 2-D + 265 3-D) · pure numpy")
+MOSAIC_TAGLINE = ("Open-source Python computer-vision library · "
+                  "~1,000 explainable classical ops (731 2-D + 265 3-D) · pure numpy")
 
 TITLE = "Fullseye"
 TAGLINE = ("~1,000 explainable classical vision ops "
