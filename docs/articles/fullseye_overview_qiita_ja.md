@@ -415,8 +415,6 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 パネルごとの説明と、これ以外の処理結果（3D レンダリング・メッシュ処理・ターンテーブル GIF など）の一覧は **[処理結果ギャラリー（docs/GALLERY.md）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)** へ。
 
-<!-- FIGURE: science-gallery -->
-
 ### 6つのセンサーをひとつずつ
 
 モンタージュの6パネルは、それぞれ独立したセンサー・シミュレーションです。同じ MuJoCo の合成シーン（緑の直方体・黄色の円柱・青い球・オレンジの箱・紫の板）を、6種類のセンサーの目を通して見るとどう変わるか――というのがこの絵の狙いです。1つずつ、原理を3段でかみくだきながら、パネルに焼き込まれた実測値を見ていきます。
