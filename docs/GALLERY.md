@@ -1,0 +1,111 @@
+# Fullseye ギャラリー / Gallery
+
+このページの位置づけ(Purpose of this page): ここに載っている図版はすべて
+`tools/gen_article_assets.py`(記事用モンタージュ・hero コピー・サムネ)および
+`tools/gen_showcase_gifs.py`(ターンテーブル GIF)を実行すれば**再生成できる実出力**です。
+モックアップ・手描き・合成画像は一切ありません(honest disclosure 規律。詳細は各生成元
+スクリプトの docstring を参照)。
+
+解説記事の側は読み込み負荷を下げるため幅 720px のサムネイル(`docs/articles/assets/thumbs/`)
+を使い、フルサイズ画像と「各パネルが何を表しているか」の説明はこのページに集約しています。
+
+---
+
+## 1. 記事用モンタージュ(フルサイズ + パネル解説)
+
+### 1.1 `physical_ai_montage.png` — Physical AI センサ・シミュレーション
+
+生成元: `tools/gen_article_assets.py::build_physical_ai_montage()`。各モジュールの
+`run_*_demo()` を実際に実行し、MuJoCo シーンをレンダ→センサモデルで処理した本物の出力を
+2x3 グリッドに並べたもの。
+
+![physical_ai_montage](articles/assets/physical_ai_montage.png)
+
+| パネル | モジュール / op | 表示されている数値の意味 |
+|---|---|---|
+| LiDAR — range image to 3D point cloud | `lidar_sim.py` | `n_points` = 復元した3D点数、`channels` = 走査チャンネル数(垂直分解能)、`hit_ratio` = 発射レイのうち物体にヒットした割合 |
+| Stereo depth — block matching | `stereo_sim.py` | `depth_corr` = ブロックマッチング推定深度と真値の相関、`median_err_m` = 深度誤差の中央値(m) |
+| Event camera (DVS) — per-pixel change events | `event_camera.py` | `n_events` = 発生したDVSイベント総数、`edge_corr` = イベント密度とエッジ強度の相関 |
+| Focus stacking — depth-from-focus | `focus_stack.py` | `sharpness_gain` = フォーカススタック後のシャープネス倍率、`depth_focus_corr` = 推定深度と焦点位置の相関 |
+| Polarization camera — DoLP / AoLP | `polar_cam.py` | `mean_dolp` = 平均直線偏光度(0–1)、`stokes_roundtrip` = Stokesベクトル round-trip 再構成精度(1.0=完全一致) |
+| Camera + IMU sensor fusion — Kalman filter | `sensor_fusion.py` | Kalman融合後のRMSE(cm)を、位置センサ単体のRMSEと比較(融合の方が誤差が小さいことを示す) |
+
+### 1.2 `vision_ops_montage.png` — 古典 2D ビジョン op チェーン
+
+生成元: `tools/gen_article_assets.py::build_vision_ops_montage()`。bundled サンプル画像
+`coins`(skimage.data、BSD)に `fullseye.apply()` 経由で実際の op チェーンを適用したもの。
+
+![vision_ops_montage](articles/assets/vision_ops_montage.png)
+
+| パネル | op | 内容 |
+|---|---|---|
+| Input — sample image | (入力) | `coins.png` そのまま |
+| Gaussian smoothing | `gaussian` | ガウス平滑化(a=0.3, b=0.0) |
+| Edge magnitude — Sobel | `sobel_amp` | 平滑化画像への Sobel エッジ強度 |
+| Segmentation — Otsu threshold | `otsu` | 平滑化画像への大津の二値化 |
+| Connected components | `scipy.ndimage.label`(otsu領域に対して) | 連結成分数 = 検出したコイン個数 |
+| Sub-pixel contours + measurement | `edges_sub_pix` → `select_contours` | サブピクセル輪郭抽出(a=0.2)後、長さ閾値 a=0.7 で短い彫刻テクスチャ由来の輪郭を除去し外周だけ残す。輪郭数と平均ブロブ面積(px)を表示 |
+
+---
+
+## 2. `examples_3d/_gallery/` — 3D 事例の hero 画像 / ターンテーブル GIF
+
+全図版は `examples_3d/_gallery/` に置かれている実データ。パスはこのページからの相対パスで、
+GitHub 上でそのまま表示されます。
+
+| サムネ | ファイル | 説明 | 生成元スクリプト |
+|---|---|---|---|
+| <img src="../examples_3d/_gallery/render_beauty_hero.png" width="180"> | `render_beauty_hero.png` | 全レンダリング品質層(鏡面ハイライト・アンビエントオクルージョン・接地影・SSAA・トーンマップ)を一発合成する hero レンダラ `render_beauty` の出力(peanut形メッシュ、金属マテリアル) | `examples_3d/render_beauty.py` |
+| <img src="../examples_3d/_gallery/gear_hero.png" width="180"> | `gear_hero.png` | 平歯車(スパーギア、12枚歯)の hero レンダ | 特定不能(推定: `examples_3d/rotational_symmetry_fold.py` の `build_gear()` 由来メッシュだが、この画像を焼いた再生成スクリプトは現在のツリーに見当たらない — honest disclosure として明記) |
+| <img src="../examples_3d/_gallery/hand_hero.png" width="180"> | `hand_hero.png` | 手続き的に組んだ手全体の骨格(手根骨8・中手骨5・指骨14、カプセルSDF)の hero レンダ | 特定不能(推定: `examples_3d/procedural_hand.py` の `build_hand_bones()` 由来メッシュだが、この画像を焼いた再生成スクリプトは現在のツリーに見当たらない) |
+| <img src="../examples_3d/_gallery/fit_primitives_ext.png" width="180"> | `fit_primitives_ext.png` | 円錐・トーラス・3軸楕円体を点群に当てはめる拡張プリミティブフィッティング(円筒・球・平面までの既存RANSACでは扱えない曲率変化形状) | `examples_3d/fit_primitives_ext.py` |
+| <img src="../examples_3d/_gallery/hull_bounds.png" width="180"> | `hull_bounds.png` | 点群を囲むプリミティブ群(convex hull / AABB / OBB は既存opの再掲、新規opは最小包含球 `min_enclosing_sphere` の1本のみ) | `examples_3d/hull_bounds.py` |
+| <img src="../examples_3d/_gallery/mesh_decimate.png" width="180"> | `mesh_decimate.png` | QEM edge-collapse による境界保存・多様体厳格なメッシュ簡略化(`decimate_qem_manifold`)を、素朴なランダム間引きおよび既存opの `decimate_qem` と実測比較 | `examples_3d/mesh_decimate.py` |
+| <img src="../examples_3d/_gallery/mesh_props.png" width="180"> | `mesh_props.png` | 三角形メッシュの法線・表面積・平均曲率(離散Laplace-Beltrami)の計測。icosphereの解析解(4πR²)と比較 | `examples_3d/mesh_props.py` |
+| <img src="../examples_3d/_gallery/mesh_smooth.png" width="180"> | `mesh_smooth.png` | ノイズの乗った球メッシュの平滑化。素朴なLaplacian平滑化(収縮する)とTaubin平滑化(収縮しない帯域通過フィルタ)の比較 | `examples_3d/mesh_smooth.py` |
+| <img src="../examples_3d/_gallery/render_ao.png" width="180"> | `render_ao.png` | アンビエントオクルージョン(頂点ごとの半球レイキャストで接触部・凹部を選択的に暗化) | `examples_3d/render_ao.py` |
+| <img src="../examples_3d/_gallery/render_shade.png" width="180"> | `render_shade.png` | 法線マップへの Phong 鏡面ハイライトおよび MatCap シェーディング | `examples_3d/render_shade.py` |
+| <img src="../examples_3d/_gallery/render_shadow.png" width="180"> | `render_shadow.png` | shadow mapping によるキャスト影・半影(ソフトシャドウ、面光源近似) | `examples_3d/render_shadow.py` |
+| <img src="../examples_3d/_gallery/render_ssaa.png" width="180"> | `render_ssaa.png` | スーパーサンプリング(SSAA)によるメッシュ輪郭のジャギー除去 | `examples_3d/render_ssaa.py` |
+| <img src="../examples_3d/_gallery/render_tonemap.png" width="180"> | `render_tonemap.png` | HDRレンダの Reinhard / ACES トーンマッピング(素朴クリップとの比較、階調保持を実証) | `examples_3d/render_tonemap.py` |
+| <img src="../examples_3d/_gallery/watershed3d.png" width="180"> | `watershed3d.png` | 接触した2物体を距離変換+分水嶺(watershed)で分離(連結成分ラベリングでは1個に融合してしまうケース) | `examples_3d/watershed3d.py` |
+| (GIF — GitHub上でアニメ表示) | `showcase_turntable_pod.gif` | SDF生成の hero pod を金属マテリアルで1回転させるターンテーブル | `tools/gen_showcase_gifs.py`(`build_pod`) |
+| (GIF) | `showcase_turntable_itokawa.gif` | 小惑星 25143 Itokawa の実点群を岩石マテリアルで1回転 | `tools/gen_showcase_gifs.py`(`build_itokawa`) |
+| (GIF) | `showcase_turntable_skeleton.gif` | 手骨CTボリュームを骨色マテリアルで1回転(骨格標本風) | `tools/gen_showcase_gifs.py`(`build_skeleton`、subject=hand-bone CT) |
+| (GIF) | `showcase_hue_cycle.gif` | hero pod を回転させながら表面アルベドの色相を0→360で回す | `tools/gen_showcase_gifs.py`(`build_pod` + hue cycle) |
+| (GIF) | `showcase_hand.gif` | 手続き的手骨格のターンテーブル(推定、`hand_hero.png` と同じ被写体) | 特定不能(再生成スクリプトが現在のツリーに見当たらない) |
+
+`gear_hero.png` / `hand_hero.png` / `showcase_hand.gif` の3点は、被写体を生成する関数
+(`build_gear()` / `build_hand_bones()`)自体はリポジトリに存在するものの、それを
+`render_beauty` 等で画像化して `_gallery/` へ焼いたスクリプトが現在のツリーに残っていません。
+過去セッションのアドホック実行と推定されます(推測で断定せず、事実として明記)。
+
+---
+
+## 3. 記事用サムネイル
+
+`docs/articles/assets/thumbs/` に、上記モンタージュ2枚と hero 1枚から幅720px(アスペクト
+維持、元画像が720pxより狭ければ拡大しない)で書き出したサムネがあります。解説記事は
+このサムネを表示し、フルサイズは本ページ経由で参照する構成です。
+
+- `thumbs/physical_ai_montage_720.png`
+- `thumbs/vision_ops_montage_720.png`
+- `thumbs/render_beauty_hero_720.png`
+
+---
+
+## 4. 自分で再生成する / Regenerate yourself
+
+```powershell
+# 記事用モンタージュ + hero コピー + 720pxサムネ(このページの §1・§3)
+py -3.11 tools/gen_article_assets.py
+
+# examples_3d/_gallery/ のターンテーブル GIF 4種(このページの §2、pod/itokawa/skeleton/hue_cycle)
+py -3.11 tools/gen_showcase_gifs.py
+
+# 個別の 3D 事例 hero 画像(例)
+py -3.11 examples_3d/render_beauty.py
+py -3.11 examples_3d/render_ao.py
+py -3.11 examples_3d/mesh_smooth.py
+# ... 他は examples_3d/<name>.py を直接実行(各スクリプトが _gallery/<name>.png を上書き)
+```

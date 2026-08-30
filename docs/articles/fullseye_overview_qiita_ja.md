@@ -12,8 +12,8 @@
 
 まず1枚。これは Fullseye の 3D レンダラ（もちろん numpy 自前実装）が、SDF で作った形状に環境光遮蔽・ソフトシャドウ・ACES トーンマップまでかけて焼いた出力です：
 
-<!-- 公開後チェック: raw URL が HTTP 200 を返すこと -->
-![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
+<!-- 公開後チェック: raw URL が HTTP 200 を返すこと。画像は軽量サムネ+クリックでフルサイズ(記事のメモリ負荷対策) -->
+[![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
 
 ---
 
@@ -130,8 +130,9 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 
 実際の出力を見てもらうのが早いでしょう。エッジ検出・セグメンテーション・輪郭計測など、定番どころを1枚に並べるとこうなります（すべて上の `apply` / `run_pipeline` の実出力）：
 
-<!-- 公開後チェック: raw URL が HTTP 200 を返すこと -->
-![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
+[![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
+
+各パネルの詳しい説明（何の op がどの数値を出しているか）は、リポジトリの **[処理結果ギャラリー（docs/GALLERY.md）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)** にまとめてあります。
 
 ### どれくらいの規模か（実測）
 
@@ -204,8 +205,9 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 この層には**センサー・シミュレーション一式**も含まれます。実機を持っていなくても、**疑似 LiDAR・ステレオカメラ・イベントカメラ（DVS）・フォトメトリックステレオ・TSDF 融合・偏光カメラ・焦点合成**といったセンサーの出力を合成シーンから作り、知覚パイプラインを**実機なしで開発・検証**できる ―― Physical AI 開発の"練習場"です。すべて Fullseye 自身の op の実出力です：
 
-<!-- 公開後チェック: raw URL が HTTP 200 を返すこと（feedback_qiita_svg_path_and_cache） -->
-![Physical AI センサ・シミュレーションのモンタージュ（疑似LiDAR / ステレオ深度 / イベントカメラDVS / 焦点合成 / 偏光カメラ / カメラ+IMUフュージョン）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
+[![Physical AI センサ・シミュレーションのモンタージュ（疑似LiDAR / ステレオ深度 / イベントカメラDVS / 焦点合成 / 偏光カメラ / カメラ+IMUフュージョン）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/physical_ai_montage_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
+
+パネルごとの説明と、これ以外の処理結果（3D レンダリング・メッシュ処理・ターンテーブル GIF など）の一覧は **[処理結果ギャラリー（docs/GALLERY.md）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)** へ。
 
 この層の"お客さん第一号"が **evis**（筋骨格ヒューマノイド）です。evis の視覚パイプラインは、**ステレオ → 深度 → 点群 → セグメント → 6自由度（6DoF）姿勢 → 動作計画 → 700筋での実現**、という流れ。ロボットに箸を使わせる・歩かせるといった課題の"目"を、この層が担います。
 

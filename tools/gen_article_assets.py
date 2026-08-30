@@ -39,13 +39,17 @@ if REPO not in sys.path:
 
 ASSETS_DIR = os.path.join(REPO, "docs", "articles", "assets")
 SOURCES_DIR = os.path.join(ASSETS_DIR, "_sources")
+THUMBS_DIR = os.path.join(ASSETS_DIR, "thumbs")
 GALLERY_DIR = os.path.join(REPO, "examples_3d", "_gallery")
 
 SEED = 20260830  # 全生成で固定する乱数種 (再現性) / fixed seed for reproducibility
 
+THUMB_WIDTH = 720  # Qiita 記事に貼るサムネの目標幅(px)。元画像がこれより狭ければ拡大しない。
+
 
 def _ensure_dirs() -> None:
     os.makedirs(SOURCES_DIR, exist_ok=True)
+    os.makedirs(THUMBS_DIR, exist_ok=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -252,6 +256,40 @@ def copy_hero_assets(log=print) -> list:
     return copied
 
 
+# --------------------------------------------------------------------------- #
+# 4) 記事貼付け用サムネイル(幅720px)/ article thumbnails (720px wide)          #
+# --------------------------------------------------------------------------- #
+def build_thumbnails(log=print) -> list:
+    """記事に貼るモンタージュ/hero 画像から幅 720px のサムネを作る.
+
+    フルサイズは GitHub 側(docs/GALLERY.md)で見せ、Qiita 記事にはこの軽量サムネだけを
+    貼ってメモリ負荷を下げる。アスペクト比は維持し、元画像が 720px より狭い場合は
+    拡大しない(honest — 存在しない解像度をでっち上げない)。PIL の LANCZOS でリサイズ、
+    PNG optimize=True で保存する。
+    """
+    from PIL import Image
+
+    names = ["physical_ai_montage.png", "vision_ops_montage.png", "render_beauty_hero.png"]
+    thumbs = []
+    for name in names:
+        src = os.path.join(ASSETS_DIR, name)
+        if not os.path.exists(src):
+            log(f"[skip] thumbnail source missing: {src}")
+            continue
+        stem = os.path.splitext(name)[0]
+        dst = os.path.join(THUMBS_DIR, f"{stem}_720.png")
+        with Image.open(src) as im:
+            im = im.convert("RGB")
+            target_w = min(THUMB_WIDTH, im.width)  # never upscale
+            target_h = round(im.height * target_w / im.width)
+            thumb = im.resize((target_w, target_h), Image.LANCZOS)
+            thumb.save(dst, format="PNG", optimize=True)
+        size_kb = os.path.getsize(dst) / 1024
+        log(f"thumbnail: {dst} | {target_w}x{target_h} ({size_kb:.1f} KiB)")
+        thumbs.append(dst)
+    return thumbs
+
+
 def main() -> int:
     import numpy as np
     np.random.seed(SEED)
@@ -268,8 +306,11 @@ def main() -> int:
     print("\n-- 3) hero copies --")
     heroes = copy_hero_assets()
 
+    print("\n-- 4) thumbnails (720px) --")
+    thumbs = build_thumbnails()
+
     print("\n== summary ==")
-    for path in [physical["path"], vision["path"], *heroes]:
+    for path in [physical["path"], vision["path"], *heroes, *thumbs]:
         size = os.path.getsize(path)
         print(f"{path}  ({size/1024:.1f} KiB)")
     if physical["skipped"]:

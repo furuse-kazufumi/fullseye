@@ -1,5 +1,9 @@
 # Fullseye
 
+[![CI](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml/badge.svg)](https://github.com/furuse-kazufumi/fullseye/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/fullseye)](https://pypi.org/project/fullseye/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+
 **An in-house, numpy-native image-processing operator library and evolutionary
 pipeline designer.** Every operator is reimplemented from published algorithms and
 open-source libraries (OpenCV, scikit-image, SciPy, Pillow, PyWavelets, SimpleITK,
@@ -161,6 +165,7 @@ Everything below lives in the repo — start at the guide that matches what you 
 
 | You want to… | Read |
 |---|---|
+| See what the operators produce (result gallery) | `docs/GALLERY.md` |
 | Look up any of the ~1000 operators | `docs/ops/` (per-op notes) · `docs/OP_CATALOG.md` (one-page catalog) |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |
