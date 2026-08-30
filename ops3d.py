@@ -294,6 +294,8 @@ _CATALOG = {
         ("skeleton_endpoints3d", "medial", ["voxel"], "voxel", False),
         ("skeleton_prune3d", "medial", ["voxel"], "voxel", False),
         ("skeleton_branches3d", "medial", ["voxel"], "voxel", False),
+        # spacing 対応の物理距離 EDT(edt_jfa は torch 必須の SDF、こちらは scipy 経路)
+        ("vol_distance_transform", "volops", ["voxel"], "voxel", False),
     ],
     "metrics": [  # 評価メトリクス(進化探索の fitness 土台 = 一致度を数値化)
         ("chamfer_distance", "metrics3d", ["points", "points"], "measurement", False),
