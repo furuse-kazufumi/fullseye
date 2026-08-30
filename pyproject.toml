@@ -15,6 +15,15 @@ keywords = ["image-processing", "computer-vision", "evolutionary-algorithm", "pi
 # only its own operators are affected when a backend is absent (graceful degradation).
 dependencies = ["numpy>=1.23", "scipy>=1.9"]
 
+# PyPI ⇄ GitHub の相互リンク(PyPI プロジェクトページのサイドバーに出る)。
+# 公開リポジトリ名は公開名 fullseye(リネーム時はここを追従させる)。
+[project.urls]
+Homepage = "https://github.com/furuse-kazufumi/fullseye"
+Repository = "https://github.com/furuse-kazufumi/fullseye"
+Documentation = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs"
+"Operator corpus (RAG)" = "https://github.com/furuse-kazufumi/fullseye/tree/master/docs/ops"
+"Bug tracker" = "https://github.com/furuse-kazufumi/fullseye/issues"
+
 [project.optional-dependencies]
 opencv = ["opencv-python>=4.6"]
 skimage = ["scikit-image>=0.20"]
@@ -49,6 +58,7 @@ all = [
 [project.scripts]
 fullseye = "imgevolve:main"
 fullseye-studio = "studio:main"
+fullseye-rag = "fullseye.rag_setup:main"      # Claude Code RAG skill installer (docs/AI_RAG_GUIDE.md)
 
 [tool.setuptools]
 # The public facade is the `fullseye` package; the engine is a set of flat
@@ -93,7 +103,10 @@ py-modules = [
 # recommended op pipeline) are generated into the `fullseye` package by
 # tools/gen_op_catalog.py and tools/gen_sensor_playbook.py, and shipped so an
 # installed wheel carries them.
-"fullseye" = ["OP_CATALOG.md", "SENSOR_PLAYBOOK.md"]
+"fullseye" = ["OP_CATALOG.md", "SENSOR_PLAYBOOK.md",
+              # Claude Code RAG skill template — lets a PyPI (wheel) install run
+              # `fullseye-rag` without a repo checkout (docs/AI_RAG_GUIDE.md).
+              "skill_template/SKILL.md"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

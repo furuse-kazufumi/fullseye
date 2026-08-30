@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use Fullseye in academic work, please cite it as below."
+title: "Fullseye: an explainable classical-vision operator library and workbench for Physical AI"
+type: software
+authors:
+  - family-names: "Furuse"
+    given-names: "Kazufumi"
+license: Apache-2.0
+version: 0.1.0
+date-released: "2026-08-30"
+abstract: >-
+  Fullseye is a numpy-native library of ~1000 typed classical image-processing and
+  geometric-vision operators (2-D and 3-D), with an evolutionary pipeline-design mode
+  evaluated under honest held-out gates, a Physical-AI perception stack
+  (stereo -> depth -> point cloud -> 6-DoF pose), and an HDevelop-style IDE
+  (Fullseye Studio). Every operator carries a machine-readable Markdown note
+  (contract, references, license, version fingerprint) designed to double as a
+  retrieval corpus for AI assistants and as a reproducible, citable methods reference.
+keywords:
+  - image processing
+  - machine vision
+  - explainable algorithms
+  - robotics perception
+  - evolutionary computation

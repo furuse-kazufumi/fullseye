@@ -14,10 +14,15 @@ on plain numpy arrays, so other projects can drop it into a vision pipeline dire
 ## Install
 
 ```bash
-pip install -e .            # numpy + scipy core (≈75 operators)
-pip install -e ".[all]"     # + opencv, scikit-image, Pillow, PyWavelets, SimpleITK, kornia/torch
-# or per-backend: .[opencv] .[skimage] .[pil] .[wavelets] .[gpu] .[extra]
+pip install fullseye        # PyPI (numpy + scipy core)
+pip install "fullseye[all]" # + opencv, scikit-image, Pillow, PyWavelets, SimpleITK, kornia/torch, PySide6
+# from a checkout: pip install -e .   (per-backend extras: .[opencv] .[skimage] .[gpu] ...)
 ```
+
+PyPI: <https://pypi.org/project/fullseye/> · Source / issues / operator corpus:
+GitHub (linked from the PyPI sidebar). After installing, `fullseye-rag` sets up the
+Claude Code RAG skill; `py -3.11 tools/update_fullseye.py` updates a checkout without
+touching your environment (see `docs/AI_RAG_GUIDE.md`).
 
 Only numpy and scipy are required; every other backend is optional and only its own
 operators are affected when it is absent (graceful degradation). GPU is opt-in.
@@ -41,11 +46,22 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-Roughly **520 typed operators** across ten backends, covering denoising, smoothing,
-sharpening, thresholding/segmentation, morphology, edge/corner/blob detection,
-distance transforms, color-space conversion, texture/shape features, contours, and
-volume (3-D) ops. Sorts: `image` (gray `[0,1]`), `color` (RGB), `region` (binary),
-`feature` (scalar), `contour`, `volume`.
+**~1000 typed operators** (measured: 731 distinct 2-D across 46 categories + 265 3-D
+across 55 categories), covering denoising, smoothing, sharpening,
+thresholding/segmentation, morphology, edge/corner/blob detection, distance
+transforms, color-space conversion, texture/shape features, contours, and the 3-D
+modality (point clouds / meshes / volumes / SDF / 6-DoF pose). Sorts: `image` (gray
+`[0,1]`), `color` (RGB), `region` (binary), `feature` (scalar), `contour`, `volume`.
+
+Every operator carries a machine-readable Markdown note under `docs/ops/`
+(call form, type contract, HALCON counterpart, references, author/license/version
+fingerprint) — a single source of truth that generates the Studio help pages and
+doubles as a **retrieval (RAG) corpus for AI coding assistants**: an agent such as
+Claude Code can look up operators by contract, chain them by sort, and inspect every
+intermediate result. One command installs the bundled Claude Code skill and pins the
+corpus path (`py -3.11 tools/setup_claude_rag.py` — see `docs/AI_RAG_GUIDE.md`).
+Coverage against HALCON's 2313 operators is measured, not asserted
+(`py -3.11 imgevolve.py coverage`).
 
 ```bash
 py -3.11 imgevolve.py ops --search edge      # search implemented operators
@@ -105,6 +121,26 @@ The default per-image path uses scipy/OpenCV. A batched `torch` fast path (`acce
 CPU the batch path speeds up heavy operators (≈1.6–2.2×) but *loses* on trivial
 pointwise ops (tensor-conversion overhead); the real win is on GPU, where that overhead
 amortizes over large parallelism.
+
+## Fullseye Studio (HDevelop-style IDE)
+
+`py -3.11 studio.py` opens the visual workbench: operator browser with generated help
+(2-D and 3-D), pipeline editor with per-stage timing, breakpoints, continue /
+run-from-line execution control, a variable window with watch expressions and
+right-click inspection, multi-window graphics scriptable from programs
+(`dev_open_window` / `dev_set_window` / `dev_set_window_extents`), worked-example
+galleries, and a tabbed **Python Editor** that opens any sample as editable, runnable
+code (F5, subprocess). Combined with the RAG corpus this is aimed at being an
+integrated environment for Physical-AI perception work: the AI writes and runs the
+pipeline, and the human inspects what it "sees" in the same windows.
+
+## Academic use
+
+Fullseye is designed to be citable and reproducible: per-operator notes carry real
+literature references (no fabricated DOIs), versions are pinned to the code by a
+registry fingerprint with a CI drift test, and evaluation follows the honest
+held-out discipline above. If you use it in academic work, please cite via
+`CITATION.cff`.
 
 ## Design principles
 
