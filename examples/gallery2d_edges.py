@@ -79,6 +79,9 @@ def input_for(in_sort: str) -> np.ndarray:
 # TARGET op 名 -- edges カテゴリの登録順・全 57 エントリを文字列リテラルで明示。    #
 # ('laplace' は registry に 2 度登録されるため 2 回現れる; 下の drift チェックで  #
 #  live registry の名前マルチセットと突き合わせる)。op→example 索引はこの列を読む。  #
+# うち 5 件 (KORNIA_OPTIONAL) は backends_kornia (要 torch+kornia) 由来の任意 op で、  #
+# 未インストール環境では registry から静かに消える (backends_kornia.build が [] を    #
+# 返す; ops.py 側は例外を握りつぶす)。BASE = 常設分、OPTIONAL = kornia 依存分。         #
 # --------------------------------------------------------------------------- #
 OPS = [
     "sobel_mag", "laplace", "prewitt_mag", "roberts_mag", "dog", "grad_dir",
@@ -95,6 +98,10 @@ OPS = [
     "xkor_gftt", "xkor_hessian", "xkor_dog", "f2_shock", "f2_topographic",
     "tf_steerable_filter", "tf_phase_congruency",
 ]
+
+# kornia backend 依存の任意 op (torch/kornia 不在なら registry に現れない)。
+KORNIA_OPTIONAL = ["xkor_laplacian", "xkor_harris", "xkor_gftt", "xkor_hessian", "xkor_dog"]
+BASE_OPS = [n for n in OPS if n not in KORNIA_OPTIONAL]  # 常設分 (= 52)
 
 _TOL = 1e-6  # 値域 [0,1] 判定の浮動小数許容。
 
@@ -187,17 +194,27 @@ def main() -> None:
 
     edges = [o for o in ops.REGISTRY if o.category == "edges"]
     lap_entries = [o for o in edges if o.name == "laplace"]
+    live_names = {o.name for o in edges}
 
-    # --- ハードコード OPS を live registry と突き合わせ (drift 検出) ------------- #
-    assert len(edges) == 57, f"registry drift: edges エントリは 57 のはず (got {len(edges)})"
+    # --- kornia 不在なら KORNIA_OPTIONAL 分を除いた「利用可能集合」を対象にする ---- #
+    skipped = sorted(n for n in KORNIA_OPTIONAL if n not in live_names)
+    if skipped:
+        print(f"skipped {len(skipped)} optional ops (kornia not installed): {', '.join(skipped)}")
+    active_ops = [n for n in OPS if n not in skipped]
+    expected = len(BASE_OPS) + (len(KORNIA_OPTIONAL) - len(skipped))
+
+    # --- ハードコード OPS (利用可能集合) を live registry と突き合わせ (drift 検出) - #
+    assert len(edges) == expected, (
+        f"registry drift: edges エントリは {expected} のはず (got {len(edges)}, "
+        f"base={len(BASE_OPS)} skipped_kornia={skipped})")
     assert len(lap_entries) == 2, f"'laplace' は edges に 2 度登録のはず (got {len(lap_entries)})"
-    assert sorted(OPS) == sorted(o.name for o in edges), "OPS の名前マルチセットが registry と不一致"
-    assert len(OPS) == 57, f"OPS 長は 57 のはず (got {len(OPS)})"
+    assert sorted(active_ops) == sorted(o.name for o in edges), "OPS の名前マルチセットが registry と不一致"
+    assert len(active_ops) == expected, f"active_ops 長は {expected} のはず (got {len(active_ops)})"
 
     # --- 全 op を呼んで契約検証。'laplace' は 2 エントリを個別に実行 (影に隠さない) - #
     seen_laplace = 0
     n_called = 0
-    for name in OPS:
+    for name in active_ops:
         if name == "laplace":
             # registry の 2 つの 'laplace' (素 / _safe ラップ) を順に実体で実行する。
             op = lap_entries[seen_laplace]
@@ -211,12 +228,12 @@ def main() -> None:
         n_called += 1
 
     assert seen_laplace == 2, "両 laplace エントリを実行できていない"
-    assert n_called == 57, f"呼び出し数が 57 でない (got {n_called})"
+    assert n_called == expected, f"呼び出し数が {expected} でない (got {n_called})"
 
     # --- 代表 op に強い GT ----------------------------------------------------- #
     gt = _ground_truth_checks(BY)
 
-    print(f"PASS: {n_called} ops exercised ({len(set(OPS))} unique names), "
+    print(f"PASS: {n_called} ops exercised ({len(set(active_ops))} unique names), "
           f"all finite/typed/deterministic; {gt} GT checks")
 
 

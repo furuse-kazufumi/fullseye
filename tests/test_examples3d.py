@@ -61,5 +61,11 @@ def test_real_sample_data_is_present():
 @pytest.mark.parametrize("example_id", ["sdf_csg", "ct_bone_segmentation", "itokawa_self_register"])
 def test_representative_example_runs_and_passes(example_id):
     """One example per data provenance runs to a passing GT assertion (real end-to-end)."""
+    if example_id == "itokawa_self_register":
+        # match3d.icp_point2point_3d is torch-only (torch.device/torch.eye etc. are called
+        # unconditionally; the module's _TorchMissing stub raises ImportError when torch is
+        # absent instead of silently falling back to numpy). Skip honestly rather than fail.
+        pytest.importorskip(
+            "torch", reason="itokawa_self_register needs match3d.icp_point2point_3d (torch-only)")
     ok, note = E.run(example_id, timeout=240)
     assert ok, f"{example_id} failed: {note}"

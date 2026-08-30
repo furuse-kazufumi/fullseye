@@ -68,6 +68,11 @@ OPS = [
     "it_full_domain", "it_crop_domain",
 ]
 
+# kornia backend (要 torch+kornia) 依存の任意 op。未インストール環境では registry から
+# 静かに消える (backends_kornia.build が [] を返す)。BASE = 常設分 = OPS から除いた分。
+KORNIA_OPTIONAL = ["xkor_clahe"]
+BASE_OPS = [n for n in OPS if n not in KORNIA_OPTIONAL]
+
 # 各 op を 4 通りの knob で叩く(finite/determinism を複数点で確かめる)。
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
 
@@ -113,13 +118,13 @@ def input_for(sort: str):
     raise ValueError(f"input_for: 未対応 sort {sort!r}(この族には現れないはず)")
 
 
-def exercise_all() -> int:
-    """族の全 op を叩き、契約(有限・型・形状・定義域・決定性)を assert する。
+def exercise_all(op_names: list[str]) -> int:
+    """族の op (op_names) を叩き、契約(有限・型・形状・定義域・決定性)を assert する。
 
     例外を投げた op は握り潰さず即座に AssertionError として噴き上げる。
     """
     ref_shape = _IMG.shape
-    for name in OPS:
+    for name in op_names:
         assert name in BY, f"未知の op 名: {name}(レジストリに無い)"
         op = BY[name]
         # 族不変条件: この族は宣言上すべて image -> image。
@@ -150,7 +155,7 @@ def exercise_all() -> int:
             assert np.array_equal(out, again, equal_nan=True), (
                 f"{name}: 非決定的(同一入力で出力が変わった, knob {a},{b})")
 
-    return len(OPS)
+    return len(op_names)
 
 
 def ground_truth_checks() -> int:
@@ -202,17 +207,26 @@ def ground_truth_checks() -> int:
 
 
 def main() -> int:
-    # OPS が族の実集合と厳密一致することを実行時に検証(取りこぼし/余分を弾く)。
     target = sorted(o.name for o in ops.REGISTRY if o.category in TARGET_CATS)
-    listed = sorted(OPS)
+
+    # kornia 不在なら KORNIA_OPTIONAL 分を除いた「利用可能集合」を対象にする(正直に表示)。
+    skipped = sorted(n for n in KORNIA_OPTIONAL if n not in set(target))
+    if skipped:
+        print(f"skipped {len(skipped)} optional ops (kornia not installed): {', '.join(skipped)}")
+    active_ops = [n for n in OPS if n not in skipped]
+
+    # active_ops が族の実集合(利用可能集合)と厳密一致することを実行時に検証(取りこぼし/余分を弾く)。
+    listed = sorted(active_ops)
     missing = sorted(set(target) - set(listed))
     extra = sorted(set(listed) - set(target))
     assert not missing, f"OPS に不足: {missing}"
     assert not extra, f"OPS に余分: {extra}"
-    assert len(OPS) == len(set(OPS)), "OPS に重複がある"
-    assert len(OPS) == len(target), f"件数不一致: OPS={len(OPS)} target={len(target)}"
+    assert len(active_ops) == len(set(active_ops)), "OPS に重複がある"
+    assert len(active_ops) == len(target), f"件数不一致: OPS={len(active_ops)} target={len(target)}"
+    assert len(BASE_OPS) + (len(KORNIA_OPTIONAL) - len(skipped)) == len(target), (
+        "BASE/OPTIONAL 分解が registry 件数と不一致")
 
-    n = exercise_all()
+    n = exercise_all(active_ops)
     k = ground_truth_checks()
 
     print(f"PASS: {n} ops exercised, all finite/typed/deterministic; {k} GT checks")

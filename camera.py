@@ -569,6 +569,22 @@ def recover_pose(E, uv1, uv2, K, K2=None):
     if best[0] == 0:                            # cheirality decided nothing
         raise ValueError("degenerate correspondences (zero baseline / pure "
                          "rotation): no pose puts any point in front of both cameras")
+    # 縮退の第二関門(BLAS 頑健化): 純回転ペアでは三角測量が幾何と整合しないため、
+    # 「前方に来た点」の再投影が大きく外れる。best==0 の厳密ゼロ判定は丸め方向で
+    # すり抜ける(CI の OpenBLAS で実測)ので、勝者候補の再投影誤差でも判定する。
+    # Second degeneracy gate: with a pure-rotation pair the triangulation is
+    # geometrically inconsistent, so even the winning candidate reprojects far
+    # off. The exact best==0 test can be defeated by rounding direction (seen
+    # on CI's OpenBLAS); a healthy pose reprojects to sub-pixel here.
+    n_best, R, tt, infront = best
+    if n_best > 0:
+        Xw = triangulate(a, b, P1, projection_matrix(K2, R, tt))[infront]
+        uvr, _ = project_points(Xw, K2, R, tt)
+        err = np.linalg.norm(uvr - b[infront], axis=1)
+        if float(np.median(err)) > 10.0:        # px — 健全ペアは合成でも実写でも桁下
+            raise ValueError("degenerate correspondences (zero baseline / pure "
+                             "rotation): triangulated points do not reproject "
+                             "(median error %.1f px)" % float(np.median(err)))
     return best[1], best[2], best[3]
 
 

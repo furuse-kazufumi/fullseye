@@ -1568,11 +1568,24 @@ def run_c_backend(op, holdout, wd: Path, cc: list[str]) -> dict:
     # "reject non-finite BEFORE the cast" property load-bearing in C, matching the Python half
     # (where int(nan) already raises). A toolchain that cannot build the sanitizer degrades to
     # "unsupported" (neutral), never a false failure. (2026-08-17 P17 review, feedback_no_solo_ai_judgment.)
+    #
+    # -fsanitize=float-cast-overflow is explicit (not implied) on purpose: GCC's
+    # -fsanitize=undefined bundle omits float-cast-overflow (Clang's does include it), so a
+    # NaN/out-of-range -> integer cast silently "worked" under plain -fsanitize=undefined on
+    # GCC/Linux while it correctly trapped under Clang (this repo's zig-cc fallback on Windows)
+    # -- a real cross-compiler blind spot, not a platform difference. And on GCC, even with
+    # -fno-sanitize-recover=all, the float-cast-overflow check specifically still only PRINTS a
+    # diagnostic and continues (verified empirically: GCC 13.3, Ubuntu 24.04 -- exit 0, no abort);
+    # -fsanitize-trap=float-cast-overflow forces that one check to hard-trap (__builtin_trap)
+    # regardless, while leaving the recoverable diagnostics for other -fsanitize=undefined checks
+    # untouched. (2026-08-30 CI investigation, verified on gcc 13.3.0 via WSL Ubuntu-24.04 against
+    # both the mutated (must trap) and unmutated (must stay "ok") max_subarray C.)
     exe_ub = wd / (f"algo_{op.name}_ubsan.exe" if sys.platform == "win32" else f"algo_{op.name}_ubsan")
     fout_ub = wd / f"out_{op.name}_ubsan.bin"
     try:
         subprocess.run(cc + ["-std=c99", "-ffp-contract=off",
                              "-fsanitize=undefined", "-fno-sanitize-recover=all",
+                             "-fsanitize=float-cast-overflow", "-fsanitize-trap=float-cast-overflow",
                              str(c_path), "-o", str(exe_ub)],
                        check=True, capture_output=True, text=True)
     except subprocess.CalledProcessError:

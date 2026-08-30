@@ -96,6 +96,13 @@ OPS = ["gaussian", "mean_box", "bilateral", "unsharp", "median", "min_filter",
        "iv_wiener_deconv_spatial", "iv_unsharp_deblur", "iv_motion_deblur",
        "iv_backproject_superres", "iv_gradient_inpaint", "tf_gradient_domain_reintegrate"]
 
+# 任意バックエンド依存の op(未インストール環境では registry から静かに消える;
+# backends_dl / backends_kornia の build() が [] を返す)。BASE = OPS からこれらを除いた常設分。
+TORCH_OPTIONAL = ["dl_aniso_diffusion", "dl_guided_filter"]
+KORNIA_OPTIONAL = ["xkor_gaussian", "xkor_bilateral", "xkor_median", "xkor_unsharp", "xkor_motion_blur"]
+OPTIONAL = TORCH_OPTIONAL + KORNIA_OPTIONAL
+BASE_OPS = [n for n in OPS if n not in OPTIONAL]
+
 # op 呼び出し時に振る knob(a, b)。conftest.KNOBS と同一。端点と中間で有限性・決定性を確認。
 KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85)]
 
@@ -109,12 +116,19 @@ def _equal(x, y) -> bool:
             and x.shape == y.shape and np.array_equal(x, y))
 
 
-def check_universal_contracts() -> int:
-    """全 TARGET op に (1)有限 (2)型=2-D float 同形状 (3)決定性 を課す。
+def check_universal_contracts() -> tuple[int, list[str]]:
+    """全 TARGET op (利用可能集合) に (1)有限 (2)型=2-D float 同形状 (3)決定性 を課す。
 
-    例外を投げた op は握り潰さず即 raise(loud failure)。返り値 = 検証した op 数。
+    torch/kornia 不在で消えた OPTIONAL 分は正直に skip 表示し、対象から除く。
+    例外を投げた op は握り潰さず即 raise(loud failure)。戻り値 = (検証した op 数, skip した op 名)。
     """
-    for name in OPS:
+    live_names = set(BY)
+    skipped = sorted(n for n in OPTIONAL if n not in live_names)
+    if skipped:
+        print(f"skipped {len(skipped)} optional ops (kornia/torch not installed): {', '.join(skipped)}")
+    active_ops = [n for n in OPS if n not in skipped]
+
+    for name in active_ops:
         assert name in BY, f"op '{name}' が REGISTRY に存在しない(登録漏れ/改名)"
         op = BY[name]
         assert op.in_sort == "image" and op.out_sort == "image", (
@@ -133,7 +147,10 @@ def check_universal_contracts() -> int:
             # (3) 決定性: 同じ入力で 2 回目もビット同一
             out2 = np.asarray(BY[name].fn(base.copy(), a, b))
             assert _equal(out, out2), f"{name}: 非決定的 (a={a}, b={b})"
-    return len(OPS)
+    expected = len(BASE_OPS) + (len(OPTIONAL) - len(skipped))
+    assert len(active_ops) == expected, (
+        f"active_ops 長 {len(active_ops)} != expected {expected} (base={len(BASE_OPS)} skipped={skipped})")
+    return len(active_ops), skipped
 
 
 def check_ground_truth() -> int:
@@ -210,9 +227,9 @@ def check_ground_truth() -> int:
 
 
 def main() -> None:
-    n_ops = check_universal_contracts()
+    n_ops, skipped = check_universal_contracts()
     n_gt = check_ground_truth()
-    assert n_ops == len(OPS)
+    assert n_ops == len(OPS) - len(skipped)
     print(f"PASS: {n_ops} ops exercised, all finite/typed/deterministic; {n_gt} GT checks")
 
 

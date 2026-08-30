@@ -3,49 +3,50 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 13:05:43
+- **最終更新**: 2026-08-30 13:40:47
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-fd527aad docs(media): JPG thumbnails, mp4 videos, DVS stream, data-source links
-f11e262e fix(compat): numpy 2.x cross removal + torch-less CI — full matrix now honest
-10a38508 docs(article): Itokawa 3-D montage, top GIF hook, install-first, inline glossary
-91fa2e8f fix(3d): registry no longer requires torch — first CI run caught it
-a50badf7 auto: ci.yml 編集前 (2026-08-30 11:58)
-c87723e8 auto: feat_shot.py 編集前 (2026-08-30 11:57)
-7167a45e auto: feat_fpfh.py 編集前 (2026-08-30 11:57)
-4d05fad8 auto: feat_shot.py 編集前 (2026-08-30 11:57)
-a5784344 auto: feat_spin.py 編集前 (2026-08-30 11:57)
-125d19b0 auto: feat_harris.py 編集前 (2026-08-30 11:56)
+e1c8521c auto: test_fullseye_3dgs.py 編集前 (2026-08-30 13:38)
+910ab4ce auto: algo_difftest.py 編集前 (2026-08-30 13:33)
+949baad6 auto: test_fullseye_3dgs.py 編集前 (2026-08-30 13:29)
+68bd409d auto: test_fullseye_3dgs.py 編集前 (2026-08-30 13:29)
+27777b3c auto: test_examples3d.py 編集前 (2026-08-30 13:27)
+5b8f8925 auto: gallery2d_smoothing_rank.py 編集前 (2026-08-30 13:25)
+2e903e17 auto: gallery2d_smoothing_rank.py 編集前 (2026-08-30 13:25)
+3633751b auto: gallery2d_smoothing_rank.py 編集前 (2026-08-30 13:25)
+9c60f4f0 auto: gallery2d_smoothing_rank.py 編集前 (2026-08-30 13:25)
+6c86b928 auto: gallery2d_segmentation.py 編集前 (2026-08-30 13:25)
 ```
 
 ## 現在の git status
 
 ```
 M docs/SESSION_SUMMARY.md
+ M tests/test_fullseye_3dgs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-12:55 docs/SESSION_SUMMARY.md
-12:53 .pytest_cache/v/cache/nodeids
-12:38 docs/articles/assets/media/hue_cycle.mp4
-12:38 examples_3d/_gallery/showcase_hue_cycle.gif
-12:37 docs/GALLERY.md
-12:37 .ruff_cache/0.16.0/13040170375023845712
-12:37 .ruff_cache/0.16.0/2128910586982079947
-12:36 .ruff_cache/0.16.0/8179453609826932745
-12:34 spikes/studio_app.py
-12:34 docs/articles/assets/media/skeleton.mp4
-12:34 examples_3d/_gallery/showcase_turntable_skeleton.gif
-12:34 contours_xld.py
-12:34 backends_halcon_ext.py
-12:33 .pytest_cache/v/cache/lastfailed
-12:32 docs/articles/assets/media/itokawa.mp4
+13:40 docs/SESSION_SUMMARY.md
+13:40 .pytest_cache/v/cache/nodeids
+13:38 .ruff_cache/0.16.0/8687138234577503176
+13:38 .ruff_cache/0.16.0/7363606932562918290
+13:38 tests/test_fullseye_3dgs.py
+13:38 .ruff_cache/0.16.0/16757696511168008846
+13:37 .ruff_cache/0.16.0/2128910586982079947
+13:33 algo_difftest.py
+13:27 tests/test_examples3d.py
+13:25 examples/gallery2d_smoothing_rank.py
+13:25 examples/gallery2d_segmentation.py
+13:24 examples/gallery2d_gray_arith.py
+13:23 examples/gallery2d_edges.py
+13:18 camera.py
+13:17 match3d.py
 ```
 
 ---

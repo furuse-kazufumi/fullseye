@@ -1,5 +1,8 @@
 """fullseye_3dgs ランチャの非GPU部分(preset)の回帰。scene 解決は scene_registry に移設。"""
 from __future__ import annotations
+
+import os
+
 import fullseye_3dgs as F
 import scene_registry as R
 
@@ -12,6 +15,23 @@ def test_presets_shape():
 
 
 def test_scene_resolution_via_registry():
+    """go2 resolves to a real MJCF path via scene_registry.
+
+    Honest note (2026-08-30 CI investigation): despite living in test_fullseye_3dgs.py,
+    this check has no torch dependency — scene_registry.py imports only json/os and
+    resolve() is pure path logic. The actual CI-only failure is that
+    scene_registry._MENAGERIE hardcodes an absolute local path
+    (C:/dev/projects/mujoco_menagerie) to a sibling checkout of mujoco_menagerie that
+    is not part of this repo and is not cloned on CI runners (ubuntu-latest); on Linux
+    that Windows path also just doesn't exist. So resolve("go2") legitimately returns
+    None there. Skip when the asset tree is absent, matching this file's existing
+    mujoco-asset skip convention (see test_pick_gif_headless_grasps etc.), rather than
+    torch.importorskip which would not address the real cause.
+    """
+    go2_xml = os.path.join(R._MENAGERIE, "unitree_go2", "scene.xml")
+    if not os.path.exists(go2_xml):
+        import pytest
+        pytest.skip("mujoco_menagerie(go2) 未取得 — scene_registry._MENAGERIE の資産チェックアウトが無い")
     r = R.resolve("go2")
     assert r is not None and r["xml"].endswith(".xml")
     assert R.resolve("does-not-exist") is None

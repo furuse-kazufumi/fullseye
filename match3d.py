@@ -1824,7 +1824,10 @@ def fit_plane_3d(points):
     """点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。"""
     P = np.asarray(points, float); c = P.mean(0)
     w, v = np.linalg.eigh((P - c).T @ (P - c))
-    return c, v[:, 0], float(np.sqrt(w[0] / len(P)))
+    # 完全平面では最小固有値が BLAS により -1e-16 側に落ちることがある(sqrt→nan)。
+    # A perfectly planar cloud can yield a tiny NEGATIVE smallest eigenvalue on
+    # some BLAS builds (caught by CI's OpenBLAS) — clamp before the sqrt.
+    return c, v[:, 0], float(np.sqrt(max(w[0], 0.0) / len(P)))
 
 
 def fit_sphere_3d(points):

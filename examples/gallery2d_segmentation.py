@@ -82,6 +82,12 @@ OPS = [
     'sg_kmeans_intensity', 'sg_region_growing_seeded', 'sg_normalized_cut_2', 'sg_watershed_gradient',
 ]
 
+# kornia backend (要 torch+kornia) 依存の任意 op。未インストール環境では registry から
+# 静かに消える (backends_kornia.build が [] を返す) ため _BY_NAME 参照は KeyError になる。
+# BASE = 常設分 = OPS から除いた分。
+KORNIA_OPTIONAL = ['xkor_canny']
+BASE_OPS = [n for n in OPS if n not in KORNIA_OPTIONAL]
+
 # 演算子つまみ(a, b)は [0,1]。既定は中庸。全 op がこの入力/つまみで CPU 完走する。
 KNOB = (0.5, 0.5)
 EPS = 1e-9
@@ -107,10 +113,20 @@ def _assert_typed_finite(name: str, out, out_sort: str) -> None:
         raise AssertionError(f"{name}: unhandled out_sort {out_sort!r}")
 
 
-def run_family() -> int:
-    """全 op を呼び、一般契約(有限・型・値域・決定性)を検査する。"""
+def run_family() -> tuple[int, list[str]]:
+    """全 op (利用可能集合) を呼び、一般契約(有限・型・値域・決定性)を検査する。
+
+    kornia 不在で消えた KORNIA_OPTIONAL 分は正直に skip 表示し、対象から除く。
+    戻り値は (検査した op 数, スキップした op 名一覧)。
+    """
+    live_names = set(ops._BY_NAME)
+    skipped = sorted(n for n in KORNIA_OPTIONAL if n not in live_names)
+    if skipped:
+        print(f"skipped {len(skipped)} optional ops (kornia not installed): {', '.join(skipped)}")
+    active_ops = [n for n in OPS if n not in skipped]
+
     exercised = 0
-    for name in OPS:
+    for name in active_ops:
         op = ops._BY_NAME[name]                       # name→op(重複名は同じ実体へ解決)
         img = input_for(op.in_sort)
         try:
@@ -121,8 +137,10 @@ def run_family() -> int:
         _assert_typed_finite(name, out1, op.out_sort)
         assert np.array_equal(out1, out2), f"{name}: non-deterministic (same input, different output)"
         exercised += 1
-    assert exercised == len(OPS), f"exercised {exercised} != {len(OPS)}"
-    return exercised
+    expected = len(BASE_OPS) + (len(KORNIA_OPTIONAL) - len(skipped))
+    assert exercised == len(active_ops) == expected, (
+        f"exercised {exercised} != active_ops {len(active_ops)} != expected {expected}")
+    return exercised, skipped
 
 
 # --------------------------------------------------------------------------- #
@@ -182,9 +200,9 @@ def gt_checks() -> int:
 
 
 def main() -> int:
-    n = run_family()
+    n, skipped = run_family()
     k = gt_checks()
-    uniq = len(set(OPS))
+    uniq = len(set(OPS) - set(skipped))
     print(f"PASS: {n} ops exercised ({uniq} unique names), "
           f"all finite/typed/deterministic; {k} GT checks")
     return 0
