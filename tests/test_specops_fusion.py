@@ -368,8 +368,14 @@ def test_dcs_is_fail_closed():
         sp.spec_decorrelation_stretch(cube, bands=[0, 99])
     with pytest.raises(ValueError, match="target_std"):
         sp.spec_decorrelation_stretch(cube, target_std=0.0)
-    with pytest.raises(ValueError, match="color"):
-        sp.spec_decorrelation_stretch(np.zeros((8, 8, 3)))
+    # 2026-08-30 (KNOWN_ISSUES #5): RGB (H, W, 3) is now ACCEPTED by this op —
+    # DStretch on colour photographs is decorrelation stretch's own canonical
+    # use (Gillespie 1986; archaeology's DStretch). Non-finite input is still
+    # refused, and the other cube ops keep refusing (H, W, 3)
+    # (test_dcs_accepts_rgb_photograph covers the positive path).
+    bad_rgb = np.zeros((8, 8, 3)); bad_rgb[0, 0, 0] = np.nan
+    with pytest.raises(ValueError, match="non-finite"):
+        sp.spec_decorrelation_stretch(bad_rgb)
 
 
 # --------------------------------------------------------------------------- #
