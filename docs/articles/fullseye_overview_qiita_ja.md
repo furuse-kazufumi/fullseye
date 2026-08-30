@@ -873,7 +873,7 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 *↑ 花粉 SEM **風**画像を分割・計数（検出数 41）。**AI 生成の模擬データ**。*
 
-この 42 展示のうち、**実データにはすべて出典とライセンス**（詳細な帰属表は[ACADEMIC_ATTRIBUTION.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/ACADEMIC_ATTRIBUTION.md)）を、**AI 生成には全点にその旨**を付けました。おまけの正直な開示をひとつ ―― この「多様な実データを流す」作業は、それ自体が**バグ発見器**でもありました。合成データでは一度も表面化しなかった op の不具合が実データで 5 件見つかり、[docs/KNOWN_ISSUES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/KNOWN_ISSUES.md) に検証状態つきで記録してあります（例：`count_obj` の連結性が HALCON 既定と食い違う疑い）。きれいな展示の裏で、テストにもなっている ―― という一石二鳥でした。
+この 41 展示のうち、**実データにはすべて出典とライセンス**（詳細な帰属表は[ACADEMIC_ATTRIBUTION.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/ACADEMIC_ATTRIBUTION.md)）を、**AI 生成には全点にその旨**を付けました。おまけの正直な開示をひとつ ―― この「多様な実データを流す」作業は、それ自体が**バグ発見器**でもありました。合成データでは一度も表面化しなかった op の不具合が実データで 5 件見つかり、[docs/KNOWN_ISSUES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/KNOWN_ISSUES.md) に検証状態つきで記録してあります（例：`count_obj` の連結性が HALCON 既定と食い違う疑い）。きれいな展示の裏で、テストにもなっている ―― という一石二鳥でした。
 
 ---
 
