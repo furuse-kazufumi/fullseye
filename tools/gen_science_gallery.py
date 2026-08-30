@@ -388,37 +388,36 @@ def subject_alife_worlds(log=print) -> dict:
 def subject_dino_xray(log=print) -> dict:
     """恐竜のレントゲン — トリケラトプス実スキャンをボクセル化して MIP."""
     V, F = _load_mesh_sample("triceratops.glb")
-    # 実寸を [0,1] 立方体に正規化してからボクセル化 (格子を ~256 に抑える)
+    # 実寸を単位箱に正規化してから骨の表面をボクセル化
+    # (骨格標本なので表面ボクセル ≈ 骨そのもの)
     V = V - V.min(axis=0)
     V = V / V.max()
-    pitch = 1.0 / 240.0
-    vol, _origin = fs.voxelize_solid(V, F, pitch)
+    pitch = 1.0 / 400.0
+    vol, _origin = fs.voxelize(V, F, pitch)
     vol = np.asarray(vol, np.float64)
     log(f"  voxel grid: {vol.shape}")
-    views = []
-    for axes, name in [((0, 1, 2), "上から"), ((1, 0, 2), "横から"),
-                       ((2, 0, 1), "正面から")]:
-        v = np.transpose(vol, axes)
-        mip = fs.apply(v, "vol_mip")
-        views.append((mip, name))
-    # レントゲン風: 白い骨 + 青黒い背景 (bone カラーマップ)
+    # 骨に厚みのにじみを与えてから最大値投影 → 濃淡のあるレントゲン調
+    vol = fs.apply(vol, "vol_gaussian", 0.25, 0.5)
+    # 格子は (z, y, x)。y-up モデルなので:
+    #   横から = x 方向に投影 → (y, z)  /  上から = y 方向に投影 → (z, x)
+    side = fs.apply(np.transpose(vol, (2, 1, 0)), "vol_mip")
+    top = fs.apply(np.transpose(vol, (1, 0, 2)), "vol_mip")
     panels, labels = [], []
-    for mip, name in views:
-        blur = fs.apply(mip, "gauss_filter", 0.15, 0.5)  # フィルムのにじみ
-        x = np.clip(0.35 * blur + 0.65 * mip, 0, 1)
+    for mip, name in [(side, "横から (X 線写真ふう)"), (top, "上から")]:
+        x = np.clip(mip * 1.6, 0, 1) ** 0.8
         panels.append(_cmap(x, "bone"))
         labels.append(name)
-    out = _montage(panels, labels, ncols=3)
+    out = _montage(panels, labels, ncols=2)
     _save_png(out, "science_dino_xray.png")
     _save_thumb("science_dino_xray.png")
     return {
         "file": "science_dino_xray.png",
         "title": "トリケラトプスのレントゲン写真",
-        "ops": ["voxelize_solid", "vol_mip", "gauss_filter"],
-        "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+        "ops": ["voxelize", "vol_gaussian", "vol_mip"],
+        "data": "Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)",
         "synthetic": False,
-        "caption": ("スミソニアン博物館の実スキャンをボクセル(3D のピクセル)に詰め、"
-                    "最大値投影 (MIP) するとレントゲン写真そっくりになる。"),
+        "caption": ("スミソニアン博物館の骨格標本スキャンをボクセル (3D のピクセル) に"
+                    "詰め、最大値投影 (vol_mip) するとレントゲン写真そっくりになる。"),
     }
 
 
