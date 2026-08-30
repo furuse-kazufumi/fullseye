@@ -87,8 +87,9 @@ sphere = np.exp(-r ** 2 / (2 * sigma ** 2))                       # 明るい球
 rho = np.sqrt((yy - cy) ** 2 + (xx - cx) ** 2)                    # z 軸まわりの半径
 cyl = np.exp(-rho ** 2 / (2 * sigma ** 2))                        # 明るい円柱 blob → ridge
 
-S_sph, C_sph, Msph, _ = [t.numpy() for t in M.curvature_maps(sphere, mc=1e-4)]
-S_cyl, C_cyl, Mcyl, _ = [t.numpy() for t in M.curvature_maps(cyl, mc=1e-4)]
+mc = 1e-4 / 32  # sobel3d gain-corrected scale(2026-08 の /32 較正に追従) / scaled for the sobel3d gain-correction (2026-08 /32 calibration)
+S_sph, C_sph, Msph, _ = [t.numpy() for t in M.curvature_maps(sphere, mc=mc)]
+S_cyl, C_cyl, Mcyl, _ = [t.numpy() for t in M.curvature_maps(cyl, mc=mc)]
 
 sh = (r > 4.5) & (r < 7.5) & (Msph > 0.5)                          # 勾配の強い球殻
 cb = (rho > 4.5) & (rho < 7.5) & (np.abs(zz - cz) < 10) & (Mcyl > 0.5)  # 円柱の側面帯

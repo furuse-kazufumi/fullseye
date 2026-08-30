@@ -16,7 +16,7 @@ hillco run performs:
      silhouette mask (e.g. a camera view of the walker), for cross-checking.
 
 Self-contained: all data is synthetic, no external files.
-Run:  cd C:/dev/projects/imgevolve && py -3.11 examples/consumer_hillco.py
+Run:  cd <your-project>/imgevolve && py -3.11 examples/consumer_hillco.py
 """
 from __future__ import annotations
 

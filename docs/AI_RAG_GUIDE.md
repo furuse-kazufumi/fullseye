@@ -62,7 +62,7 @@ SKILL.md の `FULLSEYE_REPO =` 行が**この checkout の絶対パスに自動�
 再取込(ノート更新後)の例 — 内部運用そのままの honest な記録として:
 
 ```powershell
-$env:RAPTOR_DIR="C:/dev/tools/raptor"
+$env:RAPTOR_DIR="<path-to-raptor-checkout>"
 py -3.11 raptor_corpus2skill.py --source <fullseye>/docs/ops --name fullseye_ops_corpus_v2 `
   --overwrite --max-depth 2 --max-clusters 6 --min-cluster-size 8   # 要 ANTHROPIC_API_KEY
 ```

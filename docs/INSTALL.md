@@ -22,7 +22,7 @@ Fullseye の設計方針は **「numpy + scipy だけで動くコア」+「重�
 リポジトリ直下で editable install します。
 
 ```powershell
-cd C:\dev\projects\imgevolve
+cd <path-to-fullseye>
 py -3.11 -m pip install -e .            # コアのみ（numpy + scipy、約 521 オペレータ）
 ```
 
@@ -67,7 +67,7 @@ py -3.11 -m pip install -e ".[gpu]"
 未インストールで試したい場合は、リポジトリ直下を `PYTHONPATH` に通せば `import fullseye` は動きます（コンソールスクリプトは使えません）。
 
 ```powershell
-$env:PYTHONPATH = "C:\dev\projects\imgevolve"
+$env:PYTHONPATH = "<path-to-fullseye>"
 py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 ```
 
@@ -78,7 +78,7 @@ py -3.11 -c "import fullseye; print(fullseye.version())"      # 0.1.0
 `install\install.ps1` を実行すると、環境構築とデスクトップ連携が一括で行われます（PowerShell）。
 
 ```powershell
-cd C:\dev\projects\imgevolve
+cd <path-to-fullseye>
 powershell -ExecutionPolicy Bypass -File install\install.ps1
 ```
 

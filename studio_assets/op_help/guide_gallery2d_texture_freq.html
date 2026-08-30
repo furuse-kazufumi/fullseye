@@ -73,7 +73,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_retinex</code> — 単一スケール Retinex <code style="color:#22d3bf">log(I)−log(G_σ*I)</code>(照明不変な反射率、<code style="color:#22d3bf">a</code>=スケール、<code style="color:#22d3bf">b</code>=ゲイン)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_retinex&quot;, 0.5, 0.5)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dc_local_contrast_norm</code> — 局所コントラスト正規化 <code style="color:#22d3bf">(I−μ_w)/(σ_w+ε)</code>(0.5 中心、<code style="color:#22d3bf">a</code>=窓、<code style="color:#22d3bf">b</code>=std 下限)。<code style="color:#22d3bf">fullseye.apply(img, &quot;dc_local_contrast_norm&quot;, 0.5, 0.5)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_texture_freq から)</h3>
-<p>repo 直下(<code style="color:#22d3bf">C:/dev/projects/imgevolve</code>)で <code style="color:#22d3bf">py -3.11 &lt;保存名&gt;.py</code> を実行すると、周波数フィルタ・テクスチャ統計・順序不変性・分解の再構成をグラウンドトゥルースで検証し、最後に <code style="color:#22d3bf">PASS</code> を出力します。検証済みギャラリー <code style="color:#22d3bf">examples/gallery2d_texture_freq.py</code> の GT を土台にした自己完結コードです。</p>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11 &lt;保存名&gt;.py</code> を実行すると、周波数フィルタ・テクスチャ統計・順序不変性・分解の再構成をグラウンドトゥルースで検証し、最後に <code style="color:#22d3bf">PASS</code> を出力します。検証済みギャラリー <code style="color:#22d3bf">examples/gallery2d_texture_freq.py</code> の GT を土台にした自己完結コードです。</p>
 <pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import os, sys
 sys.path.insert(0, os.getcwd())          # imgevolve リポジトリ直下から実行する
 import numpy as np

@@ -8,7 +8,7 @@ that growth. This document is the contract that makes that safe.
 ## How to depend on it
 
 ```powershell
-pip install -e C:\dev\projects\imgevolve          # editable; or add the dir to sys.path
+pip install -e <path-to-fullseye>                 # editable; or add the dir to sys.path
 ```
 ```python
 import fullseye as fs                              # the ONE public entry point

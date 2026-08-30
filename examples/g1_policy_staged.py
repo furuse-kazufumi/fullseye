@@ -21,6 +21,16 @@ Fullseye の方策実行には 2 つの入口がある(知覚サンプル percep
     py -3.11 examples/g1_policy_staged.py
 
 拡張ポイントは EXTEND コメントで明示している。
+
+外部アセット要件 / External asset requirement:
+  このサンプルはリポジトリに同梱されていない外部アセット(RL 学習済み
+  チェックポイント .pkl と参照モーション .npy)を必要とする。環境変数
+  ``FULLSEYE_G1_ASSETS_DIR`` にその両方を含むディレクトリを指定するか、
+  このファイル内の CKPT / REF を直接書き換えること。
+  This example requires external assets not bundled with this repo: an
+  RL-trained checkpoint (.pkl) and a reference motion (.npy). Point the
+  environment variable ``FULLSEYE_G1_ASSETS_DIR`` at a directory containing
+  both files, or edit CKPT / REF directly in this script.
 """
 from __future__ import annotations
 
@@ -34,17 +44,24 @@ from g1_policy_bridge import G1PolicySession  # noqa: E402
 # ---------------------------------------------------------------------------
 # 設定 — EXTEND: 別のチェックポイント/参照モーションを試すならここ
 # ---------------------------------------------------------------------------
-OUT_HUM = "C:/dev/projects/onocollo-complete/out/humanoid"
-CKPT = OUT_HUM + "/mjx_g1_walk12c_ckpt_15728640.pkl"     # 直進歩行(操舵観測つき)
-REF = OUT_HUM + "/g1_walk_cycle_straight.npy"            # 直進化した LAFAN1 歩行 1 周期
+OUT_HUM = os.environ.get("FULLSEYE_G1_ASSETS_DIR")        # directory containing ckpt + ref motion
+CKPT = os.path.join(OUT_HUM, "mjx_g1_walk12c_ckpt_15728640.pkl") if OUT_HUM else None  # 直進歩行(操舵観測つき)
+REF = os.path.join(OUT_HUM, "g1_walk_cycle_straight.npy") if OUT_HUM else None         # 直進化した LAFAN1 歩行 1 周期
 SECS = 8.0                                                # 最大ロールアウト秒数
 
 # EXTEND: 疑似 LiDAR+障害物版を試すなら vision 系 ckpt(walk13c 系)に替えて
 # vision=True にする。obs 次元が合わない組合せはロード時に明示エラーで拒否される。
 VISION = False
 
-if not (os.path.exists(CKPT) and os.path.exists(REF)):
-    raise SystemExit(f"checkpoint/reference not found: {CKPT} / {REF}")
+if not CKPT or not REF or not (os.path.exists(CKPT) and os.path.exists(REF)):
+    raise SystemExit(
+        "This staged example requires external assets not included in this repo:\n"
+        "  - an RL checkpoint (.pkl) trained with the G1 walk policy\n"
+        "  - a reference motion (.npy), e.g. a straightened LAFAN1 walk cycle\n"
+        "Set FULLSEYE_G1_ASSETS_DIR to a directory containing both files, or edit "
+        "CKPT / REF in this script directly.\n"
+        f"CKPT={CKPT}\nREF={REF}"
+    )
 
 # ---------------------------------------------------------------------------
 # 1) ロード — ckpt(numpy 化)と参照モーション(制御 dt へ再サンプル)を 1 回だけ準備

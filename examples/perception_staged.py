@@ -15,6 +15,17 @@ Fullseye のロボット知覚には 2 つの入口がある:
 
 拡張ポイントは EXTEND コメントで明示している。自分のロボット/センサ/条件に
 差し替えるときはそこだけ触ればよい。
+
+外部アセット要件 / External asset requirement:
+  このサンプルはリポジトリに同梱されていない外部アセット(ロールアウト
+  qpos .npy と MuJoCo シーン XML、例えば mujoco_menagerie の unitree_g1)を
+  必要とする。環境変数 ``FULLSEYE_G1_QPOS`` / ``FULLSEYE_MENAGERIE_XML`` に
+  それぞれのパスを指定するか、このファイル内の QPOS / XML を直接書き換える
+  こと。
+  This example requires external assets not bundled with this repo: a qpos
+  rollout (.npy) and a MuJoCo scene XML (e.g. from the mujoco_menagerie
+  unitree_g1 model). Set the environment variables ``FULLSEYE_G1_QPOS`` and
+  ``FULLSEYE_MENAGERIE_XML``, or edit QPOS / XML directly in this script.
 """
 from __future__ import annotations
 
@@ -30,9 +41,18 @@ from evis_fullseye_bridge import PerceptionSession  # noqa: E402
 # ---------------------------------------------------------------------------
 # 設定 — EXTEND: 対象ロボットを替えるならここ (qpos npy / シーン xml / センサ搭載 body)
 # ---------------------------------------------------------------------------
-QPOS = "C:/dev/projects/onocollo-complete/out/humanoid/g1_walk9_37M_qpos.npy"
-XML = "C:/dev/projects/mujoco_menagerie/unitree_g1/scene.xml"
+QPOS = os.environ.get("FULLSEYE_G1_QPOS")             # rollout qpos .npy (e.g. from g1_policy_staged.py)
+XML = os.environ.get("FULLSEYE_MENAGERIE_XML")        # MuJoCo scene xml (e.g. mujoco_menagerie unitree_g1)
 EGO_BODY = "torso_link"      # G1 は頭部が torso_link に剛結。evis なら "pelvis" など
+
+if not QPOS or not XML:
+    raise SystemExit(
+        "This staged example requires external assets not included in this repo:\n"
+        "  - a qpos rollout (.npy), e.g. produced by examples/g1_policy_staged.py\n"
+        "  - a MuJoCo scene XML (e.g. from the mujoco_menagerie unitree_g1 model)\n"
+        "Set FULLSEYE_G1_QPOS and FULLSEYE_MENAGERIE_XML to these paths, or edit "
+        "QPOS / XML in this script directly."
+    )
 
 # EXTEND: 障害物マップを替えるならここ。各行 [x, y, 半径]。
 # (学習環境 G1VisionWalk はこれをエピソードごとにランダム生成している —

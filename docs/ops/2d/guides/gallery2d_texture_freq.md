@@ -109,7 +109,7 @@ flowchart LR
 
 ## 動く最小例(検証済み gallery2d_texture_freq から)
 
-repo 直下(`C:/dev/projects/imgevolve`)で `py -3.11 <保存名>.py` を実行すると、周波数フィルタ・テクスチャ統計・順序不変性・分解の再構成をグラウンドトゥルースで検証し、最後に `PASS` を出力します。検証済みギャラリー `examples/gallery2d_texture_freq.py` の GT を土台にした自己完結コードです。
+repo 直下で `py -3.11 <保存名>.py` を実行すると、周波数フィルタ・テクスチャ統計・順序不変性・分解の再構成をグラウンドトゥルースで検証し、最後に `PASS` を出力します。検証済みギャラリー `examples/gallery2d_texture_freq.py` の GT を土台にした自己完結コードです。
 
 ```python
 import os, sys

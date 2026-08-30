@@ -64,8 +64,8 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_confidence_connected</code> — 信頼度連結領域拡張(シード近傍の平均±k·標準偏差で成長、<code style="color:#22d3bf">a</code> 反復・<code style="color:#22d3bf">b</code> 乗数 k) — <code style="color:#22d3bf">fullseye.apply(img, &quot;xsitk_confidence_connected&quot;, 0.4, 0.3)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsitk_signed_maurer_dist</code> — 符号付き Maurer 距離場(<code style="color:#22d3bf">region → image</code>)、領域内が負(→0.5 未満)・外が正(→0.5 超)、<code style="color:#22d3bf">a</code> が tanh 圧縮スケール — <code style="color:#22d3bf">fullseye.apply(reg, &quot;xsitk_signed_maurer_dist&quot;, 0.5, 0.4)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み gallery2d_color_artistic から)</h3>
-<p>repo 直下(<code style="color:#22d3bf">C:/dev/projects/imgevolve</code>)で <code style="color:#22d3bf">py -3.11 this.py</code>。検証済みギャラリーの GT を凝縮した自己完結・GT アサート付きスニペット(sort の橋渡し・BT.601 輝度の厳密一致・チャンネル選択・cos⁴ 減光・cutout・最大エントロピー閾値を確認):</p>
-<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下(C:/dev/projects/imgevolve)で: py -3.11 this.py
+<p>repo 直下で <code style="color:#22d3bf">py -3.11 this.py</code>。検証済みギャラリーの GT を凝縮した自己完結・GT アサート付きスニペット(sort の橋渡し・BT.601 輝度の厳密一致・チャンネル選択・cos⁴ 減光・cutout・最大エントロピー閾値を確認):</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf"># repo 直下で: py -3.11 this.py
 import numpy as np
 import fullseye
 

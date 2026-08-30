@@ -99,10 +99,10 @@ flowchart LR
 
 ## 動く最小例(検証済み gallery2d_color_artistic から)
 
-repo 直下(`C:/dev/projects/imgevolve`)で `py -3.11 this.py`。検証済みギャラリーの GT を凝縮した自己完結・GT アサート付きスニペット(sort の橋渡し・BT.601 輝度の厳密一致・チャンネル選択・cos⁴ 減光・cutout・最大エントロピー閾値を確認):
+repo 直下で `py -3.11 this.py`。検証済みギャラリーの GT を凝縮した自己完結・GT アサート付きスニペット(sort の橋渡し・BT.601 輝度の厳密一致・チャンネル選択・cos⁴ 減光・cutout・最大エントロピー閾値を確認):
 
 ```python
-# repo 直下(C:/dev/projects/imgevolve)で: py -3.11 this.py
+# repo 直下で: py -3.11 this.py
 import numpy as np
 import fullseye
 

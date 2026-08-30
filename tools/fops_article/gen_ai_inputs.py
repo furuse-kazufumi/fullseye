@@ -1,9 +1,17 @@
 # Generate AI input photos for Fullseye op-category demos (Gemini 2.5 flash image).
 import json, io, base64, urllib.request, os, sys, time
+from pathlib import Path
 
-key = json.load(io.open(r"C:\dev\api-keys.json", encoding="utf-8"))["GEMINI_API_KEY"]
+key = os.environ.get("GEMINI_API_KEY")
+if not key:
+    raise SystemExit(
+        "GEMINI_API_KEY is not set. Export it before running this script, e.g.\n"
+        '  PowerShell: $env:GEMINI_API_KEY = "<your-key>"\n'
+        "  bash:       export GEMINI_API_KEY=<your-key>"
+    )
 MODEL = "gemini-2.5-flash-image"
-OUT = r"C:\dev\projects\imgevolve\studio_assets\sample_sources_ai"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+OUT = str(REPO_ROOT / "studio_assets" / "sample_sources_ai")
 
 PROMPTS = {
     "parts_tray": "Top-down photograph of assorted small metal machine parts (bolts, nuts, washers, springs) scattered in a light gray plastic tray, even diffuse industrial lighting, sharp focus, realistic, no text, no watermark",

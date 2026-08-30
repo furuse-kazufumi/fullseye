@@ -10,7 +10,7 @@ reached through `import fullseye`. Pipeline shape:
                                               │
                                               └▶ pointcloud (normals/clean) ─▶ registration ─▶ 6-DoF pose (grasp)
 
-Install: `pip install -e C:\dev\projects\imgevolve` (or add the dir to `sys.path`).
+Install: `pip install -e <path-to-fullseye>` (or add the dir to `sys.path`).
 Frames are float64 grayscale in `[0,1]` (H×W), or H×W×3 for colour ops.
 
 ## Operators (521)

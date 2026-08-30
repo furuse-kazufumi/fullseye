@@ -11,7 +11,7 @@ Fullseye は **numpy 配列を入力・出力とする画像処理オペレー�
 前提: **Python 3.11**（Windows は `py -3.11`、Linux は `python3.11`）。
 
 ```powershell
-cd C:\dev\projects\imgevolve
+cd <path-to-fullseye>
 py -3.11 -m pip install -e .          # numpy + scipy のコアだけ（約 521 オペレータ）
 ```
 
@@ -25,7 +25,7 @@ py -3.11 -m pip install -e ".[gui]"       # Fullseye Studio（PySide6）を使�
 
 extras の一覧と意味は [INSTALL.md](INSTALL.md) にまとめてあります。GUI を使うなら `[gui]`（または `[all]` + `[gui]`）が必要です。
 
-> インストールせずに試すこともできます。リポジトリ直下（`C:\dev\projects\imgevolve`）を作業ディレクトリにし、環境変数 `PYTHONPATH` にそのパスを通せば `import fullseye` は動きます。ただし `fullseye` / `fullseye-studio` というコマンド（コンソールスクリプト）は `pip install -e .` を実行して初めて使えるようになります。
+> インストールせずに試すこともできます。リポジトリ直下（`<path-to-fullseye>`）を作業ディレクトリにし、環境変数 `PYTHONPATH` にそのパスを通せば `import fullseye` は動きます。ただし `fullseye` / `fullseye-studio` というコマンド（コンソールスクリプト）は `pip install -e .` を実行して初めて使えるようになります。
 
 ---
 

@@ -132,7 +132,7 @@ GT(ground truth)チェックを公開ファサード `fullseye.apply` で書き�
 「動く」ではなく「正しく効く」ことを beat-the-null で確かめ、最後に `PASS` を印字する。
 
 ```python
-# repo 直下(C:/dev/projects/imgevolve)で: py -3.11 this_file.py
+# repo 直下で: py -3.11 this_file.py
 import warnings
 import numpy as np
 import fullseye

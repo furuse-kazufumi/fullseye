@@ -13,7 +13,7 @@ Two *honest* Fullseye uses onocollo actually needs (see docs/CONSUMER_APPLICATIO
      "the camera is closing on the object" claim is checked against the pixels.
 
 Self-contained: synthetic-but-exact data, no external files.
-Run:  cd C:/dev/projects/imgevolve && py -3.11 examples/consumer_onocollo.py
+Run:  cd <your-project>/imgevolve && py -3.11 examples/consumer_onocollo.py
 """
 from __future__ import annotations
 
