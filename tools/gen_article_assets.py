@@ -627,6 +627,505 @@ def build_dvs_stream_video(log=print) -> dict:
     }
 
 
+# --------------------------------------------------------------------------- #
+# 6) op 分類マップ(treemap)/ operator taxonomy treemap                        #
+# --------------------------------------------------------------------------- #
+def _squarify(sizes, x, y, w, h):
+    """Squarified treemap layout (Bruls/Huizing/van Wijk 1999 algorithm).
+
+    Minimal from-scratch reimplementation (no external ``squarify`` dependency
+    installed in this env) — takes areas already normalised to sum to ``w*h``
+    and returns a list of (x, y, dx, dy) rects in the same order as ``sizes``.
+    """
+    sizes = [float(s) for s in sizes]
+    if not sizes:
+        return []
+    if len(sizes) == 1:
+        return _squarify_layout(sizes, x, y, w, h)
+
+    def worst(row, x, y, w, h):
+        rects = _squarify_layout(row, x, y, w, h)
+        return max(max(r[2] / r[3], r[3] / r[2]) for r in rects)
+
+    i = 1
+    while i < len(sizes) and worst(sizes[:i], x, y, w, h) >= worst(sizes[:i + 1], x, y, w, h):
+        i += 1
+    row = sizes[:i]
+    rest = sizes[i:]
+    row_rects = _squarify_layout(row, x, y, w, h)
+    covered = sum(row)
+    if w >= h:
+        row_w = covered / h
+        nx, ny, nw, nh = x + row_w, y, w - row_w, h
+    else:
+        row_h = covered / w
+        nx, ny, nw, nh = x, y + row_h, w, h - row_h
+    return row_rects + _squarify(rest, nx, ny, nw, nh)
+
+
+def _squarify_layout(row, x, y, w, h):
+    covered = sum(row)
+    rects = []
+    if w >= h:
+        row_w = covered / h if h else 0.0
+        cy = y
+        for s in row:
+            rh = s / row_w if row_w else 0.0
+            rects.append((x, cy, row_w, rh))
+            cy += rh
+    else:
+        row_h = covered / w if w else 0.0
+        cx = x
+        for s in row:
+            rw = s / row_h if row_h else 0.0
+            rects.append((cx, y, rw, row_h))
+            cx += rw
+    return rects
+
+
+def _treemap_rects(counts: dict, x, y, w, h):
+    """counts {label: n} -> list of (label, n, (rx, ry, rw, rh)), largest first."""
+    items = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+    labels = [k for k, _ in items]
+    sizes = [float(v) for _, v in items]
+    total = sum(sizes)
+    area = w * h
+    norm_sizes = [s * area / total for s in sizes]
+    rects = _squarify(norm_sizes, x, y, w, h)
+    return list(zip(labels, [v for _, v in items], rects))
+
+
+def build_op_taxonomy(log=print) -> dict:
+    """ops.py(2D)+ops3d.py(3D)の実レジストリからカテゴリ別 op 数を集計し treemap を描く.
+
+    データは実 API から取得する(推測禁止): ``ops.REGISTRY``(2D, ``Op.category``)を
+    op 名でデデュープした集合(``ops.RT`` と同じ 731 distinct — REGISTRY には同名
+    op が category を跨いで再登録されているものが4件あり、後勝ちで数える)、
+    ``ops3d.OPS3D``(3D, 265 op、``category`` フィールド)。合計が記事の実測値
+    (731 / 265)と一致することをその場で assert する — 一致しなければ記事の数字か
+    レジストリのどちらかが古いので、ここで気づけるようにしてある。
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from collections import Counter
+
+    import ops
+    import ops3d
+
+    # 2D: REGISTRY は同名 op が複数 category に再登録されているケースがあるため、
+    # ops.RT (name -> fn, 後勝ち) と同じデデュープ規則で category を数える。
+    name_to_cat = {}
+    for op in ops.REGISTRY:
+        name_to_cat[op.name] = op.category
+    counts_2d = Counter(name_to_cat.values())
+    n_2d = sum(counts_2d.values())
+    assert n_2d == len(ops.RT), f"2D op count {n_2d} != len(ops.RT) {len(ops.RT)}"
+    assert n_2d == 731, f"2D distinct op count drifted: {n_2d} (expected 731 per README/article)"
+    assert len(counts_2d) == 46, f"2D category count drifted: {len(counts_2d)} (expected 46)"
+
+    counts_3d = Counter(m["category"] for m in ops3d.OPS3D.values())
+    n_3d = sum(counts_3d.values())
+    assert n_3d == len(ops3d.OPS3D) == 265, f"3D op count drifted: {n_3d}"
+    assert len(counts_3d) == 55, f"3D category count drifted: {len(counts_3d)} (expected 55)"
+
+    bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
+    fig, axes = plt.subplots(1, 2, figsize=(20, 11), facecolor=bg)
+
+    def _draw(ax, counts, title, n_total, cmap_name):
+        cmap = plt.get_cmap(cmap_name)
+        items = _treemap_rects(counts, 0.0, 0.0, 100.0, 100.0)
+        for i, (label, n, (rx, ry, rw, rh)) in enumerate(items):
+            color = cmap(0.15 + 0.75 * (i / max(1, len(items) - 1)))
+            ax.add_patch(plt.Rectangle((rx, ry), rw, rh, facecolor=color,
+                                        edgecolor=bg, linewidth=1.4))
+            # 小さすぎる矩形はラベルを省略(読めない文字の詰め込みを避ける)
+            if rw > 6.0 and rh > 4.5:
+                fontsize = 6.5 + 3.0 * min(1.0, (rw * rh) / 600.0)
+                txt_color = "#0b0d12" if sum(color[:3]) > 1.6 else "#f2f2f2"
+                ax.text(rx + rw / 2, ry + rh / 2, f"{label}\n{n}", ha="center", va="center",
+                        color=txt_color, fontsize=fontsize, linespacing=1.3)
+        ax.set_xlim(0, 100); ax.set_ylim(0, 100)
+        ax.invert_yaxis()
+        ax.axis("off")
+        ax.set_title(f"{title}  —  {len(counts)} categories, {n_total} ops", color=fg, fontsize=14, pad=10)
+
+    _draw(axes[0], counts_2d, "2D op registry (ops.py)", n_2d, "Blues")
+    _draw(axes[1], counts_3d, "3D op registry (ops3d.py)", n_3d, "Oranges")
+
+    fig.suptitle(f"Fullseye — operator taxonomy: {n_2d} 2D ops / {n_3d} 3D ops "
+                 f"({n_2d + n_3d} total, measured from the live registry)",
+                 color=fg, fontsize=16, y=0.995)
+    fig.text(0.5, 0.01, "area = op count per category (squarified treemap, matplotlib, no mockup data)",
+              ha="center", color=muted, fontsize=9)
+    fig.tight_layout(rect=(0, 0.02, 1, 0.95))
+    out_path = os.path.join(ASSETS_DIR, "op_taxonomy.png")
+    fig.savefig(out_path, dpi=110, facecolor=bg)
+    plt.close(fig)
+    log(f"op_taxonomy: {out_path} | 2D {len(counts_2d)} cats / {n_2d} ops, "
+        f"3D {len(counts_3d)} cats / {n_3d} ops")
+    return {"path": out_path, "n_2d": n_2d, "n_3d": n_3d,
+            "n_cats_2d": len(counts_2d), "n_cats_3d": len(counts_3d)}
+
+
+# --------------------------------------------------------------------------- #
+# 7) HALCON カバレッジ 章別バー / HALCON coverage bar chart by chapter        #
+# --------------------------------------------------------------------------- #
+def build_halcon_coverage_chart(log=print) -> dict:
+    """章別 HALCON operator カバー率を実測して横棒で描く.
+
+    ``fullseye/data/halcon_graph.json`` の ``covered`` フィールドは古い/別基準の
+    スナップショットで、実際に読むと 252/2313 (10.9%) にしかならず記事の実測値
+    (982/2313=42.5%、``docs/HALCON_COVERAGE.md`` の一次ソース)と一致しない
+    (honest disclosure — 指示された参照先を鵜呑みにせず実データで確認した結果)。
+    ``docs/HALCON_COVERAGE.md`` を実際に生成しているのは ``halcon_coverage.py``
+    (``data/halcon_operators.json`` の実スクレイプ結果 + ``Op.halcon`` 突合)なので、
+    それをその場で再実行して真の章別 covered/total を取り、記事に既に書かれている
+    982/2313 の数字とも突き合わせて assert する。
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    import re
+
+    import halcon_coverage as hc
+    import ops
+
+    data = hc.load_operators(hc.JSON_DEFAULT)
+    a = hc.analyze(data, ops.REGISTRY)
+    n_cov, n_real = len(a["covered"]), a["n_real"]
+    pct = 100.0 * n_cov / n_real if n_real else 0.0
+
+    # 章別カウントの合計が全体カバー数と一致することを確認(集計崩れがないか)
+    chapter_cov_sum = sum(cov for cov, _ in a["per_chapter"].values())
+    assert chapter_cov_sum == n_cov, (
+        f"per-chapter covered sum {chapter_cov_sum} != overall covered {n_cov}")
+
+    # 既に記事に書かれている数字(docs/HALCON_COVERAGE.md, README.md)とも一致するか確認。
+    # チェックサム目的であって、ここから数字を「借りて」はいない(上のライブ計算が正)。
+    md_path = os.path.join(REPO, "docs", "HALCON_COVERAGE.md")
+    if os.path.exists(md_path):
+        with open(md_path, encoding="utf-8") as fh:
+            md_text = fh.read()
+        m = re.search(r"maps to (\d+) / (\d+) HALCON operators \(([\d.]+)%\)", md_text)
+        if m:
+            doc_cov, doc_real, doc_pct = int(m.group(1)), int(m.group(2)), float(m.group(3))
+            assert (doc_cov, doc_real) == (n_cov, n_real), (
+                f"live measurement {n_cov}/{n_real} disagrees with docs/HALCON_COVERAGE.md "
+                f"{doc_cov}/{doc_real} — the doc is stale, regenerate it with halcon_coverage.py")
+            log(f"cross-check OK vs docs/HALCON_COVERAGE.md: {doc_cov}/{doc_real} ({doc_pct}%)")
+
+    items = sorted(a["per_chapter"].items(), key=lambda kv: (kv[1][0] / kv[1][1] if kv[1][1] else 0.0),
+                   reverse=True)
+    chapters = [k for k, _ in items]
+    covs = [v[0] for _, v in items]
+    tots = [v[1] for _, v in items]
+    ratios = [c / t if t else 0.0 for c, t in zip(covs, tots)]
+
+    bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
+    n = len(chapters)
+    fig, ax = plt.subplots(figsize=(12, max(6.0, 0.34 * n)), facecolor=bg)
+    ax.set_facecolor(bg)
+    y = np.arange(n)
+    bar_color = "#5aa9e6"
+    ax.barh(y, ratios, color=bar_color, height=0.68)
+    ax.set_yticks(y)
+    ax.set_yticklabels(chapters, color=fg, fontsize=9)
+    ax.invert_yaxis()
+    ax.set_xlim(0, 1.0)
+    ax.set_xlabel("coverage ratio (covered / total, per HALCON top-level chapter)", color=muted, fontsize=9)
+    ax.tick_params(axis="x", colors=muted)
+    for spine in ax.spines.values():
+        spine.set_color(muted)
+    ax.grid(axis="x", color=muted, alpha=0.25, linewidth=0.6)
+    for yi, (c, t, r) in enumerate(zip(covs, tots, ratios)):
+        ax.text(min(r + 0.015, 0.97), yi, f"{c}/{t}", va="center", ha="left",
+                color=fg, fontsize=8)
+
+    ax.set_title(f"Fullseye — HALCON operator coverage by chapter: "
+                 f"{n_cov}/{n_real} operators ({pct:.1f}%), measured live from "
+                 f"data/halcon_operators.json + Op.halcon", color=fg, fontsize=12.5, pad=12)
+    fig.tight_layout()
+    out_path = os.path.join(ASSETS_DIR, "halcon_coverage_chart.png")
+    fig.savefig(out_path, dpi=110, facecolor=bg)
+    plt.close(fig)
+    log(f"halcon_coverage_chart: {out_path} | {n_cov}/{n_real} ({pct:.1f}%), {n} chapters")
+    return {"path": out_path, "n_covered": n_cov, "n_real": n_real, "pct": pct, "n_chapters": n}
+
+
+# --------------------------------------------------------------------------- #
+# 8) 2D op 出力サンプラー / 2D op output sampler (24 tiles, one per category) #
+# --------------------------------------------------------------------------- #
+def _pick_sampler_ops(registry, apply_fn, img, n=24, log=print):
+    """カテゴリごとに REGISTRY 登録順で最初に「実際に動く」op を機械的に選ぶ.
+
+    見た目で選ばない(honest な機械選択): REGISTRY を先頭から走査してカテゴリの
+    初出順を記録し、各カテゴリの中で最初に ``apply_fn(img, op.name, ...)`` が
+    例外なく通った op を採用する。動かない op(型の相性が悪い等)は同カテゴリ内
+    の次候補へフォールバックし、カテゴリ全滅ならそのカテゴリごと飛ばす。
+    """
+    from collections import OrderedDict
+    cat_order, cat_ops, seen = [], OrderedDict(), set()
+    for op in registry:
+        if op.category not in cat_ops:
+            cat_ops[op.category] = []
+            cat_order.append(op.category)
+        if op.name in seen:
+            continue
+        seen.add(op.name)
+        cat_ops[op.category].append(op)
+
+    chosen, skipped = [], []
+    for cat in cat_order:
+        picked = None
+        for op in cat_ops[cat]:
+            try:
+                out = apply_fn(img, op.name, a=0.5, b=0.5)
+            except Exception as exc:
+                skipped.append((cat, op.name, str(exc)))
+                continue
+            picked = (cat, op.name, out)
+            break
+        if picked is not None:
+            chosen.append(picked)
+        if len(chosen) >= n:
+            break
+    return chosen, skipped
+
+
+def _render_sampler_tile(ax, cat, name, out, img_shape, bg, fg, muted, log=print):
+    import numpy as np
+    from scipy import ndimage
+
+    caption = ""
+    if isinstance(out, dict) and "cs" in out and "shape" in out:
+        H, W = out["shape"]
+        mask = np.zeros((H, W), dtype=bool)
+        n_pts = 0
+        for c in out["cs"]:
+            c = np.asarray(c)
+            if c.size == 0:
+                continue
+            rr = np.clip(np.round(c[:, 0]).astype(int), 0, H - 1)
+            cc = np.clip(np.round(c[:, 1]).astype(int), 0, W - 1)
+            mask[rr, cc] = True
+            n_pts += len(rr)
+        mask = ndimage.binary_dilation(mask, iterations=1)
+        vis = np.full((H, W, 3), 0.08)
+        vis[mask] = [1.0, 0.3, 0.2]
+        ax.imshow(vis)
+        caption = f"XLD contour dict: {len(out['cs'])} curves, {n_pts} pts"
+    elif isinstance(out, np.ndarray) and out.ndim == 2 and out.shape == tuple(img_shape):
+        lo, hi = float(out.min()), float(out.max())
+        ax.imshow(out, cmap="gray", vmin=lo, vmax=hi if hi > lo else lo + 1e-6)
+        caption = f"image [{lo:.2f}, {hi:.2f}]"
+    elif isinstance(out, np.ndarray) and out.ndim == 3 and out.shape[-1] == 3:
+        ax.imshow(np.clip(out, 0.0, 1.0))
+        caption = f"color {out.shape[0]}x{out.shape[1]}"
+    else:
+        ax.imshow(np.full((10, 10), 0.07), cmap="gray", vmin=0, vmax=1)
+        if isinstance(out, (float, int, np.floating, np.integer)):
+            txt = f"{float(out):.4f}"
+            caption = "feature (scalar)"
+        else:
+            arr = np.asarray(out).ravel()
+            txt = "\n".join(f"{v:.3f}" for v in arr[:4])
+            caption = f"feature (vector, shape={np.asarray(out).shape})"
+        ax.text(0.5, 0.5, txt, ha="center", va="center", color="#ffd27a",
+                fontsize=13, fontweight="bold", transform=ax.transAxes)
+    ax.axis("off")
+    ax.set_title(name, color=fg, fontsize=10, pad=5)
+    ax.text(0.5, -0.05, f"[{cat}] {caption}", transform=ax.transAxes,
+            ha="center", va="top", color=muted, fontsize=7.2)
+
+
+def build_op_sampler_2d(log=print) -> dict:
+    """coins サンプル画像へ 24 カテゴリ代表 op を実際に適用し 4x6 タイルで並べる.
+
+    op は REGISTRY 登録順のカテゴリ初出順で、各カテゴリ最初に動く op を機械的に
+    選ぶ(``_pick_sampler_ops``)。手描き無し・全タイルが ``fullseye.apply`` の
+    本物の戻り値(image/region は画像、feature はスカラー数値焼き込み、contour は
+    実 XLD 点の焼き込み)。
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    import fullseye
+    import ops
+    import sample_images as si
+
+    img = si.load("coins")
+    chosen, skipped = _pick_sampler_ops(ops.REGISTRY, fullseye.apply, img, n=24, log=log)
+    if skipped:
+        log(f"op_sampler_2d: {len(skipped)} op(s) skipped (raised on this input):")
+        for cat, name, err in skipped[:10]:
+            log(f"  - [{cat}] {name}: {err}")
+    if len(chosen) < 24:
+        log(f"[warn] op_sampler_2d: only {len(chosen)}/24 categories yielded a runnable op")
+
+    bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
+    ncols, nrows = 6, -(-len(chosen) // 6)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(4.0 * ncols, 3.55 * nrows), facecolor=bg)
+    axes = axes.ravel()
+    for ax, (cat, name, out) in zip(axes, chosen):
+        _render_sampler_tile(ax, cat, name, out, img.shape, bg, fg, muted, log=log)
+    for ax in axes[len(chosen):]:
+        ax.axis("off")
+
+    fig.suptitle(f"Fullseye — 2D op sampler: {len(chosen)} categories on `coins` "
+                 f"(one representative op per category, real outputs)", color=fg, fontsize=15, y=0.995)
+    fig.tight_layout(rect=(0, 0, 1, 0.965))
+    out_path = os.path.join(ASSETS_DIR, "op_sampler_2d.png")
+    fig.savefig(out_path, dpi=110, facecolor=bg)
+    plt.close(fig)
+    log(f"op_sampler_2d: {out_path} | {len(chosen)} tiles: "
+        + ", ".join(f"{cat}:{name}" for cat, name, _ in chosen))
+    return {"path": out_path, "n_tiles": len(chosen),
+            "ops": [(cat, name) for cat, name, _ in chosen], "skipped": skipped}
+
+
+# --------------------------------------------------------------------------- #
+# 9) 3D op 出力サンプラー(余力枠)/ 3D op output sampler (bonus)             #
+# --------------------------------------------------------------------------- #
+def build_op_sampler_3d(log=print) -> dict:
+    """Itokawa 実点群に 3D op(法線/曲率/ダウンサンプル/OBB/凸包)を適用し並べる.
+
+    データ: studio_assets/sample_3d/itokawa_points.npy(実点群、build_itokawa_montage
+    と同一ソース)。各 op は ``ops3d.get(name)`` 経由でそのまま呼ぶ(モックアップ禁止)。
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401
+    from mpl_toolkits.mplot3d.art3d import Line3DCollection
+
+    import ops3d
+
+    data_path = os.path.join(REPO, "studio_assets", "sample_3d", "itokawa_points.npy")
+    if not os.path.exists(data_path):
+        log(f"[skip] op_sampler_3d: data missing: {data_path}")
+        return {"path": None, "n_tiles": 0}
+
+    pts = np.load(data_path).astype(np.float64)
+    pts = pts - pts.mean(axis=0)
+    extent = pts.max(axis=0) - pts.min(axis=0)
+    diag = float(np.linalg.norm(extent))
+
+    bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
+
+    def _style(ax):
+        ax.set_facecolor(bg)
+        for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
+            pane.set_facecolor(bg); pane.set_edgecolor(bg)
+        ax.grid(False)
+        ax.set_xticks([]); ax.set_yticks([]); ax.set_zticks([])
+        try:
+            ax.set_box_aspect((1, 1, 1))
+        except Exception:
+            pass
+
+    jobs = []
+
+    def job_raw(ax):
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=np.linalg.norm(pts, axis=1),
+                   cmap="copper", s=4, linewidths=0)
+        return f"{len(pts)} pts (raw)"
+    jobs.append(("Raw point cloud", "itokawa_points.npy", job_raw))
+
+    def job_normals(ax):
+        normals = ops3d.get("estimate_normals")(pts, k=20)
+        step = max(1, len(pts) // 300)
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=muted, s=3, alpha=0.5, linewidths=0)
+        ax.quiver(pts[::step, 0], pts[::step, 1], pts[::step, 2],
+                  normals[::step, 0], normals[::step, 1], normals[::step, 2],
+                  length=diag * 0.03, color="#55aaff", linewidth=0.6)
+        return f"estimate_normals: {len(normals)} normals (k=20 nbhd), {len(pts[::step])} shown"
+    jobs.append(("Point normals", "curvature3d.estimate_normals", job_normals))
+
+    def job_shape_index(ax):
+        si_vals = ops3d.get("shape_index")(pts, k=20)
+        lo, hi = np.percentile(si_vals, [2, 98])
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=si_vals, cmap="coolwarm",
+                  vmin=lo, vmax=hi, s=4, linewidths=0)
+        return f"shape_index: mean {si_vals.mean():.3f}, std {si_vals.std():.3f} (Koenderink)"
+    jobs.append(("Shape index", "curvature3d.shape_index", job_shape_index))
+
+    def job_downsample(ax):
+        voxel = diag / 25.0
+        ds = ops3d.get("voxel_grid_downsample")(pts, voxel_size=voxel)
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=muted, s=2, alpha=0.25, linewidths=0)
+        ax.scatter(ds[:, 0], ds[:, 1], ds[:, 2], c="#55ff99", s=8, linewidths=0)
+        reduction = 100.0 * (1.0 - len(ds) / len(pts))
+        return f"voxel_grid_downsample: {len(pts)} -> {len(ds)} pts ({reduction:.0f}% reduction, voxel={voxel:.1f}m)"
+    jobs.append(("Voxel downsample", "pcl_filter.voxel_grid_downsample", job_downsample))
+
+    def job_obb(ax):
+        obb = ops3d.get("obb")(pts)
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=muted, s=3, alpha=0.4, linewidths=0)
+        corners = obb["corners"]
+        edges = [(0, 1), (0, 2), (1, 3), (2, 3), (4, 5), (4, 6), (5, 7), (6, 7),
+                 (0, 4), (1, 5), (2, 6), (3, 7)]
+        segs = [(corners[i], corners[j]) for i, j in edges]
+        ax.add_collection3d(Line3DCollection(segs, colors="#ff5555", linewidths=1.3))
+        ext = obb["extents"]
+        return f"obb: extents {ext[0]:.0f}x{ext[1]:.0f}x{ext[2]:.0f} m (match3d.obb, oriented box)"
+    jobs.append(("Oriented bounding box", "pcseg.obb", job_obb))
+
+    def job_hull(ax):
+        verts, faces = ops3d.get("convex_hull")(pts)
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=muted, s=2, alpha=0.3, linewidths=0)
+        tri = verts[faces]
+        ax.add_collection3d(Line3DCollection(
+            np.concatenate([tri[:, [0, 1]], tri[:, [1, 2]], tri[:, [2, 0]]], axis=0),
+            colors="#ffd27a", linewidths=0.35, alpha=0.7))
+        return f"convex_hull: {len(verts)} verts, {len(faces)} tris (meshrepair.convex_hull)"
+    jobs.append(("Convex hull", "meshrepair.convex_hull", job_hull))
+
+    panels, skipped = [], []
+    for title, src, job_fn in jobs:
+        try:
+            fig = plt.figure(figsize=(5.4, 5.4), facecolor=bg)
+            ax = fig.add_subplot(111, projection="3d")
+            _style(ax)
+            caption = job_fn(ax)
+            ax.view_init(elev=18, azim=35)
+            fig.tight_layout()
+            out_png = os.path.join(SOURCES_DIR, f"src_3dsampler_{src.split('.')[-1]}.png")
+            fig.savefig(out_png, dpi=110, facecolor=bg)
+            plt.close(fig)
+            panels.append((title, src, out_png, caption))
+        except Exception as exc:
+            skipped.append((title, src, str(exc)))
+            log(f"[skip] op_sampler_3d panel {title} ({src}): {exc}")
+
+    if not panels:
+        return {"path": None, "n_tiles": 0, "skipped": skipped}
+
+    ncols = 3
+    nrows = -(-len(panels) // ncols)
+    fig, axes = plt.subplots(nrows, ncols, figsize=(6.0 * ncols, 5.6 * nrows), facecolor=bg)
+    axes = axes.ravel() if len(panels) > 1 else [axes]
+    for ax, (title, src, out_png, caption) in zip(axes, panels):
+        img = plt.imread(out_png)
+        ax.imshow(img)
+        ax.axis("off")
+        ax.set_title(title, color=fg, fontsize=11, pad=6)
+        ax.text(0.5, -0.03, f"{src} — {caption}", transform=ax.transAxes,
+                ha="center", va="top", color=muted, fontsize=7.8, wrap=True)
+    for ax in axes[len(panels):]:
+        ax.axis("off")
+
+    fig.suptitle("Fullseye — 3D op sampler on asteroid 25143 Itokawa (real point cloud, not a mockup)",
+                 color=fg, fontsize=14.5, y=0.995)
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    out_path = os.path.join(ASSETS_DIR, "op_sampler_3d.png")
+    fig.savefig(out_path, dpi=110, facecolor=bg)
+    plt.close(fig)
+    log(f"op_sampler_3d: {out_path} | panels={len(panels)} skipped={len(skipped)}")
+    return {"path": out_path, "n_tiles": len(panels), "skipped": skipped}
+
+
 def main() -> int:
     import numpy as np
     np.random.seed(SEED)
