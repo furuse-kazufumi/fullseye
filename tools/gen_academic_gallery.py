@@ -526,10 +526,13 @@ def rec_segment_count(col, invert=False, min_area=25):
     colored = fs.colorize_labels(labels)
     n = len(objs)
     binm = (labels > 0).astype(float)
+    # count_obj は公表キャプションの計数役ではない(公表値は segment_objects の
+    # オブジェクト数)。ここでの count_obj 適用は 4/8-connectivity 差を検出する
+    # 内部クロスチェック専用(KNOWN_ISSUES 発見用)なので ops_used には載せない。
     n_op = ap(binm, "count_obj", 0.5, 0.5)
     return ([("original", col), ("otsu segmentation", 1.0 - binm),
              (f"labeled objects (count = {n})", colored)],
-            ["rgb1_to_gray", "segment_objects(otsu)", "count_obj", "colorize_labels"]), n, n_op
+            ["rgb1_to_gray", "segment_objects(otsu)", "colorize_labels"]), n, n_op
 
 
 def rec_multiotsu(col):
