@@ -99,7 +99,10 @@ flowchart LR
 - `r2_split_skeleton_lines` — 骨格を分岐点で切り、線分に分割(`a` で短い断片を除去)。
 
 > **HALCON との差(重要)**: HALCON の `skeleton` は Eckhardt–Maderlechner 法、
-> Fullseye は Zhang–Suen 法(skimage)で、**アルゴリズムが異なります**。
+> Fullseye の既定 `skeleton`/`sk_skeleton` は Zhang–Suen 法(skimage)で、
+> **アルゴリズムが異なります**。HALCON からの移植で骨格の枝ぶりを
+> 近づけたい場合は、同系アルゴリズムの **`em_skeleton`** を使ってください
+> (論文準拠の独立実装。HALCON 実装との画素単位の一致までは未検証)。
 > スケルトンは実装依存性が強い代表例で、細い枝(ヒゲ)の生え方・分岐点の
 > 画素位置・斜め 2 画素幅部の残り方は一致しません。したがって
 > `junctions_skeleton` / `r2_split_skeleton_lines` の分岐数・線分数も
