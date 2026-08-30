@@ -146,19 +146,14 @@ def shot_main(out_path: str) -> None:
 def shot_editor(out_path: str) -> None:
     app, win, model = _build_offscreen_studio()
     win.show(); _pump(app, 8)
-    import examples3d
-    # open two real worked examples as tabs, run the curvature one (F5 path)
-    code_a = examples3d.code("itokawa_curvature")
-    code_b = examples3d.code("itokawa_pose_canonical")
     win._act_pyedit.trigger()          # Tools > Python Editor… (creates dialog + scratch tab)
     _pump(app, 8)
     pe = win._pyedit
     dlg = pe["dlg"]
-    # replace the scratch tab contents with the real curvature example, add a 2nd tab
-    pe["open_tab"](code_a, "itokawa_curvature.py")
-    pe["open_tab"](code_b, "itokawa_pose_canonical.py")
-    tabs = pe["tabs"]
-    tabs.setCurrentIndex(tabs.count() - 2)          # focus the curvature tab
+    # open two real worked examples BY PATH (a pathless tab would run from a temp
+    # scratch copy, breaking the examples' repo-relative data paths)
+    pe["open_path"](os.path.join(_ROOT, "examples_3d", "itokawa_pose_canonical.py"))
+    pe["open_path"](os.path.join(_ROOT, "examples_3d", "itokawa_curvature.py"))
     _pump(app, 4)
     dlg.resize(1500, 950); _pump(app, 6)
     pe["run"]()                                     # F5: run in a subprocess
