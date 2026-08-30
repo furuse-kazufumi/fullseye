@@ -107,7 +107,7 @@
 ## 植物学
 
 ![bot_fern](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg)
-*シダ葉脈(AI 生成)を sk_frangi で葉脈抽出(op: `rgb1_to_gray`, `cv_clahe`, `sk_frangi`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
+*シダ葉脈(AI 生成)を sk_frangi で葉脈抽出し、応答上位 8% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![bot_pollen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen_thumb.jpg)
 *花粉 SEM 風画像(AI 生成)を分割・計数 検出数 = 41(op: `rgb1_to_gray`, `segment_objects(otsu)`, `count_obj`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
