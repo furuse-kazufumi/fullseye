@@ -5900,11 +5900,24 @@ def build_window(model=None):
         Non-modal; all math is in the headless region_/cluster_ helpers."""
         old = getattr(win, "_feat_dlg", None)
         if old is not None:
+            # destroy (not just hide) the previous dialog: its closures hold the
+            # feat dict (base image, clouds, tables — can be hundreds of MB), so
+            # every Ctrl+F5 reopen must release the old one instead of stacking.
             try:
                 old.close()
+                old.deleteLater()
             except Exception:
                 pass
+            win._feat_dlg = None
         dlg = QtWidgets.QDialog(win)
+        # closing the dialog (X / dlg.close()) deletes it — same leak-avoidance:
+        # a closed inspection must not keep its feature data alive invisibly.
+        dlg.setAttribute(QtCore.Qt.WA_DeleteOnClose, True)
+
+        def _feat_dlg_destroyed(*_a, _d=dlg):
+            if getattr(win, "_feat_dlg", None) is _d:
+                win._feat_dlg = None
+        dlg.destroyed.connect(_feat_dlg_destroyed)
         dlg.setWindowTitle("Feature inspection")
         tag_dialog(dlg, "viewer"); dlg.setModal(False)
         outer = QtWidgets.QVBoxLayout(dlg)
