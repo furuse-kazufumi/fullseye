@@ -1079,6 +1079,7 @@ def _render_sampler_tile(ax, cat, name, out, img_shape, bg, fg, muted, log=print
         ax.imshow(np.clip(out, 0.0, 1.0))
         caption = f"color {out.shape[0]}x{out.shape[1]}"
     else:
+        # 特別扱いされなかった feature 出力の保険経路: 黒地でなく入力を薄く敷く
         ax.imshow(np.full((10, 10), 0.07), cmap="gray", vmin=0, vmax=1)
         if isinstance(out, (float, int, np.floating, np.integer)):
             txt = f"{float(out):.4f}"
@@ -1087,6 +1088,8 @@ def _render_sampler_tile(ax, cat, name, out, img_shape, bg, fg, muted, log=print
             arr = np.asarray(out).ravel()
             txt = "\n".join(f"{v:.3f}" for v in arr[:4])
             caption = f"feature (vector, shape={np.asarray(out).shape})"
+        log(f"[warn] op_sampler_2d: {name} fell back to number-only tile "
+            f"(add it to _build_feature_tile_specs)")
         ax.text(0.5, 0.5, txt, ha="center", va="center", color="#ffd27a",
                 fontsize=13, fontweight="bold", transform=ax.transAxes)
     ax.axis("off")
