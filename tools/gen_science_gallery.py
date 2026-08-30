@@ -492,7 +492,7 @@ def subject_morph_pulse(log=print) -> dict:
     frames = []
     # 育つ (dilation を累積適用) → 痩せる (erosion を累積適用)。
     # 1 回の op は半径 ~4px なので、前フレームの結果へ繰り返しかけて動かす。
-    seq = [("dilation_circle", 12), ("erosion_circle", 17)]
+    seq = [("dilation_circle", 10), ("erosion_circle", 15)]
     base = np.stack([img] * 3, -1) * 0.35
     state = seg
     i, total = 0, sum(n for _, n in seq)
