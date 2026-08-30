@@ -298,21 +298,101 @@ def build() -> Image.Image:
     return canvas
 
 
-def save(canvas: Image.Image) -> None:
-    OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    canvas.save(OUT_PATH, optimize=True, compress_level=9)
-    size = OUT_PATH.stat().st_size
+def _mosaic_src(key: str) -> Path:
+    if key.startswith("3d:"):
+        return ROOT / "examples_3d" / "_gallery" / key[3:]
+    return ASSETS / key
+
+
+def build_mosaic() -> Image.Image:
+    """1200x1200 dense 7x7 mosaic + slim bottom brand band (LinkedIn)."""
+    n_ai = sum(1 for _, _, kind in MOSAIC_TILES if kind == "ai")
+    assert len(MOSAIC_TILES) == MOSAIC_COLS * MOSAIC_ROWS, len(MOSAIC_TILES)
+    assert n_ai * 3 <= len(MOSAIC_TILES), f"AI-derived tiles over 1/3: {n_ai}"
+
+    canvas = Image.new("RGB", (MOSAIC_W, MOSAIC_H), BG)
+
+    mosaic_h = MOSAIC_H - MOSAIC_BAND_H - ACCENT_H
+    tile_w = (MOSAIC_W - 2 * MOSAIC_MARGIN
+              - (MOSAIC_COLS - 1) * MOSAIC_GAP) // MOSAIC_COLS
+    tile_h = (mosaic_h - 2 * MOSAIC_MARGIN
+              - (MOSAIC_ROWS - 1) * MOSAIC_GAP) // MOSAIC_ROWS
+    x_left = (MOSAIC_W - (MOSAIC_COLS * tile_w
+                          + (MOSAIC_COLS - 1) * MOSAIC_GAP)) // 2
+    mask = rounded_mask(tile_w, tile_h, MOSAIC_CORNER_R)
+
+    for idx, (key, box, _kind) in enumerate(MOSAIC_TILES):
+        src = Image.open(_mosaic_src(key)).convert("RGB")
+        tile = cover_crop(src, box, tile_w, tile_h)
+        r, c = divmod(idx, MOSAIC_COLS)
+        x = x_left + c * (tile_w + MOSAIC_GAP)
+        y = MOSAIC_MARGIN + r * (tile_h + MOSAIC_GAP)
+        canvas.paste(tile, (x, y), mask)
+
+    # --- accent strip + brand band -------------------------------------
+    band_top = MOSAIC_H - MOSAIC_BAND_H
+    d = ImageDraw.Draw(canvas)
+    d.rectangle((0, band_top, MOSAIC_W, MOSAIC_H), fill=BAND_BG)
+    # thin accent gradient at the band's top edge (reuse banner stops)
+    n = len(ACCENT_STOPS) - 1
+    for x in range(MOSAIC_W):
+        t = x / (MOSAIC_W - 1) * n
+        i = min(int(t), n - 1)
+        f = t - i
+        c0, c1 = ACCENT_STOPS[i], ACCENT_STOPS[i + 1]
+        col = tuple(int(c0[k] + (c1[k] - c0[k]) * f) for k in range(3))
+        d.line([(x, band_top - ACCENT_H), (x, band_top - 1)], fill=col)
+
+    # Title (left) / pip pill (right) / tagline (left, under title)
+    f_title = F_TITLE(38)
+    tx, ty = 28, band_top + 12
+    d.text((tx, ty), TITLE, font=f_title, fill=FG)
+
+    f_mono = F_MONO(19)
+    pip_w = d.textlength(PIP_CMD, font=f_mono)
+    pad_x, pad_y = 14, 9
+    pill_w = int(pip_w) + 2 * pad_x
+    pill_h = 19 + 2 * pad_y
+    px1 = MOSAIC_W - 28
+    px0 = px1 - pill_w
+    py0 = band_top + (MOSAIC_BAND_H - pill_h) // 2
+    d.rounded_rectangle((px0, py0, px1, py0 + pill_h), radius=8,
+                        fill=PILL_BG, outline=PILL_BORDER, width=2)
+    d.text((px0 + pad_x, py0 + pad_y - 2), PIP_CMD, font=f_mono, fill=PILL_FG)
+
+    f_tag = F_TEXT(19)
+    d.text((tx + 2, ty + 52), MOSAIC_TAGLINE, font=f_tag, fill=FG_DIM)
+    return canvas
+
+
+def save(canvas: Image.Image, out_path: Path = OUT_PATH) -> None:
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(out_path, optimize=True, compress_level=9)
+    size = out_path.stat().st_size
     if size >= 1_000_000:
         # GitHub social preview requires < 1 MB: quantize with dithering.
         q = canvas.quantize(colors=256, method=Image.MEDIANCUT,
                             dither=Image.FLOYDSTEINBERG)
-        q.save(OUT_PATH, optimize=True)
-        size = OUT_PATH.stat().st_size
-    print(f"wrote {OUT_PATH} ({canvas.size[0]}x{canvas.size[1]}, {size:,} bytes)")
+        q.save(out_path, optimize=True)
+        size = out_path.stat().st_size
+    print(f"wrote {out_path} ({canvas.size[0]}x{canvas.size[1]}, {size:,} bytes)")
     if size >= 1_000_000:
         print("WARNING: still >= 1 MB", file=sys.stderr)
         sys.exit(1)
 
 
+def main() -> None:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("--variant", choices=("banner", "mosaic"),
+                    default="banner",
+                    help="banner = 1280x640 GitHub social preview (default); "
+                         "mosaic = 1200x1200 dense LinkedIn mosaic")
+    args = ap.parse_args()
+    if args.variant == "mosaic":
+        save(build_mosaic(), MOSAIC_OUT)
+    else:
+        save(build())
+
+
 if __name__ == "__main__":
-    save(build())
+    main()
