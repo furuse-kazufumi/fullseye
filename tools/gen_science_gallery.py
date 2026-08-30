@@ -345,9 +345,11 @@ def subject_alife_worlds(log=print) -> dict:
     sand = bump
     for _ in range(10):
         sand = fs.apply(sand, "alife_sandpile", 1.0, 1.0)
-    # DLA 樹枝 (成長の順番で着色)
-    cl, age = _grow_dla(S, 110, rng)
-    t = np.nan_to_num(age / max(1.0, float(np.nanmax(age))), nan=0.0)
+    # DLA 樹枝 (成長の順番で着色)。小さい格子で育てて 2 倍に拡大 = 枝が太く見える
+    cl, age = _grow_dla(S // 2, 130, rng)
+    cl = np.kron(cl, np.ones((2, 2)))
+    age = np.kron(np.nan_to_num(age, nan=0.0), np.ones((2, 2)))
+    t = age / max(1.0, float(age.max()))
     dla_rgb = _cmap(0.15 + 0.85 * t, "plasma") * (cl > 0.5)[..., None]
     # レニア: なめらかノイズから珊瑚状の微細組織へ
     lenia = fs.apply(rng.random((S, S)), "gauss_filter", 0.5, 0.5)
