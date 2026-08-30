@@ -308,6 +308,12 @@ HALCON の 2313 operator は、**30 の章（chapter）**に分かれていま�
 
 厚くしてきたのは、画像処理の芯にあたる章です。**Filtering**（平滑化・エッジ・周波数フィルタ）、**Morphology**（膨張・収縮・オープニング・クロージング）、**Regions**（領域演算・特徴計測）、**Segmentation**（二値化・領域分割）、そして **Matching**（テンプレート・変形マッチング）――このあたりは、実測 42.5% という全体平均よりもずっと**濃く**塗られています。逆に薄いのは、**Tuple 処理**（数値タプルの操作、プログラミング言語的な部分）、**System**（プロセス・スレッド制御）、**Classification / OCR**（機械学習ベースの分類・文字認識）といった章です。ここはほぼ手つかず、というのが正直なところです。
 
+言葉で書いた偏りを、**章別カバレッジの棒グラフ**でそのまま開示します（`docs/HALCON_COVERAGE.md` の実測と一致することを描画スクリプトが assert しています）。
+
+[![HALCON 章別カバレッジ ―― 982/2313（42.5%）の内訳（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/halcon_coverage_chart.png)
+
+*↑ 厚い所（Regions 105/106・Morphology 42/44・Filters 186/196）と、意図して空けてある所（System 0/141・OCR 0/96・Tuple 0/165）が一目で分かります。*
+
 この偏りは**手が回っていないから**ではなく、**最初から狙ってそうした**偏りです。次の節で、その判断の中身を書きます。
 
 ### 何を作らないかを決めた話
