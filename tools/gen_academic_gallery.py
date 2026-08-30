@@ -161,9 +161,11 @@ def ap(img: np.ndarray, name: str, a: float = 0.5, b: float = 0.5):
 
 
 def norm01(arr: np.ndarray) -> np.ndarray:
+    """Robust display normalization (1..99.5 percentile) so a few extreme
+    pixels do not flatten the whole map."""
     a = np.asarray(arr, dtype=np.float64)
-    lo, hi = float(np.nanmin(a)), float(np.nanmax(a))
-    return np.zeros_like(a) if hi - lo < 1e-12 else (a - lo) / (hi - lo)
+    lo, hi = np.nanpercentile(a, [1.0, 99.5])
+    return np.zeros_like(a) if hi - lo < 1e-12 else np.clip((a - lo) / (hi - lo), 0.0, 1.0)
 
 
 def heat(arr: np.ndarray) -> np.ndarray:
