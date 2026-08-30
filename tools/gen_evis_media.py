@@ -126,8 +126,8 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
         Lg = L.mean(-1) / 255.0
         Rg = R.mean(-1) / 255.0
         disp = fs.disparity_sgm(Lg, Rg, max_disp=40, window=5)
-        disp = fs.speckle_filter(disp, max_diff=1.0, min_size=60)
-        disp = fs.fill_disparity(disp)
+        disp, valid = fs.speckle_filter(disp, max_diff=1.0, min_size=60)
+        disp = fs.fill_disparity(disp, valid)
         disp_col = _u8(fs.colorize_disparity(disp))
         depth_mm = fs.depth_from_disparity(disp, focal=f_half, baseline=baseline_mm,
                                            min_disp=0.5)
