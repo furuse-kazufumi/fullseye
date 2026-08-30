@@ -473,10 +473,10 @@ def fig_optional_extras() -> None:
                     color=color if is_hdr else FG, family=MONO_JP, va="top")
             yy -= 2.2 if is_hdr else 2.9
         col_y[col] = y0 - 3.0
-    fig.text(0.5, 0.008,
-             "pip install fullseye = core のみ / pip install \"fullseye[opencv,gui]\" のように"
-             "必要な extras だけを選んで追加する",
-             ha="center", fontsize=10.5, color=MUTED)
+    ax.text(50, -4.5,
+            "pip install fullseye = core のみ / pip install \"fullseye[opencv,gui]\" のように"
+            "必要な extras だけを選んで追加する",
+            ha="center", va="center", fontsize=10.5, color=MUTED)
     _save(fig, "fig_optional_extras")
 
 
