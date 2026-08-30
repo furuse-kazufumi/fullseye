@@ -657,6 +657,8 @@ _TWIN_ALIASES = (
     ("scale_image", _scale, "scale_image"),
     ("sobel_amp", _sobel, "sobel_amp"),
     ("sobel_dir", _grad_dir, "sobel_dir"),
+    ("local_threshold", _adaptive_gauss, "local_threshold"),
+    ("nonmax_suppression_amp", _local_max, "nonmax_suppression_amp"),
     # region sort(core は _bin(v)=v>0.5 で開始するので、灰色入力とも一致する)
     ("dilation_rectangle1", _regize(_dilate_rect), "dilation_rectangle1"),
     ("dilation_seq", _reg_dilate, "dilation_seq"),
