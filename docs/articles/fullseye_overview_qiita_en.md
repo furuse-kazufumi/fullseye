@@ -273,7 +273,7 @@ This "breadth" is faster to see than to describe, so here's a **treemap tallied 
 
 And "what does the output actually look like?" in one image too: a sampler that **mechanically picks one representative op from each of 24 categories and applies it, for real, to the same coin photo** (zero skips; ops that return scalars have their numbers baked in, ops that return contours have their real XLD points baked in).
 
-[![2D op sampler — representative ops from 24 categories applied to coins (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
+[![2D op sampler — representative ops from 24 categories applied to coins (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
 
 *↑ The 2D op sampler — from `gaussian` to `decode_barcode` to `xmh_zernike` (Zernike moments), 24 categories, 24 ways of "seeing." All real output.*
 
@@ -292,7 +292,7 @@ The reason classical algorithms are still on active duty on inspection lines is 
 
 Words alone stay abstract, so here are these "inspection-line standards" actually assembled and run (all real processing on synthetic data; detection and measurement results are checked against known ground truth — for example, defect detection is confirmed at 6/6 and particle counting at 60/60 by asserts).
 
-[![Surface defect inspection — background subtraction + blob analysis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
+[![Surface defect inspection — background subtraction + blob analysis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
 
 *↑ **Surface defect inspection** — 3 scratches, 2 dents, and 1 foreign particle on a synthetic metal surface: estimate the base texture with a median filter → subtract → blob analysis detects 6/6, boxed with areas. Ops used: `median_image`, `dilation_circle`, `segment_objects`.*
 
@@ -502,7 +502,7 @@ And from these scores there's also a video of the **full cycle — actually gras
 
 *↑ **LIDAR obstacle recognition** — over 20,000 rays actually cast, mimicking a ring LiDAR; RANSAC ground removal → Euclidean clustering resolves 6 objects into 6 clusters. Each cluster gets an OBB, shown in bird's-eye view. Ops used: `remove_ground`, `euclidean_clusters`, `obb`.*
 
-[![Stereo disparity → 3D reconstruction → bird's-eye obstacle map](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
+[![Stereo disparity → 3D reconstruction → bird's-eye obstacle map](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
 
 *↑ **Stereo obstacle map** — disparity → depth via $Z = f \cdot B / d$ → 3D point cloud → clustering everything above 12cm resolves 4 objects into 4 clusters (the reconstructed ground height has a median error of 3mm). Ops used: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`.*
 
@@ -757,7 +757,7 @@ Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, 
 
 #### Space
 
-[![Filament extraction in the Carina Nebula](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina.png)
+[![Filament extraction in the Carina Nebula](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina.png)
 
 *↑ The filament structure of the Carina Nebula ([NASA/STScI Webb, public domain](https://images.nasa.gov/details/carina_nebula)) extracted with `sk_frangi` — an op originally for enhancing blood vessels. A case of a medical op cutting into astronomy.*
 
@@ -797,7 +797,7 @@ Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, 
 
 *↑ A fluorescence micrograph of HT29 cells ([BBBC001, CC-BY 3.0](https://bbbc.broadinstitute.org/BBBC001)), Otsu-segmented → label-colored → counted (327 detected). Laboratory routine work, exactly as it is.*
 
-[![Tracing a neuron's dendrites](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
+[![Tracing a neuron's dendrites](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
 
 *↑ The dendrites in a neuron fluorescence image traced with `sk_frangi`. **AI-generated simulated data**.*
 
@@ -857,7 +857,7 @@ Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, 
 
 *↑ A coral reef coverage-classified by multi-Otsu (marine-survey style). **AI-generated simulated data**.*
 
-[![Extracting fern leaf veins](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern.png)
+[![Extracting fern leaf veins](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern.png)
 
 *↑ The leaf veins of a fern extracted with `sk_frangi`. **AI-generated simulated data**.*
 

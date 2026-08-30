@@ -273,7 +273,7 @@ op を1個足すだけで、レジストリ・探索空間・コード生成・�
 
 「では実際にどんな出力になるのか」も1枚で。**24 カテゴリから代表 op を1個ずつ機械選出して、同じコイン写真に実適用**したサンプラーです（スキップゼロ。スカラーを返す op は数値を、輪郭を返す op は実 XLD 点を、そのまま焼き込んでいます）。
 
-[![2D op サンプラー ―― 24 カテゴリの代表 op を coins に実適用（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
+[![2D op サンプラー ―― 24 カテゴリの代表 op を coins に実適用（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
 
 *↑ 2D op サンプラー ―― gaussian から decode_barcode、`xmh_zernike`（Zernike モーメント）まで、24 分類 24 通りの「見え方」。全部実出力です。*
 
@@ -292,7 +292,7 @@ Fullseye の op 体系は、突き詰めると **HALCON という産業用マシ
 
 言葉だけだと抽象的なので、この"検査ラインの定番"を実際に組んで動かした画を並べます（すべて合成データ上の実処理。検出・計測結果は既知の真値と照合済みで、たとえば欠陥検出は 6/6 件・粒子計数は 60/60 粒が assert で確認されています）。
 
-[![表面欠陥検査 ―― 背景差分+blob 解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
+[![表面欠陥検査 ―― 背景差分+blob 解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
 
 *↑ **表面欠陥検査** ―― 合成した金属面の傷 3・打痕 2・異物 1 を、median フィルタで地合いを推定 → 差分 → blob 解析で 6/6 件検出し、面積つきで枠表示。使用 op: `median_image`, `dilation_circle`, `segment_objects`。*
 
@@ -502,7 +502,7 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 *↑ **LIDAR 障害物認識** ―― リング型 LIDAR を模して 2 万本超のレイを実際に飛ばし、RANSAC 地面除去 → ユークリッドクラスタリングで物体 6 個が 6 クラスタに。各クラスタに OBB を当てて鳥瞰表示。使用 op: `remove_ground`, `euclidean_clusters`, `obb`。*
 
-[![ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
+[![ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
 
 *↑ **ステレオ障害物マップ** ―― 視差 → $Z = f \cdot B / d$ で奥行き → 3D 点群 → 高さ 12cm 超をクラスタリングで 4 物体が 4 クラスタに（復元した地面の高さ誤差は中央値 3mm）。使用 op: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`。*
 
@@ -757,7 +757,7 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 #### 宇宙
 
-[![カリーナ星雲のフィラメント抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina.png)
+[![カリーナ星雲のフィラメント抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina.png)
 
 *↑ カリーナ星雲（[NASA/STScI Webb, public domain](https://images.nasa.gov/details/carina_nebula)）のフィラメント構造を、本来は血管強調用の `sk_frangi` で抽出。医学の op が天文に刺さる例。*
 
@@ -797,7 +797,7 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 *↑ HT29 細胞の蛍光顕微鏡像（[BBBC001, CC-BY 3.0](https://bbbc.broadinstitute.org/BBBC001)）を otsu 分割 → ラベル彩色 → 計数（検出数 327）。実験室のルーチンワークそのものです。*
 
-[![神経細胞の樹状突起トレース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
+[![神経細胞の樹状突起トレース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
 
 *↑ 神経細胞蛍光像の樹状突起を `sk_frangi` でトレース。**AI 生成の模擬データ**。*
 
@@ -857,7 +857,7 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 *↑ サンゴ礁を multi-Otsu で被覆分類（海洋調査風）。**AI 生成の模擬データ**。*
 
-[![シダ葉脈の抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern.png)
+[![シダ葉脈の抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern.png)
 
 *↑ シダの葉脈を `sk_frangi` で抽出。**AI 生成の模擬データ**。*
 
