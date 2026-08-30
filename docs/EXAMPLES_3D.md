@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 265 の型付き op)を、**実問題を解く実行可能な事例**（全 105 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 279 の型付き op)を、**実問題を解く実行可能な事例**（全 106 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 79 事例
+- **合成データ(制御GT)** — 80 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 5 事例
@@ -76,12 +76,13 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **点群に大域整合した外向き法線を付与(PCA推定→MST向き伝播)** (`oriented_normals`, synthetic) — 符号未定のPCA法線を Hoppe MST で外向きに揃える。球面サンプルで生法線の外向き一致0.50(コイン投げ)を向き付け1.00へ改善、接平面精度1.00。退化入力は捏造せず拒否。
 - **球面調和記述子による回転不変な3D形状検索** (`shape_descriptor`, synthetic) — 向き未知の形状(球/箱/円柱の回転コピー)を SH 帯域エネルギー記述子で照合。検索3/3正解・分離マージン>0で、回転で全マスが入れ替わる素ボクセル占有の1/3を上回る。
 - **3Dボリュームのエッジ検出(canny3d: NMS+ヒステリシス)** (`edges_3d`, synthetic) — なだらかな内部を持つ中実ボールの外周だけを1ボクセルに細線化。オンシェル率1.000・内部誤検出0で、生勾配の固定しきい値null(0.464・誤検出4012)を+0.536上回る。
-- **3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)** (`diff_features`, synthetic) — 球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps(内部で s…
+- **3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)** (`diff_features`, synthetic) — 球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps が球殻=cap(S≈+1)/円柱=ridge(S≈+0.5)を判別分離し、curvedness は 1/r を絶対値で復元(c·r≈1.0、2026-08-30 の利得補正後は真の 1/voxel 単位)…
 - **実メッシュ曲率が詳細形状を判別(Stanford Dragon)** (`dl_mesh_curvature`, download) — DL実データStanford Dragon(87万面)をread_mesh→vertex_curvature(cotangent Laplace-Beltrami)。正規化曲率はmedian9.2・MAD6.2・|Hn|>2が88%と広く分布し、同スケールの滑球null(median1.00・0%)をMAD比1.4e7倍で判別。未取得時はSKIPしexit0。
 - **FPFH記述子で部分ビュー間の点対応を張る** (`fpfh_correspondence`, procedural) — 同一物体の2部分ビュー(58度回転+並進・重なり1514点)で法線推定→FPFH記述子(33次元)を計算し記述子最近傍で対応。幾何正答率0.633がランダム対応0.0034・記述子シャッフル0.0020(チャンス率)を約185倍上回る。register全体でなく記述子マッチ品質を直接測る。
 
 ### 形状解析
 
+- **CT の管・粒・肉厚を Hessian 特徴と物理量で計測** (`vessel_metrology`, synthetic) — vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。
 - **中軸骨格と位相署名で形状を区別** (`medial_topology`, synthetic) — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。
 - **曲面上の測地距離と最遠点サンプリング** (`geodesic_distance`, synthetic) — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** (`space_curve`, synthetic) — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。

@@ -160,6 +160,9 @@ EXAMPLES = [
      "name": "3Dモーメント不変量(剛体+一様スケールに不変)",
      "summary": "点群に既知の平行移動・回転・一様スケールを掛けても moment_invariants はほぼ不変で、別形状とは明確に区別。生モーメントは同変換で大きく変動。"},
     # -- shape analysis ---------------------------------------------------------- #
+    {"id": "vessel_metrology", "task": "shape_analysis", "data": "synthetic",
+     "name": "CT の管・粒・肉厚を Hessian 特徴と物理量で計測",
+     "summary": "vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。"},
     {"id": "medial_topology", "task": "shape_analysis", "data": "synthetic",
      "name": "中軸骨格と位相署名で形状を区別",
      "summary": "中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。"},
