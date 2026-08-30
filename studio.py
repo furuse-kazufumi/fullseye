@@ -5760,6 +5760,336 @@ def build_window(model=None):
             flash("3-D surface needs OpenGL — unavailable in this display session")
     b_3d.clicked.connect(open_3d); act_3d.triggered.connect(open_3d)
 
+    # ---- interactive 3-D viewer (View ▸ 3D viewer, Ctrl+4, disp_* directives) --- #
+    _POINT_FILE_FILTER = ("3-D data (*.ply *.pcd *.xyz *.txt *.pts *.asc *.obj *.stl "
+                          "*.off *.npy *.npz);;All files (*)")
+
+    def _load_3d_file(path):
+        """Load a 3-D file -> ``('mesh', V, F, None)`` or ``('points', P, None, C)``.
+        A mesh format with real faces opens as a mesh; anything else (or a mesh
+        read failure) falls back to its points. Raises on an unreadable file."""
+        import mesh as meshmod
+        ext = os.path.splitext(str(path))[1].lower()
+        if ext in (".obj", ".off", ".stl", ".ply"):
+            try:
+                V, F = meshmod.read_mesh(path)[:2]
+                if np.asarray(F).size:
+                    return "mesh", np.asarray(V, np.float64), np.asarray(F, int), None
+            except Exception:
+                pass                              # no faces / points-only file -> cloud
+        P, C = meshmod.read_points(path, with_colors=True)
+        return "points", P, None, C
+
+    def open_viewer3d_window(data=None, title=None):
+        """Open a Viewer3D on the graphics-window system (same numbering / cap /
+        dev_set_window as every 2-D window). *data* = ('mesh', V, F, None) or
+        ('points', P, None, colors); None shows the synthetic demo cloud."""
+        v3 = Viewer3D()
+        if data is None:
+            P, _k = demo_cluster_cloud()
+            v3.set_points(P)
+            title = title or "3D viewer (demo cloud)"
+        elif data[0] == "mesh":
+            v3.set_mesh(data[1], data[2])
+        else:
+            v3.set_points(data[1], colors=data[3])
+        sub = new_graphics_window(title=title or "3D viewer", widget=v3)
+        if sub is None:                           # window cap — new_graphics_window flashed
+            v3.deleteLater()
+            return None
+        sub._fs_viewer3d = v3
+        sub.resize(560, 480)
+        return sub
+
+    def open_viewer3d(path=None):
+        """View ▸ 3D viewer (Ctrl+4): pick a point-cloud/mesh file; Cancel opens
+        the synthetic demo cloud so the viewer is explorable immediately."""
+        if path is None:
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                win, "Open 3-D data (Cancel = demo cloud)", "", _POINT_FILE_FILTER)
+        if not path:
+            return open_viewer3d_window(None)
+        try:
+            data = _load_3d_file(path)
+        except Exception as e:
+            report_error("3D viewer", e)
+            return None
+        sub = open_viewer3d_window(data, title="3D viewer — %s" % os.path.basename(str(path)))
+        if sub is not None:
+            flash("3D viewer: %s (%s, %d pts)" % (os.path.basename(str(path)),
+                                                  data[0], data[1].shape[0]))
+        return sub
+
+    act_viewer3d.triggered.connect(lambda _=False: open_viewer3d())
+    menu_view.addAction(act_viewer3d)
+    win._open_viewer3d = open_viewer3d
+    win._open_viewer3d_window = open_viewer3d_window
+
+    # ---- Feature inspection (Tools ▸ Feature inspection, Ctrl+F5) --------------- #
+    def show_feature_inspection():
+        """HDevelop 'Feature Inspection' workalike, 2-D + 3-D in one dialog.
+
+        2-D tab: the current pipeline result is labeled (a binary result keeps its
+        own components; a gray result is auto-segmented with Otsu — stated in the
+        info line), features are chosen from a checklist, and the table and image
+        highlight each other both ways (row select -> region highlighted, image
+        click -> row selected). 3-D tab: load a cloud (or the demo), cluster with
+        pcseg.euclidean_clusters, get per-cluster features and an embedded
+        interactive Viewer3D where the selected row's cluster is highlighted.
+        Non-modal; all math is in the headless region_/cluster_ helpers."""
+        old = getattr(win, "_feat_dlg", None)
+        if old is not None:
+            try:
+                old.close()
+            except Exception:
+                pass
+        dlg = QtWidgets.QDialog(win)
+        dlg.setWindowTitle("Feature inspection")
+        tag_dialog(dlg, "viewer"); dlg.setModal(False)
+        outer = QtWidgets.QVBoxLayout(dlg)
+        tabs = QtWidgets.QTabWidget(); outer.addWidget(tabs)
+        feat = {"objs": [], "headers": [], "rows": [], "base": None,
+                "P": None, "colors": None, "clusters": [],
+                "headers3": [], "rows3": []}
+
+        # ------------------------- 2-D regions tab --------------------------- #
+        w2 = QtWidgets.QWidget(); h2 = QtWidgets.QHBoxLayout(w2)
+        left2 = QtWidgets.QVBoxLayout()
+        info2 = QtWidgets.QLabel(); info2.setProperty("muted", True); info2.setWordWrap(True)
+        checks = QtWidgets.QListWidget(); checks.setMaximumWidth(190)
+        default_on = {"area", "row", "col", "width", "height", "circularity", "mean_gray"}
+        for name in REGION_FEATURES:
+            it = QtWidgets.QListWidgetItem(name)
+            it.setFlags(it.flags() | QtCore.Qt.ItemIsUserCheckable)
+            it.setCheckState(QtCore.Qt.Checked if name in default_on else QtCore.Qt.Unchecked)
+            checks.addItem(it)
+        table = QtWidgets.QTableWidget(); table.setSortingEnabled(True)
+        table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        table.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        iv = ImageView()
+        b_csv2 = QtWidgets.QPushButton("Copy as CSV")
+        b_refresh = QtWidgets.QPushButton("Refresh from result")
+        row2 = QtWidgets.QHBoxLayout()
+        row2.addWidget(b_refresh); row2.addStretch(1); row2.addWidget(b_csv2)
+        left2.addWidget(info2)
+        mid2 = QtWidgets.QHBoxLayout()
+        mid2.addWidget(checks); mid2.addWidget(table, 1)
+        left2.addLayout(mid2, 1); left2.addLayout(row2)
+        h2.addLayout(left2, 3); h2.addWidget(iv, 2)
+        tabs.addTab(w2, "2-D regions")
+
+        def _checked_names():
+            return [checks.item(i).text() for i in range(checks.count())
+                    if checks.item(i).checkState() == QtCore.Qt.Checked]
+
+        def _selected_obj_index():
+            r = table.currentRow()
+            if r < 0:
+                return None
+            it = table.item(r, 0)
+            return None if it is None else it.data(QtCore.Qt.UserRole)
+
+        def _render_2d(selected=None):
+            base = feat["base"]
+            if base is None:
+                iv.set_message("no 2-D result to inspect\n\nrun a pipeline, then Refresh")
+                return
+            rgb = region_highlight_rgb(base, feat["objs"], selected)
+            qi = _to_qimage(rgb, QtGui)
+            if qi is not None:
+                pm = QtGui.QPixmap.fromImage(qi)
+                if not iv.set_pixmap_keep_view(pm):
+                    iv.fit()
+            iv.set_data(rgb)
+
+        def _fill_table():
+            names = _checked_names()
+            base = feat["base"]
+            gray = base if (isinstance(base, np.ndarray) and base.ndim == 2) else None
+            headers, rows = region_feature_table(feat["objs"], names, image=gray)
+            feat["headers"], feat["rows"] = headers, rows
+            table.setSortingEnabled(False)
+            table.clear()
+            table.setColumnCount(len(headers)); table.setRowCount(len(rows))
+            table.setHorizontalHeaderLabels(headers)
+            for r, row in enumerate(rows):
+                for c, v in enumerate(row):
+                    it = QtWidgets.QTableWidgetItem()
+                    it.setData(QtCore.Qt.EditRole, int(v) if c == 0 else float(v))
+                    if c == 0:
+                        it.setData(QtCore.Qt.UserRole, r)      # objs index rides the label cell
+                    table.setItem(r, c, it)
+            table.setSortingEnabled(True)
+            table.resizeColumnsToContents()
+
+        def _refresh_2d():
+            raw = state.get("raw")
+            if isinstance(raw, np.ndarray) and raw.ndim == 2:
+                try:
+                    objs, seg = region_feature_objects(raw)
+                except Exception as e:
+                    objs, seg = [], "error: %s" % truncate(e, 60)
+                feat["objs"] = objs
+                img = model.image
+                feat["base"] = (img if isinstance(img, np.ndarray) and img.ndim == 2
+                                and img.shape == raw.shape else raw)
+                info2.setText("%d region(s) from the current result (%s)  ·  "
+                              "click a row to highlight its region; click the image "
+                              "to select its row"
+                              % (len(objs), "binary labeling" if seg == "labels"
+                                 else "gray input, auto-Otsu" if seg == "otsu" else seg))
+            else:
+                feat["objs"], feat["base"] = [], None
+                info2.setText("no 2-D result — load an image / run a pipeline, then Refresh")
+            _fill_table()
+            _render_2d(None)
+
+        def _on_row_selected():
+            _render_2d(_selected_obj_index())
+
+        def _on_image_click(x, y):
+            idx = region_label_at(feat["objs"], y, x)
+            if idx is None:
+                table.clearSelection()
+                _render_2d(None)
+                return
+            for r in range(table.rowCount()):
+                it = table.item(r, 0)
+                if it is not None and it.data(QtCore.Qt.UserRole) == idx:
+                    table.selectRow(r); table.scrollToItem(it)
+                    break
+
+        def _copy_csv2():
+            QtWidgets.QApplication.clipboard().setText(
+                feature_table_csv(feat["headers"], feat["rows"]))
+            flash("feature table copied as CSV (%d rows)" % len(feat["rows"]))
+
+        table.itemSelectionChanged.connect(_on_row_selected)
+        iv.click_cb = _on_image_click
+        checks.itemChanged.connect(lambda _it: (_fill_table(), _render_2d(_selected_obj_index())))
+        b_refresh.clicked.connect(lambda _=False: _refresh_2d())
+        b_csv2.clicked.connect(lambda _=False: _copy_csv2())
+
+        # ------------------------- 3-D clusters tab -------------------------- #
+        w3 = QtWidgets.QWidget(); v3l = QtWidgets.QVBoxLayout(w3)
+        bar3 = QtWidgets.QHBoxLayout()
+        b_load3 = QtWidgets.QPushButton("Load point cloud…")
+        b_demo3 = QtWidgets.QPushButton("Demo clusters")
+        tol_spin = QtWidgets.QDoubleSpinBox(); tol_spin.setDecimals(4)
+        tol_spin.setRange(0.0001, 10000.0); tol_spin.setValue(0.05)
+        tol_spin.setPrefix("tol "); tol_spin.setToolTip(
+            "Euclidean cluster tolerance (pcseg.euclidean_clusters); auto-suggested "
+            "from the cloud's nearest-neighbour spacing on load")
+        min_spin = QtWidgets.QSpinBox(); min_spin.setRange(1, 1000000); min_spin.setValue(10)
+        min_spin.setPrefix("min "); min_spin.setToolTip("Minimum cluster size (points)")
+        b_clu = QtWidgets.QPushButton("Cluster"); b_clu.setProperty("accent", True)
+        b_csv3 = QtWidgets.QPushButton("Copy as CSV")
+        for wdg in (b_load3, b_demo3, tol_spin, min_spin, b_clu):
+            bar3.addWidget(wdg)
+        bar3.addStretch(1); bar3.addWidget(b_csv3)
+        info3 = QtWidgets.QLabel("load a cloud (or Demo clusters) — Studio's 3-D examples run "
+                                 "as subprocesses, so this tab works from files / demo data")
+        info3.setProperty("muted", True); info3.setWordWrap(True)
+        split3 = QtWidgets.QHBoxLayout()
+        table3 = QtWidgets.QTableWidget(); table3.setSortingEnabled(True)
+        table3.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+        table3.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        table3.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+        v3 = Viewer3D()
+        split3.addWidget(table3, 3); split3.addWidget(v3, 2)
+        v3l.addLayout(bar3); v3l.addWidget(info3); v3l.addLayout(split3, 1)
+        tabs.addTab(w3, "3-D clusters")
+
+        def _recluster():
+            P = feat["P"]
+            if P is None:
+                info3.setText("no cloud loaded — Load point cloud… or Demo clusters")
+                return
+            import pcseg
+            try:
+                clusters = pcseg.euclidean_clusters(P, tol=float(tol_spin.value()),
+                                                    min_size=int(min_spin.value()))
+            except Exception as e:
+                report_error("clustering", e); return
+            feat["clusters"] = clusters
+            headers, rows = cluster_feature_table(P, clusters)
+            feat["headers3"], feat["rows3"] = headers, rows
+            table3.setSortingEnabled(False)
+            table3.clear()
+            table3.setColumnCount(len(headers)); table3.setRowCount(len(rows))
+            table3.setHorizontalHeaderLabels(headers)
+            for r, row in enumerate(rows):
+                for c, val in enumerate(row):
+                    it = QtWidgets.QTableWidgetItem()
+                    it.setData(QtCore.Qt.EditRole, int(val) if c == 0 else float(val))
+                    if c == 0:
+                        it.setData(QtCore.Qt.UserRole, r)
+                    table3.setItem(r, c, it)
+            table3.setSortingEnabled(True)
+            table3.resizeColumnsToContents()
+            v3.set_points(P, colors=feat["colors"])
+            v3.set_clusters(clusters)
+            info3.setText("%d cluster(s) of %d points (tol %.4g, min %d) — select a row "
+                          "to highlight its cluster in the viewer"
+                          % (len(clusters), P.shape[0], tol_spin.value(), min_spin.value()))
+
+        def _set_cloud(P, colors=None, label=""):
+            feat["P"] = np.asarray(P, np.float64).reshape(-1, 3)
+            feat["colors"] = colors
+            try:
+                tol_spin.setValue(float(suggest_cluster_tol(feat["P"])))
+            except Exception:
+                pass
+            info3.setText("%s: %d points — press Cluster" % (label or "cloud", feat["P"].shape[0]))
+            v3.set_points(feat["P"], colors=colors)
+            _recluster()
+
+        def _load_cloud():
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(
+                dlg, "Open point cloud", "", _POINT_FILE_FILTER)
+            if not path:
+                return
+            try:
+                kind, A, F_, C = _load_3d_file(path)
+            except Exception as e:
+                report_error("point cloud", e); return
+            _set_cloud(A, colors=C, label=os.path.basename(path))
+
+        def _on_row3_selected():
+            r = table3.currentRow()
+            it = table3.item(r, 0) if r >= 0 else None
+            v3.set_selected_cluster(None if it is None else it.data(QtCore.Qt.UserRole))
+
+        def _copy_csv3():
+            QtWidgets.QApplication.clipboard().setText(
+                feature_table_csv(feat["headers3"], feat["rows3"]))
+            flash("cluster table copied as CSV (%d rows)" % len(feat["rows3"]))
+
+        b_load3.clicked.connect(lambda _=False: _load_cloud())
+        b_demo3.clicked.connect(lambda _=False: _set_cloud(demo_cluster_cloud()[0],
+                                                           label="demo clusters"))
+        b_clu.clicked.connect(lambda _=False: _recluster())
+        table3.itemSelectionChanged.connect(_on_row3_selected)
+        b_csv3.clicked.connect(lambda _=False: _copy_csv3())
+
+        dlg._feat = {"tabs": tabs, "table": table, "checks": checks, "view": iv,
+                     "refresh": _refresh_2d, "click": _on_image_click,
+                     "copy_csv": _copy_csv2, "state": feat,
+                     "table3": table3, "viewer3": v3, "set_cloud": _set_cloud,
+                     "recluster": _recluster, "copy_csv3": _copy_csv3,
+                     "tol": tol_spin, "min_size": min_spin}
+        _refresh_2d()
+        win._feat_dlg = dlg
+        win._localize(dlg)
+        persist_dialog_geometry(dlg, "featinspect", (1020, 620))
+        dlg.show()
+        return dlg
+
+    act_featins.triggered.connect(lambda _=False: show_feature_inspection())
+    win._feature_inspection = {"open": show_feature_inspection,
+                               "dialog": lambda: getattr(win, "_feat_dlg", None)}
+
     # View ▸ Display mode — colour-map the result, mirrored with the Display combo
     # (was previously reachable only from the right panel). Menu <-> combo stay in sync.
     disp_menu = _menu(menu_view, "Display mode", "display_mode")
