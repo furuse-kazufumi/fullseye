@@ -611,6 +611,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         # halcon "" — `skeleton` の coverage は core の skeleton op が既に主張
         # している(二重計上しない)。これは同系アルゴリズム(EM93)の別実装。
         ("em_skeleton", "", REGION, REGION, em_skeleton),
+        # halcon "" — junctions_skeleton の coverage は既存 op が主張済み。
+        # HALCON 版が返す EndPoints 側をこの op が補完する(二重計上しない)。
+        ("r2_endpoints_skeleton", "", REGION, REGION, r2_endpoints_skeleton),
     ]
     return [Op(name, cat, halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
