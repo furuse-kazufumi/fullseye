@@ -2829,6 +2829,8 @@ def build_window(model=None):
     b_demo = _tbtn("demo", "Load the synthetic demo scene (Ctrl+D)")
     b_save = _tbtn("save", "Save the displayed result (Ctrl+S)")
     ImageView = _image_view_class(QtWidgets, QtGui, QtCore)
+    Viewer3D = _viewer3d_class(QtWidgets, QtGui, QtCore)
+    win._viewer3d_class = Viewer3D               # for tests / feature-inspection dialog
     view = ImageView()
     b_zin = _tbtn("zin", "Zoom in (Ctrl+=)")
     b_zout = _tbtn("zout", "Zoom out (Ctrl+-)")
