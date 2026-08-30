@@ -233,7 +233,7 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
         im = Image.fromarray(vis)
         d = ImageDraw.Draw(im)
         if len(trail) >= 2:
-            d.line([(x, y) for x, y in trail[-90:]], fill=(255, 210, 60), width=2)
+            d.line([(x, y) for x, y in trail[-60:]], fill=(255, 210, 60), width=1)
         vis = np.asarray(im)
         hud = _hud(480, "fullseye segment_objects>draw_objects  "
                         f"t={fr['t']:.2f}s  {hud_extra}")
