@@ -497,7 +497,8 @@ def build_thumbnails(log=print) -> list:
     from PIL import Image
 
     names = ["physical_ai_montage.png", "vision_ops_montage.png", "render_beauty_hero.png",
-             "itokawa_montage.png"]
+             "itokawa_montage.png", "op_taxonomy.png", "halcon_coverage_chart.png",
+             "op_sampler_2d.png", "op_sampler_3d.png"]
     thumbs = []
     for name in names:
         src = os.path.join(ASSETS_DIR, name)
