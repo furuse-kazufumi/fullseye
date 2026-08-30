@@ -435,36 +435,45 @@ def fig_optional_extras() -> None:
     ax.text(cx, cy - 7.2, "(必須依存はこの2つだけ)", fontsize=10, color=MUTED,
             ha="center")
 
-    # 右側にグループ箱を 2 列で
+    # core → extras 全体への矢印(1 本。箱ごとの矢印は線が交差して読めないので廃止)
+    ax.add_patch(FancyArrowPatch((cx + 14.5, cy), (40.2, cy),
+                                 arrowstyle="-|>", mutation_scale=22,
+                                 color=MUTED, lw=1.8))
+    ax.text((cx + 14.5 + 40.2) / 2, cy + 2.2, "+ extras\n(opt-in)", ha="center",
+            va="bottom", fontsize=11, color=MUTED, linespacing=1.4)
+
+    # グループ箱を 2 列で(中身のパッケージ列は pyproject 原文どおり)
+    def _lines_for(names):
+        out = []
+        for n in names:
+            if n == "all":  # 一覧が長大なので件数のみ(len は pyproject から機械算出)
+                out.append((f"[all]  = 一括 ({len(extras['all'])} packages)", True))
+                continue
+            out.append((f"[{n}]", True))
+            for pkg in extras[n]:
+                out.append(("   " + pkg, False))
+        return out
+
     col_x = [42, 71.5]
-    col_y = [88, 88]
+    col_y = [88.5, 88.5]
     for gi, (gname, names, color) in enumerate(groups):
         col = gi % 2
-        n_pkgs = sum(len(extras[n]) for n in names)
-        h = 5.6 + 3.1 * n_pkgs + 2.2 * len(names)
+        body = _lines_for(names)
+        h = 4.6 + sum(2.2 if is_hdr else 2.9 for _, is_hdr in body)
         x0 = col_x[col]
         y0 = col_y[col] - h
         box = FancyBboxPatch((x0, y0), 26.5, h, boxstyle="round,pad=0.9",
                              facecolor=PANEL, edgecolor=color, lw=1.5)
         ax.add_patch(box)
-        ax.text(x0 + 1.6, y0 + h - 1.2, gname, fontsize=12.5, color=color,
+        ax.text(x0 + 1.6, y0 + h - 0.9, gname, fontsize=12.5, color=color,
                 fontweight="bold", va="top")
-        yy = y0 + h - 5.4
-        for n in names:
-            ax.text(x0 + 1.6, yy, f"[{n}]", fontsize=10.5, color=color,
-                    family=MONO_JP, va="top")
-            yy -= 2.2
-            for pkg in extras[n]:
-                ax.text(x0 + 4.6, yy, pkg, fontsize=9.3, color=FG,
-                        family=MONO_JP, va="top")
-                yy -= 3.1
-        ax.add_patch(FancyArrowPatch((cx + 14.5, cy), (x0 - 0.8, y0 + h / 2),
-                                     arrowstyle="-|>", mutation_scale=16,
-                                     color=GRID, lw=1.2,
-                                     connectionstyle="arc3,rad=%.2f"
-                                     % (0.12 if col == 0 else 0.06)))
-        col_y[col] = y0 - 3.2
-    fig.text(0.5, 0.012,
+        yy = y0 + h - 4.6
+        for txt, is_hdr in body:
+            ax.text(x0 + 1.6, yy, txt, fontsize=10.3 if is_hdr else 9.2,
+                    color=color if is_hdr else FG, family=MONO_JP, va="top")
+            yy -= 2.2 if is_hdr else 2.9
+        col_y[col] = y0 - 3.0
+    fig.text(0.5, 0.008,
              "pip install fullseye = core のみ / pip install \"fullseye[opencv,gui]\" のように"
              "必要な extras だけを選んで追加する",
              ha="center", fontsize=10.5, color=MUTED)
