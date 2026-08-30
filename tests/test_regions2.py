@@ -384,3 +384,26 @@ def test_em_skeleton_empty_and_single_pixel():
     one = np.zeros((10, 10))
     one[5, 5] = 1.0
     assert np.array_equal(_em(one), one), "孤立 1 画素は不変のはず"
+
+
+def test_em_skeleton_matches_published_em93_reference():
+    """公表された EM93 の参照出力との突き合わせ(HALCON 実機なしの検証)。
+
+    fixture の来歴: M. Couprie, "Note on fifteen 2D parallel thinning
+    algorithms"(公開 PDF)の Fig 16(g)/Fig 17 から抽出した 1:1 ラスタ。
+    同ノートの表(Fig 18)の EM93 行 = N1 724 / N2 2434 / N3 3895。
+    形状 1 は骨格の画素集合そのもの、形状 2/3 は画素数で照合する。
+    """
+    import pathlib
+    data = np.load(pathlib.Path(__file__).parent / "data" / "em93_reference.npz")
+    mine1 = OPS_BY_NAME["em_skeleton"].fn(
+        data["shape1"].astype(np.float64), 0.5, 0.5) > 0.5
+    ref1 = data["em_skeleton1"].astype(bool)
+    assert (mine1 == ref1).all(), (
+        f"形状1で参照 EM93 と不一致: mine={int(mine1.sum())} ref={int(ref1.sum())} "
+        f"diff={int((mine1 ^ ref1).sum())}")
+    for key, nkey in (("shape2", "n2"), ("shape3", "n3")):
+        mine = OPS_BY_NAME["em_skeleton"].fn(
+            data[key].astype(np.float64), 0.5, 0.5) > 0.5
+        assert int(mine.sum()) == int(data[nkey]), (
+            f"{key}: 画素数 {int(mine.sum())} != 公表値 {int(data[nkey])}")
