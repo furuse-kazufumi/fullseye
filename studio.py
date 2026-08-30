@@ -1077,6 +1077,17 @@ _HALCON_COLORS = {
 #: system parameters; not image pipeline stages). See docs/HDEVELOP_DEV_OPS.md (F).
 _CONFIG_DIRECTIVES = {"set_system"}
 
+#: HALCON Graphics-chapter disp_* operators Studio honours as program directives.
+#: 2-D: disp_image / disp_region show a pipeline variable in the CURRENT graphics
+#: window (arg = 1-based stage number; omitted/0 = the final result). 3-D:
+#: disp_points3d / disp_mesh3d open (slot-reuse like dev_open_window) an
+#: interactive 3-D viewer window on the same handle system; the arg is a file
+#: path (mesh.read_points / mesh.read_mesh formats). disp_object_model_3d is the
+#: honest HALCON-parity alias: it dispatches on the file (faces -> mesh, else
+#: points). All are display directives — never image pipeline stages.
+_DISP_DIRECTIVES = {"disp_image", "disp_region",
+                    "disp_points3d", "disp_mesh3d", "disp_object_model_3d"}
+
 
 def _dev_op_head(line):
     """The operator name of a program line ('dev_set_part' from
