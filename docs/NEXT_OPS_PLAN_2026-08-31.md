@@ -116,6 +116,12 @@ evis 手(相反 u + 共収縮 c の 34 次元)へリターゲット → 箸 pick
 
 実装順の提案: 2 → 3(2 が最小工数で最大効果。1 はデモ/教材価値)。
 
+実現可能性の実測(2026-08-31): mediapipe 1.0.1 は py3.11 Windows に**導入済み**。
+ただし 1.0 系は legacy solutions 廃止・モデル非同梱で、`HandLandmarker` には
+`hand_landmarker.task`(storage.googleapis.com、~8MB、モデルも Apache-2.0)の
+DL が 1 回必要 → **着手時にユーザー確認を取ってから**。fail-closed(モデル不在なら
+明示エラー+DL 手順提示)の optional extra として設計する。
+
 ---
 
 ## 実装時の共通規律
