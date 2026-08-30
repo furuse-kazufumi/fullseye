@@ -149,8 +149,8 @@ Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye'
 
 ```mermaid
 flowchart TB
-    subgraph L0["Foundation: typed operator library (~1,000 ops)"]
-        OPS["731 2D ops + 265 3D ops<br/>hand-written numpy / wired together by type (sort)"]
+    subgraph L0["Foundation: ~1,000 typed ops"]
+        OPS["The typed operator library<br/>731 2D ops + 265 3D ops<br/>hand-written numpy / wired together by type (sort)"]
     end
     subgraph L1["Two ways to use it"]
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
