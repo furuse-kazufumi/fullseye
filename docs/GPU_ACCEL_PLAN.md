@@ -33,10 +33,36 @@
 
 **教訓(honest)**: 「champion 頻度」≠「E2E レバレッジ」。**pipeline を丸ごと GPU にできる塊(volume / locate / binarize-count 一族)が高レバレッジ**。illuminate は edge では CPU op 島で低レバレッジだった。**高レバレッジな塊はほぼ回収済**。残りは (a) projective_trans_region(幾何=wave2 の order3 spline を解けば binarize/count が 6/6)、(b) backend 固有 op(各 1 champion=低レバレッジ・高難度)、(c) **fullseye API device 引数**(公開層で GPU 経路を通す=横展開)。次の実質前進は (c) or (a)。
 
+## 2026-08-31 更新(Batch 0〜3)
+
+- **境界 padding バグ修正(Batch 0)**: `_sep_conv`/`_conv`/`_unfold_reflect`/
+  `_std_filter` が torch `reflect`(端非複製)のままで、symmetric 修正が gaussian 系に
+  しか当たっていなかった → 全て `_pad_sym` 化。sobel/laplace/prewitt/unsharp/median/
+  percentile/std が **full-image 一致**になり、**diff_of_gauss の「faithful 不可」判定は
+  誤りだったと確定**(真因は _norm でなく _sep_conv の padding。sym 化で full 1e-5 級)。
+- **parity ゲート強化**: 旧 (0.5,0.4) 1 点 + 固定 3px マージン → `PARITY_AB` 5 点
+  スイープ + カーネル半径連動マージン(a>=0.75 の k=9 の穴を塞いだ)。
+- **HALCON twin 別名 42 op(Batch 1)**: registry の同一実装 twin を自動探索
+  (構造化 blob。塩ノイズ二値は erosion 全消え等の縮退で偽陽性を出す)+ PARITY_AB
+  全点実測で登録。r3_label_to_region は灰色ラベル画像で別動作のため棄却。
+- **関門 op(Batch 2)**: otsu / dyn_threshold / canny / local_max /
+  adaptive_gauss_thresh(+twin local_threshold, nonmax_suppression_amp)。
+  otsu の GPU 化で image→region 関門が開き区間分断が減少。
+  ※ binary_threshold / auto_threshold / sk_otsu は otsu kernel と**一致しなかった**
+  (実装が別物)。残 CPU。
+- **二値 reconstruction(Batch 3 先行)**: fill_holes / fill_up(境界フラッド
+  4 近傍、GT+連結規約テストつき)、bilateral(25 シフト反復)。
+- 現在: **ACCEL 90 mapping / 89 faithful**(唯一の differ = projective_trans_region の
+  metric-faithful 例外)。**出荷 RECIPES 段 GPU 15/33 → 26/33**。
+  残 uncovered(各 1 レシピ): remove_small, count_obj, clahe, gabor,
+  sk_corner_harris, sk_dog, distance_transform。
+- 次: grayscale reconstruction primitive(xsitk_closing_by_recon /
+  grindpeak = champion 残 2 op)/ 終端 reduction(count_obj, intensity 等 =
+  D2H を画像→スカラー化、bridge の feature 出力対応が前提)/ RTX 5090 で速度実測。
+
 ## 設計原則(honest parity gate)
 - accel op は **core registry と interior <5e-3 一致(faithful)** を満たすものだけ載せる。
-  満たせない op(例 diff_of_gauss = _norm 全体 max abs が大 sigma で端差を全体に乗せる)は
-  accel に載せず CPU に委ねる。**「速いが違う」を作らない**。
+  満たせない op は accel に載せず CPU に委ねる。**「速いが違う」を作らない**。
 - 単発 op は転送律速で安い op は CPU に負ける。**勝ち筋は常駐パイプライン**(転送償却)と
   **高コスト op(median/percentile/morphology)**。
 - チェーン parity は CPU と厳密一致しない(_norm 端差 + 末尾 threshold の二値増幅)。
