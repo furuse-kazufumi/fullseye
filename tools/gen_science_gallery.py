@@ -564,8 +564,15 @@ def subject_dino_skeleton(log=print) -> dict:
     r = fs.render_mesh(V, F, pose=pose, width=size, height=size)
     bones = np.asarray(r["silhouette"], np.float64)
     # 骨のすき間を閉じて「体の輪郭」にしてから中心線を取る
-    sil = fs.apply(bones, "closing_circle", 0.10, 0.5)
+    # (closing_circle 1 回の半径は最大 ~4px なので、膨張 x6 → 収縮 x6 で
+    #  大きな closing を組み立てる)
+    sil = bones
+    for _ in range(6):
+        sil = fs.apply(sil, "dilation_circle", 0.7, 0.5)
+    for _ in range(6):
+        sil = fs.apply(sil, "erosion_circle", 0.7, 0.5)
     sil = fs.apply(sil, "fill_up")
+    sil = fs.apply(sil, "select_shape_std")     # 最大成分のみ (浮いた破片を除去)
     skel = fs.apply(sil, "sk_skeleton")
     skel_bold = fs.apply(skel, "dilation_circle", 0.010, 0.5)
     dt = fs.apply(sil, "distance_transform")
