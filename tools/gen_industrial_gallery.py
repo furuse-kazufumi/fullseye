@@ -984,7 +984,7 @@ def subject_stereo_obstacles(log=print) -> dict:
     for i, idx in enumerate(clusters):
         c = cmapo(0.15 + 0.7 * i / max(1, len(clusters) - 1))
         Q = obst[idx]
-        ax[2].scatter(Q[:, 0], Q[:, 1], s=3, color=c)
+        ax[2].scatter(Q[:, 0], Q[:, 1], s=4, color=c, zorder=3)
         # 鳥瞰 (xy) 平面での最小面積長方形 (row=y, col=x として渡す)
         rect = fs.fit_rectangle2(np.column_stack([Q[:, 1], Q[:, 0]]))
         a0 = math.radians(rect["angle_deg"])
