@@ -1,4 +1,4 @@
-# 3D operator help — 271 ops in 55 categories
+# 3D operator help — 279 ops in 55 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -48,9 +48,9 @@
 
 [canny3d](edges/canny3d.md) · [edge_points](edges/edge_points.md) · [gradient3d](edges/gradient3d.md) · [link_edges](edges/link_edges.md) · [log_zero_crossings](edges/log_zero_crossings.md)
 
-### feature (4)
+### feature (9)
 
-[curvature_maps](feature/curvature_maps.md) · [edt_jfa](feature/edt_jfa.md) · [hessian3d](feature/hessian3d.md) · [sobel3d](feature/sobel3d.md)
+[curvature_maps](feature/curvature_maps.md) · [edt_jfa](feature/edt_jfa.md) · [hessian3d](feature/hessian3d.md) · [sobel3d](feature/sobel3d.md) · [vol_frangi](feature/vol_frangi.md) · [vol_gradient_magnitude](feature/vol_gradient_magnitude.md) · [vol_hessian_blobness](feature/vol_hessian_blobness.md) · [vol_local_maxima](feature/vol_local_maxima.md) · [vol_sato](feature/vol_sato.md)
 
 ### feature_register (7)
 
@@ -88,9 +88,9 @@
 
 [match_logpolar_z](match_pose/match_logpolar_z.md) · [match_pca](match_pose/match_pca.md) · [match_phase_3d](match_pose/match_phase_3d.md) · [moment_axes](match_pose/moment_axes.md)
 
-### medial (9)
+### medial (10)
 
-[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md)
+[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md) · [vol_distance_transform](medial/vol_distance_transform.md)
 
 ### mesh_process (7)
 
@@ -160,9 +160,9 @@
 
 [icp_point2plane](refine/icp_point2plane.md) · [icp_point2point_3d](refine/icp_point2point_3d.md) · [refine_lm](refine/refine_lm.md) · [refine_peak_newton](refine/refine_peak_newton.md) · [refine_rotation_z](refine/refine_rotation_z.md) · [refine_translation_lk](refine/refine_translation_lk.md)
 
-### regionprops (5)
+### regionprops (7)
 
-[filter_by_volume](regionprops/filter_by_volume.md) · [inner_box3](regionprops/inner_box3.md) · [label_components](regionprops/label_components.md) · [largest_component](regionprops/largest_component.md) · [region_props](regionprops/region_props.md)
+[filter_by_volume](regionprops/filter_by_volume.md) · [inner_box3](regionprops/inner_box3.md) · [label_components](regionprops/label_components.md) · [largest_component](regionprops/largest_component.md) · [region_props](regionprops/region_props.md) · [vol_label](regionprops/vol_label.md) · [vol_region_props](regionprops/vol_region_props.md)
 
 ### registration_metrics (4)
 

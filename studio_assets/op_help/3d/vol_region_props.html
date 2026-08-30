@@ -1,18 +1,18 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">region_props — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_region_props — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import regionprops3d; regionprops3d.region_props(vol, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;list[dict]&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;region_props&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_region_props(labels, spacing=None, surface=&#x27;auto&#x27;)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_region_props&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>各連結成分のリージョンプロパティ一覧を返す。</p>
+<p>Per-component quantitative descriptors from a label volume.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:region_props_3d">region_props_3d</a> — <code style="color:#22d3bf">py -3.11 examples_3d/region_props_3d.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:vessel_metrology">vessel_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/vessel_metrology.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">regionprops</code>)</h3>
-<p><a style="color:#22d3bf" href="op3d:label_components">label_components</a> · <a style="color:#22d3bf" href="op3d:largest_component">largest_component</a> · <a style="color:#22d3bf" href="op3d:filter_by_volume">filter_by_volume</a> · <a style="color:#22d3bf" href="op3d:inner_box3">inner_box3</a> · <a style="color:#22d3bf" href="op3d:vol_label">vol_label</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<p><a style="color:#22d3bf" href="op3d:label_components">label_components</a> · <a style="color:#22d3bf" href="op3d:region_props">region_props</a> · <a style="color:#22d3bf" href="op3d:largest_component">largest_component</a> · <a style="color:#22d3bf" href="op3d:filter_by_volume">filter_by_volume</a> · <a style="color:#22d3bf" href="op3d:inner_box3">inner_box3</a> · <a style="color:#22d3bf" href="op3d:vol_label">vol_label</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: regionprops3d.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>*Provenance: volops.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

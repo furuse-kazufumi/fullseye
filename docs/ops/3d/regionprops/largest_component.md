@@ -34,7 +34,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`regionprops`)
 
-[label_components](label_components.md) · [region_props](region_props.md) · [filter_by_volume](filter_by_volume.md) · [inner_box3](inner_box3.md)
+[label_components](label_components.md) · [region_props](region_props.md) · [filter_by_volume](filter_by_volume.md) · [inner_box3](inner_box3.md) · [vol_label](vol_label.md) · [vol_region_props](vol_region_props.md)
 
 ---
 *Provenance: regionprops3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

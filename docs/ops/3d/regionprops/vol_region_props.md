@@ -1,23 +1,23 @@
 ---
-op: region_props
+op: vol_region_props
 dim: 3d
 category: regionprops
 in: voxel
 out: measurement
-examples: [region_props_3d]
+examples: [vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# region_props — 3D `regionprops` op
+# vol_region_props — 3D `regionprops` op
 
 - **データ種**: `voxel` → `measurement`
-- **呼び出し**: `import regionprops3d; regionprops3d.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'` (または `ops3d.get("region_props")`)
+- **呼び出し**: `import volops; volops.vol_region_props(labels, spacing=None, surface='auto')` (または `ops3d.get("vol_region_props")`)
 
 ## 使い方
 
-各連結成分のリージョンプロパティ一覧を返す。
+Per-component quantitative descriptors from a label volume.
 
 ## 参考(サンプルデータ・文献)
 
@@ -26,7 +26,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [region_props_3d](../../../../examples_3d/region_props_3d.py) — `py -3.11 examples_3d/region_props_3d.py`
+- [vessel_metrology](../../../../examples_3d/vessel_metrology.py) — `py -3.11 examples_3d/vessel_metrology.py`
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 
@@ -34,9 +34,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`regionprops`)
 
-[label_components](label_components.md) · [largest_component](largest_component.md) · [filter_by_volume](filter_by_volume.md) · [inner_box3](inner_box3.md) · [vol_label](vol_label.md) · [vol_region_props](vol_region_props.md)
+[label_components](label_components.md) · [region_props](region_props.md) · [largest_component](largest_component.md) · [filter_by_volume](filter_by_volume.md) · [inner_box3](inner_box3.md) · [vol_label](vol_label.md)
 
 ---
-*Provenance: regionprops3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: volops.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.
