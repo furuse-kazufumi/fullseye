@@ -2791,7 +2791,7 @@ def test_viewer3d_camera_math_pins_known_vertices():
     assert np.allclose(xy[0], [50, 50])                     # centre stays centred
     assert np.allclose(xy[1], [95, 50])                     # +x -> right by 0.45*size
     assert np.allclose(xy[2], [50, 5])                      # +z -> up (screen y shrinks)
-    assert depth[3] > depth[0]                              # +y is toward the camera
+    assert depth[3] > depth[0]                    # +y is away from the camera (larger depth = farther)
     # yaw=90 turns +x into the depth axis
     xy2, d2 = studio.viewer3d_project(np.array([[1.0, 0, 0]]),
                                       studio.viewer3d_camera(90, 0),
