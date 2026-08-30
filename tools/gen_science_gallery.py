@@ -398,14 +398,14 @@ def subject_dino_xray(log=print) -> dict:
     log(f"  voxel grid: {vol.shape}")
     # 骨に厚みのにじみを与えてから最大値投影 → 濃淡のあるレントゲン調
     vol = fs.apply(vol, "vol_gaussian", 0.25, 0.5)
-    # 格子は (z, y, x)。y-up モデルなので:
-    #   横から = x 方向に投影 → (y, z)  /  上から = y 方向に投影 → (z, x)
-    side = fs.apply(np.transpose(vol, (2, 1, 0)), "vol_mip")
+    # 格子は (x, y, z) (長軸 z が dim2)。y-up モデルなので:
+    #   横から = x 方向に投影 → (y, z)  /  上から = y 方向に投影 → (x, z)
+    side = fs.apply(vol, "vol_mip")
     top = fs.apply(np.transpose(vol, (1, 0, 2)), "vol_mip")
     panels, labels = [], []
     for mip, name in [(side, "横から (X 線写真ふう)"), (top, "上から")]:
-        x = np.clip(mip * 1.6, 0, 1) ** 0.8
-        panels.append(_cmap(x, "bone"))
+        x = np.clip(mip, 0, 1) ** 0.9
+        panels.append(_cmap(np.kron(x, np.ones((2, 2))), "bone"))
         labels.append(name)
     out = _montage(panels, labels, ncols=2)
     _save_png(out, "science_dino_xray.png")
