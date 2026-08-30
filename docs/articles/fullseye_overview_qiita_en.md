@@ -1141,9 +1141,10 @@ Stories like this may feel "uncool" to some, frankly. I still believe **the reco
 Being honest about "fast," too. The default frame-at-a-time path runs on scipy / OpenCV. The batched, fast `torch` path (`--device cuda`) accelerates the heavy, vectorizable ops.
 
 - **On CPU**, heavy ops see roughly **1.6–2.2×**. But **light pixel-wise operations actually get slower** (the tensor-conversion overhead lands on top).
-- **The real payoff is on GPU**, where that overhead is **amortized over large parallelism**.
+- **On GPU (a real RTX 5090), the ops that are already ported are genuinely fast, as measured**: 26 dense pixel-parallel accel ops (median **60×**, percentile **46.6×**), 3D volume operations **~64×**, the shape-matching suite **44–88×** (detected positions match the CPU), NCC matching 4–6× (argmax positions identical), and an end-to-end GPU-resident pipeline (one transfer, chained ops) at **12.6× vs CPU**. All of these sit behind a **faithfulness gate** — an op only rides the GPU if it matches the CPU implementation within interior error < 5e-3.
+- The honest limitation today is **coverage**: GPU support spans only part of the ~1,000 ops so far. Pipelines that mix unported ops simply run those segments on CPU (nothing breaks).
 
-I won't write "everything gets faster." Writing down **where it's fast and where you lose** is what honest disclosure means.
+I won't write "everything gets faster." Writing down **where it's fast (with measurements) and what still runs on CPU** is what honest disclosure means.
 
 ---
 
