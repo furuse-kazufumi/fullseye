@@ -591,7 +591,7 @@ Fullseye の差別化がいちばん出るのは **3D 系**だと思っていま
 
 その最初の 2 段「ステレオ → 深度」を、evis 自身の両眼で実演した映像がこれです（クリックで動画再生）：
 
-[![evis の両眼キャプチャに Fullseye の disparity_sgm → depth_from_disparity を毎フレーム適用（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
+[![evis の両眼キャプチャに Fullseye の disparity_sgm → depth_from_disparity を毎フレーム適用（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
 
 *↑ ▶ evis が箸で豆を打つ ChopMimic シーンを、evis 自身の両眼カメラ（瞳孔間距離 64mm）で撮った実験キャプチャ 241 フレームに、Fullseye の `disparity_sgm → speckle_filter → fill_disparity → depth_from_disparity` を毎フレーム適用した実出力。左=evis の左眼映像、中央=Fullseye が計算した視差、右=深度。下段 HUD の「豆までの距離」は左右眼の `segment_objects` 重心視差から $Z = f \cdot B / d$ で読み出した値で、シミュレータ真値との誤差は 229 フレームで中央値 0.66%・最大 1.91%（豆が箸に隠れた 12 フレームは「bean not in view」と正直に表示）。*
 
