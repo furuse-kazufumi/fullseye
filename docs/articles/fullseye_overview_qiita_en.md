@@ -398,6 +398,8 @@ Having read Layer 1 this far, I hope it's visible that the three ideas — "type
 
 ## Layer 2: Designing Pipelines by "Evolution" (with Honest Evaluation)
 
+> **Status: PoC** — validated in **bounded settings** with hold-out evaluation. I'm not yet claiming general-purpose automatic design.
+
 Only for problems a single op can't solve — "I want to find the processing sequence that maximizes this metric on this data" — does **evolutionary computation** come in. As stated in Layer 1, "most of the time you just apply a known op": this is **a supporting role, not the lead**. Picking and chaining from 1,000 ops covers most needs; the search machinery is kept in reserve for the cases where even that falls short — where the optimal combination is hard for human intuition to find.
 
 ```bash
