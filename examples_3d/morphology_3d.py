@@ -105,7 +105,11 @@ def main():
     _validate_volume(v_spk, "spike_shape")
 
     eroded = m.morph_erode3d(v_spk, r)           # 素の erode = beat-the-null の baseline
-    opened = m.morph_dilate3d(eroded, r)         # opening = erode → dilate
+    opened = m.morph_open3d(v_spk, r)            # 単発 op 版 opening(= erode → dilate)
+    # 単発 op が手組みの鎖と一致することも検証(open/close は公開 op になった)
+    assert np.allclose(opened, m.morph_dilate3d(eroded, r)), "morph_open3d != erode→dilate"
+    closed_chain = m.morph_erode3d(m.morph_dilate3d(v_spk, r), r)
+    assert np.allclose(m.morph_close3d(v_spk, r), closed_chain), "morph_close3d != dilate→erode"
     b_opened = _binarize(opened)
     b_eroded = _binarize(eroded)
 
