@@ -386,7 +386,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
             ambient=0.30, exposure=1.15, log=log)
         p = os.path.join(out_dir, "showcase_turntable_pod.gif")
         sb = save_gif(frames_pod, p, fps=fps, log=log)
-        n, shp = verify_gif(p, log=log)
+        n, shp = verify_gif(p, len(frames_pod), log=log)
         results["pod"] = dict(path=p, frames=frames, bytes=sb, n=n, shape=shp,
                               info="SDF pod, metal, aces tonemap, AO+ground shadow")
         _report("turntable_pod", p, frames, sb, n, shp,
@@ -394,7 +394,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
 
         p_mp4 = os.path.join(_MEDIA_DIR, "pod.mp4")
         sb_mp4 = save_mp4(frames_pod, p_mp4, fps=fps, log=log)
-        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, len(frames_pod), log=log)
         results["pod"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
         _report("turntable_pod_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
                 "same frames as showcase_turntable_pod.gif", log)
@@ -412,7 +412,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
             ambient=0.13, log=log)
         p = os.path.join(out_dir, "showcase_turntable_itokawa.gif")
         sb = save_gif(frames_i, p, fps=fps, log=log)
-        n, shp = verify_gif(p, log=log)
+        n, shp = verify_gif(p, len(frames_i), log=log)
         results["itokawa"] = dict(path=p, frames=frames, bytes=sb, n=n, shape=shp,
                                   info=f"Itokawa point cloud via {method_i}, plastic")
         _report("turntable_itokawa", p, frames, sb, n, shp,
@@ -420,7 +420,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
 
         p_mp4 = os.path.join(_MEDIA_DIR, "itokawa.mp4")
         sb_mp4 = save_mp4(frames_i, p_mp4, fps=fps, log=log)
-        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, len(frames_i), log=log)
         results["itokawa"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
         _report("turntable_itokawa_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
                 "same frames as showcase_turntable_itokawa.gif", log)
@@ -438,7 +438,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
             ambient=0.15, log=log)
         p = os.path.join(out_dir, "showcase_turntable_skeleton.gif")
         sb = save_gif(frames_s, p, fps=fps, log=log)
-        n, shp = verify_gif(p, log=log)
+        n, shp = verify_gif(p, len(frames_s), log=log)
         results["skeleton"] = dict(path=p, frames=frames, bytes=sb, n=n, shape=shp,
                                    info=f"hand-bone CT via {method_s}, bone plastic")
         _report("turntable_skeleton", p, frames, sb, n, shp,
@@ -446,7 +446,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
 
         p_mp4 = os.path.join(_MEDIA_DIR, "skeleton.mp4")
         sb_mp4 = save_mp4(frames_s, p_mp4, fps=fps, log=log)
-        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, len(frames_s), log=log)
         results["skeleton"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
         _report("turntable_skeleton_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
                 "same frames as showcase_turntable_skeleton.gif", log)
@@ -465,7 +465,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
             ambient=0.14, albedo_fn=albedo_fn, log=log)
         p = os.path.join(out_dir, "showcase_hue_cycle.gif")
         sb = save_gif(frames_h, p, fps=fps, log=log)
-        n, shp = verify_gif(p, log=log)
+        n, shp = verify_gif(p, len(frames_h), log=log)
         results["hue"] = dict(path=p, frames=frames, bytes=sb, n=n, shape=shp,
                               info="SDF pod, plastic, HSV hue 0->360 on albedo + spin")
         _report("hue_cycle", p, frames, sb, n, shp,
@@ -473,7 +473,7 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
 
         p_mp4 = os.path.join(_MEDIA_DIR, "hue_cycle.mp4")
         sb_mp4 = save_mp4(frames_h, p_mp4, fps=fps, log=log)
-        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, len(frames_h), log=log)
         results["hue"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
         _report("hue_cycle_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
                 "same frames as showcase_hue_cycle.gif", log)
