@@ -125,8 +125,11 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
         R = iio.imread(FRAMES / f"eyer_{k:04d}.png")[..., :3]
         Lg = L.mean(-1) / 255.0
         Rg = R.mean(-1) / 255.0
-        disp = fs.disparity_sgm(Lg, Rg, max_disp=40, window=5)
-        disp, valid = fs.speckle_filter(disp, max_diff=1.0, min_size=60)
+        disp_raw = fs.disparity_sgm(Lg, Rg, max_disp=40, window=5)
+        # display map: cleaned + hole-filled; measurement uses disp_raw because
+        # the bean region (~14 px at half res) is smaller than the speckle
+        # min_size and would be invalidated, leaving background disparity.
+        disp, valid = fs.speckle_filter(disp_raw, max_diff=1.0, min_size=60)
         disp = fs.fill_disparity(disp, valid)
         disp_col = _u8(fs.colorize_disparity(disp))
         depth_mm = fs.depth_from_disparity(disp, focal=f_half, baseline=baseline_mm,
@@ -135,10 +138,11 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
 
         # --- validation: bean range from Fullseye disparity vs ground truth ---
         hud_extra = "bean not in view"
-        if fr.get("eyeL_c") and fr.get("true_Z_mm"):
+        vis_both = min(fr.get("eyeL_n", 0), fr.get("eyeR_n", 0)) >= 10
+        if fr.get("eyeL_c") and fr.get("true_Z_mm") and vis_both:
             bx, by = fr["eyeL_c"][0] / 2.0, fr["eyeL_c"][1] / 2.0
             iy, ix = int(round(by)), int(round(bx))
-            win = disp[max(0, iy - 3):iy + 4, max(0, ix - 3):ix + 4]
+            win = disp_raw[max(0, iy - 3):iy + 4, max(0, ix - 3):ix + 4]
             d_med = float(np.median(win)) if win.size else 0.0
             if d_med > 0.5:
                 est = f_half * baseline_mm / d_med
