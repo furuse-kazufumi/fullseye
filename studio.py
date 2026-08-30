@@ -691,6 +691,17 @@ def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
     img[:] = np.asarray(background, np.float64)
     if P.shape[0] == 0:
         return img
+    # drop non-finite vertices up front: NaN/inf points cannot be splatted and
+    # would otherwise emit a RuntimeWarning per frame from the float->int cast
+    # (and poison the auto center/radius). Colors follow their points.
+    finite = np.isfinite(P).all(axis=1)
+    if not finite.all():
+        P = P[finite]
+        if colors is not None:
+            ca = np.asarray(colors, np.float64).reshape(-1, 3)
+            colors = ca[finite] if ca.shape[0] == finite.shape[0] else ca
+        if P.shape[0] == 0:
+            return img
     if center is None:
         center = 0.5 * (P.min(axis=0) + P.max(axis=0))
     if radius is None:
