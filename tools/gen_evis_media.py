@@ -150,8 +150,10 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
                 rgbf = img / 255.0
                 gch = np.clip(rgbf[..., 1] - np.maximum(rgbf[..., 0], rgbf[..., 2]),
                               0, 1)
+                # threshold 0.20: the saturated-green bean sits at ~0.46 while
+                # pale highlights on the skeleton hand only reach ~0.09.
                 cands.append([o for o in
-                              fs.segment_objects(gch, threshold=0.08, min_area=3)
+                              fs.segment_objects(gch, threshold=0.20, min_area=3)
                               if o["area"] <= 2500][:8])
             # epipolar pairing: same row (+-2 px), plausible disparity, similar
             # size; among survivors take the largest matched blob (the bean).
