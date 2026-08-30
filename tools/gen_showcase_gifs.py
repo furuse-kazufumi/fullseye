@@ -303,8 +303,9 @@ def save_gif(frames_u8: list[np.ndarray], path: str, *, fps: int,
 
 def save_mp4(frames_u8: list[np.ndarray], path: str, *, fps: int,
              log: Callable[[str], None] = print) -> int:
-    """GIF と**同一フレーム**を imageio-ffmpeg で H.264 mp4 に書き出す(でっち上げ禁止 —
-    ターンテーブルを撮り直さず ``save_gif`` に渡したのと同じ ``frames_u8`` を再利用する)。
+    """GIF と**同一ソースフレーム**を imageio-ffmpeg で H.264 mp4 に書き出す(でっち上げ禁止 —
+    ターンテーブルを撮り直さず ``save_gif`` に渡したのと同じ ``frames_u8`` を再利用する。
+    H.264 は非可逆圧縮なので出力画素は GIF/入力と厳密一致はしない — 同一なのは入力フレーム)。
 
     戻り値 = 実ファイルサイズ(bytes)。決定的(入力フレームが決定的なので出力も決定的)。
     """
