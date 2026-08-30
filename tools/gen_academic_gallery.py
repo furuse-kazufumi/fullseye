@@ -38,6 +38,7 @@ import sys
 import time
 import urllib.request
 import urllib.error
+import urllib.parse
 import zipfile
 from concurrent.futures import ThreadPoolExecutor
 
