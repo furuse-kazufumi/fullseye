@@ -813,7 +813,9 @@ def run_exhibit(subject: str, slug: str, spec: tuple, recipe: str, caption: str,
             # per-subject response density: nebula ridges / fern veins are
             # broader + fainter than neuron dendrites, so keep a larger slice
             top = {"space_carina": 10.0, "bot_fern": 8.0}.get(slug, 3.0)
-            panels, ops_used = rec_filaments(col, top_pct=top)
+            # star fields: 5x5 median also erases diffraction spikes of stars
+            med = 0.5 if slug == "space_carina" else 0.2
+            panels, ops_used = rec_filaments(col, top_pct=top, med_a=med)
         else:
             panels, ops_used = RECIPES[recipe](col)
     except Exception as e:

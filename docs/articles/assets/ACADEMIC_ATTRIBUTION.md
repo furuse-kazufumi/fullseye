@@ -6,6 +6,6 @@
 
 | 画像 | 分野 | 素材 | AI 生成 | 出典 / ライセンス | 使用 op |
 |---|---|---|---|---|---|
-| `academic_bot_fern.png` | 植物学 | AI-generated simulated data (gemini-2.5-flash-image) | **Yes** (gemini-2.5-flash-image) | AI 生成模擬データ(Google gemini-2.5-flash-image)— 実データではない | rgb1_to_gray, cv_clahe, cv_median, sk_frangi, sk_area_opening, overlay_mask |
+| `academic_space_carina.png` | 宇宙 | James Webb Space Telescope NIRCam Image of the “Cosmic Cliff | No | [STScI (Webb)](https://images.nasa.gov/details/carina_nebula) — Public domain (NASA) | rgb1_to_gray, cv_clahe, cv_median, sk_frangi, sk_area_opening, overlay_mask |
 
 生成日: 2026-08-30 / スクリプト: `tools/gen_academic_gallery.py`
