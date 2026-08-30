@@ -45,3 +45,11 @@
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_align.png )
 
 エッジ勾配ベースの形状モデルをピラミッド探索で照合し、回転したワーク 3 個の位置と角度を検出。円板や長方形の別部品には反応しない。ばら積みピッキングや組立の前段になる位置決め。 使用 op: create_shape_model, find_shape_model (angles 探索)。データ: 合成ブラケット 3 個 (配置姿勢 = 真値) + 距離部品。
+
+## 焦点合成 — ボケた 7 枚から全焦点 1 枚を作る
+
+![焦点合成 — ボケた 7 枚から全焦点 1 枚を作る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack.png )
+
+手前・中間・奥にピントを振った 7 枚を撮り、各画素で最もシャープな 1 枚を選んで合成すると、全体にピントの合った 1 枚になる。顕微鏡検査や基板検査で使う焦点合成と同じ仕組み。鮮鋭度スコアは単写比 1.27 倍。 使用 op: focus_stack suite (ラプラシアン鮮鋭度で最良フォーカスを選択)。データ: MuJoCo レンダ + 被写界深度シミュレーション (7 焦点)。

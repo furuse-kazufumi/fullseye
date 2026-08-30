@@ -9,7 +9,8 @@ Two data routes:
   A) Real open-licensed downloads (NASA images API = public domain, Met Museum
      Open Access = CC0, Broad BBBC = CC-BY, Smithsonian Open Access = CC0).
      Every download's source URL + license is recorded.
-  B) AI-generated simulated data (OpenAI gpt-image-1, fallback dall-e-3) for
+  B) AI-generated simulated data (Google gemini-2.5-flash-image first --
+     OpenAI credits were exhausted at build time -- fallback gpt-image-1) for
      fields where clean licensing is hard. Every generated image is labeled
      "AI-generated (model) simulated data" on the image itself, in the
      attribution table and in the article snippet. Never presented as real.
@@ -785,7 +786,12 @@ def run_exhibit(subject: str, slug: str, spec: tuple, recipe: str, caption: str,
         if recipe == "segment_count":
             invert = slug in ("med_blood_smear",)  # dark objects on bright field
             (panels, ops_used), n, n_op = rec_segment_count(col, invert=invert)
-            count_note = f" 検出数 = {n}(count_obj = {int(n_op)})"
+            count_note = f" 検出数 = {n}"
+            if int(n_op) != n:
+                FINDINGS.append(
+                    f"count_obj={int(n_op)} vs segment_objects={n} on {slug}: count_obj "
+                    "uses 4-connectivity while segment_objects defaults to 8-connectivity "
+                    "(verified: a diagonal pixel pair counts as 2 vs 1) -- API consistency gap")
         else:
             panels, ops_used = RECIPES[recipe](col)
     except Exception as e:
@@ -828,7 +834,7 @@ def write_attribution(results: list[dict]) -> None:
         m = r["meta"]
         ai = f"**Yes** ({m.get('model', '')})" if r["is_ai"] else "No"
         if r["is_ai"]:
-            src = f"AI 生成模擬データ(OpenAI {m.get('model', '')})— 実データではない"
+            src = f"AI 生成模擬データ({m.get('credit', m.get('model', ''))})— 実データではない"
         else:
             src = f"[{m.get('credit', 'source')}]({m.get('source', '')}) — {m.get('license', '')}"
         title = (m.get("title", "") or "").replace("|", "/")[:60]
@@ -861,7 +867,7 @@ def write_snippet(results: list[dict]) -> None:
             m = r["meta"]
             lines.append(f"![{r['slug']}]({RAW_BASE}/{r['thumb']})")
             if r["is_ai"]:
-                origin = f"素材: **AI 生成(OpenAI {m.get('model', '')})による模擬データ**(実在の標本・スキャンではない)"
+                origin = f"素材: **AI 生成({m.get('credit', m.get('model', ''))})による模擬データ**(実在の標本・スキャンではない)"
             else:
                 origin = f"素材: {m.get('credit', '')} — {m.get('license', '')}([出典]({m.get('source', '')}))"
             lines.append(f"*{r['caption']}(op: `{'`, `'.join(r['ops'])}`)。{origin}*")
