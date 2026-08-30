@@ -1161,7 +1161,7 @@ The 42.5% HALCON coverage sits, as the "coverage story" section explained, on a 
 
 On the unified-API migration, honestly, a large part of it is **cleaning up after history**. The naming conventions from the `imgevolve` era and the ones added while growing the Physical AI perception facade aren't fully aligned. Realizing the "readable, completion-friendly writing feel" from the design-philosophy section across the whole surface means converging **gradually**, without breaking existing callers — plodding work, more so than feature-building.
 
-On GPU work: as the "Honest Word on Performance (GPU)" section says, CPU measurements already exist, but the main effort — **keeping ops GPU-resident and getting end-to-end (E2E) speed** — awaits verification on the real hardware (RTX 5090). I'm not jumping ahead to write "it should be dramatically faster on GPU" here, because the discipline of never conflating CPU numbers with GPU numbers applies with the same force when talking about limitations.
+On GPU work, the accurate picture is: **the usable parts already exist and are fast, as measured on a real RTX 5090** — it's just that **the full ~1,000-op catalog isn't covered yet**. Every GPU-ported op passes a faithfulness gate (interior error < 5e-3 against the CPU implementation), because "faster but with different answers" is exactly the kind of accident this library refuses to create. The remaining work is widening coverage in the order ops are actually used.
 
 The pile of work is tall, but **the foundation — typed ops, honest evaluation, md-as-source-of-truth docs, 6,238 tests — is set**. From here, the work is extending coverage and the natural API.
 
