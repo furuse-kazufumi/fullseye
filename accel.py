@@ -641,6 +641,8 @@ ACCEL = {
     # Batch 3: 二値 reconstruction(fill_up は fill_holes と同一 core 実装の twin)
     "fill_holes": (_fill_holes_bin, "fill_holes", "fill_up"),
     "fill_up": (_fill_holes_bin, "fill_up", "fill_up"),
+    # bilateral(25 シフト反復 = 計算重で GPU 向き)
+    "bilateral": (_bilateral, "bilateral", "bilateral_filter"),
 }
 
 
