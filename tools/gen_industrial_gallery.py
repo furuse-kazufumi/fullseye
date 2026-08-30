@@ -370,20 +370,18 @@ def subject_align_shapematch(log=print) -> dict:
     d = ImageDraw.Draw(vis)
     font = _font(17)
     for i, r in enumerate(found):
-        cy_f = r["row"] + size / 2
-        cx_f = r["col"] + size / 2
-        a = math.radians(-r["angle"])
+        cy_f, cx_f = r["row"], r["col"]
+        a = math.radians(r["angle"])               # PIL の CCW 回転 (y は下向き)
+        ux, uy = math.cos(a), -math.sin(a)         # テンプレ x 軸の向き
         L = 34
-        d.line([(cx_f - L * math.cos(a), cy_f - L * math.sin(a)),
-                (cx_f + L * math.cos(a), cy_f + L * math.sin(a))],
+        d.line([(cx_f - L * ux, cy_f - L * uy), (cx_f + L * ux, cy_f + L * uy)],
                fill=(30, 220, 120), width=2)
-        d.line([(cx_f + L * math.sin(a), cy_f - L * math.cos(a)),
-                (cx_f - L * math.sin(a), cy_f + L * math.cos(a))],
+        d.line([(cx_f + L * uy, cy_f - L * ux), (cx_f - L * uy, cy_f + L * ux)],
                fill=(30, 220, 120), width=2)
         d.ellipse([cx_f - 5, cy_f - 5, cx_f + 5, cy_f + 5],
                   outline=(255, 220, 60), width=2)
         d.text((cx_f + 12, cy_f + 10),
-               f"#{i + 1} θ={-r['angle']:.1f}°  s={r['score']:.2f}",
+               f"#{i + 1} θ={r['angle']:.1f}°  s={r['score']:.2f}",
                fill=(255, 220, 60), font=font)
     panels = [np.stack([tpl] * 3, -1), np.stack([scene] * 3, -1), _np_of(vis)]
     out = _montage(panels, ["テンプレート (ブラケット)",
