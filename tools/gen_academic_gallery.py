@@ -561,7 +561,7 @@ def rec_flowdir(col):
 
 def rec_relief(col):
     g = gray(col)
-    th = norm01(ap(g, "gray_tophat", 0.6, 0.5))
+    th = norm01(ap(g, "gray_tophat", 0.6, 0.5)) ** 0.5  # gamma for display
     c = ap(g, "cv_clahe", 0.6, 0.5)
     return ([("original", col), ("gray_tophat (carving relief)", th), ("cv_clahe", c)],
             ["rgb1_to_gray", "gray_tophat", "cv_clahe"])
