@@ -82,7 +82,7 @@ flowchart LR
 - `gabor` — DC を除いた Gabor カーネルで畳み込み帯域応答(`a`=向き θ、`b`=周波数)。`fullseye.apply(img, "gabor", 0.5, 0.5)`
 - `gen_gabor` — `gabor` と同じ Gabor 帯域応答(HALCON `gen_gabor` 別名)。`fullseye.apply(img, "gen_gabor", 0.5, 0.5)`
 - `sk_gabor` — skimage Gabor 実部の振幅(`a`=周波数)。`fullseye.apply(img, "sk_gabor", 0.5)`
-- `sk_frangi` — Frangi vesselness(多スケール Hessian で管状/リッジ構造を強調)。`fullseye.apply(img, "sk_frangi")`
+- `sk_frangi` — Frangi vesselness(多スケール Hessian で管状/リッジ構造を強調)。`a`=スケール範囲(最大 σ 1..5、既定 a=0.5 で σ∈{1,2,3})、`b`=blobness 感度 beta(既定 b=0.5 で skimage 既定 0.5。2026-08-30 にノブを配線 — それ以前は無視されていた)。`fullseye.apply(img, "sk_frangi")`
 - `sk_meijering` — Meijering neuriteness(神経突起状の線構造を強調)。`fullseye.apply(img, "sk_meijering")`
 - `xsk_meijering` — `sk_meijering` 同等の Meijering 線フィルタ。`fullseye.apply(img, "xsk_meijering")`
 - `sk_hessian` — Hessian ベースのリッジ/ブロブ強調フィルタ。`fullseye.apply(img, "sk_hessian")`
