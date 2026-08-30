@@ -578,7 +578,7 @@ def rec_fft(col):
     spec = np.log1p(fs.cx_magnitude(fs.cx_fft(g)))
     lo, hi = float(spec.min()), float(spec.max())  # full range: spectrum has a huge DC peak
     spec = (spec - lo) / max(hi - lo, 1e-12)
-    return ([("original", col), ("cv_clahe", c), ("log |FFT| spectrum", heat(spec))],
+    return ([("original", col), ("cv_clahe", c), ("log |FFT| spectrum", spec)],
             ["rgb1_to_gray", "cv_clahe", "cx_fft", "cx_magnitude"])
 
 
