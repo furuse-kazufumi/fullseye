@@ -597,7 +597,7 @@ SUBJECTS = {
     "dino_terrain": subject_dino_terrain,
     "morph_pulse": subject_morph_pulse,
     "wobble_warp": subject_wobble_warp,
-    "dla_skeleton": subject_dla_skeleton,
+    "dino_skeleton": subject_dino_skeleton,
 }
 
 
