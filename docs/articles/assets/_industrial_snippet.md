@@ -76,7 +76,7 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png )
 
-2 台のカメラ画像のズレ(視差)をブロックマッチングで求め、Z = f·b/d で奥行きに変換して 3D 点群へ。高さ 12cm 超の点をクラスタリングすると 4 物体が 4 クラスタに分かれ、鳥瞰の障害物マップができる。移動ロボットの視覚の定番パイプライン。 使用 op: disparity_subpixel (stereo), disparity_confidence (stereo), colorize_disparity, euclidean_clusters, fit_rectangle2。データ: MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)。
+2 台のカメラ画像のズレ(視差)をブロックマッチングで求め、Z = f·b/d で奥行きに変換して 3D 点群へ。高さ 12cm 超の点をクラスタリングすると 4 物体が 4 クラスタに分かれ、鳥瞰の障害物マップができる。移動ロボットの視覚の定番パイプライン。 使用 op: disparity_subpixel (stereo), disparity_confidence (stereo), speckle_filter (stereo), colorize_disparity, euclidean_clusters, fit_rectangle2。データ: MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)。
 
 ## bin picking 実動作 — 探索・把持・搬出のフルサイクル
 

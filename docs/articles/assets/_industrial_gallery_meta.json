@@ -108,6 +108,7 @@
     "ops": [
       "disparity_subpixel (stereo)",
       "disparity_confidence (stereo)",
+      "speckle_filter (stereo)",
       "colorize_disparity",
       "euclidean_clusters",
       "fit_rectangle2"
