@@ -1113,7 +1113,7 @@ With Wave 2 cleared, **CI went all green**, and I published `v0.1.0` to PyPI. It
 
 "All tests passing" and "working from a bare pip install" are separate verifications — that's the lesson the final wave carved in.
 
-Why CI's full suite missed this bug deserves one more level of digging. The CI `test` job installs with `pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"` — **a heaping plate of extras** — before running tests (only torch is left out for weight, as in the Wave 1 context). In that configuration, `scikit-image` always exists, so `recon3d`'s unconditional import **never fails, not once**. Meaning: no matter how many times the full suite ran, **it was structurally incapable of noticing this bug**. "Making tests thicker" and "widening the set of dependency combinations the tests verify" are different axes, and the latter had a gap. CI did have a **`core-minimal` job that exercises the bare install** (the one from Wave 1 that runs `import fullseye` and `import ops3d, pipeline3d, measure3d` in a bare environment) — and yet, at the time of the `v0.1.0` release, the very spot in question wasn't in that job's scope. That was the hole. The scope was widened together with the `v0.1.1` fix.
+The reason CI missed it is simple: the full suite ran with the extras installed (scikit-image always present), so the unconditional import **never had a chance to fail**. The bare-install `core-minimal` job's scope was widened in `v0.1.1`, and CI now catches this class on its own.
 
 ### The Trajectory in Numbers, and the Lessons in Words
 
