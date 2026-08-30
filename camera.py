@@ -552,6 +552,29 @@ def recover_pose(E, uv1, uv2, K, K2=None):
     b = _pts2(uv2)
     K = _K3(K)
     K2 = K if K2 is None else _K3(K2)
+    # 縮退の第一関門(視差の存在検定): 純回転ペアでは両画像の視線ベクトル集合が
+    # 「単一の回転」で厳密に重なる(視差ゼロ)。Kabsch で最適回転を当て、残差角の
+    # 中央値が実質ゼロなら、三角測量に基づくどんな後段判定too不安定
+    # (無限遠点は再投影が正確に一致してしまう — CI の BLAS 差で実証)なので、
+    # ここで幾何学的に拒否する。健全な並進ペアは視差が視野内で変化するため、
+    # どの単一回転でも残差が残る。
+    # First degeneracy gate — a parallax-existence test. For a pure-rotation
+    # pair the two bearing-ray sets align EXACTLY under one rotation (Kabsch
+    # residual ~ 0). Triangulation-based gates are unreliable here because
+    # points at infinity reproject perfectly (seen across CI BLAS builds), so
+    # the rejection must happen before triangulation.
+    r1 = np.column_stack([a, np.ones(len(a))]) @ np.linalg.inv(K).T
+    r2 = np.column_stack([b, np.ones(len(b))]) @ np.linalg.inv(K2).T
+    r1 /= np.linalg.norm(r1, axis=1, keepdims=True)
+    r2 /= np.linalg.norm(r2, axis=1, keepdims=True)
+    U, _, Vt = np.linalg.svd(r2.T @ r1)
+    S = np.diag([1.0, 1.0, np.sign(np.linalg.det(U @ Vt))])
+    R_fit = U @ S @ Vt                               # 最良の r1→r2 回転
+    resid = np.linalg.norm(r2 - r1 @ R_fit.T, axis=1)
+    if float(np.median(resid)) < 1e-9:               # 視差ゼロ = 純回転/ゼロ基線
+        raise ValueError("degenerate correspondences (zero baseline / pure "
+                         "rotation): the bearing rays align under a single "
+                         "rotation — there is no parallax to triangulate")
     R1, R2, t = decompose_essential(E)
     P1 = projection_matrix(K)                                  # [I | 0]
     best = None
