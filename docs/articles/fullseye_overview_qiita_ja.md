@@ -184,6 +184,8 @@ n     = fullseye.apply(seg,   "count_obj")       # 領域 → 特徴量（物体
 out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 ```
 
+コード例に出てきた `a, b` という2つのツマミについて、一言補足しておきます。なぜ「op ごとに自由なパラメータ名」ではなく、**全 op 共通で `a, b ∈ [0,1]` の2つだけ**にしたのか。理由は単純で、**進化計算（層②）がパイプラインを探索するとき、パラメータの意味を知らなくても機械的に探索できる**ようにするためです。`gaussian` の `a` は「ぼかしの強さ」、`otsu` の `a` は（意味を持たないダミーとして無視される、あるいは別の閾値調整として使われる）というように、op ごとに意味は違いますが、**探索する側から見ればどれも「0から1の間のツマミを2つ回すだけ」**。パラメータの数と範囲を揃えることで、進化計算のコード自体は op の中身を一切気にしなくて良くなります。これも層①の「型で繋ぐ」思想の延長線上にある設計判断です。
+
 実際の出力を見てもらうのが早いでしょう。エッジ検出・セグメンテーション・輪郭計測など、定番どころを1枚に並べるとこうなります（すべて上の `apply` / `run_pipeline` の実出力。入力は scikit-image 同梱のサンプル画像 `coins`）：
 
 [![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)

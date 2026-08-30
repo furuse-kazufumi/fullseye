@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 16:23:54
+- **最終更新**: 2026-08-30 16:25:14
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+ecd487d8 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:24)
+ef37aaa8 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:24)
+b5d5919d auto: gen_academic_gallery.py 編集前 (2026-08-30 16:24)
+a6d567cf auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:24)
 8994cd21 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:23)
 ce1b71cc auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:23)
 cfc9450f auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:23)
 a5047b11 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:22)
 0bf0f8ca auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:22)
 3e61eb73 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:22)
-6c852d64 auto: gen_science_gallery.py 編集前 (2026-08-30 16:21)
-7c2e2b78 auto: gen_science_gallery.py 編集前 (2026-08-30 16:21)
-970c83f8 auto: gen_science_gallery.py 編集前 (2026-08-30 16:21)
-8130593f auto: gen_studio_screenshots.py 編集前 (2026-08-30 16:21)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ M docs/articles/fullseye_overview_qiita_ja.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-16:23 data/academic_samples/_gemini_probe.png
-16:23 docs/articles/fullseye_overview_qiita_ja.md
-16:23 docs/articles/assets/_academic_gallery_snippet.md
-16:23 docs/articles/assets/ACADEMIC_ATTRIBUTION.md
-16:23 data/academic_samples/manifest.json
-16:23 docs/articles/assets/academic_paleo_ammonite_real_thumb.jpg
-16:23 docs/articles/assets/academic_paleo_ammonite_real.png
-16:22 docs/articles/assets/academic_bio_cells_thumb.jpg
-16:22 docs/articles/assets/academic_bio_cells.png
-16:22 docs/articles/assets/academic_arch_relief_thumb.jpg
-16:22 docs/articles/assets/academic_arch_relief.png
-16:22 docs/articles/assets/academic_arch_amphora_thumb.jpg
-16:22 docs/articles/assets/academic_arch_amphora.png
-16:22 docs/articles/assets/academic_met_hurricane_thumb.jpg
-16:22 docs/articles/assets/academic_met_hurricane.png
+16:25 data/academic_samples/ai_paleo_triceratops.png.meta.json
+16:25 data/academic_samples/ai_paleo_triceratops.png
+16:25 data/academic_samples/ai_paleo_feathered.png.meta.json
+16:25 data/academic_samples/ai_paleo_feathered.png
+16:25 data/academic_samples/ai_paleo_trex.png.meta.json
+16:25 data/academic_samples/ai_paleo_trex.png
+16:25 data/academic_samples/ai_bio_butterfly.png.meta.json
+16:25 data/academic_samples/ai_bio_butterfly.png
+16:25 data/academic_samples/ai_bio_deepsea.png.meta.json
+16:25 data/academic_samples/ai_bio_deepsea.png
+16:25 data/academic_samples/ai_bio_diatoms.png.meta.json
+16:25 data/academic_samples/ai_bio_diatoms.png
+16:24 data/academic_samples/ai_arch_cuneiform.png.meta.json
+16:24 data/academic_samples/ai_arch_cuneiform.png
+16:24 data/academic_samples/ai_bio_neuron.png.meta.json
 ```
 
 ---
