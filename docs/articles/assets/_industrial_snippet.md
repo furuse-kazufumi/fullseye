@@ -69,3 +69,11 @@
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick.png )
 
 部品 10 個を物理シミュレーションで箱に落とし、真上の深度カメラで観測。深度しきい値でセグメントした各部品を「周囲クリアランス + 高さ」で採点し、把持ジョーの向きは長方形フィットの長軸から決める。緑が最優先候補。実機ビンピッキングの前段そのもの。 使用 op: segment_objects, fit_rectangle2, colorize_depth, (scipy distance_transform_edt)。データ: MuJoCo 物理シミュレーション (部品 10 個を実際に落下・堆積)。
+
+## ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ
+
+![ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png )
+
+2 台のカメラ画像のズレ(視差)をブロックマッチングで求め、Z = f·b/d で奥行きに変換して 3D 点群へ。高さ 10cm 超の点をクラスタリングすると 4 物体が 4 クラスタに分かれ、鳥瞰の障害物マップができる。移動ロボットの視覚の最短経路。 使用 op: disparity_subpixel (stereo), colorize_disparity, euclidean_clusters, obb。データ: MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)。

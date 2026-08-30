@@ -559,8 +559,9 @@ def subject_dino_skeleton(log=print) -> dict:
     V = V - V.mean(axis=0)
     V = V / np.abs(V).max()
     size = 720
-    # glTF は y-up・長軸 z。真横 (+x) から見ると骨格標本の側面像になる
-    pose = fs.look_at((2.6, 0.35, 0.0), (0.0, 0.0, 0.0), up=(0.0, 1.0, 0.0))
+    # glTF は y-up・長軸 z。真上 (+y) から見下ろすと、広げた足・しっぽ・角の
+    # そろった「恐竜らしい」影絵になる (横からだと展示ポーズが重なって読めない)
+    pose = fs.look_at((0.0, 2.6, 0.0), (0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))
     r = fs.render_mesh(V, F, pose=pose, width=size, height=size)
     bones = np.asarray(r["silhouette"], np.float64)
     # 骨のすき間を閉じて「体の輪郭」にしてから中心線を取る
