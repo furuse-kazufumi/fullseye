@@ -135,6 +135,12 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 
 もう少し噛み砕くと、こういう順番の話です。ロボットが箸で豆をつまむにも、二足で歩くにも、まず「今、目の前に何があって、どこにあるか」が分からないと話になりません。**動く（制御）より先に、見える（知覚）が要る**――当たり前のようですが、evis の実験群を積み重ねる中で、これを痛感する場面が何度もありました。動作計画がどれだけ賢くても、入力の点群が歪んでいたり、姿勢推定が裏返っていたりすれば、その上に積んだものは全部意味を失います。だからこそ、知覚の土台を**後回しにせず、最初に、独立したライブラリとして**作る、という判断をしました。evis という"お客さん"が要求を出し、Fullseye という"納品先"がそれに応える――この関係を、同じ人間が両方の帽子をかぶって回している、というのが実態に近い言い方です。
 
+その「箸で豆をつまむ」実験を、実際に Fullseye の目で見た映像がこれです（クリックで動画再生）：
+
+[![evis の箸先カメラ映像に Fullseye の segment_objects → draw_objects を毎フレーム適用して豆を追跡（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
+
+*↑ ▶ ChopMimic 実験（evis_chopstick プロジェクトの実験素材）の箸先カメラ映像に、Fullseye の `segment_objects → draw_objects` を毎フレーム適用して豆を追跡した実出力。左=三人称視点（文脈用、無加工）、右=Fullseye が検出した豆の bbox。豆が写っている 163 フレームすべてで検出（可視フレーム検出率 100%、重心誤差は真値比で中央値 0.10px）。隠れて見えない 78 フレームは検出なし ―― 捏造はありません。*
+
 ---
 
 ## 全体像 ―― Fullseye は3つの層でできている
