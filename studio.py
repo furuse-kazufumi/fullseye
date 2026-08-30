@@ -5166,7 +5166,7 @@ def build_window(model=None):
         # dev_* / set_system 行を退避 — sync_program の再生成後もエディタに残す
         # (以前は Apply でディレクティブ行が消え、再 Apply の意味が変わっていた)
         state["dev_lines"] = [ln.rstrip() for ln in text.splitlines()
-                              if ln.strip().startswith(("dev_", "set_system"))]
+                              if ln.strip().startswith(("dev_", "set_system", "disp_"))]
         code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
