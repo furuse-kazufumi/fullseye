@@ -17,6 +17,11 @@ honest: これは GT アサートのある op ではなく **視覚ショーケ�
 すべて Fullseye の実 op が実データ / 生成メッシュから作った本物のレンダである。
 決定的(乱数を使わない。AO / 影の下位 op は決定的サンプリング)。
 
+各 GIF と**同一フレーム**から H.264 mp4(imageio-ffmpeg)も
+``docs/articles/assets/media/{pod,itokawa,skeleton,hue_cycle}.mp4`` へ書き出す
+(GIF を撮り直さず ``frames_pod``/``frames_i``/``frames_s``/``frames_h`` をそのまま
+``save_mp4()`` に渡すので、GIF と mp4 は完全に同じ内容 — でっち上げ禁止)。
+
 技法メモ:
   * 速度: ``render_beauty`` の AO は **頂点ごと**の半球レイキャスト(頂点 × 方向 × 面)なので、
     メッシュは ``mesh_decimate.decimate_qem_manifold`` で ~2500 面へ QEM 減面してから描く
@@ -40,7 +45,11 @@ from typing import Callable, Optional
 import numpy as np
 from scipy.ndimage import binary_dilation, binary_fill_holes, gaussian_filter
 
-# --- Fullseye 実 op(imgevolve ルートを PYTHONPATH に置いて実行)------------------
+# --- Fullseye 実 op ---------------------------------------------------------------
+# スクリプト直実行(py tools/gen_showcase_gifs.py)でも動くよう、repo ルートを
+# sys.path に自前追加(スクリプトの親=tools/ しか自動では載らないため)。
+# Bootstrap the repo root so `py tools/gen_showcase_gifs.py` works as documented.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import sdf_ops
 import render3d
 import recon3d
@@ -51,6 +60,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
 _ASSETS = os.path.join(_ROOT, "studio_assets", "sample_3d")
 _OUT_DIR = os.path.join(_ROOT, "examples_3d", "_gallery")
+_MEDIA_DIR = os.path.join(_ROOT, "docs", "articles", "assets", "media")
 
 
 # --------------------------------------------------------------------------- #
@@ -280,6 +290,39 @@ def save_gif(frames_u8: list[np.ndarray], path: str, *, fps: int,
     return size_bytes
 
 
+def save_mp4(frames_u8: list[np.ndarray], path: str, *, fps: int,
+             log: Callable[[str], None] = print) -> int:
+    """GIF と**同一フレーム**を imageio-ffmpeg で H.264 mp4 に書き出す(でっち上げ禁止 —
+    ターンテーブルを撮り直さず ``save_gif`` に渡したのと同じ ``frames_u8`` を再利用する)。
+
+    戻り値 = 実ファイルサイズ(bytes)。決定的(入力フレームが決定的なので出力も決定的)。
+    """
+    import imageio.v2 as imageio
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    imageio.mimwrite(path, frames_u8, fps=fps, codec="libx264", quality=8,
+                      macro_block_size=1, pixelformat="yuv420p")
+    size_bytes = os.path.getsize(path)
+    log(f"    saved {os.path.basename(path)}  {size_bytes / 1e6:.2f} MB")
+    return size_bytes
+
+
+def verify_mp4(path: str, log: Callable[[str], None] = print) -> tuple[int, tuple]:
+    """imageio で開き直してフレーム数と 1 フレームの形状を実測(捏造しない検証)。"""
+    import imageio.v2 as imageio
+    reader = imageio.get_reader(path)
+    n = 0
+    shape = None
+    for frame in reader:
+        if shape is None:
+            shape = tuple(np.asarray(frame).shape)
+        n += 1
+    reader.close()
+    if n <= 1:
+        raise RuntimeError(f"{path}: mp4 has {n} frame(s) — expected an animation")
+    log(f"    verify {os.path.basename(path)}: {n} frames, frame shape {shape}")
+    return n, shape
+
+
 def verify_gif(path: str, log: Callable[[str], None] = print) -> tuple[int, tuple]:
     """imageio で開き直してフレーム数と 1 フレームの形状を実測(捏造しない検証)。"""
     import imageio.v2 as imageio
@@ -333,6 +376,13 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         _report("turntable_pod", p, frames, sb, n, shp,
                 "subject=SDF pod / material=metal", log)
 
+        p_mp4 = os.path.join(_MEDIA_DIR, "pod.mp4")
+        sb_mp4 = save_mp4(frames_pod, p_mp4, fps=fps, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        results["pod"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
+        _report("turntable_pod_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
+                "same frames as showcase_turntable_pod.gif", log)
+
     # --- 2. Itokawa ターンテーブル(岩石)------------------------------------
     if "itokawa" in subjects:
         log("[build] itokawa (point cloud -> mesh)")
@@ -351,6 +401,13 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
                                   info=f"Itokawa point cloud via {method_i}, plastic")
         _report("turntable_itokawa", p, frames, sb, n, shp,
                 f"subject=Itokawa asteroid / mesh via {method_i}", log)
+
+        p_mp4 = os.path.join(_MEDIA_DIR, "itokawa.mp4")
+        sb_mp4 = save_mp4(frames_i, p_mp4, fps=fps, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        results["itokawa"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
+        _report("turntable_itokawa_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
+                "same frames as showcase_turntable_itokawa.gif", log)
 
     # --- 3. 手骨 CT ターンテーブル(骨色)------------------------------------
     if "skeleton" in subjects:
@@ -371,6 +428,13 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
         _report("turntable_skeleton", p, frames, sb, n, shp,
                 f"subject=hand-bone CT / mesh via {method_s}", log)
 
+        p_mp4 = os.path.join(_MEDIA_DIR, "skeleton.mp4")
+        sb_mp4 = save_mp4(frames_s, p_mp4, fps=fps, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        results["skeleton"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
+        _report("turntable_skeleton_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
+                "same frames as showcase_turntable_skeleton.gif", log)
+
     # --- 4. 色相回し(pod、回転 + アルベド hue 0->360)-----------------------
     if "hue" in subjects:
         log("[render] showcase_hue_cycle.gif  (pod, plastic, albedo hue 0->360)")
@@ -390,6 +454,13 @@ def gen_all(*, frames: int, size: int, ss: int, fps: int, out_dir: str,
                               info="SDF pod, plastic, HSV hue 0->360 on albedo + spin")
         _report("hue_cycle", p, frames, sb, n, shp,
                 "subject=SDF pod / albedo hue 0->360", log)
+
+        p_mp4 = os.path.join(_MEDIA_DIR, "hue_cycle.mp4")
+        sb_mp4 = save_mp4(frames_h, p_mp4, fps=fps, log=log)
+        n_mp4, shp_mp4 = verify_mp4(p_mp4, log=log)
+        results["hue"]["mp4"] = dict(path=p_mp4, bytes=sb_mp4, n=n_mp4, shape=shp_mp4)
+        _report("hue_cycle_mp4", p_mp4, frames, sb_mp4, n_mp4, shp_mp4,
+                "same frames as showcase_hue_cycle.gif", log)
 
     return results
 
@@ -424,6 +495,9 @@ def main(argv=None) -> int:
         f"{len(results)} GIF(s) -> {args.out} ===")
     for k, r in results.items():
         log(f"  {k}: {r['path']}  {r['n']} frames  {r['bytes'] / 1e6:.2f}MB")
+        if "mp4" in r:
+            m = r["mp4"]
+            log(f"  {k} (mp4): {m['path']}  {m['n']} frames  {m['bytes'] / 1e6:.2f}MB")
     return 0
 
 

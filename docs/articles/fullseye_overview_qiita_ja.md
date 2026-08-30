@@ -18,7 +18,7 @@
 まず1枚。これは Fullseye の 3D レンダラ（もちろん numpy 自前実装）が、SDF で作った形状に環境光遮蔽・ソフトシャドウ・ACES トーンマップまでかけて焼いた出力です：
 
 <!-- 公開後チェック: raw URL が HTTP 200 を返すこと。画像は軽量サムネ+クリックでフルサイズ(記事のメモリ負荷対策) -->
-[![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
+[![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
 
 ---
 
@@ -67,6 +67,15 @@ py -3.11 tools/update_fullseye.py --check   # 以後の更新は安全アップ�
 
 アップデータは**環境をつぶさない**方針で作ってあります（未コミットの変更があれば拒否・`--ff-only` のみ・RAG スキルはバックアップしてから更新・Studio の設定には触れない）。使い方の詳細は、リポジトリの `README.md` と `docs/AI_RAG_GUIDE.md`（RAG 化手順）、`docs/STUDIO_GUIDE.md`（IDE ガイド）にまとまっています。
 
+**全体像を先に掴みたい人向けのリンク集**（すべて GitHub 上でそのまま読めます）：
+
+| 見たいもの | リンク |
+|---|---|
+| 約1000 op の**ヘルプ総目次**（2D / 3D） | [docs/ops/INDEX.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/INDEX.md) |
+| 全 op の**一枚カタログ**（型契約つき） | [docs/OP_CATALOG.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/OP_CATALOG.md) |
+| **処理結果ギャラリー**（本記事の図版のフルサイズ＋解説） | [docs/GALLERY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md) |
+| **サンプルデータの入手先カタログ**（実 DL URL・ライセンスつき） | [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md) |
+
 ---
 
 ## まず言葉を4つだけ（最小用語集）
@@ -108,7 +117,13 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 
 この再定義は自分にとって大きな判断でした。汎用的なアルゴリズム（ソートや圧縮など）を積みかけていたのを「それは筋が違う」と切り、**画像・幾何ビジョンに一点集中**すると決めた。**何を作らないかを決める**のが、実は一番効きました。
 
-背景には **evis（エビス）** の存在があります。私が別シリーズの記事で進めている**筋骨格ヒューマノイド**（700 筋モデルなど）の実験群で、Fullseye の"お客さん第一号"です。ロボットに箸で豆をつまませたり、歩かせたりするには、**「世界を正しく見る目」** が要る。深層学習の目も強力ですが、**"なぜその姿勢だと判断したのか"が説明できない**と、身体の安全に関わる判断は任せづらい。だから **説明できる古典ビジョンを、スキルとして手元に全部持っておきたい** ―― これが Fullseye の芯です。
+背景には **evis（エビス）** の存在があります。私が別シリーズの記事で進めている**筋骨格ヒューマノイド**（700 筋モデルなど）の実験群で、Fullseye の"お客さん第一号"です。ロボットに箸で豆をつまませたり、歩かせたりするには、**「世界を正しく見る目」** が要る。
+
+![手続き生成した手の骨格（手根骨8・中手骨5・指骨14、カプセルSDF）を Fullseye の自前レンダラで描画したもの](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/hand_hero.png)
+
+*↑ その「手」を Fullseye 側から見た一枚。手続き生成した手の骨格（手根骨8・中手骨5・指骨14）を、これも自前レンダラで描画しています。*
+
+深層学習の目も強力ですが、**"なぜその姿勢だと判断したのか"が説明できない**と、身体の安全に関わる判断は任せづらい。だから **説明できる古典ビジョンを、スキルとして手元に全部持っておきたい** ―― これが Fullseye の芯です。
 
 ---
 
@@ -165,7 +180,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 
 実際の出力を見てもらうのが早いでしょう。エッジ検出・セグメンテーション・輪郭計測など、定番どころを1枚に並べるとこうなります（すべて上の `apply` / `run_pipeline` の実出力）：
 
-[![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
+[![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
 各パネルの詳しい説明（何の op がどの数値を出しているか）は、リポジトリの **[処理結果ギャラリー（docs/GALLERY.md）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)** にまとめてあります。
 
@@ -240,19 +255,47 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 この層には**センサー・シミュレーション一式**も含まれます。実機を持っていなくても、**疑似 LiDAR・ステレオカメラ・イベントカメラ（DVS）・フォトメトリックステレオ・TSDF 融合・偏光カメラ・焦点合成**といったセンサーの出力を合成シーンから作り、知覚パイプラインを**実機なしで開発・検証**できる ―― Physical AI 開発の"練習場"です。すべて Fullseye 自身の op の実出力です：
 
-[![Physical AI センサ・シミュレーションのモンタージュ（疑似LiDAR / ステレオ深度 / イベントカメラDVS / 焦点合成 / 偏光カメラ / カメラ+IMUフュージョン）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/physical_ai_montage_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
+[![Physical AI センサ・シミュレーションのモンタージュ（疑似LiDAR / ステレオ深度 / イベントカメラDVS / 焦点合成 / 偏光カメラ / カメラ+IMUフュージョン）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/physical_ai_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
 パネルごとの説明と、これ以外の処理結果（3D レンダリング・メッシュ処理・ターンテーブル GIF など）の一覧は **[処理結果ギャラリー（docs/GALLERY.md）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)** へ。
+
+この中の1つ、**イベントカメラ（DVS）** ―― 画素ごとの輝度変化だけを非同期に吐くセンサー ―― は、動きで見るのが一番わかりやすい。カメラがパンすると、エッジに沿って ON イベント（シアン）と OFF イベント（マゼンタ）が流れます：
+
+![イベントカメラ(DVS)シミュレーション ―― パンに伴い ON(シアン)/OFF(マゼンタ)イベントがエッジに沿って発生](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/dvs_stream.gif)
+
+より滑らかな **mp4 版**と、イトカワ等のターンテーブル動画は、リポジトリの [docs/articles/assets/media/](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/media) に置いてあります（GitHub 上でそのまま再生できます）。
 
 ### 3D をここまで自作している話（いちばんの差別化ポイント）
 
 Fullseye の差別化がいちばん出るのは **3D 系**だと思っています。冒頭の GIF に出てきた小惑星イトカワの実点群に、3D op を実際に当てるとこうなります：
 
-[![小惑星イトカワ実点群への 3D op（曲率解析 / ICP 自己レジストレーション / PCA 正準姿勢）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_montage_720.png)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_montage.png)
+[![小惑星イトカワ実点群への 3D op（曲率解析 / ICP 自己レジストレーション / PCA 正準姿勢）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_montage.png)
 
 実点群 3000 点に対して、**曲率解析**（近傍曲率の相関 r=0.87 ―― 実在表面である証拠）、**ICP 自己レジストレーション**（未知の 30° 回転＋ノイズから回転誤差 0.027° で復元）、**PCA 正準姿勢**（未知の 50° 回転後も主軸を完全回復）。全部この場で実行した実測値です。
 
-3D op は現在 265 個。点群・メッシュ・ボリューム・SDF を跨いで、SHOT / FPFH / スピンイメージといった **3D 特徴記述子**、**TSDF 融合**、**縞投影（fringe projection）**、**フォトメトリックステレオ**、**スーパークアドリク当てはめ**、**メディアル軸**、**測地距離**、**ビジュアルハル**、**QEM メッシュ簡略化（境界保存・多様体厳格）** まで揃えています。個々のアルゴリズムは PCL（C++）や Open3D に散在しますが、**「純 numpy・型付き・全 op に機械可読ノート付き」で1つのライブラリがこの範囲を持っている構成は、あまり見ない**と思います。産業の縞投影計測からロボットの把持姿勢まで、同じ書き味で届くのが狙いです。
+3D op は現在 265 個。点群・メッシュ・ボリューム・SDF を跨いで、SHOT / FPFH / スピンイメージといった **3D 特徴記述子**、**TSDF 融合**、**縞投影（fringe projection）**、**フォトメトリックステレオ**、**スーパークアドリク当てはめ**、**メディアル軸**、**測地距離**、**ビジュアルハル**、**QEM メッシュ簡略化（境界保存・多様体厳格）** まで揃えています。いくつか実物を：
+
+![接触した2物体を距離変換+分水嶺（watershed）で分離。連結成分ラベリングでは1個に融合してしまうケース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/watershed3d.png)
+
+*↑ 3D 分水嶺（watershed）分割 ―― くっついた 2 物体を距離変換の「谷」で切り分ける。ビンピッキングで部品が重なる、あの状況の道具です。*
+
+![QEM edge-collapse による境界保存・多様体厳格なメッシュ簡略化の実測比較](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/mesh_decimate.png)
+
+*↑ QEM メッシュ簡略化の実測比較。「境界を保つ」「多様体を壊さない」を実測で確認しながら削る ―― この op は本記事のバグ⑥の舞台でもあります（後述）。*
+
+![手骨ボリュームを骨色マテリアルで回すターンテーブル（マーチングキューブ→レンダリングまで自前）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/showcase_turntable_skeleton.gif)
+
+*↑ 解剖学的な手骨メッシュ（MS-Human-700 筋骨格モデル由来）をボクセル化した合成 CT ボリュームから、マーチングキューブでメッシュ化して骨格標本風に回したもの。ボリューム→メッシュ→レンダまで一気通貫です。*個々のアルゴリズムは PCL（C++）や Open3D に散在しますが、**「純 numpy・型付き・全 op に機械可読ノート付き」で1つのライブラリがこの範囲を持っている構成は、あまり見ない**と思います。産業の縞投影計測からロボットの把持姿勢まで、同じ書き味で届くのが狙いです。
+
+試すための **3D データは、公開ソースから無料で手に入ります**。定番どころ：
+
+- **[Stanford 3D Scanning Repository](https://graphics.stanford.edu/data/3Dscanrep/)** ―― bunny / dragon / armadillo。3D 処理界の「Lenna」たち
+- **[JAXA DARTS はやぶさアーカイブ](https://data.darts.isas.jaxa.jp/pub/hayabusa/shape/gaskell/)** ―― 本記事のイトカワ形状モデルの出どころ（[PDS 側の解説はこちら](https://sbn.psi.edu/pds/resource/itokawashape.html)）
+- **[NASA 3D Resources](https://nasa3d.arc.nasa.gov/)** ―― 探査機や地形など、宇宙関連の 3D モデル
+- **[The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/)** ―― 研究用 CT/MRI の **DICOM ボリューム**（volume sort の実データ源）
+- **ロボットのモデル**も公開で揃います：**[MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)**（実機ロボットの高品質 MJCF 群）、**[MyoSuite](https://github.com/MyoHub/myosuite)**（筋骨格モデル）、**[LocoMuJoCo](https://github.com/robfiras/loco-mujoco)**（歩行ベンチマーク環境）
+
+ライセンスと直 DL URL を整理した一覧はリポジトリの [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md) にあり、`sample_data.download('bunny', yes=True)` の1行で取得できるものはコード側にも登録済みです（未取得なら明示エラー、勝手に拾わない fail-closed 設計）。
 
 この層の"お客さん第一号"が **evis**（筋骨格ヒューマノイド）です。evis の視覚パイプラインは、**ステレオ → 深度 → 点群 → セグメント → 6自由度（6DoF）姿勢 → 動作計画 → 700筋での実現**、という流れ。ロボットに箸を使わせる・歩かせるといった課題の"目"を、この層が担います。
 

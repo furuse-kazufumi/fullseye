@@ -24,6 +24,12 @@ Generate demo PNG assets for the "Fullseye retrospective" Qiita article.
                             -- examples_3d/_gallery/ の既存 hero 画像のコピー
   _sources/*.png            -- モンタージュの元になった各センサー demo のフルサイズ
                                中間出力(honest な来歴保持のため残す)
+  thumbs/*_720.jpg          -- 記事貼付け用 720px サムネ(JPEG quality=85。容量を JPG で
+                               抑える方針。旧 PNG サムネは削除される)
+  media/dvs_stream.mp4 / .gif
+                            -- event_camera の DVS(イベントカメラ)シミュレーションを
+                               フレーム単位で可視化した短尺動画(パン中に ON/OFF イベントが
+                               流れる様子。event_camera._render_pan/_events と同一モデル)
 
 Run:  py -3.11 tools/gen_article_assets.py
 """
@@ -40,6 +46,7 @@ if REPO not in sys.path:
 ASSETS_DIR = os.path.join(REPO, "docs", "articles", "assets")
 SOURCES_DIR = os.path.join(ASSETS_DIR, "_sources")
 THUMBS_DIR = os.path.join(ASSETS_DIR, "thumbs")
+MEDIA_DIR = os.path.join(ASSETS_DIR, "media")  # mp4/gif 動画置き場(GitHub blob リンク用)
 GALLERY_DIR = os.path.join(REPO, "examples_3d", "_gallery")
 
 SEED = 20260830  # 全生成で固定する乱数種 (再現性) / fixed seed for reproducibility
@@ -50,6 +57,7 @@ THUMB_WIDTH = 720  # Qiita 記事に貼るサムネの目標幅(px)。元画像�
 def _ensure_dirs() -> None:
     os.makedirs(SOURCES_DIR, exist_ok=True)
     os.makedirs(THUMBS_DIR, exist_ok=True)
+    os.makedirs(MEDIA_DIR, exist_ok=True)
 
 
 # --------------------------------------------------------------------------- #
@@ -476,12 +484,13 @@ def build_itokawa_montage(log=print) -> dict:
 # 4) 記事貼付け用サムネイル(幅720px)/ article thumbnails (720px wide)          #
 # --------------------------------------------------------------------------- #
 def build_thumbnails(log=print) -> list:
-    """記事に貼るモンタージュ/hero 画像から幅 720px のサムネを作る.
+    """記事に貼るモンタージュ/hero 画像から幅 720px の JPG サムネを作る.
 
     フルサイズは GitHub 側(docs/GALLERY.md)で見せ、Qiita 記事にはこの軽量サムネだけを
     貼ってメモリ負荷を下げる。アスペクト比は維持し、元画像が 720px より狭い場合は
     拡大しない(honest — 存在しない解像度をでっち上げない)。PIL の LANCZOS でリサイズ、
-    PNG optimize=True で保存する。
+    RGB 変換のうえ JPEG quality=85 で保存する(容量を JPG で抑える方針。旧 PNG サムネが
+    残っていれば削除する)。
     """
     from PIL import Image
 
@@ -494,17 +503,128 @@ def build_thumbnails(log=print) -> list:
             log(f"[skip] thumbnail source missing: {src}")
             continue
         stem = os.path.splitext(name)[0]
-        dst = os.path.join(THUMBS_DIR, f"{stem}_720.png")
+        dst = os.path.join(THUMBS_DIR, f"{stem}_720.jpg")
+        old_png = os.path.join(THUMBS_DIR, f"{stem}_720.png")
+        if os.path.exists(old_png):
+            os.remove(old_png)
+            log(f"removed stale PNG thumbnail: {old_png}")
         with Image.open(src) as im:
             im = im.convert("RGB")
             target_w = min(THUMB_WIDTH, im.width)  # never upscale
             target_h = round(im.height * target_w / im.width)
             thumb = im.resize((target_w, target_h), Image.LANCZOS)
-            thumb.save(dst, format="PNG", optimize=True)
+            thumb.save(dst, format="JPEG", quality=85, optimize=True)
         size_kb = os.path.getsize(dst) / 1024
         log(f"thumbnail: {dst} | {target_w}x{target_h} ({size_kb:.1f} KiB)")
         thumbs.append(dst)
     return thumbs
+
+
+# --------------------------------------------------------------------------- #
+# 5) DVS(event camera)イベントストリームの短尺動画 / DVS event-stream video     #
+# --------------------------------------------------------------------------- #
+def build_dvs_stream_video(log=print) -> dict:
+    """event_camera の DVS シミュレーションをステップごとに可視化した短尺動画を作る.
+
+    ``event_camera.run_event_demo()`` はイベント総数を1枚の静止画へ集計するだけだが、
+    Physical AI 系は動画で見せたい(ユーザー方針)ので、内部の ``_render_pan()`` /
+    ``_events()`` と**同一のログ輝度差分モデル**をステップごとに評価し、パン中に
+    ON(明)/OFF(暗)イベントが実際に流れる様子を mp4 + 軽量 GIF(幅600px)にする。
+
+    honest: フレームは ``event_camera._render_pan()`` が実際にレンダした MuJoCo パン
+    シーンそのもの。イベント判定式(log差分・閾値 C・発火画素の reference reset)は
+    ``event_camera._events()`` と同じ式をステップ実行するだけで、新しい乱数や捏造値は
+    一切導入しない(seed 固定・MuJoCo レンダは決定的)。
+    """
+    import importlib.util
+    if importlib.util.find_spec("mujoco") is None:
+        log("[skip] dvs_stream: mujoco is not installed")
+        return {"mp4": None, "gif": None, "skipped": "mujoco not installed"}
+
+    import imageio.v2 as imageio
+    import numpy as np
+    from PIL import Image
+
+    import event_camera as ec
+
+    n_frames = 30
+    res = 600  # GIF 幅600px 要件をそのまま満たす解像度でレンダ(アップスケール不要)
+    C = 0.15
+    frames = ec._render_pan(n_frames=n_frames, res=res, az0=110, az1=170)
+    logs = [np.log(f.mean(axis=2) + 0.02) for f in frames]
+    ref = logs[0]
+
+    out_frames = []
+    cum_total = 0
+    for k in range(1, len(logs)):
+        diff = logs[k] - ref
+        pos = diff > C     # ON: 明るくなった画素
+        neg = diff < -C    # OFF: 暗くなった画素
+        cum_total += int(pos.sum() + neg.sum())
+        ref = np.where(pos | neg, logs[k], ref)   # event_camera._events() と同じ reset
+
+        base = frames[k]
+        overlay = np.zeros_like(base)
+        overlay[..., 1][pos] = 1.0; overlay[..., 2][pos] = 1.0   # ON -> teal
+        overlay[..., 0][neg] = 1.0; overlay[..., 2][neg] = 1.0   # OFF -> magenta
+        mask = pos | neg
+        vis = base.copy()
+        vis[mask] = 0.20 * base[mask] + 0.80 * overlay[mask]
+        out_frames.append(np.clip(vis * 255.0 + 0.5, 0, 255).astype(np.uint8))
+
+    log(f"dvs_stream: rendered {n_frames} pan frames -> {len(out_frames)} event frames, "
+        f"cumulative events={cum_total}")
+
+    mp4_path = os.path.join(MEDIA_DIR, "dvs_stream.mp4")
+    imageio.mimwrite(mp4_path, out_frames, fps=8, codec="libx264", quality=8,
+                      macro_block_size=1, pixelformat="yuv420p")
+    mp4_size = os.path.getsize(mp4_path)
+    log(f"dvs_stream mp4: {mp4_path} ({mp4_size / 1e6:.2f} MB)")
+
+    gif_path = os.path.join(MEDIA_DIR, "dvs_stream.gif")
+    gif_width = 600
+    duration_ms = int(round(1000.0 / 8))
+    gif_size = -1
+    for colors in (256, 192, 128, 96, 64):
+        pil_frames = []
+        for f in out_frames:
+            im = Image.fromarray(f, "RGB")
+            if im.width != gif_width:
+                gh = round(im.height * gif_width / im.width)
+                im = im.resize((gif_width, gh), Image.LANCZOS)
+            pil_frames.append(im.convert("P", palette=Image.ADAPTIVE, colors=colors))
+        pil_frames[0].save(gif_path, save_all=True, append_images=pil_frames[1:],
+                            duration=duration_ms, loop=0, disposal=2, optimize=True)
+        gif_size = os.path.getsize(gif_path)
+        if gif_size <= 2_000_000:
+            break
+        log(f"dvs_stream gif {gif_size / 1e6:.2f} MB > 2MB budget at colors={colors}, "
+            f"retrying with fewer colors")
+    log(f"dvs_stream gif: {gif_path} ({gif_size / 1e6:.2f} MB)")
+
+    # honest verification: read both back and count real frames (捏造でないことの実測確認)
+    mp4_reader = imageio.get_reader(mp4_path)
+    mp4_n, mp4_shape = 0, None
+    for fr in mp4_reader:
+        if mp4_shape is None:
+            mp4_shape = tuple(np.asarray(fr).shape)
+        mp4_n += 1
+    mp4_reader.close()
+
+    gif_reader = imageio.get_reader(gif_path)
+    gif_n, gif_shape = 0, None
+    for fr in gif_reader:
+        if gif_shape is None:
+            gif_shape = tuple(np.asarray(fr).shape)
+        gif_n += 1
+    gif_reader.close()
+
+    log(f"dvs_stream verify: mp4 {mp4_n} frames {mp4_shape} | gif {gif_n} frames {gif_shape}")
+    return {
+        "mp4": mp4_path, "mp4_bytes": mp4_size, "mp4_n": mp4_n, "mp4_shape": mp4_shape,
+        "gif": gif_path, "gif_bytes": gif_size, "gif_n": gif_n, "gif_shape": gif_shape,
+        "n_events": cum_total,
+    }
 
 
 def main() -> int:
@@ -526,8 +646,11 @@ def main() -> int:
     print("\n-- 3b) itokawa_montage --")
     itokawa = build_itokawa_montage()
 
-    print("\n-- 4) thumbnails (720px) --")
+    print("\n-- 4) thumbnails (720px JPG) --")
     thumbs = build_thumbnails()
+
+    print("\n-- 5) dvs_stream video (event camera) --")
+    dvs = build_dvs_stream_video()
 
     print("\n== summary ==")
     all_paths = [physical["path"], vision["path"], *heroes]
@@ -537,6 +660,13 @@ def main() -> int:
     for path in all_paths:
         size = os.path.getsize(path)
         print(f"{path}  ({size/1024:.1f} KiB)")
+    if dvs.get("mp4"):
+        print(f"{dvs['mp4']}  ({dvs['mp4_bytes']/1024:.1f} KiB, "
+              f"{dvs['mp4_n']} frames, {dvs['mp4_shape']})")
+        print(f"{dvs['gif']}  ({dvs['gif_bytes']/1024:.1f} KiB, "
+              f"{dvs['gif_n']} frames, {dvs['gif_shape']})")
+    elif dvs.get("skipped"):
+        print(f"skipped dvs_stream: {dvs['skipped']}")
     if physical["skipped"]:
         print("skipped physical-AI panels:")
         for title, module, reason in physical["skipped"]:

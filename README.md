@@ -176,7 +176,8 @@ Everything below lives in the repo — start at the guide that matches what you 
 | You want to… | Read |
 |---|---|
 | See what the operators produce (result gallery) | `docs/GALLERY.md` |
-| Look up any of the ~1000 operators | `docs/ops/` (per-op notes) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Look up any of the ~1000 operators | `docs/ops/INDEX.md` (full TOC) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Find real sample data (meshes / volumes / images, with licenses) | `docs/ops/SAMPLES.md` |
 | Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
 | Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |
 | Add an operator | `docs/ADDING_OPS.md` · `CONTRIBUTING.md` |

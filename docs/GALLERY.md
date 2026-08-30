@@ -101,23 +101,45 @@ GitHub 上でそのまま表示されます。
 ## 3. 記事用サムネイル
 
 `docs/articles/assets/thumbs/` に、上記モンタージュ3枚と hero 1枚から幅720px(アスペクト
-維持、元画像が720pxより狭ければ拡大しない)で書き出したサムネがあります。解説記事は
-このサムネを表示し、フルサイズは本ページ経由で参照する構成です。
+維持、元画像が720pxより狭ければ拡大しない)で書き出したサムネがあります。容量を抑える
+方針のため **JPEG(quality=85、RGB変換)** で保存しています。解説記事はこのサムネを表示し、
+フルサイズは本ページ経由で参照する構成です。
 
-- `thumbs/physical_ai_montage_720.png`
-- `thumbs/vision_ops_montage_720.png`
-- `thumbs/render_beauty_hero_720.png`
-- `thumbs/itokawa_montage_720.png`
+- `thumbs/physical_ai_montage_720.jpg`
+- `thumbs/vision_ops_montage_720.jpg`
+- `thumbs/render_beauty_hero_720.jpg`
+- `thumbs/itokawa_montage_720.jpg`
 
 ---
 
-## 4. 自分で再生成する / Regenerate yourself
+## 4. 動画(mp4)
+
+`docs/articles/assets/media/` に、GIF ショーケースと同一フレームから書き出した H.264 mp4
+(容量が軽く、GitHub の blob ページ上でそのまま再生できる)と、Physical AI センサー系の
+イベントカメラ(DVS)ストリームを可視化した動画があります。
+
+| 動画 | 説明 |
+|---|---|
+| [`pod.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/pod.mp4) | SDF生成の hero pod を金属マテリアルで1回転させるターンテーブル(`showcase_turntable_pod.gif` と同一フレーム) |
+| [`itokawa.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/itokawa.mp4) | 小惑星 25143 Itokawa の実点群を岩石マテリアルで1回転(`showcase_turntable_itokawa.gif` と同一フレーム) |
+| [`skeleton.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/skeleton.mp4) | 手骨CTボリュームを骨色マテリアルで1回転、骨格標本風(`showcase_turntable_skeleton.gif` と同一フレーム) |
+| [`hue_cycle.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/hue_cycle.mp4) | hero pod を回転させながら表面アルベドの色相を0→360で回す(`showcase_hue_cycle.gif` と同一フレーム) |
+| [`dvs_stream.mp4`](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/dvs_stream.mp4) | イベントカメラ(DVS)シミュレーション — MuJoCoシーンをパンしながら発生するON(明)/OFF(暗)イベントが物体エッジ上を流れる様子(`event_camera.py` と同一のログ輝度差分モデルをステップ実行、軽量版 `dvs_stream.gif` も同梱) |
+
+生成元: `tools/gen_showcase_gifs.py::save_mp4()`(ターンテーブル4種、GIFと同一フレームを
+再利用)/ `tools/gen_article_assets.py::build_dvs_stream_video()`(DVSストリーム)。
+
+---
+
+## 5. 自分で再生成する / Regenerate yourself
 
 ```powershell
-# 記事用モンタージュ + hero コピー + 720pxサムネ(このページの §1・§3)
+# 記事用モンタージュ + hero コピー + 720px JPGサムネ + DVSストリーム動画(このページの §1・§3・§4)
 py -3.11 tools/gen_article_assets.py
 
-# examples_3d/_gallery/ のターンテーブル GIF 4種(このページの §2、pod/itokawa/skeleton/hue_cycle)
+# examples_3d/_gallery/ のターンテーブル GIF 4種 + 同一フレームの mp4(このページの §2・§4、
+# pod/itokawa/skeleton/hue_cycle)。repo ルートはスクリプトが自前で sys.path に足すので
+# PYTHONPATH の設定は不要。
 py -3.11 tools/gen_showcase_gifs.py
 
 # 個別の 3D 事例 hero 画像(例)
