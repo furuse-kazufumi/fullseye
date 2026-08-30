@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">vol_erode — 2D <code style="color:#22d3bf">3d</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_opening_ball — 2D <code style="color:#22d3bf">3d</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">volume</code> → <code style="color:#22d3bf">volume</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;vol_erode&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;vol_opening_ball&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>型契約は <code style="color:#22d3bf">volume → volume</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
@@ -13,9 +13,9 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_physics_alife_3d.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">volume</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a> · <a style="color:#22d3bf" href="op:vol_dilation_ball">vol_dilation_ball</a></p>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">3d</code>)</h3>
-<p><a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a> · <a style="color:#22d3bf" href="op:vol_dilation_ball">vol_dilation_ball</a> · <a style="color:#22d3bf" href="op:vol_erosion_ball">vol_erosion_ball</a></p>
+<p><a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a> · <a style="color:#22d3bf" href="op:vol_dilation_ball">vol_dilation_ball</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
 <p>*Provenance: ops.py — 2D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

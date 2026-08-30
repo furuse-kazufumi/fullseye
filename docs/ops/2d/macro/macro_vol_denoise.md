@@ -35,7 +35,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`volume` を入力に取れる)
 
-[identity](../misc/identity.md) · [vol_gaussian](../3d/vol_gaussian.md) · [vol_median](../3d/vol_median.md) · [vol_erode](../3d/vol_erode.md) · [vol_dilate](../3d/vol_dilate.md) · [vol_threshold](../3d/vol_threshold.md) · [vol_mip](../3d/vol_mip.md) · [vol_slice](../3d/vol_slice.md)
+[identity](../misc/identity.md) · [vol_gaussian](../3d/vol_gaussian.md) · [vol_median](../3d/vol_median.md) · [vol_erode](../3d/vol_erode.md) · [vol_dilate](../3d/vol_dilate.md) · [vol_threshold](../3d/vol_threshold.md) · [vol_reg_dilate](../3d/vol_reg_dilate.md) · [vol_reg_erode](../3d/vol_reg_erode.md)
 
 ## 同カテゴリ(`macro`)
 

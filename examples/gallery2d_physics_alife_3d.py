@@ -198,6 +198,27 @@ def _gt_checks(BY) -> list[str]:
     assert vt.min() == 0.0 and vt.max() == 1.0, "vol_threshold missing a class (all-0 or all-1)"
     logs.append("vol_threshold -> strictly binary volume with both 0 and 1")
 
+    # GT5b — 3D binary morphology footprint discrimination. Dilating a single
+    # voxel with a=0.4 (radius/iterations 2) must give the L1 diamond (25 voxels)
+    # for the 6-neighbour cross, and the Euclidean ball (33 voxels = integer
+    # points with x²+y²+z²<=4) for the ball footprint. A wrong footprint (cube,
+    # 8-neighbour, off-by-one radius) lands on a different count, so this pins
+    # the exact structuring element. Erosion of that ball by the same ball
+    # recovers exactly the seed voxel; opening the ball by itself is identity.
+    seed_v = np.zeros((9, 9, 9), np.float64)
+    seed_v[4, 4, 4] = 1.0
+    cross_d = BY["vol_reg_dilate"].fn(np.array(seed_v, copy=True), 0.4, 0.5)
+    ball_d = BY["vol_dilation_ball"].fn(np.array(seed_v, copy=True), 0.4, 0.5)
+    assert int(cross_d.sum()) == 25, f"cross dilation != L1 diamond: {int(cross_d.sum())}"
+    assert int(ball_d.sum()) == 33, f"ball dilation != Euclidean ball: {int(ball_d.sum())}"
+    ero = BY["vol_erosion_ball"].fn(np.array(ball_d, copy=True), 0.4, 0.5)
+    assert int(ero.sum()) == 1 and ero[4, 4, 4] == 1.0, "ball erosion did not recover the seed"
+    opened = BY["vol_opening_ball"].fn(np.array(ball_d, copy=True), 0.4, 0.5)
+    assert np.array_equal(opened, ball_d), "opening of a ball by itself is not identity"
+    ero_c = BY["vol_reg_erode"].fn(np.array(cross_d, copy=True), 0.4, 0.5)
+    assert int(ero_c.sum()) == 1 and ero_c[4, 4, 4] == 1.0, "cross erosion did not recover the seed"
+    logs.append("3D binary morph: cross diamond 25 / ball 33 voxels, erosion/opening exact")
+
     # GT6 — macro_edge ends in an Otsu segmentation. On a STRUCTURED image it must
     # produce a genuine binary region with BOTH classes present; a flat null image
     # carries no edge, so the same op collapses to a single class (Otsu on

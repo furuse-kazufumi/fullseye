@@ -35,11 +35,11 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`volume` を入力に取れる)
 
-[identity](../misc/identity.md) · [vol_gaussian](vol_gaussian.md) · [vol_median](vol_median.md) · [vol_dilate](vol_dilate.md) · [vol_threshold](vol_threshold.md) · [vol_mip](vol_mip.md) · [vol_slice](vol_slice.md) · [vol_count](../features/vol_count.md)
+[identity](../misc/identity.md) · [vol_gaussian](vol_gaussian.md) · [vol_median](vol_median.md) · [vol_dilate](vol_dilate.md) · [vol_threshold](vol_threshold.md) · [vol_reg_dilate](vol_reg_dilate.md) · [vol_reg_erode](vol_reg_erode.md) · [vol_dilation_ball](vol_dilation_ball.md)
 
 ## 同カテゴリ(`3d`)
 
-[vol_gaussian](vol_gaussian.md) · [vol_median](vol_median.md) · [vol_dilate](vol_dilate.md) · [vol_threshold](vol_threshold.md) · [vol_mip](vol_mip.md) · [vol_slice](vol_slice.md)
+[vol_gaussian](vol_gaussian.md) · [vol_median](vol_median.md) · [vol_dilate](vol_dilate.md) · [vol_threshold](vol_threshold.md) · [vol_reg_dilate](vol_reg_dilate.md) · [vol_reg_erode](vol_reg_erode.md) · [vol_dilation_ball](vol_dilation_ball.md) · [vol_erosion_ball](vol_erosion_ball.md)
 
 ---
 *Provenance: ops.py — 2D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

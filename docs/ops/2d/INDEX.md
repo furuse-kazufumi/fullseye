@@ -1,4 +1,4 @@
-# 2D operator help — 733 ops in 46 categories
+# 2D operator help — 738 ops in 46 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/2d/<category>/<op>.md` を走査。
 
@@ -20,9 +20,9 @@
 
 ## カテゴリ
 
-### 3d (7)
+### 3d (12)
 
-[vol_dilate](3d/vol_dilate.md) · [vol_erode](3d/vol_erode.md) · [vol_gaussian](3d/vol_gaussian.md) · [vol_median](3d/vol_median.md) · [vol_mip](3d/vol_mip.md) · [vol_slice](3d/vol_slice.md) · [vol_threshold](3d/vol_threshold.md)
+[vol_dilate](3d/vol_dilate.md) · [vol_dilation_ball](3d/vol_dilation_ball.md) · [vol_erode](3d/vol_erode.md) · [vol_erosion_ball](3d/vol_erosion_ball.md) · [vol_gaussian](3d/vol_gaussian.md) · [vol_median](3d/vol_median.md) · [vol_mip](3d/vol_mip.md) · [vol_opening_ball](3d/vol_opening_ball.md) · [vol_reg_dilate](3d/vol_reg_dilate.md) · [vol_reg_erode](3d/vol_reg_erode.md) · [vol_slice](3d/vol_slice.md) · [vol_threshold](3d/vol_threshold.md)
 
 ### arithmetic (10)
 
