@@ -236,19 +236,10 @@ def shot_surface3d(out_path: str) -> None:
     if not studio._opengl_available():
         raise SystemExit("no real GL context on this machine — surface3d shot impossible")
 
-    from PySide6.QtDataVisualization import (Q3DSurface, QSurface3DSeries,
-                                             QSurfaceDataProxy, QSurfaceDataItem)
-    from PySide6 import QtGui, QtCore
-    hm = studio._downsample_grid(heightmap)    # exactly what show_3d_surface plots
-    ny, nx = hm.shape
-    proxy = QSurfaceDataProxy()
-    rows = []
-    for i in range(ny):
-        rows.append([QSurfaceDataItem(QtGui.QVector3D(float(j), float(hm[i, j]), float(i)))
-                     for j in range(nx)])
-    proxy.resetArray(rows)
-    series = QSurface3DSeries(proxy)
-    series.setDrawMode(QSurface3DSeries.DrawSurface)
+    from PySide6.QtDataVisualization import Q3DSurface
+    from PySide6 import QtCore
+    # series 構築は studio 本体と共有(グラデーション含め実機と同一の見た目を保証)
+    series = studio._build_surface3d_series(heightmap)
     surface = Q3DSurface()
     surface.addSeries(series)
     # a mouse-rotated viewpoint (the same manipulation the user does by dragging)

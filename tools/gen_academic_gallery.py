@@ -450,18 +450,18 @@ def generate_ai(prompt: str, slug: str) -> tuple[str, dict] | None:
 
 def rec_enhance(col):
     g = gray(col)
-    c = ap(g, "clahe", 0.6, 0.5)
+    c = ap(g, "cv_clahe", 0.6, 0.5)
     u = np.clip(ap(c, "unsharp", 0.6, 0.5), 0, 1)
-    return ([("original", col), ("clahe (local contrast)", c), ("clahe -> unsharp", u)],
-            ["rgb1_to_gray", "clahe", "unsharp"])
+    return ([("original", col), ("cv_clahe (local contrast)", c), ("clahe -> unsharp", u)],
+            ["rgb1_to_gray", "cv_clahe", "unsharp"])
 
 
 def rec_xray(col):
     g = gray(col)
-    c = ap(g, "clahe", 0.65, 0.5)
+    c = ap(g, "cv_clahe", 0.65, 0.5)
     s = norm01(ap(g, "sobel_amp", 0.5, 0.5))
-    return ([("original", col), ("clahe (bone/lung detail)", c), ("sobel_amp edge map", heat(s))],
-            ["rgb1_to_gray", "clahe", "sobel_amp"])
+    return ([("original", col), ("cv_clahe (bone/lung detail)", c), ("sobel_amp edge map", heat(s))],
+            ["rgb1_to_gray", "cv_clahe", "sobel_amp"])
 
 
 def rec_edges(col):
@@ -474,10 +474,10 @@ def rec_edges(col):
 
 def rec_filaments(col):
     g = gray(col)
-    c = ap(g, "clahe", 0.6, 0.5)
+    c = ap(g, "cv_clahe", 0.6, 0.5)
     f = norm01(ap(c, "sk_frangi", 0.5, 0.5))
-    return ([("original", col), ("clahe", c), ("sk_frangi filaments", heat(f))],
-            ["rgb1_to_gray", "clahe", "sk_frangi"])
+    return ([("original", col), ("cv_clahe", c), ("sk_frangi filaments", heat(f))],
+            ["rgb1_to_gray", "cv_clahe", "sk_frangi"])
 
 
 def rec_texture(col):
@@ -534,17 +534,17 @@ def rec_dstretch(col):
     """
     ds = norm01(ap(col, "principal_comp", 0.5, 0.5))
     g = gray(col)
-    c = ap(g, "clahe", 0.6, 0.5)
-    return ([("original", col), ("principal_comp (decorrelation)", ds), ("clahe", c)],
-            ["principal_comp", "rgb1_to_gray", "clahe"])
+    c = ap(g, "cv_clahe", 0.6, 0.5)
+    return ([("original", col), ("principal_comp (decorrelation)", ds), ("cv_clahe", c)],
+            ["principal_comp", "rgb1_to_gray", "cv_clahe"])
 
 
 def rec_fft(col):
     g = gray(col)
-    c = ap(g, "clahe", 0.55, 0.5)
+    c = ap(g, "cv_clahe", 0.55, 0.5)
     spec = np.log1p(fs.cx_magnitude(fs.cx_fft(g)))
-    return ([("original", col), ("clahe", c), ("log |FFT| spectrum", heat(norm01(spec)))],
-            ["rgb1_to_gray", "clahe", "cx_fft", "cx_magnitude"])
+    return ([("original", col), ("cv_clahe", c), ("log |FFT| spectrum", heat(norm01(spec)))],
+            ["rgb1_to_gray", "cv_clahe", "cx_fft", "cx_magnitude"])
 
 
 def rec_flowdir(col):
@@ -562,9 +562,9 @@ def rec_flowdir(col):
 def rec_relief(col):
     g = gray(col)
     th = norm01(ap(g, "gray_tophat", 0.6, 0.5))
-    c = ap(g, "clahe", 0.6, 0.5)
-    return ([("original", col), ("gray_tophat (carving relief)", th), ("clahe", c)],
-            ["rgb1_to_gray", "gray_tophat", "clahe"])
+    c = ap(g, "cv_clahe", 0.6, 0.5)
+    return ([("original", col), ("gray_tophat (carving relief)", th), ("cv_clahe", c)],
+            ["rgb1_to_gray", "gray_tophat", "cv_clahe"])
 
 
 def rec_skeleton(col, invert=False):
