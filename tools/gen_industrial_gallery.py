@@ -811,7 +811,10 @@ def subject_stereo_obstacles(log=print) -> dict:
     conf = stereo.disparity_confidence(gl, gr, max_disp=48, block=9)
     from scipy.ndimage import median_filter
     disp = median_filter(disp, size=5)           # スペックル除去 (despeckle)
-    valid = (disp > 3.0) & (conf > 0.25)         # 低テクスチャ/縁のにじみを棄却
+    # 深度不連続まわりの flying pixels(縁のにじみが物体間を橋渡しする)を除去
+    from scipy.ndimage import maximum_filter, minimum_filter
+    edge_jump = maximum_filter(disp, size=7) - minimum_filter(disp, size=7)
+    valid = (disp > 3.0) & (conf > 0.25) & (edge_jump < 3.0)
     depth_est = np.where(valid, f_px * SS._BASELINE / np.maximum(disp, 1e-6),
                          np.nan)
 
