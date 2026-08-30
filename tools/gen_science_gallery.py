@@ -603,15 +603,6 @@ def subject_dino_skeleton(log=print) -> dict:
     }
 
 
-def _has_cmap(name: str) -> bool:
-    try:
-        from matplotlib import cm
-        cm.get_cmap(name)
-        return True
-    except Exception:
-        return False
-
-
 SUBJECTS = {
     "distance_ripple": subject_distance_ripple,
     "fourier_stars": subject_fourier_stars,
