@@ -1291,7 +1291,9 @@ def build_op_sampler_3d(log=print) -> dict:
     ncols = 3
     nrows = -(-len(panels) // ncols)
     fig, axes = plt.subplots(nrows, ncols, figsize=(6.0 * ncols, 5.6 * nrows), facecolor=bg)
-    axes = axes.ravel() if len(panels) > 1 else [axes]
+    # ncols=3 なので panels==1 でも subplots は ndarray を返す —
+    # `axes.ravel() if len(panels) > 1 else [axes]` は latent bug(レビュー指摘)。
+    axes = np.atleast_1d(axes).ravel()
     for ax, (title, src, out_png, caption) in zip(axes, panels):
         img = plt.imread(out_png)
         ax.imshow(img)
