@@ -85,6 +85,8 @@ OPS = [
     "decode_barcode",
     # 3d volume ops (volume -> volume | image)
     "vol_gaussian", "vol_median", "vol_erode", "vol_dilate", "vol_threshold",
+    "vol_reg_dilate", "vol_reg_erode", "vol_dilation_ball", "vol_erosion_ball",
+    "vol_opening_ball",
     "vol_mip", "vol_slice",
     # physics / PDE flows (image -> image)
     "ph_perona_malik", "ph_coherence_enhancing_diffusion", "ph_reaction_diffusion",
