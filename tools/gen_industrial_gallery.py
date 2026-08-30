@@ -996,11 +996,13 @@ def subject_stereo_obstacles(log=print) -> dict:
                           cy0 + s1 * l1 * uy + s2 * l2 * vy]
                          for s1, s2 in [(-1, -1), (1, -1), (1, 1), (-1, 1),
                                         (-1, -1)]])
-        ax[2].plot(poly[:, 0], poly[:, 1], color=c, lw=1.4)
-    ax[2].scatter([cam_pos[0]], [cam_pos[1]], c="red", marker="^", s=60,
-                  label="camera")
+        ax[2].plot(poly[:, 0], poly[:, 1], color=c, lw=2.2, zorder=4)
+    ax[2].scatter([cam_pos[0]], [cam_pos[1]], c="red", marker="^", s=80,
+                  label="camera", zorder=5)
     ax[2].legend(loc="lower right", facecolor=bg, labelcolor=fg, edgecolor=muted)
     ax[2].set_aspect("equal")
+    ax[2].set_xlim(-2.3, 2.3)
+    ax[2].set_ylim(-1.0, 4.4)
     ax[2].set_title(f"鳥瞰の障害物マップ ({len(clusters)} クラスタ)", color=fg,
                     fontsize=12)
     ax[2].tick_params(colors=muted)
