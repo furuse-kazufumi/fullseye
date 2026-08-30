@@ -281,6 +281,12 @@ _CATALOG = {
         ("medial_axis_points", "medial", ["voxel"], "points", False),
         ("topology_signature", "medial", ["voxel"], "descriptor", False),
         ("medial_match", "medial", ["voxel", "voxel"], "measurement", False),
+        # 骨格グラフ要素(2D の junctions/endpoints/pruning/split の 3D 版。
+        # HALCON に voxel 骨格のグラフ op は無い = 差別化領域)
+        ("skeleton_junctions3d", "medial", ["voxel"], "voxel", False),
+        ("skeleton_endpoints3d", "medial", ["voxel"], "voxel", False),
+        ("skeleton_prune3d", "medial", ["voxel"], "voxel", False),
+        ("skeleton_branches3d", "medial", ["voxel"], "voxel", False),
     ],
     "metrics": [  # 評価メトリクス(進化探索の fitness 土台 = 一致度を数値化)
         ("chamfer_distance", "metrics3d", ["points", "points"], "measurement", False),

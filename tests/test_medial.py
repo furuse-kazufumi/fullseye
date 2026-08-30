@@ -206,3 +206,55 @@ def test_skeletonize_empty_volume():
     assert skel.shape == empty.shape and not skel.any()
     sig = medial.topology_signature(skel)
     assert sig["total"] == 0 and sig["endpoints"] == 0 and sig["branches"] == 0
+
+
+# --------------------------------------------------------------------------- #
+# 骨格グラフ要素(junctions / endpoints / prune / branches)の 3D 版
+# --------------------------------------------------------------------------- #
+def _y_tube(size=40, c=20, half=1):
+    """3 本の太い腕が中心で合流する Y 字ボリューム。"""
+    vol = np.zeros((size, size, size), bool)
+    vol[c - half:c + half + 1, c - half:c + half + 1, 4:c + half + 1] = True
+    vol[c - half:c + half + 1, 4:c + half + 1, c - half:c + half + 1] = True
+    vol[4:c + half + 1, c - half:c + half + 1, c - half:c + half + 1] = True
+    return vol
+
+
+def test_skeleton_graph3d_y_tube_counts():
+    from scipy import ndimage
+    import medial
+    vol = _y_tube()
+    st = np.ones((3, 3, 3), dtype=np.int32)
+    _, nj = ndimage.label(medial.skeleton_junctions3d(vol), structure=st)
+    _, ne = ndimage.label(medial.skeleton_endpoints3d(vol), structure=st)
+    _, nb = ndimage.label(medial.skeleton_branches3d(vol, min_length=3),
+                          structure=st)
+    assert nj == 1, f"Y 字の分岐クラスタは 1 のはず (got {nj})"
+    assert ne == 3, f"Y 字の端点は 3 のはず (got {ne})"
+    assert nb == 3, f"分岐で切ると枝は 3 本のはず (got {nb})"
+
+
+def test_skeleton_prune3d_removes_spur_keeps_trunk():
+    import medial
+    vol = _y_tube()
+    skel = medial.skeletonize_vol(vol)
+    zs, ys, xs = np.nonzero(skel)
+    i = len(zs) // 3
+    spur = skel.copy()
+    spur[zs[i] + 1, ys[i] + 1, xs[i]] = True     # 長さ 2 のヒゲ
+    spur[zs[i] + 2, ys[i] + 2, xs[i]] = True
+    pruned = medial.skeleton_prune3d(spur, length=3)
+    assert not pruned[zs[i] + 2, ys[i] + 2, xs[i]], "ヒゲが刈られていない"
+    assert pruned.sum() > 0.5 * skel.sum(), "本体まで消えている"
+
+
+def test_skeleton_graph3d_empty_and_thick_input():
+    import medial
+    empty = np.zeros((8, 8, 8))
+    assert medial.skeleton_junctions3d(empty).sum() == 0
+    assert medial.skeleton_endpoints3d(empty).sum() == 0
+    # 太い塊(骨格でない)を渡しても内部で細線化されて動く
+    solid = np.zeros((16, 16, 16), bool)
+    solid[4:12, 4:12, 4:12] = True
+    out = medial.skeleton_endpoints3d(solid)
+    assert out.shape == solid.shape and out.dtype == bool
