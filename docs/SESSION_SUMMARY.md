@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 15:58:09
+- **最終更新**: 2026-08-30 16:03:49
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+b71981e6 auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:01)
 0c9aee40 chore(security+i18n): pin actions to commit SHAs; English fullseye-rag help
 0708d587 auto: rag_setup.py 編集前 (2026-08-30 15:57)
 c065646b auto: rag_setup.py 編集前 (2026-08-30 15:57)
@@ -19,23 +20,23 @@ b6080662 fix(3d): bare-install ops3d — recon3d's hard skimage import; release 
 bc937896 auto: ci.yml 編集前 (2026-08-30 14:39)
 a20eb1b6 auto: test_optional_torch_absent.py 編集前 (2026-08-30 14:39)
 365399c1 auto: recon3d.py 編集前 (2026-08-30 14:39)
-046d397c fix(camera): degeneracy gate that cannot be defeated by BLAS rounding
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M tools/gen_showcase_gifs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+16:01 tools/gen_showcase_gifs.py
+15:58 docs/SESSION_SUMMARY.md
 15:57 .pytest_cache/v/cache/nodeids
 15:57 fullseye/rag_setup.py
 15:57 .github/workflows/release.yml
 15:57 .github/workflows/ci.yml
-15:56 docs/SESSION_SUMMARY.md
 15:54 CITATION.cff
 15:54 pyproject.toml
 15:53 tests/test_unified_packaging.py
@@ -44,8 +45,6 @@ a20eb1b6 auto: test_optional_torch_absent.py 編集前 (2026-08-30 14:39)
 14:39 tests/test_optional_torch_absent.py
 14:39 recon3d.py
 14:11 camera.py
-13:59 docs/articles/fullseye_overview_qiita_en.md
-13:59 docs/articles/fullseye_overview_qiita_ja.md
 ```
 
 ---

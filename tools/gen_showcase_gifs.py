@@ -206,13 +206,21 @@ def build_itokawa(target_faces: int = 2600):
     return Vd, Fd, method
 
 
-def build_skeleton(target_faces: int = 2600):
-    """手骨 CT ボリューム (D,H,W) → marching cubes で骨表面メッシュ。
+def build_skeleton(target_faces: int = 6000):
+    """手続き生成の手骨格(27 骨)をボクセル化 → marching cubes で骨表面メッシュ。
+    Procedural hand skeleton (27 bones) voxelised, then marching cubes.
 
-    境界で表面が開かないよう 0 パディングしてから ``level=0.5`` で等値面抽出。指の長軸
-    (元 axis1)を鉛直 Z に向け直し(列を [0,2,1] に並べ替え)、骨格標本のように立たせる。
-    戻り値 (V, F, method)。"""
-    vol = np.load(os.path.join(_ASSETS, "skeleton_ct.npy")).astype(np.float64)
+    被写体は ``examples_3d/procedural_hand``(hand_hero と同一: 手根骨8・中手骨5・
+    指骨14 のカプセル/球 SDF)。SDF を占有格子(150x170x60)へ落として密度ボリューム
+    とし、0 パディング後に ``level=0.5`` で等値面抽出 — ボリューム→メッシュ→レンダの
+    一気通貫デモ。指の長軸(格子 axis1=+y)を鉛直 Z に向け直して骨格標本のように
+    立たせる。戻り値 (V, F, method)。
+
+    旧実装は skeleton_ct.npy(指 1 本相当の細長い柱)を使っており「手に見えない」
+    (2026-08-30 ユーザー指摘)ため、被写体を丸ごと差し替えた。"""
+    from examples_3d import procedural_hand as PH
+    coords, sdf = PH.eval_sdf(PH.build_hand_bones())
+    vol = (sdf < 0.0).astype(np.float64)                      # 密度ボリューム(1=骨)
     volp = np.pad(vol, 1, mode="constant", constant_values=0.0)
     level = 0.5
     V, F = render3d.marching_cubes(volp, level=level)
@@ -220,7 +228,7 @@ def build_skeleton(target_faces: int = 2600):
     F = _orient_outward(V, F)
     V = _center(V)
     Vd, Fd = _decimate(V, F, target_faces)
-    return Vd, Fd, f"marching_cubes(level={level}, padded)"
+    return Vd, Fd, f"marching_cubes(level={level}, padded, procedural-hand voxels)"
 
 
 # --------------------------------------------------------------------------- #
