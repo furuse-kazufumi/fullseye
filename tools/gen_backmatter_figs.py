@@ -362,7 +362,7 @@ def fig_rag_corpus() -> None:
          "in: image → out: image\n\n「型が繋がる次の op」リンクをたどり\n"
          "image → 領域 → 特徴量 と\n型が繋がる順にパイプラインを組む"),
         ("③ worked example で自己検証", GREEN,
-         "$ py -3.11 examples/gallery2d_smoothing_rank.py\n\n" + PASS_LINE + "\n\n"
+         "$ py -3.11 examples/gallery2d_smoothing_rank.py\n\n" + pass_line + "\n\n"
          "AI 自身が PASS を確認してから答える\n(↑この環境で実行した実出力)"),
     ]
     ybox = 62.5
