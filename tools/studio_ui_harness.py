@@ -281,9 +281,15 @@ def main() -> int:
             return None
 
     def p2():
+        import shiboken6
         acts = [a for a in win.findChildren(QtGui.QAction) if a.isEnabled()]
         prev_in = _primary_in_mdi()
         for a in acts:
+            # an earlier trigger may have DESTROYED the dialog owning this action
+            # (Feature inspection is WA_DeleteOnClose since 2026-08-30 — reopening
+            # deletes the previous dialog and its child QActions): skip dead ones
+            if not shiboken6.isValid(a):
+                continue
             name = a.objectName() or a.text() or "action"
             if not name:
                 continue
