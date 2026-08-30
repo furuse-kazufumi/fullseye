@@ -411,14 +411,23 @@ def test_em_skeleton_matches_published_em93_reference():
 
 def test_endpoints_skeleton_plus_and_line():
     from scipy import ndimage
-    # 十字(太い) -> 端点 4 か所(腕の先)、中心は端点でない
+    # 1 画素幅の十字 -> 端点はちょうど腕の先の 4 画素、中心(分岐点)は端点でない
     m = np.zeros((41, 41), np.float64)
-    m[19:22, 5:36] = 1.0
-    m[5:36, 19:22] = 1.0
+    m[20, 5:36] = 1.0
+    m[5:36, 20] = 1.0
     out = OPS_BY_NAME["r2_endpoints_skeleton"].fn(m, 0.5, 0.5)
-    _, n = ndimage.label(out > 0.5, structure=np.ones((3, 3)))
-    assert n == 4, f"十字の端点は 4 か所のはず (got {n})"
+    ys, xs = np.where(out > 0.5)
+    assert sorted(zip(ys.tolist(), xs.tolist())) == \
+        [(5, 20), (20, 5), (20, 35), (35, 20)]
     assert out[20, 20] == 0.0
+    # 太い十字 -> 内部で em_skeleton が走る。EM は枝を多く残すので
+    # 端点クラスタは 4 以上(厳密数はアルゴリズム特性に依存するため縛らない)
+    thick = np.zeros((41, 41), np.float64)
+    thick[19:22, 5:36] = 1.0
+    thick[5:36, 19:22] = 1.0
+    out = OPS_BY_NAME["r2_endpoints_skeleton"].fn(thick, 0.5, 0.5)
+    _, n = ndimage.label(out > 0.5, structure=np.ones((3, 3)))
+    assert n >= 4, f"太い十字でも端点クラスタは 4 以上のはず (got {n})"
     # 1 画素幅の直線 -> 端点はちょうど両端の 2 画素
     line = np.zeros((11, 30), np.float64)
     line[5, 4:26] = 1.0

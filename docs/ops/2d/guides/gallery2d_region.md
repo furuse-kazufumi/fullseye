@@ -95,7 +95,8 @@ flowchart LR
 - `thinning` / `sk_thin` / `thinning_golay` / `thinning_seq` — 反復細線化(skimage `thin`)。
 - `sk_medial` — 中心軸変換(medial axis、Blum の骨格。skimage `medial_axis`)。
 - `pruning` — スケルトンのヒゲ(短い枝)を刈る(端点を `1+int(a*4)` 回除去 = **枝長 ≤5px 相当**)。HALCON の `pruning` の Length 引数に相当する枝長閾値は、この op の**重ね掛け**で伸ばせる(1 回ごとに +5px)。より長い断片除去は `r2_split_skeleton_lines` の `a`(`a*8`px 未満を除去)。GROUNDED。
-- `junctions_skeleton` — スケルトンの分岐点(8 近傍が 3 個以上)を抽出。GROUNDED。
+- `junctions_skeleton` — スケルトンの分岐点(joint、8 近傍が 3 個以上)を抽出。GROUNDED。HALCON 版は EndPoints/JuncPoints の両方を返すが、こちらは分岐点のみ。
+- `r2_endpoints_skeleton` — スケルトンの端点(8 近傍がちょうど 1 個)を抽出。HALCON `junctions_skeleton` の EndPoints 出力に相当。骨格でない入力は em_skeleton で細線化してから測る。GROUNDED。
 - `r2_split_skeleton_lines` — 骨格を分岐点で切り、線分に分割(`a` で短い断片を除去)。
 
 > **HALCON との差(重要)**: HALCON の `skeleton` は Eckhardt–Maderlechner 法、

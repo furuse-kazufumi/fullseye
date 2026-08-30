@@ -1,30 +1,13 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">em_skeleton — 2D <code style="color:#22d3bf">region</code> op</h2>
+<h2 style="color:#f5a524;margin:0 0 4px 0">r2_endpoints_skeleton — 2D <code style="color:#22d3bf">region</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">region</code> → <code style="color:#22d3bf">region</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;em_skeleton&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;r2_endpoints_skeleton&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Eckhardt–Maderlechner 型の不変細線化(HALCON <code style="color:#22d3bf">skeleton</code> と同系統)。</p>
-<p>出典: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;,</p>
-<p>Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は</p>
-<p>M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; の EM93</p>
-<p>定義に従うクリーンルーム実装。**同ノートが公表する EM93 の参照出力と</p>
-<p>突き合わせ済み**: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、</p>
-<p>形状 2/3 は画素数が公表値と一致(2434 / 3895)。</p>
-<p>tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。</p>
-<p>(HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの</p>
-<p>参照出力と一致している):</p>
-<p>interior = 4 近傍がすべて前景の画素</p>
-<p>simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)</p>
-<p>perfect  = ある 4 方向の隣が interior で、その反対方向が背景</p>
-<p>「simple かつ perfect な画素を全部同時に消す」を不動点まで反復</p>
-<p>注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と</p>
-<p>実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。</p>
-<p>simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で</p>
-<p>一致したので、これが EM93 の正しい読みだと裏付けられている。</p>
-<p>完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の</p>
-<p><code style="color:#22d3bf">sk_skeleton</code> より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の</p>
-<p>比較表で EM が対称・枝多である性格と整合)。ヒゲは <code style="color:#22d3bf">pruning</code> で後処理する</p>
-<p>流儀も HALCON と同じ。つまみ a, b は未使用。</p>
+<p>骨格の端点(8 近傍にちょうど 1 個の骨格画素を持つ点)を抽出する。</p>
+<p>HALCON の <code style="color:#22d3bf">junctions_skeleton</code> は EndPoints と JuncPoints の両方を返すが、</p>
+<p>fullseye の <code style="color:#22d3bf">junctions_skeleton</code> は分岐点のみなので、端点側をこの op が担う。</p>
+<p>入力が骨格でない場合は em_skeleton で細線化してから端点を取る。</p>
+<p>孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

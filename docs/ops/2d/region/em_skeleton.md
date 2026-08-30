@@ -22,18 +22,22 @@ Eckhardt–Maderlechner 型の不変細線化(HALCON `skeleton` と同系統)。
     出典: U. Eckhardt, G. Maderlechner, "Invariant Thinning",
     Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は
     M. Couprie "Note on fifteen 2D parallel thinning algorithms" の EM93
-    定義に従う(論文準拠のクリーンルーム実装。HALCON 実装との画素単位の
-    一致は未検証):
+    定義に従うクリーンルーム実装。**同ノートが公表する EM93 の参照出力と
+    突き合わせ済み**: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、
+    形状 2/3 は画素数が公表値と一致(2434 / 3895)。
+    tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。
+    (HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの
+    参照出力と一致している):
 
       interior = 4 近傍がすべて前景の画素
       simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)
       perfect  = ある 4 方向の隣が interior で、その反対方向が背景
       「simple かつ perfect な画素を全部同時に消す」を不動点まで反復
 
-    注: ノートの転記どおり「強(4)連結成分のみで simple を数える」と、
-    並列削除が斜め橋を同時に落とし位相が壊れることを反例で実測したため、
-    simple は標準の (8,4) 単純点にしてある(count_obj 等の既定 8 連結と同じ
-    (8,4) 規約)。この点は原論文との異同が残る可能性があり、正直に記す。
+    注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と
+    実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。
+    simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で
+    一致したので、これが EM93 の正しい読みだと裏付けられている。
 
     完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の
     `sk_skeleton` より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の
