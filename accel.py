@@ -622,6 +622,9 @@ ACCEL = {
     "canny": (_canny, "canny", "edges_image"),
     "local_max": (_local_max, "local_max", "local_max_sub_pix"),
     "adaptive_gauss_thresh": (_adaptive_gauss, "adaptive_gauss_thresh", "local_threshold"),
+    # Batch 3: 二値 reconstruction(fill_up は fill_holes と同一 core 実装の twin)
+    "fill_holes": (_fill_holes_bin, "fill_holes", "fill_up"),
+    "fill_up": (_fill_holes_bin, "fill_up", "fill_up"),
 }
 
 

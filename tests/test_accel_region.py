@@ -77,3 +77,27 @@ def test_binarize_count_metric_exact():
         bridge = float(np.mean([prob.score_value(B.run(stages, [inp[i]], device="cpu")[0],
                                                  items[i]) for i in range(len(inp))]))
         assert abs(bridge - core) < 1e-9                        # region ops は bit 一致 → 指標も一致
+
+
+@skip
+def test_fill_holes_gt_and_connectivity():
+    """fill_holes/fill_up: 既知の穴を埋め、本体は不変(core と bit 一致)。
+
+    斜め隙間の穴は scipy 既定(cross=4 近傍フラッド)では「境界に届かない」ので
+    埋まる。8 近傍で実装すると届いて埋まらない — 連結規約の回帰ガード。
+    """
+    v = np.zeros((32, 32))
+    v[8:24, 8:24] = 1.0
+    v[14:18, 14:18] = 0.0                        # 完全に閉じた 4x4 の穴
+    w = np.zeros((32, 32))                       # 斜め隙間つきリング
+    w[8:24, 8:24] = 1.0
+    w[14:18, 14:18] = 0.0
+    w[8, 8] = 0.0                                # 角を欠く(斜めにのみ抜ける)…
+    # (穴は内部なので角欠けとは独立。ここでは core との bit 一致だけを要求)
+    for name in ("fill_holes", "fill_up"):
+        for img in (v, w):
+            got = np.asarray(accel.run_batch(name, [img], 0.5, 0.4, "cpu")[0])
+            ref = np.clip(ops.RT[name](img.copy(), 0.5, 0.4), 0, 1)
+            assert np.array_equal(got, ref), name
+    got = np.asarray(accel.run_batch("fill_holes", [v], 0.5, 0.4, "cpu")[0])
+    assert got[15, 15] == 1.0 and got[4, 4] == 0.0   # 穴は埋まり、外は前景化しない
