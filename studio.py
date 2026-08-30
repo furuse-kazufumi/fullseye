@@ -1019,6 +1019,19 @@ def show_3d_surface(heightmap, parent=None):
     proxy.resetArray(rows)
     series = QSurface3DSeries(proxy)
     series.setDrawMode(QSurface3DSeries.DrawSurface)
+    try:
+        # 高さ連動の地形風グラデーション(低=深青 → 緑 → 砂色 → 頂=白)。
+        # cosmetic なので API 差異で失敗しても表示自体は落とさない(fail-soft)。
+        from PySide6.QtDataVisualization import Q3DTheme
+        grad = QtGui.QLinearGradient()
+        grad.setColorAt(0.0, QtGui.QColor(28, 58, 138))
+        grad.setColorAt(0.35, QtGui.QColor(38, 158, 118))
+        grad.setColorAt(0.65, QtGui.QColor(228, 198, 92))
+        grad.setColorAt(1.0, QtGui.QColor(248, 248, 248))
+        series.setBaseGradient(grad)
+        series.setColorStyle(Q3DTheme.ColorStyle.ColorStyleRangeGradient)
+    except Exception:
+        pass
     surface = Q3DSurface()
     surface.addSeries(series)
     container = QtWidgets.QWidget.createWindowContainer(surface, parent)
