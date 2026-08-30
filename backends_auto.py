@@ -734,12 +734,20 @@ def _sh_region_trans(p):
 # ---- region -> feature : shape measurements -------------------------------- #
 def _sh_region_feat(p):
     metric = p["metric"]
+    # 2026-08-30 (KNOWN_ISSUES #1): the "count" metric now labels with
+    # 8-connectivity by default — HALCON parity (`connection` / `count_obj`
+    # default to 8-connectivity, and `segment_objects` here already did). The
+    # old scipy default (4-connectivity) split diagonally-touching blobs and
+    # over-counted (cell counting: 342 vs 327 on real data). The legacy
+    # behaviour stays reachable via params {"connectivity": 4}.
+    connectivity = int(p.get("connectivity", 8))
 
     def fn(v, a, b):
         m = _bin(v)
-        big, lab, n = _largest_label(m)
         if metric == "count":
-            return np.float64(n)
+            st = ndimage.generate_binary_structure(2, 2 if connectivity == 8 else 1)
+            return np.float64(ndimage.label(m, structure=st)[1])
+        big, lab, n = _largest_label(m)
         if metric == "area":
             return np.float64(np.mean(m))
         if big is None:
