@@ -94,7 +94,7 @@ def test_nonempty_halcon_names_exist_in_graph():
     from pathlib import Path
 
     graph = json.loads(
-        (Path(__file__).resolve().parents[1] / "data" / "halcon_graph.json").read_text(
+        (Path(__file__).resolve().parents[1] / "fullseye" / "data" / "halcon_graph.json").read_text(
             encoding="utf-8"
         )
     )

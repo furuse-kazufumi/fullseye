@@ -14,6 +14,10 @@ import pathlib
 import numpy as np
 import pytest
 
+pytest.importorskip("torch", reason="accel bridge routes into the torch batch path — "
+                    "without torch every op is honestly CPU-only and the GPU-plan "
+                    "invariants below are vacuous (CI runs without torch)")
+
 import accel
 import ops
 import accel_bridge as B

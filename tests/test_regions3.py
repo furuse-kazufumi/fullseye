@@ -68,7 +68,7 @@ def test_halcon_names_are_real_and_uncovered():
     """Every claimed HALCON name exists in the graph and was uncovered."""
     import json
     from pathlib import Path
-    graph_path = Path(R3.__file__).resolve().parent / "data" / "halcon_graph.json"
+    graph_path = Path(R3.__file__).resolve().parent / "fullseye" / "data" / "halcon_graph.json"
     nodes = json.loads(graph_path.read_text(encoding="utf-8"))["nodes"]
     for o in OPS:
         assert o.halcon in nodes, f"{o.halcon} not a real HALCON operator"

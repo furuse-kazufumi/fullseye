@@ -16,6 +16,22 @@ try:
 except Exception:  # pragma: no cover
     _HAS_TORCH = False
 
+    # torch 不在でも参照名は生かし、使用時に明確に拒否する(NameError で死なせない)。
+    # ただし is_tensor だけは False を返す — numpy 経路の入力判定ガードとして
+    # 多くの関数が `if torch.is_tensor(x):` を使っており、torch が無い世界では
+    # 「tensor ではない」が正答だから(ここで raise すると numpy 経路まで死ぬ)。
+    # Keep the names bound; any GPU use fails with a clear ImportError, but
+    # is_tensor() answers False so pure-numpy paths keep working.
+    class _TorchMissing:
+        @staticmethod
+        def is_tensor(x):
+            return False
+        def __getattr__(self, name):
+            raise ImportError(
+                "this operator needs the optional 'torch' backend — "
+                "install with: pip install \"fullseye[gpu]\"")
+    torch = F = _TorchMissing()
+
 import accel_match as M   # 3D NCC / pyramid / sub-voxel
 
 

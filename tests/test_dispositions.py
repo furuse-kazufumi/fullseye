@@ -105,7 +105,7 @@ def test_pure_algebra_chapters_never_model():
     violated (it flagged 47 such algebra ops as models)."""
     import json
     import os
-    with open(os.path.join(D.HERE, "data", "halcon_graph.json"), encoding="utf-8") as f:
+    with open(D.GRAPH_PATH, encoding="utf-8") as f:
         graph = json.load(f)
     nodes = graph["nodes"]
     disp = _disp_map()

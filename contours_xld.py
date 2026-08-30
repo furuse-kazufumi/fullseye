@@ -79,6 +79,12 @@ def get_contour_angle_xld(contour, k=2):
     return out
 
 
+def _cross2d(a, b):
+    """2D ベクトルの外積(z 成分のスカラー)。numpy>=2.0 で ``np.cross`` の 2 次元
+    入力対応が削除される見込みのため、明示式で代替(数式は等価: a×b の z 成分)。"""
+    return a[..., 0] * b[..., 1] - a[..., 1] * b[..., 0]
+
+
 def get_polygon_xld(contour, tolerance=2.0):
     """Douglas-Peucker で輪郭を多角形近似(get_polygon_xld)。頂点列を返す。"""
     def dp(pts, eps):
@@ -86,7 +92,7 @@ def get_polygon_xld(contour, tolerance=2.0):
             return pts
         start, end = pts[0], pts[-1]
         line = end - start; L = np.linalg.norm(line) + 1e-12
-        d = np.abs(np.cross(line, pts - start)) / L
+        d = np.abs(_cross2d(line, pts - start)) / L
         idx = int(d.argmax())
         if d[idx] > eps:
             left = dp(pts[:idx + 1], eps); right = dp(pts[idx:], eps)

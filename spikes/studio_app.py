@@ -78,7 +78,7 @@ def stereo_pair(h: int = 64, w: int = 96, bg_disp: int = 3, fg_disp: int = 9):
     rng = np.random.default_rng(1)
     pad = fg_disp + 4
     tex = ndimage.gaussian_filter(rng.random((h, w + pad)), sigma=1.1)  # 平滑テクスチャ
-    tex = (tex - tex.min()) / (tex.ptp() + 1e-9)
+    tex = (tex - tex.min()) / (np.ptp(tex) + 1e-9)  # ndarray.ptp() removed in numpy 2.0; np.ptp() still works
     left = tex[:, pad:pad + w].copy()
     right = np.roll(tex, bg_disp, axis=1)[:, pad:pad + w].copy()          # 背景=小視差
     fg = (slice(18, 46), slice(30, 66))                                  # 近い前景ブロック=大視差

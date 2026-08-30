@@ -591,6 +591,7 @@ def test_surface_fit_and_form_error():
 
 def test_polar_unwrap_and_zernike():
     """曲座標系: 極アンラップで角度周期を復元、Zernike で tilt を (1,±1) に。"""
+    pytest.importorskip("torch", reason="polar_unwrap/fit_zernike are torch-backed")
     N = 64
     yy, xx = np.mgrid[0:N, 0:N]; c = N / 2
     ang = np.arctan2(yy - c, xx - c); rad = np.sqrt((yy - c) ** 2 + (xx - c) ** 2)
@@ -617,6 +618,7 @@ def test_optics_reflection_refraction():
 # ── 射影 / レンダリング(3D → 2D 合成)────────────────────────────────────
 def test_projection_and_rendering():
     """射影/レンダリング: ピンホール投影・点群深度・ボリューム投影・陰影が妥当。"""
+    pytest.importorskip("torch", reason="the volume-projection path is torch-backed")
     K = np.array([[100, 0, 32], [0, 100, 32], [0, 0, 1]], float)
     uv, z = X.project_points(np.array([[1, 2, 10.0]]), K)
     assert np.allclose(uv[0], [42, 52]) and abs(z[0] - 10) < 1e-6

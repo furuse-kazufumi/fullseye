@@ -4,6 +4,10 @@ from __future__ import annotations
 import warnings
 
 import numpy as np
+import pytest
+
+pytest.importorskip("mujoco", reason="sim-source renders through MuJoCo (optional; "
+                    "not installed on CI)")
 
 warnings.simplefilter("ignore")
 import sim_source as S  # noqa: E402

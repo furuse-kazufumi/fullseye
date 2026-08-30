@@ -583,6 +583,12 @@ def _moments_any_xld(v, a, b):
     return np.float64(min(mu / (max(_c_shape(v)) ** 2), 1.0))
 
 
+def _cross2d(a, b):
+    """2D ベクトルの外積(z 成分のスカラー)。numpy>=2.0 で ``np.cross`` の 2 次元
+    入力対応が削除される見込みのため、明示式で代替(数式は等価: a×b の z 成分)。"""
+    return a[..., 0] * b[..., 1] - a[..., 1] * b[..., 0]
+
+
 def _rdp(pts, eps):
     """Ramer-Douglas-Peucker: 支配点の index を返す。"""
     if len(pts) < 3:
@@ -593,7 +599,7 @@ def _rdp(pts, eps):
     if L < 1e-9:
         d = np.hypot(*(pts - a).T)
     else:
-        d = np.abs(np.cross(np.tile(ab, (len(pts), 1)), pts - a)) / L
+        d = np.abs(_cross2d(np.tile(ab, (len(pts), 1)), pts - a)) / L
     i = int(np.argmax(d))
     if d[i] > eps:
         left = _rdp(pts[:i + 1], eps)

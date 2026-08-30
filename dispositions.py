@@ -94,8 +94,23 @@ def classify(node, covered, nary_names):
     return "needs_new_capability", "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)"
 
 
+def _graph_path() -> str:
+    """halcon_graph.json の解決: 同梱正本 fullseye/data → 開発キャッシュ data の順。
+    Resolve the graph: shipped fullseye/data first, then the dev cache
+    (release audit 2026-08-30: data/ is gitignored, so clean checkouts and
+    wheels must carry their own copy)."""
+    for d in (os.path.join(HERE, "fullseye", "data"), os.path.join(HERE, "data")):
+        p = os.path.join(d, "halcon_graph.json")
+        if os.path.exists(p):
+            return p
+    return os.path.join(HERE, "fullseye", "data", "halcon_graph.json")
+
+
+GRAPH_PATH = _graph_path()
+
+
 def build():
-    graph = json.load(open(os.path.join(HERE, "data", "halcon_graph.json"), encoding="utf-8"))
+    graph = json.load(open(GRAPH_PATH, encoding="utf-8"))
     nodes = graph["nodes"]
     import ops as R
     covered = {(o.halcon or "").strip() for o in R.REGISTRY if (o.halcon or "").strip()}

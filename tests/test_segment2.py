@@ -99,7 +99,7 @@ def test_regiongrowing_is_already_covered():
     import json
     from pathlib import Path
 
-    graph = Path(SG.__file__).resolve().parent / "data" / "halcon_graph.json"
+    graph = Path(SG.__file__).resolve().parent / "fullseye" / "data" / "halcon_graph.json"
     nodes = json.loads(graph.read_text(encoding="utf-8"))["nodes"]
     assert "regiongrowing" in nodes
     assert nodes["regiongrowing"].get("covered") is True, (

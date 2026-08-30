@@ -91,10 +91,12 @@ def test_op_library_still_works():
 
 def test_facade_imports_without_torch():
     """The facade must stay importable on a numpy-only install — torch is optional.
-    The numpy-only 3-D metrology (measure3d fits + inner_box3) works, and the
-    torch-backed op registry (ops3d / pipeline3d) degrades to None instead of
-    crashing the import. This is the contract that keeps `pip install fullseye`
-    (no extras) usable."""
+    The numpy-only 3-D metrology (measure3d fits + inner_box3) works, and — since
+    the 2026-08-30 fix that removed the hard torch imports from feat_* — the 3-D
+    registry (ops3d / pipeline3d) now imports fully WITHOUT torch: only the
+    torch-backed descriptor ops refuse at call time with a clear ImportError.
+    This is a strictly stronger contract than the old one (ops3d degraded to
+    None), and it is what keeps `pip install fullseye` (no extras) usable."""
     import os
     import subprocess
     import sys
@@ -116,7 +118,15 @@ def test_facade_imports_without_torch():
         V = np.zeros((6, 7, 8), bool); V[1:5, 1:6, 1:7] = True
         assert fs.inner_box3(V)['volume'] == 4 * 5 * 6, 'inner_box3 broken w/o torch'
         assert callable(fs.fit_plane3), 'fit_plane3 missing w/o torch'
-        assert fs.ops3d is None and fs.pipeline3d is None, 'torch-backed toolkit did not degrade'
+        # 3-D toolkit now survives a torch-less install (2026-08-30): the registry
+        # imports and lists ops; only torch-backed ops refuse (clearly) on call.
+        assert fs.ops3d is not None and fs.pipeline3d is not None, '3-D toolkit lost w/o torch'
+        assert len(fs.ops3d.list_ops()) > 0, '3-D registry empty w/o torch'
+        try:
+            fs.ops3d.get('harris3d_keypoints')(np.zeros((8, 8, 8)))
+            raise SystemExit('expected a clear ImportError for a torch-backed op')
+        except ImportError as e:
+            assert 'fullseye[gpu]' in str(e), str(e)
         print('OK')
         """
     )
