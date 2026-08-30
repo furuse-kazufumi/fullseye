@@ -6230,8 +6230,90 @@ def build_window(model=None):
         (-1 keeps a value); dev_close_window closes the current one (the resident
         primary window is close-protected). Windows opened by the program are keyed
         to their source-order slot, so RE-Applying the same program repositions the
-        SAME windows instead of multiplying them. See docs/HDEVELOP_DEV_OPS.md."""
+        SAME windows instead of multiplying them. See docs/HDEVELOP_DEV_OPS.md.
+
+        disp_* directives (HALCON Graphics chapter): disp_image (n) / disp_region (n)
+        draw stage n's output (1-based; omitted = final result) into the CURRENT
+        graphics window — a 3-D current window redirects to the primary view.
+        disp_points3d ('file') / disp_mesh3d ('file') / disp_object_model_3d ('file')
+        open the interactive 3-D viewer on the graphics-window system, slot-keyed
+        like dev_open_window so a re-Apply reuses the same windows. Every disp_*
+        is recorded in state['disp_log'] (headless-testable; a load failure is
+        logged + flashed, never raised)."""
         open_slot = 0
+        d3_slot = 0
+
+        def _log_disp(name, args, ok, **extra):
+            rec = {"op": name, "args": list(args), "ok": bool(ok)}
+            rec.update(extra)
+            state.setdefault("disp_log", []).append(rec)
+
+        def _disp_2d(name, args):
+            try:
+                idx = (int(args[0]) - 1) if args and isinstance(args[0], float) \
+                    else len(model.stages) - 1
+                val = model.result_upto(idx)
+            except Exception as e:
+                _log_disp(name, args, False, error=truncate(e, 80))
+                flash("%s: %s" % (name, truncate(e, 80)))
+                return
+            if name == "disp_region":
+                shown = apply_display(val, "region overlay", base=model.image,
+                                      draw=state["draw"])
+            else:
+                shown = apply_display(val, display.currentText(), base=model.image,
+                                      draw=state["draw"])
+            ok = False
+            if isinstance(shown, np.ndarray) and shown.ndim in (2, 3):
+                qi = _to_qimage(shown, QtGui)
+                if qi is not None:
+                    gv = _current_view()
+                    gv.set_pixmap(QtGui.QPixmap.fromImage(qi)); gv.fit()
+                    gv.set_data(val if isinstance(val, np.ndarray) else shown)
+                    ok = True
+            _log_disp(name, args, ok, stage=idx + 1)
+
+        def _disp_3d(name, args, slot):
+            path = str(args[0]) if args else ""
+            if path and not os.path.isabs(path):
+                path = os.path.join(os.path.dirname(os.path.abspath(__file__)), path)
+            sub = next((s for s in win._graphics_windows
+                        if s in mdi.subWindowList()
+                        and getattr(s, "_fs_disp3d_slot", None) == slot), None)
+            try:
+                if not path:
+                    raise ValueError("%s needs a file path argument" % name)
+                if name == "disp_mesh3d":
+                    import mesh as meshmod
+                    V, F = meshmod.read_mesh(path)[:2]
+                    data = ("mesh", np.asarray(V, np.float64), np.asarray(F, int), None)
+                elif name == "disp_points3d":
+                    import mesh as meshmod
+                    P, C = meshmod.read_points(path, with_colors=True)
+                    data = ("points", P, None, C)
+                else:                              # disp_object_model_3d: dispatch on file
+                    data = _load_3d_file(path)
+            except Exception as e:
+                _log_disp(name, args, False, error=truncate(e, 100))
+                flash("%s: %s" % (name, truncate(e, 100)))
+                return
+            if sub is not None:                    # re-Apply: reuse the slot's window
+                v3 = getattr(sub, "_fs_viewer3d", None)
+                if v3 is not None:
+                    (v3.set_mesh(data[1], data[2]) if data[0] == "mesh"
+                     else v3.set_points(data[1], colors=data[3]))
+                win._current_gfx = sub
+                _update_current_indicator()
+            else:
+                sub = open_viewer3d_window(
+                    data, title="3D viewer (program %d)" % slot)
+                if sub is None:                    # window cap — already flashed
+                    _log_disp(name, args, False, error="graphics window limit")
+                    return
+                sub._fs_disp3d_slot = slot
+            _log_disp(name, args, True, kind=data[0],
+                      n_points=int(np.asarray(data[1]).shape[0]))
+
         for name, args in extract_dev_directives(text):
             if name == "dev_update_off":
                 set_dev_update("all", False)
