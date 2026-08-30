@@ -161,9 +161,11 @@ def _range_rect(t, a, b, dev):
 
 # ── wave 1: 密画素並列で core と <5e-3 一致する追加 op(2026-08-26)───────────── #
 def _unfold_reflect(t, k):
-    """(B,1,H,W) を reflect パディングして k×k 近傍を (B, k*k, H, W) に展開。"""
+    """(B,1,H,W) を symmetric パディングして k×k 近傍を (B, k*k, H, W) に展開。
+    scipy median/percentile_filter の既定 mode='reflect'=symmetric に一致
+    (旧版は torch 'reflect' で k=9 のとき端 4px がずれた。2026-08-31 修正)。"""
     r = k // 2
-    p = F.pad(t, (r, r, r, r), mode="reflect")
+    p = _pad_sym(_pad_sym(t, r, 3), r, 2)
     return F.unfold(p, kernel_size=k).view(t.shape[0], k * k, t.shape[2], t.shape[3])
 
 
