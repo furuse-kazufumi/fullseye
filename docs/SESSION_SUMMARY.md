@@ -3,49 +3,64 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 16:09:23
+- **最終更新**: 2026-08-30 16:13:01
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-7e500c49 auto: gen_article_assets.py 編集前 (2026-08-30 16:09)
-08759c84 auto: gen_article_assets.py 編集前 (2026-08-30 16:09)
-9b9ae58f auto: gen_article_assets.py 編集前 (2026-08-30 16:08)
-b71981e6 auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:01)
-0c9aee40 chore(security+i18n): pin actions to commit SHAs; English fullseye-rag help
-0708d587 auto: rag_setup.py 編集前 (2026-08-30 15:57)
-c065646b auto: rag_setup.py 編集前 (2026-08-30 15:57)
-3833b909 fix(compliance): shipped HALCON metadata is facts-only — release 0.1.2
-e1150b22 auto: test_unified_packaging.py 編集前 (2026-08-30 15:53)
-b6080662 fix(3d): bare-install ops3d — recon3d's hard skimage import; release 0.1.1
+e5f2decb auto: gen_studio_screenshots.py 編集前 (2026-08-30 16:12)
+a77f3c8a auto: gen_article_assets.py 編集前 (2026-08-30 16:12)
+008eaea3 auto: gen_article_assets.py 編集前 (2026-08-30 16:12)
+6c3d5a39 auto: gen_article_assets.py 編集前 (2026-08-30 16:11)
+44f30538 auto: gen_article_assets.py 編集前 (2026-08-30 16:11)
+d15b710a auto: gen_article_assets.py 編集前 (2026-08-30 16:11)
+27f717ca auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:11)
+e3ad488b auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:11)
+adb294bc auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:11)
+8cfe3ada auto: gen_article_assets.py 編集前 (2026-08-30 16:10)
 ```
 
 ## 現在の git status
 
 ```
-M tools/gen_article_assets.py
+M docs/articles/assets/showcase_turntable_itokawa.gif
+ M tools/gen_studio_screenshots.py
+?? docs/articles/assets/studio_3d_examples.png
+?? docs/articles/assets/studio_3d_examples_thumb.jpg
+?? docs/articles/assets/studio_3d_ops.png
+?? docs/articles/assets/studio_3d_ops_thumb.jpg
+?? docs/articles/assets/studio_3d_surface.png
+?? docs/articles/assets/studio_3d_surface_thumb.jpg
+?? docs/articles/assets/studio_main.png
+?? docs/articles/assets/studio_main_thumb.jpg
+?? docs/articles/assets/studio_python_editor.png
+?? docs/articles/assets/studio_python_editor_thumb.jpg
+?? docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg
+?? docs/articles/assets/thumbs/op_sampler_2d_720.jpg
+?? docs/articles/assets/thumbs/op_sampler_3d_720.jpg
+?? docs/articles/assets/thumbs/op_taxonomy_720.jpg
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-16:09 tools/gen_article_assets.py
-16:03 docs/SESSION_SUMMARY.md
-16:01 tools/gen_showcase_gifs.py
-15:57 .pytest_cache/v/cache/nodeids
-15:57 fullseye/rag_setup.py
-15:57 .github/workflows/release.yml
-15:57 .github/workflows/ci.yml
-15:54 CITATION.cff
-15:54 pyproject.toml
-15:53 tests/test_unified_packaging.py
-15:53 fullseye/data/halcon_graph.json
-15:53 fullseye/data/halcon_stubs.json
-14:39 tests/test_optional_torch_absent.py
-14:39 recon3d.py
-14:11 camera.py
+16:12 docs/articles/assets/studio_3d_ops_thumb.jpg
+16:12 docs/articles/assets/studio_3d_ops.png
+16:12 docs/articles/assets/studio_3d_examples_thumb.jpg
+16:12 docs/articles/assets/studio_3d_examples.png
+16:12 docs/articles/assets/media/dvs_stream.gif
+16:12 docs/articles/assets/media/dvs_stream.mp4
+16:12 docs/articles/assets/thumbs/op_sampler_3d_720.jpg
+16:12 docs/articles/assets/thumbs/op_sampler_2d_720.jpg
+16:12 docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg
+16:12 docs/articles/assets/thumbs/op_taxonomy_720.jpg
+16:12 docs/articles/assets/thumbs/itokawa_montage_720.jpg
+16:12 docs/articles/assets/thumbs/vision_ops_montage_720.jpg
+16:12 docs/articles/assets/thumbs/render_beauty_hero_720.jpg
+16:12 docs/articles/assets/thumbs/physical_ai_montage_720.jpg
+16:12 docs/articles/assets/op_sampler_3d.png
 ```
 
 ---

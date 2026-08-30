@@ -130,20 +130,9 @@ def shot_editor(out_path: str) -> None:
     win.show(); _pump(app, 8)
     import examples3d
     # open two real worked examples as tabs, run the curvature one (F5 path)
-    win._pyedit if hasattr(win, "_pyedit") else None
-    # first open creates the dialog + one tab
     code_a = examples3d.code("itokawa_curvature")
     code_b = examples3d.code("itokawa_pose_canonical")
-    # show_python_editor is wired to the menu action; call the exposed action
-    win._actions  # ensure built
-    # the function is a closure; reach it via the action that triggers it
-    act = win._act_pyedit if hasattr(win, "_act_pyedit") else None
-    if act is not None:
-        act.trigger()
-    else:  # fallback: the Tools menu action created in build_window
-        for a in win.findChildren(__import__("PySide6.QtGui", fromlist=["QAction"]).QAction):
-            if a.text().startswith("Python Editor"):
-                a.trigger(); break
+    win._act_pyedit.trigger()          # Tools > Python Editor… (creates dialog + scratch tab)
     _pump(app, 8)
     pe = win._pyedit
     dlg = pe["dlg"]
