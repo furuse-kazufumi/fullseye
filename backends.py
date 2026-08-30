@@ -127,8 +127,14 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         sk = [
             ("sk_scharr", "edges", "edges_image", IMAGE, IMAGE, lambda v, a, b: norm(filters.scharr(v))),
             ("sk_farid", "edges", "edges_image", IMAGE, IMAGE, lambda v, a, b: norm(filters.farid(v))),
+            # 2026-08-30 (KNOWN_ISSUES #2): a,b were completely ignored (fixed
+            # sigmas=range(1,4)). Wired: a -> scale range (max sigma 1..5; a=0.5
+            # reproduces the historical range(1,4) bit-exactly), b -> Frangi
+            # blobness sensitivity beta (b=0.5 -> 0.5 = the skimage default, so
+            # the (0.5, 0.5) default output is unchanged).
             ("sk_frangi", "texture", "lines_gauss", IMAGE, IMAGE,
-             lambda v, a, b: norm(filters.frangi(v, sigmas=range(1, 4)))),
+             lambda v, a, b: norm(filters.frangi(v, sigmas=range(1, 2 + int(round(a * 4))),
+                                                 beta=0.15 + 0.7 * b))),
             ("sk_meijering", "texture", "lines_gauss", IMAGE, IMAGE,
              lambda v, a, b: norm(filters.meijering(v, sigmas=range(1, 4)))),
             ("sk_hessian", "texture", "lines_gauss", IMAGE, IMAGE,
