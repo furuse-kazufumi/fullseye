@@ -102,7 +102,8 @@ flowchart LR
 > Fullseye の既定 `skeleton`/`sk_skeleton` は Zhang–Suen 法(skimage)で、
 > **アルゴリズムが異なります**。HALCON からの移植で骨格の枝ぶりを
 > 近づけたい場合は、同系アルゴリズムの **`em_skeleton`** を使ってください
-> (論文準拠の独立実装。HALCON 実装との画素単位の一致までは未検証)。
+> (独立実装だが、**公表されている EM93 の参照出力とビット単位一致を検証済み**。
+> HALCON 実機との直接照合のみ未実施)。
 > スケルトンは実装依存性が強い代表例で、細い枝(ヒゲ)の生え方・分岐点の
 > 画素位置・斜め 2 画素幅部の残り方は一致しません。したがって
 > `junctions_skeleton` / `r2_split_skeleton_lines` の分岐数・線分数も
