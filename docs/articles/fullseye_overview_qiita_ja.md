@@ -589,6 +589,12 @@ Fullseye の差別化がいちばん出るのは **3D 系**だと思っていま
 
 この層の"お客さん第一号"が **evis**（筋骨格ヒューマノイド）です。evis の視覚パイプラインは、**ステレオ → 深度 → 点群 → セグメント → 6自由度（6DoF）姿勢 → 動作計画 → 700筋での実現**、という流れ。ロボットに箸を使わせる・歩かせるといった課題の"目"を、この層が担います。
 
+その最初の 2 段「ステレオ → 深度」を、evis 自身の両眼で実演した映像がこれです（クリックで動画再生）：
+
+[![evis の両眼キャプチャに Fullseye の disparity_sgm → depth_from_disparity を毎フレーム適用（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
+
+*↑ ▶ evis が箸で豆を打つ ChopMimic シーンを、evis 自身の両眼カメラ（瞳孔間距離 64mm）で撮った実験キャプチャ 241 フレームに、Fullseye の `disparity_sgm → speckle_filter → fill_disparity → depth_from_disparity` を毎フレーム適用した実出力。左=evis の左眼映像、中央=Fullseye が計算した視差、右=深度。下段 HUD の「豆までの距離」は左右眼の `segment_objects` 重心視差から $Z = f \cdot B / d$ で読み出した値で、シミュレータ真値との誤差は 229 フレームで中央値 0.66%・最大 1.91%（豆が箸に隠れた 12 フレームは「bean not in view」と正直に表示）。*
+
 大事にしているのは **OSS を再発明しないこと**。PCL / OpenCV / MoveIt2 といった標準は、**忠実性とカバレッジの地図＋薄いアダプタ**として使う。**統一インターフェースの裏に隠す**ので、使う側は「中身が自作 numpy か OSS ラッパか」を気にせず、同じ書き味で呼べます。
 
 「HALCON カバレッジの物語」の節で書いた**「何を作らないかを決める」**という判断は、ここにも顔を出しています。PCL や MoveIt2 が既にカバーしている領域（点群処理の一部・動作計画の一部）を丸ごと自前実装で置き換える必要はない。Fullseye がそこに足すべき価値は「同じ書き味で呼べるようにする」ことであって、「もう1つの実装を増やす」ことではありません。何を numpy で自前実装し、何を薄いアダプタで済ませるかの線引きは、**設計思想の4本柱すべてに関わる判断**で、ここでも honest disclosure の精神――「これは自前実装、これは OSS ラッパです」と、機械可読なノート（層①の md=SoT）で常に区別して開示する――が効いています。
