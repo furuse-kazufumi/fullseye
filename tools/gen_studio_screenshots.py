@@ -85,6 +85,9 @@ def _pump(app, n=8, ms=40):
 def _build_offscreen_studio():
     """Build the Studio window on the offscreen platform with modals stubbed."""
     os.environ["QT_QPA_PLATFORM"] = "offscreen"
+    # the offscreen platform ships no system fonts (all text renders as tofu boxes);
+    # point its freetype font database at the real Windows fonts so grabs are readable
+    os.environ.setdefault("QT_QPA_FONTDIR", r"C:\Windows\Fonts")
     from PySide6 import QtWidgets
     import studio
     studio.CONFIRM_HOOK = lambda *a, **k: True      # never block on a confirm modal
