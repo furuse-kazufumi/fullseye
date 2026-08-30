@@ -1144,6 +1144,12 @@ If this made you want to try it, installation is about five minutes away in the 
 
 ## To Be Continued
 
+One preview of the next installment's protagonist (click to play the video):
+
+[![evis's 700-muscle activation heatmap — tendon colors driven by real activations during a real physics re-simulation (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_muscle_heatmap_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_muscle_heatmap.mp4)
+
+*↑ ▶ The body of Fullseye's customer number one, evis — a muscle-activation heatmap where the colors of all 700 tendons update every frame from real activations (d.act) during a real physics re-simulation (arm raise → walking). **This is a re-encode of experimental footage from the evis-side project; no Fullseye processing is involved** — supplying this body with "eyes" is exactly what Fullseye's layer ③ is for.*
+
 This article was the "map." Next, I'll walk its regions. Candidates:
 
 - **What happens when you add one op** — the internals of the machinery by which the registry, evolution, code generation, and documentation all follow automatically.
