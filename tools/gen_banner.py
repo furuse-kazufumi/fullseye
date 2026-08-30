@@ -186,8 +186,9 @@ MOSAIC_TAGLINE = ("Open-source Python computer-vision library · "
                   "~1,000 explainable classical ops (731 2-D + 265 3-D) · pure numpy")
 
 TITLE = "Fullseye"
-TAGLINE = ("~1,000 explainable classical vision ops "
-           "(731 2-D + 265 3-D)  \u00b7  Physical AI sensing  \u00b7  pure numpy")
+TAGLINE = ("Open-source Python computer-vision library  \u00b7  "
+           "~1,000 explainable classical ops (731 2-D + 265 3-D)  \u00b7  "
+           "Physical AI sensing  \u00b7  pure numpy")
 PIP_CMD = "$ pip install fullseye"
 
 
