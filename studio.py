@@ -5901,7 +5901,8 @@ def build_window(model=None):
             try:
                 V, F = meshmod.read_mesh(path)[:2]
                 if np.asarray(F).size:
-                    return "mesh", np.asarray(V, np.float64), np.asarray(F, int), None
+                    V, F = validate_mesh_faces(V, F)   # corrupt faces -> points fallback
+                    return "mesh", V, F, None
             except Exception:
                 pass                              # no faces / points-only file -> cloud
         P, C = meshmod.read_points(path, with_colors=True)
