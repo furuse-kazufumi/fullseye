@@ -704,7 +704,9 @@ def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
     if C.shape[0] != P.shape[0]:
         C = np.broadcast_to(C[:1], (P.shape[0], 3)).copy()
     xy, depth = viewer3d_project(P, viewer3d_camera(yaw, pitch), center, radius, zoom, pan, size)
-    order = np.argsort(depth)                       # far -> near, so near splats win
+    # painter's algorithm: paint far first so NEAR splats win. depth is the view
+    # forward coordinate (larger = farther), so descending depth = far -> near.
+    order = np.argsort(depth)[::-1]
     xi = np.floor(xy[order, 0]).astype(int)
     yi = np.floor(xy[order, 1]).astype(int)
     Co = C[order]
