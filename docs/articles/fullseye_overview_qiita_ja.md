@@ -156,8 +156,8 @@ flowchart TB
         APPLY["① 既知の op を適用<br/>fullseye.apply / run_pipeline"]
         EVO["② パイプラインを進化で設計<br/>evolve / robust（held-out で正直に評価）"]
     end
-    subgraph L2["応用：Physical AI 知覚スタック"]
-        PERC["ステレオ→深度→点群→<br/>6DoF姿勢→筋駆動（evis）"]
+    subgraph L2["応用：ロボットの目"]
+        PERC["Physical AI 知覚スタック<br/>ステレオ→深度→点群→<br/>6DoF姿勢→筋駆動（evis）"]
     end
     STUDIO["Fullseye Studio（HDevelop 風 IDE）<br/>見て・試して・仕事で使う"]
 
