@@ -314,6 +314,10 @@ def fig_rag_corpus() -> None:
     chain_hdr = "## 型が繋がる次の op(`image` を入力に取れる)"
     i = lines.index(chain_hdr)
     chain_line = lines[i + 2]
+    ex_hdr = "## 実行できる例(この op を実際に呼ぶ検証済みサンプル)"
+    j = lines.index(ex_hdr)
+    ex_lines = [ln for ln in lines[j + 1: j + 5] if ln.startswith("- ")]
+    prov_line = next(ln for ln in lines if ln.startswith("*Provenance:"))
     # 表示テキスト(md リンクは [name](path) → name に畳む。行の内容自体は原文)
     import re
 
