@@ -1081,6 +1081,10 @@ Why CI's full suite missed this bug deserves one more level of digging. The CI `
 
 ### The Trajectory in Numbers, and the Lessons in Words
 
+[![The failing-test count across the waves: ~80 → 9 → 1 → 0](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_ci_waterfall_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_ci_waterfall.png)
+
+*↑ Failing-test count across the three waves (about 80 → 9 → 1 → 0): wave 1 = an unconditional torch import, wave 2 = nine failures caught by absolute values and signs, final wave = an unconditional scikit-image import found by clean-venv verification. Numbers are the actual counts reported in this article.*
+
 The failing-test trajectory ran **~80 → 9 → 1 → 0** across three waves (plus one final-check item). The full suite passes locally at **6,224**. CI itself runs a **Python 3.10 / 3.11 / 3.12 matrix**, plus an independent minimal-configuration job that **actually executes, on every run, the claim "it runs on numpy + scipy alone"** (this job is what makes the next accident of the scikit-image class something CI itself catches).
 
 Four lessons from this sequence, put into words:
