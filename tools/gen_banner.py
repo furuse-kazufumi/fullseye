@@ -64,7 +64,7 @@ ACCENT_STOPS = [
 TILES = [
     # -- row 1 ------------------------------------------------------------
     # Real asteroid Itokawa point cloud, surface-curvature coloring (3D ops)
-    ("itokawa_montage.png",        (0.615, 0.145, 0.895, 0.475)),
+    ("itokawa_montage.png",        (0.655, 0.155, 0.860, 0.460)),
     # Edge orientation painted as hue (sobel_dir)
     ("science_edge_compass.png",   (0.505, 0.000, 1.000, 0.915)),
     # Sub-pixel metrology on a stepped shaft (measure_pairs)
