@@ -713,7 +713,10 @@ def subject_lidar_clusters(log=print) -> dict:
     d = mujoco.MjData(m)
     mujoco.mj_forward(m, d)
     origin = (0.0, 0.0, 0.9)
-    pts, hit_ratio = LS._scan(m, d, origin, channels=48, az_steps=480)
+    # 既定 fov (-18..12°) では近距離の低い物体が死角に入る(実機と同じ)ので、
+    # 近接シーン用に下向き視野を広げる
+    pts, hit_ratio = LS._scan(m, d, origin, channels=48, az_steps=480,
+                              fov_deg=(-40.0, 10.0))
     log(f"  rays={48 * 480} points={len(pts)} hit={hit_ratio * 100:.0f}%")
 
     nonground, gmask = fs.remove_ground(pts, thresh=0.03)
