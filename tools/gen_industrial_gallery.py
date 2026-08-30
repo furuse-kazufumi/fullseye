@@ -403,7 +403,7 @@ def subject_align_shapematch(log=print) -> dict:
         "file": "industrial_align.png",
         "title": "位置決め — 回転探索つき shape matching",
         "ops": ["create_shape_model", "find_shape_model (angles 探索)"],
-        "data": "合成ブラケット 3 個 (配置姿勢 = 真値) + 距離部品",
+        "data": "合成ブラケット 3 個 (配置姿勢 = 真値) + 紛らわしい別部品",
         "synthetic": True,
         "caption": ("エッジ勾配ベースの形状モデルをピラミッド探索で照合し、"
                     "回転したワーク 3 個の位置と角度を検出。円板や長方形の別部品には"
