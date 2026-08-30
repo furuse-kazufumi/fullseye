@@ -805,10 +805,6 @@ Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, 
 
 #### Biology
 
-[![Segmenting and counting HT29 cells](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells.png)
-
-*↑ A fluorescence micrograph of HT29 cells ([BBBC001, CC-BY 3.0](https://bbbc.broadinstitute.org/BBBC001)), Otsu-segmented → label-colored → counted (327 detected). Laboratory routine work, exactly as it is.*
-
 [![Tracing a neuron's dendrites](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
 
 *↑ The dendrites in a neuron fluorescence image traced with `sk_frangi`. **AI-generated simulated data**.*
