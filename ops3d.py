@@ -126,6 +126,13 @@ _CATALOG = {
         ("hessian3d", "match3d", ["voxel"], "hessian", True),
         ("curvature_maps", "match3d", ["voxel"], "curvature", True),
         ("edt_jfa", "match3d", ["voxel"], "sdf", True),
+        # volops の Hessian 固有値ベース特徴(2026-08-31 登録。実装は既存・api 公開済み
+        # だったが _CATALOG に無く発見不能だった)。医用 CT の血管/気道・産業 CT の欠陥
+        ("vol_frangi", "volops", ["voxel"], "voxel", False),
+        ("vol_sato", "volops", ["voxel"], "voxel", False),
+        ("vol_hessian_blobness", "volops", ["voxel"], "voxel", False),
+        ("vol_gradient_magnitude", "volops", ["voxel"], "voxel", False),
+        ("vol_local_maxima", "volops", ["voxel"], "points", False),
     ],
     "morphology": [  # 3D モルフォロジー(前処理/特徴抽出。torch 不在時は scipy 経路)
         ("morph_dilate3d", "match3d", ["voxel"], "voxel", True),
