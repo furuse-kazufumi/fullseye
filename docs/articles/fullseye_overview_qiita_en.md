@@ -271,7 +271,7 @@ This "breadth" is faster to see than to describe, so here's a **treemap tallied 
 
 *↑ Op taxonomy treemap — left, the 2D registry (halcon_ext 81, region 76, features 71, ...); right, the 3D registry (geometry 23, render 14, ...). Area = op count.*
 
-And "what does the output actually look like?" in one image too: a sampler that **mechanically picks one representative op from each of 24 categories and applies it, for real, to the same coin photo** (zero skips; ops that return scalars have their numbers baked in, ops that return contours have their real XLD points baked in).
+And "what does the output actually look like?" in one image too: a sampler that **mechanically picks one representative op from each of 24 categories and applies it, for real, to the same coin photo** (zero skips; ops that return contours have their real XLD points baked in, and ops that return numbers — counting, matching, shape descriptors — are applied "the proper way" and shown as input + detection overlay + measured value: `blob_count` reads **count = 24 on a preprocessed region (asserted to equal the number of coins)**, `ncc_locate` draws a box at the position found with a real template, and `decode_barcode` runs on a synthetic barcode input, reading bars = 12).
 
 [![2D op sampler — representative ops from 24 categories applied to coins (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
 
