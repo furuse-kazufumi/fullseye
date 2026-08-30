@@ -10,6 +10,11 @@
 
 > この記事は「完成した自慢」ではありません。**なぜこの形にしたのか・どこがまだ弱いのか**を、追試できる粒度で残すものです。数字はすべて実測、限界は隠さず書きます。
 
+まず1枚。これは Fullseye の 3D レンダラ（もちろん numpy 自前実装）が、SDF で作った形状に環境光遮蔽・ソフトシャドウ・ACES トーンマップまでかけて焼いた出力です：
+
+<!-- 公開後チェック: raw URL が HTTP 200 を返すこと -->
+![Fullseye 自前レンダラの出力（SDF smooth union + AO + ソフトシャドウ + ACES）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
+
 ---
 
 ## この記事は何？（3行で）
@@ -123,6 +128,11 @@ n     = fullseye.apply(seg,   "count_obj")       # 領域 → 特徴量（物体
 out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 ```
 
+実際の出力を見てもらうのが早いでしょう。エッジ検出・セグメンテーション・輪郭計測など、定番どころを1枚に並べるとこうなります（すべて上の `apply` / `run_pipeline` の実出力）：
+
+<!-- 公開後チェック: raw URL が HTTP 200 を返すこと -->
+![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
+
 ### どれくらいの規模か（実測）
 
 - **2D オペレータ：731 種**（レジストリ登録 735 エントリのうち、名前で distinct なもの 731。46 カテゴリ）
@@ -192,6 +202,11 @@ ok    = fs.traversability(grid, cell=0.05, max_step=0.1)    # 足場/障害物�
 objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾何＋記述子
 ```
 
+この層には**センサー・シミュレーション一式**も含まれます。実機を持っていなくても、**疑似 LiDAR・ステレオカメラ・イベントカメラ（DVS）・フォトメトリックステレオ・TSDF 融合・偏光カメラ・焦点合成**といったセンサーの出力を合成シーンから作り、知覚パイプラインを**実機なしで開発・検証**できる ―― Physical AI 開発の"練習場"です。すべて Fullseye 自身の op の実出力です：
+
+<!-- 公開後チェック: raw URL が HTTP 200 を返すこと（feedback_qiita_svg_path_and_cache） -->
+![Physical AI センサ・シミュレーションのモンタージュ（疑似LiDAR / ステレオ深度 / イベントカメラDVS / 焦点合成 / 偏光カメラ / カメラ+IMUフュージョン）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
+
 この層の"お客さん第一号"が **evis**（筋骨格ヒューマノイド）です。evis の視覚パイプラインは、**ステレオ → 深度 → 点群 → セグメント → 6自由度（6DoF）姿勢 → 動作計画 → 700筋での実現**、という流れ。ロボットに箸を使わせる・歩かせるといった課題の"目"を、この層が担います。
 
 大事にしているのは **OSS を再発明しないこと**。PCL / OpenCV / MoveIt2 といった標準は、**忠実性とカバレッジの地図＋薄いアダプタ**として使う。**統一インターフェースの裏に隠す**ので、使う側は「中身が自作 numpy か OSS ラッパか」を気にせず、同じ書き味で呼べます。
@@ -243,6 +258,41 @@ Fullseye が「ただの関数の寄せ集め」にならないための背骨�
 そして **推奨する運用はこの RAG 型**です。その上で Studio を組み合わせると、AI エージェント（Claude Code など）が組んだパイプラインの結果を**画像ウィンドウや 3D 表示画面として人間の目の前に出せる** ―― コードと会話だけで閉じず、「AI が見ているもの」を人間が同じ画面で検査できる。狙っている位置づけは、**Physical AI（ロボット知覚）の統合環境**です。
 
 もうひとつ意識しているのが**学術利用**です。全 op が参考文献つきの機械可読ノート（md=SoT）を持ち、版が fingerprint で code に固定され、評価は hold-out で正直 ―― つまり**引用でき、追試できる**形を最初から作ってあります。リポジトリには `CITATION.cff` を置き、文献は実在する古典（DOI を捏造しない）だけを引いています。研究の道具として使われ、参照される ―― そうなったら嬉しい、という設計です。
+
+---
+
+## 使ってみる ―― 導入方法
+
+公開リポジトリ（GitHub）と PyPI から入れられます。**numpy + scipy だけでコアが動く**ので、まず素で入れて、必要になったら extras を足すのがおすすめです。
+
+```bash
+# ① まず動かす（コアは numpy + scipy のみ）
+pip install fullseye
+
+# ② Studio（IDE）や重い op も使うなら extras を足す
+pip install "fullseye[gui]"        # PySide6 の IDE だけ
+pip install "fullseye[all]"        # OpenCV / torch / GUI / 動画など全部入り
+
+# ③ Studio を起動
+fullseye-studio
+```
+
+AI コーディングアシスタント（Claude Code など）の **RAG として使う**場合は、同梱のセットアップスクリプトが1コマンドでスキルを配置します：
+
+```bash
+fullseye-rag              # op カタログを Claude Code のスキルとして登録
+fullseye-rag --uninstall  # きれいに外す
+```
+
+ソースから入れる場合（op ドキュメント約1000枚のフルコーパスを RAG に使いたい人向け）：
+
+```bash
+git clone https://github.com/furuse-kazufumi/fullseye && cd fullseye
+pip install -e ".[all]"
+py -3.11 tools/update_fullseye.py --check   # 以後の更新は安全アップデータで
+```
+
+アップデータは**環境をつぶさない**方針で作ってあります（未コミットの変更があれば拒否・`--ff-only` のみ・RAG スキルはバックアップしてから更新・Studio の設定には触れない）。使い方の詳細は、リポジトリの `README.md` と `docs/AI_RAG_GUIDE.md`（RAG 化手順）、`docs/STUDIO_GUIDE.md`（IDE ガイド）にまとまっています。
 
 ---
 

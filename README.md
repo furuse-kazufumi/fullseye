@@ -11,6 +11,12 @@ Two ways to use it: **apply known operators** (most of the time), or **evolve a 
 pipeline** when no single operator solves the task. It is `pip`-installable and works
 on plain numpy arrays, so other projects can drop it into a vision pipeline directly.
 
+<!-- Absolute raw URLs on purpose: this README doubles as the PyPI long description,
+     where repo-relative image paths break. -->
+![Fullseye's own renderer: SDF smooth-union sculpture with AO, soft shadows and ACES tonemap — pure numpy](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
+
+*Rendered by Fullseye's numpy renderer (SDF → marching cubes → AO / soft shadows / ACES). More real outputs below.*
+
 ## Install
 
 ```bash
@@ -73,10 +79,16 @@ py -3.11 imgevolve.py coverage               # honest coverage numbers
 Adding one operator makes evolution, code generation, the catalog, and the
 machine-readable index (`docs/OP_INDEX.json`) follow automatically.
 
+![Real outputs of classic 2-D vision operators — edges, segmentation, contour measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
+
 ## Perception stack (robotics-friendly)
 
 Building blocks that turn frames into geometry and objects — the pieces a robot
-needs to perceive, measure, and act:
+needs to perceive, measure, and act. A **sensor-simulation suite** (pseudo-LiDAR,
+stereo, event camera / DVS, photometric stereo, TSDF fusion, polarization, focus
+stacking) lets you develop and test perception pipelines without hardware:
+
+![Physical-AI sensor simulation suite — pseudo-LiDAR, stereo depth, event camera (DVS), focus stacking, polarization, camera+IMU Kalman fusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
 ```python
 import fullseye as fs
@@ -124,7 +136,8 @@ amortizes over large parallelism.
 
 ## Fullseye Studio (HDevelop-style IDE)
 
-`py -3.11 studio.py` opens the visual workbench: operator browser with generated help
+`fullseye-studio` (or `py -3.11 studio.py` from a checkout) opens the visual
+workbench: operator browser with generated help
 (2-D and 3-D), pipeline editor with per-stage timing, breakpoints, continue /
 run-from-line execution control, a variable window with watch expressions and
 right-click inspection, multi-window graphics scriptable from programs
@@ -141,6 +154,20 @@ literature references (no fabricated DOIs), versions are pinned to the code by a
 registry fingerprint with a CI drift test, and evaluation follows the honest
 held-out discipline above. If you use it in academic work, please cite via
 `CITATION.cff`.
+
+## Documentation map
+
+Everything below lives in the repo — start at the guide that matches what you want to do:
+
+| You want to… | Read |
+|---|---|
+| Look up any of the ~1000 operators | `docs/ops/` (per-op notes) · `docs/OP_CATALOG.md` (one-page catalog) |
+| Use Fullseye as an AI/RAG knowledge base | `docs/AI_RAG_GUIDE.md` (+ `fullseye-rag`) |
+| Drive the Studio IDE | `docs/STUDIO_GUIDE.md` · `docs/HDEVELOP_DEV_OPS.md` (dev_* window ops) |
+| Add an operator | `docs/ADDING_OPS.md` · `CONTRIBUTING.md` |
+| Understand the language policy (en/ja) | `docs/I18N.md` |
+| Update a checkout safely | `tools/update_fullseye.py --check` |
+| Cite Fullseye | `CITATION.cff` |
 
 ## Design principles
 
