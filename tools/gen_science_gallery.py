@@ -483,7 +483,7 @@ def subject_dino_terrain(log=print) -> dict:
 
 def subject_morph_pulse(log=print) -> dict:
     """形が育つ・痩せる — 膨張と収縮のアニメ GIF."""
-    img = _load_gray("coins.png")
+    img = _load_gray("coins.png")[60:, :]   # 上端の照明ムラを除外
     seg = fs.apply(img, "otsu")
     seg = fs.apply(seg, "fill_up")
     frames = []
