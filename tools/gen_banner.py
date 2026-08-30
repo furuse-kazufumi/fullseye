@@ -125,7 +125,7 @@ MOSAIC_OUT = ASSETS / "fullseye_mosaic.png"
 
 MOSAIC_TILES = [
     # -- row 1 ------------------------------------------------------------
-    ("itokawa_montage.png",         (0.655, 0.155, 0.860, 0.460), "real"),
+    ("itokawa_montage.png",         (0.680, 0.190, 0.840, 0.420), "real"),
     ("science_edge_compass.png",    (0.505, 0.000, 1.000, 0.915), "demo"),
     ("academic_med_blood_smear.png", (0.672, 0.000, 1.000, 1.000), "ai"),
     ("science_dino_xray.png",       (0.020, 0.400, 0.980, 0.920), "demo"),
