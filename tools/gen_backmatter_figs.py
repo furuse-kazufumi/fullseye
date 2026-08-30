@@ -263,7 +263,7 @@ def fig_bug4_curvature() -> None:
                     loc="lower left")
     leg.get_frame().set_alpha(0.9)
     ax.annotate("修正前はこの線に乗っていた\n(比率は正しく、絶対値だけ 1/32)",
-                xy=(4.0, 1 / (32 * 4.0)), xytext=(1.1, 3.2e-3),
+                xy=(5.0, 1 / (32 * 5.0)), xytext=(1.6, 3.4e-2),
                 fontsize=11, color=MUTED, linespacing=1.45,
                 arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.0))
     ax.text(0.985, 0.975,
