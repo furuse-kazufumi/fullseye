@@ -2,6 +2,8 @@
 
 > Japanese original: [fullseye_overview_qiita_ja.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/fullseye_overview_qiita_ja.md)
 
+![Fullseye — a 12-tile banner of real processing results (defect inspection, sub-pixel metrology, watershed, a dinosaur X-ray, a nebula, LiDAR and more — all real outputs that appear in this article)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fullseye_banner.png)
+
 ![A real point cloud of asteroid Itokawa, spun on a turntable by a custom renderer (all hand-written in numpy)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif)
 
 This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape model built from Hayabusa spacecraft observations, published in the JAXA DARTS archive — spinning inside the custom 3D renderer of this article's protagonist, **Fullseye**. Loading the point cloud, rendering it, the rock material, the shadows — **all of it is hand-written numpy**. This is the story of how I've been building that "eye."
@@ -137,7 +139,7 @@ To break it down a bit further, the reasoning goes in this order. Whether a robo
 
 Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye's eye (click to play the video):
 
-[![evis's chopstick-tip camera footage with Fullseye's segment_objects → draw_objects applied every frame to track the bean (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
+[![evis's chopstick-tip camera footage with Fullseye's segment_objects → draw_objects applied every frame to track the bean (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg?v=2)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
 
 *↑ ▶ Chopstick-tip camera footage from the ChopMimic experiment (experimental material from the evis_chopstick project), with Fullseye's `segment_objects → draw_objects` applied every frame to track the bean. Left = third-person view (context, unprocessed); right = the bean bbox Fullseye detected. Detected in all 163 frames where the bean is visible (100% visible-frame detection rate; centroid error vs. ground truth: median 0.10px, max 14.5px on partially occluded frames). No detections in the 78 frames where it's genuinely occluded by chopsticks or plate — nothing is fabricated.*
 
@@ -591,7 +593,7 @@ This layer's customer number one is **evis**, the musculoskeletal humanoid. Its 
 
 Here are the first two stages — **stereo → depth** — demonstrated with evis's own two eyes (click to play the video):
 
-[![evis's binocular captures with Fullseye's disparity_sgm → depth_from_disparity applied every frame (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
+[![evis's binocular captures with Fullseye's disparity_sgm → depth_from_disparity applied every frame (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg?v=2)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
 
 *↑ ▶ The ChopMimic scene — evis striking a bean with chopsticks — captured by evis's own binocular cameras (64mm interpupillary distance), 241 real experiment frames, with Fullseye's `disparity_sgm → speckle_filter → fill_disparity → depth_from_disparity` applied to every frame. Left = evis's left-eye view; center = the disparity Fullseye computed; right = depth. The "distance to bean" HUD reads $Z = f \cdot B / d$ from the disparity of `segment_objects` centroids in each eye; error vs. simulator ground truth over 229 frames: median 0.66%, max 1.91% (the 12 frames where the bean is occluded by chopsticks honestly display "bean not in view").*
 

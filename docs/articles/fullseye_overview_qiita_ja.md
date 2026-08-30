@@ -139,7 +139,7 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 
 その「箸で豆をつまむ」実験を、実際に Fullseye の目で見た映像がこれです（クリックで動画再生）：
 
-[![evis の箸先カメラ映像に Fullseye の segment_objects → draw_objects を毎フレーム適用して豆を追跡（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
+[![evis の箸先カメラ映像に Fullseye の segment_objects → draw_objects を毎フレーム適用して豆を追跡（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg?v=2)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
 
 *↑ ▶ ChopMimic 実験（evis_chopstick プロジェクトの実験素材）の箸先カメラ映像に、Fullseye の `segment_objects → draw_objects` を毎フレーム適用して豆を追跡した実出力。左=三人称視点（文脈用、無加工）、右=Fullseye が検出した豆の bbox。豆が写っている 163 フレームすべてで検出（可視フレーム検出率 100%、重心誤差は真値比で中央値 0.10px・最大 14.5px＝部分遮蔽フレーム）。隠れて見えない 78 フレームは検出なし ―― 捏造はありません。*
 
@@ -593,7 +593,7 @@ Fullseye の差別化がいちばん出るのは **3D 系**だと思っていま
 
 その最初の 2 段「ステレオ → 深度」を、evis 自身の両眼で実演した映像がこれです（クリックで動画再生）：
 
-[![evis の両眼キャプチャに Fullseye の disparity_sgm → depth_from_disparity を毎フレーム適用（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
+[![evis の両眼キャプチャに Fullseye の disparity_sgm → depth_from_disparity を毎フレーム適用（クリックで mp4 再生）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_stereo_fullseye_thumb.jpg?v=2)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_stereo_fullseye.mp4)
 
 *↑ ▶ evis が箸で豆を打つ ChopMimic シーンを、evis 自身の両眼カメラ（瞳孔間距離 64mm）で撮った実験キャプチャ 241 フレームに、Fullseye の `disparity_sgm → speckle_filter → fill_disparity → depth_from_disparity` を毎フレーム適用した実出力。左=evis の左眼映像、中央=Fullseye が計算した視差、右=深度。下段 HUD の「豆までの距離」は左右眼の `segment_objects` 重心視差から $Z = f \cdot B / d$ で読み出した値で、シミュレータ真値との誤差は 229 フレームで中央値 0.66%・最大 1.91%（豆が箸に隠れた 12 フレームは「bean not in view」と正直に表示）。*
 
