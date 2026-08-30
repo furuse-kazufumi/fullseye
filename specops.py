@@ -199,7 +199,7 @@ def _meta_wavelengths(meta):
 # --------------------------------------------------------------------------- #
 # Cube validation (fail-closed)                                               #
 # --------------------------------------------------------------------------- #
-def _as_cube(cube, name: str = "cube") -> np.ndarray:
+def _as_cube(cube, name: str = "cube", allow_rgb: bool = False) -> np.ndarray:
     """Coerce to a validated ``(H, W, B)`` float64 cube or raise ``ValueError``.
 
     Enforces the modality boundary: a 2-D array is an ``image``; an ``(H, W, 3)``
@@ -207,6 +207,11 @@ def _as_cube(cube, name: str = "cube") -> np.ndarray:
     silently consumed as a spectral cube (and a cube is never silently truncated
     to three channels). B = 2 is accepted (an explicit two-band cube / index);
     B = 3 is the sole ambiguous count and is the one rejected.
+
+    ``allow_rgb=True`` opts a *specific op* out of the B = 3 refusal — for ops
+    whose established practice **is** to run on RGB photographs (decorrelation
+    stretch / DStretch). Every other validation (dimensionality, B >= 2,
+    finiteness) still applies; the flag never weakens those.
     """
     a = np.asarray(cube, np.float64)
     if a.ndim != 3:
@@ -215,7 +220,7 @@ def _as_cube(cube, name: str = "cube") -> np.ndarray:
             "A single band is an `image` (H, W); an RGB frame is `color` (H, W, 3)."
             % (name, a.ndim, a.shape))
     B = a.shape[2]
-    if B == 3:
+    if B == 3 and not allow_rgb:
         raise ValueError(
             "%s has 3 channels (H, W, 3): that is the `color` (RGB) sort, not a "
             "multispectral cube. A cube carries B>3 narrow bands (B=2 is allowed as "
