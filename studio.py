@@ -3049,9 +3049,11 @@ def build_window(model=None):
     win._gfx_handle_seq = 1
     win._current_gfx = gsub
 
-    def new_graphics_window(pixmap=None, title=None):
+    def new_graphics_window(pixmap=None, title=None, widget=None):
         """Open another graphics window (HDevelop allows several). Shows a snapshot
-        of the current display by default, or a supplied pixmap (e.g. a variable).
+        of the current display by default, or a supplied pixmap (e.g. a variable),
+        or embeds *widget* (a Viewer3D — the 3-D viewer rides the SAME window
+        numbering, cap and dev_set_window machinery as the 2-D windows).
         Capped by set_system('max_graphics_windows') — at the cap, no new window is
         opened (flash + returns None), so a looping program cannot flood the MDI."""
         alive = [s for s in win._graphics_windows if s in mdi.subWindowList()]
@@ -3062,12 +3064,15 @@ def build_window(model=None):
             return None
         win._gfx_handle_seq += 1
         h = win._gfx_handle_seq
-        gv = ImageView()
-        try:
-            gv.set_pixmap(pixmap if pixmap is not None else view._item.pixmap())
-            gv.fit()
-        except Exception:
-            pass
+        if widget is not None:
+            gv = widget
+        else:
+            gv = ImageView()
+            try:
+                gv.set_pixmap(pixmap if pixmap is not None else view._item.pixmap())
+                gv.fit()
+            except Exception:
+                pass
         sub = mdi.addSubWindow(gv)
         sub._fs_handle = h
         sub.setWindowTitle(title or ("Graphics %d" % h))
