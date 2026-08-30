@@ -518,7 +518,7 @@ def rec_filaments(col, top_pct: float = 3.0, med_a: float = 0.2):
     """
     g = gray(col)
     c = ap(g, "cv_clahe", 0.6, 0.5)
-    m = ap(c, "cv_median", 0.2, 0.5)  # 3x3: suppress stars / pixel noise
+    m = ap(c, "cv_median", med_a, 0.5)  # 3x3 (med_a=0.2) or 5x5 (0.5): kill point/spike noise
     f = norm01(ap(m, "sk_frangi", 0.5, 0.5))
     thr = float(np.percentile(f, 100.0 - top_pct))
     mask = (f >= thr).astype(np.float64)
