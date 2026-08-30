@@ -286,12 +286,12 @@ def test_curvature_shape_index_sphere_vs_cylinder():
     zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
     r = np.sqrt((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2)
     sphere = 1 / (1 + np.exp((r - 12) / 1.5))
-    S, _, _, _ = X.curvature_maps(sphere, "cpu", mc=0.01)
+    S, _, _, _ = X.curvature_maps(sphere, "cpu", mc=3.125e-4)
     Ss = S.cpu().numpy()[np.abs(r - 12) < 1.5]
     assert abs(Ss.mean() - 1.0) < 0.1                    # 球殻 = cap
     rc = np.sqrt((yy - c) ** 2 + (xx - c) ** 2)
     cyl = 1 / (1 + np.exp((rc - 10) / 1.5))
-    S2, _, _, _ = X.curvature_maps(cyl, "cpu", mc=0.01)
+    S2, _, _, _ = X.curvature_maps(cyl, "cpu", mc=3.125e-4)
     Sc = S2.cpu().numpy()[(np.abs(rc - 10) < 1.5) & (np.abs(zz - c) < 12)]
     assert abs(Sc.mean() - 0.5) < 0.1                    # 円柱 = ridge
 
@@ -310,7 +310,7 @@ def test_curvature_matches_by_shape_not_intensity():
     sc += 1 / (1 + np.exp((ra - 5) / 1.2))               # 球 A
     rcB = np.sqrt((Y - 40) ** 2 + (Xx - 40) ** 2)
     sc += 1 / (1 + np.exp((rcB - 5) / 1.2)) * (np.abs(Z - 40) < 6)   # 円柱 B(同強度)
-    r = X.match_curvature_3d(np.clip(sc, 0, 1), Tsph, "cpu", mc=0.01)
+    r = X.match_curvature_3d(np.clip(sc, 0, 1), Tsph, "cpu", mc=3.125e-4)
     assert abs(r[1] - 16) + abs(r[2] - 16) + abs(r[3] - 16) <= 3     # 球を選ぶ
 
 
@@ -497,13 +497,22 @@ def test_signed_distance_field():
 @skip
 @need_scipy
 def test_estimate_point_normals_sphere():
-    """点群法線: 球面の法線が放射方向に一致(FPFH/ICP-p2plane の前段)。"""
+    """点群法線の向き規約を SIGNED で検証(旧テストは np.abs が ~50% の符号反転を
+    隠していた = match_pca と同型の「abs でコイン投げを隠す」パターン)。
+    (a) viewpoint=センサ位置: 可視半球の法線は放射方向 = 視点向きに揃う(Hoppe/PCL)。
+    (b) viewpoint=None: 全周球の法線は重心から外向き。"""
     rng = np.random.default_rng(1)
     u = rng.random(2000) * 2 * np.pi; v = rng.random(2000) * np.pi
     sph = np.stack([np.sin(v) * np.cos(u), np.sin(v) * np.sin(u), np.cos(v)], 1) * 8
-    nrm = X.estimate_point_normals(sph, k=20, viewpoint=np.array([0, 0, 100.0]))
-    radial = sph / np.linalg.norm(sph, axis=1, keepdims=True)
-    assert np.abs(np.einsum("ni,ni->n", nrm, radial)).mean() > 0.95
+    # (a) 単一視点スキャン: センサ (0,0,100) から見える上半球のみ
+    upper = sph[sph[:, 2] > 0.5]
+    nrm = X.estimate_point_normals(upper, k=20, viewpoint=np.array([0, 0, 100.0]))
+    radial = upper / np.linalg.norm(upper, axis=1, keepdims=True)
+    assert np.einsum("ni,ni->n", nrm, radial).mean() > 0.95       # signed: toward sensor
+    # (b) 既定=重心基準: 全周球で外向き(signed)
+    nrm2 = X.estimate_point_normals(sph, k=20)
+    radial2 = sph / np.linalg.norm(sph, axis=1, keepdims=True)
+    assert np.einsum("ni,ni->n", nrm2, radial2).mean() > 0.95     # signed: outward
 
 
 @skip
@@ -621,3 +630,46 @@ def test_projection_and_rendering():
     xr = X.render_volume_projection(ball, 0, 0, "xray")
     assert xr[c, c] > 10 * (xr[2, 2] + 1e-6)               # 中心が厚い(球)
     assert X.render_volume_projection(ball, 45, 30, "xray").shape == (N, N)   # 任意視点
+
+
+@skip
+def test_match_pca_recovers_rotation_with_left_handed_eigh_frames():
+    """Regression (2026-08-30): eigh eigenvector frames have arbitrary handedness and
+    S=diag(sx,sy,sx*sy) always has det=+1, so det(R)=det(As)*det(Am) was constant across
+    all 4 sign candidates; a left-handed frame pair rejected every candidate and silently
+    fell back to the identity rotation (~46% of random trials, measured). The fix
+    canonicalises both frames to right-handed first. Sweeping many random anisotropic
+    clouds and rotations exercises both handedness combinations."""
+    rng = np.random.default_rng(1)
+    for _ in range(40):
+        P = rng.normal(size=(120, 3)) * np.array([5.0, 2.0, 0.7])
+        th, ph = rng.uniform(0, 3), rng.uniform(0, 3)
+        Rz = np.array([[np.cos(th), -np.sin(th), 0],
+                       [np.sin(th), np.cos(th), 0], [0, 0, 1]])
+        Rx = np.array([[1, 0, 0], [0, np.cos(ph), -np.sin(ph)],
+                       [0, np.sin(ph), np.cos(ph)]])
+        Rt = Rz @ Rx
+        Q = (Rt @ P.T).T + np.array([1.0, 2.0, 3.0])
+        R, t = X.match_pca(Q, P)
+        assert np.abs(R - Rt).max() < 1e-6              # never the identity fallback
+        # full transform round-trip: R @ model + t reproduces the scene cloud
+        assert np.abs((R @ P.T).T + t - Q).max() < 1e-6
+
+
+@skip
+def test_curvature_maps_curvedness_absolute_calibration():
+    """Regression (2026-08-30): curvature_maps mixed a raw sobel3d gradient (separable
+    conv gain 32) with a correctly normalised hessian3d, so curvedness came out 1/32 of
+    the true value (shape index, a pure ratio, was unaffected). After dividing the gain
+    back out, a spherical level set of radius R must report curvedness = 1/R in true
+    1/voxel units - checked absolutely here, not just proportionally."""
+    N = 48; c = (N - 1) / 2.0
+    zz, yy, xx = np.mgrid[0:N, 0:N, 0:N]
+    r = np.sqrt((zz - c) ** 2 + (yy - c) ** 2 + (xx - c) ** 2)
+    sphere = np.exp(-r ** 2 / (2 * 6.0 ** 2))
+    _S, C, M, _g = X.curvature_maps(sphere)
+    C = C.cpu().numpy(); M = M.cpu().numpy()
+    sh = (r > 5.5) & (r < 6.5) & (M > 0.5)
+    assert sh.any()
+    curv = float(np.median(C[sh])); rad = float(np.median(r[sh]))
+    assert abs(curv * rad - 1.0) < 0.05                 # curvedness == 1/R within 5%

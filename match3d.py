@@ -222,10 +222,21 @@ def match_pca(pts_scene, pts_model):
     """PCA 姿勢マッチング(構造=point cloud × 手法=主軸整列)。
 
     両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない
-    **回転**をここで担う(符号の 4 通り曖昧性は最小二乗で解消)。返り値 (R(3,3), t(3,))。
+    **回転**をここで担う(符号の 4 通り曖昧性は最小二乗で解消。この残差は両雲の点が
+    同じ並び順で対応している前提の粗い基準 — 無対応の実測雲では ICP 等で後段精密化を)。
+    返り値 (R(3,3), t(3,))。
     """
     cs, As, _ = moment_axes(pts_scene)
     cm, Am, _ = moment_axes(pts_model)
+    # eigh の固有ベクトル枠は掌性(det ±1)が不定。S=diag(sx,sy,sx·sy) は常に det=+1 なので
+    # det(R)=det(As)·det(Am) が 4 候補すべてで同符号になり、左手系ペアだと全候補が
+    # 下の det<0 ガードで棄却され恒等回転に落ちていた(46%/ランダム試行で実測)。
+    # 両枠を先に右手系へ正準化して、4 候補が常に真の回転になるようにする。
+    As = As.copy(); Am = Am.copy()
+    if np.linalg.det(As) < 0:
+        As[:, 2] *= -1.0
+    if np.linalg.det(Am) < 0:
+        Am[:, 2] *= -1.0
     best = None
     Qs = np.asarray(pts_scene, np.float64) - cs
     Qm = np.asarray(pts_model, np.float64) - cm
@@ -557,16 +568,23 @@ def hessian3d(vol, device="cpu"):
     return [x[0, 0] for x in (fzz, fyy, fxx, fzy, fzx, fyx)]
 
 
-def curvature_maps(vol, device="cpu", mc=0.02):
+def curvature_maps(vol, device="cpu", mc=6.25e-4):
     """level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。
 
     2D 輪郭の曲率(スカラー 1 個)の **線→面リフト**: 曲面は主曲率 κ1,κ2 の 2 個を持つ。
     mean = (κ1+κ2)/2 = (|g|²trH − gᵀHg)/|g|³、Gauss K = κ1κ2 = gᵀadj(H)g/|g|⁴(g=∇, H=Hessian)。
     S=(2/π)atan2(κ1+κ2, κ1−κ2) ∈[-1,1] は **強度・回転に不変な局所曲面型**(cup−1/rut/saddle0/
     ridge+.5/cap+1)。外向き法線規約で明凸 blob=cap(+1)。返り値 (S, curvedness, mask, |g|)、全 torch。
+
+    単位系: sobel3d の分離 conv 利得 32(deriv[-1,0,1]×平滑[1,2,1]²)をここで割り戻すので、
+    κ1,κ2/curvedness は **真の 1/voxel 単位**(半径 R の球殻で curvedness=1/R)、|g| と
+    mask 閾値 mc は **voxel あたりの真の勾配単位**。旧版(〜2026-08-29)は割り戻しを忘れ
+    curvedness が 1/32 倍・mc が生 sobel3d 単位だった(shape index S は比なので影響なし)。
+    旧 mc 値を使っていた場合は 1/32 して渡すこと(既定値 0.02→6.25e-4 も等価変換済み)。
     """
     gz, gy, gx = sobel3d(vol, device)
-    gz, gy, gx = gz[0, 0], gy[0, 0], gx[0, 0]
+    # sobel3d は利得 32 の規約(refine_translation_lk 等は grad_scale=32 で補正) — ここでも割り戻す
+    gz, gy, gx = gz[0, 0] / 32.0, gy[0, 0] / 32.0, gx[0, 0] / 32.0
     a, b, c, d, e, f = hessian3d(vol, device)               # a=Hzz b=Hyy c=Hxx d=Hzy e=Hzx f=Hyx
     g2 = gz * gz + gy * gy + gx * gx
     gmag = torch.sqrt(g2.clamp_min(1e-12))
@@ -588,7 +606,7 @@ def curvature_maps(vol, device="cpu", mc=0.02):
     return S, curv, mask, gmag
 
 
-def match_curvature_3d(scene, template, device="cpu", mc=0.02, subvoxel=True):
+def match_curvature_3d(scene, template, device="cpu", mc=6.25e-4, subvoxel=True):
     """曲率(shape index)マッチング。voxel × 曲率列(線→面リフトの本丸)。
 
     scene/template を **curvedness で重み付けした shape-index 場**へ変換 → 既存 3D NCC で定位。
@@ -730,6 +748,12 @@ def sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device="cpu"):
     2D 閉輪郭を 1D Fourier 記述子で表す **線→面リフト**: 3D 閉曲面は SH で表し、帯域エネルギーは
     回転で m を帯域内に混ぜるだけ=**回転不変**(Kazhdan 2003)。全 shell を grid_sample で取り、
     固定 SH 基底との内積 → 帯域二乗和。retrieval/verification 用の大域シグネチャ。返り値 (nradii,L+1)。
+
+    honest 開示(2026-08-30 レビュー実測): 球面求積は一様 θ×φ グリッド和(Gauss-Legendre
+    でない)ため、値は**厳密な SH 帯域エネルギーの近似**(既定 32×64 で l=4 自己内積が
+    理論値の ~0.62 倍、解像度↑で 1 に収束)。match_sh_descriptor は L2 正規化+コサイン
+    類似度なので**同一 ntheta/nphi 同士の比較には影響しない**が、絶対値を物理量として
+    使う・異なる解像度設定間で比較するのは不可。
     """
     v = np.asarray(vol, np.float64)
     N = v.shape[0]
@@ -1576,8 +1600,12 @@ def sdf_to_occupancy(sdf, iso=0.0):
 def estimate_point_normals(points, k=16, viewpoint=None):
     """点群 (N,3) → 単位法線(局所 k 近傍共分散の最小固有ベクトル=PCA)。
 
-    FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きは viewpoint(既定=重心)基準で
-    一貫化(外向き)。返り値 normals (N,3)。points→(points+normals) の変換。
+    FPFH/SHOT/点-面 ICP が要る法線を raw 点群から生成。向きの規約は 2 面:
+    **viewpoint=None(既定)= 重心から外向き**(閉じた物体の全周点群向け)/
+    **viewpoint 指定 = 視点(センサ)向き**(Hoppe 1992 / PCL 規約。単一視点スキャンの
+    可視面はセンサ側を向くのが物理的に正しい。`pointcloud.estimate_normals` と同規約)。
+    旧版(〜2026-08-30)は viewpoint 指定でも「視点から遠ざける」符号で、単一視点
+    スキャンという本来用途で全点が裏返っていた。返り値 normals (N,3)。
     """
     from scipy.spatial import cKDTree
     P = np.asarray(points, np.float64)
@@ -1588,8 +1616,13 @@ def estimate_point_normals(points, k=16, viewpoint=None):
     cov = np.einsum("nki,nkj->nij", Q, Q) / Q.shape[1]
     _, v = np.linalg.eigh(cov)
     nrm = v[:, :, 0]                                        # 最小固有値の固有ベクトル
-    vp = P.mean(0) if viewpoint is None else np.asarray(viewpoint, np.float64)
-    flip = np.einsum("ni,ni->n", nrm, vp - P) > 0
+    if viewpoint is None:
+        # 重心基準=外向き: 重心の方を向いた法線を裏返す
+        flip = np.einsum("ni,ni->n", nrm, P.mean(0) - P) > 0
+    else:
+        # センサ基準=視点向き(Hoppe/PCL): 視点から離れる法線を裏返す
+        flip = np.einsum("ni,ni->n", nrm,
+                         np.asarray(viewpoint, np.float64) - P) < 0
     nrm[flip] *= -1
     return nrm / np.linalg.norm(nrm, axis=1, keepdims=True).clip(1e-12)
 
@@ -1850,12 +1883,14 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     """画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。
 
     円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。
+    θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない
+    周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。
     """
     img = np.asarray(image, np.float32); H, W = img.shape
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
-    th = torch.linspace(0, 2 * float(np.pi), ntheta, device=device)
+    th = torch.arange(ntheta, device=device, dtype=torch.float32) * (2 * float(np.pi) / ntheta)
     rr = torch.linspace(r_in, r_out, nr, device=device)
     ys = cy + rr[None, :] * torch.sin(th[:, None])
     xs = cx + rr[None, :] * torch.cos(th[:, None])
@@ -1865,12 +1900,14 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
 
 
 def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device="cpu"):
-    """voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。"""
+    """voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。
+
+    θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。"""
     v = np.asarray(vol, np.float32); D, H, W = v.shape
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
-    th = torch.linspace(0, 2 * float(np.pi), ntheta, device=device)
+    th = torch.arange(ntheta, device=device, dtype=torch.float32) * (2 * float(np.pi) / ntheta)
     rr = torch.linspace(r_in, r_out, nr, device=device)
     zz = torch.arange(D, device=device, dtype=torch.float32)
     Z = zz[:, None, None]; TH = th[None, :, None]; RR = rr[None, None, :]
@@ -1902,14 +1939,19 @@ def _zernike_basis(nr, nt, n_max):
     return np.stack(rows, 0), idx, R.ravel()
 
 
-def fit_zernike(disk_image, n_max=6, device="cpu"):
+def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72):
     """円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。
 
     直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/
     coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。
+
+    honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では
+    理論上直交のモード間に**最大 ~10% のクロストーク**が残る(例: 純 (2,0) defocus 入力で
+    係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が
+    要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。
     """
     img = np.asarray(disk_image, np.float32); H, W = img.shape
-    nr, nt = 48, 72
+    nr, nt = int(nr), int(nt)
     B, idx, rho = _zernike_basis(nr, nt, n_max)
     cy, cx = (H - 1) / 2, (W - 1) / 2; rad = min(H, W) / 2 - 1
     rr = np.linspace(0, 1, nr); th = np.linspace(0, 2 * np.pi, nt, endpoint=False)
@@ -1943,6 +1985,8 @@ def refract(d, n, eta1=1.0, eta2=1.5):
     """Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。
 
     透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。
+    契約は単一ベクトル。(N,3) バッチも通るが、**1 本でも TIR ならバッチ全体が None**
+    (per-ray マスクはしない)— バッチで使うなら呼び出し側で 1 本ずつ回すこと。
     """
     d = _uo(d); n = _uo(n); eta = eta1 / eta2
     cosi = -np.sum(d * n, -1, keepdims=True)

@@ -462,7 +462,12 @@ def _plateaus_center(v, a, b):
 
 # ── 第 7 バッチ: region 平行移動 / skeleton 分割 ──────────────────────────────── #
 def _move_region(v, a, b):
-    """region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。"""
+    """region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。
+
+    np.roll ゆえ**端は循環**(はみ出た region が反対側から現れる)。HALCON の
+    move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —
+    進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。
+    """
     reg = v > 0.5
     dy = int((a - 0.5) * v.shape[0])
     dx = int((b - 0.5) * v.shape[1])

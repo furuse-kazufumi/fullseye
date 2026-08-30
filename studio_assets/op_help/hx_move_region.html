@@ -5,6 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">move_region</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。</p>
+<p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の</p>
+<p>move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —</p>
+<p>進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

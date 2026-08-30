@@ -14,7 +14,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # match_curvature_3d — 3D `match_localize` op
 
 - **データ種**: `voxel × voxel` → `position`
-- **呼び出し**: `import match3d; match3d.match_curvature_3d(scene, template, device='cpu', mc=0.02, subvoxel=True)` (または `ops3d.get("match_curvature_3d")`)
+- **呼び出し**: `import match3d; match3d.match_curvature_3d(scene, template, device='cpu', mc=0.000625, subvoxel=True)` (または `ops3d.get("match_curvature_3d")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

@@ -273,3 +273,22 @@ def test_bit_slice_extracts_exact_periodic_bit_plane():
     # a higher plane is coarser: strictly fewer transitions (genuine periodicity)
     msb2 = F.f2_bit_slice(ramp, 2 / 7, 0.0)[0]
     assert int(np.abs(np.diff(msb2)).sum()) < 255
+
+
+def test_topographic_straight_ridge_crest_is_ridge_not_hillside():
+    """Regression (2026-08-30 review): the crest of a straight (translation-invariant)
+    ridge has exactly zero gradient with only one significant Hessian eigenvalue — a
+    degenerate critical line that fell through to the hillside default (0.55). It must
+    classify as ridge (0.75), and the mirrored valley as ravine (0.30)."""
+    import numpy as np
+
+    from backends_filters2 import f2_topographic
+    yy = np.arange(64)[:, None] * np.ones((1, 64))
+    ridge = np.exp(-((yy - 32.0) ** 2) / (2 * 5.0 ** 2))     # horizontal ridge band
+    code = f2_topographic(ridge, 0.3, 0.3)
+    crest = code[32, 8:-8]                                    # away from the borders
+    assert np.median(crest) == 0.75, f"crest classified {np.median(crest)}, want ridge 0.75"
+    valley = 1.0 - ridge                                      # same geometry, inverted
+    code_v = f2_topographic(valley, 0.3, 0.3)
+    trough = code_v[32, 8:-8]
+    assert np.median(trough) == 0.30, f"trough classified {np.median(trough)}, want ravine 0.30"

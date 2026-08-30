@@ -21,6 +21,10 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 region を平行移動(dy=a, dx=b を中心 0 のオフセットに)。
 
+    np.roll ゆえ**端は循環**(はみ出た region が反対側から現れる)。HALCON の
+    move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる —
+    進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。
+
 ## 詳しい使い方ガイド
 
 - [gallery2d_halcon_ext ファミリ ガイド](../guides/gallery2d_halcon_ext.md)

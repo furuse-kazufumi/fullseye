@@ -168,6 +168,12 @@ def f2_topographic(v, a, b):
     code[flat_g & (l1 > et) & (l2 < -et)] = 0.45        # saddle
     code[flat_g & (l1 < -et) & (l2 < -et)] = 1.0        # peak
     code[flat_g & (l1 > et) & (l2 > et)] = 0.14         # pit
+    # degenerate critical lines (2026-08-30 review): the crest of a straight ridge is
+    # translation-invariant, so gmag == 0 there with only ONE significant eigenvalue —
+    # Haralick classes it ridge/ravine, but no flat-case matched and it fell through
+    # to the hillside default.
+    code[flat_g & (np.abs(l1) <= et) & (l2 < -et)] = 0.75   # ridge crest
+    code[flat_g & (np.abs(l2) <= et) & (l1 > et)] = 0.30    # ravine trough
     return np.clip(code, 0.0, 1.0)
 
 

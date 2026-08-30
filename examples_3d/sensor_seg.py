@@ -124,7 +124,7 @@ PB = S.ravel()[:, None] * tB + T.ravel()[:, None] * uy
 corner = np.vstack([PA, PB])
 nrm = np.vstack([np.tile(nA, (len(PA), 1)), np.tile(nB, (len(PB), 1))])
 label_true = np.concatenate([np.zeros(len(PA), int), np.ones(len(PB), int)])
-ang = np.degrees(np.arccos(abs(nA @ nB)))
+ang = np.degrees(np.arccos(np.clip(abs(nA @ nB), 0.0, 1.0)))   # fp 誤差での NaN を封じる
 print(f"[region_growing] 稜線での法線角 {ang:.1f}° / 点数 {len(corner)}")
 
 labels = SEG.region_growing(corner, normals=nrm, angle_thresh_deg=15.0, k=18)

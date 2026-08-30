@@ -14,7 +14,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # fit_zernike — 3D `curvilinear` op
 
 - **データ種**: `image2d` → `descriptor`
-- **呼び出し**: `import match3d; match3d.fit_zernike(disk_image, n_max=6, device='cpu')` (または `ops3d.get("fit_zernike")`)
+- **呼び出し**: `import match3d; match3d.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72)` (または `ops3d.get("fit_zernike")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方

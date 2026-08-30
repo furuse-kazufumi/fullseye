@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_maps — 3D <code style="color:#22d3bf">feature</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">curvature</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.02)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;curvature_maps&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import match3d; match3d.curvature_maps(vol, device=&#x27;cpu&#x27;, mc=0.000625)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;curvature_maps&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: この op は GPU 経路あり(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。</p>

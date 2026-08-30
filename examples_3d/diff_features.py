@@ -99,17 +99,20 @@ assert s_sphere > 0.9, f"球の等値面を cap と判定できていない: {s_
 assert 0.4 < s_cyl < 0.6, f"円柱の等値面を ridge と判定できていない: {s_cyl:.3f}"
 assert s_sphere - s_cyl > 0.3, "shape index が球(cap)と円柱(ridge)を判別的に分離できていない"
 
-# curvedness は球半径に反比例(利得非依存の比で裏取り)
+# curvedness は球殻で厳密に 1/r(2026-08-30 の利得補正後は絶対値で裏取りできる —
+# それ以前は sobel3d 利得 32 が混入し 1/32 倍だったため比でしか確認できなかった)
 def shell_curv(a0, b0):
     m = (r > a0) & (r < b0) & (Msph > 0.5)
     return float(np.median(C_sph[m])), float(np.median(r[m]))
 c_in, r_in = shell_curv(3.0, 4.5)
 c_out, r_out = shell_curv(7.5, 9.0)
-ratio_err = abs((c_in / c_out) - (r_out / r_in)) / (r_out / r_in)
-print(f"  curvedness ∝ 1/r : 内殻/外殻比 {c_in / c_out:.3f} ≈ 半径比 {r_out / r_in:.3f} "
-      f"(相対誤差 {ratio_err:.3f})")
+abs_err_in = abs(c_in * r_in - 1.0)
+abs_err_out = abs(c_out * r_out - 1.0)
+print(f"  curvedness = 1/r : 内殻 c·r = {c_in * r_in:.3f} / 外殻 c·r = {c_out * r_out:.3f} "
+      f"(どちらも 1 が真値)")
 assert c_in > c_out, "小半径の殻で curvedness がより大きくなっていない(∝1/r に反する)"
-assert ratio_err < 0.1, f"curvedness の 1/r 依存が半径比と一致しない: rel {ratio_err:.3f}"
+assert abs_err_in < 0.1 and abs_err_out < 0.1, \
+    f"curvedness が 1/r を絶対値で復元していない: c·r 内={c_in * r_in:.3f} 外={c_out * r_out:.3f}"
 
 # ══════════════════════════════════════════════════════════════════════════
 # 3) edt_jfa — 球中心 1 点を種にした距離場が半径座標 r を厳密復元
@@ -148,6 +151,7 @@ assert bh_clean < 1e-6, "空隙の無いソリッドで black-hat が立って�
 assert th_max < 1e-6, "white top-hat が暗い空隙に反応してしまっている(black-hat の差別化が崩れる)"
 
 print(f"PASS: sobel3d/hessian3d が解析勾配・Hessian を機械精度({max(e_gz, e_gy, e_gx):.1e}/{e_hess:.1e})で復元。"
-      f"curvature_maps が球=cap({s_sphere:.2f}) と円柱=ridge({s_cyl:.2f}) を判別分離し curvedness∝1/r を確認。"
+      f"curvature_maps が球=cap({s_sphere:.2f}) と円柱=ridge({s_cyl:.2f}) を判別分離し "
+      f"curvedness=1/r を絶対値(c·r={c_in * r_in:.2f})で確認。"
       f"edt_jfa が半径 r を厳密復元(err {edt_err:.1e}, L∞ null と {cheb_gap:.0f} 差)。"
       f"morph_blackhat3d が内部空隙を厳密 mask 復元(top-hat/空隙無し null は不反応)")

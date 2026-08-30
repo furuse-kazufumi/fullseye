@@ -229,7 +229,7 @@ EXAMPLES = [
      "summary": "回転体(3枚羽根=m=3回対称)の検査を、中心を原点にした曲座標へ展開する4つのopで横断検証する事例。fit_zernikeは既知の波面係数(piston/tilt/defocus/astigmatism)で合成した円板を極座標直交基底(n,m)へ分解し、各係数を誤差5e-5で復元(非点収差=m=2角モードが立つ)。polar_unwrapは2D画像の円板を(θ×r)へ展開しθ軸FFTでm=3を検出(power@m=179で他ビンを圧倒)、回転対称画像は…"},
     {"id": "diff_features", "task": "features", "data": "synthetic",
      "name": "3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)",
-     "summary": "球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps(内部で s…"},
+     "summary": "球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps が球殻=cap(S≈+1)/円柱=ridge(S≈+0.5)を判別分離し、curvedness は 1/r を絶対値で復元(c·r≈1.0、2026-08-30 の利得補正後は真の 1/voxel 単位)…"},
     {"id": "feature_register", "task": "registration", "data": "synthetic",
      "name": "疎特徴による3D点群レジストレーション(Harris/ISS + SHOT/Spin/FPFH)",
      "summary": "初期推定なしで57度回転した2点群を合わせる「疎特徴レジストレーション」道具箱の6opを1本で通し、各段を実測の真値で検証する。harris3d_keypointsは立方体密度場の解析的な8頂点(唯一の3Dコーナー)を狙い、上位8検出が8頂点と1対1対応(平均1.73voxel、無作為null 9.16を判別的に下回る)。iss_keypointsは回転不変性を真値とし、同一点群を既知(R,t)で回した雲でも選ばれる163点のindex配列が完全一致。sh…"},
