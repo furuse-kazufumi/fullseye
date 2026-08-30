@@ -568,6 +568,27 @@ def em_skeleton(v, a, b):
     return x.astype(np.float64)
 
 
+def r2_endpoints_skeleton(v, a, b):
+    """骨格の端点(8 近傍にちょうど 1 個の骨格画素を持つ点)を抽出する。
+
+    HALCON の `junctions_skeleton` は EndPoints と JuncPoints の両方を返すが、
+    fullseye の `junctions_skeleton` は分岐点のみなので、端点側をこの op が担う。
+    入力が骨格でない場合は em_skeleton で細線化してから端点を取る。
+    孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。
+    """
+    m = _as_mask(v)
+    out = np.zeros(m.shape, np.float64)
+    if not m.any():
+        return out
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    interior = ndimage.binary_erosion(m, structure=cross, border_value=0)
+    sk = m if not interior.any() else (em_skeleton(v, a, b) > 0.5)
+    kernel = np.ones((3, 3), dtype=np.int64)
+    neigh = ndimage.convolve(sk.astype(np.int64), kernel, mode="constant") - sk
+    out[sk & (neigh <= 1)] = 1.0
+    return out
+
+
 # --------------------------------------------------------------------------- #
 # registry assembly
 # --------------------------------------------------------------------------- #
