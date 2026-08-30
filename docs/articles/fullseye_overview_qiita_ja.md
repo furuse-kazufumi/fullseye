@@ -149,8 +149,8 @@ Fullseye には前身があります。もともとは **`imgevolve`**、つま�
 
 ```mermaid
 flowchart TB
-    subgraph L0["土台：型付きオペレータ・ライブラリ（約1000 op）"]
-        OPS["2D op 731種 + 3D op 265種<br/>numpy 自前実装 / 型(sort)で接続"]
+    subgraph L0["土台：型付き op 約1000個"]
+        OPS["型付きオペレータ・ライブラリ<br/>2D op 731種 + 3D op 265種<br/>numpy 自前実装 / 型(sort)で接続"]
     end
     subgraph L1["使い方は2通り"]
         APPLY["① 既知の op を適用<br/>fullseye.apply / run_pipeline"]
