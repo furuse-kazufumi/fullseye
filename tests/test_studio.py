@@ -2731,7 +2731,7 @@ def test_region_feature_table_known_shapes():
 def test_region_feature_gray_values_and_auto_otsu():
     """Gray input auto-segments (Otsu) and the *_gray features come from
     image_gray.gray_features over each region's mask."""
-    img = _shapes_image() * 0.7 + 0.1                      # fg 0.8 on bg 0.1 — gray now
+    img = _shapes_image() * 0.8                            # fg 0.8 on bg 0 — gray, not binary
     objs, mode = studio.region_feature_objects(img)
     assert mode == "otsu" and len(objs) == 2
     headers, rows = studio.region_feature_table(objs, ["area", "mean_gray"], image=img)
