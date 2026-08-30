@@ -135,6 +135,12 @@ Deep-learning vision is powerful, but when it **can't explain why it decided on 
 
 To break it down a bit further, the reasoning goes in this order. Whether a robot is picking up a bean with chopsticks or walking on two legs, nothing starts until it knows "what is in front of me right now, and where." **Seeing (perception) has to come before moving (control)** — obvious as that sounds, there were many moments across the evis experiments where this hit home hard. However clever the motion planner, if the input point cloud is warped or the pose estimate is flipped, everything stacked on top loses its meaning. That's exactly why I decided to build the perception foundation **first, not later, and as an independent library**. A customer named evis raises the requirements, and a supplier named Fullseye answers them — with the same one person wearing both hats. That's the most accurate description of how this actually runs.
 
+Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye's eye (click to play the video):
+
+[![evis's chopstick-tip camera footage with Fullseye's segment_objects → draw_objects applied every frame to track the bean (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
+
+*↑ ▶ Chopstick-tip camera footage from the ChopMimic experiment (experimental material from the evis_chopstick project), with Fullseye's `segment_objects → draw_objects` applied every frame to track the bean. Left = third-person view (context, unprocessed); right = the bean bbox Fullseye detected. Detected in all 163 frames where the bean is visible (100% visible-frame detection rate; centroid error vs. ground truth: median 0.10px). No detections in the 78 frames where it's genuinely occluded by chopsticks or plate — nothing is fabricated.*
+
 ---
 
 ## The Big Picture — Fullseye Has Three Layers
