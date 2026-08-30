@@ -145,25 +145,33 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
         hud_extra = "bean not in view"
         vis_both = min(fr.get("eyeL_n", 0), fr.get("eyeR_n", 0)) >= 10
         if fr.get("true_Z_mm") and vis_both:
-            cs = []
+            cands = []
             for img in (L, R):
                 rgbf = img / 255.0
                 gch = np.clip(rgbf[..., 1] - np.maximum(rgbf[..., 0], rgbf[..., 2]),
                               0, 1)
-                cand = [o for o in fs.segment_objects(gch, threshold=0.08, min_area=3)
-                        if o["area"] <= 2500]
-                cand.sort(key=lambda o: -o["circularity"])
-                cs.append(cand[0]["centroid"] if cand else None)
-            if cs[0] and cs[1]:
-                d_feat = cs[0][1] - cs[1][1]        # centroid col difference (px)
-                if d_feat > 0.5:
-                    est = f_half * baseline_mm / d_feat
-                    true = fr["true_Z_mm"]
-                    err = abs(est - true) / true * 100.0
-                    errs.append(err)
-                    n_valid += 1
-                    hud_extra = (f"bean {est:5.0f}mm  truth {true:5.0f}mm  "
-                                 f"err {err:4.1f}%")
+                cands.append([o for o in
+                              fs.segment_objects(gch, threshold=0.08, min_area=3)
+                              if o["area"] <= 2500][:8])
+            # epipolar pairing: same row (+-2 px), plausible disparity, similar
+            # size; among survivors take the largest matched blob (the bean).
+            pairs = []
+            for lo in cands[0]:
+                for ro in cands[1]:
+                    d_feat = lo["centroid"][1] - ro["centroid"][1]
+                    ratio = lo["area"] / ro["area"]
+                    if (abs(lo["centroid"][0] - ro["centroid"][0]) < 2.0
+                            and 3.0 < d_feat < 40.0 and 0.5 <= ratio <= 2.0):
+                        pairs.append((min(lo["area"], ro["area"]), d_feat))
+            if pairs:
+                d_feat = max(pairs)[1]
+                est = f_half * baseline_mm / d_feat
+                true = fr["true_Z_mm"]
+                err = abs(est - true) / true * 100.0
+                errs.append(err)
+                n_valid += 1
+                hud_extra = (f"bean {est:5.0f}mm  truth {true:5.0f}mm  "
+                             f"err {err:4.1f}%")
         hud = _hud(L.shape[1] * 3,
                    "fullseye: disparity_sgm > speckle_filter > fill_disparity > "
                    "depth_from_disparity + segment_objects(x2) "
