@@ -2504,6 +2504,12 @@ def build_window(model=None):
     act_holdout = _act("Validate on holdout…", "Ctrl+H",
                        "Run the current pipeline over a folder of validation images and report results")
     act_palette = _act("Command palette…", "Ctrl+P", "Run any operator or action by name")
+    act_featins = _act("Feature inspection…", "Ctrl+F5",
+                       "Per-region / per-cluster feature table with two-way highlight "
+                       "(rows ↔ image / 3-D view)")
+    act_viewer3d = _act("3D viewer…", "Ctrl+4",
+                        "Open the interactive 3-D viewer (point cloud / mesh file, "
+                        "orbit / zoom / pan)")
     act_shortcuts = _act("Keyboard shortcuts", "F1", "Show all keyboard shortcuts")
     act_op_help = _act("Operator reference…", "Shift+F1", "Browse every operator with its sorts + HALCON alias")
     act_samples = _act("Samples & code…", None, "Load a sample pipeline and see its code")
