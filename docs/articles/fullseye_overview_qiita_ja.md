@@ -294,7 +294,7 @@ Fullseye の op 体系は、突き詰めると **HALCON という産業用マシ
 
 [![表面欠陥検査 ―― 背景差分+blob 解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
 
-*↑ **表面欠陥検査** ―― 合成した金属面の傷 3・打痕 2・異物 1 を、median フィルタで地合いを推定 → 差分 → blob 解析で 6/6 件検出し、面積つきで枠表示。使用 op: `median_image`, `dilation_circle`, `segment_objects`。*
+*↑ **表面欠陥検査** ―― 合成した金属面の傷 3・打痕 2・異物 1 を、median フィルタで地合いを推定 → 差分ヒートマップ → blob 解析で 6/6 件検出。さらに真値を使わない特徴量分類（離心率・色み）で傷/打痕/異物の**種別まで全件一致**させ、種別ごとに色分け枠+拡大インセットで表示しています。使用 op: `median_image`, `dilation_circle`, `segment_objects`。*
 
 [![サブピクセル寸法計測 ―― 1D measuring キャリパー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology.png)
 
