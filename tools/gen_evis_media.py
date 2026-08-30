@@ -266,17 +266,22 @@ def gen_stereo(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
         _stills(rep, "evis_stereo_fullseye")
 
 
-def gen_track(meta: dict, fps: int = 20, step: int = 1):
-    """third-person context | tip camera with fs.segment_objects bean tracking."""
+def gen_track(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
+    """third-person context | tip camera with fs.segment_objects bean tracking.
+
+    Detection accounting is paired PER FRAME (2026-08-30 review): the published
+    rate is detections-on-visible-frames / visible-frames; a detection on a
+    frame where the meta says the bean is NOT visible is counted separately as
+    a false positive, never folded into the numerator."""
     frames = meta["frames"]
     out = MEDIA / "evis_bean_track_fullseye.mp4"
     wr = _writer(out, fps)
-    n_det, px_errs = 0, []
+    n_vis, n_det_vis, n_fp, px_errs = 0, 0, 0, []
     rep = None
     for fr in frames[::step]:
         k = fr["k"]
-        tp = iio.imread(FRAMES / f"tp_{k:04d}.png")[..., :3] / 255.0
-        tip = iio.imread(FRAMES / f"tip_{k:04d}.png")[..., :3] / 255.0
+        tp = iio.imread(frames_dir / f"tp_{k:04d}.png")[..., :3] / 255.0
+        tip = iio.imread(frames_dir / f"tip_{k:04d}.png")[..., :3] / 255.0
         green = np.clip(tip[..., 1] - np.maximum(tip[..., 0], tip[..., 2]), 0, 1)
         objs = fs.segment_objects(green, threshold=0.08, min_area=4)
         # the bean is the most circular candidate of plausible size
@@ -285,23 +290,30 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
         bean = objs[:1]
         vis = fs.draw_objects(tip, bean, box_color=(1.0, 0.25, 0.25))
         vis = _u8(vis)
+        visible = fr.get("tip_n", 0) >= 10          # meta ground truth: bean in tip cam
+        if visible:
+            n_vis += 1
         hud_extra = "bean lost"
         if bean:
             cy, cx = bean[0]["centroid"]
             # no trail overlay: the tip camera rides the moving chopsticks, so
             # an image-space trail would mix camera motion into the bean path.
-            n_det += 1
+            if visible:
+                n_det_vis += 1
+            else:
+                n_fp += 1                            # detection where truth says not visible
             if fr.get("tip_c"):
                 # meta tip_c is (x, y) col-major from the original capture script
                 gx, gy = fr["tip_c"][0], fr["tip_c"][1]
                 px_errs.append(float(np.hypot(cx - gx, cy - gy)))
             hud_extra = f"bean ({cx:.0f},{cy:.0f})"
-        hud = _hud(480, "fullseye segment_objects>draw_objects  "
-                        f"t={fr['t']:.2f}s  {hud_extra}")
         row = np.concatenate([
             _label(_u8(tp), "third person (context)"),
             _label(vis, "fullseye bean tracking"),
         ], axis=1)
+        # HUD width follows the actual row width (no hardcoded resolution)
+        hud = _hud(row.shape[1], "fullseye segment_objects>draw_objects  "
+                                 f"t={fr['t']:.2f}s  {hud_extra}")
         frame = np.concatenate([row, hud], axis=0)
         # x1.5 upscale for readability
         h, w = frame.shape[:2]
@@ -313,12 +325,27 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
     wr.close()
     print(f"track -> {out}  ({out.stat().st_size/1e6:.1f} MB)")
     n = len(frames[::step])
-    n_vis = sum(1 for f in frames[::step] if f.get("tip_n", 0) >= 10)
-    print(f"  VALIDATION: bean detected {n_det}/{n} frames "
-          f"({100*n_det/n:.1f}%); visible in tip cam on {n_vis} frames "
-          f"-> {100*n_det/max(n_vis,1):.1f}% of visible;  centroid err vs truth: "
-          f"median {np.median(px_errs):.2f}px  max {np.max(px_errs):.2f}px"
-          if px_errs else "  VALIDATION: no ground-truth comparisons")
+    if px_errs:
+        print(f"  VALIDATION: bean detected on {n_det_vis}/{n_vis} visible frames "
+              f"({100*n_det_vis/max(n_vis,1):.1f}%); false positives on "
+              f"{n - n_vis} non-visible frames: {n_fp};  centroid err vs truth: "
+              f"median {np.median(px_errs):.2f}px  max {np.max(px_errs):.2f}px")
+    else:
+        print("  VALIDATION: no ground-truth comparisons")
+    # --- caption-claim gates (raise = the video must not ship if the claims
+    #     no longer hold: 100% detection on visible frames, median err <=1px) --
+    if n_vis == 0:
+        raise SystemExit("track gate FAILED: meta reports zero bean-visible frames")
+    if n_det_vis != n_vis:
+        raise SystemExit(f"track gate FAILED: detected {n_det_vis}/{n_vis} visible frames "
+                         "(caption claims 100%)")
+    if not px_errs:
+        raise SystemExit("track gate FAILED: no centroid ground-truth comparisons")
+    if float(np.median(px_errs)) > 1.0:
+        raise SystemExit(f"track gate FAILED: median centroid err "
+                         f"{float(np.median(px_errs)):.2f}px > 1px")
+    print(f"  GATE PASS: {n_det_vis}/{n_vis} visible-frame detection (100%), "
+          f"median err <=1px, false positives reported separately ({n_fp})")
     if rep is not None:
         _stills(rep, "evis_bean_track_fullseye")
 
