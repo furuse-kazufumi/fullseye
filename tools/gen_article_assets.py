@@ -834,9 +834,14 @@ def build_halcon_coverage_chart(log=print) -> dict:
         m = re.search(r"maps to (\d+) / (\d+) HALCON operators \(([\d.]+)%\)", md_text)
         if m:
             doc_cov, doc_real, doc_pct = int(m.group(1)), int(m.group(2)), float(m.group(3))
-            assert (doc_cov, doc_real) == (n_cov, n_real), (
-                f"live measurement {n_cov}/{n_real} disagrees with docs/HALCON_COVERAGE.md "
-                f"{doc_cov}/{doc_real} — the doc is stale, regenerate it with halcon_coverage.py")
+            if (doc_cov, doc_real) != (n_cov, n_real):
+                raise AssertionError(
+                    f"live measurement {n_cov}/{n_real} disagrees with docs/HALCON_COVERAGE.md "
+                    f"{doc_cov}/{doc_real} — the doc is stale, regenerate it with halcon_coverage.py")
+            if abs(doc_pct - pct) > 0.1:
+                raise AssertionError(
+                    f"live coverage pct {pct:.2f}% disagrees with docs/HALCON_COVERAGE.md "
+                    f"{doc_pct}% (>0.1 tolerance) — the doc is stale, regenerate it")
             log(f"cross-check OK vs docs/HALCON_COVERAGE.md: {doc_cov}/{doc_real} ({doc_pct}%)")
 
     items = sorted(a["per_chapter"].items(), key=lambda kv: (kv[1][0] / kv[1][1] if kv[1][1] else 0.0),
