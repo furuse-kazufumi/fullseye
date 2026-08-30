@@ -30,6 +30,15 @@ Generate demo PNG assets for the "Fullseye retrospective" Qiita article.
                             -- event_camera の DVS(イベントカメラ)シミュレーションを
                                フレーム単位で可視化した短尺動画(パン中に ON/OFF イベントが
                                流れる様子。event_camera._render_pan/_events と同一モデル)
+  op_taxonomy.png           -- ops.py(2D 731 op/46カテゴリ)+ ops3d.py(3D 265 op/55カテゴリ)
+                               の実レジストリから集計した squarified treemap(左右で 2D/3D)
+  halcon_coverage_chart.png -- HALCON operator カバレッジの章別横棒(982/2313=42.5%、
+                               halcon_coverage.py をその場で再実行して実測、
+                               docs/HALCON_COVERAGE.md と cross-check assert 済み)
+  op_sampler_2d.png         -- coins サンプル画像へ 46 カテゴリから機械的に選んだ 24
+                               カテゴリ代表 op を実適用した 4x6 タイルサンプラー
+  op_sampler_3d.png         -- Itokawa 実点群へ 3D op(法線/shape index/ダウンサンプル/
+                               OBB/凸包)を実適用した 2x3 タイルサンプラー(余力枠)
 
 Run:  py -3.11 tools/gen_article_assets.py
 """
