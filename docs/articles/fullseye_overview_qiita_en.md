@@ -4,38 +4,39 @@
 
 ![A real point cloud of asteroid Itokawa, spun on a turntable by a custom renderer (all hand-written in numpy)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/showcase_turntable_itokawa.gif)
 
-This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape model built from Hayabusa spacecraft observations, published in the JAXA DARTS archive — spinning inside the custom 3D renderer that is the star of this article, **Fullseye**. Loading the point cloud, rendering it, the rock material, the shadows — **all of it is hand-written numpy, no external rendering library**. This is the story of how I built that "eye."
+This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape model built from Hayabusa spacecraft observations, published in the JAXA DARTS archive — spinning inside the custom 3D renderer of this article's protagonist, **Fullseye**. Loading the point cloud, rendering it, the rock material, the shadows — **all of it is hand-written numpy**. This is the story of how I've been building that "eye."
 
 ## TL;DR
 
-- **Fullseye** (a pun on "Bullseye" — hitting dead center on a target) is a self-built library of classical image-processing and geometric-vision algorithms: **roughly 1,000 operators, all implemented in numpy from scratch, sitting behind one typed interface**. The goal is to make "explainable vision" — vision whose internals you can actually account for — something you can carry around for **Physical AI** (AI that acts in the physical world with a body, i.e. robots).
-- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a matching implementation for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from HALCON's official reference.
-- On top of the library sit an **evolutionary-design mode** that "designs" algorithms through evolutionary computation, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE called Fullseye Studio**.
-- **The recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain-language request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with results shown right in the Studio window** — that's the workflow this is designed for.
-- The undercurrent of this article is **making "honest disclosure" a mechanism**, not a slogan — not cherry-picking good numbers, not hiding failures, spelling out limitations plainly. I include cases where the quality gates actually caught bugs, including **six that I fixed in the course of writing this very article**.
-- Tests currently number **6,238**. All heavy dependencies (OpenCV, torch, etc.) are optional — **the core runs on nothing but numpy + scipy**.
+- **Fullseye** (a pun on "Bullseye" — the dead center of a target) is a self-built library of classical image-processing and geometric-vision algorithms: **roughly 1,000 operators, implemented from scratch in numpy, sitting behind one typed interface**. The goal is to make "explainable vision" — vision whose internals you can actually account for — something you can carry around as the eyes of **Physical AI** (AI that acts in the physical world with a body, i.e. robots).
+- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
+- On top of the library sit an **evolutionary mode that "designs" algorithms through evolutionary computation**, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE, Fullseye Studio**.
+- **The single most recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain conversational request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with the results appearing on Studio's screen** — that's the foundation this is designed to be.
+- The undercurrent of this article is **making "honest disclosure" a mechanism** — never showing only the good numbers, never erasing failures, always stating the limitations. I include cases where the quality gates actually caught bugs, **including six I fixed just now**, exactly as they happened.
+- Tests currently number **6,238**. Every deep dependency (OpenCV, torch, etc.) is optional — **the core runs on nothing but numpy + scipy**.
 
-> This article isn't a victory lap. It's a record of **why I built it this way and where it's still weak**, at a level of detail you could reproduce yourself. Every number here is measured; every limitation is stated plainly.
+> This article isn't a victory lap over something finished. It's a record of **why I shaped it this way and where it's still weak**, at a granularity you could reproduce yourself. Every number is measured; no limitation is hidden.
 
-First, one image. This is output from Fullseye's own 3D renderer (again, hand-written numpy) — an SDF shape baked with ambient occlusion, soft shadows, and ACES tone mapping:
+First, one image. This is output from Fullseye's 3D renderer (hand-written numpy, of course) — an SDF-built shape baked with ambient occlusion, soft shadows, and ACES tone mapping:
 
+<!-- Post-publication check: the raw URL must return HTTP 200. Images are lightweight thumbnails that click through to full size (to keep the article's memory footprint down) -->
 [![Output from Fullseye's custom renderer (SDF smooth union + AO + soft shadows + ACES) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/render_beauty_hero_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/render_beauty_hero.png)
 
 ---
 
 ## What This Article Is (in Three Lines)
 
-- This is an overview of my personal image-processing library **Fullseye** — a single article covering everything from the design philosophy to how the internals are built.
+- This is an overview of my personal image-processing library **Fullseye** — a compilation covering everything **from the design philosophy to how the internals are built**.
 - It's aimed at anyone working in **machine vision, robot perception, or image processing**, or anyone curious about **how to design a library so it stays maintainable for the long haul**.
-- Individual techniques (3D Gaussian splatting, evolutionary computation, musculoskeletal control, etc.) are covered in dedicated articles elsewhere. This one is the **map**.
+- Individual techniques (3D Gaussian splatting, evolutionary computation, musculoskeletal control, etc.) are covered in depth in separate articles. This one is the **map**.
 
-Expect roughly 20 minutes of reading. It's long, so feel free to jump to whichever section interests you from the table of contents.
+Expect roughly 20 minutes of reading. It's long, so feel free to jump from the table of contents to whichever layer interests you.
 
 ---
 
 ## Getting Started (Installation, Up Front)
 
-For anyone who wants to try things hands-on while reading, installation first. It's available from the public GitHub repository and from PyPI. Since **the core runs on nothing but numpy + scipy**, I'd recommend installing it bare first and adding extras only when you need them.
+For anyone who wants to try things hands-on while reading, installation first. It's available from the public GitHub repository and from PyPI. Since **the core runs on nothing but numpy + scipy**, I'd recommend installing it bare first and adding extras (the optional dependencies) only when you need them.
 
 ```bash
 # ① Get it running (core needs only numpy + scipy)
@@ -49,16 +50,18 @@ pip install "fullseye[all]"        # OpenCV / torch / GUI / video, everything
 fullseye-studio
 ```
 
-And **the way I'd most recommend using it is as a RAG (retrieval-augmented generation) knowledge base for an AI coding assistant like Claude Code**. A bundled setup script installs the skill in one command:
+Let me be a bit more concrete about what command ① actually does. `pip install fullseye` pulls in **only numpy and scipy** as dependencies (no OpenCV, no torch, no PySide6). Even in this state, `import fullseye` works and **more than 500 ops are immediately usable**. As the chapters "An Honest Word on Performance (GPU)" and "The Night Before Release" will describe, this claim — "the bare install runs a working minimum" — is itself something **CI executes and verifies on every run**; it isn't a verbal promise. The extras in ② are positioned as an **add-on choice** you reach for when you need them.
+
+And **the single most recommended way to use it is as a RAG (retrieval-augmented generation) knowledge base for an AI coding assistant such as Claude Code**. A bundled setup script installs the skill in one command:
 
 ```bash
 fullseye-rag              # register the op catalog as a Claude Code skill
 fullseye-rag --uninstall  # remove it cleanly
 ```
 
-With that in place, you can just say "detect the scratches in this image" to the AI, and it will assemble and run an appropriate pipeline out of ~1,000 ops (more on what it can and can't do in the RAG section below). If you haven't tried Claude Code yet, starting from [this referral link](https://claude.ai/referral/0sqPw8E_lw) helps fund my development budget a little — full disclosure, it's a referral link.
+With that in place, you can just say "detect the scratches in this image" to the AI, and it will assemble and run an appropriate pipeline out of ~1,000 ops (more on what it can and can't do in the RAG section below). If you haven't tried Claude Code yet, starting from [this referral link](https://claude.ai/referral/0sqPw8E_lw) helps fund the author's development budget (i.e. wallet) a little.
 
-If you'd rather install from source (useful if you want the full corpus of ~1,000 op-docs for your RAG setup):
+If you'd rather install from source (for anyone who wants the full corpus of ~1,000 op docs for RAG):
 
 ```bash
 git clone https://github.com/furuse-kazufumi/fullseye && cd fullseye
@@ -66,7 +69,9 @@ pip install -e ".[all]"
 py -3.11 tools/update_fullseye.py --check   # use the safe updater for subsequent updates
 ```
 
-The updater is built to **never trash your environment** — it refuses to run if there are uncommitted changes, only ever does `--ff-only` merges, backs up the RAG skill before updating, and never touches your Studio settings. Full usage details live in the repo's `README.md`, `docs/AI_RAG_GUIDE.md` (RAG setup), and `docs/STUDIO_GUIDE.md` (IDE guide).
+The updater is built on a **never-trash-your-environment** policy (it refuses to run if there are uncommitted changes, only ever does `--ff-only`, backs up the RAG skill before updating, and never touches your Studio settings). Full usage details live in the repo's `README.md`, `docs/AI_RAG_GUIDE.md` (RAG setup), and `docs/STUDIO_GUIDE.md` (IDE guide).
+
+The four constraints just listed (refusing uncommitted changes, fast-forward only, back up before updating, hands off Studio settings) are each unglamorous tricks on their own. I still spelled them out side by side because of one self-awareness: **an update script whose job is to grow an AI's foundation can itself become the offender that destroys a human's work.** If the RAG setup script or the Studio setup — tools that are supposed to help development — carelessly wiped unsaved changes or overwrote hand-tuned settings, the whole point would be defeated. The fail-closed designs introduced later in this article are, at bottom, the same idea repeated over and over.
 
 **A quick link set for anyone who wants the big picture first** (all readable directly on GitHub):
 
@@ -75,20 +80,20 @@ The updater is built to **never trash your environment** — it refuses to run i
 | The full **help index** for ~1,000 ops (2D / 3D) | [docs/ops/INDEX.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/INDEX.md) |
 | A **one-page catalog** of every op, with type contracts | [docs/OP_CATALOG.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/OP_CATALOG.md) |
 | A **results gallery** (full-size versions of this article's figures, with commentary) | [docs/GALLERY.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md) |
-| A **catalog of where to get sample data**, with real download URLs and licenses | [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md) |
+| A **catalog of where to get sample data** (real download URLs and licenses) | [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md) |
 
 ---
 
 ## Four Words First (A Minimal Glossary)
 
-Just four terms up front. **Every other term gets broken down inline the first time it appears**, so there's nothing else to memorize.
+Just the four most frequent terms up front. **Every other term gets broken down inline the first time it appears**, so there's nothing else to memorize.
 
 | Term | In short |
 |---|---|
-| **Fullseye** | The star of this article. A self-built library of image-processing and geometric-vision operators. The name is **a pun on Bullseye** — hitting dead center on a target (details in "The Name," below). The development repo is called `imgevolve`. |
-| **Operator (op)** | "One image-processing function." Gaussian blur, Otsu thresholding, a Sobel edge filter — that kind of thing. Fullseye has roughly 1,000 of them. |
-| **HALCON** | The industrial machine-vision standard from Germany's MVTec. A giant with **2,313 operators**. I use it as the **yardstick** for how much of that ground Fullseye covers with its own implementations. |
-| **Studio (Fullseye Studio)** | The IDE (integrated development environment) for **looking at, trying out, and actually working with** Fullseye. The equivalent of HDevelop in industrial vision. |
+| **Fullseye** | The star of this article. A self-built operator library for image processing and geometric vision. The name is **a pun on Bullseye — the dead center of a target in darts or archery** (details in "The Name," below). The development repo is called `imgevolve`. |
+| **Operator (op)** | "One image-processing function." Examples: Gaussian blur, Otsu thresholding, Sobel edges. Fullseye has roughly 1,000 of them. |
+| **HALCON** | The industrial machine-vision standard from Germany's MVTec. A giant with **2,313 operators**. Fullseye uses it as the **yardstick** for measuring "how much of this ground have I covered with my own implementations?" |
+| **Studio (Fullseye Studio)** | The IDE (integrated development environment) for **looking at, trying out, and doing real work with** Fullseye. The equivalent of HDevelop in industrial vision. |
 
 ---
 
@@ -98,11 +103,13 @@ The name's origin, first. **Fullseye** is a pun on **Bullseye** — the dead cen
 
 There's a triple meaning packed in:
 
-- **Full (everything) + eye**: "**an eye that can see everything**." The goal itself — holding every kind of image processing and geometric vision as a "skill," all of it, in one place.
-- **The precision of hitting Bullseye's dead center**. The implication that this should be an eye that's **explainable and doesn't miss** — the standard demanded of industrial inspection and robot perception.
-- And a personal echo: my own surname, **Furuse**, plus **eye** — "Furuse's eye." As a solo project, I've woven myself into the name.
+- **Full (everything) + eye**: "**an eye that can see everything**." The goal itself — holding every kind of image processing and geometric vision as a "skill," all of it.
+- **The precision of hitting Bullseye's dead center**. The implication that this should be an eye that's **explainable and doesn't miss** — the standard demanded by industrial inspection and robot perception.
+- And the echo of my own surname, **Furuse**, joined to **eye** — "Furuse's eye." As a solo project, I've woven myself into the name.
 
-From a name that described the *means* — "designing by evolution" (`imgevolve`) — to a name that describes the *goal* — "an eye that hits its target" (`Fullseye`). The change in name itself mirrors the project's change in direction.
+From a name that described the *means* — "designing by evolution" (`imgevolve`) — to a name that describes the *goal* — "an eye that hits its target" (Fullseye). The change in name itself mirrors the project's change in direction.
+
+Keeping the development repo named `imgevolve` is, in fact, deliberate. Changing the name doesn't mean I want to erase the accumulation that led here — the assets and lessons from the era when evolutionary computation searched over ops. The public product name switches to Fullseye, while the internal name keeps a trace of the original idea — I think of this, too, as a kind of provenance record.
 
 ---
 
@@ -116,15 +123,17 @@ Then, in August 2026, I redefined Fullseye's mission as follows:
 
 > **Hold every kind of image-processing and vision algorithm as a "skill," ready to use, in one comprehensive library. Build an explainable, robot-purposed "private HALCON."**
 
-That redefinition was a big call for me. I'd been stacking general-purpose algorithms (sorting, compression, and the like) into the library, and I cut that — "that's not the right lane for this" — and decided to **concentrate entirely on image and geometric vision**. Deciding **what not to build** turned out to be the single most effective decision.
+That redefinition was a big call for me. I'd been stacking up general-purpose algorithms (sorting, compression, and the like), and I cut that — "that's the wrong lane" — and decided to **concentrate entirely on image and geometric vision**. Deciding **what not to build** turned out to be the single most effective decision.
 
-Behind this is **evis**, the musculoskeletal humanoid (a 700-muscle model, among others) I've been building in a separate series of articles — Fullseye's **first customer**. Getting a robot to pick up a bean with chopsticks, or to walk, requires **an eye that sees the world correctly**.
+Behind this is **evis**, the musculoskeletal humanoid (a 700-muscle model, among others) I've been building in a separate series of articles — Fullseye's **customer number one**. Getting a robot to pick up a bean with chopsticks, or to walk, requires **an eye that sees the world correctly**.
 
 ![A procedurally generated hand skeleton (8 carpal bones, 5 metacarpals, 14 phalanges, capsule SDFs) rendered by Fullseye's custom renderer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/hand_hero.png)
 
-*↑ That "hand," seen from Fullseye's side. A procedurally generated hand skeleton (8 carpal bones, 5 metacarpals, 14 phalanges), rendered with the same custom renderer.*
+*↑ That "hand," seen from Fullseye's side. A procedurally generated hand skeleton (8 carpal bones, 5 metacarpals, 14 phalanges), rendered — again — with the custom renderer.*
 
-Deep-learning vision is powerful, but when it **can't explain why it decided on a given pose**, it's hard to trust it with decisions that affect a body's safety. That's why I want **explainable classical vision, held as skills, entirely under my own hands** — that's the core of Fullseye.
+Deep-learning vision is powerful, but when it **can't explain why it decided on a given pose**, it's hard to trust it with decisions that affect a body's safety. That's why I want **explainable classical vision, held entirely in hand as a set of skills** — that's the core of Fullseye.
+
+To break it down a bit further, the reasoning goes in this order. Whether a robot is picking up a bean with chopsticks or walking on two legs, nothing starts until it knows "what is in front of me right now, and where." **Seeing (perception) has to come before moving (control)** — obvious as that sounds, there were many moments across the evis experiments where this hit home hard. However clever the motion planner, if the input point cloud is warped or the pose estimate is flipped, everything stacked on top loses its meaning. That's exactly why I decided to build the perception foundation **first, not later, and as an independent library**. A customer named evis raises the requirements, and a supplier named Fullseye answers them — with the same one person wearing both hats. That's the most accurate description of how this actually runs.
 
 ---
 
@@ -133,11 +142,11 @@ Deep-learning vision is powerful, but when it **can't explain why it decided on 
 ```mermaid
 flowchart TB
     subgraph L0["Foundation: typed operator library (~1,000 ops)"]
-        OPS["731 2D ops + 265 3D ops<br/>Custom numpy implementations, wired together by type (sort)"]
+        OPS["731 2D ops + 265 3D ops<br/>hand-written numpy / wired together by type (sort)"]
     end
     subgraph L1["Two ways to use it"]
         APPLY["① Apply a known op<br/>fullseye.apply / run_pipeline"]
-        EVO["② Design a pipeline by evolution<br/>evolve / robust (evaluated honestly, held-out)"]
+        EVO["② Design a pipeline by evolution<br/>evolve / robust (evaluated honestly on held-out data)"]
     end
     subgraph L2["Application: Physical AI perception stack"]
         PERC["stereo → depth → point cloud →<br/>6-DoF pose → muscle actuation (evis)"]
@@ -150,10 +159,12 @@ flowchart TB
     PERC -.visualize.-> STUDIO
 ```
 
-- **Layer 1: the typed operator library** — the foundation, roughly 1,000 ops connected by **type** (I call these "sorts" — the kind of data: image, region, feature, contour, volume).
+- **Layer 1: the typed operator library** — the foundation, roughly 1,000 ops connected by **type** (I call these "sorts" — the kind of data: `image / region / feature / contour / volume`).
 - **Layer 2: two ways to use it** — most of the time you just **apply a known op** (`apply` / `run_pipeline`). Only when a single op can't solve the problem do you **design a pipeline via evolutionary computation** (`evolve` / `robust`).
 - **Layer 3: the Physical AI perception stack** — the components that turn frames into geometry and objects. The toolkit a robot needs to **see, measure, and act**.
-- And running across all of it, **Fullseye Studio** — an IDE, equivalent to HDevelop in industrial vision, for grasping, testing, and actually using the functionality.
+- And running across all of it, **Fullseye Studio** — an IDE, equivalent to HDevelop in industrial vision, for grasping, testing, and using the functionality in real work.
+
+One tip for reading this diagram. Read the arrows not as "the direction data flows" but as **"the direction types are guaranteed."** Every Layer-1 op, called through `apply`, returns a typed result — which is why the evolutionary computation in Layer 2 can search over "arrangements of ops whose types connect" without caring what's inside each part. For the same reason, the Physical AI perception stack in Layer 3 can call Layer-1 ops **directly as components**. If Layer 1 offered no type guarantee, Layers 2 and 3 would both be stuck in a state of "you don't know if it actually works until you try it, every time." The reason a library at the ~1,000-op scale keeps growing without collapsing is that **every one of these arrows is backed by a type contract** — hold that thought, and the layer-by-layer explanations below should click together.
 
 Let's dig into each layer.
 
@@ -163,9 +174,9 @@ Let's dig into each layer.
 
 ### What Is an Op? (In Three Passes)
 
-1. **One-liner**: an op is "a single function that takes an image in and gets back an image (or a region, or a number)."
-2. **A bit more**: in Fullseye, ops carry a **type (sort)**. "Image → region" (e.g. thresholding), "region → number" (e.g. counting objects) — **the input and output types are fixed**. That means you can **chain ops together like beads on a string** as long as the types line up.
-3. **Precisely**: every op can be called through one unified signature, `apply(image, name, a=0.5, b=0.5)`. `a` and `b` are two dials in `[0, 1]`. Feature ops return a Python float, contour ops return a dict — a **type contract that every op honors**.
+1. **One-liner**: an op is "a single function — image in, image (or region, or number) out."
+2. **A bit more**: in Fullseye, ops carry a **type (sort)**. "Image → region" (e.g. thresholding), "region → number" (e.g. counting objects) — **the input and output types are fixed**. That means ops whose types line up can be **chained like beads on a string**.
+3. **Precisely**: every op can be called through one unified signature, `apply(image, name, a=0.5, b=0.5)`. `a` and `b` are two dials in `[0,1]`. Feature ops return a Python float, contour ops return a dict — a **type contract that every op honors**.
 
 ```python
 import fullseye, numpy as np
@@ -179,11 +190,74 @@ n     = fullseye.apply(seg,   "count_obj")       # region -> feature (object cou
 out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 ```
 
-Actual output is worth more than description. Here are some of the usual suspects — edge detection, segmentation, contour measurement — laid out in one montage (all real output from the `apply` / `run_pipeline` calls above; the input is the `coins` sample image bundled with scikit-image):
+A word on the two dials `a, b` that appeared in the code. Why **exactly two knobs, `a, b ∈ [0,1]`, shared by every op**, instead of free-form parameter names per op? The reason is simple: so that **when evolutionary computation (Layer 2) searches over pipelines, it can search mechanically without knowing what any parameter means**. `gaussian`'s `a` is "blur strength"; `otsu`'s `a` might be a meaningless dummy that gets ignored, or repurposed as a threshold adjustment — the meaning differs per op, but **from the searcher's point of view, every op is just "two knobs between 0 and 1."** Standardizing the parameter count and range means the evolution code never has to care about any op's internals. This, too, is a design decision on the same line as Layer 1's "connect by type" philosophy.
+
+Actual output is worth more than description. Here are the usual suspects — edge detection, segmentation, contour measurement — laid out in one montage (all real output from the `apply` / `run_pipeline` calls above; the input is the `coins` sample image bundled with scikit-image):
 
 [![Real output montage from 2D classical vision ops (edges / segmentation / contour measurement, and more) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
 A detailed breakdown of every panel (which op produced which value) lives in the repo's **[results gallery (docs/GALLERY.md)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)**.
+
+### The Type (Sort) as a Backbone
+
+Having 1,000 ops means nothing if each is an isolated island. What actually makes this work is one thing: **connecting by type (sort)**. Let me dig into that.
+
+1. **One-liner**: every Fullseye op takes one of **six types** — `image / color / region / feature / contour / volume` — at its entrance, and returns one of them at its exit. "Thresholding (`otsu`) eats an image and spits out a region"; "counting objects (`count_obj`) eats a region and spits out a number" — the input/output types are **fixed** per op.
+2. **A bit more**: the constraint that only type-compatible ops can be **chained** works in your favor. Just as a chessboard is readable because each piece has fixed moves, the rule "after this type, only that type can follow" means pipelines can be **searched without getting lost, even inside a combinatorial explosion**. The search space of Layer 2's evolutionary computation is, at bottom, an enumeration of "arrangements of ops whose types connect."
+3. **Precisely**: type consistency is enforced as a **contract** by `tests/test_op_contracts.py`. `image`/`color` are floats in `[0,1]`, `region` is binary `{0,1}`, `feature` is a scalar float, `contour` is a dict with `{"shape","cs"}`, `volume` is a 3-dimensional float stack — **the shape of the output is itself the spec**. And the spec also demands finiteness (never return NaN/Inf) and determinism (same input, same knobs, same output). Ops that lean on luck, or ops that occasionally break, **cannot be registered in the first place**.
+
+How type-incompatible connections get rejected matters just as much. Try to feed the output of `otsu` (image → region) straight into `sobel_amp` (image → image), and `run_pipeline` **fails explicitly, right there**. Not "it sort of runs but the numbers are wrong," but "the types don't connect, so it's refused before execution" — in cooking terms, it's like keeping the cutting board for raw fish separate from the one for bread. Things that must not be mixed are made **physically** unmixable. The fail-closed design philosophy (an idea that recurs throughout this article) does its first work at this smallest unit: the seam between op and op.
+
+### The Six Types, Seen Through Concrete Connections
+
+`image / color / region / feature / contour / volume` — six names alone won't mean much, so here's how they actually connect.
+
+- **`image`**: an H×W float array in `[0,1]`. Ops like `gaussian` and `sobel_amp` that take an image and return an image belong here. It's exactly the first code example in Layer 1.
+- **`color`**: the 3-channel version of `image` (H×W×3). Separating grayscale-only ops from color-only ops at the type level catches the classic accident — passing a color image where a grayscale one was expected — before execution.
+- **`region`**: a binary `{0,1}` array. It's the exit of thresholding ops like `otsu` (image → region), and the entrance of measurement ops like `count_obj` (the HALCON counterpart; region → feature). Think of it as the type that answers "which pixels are the object?"
+- **`feature`**: a single scalar float. It's often a pipeline's **final output**. "Object count," "mean brightness," "curvature correlation coefficient" — most of the measured values in the Layer-3 sections arrive as this `feature` type.
+- **`contour`**: a dict with `{"shape", "cs"}`. It's the exit of edge-detection ops (`edges_sub_pix`) and the entrance of contour-selection ops (`select_contours`). The flow shown in the opening montage — subpixel contour extraction, then dropping short contours — is relayed precisely through this type.
+- **`volume`**: a 3-dimensional float stack. The type for data with resolution along depth, like a CT volume. Many of the ops in the Layer-3 3D sections pass through it.
+
+Line the types up and you notice that **common processing flows read directly as type sequences**: `image → region → feature` ("take a picture → separate out the objects → count them"), or `image → contour → feature` ("take a picture → extract contours → measure them"). Conversely, once you can read the types, you can **guess what could follow a given op without reading its implementation**. That reading works identically whether an AI is choosing ops as a RAG or a human is assembling a pipeline in Studio.
+
+### What Happens When You Add One Op
+
+Writing "there are 1,000 ops" makes it sound like they appeared all at once, but in reality this is the accumulated history of **adding them one at a time**. So what happens behind the scenes when you add one? Here it is, at a granularity a reader could retrace (`docs/ADDING_OPS.md` is the actual procedure; what follows is that, broken down).
+
+```mermaid
+flowchart TD
+    A["Implement one op<br/>(write a function in ops.py /<br/>add a spec to backends_auto.py)"]
+    B["It lands in the registry<br/>(a _DEFS tuple or a one-line spec)"]
+    C["Instantly callable from<br/>apply / run_pipeline"]
+    D["The evolution (evolve) search space<br/>grows by one<br/>(insertable anywhere the types connect)"]
+    E["verify_auto.py runs it on real data and<br/>checks it returns its declared type<br/>(crashing or type-violating ops aren't counted)"]
+    F["opdocs.py all auto-generates<br/>a Markdown note"]
+    G["Reflected in Studio's help HTML<br/>(same path for 2D and 3D)"]
+    H["Automatically included in the<br/>docs/ops/INDEX.md table of contents (folder walk)"]
+    I["The drift CI compares<br/>committed notes == notes regenerated<br/>from current code"]
+    J["Without a worked example it fails<br/>test_op_example_coverage"]
+
+    A --> B --> C
+    B --> D
+    A --> E
+    A --> F --> G
+    F --> H
+    F --> I
+    A --> J
+```
+
+**There are two entrances for adding an op.** **Path A** (hand-written): write a function `_myop(v, a, b)` in `ops.py` and add one tuple to `_DEFS` — `("myop", "category", "halcon-name-or-empty", input sort, output sort, _myop)`. The `REGISTRY` is **rebuilt automatically** from these tuples, so there's nothing else to touch. **Path B** (data-driven) applies when the op fits one of the **already-validated templates**: pointwise / linfilter / rank / graymorph / edge / freq / diffusion / texture / geom / threshold / segment / binmorph / region_trans / region_feat / img_feat / xld. No code — add a **spec** with just a name, shape, and parameters, and it becomes an op. If it claims a HALCON alias, it is **checked against the list of real operators**, and if the operator doesn't exist, the spec is **dropped on the spot** (fail-closed, to prevent padding the count).
+
+From here on, **everything follows automatically, with no human involvement**.
+
+- **The evolution search space**: a new op becomes a candidate that can be inserted anywhere the types connect. Layer 2's `evolve.py` is a program that "searches for good arrangements of the ops that exist," so adding one op **silently widens the search space by one step** — the same feeling as dropping a new Lego brick into the bin.
+- **The functional gate**: `verify_auto.py` runs the op, on the spot, against real image / region / contour data and confirms it **actually returns its declared type**. Ops that crash, or ops that betray their type, **are not counted**. It's the mechanism that keeps "the number registered = the number that works," by measurement.
+- **Documentation**: running `py -3.11 tools/opdocs.py all` auto-generates the **Markdown note**, and from it, **Studio's help HTML** (2D and 3D through the same path) and the **table of contents (INDEX.md)** are updated in one sweep. Zero hand-written indices, as noted earlier — this auto-generation is what's behind that.
+- **The CI drift test** (`tests/test_opdocs.py`) compares — with no side effects — "the committed notes" against "notes regenerated from the current registry," and fails CI on any mismatch. It mechanically prevents the **classic form of rot**: changing an op's spec and forgetting to update its note.
+- Finally, `tests/test_op_example_coverage.py` checks: "does this op have a worked example with ground truth?" **An op without an example fails CI** — the last gate, which refuses to let "an op that works but that nobody knows how to use" exist.
+
+Add one op, and the registry, the search space, code generation, documentation, the table of contents, CI, and Studio help all **update in a chain** — this "touch one point and the whole follows" design is exactly why a library at the 1,000-op scale **can be maintained by one person**. The fewer places a human hand has to intervene, the less room there is for the **seeds of rot** — "only the docs are stale," "only this op has no example" — to sprout.
 
 ### How Big Is It, Really? (Measured)
 
@@ -191,39 +265,118 @@ A detailed breakdown of every panel (which op produced which value) lives in the
 - **3D operators: 265** (point clouds, meshes, volumes, SDFs, and more), across **55 categories**.
 - Roughly **1,000 total**, covering denoising / smoothing / sharpening / thresholding & segmentation / morphology / edge, corner, and blob detection / distance transforms / color spaces / texture and shape features / contours / 3D geometry.
 
+This "breadth" is faster to see than to describe, so here's a **treemap tallied mechanically from the actual registries** (area = number of ops per category; the script asserts the totals match 731/46 and 265/55 before drawing — a construction that can't inflate the numbers).
+
+[![Fullseye operator taxonomy — a treemap of 731 2D ops / 46 categories and 265 3D ops / 55 categories (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_taxonomy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_taxonomy.png)
+
+*↑ Op taxonomy treemap — left, the 2D registry (halcon_ext 81, region 76, features 71, ...); right, the 3D registry (geometry 23, render 14, ...). Area = op count.*
+
+And "what does the output actually look like?" in one image too: a sampler that **mechanically picks one representative op from each of 24 categories and applies it, for real, to the same coin photo** (zero skips; ops that return scalars have their numbers baked in, ops that return contours have their real XLD points baked in).
+
+[![2D op sampler — representative ops from 24 categories applied to coins (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
+
+*↑ The 2D op sampler — from `gaussian` to `decode_barcode` to `xmh_zernike` (Zernike moments), 24 categories, 24 ways of "seeing." All real output.*
+
+### The Workhorses of Factory Inspection Lines, One pip Away
+
+Fullseye's op system, at bottom, was built having learned a great deal from **the HALCON lineage of industrial machine vision**. So ops corresponding to the "standard jobs" that have run on factory inspection lines come with a bare `pip install fullseye`. Let me be specific, with the names of implemented ops.
+
+- **Defect detection**: `tophat` / `bothat` (grayscale-morphology top-hat and bottom-hat — the standard trick for lifting unevenness and small scratches off the background) and `morph_grad` (morphological gradient), plus **blob detection** (`xsk_blob_log` / `xsk_blob_dog` / `xsk_blob_doh`, which pick out blob-like defect candidates from scale-space extrema) and `blob_count` (the counterpart of HALCON's `count_obj`) — combine them and you have the inspection-line staple, "detect and count small stains, holes, and scratches."
+- **Subpixel dimensional metrology**: counterparts of HALCON's `measure_pos` / `measure_thresh` / `measure_pairs` / `fuzzy_measure_pos` (**caliper measurement** — finding edge positions at subpixel precision inside a specified search window, to measure dimensions and positions) are implemented as `m1_measure_pos` / `m1_measure_thresh` / `m1_measure_pairs` / `m1_fuzzy_measure_pos`. The `subpix` op family — `sp_local_max_sub_pix` / `sp_saddle_points_sub_pix` / `sp_critical_points_sub_pix`, which find contour extrema and saddle points at subpixel precision — is there too.
+- **Alignment (shape matching)**: `ncc_locate` (the counterpart of HALCON's `find_ncc_model`, template matching by normalized cross-correlation) and `shape_locate` (the counterpart of HALCON's `find_shape_model`, contour-based shape matching) handle **position and orientation finding** — the job at the entrance of every inspection line, working out "where is it right now?" before a robot grabs a part.
+- **Code reading**: `decode_barcode` (the counterpart of HALCON's `find_bar_code`) covers **barcode reading** as well.
+
+Individually these are unglamorous ops, but **the bulk of what actually runs day after day on factory inspection lines is, at bottom, combinations of exactly this kind of unglamorous classic**. There are still plenty of sites where combining **explainable, lightweight, deterministic** ops beats training a deep-learning object detector. Fullseye does lean toward Physical AI in Layer 3, that's true — but **the op system at its foundation has stood on the industrial-vision lineage from the very beginning** — which also resonates with the name's implication: "Bullseye = precision that doesn't miss."
+
+The reason classical algorithms are still on active duty on inspection lines is simple. **On an inspection jig with fixed lighting and a fixed camera, looking for a known defect on a known part**, there's usually just not enough complexity to justify the cost of collecting training data and retraining. What matters more, on a mass-production line, is being able to **explain outright, in the language of thresholds and algorithms, why this part was judged defective**. As written in Layer 1's "The Type (Sort) as a Backbone," Fullseye's ops are deterministic — same input, same knobs, always the same result. That's a property trained models don't have, and it matters more the more a site is held accountable for its **inspection criteria**.
+
+Words alone stay abstract, so here are these "inspection-line standards" actually assembled and run (all real processing on synthetic data; detection and measurement results are checked against known ground truth — for example, defect detection is confirmed at 6/6 and particle counting at 60/60 by asserts).
+
+[![Surface defect inspection — background subtraction + blob analysis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
+
+*↑ **Surface defect inspection** — 3 scratches, 2 dents, and 1 foreign particle on a synthetic metal surface: estimate the base texture with a median filter → subtract → blob analysis detects 6/6, boxed with areas. Ops used: `median_image`, `dilation_circle`, `segment_objects`.*
+
+[![Subpixel dimensional metrology — 1D measuring calipers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology.png)
+
+*↑ **Subpixel dimensional metrology** — edge pairs extracted by subpixel interpolation of the derivative extrema of the gray profile along a measurement rectangle. The diameters of a 3-step shaft are measured, with a maximum error of 0.02px against the drawn dimensions. The same manner as HALCON's 1D Measuring. Ops used: `m1_measure_pairs` and others.*
+
+[![Alignment — shape matching with rotation search](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_align_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_align.png)
+
+*↑ **Alignment** — an edge-gradient shape model matched by pyramid search detects the position and angle of 3 rotated workpieces (agreeing with ground truth to 0.0px and 0.0°). It does not react to the confusable decoy parts — the disk and the rectangle. Ops used: `create_shape_model`, `find_shape_model`.*
+
+[![Blob analysis — particle counting and size distribution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_blobs_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_blobs.png)
+
+*↑ **Particle counting** — 60 particles (6 pairs touching) split apart by marker-based watershed, counted 60/60, and color-coded into 3 sizes by area. The standard pattern for quality inspection of powders and granules. Ops used: `otsu`, `xcv_watershed_markers`, `segment_objects`.*
+
+[![The foundation of code reading — bar detection by scanline edge pairs](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_barcode_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_barcode.png)
+
+*↑ **Bar detection** — just like a real reader, bar edge pairs are detected from the gray profile along a scanline. Both ends of all 45 bars located within ±1.5px (this is the raw material for bar detection and width measurement, not a full decoder). Ops used: `decode_barcode`, `m1_measure_pairs`.*
+
 ### The Yardstick Is HALCON (42.5%, Measured)
 
-To avoid claiming "coverage" subjectively, I use the industrial-vision giant **HALCON** as a yardstick. Against the **2,313-operator** list compiled from HALCON's official reference, every Fullseye op that corresponds to a real HALCON operator is tagged, and the tally is done mechanically.
+To avoid talking about "coverage" subjectively, I use the industrial-vision giant **HALCON** as a yardstick. Against the list of **2,313 operators** compiled from the official reference, each Fullseye op is tagged with "which real operator does this correspond to?", and the tally is done mechanically.
 
-> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not a figure from memory, but a measurement against the actual list.
+Let me pause on why a yardstick is needed at all. "There are about 1,000 ops" tells a reader nothing on its own — is that a lot, or a little? **The number 1,000 has no meaning until it's compared against something.** But declaring "it's comprehensive" subjectively would violate this article's undercurrent, honest disclosure. So the method I chose was: **measure with the same yardstick as the giant actually used in industry, and produce the number by mechanical tally**. I picked HALCON not merely because it's famous, but because **its operator list is organized and published as an official reference** — that is, for its high comparability.
 
-To be honest, that's **still under half**. Chapters like Tuple handling, System, Classification, and OCR are almost entirely untouched (they sit outside the core of image processing, so I've deprioritized them). Matching, Morphology, Filtering, and geometric measurement, on the other hand, are well filled in. The point of this number isn't the percentage itself — it's that **I keep a per-chapter table open, showing exactly what's filled in and what's empty, all the time.**
+> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not from memory, but measured against the scraped list.
+
+To be honest, that's **still under half**. Chapters like Tuple handling, System, Classification, and OCR are almost entirely untouched (they sit outside the core of image processing, so I've deprioritized them). Matching, Morphology, Filtering, and geometric measurement, on the other hand, are where I've built thick. The heart of this number is that **a per-chapter table showing "what's filled in and what's empty" stays open for anyone to see, at all times.**
+
+### The Per-Chapter Map — Thick Spots and Empty Spots
+
+HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 982 counterparts are **not** spread evenly across them.
+
+Where I've built thick is the chapters at the heart of image processing: **Filtering** (smoothing, edges, frequency-domain filters), **Morphology** (dilation, erosion, opening, closing), **Regions** (region operations and feature measurement), **Segmentation** (thresholding and region splitting), and **Matching** (template and deformable matching) — all painted **far denser** than the overall 42.5% average. The thin spots are chapters like **Tuple handling** (numeric-tuple operations, the programming-language side of HDevelop), **System** (process and thread control), and **Classification / OCR** (machine-learning-based classification and character recognition). Those are nearly untouched — that's the honest state of things.
+
+The skew described in words is disclosed as-is in a **per-chapter coverage bar chart** (the drawing script asserts agreement with the measured numbers in `docs/HALCON_COVERAGE.md`).
+
+[![HALCON per-chapter coverage — the breakdown of 982/2313 (42.5%) (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/halcon_coverage_chart.png)
+
+*↑ The thick spots (Regions 105/106, Morphology 42/44, Filters 186/196) and the deliberately empty ones (System 0/141, OCR 0/96, Tuple 0/165) are visible at a glance.*
+
+This skew is not because **I haven't gotten around to it** — it's a skew **I aimed for from the start**. The next section explains the reasoning behind that call.
+
+### Deciding What Not to Build
+
+The moment you pick HALCON as a yardstick, a question arises: "So — are you going to build all 2,313?" The answer is **no**.
+
+Chapters like Tuple, System, File, Develop, and Control are **not image processing itself — they're the plumbing that runs HDevelop, the development environment**. Launching processes, opening files, saving variables — these are areas Python's ecosystem is already good at, and there's little point in a numpy-based vision-skill library reinventing them. Classification, OCR, and Deep Learning are a different domain that **requires trained models**, falling outside Fullseye's very axis of "classical algorithms whose internals can be explained." Legacy is, literally, deprecated.
+
+This is the same call, repeated, as the **change of direction** described in "Why I Built This" (the redefinition from `imgevolve` to Fullseye). Just as when I cut general-purpose algorithms (sorting, compression, and so on), the house rule at work here is: **deciding what not to build does more than deciding what to build**. Widening the scope would grow the headline number, but it would mean **scattering shots away from the target of image and geometric vision — the very target the name Fullseye is about**. I write "still under half" about the 42.5% while refusing to widen the scope, because **the denominator of that number is itself deliberately narrowed**.
+
+Of course, this wasn't a monolithic, obvious call. A design aiming for "full HALCON compatibility, Tuple and System included" was conceivable in principle. I didn't choose it because Fullseye's reason for existing is not "build a HALCON substitute" but "**make explainable algorithms something you can carry around as a robot's eyes**." Borrow HALCON as a yardstick, but never try to become HALCON — and keeping that line **permanently disclosed, in the form of the per-chapter table**, is, I believe, the plainest and most effective mechanism for "not inflating claims of coverage."
 
 ### Making Docs a Single Source of Truth (md = SoT)
 
-With ~1,000 ops, **help text isn't optional — without it, the library is unusable**. But maintaining help HTML and AI-facing descriptions as two separate things guarantees one of them will rot. So the approach I took was **making Markdown the single source of truth (SoT)**.
+With 1,000 ops, **the library is unusable without help text**. But maintaining help HTML and AI-facing descriptions as two separate things guarantees one of them rots. So the approach I took was **making Markdown the single source of truth**.
 
 ```mermaid
 flowchart LR
     MD["docs/ops/**/*.md<br/>Per-op Markdown notes<br/>(author, license, version, references,<br/>sample-data download URL, related-op links)"]
     MD -->|bulk conversion| HTML["Studio help HTML<br/>(2D + 3D)"]
-    MD -->|walk folder hierarchy| TOC["Auto-generated table of contents"]
+    MD -->|walk folder hierarchy| TOC["Auto-generated INDEX"]
     MD -->|hierarchical clustering| RAD["A navigable corpus<br/>an AI can query"]
     MD -->|drift test| CI["CI fails if versions drift<br/>(pins docs and code to the same version)"]
 ```
 
-- **A Markdown note per op** (roughly 1,000 of them) is the source of truth. Frontmatter carries **author, license (Apache-2.0), library version, references, a real sample-data download URL, and links to related ops**.
-- From there, **Studio's help HTML is generated in bulk** (2D and 3D go through the same pipeline). **There is no dual maintenance.**
-- **The table of contents is generated by walking the folder hierarchy.** Zero hand-written indices.
-- **Version pinning** matters more than it sounds. Image processing is the kind of domain where a tiny spec change changes results outright. So CI runs a **drift test that compares "the committed notes" against "notes freshly regenerated from the current registry," with no side effects** — if an op's behavior changes, its note falls out of sync and the test fails, which **pins the docs and the code to the same version**.
+- **A Markdown note per op** (roughly 1,000 of them) is the source of truth. Frontmatter carries **author, license (Apache-2.0), library version, references, real sample-data download URLs, and links to related ops**.
+- From there, **Studio's help HTML is generated in bulk** (2D and 3D through the same path). **There is no dual maintenance.**
+- **The table of contents is auto-generated by walking the folder hierarchy.** Zero hand-written indices.
+- **Version pinning** matters more than it sounds. Image processing is a domain where "a tiny spec change translates directly into different results." So CI includes a **drift test that compares "committed notes == notes regenerated from the current registry," with no side effects** — change an op's spec, and the notes fall out of sync and the test fails. In other words, **docs and code stay pinned to the same version**.
 
-This move to "md as source of truth" was actually finished during **the very work of writing this overview article** — related-op links, references (Tomasi & Manduchi 1998, Serra 1982, Sobel & Feldman 1968, and so on — **real classical papers, cited accurately, no fabricated DOIs**), and real sample-data URLs, all brought into a shape meant to **stay maintainable for years**.
+This "md as source of truth" work was finished during **the very sequence of work that produced this overview article** — related-op links, references (Tomasi & Manduchi 1998, Serra 1982, Sobel & Feldman 1968, and so on — **real classical papers, cited accurately, no fabricated DOIs**), and real sample-data URLs, all brought into a shape that can **stay maintainable for years**.
+
+(One more word, from experience.) I once tried "write the help HTML by hand, write the AI-facing descriptions separately." The result was an instructive failure. Change one op parameter, and you **fix the HTML, feel satisfied**, and forget the AI-facing description. Or fix the AI-facing one and forget the HTML. Within half a year, **even the author can no longer tell which one to believe** — dual-maintained documentation always ends up here if left alone. Unless the structure makes one the truth and the other a mere projection, **both gradually start lying**.
+
+Since moving to md=SoT, this class of accident — "one side quietly went stale" — has become structurally impossible. Fix the note, and the HTML and the table of contents follow. Forget to fix the note, and the CI drift test **tells you** (it fails, so you can't not notice). Replacing "be careful" with "guaranteed by a mechanism" — this shares a root with the article's undercurrent, honest disclosure. Don't rely on human attentiveness.
+
+Having read Layer 1 this far, I hope it's visible that the three ideas — "type (sort)," "the chain of automation when one op is added," and "md=SoT" — are really **three faces of one and the same design decision**. Types guarantee the seams between op and op; md=SoT guarantees the seam between code and documentation — each **by mechanical contract, not human attentiveness**. It's because this foundation exists that Layer 2's evolutionary computation and Layer 3's Physical AI perception stack can be stacked on top without worrying about Layer 1's internals. In Layer 2, next, a different kind of honesty is demanded: honesty in "searching for good arrangements" on top of that foundation.
 
 ---
 
-## Layer 2: Designing Pipelines by Evolution (with Honest Evaluation)
+## Layer 2: Designing Pipelines by "Evolution" (with Honest Evaluation)
 
-Only when a single op can't solve the problem — "I want to find the processing sequence that maximizes this metric on this data" — does **evolutionary computation** come in.
+Only for problems a single op can't solve — "I want to find the processing sequence that maximizes this metric on this data" — does **evolutionary computation** come in. As stated in Layer 1, "most of the time you just apply a known op": this is **a supporting role, not the lead**. Picking and chaining from 1,000 ops covers most needs; the search machinery is kept in reserve for the cases where even that falls short — where the optimal combination is hard for human intuition to find.
 
 ```bash
 py -3.11 baseline.py --problem denoise --workdir out/mine     # measure an honest floor first
@@ -234,88 +387,485 @@ py -3.11 robust.py   --problem denoise --workdir out/mine --seeds 5
 The thing I care most about here is **honesty in evaluation**.
 
 - **Fitness is measured only on the training split.**
-- **The held-out split is tracked, but never used for selection.**
+- **The hold-out split is tracked, but never, ever used for selection.**
 
-This keeps the generalization performance I report from being "overfit to the evaluation set" — it stays an **honest number**. "When results look too good, doubt the breakdown before feeling like you've won" is a house rule across my whole development practice, not just here.
+This keeps the generalization performance I report from being "overfit to the evaluation set" — it stays an **honest number**. "When a good result comes in, doubt the breakdown before feeling like you've won" — that's a house rule for the whole development effort.
+
+### What Each of the Three Commands Does
+
+Let's break those three command lines down one more level.
+
+1. **`baseline.py`** — first, measure **what score you get by doing nothing, or by the most naive method**. In Go or shogi terms, it's like first measuring how well a novice who knows no established openings can play. Without this, "evolutionary computation produced a good number" is undecidable — is it **impressive, or just what anyone would get?** "Measure the baseline first" is, of the house rules that recur throughout this article, the plainest and the most effective. When an unusually good number appears, the first response is "and the baseline was...?" — that's the habitual retort inside this development team (of, effectively, one).
+2. **`evolve.py`** — a **genetic algorithm** evolves the arrangement of ops (the pipeline) itself. Each generation (`--gens`), a population of pipelines (`--pop`) is mutated and crossed over, and the individuals with the best fitness on the training data survive. The key point: **the object of the search is "an arrangement of ops," not "the weights of one giant model."** The solutions that come out are **human-readable sequences of ops**, so why a solution works can be **verified after the fact**.
+3. **`robust.py`** — runs `evolve` independently multiple times with multiple seeds (`--seeds`), and picks one best individual **selected on the training data** (best-of-N, train-selected). The goal is to average out the luck of the random draw.
+
+The `--problem denoise` in the example specifies noise removal as the objective — one example among several. `baseline.py` first measures the score of a naive method (say, a single Gaussian blur with fixed parameters); `evolve.py` starts from there and searches, generation by generation, for a **better pipeline** chaining Layer-1 ops (a combination like "median filter → bilateral filter → unsharp mask," for instance). Some combinations a human would think of from the start; others come out in an **order that surprises a human** — that's the fun of using a genetic algorithm, and being able to read back, op by op, *why* that order works is the payoff of Layer 1's typed design.
+
+### Why "Never Select on Held-Out Data" Works (Intuitively)
+
+Why is this seemingly roundabout rule — "track the hold-out but never use it for selection" — necessary? Let me attempt an intuitive explanation.
+
+Imagine a student cramming for an exam who **solves past papers over and over until they've memorized the answers**. Their score on the past papers (the training data) keeps rising — but is that "deeper understanding" or "mere memorization"? The past papers alone can't tell you. The only way to tell is to measure on **new problems they haven't seen (the hold-out)**. Here's the trap: if you re-select your study method in the direction that "raises the hold-out score" — say, by repeatedly keeping only the textbooks that scored well on the hold-out — then **the hold-out itself becomes something being memorized**, and it loses its meaning as a measurement.
+
+The same thing happens in evolutionary computation. If per-generation selection (which individuals survive) is driven by the hold-out score, then over many generations, **the only pipelines left standing are the ones that "work on" that one particular hold-out dataset**. That isn't generalization — it's **overfitting to the hold-out**. So in Fullseye, selection is always done on training data alone, and the hold-out sits **outside the selection process**, as "the window you peek through at the end to see whether it truly generalizes." Think of it as the evolutionary-computation version of the statistical-testing discipline "don't run multiple comparisons on the data you set aside for validation."
+
+To be honest, keeping this discipline tends to make **the headline numbers more modest**. There really have been moments where selecting toward the hold-out would have made the reported performance look better. I still don't use the hold-out for selection, because a number that **won't betray you later** is worth far more, for keeping development going, than a number that flatters you now.
 
 ---
 
 ## Layer 3: The Physical AI Perception Stack (a Robot's Eyes)
 
-The components that turn frames into **geometry and objects**. A toolbox for a robot to see, measure, and act.
+The components that turn frames into **geometry and objects**. The toolbox a robot needs to see, measure, and act.
 
 ```python
 import fullseye as fs
 disp  = fs.disparity_map(left, right, max_disp=16)          # stereo disparity
-Z     = fs.depth_from_disparity(disp, focal=f, baseline=B)  # depth  Z = f*B/d
+Z     = fs.depth_from_disparity(disp, focal=f, baseline=B)  # depth  Z = f·B/d
 pts   = fs.reproject_to_points(Z, fx=f, fy=f)               # point cloud (N,3)
-grid,_= fs.elevation_map(world_pts, cell=0.05)              # 2.5D elevation map
+grid,_= fs.elevation_map(world_pts, cell=0.05)              # 2.5D terrain height map
 ok    = fs.traversability(grid, cell=0.05, max_step=0.1)    # foothold/obstacle mask
 objs  = fs.segment_objects(frame, threshold="otsu")        # per-object geometry + descriptors
 ```
 
-This layer also includes a **full sensor-simulation suite**. Without owning any actual hardware, you can synthesize the output of **pseudo-LiDAR, stereo cameras, event cameras (DVS), photometric stereo, TSDF fusion, polarization cameras, and focus stacking** from a synthetic scene, and develop and validate a perception pipeline **without hardware in the loop** — a practice ground for Physical AI development. Every image below is real output from Fullseye's own ops:
+These six lines actually run the whole way from **"seeing" to one step short of "walking / grasping."** From the two camera images (`left, right`), compute the disparity `disp`; convert it to depth `Z` (this is exactly the $Z = f \cdot B / d$ introduced in the stereo section below); back-project the depth into a 3D point cloud `pts`. From there, build the terrain height map `grid`, and let `traversability` decide "where can be walked and where can't." The last line, `segment_objects`, splits the image into objects and extracts each one's geometry (position, size, and so on) and descriptors (the features used for identification) — in factory bin-picking terms, this is precisely the "which part is where?" computation. What these six lines expose is the structure: Layer 3 calls Layer-1 ops **through a thin facade (an outer interface) renamed to match the purpose**.
+
+This layer also includes a **full sensor-simulation suite**. Without owning any hardware, you can synthesize the output of **pseudo-LiDAR, stereo cameras, event cameras (DVS), photometric stereo, TSDF fusion, polarization cameras, and focus stacking** from a synthetic scene, and develop and validate perception pipelines **with no hardware in the loop** — a practice ground for Physical AI development. Every image below is real output from Fullseye's own ops:
 
 [![Physical AI sensor-simulation montage (pseudo-LiDAR / stereo depth / event-camera DVS / focus stacking / polarization camera / camera+IMU fusion) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/physical_ai_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
-Panel-by-panel explanations, and other results (3D rendering, mesh processing, turntable GIFs, etc.) live in the **[results gallery (docs/GALLERY.md)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)**.
+Panel-by-panel explanations, and the other results (3D rendering, mesh processing, turntable GIFs, etc.), live in the **[results gallery (docs/GALLERY.md)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)**.
 
-One of these, the **event camera (DVS)** — a sensor that asynchronously emits nothing but per-pixel brightness changes — is easiest to appreciate in motion. As the camera pans, ON events (cyan) and OFF events (magenta) stream along the edges:
+### The Six Sensors, One at a Time
+
+The montage's six panels are six independent sensor simulations. The point of the picture: take the same synthetic MuJoCo scene (a green box, a yellow cylinder, a blue sphere, an orange crate, a purple slab) and see how it changes through the eyes of six different sensors. Let's take them one by one — each principle broken down in three passes, with the measured values baked into each panel.
+
+#### LiDAR (Light-Based Ranging)
+
+1. **One-liner**: a sensor that fires laser light in all directions and measures **distance** from the time (or phase) it takes to bounce back. The thing on the roof of self-driving cars.
+2. **A bit more**: Fullseye's simulation renders the scene as a **range image** (an image where each pixel holds a distance) and **back-projects it into a 3D point cloud**. Just as a real LiDAR's resolution is set by its channel count (how many lasers are stacked vertically), the simulation mimics **32 channels**.
+3. **Measured**: the output of `lidar_sim.py` shows **2,965 points, 32 channels, hit ratio 26%**. Hit ratio is "of the rays fired, the fraction that actually struck an object" — the other 74% flew into the background or out of the field of view, which is **natural for an indoor scene of sparse objects**. In a scene crowded with dense objects, the ratio climbs.
+
+#### Stereo Depth (Two-Camera Depth Estimation)
+
+1. **One-liner**: computing distance from the **offset (disparity)** between the images of two cameras — the same principle as your own two eyes.
+2. **A bit more**: find the same pattern in the left and right images (block matching) and measure the offset (disparity). The closer the object, the larger the offset; the farther, the smaller — and the formula $Z = f \cdot B / d$ (focal length × baseline ÷ disparity) converts that into distance $Z$. This is exactly the `depth_from_disparity` from this layer's opening code example.
+3. **Measured**: `stereo_sim.py` outputs **depth corr 0.55, median err 1.3cm**. Depth corr is the correlation between estimated depth and true depth (the answer MuJoCo knows); median err is the median of the error. **Matching is hard on low-texture flat surfaces (the white block at the top center of the montage), and error creeps in there** — a classic weakness of stereo vision, and one that shows honestly in the numbers.
+
+#### Event Camera (DVS — a Sensor That Emits Only Motion)
+
+1. **One-liner**: instead of spitting out "30 frames per second" like an ordinary camera, each pixel emits an event asynchronously **only at the moment its brightness changes**.
+2. **A bit more**: each pixel independently fires one event — + (brighter / ON) or − (darker / OFF) — whenever its log-luminance changes past a threshold. No motion, no output — **it fundamentally cannot see a static scene, but it is extremely strong on motion** (microsecond-order temporal resolution, wide dynamic range).
+3. **Measured**: `event_camera.py` outputs **247,189 events, edge-corr 0.56**. Edge-corr is the correlation between "where events fired densely" and "the edge strength at that location (contour strength à la Sobel)" — corroborating that **events fire along contours**. The number matches intuition, but "back up designs that seem intuitively right with measurements anyway" is how honest disclosure works.
+
+This DVS is **easiest to appreciate in motion**, so a streaming gif follows below.
+
+#### Focus Stacking (and Depth-from-Focus)
+
+1. **One-liner**: shoot many frames while varying the focus distance, then **collect from each photo only the places that are in focus** and stitch them together. Common in macro photography and microscopy.
+2. **A bit more**: from the image at each focus distance, measure per-pixel **sharpness (local contrast)**, adopt the sharpest focus position, and stitch — the result is an **all-in-focus image** (focus stacking). At the same time, if you record per pixel *which* focus distance was sharpest, that is directly an **estimate of the distance to that pixel** (depth-from-focus).
+3. **Measured**: `focus_stack.py` composites from 3 focus distances — near (0.91m), middle (3.33m), far (5.74m) — with a **sharpness gain of ×1.27 and depth corr 0.89**. The ×1.27 is "how much sharper the composite is than any single-focus frame"; depth corr is the correlation between depth back-computed from focus and MuJoCo's ground-truth depth. **0.89 is on the high side among the six panels** — it stands to reason that using multiple focus distances is steadier than single-shot stereo.
+
+#### Polarization Camera (DoLP / AoLP — Seeing Light's "Oscillation Direction")
+
+1. **One-liner**: an ordinary camera sees only light's **intensity**; a polarization camera also sees its **oscillation direction (polarization)**. At equal brightness, reflected light polarizes differently depending on **surface orientation** — so this oddball sensor can recover **normals (surface orientation) even on smooth, textureless surfaces**.
+2. **A bit more**: from images taken through polarizers at 4 orientations, reconstruct the Stokes vector, and from it compute **DoLP (degree of linear polarization, 0–1)** and **AoLP (angle of linear polarization)**. Following the Fresnel reflection equations, DoLP lets you back out the **surface tilt (zenith angle)** and AoLP the **tilt direction (azimuth)** — that's the physical model.
+3. **Measured**: `polar_cam.py` outputs **mean DoLP 0.79, Stokes round-trip 1.00**. Round-trip 1.00 means the round conversion — build the Stokes vector from the 4 polarizer images, then recompute the original 4 images from it — **matched perfectly** (an internal consistency check of the implementation). The high DoLP is consistent with physics: the montage's sphere material is on the glossy side, and **polarization gets stronger near grazing angles (viewing directions nearly parallel to the surface)**.
+
+#### Camera + IMU Sensor Fusion (Kalman Filter)
+
+1. **One-liner**: the classic technique of fusing a camera-only position estimate (noisy) with an IMU-only estimate (drifting — error accumulating over time) so that **each covers the other's weakness**.
+2. **A bit more**: a Kalman filter alternates "predict" and "correct with an observation." Predict the motion from the IMU, correct with the camera's observation — both sources are imperfect, but **their error characters differ (noise vs. drift)**, and exploiting that difference produces an estimate better than either alone.
+3. **Measured**: `sensor_fusion.py` is a demo tracking the parabolic flight of a thrown ball. Against a **position-sensor-only RMSE of 22.6cm** and an **IMU-dead-reckoning-only RMSE of 8.4cm**, **Kalman fusion lands at RMSE 6.1cm**. Smaller error than either source alone — one picture that shows the payoff of sensor fusion, in numbers.
+
+Six different principles, but the implementation footing is shared: **no external simulator or sensor-vendor SDK is being called — every sensor model is written in the same numpy as Layer 1's typed ops**. The LiDAR raycasts, the stereo block matching, the polarization Stokes-vector math — at bottom, each is nothing more than a composition of "functions that take arrays and return arrays." Wildly different physical phenomena being simulated per sensor, yet **the way you call them and the way you verify them is uniform** — I take that as evidence that the design principles repeated throughout Layer 1 ("connect by type," "verify via md=SoT") keep functioning, unbroken, even when carried into the more complex destination that is Physical AI.
+
+### Simulation and the Factory Line Stand on the Same Op System
+
+The six sensors above were introduced in a Physical AI (robot perception) context, but the same ops are built to serve just as well in the context of **factory inspection and picking lines**.
+
+- **Stereo disparity → depth → point cloud** (the same path as this section's `stereo_sim.py`) feeds directly into **bin picking**. In fact, a worked example ships with the library (`examples_3d/object_segmentation.py`) for the workflow "remove the table plane, then split the objects into clusters" using `euclidean_cluster` (an op that distance-clusters a point cloud via connected components of a proximity graph). It also includes the honest-gate comparison against the "do nothing" zero point: cluster without removing the table plane, and every object fuses into a single blob.
+- **Clustering LiDAR point clouds** is the same `euclidean_cluster`'s territory. There's a worked example for the outdoor-scene case — ground removal followed by object segmentation, the situation robots in warehouses and open yards actually face (`examples_3d/lidar_scene_segmentation.py`). In this example, a LiDAR cloud of 5,316 points covering 4 objects (sphere, box, cylinder, cone) resting on sloped ground (about 5.4°) is processed by detecting the ground with `fit_plane_ransac`, keeping only points above it, then splitting with `euclidean_cluster`. As measured, the number of detected clusters matches the true object count (4), and cluster centroids map one-to-one onto the true objects with a maximum error of 0.128m. **Skip the ground removal and cluster all points as-is, and every object fuses into one blob** — the comparison against this "do nothing" case backs the value of that one extra step with numbers.
+- For **grasp-point detection**, there's a path using curvature analysis (`principal_curvatures` / `gaussian_curvature`) — the `curvature_grasp` worked example. It's the classical approach of narrowing candidate points from the target's shape: "a graspable spot = a smoothly convex spot."
+- The **event camera (DVS)** also gets along well with the industrial side, in the role of **capturing motion without blur on high-speed conveyor lines** (by principle, it has no motion blur at all).
+
+A robot-vision pipeline grown inside simulation can be reused, as-is, as a component of an inspection line — that's not a bonus; it's a direct consequence of the design: **both stand on the same typed op system.**
+
+Here is that consequence, actually assembled and run in simulation (all real processing on MuJoCo physics, real raycasts, real renders; cluster counts and object counts checked against ground truth).
+
+[![Bin picking — depth segmentation and grasp-candidate scoring](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick.png)
+
+*↑ **The front half of bin picking** — 10 parts dropped into a bin under physics simulation, observed by an overhead depth camera → depth segmentation → 8 grasp candidates scored by "surrounding clearance + height" (green = top priority). Gripper-jaw orientation comes from the long axis of a rectangle fit. Ops used: `segment_objects`, `fit_rectangle2`, `colorize_depth`.*
+
+And from these scores there's also a video of the **full cycle — actually grasping and carrying out with 6-DoF IK** → [phai_bin_pick.mp4 (plays inline on GitHub)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/phai_bin_pick.mp4). Plain physics with no adhesion tricks, and only parts that end up outside the bin count as successes: 3 parts carried out, honestly tallied.
+
+[![LIDAR point cloud → ground removal → clustering](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_lidar_clusters_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_lidar_clusters.png)
+
+*↑ **LIDAR obstacle recognition** — over 20,000 rays actually cast, mimicking a ring LiDAR; RANSAC ground removal → Euclidean clustering resolves 6 objects into 6 clusters. Each cluster gets an OBB, shown in bird's-eye view. Ops used: `remove_ground`, `euclidean_clusters`, `obb`.*
+
+[![Stereo disparity → 3D reconstruction → bird's-eye obstacle map](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
+
+*↑ **Stereo obstacle map** — disparity → depth via $Z = f \cdot B / d$ → 3D point cloud → clustering everything above 12cm resolves 4 objects into 4 clusters (the reconstructed ground height has a median error of 3mm). Ops used: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`.*
+
+[![Focus stacking — one all-in-focus frame from 7 blurry ones](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack.png)
+
+*↑ **Focus stacking** — from 7 frames with swept focus positions, pick the sharpest per pixel and composite (sharpness 1.27× a single shot). The mechanism used in microscope inspection and PCB inspection.*
+
+One of these, the **event camera (DVS)** — the sensor that asynchronously emits nothing but per-pixel brightness changes — is easiest to appreciate in motion. As the camera pans, ON events (cyan) and OFF events (magenta) stream along the edges:
 
 ![Event-camera (DVS) simulation — ON (cyan) and OFF (magenta) events firing along edges as the camera pans](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/dvs_stream.gif)
 
-A smoother **mp4 version**, along with turntable videos including the Itokawa one, live in the repo's [docs/articles/assets/media/](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/media) (playable directly on GitHub).
+A smoother **mp4 version**, along with the turntable videos including Itokawa, lives in the repo's [docs/articles/assets/media/](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/media) (playable directly on GitHub).
 
 ### How Far the 3D Stack Goes Custom-Built (the Biggest Differentiator)
 
-I think Fullseye's differentiation shows up most in the **3D side**. Running actual 3D ops on the same real Itokawa point cloud from the opening GIF gives you this:
+I think Fullseye's differentiation shows up most in the **3D side**. Classical 2D image processing is already broadly covered by powerful OSS — OpenCV and scikit-image. Merely stacking numpy reimplementations there would, frankly, invite a fair accusation of "reinventing the wheel." 3D is different: it spans multiple data formats — point clouds, meshes, volumes — and as far as I've been able to find, there aren't many libraries that cover that ground while holding the whole set of conditions "typed, pure numpy, with machine-readable notes." That's why this section runs a bit longer than the other layers and spends its pages on demonstrations with real data.
 
-[![3D ops applied to the real Itokawa point cloud (curvature analysis / ICP self-registration / PCA canonical pose) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_montage.png)
+Apply 3D ops to the real Itokawa point cloud from the opening GIF, and you get this:
 
-On a real point cloud of 3,000 points: **curvature analysis** (neighborhood-curvature correlation r=0.87 — evidence this is a real surface), **ICP self-registration** (recovering an unknown 30° rotation plus noise down to 0.027° rotation error), **PCA canonical pose** (fully recovering the principal axes after an unknown 50° rotation). All of these are measured values, run live for this article.
+[![3D ops on the real asteroid Itokawa point cloud (curvature analysis / ICP self-registration / PCA canonical pose) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_montage.png)
 
-3D ops currently number 265. Spanning point clouds, meshes, volumes, and SDFs, the library covers **3D feature descriptors** like SHOT, FPFH, and spin images, **TSDF fusion**, **fringe projection**, **photometric stereo**, **superquadric fitting**, **medial axis**, **geodesic distance**, **visual hull**, and **QEM mesh simplification** (boundary-preserving, strictly manifold). A few concrete examples:
+On a real point cloud of 3,000 points: **curvature analysis** (neighborhood-curvature correlation r=0.87 — evidence of a real surface), **ICP self-registration** (recovering an unknown 30° rotation plus noise down to 0.027° rotation error), **PCA canonical pose** (fully recovering the principal axes after an unknown 50° rotation). All measured values, executed on the spot.
 
-![Two touching objects separated by distance transform + watershed. Connected-component labeling would merge them into one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/watershed3d.png)
+Let's look at the four panels a bit more carefully.
 
-*↑ 3D watershed segmentation — splitting two touching objects along the "valley" of the distance transform. This is the tool for that classic bin-picking situation where parts overlap.*
+- **① The raw point cloud**: `itokawa_points.npy` holds 3,000 points, with a bounding extent of **559×301×242 m** — Itokawa is an elongated, "sea-otter-shaped" asteroid just under 600m along its long axis, and these dimensions capture that shape well. Color encodes distance from the origin (near the centroid); the rocky shading comes from the 3D renderer.
+- **② Curvature analysis**: `curvature3d.curvedness` is an op that quantifies each point's **degree of bending** (one of the curvature notions touched on again in the Layer-3 details). Measured: **mean curvedness 0.0102, standard deviation 0.0059**, and **curvature correlation with neighboring points r=0.87**. Put into words, a high correlation here means "adjacent points bend in similar ways" — a property **peculiar to a real, continuous surface**. If this were just a random scatter of points, curvatures would be all over the place and the correlation would sit near zero. r=0.87 is indirect but quantitative evidence that this point cloud **was sampled from the surface of a real rock**.
+- **③ ICP self-registration**: make a copy of the same cloud with an **unknown 30° rotation and sensor noise** added, and test whether it can be registered back onto the original (ICP — Iterative Closest Point). Measured: **rotation error 0.027°, RMSE 4.27m**. For a sense of how small 0.027° is: it's roughly **1/13,000 of a full 360° turn** — under noisy conditions, essentially a complete recovery.
+- **④ PCA canonical pose**: compute the cloud's principal inertial axes (three orthogonal axes, the eigenvectors of the moment of inertia) and test whether they can be recovered after an **unknown 50° rotation**. Measured: **principal-axis ratio 4.02:1** (the eigenvalue ratio of the longest to the next-longest axis — a number expressing Itokawa's elongation), **axis recovery |cos| ≥ 1.0000** (the principal axes recovered with perfect alignment even after the 50° rotation).
 
-![Measured comparison of QEM edge-collapse mesh simplification, preserving boundaries and strict manifoldness](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/mesh_decimate.png)
+The heart of it: all three analyses cross-examine **the same 3,000-point real cloud from different angles for realness and reproducibility**. Curvature asks "is this consistent as a surface?", ICP asks "can this be identified as the same object?", PCA asks "can orientation be recovered when it's been lost?" — each with different mathematics (differential geometry, nearest-neighbor search, eigendecomposition). Rather than just enumerating 3D op coverage, I believe **cutting into the same data from multiple angles, live**, conveys the value of explainable vision better.
 
-*↑ A measured comparison of QEM mesh simplification. It decimates while continuously checking, with actual measurements, that boundaries are preserved and manifoldness isn't broken — this op is also where Bug 6, below, plays out.*
+### The Renderer Is Custom Too — Decomposing "Appearance" Into Measurable Parts
 
-![A turntable of a hand-bone volume with a bone-colored material (from marching cubes all the way through rendering, all custom-built)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/showcase_turntable_skeleton.gif)
+The image at the top of this article (SDF smooth union + AO + soft shadows + ACES) and the Itokawa turntable GIF are both output of the **custom renderer**. What matters here is less "it looks pretty" than the fact that **every element that produces the "appearance" is decomposed into its own independent op**. The results gallery (`docs/GALLERY.md`) carries figures where each element can be verified on its own.
 
-*↑ An anatomical hand-bone mesh (derived from the MS-Human-700 musculoskeletal model), voxelized into a synthetic CT volume, meshed via marching cubes, and spun like a skeleton specimen. Volume → mesh → render, entirely in one pipeline.* Individual algorithms like these are scattered across PCL (C++) and Open3D, but **one library covering this range as "pure numpy, typed, with a machine-readable note for every op" is not something I've seen much of.** The goal is for the same feel to carry you from industrial fringe-projection measurement all the way to a robot's grasp pose.
+- **Ambient occlusion (AO)**: fire rays per vertex into the hemisphere, measure how occluded the surroundings are, and selectively darken contact areas and concavities. Easier to grasp as visualizing "places where light has trouble arriving because something is there" than as a shadow.
+- **Shading**: Phong specular highlights over normal maps, and MatCap shading (approximating material response with a spherical texture that has the environment pre-baked in) — held as separate ops.
+- **Shadow mapping**: cast shadows determined by visibility from the light source, with soft shadows (blurred-edge shadows) available by approximating an area light.
+- **SSAA (supersampling anti-aliasing)**: render at higher resolution and downscale, erasing the jaggies along mesh silhouettes.
+- **Tone mapping**: compress HDR renders (wide exposure range) into the normal display range while **preserving gradation**, via Reinhard or ACES, where naive clipping would blow out highlights and crush shadows. The gradation preservation is confirmed by measurement against the naive clip.
+
+These are not "decoration for looks" — **each is an independently verifiable op**. For AO, "are the more-occluded vertices actually darker?"; for tone mapping, "is gradation restored in regions that used to blow out?" — both check out numerically. Behind the single hero image at the top of the article sits a stack of **measurable parts written as typed ops** — Layer 1's "type (sort) as a backbone" philosophy applied consistently even to rendering, a field that looks far removed from it.
+
+3D ops currently number 265. Spanning point clouds, meshes, volumes, and SDFs, the library carries **3D feature descriptors** like SHOT, FPFH, and spin images, **TSDF fusion**, **fringe projection**, **photometric stereo**, **superquadric fitting**, **medial axis**, **geodesic distance**, **visual hull**, and **QEM mesh simplification (boundary-preserving, strictly manifold)**.
+
+There's also a one-image sampler that **applies the basic 3D ops in sequence to the same real Itokawa cloud** (normal estimation, shape index, voxel decimation 3,000 → 635 points, OBB, convex hull — all actual execution results).
+
+[![3D op sampler — normal estimation / shape index / voxel decimation / OBB / convex hull on the real Itokawa point cloud (click for full size)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_3d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_3d.png)
+
+*↑ The 3D op sampler — the measured OBB extents are 281×149×122 m. Not a textbook figure: numbers measured on this asteroid's real data.*
+
+A few more, in the flesh:
+
+![Two touching objects separated by distance transform + watershed. A case where connected-component labeling would merge them into one](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/watershed3d.png)
+
+*↑ 3D watershed segmentation — splitting two touching objects along the "valleys" of the distance transform. The tool for that bin-picking situation where parts overlap.*
+
+![Measured comparison of QEM edge-collapse mesh simplification, boundary-preserving and strictly manifold](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/mesh_decimate.png)
+
+*↑ A measured comparison of QEM mesh simplification. Decimating while confirming, by measurement, that boundaries are preserved and manifoldness isn't broken — this op is also the stage for Bug 6 in this article (later).*
+
+![A procedural hand skeleton, voxelized → marching_cubes → spun on a museum-specimen-style turntable with a bone-colored material (laid palm-up)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/showcase_turntable_skeleton.gif?v=2)
+
+*↑ The procedurally generated hand skeleton (8 carpals, 5 metacarpals, 14 phalanges = 27 bones in all — the same subject as `hand_hero.png` from "The Name" section), its SDF dropped into an occupancy voxel grid, meshed with `marching_cubes` (isosurface level 0.5), and spun like a skeleton specimen. Laid palm-up and rotated once under a high-angle view. Volume → mesh → render, straight through.*
+
+The individual algorithms are scattered across PCL (C++) and Open3D, but **one library holding this range as "pure numpy, typed, with machine-readable notes on every op" is a configuration I don't see much of**. The aim is for the same writing feel to reach from industrial fringe-projection metrology to a robot's grasp pose.
 
 The **3D data to try this on is available free from public sources.** The usual suspects:
 
-- **[Stanford 3D Scanning Repository](https://graphics.stanford.edu/data/3Dscanrep/)** — bunny, dragon, armadillo. The "Lenna" images of 3D processing.
+- **[Stanford 3D Scanning Repository](https://graphics.stanford.edu/data/3Dscanrep/)** — bunny / dragon / armadillo. The "Lenna" images of the 3D world.
 - **[JAXA DARTS Hayabusa archive](https://data.darts.isas.jaxa.jp/pub/hayabusa/shape/gaskell/)** — the source of this article's Itokawa shape model ([the PDS-side documentation is here](https://sbn.psi.edu/pds/resource/itokawashape.html)).
 - **[NASA 3D Resources](https://nasa3d.arc.nasa.gov/)** — 3D models of spacecraft, terrain, and other space-related subjects.
-- **[The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/)** — research-grade CT/MRI **DICOM volumes** (real data for the volume sort).
-- **Robot models** are also freely available: **[MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)** (high-quality MJCF for real robots), **[MyoSuite](https://github.com/MyoHub/myosuite)** (musculoskeletal models), **[LocoMuJoCo](https://github.com/robfiras/loco-mujoco)** (locomotion benchmark environments).
+- **[The Cancer Imaging Archive (TCIA)](https://www.cancerimagingarchive.net/)** — research-grade CT/MRI **DICOM volumes** (a real-data source for the volume sort).
+- **Robot models** are publicly available too: **[MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie)** (high-quality MJCF of real robots), **[MyoSuite](https://github.com/MyoHub/myosuite)** (musculoskeletal models), **[LocoMuJoCo](https://github.com/robfiras/loco-mujoco)** (locomotion benchmark environments).
 
-A curated list of licenses and direct download URLs lives in the repo's [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md), and anything fetchable with a one-liner like `sample_data.download('bunny', yes=True)` is also registered in code (fail-closed by design — it errors explicitly rather than fetching anything on its own if you haven't asked for it).
+A curated list of licenses and direct download URLs lives in the repo's [docs/ops/SAMPLES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/ops/SAMPLES.md), and anything fetchable with the one-liner `sample_data.download('bunny', yes=True)` is registered in code as well (explicit error if not yet downloaded — never fetching on its own; fail-closed by design).
 
-This layer's first customer is **evis**, the musculoskeletal humanoid. Its vision pipeline runs **stereo → depth → point cloud → segmentation → 6-DoF pose → motion planning → realization through 700 muscles**. This layer supplies the "eyes" for tasks like getting a robot to use chopsticks or to walk.
+This layer's customer number one is **evis**, the musculoskeletal humanoid. Its vision pipeline runs **stereo → depth → point cloud → segmentation → 6-DoF pose → motion planning → realization through 700 muscles**. This layer supplies the "eyes" for tasks like getting a robot to use chopsticks or to walk.
 
-What I care about here is **not reinventing OSS**. Standards like PCL, OpenCV, and MoveIt2 are used as **a map of fidelity and coverage, plus a thin adapter** — hidden behind the **unified interface**, so the caller never has to care whether the implementation underneath is hand-written numpy or an OSS wrapper. Either way, it's called the same way.
+What I care about here is **not reinventing OSS**. Standards like PCL, OpenCV, and MoveIt2 are used as **a map of fidelity and coverage, plus thin adapters** — hidden behind the **unified interface**, so the caller never has to care whether the implementation underneath is hand-written numpy or an OSS wrapper. It's the same writing feel either way.
+
+The call described in "the HALCON coverage story" — **deciding what not to build** — surfaces here too. There's no need to wholesale-replace the areas PCL and MoveIt2 already cover (parts of point-cloud processing, parts of motion planning) with in-house implementations. The value Fullseye should add there is "making it callable with the same writing feel," not "adding one more implementation to the world." Where to draw the line between hand-written numpy and thin adapters is **a decision that touches all four pillars of the design philosophy**, and here again the honest-disclosure spirit applies — "this one is in-house, this one is an OSS wrapper," always distinguished and disclosed in the machine-readable notes (Layer 1's md=SoT).
 
 ---
 
 ## Fullseye Studio — an IDE for Looking, Trying, and Working
 
-Having the algorithms isn't enough on its own. You need a layer for **"seeing it and confirming it works."** That's **Fullseye Studio**. Its positioning:
+Having the algorithms isn't enough. You need a layer for **seeing and confirming**. That's **Fullseye Studio**. Its positioning:
 
-> **A fusion of HDevelop (the 2D-image IDE from industrial vision) and RViz2 (the robotics visualization tool for point clouds, depth, 6-DoF pose axes, and terrain layers).**
+> **A fusion of HDevelop (industrial vision's 2D-image IDE) and the robot world's RViz2 (3D perception visualization: point clouds, depth, 6-DoF pose axes, terrain layers).**
 
-- On the left, an **operator/sample list**; in the center, **code editing plus parameter sliders**; on the right, a **drawing pane**. Pick a sample, code appears, hit Run for instant rendering, drag a slider for instant re-rendering.
-- Every one of the ~1,000 ops has a **generated help page**, and **both 2D and 3D** pull from the same help dictionary (unified during the work on this overview article).
-- Hovering over an image shows **pixel coordinates and values**, and detected regions can be **overlaid on the input image** — HDevelop-style "inspection" conventions carried over into Studio.
-- And a **Python Editor** (a Qt-Creator-style edit-and-run environment). Previously, sample code could only be **read, or called as a pipeline**; now you can open a gallery's worked example **in an editable editor, modify it, and run it instantly with F5** (syntax highlighting, line numbers, and a run console included; execution runs in a subprocess, so the UI never freezes). Just like HDevelop's "main script plus sub-scripts," you can **open and edit multiple scripts in tabs at once**, and samples can be opened as **any number of independent MDI windows side by side**, so you can copy fragments while you write. The goal is to let the **staircase from learning to real work — "run the sample as-is, then tweak it toward your own problem" — happen entirely inside Studio** (added during work on this overview article).
-- I also added **debugger-level execution control and variable watching**. You can pause at a breakpoint, **resume from the current line (Continue)**, or **restart from any given line (Run from here)**. Variables can be **right-clicked to pop up an inspection view**, and **watch expressions** (arbitrary expressions like `v.mean()` or `np.percentile(v, 99)`) get **automatically re-evaluated against the selected variable every time the pipeline changes**.
-- **Multiple drawing windows can be controlled from a script.** Following HDevelop's convention, `dev_open_window(row, col, width, height)` in your program opens and places a window, `dev_set_window` switches between them, and `dev_set_window_extents` moves one. In real image-processing work, laying input, intermediate, and result images out in separate windows is an everyday need, so I made that reproducible from code (a configurable cap prevents opening too many, default 256).
+- On the left, an **operator/sample list**; in the center, **code editing plus parameter sliders**; on the right, a **drawing pane**. Pick a sample → the code appears → Run renders instantly, and sliders re-render instantly.
+- Every one of the ~1,000 ops has a **generated help page**, and **both 2D and 3D** pull from the same help dictionary (the 3D side was unified during the work on this overview).
+- Hovering over an image shows **pixel coordinates and values**, and detected regions can be **overlaid on the input image** — the HDevelop-style "inspection" conventions are in here too.
+- And a **Python Editor** (a Qt-Creator-style edit-and-run environment). Previously, sample code could only be **read, or invoked as a pipeline**; now you can open a gallery's worked example **in an editable editor, rewrite it, and run it instantly with F5** (syntax highlighting, line numbers, and a run console included; execution runs in a subprocess, so the UI never freezes). Just like HDevelop's "main plus sub-scripts," you can **open and edit multiple scripts in tabs at once**, and samples open as **independent MDI windows, as many as you like, side by side**, so you can select-copy fragments while you write. It's the layer that lets the **staircase between learning and real work** — "run the sample as-is → tweak it toward your own problem" — complete entirely inside Studio (added during the work on this overview).
+- **Debugger-grade execution control and a variable watch** went in too. Pause at a breakpoint, **resume from the current line (Continue)**, **restart from an arbitrary line (Run from here)**. Variables can be **right-clicked for a popup inspection of their contents**, and **watch expressions** (arbitrary expressions like `v.mean()` or `np.percentile(v, 99)`) are **automatically re-evaluated against the selected variable on every pipeline change**.
+- **Multiple drawing windows can be driven from a script.** In the same manner as HDevelop, `dev_open_window (row, column, width, height)` in a program opens and places a window, `dev_set_window` switches between them, and `dev_set_window_extents` moves one. In real image-processing work, "input, intermediate, and result in separate windows side by side" is everyday practice, so this is reproducible from code (the cap against opening too many is adjustable in system settings, default 256).
+
+Here's the actual screen (not a mockup — a straight capture of the real UI assembled by `studio.build_window()`). Result view on the left (wheel to zoom, drag to pan), Program panel at the bottom, operator browser on the right; pick ops, wire them up, turn the knobs, and the result updates live.
+
+![Fullseye Studio main window](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_main_thumb.jpg)
+
+*↑ The Studio main window — a blob-splitting pipeline (gaussian → otsu → opening_circle → sk_clear_border) applied to the coins sample, with the 21 detected coins overlaid as a region overlay. The status bar reads "21 obj."*
+
+### The Tabbed Editor — Inheriting HDevelop's "Main Plus Sub-Scripts"
+
+For readers who have used HDevelop, here's how Studio's Python Editor maps onto it.
+
+In HDevelop, the standard style is one main program calling several sub-programs (subroutines), each edited in its own tab. Studio's **Python Editor** (`File ▸ Python Editor…`, or "Open in editor" from the gallery) follows the same idea: **multiple Python scripts open and editable in tabs at once**. **F5 (Run)** executes the current tab in a subprocess — and because it's a subprocess, heavy jobs never freeze the main UI. The repository lands on `PYTHONPATH` automatically, so `import fullseye` just works in every tab. Unsaved buffers execute as a **scratch copy**, so "rewrite it a little and see what happens" never forces a save first.
+
+![Studio Python Editor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_python_editor_thumb.jpg)
+
+*↑ The Python Editor — right after running `itokawa_curvature.py` with F5 (PASS, exit 0). The console below streams curvature statistics from the real data.*
+
+There's one more option: **MDI code windows** ("Open in window" from the gallery). These let you lay out any number of samples as **independent windows**, and `Window ▸ Tile/Cascade` arranges them. Tabs suit "reading and writing in sequence"; MDI windows suit "comparing several samples while copying fragments" — the two uses are kept deliberately distinct.
+
+### The Variable Watch and Debugger-Grade Execution Control
+
+One of HDevelop's strengths is executing a program line by line while **peeking into variables on the spot**. Studio has the same kind of machinery.
+
+- **Breakpoints**: click the gutter (left of the line numbers) and execution pauses at that line.
+- **Continue**: resume from the paused line to the next breakpoint or the end.
+- **Run from here / Run to here**: right-click a stage to **restart execution from an arbitrary line** (or run **up to** it). When you want to iterate on just the back half of a pipeline, you're spared re-running it from the top every time.
+- **Variable watch**: register **arbitrary expressions** in the Variables window — `v.mean()`, `np.percentile(v, 99)`, `(v > 0.5).sum()` — where `v` is the selected variable, `np` is numpy, `img` is the input image. These expressions **re-evaluate automatically every time the selection changes or the pipeline changes**. If an expression fails, that row just gets a warning marker — the panel as a whole never crashes.
+- **Right-click ▸ Inspect in popup…**: right-click a variable for an instant type-aware inspection popup (shape, min/max/mean, percentiles, a value preview).
+
+One honest caveat here too. Watch expressions are **evaluated synchronously on the GUI thread**, so registering a **heavy expression** that scans a huge array end to end will make the UI wait for it. For heavy aggregations, the practical tip is to lighten the expression or run it in the Python Editor instead.
+
+### Turning It by Hand — the 3D Surface (Ctrl+3)
+
+Studio's right panel can **open the current result as a rotatable 3D surface** (`Ctrl+3` under `DISPLAY & PERCEPTION`; internally a best-effort implementation on Qt's `Q3DSurface`). Usage is simple. When the displayed result carries **one height value per pixel** — a depth map, a terrain height map, a curvature-colored height field — press `Ctrl+3` and it opens in a separate window as **solid terrain**.
+
+From there, **dragging the mouse swings the viewpoint around** and **the wheel zooms in and out** — instead of squinting at a colormap thinking "that's probably a dent," you can **actually grab the thing, change the angle, and confirm the relief by watching how the light falls on it**. The places where stereo-depth error creeps in, the steps in a terrain height map, the ridges and valleys of a curvature map — these can **look flat in a single static color image**. Rotate the same data and re-light it, and the shadows make them jump out. The single step from "staring at results as a still image" to "picking results up and checking them by hand" is plain, but it earns its keep in real work. (In environments where a real offscreen GPU context can't be acquired, the feature disables itself safely — best-effort; if it's not there, it's quietly not there.) Height is colored with a terrain-style gradient (low = deep blue → green → sand → summit = white), so high and low read off the colors as well.
+
+![Studio 3D surface view (Itokawa)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_surface_thumb.jpg)
+
+*↑ The Ctrl+3 3D surface view — the relief of a depth render of asteroid Itokawa's real shape model (JAXA Hayabusa / Gaskell model). In the app you rotate this very scene by mouse drag and zoom with the wheel (the image is a `renderToImage` still of the same GL scene).*
+
+### System Settings — the Settings Tree
+
+`Tools ▸ System settings…` (`Ctrl+,`) is a category-tree settings screen. **Execution** (worker thread count, operator timeout), **Windows** (the cap on graphics windows), **Display** (default colormap, region drawing mode), **Editor** (font size, the Python Editor's interpreter) — the settings corresponding to HDevelop's `set_system`, gathered on one screen. The **Command palette** on `Ctrl+P` fuzzy-searches any action or any operator by name and runs it immediately, so a full session's worth of operations can stay on the keyboard without walking menus.
+
+### The Gallery and Help — 105 Worked Examples and a 265-Op Reference
+
+On the 3D side, 105 worked examples (real Itokawa point cloud, skeleton volume, synthetic data) can be picked from the gallery and Run on the spot, and each of the 265 3D ops has a generated help page (signature, usage, links to verified samples, and the type-compatible next ops).
+
+![Studio 3D Examples gallery](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_examples_thumb.jpg)
+
+*↑ The 3D Examples gallery — right after selecting and running itokawa_curvature (Output shows a PASS with ground-truth verification).*
+
+![Studio 3D Operators reference](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_ops_thumb.jpg)
+
+*↑ The 3D Operators reference — the help page for `icp_point2plane`.*
+
+### One Workflow, Followed From an Inspection-Line Practitioner's Seat
+
+Here's how the features above chain together in real work — written for someone who has built inspection programs in HDevelop.
+
+Search the left **OPERATORS** panel for `shape_locate` or `m1_measure_pos` and double-click to insert into the pipeline. Move the knobs a, b in the central **SELECTED STAGE / KNOBS** while checking the result in the right **IMAGE** panel each time. Once the thresholds are settled, `Ctrl+E` (Export) writes out both the `--ops` string and a Python function, ready to embed into your own inspection program. If dialing in a parameter takes a while, register `region.sum()` or `np.percentile(v, 95)` in the **variable watch** and watch the statistics move in real time as you slide the threshold. If some stage misbehaves, right-click it and **Run from here** to redo just that part — anyone who has built inspection programs in HDevelop's Program window with breakpoints will find this whole sequence immediately familiar.
+
+**Design in Studio, run in code** — the same division of labor as exporting from HDevelop to HDevEngine. Trial and error in the GUI; integration into the production line via the exported Python function or JSON. Because both share the same ops and the same parameters, **"it runs on the floor exactly as confirmed in Studio"** is guaranteed by construction.
+
+Layer the RAG from the "Letting AI Do Image Processing" section over this flow, and it gets one step shorter still. Ask Claude Code to "build a pipeline that detects scratches in this image, and make it inspectable in Studio," and the AI drafts pipeline candidates from `docs/ops` and saves them in Studio's JSON format — from there, a human fine-tunes in Studio. This division — **the AI drafts, the human finishes in Studio** — also stands only because both share the same ops and the same parameter space. The "unified interface" from the design-philosophy section is what lets Studio, the AI, and the production line speak the same language.
+
+---
+
+## A Science Museum on Paper — 42 Exhibits of Playing With Ops
+
+Time to relax the shoulders a little. This corner is meant to be wandered **the way you'd wander the exhibit halls of a science museum**. Everything below is **real output** from Fullseye's registered ops — not a single mockup. The provenance of the materials splits two ways:
+
+- **Real data**: public data from the Smithsonian (CC0), the Metropolitan Museum of Art (CC0), NASA (public domain), the Broad Bioimage Benchmark Collection (CC-BY), and others. Source links are in the captions.
+- **AI-generated simulated data**: for fields where license-clean real data is hard to find (medical imaging, for example), the materials were produced with an image-generation AI (Google gemini-2.5-flash-image), and **"AI-generated" is stated both inside the image and in the caption**. These are not real specimens, patients, or scans.
+
+The star throughout is **the processing**. Each caption names the ops used, so you can reverse-look-up "which op makes this picture?" Full resolution and additional exhibits are in the [results gallery (docs/GALLERY.md)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md).
+
+### The Science-Museum Wing — Image-Processing Principles as "Beautiful Pictures"
+
+[![Rainbow ripples of the distance transform](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_distance_ripple_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_distance_ripple.png)
+
+*↑ **Rainbow ripples of the distance transform** — split a coin photo into black and white, then paint "how many pixels from the edge?" in rainbow colors, and ripple-like contour lines emerge. Ops used: `otsu`, `fill_up`, `distance_transform`.*
+
+[![The Fourier world](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_fourier_stars_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_fourier_stars.png)
+
+*↑ **The Fourier world** — view an image in frequency space, and "what fineness of pattern, in what direction" becomes points of light. A regular weave glows like a constellation (the weave panel only is synthetic). Op used: `fft_image`.*
+
+[![Watershed — coloring-book segmentation of coins](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_watershed_foam_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_watershed_foam.png)
+
+*↑ **Watershed's coloring-book segmentation** — mimic water flowing downhill and pooling, and each coin gets its own color. Ops used: `otsu`, `distance_transform`, `watersheds`, `colorize_labels`.*
+
+[![The edge compass](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_edge_compass_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_edge_compass.png)
+
+*↑ **The edge compass** — paint contour direction with the colors of a hue wheel, and lines pointing the same way glow the same color. Ops used: `sobel_amp`, `sobel_dir`.*
+
+[![Six universes born from simple rules](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds.png)
+
+*↑ **Six universes born from simple rules** — from nothing more than "look at your neighbors and decide your own color" come fractals, chaos, sandpile mandalas, dendrites, and coral patterns (simulation imagery). Ops used: `alife_wolfram1d`, `alife_sandpile`, `alife_dla`, `alife_lenia`, `alife_cyclic_ca`.*
+
+[![An X-ray photograph of a Triceratops](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray.png)
+
+*↑ **An X-ray photograph of a Triceratops** — pack the Smithsonian's real skeleton scan (CC0) into voxels and take a maximum-intensity projection (MIP), and it comes out looking just like an X-ray. Ribs and horns both show. Ops used: `voxelize`, `vol_gaussian`, `vol_mip`.*
+
+[![A dragon that pops out with red-blue glasses](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph.png)
+
+*↑ **A dragon that pops out with red-blue glasses** — the real Stanford dragon scan rendered from 2 viewpoints and overlaid in red-cyan as an anaglyph. Put on red-blue glasses and it floats. Ops used: `read_mesh`, `look_at`, `render_mesh`.*
+
+[![The Triceratops mountain range](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain.png)
+
+*↑ **The Triceratops mountain range** — turn the skeleton into a 600,000-point cloud and build an elevation map from directly above, and the spine becomes a mountain range, the ribs its ridgelines. The same ops a robot uses to read terrain. Ops used: `sample_surface`, `elevation_map`, `colorize_height`.*
+
+![Shapes growing and shrinking (morphology)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_morph_pulse.gif)
+
+*↑ **Shapes growing and shrinking** — coins puff up and merge under dilation, then slim down under erosion. Fundamental ops used in factory image inspection too. Ops used: `dilation_circle`, `erosion_circle`.*
+
+[![Space gone wobbly — three deformation algorithms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_wobble_warp_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_wobble_warp.png)
+
+*↑ **Space gone wobbly** — imagine an invisible rubber sheet under the image, then pinch and pull it in three different styles: TPS / FFD / MLS. Ops used: `deform_tps`, `deform_ffd`, `deform_mls`.*
+
+[![Extracting a skeleton from a dinosaur silhouette](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton.png)
+
+*↑ **Extracting a skeleton from a dinosaur silhouette** — the centerline (skeleton) of a Triceratops skeleton's shadow, extracted at 1-pixel width. Legs, horns, and tail remain like wirework. Ops used: `sk_skeleton`, `distance_transform`, and others.*
+
+### The Museum Wing — 31 Exhibits Across the Academic Disciplines
+
+Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, space, paleontology, geology, meteorology, oceanography, botany — this corner exists to show that **the same op system cuts straight into images from any field**. Caption conventions from here on are the same as above (real data gets a source link; AI-generated is labeled as such).
+
+#### Paleontology
+
+[![Spiral extraction from an ammonite fossil](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_real_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_real.png)
+
+*↑ The spiral of an ammonite fossil ([Smithsonian Open Access, CC0](http://n2t.net/ark:/65665/34afa6692-b3f9-408d-90dc-cc53097171b6)) extracted with `canny`. Ops used: `rgb1_to_gray`, `canny`, `overlay_mask`.*
+
+[![Skin-texture analysis of a T. rex life reconstruction](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trex_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trex.png)
+
+*↑ Skin texture of a Tyrannosaurus life reconstruction analyzed with `std_filter` / `texture_laws`. The material is **AI-generated (gemini-2.5-flash-image) simulated data** (not a real specimen).*
+
+[![Multi-Otsu classification of a Triceratops life reconstruction](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_triceratops_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_triceratops.png)
+
+*↑ A Triceratops life reconstruction region-classified by multi-Otsu. The material is **AI-generated simulated data**. Ops used: `xsk2_multiotsu`, `colorize_labels`.*
+
+[![Feather-flow analysis of a feathered dinosaur](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_feathered_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_feathered.png)
+
+*↑ The flow of a feathered dinosaur's plumage analyzed with Gabor filters. The material is **AI-generated simulated data**. Ops used: `sk_gabor`, `std_filter`.*
+
+[![Log-spiral FFT of an ammonite cross-section](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_section_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_section.png)
+
+*↑ The logarithmic spiral of an ammonite cross-section observed through its FFT spectrum. The material is **AI-generated simulated data**. Ops used: `cv_clahe`, `cx_fft`, `cx_magnitude`.*
+
+[![Relief-enhancing a trilobite's segments](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trilobite_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trilobite.png)
+
+*↑ A trilobite's body segments relief-enhanced with `gray_tophat`. The material is **AI-generated simulated data**.*
+
+#### Space
+
+[![Filament extraction in the Carina Nebula](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina.png)
+
+*↑ The filament structure of the Carina Nebula ([NASA/STScI Webb, public domain](https://images.nasa.gov/details/carina_nebula)) extracted with `sk_frangi` — an op originally for enhancing blood vessels. A case of a medical op cutting into astronomy.*
+
+[![Texture analysis of the Nili Patera dunes on Mars](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_mars_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_mars.png)
+
+*↑ The texture of Martian dunes ([NASA/JPL-Caltech/Univ. of Arizona, public domain](https://images.nasa.gov/details/PIA18244)) analyzed with `std_filter` / `texture_laws`.*
+
+[![FFT spectrum of the Sunflower Galaxy](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_galaxy_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_galaxy.png)
+
+*↑ The frequency structure of a spiral galaxy ([NASA GSFC, public domain](https://images.nasa.gov/details/hubble-sees-a-galactic-sunflower_21136469209_o)) visualized with `cx_fft`.*
+
+#### Medicine (Everything in This Block Is AI-Generated Simulated Data)
+
+[![Enhancement and edge extraction of a chest-X-ray-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_chest_xray_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_chest_xray.png)
+
+*↑ A chest-X-ray-**style** image enhanced and edge-extracted with `cv_clahe` + `sobel_amp`. **AI-generated simulated data** (not a real patient or scan).*
+
+[![Multi-Otsu classification of an H&E-histology-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_histology_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_histology.png)
+
+*↑ An H&E-tissue-section-**style** image tissue-classified by multi-Otsu. **AI-generated simulated data**.*
+
+[![Contrast enhancement of a brain-MRI-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_brain_mri_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_brain_mri.png)
+
+*↑ A brain-MRI-**style** image with tissue contrast enhanced by `cv_clahe` + `unsharp`. **AI-generated simulated data**.*
+
+[![Blood-cell counting on a blood-smear-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear.png)
+
+*↑ Blood cells in a blood-smear-**style** image segmented and counted (131 detected). **AI-generated simulated data**. Ops used: `segment_objects(otsu)`, `count_obj`, `colorize_labels`.*
+
+[![Contour extraction of an anatomical-illustration-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart.png)
+
+*↑ The contours of an anatomical-illustration-**style** image extracted with `canny`. **AI-generated simulated data**.*
+
+#### Biology
+
+[![Segmenting and counting HT29 cells](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells.png)
+
+*↑ A fluorescence micrograph of HT29 cells ([BBBC001, CC-BY 3.0](https://bbbc.broadinstitute.org/BBBC001)), Otsu-segmented → label-colored → counted (327 detected). Laboratory routine work, exactly as it is.*
+
+[![Tracing a neuron's dendrites](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
+
+*↑ The dendrites in a neuron fluorescence image traced with `sk_frangi`. **AI-generated simulated data**.*
+
+[![Segmenting and counting diatoms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_diatoms_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_diatoms.png)
+
+*↑ A diatom micrograph segmented and counted (123 detected). **AI-generated simulated data**.*
+
+[![Shadow-region enhancement of a deep-sea anglerfish](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_deepsea_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_deepsea.png)
+
+*↑ The dark regions of a deep-sea creature enhanced with `cv_clahe`. **AI-generated simulated data**.*
+
+[![Periodic-structure analysis of butterfly wing scales](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_butterfly_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_butterfly.png)
+
+*↑ The periodic structure of a butterfly's wing scales analyzed with `sk_gabor`. **AI-generated simulated data**.*
+
+#### Archaeology
+
+[![Elliptic Fourier descriptors of a pottery silhouette](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_amphora_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_amphora.png)
+
+*↑ The silhouette of an amphora ([The Metropolitan Museum of Art Open Access, CC0](https://www.metmuseum.org/art/collection/search/254896)) shape-reconstructed with elliptic Fourier descriptors (EFD). Raising the harmonics 2 → 8 → 32 makes the curve cling ever closer to the contour — a method actually used in archaeological pottery-shape classification. Ops used: `otsu`, `fourierdesc.elliptic_fourier`, `fourierdesc.reconstruct`.*
+
+[![Relief enhancement of a stone stele](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_relief_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_relief.png)
+
+*↑ The carving of an Assyrian stone relief ([The Metropolitan Museum of Art, CC0](https://www.metmuseum.org/art/collection/search/322611)) relief-enhanced with `gray_tophat`.*
+
+[![Pigment enhancement of a cave painting (the DStretch approach)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cave_painting_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cave_painting.png)
+
+*↑ The fading pigments of a cave painting enhanced with decorrelation stretch (the same family of technique as DStretch, the rock-art survey standard). **AI-generated simulated data**. Op used: `principal_comp`.*
+
+[![Enhancing the impressions on a cuneiform tablet](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cuneiform_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cuneiform.png)
+
+*↑ The character impressions of a cuneiform clay tablet enhanced with `gray_tophat`. **AI-generated simulated data**.*
+
+#### Geology, Meteorology, Oceanography, Botany
+
+[![Decorrelation stretch of satellite-image lithology](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_earth_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_earth.png)
+
+*↑ The lithology in a satellite image ([NASA JSC, public domain](https://images.nasa.gov/details/SL2-04-018)) enhanced with decorrelation stretch (a remote-sensing standard).*
+
+[![Extracting facet ridgelines of a mineral crystal](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_mineral_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_mineral.png)
+
+*↑ The facet ridgelines of an amethyst crystal extracted with `canny`. **AI-generated simulated data**.*
+
+[![Mineral-grain classification of a rock thin section](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_thin_section_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_thin_section.png)
+
+*↑ A rock thin section (polarized-microscope style) classified into mineral grains by multi-Otsu. **AI-generated simulated data**.*
+
+[![Gradient-direction wheel of a hurricane's vortex structure](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_hurricane_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_hurricane.png)
+
+*↑ The vortex structure of a hurricane ([NASA JSC, public domain](https://images.nasa.gov/details/iss056e162187)) visualized with a gradient-direction wheel (`sobel_dir` + `colorize_flow`).*
+
+[![Structure enhancement of a supercell thunderstorm](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_supercell_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_supercell.png)
+
+*↑ A supercell thunderstorm structure-enhanced with `cv_clahe` + `unsharp`. **AI-generated simulated data**.*
+
+[![Coral-reef coverage classification](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_ocean_coral_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_ocean_coral.png)
+
+*↑ A coral reef coverage-classified by multi-Otsu (marine-survey style). **AI-generated simulated data**.*
+
+[![Extracting fern leaf veins](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern.png)
+
+*↑ The leaf veins of a fern extracted with `sk_frangi`. **AI-generated simulated data**.*
+
+[![Segmenting and counting a pollen-SEM-style image](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen.png)
+
+*↑ A pollen-SEM-**style** image segmented and counted (41 detected). **AI-generated simulated data**.*
+
+Across these 42 exhibits, **every piece of real data carries its source and license** (the detailed attribution table is in [ACADEMIC_ATTRIBUTION.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/ACADEMIC_ATTRIBUTION.md)), and **every AI-generated piece is labeled as such**. One bonus honest disclosure — this exercise of "running diverse real data through the ops" turned out to be a **bug detector** in its own right. Five op defects that had never once surfaced on synthetic data showed up on real data, and they're recorded with verification status in [docs/KNOWN_ISSUES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/KNOWN_ISSUES.md) (example: a suspicion that `count_obj`'s connectivity disagrees with HALCON's default). Behind the pretty exhibits, it doubled as a test — two birds with one stone.
 
 ---
 
@@ -324,126 +874,281 @@ Having the algorithms isn't enough on its own. You need a layer for **"seeing it
 The backbone that keeps Fullseye from becoming "just a pile of functions."
 
 1. **Honest by construction**
-   Held-out data is never used for selection. Coverage and benchmarks are **measured, never merely claimed**. Limitations are **disclosed, not hidden**. When a result looks too good, I doubt the breakdown.
+   Hold-out data is never used for selection. Coverage and benchmarks are **measured, never merely claimed**. Limitations are **disclosed, not hidden**. Results that look too good get their breakdowns doubted.
 2. **A unified interface**
-   Whether the implementation underneath is hand-written or an OSS wrapper, **the caller uses the same naming and signature conventions**. And it should be **an API that reads naturally when a human writes it** — something like `fs.stereo.SGM(num_disparities=128).compute(l, r)`, readable and completion-friendly (with any mechanical string dispatch hidden behind it). This is something I specifically cared about.
+   Whether the implementation underneath is hand-written or an OSS wrapper, **the caller uses the same naming and signature conventions**. And it must be **an API that's natural for a human to write** — something like `fs.stereo.SGM(num_disparities=128).compute(l, r)`, readable and completion-friendly (with any mechanical string dispatch hidden behind it). This is a point I especially cared about.
 3. **Every heavy dependency is optional**
-   **The core runs on nothing but numpy + scipy.** OpenCV, scikit-image, torch, and GPU support are all opt-in; without them, the affected ops just quietly disable themselves (graceful degradation).
+   **The core runs on nothing but numpy + scipy.** OpenCV, scikit-image, torch, and GPU support are opt-in; without them, only the affected ops quietly disable themselves (graceful degradation).
 4. **Reimplemented from public knowledge**
-   Everything is implemented from **public knowledge — papers, OSS, and the like**. Nothing is derived from any specific commercial product. That line is drawn clearly.
+   Everything is implemented from **public knowledge — papers, OSS, and the like**. Nothing is derived from any specific commercial product (that line is drawn clearly).
+
+I wrote "four pillars," but in truth they aren't four independent columns — it's closer to **one spine with branches reaching in four directions**. Let me dig a little deeper.
+
+**"Honest by construction"** is the thickest trunk, showing its face in nearly every section of this article. Layer 2's hold-out discipline, the per-chapter HALCON coverage disclosure, the "Night Before Release" CI chapter, the reproduction notes for Bugs 1–6 — they all share one root: the wariness that "if you show only the good numbers, eventually you fool yourself too." I think of this less as a technical choice than as **a lifestyle habit for keeping development going long-term**. Producing one good number once is easy; repeating the same discipline a hundred times doesn't happen unless the structure forces it.
+
+The reason I insisted on **"a unified interface"** is that Fullseye is ultimately aimed at being used as **an AI's toolbox**. A library where the calling convention changes depending on whether the internals are hand-written numpy or an OpenCV wrapper means **more to memorize — for humans and for AIs alike**. With one uniform calling convention, an AI can go from "I want to do this processing" straight to the correct call without getting lost. The insistence on a writing feel like `fs.stereo.SGM(num_disparities=128).compute(l, r)` comes from wanting **Python's completion machinery to function as documentation in its own right**. If the IDE tells you the types, that by itself is a minimal onboarding.
+
+**"Every heavy dependency is optional"** looks unglamorous, but it's actually the pillar that sits closest to honest disclosure. Rather than the honest-but-blunt "it doesn't work without torch," it opts for a **graduated honesty**: "without torch it runs on the numpy path; with torch, a faster path opens up." The flip side: many of the CI bugs recounted in "The Night Before Release" grew precisely out of **lapses in operating this pillar** (missing guards on optional imports). Raising a pillar is easy; **verifying you're actually honoring the pillar you raised** is a separate job — the CI episode drove that home.
+
+**"Reimplemented from public knowledge"** is the plainest pillar and the least negotiable line. Lifting code from commercial industrial software might have let me "catch up" faster on the surface. I don't do it because it's an **ethical line**, and at the same time **the road on which my own understanding deepens over the long run**. By never skipping the step of reading the paper and rewriting the algorithm with my own hands, I keep myself in a state where I can **genuinely explain** why a given op returns a given result.
 
 ---
 
-## Letting AI Do Image Processing — Using Fullseye as a RAG Knowledge Base
+## Letting AI Do Image Processing — Using Fullseye as a RAG
 
-This is Fullseye's hidden advantage. As mentioned earlier, each of the ~1,000 ops carries a **Markdown note** (usage, type contract, related ops, references), and the algorithms themselves are **classical, explainable ones by design**. Put those two together, and the library works out of the box as a **RAG (retrieval-augmented generation) knowledge base for AI coding assistants like Claude Code**.
+This is Fullseye's hidden advantage. As mentioned earlier, each of the ~1,000 ops carries a **Markdown note** (usage, type contract, related ops, references), and the algorithms themselves are **classical and explainable**. Put those two together, and the library functions as-is as a **RAG (Retrieval-Augmented Generation) knowledge base for AI coding assistants like Claude Code**.
 
 Broken down in three passes:
 
-1. **One-liner**: ask an AI to "detect X in this image," and it **retrieves** Fullseye's op documentation, composes a pipeline out of matching ops, **writes and runs it**.
-2. **A bit more**: because the AI can read an op's **type (sort)**, it can pick ops in an order where the types actually connect — "image → region → feature" — and it can follow related-op links to suggest alternatives. Unlike a deep-learning black box that's one opaque function, **each stage is explainable and its intermediate output can be inspected**, so when the AI gets something wrong, **you can see exactly where it went off track**.
-3. **Why it works**: the documentation is a machine-readable single source of truth (md = SoT), and the ops are deterministic, typed, and contract-tested. That combination makes it **a parts bin that's easy for an AI to retrieve from, easy to compose with, and easy to verify.** A human trying things in Studio and an AI composing a pipeline via RAG are both working from **the same ops and the same documentation**.
+1. **One-liner**: ask the AI to "detect X in this image," and it **retrieves** Fullseye's op documentation, **writes and runs** a pipeline combining the appropriate ops.
+2. **A bit more**: because the AI can read each op's **type (sort)**, it can pick ops in an order where the types connect — "image → region → feature" — and follow related-op links to offer alternatives. Unlike deep learning's "one black-box function," **each stage is explainable and intermediate results can be inspected**, so when the AI goes wrong, **you can see exactly where it went off track**.
+3. **Why it works**: because the documentation is a machine-readable single source of truth (md=SoT), and the ops are deterministic, typed, and contract-tested. It's **a parts bin that's easy for an AI to retrieve from, compose with, and verify against.** A human trying things in Studio and an AI composing via RAG stand on **the same ops and the same documentation**.
 
-In other words, Fullseye is a "library for humans to use" and, at the same time, **"a foundation for letting an AI do image processing freely."** Assembling explainable classical vision as a set of skills turns out to translate directly into how well it works with AI.
+### What SKILL.md Pins Down
 
-And this RAG-based mode is **the workflow I actually recommend**. Pair it with Studio, and an AI agent (Claude Code, say) can put the results of the pipeline it assembled **right in front of a human, in an image window or a 3D view** — it doesn't have to stay closed inside code and conversation; a human can inspect "what the AI is looking at" on the same screen. The position I'm aiming for is **an integrated environment for Physical AI (robot perception)**.
+"The AI retrieves Fullseye's op docs" doesn't happen on slogans alone. Here's how it's actually pinned down.
 
-Concretely: open Studio next to Claude Code and ask it, "count the parts in this bin and give me a graspable pose for each." The AI retrieves the relevant op notes, writes and runs a segmentation-then-6-DoF-pose-estimation pipeline, and the results show up in Studio's image window and 3D view. The human looks at the screen and, if something's off, asks for a redo in plain language. **The workflow this is designed for is image processing that runs entirely on conversation and a screen** — all the pieces introduced in this article (~1,000 ops, type contracts, machine-readable notes, and Studio's rendering layer) are what make it possible.
+Run `fullseye-rag` in a `pip install fullseye` environment, and the bundled skill `skills/fullseye-ops` is copied to `~/.claude/skills/fullseye-ops`. At that moment, **the single line `FULLSEYE_REPO =` in the skill's `SKILL.md` is automatically rewritten to the corpus location for that environment**. What this means: the AI (Claude Code), **whatever project folder it's working in**, knows without hesitation "the Fullseye op corpus is here." If the path weren't pinned, the AI would hunt for the repository every time — and retrieve nothing when it couldn't find it. **One pinned path line** is what separates a RAG that works in practice from one that doesn't.
 
-For what it's worth, this development itself is done with Claude Code as an implementation partner — the design decisions and direction stay with me. If you'd like to try it, starting from [the author's referral link](https://claude.ai/referral/0sqPw8E_lw) helps this project's continued development a little (full disclosure: it's a referral link).
+One more fail-closed touch: if the corpus itself (`docs/ops` or `OP_CATALOG.md`) can't be found, the installation is **refused outright**. If a skill already exists, it's **set aside with a timestamp** before being overwritten, so a reinstall (i.e. an update) never silently erases hand edits. Never create the half-state of "installed, but empty inside" — if it goes in, it goes in working; if it can't work, it doesn't go in. That's the discipline.
 
-One more thing I've kept in mind is **academic use**. Every op carries a machine-readable note with real references (md = SoT), each version is pinned to code with a fingerprint, and evaluation is done honestly with held-out data — meaning it's built from the start to be **citable and reproducible**. The repo includes a `CITATION.cff`, and every reference cites a real classical work, never a fabricated DOI. If this ends up used and cited as a research tool, that would make me genuinely happy — that's the design intent.
+### Checkout Mode and Wheel Mode — Two Ways In
+
+`fullseye-rag` (in reality `fullseye/rag_setup.py`) **looks at how the package was installed and adapts the corpus contents automatically**.
+
+- **Checkout mode**: in a git-cloned or `pip install -e .` environment, `docs/ops/INDEX.md` really exists next to the package. In that case the **full corpus of `docs/ops` (about 1,000 per-op notes)** is pinned as-is.
+- **Wheel mode**: in an environment that only ran `pip install fullseye` from PyPI, `docs/ops` isn't bundled (the corpus is repository content, not wheel content). In that case the package-bundled **`OP_CATALOG.md` (the one-page all-ops catalog for AI)** is pinned instead, and the SKILL.md gets an explicit note written into it: "if you want the full per-op notes, clone the repository."
+
+In either mode, if the corpus body (`docs/ops/INDEX.md` or `OP_CATALOG.md`) can't be found, installation is **refused on the spot** — never install an empty skill and let someone puzzle over "it doesn't work" later. Fail-closed, all the way through.
+
+### What Actually Comes Back When You Ask
+
+Here's the concrete feel, with real example prompts. Run `pip install fullseye` once and `fullseye-rag` once, and from then on, in whatever directory you open Claude Code, exchanges like this work:
+
+> **Human**: "I want to detect scratch-like defects in this PCB image."
+>
+> **AI (via the `fullseye-ops` skill)**: searches `docs/ops` and picks ops whose `in:`/`out:` types chain as "image → image (enhance) → region (binarize) → contour (measure)." For example: "`bilateral` or `gaussian` for noise suppression, `sobel_amp` or `dog` (Difference of Gaussians) for edge enhancement, `otsu` or adaptive thresholding for binarization, `edges_sub_pix` → `select_contours` for contour extraction" — presenting the candidates **grounded in each op's type contract and HALCON alias**, then writing and running the `fullseye.run_pipeline(img, [...])` code on the spot.
+
+One more, on the industrial side:
+
+> **Human**: "This part isn't placed in a fixed orientation — before grasping it, I first need its position and orientation."
+>
+> **AI (via the `fullseye-ops` skill)**: pulls the `matching` category of `docs/ops` and offers `shape_locate` (the counterpart of HALCON's `find_shape_model`, contour-based shape matching) or `ncc_locate` (the counterpart of HALCON's `find_ncc_model`, template matching) as candidates. After confirming the types chain as `image → match`, it writes and runs code that returns position and angle.
+
+In both examples, what the AI grounds itself in is **the same corpus (`docs/ops`) and the same type contracts**. "Defect detection on an inspection line" and "alignment for a robot" are, from the AI's seat, **the same kind of question answered by the same RAG** — the op system from Layer 1 serving both Physical AI and industrial vision owes a lot to this RAG machinery.
+
+What the AI is doing behind these responses is not vector search, not embedding-similarity computation. **It greps `docs/ops` and reads each note's `in:`/`out:` lines to chain the types — that's all** (the "Retrieval recipes" in SKILL.md are the literal procedure). Which is exactly why no special vector DB or embedding service is needed: **any environment that can grep functions as the RAG**. In a checkout environment it draws evidence from ~1,000 per-op notes; in a wheel environment, from the `OP_CATALOG.md` listing. Nor do you have to take the proposed code on faith. **Every op ships with a ground-truth-verified worked example**, so a self-verification loop — the AI itself runs `py -3.11 examples/<id>.py` and confirms "PASS" before replying — can be built right in.
+
+And what if the AI mistakenly picks an op whose type doesn't connect? The answer is as simple as the "type contract" section in Layer 1 said: `run_pipeline` **fails explicitly at run time**. For the AI, that's not an unfriendly error aimed at humans — it is itself **machine-readable feedback: "the types don't connect here."** The AI reads the error message and re-selects an op whose type connects — a correction loop that can run **without a human stepping in**. Unlike a deep-learning function that "returns a vaguely wrong answer," a type contract **refuses to swallow mistakes silently and surfaces them on the spot**, which makes "where did it get lost?" easy to trace — for the AI and for the human alike.
+
+### Fail-Closed Design — No Silent Giving-Up When the Corpus Is Missing
+
+The RAG machinery, too, is threaded through with the fail-closed philosophy that recurs across this article. Installation is refused in environments where the corpus body can't be found. The update script (`tools/update_fullseye.py`) **refuses to run when there are uncommitted changes**, advances only via `--ff-only` (fast-forward), updates the RAG skill **only after taking a backup**, and never touches Studio settings. The accident where "an update meant to strengthen the AI's foundation destroys the human's working environment" is made structurally impossible.
+
+So Fullseye is a "library for humans" and, at the same time, **"a foundation for letting an AI do image processing freely."** Assembling explainable classical vision as skills turns out to translate directly into affinity with AI.
+
+And **the recommended mode of operation is this RAG style**. Combine it with Studio, and the results of a pipeline assembled by an AI agent (Claude Code, say) can be **put in front of a human as image windows and 3D views** — not closed off inside code and conversation; the human can inspect "what the AI is seeing" on the same screen. The position I'm aiming for: **an integrated environment for Physical AI (robot perception)**.
+
+Concretely, the picture looks like this. Ask Claude Code, with Studio open alongside: "count the parts in this bin, and give me poses I can grasp them at" → the AI pulls the op notes, writes and runs a segmentation → 3D-pose-estimation pipeline → the results land in Studio's image window and 3D view → the human looks at the screen and, if something's off, asks for a redo in plain language. **Image processing that runs on conversation and a screen** — that's the operation this is built for (and every part of it was introduced in this article: ~1,000 ops × type contracts × machine-readable notes × Studio's rendering layer).
+
+Incidentally, this development itself proceeds the same way — the design calls and direction stay with me, with Claude Code as the implementation partner. If you'd like to try it, starting from [the author's referral link](https://claude.ai/referral/0sqPw8E_lw) chips in a little toward keeping this development going (honest disclosure: it's a referral link).
+
+One more thing I keep in mind is **academic use**. Every op has a machine-readable note with references (md=SoT), versions are pinned to code by fingerprint, and evaluation is honest with held-out data — in other words, it's built from the start to be **citable and reproducible**. The repo carries a `CITATION.cff`, and the references cite only real classical works (no fabricated DOIs). Used as a research tool, and cited — if that happens, I'll be glad. That's the design.
+
+Academic use and RAG operation are, in fact, a good match. When trying a new preprocessing pipeline in research, comparisons against existing methods eat your time — with Fullseye, ask the AI to "assemble a preprocessing pipeline close to this paper's method," and it proposes candidates from **ops whose sources are explicitly cited**. The code that comes out is a composition of parts verified by worked examples, so **the anxiety of "is this baseline even implemented correctly?" no longer has to be re-checked from zero**. From the standpoint of research reproducibility, this is another place the md=SoT structure pays off directly.
 
 ---
 
 ## Building "Honesty" Into the System — Bugs It Actually Caught
 
-Throughout this project I've placed what I call **honest gates** — checkpoints where an expected behavior has to be verified numerically before it's accepted. And whether they're actually working should be judged by **the bugs they've caught**.
+Throughout this project I've placed what I call **honest gates** — checkpoints where expected behavior must be verified numerically before it's accepted. And whether they actually work should be judged by **the record of bugs they've caught**.
 
-**In the course of preparing this overview article alone, the quality checks caught six confirmed bugs.** I'm reporting them without hiding anything. The first two came from ways a test could be technically passing but still wrong; the last four came from **having AI perform an adversarial code review, then manually verifying each finding against first principles before acting on it** — each one taught a lesson.
+**In the course of preparing this overview article alone, the quality checks caught six confirmed bugs.** I'm publishing them without hiding anything. The first two are lessons in how tests get slipped past; the latter four are lessons in a discovery route — **have an AI do adversarial review, then manually verify each finding against primary evidence**.
 
-### Bug 1: The Hessian in 3D topographic classification was asymmetric
+### Bug 1: The Hessian in 3D Topographic Classification Was Asymmetric
 
-An op that classifies terrain bumps into "peak, valley, ridge, saddle" was pulling the **cross term of the Hessian matrix** from the **wrong axis** of `np.gradient`. `np.gradient` returns values in `[∂/∂y, ∂/∂x]` order, but the code was picking up ∂²/∂y² (a duplicate of a different term) where it meant to compute the cross term ∂²/∂x∂y.
+An op that classifies terrain relief into "peak, valley, ridge, saddle" was pulling the **cross term of the Hessian matrix** from the **wrong axis** of `np.gradient`. `np.gradient` returns `[∂/∂y, ∂/∂x]` in that order, but where the code meant to compute the cross term ∂²/∂x∂y, it was picking up ∂²/∂y² (a duplicate of a different term).
 
-- **Impact**: for structure diagonal to the axes, eigenvalues would be cut in half or flip sign, causing misclassification.
-- **How I confirmed it (reproducible)**: a correct classification should be **invariant under transpose** (an image and its transpose shouldn't swap "peak" and "valley"). Measured: the old code misclassified **46 out of 576 pixels** on a 24×24 diagonal structure; the fixed version is **perfectly transpose-symmetric**.
-- **Fix**: pull the cross term from the correct axis, and **pin transpose symmetry as a regression test**.
+- **Impact**: on structure diagonal to the axes, eigenvalues would halve or flip sign, causing misclassification.
+- **How to confirm it (reproducible)**: a correct classification should be **the same under transpose** (an image and its transpose don't swap "peak" and "valley"). Measured: the old code misclassified **46 of 576 pixels** on a 24×24 diagonal structure; the fixed version is **perfectly transpose-symmetric**.
+- **Fix**: take the cross term from the correct axis, and **pin transpose symmetry as a regression test**.
 
-### Bug 2: Studio's op-help dropdown was broken for every op
+The choice of "how to confirm it" is itself a good expression of the honest-gate mindset, I think. Directly re-deriving whether the Hessian cross term is computed correctly is hard work if you're just eyeballing formulas. Far better to **find one symmetry that must hold if the code is correct, and check mechanically that it isn't broken** — a much more reproducible test. That mixing up the axes breaks transpose symmetry is a check **derivable deductively from this op's mathematics** — a different animal from a test that concludes "it ran, so it's correct."
 
-While unifying op help lookup across 2D and 3D, a `(dimension, name)` tuple was being **unpacked directly into `display_fn(name, dimension)`** — the argument order was reversed. Since both are strings, **it never raised an error** — instead, every op you selected showed an empty card, a **user-visible bug**.
+### Bug 2: Studio's Op-Help Dropdown Was Broken for Every Op
 
-- **Why the test missed it**: the existing test called the display function **directly, with the correct argument order**, and never exercised the actual dropdown interaction (via its signal).
-- **Fix**: corrected the argument order, and added a **regression test that reproduces the actual dropdown interaction**. Since "the same bug tends to recur in similar spots," I also **audited every other dispatch site for the same class of argument-order mistake** (confirmed none elsewhere).
+While unifying op-help lookup across 2D and 3D, a `(dimension, name)` tuple was being **unpacked directly into `display_fn(name, dimension)`** — arguments reversed. Both being strings, **no error was ever raised** — instead, every op you selected showed an empty card: a **user-visible defect**.
 
-### Bug 3: PCA pose estimation silently returned "do-nothing rotation" about half the time
+- **Why the tests missed it**: the existing tests called the display function **directly, with the correct argument order**, and never went through the actual dropdown interaction (via the signal).
+- **Fix**: corrected the argument order and added a **regression test that reproduces the actual dropdown interaction**. And since "the same failure recurs in similar places," I **swept every dispatch site for the same class of argument-order mistake** (confirmed there were no others).
 
-An op that aligns a point cloud's principal axes to estimate its pose (rotation) wasn't accounting for the **handedness (right- or left-handed) of the frame** returned by eigendecomposition (`eigh`). Mathematically, in the configuration used to build sign candidates, the determinant of the candidate matrix came out **identically +1** — so whenever a left-handed frame was drawn, all four candidates got **rejected**, and the code **silently fell back to the identity rotation (i.e. doing nothing), with no error and no warning**.
+This one leaves a different kind of lesson than Bug 1 (the mixed-up axis in a formula). Bug 1 was wrong **computation**; Bug 2's computation was fine — the **GUI wiring** (which value gets passed in which position) was wrong. And since `(dimension, name)` and `(name, dimension)` are both just pairs of strings, Python raises no type error at all. Breakage of the form **"correct as a type, swapped as a meaning"** lies outside what Layer 1's type contracts (the `image`/`region`/`feature` sorts) can detect. Unit tests that call functions directly aren't enough — you have to go as far as **exercising the real GUI path (signal → slot)** to catch this class of wiring mistake. That's the lesson.
 
-- **Measured**: across 200 trials of random point clouds and rotations, **92 (46%)** returned the identity rotation. After the fix: **200/200** recovered to machine precision (around 1e-15).
-- **Why the test missed it**: the existing test's random seed happened to land on the "lucky 54%" side. **Passing with one seed doesn't mean it's not broken for half the inputs.**
-- **Fix**: canonicalize the frame to right-handed immediately after decomposition. The regression test now **sweeps 40 random trials**, guaranteeing it hits both handednesses.
+### Bug 3: PCA Pose Estimation Silently Returned a "Do-Nothing Rotation" About Half the Time
 
-### Bug 4: Curvature's "absolute value" was off by a factor of 32 (only the ratio was correct)
+An op that aligns a point cloud's principal axes to estimate its pose (rotation) wasn't accounting for the **handedness (right- or left-handed) of the frame** returned by eigendecomposition (`eigh`). Mathematically, the construction was such that the determinant of the sign-candidate matrix came out **identically +1** — so whenever a left-handed frame was drawn, all four candidates were **rejected**, and the code **fell back to the identity rotation (i.e. doing nothing) with no error and no warning**.
 
-An op computing surface curvedness was mixing a **gradient filter with a gain of 32** (a deliberate convention, correctly compensated for by dividing by 32 elsewhere) with an **already-normalized Hessian**. The shape classification (shape index), which is a **ratio**, came out correctly, but the **absolute value alone was off by 1/32** — a sphere of radius R should have curvature 1/R, but it was coming out as 1/(32R).
+- **Measured**: 200 trials with random point clouds and rotations → **92 (46%) returned the identity rotation**. After the fix: **200/200 recover to machine precision (order 1e-15)**.
+- **Why the tests missed it**: the existing test's random seed happened to land on the "lucky 54%" side. **Passing on one seed does not mean it isn't broken for half of all inputs.**
+- **Fix**: canonicalize the frame to right-handed immediately after decomposition. The regression test now **sweeps 40 random trials**, guaranteed to step on both handednesses.
 
-- **How I found it**: I checked the **absolute value** on a synthetic sphere of known radius — measured 0.0022 versus a true value of 0.0714, exactly a **32.2× discrepancy** (matching the gain's origin, 2×4×4=32).
-- **Lesson**: the "ratio test" had been passing all along. Some bugs are **only caught by validating absolute values against ground truth, not just ratios**. After the fix, c·R = 1.004 on the measured spherical shell, and the regression test now pins the **absolute value**.
+### Bug 4: Curvature's "Absolute Value" Was Off by 32× (Only the Ratio Was Right)
 
-Bugs 3 and 4 came from a different path than 1 and 2: **having AI perform an adversarial code review, then never taking its findings at face value — manually reproducing them numerically first, and only then acting.** AI review findings are often wrong, so I always insert a gate: **"finding → reproduce it myself → only then adopt it."**
+An op computing surface curvedness was mixing a **gradient filter with a gain of 32** (a deliberate convention — other consumers explicitly divide by 32 to compensate) with an **already-normalized Hessian**. The surface-shape classification (shape index), being a **ratio**, came out correct — but **the absolute value alone was off by 1/32**: a sphere of radius R should have curvature 1/R, and it was coming out 1/(32R).
 
-A **second, pre-publication pass** in the same spirit caught two more confirmed bugs. **Bug 5: point-cloud normal viewpoint sign was reversed** (in a single-viewpoint scan — literally the intended use case for the `viewpoint` argument — every point's normal was flipped. The existing test absorbed the sign with `abs()`, the same kind of "test that hides a coin flip" as Bug 3). **Bug 6: mesh-simplification boundary preservation broke down at high compression ratios** (an ill-conditioned quadric solve placed a solution several edge-lengths away from where it should be, and the "boundary-preserving" rim collapsed. Fixed by hardening the outlier-position guard and pinning the breaking condition itself as a regression test). What both have in common isn't that the old tests were "lucky" — it's that they were replaced with tests that check **signed values, absolute values, and the exact conditions that break**, instead of tests that merely happen to pass.
+- **How it was found**: check the **absolute value** on a synthetic sphere of known radius — measured 0.0022 vs. true 0.0714, **precisely a 32.2× gap** (matching the gain's origin, 2×4×4=32).
+- **Lesson**: the "ratio tests" had been passing. Some bugs are **only caught once you verify units and absolute values against ground truth**. After the fix, c·R = 1.004 (measured on the spherical shell), and the regression test now pins the **absolute value**.
 
-These six bugs are the kind of thing **that would never make it into an article that only shows good results**. But I think they're exactly the kind of thing worth keeping — **proof that the quality assurance here is actually doing its job.**
+The discovery route for Bugs 3 and 4 differs from 1 and 2: **have an AI do adversarial code review, then never swallow its findings — manually verify each one against primary evidence (numerical reproduction) before fixing anything.** AI-review findings are often wrong, so the gate — **"finding → reproduce it myself → only then adopt"** — is always inserted.
+
+A **pre-publication full sweep (round 2)** in the same style caught and fixed two more confirmed bugs. **Bug 5: the viewpoint sign on point-cloud normals was inverted** (in a single-viewpoint scan — precisely the intended use of the `viewpoint` argument — every point's normal faced backwards. The existing test absorbed the sign with `abs()`: the same species as Bug 3, "a test that hides the coin flip"). **Bug 6: mesh simplification's boundary preservation self-destructed at high decimation ratios** (the solution of an ill-conditioned quadric was placed several edge-lengths away from where it belonged, and the rim that was supposed to "preserve the boundary" collapsed. The outlier-position guard was hardened, and the breaking condition itself pinned as a regression test). In both cases, the essence was replacing **"tests that happen to pass" with tests that verify signs, absolute values, and the conditions under which things break**.
+
+Bugs 5 and 6 deserve their "how to confirm it" notes at the same granularity as 1–4.
+
+### How to Confirm Bug 5 (Reproducible)
+
+A point cloud's normal vectors should, by rights, be aligned "outward as seen from the sensor (viewpoint)." In a single-viewpoint scan — in the real world, a point cloud captured by one camera or LiDAR seeing one side — the `viewpoint` argument exists precisely to enforce that outward alignment. The bug was that this sign-alignment logic pointed the wrong way: **every point's normal faced away from the viewpoint** — a breakage that's hard to notice by eye.
+
+- **Why the tests missed it**: the existing tests looked only at the normals' **absolute values** (`abs()`). Whether a normal points the right way or exactly backwards, its components' absolute values don't change — so **the tests stayed green even with the sign flipped**. Exactly the same species as Bug 3 (PCA handedness): "a test that looks at only one side of the coin flip."
+- **Fix**: replaced it with a regression test that explicitly verifies the sign relative to `viewpoint` — making **the sign itself** the test subject. Round things off with absolute values, and in many geometric operations the "orientation" information vanishes wholesale — the lesson from Bug 3, reappearing verbatim in another op.
+
+### How to Confirm Bug 6 (Reproducible)
+
+QEM (Quadric Error Metric) edge-collapse is the simplification algorithm that thins a mesh's triangles while preserving shape as well as possible. When collapsing an edge, "where should the merged vertex go to minimize error?" is solved as the **minimization of a quadratic form (the quadric)**. The bug: at **high decimation ratios** (aggressive thinning), this quadric became ill-conditioned, and its solution **jumped to a position several edge-lengths away** from where it belonged. Result: the rim — the part meant to "preserve the boundary (the mesh's edge)" — crumbled more the harder you compressed.
+
+- **How it was found**: this op is the very stage of this article's `mesh_decimate.png` (from "How Far the 3D Stack Goes Custom-Built"), which compares naive random decimation, the existing `decimate_qem`, and the boundary-preserving `decimate_qem_manifold` side by side. Adversarial review flagged the high-decimation regime as suspect, and actually confirming the boundary collapse was the starting point of the discovery.
+- **Fix**: added an **outlier-position guard** that checks the quadric's solution stays within a sane range, and pinned the exact high-decimation condition where the collapse reproduces as a **regression test**. Even when the design intent "preserve the boundary" is right, **the numerically ill-conditioned regime needs its own guard** — a case of an honest gate revealing the "edge where the optimization stops working."
+
+For both 5 and 6, the essence is the same: **doubt the assumptions of tests that happened to be passing, and re-verify against the concrete ways things break — sign, absolute value, ill-conditioning.**
+
+These six are stories that **would never appear in an article that only shows good results**. But I believe stories like these are exactly what's worth keeping — as **evidence that the quality assurance actually runs**.
+
+---
+
+## The Night Before Release — the Story of CI Digging Up 80 Landmines
+
+Having read this far, you might be thinking, "this person talks with a lot of confidence." What follows is the opposite kind of story. In the same session in which I was finishing this overview, I ran GitHub Actions CI in earnest for the first time, heading toward the PyPI release — and **a huge number of tests in the full suite failed**. I eventually drove it to zero, but many of the mines found along the way were of the kind that had "never caused a single problem locally." Following the honest-disclosure house rule, here is what actually happened — recorded **not celebratorily, but plainly and with interest**. CI failures aren't a disgrace; they're **proof the quality gates actually did their job**.
+
+Let me first be honest about why I hadn't been running CI seriously until now. In solo development, the temptation is constant: **if the local full suite passes, that's good enough**. Your own PC is the environment you know best; dependencies and the GPU are always lined up the same way. Setting up CI is **unglamorous work, easy to defer**, compared with adding one more feature. But publishing to PyPI is a promise that the thing will run **in environments you know nothing about, in combinations you never anticipated**. The comfort of having verified only the single point called "local" becomes **no guarantee at all** the moment you publish — this whole sequence of events was the work of closing that gap the hard way.
+
+### Wave 1: Dependencies "Resident" Locally Get Peeled Away by CI for the First Time
+
+The first wall: on the initial CI run (GitHub Actions, ubuntu, no torch), **the full suite failed en masse**. Tracing the cause: the 3D feature-descriptor modules — `feat_harris` / `feat_spin` / `feat_shot` / `feat_fpfh` — were **importing torch unconditionally at the top of the file**. In an environment without torch installed, the error fires at that import statement, and **`import ops3d` — the load of the entire 3D registry — dies on the spot**. One module's carelessness was dragging down the loading of all 265 3D ops with it.
+
+My development machine has torch permanently installed, so this problem **never once surfaced locally**. The lesson, put into words: **"optional dependencies that are resident locally get peeled away for the first time by CI."** "It runs on my PC" and "the assumptions under which it runs are correct" are different things. The fix: **guard** the torch imports, and raise a **clear ImportError** — "please install `fullseye[gpu]`" — at the moment of actual use. With one deliberate exception: the predicate function `is_tensor` alone **plainly returns False** in torch-less environments. It's used by the numpy path's input guard (the branch "is this a torch tensor? if not, treat it as numpy"), and throwing there would break things that work perfectly well in a numpy-only environment.
+
+### Wave 2: The Remaining 9 — Ratios Pass; Absolute Values and Signs Catch
+
+Clearing Wave 1 still left **nine** failures. From here, each one is a different species of breakage.
+
+**(a) numpy 2.x removed `np.cross`'s support for 2D vectors.** In numpy's major-version bump, the cross product of 2D vectors (`np.cross` — nominally for 3D, but it had historically worked in 2D) became unsupported. Sweeping for call sites that actually passed 2D vectors: **of about 180 `np.cross` calls overall, exactly 2 were affected** — both in the contour Douglas-Peucker (line-segment approximation) code. The fix was local: replace just those two with the **explicit scalar cross product z = ax·by − ay·bx**. This one is an example of a dependency's **breaking change** being caught by tests — the kind of failure whose origin is momentarily hard to place, because "my code didn't change, yet CI fails." Locating 2 sites out of 180 was possible because **I traced from the exact lines the error messages pointed to** — not because I eyeballed all 180.
+
+**(b) `fit_plane_3d` returns `nan` only on CI.** Fit a plane to a perfectly flat point cloud, and the **smallest eigenvalue** of the cloud's covariance matrix is theoretically zero. The computation takes a square root of a quantity derived from that eigenvalue — and **the local BLAS (basic linear-algebra library) implementation rounds that eigenvalue to the +ε side (a tiny positive value)**, while **the BLAS used by the CI runner can round it to the −1e-16 side (a tiny negative value)**. The square root of a negative number is `nan`. Same formula, same input — yet **the direction of the rounding error depends on the runtime's BLAS implementation**. This is a class of breakage that simply does not reproduce locally. The fix: clamp the eigenvalue non-negative with `max(w, 0)` — simple, but it works. Because the root cause was that **the dev machine and the CI runner run different BLAS implementations outright**, no amount of re-running the same test locally would reproduce it. The general rule you can extract: whenever code handles "a value that should theoretically be zero," write the guard on the assumption that **in practice it will not be exactly zero**.
+
+**(c) The camera degeneracy check (rejecting pure-rotation pairs) slips through only on Python 3.12.** When triangulating with two cameras, if the cameras have **rotated but not translated** (a degenerate stereo pair), the triangulated points should theoretically fly off **to infinity**. But digging in revealed something: a point that has flown to infinity, when **reprojected (projecting the 3D point back into the 2D image), lands exactly back on the original pixel**. In other words, "reprojection error" — a metric that looks perfectly natural — **cannot detect** this degenerate case. The final fix was a different method: **test for the existence of parallax (disparity) itself**. Take the sets of viewing-direction vectors (the direction each camera sees) in both images, try to overlay them exactly with a single rotation (an optimal rotation alignment via the Kabsch algorithm), and look at the **median residual**. In the degenerate (pure-rotation) case this residual is **3.5×10⁻¹⁶**; in the healthy case, **1.8×10⁻²** — a decision with **fully 14 orders of magnitude of margin**. A plausible-looking metric (reprojection error) turned out useless, and only switching to a different cut — testing for the existence of parallax — made the decision reliable; personally, this was the most interesting debugging of the batch.
+
+Why reprojection error can't see through the degeneracy, in three passes. ① **One-liner**: a point at infinity photographs onto the same pixel from any angle. ② **A bit more**: even when triangulation fails and the point flies to infinity, reprojecting that "wrong" point back through the camera lands, **by the peculiar property of points at infinity, exactly on the original pixel**. So "run input through to output and measure the loop error" — a verification move that works in many situations — is, in this one situation, **not measuring the thing it needs to measure**. ③ **Why the parallax test does see through it**: parallax is itself the evidence that "both cameras are seeing the same point from different angles." If the camera motion is pure rotation, the two sets of viewing vectors **coincide completely under a single rotation**, leaving no residual (no parallax). If reprojection error is "checking the answer," the parallax-existence test is **the check one step earlier** — "does the problem even exist to be solved?"
+
+**(d) zig/GCC's UBSan misses float→int cast overflow.** The UBSan (Undefined Behavior Sanitizer — a tool for detecting undefined behavior) used by the C code-generation tests turns out to **differ in what it detects by compiler**. GCC's `-fsanitize=undefined` **does not include** the case of a **float-to-int cast overflowing** (`float-cast-overflow`) — clang does. Worse, GCC also showed behavior ignoring no-recover (the directive to stop at the first error). The difference reproduced on real GCC 13.3 under WSL, and the fix was to add the explicit flags `-fsanitize=float-cast-overflow -fsanitize-trap=...`. "We use a sanitizer" is not enough — unless you confirm **what that sanitizer detects and doesn't detect, per compiler and version**, holes remain. This is part of the test layer supporting Fullseye's C code generation (emitting real C from an op's `c_stmt` and bit-comparing against the Python version), the layer that mechanically checks "does the generated C step on undefined behavior?" Don't trust the tool itself — **verify the tool's coverage too**: a lesson one level more abstract.
+
+**(e) On shared CI runners, the sparse solver is slower than dense.** The sparse-matrix solver that's supposed to improve performance measured **slower than dense on shared CI runners** (measured 1.8–3.2s vs. 0.2–0.3s). Not a bug — just the plain fact that **CI's shared machines differ from a dedicated box in hardware and load**. From this I reconfirmed the discipline: "performance claims are verified only on dedicated machines." The same spirit as this article's "An Honest Word on Performance (GPU)." Shared runners fight countless other jobs for the physical machine, so **cache hit rates and memory bandwidth are a different world from a dedicated box**. This isn't something to fix; it's handled on the **operating-rules side**: "never use CI-side timing measurements as performance claims." The design decision to keep timing out of test pass/fail (benchmarks are managed separately, on dedicated hardware) also came from this incident.
+
+### The Final Wave: "All Tests Pass" and "pip install Just Works" Are Different Gates
+
+With Wave 2 cleared, **CI went all green**, and I published `v0.1.0` to PyPI. It would have been easy to relax there — but right after publishing I ran one more verification: **`pip install fullseye` into a clean venv (a pristine Python virtual environment) and run it**. That caught the last bug.
+
+`recon3d` (the 3D reconstruction module) was **importing `scikit-image` unconditionally**. `scikit-image` is an extras-side dependency — a bare `pip install fullseye` (numpy + scipy only) doesn't bring it in. Result: **`import ops3d` dies on a bare install** — **exactly the same shape of bug** as Wave 1's torch, this time with scikit-image, and — the important part — **CI didn't detect it; it was found only by manual post-release verification**. CI's full suite ran in an environment with the opencv/skimage extras installed, so **CI itself was blind to this class of bug**. I fixed it and published `v0.1.1` **the same day**, this time confirming with the **full smoke-test run in a clean venv** — 0.1.1, numpy 2.4.6, 502 ops, pipeline execution, the 265 ops of ops3d, and the console scripts, all PASS together.
+
+"All tests passing" and "working from a bare pip install" are separate verifications — that's the lesson the final wave carved in.
+
+Why CI's full suite missed this bug deserves one more level of digging. The CI `test` job installs with `pip install -e ".[opencv,skimage,pil,wavelets,gui,video,volume,gltf,lidar,pcd]"` — **a heaping plate of extras** — before running tests (only torch is left out for weight, as in the Wave 1 context). In that configuration, `scikit-image` always exists, so `recon3d`'s unconditional import **never fails, not once**. Meaning: no matter how many times the full suite ran, **it was structurally incapable of noticing this bug**. "Making tests thicker" and "widening the set of dependency combinations the tests verify" are different axes, and the latter had a gap. CI did have a **`core-minimal` job that exercises the bare install** (the one from Wave 1 that runs `import fullseye` and `import ops3d, pipeline3d, measure3d` in a bare environment) — and yet, at the time of the `v0.1.0` release, the very spot in question wasn't in that job's scope. That was the hole. The scope was widened together with the `v0.1.1` fix.
+
+### The Trajectory in Numbers, and the Lessons in Words
+
+The failing-test trajectory ran **~80 → 9 → 1 → 0** across three waves (plus one final-check item). The full suite passes locally at **6,224**. CI itself runs a **Python 3.10 / 3.11 / 3.12 matrix**, plus an independent minimal-configuration job that **actually executes, on every run, the claim "it runs on numpy + scipy alone"** (this job is what makes the next accident of the scikit-image class something CI itself catches).
+
+Four lessons from this sequence, put into words:
+
+1. **Optional dependencies resident locally, and gitignored runtime data, get peeled away for the first time by CI.** That it runs in your environment doesn't mean the assumptions under which it runs are correct.
+2. **Ratio tests pass. Absolute values and units catch.** This is the **same shape of lesson** as this article's Bug 4 (the curvature absolute value off by 32×), reappearing in the different context of CI.
+3. **Exact zero checks break at the mercy of BLAS rounding direction.** When writing code on the premise "this should theoretically be zero," suspect that the sign can flip depending on the runtime environment.
+4. **"Tests green" and "works from pip" are different gates.** If the dependency combination your test suite verifies differs from the combination end users actually get, the tests are powerless.
+
+The interesting part: lessons 1 and 4 are **the same accident in the same shape**. The unconditional torch import (Wave 1) and the unconditional scikit-image import (final wave) differ in cause and location, yet their skeleton is identical: **"a dependency that was supposed to be optional had quietly become mandatory."** Even after horizontally deploying the Wave-1 lesson (guard it; raise a clear error) across every site, **add one new module and the same hole can open again**. You could say this was re-learning, on the larger stage called CI, the house rule that appears throughout this article: "found one bug → suspect the same class of bug sleeping in sibling code." Don't stop at one fix — go as far as **embedding into CI itself a mechanism that plugs the same shape of hole** (here: the minimal-configuration job that executes "runs on numpy+scipy alone" every time). Only then can you call it recurrence prevention.
+
+Stories like this may feel "uncool" to some, frankly. I still believe **the record of CI actually digging up mines is itself the evidence that the quality gates truly function**. An article that shows only good numbers would not contain this chapter.
 
 ---
 
 ## An Honest Word on Performance (GPU)
 
-Being honest about "fast," too. The default per-frame path runs on scipy/OpenCV. A batched, faster `torch` path (`--device cuda`) accelerates the heavy, vectorizable ops.
+Being honest about "fast," too. The default frame-at-a-time path runs on scipy / OpenCV. The batched, fast `torch` path (`--device cuda`) accelerates the heavy, vectorizable ops.
 
-- **On CPU**, heavy ops see roughly **1.6–2.2×**. But **light pixel-wise operations actually get slower** (the overhead of the tensor conversion outweighs the gain).
-- **The real payoff is on GPU**, where that overhead gets amortized over much greater parallelism.
+- **On CPU**, heavy ops see roughly **1.6–2.2×**. But **light pixel-wise operations actually get slower** (the tensor-conversion overhead lands on top).
+- **The real payoff is on GPU**, where that overhead is **amortized over large parallelism**.
 
-I won't claim "everything gets faster." Writing down **where it helps and where it costs you** is what honest disclosure means here.
+I won't write "everything gets faster." Writing down **where it's fast and where you lose** is what honest disclosure means.
 
 ---
 
 ## Limitations and What's Next (No Hiding)
 
-- **HALCON coverage is still 42.5%.** OCR, Classification, and System-level chapters are nearly untouched. I'm not changing the strategy of thickening the image/geometry core, but "under half" is the fact of the matter.
-- **The unified API is still mid-migration.** Historical conventions differ across the image registry, the algorithms, and the perception facade, and I'm **gradually migrating them** toward the Qt-style natural API.
-- **GPU work is still mid-way on the main effort.** I'm building toward a per-op GPU-resident pipeline (end to end), but real throughput numbers are gated on real hardware (an RTX 5090). **Never present CPU numbers as if they were GPU numbers** — that's the discipline here.
-- **3D visualization inside Studio** is also still being grown, mainly around integration with existing viewers (Open3D, RViz2).
+- **HALCON coverage is still 42.5%.** OCR, Classification, and System chapters are nearly empty. The policy of thickening the image/geometry core stays, but "under half" is the fact.
+- **The unified API is still mid-migration.** Conventions historically diverged across the image registry, the algorithms, and the perception facade, and the move to the Qt-style natural API is **proceeding in stages**.
+- **GPU work's main effort is still in progress.** The per-op GPU-resident pipeline (E2E) is underway, but real speeds are gated on real hardware (RTX 5090). **Never pass off CPU numbers as GPU numbers** — that's the discipline.
+- **3D visualization inside Studio** is also still being grown, centered on integration with existing viewers (Open3D / RViz2).
 
-There's a lot left to do, but **the foundation — typed ops, honest evaluation, docs with md as the source of truth, and 6,238 tests — is solid.** From here, the work is extending coverage and the natural API.
+A bit more honesty on each.
+
+The 42.5% HALCON coverage sits, as the "coverage story" section explained, on a **deliberately narrowed denominator** — but even so, the work of thickening the Filtering / Morphology / Regions / Segmentation core has no visible finish line yet. In particular, chapters that lean toward machinery — Matching (template and deformable matching), 3D Reconstruction — **don't fit comfortably in a single `fn(v, a, b)`**, and involve design decisions about how to extend the type contracts. They're not the kind of thing that grows just by adding ops.
+
+On the unified-API migration, honestly, a large part of it is **cleaning up after history**. The naming conventions from the `imgevolve` era and the ones added while growing the Physical AI perception facade aren't fully aligned. Realizing the "readable, completion-friendly writing feel" from the design-philosophy section across the whole surface means converging **gradually**, without breaking existing callers — plodding work, more so than feature-building.
+
+On GPU work: as the "Honest Word on Performance (GPU)" section says, CPU measurements already exist, but the main effort — **keeping ops GPU-resident and getting end-to-end (E2E) speed** — awaits verification on the real hardware (RTX 5090). I'm not jumping ahead to write "it should be dramatically faster on GPU" here, because the discipline of never conflating CPU numbers with GPU numbers applies with the same force when talking about limitations.
+
+The pile of work is tall, but **the foundation — typed ops, honest evaluation, md-as-source-of-truth docs, 6,238 tests — is set**. From here, the work is extending coverage and the natural API.
 
 ---
 
 ## Summary
 
-**Fullseye** is a numpy-native, self-built library that carries roughly **1,000 explainable classical vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
+**Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
 
 - **use them directly (apply / pipeline)**,
-- **design with them via evolution (evolve, with honest evaluation)**, or
-- **use them as a robot's eyes (the Physical AI perception stack)**.
+- **design with them by evolution (evolve, with honest evaluation)**, or
+- **use them as a robot's eyes (the Physical AI perception stack)** —
 
-**42.5% coverage against HALCON as a yardstick (measured)**, **6,238 tests**, a documentation system with **Markdown as its single source of truth**, and an **HDevelop-style Studio**. Every heavy dependency is optional, and **the core runs on nothing but numpy + scipy**.
+a numpy-native, self-built library. **42.5% against the HALCON yardstick (measured)**, **6,238 tests**, a documentation system with **Markdown as its single source of truth**, and the **HDevelop-style Studio**. Every deep dependency is optional, and **the core runs on nothing but numpy + scipy**.
 
-The thing I most want to convey isn't the scale or the coverage number — it's the practice of **making honesty a mechanism**. Held-out data never gets used for selection. Coverage gets disclosed as measured fact. **When a bug is found, the whole quality-assurance apparatus that found it gets written up too.** More than flashiness, I've been steadily building toward something whose internals are **explainable, reproducible, and maintainable for the long haul.**
+What I most want to convey is neither the scale nor the coverage rate, but the stance of **making honesty a mechanism**. Hold-out data never selects. Coverage is disclosed as measured. **When a bug is found, the article keeps the bug — together with the quality assurance that caught it.** Over flash, the priorities are being **explainable, reproducible, and maintainable for the long haul** — built up steadily.
 
-If this made you want to try it, installation is about five minutes away in the "[Getting Started](#getting-started-installation-up-front)" section near the top. The most rewarding way to use it is the combination of **Claude Code + `fullseye-rag`** (turning it into an AI's toolbox). If you haven't set up Claude Code yet, [the author's referral link](https://claude.ai/referral/0sqPw8E_lw) is there if you'd like to start.
+The CI story in "The Night Before Release" connects to the same root. Publishing the whole path from ~80 failures down to zero, without hiding it, is this discipline in practice: **keep the evidence that quality assurance actually works, with the same standing as the good numbers**.
+
+One more thing worth adding: Fullseye is a library with **footholds in both the industrial-vision lineage and Physical AI**. As the section "The Workhorses of Factory Inspection Lines, One pip Away" describes, the inspection-line staples — defect detection, subpixel metrology, shape matching, blob analysis — carry straight over into Physical AI robot perception (object separation for bin picking, LiDAR clustering, grasp-point detection). Rather than saying the two were deliberately balanced, the more accurate phrasing is: **build one "system of ops connected by types," and it naturally reaches both floors.**
+
+If this made you want to try it, installation is about five minutes away in the "[Getting Started](#getting-started-installation-up-front)" section near the top. The tastiest way to use it is the combination of **Claude Code + `fullseye-rag`** (turning it into an AI's toolbox). If you haven't set up Claude Code yet, [the author's referral link](https://claude.ai/referral/0sqPw8E_lw) is there if you'd like to start.
 
 ---
 
 ## To Be Continued
 
-This article was a map. Next, I want to walk some of its terrain. Candidates:
+This article was the "map." Next, I'll walk its regions. Candidates:
 
-- **What happens when you add one op** — the machinery by which the registry, evolution, code generation, and documentation all follow automatically.
-- **How to push HALCON coverage past 42.5%** — a build log of closing uncovered operators one by one through the honest gate.
-- **Physical AI's eyes** — evis's vision pipeline end to end, from stereo all the way through 6-DoF pose to "picking something up" with 700 muscles.
+- **What happens when you add one op** — the internals of the machinery by which the registry, evolution, code generation, and documentation all follow automatically.
+- **How to grow HALCON's 42.5%** — a build log of filling uncovered operators one by one through the honest gate.
+- **Physical AI's eyes** — evis's vision pipeline end to end, from stereo through 6-DoF pose to "pinching" with 700 muscles.
+- **Technical follow-ups on the mines CI dug up** — each bug from "The Night Before Release," down to the fix commits and how the tests were written.
 
-Thanks for reading. If there's a part you'd like to see explored further, that'll be the next article.
+This ran much longer than originally planned. From Layer 1's type contracts through the six sensors, Studio's working workflow, AI-as-RAG operation, and the mines CI dug up — the reason for packing it all into one article is that I wanted to show, without carving it apart, that **inside the single library called Fullseye, all of these rest on the same design decisions**. Each topic alone is a pile of unglamorous craft; lined up together, one thread runs through them — "make honesty structural." If that came through, I'm glad.
+
+Thank you for reading. If there's a "tell me more about this part," that will become the next article.
+
+---
+
+<!--
+Publication notes (not shown in the article body):
+- All numbers are measured (ops 735/731, 3D 265, HALCON 982/2313=42.5%, tests 6238). Re-measure before updating any of them.
+- Prefer Mermaid over images where possible (native to Qiita; avoids SVG path/cache issues). If figures become SVG, always apply raw absolute URL + HTTP 200 check + ?v=N cache-bust.
+- Apache-2.0 and reimplemented-from-public-knowledge are stated explicitly (the no-derivation-from-commercial-products line).
+- Release logistics: queue as a private draft, and publish when a slot opens, avoiding Qiita's consecutive-post 502.
+-->
