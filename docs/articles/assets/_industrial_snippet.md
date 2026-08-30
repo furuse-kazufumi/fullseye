@@ -20,7 +20,7 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_blobs.png )
 
-60 粒を配置した合成画像を otsu 二値化し、距離変換 + watershed で接触粒を切り分けて計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・大粒(橙)に色分け。粉粒体の品質検査の型。 使用 op: otsu, fill_up, distance_transform, watersheds, segment_objects。データ: 合成樹脂ペレット 60 粒 (配置数 = 真値)。
+60 粒(うち 6 組は実際に接触)を配置した合成画像を otsu 二値化し、距離変換ピークを種にしたマーカー式 watershed で接触粒を切り分けて計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・大粒(橙)に色分け。粉粒体の品質検査の型。 使用 op: otsu, fill_up, xcv_watershed_markers, segment_objects。データ: 合成樹脂ペレット 60 粒・うち 6 組は接触 (配置数 = 真値)。
 
 ## コード読取りの土台 — 走査線エッジ対によるバー検出
 

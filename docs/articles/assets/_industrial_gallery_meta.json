@@ -17,14 +17,13 @@
     "ops": [
       "otsu",
       "fill_up",
-      "distance_transform",
-      "watersheds",
+      "xcv_watershed_markers",
       "segment_objects"
     ],
-    "data": "合成樹脂ペレット 60 粒 (配置数 = 真値)",
+    "data": "合成樹脂ペレット 60 粒・うち 6 組は接触 (配置数 = 真値)",
     "synthetic": true,
-    "caption": "60 粒を配置した合成画像を otsu 二値化し、距離変換 + watershed で接触粒を切り分けて計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・大粒(橙)に色分け。粉粒体の品質検査の型。",
-    "verify": "配置 60 粒に対し計数 60 (一致を assert 済)"
+    "caption": "60 粒(うち 6 組は実際に接触)を配置した合成画像を otsu 二値化し、距離変換ピークを種にしたマーカー式 watershed で接触粒を切り分けて計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・大粒(橙)に色分け。粉粒体の品質検査の型。",
+    "verify": "配置 60 粒 (接触 6 組込み) に対し計数 60 (一致を assert 済)"
   },
   {
     "file": "industrial_barcode.png",

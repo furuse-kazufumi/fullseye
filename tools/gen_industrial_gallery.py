@@ -495,22 +495,22 @@ def subject_blob_pellets(log=print) -> dict:
     plt.close(fig)
 
     panels = [np.stack([img] * 3, -1), _np_of(vis), hist]
-    out = _montage(panels, ["樹脂ペレット (合成, 60 粒)",
-                            f"watershed 分離 + 計数 = {len(objs)}",
+    out = _montage(panels, ["樹脂ペレット (合成, 60 粒・接触 6 組)",
+                            f"marker watershed 分離 + 計数 = {len(objs)}",
                             "面積分布 (20/80 パーセンタイル)"], ncols=3)
     _save_png(out, "industrial_blobs.png")
     _save_thumb("industrial_blobs.png")
     return {
         "file": "industrial_blobs.png",
         "title": "ブロブ解析 — 粒子計数とサイズ分布",
-        "ops": ["otsu", "fill_up", "distance_transform", "watersheds",
-                "segment_objects"],
-        "data": "合成樹脂ペレット 60 粒 (配置数 = 真値)",
+        "ops": ["otsu", "fill_up", "xcv_watershed_markers", "segment_objects"],
+        "data": "合成樹脂ペレット 60 粒・うち 6 組は接触 (配置数 = 真値)",
         "synthetic": True,
-        "caption": ("60 粒を配置した合成画像を otsu 二値化し、距離変換 + watershed で"
-                    "接触粒を切り分けて計数 60/60。面積の 20/80 パーセンタイルで"
-                    "小粒(青)・標準(緑)・大粒(橙)に色分け。粉粒体の品質検査の型。"),
-        "verify": f"配置 60 粒に対し計数 {len(objs)} (一致を assert 済)",
+        "caption": ("60 粒(うち 6 組は実際に接触)を配置した合成画像を otsu 二値化し、"
+                    "距離変換ピークを種にしたマーカー式 watershed で接触粒を切り分けて"
+                    "計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・"
+                    "大粒(橙)に色分け。粉粒体の品質検査の型。"),
+        "verify": f"配置 60 粒 (接触 6 組込み) に対し計数 {len(objs)} (一致を assert 済)",
     }
 
 
