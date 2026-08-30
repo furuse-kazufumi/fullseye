@@ -53,14 +53,53 @@ from PIL import Image, ImageDraw, ImageFont  # noqa: E402
 
 import fullseye as fs  # noqa: E402
 
-EVIS = Path("C:/dev/projects/evis_chopstick/out")
-FRAMES = EVIS / "chop_vision_frames"
-META = EVIS / "chop_vision_meta.json"
 MEDIA = ROOT / "docs" / "articles" / "assets" / "media"
 ASSETS = ROOT / "docs" / "articles" / "assets"
-LEGACY_GIF = Path(
-    "C:/dev/projects/onocollo-complete/docs/qiita/20260822_g1_evis/evis_muscle_heatmap.gif"
-)
+
+
+def _require_dir(env_name: str, what: str, hint: str) -> Path:
+    """Fail-closed input resolution: the directory must come from an env var.
+
+    Hardcoding local absolute paths in a public repo leaks machine layout and
+    silently breaks for everyone else, so an unset/invalid variable stops the
+    run with instructions instead of guessing."""
+    d = os.environ.get(env_name)
+    if not d:
+        raise SystemExit(
+            f"{env_name} is not set (fail-closed).\n"
+            f"  needed for : {what}\n"
+            f"  how to get : {hint}\n"
+            f"  then run   : set {env_name}=<path> (PowerShell: $env:{env_name}='<path>')")
+    p = Path(d)
+    if not p.is_dir():
+        raise SystemExit(f"{env_name}={d} is not an existing directory (fail-closed).")
+    return p
+
+
+def _evis_paths() -> tuple[Path, Path]:
+    """(frames_dir, meta_json) from EVIS_CHOPSTICK_DIR, read-only."""
+    root = _require_dir(
+        "EVIS_CHOPSTICK_DIR", "stereo/track subjects (real evis eye-camera frames)",
+        "the evis_chopstick project's ChopMimic vision capture writes "
+        "out/chop_vision_frames/ + out/chop_vision_meta.json")
+    frames = root / "out" / "chop_vision_frames"
+    meta = root / "out" / "chop_vision_meta.json"
+    if not frames.is_dir() or not meta.is_file():
+        raise SystemExit(
+            f"EVIS_CHOPSTICK_DIR={root} does not contain out/chop_vision_frames "
+            "+ out/chop_vision_meta.json — run the ChopMimic vision capture first (fail-closed).")
+    return frames, meta
+
+
+def _legacy_gif() -> Path:
+    root = _require_dir(
+        "ONOCOLLO_DIR", "legacy subject (700-muscle activation heatmap gif)",
+        "clone/point at the onocollo-complete repo containing "
+        "docs/qiita/20260822_g1_evis/evis_muscle_heatmap.gif")
+    gif = root / "docs" / "qiita" / "20260822_g1_evis" / "evis_muscle_heatmap.gif"
+    if not gif.is_file():
+        raise SystemExit(f"legacy gif not found: {gif} (fail-closed).")
+    return gif
 
 HUD_H = 28
 FONT = None
