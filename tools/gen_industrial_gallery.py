@@ -694,12 +694,13 @@ def subject_binpick_depth(log=print) -> dict:
         tx, ty = math.cos(ang), math.sin(ang)
         for s in (-1, 1):
             ox, oy = xcen + s * jaw * nx, ycen + s * jaw * ny
-            dr.line([(ox - 10 * tx, oy - 10 * ty), (ox + 10 * tx, oy + 10 * ty)],
-                    fill=col, width=3)
-        dr.ellipse([xcen - 4, ycen - 4, xcen + 4, ycen + 4], fill=col)
-        dr.text((xcen + 8, ycen - 20), f"{rank + 1}", fill=col, font=font)
-    panels = [rgb, fs.colorize_depth(np.where(inner > 0.5, depth, np.nan)),
-              _np_of(vis)]
+            dr.line([(ox - 14 * tx, oy - 14 * ty), (ox + 14 * tx, oy + 14 * ty)],
+                    fill=col, width=4)
+        dr.ellipse([xcen - 5, ycen - 5, xcen + 5, ycen + 5], fill=col)
+        dr.text((xcen + 9, ycen - 24), f"{rank + 1}", fill=col, font=font)
+    height = np.where(inner > 0.5, np.clip(d_table - depth, 0.0, 0.15) / 0.15,
+                      0.0)
+    panels = [rgb, fs.colorize_depth(height), _np_of(vis)]
     out = _montage(panels, ["ばら積み (MuJoCo 物理落下)",
                             "深度画像 (真上カメラ)",
                             f"把持候補 {len(objs)} 件 (緑=最良)"], ncols=3)
