@@ -358,6 +358,24 @@ def test_dcs_band_subset_leaves_the_other_bands_bit_identical():
     assert np.allclose(off, 0.0, atol=1e-9)
 
 
+def test_dcs_accepts_rgb_photograph():
+    """KNOWN_ISSUES #5 (2026-08-30): decorrelation stretch on an RGB photograph is
+    the method's canonical DStretch use, so (H, W, 3) is accepted by THIS op (and
+    only this op) and actually decorrelates the three channels."""
+    rgb = _correlated_cube(B=3)
+    out = sp.spec_decorrelation_stretch(rgb)
+    assert out.shape == rgb.shape
+    assert np.isfinite(out).all()
+    assert _max_offdiag_corr(out) < _max_offdiag_corr(rgb)
+    # channel means preserved (the documented DCS re-centring contract)
+    np.testing.assert_allclose(out.reshape(-1, 3).mean(0), rgb.reshape(-1, 3).mean(0),
+                               atol=1e-10)
+    # the modality boundary is intact everywhere else: another cube op still
+    # refuses RGB rather than silently consuming it
+    with pytest.raises(ValueError, match="color"):
+        sp.spec_pca(rgb, 2)
+
+
 def test_dcs_is_fail_closed():
     cube = _correlated_cube()
     with pytest.raises(ValueError, match="at least 2 bands"):
