@@ -549,6 +549,9 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
         ("r2_partition_rectangle", "partition_rectangle", REGION, REGION, r2_partition_rectangle),
         ("r2_runlength_features", "runlength_features", REGION, FEATURE, r2_runlength_features),
         ("r2_split_skeleton_lines", "split_skeleton_lines", REGION, REGION, r2_split_skeleton_lines),
+        # halcon "" — `skeleton` の coverage は core の skeleton op が既に主張
+        # している(二重計上しない)。これは同系アルゴリズム(EM93)の別実装。
+        ("em_skeleton", "", REGION, REGION, em_skeleton),
     ]
     return [Op(name, cat, halcon, isort, osort, fn)
             for (name, halcon, isort, osort, fn) in defs]
