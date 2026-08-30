@@ -487,19 +487,27 @@ def subject_morph_pulse(log=print) -> dict:
     seg = fs.apply(img, "otsu")
     seg = fs.apply(seg, "fill_up")
     frames = []
-    n_steps = 14
-    # 育つ (dilation) → 痩せる (erosion) の往復
-    seq = ([("dilation_circle", a) for a in np.linspace(0.02, 0.55, n_steps)]
-           + [("erosion_circle", a) for a in np.linspace(0.02, 0.45, n_steps)])
+    # 育つ (dilation を累積適用) → 痩せる (erosion を累積適用)。
+    # 1 回の op は半径 ~4px なので、前フレームの結果へ繰り返しかけて動かす。
+    seq = [("dilation_circle", 12), ("erosion_circle", 17)]
     base = np.stack([img] * 3, -1) * 0.35
-    for i, (op, a) in enumerate(seq):
-        r = fs.apply(seg, op, float(a), 0.5)
-        hue = (0.55 + 0.35 * i / len(seq)) % 1.0
-        color = _hsv_to_rgb(np.full(img.shape, hue), np.full(img.shape, 0.85),
-                            r)
-        vis = np.where((r > 0.5)[..., None], 0.35 * base + 0.85 * color, base)
-        frames.append(_to_u8(vis))
-    frames += frames[-1:] * 3
+    state = seg
+    i, total = 0, sum(n for _, n in seq)
+    for op, n in seq:
+        for _ in range(n):
+            state = fs.apply(state, op, 0.7, 0.5)
+            hue = (0.55 + 0.35 * i / total) % 1.0
+            color = _hsv_to_rgb(np.full(img.shape, hue),
+                                np.full(img.shape, 0.85), state)
+            vis = np.where((state > 0.5)[..., None],
+                           0.35 * base + 0.85 * color, base)
+            frames.append(_to_u8(vis))
+            i += 1
+    frames = [_to_u8(np.where((seg > 0.5)[..., None],
+                              0.35 * base + 0.85 * _hsv_to_rgb(
+                                  np.full(img.shape, 0.55),
+                                  np.full(img.shape, 0.85), seg), base))] * 3 \
+        + frames + frames[-1:] * 3
     _save_gif(frames, "science_morph_pulse.gif", fps=7)
     return {
         "file": "science_morph_pulse.gif",

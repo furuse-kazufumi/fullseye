@@ -53,3 +53,19 @@
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack.png )
 
 手前・中間・奥にピントを振った 7 枚を撮り、各画素で最もシャープな 1 枚を選んで合成すると、全体にピントの合った 1 枚になる。顕微鏡検査や基板検査で使う焦点合成と同じ仕組み。鮮鋭度スコアは単写比 1.27 倍。 使用 op: focus_stack suite (ラプラシアン鮮鋭度で最良フォーカスを選択)。データ: MuJoCo レンダ + 被写界深度シミュレーション (7 焦点)。
+
+## LIDAR 点群 → 地面除去 → クラスタリング
+
+![LIDAR 点群 → 地面除去 → クラスタリング](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_lidar_clusters_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_lidar_clusters.png )
+
+リング型 LIDAR を模して 2 万本超のレイを実際に飛ばし、返ってきた点群から RANSAC で地面を除去、ユークリッド距離でクラスタリングすると物体 6 個が 6 クラスタに分かれる。各クラスタに OBB(有向バウンディングボックス)を当てて鳥瞰表示。自律移動ロボットの障害物認識の型。 使用 op: remove_ground, euclidean_clusters, obb, (mj_ray 実レイキャスト)。データ: MuJoCo シーンへの実レイキャスト (48ch × 480 方位, 物体 6 個 = 真値)。
+
+## bin picking — 深度セグメントと把持候補の採点
+
+![bin picking — 深度セグメントと把持候補の採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick.png )
+
+部品 10 個を物理シミュレーションで箱に落とし、真上の深度カメラで観測。深度しきい値でセグメントした各部品を「周囲クリアランス + 高さ」で採点し、把持ジョーの向きは長方形フィットの長軸から決める。緑が最優先候補。実機ビンピッキングの前段そのもの。 使用 op: segment_objects, fit_rectangle2, colorize_depth, (scipy distance_transform_edt)。データ: MuJoCo 物理シミュレーション (部品 10 個を実際に落下・堆積)。

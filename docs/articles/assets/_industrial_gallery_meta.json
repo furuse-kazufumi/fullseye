@@ -74,5 +74,33 @@
     "synthetic": true,
     "caption": "手前・中間・奥にピントを振った 7 枚を撮り、各画素で最もシャープな 1 枚を選んで合成すると、全体にピントの合った 1 枚になる。顕微鏡検査や基板検査で使う焦点合成と同じ仕組み。鮮鋭度スコアは単写比 1.27 倍。",
     "verify": "run_focus_stack_demo の自己スコア (画像内に実測値表示)"
+  },
+  {
+    "file": "phai_lidar_clusters.png",
+    "title": "LIDAR 点群 → 地面除去 → クラスタリング",
+    "ops": [
+      "remove_ground",
+      "euclidean_clusters",
+      "obb",
+      "(mj_ray 実レイキャスト)"
+    ],
+    "data": "MuJoCo シーンへの実レイキャスト (48ch × 480 方位, 物体 6 個 = 真値)",
+    "synthetic": true,
+    "caption": "リング型 LIDAR を模して 2 万本超のレイを実際に飛ばし、返ってきた点群から RANSAC で地面を除去、ユークリッド距離でクラスタリングすると物体 6 個が 6 クラスタに分かれる。各クラスタに OBB(有向バウンディングボックス)を当てて鳥瞰表示。自律移動ロボットの障害物認識の型。",
+    "verify": "シーンの物体 6 個 = クラスタ 6 個 (assert 済)"
+  },
+  {
+    "file": "phai_binpick.png",
+    "title": "bin picking — 深度セグメントと把持候補の採点",
+    "ops": [
+      "segment_objects",
+      "fit_rectangle2",
+      "colorize_depth",
+      "(scipy distance_transform_edt)"
+    ],
+    "data": "MuJoCo 物理シミュレーション (部品 10 個を実際に落下・堆積)",
+    "synthetic": true,
+    "caption": "部品 10 個を物理シミュレーションで箱に落とし、真上の深度カメラで観測。深度しきい値でセグメントした各部品を「周囲クリアランス + 高さ」で採点し、把持ジョーの向きは長方形フィットの長軸から決める。緑が最優先候補。実機ビンピッキングの前段そのもの。",
+    "verify": "10 個投入で可視セグメント数が 5〜10 に入ることを assert (重なりで隠れる分は正直に減る)"
   }
 ]
