@@ -447,16 +447,14 @@ def subject_blob_pellets(log=print) -> dict:
         img[mask] = rng.uniform(0.62, 0.88)
     img = np.clip(_blur(img, 0.8) + 0.015 * rng.standard_normal((H, W)), 0, 1)
 
-    # 検出: otsu → 穴埋め → 内側距離変換 (粒中心がピーク) を反転して watershed
-    #        → 接触粒の間に稜線が引かれる → blob 計数
+    # 検出: otsu → 穴埋め → マーカー式 watershed (距離変換ピークを種に) で
+    #        接触粒の間に稜線を引く → blob 計数 (稜線 1px を跨がない 4 連結)
     seg = fs.apply(img, "otsu")
     seg = fs.apply(seg, "fill_up")
-    dt = fs.apply(seg, "distance_transform")
-    dtn = dt / (dt.max() + 1e-9)
-    dts = fs.apply(dtn, "gauss_filter", 0.3, 0.5)   # 過分割を抑える平滑化
-    ridges = fs.apply(1.0 - dts, "watersheds", 0.0, 0.5)
+    ridges = fs.apply(img, "xcv_watershed_markers", 0.4, 0.5)
     cells = (ridges < 0.5).astype(np.float64) * seg
-    objs = fs.segment_objects(cells, threshold="none", min_area=60)
+    objs = fs.segment_objects(cells, threshold="none", min_area=60,
+                              connectivity=1)
     log(f"  pellets known={N} counted={len(objs)}")
     if len(objs) != N:
         raise RuntimeError(f"pellet count mismatch: {len(objs)} != {N}")
