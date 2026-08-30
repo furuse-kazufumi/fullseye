@@ -1,5 +1,6 @@
-"""Claude Code 向け RAG セットアップ(``fullseye-rag`` console script)。
+"""Install the Fullseye operator corpus as a Claude Code RAG skill (fullseye-rag).
 
+Claude Code 向け RAG セットアップ(``fullseye-rag`` console script)。
 同梱スキル(fullseye-ops)をユーザーの Claude Code スキルディレクトリへコピーし、
 SKILL.md の ``FULLSEYE_REPO =`` 行をコーパスの実在パスに固定する。2 モード:
 
