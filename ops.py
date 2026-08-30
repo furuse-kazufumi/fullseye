@@ -578,6 +578,41 @@ def _vol_threshold(v, a, b):
     return (v > a).astype(np.float64)                    # volume -> binary volume
 
 
+# 3D 二値(領域)モルフォロジ(2026-08-31)。accel_vol に GPU kernel が先に実装
+# 済みで core 名が無く bridge から永久に到達不能だった層 — ここが SoT になる。
+# cross = 6 近傍(generate_binary_structure(3,1))、ball = x²+y²+z²<=r²
+# (skimage.morphology.ball と同式)。境界は scipy 既定 border_value=0(背景)。
+def _vol_ball_fp(r):
+    if r <= 0:
+        return np.ones((1, 1, 1), bool)
+    zz, yy, xx = np.mgrid[-r:r + 1, -r:r + 1, -r:r + 1]
+    return (xx * xx + yy * yy + zz * zz) <= r * r
+
+
+def _vol_reg_dilate(v, a, b):
+    st = ndimage.generate_binary_structure(3, 1)
+    return ndimage.binary_dilation(_bin(v), st, iterations=1 + int(a * 3)).astype(np.float64)
+
+
+def _vol_reg_erode(v, a, b):
+    st = ndimage.generate_binary_structure(3, 1)
+    return ndimage.binary_erosion(_bin(v), st, iterations=1 + int(a * 3)).astype(np.float64)
+
+
+def _vol_dilation_ball(v, a, b):
+    return ndimage.binary_dilation(_bin(v), _vol_ball_fp(1 + int(a * 3))).astype(np.float64)
+
+
+def _vol_erosion_ball(v, a, b):
+    return ndimage.binary_erosion(_bin(v), _vol_ball_fp(1 + int(a * 3))).astype(np.float64)
+
+
+def _vol_opening_ball(v, a, b):
+    fp = _vol_ball_fp(1 + int(a * 3))
+    return ndimage.binary_dilation(
+        ndimage.binary_erosion(_bin(v), fp), fp).astype(np.float64)
+
+
 def _vol_mip(v, a, b):
     return _norm(np.max(v, axis=0))                      # volume -> image (max-intensity projection)
 
