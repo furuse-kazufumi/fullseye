@@ -1,7 +1,19 @@
 """3D Harris/Shi-Tomasi キーポイント検出(workflow 並行探索・実測検証済、初期推定なしの大回転+部分重なり登録)。"""
 import numpy as np
-import torch
-import torch.nn.functional as F
+
+try:
+    import torch
+    import torch.nn.functional as F
+except ImportError:                       # torch は optional(gpu/threed extra)
+    # import 自体は成功させ(3D レジストリ全体を殺さない)、使用時に明確に拒否する。
+    # Keep the module importable without torch; fail clearly only on use.
+    class _TorchMissing:
+        def __getattr__(self, name):
+            raise ImportError(
+                "this operator needs the optional 'torch' backend — "
+                "install with: pip install \"fullseye[gpu]\"")
+    torch = F = _TorchMissing()
+
 from match3d import sobel3d, _gauss3d
 
 
