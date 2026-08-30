@@ -155,7 +155,7 @@ MOSAIC_TILES = [
     ("gear_hero.png",               (0.000, 0.000, 1.000, 1.000), "demo"),
     ("academic_ocean_coral.png",    (0.672, 0.000, 1.000, 1.000), "ai"),
     ("science_alife_worlds.png",    (0.720, 0.550, 0.990, 0.950), "demo"),
-    ("academic_paleo_ammonite_real.png", (0.550, 0.000, 0.780, 1.000), "real"),
+    ("academic_paleo_ammonite_real.png", (0.740, 0.000, 0.920, 1.000), "real"),
     # -- row 5 ------------------------------------------------------------
     ("academic_med_histology.png",  (0.672, 0.000, 1.000, 1.000), "ai"),
     ("science_dragon_anaglyph.png", (0.100, 0.100, 0.900, 0.900), "demo"),
