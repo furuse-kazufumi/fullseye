@@ -318,8 +318,10 @@ def save_mp4(frames_u8: list[np.ndarray], path: str, *, fps: int,
     return size_bytes
 
 
-def verify_mp4(path: str, log: Callable[[str], None] = print) -> tuple[int, tuple]:
-    """imageio で開き直してフレーム数と 1 フレームの形状を実測(捏造しない検証)。"""
+def verify_mp4(path: str, expected_frames: int,
+               log: Callable[[str], None] = print) -> tuple[int, tuple]:
+    """imageio で開き直してフレーム数と 1 フレームの形状を実測し、書き出しに渡した
+    フレーム数 ``expected_frames`` と**一致することを強制**(捏造しない検証)。"""
     import imageio.v2 as imageio
     reader = imageio.get_reader(path)
     n = 0
@@ -329,14 +331,16 @@ def verify_mp4(path: str, log: Callable[[str], None] = print) -> tuple[int, tupl
             shape = tuple(np.asarray(frame).shape)
         n += 1
     reader.close()
-    if n <= 1:
-        raise RuntimeError(f"{path}: mp4 has {n} frame(s) — expected an animation")
-    log(f"    verify {os.path.basename(path)}: {n} frames, frame shape {shape}")
+    if n != expected_frames:
+        raise RuntimeError(f"{path}: mp4 has {n} frame(s) — expected exactly {expected_frames}")
+    log(f"    verify {os.path.basename(path)}: {n} frames (== expected), frame shape {shape}")
     return n, shape
 
 
-def verify_gif(path: str, log: Callable[[str], None] = print) -> tuple[int, tuple]:
-    """imageio で開き直してフレーム数と 1 フレームの形状を実測(捏造しない検証)。"""
+def verify_gif(path: str, expected_frames: int,
+               log: Callable[[str], None] = print) -> tuple[int, tuple]:
+    """imageio で開き直してフレーム数と 1 フレームの形状を実測し、書き出しに渡した
+    フレーム数 ``expected_frames`` と**一致することを強制**(捏造しない検証)。"""
     import imageio.v2 as imageio
     reader = imageio.get_reader(path)
     n = 0
@@ -346,9 +350,9 @@ def verify_gif(path: str, log: Callable[[str], None] = print) -> tuple[int, tupl
             shape = tuple(np.asarray(frame).shape)
         n += 1
     reader.close()
-    if n <= 1:
-        raise RuntimeError(f"{path}: GIF has {n} frame(s) — expected an animation")
-    log(f"    verify {os.path.basename(path)}: {n} frames, frame shape {shape}")
+    if n != expected_frames:
+        raise RuntimeError(f"{path}: GIF has {n} frame(s) — expected exactly {expected_frames}")
+    log(f"    verify {os.path.basename(path)}: {n} frames (== expected), frame shape {shape}")
     return n, shape
 
 
