@@ -95,8 +95,12 @@ def cached_download(url: str, fname: str, meta: dict) -> str | None:
     except Exception as e:
         log(f"  [skip] download failed: {url} ({e})")
         return None
-    with open(dest, "wb") as f:
+    # atomic write: tmp file + rename so an interrupted write can never become
+    # a permanently cached partial file (the cache check above is size>0 only)
+    tmp = dest + ".part"
+    with open(tmp, "wb") as f:
         f.write(blob)
+    os.replace(tmp, dest)
     meta = dict(meta)
     meta["download_url"] = url
     with open(dest + ".meta.json", "w", encoding="utf-8") as f:
