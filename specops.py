@@ -22,6 +22,8 @@ three channels, and — so that a colour image is never silently processed *as* 
 cube — an ``(H, W, 3)`` array is refused where a cube is expected (see
 :func:`_as_cube`). B = 2 is allowed (an explicit two-band index); B = 3 is the
 only channel count that is ambiguous with RGB, and it is the one that is refused.
+Sole deliberate exception: :func:`spec_decorrelation_stretch` accepts RGB,
+because DStretch on colour photographs is that method's own canonical use.
 
 These are **plain module functions** surfaced through the ``fullseye`` facade
 (like :mod:`stereo` / :mod:`pointcloud`); they are deliberately **not** registered
