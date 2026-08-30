@@ -298,8 +298,8 @@ py -3.11 tools/gen_industrial_gallery.py
 医学・考古学・生物学・宇宙・古生物学・地質学・気象学・海洋学・植物学をカバーし、
 全画像に fullseye の登録 op を適用した処理前→後のペア構成です。
 
-- **実データ**は Smithsonian(CC0)・メトロポリタン美術館(CC0)・NASA(public domain)・
-  BBBC(CC-BY)のみを使用。**全素材の出典・ライセンスは
+- **実データ**は Smithsonian(CC0)・メトロポリタン美術館(CC0)・NASA(public domain)
+  のみを使用。**全素材の出典・ライセンスは
   [articles/assets/ACADEMIC_ATTRIBUTION.md](articles/assets/ACADEMIC_ATTRIBUTION.md) の帰属表を参照。**
 - **AI 生成(Google gemini-2.5-flash-image)の模擬データ**は、montage の全パネル左上に
   「AI-generated」を刻印し、帰属表にも明記(実在の標本・患者・スキャンではありません)。
