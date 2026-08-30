@@ -87,9 +87,12 @@ def _sep_conv_sym(t, k):
 
 
 def _conv(t, ker, device):
+    """2D conv(symmetric パディング = scipy ndimage 既定 mode='reflect')。
+    cv2 系(BORDER_REFLECT_101 = torch 'reflect')の op はこれを使わず
+    自前で F.pad(mode='reflect') すること(_cv_sharpen 参照)。"""
     k = torch.as_tensor(ker, dtype=torch.float32, device=device).view(1, 1, *ker.shape)
     r0, r1 = ker.shape[0] // 2, ker.shape[1] // 2
-    return F.conv2d(F.pad(t, (r1, r1, r0, r0), mode="reflect"), k)
+    return F.conv2d(_pad_sym(_pad_sym(t, r1, 3), r0, 2), k)
 
 
 def _norm_b(t):
