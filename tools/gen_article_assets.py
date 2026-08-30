@@ -921,7 +921,7 @@ def _build_feature_tile_specs(img, log=print) -> dict:
     Returns: {op_name: {"display", "value_text", "caption", "boxes"?, "note"?}}
     """
     import numpy as np
-    from matplotlib import cm
+    from matplotlib import colormaps
     from scipy import ndimage
 
     import fullseye
