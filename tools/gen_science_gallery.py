@@ -61,9 +61,8 @@ def _cmap(gray: np.ndarray, name: str) -> np.ndarray:
     """matplotlib カラーマップで可視化 (処理でなく着色のみ). 戻り HxWx3 [0,1]."""
     import matplotlib
     matplotlib.use("Agg")
-    from matplotlib import cm
     g = np.clip(np.asarray(gray, np.float64), 0.0, 1.0)
-    return np.asarray(cm.get_cmap(name)(g)[..., :3], np.float64)
+    return np.asarray(matplotlib.colormaps[name](g)[..., :3], np.float64)
 
 
 def _to_u8(rgb: np.ndarray) -> np.ndarray:
