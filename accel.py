@@ -235,8 +235,8 @@ def _std_filter(t, a, b, dev):
     k = _k(a)
     ker = torch.ones(1, 1, k, k, device=dev) / (k * k)
     r = k // 2
-    m = F.conv2d(F.pad(t, (r, r, r, r), mode="reflect"), ker)
-    m2 = F.conv2d(F.pad(t * t, (r, r, r, r), mode="reflect"), ker)
+    m = F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
+    m2 = F.conv2d(_pad_sym(_pad_sym(t * t, r, 3), r, 2), ker)
     return _norm_b(torch.sqrt((m2 - m * m).clamp_min(0.0)))
 
 
