@@ -135,9 +135,10 @@ def uninstall(target_dir: Path) -> bool:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--uninstall", action="store_true", help="スキルを削除する")
+    ap.add_argument("--uninstall", action="store_true",
+                    help="remove the installed skill")
     ap.add_argument("--target", type=Path, default=None,
-                    help="スキルディレクトリ(既定: ~/.claude/skills)")
+                    help="skill directory (default: ~/.claude/skills)")
     args = ap.parse_args(argv)
     target = args.target if args.target is not None else default_target()
     if args.uninstall:
