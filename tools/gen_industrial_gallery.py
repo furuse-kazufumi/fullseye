@@ -624,6 +624,10 @@ def subject_binpick_depth(log=print) -> dict:
     d.ctrl[7] = BP._GRIP_OPEN
     for _ in range(int(2.0 / m.opt.timestep)):     # 部品が山なりに落ち着くまで
         mujoco.mj_step(m, d)
+    # スキャン時はアームを退避(実機でも撮像時はカメラ視野から外す)
+    park = np.array([2.6, -1.2, 0.0, -2.2, 0.0, 1.2, 0.0])
+    d.qpos[:7] = park
+    mujoco.mj_forward(m, d)
 
     res_h, res_w = 480, 480
     ren = mujoco.Renderer(m, height=res_h, width=res_w)
