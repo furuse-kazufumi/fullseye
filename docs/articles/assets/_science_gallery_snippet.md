@@ -9,9 +9,14 @@
 | フーリエの世界 — 画像を周波数で見る | ![フーリエの世界 — 画像を周波数で見る](assets/science_fourier_stars_thumb.jpg) | fft_image | skimage.data camera (実写真) + fullseye synth 織り目 (合成) |
 | エッジの方位磁針 | ![エッジの方位磁針](assets/science_edge_compass_thumb.jpg) | sobel_amp, sobel_dir | skimage.data camera (実写真) |
 | watershed — コインのぬりえ分割 | ![watershed — コインのぬりえ分割](assets/science_watershed_foam_thumb.jpg) | otsu, fill_up, distance_transform, watersheds, segment_objects, colorize_labels | skimage.data coins (実写真) |
-| 人工生命の 6 つの宇宙 | ![人工生命の 6 つの宇宙](assets/science_alife_worlds_thumb.jpg) | alife_gray_scott, alife_turing, alife_lenia, alife_dla, alife_sandpile, alife_wolfram1d | 乱数ノイズ / 1 点から成長 (シミュレーション) |
+| 単純ルールから生まれる 6 つの宇宙 | ![単純ルールから生まれる 6 つの宇宙](assets/science_alife_worlds_thumb.jpg) | alife_wolfram1d, alife_sandpile, alife_dla, alife_lenia, alife_cyclic_ca, gauss_filter | 0 と乱数の初期値から反復シミュレーション |
 | 空間がぐにゃり — 3 つの変形アルゴリズム | ![空間がぐにゃり — 3 つの変形アルゴリズム](assets/science_wobble_warp_thumb.jpg) | deform_tps, deform_ffd, deform_mls | skimage.data camera (実写真) |
 | 樹枝状結晶とその骨格 | ![樹枝状結晶とその骨格](assets/science_dla_skeleton_thumb.jpg) | alife_dla, dilation_circle, sk_skeleton, distance_transform | 乱数から DLA 成長 (シミュレーション) |
+| 恐竜の影絵から骨格を取り出す | ![恐竜の影絵から骨格を取り出す](assets/science_dino_skeleton_thumb.jpg) | read_mesh, look_at, render_mesh, fill_up, sk_skeleton, dilation_circle, distance_transform | Smithsonian 3D triceratops 実スキャン (CC0) |
+| トリケラトプスのレントゲン写真 | ![トリケラトプスのレントゲン写真](assets/science_dino_xray_thumb.jpg) | voxelize_solid, vol_mip, gauss_filter | Smithsonian 3D triceratops 実スキャン (CC0) |
+| 赤青メガネで飛び出すドラゴン | ![赤青メガネで飛び出すドラゴン](assets/science_dragon_anaglyph_thumb.jpg) | read_mesh, look_at, render_mesh | Stanford dragon 実スキャン |
+| トリケラトプス山脈 — 恐竜を地図にする | ![トリケラトプス山脈 — 恐竜を地図にする](assets/science_dino_terrain_thumb.jpg) | sample_surface, elevation_map, colorize_height | Smithsonian 3D triceratops 実スキャン (CC0) |
+| 形が育つ・痩せる (モルフォロジー) | ![形が育つ・痩せる (モルフォロジー)](assets/science_morph_pulse.gif) | otsu, fill_up, dilation_circle, erosion_circle | skimage.data coins (実写真) |
 
 ## 記事挿入候補 (raw GitHub URL)
 
@@ -47,13 +52,13 @@
 
 水が低い所へ流れて溜まる様子をまねて領域を分ける watershed 法。写真のコインが 1 枚ずつ別の色に塗り分けられる。 使用 op: otsu, fill_up, distance_transform, watersheds, segment_objects, colorize_labels。データ: skimage.data coins (実写真)。
 
-### 人工生命の 6 つの宇宙
+### 単純ルールから生まれる 6 つの宇宙
 
-![人工生命の 6 つの宇宙](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds_thumb.jpg)
+![単純ルールから生まれる 6 つの宇宙](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds_thumb.jpg)
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds.png )
 
-単純なルールを繰り返すだけで、ヒョウ柄・生き物・結晶・雪崩・フラクタルが勝手に生まれる。全部 fullseye の op 1 回ずつ。※シミュレーション画像 (実写ではない)。 使用 op: alife_gray_scott, alife_turing, alife_lenia, alife_dla, alife_sandpile, alife_wolfram1d。データ: 乱数ノイズ / 1 点から成長 (シミュレーション)。
+となりのマスを見て自分の色を決める——それだけのルールを繰り返すと、フラクタル・カオス・結晶・珊瑚もようが勝手に生まれる。※シミュレーション画像 (実写ではない)。 使用 op: alife_wolfram1d, alife_sandpile, alife_dla, alife_lenia, alife_cyclic_ca, gauss_filter。データ: 0 と乱数の初期値から反復シミュレーション。
 
 ### 空間がぐにゃり — 3 つの変形アルゴリズム
 
@@ -70,3 +75,41 @@
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dla_skeleton.png )
 
 粒子がふらふら漂って張り付くだけで雪の結晶のような枝が育つ (DLA)。スケルトン化するとその「骨」が 1 ピクセル幅で取り出せる。※シミュレーション画像 (実写ではない)。 使用 op: alife_dla, dilation_circle, sk_skeleton, distance_transform。データ: 乱数から DLA 成長 (シミュレーション)。
+
+### 恐竜の影絵から骨格を取り出す
+
+![恐竜の影絵から骨格を取り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton.png )
+
+トリケラトプスの影絵から、形の中心線 (スケルトン) を1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。 使用 op: read_mesh, look_at, render_mesh, fill_up, sk_skeleton, dilation_circle, distance_transform。データ: Smithsonian 3D triceratops 実スキャン (CC0)。
+
+### トリケラトプスのレントゲン写真
+
+![トリケラトプスのレントゲン写真](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray.png )
+
+スミソニアン博物館の実スキャンをボクセル(3D のピクセル)に詰め、最大値投影 (MIP) するとレントゲン写真そっくりになる。 使用 op: voxelize_solid, vol_mip, gauss_filter。データ: Smithsonian 3D triceratops 実スキャン (CC0)。
+
+### 赤青メガネで飛び出すドラゴン
+
+![赤青メガネで飛び出すドラゴン](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph.png )
+
+左目用と右目用、少しずらした 2 枚を赤とシアンで重ねたアナグリフ。赤青メガネをかけると龍が画面から浮き上がる。 使用 op: read_mesh, look_at, render_mesh。データ: Stanford dragon 実スキャン。
+
+### トリケラトプス山脈 — 恐竜を地図にする
+
+![トリケラトプス山脈 — 恐竜を地図にする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain_thumb.jpg)
+
+(フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain.png )
+
+恐竜の実スキャンを 40 万点の点群にして真上から標高地図を作ると、背中が山脈、フリルが台地になる。ロボットが地形を読むのと同じ op。 使用 op: sample_surface, elevation_map, colorize_height。データ: Smithsonian 3D triceratops 実スキャン (CC0)。
+
+### 形が育つ・痩せる (モルフォロジー)
+
+![形が育つ・痩せる (モルフォロジー)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_morph_pulse.gif)
+
+膨張 (dilation) でコインがぷくぷく育って合体し、収縮 (erosion) で痩せていく。工場の画像検査でも使う基本の op。 使用 op: otsu, fill_up, dilation_circle, erosion_circle。データ: skimage.data coins (実写真)。

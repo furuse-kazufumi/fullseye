@@ -49,18 +49,18 @@
   },
   {
     "file": "science_alife_worlds.png",
-    "title": "人工生命の 6 つの宇宙",
+    "title": "単純ルールから生まれる 6 つの宇宙",
     "ops": [
-      "alife_gray_scott",
-      "alife_turing",
-      "alife_lenia",
-      "alife_dla",
+      "alife_wolfram1d",
       "alife_sandpile",
-      "alife_wolfram1d"
+      "alife_dla",
+      "alife_lenia",
+      "alife_cyclic_ca",
+      "gauss_filter"
     ],
-    "data": "乱数ノイズ / 1 点から成長 (シミュレーション)",
+    "data": "0 と乱数の初期値から反復シミュレーション",
     "synthetic": true,
-    "caption": "単純なルールを繰り返すだけで、ヒョウ柄・生き物・結晶・雪崩・フラクタルが勝手に生まれる。全部 fullseye の op 1 回ずつ。"
+    "caption": "となりのマスを見て自分の色を決める——それだけのルールを繰り返すと、フラクタル・カオス・結晶・珊瑚もようが勝手に生まれる。"
   },
   {
     "file": "science_wobble_warp.png",
@@ -86,5 +86,70 @@
     "data": "乱数から DLA 成長 (シミュレーション)",
     "synthetic": true,
     "caption": "粒子がふらふら漂って張り付くだけで雪の結晶のような枝が育つ (DLA)。スケルトン化するとその「骨」が 1 ピクセル幅で取り出せる。"
+  },
+  {
+    "file": "science_dino_skeleton.png",
+    "title": "恐竜の影絵から骨格を取り出す",
+    "ops": [
+      "read_mesh",
+      "look_at",
+      "render_mesh",
+      "fill_up",
+      "sk_skeleton",
+      "dilation_circle",
+      "distance_transform"
+    ],
+    "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+    "synthetic": false,
+    "caption": "トリケラトプスの影絵から、形の中心線 (スケルトン) を1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。"
+  },
+  {
+    "file": "science_dino_xray.png",
+    "title": "トリケラトプスのレントゲン写真",
+    "ops": [
+      "voxelize_solid",
+      "vol_mip",
+      "gauss_filter"
+    ],
+    "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+    "synthetic": false,
+    "caption": "スミソニアン博物館の実スキャンをボクセル(3D のピクセル)に詰め、最大値投影 (MIP) するとレントゲン写真そっくりになる。"
+  },
+  {
+    "file": "science_dragon_anaglyph.png",
+    "title": "赤青メガネで飛び出すドラゴン",
+    "ops": [
+      "read_mesh",
+      "look_at",
+      "render_mesh"
+    ],
+    "data": "Stanford dragon 実スキャン",
+    "synthetic": false,
+    "caption": "左目用と右目用、少しずらした 2 枚を赤とシアンで重ねたアナグリフ。赤青メガネをかけると龍が画面から浮き上がる。"
+  },
+  {
+    "file": "science_dino_terrain.png",
+    "title": "トリケラトプス山脈 — 恐竜を地図にする",
+    "ops": [
+      "sample_surface",
+      "elevation_map",
+      "colorize_height"
+    ],
+    "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+    "synthetic": false,
+    "caption": "恐竜の実スキャンを 40 万点の点群にして真上から標高地図を作ると、背中が山脈、フリルが台地になる。ロボットが地形を読むのと同じ op。"
+  },
+  {
+    "file": "science_morph_pulse.gif",
+    "title": "形が育つ・痩せる (モルフォロジー)",
+    "ops": [
+      "otsu",
+      "fill_up",
+      "dilation_circle",
+      "erosion_circle"
+    ],
+    "data": "skimage.data coins (実写真)",
+    "synthetic": false,
+    "caption": "膨張 (dilation) でコインがぷくぷく育って合体し、収縮 (erosion) で痩せていく。工場の画像検査でも使う基本の op。"
   }
 ]
