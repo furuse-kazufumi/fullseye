@@ -632,6 +632,205 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 ---
 
+## 紙面の科学館 ―― op で遊ぶ 42 の展示
+
+ここで少し肩の力を抜いて、**科学館・博物館の展示室を巡るつもりで**眺められるコーナーを置いておきます。以下はすべて Fullseye の登録 op の**実出力**で、モックアップは1枚もありません。素材の来歴は 2 種類に分かれます：
+
+- **実データ**：Smithsonian（CC0）・メトロポリタン美術館（CC0）・NASA（public domain）・Broad Bioimage Benchmark Collection（CC-BY）などの公開データ。キャプションに出典リンクを付けています。
+- **AI 生成の模擬データ**：ライセンスがクリーンな実データを見つけにくい分野（医学画像など）は、画像生成 AI（Google gemini-2.5-flash-image）で素材を作り、**画像内・キャプションの両方に「AI 生成」と明記**しています。実在の標本・患者・スキャンではありません。
+
+主役はあくまで**処理の方**です。各キャプションに使用 op を書いてあるので、「この絵はどの op で作れるのか」から逆引きできます。フル解像度と追加の展示は[処理結果ギャラリー（docs/GALLERY.md）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md)へ。
+
+### 科学館ウィング ―― 画像処理の原理を「きれいな絵」で
+
+[![距離変換の虹の波紋](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_distance_ripple_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_distance_ripple.png)
+
+*↑ **距離変換の虹の波紋** ―― コイン写真を白黒に分け、「ふちから何ピクセル離れているか」を虹色で塗ると波紋のような等高線が浮かぶ。使用 op: `otsu`, `fill_up`, `distance_transform`。*
+
+[![フーリエの世界](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_fourier_stars_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_fourier_stars.png)
+
+*↑ **フーリエの世界** ―― 画像を周波数で見ると「どんな細かさの模様がどの向きにあるか」が光の点になる。規則正しい織り目は星座のように光る（織り目パネルのみ合成）。使用 op: `fft_image`。*
+
+[![watershed ―― コインのぬりえ分割](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_watershed_foam_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_watershed_foam.png)
+
+*↑ **watershed のぬりえ分割** ―― 水が低い所へ流れて溜まる様子をまねて、コインを 1 枚ずつ別の色に。使用 op: `otsu`, `distance_transform`, `watersheds`, `colorize_labels`。*
+
+[![エッジの方位磁針](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_edge_compass_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_edge_compass.png)
+
+*↑ **エッジの方位磁針** ―― 輪郭の向きを色相環の色で塗ると、同じ向きの線が同じ色に光る。使用 op: `sobel_amp`, `sobel_dir`。*
+
+[![単純ルールから生まれる 6 つの宇宙](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_alife_worlds.png)
+
+*↑ **単純ルールから生まれる 6 つの宇宙** ―― 「となりのマスを見て自分の色を決める」だけのルールから、フラクタル・カオス・砂山マンダラ・樹枝・珊瑚もようが生まれる（シミュレーション画像）。使用 op: `alife_wolfram1d`, `alife_sandpile`, `alife_dla`, `alife_lenia`, `alife_cyclic_ca`。*
+
+[![トリケラトプスのレントゲン写真](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray.png)
+
+*↑ **トリケラトプスのレントゲン写真** ―― Smithsonian の骨格標本実スキャン（CC0）をボクセルに詰めて最大値投影（MIP）すると、レントゲン写真そっくりになる。肋骨も角も写る。使用 op: `voxelize`, `vol_gaussian`, `vol_mip`。*
+
+[![赤青メガネで飛び出すドラゴン](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dragon_anaglyph.png)
+
+*↑ **赤青メガネで飛び出すドラゴン** ―― Stanford dragon 実スキャンを 2 視点からレンダして赤シアンで重ねたアナグリフ。赤青メガネで浮き上がります。使用 op: `read_mesh`, `look_at`, `render_mesh`。*
+
+[![トリケラトプス山脈](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain.png)
+
+*↑ **トリケラトプス山脈** ―― 骨格標本を 60 万点の点群にして真上から標高地図を作ると、背骨が山脈、肋骨が尾根になる。ロボットが地形を読むのと同じ op です。使用 op: `sample_surface`, `elevation_map`, `colorize_height`。*
+
+![形が育つ・痩せる（モルフォロジー）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_morph_pulse.gif)
+
+*↑ **形が育つ・痩せる** ―― 膨張（dilation）でコインがぷくぷく育って合体し、収縮（erosion）で痩せる。工場の画像検査でも使う基本の op です。使用 op: `dilation_circle`, `erosion_circle`。*
+
+[![空間がぐにゃり ―― 3 つの変形アルゴリズム](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_wobble_warp_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_wobble_warp.png)
+
+*↑ **空間がぐにゃり** ―― 画像の下に見えないゴムのシートがあると思って、TPS / FFD / MLS という 3 つの流儀でつまんで引っぱった結果。使用 op: `deform_tps`, `deform_ffd`, `deform_mls`。*
+
+[![恐竜の影絵から骨格を取り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton.png)
+
+*↑ **恐竜の影絵から骨格を取り出す** ―― トリケラトプス骨格標本の影絵から中心線（スケルトン）を 1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。使用 op: `sk_skeleton`, `distance_transform` ほか。*
+
+### 博物館ウィング ―― 学問分野を横断する 31 の展示
+
+続いて分野別の展示室です。医学・考古学・生物学・宇宙・古生物学・地質学・気象学・海洋学・植物学 ―― **どの分野の画像にも、同じ op 体系がそのまま刺さる**ことを見てもらうコーナーです。ここから先のキャプション表記は上と同じルール（実データは出典リンク、AI 生成は明記）です。
+
+#### 古生物学
+
+[![アンモナイト化石の螺旋抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_real_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_real.png)
+
+*↑ アンモナイト化石（[Smithsonian Open Access, CC0](http://n2t.net/ark:/65665/34afa6692-b3f9-408d-90dc-cc53097171b6)）の螺旋を `canny` で抽出。使用 op: `rgb1_to_gray`, `canny`, `overlay_mask`。*
+
+[![ティラノサウルス生体復元の皮膚テクスチャ解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trex_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trex.png)
+
+*↑ ティラノサウルス生体復元の皮膚テクスチャを `std_filter` / `texture_laws` で解析。素材は **AI 生成（gemini-2.5-flash-image）の模擬データ**（実在の標本ではありません）。*
+
+[![トリケラトプス生体復元の multi-Otsu 分類](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_triceratops_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_triceratops.png)
+
+*↑ トリケラトプス生体復元を multi-Otsu で領域分類。素材は **AI 生成の模擬データ**。使用 op: `xsk2_multiotsu`, `colorize_labels`。*
+
+[![羽毛恐竜の羽毛流れ解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_feathered_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_feathered.png)
+
+*↑ 羽毛恐竜の羽毛の流れを Gabor フィルタで解析。素材は **AI 生成の模擬データ**。使用 op: `sk_gabor`, `std_filter`。*
+
+[![アンモナイト断面の対数螺旋 FFT](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_section_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_ammonite_section.png)
+
+*↑ アンモナイト断面の対数螺旋を FFT スペクトルで観察。素材は **AI 生成の模擬データ**。使用 op: `cv_clahe`, `cx_fft`, `cx_magnitude`。*
+
+[![三葉虫の体節を浮き彫り強調](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trilobite_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_paleo_trilobite.png)
+
+*↑ 三葉虫の体節を `gray_tophat` で浮き彫り強調。素材は **AI 生成の模擬データ**。*
+
+#### 宇宙
+
+[![カリーナ星雲のフィラメント抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_carina.png)
+
+*↑ カリーナ星雲（[NASA/STScI Webb, public domain](https://images.nasa.gov/details/carina_nebula)）のフィラメント構造を、本来は血管強調用の `sk_frangi` で抽出。医学の op が天文に刺さる例。*
+
+[![火星 Nili Patera 砂丘のテクスチャ解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_mars_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_mars.png)
+
+*↑ 火星の砂丘（[NASA/JPL-Caltech/Univ. of Arizona, public domain](https://images.nasa.gov/details/PIA18244)）のテクスチャを `std_filter` / `texture_laws` で解析。*
+
+[![ひまわり銀河の FFT スペクトル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_galaxy_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_space_galaxy.png)
+
+*↑ 渦巻銀河（[NASA GSFC, public domain](https://images.nasa.gov/details/hubble-sees-a-galactic-sunflower_21136469209_o)）の周波数構造を `cx_fft` で可視化。*
+
+#### 医学（このブロックはすべて AI 生成の模擬データです）
+
+[![胸部X線風画像の強調とエッジ抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_chest_xray_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_chest_xray.png)
+
+*↑ 胸部X線**風**画像を `cv_clahe` + `sobel_amp` で強調・エッジ抽出。**AI 生成の模擬データ**（実在の患者・スキャンではありません）。*
+
+[![H&E 組織切片風画像の multi-Otsu 分類](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_histology_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_histology.png)
+
+*↑ H&E 組織切片**風**画像を multi-Otsu で組織構造分類。**AI 生成の模擬データ**。*
+
+[![脳 MRI 風画像のコントラスト強調](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_brain_mri_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_brain_mri.png)
+
+*↑ 脳 MRI **風**画像を `cv_clahe` + `unsharp` で組織コントラスト強調。**AI 生成の模擬データ**。*
+
+[![血液塗抹風画像の血球計数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear.png)
+
+*↑ 血液塗抹**風**画像の血球を分割・計数（検出数 131）。**AI 生成の模擬データ**。使用 op: `segment_objects(otsu)`, `count_obj`, `colorize_labels`。*
+
+[![解剖図風イラストの輪郭抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart.png)
+
+*↑ 解剖図**風**イラストの輪郭を `canny` で抽出。**AI 生成の模擬データ**。*
+
+#### 生物学
+
+[![HT29 細胞の分割と計数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells.png)
+
+*↑ HT29 細胞の蛍光顕微鏡像（[BBBC001, CC-BY 3.0](https://bbbc.broadinstitute.org/BBBC001)）を otsu 分割 → ラベル彩色 → 計数（検出数 327）。実験室のルーチンワークそのものです。*
+
+[![神経細胞の樹状突起トレース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
+
+*↑ 神経細胞蛍光像の樹状突起を `sk_frangi` でトレース。**AI 生成の模擬データ**。*
+
+[![珪藻の分割と計数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_diatoms_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_diatoms.png)
+
+*↑ 珪藻顕微鏡像を分割・計数（検出数 123）。**AI 生成の模擬データ**。*
+
+[![深海アンコウの暗部増強](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_deepsea_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_deepsea.png)
+
+*↑ 深海生物の暗部を `cv_clahe` で増強。**AI 生成の模擬データ**。*
+
+[![蝶の翅鱗粉の周期構造解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_butterfly_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_butterfly.png)
+
+*↑ 蝶の翅の鱗粉の周期構造を `sk_gabor` で解析。**AI 生成の模擬データ**。*
+
+#### 考古学
+
+[![土器シルエットの楕円フーリエ記述子](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_amphora_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_amphora.png)
+
+*↑ アンフォラ（[メトロポリタン美術館 Open Access, CC0](https://www.metmuseum.org/art/collection/search/254896)）のシルエットを楕円フーリエ記述子（EFD）で形状復元。2 → 8 → 32 高調波と増やすほど輪郭に吸い付いていく ―― 考古学の土器形状分類で実際に使われる手法です。使用 op: `otsu`, `fourierdesc.elliptic_fourier`, `fourierdesc.reconstruct`。*
+
+[![石碑レリーフの浮き彫り強調](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_relief_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_relief.png)
+
+*↑ アッシリアの石碑レリーフ（[メトロポリタン美術館, CC0](https://www.metmuseum.org/art/collection/search/322611)）の彫刻を `gray_tophat` で浮き彫り強調。*
+
+[![洞窟壁画の顔料強調（DStretch 手法）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cave_painting_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cave_painting.png)
+
+*↑ 洞窟壁画の消えかけた顔料を decorrelation stretch（岩絵調査の定番 DStretch と同系の手法）で強調。**AI 生成の模擬データ**。使用 op: `principal_comp`。*
+
+[![楔形文字粘土板の刻印強調](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cuneiform_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_arch_cuneiform.png)
+
+*↑ 楔形文字粘土板の文字刻印を `gray_tophat` で強調。**AI 生成の模擬データ**。*
+
+#### 地質学・気象学・海洋学・植物学
+
+[![衛星画像の岩相 decorrelation stretch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_earth_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_earth.png)
+
+*↑ 衛星画像（[NASA JSC, public domain](https://images.nasa.gov/details/SL2-04-018)）の岩相を decorrelation stretch（リモートセンシングの定番）で強調。*
+
+[![鉱物結晶のファセット稜線抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_mineral_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_mineral.png)
+
+*↑ アメジスト結晶のファセット稜線を `canny` で抽出。**AI 生成の模擬データ**。*
+
+[![岩石薄片の鉱物粒子分類](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_thin_section_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_geo_thin_section.png)
+
+*↑ 岩石薄片（偏光顕微鏡風）を multi-Otsu で鉱物粒子に分類。**AI 生成の模擬データ**。*
+
+[![ハリケーンの渦構造の勾配方向ホイール](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_hurricane_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_hurricane.png)
+
+*↑ ハリケーン（[NASA JSC, public domain](https://images.nasa.gov/details/iss056e162187)）の渦構造を勾配方向ホイール（`sobel_dir` + `colorize_flow`）で可視化。*
+
+[![スーパーセル積乱雲の構造強調](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_supercell_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_met_supercell.png)
+
+*↑ スーパーセル積乱雲を `cv_clahe` + `unsharp` で構造強調。**AI 生成の模擬データ**。*
+
+[![サンゴ礁の被覆分類](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_ocean_coral_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_ocean_coral.png)
+
+*↑ サンゴ礁を multi-Otsu で被覆分類（海洋調査風）。**AI 生成の模擬データ**。*
+
+[![シダ葉脈の抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_fern.png)
+
+*↑ シダの葉脈を `sk_frangi` で抽出。**AI 生成の模擬データ**。*
+
+[![花粉 SEM 風画像の分割と計数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen.png)
+
+*↑ 花粉 SEM **風**画像を分割・計数（検出数 41）。**AI 生成の模擬データ**。*
+
+この 42 展示のうち、**実データにはすべて出典とライセンス**（詳細な帰属表は[ACADEMIC_ATTRIBUTION.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/ACADEMIC_ATTRIBUTION.md)）を、**AI 生成には全点にその旨**を付けました。おまけの正直な開示をひとつ ―― この「多様な実データを流す」作業は、それ自体が**バグ発見器**でもありました。合成データでは一度も表面化しなかった op の不具合が実データで 5 件見つかり、[docs/KNOWN_ISSUES.md](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/KNOWN_ISSUES.md) に検証状態つきで記録してあります（例：`count_obj` の連結性が HALCON 既定と食い違う疑い）。きれいな展示の裏で、テストにもなっている ―― という一石二鳥でした。
+
+---
+
 ## 設計思想（4本の柱）
 
 Fullseye が「ただの関数の寄せ集め」にならないための背骨です。
