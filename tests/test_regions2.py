@@ -312,3 +312,72 @@ def test_split_skeleton_lines_leaves_straight_line_intact_count():
     _, n = ndimage.label(out > 0.5)
     assert n == 1, "a junction-free line stays a single segment"
     assert out.sum() > 0
+
+
+# --------------------------------------------------------------------------- #
+# em_skeleton (Eckhardt-Maderlechner 型不変細線化) の回帰テスト
+# --------------------------------------------------------------------------- #
+def _em(m):
+    return OPS_BY_NAME["em_skeleton"].fn(m, 0.5, 0.5)
+
+
+def _topo(m):
+    """(前景8連結成分数, 穴数)。画像外=背景の海を明示してから数える。"""
+    from scipy import ndimage
+    p = np.pad(np.asarray(m) > 0.5, 1)
+    st8 = ndimage.generate_binary_structure(2, 2)
+    return ndimage.label(p, structure=st8)[1], ndimage.label(~p)[1] - 1
+
+
+def _em_test_shapes():
+    from scipy import ndimage
+    rng = np.random.default_rng(0)
+    blob = ndimage.gaussian_filter(rng.random((120, 120)), 5)
+    yy, xx = np.mgrid[:100, :100]
+    ring = (((yy - 50) ** 2 + (xx - 50) ** 2) < 38 ** 2) & \
+           (((yy - 50) ** 2 + (xx - 50) ** 2) > 10 ** 2)
+    L = np.zeros((80, 80))
+    L[8:72, 8:28] = 1.0
+    L[52:72, 8:72] = 1.0
+    return {"blob": (blob > blob.mean()).astype(np.float64),
+            "ring": ring.astype(np.float64), "L": L}
+
+
+def test_em_skeleton_preserves_topology():
+    for name, m in _em_test_shapes().items():
+        sk = _em(m)
+        assert _topo(m) == _topo(sk), f"{name}: 位相(成分数・穴数)が保存されない"
+
+
+def test_em_skeleton_symmetric_and_idempotent():
+    m = _em_test_shapes()["blob"]
+    sk = _em(m)
+    assert np.array_equal(_em(np.rot90(m).copy()), np.rot90(sk)), "90度回転と非可換"
+    assert np.array_equal(_em(m[::-1].copy()), sk[::-1]), "上下反転と非可換"
+    assert np.array_equal(_em(sk), sk), "冪等でない"
+
+
+def test_em_skeleton_thin_no_interior():
+    from scipy import ndimage
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)
+    for name, m in _em_test_shapes().items():
+        sk = _em(m) > 0.5
+        interior = ndimage.binary_erosion(sk, structure=cross, border_value=0)
+        assert interior.sum() == 0, f"{name}: interior 画素が残っている(細くない)"
+
+
+def test_em_skeleton_branchier_than_zhang_suen():
+    # EM 系は対称・枝多(Couprie の比較表の性格)。Zhang-Suen より画素が多い
+    skimage = pytest.importorskip("skimage")
+    from skimage.morphology import skeletonize
+    m = _em_test_shapes()["blob"]
+    em_px = (_em(m) > 0.5).sum()
+    zs_px = skeletonize(m > 0.5).sum()
+    assert em_px > zs_px, f"EM({em_px}px) が Zhang-Suen({zs_px}px) より枝を残すはず"
+
+
+def test_em_skeleton_empty_and_single_pixel():
+    assert _em(np.zeros((10, 10))).sum() == 0
+    one = np.zeros((10, 10))
+    one[5, 5] = 1.0
+    assert np.array_equal(_em(one), one), "孤立 1 画素は不変のはず"
