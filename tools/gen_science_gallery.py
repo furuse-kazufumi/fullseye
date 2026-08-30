@@ -461,22 +461,23 @@ def subject_dino_terrain(log=print) -> dict:
     V, F = _load_mesh_sample("triceratops.glb")
     V = V - V.min(axis=0)
     V = V / V.max()
-    pts = fs.sample_surface(V, F, 400_000, seed=SEED)
-    # glTF は y-up なので z-up に回す (高さ = 体の上面)
-    pts = pts[:, [0, 2, 1]]
-    grid, extent = fs.elevation_map(pts, cell=1.0 / 420.0, agg="max")
+    pts = fs.sample_surface(V, F, 600_000, seed=SEED)
+    # glTF は y-up なので z-up に回す (高さ = 体の上面)。長軸を x に置いて横長の地図に
+    pts = pts[:, [2, 0, 1]]
+    grid, extent = fs.elevation_map(pts, cell=1.0 / 640.0, agg="max")
     grid = np.nan_to_num(grid, nan=float(np.nanmin(grid)))
     rgb = fs.colorize_height(grid, name="terrain", relief=True)
+    rgb = np.kron(rgb, np.ones((2, 2, 1)))          # 表示用に 2 倍拡大
     _save_png(rgb, "science_dino_terrain.png")
     _save_thumb("science_dino_terrain.png")
     return {
         "file": "science_dino_terrain.png",
         "title": "トリケラトプス山脈 — 恐竜を地図にする",
         "ops": ["sample_surface", "elevation_map", "colorize_height"],
-        "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+        "data": "Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)",
         "synthetic": False,
-        "caption": ("恐竜の実スキャンを 40 万点の点群にして真上から標高地図を作ると、"
-                    "背中が山脈、フリルが台地になる。ロボットが地形を読むのと同じ op。"),
+        "caption": ("骨格標本の実スキャンを 60 万点の点群にして真上から標高地図を作る"
+                    "と、背骨が山脈、ろっ骨が尾根になる。ロボットが地形を読むのと同じ op。"),
     }
 
 
