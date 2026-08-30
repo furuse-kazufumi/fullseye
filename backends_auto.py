@@ -879,8 +879,10 @@ def _moore_boundaries(mask):
             py, px = cy + _RING8[(j - 1) % 8][0], cx + _RING8[(j - 1) % 8][1]
             nb = _RING8_IDX[(py - ny, px - nx)]
             cy, cx, cb = ny, nx, nb
-            if (cy, cx) == (sy, sx) and cb == back:
-                break                            # Jacob: start re-entered same way
+            if (cy, cx) == (sy, sx):
+                if cb in seen_at_start:
+                    break                        # Jacob: start re-entered same way
+                seen_at_start.add(cb)
             pts.append((cy, cx))
         pts.append((sy, sx))                     # close the loop
         out.append(np.asarray(pts, np.float64))

@@ -6,7 +6,7 @@
   "out_sort": "contour",
   "shape": "xld",
   "params": {
-   "kind": "edges_sub_pix"
+   "kind": "region_boundary"
   }
  },
  {
