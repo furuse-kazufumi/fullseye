@@ -1019,12 +1019,16 @@ def _build_feature_tile_specs(img, log=print) -> dict:
 
     # --- xmh_zernike / xmh_pftas: 入力を見せて数値+意味ラベル ---------------- #
     zern = fullseye.apply(img, "xmh_zernike")
+    if not np.isfinite(zern):
+        raise AssertionError(f"xmh_zernike returned non-finite value: {zern}")
     specs["xmh_zernike"] = {
         "display": img,
         "value_text": f"{zern:.4f}",
         "caption": "sum of Zernike moments (shape descriptor)",
     }
     pftas = fullseye.apply(img, "xmh_pftas")
+    if not np.isfinite(pftas):
+        raise AssertionError(f"xmh_pftas returned non-finite value: {pftas}")
     specs["xmh_pftas"] = {
         "display": img,
         "value_text": f"{pftas:.4f}",
