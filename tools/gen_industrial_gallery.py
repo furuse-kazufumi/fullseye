@@ -447,11 +447,14 @@ def subject_blob_pellets(log=print) -> dict:
         img[mask] = rng.uniform(0.62, 0.88)
     img = np.clip(_blur(img, 0.8) + 0.015 * rng.standard_normal((H, W)), 0, 1)
 
-    # 検出: otsu → 穴埋め → 距離変換 watershed で接触粒を切る → blob 計数
+    # 検出: otsu → 穴埋め → 内側距離変換 (粒中心がピーク) を反転して watershed
+    #        → 接触粒の間に稜線が引かれる → blob 計数
     seg = fs.apply(img, "otsu")
     seg = fs.apply(seg, "fill_up")
-    dt = fs.apply(1.0 - seg, "distance_transform")
-    ridges = fs.apply(dt ** 0.3, "watersheds", 0.0, 0.5)
+    dt = fs.apply(seg, "distance_transform")
+    dtn = dt / (dt.max() + 1e-9)
+    dts = fs.apply(dtn, "gauss_filter", 0.3, 0.5)   # 過分割を抑える平滑化
+    ridges = fs.apply(1.0 - dts, "watersheds", 0.0, 0.5)
     cells = (ridges < 0.5).astype(np.float64) * seg
     objs = fs.segment_objects(cells, threshold="none", min_area=60)
     log(f"  pellets known={N} counted={len(objs)}")
