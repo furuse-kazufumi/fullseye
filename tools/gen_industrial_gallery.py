@@ -988,8 +988,8 @@ def subject_binpick_motion(log=print) -> dict:
     mp4_path = os.path.join(MEDIA_DIR, "phai_bin_pick.mp4")
     imageio.mimwrite(mp4_path, frames, fps=30, codec="libx264", quality=8,
                      macro_block_size=1, pixelformat="yuv420p")
-    # 静的サムネ: シーケンス中盤(把持中)のフレーム
-    thumb_frame = frames[len(frames) // 2]
+    # 静的サムネ: 序盤 1/4 地点(部品が多く残る把持動作中)のフレーム
+    thumb_frame = frames[len(frames) // 4]
     _save_png(thumb_frame.astype(np.float64) / 255.0, "phai_bin_pick_still.png")
     _save_thumb("phai_bin_pick_still.png")
     os.remove(scratch_gif)
