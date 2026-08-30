@@ -1081,6 +1081,10 @@ QEM（Quadric Error Metric）edge-collapse は、メッシュの三角形を間�
 
 ### 数字で見る推移、そして教訓の言語化
 
+[![CI 失敗テスト数の推移 約80→9→1→0](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_ci_waterfall_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_ci_waterfall.png)
+
+*↑ 失敗テスト数の推移（約80 → 9 → 1 → 0）。第1波=torch の無条件 import、第2波=絶対値と符号で捕まる9件、最終波=クリーン venv 検証で見つけた scikit-image の無条件 import。数値は本文記載の実績値。*
+
 失敗テスト数の推移は、**約80 → 9 → 1 → 0** という3波(+最終確認1件)でした。フルスイートはローカルで **6224 passed**。CI 自体は **Python 3.10 / 3.11 / 3.12 のマトリクス**に加えて、「**numpy + scipy だけで動く**」という主張を**毎回実際に実行して確かめる最小構成のジョブ**を独立に持っています(このジョブこそが、最終波の scikit-image バグと同じクラスの事故を、次からは CI 自身が捕まえられるようにする、という意味を持ちます)。
 
 この一連の出来事から、言葉にしておきたい教訓が4つあります。
