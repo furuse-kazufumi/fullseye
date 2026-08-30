@@ -294,7 +294,7 @@ Words alone stay abstract, so here are these "inspection-line standards" actuall
 
 [![Surface defect inspection — background subtraction + blob analysis](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
 
-*↑ **Surface defect inspection** — 3 scratches, 2 dents, and 1 foreign particle on a synthetic metal surface: estimate the base texture with a median filter → subtract → blob analysis detects 6/6, boxed with areas. Ops used: `median_image`, `dilation_circle`, `segment_objects`.*
+*↑ **Surface defect inspection** — 3 scratches, 2 dents, and 1 foreign particle on a synthetic metal surface: estimate the base texture with a median filter → difference heatmap → blob analysis detects 6/6. A truth-free feature classifier (eccentricity, redness) then assigns **the correct type to every defect** — shown with type-colored boxes and 3× zoom insets. Ops used: `median_image`, `dilation_circle`, `segment_objects`.*
 
 [![Subpixel dimensional metrology — 1D measuring calipers](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology.png)
 
