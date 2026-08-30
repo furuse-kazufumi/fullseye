@@ -68,7 +68,7 @@ TILES = [
     # Edge orientation painted as hue (sobel_dir)
     ("science_edge_compass.png",   (0.505, 0.000, 1.000, 0.915)),
     # Sub-pixel metrology on a stepped shaft (measure_pairs)
-    ("industrial_metrology.png",   (0.600, 0.020, 0.950, 0.800)),
+    ("industrial_metrology.png",   (0.635, 0.020, 0.950, 0.800)),
     # Watershed instance segmentation of coins, color-labelled
     ("science_watershed_foam.png", (0.505, 0.000, 1.000, 0.830)),
     # Surface-defect heatmap (|img - median| background subtraction)

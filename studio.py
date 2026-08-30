@@ -1555,6 +1555,238 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
     return ImageView
 
 
+def _viewer3d_class(QtWidgets, QtGui, QtCore):
+    """The interactive 3-D viewer widget (point clouds + meshes).
+
+    Software-rasterised on purpose — see the method-choice note above
+    :func:`viewer3d_camera`: the same numpy render path runs on GL-less
+    platforms (offscreen CI, thin Remote Desktop) and is fully unit-testable,
+    at measured interactive rates for this repo's data sizes. Interaction:
+    left-drag orbits (turntable), wheel zooms at the view centre, middle- or
+    Shift-drag pans, ``R`` resets the home view, ``W`` toggles the mesh
+    wireframe overlay. Meshes draw as lambert-shaded vertex splats (vertex
+    normals x view-direction light) plus an optional QPainter wireframe; very
+    large clouds decimate during a drag and re-render full on release.
+    """
+    class Viewer3D(QtWidgets.QWidget):
+        DRAG_BUDGET = 250000                   # points rendered per frame WHILE dragging
+
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.setMinimumSize(320, 300)
+            self.setFocusPolicy(QtCore.Qt.StrongFocus)
+            self.setMouseTracking(False)
+            self._P = np.zeros((0, 3))          # displayed points (mesh: its vertices)
+            self._colors = None                 # explicit per-point colors, or None
+            self._F = None                      # mesh faces, or None for a cloud
+            self._VN = None                     # mesh vertex normals
+            self._edges = None                  # mesh wireframe edges (or None)
+            self._wire = False
+            self._clusters = []                 # index arrays for highlight mode
+            self._selected = None               # highlighted cluster index
+            self._center = np.zeros(3); self._radius = 1.0
+            self._yaw, self._pitch, self._zoom = 35.0, 25.0, 1.0
+            self._pan = [0.0, 0.0]
+            self._drag = None                   # (mode, last QPoint) while a button is down
+            self._frame = None                  # last rendered numpy frame (tests/screenshots)
+            self.info = {"kind": "empty", "n_points": 0}
+
+        # ---- data ----------------------------------------------------------- #
+        def set_points(self, points, colors=None):
+            """Show a point cloud (n, 3); *colors* (n, 3) in [0, 1] or None for a
+            height ramp. Resets clusters/mesh state, keeps the camera."""
+            self._P = np.asarray(points, np.float64).reshape(-1, 3)
+            self._colors = None if colors is None else np.asarray(colors, np.float64)
+            self._F = self._VN = self._edges = None
+            self._clusters, self._selected = [], None
+            self._refit(); self.info = {"kind": "points", "n_points": int(self._P.shape[0])}
+            self._repaint()
+
+        def set_mesh(self, V, F):
+            """Show a triangle mesh: lambert-shaded vertex splats + optional wire."""
+            self._P = np.asarray(V, np.float64).reshape(-1, 3)
+            self._F = np.asarray(F, int)
+            self._VN = mesh_vertex_normals(self._P, self._F)
+            self._edges = mesh_edges(self._F)
+            self._colors = None
+            self._clusters, self._selected = [], None
+            self._refit()
+            self.info = {"kind": "mesh", "n_points": int(self._P.shape[0]),
+                         "n_faces": int(self._F.shape[0]),
+                         "wireframe_available": self._edges is not None}
+            self._repaint()
+
+        def set_clusters(self, clusters, selected=None):
+            """Color the current cloud by cluster membership (3-D feature
+            inspection); *selected* highlights one cluster and dims the rest."""
+            self._clusters = list(clusters)
+            self._selected = selected
+            self._repaint()
+
+        def set_selected_cluster(self, i):
+            self._selected = i
+            self._repaint()
+
+        def _refit(self):
+            if self._P.shape[0]:
+                self._center = 0.5 * (self._P.min(axis=0) + self._P.max(axis=0))
+                self._radius = float(np.linalg.norm(self._P - self._center, axis=1).max()) or 1.0
+            else:
+                self._center = np.zeros(3); self._radius = 1.0
+
+        # ---- rendering ------------------------------------------------------ #
+        def _point_colors(self):
+            if self._clusters:
+                return cluster_colors(self._P.shape[0], self._clusters, self._selected)
+            if self._VN is not None:
+                cam = viewer3d_camera(self._yaw, self._pitch)
+                lam = np.clip(self._VN @ -cam[2], 0.0, 1.0) * 0.82 + 0.16
+                return lam[:, None] * np.array([0.78, 0.82, 0.88])
+            return self._colors
+
+        def frame_rgb(self):
+            """Render the current view -> RGB float array (the paintEvent core,
+            exposed headless-style for tests and screenshots)."""
+            size = max(64, min(self.width(), self.height()) or 480)
+            P, C = self._P, self._point_colors()
+            if self._drag is not None and P.shape[0] > self.DRAG_BUDGET:
+                step = int(np.ceil(P.shape[0] / self.DRAG_BUDGET))
+                P = P[::step]
+                C = None if C is None else C[::step]
+            return render_points_frame(
+                P, colors=C, yaw=self._yaw, pitch=self._pitch, zoom=self._zoom,
+                pan=self._pan, size=size, point_px=2,
+                center=self._center, radius=self._radius)
+
+        def _repaint(self):
+            self._frame = None
+            self.update()
+
+        def paintEvent(self, ev):
+            if self._frame is None:
+                self._frame = self.frame_rgb()
+            qi = _to_qimage(self._frame, QtGui)
+            p = QtGui.QPainter(self)
+            p.fillRect(self.rect(), QtGui.QColor(NAVY_0))
+            if qi is not None:
+                # centred, unscaled (frame is already sized to the short side)
+                x0 = (self.width() - qi.width()) // 2
+                y0 = (self.height() - qi.height()) // 2
+                p.drawImage(x0, y0, qi)
+                if self._wire and self._edges is not None and self._drag is None:
+                    size = qi.width()
+                    xy, _ = viewer3d_project(
+                        self._P, viewer3d_camera(self._yaw, self._pitch),
+                        self._center, self._radius, self._zoom, self._pan, size)
+                    pen = QtGui.QPen(QtGui.QColor(23, 184, 166, 90)); pen.setWidthF(1.0)
+                    p.setPen(pen)
+                    for a, b in self._edges:
+                        p.drawLine(QtCore.QPointF(x0 + xy[a, 0], y0 + xy[a, 1]),
+                                   QtCore.QPointF(x0 + xy[b, 0], y0 + xy[b, 1]))
+            hint = ("%s · %d pts%s   drag=orbit · wheel=zoom · shift/middle-drag=pan · R=reset%s"
+                    % (self.info.get("kind"), self._P.shape[0],
+                       (" · %d faces" % self.info["n_faces"]) if self._F is not None else "",
+                       " · W=wire" if self._edges is not None else ""))
+            p.setPen(QtGui.QColor(MUTED))
+            p.drawText(8, self.height() - 8, hint)
+            p.end()
+
+        # ---- interaction ---------------------------------------------------- #
+        def reset_view(self):
+            self._yaw, self._pitch, self._zoom = 35.0, 25.0, 1.0
+            self._pan = [0.0, 0.0]
+            self._repaint()
+
+        def mousePressEvent(self, e):
+            mode = ("pan" if (e.button() == QtCore.Qt.MiddleButton
+                              or e.modifiers() & QtCore.Qt.ShiftModifier) else "orbit")
+            self._drag = (mode, e.position().toPoint())
+
+        def mouseMoveEvent(self, e):
+            if self._drag is None:
+                return
+            mode, last = self._drag
+            pos = e.position().toPoint()
+            dx, dy = pos.x() - last.x(), pos.y() - last.y()
+            if mode == "orbit":
+                self._yaw = (self._yaw + 0.5 * dx) % 360.0
+                self._pitch = float(np.clip(self._pitch + 0.5 * dy, -89.0, 89.0))
+            else:
+                self._pan[0] += dx; self._pan[1] += dy
+            self._drag = (mode, pos)
+            self._repaint()
+
+        def mouseReleaseEvent(self, e):
+            self._drag = None
+            self._repaint()                       # full-resolution re-render after a drag
+
+        def wheelEvent(self, e):
+            f = 1.25 if e.angleDelta().y() > 0 else 0.8
+            self._zoom = float(np.clip(self._zoom * f, 0.02, 500.0))
+            self._repaint()
+
+        def keyPressEvent(self, e):
+            if e.key() == QtCore.Qt.Key_R:
+                self.reset_view()
+            elif e.key() == QtCore.Qt.Key_W and self._edges is not None:
+                self._wire = not self._wire
+                self._repaint()
+            else:
+                super().keyPressEvent(e)
+    return Viewer3D
+
+
+def _disp3d_viewer(kind, *args, title=None, parent=None):
+    """Shared implementation of the public disp_* 3-D API (single code path).
+
+    Headless-safe contract: with no QApplication on the offscreen platform the
+    call records what WOULD have been shown and returns that info dict (no
+    window, no crash — CI/tests). With a running QApplication (Studio, tests)
+    it returns the shown ``Viewer3D`` widget, non-blocking. With no
+    QApplication on a real display it creates one and blocks until the window
+    closes (matplotlib-show semantics for plain scripts)."""
+    try:
+        from PySide6 import QtWidgets, QtGui, QtCore
+    except Exception:
+        return {"kind": kind, "shown": False, "reason": "PySide6 unavailable"}
+    app = QtWidgets.QApplication.instance()
+    offscreen = os.environ.get("QT_QPA_PLATFORM") == "offscreen"
+    if app is None and offscreen:
+        n = int(np.asarray(args[0], np.float64).reshape(-1, 3).shape[0])
+        return {"kind": kind, "shown": False, "n_points": n, "reason": "offscreen, no app"}
+    created = False
+    if app is None:
+        app = QtWidgets.QApplication([])
+        created = True
+    w = _viewer3d_class(QtWidgets, QtGui, QtCore)(parent)
+    if kind == "mesh":
+        w.set_mesh(args[0], args[1])
+    else:
+        w.set_points(args[0], colors=args[1] if len(args) > 1 else None)
+    w.setWindowTitle(title or ("Fullseye Studio - 3D viewer (%s)" % kind))
+    w.resize(640, 560)
+    w.show()
+    w.info["shown"] = True
+    if created and not offscreen:
+        app.exec()                                # standalone script: block until closed
+    return w
+
+
+def disp_points3d(points, colors=None, title=None, parent=None):
+    """Open the interactive 3-D viewer on a point cloud (HALCON
+    ``disp_object_model_3d`` workalike; the Studio program-directive
+    ``disp_points3d ('file')`` and this function share one viewer). *points* is
+    (n, 3); *colors* optional (n, 3) in [0, 1]. See :func:`_disp3d_viewer` for
+    the headless-safe return contract."""
+    return _disp3d_viewer("points", points, colors, title=title, parent=parent)
+
+
+def disp_mesh3d(V, F, title=None, parent=None):
+    """Open the interactive 3-D viewer on a triangle mesh (lambert vertex
+    shading, ``W`` toggles wireframe). Same contract as :func:`disp_points3d`."""
+    return _disp3d_viewer("mesh", V, F, title=title, parent=parent)
+
+
 def _group(QtWidgets, title, inner_layout):
     """A titled section card (QGroupBox) wrapping *inner_layout*."""
     g = QtWidgets.QGroupBox(title)
