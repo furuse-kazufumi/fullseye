@@ -1468,6 +1468,27 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
                 if 0 <= x < w and 0 <= y < h:
                     self.hover_cb(x, y, self._data[y, x])
 
+        def mousePressEvent(self, e):
+            self._press_pos = e.position().toPoint()
+            super().mousePressEvent(e)
+
+        def mouseReleaseEvent(self, e):
+            # A CLICK (press+release without a pan drag) maps to an image pixel and
+            # fires click_cb — the Feature-inspection dialog uses it for
+            # "click a region -> select its table row". A drag (ScrollHandDrag pan)
+            # moves further than the 4-px slop and is NOT a click.
+            super().mouseReleaseEvent(e)
+            pos = e.position().toPoint()
+            if (self.click_cb is not None and self._data is not None
+                    and self._press_pos is not None
+                    and (pos - self._press_pos).manhattanLength() <= 4):
+                p = self.mapToScene(pos)
+                x, y = int(p.x()), int(p.y())
+                h, w = self._data.shape[:2]
+                if 0 <= x < w and 0 <= y < h:
+                    self.click_cb(x, y)
+            self._press_pos = None
+
         def clear(self):
             self.clear_text()
             self._item.setPixmap(QtGui.QPixmap())
