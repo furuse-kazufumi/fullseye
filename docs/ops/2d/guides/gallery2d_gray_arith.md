@@ -64,7 +64,7 @@ flowchart LR
 - `equalize` — ヒストグラム平坦化(CDF を LUT に)。順位を保ちコントラストを均す(HALCON `equ_histo_image`)。`fullseye.apply(img, "equalize", 0.5, 0.5)`
 - `equ_histo_image` — 大域ヒストグラム平坦化(HALCON `equ_histo_image`)。`fullseye.apply(img, "equ_histo_image", 0.5, 0.5)`
 - `equ_histo_image_rect` — 矩形ブロックごとの局所ヒストグラム平坦化。`a`=ブロック分割数(HALCON `equ_histo_image_rect`)。`fullseye.apply(img, "equ_histo_image_rect", 0.5, 0.5)`
-- `clahe` — タイル分割してブロックごとに平坦化(コントラスト制限つき適応平坦化)。`a`=タイル数。`fullseye.apply(img, "clahe", 0.5, 0.5)`
+- `clahe` — タイル分割の適応平坦化。各タイルの CDF を近傍 4 タイル中心で**双線形ブレンド**するのでタイル継ぎ目は出ない(Zuiderveld 1994 の標準補間。2026-08-30 に補間を追加)。`a`=タイル数。`fullseye.apply(img, "clahe", 0.5, 0.5)`
 - `cv_clahe` — OpenCV CLAHE。`a`=clipLimit。`fullseye.apply(img, "cv_clahe", 0.5, 0.5)`
 - `sk_adapthist` — skimage の適応ヒストグラム平坦化(CLAHE)。`a`=clip_limit。`fullseye.apply(img, "sk_adapthist", 0.5, 0.5)`
 - `xkor_clahe` — kornia の CLAHE。`a`=clip_limit。`fullseye.apply(img, "xkor_clahe", 0.5, 0.5)`
