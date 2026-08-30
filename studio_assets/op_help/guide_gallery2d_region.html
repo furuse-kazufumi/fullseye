@@ -65,6 +65,16 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pruning</code> — スケルトンのヒゲ(短い枝)を刈る(端点を <code style="color:#22d3bf">1+int(a*4)</code> 回除去)。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">junctions_skeleton</code> — スケルトンの分岐点(8 近傍が 3 個以上)を抽出。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r2_split_skeleton_lines</code> — 骨格を分岐点で切り、線分に分割(<code style="color:#22d3bf">a</code> で短い断片を除去)。</p>
+<p>&gt; <b>HALCON との差(重要)</b>: HALCON の <code style="color:#22d3bf">skeleton</code> は Eckhardt–Maderlechner 法、</p>
+<p>&gt; Fullseye は Zhang–Suen 法(skimage)で、<b>アルゴリズムが異なります</b>。</p>
+<p>&gt; スケルトンは実装依存性が強い代表例で、細い枝(ヒゲ)の生え方・分岐点の</p>
+<p>&gt; 画素位置・斜め 2 画素幅部の残り方は一致しません。したがって</p>
+<p>&gt; <code style="color:#22d3bf">junctions_skeleton</code> / <code style="color:#22d3bf">r2_split_skeleton_lines</code> の分岐数・線分数も</p>
+<p>&gt; HALCON と同数にはなりません。一致するのは位相的な性質</p>
+<p>&gt; (連結性の保存・穴の数・おおむね 1 画素幅)です。HALCON からの移植で</p>
+<p>&gt; 分岐数などを閾値に使っている場合は、<code style="color:#22d3bf">pruning</code> でヒゲを刈ってから</p>
+<p>&gt; 閾値を取り直してください。<code style="color:#22d3bf">sk_medial</code>(距離変換の稜線)はさらに別物で、</p>
+<p>&gt; ヒゲが多い代わりに局所半径(厚み)が得られます。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">境界・輪郭抽出</h3>
 <p>領域から外周(1 画素の縁)を取り出す。いずれも元領域の部分集合になる薄いリング。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">boundary</code> / <code style="color:#22d3bf">region_boundary</code> / <code style="color:#22d3bf">get_region_contour</code> — 領域から収縮を引いた縁(<code style="color:#22d3bf">region − erosion</code>)。GROUNDED。元領域の部分集合。</p>

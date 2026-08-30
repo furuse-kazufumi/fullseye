@@ -97,6 +97,17 @@ flowchart LR
 - `junctions_skeleton` — スケルトンの分岐点(8 近傍が 3 個以上)を抽出。GROUNDED。
 - `r2_split_skeleton_lines` — 骨格を分岐点で切り、線分に分割(`a` で短い断片を除去)。
 
+> **HALCON との差(重要)**: HALCON の `skeleton` は Eckhardt–Maderlechner 法、
+> Fullseye は Zhang–Suen 法(skimage)で、**アルゴリズムが異なります**。
+> スケルトンは実装依存性が強い代表例で、細い枝(ヒゲ)の生え方・分岐点の
+> 画素位置・斜め 2 画素幅部の残り方は一致しません。したがって
+> `junctions_skeleton` / `r2_split_skeleton_lines` の分岐数・線分数も
+> HALCON と同数にはなりません。一致するのは位相的な性質
+> (連結性の保存・穴の数・おおむね 1 画素幅)です。HALCON からの移植で
+> 分岐数などを閾値に使っている場合は、`pruning` でヒゲを刈ってから
+> 閾値を取り直してください。`sk_medial`(距離変換の稜線)はさらに別物で、
+> ヒゲが多い代わりに局所半径(厚み)が得られます。
+
 ### 境界・輪郭抽出
 
 領域から外周(1 画素の縁)を取り出す。いずれも元領域の部分集合になる薄いリング。
