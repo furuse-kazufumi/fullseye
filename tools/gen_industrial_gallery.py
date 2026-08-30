@@ -384,8 +384,9 @@ def subject_align_shapematch(log=print) -> dict:
         d.text((cx_f + 12, cy_f + 10),
                f"#{i + 1} θ={r['angle']:.1f}°  s={r['score']:.2f}",
                fill=(255, 220, 60), font=font)
-    panels = [np.stack([tpl] * 3, -1), np.stack([scene] * 3, -1), _np_of(vis)]
-    out = _montage(panels, ["テンプレート (ブラケット)",
+    tpl_big = np.kron(tpl, np.ones((3, 3)))        # 視認用に 3 倍表示 (処理は原寸)
+    panels = [np.stack([tpl_big] * 3, -1), np.stack([scene] * 3, -1), _np_of(vis)]
+    out = _montage(panels, ["テンプレート (ブラケット, 3x 表示)",
                             "シーン (回転ワーク 3 + 別部品)",
                             "shape matching で位置 + 角度を検出"], ncols=3)
     _save_png(out, "industrial_align.png")
