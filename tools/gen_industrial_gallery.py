@@ -199,7 +199,8 @@ def subject_defect_metal(log=print) -> dict:
         m = 6
         d2.rectangle([x0 - m, y0 - m, x1 + m, y1 + m],
                      outline=(255, 90, 60), width=2)
-        d2.text((x0 - m, max(2, y0 - m - 20)), f"NG{i + 1}  area={o['area']}px",
+        tx = min(max(2, x0 - m), img.shape[1] - 150)
+        d2.text((tx, max(2, y0 - m - 20)), f"NG{i + 1}  area={int(o['area'])}px",
                 fill=(255, 200, 80), font=font)
     panels = [np.stack([_synth_brushed_metal(np.random.default_rng(SEED))] * 3, -1),
               np.stack([np.clip(diff * 6.0, 0, 1)] * 3, -1), _np_of(vis)]
