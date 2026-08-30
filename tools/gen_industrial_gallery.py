@@ -544,6 +544,25 @@ def subject_blob_pellets(log=print) -> dict:
     if len(objs) != N:
         raise RuntimeError(f"pellet count mismatch: {len(objs)} != {N}")
 
+    # 真値センター 60 点と検出重心の 1:1 照合(計数一致だけでは「1 粒の 2 分割 +
+    # 接触 2 粒の融合」のような相殺誤りを見逃す)。各検出重心を最近傍の真値へ
+    # 対応付け、全真値が一意に割り当てられ、かつ重心誤差が小さいことを assert
+    # (2026-08-30 レビュー実測: max 0.31px で全対応 → 恒久ゲート化、許容 2px)。
+    true_c = np.asarray(centers, float)                     # (60, 2) = (cy, cx)
+    det_c = np.asarray([o["centroid"] for o in objs], float)  # (60, 2) = (row, col)
+    d2 = ((det_c[:, None, :] - true_c[None, :, :]) ** 2).sum(-1)
+    nearest = np.argmin(d2, axis=1)
+    dists = np.sqrt(d2[np.arange(len(objs)), nearest])
+    if len(set(nearest.tolist())) != N:
+        raise RuntimeError(
+            "pellet matching is not 1:1: some true center claimed by 2+ detections "
+            "(split/merge error hidden by an equal count)")
+    if float(dists.max()) > 2.0:
+        raise RuntimeError(
+            f"pellet centroid error too large: max {float(dists.max()):.2f}px > 2px")
+    log(f"  pellet 1:1 match OK: centroid err max {float(dists.max()):.2f}px "
+        f"median {float(np.median(dists)):.2f}px")
+
     areas = np.array([o["area"] for o in objs], float)
     lo, hi = np.percentile(areas, [20, 80])
     vis = _pil_of(img)
