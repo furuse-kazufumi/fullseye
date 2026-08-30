@@ -436,8 +436,9 @@ def subject_blob_pellets(log=print) -> dict:
     radii = np.asarray(radii)
     img = np.full((H, W), 0.10)
     yy, xx = np.mgrid[0:H, 0:W]
-    for (cy, cx), r in zip(centers, radii):
-        e = rng.uniform(0.75, 1.0)
+    for i, ((cy, cx), r) in enumerate(zip(centers, radii)):
+        # 接触ペアの粒は真円にして確実に接触させる(それ以外は楕円)
+        e = 1.0 if (i < n_touch or i >= n_base) else rng.uniform(0.75, 1.0)
         th = rng.uniform(0, math.pi)
         dy, dx = yy - cy, xx - cx
         u = dy * math.cos(th) + dx * math.sin(th)
