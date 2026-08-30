@@ -340,7 +340,8 @@ def fig_rag_corpus() -> None:
     ax.add_patch(panel)
     ytxt = 83.0
     hi_keys = ("op:", "in:", "out:", "halcon:", "examples:", "author:", "license:", "version:")
-    for ln in front + [""] + picks + ["", chain_hdr, flat(chain_line)]:
+    for ln in (front + [""] + picks + ["", chain_hdr, flat(chain_line), ""]
+               + [ex_hdr] + [flat(x) for x in ex_lines] + ["", flat(prov_line)]):
         disp = flat(ln)
         if len(disp) > 62:
             disp = disp[:61] + "…"
