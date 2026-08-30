@@ -1195,7 +1195,7 @@ The pile of work is tall, but **the foundation — typed ops, honest evaluation,
 
 ## Addendum (2026-08-31): The Skeleton Toolkit Got a Level Deeper
 
-> **Status: Production-ready / Verified** (on GitHub master; the next PyPI release will ship it. The op counts at publication — 731+265 — are now **733+271** with this addendum.)
+> **Status: Production-ready / Verified** (shipped on PyPI as **v0.1.4** (`pip install -U fullseye`). The op counts at publication — 731+265 — are now **733+271** with this addendum.)
 
 The day after publication I ended up digging into "how different is Fullseye's skeletonization from HALCON's, really?" — and the skeleton toolkit grew substantially. In this article's spirit, here it is **with verification**.
 
