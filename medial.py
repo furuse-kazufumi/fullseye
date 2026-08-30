@@ -125,6 +125,93 @@ def medial_axis_points(vol, min_radius=0.0):
     return points, radius
 
 
+def _skeleton_degree(skel):
+    """各骨格 voxel の 26 近傍次数(骨格 voxel の数)。"""
+    kernel = np.ones((3, 3, 3), dtype=np.int32)
+    kernel[1, 1, 1] = 0
+    return convolve(skel.astype(np.int32), kernel, mode="constant", cval=0)
+
+
+def _ensure_skeleton(vol, name="vol"):
+    """入力が骨格でなければ skeletonize_vol で細線化してから返す。
+
+    「骨格である」判定 = 6 近傍(面隣接)がすべて前景の interior voxel が無いこと。
+    """
+    mask = _as_binary_volume(vol, name=name)
+    if not mask.any():
+        return mask
+    from scipy.ndimage import binary_erosion, generate_binary_structure
+    interior = binary_erosion(mask, structure=generate_binary_structure(3, 1),
+                              border_value=0)
+    return skeletonize_vol(mask) if interior.any() else mask
+
+
+def skeleton_junctions3d(vol):
+    """3D 骨格の分岐点(joint、26 近傍に骨格 voxel が 3 個以上)を voxel マスクで返す。
+
+    骨格でない入力(interior を持つ塊)は skeletonize_vol で細線化してから測る。
+    2D の `junctions_skeleton` の 3D 版。血管・多孔質・ネットワーク状構造の
+    グラフ化(node 抽出)に使う。分岐次数の集計だけ欲しい場合は
+    topology_signature が dict で返す。
+
+    注意(honest): 26 近傍次数は分岐近傍の対角隣接で過大に出うる(離散骨格の
+    既知の性質)。分岐 *個数* を数えるときはこのマスクを連結成分でまとめること。
+    """
+    skel = _ensure_skeleton(vol)
+    if not skel.any():
+        return np.zeros_like(skel)
+    return skel & (_skeleton_degree(skel) >= 3)
+
+
+def skeleton_endpoints3d(vol):
+    """3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。
+
+    孤立 voxel(次数 0)も端点に数える。2D の `r2_endpoints_skeleton` の 3D 版。
+    """
+    skel = _ensure_skeleton(vol)
+    if not skel.any():
+        return np.zeros_like(skel)
+    return skel & (_skeleton_degree(skel) <= 1)
+
+
+def skeleton_prune3d(vol, length=1):
+    """3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 <=length を除去。
+
+    2D の `pruning` の 3D 版。孤立 voxel は端点扱いで消える。
+    """
+    skel = _ensure_skeleton(vol)
+    n = max(0, int(length))
+    for _ in range(n):
+        if not skel.any():
+            break
+        ends = skel & (_skeleton_degree(skel) <= 1)
+        if not ends.any():
+            break
+        skel = skel & ~ends
+    return skel
+
+
+def skeleton_branches3d(vol, min_length=0):
+    """3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。
+
+    分岐点 voxel を除いた残りが枝。min_length > 0 なら、26 連結成分の voxel 数が
+    それ未満の断片を除去する。
+    """
+    skel = _ensure_skeleton(vol)
+    if not skel.any():
+        return np.zeros_like(skel)
+    branches = skel & ~(skel & (_skeleton_degree(skel) >= 3))
+    if min_length > 0 and branches.any():
+        from scipy.ndimage import label
+        lab, n = label(branches, structure=np.ones((3, 3, 3), dtype=np.int32))
+        if n:
+            sizes = np.bincount(lab.ravel())
+            keep = np.zeros_like(sizes, dtype=bool)
+            keep[1:] = sizes[1:] >= int(min_length)
+            branches = keep[lab]
+    return branches
+
+
 def topology_signature(skeleton):
     """骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。
 
