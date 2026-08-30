@@ -338,6 +338,22 @@ def _fill_holes_bin(t, a, b, dev):
     return torch.clamp(m + (bg - reach), 0, 1)
 
 
+def _bilateral(t, a, b, dev):
+    """core _bilateral の逐語移植: 5x5 shift 総和(edge-clamp = _shift の replicate)。
+    25 シフト x exp の反復で計算重 = 転送律速でなく GPU が効く型。"""
+    ss, sr, r = 1.0 + 3.0 * a, 0.05 + 0.4 * b, 2
+    out = torch.zeros_like(t)
+    wsum = torch.zeros_like(t)
+    for dy in range(-r, r + 1):
+        for dx in range(-r, r + 1):
+            sh = _shift(t, dy, dx)
+            w = float(np.exp(-(dx * dx + dy * dy) / (2 * ss * ss))) \
+                * torch.exp(-((sh - t) ** 2) / (2 * sr * sr))
+            out = out + w * sh
+            wsum = wsum + w
+    return out / wsum.clamp_min(1e-8)
+
+
 def _signed01_b(t):
     """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。"""
     m = t.abs().amax(dim=(2, 3), keepdim=True)
