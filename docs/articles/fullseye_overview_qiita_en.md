@@ -956,6 +956,8 @@ The reason I insisted on **"a unified interface"** is that Fullseye is ultimatel
 
 ## Letting AI Do Image Processing — Using Fullseye as a RAG
 
+> **Status: PoC** — the RAG setup itself ships and is verified to work. **Letting an AI pick ops and run them autonomously** is still experimental.
+
 This is Fullseye's hidden advantage. As mentioned earlier, each of the ~1,000 ops carries a **Markdown note** (usage, type contract, related ops, references), and the algorithms themselves are **classical and explainable**. Put those two together, and the library functions as-is as a **RAG (Retrieval-Augmented Generation) knowledge base for AI coding assistants like Claude Code**.
 
 Broken down in three passes:
