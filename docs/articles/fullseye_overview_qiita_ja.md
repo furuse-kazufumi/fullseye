@@ -271,7 +271,7 @@ op を1個足すだけで、レジストリ・探索空間・コード生成・�
 
 *↑ op 分類ツリーマップ ―― 左が 2D レジストリ（halcon_ext 81・region 76・features 71…）、右が 3D レジストリ（geometry 23・render 14…）。面積＝op 数。*
 
-「では実際にどんな出力になるのか」も1枚で。**24 カテゴリから代表 op を1個ずつ機械選出して、同じコイン写真に実適用**したサンプラーです（スキップゼロ。スカラーを返す op は数値を、輪郭を返す op は実 XLD 点を、そのまま焼き込んでいます）。
+「では実際にどんな出力になるのか」も1枚で。**24 カテゴリから代表 op を1個ずつ機械選出して、同じコイン写真に実適用**したサンプラーです（スキップゼロ。輪郭を返す op は実 XLD 点を焼き込み、数値を返す op ―― 計数・マッチング・形状記述など ―― は「正規の使い方」で適用して入力+検出オーバーレイ+実測値で見せています。たとえば `blob_count` は前処理後の region で **count = 24（コイン枚数と一致することを assert）**、`ncc_locate` は実テンプレートで見つけた位置に枠、`decode_barcode` は合成バーコードを入力にして bars = 12 です）。
 
 [![2D op サンプラー ―― 24 カテゴリの代表 op を coins に実適用（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
 
