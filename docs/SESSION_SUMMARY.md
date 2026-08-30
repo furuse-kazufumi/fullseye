@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-31 00:19:37
+- **最終更新**: 2026-08-31 06:14:24
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+120e4d87 docs: skeleton 系の HALCON 差分を明示(Zhang-Suen vs Eckhardt-Maderlechner、分岐数・ヒゲは一致しない/位相は同等/移植時は pruning 後に閾値再調整)。Studio HTML help 再生成、drift テスト 24 pass
+433710b6 auto: gallery2d_region.md 編集前 (2026-08-31 00:34)
 44006d66 記事: 主張の3階層仕分け(実装済み/実証途上/将来構想)を冒頭に追加+6章にStatusラベル(Production-ready/PoC/Research prototype/Roadmap)。Perplexityレビュー反映、数字は記事内実値と照合済み(6238テスト/982/2313)。ja/en両方
 7edc20bb auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
 080f0f8f auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
@@ -18,8 +20,6 @@ c2ee2425 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
 8adf4784 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
 0accd900 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
 27952293 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
-e369e14e auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 22:55)
-9ac1dd85 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 22:55)
 ```
 
 ## 現在の git status
@@ -31,9 +31,7 @@ M docs/SESSION_SUMMARY.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-23:45 docs/SESSION_SUMMARY.md
-22:55 docs/articles/fullseye_overview_qiita_en.md
-22:55 docs/articles/fullseye_overview_qiita_ja.md
+06:12 docs/SESSION_SUMMARY.md
 ```
 
 ---
