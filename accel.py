@@ -311,6 +311,33 @@ def _adaptive_gauss(t, a, b, dev):
     return (t > g + (b - 0.5) * 0.3).float()
 
 
+# ── Batch 3(2026-08-31): 二値 reconstruction(境界フラッド)────────────────
+def _fill_holes_bin(t, a, b, dev):
+    """ndimage.binary_fill_holes(v>0.5) の忠実移植。
+
+    補集合を画像境界から 4 近傍(scipy 既定 structure = cross)で測地拡張し、
+    届かなかった背景 = 穴 として前景に加える。不動点までの反復は決定的で、
+    収束後の追加反復は結果を変えない(= faithful)。
+    """
+    m = (t > 0.5).float()
+    bg = 1.0 - m
+    reach = torch.zeros_like(bg)
+    reach[:, :, 0, :] = bg[:, :, 0, :]
+    reach[:, :, -1, :] = bg[:, :, -1, :]
+    reach[:, :, :, 0] = bg[:, :, :, 0]
+    reach[:, :, :, -1] = bg[:, :, :, -1]
+    while True:
+        up = F.pad(reach[:, :, 1:, :], (0, 0, 0, 1))
+        down = F.pad(reach[:, :, :-1, :], (0, 0, 1, 0))
+        left = F.pad(reach[:, :, :, 1:], (0, 1, 0, 0))
+        right = F.pad(reach[:, :, :, :-1], (1, 0, 0, 0))
+        grown = torch.clamp(reach + up + down + left + right, 0, 1) * bg
+        if torch.equal(grown, reach):
+            break
+        reach = grown
+    return torch.clamp(m + (bg - reach), 0, 1)
+
+
 def _signed01_b(t):
     """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。"""
     m = t.abs().amax(dim=(2, 3), keepdim=True)
