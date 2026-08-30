@@ -640,18 +640,42 @@ def _write_snippet(meta: list) -> None:
         "<!-- gen_science_gallery.py が自動生成。GALLERY.md / 記事 md への",
         "     追記候補 (このファイル自体は記事ではない)。 -->",
         "",
-        "# 科学ギャラリー追加分 — GALLERY.md 追記行 + 記事挿入候補",
+        "# 科学ギャラリー追加分 — GALLERY.md 追記セクション + 記事挿入候補",
         "",
-        "## GALLERY.md 追記行",
+        "## GALLERY.md 追記セクション (そのまま貼り付け可)",
+        "",
+        "```markdown",
+        "## 科学ギャラリー — 子供向けサイエンス画像"
+        " (`tools/gen_science_gallery.py`)",
+        "",
+        "生成元: `tools/gen_science_gallery.py` (subject 単位で再生成可能:",
+        "`py -3.11 tools/gen_science_gallery.py --subjects <name,...>`)。",
+        "すべて fullseye の登録 op / facade の実出力で、モックアップはありません。",
+        "シミュレーション由来の画像はキャプションにその旨を明記しています。",
+        "サムネ (幅 720px JPG) は同ディレクトリの `*_thumb.jpg`。",
         "",
     ]
     for m in meta:
-        thumb = os.path.splitext(m["file"])[0] + "_thumb.jpg"
         is_gif = m["file"].endswith(".gif")
-        shown = m["file"] if is_gif else thumb
-        lines.append(f"| {m['title']} | ![{m['title']}](assets/{shown}) | "
-                     f"{', '.join(m['ops'])} | {m['data']} |")
-    lines += ["", "## 記事挿入候補 (raw GitHub URL)", ""]
+        note = ""
+        if m.get("synthetic") is True:
+            note = " ※シミュレーション画像 (実写ではない)。"
+        elif isinstance(m.get("synthetic"), str):
+            note = f" ※{m['synthetic']}。"
+        lines += [
+            f"### {m['title']}",
+            "",
+            f"生成元: `tools/gen_science_gallery.py::"
+            f"subject_{m.get('subject', '?')}()`",
+            "",
+            f"![{os.path.splitext(m['file'])[0]}]"
+            f"(articles/assets/{m['file']})",
+            "",
+            f"{m['caption']}{note} 使用 op: {', '.join(m['ops'])}。"
+            f"データ: {m['data']}。",
+            "",
+        ]
+    lines += ["```", "", "## 記事挿入候補 (raw GitHub URL)", ""]
     for m in meta:
         thumb = os.path.splitext(m["file"])[0] + "_thumb.jpg"
         is_gif = m["file"].endswith(".gif")
