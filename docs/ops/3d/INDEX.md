@@ -1,4 +1,4 @@
-# 3D operator help — 265 ops in 55 categories
+# 3D operator help — 271 ops in 55 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -88,9 +88,9 @@
 
 [match_logpolar_z](match_pose/match_logpolar_z.md) · [match_pca](match_pose/match_pca.md) · [match_phase_3d](match_pose/match_phase_3d.md) · [moment_axes](match_pose/moment_axes.md)
 
-### medial (5)
+### medial (9)
 
-[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md)
+[distance_ridge](medial/distance_ridge.md) · [medial_axis_points](medial/medial_axis_points.md) · [medial_match](medial/medial_match.md) · [skeleton_branches3d](medial/skeleton_branches3d.md) · [skeleton_endpoints3d](medial/skeleton_endpoints3d.md) · [skeleton_junctions3d](medial/skeleton_junctions3d.md) · [skeleton_prune3d](medial/skeleton_prune3d.md) · [skeletonize_vol](medial/skeletonize_vol.md) · [topology_signature](medial/topology_signature.md)
 
 ### mesh_process (7)
 
@@ -104,9 +104,9 @@
 
 [central_moments](moment_invariant/central_moments.md) · [inertia_tensor](moment_invariant/inertia_tensor.md) · [moment_invariants](moment_invariant/moment_invariants.md) · [principal_moments](moment_invariant/principal_moments.md)
 
-### morphology (5)
+### morphology (7)
 
-[morph_blackhat3d](morphology/morph_blackhat3d.md) · [morph_dilate3d](morphology/morph_dilate3d.md) · [morph_erode3d](morphology/morph_erode3d.md) · [morph_gradient3d](morphology/morph_gradient3d.md) · [morph_tophat3d](morphology/morph_tophat3d.md)
+[morph_blackhat3d](morphology/morph_blackhat3d.md) · [morph_close3d](morphology/morph_close3d.md) · [morph_dilate3d](morphology/morph_dilate3d.md) · [morph_erode3d](morphology/morph_erode3d.md) · [morph_gradient3d](morphology/morph_gradient3d.md) · [morph_open3d](morphology/morph_open3d.md) · [morph_tophat3d](morphology/morph_tophat3d.md)
 
 ### motion (1)
 

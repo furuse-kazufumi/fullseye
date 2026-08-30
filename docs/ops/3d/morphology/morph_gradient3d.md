@@ -14,7 +14,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 # morph_gradient3d — 3D `morphology` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import match3d; match3d.morph_gradient3d(vol, r=1, device='cpu')` (または `ops3d.get("morph_gradient3d")`)
+- **呼び出し**: `import match3d; match3d.morph_gradient3d(vol, r=1, device='cpu', se='cube')` (または `ops3d.get("morph_gradient3d")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方
@@ -36,7 +36,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 同カテゴリ(`morphology`)
 
-[morph_dilate3d](morph_dilate3d.md) · [morph_erode3d](morph_erode3d.md) · [morph_tophat3d](morph_tophat3d.md) · [morph_blackhat3d](morph_blackhat3d.md)
+[morph_dilate3d](morph_dilate3d.md) · [morph_erode3d](morph_erode3d.md) · [morph_open3d](morph_open3d.md) · [morph_close3d](morph_close3d.md) · [morph_tophat3d](morph_tophat3d.md) · [morph_blackhat3d](morph_blackhat3d.md)
 
 ---
 *Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

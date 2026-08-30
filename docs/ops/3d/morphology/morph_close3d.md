@@ -1,23 +1,25 @@
 ---
-op: distance_ridge
+op: morph_close3d
 dim: 3d
-category: medial
+category: morphology
 in: voxel
 out: voxel
-examples: [pcl_geodesic]
+gpu: true
+examples: [morphology_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# distance_ridge — 3D `medial` op
+# morph_close3d — 3D `morphology` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import medial; medial.distance_ridge(vol, min_radius=0.0)` (または `ops3d.get("distance_ridge")`)
+- **呼び出し**: `import match3d; match3d.morph_close3d(vol, r=1, device='cpu', se='cube')` (または `ops3d.get("morph_close3d")`)
+- **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方
 
-EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。
+3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。
 
 ## 参考(サンプルデータ・文献)
 
@@ -26,17 +28,17 @@ EDT のリッジ(距離場の局所極大)を medial として抽出。返り値
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [pcl_geodesic](../../../../examples_3d/pcl_geodesic.py) — `py -3.11 examples_3d/pcl_geodesic.py`
+- [morphology_3d](../../../../examples_3d/morphology_3d.py) — `py -3.11 examples_3d/morphology_3d.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
 [voxel_to_mips](../transform/voxel_to_mips.md) · [voxel_to_mesh](../transform/voxel_to_mesh.md) · [signed_distance_field](../transform/signed_distance_field.md) · [to_points](../transform/to_points.md) · [sobel3d](../feature/sobel3d.md) · [hessian3d](../feature/hessian3d.md) · [curvature_maps](../feature/curvature_maps.md) · [edt_jfa](../feature/edt_jfa.md)
 
-## 同カテゴリ(`medial`)
+## 同カテゴリ(`morphology`)
 
-[skeletonize_vol](skeletonize_vol.md) · [medial_axis_points](medial_axis_points.md) · [topology_signature](topology_signature.md) · [medial_match](medial_match.md) · [skeleton_junctions3d](skeleton_junctions3d.md) · [skeleton_endpoints3d](skeleton_endpoints3d.md) · [skeleton_prune3d](skeleton_prune3d.md) · [skeleton_branches3d](skeleton_branches3d.md)
+[morph_dilate3d](morph_dilate3d.md) · [morph_erode3d](morph_erode3d.md) · [morph_open3d](morph_open3d.md) · [morph_gradient3d](morph_gradient3d.md) · [morph_tophat3d](morph_tophat3d.md) · [morph_blackhat3d](morph_blackhat3d.md)
 
 ---
-*Provenance: medial.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
+*Provenance: match3d.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
 
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

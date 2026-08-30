@@ -159,10 +159,36 @@ def main():
     assert real_rate == 1.0
     assert null_rate < 0.65, f"帰無ベースラインが偶然を超えて分離している: {null_rate:.3f}"
 
+    # --- 骨格グラフ要素: Y 字チューブで分岐 1 / 端点 3 / 枝 3 を機械検証 ---
+    from scipy import ndimage as _ndi
+    y_vol = np.zeros((40, 40, 40), bool)
+    c2 = 20
+    y_vol[c2 - 1:c2 + 2, c2 - 1:c2 + 2, 4:c2 + 2] = True
+    y_vol[c2 - 1:c2 + 2, 4:c2 + 2, c2 - 1:c2 + 2] = True
+    y_vol[4:c2 + 2, c2 - 1:c2 + 2, c2 - 1:c2 + 2] = True
+    st26 = np.ones((3, 3, 3), dtype=np.int32)
+    _, n_j = _ndi.label(skeleton_junctions3d(y_vol), structure=st26)
+    _, n_e = _ndi.label(skeleton_endpoints3d(y_vol), structure=st26)
+    _, n_b = _ndi.label(skeleton_branches3d(y_vol, min_length=3), structure=st26)
+    assert n_j == 1 and n_e == 3 and n_b == 3, (n_j, n_e, n_b)
+    # prune はヒゲを刈って本体を残す
+    y_skel = skeletonize_vol(y_vol)
+    zs, ys, xs = np.nonzero(y_skel)
+    i = len(zs) // 3
+    y_spur = y_skel.copy()
+    y_spur[zs[i] + 1, ys[i] + 1, xs[i]] = True
+    y_spur[zs[i] + 2, ys[i] + 2, xs[i]] = True
+    y_pruned = skeleton_prune3d(y_spur, length=3)
+    assert not y_pruned[zs[i] + 2, ys[i] + 2, xs[i]]
+    assert y_pruned.sum() > 0.5 * y_skel.sum()
+    print("\n[骨格グラフ] Y字チューブ: 分岐クラスタ 1 / 端点 3 / 枝 3、"
+          "prune がヒゲのみ除去 — すべて機械検証 OK")
+
     print(
         f"\nPASS: 円柱の芯が既知軸上(最大半径距離 {max_radial:.3f})、"
         f"位相署名が genus1(トーラス)と genus0(球)を距離 {d_cross:.1f} で分離(同トポロジー対は {d_same:.1f})、"
         f"medial_match も同トポロジー対を最類似 {m_same:.2f} と判定、ランダム署名 {null_rate:.2f} を上回る。"
+        f" 骨格グラフ(junctions/endpoints/prune/branches)も GT 一致。"
     )
 
 

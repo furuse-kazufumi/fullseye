@@ -34,7 +34,7 @@ medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返�
 
 ## 同カテゴリ(`medial`)
 
-[distance_ridge](distance_ridge.md) · [skeletonize_vol](skeletonize_vol.md) · [topology_signature](topology_signature.md) · [medial_match](medial_match.md)
+[distance_ridge](distance_ridge.md) · [skeletonize_vol](skeletonize_vol.md) · [topology_signature](topology_signature.md) · [medial_match](medial_match.md) · [skeleton_junctions3d](skeleton_junctions3d.md) · [skeleton_endpoints3d](skeleton_endpoints3d.md) · [skeleton_prune3d](skeleton_prune3d.md) · [skeleton_branches3d](skeleton_branches3d.md)
 
 ---
 *Provenance: medial.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

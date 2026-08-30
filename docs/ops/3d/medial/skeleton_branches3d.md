@@ -1,23 +1,23 @@
 ---
-op: distance_ridge
+op: skeleton_branches3d
 dim: 3d
 category: medial
 in: voxel
 out: voxel
-examples: [pcl_geodesic]
+examples: [medial_topology]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
-# distance_ridge — 3D `medial` op
+# skeleton_branches3d — 3D `medial` op
 
 - **データ種**: `voxel` → `voxel`
-- **呼び出し**: `import medial; medial.distance_ridge(vol, min_radius=0.0)` (または `ops3d.get("distance_ridge")`)
+- **呼び出し**: `import medial; medial.skeleton_branches3d(vol, min_length=0)` (または `ops3d.get("skeleton_branches3d")`)
 
 ## 使い方
 
-EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。
+3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。
 
 ## 参考(サンプルデータ・文献)
 
@@ -26,7 +26,7 @@ EDT のリッジ(距離場の局所極大)を medial として抽出。返り値
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- [pcl_geodesic](../../../../examples_3d/pcl_geodesic.py) — `py -3.11 examples_3d/pcl_geodesic.py`
+- [medial_topology](../../../../examples_3d/medial_topology.py) — `py -3.11 examples_3d/medial_topology.py`
 
 ## 型が繋がる次の op(`voxel` を入力に取れる)
 
@@ -34,7 +34,7 @@ EDT のリッジ(距離場の局所極大)を medial として抽出。返り値
 
 ## 同カテゴリ(`medial`)
 
-[skeletonize_vol](skeletonize_vol.md) · [medial_axis_points](medial_axis_points.md) · [topology_signature](topology_signature.md) · [medial_match](medial_match.md) · [skeleton_junctions3d](skeleton_junctions3d.md) · [skeleton_endpoints3d](skeleton_endpoints3d.md) · [skeleton_prune3d](skeleton_prune3d.md) · [skeleton_branches3d](skeleton_branches3d.md)
+[distance_ridge](distance_ridge.md) · [skeletonize_vol](skeletonize_vol.md) · [medial_axis_points](medial_axis_points.md) · [topology_signature](topology_signature.md) · [medial_match](medial_match.md) · [skeleton_junctions3d](skeleton_junctions3d.md) · [skeleton_endpoints3d](skeleton_endpoints3d.md) · [skeleton_prune3d](skeleton_prune3d.md)
 
 ---
 *Provenance: medial.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
