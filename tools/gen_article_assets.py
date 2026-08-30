@@ -850,8 +850,9 @@ def build_halcon_coverage_chart(log=print) -> dict:
                 color=fg, fontsize=8)
 
     ax.set_title(f"Fullseye — HALCON operator coverage by chapter: "
-                 f"{n_cov}/{n_real} operators ({pct:.1f}%), measured live from "
-                 f"data/halcon_operators.json + Op.halcon", color=fg, fontsize=12.5, pad=12)
+                 f"{n_cov}/{n_real} operators ({pct:.1f}%)\n"
+                 f"measured live from data/halcon_operators.json + Op.halcon",
+                 color=fg, fontsize=13, pad=12)
     fig.tight_layout()
     out_path = os.path.join(ASSETS_DIR, "halcon_coverage_chart.png")
     fig.savefig(out_path, dpi=110, facecolor=bg)
