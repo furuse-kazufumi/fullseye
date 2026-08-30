@@ -14,17 +14,24 @@ _REPO = Path(__file__).resolve().parents[1]
 
 _HARNESS = r"""
 import sys
+# torch だけでなく、素の pip install(numpy+scipy のみ)に無い optional を全部遮断。
+# v0.1.0 の実 PyPI 検証で recon3d の skimage ハード import が ops3d を殺していた
+# (feat_* の torch と同クラス)— この網羅遮断がそのクラス全体の恒久ガード。
+_BLOCKED = ("torch", "kornia", "skimage", "cv2", "PIL", "pywt", "mahotas")
 class _Block:
     def find_module(self, name, path=None):
-        if name == "torch" or name.startswith("torch."):
+        if name.split(".")[0] in _BLOCKED:
             return self
     def load_module(self, name):
         raise ModuleNotFoundError("No module named %r (blocked)" % name)
 sys.meta_path.insert(0, _Block())
-sys.modules.pop("torch", None)
+for _m in list(sys.modules):
+    if _m.split(".")[0] in _BLOCKED:
+        sys.modules.pop(_m, None)
 
-import ops3d                      # ← 以前は feat_harris.py:3 で即死していた
+import ops3d                      # ← 以前は feat_harris.py:3 / recon3d.py:24 で即死していた
 import pipeline_evolve            # ops3d 経由の消費側も生きる
+import fullseye, measure3d, examples3d, examples2d      # bare-install の主要面
 assert ops3d.get("harris3d_keypoints") is not None or True   # レジストリ構築が走った
 
 # 使用時は「optional backend が要る」ことを明確に伝えて拒否する(fail-closed)
