@@ -506,12 +506,29 @@ def rec_edges(col):
             ["rgb1_to_gray", "canny", "overlay_mask"])
 
 
-def rec_filaments(col):
+def rec_filaments(col, top_pct: float = 3.0):
+    """Filament extraction shown as a colored overlay, not a raw response map.
+
+    The raw sk_frangi response is salt-and-pepper on busy data (star fields):
+    the op ignores its a/b knobs (docs/KNOWN_ISSUES.md #2, fixed scale set), so
+    we cannot tune it. Instead: median prefilter (kills point sources like
+    stars), frangi, keep only the top `top_pct`% strongest response, drop tiny
+    speckle components (sk_area_opening), then overlay the surviving filaments
+    in magenta on a dimmed original so the reader sees WHERE they run.
+    """
     g = gray(col)
     c = ap(g, "cv_clahe", 0.6, 0.5)
-    f = norm01(ap(c, "sk_frangi", 0.5, 0.5)) ** 0.5  # gamma: lift faint filaments
-    return ([("original", col), ("cv_clahe", c), ("sk_frangi filaments", heat(f))],
-            ["rgb1_to_gray", "cv_clahe", "sk_frangi"])
+    m = ap(c, "cv_median", 0.2, 0.5)  # 3x3: suppress stars / pixel noise
+    f = norm01(ap(m, "sk_frangi", 0.5, 0.5))
+    thr = float(np.percentile(f, 100.0 - top_pct))
+    mask = (f >= thr).astype(np.float64)
+    mask = ap(mask, "sk_area_opening", 0.5, 0.5)  # drop specks < ~66 px
+    base = np.stack([g] * 3, axis=-1) * 0.5  # dimmed gray: overlay pops
+    ov = overlay(base, mask, color=(1.0, 0.2, 0.85), alpha=0.95)
+    return ([("original", col), ("cv_clahe", c),
+             (f"sk_frangi filaments (top {top_pct:.0f}% overlay)", ov)],
+            ["rgb1_to_gray", "cv_clahe", "cv_median", "sk_frangi",
+             "sk_area_opening", "overlay_mask"])
 
 
 def rec_texture(col):
