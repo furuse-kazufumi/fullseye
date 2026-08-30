@@ -656,6 +656,32 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 *↑ Ctrl+3 の 3D surface ビュー ―― 小惑星イトカワの実形状モデル（JAXA はやぶさ / Gaskell モデル）を深度レンダした起伏。アプリ内ではこのシーンをそのままマウスドラッグで回し、ホイールで寄れます（画像は同一 GL シーンの `renderToImage` 静止画）。*
 
+### メッシュも点群も回せる ―― 対話 3D ビューア（Ctrl+4）
+
+3D surface（Ctrl+3）は高さ場専用でしたが、この総集編の作業の最終盤で、**メッシュと点群をそのままマウスで回せる対話 3D ビューア**（`Ctrl+4`、または View メニュー）を追加しました。左ドラッグで軌道回転、ホイールでズーム、Shift+ドラッグでパン、R でリセット、W でワイヤフレーム切替です。
+
+[![Studio の対話 3D ビューア ―― イトカワ 49,152 面メッシュ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_viewer_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_viewer.png)
+
+*↑ 対話 3D ビューアでイトカワ実メッシュ（24,578 頂点・49,152 面）を表示したところ。マウスで回しながらランバート照明の当たり方で起伏を確かめられます。*
+
+実装は正直に書くと **GPU を使わないソフトウェアラスタライザ**です。理由は消去法ではなく実測で選びました ―― GL 実装は CI のオフスクリーン環境でテスト経路が完全に死に、リモートデスクトップでも脆弱。ソフトウェア実装なら**テストと実機が同一コード経路**を通ります。実測は 20 万点で 66ms、100 万点で 349ms（480px）―― 100 万点はフル解像度では対話的と言えないので、ドラッグ/ズーム中は 25 万点への均一間引きプレビュー（HUD に正直表示）+離した瞬間フル再描画、という作りです。メッシュ描画も頂点+面重心のランバート splat で、塗り潰しレンダではありません（高品質静止画は既存の `render3d.render_mesh` の役目）。
+
+正直な開示をもうひとつ ―― このビューアの初版には、**奥行きソートが逆で「遠い点が近い点を上書きする」という隠蔽バグ**がありました。しかもカメラ数学のテスト自身が逆の規約を「正」とピンしていたため素通り。公開前の敵対的レビュー（AI 2 系統）が「近半球を赤・遠半球を青に塗った球」で実証し（修正前: 可視ピクセル赤 20 vs 青 22,222/修正後: 赤 22,229 vs 青 13）、遮蔽を検証する回帰テストごと修正済みです。「テストがあること」と「テストが正しい規約を検証していること」は別問題 ―― 本記事で繰り返してきた教訓が、公開直前にもう一度姿を現しました。
+
+### 領域⇔特徴量を行き来する ―― Feature Inspection（Ctrl+F5）
+
+HDevelop の定番機能に、ラベリングした複数領域の特徴量を表で検分するツールがあります。同じものを Studio にも入れました（`Ctrl+F5`、Tools メニュー）。
+
+[![Feature Inspection ―― 領域⇔特徴量テーブルの双方向対応](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection.png)
+
+*↑ 2D Feature Inspection ―― チェックリストで特徴量（面積・重心・真円度・離心率・グレー統計など、既存の regionprops/gray_features 実装を再利用）を選ぶと、行=領域・列=特徴量のソート可能テーブルに。**行を選ぶと画像上の該当領域が amber でハイライトされ、逆に画像をクリックするとその領域の行へジャンプ**します。CSV コピー付き。*
+
+[![3D Feature Inspection ―― クラスタごとの特徴量+ビューアハイライト](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection_3d_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_feature_inspection_3d.png)
+
+*↑ 同じダイアログの 3D タブ ―― 点群を `euclidean_clusters` でクラスタリングし、クラスタごとの点数・重心・extent・OBB 寸法（ops3d の既存 op の範囲のみ）を表に。**行を選ぶと埋め込みの対話 3D ビューアで該当クラスタが強調表示**されます。*
+
+スクリプト側からも同じ流儀で使えます。HDevelop の `disp_image` / `disp_object_model_3d` に相当する **disp 系ディレクティブ**（`disp_image (n)` / `disp_region (n)` / `disp_points3d ('file')` / `disp_mesh3d ('file')`）を dev ウィンドウ体系に追加したので、プログラム中から「入力・中間・結果を別ウィンドウに並べる」が 2D でも 3D でも書けます（Python API は `studio.disp_points3d(P)` 等。副作用を持つ表示系なので、純変換の op レジストリとは意図的に分けてあり、HALCON カバレッジの数字にも算入していません）。
+
 ### System settings ―― 設定ツリー
 
 `Tools ▸ System settings…`（`Ctrl+,`）は、カテゴリツリー形式の設定画面です。**Execution**（ワーカースレッド数・operator タイムアウト）、**Windows**（グラフィクス窓の上限）、**Display**（既定のカラーマップ・領域の描画方式）、**Editor**（フォントサイズ・Python Editor の実行インタプリタ）――と、HDevelop の `set_system` に相当する設定が1画面にまとまっています。`Ctrl+P` の **Command palette** からも、任意のアクションや任意のオペレータを名前でファジー検索して即実行できるので、メニューを辿らずキーボードだけで一通りの操作が完結します。
