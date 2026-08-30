@@ -522,11 +522,19 @@ def rec_multiotsu(col):
 
 
 def rec_dstretch(col):
-    ds = norm01(fs.spec_decorrelation_stretch(col))
+    """DStretch-style decorrelation on RGB.
+
+    NOTE (recorded as a finding): fs.spec_decorrelation_stretch refuses B=3
+    (RGB is the `color` sort, cubes are B>3) -- by-contract fail-closed, but it
+    means the classic archaeology "DStretch on an RGB photo" use case has no
+    spectral-op path. The registered HALCON-parity op `principal_comp`
+    (color->color PCA) covers it.
+    """
+    ds = norm01(ap(col, "principal_comp", 0.5, 0.5))
     g = gray(col)
     c = ap(g, "clahe", 0.6, 0.5)
-    return ([("original", col), ("decorrelation stretch", ds), ("clahe", c)],
-            ["spec_decorrelation_stretch", "rgb1_to_gray", "clahe"])
+    return ([("original", col), ("principal_comp (decorrelation)", ds), ("clahe", c)],
+            ["principal_comp", "rgb1_to_gray", "clahe"])
 
 
 def rec_fft(col):
