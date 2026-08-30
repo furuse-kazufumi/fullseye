@@ -144,7 +144,7 @@ MOSAIC_TILES = [
     ("academic_paleo_triceratops.png", (0.672, 0.000, 1.000, 1.000), "ai"),
     ("3d:render_beauty_hero.png",   (0.050, 0.050, 0.950, 0.950), "demo"),
     ("academic_met_hurricane.png",  (0.000, 0.000, 0.230, 1.000), "real"),
-    ("_sources/src_event_camera.png", (0.000, 0.000, 1.000, 1.000), "demo"),
+    ("_sources/src_event_camera.png", (0.100, 0.200, 0.900, 1.000), "demo"),
     ("academic_geo_thin_section.png", (0.672, 0.000, 1.000, 1.000), "ai"),
     ("evis_muscle_heatmap_still.png", (0.050, 0.120, 0.950, 1.000), "demo"),
     ("academic_arch_cave_painting.png", (0.339, 0.000, 0.661, 1.000), "ai"),
