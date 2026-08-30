@@ -165,7 +165,8 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
                                  f"err {err:4.1f}%")
         hud = _hud(L.shape[1] * 3,
                    "fullseye: disparity_sgm > speckle_filter > fill_disparity > "
-                   f"depth_from_disparity   t={fr['t']:5.2f}s   {hud_extra}")
+                   "depth_from_disparity + segment_objects(x2) "
+                   f"t={fr['t']:5.2f}s  {hud_extra}")
         row = np.concatenate([
             _label(L, "evis left eye (real capture)"),
             _label(disp_col, "fullseye disparity"),
