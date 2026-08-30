@@ -444,36 +444,65 @@ _EM_SIMPLE_LUT = None
 
 
 def _em_simple_lut():
-    """EM93 の simple 判定を 8 近傍 256 パターンの LUT にする。
+    """(8,4) 単純点判定の 8 近傍 256 パターン LUT(総当たりで構築)。
 
-    近傍を時計回りの環 (N,NE,E,SE,S,SW,W,NW) で並べると、環上で隣り合う
-    2 セルは常に 4 隣接、隣り合わないセルは 4 隣接しない。したがって
-    「近傍内の前景の強(4)連結成分」= 環上の 1 の連続区間。中心画素と
-    強連結な成分 = 辺位置(N/E/S/W = 偶数番)を含む区間。
-    simple ⇔ その区間がちょうど 1 個。
+    P が単純 ⇔ 近傍の前景セルが画素としての 8 隣接でちょうど 1 成分
+    ∧ 近傍の背景セルの 4 連結成分のうち P に 4 隣接するものがちょうど 1 個。
+    (Couprie ノートの EM93 転記を字義どおり「強連結成分のみ」で実装すると、
+    斜め接続だけの近傍画素を数え落とし、並列削除が橋を落とすことを
+    反例パターンで実測済み。標準の (8,4) 単純点なら同反例で削除が抑止される)
     """
     global _EM_SIMPLE_LUT
     if _EM_SIMPLE_LUT is not None:
         return _EM_SIMPLE_LUT
+    pos = [(-1, 0), (-1, 1), (0, 1), (1, 1),
+           (1, 0), (1, -1), (0, -1), (-1, -1)]      # 環順 N,NE,E,SE,S,SW,W,NW
+
+    def n_components(cells, adj):
+        comps, seen = 0, set()
+        for c in cells:
+            if c in seen:
+                continue
+            comps += 1
+            stack = [c]
+            while stack:
+                u = stack.pop()
+                if u in seen:
+                    continue
+                seen.add(u)
+                stack.extend(v for v in cells if v not in seen and adj(u, v))
+        return comps
+
+    def adj8(u, v):
+        return max(abs(u[0] - v[0]), abs(u[1] - v[1])) == 1
+
+    def adj4(u, v):
+        return abs(u[0] - v[0]) + abs(u[1] - v[1]) == 1
+
     lut = np.zeros(256, dtype=bool)
     for code in range(1, 256):
-        bits = [(code >> k) & 1 for k in range(8)]
-        if all(bits):
-            runs = [list(range(8))]
-        else:
-            start = bits.index(0)
-            runs, cur = [], []
-            for step in range(8):
-                idx = (start + step) % 8
-                if bits[idx]:
-                    cur.append(idx)
-                elif cur:
-                    runs.append(cur)
-                    cur = []
-            if cur:
-                runs.append(cur)
-        strong = sum(1 for r in runs if any(i % 2 == 0 for i in r))
-        lut[code] = strong == 1
+        fg = [pos[k] for k in range(8) if (code >> k) & 1]
+        bg = [pos[k] for k in range(8) if not (code >> k) & 1]
+        if n_components(fg, adj8) != 1:
+            continue
+        bg_touch = [c for c in bg if abs(c[0]) + abs(c[1]) == 1]
+        if not bg_touch:
+            continue
+        comps, seen = 0, set()
+        for c in bg:
+            if c in seen:
+                continue
+            stack, comp = [c], set()
+            while stack:
+                u = stack.pop()
+                if u in seen:
+                    continue
+                seen.add(u)
+                comp.add(u)
+                stack.extend(v for v in bg if v not in seen and adj4(u, v))
+            if any(abs(x[0]) + abs(x[1]) == 1 for x in comp):
+                comps += 1
+        lut[code] = comps == 1
     _EM_SIMPLE_LUT = lut
     return lut
 
