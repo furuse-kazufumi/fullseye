@@ -504,7 +504,7 @@ And from these scores there's also a video of the **full cycle — actually gras
 
 [![Stereo disparity → 3D reconstruction → bird's-eye obstacle map](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
 
-*↑ **Stereo obstacle map** — disparity → depth via $Z = f \cdot B / d$ → 3D point cloud → clustering everything above 12cm resolves 4 objects into 4 clusters (the reconstructed ground height has a median error of 3mm). Ops used: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`.*
+*↑ **Stereo obstacle map** — disparity → depth via $Z = f \cdot B / d$ → 3D point cloud → clustering everything above 12cm resolves 4 objects into 4 clusters (the reconstructed ground height has a median error of 3mm). The disparity panel shows only the disparities that survive a speckle filter + confidence gate — invalid pixels are masked gray. Ops used: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`.*
 
 [![Focus stacking — one all-in-focus frame from 7 blurry ones](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack.png)
 
