@@ -38,7 +38,9 @@ def test_core_to_accel_injective():
 
 
 def test_plan_segments_mixed():
-    st = [ops.stage("median", 0.5, 0.4), ops.stage("dog", 0.5, 0.4),
+    # rotate_img = scipy order=3 B-spline(IIR 前置フィルタ)で bit-faithful な
+    # GPU 化が不能と判定済みの恒久 CPU op(dog は 2026-08-31 に GPU 化されたので交代)
+    st = [ops.stage("median", 0.5, 0.4), ops.stage("rotate_img", 0.5, 0.4),
           ops.stage("threshold", 0.3, 0.4)]
     segs = B.plan(st)
     assert [k for k, _ in segs] == ["gpu", "cpu", "gpu"]
