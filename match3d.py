@@ -1689,7 +1689,12 @@ def tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0):
     return tsdf.astype(np.float32)
 
 
-# ── 3D モルフォロジー(グレースケール、cube SE、max_pool3d=dilation)──────────
+# ── 3D モルフォロジー(グレースケール)────────────────────────────────────────
+# 実装は 2 経路: torch(max_pool3d、cube SE、GPU 可)と scipy.ndimage(CPU、
+# cube/ball SE)。torch 不在でも全 op が scipy で動く(コア= numpy+scipy 主義)。
+# 境界規約は両経路とも「外は dilation で −inf / erosion で +inf」= 画像内の
+# 値だけで局所 max/min を取る(torch の implicit padding と同一。パリティは
+# tests/test_match3d_morph.py でビット単位検証)。
 def _mdil(t, r):
     return F.max_pool3d(t, 2 * r + 1, stride=1, padding=r)
 
@@ -1702,32 +1707,65 @@ def _morph_in(vol, device):
     return torch.as_tensor(np.asarray(vol, np.float32)[None, None], device=device)
 
 
-def morph_dilate3d(vol, r=1, device="cpu"):
-    """3D グレースケール dilation(cube SE 半径 r の局所 max)。明領域を膨張。"""
-    return _mdil(_morph_in(vol, device), r)[0, 0].detach().cpu().numpy()
+def _ball_footprint(r):
+    z, y, x = np.ogrid[-r:r + 1, -r:r + 1, -r:r + 1]
+    return (z * z + y * y + x * x) <= r * r
 
 
-def morph_erode3d(vol, r=1, device="cpu"):
-    """3D グレースケール erosion(cube SE の局所 min)。明領域を収縮。"""
-    return _mero(_morph_in(vol, device), r)[0, 0].detach().cpu().numpy()
+def _gray_morph3d(vol, r, device, se, kind):
+    """kind='dil'|'ero'。se='cube'|'ball'(ball は scipy 経路のみ)。"""
+    if se not in ("cube", "ball"):
+        raise ValueError(f"se は 'cube' か 'ball'(got {se!r})")
+    if se == "cube" and _HAS_TORCH:
+        t = _morph_in(vol, device)
+        out = _mdil(t, r) if kind == "dil" else _mero(t, r)
+        return out[0, 0].detach().cpu().numpy()
+    from scipy import ndimage as _ndi
+    v = np.asarray(vol, np.float32)
+    kw = ({"size": (2 * r + 1,) * 3} if se == "cube"
+          else {"footprint": _ball_footprint(r)})
+    if kind == "dil":
+        return _ndi.grey_dilation(v, mode="constant", cval=-np.inf, **kw)
+    return _ndi.grey_erosion(v, mode="constant", cval=np.inf, **kw)
 
 
-def morph_gradient3d(vol, r=1, device="cpu"):
+def morph_dilate3d(vol, r=1, device="cpu", se="cube"):
+    """3D グレースケール dilation(SE 半径 r の局所 max)。明領域を膨張。
+
+    se="cube"(既定、torch 経路で GPU 可)/ "ball"(等方 SE、scipy 経路)。
+    """
+    return _gray_morph3d(vol, r, device, se, "dil")
+
+
+def morph_erode3d(vol, r=1, device="cpu", se="cube"):
+    """3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。"""
+    return _gray_morph3d(vol, r, device, se, "ero")
+
+
+def morph_open3d(vol, r=1, device="cpu", se="cube"):
+    """3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。"""
+    return morph_dilate3d(morph_erode3d(vol, r, device, se), r, device, se)
+
+
+def morph_close3d(vol, r=1, device="cpu", se="cube"):
+    """3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。"""
+    return morph_erode3d(morph_dilate3d(vol, r, device, se), r, device, se)
+
+
+def morph_gradient3d(vol, r=1, device="cpu", se="cube"):
     """3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。"""
-    t = _morph_in(vol, device)
-    return (_mdil(t, r) - _mero(t, r))[0, 0].detach().cpu().numpy()
+    return (morph_dilate3d(vol, r, device, se)
+            - morph_erode3d(vol, r, device, se))
 
 
-def morph_tophat3d(vol, r=1, device="cpu"):
+def morph_tophat3d(vol, r=1, device="cpu", se="cube"):
     """3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。"""
-    t = _morph_in(vol, device)
-    return (t - _mdil(_mero(t, r), r))[0, 0].detach().cpu().numpy()
+    return np.asarray(vol, np.float32) - morph_open3d(vol, r, device, se)
 
 
-def morph_blackhat3d(vol, r=1, device="cpu"):
+def morph_blackhat3d(vol, r=1, device="cpu", se="cube"):
     """3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。"""
-    t = _morph_in(vol, device)
-    return (_mero(_mdil(t, r), r) - t)[0, 0].detach().cpu().numpy()
+    return morph_close3d(vol, r, device, se) - np.asarray(vol, np.float32)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
