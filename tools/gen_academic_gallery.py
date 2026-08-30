@@ -690,9 +690,11 @@ EXHIBITS = [
      "洞窟壁画(AI 生成)を decorrelation stretch で顔料強調(DStretch 手法)"),
     ("archaeology", "arch_cuneiform", ("ai", "Close-up photograph of an ancient clay tablet covered in cuneiform script, raking light emphasizing the wedge-shaped impressions, museum artifact photography, no text"), "relief",
      "楔形文字粘土板(AI 生成)を gray_tophat で文字刻印強調"),
-    # ----- 生物学 (real BBBC CC-BY + AI)
-    ("biology", "bio_cells", ("bbbc",), "segment_count",
-     "HT29 細胞蛍光顕微鏡像(BBBC001)を otsu 分割 -> ラベル彩色 -> count_obj で計数"),
+    # ----- 生物学 (AI のみ)
+    # NOTE: 旧 bio_cells 展示(Broad BBBC001, HT29 細胞)はここから削除した。
+    # BBBC001 は CC BY-NC-SA 3.0(公式ページで実確認 2026-08-30)。NC/SA が
+    # 本リポジトリの Apache-2.0+商用デュアルライセンスと非両立のため展示から除去。
+    # 再追加禁止(当初 CC-BY 3.0 と誤記していた)。
     ("biology", "bio_neuron", ("ai", "Fluorescence microscopy image of a single neuron with long branching dendrites, green fluorescent protein labeling on black background, confocal microscope, scientific imaging, no text"), "filaments",
      "神経細胞蛍光像(AI 生成)の樹状突起を sk_frangi でトレース"),
     ("biology", "bio_diatoms", ("ai", "Dark-field light microscopy image of many diverse diatoms with intricate glass shells scattered on a dark background, various geometric shapes, scientific microscopy, no text"), "segment_count",
