@@ -256,6 +256,61 @@ def _illuminate(t, a, b, dev):
     return (t + (0.3 + 0.7 * b) * (t - sm)).clamp(0, 1)
 
 
+# ── Batch 2(2026-08-31): image→region の関門 op。otsu が CPU に残ると
+#    その先の region morphology 島へ GPU 常駐のまま入れず転送が分断される。
+def _otsu(t, a, b, dev):
+    """core _otsu の逐語移植: 256-bin ヒストグラム → 間クラス分散 argmax → x > mid。"""
+    x = t.clamp(0, 1)
+    B = x.shape[0]
+    outs = []
+    edges = torch.linspace(0.0, 1.0, 257, device=t.device)
+    mids = (edges[:-1] + edges[1:]) / 2
+    for i in range(B):
+        hist = torch.histc(x[i], bins=256, min=0.0, max=1.0)
+        p = hist / hist.sum().clamp_min(1.0)
+        omega = torch.cumsum(p, 0)
+        mu = torch.cumsum(p * mids, 0)
+        mu_t = mu[-1]
+        den = omega * (1 - omega)
+        sb = torch.where(den > 1e-12,
+                         (mu_t * omega - mu) ** 2 / den.clamp_min(1e-12),
+                         torch.zeros_like(den))
+        outs.append((x[i] > mids[int(sb.argmax())]).float())
+    return torch.stack(outs)
+
+
+def _dyn_threshold(t, a, b, dev):
+    k = _k(a)
+    ker = torch.ones(1, 1, k, k, device=dev) / (k * k)
+    r = k // 2
+    m = F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
+    return (t > m + (b - 0.5) * 0.4).float()
+
+
+def _canny(t, a, b, dev):
+    g = _sep_conv_sym(t, _gauss_kernel(0.5 + 1.5 * a, dev))
+    gx = _conv(g, np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32), dev)
+    gy = _conv(g, np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], np.float32), dev)
+    m = _norm_b(torch.hypot(gx, gy))
+    return (m > (0.1 + 0.5 * b)).float()
+
+
+def _maxpool_sym(t, k):
+    """symmetric パディングの maximum_filter(scipy 既定 mode='reflect' と一致)。"""
+    r = k // 2
+    return F.max_pool2d(_pad_sym(_pad_sym(t, r, 3), r, 2), k, stride=1)
+
+
+def _local_max(t, a, b, dev):
+    k = _k(a)
+    return ((t >= _maxpool_sym(t, k)) & (t > (0.3 + 0.4 * b))).float()
+
+
+def _adaptive_gauss(t, a, b, dev):
+    g = _sep_conv_sym(t, _gauss_kernel(1.0 + 3.0 * a, dev))
+    return (t > g + (b - 0.5) * 0.3).float()
+
+
 def _signed01_b(t):
     """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。"""
     m = t.abs().amax(dim=(2, 3), keepdim=True)
