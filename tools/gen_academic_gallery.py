@@ -451,7 +451,8 @@ def generate_ai(prompt: str, slug: str) -> tuple[str, dict] | None:
         except Exception as e:
             log(f"  [ai] gpt-image-1 failed for {slug}: {e}")
     if not gkey and not okey:
-        log(f"  [skip] no GEMINI_API_KEY / OPENAI_API_KEY for {slug}")
+        log(f"  [skip] {slug}: no API key. Set GEMINI_API_KEY / OPENAI_API_KEY, "
+            "or FULLSEYE_API_KEYS_JSON=<path to a JSON file with those keys>")
     return None
 
 
