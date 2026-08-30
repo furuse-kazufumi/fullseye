@@ -413,19 +413,29 @@ def subject_blob_pellets(log=print) -> dict:
     rng = np.random.default_rng(SEED + 1)
     H, W = 480, 640
     N = 60
-    # ペレット配置: 最小間隔を保った 60 点 (真値)。うち数点はほぼ接触。
+    # ペレット配置: 54 点 + 実際に接触するペア 6 組ぶんの相方 6 点 = 60 (真値)
+    n_base, n_touch = 54, 6
     centers = []
     tries = 0
-    while len(centers) < N and tries < 40000:
+    while len(centers) < n_base and tries < 60000:
         tries += 1
         p = (rng.uniform(30, H - 30), rng.uniform(30, W - 30))
-        if all((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 > 30 ** 2 for q in centers):
+        if all((p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 > 44 ** 2 for q in centers):
             centers.append(p)
-    if len(centers) < N:
+    if len(centers) < n_base:
         raise RuntimeError("pellet placement failed")
+    radii = list(rng.uniform(8.5, 13.0, n_base))
+    for i in range(n_touch):                       # 相方を接触距離に置く
+        cy0, cx0 = centers[i]
+        r0 = radii[i] = 10.0
+        r1 = 10.0
+        th = rng.uniform(0, 2 * math.pi)
+        dist = (r0 + r1) * 0.96                    # わずかに食い込む = 接触
+        centers.append((cy0 + dist * math.sin(th), cx0 + dist * math.cos(th)))
+        radii.append(r1)
+    radii = np.asarray(radii)
     img = np.full((H, W), 0.10)
     yy, xx = np.mgrid[0:H, 0:W]
-    radii = rng.uniform(8.5, 13.0, N)
     for (cy, cx), r in zip(centers, radii):
         e = rng.uniform(0.75, 1.0)
         th = rng.uniform(0, math.pi)
