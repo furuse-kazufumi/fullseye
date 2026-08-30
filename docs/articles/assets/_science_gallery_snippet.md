@@ -12,10 +12,10 @@
 | 単純ルールから生まれる 6 つの宇宙 | ![単純ルールから生まれる 6 つの宇宙](assets/science_alife_worlds_thumb.jpg) | alife_wolfram1d, alife_sandpile, alife_dla, alife_lenia, alife_cyclic_ca, gauss_filter | 0 と乱数の初期値から反復シミュレーション |
 | 空間がぐにゃり — 3 つの変形アルゴリズム | ![空間がぐにゃり — 3 つの変形アルゴリズム](assets/science_wobble_warp_thumb.jpg) | deform_tps, deform_ffd, deform_mls | skimage.data camera (実写真) |
 | 樹枝状結晶とその骨格 | ![樹枝状結晶とその骨格](assets/science_dla_skeleton_thumb.jpg) | alife_dla, dilation_circle, sk_skeleton, distance_transform | 乱数から DLA 成長 (シミュレーション) |
-| 恐竜の影絵から骨格を取り出す | ![恐竜の影絵から骨格を取り出す](assets/science_dino_skeleton_thumb.jpg) | read_mesh, look_at, render_mesh, fill_up, sk_skeleton, dilation_circle, distance_transform | Smithsonian 3D triceratops 実スキャン (CC0) |
-| トリケラトプスのレントゲン写真 | ![トリケラトプスのレントゲン写真](assets/science_dino_xray_thumb.jpg) | voxelize_solid, vol_mip, gauss_filter | Smithsonian 3D triceratops 実スキャン (CC0) |
+| 恐竜の影絵から骨格を取り出す | ![恐竜の影絵から骨格を取り出す](assets/science_dino_skeleton_thumb.jpg) | read_mesh, look_at, render_mesh, closing_circle, fill_up, sk_skeleton, dilation_circle, distance_transform | Smithsonian 3D triceratops 骨格標本の実スキャン (CC0) |
+| トリケラトプスのレントゲン写真 | ![トリケラトプスのレントゲン写真](assets/science_dino_xray_thumb.jpg) | voxelize, vol_gaussian, vol_mip | Smithsonian 3D triceratops 骨格標本の実スキャン (CC0) |
 | 赤青メガネで飛び出すドラゴン | ![赤青メガネで飛び出すドラゴン](assets/science_dragon_anaglyph_thumb.jpg) | read_mesh, look_at, render_mesh | Stanford dragon 実スキャン |
-| トリケラトプス山脈 — 恐竜を地図にする | ![トリケラトプス山脈 — 恐竜を地図にする](assets/science_dino_terrain_thumb.jpg) | sample_surface, elevation_map, colorize_height | Smithsonian 3D triceratops 実スキャン (CC0) |
+| トリケラトプス山脈 — 恐竜を地図にする | ![トリケラトプス山脈 — 恐竜を地図にする](assets/science_dino_terrain_thumb.jpg) | sample_surface, elevation_map, colorize_height | Smithsonian 3D triceratops 骨格標本の実スキャン (CC0) |
 | 形が育つ・痩せる (モルフォロジー) | ![形が育つ・痩せる (モルフォロジー)](assets/science_morph_pulse.gif) | otsu, fill_up, dilation_circle, erosion_circle | skimage.data coins (実写真) |
 
 ## 記事挿入候補 (raw GitHub URL)
@@ -82,7 +82,7 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_skeleton.png )
 
-トリケラトプスの影絵から、形の中心線 (スケルトン) を1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。 使用 op: read_mesh, look_at, render_mesh, fill_up, sk_skeleton, dilation_circle, distance_transform。データ: Smithsonian 3D triceratops 実スキャン (CC0)。
+トリケラトプス骨格標本の影絵から、形の中心線 (スケルトン) を1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。 使用 op: read_mesh, look_at, render_mesh, closing_circle, fill_up, sk_skeleton, dilation_circle, distance_transform。データ: Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)。
 
 ### トリケラトプスのレントゲン写真
 
@@ -90,7 +90,7 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_xray.png )
 
-スミソニアン博物館の実スキャンをボクセル(3D のピクセル)に詰め、最大値投影 (MIP) するとレントゲン写真そっくりになる。 使用 op: voxelize_solid, vol_mip, gauss_filter。データ: Smithsonian 3D triceratops 実スキャン (CC0)。
+スミソニアン博物館の骨格標本スキャンをボクセル (3D のピクセル) に詰め、最大値投影 (vol_mip) するとレントゲン写真そっくりになる。 使用 op: voxelize, vol_gaussian, vol_mip。データ: Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)。
 
 ### 赤青メガネで飛び出すドラゴン
 
@@ -106,7 +106,7 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_dino_terrain.png )
 
-恐竜の実スキャンを 40 万点の点群にして真上から標高地図を作ると、背中が山脈、フリルが台地になる。ロボットが地形を読むのと同じ op。 使用 op: sample_surface, elevation_map, colorize_height。データ: Smithsonian 3D triceratops 実スキャン (CC0)。
+骨格標本の実スキャンを 60 万点の点群にして真上から標高地図を作ると、背骨が山脈、ろっ骨が尾根になる。ロボットが地形を読むのと同じ op。 使用 op: sample_surface, elevation_map, colorize_height。データ: Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)。
 
 ### 形が育つ・痩せる (モルフォロジー)
 

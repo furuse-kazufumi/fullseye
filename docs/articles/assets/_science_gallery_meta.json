@@ -94,26 +94,27 @@
       "read_mesh",
       "look_at",
       "render_mesh",
+      "closing_circle",
       "fill_up",
       "sk_skeleton",
       "dilation_circle",
       "distance_transform"
     ],
-    "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+    "data": "Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)",
     "synthetic": false,
-    "caption": "トリケラトプスの影絵から、形の中心線 (スケルトン) を1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。"
+    "caption": "トリケラトプス骨格標本の影絵から、形の中心線 (スケルトン) を1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。"
   },
   {
     "file": "science_dino_xray.png",
     "title": "トリケラトプスのレントゲン写真",
     "ops": [
-      "voxelize_solid",
-      "vol_mip",
-      "gauss_filter"
+      "voxelize",
+      "vol_gaussian",
+      "vol_mip"
     ],
-    "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+    "data": "Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)",
     "synthetic": false,
-    "caption": "スミソニアン博物館の実スキャンをボクセル(3D のピクセル)に詰め、最大値投影 (MIP) するとレントゲン写真そっくりになる。"
+    "caption": "スミソニアン博物館の骨格標本スキャンをボクセル (3D のピクセル) に詰め、最大値投影 (vol_mip) するとレントゲン写真そっくりになる。"
   },
   {
     "file": "science_dragon_anaglyph.png",
@@ -135,9 +136,9 @@
       "elevation_map",
       "colorize_height"
     ],
-    "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+    "data": "Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)",
     "synthetic": false,
-    "caption": "恐竜の実スキャンを 40 万点の点群にして真上から標高地図を作ると、背中が山脈、フリルが台地になる。ロボットが地形を読むのと同じ op。"
+    "caption": "骨格標本の実スキャンを 60 万点の点群にして真上から標高地図を作ると、背骨が山脈、ろっ骨が尾根になる。ロボットが地形を読むのと同じ op。"
   },
   {
     "file": "science_morph_pulse.gif",
