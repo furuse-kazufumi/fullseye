@@ -357,12 +357,11 @@ def subject_align_shapematch(log=print) -> dict:
         h, w = rot.size[1], rot.size[0]
         centers_true.append((top + h / 2, left + w / 2, ang))
     for r in found:
-        cy_f = r["row"] + size / 2
-        cx_f = r["col"] + size / 2
+        cy_f, cx_f = r["row"], r["col"]            # 実測: 返り値はモデル中心
         best = min(centers_true,
                    key=lambda t: (t[0] - cy_f) ** 2 + (t[1] - cx_f) ** 2)
         dpos = math.hypot(best[0] - cy_f, best[1] - cx_f)
-        dang = abs(-r["angle"] - best[2])          # 画像座標系は角度符号が逆
+        dang = abs(r["angle"] - best[2])           # angles は PIL rotate と同符号
         log(f"    vs truth: dpos={dpos:.1f}px dang={dang:.1f}deg")
         if dpos > 6.0 or dang > 5.0:
             raise RuntimeError(f"pose error too large: {dpos:.1f}px / {dang:.1f}deg")
