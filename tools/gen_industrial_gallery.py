@@ -435,7 +435,7 @@ def subject_align_shapematch(log=print) -> dict:
         log(f"  match#{k + 1}: row={r['row']} col={r['col']} "
             f"angle={r['angle']:.1f} score={r['score']:.2f}")
 
-    # 真値との突き合わせ(検算): 各検出は最寄りの真値と ±4px / ±5deg
+    # 真値との突き合わせ(検算): 各検出は最寄りの真値と 位置 ≤6.0px / 角度 ≤5.0°
     centers_true = []
     for top, left, ang in poses:
         rot = tpl_img.rotate(ang, resample=Image.BICUBIC, expand=True,
