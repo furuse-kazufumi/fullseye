@@ -148,6 +148,11 @@ Apply 時に適用されます（`docs/HDEVELOP_DEV_OPS.md` に全 43 `dev_*` �
 | `dev_set_color ('red'|'green'…)` | region overlay の色 | 〃 |
 | `dev_set_line_width (N)` | margin の輪郭幅（px） | 〃 |
 | `dev_disp_text ('label', Row, Col)` | 結果の上にテキスト注釈（次の描画/`dev_clear_window` で消える） | — |
+| `dev_open_window (Row, Col, W, H)` | グラフィクス窓を**開いて配置しカレント化**（再 Apply は同じ窓を再配置=増殖しない） | Ctrl+G / Window ▸ Graphics |
+| `dev_set_window (Handle)` | カレント窓をハンドルで切替 | 窓クリック |
+| `dev_set_window_extents (Row, Col, W, H)` | カレント窓の位置・サイズ（-1=現状維持） | 窓ドラッグ |
+| `dev_close_window ()` | カレント窓を閉じる（常駐の主窓は保護） | 窓の × |
+| `set_system ('max_graphics_windows', N)` | 窓数の上限（既定 256・全経路 fail-closed） | Tools ▸ System settings ▸ Windows |
 
 **用途**: `dev_update_off ()` を先頭に置くと、重い処理や多数の編集を**描画コストなし**で行え、
 `dev_update_on ()` で現状態へ一括更新できます（HDevelop の性能テクニックと同じ）。更新が
@@ -164,6 +169,44 @@ HDevelop プログラム（区分→領域を cyan の輪郭 + ラベルで表�
 で再生成）。
 
 ---
+
+## 多言語対応(en / ja / zh、テーブル駆動)
+
+UI の言語は **Tools ▸ Language / 言語 / 语言** で切替(記憶されます)。対訳は
+**`studio_assets/i18n.json` に一元化**されたテーブルで、コード変更なしで追加できます:
+
+- `languages` — 言語一覧(追加すればメニューに自動で並ぶ。英語が常にベース)
+- `tooltips` — ツールチップ対訳(英語原文がキー)
+- `strings` — **メニュー・ボタン・ダイアログのラベル対訳**(英語原文がキー。2026-08-30
+  追加。日本語 40+ 項目を同梱、未訳の文字列は英語のまま=graceful fallback)
+- `guide` — クイックガイド本文(Shift+F2)
+
+op ヘルプは `op_help/<name>.<lang>.html` があれば言語別に出ます。honest 開示:
+実行中に変化するステータス文言(`running…` / `PASS` 等)と op ノート本文は現状
+翻訳対象外です(op ノートの英語化は docstring 二言語化とセットの将来課題)。
+
+## Python Editor と IDE 機能(2026-08-30)
+
+Studio は「パイプラインからしかコードを呼べない」段階を越えて、**Python 開発環境**としても使えます。
+
+- **Python Editor**(File ▸ Python Editor… / ギャラリーの「Open in editor」): 構文ハイライト+
+  行番号+自動インデントの**マルチタブ**エディタ(HDevelop のメイン+サブスクリプトと同様、
+  複数スクリプトを同時編集)。**F5 / Run** で現在タブをサブプロセス実行(repo が PYTHONPATH に
+  載るので `import fullseye` がそのまま動く。未保存バッファは scratch コピーで走り Save を
+  強制しない)。**Samples ▾** から全 worked example を新規タブで開ける(path 無しで開くため
+  出荷サンプルの誤上書きは不可)。実行インタプリタは System settings ▸ Editor で変更可。
+- **MDI コード窓**(ギャラリーの「Open in window」): サンプルコードを独立ウィンドウとして
+  **何枚でも並べて**、断片を選択コピー(Window ▸ Tile/Cascade も効く)。
+- **実行制御**: gutter クリックでブレークポイント(=一時停止)、**Continue** ボタンで実行行から
+  次のブレークポイント/末尾まで再開、ステージ右クリックの **Run from here** で任意の行から
+  やり直し(**Run to here** と対)。
+- **変数ウォッチ**: Variables 窓に任意の式(`v.mean()` / `np.percentile(v, 99)` / `(v > 0.5).sum()`
+  など。`v`=選択変数、`np`=numpy、`img`=入力)を登録すると、選択変更・パイプライン変更のたびに
+  **自動再評価**。失敗した式はその行に ⚠ 表示(パネルは落ちない)。変数の**右クリック ▸
+  Inspect in popup…** で、型別インスペクション+percentile+値プレビューが即座に出る。
+- **System settings**(Tools ▸ System settings… / Ctrl+,): カテゴリツリー+ページ構成。
+  Execution(threads / timeout)・Windows(窓上限)・Display(既定 LUT / region 描画)・
+  Editor(フォントサイズ / 実行インタプリタ)。
 
 ## Export と Save/Open の関係
 

@@ -24,10 +24,10 @@ Studio の残件「大画像/重い op で GUI が固まる」に対し、HDevel
 | op | 説明 | Studio |
 |---|---|---|
 | `dev_set_part` | **表示する画像部分(ズーム/パン範囲)を変更** | ★ |
-| `dev_set_window` / `dev_get_window` | アクティブ窓の切替 / ハンドル取得 | ✔ (v18.8 カレント窓モデル) |
-| `dev_open_window` / `dev_close_window` | 窓の open / close | ✔ (new/close graphics window) |
-| `dev_clear_window` | アクティブ窓のクリア | ○ |
-| `dev_set_window_extents` | 浮動グラフィクス窓の位置・サイズ | △ (detach/float あり) |
+| `dev_set_window` / `dev_get_window` | アクティブ窓の切替 / ハンドル取得 | ✔ (UI カレント窓モデル + **program directive**: `dev_set_window (handle)`) |
+| `dev_open_window` / `dev_close_window` | 窓の open / close | ✔ (UI + **program directive**: `dev_open_window (row, col, w, h)` が開いて配置しカレント化 / `dev_close_window` はカレントを閉じる。resident 主窓は close 保護。再 Apply は**同じ窓を再配置**(source-order slot キー)し増殖しない。上限 = `set_system('max_graphics_windows')`(既定 256、System settings で変更可・全経路 fail-closed)) |
+| `dev_clear_window` | アクティブ窓のクリア | ✔ (script directive) |
+| `dev_set_window_extents` | 浮動グラフィクス窓の位置・サイズ | ✔ (**program directive**: `dev_set_window_extents (row, col, w, h)`、-1 は現状維持) |
 
 ### C. iconic 表示・描画スタイル
 | op | 説明 | Studio |

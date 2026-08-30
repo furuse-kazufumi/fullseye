@@ -2276,3 +2276,347 @@ def test_2d_examples_dialog_lists_geometric_samples():
     assert 0 < lst.count() < len(EX.names())
     filt.clear()
     assert lst.count() == len(EX.names())
+
+
+def test_python_editor_opens_edits_and_runs():
+    """Python Editor (IDE layer): the File-menu action opens a tabbed editor seeded
+    with a runnable template, typing marks the tab/title dirty, and the Run button
+    (real click -> QProcess subprocess) streams the current tab's stdout into the
+    console with a PASS verdict. Unsaved buffers run from a scratch copy, so Run
+    never forces a Save."""
+    import time
+
+    from PySide6 import QtWidgets
+    app = _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_pyedit.trigger()
+    dlg = win._pyedit_dlg
+    assert dlg is not None
+    pe = win._pyedit
+    assert "fullseye" in pe["editor"]().toPlainText()        # template seeds tab 1
+    tbs = [t for t in dlg.findChildren(QtWidgets.QToolButton) if t.text().startswith("Samples")]
+    assert tbs and tbs[0].menu() is not None and tbs[0].menu().actions()   # sample browser wired
+    pe["editor"]().setPlainText("print('hello from the studio editor')")
+    assert dlg.windowTitle().endswith("*")                   # dirty marker
+    btns = {b.text(): b for b in dlg.findChildren(QtWidgets.QPushButton)}
+    btns["Run (F5)"].click()                                 # real signal path, not a direct call
+    deadline = time.time() + 90
+    while dlg._proc is not None and time.time() < deadline:
+        app.processEvents(); time.sleep(0.02)
+    assert dlg._proc is None, "editor subprocess did not finish in time"
+    assert "hello from the studio editor" in pe["output"].toPlainText()
+    assert pe["status"].text().startswith("PASS")
+
+
+def test_python_editor_multi_document_tabs():
+    """HDevelop-style main + sub-scripts: several scripts stay open and editable at
+    once, each in its own tab with independent content, dirty state and title; the
+    close button removes only its tab."""
+    from PySide6 import QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_pyedit.trigger()
+    pe = win._pyedit
+    tabs = pe["tabs"]
+    n0 = tabs.count()
+    e1 = pe["open_tab"]("print('main')", "main.py")
+    e2 = pe["open_tab"]("print('sub')", "sub.py")
+    assert tabs.count() == n0 + 2
+    assert e1.toPlainText() == "print('main')" and e2.toPlainText() == "print('sub')"
+    assert pe["editor"]() is e2                              # newest tab is current
+    e1.setPlainText("print('main edited')")                  # editing a BACKGROUND tab
+    assert e2.toPlainText() == "print('sub')"                # does not leak across tabs
+    assert tabs.tabText(tabs.indexOf(e1)).endswith("*")      # its own dirty marker
+    tabs.setCurrentWidget(e1)
+    assert win._pyedit_dlg.windowTitle().endswith("*")       # title follows current tab
+    e2._dirty = False                                        # close without confirm dialog
+    pe["close_tab"](tabs.indexOf(e2))
+    assert tabs.count() == n0 + 1 and tabs.indexOf(e1) >= 0
+
+
+def test_python_editor_opens_gallery_sample_as_editable():
+    """The 2-D gallery's "Open in editor" button hands the selected example's code to
+    the Python Editor as an editable, path-less NEW TAB (Save routes to Save-as, so a
+    shipped validate()-checked example can't be overwritten by accident)."""
+    from PySide6 import QtCore, QtWidgets
+    _app()
+    import examples2d as EX
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_2d_examples.trigger()
+    g = win._ex2d_dlg
+    lst = g.findChildren(QtWidgets.QListWidget)[0]
+    assert lst.currentItem() is not None
+    i = lst.currentItem().data(QtCore.Qt.UserRole)
+    btns = {b.text(): b for b in g.findChildren(QtWidgets.QPushButton)}
+    btns["Open in editor"].click()
+    dlg = win._pyedit_dlg
+    assert dlg is not None
+    ed = win._pyedit["editor"]()
+    assert ed.toPlainText() == EX.code(i)
+    assert ed._path is None and i in dlg.windowTitle()
+
+
+def test_python_editor_save_and_reopen_roundtrip(tmp_path):
+    """save_to clears the current tab's dirty flag and retitles; open_path loads the
+    file back into a new tab with its path attached (so a plain Save then writes in
+    place, no dialog)."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_pyedit.trigger()
+    pe, dlg = win._pyedit, win._pyedit_dlg
+    e1 = pe["open_tab"]("x = 1\n", "t.py")
+    p = str(tmp_path / "t.py")
+    assert pe["save_to"](p) is True
+    assert e1._dirty is False and dlg.windowTitle().endswith("t.py")
+    pe["open_path"](p)                                       # opens a NEW tab from disk
+    e2 = pe["editor"]()
+    assert e2 is not e1
+    assert e2.toPlainText() == "x = 1\n" and e2._path == p
+
+
+def test_variable_watch_expressions_evaluate_live():
+    """Variable-window watch (user spec 2026-08-30: the variable window was weak):
+    an expression added through the real input box + button evaluates against the
+    SELECTED variable, re-evaluates on selection change, and a failing expression
+    reports its error in place without crashing the panel."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    model.add_stage("gaussian")
+    win._variables["refresh"]()
+    lst = win._variables["list"]
+    lst.setCurrentRow(0)                                     # the input frame
+    w = win._watch
+    w["table"].setRowCount(0)                                # hermetic: drop persisted rows
+    w["input"].setText("float(np.nanmean(v))")
+    w["input"].returnPressed.emit()                          # real add path (Enter)
+    assert w["table"].rowCount() == 1
+    val = w["table"].item(0, 1).text()
+    assert not val.startswith("⚠")                      # evaluated, no error marker
+    expect = float(np.nanmean(model.result_upto(lst.item(0).data(_qt_userrole()))))
+    assert abs(float(val) - expect) < 1e-9
+    lst.setCurrentRow(1)                                     # stage 1 output -> re-evaluates
+    val2 = w["table"].item(0, 1).text()
+    expect2 = float(np.nanmean(model.result_upto(lst.item(1).data(_qt_userrole()))))
+    assert abs(float(val2) - expect2) < 1e-9
+    w["add"]("no_such_name + 1")                             # broken watch: reports, no crash
+    assert w["table"].item(1, 1).text().startswith("⚠")
+    w["table"].setCurrentCell(1, 0); w["remove"]()
+    assert w["table"].rowCount() == 1
+
+
+def _qt_userrole():
+    from PySide6 import QtCore
+    return QtCore.Qt.UserRole
+
+
+def test_code_windows_open_multiple_samples_in_mdi():
+    """MDI usability (user spec 2026-08-30): "Open in window" puts a sample's code in
+    its own MDI subwindow, so several samples sit side by side; fragments are
+    selectable/copyable and "Open in editor" hands the text to a new editor tab."""
+    from PySide6 import QtCore, QtWidgets
+    _app()
+    import examples2d as EX
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_2d_examples.trigger()
+    g = win._ex2d_dlg
+    lst = g.findChildren(QtWidgets.QListWidget)[0]
+    btns = {b.text(): b for b in g.findChildren(QtWidgets.QPushButton)}
+    lst.setCurrentRow(0); i0 = lst.currentItem().data(QtCore.Qt.UserRole)
+    btns["Open in window"].click()
+    lst.setCurrentRow(1); i1 = lst.currentItem().data(QtCore.Qt.UserRole)
+    btns["Open in window"].click()
+    subs = win._code_windows
+    assert len(subs) == 2 and all(s in win._mdi.subWindowList() for s in subs)
+    titles = {s.windowTitle() for s in subs}
+    assert titles == {i0 + ".py", i1 + ".py"}
+    # the second window's "Open in editor" lands that sample in a new editor tab
+    inner = subs[1].widget()
+    ed_btns = {b.text(): b for b in inner.findChildren(QtWidgets.QPushButton)}
+    ed_btns["Open in editor"].click()
+    assert win._pyedit["editor"]().toPlainText() == EX.code(i1)
+
+
+def test_program_continue_and_run_from_line():
+    """HDevelop-grade execution control (user spec 2026-08-30): a gutter breakpoint
+    pauses the run, Continue resumes from the execution line (not line 1), and
+    run_from restarts at an arbitrary line — the API the stage context menu calls."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    model.add_stage("gaussian"); model.add_stage("sobel_amp"); model.add_stage("otsu")
+    ed = win._program["edit"]
+    ed.breakpoints.add(2)                      # "pause" after line 2
+    win._program["run"](True)
+    assert ed._exec_line == 2                  # stopped at the breakpoint, not the end
+    ed.breakpoints.clear()
+    win._program["continue"]()                 # "resume" -> runs 3..end
+    assert ed._exec_line == 3
+    win._program["run_from"](2)                # "restart from line 2"
+    assert ed._exec_line == 3                  # re-ran 2..3 to the end
+    labels = [lbl for lbl, _ in win._ctx["pipeline"]()]
+    if labels:                                 # a stage row is selected -> entries exposed
+        assert "Run from here" in labels and "Continue (to breakpoint / end)" in labels
+
+
+def test_variable_inspect_popup_shows_contents():
+    """Right-click a variable -> see its contents (user spec 2026-08-30): the popup
+    carries the sort-aware inspection plus percentiles and a raw-value preview."""
+    from PySide6 import QtWidgets
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    model.add_stage("gaussian")
+    win._variables["refresh"]()
+    win._variables["list"].setCurrentRow(1)    # stage 1 output (an image)
+    labels = [lbl for lbl, _ in win._ctx["variables"]()]
+    assert labels and labels[0].startswith("Inspect in popup")
+    dlg = win._variables["popup"]()
+    assert dlg is win._last_var_popup and dlg.isVisible()
+    txt = dlg.findChildren(QtWidgets.QPlainTextEdit)[0].toPlainText()
+    assert "kind" in txt and "percentiles" in txt and "preview" in txt
+
+
+def test_dev_window_management_directives():
+    """HDevelop-style multi-window scripting (user spec 2026-08-30): dev_open_window
+    opens+places+selects a graphics window, dev_set_window selects by handle,
+    dev_set_window_extents moves the current window (-1 keeps), dev_close_window
+    closes it (the resident primary is protected) — and re-Applying the same program
+    REUSES the same window instead of multiplying them."""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._program["edit"].setPlainText("dev_open_window (10, 20, 300, 240)\ngaussian (0.5, 0.5)\n")
+    win._program["apply"]()
+    subs = [s for s in win._graphics_windows
+            if getattr(s, "_fs_directive_slot", None) == 1]
+    assert len(subs) == 1
+    sub = subs[0]
+    assert win._current_gfx is sub
+    assert (sub.geometry().x(), sub.geometry().y()) == (20, 10)   # col->x, row->y
+    assert (sub.width(), sub.height()) == (300, 240)
+    n0 = len([s for s in win._graphics_windows if s in win._mdi.subWindowList()])
+    win._program["apply"]()                      # re-Apply: same window, not another one
+    n1 = len([s for s in win._graphics_windows if s in win._mdi.subWindowList()])
+    assert n1 == n0
+    win._apply_dev_directives("dev_set_window (%d)" % sub._fs_handle)
+    assert win._current_gfx is sub
+    win._apply_dev_directives("dev_set_window_extents (50, 60, -1, -1)")
+    assert (sub.geometry().x(), sub.geometry().y()) == (60, 50)
+    assert (sub.width(), sub.height()) == (300, 240)              # -1 keeps the size
+    win._apply_dev_directives("dev_close_window")
+    assert sub not in win._mdi.subWindowList()
+    assert win._current_gfx is win._primary_gsub
+    win._apply_dev_directives("dev_close_window")                 # resident refuses to close
+    assert win._primary_gsub in win._mdi.subWindowList()
+
+
+def test_graphics_window_cap_is_fail_closed_and_configurable():
+    """max_graphics_windows (user spec 2026-08-30, default 256, settable in System
+    settings / set_system): at the cap new_graphics_window refuses (returns None)
+    on every path — including the dev_open_window program directive — instead of
+    flooding the MDI."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    assert win._get_system_param("max_graphics_windows") == 256      # default
+    win._set_system_param("max_graphics_windows", 2)                 # resident + 1 extra
+    s1 = win._new_graphics_window()
+    assert s1 is not None
+    assert win._new_graphics_window() is None                        # cap reached
+    n0 = len([s for s in win._graphics_windows if s in win._mdi.subWindowList()])
+    win._apply_dev_directives("dev_open_window (0, 0, 200, 150)")    # directive path capped too
+    n1 = len([s for s in win._graphics_windows if s in win._mdi.subWindowList()])
+    assert n1 == n0
+    import pytest as _pytest
+    with _pytest.raises(ValueError):
+        win._set_system_param("max_graphics_windows", 0)             # fail-closed bound
+    win._set_system_param("max_graphics_windows", 256)
+
+
+def test_editor_font_size_applies_and_persists():
+    """System settings: the monospace font size applies live to the program editor and
+    open Python Editor tabs, and a NEWLY constructed editor picks the persisted value."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_pyedit.trigger()
+    try:
+        win._apply_mono_font(14)
+        # The size is delivered as a WIDGET-level stylesheet rule (it outranks the app
+        # QSS in Qt's cascade). The offscreen platform ships no fonts at all, so
+        # fontInfo() cannot resolve here — assert the mechanism, not the rasterizer.
+        assert "font-size:14pt" in win._program["edit"].styleSheet()
+        assert "font-size:14pt" in win._pyedit["editor"]().styleSheet()
+        e2 = win._pyedit["open_tab"]("x = 1", "later.py")        # constructed AFTER the change
+        assert "font-size:14pt" in e2.styleSheet()               # persisted value picked up
+    finally:
+        win._apply_mono_font(10)
+
+
+def test_system_settings_dialog_tree_and_pages():
+    """System settings is a category tree (left, whole-picture) + one page per
+    category (right), Qt Creator preferences style; selecting a tree item switches
+    the page (user spec 2026-08-30)."""
+    from PySide6 import QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    orig = QtWidgets.QDialog.exec
+    QtWidgets.QDialog.exec = lambda self: QtWidgets.QDialog.Rejected
+    try:
+        win._open_system_settings()
+    finally:
+        QtWidgets.QDialog.exec = orig
+    dlg = win._system_dialog
+    titles = [dlg._tree.topLevelItem(i).text(0) for i in range(dlg._tree.topLevelItemCount())]
+    assert titles == ["Execution", "Windows", "Display", "Editor"]
+    assert dlg._stack.count() == 4
+    dlg._tree.setCurrentItem(dlg._tree.topLevelItem(2))
+    assert dlg._stack.currentIndex() == 2                     # tree drives the page
+
+
+def test_feedback_action_links_issue_tracker():
+    """Release feedback loop (user spec 2026-08-30): Help carries a "Feedback /
+    Report an issue" action pointing at the GitHub tracker (templates: bug /
+    operator request / accuracy report). Presence + URL only — no browser launch."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    assert win._act_feedback.text().startswith("Feedback")
+    assert win._feedback_url.startswith("https://github.com/") \
+        and win._feedback_url.endswith("/issues")
+
+
+def test_ui_language_table_switches_labels_ja():
+    """メッセージ表示の日英対応 (user spec 2026-08-30): 対訳は i18n.json の 'strings'
+    テーブル一箇所にあり、言語切替でメニュー・ボタン・遅延ダイアログのラベルが
+    差し替わる。未訳の文字列は英語のまま (graceful fallback)、en へ戻せば原文復元。"""
+    from PySide6 import QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    win._act_pyedit.trigger()                        # lazy dialog registered via _localize
+    dlg = win._pyedit_dlg
+    btns = {b.text(): b for b in dlg.findChildren(QtWidgets.QPushButton)}
+    run_btn = btns["Run (F5)"]
+    win._apply_language("ja")
+    assert win._menus["file"].title() == "ファイル(&F)"
+    assert win._act_pyedit.text() == "Python エディタ…"
+    assert run_btn.text() == "実行 (F5)"
+    assert studio.tr("Run (F5)") == "実行 (F5)"       # module-level table lookup
+    assert studio.tr("no-such-string-xyz") == "no-such-string-xyz"   # graceful fallback
+    win._apply_language("en")                         # round-trip restores the baseline
+    assert win._menus["file"].title() == "&File"
+    assert run_btn.text() == "Run (F5)"
+    assert win._act_pyedit.text() == "Python Editor…"
+
+
+def test_system_settings_pages_localized_at_build():
+    """環境設定はビルド時 tr() 翻訳 (毎回再構築なので registry 不要): 日本語で開くと
+    カテゴリツリーが日本語になる。"""
+    from PySide6 import QtWidgets
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(32)))
+    win._apply_language("ja")
+    orig = QtWidgets.QDialog.exec
+    QtWidgets.QDialog.exec = lambda self: QtWidgets.QDialog.Rejected
+    try:
+        win._open_system_settings()
+    finally:
+        QtWidgets.QDialog.exec = orig
+    dlg = win._system_dialog
+    titles = [dlg._tree.topLevelItem(i).text(0) for i in range(dlg._tree.topLevelItemCount())]
+    assert titles == ["実行", "ウィンドウ", "表示", "エディタ"]
+    win._apply_language("en")

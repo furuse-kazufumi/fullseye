@@ -730,7 +730,11 @@ def parse_hdev_program(text, names):
 _DEV_DIRECTIVES = {"dev_update_window", "dev_update_var", "dev_update_pc",
                    "dev_update_time", "dev_update_off", "dev_update_on", "dev_set_part",
                    "dev_set_lut", "dev_clear_window",
-                   "dev_set_draw", "dev_set_color", "dev_set_line_width", "dev_disp_text"}
+                   "dev_set_draw", "dev_set_color", "dev_set_line_width", "dev_disp_text",
+                   # window management (user spec 2026-08-30: multi-window scripts must
+                   # be able to open / select / place graphics windows, like HDevelop)
+                   "dev_open_window", "dev_set_window", "dev_set_window_extents",
+                   "dev_close_window"}
 
 #: HALCON colour names -> RGB in [0,1], for dev_set_color.
 _HALCON_COLORS = {
@@ -1309,10 +1313,26 @@ def _load_i18n():
     langs = dict(data.get("languages") or {})
     if "en" not in langs:                      # English is always available as the base
         langs = {"en": "English", **langs}
-    return langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""}
+    return (langs, data.get("tooltips", {}) or {}, data.get("guide", {}) or {"en": ""},
+            data.get("strings", {}) or {})
 
 
-LANGUAGES, TOOLTIPS_I18N, HELP_I18N = _load_i18n()
+LANGUAGES, TOOLTIPS_I18N, HELP_I18N, STRINGS_I18N = _load_i18n()
+
+#: current UI language (module-level so `tr` works in any nested scope; the value is
+#: switched by build_window's apply_language and mirrors win._lang).
+_UI_LANG = {"code": "en"}
+
+
+def tr(text):
+    """UI 文字列を i18n テーブル(studio_assets/i18n.json の 'strings')で現在言語へ。
+
+    英語がキー=ベース言語(tooltips と同じ規約)。テーブルに無い文字列・未訳の言語は
+    **英語のまま**(graceful fallback — 壊れた翻訳より原文)。翻訳の追加はコード変更
+    なしで i18n.json だけ(ユーザー仕様 2026-08-30: 対訳はテーブルとして一箇所に)。"""
+    if _UI_LANG["code"] == "en" or not text:
+        return text
+    return STRINGS_I18N.get(text, {}).get(_UI_LANG["code"], text)
 
 
 def op_help_html(name, lang="en", meta=None, dim="2d"):
@@ -1399,6 +1419,161 @@ def op_help_html_3d(name, meta=None):
             "<code>docs/ops/3d/</code>.</p>"
             % (_e(name), _e(m.get("category", "operator")), _e(ins),
                _e(m.get("out", "?")), _e(m.get("doc") or "")))
+
+
+def _python_highlighter_class(QtGui, QtCore):
+    """Python syntax-highlighter factory for the Python Editor (keywords / strings /
+    comments / numbers / def-class names / decorators). Triple-quoted
+    strings are tracked across blocks with ``setCurrentBlockState`` (1 = inside
+    ``'''``, 2 = inside ``\"\"\"``) so editing inside a docstring re-highlights.
+    Known honest limitation: an opener that itself sits inside a one-line string
+    or comment is still treated as an opener (lightweight lexer, not a parser)."""
+    import keyword
+
+    def _fmt(color, bold=False, italic=False):
+        f = QtGui.QTextCharFormat()
+        f.setForeground(QtGui.QColor(color))
+        if bold:
+            f.setFontWeight(QtGui.QFont.Bold)
+        if italic:
+            f.setFontItalic(True)
+        return f
+
+    class PythonHighlighter(QtGui.QSyntaxHighlighter):
+        def __init__(self, doc):
+            super().__init__(doc)
+            self._str_fmt = _fmt("#9ece6a")
+            self._rules = [
+                (re.compile(r"\b(?:%s)\b" % "|".join(keyword.kwlist)),
+                 _fmt("#e0af68", bold=True)),                                # keywords
+                (re.compile(r"\b(?:self|cls)\b"), _fmt("#ff9e64")),
+                (re.compile(r"\b\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b"), _fmt("#ff9e64")),
+                (re.compile(r"(?:(?<=\bdef\s)|(?<=\bclass\s))\w+"),
+                 _fmt("#7dcfff", bold=True)),
+                (re.compile(r"@\w+(?:\.\w+)*"), _fmt("#bb9af7")),            # decorators
+                (re.compile(r"'[^'\n]*'|\"[^\"\n]*\""), self._str_fmt),      # 1-line strings
+                (re.compile(r"#[^\n]*"), _fmt("#565f89", italic=True)),      # comments
+            ]
+
+        def highlightBlock(self, text):
+            for rx, fmt in self._rules:
+                for m in rx.finditer(text):
+                    self.setFormat(m.start(), m.end() - m.start(), fmt)
+            # -- triple-quoted strings span blocks (they overwrite the rule pass) --
+            self.setCurrentBlockState(0)
+            pos, state = 0, max(0, self.previousBlockState())
+            while pos <= len(text):
+                if state:
+                    quote = "'''" if state == 1 else '"""'
+                    end = text.find(quote, pos)
+                    if end < 0:
+                        self.setFormat(pos, len(text) - pos, self._str_fmt)
+                        self.setCurrentBlockState(state)
+                        return
+                    self.setFormat(pos, end + 3 - pos, self._str_fmt)
+                    pos, state = end + 3, 0
+                else:
+                    cands = [(i, st) for i, st in ((text.find("'''", pos), 1),
+                                                   (text.find('"""', pos), 2)) if i >= 0]
+                    if not cands:
+                        return
+                    pos, state = min(cands)
+
+    return PythonHighlighter
+
+
+def _code_editor_class(QtWidgets, QtGui, QtCore):
+    """Editable Python code-editor widget factory for the Python Editor: monospace
+    font, a line-number gutter, Tab -> 4 spaces, and auto-indent on Enter (copies
+    the previous line's leading whitespace, one extra level after a trailing ':').
+    Kept separate from :class:`ProgramEditor`, whose gutter carries pipeline-only
+    state (breakpoints / per-stage timings) that has no meaning for a script."""
+
+    class _Gutter(QtWidgets.QWidget):
+        def __init__(self, editor):
+            super().__init__(editor)
+            self._editor = editor
+
+        def sizeHint(self):
+            return QtCore.QSize(self._editor.gutter_width(), 0)
+
+        def paintEvent(self, ev):
+            self._editor.paint_gutter(ev)
+
+    class CodeEditor(QtWidgets.QPlainTextEdit):
+        def __init__(self, parent=None):
+            super().__init__(parent)
+            self.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+            try:                                   # System settings: editor font size
+                pt = int(QtCore.QSettings("Fullseye", "Studio").value("ui/mono_font_pt", 10))
+            except (TypeError, ValueError):
+                pt = 10
+            f = QtGui.QFont("Consolas"); f.setStyleHint(QtGui.QFont.Monospace)
+            f.setPointSize(max(6, min(pt, 32)))
+            self.setFont(f)
+            # the app-level QSS also styles QPlainTextEdit fonts; a widget-level rule
+            # outranks it so the configured size actually takes effect
+            self.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace; "
+                               "font-size:%dpt;" % max(6, min(pt, 32)))
+            self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(" "))
+            self._gutter = _Gutter(self)
+            self.blockCountChanged.connect(lambda _n: self._update_gutter_width())
+            self.updateRequest.connect(self._update_gutter)
+            self._update_gutter_width()
+
+        def gutter_width(self):
+            digits = max(2, len(str(max(1, self.blockCount()))))
+            return 14 + self.fontMetrics().horizontalAdvance("9") * digits
+
+        def _update_gutter_width(self):
+            self.setViewportMargins(self.gutter_width(), 0, 0, 0)
+
+        def _update_gutter(self, rect, dy):
+            if dy:
+                self._gutter.scroll(0, dy)
+            else:
+                self._gutter.update(0, rect.y(), self._gutter.width(), rect.height())
+            if rect.contains(self.viewport().rect()):
+                self._update_gutter_width()
+
+        def resizeEvent(self, ev):
+            super().resizeEvent(ev)
+            cr = self.contentsRect()
+            self._gutter.setGeometry(QtCore.QRect(cr.left(), cr.top(),
+                                                  self.gutter_width(), cr.height()))
+
+        def paint_gutter(self, ev):
+            p = QtGui.QPainter(self._gutter)
+            p.fillRect(ev.rect(), QtGui.QColor("#12141b"))
+            p.setPen(QtGui.QColor("#565f89"))
+            block = self.firstVisibleBlock()
+            n = block.blockNumber()
+            top = self.blockBoundingGeometry(block).translated(self.contentOffset()).top()
+            while block.isValid() and top <= ev.rect().bottom():
+                bh = self.blockBoundingRect(block).height()
+                if block.isVisible() and top + bh >= ev.rect().top():
+                    p.drawText(0, int(top), self._gutter.width() - 8,
+                               self.fontMetrics().height(),
+                               QtCore.Qt.AlignRight, str(n + 1))
+                block = block.next(); top += bh; n += 1
+
+        def keyPressEvent(self, ev):
+            if ev.key() in (QtCore.Qt.Key_Return, QtCore.Qt.Key_Enter):
+                cur = self.textCursor()
+                line = cur.block().text()[: cur.positionInBlock()]
+                indent = line[: len(line) - len(line.lstrip())]
+                if line.rstrip().endswith(":"):
+                    indent += "    "
+                super().keyPressEvent(ev)
+                if indent:
+                    self.insertPlainText(indent)
+                return
+            if ev.key() == QtCore.Qt.Key_Tab and not ev.modifiers():
+                self.insertPlainText("    ")
+                return
+            super().keyPressEvent(ev)
+
+    return CodeEditor
 
 
 def _program_editor_class(QtWidgets, QtGui, QtCore):
@@ -1758,6 +1933,10 @@ def build_window(model=None):
     act_3d_ops.setToolTip("Browse all 3-D operators (point-cloud / mesh / volume) with their "
                           "generated help pages and type-compatible neighbours")
     m.addAction(act_3d_ops); win._act_3d_ops = act_3d_ops
+    act_pyedit = QtGui.QAction("Python Editor…", win)   # Qt Creator 風の編集+実行環境
+    act_pyedit.setToolTip("Edit and run Python scripts against the repo — open any worked "
+                          "example as editable code, F5 to run in a subprocess")
+    m.addAction(act_pyedit); win._act_pyedit = act_pyedit
     m.addSeparator()
     m.addAction(act_save_res); m.addAction(act_copy_res)      # result out
     m.addSeparator(); m.addAction(act_quit)
@@ -1781,6 +1960,7 @@ def build_window(model=None):
     menu_tools.addAction(act_palette)                         # cross-cutting command launcher (was under Run)
     menu_tools.addSeparator()
     act_system_settings = QtGui.QAction("System settings…", win)   # HALCON set_system-style config
+    act_system_settings.setShortcut("Ctrl+,")                      # standard preferences shortcut
     act_system_settings.triggered.connect(lambda: win._open_system_settings())
     menu_tools.addAction(act_system_settings)
     win._act_system_settings = act_system_settings
@@ -1798,6 +1978,14 @@ def build_window(model=None):
     act_guide = _act("Quick guide (en/ja/zh)", "Shift+F2", "A short guide in the selected language")
     m.addAction(act_guide)
     m.addSeparator()
+    act_feedback = QtGui.QAction("Feedback / Report an issue…", win)
+    act_feedback.setToolTip("Open the GitHub issue tracker — bug reports, operator "
+                            "requests and accuracy/honesty reports all have templates")
+    _FEEDBACK_URL = "https://github.com/furuse-kazufumi/fullseye/issues"
+    act_feedback.triggered.connect(
+        lambda _=False: QtGui.QDesktopServices.openUrl(QtCore.QUrl(_FEEDBACK_URL)))
+    win._act_feedback = act_feedback; win._feedback_url = _FEEDBACK_URL
+    m.addAction(act_feedback); m.addSeparator()
     m.addAction(act_shortcuts); m.addSeparator(); m.addAction(act_about)
 
     # ---- branded toolbar (icon-only; tooltips carry the meaning) ------------- #
@@ -2079,6 +2267,8 @@ def build_window(model=None):
                          "`*`/`#` comments, and control flow `for N … endfor` / `if … else … endif`.\n"
                          "Type for autocomplete; click the gutter to toggle a breakpoint; Step / Run (timed).")
     c_run = _tbtn("play", "Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)", accent=True)
+    c_cont = _tbtn("playplay", "Continue: resume from the execution line to the next "
+                   "breakpoint / end (HDevelop F5 — pause via breakpoints, resume here)")
     c_step = _tbtn("step", "Execute one more line and show its result (F10)")
     c_reset = _tbtn("reset", "Clear the run highlight and per-line timings")
     c_apply = _tbtn("apply", "Apply → parse the code and replace the pipeline")
@@ -2087,7 +2277,7 @@ def build_window(model=None):
     code_w = QtWidgets.QWidget(); cvl = QtWidgets.QVBoxLayout(code_w)
     cvl.setContentsMargins(4, 4, 4, 4); cvl.setSpacing(4)
     crow = QtWidgets.QHBoxLayout()
-    for _cb in (c_run, c_step, c_reset, c_apply, c_sync):
+    for _cb in (c_run, c_cont, c_step, c_reset, c_apply, c_sync):
         crow.addWidget(_cb)
     crow.addStretch(1)
     cvl.addLayout(crow); cvl.addWidget(code_edit, 1); cvl.addWidget(code_status)
@@ -2106,6 +2296,29 @@ def build_window(model=None):
     vrow = QtWidgets.QHBoxLayout()
     vrow.addWidget(v_disp); vrow.addWidget(v_here); vrow.addStretch(1)
     vvl.addWidget(var_list, 1); vvl.addLayout(vrow); vvl.addWidget(var_inspect, 1)
+
+    # -- watch expressions (debugger-style, user spec 2026-08-30: the variable window
+    #    was "a bit weak") — arbitrary expressions re-evaluated live against the
+    #    SELECTED variable on every selection / pipeline change. --
+    watch_table = QtWidgets.QTableWidget(0, 2)
+    watch_table.setHorizontalHeaderLabels(["expression", "value"])
+    watch_table.horizontalHeader().setStretchLastSection(True)
+    watch_table.verticalHeader().setVisible(False)
+    watch_table.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
+    watch_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
+    watch_table.setToolTip("Watch expressions, re-evaluated live against the SELECTED variable.\n"
+                           "`v` = selected variable's value, `np` = numpy, `img` = input frame.\n"
+                           "e.g.  v.mean()   np.percentile(v, 99)   (v > 0.5).sum()")
+    watch_input = QtWidgets.QLineEdit()
+    watch_input.setPlaceholderText("add watch…  (v = selected variable, np = numpy)")
+    watch_input.setClearButtonEnabled(True)
+    w_add = QtWidgets.QPushButton("+"); w_add.setFixedWidth(28)
+    w_add.setToolTip("Add the expression as a watch (Enter in the box does the same)")
+    w_del = QtWidgets.QPushButton("−"); w_del.setFixedWidth(28)
+    w_del.setToolTip("Remove the selected watch row")
+    wrow = QtWidgets.QHBoxLayout()
+    wrow.addWidget(watch_input, 1); wrow.addWidget(w_add); wrow.addWidget(w_del)
+    vvl.addLayout(wrow); vvl.addWidget(watch_table, 1)
 
     # ---- dockable tool windows (VS / HDevelop-style, all movable/floatable) ---- #
     def _mk_dock(title, widget, objname):
@@ -2210,7 +2423,15 @@ def build_window(model=None):
 
     def new_graphics_window(pixmap=None, title=None):
         """Open another graphics window (HDevelop allows several). Shows a snapshot
-        of the current display by default, or a supplied pixmap (e.g. a variable)."""
+        of the current display by default, or a supplied pixmap (e.g. a variable).
+        Capped by set_system('max_graphics_windows') — at the cap, no new window is
+        opened (flash + returns None), so a looping program cannot flood the MDI."""
+        alive = [s for s in win._graphics_windows if s in mdi.subWindowList()]
+        cap = int(state["system"].get("max_graphics_windows", 256))
+        if len(alive) >= cap:
+            flash("graphics window limit reached (%d) — close one, or raise it via "
+                  "set_system('max_graphics_windows', n)" % cap)
+            return None
         win._gfx_handle_seq += 1
         h = win._gfx_handle_seq
         gv = ImageView()
@@ -2328,7 +2549,11 @@ def build_window(model=None):
              # per-stage operator timeout in ms (0 = off; a slow stage is flagged — native
              # ops cannot be hard-interrupted, same honest limit as fsruntime). Fullseye's
              # runtime error mode is always fail-closed. See docs/HDEVELOP_DEV_OPS.md (F).
-             "system": {"threads": 0, "operator_timeout_ms": 0},
+             "system": {"threads": 0, "operator_timeout_ms": 0,
+                        # 開ける graphics window の上限(dev_open_window / Ctrl+G / 変数表示の
+                        # 全経路に効く fail-closed ガード。System settings 画面か
+                        # set_system('max_graphics_windows', N) で変更可)
+                        "max_graphics_windows": 256},
              # HDevelop dev_set_draw / dev_set_color / dev_set_line_width: how a region
              # result is drawn over the source in the 'region overlay' display mode.
              "draw": {"mode": "fill", "color": (0.96, 0.62, 0.14), "line_width": 1, "alpha": 0.5}}
@@ -3238,6 +3463,7 @@ def build_window(model=None):
 
         code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
         code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        dlg._code_hl = _python_highlighter_class(QtGui, QtCore)(code.document())
         thumb = QtWidgets.QLabel()                 # pre-rendered result (input -> output)
         thumb.setAlignment(QtCore.Qt.AlignCenter)
         thumb.setToolTip("Pre-rendered result of this sample on a bundled sample image "
@@ -3462,6 +3688,7 @@ def build_window(model=None):
         tabs = QtWidgets.QTabWidget()
         code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
         code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        dlg._code_hl = _python_highlighter_class(QtGui, QtCore)(code.document())
         out = QtWidgets.QPlainTextEdit(); out.setReadOnly(True)
         out.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
         out.setPlaceholderText("press Run to execute this example and see its ground-truth output here")
@@ -3494,6 +3721,35 @@ def build_window(model=None):
             except Exception as e:
                 report_error("copy", e)
         b_copy.clicked.connect(copy_code)
+
+        b_edit = QtWidgets.QPushButton("Open in editor")
+        b_edit.setToolTip("Load this example into the Python Editor as editable, runnable code")
+        btnrow.insertWidget(1, b_edit)
+
+        def edit_code():
+            it = lst.currentItem()
+            if it is None: return
+            i = it.data(QtCore.Qt.UserRole)
+            try:
+                show_python_editor(EX.code(i), i + ".py")
+            except Exception as e:
+                report_error("editor", e)
+        b_edit.clicked.connect(lambda _=False: edit_code())
+
+        b_mdiw = QtWidgets.QPushButton("Open in window")
+        b_mdiw.setToolTip("Open this example's code as its own MDI window — open several "
+                          "samples side by side and copy fragments between them")
+        btnrow.insertWidget(1, b_mdiw)
+
+        def win_code():
+            it = lst.currentItem()
+            if it is None: return
+            i = it.data(QtCore.Qt.UserRole)
+            try:
+                open_code_window(i + ".py", EX.code(i))
+            except Exception as e:
+                report_error("code window", e)
+        b_mdiw.clicked.connect(lambda _=False: win_code())
 
         def run_example():
             # Run the selected example in a subprocess (QProcess = non-blocking; the GUI stays
@@ -3533,7 +3789,8 @@ def build_window(model=None):
         h.addLayout(left, 1); h.addLayout(right, 2)
         refill_list()
         if lst.count(): lst.setCurrentRow(0); preview()
-        persist_dialog_geometry(dlg, "ex3d"); win._ex3d_dlg = dlg; dlg.show()
+        persist_dialog_geometry(dlg, "ex3d"); win._ex3d_dlg = dlg
+        win._localize(dlg); dlg.show()
 
     def show_2d_examples():
         # 2-D geometric-vision gallery: browse the examples2d worked examples (morph / shape
@@ -3580,6 +3837,7 @@ def build_window(model=None):
         tabs = QtWidgets.QTabWidget()
         code = QtWidgets.QPlainTextEdit(); code.setReadOnly(True)
         code.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        dlg._code_hl = _python_highlighter_class(QtGui, QtCore)(code.document())
         out = QtWidgets.QPlainTextEdit(); out.setReadOnly(True)
         out.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
         out.setPlaceholderText("press Run to execute this example and see its ground-truth output here")
@@ -3612,6 +3870,35 @@ def build_window(model=None):
                 report_error("copy", e)
         b_copy.clicked.connect(copy_code)
 
+        b_edit = QtWidgets.QPushButton("Open in editor")
+        b_edit.setToolTip("Load this example into the Python Editor as editable, runnable code")
+        btnrow.insertWidget(1, b_edit)
+
+        def edit_code():
+            it = lst.currentItem()
+            if it is None: return
+            i = it.data(QtCore.Qt.UserRole)
+            try:
+                show_python_editor(EX.code(i), i + ".py")
+            except Exception as e:
+                report_error("editor", e)
+        b_edit.clicked.connect(lambda _=False: edit_code())
+
+        b_mdiw = QtWidgets.QPushButton("Open in window")
+        b_mdiw.setToolTip("Open this example's code as its own MDI window — open several "
+                          "samples side by side and copy fragments between them")
+        btnrow.insertWidget(1, b_mdiw)
+
+        def win_code():
+            it = lst.currentItem()
+            if it is None: return
+            i = it.data(QtCore.Qt.UserRole)
+            try:
+                open_code_window(i + ".py", EX.code(i))
+            except Exception as e:
+                report_error("code window", e)
+        b_mdiw.clicked.connect(lambda _=False: win_code())
+
         def run_example():
             it = lst.currentItem()
             if it is None or getattr(dlg, "_proc", None) is not None:
@@ -3643,7 +3930,292 @@ def build_window(model=None):
         h.addLayout(left, 1); h.addLayout(right, 2)
         refill_list()
         if lst.count(): lst.setCurrentRow(0); preview()
-        persist_dialog_geometry(dlg, "ex2d"); win._ex2d_dlg = dlg; dlg.show()
+        persist_dialog_geometry(dlg, "ex2d"); win._ex2d_dlg = dlg
+        win._localize(dlg); dlg.show()
+
+    def show_python_editor(code_text=None, name_hint=None):
+        # Qt Creator / HDevelop-style Python workbench: a MULTI-DOCUMENT (tabbed) editor
+        # + run console, so a worked example (or any fullseye script) can be opened,
+        # modified and executed as-is — and, like HDevelop's main + sub-scripts, several
+        # scripts stay open and editable at once (user spec 2026-08-30). Scripts run in
+        # a subprocess (QProcess = non-blocking, GUI stays responsive) with the repo on
+        # PYTHONPATH, exactly like the example galleries' Run buttons.
+        if getattr(win, "_pyedit_dlg", None) is not None:
+            d = win._pyedit_dlg
+            d.show(); d.raise_(); d.activateWindow()
+            if code_text is not None:
+                win._pyedit["open_tab"](code_text, name_hint)
+            return
+        repo_root = os.path.dirname(os.path.abspath(__file__))
+        dlg = QtWidgets.QDialog(win); tag_dialog(dlg, "reference"); dlg.setModal(False)
+        v = QtWidgets.QVBoxLayout(dlg)
+        CodeEditor = _code_editor_class(QtWidgets, QtGui, QtCore)
+        Highlighter = _python_highlighter_class(QtGui, QtCore)
+        tabs_ed = QtWidgets.QTabWidget()
+        tabs_ed.setTabsClosable(True); tabs_ed.setMovable(True)
+        tabs_ed.setDocumentMode(True)
+        out = QtWidgets.QPlainTextEdit(); out.setReadOnly(True)
+        out.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        out.setPlaceholderText("Run (F5) executes the CURRENT tab with the repo on PYTHONPATH; "
+                               "output streams here")
+        split = QtWidgets.QSplitter(QtCore.Qt.Vertical)
+        split.addWidget(tabs_ed); split.addWidget(out)
+        split.setStretchFactor(0, 3); split.setStretchFactor(1, 1)
+        status = QtWidgets.QLabel("ready"); status.setProperty("hint", True)
+        b_new = QtWidgets.QPushButton("New")
+        b_open = QtWidgets.QPushButton("Open…")
+        b_save = QtWidgets.QPushButton("Save")
+        b_saveas = QtWidgets.QPushButton("Save as…")
+        b_samples = QtWidgets.QToolButton(); b_samples.setText("Samples ▾")
+        b_samples.setPopupMode(QtWidgets.QToolButton.InstantPopup)
+        b_stop = QtWidgets.QPushButton("Stop"); b_stop.setEnabled(False)
+        b_run = QtWidgets.QPushButton("Run (F5)"); b_run.setProperty("accent", True)
+        btnrow = QtWidgets.QHBoxLayout()
+        for w in (b_new, b_open, b_save, b_saveas, b_samples):
+            btnrow.addWidget(w)
+        btnrow.addWidget(status, 1); btnrow.addWidget(b_stop); btnrow.addWidget(b_run)
+        v.addLayout(btnrow); v.addWidget(split, 1)
+        dlg._proc = None
+
+        def cur_editor():
+            return tabs_ed.currentWidget()             # a CodeEditor page, or None
+
+        def _tab_title(ed):
+            name = os.path.basename(ed._path) if ed._path else (ed._hint or "untitled.py")
+            return name + (" *" if ed._dirty else "")
+
+        def _sync_tab(ed):
+            i = tabs_ed.indexOf(ed)
+            if i >= 0:
+                tabs_ed.setTabText(i, _tab_title(ed))
+            if ed is tabs_ed.currentWidget():
+                dlg.setWindowTitle("Python Editor — %s" % _tab_title(ed))
+
+        def open_tab(text, hint=None, path=None):
+            # every document is its own tab (HDevelop main + sub-scripts); nothing is
+            # ever replaced, so no discard-confirm is needed
+            ed = CodeEditor()
+            ed._hl = Highlighter(ed.document())
+            ed._path = path; ed._hint = hint; ed._dirty = False
+            ed.setPlainText(text)
+            ed.textChanged.connect(lambda ed=ed: _mark_dirty(ed))
+            tabs_ed.setCurrentIndex(tabs_ed.addTab(ed, _tab_title(ed)))
+            _sync_tab(ed)
+            return ed
+
+        def _mark_dirty(ed):
+            if not ed._dirty:
+                ed._dirty = True; _sync_tab(ed)
+
+        def close_tab(i):
+            ed = tabs_ed.widget(i)
+            if ed is None:
+                return
+            if ed._dirty and ed.toPlainText().strip():
+                r = QtWidgets.QMessageBox.question(
+                    dlg, "Discard changes?",
+                    "'%s' has unsaved changes — close anyway?" % _tab_title(ed),
+                    QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+                if r != QtWidgets.QMessageBox.Yes:
+                    return
+            tabs_ed.removeTab(i); ed.deleteLater()
+        tabs_ed.tabCloseRequested.connect(close_tab)
+        tabs_ed.currentChanged.connect(
+            lambda _i: (cur_editor() is not None) and _sync_tab(cur_editor()))
+
+        def new_file():
+            open_tab("# Fullseye scratch — the repo is on PYTHONPATH (import fullseye works).\n"
+                     "import numpy as np\n"
+                     "import fullseye\n"
+                     "\n"
+                     "img = np.zeros((64, 64), dtype=np.uint8)\n"
+                     "img[16:48, 16:48] = 200\n"
+                     "out = fullseye.apply(img, 'gaussian', 1.2, 0.0)\n"
+                     "print('mean after gaussian:', float(out.mean()))\n",
+                     "untitled.py")
+
+        def save_to(path):
+            ed = cur_editor()
+            if ed is None:
+                return False
+            try:
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(ed.toPlainText())
+            except Exception as e:
+                report_error("save", e); return False
+            ed._path = path; ed._dirty = False; _sync_tab(ed)
+            flash("saved " + os.path.basename(path))
+            return True
+
+        def do_save_as():
+            ed = cur_editor()
+            if ed is None:
+                return
+            p, _f = QtWidgets.QFileDialog.getSaveFileName(
+                dlg, "Save Python file",
+                os.path.join(repo_root, ed._hint or "untitled.py"), "Python (*.py)")
+            if p:
+                save_to(p)
+
+        def do_save():
+            ed = cur_editor()
+            if ed is None:
+                return
+            if ed._path:
+                save_to(ed._path)
+            else:
+                do_save_as()
+
+        def open_path(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    text = f.read()
+            except Exception as e:
+                report_error("open", e); return
+            open_tab(text, os.path.basename(path), path=path)
+
+        def do_open():
+            p, _f = QtWidgets.QFileDialog.getOpenFileName(
+                dlg, "Open Python file", repo_root, "Python (*.py)")
+            if p:
+                open_path(p)
+
+        # -- Samples menu: every 2-D / 3-D worked example, grouped by task. Each opens
+        #    as a NEW TAB without a path, so Save routes to Save-as (a shipped,
+        #    validate()-checked example can never be overwritten by accident). --
+        smenu = QtWidgets.QMenu(dlg)
+        for label, modname in (("2-D examples", "examples2d"), ("3-D examples", "examples3d")):
+            try:
+                EXm = __import__(modname)
+            except Exception:
+                continue
+            sub = smenu.addMenu(label)
+            for task, ids in EXm.by_task().items():
+                tsub = sub.addMenu(task)
+                for i in ids:
+                    tsub.addAction("%s — %s" % (i, EXm.get(i)["name"]),
+                                   (lambda i=i, EXm=EXm:
+                                    open_tab(EXm.code(i), i + ".py")))
+        b_samples.setMenu(smenu)
+
+        def run_code():
+            ed = cur_editor()
+            if dlg._proc is not None or ed is None:
+                return
+            text = ed.toPlainText()
+            if not text.strip():
+                flash("nothing to run — the editor is empty"); return
+            script = ed._path
+            if script is None or ed._dirty:
+                # unsaved buffers run from a scratch copy — Run never forces a Save
+                import tempfile
+                d = os.path.join(tempfile.gettempdir(), "fullseye_studio")
+                try:
+                    os.makedirs(d, exist_ok=True)
+                    script = os.path.join(d, "scratch_%d.py" % os.getpid())
+                    with open(script, "w", encoding="utf-8") as f:
+                        f.write(text)
+                except Exception as e:
+                    report_error("run", e); return
+            out.setPlainText("$ py %s\n\n" % os.path.basename(script))
+            status.setText("running…")
+            proc = QtCore.QProcess(dlg)
+            proc.setProcessChannelMode(QtCore.QProcess.MergedChannels)
+            proc.setWorkingDirectory(repo_root)
+            env = QtCore.QProcessEnvironment.systemEnvironment()
+            env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
+            env.insert("PYTHONUTF8", "1")
+            proc.setProcessEnvironment(env)
+            def on_out():
+                out.moveCursor(QtGui.QTextCursor.End)
+                out.insertPlainText(bytes(proc.readAll()).decode("utf-8", "replace"))
+                out.moveCursor(QtGui.QTextCursor.End)
+            def on_done(code_, st=None):
+                on_out()
+                if st == QtCore.QProcess.CrashExit:
+                    status.setText("stopped")
+                elif code_ == 0:
+                    status.setText("PASS ✓ (exit 0)")
+                else:
+                    status.setText("FAIL (exit %d)" % code_)
+                dlg._proc = None
+                b_run.setEnabled(True); b_stop.setEnabled(False)
+            proc.readyRead.connect(on_out); proc.finished.connect(on_done)
+            # System settings can point Run at another interpreter (venv etc.);
+            # a broken path is refused up-front (fail-closed) instead of a cryptic
+            # QProcess failure.
+            interp = str(QtCore.QSettings("Fullseye", "Studio")
+                         .value("pyedit/interpreter", "") or "").strip()
+            if interp and not os.path.isfile(interp):
+                report_error("run", "configured interpreter not found: %s" % interp)
+                dlg._proc = None; b_run.setEnabled(True); b_stop.setEnabled(False)
+                return
+            dlg._proc = proc; b_run.setEnabled(False); b_stop.setEnabled(True)
+            proc.start(interp or sys.executable, [script])
+
+        def stop_code():
+            if dlg._proc is not None:
+                dlg._proc.kill()
+
+        b_new.clicked.connect(lambda _=False: new_file())
+        b_open.clicked.connect(lambda _=False: do_open())
+        b_save.clicked.connect(lambda _=False: do_save())
+        b_saveas.clicked.connect(lambda _=False: do_save_as())
+        b_run.clicked.connect(lambda _=False: run_code())
+        b_stop.clicked.connect(lambda _=False: stop_code())
+        QtGui.QShortcut(QtGui.QKeySequence("F5"), dlg, run_code)
+        QtGui.QShortcut(QtGui.QKeySequence("Ctrl+S"), dlg, do_save)
+
+        win._pyedit = {"dlg": dlg, "tabs": tabs_ed, "editor": cur_editor, "output": out,
+                       "status": status, "run": run_code, "stop": stop_code,
+                       "open_tab": open_tab, "close_tab": close_tab, "save_to": save_to,
+                       "open_path": open_path, "new": new_file}
+        if code_text is not None:
+            open_tab(code_text, name_hint)
+        else:
+            new_file()
+        persist_dialog_geometry(dlg, "pyedit", default_size=(920, 660))
+        win._pyedit_dlg = dlg
+        win._localize(dlg)                     # register + translate this lazy dialog
+        dlg.show()
+
+    def open_code_window(title, text):
+        # A read-only, syntax-highlighted CODE window inside the MDI area — the sample-
+        # browsing counterpart of a graphics window (user spec 2026-08-30: comparing
+        # several samples and copying fragments between them is everyday work in an
+        # MDI IDE). Non-singleton: open as many as needed; Window-menu tile/cascade
+        # applies; select any fragment and Ctrl+C copies it.
+        w = QtWidgets.QWidget()
+        v = QtWidgets.QVBoxLayout(w); v.setContentsMargins(4, 4, 4, 4); v.setSpacing(4)
+        ed = QtWidgets.QPlainTextEdit(); ed.setReadOnly(True)
+        ed.setLineWrapMode(QtWidgets.QPlainTextEdit.NoWrap)
+        f = QtGui.QFont("Consolas"); f.setStyleHint(QtGui.QFont.Monospace); f.setPointSize(10)
+        ed.setFont(f)
+        ed.setPlainText(text)
+        w._hl = _python_highlighter_class(QtGui, QtCore)(ed.document())
+        hint = QtWidgets.QLabel("select any fragment — Ctrl+C copies it")
+        hint.setProperty("hint", True)
+        b_copy = QtWidgets.QPushButton("Copy all")
+        b_edit = QtWidgets.QPushButton("Open in editor")
+        row = QtWidgets.QHBoxLayout()
+        row.addWidget(hint, 1); row.addWidget(b_copy); row.addWidget(b_edit)
+        v.addWidget(ed, 1); v.addLayout(row)
+
+        def _copy_all(_=False):
+            QtWidgets.QApplication.clipboard().setText(ed.toPlainText())
+            flash("copied '%s' to the clipboard" % title)
+        b_copy.clicked.connect(_copy_all)
+        b_edit.clicked.connect(lambda _=False: show_python_editor(ed.toPlainText(), title))
+        sub = mdi.addSubWindow(w)
+        sub.setWindowTitle(title)
+        sub.setAttribute(QtCore.Qt.WA_DeleteOnClose)
+        sub.resize(520, 480)
+        win._code_windows = [s for s in getattr(win, "_code_windows", [])
+                             if s in mdi.subWindowList()]
+        win._code_windows.append(sub)
+        win._localize(sub)
+        sub.show()
+        return sub
 
     def add_op_by_name(n):
         row = _op_row(n)
@@ -3971,9 +4543,53 @@ def build_window(model=None):
         stage_list.setCurrentRow(nxt - 1)
         code_status.setText("stepped to line %d" % nxt)
 
+    def continue_program():
+        # HDevelop F5 semantics (user spec 2026-08-30: pause / resume / restart-from-line
+        # freedom): resume from the CURRENT execution line — not line 1 — to the next
+        # breakpoint or the end. A gutter breakpoint is the "pause"; this is the "resume";
+        # run_from() below is the "restart from an arbitrary line".
+        if not model.stages:
+            code_status.setText("no stages to run"); return
+        start = max(code_edit._exec_line, 0)            # 1-based last-executed line (0 = none)
+        try:
+            v = model.result_upto(start - 1)            # recompute state up to that line
+        except Exception as e:
+            code_status.setText("cannot continue: %s" % e); return
+        timings = dict(code_edit.timings); last = start - 1; hit_bp = False
+        for i in range(start, len(model.stages)):
+            name, a, b = model.stages[i]
+            fn = api.RT.get(name)
+            if fn is None:
+                break
+            t0 = _time.perf_counter()
+            try:
+                v = fn(v, a, b)
+            except Exception:
+                pass
+            timings[i + 1] = (_time.perf_counter() - t0) * 1000.0
+            last = i
+            if (i + 1) in code_edit.breakpoints:
+                hit_bp = True
+                break
+        if state["dev_update"]["time"]:
+            code_edit.set_timings(timings)
+        if state["dev_update"]["pc"]:
+            code_edit.set_exec_line(last + 1)
+        if 0 <= last < len(model.stages):
+            stage_list.setCurrentRow(last)
+        code_status.setText("continued line %d → %d%s"
+                            % (start + 1, last + 1,
+                               "  · stopped at breakpoint" if hit_bp else ""))
+
+    def run_from(line):
+        # restart execution AT `line` (1-based): position the cursor before it, continue
+        code_edit.set_exec_line(max(0, int(line) - 1))
+        continue_program()
+
     c_apply.clicked.connect(apply_program)
     c_sync.clicked.connect(sync_program)
     c_run.clicked.connect(lambda: run_program(True))
+    c_cont.clicked.connect(lambda: continue_program())
     c_step.clicked.connect(step_program)
     def reset_program():
         state["code_dirty"] = False           # discard unapplied edits, restore code from the pipeline
@@ -3982,7 +4598,8 @@ def build_window(model=None):
         code_status.setText("ready")
     c_reset.clicked.connect(reset_program)
     win._program = {"edit": code_edit, "apply": apply_program, "run": run_program,
-                    "step": step_program, "parse": parse_program, "text": program_text_from_model}
+                    "step": step_program, "continue": continue_program, "run_from": run_from,
+                    "parse": parse_program, "text": program_text_from_model}
 
     # -- variables & objects window wiring (inspect / display any stage output) - #
     def _var_entries():
@@ -3999,12 +4616,77 @@ def build_window(model=None):
     def show_variable_inspection():
         it = var_list.currentItem()
         if it is None:
-            var_inspect.setPlainText(""); return
+            var_inspect.setPlainText(""); refresh_watches(); return
         try:
             val = model.result_upto(it.data(QtCore.Qt.UserRole))
             var_inspect.setPlainText(format_inspection(inspect_result(val)))
         except Exception as e:
             var_inspect.setPlainText("inspect error: %s" % e)
+        refresh_watches()
+
+    # -- watch-expression evaluation (widgets built next to var_inspect above) -- #
+    _WATCH_BUILTINS = {"abs": abs, "len": len, "min": min, "max": max, "sum": sum,
+                       "round": round, "float": float, "int": int, "bool": bool}
+
+    def _save_watches():
+        exprs = [watch_table.item(r, 0).text() for r in range(watch_table.rowCount())]
+        QtCore.QSettings("Fullseye", "Studio").setValue("watch/expressions", exprs)
+
+    def refresh_watches():
+        # every watch row is evaluated against the SELECTED variable; a failing
+        # expression shows its error in place (never crashes the panel).
+        it = var_list.currentItem()
+        val = None
+        if it is not None:
+            try:
+                val = model.result_upto(it.data(QtCore.Qt.UserRole))
+            except Exception:
+                val = None
+        env = {"v": val, "np": np, "img": model.image}
+        for r in range(watch_table.rowCount()):
+            expr = watch_table.item(r, 0).text()
+            try:
+                # a local debugger-style watch window: the expressions are the user's
+                # own, evaluated in-process on purpose (same trust level as the CLI)
+                res = eval(expr, {"__builtins__": _WATCH_BUILTINS}, env)
+                if isinstance(res, np.ndarray):
+                    txt = ("%s %s mean=%.5g" % ("×".join(str(s) for s in res.shape),
+                                                res.dtype, float(np.nanmean(res)))
+                           if res.size else "empty array")
+                else:
+                    txt = repr(res)
+            except Exception as e:
+                txt = "⚠ %s" % e
+            cell = QtWidgets.QTableWidgetItem(str(txt)[:200])
+            cell.setToolTip(str(txt))
+            watch_table.setItem(r, 1, cell)
+
+    def add_watch(expr=None, persist=True):
+        expr = (expr if isinstance(expr, str) else watch_input.text()).strip()
+        if not expr:
+            return
+        r = watch_table.rowCount(); watch_table.insertRow(r)
+        watch_table.setItem(r, 0, QtWidgets.QTableWidgetItem(expr))
+        watch_input.clear()
+        if persist:
+            _save_watches()
+        refresh_watches()
+
+    def del_watch():
+        r = watch_table.currentRow()
+        if r >= 0:
+            watch_table.removeRow(r); _save_watches(); refresh_watches()
+
+    w_add.clicked.connect(lambda _=False: add_watch())
+    watch_input.returnPressed.connect(add_watch)
+    w_del.clicked.connect(lambda _=False: del_watch())
+    _saved_watches = QtCore.QSettings("Fullseye", "Studio").value("watch/expressions") or []
+    if isinstance(_saved_watches, str):           # QSettings round-trips a 1-list as str
+        _saved_watches = [_saved_watches]
+    for _e in _saved_watches:
+        add_watch(str(_e), persist=False)
+    win._watch = {"table": watch_table, "input": watch_input, "add": add_watch,
+                  "remove": del_watch, "refresh": refresh_watches}
 
     _VAR_THUMB = 44
 
@@ -4302,22 +4984,64 @@ def build_window(model=None):
         if not (0 <= i < len(model.stages)):
             return []
         return [("Run to here", lambda: step_to(i)),
+                ("Run from here", lambda: win._program["run_from"](i + 1)),
+                ("Continue (to breakpoint / end)", lambda: win._program["continue"]()),
                 ("---", None),
                 ("Remove stage", remove),
                 ("Move up", lambda: move(-1)),
                 ("Move down", lambda: move(1))]
 
+    def inspect_variable_popup():
+        # right-click "show me the contents" (user spec 2026-08-30): a self-contained
+        # popup with the full inspection, percentiles and a value preview — no need to
+        # hunt for the docked inspector panel.
+        it = var_list.currentItem()
+        if it is None:
+            return
+        try:
+            val = model.result_upto(it.data(QtCore.Qt.UserRole))
+        except Exception as e:
+            report_error("inspect", e); return
+        lines = [format_inspection(inspect_result(val))]
+        if isinstance(val, np.ndarray) and val.ndim in (2, 3):
+            plane = val if val.ndim == 2 else val[..., 0]
+            fin = plane[np.isfinite(plane)]
+            if fin.size:
+                qs = np.percentile(fin, [1, 25, 50, 75, 99])
+                lines.append("")
+                lines.append("percentiles 1/25/50/75/99: "
+                             + "  ".join("%.5g" % q for q in qs))
+            with np.printoptions(precision=4, threshold=200, linewidth=96,
+                                 suppress=True):
+                lines.append("")
+                lines.append("top-left 6×6 preview:")
+                lines.append(str(plane[:6, :6]))
+        dlgv = QtWidgets.QDialog(win)
+        dlgv.setWindowTitle("Variable — %s" % it.text().strip().splitlines()[0])
+        tag_dialog(dlgv, "reference"); dlgv.setModal(False)
+        lay = QtWidgets.QVBoxLayout(dlgv)
+        te = QtWidgets.QPlainTextEdit(); te.setReadOnly(True)
+        te.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace;")
+        te.setPlainText(chr(10).join(lines))
+        lay.addWidget(te)
+        dlgv.resize(480, 400); dlgv.show()
+        win._last_var_popup = dlgv                    # test / scripting hook
+        return dlgv
+
     def _var_ctx():
         if var_list.currentItem() is None:
             return []
-        return [("Display → current window", lambda: display_variable("current")),
+        return [("Inspect in popup…", inspect_variable_popup),
+                ("---", None),
+                ("Display → current window", lambda: display_variable("current")),
                 ("Display → new window", lambda: display_variable("new")),
                 ("---", None),
-                ("Inspect", show_variable_inspection)]
+                ("Inspect (panel)", show_variable_inspection)]
 
     win._ctx = {"operators": _ctx_menu(op_list, _op_ctx),
                 "pipeline": _ctx_menu(stage_list, _stage_ctx),
                 "variables": _ctx_menu(var_list, _var_ctx)}
+    win._variables["popup"] = inspect_variable_popup     # right-click "Inspect in popup…"
 
     act_palette.triggered.connect(show_palette)
     act_shortcuts.triggered.connect(show_shortcuts)
@@ -4328,6 +5052,7 @@ def build_window(model=None):
     act_3d_examples.triggered.connect(show_3d_examples)
     act_3d_ops.triggered.connect(show_3d_ops)
     act_2d_examples.triggered.connect(show_2d_examples)
+    act_pyedit.triggered.connect(lambda _=False: show_python_editor())
     b_browse_samples.clicked.connect(show_samples)       # sample gallery reachable from the panel
     win._samples = samples
     win._browse_samples = b_browse_samples
@@ -4480,7 +5205,14 @@ def build_window(model=None):
         unlike the pipeline stages (which honour if/for), dev_* directives are applied
         UNCONDITIONALLY — a dev_* inside a not-taken branch still fires. Put them at
         top level. The frozen-display state is surfaced by the status-bar indicator.
-        See docs/HDEVELOP_DEV_OPS.md."""
+        Window management: dev_open_window (row, col, w, h) opens/places a graphics
+        window and makes it current; dev_set_window (handle) selects one by handle;
+        dev_set_window_extents (row, col, w, h) moves/resizes the current window
+        (-1 keeps a value); dev_close_window closes the current one (the resident
+        primary window is close-protected). Windows opened by the program are keyed
+        to their source-order slot, so RE-Applying the same program repositions the
+        SAME windows instead of multiplying them. See docs/HDEVELOP_DEV_OPS.md."""
+        open_slot = 0
         for name, args in extract_dev_directives(text):
             if name == "dev_update_off":
                 set_dev_update("all", False)
@@ -4519,6 +5251,55 @@ def build_window(model=None):
                     _set_system_param(str(args[0]), args[1])   # HALCON set_system(param, value)
                 except (TypeError, ValueError):
                     pass
+            elif name == "dev_open_window":
+                open_slot += 1
+                try:
+                    r, c = int(args[0]), int(args[1])
+                    w_, h_ = int(args[2]), int(args[3])
+                except (IndexError, TypeError, ValueError):
+                    r = c = 0; w_, h_ = 440, 360
+                sub = next((s for s in win._graphics_windows
+                            if s in mdi.subWindowList()
+                            and getattr(s, "_fs_directive_slot", None) == open_slot), None)
+                if sub is None:
+                    sub = new_graphics_window(title="Graphics (program %d)" % open_slot)
+                    if sub is None:                    # window cap reached — skip placement
+                        continue
+                    sub._fs_directive_slot = open_slot
+                else:
+                    win._current_gfx = sub
+                    _update_current_indicator()
+                sub.move(max(0, c), max(0, r))
+                sub.resize(max(80, w_), max(60, h_))
+            elif name == "dev_set_window" and args:
+                try:
+                    hd = int(args[0])
+                except (TypeError, ValueError):
+                    hd = -1
+                target = next((s for s in win._graphics_windows
+                               if s in mdi.subWindowList()
+                               and getattr(s, "_fs_handle", None) == hd), None)
+                if target is not None:
+                    win._current_gfx = target
+                    _update_current_indicator()
+            elif name == "dev_set_window_extents" and len(args) >= 4:
+                sub = win._current_gfx
+                if sub is not None and sub in mdi.subWindowList():
+                    try:
+                        r, c, w_, h_ = (int(a) for a in args[:4])
+                    except (TypeError, ValueError):
+                        r = c = w_ = h_ = -1
+                    g = sub.geometry()
+                    sub.move(c if c >= 0 else g.x(), r if r >= 0 else g.y())
+                    sub.resize(w_ if w_ > 0 else g.width(), h_ if h_ > 0 else g.height())
+            elif name == "dev_close_window":
+                sub = win._current_gfx
+                if sub is win._primary_gsub:
+                    flash("the primary graphics window stays open (resident view)")
+                elif sub is not None and sub in mdi.subWindowList():
+                    sub.close()
+                    win._current_gfx = win._primary_gsub
+                    _update_current_indicator()
             # dev_disp_text is a DRAW directive applied after the render (apply_text_directives)
     win._apply_dev_directives = apply_dev_directives
 
@@ -4549,6 +5330,7 @@ def build_window(model=None):
         s = QtCore.QSettings("Fullseye", "Studio"); s.beginGroup("system")
         s.setValue("threads", int(state["system"]["threads"]))
         s.setValue("operator_timeout_ms", int(state["system"]["operator_timeout_ms"]))
+        s.setValue("max_graphics_windows", int(state["system"]["max_graphics_windows"]))
         s.endGroup()
 
     def _get_system_param(name):
@@ -4558,10 +5340,12 @@ def build_window(model=None):
             return int(cv2.getNumThreads()) if cv2 is not None else int(state["system"]["threads"])
         if name in ("operator_timeout", "operator_timeout_ms"):
             return int(state["system"]["operator_timeout_ms"])
+        if name == "max_graphics_windows":
+            return int(state["system"]["max_graphics_windows"])
         if name in ("check", "error_check"):
             return "on"            # Fullseye's runtime is fail-closed (industrial refuses degraded ops)
-        raise ValueError("unknown system parameter %r; known: thread_num, operator_timeout, check"
-                         % (name,))
+        raise ValueError("unknown system parameter %r; known: thread_num, operator_timeout, "
+                         "max_graphics_windows, check" % (name,))
 
     def _set_system_param(name, value):
         """set_system: set a HALCON-style system parameter (fail-closed on an unknown name)."""
@@ -4580,16 +5364,64 @@ def build_window(model=None):
             state["system"]["operator_timeout_ms"] = ms
             _persist_system()
             return ms
-        raise ValueError("unknown system parameter %r; known: thread_num, operator_timeout"
-                         % (name,))
+        if name == "max_graphics_windows":
+            n = int(value)
+            if n < 1:
+                raise ValueError("max_graphics_windows must be >= 1")
+            state["system"]["max_graphics_windows"] = n
+            _persist_system()
+            return n
+        raise ValueError("unknown system parameter %r; known: thread_num, operator_timeout, "
+                         "max_graphics_windows" % (name,))
     win._set_system_param = _set_system_param
     win._get_system_param = _get_system_param
 
+    def _apply_mono_font(pt):
+        """Apply the monospace editor font size to every live code surface (the
+        pipeline program editor + open Python Editor tabs) and persist it; a new
+        CodeEditor picks the persisted value up on construction."""
+        pt = max(6, min(int(pt), 32))
+        QtCore.QSettings("Fullseye", "Studio").setValue("ui/mono_font_pt", pt)
+        for ed in [code_edit] + ([win._pyedit["tabs"].widget(i)
+                                  for i in range(win._pyedit["tabs"].count())]
+                                 if getattr(win, "_pyedit", None) else []):
+            f = ed.font(); f.setPointSize(pt); ed.setFont(f)
+            # widget-level rule outranks the app QSS (which pins QPlainTextEdit fonts)
+            ed.setStyleSheet("font-family:Consolas,'Cascadia Mono',monospace; "
+                             "font-size:%dpt;" % pt)
+            ed.setTabStopDistance(4 * ed.fontMetrics().horizontalAdvance(" "))
+        return pt
+    win._apply_mono_font = _apply_mono_font
+    try:        # apply the persisted size to the program editor at startup
+        _apply_mono_font(int(QtCore.QSettings("Fullseye", "Studio")
+                             .value("ui/mono_font_pt", 10)))
+    except (TypeError, ValueError):
+        pass
+
     def open_system_settings():
+        # Preferences hub (Tools menu / Ctrl+,) — the parameters a vision IDE needs at
+        # hand: execution (threads / timeout), windows (cap), display defaults (LUT /
+        # region draw), and the developer surface (editor font / run interpreter).
         dlg = QtWidgets.QDialog(win)
         dlg.setWindowTitle("System settings — Fullseye Studio")
         tag_dialog(dlg, "system")
-        form = QtWidgets.QFormLayout(dlg)
+        # -- category tree (left, whole-picture overview) + one page per category
+        #    (right), Qt Creator preferences style (user spec 2026-08-30) --
+        root = QtWidgets.QVBoxLayout(dlg)
+        body = QtWidgets.QHBoxLayout()
+        cat_tree = QtWidgets.QTreeWidget(); cat_tree.setHeaderHidden(True)
+        cat_tree.setFixedWidth(180)
+        stack = QtWidgets.QStackedWidget()
+
+        def _settings_page(title, rows):
+            pg = QtWidgets.QWidget(); f = QtWidgets.QFormLayout(pg)
+            for lab, wdg in rows:
+                f.addRow(tr(lab), wdg)
+            i = stack.addWidget(pg)
+            it = QtWidgets.QTreeWidgetItem([tr(title)])
+            it.setData(0, QtCore.Qt.UserRole, i)
+            cat_tree.addTopLevelItem(it)
+            return pg
         th = QtWidgets.QSpinBox(); th.setRange(0, 256); th.setValue(_get_system_param("thread_num"))
         th.setToolTip("set_system('thread_num'): OpenCV worker threads (0 = default / all). "
                       "Affects interactive operator speed.")
@@ -4597,20 +5429,76 @@ def build_window(model=None):
         to.setValue(_get_system_param("operator_timeout"))
         to.setToolTip("set_operator_timeout: SOFT per-stage timeout — a slower stage is flagged "
                       "in Run status (native ops cannot be hard-interrupted; 0 = off).")
+        mw = QtWidgets.QSpinBox(); mw.setRange(1, 4096)
+        mw.setValue(_get_system_param("max_graphics_windows"))
+        mw.setToolTip("set_system('max_graphics_windows'): cap on open graphics windows.\n"
+                      "Guards every path (dev_open_window scripts, Ctrl+G, variable display) "
+                      "so a looping program cannot flood the MDI.")
+        sset = QtCore.QSettings("Fullseye", "Studio")
+        dmode = QtWidgets.QComboBox(); dmode.addItems(sorted(win._display_actions))
+        cur_mode = next((m for m, a in win._display_actions.items() if a.isChecked()),
+                        None)
+        if cur_mode is not None:
+            dmode.setCurrentText(cur_mode)
+        dmode.setToolTip("Default display mode (LUT) — applied now and restored on startup.")
+        drawm = QtWidgets.QComboBox(); drawm.addItems(["fill", "margin"])
+        drawm.setCurrentText(str(state["draw"].get("mode", "fill")))
+        drawm.setToolTip("dev_set_draw default: how a region result is painted over the image.")
+        drawlw = QtWidgets.QSpinBox(); drawlw.setRange(1, 9)
+        drawlw.setValue(int(state["draw"].get("line_width", 1)))
+        drawlw.setToolTip("dev_set_line_width default for the margin draw mode.")
+        fpt = QtWidgets.QSpinBox(); fpt.setRange(6, 32)
+        fpt.setValue(int(sset.value("ui/mono_font_pt", 10)))
+        fpt.setToolTip("Monospace font size for the program editor, Python Editor tabs "
+                       "and code windows.")
+        interp = QtWidgets.QLineEdit(str(sset.value("pyedit/interpreter", "") or ""))
+        interp.setPlaceholderText(sys.executable + "   (empty = this Studio's Python)")
+        interp.setToolTip("Interpreter used by the Python Editor's Run. Empty = the Python "
+                          "running Studio. A non-existent path is refused (fail-closed).")
         chk = QtWidgets.QLabel("fail-closed  (the runtime refuses degraded operators)")
         chk.setStyleSheet("QLabel{color:%s;}" % MUTED)
-        form.addRow("Threads (thread_num)", th)
-        form.addRow("Operator timeout", to)
-        form.addRow("Error checking (set_check)", chk)
+        _settings_page("Execution", [("Threads (thread_num)", th),
+                                     ("Operator timeout", to),
+                                     ("Error checking (set_check)", chk)])
+        _settings_page("Windows", [("Max graphics windows", mw)])
+        _settings_page("Display", [("Default display mode", dmode),
+                                   ("Region draw (dev_set_draw)", drawm),
+                                   ("Region line width", drawlw)])
+        _settings_page("Editor", [("Editor font size", fpt),
+                                  ("Python Editor interpreter", interp)])
+        cat_tree.currentItemChanged.connect(
+            lambda it, _prev=None: it is not None
+            and stack.setCurrentIndex(it.data(0, QtCore.Qt.UserRole)))
+        cat_tree.setCurrentItem(cat_tree.topLevelItem(0))
+        body.addWidget(cat_tree); body.addWidget(stack, 1)
+        root.addLayout(body, 1)
         bb = QtWidgets.QDialogButtonBox(
             QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         bb.accepted.connect(dlg.accept); bb.rejected.connect(dlg.reject)
-        form.addRow(bb)
+        root.addWidget(bb)
+        dlg.resize(640, 420)
+        dlg._tree = cat_tree; dlg._stack = stack     # test / scripting hooks
         win._system_dialog = dlg               # for headless tests
+        # NOTE: no win._localize here — this dialog is rebuilt per-open with tr() at
+        # build time; registering tr()-produced text would poison the English baseline
         if dlg.exec() == QtWidgets.QDialog.Accepted:
             _set_system_param("thread_num", th.value())
             _set_system_param("operator_timeout", to.value())
-            flash("system settings applied (threads %d, timeout %d ms)" % (th.value(), to.value()))
+            _set_system_param("max_graphics_windows", mw.value())
+            win._set_display_mode(dmode.currentText())
+            sset.setValue("display/default_mode", dmode.currentText())
+            set_draw_style(mode=drawm.currentText(), line_width=drawlw.value())
+            sset.setValue("draw/mode", drawm.currentText())
+            sset.setValue("draw/line_width", drawlw.value())
+            _apply_mono_font(fpt.value())
+            ip = interp.text().strip()
+            if ip and not os.path.isfile(ip):
+                report_error("Python Editor interpreter",
+                             "not a file (kept previous): %s" % ip)
+            else:
+                sset.setValue("pyedit/interpreter", ip)
+            flash("settings applied (threads %d · timeout %d ms · windows ≤%d · font %dpt)"
+                  % (th.value(), to.value(), mw.value(), fpt.value()))
     win._open_system_settings = open_system_settings
 
     def _latest_evis_perception():
@@ -4667,6 +5555,7 @@ def build_window(model=None):
     # temporary INI (conftest fixture) so tests stay hermetic.
     _s_sys = QtCore.QSettings("Fullseye", "Studio"); _s_sys.beginGroup("system")
     _sv_to, _sv_th = _s_sys.value("operator_timeout_ms"), _s_sys.value("threads")
+    _sv_mw = _s_sys.value("max_graphics_windows")
     _s_sys.endGroup()
     if _sv_to is not None:
         try:
@@ -4676,6 +5565,25 @@ def build_window(model=None):
     if _sv_th is not None:
         try:
             _set_system_param("thread_num", int(_sv_th))
+        except (TypeError, ValueError):
+            pass
+    if _sv_mw is not None:
+        try:
+            state["system"]["max_graphics_windows"] = max(1, int(_sv_mw))
+        except (TypeError, ValueError):
+            pass
+    # restore the display / draw preferences chosen in System settings
+    _s_pref = QtCore.QSettings("Fullseye", "Studio")
+    _pv_mode = _s_pref.value("display/default_mode")
+    if _pv_mode and str(_pv_mode) in win._display_actions:
+        win._set_display_mode(str(_pv_mode))
+    _pv_draw = _s_pref.value("draw/mode")
+    if _pv_draw in ("fill", "margin"):
+        set_draw_style(mode=str(_pv_draw))
+    _pv_lw = _s_pref.value("draw/line_width")
+    if _pv_lw is not None:
+        try:
+            set_draw_style(line_width=max(1, min(int(_pv_lw), 9)))
         except (TypeError, ValueError):
             pass
 
@@ -5136,19 +6044,79 @@ def build_window(model=None):
     _rebuild_recent_menu()
     _set_title()
 
-    # -- tooltip / help localisation (en / ja / zh) --------------------------- #
+    # -- tooltip / label / message localisation (en / ja / zh) ---------------- #
+    # Same pattern for both: snapshot the ENGLISH baseline after construction, then
+    # swap through the i18n.json tables on language switch. Labels use the 'strings'
+    # table (user spec 2026-08-30: 対訳はテーブルで一箇所に). Lazily-built dialogs
+    # register their subtree via win._localize(root).
     win._tt_en = {w: w.toolTip() for w in win.findChildren(QtWidgets.QWidget) if w.toolTip()}
+    win._label_en = {}
     win._lang = "en"
+    _UI_LANG["code"] = "en"                    # a fresh window starts from the base language
     win._lang_actions = {}
 
-    def apply_language(lang):
-        win._lang = lang if lang in ("en", "ja", "zh") else "en"
-        for w, en in win._tt_en.items():
+    def _collect_labels(root):
+        """(obj -> (setter-kind, english-text)) for the translatable chrome under
+        *root*: actions, menus, buttons, group boxes and STATIC labels. Dynamic
+        status labels (property hint/muted) are excluded so a language switch never
+        clobbers a live status message."""
+        out = {}
+        for a in root.findChildren(QtGui.QAction):
+            if a.text():
+                out[a] = ("text", a.text())
+        for w in root.findChildren(QtWidgets.QMenu):
+            if w.title():
+                out[w] = ("title", w.title())
+        for w in root.findChildren(QtWidgets.QGroupBox):
+            if w.title():
+                out[w] = ("title", w.title())
+        for w in root.findChildren(QtWidgets.QPushButton):
+            if w.text():
+                out[w] = ("text", w.text())
+        for w in root.findChildren(QtWidgets.QToolButton):
+            if w.text():
+                out[w] = ("text", w.text())
+        for w in root.findChildren(QtWidgets.QLabel):
+            if w.text() and not w.property("hint") and not w.property("muted") \
+                    and "<" not in w.text():          # skip rich-text / dynamic labels
+                out[w] = ("text", w.text())
+        return out
+    win._label_en.update(_collect_labels(win))
+
+    def _apply_labels(objs=None):
+        for obj, (kind, en) in list((objs or win._label_en).items()):
+            try:
+                txt = en if win._lang == "en" else STRINGS_I18N.get(en, {}).get(win._lang, en)
+                (obj.setTitle if kind == "title" else obj.setText)(txt)
+            except Exception:
+                pass                                   # a deleted widget is skipped
+
+    def _apply_tooltips(items=None):
+        for w, en in list((items or win._tt_en).items()):
             try:
                 w.setToolTip(en if win._lang == "en"
                              else TOOLTIPS_I18N.get(en, {}).get(win._lang, en))
             except Exception:
                 pass
+
+    def localize(root):
+        """Register a lazily-built dialog/window subtree for localisation and apply
+        the current language to it immediately (English snapshot = first sight)."""
+        tips = {w: w.toolTip() for w in root.findChildren(QtWidgets.QWidget)
+                if w.toolTip() and w not in win._tt_en}
+        labels = {o: v for o, v in _collect_labels(root).items() if o not in win._label_en}
+        win._tt_en.update(tips)
+        win._label_en.update(labels)
+        _apply_tooltips(tips)
+        _apply_labels(labels)
+        return root
+    win._localize = localize
+
+    def apply_language(lang):
+        win._lang = lang if lang in ("en", "ja", "zh") else "en"
+        _UI_LANG["code"] = win._lang
+        _apply_tooltips()
+        _apply_labels()
         for code, a in win._lang_actions.items():
             a.setChecked(code == win._lang)
         try:
