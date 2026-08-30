@@ -80,7 +80,7 @@ flowchart LR
 - **contours_to_region** — 輪郭画素を 2 値マスクに描き、`1+2a` 回 dilation して領域化する(*HALCON: gen_region_contour_xld*)。`fullseye.apply(cs, "contours_to_region", 0.5, 0.5)`
 - **gen_region_contour_xld** — 上と同じ輪郭→領域(2 値)(*HALCON: gen_region_contour_xld*)。`fullseye.apply(cs, "gen_region_contour_xld", 0.5, 0.5)`
 - **gen_region_polygon_xld** — 輪郭を多角形とみて塗りつぶし領域を作る(*HALCON: gen_region_polygon_xld*)。`fullseye.apply(cs, "gen_region_polygon_xld", 0.5, 0.5)`
-- **gen_contour_region_xld** — 領域(マスク)の境界を下位画素輪郭に戻す(*HALCON: gen_contour_region_xld*、入力は region)。`fullseye.apply(reg, "gen_contour_region_xld", 0.5, 0.5)`
+- **gen_contour_region_xld** — 領域(マスク)の境界を下位画素輪郭に戻す(*HALCON: gen_contour_region_xld*、入力は region)。境界点は**トレース順**(skimage `find_contours`、不在時は Moore 近傍トレース。2026-08-30 にラスタ順から修正 — 順序前提の EFD 等にそのまま渡せる)。`fullseye.apply(reg, "gen_contour_region_xld", 0.5, 0.5)`
 
 ### E. 輪郭の計測(contour -> feature)
 
