@@ -185,16 +185,24 @@ def shot_examples3d(out_path: str) -> None:
     win._act_3d_examples.trigger(); _pump(app, 8)
     dlg = win._ex3d_dlg
     lst = dlg.findChildren(QtWidgets.QListWidget)[0]
-    # select the Itokawa curvature worked example (real JAXA Hayabusa data)
+    # select the Itokawa curvature worked example (real JAXA Hayabusa data);
+    # fail loudly if it is not listed — silently running whatever row happens to
+    # be selected would ship a screenshot of the wrong example.
+    found = False
     for r in range(lst.count()):
         if lst.item(r).data(QtCore.Qt.UserRole) == "itokawa_curvature":
-            lst.setCurrentRow(r); break
+            lst.setCurrentRow(r); found = True; break
+    if not found:
+        raise SystemExit("examples3d shot: 'itokawa_curvature' not found in the examples list")
     _pump(app, 6)
     dlg.resize(1500, 900); _pump(app, 6)
     # really run it so the Output tab shows the ground-truth output (honest)
+    clicked = False
     for b in dlg.findChildren(QtWidgets.QPushButton):
         if b.text() in ("Run", "running…"):
-            b.click(); break
+            b.click(); clicked = True; break
+    if not clicked:
+        raise SystemExit("examples3d shot: Run button not found in the dialog")
     _wait_proc(app, dlg)
     _pump(app, 8)
     dlg.grab().save(out_path)
