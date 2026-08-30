@@ -89,7 +89,7 @@ py-modules = [
   "algo", "algo_codegen", "algo_difftest", "synth",
   "sweep", "graph", "graph_seed", "lib_coverage",
   "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
-  "fscript", "fslib", "fsruntime",
+  "fscript", "fslib", "fsruntime", "fsi18n",
   # --- geometric / math / drawing op modules + 2-D examples gallery (対話で追加) ---
   "imagemorph", "fourierdesc", "imagedraw", "signal1d", "examples2d",
   # --- 3-D vision toolkit (ops3d registry + method modules) + examples gallery ---
@@ -106,7 +106,10 @@ py-modules = [
 "fullseye" = ["OP_CATALOG.md", "SENSOR_PLAYBOOK.md",
               # Claude Code RAG skill template — lets a PyPI (wheel) install run
               # `fullseye-rag` without a repo checkout (docs/AI_RAG_GUIDE.md).
-              "skill_template/SKILL.md"]
+              "skill_template/SKILL.md",
+              # fsi18n shipped message tables (English template -> translation);
+              # user tables in FULLSEYE_I18N_DIR override these (docs/I18N.md).
+              "i18n/*.json"]
 # Studio runtime assets shipped inside the `studio_assets` package so an installed
 # wheel has localisation, per-operator help, and the bundled sample images (the
 # Studio degrades to English-only / no-help / no-samples without them).

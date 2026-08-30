@@ -24,6 +24,10 @@ input. The fastest routes:
    no canonical reference.
 5. **Fail-closed** — invalid input raises or returns the documented fail-soft value;
    never a silently wrong answer.
+6. **Language policy** (see `docs/I18N.md`) — exception/CLI messages are **English**
+   (optionally via `fsi18n.msg()` so users can supply translation tables); UI text
+   goes through the i18n tables; comments and docstrings are **bilingual ja+en**
+   in new code.
 
 ## Adding an operator
 

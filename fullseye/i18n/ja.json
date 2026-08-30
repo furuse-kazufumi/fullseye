@@ -1,0 +1,13 @@
+{
+  "__doc__": "fsi18n 同梱の日本語テーブル(英語テンプレート → 訳)。ユーザーは FULLSEYE_I18N_DIR に自作の ja.json を置けばここより優先される。Shipped Japanese table for fsi18n; a user ja.json in FULLSEYE_I18N_DIR overrides these entries.",
+  "vertices must be (N, 3) (got shape {shape})": "vertices は (N, 3) が必要です(受領 shape={shape})",
+  "faces must be (M, 3) (got shape {shape})": "faces は (M, 3) が必要です(受領 shape={shape})",
+  "points must be (N, 3) (got shape {shape})": "points は (N, 3) が必要です(受領 shape={shape})",
+  "empty mesh (no vertices or faces)": "空のメッシュです(頂点または面が 0)",
+  "empty point cloud": "空の点群です",
+  "input contains NaN/Inf": "入力に NaN/Inf が含まれています",
+  "image must be 2-D grayscale (got shape {shape})": "画像は 2 次元グレースケールが必要です(受領 shape={shape})",
+  "volume must be 3-D (got shape {shape})": "volume は 3 次元が必要です(受領 shape={shape})",
+  "index out of range (expected [0, {n}), got {got})": "インデックスが範囲外です([0, {n}) を期待、実際 {got})",
+  "unknown operator '{name}'": "未知のオペレータ '{name}' です"
+}

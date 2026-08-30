@@ -4125,6 +4125,9 @@ def build_window(model=None):
             env = QtCore.QProcessEnvironment.systemEnvironment()
             env.insert("PYTHONPATH", repo_root + os.pathsep + env.value("PYTHONPATH"))
             env.insert("PYTHONUTF8", "1")
+            # UI 言語をライブラリ層(fsi18n)へ伝播 — スクリプトが出す fsi18n.msg()
+            # 経由のメッセージが Studio の言語設定に追従する(docs/I18N.md)
+            env.insert("FULLSEYE_LANG", getattr(win, "_lang", "en"))
             proc.setProcessEnvironment(env)
             def on_out():
                 out.moveCursor(QtGui.QTextCursor.End)
