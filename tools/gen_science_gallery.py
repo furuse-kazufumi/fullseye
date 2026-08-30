@@ -132,21 +132,24 @@ def _montage(panels: list, labels: list | None = None, ncols: int = 3,
     ncols = min(ncols, n)
     nrows = (n + ncols - 1) // ncols
     cw = max(im.width for im in imgs)
-    ch = max(im.height for im in imgs)
+    row_h = [max(im.height for im in imgs[r * ncols:(r + 1) * ncols])
+             for r in range(nrows)]
     lh = label_h if labels else 0
     W = ncols * cw + (ncols + 1) * pad
-    H = nrows * (ch + lh) + (nrows + 1) * pad
+    H = sum(h + lh for h in row_h) + (nrows + 1) * pad
     canvas = Image.new("RGB", (W, H), bg)
     draw = ImageDraw.Draw(canvas)
     font = _font(font_size)
     for i, im in enumerate(imgs):
         r, c = divmod(i, ncols)
         x = pad + c * (cw + pad) + (cw - im.width) // 2
-        y = pad + r * (ch + lh + pad)
+        y = pad + sum(h + lh + pad for h in row_h[:r]) \
+            + (row_h[r] - im.height) // 2
         canvas.paste(im, (x, y))
         if labels and i < len(labels) and labels[i]:
             tx = pad + c * (cw + pad) + cw // 2
-            ty = y + ch + lh // 2
+            ty = pad + sum(h + lh + pad for h in row_h[:r]) + row_h[r] \
+                + lh // 2 - (row_h[r] - im.height) // 2
             draw.text((tx, ty), labels[i], fill=(235, 235, 240),
                       font=font, anchor="mm")
     return np.asarray(canvas, np.float64) / 255.0
