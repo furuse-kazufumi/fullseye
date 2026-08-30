@@ -537,6 +537,81 @@ ACCEL = {
 }
 
 
+# ── HALCON twin 別名(2026-08-31)────────────────────────────────────────────
+# registry には core op と同一実装の「HALCON 名の twin」が多数ある。bridge の
+# _seg_kind は core 名の完全一致で GPU 判定するため、twin にも ACCEL 行が要る。
+# 全件、構造化 blob + PARITY_AB 全点の自動探索で core と数値一致を実測してから
+# 登録した(塩ノイズ二値は erosion 全消え等の縮退で偽陽性を出すため使わない。
+# r3_label_to_region は灰色ラベル画像でレベル選択という別動作をするため棄却)。
+def _regize(fn):
+    """二値化(>0.5)してから既存 kernel を通す region 別名用ラッパ。
+    core の region op は _bin(v)=v>0.5 で始まるので、灰色入力でも一致する。"""
+    def g(t, a, b, dev):
+        return fn((t > 0.5).float(), a, b, dev)
+    return g
+
+
+def _reg_copy(t, a, b, dev):
+    """union1: 全連結成分の和 = 前景マスクそのもの(二値化コピー)。"""
+    return (t > 0.5).float()
+
+
+def _reg_invert(t, a, b, dev):
+    """complement: 1 - 前景マスク。"""
+    return 1.0 - (t > 0.5).float()
+
+
+_TWIN_ALIASES = (
+    # (registry 名, kernel 関数, halcon 名)
+    ("bit_not", _invert, "bit_not"),
+    ("deviation_image", _std_filter, "deviation_image"),
+    ("diff_of_gauss", _dog, "diff_of_gauss"),
+    ("dual_rank", _percentile, "dual_rank"),
+    ("eliminate_min_max", _median, "eliminate_min_max"),
+    ("equ_histo_image", _equalize, "equ_histo_image"),
+    ("gauss_filter", _gaussian, "gauss_filter"),
+    ("gauss_image", _gaussian, "gauss_image"),
+    ("gray_bothat", _bothat, "gray_bothat"),
+    ("gray_closing", _close_rect, "gray_closing"),
+    ("gray_closing_rect", _close_rect, "gray_closing_rect"),
+    ("gray_dilation", _dilate_rect, "gray_dilation"),
+    ("gray_dilation_rect", _dilate_rect, "gray_dilation_rect"),
+    ("gray_erosion", _erode_rect, "gray_erosion"),
+    ("gray_erosion_rect", _erode_rect, "gray_erosion_rect"),
+    ("gray_opening", _open_rect, "gray_opening"),
+    ("gray_opening_rect", _open_rect, "gray_opening_rect"),
+    ("gray_range_rect", _range_rect, "gray_range_rect"),
+    ("gray_tophat", _tophat, "gray_tophat"),
+    ("invert_image", _invert, "invert_image"),
+    ("mean_image", _mean, "mean_image"),
+    ("median_image", _median, "median_image"),
+    ("median_separate", _median, "median_separate"),
+    ("median_weighted", _median, "median_weighted"),
+    ("prewitt_amp", _prewitt, "prewitt_amp"),
+    ("projective_trans_image", _projective_region, "projective_trans_image"),
+    ("projective_trans_image_size", _projective_region, "projective_trans_image_size"),
+    ("rank_image", _percentile, "rank_image"),
+    ("rank_rect", _percentile, "rank_rect"),
+    ("roberts", _roberts, "roberts"),
+    ("scale_image", _scale, "scale_image"),
+    ("sobel_amp", _sobel, "sobel_amp"),
+    ("sobel_dir", _grad_dir, "sobel_dir"),
+    # region sort(core は _bin(v)=v>0.5 で開始するので、灰色入力とも一致する)
+    ("dilation_rectangle1", _regize(_dilate_rect), "dilation_rectangle1"),
+    ("dilation_seq", _reg_dilate, "dilation_seq"),
+    ("erosion_seq", _reg_erode, "erosion_seq"),
+    ("invert_region", _reg_invert, "complement"),
+    ("opening_golay", _opening_circle, "opening_golay"),
+    ("remove_noise_region", _opening_circle, "remove_noise_region"),
+    ("r2_union1", _reg_copy, "union1"),
+)
+
+for _rname, _fn, _hal in _TWIN_ALIASES:
+    _key = _rname if _rname not in ACCEL else _rname + "@twin"
+    ACCEL[_key] = (_fn, _rname, _hal)
+del _rname, _fn, _hal, _key
+
+
 def run_batch(name, imgs, a=0.5, b=0.4, device="cpu"):
     """Run one accel op over a batch of images; returns a list of 2-D arrays."""
     fn = ACCEL[name][0]
