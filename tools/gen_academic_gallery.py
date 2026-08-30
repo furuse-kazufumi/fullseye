@@ -757,8 +757,6 @@ def run_exhibit(subject: str, slug: str, spec: tuple, recipe: str, caption: str,
             got = fetch_nasa(spec[1], f"real_{slug}")
         elif kind == "met":
             got = fetch_met(spec[1], f"real_{slug}")
-        elif kind == "bbbc":
-            got = fetch_bbbc001(f"real_{slug}")
         elif kind == "si":
             got = fetch_smithsonian(spec[1], f"real_{slug}")
         else:
