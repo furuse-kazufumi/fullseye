@@ -485,7 +485,7 @@ def rec_enhance(col):
     g = gray(col)
     c = ap(g, "cv_clahe", 0.6, 0.5)
     u = np.clip(ap(c, "unsharp", 0.6, 0.5), 0, 1)
-    return ([("original", col), ("cv_clahe (local contrast)", c), ("clahe -> unsharp", u)],
+    return ([("original", col), ("cv_clahe (local contrast)", c), ("cv_clahe -> unsharp", u)],
             ["rgb1_to_gray", "cv_clahe", "unsharp"])
 
 

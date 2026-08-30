@@ -1,0 +1,42 @@
+[
+  {
+    "file": "industrial_metrology.png",
+    "title": "寸法計測 — 1D measuring サブピクセルキャリパー",
+    "ops": [
+      "gen_measure_rectangle2 (m1_*)",
+      "measure_pairs (m1_measure_pairs)"
+    ],
+    "data": "合成段付きシャフト (描画径 = 真値、0.05 mm/px)",
+    "synthetic": true,
+    "caption": "測定矩形に沿ってグレープロファイルを取り、微分の極値をサブピクセル補間してエッジ対を抽出。3 段の径を実測し、描画寸法との誤差は最大 0.02px。HALCON の 1D Measuring と同じ流儀。",
+    "verify": "3 区間とも |実測 − 真値| ≤ 0.02px (1px 未満を assert 済)"
+  },
+  {
+    "file": "industrial_blobs.png",
+    "title": "ブロブ解析 — 粒子計数とサイズ分布",
+    "ops": [
+      "otsu",
+      "fill_up",
+      "distance_transform",
+      "watersheds",
+      "segment_objects"
+    ],
+    "data": "合成樹脂ペレット 60 粒 (配置数 = 真値)",
+    "synthetic": true,
+    "caption": "60 粒を配置した合成画像を otsu 二値化し、距離変換 + watershed で接触粒を切り分けて計数 60/60。面積の 20/80 パーセンタイルで小粒(青)・標準(緑)・大粒(橙)に色分け。粉粒体の品質検査の型。",
+    "verify": "配置 60 粒に対し計数 60 (一致を assert 済)"
+  },
+  {
+    "file": "industrial_barcode.png",
+    "title": "コード読取りの土台 — 走査線エッジ対によるバー検出",
+    "ops": [
+      "decode_barcode",
+      "gen_measure_rectangle2 (m1_*)",
+      "measure_pairs (m1_measure_pairs)"
+    ],
+    "data": "合成バーコード (45 本, バー位置 = 真値)",
+    "synthetic": true,
+    "caption": "実際のバーコードリーダーと同じく走査線のグレープロファイルからバーのエッジ対を検出。45 本のバー全ての両端を ±1.5px 以内で特定し、登録 op decode_barcode(簡易バー計数)とも本数が一致。※フル復号器ではなくバー検出・幅計測の素材。",
+    "verify": "真値 45 本 = decode_barcode = measure_pairs、全エッジ ±1.5px (assert 済)"
+  }
+]
