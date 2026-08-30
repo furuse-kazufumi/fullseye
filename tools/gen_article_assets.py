@@ -942,7 +942,7 @@ def _build_feature_tile_specs(img, log=print) -> dict:
     assert count == 24.0, f"blob_count on preprocessed region = {count}, expected 24 coins"
     # ラベル彩色オーバーレイ(暗背景 + blob ごとに色)
     vis = np.full((*lab.shape, 3), 0.05)
-    colors = cm.get_cmap("tab20")(np.linspace(0, 1, 20))[:, :3]
+    colors = colormaps["tab20"](np.linspace(0, 1, 20))[:, :3]
     for i in range(1, n_blobs + 1):
         vis[lab == i] = colors[(i - 1) % 20] * 0.9 + 0.1
     specs["blob_count"] = {
