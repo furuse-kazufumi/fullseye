@@ -407,7 +407,7 @@ def subject_dino_xray(log=print) -> dict:
         x = np.clip(mip, 0, 1) ** 0.9
         panels.append(_cmap(np.kron(x, np.ones((2, 2))), "bone"))
         labels.append(name)
-    out = _montage(panels, labels, ncols=2)
+    out = _montage(panels, labels, ncols=1)
     _save_png(out, "science_dino_xray.png")
     _save_thumb("science_dino_xray.png")
     return {
