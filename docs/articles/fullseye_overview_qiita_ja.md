@@ -565,7 +565,7 @@ Fullseye の差別化がいちばん出るのは **3D 系**だと思っていま
 
 *↑ QEM メッシュ簡略化の実測比較。「境界を保つ」「多様体を壊さない」を実測で確認しながら削る ―― この op は本記事のバグ⑥の舞台でもあります（後述）。*
 
-![手骨ボリュームを骨色マテリアルで回すターンテーブル（マーチングキューブ→レンダリングまで自前）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/showcase_turntable_skeleton.gif)
+![手続き生成した手の骨格をボクセル化 → marching_cubes → 骨色マテリアルで回すターンテーブル（掌を上に寝かせた標本展示風）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/showcase_turntable_skeleton.gif?v=2)
 
 *↑ 手続き生成した手の骨格（手根骨8・中手骨5・指骨14＝計27骨、名前の話の節に出てきた `hand_hero.png` と同じ被写体）の SDF を占有ボクセル格子に落とし込み、`marching_cubes`（等値面レベル 0.5）でメッシュ抽出して骨格標本風に回したもの。掌を上にして寝かせ、俯瞰で1回転させています。ボリューム→メッシュ→レンダまで一気通貫です。*
 
