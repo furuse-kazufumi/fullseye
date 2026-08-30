@@ -100,6 +100,8 @@ py-modules = [
   # imported by shipped examples/examples_3d (release audit 2026-08-30: these were
   # missing, so the corresponding samples ImportError'd on a pip install)
   "mesh_decimate", "watershed3d", "g1_policy_bridge", "evis_fullseye_bridge",
+  # imported by studio.py (gray_features dev ops, 2026-08-30) — must ship in the wheel
+  "image_gray",
 ]
 
 [tool.setuptools.package-data]
