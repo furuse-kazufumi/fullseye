@@ -6401,6 +6401,11 @@ def build_window(model=None):
                     sub.close()
                     win._current_gfx = win._primary_gsub
                     _update_current_indicator()
+            elif name in ("disp_image", "disp_region"):
+                _disp_2d(name, args)
+            elif name in ("disp_points3d", "disp_mesh3d", "disp_object_model_3d"):
+                d3_slot += 1
+                _disp_3d(name, args, d3_slot)
             # dev_disp_text is a DRAW directive applied after the render (apply_text_directives)
         # ディレクティブ数が減った再 Apply で取り残される旧スロット窓を回収(窓リーク防止)。
         # フルプログラムの Apply 経路のみ(reclaim_stale=True)— スニペットの直接適用で
