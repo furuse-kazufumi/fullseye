@@ -215,14 +215,25 @@ def subject_distance_ripple(log=print) -> dict:
     }
 
 
+def _resize_rgb(rgb: np.ndarray, size: int) -> np.ndarray:
+    from PIL import Image
+    im = Image.fromarray(_to_u8(rgb if rgb.ndim == 3
+                                else np.stack([rgb] * 3, -1)), "RGB")
+    im = im.resize((size, size), Image.LANCZOS)
+    return np.asarray(im, np.float64) / 255.0
+
+
 def subject_fourier_stars(log=print) -> dict:
     """フーリエの世界 — 画像を「周波数」で見ると星が現れる."""
     cam = _load_gray("camera.png")
     weave = _load_gray("weave_synth.png")
     spec_cam = fs.apply(cam, "fft_image")
     spec_weave = fs.apply(weave, "fft_image")
-    panels = [np.stack([cam] * 3, -1), _cmap(spec_cam, "inferno"),
-              np.stack([weave] * 3, -1), _cmap(spec_weave, "inferno")]
+    S = 512
+    panels = [_resize_rgb(np.stack([cam] * 3, -1), S),
+              _resize_rgb(_cmap(spec_cam, "inferno"), S),
+              _resize_rgb(np.stack([weave] * 3, -1), S),
+              _resize_rgb(_cmap(spec_weave, "inferno"), S)]
     out = _montage(panels, ["ふつうの写真", "その周波数の姿 (fft_image)",
                             "布の織り目 (合成テクスチャ)", "規則的な模様は星になる"],
                    ncols=2)
