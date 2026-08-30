@@ -762,6 +762,24 @@ def mesh_vertex_normals(V, F):
     return N / np.where(ln > 1e-12, ln, 1.0)
 
 
+def validate_mesh_faces(V, F):
+    """Fail-closed sanity check for a loaded triangle mesh: faces must be (m, 3)
+    integer indices inside ``[0, len(V))``. Returns ``(V, F)`` as float64/int
+    arrays; raises ValueError on a corrupt mesh (out-of-range or negative
+    indices, wrong shape) so callers can log+flash instead of crashing later
+    inside the renderer. Headless."""
+    V = np.asarray(V, np.float64).reshape(-1, 3)
+    F = np.asarray(F, int)
+    if F.size:
+        if F.ndim != 2 or F.shape[1] != 3:
+            raise ValueError("mesh faces must be (m, 3), got shape %s" % (F.shape,))
+        lo, hi = int(F.min()), int(F.max())
+        if lo < 0 or hi >= V.shape[0]:
+            raise ValueError("corrupt mesh: face index %d out of range for %d vertices"
+                             % (lo if lo < 0 else hi, V.shape[0]))
+    return V, F
+
+
 def mesh_edges(F, cap=60000):
     """Unique undirected edges (E, 2) of a triangle mesh, or None when the count
     exceeds *cap* (the wireframe overlay skips itself rather than crawl)."""
