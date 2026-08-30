@@ -1040,9 +1040,12 @@ def parse_hdev_program(text, names):
                 errs.append("line %d: unexpected '%s'" % (n, kind))
             else:  # op — or a dev_*/set_system directive, which is not a pipeline stage
                 head = _dev_op_head(line)
-                if head.startswith("dev_") or head in _CONFIG_DIRECTIVES:
+                if (head.startswith("dev_") or head in _CONFIG_DIRECTIVES
+                        or head.startswith("disp_")):
                     if head.startswith("dev_") and head not in _DEV_DIRECTIVES:
                         errs.append("line %d: unsupported dev_ operator '%s'" % (n, head))
+                    if head.startswith("disp_") and head not in _DISP_DIRECTIVES:
+                        errs.append("line %d: unsupported disp_ operator '%s'" % (n, head))
                     continue                       # applied via extract_dev_directives
                 st = _hdev_parse_op(line, n, errs, names)
                 if st:
