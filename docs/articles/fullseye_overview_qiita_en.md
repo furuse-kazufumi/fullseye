@@ -1160,6 +1160,8 @@ Stories like this may feel "uncool" to some, frankly. I still believe **the reco
 
 ## An Honest Word on Performance (GPU)
 
+> **Status: Verified (measured on a real RTX 5090)** — though op coverage is still in progress (see the next chapter).
+
 Being honest about "fast," too. The default frame-at-a-time path runs on scipy / OpenCV. The batched, fast `torch` path (`--device cuda`) accelerates the heavy, vectorizable ops.
 
 - **On CPU**, heavy ops see roughly **1.6–2.2×**. But **light pixel-wise operations actually get slower** (the tensor-conversion overhead lands on top).
