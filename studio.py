@@ -6064,22 +6064,35 @@ def build_window(model=None):
             table.setSortingEnabled(True)
             table.resizeColumnsToContents()
 
+        MAX_REGIONS = 500                        # table/HUD runaway guard (freeze prevention)
+
         def _refresh_2d():
             raw = state.get("raw")
             if isinstance(raw, np.ndarray) and raw.ndim == 2:
                 try:
-                    objs, seg = region_feature_objects(raw)
+                    # speckle guard: scale the minimum region area with the image
+                    # (~20 ppm, floor 1 px) so a noisy segmentation cannot flood
+                    # the table with thousands of 1-px regions and freeze the UI
+                    min_area = max(1, int(round(raw.size * 2e-5)))
+                    objs, seg = region_feature_objects(raw, min_area=min_area)
                 except Exception as e:
                     objs, seg = [], "error: %s" % truncate(e, 60)
+                total = len(objs)
+                if total > MAX_REGIONS:          # objects come largest-first
+                    objs = objs[:MAX_REGIONS]
                 feat["objs"] = objs
                 img = model.image
                 feat["base"] = (img if isinstance(img, np.ndarray) and img.ndim == 2
                                 and img.shape == raw.shape else raw)
-                info2.setText("%d region(s) from the current result (%s)  ·  "
+                note = ("" if total <= MAX_REGIONS
+                        else "  ·  showing the largest %d of %d regions"
+                             % (MAX_REGIONS, total))
+                info2.setText("%d region(s) from the current result (%s)%s  ·  "
                               "click a row to highlight its region; click the image "
                               "to select its row"
                               % (len(objs), "binary labeling" if seg == "labels"
-                                 else "gray input, auto-Otsu" if seg == "otsu" else seg))
+                                 else "gray input, auto-Otsu" if seg == "otsu" else seg,
+                                 note))
             else:
                 feat["objs"], feat["base"] = [], None
                 info2.setText("no 2-D result — load an image / run a pipeline, then Refresh")
