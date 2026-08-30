@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 17:58:56
+- **最終更新**: 2026-08-30 18:02:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-afcefbdd auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
-4b713899 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
-b99e37f0 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
-75e195c9 auto: gen_backmatter_figs.py 編集前 (2026-08-30 17:58)
-2d5f9312 auto: gen_backmatter_figs.py 編集前 (2026-08-30 17:58)
-84708b10 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
-cea7697a auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
-38d7e95e auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
-f66404bb auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 17:57)
-550acebc auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 17:57)
+2fbaf21a auto: studio.py 編集前 (2026-08-30 18:02)
+03bb4595 auto: studio.py 編集前 (2026-08-30 18:02)
+9931044f auto: studio.py 編集前 (2026-08-30 18:02)
+f3457757 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 18:02)
+d612be88 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 18:02)
+26407817 auto: gen_showcase_gifs.py 編集前 (2026-08-30 18:02)
+243deb25 auto: gen_showcase_gifs.py 編集前 (2026-08-30 18:01)
+0c909c14 auto: gen_showcase_gifs.py 編集前 (2026-08-30 18:01)
+398bc17b auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 18:01)
+88ffbcd9 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 18:01)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/fullseye_overview_qiita_en.md
+M studio.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-17:58 docs/articles/fullseye_overview_qiita_en.md
-17:58 docs/articles/assets/fig_optional_extras_thumb.jpg
-17:58 docs/articles/assets/fig_optional_extras.png
-17:58 docs/articles/assets/fig_bug4_curvature_thumb.jpg
-17:58 docs/articles/assets/fig_bug4_curvature.png
-17:58 docs/articles/assets/fig_kabsch_margin_thumb.jpg
-17:58 docs/articles/assets/fig_kabsch_margin.png
-17:58 docs/articles/assets/fig_ci_waterfall_thumb.jpg
-17:58 docs/articles/assets/fig_ci_waterfall.png
-17:58 tools/gen_backmatter_figs.py
-17:57 docs/articles/assets/fig_rag_corpus_thumb.jpg
-17:57 docs/articles/assets/fig_rag_corpus.png
-17:57 docs/articles/fullseye_overview_qiita_ja.md
-17:57 .pytest_cache/v/cache/nodeids
-17:55 studio.py
+18:02 studio.py
+18:02 docs/articles/fullseye_overview_qiita_en.md
+18:02 tools/gen_showcase_gifs.py
+18:02 docs/articles/assets/studio_3d_viewer_thumb.jpg
+18:02 docs/articles/assets/studio_3d_viewer.png
+18:02 docs/articles/assets/studio_feature_inspection_3d_thumb.jpg
+18:02 docs/articles/assets/studio_feature_inspection_3d.png
+18:02 docs/articles/assets/studio_feature_inspection_thumb.jpg
+18:02 docs/articles/assets/studio_feature_inspection.png
+18:01 tools/gen_article_assets.py
+18:01 docs/articles/fullseye_overview_qiita_ja.md
+18:01 .pytest_cache/v/cache/nodeids
+18:01 .pytest_cache/v/cache/lastfailed
+18:01 tools/gen_studio_screenshots.py
+18:00 docs/GALLERY.md
 ```
 
 ---

@@ -1712,7 +1712,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                         p.drawLine(QtCore.QPointF(x0 + xy[a, 0], y0 + xy[a, 1]),
                                    QtCore.QPointF(x0 + xy[b, 0], y0 + xy[b, 1]))
             hint = ("%s · %d pts%s   drag=orbit · wheel=zoom · shift/middle-drag=pan · R=reset%s"
-                    % (self.info.get("kind"), self._P.shape[0],
+                    % (self.info.get("kind"), self.info.get("n_points", self._P.shape[0]),
                        (" · %d faces" % self.info["n_faces"]) if self._F is not None else "",
                        " · W=wire" if self._edges is not None else ""))
             p.setPen(QtGui.QColor(MUTED))
