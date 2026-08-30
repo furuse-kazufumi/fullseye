@@ -464,7 +464,9 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 ### 3D をここまで自作している話（いちばんの差別化ポイント）
 
-Fullseye の差別化がいちばん出るのは **3D 系**だと思っています。冒頭の GIF に出てきた小惑星イトカワの実点群に、3D op を実際に当てるとこうなります：
+Fullseye の差別化がいちばん出るのは **3D 系**だと思っています。2D の古典画像処理は、OpenCV や scikit-image という強力な OSS がすでに広くカバーしています。そこで numpy の再実装を積むだけでは、正直「車輪の再発明」と言われても仕方がない部分があります。一方 3D は、点群・メッシュ・ボリュームという複数のデータ形式にまたがり、しかも「型付き・純 numpy・機械可読ノート付き」という条件を揃えたまま網羅しているライブラリは、私が調べた限りではあまり見当たりませんでした。だからこそ、この節では他の層より少し長く、実データでの実演にページを割きます。
+
+冒頭の GIF に出てきた小惑星イトカワの実点群に、3D op を実際に当てるとこうなります：
 
 [![小惑星イトカワ実点群への 3D op（曲率解析 / ICP 自己レジストレーション / PCA 正準姿勢）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/itokawa_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_montage.png)
 
