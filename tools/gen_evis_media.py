@@ -8,9 +8,10 @@ and renders honest, verifiable videos for the Qiita overview article:
 
   stereo : eyeL/eyeR pair -> fs.disparity_sgm -> fs.speckle_filter ->
            fs.fill_disparity -> fs.colorize_disparity / fs.depth_from_disparity
-           -> fs.colorize_depth.  Per-frame the bean's distance estimated from
-           the Fullseye disparity is compared against the simulator ground
-           truth stored in chop_vision_meta.json (validation printed at end).
+           -> fs.colorize_depth for the dense panels; the bean's range readout
+           uses fs.segment_objects per eye (centroid col difference = feature
+           disparity), compared per-frame against the simulator ground truth
+           stored in chop_vision_meta.json (validation printed at end).
   track  : chopstick-tip camera -> green-margin channel -> fs.segment_objects
            -> fs.draw_objects, with the tracked bean centroid trail.  Validated
            against the ground-truth bean pixel centroid in the meta file.
