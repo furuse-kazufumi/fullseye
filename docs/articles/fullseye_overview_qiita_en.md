@@ -898,6 +898,10 @@ The reason I insisted on **"a unified interface"** is that Fullseye is ultimatel
 
 **"Every heavy dependency is optional"** looks unglamorous, but it's actually the pillar that sits closest to honest disclosure. Rather than the honest-but-blunt "it doesn't work without torch," it opts for a **graduated honesty**: "without torch it runs on the numpy path; with torch, a faster path opens up." The flip side: many of the CI bugs recounted in "The Night Before Release" grew precisely out of **lapses in operating this pillar** (missing guards on optional imports). Raising a pillar is easy; **verifying you're actually honoring the pillar you raised** is a separate job — the CI episode drove that home.
 
+[![The dependency map: numpy+scipy core and the optional extras](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_optional_extras_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_optional_extras.png)
+
+*↑ This pillar as a picture — the only required dependencies are numpy + scipy; OpenCV / scikit-image / torch / GUI / point-cloud I/O / industrial I/O are all opt-in extras. Generated mechanically from the actual `pyproject.toml` definitions (if an extra is added and the figure goes stale, the generating script fails).*
+
 **"Reimplemented from public knowledge"** is the plainest pillar and the least negotiable line. Lifting code from commercial industrial software might have let me "catch up" faster on the surface. I don't do it because it's an **ethical line**, and at the same time **the road on which my own understanding deepens over the long run**. By never skipping the step of reading the paper and rewriting the algorithm with my own hands, I keep myself in a state where I can **genuinely explain** why a given op returns a given result.
 
 ---
