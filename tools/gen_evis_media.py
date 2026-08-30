@@ -232,8 +232,8 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
         if len(trail) >= 2:
             d.line([(x, y) for x, y in trail[-90:]], fill=(255, 210, 60), width=2)
         vis = np.asarray(im)
-        hud = _hud(480, "fullseye: segment_objects > draw_objects  (tip cam)   "
-                        f"t={fr['t']:5.2f}s   {hud_extra}")
+        hud = _hud(480, "fullseye segment_objects>draw_objects  "
+                        f"t={fr['t']:.2f}s  {hud_extra}")
         row = np.concatenate([
             _label(_u8(tp), "third person (context)"),
             _label(vis, "fullseye bean tracking"),
