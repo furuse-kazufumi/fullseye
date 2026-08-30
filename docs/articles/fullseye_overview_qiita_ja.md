@@ -1193,6 +1193,24 @@ GPU 化については、**使える部分は既にあって実測も速い**（
 
 ---
 
+## 追記(2026-08-31): 骨格まわりが一段深くなりました
+
+> **Status: Production-ready / Verified**(GitHub master。次の PyPI リリースで配布版にも反映します。公開時点の op 数 731+265 は、この追記の分で **733+271** になりました)
+
+公開の翌日、「Fullseye のスケルトンは HALCON と作りがどれくらい違うのか」を確かめる流れになり、骨格(スケルトン)まわりを一気に増強したので、本記事の流儀どおり**検証込みで**追記します。
+
+- **`em_skeleton`(新 op)** ―― HALCON の `skeleton` と同系の **Eckhardt–Maderlechner 法(1993)** を純 numpy でクリーンルーム実装しました。ここで本記事らしい話をひとつ。参照した文献の定義を字義どおり実装したら並列削除で位相が壊れ、反例パターンで原因を絞って標準の (8,4) 単純点判定に読み替えたところ、**文献が公表している EM93 の実行結果と画素単位で完全一致**しました(検定形状 1 = 724/724 画素で差分ゼロ、残る 2 形状も公表画素数 2434/3895 と一致)。この突き合わせはそのまま回帰テストに焼き込んであります。HALCON 実機との直接照合だけは未実施です(手元にライセンスがないため)。
+- **骨格のグラフ要素が 2D/3D で同じ語彙に** ―― 分岐点(`junctions_skeleton`)に加えて端点(`r2_endpoints_skeleton`)、3D 側は `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d` を追加。太いボリュームを渡すと Lee 法(1994)で細線化してからノード・枝・端点を返します。**voxel 骨格のグラフ化は HALCON に対応物がない**領域です(血管・多孔質・根系などのネットワーク解析向け)。
+- **3D モルフォロジーの土台整備** ―― `morph_open3d` / `morph_close3d` の単発 op 化、球の構造要素、そして **torch なし環境でも全 op が動く** scipy 経路(cube SE は torch 経路とビット単位一致をテストで固定)。
+
+できたての op で遊んだ一枚を置いておきます。
+
+[![粘菌ネットワークの骨格グラフ抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/science_physarum_skeleton_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_physarum_skeleton.png)
+
+*↑ **粘菌の管ネットワークから骨格グラフを取り出す** ―― 粘菌(モジホコリ)の数理モデル(流量の多い管が太り、使われない管が退化する適応ネットワーク)を自作シミュレーションで育て、`em_skeleton`(シアン)と `junctions_skeleton`(白 = 分岐点)で読んだもの。左は探索中の網目、右は収束後 ―― **最短路 1 本だけが残る**。使用 op: `binary_threshold`, `em_skeleton`, `junctions_skeleton`, `dilation_circle`。*
+
+種明かしをすると、この粘菌シミュレーションは Fullseye とは別に進めている自作研究 ―― **「進化する脳」を作る計画(開発コードネーム Afterman、ドゥーガル・ディクソン『アフターマン』へのオマージュです)** ―― の実験データそのものです。Transformer の"次"を進化で探すという無謀な話で、粘菌の管の力学が思わぬ答えをくれました。こちらはいずれ別の記事でじっくり書きます。
+
 ## まとめ
 
 **Fullseye** は、**説明できる古典ビジョンのアルゴリズムを「スキル」として約1000個持ち歩き**、それを
