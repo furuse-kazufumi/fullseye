@@ -231,4 +231,106 @@ py -3.11 examples_3d/render_beauty.py
 py -3.11 examples_3d/render_ao.py
 py -3.11 examples_3d/mesh_smooth.py
 # ... 他は examples_3d/<name>.py を直接実行(各スクリプトが _gallery/<name>.png を上書き)
+
+# Studio スクリーンショット(§6)/科学ギャラリー(§7)/学問分野横断(§8)/工業+Physical AI(§9)
+py -3.11 tools/gen_studio_screenshots.py
+py -3.11 tools/gen_science_gallery.py
+py -3.11 tools/gen_academic_gallery.py     # DL/生成キャッシュは data/academic_samples/(再実行は課金・再DLなし)
+py -3.11 tools/gen_industrial_gallery.py
 ```
+
+---
+
+## 6. Studio スクリーンショット(`studio_*.png`)
+
+生成元: `tools/gen_studio_screenshots.py`。すべて `studio.build_window()` が組み立てた
+実際の Studio UI をヘッドレスで `grab()` した本物の画面です(3D surface のみ実 GL
+コンテキストでの `Q3DSurface.renderToImage`。series 構築は Studio 本体の
+`_build_surface3d_series` を共有し、実機と見た目が乖離しない作り)。モックアップはありません。
+
+![studio_main](articles/assets/studio_main.png)
+
+| 画像 | 内容 |
+|---|---|
+| `studio_main.png` | メインウィンドウ。coins サンプル画像に blob 分割パイプライン(gaussian → otsu → opening_circle → sk_clear_border)を適用し、region overlay 表示で 21 個のコインを重畳表示。下部 Program パネルに HDevelop 風のパイプラインコード、右に演算子ブラウザ(検索+シグネチャ表示)、ステータスバーに `21 obj` |
+| `studio_3d_surface.png` | Ctrl+3 で開く回転可能な 3-D surface ビュー(Q3DSurface、高さ連動の地形風グラデーション)。データは小惑星イトカワの Gaskell 形状モデル(JAXA はやぶさ)を `render3d.render_mesh` で深度画像化した実データの起伏。アプリ内ではこのビューをマウスドラッグで回転・ホイールでズームできる |
+| `studio_python_editor.png` | Python Editor(タブ式・複数スクリプト同時編集)。`examples_3d/itokawa_curvature.py` を開いて F5 実行した直後で、下部コンソールに実際のイトカワ曲率解析の出力(PASS, exit 0) |
+| `studio_3d_examples.png` | 3-D Examples ギャラリー(105 の実データ worked example)。itokawa_curvature を選択して Run した直後で、Output タブにグラウンドトゥルース検証つきの実行結果(PASS) |
+| `studio_3d_ops.png` | 3-D Operators リファレンス(265 op)。icp_point2plane の生成済みヘルプページ(シグネチャ・使い方・検証済みサンプル・型が繋がる次の op へのリンク) |
+
+![studio_3d_surface](articles/assets/studio_3d_surface.png)
+![studio_python_editor](articles/assets/studio_python_editor.png)
+![studio_3d_examples](articles/assets/studio_3d_examples.png)
+![studio_3d_ops](articles/assets/studio_3d_ops.png)
+
+---
+
+## 7. 科学ギャラリー(`science_*.png/gif`)
+
+生成元: `tools/gen_science_gallery.py`(subject 単位で再生成可能:
+`py -3.11 tools/gen_science_gallery.py --subjects <name,...>`)。
+すべて fullseye の登録 op / facade の実出力で、モックアップはありません。
+シミュレーション由来の画像はキャプションにその旨を明記しています。
+サムネ(幅 720px JPG)は同ディレクトリの `*_thumb.jpg`。
+
+| 画像 | 内容(使用 op / データ) |
+|---|---|
+| `science_distance_ripple.png` | コイン実写真の距離変換を虹色+波紋等高線で(otsu, fill_up, distance_transform / skimage.data coins) |
+| `science_fourier_stars.png` | camera 実写真と織り目テクスチャの FFT スペクトル。織り目が星座状に光る(fft_image。織り目パネルのみ合成) |
+| `science_watershed_foam.png` | コイン 24 枚を watershed で 1 枚ずつ色分け(watersheds, segment_objects, colorize_labels) |
+| `science_edge_compass.png` | 輪郭の向きを色相環で塗るネオン画(sobel_dir, sobel_amp) |
+| `science_alife_worlds.png` | ルール90 フラクタル/ルール30 カオス/砂山くずし/DLA 樹枝/レニア/サイクリック CA の 6 パネル(alife_* 反復適用。シミュレーション画像) |
+| `science_dino_xray.png` | Smithsonian トリケラトプス骨格標本の実スキャン(CC0)をボクセル化 → vol_mip でレントゲン調(voxelize, vol_gaussian, vol_mip) |
+| `science_dragon_anaglyph.png` | Stanford dragon 2 視点レンダの赤青アナグリフ(read_mesh, look_at, render_mesh) |
+| `science_dino_terrain.png` | 骨格標本 60 万点群 → 標高地図 → 地形陰影着色。背骨が山脈になる(elevation_map, colorize_height) |
+| `science_morph_pulse.gif` | 膨張で合体 → 収縮で痩せるモルフォロジーアニメ 26 フレーム(dilation_circle, erosion_circle) |
+| `science_wobble_warp.png` | TPS/FFD/MLS 3 流儀の空間変形 before/after(deform_tps/ffd/mls) |
+| `science_dino_skeleton.png` | 骨格標本の真上影絵から中心線を金色で抽出(sk_skeleton) |
+
+![science_dino_xray](articles/assets/science_dino_xray.png)
+![science_dragon_anaglyph](articles/assets/science_dragon_anaglyph.png)
+
+---
+
+## 8. 学問分野横断ギャラリー(`academic_*.png`)
+
+生成元: `tools/gen_academic_gallery.py`。**31 展示 = 実データ 9 + AI 生成 22**。
+医学・考古学・生物学・宇宙・古生物学・地質学・気象学・海洋学・植物学をカバーし、
+全画像に fullseye の登録 op を適用した処理前→後のペア構成です。
+
+- **実データ**は Smithsonian(CC0)・メトロポリタン美術館(CC0)・NASA(public domain)・
+  BBBC(CC-BY)のみを使用。**全素材の出典・ライセンスは
+  [articles/assets/ACADEMIC_ATTRIBUTION.md](articles/assets/ACADEMIC_ATTRIBUTION.md) の帰属表を参照。**
+- **AI 生成(Google gemini-2.5-flash-image)の模擬データ**は、montage の全パネル左上に
+  「AI-generated」を刻印し、帰属表にも明記(実在の標本・患者・スキャンではありません)。
+- この収集・処理は**実データによるバグ発見**も兼ねており、見つかった 5 件は
+  [KNOWN_ISSUES.md](KNOWN_ISSUES.md) に記録済み。
+
+代表 2 点(全 31 点は `articles/assets/academic_*.png` を直接参照):
+
+![academic_paleo_trex](articles/assets/academic_paleo_trex.png)
+![academic_arch_amphora](articles/assets/academic_arch_amphora.png)
+
+---
+
+## 9. 工業+Physical AI ギャラリー(`industrial_*.png` / `phai_*.png`)
+
+生成元: `tools/gen_industrial_gallery.py`(`--subjects` 選択可)。
+すべて合成データ / MuJoCo シミュレーション上の実処理で、検出・計測結果は既知の真値
+(配置数・描画寸法・配置姿勢)との一致を assert で確認しています。
+
+| 画像 | 内容(検算) |
+|---|---|
+| `industrial_defect.png` | ヘアライン金属面の傷3・打痕2・異物1 → median 背景差分 → 赤枠+面積(6/6 検出) |
+| `industrial_metrology.png` | 段付きシャフト 3 段径をサブピクセルキャリパーで実測(誤差最大 0.02px) |
+| `industrial_align.png` | 回転ワーク 3 個の shape matching 位置決め(位置 0.0px・角度 0.0° 一致、別部品に無反応) |
+| `industrial_blobs.png` | ペレット 60 粒(接触 6 組)をマーカー watershed で計数 60/60+サイズ 3 色分類 |
+| `industrial_barcode.png` | バー 45 本のエッジ対検出(全エッジ ±1.5px)+走査線プロファイル |
+| `phai_binpick.png` | MuJoCo 物理落下のばら積み → 高さマップ → 把持候補 8 件採点 |
+| `phai_lidar_clusters.png` | 実レイキャスト 2.3 万本 → 地面除去 → 6 クラスタ+OBB 鳥瞰(6/6) |
+| `phai_stereo_obstacles.png` | 視差 → 3D 復元 → 鳥瞰障害物マップ(4/4、地面誤差中央値 3mm) |
+| `phai_focus_stack.png` | 7 焦点 → 全焦点合成(sharpness ×1.27) |
+| `media/phai_bin_pick.mp4` | Panda が把持候補を選び 6-DOF IK で掴んで搬出するフルサイクル(150 フレーム、搬出成功 3/3 実測) |
+
+![industrial_defect](articles/assets/industrial_defect.png)
+![phai_binpick](articles/assets/phai_binpick.png)
