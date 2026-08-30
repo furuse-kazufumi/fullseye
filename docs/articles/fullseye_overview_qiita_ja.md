@@ -439,6 +439,8 @@ py -3.11 robust.py   --problem denoise --workdir out/mine --seeds 5
 
 ## 層③：Physical AI 知覚スタック（ロボットの目）
 
+> **Status: Research prototype** ―― この章の実証は**すべてシミュレーション内**です。実機投入・Sim-to-Real は未着手。
+
 フレームを**幾何と物体**に変える部品群です。ロボットが見て・測って・動くための道具箱。
 
 ```python
