@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 16:32:48
+- **最終更新**: 2026-08-30 16:36:30
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-0f46170b auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:32)
-e7592238 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:32)
-2ff8ec70 auto: gen_science_gallery.py 編集前 (2026-08-30 16:32)
-f8c62a21 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:32)
-d5def783 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:32)
-0c70d501 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:32)
-6aee3eae auto: gen_science_gallery.py 編集前 (2026-08-30 16:32)
-bf8dd79f auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:31)
-45e6af98 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:31)
-eac0dc19 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:31)
+c056cc09 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:36)
+119c8346 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:35)
+cac4ad42 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:35)
+1c31bf1c auto: gen_science_gallery.py 編集前 (2026-08-30 16:35)
+ad3c6589 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:34)
+493257fa auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:34)
+a02eb8d2 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:34)
+3dfe569e auto: gen_science_gallery.py 編集前 (2026-08-30 16:34)
+1547b794 auto: gen_science_gallery.py 編集前 (2026-08-30 16:34)
+4e1fecbc auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:33)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/fullseye_overview_qiita_ja.md
+M tools/gen_industrial_gallery.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-16:32 docs/articles/fullseye_overview_qiita_ja.md
-16:32 tools/gen_industrial_gallery.py
-16:32 docs/articles/assets/science_dino_xray_thumb.jpg
-16:32 docs/articles/assets/science_dino_xray.png
-16:32 docs/articles/assets/science_alife_worlds_thumb.jpg
-16:32 docs/articles/assets/science_alife_worlds.png
-16:32 docs/articles/assets/science_edge_compass_thumb.jpg
-16:32 docs/articles/assets/science_edge_compass.png
-16:32 docs/articles/assets/science_watershed_foam_thumb.jpg
-16:32 docs/articles/assets/science_watershed_foam.png
-16:32 docs/articles/assets/science_fourier_stars_thumb.jpg
-16:32 docs/articles/assets/science_fourier_stars.png
-16:32 docs/articles/assets/science_distance_ripple_thumb.jpg
-16:32 docs/articles/assets/science_distance_ripple.png
-16:32 docs/KNOWN_ISSUES.md
+16:36 tools/gen_industrial_gallery.py
+16:36 docs/articles/assets/industrial_blobs_thumb.jpg
+16:36 docs/articles/assets/_industrial_snippet.md
+16:36 docs/articles/assets/_industrial_gallery_meta.json
+16:36 docs/articles/assets/industrial_blobs.png
+16:35 docs/articles/assets/_science_gallery_snippet.md
+16:35 docs/articles/assets/_science_gallery_meta.json
+16:35 docs/articles/assets/science_distance_ripple_thumb.jpg
+16:35 docs/articles/assets/science_distance_ripple.png
+16:35 tools/gen_science_gallery.py
+16:34 docs/articles/assets/science_dino_skeleton_thumb.jpg
+16:34 docs/articles/assets/science_dino_skeleton.png
+16:34 docs/articles/assets/science_wobble_warp_thumb.jpg
+16:34 docs/articles/assets/science_wobble_warp.png
+16:34 docs/articles/assets/science_morph_pulse.gif
 ```
 
 ---

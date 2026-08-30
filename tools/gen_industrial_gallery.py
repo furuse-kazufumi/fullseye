@@ -588,6 +588,10 @@ def subject_barcode(log=print) -> dict:
     out = _montage([_np_of(vis), profimg],
                    ["バーエッジ検出 (緑=立下り, 橙=立上り)", None], ncols=1,
                    label_h=30)
+    # 高さ違いのセルで生じる末尾の無地帯を刈る
+    bgc = np.array([14, 15, 22]) / 255.0
+    nonbg = np.where(np.abs(out - bgc).sum(axis=2).max(axis=1) > 0.02)[0]
+    out = out[: nonbg[-1] + 12]
     _save_png(out, "industrial_barcode.png")
     _save_thumb("industrial_barcode.png")
     return {
