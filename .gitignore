@@ -29,3 +29,5 @@ out/ui_harness_shots/
 .venv-gsplat/
 .venv*/
 .gsplat-cuda/
+.coverage
+coverage.xml
