@@ -248,8 +248,15 @@ def _invert_region(v, a, b): return 1.0 - _bin(v).astype(np.float64)
 
 
 # --- region -> feature (measurement) ----------------------------------------- #
-def _blob_count(v, a, b):
-    _, n = ndimage.label(_bin(v))
+def _blob_count(v, a, b, connectivity=8):
+    """Number of connected components in the region (HALCON `count_obj`).
+
+    2026-08-30: 8 連結既定に修正(HALCON パリティ — `connection`/計数の既定は
+    8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を
+    2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。
+    """
+    st = ndimage.generate_binary_structure(2, 2 if int(connectivity) == 8 else 1)
+    _, n = ndimage.label(_bin(v), structure=st)
     return np.float64(n)
 
 
