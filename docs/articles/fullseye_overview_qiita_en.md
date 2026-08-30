@@ -439,6 +439,8 @@ To be honest, keeping this discipline tends to make **the headline numbers more 
 
 ## Layer 3: The Physical AI Perception Stack (a Robot's Eyes)
 
+> **Status: Research prototype** — everything demonstrated in this chapter runs **in simulation**. Real hardware and sim-to-real are untouched.
+
 The components that turn frames into **geometry and objects**. The toolbox a robot needs to see, measure, and act.
 
 ```python
