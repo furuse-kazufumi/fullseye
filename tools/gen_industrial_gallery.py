@@ -894,13 +894,17 @@ def subject_stereo_obstacles(log=print) -> dict:
         c = cmapo(0.15 + 0.7 * i / max(1, len(clusters) - 1))
         Q = obst[idx]
         ax[2].scatter(Q[:, 0], Q[:, 1], s=3, color=c)
-        box = fs.obb(Q)
-        corners = box["corners"]
-        top4 = corners[np.argsort(corners[:, 2])[-4:]][:, :2]
-        centre = top4.mean(axis=0)
-        angs = np.arctan2(top4[:, 1] - centre[1], top4[:, 0] - centre[0])
-        poly = top4[np.argsort(angs)]
-        poly = np.vstack([poly, poly[:1]])
+        # 鳥瞰 (xy) 平面での最小面積長方形 (row=y, col=x として渡す)
+        rect = fs.fit_rectangle2(np.column_stack([Q[:, 1], Q[:, 0]]))
+        a0 = math.radians(rect["angle_deg"])
+        ux, uy = math.cos(a0), math.sin(a0)
+        vx, vy = -uy, ux
+        cx0, cy0 = rect["cx"], rect["cy"]
+        l1, l2 = rect["l1"], rect["l2"]
+        poly = np.array([[cx0 + s1 * l1 * ux + s2 * l2 * vx,
+                          cy0 + s1 * l1 * uy + s2 * l2 * vy]
+                         for s1, s2 in [(-1, -1), (1, -1), (1, 1), (-1, 1),
+                                        (-1, -1)]])
         ax[2].plot(poly[:, 0], poly[:, 1], color=c, lw=1.4)
     ax[2].scatter([cam_pos[0]], [cam_pos[1]], c="red", marker="^", s=60,
                   label="camera")
