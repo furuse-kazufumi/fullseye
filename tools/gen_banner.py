@@ -151,7 +151,7 @@ MOSAIC_TILES = [
     # -- row 4 ------------------------------------------------------------
     ("phai_binpick.png",            (0.670, 0.000, 1.000, 0.910), "demo"),
     ("academic_bio_butterfly.png",  (0.339, 0.000, 0.661, 1.000), "ai"),
-    ("industrial_defect.png",       (0.370, 0.040, 0.540, 0.450), "demo"),
+    ("industrial_defect.png",       (0.600, 0.500, 0.900, 0.950), "demo"),
     ("gear_hero.png",               (0.000, 0.000, 1.000, 1.000), "demo"),
     ("academic_ocean_coral.png",    (0.672, 0.000, 1.000, 1.000), "ai"),
     ("science_alife_worlds.png",    (0.500, 0.080, 1.000, 0.900), "demo"),
