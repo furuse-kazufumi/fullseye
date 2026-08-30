@@ -125,6 +125,12 @@ def shot_main(out_path: str) -> None:
               if combo.itemText(i) == "Segment — blob / coin"]
     assert target, "recipe 'Segment — blob / coin' not in combo"
     combo.setCurrentIndex(target[0]); _pump(app, 20)
+    # HDevelop-style region overlay (the segmented coins painted over the input)
+    disp = [cb for cb in win.findChildren(QtWidgets.QComboBox)
+            if any(cb.itemText(i) == "region overlay" for i in range(cb.count()))]
+    if disp:
+        disp[0].setCurrentText("region overlay"); _pump(app, 10)
+    win._actions["fit"].trigger(); _pump(app, 10)      # Ctrl+0: fit image to the view
     win.grab().save(out_path)
 
 
