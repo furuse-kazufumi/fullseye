@@ -225,7 +225,7 @@ def build_skeleton(target_faces: int = 6000):
     volp = np.pad(vol, 1, mode="constant", constant_values=0.0)
     level = 0.5
     V, F = render3d.marching_cubes(volp, level=level)
-    V = V[:, [0, 2, 1]]                                       # 指の長軸を鉛直(Z)へ
+    # 格子 = (幅, 指長軸, 厚み)。恒等マッピングで厚み=Z → 掌が水平に寝る。
     F = _orient_outward(V, F)
     V = _center(V)
     Vd, Fd = _decimate(V, F, target_faces)
