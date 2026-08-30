@@ -87,7 +87,7 @@ TILES = [
     # Elliptic Fourier descriptor fit of an amphora silhouette
     ("academic_arch_amphora.png",  (0.670, 0.000, 1.000, 0.940)),
     # LiDAR bird's-eye view: ground removal + clustering + oriented boxes
-    ("phai_lidar_clusters.png",    (0.570, 0.080, 0.950, 0.920)),
+    ("phai_lidar_clusters.png",    (0.620, 0.120, 0.920, 0.830)),
 ]
 
 TITLE = "Fullseye"
