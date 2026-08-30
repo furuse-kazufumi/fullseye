@@ -2691,3 +2691,316 @@ def test_dev_directive_lines_survive_apply_roundtrip():
             if getattr(s, "_fs_directive_slot", None) == 1
             and s in win._mdi.subWindowList()]
     assert len(subs) == 1
+
+
+# --------------------------------------------------------------------------- #
+# Feature inspection (2-D regions / 3-D clusters) + interactive 3-D viewer +
+# disp_* program directives (2026-08-30).
+# --------------------------------------------------------------------------- #
+def _shapes_image():
+    """Known shapes for feature checks: a filled circle r=20 at (40, 40) and a
+    30-row x 10-col rectangle at rows 80:110, cols 90:100."""
+    img = np.zeros((128, 128))
+    yy, xx = np.mgrid[0:128, 0:128]
+    img[(yy - 40) ** 2 + (xx - 40) ** 2 <= 20 * 20] = 1.0
+    img[80:110, 90:100] = 1.0
+    return img
+
+
+def test_region_feature_table_known_shapes():
+    """The 2-D feature core, checked against geometry ground truth: circle area
+    ≈ πr², circularity near 1 for the circle and clearly lower for the bar,
+    bbox width/height exact, centroids at the shape centres."""
+    img = _shapes_image()
+    objs, mode = studio.region_feature_objects(img)
+    assert mode == "labels" and len(objs) == 2            # binary keeps its labeling
+    headers, rows = studio.region_feature_table(
+        objs, ["area", "row", "col", "width", "height", "circularity"], image=img)
+    assert headers == ["#", "area", "row", "col", "width", "height", "circularity"]
+    circle = next(r for r in rows if r[1] > 1000)          # largest = the circle
+    bar = next(r for r in rows if r is not circle)
+    assert abs(circle[1] - np.pi * 20 * 20) / (np.pi * 400) < 0.05
+    assert abs(circle[2] - 40) < 1 and abs(circle[3] - 40) < 1
+    assert circle[6] > 0.85 and bar[6] < 0.8               # circularity separates them
+    assert (bar[4], bar[5]) == (10.0, 30.0)                # bbox width (cols) x height (rows)
+    # unknown feature names are dropped, not errors
+    h2, _ = studio.region_feature_table(objs, ["area", "no_such_feature"])
+    assert h2 == ["#", "area"]
+
+
+def test_region_feature_gray_values_and_auto_otsu():
+    """Gray input auto-segments (Otsu) and the *_gray features come from
+    image_gray.gray_features over each region's mask."""
+    img = _shapes_image() * 0.7 + 0.1                      # fg 0.8 on bg 0.1 — gray now
+    objs, mode = studio.region_feature_objects(img)
+    assert mode == "otsu" and len(objs) == 2
+    headers, rows = studio.region_feature_table(objs, ["area", "mean_gray"], image=img)
+    assert all(abs(r[2] - 0.8) < 1e-6 for r in rows)
+    # without an image the gray columns are dropped silently
+    h2, _ = studio.region_feature_table(objs, ["area", "mean_gray"])
+    assert h2 == ["#", "area"]
+
+
+def test_feature_csv_label_at_and_highlight():
+    img = _shapes_image()
+    objs, _ = studio.region_feature_objects(img)
+    headers, rows = studio.region_feature_table(objs, ["area"])
+    csv = studio.feature_table_csv(headers, rows)
+    lines = csv.splitlines()
+    assert lines[0] == "#,area" and len(lines) == 1 + len(objs)
+    ci = studio.region_label_at(objs, 40, 40)              # circle centre
+    assert ci is not None and objs[ci]["mask"][40, 40]
+    assert studio.region_label_at(objs, 5, 120) is None    # background
+    rgb = studio.region_highlight_rgb(img, objs, selected=ci)
+    assert rgb.shape == (128, 128, 3) and 0.0 <= rgb.min() and rgb.max() <= 1.0
+    # the selected region is amber-dominant (R > B), the others are teal-ish (B/G > R)
+    other = objs[1 - ci]["mask"]
+    assert rgb[40, 40, 0] > rgb[40, 40, 2]
+    oy, ox = np.argwhere(other)[0]
+    assert rgb[oy, ox, 1] >= rgb[oy, ox, 0]
+
+
+def test_cluster_feature_table_known_box():
+    """3-D feature core against a known box: a 1.0 x 0.5 x 0.25 grid cloud has
+    those extents, OBB side lengths (sorted) and OBB volume = their product."""
+    xs = np.linspace(0, 1.0, 11)
+    ys = np.linspace(0, 0.5, 6)
+    zs = np.linspace(0, 0.25, 4)
+    P = np.array([(x, y, z) for x in xs for y in ys for z in zs])
+    headers, rows = studio.cluster_feature_table(P, [np.arange(P.shape[0])])
+    assert headers[0] == "#" and len(rows) == 1
+    r = dict(zip(headers, rows[0]))
+    assert r["n_points"] == P.shape[0]
+    assert abs(r["centroid_x"] - 0.5) < 1e-6 and abs(r["centroid_z"] - 0.125) < 1e-6
+    assert abs(r["extent_x"] - 1.0) < 1e-6 and abs(r["extent_y"] - 0.5) < 1e-6
+    assert abs(r["obb_length"] - 1.0) < 0.02 and abs(r["obb_height"] - 0.25) < 0.02
+    assert abs(r["obb_volume"] - 0.125) < 0.01
+    # a 1-point cluster cannot carry an OBB -> NaN, not an exception
+    _, tiny = studio.cluster_feature_table(P, [np.array([0])])
+    assert np.isnan(dict(zip(headers, tiny[0]))["obb_volume"])
+
+
+def test_viewer3d_camera_math_pins_known_vertices():
+    """Orbit camera + orthographic projection, pinned numerically: at yaw=0 /
+    pitch=0 the camera looks along +y with +z up-screen, so +x maps right,
+    +z maps up, and +y is the near depth direction."""
+    cam = studio.viewer3d_camera(0, 0)
+    xy, depth = studio.viewer3d_project(
+        np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 0, 1.0], [0, 1.0, 0]]),
+        cam, (0, 0, 0), 1.0, 1.0, (0, 0), 100)
+    assert np.allclose(xy[0], [50, 50])                     # centre stays centred
+    assert np.allclose(xy[1], [95, 50])                     # +x -> right by 0.45*size
+    assert np.allclose(xy[2], [50, 5])                      # +z -> up (screen y shrinks)
+    assert depth[3] > depth[0]                              # +y is toward the camera
+    # yaw=90 turns +x into the depth axis
+    xy2, d2 = studio.viewer3d_project(np.array([[1.0, 0, 0]]),
+                                      studio.viewer3d_camera(90, 0),
+                                      (0, 0, 0), 1.0, 1.0, (0, 0), 100)
+    assert abs(xy2[0, 0] - 50) < 1e-6 and d2[0] > 0.99
+    # zoom and pan are linear in screen space
+    xy3, _ = studio.viewer3d_project(np.array([[1.0, 0, 0]]), cam,
+                                     (0, 0, 0), 1.0, 2.0, (10, -5), 100)
+    assert np.allclose(xy3[0], [1.0 * 0.45 * 100 * 2 + 50 + 10, 45])
+
+
+def test_render_points_frame_and_cluster_colors():
+    P, k = studio.demo_cluster_cloud()
+    img = studio.render_points_frame(P, size=160)
+    assert img.shape == (160, 160, 3) and 0.0 <= img.min() and img.max() <= 1.0
+    assert (img != img[0, 0]).any(), "no points were splatted"
+    # a single red point lands at the view centre
+    one = studio.render_points_frame(np.zeros((1, 3)), colors=np.array([[1.0, 0, 0]]),
+                                     size=64, center=(0, 0, 0), radius=1.0)
+    assert one[32, 32, 0] == 1.0 and one[32, 32, 2] == 0.0
+    C = studio.cluster_colors(P.shape[0], [np.arange(10), np.arange(10, 20)], selected=1)
+    assert np.allclose(C[10], [0.96, 0.65, 0.14])           # selected -> amber accent
+    assert C[0].max() < 0.3                                 # non-selected dimmed
+
+
+def test_mesh_helpers_normals_and_edges():
+    V = np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    F = np.array([[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]])
+    N = studio.mesh_vertex_normals(V, F)
+    assert N.shape == (4, 3)
+    assert np.allclose(np.linalg.norm(N, axis=1), 1.0)
+    E = studio.mesh_edges(F)
+    assert E.shape == (6, 2)                                # tetrahedron: 6 unique edges
+    assert studio.mesh_edges(F, cap=3) is None              # over the wireframe cap
+
+
+def test_feature_inspection_dialog_2d_bidirectional_offscreen():
+    """Ctrl+F5 dialog: the current binary result fills a sortable table; selecting
+    a row re-renders the highlight overlay; clicking a region pixel selects its
+    row; Copy-as-CSV fills the clipboard."""
+    _app()
+    from PySide6 import QtWidgets
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(64)))
+    model.add_stage("otsu")
+    win._actions["run_all"].trigger()
+    win._actions["feature_inspection"].trigger()
+    dlg = win._feature_inspection["dialog"]()
+    assert dlg is not None
+    f = dlg._feat
+    table, feat = f["table"], f["state"]
+    assert table.rowCount() == len(feat["objs"]) > 0
+    assert table.columnCount() == len(feat["headers"]) >= 2
+    table.selectRow(0)                                      # row -> highlight render
+    assert f["view"]._data is not None
+    cy, cx = feat["objs"][0]["centroid"]                    # image click -> row select
+    table.clearSelection()
+    f["click"](int(cx), int(cy))
+    rows = {i.row() for i in table.selectedIndexes()}
+    assert len(rows) == 1
+    it = table.item(rows.pop(), 0)
+    assert feat["objs"][it.data(_qt_userrole())]["mask"][int(cy), int(cx)]
+    f["copy_csv"]()
+    assert QtWidgets.QApplication.clipboard().text().startswith("#,")
+    dlg.close()
+
+
+def _qt_userrole():
+    from PySide6 import QtCore
+    return QtCore.Qt.UserRole
+
+
+def test_feature_inspection_dialog_3d_clusters_offscreen():
+    """3-D tab: the demo cloud clusters into 3, the table carries the cluster
+    features, and selecting a row highlights that cluster in the embedded
+    interactive viewer (amber accent in its color array)."""
+    _app()
+    from PySide6 import QtWidgets
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._feature_inspection["open"]()
+    dlg = win._feature_inspection["dialog"]()
+    f = dlg._feat
+    P, k = studio.demo_cluster_cloud()
+    f["set_cloud"](P, label="demo")
+    assert f["table3"].rowCount() == k == 3
+    f["table3"].selectRow(1)
+    v3 = f["viewer3"]
+    sel = v3._selected
+    assert sel is not None
+    C = studio.cluster_colors(P.shape[0], v3._clusters, sel)
+    assert np.allclose(C[np.asarray(v3._clusters[sel], int)[0]], [0.96, 0.65, 0.14])
+    f["copy_csv3"]()
+    assert QtWidgets.QApplication.clipboard().text().splitlines()[0].startswith("#,n_points")
+    dlg.close()
+
+
+def test_viewer3d_widget_offscreen_points_mesh_and_keys():
+    """The interactive viewer renders points and meshes through the same headless
+    software path offscreen; R resets the camera, W toggles the wireframe, a
+    wheel event zooms."""
+    _app()
+    from PySide6 import QtCore, QtGui, QtWidgets
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(300, 300)
+    P, _k = studio.demo_cluster_cloud()
+    v.set_points(P)
+    assert v.info["kind"] == "points" and v.info["n_points"] == P.shape[0]
+    fr = v.frame_rgb()
+    assert fr.shape[0] == fr.shape[1] and fr.shape[2] == 3
+    v._yaw, v._pitch, v._zoom = 120.0, -40.0, 3.0
+    v.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_R,
+                                    QtCore.Qt.NoModifier))
+    assert (v._yaw, v._pitch, v._zoom) == (35.0, 25.0, 1.0)
+    V = np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    F = np.array([[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]])
+    v.set_mesh(V, F)
+    assert v.info["kind"] == "mesh" and v.info["n_faces"] == 4
+    assert v.info["wireframe_available"]
+    v.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, QtCore.Qt.Key_W,
+                                    QtCore.Qt.NoModifier))
+    assert v._wire is True
+    v.deleteLater()
+
+
+def test_viewer3d_window_rides_graphics_window_system():
+    """View ▸ 3D viewer windows join the SAME handle numbering / cap /
+    dev_set_window machinery as 2-D graphics windows."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    sub = win._open_viewer3d_window(None)                   # demo cloud
+    assert sub is not None and sub in win._mdi.subWindowList()
+    assert getattr(sub, "_fs_handle", None) is not None
+    assert win._current_gfx is sub
+    v3 = sub._fs_viewer3d
+    assert v3.info["kind"] == "points" and v3.info["n_points"] > 0
+    win._apply_dev_directives("dev_set_window (1)")         # back to the primary
+    assert win._current_gfx is win._primary_gsub
+    win._apply_dev_directives("dev_set_window (%d)" % sub._fs_handle)
+    assert win._current_gfx is sub
+    sub.close()
+
+
+def test_disp_directives_parse_and_apply(tmp_path):
+    """disp_* program directives: they are display directives (never pipeline
+    stages), disp_image/disp_region draw into the current window, disp_points3d
+    opens a slot-reused 3-D viewer window, a bad file logs+flashes instead of
+    raising, and an unknown disp_ op is a program error."""
+    _app()
+    import api as _api
+    names = {r["name"] for r in _api.list_ops()}
+    stages, errs = studio.parse_hdev_program(
+        "disp_image (1)\ngaussian (0.5, 0.5)\ndisp_points3d ('x.ply')", names)
+    assert [s[0] for s in stages] == ["gaussian"] and errs == []
+    _, errs2 = studio.parse_hdev_program("disp_bogus (1)", names)
+    assert errs2 and "disp_bogus" in errs2[0]
+
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    model.add_stage("otsu")
+    win._apply_dev_directives("disp_image (1)")
+    win._apply_dev_directives("disp_region")
+    log = win._state["disp_log"]
+    assert [r["op"] for r in log[-2:]] == ["disp_image", "disp_region"]
+    assert all(r["ok"] for r in log[-2:])
+
+    pts = tmp_path / "cloud.xyz"
+    pts.write_text("\n".join("%f %f %f" % tuple(p)
+                             for p in studio.demo_cluster_cloud(n_per=40)[0]))
+    prog = "disp_points3d ('%s')\ngaussian (0.5, 0.5)\n" % str(pts).replace("\\", "/")
+    win._program["edit"].setPlainText(prog)
+    win._program["apply"]()
+    subs = [s for s in win._graphics_windows
+            if getattr(s, "_fs_disp3d_slot", None) == 1 and s in win._mdi.subWindowList()]
+    assert len(subs) == 1 and subs[0]._fs_viewer3d.info["kind"] == "points"
+    n0 = len([s for s in win._graphics_windows if s in win._mdi.subWindowList()])
+    win._program["apply"]()                                 # re-Apply reuses the slot window
+    n1 = len([s for s in win._graphics_windows if s in win._mdi.subWindowList()])
+    assert n1 == n0
+    assert "disp_points3d" in win._program["edit"].toPlainText()   # directive line survives
+    win._program["edit"].setPlainText("gaussian (0.5, 0.5)\n")
+    win._program["apply"]()                                 # fewer disp slots -> reclaimed
+    assert not [s for s in win._graphics_windows
+                if getattr(s, "_fs_disp3d_slot", None) == 1 and s in win._mdi.subWindowList()]
+
+    win._apply_dev_directives("disp_points3d ('no_such_file_xyz.ply')")
+    bad = win._state["disp_log"][-1]
+    assert bad["op"] == "disp_points3d" and bad["ok"] is False and "error" in bad
+
+
+def test_disp3d_python_api_headless_contract():
+    """studio.disp_points3d / disp_mesh3d (the single implementation behind the
+    program directives' viewer): with a running offscreen QApplication they
+    return the live widget (non-blocking); the info record says what was shown."""
+    _app()
+    P, _k = studio.demo_cluster_cloud(n_per=30)
+    w = studio.disp_points3d(P)
+    assert w.info["kind"] == "points" and w.info["n_points"] == P.shape[0]
+    assert w.info.get("shown") is True
+    w.close(); w.deleteLater()
+    V = np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    F = np.array([[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]])
+    m = studio.disp_mesh3d(V, F)
+    assert m.info["kind"] == "mesh" and m.info["n_faces"] == 4
+    m.close(); m.deleteLater()
+
+
+def test_suggest_cluster_tol_scales_with_spacing():
+    g = np.stack(np.meshgrid(np.arange(5.0), np.arange(5.0), np.arange(5.0)),
+                 axis=-1).reshape(-1, 3)                    # unit-spaced grid
+    t1 = studio.suggest_cluster_tol(g)
+    t2 = studio.suggest_cluster_tol(g * 10.0)               # 10x spacing -> 10x tol
+    assert abs(t2 / t1 - 10.0) < 0.5
+    assert studio.suggest_cluster_tol(np.zeros((1, 3))) == 0.05
