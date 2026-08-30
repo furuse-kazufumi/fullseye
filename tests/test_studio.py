@@ -2783,7 +2783,8 @@ def test_cluster_feature_table_known_box():
 def test_viewer3d_camera_math_pins_known_vertices():
     """Orbit camera + orthographic projection, pinned numerically: at yaw=0 /
     pitch=0 the camera looks along +y with +z up-screen, so +x maps right,
-    +z maps up, and +y is the near depth direction."""
+    +z maps up, and +y is the FAR depth direction (depth grows away from
+    the camera)."""
     cam = studio.viewer3d_camera(0, 0)
     xy, depth = studio.viewer3d_project(
         np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 0, 1.0], [0, 1.0, 0]]),
