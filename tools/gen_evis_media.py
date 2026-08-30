@@ -166,9 +166,10 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
     wr.close()
     print(f"stereo -> {out}  ({out.stat().st_size/1e6:.1f} MB)")
     if errs:
+        e = np.array(errs)
         print(f"  VALIDATION: bean range vs truth on {n_valid}/{len(frames[::step])} "
-              f"frames  median err {np.median(errs):.2f}%  mean {np.mean(errs):.2f}%  "
-              f"max {np.max(errs):.2f}%")
+              f"frames  median err {np.median(e):.2f}%  p90 {np.percentile(e, 90):.2f}%  "
+              f"max {np.max(e):.2f}%  frames within 5%: {(e < 5).mean()*100:.1f}%")
     if rep is not None:
         _stills(rep, "evis_stereo_fullseye")
 
