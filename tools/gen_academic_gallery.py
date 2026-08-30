@@ -576,20 +576,15 @@ def rec_distance(col, invert=False):
             ["rgb1_to_gray", "otsu", "fill_up", "dist_transform"])
 
 
-def _ordered_boundary(mask: np.ndarray) -> np.ndarray:
-    """Boundary of the largest component, ordered by angle around the centroid.
-
-    NOTE (bug workaround, reported): fullseye op `gen_contour_region_xld` returns
-    boundary points in raster order, not traced order, which silently breaks
-    order-sensitive consumers like fourierdesc.elliptic_fourier. Angle sort is a
-    star-convex approximation good enough for vase silhouettes.
-    """
-    er = ap(mask, "morph_skeleton", 0.5, 0.5)  # not used; keep registry-only? no:
-    return er  # placeholder replaced below
-
-
 def rec_efd(col):
-    """Shape description: silhouette -> elliptic Fourier reconstruction overlay."""
+    """Shape description: silhouette -> elliptic Fourier reconstruction overlay.
+
+    NOTE (bug workaround, reported as a finding): fullseye op
+    `gen_contour_region_xld` returns boundary points in raster order, not traced
+    order, which silently breaks order-sensitive consumers like
+    fourierdesc.elliptic_fourier. We therefore order the boundary by angle around
+    the centroid (star-convex approximation, fine for vase silhouettes).
+    """
     g = gray(col)
     binm = ap(g, "otsu", 0.5, 0.5)
     if float(binm.mean()) > 0.5:  # foreground should be minority
