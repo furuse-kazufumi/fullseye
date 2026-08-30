@@ -44,7 +44,7 @@
 *脳 MRI 風画像(AI 生成)を cv_clahe + unsharp で組織コントラスト強調(op: `rgb1_to_gray`, `cv_clahe`, `unsharp`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![med_blood_smear](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear_thumb.jpg)
-*血液塗抹風画像(AI 生成)の血球を分割・計数 検出数 = 131(op: `rgb1_to_gray`, `segment_objects(otsu)`, `count_obj`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
+*血液塗抹風画像(AI 生成)の血球を分割・計数 検出数 = 131(op: `rgb1_to_gray`, `segment_objects(otsu)`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![med_anatomy_heart](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart_thumb.jpg)
 *解剖図風イラスト(AI 生成)の輪郭を canny で抽出(op: `rgb1_to_gray`, `canny`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
@@ -55,7 +55,7 @@
 *神経細胞蛍光像(AI 生成)の樹状突起を sk_frangi でトレースし、応答上位 3% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![bio_diatoms](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_diatoms_thumb.jpg)
-*珪藻顕微鏡像(AI 生成)を分割・計数 検出数 = 123(op: `rgb1_to_gray`, `segment_objects(otsu)`, `count_obj`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
+*珪藻顕微鏡像(AI 生成)を分割・計数 検出数 = 123(op: `rgb1_to_gray`, `segment_objects(otsu)`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![bio_deepsea](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_deepsea_thumb.jpg)
 *深海生物(AI 生成)の暗部を cv_clahe で増強(op: `rgb1_to_gray`, `cv_clahe`, `unsharp`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
@@ -107,4 +107,4 @@
 *シダ葉脈(AI 生成)を sk_frangi で葉脈抽出し、応答上位 8% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
 ![bot_pollen](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bot_pollen_thumb.jpg)
-*花粉 SEM 風画像(AI 生成)を分割・計数 検出数 = 41(op: `rgb1_to_gray`, `segment_objects(otsu)`, `count_obj`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
+*花粉 SEM 風画像(AI 生成)を分割・計数 検出数 = 41(op: `rgb1_to_gray`, `segment_objects(otsu)`, `colorize_labels`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
