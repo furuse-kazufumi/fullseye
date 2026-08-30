@@ -630,7 +630,8 @@ def subject_binpick_depth(log=print) -> dict:
     f_px = (res_h / 2) / math.tan(fovy / 2)
     d_table = cam.distance                         # lookat がテーブル面
     inner_px = int((BP._BIN_HALF - 0.012) * f_px / (d_table - 0.05))
-    mask = (depth < d_table - 0.02).astype(np.float64)
+    # 高さ帯域 2〜16cm: テーブル面と、上空にかかるロボットアーム自身を除外
+    mask = ((depth < d_table - 0.02) & (depth > d_table - 0.16)).astype(np.float64)
     inner = np.zeros_like(mask)
     ic, jc = res_h // 2, res_w // 2
     inner[ic - inner_px:ic + inner_px, jc - inner_px:jc + inner_px] = 1.0
