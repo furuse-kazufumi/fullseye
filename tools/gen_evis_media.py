@@ -228,16 +228,19 @@ def gen_stereo(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
                 err = abs(est - true) / true * 100.0
                 errs.append(err)
                 n_valid += 1
-                hud_extra = (f"bean {est:.0f}mm | truth {true:.0f}mm | "
-                             f"err {err:.1f}%")
-        hud = _hud(L.shape[1] * 3,
-                   "fullseye disparity_sgm>speckle_filter>fill_disparity>"
-                   f"depth_from_disparity  t={fr['t']:.2f}s  {hud_extra}")
+                # 計測経路を明示: この誤差は segment_objects 重心の特徴ベース
+                # 視差由来であり、画面の SGM 密マップの精度主張ではない。
+                hud_extra = (f"bean {est:.0f}mm (centroid stereo, not the SGM map) | "
+                             f"truth {true:.0f}mm | err {err:.1f}%")
         row = np.concatenate([
             _label(L, "evis left eye (real capture)"),
             _label(disp_col, "fullseye disparity"),
             _label(depth_col, "fullseye depth"),
         ], axis=1)
+        # HUD width follows the actual row width (no hardcoded resolution)
+        hud = _hud(row.shape[1],
+                   "dense map: fullseye disparity_sgm>speckle_filter>fill_disparity>"
+                   f"depth_from_disparity  t={fr['t']:.2f}s  {hud_extra}")
         frame = np.concatenate([row, hud], axis=0)
         wr.append_data(frame)
         if k == 60:
