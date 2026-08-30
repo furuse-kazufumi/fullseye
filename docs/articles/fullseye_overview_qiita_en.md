@@ -1152,7 +1152,7 @@ I won't write "everything gets faster." Writing down **where it's fast (with mea
 
 - **HALCON coverage is still 42.5%.** OCR, Classification, and System chapters are nearly empty. The policy of thickening the image/geometry core stays, but "under half" is the fact.
 - **The unified API is still mid-migration.** Conventions historically diverged across the image registry, the algorithms, and the perception facade, and the move to the Qt-style natural API is **proceeding in stages**.
-- **GPU work's main effort is still in progress.** The per-op GPU-resident pipeline (E2E) is underway, but real speeds are gated on real hardware (RTX 5090). **Never pass off CPU numbers as GPU numbers** — that's the discipline.
+- **GPU coverage is still in progress.** The ported parts already exist with real RTX 5090 measurements (see "An Honest Word on Performance" above), but **the full ~1,000 ops aren't covered yet**. **Never pass off CPU numbers as GPU numbers** — that's the discipline.
 - **3D visualization inside Studio** is also still being grown, centered on integration with existing viewers (Open3D / RViz2).
 
 A bit more honesty on each.
