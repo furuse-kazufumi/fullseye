@@ -109,7 +109,7 @@ def fig_ci_waterfall() -> None:
                 fontweight="bold", color=GREEN if v == 0 else FG)
         ax.text(x[i], -13.5, notes[i], ha="center", va="top", fontsize=10.5,
                 color=MUTED, linespacing=1.45)
-    ax.text(3, 6.8, "✓", ha="center", va="bottom", fontsize=20, color=GREEN)
+    ax.text(3.28, 3.0, "✓", ha="center", va="bottom", fontsize=19, color=GREEN)
     ax.set_xticks(x, stages, fontsize=12)
     ax.set_ylim(0, 95)
     ax.set_xlim(-0.55, 3.55)
