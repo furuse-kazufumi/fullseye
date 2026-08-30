@@ -797,7 +797,7 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 [![血液塗抹風画像の血球計数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_blood_smear.png)
 
-*↑ 血液塗抹**風**画像の血球を分割・計数（検出数 131）。**AI 生成の模擬データ**。使用 op: `segment_objects(otsu)`, `count_obj`, `colorize_labels`。*
+*↑ 血液塗抹**風**画像の血球を分割・計数（検出数 131）。**AI 生成の模擬データ**。使用 op: `segment_objects(otsu)`, `colorize_labels`。*
 
 [![解剖図風イラストの輪郭抽出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_med_anatomy_heart.png)
 
