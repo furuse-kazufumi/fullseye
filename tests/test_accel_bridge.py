@@ -77,12 +77,18 @@ def test_all_cpu_equals_core():
 
 
 def test_coverage_counts():
-    st = [ops.stage("median", 0.5, 0.4), ops.stage("dog", 0.5, 0.4),
+    st = [ops.stage("median", 0.5, 0.4), ops.stage("rotate_img", 0.5, 0.4),
           ops.stage("threshold", 0.3, 0.4)]
     cov = B.coverage(st)
     assert cov["n_total"] == 3 and cov["n_gpu"] == 2 and cov["n_cpu"] == 1
     assert cov["n_gpu_segments"] == 2
-    assert cov["uncovered_ops"] == ["dog"]
+    assert cov["uncovered_ops"] == ["rotate_img"]
+
+
+def test_dog_is_gpu_covered():
+    """dog は 2026-08-31 の symmetric パディング修正で GPU 化された(回帰ガード)。"""
+    cov = B.coverage([ops.stage("dog", 0.5, 0.4)])
+    assert cov["n_gpu"] == 1 and cov["uncovered_ops"] == []
 
 
 def test_champion_denoise_runs():
