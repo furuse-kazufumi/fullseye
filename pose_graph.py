@@ -86,13 +86,13 @@ def optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200):
     poses_init = np.asarray(poses_init, float).reshape(-1, 6)
     n = len(poses_init)
     if n < 2:
-        raise ValueError("姿勢グラフは 2 ノード以上必要")
+        raise ValueError("pose graph requires at least 2 nodes")
     if len(edges) == 0:
-        raise ValueError("エッジ(相対姿勢制約)が空")
+        raise ValueError("edges (relative pose constraints) are empty")
     for e in edges:                                  # fail-closed: エッジ index を検証(負の silent wrap/範囲外を拒否)
         ei, ej = int(e[0]), int(e[1])
         if not (0 <= ei < n and 0 <= ej < n):
-            raise ValueError(f"エッジのノード index が範囲外 [0,{n}): ({e[0]},{e[1]})")
+            raise ValueError(f"edge node index out of range [0,{n}): ({e[0]},{e[1]})")
     pose0 = poses_init[0].copy()
 
     def unpack(p):

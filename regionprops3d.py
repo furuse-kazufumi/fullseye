@@ -38,8 +38,8 @@ try:
     from scipy.ndimage import generate_binary_structure as _gen_struct
 except ImportError as exc:  # pragma: no cover - scipy は前提だが明示的に失敗させる
     raise ImportError(
-        "regionprops3d は scipy.ndimage を必要とします "
-        "(`from scipy.ndimage import label, find_objects`)。"
+        "regionprops3d requires scipy.ndimage "
+        "(`from scipy.ndimage import label, find_objects`)."
     ) from exc
 
 __all__ = [
@@ -62,7 +62,7 @@ def _as_binary_3d(vol) -> np.ndarray:
     arr = np.asarray(vol)
     if arr.ndim != 3:
         raise ValueError(
-            f"3D ボクセル配列 (ndim==3) が必要ですが ndim={arr.ndim} を受け取りました。"
+            f"a 3D voxel array (ndim==3) is required, but got ndim={arr.ndim}."
         )
     return arr.astype(bool, copy=False)
 
@@ -73,8 +73,8 @@ def _structure(connectivity: int) -> np.ndarray:
         rank = _CONNECTIVITY_RANK[int(connectivity)]
     except (KeyError, ValueError, TypeError):
         raise ValueError(
-            f"connectivity は 6 / 18 / 26 のいずれかである必要があります "
-            f"(受け取った値: {connectivity!r})。"
+            f"connectivity must be one of 6 / 18 / 26 "
+            f"(got: {connectivity!r})."
         )
     return _gen_struct(3, rank)
 
@@ -332,7 +332,7 @@ def inner_box3(vol) -> dict:
     m = _as_binary_3d(vol)
     D = m.shape[0]
     if not m.any():
-        raise ValueError("領域が空です(前景ゼロ)。内接ボックスは定義できません。")
+        raise ValueError("region is empty (zero foreground). Inner box is undefined.")
     best = None                                           # (vol, z0, z1, top, left, bottom, right)
     for z0 in range(D):
         acc = m[z0].copy()

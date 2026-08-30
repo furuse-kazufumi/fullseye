@@ -148,7 +148,7 @@ def run_walk_physics(out_gif="out/walk_physics.gif", *, terrain="rolling", roll_
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")
@@ -246,7 +246,7 @@ def run_jump_physics(out_gif="out/jump_physics.gif", *, terrain="flat", width=64
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")
@@ -321,7 +321,7 @@ def run_hurdle_physics(out_gif="out/hurdle_physics.gif", *, barrier_h=0.20, barr
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")
@@ -429,7 +429,7 @@ def run_route_planning(out_gif="out/route_planning.gif", *, max_s=60.0, freq=1.8
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")
@@ -547,7 +547,7 @@ def run_figure8(out_gif="out/figure8.gif", *, sizes=(3.0, 5.0), freq=1.3, width=
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")
@@ -611,7 +611,7 @@ def run_long_route(out_gif="out/long_route.gif", *, target_m=100.0, max_s=360.0,
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")

@@ -60,7 +60,7 @@ def rmse_correspondence(a, b):
     a = np.asarray(a, float)
     b = np.asarray(b, float)
     if a.shape != b.shape:
-        raise ValueError("同数・同形状の対応点が必要")
+        raise ValueError("correspondence points must have equal count and shape")
     return float(np.sqrt(np.mean(np.sum((a - b) ** 2, axis=1))))
 
 
@@ -85,7 +85,7 @@ def voxel_iou(vol_a, vol_b, iso=0.5):
     b = np.asarray(vol_b)
     if a.shape != b.shape:
         raise ValueError(
-            f"voxel_iou: 両 volume は同一 shape が必要(得た {a.shape} と {b.shape})")
+            f"voxel_iou: both volumes must have the same shape (got {a.shape} and {b.shape})")
     a = a >= iso
     b = b >= iso
     inter = int(np.logical_and(a, b).sum())
@@ -102,7 +102,7 @@ def voxel_dice(vol_a, vol_b, iso=0.5):
     b = np.asarray(vol_b)
     if a.shape != b.shape:
         raise ValueError(
-            f"voxel_dice: 両 volume は同一 shape が必要(得た {a.shape} と {b.shape})")
+            f"voxel_dice: both volumes must have the same shape (got {a.shape} and {b.shape})")
     a = a >= iso
     b = b >= iso
     sa, sb = int(a.sum()), int(b.sum())

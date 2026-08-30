@@ -73,8 +73,8 @@ try:
     from scipy.ndimage import distance_transform_edt as _edt_indices
 except ImportError as exc:  # pragma: no cover - scipy は前提だが明示的に失敗させる
     raise ImportError(
-        "watershed3d は scipy.ndimage を必要とします "
-        "(`from scipy.ndimage import distance_transform_edt`)。"
+        "watershed3d requires scipy.ndimage "
+        "(`from scipy.ndimage import distance_transform_edt`)."
     ) from exc
 
 # 距離変換・局所極大・分水嶺の本体は fullseye 公開 API を再利用する(ゼロから再実装しない)。
@@ -99,10 +99,10 @@ def _as_binary_3d(vol) -> np.ndarray:
     arr = np.asarray(vol)
     if arr.ndim != 3:
         raise ValueError(
-            f"3D ボクセル配列 (ndim==3) が必要ですが ndim={arr.ndim} を受け取りました。"
+            f"a 3D voxel array (ndim==3) is required but got ndim={arr.ndim}."
         )
     if not np.all(np.isfinite(arr)):
-        raise ValueError("入力ボリュームに NaN/Inf が含まれています(退化入力)。")
+        raise ValueError("input volume contains NaN/Inf (degenerate input).")
     return arr.astype(bool, copy=False)
 
 
@@ -111,13 +111,13 @@ def _as_marker_3d(markers, shape: tuple[int, int, int]) -> np.ndarray:
     m = np.asarray(markers)
     if m.shape != shape:
         raise ValueError(
-            f"markers はボリュームと同形状 {shape} が必要ですが {m.shape} を受け取りました。"
+            f"markers must have the same shape as the volume {shape} but got {m.shape}."
         )
     if not np.all(np.isfinite(m)):
-        raise ValueError("markers に NaN/Inf が含まれています。")
+        raise ValueError("markers contains NaN/Inf.")
     m = m.astype(np.int64, copy=False)
     if m.min() < 0:
-        raise ValueError("markers に負のラベルが含まれています(0=背景, 1..n=シード)。")
+        raise ValueError("markers contains negative labels (0=background, 1..n=seeds).")
     return m
 
 
@@ -138,7 +138,7 @@ def _markers_from_peaks(dist: np.ndarray, min_distance: float) -> tuple[np.ndarr
     """
     md = float(min_distance)
     if md < 0:
-        raise ValueError(f"min_distance は非負が必要です(受領: {min_distance})。")
+        raise ValueError(f"min_distance must be non-negative (received: {min_distance}).")
     markers = np.zeros(dist.shape, dtype=np.int32)
     # vol_local_maxima は正整数の半径を要求する。min_distance をシード最小間隔として渡す
     # (0/端数は最小の 1 に丸めて strict 近傍 3x3x3 相当にする)。
@@ -251,7 +251,7 @@ def watershed_vol(binary, markers: Optional[np.ndarray] = None,
     """
     if method not in ("auto", "skimage", "scipy"):
         raise ValueError(
-            f"method は 'auto'/'skimage'/'scipy' のいずれか(受領: {method!r})。"
+            f"method must be one of 'auto'/'skimage'/'scipy' (received: {method!r})."
         )
     mask = _as_binary_3d(binary)
     if not mask.any():

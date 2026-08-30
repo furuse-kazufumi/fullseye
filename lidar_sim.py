@@ -56,7 +56,7 @@ def run_lidar_demo(out_png="out/lidar.png", *, channels=32, az_steps=360,
     """Render the reference view + the LIDAR point cloud and report scan stats."""
     import importlib.util
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")

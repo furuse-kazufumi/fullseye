@@ -89,9 +89,9 @@ def score_maps(models, image, *, metric="use_polarity", mc=0.0,
     min_contrast。``ncount`` も返す必要はない(各行 /n 済み)。
     """
     if not _HAS_TORCH:
-        raise RuntimeError("torch が要ります")
+        raise RuntimeError("torch is required")
     if metric == "ignore_local_polarity":
-        raise ValueError("ignore_local_polarity は conv で表現できない(CPU で)")
+        raise ValueError("ignore_local_polarity cannot be expressed as a conv (use CPU instead)")
     dev = torch.device(device)
     ftype = torch.float32 if dtype == "float32" else torch.float64
 
@@ -131,7 +131,7 @@ def search_transforms(model, image, combos, *, min_score=0.5,
     —— conv が密で速いので全解像度で十分(実測で CPU ピラミッドより速い)。
     """
     if build_transform is None:
-        raise ValueError("build_transform(transform_model) を渡すこと")
+        raise ValueError("must pass build_transform(transform_model)")
     metric = model.get("metric", "use_polarity")
     mc = float(model.get("min_contrast", 0.0))
 

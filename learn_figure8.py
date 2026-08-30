@@ -383,7 +383,7 @@ def eval_figure8(out_gif="out/fig8_learned.gif", weights="out/fig8_policy.npz", 
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     import matplotlib
     matplotlib.use("Agg")

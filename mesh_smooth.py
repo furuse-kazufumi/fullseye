@@ -49,24 +49,24 @@ def _as_mesh(mesh: Sequence) -> Mesh:
     """
     if not isinstance(mesh, (tuple, list)) or len(mesh) < 2:
         raise ValueError(
-            "mesh は (verts, faces) を含む長さ>=2 のシーケンスが必要です"
-            f"(受領: {type(mesh).__name__})")
+            "mesh must be a sequence of length >=2 containing (verts, faces)"
+            f" (got: {type(mesh).__name__})")
     V = np.asarray(mesh[0], dtype=np.float64)
     F = np.asarray(mesh[1], dtype=np.int64)
     if V.ndim != 2 or V.shape[1] != 3:
-        raise ValueError(f"verts は (N,3) が必要です(受領 shape={V.shape})")
+        raise ValueError(f"verts must be (N,3) (got shape={V.shape})")
     if F.ndim != 2 or F.shape[1] != 3:
-        raise ValueError(f"faces は (M,3) が必要です(受領 shape={F.shape})")
+        raise ValueError(f"faces must be (M,3) (got shape={F.shape})")
     if len(V) < 3:
-        raise ValueError(f"頂点が少なすぎます(>=3、受領 {len(V)})")
+        raise ValueError(f"too few vertices (>=3 required, got {len(V)})")
     if not np.isfinite(V).all():
-        raise ValueError("verts に NaN/Inf が含まれています")
+        raise ValueError("verts contain NaN/Inf")
     if len(F) == 0:
-        raise ValueError("faces が空です(隣接を張れません)")
+        raise ValueError("faces is empty (no adjacency can be built)")
     if F.min() < 0 or F.max() >= len(V):
         raise ValueError(
-            f"faces のインデックスが範囲外です([0,{len(V)}) 必要、"
-            f"実測 [{int(F.min())},{int(F.max())}])")
+            f"faces indices are out of range (expected [0,{len(V)}), "
+            f"got [{int(F.min())},{int(F.max())}])")
     return V, F
 
 
@@ -118,9 +118,9 @@ def laplacian_smooth(mesh: Sequence, iters: int = 10, lam: float = 0.5) -> Mesh:
     """
     V, F = _as_mesh(mesh)
     if not isinstance(iters, (int, np.integer)) or iters < 1:
-        raise ValueError(f"iters は正の整数が必要です(受領 {iters!r})")
+        raise ValueError(f"iters must be a positive integer (got {iters!r})")
     if not np.isfinite(lam) or not (0.0 < lam <= 1.0):
-        raise ValueError(f"lam は 0 < lam <= 1 が必要です(受領 {lam!r})")
+        raise ValueError(f"lam must satisfy 0 < lam <= 1 (got {lam!r})")
 
     W, has_nb = _umbrella_operator(F, len(V))
     out = V.copy()
@@ -152,14 +152,14 @@ def taubin_smooth(mesh: Sequence, iters: int = 10, lam: float = 0.33,
     """
     V, F = _as_mesh(mesh)
     if not isinstance(iters, (int, np.integer)) or iters < 1:
-        raise ValueError(f"iters は正の整数が必要です(受領 {iters!r})")
+        raise ValueError(f"iters must be a positive integer (got {iters!r})")
     if not np.isfinite(lam) or not (0.0 < lam < 1.0):
-        raise ValueError(f"lam は 0 < lam < 1 が必要です(受領 {lam!r})")
+        raise ValueError(f"lam must satisfy 0 < lam < 1 (got {lam!r})")
     if not np.isfinite(mu) or mu >= 0.0:
-        raise ValueError(f"mu は負である必要があります(受領 {mu!r})")
+        raise ValueError(f"mu must be negative (got {mu!r})")
     if abs(mu) <= lam:
         raise ValueError(
-            f"|mu| > lam が必要です(非収縮の条件)。受領 lam={lam!r}, mu={mu!r}")
+            f"|mu| > lam is required (non-shrinking condition). Got lam={lam!r}, mu={mu!r}")
 
     W, has_nb = _umbrella_operator(F, len(V))
     out = V.copy()

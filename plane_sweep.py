@@ -36,9 +36,9 @@ def _check_image(img: np.ndarray, name: str) -> np.ndarray:
     """2D float 画像を検証して返す(fail-closed)。"""
     a = np.asarray(img, dtype=float)
     if a.ndim != 2:
-        raise ValueError(f"{name} は 2D grayscale が必要 (ndim={a.ndim})")
+        raise ValueError(f"{name} must be 2D grayscale (ndim={a.ndim})")
     if a.size == 0:
-        raise ValueError(f"{name} が空")
+        raise ValueError(f"{name} is empty")
     return a
 
 
@@ -53,13 +53,13 @@ def plane_homography(K: np.ndarray, R: np.ndarray, t: np.ndarray, depth: float,
     t = np.asarray(t, float).reshape(3)
     n = np.asarray(normal, float).reshape(3)
     if K.shape != (3, 3) or R.shape != (3, 3):
-        raise ValueError("K,R は 3x3 が必要")
+        raise ValueError("K,R must be 3x3")
     if not np.isfinite(depth) or depth <= 0:
-        raise ValueError(f"depth は正の有限値が必要 (depth={depth})")
+        raise ValueError(f"depth must be a positive finite value (depth={depth})")
     try:
         Kinv = np.linalg.inv(K)
     except np.linalg.LinAlgError as e:
-        raise ValueError("K が特異(逆行列なし)") from e
+        raise ValueError("K is singular (no inverse)") from e
     return K @ (R + np.outer(t, n) / depth) @ Kinv
 
 
@@ -72,7 +72,7 @@ def warp_by_plane(img: np.ndarray, H: np.ndarray, order: int = 1,
     a = _check_image(img, "img")
     H = np.asarray(H, float)
     if H.shape != (3, 3):
-        raise ValueError("H は 3x3 が必要")
+        raise ValueError("H must be 3x3")
     h, w = a.shape
     yy, xx = np.mgrid[0:h, 0:w]
     ones = np.ones_like(xx, dtype=float)
@@ -105,14 +105,14 @@ def cost_volume(img_ref: np.ndarray, img_src: np.ndarray, K: np.ndarray,
     ref = _check_image(img_ref, "img_ref")
     src = _check_image(img_src, "img_src")
     if ref.shape != src.shape:
-        raise ValueError(f"img_ref と img_src の shape 不一致 {ref.shape} vs {src.shape}")
+        raise ValueError(f"img_ref and img_src shape mismatch {ref.shape} vs {src.shape}")
     depths = np.asarray(depth_candidates, dtype=float).ravel()
     if depths.size == 0:
-        raise ValueError("depth_candidates が空")
+        raise ValueError("depth_candidates is empty")
     if not np.all(np.isfinite(depths)) or np.any(depths <= 0):
-        raise ValueError("depth_candidates は正の有限値のみ")
+        raise ValueError("depth_candidates must contain only positive finite values")
     if int(window) < 1:
-        raise ValueError("window は 1 以上")
+        raise ValueError("window must be at least 1")
     window = int(window)
 
     h, w = ref.shape

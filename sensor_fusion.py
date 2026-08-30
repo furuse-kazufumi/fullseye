@@ -116,7 +116,7 @@ def run_fusion_demo(out_png="out/sensor_fusion.png", *, seed=0, log=print):
     """Simulate, fuse, score, and render the comparison figure. Returns the RMSE dict."""
     import importlib.util
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt

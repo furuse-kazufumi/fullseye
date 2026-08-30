@@ -28,9 +28,9 @@ __all__ = [
 def _prep(img):
     a = np.array(img, dtype=np.float64)          # copy(入力を破壊しない)
     if a.ndim not in (2, 3):
-        raise ValueError(f"img は (H,W) か (H,W,C)(受領: {a.shape})")
+        raise ValueError(f"img must be (H,W) or (H,W,C) (got: {a.shape})")
     if a.size == 0 or a.shape[0] == 0 or a.shape[1] == 0:
-        raise ValueError("img が空")
+        raise ValueError("img is empty")
     return np.clip(a, 0.0, 1.0)
 
 
@@ -76,7 +76,7 @@ def _line_mask(shape, p0, p1):
 def _polyline_mask(shape, points, closed):
     pts = np.asarray(points, dtype=np.float64).reshape(-1, 2)
     if pts.shape[0] < 2:
-        raise ValueError("polyline には2点以上必要")
+        raise ValueError("polyline requires at least 2 points")
     seq = list(pts) + ([pts[0]] if closed else [])
     m = np.zeros(shape, dtype=bool)
     for i in range(len(seq) - 1):
@@ -151,5 +151,5 @@ def draw_markers(img, points, color=1.0, size=4, shape="cross", width=1):
             m |= _polyline_mask((H, W), [(x - size, y - size), (x + size, y - size),
                                          (x + size, y + size), (x - size, y + size)], closed=True)
         else:
-            raise ValueError(f"shape は 'cross'|'square'|'dot'(受領: {shape!r})")
+            raise ValueError(f"shape must be 'cross'|'square'|'dot' (got: {shape!r})")
     return _apply(a, m, color, width)

@@ -231,8 +231,8 @@ class _NS:
         ops = object.__getattribute__(self, "_ops")
         if item in ops:
             return ops[item]
-        raise AttributeError(f"fullseye '{self._name}' に op '{item}' は無い。"
-                             f"候補: {', '.join(sorted(ops)[:8])} …")
+        raise AttributeError(f"fullseye '{self._name}' has no op '{item}'. "
+                             f"Candidates: {', '.join(sorted(ops)[:8])} ...")
 
     def __dir__(self):
         return sorted(object.__getattribute__(self, "_ops"))
@@ -538,8 +538,8 @@ def _resolve_op(op) -> "UnifiedOp":
     reg = _ensure()
     found = reg.get(op)
     if found is None:
-        cand = ", ".join(o.name for o in reg.find(str(op))[:5]) or "(なし)"
-        raise KeyError(f"pipeline: op {op!r} は registry に無い。候補: {cand}")
+        cand = ", ".join(o.name for o in reg.find(str(op))[:5]) or "(none)"
+        raise KeyError(f"pipeline: op {op!r} is not in the registry. Candidates: {cand}")
     return found
 
 
@@ -631,8 +631,8 @@ class Image:
         reg = _ensure()
         uop = reg.get(item)
         if uop is None:
-            cand = ", ".join(o.name for o in reg.find(item)[:6]) or "(なし)"
-            raise AttributeError(f"Image に op '{item}' は無い。候補: {cand}")
+            cand = ", ".join(o.name for o in reg.find(item)[:6]) or "(none)"
+            raise AttributeError(f"Image has no op '{item}'. Candidates: {cand}")
 
         def _bound(**kwargs):
             return self.apply(uop, **kwargs)

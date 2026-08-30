@@ -194,7 +194,7 @@ def animate(scene, out_dir, *, n_views=36, iters=1000, res=256, radius=1.3,
     if motion_file:
         arr = np.load(motion_file)
         if arr.ndim != 2 or arr.shape[1] != model.nq:
-            raise ValueError(f"motion_file の形が不正: {arr.shape}(期待 (F, {model.nq}))")
+            raise ValueError(f"motion_file has invalid shape: {arr.shape} (expected (F, {model.nq}))")
         qtraj = [arr[i].astype(np.float64) for i in range(len(arr))]
         log(f"real motion: {len(qtraj)} frames from {os.path.basename(motion_file)}")
     elif gait:

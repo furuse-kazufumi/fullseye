@@ -46,9 +46,9 @@ def _check_points(points, k, name):
     """(N,3) 検証と最小サンプル数チェック。返り値 = float 化した (N,3) 配列。"""
     P = np.asarray(points, float)
     if P.ndim != 2 or P.shape[1] != 3:
-        raise ValueError(f"{name}: points は (N,3) 形状が必要(得た shape={P.shape})")
+        raise ValueError(f"{name}: points must have shape (N,3) (got shape={P.shape})")
     if len(P) < k:
-        raise ValueError(f"{name}: 最小 {k} 点必要(得た N={len(P)})")
+        raise ValueError(f"{name}: at least {k} points required (got N={len(P)})")
     return P
 
 
@@ -214,7 +214,7 @@ def ransac_sphere(points, thresh, iters=500, seed=0):
         fit = _fit_sphere_ls(P)              # 最終フォールバック
         fallback = True
     if fit is None:
-        raise ValueError("ransac_sphere: 球フィット不能(点が同一平面上など)")
+        raise ValueError("ransac_sphere: cannot fit a sphere (e.g. points are coplanar)")
     c, r = fit
     dist = np.abs(np.linalg.norm(P - c, axis=1) - r)
     mask = dist < thresh
@@ -310,8 +310,8 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
     P = _check_points(points, 2, "ransac_cylinder")
     Nrm = np.asarray(normals, float)
     if Nrm.shape != P.shape:
-        raise ValueError(f"ransac_cylinder: normals は points と同形状 (N,3) が必要"
-                         f"(points={P.shape}, normals={Nrm.shape})")
+        raise ValueError(f"ransac_cylinder: normals must have the same shape (N,3) as points"
+                         f" (points={P.shape}, normals={Nrm.shape})")
     # 法線は単位化(未正規化でも安全に)
     Nn = Nrm / np.linalg.norm(Nrm, axis=1, keepdims=True).clip(1e-12)
     rng = np.random.default_rng(seed)
@@ -369,7 +369,7 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
         best_axis = vt[-1]
         res = circle_refit(best_axis)
         if res is None:
-            raise ValueError("ransac_cylinder: 円筒フィット不能(投影円が縮退)")
+            raise ValueError("ransac_cylinder: cannot fit a cylinder (projected circle is degenerate)")
         best_mask = res[0]
 
     # リフィット: inlier 法線から軸を頑健再推定(法線 ⟂ 軸 → 最小特異方向)
@@ -393,7 +393,7 @@ def ransac_cylinder(points, normals, thresh, iters=800, seed=0):
         fallback = True
         res = circle_refit(axis)
         if res is None:
-            raise ValueError("ransac_cylinder: 円筒フィット不能(投影円が縮退)")
+            raise ValueError("ransac_cylinder: cannot fit a cylinder (projected circle is degenerate)")
         mask, axis, point3d, r = res
     else:
         c2, r = fit

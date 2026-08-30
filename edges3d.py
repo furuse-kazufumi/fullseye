@@ -32,11 +32,11 @@ def _check_vol(vol) -> np.ndarray:
     """3D の実数 voxel であることを検証し float64 配列にして返す。"""
     arr = np.asarray(vol, dtype=np.float64)
     if arr.ndim != 3:
-        raise ValueError(f"vol は 3 次元(D,H,W)である必要があります: ndim={arr.ndim}, shape={arr.shape}")
+        raise ValueError(f"vol must be 3-dimensional (D,H,W): ndim={arr.ndim}, shape={arr.shape}")
     if arr.size == 0:
-        raise ValueError("vol が空です(size=0)")
+        raise ValueError("vol is empty (size=0)")
     if not np.all(np.isfinite(arr)):
-        raise ValueError("vol に NaN/Inf が含まれています。前処理で除去してください")
+        raise ValueError("vol contains NaN/Inf; remove them during preprocessing")
     return arr
 
 
@@ -44,7 +44,7 @@ def _check_mask(edge_mask) -> np.ndarray:
     """3D の bool mask に正規化する。"""
     arr = np.asarray(edge_mask)
     if arr.ndim != 3:
-        raise ValueError(f"edge_mask は 3 次元である必要があります: ndim={arr.ndim}, shape={arr.shape}")
+        raise ValueError(f"edge_mask must be 3-dimensional: ndim={arr.ndim}, shape={arr.shape}")
     return arr.astype(bool)
 
 
@@ -75,7 +75,7 @@ def gradient3d(vol, sigma: float = 1.0):
     """
     arr = _check_vol(vol)
     if sigma < 0:
-        raise ValueError(f"sigma は非負である必要があります: {sigma}")
+        raise ValueError(f"sigma must be non-negative: {sigma}")
     smoothed = gaussian_filter(arr, sigma=sigma, mode="nearest") if sigma > 0 else arr
     # np.gradient は各軸ごとの偏微分を list で返す(axis0, axis1, axis2)。
     g0, g1, g2 = np.gradient(smoothed)
@@ -148,13 +148,13 @@ def canny3d(vol, low: float, high: float, sigma: float = 1.0) -> np.ndarray:
     gmag.max() のスケールで与えるとロバスト。
     """
     if not (np.isfinite(low) and np.isfinite(high)):
-        raise ValueError(f"low/high は有限値である必要があります: low={low}, high={high}")
+        raise ValueError(f"low/high must be finite: low={low}, high={high}")
     if low < 0:
-        raise ValueError(f"low は非負である必要があります: {low}")
+        raise ValueError(f"low must be non-negative: {low}")
     if high <= 0:
-        raise ValueError(f"high は正である必要があります: {high}")
+        raise ValueError(f"high must be positive: {high}")
     if low > high:
-        raise ValueError(f"low <= high である必要があります: low={low}, high={high}")
+        raise ValueError(f"low <= high is required: low={low}, high={high}")
 
     gmag, gvec = gradient3d(vol, sigma=sigma)
     nms_keep = _nms3d(gmag, gvec)
@@ -195,7 +195,7 @@ def log_zero_crossings(vol, sigma: float = 1.5, rel_thresh: float = 1e-3) -> np.
     """
     arr = _check_vol(vol)
     if sigma <= 0:
-        raise ValueError(f"sigma は正である必要があります: {sigma}")
+        raise ValueError(f"sigma must be positive: {sigma}")
 
     L = gaussian_laplace(arr, sigma=sigma, mode="nearest")
     scale = float(np.abs(L).max())

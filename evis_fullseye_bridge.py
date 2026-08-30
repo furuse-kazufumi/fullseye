@@ -50,7 +50,7 @@ def perceive_evis_walk(qpos_npy, xml, out_gif="out/evis_fullseye.gif", *, width=
     import importlib.util
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     from PIL import Image
 
@@ -386,7 +386,7 @@ def perceive_g1_real(qpos_npy, xml, out_gif="out/g1_real_sensors.gif", *, height
     import math
     import os
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import mujoco
     from PIL import Image
 

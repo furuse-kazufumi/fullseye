@@ -74,17 +74,17 @@ def _as_mesh(vertices, faces) -> tuple[np.ndarray, np.ndarray]:
     V = np.asarray(vertices, dtype=np.float64)
     F = np.asarray(faces, dtype=np.int64)
     if V.ndim != 2 or V.shape[1] != 3:
-        raise ValueError(f"vertices は (N,3) が必要です(受領 shape={V.shape})")
+        raise ValueError(f"vertices must be (N,3) (received shape={V.shape})")
     if F.ndim != 2 or F.shape[1] != 3:
-        raise ValueError(f"faces は (M,3) が必要です(受領 shape={F.shape})")
+        raise ValueError(f"faces must be (M,3) (received shape={F.shape})")
     if len(V) == 0 or len(F) == 0:
-        raise ValueError("空のメッシュです(頂点または面が 0)")
+        raise ValueError("empty mesh (0 vertices or 0 faces)")
     if not np.isfinite(V).all():
-        raise ValueError("vertices に NaN/Inf が含まれています")
+        raise ValueError("vertices contains NaN/Inf")
     if F.min() < 0 or F.max() >= len(V):
         raise ValueError(
-            f"faces のインデックスが範囲外です([0,{len(V)}) を期待、"
-            f"実際 [{int(F.min())},{int(F.max())}])")
+            f"faces indices are out of range (expected [0,{len(V)}), "
+            f"got [{int(F.min())},{int(F.max())}])")
     return V, F
 
 
@@ -196,7 +196,7 @@ def decimate_qem_manifold(vertices, faces, target_faces: int):
     """
     V0, F0 = _as_mesh(vertices, faces)
     if int(target_faces) < 4:
-        raise ValueError(f"target_faces は >=4 が必要です(受領 {target_faces})")
+        raise ValueError(f"target_faces must be >=4 (received {target_faces})")
     target = int(target_faces)
 
     # 退化(面積 0 / 同一インデックス)面を最初に除く。
@@ -207,7 +207,7 @@ def decimate_qem_manifold(vertices, faces, target_faces: int):
                (F0[:, 1] != F0[:, 2]) & (F0[:, 0] != F0[:, 2])
     F0 = F0[nondegen]
     if len(F0) == 0:
-        raise ValueError("有効な面がありません(全て退化しています)")
+        raise ValueError("no valid faces (all are degenerate)")
 
     n_faces = len(F0)
     if target >= n_faces:
@@ -325,7 +325,7 @@ def decimate_qem_manifold(vertices, faces, target_faces: int):
     out_faces = np.array([faces_arr[fi] for fi in range(len(faces_arr))
                           if valid_f[fi]], dtype=np.int64)
     if len(out_faces) == 0:
-        raise ValueError("簡略化の結果、面が残りませんでした(target が過小)")
+        raise ValueError("decimation left no faces remaining (target too small)")
     return _compact(V, out_faces)
 
 

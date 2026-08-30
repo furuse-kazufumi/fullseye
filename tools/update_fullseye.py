@@ -43,12 +43,12 @@ def preflight() -> list[str]:
     problems = []
     r = _git("rev-parse", "--is-inside-work-tree")
     if r.returncode != 0:
-        return [f"git リポジトリではありません: {REPO}(zip 配布なら再ダウンロードで更新)"]
+        return [f"not a git repository: {REPO} (zip distribution: re-download to update)"]
     r = _git("status", "--porcelain")
     if r.stdout.strip():
         problems.append(
-            "作業ツリーに未コミットの変更があります — 更新はあなたの変更に触れません。\n"
-            "  commit / stash してから再実行してください:\n"
+            "uncommitted changes in the working tree — the updater never touches your work.\n"
+            "  commit / stash them, then re-run:\n"
             + "\n".join("    " + ln for ln in r.stdout.strip().splitlines()[:10]))
     return problems
 
@@ -60,17 +60,17 @@ def has_remote() -> bool:
 
 def pull_ff_only(check: bool) -> str:
     if not has_remote():
-        return "remote 未設定 — pull はスキップ(ローカル checkout)"
+        return "no remote configured — pull skipped (local checkout)"
     if check:
         _git("fetch", "--quiet")
         r = _git("rev-list", "--count", "HEAD..@{u}")
         n = r.stdout.strip() or "?"
-        return f"更新可能なコミット: {n} 件(--check のため未適用)"
+        return f"commits available: {n} (not applied because of --check)"
     r = _git("pull", "--ff-only")
     if r.returncode != 0:
         raise SystemExit(
-            "git pull --ff-only が拒否されました(ローカル独自コミットと分岐?)。\n"
-            "履歴は書き換えません — 手動で rebase/merge を判断してください。\n" + r.stderr)
+            "git pull --ff-only was refused (diverged from local commits?).\n"
+            "History is never rewritten — decide rebase/merge manually.\n" + r.stderr)
     return r.stdout.strip().splitlines()[-1] if r.stdout.strip() else "already up to date"
 
 
@@ -80,35 +80,36 @@ def update_rag_skill(check: bool) -> str:
     target = rag.default_target()
     dest = target / rag.SKILL_NAME
     if not dest.is_dir():
-        return "RAG スキル未インストール — スキップ(入れるなら tools/setup_claude_rag.py)"
+        return "RAG skill not installed — skipped (to install: tools/setup_claude_rag.py)"
     if check:
-        return f"RAG スキルを更新予定: {dest}(バックアップの上、再インストール)"
+        return f"RAG skill would be updated: {dest} (backup, then reinstall)"
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     backup = target / f"{rag.SKILL_NAME}.bak-{stamp}"
     shutil.copytree(dest, backup)
     rag.install(target)
-    return f"RAG スキル更新済み(旧版のバックアップ: {backup})"
+    return f"RAG skill updated (previous version backed up: {backup})"
 
 
 def pip_refresh(check: bool) -> str:
     if check:
-        return f"pip install -e {REPO} を実行予定"
+        return f"would run: pip install -e {REPO}"
     r = subprocess.run([sys.executable, "-m", "pip", "install", "-e", str(REPO)],
                        capture_output=True, text=True)
     if r.returncode != 0:
-        raise SystemExit("pip install -e . が失敗しました:\n" + r.stderr[-2000:])
-    return "pip install -e . 完了"
+        raise SystemExit("pip install -e . failed:\n" + r.stderr[-2000:])
+    return "pip install -e . done"
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--check", action="store_true", help="変更せず、何が起きるかだけ表示")
-    ap.add_argument("--pip", action="store_true", help="pip install -e . も再実行する")
+    ap.add_argument("--check", action="store_true",
+                    help="dry run: show what would happen, change nothing")
+    ap.add_argument("--pip", action="store_true", help="also re-run pip install -e .")
     args = ap.parse_args(argv)
 
     problems = preflight()
     if problems:
-        print("更新を中止しました(環境保護):")
+        print("update aborted (environment protection):")
         for p in problems:
             print("  - " + p)
         return 2
@@ -118,9 +119,9 @@ def main(argv=None) -> int:
     if args.pip:
         print("[3/3] " + pip_refresh(args.check))
     else:
-        print("[3/3] pip はスキップ(依存が変わった版では --pip を付けて再実行)")
+        print("[3/3] pip skipped (re-run with --pip when dependencies changed)")
     if not args.check:
-        print("推奨: py -3.11 -m pytest -q で更新後の健全性を確認できます")
+        print("recommended: py -3.11 -m pytest -q to verify the updated tree")
     return 0
 
 

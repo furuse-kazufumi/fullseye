@@ -47,9 +47,9 @@ def _as_transform(T, name: str = "transform") -> np.ndarray:
     """4×4 同次変換として検証。形状不正・非有限は ValueError(fail-closed)。"""
     A = np.asarray(T, np.float64)
     if A.shape != (4, 4):
-        raise ValueError(f"{name}: 4×4 同次変換が必要(得た shape {A.shape})")
+        raise ValueError(f"{name}: a 4x4 homogeneous transform is required (got shape {A.shape})")
     if not np.all(np.isfinite(A)):
-        raise ValueError(f"{name}: 非有限値(NaN/Inf)を含む")
+        raise ValueError(f"{name}: contains non-finite values (NaN/Inf)")
     return A
 
 
@@ -57,9 +57,9 @@ def _as_points(P, name: str = "points") -> np.ndarray:
     """(N,3) 非空点群として検証。形状不正・非有限は ValueError(fail-closed)。"""
     A = np.asarray(P, np.float64)
     if A.ndim != 2 or A.shape[1] != 3 or A.shape[0] < 1:
-        raise ValueError(f"{name}: (N,3) の非空点群が必要(得た shape {A.shape})")
+        raise ValueError(f"{name}: a non-empty (N,3) point cloud is required (got shape {A.shape})")
     if not np.all(np.isfinite(A)):
-        raise ValueError(f"{name}: 非有限値(NaN/Inf)を含む")
+        raise ValueError(f"{name}: contains non-finite values (NaN/Inf)")
     return A
 
 
@@ -67,7 +67,7 @@ def _check_thresh(thresh, name: str = "thresh") -> float:
     """正の有限しきい値として検証。非正・非有限は ValueError(fail-closed)。"""
     t = float(thresh)
     if not np.isfinite(t) or t <= 0.0:
-        raise ValueError(f"{name} は正の有限値が必要(得た {thresh})")
+        raise ValueError(f"{name} must be a positive finite value (got {thresh})")
     return t
 
 
@@ -79,9 +79,9 @@ def make_transform(R, t) -> np.ndarray:
     Rm = np.asarray(R, np.float64)
     tv = np.asarray(t, np.float64).reshape(-1)
     if Rm.shape != (3, 3):
-        raise ValueError(f"make_transform: R は 3×3 が必要(得た {Rm.shape})")
+        raise ValueError(f"make_transform: R must be 3x3 (got {Rm.shape})")
     if tv.shape != (3,):
-        raise ValueError(f"make_transform: t は長さ 3 が必要(得た {tv.shape})")
+        raise ValueError(f"make_transform: t must have length 3 (got {tv.shape})")
     T = np.eye(4, dtype=np.float64)
     T[:3, :3] = Rm
     T[:3, 3] = tv
@@ -109,8 +109,8 @@ def inlier_ratio(source, target, transform, thresh: float) -> float:
     Tg = _as_points(target, "target")
     if S.shape != Tg.shape:
         raise ValueError(
-            f"inlier_ratio: source と target は同数の対応点が必要"
-            f"({S.shape} vs {Tg.shape})")
+            f"inlier_ratio: source and target must have the same number of corresponding points"
+            f" ({S.shape} vs {Tg.shape})")
     T = _as_transform(transform)
     tau = _check_thresh(thresh)
     res = np.linalg.norm(S @ T[:3, :3].T + T[:3, 3] - Tg, axis=1)
@@ -128,8 +128,8 @@ def rmse_inliers(source, target, transform, thresh: float):
     Tg = _as_points(target, "target")
     if S.shape != Tg.shape:
         raise ValueError(
-            f"rmse_inliers: source と target は同数の対応点が必要"
-            f"({S.shape} vs {Tg.shape})")
+            f"rmse_inliers: source and target must have the same number of corresponding points"
+            f" ({S.shape} vs {Tg.shape})")
     T = _as_transform(transform)
     tau = _check_thresh(thresh)
     res = np.linalg.norm(S @ T[:3, :3].T + T[:3, 3] - Tg, axis=1)

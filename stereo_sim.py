@@ -74,7 +74,7 @@ def run_stereo_demo(out_png="out/stereo.png", *, max_disp=48, block=9, log=print
     """Render a stereo pair, estimate depth by block matching, score vs truth."""
     import importlib.util
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt

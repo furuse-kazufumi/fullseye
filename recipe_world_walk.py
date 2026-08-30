@@ -30,7 +30,7 @@ def world_walk(out_dir, *, terrain="terrain", walker="evis", motion="walk",
     # --- 手順1: 地形をメッシュ化(共通 I/F op)。tsdf=GPU不要・清潔、sugar=3DGS由来 ---
     tspec = R.resolve(terrain)
     if tspec is None:
-        raise ValueError(f"terrain '{terrain}' が未登録")
+        raise ValueError(f"terrain '{terrain}' is not registered")
     fr = dict(radius=tspec["radius"], elevation_deg=tspec["elevation_deg"], lookat=tspec["lookat"])
     if mesh_method == "tsdf":
         tr = u.ops["tsdf_mesh"](tspec["xml"], os.path.join(out_dir, "terrain"),
@@ -46,7 +46,7 @@ def world_walk(out_dir, *, terrain="terrain", walker="evis", motion="walk",
     wspec = R.resolve(walker)
     mpath = R.motion(walker, motion)
     if wspec is None or mpath is None:
-        raise ValueError(f"walker '{walker}' / motion '{motion}' が未解決")
+        raise ValueError(f"walker '{walker}' / motion '{motion}' could not be resolved")
     qpos = np.load(mpath).copy()
     qpos[:, 2] += z_offset                       # 地形の上へ持ち上げる(視覚合成)
     xml = open(wspec["xml"], encoding="utf-8").read()

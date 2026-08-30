@@ -81,15 +81,15 @@ def fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None):
     m = xr.size
     if m < 4:
         raise ValueError(
-            f"B スプライン曲面には最低 4 点必要(線形 kx=ky=1)。得られた点数={m}."
+            f"B-spline surface needs at least 4 points (linear kx=ky=1). Got {m} points."
         )
     if not (np.all(np.isfinite(xr)) and np.all(np.isfinite(yr)) and np.all(np.isfinite(zr))):
-        raise ValueError("x, y, z に非有限値(NaN/Inf)が含まれます。")
+        raise ValueError("x, y, z contain non-finite values (NaN/Inf).")
 
     kx = int(kx)
     ky = int(ky)
     if kx < 1 or ky < 1:
-        raise ValueError(f"kx, ky は 1 以上(得た値 kx={kx}, ky={ky})。")
+        raise ValueError(f"kx, ky must be >= 1 (got kx={kx}, ky={ky}).")
     # 次数が過大で係数数 (kx+1)*(ky+1) が点数を超えると縮退するので下げる。
     while (kx + 1) * (ky + 1) > m and (kx > 1 or ky > 1):
         if kx >= ky:
@@ -99,7 +99,7 @@ def fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None):
 
     s = _auto_surface_smooth(m) if smooth is None else float(smooth)
     if s < 0:
-        raise ValueError(f"smooth は非負(得た値 {s})。")
+        raise ValueError(f"smooth must be non-negative (got {s}).")
 
     try:
         with warnings.catch_warnings():
@@ -108,14 +108,14 @@ def fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None):
             tck = bisplrep(xr, yr, zr, kx=kx, ky=ky, s=s)
     except Exception as exc:  # noqa: BLE001 - FITPACK は素の ValueError/RuntimeError
         raise ValueError(
-            "B スプライン曲面のフィットに失敗しました(点が共線/重複、または "
-            f"平滑化係数が小さすぎて縮退した可能性): {exc}"
+            "B-spline surface fit failed (points may be collinear/duplicate, or "
+            f"smoothing factor too small causing degeneracy): {exc}"
         ) from exc
 
     # bisplrep は失敗時に None を返すことがある。
     if tck is None or tck[2] is None or len(np.asarray(tck[2])) == 0:
         raise ValueError(
-            "B スプライン曲面の係数が得られませんでした(縮退したデータ配置)。"
+            "no B-spline surface coefficients obtained (degenerate data arrangement)."
         )
     return tck
 
@@ -146,7 +146,7 @@ def eval_bspline_surface(tck, x, y, grid=False):
         gx = np.asarray(x, float).ravel()
         gy = np.asarray(y, float).ravel()
         if gx.size == 0 or gy.size == 0:
-            raise ValueError("格子評価には x, y とも 1 点以上必要です。")
+            raise ValueError("grid evaluation requires at least 1 point for both x and y.")
         # bisplev は昇順を仮定するので並べ替え、評価後に元の順序へ戻す。
         ox = np.argsort(gx, kind="mergesort")
         oy = np.argsort(gy, kind="mergesort")
@@ -159,8 +159,8 @@ def eval_bspline_surface(tck, x, y, grid=False):
     ya = np.asarray(y, float)
     if xa.shape != ya.shape:
         raise ValueError(
-            f"散布評価では x と y は同一 shape が必要(x={xa.shape}, y={ya.shape})。"
-            " 格子評価なら grid=True を指定してください。"
+            f"scattered evaluation requires x and y to have the same shape (x={xa.shape}, y={ya.shape})."
+            " For grid evaluation, pass grid=True."
         )
     xf = xa.ravel()
     yf = ya.ravel()
@@ -228,24 +228,24 @@ def fit_bspline_curve(points, smooth=0.0, k=3, nest=None):
 
     pts = np.asarray(points, float)
     if pts.ndim != 2:
-        raise ValueError(f"points は (M, D) の 2 次元配列が必要(得た shape {pts.shape})。")
+        raise ValueError(f"points must be a 2D array of shape (M, D) (got shape {pts.shape}).")
     m, d = pts.shape
     if m < 2:
-        raise ValueError(f"曲線フィットには最低 2 点必要(得た点数={m})。")
+        raise ValueError(f"curve fitting needs at least 2 points (got {m}).")
     if d < 2:
-        raise ValueError(f"points の次元 D は 2 以上が必要(得た D={d})。")
+        raise ValueError(f"points dimension D must be >= 2 (got D={d}).")
     if not np.all(np.isfinite(pts)):
-        raise ValueError("points に非有限値(NaN/Inf)が含まれます。")
+        raise ValueError("points contain non-finite values (NaN/Inf).")
 
     k = int(k)
     if k < 1:
-        raise ValueError(f"k は 1 以上(得た値 {k})。")
+        raise ValueError(f"k must be >= 1 (got {k}).")
     if k >= m:  # splprep は m > k を要求
         k = m - 1
 
     s = float(smooth)
     if s < 0:
-        raise ValueError(f"smooth は非負(得た値 {s})。")
+        raise ValueError(f"smooth must be non-negative (got {s}).")
 
     coords = [pts[:, j] for j in range(d)]
     try:
@@ -254,8 +254,8 @@ def fit_bspline_curve(points, smooth=0.0, k=3, nest=None):
             tck, _u = splprep(coords, s=s, k=k, nest=nest)
     except Exception as exc:  # noqa: BLE001
         raise ValueError(
-            "B スプライン曲線のフィットに失敗しました(連続する重複点や縮退した "
-            f"配置の可能性): {exc}"
+            "B-spline curve fit failed (possibly due to consecutive duplicate points or "
+            f"a degenerate arrangement): {exc}"
         ) from exc
     return tck
 
@@ -279,7 +279,7 @@ def eval_bspline_curve(tck, n=200):
 
     n = int(n)
     if n < 2:
-        raise ValueError(f"n は 2 以上が必要(得た値 {n})。")
+        raise ValueError(f"n must be >= 2 (got {n}).")
     u = np.linspace(0.0, 1.0, n)
     out = splev(u, tck)  # D 本の 1 次元配列のリスト
     return np.stack(out, axis=1)

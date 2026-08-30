@@ -42,11 +42,11 @@ def _as_binary_volume(vol, name="vol"):
     """
     arr = np.asarray(vol)
     if arr.ndim != 3:
-        raise ValueError(f"{name} は 3D voxel 配列である必要があります(実際: ndim={arr.ndim}, shape={arr.shape})")
+        raise ValueError(f"{name} must be a 3D voxel array (got ndim={arr.ndim}, shape={arr.shape})")
     if arr.size == 0:
-        raise ValueError(f"{name} が空です(shape={arr.shape})")
+        raise ValueError(f"{name} is empty (shape={arr.shape})")
     if np.issubdtype(arr.dtype, np.floating) and not np.all(np.isfinite(arr)):
-        raise ValueError(f"{name} に NaN/Inf が含まれています(バイナリ voxel を渡してください)")
+        raise ValueError(f"{name} contains NaN/Inf (pass a binary voxel array)")
     return np.ascontiguousarray(arr).astype(bool)
 
 
@@ -71,7 +71,7 @@ def distance_ridge(vol, min_radius=0.0):
     """
     mask = _as_binary_volume(vol)
     if float(min_radius) < 0.0:
-        raise ValueError(f"min_radius は非負(実際: {min_radius})")
+        raise ValueError(f"min_radius must be non-negative (got: {min_radius})")
     edt = distance_transform_edt(mask).astype(np.float64)
     # 3x3x3 の最大値フィルタ(外側 = 背景 = 0)。自分自身を含むので edt >= local_max は
     # 「26 近傍で最大(タイ許容)」= 局所極大を意味する。
@@ -202,7 +202,7 @@ def medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12):
         float: 類似スコア [0,1](大きいほど類似)。
     """
     if w_topology < 0 or w_radius < 0 or (w_topology + w_radius) <= 0:
-        raise ValueError("重みは非負かつ合計 > 0 である必要があります")
+        raise ValueError("weights must be non-negative and sum to > 0")
 
     # 位相距離: 骨格の次数割合ベクトルの L1 距離を半分にして [0,1] に収める。
     sig_a = topology_signature(skeletonize_vol(vol_a))

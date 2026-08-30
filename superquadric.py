@@ -197,7 +197,7 @@ def fit_superquadric(points) -> dict:
 
     P = _pts(points)
     if len(P) < 6:
-        raise ValueError(f"fit_superquadric: 最低 6 点必要(得た N={len(P)})")
+        raise ValueError(f"fit_superquadric: at least 6 points required (got N={len(P)})")
 
     t0, R0, a0 = _principal_frame(P)
     rotvec0 = Rotation.from_matrix(R0).as_rotvec()

@@ -78,7 +78,7 @@ def run_event_demo(out_png="out/event_camera.png", *, n_frames=24, C=0.15, log=p
     """Render a pan, emit DVS events, and score that they land on edges."""
     import importlib.util
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt

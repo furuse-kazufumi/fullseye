@@ -46,9 +46,9 @@ __all__ = [
 def _as_image(img, name="img"):
     a = np.asarray(img, dtype=np.float64)
     if a.ndim not in (2, 3):
-        raise ValueError(f"{name} は (H,W) か (H,W,C) でなければならない(受領: {a.shape})")
+        raise ValueError(f"{name} must be (H,W) or (H,W,C) (got: {a.shape})")
     if a.size == 0 or a.shape[0] == 0 or a.shape[1] == 0:
-        raise ValueError(f"{name} が空")
+        raise ValueError(f"{name} is empty")
     if not np.all(np.isfinite(a)):
         a = np.nan_to_num(a, nan=0.0, posinf=1.0, neginf=0.0)
     return a
@@ -57,9 +57,9 @@ def _as_image(img, name="img"):
 def _as_pts(p, name):
     a = np.asarray(p, dtype=np.float64)
     if a.ndim != 2 or a.shape[1] != 2:
-        raise ValueError(f"{name} は (N,2) の (x,y) 座標でなければならない(受領: {a.shape})")
+        raise ValueError(f"{name} must be (N,2) (x,y) coordinates (got: {a.shape})")
     if not np.all(np.isfinite(a)):
-        raise ValueError(f"{name} に非有限値がある")
+        raise ValueError(f"{name} contains non-finite values")
     return a
 
 
@@ -123,9 +123,9 @@ def warp_piecewise_affine(img, src_pts, dst_pts, order=1):
     src = _as_pts(src_pts, "src_pts")
     dst = _as_pts(dst_pts, "dst_pts")
     if src.shape[0] != dst.shape[0]:
-        raise ValueError(f"src_pts と dst_pts の点数が不一致({src.shape[0]} vs {dst.shape[0]})")
+        raise ValueError(f"src_pts and dst_pts have mismatched point counts ({src.shape[0]} vs {dst.shape[0]})")
     if src.shape[0] < 3:
-        raise ValueError(f"三角形分割には対応点が3点以上必要(受領: {src.shape[0]})")
+        raise ValueError(f"triangulation needs at least 3 corresponding points (got: {src.shape[0]})")
 
     H, W = a.shape[:2]
     yy, xx = np.mgrid[0:H, 0:W]
@@ -173,9 +173,9 @@ def _tps_fit_2d(src, dst, lam=0.0):
     v = _as_pts(dst, "dst")
     n = p.shape[0]
     if n < 3:
-        raise ValueError(f"2D TPS には制御点が3点以上必要(受領: {n})")
+        raise ValueError(f"2D TPS needs at least 3 control points (got: {n})")
     if lam < 0:
-        raise ValueError(f"lam は非負(受領: {lam})")
+        raise ValueError(f"lam must be non-negative (got: {lam})")
     K = _tps_kernel_2d(_pairwise_dist(p, p))
     if lam > 0:
         K = K + lam * np.eye(n)
@@ -210,7 +210,7 @@ def warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1):
     src = _as_pts(src_pts, "src_pts")
     dst = _as_pts(dst_pts, "dst_pts")
     if src.shape[0] != dst.shape[0]:
-        raise ValueError(f"src_pts と dst_pts の点数が不一致({src.shape[0]} vs {dst.shape[0]})")
+        raise ValueError(f"src_pts and dst_pts have mismatched point counts ({src.shape[0]} vs {dst.shape[0]})")
 
     H, W = a.shape[:2]
     yy, xx = np.mgrid[0:H, 0:W]
@@ -231,7 +231,7 @@ def blend(a, b, alpha):
     A = _as_image(a, "a")
     B = _as_image(b, "b")
     if A.shape != B.shape:
-        raise ValueError(f"a と b の shape が不一致({A.shape} vs {B.shape})")
+        raise ValueError(f"a and b have mismatched shapes ({A.shape} vs {B.shape})")
     t = float(np.clip(alpha, 0.0, 1.0))
     return np.clip((1.0 - t) * A + t * B, 0.0, 1.0)
 
@@ -241,7 +241,7 @@ def _warp(img, src_pts, dst_pts, method, lam):
         return warp_piecewise_affine(img, src_pts, dst_pts)
     if method == "tps":
         return warp_tps_image(img, src_pts, dst_pts, lam=lam)
-    raise ValueError(f"method は 'affine' か 'tps'(受領: {method!r})")
+    raise ValueError(f"method must be 'affine' or 'tps' (got: {method!r})")
 
 
 def morph(imgA, imgB, ptsA, ptsB, alpha, method="affine", lam=0.0, with_corners=True):
@@ -267,11 +267,11 @@ def morph(imgA, imgB, ptsA, ptsB, alpha, method="affine", lam=0.0, with_corners=
     A = _as_image(imgA, "imgA")
     B = _as_image(imgB, "imgB")
     if A.shape != B.shape:
-        raise ValueError(f"imgA と imgB の shape が不一致({A.shape} vs {B.shape})")
+        raise ValueError(f"imgA and imgB have mismatched shapes ({A.shape} vs {B.shape})")
     pa = _as_pts(ptsA, "ptsA")
     pb = _as_pts(ptsB, "ptsB")
     if pa.shape != pb.shape:
-        raise ValueError(f"ptsA と ptsB の点数が不一致({pa.shape[0]} vs {pb.shape[0]})")
+        raise ValueError(f"ptsA and ptsB have mismatched point counts ({pa.shape[0]} vs {pb.shape[0]})")
     if with_corners:
         pa = add_frame_corners(pa, A.shape)
         pb = add_frame_corners(pb, B.shape)
@@ -289,7 +289,7 @@ def morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method="affine", lam=0.0, with_c
     返り値: 長さ n の list。先頭が A、末尾が B に一致する。
     """
     if n < 2:
-        raise ValueError(f"n は 2 以上(受領: {n})")
+        raise ValueError(f"n must be >= 2 (got: {n})")
     alphas = np.linspace(0.0, 1.0, int(n))
     return [
         morph(imgA, imgB, ptsA, ptsB, a, method=method, lam=lam, with_corners=with_corners)

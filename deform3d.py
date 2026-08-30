@@ -45,13 +45,13 @@ def _as_points(a, name="points"):
     arr = np.asarray(a, dtype=np.float64)
     if arr.ndim == 1:
         if arr.shape[0] != 3:
-            raise ValueError(f"{name} は長さ3の1次元、または (N,3) でなければならない "
-                             f"(受領: shape={arr.shape})")
+            raise ValueError(f"{name} must be a 1D array of length 3, or (N,3) "
+                             f"(got: shape={arr.shape})")
         arr = arr.reshape(1, 3)
     if arr.ndim != 2 or arr.shape[1] != 3:
-        raise ValueError(f"{name} は (N,3) 形状でなければならない(受領: shape={arr.shape})")
+        raise ValueError(f"{name} must have shape (N,3) (got: shape={arr.shape})")
     if not np.all(np.isfinite(arr)):
-        raise ValueError(f"{name} に非有限値(NaN/Inf)が含まれる")
+        raise ValueError(f"{name} contains non-finite values (NaN/Inf)")
     return arr
 
 
@@ -108,14 +108,14 @@ def tps_fit(src_ctrl, dst_ctrl, lam=0.0):
     p = _as_points(src_ctrl, "src_ctrl")
     v = _as_points(dst_ctrl, "dst_ctrl")
     if p.shape[0] != v.shape[0]:
-        raise ValueError(f"src_ctrl と dst_ctrl の点数が不一致 "
+        raise ValueError(f"src_ctrl and dst_ctrl have mismatched point counts "
                          f"({p.shape[0]} vs {v.shape[0]})")
     n = p.shape[0]
     if n < 4:
         # 3D のアフィン部(4 係数)を決めるには最低 4 点必要。
-        raise ValueError(f"3D TPS には制御点が4点以上必要(受領: {n})")
+        raise ValueError(f"3D TPS needs at least 4 control points (got: {n})")
     if lam < 0:
-        raise ValueError(f"lam は非負でなければならない(受領: {lam})")
+        raise ValueError(f"lam must be non-negative (got: {lam})")
 
     # カーネル行列 K (n,n) と多項式部 P (n,4)
     K = tps_kernel(_pairwise_dist(p, p))
@@ -155,7 +155,7 @@ def tps_warp(model, points):
     """
     for key in ("ctrl", "w", "a"):
         if key not in model:
-            raise ValueError(f"model に必須キー '{key}' が無い(tps_fit の出力を渡すこと)")
+            raise ValueError(f"model is missing required key '{key}' (pass the output of tps_fit)")
     ctrl = np.asarray(model["ctrl"], dtype=np.float64)
     w = np.asarray(model["w"], dtype=np.float64)
     a = np.asarray(model["a"], dtype=np.float64)
@@ -212,14 +212,14 @@ def register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None):
     S0 = _as_points(src, "src")
     D = _as_points(dst, "dst")
     if S0.shape[0] < 4:
-        raise ValueError(f"src は4点以上必要(TPS 制御点)(受領: {S0.shape[0]})")
+        raise ValueError(f"src needs at least 4 points (TPS control points) (got: {S0.shape[0]})")
     if D.shape[0] < 1:
-        raise ValueError("dst が空")
+        raise ValueError("dst is empty")
     if iters < 1:
-        raise ValueError(f"iters は1以上(受領: {iters})")
+        raise ValueError(f"iters must be >= 1 (got: {iters})")
     if k_smooth is not None:
         if not isinstance(k_smooth, (int, np.integer)) or k_smooth < 1:
-            raise ValueError(f"k_smooth は正の整数か None(受領: {k_smooth})")
+            raise ValueError(f"k_smooth must be a positive integer or None (got: {k_smooth})")
         k_smooth = int(min(k_smooth, D.shape[0]))
 
     # スケール(dst の重心まわり RMS 半径)→ λ をスケール相対に。
@@ -323,11 +323,11 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
     Y = _as_points(src, "src")   # 移動側 (M,3)
     X = _as_points(dst, "dst")   # 固定側 (N,3)
     if not (0.0 <= w < 1.0):
-        raise ValueError(f"w は 0≤w<1(受領: {w})")
+        raise ValueError(f"w must satisfy 0<=w<1 (got: {w})")
     if Y.shape[0] < 1 or X.shape[0] < 1:
-        raise ValueError("src / dst が空")
+        raise ValueError("src / dst is empty")
     if iters < 1:
-        raise ValueError(f"iters は1以上(受領: {iters})")
+        raise ValueError(f"iters must be >= 1 (got: {iters})")
 
     M, D = Y.shape
     N = X.shape[0]

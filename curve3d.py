@@ -55,7 +55,7 @@ def curvature_torsion(curve):
     # 代表スケール L(典型 ‖r'‖, index param)。座標スケール s に線形に伴走する。
     L = float(np.median(r1_norm))
     if not np.isfinite(L) or L <= 0.0:
-        raise ValueError("degenerate curve: 全点が一致/重複し ‖r'‖=0 のため κ/τ を計算不能")
+        raise ValueError("degenerate curve: all points coincide/overlap so ||r'||=0, cannot compute kappa/tau")
     eps_k = 1e-12 * L ** 3   # r1_norm³ と同次元(~s³)
     eps_t = 1e-12 * L ** 4   # cross_norm² と同次元(~s⁴)
     kappa = cross_norm / (r1_norm ** 3 + eps_k)
@@ -93,7 +93,7 @@ def fit_spline_curve(points, smooth=0.0, k=3, n=None):
     from scipy.interpolate import splprep, splev
     c = np.asarray(points, float)
     if len(c) <= k:
-        raise ValueError("点数がスプライン次数 k より多く必要")
+        raise ValueError("number of points must exceed spline degree k")
     n = len(c) if n is None else n
     tck, _ = splprep([c[:, 0], c[:, 1], c[:, 2]], s=smooth, k=k)
     u = np.linspace(0.0, 1.0, n)

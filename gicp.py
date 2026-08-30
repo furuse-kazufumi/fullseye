@@ -91,12 +91,12 @@ def estimate_covariances(points, k: int = 20, epsilon: float = 1e-3) -> np.ndarr
 
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
-        raise ValueError("points は (N,3) でなければならない")
+        raise ValueError("points must be (N,3)")
     N = P.shape[0]
     if N < 3:
-        raise ValueError("共分散推定には少なくとも 3 点が必要(N<3 は縮退)")
+        raise ValueError("covariance estimation needs at least 3 points (N<3 is degenerate)")
     if not (0.0 < float(epsilon) < 1.0):
-        raise ValueError("epsilon は (0,1) の範囲でなければならない")
+        raise ValueError("epsilon must be in the range (0,1)")
 
     kk = int(min(max(4, k), N))
     _, idx = cKDTree(P).query(P, k=kk)
@@ -165,11 +165,11 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
     S = np.asarray(source, np.float64)
     Q = np.asarray(target, np.float64)
     if S.ndim != 2 or S.shape[1] != 3:
-        raise ValueError("source は (N,3) でなければならない")
+        raise ValueError("source must be (N,3)")
     if Q.ndim != 2 or Q.shape[1] != 3:
-        raise ValueError("target は (M,3) でなければならない")
+        raise ValueError("target must be (M,3)")
     if S.shape[0] < 3 or Q.shape[0] < 3:
-        raise ValueError("source/target とも 3 点以上が必要(縮退)")
+        raise ValueError("both source and target need at least 3 points (degenerate)")
 
     # 初期姿勢
     if init is None:
@@ -227,7 +227,7 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
         except np.linalg.LinAlgError:
             x, *_ = np.linalg.lstsq(Hr, g, rcond=None)
         if not np.all(np.isfinite(x)):
-            raise ValueError("GICP 数値発散(非有限な更新)= fail-closed")
+            raise ValueError("GICP numerical divergence (non-finite update) = fail-closed")
 
         omega = x[0:3]
         tau = x[3:6]
@@ -245,6 +245,6 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
     d = p - Q[idx]
     rmse = float(np.sqrt(np.mean(np.sum(d ** 2, axis=1))))
     if not (np.all(np.isfinite(R)) and np.all(np.isfinite(t)) and np.isfinite(rmse)):
-        raise ValueError("GICP 数値発散(非有限な結果)= fail-closed")
+        raise ValueError("GICP numerical divergence (non-finite result) = fail-closed")
 
     return {"R": R, "t": t, "rmse": rmse, "iterations": n_iter}

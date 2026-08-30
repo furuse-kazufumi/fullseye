@@ -38,9 +38,9 @@ __all__ = [
 def _as_1d(y, name="y"):
     a = np.asarray(y, dtype=np.float64).ravel()
     if a.size < 2:
-        raise ValueError(f"{name} は長さ2以上の1D配列が必要(受領: {a.shape})")
+        raise ValueError(f"{name} must be a 1D array of length >= 2 (got: {a.shape})")
     if not np.all(np.isfinite(a)):
-        raise ValueError(f"{name} に非有限値がある")
+        raise ValueError(f"{name} contains non-finite values")
     return a
 
 
@@ -56,12 +56,12 @@ def poly_fit(x, y, degree):
     xa = _as_1d(x, "x")
     ya = _as_1d(y, "y")
     if xa.shape != ya.shape:
-        raise ValueError(f"x と y の長さが不一致({xa.shape} vs {ya.shape})")
+        raise ValueError(f"x and y have mismatched lengths ({xa.shape} vs {ya.shape})")
     d = int(degree)
     if d < 0:
-        raise ValueError(f"degree は非負(受領: {degree})")
+        raise ValueError(f"degree must be non-negative (got: {degree})")
     if d >= xa.size:
-        raise ValueError(f"degree({d}) は点数({xa.size})未満でなければならない")
+        raise ValueError(f"degree({d}) must be less than the number of points({xa.size})")
     return np.polyfit(xa, ya, d)
 
 
@@ -118,7 +118,7 @@ def bandpass(y, low=0.1, high=0.4):
     """点列 y のバンドパス(low..high の中間帯だけ通す)。low<high(ナイキスト割合)。"""
     a = _as_1d(y, "y")
     if not (0.0 <= low < high <= 1.0):
-        raise ValueError(f"0<=low<high<=1 が必要(受領: low={low}, high={high})")
+        raise ValueError(f"0<=low<high<=1 required (got: low={low}, high={high})")
     return _apply_gain(a, _gauss_lp_gain(a.size, high)) - _apply_gain(a, _gauss_lp_gain(a.size, low))
 
 
@@ -127,7 +127,7 @@ def smooth(y, window=5):
     a = _as_1d(y, "y")
     w = int(window)
     if w < 1:
-        raise ValueError(f"window は1以上(受領: {window})")
+        raise ValueError(f"window must be >= 1 (got: {window})")
     if w % 2 == 0:
         w += 1
     pad = w // 2
@@ -151,14 +151,14 @@ def spline_fit(x, y, smooth=0.0):
     xa = _as_1d(x, "x")
     ya = _as_1d(y, "y")
     if xa.shape != ya.shape:
-        raise ValueError(f"x と y の長さが不一致({xa.shape} vs {ya.shape})")
+        raise ValueError(f"x and y have mismatched lengths ({xa.shape} vs {ya.shape})")
     order = np.argsort(xa)
     xs, ys = xa[order], ya[order]
     if np.any(np.diff(xs) <= 0):
-        raise ValueError("x に重複値があり補間できない(単調増加に整列できない)")
+        raise ValueError("x has duplicate values and cannot be interpolated (cannot sort to strictly increasing)")
     s = float(smooth)
     if s < 0:
-        raise ValueError(f"smooth は非負(受領: {smooth})")
+        raise ValueError(f"smooth must be non-negative (got: {smooth})")
     if s > 0:
         return UnivariateSpline(xs, ys, s=s)               # 平滑化(s=scipy 平滑化係数)
     return CubicSpline(xs, ys)                              # 補間(全点を通る)
@@ -176,7 +176,7 @@ def spline_resample(x, y, n, smooth=0.0):
     """
     xa = _as_1d(x, "x")
     if int(n) < 2:
-        raise ValueError(f"n は2以上(受領: {n})")
+        raise ValueError(f"n must be >= 2 (got: {n})")
     spl = spline_fit(xa, y, smooth=smooth)
     x_new = np.linspace(float(xa.min()), float(xa.max()), int(n))
     return x_new, spline_eval(spl, x_new)
@@ -192,11 +192,11 @@ def spline_resample(x, y, n, smooth=0.0):
 def _as_ptsND(points, name="points"):
     p = np.asarray(points, dtype=np.float64)
     if p.ndim != 2 or p.shape[1] < 2:
-        raise ValueError(f"{name} は (N, D>=2) の曲線点列が必要(受領: {p.shape})")
+        raise ValueError(f"{name} must be a curve point sequence of shape (N, D>=2) (got: {p.shape})")
     if p.shape[0] < 4:
-        raise ValueError(f"{name} は4点以上必要(3次スプライン, 受領: {p.shape[0]})")
+        raise ValueError(f"{name} needs at least 4 points (cubic spline, got: {p.shape[0]})")
     if not np.all(np.isfinite(p)):
-        raise ValueError(f"{name} に非有限値がある")
+        raise ValueError(f"{name} contains non-finite values")
     return p
 
 
@@ -232,7 +232,7 @@ def spline_curve_eval(model, t):
 def spline_curve_resample(points, n, closed=False, smooth=0.0):
     """曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。"""
     if int(n) < 4:
-        raise ValueError(f"n は4以上(受領: {n})")
+        raise ValueError(f"n must be >= 4 (got: {n})")
     m = spline_curve_fit(points, closed=closed, smooth=smooth)
     t = np.linspace(0.0, 1.0, int(n), endpoint=not closed)
     return spline_curve_eval(m, t)

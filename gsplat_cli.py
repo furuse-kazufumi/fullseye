@@ -30,10 +30,10 @@ def run(scene: str, out_dir: str, *, n_views=36, iters=700, width=128, height=12
     torch.manual_seed(seed); np.random.seed(seed)
     dev = "cuda"
     if not torch.cuda.is_available():
-        raise RuntimeError("gsplat_cli: CUDA が無い。.venv-gsplat(cu128)の python で実行する。")
+        raise RuntimeError("gsplat_cli: CUDA is not available. Run with the .venv-gsplat (cu128) python.")
     path = _BUILTIN.get(scene, scene)
     if not path.endswith(".xml") or not os.path.exists(path):
-        raise FileNotFoundError(f"scene が見つからない: {scene} (builtin={list(_BUILTIN)})")
+        raise FileNotFoundError(f"scene not found: {scene} (builtin={list(_BUILTIN)})")
     os.makedirs(out_dir, exist_ok=True)
     s, names = S.orbit_scene(path, n_views=n_views, radius=radius,
                              elevation_deg=elevation_deg, lookat=lookat,

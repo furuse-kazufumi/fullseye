@@ -1272,9 +1272,9 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
     src_t = _to_t(src)
     dst_t = _to_t(dst)
     if src_t.ndim != 2 or src_t.shape[1] != 3:
-        raise ValueError("src は (N,3) でなければならない")
+        raise ValueError("src must be (N,3)")
     if dst_t.ndim != 2 or dst_t.shape[1] != 3:
-        raise ValueError("dst は (M,3) でなければならない")
+        raise ValueError("dst must be (M,3)")
 
     # --- 初期姿勢(累積 R, t)--------------------------------------------
     if init_R is None:

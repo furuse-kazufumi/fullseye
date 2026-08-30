@@ -26,7 +26,7 @@ def to_points(data, kind, samples=20000, **kw):
         return np.argwhere(np.asarray(data) > kw.get("iso", 0.5)).astype(float)
     if kind == "3dgs":
         return np.asarray(data, float)
-    raise ValueError(f"未知の構造種別: {kind}")
+    raise ValueError(f"unknown structure kind: {kind}")
 
 
 def _np(x):
@@ -46,7 +46,7 @@ def register_cross(src, src_kind, dst, dst_kind, method="fpfh", samples=15000, *
     if method == "icp":
         R, t, _ = X.icp_point2point_3d(ps, pd, iters=50)
         return _np(R), _np(t)
-    raise ValueError(f"未知の登録法: {method}")
+    raise ValueError(f"unknown registration method: {method}")
 
 
 def fuse_to_voxel(items, size=64, bounds=None, device="cpu", smooth=0.8):

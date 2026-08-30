@@ -60,15 +60,15 @@ def _check_points(points, min_points: int, name: str = "points") -> np.ndarray:
     arr = np.asarray(points, dtype=np.float64)
     if arr.ndim != 2 or arr.shape[1] != 3:
         raise ValueError(
-            f"{name} は (N,3) の点群である必要があります: shape={arr.shape}"
+            f"{name} must be a point cloud of shape (N,3): shape={arr.shape}"
         )
     n = arr.shape[0]
     if n < min_points:
         raise ValueError(
-            f"{name} の点数が不足しています: N={n}(この指標には最低 {min_points} 点が必要)"
+            f"{name} has too few points: N={n} (this metric needs at least {min_points} points)"
         )
     if not np.all(np.isfinite(arr)):
-        raise ValueError(f"{name} に NaN/Inf が含まれています。前処理で除去してください")
+        raise ValueError(f"{name} contains NaN/Inf; remove them during preprocessing")
     return np.ascontiguousarray(arr)
 
 
@@ -107,7 +107,7 @@ def central_moments(points, max_order: int = 3) -> dict:
         (p, q, r) -> μ_{pqr}。
     """
     if max_order < 0:
-        raise ValueError(f"max_order は 0 以上である必要があります: {max_order}")
+        raise ValueError(f"max_order must be at least 0: {max_order}")
     p = _check_points(points, min_points=1)
     centered = p - p.mean(axis=0, keepdims=True)
     dx, dy, dz = centered[:, 0], centered[:, 1], centered[:, 2]
@@ -213,8 +213,8 @@ def moment_invariants(points) -> np.ndarray:
     max_abs = float(np.max(np.abs(centered))) if centered.size else 0.0
     if max_abs <= 0.0 or rms <= _EPS * max_abs:
         raise ValueError(
-            "点群が縮退しています(全点が一致、広がり ≈ 0)。"
-            "スケール正規化ができないため不変量は定義されません"
+            "point cloud is degenerate (all points coincide, spread ≈ 0); "
+            "invariants are undefined because scale normalization is not possible"
         )
     normalized = centered / rms
 
@@ -251,9 +251,9 @@ def shape_distance(inv_a, inv_b) -> float:
     a = np.asarray(inv_a, dtype=np.float64).ravel()
     b = np.asarray(inv_b, dtype=np.float64).ravel()
     if a.shape != b.shape:
-        raise ValueError(f"不変量ベクトルの長さが一致しません: {a.shape} vs {b.shape}")
+        raise ValueError(f"invariant vector lengths do not match: {a.shape} vs {b.shape}")
     if a.size == 0:
-        raise ValueError("不変量ベクトルが空です")
+        raise ValueError("invariant vector is empty")
     if not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):
-        raise ValueError("不変量ベクトルに NaN/Inf が含まれています")
+        raise ValueError("invariant vector contains NaN/Inf")
     return float(np.linalg.norm(a - b))

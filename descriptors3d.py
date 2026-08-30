@@ -55,15 +55,15 @@ def _check_points(points, min_points: int, name: str = "points") -> np.ndarray:
     arr = np.asarray(points, dtype=np.float64)
     if arr.ndim != 2 or arr.shape[1] != 3:
         raise ValueError(
-            f"{name} は (N,3) の点群である必要があります: shape={arr.shape}"
+            f"{name} must be a point cloud of shape (N,3): shape={arr.shape}"
         )
     n = arr.shape[0]
     if n < min_points:
         raise ValueError(
-            f"{name} の点数が不足しています: N={n}(この指標には最低 {min_points} 点が必要)"
+            f"{name} has too few points: N={n} (this metric needs at least {min_points} points)"
         )
     if not np.all(np.isfinite(arr)):
-        raise ValueError(f"{name} に NaN/Inf が含まれています。前処理で除去してください")
+        raise ValueError(f"{name} contains NaN/Inf; remove them during preprocessing")
     return np.ascontiguousarray(arr)
 
 
@@ -75,7 +75,7 @@ def _normalized_hist(values: np.ndarray, bins: int, lo: float, hi: float) -> np.
     空入力・全ゼロは一様分布にフォールバックして NaN を出さない。
     """
     if bins < 1:
-        raise ValueError(f"bins は 1 以上である必要があります: bins={bins}")
+        raise ValueError(f"bins must be at least 1: bins={bins}")
     v = np.asarray(values, dtype=np.float64)
     v = v[np.isfinite(v)]
     if v.size == 0:
@@ -118,7 +118,7 @@ def d2_distribution(points, bins: int = 64, samples: int = 100_000, seed: int = 
     p = _check_points(points, min_points=2)
     n = p.shape[0]
     if samples < 1:
-        raise ValueError(f"samples は 1 以上である必要があります: samples={samples}")
+        raise ValueError(f"samples must be at least 1: samples={samples}")
     rng = np.random.default_rng(seed)
     i = rng.integers(0, n, size=samples)
     # j != i を保証: i に [1, n-1] のオフセットを足して mod n。
@@ -161,7 +161,7 @@ def a3_distribution(points, bins: int = 64, samples: int = 100_000, seed: int = 
     p = _check_points(points, min_points=3)
     n = p.shape[0]
     if samples < 1:
-        raise ValueError(f"samples は 1 以上である必要があります: samples={samples}")
+        raise ValueError(f"samples must be at least 1: samples={samples}")
     rng = np.random.default_rng(seed)
     b = rng.integers(0, n, size=samples)                 # 頂点
     a = (b + rng.integers(1, n, size=samples)) % n       # b != a
@@ -277,11 +277,11 @@ def shape_distance(desc_a, desc_b, metric: str = "l1") -> float:
     a = np.asarray(desc_a, dtype=np.float64).ravel()
     b = np.asarray(desc_b, dtype=np.float64).ravel()
     if a.shape != b.shape:
-        raise ValueError(f"記述子の長さが一致しません: {a.shape} vs {b.shape}")
+        raise ValueError(f"descriptor lengths do not match: {a.shape} vs {b.shape}")
     if a.size == 0:
-        raise ValueError("記述子が空です")
+        raise ValueError("descriptor is empty")
     if not (np.all(np.isfinite(a)) and np.all(np.isfinite(b))):
-        raise ValueError("記述子に NaN/Inf が含まれています")
+        raise ValueError("descriptor contains NaN/Inf")
 
     metric = metric.lower()
     if metric == "l1":
@@ -298,4 +298,4 @@ def shape_distance(desc_a, desc_b, metric: str = "l1") -> float:
         js = 0.5 * _kl(pa, m) + 0.5 * _kl(pb, m)
         js = max(js, 0.0)  # 数値誤差でわずかに負になるのを防ぐ
         return float(np.sqrt(js))
-    raise ValueError(f"未知の metric です: {metric!r}('l1' か 'jsd')")
+    raise ValueError(f"unknown metric: {metric!r} ('l1' or 'jsd')")

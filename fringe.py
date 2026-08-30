@@ -45,17 +45,17 @@ def _as_stack(images) -> np.ndarray:
     images: 長さ N のシーケンス(各 2D 画像)または (N, H, W) 配列。N >= 3 が必須。
     """
     if images is None:
-        raise ValueError("images が None です(位相シフト画像列を渡してください)")
+        raise ValueError("images must not be None (pass a phase-shift image sequence)")
     stack = np.asarray(images, dtype=np.float64)
     if stack.ndim != 3:
         raise ValueError(
-            f"位相シフト画像列は (N, H, W) の 3 次元である必要があります: 実際は shape={stack.shape}"
+            f"phase-shift image sequence must be 3-dimensional (N, H, W): got shape={stack.shape}"
         )
     n = stack.shape[0]
     if n < 3:
-        raise ValueError(f"N-step 位相シフトには N >= 3 が必要です: N={n}")
+        raise ValueError(f"N-step phase shifting requires N >= 3: N={n}")
     if not np.all(np.isfinite(stack)):
-        raise ValueError("位相シフト画像に非有限値(NaN/Inf)が含まれています")
+        raise ValueError("phase-shift images contain non-finite values (NaN/Inf)")
     return stack
 
 
@@ -120,18 +120,18 @@ def unwrap_phase_2d(wrapped, mask=None) -> np.ndarray:
     """
     if not _HAVE_SKIMAGE or _sk_unwrap_phase is None:
         raise RuntimeError(
-            "skimage.restoration.unwrap_phase が利用できません(scikit-image を導入してください)"
+            "skimage.restoration.unwrap_phase is unavailable (install scikit-image)"
         )
     arr = np.asarray(wrapped, dtype=np.float64)
     if arr.ndim != 2:
-        raise ValueError(f"unwrap_phase_2d は 2D 配列を想定: 実際は shape={arr.shape}")
+        raise ValueError(f"unwrap_phase_2d expects a 2D array: got shape={arr.shape}")
 
     invalid = ~np.isfinite(arr)
     if mask is not None:
         mask = np.asarray(mask, dtype=bool)
         if mask.shape != arr.shape:
             raise ValueError(
-                f"mask の形状 {mask.shape} が wrapped の形状 {arr.shape} と一致しません"
+                f"mask shape {mask.shape} does not match wrapped shape {arr.shape}"
             )
         invalid = invalid | (~mask)
 
@@ -139,7 +139,7 @@ def unwrap_phase_2d(wrapped, mask=None) -> np.ndarray:
         return np.asarray(_sk_unwrap_phase(arr), dtype=np.float64)
 
     if invalid.all():
-        raise ValueError("有効画素が 1 つもありません(全画素が NaN/マスク済み)")
+        raise ValueError("no valid pixels (all pixels are NaN/masked)")
 
     # 無効画素を masked array で除外してアンラップ(skimage が対応)。
     filled = np.where(invalid, 0.0, arr)
@@ -165,19 +165,19 @@ def graycode_decode(bit_images, thresh=0.5) -> np.ndarray:
     返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。
     """
     if bit_images is None:
-        raise ValueError("bit_images が None です")
+        raise ValueError("bit_images must not be None")
     bits_stack = np.asarray(bit_images, dtype=np.float64)
     if bits_stack.ndim != 3:
         raise ValueError(
-            f"bit_images は (K, H, W) の 3 次元が必要: 実際は shape={bits_stack.shape}"
+            f"bit_images must be 3-dimensional (K, H, W): got shape={bits_stack.shape}"
         )
     k = bits_stack.shape[0]
     if k < 1:
-        raise ValueError("Gray code のビット面が 1 枚もありません")
+        raise ValueError("no Gray code bit planes given")
     if k > 62:
-        raise ValueError(f"ビット数が多すぎます(int64 では K<=62): K={k}")
+        raise ValueError(f"too many bits (int64 requires K<=62): K={k}")
     if not np.all(np.isfinite(bits_stack)):
-        raise ValueError("bit_images に非有限値(NaN/Inf)が含まれています")
+        raise ValueError("bit_images contain non-finite values (NaN/Inf)")
 
     # 二値化 → Gray 整数(MSB first)
     binimg = (bits_stack >= thresh).astype(np.int64)
@@ -208,7 +208,7 @@ def phase_to_height(phase, ref_phase, k) -> np.ndarray:
     ref = np.asarray(ref_phase, dtype=np.float64)
     if ref.ndim != 0 and ref.shape != ph.shape:
         raise ValueError(
-            f"ref_phase の形状 {ref.shape} が phase の形状 {ph.shape} と一致しません"
+            f"ref_phase shape {ref.shape} does not match phase shape {ph.shape}"
         )
     kf = float(k)
     return kf * (ph - ref)
@@ -273,14 +273,14 @@ def synthesize_fringes(height, n_steps=4, freq=1.0, phase_gain=1.0,
     """
     h = np.asarray(height, dtype=np.float64)
     if h.ndim != 2:
-        raise ValueError(f"height は 2D 配列が必要: 実際は shape={h.shape}")
+        raise ValueError(f"height must be a 2D array: got shape={h.shape}")
     n = int(n_steps)
     if n < 3:
-        raise ValueError(f"n_steps は 3 以上が必要: n_steps={n}")
+        raise ValueError(f"n_steps must be >= 3: n_steps={n}")
     if axis not in (0, 1):
-        raise ValueError(f"axis は 0(行) か 1(列) のみ: axis={axis}")
+        raise ValueError(f"axis must be 0 (rows) or 1 (cols): axis={axis}")
     if amplitude < 0 or bias < 0:
-        raise ValueError("bias / amplitude は非負である必要があります")
+        raise ValueError("bias / amplitude must be non-negative")
 
     rows, cols = h.shape
     # 搬送波: axis に沿った [0,1) 正規化座標 × 2π × freq

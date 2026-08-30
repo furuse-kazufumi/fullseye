@@ -85,7 +85,7 @@ class Scene:
         self.name = name
         self.spec = R.resolve(name)
         if self.spec is None:
-            raise ValueError(f"scene '{name}' が見つかりません。f3d.scenes() を確認してください。")
+            raise ValueError(f"scene '{name}' not found. Check f3d.scenes().")
 
     def _framing(self):
         return dict(radius=self.spec["radius"], elevation_deg=self.spec["elevation_deg"],
@@ -148,9 +148,9 @@ class Scene:
             d = mujoco.MjData(m); mujoco.mj_forward(m, d)
             qpos = G.build(m, np.asarray(d.qpos), gait, n_frames=60)
             if qpos is None:
-                raise ValueError(f"gait '{gait}' はこのモデルで生成不可")
+                raise ValueError(f"gait '{gait}' cannot be generated for this model")
         else:
-            raise ValueError("motion 名か gait を指定してください(例: walk / trot)")
+            raise ValueError("specify either a motion name or a gait (e.g. walk / trot)")
         static = None
         if on is not None:
             qpos = qpos.copy(); qpos[:, 2] += z_offset

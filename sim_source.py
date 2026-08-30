@@ -56,7 +56,7 @@ class MuJoCo:
             return cam
         cid = mujoco.mj_name2id(self._m, mujoco.mjtObj.mjOBJ_CAMERA, cam)
         if cid < 0:
-            raise ValueError(f"MuJoCo: camera {cam!r} が無い。候補: {self.cameras()}")
+            raise ValueError(f"MuJoCo: camera {cam!r} not found. Candidates: {self.cameras()}")
         return cid
 
     # -- GL 不要 -----------------------------------------------------------
@@ -153,7 +153,7 @@ class MuJoCo:
         from PIL import Image as _PILImage
         cams = list(cams) if cams is not None else self.cameras()
         if not cams:
-            raise RuntimeError("save_gsplat_dataset: named カメラが無い。capture_orbit() を使う。")
+            raise RuntimeError("save_gsplat_dataset: no named cameras. Use capture_orbit() instead.")
         img_dir = os.path.join(out_dir, "images")
         os.makedirs(img_dir, exist_ok=True)
         K = self.intrinsics(cams[0])
@@ -323,7 +323,7 @@ class MuJoCo:
         import os
         import shutil
         if self._xml is None:
-            raise RuntimeError("save_animation は XML 由来の MuJoCo が要る(MjModel 直渡しは不可)")
+            raise RuntimeError("save_animation requires an XML-derived MuJoCo instance (passing an MjModel directly is not supported)")
         os.makedirs(scene_dir, exist_ok=True)
         qpos = np.asarray(qpos, float)
         with open(os.path.join(scene_dir, "model.xml"), "w", encoding="utf-8") as fh:
@@ -447,8 +447,8 @@ class _Scaffold:
         pass
 
     def _na(self, *a, **k):
-        raise RuntimeError(f"{self.backend} sim-source は未接続(optional)。"
-                           f"本環境では MuJoCo を使用。{self.backend} 接続は別途ブリッジが要る。")
+        raise RuntimeError(f"{self.backend} sim-source is not connected (optional). "
+                           f"This environment uses MuJoCo; connecting {self.backend} requires a separate bridge.")
 
     cameras = intrinsics = rgb = depth = point_cloud = ground_truth = _na
 
@@ -538,7 +538,7 @@ def _look_at_xyaxes(pos, target, world_up=(0.0, 0.0, 1.0)):
     f = target - pos
     n = np.linalg.norm(f)
     if n < 1e-9:
-        raise ValueError("_look_at_xyaxes: pos と target が一致")
+        raise ValueError("_look_at_xyaxes: pos and target coincide")
     f = f / n
     up = np.asarray(world_up, float)
     if abs(float(np.dot(f, up))) > 0.999:                 # 視線が up と平行 → 退避軸
@@ -573,7 +573,7 @@ def capture_orbit(base_xml: str, out_dir: str, *, n_views: int = 24,
             f'fovy="{fovy}" xyaxes="{" ".join(f"{v:.6f}" for v in xy)}"/>')
     inject = "".join(cams_xml)
     if "</worldbody>" not in base_xml:
-        raise ValueError("capture_orbit: base_xml に </worldbody> が無い")
+        raise ValueError("capture_orbit: base_xml has no </worldbody>")
     xml = base_xml.replace("</worldbody>", inject + "</worldbody>", 1)
     s = MuJoCo(xml, width=width, height=height)
     try:

@@ -55,7 +55,7 @@ def _build_model(walker, terrain, log):
     import scene_registry as R
     wspec = R.resolve(walker); tspec = R.resolve(terrain)
     if wspec is None or tspec is None:
-        raise ValueError(f"walker '{walker}' / terrain '{terrain}' の解決に失敗")
+        raise ValueError(f"failed to resolve walker '{walker}' / terrain '{terrain}'")
     spec = mujoco.MjSpec.from_file(wspec["xml"])            # include/mesh 解決つき
     _add_terrain_geoms(spec, open(tspec["xml"], encoding="utf-8").read(), log)
     return spec.compile(), tspec
@@ -75,9 +75,9 @@ def _walk_qpos(walker, motion=None, gait=None, n_frames=90, travel=0.0):
         d = mujoco.MjData(m); mujoco.mj_forward(m, d)
         q = G.build(m, np.asarray(d.qpos), gait, n_frames=n_frames, travel=travel)
         if q is None:
-            raise ValueError(f"gait '{gait}' はこのモデルで生成不可")
+            raise ValueError(f"gait '{gait}' cannot be generated for this model")
         return q.astype(float)
-    raise ValueError("motion 名か gait を指定")
+    raise ValueError("specify either a motion name or a gait")
 
 
 def _terrain_height(m, d, x, y, geomgroup):
@@ -147,7 +147,7 @@ def render_walk_gif(out_gif, *, walker="go2", terrain="rolling", motion=None, ga
         ground_follow = travel > 0                          # 横断時は地形に接地させる
     m, tspec = _build_model(walker, terrain, log)
     if q.shape[1] != m.nq:
-        raise ValueError(f"motion nq={q.shape[1]} が合成モデル nq={m.nq} と不一致")
+        raise ValueError(f"motion nq={q.shape[1]} does not match composite model nq={m.nq}")
     q = q.copy(); q[:, 2] += float(z_offset)
     d = mujoco.MjData(m)
     dist = float(distance if distance is not None else max(3.2, tspec.get("radius", 3.0) * 1.35))

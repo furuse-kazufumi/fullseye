@@ -62,11 +62,11 @@ def _as_points(points, k: int, name: str) -> np.ndarray:
     """入力を (N,3) float64 へ検証。fail-closed(形状不正/非有限/点数不足は ValueError)。"""
     P = np.asarray(points, dtype=np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
-        raise ValueError(f"{name}: points は (N,3) 形状が必要(得た shape={P.shape})")
+        raise ValueError(f"{name}: points must have shape (N,3) (got shape={P.shape})")
     if not np.all(np.isfinite(P)):
-        raise ValueError(f"{name}: points に非有限値が含まれる")
+        raise ValueError(f"{name}: points contains non-finite values")
     if len(P) < k:
-        raise ValueError(f"{name}: 最低 {k} 点必要(得た N={len(P)})")
+        raise ValueError(f"{name}: at least {k} points required (got N={len(P)})")
     return P
 
 
@@ -136,7 +136,7 @@ def fit_cone(points) -> dict:
         t = -t
         m, b = np.polyfit(t, rho, 1)
     if abs(m) < 1e-6:
-        raise ValueError("fit_cone: 円錐の広がりが検出できない(半角 ~0、円柱に縮退)")
+        raise ValueError("fit_cone: cannot detect cone spread (half-angle ~0, degenerates to cylinder)")
     t_apex = -b / m
     apex0 = centroid + t_apex * d0
     alpha0 = float(np.clip(np.arctan(abs(m)), 1e-3, np.pi / 2 - 1e-3))
@@ -161,7 +161,7 @@ def fit_cone(points) -> dict:
     # 縮退ガード(honest): 半角 ~0 の円錐は円柱/直線と区別できず頂点も定まらない → 拒否。
     if half_angle < np.deg2rad(0.5):
         raise ValueError(
-            "fit_cone: 半角が ~0(円柱/直線へ縮退)。円錐として当てはめられない")
+            "fit_cone: half-angle is ~0 (degenerates to cylinder/line); cannot fit as a cone")
 
     # 開く向きの正規化(点は +axis 側の nappe にあるはず): 平均軸成分が負なら向き付けを直す。
     a, _ = _axial_radial(P, apex, axis)
@@ -323,14 +323,14 @@ def fit_ellipsoid(points) -> dict:
     d = P - centroid
     scale = float(np.sqrt(np.mean(np.sum(d ** 2, axis=1))))   # RMS 半径
     if scale < 1e-12:
-        raise ValueError("fit_ellipsoid: 点が 1 点に縮退している(スケール 0)")
+        raise ValueError("fit_ellipsoid: points degenerate to a single point (scale 0)")
     # 平面状の退化ガード(honest): 点が(ほぼ)同一平面/直線上だと面外の広がりが決まらず
     # 3D 楕円体は一意に定まらない。中心化共分散の最小/最大固有値比で検出して fail-closed。
     # (真に薄い楕円体を「表面」からサンプルすれば上下面で面外にも広がるので比は 0 にならない。)
     cov_evals = np.linalg.eigvalsh(d.T @ d)
     if cov_evals[0] <= 1e-9 * cov_evals[-1]:
         raise ValueError(
-            "fit_ellipsoid: 点が(ほぼ)同一平面/直線上=面外の広がりが不定(退化)")
+            "fit_ellipsoid: points are (nearly) coplanar/collinear; out-of-plane spread is undetermined (degenerate)")
     Pn = d / scale
     x, y, z = Pn[:, 0], Pn[:, 1], Pn[:, 2]
     # 設計行列 D(列 = χ = [x²,y²,z²,2yz,2xz,2xy,2x,2y,2z,1])
@@ -349,7 +349,7 @@ def fit_ellipsoid(points) -> dict:
     try:
         evals, evecs = sla.eig(Sr, _ELLIPSOID_C)
     except (np.linalg.LinAlgError, ValueError) as exc:
-        raise ValueError(f"fit_ellipsoid: 一般化固有問題が解けない({exc})")
+        raise ValueError(f"fit_ellipsoid: cannot solve the generalized eigenproblem ({exc})")
 
     # 各一般化固有ベクトルを楕円体へ復元し、正定値(= 実在する楕円体)に復元できた解のうち
     # 残差 RMS 最小を採用する。楕円体拘束の符号(vᵀCv の正負)は係数ベクトルのスケール規約に
@@ -376,7 +376,7 @@ def fit_ellipsoid(points) -> dict:
 
     if best is None:
         raise ValueError(
-            "fit_ellipsoid: 正定値な楕円体解が得られない(平面状の退化・非楕円面・"
-            "角度被覆不足)")
+            "fit_ellipsoid: no positive-definite ellipsoid solution found (planar degeneracy, "
+            "non-ellipsoidal surface, or insufficient angular coverage)")
     best["residual"] = best_rms
     return best

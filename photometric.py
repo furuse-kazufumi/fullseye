@@ -15,7 +15,7 @@ import numpy as np
 def _as_stack(images):
     a = np.asarray(images, dtype=np.float64)
     if a.ndim != 3:
-        raise ValueError("images は (N,H,W) 形状が必要")
+        raise ValueError("images must have shape (N,H,W)")
     return a
 
 
@@ -30,12 +30,12 @@ def photometric_stereo(images, lights, mask=None, normalize=True):
     I = _as_stack(images)                       # (N,H,W)
     L = np.asarray(lights, dtype=np.float64)    # (N,3)
     if L.ndim != 2 or L.shape[1] != 3:
-        raise ValueError("lights は (N,3) 形状が必要")
+        raise ValueError("lights must have shape (N,3)")
     N, H, W = I.shape
     if L.shape[0] != N:
-        raise ValueError("images と lights の枚数が不一致")
+        raise ValueError("images and lights count mismatch")
     if N < 3:
-        raise ValueError("光源は 3 方向以上必要")
+        raise ValueError("at least 3 light directions are required")
     if normalize:
         L = L / (np.linalg.norm(L, axis=1, keepdims=True) + 1e-12)
     Iv = I.reshape(N, H * W)                     # (N,P)

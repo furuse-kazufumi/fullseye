@@ -88,11 +88,11 @@ def bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K,
     obs_uv = np.asarray(obs_uv, float)
     nc, m = len(cameras), len(points)
     if nc < 2:
-        raise ValueError("バンドル調整は 2 カメラ以上必要")
+        raise ValueError("bundle adjustment requires at least 2 cameras")
     if len(obs_cam) == 0:
-        raise ValueError("観測が空(バンドル調整は再投影観測が必要)")
+        raise ValueError("observations are empty (bundle adjustment requires reprojection observations)")
     if not (len(obs_cam) == len(obs_pt) == len(obs_uv)):
-        raise ValueError("観測配列の長さが不一致")
+        raise ValueError("observation array lengths do not match")
     cam0 = cameras[0].copy()
 
     def fun(p):

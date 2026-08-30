@@ -34,11 +34,11 @@ __all__ = [
 def _as_contour(points, name="points"):
     p = np.asarray(points, dtype=np.float64)
     if p.ndim != 2 or p.shape[1] != 2:
-        raise ValueError(f"{name} は (N,2) の点列でなければならない(受領: {p.shape})")
+        raise ValueError(f"{name} must be a sequence of (N,2) points (received: {p.shape})")
     if p.shape[0] < 3:
-        raise ValueError(f"{name} は3点以上の閉輪郭が必要(受領: {p.shape[0]})")
+        raise ValueError(f"{name} needs a closed contour with at least 3 points (received: {p.shape[0]})")
     if not np.all(np.isfinite(p)):
-        raise ValueError(f"{name} に非有限値がある")
+        raise ValueError(f"{name} contains non-finite values")
     return p
 
 
@@ -67,7 +67,7 @@ def elliptic_fourier(points, n_harmonics=10):
     """
     p = _as_contour(points)
     if n_harmonics < 1:
-        raise ValueError(f"n_harmonics は1以上(受領: {n_harmonics})")
+        raise ValueError(f"n_harmonics must be at least 1 (received: {n_harmonics})")
     # 閉輪郭にする(末尾==先頭)
     if not np.allclose(p[0], p[-1]):
         p = np.vstack([p, p[0]])
@@ -77,7 +77,7 @@ def elliptic_fourier(points, n_harmonics=10):
     t = np.concatenate([[0.0], np.cumsum(dt)])  # (K+1,) 累積弧長
     T = t[-1]
     if T < 1e-9:
-        raise ValueError("輪郭の周長が 0(全点が同一)")
+        raise ValueError("contour perimeter is 0 (all points coincide)")
     phi = 2.0 * np.pi * t / T                  # (K+1,)
 
     K = d.shape[0]
@@ -201,7 +201,7 @@ def descriptor_distance(m1, m2, n_harmonics=None, scale_invariant=True):
     if n_harmonics is not None:
         N = min(N, int(n_harmonics))
     if N < 1:
-        raise ValueError("比較には1高調波以上必要")
+        raise ValueError("comparison requires at least 1 harmonic")
     return float(np.linalg.norm(a[:N] - b[:N]))
 
 
@@ -221,7 +221,7 @@ def fourier_smooth(points, keep):
     Z = np.fft.fft(z)
     k = int(keep)
     if k < 1:
-        raise ValueError("keep は1以上")
+        raise ValueError("keep must be at least 1")
     if k >= (N + 1) // 2:
         return p.copy()
     mask = np.zeros(N, dtype=bool)

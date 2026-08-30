@@ -31,9 +31,9 @@ def _as_points(points):
     """入力を (N,3) float64 に正規化。形が違えば明示エラー。"""
     P = np.asarray(points, dtype=np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
-        raise ValueError(f"points は (N,3) の点群が必要です(受領: shape={P.shape})")
+        raise ValueError(f"points must be a (N,3) point cloud (got shape={P.shape})")
     if not np.isfinite(P).all():
-        raise ValueError("points に NaN/Inf が含まれています")
+        raise ValueError("points contain NaN/Inf")
     return P
 
 
@@ -51,8 +51,8 @@ def _grid_coords(P, size, pad_vox):
     inner = (size - 1) - 2 * pad_vox
     if inner <= 0:
         raise ValueError(
-            f"size={size} が pad_vox={pad_vox}(≈3σ)に対して小さすぎます。"
-            "size を大きく、または sigma を小さくしてください。")
+            f"size={size} is too small relative to pad_vox={pad_vox} (approx. 3 sigma). "
+            "Increase size, or decrease sigma.")
     gp = pad_vox + (P - lo) / span_safe * inner
     return gp, lo, span, inner
 
@@ -75,9 +75,9 @@ def _winding_indicator(gp, normals, size, sigma, idx):
     n = np.asarray(normals, dtype=np.float64)
     if n.shape != gp.shape:
         raise ValueError(
-            f"normals は points と同形 (N,3) が必要です(points={gp.shape}, normals={n.shape})")
+            f"normals must have the same shape (N,3) as points (points={gp.shape}, normals={n.shape})")
     if not np.isfinite(n).all():
-        raise ValueError("normals に NaN/Inf が含まれています")
+        raise ValueError("normals contain NaN/Inf")
     nn = n / (np.linalg.norm(n, axis=1, keepdims=True) + 1e-12)   # 単位化
 
     # 法線を最近傍 voxel へ splat(3 チャンネルのベクトル場)
@@ -102,7 +102,7 @@ def _winding_indicator(gp, normals, size, sigma, idx):
     lo_ref = np.percentile(w, 5.0)
     hi_ref = np.percentile(w, 95.0)
     if hi_ref - lo_ref < 1e-12:
-        raise ValueError("法線指標場が縮退しています(有効な内外差がありません)")
+        raise ValueError("normal-based indicator field is degenerate (no valid inside/outside contrast)")
     field = np.clip((w - lo_ref) / (hi_ref - lo_ref), 0.0, 1.0)
 
     # 自動向き付け: 格子中心(通常は物体内部)が端(通常は外部)より高くなるよう反転
@@ -154,11 +154,11 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
     """
     P = _as_points(points)
     if len(P) < 4:
-        raise ValueError(f"点群が少なすぎます(表面再構成には >=4 点、受領 {len(P)})")
+        raise ValueError(f"too few points (surface reconstruction needs >=4, got {len(P)})")
     if size < 8:
-        raise ValueError(f"size={size} が小さすぎます(>=8 推奨)")
+        raise ValueError(f"size={size} is too small (>=8 recommended)")
     if sigma <= 0:
-        raise ValueError("sigma は正である必要があります")
+        raise ValueError("sigma must be positive")
 
     pad_vox = int(np.ceil(3.0 * sigma)) + 2
     gp, lo, span, inner = _grid_coords(P, size, pad_vox)
@@ -170,7 +170,7 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
         grid = gaussian_filter(grid, sigma)
         mx = float(grid.max())
         if mx <= 0.0:
-            raise ValueError("占有場が空です(点が格子に載っていません)")
+            raise ValueError("occupancy field is empty (no points landed on the grid)")
         occ = grid / mx
 
         # 占有(unsigned)場は内外対称なので、薄い表面サンプルでは任意の等値面が内・外スロープの
@@ -195,13 +195,14 @@ def poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None):
     fmin, fmax = float(field.min()), float(field.max())
     if not (fmin < level < fmax):
         raise ValueError(
-            f"iso={level} が等値面場の値域 ({fmin:.4g}, {fmax:.4g}) の外です。"
-            "占有/指標が薄い、または iso が不適切です。iso を値域内に調整してください。")
+            f"iso={level} is outside the field's value range ({fmin:.4g}, {fmax:.4g}). "
+            "The occupancy/indicator field may be too thin, or iso is unsuitable. "
+            "Adjust iso to fall within the range.")
 
     try:
         verts, faces, _, _ = marching_cubes(field, level=level)
     except (RuntimeError, ValueError) as e:              # 等値面が見つからない等
-        raise ValueError(f"marching cubes による等値面抽出に失敗: {e}")
+        raise ValueError(f"marching cubes isosurface extraction failed: {e}")
 
     # 格子座標 → 世界座標(縮退軸は span=0 で lo に固定)
     world = lo[None, :] + (verts - pad_vox) / inner * span[None, :]
@@ -249,13 +250,13 @@ def _alpha_boundary_faces(P, alpha):
     (= 内部で共有されない外皮)を境界とする。返り値 (B,3) の頂点 index(points を参照)。
     """
     if alpha <= 0:
-        raise ValueError("alpha は正である必要があります(1/alpha が半径しきい値)")
+        raise ValueError("alpha must be positive (1/alpha is the radius threshold)")
     if len(P) < 4:
-        raise ValueError(f"Delaunay 四面体分割には >=4 点必要です(受領 {len(P)})")
+        raise ValueError(f"Delaunay tetrahedralization needs >=4 points (got {len(P)})")
     try:
         tri = Delaunay(P)
     except Exception as e:                              # 共面/共線などの縮退
-        raise ValueError(f"Delaunay 分割に失敗しました(縮退した点群?): {e}")
+        raise ValueError(f"Delaunay tetrahedralization failed (degenerate point cloud?): {e}")
 
     simp = tri.simplices                                # (M,4)
     if len(simp) == 0:
@@ -351,12 +352,12 @@ def estimate_alpha(points):
     """
     P = _as_points(points)
     if len(P) < 2:
-        raise ValueError(f"最近傍距離の推定には >=2 点必要です(受領 {len(P)})")
+        raise ValueError(f"nearest-neighbor distance estimation needs >=2 points (got {len(P)})")
     tree = cKDTree(P)
     d, _ = tree.query(P, k=2)                           # (N,2): 自分自身と最近傍
     nn = d[:, 1]
     nn = nn[nn > 0]                                     # 重複点(距離 0)を除外
     if len(nn) == 0:
-        raise ValueError("有効な最近傍距離がありません(点が全て重複している可能性)")
+        raise ValueError("no valid nearest-neighbor distances (points may all be duplicates)")
     med = float(np.median(nn))
     return 1.0 / (2.0 * med)

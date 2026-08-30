@@ -49,7 +49,7 @@ def _median_spacing(points):
     # 重複点(spacing≈0)のみを相対フロアで持ち上げる。
     scale = float(np.sqrt(np.mean(np.sum((p - p.mean(axis=0)) ** 2, axis=1))))
     if scale == 0.0:                                  # 全点一致=正規化不能: 詐称せず fail-closed
-        raise ValueError("退化点群(全点一致)は対称正規化の基準長を定義できない")
+        raise ValueError("degenerate point cloud (all points coincide): symmetry normalization scale is undefined")
     return max(spacing, 1e-12 * scale)
 
 
@@ -75,7 +75,7 @@ def detect_reflection_symmetry(points):
     """
     p = np.asarray(points, float)
     if len(p) < 3:
-        raise ValueError("反射対称検出は 3 点以上必要")
+        raise ValueError("reflection symmetry detection requires at least 3 points")
     c = p.mean(axis=0)
     axes = _pca_axes(p)
     scores = [reflection_symmetry_score(p, c, axes[:, i]) for i in range(3)]
@@ -98,7 +98,7 @@ def detect_rotational_symmetry(points, orders=(2, 3, 4, 6, 8)):
     """
     p = np.asarray(points, float)
     if len(p) < 3:
-        raise ValueError("回転対称検出は 3 点以上必要")
+        raise ValueError("rotational symmetry detection requires at least 3 points")
     c = p.mean(axis=0)
     axes = _pca_axes(p)
     best = None

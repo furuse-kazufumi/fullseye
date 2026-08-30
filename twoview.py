@@ -38,9 +38,9 @@ def fundamental_8point(pts1, pts2):
     p1 = np.asarray(pts1, float)
     p2 = np.asarray(pts2, float)
     if len(p1) < 8 or len(p2) < 8:
-        raise ValueError("8 点法は 8 点以上必要")
+        raise ValueError("8-point algorithm requires at least 8 points")
     if len(p1) != len(p2):
-        raise ValueError("対応点数が不一致")
+        raise ValueError("correspondence point counts do not match")
     n1, T1 = _normalize_points(p1)
     n2, T2 = _normalize_points(p2)
     x1, y1 = n1[:, 0], n1[:, 1]
@@ -198,15 +198,16 @@ def recover_pose(pts1, pts2, K1, K2=None, planar_tol=1e-2):
     p1 = np.asarray(pts1, float)
     p2 = np.asarray(pts2, float)
     if len(p1) < 8 or len(p2) < 8:
-        raise ValueError("8 点法は 8 点以上必要")
+        raise ValueError("8-point algorithm requires at least 8 points")
     if len(p1) != len(p2):
-        raise ValueError("対応点数が不一致")
+        raise ValueError("correspondence point counts do not match")
     ratio = _planar_degeneracy_ratio(p1, p2)
     if ratio < planar_tol:
         raise ValueError(
-            "平面(共平面 3D)/純回転シーンは本質行列分解が退化するため recover_pose では"
-            f"相対姿勢を復元できない(平面度 ratio={ratio:.2e} < tol={planar_tol:g})。"
-            "この配置ではホモグラフィ分解(H = K2⁻¹·(画像ホモグラフィ)·K1 の分解)を用いること。"
+            "planar (coplanar 3D) / pure-rotation scenes degenerate the essential-matrix "
+            f"decomposition, so recover_pose cannot recover relative pose "
+            f"(planarity ratio={ratio:.2e} < tol={planar_tol:g}). "
+            "Use homography decomposition (H = K2^-1 * (image homography) * K1) for this layout instead."
         )
     E = essential_8point(pts1, pts2, K1, K2)
     best = None

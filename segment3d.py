@@ -39,9 +39,9 @@ def _pts3(points, name: str) -> np.ndarray:
     """(N,3) 検証 → float64 配列。縮退入力は fail-closed(ValueError)。"""
     P = np.asarray(points, np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
-        raise ValueError(f"{name}: points は (N,3) 形状が必要(得た shape={P.shape})")
+        raise ValueError(f"{name}: points must have shape (N,3) (got shape={P.shape})")
     if not np.all(np.isfinite(P)):
-        raise ValueError(f"{name}: points に非有限値(NaN/Inf)が含まれる")
+        raise ValueError(f"{name}: points contains non-finite values (NaN/Inf)")
     return P
 
 
@@ -82,9 +82,9 @@ def region_growing(points, normals=None, angle_thresh_deg: float = 15.0,
     """
     P = _pts3(points, "region_growing")
     if not (0.0 < float(angle_thresh_deg) < 180.0):
-        raise ValueError(f"region_growing: angle_thresh_deg は (0,180) が必要(得た {angle_thresh_deg})")
+        raise ValueError(f"region_growing: angle_thresh_deg must be in (0,180) (got {angle_thresh_deg})")
     if int(k) < 1:
-        raise ValueError(f"region_growing: k>=1 が必要(得た {k})")
+        raise ValueError(f"region_growing: k>=1 is required (got {k})")
     n = len(P)
     if n == 0:
         return np.zeros(0, np.int64)
@@ -97,8 +97,8 @@ def region_growing(points, normals=None, angle_thresh_deg: float = 15.0,
     else:
         Nrm = np.asarray(normals, np.float64)
         if Nrm.shape != P.shape:
-            raise ValueError(f"region_growing: normals は points と同 shape が必要"
-                             f"(points={P.shape}, normals={Nrm.shape})")
+            raise ValueError(f"region_growing: normals must have the same shape as points"
+                             f" (points={P.shape}, normals={Nrm.shape})")
         nrm = np.linalg.norm(Nrm, axis=1, keepdims=True)
         Nrm = Nrm / np.maximum(nrm, 1e-12)   # 単位化(入力が非正規化でも安全)
 
@@ -160,9 +160,9 @@ def euclidean_cluster(points, tol: float, min_size: int = 10) -> np.ndarray:
 
     P = _pts3(points, "euclidean_cluster")
     if not (float(tol) > 0.0):
-        raise ValueError(f"euclidean_cluster: tol>0 が必要(得た {tol})")
+        raise ValueError(f"euclidean_cluster: tol>0 is required (got {tol})")
     if int(min_size) < 1:
-        raise ValueError(f"euclidean_cluster: min_size>=1 が必要(得た {min_size})")
+        raise ValueError(f"euclidean_cluster: min_size>=1 is required (got {min_size})")
     n = len(P)
     if n == 0:
         return np.zeros(0, np.int64)
@@ -218,11 +218,11 @@ def plane_segmentation(points, thresh: float, min_inliers: int,
 
     P = _pts3(points, "plane_segmentation")
     if not (float(thresh) > 0.0):
-        raise ValueError(f"plane_segmentation: thresh>0 が必要(得た {thresh})")
+        raise ValueError(f"plane_segmentation: thresh>0 is required (got {thresh})")
     if int(min_inliers) < 3:
-        raise ValueError(f"plane_segmentation: min_inliers>=3 が必要(得た {min_inliers})")
+        raise ValueError(f"plane_segmentation: min_inliers>=3 is required (got {min_inliers})")
     if int(max_planes) < 1:
-        raise ValueError(f"plane_segmentation: max_planes>=1 が必要(得た {max_planes})")
+        raise ValueError(f"plane_segmentation: max_planes>=1 is required (got {max_planes})")
     n = len(P)
     labels = np.full(n, -1, np.int64)
     if n == 0:

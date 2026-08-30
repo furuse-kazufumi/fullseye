@@ -51,11 +51,11 @@ def _as_points(points, min_n: int = 1) -> np.ndarray:
     """入力を (N,3) float64 に検証・正規化。fail-closed(形状不正/非有限/点数不足は ValueError)。"""
     P = np.asarray(points, dtype=np.float64)
     if P.ndim != 2 or P.shape[1] != 3:
-        raise ValueError(f"points は (N,3) の点群が必要です(受領: shape={P.shape})")
+        raise ValueError(f"points must be an (N,3) point cloud (got shape={P.shape})")
     if len(P) < min_n:
-        raise ValueError(f"点数が不足しています(>= {min_n} 必要、受領 {len(P)})")
+        raise ValueError(f"not enough points (need >= {min_n}, got {len(P)})")
     if not np.isfinite(P).all():
-        raise ValueError("points に NaN/Inf が含まれています")
+        raise ValueError("points contains NaN/Inf")
     return P
 
 
@@ -105,7 +105,7 @@ def min_enclosing_sphere(points, refine_iters: int = 1000) -> Dict[str, object]:
     """
     P = _as_points(points, min_n=1)
     if refine_iters < 0:
-        raise ValueError("refine_iters は非負である必要があります")
+        raise ValueError("refine_iters must be non-negative")
     if len(P) == 1:
         return {"center": P[0].astype(np.float64), "radius": 0.0}
 

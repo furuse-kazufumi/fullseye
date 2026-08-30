@@ -89,7 +89,7 @@ def harris3d_keypoints(vol, device="cpu", k=0.005, nms=3, topn=64,
         diag_min = torch.minimum(torch.minimum(a, b), c)
         resp = torch.where(p > 1e-12, eig_min, diag_min)
     else:
-        raise ValueError("response は 'mineig' か 'harris'")
+        raise ValueError("response must be 'mineig' or 'harris'")
 
     D, H, W = resp.shape
 

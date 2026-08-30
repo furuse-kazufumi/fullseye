@@ -35,7 +35,7 @@ def test_preflight_refuses_dirty_worktree(tmp_path, monkeypatch):
     assert upd.preflight() == []                       # clean -> safe
     (tmp_path / "a.txt").write_text("edited by user\n", encoding="utf-8")
     problems = upd.preflight()
-    assert problems and "未コミット" in problems[0]     # dirty -> refuse, never touch
+    assert problems and "uncommitted" in problems[0]   # dirty -> refuse, never touch
 
 
 @need_git
@@ -43,13 +43,13 @@ def test_pull_skipped_without_remote(tmp_path, monkeypatch):
     _mk_repo(tmp_path)
     monkeypatch.setattr(upd, "REPO", tmp_path)
     msg = upd.pull_ff_only(check=False)
-    assert "スキップ" in msg                            # no remote -> no-op, no crash
+    assert "skipped" in msg                             # no remote -> no-op, no crash
 
 
 def test_rag_skill_update_backs_up_user_edits(tmp_path, monkeypatch):
     monkeypatch.setattr(rag, "default_target", lambda: tmp_path)
     # not installed -> untouched
-    assert "未インストール" in upd.update_rag_skill(check=False)
+    assert "not installed" in upd.update_rag_skill(check=False)
     assert not (tmp_path / rag.SKILL_NAME).exists()
     # installed + user-edited -> backup keeps the edit, live copy refreshed
     rag.install(tmp_path)
@@ -57,7 +57,7 @@ def test_rag_skill_update_backs_up_user_edits(tmp_path, monkeypatch):
     skill_md.write_text(skill_md.read_text(encoding="utf-8") + "\nUSER EDIT\n",
                         encoding="utf-8")
     msg = upd.update_rag_skill(check=False)
-    assert "バックアップ" in msg
+    assert "backed up" in msg
     baks = list(tmp_path.glob(rag.SKILL_NAME + ".bak-*"))
     assert len(baks) == 1
     assert "USER EDIT" in (baks[0] / "SKILL.md").read_text(encoding="utf-8")

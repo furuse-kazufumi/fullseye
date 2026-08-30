@@ -62,16 +62,17 @@ def dlt_pose(points_3d, points_2d, K):
     x = np.asarray(points_2d, float)
     n = len(X)
     if n < 6:
-        raise ValueError("DLT 姿勢推定は 6 点以上必要")
+        raise ValueError("DLT pose estimation requires at least 6 points")
     if len(x) != n:
-        raise ValueError("3D と 2D の点数が不一致")
+        raise ValueError("3D and 2D point counts do not match")
     # 共平面性ガード(fail-closed): 共平面な 3D 点では DLT の係数行列が縮退し、
     # 例外も警告も無く巨大誤差の姿勢を返す。平面ターゲット(チェッカーボード等)は
     # DLT でなくホモグラフィ/IPPE を使うべきなので、ここで明示拒否する。
     if coplanarity_ratio(X) < _COPLANAR_TOL:
         raise ValueError(
-            "DLT 姿勢推定には非共平面の 3D 点が必要(共平面入力は係数行列が縮退)。"
-            "平面ターゲットにはホモグラフィ/IPPE を使うこと"
+            "DLT pose estimation requires non-coplanar 3D points "
+            "(coplanar input degenerates the coefficient matrix). "
+            "Use homography/IPPE for planar targets instead"
         )
     A = np.zeros((2 * n, 12))
     for i in range(n):
@@ -103,7 +104,7 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
     x = np.asarray(points_2d, float)
     n = len(X)
     if n < 6:
-        raise ValueError("PnP は 6 点以上必要")
+        raise ValueError("PnP requires at least 6 points")
     rng = np.random.default_rng(seed)
     best_inliers = None
     best_count = -1
@@ -129,7 +130,7 @@ def pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0):
         except (ValueError, np.linalg.LinAlgError) as e:
             # 共平面など DLT 不能。姿勢を捏造せず fail-closed で失敗を明示する。
             raise ValueError(
-                f"pnp_ransac: RANSAC 合意不十分かつ全点 DLT fallback も不能: {e}"
+                f"pnp_ransac: RANSAC consensus insufficient and full-point DLT fallback also failed: {e}"
             ) from e
         proj = _project(X, K, R, t)
         err = np.linalg.norm(proj - x, axis=1)

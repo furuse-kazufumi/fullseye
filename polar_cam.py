@@ -81,7 +81,7 @@ def run_polar_demo(out_png="out/polarization.png", *, log=print):
     images, and check the recovered AoLP tracks the true surface-normal azimuth."""
     import importlib.util
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt

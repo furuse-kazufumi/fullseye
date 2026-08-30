@@ -76,7 +76,7 @@ def node_at(graph: Graph, row: int, col: int) -> int:
     """格子座標からノード番号を引く(源/吸込の指定用)。"""
     hit = np.nonzero((graph.coords[:, 0] == row) & (graph.coords[:, 1] == col))[0]
     if len(hit) == 0:
-        raise ValueError(f"({row},{col}) は通行可ノードでない")
+        raise ValueError(f"({row},{col}) is not a traversable node")
     return int(hit[0])
 
 
@@ -403,11 +403,11 @@ def solve_physarum_batch(graph: Graph, sources, sinks, *, I0=1.0, mu=1.0,
     返り値: D (B, E) の numpy。各行が対応する(源, 吸込)の最終伝導率。
     """
     if not _HAS_TORCH:
-        raise RuntimeError("torch が要ります")
+        raise RuntimeError("torch is required")
     dev = torch.device(device)
     if use_cuda_graph:
         if dev.type != "cuda":
-            raise ValueError("use_cuda_graph は device='cuda' のときだけ")
+            raise ValueError("use_cuda_graph is only valid when device='cuda'")
         return _solve_batch_cudagraph(
             graph, sources, sinks, I0=I0, mu=mu, dt=dt, time_steps=time_steps,
             cg_iters=cg_iters, D_init=D_init, dev=dev, dtype=dtype)

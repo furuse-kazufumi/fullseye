@@ -47,34 +47,34 @@ def _as_mesh(mesh) -> tuple[np.ndarray, np.ndarray]:
     """
     if not (isinstance(mesh, (tuple, list)) and len(mesh) == 2):
         raise ValueError(
-            "mesh は (vertices, faces) の 2 要素タプルが必要です"
-            f"(受領: {type(mesh).__name__})")
+            "mesh must be a 2-element tuple (vertices, faces)"
+            f" (got: {type(mesh).__name__})")
     V = np.asarray(mesh[0], dtype=np.float64)
     F_raw = np.asarray(mesh[1])
     if V.ndim != 2 or V.shape[1] != 3:
-        raise ValueError(f"vertices は (N,3) が必要です(受領 shape={V.shape})")
+        raise ValueError(f"vertices must be (N,3) (got shape={V.shape})")
     if not np.isfinite(V).all():
-        raise ValueError("vertices に NaN/Inf が含まれています")
+        raise ValueError("vertices contain NaN/Inf")
     if F_raw.ndim != 2 or F_raw.shape[1] != 3:
-        raise ValueError(f"faces は (M,3) が必要です(受領 shape={F_raw.shape})")
+        raise ValueError(f"faces must be (M,3) (got shape={F_raw.shape})")
     if not np.issubdtype(F_raw.dtype, np.integer):
         if not np.all(np.isfinite(F_raw)) or not np.all(np.equal(np.mod(F_raw, 1.0), 0.0)):
-            raise ValueError("faces は整数の頂点 index が必要です(非整数値を検出)")
+            raise ValueError("faces must be integer vertex indices (non-integer values detected)")
     F = F_raw.astype(np.int64)
     if len(V) == 0:
-        raise ValueError("vertices が空です")
+        raise ValueError("vertices is empty")
     if len(F) == 0:
-        raise ValueError("faces が空です")
+        raise ValueError("faces is empty")
     if F.min() < 0 or F.max() >= len(V):
         raise ValueError(
-            f"faces に範囲外の頂点 index があります(許容 [0,{len(V)}))"
+            f"faces has out-of-range vertex indices (valid range [0,{len(V)}))"
             f": min={int(F.min())}, max={int(F.max())}")
     # 構造検証: 三角形は 3 頂点が相異なる必要がある(index 重複 = 退化した接続)。
     degen_conn = (F[:, 0] == F[:, 1]) | (F[:, 1] == F[:, 2]) | (F[:, 0] == F[:, 2])
     if np.any(degen_conn):
         raise ValueError(
-            f"{int(degen_conn.sum())} 個の face が同一頂点を重複参照しています"
-            "(三角形は 3 頂点が相異なる必要があります)")
+            f"{int(degen_conn.sum())} face(s) reference a duplicate vertex"
+            " (a triangle's 3 vertices must be distinct)")
     return V, F
 
 
@@ -112,7 +112,7 @@ def face_normals(mesh) -> np.ndarray:
     degen = mag <= _DEGEN_REL * scale if scale > 0 else mag <= 0
     if np.any(degen):
         raise ValueError(
-            f"{int(degen.sum())} 個の退化(ゼロ面積)三角形があり面法線が定義できません")
+            f"{int(degen.sum())} degenerate (zero-area) triangle(s); face normals cannot be defined")
     return cr / mag[:, None]
 
 
@@ -143,8 +143,8 @@ def vertex_normals(mesh) -> np.ndarray:
     bad = mag <= _DEGEN_REL * scale if scale > 0 else mag <= 0
     if np.any(bad):
         raise ValueError(
-            f"{int(bad.sum())} 個の頂点で法線が定義できません"
-            "(入射三角形が無い、または面法線が相殺)")
+            f"{int(bad.sum())} vertex(es) have no defined normal"
+            " (no incident triangles, or face normals cancel out)")
     return vn / mag[:, None]
 
 
@@ -202,7 +202,7 @@ def vertex_curvature(mesh) -> np.ndarray:
     area = 0.5 * twice_area
     scale_a = float(np.median(area[area > 0])) if np.any(area > 0) else 0.0
     if np.any(area <= _DEGEN_REL * scale_a if scale_a > 0 else area <= 0):
-        raise ValueError("退化(ゼロ面積)三角形があり曲率が定義できません")
+        raise ValueError("degenerate (zero-area) triangle(s); curvature cannot be defined")
 
     # 各頂点における角の cotangent = (隣接 2 辺の内積) / (2·area)。
     # cot(∠at v0) は v0 の 2 辺 (p1−p0),(p2−p0) から、他も同様。
@@ -250,7 +250,7 @@ def vertex_curvature(mesh) -> np.ndarray:
     scale_m = float(np.median(A_mixed[A_mixed > 0])) if np.any(A_mixed > 0) else 0.0
     if np.any(A_mixed <= _DEGEN_REL * scale_m if scale_m > 0 else A_mixed <= 0):
         raise ValueError(
-            "混合面積がゼロの頂点があり曲率が定義できません(孤立/退化した接続)")
+            "vertex(es) with zero mixed area; curvature cannot be defined (isolated/degenerate connectivity)")
 
     Kvec = K / (2.0 * A_mixed[:, None])             # = 2·H·n(平均曲率法線)
     return 0.5 * np.linalg.norm(Kvec, axis=1)       # H = |K|/2(向きに依らない大きさ)

@@ -83,7 +83,7 @@ def run_focus_stack_demo(out_png="out/focus_stack.png", *, n_focus=7, coc_gain=7
     """Simulate a focal stack, fuse it all-in-focus, and score it honestly."""
     import importlib.util
     if importlib.util.find_spec("mujoco") is None:
-        raise RuntimeError("mujoco 未インストール")
+        raise RuntimeError("mujoco is not installed")
     import matplotlib
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
