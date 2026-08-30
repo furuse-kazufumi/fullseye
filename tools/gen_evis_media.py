@@ -350,11 +350,11 @@ def gen_track(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
         _stills(rep, "evis_bean_track_fullseye")
 
 
-def gen_legacy(fps: int = 10):
+def gen_legacy(gif_path: Path, fps: int = 10):
     """Re-encode the existing 700-muscle activation heatmap gif to mp4 (no
     Fullseye processing - this clip only introduces the evis body itself)."""
     out = MEDIA / "evis_muscle_heatmap.mp4"
-    rd = iio.get_reader(str(LEGACY_GIF))
+    rd = iio.get_reader(str(gif_path))
     wr = _writer(out, fps)
     rep = None
     for i, f in enumerate(rd):
