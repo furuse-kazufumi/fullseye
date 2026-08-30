@@ -309,37 +309,6 @@ def fetch_met(query: str, slug: str, max_checks: int = 10) -> tuple[str, dict] |
         return None
 
 
-def fetch_bbbc001(slug: str) -> tuple[str, dict] | None:
-    """Broad BBBC001 (human HT29 colon-cancer cells, CC-BY 3.0)."""
-    tif = os.path.join(DATA, f"{slug}.tif")
-    metap = tif + ".meta.json"
-    if os.path.exists(tif) and os.path.exists(metap):
-        return tif, json.load(open(metap, encoding="utf-8"))
-    url = "https://data.broadinstitute.org/bbbc/BBBC001/BBBC001_v1_images_tif.zip"
-    zp = cached_download(url, "bbbc001_images.zip", {"license": "CC-BY 3.0"})
-    if not zp:
-        return None
-    try:
-        with zipfile.ZipFile(zp) as z:
-            names = sorted(n for n in z.namelist() if n.lower().endswith((".tif", ".tiff")))
-            if not names:
-                return None
-            with open(tif, "wb") as f:
-                f.write(z.read(names[0]))
-        meta = {
-            "title": f"BBBC001 human HT29 colon-cancer cells ({os.path.basename(names[0])})",
-            "source": "https://bbbc.broadinstitute.org/BBBC001",
-            "license": "CC-BY 3.0 (Broad Bioimage Benchmark Collection; Ljosa et al., Nature Methods 2012)",
-            "credit": "Broad Bioimage Benchmark Collection",
-        }
-        with open(metap, "w", encoding="utf-8") as f:
-            json.dump(meta, f, ensure_ascii=False, indent=1)
-        return tif, meta
-    except Exception as e:
-        log(f"  [skip] BBBC001 extract failed: {e}")
-        return None
-
-
 def fetch_smithsonian(query: str, slug: str) -> tuple[str, dict] | None:
     """Smithsonian Open Access, CC0 media only (DEMO_KEY, very low volume)."""
     cache = os.path.join(DATA, f"{slug}.jpg")
