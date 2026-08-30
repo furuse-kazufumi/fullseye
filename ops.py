@@ -435,16 +435,82 @@ def _gabor(v, a, b):
 
 
 def _clahe(v, a, b):
-    nb = 2 + int(a * 3); H, W = v.shape; out = v.copy()
-    # Boundaries from linspace so the tiles PARTITION the image: the last tile
-    # absorbs the H % nb / W % nb remainder instead of leaving it unequalised.
-    ys = np.linspace(0, H, nb + 1).astype(int); xs = np.linspace(0, W, nb + 1).astype(int)
+    """Adaptive (tiled) histogram equalization with inter-tile bilinear blending.
+
+    Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the
+    H % nb / W % nb remainder), each tile's normalised CDF is its local tone map,
+    and every pixel blends the maps of its (up to) 4 nearest tile centres with
+    bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).
+
+    2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化
+    しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の
+    近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の
+    連続版になっている。
+    """
+    nb = 2 + int(a * 3)
+    H, W = v.shape
+    x = np.clip(np.asarray(v, np.float64), 0, 1)
+    ys = np.linspace(0, H, nb + 1).astype(int)
+    xs = np.linspace(0, W, nb + 1).astype(int)
+    cy = (ys[:-1] + ys[1:]) / 2.0                       # tile centres (pixel coords)
+    cx = (xs[:-1] + xs[1:]) / 2.0
+    edges = np.linspace(0.0, 1.0, 257)
+    mids = (edges[:-1] + edges[1:]) / 2.0
+
+    # Global CDF: the fallback map for degenerate (empty) tiles, which linspace
+    # can produce when nb exceeds the image side.
+    ghist, _ = np.histogram(x, 256, (0, 1))
+    gcdf = np.cumsum(ghist).astype(np.float64)
+    gcdf = gcdf / gcdf[-1] if gcdf[-1] > 0 else gcdf
+
+    cdfs = np.empty((nb, nb, 256), np.float64)          # per-tile tone maps at bin mids
     for i in range(nb):
         for j in range(nb):
-            blk = v[ys[i]:ys[i + 1], xs[j]:xs[j + 1]]
+            blk = x[ys[i]:ys[i + 1], xs[j]:xs[j + 1]]
             if blk.size:
-                out[ys[i]:ys[i + 1], xs[j]:xs[j + 1]] = _equalize(blk, 0, 0)
-    return out
+                hist, _ = np.histogram(blk, 256, (0, 1))
+                cdf = np.cumsum(hist).astype(np.float64)
+                cdfs[i, j] = cdf / cdf[-1] if cdf[-1] > 0 else cdf
+            else:
+                cdfs[i, j] = gcdf
+
+    def _tent(centers, n):
+        """Clamped bilinear (tent) weights, one (n,) vector per tile; sums to 1."""
+        pos = np.arange(n, dtype=np.float64)
+        ws = []
+        for i in range(len(centers)):
+            w = np.zeros(n)
+            if i > 0:
+                gap = max(centers[i] - centers[i - 1], 1e-12)
+                m = (pos >= centers[i - 1]) & (pos < centers[i])
+                w[m] = (pos[m] - centers[i - 1]) / gap
+            if i < len(centers) - 1:
+                gap = max(centers[i + 1] - centers[i], 1e-12)
+                m = (pos >= centers[i]) & (pos <= centers[i + 1])
+                w[m] = np.minimum(1.0, (centers[i + 1] - pos[m]) / gap)
+            else:
+                w[pos >= centers[i]] = 1.0
+            if i == 0:
+                w[pos <= centers[0]] = 1.0
+            ws.append(w)
+        return ws
+
+    wy, wx = _tent(cy, H), _tent(cx, W)
+    out = np.zeros_like(x)
+    for i in range(nb):
+        ri = np.nonzero(wy[i] > 0)[0]
+        if ri.size == 0:
+            continue
+        r0, r1 = int(ri[0]), int(ri[-1]) + 1            # tent support is contiguous
+        for j in range(nb):
+            ci = np.nonzero(wx[j] > 0)[0]
+            if ci.size == 0:
+                continue
+            c0, c1 = int(ci[0]), int(ci[-1]) + 1
+            sub = x[r0:r1, c0:c1]
+            mapped = np.interp(sub.ravel(), mids, cdfs[i, j]).reshape(sub.shape)
+            out[r0:r1, c0:c1] += (wy[i][r0:r1, None] * wx[j][None, c0:c1]) * mapped
+    return np.clip(out, 0.0, 1.0)
 
 
 def _corner_response(v, a, b):
