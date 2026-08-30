@@ -72,7 +72,7 @@ TILES = [
     # Watershed instance segmentation of coins, color-labelled
     ("science_watershed_foam.png", (0.505, 0.000, 1.000, 0.830)),
     # Surface-defect heatmap (|img - median| background subtraction)
-    ("industrial_defect.png",      (0.340, 0.005, 0.660, 0.550)),
+    ("industrial_defect.png",      (0.370, 0.040, 0.540, 0.450)),
     # Volumetric X-ray style render of a dinosaur skeleton (3D volume ops)
     ("science_dino_xray.png",      (0.020, 0.400, 0.980, 0.920)),
     # -- row 2 ------------------------------------------------------------
