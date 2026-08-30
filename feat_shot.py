@@ -14,10 +14,6 @@ except ImportError:                       # torch は optional(gpu/threed extra)
 from match3d import icp_point2point_3d
 
 
-import numpy as np
-import torch
-
-
 def estimate_normals(points, k=16, device="cpu"):
     """各点の法線を局所共分散の最小固有ベクトルで推定し、Tombari 局所符号則で
     近傍質量から離れる向き(局所外向き)へ統一する。回転共変かつ部分重なりに
