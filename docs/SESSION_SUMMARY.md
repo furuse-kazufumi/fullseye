@@ -3,64 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 16:13:01
+- **最終更新**: 2026-08-30 16:14:56
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+d968c968 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:14)
+05281cd3 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:14)
+3b11c77a auto: gen_article_assets.py 編集前 (2026-08-30 16:14)
+fe144bd4 auto: GALLERY.md 編集前 (2026-08-30 16:13)
+8148287b auto: gen_studio_screenshots.py 編集前 (2026-08-30 16:13)
+48204fc4 auto: gen_studio_screenshots.py 編集前 (2026-08-30 16:13)
+7dc6e6c9 auto: GALLERY.md 編集前 (2026-08-30 16:13)
+5d9c50ef auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:13)
 e5f2decb auto: gen_studio_screenshots.py 編集前 (2026-08-30 16:12)
 a77f3c8a auto: gen_article_assets.py 編集前 (2026-08-30 16:12)
-008eaea3 auto: gen_article_assets.py 編集前 (2026-08-30 16:12)
-6c3d5a39 auto: gen_article_assets.py 編集前 (2026-08-30 16:11)
-44f30538 auto: gen_article_assets.py 編集前 (2026-08-30 16:11)
-d15b710a auto: gen_article_assets.py 編集前 (2026-08-30 16:11)
-27f717ca auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:11)
-e3ad488b auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:11)
-adb294bc auto: gen_showcase_gifs.py 編集前 (2026-08-30 16:11)
-8cfe3ada auto: gen_article_assets.py 編集前 (2026-08-30 16:10)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/assets/showcase_turntable_itokawa.gif
- M tools/gen_studio_screenshots.py
-?? docs/articles/assets/studio_3d_examples.png
-?? docs/articles/assets/studio_3d_examples_thumb.jpg
-?? docs/articles/assets/studio_3d_ops.png
-?? docs/articles/assets/studio_3d_ops_thumb.jpg
-?? docs/articles/assets/studio_3d_surface.png
-?? docs/articles/assets/studio_3d_surface_thumb.jpg
-?? docs/articles/assets/studio_main.png
-?? docs/articles/assets/studio_main_thumb.jpg
-?? docs/articles/assets/studio_python_editor.png
-?? docs/articles/assets/studio_python_editor_thumb.jpg
-?? docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg
-?? docs/articles/assets/thumbs/op_sampler_2d_720.jpg
-?? docs/articles/assets/thumbs/op_sampler_3d_720.jpg
-?? docs/articles/assets/thumbs/op_taxonomy_720.jpg
+M docs/articles/fullseye_overview_qiita_ja.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-16:12 docs/articles/assets/studio_3d_ops_thumb.jpg
-16:12 docs/articles/assets/studio_3d_ops.png
-16:12 docs/articles/assets/studio_3d_examples_thumb.jpg
-16:12 docs/articles/assets/studio_3d_examples.png
-16:12 docs/articles/assets/media/dvs_stream.gif
-16:12 docs/articles/assets/media/dvs_stream.mp4
-16:12 docs/articles/assets/thumbs/op_sampler_3d_720.jpg
-16:12 docs/articles/assets/thumbs/op_sampler_2d_720.jpg
-16:12 docs/articles/assets/thumbs/halcon_coverage_chart_720.jpg
-16:12 docs/articles/assets/thumbs/op_taxonomy_720.jpg
-16:12 docs/articles/assets/thumbs/itokawa_montage_720.jpg
-16:12 docs/articles/assets/thumbs/vision_ops_montage_720.jpg
-16:12 docs/articles/assets/thumbs/render_beauty_hero_720.jpg
-16:12 docs/articles/assets/thumbs/physical_ai_montage_720.jpg
-16:12 docs/articles/assets/op_sampler_3d.png
+16:14 docs/articles/fullseye_overview_qiita_ja.md
+16:14 docs/articles/assets/science_watershed_foam_thumb.jpg
+16:14 docs/articles/assets/_science_gallery_snippet.md
+16:14 docs/articles/assets/_science_gallery_meta.json
+16:14 docs/articles/assets/science_watershed_foam.png
+16:14 docs/articles/assets/science_edge_compass_thumb.jpg
+16:14 docs/articles/assets/science_edge_compass.png
+16:14 docs/articles/assets/science_fourier_stars_thumb.jpg
+16:14 docs/articles/assets/science_fourier_stars.png
+16:14 docs/articles/assets/science_distance_ripple_thumb.jpg
+16:14 docs/articles/assets/science_distance_ripple.png
+16:14 tools/gen_science_gallery.py
+16:14 tools/gen_article_assets.py
+16:13 docs/articles/assets/studio_main_thumb.jpg
+16:13 docs/articles/assets/studio_main.png
 ```
 
 ---
