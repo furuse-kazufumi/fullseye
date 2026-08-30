@@ -1768,24 +1768,50 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
     return Viewer3D
 
 
-def _disp3d_viewer(kind, *args, title=None, parent=None):
+#: Strong references to top-level viewers opened by :func:`disp_points3d` /
+#: :func:`disp_mesh3d`. Under an EXISTING QApplication the call returns
+#: non-blocking; a caller that discards the return value must still get a live
+#: window (matplotlib-figure semantics), so the widget is registered here and
+#: removed again when its window closes (event filter below).
+_DISP3D_KEEPALIVE = []
+
+
+def _disp3d_can_create_app():
+    """Whether creating a QApplication is plausibly safe (Qt ABORTS the process
+    when no display/platform plugin is available, so guessing wrong is fatal):
+    an explicit ``QT_QPA_PLATFORM`` counts as the user's choice; Windows/macOS
+    always have a display server; other unixes need DISPLAY/WAYLAND_DISPLAY."""
+    if os.environ.get("QT_QPA_PLATFORM"):
+        return True
+    if sys.platform.startswith("win") or sys.platform == "darwin":
+        return True
+    return bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
+
+
+def _disp3d_viewer(kind, *args, title=None, parent=None, block=True):
     """Shared implementation of the public disp_* 3-D API (single code path).
 
-    Headless-safe contract: with no QApplication on the offscreen platform the
-    call records what WOULD have been shown and returns that info dict (no
-    window, no crash — CI/tests). With a running QApplication (Studio, tests)
-    it returns the shown ``Viewer3D`` widget, non-blocking. With no
-    QApplication on a real display it creates one and blocks until the window
-    closes (matplotlib-show semantics for plain scripts)."""
+    Headless-safe contract: with no QApplication AND no way to safely create
+    one (offscreen platform, or no display detected — see
+    :func:`_disp3d_can_create_app`) the call records what WOULD have been shown
+    and returns that info dict (no window, no abort — CI/tests). With a
+    running QApplication (Studio, tests) it shows the window, registers it in
+    ``_DISP3D_KEEPALIVE`` (so discarding the return value does NOT let GC close
+    it) and returns the ``Viewer3D`` widget non-blocking. With no QApplication
+    on a real display it creates one and — with ``block=True`` (default) —
+    runs a nested ``app.exec()`` until the window closes (deliberate
+    matplotlib-``show`` semantics for plain scripts); pass ``block=False`` to
+    return immediately (the caller then owns running the event loop)."""
     try:
         from PySide6 import QtWidgets, QtGui, QtCore
     except Exception:
         return {"kind": kind, "shown": False, "reason": "PySide6 unavailable"}
     app = QtWidgets.QApplication.instance()
     offscreen = os.environ.get("QT_QPA_PLATFORM") == "offscreen"
-    if app is None and offscreen:
+    if app is None and (offscreen or not _disp3d_can_create_app()):
         n = int(np.asarray(args[0], np.float64).reshape(-1, 3).shape[0])
-        return {"kind": kind, "shown": False, "n_points": n, "reason": "offscreen, no app"}
+        reason = "offscreen, no app" if offscreen else "no display, no app"
+        return {"kind": kind, "shown": False, "n_points": n, "reason": reason}
     created = False
     if app is None:
         app = QtWidgets.QApplication([])
@@ -1797,26 +1823,45 @@ def _disp3d_viewer(kind, *args, title=None, parent=None):
         w.set_points(args[0], colors=args[1] if len(args) > 1 else None)
     w.setWindowTitle(title or ("Fullseye Studio - 3D viewer (%s)" % kind))
     w.resize(640, 560)
+
+    class _CloseWatch(QtCore.QObject):
+        """Drops the keepalive reference when the viewer window closes."""
+        def eventFilter(self, obj, ev):
+            if ev.type() == QtCore.QEvent.Close:
+                try:
+                    _DISP3D_KEEPALIVE.remove(obj)
+                except ValueError:
+                    pass
+            return False
+
+    w.installEventFilter(_CloseWatch(w))          # parented to w — lives as long as w
+    _DISP3D_KEEPALIVE.append(w)
     w.show()
     w.info["shown"] = True
-    if created and not offscreen:
+    if created and not offscreen and block:
         app.exec()                                # standalone script: block until closed
     return w
 
 
-def disp_points3d(points, colors=None, title=None, parent=None):
+def disp_points3d(points, colors=None, title=None, parent=None, block=True):
     """Open the interactive 3-D viewer on a point cloud (HALCON
     ``disp_object_model_3d`` workalike; the Studio program-directive
     ``disp_points3d ('file')`` and this function share one viewer). *points* is
     (n, 3); *colors* optional (n, 3) in [0, 1]. See :func:`_disp3d_viewer` for
-    the headless-safe return contract."""
-    return _disp3d_viewer("points", points, colors, title=title, parent=parent)
+    the headless-safe return contract. Under an existing QApplication the
+    window stays open even if the return value is discarded (module keepalive,
+    released on close). From a plain script (no QApplication) the call blocks
+    in a nested event loop until the window closes — matplotlib-``show``
+    semantics; pass ``block=False`` to opt out and drive the loop yourself."""
+    return _disp3d_viewer("points", points, colors, title=title, parent=parent,
+                          block=block)
 
 
-def disp_mesh3d(V, F, title=None, parent=None):
+def disp_mesh3d(V, F, title=None, parent=None, block=True):
     """Open the interactive 3-D viewer on a triangle mesh (lambert vertex
-    shading, ``W`` toggles wireframe). Same contract as :func:`disp_points3d`."""
-    return _disp3d_viewer("mesh", V, F, title=title, parent=parent)
+    shading, ``W`` toggles wireframe). Same contract as :func:`disp_points3d`
+    (keepalive registry, ``block=`` opt-out)."""
+    return _disp3d_viewer("mesh", V, F, title=title, parent=parent, block=block)
 
 
 def _group(QtWidgets, title, inner_layout):
