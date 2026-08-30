@@ -506,7 +506,7 @@ def rec_edges(col):
             ["rgb1_to_gray", "canny", "overlay_mask"])
 
 
-def rec_filaments(col, top_pct: float = 3.0):
+def rec_filaments(col, top_pct: float = 3.0, med_a: float = 0.2):
     """Filament extraction shown as a colored overlay, not a raw response map.
 
     The raw sk_frangi response is salt-and-pepper on busy data (star fields):
