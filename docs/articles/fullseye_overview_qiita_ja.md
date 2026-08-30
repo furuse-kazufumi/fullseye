@@ -364,6 +364,8 @@ ok    = fs.traversability(grid, cell=0.05, max_step=0.1)    # 足場/障害物�
 objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾何＋記述子
 ```
 
+このコード例、実は6行で**「見る」から「歩く／掴む」の一歩手前まで**を通しています。左右2枚のカメラ画像（`left, right`）から視差 `disp` を求め、それを深度 `Z` に変換し（層③各論のステレオの節で紹介した $Z = f \cdot B / d$ そのものです）、深度を3D 点群 `pts` に逆投影する。そこから地形の高さマップ `grid` を作り、`traversability`（踏破可能性）で「歩ける場所・歩けない場所」を判定する。最後の `segment_objects` は、画像を物体ごとに分けて、それぞれの幾何情報（位置・サイズなど）と記述子（識別に使う特徴量）を取り出す――これは工場のビンピッキングで言えば「どの部品がどこにあるか」を求める処理そのものです。層①の op を、層③では**目的に応じて名前を変えた薄い facade（外側のインターフェース）**として呼んでいる、という構造がこの6行に表れています。
+
 この層には**センサー・シミュレーション一式**も含まれます。実機を持っていなくても、**疑似 LiDAR・ステレオカメラ・イベントカメラ（DVS）・フォトメトリックステレオ・TSDF 融合・偏光カメラ・焦点合成**といったセンサーの出力を合成シーンから作り、知覚パイプラインを**実機なしで開発・検証**できる ―― Physical AI 開発の"練習場"です。すべて Fullseye 自身の op の実出力です：
 
 [![Physical AI センサ・シミュレーションのモンタージュ（疑似LiDAR / ステレオ深度 / イベントカメラDVS / 焦点合成 / 偏光カメラ / カメラ+IMUフュージョン）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/physical_ai_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
