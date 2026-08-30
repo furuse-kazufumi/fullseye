@@ -271,7 +271,7 @@ def subject_defect_metal(log=print) -> dict:
         cw, ch = 240, 110
         x0 = int(np.clip(cyx[1] - cw / 2, 0, W - cw))
         y0 = int(np.clip(cyx[0] - ch / 2, 0, H - ch))
-        crop = _to_u8(vis_np[y0:y0 + ch, x0:x0 + cw])
+        crop = _to_u8(vis_clean_np[y0:y0 + ch, x0:x0 + cw])
         zoom = Image.fromarray(crop, "RGB").resize((cw * 3, ch * 3),
                                                    Image.LANCZOS)
         zd = ImageDraw.Draw(zoom)
