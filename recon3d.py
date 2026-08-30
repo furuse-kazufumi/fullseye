@@ -21,7 +21,16 @@ import numpy as np
 from scipy.ndimage import gaussian_filter, binary_fill_holes
 from scipy.signal import fftconvolve
 from scipy.spatial import Delaunay, cKDTree
-from skimage.measure import marching_cubes
+
+try:
+    from skimage.measure import marching_cubes
+except ImportError:                       # scikit-image は optional(skimage/threed extra)
+    # import 自体は成功させ(3D レジストリを殺さない)、使用時に明確に拒否する。
+    # Keep this module importable without scikit-image; fail clearly on use.
+    def marching_cubes(*a, **k):
+        raise ImportError(
+            "this operator needs the optional 'scikit-image' backend — "
+            "install with: pip install \"fullseye[skimage]\"")
 
 
 # ═══════════════════════════════════════════════════════════════════════════
