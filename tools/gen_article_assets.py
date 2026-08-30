@@ -257,6 +257,222 @@ def copy_hero_assets(log=print) -> list:
 
 
 # --------------------------------------------------------------------------- #
+# 3b) イトカワ実点群 3D op モンタージュ / Itokawa real-pointcloud 3D-op montage  #
+# --------------------------------------------------------------------------- #
+def build_itokawa_montage(log=print) -> dict:
+    """小惑星 25143 Itokawa の実点群に fullseye の 3D op を実際に適用し 2x2 で並べる.
+
+    データ: studio_assets/sample_3d/itokawa_points.npy — JAXA はやぶさ / Gaskell 形状
+    モデル由来の実測点群(float32, 3000点)。examples_3d/itokawa_*.py と同じ計算を直接
+    呼び出す(curvature3d / match3d / metrics3d)。**モックアップ禁止** — 各パネルの
+    数値はその場で実行して得た本物の結果であり、でっち上げではない。
+
+    Runs real fullseye 3D ops on the actual Itokawa point cloud (not a mockup mesh)
+    and lays 4 panels out on a 2x2 grid: (1) a "beauty" scatter of the raw shape,
+    (2) surface curvature (curvature3d.curvedness), (3) ICP self-registration
+    before/after (match3d.icp_point2point_3d), (4) PCA canonical-pose axes
+    (match3d.moment_axes). Each caption carries a real measured number from that
+    op call — same math as examples_3d/itokawa_*.py, called directly here.
+    """
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from mpl_toolkits.mplot3d import Axes3D  # noqa: F401  (3D projection registration)
+    from scipy.spatial import cKDTree
+    from scipy.spatial.transform import Rotation
+
+    import curvature3d  # principal_curvatures / curvedness(局所二次曲面フィット)
+    import match3d       # icp_point2point_3d / moment_axes
+    import metrics3d     # pose_error
+
+    bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
+
+    def _style_3d_ax(ax):
+        """3D 軸のパネル背景・グリッド・目盛りをモンタージュのダーク配色に揃える."""
+        ax.set_facecolor(bg)
+        for pane in (ax.xaxis.pane, ax.yaxis.pane, ax.zaxis.pane):
+            pane.set_facecolor(bg)
+            pane.set_edgecolor(bg)
+        ax.grid(False)
+        ax.set_xticks([]); ax.set_yticks([]); ax.set_zticks([])
+        try:
+            ax.set_box_aspect((1, 1, 1))
+        except Exception:
+            pass  # 古い matplotlib では box_aspect 非対応(無くても崩れない)
+
+    data_path = os.path.join(REPO, "studio_assets", "sample_3d", "itokawa_points.npy")
+    if not os.path.exists(data_path):
+        log(f"[skip] itokawa_montage: data missing: {data_path}")
+        return {"path": None, "n_panels": 0, "skipped": [("itokawa_montage", "all", "data missing")]}
+
+    import numpy as np
+    pts = np.load(data_path).astype(np.float64)
+    pts = pts - pts.mean(axis=0)
+    extent = pts.max(axis=0) - pts.min(axis=0)
+    diag = float(np.linalg.norm(extent))
+
+    panels = []
+    skipped = []
+
+    # --- パネル1: 見栄えレンダ(実点群を岩石色でscatter)/ beauty scatter ---
+    try:
+        fig = plt.figure(figsize=(6, 6), facecolor=bg)
+        ax = fig.add_subplot(111, projection="3d")
+        _style_3d_ax(ax)
+        r = np.linalg.norm(pts, axis=1)
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=r, cmap="copper", s=4, linewidths=0)
+        ax.view_init(elev=18, azim=35)
+        fig.tight_layout()
+        out_png = os.path.join(SOURCES_DIR, "src_itokawa_beauty.png")
+        fig.savefig(out_png, dpi=112, facecolor=bg)
+        plt.close(fig)
+        caption = (f"{len(pts)} pts, extent {extent[0]:.0f}x{extent[1]:.0f}x{extent[2]:.0f} m "
+                   "(JAXA Hayabusa / Gaskell shape model, real point cloud)")
+        panels.append(("Itokawa — raw point cloud", "itokawa_points.npy", out_png, caption))
+    except Exception as exc:
+        skipped.append(("beauty scatter", "itokawa_points.npy", str(exc)))
+        log(f"[skip] itokawa beauty panel: {exc}")
+
+    # --- パネル2: 曲率(curvature3d.curvedness)/ surface curvature ---
+    try:
+        cv = curvature3d.curvedness(pts, k=20)
+        tree = cKDTree(pts)
+        _, idx = tree.query(pts, k=6)
+        neigh_mean = cv[idx[:, 1:]].mean(axis=1)
+        coh = float(np.corrcoef(cv, neigh_mean)[0, 1])   # 近傍相関(実在表面なら高い)
+        cv_mean, cv_std = float(np.mean(cv)), float(np.std(cv))
+        vlo, vhi = np.percentile(cv, [2, 98])              # 外れ値でスケールが潰れないよう clip
+
+        fig = plt.figure(figsize=(6, 6), facecolor=bg)
+        ax = fig.add_subplot(111, projection="3d")
+        _style_3d_ax(ax)
+        ax.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=cv, cmap="inferno",
+                   vmin=vlo, vmax=vhi, s=4, linewidths=0)
+        ax.view_init(elev=18, azim=35)
+        fig.tight_layout()
+        out_png = os.path.join(SOURCES_DIR, "src_itokawa_curvature.png")
+        fig.savefig(out_png, dpi=112, facecolor=bg)
+        plt.close(fig)
+        caption = (f"curvedness mean {cv_mean:.4f} / std {cv_std:.4f}, "
+                   f"neighbor coherence r={coh:.2f} (op: curvature3d.curvedness)")
+        panels.append(("Surface curvature", "curvature3d.py", out_png, caption))
+    except Exception as exc:
+        skipped.append(("curvature", "curvature3d.py", str(exc)))
+        log(f"[skip] itokawa curvature panel: {exc}")
+
+    # --- パネル3: ICP 自己位置合わせ before/after / self-registration ---
+    try:
+        rng = np.random.default_rng(0)
+        R_gt = Rotation.from_rotvec(np.array([0.2, 0.5, 0.84]) /
+                                     np.linalg.norm([0.2, 0.5, 0.84]) *
+                                     np.radians(30.0)).as_matrix()
+        noise_sigma = 0.004 * diag
+        scan = pts @ R_gt.T + rng.normal(0.0, noise_sigma, pts.shape)
+        R, t, info = match3d.icp_point2point_3d(scan, pts, iters=80)
+        R = R.detach().cpu().numpy()
+        t = t.detach().cpu().numpy()
+        aligned = scan @ R.T + t
+        rot_deg, _ = metrics3d.pose_error(R, np.zeros(3), R_gt.T, np.zeros(3))
+        rmse = float(info["rmse"])
+
+        # figsize は最終モンタージュのセル比(7.5:6.6 ≈ 1.14:1)に近づけ、aspect='auto' で
+        # 引き伸ばす際の歪みを最小化する(他の正方形パネルとの見た目バランス合わせ)。
+        fig = plt.figure(figsize=(9.0, 7.9), facecolor=bg)
+        ax1 = fig.add_subplot(121, projection="3d")
+        _style_3d_ax(ax1)
+        ax1.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=muted, s=3, alpha=0.5, linewidths=0)
+        ax1.scatter(scan[:, 0], scan[:, 1], scan[:, 2], c="#ff5555", s=3, linewidths=0)
+        ax1.set_title("Before ICP", color=fg, fontsize=10)
+        ax1.view_init(elev=18, azim=35)
+        ax2 = fig.add_subplot(122, projection="3d")
+        _style_3d_ax(ax2)
+        ax2.scatter(pts[:, 0], pts[:, 1], pts[:, 2], c=muted, s=3, alpha=0.5, linewidths=0)
+        ax2.scatter(aligned[:, 0], aligned[:, 1], aligned[:, 2], c="#55ff99", s=3, linewidths=0)
+        ax2.set_title("After ICP", color=fg, fontsize=10)
+        ax2.view_init(elev=18, azim=35)
+        fig.tight_layout()
+        out_png = os.path.join(SOURCES_DIR, "src_itokawa_register.png")
+        fig.savefig(out_png, dpi=112, facecolor=bg)
+        plt.close(fig)
+        caption = (f"ICP: rot err {rot_deg:.3f} deg, RMSE {rmse:.2f} m "
+                   "(op: match3d.icp_point2point_3d, 30 deg unknown rotation + sensor noise)")
+        panels.append(("Self-registration (ICP)", "match3d.py", out_png, caption))
+    except Exception as exc:
+        skipped.append(("self-register", "match3d.py", str(exc)))
+        log(f"[skip] itokawa register panel: {exc}")
+
+    # --- パネル4: 正準姿勢(match3d.moment_axes の主軸)/ canonical pose axes ---
+    try:
+        c0, axes0, vals0 = match3d.moment_axes(pts)
+        q = (pts - c0) @ axes0
+        skew = np.mean(q ** 3, axis=0)
+        sign = np.where(skew >= 0.0, 1.0, -1.0)
+        q = q * sign
+        ratio = float(vals0[0] / vals0[1])
+
+        # 未知回転を掛けてから主軸を回復できるか(honest な数値の裏取り)
+        R_unknown = Rotation.from_rotvec(np.array([0.30, 0.70, 0.60]) /
+                                         np.linalg.norm([0.30, 0.70, 0.60]) *
+                                         np.radians(50.0)).as_matrix()
+        pts_rot = pts @ R_unknown.T
+        _, axes1, _ = match3d.moment_axes(pts_rot)
+        cos_axes = [abs(float(np.dot(axes1[:, i], R_unknown @ axes0[:, i]))) for i in range(3)]
+
+        fig = plt.figure(figsize=(6, 6), facecolor=bg)
+        ax = fig.add_subplot(111, projection="3d")
+        _style_3d_ax(ax)
+        ax.scatter(q[:, 0], q[:, 1], q[:, 2], c=muted, s=4, alpha=0.6, linewidths=0)
+        axis_len = np.sqrt(vals0) * 0.8
+        colors = ["#ff5555", "#55ff99", "#55aaff"]
+        for i in range(3):
+            d = np.zeros(3); d[i] = 1.0
+            ax.quiver(0, 0, 0, d[0] * axis_len[i], d[1] * axis_len[i], d[2] * axis_len[i],
+                      color=colors[i], linewidth=2.2)
+        ax.view_init(elev=18, azim=35)
+        fig.tight_layout()
+        out_png = os.path.join(SOURCES_DIR, "src_itokawa_pose.png")
+        fig.savefig(out_png, dpi=112, facecolor=bg)
+        plt.close(fig)
+        caption = (f"principal-axis ratio {ratio:.2f}:1, axis recovery under 50deg unknown "
+                   f"rotation |cos|>= {min(cos_axes):.4f} (op: match3d.moment_axes)")
+        panels.append(("Canonical pose (PCA axes)", "match3d.py", out_png, caption))
+    except Exception as exc:
+        skipped.append(("pose canonical", "match3d.py", str(exc)))
+        log(f"[skip] itokawa pose panel: {exc}")
+
+    if not panels:
+        raise RuntimeError("itokawa_montage: every panel failed, nothing to render")
+
+    n = len(panels)
+    ncols = 2
+    nrows = -(-n // ncols)  # ceil
+    fig, axes = plt.subplots(nrows, ncols, figsize=(7.5 * ncols, 6.6 * nrows), facecolor=bg)
+    axes = axes.ravel() if n > 1 else [axes]
+    for ax, (title, src_module, out_png, caption) in zip(axes, panels):
+        img = plt.imread(out_png)
+        # aspect='auto': 各パネルPNGの縦横比(正方形1枚 vs before/after横並び2枚)がまちまちなので、
+        # 元比率を保存すると空白が生まれる。グリッドセルいっぱいに引き伸ばして埋める。
+        # source PNGs have mixed aspect ratios (square vs. wide before/after pair); stretch
+        # to fill the grid cell instead of letterboxing so every panel reads at the same size.
+        ax.imshow(img, aspect="auto")
+        ax.axis("off")
+        ax.set_title(title, color=fg, fontsize=12, pad=8)
+        ax.text(0.5, -0.02, f"{src_module} — {caption}", transform=ax.transAxes,
+                ha="center", va="top", color=muted, fontsize=8.5, wrap=True)
+    for ax in axes[len(panels):]:
+        ax.axis("off")
+
+    fig.suptitle("Fullseye — asteroid 25143 Itokawa, real point cloud (3D ops, not a mockup)",
+                 color=fg, fontsize=15, y=0.995)
+    fig.tight_layout(rect=(0, 0, 1, 0.97))
+    out_path = os.path.join(ASSETS_DIR, "itokawa_montage.png")
+    fig.savefig(out_path, dpi=118, facecolor=bg)
+    plt.close(fig)
+    log(f"itokawa_montage: {out_path} | panels={len(panels)} skipped={len(skipped)}")
+    return {"path": out_path, "n_panels": len(panels), "skipped": skipped}
+
+
+# --------------------------------------------------------------------------- #
 # 4) 記事貼付け用サムネイル(幅720px)/ article thumbnails (720px wide)          #
 # --------------------------------------------------------------------------- #
 def build_thumbnails(log=print) -> list:
@@ -269,7 +485,8 @@ def build_thumbnails(log=print) -> list:
     """
     from PIL import Image
 
-    names = ["physical_ai_montage.png", "vision_ops_montage.png", "render_beauty_hero.png"]
+    names = ["physical_ai_montage.png", "vision_ops_montage.png", "render_beauty_hero.png",
+             "itokawa_montage.png"]
     thumbs = []
     for name in names:
         src = os.path.join(ASSETS_DIR, name)
@@ -306,16 +523,27 @@ def main() -> int:
     print("\n-- 3) hero copies --")
     heroes = copy_hero_assets()
 
+    print("\n-- 3b) itokawa_montage --")
+    itokawa = build_itokawa_montage()
+
     print("\n-- 4) thumbnails (720px) --")
     thumbs = build_thumbnails()
 
     print("\n== summary ==")
-    for path in [physical["path"], vision["path"], *heroes, *thumbs]:
+    all_paths = [physical["path"], vision["path"], *heroes]
+    if itokawa["path"]:
+        all_paths.append(itokawa["path"])
+    all_paths.extend(thumbs)
+    for path in all_paths:
         size = os.path.getsize(path)
         print(f"{path}  ({size/1024:.1f} KiB)")
     if physical["skipped"]:
         print("skipped physical-AI panels:")
         for title, module, reason in physical["skipped"]:
+            print(f"  - {title} ({module}): {reason}")
+    if itokawa["skipped"]:
+        print("skipped itokawa panels:")
+        for title, module, reason in itokawa["skipped"]:
             print(f"  - {title} ({module}): {reason}")
     return 0
 

@@ -94,6 +94,16 @@ stacking) lets you develop and test perception pipelines without hardware:
 
 ![Physical-AI sensor simulation suite — pseudo-LiDAR, stereo depth, event camera (DVS), focus stacking, polarization, camera+IMU Kalman fusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
+The **3-D side is where Fullseye differentiates most**: 265 typed 3-D operators
+spanning point clouds / meshes / volumes / SDF — 3-D feature descriptors
+(SHOT, FPFH, spin images), TSDF fusion, fringe projection, photometric stereo,
+superquadric fitting, medial axis, geodesic distance, visual hull, and
+boundary-preserving manifold-strict QEM decimation — all pure numpy behind one
+typed registry. Real data, real numbers (asteroid 25143 Itokawa, JAXA
+Hayabusa / Gaskell shape model):
+
+![Asteroid 25143 Itokawa real point cloud — curvature analysis, ICP self-registration (rot err 0.027°), PCA canonical pose](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/itokawa_montage.png)
+
 ```python
 import fullseye as fs
 disp  = fs.disparity_map(left, right, max_disp=16)         # dense stereo (block matching)

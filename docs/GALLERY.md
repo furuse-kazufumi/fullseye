@@ -46,6 +46,22 @@
 | Connected components | `scipy.ndimage.label`(otsu領域に対して) | 連結成分数 = 検出したコイン個数 |
 | Sub-pixel contours + measurement | `edges_sub_pix` → `select_contours` | サブピクセル輪郭抽出(a=0.2)後、長さ閾値 a=0.7 で短い彫刻テクスチャ由来の輪郭を除去し外周だけ残す。輪郭数と平均ブロブ面積(px)を表示 |
 
+### 1.3 `itokawa_montage.png` — 小惑星 25143 Itokawa 実点群への 3D op
+
+生成元: `tools/gen_article_assets.py::build_itokawa_montage()`。データは
+`studio_assets/sample_3d/itokawa_points.npy`(JAXA はやぶさ / Gaskell 形状モデル由来の
+実測点群、float32・3000点)。`examples_3d/itokawa_*.py` と同じ計算(curvature3d /
+match3d / metrics3d)をその場で直接実行し、本物の数値をキャプションへ焼き込んだもの。
+
+![itokawa_montage](articles/assets/itokawa_montage.png)
+
+| パネル | モジュール / op | 表示されている数値の意味 |
+|---|---|---|
+| Itokawa — raw point cloud | `itokawa_points.npy` | 実点群をそのまま3D scatter表示(色は原点からの距離、岩石感の陰影付け)。点数と外接寸法(m) |
+| Surface curvature | `curvature3d.curvedness` | 各点の曲率強度(curvedness)で着色。`mean`/`std` は分布のばらつき、`neighbor coherence r` は近傍点との曲率相関(実在表面なら高い、乱数なら~0 — 対応 `examples_3d/itokawa_curvature.py` の検証項目) |
+| Self-registration (ICP) | `match3d.icp_point2point_3d` | 基準点群に未知回転30度+センサーノイズを掛けたスキャンを ICP で位置合わせ(左=前・右=後)。`rot err` = 回復した回転の真値との誤差(度)、`RMSE` = 最終残差(m) |
+| Canonical pose (PCA axes) | `match3d.moment_axes` | 主慣性軸(赤=最長軸/緑/青、長さは固有値の平方根に比例)を実点群に重畳。`principal-axis ratio` = 最長:次長軸の固有値比、`axis recovery` = 50度の未知回転を掛けたあと主軸を回復できた度合い(|cos|、1.0000=完全一致) |
+
 ---
 
 ## 2. `examples_3d/_gallery/` — 3D 事例の hero 画像 / ターンテーブル GIF
@@ -84,13 +100,14 @@ GitHub 上でそのまま表示されます。
 
 ## 3. 記事用サムネイル
 
-`docs/articles/assets/thumbs/` に、上記モンタージュ2枚と hero 1枚から幅720px(アスペクト
+`docs/articles/assets/thumbs/` に、上記モンタージュ3枚と hero 1枚から幅720px(アスペクト
 維持、元画像が720pxより狭ければ拡大しない)で書き出したサムネがあります。解説記事は
 このサムネを表示し、フルサイズは本ページ経由で参照する構成です。
 
 - `thumbs/physical_ai_montage_720.png`
 - `thumbs/vision_ops_montage_720.png`
 - `thumbs/render_beauty_hero_720.png`
+- `thumbs/itokawa_montage_720.png`
 
 ---
 
