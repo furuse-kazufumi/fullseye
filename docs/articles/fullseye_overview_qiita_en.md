@@ -192,6 +192,8 @@ Let's dig into each layer.
 
 ## Layer 1: A Ready-to-Use Operator Library (~1,000 Ops)
 
+> **Status: Production-ready / Verified** — installable from PyPI; 6,238 tests; every number is machine-tallied.
+
 ### What Is an Op? (In Three Passes)
 
 1. **One-liner**: an op is "a single function — image in, image (or region, or number) out."
