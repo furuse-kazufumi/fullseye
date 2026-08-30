@@ -136,21 +136,33 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
                                            min_disp=0.5)
         depth_col = _u8(fs.colorize_depth(np.clip(depth_mm, 250.0, 2500.0)))
 
-        # --- validation: bean range from Fullseye disparity vs ground truth ---
+        # --- validation: bean range from Fullseye stereo vs ground truth ---
+        # feature-based readout: segment the (green) bean in EACH eye with
+        # fs.segment_objects; centroid x-difference = its disparity.  Robust to
+        # the strike frames where the chopstick occludes the bean's centre and
+        # a dense-window median would match the background instead.
         hud_extra = "bean not in view"
         vis_both = min(fr.get("eyeL_n", 0), fr.get("eyeR_n", 0)) >= 10
-        if fr.get("eyeL_c") and fr.get("true_Z_mm") and vis_both:
-            bx, by = fr["eyeL_c"][0] / 2.0, fr["eyeL_c"][1] / 2.0
-            iy, ix = int(round(by)), int(round(bx))
-            win = disp_raw[max(0, iy - 3):iy + 4, max(0, ix - 3):ix + 4]
-            d_med = float(np.median(win)) if win.size else 0.0
-            if d_med > 0.5:
-                est = f_half * baseline_mm / d_med
-                true = fr["true_Z_mm"]
-                err = abs(est - true) / true * 100.0
-                errs.append(err)
-                n_valid += 1
-                hud_extra = f"bean {est:5.0f}mm  truth {true:5.0f}mm  err {err:4.1f}%"
+        if fr.get("true_Z_mm") and vis_both:
+            cs = []
+            for img in (L, R):
+                rgbf = img / 255.0
+                gch = np.clip(rgbf[..., 1] - np.maximum(rgbf[..., 0], rgbf[..., 2]),
+                              0, 1)
+                cand = [o for o in fs.segment_objects(gch, threshold=0.08, min_area=3)
+                        if o["area"] <= 2500]
+                cand.sort(key=lambda o: -o["circularity"])
+                cs.append(cand[0]["centroid"] if cand else None)
+            if cs[0] and cs[1]:
+                d_feat = cs[0][1] - cs[1][1]        # centroid col difference (px)
+                if d_feat > 0.5:
+                    est = f_half * baseline_mm / d_feat
+                    true = fr["true_Z_mm"]
+                    err = abs(est - true) / true * 100.0
+                    errs.append(err)
+                    n_valid += 1
+                    hud_extra = (f"bean {est:5.0f}mm  truth {true:5.0f}mm  "
+                                 f"err {err:4.1f}%")
         hud = _hud(L.shape[1] * 3,
                    "fullseye: disparity_sgm > speckle_filter > fill_disparity > "
                    f"depth_from_disparity   t={fr['t']:5.2f}s   {hud_extra}")
