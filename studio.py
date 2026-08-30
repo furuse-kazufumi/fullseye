@@ -6391,8 +6391,11 @@ def build_window(model=None):
 
         def _disp_2d(name, args):
             try:
-                idx = (int(args[0]) - 1) if args and isinstance(args[0], float) \
-                    else len(model.stages) - 1
+                # docstring contract: 1-based stage number; omitted OR 0 (or any
+                # non-positive value) = the FINAL result. int(args[0]) - 1 alone
+                # would turn 0 into -1 = the raw input image, breaking the contract.
+                n = int(args[0]) if args and isinstance(args[0], float) else 0
+                idx = (n - 1) if n >= 1 else len(model.stages) - 1
                 val = model.result_upto(idx)
             except Exception as e:
                 _log_disp(name, args, False, error=truncate(e, 80))
