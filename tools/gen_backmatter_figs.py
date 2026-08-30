@@ -283,13 +283,25 @@ def fig_bug4_curvature() -> None:
 # fig 4: RAG コーパスの実物パネル + 「grep → 型を繋ぐ → 自己検証」3 ステップ
 # 内容の出所: 左パネルは実在ファイル docs/ops/2d/smoothing/bilateral.md からの
 #   引用のみ(実行時に読み込む。存在しなければ fail)。ステップ③の PASS 行は
-#   (a) 実測 — examples/gallery2d_smoothing_rank.py をこの環境で実行した実出力。
+#   (a) 実測 — examples/gallery2d_smoothing_rank.py をその場で subprocess 実行し、
+#   実出力から PASS 行を捕捉して描く(PASS しなければ図の生成自体を fail)。
 #   存在しない記述は作らない。
 # --------------------------------------------------------------------------- #
-PASS_LINE = "PASS: 86 ops exercised, all finite/typed/deterministic; 9 GT checks"
+def _run_worked_example() -> str:
+    import subprocess
+    p = subprocess.run([sys.executable, os.path.join(REPO, "examples",
+                        "gallery2d_smoothing_rank.py")],
+                       capture_output=True, text=True, cwd=REPO, timeout=600)
+    for ln in reversed((p.stdout or "").splitlines()):
+        if ln.startswith("PASS:"):
+            return ln.strip()
+    raise SystemExit("worked example did not PASS — refusing to fake the output:\n"
+                     + (p.stdout or "")[-800:] + (p.stderr or "")[-800:])
 
 
 def fig_rag_corpus() -> None:
+    pass_line = _run_worked_example()
+    print(f"    worked example output: {pass_line}")
     note_path = os.path.join(REPO, "docs", "ops", "2d", "smoothing", "bilateral.md")
     with open(note_path, encoding="utf-8") as f:
         lines = f.read().splitlines()
