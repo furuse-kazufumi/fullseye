@@ -999,7 +999,21 @@ def _opengl_available() -> bool:
 def show_3d_surface(heightmap, parent=None):
     """Open a rotatable 3-D surface plot of a height/depth image (Q3DSurface).
     Best-effort: returns the container widget, or None if 3-D isn't available."""
-    return _show_surface3d_impl(heightmap, parent)
+    if not _opengl_available():          # Q3DSurface segfaults without a real GL context
+        return None
+    try:
+        from PySide6.QtDataVisualization import Q3DSurface
+        from PySide6 import QtWidgets
+    except Exception:
+        return None
+    series = _build_surface3d_series(heightmap)
+    surface = Q3DSurface()
+    surface.addSeries(series)
+    container = QtWidgets.QWidget.createWindowContainer(surface, parent)
+    container.setMinimumSize(560, 460)
+    container.setWindowTitle("Fullseye Studio - 3D surface")
+    container.show()
+    return container
 
 
 def _build_surface3d_series(heightmap):
