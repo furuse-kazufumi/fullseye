@@ -200,7 +200,8 @@ def fig_kabsch_margin() -> None:
     # 判定しきい値 (camera.recover_pose 実装の 1e-9)
     ax.axvline(1e-9, color=ORANGE, lw=1.4, ls=(0, (5, 3)), zorder=2)
     ax.text(1e-9, 1.86, "判定しきい値 1e-9\n(recover_pose 実装値)", ha="center",
-            va="top", fontsize=11, color=ORANGE, linespacing=1.4)
+            va="top", fontsize=11, color=ORANGE, linespacing=1.4,
+            bbox=dict(facecolor=BG, edgecolor="none", pad=2.5))
     # マージンのブラケット
     yb = -0.45
     ax.annotate("", xy=(ok, yb), xytext=(deg, yb),
