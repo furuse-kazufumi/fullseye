@@ -306,7 +306,7 @@ py -3.11 tools/gen_industrial_gallery.py
 - この収集・処理は**実データによるバグ発見**も兼ねており、見つかった 5 件は
   [KNOWN_ISSUES.md](KNOWN_ISSUES.md) に記録済み。
 
-代表 2 点(全 31 点は `articles/assets/academic_*.png` を直接参照):
+代表 2 点(全 30 点は `articles/assets/academic_*.png` を直接参照):
 
 ![academic_paleo_trex](articles/assets/academic_paleo_trex.png)
 ![academic_arch_amphora](articles/assets/academic_arch_amphora.png)
