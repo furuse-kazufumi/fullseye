@@ -2590,6 +2590,7 @@ def build_window(model=None):
     menu_windows = _menu(mb, "&Window", "window")   # panels / graphics / layout submenus (filled after docks)
     menu_tools = _menu(mb, "&Tools", "tools")
     menu_tools.addAction(act_palette)                         # cross-cutting command launcher (was under Run)
+    menu_tools.addAction(act_featins)                         # HDevelop-style feature inspection (2D+3D)
     menu_tools.addSeparator()
     act_system_settings = QtGui.QAction("System settings…", win)   # HALCON set_system-style config
     act_system_settings.setShortcut("Ctrl+,")                      # standard preferences shortcut
