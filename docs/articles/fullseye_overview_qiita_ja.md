@@ -597,6 +597,14 @@ Fullseye が「ただの関数の寄せ集め」にならないための背骨�
 >
 > **AI（`fullseye-ops` スキル経由）**：`docs/ops` を検索し、`in:`/`out:` の型が「画像 → 画像（強調）→ 領域（二値）→ 輪郭（計測）」と繋がる op を選定。例えば「ノイズ抑制に `bilateral` か `gaussian`、エッジ強調に `sobel_amp` か `dog`（Difference of Gaussians）、二値化に `otsu` か適応的しきい値、輪郭抽出に `edges_sub_pix` → `select_contours`」といった候補を、**各 op の型契約と HALCON 別名を根拠に**提示し、`fullseye.run_pipeline(img, [...])` のコードをその場で書いて実行する。
 
+もう1つ、工業寄りの例も挙げておきます。
+
+> **人間**：「この部品、決まった向きで置かれていないので、掴む前にまず位置と向きを知りたい」
+>
+> **AI（`fullseye-ops` スキル経由）**：`docs/ops` の `matching` カテゴリを引き、`shape_locate`（HALCON `find_shape_model` 相当、輪郭ベースの形状マッチング）か `ncc_locate`（HALCON `find_ncc_model` 相当、テンプレートマッチング）を候補として提示。型が `image → match` と繋がることを確認した上で、位置・角度を返すコードを書いて実行する。
+
+どちらの例でも、AI が根拠にしているのは**同じコーパス（`docs/ops`）と同じ型契約**です。「検査ラインの欠陥検出」も「ロボットの位置決め」も、AI から見れば**同じ RAG が答える同じ種類の質問**でしかない――層①で紹介した op 体系が、Physical AI と産業ビジョンの両方に効いてくるのは、この RAG の仕組みのおかげでもあります。
+
 この応答の裏でAIがやっているのは、ベクタ検索でも埋め込み類似度計算でもありません。**`docs/ops` を `grep` で引き、各ノートの `in:`/`out:` 記載を読んで型を繋げているだけ**です（SKILL.md の「Retrieval recipes」がそのまま手順書）。だからこそ特別なベクタ DB や埋め込みサービスが要らず、**grep できる環境ならそのまま RAG として機能する**わけです。checkout 環境なら約1000枚の per-op ノートから、wheel 環境なら `OP_CATALOG.md` の一覧から、それぞれ根拠を引いてきます。提案されたコードを鵜呑みにする必要もありません。**全 op に ground-truth 付きの worked example が付属している**ので、AI 自身が `py -3.11 examples/<id>.py` を実行して「PASS」を確認してから返答する、という自己検証のループも組み込めます。
 
 ### fail-closed 設計 ―― コーパスが無ければ黙って諦めない
