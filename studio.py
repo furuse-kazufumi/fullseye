@@ -999,6 +999,49 @@ def _opengl_available() -> bool:
 def show_3d_surface(heightmap, parent=None):
     """Open a rotatable 3-D surface plot of a height/depth image (Q3DSurface).
     Best-effort: returns the container widget, or None if 3-D isn't available."""
+    return _show_surface3d_impl(heightmap, parent)
+
+
+def _build_surface3d_series(heightmap):
+    """高さ場から QSurface3DSeries(地形風グラデーション付き)を構築して返す。
+
+    Ctrl+3 ビューとスクリーンショット生成(tools/gen_studio_screenshots.py)が
+    同一コード経路を通るための共有ヘルパー — 撮影用に別実装を持つと実機と
+    見た目が乖離する。GL 前提の呼び出し側専用(offscreen では呼ばない)。"""
+    from PySide6.QtDataVisualization import (QSurface3DSeries, QSurfaceDataProxy,
+                                             QSurfaceDataItem)
+    from PySide6 import QtGui
+    h = _downsample_grid(heightmap)
+    ny, nx = h.shape
+    proxy = QSurfaceDataProxy()
+    rows = []
+    for i in range(ny):
+        row = []
+        for j in range(nx):
+            row.append(QSurfaceDataItem(QtGui.QVector3D(float(j), float(h[i, j]), float(i))))
+        rows.append(row)
+    proxy.resetArray(rows)
+    series = QSurface3DSeries(proxy)
+    series.setDrawMode(QSurface3DSeries.DrawSurface)
+    try:
+        # 高さ連動の地形風グラデーション(低=深青 → 緑 → 砂色 → 頂=白)。
+        # cosmetic なので API 差異で失敗しても表示自体は落とさない(fail-soft)。
+        from PySide6.QtDataVisualization import Q3DTheme
+        grad = QtGui.QLinearGradient()
+        grad.setColorAt(0.0, QtGui.QColor(28, 58, 138))
+        grad.setColorAt(0.35, QtGui.QColor(38, 158, 118))
+        grad.setColorAt(0.65, QtGui.QColor(228, 198, 92))
+        grad.setColorAt(1.0, QtGui.QColor(248, 248, 248))
+        series.setBaseGradient(grad)
+        style = getattr(getattr(Q3DTheme, "ColorStyle", Q3DTheme),
+                        "ColorStyleRangeGradient")
+        series.setColorStyle(style)
+    except Exception:
+        pass
+    return series
+
+
+def _show_surface3d_impl(heightmap, parent):
     if not _opengl_available():          # Q3DSurface segfaults without a real GL context
         return None
     try:
