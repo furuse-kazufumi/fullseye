@@ -1595,7 +1595,8 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._P = np.zeros((0, 3))          # displayed points (mesh: its vertices)
             self._colors = None                 # explicit per-point colors, or None
             self._F = None                      # mesh faces, or None for a cloud
-            self._VN = None                     # mesh vertex normals
+            self._V = None                      # mesh vertices proper (wireframe)
+            self._VN = None                     # normals for the splat cloud
             self._edges = None                  # mesh wireframe edges (or None)
             self._wire = False
             self._clusters = []                 # index arrays for highlight mode
