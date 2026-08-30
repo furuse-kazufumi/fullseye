@@ -39,6 +39,19 @@ def test_missing_facade_data_degrades_gracefully(monkeypatch):
     assert len(reg.all()) == 0 if hasattr(reg, "all") else True
 
 
+def test_shipped_halcon_data_carries_no_vendor_prose():
+    """同梱の HALCON メタデータは事実(名前/URL/型/章)だけを持ち、ベンダー文書の
+    説明文(short_desc)を含まない — 2026-08-30 のコンプライアンス点検で除去。
+    dev キャッシュ(data/、非同梱)からの再コピーで再混入しないよう CI で固定する。
+    Shipped HALCON metadata must stay facts-only: no vendor short_desc prose."""
+    stubs = json.loads((_REPO / "fullseye" / "data" / "halcon_stubs.json")
+                       .read_text(encoding="utf-8"))["operators"]
+    graph = json.loads((_REPO / "fullseye" / "data" / "halcon_graph.json")
+                       .read_text(encoding="utf-8"))["nodes"]
+    assert not any("short_desc" in v for v in stubs.values())
+    assert not any("short_desc" in v for v in graph.values())
+
+
 def test_data_file_resolution_prefers_shipped_copy():
     """_data_file は同梱正本(fullseye/data)を第一候補にする。"""
     p = unified._data_file("halcon_facade_map.json")

@@ -6,7 +6,7 @@ authors:
   - family-names: "Furuse"
     given-names: "Kazufumi"
 license: Apache-2.0
-version: 0.1.1
+version: 0.1.2
 date-released: "2026-08-30"
 abstract: >-
   Fullseye is a numpy-native library of ~1000 typed classical image-processing and
