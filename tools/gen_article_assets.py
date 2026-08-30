@@ -910,9 +910,148 @@ def _pick_sampler_ops(registry, apply_fn, img, n=24, log=print):
     return chosen, skipped
 
 
-def _render_sampler_tile(ax, cat, name, out, img_shape, bg, fg, muted, log=print):
+def _build_feature_tile_specs(img, log=print) -> dict:
+    """feature/matching 出力 op 6 種の「入力+オーバーレイ+数値」タイル素材を実測で作る.
+
+    以前は feature 出力 op が「黒地に数字だけ」で何の数値か読めなかった。ここでは
+    各 op の *正規の使い方*(前処理済み region / テンプレート指定 / 測る対象が写った
+    入力)で実適用し、入力画像・実戻り値・意味ラベルをセットで返す。数値はすべて
+    ``fullseye.apply`` の本物の戻り値で、期待値と一致することを assert する(honest)。
+
+    Returns: {op_name: {"display", "value_text", "caption", "boxes"?, "note"?}}
+    """
+    import numpy as np
+    from matplotlib import cm
+    from scipy import ndimage
+
+    import fullseye
+    import ops as ops_mod
+
+    specs: dict = {}
+
+    # --- 共通前処理: coins を実 op チェーンで 24 コイン region に -------------- #
+    # adaptive_gauss_thresh(1.0,0.55) -> fill_holes -> reg_open(1.0) は
+    # ノイズ粒ゼロ・結合ゼロで 24 blob(全部コインサイズ 1074..3115 px)になる実測済チェーン。
+    seg_chain = [("adaptive_gauss_thresh", 1.0, 0.55), ("fill_holes", 0.5, 0.5),
+                 ("reg_open", 1.0, 0.5)]
+    region = fullseye.run_pipeline(img, seg_chain)
+    lab, n_blobs = ndimage.label(region > 0.5)
+
+    # --- blob_count: 前処理済み region への実適用で 24(=コイン枚数)---------- #
+    count = fullseye.apply(region, "blob_count")
+    assert count == 24.0, f"blob_count on preprocessed region = {count}, expected 24 coins"
+    # ラベル彩色オーバーレイ(暗背景 + blob ごとに色)
+    vis = np.full((*lab.shape, 3), 0.05)
+    colors = cm.get_cmap("tab20")(np.linspace(0, 1, 20))[:, :3]
+    for i in range(1, n_blobs + 1):
+        vis[lab == i] = colors[(i - 1) % 20] * 0.9 + 0.1
+    specs["blob_count"] = {
+        "display": vis,
+        "value_text": f"count = {int(count)}  (= coins)",
+        "caption": "on thresh+fill+open region (labels colored)",
+    }
+
+    # --- classify_shape: 画像中央に最も近い 1 コイン region の真円度 ---------- #
+    coms = np.array(ndimage.center_of_mass(np.ones_like(lab), lab, index=range(1, n_blobs + 1)))
+    ctr = np.array(img.shape) / 2.0
+    blob_i = int(np.argmin(((coms - ctr) ** 2).sum(axis=1))) + 1
+    cy, cx = (int(round(c)) for c in coms[blob_i - 1])
+    single = (lab == blob_i).astype(np.float64)
+    circ = fullseye.apply(single, "classify_shape")
+    assert 0.5 < circ <= 1.0, f"classify_shape on a coin = {circ}, expected near-circular"
+    specs["classify_shape"] = {
+        "display": single,
+        "value_text": f"circularity = {circ:.2f}  (1 = circle)",
+        "caption": "4*pi*area/perimeter^2 of one coin region",
+    }
+
+    # --- ncc_locate: 実テンプレート(中央コイン切出し)で探索し枠+スコア ------ #
+    h = 26
+    template = img[cy - h:cy + h, cx - h:cx + h].copy()
+    ops_mod.set_match_template(template)          # op の正規のテンプレート指定手段
+    try:
+        score, row, col = fullseye.apply(img, "ncc_locate")
+    finally:
+        ops_mod.set_match_template(None)          # 他 op へ波及させない
+    assert score > 0.99 and abs(row - cy) <= 2 and abs(col - cx) <= 2, (
+        f"ncc_locate found ({score:.3f}, {row}, {col}), expected ~(1.0, {cy}, {cx})")
+    specs["ncc_locate"] = {
+        "display": img,
+        "boxes": [(row - h, col - h, 2 * h, 2 * h)],
+        "value_text": f"score = {score:.2f} @ ({int(row)}, {int(col)})",
+        "caption": f"template = {2*h}x{2*h} coin cut from image",
+    }
+
+    # --- decode_barcode: バーコードが写っている合成入力で実デコード ----------- #
+    n_bars = 12
+    bar_img = np.ones(img.shape, dtype=np.float64)
+    x = 40
+    for k in range(n_bars):                       # 幅可変の dark bar を n_bars 本
+        w = 6 + (k * 5) % 14
+        bar_img[60:240, x:x + w] = 0.05
+        x += w + 10 + (k * 7) % 12
+    bars = fullseye.apply(bar_img, "decode_barcode")
+    assert bars == float(n_bars), f"decode_barcode = {bars}, expected {n_bars} bars"
+    specs["decode_barcode"] = {
+        "display": bar_img,
+        "value_text": f"bars = {int(bars)}",
+        "caption": "dark-bar count on mid scanline",
+        "note": "input: synthetic barcode",
+        "hline": img.shape[0] // 2,
+    }
+
+    # --- xmh_zernike / xmh_pftas: 入力を見せて数値+意味ラベル ---------------- #
+    zern = fullseye.apply(img, "xmh_zernike")
+    specs["xmh_zernike"] = {
+        "display": img,
+        "value_text": f"{zern:.4f}",
+        "caption": "sum of Zernike moments (shape descriptor)",
+    }
+    pftas = fullseye.apply(img, "xmh_pftas")
+    specs["xmh_pftas"] = {
+        "display": img,
+        "value_text": f"{pftas:.4f}",
+        "caption": "mean of PFTAS vector (texture feature)",
+    }
+
+    log("op_sampler_2d feature tiles: "
+        f"blob_count={int(count)} classify_shape={circ:.3f} "
+        f"ncc=({score:.2f},{int(row)},{int(col)}) barcode={int(bars)} "
+        f"zernike={zern:.4f} pftas={pftas:.4f}")
+    return specs
+
+
+def _render_sampler_tile(ax, cat, name, out, img_shape, bg, fg, muted, log=print,
+                         special=None):
     import numpy as np
     from scipy import ndimage
+
+    if special is not None:
+        # feature/matching op: 入力画像+オーバーレイ+実測値(黒地数字タイルの廃止)
+        disp = np.asarray(special["display"])
+        if disp.ndim == 3:
+            ax.imshow(np.clip(disp, 0.0, 1.0))
+        else:
+            ax.imshow(disp, cmap="gray", vmin=0.0, vmax=1.0)
+        for (r, c, hh, ww) in special.get("boxes", []):
+            from matplotlib.patches import Rectangle
+            ax.add_patch(Rectangle((c, r), ww, hh, fill=False,
+                                   edgecolor="#ffd27a", linewidth=1.8))
+        if "hline" in special:
+            ax.axhline(special["hline"], color="#ffd27a", linewidth=0.9,
+                       linestyle="--", alpha=0.8)
+        if special.get("note"):
+            ax.text(0.985, 0.03, special["note"], transform=ax.transAxes,
+                    ha="right", va="bottom", color=muted, fontsize=6.5)
+        ax.text(0.5, 0.955, special["value_text"], transform=ax.transAxes,
+                ha="center", va="top", color="#ffd27a", fontsize=10.5,
+                fontweight="bold",
+                bbox=dict(facecolor=bg, alpha=0.72, edgecolor="none", pad=2.0))
+        ax.axis("off")
+        ax.set_title(name, color=fg, fontsize=10, pad=5)
+        ax.text(0.5, -0.05, f"[{cat}] {special['caption']}", transform=ax.transAxes,
+                ha="center", va="top", color=muted, fontsize=7.2)
+        return
 
     caption = ""
     if isinstance(out, dict) and "cs" in out and "shape" in out:
