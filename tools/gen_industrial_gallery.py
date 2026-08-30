@@ -807,7 +807,9 @@ def subject_stereo_obstacles(log=print) -> dict:
     gl = left.mean(axis=2)
     gr = right.mean(axis=2)
     disp = stereo.disparity_subpixel(gl, gr, max_disp=48, block=9)
-    valid = disp > 0.5
+    from scipy.ndimage import median_filter
+    disp = median_filter(disp, size=5)           # スペックル除去 (despeckle)
+    valid = disp > 3.0
     depth_est = np.where(valid, f_px * SS._BASELINE / np.maximum(disp, 1e-6),
                          np.nan)
 
