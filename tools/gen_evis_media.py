@@ -220,7 +220,10 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
         hud_extra = "bean lost"
         if bean:
             cy, cx = bean[0]["centroid"]
-            trail.append((cx, cy))
+            # extend the trail only on real motion (>=1.5 px) so the resting
+            # bean's sub-pixel jitter doesn't scribble over the plate
+            if not trail or np.hypot(cx - trail[-1][0], cy - trail[-1][1]) >= 1.5:
+                trail.append((cx, cy))
             n_det += 1
             if fr.get("tip_c"):
                 # meta tip_c is (x, y) col-major from the original capture script
