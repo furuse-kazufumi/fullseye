@@ -416,7 +416,7 @@ def fig_optional_extras() -> None:
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_axis_off()
     ax.set_xlim(0, 100)
-    ax.set_ylim(0, 100)
+    ax.set_ylim(-7, 100)
     fig.text(0.03, 0.955, "コアは numpy + scipy だけ ―― 重い依存はぜんぶ optional extras",
              fontsize=17, color=FG, fontweight="bold")
     fig.text(0.03, 0.915, "pyproject.toml の実定義から機械生成(fullseye v%s)。"
