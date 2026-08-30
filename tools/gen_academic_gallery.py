@@ -7,7 +7,7 @@ across academic fields (medicine / archaeology / biology / space / paleontology
 
 Two data routes:
   A) Real open-licensed downloads (NASA images API = public domain, Met Museum
-     Open Access = CC0, Broad BBBC = CC-BY, Smithsonian Open Access = CC0).
+     Open Access = CC0, Smithsonian Open Access = CC0).
      Every download's source URL + license is recorded.
   B) AI-generated simulated data (Google gemini-2.5-flash-image first --
      OpenAI credits were exhausted at build time -- fallback gpt-image-1) for
