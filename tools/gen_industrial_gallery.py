@@ -737,8 +737,7 @@ def subject_lidar_clusters(log=print) -> dict:
     """LIDAR — 実レイキャストの点群を地面除去 + クラスタリングして物体を数える."""
     import mujoco
     import lidar_sim as LS
-    import matplotlib
-    matplotlib.use("Agg")
+    _mpl_jp()
     import matplotlib.pyplot as plt
 
     m = mujoco.MjModel.from_xml_string(LS._SCENE)
@@ -831,8 +830,7 @@ def subject_stereo_obstacles(log=print) -> dict:
     """ステレオ — 視差から奥行きを復元し、鳥瞰の障害物マップまで通す."""
     import stereo
     import stereo_sim as SS
-    import matplotlib
-    matplotlib.use("Agg")
+    _mpl_jp()
     import matplotlib.pyplot as plt
 
     left, right, depth_gt, f_px = SS._render(res=360)

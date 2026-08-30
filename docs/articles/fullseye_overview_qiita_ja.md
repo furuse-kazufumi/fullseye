@@ -552,6 +552,10 @@ HDevelop を触ったことがある人向けに、Studio の Python Editor が�
 
 HDevelop では、1つのメインプログラムから複数のサブプログラム（サブルーチン）を呼び出し、それぞれを別タブで編集する、という書き方が定番です。Studio の **Python Editor**（`File ▸ Python Editor…`、またはギャラリーの「Open in editor」）も同じ発想で、**複数の Python スクリプトを同時にタブで開いて編集**できます。**F5（Run）**で現在のタブをサブプロセス実行――サブプロセスなので、重い処理を回してもメインの UI は固まりません。リポジトリが `PYTHONPATH` に自動で乗るので、`import fullseye` はどのタブでもそのまま動きます。未保存のバッファは**scratch コピー**として実行されるので、「試しに書き換えて動かしてみる」ために毎回セーブを強制されることもありません。
 
+![Studio Python Editor](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_python_editor_thumb.jpg)
+
+*↑ Python Editor ―― `itokawa_curvature.py` を F5 実行した直後（PASS, exit 0）。下部コンソールに実データの曲率統計がストリームされている。*
+
 もう1つ、**MDI コード窓**（ギャラリーの「Open in window」）という選択肢もあります。こちらはサンプルを**独立したウィンドウ**として何枚でも並べられ、`Window ▸ Tile/Cascade` で整列もできる。タブは「順番に読み書きする」用途、MDI 窓は「複数のサンプルを見比べながら断片をコピーする」用途――と、使い分けが効くようにしてあります。
 
 ### 変数ウォッチとデバッガ級の実行制御
