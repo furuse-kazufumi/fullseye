@@ -805,10 +805,6 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 #### 生物学
 
-[![HT29 細胞の分割と計数](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells.png)
-
-*↑ HT29 細胞の蛍光顕微鏡像（[BBBC001, CC-BY 3.0](https://bbbc.broadinstitute.org/BBBC001)）を otsu 分割 → ラベル彩色 → 計数（検出数 327）。実験室のルーチンワークそのものです。*
-
 [![神経細胞の樹状突起トレース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron.png)
 
 *↑ 神経細胞蛍光像の樹状突起を `sk_frangi` でトレース。**AI 生成の模擬データ**。*
