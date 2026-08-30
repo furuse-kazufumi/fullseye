@@ -202,7 +202,6 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
     frames = meta["frames"]
     out = MEDIA / "evis_bean_track_fullseye.mp4"
     wr = _writer(out, fps)
-    trail: list[tuple[float, float]] = []
     n_det, px_errs = 0, []
     rep = None
     for fr in frames[::step]:
@@ -220,21 +219,14 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
         hud_extra = "bean lost"
         if bean:
             cy, cx = bean[0]["centroid"]
-            # extend the trail only on real motion (>=1.5 px) so the resting
-            # bean's sub-pixel jitter doesn't scribble over the plate
-            if not trail or np.hypot(cx - trail[-1][0], cy - trail[-1][1]) >= 1.5:
-                trail.append((cx, cy))
+            # no trail overlay: the tip camera rides the moving chopsticks, so
+            # an image-space trail would mix camera motion into the bean path.
             n_det += 1
             if fr.get("tip_c"):
                 # meta tip_c is (x, y) col-major from the original capture script
                 gx, gy = fr["tip_c"][0], fr["tip_c"][1]
                 px_errs.append(float(np.hypot(cx - gx, cy - gy)))
             hud_extra = f"bean ({cx:.0f},{cy:.0f})"
-        im = Image.fromarray(vis)
-        d = ImageDraw.Draw(im)
-        if len(trail) >= 2:
-            d.line([(x, y) for x, y in trail[-60:]], fill=(255, 210, 60), width=1)
-        vis = np.asarray(im)
         hud = _hud(480, "fullseye segment_objects>draw_objects  "
                         f"t={fr['t']:.2f}s  {hud_extra}")
         row = np.concatenate([
