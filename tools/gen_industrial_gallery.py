@@ -186,10 +186,13 @@ def subject_defect_metal(log=print) -> dict:
     gray = np.asarray(pil, np.float64)[..., 0] / 255.0
     for (cx, cy) in [(210, 400), (520, 240)]:
         # 打痕 = 深い影の芯 (median 窓 9px より細い → 差分に残る) +
-        #        まわりの淡いハイライト (凹みの照り返し。広く滑らか → 差分に出ない)
+        #        広く滑らかな凹み陰影 (右下が影・左上が照り返し → 差分に出ない)
         d2c = (xx - cx) ** 2 + (yy - cy) ** 2
+        d2s = (xx - cx - 5) ** 2 + (yy - cy - 5) ** 2      # 影 (光源は左上)
+        d2h = (xx - cx + 5) ** 2 + (yy - cy + 5) ** 2      # 照り返し
         gray = gray - 0.45 * np.exp(-d2c / (2 * 3.0 ** 2)) \
-                    + 0.12 * np.exp(-d2c / (2 * 6.5 ** 2))
+                    - 0.16 * np.exp(-d2s / (2 * 7.0 ** 2)) \
+                    + 0.18 * np.exp(-d2h / (2 * 7.0 ** 2))
         truth.append(("dent", (cx, cy)))
     rgb = np.stack([gray] * 3, axis=-1)
     cx, cy = 330, 130
