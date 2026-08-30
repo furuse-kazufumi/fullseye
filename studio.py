@@ -6416,7 +6416,10 @@ def build_window(model=None):
         if reclaim_stale:
             for sub in list(win._graphics_windows):
                 slot = getattr(sub, "_fs_directive_slot", None)
-                if slot is not None and slot > open_slot and sub in mdi.subWindowList():
+                slot3 = getattr(sub, "_fs_disp3d_slot", None)
+                stale = ((slot is not None and slot > open_slot)
+                         or (slot3 is not None and slot3 > d3_slot))
+                if stale and sub in mdi.subWindowList():
                     sub.close()
                     if win._current_gfx is sub:
                         win._current_gfx = win._primary_gsub
