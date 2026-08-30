@@ -1790,7 +1790,20 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
         def wheelEvent(self, e):
             f = 1.25 if e.angleDelta().y() > 0 else 0.8
             self._zoom = float(np.clip(self._zoom * f, 0.02, 500.0))
+            if self._P.shape[0] > self.DRAG_BUDGET:
+                # same decimated preview as a drag; a short timer restores the
+                # full-resolution render once the wheel burst ends
+                self._wheeling = True
+                self._wheel_timer.start()
             self._repaint()
+
+        def _end_wheel(self):
+            self._wheeling = False
+            self._repaint()                       # full-resolution re-render after zooming
+
+        def resizeEvent(self, e):
+            super().resizeEvent(e)
+            self._repaint()                       # frame is sized to the widget: re-render
 
         def keyPressEvent(self, e):
             if e.key() == QtCore.Qt.Key_R:
