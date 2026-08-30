@@ -41,8 +41,8 @@ flowchart LR
 ## 使い方（op グループ別）
 
 ### 1. 数える・トポロジ（region / contour / volume → feature）
-- `count_obj` — 連結成分の個数（`scipy.ndimage.label`）。3 つに分かれた領域なら厳密に 3。呼び出し: `fullseye.apply(region, "count_obj")`
-- `blob_count` — `count_obj` と同義の blob 計数。呼び出し: `fullseye.apply(region, "blob_count")`
+- `count_obj` — 連結成分の個数（`scipy.ndimage.label`、**8 連結既定** = HALCON `connection` パリティ。対角接触は 1 個。2026-08-30 に 4 連結から修正）。3 つに分かれた領域なら厳密に 3。呼び出し: `fullseye.apply(region, "count_obj")`
+- `blob_count` — `count_obj` と同義の blob 計数（同じく 8 連結既定。旧 4 連結は `ops._blob_count(..., connectivity=4)`）。呼び出し: `fullseye.apply(region, "blob_count")`
 - `cv_cc_count` — OpenCV `connectedComponents` による連結成分数（cv2 が要る）。呼び出し: `fullseye.apply(region, "cv_cc_count")`
 - `connect_and_holes` — 連結成分の個数を返す（metric=`count`）。呼び出し: `fullseye.apply(region, "connect_and_holes")`
 - `euler_number` / `sk_euler` — オイラー数（連結成分数 − 穴の数、`skimage.measure.euler_number`）。呼び出し: `fullseye.apply(region, "euler_number")`
