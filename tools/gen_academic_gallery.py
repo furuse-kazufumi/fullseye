@@ -634,8 +634,10 @@ def rec_efd(col):
     NOTE (bug workaround, reported as a finding): fullseye op
     `gen_contour_region_xld` returns boundary points in raster order, not traced
     order, which silently breaks order-sensitive consumers like
-    fourierdesc.elliptic_fourier. We therefore order the boundary by angle around
-    the centroid (star-convex approximation, fine for vase silhouettes).
+    fourierdesc.elliptic_fourier. We therefore trace an ordered boundary with
+    skimage.measure.find_contours (marching squares) — an earlier angle-sort
+    workaround was rejected because it fails on non-star-convex shapes such as
+    amphora handles.
     """
     g = gray(col)
     binm = ap(g, "otsu", 0.5, 0.5)
