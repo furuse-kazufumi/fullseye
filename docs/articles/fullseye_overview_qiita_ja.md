@@ -584,6 +584,18 @@ Studio の右パネルには、**現在の結果を回転可能な 3D サーフ�
 
 `Tools ▸ System settings…`（`Ctrl+,`）は、カテゴリツリー形式の設定画面です。**Execution**（ワーカースレッド数・operator タイムアウト）、**Windows**（グラフィクス窓の上限）、**Display**（既定のカラーマップ・領域の描画方式）、**Editor**（フォントサイズ・Python Editor の実行インタプリタ）――と、HDevelop の `set_system` に相当する設定が1画面にまとまっています。`Ctrl+P` の **Command palette** からも、任意のアクションや任意のオペレータを名前でファジー検索して即実行できるので、メニューを辿らずキーボードだけで一通りの操作が完結します。
 
+### ギャラリーとヘルプ ―― 105 本の worked example と 265 op のリファレンス
+
+3D 側は 105 本の worked example（実イトカワ点群・骨格ボリューム・合成データ）をギャラリーから選んでその場で Run でき、265 の 3D op それぞれに生成済みヘルプページ（シグネチャ・使い方・検証済みサンプルへのリンク・型が繋がる次の op）が付いています。
+
+![Studio 3D Examples ギャラリー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_examples_thumb.jpg)
+
+*↑ 3D Examples ギャラリー ―― itokawa_curvature を選択して Run した直後（Output にグラウンドトゥルース検証つきの PASS）。*
+
+![Studio 3D Operators リファレンス](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_3d_ops_thumb.jpg)
+
+*↑ 3D Operators リファレンス ―― `icp_point2plane` のヘルプページ。*
+
 ### 検査ラインの実務目線で1つ流れを追う
 
 ここまでの機能が、実務でどう繋がるかを1つの流れで書いておきます。HDevelop で検査プログラムを組んだことがある人向けの想定です。
