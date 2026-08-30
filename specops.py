@@ -1093,8 +1093,16 @@ def spec_decorrelation_stretch(cube, bands=None, target_std=None) -> np.ndarray:
     are identical) carry no information and would be divided by ~0, so their gain is
     set to **0** instead: the result stays finite and NaN-free by construction. The
     output is not clipped to [0, 1]; a display stretch is the caller's business.
+
+    **RGB (H, W, 3) is accepted here** — unlike the other cube ops. Decorrelation
+    stretch on plain RGB photographs is the method's own canonical use (Gillespie
+    et al. 1986 §"three-band images"; the archaeology-standard DStretch tool is
+    exactly this on RGB rock-art photos), so this op treats an RGB frame as a
+    3-band cube instead of refusing it (2026-08-30, KNOWN_ISSUES #5). The other
+    validations stay fail-closed: 2-D input, B < 2, and non-finite data are still
+    refused, and every other spectral op still refuses (H, W, 3).
     """
-    a = _as_cube(cube)
+    a = _as_cube(cube, allow_rgb=True)
     H, W, B = a.shape
     idx = _select_bands(B, bands)
     k = int(idx.size)
