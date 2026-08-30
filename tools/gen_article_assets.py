@@ -985,7 +985,7 @@ def build_op_sampler_2d(log=print) -> dict:
                  f"(one representative op per category, real outputs)", color=fg, fontsize=15, y=0.995)
     fig.tight_layout(rect=(0, 0, 1, 0.965))
     out_path = os.path.join(ASSETS_DIR, "op_sampler_2d.png")
-    fig.savefig(out_path, dpi=75, facecolor=bg)
+    fig.savefig(out_path, dpi=68, facecolor=bg)
     plt.close(fig)
     log(f"op_sampler_2d: {out_path} | {len(chosen)} tiles: "
         + ", ".join(f"{cat}:{name}" for cat, name, _ in chosen))
