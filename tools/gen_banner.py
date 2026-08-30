@@ -13,9 +13,24 @@ branding. Numbers in the tagline match the measured counts in README.md
 (731 distinct 2-D ops + 265 3-D ops ~= 1,000).
 
 Reproducible: ``py -3.11 tools/gen_banner.py``
+
+Variants
+--------
+``--variant banner`` (default)
+    The original 12-tile 1280x640 GitHub social-preview banner. Unchanged.
+``--variant mosaic``
+    ``docs/articles/assets/fullseye_mosaic.png`` — a dense 1200x1200 square
+    (7x7 = 49 tiles) for LinkedIn feed posts.  Optimised to *overwhelm* at
+    feed size (~550 px) with colour/subject variety rather than per-tile
+    legibility.  Tiles come from verified assets in ``docs/articles/assets``
+    and ``examples_3d/_gallery``; montages are cropped per panel.  Tiles cut
+    from AI-generated simulated source data (see ACADEMIC_ATTRIBUTION.md)
+    always show the *processed* analysis panel and are kept under 1/3 of the
+    grid.  ``py -3.11 tools/gen_banner.py --variant mosaic``
 """
 from __future__ import annotations
 
+import argparse
 import os
 import sys
 from pathlib import Path
