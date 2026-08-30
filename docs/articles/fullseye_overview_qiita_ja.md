@@ -540,7 +540,11 @@ Fullseye の差別化がいちばん出るのは **3D 系**だと思っていま
 - **デバッガ級の実行制御と変数ウォッチ**も入れました。ブレークポイントで止め、**実行行から再開（Continue）**、**任意の行からやり直し（Run from here）**。変数は**右クリックで中身をポップアップ検査**でき、**ウォッチ式**（`v.mean()` や `np.percentile(v, 99)` など任意の式）が選択変数に対して**パイプラインの変更のたびに自動再評価**されます。
 - **複数の描画ウィンドウをスクリプトから制御**できます。HDevelop と同じ流儀で、プログラム中の `dev_open_window (行, 列, 幅, 高さ)` がウィンドウを開いて配置し、`dev_set_window` で切り替え、`dev_set_window_extents` で動かせる。画像処理の実務では「入力・中間・結果を別ウィンドウに並べる」が日常なので、これをコードで再現可能にしています（開き過ぎ防止の上限は環境設定で調整可能、既定 256）。
 
-<!-- FIGURE: studio-screenshot -->
+実際の画面がこれです（モックアップではなく、`studio.build_window()` が組み立てた実 UI をそのまま撮ったもの）。左に結果ビュー（ホイールでズーム、ドラッグでパン）、下に Program パネル、右に演算子ブラウザという構成で、op を選んでつなぎ、ノブを回すと結果がライブ更新されます。
+
+![Fullseye Studio メイン画面](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/studio_main_thumb.jpg)
+
+*↑ Studio メイン画面 ―― coins サンプルに blob 分割パイプライン（gaussian → otsu → opening_circle → sk_clear_border）を適用し、検出した 21 枚のコインを region overlay で重畳した状態。ステータスバーに「21 obj」。*
 
 ### タブ・エディタ ―― HDevelop の「メイン＋サブスクリプト」を継ぐ
 
