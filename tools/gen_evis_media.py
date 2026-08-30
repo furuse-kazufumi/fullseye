@@ -172,8 +172,8 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
                 err = abs(est - true) / true * 100.0
                 errs.append(err)
                 n_valid += 1
-                hud_extra = (f"bean {est:5.0f}mm  truth {true:5.0f}mm  "
-                             f"err {err:4.1f}%")
+                hud_extra = (f"bean {est:.0f}mm | truth {true:.0f}mm | "
+                             f"err {err:.1f}%")
         hud = _hud(L.shape[1] * 3,
                    "fullseye: disparity_sgm > speckle_filter > fill_disparity > "
                    "depth_from_disparity + segment_objects(x2) "
