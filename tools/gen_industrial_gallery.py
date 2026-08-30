@@ -835,9 +835,10 @@ def subject_stereo_obstacles(log=print) -> dict:
     if ground_med > 0.06:
         raise RuntimeError(f"ground plane off: {ground_med:.3f}m")
 
-    obst = P[P[:, 2] > 0.10]
-    clusters = fs.euclidean_clusters(obst, tol=0.16, min_size=60)
-    log(f"  obstacle clusters={len(clusters)} (scene objects=4)")
+    obst = P[P[:, 2] > 0.12]
+    clusters = fs.euclidean_clusters(obst, tol=0.20, min_size=150)
+    log(f"  obstacle clusters={len(clusters)} sizes="
+        f"{[len(c) for c in clusters]} (scene objects=4)")
     if len(clusters) != 4:
         raise RuntimeError(f"obstacle clusters {len(clusters)} != 4")
 
