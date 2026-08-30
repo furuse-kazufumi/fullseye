@@ -347,18 +347,28 @@ def fetch_smithsonian(query: str, slug: str) -> tuple[str, dict] | None:
 # --------------------------------------------------------------- data route B
 
 
+def _key_from_env(name: str) -> str | None:
+    """API key resolution, fail-closed: the env var itself first, else a JSON
+    key file whose PATH is given via the FULLSEYE_API_KEYS_JSON env var.
+    No hardcoded local paths (this is a public repo) — unset means no AI route."""
+    v = os.environ.get(name)
+    if v:
+        return v
+    p = os.environ.get("FULLSEYE_API_KEYS_JSON")
+    if p:
+        try:
+            return json.load(open(p, encoding="utf-8")).get(name)
+        except Exception:
+            return None
+    return None
+
+
 def _openai_key() -> str | None:
-    try:
-        return json.load(open(API_KEYS_PATH, encoding="utf-8")).get("OPENAI_API_KEY")
-    except Exception:
-        return None
+    return _key_from_env("OPENAI_API_KEY")
 
 
 def _gemini_key() -> str | None:
-    try:
-        return json.load(open(API_KEYS_PATH, encoding="utf-8")).get("GEMINI_API_KEY")
-    except Exception:
-        return None
+    return _key_from_env("GEMINI_API_KEY")
 
 
 def _save_ai(cache: str, metap: str, blob: bytes, model: str, provider: str,
