@@ -342,9 +342,10 @@ def subject_align_shapematch(log=print) -> dict:
         if not r["found"]:
             raise RuntimeError(f"shape match #{k + 1} not found")
         found.append(r)
-        # 見つけた領域を消して次のインスタンスを探す
+        # 見つけた領域を消して次のインスタンスを探す(row/col は実測でモデル中心)
         rr, cc = r["row"], r["col"]
-        work[max(0, rr - 10):rr + size + 10, max(0, cc - 10):cc + size + 10] = 0.15
+        h2 = size // 2 + 12
+        work[max(0, rr - h2):rr + h2, max(0, cc - h2):cc + h2] = 0.15
         log(f"  match#{k + 1}: row={r['row']} col={r['col']} "
             f"angle={r['angle']:.1f} score={r['score']:.2f}")
 
