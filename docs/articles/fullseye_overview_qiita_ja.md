@@ -947,6 +947,10 @@ Fullseye が「ただの関数の寄せ集め」にならないための背骨�
 
 この応答の裏でAIがやっているのは、ベクタ検索でも埋め込み類似度計算でもありません。**`docs/ops` を `grep` で引き、各ノートの `in:`/`out:` 記載を読んで型を繋げているだけ**です（SKILL.md の「Retrieval recipes」がそのまま手順書）。だからこそ特別なベクタ DB や埋め込みサービスが要らず、**grep できる環境ならそのまま RAG として機能する**わけです。checkout 環境なら約1000枚の per-op ノートから、wheel 環境なら `OP_CATALOG.md` の一覧から、それぞれ根拠を引いてきます。提案されたコードを鵜呑みにする必要もありません。**全 op に ground-truth 付きの worked example が付属している**ので、AI 自身が `py -3.11 examples/<id>.py` を実行して「PASS」を確認してから返答する、という自己検証のループも組み込めます。
 
+[![RAG コーパスの実物: per-op ノートと 3 ステップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_rag_corpus_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fig_rag_corpus.png)
+
+*↑ RAG コーパスの実物 ―― `docs/ops/2d/smoothing/bilateral.md` の frontmatter（型契約 `in:`/`out:`、HALCON 別名、著者・ライセンス・版）と「型が繋がる次の op」リンク。右は AI がやっている 3 ステップで、③の PASS 行はこの図の生成時に worked example を実行して得た実出力。*
+
 もし AI が型の繋がらない op を誤って選んでしまったらどうなるか、も書いておきます。答えは「層①の型契約」の節に書いた通り単純です。`run_pipeline` が実行時に**明示的に落ちます**。AI にとってこれは、人間に対する不親切なエラーではなく、**「ここで型が繋がっていない」という機械可読なフィードバック**そのものです。AI はそのエラーメッセージを読んで、繋がる型の op に選び直す――という訂正のループが、**人間が介入しなくても**回ることがあります。深層学習の1関数が「なんとなく違う答えを返す」のと違い、型契約は**間違いを黙って飲み込まず、その場で顕在化させる**ので、AI にとっても人間にとっても、どこで迷子になったかが追いやすくなっています。
 
 ### fail-closed 設計 ―― コーパスが無ければ黙って諦めない
