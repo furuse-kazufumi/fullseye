@@ -539,34 +539,41 @@ def subject_wobble_warp(log=print) -> dict:
     }
 
 
-def subject_dla_skeleton(log=print) -> dict:
-    """樹枝状結晶とその骨格 — DLA 成長 + スケルトン抽出."""
-    rng = np.random.default_rng(SEED)
-    noise = rng.random((480, 480))
-    dla = fs.apply(noise, "alife_dla", 0.7, 0.5)
-    mask = (dla > 0.2).astype(np.float64)
-    grown = fs.apply(mask, "dilation_circle", 0.03, 0.5)
-    skel = fs.apply(grown, "sk_skeleton")
-    # 氷の結晶 (青白) + 骨格 (金色)
-    ice = _cmap(fs.apply(grown, "distance_transform"), "ice"
-                if _has_cmap("ice") else "winter")
-    vis = np.where((grown > 0.5)[..., None], ice * 0.9 + 0.1, 0.02)
-    gold = np.array([1.0, 0.82, 0.25])
-    vis = np.where((skel > 0.5)[..., None], gold, vis)
-    panels = [_cmap(grown, "bone"), vis]
-    out = _montage(panels, ["拡散で育った結晶 (alife_dla)",
-                            "その骨格を金色で抽出 (sk_skeleton)"], ncols=2)
-    _save_png(out, "science_dla_skeleton.png")
-    _save_thumb("science_dla_skeleton.png")
+def subject_dino_skeleton(log=print) -> dict:
+    """恐竜の影絵と針金の骨格 — シルエット → スケルトン抽出."""
+    V, F = _load_mesh_sample("triceratops.glb")
+    V = V - V.mean(axis=0)
+    V = V / np.abs(V).max()
+    size = 720
+    pose = fs.look_at((0.0, -2.6, 0.35), (0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))
+    # glTF は y-up → z-up に回してから横向きで見る
+    Vz = V[:, [0, 2, 1]] * np.array([1.0, -1.0, 1.0])
+    r = fs.render_mesh(Vz, F, pose=pose, width=size, height=size)
+    sil = np.asarray(r["silhouette"], np.float64)
+    sil = fs.apply(sil, "fill_up")
+    skel = fs.apply(sil, "sk_skeleton")
+    skel_bold = fs.apply(skel, "dilation_circle", 0.012, 0.5)
+    dt = fs.apply(sil, "distance_transform")
+    body = _cmap(dt * 0.9, "bone")                  # 厚みで淡く光る影絵
+    vis = np.where((sil > 0.5)[..., None], body * 0.55 + 0.08, 0.02)
+    gold = np.array([1.0, 0.8, 0.2])
+    vis = np.where((skel_bold > 0.5)[..., None], gold, vis)
+    panels = [np.where((sil > 0.5)[..., None],
+                       np.array([0.75, 0.85, 1.0]), 0.03) * np.ones((1, 1, 3)),
+              np.clip(vis, 0, 1)]
+    out = _montage(panels, ["実スキャンの影絵 (render_mesh)",
+                            "中心線の「骨格」を金色で抽出 (sk_skeleton)"], ncols=2)
+    _save_png(out, "science_dino_skeleton.png")
+    _save_thumb("science_dino_skeleton.png")
     return {
-        "file": "science_dla_skeleton.png",
-        "title": "樹枝状結晶とその骨格",
-        "ops": ["alife_dla", "dilation_circle", "sk_skeleton",
-                "distance_transform"],
-        "data": "乱数から DLA 成長 (シミュレーション)",
-        "synthetic": True,
-        "caption": ("粒子がふらふら漂って張り付くだけで雪の結晶のような枝が育つ "
-                    "(DLA)。スケルトン化するとその「骨」が 1 ピクセル幅で取り出せる。"),
+        "file": "science_dino_skeleton.png",
+        "title": "恐竜の影絵から骨格を取り出す",
+        "ops": ["read_mesh", "look_at", "render_mesh", "fill_up",
+                "sk_skeleton", "dilation_circle", "distance_transform"],
+        "data": "Smithsonian 3D triceratops 実スキャン (CC0)",
+        "synthetic": False,
+        "caption": ("トリケラトプスの影絵から、形の中心線 (スケルトン) を"
+                    "1 ピクセル幅で抽出。足・角・しっぽが針金細工のように残る。"),
     }
 
 
