@@ -63,3 +63,21 @@ def test_wheel_mode_pins_package_catalog(tmp_path):
     assert "FULLSEYE_REPO = %s" % core.PKG.as_posix() in text
     assert "OP_CATALOG.md" in text
     assert (core.PKG / "OP_CATALOG.md").is_file()                # the pin is real
+
+
+def test_reinstall_backs_up_user_edited_skill(tmp_path):
+    """公開前レビュー回帰(high): `fullseye-rag` の再インストール(=更新)が
+    ユーザーの SKILL.md 手編集を黙って消さない — 上書き前にバックアップが残る。"""
+    import setup_claude_rag as rag
+    rag.install(tmp_path)
+    skill_md = tmp_path / rag.SKILL_NAME / "SKILL.md"
+    skill_md.write_text(skill_md.read_text(encoding="utf-8") + "\nUSER EDIT\n",
+                        encoding="utf-8")
+    rag.install(tmp_path)                       # 再インストール(更新の標準導線)
+    baks = sorted(tmp_path.glob(rag.SKILL_NAME + ".bak-*"))
+    assert baks, "reinstall left no backup of the edited skill"
+    assert "USER EDIT" in (baks[-1] / "SKILL.md").read_text(encoding="utf-8")
+    assert "USER EDIT" not in skill_md.read_text(encoding="utf-8")
+    # 同一秒内の連続インストールでもバックアップ名は衝突しない
+    rag.install(tmp_path)
+    assert len(sorted(tmp_path.glob(rag.SKILL_NAME + ".bak-*"))) >= 2

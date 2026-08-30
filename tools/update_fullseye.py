@@ -85,8 +85,12 @@ def update_rag_skill(check: bool) -> str:
         return f"RAG skill would be updated: {dest} (backup, then reinstall)"
     stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
     backup = target / f"{rag.SKILL_NAME}.bak-{stamp}"
+    n = 1
+    while backup.exists():                   # 同一秒内の再実行でも衝突させない
+        backup = target / f"{rag.SKILL_NAME}.bak-{stamp}-{n}"
+        n += 1
     shutil.copytree(dest, backup)
-    rag.install(target)
+    rag.install(target, backup=False)        # 退避済み — install 側の二重バックアップを抑止
     return f"RAG skill updated (previous version backed up: {backup})"
 
 

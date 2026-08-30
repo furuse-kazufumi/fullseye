@@ -56,6 +56,7 @@ def set_language(lang: str | None) -> None:
 def register(lang: str, mapping: dict) -> None:
     """プログラムから対訳を登録(ユーザーテーブルと同格・既存キーを上書き)。
     Register translations programmatically (same rank as user tables; overrides)."""
+    lang = str(lang).strip().lower()         # get/set_language と同じ正規化
     _tables.setdefault(lang, {}).update({str(k): str(v) for k, v in mapping.items()})
 
 

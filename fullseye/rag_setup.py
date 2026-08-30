@@ -72,13 +72,41 @@ def _pin_line(repo: Path | None) -> str:
             "full per-op notes = clone the GitHub repo)" % PKG.as_posix())
 
 
-def install(target_dir: Path, repo: Path | None = None, _auto_repo: bool = True) -> Path:
-    """スキルをコピーし FULLSEYE_REPO 行を固定して dest を返す(fail-closed)。"""
+def _backup_existing(dest: Path) -> Path | None:
+    """既存スキルをタイムスタンプ付きで退避し、退避先を返す(無ければ None)。
+
+    再インストール(=更新)がユーザーの手編集を黙って消さないための関門。
+    同一秒内の連続実行でも衝突しないよう、既存ならカウンタを足す。
+    Back up an existing skill dir before overwrite so a reinstall never
+    silently destroys the user's hand edits; collision-safe within a second."""
+    if not dest.is_dir():
+        return None
+    import datetime
+    stamp = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    backup = dest.with_name(f"{dest.name}.bak-{stamp}")
+    n = 1
+    while backup.exists():
+        backup = dest.with_name(f"{dest.name}.bak-{stamp}-{n}")
+        n += 1
+    shutil.copytree(dest, backup)
+    return backup
+
+
+def install(target_dir: Path, repo: Path | None = None, _auto_repo: bool = True,
+            backup: bool = True) -> Path:
+    """スキルをコピーし FULLSEYE_REPO 行を固定して dest を返す(fail-closed)。
+
+    既定で、既存インストールがあれば上書き前にバックアップを残す
+    (``backup=False`` は呼び出し側が独自にバックアップ済みの場合のみ)。"""
     if repo is None and _auto_repo:
         repo = find_repo()
     src_dir = _skill_source(repo)
     pinned = _pin_line(repo)
     dest = target_dir / SKILL_NAME
+    if backup:
+        saved = _backup_existing(dest)
+        if saved is not None:
+            print("existing skill backed up to: %s" % saved)
     dest.mkdir(parents=True, exist_ok=True)
     for src in src_dir.rglob("*"):
         rel = src.relative_to(src_dir)

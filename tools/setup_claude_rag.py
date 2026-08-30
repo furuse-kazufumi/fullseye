@@ -26,8 +26,8 @@ from fullseye.rag_setup import main as _main
 SKILL_SRC = REPO / "skills" / SKILL_NAME
 
 
-def install(target_dir: Path) -> Path:
-    return _install(target_dir, repo=REPO, _auto_repo=False)
+def install(target_dir: Path, backup: bool = True) -> Path:
+    return _install(target_dir, repo=REPO, _auto_repo=False, backup=backup)
 
 
 def main(argv=None) -> int:
