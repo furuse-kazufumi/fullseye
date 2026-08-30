@@ -660,7 +660,7 @@ RECIPES = {
 }
 
 # (subject, slug, fetch spec, recipe, caption-ja)
-# fetch spec: ("nasa", query) | ("met", query) | ("bbbc",) | ("si", query) | ("ai", prompt)
+# fetch spec: ("nasa", query) | ("met", query) | ("si", query) | ("ai", prompt)
 EXHIBITS = [
     # ----- 宇宙 (real, NASA public domain)
     ("space", "space_carina", ("nasa", "carina nebula cosmic cliffs webb"), "filaments",
