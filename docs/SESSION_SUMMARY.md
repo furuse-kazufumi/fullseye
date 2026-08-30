@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 16:25:14
+- **最終更新**: 2026-08-30 16:32:48
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-ecd487d8 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:24)
-ef37aaa8 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:24)
-b5d5919d auto: gen_academic_gallery.py 編集前 (2026-08-30 16:24)
-a6d567cf auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:24)
-8994cd21 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:23)
-ce1b71cc auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:23)
-cfc9450f auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:23)
-a5047b11 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:22)
-0bf0f8ca auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:22)
-3e61eb73 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:22)
+0f46170b auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:32)
+e7592238 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:32)
+2ff8ec70 auto: gen_science_gallery.py 編集前 (2026-08-30 16:32)
+f8c62a21 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:32)
+d5def783 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:32)
+0c70d501 auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:32)
+6aee3eae auto: gen_science_gallery.py 編集前 (2026-08-30 16:32)
+bf8dd79f auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 16:31)
+45e6af98 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:31)
+eac0dc19 auto: gen_industrial_gallery.py 編集前 (2026-08-30 16:31)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ M docs/articles/fullseye_overview_qiita_ja.md
 ## 直近 2 時間に変更されたファイル
 
 ```
-16:25 data/academic_samples/ai_paleo_triceratops.png.meta.json
-16:25 data/academic_samples/ai_paleo_triceratops.png
-16:25 data/academic_samples/ai_paleo_feathered.png.meta.json
-16:25 data/academic_samples/ai_paleo_feathered.png
-16:25 data/academic_samples/ai_paleo_trex.png.meta.json
-16:25 data/academic_samples/ai_paleo_trex.png
-16:25 data/academic_samples/ai_bio_butterfly.png.meta.json
-16:25 data/academic_samples/ai_bio_butterfly.png
-16:25 data/academic_samples/ai_bio_deepsea.png.meta.json
-16:25 data/academic_samples/ai_bio_deepsea.png
-16:25 data/academic_samples/ai_bio_diatoms.png.meta.json
-16:25 data/academic_samples/ai_bio_diatoms.png
-16:24 data/academic_samples/ai_arch_cuneiform.png.meta.json
-16:24 data/academic_samples/ai_arch_cuneiform.png
-16:24 data/academic_samples/ai_bio_neuron.png.meta.json
+16:32 docs/articles/fullseye_overview_qiita_ja.md
+16:32 tools/gen_industrial_gallery.py
+16:32 docs/articles/assets/science_dino_xray_thumb.jpg
+16:32 docs/articles/assets/science_dino_xray.png
+16:32 docs/articles/assets/science_alife_worlds_thumb.jpg
+16:32 docs/articles/assets/science_alife_worlds.png
+16:32 docs/articles/assets/science_edge_compass_thumb.jpg
+16:32 docs/articles/assets/science_edge_compass.png
+16:32 docs/articles/assets/science_watershed_foam_thumb.jpg
+16:32 docs/articles/assets/science_watershed_foam.png
+16:32 docs/articles/assets/science_fourier_stars_thumb.jpg
+16:32 docs/articles/assets/science_fourier_stars.png
+16:32 docs/articles/assets/science_distance_ripple_thumb.jpg
+16:32 docs/articles/assets/science_distance_ripple.png
+16:32 docs/KNOWN_ISSUES.md
 ```
 
 ---
