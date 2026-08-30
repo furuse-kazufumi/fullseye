@@ -603,6 +603,22 @@ def cluster_feature_table(points, clusters, names=None):
     return headers, rows
 
 
+def suggest_cluster_tol(points, k_med=3.0, sample=2000, seed=0):
+    """A starting Euclidean-cluster tolerance for an unknown cloud: *k_med* x the
+    median nearest-neighbour distance of (up to) *sample* points. Purely a UI
+    default for the Feature-inspection 3-D tab — the user owns the final value.
+    Headless."""
+    from scipy.spatial import cKDTree
+    P = np.asarray(points, np.float64).reshape(-1, 3)
+    if P.shape[0] < 2:
+        return 0.05
+    if P.shape[0] > sample:
+        P = P[np.random.default_rng(seed).choice(P.shape[0], sample, replace=False)]
+    d, _ = cKDTree(P).query(P, k=2)
+    med = float(np.median(d[:, 1]))
+    return round(float(k_med) * med, 6) if med > 0 else 0.05
+
+
 def demo_cluster_cloud(seed=0, n_per=400):
     """A synthetic 3-cluster point cloud for the 3-D demos/tests: three Gaussian
     blobs (std 0.4) centred 10 apart -> ``(points (3*n_per, 3), true_k=3)``."""
