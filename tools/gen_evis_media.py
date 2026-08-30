@@ -18,9 +18,20 @@ and renders honest, verifiable videos for the Qiita overview article:
   legacy : re-encode one existing evis gif (700-muscle activation heatmap) to
            H.264 mp4 for the article (no Fullseye processing - honest label).
 
-Source frames are read from C:/dev/projects/evis_chopstick/out/chop_vision_frames
-READ-ONLY (nothing there is modified).  Outputs land in
-docs/articles/assets/media/evis_*.mp4 plus stills/thumbs in docs/articles/assets/.
+Input locations are NOT hardcoded (public repo — no local machine layout):
+  EVIS_CHOPSTICK_DIR  (required for stereo/track)  root of the evis_chopstick
+      project; frames are read READ-ONLY from
+      <EVIS_CHOPSTICK_DIR>/out/chop_vision_frames + chop_vision_meta.json
+      (produced by that project's ChopMimic vision-capture run).
+  ONOCOLLO_DIR        (required for legacy)  root of the onocollo-complete repo;
+      the 700-muscle heatmap gif is read from
+      <ONOCOLLO_DIR>/docs/qiita/20260822_g1_evis/evis_muscle_heatmap.gif
+Unset variables fail closed with an explanation (no silent fallback paths).
+
+Outputs land in docs/articles/assets/media/evis_*.mp4 plus stills/thumbs in
+docs/articles/assets/.  The stats printed at the end are not informational:
+they are enforced as gates (raise) at the same thresholds the article captions
+claim, so a regression can never silently ship.
 
 Run:  py -3.11 tools/gen_evis_media.py --subjects stereo,track,legacy
 """
