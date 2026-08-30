@@ -576,7 +576,9 @@ def rec_fft(col):
     g = gray(col)
     c = ap(g, "cv_clahe", 0.55, 0.5)
     spec = np.log1p(fs.cx_magnitude(fs.cx_fft(g)))
-    return ([("original", col), ("cv_clahe", c), ("log |FFT| spectrum", heat(norm01(spec)))],
+    lo, hi = float(spec.min()), float(spec.max())  # full range: spectrum has a huge DC peak
+    spec = (spec - lo) / max(hi - lo, 1e-12)
+    return ([("original", col), ("cv_clahe", c), ("log |FFT| spectrum", heat(spec))],
             ["rgb1_to_gray", "cv_clahe", "cx_fft", "cx_magnitude"])
 
 
@@ -816,7 +818,7 @@ def write_attribution(results: list[dict]) -> None:
         "# Academic gallery — attribution / 出典とライセンス",
         "",
         "`academic_*.png` (tools/gen_academic_gallery.py 生成) の全素材の出典。",
-        "**「AI 生成」列が Yes の画像は OpenAI 画像生成モデルによる模擬データであり、実在の標本・スキャン・観測ではない。**",
+        "**「AI 生成」列が Yes の画像は画像生成 AI(モデル名は表に記載)による模擬データであり、実在の標本・スキャン・観測ではない。**",
         "実データはすべて public domain / CC0 / CC-BY のみを使用。",
         "",
         "| 画像 | 分野 | 素材 | AI 生成 | 出典 / ライセンス | 使用 op |",
