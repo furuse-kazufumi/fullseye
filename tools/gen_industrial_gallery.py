@@ -174,7 +174,7 @@ def subject_defect_metal(log=print) -> dict:
         blob = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * r * r)))
         img = img + dv * blob
         truth.append(("dent", (cx, cy)))
-    cx, cy, r = 330, 130, 5
+    cx, cy, r = 330, 130, 2.2
     yy, xx = np.mgrid[0:H, 0:W]
     img = img + 0.30 * np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * r * r)))
     truth.append(("particle", (cx, cy)))
