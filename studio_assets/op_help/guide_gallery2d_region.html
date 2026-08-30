@@ -63,7 +63,7 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">em_skeleton</code> — Eckhardt–Maderlechner 型の不変細線化(HALCON <code style="color:#22d3bf">skeleton</code> と同系のアルゴリズム。純 numpy 実装、対称・位相保存・冪等。Zhang–Suen より枝を多く残す)。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thinning</code> / <code style="color:#22d3bf">sk_thin</code> / <code style="color:#22d3bf">thinning_golay</code> / <code style="color:#22d3bf">thinning_seq</code> — 反復細線化(skimage <code style="color:#22d3bf">thin</code>)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_medial</code> — 中心軸変換(medial axis、Blum の骨格。skimage <code style="color:#22d3bf">medial_axis</code>)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pruning</code> — スケルトンのヒゲ(短い枝)を刈る(端点を <code style="color:#22d3bf">1+int(a*4)</code> 回除去)。GROUNDED。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pruning</code> — スケルトンのヒゲ(短い枝)を刈る(端点を <code style="color:#22d3bf">1+int(a*4)</code> 回除去 = <b>枝長 ≤5px 相当</b>)。HALCON の <code style="color:#22d3bf">pruning</code> の Length 引数に相当する枝長閾値は、この op の<b>重ね掛け</b>で伸ばせる(1 回ごとに +5px)。より長い断片除去は <code style="color:#22d3bf">r2_split_skeleton_lines</code> の <code style="color:#22d3bf">a</code>(<code style="color:#22d3bf">a*8</code>px 未満を除去)。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">junctions_skeleton</code> — スケルトンの分岐点(8 近傍が 3 個以上)を抽出。GROUNDED。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">r2_split_skeleton_lines</code> — 骨格を分岐点で切り、線分に分割(<code style="color:#22d3bf">a</code> で短い断片を除去)。</p>
 <p>&gt; <b>HALCON との差(重要)</b>: HALCON の <code style="color:#22d3bf">skeleton</code> は Eckhardt–Maderlechner 法、</p>

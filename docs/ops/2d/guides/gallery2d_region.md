@@ -94,7 +94,7 @@ flowchart LR
 - `em_skeleton` — Eckhardt–Maderlechner 型の不変細線化(HALCON `skeleton` と同系のアルゴリズム。純 numpy 実装、対称・位相保存・冪等。Zhang–Suen より枝を多く残す)。GROUNDED。
 - `thinning` / `sk_thin` / `thinning_golay` / `thinning_seq` — 反復細線化(skimage `thin`)。
 - `sk_medial` — 中心軸変換(medial axis、Blum の骨格。skimage `medial_axis`)。
-- `pruning` — スケルトンのヒゲ(短い枝)を刈る(端点を `1+int(a*4)` 回除去)。GROUNDED。
+- `pruning` — スケルトンのヒゲ(短い枝)を刈る(端点を `1+int(a*4)` 回除去 = **枝長 ≤5px 相当**)。HALCON の `pruning` の Length 引数に相当する枝長閾値は、この op の**重ね掛け**で伸ばせる(1 回ごとに +5px)。より長い断片除去は `r2_split_skeleton_lines` の `a`(`a*8`px 未満を除去)。GROUNDED。
 - `junctions_skeleton` — スケルトンの分岐点(8 近傍が 3 個以上)を抽出。GROUNDED。
 - `r2_split_skeleton_lines` — 骨格を分岐点で切り、線分に分割(`a` で短い断片を除去)。
 
