@@ -165,7 +165,7 @@ MOSAIC_TILES = [
     ("hand_hero.png",               (0.000, 0.000, 1.000, 1.000), "demo"),
     ("academic_bot_pollen.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
     # -- row 6 ------------------------------------------------------------
-    ("evis_bean_track_fullseye_still.png", (0.500, 0.000, 1.000, 1.000), "demo"),
+    ("evis_bean_track_fullseye_still.png", (0.500, 0.000, 1.000, 0.880), "demo"),
     ("academic_space_galaxy.png",   (0.339, 0.000, 0.661, 1.000), "real"),
     ("op_taxonomy.png",             (0.680, 0.520, 1.000, 1.000), "demo"),
     ("academic_paleo_trex.png",     (0.672, 0.000, 1.000, 1.000), "ai"),
