@@ -411,6 +411,335 @@ TEAL, TEAL_HI = "#17b8a6", "#22d3bf"
 AMBER = "#f5a524"
 INK = "#0c1116"
 
+
+# --------------------------------------------------------------------------- #
+# Feature inspection (HDevelop-style) — headless cores, no Qt.
+#
+# 2-D: per-region shape/gray features backed by the existing implementations
+# (detect.segment_objects for shape, image_gray.gray_features for gray stats —
+# no new feature math lives here). 3-D: per-cluster features backed by
+# pcseg.aabb / pcseg.obb. Both feed the Feature-inspection dialog (Ctrl+F5)
+# and are unit-tested against known shapes.
+# --------------------------------------------------------------------------- #
+
+#: Selectable 2-D region features -> (source, human unit). Each is read from a
+#: detect.segment_objects record or (``*_gray``) from image_gray.gray_features.
+REGION_FEATURES = ("area", "row", "col", "width", "height", "circularity",
+                   "perimeter", "eccentricity", "extent", "solidity",
+                   "orientation_deg", "equiv_diameter",
+                   "mean_gray", "deviation_gray", "min_gray", "max_gray")
+
+#: The gray-value subset of REGION_FEATURES (needs the source image).
+GRAY_REGION_FEATURES = ("mean_gray", "deviation_gray", "min_gray", "max_gray")
+
+
+def region_feature_objects(result, min_area=1):
+    """Label a 2-D pipeline result into per-region records for feature inspection.
+
+    A binary (region) result keeps its own labeling (``threshold='none'``); a
+    gray image is auto-segmented with Otsu — the HDevelop-workalike design choice
+    here is *auto-labeling* rather than disabling the tool on gray input, so
+    Feature inspection always has something honest to show (the info line in the
+    dialog states which path was taken). Returns ``(objects, mode)`` where
+    *objects* is the ``detect.segment_objects`` record list (largest first) and
+    *mode* is ``'labels'`` (binary input) or ``'otsu'`` (auto-segmented).
+    """
+    import detect
+    arr = np.asarray(result, np.float64)
+    if arr.ndim != 2:
+        raise ValueError("region_feature_objects: expected a 2-D array, got shape %s"
+                         % (arr.shape,))
+    mode = "labels" if _is_binary(arr) else "otsu"
+    thr = "none" if mode == "labels" else "otsu"
+    return detect.segment_objects(arr, threshold=thr, min_area=int(min_area)), mode
+
+
+def region_feature_table(objs, names, image=None):
+    """Build the feature table for segmented regions -> ``(headers, rows)``.
+
+    *objs* is the record list from :func:`region_feature_objects`; *names* is an
+    iterable of feature names (unknown names are silently dropped, gray features
+    are dropped when *image* is None or its shape mismatches the masks). The
+    first column is always the region label ``#``. Values are floats rounded to
+    4 decimals (NaN when a backend could not provide the feature). Headless.
+    """
+    import image_gray
+    names = [n for n in names if n in REGION_FEATURES]
+    if image is None:
+        names = [n for n in names if n not in GRAY_REGION_FEATURES]
+    else:
+        image = np.asarray(image, np.float64)
+    headers = ["#"] + list(names)
+    rows = []
+    for o in objs:
+        if image is not None and any(n in GRAY_REGION_FEATURES for n in names):
+            if image.shape == o["mask"].shape:
+                g = image_gray.gray_features(image, o["mask"])
+            else:
+                g = {}
+        else:
+            g = {}
+        y0, x0, y1, x1 = o["bbox"]
+        vals = {
+            "area": o.get("area"), "row": o["centroid"][0], "col": o["centroid"][1],
+            "width": float(x1 - x0), "height": float(y1 - y0),
+            "circularity": o.get("circularity"), "perimeter": o.get("perimeter"),
+            "eccentricity": o.get("eccentricity"), "extent": o.get("extent"),
+            "solidity": o.get("solidity"),
+            "orientation_deg": (float(np.degrees(o["orientation"]))
+                                if np.isfinite(o.get("orientation", np.nan)) else float("nan")),
+            "equiv_diameter": o.get("equiv_diameter"),
+            "mean_gray": g.get("mean"), "deviation_gray": g.get("deviation"),
+            "min_gray": g.get("min"), "max_gray": g.get("max"),
+        }
+        row = [float(o["label"])]
+        for n in names:
+            v = vals.get(n)
+            row.append(round(float(v), 4) if v is not None and np.isfinite(v) else float("nan"))
+        rows.append(row)
+    return headers, rows
+
+
+def feature_table_csv(headers, rows):
+    """Serialise a feature table to CSV text (for 'Copy as CSV'). Headless."""
+    out = [",".join(str(h) for h in headers)]
+    for r in rows:
+        cells = []
+        for v in r:
+            if isinstance(v, float):
+                cells.append("%d" % v if float(v).is_integer() and np.isfinite(v) else "%s" % v)
+            else:
+                cells.append(str(v))
+        out.append(",".join(cells))
+    return "\n".join(out)
+
+
+def region_label_at(objs, row, col):
+    """Index into *objs* of the region covering pixel (*row*, *col*), or None.
+
+    The reverse lookup behind 'click the image -> select the table row'.
+    """
+    r, c = int(row), int(col)
+    for i, o in enumerate(objs):
+        m = o["mask"]
+        if 0 <= r < m.shape[0] and 0 <= c < m.shape[1] and m[r, c]:
+            return i
+    return None
+
+
+def region_highlight_rgb(base, objs, selected=None):
+    """Render the region-highlight overlay -> RGB float (H, W, 3) in [0, 1].
+
+    *base* is the grayscale source (or the binary result itself); all regions get
+    a faint teal tint so the labeling is visible, and *selected* (an index into
+    *objs*) is overlaid in the Studio amber accent while every other region is
+    dimmed — the two visual answers to "which row is which region". Headless.
+    """
+    b = np.clip(np.asarray(base, np.float64), 0.0, 1.0)
+    if b.ndim == 3:
+        rgb = b[..., :3].copy()
+    else:
+        rgb = np.stack([b, b, b], axis=-1)
+    teal = np.array([0.09, 0.72, 0.65])
+    amber = np.array([0.96, 0.65, 0.14])
+    for i, o in enumerate(objs):
+        m = o["mask"]
+        if m.shape != rgb.shape[:2]:
+            continue
+        if selected is None:
+            rgb[m] = rgb[m] * 0.70 + teal * 0.30
+        elif i == selected:
+            rgb[m] = rgb[m] * 0.35 + amber * 0.65
+        else:
+            rgb[m] = rgb[m] * 0.35 + teal * 0.12          # dim the non-selected regions
+    return np.clip(rgb, 0.0, 1.0)
+
+
+#: Per-cluster 3-D features (all derived from pcseg.aabb / pcseg.obb — nothing new).
+CLUSTER_FEATURES = ("n_points", "centroid_x", "centroid_y", "centroid_z",
+                    "extent_x", "extent_y", "extent_z",
+                    "obb_length", "obb_width", "obb_height", "obb_volume")
+
+
+def cluster_feature_table(points, clusters, names=None):
+    """Feature table for point-cloud clusters -> ``(headers, rows)``.
+
+    *clusters* is a list of index arrays (``pcseg.euclidean_clusters`` output).
+    Features: point count, centroid, axis-aligned extent (``pcseg.aabb``) and
+    oriented-bounding-box dimensions/volume (``pcseg.obb``; the OBB dims are the
+    sorted full side lengths, volume their product). A cluster too small for an
+    OBB (< 2 points) reports NaN for the OBB columns. First column = cluster id
+    (1-based, matching the display). Headless, unit-tested on known boxes.
+    """
+    import pcseg
+    P = np.asarray(points, np.float64)
+    names = [n for n in (names or CLUSTER_FEATURES) if n in CLUSTER_FEATURES]
+    headers = ["#"] + list(names)
+    rows = []
+    for ci, idx in enumerate(clusters, 1):
+        Q = P[np.asarray(idx, int)]
+        cen = Q.mean(axis=0) if Q.shape[0] else np.full(3, np.nan)
+        try:
+            lo, hi = pcseg.aabb(Q)
+            ext = hi - lo
+        except Exception:
+            ext = np.full(3, np.nan)
+        try:
+            box = pcseg.obb(Q)
+            dims = np.sort(2.0 * np.asarray(box["extents"], np.float64))[::-1]
+            vol = float(np.prod(dims))
+        except Exception:
+            dims = np.full(3, np.nan); vol = float("nan")
+        vals = {"n_points": float(Q.shape[0]),
+                "centroid_x": cen[0], "centroid_y": cen[1], "centroid_z": cen[2],
+                "extent_x": ext[0], "extent_y": ext[1], "extent_z": ext[2],
+                "obb_length": dims[0], "obb_width": dims[1], "obb_height": dims[2],
+                "obb_volume": vol}
+        row = [float(ci)]
+        for n in names:
+            v = vals[n]
+            row.append(round(float(v), 4) if np.isfinite(v) else float("nan"))
+        rows.append(row)
+    return headers, rows
+
+
+def demo_cluster_cloud(seed=0, n_per=400):
+    """A synthetic 3-cluster point cloud for the 3-D demos/tests: three Gaussian
+    blobs (std 0.4) centred 10 apart -> ``(points (3*n_per, 3), true_k=3)``."""
+    rng = np.random.default_rng(seed)
+    centers = np.array([[0.0, 0.0, 0.0], [10.0, 0.0, 0.0], [0.0, 10.0, 5.0]])
+    P = np.concatenate([c + rng.normal(scale=0.4, size=(int(n_per), 3)) for c in centers])
+    return P, 3
+
+
+# --------------------------------------------------------------------------- #
+# Interactive 3-D viewer — headless camera math + software rasteriser.
+#
+# Method choice (measured 2026-08-30, RTX 5090 / GL 4.6 available): a QOpenGLWidget
+# path (plan A) renders fastest but is dead under QT_QPA_PLATFORM=offscreen (CI)
+# and fragile over Remote Desktop; Q3DScatter (plan B) has no mesh support and
+# slow per-item proxies >50k points. The software rasteriser below measured
+# 21 ms/frame at 200k points (≈47 fps) and 116 ms at 1M — interactive at this
+# repo's data sizes (Itokawa ≈ 25k vertices) — and the SAME code path runs in
+# tests, offscreen and over RDP. So the viewer is software-rendered with the
+# camera math kept headless; a GL backend can be swapped in later without
+# touching the interaction model.
+# --------------------------------------------------------------------------- #
+def viewer3d_camera(yaw_deg, pitch_deg):
+    """Turntable orbit camera -> world-to-view rotation (3, 3).
+
+    Rows are the view axes in world coordinates: right, down (screen y) and
+    forward. yaw spins about the world z axis, pitch tilts toward it; both in
+    degrees. ``yaw=0, pitch=0`` looks along +y with +z up on screen. Headless.
+    """
+    ya, pa = np.radians(float(yaw_deg)), np.radians(float(pitch_deg))
+    cy, sy = np.cos(ya), np.sin(ya)
+    cp, sp = np.cos(pa), np.sin(pa)
+    rz = np.array([[cy, -sy, 0.0], [sy, cy, 0.0], [0.0, 0.0, 1.0]])
+    rx = np.array([[1.0, 0.0, 0.0], [0.0, sp, -cp], [0.0, cp, sp]])
+    return rx @ rz
+
+
+def viewer3d_project(points, cam, center, radius, zoom, pan, size):
+    """Project world points through the orbit camera -> ``(xy (n, 2), depth (n,))``.
+
+    Orthographic: view = cam @ (P - center); screen xy maps the +/-radius view
+    box into *size* pixels scaled by *zoom* and shifted by *pan* (pixels);
+    depth is the view-space forward coordinate (larger = nearer the camera).
+    Headless — the unit tests pin known vertices to known screen positions.
+    """
+    P = np.asarray(points, np.float64).reshape(-1, 3)
+    V = (P - np.asarray(center, np.float64)) @ np.asarray(cam, np.float64).T
+    s = 0.45 * float(size) * float(zoom) / max(float(radius), 1e-12)
+    xy = V[:, :2] * s
+    xy[:, 0] += size / 2.0 + float(pan[0])
+    xy[:, 1] += size / 2.0 + float(pan[1])
+    return xy, V[:, 2]
+
+
+def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
+                        pan=(0.0, 0.0), size=480, point_px=2,
+                        center=None, radius=None, background=(0.070, 0.078, 0.106)):
+    """Software-rasterise a point cloud -> RGB float (size, size, 3) in [0, 1].
+
+    Depth-sorted splats (far painted first) of *point_px* square pixels; *colors*
+    is (n, 3) in [0, 1] or None for a height (world z) viridis ramp via
+    imgio.apply_cmap. This single function is the render core of the interactive
+    viewer, the cluster preview AND the tests/screenshots — one code path, no
+    drift. Headless (numpy only).
+    """
+    P = np.asarray(points, np.float64).reshape(-1, 3)
+    size = int(size)
+    img = np.empty((size, size, 3), np.float64)
+    img[:] = np.asarray(background, np.float64)
+    if P.shape[0] == 0:
+        return img
+    if center is None:
+        center = 0.5 * (P.min(axis=0) + P.max(axis=0))
+    if radius is None:
+        radius = float(np.linalg.norm(P - center, axis=1).max()) or 1.0
+    if colors is None:
+        z = P[:, 2]
+        span = float(z.max() - z.min())
+        t = (z - z.min()) / span if span > 0 else np.zeros_like(z)
+        colors = imgio.apply_cmap(t.reshape(1, -1), name="viridis")[0]
+    C = np.clip(np.asarray(colors, np.float64).reshape(-1, 3), 0.0, 1.0)
+    if C.shape[0] != P.shape[0]:
+        C = np.broadcast_to(C[:1], (P.shape[0], 3)).copy()
+    xy, depth = viewer3d_project(P, viewer3d_camera(yaw, pitch), center, radius, zoom, pan, size)
+    order = np.argsort(depth)                       # far -> near, so near splats win
+    xi = np.floor(xy[order, 0]).astype(int)
+    yi = np.floor(xy[order, 1]).astype(int)
+    Co = C[order]
+    px = max(1, int(point_px))
+    for dy in range(px):
+        for dx in range(px):
+            xs, ys = xi + dx, yi + dy
+            ok = (xs >= 0) & (xs < size) & (ys >= 0) & (ys < size)
+            img[ys[ok], xs[ok]] = Co[ok]
+    return img
+
+
+def cluster_colors(n_points, clusters, selected=None):
+    """Per-point colors for a clustered cloud -> (n_points, 3) float.
+
+    Unclustered points are dark gray; clusters cycle a categorical palette.
+    With *selected* set, that cluster gets the amber accent and every other
+    point is dimmed — the viewer-side half of table-row -> cluster highlight.
+    Headless."""
+    palette = np.array([[0.09, 0.72, 0.65], [0.38, 0.55, 0.91], [0.61, 0.44, 0.86],
+                        [0.30, 0.75, 0.42], [0.85, 0.42, 0.55], [0.80, 0.72, 0.35]])
+    C = np.full((int(n_points), 3), 0.32, np.float64)
+    for i, idx in enumerate(clusters):
+        C[np.asarray(idx, int)] = palette[i % len(palette)]
+    if selected is not None and 0 <= int(selected) < len(clusters):
+        C *= 0.28                                    # dim everything ...
+        C[np.asarray(clusters[int(selected)], int)] = [0.96, 0.65, 0.14]   # ... except the pick
+    return C
+
+
+def mesh_vertex_normals(V, F):
+    """Area-weighted vertex normals (n, 3), unit length, for lambert shading.
+
+    Face normals accumulated onto their vertices — the standard construction
+    (same math as render3d's face normals, aggregated per vertex). Headless."""
+    V = np.asarray(V, np.float64); F = np.asarray(F, int)
+    fn = np.cross(V[F[:, 1]] - V[F[:, 0]], V[F[:, 2]] - V[F[:, 0]])
+    N = np.zeros_like(V)
+    for k in range(3):
+        np.add.at(N, F[:, k], fn)
+    ln = np.linalg.norm(N, axis=1, keepdims=True)
+    return N / np.where(ln > 1e-12, ln, 1.0)
+
+
+def mesh_edges(F, cap=60000):
+    """Unique undirected edges (E, 2) of a triangle mesh, or None when the count
+    exceeds *cap* (the wireframe overlay skips itself rather than crawl)."""
+    F = np.asarray(F, int)
+    e = np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]])
+    e = np.unique(np.sort(e, axis=1), axis=0)
+    return None if e.shape[0] > int(cap) else e
+
 THEME = f"""
 QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
     font-family:"Segoe UI","Yu Gothic UI","Meiryo",system-ui,sans-serif; }}
