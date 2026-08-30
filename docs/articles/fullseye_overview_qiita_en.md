@@ -623,6 +623,8 @@ The call described in "the HALCON coverage story" — **deciding what not to bui
 
 ## Fullseye Studio — an IDE for Looking, Trying, and Working
 
+> **Status: Production-ready** — ships with v0.1.3. Every screenshot in this chapter is a real screen.
+
 Having the algorithms isn't enough. You need a layer for **seeing and confirming**. That's **Fullseye Studio**. Its positioning:
 
 > **A fusion of HDevelop (industrial vision's 2D-image IDE) and the robot world's RViz2 (3D perception visualization: point clouds, depth, 6-DoF pose axes, terrain layers).**
