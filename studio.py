@@ -634,12 +634,15 @@ def demo_cluster_cloud(seed=0, n_per=400):
 # Method choice (measured 2026-08-30, RTX 5090 / GL 4.6 available): a QOpenGLWidget
 # path (plan A) renders fastest but is dead under QT_QPA_PLATFORM=offscreen (CI)
 # and fragile over Remote Desktop; Q3DScatter (plan B) has no mesh support and
-# slow per-item proxies >50k points. The software rasteriser below measured
-# 21 ms/frame at 200k points (≈47 fps) and 116 ms at 1M — interactive at this
-# repo's data sizes (Itokawa ≈ 25k vertices) — and the SAME code path runs in
-# tests, offscreen and over RDP. So the viewer is software-rendered with the
-# camera math kept headless; a GL backend can be swapped in later without
-# touching the interaction model.
+# slow per-item proxies >50k points. The software rasteriser below measures
+# (steady-state median, size=480, re-measured 2026-08-30) 66 ms/frame at 200k
+# points (≈15 fps) and ~350 ms at 1M. Honest reading: comfortably interactive
+# at this repo's data sizes (Itokawa ≈ 25k vertices), usable at 200k, and NOT
+# interactive at 1M full resolution — which is why the viewer decimates to
+# DRAG_BUDGET points during drags/wheel zooms and re-renders full on release.
+# The SAME code path runs in tests, offscreen and over RDP. So the viewer is
+# software-rendered with the camera math kept headless; a GL backend can be
+# swapped in later without touching the interaction model.
 # --------------------------------------------------------------------------- #
 def viewer3d_camera(yaw_deg, pitch_deg):
     """Turntable orbit camera -> world-to-view rotation (3, 3).
