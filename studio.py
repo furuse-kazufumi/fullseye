@@ -1617,10 +1617,12 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
     Shift-drag pans, ``R`` resets the home view, ``W`` toggles the mesh
     wireframe overlay. Meshes draw as lambert-shaded vertex splats (vertex
     normals x view-direction light) plus an optional QPainter wireframe; very
-    large clouds decimate during a drag and re-render full on release.
+    large clouds decimate uniformly to ``DRAG_BUDGET`` points during a drag or
+    a wheel-zoom burst (the HUD then shows the honest "preview N pts" count)
+    and re-render at full resolution on release / shortly after the last tick.
     """
     class Viewer3D(QtWidgets.QWidget):
-        DRAG_BUDGET = 250000                   # points rendered per frame WHILE dragging
+        DRAG_BUDGET = 250000                   # points rendered per frame while interacting
 
         def __init__(self, parent=None):
             super().__init__(parent)
