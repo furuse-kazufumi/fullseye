@@ -34,7 +34,7 @@
   },
   {
     "file": "science_watershed_foam.png",
-    "title": "watershed — コインのなわばり地図",
+    "title": "watershed — コインのぬりえ分割",
     "ops": [
       "otsu",
       "fill_up",
@@ -45,6 +45,46 @@
     ],
     "data": "skimage.data coins (実写真)",
     "synthetic": false,
-    "caption": "水が低いところへ流れて溜まるように領域を分ける watershed 法。どのコインに一番近いかで平面が泡のように分割される。"
+    "caption": "水が低い所へ流れて溜まる様子をまねて領域を分ける watershed 法。写真のコインが 1 枚ずつ別の色に塗り分けられる。"
+  },
+  {
+    "file": "science_alife_worlds.png",
+    "title": "人工生命の 6 つの宇宙",
+    "ops": [
+      "alife_gray_scott",
+      "alife_turing",
+      "alife_lenia",
+      "alife_dla",
+      "alife_sandpile",
+      "alife_wolfram1d"
+    ],
+    "data": "乱数ノイズ / 1 点から成長 (シミュレーション)",
+    "synthetic": true,
+    "caption": "単純なルールを繰り返すだけで、ヒョウ柄・生き物・結晶・雪崩・フラクタルが勝手に生まれる。全部 fullseye の op 1 回ずつ。"
+  },
+  {
+    "file": "science_wobble_warp.png",
+    "title": "空間がぐにゃり — 3 つの変形アルゴリズム",
+    "ops": [
+      "deform_tps",
+      "deform_ffd",
+      "deform_mls"
+    ],
+    "data": "skimage.data camera (実写真)",
+    "synthetic": false,
+    "caption": "画像の下に見えないゴムのシートがあると思って、数学の異なる 3 つの流儀でつまんで引っぱった結果。"
+  },
+  {
+    "file": "science_dla_skeleton.png",
+    "title": "樹枝状結晶とその骨格",
+    "ops": [
+      "alife_dla",
+      "dilation_circle",
+      "sk_skeleton",
+      "distance_transform"
+    ],
+    "data": "乱数から DLA 成長 (シミュレーション)",
+    "synthetic": true,
+    "caption": "粒子がふらふら漂って張り付くだけで雪の結晶のような枝が育つ (DLA)。スケルトン化するとその「骨」が 1 ピクセル幅で取り出せる。"
   }
 ]
