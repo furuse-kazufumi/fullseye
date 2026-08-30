@@ -1677,31 +1677,47 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._repaint()
 
         def _refit(self):
-            if self._P.shape[0]:
-                self._center = 0.5 * (self._P.min(axis=0) + self._P.max(axis=0))
-                self._radius = float(np.linalg.norm(self._P - self._center, axis=1).max()) or 1.0
+            P = self._P[np.isfinite(self._P).all(axis=1)] if self._P.size else self._P
+            if P.shape[0]:
+                self._center = 0.5 * (P.min(axis=0) + P.max(axis=0))
+                self._radius = float(np.linalg.norm(P - self._center, axis=1).max()) or 1.0
             else:
                 self._center = np.zeros(3); self._radius = 1.0
 
         # ---- rendering ------------------------------------------------------ #
-        def _point_colors(self):
+        def _point_colors(self, idx=None):
+            """Per-point colors; *idx* restricts the computation to that index
+            subset so the interaction-decimated path never does O(N) lighting."""
             if self._clusters:
-                return cluster_colors(self._P.shape[0], self._clusters, self._selected)
+                C = cluster_colors(self._P.shape[0], self._clusters, self._selected)
+                return C if idx is None else C[idx]
             if self._VN is not None:
+                VN = self._VN if idx is None else self._VN[idx]
                 cam = viewer3d_camera(self._yaw, self._pitch)
-                lam = np.clip(self._VN @ -cam[2], 0.0, 1.0) * 0.82 + 0.16
+                lam = np.clip(VN @ -cam[2], 0.0, 1.0) * 0.82 + 0.16
                 return lam[:, None] * np.array([0.78, 0.82, 0.88])
-            return self._colors
+            if self._colors is None or idx is None:
+                return self._colors
+            return self._colors[idx] if self._colors.shape[0] == self._P.shape[0] \
+                else self._colors
 
         def frame_rgb(self):
             """Render the current view -> RGB float array (the paintEvent core,
             exposed headless-style for tests and screenshots)."""
             size = max(64, min(self.width(), self.height()) or 480)
-            P, C = self._P, self._point_colors()
-            if self._drag is not None and P.shape[0] > self.DRAG_BUDGET:
-                step = int(np.ceil(P.shape[0] / self.DRAG_BUDGET))
-                P = P[::step]
-                C = None if C is None else C[::step]
+            P = self._P
+            idx = None
+            if ((self._drag is not None or self._wheeling)
+                    and P.shape[0] > self.DRAG_BUDGET):
+                # Uniform pick of exactly DRAG_BUDGET indices, chosen BEFORE the
+                # color/lighting pass (no O(N) per-frame work while interacting).
+                # A plain stride [::ceil(N/budget)] can undershoot the budget
+                # badly (500,001 pts -> stride 3 -> 166,667 drawn); linspace
+                # keeps the count honest at the advertised budget.
+                idx = np.linspace(0, P.shape[0] - 1, self.DRAG_BUDGET).astype(np.intp)
+                P = P[idx]
+            C = self._point_colors(idx)
+            self._n_drawn = int(P.shape[0])
             return render_points_frame(
                 P, colors=C, yaw=self._yaw, pitch=self._pitch, zoom=self._zoom,
                 pan=self._pan, size=size, point_px=2,
