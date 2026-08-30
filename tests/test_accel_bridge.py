@@ -69,7 +69,7 @@ def test_all_accel_equals_run_pipeline():
 
 
 def test_all_cpu_equals_core():
-    st = [ops.stage("dog", 0.5, 0.4)]
+    st = [ops.stage("rotate_img", 0.5, 0.4)]
     imgs = _imgs()
     out = B.run(st, imgs, device="cpu")
     for a, im in zip(out, imgs):
