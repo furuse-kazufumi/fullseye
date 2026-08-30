@@ -809,6 +809,11 @@ def run_exhibit(subject: str, slug: str, spec: tuple, recipe: str, caption: str,
                     f"count_obj={int(n_op)} vs segment_objects={n} on {slug}: count_obj "
                     "uses 4-connectivity while segment_objects defaults to 8-connectivity "
                     "(verified: a diagonal pixel pair counts as 2 vs 1) -- API consistency gap")
+        elif recipe == "filaments":
+            # per-subject response density: nebula ridges / fern veins are
+            # broader + fainter than neuron dendrites, so keep a larger slice
+            top = {"space_carina": 10.0, "bot_fern": 8.0}.get(slug, 3.0)
+            panels, ops_used = rec_filaments(col, top_pct=top)
         else:
             panels, ops_used = RECIPES[recipe](col)
     except Exception as e:
