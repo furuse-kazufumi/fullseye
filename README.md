@@ -4,6 +4,10 @@
 [![PyPI](https://img.shields.io/pypi/v/fullseye)](https://pypi.org/project/fullseye/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
+<!-- Banner: real Fullseye outputs only (no mockups). Regenerate with
+     `py -3.11 tools/gen_banner.py`. Absolute raw URL for PyPI compatibility. -->
+![Fullseye banner — a mosaic of real outputs: Itokawa point-cloud curvature, edge orientation, sub-pixel metrology, watershed segmentation, defect heatmap, volumetric X-ray, Frangi filaments, distance transform, bin-picking grasps, event camera, elliptic Fourier fit, LiDAR clustering](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/fullseye_banner.png)
+
 **An in-house, numpy-native image-processing operator library and evolutionary
 pipeline designer.** Every operator is reimplemented from published algorithms and
 open-source libraries (OpenCV, scikit-image, SciPy, Pillow, PyWavelets, SimpleITK,
