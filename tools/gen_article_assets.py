@@ -1079,7 +1079,7 @@ def _render_sampler_tile(ax, cat, name, out, img_shape, bg, fg, muted, log=print
         ax.imshow(np.clip(out, 0.0, 1.0))
         caption = f"color {out.shape[0]}x{out.shape[1]}"
     else:
-        # 特別扱いされなかった feature 出力の保険経路: 黒地でなく入力を薄く敷く
+        # 保険経路(現在の 24 op では未使用): spec 無き feature 出力は warn を出す
         ax.imshow(np.full((10, 10), 0.07), cmap="gray", vmin=0, vmax=1)
         if isinstance(out, (float, int, np.floating, np.integer)):
             txt = f"{float(out):.4f}"
