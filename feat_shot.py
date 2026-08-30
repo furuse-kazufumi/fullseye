@@ -1,6 +1,16 @@
 """SHOT 記述子 + ISS keypoint + RANSAC 登録(Tombari 2010)(workflow 並行探索・実測検証済、初期推定なしの大回転+部分重なり登録)。"""
 import numpy as np
-import torch
+
+try:
+    import torch
+except ImportError:                       # torch は optional(gpu/threed extra)
+    class _TorchMissing:
+        def __getattr__(self, name):
+            raise ImportError(
+                "this operator needs the optional 'torch' backend — "
+                "install with: pip install \"fullseye[gpu]\"")
+    torch = _TorchMissing()
+
 from match3d import icp_point2point_3d
 
 
