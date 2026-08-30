@@ -701,8 +701,8 @@ def subject_binpick_depth(log=print) -> dict:
     height = np.where(inner > 0.5, np.clip(d_table - depth, 0.0, 0.15) / 0.15,
                       0.0)
     panels = [rgb, fs.colorize_depth(height), _np_of(vis)]
-    out = _montage(panels, ["ばら積み (MuJoCo 物理落下)",
-                            "深度画像 (真上カメラ)",
+    out = _montage(panels, ["ばら積み (MuJoCo 物理落下, アーム退避後)",
+                            "高さマップ (真上深度カメラ, 0〜15cm)",
                             f"把持候補 {len(objs)} 件 (緑=最良)"], ncols=3)
     _save_png(out, "phai_binpick.png")
     _save_thumb("phai_binpick.png")
