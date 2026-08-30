@@ -247,11 +247,21 @@ def gen_stereo(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
             rep = frame
     wr.close()
     print(f"stereo -> {out}  ({out.stat().st_size/1e6:.1f} MB)")
-    if errs:
-        e = np.array(errs)
-        print(f"  VALIDATION: bean range vs truth on {n_valid}/{len(frames[::step])} "
-              f"frames  median err {np.median(e):.2f}%  p90 {np.percentile(e, 90):.2f}%  "
-              f"max {np.max(e):.2f}%  frames within 5%: {(e < 5).mean()*100:.1f}%")
+    if not errs:
+        raise SystemExit("stereo gate FAILED: no ground-truth bean-range comparisons at all")
+    e = np.array(errs)
+    print(f"  VALIDATION: bean range vs truth on {n_valid}/{len(frames[::step])} "
+          f"frames  median err {np.median(e):.2f}%  p90 {np.percentile(e, 90):.2f}%  "
+          f"max {np.max(e):.2f}%  frames within 5%: {(e < 5).mean()*100:.1f}%")
+    # --- caption-claim gates (same thresholds the article claims; raise = the
+    #     video must not ship if the claims no longer hold) ------------------
+    if n_valid < 200:
+        raise SystemExit(f"stereo gate FAILED: only {n_valid} validated frames (< 200)")
+    if float(np.median(e)) > 2.0:
+        raise SystemExit(f"stereo gate FAILED: median err {float(np.median(e)):.2f}% > 2%")
+    if float(np.max(e)) > 5.0:
+        raise SystemExit(f"stereo gate FAILED: max err {float(np.max(e)):.2f}% > 5%")
+    print(f"  GATE PASS: {n_valid} valid frames (>=200), median <=2%, max <=5%")
     if rep is not None:
         _stills(rep, "evis_stereo_fullseye")
 
