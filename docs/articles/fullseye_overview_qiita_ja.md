@@ -194,7 +194,7 @@ out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 
 ### 物差しは HALCON（実測 42.5%）
 
-「網羅」を主観で語らないために、産業ビジョンの巨人 **HALCON** を物差しにしています。HALCON の公式ドキュメントをスクレイプして得た **2313 operator** に対し、Fullseye の各 op が「どの実在 operator に相当するか」をタグ付けし、機械集計しています。
+「網羅」を主観で語らないために、産業ビジョンの巨人 **HALCON** を物差しにしています。公式リファレンスから整理した **2313 operator** の一覧に対し、Fullseye の各 op が「どの実在 operator に相当するか」をタグ付けし、機械集計しています。
 
 > **imgevolve maps to 982 / 2313 HALCON operators（42.5%）** ―― これは記憶でなく、スクレイプした一覧に対する実測です。
 
