@@ -180,7 +180,7 @@ GitHub 上でそのまま表示されます。
 
 ## 3. 記事用サムネイル
 
-`docs/articles/assets/thumbs/` に、上記モンタージュ3枚と hero 1枚から幅720px(アスペクト
+`docs/articles/assets/thumbs/` に、上記モンタージュ・hero・新規図版から幅720px(アスペクト
 維持、元画像が720pxより狭ければ拡大しない)で書き出したサムネがあります。容量を抑える
 方針のため **JPEG(quality=85、RGB変換)** で保存しています。解説記事はこのサムネを表示し、
 フルサイズは本ページ経由で参照する構成です。
@@ -189,6 +189,10 @@ GitHub 上でそのまま表示されます。
 - `thumbs/vision_ops_montage_720.jpg`
 - `thumbs/render_beauty_hero_720.jpg`
 - `thumbs/itokawa_montage_720.jpg`
+- `thumbs/op_taxonomy_720.jpg`
+- `thumbs/halcon_coverage_chart_720.jpg`
+- `thumbs/op_sampler_2d_720.jpg`
+- `thumbs/op_sampler_3d_720.jpg`
 
 ---
 
