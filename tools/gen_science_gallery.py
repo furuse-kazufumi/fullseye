@@ -498,7 +498,7 @@ def subject_morph_pulse(log=print) -> dict:
     i, total = 0, sum(n for _, n in seq)
     for op, n in seq:
         for _ in range(n):
-            state = fs.apply(state, op, 0.7, 0.5)
+            state = fs.apply(state, op, 0.2, 0.5)   # 半径 ~1px ずつ動かす
             hue = (0.55 + 0.35 * i / total) % 1.0
             color = _hsv_to_rgb(np.full(img.shape, hue),
                                 np.full(img.shape, 0.85), state)
