@@ -204,6 +204,9 @@ Studio は「パイプラインからしかコードを呼べない」段階を�
   など。`v`=選択変数、`np`=numpy、`img`=入力)を登録すると、選択変更・パイプライン変更のたびに
   **自動再評価**。失敗した式はその行に ⚠ 表示(パネルは落ちない)。変数の**右クリック ▸
   Inspect in popup…** で、型別インスペクション+percentile+値プレビューが即座に出る。
+  既知の制限(honest): ウォッチ式は GUI スレッドで同期評価されるため、**非常に重い式**
+  (巨大配列の全走査など)はその間 UI が待たされる。重い集計は式を軽くするか
+  Python Editor 側で実行を。
 - **System settings**(Tools ▸ System settings… / Ctrl+,): カテゴリツリー+ページ構成。
   Execution(threads / timeout)・Windows(窓上限)・Display(既定 LUT / region 描画)・
   Editor(フォントサイズ / 実行インタプリタ)。

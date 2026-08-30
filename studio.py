@@ -2595,13 +2595,25 @@ def build_window(model=None):
         unapplied Program-editor edits (Codex #9). When neither is pending, no prompt."""
         pipe_dirty = state["dirty"] and bool(model.stages)
         code_dirty = bool(state.get("code_dirty"))
-        if not (pipe_dirty or code_dirty):
+        # Python Editor の未保存タブも数える(アプリ終了経路のデータ損失防止)。
+        # Count unsaved Python-Editor tabs too — the app-quit path must not
+        # silently discard them (only per-tab close prompted before this fix).
+        ed_dirty = 0
+        pe = getattr(win, "_pyedit", None)
+        if pe is not None:
+            tabs = pe.get("tabs")
+            if tabs is not None:
+                ed_dirty = sum(1 for i in range(tabs.count())
+                               if getattr(tabs.widget(i), "_dirty", False))
+        if not (pipe_dirty or code_dirty or ed_dirty):
             return True
         parts = []
         if pipe_dirty:
             parts.append("%d unsaved stage(s)" % len(model.stages))
         if code_dirty:
             parts.append("unapplied Program edits")
+        if ed_dirty:
+            parts.append("%d unsaved editor tab(s)" % ed_dirty)
         return bool(CONFIRM_HOOK(
             win, title, "%s has %s.\nDiscard them?" % (what.capitalize(), " and ".join(parts))))
 
@@ -4106,13 +4118,14 @@ def build_window(model=None):
             if not text.strip():
                 flash("nothing to run — the editor is empty"); return
             script = ed._path
+            scratch = None                    # set when running from a temp copy
             if script is None or ed._dirty:
                 # unsaved buffers run from a scratch copy — Run never forces a Save
                 import tempfile
                 d = os.path.join(tempfile.gettempdir(), "fullseye_studio")
                 try:
                     os.makedirs(d, exist_ok=True)
-                    script = os.path.join(d, "scratch_%d.py" % os.getpid())
+                    script = scratch = os.path.join(d, "scratch_%d.py" % os.getpid())
                     with open(script, "w", encoding="utf-8") as f:
                         f.write(text)
                 except Exception as e:
@@ -4143,6 +4156,11 @@ def build_window(model=None):
                     status.setText("FAIL (exit %d)" % code_)
                 dlg._proc = None
                 b_run.setEnabled(True); b_stop.setEnabled(False)
+                if scratch is not None:       # 実行済みスクラッチは残さない(コード残留防止)
+                    try:
+                        os.remove(scratch)
+                    except OSError:
+                        pass
             proc.readyRead.connect(on_out); proc.finished.connect(on_done)
             # System settings can point Run at another interpreter (venv etc.);
             # a broken path is refused up-front (fail-closed) instead of a cryptic
@@ -4444,7 +4462,14 @@ def build_window(model=None):
         if code_edit.hasFocus() or state.get("code_dirty"):
             return
         code_edit.blockSignals(True)
-        code_edit.setPlainText(program_text_from_model())
+        # 適用済みの dev_* / set_system 行は残す(モデル再生成で消さない)。HDevelop の
+        # プログラム同様、表示ディレクティブはプログラムの一部。位置は先頭へ正規化される
+        # (honest limit: op 行間の元位置までは復元しない — ディレクティブは適用順不問)。
+        # Keep applied dev_*/set_system lines across model-driven rewrites; they are
+        # normalised to the top (their exact interleaving is not round-tripped).
+        dev_lines = state.get("dev_lines") or []
+        body = program_text_from_model()
+        code_edit.setPlainText("\n".join(dev_lines) + "\n" + body if dev_lines else body)
         code_edit.blockSignals(False)
         code_edit.clear_exec()
         state["code_dirty"] = False
@@ -4482,9 +4507,14 @@ def build_window(model=None):
         model.stages = list(stages)
         mark_dirty()
         state["code_dirty"] = False           # the edits are now applied to the pipeline
+        # dev_* / set_system 行を退避 — sync_program の再生成後もエディタに残す
+        # (以前は Apply でディレクティブ行が消え、再 Apply の意味が変わっていた)
+        state["dev_lines"] = [ln.rstrip() for ln in text.splitlines()
+                              if ln.strip().startswith(("dev_", "set_system"))]
+        code_edit.clear_exec()                # 旧実行位置は新パイプラインと不整合 — Continue の誤表示防止
         code_status.setText("applied %d stage(s)" % len(stages))
         refresh_stage_list(select=(len(stages) - 1) if stages else None)
-        apply_dev_directives(text)            # state/style directives (update/part/lut/draw/system) — pre-render
+        apply_dev_directives(text, reclaim_stale=True)   # state/style directives — pre-render; stale program windows reclaimed
         show_result()
         apply_text_directives(text)           # dev_disp_text annotations — drawn on top of the render
 
@@ -5199,7 +5229,7 @@ def build_window(model=None):
         _a.triggered.connect(lambda _=False, cn=_cn: set_draw_style(color=_HALCON_COLORS[cn]))
     win._region_style_menu = style_menu
 
-    def apply_dev_directives(text):
+    def apply_dev_directives(text, reclaim_stale=False):
         """Apply a program's dev_* display directives (source order): dev_update_* /
         dev_update_off|on set the display-update flags; dev_set_part zooms the current
         view; dev_set_lut/dev_clear_window drive the current window. Studio's runner
@@ -5304,6 +5334,20 @@ def build_window(model=None):
                     win._current_gfx = win._primary_gsub
                     _update_current_indicator()
             # dev_disp_text is a DRAW directive applied after the render (apply_text_directives)
+        # ディレクティブ数が減った再 Apply で取り残される旧スロット窓を回収(窓リーク防止)。
+        # フルプログラムの Apply 経路のみ(reclaim_stale=True)— スニペットの直接適用で
+        # プログラム窓を誤回収しないため。
+        # A re-Apply that reaches FEWER dev_open_window slots must close the stale
+        # ones; only the full-program Apply path opts in, so applying a snippet
+        # directly never garbage-collects the program's windows.
+        if reclaim_stale:
+            for sub in list(win._graphics_windows):
+                slot = getattr(sub, "_fs_directive_slot", None)
+                if slot is not None and slot > open_slot and sub in mdi.subWindowList():
+                    sub.close()
+                    if win._current_gfx is sub:
+                        win._current_gfx = win._primary_gsub
+                        _update_current_indicator()
     win._apply_dev_directives = apply_dev_directives
 
     def apply_text_directives(text):

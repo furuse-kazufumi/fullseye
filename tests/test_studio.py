@@ -2620,3 +2620,74 @@ def test_system_settings_pages_localized_at_build():
     titles = [dlg._tree.topLevelItem(i).text(0) for i in range(dlg._tree.topLevelItemCount())]
     assert titles == ["実行", "ウィンドウ", "表示", "エディタ"]
     win._apply_language("en")
+
+
+def test_quit_confirms_when_python_editor_tab_is_dirty():
+    """公開前レビュー回帰(high): パイプラインがクリーンでも Python Editor に未保存
+    タブがあれば、アプリ終了(closeEvent)は確認を出す — 黙ってデータを捨てない。
+    Regression: app-quit must prompt for unsaved Python-Editor tabs too."""
+    from PySide6 import QtGui, QtWidgets
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._act_pyedit.trigger()
+    pe = win._pyedit
+    pe["open_tab"]("print('draft')", "draft.py")
+    ed = pe["editor"]()
+    ed.insertPlainText("# edited\n")                      # → _dirty
+    assert getattr(ed, "_dirty", False)
+    orig = studio.CONFIRM_HOOK
+    studio.CONFIRM_HOOK = lambda parent, title, text: False       # "cancel"
+    try:
+        ev = QtGui.QCloseEvent(); ev.accept()
+        QtWidgets.QApplication.sendEvent(win, ev)
+        assert not ev.isAccepted(), "quit discarded a dirty editor tab without asking"
+        studio.CONFIRM_HOOK = lambda parent, title, text: True    # "discard"
+        ev = QtGui.QCloseEvent(); ev.accept()
+        QtWidgets.QApplication.sendEvent(win, ev)
+        assert ev.isAccepted()
+    finally:
+        studio.CONFIRM_HOOK = orig
+
+
+def test_reapply_with_fewer_dev_windows_reclaims_stale_slots():
+    """公開前レビュー回帰(medium): dev_open_window を 2→1 に減らして再 Apply したら
+    旧スロットの窓は閉じる(窓リーク防止)。スニペットの直接適用(reclaim_stale 無し)
+    ではプログラム窓を誤回収しない。"""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._program["edit"].setPlainText(
+        "dev_open_window (10, 20, 200, 160)\n"
+        "dev_open_window (10, 240, 200, 160)\n"
+        "gaussian (0.5, 0.5)\n")
+    win._program["apply"]()
+    slots = {getattr(s, "_fs_directive_slot", None)
+             for s in win._graphics_windows if s in win._mdi.subWindowList()}
+    assert {1, 2} <= slots
+    win._program["edit"].setPlainText(
+        "dev_open_window (10, 20, 200, 160)\ngaussian (0.5, 0.5)\n")
+    win._program["apply"]()                                # fewer slots → slot 2 closes
+    slots = {getattr(s, "_fs_directive_slot", None)
+             for s in win._graphics_windows if s in win._mdi.subWindowList()}
+    assert 1 in slots and 2 not in slots, "stale directive window leaked after re-Apply"
+    # 直接適用(スニペット)は回収しない — slot 1 は残る
+    win._apply_dev_directives("dev_set_lut (gray)")
+    assert 1 in {getattr(s, "_fs_directive_slot", None)
+                 for s in win._graphics_windows if s in win._mdi.subWindowList()}
+
+
+def test_dev_directive_lines_survive_apply_roundtrip():
+    """公開前レビューの根本原因回帰: Apply 後の sync_program がエディタ本文を
+    モデルから再生成しても、適用済み dev_* / set_system 行は消えない(以前は
+    消えて「再 Apply=ディレクティブ無し」に化けていた)。"""
+    _app()
+    win, model = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    win._program["edit"].setPlainText(
+        "dev_open_window (10, 20, 300, 240)\ngaussian (0.5, 0.5)\n")
+    win._program["apply"]()
+    text = win._program["edit"].toPlainText()
+    assert "dev_open_window" in text, "applied dev_* line vanished from the editor"
+    win._program["apply"]()                    # 再 Apply — 窓は同スロット再利用で維持
+    subs = [s for s in win._graphics_windows
+            if getattr(s, "_fs_directive_slot", None) == 1
+            and s in win._mdi.subWindowList()]
+    assert len(subs) == 1
