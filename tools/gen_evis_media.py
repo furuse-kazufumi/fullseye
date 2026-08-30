@@ -160,9 +160,13 @@ def _stills(frame_u8: np.ndarray, stem: str):
     print(f"  still -> {still}\n  thumb -> {thumb}")
 
 
-def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
+def gen_stereo(meta: dict, frames_dir: Path, fps: int = 20, step: int = 1):
     """eyeL | Fullseye SGM disparity | Fullseye metric depth, with live bean-range
-    readout (Fullseye estimate vs simulator ground truth)."""
+    readout (Fullseye estimate vs simulator ground truth).
+
+    HUD attribution (2026-08-30 review): the err% shown/claimed comes from the
+    FEATURE-BASED readout (fs.segment_objects centroid disparity per eye), NOT
+    from the dense SGM map on screen — the HUD says so explicitly."""
     f_half = meta["f_px_full"] / 2.0          # frames on disk are 320x240 (half res)
     baseline_mm = meta["ipd_mm"]              # 64.0
     frames = meta["frames"]
@@ -172,14 +176,16 @@ def gen_stereo(meta: dict, fps: int = 20, step: int = 1):
     rep = None
     for fr in frames[::step]:
         k = fr["k"]
-        L = iio.imread(FRAMES / f"eyel_{k:04d}.png")[..., :3]
-        R = iio.imread(FRAMES / f"eyer_{k:04d}.png")[..., :3]
+        L = iio.imread(frames_dir / f"eyel_{k:04d}.png")[..., :3]
+        R = iio.imread(frames_dir / f"eyer_{k:04d}.png")[..., :3]
         Lg = L.mean(-1) / 255.0
         Rg = R.mean(-1) / 255.0
         disp_raw = fs.disparity_sgm(Lg, Rg, max_disp=40, window=5)
-        # display map: cleaned + hole-filled; measurement uses disp_raw because
-        # the bean region (~14 px at half res) is smaller than the speckle
-        # min_size and would be invalidated, leaving background disparity.
+        # display map: cleaned + hole-filled. The bean-range MEASUREMENT below
+        # does not read this dense map (nor disp_raw) at all — it is feature
+        # based (fs.segment_objects centroids in each eye), because the bean
+        # (~14 px at half res) is smaller than the speckle min_size and the
+        # dense map is unreliable there.
         disp, valid = fs.speckle_filter(disp_raw, max_diff=1.0, min_size=60)
         disp = fs.fill_disparity(disp, valid)
         disp_col = _u8(fs.colorize_disparity(disp))
