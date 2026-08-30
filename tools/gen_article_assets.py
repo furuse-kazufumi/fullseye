@@ -820,9 +820,10 @@ def build_halcon_coverage_chart(log=print) -> dict:
     # 重複計上される。これは halcon_coverage.py 自体の per_chapter 仕様どおりで、
     # ここでは「グラフの各バーが analyze() の生データそのもの」であることだけ確認する。
     chapter_cov_sum = sum(cov for cov, _ in a["per_chapter"].values())
-    assert chapter_cov_sum >= n_cov, (
-        f"per-chapter covered sum {chapter_cov_sum} should be >= overall distinct covered {n_cov} "
-        "(chapters overlap, so sum is expected to be >=, never <)")
+    if chapter_cov_sum < n_cov:
+        raise AssertionError(
+            f"per-chapter covered sum {chapter_cov_sum} should be >= overall distinct covered {n_cov} "
+            "(chapters overlap, so sum is expected to be >=, never <)")
 
     # 既に記事に書かれている数字(docs/HALCON_COVERAGE.md, README.md)とも一致するか確認。
     # チェックサム目的であって、ここから数字を「借りて」はいない(上のライブ計算が正)。
