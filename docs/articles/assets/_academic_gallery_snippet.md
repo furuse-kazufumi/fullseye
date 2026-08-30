@@ -51,9 +51,6 @@
 
 ## 生物学
 
-![bio_cells](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_cells_thumb.jpg)
-*HT29 細胞蛍光顕微鏡像(BBBC001)を otsu 分割 -> ラベル彩色 -> count_obj で計数 検出数 = 327(op: `rgb1_to_gray`, `segment_objects(otsu)`, `count_obj`, `colorize_labels`)。素材: Broad Bioimage Benchmark Collection — CC-BY 3.0 (Broad Bioimage Benchmark Collection; Ljosa et al., Nature Methods 2012)([出典](https://bbbc.broadinstitute.org/BBBC001))*
-
 ![bio_neuron](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/academic_bio_neuron_thumb.jpg)
 *神経細胞蛍光像(AI 生成)の樹状突起を sk_frangi でトレースし、応答上位 3% を着色オーバーレイ表示(op: `rgb1_to_gray`, `cv_clahe`, `cv_median`, `sk_frangi`, `sk_area_opening`, `overlay_mask`)。素材: **AI 生成(Google gemini-2.5-flash-image)による模擬データ**(実在の標本・スキャンではない)*
 
