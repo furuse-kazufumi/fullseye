@@ -169,7 +169,7 @@ def subject_defect_metal(log=print) -> dict:
         draw.line([(x0, y0), (x1, y1)], fill=(70, 70, 74), width=2)
         truth.append(("scratch", ((x0 + x1) / 2, (y0 + y1) / 2)))
     img = np.asarray(pil, np.float64)[..., 0] / 255.0
-    for (cx, cy, r, dv) in [(210, 400, 6, -0.30), (520, 240, 7, -0.28)]:
+    for (cx, cy, r, dv) in [(210, 400, 2.4, -0.34), (520, 240, 2.8, -0.32)]:
         yy, xx = np.mgrid[0:H, 0:W]
         blob = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * r * r)))
         img = img + dv * blob
