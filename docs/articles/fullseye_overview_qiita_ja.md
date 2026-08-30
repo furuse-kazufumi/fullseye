@@ -504,7 +504,7 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 [![ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg?v=2)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
 
-*↑ **ステレオ障害物マップ** ―― 視差 → $Z = f \cdot B / d$ で奥行き → 3D 点群 → 高さ 12cm 超をクラスタリングで 4 物体が 4 クラスタに（復元した地面の高さ誤差は中央値 3mm）。使用 op: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`。*
+*↑ **ステレオ障害物マップ** ―― 視差 → $Z = f \cdot B / d$ で奥行き → 3D 点群 → 高さ 12cm 超をクラスタリングで 4 物体が 4 クラスタに（復元した地面の高さ誤差は中央値 3mm）。視差は speckle フィルタ+信頼度ゲート後の「使う視差」だけを表示し、無効画素はグレーでマスクしています。使用 op: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`。*
 
 [![焦点合成 ―― ボケた 7 枚から全焦点 1 枚](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack.png)
 
