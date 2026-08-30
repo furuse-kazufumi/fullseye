@@ -511,7 +511,15 @@ Fullseye の差別化がいちばん出るのは **3D 系**だと思っていま
 
 これらは「見た目のための飾り」ではなく、**それぞれが独立して検証できる op**です。AO なら「遮蔽されている頂点ほど暗くなっているか」、トーンマッピングなら「白飛びしていた領域の階調が復元されているか」――どちらも数値で確認できます。冒頭のヒーロー画像1枚の裏には、**型付き op として書かれた測定可能な部品**が積み重なっている、という点は、層①で書いた「型（sort）という背骨」の思想が、レンダリングという一見遠い分野にまで一貫して適用されていることの表れです。
 
-3D op は現在 265 個。点群・メッシュ・ボリューム・SDF を跨いで、SHOT / FPFH / スピンイメージといった **3D 特徴記述子**、**TSDF 融合**、**縞投影（fringe projection）**、**フォトメトリックステレオ**、**スーパークアドリク当てはめ**、**メディアル軸**、**測地距離**、**ビジュアルハル**、**QEM メッシュ簡略化（境界保存・多様体厳格）** まで揃えています。いくつか実物を：
+3D op は現在 265 個。点群・メッシュ・ボリューム・SDF を跨いで、SHOT / FPFH / スピンイメージといった **3D 特徴記述子**、**TSDF 融合**、**縞投影（fringe projection）**、**フォトメトリックステレオ**、**スーパークアドリク当てはめ**、**メディアル軸**、**測地距離**、**ビジュアルハル**、**QEM メッシュ簡略化（境界保存・多様体厳格）** まで揃えています。
+
+同じイトカワ実点群に**基本の 3D op を順に当てたサンプラー**も1枚にまとめてあります（法線推定・shape index・ボクセル間引き 3000→635 点・OBB・凸包 ―― 全部実行結果です）。
+
+[![3D op サンプラー ―― イトカワ実点群に法線推定 / shape index / ボクセル間引き / OBB / 凸包（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_3d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_3d.png)
+
+*↑ 3D op サンプラー ―― OBB の外形実測は 281×149×122 m。教科書の図ではなく、この小惑星の実データで測った数字です。*
+
+いくつか実物を：
 
 ![接触した2物体を距離変換+分水嶺（watershed）で分離。連結成分ラベリングでは1個に融合してしまうケース](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/examples_3d/_gallery/watershed3d.png)
 

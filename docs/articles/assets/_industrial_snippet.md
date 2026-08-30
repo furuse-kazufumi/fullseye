@@ -44,7 +44,7 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_align.png )
 
-エッジ勾配ベースの形状モデルをピラミッド探索で照合し、回転したワーク 3 個の位置と角度を検出。円板や長方形の別部品には反応しない。ばら積みピッキングや組立の前段になる位置決め。 使用 op: create_shape_model, find_shape_model (angles 探索)。データ: 合成ブラケット 3 個 (配置姿勢 = 真値) + 距離部品。
+エッジ勾配ベースの形状モデルをピラミッド探索で照合し、回転したワーク 3 個の位置と角度を検出。円板や長方形の別部品には反応しない。ばら積みピッキングや組立の前段になる位置決め。 使用 op: create_shape_model, find_shape_model (angles 探索)。データ: 合成ブラケット 3 個 (配置姿勢 = 真値) + 紛らわしい別部品。
 
 ## 焦点合成 — ボケた 7 枚から全焦点 1 枚を作る
 
