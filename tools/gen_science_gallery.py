@@ -593,9 +593,9 @@ def subject_dino_skeleton(log=print) -> dict:
     return {
         "file": "science_dino_skeleton.png",
         "title": "恐竜の影絵から骨格を取り出す",
-        "ops": ["read_mesh", "look_at", "render_mesh", "closing_circle",
-                "fill_up", "sk_skeleton", "dilation_circle",
-                "distance_transform"],
+        "ops": ["read_mesh", "look_at", "render_mesh", "dilation_circle",
+                "erosion_circle", "fill_up", "select_shape_std",
+                "sk_skeleton", "distance_transform"],
         "data": "Smithsonian 3D triceratops 骨格標本の実スキャン (CC0)",
         "synthetic": False,
         "caption": ("トリケラトプス骨格標本の影絵から、形の中心線 (スケルトン) を"
