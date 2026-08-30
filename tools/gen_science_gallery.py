@@ -548,24 +548,27 @@ def subject_dino_skeleton(log=print) -> dict:
     V = V - V.mean(axis=0)
     V = V / np.abs(V).max()
     size = 720
-    pose = fs.look_at((0.0, -2.6, 0.35), (0.0, 0.0, 0.0), up=(0.0, 0.0, 1.0))
-    # glTF は y-up → z-up に回してから横向きで見る
-    Vz = V[:, [0, 2, 1]] * np.array([1.0, -1.0, 1.0])
-    r = fs.render_mesh(Vz, F, pose=pose, width=size, height=size)
-    sil = np.asarray(r["silhouette"], np.float64)
+    # glTF は y-up・長軸 z。真横 (+x) から見ると骨格標本の側面像になる
+    pose = fs.look_at((2.6, 0.35, 0.0), (0.0, 0.0, 0.0), up=(0.0, 1.0, 0.0))
+    r = fs.render_mesh(V, F, pose=pose, width=size, height=size)
+    bones = np.asarray(r["silhouette"], np.float64)
+    # 骨のすき間を閉じて「体の輪郭」にしてから中心線を取る
+    sil = fs.apply(bones, "closing_circle", 0.10, 0.5)
     sil = fs.apply(sil, "fill_up")
     skel = fs.apply(sil, "sk_skeleton")
-    skel_bold = fs.apply(skel, "dilation_circle", 0.012, 0.5)
+    skel_bold = fs.apply(skel, "dilation_circle", 0.010, 0.5)
     dt = fs.apply(sil, "distance_transform")
     body = _cmap(dt * 0.9, "bone")                  # 厚みで淡く光る影絵
-    vis = np.where((sil > 0.5)[..., None], body * 0.55 + 0.08, 0.02)
+    vis = np.where((sil > 0.5)[..., None], body * 0.45 + 0.06, 0.02)
+    vis = np.where((bones > 0.5)[..., None],
+                   np.array([0.55, 0.65, 0.85]), vis)   # 実際の骨は青白く
     gold = np.array([1.0, 0.8, 0.2])
     vis = np.where((skel_bold > 0.5)[..., None], gold, vis)
-    panels = [np.where((sil > 0.5)[..., None],
-                       np.array([0.75, 0.85, 1.0]), 0.03) * np.ones((1, 1, 3)),
+    panels = [np.where((bones > 0.5)[..., None],
+                       np.array([0.85, 0.90, 1.0]), 0.03) * np.ones((1, 1, 3)),
               np.clip(vis, 0, 1)]
-    out = _montage(panels, ["実スキャンの影絵 (render_mesh)",
-                            "中心線の「骨格」を金色で抽出 (sk_skeleton)"], ncols=2)
+    out = _montage(panels, ["骨格標本スキャンの影絵 (render_mesh)",
+                            "輪郭の中心線を金色で抽出 (sk_skeleton)"], ncols=2)
     _save_png(out, "science_dino_skeleton.png")
     _save_thumb("science_dino_skeleton.png")
     return {

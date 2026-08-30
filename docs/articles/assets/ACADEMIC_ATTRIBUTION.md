@@ -6,6 +6,6 @@
 
 | 画像 | 分野 | 素材 | AI 生成 | 出典 / ライセンス | 使用 op |
 |---|---|---|---|---|---|
-| `academic_met_supercell.png` | 気象学 | AI-generated simulated data (gemini-2.5-flash-image) | **Yes** (gemini-2.5-flash-image) | AI 生成模擬データ(OpenAI gemini-2.5-flash-image)— 実データではない | rgb1_to_gray, cv_clahe, unsharp |
+| `academic_med_brain_mri.png` | 医学 | AI-generated simulated data (gemini-2.5-flash-image) | **Yes** (gemini-2.5-flash-image) | AI 生成模擬データ(OpenAI gemini-2.5-flash-image)— 実データではない | rgb1_to_gray, cv_clahe, unsharp |
 
 生成日: 2026-08-30 / スクリプト: `tools/gen_academic_gallery.py`
