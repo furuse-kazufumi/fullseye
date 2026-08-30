@@ -98,13 +98,29 @@ def _build_offscreen_studio():
 
 
 def _wait_proc(app, holder, attr="_proc", timeout_s=120):
-    """Pump the event loop until the dialog's QProcess finishes (F5 run)."""
+    """Pump the event loop until the dialog's QProcess finishes (F5 run), then
+    ASSERT it exited cleanly (NormalExit + exit code 0) — a screenshot of a
+    failed run must never ship silently. On timeout the child process is
+    terminated/killed before failing (no orphan python processes)."""
     import time
+    from PySide6 import QtCore
+    proc = getattr(holder, attr, None)
+    if proc is None:
+        raise SystemExit("run did not start: no QProcess on the dialog")
     t0 = time.time()
     while getattr(holder, attr, None) is not None:
         _pump(app, 2, 50)
         if time.time() - t0 > timeout_s:
-            raise SystemExit("run did not finish within %ds" % timeout_s)
+            proc.terminate()
+            if not proc.waitForFinished(3000):
+                proc.kill()
+                proc.waitForFinished(3000)
+            raise SystemExit("run did not finish within %ds (process terminated)" % timeout_s)
+    # the dialog's on_done handler clears _proc but the QProcess object survives
+    # (parented to the dialog), so the exit code is still readable here.
+    if proc.exitStatus() != QtCore.QProcess.NormalExit or proc.exitCode() != 0:
+        raise SystemExit("run FAILED: exitStatus=%s exitCode=%d — refusing to screenshot a failed run"
+                         % (proc.exitStatus(), proc.exitCode()))
 
 
 # --------------------------------------------------------------------------- #
