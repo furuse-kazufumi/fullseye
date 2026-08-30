@@ -139,7 +139,7 @@ Here is that "pick up a bean with chopsticks" experiment, seen through Fullseye'
 
 [![evis's chopstick-tip camera footage with Fullseye's segment_objects → draw_objects applied every frame to track the bean (click to play mp4)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/evis_bean_track_fullseye_thumb.jpg)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/evis_bean_track_fullseye.mp4)
 
-*↑ ▶ Chopstick-tip camera footage from the ChopMimic experiment (experimental material from the evis_chopstick project), with Fullseye's `segment_objects → draw_objects` applied every frame to track the bean. Left = third-person view (context, unprocessed); right = the bean bbox Fullseye detected. Detected in all 163 frames where the bean is visible (100% visible-frame detection rate; centroid error vs. ground truth: median 0.10px). No detections in the 78 frames where it's genuinely occluded by chopsticks or plate — nothing is fabricated.*
+*↑ ▶ Chopstick-tip camera footage from the ChopMimic experiment (experimental material from the evis_chopstick project), with Fullseye's `segment_objects → draw_objects` applied every frame to track the bean. Left = third-person view (context, unprocessed); right = the bean bbox Fullseye detected. Detected in all 163 frames where the bean is visible (100% visible-frame detection rate; centroid error vs. ground truth: median 0.10px, max 14.5px on partially occluded frames). No detections in the 78 frames where it's genuinely occluded by chopsticks or plate — nothing is fabricated.*
 
 ---
 
