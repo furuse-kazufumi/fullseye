@@ -682,7 +682,7 @@ Layer the RAG from the "Letting AI Do Image Processing" section over this flow, 
 
 ---
 
-## A Science Museum on Paper — 42 Exhibits of Playing With Ops
+## A Science Museum on Paper — 41 Exhibits of Playing With Ops
 
 Time to relax the shoulders a little. This corner is meant to be wandered **the way you'd wander the exhibit halls of a science museum**. Everything below is **real output** from Fullseye's registered ops — not a single mockup. The provenance of the materials splits two ways:
 
