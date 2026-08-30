@@ -1193,6 +1193,24 @@ The pile of work is tall, but **the foundation — typed ops, honest evaluation,
 
 ---
 
+## Addendum (2026-08-31): The Skeleton Toolkit Got a Level Deeper
+
+> **Status: Production-ready / Verified** (on GitHub master; the next PyPI release will ship it. The op counts at publication — 731+265 — are now **733+271** with this addendum.)
+
+The day after publication I ended up digging into "how different is Fullseye's skeletonization from HALCON's, really?" — and the skeleton toolkit grew substantially. In this article's spirit, here it is **with verification**.
+
+- **`em_skeleton` (new op)** — a pure-numpy clean-room implementation of the **Eckhardt–Maderlechner (1993) invariant thinning**, the same algorithm family as HALCON's `skeleton`. One story worth telling: implementing the literature's definition verbatim broke topology under parallel deletion. After isolating the cause with a counter-example pattern and re-reading it as the standard (8,4) simple-point test, the output **matched the published EM93 reference results pixel for pixel** (test shape 1 = 724/724 pixels, zero differences; the other two shapes matched the published counts 2434/3895). That comparison is now baked in as a regression test. The only thing left unverified is a direct comparison against a live HALCON installation (no license at hand).
+- **Skeleton graph elements now share one vocabulary across 2D/3D** — alongside junctions (`junctions_skeleton`) there are now endpoints (`r2_endpoints_skeleton`), and in 3D: `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d`. Feed them a thick volume and they thin it with Lee's method (1994) first, then return nodes, branches, and endpoints. **Voxel skeleton graphs have no counterpart in HALCON** — useful for vessels, porous media, and root-system network analysis.
+- **3D morphology groundwork** — single-op `morph_open3d` / `morph_close3d`, a ball structuring element, and a scipy path so that **every op runs without torch** (the cube-SE path is pinned bit-identical to the torch path by tests).
+
+Here's one picture made with the freshly minted ops.
+
+[![Skeleton graph extraction from a slime mold network](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/science_physarum_skeleton_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_physarum_skeleton.png)
+
+*↑ **Extracting the skeleton graph from a slime mold's tube network** — a Physarum (slime mold) mathematical model (an adaptive network where high-flow tubes thicken and unused tubes decay), grown in my own simulation and read with `em_skeleton` (cyan) and `junctions_skeleton` (white = junctions). Left: the exploring mesh. Right: after convergence — **only the shortest path survives**. Ops used: `binary_threshold`, `em_skeleton`, `junctions_skeleton`, `dilation_circle`.*
+
+Full disclosure: this slime mold simulation is actual experimental data from a separate homegrown research project — **an attempt to build an "evolving brain" (development codename Afterman, an homage to Dougal Dixon's "After Man")** — a reckless quest to search for what comes *after* the Transformer, by evolution. The slime mold's tube dynamics handed it an unexpected answer. That story will get its own article in due time.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
