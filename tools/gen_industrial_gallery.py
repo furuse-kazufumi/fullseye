@@ -140,6 +140,14 @@ def _blur(img: np.ndarray, sigma: float) -> np.ndarray:
     return gaussian_filter(np.asarray(img, np.float64), sigma)
 
 
+def _mpl_jp() -> None:
+    """matplotlib の図に日本語ラベルを出すためのフォント設定(豆腐対策)."""
+    import matplotlib
+    matplotlib.use("Agg")
+    matplotlib.rcParams["font.family"] = ["Meiryo", "Yu Gothic", "MS Gothic",
+                                          "sans-serif"]
+
+
 # --------------------------------------------------------------------------- #
 # 工業 1: 欠陥検出 / surface defect detection                                    #
 # --------------------------------------------------------------------------- #
