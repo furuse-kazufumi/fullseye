@@ -589,6 +589,12 @@ ACCEL = {
     "simulate_defocus": (_mean, "simulate_defocus", "simulate_defocus"),
     # sk_tv = Chambolle TV(計算重・GPU 向き)。skimage を忠実に写す。bit でなく指標保存で採否
     "sk_tv": (_sk_tv, "sk_tv", ""),
+    # Batch 2(2026-08-31): image→region 関門。otsu で GPU 区間の分断が消える
+    "otsu": (_otsu, "otsu", "binary_threshold"),
+    "dyn_threshold": (_dyn_threshold, "dyn_threshold", "dyn_threshold"),
+    "canny": (_canny, "canny", "edges_image"),
+    "local_max": (_local_max, "local_max", "local_max_sub_pix"),
+    "adaptive_gauss_thresh": (_adaptive_gauss, "adaptive_gauss_thresh", "local_threshold"),
 }
 
 
