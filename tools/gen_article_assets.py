@@ -732,14 +732,21 @@ def build_op_taxonomy(log=print) -> dict:
         name_to_cat[op.name] = op.category
     counts_2d = Counter(name_to_cat.values())
     n_2d = sum(counts_2d.values())
-    assert n_2d == len(ops.RT), f"2D op count {n_2d} != len(ops.RT) {len(ops.RT)}"
-    assert n_2d == 731, f"2D distinct op count drifted: {n_2d} (expected 731 per README/article)"
-    assert len(counts_2d) == 46, f"2D category count drifted: {len(counts_2d)} (expected 46)"
+    # 公表数値ゲート: `python -O` で assert 文は消えるため、明示 raise で強制する。
+    # Published-number gates as explicit raises (assert statements vanish under -O).
+    if n_2d != len(ops.RT):
+        raise AssertionError(f"2D op count {n_2d} != len(ops.RT) {len(ops.RT)}")
+    if n_2d != 731:
+        raise AssertionError(f"2D distinct op count drifted: {n_2d} (expected 731 per README/article)")
+    if len(counts_2d) != 46:
+        raise AssertionError(f"2D category count drifted: {len(counts_2d)} (expected 46)")
 
     counts_3d = Counter(m["category"] for m in ops3d.OPS3D.values())
     n_3d = sum(counts_3d.values())
-    assert n_3d == len(ops3d.OPS3D) == 265, f"3D op count drifted: {n_3d}"
-    assert len(counts_3d) == 55, f"3D category count drifted: {len(counts_3d)} (expected 55)"
+    if not (n_3d == len(ops3d.OPS3D) == 265):
+        raise AssertionError(f"3D op count drifted: {n_3d} (len(OPS3D)={len(ops3d.OPS3D)}, expected 265)")
+    if len(counts_3d) != 55:
+        raise AssertionError(f"3D category count drifted: {len(counts_3d)} (expected 55)")
 
     bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
     fig, axes = plt.subplots(1, 2, figsize=(20, 11), facecolor=bg)
