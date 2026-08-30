@@ -103,6 +103,30 @@ fail-closed 表示。**`set_system(param, value)` を Program directive 化**(HA
 (honest)。deadline_ms/high_priority の runtime 配布設定は fsruntime 側の既存 knob に集約(過剰な
 設定面を作らない=「IDE はシンプルかつ多機能」原則)。studio 89→92 / harness 202→204。
 
+## G. `disp_*` 表示 op(Graphics 章・2026-08-30 実装)
+HALCON の Graphics 章には窓へ直接描く `disp_*` operator 群がある。Studio は表示 op を純変換の
+`ops.REGISTRY` に混ぜず(副作用=UI を持つため)、`dev_*` と同じ **Program directive 層**
+(`_DISP_DIRECTIVES`)+ **Python API**(`studio.disp_points3d` / `studio.disp_mesh3d`、directive の
+ビューアと同一実装)の二面で提供する。全 `disp_*` は `state["disp_log"]` に記録され(headless で
+テスト可能)、失敗は flash+ログで raise しない(fail-soft)。
+
+| directive | HALCON 実 op(裏取り) | Studio 動作 |
+|---|---|---|
+| `disp_image (n)` | `disp_image` | stage n(1 始まり、省略=最終)の出力を**カレント graphics 窓**へ現在の display mode で描画 |
+| `disp_region (n)` | `disp_region` | 同上を region overlay(dev_set_draw/color/line_width スタイル)で描画 |
+| `disp_points3d ('file')` | `disp_object_model_3d` 相当(点群面) | 対話 3-D ビューア窓を開く(mesh.read_points 形式: ply/pcd/xyz/npy/npz/obj/stl/off) |
+| `disp_mesh3d ('file')` | `disp_object_model_3d` 相当(メッシュ面) | 同、メッシュ(頂点+面重心のランバート splat、W=ワイヤフレーム) |
+| `disp_object_model_3d ('file')` | `disp_object_model_3d` | HALCON パリティ別名: 面が有ればメッシュ、無ければ点群として dispatch |
+
+正直な整理: HALCON の `disp_object_model_3d` は window handle + カメラパラメータ + genParam を取る
+リッチな op であり、Studio 版は「ファイル→ビューア窓」の最小写像(相当・workalike)。窓管理は
+`dev_open_window` と同じ handle 体系に乗り(`dev_set_window` で選択可、`max_graphics_windows` の
+上限も共通)、re-Apply は source-order slot キーで**同じ窓を再利用**する。2-D の `disp_image` を
+3-D ビューア窓がカレントの時に呼ぶと primary 窓へ安全に redirect(honest limit)。ビューアは
+実測に基づき software rasterizer(200k pts ≈ 21 ms/frame、offscreen/RDP でも同一経路)で、
+ヘッドレスのカメラ数学(`viewer3d_camera`/`viewer3d_project`)は pytest で数値固定済み。
+`dev_*` 同様、docs/ops の per-op ノート体系(純変換 op 用)には登録しない(体系を乱さない)。
+
 ## 出典
 一次情報 = `data/halcon_operators.json`(MVTec Operator Reference 実スクレイプ, HALCON 26.05)。
 個別 op 裏取り例: [dev_update_window](https://www.mvtec.com/doc/halcon/13/en/dev_update_window.html) /
