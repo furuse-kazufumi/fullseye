@@ -251,34 +251,37 @@ def subject_fourier_stars(log=print) -> dict:
 
 
 def subject_watershed_foam(log=print) -> dict:
-    """watershed の色分け — コインの領域が泡のように分かれる."""
-    img = _load_gray("coins.png")
+    """watershed の色分け — コインを 1 枚ずつ切り分けてぬりえにする."""
+    img = _load_gray("coins.png")[60:, :]     # 上端は照明ムラで二値化が荒れるため除外
     seg = fs.apply(img, "otsu")
     seg = fs.apply(seg, "fill_up")
     dt = fs.apply(1.0 - seg, "distance_transform")   # コインからの距離 (背景側)
-    ridges = fs.apply(dt, "watersheds")              # 尾根線 = なわばりの境界
-    cells = (ridges < 0.5).astype(np.float64)
-    objs = fs.segment_objects(cells, threshold=0.5, min_area=30)
+    # dt をガンマ強調してからマーカー式 watershed: コインごとに独立の水源になる
+    ridges = fs.apply(dt ** 0.3, "watersheds", 0.0, 0.5)
+    cells = (ridges < 0.5).astype(np.float64) * seg   # コイン内部のみ色を塗る
+    objs = fs.segment_objects(cells, threshold=0.5, min_area=80)
     lab = np.zeros(img.shape, np.int32)
     for i, o in enumerate(objs):
         lab[o["mask"] > 0] = i + 1
-    colors = fs.colorize_labels(lab, seed=SEED)
-    vis = 0.45 * np.stack([img] * 3, -1) + 0.55 * colors
-    vis = np.where((ridges > 0.5)[..., None], 1.0, vis)   # 境界線は白
-    panels = [np.stack([img] * 3, -1), vis]
+    colors = fs.colorize_labels(lab, seed=3)
+    base = np.stack([img] * 3, -1)
+    vis = np.where((lab > 0)[..., None], 0.45 * base + 0.65 * colors, base * 0.8)
+    vis = np.where((ridges > 0.5)[..., None] & (seg > 0.5)[..., None], 1.0, vis)
+    panels = [base, np.clip(vis, 0, 1)]
     out = _montage(panels, ["元の写真 (コイン)",
-                            "各コインの「なわばり」を watershed で色分け"], ncols=2)
+                            f"watershed で {len(objs)} 枚に切り分けて色分け"],
+                   ncols=2)
     _save_png(out, "science_watershed_foam.png")
     _save_thumb("science_watershed_foam.png")
     return {
         "file": "science_watershed_foam.png",
-        "title": "watershed — コインのなわばり地図",
+        "title": "watershed — コインのぬりえ分割",
         "ops": ["otsu", "fill_up", "distance_transform", "watersheds",
                 "segment_objects", "colorize_labels"],
         "data": "skimage.data coins (実写真)",
         "synthetic": False,
-        "caption": ("水が低いところへ流れて溜まるように領域を分ける watershed 法。"
-                    "どのコインに一番近いかで平面が泡のように分割される。"),
+        "caption": ("水が低い所へ流れて溜まる様子をまねて領域を分ける watershed 法。"
+                    "写真のコインが 1 枚ずつ別の色に塗り分けられる。"),
     }
 
 
