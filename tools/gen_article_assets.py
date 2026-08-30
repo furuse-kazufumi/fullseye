@@ -972,7 +972,8 @@ def _build_feature_tile_specs(img, log=print) -> dict:
     cy, cx = (int(round(c)) for c in coms[blob_i - 1])
     single = (lab == blob_i).astype(np.float64)
     circ = fullseye.apply(single, "classify_shape")
-    assert 0.5 < circ <= 1.0, f"classify_shape on a coin = {circ}, expected near-circular"
+    if not (0.5 < circ <= 1.0):
+        raise AssertionError(f"classify_shape on a coin = {circ}, expected near-circular")
     specs["classify_shape"] = {
         "display": single,
         "value_text": f"circularity = {circ:.2f}  (1 = circle)",
