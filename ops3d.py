@@ -127,9 +127,11 @@ _CATALOG = {
         ("curvature_maps", "match3d", ["voxel"], "curvature", True),
         ("edt_jfa", "match3d", ["voxel"], "sdf", True),
     ],
-    "morphology": [  # 3D モルフォロジー(前処理/特徴抽出)
+    "morphology": [  # 3D モルフォロジー(前処理/特徴抽出。torch 不在時は scipy 経路)
         ("morph_dilate3d", "match3d", ["voxel"], "voxel", True),
         ("morph_erode3d", "match3d", ["voxel"], "voxel", True),
+        ("morph_open3d", "match3d", ["voxel"], "voxel", True),
+        ("morph_close3d", "match3d", ["voxel"], "voxel", True),
         ("morph_gradient3d", "match3d", ["voxel"], "voxel", True),
         ("morph_tophat3d", "match3d", ["voxel"], "voxel", True),
         ("morph_blackhat3d", "match3d", ["voxel"], "voxel", True),
