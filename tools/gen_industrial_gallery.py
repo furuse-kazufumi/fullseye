@@ -161,36 +161,48 @@ def _synth_brushed_metal(rng, H=520, W=720):
 
 
 def subject_defect_metal(log=print) -> dict:
-    """欠陥検出 — 合成金属面の傷/打痕/異物を median 差分 + blob で検出し枠を描く."""
-    from PIL import ImageDraw
+    """欠陥検出 — 合成金属面の傷/打痕/異物を median 差分 + blob で検出・分類する."""
+    from PIL import Image, ImageDraw
+    import matplotlib
+    matplotlib.use("Agg")
     rng = np.random.default_rng(SEED)
-    img = _synth_brushed_metal(rng)
-    H, W = img.shape
+    base = _synth_brushed_metal(rng)
+    H, W = base.shape
+    yy, xx = np.mgrid[0:H, 0:W]
 
-    # 既知の欠陥 6 件を描き込む(真値): 傷 3 / 打痕 2 / 異物(明) 1
-    truth = []
-    pil = _pil_of(img)
+    # 既知の欠陥 6 件を描き込む(真値): 傷 3 / 打痕 2 / 異物(錆色) 1。
+    # サムネ (幅 720px) でも肉眼で分かるコントラストにする(記事レビュー指摘)。
+    truth = []                                    # (種別, (cx, cy))
+    pil = _pil_of(base)
     draw = ImageDraw.Draw(pil)
     scratches = [((120, 90), (240, 150)), ((430, 380), (560, 330)),
                  ((580, 120), (660, 190))]
     for (x0, y0), (x1, y1) in scratches:
-        draw.line([(x0, y0), (x1, y1)], fill=(70, 70, 74), width=2)
+        # 深い溝(暗) + 溝の下縁で光るバリ(明) — 実物の引っかき傷の見え方
+        draw.line([(x0, y0), (x1, y1)], fill=(36, 36, 40), width=4)
+        draw.line([(x0 + 1, y0 + 3), (x1 + 1, y1 + 3)],
+                  fill=(238, 238, 242), width=1)
         truth.append(("scratch", ((x0 + x1) / 2, (y0 + y1) / 2)))
-    img = np.asarray(pil, np.float64)[..., 0] / 255.0
-    for (cx, cy, r, dv) in [(210, 400, 2.4, -0.34), (520, 240, 2.8, -0.32)]:
-        yy, xx = np.mgrid[0:H, 0:W]
-        blob = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * r * r)))
-        img = img + dv * blob
+    gray = np.asarray(pil, np.float64)[..., 0] / 255.0
+    for (cx, cy) in [(210, 400), (520, 240)]:
+        # 打痕 = 深い影の中心 + まわりの淡いハイライトリング (凹みの照り返し)
+        d2c = (xx - cx) ** 2 + (yy - cy) ** 2
+        gray = gray - 0.40 * np.exp(-d2c / (2 * 5.5 ** 2)) \
+                    + 0.17 * np.exp(-d2c / (2 * 10.0 ** 2))
         truth.append(("dent", (cx, cy)))
-    cx, cy, r = 330, 130, 2.2
-    yy, xx = np.mgrid[0:H, 0:W]
-    img = img + 0.30 * np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * r * r)))
+    rgb = np.stack([gray] * 3, axis=-1)
+    cx, cy = 330, 130
+    blob = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * 4.5 ** 2)))
+    rgb[..., 0] += 0.10 * blob                    # 異物 = 錆色の付着物 (赤み + 暗)
+    rgb[..., 1] -= 0.28 * blob
+    rgb[..., 2] -= 0.40 * blob
     truth.append(("particle", (cx, cy)))
-    img = np.clip(_blur(img, 0.7), 0.0, 1.0)
+    rgb = np.clip(_blur(rgb, (0.6, 0.6, 0.0)), 0.0, 1.0)
 
-    # 検出: median_image で背景(地合い)を推定 → 差分 → しきい値 → blob 解析
-    bg = fs.apply(img, "median_image", 1.0, 0.5)          # a=1.0 → 最大カーネル
-    diff = np.abs(img - bg)
+    # 検出: 輝度に落として median_image で地合いを推定 → 差分 → 二値化 → blob
+    lum = rgb @ np.array([0.299, 0.587, 0.114])
+    bg = fs.apply(lum, "median_image", 1.0, 0.5)          # a=1.0 → 最大カーネル
+    diff = np.abs(lum - bg)
     seg = (diff > 0.055).astype(np.float64)
     seg = fs.apply(seg, "dilation_circle", 0.05, 0.5)     # 断片化した傷を繋ぐ
     objs = fs.segment_objects(seg, threshold="none", min_area=25)
@@ -198,35 +210,92 @@ def subject_defect_metal(log=print) -> dict:
     if len(objs) != len(truth):
         raise RuntimeError(f"defect count mismatch: {len(objs)} != {len(truth)}")
 
-    # オーバーレイ: 欠陥ごとに枠 + 面積スコア
-    vis = _pil_of(img)
+    # 分類: 形状 (離心率) と色 (錆の赤み) だけで種別を決める — 真値は使わない
+    def _classify(o) -> str:
+        if o["eccentricity"] > 0.95:              # 細長い = 傷
+            return "scratch"
+        m = o["mask"]
+        redness = float((rgb[..., 0][m] - rgb[..., 2][m]).mean())
+        return "particle" if redness > 0.05 else "dent"
+
+    # 検算: 検出 6 件を最寄り真値と 1:1 対応させ、位置 (<30px) と種別まで照合
+    kinds = []
+    used: set = set()
+    for o in objs:
+        cyx = o["centroid"]
+        kind = _classify(o)
+        j = min((jj for jj in range(len(truth)) if jj not in used),
+                key=lambda jj: ((truth[jj][1][0] - cyx[1]) ** 2
+                                + (truth[jj][1][1] - cyx[0]) ** 2))
+        d = math.hypot(truth[j][1][0] - cyx[1], truth[j][1][1] - cyx[0])
+        if d > 30.0 or kind != truth[j][0]:
+            raise RuntimeError(
+                f"defect mismatch: detected {kind}@{cyx} vs "
+                f"truth {truth[j][0]}@{truth[j][1]} (dist {d:.1f}px)")
+        used.add(j)
+        kinds.append(kind)
+    log(f"  classified: {kinds} (all matched truth)")
+
+    # オーバーレイ: 種別ごとに色分けした枠 + 種別ラベル + 面積
+    KIND_COLOR = {"scratch": (255, 80, 60), "dent": (255, 170, 40),
+                  "particle": (80, 200, 255)}
+    KIND_JP = {"scratch": "傷", "dent": "打痕", "particle": "異物"}
+    vis = _pil_of(rgb)
     d2 = ImageDraw.Draw(vis)
     font = _font(16)
-    for i, o in enumerate(objs):
+    for i, (o, kind) in enumerate(zip(objs, kinds)):
         y0, x0, y1, x1 = o["bbox"]
         m = 6
-        d2.rectangle([x0 - m, y0 - m, x1 + m, y1 + m],
-                     outline=(255, 90, 60), width=2)
-        tx = min(max(2, x0 - m), img.shape[1] - 150)
-        d2.text((tx, max(2, y0 - m - 20)), f"NG{i + 1}  area={int(o['area'])}px",
-                fill=(255, 200, 80), font=font)
-    panels = [np.stack([_synth_brushed_metal(np.random.default_rng(SEED))] * 3, -1),
-              np.stack([np.clip(diff * 6.0, 0, 1)] * 3, -1), _np_of(vis)]
-    out = _montage(panels, ["良品面 (合成ヘアライン金属)",
-                            "median 背景差分 |img − median|",
-                            f"欠陥 {len(objs)} 件検出 (枠 + 面積)"], ncols=3)
+        col = KIND_COLOR[kind]
+        d2.rectangle([x0 - m, y0 - m, x1 + m, y1 + m], outline=col, width=3)
+        tx = min(max(2, x0 - m), W - 210)
+        d2.text((tx, max(2, y0 - m - 20)),
+                f"NG{i + 1} {KIND_JP[kind]} {kind}  {int(o['area'])}px",
+                fill=col, font=font)
+    vis_np = _np_of(vis)
+
+    # 差分パネルはヒートマップ着色 (hot): どこが「光って」検出されたかを見せる
+    heat = matplotlib.colormaps["hot"](np.clip(diff * 5.0, 0.0, 1.0))[..., :3]
+
+    # 拡大インセット: 傷 / 打痕 / 異物を 1 件ずつ 3 倍ズーム (240x110 → 720x330)
+    insets, inset_labels = [], []
+    for want in ("scratch", "dent", "particle"):
+        i = kinds.index(want)
+        o = objs[i]
+        cyx = o["centroid"]
+        cw, ch = 240, 110
+        x0 = int(np.clip(cyx[1] - cw / 2, 0, W - cw))
+        y0 = int(np.clip(cyx[0] - ch / 2, 0, H - ch))
+        crop = _to_u8(vis_np[y0:y0 + ch, x0:x0 + cw])
+        zoom = Image.fromarray(crop, "RGB").resize((cw * 3, ch * 3),
+                                                   Image.LANCZOS)
+        zd = ImageDraw.Draw(zoom)
+        zd.rectangle([0, 0, cw * 3 - 1, ch * 3 - 1],
+                     outline=KIND_COLOR[want], width=3)
+        insets.append(_np_of(zoom))
+        inset_labels.append(f"拡大 x3: NG{i + 1} {KIND_JP[want]} ({want})")
+
+    row1 = _montage([rgb, heat, vis_np],
+                    ["検査画像 (合成ヘアライン金属, 欠陥 6 件)",
+                     "median 背景差分ヒートマップ |img − median|",
+                     f"検出 {len(objs)}/6 — 種別分類つき (傷/打痕/異物)"], ncols=3)
+    row2 = _montage(insets, inset_labels, ncols=3)
+    out = np.concatenate([row1, row2], axis=0)    # 同幅 (パネル 720px x 3 列)
     _save_png(out, "industrial_defect.png")
     _save_thumb("industrial_defect.png")
     return {
         "file": "industrial_defect.png",
-        "title": "表面欠陥検査 — 背景差分 + blob 解析",
+        "title": "表面欠陥検査 — 背景差分 + blob 解析 + 種別分類",
         "ops": ["median_image", "dilation_circle", "segment_objects"],
         "data": "合成ヘアライン金属面 + 描き込み欠陥 6 件 (真値既知)",
         "synthetic": True,
-        "caption": ("合成した金属面に入れた傷 3・打痕 2・異物 1 を、median フィルタで"
-                    "地合いを推定して差分を取り、blob 解析で 6/6 件検出。"
-                    "面積スコア付きで枠表示する定番の外観検査パイプライン。"),
-        "verify": f"既知 6 欠陥に対し検出 {len(objs)} 件 (一致を assert 済)",
+        "caption": ("合成した金属面に入れた傷 3・打痕 2・錆色異物 1 を、median "
+                    "フィルタで地合いを推定して差分を取り、blob 解析で 6/6 件検出。"
+                    "さらに形状 (離心率) と色 (赤み) だけで傷/打痕/異物に分類し、"
+                    "種別ラベル + 色分け枠 + 拡大インセットで表示する外観検査"
+                    "パイプライン。"),
+        "verify": ("既知 6 欠陥に対し検出 6 件、位置 (<30px) と種別 (傷/打痕/異物) "
+                   "の 1:1 一致まで assert 済"),
     }
 
 
