@@ -380,16 +380,21 @@ def main():
                     help="use every Nth source frame")
     args = ap.parse_args()
     subjects = [s.strip() for s in args.subjects.split(",") if s.strip()]
-    meta = json.loads(META.read_text(encoding="utf-8"))
+    unknown = [s for s in subjects if s not in ("stereo", "track", "legacy")]
+    if unknown:
+        raise SystemExit(f"unknown subject(s): {', '.join(unknown)}")
+    meta = None
+    frames_dir = None
+    if any(s in ("stereo", "track") for s in subjects):
+        frames_dir, meta_path = _evis_paths()      # fail-closed env resolution
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
     for s in subjects:
         if s == "stereo":
-            gen_stereo(meta, fps=args.fps, step=args.step)
+            gen_stereo(meta, frames_dir, fps=args.fps, step=args.step)
         elif s == "track":
-            gen_track(meta, fps=args.fps, step=args.step)
+            gen_track(meta, frames_dir, fps=args.fps, step=args.step)
         elif s == "legacy":
-            gen_legacy()
-        else:
-            raise SystemExit(f"unknown subject: {s}")
+            gen_legacy(_legacy_gif())
 
 
 if __name__ == "__main__":
