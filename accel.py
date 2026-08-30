@@ -54,13 +54,13 @@ def _gauss_kernel(sigma, device):
 
 
 def _sep_conv(t, k):
+    """分離可能 conv(symmetric パディング)。scipy gaussian_filter の既定
+    mode='reflect'(= numpy 'symmetric'、端複製)に一致させる。torch の
+    'reflect'(端非複製)を使っていた旧版は sobel/dog/unsharp 系で端リングが
+    ずれ、_norm 正規化を通じて全体に乗っていた(2026-08-31 修正)。"""
     r = (k.numel() - 1) // 2
-    kh = k.view(1, 1, 1, -1)
-    kv = k.view(1, 1, -1, 1)
-    t = F.pad(t, (r, r, 0, 0), mode="reflect")
-    t = F.conv2d(t, kh)
-    t = F.pad(t, (0, 0, r, r), mode="reflect")
-    return F.conv2d(t, kv)
+    t = F.conv2d(_pad_sym(t, r, 3), k.view(1, 1, 1, -1))
+    return F.conv2d(_pad_sym(t, r, 2), k.view(1, 1, -1, 1))
 
 
 def _sym_idx(n, r, device):
