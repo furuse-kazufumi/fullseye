@@ -661,7 +661,8 @@ def viewer3d_project(points, cam, center, radius, zoom, pan, size):
 
     Orthographic: view = cam @ (P - center); screen xy maps the +/-radius view
     box into *size* pixels scaled by *zoom* and shifted by *pan* (pixels);
-    depth is the view-space forward coordinate (larger = nearer the camera).
+    depth is the view-space forward coordinate (larger = FARTHER from the
+    camera — the camera sits on the negative forward side looking along +forward).
     Headless — the unit tests pin known vertices to known screen positions.
     """
     P = np.asarray(points, np.float64).reshape(-1, 3)
