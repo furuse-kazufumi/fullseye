@@ -308,39 +308,78 @@ def subject_edge_compass(log=print) -> dict:
     }
 
 
+def _grow_dla(size: int, iters: int, rng) -> tuple[np.ndarray, np.ndarray]:
+    """中央 1 点から DLA 樹枝を育てる (op を反復適用)。戻り (cluster, age)."""
+    food = 0.28 * rng.random((size, size))     # 周囲の「栄養」= 拡散源
+    cl = np.zeros((size, size))
+    cl[size // 2, size // 2] = 1.0
+    age = np.full((size, size), np.nan)
+    age[cl > 0.5] = 0.0
+    for i in range(1, iters + 1):
+        inp = np.maximum(cl, food * (cl < 0.5))
+        new = fs.apply(inp, "alife_dla", 1.0, 1.0)
+        fresh = (new > 0.5) & (cl <= 0.5)
+        age[fresh] = float(i)
+        cl = new
+    return cl, age
+
+
 def subject_alife_worlds(log=print) -> dict:
-    """人工生命の世界 — セル・オートマトンと反応拡散の 6 つの宇宙."""
+    """人工生命の世界 — セル・オートマトン/自己組織化の 6 つの宇宙.
+
+    honest note: alife op は 1 回の適用が数十ステップ相当なので、
+    ここでは同じ op を**反復適用**して十分に発達させている (それでも
+    「登録 op しか使わない」は守られる)。gray_scott / turing は反復しても
+    このサイズでは絵にならなかったため不採用 (数合わせで載せない)。
+    """
     rng = np.random.default_rng(SEED)
-    noise = rng.random((320, 320))
-    # ウルフラム CA は中央 1 点から成長させるときれいな三角形 (ルール 90 相当)
-    point = np.zeros((320, 320))
-    point[0, 160] = 1.0
-    spec = [
-        ("alife_gray_scott", noise, 0.5, 0.5, "magma", "反応拡散 (グレイ=スコット)"),
-        ("alife_turing", noise, 0.5, 0.5, "viridis", "チューリング模様"),
-        ("alife_lenia", noise, 0.5, 0.5, "cividis", "レニア (連続的な人工生命)"),
-        ("alife_dla", noise, 0.5, 0.5, "bone", "結晶成長 (DLA)"),
-        ("alife_sandpile", noise, 0.5, 0.5, "plasma", "砂山くずし (自己組織化臨界)"),
-        ("alife_wolfram1d", point, 90.0 / 255.0, 0.5, "afmhot",
-         "1 次元セル・オートマトン"),
+    S = 320
+    zeros = np.zeros((S, S))
+    # ルール 90 (index 1) = シェルピンスキー / ルール 30 (index 0) = カオス
+    wolf90 = fs.apply(zeros, "alife_wolfram1d", 0.125, 0.0)
+    wolf30 = fs.apply(zeros, "alife_wolfram1d", 0.0, 0.0)
+    # 砂山くずし: 中央のなだらかな砂の山が、くずれて幾何学模様になる
+    yy, xx = np.mgrid[0:S, 0:S]
+    bump = np.exp(-(((yy - S / 2) ** 2 + (xx - S / 2) ** 2)
+                    / (2 * (S / 5.0) ** 2)))
+    sand = bump
+    for _ in range(10):
+        sand = fs.apply(sand, "alife_sandpile", 1.0, 1.0)
+    # DLA 樹枝 (成長の順番で着色)
+    cl, age = _grow_dla(S, 110, rng)
+    t = np.nan_to_num(age / max(1.0, float(np.nanmax(age))), nan=0.0)
+    dla_rgb = _cmap(0.15 + 0.85 * t, "plasma") * (cl > 0.5)[..., None]
+    # レニア: なめらかノイズから珊瑚状の微細組織へ
+    lenia = fs.apply(rng.random((S, S)), "gauss_filter", 0.5, 0.5)
+    for _ in range(15):
+        lenia = fs.apply(lenia, "alife_lenia", 0.5, 1.0)
+    # サイクリック CA: 色相環を「次の色に食べられる」ルール
+    cyc = rng.random((S, S))
+    for _ in range(120):
+        cyc = fs.apply(cyc, "alife_cyclic_ca", 1.0, 1.0)
+    panels = [
+        _cmap(wolf90, "afmhot"),
+        _cmap(wolf30, "GnBu_r"),
+        _cmap(sand, "magma"),
+        dla_rgb,
+        _cmap(lenia, "viridis"),
+        _hsv_to_rgb(cyc, np.full_like(cyc, 0.75), 0.35 + 0.65 * cyc),
     ]
-    panels, labels, ops = [], [], []
-    for op, src, a, b, cmap, label in spec:
-        res = fs.apply(src, op, a, b)
-        panels.append(_cmap(res, cmap))
-        labels.append(label)
-        ops.append(op)
+    labels = ["ルール 90 → フラクタル", "ルール 30 → カオス",
+              "砂山くずし (自己組織化臨界)", "拡散で育つ樹枝 (DLA)",
+              "レニア (連続ライフゲーム)", "サイクリック CA"]
     out = _montage(panels, labels, ncols=3)
     _save_png(out, "science_alife_worlds.png")
     _save_thumb("science_alife_worlds.png")
     return {
         "file": "science_alife_worlds.png",
-        "title": "人工生命の 6 つの宇宙",
-        "ops": ops,
-        "data": "乱数ノイズ / 1 点から成長 (シミュレーション)",
+        "title": "単純ルールから生まれる 6 つの宇宙",
+        "ops": ["alife_wolfram1d", "alife_sandpile", "alife_dla",
+                "alife_lenia", "alife_cyclic_ca", "gauss_filter"],
+        "data": "0 と乱数の初期値から反復シミュレーション",
         "synthetic": True,
-        "caption": ("単純なルールを繰り返すだけで、ヒョウ柄・生き物・結晶・雪崩・"
-                    "フラクタルが勝手に生まれる。全部 fullseye の op 1 回ずつ。"),
+        "caption": ("となりのマスを見て自分の色を決める——それだけのルールを"
+                    "繰り返すと、フラクタル・カオス・結晶・珊瑚もようが勝手に生まれる。"),
     }
 
 

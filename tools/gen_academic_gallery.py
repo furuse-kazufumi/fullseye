@@ -548,7 +548,7 @@ def rec_fft(col):
 
 
 def rec_flowdir(col):
-    g = gray(col)
+    g = ap(gray(col), "cv_clahe", 0.6, 0.5)   # enhance first: cloud decks are low-contrast
     amp = norm01(ap(g, "sobel_amp", 0.5, 0.5))
     dire = ap(g, "sobel_dir", 0.5, 0.5)
     theta = dire * 2 * np.pi
@@ -556,7 +556,7 @@ def rec_flowdir(col):
     wheel = fs.colorize_flow(u, v)
     return ([("original", col), ("sobel_amp", heat(amp)),
              ("gradient direction wheel", wheel)],
-            ["rgb1_to_gray", "sobel_amp", "sobel_dir", "colorize_flow"])
+            ["rgb1_to_gray", "cv_clahe", "sobel_amp", "sobel_dir", "colorize_flow"])
 
 
 def rec_relief(col):
@@ -656,10 +656,10 @@ EXHIBITS = [
     ("geology", "geo_thin_section", ("ai", "Polarized light microscopy image of a granite rock thin section, interference colors, interlocking mineral grains of quartz feldspar and biotite, petrographic microscope view, no text"), "multiotsu",
      "岩石薄片(偏光顕微鏡風)を multi-Otsu で鉱物粒子に分類"),
     # ----- 気象学 (real NASA + AI)
-    ("meteorology", "met_hurricane", ("nasa", "hurricane eye from space station"), "flowdir",
+    ("meteorology", "met_hurricane", ("nasa", "hurricane florence space station"), "flowdir",
      "ハリケーンの渦構造を sobel_dir 勾配方向ホイールで可視化"),
     ("meteorology", "met_supercell", ("ai", "Dramatic wide-angle photograph of a supercell thunderstorm over the great plains, rotating wall cloud, storm chasing photography, natural light, no text"), "enhance",
-     "スーパーセル積乱雲(AI 生成)を clahe + unsharp で構造強調"),
+     "スーパーセル積乱雲(AI 生成)を cv_clahe + unsharp で構造強調"),
     # ----- 考古学 (real Met CC0 + AI)
     ("archaeology", "arch_amphora", ("met", "terracotta amphora"), "efd",
      "土器シルエットを楕円フーリエ記述子(EFD)で形状復元(2/8/32 高調波)"),
@@ -677,7 +677,7 @@ EXHIBITS = [
     ("biology", "bio_diatoms", ("ai", "Dark-field light microscopy image of many diverse diatoms with intricate glass shells scattered on a dark background, various geometric shapes, scientific microscopy, no text"), "segment_count",
      "珪藻顕微鏡像(AI 生成)を分割・計数"),
     ("biology", "bio_deepsea", ("ai", "Deep sea anglerfish with glowing bioluminescent lure in the dark abyss, underwater scientific expedition photography, faint blue light, no text"), "enhance",
-     "深海生物(AI 生成)の暗部を clahe で増強"),
+     "深海生物(AI 生成)の暗部を cv_clahe で増強"),
     ("biology", "bio_butterfly", ("ai", "Extreme macro photograph of a blue morpho butterfly wing showing iridescent scales in overlapping rows, scientific macro photography, no text"), "gabor",
      "蝶の翅鱗粉(AI 生成)の周期構造を sk_gabor で解析"),
     # ----- 古生物学 (real Smithsonian CC0 + AI 生体復元が目玉)
@@ -695,11 +695,11 @@ EXHIBITS = [
      "三葉虫化石(AI 生成)の体節を gray_tophat で浮き彫り強調"),
     # ----- 医学 (AI のみ: 実データはライセンス困難)
     ("medicine", "med_chest_xray", ("ai", "Chest X-ray radiograph style grayscale medical image of a healthy adult thorax, ribs lungs and heart shadow visible, frontal PA view, radiology style, simulated educational image, no text no patient information"), "xray",
-     "胸部X線風画像(AI 生成)を clahe + sobel_amp で強調・エッジ抽出"),
+     "胸部X線風画像(AI 生成)を cv_clahe + sobel_amp で強調・エッジ抽出"),
     ("medicine", "med_histology", ("ai", "Hematoxylin and eosin stained histology slide of intestinal tissue under a light microscope, pink and purple cells with visible nuclei and villi structures, pathology microscopy, simulated educational image, no text"), "multiotsu",
      "H&E 組織切片風画像(AI 生成)を multi-Otsu で組織構造分類"),
     ("medicine", "med_brain_mri", ("ai", "Axial T1-weighted brain MRI scan style grayscale medical image showing brain anatomy with clear gray and white matter contrast, radiology style, simulated educational image, no text no patient information"), "enhance",
-     "脳 MRI 風画像(AI 生成)を clahe + unsharp で組織コントラスト強調"),
+     "脳 MRI 風画像(AI 生成)を cv_clahe + unsharp で組織コントラスト強調"),
     ("medicine", "med_blood_smear", ("ai", "Light microscopy image of a blood smear with many red blood cells and a few purple stained white blood cells, hematology microscopy at high magnification, simulated educational image, no text"), "segment_count",
      "血液塗抹風画像(AI 生成)の血球を分割・計数"),
     ("medicine", "med_anatomy_heart", ("ai", "Vintage anatomical illustration of a human heart with labeled chambers drawn in the style of a 19th century medical atlas, sepia ink on aged paper, detailed engraving style, simulated illustration"), "edges",
