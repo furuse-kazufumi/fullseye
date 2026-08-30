@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fullseye"
-version = "0.1.0"
+version = "0.1.1"
 description = "Evolvable image-processing operator library and honest pipeline designer (numpy-native, optional GPU)"
 readme = "README.md"
 requires-python = ">=3.10"

@@ -22,9 +22,19 @@ jobs:
       - name: Install core only (no extras)
         run: pip install -e .
       - name: Import + registry smoke (the README claim, executed)
+        # ops3d/pipeline3d included since the v0.1.0 pip check found a hard
+        # skimage import killing the 3-D registry on a bare install.
         run: |
           python -c "import fullseye, fsi18n; print('import ok')"
           python -c "import fullseye; n=len(fullseye.op_names()); print(n, 'ops'); assert n > 500"
+          python -c "import ops3d, pipeline3d, measure3d; assert len(ops3d.list_ops()) > 200"
+          python - <<'PY'
+          import numpy as np, fullseye
+          img = np.zeros((64, 64)); img[16:48, 16:48] = 1.0
+          out = fullseye.run_pipeline(img, ["gaussian", "sobel_amp", "otsu"])
+          assert set(np.unique(out)) <= {0.0, 1.0}
+          print("bare-install pipeline smoke ok")
+          PY
       - name: Packaging invariants
         run: |
           pip install pytest
