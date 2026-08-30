@@ -9,7 +9,7 @@ This is a real point cloud of asteroid **25143 Itokawa** — the Gaskell shape m
 ## TL;DR
 
 - **Fullseye** (a pun on "Bullseye" — hitting dead center on a target) is a self-built library of classical image-processing and geometric-vision algorithms: **roughly 1,000 operators, all implemented in numpy from scratch, sitting behind one typed interface**. The goal is to make "explainable vision" — vision whose internals you can actually account for — something you can carry around for **Physical AI** (AI that acts in the physical world with a body, i.e. robots).
-- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a matching implementation for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against an actual scraped operator list.
+- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a matching implementation for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from HALCON's official reference.
 - On top of the library sit an **evolutionary-design mode** that "designs" algorithms through evolutionary computation, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE called Fullseye Studio**.
 - **The recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain-language request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with results shown right in the Studio window** — that's the workflow this is designed for.
 - The undercurrent of this article is **making "honest disclosure" a mechanism**, not a slogan — not cherry-picking good numbers, not hiding failures, spelling out limitations plainly. I include cases where the quality gates actually caught bugs, including **six that I fixed in the course of writing this very article**.
@@ -193,9 +193,9 @@ A detailed breakdown of every panel (which op produced which value) lives in the
 
 ### The Yardstick Is HALCON (42.5%, Measured)
 
-To avoid claiming "coverage" subjectively, I use the industrial-vision giant **HALCON** as a yardstick. Against **2,313 operators** scraped from HALCON's official documentation, every Fullseye op that corresponds to a real HALCON operator is tagged, and the tally is done mechanically.
+To avoid claiming "coverage" subjectively, I use the industrial-vision giant **HALCON** as a yardstick. Against the **2,313-operator** list compiled from HALCON's official reference, every Fullseye op that corresponds to a real HALCON operator is tagged, and the tally is done mechanically.
 
-> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not a figure from memory, but a measurement against an actual scraped list.
+> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not a figure from memory, but a measurement against the actual list.
 
 To be honest, that's **still under half**. Chapters like Tuple handling, System, Classification, and OCR are almost entirely untouched (they sit outside the core of image processing, so I've deprioritized them). Matching, Morphology, Filtering, and geometric measurement, on the other hand, are well filled in. The point of this number isn't the percentage itself — it's that **I keep a per-chapter table open, showing exactly what's filled in and what's empty, all the time.**
 
@@ -350,7 +350,7 @@ And this RAG-based mode is **the workflow I actually recommend**. Pair it with S
 
 Concretely: open Studio next to Claude Code and ask it, "count the parts in this bin and give me a graspable pose for each." The AI retrieves the relevant op notes, writes and runs a segmentation-then-6-DoF-pose-estimation pipeline, and the results show up in Studio's image window and 3D view. The human looks at the screen and, if something's off, asks for a redo in plain language. **The workflow this is designed for is image processing that runs entirely on conversation and a screen** — all the pieces introduced in this article (~1,000 ops, type contracts, machine-readable notes, and Studio's rendering layer) are what make it possible.
 
-For what it's worth, this development itself is done in partnership with Claude Code. If you'd like to try it, starting from [the author's referral link](https://claude.ai/referral/0sqPw8E_lw) helps this project's continued development a little (full disclosure: it's a referral link).
+For what it's worth, this development itself is done with Claude Code as an implementation partner — the design decisions and direction stay with me. If you'd like to try it, starting from [the author's referral link](https://claude.ai/referral/0sqPw8E_lw) helps this project's continued development a little (full disclosure: it's a referral link).
 
 One more thing I've kept in mind is **academic use**. Every op carries a machine-readable note with real references (md = SoT), each version is pinned to code with a fingerprint, and evaluation is done honestly with held-out data — meaning it's built from the start to be **citable and reproducible**. The repo includes a `CITATION.cff`, and every reference cites a real classical work, never a fabricated DOI. If this ends up used and cited as a research tool, that would make me genuinely happy — that's the design intent.
 

@@ -180,7 +180,7 @@ n     = fullseye.apply(seg,   "count_obj")       # 領域 → 特徴量（物体
 out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 ```
 
-実際の出力を見てもらうのが早いでしょう。エッジ検出・セグメンテーション・輪郭計測など、定番どころを1枚に並べるとこうなります（すべて上の `apply` / `run_pipeline` の実出力）：
+実際の出力を見てもらうのが早いでしょう。エッジ検出・セグメンテーション・輪郭計測など、定番どころを1枚に並べるとこうなります（すべて上の `apply` / `run_pipeline` の実出力。入力は scikit-image 同梱のサンプル画像 `coins`）：
 
 [![2D 古典ビジョン op の実出力モンタージュ（エッジ / セグメンテーション / 輪郭計測 ほか）— クリックでフルサイズ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
