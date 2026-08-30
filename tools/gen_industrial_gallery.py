@@ -242,18 +242,22 @@ def subject_defect_metal(log=print) -> dict:
                   "particle": (80, 200, 255)}
     KIND_JP = {"scratch": "傷", "dent": "打痕", "particle": "異物"}
     vis = _pil_of(rgb)
+    vis_clean = _pil_of(rgb)                      # インセット切出し用 (文字なし)
     d2 = ImageDraw.Draw(vis)
+    d2c = ImageDraw.Draw(vis_clean)
     font = _font(16)
     for i, (o, kind) in enumerate(zip(objs, kinds)):
         y0, x0, y1, x1 = o["bbox"]
         m = 6
         col = KIND_COLOR[kind]
         d2.rectangle([x0 - m, y0 - m, x1 + m, y1 + m], outline=col, width=3)
+        d2c.rectangle([x0 - m, y0 - m, x1 + m, y1 + m], outline=col, width=2)
         tx = min(max(2, x0 - m), W - 210)
         d2.text((tx, max(2, y0 - m - 20)),
                 f"NG{i + 1} {KIND_JP[kind]} {kind}  {int(o['area'])}px",
                 fill=col, font=font)
     vis_np = _np_of(vis)
+    vis_clean_np = _np_of(vis_clean)
 
     # 差分パネルはヒートマップ着色 (hot): どこが「光って」検出されたかを見せる
     heat = matplotlib.colormaps["hot"](np.clip(diff * 5.0, 0.0, 1.0))[..., :3]
