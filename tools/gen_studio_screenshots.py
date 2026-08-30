@@ -125,6 +125,15 @@ def shot_main(out_path: str) -> None:
               if combo.itemText(i) == "Segment — blob / coin"]
     assert target, "recipe 'Segment — blob / coin' not in combo"
     combo.setCurrentIndex(target[0]); _pump(app, 20)
+    # tune the sample through the Program panel (the normal Studio workflow): the
+    # shipped recipe's Otsu mask merges the bright top band into one blob on this
+    # image, so open the discs and drop border-touching regions -> 21 clean coins.
+    win._program["edit"].setPlainText(
+        "gaussian (0.300, 0.000)\n"
+        "otsu (0.500, 0.500)\n"
+        "opening_circle (0.600, 0.500)\n"
+        "sk_clear_border (0.500, 0.500)\n")
+    win._program["apply"](); _pump(app, 20)
     # HDevelop-style region overlay (the segmented coins painted over the input)
     disp = [cb for cb in win.findChildren(QtWidgets.QComboBox)
             if any(cb.itemText(i) == "region overlay" for i in range(cb.count()))]
