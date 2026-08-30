@@ -1126,12 +1126,15 @@ def build_op_sampler_2d(log=print) -> dict:
     if len(chosen) < 24:
         log(f"[warn] op_sampler_2d: only {len(chosen)}/24 categories yielded a runnable op")
 
+    feature_specs = _build_feature_tile_specs(img, log=log)
+
     bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
     ncols, nrows = 6, -(-len(chosen) // 6)
     fig, axes = plt.subplots(nrows, ncols, figsize=(4.0 * ncols, 3.55 * nrows), facecolor=bg)
     axes = axes.ravel()
     for ax, (cat, name, out) in zip(axes, chosen):
-        _render_sampler_tile(ax, cat, name, out, img.shape, bg, fg, muted, log=log)
+        _render_sampler_tile(ax, cat, name, out, img.shape, bg, fg, muted, log=log,
+                             special=feature_specs.get(name))
     for ax in axes[len(chosen):]:
         ax.axis("off")
 
