@@ -30,13 +30,13 @@
 
 実際のバーコードリーダーと同じく走査線のグレープロファイルからバーのエッジ対を検出。45 本のバー全ての両端を ±1.5px 以内で特定し、登録 op decode_barcode(簡易バー計数)とも本数が一致。※フル復号器ではなくバー検出・幅計測の素材。 使用 op: decode_barcode, gen_measure_rectangle2 (m1_*), measure_pairs (m1_measure_pairs)。データ: 合成バーコード (45 本, バー位置 = 真値)。
 
-## 表面欠陥検査 — 背景差分 + blob 解析
+## 表面欠陥検査 — 背景差分 + blob 解析 + 種別分類
 
-![表面欠陥検査 — 背景差分 + blob 解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg)
+![表面欠陥検査 — 背景差分 + blob 解析 + 種別分類](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg)
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png )
 
-合成した金属面に入れた傷 3・打痕 2・異物 1 を、median フィルタで地合いを推定して差分を取り、blob 解析で 6/6 件検出。面積スコア付きで枠表示する定番の外観検査パイプライン。 使用 op: median_image, dilation_circle, segment_objects。データ: 合成ヘアライン金属面 + 描き込み欠陥 6 件 (真値既知)。
+合成した金属面に入れた傷 3・打痕 2・錆色異物 1 を、median フィルタで地合いを推定して差分を取り、blob 解析で 6/6 件検出。さらに形状 (離心率) と色 (赤み) だけで傷/打痕/異物に分類し、種別ラベル + 色分け枠 + 拡大インセットで表示する外観検査パイプライン。 使用 op: median_image, dilation_circle, segment_objects。データ: 合成ヘアライン金属面 + 描き込み欠陥 6 件 (真値既知)。
 
 ## 位置決め — 回転探索つき shape matching
 

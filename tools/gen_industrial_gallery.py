@@ -185,17 +185,18 @@ def subject_defect_metal(log=print) -> dict:
         truth.append(("scratch", ((x0 + x1) / 2, (y0 + y1) / 2)))
     gray = np.asarray(pil, np.float64)[..., 0] / 255.0
     for (cx, cy) in [(210, 400), (520, 240)]:
-        # 打痕 = 深い影の中心 + まわりの淡いハイライトリング (凹みの照り返し)
+        # 打痕 = 深い影の芯 (median 窓 9px より細い → 差分に残る) +
+        #        まわりの淡いハイライト (凹みの照り返し。広く滑らか → 差分に出ない)
         d2c = (xx - cx) ** 2 + (yy - cy) ** 2
-        gray = gray - 0.40 * np.exp(-d2c / (2 * 5.5 ** 2)) \
-                    + 0.17 * np.exp(-d2c / (2 * 10.0 ** 2))
+        gray = gray - 0.45 * np.exp(-d2c / (2 * 3.0 ** 2)) \
+                    + 0.12 * np.exp(-d2c / (2 * 6.5 ** 2))
         truth.append(("dent", (cx, cy)))
     rgb = np.stack([gray] * 3, axis=-1)
     cx, cy = 330, 130
-    blob = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * 4.5 ** 2)))
-    rgb[..., 0] += 0.10 * blob                    # 異物 = 錆色の付着物 (赤み + 暗)
-    rgb[..., 1] -= 0.28 * blob
-    rgb[..., 2] -= 0.40 * blob
+    blob = np.exp(-(((xx - cx) ** 2 + (yy - cy) ** 2) / (2 * 3.0 ** 2)))
+    rgb[..., 0] += 0.12 * blob                    # 異物 = 錆色の付着物 (赤み + 暗)
+    rgb[..., 1] -= 0.32 * blob
+    rgb[..., 2] -= 0.45 * blob
     truth.append(("particle", (cx, cy)))
     rgb = np.clip(_blur(rgb, (0.6, 0.6, 0.0)), 0.0, 1.0)
 
