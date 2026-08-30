@@ -294,7 +294,7 @@ py -3.11 tools/gen_industrial_gallery.py
 
 ## 8. 学問分野横断ギャラリー(`academic_*.png`)
 
-生成元: `tools/gen_academic_gallery.py`。**31 展示 = 実データ 9 + AI 生成 22**。
+生成元: `tools/gen_academic_gallery.py`。**30 展示 = 実データ 8 + AI 生成 22**。
 医学・考古学・生物学・宇宙・古生物学・地質学・気象学・海洋学・植物学をカバーし、
 全画像に fullseye の登録 op を適用した処理前→後のペア構成です。
 
