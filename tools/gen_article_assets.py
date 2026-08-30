@@ -831,7 +831,7 @@ def build_halcon_coverage_chart(log=print) -> dict:
 
     bg, fg, muted = "#0b0d12", "#e7e9ee", "#8b91a0"
     n = len(chapters)
-    fig, ax = plt.subplots(figsize=(12, max(6.0, 0.34 * n)), facecolor=bg)
+    fig, ax = plt.subplots(figsize=(14, max(6.5, 0.34 * n)), facecolor=bg)
     ax.set_facecolor(bg)
     y = np.arange(n)
     bar_color = "#5aa9e6"
