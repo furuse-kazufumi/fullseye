@@ -123,8 +123,13 @@ HALCON の Graphics 章には窓へ直接描く `disp_*` operator 群がある�
 `dev_open_window` と同じ handle 体系に乗り(`dev_set_window` で選択可、`max_graphics_windows` の
 上限も共通)、re-Apply は source-order slot キーで**同じ窓を再利用**する。2-D の `disp_image` を
 3-D ビューア窓がカレントの時に呼ぶと primary 窓へ安全に redirect(honest limit)。ビューアは
-実測に基づき software rasterizer(200k pts ≈ 21 ms/frame、offscreen/RDP でも同一経路)で、
-ヘッドレスのカメラ数学(`viewer3d_camera`/`viewer3d_project`)は pytest で数値固定済み。
+実測に基づき software rasterizer(offscreen/RDP でも同一経路)。**性能実測**(2026-08-30
+再計測、size=480、定常状態 median): 200k pts ≈ 66 ms/frame(≈15 fps)、1M pts ≈ 350 ms/frame —
+**1M は full resolution では対話的とは言えない**ため、drag/wheel 中は `DRAG_BUDGET`(250k)点へ
+均一間引きし(HUD に "preview N pts" と正直表示)、リリース時にフル解像度で再描画する。
+ワイヤフレーム overlay は **60,000 辺 cap**(`mesh_edges(cap=60000)`、超過時は overlay 自体を
+スキップ)。ヘッドレスのカメラ数学(`viewer3d_camera`/`viewer3d_project`)は pytest で数値固定済み
+(depth は「大きいほど遠い」— far→near の painter's algorithm で遮蔽、UV 球の可視面回帰テストあり)。
 `dev_*` 同様、docs/ops の per-op ノート体系(純変換 op 用)には登録しない(体系を乱さない)。
 
 ## 出典
