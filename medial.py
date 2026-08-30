@@ -31,6 +31,10 @@ __all__ = [
     "medial_axis_points",
     "topology_signature",
     "medial_match",
+    "skeleton_junctions3d",
+    "skeleton_endpoints3d",
+    "skeleton_prune3d",
+    "skeleton_branches3d",
 ]
 
 
