@@ -490,7 +490,25 @@ objs  = fs.segment_objects(frame, threshold="otsu")        # 物体ごとの幾�
 
 シミュレーションの中で育てたロボット視覚のパイプラインが、そのまま検査ラインの部品として転用できる――これは"おまけ"ではなく、**同じ型付き op 体系の上に両方が乗っている**という設計の直接の帰結です。
 
-<!-- FIGURE: industrial-gallery -->
+その帰結を、実際にシミュレーションで組んで動かした画で示します（すべて MuJoCo 物理・実レイキャスト・実レンダ上の実処理。クラスタ数・物体数は真値と照合済み）。
+
+[![bin picking ―― 深度セグメントと把持候補の採点](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_binpick.png)
+
+*↑ **bin picking の前段** ―― 部品 10 個を物理シミュレーションで箱に落とし、真上の深度カメラで観測 → 深度セグメント → 「周囲クリアランス+高さ」で把持候補 8 件を採点（緑=最優先）。把持ジョーの向きは長方形フィットの長軸から。使用 op: `segment_objects`, `fit_rectangle2`, `colorize_depth`。*
+
+さらに、この採点結果から **6 自由度 IK で実際に掴んで搬出するフルサイクル**も動画にしてあります → [phai_bin_pick.mp4（GitHub でインライン再生）](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/phai_bin_pick.mp4)。接着なしの素の物理で、箱の外に出た部品だけを成功と数えて 3 個搬出成功、という正直な集計です。
+
+[![LIDAR 点群 → 地面除去 → クラスタリング](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_lidar_clusters_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_lidar_clusters.png)
+
+*↑ **LIDAR 障害物認識** ―― リング型 LIDAR を模して 2 万本超のレイを実際に飛ばし、RANSAC 地面除去 → ユークリッドクラスタリングで物体 6 個が 6 クラスタに。各クラスタに OBB を当てて鳥瞰表示。使用 op: `remove_ground`, `euclidean_clusters`, `obb`。*
+
+[![ステレオ視差 → 3D 復元 → 鳥瞰障害物マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png)
+
+*↑ **ステレオ障害物マップ** ―― 視差 → $Z = f \cdot B / d$ で奥行き → 3D 点群 → 高さ 12cm 超をクラスタリングで 4 物体が 4 クラスタに（復元した地面の高さ誤差は中央値 3mm）。使用 op: `disparity_subpixel`, `disparity_confidence`, `euclidean_clusters`。*
+
+[![焦点合成 ―― ボケた 7 枚から全焦点 1 枚](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_focus_stack.png)
+
+*↑ **焦点合成** ―― ピント位置を振った 7 枚から各画素で最もシャープな 1 枚を選んで合成（鮮鋭度は単写比 1.27 倍）。顕微鏡検査・基板検査で使われる仕組みです。*
 
 この中の1つ、**イベントカメラ（DVS）** ―― 画素ごとの輝度変化だけを非同期に吐くセンサー ―― は、動きで見るのが一番わかりやすい。カメラがパンすると、エッジに沿って ON イベント（シアン）と OFF イベント（マゼンタ）が流れます：
 
