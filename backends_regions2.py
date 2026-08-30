@@ -440,6 +440,96 @@ def r2_split_skeleton_lines(v, a, b):
     return _clip01(out)
 
 
+_EM_SIMPLE_LUT = None
+
+
+def _em_simple_lut():
+    """EM93 の simple 判定を 8 近傍 256 パターンの LUT にする。
+
+    近傍を時計回りの環 (N,NE,E,SE,S,SW,W,NW) で並べると、環上で隣り合う
+    2 セルは常に 4 隣接、隣り合わないセルは 4 隣接しない。したがって
+    「近傍内の前景の強(4)連結成分」= 環上の 1 の連続区間。中心画素と
+    強連結な成分 = 辺位置(N/E/S/W = 偶数番)を含む区間。
+    simple ⇔ その区間がちょうど 1 個。
+    """
+    global _EM_SIMPLE_LUT
+    if _EM_SIMPLE_LUT is not None:
+        return _EM_SIMPLE_LUT
+    lut = np.zeros(256, dtype=bool)
+    for code in range(1, 256):
+        bits = [(code >> k) & 1 for k in range(8)]
+        if all(bits):
+            runs = [list(range(8))]
+        else:
+            start = bits.index(0)
+            runs, cur = [], []
+            for step in range(8):
+                idx = (start + step) % 8
+                if bits[idx]:
+                    cur.append(idx)
+                elif cur:
+                    runs.append(cur)
+                    cur = []
+            if cur:
+                runs.append(cur)
+        strong = sum(1 for r in runs if any(i % 2 == 0 for i in r))
+        lut[code] = strong == 1
+    _EM_SIMPLE_LUT = lut
+    return lut
+
+
+def em_skeleton(v, a, b):
+    """Eckhardt–Maderlechner 型の不変細線化(HALCON `skeleton` と同系統)。
+
+    出典: U. Eckhardt, G. Maderlechner, "Invariant Thinning",
+    Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は
+    M. Couprie "Note on fifteen 2D parallel thinning algorithms" の EM93
+    定義に従う(論文準拠のクリーンルーム実装。HALCON 実装との画素単位の
+    一致は未検証):
+
+      interior = 4 近傍がすべて前景の画素
+      simple   = 近傍の前景 4 連結成分のうち中心と 4 隣接するものが丁度 1 個
+      perfect  = ある 4 方向の隣が interior で、その反対方向が背景
+      「simple かつ perfect な画素を全部同時に消す」を不動点まで反復
+
+    完全並列・対称(90 度回転/鏡映と可換)・位相保存。Zhang–Suen 系の
+    `sk_skeleton` より枝を多く残し、中心軸(距離変換の稜線)の画素を
+    ほぼすべて含むのが特徴。ヒゲは `pruning` で後処理する流儀も HALCON と同じ。
+    つまみ a, b は未使用。
+    """
+    x = _as_mask(v).astype(bool)
+    if not x.any():
+        return np.zeros(x.shape, np.float64)
+    lut = _em_simple_lut()
+    cross = np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], dtype=bool)
+    # 環順 (N,NE,E,SE,S,SW,W,NW) の (dy, dx)
+    offs = [(-1, 0), (-1, 1), (0, 1), (1, 1),
+            (1, 0), (1, -1), (0, -1), (-1, -1)]
+
+    def shifted(arr, dy, dx):
+        """value[P] = arr[P + (dy,dx)](外は背景=False)。"""
+        p = np.zeros((arr.shape[0] + 2, arr.shape[1] + 2), dtype=arr.dtype)
+        p[1:-1, 1:-1] = arr
+        return p[1 + dy:1 + dy + arr.shape[0], 1 + dx:1 + dx + arr.shape[1]]
+
+    while True:
+        interior = ndimage.binary_erosion(x, structure=cross, border_value=0)
+        code = np.zeros(x.shape, dtype=np.int64)
+        for k, (dy, dx) in enumerate(offs):
+            code |= shifted(x, dy, dx).astype(np.int64) << k
+        simple = lut[code]
+        perfect = np.zeros_like(x)
+        for k in (0, 2, 4, 6):                       # 強(4)方向のみ
+            dy, dx = offs[k]
+            oy, ox = offs[(k + 4) % 8]
+            perfect |= shifted(interior, dy, dx) & ~shifted(x, oy, ox)
+        delete = x & ~interior & simple & perfect
+        if not delete.any():
+            break
+        x = x & ~delete
+    return x.astype(np.float64)
+
+
 # --------------------------------------------------------------------------- #
 # registry assembly
 # --------------------------------------------------------------------------- #
