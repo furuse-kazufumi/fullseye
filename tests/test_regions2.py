@@ -70,7 +70,7 @@ def test_registry_names_unique_and_prefixed():
     # `skeleton` coverage is already claimed by the core skeleton op).
     assert all(isinstance(o.halcon, str) for o in OPS)
     assert ({o.name for o in OPS if not o.halcon}
-            == {"r2_smallest_rectangle1", "em_skeleton"})
+            == {"r2_smallest_rectangle1", "em_skeleton", "r2_endpoints_skeleton"})
     # contlength is honestly skipped, not silently faked
     assert "contlength" in R2.SKIPPED
     assert "contlength" not in {o.halcon for o in OPS}
@@ -407,3 +407,25 @@ def test_em_skeleton_matches_published_em93_reference():
             data[key].astype(np.float64), 0.5, 0.5) > 0.5
         assert int(mine.sum()) == int(data[nkey]), (
             f"{key}: 画素数 {int(mine.sum())} != 公表値 {int(data[nkey])}")
+
+
+def test_endpoints_skeleton_plus_and_line():
+    from scipy import ndimage
+    # 十字(太い) -> 端点 4 か所(腕の先)、中心は端点でない
+    m = np.zeros((41, 41), np.float64)
+    m[19:22, 5:36] = 1.0
+    m[5:36, 19:22] = 1.0
+    out = OPS_BY_NAME["r2_endpoints_skeleton"].fn(m, 0.5, 0.5)
+    _, n = ndimage.label(out > 0.5, structure=np.ones((3, 3)))
+    assert n == 4, f"十字の端点は 4 か所のはず (got {n})"
+    assert out[20, 20] == 0.0
+    # 1 画素幅の直線 -> 端点はちょうど両端の 2 画素
+    line = np.zeros((11, 30), np.float64)
+    line[5, 4:26] = 1.0
+    out = OPS_BY_NAME["r2_endpoints_skeleton"].fn(line, 0.5, 0.5)
+    ys, xs = np.where(out > 0.5)
+    assert sorted(zip(ys.tolist(), xs.tolist())) == [(5, 4), (5, 25)]
+    # 孤立 1 画素は端点
+    dot = np.zeros((9, 9), np.float64)
+    dot[4, 4] = 1.0
+    assert OPS_BY_NAME["r2_endpoints_skeleton"].fn(dot, 0.5, 0.5)[4, 4] == 1.0

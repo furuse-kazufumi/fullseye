@@ -52,6 +52,7 @@ OPS = [
     "r2_smallest_rectangle1", "r2_smallest_circle", "r2_smallest_rectangle2",
     "r2_sort_region", "r2_union1", "r2_partition_rectangle",
     "r2_runlength_features", "r2_split_skeleton_lines", "em_skeleton",
+    "r2_endpoints_skeleton",
     "r3_background_seg",
     "r3_clip_region", "r3_eliminate_runs", "r3_rank_region", "r3_region_features",
     "r3_runlength_distribution", "r3_select_region_point", "r3_partition_dynamic",
