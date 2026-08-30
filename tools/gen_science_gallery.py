@@ -433,8 +433,9 @@ def subject_dragon_anaglyph(log=print) -> dict:
     sep = 0.055
     imgs = {}
     for eye, dx in (("L", -sep), ("R", +sep)):
-        pose = fs.look_at((dx * dist, -dist, 0.35 * dist), (0.0, 0.0, 0.0),
-                          up=(0.0, 0.0, 1.0))
+        # Stanford メッシュは y-up。少し上から見下ろす正面ビュー
+        pose = fs.look_at((dx * dist, 0.3 * dist, dist), (0.0, 0.0, 0.0),
+                          up=(0.0, 1.0, 0.0))
         r = fs.render_mesh(V, F, pose=pose, width=size, height=size)
         shade = _lambert(r["normals"], r["silhouette"])
         imgs[eye] = shade
