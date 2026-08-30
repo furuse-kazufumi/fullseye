@@ -290,7 +290,27 @@ Fullseye の op 体系は、突き詰めると **HALCON という産業用マシ
 
 検査ラインで古典アルゴリズムがいまだに現役である理由は、単純です。**照明とカメラを固定した検査治具の上で、決まった部品の決まった欠陥を探す**という状況では、学習データを集めて再学習するコストに見合うだけの複雑さが、そもそも要らないことが多い。むしろ「なぜこの部品を不良品と判定したのか」を、しきい値とアルゴリズムの言葉で**そのまま説明できる**ことの方が、量産ラインの現場では価値を持ちます。層①の「型（sort）という背骨」の節に書いた通り、Fullseye の op は決定論的で、同じ入力・同じつまみなら必ず同じ結果を返す――これは学習済みモデルには無い性質で、**検査基準の説明責任**が問われる現場ほど効いてくる特性だと思っています。
 
-<!-- FIGURE: industrial-gallery -->
+言葉だけだと抽象的なので、この"検査ラインの定番"を実際に組んで動かした画を並べます（すべて合成データ上の実処理。検出・計測結果は既知の真値と照合済みで、たとえば欠陥検出は 6/6 件・粒子計数は 60/60 粒が assert で確認されています）。
+
+[![表面欠陥検査 ―― 背景差分+blob 解析](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_defect.png)
+
+*↑ **表面欠陥検査** ―― 合成した金属面の傷 3・打痕 2・異物 1 を、median フィルタで地合いを推定 → 差分 → blob 解析で 6/6 件検出し、面積つきで枠表示。使用 op: `median_image`, `dilation_circle`, `segment_objects`。*
+
+[![サブピクセル寸法計測 ―― 1D measuring キャリパー](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_metrology.png)
+
+*↑ **サブピクセル寸法計測** ―― 測定矩形に沿ったグレープロファイルの微分極値をサブピクセル補間してエッジ対を抽出。段付きシャフト 3 段の径を実測し、描画寸法との誤差は最大 0.02px。HALCON の 1D Measuring と同じ流儀です。使用 op: `m1_measure_pairs` ほか。*
+
+[![位置決め ―― 回転探索つき shape matching](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_align_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_align.png)
+
+*↑ **位置決め** ―― エッジ勾配ベースの形状モデルをピラミッド探索で照合し、回転したワーク 3 個の位置と角度を検出（真値と 0.0px・0.0° 一致）。円板や長方形の紛らわしい別部品には反応しません。使用 op: `create_shape_model`, `find_shape_model`。*
+
+[![ブロブ解析 ―― 粒子計数とサイズ分布](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_blobs_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_blobs.png)
+
+*↑ **粒子計数** ―― 60 粒（うち 6 組は接触）をマーカー式 watershed で切り分けて 60/60 計数し、面積で 3 サイズに色分け。粉粒体の品質検査の型です。使用 op: `otsu`, `xcv_watershed_markers`, `segment_objects`。*
+
+[![コード読取りの土台 ―― 走査線エッジ対によるバー検出](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_barcode_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/industrial_barcode.png)
+
+*↑ **バー検出** ―― 実際のリーダーと同じく走査線のグレープロファイルからバーのエッジ対を検出。45 本全ての両端を ±1.5px 以内で特定（フル復号器ではなくバー検出・幅計測の素材です）。使用 op: `decode_barcode`, `m1_measure_pairs`。*
 
 ### 物差しは HALCON（実測 42.5%）
 
