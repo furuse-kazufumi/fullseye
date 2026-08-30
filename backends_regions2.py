@@ -513,8 +513,12 @@ def em_skeleton(v, a, b):
     出典: U. Eckhardt, G. Maderlechner, "Invariant Thinning",
     Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は
     M. Couprie "Note on fifteen 2D parallel thinning algorithms" の EM93
-    定義に従う(論文準拠のクリーンルーム実装。HALCON 実装との画素単位の
-    一致は未検証):
+    定義に従うクリーンルーム実装。**同ノートが公表する EM93 の参照出力と
+    突き合わせ済み**: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、
+    形状 2/3 は画素数が公表値と一致(2434 / 3895)。
+    tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。
+    (HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの
+    参照出力と一致している):
 
       interior = 4 近傍がすべて前景の画素
       simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)
