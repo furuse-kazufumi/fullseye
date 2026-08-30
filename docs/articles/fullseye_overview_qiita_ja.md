@@ -265,6 +265,18 @@ op を1個足すだけで、レジストリ・探索空間・コード生成・�
 - **3D オペレータ：265 種**（点群・メッシュ・ボリューム・SDF など、55 カテゴリ）
 - 合わせて **約1000個**。denoise / 平滑化 / 先鋭化 / 二値化・セグメンテーション / モルフォロジー / エッジ・コーナー・ブロブ検出 / 距離変換 / 色空間 / テクスチャ・形状特徴 / 輪郭 / 3D幾何 ―― をカバーします。
 
+この「幅」は言葉より図の方が早いので、**実レジストリから機械集計したツリーマップ**を貼っておきます（面積＝カテゴリの op 数。スクリプトが 731/46・265/55 と一致することを assert してから描いています ―― 数字を盛れない作りです）。
+
+[![Fullseye operator taxonomy ―― 2D 731 op / 46 カテゴリ、3D 265 op / 55 カテゴリのツリーマップ（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_taxonomy_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_taxonomy.png)
+
+*↑ op 分類ツリーマップ ―― 左が 2D レジストリ（halcon_ext 81・region 76・features 71…）、右が 3D レジストリ（geometry 23・render 14…）。面積＝op 数。*
+
+「では実際にどんな出力になるのか」も1枚で。**24 カテゴリから代表 op を1個ずつ機械選出して、同じコイン写真に実適用**したサンプラーです（スキップゼロ。スカラーを返す op は数値を、輪郭を返す op は実 XLD 点を、そのまま焼き込んでいます）。
+
+[![2D op サンプラー ―― 24 カテゴリの代表 op を coins に実適用（クリックでフルサイズ）](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/op_sampler_2d_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/op_sampler_2d.png)
+
+*↑ 2D op サンプラー ―― gaussian から decode_barcode、`xmh_zernike`（Zernike モーメント）まで、24 分類 24 通りの「見え方」。全部実出力です。*
+
 ### 工場の検査ラインで使われてきた処理が、pip 一発で
 
 Fullseye の op 体系は、突き詰めると **HALCON という産業用マシンビジョンの系譜**から多くを学んで作られています。だから、工場の検査ラインで使われてきた"定番の仕事"に相当する op が、素の `pip install fullseye` だけで手に入ります。実装済みの op 名を挙げて具体的に書きます。
