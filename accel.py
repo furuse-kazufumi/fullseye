@@ -571,8 +571,18 @@ def _interior_max(ref, got, m=3):
         float(np.max(np.abs(ref - got)))
 
 
+# parity の (a, b) スイープ点。旧版は (0.5, 0.4) の 1 点だけで、a>=0.75 のとき
+# _k(a)=9(半径 4px)が固定 3px マージンに食い込む穴があった(2026-08-31 修正)。
+PARITY_AB = ((0.5, 0.4), (0.25, 0.75), (0.8, 0.2), (0.0, 0.5), (1.0, 0.9))
+
+
 def parity(device="cpu"):
-    """Difftest every accel op against the CORE registry op it reproduces."""
+    """Difftest every accel op against the CORE registry op it reproduces.
+
+    マージンは a ごとにカーネル半径 +1(最低 3px)。symmetric パディング修正後の
+    conv 系 op は full-image でも一致するが、pooling 系(erode/dilate 等)は端の
+    規約差が原理的に残るため interior 判定を維持する(accel_vol._op_margin と同思想)。
+    """
     import ops
     rng = np.random.default_rng(7)
     imgs = [np.clip(rng.random((64, 64)) * 0.6 + 0.2 * (np.mgrid[0:64, 0:64][1] / 64), 0, 1)
@@ -581,12 +591,14 @@ def parity(device="cpu"):
     for name, (fn, core_name, halcon) in ACCEL.items():
         if core_name not in ops.RT:
             continue
-        got = run_batch(name, imgs, 0.5, 0.4, device)
         full = inter = 0.0
-        for i, im in enumerate(imgs):
-            ref = np.clip(ops.RT[core_name](im.copy(), 0.5, 0.4), 0, 1)
-            full = max(full, float(np.max(np.abs(ref - got[i]))))
-            inter = max(inter, _interior_max(ref, got[i]))
+        for a, b in PARITY_AB:
+            m = max(3, _k(a) // 2 + 1)
+            got = run_batch(name, imgs, a, b, device)
+            for i, im in enumerate(imgs):
+                ref = np.clip(ops.RT[core_name](im.copy(), a, b), 0, 1)
+                full = max(full, float(np.max(np.abs(ref - got[i]))))
+                inter = max(inter, _interior_max(ref, got[i], m))
         rows.append((name, halcon, full, inter))
     return rows
 
