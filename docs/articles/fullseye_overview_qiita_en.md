@@ -737,7 +737,7 @@ The star throughout is **the processing**. Each caption names the ops used, so y
 
 *↑ **Extracting a skeleton from a dinosaur silhouette** — the centerline (skeleton) of a Triceratops skeleton's shadow, extracted at 1-pixel width. Legs, horns, and tail remain like wirework. Ops used: `sk_skeleton`, `distance_transform`, and others.*
 
-### The Museum Wing — 31 Exhibits Across the Academic Disciplines
+### The Museum Wing — 30 Exhibits Across the Academic Disciplines
 
 Now the discipline-by-discipline exhibit rooms. Medicine, archaeology, biology, space, paleontology, geology, meteorology, oceanography, botany — this corner exists to show that **the same op system cuts straight into images from any field**. Caption conventions from here on are the same as above (real data gets a source link; AI-generated is labeled as such).
 
