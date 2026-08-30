@@ -1148,6 +1148,18 @@ def main() -> int:
     print("\n-- 3b) itokawa_montage --")
     itokawa = build_itokawa_montage()
 
+    print("\n-- 6) op_taxonomy (treemap) --")
+    taxonomy = build_op_taxonomy()
+
+    print("\n-- 7) halcon_coverage_chart --")
+    halcon_chart = build_halcon_coverage_chart()
+
+    print("\n-- 8) op_sampler_2d --")
+    sampler_2d = build_op_sampler_2d()
+
+    print("\n-- 9) op_sampler_3d (bonus) --")
+    sampler_3d = build_op_sampler_3d()
+
     print("\n-- 4) thumbnails (720px JPG) --")
     thumbs = build_thumbnails()
 
@@ -1158,6 +1170,11 @@ def main() -> int:
     all_paths = [physical["path"], vision["path"], *heroes]
     if itokawa["path"]:
         all_paths.append(itokawa["path"])
+    all_paths.append(taxonomy["path"])
+    all_paths.append(halcon_chart["path"])
+    all_paths.append(sampler_2d["path"])
+    if sampler_3d.get("path"):
+        all_paths.append(sampler_3d["path"])
     all_paths.extend(thumbs)
     for path in all_paths:
         size = os.path.getsize(path)
@@ -1177,6 +1194,14 @@ def main() -> int:
         print("skipped itokawa panels:")
         for title, module, reason in itokawa["skipped"]:
             print(f"  - {title} ({module}): {reason}")
+    print(f"\nop_taxonomy: 2D {taxonomy['n_cats_2d']} cats/{taxonomy['n_2d']} ops, "
+          f"3D {taxonomy['n_cats_3d']} cats/{taxonomy['n_3d']} ops")
+    print(f"halcon_coverage: {halcon_chart['n_covered']}/{halcon_chart['n_real']} "
+          f"({halcon_chart['pct']:.1f}%) across {halcon_chart['n_chapters']} chapters")
+    print(f"op_sampler_2d: {sampler_2d['n_tiles']} tiles -> "
+          + ", ".join(f"{c}:{n}" for c, n in sampler_2d["ops"]))
+    if sampler_3d.get("path"):
+        print(f"op_sampler_3d: {sampler_3d['n_tiles']} tiles")
     return 0
 
 
