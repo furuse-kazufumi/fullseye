@@ -1619,15 +1619,27 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._repaint()
 
         def set_mesh(self, V, F):
-            """Show a triangle mesh: lambert-shaded vertex splats + optional wire."""
-            self._P = np.asarray(V, np.float64).reshape(-1, 3)
+            """Show a triangle mesh: lambert-shaded splats + optional wireframe.
+
+            The splat cloud is the vertices PLUS the face centroids (with face
+            normals), which roughly doubles the surface sample density — a
+            24.5k-vertex Itokawa reads as a surface instead of a dot sprinkle,
+            still well inside the measured software-render budget."""
+            Va = np.asarray(V, np.float64).reshape(-1, 3)
             self._F = np.asarray(F, int)
-            self._VN = mesh_vertex_normals(self._P, self._F)
+            fc = Va[self._F].mean(axis=1)                 # face centroids
+            fn = np.cross(Va[self._F[:, 1]] - Va[self._F[:, 0]],
+                          Va[self._F[:, 2]] - Va[self._F[:, 0]])
+            ln = np.linalg.norm(fn, axis=1, keepdims=True)
+            fn = fn / np.where(ln > 1e-12, ln, 1.0)
+            self._V = Va                                  # true vertices (wireframe)
+            self._P = np.concatenate([Va, fc])
+            self._VN = np.concatenate([mesh_vertex_normals(Va, self._F), fn])
             self._edges = mesh_edges(self._F)
             self._colors = None
             self._clusters, self._selected = [], None
             self._refit()
-            self.info = {"kind": "mesh", "n_points": int(self._P.shape[0]),
+            self.info = {"kind": "mesh", "n_points": int(Va.shape[0]),
                          "n_faces": int(self._F.shape[0]),
                          "wireframe_available": self._edges is not None}
             self._repaint()
