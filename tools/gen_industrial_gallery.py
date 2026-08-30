@@ -1062,8 +1062,10 @@ def _write_snippet(meta: list) -> None:
         lines.append(f"## {m['title']}")
         lines.append("")
         if is_mp4:
-            lines.append(f"動画: {RAW_BASE}{m['file']}")
-            lines.append("(GitHub blob ページでインライン再生可。静止サムネ: "
+            blob = ("https://github.com/furuse-kazufumi/fullseye/blob/master/"
+                    f"docs/articles/assets/{m['file']}")
+            lines.append(f"動画 (GitHub blob ページでインライン再生): {blob}")
+            lines.append(f"(raw 直リンク: {RAW_BASE}{m['file']} / 静止サムネ: "
                          f"{RAW_BASE}{m['still'].replace('.png', '_thumb.jpg')} )")
         else:
             thumb = os.path.splitext(m["file"])[0] + "_thumb.jpg"

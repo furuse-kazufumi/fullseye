@@ -76,11 +76,11 @@
 
 (フル解像度: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_stereo_obstacles.png )
 
-2 台のカメラ画像のズレ(視差)をブロックマッチングで求め、Z = f·b/d で奥行きに変換して 3D 点群へ。高さ 10cm 超の点をクラスタリングすると 4 物体が 4 クラスタに分かれ、鳥瞰の障害物マップができる。移動ロボットの視覚の最短経路。 使用 op: disparity_subpixel (stereo), disparity_confidence (stereo), colorize_disparity, euclidean_clusters, fit_rectangle2。データ: MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)。
+2 台のカメラ画像のズレ(視差)をブロックマッチングで求め、Z = f·b/d で奥行きに変換して 3D 点群へ。高さ 12cm 超の点をクラスタリングすると 4 物体が 4 クラスタに分かれ、鳥瞰の障害物マップができる。移動ロボットの視覚の定番パイプライン。 使用 op: disparity_subpixel (stereo), disparity_confidence (stereo), colorize_disparity, euclidean_clusters, fit_rectangle2。データ: MuJoCo レンダのステレオペア (基線 12cm, 物体 4 個 = 真値)。
 
 ## bin picking 実動作 — 探索・把持・搬出のフルサイクル
 
-動画: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/phai_bin_pick.mp4
-(GitHub blob ページでインライン再生可。静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_bin_pick_still_thumb.jpg )
+動画 (GitHub blob ページでインライン再生): https://github.com/furuse-kazufumi/fullseye/blob/master/docs/articles/assets/media/phai_bin_pick.mp4
+(raw 直リンク: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/phai_bin_pick.mp4 / 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/phai_bin_pick_still_thumb.jpg )
 
 箱に落とした部品 8 個から把持候補を採点して選び、6 自由度 IK で真上から掴んで搬出する実動作。接着なしの素の物理で、箱の外に出た部品だけを成功と数えて 3 個成功。 使用 op: bin_pick suite (6-DOF IK + 把持候補採点 + MuJoCo 物理)。データ: MuJoCo 物理シミュレーション (Franka Panda + 部品 8 個、3 個の搬出成功を実測)。
