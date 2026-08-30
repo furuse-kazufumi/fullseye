@@ -1103,8 +1103,11 @@ def build_op_sampler_2d(log=print) -> dict:
 
     op は REGISTRY 登録順のカテゴリ初出順で、各カテゴリ最初に動く op を機械的に
     選ぶ(``_pick_sampler_ops``)。手描き無し・全タイルが ``fullseye.apply`` の
-    本物の戻り値(image/region は画像、feature はスカラー数値焼き込み、contour は
-    実 XLD 点の焼き込み)。
+    本物の戻り値(image/region は画像、contour は実 XLD 点の焼き込み)。
+    feature/matching 出力 op(blob_count/ncc_locate/decode_barcode/classify_shape/
+    xmh_zernike/xmh_pftas)は「黒地に数字だけ」でなく、その op の正規の使い方
+    (前処理済み region・実テンプレート・測る対象が写った入力)での入力画像+
+    オーバーレイ+実測値をタイルにする(``_build_feature_tile_specs``、assert 付き)。
     """
     import matplotlib
     matplotlib.use("Agg")
