@@ -179,7 +179,7 @@ n     = fullseye.apply(seg,   "count_obj")       # region -> feature (object cou
 out = fullseye.run_pipeline(frame, ["gaussian", "sobel_amp", "otsu"])
 ```
 
-Actual output is worth more than description. Here are some of the usual suspects — edge detection, segmentation, contour measurement — laid out in one montage (all real output from the `apply` / `run_pipeline` calls above):
+Actual output is worth more than description. Here are some of the usual suspects — edge detection, segmentation, contour measurement — laid out in one montage (all real output from the `apply` / `run_pipeline` calls above; the input is the `coins` sample image bundled with scikit-image):
 
 [![Real output montage from 2D classical vision ops (edges / segmentation / contour measurement, and more) — click for full size](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/vision_ops_montage_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/vision_ops_montage.png)
 
