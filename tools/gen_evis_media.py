@@ -226,7 +226,7 @@ def gen_track(meta: dict, fps: int = 20, step: int = 1):
                 # meta tip_c is (x, y) col-major from the original capture script
                 gx, gy = fr["tip_c"][0], fr["tip_c"][1]
                 px_errs.append(float(np.hypot(cx - gx, cy - gy)))
-            hud_extra = f"bean px=({cx:5.1f},{cy:5.1f})  area {bean[0]['area']:.0f}"
+            hud_extra = f"bean ({cx:.0f},{cy:.0f})"
         im = Image.fromarray(vis)
         d = ImageDraw.Draw(im)
         if len(trail) >= 2:
