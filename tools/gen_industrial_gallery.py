@@ -664,9 +664,9 @@ def subject_binpick_depth(log=print) -> dict:
         o = objs[i]
         ycen, xcen = o["centroid"]
         col = (40, 255, 120) if i == best else (255, 200, 60)
-        pts = np.argwhere(o["mask"])
-        rect = fs.fit_rectangle2(pts[:, ::-1])     # (x, y) で長方形フィット
-        ang = rect["phi"]
+        pts = np.argwhere(o["mask"])               # (row, col)
+        rect = fs.fit_rectangle2(pts)              # 最小面積の有向長方形
+        ang = math.radians(rect["angle_deg"])      # 長軸角 (y 下向き, PIL と同系)
         jaw = 26
         # 把持ジョー: 長軸に直交する 2 本の平行線
         nx, ny = -math.sin(ang), math.cos(ang)
