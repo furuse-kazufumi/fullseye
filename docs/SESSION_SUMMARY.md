@@ -3,50 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-30 17:53:03
+- **最終更新**: 2026-08-30 17:58:56
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-08fc9f9f auto: studio.py 編集前 (2026-08-30 17:52)
-dc00bf02 auto: studio.py 編集前 (2026-08-30 17:52)
-e39c649d auto: studio.py 編集前 (2026-08-30 17:52)
-fe1701e0 auto: README.md 編集前 (2026-08-30 17:52)
-e35c7819 auto: studio.py 編集前 (2026-08-30 17:52)
-09df1027 auto: gen_banner.py 編集前 (2026-08-30 17:51)
-50171900 auto: gen_banner.py 編集前 (2026-08-30 17:51)
-70341225 auto: gen_banner.py 編集前 (2026-08-30 17:51)
-869a4fce auto: gen_banner.py 編集前 (2026-08-30 17:51)
-e903fca6 auto: gen_banner.py 編集前 (2026-08-30 17:51)
+afcefbdd auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
+4b713899 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
+b99e37f0 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
+75e195c9 auto: gen_backmatter_figs.py 編集前 (2026-08-30 17:58)
+2d5f9312 auto: gen_backmatter_figs.py 編集前 (2026-08-30 17:58)
+84708b10 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
+cea7697a auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
+38d7e95e auto: fullseye_overview_qiita_en.md 編集前 (2026-08-30 17:58)
+f66404bb auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 17:57)
+550acebc auto: fullseye_overview_qiita_ja.md 編集前 (2026-08-30 17:57)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
- M studio.py
+M docs/articles/fullseye_overview_qiita_en.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-17:52 docs/SESSION_SUMMARY.md
-17:52 studio.py
-17:52 README.md
-17:52 docs/articles/assets/fullseye_banner.png
-17:51 fullseye.egg-info/SOURCES.txt
-17:51 fullseye.egg-info/top_level.txt
-17:51 fullseye.egg-info/requires.txt
-17:51 fullseye.egg-info/entry_points.txt
-17:51 fullseye.egg-info/dependency_links.txt
-17:51 fullseye.egg-info/PKG-INFO
-17:51 tools/gen_banner.py
-17:25 docs/articles/fullseye_overview_qiita_en.md
-17:25 docs/articles/fullseye_overview_qiita_ja.md
-17:23 docs/articles/assets/_evis_media_snippet.md
-17:21 tools/gen_evis_media.py
+17:58 docs/articles/fullseye_overview_qiita_en.md
+17:58 docs/articles/assets/fig_optional_extras_thumb.jpg
+17:58 docs/articles/assets/fig_optional_extras.png
+17:58 docs/articles/assets/fig_bug4_curvature_thumb.jpg
+17:58 docs/articles/assets/fig_bug4_curvature.png
+17:58 docs/articles/assets/fig_kabsch_margin_thumb.jpg
+17:58 docs/articles/assets/fig_kabsch_margin.png
+17:58 docs/articles/assets/fig_ci_waterfall_thumb.jpg
+17:58 docs/articles/assets/fig_ci_waterfall.png
+17:58 tools/gen_backmatter_figs.py
+17:57 docs/articles/assets/fig_rag_corpus_thumb.jpg
+17:57 docs/articles/assets/fig_rag_corpus.png
+17:57 docs/articles/fullseye_overview_qiita_ja.md
+17:57 .pytest_cache/v/cache/nodeids
+17:55 studio.py
 ```
 
 ---
