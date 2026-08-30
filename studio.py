@@ -1431,6 +1431,8 @@ def _image_view_class(QtWidgets, QtGui, QtCore):
             self._data = None
             self._text_items = []                    # dev_disp_text annotations (scene items)
             self.hover_cb = None                     # set by build_window
+            self.click_cb = None                     # optional pixel-click callback (x, y)
+            self._press_pos = None                   # to tell a click from a pan drag
 
         def set_pixmap(self, pm):
             self.clear_text()                        # a fresh render starts without stale annotations
