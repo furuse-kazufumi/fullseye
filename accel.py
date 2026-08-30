@@ -495,9 +495,10 @@ ACCEL = {
     "rank_percentile": (_percentile, "percentile", "rank_image"),
     "prewitt_amp": (_prewitt, "prewitt_mag", "prewitt_amp"),
     "roberts_amp": (_roberts, "roberts_mag", "roberts"),
-    # diff_of_gauss は core が |g1-g2| を _norm(全体 max abs)で割るため、大 sigma で
-    # 端の reflect 規約差が正規化係数を通じて全体スケールに乗る(interior 12px でも
-    # 0.10 残る)。faithful にできないので accel には載せず CPU(core)へ委ねる。honest。
+    # diff_of_gauss: 旧版は「_norm が端差を全体に乗せるので faithful 不可」と
+    # 結論していたが、真因は _sep_conv の torch 'reflect'(端非複製)だった。
+    # symmetric 化(2026-08-31)で端差そのものが消え full-image で一致する。
+    "diff_of_gauss": (_dog, "dog", "diff_of_gauss"),
     "gray_opening_rect": (_open_rect, "gopen", "gray_opening_rect"),
     "gray_closing_rect": (_close_rect, "gclose", "gray_closing_rect"),
     "gray_tophat": (_tophat, "tophat", "gray_tophat"),
