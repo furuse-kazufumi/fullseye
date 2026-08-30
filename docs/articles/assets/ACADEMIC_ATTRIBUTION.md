@@ -6,6 +6,6 @@
 
 | 画像 | 分野 | 素材 | AI 生成 | 出典 / ライセンス | 使用 op |
 |---|---|---|---|---|---|
-| `academic_geo_earth.png` | 地質学 | Lake Powell, Colorado River, Utah and Grand Canyon, Arizona | No | [JSC](https://images.nasa.gov/details/SL2-04-018) — Public domain (NASA) | principal_comp, rgb1_to_gray, clahe |
+| `academic_arch_amphora.png` | 考古学 | Terracotta amphora (jar) | No | [The Metropolitan Museum of Art](https://www.metmuseum.org/art/collection/search/254896) — CC0 (The Met Open Access) | rgb1_to_gray, otsu, fill_up, segment_objects, fourierdesc.elliptic_fourier, fourierdesc.reconstruct |
 
 生成日: 2026-08-30 / スクリプト: `tools/gen_academic_gallery.py`

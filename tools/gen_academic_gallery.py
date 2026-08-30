@@ -606,13 +606,11 @@ def rec_efd(col):
     if not objs:
         raise RuntimeError("EFD: no object found")
     mask = max(objs, key=lambda o: o["area"])["mask"]
-    # boundary pixels
-    from scipy import ndimage as ndi
-    bnd = mask & ~ndi.binary_erosion(mask)
-    ys, xs = np.nonzero(bnd)
-    cy, cx = ys.mean(), xs.mean()
-    order = np.argsort(np.arctan2(ys - cy, xs - cx))
-    pts = np.stack([ys[order], xs[order]], axis=1).astype(float)
+    # Ordered boundary trace (marching squares). Angle-sort fails on
+    # non-star-convex shapes (amphora handles), so trace properly.
+    from skimage import measure
+    contours = measure.find_contours(mask.astype(float), 0.5)
+    pts = max(contours, key=len)  # (row, col), ordered
     model = fd.elliptic_fourier(pts, 40)
     base = to_u8(col)
     im = Image.fromarray(base)
