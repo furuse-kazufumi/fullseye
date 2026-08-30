@@ -91,6 +91,33 @@ skeleton 系 / backend ブラックボックス 368 op / color 3ch(_to_batch が
 
 ---
 
+## C. 手・指のモーショントラッキング(2026-08-31 ユーザー発案)
+
+> 「手の動きをモーショントラッキングしている事例が結構見られる。指の動きとか、
+> 見れるようになると Physical AI への応用が効きやすい」
+
+fullseye ミッション(Physical AI / evis 視覚の統一 I/F)に直結。G1 歩行で実証済みの
+「mocap → 模倣 RL」パイプラインの**手版**が本命: 動画 → 手ランドマーク →
+evis 手(相反 u + 共収縮 c の 34 次元)へリターゲット → 箸 pick-place の模倣。
+
+候補 op(3 層):
+
+1. **古典層(依存なし・コア方針適合)**: 前景/肌色セグメント → 輪郭 →
+   凸包欠陥(convexity defects)で指先候補・指数カウント。HALCON 流でもある。
+   既存 op(contour/convex hull/skeleton)の組み合わせ + 新 op 2〜3 個で成立。
+   ロバスト性は限定的(デモ・単純背景向け)
+2. **学習層(optional extra)**: `hand_landmarks` op — 21 キーポイント + 左右。
+   MediaPipe Hands(Apache-2.0、ライセンス適合)を optional backend
+   (`pip install mediapipe`)か ONNX 変換で。返り値 (N, 21, 3)。
+   身体版 `pose_landmarks`(33 点)も同一機構で追加可
+3. **3D 化・下流ブリッジ**: 既存 stereo スイート / D435i depth で 3D リフト →
+   `hand_retarget`(21 点 → 関節角、evis 34 次元作動への写像)。
+   これは fullseye というより evis 側のブリッジ(所属は実装時に判断)
+
+実装順の提案: 2 → 3(2 が最小工数で最大効果。1 はデモ/教材価値)。
+
+---
+
 ## 実装時の共通規律
 
 - 数値はすべて実装時に再実測してから主張する(この文書の数値は調査時点)
