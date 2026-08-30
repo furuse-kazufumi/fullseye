@@ -1620,6 +1620,12 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._pan = [0.0, 0.0]
             self._drag = None                   # (mode, last QPoint) while a button is down
             self._frame = None                  # last rendered numpy frame (tests/screenshots)
+            self._n_drawn = 0                   # points actually splatted last frame (HUD honesty)
+            self._wheeling = False              # True during a wheel-zoom burst (decimated preview)
+            self._wheel_timer = QtCore.QTimer(self)
+            self._wheel_timer.setSingleShot(True)
+            self._wheel_timer.setInterval(180)  # full re-render shortly after the last tick
+            self._wheel_timer.timeout.connect(self._end_wheel)
             self.info = {"kind": "empty", "n_points": 0}
 
         # ---- data ----------------------------------------------------------- #
