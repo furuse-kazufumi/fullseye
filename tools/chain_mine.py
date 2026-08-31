@@ -567,11 +567,15 @@ def mine(ops, gens, chains, length, seed, check_determinism=True,
                "arg_keys": got["arg_keys"], "out_type": got["out_type"],
                "desc": d, "deterministic": None}
         if check_determinism:
-            # 高い検査なので、恒等・定数で落ちる候補には掛けない(収縮と同じ判定)
+            # 高い検査なので、収縮でどのみち落ちる候補には掛けない。判定材料は
+            # **中身だけ**で、実測秒は使わない — 秒を混ぜると「検査したか」が
+            # マシン負荷で変わり、``deterministic`` が None <-> True で
+            # 入れ替わって記録の決定性そのものが壊れる(実測: 閾値を跨がせると
+            # 40 連鎖中 6 件が反転した)
             cheap_out = ((d["delta"] is not None and d["delta"] < IDENTITY_EPS)
                          or d["size"] == 0
-                         or (d["rel_std"] is not None and d["rel_std"] < CONST_EPS)
-                         or d["sec"] > SLOW_S)
+                         or d["rel_std"] is None
+                         or d["rel_std"] < CONST_EPS)
             if cheap_out:
                 rec["deterministic"] = None
             else:
