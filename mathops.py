@@ -756,10 +756,25 @@ def poly_eval(coeffs, x):
     :func:`poly_fit`'s ``cond``).
 
     HALCON: no polynomial tuple operator (compose ``tuple_pow`` + arithmetic).
+
+    Raises ValueError when a finite input overflows float64 — a degree-*d*
+    polynomial at ``|x|`` well above 1 grows like ``|x|**d``, so mixing up the
+    two arguments (a long signal used as coefficients) silently produced ``inf``
+    before this guard (chain fuzzer wave-7: 256 coefficients evaluated at
+    ``|x|<=22`` -> ``22**255``). An unusable ``inf`` must not flow downstream.
     """
     c = _require_vector(coeffs, "coeffs")
     q, scalar = _query_points(x, "x")
-    out = np.polyval(c, q)
+    with np.errstate(over="ignore", invalid="ignore"):
+        out = np.polyval(c, q)
+    if not np.isfinite(out).all():
+        bad = np.abs(q[~np.isfinite(out)])
+        raise ValueError(
+            "poly_eval overflowed float64: a degree-%d polynomial evaluated at "
+            "|x| up to %.3g exceeds ~1.8e308 (|x|**degree grows that fast). "
+            "Check that the arguments are not swapped — coeffs is the short "
+            "coefficient vector, x the query points."
+            % (len(c) - 1, float(bad.max()) if bad.size else float("nan")))
     return float(out[0]) if scalar else np.ascontiguousarray(out, dtype=np.float64)
 
 
