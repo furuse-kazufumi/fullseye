@@ -246,9 +246,29 @@ def _op_md(rec, path, by_name):
         lines.append(f"型契約は `{ins} → {out}`。挙動の言語説明は下記のファミリ使い方ガイドと"
                      "実行可能サンプルを参照(ここでは推測を書かない)。")
     lines.append("")
+    if dim == "math":
+        # family-wide fail-closed input contract, stated once per note (grounded in
+        # mathops._as_float64 / _require_* / _check_elements — the 2026-08 adversarial
+        # audits' confirmed bug families, refused explicitly instead of silently).
+        lines.append("## ファミリ共通の入力契約(fail-closed)")
+        lines.append("")
+        lines.append("mathops の全 op は入力を検証してから計算する(黙って通さない):")
+        lines.append("")
+        lines.append("- **complex 入力は `ValueError`** — float64 への強制変換は虚部を黙って捨てる"
+                     "(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。"
+                     "`.real`/`.imag`/`abs()` を明示するか、複素対応の complexops を使う。")
+        lines.append("- **masked array(masked 要素あり)は `ValueError`** — マスクを剥がして"
+                     "下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。")
+        lines.append("- **NaN/Inf は全入力で `ValueError`**(件数を明示して拒否 — 結果全体に伝播するため)。")
+        lines.append("- **形状は厳格**: 1-D と 2-D を暗黙昇格・ブロードキャストしない"
+                     "(vector 枠に matrix、matrix 枠に vector は `ValueError`。reshape を明示する)。")
+        lines.append("- **サイズ上限**: 行列を取る op と `stat_histogram` の bins は "
+                     "`mathops.MAX_ELEMENTS`(2^26 ≈ 6700 万要素)超で `ValueError`。")
+        lines.append("")
     # family guide
     if rec.get("family"):
-        gp = os.path.join(DOCS, "2d", "guides", rec["family"] + ".md")
+        gp = os.path.join(DOCS, "math" if dim == "math" else "2d",
+                          "guides", rec["family"] + ".md")
         lines.append("## 詳しい使い方ガイド")
         lines.append("")
         lines.append(f"- [{rec['family']} ファミリ ガイド]({_rel(path, gp)})")
