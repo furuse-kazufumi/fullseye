@@ -17,6 +17,26 @@ def _kd(pts):
     return cKDTree(np.asarray(pts, float))
 
 
+def _require_cloud(pts, name):
+    """空でない (N,3) 点群であることを入口で保証(fail-closed)。
+
+    空点群の平均は無言の NaN になり、進化探索の fitness に毒として流れ込む
+    (連鎖ファザー wave-7 実測: radius_outlier_removal が雲を空にした直後の
+    chamfer_distance が NaN。同クラスを accuracy/completeness/fscore/
+    normal_consistency でも実測確認し一掃)。空になるのは上流フィルタの
+    パラメータ事故なので、メトリクス側は数を返さず明示的に拒否する。
+    """
+    p = np.asarray(pts, float)
+    if p.ndim != 2 or p.shape[1] != 3:
+        raise ValueError("%s must be an (N, 3) point cloud, got shape %r"
+                         % (name, p.shape))
+    if len(p) == 0:
+        raise ValueError("%s is empty — an upstream filter (outlier removal / "
+                         "cropping / downsampling) probably removed every "
+                         "point; the metric would be a silent NaN" % (name,))
+    return p
+
+
 def _nn_dist(a, b):
     """a の各点 → b への最近傍距離。→ (Na,)。"""
     d, _ = _kd(b).query(np.asarray(a, float), k=1)
@@ -24,7 +44,11 @@ def _nn_dist(a, b):
 
 
 def chamfer_distance(a, b, squared=False):
-    """対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。"""
+    """対称 Chamfer 距離 = 0.5*(mean_a min_b + mean_b min_a)。→ scalar。小さいほど一致。
+
+    Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = 無言 NaN)。"""
+    a = _require_cloud(a, "a")
+    b = _require_cloud(b, "b")
     dab = _nn_dist(a, b)
     dba = _nn_dist(b, a)
     if squared:
