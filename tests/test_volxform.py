@@ -254,10 +254,7 @@ def test_2d_input_rejected(name, call):
 @pytest.mark.parametrize("order", [-1, 6, 1.5, "cubic", np.nan])
 def test_order_must_be_exact_integer_0_to_5(fn, kwargs, order):
     with pytest.raises(ValueError, match="order"):
-        if fn is vol_rotate:
-            fn(np.zeros((4, 4, 4)), order=order, **kwargs)
-        else:
-            fn(np.zeros((4, 4, 4)), order=order, **kwargs)
+        fn(np.zeros((4, 4, 4)), order=order, **kwargs)
 
 
 def test_ops_registry():
