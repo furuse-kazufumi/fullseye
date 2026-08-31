@@ -451,6 +451,64 @@ def test_poly_roots_fail_closed():
 
 
 # --------------------------------------------------------------------------- #
+# silent-truncation rejection (2026-08-31 adversarial audit regressions)       #
+# --------------------------------------------------------------------------- #
+def test_complex_input_rejected_not_truncated():
+    # Regression: numpy's float64 coercion of complex input emits only a
+    # ComplexWarning and silently discards the imaginary part — mat_solve of a
+    # complex matrix returned a plausible-wrong real answer. Now ValueError.
+    C = np.array([[1.0 + 2.0j, 0.0], [0.0, 1.0]])
+    with pytest.raises(ValueError, match="complex"):
+        mathops.mat_solve(C, [1.0, 1.0])                    # matrix slot
+    with pytest.raises(ValueError, match="complex"):
+        mathops.mat_lstsq(np.eye(2), np.array([1.0 + 5.0j, 2.0]))  # rhs slot
+    with pytest.raises(ValueError, match="complex"):
+        mathops.stat_zscore(np.array([1.0 + 9.0j, 2.0, 3.0]))      # vector slot
+    with pytest.raises(ValueError, match="complex"):
+        mathops.interp_linear([0.0, 1.0], [0.0, 1.0],
+                              np.array([0.5 + 0.5j]))              # query slot
+    with pytest.raises(ValueError, match="complex"):
+        mathops.poly_eval(np.array([1.0 + 3.0j, 0.0j]), 2.0)       # coeffs slot
+
+
+def test_masked_values_rejected_not_stripped():
+    # Same family: coercing a masked array silently strips the mask and uses
+    # the raw values underneath as if they were valid measurements.
+    m = np.ma.masked_array([[1.0, 0.0], [0.0, 1.0]],
+                           mask=[[True, False], [False, False]])
+    with pytest.raises(ValueError, match="masked"):
+        mathops.mat_solve(m, [1.0, 1.0])
+    with pytest.raises(ValueError, match="masked"):
+        mathops.stat_describe(np.ma.masked_array([1.0, 2.0], mask=[True, False]))
+    # A masked array with NO masked entries loses nothing — accepted.
+    ok = np.ma.masked_array([[2.0, 0.0], [0.0, 1.0]], mask=False)
+    assert np.allclose(mathops.mat_solve(ok, [2.0, 3.0]), [1.0, 3.0])
+
+
+def test_histogram_density_over_empty_range_raises_not_nan():
+    # Regression: an explicit range excluding every sample with density=True
+    # returned a silent all-NaN density (numpy divides 0/0). Now ValueError.
+    with pytest.raises(ValueError, match="no samples"):
+        mathops.stat_histogram([5.0, 6.0], bins=3, range=(0.0, 1.0), density=True)
+    # density=False stays: honest zero counts are a valid answer.
+    counts, _ = mathops.stat_histogram([5.0, 6.0], bins=3, range=(0.0, 1.0))
+    assert list(counts) == [0, 0, 0]
+    # A range touching the data still yields a normalised density.
+    counts, edges = mathops.stat_histogram([0.5], bins=2, range=(0.0, 1.0),
+                                           density=True)
+    assert abs(float((counts * np.diff(edges)).sum()) - 1.0) < 1e-12
+
+
+def test_histogram_bins_capped():
+    # Regression: bins was unbounded — bins=2**30 would try to allocate
+    # gigabytes of edges/counts for a 2-sample vector. Now capped.
+    with pytest.raises(ValueError, match="cap"):
+        mathops.stat_histogram([1.0, 2.0], bins=mathops.MAX_ELEMENTS + 1)
+    counts, _ = mathops.stat_histogram([1.0, 2.0], bins=4)   # sane bins still fine
+    assert counts.sum() == 2
+
+
+# --------------------------------------------------------------------------- #
 # facade / registry wiring                                                     #
 # --------------------------------------------------------------------------- #
 def test_mathops_registry_names_resolve():

@@ -208,6 +208,39 @@ def _ops1d_section() -> list[str]:
     return out
 
 
+def _opsmath_section() -> list[str]:
+    out = ["## Math operators(opsmath)by category", "",
+           "視覚計測を支える数学 op(線形代数/統計/補間・多項式)。北極星は"
+           "「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・"
+           "volfreq、1-D 関数は funct1d を参照。", ""]
+    try:
+        import opsmath
+        cats = opsmath.categories()
+        catalog = getattr(opsmath, "_CATALOG", {})
+    except Exception as e:
+        return out + [f"- (opsmath を読めませんでした: {e})", ""]
+    total = 0
+    for cat in sorted(cats):
+        entries = catalog.get(cat, [])
+        if not entries:
+            continue
+        out.append(f"### {cat}({len(entries)})")
+        for entry in entries:
+            try:
+                name = entry[0]
+                info = opsmath.info(name)
+                io_ = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
+                doc = info.get("doc", "") or ""
+                out.append(f"- `{name}` (`{io_}`) — {doc}")
+                total += 1
+            except Exception as ex:
+                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
+        out.append("")
+    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_
+")
+    return out
+
+
 def _ops2d_section() -> list[str]:
     out = ["## 2-D pipeline operators(ops registry)by category", "",
            "1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` の"
@@ -272,7 +305,7 @@ def _references_section() -> list[str]:
 def build_catalog() -> str:
     lines: list[str] = []
     for section in (_preamble, _examples_section, _modules_section,
-                    _ops3d_section, _ops2d_section, _ops1d_section,
+                    _ops3d_section, _ops2d_section, _ops1d_section, _opsmath_section,
                     _references_section):
         try:
             lines += section()
