@@ -43,7 +43,9 @@ _CATALOG = {
         ("transform_funct_1d", "funct1d", ["signal"], "pairs"),
         ("compose_funct_1d", "funct1d", ["signal", "signal"], "signal"),
         ("sample_funct_1d", "funct1d", ["signal"], "signal"),
-        ("match_funct_1d_trans", "funct1d", ["signal", "signal"], "measurement"),
+        # {"shift": int, "score": float} の dict — shift と score は同格の対で
+        # スカラ 1 個に潰せないため table 宣言(wave-4 TYPEMISS 修正)
+        ("match_funct_1d_trans", "funct1d", ["signal", "signal"], "table"),
         ("distance_funct_1d", "funct1d", ["signal", "signal"], "measurement"),
         ("num_points_funct_1d", "funct1d", ["signal"], "measurement"),
         ("x_range_funct_1d", "funct1d", ["signal"], "pairs"),
