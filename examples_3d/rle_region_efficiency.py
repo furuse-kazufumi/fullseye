@@ -40,8 +40,12 @@ from volregion import (
     VolRLE,
     vol_rle_bbox,
     vol_rle_centroid,
+    vol_rle_components,
     vol_rle_decode,
+    vol_rle_difference,
     vol_rle_encode,
+    vol_rle_intersect,
+    vol_rle_union,
     vol_rle_volume,
 )
 
