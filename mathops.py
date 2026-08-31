@@ -481,6 +481,11 @@ def stat_histogram(x, bins=10, range=None, density=False):
             raise ValueError("range must be finite with lo < hi, got (%r, %r)"
                              % (lo, hi))
         rng = (lo, hi)
+        if density and not ((v >= lo) & (v <= hi)).any():
+            raise ValueError("stat_histogram: no samples fall inside range "
+                             "(%g, %g) — a density over zero samples is 0/0; "
+                             "refusing to return silent NaNs (use "
+                             "density=False for honest zero counts)" % (lo, hi))
     else:
         rng = None
     counts, edges = np.histogram(v, bins=int(bins), range=rng, density=bool(density))
