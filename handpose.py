@@ -139,8 +139,11 @@ def hand_landmarks(image, num_hands: int = 2, model_path=None,
           ``world_landmarks``  (21, 3) float。手の幾何中心を原点とするメートル座標
                                (関節角の計算はこちらを使う — 遠近で歪まない)
     """
-    import mediapipe as mp
+    # 先に _get_landmarker(内部で親切な ImportError/FileNotFoundError を送出)。
+    # 素の import を先に置くと fail-closed メッセージが永久に到達しない
+    # (敵対レビュー 2026-08-31 D1 で実測された到達不能デッドコード)
     lm = _get_landmarker(str(model_path or DEFAULT_MODEL), num_hands, min_confidence)
+    mp = _import_mediapipe()
     rgb = _to_rgb_uint8(image)
     res = lm.detect(mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb))
     out = []
