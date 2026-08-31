@@ -269,6 +269,13 @@ TYPE_CHECKS = {
     "matrix": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "roots": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
     and v.dtype.kind == "c",
+    # cpoints = 複素 1-D の**順序つき**点列(閉曲線)。roots と同じ形だが別プール:
+    # roots は順序に意味の無い解集合で、周回積分・巻き数は順序と閉性が答えそのもの
+    "cpoints": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+    and v.dtype.kind == "c",
+    # cscalar = 複素スカラ(∮f dz / f(w) / 留数)。measurement(実スカラのみ)へ
+    # 混ぜると下流の実数 op が生 TypeError で落ちるため型を分ける
+    "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
 }
 
 
