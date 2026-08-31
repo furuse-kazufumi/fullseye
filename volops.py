@@ -819,10 +819,11 @@ def vol_boundary(vol_binary, connectivity=6, side="inner"):
     (a mask reaching the border has a boundary there — the same convention as
     the surface-area estimate in :func:`vol_region_props`).
 
-    A solid region's interior drops out entirely: a 256**3 solid ball keeps
-    only ~1-2%% of its voxels, which is exactly why boundary representations
-    (and :func:`vol_boundary_points`) are the memory-frugal way to hand a shape
-    to the point-cloud / metrology operators.
+    A solid region's interior drops out entirely: the shell of a solid ball of
+    radius ``r`` voxels is roughly a ``3/r`` fraction of it (surface over
+    volume), so the saving grows with size — which is exactly why boundary
+    representations (and :func:`vol_boundary_points`) are the memory-frugal way
+    to hand a shape to the point-cloud / metrology operators.
 
     Returns a ``(D, H, W)`` float64 ``{0, 1}`` volume (chainable into
     :func:`vol_label`, :func:`vol_boundary_points`, ...).
