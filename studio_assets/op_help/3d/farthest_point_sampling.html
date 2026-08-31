@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">farthest_point_sampling — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code> (または <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。</p>
@@ -10,7 +10,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_distance">geodesic_distance</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_distance.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pointcloud_downsampling">pointcloud_downsampling</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pointcloud_downsampling.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">keypoints</code> を入力に取れる)</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">indices</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geodesic</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:geodesic_distances">geodesic_distances</a> · <a style="color:#22d3bf" href="op3d:geodesic_mesh">geodesic_mesh</a> · <a style="color:#22d3bf" href="op3d:knn_graph">knn_graph</a></p>

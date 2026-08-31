@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">phong_shade — 3D <code style="color:#22d3bf">render</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: &#x27;float&#x27; = 0.1, diffuse: &#x27;float&#x27; = 0.8, specular: &#x27;float&#x27; = 0.5, shininess: &#x27;float&#x27; = 32.0, clip: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">ops3d.get(&quot;phong_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + <b>鏡面</b>)。→ `<code style="color:#22d3bf">(H, W)</code>`。</p>

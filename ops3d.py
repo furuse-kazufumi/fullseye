@@ -627,9 +627,8 @@ RESULT_ADAPTERS = {
     # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
     "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
     # probe: (t_mm, values) → (2, n) pairs / list[float] → 1-D signal
-    "vol_profile_line": lambda r: __import__("numpy").stack(r)
-    if isinstance(r, tuple) else r,
-    "vol_wall_thickness": lambda r: __import__("numpy").asarray(r, float),
+    "vol_profile_line": lambda r: np.stack(r) if isinstance(r, tuple) else r,
+    "vol_wall_thickness": lambda r: np.asarray(r, np.float64),
 }
 
 

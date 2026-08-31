@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stat_histogram — MATH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mathops; mathops.stat_histogram(x, bins=10, range=None, density=False)</code> (または <code style="color:#22d3bf">opsmath.get(&quot;stat_histogram&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Histogram of a 1-D sample with the binning <b>explicit</b>.</p>
+<p>*bins* is a positive integer count of equal-width bins; *range* is an</p>
+<p>explicit `<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf"> (finite, </code><code style="color:#22d3bf">lo &lt; hi</code><code style="color:#22d3bf">) or </code><code style="color:#22d3bf">None</code>` to span the data</p>
+<p>(values exactly at `<code style="color:#22d3bf">hi</code>` land in the last bin, numpy&#x27;s convention; with an</p>
+<p>explicit *range*, values outside it are excluded from every bin — they</p>
+<p>simply do not count, which is why passing *range* explicitly is the honest</p>
+<p>choice when comparing histograms across datasets). With `<code style="color:#22d3bf">density=False</code>`</p>
+<p>(default) *counts* are occurrence <b>frequencies</b> (int64, summing to the</p>
+<p>number of in-range samples); with `<code style="color:#22d3bf">density=True</code>` they form a</p>
+<p><b>probability density</b> (float64, integrating to 1 over the range).</p>
+<p>A *range* that excludes <b>every</b> sample raises `<code style="color:#22d3bf">ValueError</code>` under</p>
+<p>`<code style="color:#22d3bf">density=True</code>` (the density would be 0/0 — silent NaNs refused) while</p>
+<p>`<code style="color:#22d3bf">density=False</code>` honestly returns all-zero counts. *bins* is capped at</p>
+<p>`<code style="color:#22d3bf">MAX_ELEMENTS</code>` (the edge/count arrays are allocations too).</p>
+<p>Returns `<code style="color:#22d3bf">(counts, edges)</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> has </code><code style="color:#22d3bf">bins + 1</code>` entries;</p>
+<p>bin *i* is `<code style="color:#22d3bf">[edges[i], edges[i+1])</code>`.</p>
+<p>HALCON: `<code style="color:#22d3bf">tuple_histo_range</code><code style="color:#22d3bf"> (and </code><code style="color:#22d3bf">gray_histo</code>` for whole images).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_covariance">stat_covariance</a> · <a style="color:#22d3bf" href="opmath:stat_correlation">stat_correlation</a> · <a style="color:#22d3bf" href="opmath:stat_zscore">stat_zscore</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
