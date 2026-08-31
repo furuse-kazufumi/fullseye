@@ -46,12 +46,15 @@ def test_direct_queries_match_dense():
 
 
 def test_memory_is_run_proportional():
-    """The advertised claim: RLE cost tracks runs, not voxels."""
+    """The advertised claim: RLE cost tracks runs, not voxels — so the saving
+    grows with run length. Measured: 1/9.5 on a 64^3 cube (short runs), 1/145
+    on the realistic 384^3 part in the module docstring (long runs)."""
     m = np.zeros((64, 64, 64), np.float64)
     m[8:56, 8:56, 8:56] = 1.0                       # 110,592 voxels, 48*48 runs
     r = vr.vol_rle_encode(m)
     assert len(r) == 48 * 48
-    assert r.nbytes < m.astype(bool).nbytes / 25    # measured 16x64x9? — well under
+    assert r.nbytes == 48 * 48 * 12                 # 12 bytes per run, exactly
+    assert r.nbytes < m.astype(bool).nbytes / 9     # measured 1/9.48
     assert vr.vol_rle_volume(r) == 48 ** 3
 
 
