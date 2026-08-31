@@ -130,3 +130,52 @@ DL が 1 回必要 → **着手時にユーザー確認を取ってから**。fa
 - op 追加は 4 点セット(登録 / example / per-op docs / Studio help)+
   fingerprint drift CI を通す
 - GPU 化は忠実性ゲート(5e-3)を**修正後の parity で**通す
+
+## D. 2D→3D ギャップ棚卸し 第2波(2026-08-31 夜、domain/boundary/RLE 実装後)
+
+domain(4op)/ boundary(2op)/ rle_region(5op)/ vol_tiled_map は実装済み。
+2D 45 カテゴリ × 3D カタログ(58 カテゴリ 291 op)の概念突き合わせで残る欠け。
+数値・用途の根拠は実利用ドメイン(CT/MRI/顕微鏡/産業検査)の定番度で採点。
+
+### 優先度 高(定番なのに voxel 界に無い)
+
+1. **intensity/gray 系(2D は 41 op、3D はゼロ)**
+   - `vol_window_level`: CT の HU windowing(放射線科の毎日の操作)。center/width
+     で [0,1] へ写像。実装 1 時間・依存なし
+   - `vol_equalize` / `vol_gamma` / `vol_stretch`: ヒスト平坦化・ガンマ・
+     コントラスト伸長の 3D 版
+2. **geometry transform 系(2D は 28 op、3D は形式変換のみ)**
+   - `vol_resize`(ndimage.zoom、spacing 再計算を返す)/ `vol_rotate`(軸+角度)
+     / `vol_affine`(4x4 行列)。位置合わせ後のリサンプリングに必須。
+     match3d 内部に affine 実装は既存(公開されていないだけ)
+3. **measure1d の 3D 版(virtual probe)**
+   - `vol_profile_line`(2 点間の強度プロファイル、spacing 対応)+
+     `vol_edge_probe`(プロファイル上のエッジ対検出=肉厚・壁厚)。産業 CT 計測の核。
+     2D measure1d(5op)の縦持ち版
+4. **restoration**: `vol_richardson_lucy`(3D デコンボリューション、共焦点顕微鏡の
+   定番。skimage.restoration に 2D 実装あり、nD 対応)
+
+### 優先度 中
+
+5. **frequency**: `vol_fft_bandpass` / `vol_fft_lowpass`(3D FFT フィルタ、
+   リング/縞アーチファクト除去)。complexops は 2D 専用
+6. **arithmetic**(2 volume の add/sub/absdiff/blend): numpy 1 行だが、RAG が
+   「引き算で差分検出」を提案できる目録の完備性に価値
+7. **noise**(ガウス/ポアズン付加): データ拡張・頑健性試験用
+8. **RLE の充実**: run のまま集合演算(union/intersect/difference — HALCON
+   region 演算の本体)、成分ごと RLE 化(vol_label → 成分別 VolRLE リスト =
+   「数千領域を保持」のユースケース本番)
+
+### 優先度 低(重い/ニッチ)
+
+9. texture 3D(GLCM radiomics)/ tomography 系(xct プロジェクトと重複)/
+   vol の histogram 統計(percentile 系)
+
+### 効率化の実測(2026-08-31 夜 PoC、scratchpad/poc_efficiency.py)
+
+- **RLE**: 384^3 部品マスクで dense bool の 1/145、volume 0.08ms vs 23.5ms、
+  bbox 0.13ms vs 166ms → **実装採用**(volregion.py、5op)
+- **タイル処理**: gaussian σ=2 を overlap=8 で厳密一致(最大差 0.0)、ピーク作業
+  メモリはスラブ比例 → **実装採用**(vol_tiled_map)
+- **float32 経路**: gaussian で 1.6x 速・半メモリ・相対誤差 7.7e-8 → 保留
+  (float64 規約の変更を伴う。opt-in dtype 引数の設計を先に決める)

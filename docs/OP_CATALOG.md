@@ -45,7 +45,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
 
-### 3-D 点群/体積/曲面(106 例)
+### 3-D 点群/体積/曲面(108 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -64,6 +64,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **平面度メトロロジー(基準面からの偏差)** — 点群に平面を当て、基準面からの偏差=平面度を測る。既知の膨らみ高さと一致することで検証。 `py -3.11 examples_3d/plane_flatness.py`
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
+- **domain(処理領域)と boundary(境界殻)でメモリを絞って計測** — vol_reduce_domain で治具を消し vol_crop_domain でメモリ 1/34(実測)、vol_boundary の殻 19% を vol_boundary_points で物理mm点群化して fit_sphere3 が中心誤差 0.000mm、vol_uncrop は元フレームへ bit 一致で貼り戻し。 `py -3.11 examples_3d/roi_domain_boundary.py`
+- **RLE 領域 — HALCON region の効率の正体を voxel 界へ** — vol_rle_encode が 192^3 部品マスクを dense bool の 1/73(実測)に、volume/bbox/centroid は run 直接演算で dense と厳密一致かつ 93x 速(実測)、vol_rle_decode は往復 bit 一致、改竄 RLE は decode 前に fail-closed 拒否。 `py -3.11 examples_3d/rle_region_efficiency.py`
 - **曲座標展開: 極/円筒/Zernike/LiDAR円筒投影で回転体の m 回対称を一貫復元** — 回転体(3枚羽根=m=3回対称)の検査を、中心を原点にした曲座標へ展開する4つのopで横断検証する事例。fit_zernikeは既知の波面係数(piston/tilt/defocus/astigmatism)で合成した円板を極座標直交基底(n,m)へ分解し、各係数を誤差5e-5で復元(非点収差=m=2角モードが立つ)。polar_unwrapは2D画像の円板を(θ×r)へ展開しθ軸FFTでm=3を検出(power@m=179で他ビンを圧倒)、回転対称画像は… `py -3.11 examples_3d/curvilinear_proj.py`
 - **幾何メトロロジー: 直線/平面/球/円の当てはめ→角度・距離・交線計測** — 1 個の機械加工ブロック(2 面が稜線で交わり、面上に球と円穴が乗る)を舞台に、当てはめ op(fit_line_3d/fit_plane_3d/fit_sphere_3d/fit_circle_3d/ransac_line)の出力を計測 op(angle_3points/angle_between_lines/angle_between_planes/angle_line_plane/distance_point_plane/distance_point… `py -3.11 examples_3d/geometry_metrology.py`
 - **3-D プリミティブ当てはめ(直線/平面/球/円/最小包含球)** — 点群から直線・平面・球・円を最小二乗で当て、中心/半径/向き/残差を (depth,row,col) で復元(機械精度)。各残差は『わざと外した』null を桁違いに下回る。measure3d.fit_line3/fit_plane3/fit_sphere3/fit_circle3/smallest_sphere3。2-D fit_line/fit_circle の 3-D 版。 `py -3.11 examples_3d/primitive_fitting_3d.py`
@@ -255,7 +257,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 285 ops / 57 categories。_
+_計 291 ops / 58 categories。_
 
 
 ### augment(6)
@@ -319,11 +321,12 @@ _計 285 ops / 57 categories。_
 - `hough_plane_3d` (`voxel → primitive`) — 平面検出(2D Hough 直線の 3D リフト)。勾配=法線を使い (法線 n, 距離 d) 空間へ投票。 · 例: `detect_primitives_3d`
 - `hough_sphere_3d` (`voxel → primitive`) — 球検出(2D Hough 円の 3D リフト)。中心 = p + sgn·r·n を半径 r ごとに投票。 · 例: `detect_primitives_3d`
 
-### domain(4)
+### domain(5)
 - `vol_reduce_domain` (`voxel, voxel → voxel`) — Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise). · 例: `roi_domain_boundary`
-- `vol_bounding_box` (`voxel → primitive`) — Tight axis-aligned bounding box of a mask's foreground, in voxel indices. · 例: `roi_domain_boundary`
+- `vol_bounding_box` (`voxel → primitive`) — Tight axis-aligned bounding box of a mask's foreground, in voxel indices. · 例: `rle_region_efficiency`, `roi_domain_boundary`
 - `vol_crop_domain` (`voxel → voxel`) — Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``). · 例: `roi_domain_boundary`
 - `vol_uncrop` (`voxel → voxel`) — Paste a cropped sub-volume back into the full frame (inverse of · 例: `roi_domain_boundary`
+- `vol_tiled_map` (`voxel → voxel`) — Apply a shape-preserving volume operator in overlapping z-slabs, so peak · 例: `rle_region_efficiency`
 
 ### edges(5)
 - `gradient3d` (`voxel → gradient`) — ガウス平滑後の中心差分勾配を計算する。 · 例: `edges_3d`
@@ -564,6 +567,13 @@ _計 285 ops / 57 categories。_
 - `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。 · 例: `render_beauty`, `render_tonemap`
 - `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
 - `render_beauty` (`mesh → image2d`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `render_beauty`
+
+### rle_region(5)
+- `vol_rle_encode` (`voxel → rle_region`) — Encode a binary volume as x-runs (the 3-D HALCON-region representation). · 例: `rle_region_efficiency`
+- `vol_rle_decode` (`rle_region → voxel`) — Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` · 例: `rle_region_efficiency`
+- `vol_rle_volume` (`rle_region → measurement`) — Voxel count of the region, computed on the runs (no decode). Measured · 例: `rle_region_efficiency`
+- `vol_rle_bbox` (`rle_region → primitive`) — Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds) · 例: `rle_region_efficiency`
+- `vol_rle_centroid` (`rle_region → position`) — Centroid ``(z, y, x)`` of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
 
 ### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。 · 例: `ransac_prim`

@@ -7,7 +7,7 @@ out: measurement
 examples: [curvature_grasp, curvature_shape_index]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # gaussian_curvature — 3D `curvature` op

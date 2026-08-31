@@ -8,7 +8,7 @@ halcon: fft_image_inv
 examples: [gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # fft_image_inv — 2D `frequency` op

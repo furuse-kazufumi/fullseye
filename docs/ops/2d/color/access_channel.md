@@ -8,7 +8,7 @@ halcon: access_channel
 examples: [gallery2d_color_artistic]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # access_channel — 2D `color` op

@@ -8,7 +8,7 @@ halcon: nonmax_suppression_amp
 examples: [gallery2d_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # nonmax_suppression_amp — 2D `segmentation` op

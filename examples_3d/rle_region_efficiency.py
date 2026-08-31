@@ -14,6 +14,7 @@
     3) vol_rle_bbox     : run のまま AABB(decode 不要、volops と厳密一致)
     4) vol_rle_centroid : run のまま重心(spacing で物理 mm、dense と一致)
     5) vol_rle_decode   : dense へ復元(往復 bit 一致)
+    6) vol_tiled_map    : z スラブ streaming(局所 op はメモリ有界で厳密一致)
 
 Ground truth(検証):
     - メモリ: 192^3 の現実的な部品(球+軸円柱)で dense bool の 1/73(実測)。

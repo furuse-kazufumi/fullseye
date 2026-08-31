@@ -8,7 +8,7 @@ halcon: fit_surface_second_order
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # hx_fit_surface2 — 2D `halcon_ext` op

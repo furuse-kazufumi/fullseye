@@ -7,7 +7,7 @@ out: keypoints
 examples: [geodesic_distance, pointcloud_downsampling]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # farthest_point_sampling — 3D `geodesic` op

@@ -8,7 +8,7 @@ halcon: split_skeleton_region
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # hx_split_skeleton_region — 2D `halcon_ext` op

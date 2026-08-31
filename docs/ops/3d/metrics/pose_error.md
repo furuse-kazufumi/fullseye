@@ -7,7 +7,7 @@ out: measurement
 examples: [itokawa_self_register]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # pose_error — 3D `metrics` op

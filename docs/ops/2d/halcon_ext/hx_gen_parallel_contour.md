@@ -8,7 +8,7 @@ halcon: gen_parallel_contour_xld
 examples: [gallery2d_halcon_ext]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # hx_gen_parallel_contour — 2D `halcon_ext` op

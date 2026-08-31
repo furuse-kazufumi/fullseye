@@ -8,7 +8,7 @@ halcon: measure_pos
 examples: [gallery2d_contour_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # m1_measure_pos — 2D `measure1d` op

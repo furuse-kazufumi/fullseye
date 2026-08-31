@@ -7,7 +7,7 @@ out: measurement
 examples: [superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # superquadric_residual — 3D `superquadric` op

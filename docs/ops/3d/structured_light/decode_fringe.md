@@ -7,7 +7,7 @@ out: depth
 examples: [structured_light]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # decode_fringe — 3D `structured_light` op

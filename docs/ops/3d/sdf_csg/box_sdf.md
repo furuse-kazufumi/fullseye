@@ -7,7 +7,7 @@ out: sdf
 examples: [gear_metrology, sdf_csg]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # box_sdf — 3D `sdf_csg` op

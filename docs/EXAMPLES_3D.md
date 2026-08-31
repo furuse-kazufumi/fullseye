@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 290 の型付き op)を、**実問題を解く実行可能な事例**（全 108 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 291 の型付き op)を、**実問題を解く実行可能な事例**（全 108 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 

@@ -8,7 +8,7 @@ halcon: acos_image
 examples: [gallery2d_gray_arith]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # acos_image — 2D `arithmetic` op

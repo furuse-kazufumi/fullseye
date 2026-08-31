@@ -7,7 +7,7 @@ out: voxel
 examples: [roi_domain_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # vol_crop_domain — 3D `domain` op
@@ -34,7 +34,7 @@ Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``).
 
 ## 同カテゴリ(`domain`)
 
-[vol_reduce_domain](vol_reduce_domain.md) · [vol_bounding_box](vol_bounding_box.md) · [vol_uncrop](vol_uncrop.md)
+[vol_reduce_domain](vol_reduce_domain.md) · [vol_bounding_box](vol_bounding_box.md) · [vol_uncrop](vol_uncrop.md) · [vol_tiled_map](vol_tiled_map.md)
 
 ---
 *Provenance: volops.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

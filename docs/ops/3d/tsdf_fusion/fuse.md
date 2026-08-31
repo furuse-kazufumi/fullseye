@@ -7,7 +7,7 @@ out: sdf
 examples: [tsdf_fusion_demo]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # fuse — 3D `tsdf_fusion` op

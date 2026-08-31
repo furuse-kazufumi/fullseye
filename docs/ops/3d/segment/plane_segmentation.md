@@ -7,7 +7,7 @@ out: labels
 examples: [object_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # plane_segmentation — 3D `segment` op

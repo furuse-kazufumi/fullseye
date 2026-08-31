@@ -8,7 +8,7 @@ gpu: true
 examples: [sh_descriptor_retrieval, shape_descriptor]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.1.0  # fullseye lib version this note was generated for
+version: 0  # fullseye lib version this note was generated for
 ---
 
 # match_sh_descriptor — 3D `describe` op
