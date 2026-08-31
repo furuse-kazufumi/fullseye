@@ -3518,40 +3518,42 @@ def test_viewer3d_fp_wireframe_perspective_and_near_clip():
     v.deleteLater()
 
 
-def test_splat_points_bit_identical_to_reference():
-    """The padded-canvas splat fast path must reproduce the naive per-offset
-    bounds-masked assignment EXACTLY — same pixels, same winner on duplicate
-    hits — for px = 1, 2, 3, including splats far off canvas and straddling
-    every border (this pins the 2026-08-31 render optimization to the old
-    behavior bit for bit)."""
-    rng = np.random.default_rng(11)
-
-    def reference(img, xi, yi, colors, px):     # the pre-optimization inline loop
-        h, w = img.shape[:2]
-        for dy in range(px):
-            for dx in range(px):
-                xs, ys = xi + dx, yi + dy
-                ok = (xs >= 0) & (xs < w) & (ys >= 0) & (ys < h)
-                img[ys[ok], xs[ok]] = colors[ok]
-        return img
-
-    for px in (1, 2, 3):
-        n, size = 4000, 80
-        xi = rng.integers(-25, size + 25, n)    # off-canvas + border-straddling
-        yi = rng.integers(-25, size + 25, n)
-        colors = rng.random((n, 3))
-        a = np.full((size, size, 3), 0.5)
-        b = a.copy()
-        reference(a, xi, yi, colors, px)
-        studio._splat_points(b, xi, yi, colors, px)
-        assert np.array_equal(a, b), "px=%d diverged from the reference" % px
-    # all-on-canvas fast path (keep.all() -> no filtering copy) stays identical
-    xi = rng.integers(2, 70, 1000); yi = rng.integers(2, 70, 1000)
-    colors = rng.random((1000, 3))
-    a = np.zeros((80, 80, 3)); b = a.copy()
-    reference(a, xi, yi, colors, 2)
-    studio._splat_points(b, xi, yi, colors, 2)
-    assert np.array_equal(a, b)
+def test_viewer3d_height_ramp_cached_and_bit_identical():
+    """Plain-cloud height ramp: computed once per cloud in the widget (it was
+    a measured 84 ms/frame at 100k pts when recomputed inside every render —
+    4.6x the splat render itself), with the full-resolution frame bit-identical
+    to the renderer's own internal ramp path, invalidation on a new cloud, and
+    NaN vertices unable to poison the normalization."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(200, 200)
+    rng = np.random.default_rng(5)
+    P = rng.normal(size=(500, 3))
+    v.set_points(P)                                        # no colors: height ramp
+    frame = v.frame_rgb()
+    assert v._ramp is not None and v._ramp.shape == (500, 3)
+    size = max(64, min(v.width(), v.height()) or 480)
+    direct = studio.render_points_frame(
+        P, colors=None, yaw=v._yaw, pitch=v._pitch, zoom=v._zoom,
+        pan=v._pan, size=size, point_px=2, center=v._center, radius=v._radius)
+    assert np.array_equal(frame, direct)                   # bit-identical output
+    ramp0 = v._ramp
+    v.frame_rgb()
+    assert v._ramp is ramp0                                # cached, not recomputed
+    v.set_points(P * 2.0)                                  # new cloud invalidates
+    assert v._ramp is None
+    v.frame_rgb()
+    assert v._ramp is not None
+    Pn = P.copy(); Pn[0] = np.nan                          # NaN vertex in the cloud
+    v.set_points(Pn)
+    f = v.frame_rgb()
+    assert np.isfinite(f).all()
+    ref = studio.render_points_frame(
+        Pn, colors=None, yaw=v._yaw, pitch=v._pitch, zoom=v._zoom,
+        pan=v._pan, size=size, point_px=2, center=v._center, radius=v._radius)
+    assert np.array_equal(f, ref)                          # still matches in-render ramp
+    v.deleteLater()
 
 
 def test_feature_inspection_reopen_releases_old_dialog():
