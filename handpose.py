@@ -65,14 +65,31 @@ def hand_skeleton_edges() -> list[tuple[int, int]]:
 
 
 def _to_rgb_uint8(image) -> np.ndarray:
-    """float[0,1] gray / float[0,1] RGB / uint8 RGB を uint8 RGB に正規化。"""
+    """float[0,1] gray / float[0,1] RGB / uint8 RGB を uint8 RGB に正規化。
+
+    fail-closed: float なのに値域が [0,1] を超える(= 0..255 スケールの疑い)
+    入力や uint8 以外の整数型は、無言で 2 値に潰さず明示エラーにする
+    (敵対レビュー 2026-08-31 D6: 旧版は float 0..255 を {0,255} の 2 値に潰し
+    「検出 0 手」という最も静かな失敗になっていた)。"""
     a = np.asarray(image)
     if a.ndim == 2:
         a = np.stack([a, a, a], axis=-1)
     if a.ndim != 3 or a.shape[-1] != 3:
         raise ValueError(f"hand_landmarks: HxW か HxWx3 が必要 (shape={a.shape})")
-    if a.dtype != np.uint8:
-        a = (np.clip(a.astype(np.float64), 0.0, 1.0) * 255.0 + 0.5).astype(np.uint8)
+    if a.dtype == np.uint8:
+        return np.ascontiguousarray(a)
+    if a.dtype == np.bool_:
+        return np.ascontiguousarray(a.astype(np.uint8) * 255)
+    if not np.issubdtype(a.dtype, np.floating):
+        raise ValueError(
+            f"hand_landmarks: 整数画像は uint8 のみ対応 (dtype={a.dtype})。"
+            "uint8 に変換するか float [0,1] に正規化してから渡すこと")
+    mx = float(a.max()) if a.size else 0.0
+    if mx > 1.001:
+        raise ValueError(
+            f"hand_landmarks: float 画像の値域が [0,1] を超えている (max={mx:.3g})。"
+            "0..255 スケールの疑い — 255 で割ってから渡すこと")
+    a = (np.clip(a.astype(np.float64), 0.0, 1.0) * 255.0 + 0.5).astype(np.uint8)
     return np.ascontiguousarray(a)
 
 
