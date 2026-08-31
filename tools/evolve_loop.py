@@ -115,11 +115,14 @@ def gate(candidates, ops, problems, max_existing=None, capacity=None, verbose=Fa
     cap = DNA_CAPACITY if capacity is None else capacity
     passed, failed = [], []
     for i, c in enumerate(candidates):
-        spec = [{"op": name, "a": 0.5, "b": 0.5} for name in c["ops"]]
         try:
+            spec = [{"op": _registry_name(ops, name), "a": 0.5, "b": 0.5}
+                    for name in c["ops"]]
             fn = stages_runner(ops, spec)
         except KeyError as exc:
-            # 採掘器のカタログ側の名前で、進化レジストリには居ない op
+            # 採掘器はカタログ名で連鎖を作るが、進化レジストリに橋渡しされて
+            # いない op は再構成できない(既定は新 sort のみ = 58 op)。
+            # IMGEVOLVE_WIDE_VOCAB=1 で 125 op まで広がる。
             failed.append((c, f"進化レジストリに無い op: {exc}"))
             continue
         in_sort = bt.TYPE_TO_SORT.get(c["start"])
