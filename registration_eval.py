@@ -93,8 +93,13 @@ def _check_thresh(thresh, name: str = "thresh") -> float:
 # ─────────────────────────────────────────────────────────────────────────
 def make_transform(R, t) -> np.ndarray:
     """回転 (3×3) と並進 (3,) から 4×4 同次変換を組む。→ (4,4)。"""
-    Rm = np.asarray(R, np.float64)
-    tv = np.asarray(t, np.float64).reshape(-1)
+    try:
+        Rm = np.asarray(R, np.float64)
+        tv = np.asarray(t, np.float64).reshape(-1)
+    except (TypeError, ValueError) as e:
+        raise ValueError(
+            f"make_transform: R and t must be numeric "
+            f"(got {type(R).__name__} / {type(t).__name__})") from e
     if Rm.shape != (3, 3):
         raise ValueError(f"make_transform: R must be 3x3 (got {Rm.shape})")
     if tv.shape != (3,):
