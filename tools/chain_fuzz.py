@@ -144,8 +144,10 @@ OP_PARAM_HINTS = {
 def _registry_adapters():
     import ops1d
     import ops3d
+    import opsmath
     d = dict(ops3d.RESULT_ADAPTERS)
     d.update(ops1d.RESULT_ADAPTERS)
+    d.update(opsmath.RESULT_ADAPTERS)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d

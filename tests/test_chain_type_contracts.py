@@ -135,3 +135,40 @@ def test_surface_form_error_measurement():
     _check(ops3d.OPS3D, "surface_form_error", r_bump)
     assert r_flat == pytest.approx(0.0, abs=1e-9)
     assert r_bump == pytest.approx(1.0, rel=0.05)
+
+
+def test_opsmath_call_returns_declared_types():
+    """math 次元追加(2026-09-01)の初走行で mat_svd/mat_eigh が「宣言 table・
+    実際 tuple」の型の嘘として検出された回帰。opsmath.call() が全 16 op で
+    宣言 out 型どおり返すことを TYPE_CHECKS で固定する。"""
+    import opsmath
+    rng = np.random.default_rng(0)
+    A = rng.standard_normal((6, 4))
+    S = rng.standard_normal((5, 5))
+    spd = S @ S.T + 5.0 * np.eye(5)
+    x = np.linspace(0.0, 1.0, 16)
+    y = np.sin(x * 6.0)
+    args = {
+        "mat_solve": (spd, np.ones(5)), "mat_lstsq": (A, np.ones(6)),
+        "mat_svd": (A,), "mat_eigh": (spd,), "mat_pinv": (A,),
+        "mat_cond": (spd,),
+        "stat_describe": (y,), "stat_histogram": (y,),
+        "stat_covariance": (A,), "stat_correlation": (A,),
+        "stat_zscore": (y,),
+        "interp_linear": (x, y, x[:8] + 0.01),
+        "interp_cubic": (x, y, x[:8] + 0.01),
+        "poly_fit": (x, y, 3), "poly_eval": (np.array([1.0, 0.0, -1.0]), x),
+        "poly_roots": (np.array([1.0, 0.0, -1.0]),),
+    }
+    from tools.chain_fuzz import TYPE_CHECKS
+    missing = [n for n in opsmath.OPSMATH if n not in args]
+    assert not missing, f"test args missing for: {missing}"
+    for name, a in args.items():
+        out_t = opsmath.OPSMATH[name]["out"]
+        val = opsmath.call(name, *a)
+        check = TYPE_CHECKS.get(out_t)
+        assert check is not None, f"{name}: unknown declared type {out_t!r}"
+        assert check(val), (name, out_t, type(val).__name__)
+    # 素の API は数学慣習の tuple を維持(unpacking 互換)
+    U, s, Vt = opsmath.get("mat_svd")(A)
+    assert U.shape[0] == 6 and Vt.shape[1] == 4
