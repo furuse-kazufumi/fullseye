@@ -78,7 +78,9 @@ def completeness(a, b, tau):
 
 
 def fscore(a, b, tau):
-    """F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。"""
+    """F-score @ tau = precision と recall の調和平均。→ (f, precision, recall)。再構成の標準指標。
+
+    Raises ValueError: どちらかが空 or (N,3) でない場合(accuracy/completeness 経由)。"""
     p = accuracy(a, b, tau)
     r = completeness(a, b, tau)
     f = 0.0 if (p + r) == 0 else 2 * p * r / (p + r)
