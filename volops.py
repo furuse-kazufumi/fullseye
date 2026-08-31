@@ -893,6 +893,9 @@ def vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 
                          "got %r" % (origin,)) from None
     if len(org) != 3:
         raise ValueError("origin must have length 3, got %r" % (origin,))
+    if not all(np.isfinite(o) for o in org):
+        raise ValueError("origin must be finite, got %r — a NaN/Inf origin would "
+                         "poison every point coordinate" % (origin,))
     idx = np.argwhere(shell > 0.5).astype(np.float64)
     if idx.size == 0:
         return np.zeros((0, 3), dtype=np.float64)
