@@ -571,7 +571,7 @@ def _persp_matrix(src, dst):
     return np.array([[m[0], m[1], m[2]], [m[3], m[4], m[5]], [m[6], m[7], 1.0]])
 
 
-def _projective_region(t, a, b, dev):
+def _projective_warp(t, a, b, dev):
     # core = cv2.warpPerspective(getPerspectiveTransform(src,dst), INTER_LINEAR, BORDER_REFLECT)。
     # grid_sample(bilinear, reflection)で近似。cv2 の warp 規約と bit 一致はしないため、
     # 採否は IoU/count 指標の保存で判定(bridge の validate)。
