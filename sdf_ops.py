@@ -24,6 +24,10 @@
 min/max による合成はゼロ等値面(=形状境界)を厳密に与え、**外側では厳密な SDF**、内側は保守的
 下界(近傍の重なり領域で真の距離をやや過小評価しうる)になる — CSG では標準的な性質。
 
+契約: ``±inf`` を含む SDF(``esdf`` は「全自由なら +inf」を明示契約)も正しく合成する —
+min/max 代数は inf を厳密に伝播し(``min(a,+inf)=a`` 等)、``sdf_smooth_union`` は inf 要素で
+厳密に ``min`` へ退化する。したがって出力の inf は入力契約の伝播であり異常値ではない。
+
 cv2/skimage は使わない。numpy + 標準ライブラリのみ。
 """
 from __future__ import annotations
