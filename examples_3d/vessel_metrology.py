@@ -8,7 +8,10 @@
     常態なので、距離・体積は spacing を考慮しないと系統誤差になる。
 
 方法(volops の ops を鎖状につなぐ):
-    1) vol_frangi / vol_sato      : Hessian 固有値の管状度。管で強く、粒で弱い
+    1) vol_frangi                 : Hessian 固有値の管状度。管で強く、粒で弱い
+       vol_sato                   : 同系だが blob 抑制項(R_B)を持たないため
+                                    粒にもほぼ満点で応答する(実測 0.92)。ここでは
+                                    「管を背景から強く検出する」性質だけを検証する
     2) vol_hessian_blobness       : 同じ Hessian の粒状度。粒で強く、管で弱い
     3) vol_gradient_magnitude     : 表面(境界)で強い勾配場 — 内外の確認
     4) vol_local_maxima           : 粒の中心 = 強度ピークを (z,y,x) で列挙
