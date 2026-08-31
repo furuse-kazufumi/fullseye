@@ -779,6 +779,78 @@ def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
     return img
 
 
+def render_points_frame_fp(points, colors=None, eye=(0.0, 0.0, 0.0), yaw=0.0,
+                           pitch=0.0, fov_deg=70.0, size=480, point_px=2,
+                           radius=None, background=(0.070, 0.078, 0.106)):
+    """First-person software-rasterise -> RGB float (size, size, 3) in [0, 1].
+
+    The walkthrough twin of :func:`render_points_frame`: same splat approach,
+    but through :func:`viewer3d_project_persp` (perspective is the whole point
+    of the mode — parallax and size-with-distance are what make a cloud feel
+    like a place instead of a chart). Two cheap depth cues on top:
+
+    * brightness fades with distance (linear toward ``4 * radius``, floored so
+      far geometry stays legible against the navy background);
+    * points nearer than ``0.8 * radius`` splat one pixel larger — painted as a
+      second pass AFTER all farther points, which keeps the painter's algorithm
+      globally correct (every near point is in front of every far point).
+
+    *radius* is the scene scale for the cues (auto from the data if None).
+    Headless (numpy only) — the same code path runs in tests and in the widget.
+    """
+    P = np.asarray(points, np.float64).reshape(-1, 3)
+    size = int(size)
+    img = np.empty((size, size, 3), np.float64)
+    img[:] = np.asarray(background, np.float64)
+    if P.shape[0] == 0:
+        return img
+    finite = np.isfinite(P).all(axis=1)           # same NaN policy as the orbit path
+    if not finite.all():
+        P = P[finite]
+        if colors is not None:
+            ca = np.asarray(colors, np.float64).reshape(-1, 3)
+            colors = ca[finite] if ca.shape[0] == finite.shape[0] else ca
+        if P.shape[0] == 0:
+            return img
+    if radius is None:
+        c = 0.5 * (P.min(axis=0) + P.max(axis=0))
+        radius = float(np.linalg.norm(P - c, axis=1).max()) or 1.0
+    radius = max(float(radius), 1e-12)
+    if colors is None:
+        z = P[:, 2]
+        span = float(z.max() - z.min())
+        t = (z - z.min()) / span if span > 0 else np.zeros_like(z)
+        colors = imgio.apply_cmap(t.reshape(1, -1), name="viridis")[0]
+    C = np.clip(np.asarray(colors, np.float64).reshape(-1, 3), 0.0, 1.0)
+    if C.shape[0] != P.shape[0]:
+        C = np.broadcast_to(C[:1], (P.shape[0], 3)).copy()
+    xy, depth, visible = viewer3d_project_persp(
+        P, viewer3d_camera_fp(yaw, pitch), eye, fov_deg, size,
+        near=max(1e-9, 1e-3 * radius))
+    if not visible.any():
+        return img
+    xy, depth, C = xy[visible], depth[visible], C[visible]
+    # depth cue 1: brightness attenuation with distance
+    C = C * np.clip(1.0 - depth / (4.0 * radius), 0.30, 1.0)[:, None]
+    px = max(1, int(point_px))
+    near_thr = 0.8 * radius
+    # far pass (base size) then near pass (base+1): each pass sorted far->near,
+    # and the passes themselves are ordered far->near by the fixed threshold.
+    for sel, p in ((depth >= near_thr, px), (depth < near_thr, px + 1)):
+        if not sel.any():
+            continue
+        order = np.argsort(depth[sel])[::-1]
+        xi = np.floor(xy[sel][order, 0]).astype(int)
+        yi = np.floor(xy[sel][order, 1]).astype(int)
+        Co = C[sel][order]
+        for dy in range(p):
+            for dx in range(p):
+                xs, ys = xi + dx, yi + dy
+                ok = (xs >= 0) & (xs < size) & (ys >= 0) & (ys < size)
+                img[ys[ok], xs[ok]] = Co[ok]
+    return img
+
+
 def cluster_colors(n_points, clusters, selected=None):
     """Per-point colors for a clustered cloud -> (n_points, 3) float.
 
