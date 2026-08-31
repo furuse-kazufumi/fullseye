@@ -223,11 +223,14 @@ def run_chain(ops, gens, rng, length, log):
         if not cands:
             break
         name, dim, ins, out, fn = cands[rng.integers(len(cands))]
-        data_args = []
-        for t in ins:
-            src = pool[t] if t != "any" else pool[rng.choice(list(pool.keys()))]
-            data_args.append(src[rng.integers(len(src))])
-        bound = _bind_args(name, fn, data_args, rng)
+        if name in OP_ARG_BUILDERS:
+            bound = OP_ARG_BUILDERS[name](pool, rng)
+        else:
+            data_args = []
+            for t in ins:
+                src = pool[t] if t != "any" else pool[rng.choice(list(pool.keys()))]
+                data_args.append(src[rng.integers(len(src))])
+            bound = _bind_args(name, fn, data_args, rng)
         if bound is None:
             continue
         args, kwargs = bound
