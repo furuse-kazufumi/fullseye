@@ -431,7 +431,7 @@ def _walk_ops(dim: str):
 
 def cmd_toc():
     written = 0
-    dims = [d for d in ("2d", "3d") if os.path.isdir(os.path.join(DOCS, d))]
+    dims = [d for d in ("2d", "3d", "math") if os.path.isdir(os.path.join(DOCS, d))]
     # per-dimension INDEX
     dim_counts = {}
     for dim in dims:
