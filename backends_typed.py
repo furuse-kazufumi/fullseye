@@ -101,14 +101,34 @@ def _coerce(value, sort):
     return np.asarray(value)
 
 
-def _fallback(v, sort):
-    """fail-soft の戻り値: 入力を sort 妥当な形にしたもの(全 backend 共通契約)。"""
-    if sort == "feature":
+def _fallback(v, in_sort, out_sort):
+    """fail-soft の戻り値。**宣言した out_sort に合う値**でなければならない。
+
+    最初は「入力をそのまま返す」実装だったが、これは **out_sort が in_sort と
+    違う op で型の嘘になる**。実測 2026-09-01: points→volume の橋渡し op が
+    失敗したとき (N,3) の点群が返り、パイプラインはそれを volume と信じて次の
+    ``vol_slice`` が ``IndexError: tuple index out of range`` で落ちた
+    (fail-soft のはずが、失敗を 1 段先へ運んで別の場所で壊す形になっていた)。
+
+    同型なら入力を通す(情報を保つ)。型が変わる op では **その sort の最小限
+    妥当な値**を返す — 内容は無いが、下流の型契約は満たす。
+    """
+    if out_sort == "feature":
         try:
             return float(np.mean(np.asarray(v, np.float64)))
         except (TypeError, ValueError):
             return 0.0
-    return np.asarray(v)
+    if in_sort == out_sort:
+        return np.asarray(v)
+    # 型が変わる op の失敗: 中身のない、しかし sort として妥当な値
+    return {
+        "volume": lambda: np.zeros((2, 2, 2), np.float64),
+        "image": lambda: np.zeros((2, 2), np.float64),
+        "points": lambda: np.zeros((1, 3), np.float64),
+        "signal": lambda: np.zeros(2, np.float64),
+        "matrix": lambda: np.zeros((2, 2), np.float64),
+        "cimage": lambda: np.zeros((2, 2), np.complex128),
+    }.get(out_sort, lambda: np.asarray(v))()
 
 
 def _scaled(default, knob):
@@ -123,7 +143,7 @@ def _scaled(default, knob):
     return val
 
 
-def _make_runner(fn, kwargs, tunable, out_sort):
+def _make_runner(fn, kwargs, tunable, in_sort, out_sort):
     """``fn(v, a, b)`` 規約のランナー。
 
     *tunable* は ``[(param 名, 既定値), ...]`` を最大 2 個(a に第 1、b に第 2)。
@@ -134,9 +154,14 @@ def _make_runner(fn, kwargs, tunable, out_sort):
         for (pname, default), knob in zip(tunable, (a, b)):
             kw[pname] = _scaled(default, knob)
         try:
-            return _coerce(fn(v, **kw), out_sort)
+            got = _coerce(fn(v, **kw), out_sort)
         except Exception:                                 # noqa: BLE001 - fail-soft
-            return _fallback(v, out_sort)
+            return _fallback(v, in_sort, out_sort)
+        # 型の嘘も fail-soft と同じ扱い: 宣言と違う形が下流へ漏れると、失敗が
+        # 1 段先の無関係な op で顕在化して原因が追えなくなる
+        if out_sort != "feature" and not isinstance(got, np.ndarray):
+            return _fallback(v, in_sort, out_sort)
+        return got
     return _run
 
 
@@ -209,5 +234,5 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
         base = fn if adapter is None else (
             lambda *a, _f=fn, _ad=adapter, **k: _ad(_f(*a, **k)))
         out.append(Op("tb_" + name, "typed", "", in_sort, out_sort,
-                      _make_runner(base, kwargs, tunable, out_sort)))
+                      _make_runner(base, kwargs, tunable, in_sort, out_sort)))
     return out
