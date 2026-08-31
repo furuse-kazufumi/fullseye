@@ -3272,6 +3272,34 @@ def test_render_points_frame_fp_splats_and_depth_cue():
     assert np.allclose(behind, behind[0, 0])                # nothing splatted
 
 
+def test_render_points_frame_fp_is_scale_free_for_tiny_scenes():
+    """Regression (2026-08-31 adversarial review): the FP near plane carried an
+    absolute ``max(1e-9, ...)`` floor, so a cloud of extent below ~1e-9 world
+    units was entirely near-clipped (the entrance eye stands 1.5 * radius out,
+    max scene depth ~2.5 * radius < 1e-9) and the walkthrough rendered
+    permanently blank while the scale-free orbit view showed the same cloud
+    fine. The near plane must scale with the scene radius."""
+    rng = np.random.default_rng(1)
+    P = rng.normal(scale=1e-12, size=(200, 3))
+    c = 0.5 * (P.min(axis=0) + P.max(axis=0))
+    r = float(np.linalg.norm(P - c, axis=1).max())
+    assert r < 1e-9                                          # genuinely tiny scene
+    eye = c - studio.viewer3d_camera_fp(0, 0)[2] * (1.5 * r)  # _fp_home placement
+    img = studio.render_points_frame_fp(P, eye=eye, yaw=0, pitch=0,
+                                        size=64, radius=r)
+    bg = studio.render_points_frame_fp(np.zeros((0, 3)), size=64)
+    assert np.isfinite(img).all()
+    assert not np.allclose(img, bg)                          # something splats
+    # and the huge-scale twin stays visible too (scale-free both ways)
+    Pb = P * 1e24
+    cb = 0.5 * (Pb.min(axis=0) + Pb.max(axis=0))
+    rb = float(np.linalg.norm(Pb - cb, axis=1).max())
+    eyeb = cb - studio.viewer3d_camera_fp(0, 0)[2] * (1.5 * rb)
+    imgb = studio.render_points_frame_fp(Pb, eye=eyeb, yaw=0, pitch=0,
+                                         size=64, radius=rb)
+    assert np.isfinite(imgb).all() and not np.allclose(imgb, bg)
+
+
 def test_viewer3d_first_person_widget_toggle_move_look():
     """The widget mode: F enters walking at the scene perimeter continuing the
     orbit line of sight, WASD moves along the camera axes (radius/50 per press,
