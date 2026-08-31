@@ -81,9 +81,11 @@ def main():
     assert abs(tau_est - tau) < 0.2 * tau              # 20% 以内
 
     # ---- 6) 相互相関で既知の遅延を復元(真値 25 サンプル) ---------------- #
-    y1 = sm[:400]
-    y2 = sm[25:425]                                    # y2[i] = y1[i+25] → shift=+25
-    m = F.match_funct_1d_trans(y1, y2)
+    # 減衰包絡は非正規化相関を数サンプル偏らせるので、定石どおり微分で白色化して
+    # から照合する(トレンド・包絡の効きにくい波形同士を相関にかける)。
+    y1 = noisy[:400]
+    y2 = noisy[25:425]                                 # y2[i] = y1[i+25] → shift=+25
+    m = F.match_funct_1d_trans(F.derivate_funct_1d(y1), F.derivate_funct_1d(y2))
     print(f"遅延推定: shift={m['shift']} サンプル(真値 25), score={m['score']:.3f}")
     assert m["shift"] == 25
     assert F.distance_funct_1d(y1, y1) == 0.0          # 距離の恒等
