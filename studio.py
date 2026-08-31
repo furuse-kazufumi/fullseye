@@ -1871,6 +1871,11 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 P = P[idx]
             C = self._point_colors(idx)
             self._n_drawn = int(P.shape[0])
+            if self._fp:
+                return render_points_frame_fp(
+                    P, colors=C, eye=self._eye, yaw=self._fp_yaw,
+                    pitch=self._fp_pitch, fov_deg=70.0, size=size, point_px=2,
+                    radius=self._radius)
             return render_points_frame(
                 P, colors=C, yaw=self._yaw, pitch=self._pitch, zoom=self._zoom,
                 pan=self._pan, size=size, point_px=2,
