@@ -109,8 +109,15 @@ IDENTITY_EPS = 0.02        # delta がこれ未満 = 恒等に近い(価値な�
 #: 「見た目まっ平らな像」が 1e-9 では素通りしたので 1e-6 に置いた。
 CONST_EPS = 1e-6
 SLOW_S = 5.0               # 連鎖全体がこれを超える = 遅すぎる
+SLOW_OP_S = 5.0            # 1 op がこれを超えたら**ログで名指し**(記録には載せない)
 MIN_OPS = 2                # 1 op は「合成」ではない
 HIST_BINS = 32
+
+#: True で全 op を実行**前**に print(--trace-ops)。戻ってこない op を名指し
+#: するための最後の手段。実測でこれが要った: seed 7 の 1500 連鎖が chain 334 で
+#: 12 分以上無音になり、犯人は 23,040 点の雲を食った ``icp_point2plane``(40s)
+#: 系だった。**バイト上限では捕まらない**(0.5MB の入力で数十秒)。
+TRACE_OPS = False
 
 DROP_REASONS = ("identity_like", "const_output", "nondeterministic",
                 "too_slow", "no_numeric_output", "unmeasurable_stats",
