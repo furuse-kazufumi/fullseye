@@ -1896,7 +1896,8 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 x0 = (self.width() - qi.width()) // 2
                 y0 = (self.height() - qi.height()) // 2
                 p.drawImage(x0, y0, qi)
-                if self._wire and self._edges is not None and self._drag is None:
+                if (self._wire and self._edges is not None and self._drag is None
+                        and not self._fp):    # wire overlay is orbit-projected only
                     size = qi.width()
                     xy, _ = viewer3d_project(
                         self._P, viewer3d_camera(self._yaw, self._pitch),
