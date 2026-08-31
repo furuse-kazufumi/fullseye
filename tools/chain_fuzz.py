@@ -330,6 +330,12 @@ def run_chain(ops, gens, rng, length, log):
             log.append({"kind": "NONFINITE", "op": name, "dim": dim,
                         "trace": trace + [name]})
             continue                      # 毒は pool に入れない
+        nb = _nbytes(result)
+        if nb > MAX_POOL_BYTES:
+            log.append({"kind": "GROWTH", "op": name, "dim": dim,
+                        "mb": round(nb / 2 ** 20, 1),
+                        "trace": trace + [name]})
+            continue                      # 巨大産物は pool に入れない(指数増殖防止)
         check = TYPE_CHECKS.get(out)
         if check is not None and not check(result):
             log.append({"kind": "TYPEMISS", "op": name, "dim": dim,
