@@ -878,9 +878,11 @@ def vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 
     Coordinates are ``(index + origin) * spacing`` per axis: pass *spacing*
     ``(sz, sy, sx)`` (or a :class:`volio.VolumeMeta`) for physical millimetre
     coordinates, and pass the offset returned by :func:`vol_crop_domain` as
-    *origin* so points from a cropped volume land in the uncropped frame. An
-    empty mask returns an empty ``(0, 3)`` array (a valid question with a valid
-    empty answer — unlike a crop, which needs a box to exist).
+    *origin* so points from a cropped volume land in the uncropped frame
+    (*origin* is in **voxel units** — it is added to the index *before* the
+    spacing multiply; it must be finite, and may be fractional for a subvoxel
+    shift). An empty mask returns an empty ``(0, 3)`` array (a valid question
+    with a valid empty answer — unlike a crop, which needs a box to exist).
 
     Returns an ``(N, 3)`` float64 array, rows ordered z-major (deterministic).
     """
