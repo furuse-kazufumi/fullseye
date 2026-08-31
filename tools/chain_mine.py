@@ -244,13 +244,16 @@ def describe(x_in, y_out, in_type, out_type, ops_seq, sec):
     d["size"] = int(fo.size)
     d["finite_frac"] = round(float(finite.mean()), 6)
     if ff.size:
-        mean, std = float(ff.mean()), float(ff.std())
-        d.update({"mean": round(mean, 6), "std": round(std, 6),
-                  "vmin": round(float(ff.min()), 6),
-                  "vmax": round(float(ff.max()), 6),
-                  "rel_std": round(std / (abs(mean) + 1.0), 9),
-                  "entropy": round(_entropy01(ff), 6),
-                  "nonzero": round(float((np.abs(ff) > 1e-12).mean()), 6)})
+        # mean/std は要素が有限でも溢れる(1e308 の配列)。溢れた統計は None =
+        # 「測れなかった」にして、NaN が下流のビンや絞り込みへ漏れるのを断つ
+        mean, std = _num(ff.mean()), _num(ff.std())
+        rel = (None if (mean is None or std is None)
+               else _num(std / (abs(mean) + 1.0)))
+        d.update({"mean": _r(mean, 6), "std": _r(std, 6),
+                  "vmin": _r(ff.min(), 6), "vmax": _r(ff.max(), 6),
+                  "rel_std": _r(rel, 9),
+                  "entropy": _r(_entropy01(ff), 6),
+                  "nonzero": _r(float((np.abs(ff) > 1e-12).mean()), 6)})
     else:
         d.update({"mean": None, "std": None, "vmin": None, "vmax": None,
                   "rel_std": None, "entropy": None, "nonzero": None})
