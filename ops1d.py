@@ -15,6 +15,8 @@ OP_CATALOG から不可視だった(2026-08-31 監査)。1D は「op が足り�
     ops1d.list_ops("function")      # カテゴリ内の op 名
     ops1d.get("derivate_funct_1d")  # 実体を取得して呼ぶ
 """
+import numpy as np
+
 import dsp
 import funct1d
 
