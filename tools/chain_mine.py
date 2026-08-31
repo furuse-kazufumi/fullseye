@@ -264,7 +264,7 @@ def describe(x_in, y_out, in_type, out_type, ops_seq, sec):
         d.update({"mean": None, "std": None, "vmin": None, "vmax": None,
                   "rel_std": None, "entropy": None, "nonzero": None})
     d["log_size_ratio"] = (None if fi is None or fi.size == 0 else
-                           round(math.log2(fo.size / fi.size), 4))
+                           _r(math.log2(fo.size / fi.size), 4))
     return d
 
 
