@@ -738,8 +738,10 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     lo, hi = float(vals.min()), float(vals.max())
     g = (vals - lo) / (hi - lo) if hi > lo else np.full(len(vals), 0.7)
     C = np.repeat((0.25 + 0.75 * g)[:, None], 3, axis=1)   # dark-to-light gray
-    info = {"shape": tuple(int(s) for s in vol.shape) if hasattr(vol, "shape")
-            else v.shape, "downsampled_by": factor, "threshold": thr,
+    # orig_shape, not v.shape: v has been reassigned by downsampling, so for a
+    # list-like input `v.shape` here would misreport the DOWNSAMPLED shape
+    info = {"shape": tuple(int(s) for s in orig_shape),
+            "downsampled_by": factor, "threshold": thr,
             "n_points": len(P)}
     return P, C, info
 
