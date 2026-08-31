@@ -107,3 +107,69 @@ def test_thresholding_convention_matches_volops():
     r = vr.vol_rle_encode(m)
     assert vr.vol_rle_volume(r) == 1
     assert vr.vol_rle_bbox(r) == (0, 0, 1, 1, 1, 2)
+
+
+# --------------------------------------------------------------------------- #
+# set algebra on runs                                                          #
+# --------------------------------------------------------------------------- #
+@pytest.mark.parametrize("seed", [0, 1, 2])
+def test_set_algebra_matches_dense_boolean(seed):
+    """decode(op(A, B)) must equal the dense boolean op — for random masks."""
+    rng = np.random.default_rng(seed)
+    a = (rng.random((9, 7, 11)) > 0.6).astype(np.float64)
+    b = (rng.random((9, 7, 11)) > 0.6).astype(np.float64)
+    ra, rb = vr.vol_rle_encode(a), vr.vol_rle_encode(b)
+    assert np.array_equal(vr.vol_rle_decode(vr.vol_rle_union(ra, rb)),
+                          ((a > 0.5) | (b > 0.5)).astype(np.float64))
+    assert np.array_equal(vr.vol_rle_decode(vr.vol_rle_intersect(ra, rb)),
+                          ((a > 0.5) & (b > 0.5)).astype(np.float64))
+    assert np.array_equal(vr.vol_rle_decode(vr.vol_rle_difference(ra, rb)),
+                          ((a > 0.5) & ~(b > 0.5)).astype(np.float64))
+
+
+def test_set_algebra_edge_cases_and_canonical_runs():
+    m = _scene()
+    r = vr.vol_rle_encode(m)
+    empty = vr.vol_rle_encode(np.zeros(m.shape))
+    # identities with the empty region
+    assert vr.vol_rle_volume(vr.vol_rle_union(r, empty)) == vr.vol_rle_volume(r)
+    assert vr.vol_rle_volume(vr.vol_rle_intersect(r, empty)) == 0
+    assert vr.vol_rle_volume(vr.vol_rle_difference(r, r)) == 0
+    assert vr.vol_rle_volume(vr.vol_rle_intersect(r, r)) == vr.vol_rle_volume(r)
+    # adjacent runs merge to canonical form: [4,8) ∪ [8,12) = one run [4,12)
+    a = np.zeros((1, 1, 16), np.float64); a[0, 0, 4:8] = 1.0
+    b = np.zeros((1, 1, 16), np.float64); b[0, 0, 8:12] = 1.0
+    u = vr.vol_rle_union(vr.vol_rle_encode(a), vr.vol_rle_encode(b))
+    assert len(u) == 1 and (int(u.starts[0]), int(u.ends[0])) == (4, 12)
+    # ...but runs of NEIGHBOURING plane rows must never merge (the +1 stride)
+    c = np.zeros((1, 2, 16), np.float64); c[0, 0, 12:16] = 1.0; c[0, 1, 0:4] = 1.0
+    rc = vr.vol_rle_encode(c)
+    u2 = vr.vol_rle_union(rc, empty)
+    assert len(u2) == 2
+    assert np.array_equal(vr.vol_rle_decode(u2), c)
+    # different shapes are refused
+    other = vr.vol_rle_encode(np.zeros((2, 2, 2)))
+    with pytest.raises(ValueError, match="different volumes"):
+        vr.vol_rle_union(r, other)
+
+
+def test_components_respect_connectivity_and_conserve_volume():
+    v = np.zeros((8, 8, 8), np.float64)
+    v[1:3, 1:3, 1:3] = 1.0                          # corner at (2,2,2)
+    v[3:5, 3:5, 3:5] = 1.0                          # corner at (3,3,3) — diagonal touch
+    c6 = vr.vol_rle_components(v, connectivity=6)
+    c26 = vr.vol_rle_components(v, connectivity=26)
+    assert len(c6) == 2 and len(c26) == 1           # same GT as volops.vol_label
+    total = int(v.sum())
+    assert sum(vr.vol_rle_volume(c) for c in c6) == total
+    assert vr.vol_rle_volume(c26[0]) == total
+    # each component decodes to a disjoint sub-mask whose union is the input
+    u = np.zeros(v.shape)
+    for c in c6:
+        d = vr.vol_rle_decode(c)
+        assert np.all(u + d <= 1.0)                 # disjoint
+        u += d
+    assert np.array_equal(u, v)
+    assert vr.vol_rle_components(np.zeros((3, 3, 3))) == []
+    with pytest.raises(ValueError, match="connectivity"):
+        vr.vol_rle_components(v, connectivity=6.5)

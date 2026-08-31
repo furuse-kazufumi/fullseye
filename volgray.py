@@ -208,12 +208,8 @@ def vol_equalize(vol, nbins=256, mask=None):
     nb = int(nbins)
     if nb < 2:
         raise ValueError("nbins must be an integer >= 2, got %r" % (nbins,))
-    vmin = float(v.min())
-    vmax = float(v.max())
-    if vmax <= vmin:
-        # constant volume: no contrast to redistribute — pass through unchanged
-        return v.copy()
-    if mask is not None:
+    sample = None
+    if mask is not None:                              # validate *before* any shortcut
         m = _require_volume(mask, "mask") > 0.5
         if m.shape != v.shape:
             raise ValueError("mask shape %r does not match vol shape %r"
@@ -222,7 +218,12 @@ def vol_equalize(vol, nbins=256, mask=None):
         if sample.size == 0:
             raise ValueError("mask selects no voxels — an empty domain has no "
                              "histogram to equalise against")
-    else:
+    vmin = float(v.min())
+    vmax = float(v.max())
+    if vmax <= vmin:
+        # constant volume: no contrast to redistribute — pass through unchanged
+        return v.copy()
+    if sample is None:
         sample = v.ravel()
     # histogram over the *full* volume range so the LUT covers every voxel,
     # even when the mask spans a narrower intensity band
