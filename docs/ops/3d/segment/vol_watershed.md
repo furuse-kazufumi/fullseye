@@ -31,7 +31,7 @@ Marker-controlled 3-D watershed segmentation (**optional — scikit-image**).
 
 ## 型が繋がる次の op(`labels` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [vol_region_props](../regionprops/vol_region_props.md)
 
 ## 同カテゴリ(`segment`)
 

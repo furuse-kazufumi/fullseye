@@ -57,12 +57,50 @@ def test_finger_flexions_rejects_bad_shape():
 
 def test_draw_is_nondestructive_and_marks_points():
     img = np.zeros((60, 80), np.float64)
-    det = {"landmarks": np.full((21, 3), 0.5), "handedness": "Left", "score": 1.0,
+    # 非対称の点 (x=0.25, y=0.75) で軸規約(landmarks は x,y 順 / 画素は行=y)を固定
+    # — 全点 0.5 だと y/x を入れ替えても通ってしまう(敵対レビュー F5)
+    pts = np.full((21, 3), 0.5)
+    pts[0] = (0.25, 0.75, 0.0)
+    det = {"landmarks": pts, "handedness": "Left", "score": 1.0,
            "world_landmarks": _straight_hand()}
     out = H.draw_hand_landmarks(img, [det])
     assert out.shape == (60, 80, 3) and out.dtype == np.uint8
     assert img.sum() == 0                              # 入力は非破壊
     assert (out[30, 40] == (255, 60, 60)).all()        # 正規化 0.5 → 中央に点
+    assert (out[45, 20] == (255, 60, 60)).all()        # y=0.75→行45, x=0.25→列20
+    assert not (out[20, 45] == (255, 60, 60)).all()    # 軸を入れ替えた位置ではない
+
+
+def test_missing_mediapipe_gives_install_instructions(monkeypatch):
+    """mediapipe 不在時の fail-closed が**到達可能**で導入手順を含む(D1 回帰)。
+
+    旧版は素の import が先に走り、親切な ImportError が永久に到達しなかった。
+    """
+    import builtins
+    import sys
+    real_import = builtins.__import__
+
+    def block(name, *a, **k):
+        if name == "mediapipe" or name.startswith("mediapipe."):
+            raise ImportError(f"blocked: {name}")
+        return real_import(name, *a, **k)
+
+    for m in [m for m in sys.modules if m == "mediapipe" or m.startswith("mediapipe.")]:
+        monkeypatch.delitem(sys.modules, m)
+    monkeypatch.setattr(builtins, "__import__", block)
+    H._LANDMARKER_CACHE.clear()
+    with pytest.raises(ImportError, match="pip install mediapipe"):
+        H.hand_landmarks(np.zeros((32, 32)))
+
+
+def test_suspicious_float_range_fails_closed():
+    """float 0..255 画像は無言で 2 値に潰さず明示エラー(D6 回帰)。"""
+    with pytest.raises(ValueError, match="255"):
+        H._to_rgb_uint8(np.linspace(0, 255, 64 * 64).reshape(64, 64))
+    with pytest.raises(ValueError, match="uint8"):
+        H._to_rgb_uint8(np.zeros((8, 8), np.uint16))
+    ok = H._to_rgb_uint8(np.linspace(0, 1, 64).reshape(8, 8))
+    assert ok.dtype == np.uint8 and len(np.unique(ok)) > 2
 
 
 _HAS_MP = True

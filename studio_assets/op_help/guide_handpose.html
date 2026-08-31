@@ -1,0 +1,77 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">手の 21 キーポイントと指屈曲角 — 使い方ガイド</h2>
+<p>&gt; 呼び出しモデル: この族は <code style="color:#22d3bf">apply(img, &quot;&lt;op名&gt;&quot;, a, b)</code> の 2 つまみ規約では<b>なく</b>、</p>
+<p>&gt; ファサード関数(<code style="color:#22d3bf">import fullseye; fullseye.hand_landmarks(...)</code>)です。</p>
+<p>&gt; 検出結果が dict のリストという構造化データで、a/b の連続つまみに馴染まないため。</p>
+<p>&gt; 検証済みテスト: [<code style="color:#22d3bf">tests/test_handpose.py</code>](../../../../tests/test_handpose.py)</p>
+<p>&gt; (幾何 = 伸びきり 0° / 直角 90° / 描画非破壊 / fail-closed を機械検証)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>写真・動画から<b>手の 21 キーポイント</b>(手首 1 + 各指 4×5)を取り、そこから</p>
+<p><b>指 5 本の屈曲角</b>を計算するための入口です。位置づけは Physical AI ブリッジ ——</p>
+<p>「人の動きを見て、ロボットに写す」パイプラインの手版の第一歩です。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hand_landmarks(image)</code> — 画像 → 手ごとの 21 点。画像正規化座標(描画用)と</p>
+<p><b>world 座標(メートル、手の幾何中心原点)</b>の両方を返します。関節角の計算は</p>
+<p>遠近で歪まない world 側を使います。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">finger_flexions(det)</code> — 1 検出 → 指 5 本の屈曲角[deg]。伸びきり ~0°、</p>
+<p>直角 90°、握り込み ~180°+。<b>リターゲットの入口</b>(屈曲量を [0,1] に正規化</p>
+<p>すればロボットハンドの相反駆動指令の最初の近似になる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hand_skeleton_edges()</code> — 21 点の骨格結線(手首→付け根、指内、掌の橋)。</p>
+<p>描画やグラフ解析(骨格 op 族と同じ語彙)に。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">draw_hand_landmarks(image, dets)</code> — numpy だけで点+骨を描いた注釈画像。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">依存と fail-closed(重要)</h3>
+<p><b>検出だけ</b> optional extra です。<code style="color:#22d3bf">mediapipe</code>(Apache-2.0)と手モデル</p>
+<p><code style="color:#22d3bf">hand_landmarker.task</code>(~8MB、Apache-2.0)が要り、どちらか欠けると</p>
+<p><b>導入手順つきの明示エラー</b>を送出します(黙って空リストは返しません)。</p>
+<p>幾何側(<code style="color:#22d3bf">finger_flexions</code> / <code style="color:#22d3bf">hand_skeleton_edges</code> / <code style="color:#22d3bf">draw_hand_landmarks</code>)は</p>
+<p>numpy のみで動きます。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">py -3.11 -m pip install mediapipe
+curl -L -o %USERPROFILE%/.cache/fullseye/hand_landmarker.task ^
+    https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+  img[&quot;写真 / 動画フレーム&lt;br/&gt;image(HxW / HxWx3)&quot;] --&gt; det[&quot;hand_landmarks&lt;br/&gt;21 点 x 手&quot;]
+  det --&gt; flex[&quot;finger_flexions&lt;br/&gt;指 5 本の屈曲角[deg]&quot;]
+  det --&gt; draw[&quot;draw_hand_landmarks&lt;br/&gt;注釈画像&quot;]
+  flex --&gt; ret[&quot;正規化 [0,1]&lt;br/&gt;→ ロボットハンド指令(構想)&quot;]
+  det -.-&gt;|骨格語彙| skel[&quot;hand_skeleton_edges&lt;br/&gt;(junctions/branches と同じ発想)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import handpose as H
+
+# --- 検出(mediapipe + モデルが要る。無ければ導入手順つきエラー)---
+# dets = H.hand_landmarks(rgb_image)          # list[dict]
+
+# --- 幾何は numpy だけで動く: 合成 world 座標で屈曲角を確かめる ---
+w = np.zeros((21, 3))
+for f, chain in enumerate(H.FINGERS.values()):
+    d = np.array([1.0, 0.15 * f, 0.0]); d /= np.linalg.norm(d)
+    for j, idx in enumerate(chain):
+        w[idx] = 0.03 * (j + 1) * d                 # 全指伸びきり(手首から放射直線)
+flex = H.finger_flexions({&quot;world_landmarks&quot;: w})
+assert all(abs(v) &lt; 0.1 for v in flex.values())     # 伸びきり = 0°
+
+mcp, pip, dip, tip = H.FINGERS[&quot;index&quot;]
+w[dip] = w[pip] + (0.0, 0.0, 0.03)                  # 人差し指を PIP で直角に折る
+w[tip] = w[dip] + (0.0, 0.0, 0.03)
+flex = H.finger_flexions({&quot;world_landmarks&quot;: w})
+assert abs(flex[&quot;index&quot;] - 90.0) &lt; 0.1              # 直角 = 90°
+print({k: round(v, 1) for k, v in flex.items()})</pre>
+<p>デモ(画像 1 枚 / Web カメラ 1 フレーム):</p>
+<p>[<code style="color:#22d3bf">examples/hand_tracking_demo.py</code>](../../../../examples/hand_tracking_demo.py)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な現状と落とし穴</h3>
+<p style="margin:2px 0 2px 12px">• <b>検証済み</b>: 幾何(屈曲角の 0°/90° GT、結線の全点被覆、描画の非破壊)、</p>
+<p>モデル不在の fail-closed、空画像 → 0 検出の機械的 e2e。</p>
+<p style="margin:2px 0 2px 12px">• <b>未検証</b>: 実写での検出品質はまだ運用実績がありません(モデルは MediaPipe</p>
+<p>Hands の公開学習済み。手が画面の 1/10 以上を占める距離が目安)。</p>
+<p style="margin:2px 0 2px 12px">• <b>落とし穴 1</b>: 関節角は正規化座標でなく <b>world 座標で</b>計算すること。</p>
+<p>正規化座標は遠近とアスペクトで歪みます(<code style="color:#22d3bf">finger_flexions</code> は world 前提)。</p>
+<p style="margin:2px 0 2px 12px">• <b>落とし穴 2</b>: <code style="color:#22d3bf">handedness</code> は解剖学的左右(鏡像の自撮り映像では見た目と</p>
+<p>逆になり得る)。</p>
+<p style="margin:2px 0 2px 12px">• <b>落とし穴 3</b>: 屈曲角は MCP+PIP の折れ角の<b>和</b>という素朴な定義です。</p>
+<p>過伸展(反り)は 0° 側に折り返さず正の角になります —— 反り分離が要る用途は</p>
+<p>符号付き定義に差し替えてから使ってください。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• 骨格グラフ族(<code style="color:#22d3bf">junctions_skeleton</code> / <code style="color:#22d3bf">skeleton_branches3d</code> など)—— 「点と結線で</p>
+<p>形を読む」同じ発想の 2D/3D 版。</p>
+<p style="margin:2px 0 2px 12px">• Physical AI 知覚スタック(ステレオ・6DoF 姿勢)—— 手の 3D 化(両眼/深度で</p>
+<p>world 座標を実測に置換)はこの先の接続点。</p>

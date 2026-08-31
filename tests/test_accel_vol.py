@@ -116,3 +116,35 @@ def test_vol_denoise_metric_preserved():
     bridge = float(np.mean([prob.score_value(B.run(stages, [inp[i]], device="cpu")[0],
                                              items[i]) for i in range(len(inp))]))
     assert abs(bridge - core) < 0.5                       # dB PSNR、実測 ~0.06-0.15
+
+
+_BIN_MORPH = ["vol_reg_dilate_g", "vol_reg_erode_g", "vol_erosion_ball_g",
+              "vol_dilation_ball_g", "vol_opening_ball_g"]
+
+
+def _sparse_structured_vol():
+    """疎な構造ボリューム(中実ブロック+角の孤立 voxel = 境界ストレス)。
+
+    50% ランダム二値は 33 voxel footprint の膨張で全 1 / 収縮で全 0 に縮退し、
+    「参照も出力も定数」の空虚な parity になる(敵対レビュー 2026-08-31 D2)。
+    """
+    v = np.zeros((24, 24, 24), np.float64)
+    v[4:15, 4:15, 4:15] = 1.0                       # 11^3 の中実ブロック
+    v[18:21, 6:9, 14:17] = 1.0                      # 小ブロック
+    v[0, 0, 0] = v[23, 23, 23] = v[0, 23, 11] = 1.0  # 角・辺の孤立 voxel
+    return v
+
+
+@skip
+@pytest.mark.parametrize("name", _BIN_MORPH)
+@pytest.mark.parametrize("a", [0.0, 0.34, 0.67, 1.0])
+def test_binary_morph_parity_sparse_bit_exact(name, a):
+    """3D 二値モルフォロジ: 疎構造入力で core と bit 一致、かつ出力が非縮退。"""
+    core = V.VOL_ACCEL[name][1]
+    if core not in ops.RT:
+        pytest.skip(f"{core} は core RT に無い")
+    vol = _sparse_structured_vol()
+    got = np.asarray(V.run_batch_vol(name, [vol], a, 0.5, "cpu")[0], np.float64)
+    ref = ops.RT[core](vol.copy(), a, 0.5)
+    assert np.array_equal(got, ref), f"{name} a={a}: core と不一致 ({np.abs(got-ref).sum():.0f} voxel)"
+    assert 0 < ref.sum() < ref.size, f"{name} a={a}: 出力が縮退(全0/全1)して比較が空虚"

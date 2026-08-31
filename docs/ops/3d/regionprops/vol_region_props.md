@@ -2,7 +2,7 @@
 op: vol_region_props
 dim: 3d
 category: regionprops
-in: voxel
+in: labels
 out: measurement
 examples: [vessel_metrology]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # vol_region_props — 3D `regionprops` op
 
-- **データ種**: `voxel` → `measurement`
+- **データ種**: `labels` → `measurement`
 - **呼び出し**: `import volops; volops.vol_region_props(labels, spacing=None, surface='auto')` (または `ops3d.get("vol_region_props")`)
 
 ## 使い方

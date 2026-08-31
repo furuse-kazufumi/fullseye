@@ -17,6 +17,7 @@
 - [gallery2d_segmentation](guides/gallery2d_segmentation.md) — セグメンテーション — 使い方ガイド
 - [gallery2d_smoothing_rank](guides/gallery2d_smoothing_rank.md) — 平滑化・ランク・復元フィルタ — 使い方ガイド
 - [gallery2d_texture_freq](guides/gallery2d_texture_freq.md) — テクスチャ・周波数・分解 — 使い方ガイド
+- [handpose](guides/handpose.md) — 手の 21 キーポイントと指屈曲角 — 使い方ガイド
 
 ## カテゴリ
 
