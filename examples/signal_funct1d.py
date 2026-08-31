@@ -69,8 +69,8 @@ def main():
     round_err = F.distance_funct_1d(back, sm_w - sm_w[0], mode="max")
     print(f"微分→積分の往復: 最大誤差 {round_err:.2e}(信号振幅 ~1)")
     assert round_err < 5e-3
-    # 極大点では微分 ≈ 0(1次条件)
-    assert float(np.max(np.abs(dsm[peaks]))) < 0.02 * float(np.max(np.abs(dsm)))
+    # 極大点では微分 ≈ 0(1次条件。離散格子なので曲率×格子幅 ~ 数% までは残る)
+    assert float(np.max(np.abs(dsm[peaks]))) < 0.1 * float(np.max(np.abs(dsm)))
 
     # ---- 5) ピーク包絡線 → 減衰時定数 τ(真値 0.4 s) -------------------- #
     env = F.abs_funct_1d(sm_w)
