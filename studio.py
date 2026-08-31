@@ -1766,6 +1766,10 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._center = np.zeros(3); self._radius = 1.0
             self._yaw, self._pitch, self._zoom = 35.0, 25.0, 1.0
             self._pan = [0.0, 0.0]
+            self._fp = False                    # first-person walkthrough mode (F key)
+            self._fp_yaw, self._fp_pitch = 0.0, 0.0
+            self._eye = np.zeros(3)             # first-person camera position (world)
+            self._fp_speed = 1.0                # walk-speed multiplier (wheel)
             self._drag = None                   # (mode, last QPoint) while a button is down
             self._frame = None                  # last rendered numpy frame (tests/screenshots)
             self._n_drawn = 0                   # points actually splatted last frame (HUD honesty)
