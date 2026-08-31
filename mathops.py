@@ -102,6 +102,27 @@ POLY_COND_WARN = 1e10
 # --------------------------------------------------------------------------- #
 # fail-closed input helpers                                                    #
 # --------------------------------------------------------------------------- #
+def _as_float64(a, name: str) -> np.ndarray:
+    """Coerce to contiguous float64, rejecting inputs that would lose data.
+
+    Two silent-truncation traps (both raise ``ValueError``): a **complex**
+    input would have its imaginary part discarded (numpy emits only a
+    ``ComplexWarning`` and returns a plausible-wrong real answer), and a
+    **masked array with masked entries** would have the mask stripped and the
+    underlying raw values used as if they were valid data."""
+    if np.ma.is_masked(a):
+        raise ValueError("%s is a masked array with masked (invalid) entries — "
+                         "coercion would silently strip the mask and use the "
+                         "raw values underneath; fill or drop them explicitly"
+                         % (name,))
+    if np.iscomplexobj(a):
+        raise ValueError("%s is complex — coercion to float64 would silently "
+                         "discard the imaginary part (a plausible-wrong real "
+                         "answer); take .real/.imag/abs() explicitly, or use "
+                         "the complex-capable ops in complexops" % (name,))
+    return np.ascontiguousarray(a, dtype=np.float64)
+
+
 def _require_finite(a: np.ndarray, name: str) -> None:
     if not np.isfinite(a).all():
         n = int((~np.isfinite(a)).sum())
