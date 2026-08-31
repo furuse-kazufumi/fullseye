@@ -1966,7 +1966,7 @@ def fit_sphere_3d(points):
 
 def fit_circle_3d(points):
     """点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。"""
-    P = np.asarray(points, float); c, n, _ = fit_plane_3d(P)
+    P = _pts(points, "fit_circle_3d", 3); c, n, _ = fit_plane_3d(P)
     e1 = _u(np.cross(n, [1, 0, 0]) if abs(n[0]) < 0.9 else np.cross(n, [0, 1, 0]))
     e2 = np.cross(n, e1)
     xy = np.stack([(P - c) @ e1, (P - c) @ e2], 1)
