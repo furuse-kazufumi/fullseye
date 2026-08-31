@@ -853,18 +853,15 @@ def _splat_points(img, xi, yi, colors, px):
     array order), so the painter's algorithm outcome — including which
     duplicate index wins a pixel — is unchanged. In-place; returns *img*."""
     h, w = img.shape[:2]
-    keep = (xi >= 1 - px) & (xi <= w - 1) & (yi >= 1 - px) & (yi <= h - 1)
-    if not keep.all():
-        xi, yi, colors = xi[keep], yi[keep], colors[keep]
-    if xi.size == 0:
-        return img
-    if px == 1:
-        img[yi, xi] = colors
-        return img
-    pad = px - 1
+    pad = px                                      # margin absorbs every clipped splat:
+    # clip into [-pad, w]: on-canvas-touching splats (xi in [1-px, w-1]) pass
+    # through unchanged, everything farther is folded onto the margin where its
+    # writes land outside the centre crop — cheaper than filtering (no O(N)
+    # gather of the color array) and order-preserving by construction.
+    xs = np.clip(xi, -pad, w) + pad
+    ys = np.clip(yi, -pad, h) + pad
     big = np.empty((h + 2 * pad, w + 2 * pad, 3), img.dtype)
     big[pad:pad + h, pad:pad + w] = img
-    ys, xs = yi + pad, xi + pad
     for dy in range(px):
         for dx in range(px):
             big[ys + dy, xs + dx] = colors
