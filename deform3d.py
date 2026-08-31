@@ -183,9 +183,14 @@ def tps_warp(model, points):
     was_1d = np.asarray(points).ndim == 1
     x = _as_points(points, "points")
 
-    U = tps_kernel(_pairwise_dist(x, ctrl))       # (M,K)
-    Phi = np.hstack([np.ones((x.shape[0], 1)), x])  # (M,4)
-    out = Phi @ a + U @ w                          # (M,3)
+    # (M,K) カーネルを一括で組むと M×K×8 バイト(M=数百万 × K=数千で数百 GB)に
+    # なるため、M 方向にチャンクして評価する。数学は同一(行ごとに独立)。
+    out = np.empty((x.shape[0], 3), dtype=np.float64)
+    for s in range(0, x.shape[0], _TPS_WARP_CHUNK):
+        blk = x[s:s + _TPS_WARP_CHUNK]
+        U = tps_kernel(_pairwise_dist(blk, ctrl))         # (m,K)
+        Phi = np.hstack([np.ones((blk.shape[0], 1)), blk])  # (m,4)
+        out[s:s + _TPS_WARP_CHUNK] = Phi @ a + U @ w
     return out[0] if was_1d else out
 
 
