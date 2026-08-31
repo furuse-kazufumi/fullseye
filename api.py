@@ -165,6 +165,26 @@ from volregion import (  # noqa: E402,F401
     vol_rle_centroid, vol_rle_union, vol_rle_intersect, vol_rle_difference,
     vol_rle_components,
 )
+import volgray  # noqa: E402  (3-D intensity transforms: CT windowing / equalize / gamma / stretch)
+import volxform  # noqa: E402  (3-D geometric transforms: resize / rotate / affine)
+import volprobe  # noqa: E402  (3-D virtual probe: profile line / edge probe / wall thickness)
+import volfreq  # noqa: E402  (3-D FFT filtering: low/high/band-pass)
+import volrestore  # noqa: E402  (3-D restoration: Richardson-Lucy deconvolution)
+from volgray import (  # noqa: E402,F401
+    vol_window_level, vol_equalize, vol_gamma, vol_stretch,
+)
+from volxform import (  # noqa: E402,F401
+    vol_resize, vol_rotate, vol_affine,
+)
+from volprobe import (  # noqa: E402,F401
+    vol_profile_line, vol_edge_probe, vol_wall_thickness,
+)
+from volfreq import (  # noqa: E402,F401
+    vol_fft_lowpass, vol_fft_highpass, vol_fft_bandpass,
+)
+from volrestore import (  # noqa: E402,F401
+    vol_gaussian_psf, vol_richardson_lucy,
+)
 from handpose import (  # noqa: E402,F401
     hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
 )
