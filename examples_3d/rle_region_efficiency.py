@@ -16,7 +16,7 @@
     5) vol_rle_decode   : dense へ復元(往復 bit 一致)
 
 Ground truth(検証):
-    - メモリ: 192^3 の現実的な部品(球+軸円柱)で dense bool の 1/49(実測)。
+    - メモリ: 192^3 の現実的な部品(球+軸円柱)で dense bool の 1/73(実測)。
       run 数に比例するので、大きい部品ほど得(384^3 実測は 1/145)
     - 正確性: volume/bbox/centroid が dense 計算・volops.vol_bounding_box と
       厳密一致、encode→decode の往復が bit 一致
