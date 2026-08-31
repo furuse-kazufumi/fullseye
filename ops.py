@@ -590,13 +590,15 @@ def _vol_ball_fp(r):
 
 
 def _vol_reg_dilate(v, a, b):
+    # iterations は 1 以上へクランプ。scipy は iterations<1 を「収束まで反復」と
+    # 解釈するため、a<0 を渡すと全充填/全消去に発散する(敵対レビュー D3)
     st = ndimage.generate_binary_structure(3, 1)
-    return ndimage.binary_dilation(_bin(v), st, iterations=1 + int(a * 3)).astype(np.float64)
+    return ndimage.binary_dilation(_bin(v), st, iterations=max(1, 1 + int(a * 3))).astype(np.float64)
 
 
 def _vol_reg_erode(v, a, b):
     st = ndimage.generate_binary_structure(3, 1)
-    return ndimage.binary_erosion(_bin(v), st, iterations=1 + int(a * 3)).astype(np.float64)
+    return ndimage.binary_erosion(_bin(v), st, iterations=max(1, 1 + int(a * 3))).astype(np.float64)
 
 
 def _vol_dilation_ball(v, a, b):
