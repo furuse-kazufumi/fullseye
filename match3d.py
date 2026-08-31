@@ -1957,7 +1957,7 @@ def fit_plane_3d(points):
 
 def fit_sphere_3d(points):
     """点群 → 最小二乗球(代数フィット)。返り値 (center, radius)。配管/ボール計測に。"""
-    P = np.asarray(points, float)
+    P = _pts(points, "fit_sphere_3d", 4)
     A = np.hstack([2 * P, np.ones((len(P), 1))]); b = (P ** 2).sum(1)
     sol, *_ = np.linalg.lstsq(A, b, rcond=None)
     c = sol[:3]
