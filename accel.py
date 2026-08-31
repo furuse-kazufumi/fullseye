@@ -499,9 +499,13 @@ def _opening_circle(t, a, b, dev):                    # erosion → dilation(dis
 def _cv_sharpen(t, a, b, dev):
     # core = cv2.filter2D(v, kernel=[[0,-a,0],[-a,1+4a,-a],[0,-a,0]]), clip[0,1]。
     # cv2.filter2D 既定 border=BORDER_REFLECT_101 = torch 'reflect'。相関(非反転)= conv2d。
+    # 1px 幅/高さの次元は torch 'reflect' が拒否する(P4 クラッシュ)。長さ 1 の
+    # 次元では reflect101 も replicate も同じ「唯一の画素の複製」なので replicate へ。
     k = torch.tensor([[0.0, -a, 0.0], [-a, 1.0 + 4.0 * a, -a], [0.0, -a, 0.0]],
                      dtype=torch.float32, device=dev).view(1, 1, 3, 3)
-    return F.conv2d(F.pad(t, (1, 1, 1, 1), mode="reflect"), k).clamp(0, 1)
+    p = F.pad(t, (0, 0, 1, 1), mode="reflect" if t.shape[2] > 1 else "replicate")
+    p = F.pad(p, (1, 1, 0, 0), mode="reflect" if t.shape[3] > 1 else "replicate")
+    return F.conv2d(p, k).clamp(0, 1)
 
 
 def _tv_chambolle(img, weight, eps=2.0e-4, max_iter=200):
