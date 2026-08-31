@@ -219,6 +219,32 @@ def test_growth_guard_shares_the_fuzzer_limit():
     assert MAX_POOL_BYTES == cf.MAX_POOL_BYTES
 
 
+def test_oversize_input_is_skipped_and_counted(env):
+    """巨大な入力を食う op は実行**前**に弾き、理由つきで数える。
+
+    バイト上限(128MB)は時間の暴走を止められない: 実測で ``match_shape_3d``
+    が 161³ の volume 2 本(63.7MB = 8.3M 要素、上限内)を食って **5 分経っても
+    返らず**、1500 連鎖の本番走行がそこで止まった。要素数で切ると決定的に
+    防げる(秒で切ると判定がマシン負荷に依存して記録の決定性が壊れる)。
+    """
+    import time
+    import tools.chain_mine as cm
+    ops, gens = env
+    tally = {}
+    t0 = time.perf_counter()
+    cm.mine_chain(ops, gens, 7 * 1_000_003 + 335, 4, tally)   # 実測のストール連鎖
+    elapsed = time.perf_counter() - t0
+    assert tally.get("oversize_input", 0) > 0, "巨大入力が弾かれていない"
+    assert elapsed < 60.0, f"ストール連鎖が {elapsed:.0f}s かかっている"
+
+
+def test_oversize_guard_leaves_normal_intermediates_alone(env):
+    """上限は実際に有用だった中間産物(最大 33,792 要素)より桁で上にある。"""
+    from tools.chain_mine import MAX_OP_ELEMS
+    assert MAX_OP_ELEMS >= 20 * 33_792
+    assert MAX_OP_ELEMS < 161 ** 3            # 実測のストール入力は弾く
+
+
 # --------------------------------------------------------------------------- #
 # 極値: 有限な入力から集約が溢れる / ビンが刻めない幅                            #
 # --------------------------------------------------------------------------- #
