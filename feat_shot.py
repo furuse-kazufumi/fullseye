@@ -117,8 +117,16 @@ def shot_descriptor(points, normals, kp_idx, tree, radius,
     """SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を
     径2×仰角2×方位8=32 空間セルに分割、各セルで「LRF z 軸と近傍点法線の
     cos角」を n_cos=11 ビンのヒストグラムに quadrilinear 補間で蓄積 → 32×11=352
-    次元を L2 正規化。返り値 (Kp,352)。LRF 不能な点は零ベクトル。"""
+    次元を L2 正規化。返り値 (Kp,352)。LRF 不能な点は零ベクトル。
+
+    Raises ValueError: normals の行数が points と一致しない場合(別点群の法線を
+    混ぜると近傍 index が範囲を越え生 IndexError になる — compute_fpfh と同クラス)。"""
     pts = np.asarray(points, np.float64)
+    normals = np.asarray(normals, np.float64)
+    if normals.shape != pts.shape:
+        raise ValueError("shot_descriptor: normals must pair one normal with "
+                         "each point — points %r vs normals %r"
+                         % (pts.shape, normals.shape))
     Kp = len(kp_idx)
     dim = n_azim * n_elev * n_rad * n_cos
     desc = np.zeros((Kp, dim), np.float64)
