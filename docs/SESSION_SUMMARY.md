@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-01 07:15:57
+- **最終更新**: 2026-09-01 07:47:30
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-cbdf3a53 fuzz+math+studio: --minimize 実装 / 数学 tier2 複素解析 10op / Studio 起動 2.4倍
-d49154fa auto: match3d.py 編集前 (2026-09-01 07:10)
-56125d98 auto: NEXT_OPS_PLAN_2026-08-31.md 編集前 (2026-09-01 07:03)
-9975fe48 auto: test_mathops.py 編集前 (2026-09-01 06:53)
-5d208905 auto: chain_fuzz.py 編集前 (2026-09-01 06:52)
-3afa5148 auto: chain_fuzz.py 編集前 (2026-09-01 06:52)
-9746f6a1 auto: chain_fuzz.py 編集前 (2026-09-01 06:52)
-1cbef40e auto: mathops.py 編集前 (2026-09-01 06:52)
-53f1f37a auto: mathops.py 編集前 (2026-09-01 06:51)
-22369a30 auto: mathops.py 編集前 (2026-09-01 06:50)
+4e5da7d4 docs: 進化型アルゴリズム開発環境の設計を記録(拡散→収縮→昇格、2つのop宇宙の橋、ゲートの根拠と限界)
+527b157f auto: README.md 編集前 (2026-09-01 07:47)
+ddd423f6 evolve_loop: 拡散→収縮→昇格を1本で回す進化型アルゴリズム開発環境
+bf860fca auto: evolve_loop.py 編集前 (2026-09-01 07:44)
+a1ba4356 auto: evolve_loop.py 編集前 (2026-09-01 07:42)
+ce4407cb auto: evolve_loop.py 編集前 (2026-09-01 07:42)
+c996de65 auto: chain_mine.py 編集前 (2026-09-01 07:41)
+2cfba6d3 auto: chain_mine.py 編集前 (2026-09-01 07:41)
+0bc7ec22 auto: chain_mine.py 編集前 (2026-09-01 07:41)
+122c3a10 auto: chain_mine.py 編集前 (2026-09-01 07:41)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:15 .pytest_cache/v/cache/nodeids
-07:15 docs/SESSION_SUMMARY.md
-07:11 tests/test_match3d.py
-07:10 match3d.py
-07:03 docs/NEXT_OPS_PLAN_2026-08-31.md
-07:02 docs/ops/math/guides/math_metrology.md
-07:01 fullseye/OP_CATALOG.md
-07:01 docs/OP_CATALOG.md
-07:01 tools/gen_op_catalog.py
-06:59 studio_assets/op_help/math/stat_zscore.html
-06:59 studio_assets/op_help/math/stat_histogram.html
-06:59 studio_assets/op_help/math/stat_describe.html
-06:59 studio_assets/op_help/math/stat_covariance.html
-06:59 studio_assets/op_help/math/stat_correlation.html
-06:59 studio_assets/op_help/math/mat_svd.html
+07:47 docs/README.md
+07:46 .pytest_cache/v/cache/nodeids
+07:46 docs/EVOLUTION_ENVIRONMENT.md
+07:46 tools/chain_fuzz.py
+07:45 .pytest_cache/v/cache/lastfailed
+07:45 tests/test_chain_mine.py
+07:44 tools/evolve_loop.py
+07:43 tests/test_evolve_loop.py
+07:41 tools/chain_mine.py
+07:41 tests/test_optics.py
+07:41 optics.py
+07:41 tests/test_promote_gate.py
+07:40 champion_to_macro.py
+07:39 tools/promote_gate.py
+07:34 tests/test_backends_typed.py
 ```
 
 ---
