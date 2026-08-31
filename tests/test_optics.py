@@ -761,7 +761,9 @@ class TestAdversarialRegressions:
         so a 60th-order 'wavefront' used to report an RMS of 3032 waves."""
         with pytest.raises(ValueError, match="exceeds the 40 cap"):
             O.wavefront_stats({(60, 0): 0.1})
-        assert O.wavefront_stats({(40, 0): 0.1}, radial=1024)["rms_waves"] < 1.0
+        with pytest.warns(RuntimeWarning, match="under-sampled"):
+            r = O.wavefront_stats({(40, 0): 0.1})
+        assert r["rms_waves"] < 1.0             # bounded, not 3032 waves
 
     def test_a_small_call_cannot_ask_for_a_hundred_gigabytes(self):
         """wavefront_stats builds every (n, m) up to n_max on the whole polar
@@ -780,7 +782,10 @@ class TestAdversarialRegressions:
     def test_documented_infinities_are_the_only_infinities(self):
         """Only depth_of_field's far limit and gaussian_beam's waist curvature
         may be non-finite, and both advertise it with a companion field."""
+        documented = {"depth_of_field", "gaussian_beam"}
         for name, a in _ledger_args().items():
+            if name in documented:
+                continue                        # their infinities are the contract
             val = opsoptics.call(name, *a)
             if isinstance(val, np.ndarray):
                 assert np.isfinite(val).all(), name

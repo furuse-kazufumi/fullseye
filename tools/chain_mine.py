@@ -435,7 +435,10 @@ def contract(cands, ops, gens, identity_eps=IDENTITY_EPS, const_eps=CONST_EPS,
     for c in kept:
         key = bin_key(c["desc"])
         cur = bins.get(key)
-        rank = (c["desc"]["n_ops"], c["desc"]["sec"], c["seed"])
+        # 代表は品質ではなく**簡潔さ**で選ぶ。順位に秒を入れてはいけない
+        # (実測: 秒でタイを割ると 95 代表中 4 件が走るたびに入れ替わり、
+        #  同じ seed でも出力 jsonl が一致しなくなった)
+        rank = (c["desc"]["n_ops"], c["seed"])
         if cur is None or rank < cur[0]:
             bins[key] = (rank, c, (0 if cur is None else cur[2]) + 1)
         else:

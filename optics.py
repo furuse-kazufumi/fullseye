@@ -126,7 +126,8 @@ __all__ = [
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
-    "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "JONES_KINDS", "MUELLER_KINDS",
+    "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "MAX_ZERNIKE_BASIS",
+    "JONES_KINDS", "MUELLER_KINDS",
 ]
 
 #: The public optics operators, by name (introspection / facade wiring).
@@ -162,6 +163,14 @@ MAX_ZERNIKE_TERMS = 512
 #: ``n = 50`` and 2.8e5 at ``n = 60``. Past the cap the numbers are garbage that
 #: looks like a wavefront, so they are refused rather than returned.
 MAX_ZERNIKE_ORDER = 40
+
+#: Largest working set (float64 elements) for the Zernike basis
+#: :func:`wavefront_stats` builds. The builder evaluates *every* ``(n, m)`` up to
+#: ``n_max`` on the whole polar grid, so the allocation is
+#: ``(n_max+1)(n_max+2)/2 * radial * angular`` — quadratic in an argument that
+#: looks innocent. 2^25 elements = 268 MB, which admits ``n_max = 40`` on the
+#: default grid (21 M) and refuses ``n_max = 40`` at 4096x4096 (1.4e10 = 108 GB).
+MAX_ZERNIKE_BASIS = 1 << 25
 
 #: Jones element kinds accepted by :func:`jones_element`.
 JONES_KINDS = ("polarizer", "retarder", "quarter_wave", "half_wave", "rotator")
@@ -1084,7 +1093,7 @@ def wavefront_stats(coeffs, radial=128, angular=192):
     12%-wrong Strehl look authoritative. Raising *radial* fixes it at
     ``O(1/radial^2)``, but note the basis is built for *all* orders up to
     ``n_max``, so the working set grows as ``n_max^2 * radial * angular`` and is
-    capped by :data:`MAX_FIELD_ELEMENTS`.
+    capped by :data:`MAX_ZERNIKE_BASIS`.
 
     Marechal is a small-aberration approximation and the RMS is over the *fitted*
     expansion, so it says nothing about wavefront structure finer than ``n_max``
@@ -1103,13 +1112,13 @@ def wavefront_stats(coeffs, radial=128, angular=192):
     # inputs are one dict and two ints. Refuse it up front.
     rows = (n_max + 1) * (n_max + 2) // 2
     need = rows * nr * nt
-    if need > MAX_FIELD_ELEMENTS:
+    if need > MAX_ZERNIKE_BASIS:
         raise ValueError("wavefront_stats: the Zernike basis for n_max=%d on a "
                          "%dx%d grid needs %d elements (%.1f GB), over the %d "
-                         "cap (optics.MAX_FIELD_ELEMENTS) — lower radial/angular "
+                         "cap (optics.MAX_ZERNIKE_BASIS) — lower radial/angular "
                          "or fit fewer orders"
                          % (n_max, nr, nt, need, need * 8 / 2 ** 30,
-                            MAX_FIELD_ELEMENTS))
+                            MAX_ZERNIKE_BASIS))
     if nr < 16 * n_max:
         # Measured 2026-09-01: the relative RMS error of the radial quadrature
         # tracks (n_max/radial)^2 to within a factor 2 — 1.7e-3 at n=6/nr=128,
