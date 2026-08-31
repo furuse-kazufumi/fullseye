@@ -262,6 +262,23 @@ def decide(utility, duplicate_of, library_size, capacity=DNA_CAPACITY):
                   f"best relative gain {utility['best_relative_gain']:+.4f}")
 
 
+def gate_candidate(ops, problems, name, fn, in_sort, out_sort, a=0.5, b=0.5,
+                   split="locked", max_existing=None, capacity=DNA_CAPACITY,
+                   library_size=None, verbose=False):
+    """未登録の候補(callable)を一時登録して判定する。→ (promote, reason, 詳細)。
+
+    ``champion_to_macro`` から呼ぶ入口。候補は判定が終われば必ず外れる。
+    """
+    dup = find_behavioural_duplicate(ops, fn, in_sort, a, b, limit=max_existing)
+    with temp_op(ops, name, fn, in_sort, out_sort):
+        util = counterfactual_utility(ops, problems, name, a, b, split=split,
+                                      max_existing=max_existing, verbose=verbose)
+    size = len(_load_library()) if library_size is None else library_size
+    ok, reason = decide(util, dup, size, capacity)
+    return ok, reason, {"duplicate_of": dup, "utility": util,
+                        "library_size": size, "capacity": capacity}
+
+
 def _load_library():
     path = os.path.join(ROOT, "data", "macro_champions.json")
     if not os.path.exists(path):
