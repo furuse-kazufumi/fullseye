@@ -127,6 +127,13 @@ def tps_fit(src_ctrl, dst_ctrl, lam=0.0):
     if n < 4:
         # 3D のアフィン部(4 係数)を決めるには最低 4 点必要。
         raise ValueError(f"3D TPS needs at least 4 control points (got: {n})")
+    if n > TPS_MAX_CTRL:
+        raise ValueError(
+            f"tps_fit got {n} control points; the dense (K+4)^2 system is "
+            f"O(K^3) and impractical beyond TPS_MAX_CTRL={TPS_MAX_CTRL}. "
+            f"Subsample the correspondences first (e.g. random choice or "
+            f"farthest_point_sampling) — TPS needs only a sparse set of "
+            f"control points to represent a smooth deformation.")
     if lam < 0:
         raise ValueError(f"lam must be non-negative (got: {lam})")
 
