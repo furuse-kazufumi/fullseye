@@ -274,8 +274,16 @@ def shape_distance(desc_a, desc_b, metric: str = "l1") -> float:
     float
         非負の距離。
     """
-    a = np.asarray(desc_a, dtype=np.float64).ravel()
-    b = np.asarray(desc_b, dtype=np.float64).ravel()
+    try:
+        a = np.asarray(desc_a, dtype=np.float64).ravel()
+        b = np.asarray(desc_b, dtype=np.float64).ravel()
+    except (TypeError, ValueError) as e:
+        # 連鎖ファザー実測(wave-4): dict 等の非数値プール産物が np.asarray で
+        # 生 TypeError 化していた。fail-closed に明示 ValueError で拒否する。
+        raise ValueError(
+            f"shape_distance: descriptors must be numeric vectors "
+            f"(got {type(desc_a).__name__} / {type(desc_b).__name__}) — "
+            f"pass describe() outputs") from e
     if a.shape != b.shape:
         raise ValueError(f"descriptor lengths do not match: {a.shape} vs {b.shape}")
     if a.size == 0:
