@@ -883,10 +883,22 @@ def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
     xy, depth = viewer3d_project(P, viewer3d_camera(yaw, pitch), center, radius, zoom, pan, size)
     # painter's algorithm: paint far first so NEAR splats win. depth is the view
     # forward coordinate (larger = farther), so descending depth = far -> near.
+    # NOTE(2026-08-31): two "faster splat" variants (pre-filter + padded canvas;
+    # clip-into-discard-margin) were measured against this loop at 100k/250k pts
+    # in the REAL frame path and were a wash for orbit and 20% SLOWER for the
+    # walkthrough (the extra full-canvas copies / unconditional writes eat the
+    # per-offset mask savings, and the masks auto-adapt when most points are
+    # off-canvas at high zoom). The naive loop stays on purpose.
     order = np.argsort(depth)[::-1]
     xi = np.floor(xy[order, 0]).astype(int)
     yi = np.floor(xy[order, 1]).astype(int)
-    _splat_points(img, xi, yi, C[order], max(1, int(point_px)))
+    Co = C[order]
+    px = max(1, int(point_px))
+    for dy in range(px):
+        for dx in range(px):
+            xs, ys = xi + dx, yi + dy
+            ok = (xs >= 0) & (xs < size) & (ys >= 0) & (ys < size)
+            img[ys[ok], xs[ok]] = Co[ok]
     return img
 
 
