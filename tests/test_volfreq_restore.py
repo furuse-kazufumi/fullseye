@@ -147,3 +147,73 @@ def test_richardson_lucy_fail_closed():
     big_psf = volrestore.vol_gaussian_psf(10.0)        # 81^3 kernel > 20^3 volume
     with pytest.raises(ValueError, match="exceeds"):
         volrestore.vol_richardson_lucy(blurred, big_psf)
+
+
+# --------------------------------------------------------------------------- #
+# adversarial regressions                                                      #
+# --------------------------------------------------------------------------- #
+def test_cutoff_underflow_rejected_not_nan():
+    """Regression: cutoff=1e-300 squared underflows to 0 -> the transfer was
+    0/0 = NaN and a silently poisoned volume came back. Must raise instead."""
+    v = np.zeros((4, 4, 4)); v[1, 1, 1] = 1.0
+    for bad in (1e-300, 5e-324):
+        with pytest.raises(ValueError, match="underflows"):
+            volfreq.vol_fft_lowpass(v, cutoff=bad)
+        with pytest.raises(ValueError, match="underflows"):
+            volfreq.vol_fft_bandpass(v, low=bad, high=0.1)
+    # a small-but-representable cutoff still works and stays finite
+    assert np.isfinite(volfreq.vol_fft_lowpass(v, cutoff=1e-150)).all()
+
+
+def test_volfreq_no_numpy_deprecation_warning():
+    """Regression: irfftn(s=...) without axes= is deprecated in NumPy 2.0 and
+    will become an error — every call used to emit a DeprecationWarning."""
+    import warnings
+    v = np.random.default_rng(0).uniform(0.0, 1.0, (1, 6, 7))  # incl. D=1 axis
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        out = volfreq.vol_fft_lowpass(v, cutoff=0.2)
+    assert out.shape == v.shape
+
+
+def test_richardson_lucy_even_psf_exact_adjoint():
+    """Regression: for EVEN-sized PSFs, fftconvolve(..., mode='same') is NOT
+    the adjoint of the forward blur (its crop is off by one voxel per even
+    axis) — the estimate diverged catastrophically (a 2x2x2 corner-delta PSF
+    blew a random volume up to ~1e91 in 10 iterations; a 2x2x2 box PSF
+    inflated total flux ~625x). With the exact adjoint both behave."""
+    rng = np.random.default_rng(3)
+    obs = rng.uniform(0.1, 1.0, (8, 8, 8))
+    # corner-delta of even size: forward conv is the identity, so RL must
+    # return the observation (it used to return a shifted, exploding estimate)
+    keven = np.zeros((2, 2, 2)); keven[0, 0, 0] = 1.0
+    est = volrestore.vol_richardson_lucy(obs, keven, iterations=10)
+    assert np.allclose(est, obs, atol=1e-12)
+    # even box PSF: flux must be conserved (it used to explode)
+    kbox = np.ones((2, 2, 2)) / 8.0
+    y = np.clip(np.abs(rng.normal(1.0, 0.2, (10, 10, 10))), 0.0, None)
+    est = volrestore.vol_richardson_lucy(y, kbox, iterations=20)
+    assert float(est.sum()) == pytest.approx(float(y.sum()), rel=1e-6)
+    assert np.isfinite(est).all()
+
+
+def test_richardson_lucy_clip_tiny_validated():
+    """Regression: clip_tiny=0 (or negative) made the denominator floor a
+    no-op -> 0/0 -> the whole estimate silently became NaN."""
+    v = np.zeros((5, 5, 5))
+    delta = np.zeros((3, 3, 3)); delta[1, 1, 1] = 1.0
+    for bad in (0.0, -1.0, np.nan, np.inf):
+        with pytest.raises(ValueError, match="clip_tiny"):
+            volrestore.vol_richardson_lucy(v, delta, iterations=3, clip_tiny=bad)
+
+
+def test_gaussian_psf_sigma_underflow_rejected():
+    """Regression: sigma=1e-300 passes the > 0 check but sigma**2 underflows
+    to 0 -> the kernel centre was exp(-0/0) = NaN, returned silently."""
+    with pytest.raises(ValueError, match="underflow"):
+        volrestore.vol_gaussian_psf(1e-300)
+    with pytest.raises(ValueError, match="underflow"):
+        volrestore.vol_gaussian_psf((1.0, 1e-300, 1.0))
+    # a small-but-representable sigma still yields a finite normalised kernel
+    k = volrestore.vol_gaussian_psf(1e-100)
+    assert np.isfinite(k).all() and k.sum() == pytest.approx(1.0)
