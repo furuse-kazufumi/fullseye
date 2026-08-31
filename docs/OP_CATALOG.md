@@ -1540,6 +1540,55 @@ _計 742 ops / 46 categories。_
 - `xg_gen_polygons` (halcon: `gen_polygons_xld`) `contour → contour` · 例: `gallery2d_geometry`
 - `xg_crop_contours` `contour → contour` · 例: `gallery2d_geometry`
 
+## 1-D operators(ops1d)by category
+_計 37 ops / 3 categories。_
+
+
+プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
+
+### function(23)
+- `create_funct_1d_array` (`signal → signal`) — 等間隔サンプル配列から 1D 関数を作る(create_funct_1d_array)。
+- `create_funct_1d_pairs` (`signal, signal → pairs`) — (x,y) 対から等間隔 1D 関数へ再標本化(create_funct_1d_pairs)。
+- `smooth_funct_1d_gauss` (`signal → signal`) — 1D ガウス平滑化(smooth_funct_1d_gauss)。
+- `smooth_funct_1d_mean` (`signal → signal`) — 1D 移動平均平滑化(smooth_funct_1d_mean)。
+- `derivate_funct_1d` (`signal → signal`) — 1D 微分(中心差分、derivate_funct_1d)。
+- `integrate_funct_1d` (`signal → signal`) — 1D 累積積分(台形則、integrate_funct_1d)。
+- `zero_crossings_funct_1d` (`signal → indices`) — 符号が変わる位置(ゼロ交差)の index を返す(zero_crossings_funct_1d)。
+- `local_min_max_funct_1d` (`signal → indices`) — 局所極大/極小の index を返す(local_min_max_funct_1d)。
+- `abs_funct_1d` (`signal → signal`) — y 値の絶対値(abs_funct_1d)。
+- `negate_funct_1d` (`signal → signal`) — y 値の符号反転(negate_funct_1d)。
+- `invert_funct_1d` (`signal → signal`) — 関数 y=f(x) を x=f^-1(y) へ反転(単調区間で線形補間)(invert_funct_1d)。
+- `scale_y_funct_1d` (`signal → signal`) — y 値を線形変換 mult*y+add(scale_y_funct_1d)。
+- `transform_funct_1d` (`signal → pairs`) — 1D 関数のアフィン変換(x,y 独立、transform_funct_1d)。(x,y) 対を返す。
+- `compose_funct_1d` (`signal, signal → signal`) — 2 関数の合成 y1(y2)(値域を index として参照、compose_funct_1d)。
+- `sample_funct_1d` (`signal → signal`) — 関数を step 間隔で再標本化(sample_funct_1d)。
+- `match_funct_1d_trans` (`signal, signal → measurement`) — 2 つの 1D 関数間の最良シフト(相互相関ピーク)を推定(match_funct_1d_trans)。
+- `distance_funct_1d` (`signal, signal → measurement`) — 2 関数間の距離(max=上限, mean=平均、distance_funct_1d)。
+- `num_points_funct_1d` (`signal → measurement`) — 関数の点数(num_points_funct_1d)。
+- `x_range_funct_1d` (`signal → measurement`) — 関数の x 範囲(min,max)(x_range_funct_1d)。
+- `y_range_funct_1d` (`signal → measurement`) — 関数の y 範囲(min,max)(y_range_funct_1d)。
+- `get_pair_funct_1d` (`signal → measurement`) — index の (x, y) 対を返す(get_pair_funct_1d)。
+- `get_y_value_funct_1d` (`signal → measurement`) — 指定 x での y 値(線形補間可)(get_y_value_funct_1d)。
+- `funct_1d_to_pairs` (`signal → pairs`) — 1D 関数を (x, y) の対に変換(funct_1d_to_pairs)。
+
+### io(3)
+- `read_wav` (`file → signal`) — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is
+- `write_wav` (`signal → file`) — Write a float ``[-1,1]`` mono signal to a 16-bit PCM WAV (stdlib).
+- `read_audio` (`file → signal`) — Read any audio format -> ``(x, rate)``. Uses ``soundfile`` if available
+
+### signal(11)
+- `lowpass` (`signal → signal`) — Butterworth low-pass (scipy, zero-phase filtfilt). *cutoff* must be inside
+- `highpass` (`signal → signal`) — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.
+- `bandpass` (`signal → signal`) — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
+- `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
+- `rms` (`signal → signal`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
+- `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
+- `spectrum` (`signal → pairs`) — Single-sided magnitude spectrum -> ``(freqs, magnitude)`` (real FFT).
+- `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
+- `zero_crossing_rate` (`signal → measurement`) — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
+- `find_peaks` (`signal → indices`) — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
+- `signal_features` (`signal → measurement`) — A compact acoustic/vibration feature vector for anomaly detection:
+
 ## References(アルゴリズムの一次情報・further reading)
 
 各 op の原理はモジュール docstring にも一次文献名を明記。以下は主要技術族の外部参照。

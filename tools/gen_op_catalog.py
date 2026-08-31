@@ -272,7 +272,8 @@ def _references_section() -> list[str]:
 def build_catalog() -> str:
     lines: list[str] = []
     for section in (_preamble, _examples_section, _modules_section,
-                    _ops3d_section, _ops2d_section, _references_section):
+                    _ops3d_section, _ops2d_section, _ops1d_section,
+                    _references_section):
         try:
             lines += section()
         except Exception as e:                          # 1 セクションの失敗で全体を壊さない

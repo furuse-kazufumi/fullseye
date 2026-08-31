@@ -179,3 +179,31 @@ domain(4op)/ boundary(2op)/ rle_region(5op)/ vol_tiled_map は実装済み。
   メモリはスラブ比例 → **実装採用**(vol_tiled_map)
 - **float32 経路**: gaussian で 1.6x 速・半メモリ・相対誤差 7.7e-8 → 保留
   (float64 規約の変更を伴う。opt-in dtype 引数の設計を先に決める)
+
+## E. 実装状況更新(2026-08-31 深夜)+ 1D 監査
+
+§D の高優先はすべて実装済み(実装状態 4 段: **動作実証済み** = 専用テスト+GT example
++フルスイート 6,483 passed):
+
+- ✅ gray 4op(volgray)/ geom_transform 3op(volxform)/ probe 3op(volprobe)
+  / frequency 3op(volfreq)/ restoration 2op(volrestore)
+- ✅ RLE 集合演算 union/intersect/difference(掃引エンジン、192^3 で 3.1ms 実測)
+  + vol_rle_components(run 内ラベル一定の構造事実で run 単位振り分け)
+- ✅ vol_tiled_map(z スラブ streaming、局所 op は overlap>=footprint で厳密一致)
+- ✅ Studio volume_to_shell_points + _load_3d_file の volume 対応
+  (DICOM/NIfTI/NRRD/TIFF → Otsu → 殻点群 → そのまま一人称ウォークスルー)
+
+### 1D 監査(ユーザー発問「1D ももっと op があるべきでは」への答え)
+
+**「足りない」でなく「あるのに接続されていない」が正診**:
+
+- **funct1d.py(23 関数、HALCON funct_1d 対応)が完全な孤児だった**: import 皆無・
+  py-modules 非登録(未出荷)・テストなし・カタログ不可視。HALCON funct_1d の
+  カバレッジ自体はほぼ完備(smooth/derivate/integrate/zero_crossings/
+  local_min_max/compose/match/distance/transform 等)
+- dsp.py(信号 16 関数)は出荷済みだが OP_CATALOG 不可視だった
+- 対応: funct1d の品質採用(fail-closed 化+テスト+配線)+ **ops1d.py 統一
+  レジストリ新設(37op/3 カテゴリ)** + OP_CATALOG に 1-D 節を追加
+- 残 backlog: opdocs の per-op ノートに dim="1d" を通す(生成系の次元追加)、
+  1D の追加 op 候補(変化点検出/自己相関周期推定/1D median/ロバスト平滑)は
+  funct1d 接続後の需要を見て
