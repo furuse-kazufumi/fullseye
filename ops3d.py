@@ -174,6 +174,31 @@ _CATALOG = {
         # 成分分解(run 内はラベル一定、という構造事実で run 単位に振り分け)
         ("vol_rle_components", "volregion", ["voxel"], "rle_region", False),
     ],
+    "gray": [  # 強度変換(2D gray 41op の voxel 版第一陣。CT windowing が旗艦)
+        ("vol_window_level", "volgray", ["voxel"], "voxel", False),
+        ("vol_equalize", "volgray", ["voxel"], "voxel", False),
+        ("vol_gamma", "volgray", ["voxel"], "voxel", False),
+        ("vol_stretch", "volgray", ["voxel"], "voxel", False),
+    ],
+    "geom_transform": [  # 幾何変換(resize/rotate/affine。位置合わせ後の再サンプリング)
+        ("vol_resize", "volxform", ["voxel"], "voxel", False),
+        ("vol_rotate", "volxform", ["voxel"], "voxel", False),
+        ("vol_affine", "volxform", ["voxel"], "voxel", False),
+    ],
+    "probe": [  # virtual probe(measure1d の 3D 版 = 産業 CT 肉厚計測の核)
+        ("vol_profile_line", "volprobe", ["voxel"], "measurement", False),
+        ("vol_edge_probe", "volprobe", ["voxel"], "measurement", False),
+        ("vol_wall_thickness", "volprobe", ["voxel"], "measurement", False),
+    ],
+    "frequency": [  # 3D FFT フィルタ(2D frequency 19op の voxel 版第一陣)
+        ("vol_fft_lowpass", "volfreq", ["voxel"], "voxel", False),
+        ("vol_fft_highpass", "volfreq", ["voxel"], "voxel", False),
+        ("vol_fft_bandpass", "volfreq", ["voxel"], "voxel", False),
+    ],
+    "restoration": [  # 復元(Richardson-Lucy 3D デコンボリューション=顕微鏡定番)
+        ("vol_gaussian_psf", "volrestore", ["measurement"], "voxel", False),
+        ("vol_richardson_lucy", "volrestore", ["voxel", "voxel"], "voxel", False),
+    ],
     "morphology": [  # 3D モルフォロジー(前処理/特徴抽出。torch 不在時は scipy 経路)
         ("morph_dilate3d", "match3d", ["voxel"], "voxel", True),
         ("morph_erode3d", "match3d", ["voxel"], "voxel", True),
