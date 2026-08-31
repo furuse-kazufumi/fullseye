@@ -18,9 +18,14 @@ voxel へ揃える・姿勢推定の逆変換で切り出す)の核。規約は�
   (3) affine 平行移動(4x4 同次)で bbox シフトが厳密一致
   (4) spacing 再計算で物理体積 mm^3 が保存(voxel 数 x new_spacing 積で機械検証)
 """
+import sys
+from pathlib import Path
+
 import numpy as np
 
-from volxform import vol_affine, vol_resize, vol_rotate
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from volxform import vol_affine, vol_resize, vol_rotate  # noqa: E402
 
 # --- 非対称な合成部品: L 字ブロック(真値既知)------------------------------
 # (24, 32, 32) の中に、z 方向に厚みを持つ L 字(縦棒 + 足)。回転平面 (y, x) は
