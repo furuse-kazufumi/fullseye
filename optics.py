@@ -692,6 +692,11 @@ def angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0,
     lam = _positive(wavelength_um, "wavelength_um")
     z = _finite_scalar(distance_um, "distance_um")
     pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
+    if z == 0.0:
+        # Zero distance is the identity operator. Taking the FFT round trip
+        # anyway would return the field with ~1e-16 of numerical dirt on it and
+        # cost two transforms for nothing; a copy is both exact and cheaper.
+        return np.ascontiguousarray(u, dtype=np.complex128).copy()
     h, w = u.shape
     fy = np.fft.fftfreq(h, d=pitch)[:, None]
     fx = np.fft.fftfreq(w, d=pitch)[None, :]
