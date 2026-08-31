@@ -74,6 +74,14 @@ Honest numerical disclosure (the traps, stated up front):
     — the answer looks plausible and is wrong; a general matrix also has
     complex eigenvalues this API cannot represent. Fail-closed instead.
 
+  * **The complex family is the one exception to "complex input is refused".**
+    Everywhere else a complex array in a real slot is a silent-truncation trap
+    and raises; in the ``cplx_*`` ops the imaginary part *is* the data, so they
+    take complex (or real, promoted) input by design. They still refuse masked
+    entries, NaN/Inf, wrong rank — and, uniquely, a *result* that overflowed to
+    Inf, because "the integral is inf" and "float64 ran out" are different
+    statements and only the second one is what happened.
+
 Fail-closed on untrusted input, like every Fullseye module: exact
 dimensionality, NaN/Inf rejected everywhere, singular / constant / empty /
 out-of-range cases raise an explicit ``ValueError`` naming the problem — never
