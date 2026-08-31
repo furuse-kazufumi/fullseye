@@ -93,27 +93,38 @@ def _to_rgb_uint8(image) -> np.ndarray:
     return np.ascontiguousarray(a)
 
 
-def _get_landmarker(model_path: str, num_hands: int, min_confidence: float):
-    key = (model_path, num_hands, round(float(min_confidence), 3))
-    if key in _LANDMARKER_CACHE:
-        return _LANDMARKER_CACHE[key]
+_CACHE_LOCK = __import__("threading").Lock()
+
+
+def _import_mediapipe():
+    """mediapipe を親切なエラーつきで import(fail-closed の唯一の入口)。"""
     try:
-        from mediapipe.tasks import python as mp_python
-        from mediapipe.tasks.python import vision
-    except ImportError as e:                                   # fail-closed
+        import mediapipe as mp
+        return mp
+    except ImportError as e:
         raise ImportError(
             "hand_landmarks には mediapipe が必要です: py -3.11 -m pip install mediapipe"
         ) from e
-    if not Path(model_path).exists():
-        raise FileNotFoundError(
-            f"手モデルがありません: {model_path}\n"
-            f"取得: curl -L -o \"{model_path}\" {MODEL_URL}")
-    opts = vision.HandLandmarkerOptions(
-        base_options=mp_python.BaseOptions(model_asset_path=str(model_path)),
-        num_hands=int(num_hands),
-        min_hand_detection_confidence=float(min_confidence))
-    _LANDMARKER_CACHE[key] = vision.HandLandmarker.create_from_options(opts)
-    return _LANDMARKER_CACHE[key]
+
+
+def _get_landmarker(model_path: str, num_hands: int, min_confidence: float):
+    key = (model_path, int(num_hands), float(min_confidence))
+    with _CACHE_LOCK:
+        if key in _LANDMARKER_CACHE:
+            return _LANDMARKER_CACHE[key]
+        _import_mediapipe()
+        from mediapipe.tasks import python as mp_python
+        from mediapipe.tasks.python import vision
+        if not Path(model_path).exists():
+            raise FileNotFoundError(
+                f"手モデル hand_landmarker.task がありません: {model_path}\n"
+                f"取得: curl -L -o \"{model_path}\" {MODEL_URL}")
+        opts = vision.HandLandmarkerOptions(
+            base_options=mp_python.BaseOptions(model_asset_path=str(model_path)),
+            num_hands=int(num_hands),
+            min_hand_detection_confidence=float(min_confidence))
+        _LANDMARKER_CACHE[key] = vision.HandLandmarker.create_from_options(opts)
+        return _LANDMARKER_CACHE[key]
 
 
 def hand_landmarks(image, num_hands: int = 2, model_path=None,
