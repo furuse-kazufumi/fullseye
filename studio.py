@@ -6175,14 +6175,37 @@ def build_window(model=None):
 
     # ---- interactive 3-D viewer (View ▸ 3D viewer, Ctrl+4, disp_* directives) --- #
     _POINT_FILE_FILTER = ("3-D data (*.ply *.pcd *.xyz *.txt *.pts *.asc *.obj *.stl "
-                          "*.off *.npy *.npz);;All files (*)")
+                          "*.off *.npy *.npz "
+                          "*.nii *.nii.gz *.nrrd *.nhdr *.mha *.mhd *.tif *.tiff *.dcm)"
+                          ";;All files (*)")
+    _VOLUME_EXTS = (".nii", ".gz", ".nrrd", ".nhdr", ".mha", ".mhd",
+                    ".tif", ".tiff", ".dcm")
 
     def _load_3d_file(path):
         """Load a 3-D file -> ``('mesh', V, F, None)`` or ``('points', P, None, C)``.
-        A mesh format with real faces opens as a mesh; anything else (or a mesh
-        read failure) falls back to its points. Raises on an unreadable file."""
+        A mesh format with real faces opens as a mesh; a **volume** format
+        (DICOM/NIfTI/NRRD/MetaImage/TIFF stack via volio) opens as its
+        Otsu-threshold boundary shell — physical-unit points ready for the
+        walkthrough (a museum-piece view of a CT straight from the file
+        dialog). Anything else (or a mesh read failure) falls back to its
+        points. Raises on an unreadable file."""
         import mesh as meshmod
         ext = os.path.splitext(str(path))[1].lower()
+        if ext in _VOLUME_EXTS:
+            import volio                          # lazy: SimpleITK etc. optional
+            vol, meta = volio.read_volume(str(path))
+            P, C, info = volume_to_shell_points(vol, spacing=meta.spacing_mm)
+            flash("volume %s -> shell %s pts (thr %.4g%s)"
+                  % ("x".join(str(s) for s in info["shape"]), f"{info['n_points']:,}",
+                     info["threshold"],
+                     ", 1/%d 間引き" % info["downsampled_by"]
+                     if info["downsampled_by"] > 1 else ""))
+            return "points", P, None, C
+        if ext == ".npy":                          # a saved 3-D array is a volume
+            arr = np.load(str(path), allow_pickle=False)
+            if arr.ndim == 3 and arr.shape[1] != 3:
+                P, C, _info = volume_to_shell_points(arr)
+                return "points", P, None, C
         if ext in (".obj", ".off", ".stl", ".ply"):
             try:
                 V, F = meshmod.read_mesh(path)[:2]
