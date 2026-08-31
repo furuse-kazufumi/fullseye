@@ -524,3 +524,17 @@ def test_fullseye_facade_exports_mathops():
         assert getattr(fullseye, name) is getattr(mathops, name), name
         assert name in fullseye.__all__
     assert fullseye.mathops is mathops
+
+
+def test_poly_eval_overflow_is_rejected_not_silent_inf():
+    """連鎖ファザー wave-7 実測: 256 個の係数を |x|<=22 で評価すると 22**255 が
+    float64 を超え、無言で inf が下流に流れていた。引数の取り違え(長い信号を
+    係数に渡す)が典型なので、その旨を告げて fail-closed にする。"""
+    coeffs = np.sin(np.linspace(0.0, 8 * np.pi, 256))
+    with pytest.raises(ValueError, match="overflow"):
+        mathops.poly_eval(coeffs, np.linspace(0.0, 22.0, 16))
+    # 正常系は不変: (x^2 - 1) を閉形式と一致させる
+    got = mathops.poly_eval(np.array([1.0, 0.0, -1.0]), np.array([0.0, 1.0, 2.0]))
+    assert np.allclose(got, [-1.0, 0.0, 3.0])
+    # 高次でも |x|<=1 なら通る(次数だけを理由に拒否しない)
+    assert np.isfinite(mathops.poly_eval(coeffs, np.linspace(-1.0, 1.0, 8))).all()

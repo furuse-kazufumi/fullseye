@@ -97,3 +97,31 @@ def test_voxel_shape_mismatch_raises():
     y = np.zeros((4, 4, 4)); y[1:3] = 1.0
     assert 0.0 <= M.voxel_iou(x, y) <= 1.0
     assert 0.0 <= M.voxel_dice(x, y) <= 1.0
+
+
+def test_empty_cloud_rejected_not_silent_nan():
+    """空点群は平均が無言 NaN になり進化 fitness に毒として流れ込む。
+
+    連鎖ファザー wave-7 実測: radius_outlier_removal が雲を空にした直後の
+    chamfer_distance が NaN。同クラスを accuracy/completeness/fscore/
+    normal_consistency でも実測確認して一掃した(hausdorff/rmse/voxel_* は
+    もともと fail-closed だったので対象外)。
+    """
+    good = _cloud(0, 50)
+    empty = np.zeros((0, 3))
+    for fn, args in ((M.chamfer_distance, ()), (M.accuracy, (0.1,)),
+                     (M.completeness, (0.1,)), (M.fscore, (0.1,))):
+        with pytest.raises(ValueError, match="empty"):
+            fn(empty, good, *args)
+        with pytest.raises(ValueError, match="empty"):
+            fn(good, empty, *args)
+    with pytest.raises(ValueError, match="empty"):
+        M.normal_consistency(empty, empty, good, good)
+    # 法線と点の対応ずれも拒否(別点群の法線を混ぜる事故)
+    with pytest.raises(ValueError, match="pair one normal"):
+        M.normal_consistency(good, _cloud(1, 20), good, good)
+    # 形が違う入力も入口で拒否
+    with pytest.raises(ValueError, match=r"\(N, 3\)"):
+        M.chamfer_distance(np.zeros((5, 2)), good)
+    # 健全な入力の値は不変(既知オフセット 0.1 の平行移動)
+    assert M.chamfer_distance(good, good) == pytest.approx(0.0, abs=1e-12)

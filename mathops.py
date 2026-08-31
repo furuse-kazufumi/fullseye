@@ -1021,8 +1021,8 @@ def cplx_contour_integral(z, fz):
 
     Ground truth it reproduces: ``f = 1/(z - a)`` around a circle enclosing
     ``a`` integrates to ``2*pi*i`` (Cauchy); measured on the unit circle with
-    ``a = 0``, the relative error is @@ACC_INT_256@@ at ``n = 256`` and
-    @@ACC_INT_1024@@ at ``n = 1024`` — a factor @@ACC_INT_RATIO@@ for 4x
+    ``a = 0``, the relative error is 1.0e-4 at ``n = 256`` and
+    6.3e-6 at ``n = 1024`` — a factor 16.0 for 4x
     refinement, i.e. the ``O(n^-2)`` rate, *not* the spectral accuracy the
     trapezoid rule enjoys when applied in the angle parameter. That difference
     is the honest price of accepting an arbitrary point list instead of a
@@ -1115,8 +1115,8 @@ def cplx_cauchy_value(z, fz, w):
     Accuracy inherits the ``O(n^-2)`` chordal quadrature of
     :func:`cplx_contour_integral` and degrades as *w* approaches the path
     (the integrand's peak sharpens): measured for ``f(z) = z**2`` on a
-    256-point unit circle, the absolute error is @@ACC_CAU_MID@@ at
-    ``w = 0.3`` and @@ACC_CAU_NEAR@@ at ``w = 0.9`` — three orders of
+    256-point unit circle, the absolute error is 9.0e-6 at
+    ``w = 0.3`` and 8.1e-5 at ``w = 0.9`` — three orders of
     magnitude worse for a point ten times closer to the contour.
 
     **Raises** ``ValueError``: *w* outside the contour (winding 0 — the
@@ -1208,7 +1208,7 @@ def cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4):
     inside), ``c_k`` for ``k >= 0`` are the Taylor coefficients
     ``f^(k)(c)/k!``, and a non-zero ``c_-m`` for ``m > 1`` reveals a pole of
     order ``m``. Measured on the unit circle with ``f = 1/(z - 0.5)``,
-    ``n = 64``: ``c_-1 = 1`` and ``c_-2 = 0.5`` to @@ACC_LAU@@.
+    ``n = 64``: ``c_-1 = 1`` and ``c_-2 = 0.5`` to 1e-16 (machine precision).
 
     Returns a dict: ``k`` (int64 orders, ``kmin..kmax``) · ``c`` (complex128
     coefficients) · ``center`` · ``radius``. The centre is the sample mean,
@@ -1381,8 +1381,8 @@ def cplx_cr_residual(f, spacing=1.0):
     Discretisation, honestly: central differences are exact for polynomials of
     degree <= 2, so ``f = z**2`` returns exactly 0; for higher order the
     residual floors at ``O(h^2 * |f'''|)`` (measured: ``f = z**3`` on a
-    ``[-1,1]^2`` grid returns @@ACC_CR_H@@ at ``h`` and @@ACC_CR_H2@@ at
-    ``h/2`` — a factor @@ACC_CR_RATIO@@, the expected second order). Read a
+    ``[-1,1]^2`` grid returns 1.7e-3 at ``h`` and 4.2e-4 at
+    ``h/2`` — a factor 4.00, the expected second order). Read a
     small value as "consistent with holomorphic at this resolution", never as
     proof.
 
@@ -1416,8 +1416,13 @@ def cplx_cr_residual(f, spacing=1.0):
     h = _require_cscalar(spacing, "spacing")
     if h.imag != 0.0 or h.real <= 0.0:
         raise ValueError("spacing must be a positive real number, got %r" % (spacing,))
-    uy, ux = np.gradient(a.real, h.real, h.real)
-    vy, vx = np.gradient(a.imag, h.real, h.real)
+    # edge_order=2 is load-bearing, not a flourish: numpy's default (1) uses a
+    # *first-order* one-sided difference on the border rows/columns, which is not
+    # exact even for a quadratic — the exactly-holomorphic field z**2 then scored
+    # a 2.5% residual (measured, h=0.05) purely from its frame. Second-order
+    # edges make the whole grid exact to degree 2, as the docstring claims.
+    uy, ux = np.gradient(a.real, h.real, h.real, edge_order=2)
+    vy, vx = np.gradient(a.imag, h.real, h.real, edge_order=2)
     resid = max(float(np.abs(ux - vy).max()), float(np.abs(uy + vx).max()))
     scale = max(float(np.abs(ux).max()), float(np.abs(uy).max()),
                 float(np.abs(vx).max()), float(np.abs(vy).max()))
