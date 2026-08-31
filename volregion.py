@@ -294,10 +294,11 @@ def vol_rle_components(vol_binary, connectivity=26):
     returns an empty list.
     """
     from scipy import ndimage                       # lazy: keep import cost low
-    if float(connectivity) != int(connectivity):
+    try:                                            # None etc. -> ValueError, not TypeError
+        rank = (None if float(connectivity) != int(connectivity)
+                else {6: 1, 18: 2, 26: 3}.get(int(connectivity)))
+    except (TypeError, ValueError):
         rank = None
-    else:
-        rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity))
     if rank is None:
         raise ValueError("connectivity must be 6, 18 or 26 (3-D neighbourhoods),"
                          " got %r" % (connectivity,))
