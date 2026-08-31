@@ -539,8 +539,8 @@ def main():
             continue                      # 白は件数のみ(ファイルには残す)
         print(f"  [{kind}] {op} x{v['n']} {exc}: {msg}")
     if len(sig) > sum(1 for k in sig if k[0] == "CONTRACT"):
-        print(f"
-== 収束(最小再現): py -3.11 tools/chain_fuzz.py --minimize {args.out}")
+        print("\n== 収束(最小再現): py -3.11 tools/chain_fuzz.py "
+              f"--minimize {args.out}")
     return 0
 
 
