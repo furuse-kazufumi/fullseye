@@ -140,8 +140,9 @@ def _require_matrix(a, name: str = "a") -> np.ndarray:
     """Coerce to a strictly 2-D float64 matrix or raise ``ValueError``.
 
     A 1-D vector is **not** silently promoted to a row/column — the caller must
-    say what it means (silent shape coercion is a confirmed bug family)."""
-    m = np.ascontiguousarray(a, dtype=np.float64)
+    say what it means (silent shape coercion is a confirmed bug family).
+    Complex input and masked entries are rejected (silent truncation)."""
+    m = _as_float64(a, name)
     if m.ndim != 2:
         raise ValueError("%s must be a 2-D matrix, got a %d-D array of shape %r "
                          "— reshape explicitly, nothing is promoted silently"
