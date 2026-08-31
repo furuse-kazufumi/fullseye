@@ -75,6 +75,12 @@ import render_beauty  # capstone: 全品質層を一発合成する hero レン�
 import measure3d
 # --- Wave D: RLE 領域(効率レイヤ。2-D HALCON region の run-length を voxel 界へ)---
 import volregion
+# --- Wave E: 2D→3D ギャップ第2波(gray/幾何変換/probe/FFT/復元。NEXT_OPS_PLAN §D)---
+import volgray
+import volxform
+import volprobe
+import volfreq
+import volrestore
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
