@@ -812,7 +812,7 @@ def vol_uncrop(part, offset, shape, fill=0.0):
     if any(o < 0 for o in off) or any(o + p.shape[i] > shp[i] for i, o in enumerate(off)):
         raise ValueError("part of shape %r at offset %r does not fit inside %r "
                          "— refusing to clip data" % (p.shape, off, shp))
-    out = np.full(shp, float(fill), dtype=np.float64)
+    out = np.full(shp, fv, dtype=np.float64)
     out[off[0]:off[0] + p.shape[0],
         off[1]:off[1] + p.shape[1],
         off[2]:off[2] + p.shape[2]] = p
