@@ -134,7 +134,9 @@ def test_rotate_reshape_grows_and_caps():
     assert out.shape[0] == 3
     assert out.shape[1:] in ((4, 10), (5, 11))   # rotated bbox (scipy rounding)
     # a reshape on a near-cap volume must be refused before allocation
-    big = np.zeros((1, 11000, 11000))            # 121 M voxels, under the cap
+    # (input 8300^2 = 68.9 M voxels is under the cap; the 45-deg bbox grows the
+    # plane by sqrt(2) per axis -> ~137.8 M voxels, over the cap)
+    big = np.zeros((1, 8300, 8300))
     with pytest.raises(ValueError, match="MAX_VOXELS"):
         vol_rotate(big, 45, axes=(1, 2), reshape=True)
 
