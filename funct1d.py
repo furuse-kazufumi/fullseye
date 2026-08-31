@@ -422,7 +422,7 @@ def get_pair_funct_1d(y, index=0):
     :raises ValueError: non-1-D / NaN / Inf input, empty input, or non-finite *index*.
     """
     arr = _f1d(y, "y", min_len=1)
-    raw = _int_param(index, "index", -(1 << 62))  # finite int, range handled by clip
+    raw = int(_finite_scalar(index, "index"))  # finite; range handled by the clamp
     i = int(np.clip(raw, 0, len(arr) - 1))
     return np.array([float(i), float(arr[i])])
 
