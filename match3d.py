@@ -934,6 +934,25 @@ def refine_peak_newton(score, idx, device="cpu", max_iter=12, tol=1e-4):
     return np.array([peak, p[0], p[1], p[2]])
 
 
+def _init_pos3(v, op):
+    """粗マッチ初期位置 [z,y,x] の検証(fail-closed)。→ (3,) float 配列。
+
+    連鎖ファザー実測(wave-4, refine_rotation_z): プール産物(tuple/dict)が
+    そのまま init 引数へ流れ込み float()/添字が生 TypeError/KeyError で落ちる
+    穴の兄弟一掃。型・形状不正は明確な ValueError で拒否する。
+    """
+    try:
+        a = np.asarray(v, float).reshape(-1)
+    except (TypeError, ValueError) as e:
+        raise ValueError("%s: init_pos must be a numeric [z, y, x] position "
+                         "(got %s) — pass the coarse-match location"
+                         % (op, type(v).__name__)) from e
+    if a.shape[0] != 3:
+        raise ValueError("%s: init_pos must have exactly 3 components [z, y, x] "
+                         "(got %d)" % (op, a.shape[0]))
+    return a
+
+
 def refine_translation_lk(scene, template, init_pos, device="cpu", iters=30, tol=1e-4):
     """Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。
 
