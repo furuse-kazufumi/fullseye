@@ -95,6 +95,16 @@ def main():
     assert np.array_equal(back, mask)
     print("[decode] 往復 bit 一致")
 
+    # 6) 三本目の脚 vol_tiled_map: 「一度に RAM に載る量」を有界化。
+    #    局所 op(gaussian σ=2 → z footprint = round(4σ) = 8)は overlap=8 で
+    #    全量計算と厳密一致(この契約が破れる overlap では一致しない=正直な限界)
+    tiled = volops.vol_tiled_map(
+        mask, lambda s: ndimage.gaussian_filter(s, 2.0), tile=48, overlap=8)
+    full = ndimage.gaussian_filter(mask, 2.0)
+    err = float(np.abs(tiled - full).max())
+    print(f"[tiled_map] 48 スラブ streaming vs 全量 gaussian: 最大差 {err:.1e}")
+    assert err < 1e-14, f"タイル処理が全量計算と一致しない: {err}"
+
     # fail-closed: 改竄 RLE は書き込む前に拒否される
     hostile = VolRLE(np.array([10 ** 9], np.int32), np.array([0], np.int32),
                      np.array([4], np.int32), region.shape)
