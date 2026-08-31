@@ -60,6 +60,18 @@ _CATALOG = {
         ("poly_eval", "mathops", ["signal", "signal"], "signal"),
         ("poly_roots", "mathops", ["signal"], "roots"),
     ],
+    "complex": [
+        ("cplx_contour_circle", "mathops", [], "cpoints"),
+        ("cplx_poly_eval", "mathops", ["signal", "cpoints"], "cpoints"),
+        ("cplx_contour_integral", "mathops", ["cpoints", "cpoints"], "cscalar"),
+        ("cplx_winding_number", "mathops", ["cpoints"], "measurement"),
+        ("cplx_cauchy_value", "mathops", ["cpoints", "cpoints"], "cscalar"),
+        ("cplx_argument_principle", "mathops", ["cpoints", "cpoints"], "measurement"),
+        ("cplx_laurent_coeffs", "mathops", ["cpoints", "cpoints"], "table"),
+        ("cplx_joukowski", "mathops", ["cpoints"], "cpoints"),
+        ("cplx_mobius", "mathops", ["cpoints"], "cpoints"),
+        ("cplx_cr_residual", "mathops", ["cimage"], "measurement"),
+    ],
 }
 
 

@@ -97,11 +97,20 @@ def rmse_correspondence(a, b):
 
 
 def normal_consistency(points_a, normals_a, points_b, normals_b):
-    """最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。"""
+    """最近傍対応での法線一致度 = mean|cos(na, nb)|(向き無視)。→ [0,1]。1=完全一致。
+
+    Raises ValueError: 点群が空 or (N,3) でない/法線が点と 1 対 1 でない場合。"""
     from scipy.spatial import cKDTree
-    _, idx = cKDTree(np.asarray(points_b, float)).query(np.asarray(points_a, float), k=1)
-    na = np.asarray(normals_a, float)
-    nb = np.asarray(normals_b, float)[idx]
+    pa = _require_cloud(points_a, "points_a")
+    pb = _require_cloud(points_b, "points_b")
+    na = _require_cloud(normals_a, "normals_a")
+    nb_all = _require_cloud(normals_b, "normals_b")
+    if len(na) != len(pa) or len(nb_all) != len(pb):
+        raise ValueError("normals must pair one normal with each point — "
+                         "points_a %d/normals_a %d, points_b %d/normals_b %d"
+                         % (len(pa), len(na), len(pb), len(nb_all)))
+    _, idx = cKDTree(pb).query(pa, k=1)
+    nb = nb_all[idx]
     na = na / (np.linalg.norm(na, axis=1, keepdims=True) + 1e-12)
     nb = nb / (np.linalg.norm(nb, axis=1, keepdims=True) + 1e-12)
     return float(np.mean(np.abs(np.sum(na * nb, axis=1))))
