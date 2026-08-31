@@ -92,15 +92,36 @@ def test_scaled_uses_author_default_as_centre():
     assert isinstance(bt._scaled(8, 0.5), int)
 
 
-def test_fail_soft_on_broken_op():
-    """op が例外を投げても入力の sort 妥当な値へ落ちる(進化を止めない)。"""
+def test_fail_soft_returns_a_value_of_the_DECLARED_out_sort():
+    """op が例外を投げても、**宣言した out_sort に合う値**へ落ちる。
+
+    最初は「入力をそのまま返す」実装だったが、out_sort が in_sort と違う op では
+    それ自体が型の嘘になる。実測 2026-09-01: points→volume の op が失敗すると
+    (N,3) の点群が volume として下流へ流れ、次の vol_slice が
+    IndexError で落ちた — fail-soft のはずが失敗を 1 段先へ運んでいた。
+    """
     import backends_typed as bt
 
     def _boom(v, **kw):
         raise RuntimeError("boom")
 
-    run = bt._make_runner(_boom, {}, [], "points")
     pts = _seed("points")
-    assert np.array_equal(run(pts, 0.5, 0.5), pts)
-    run_f = bt._make_runner(_boom, {}, [], "feature")
-    assert isinstance(run_f(pts, 0.5, 0.5), float)
+    # 同型なら入力を通す(情報を保つ)
+    assert np.array_equal(bt._make_runner(_boom, {}, [], "points", "points")(pts, 0.5, 0.5), pts)
+    # 型が変わるなら、その sort として妥当な最小値(入力を偽装しない)
+    vol = bt._make_runner(_boom, {}, [], "points", "volume")(pts, 0.5, 0.5)
+    assert isinstance(vol, np.ndarray) and vol.ndim == 3, vol.shape
+    img = bt._make_runner(_boom, {}, [], "points", "image")(pts, 0.5, 0.5)
+    assert isinstance(img, np.ndarray) and img.ndim == 2
+    sig = bt._make_runner(_boom, {}, [], "points", "signal")(pts, 0.5, 0.5)
+    assert isinstance(sig, np.ndarray) and sig.ndim == 1
+    assert isinstance(bt._make_runner(_boom, {}, [], "points", "feature")(pts, 0.5, 0.5), float)
+
+
+def test_non_array_return_is_treated_as_failure():
+    """宣言と違う形(dict など)が下流へ漏れないこと。"""
+    import backends_typed as bt
+
+    run = bt._make_runner(lambda v, **kw: {"not": "an array"}, {}, [], "points", "volume")
+    got = run(_seed("points"), 0.5, 0.5)
+    assert isinstance(got, np.ndarray) and got.ndim == 3
