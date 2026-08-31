@@ -70,7 +70,10 @@ fullseye-rag = "fullseye.rag_setup:main"      # Claude Code RAG skill installer 
 # loads them by path relative to studio.py, which resolves to the shipped copy.
 packages = ["fullseye", "studio_assets", "examples_3d", "examples"]
 py-modules = [
-  "api", "ops", "backend_safe",
+  # `torch_lazy` is the lazy torch/torch.nn.functional shim imported by
+  # accel_match / match3d / feat_* — it MUST ship or those modules ImportError
+  # on a pip install (it keeps `import torch`, ~700 ms, off every start-up).
+  "api", "ops", "backend_safe", "torch_lazy",
   "backends", "backends_auto", "backends_color", "backends_cv2b", "backends_dl",
   "backends_extra", "backends_kornia", "backends_pil", "backends_r3",
   "backends_scipy", "backends_ski2",
