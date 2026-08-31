@@ -3,11 +3,16 @@
 
 The Markdown under ``docs/ops/`` is the **source of truth** for operator docs: one
 note per operator (``docs/ops/<dim>/<category>/<op>.md``), a hand/agent-authored
-family usage guide per op-family (``docs/ops/2d/guides/<family>.md``), and an
-**auto-generated** table of contents that simply walks the folder hierarchy. Studio's
-per-op HTML help (``studio_assets/op_help/2d/*.html``) is produced by **bulk-converting**
-that Markdown — never authored twice. The same Markdown tree is shaped as an AI-usage
-corpus (file-per-note) so an assistant can grasp *how to use* each op.
+family usage guide per op-family (``docs/ops/2d/guides/<family>.md``, math は
+``docs/ops/math/guides/``), and an **auto-generated** table of contents that simply
+walks the folder hierarchy. Studio's per-op HTML help (``studio_assets/op_help/``)
+is produced by **bulk-converting** that Markdown — never authored twice. The same
+Markdown tree is shaped as an AI-usage corpus (file-per-note) so an assistant can
+grasp *how to use* each op.
+
+Dimensions: ``2d`` (ops.REGISTRY), ``3d`` (ops3d.OPS3D), ``math`` (opsmath.OPSMATH —
+the maths-operator ledger; notes land in ``docs/ops/math/<category>/<op>.md`` and
+help pages in ``op_help/math/``, namespaced like 3-D).
 
 Subcommands (all idempotent; safe to re-run)::
 
