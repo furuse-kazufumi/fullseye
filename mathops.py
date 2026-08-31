@@ -1264,11 +1264,6 @@ def cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4):
         raise ValueError("cplx_laurent_coeffs: kmin (%d) must not exceed kmax (%d)"
                          % (kmin, kmax))
     n = c.size
-    if kmax - kmin + 1 > n:
-        raise ValueError("cplx_laurent_coeffs: %d coefficients requested from %d "
-                         "samples — the discrete transform cannot resolve more "
-                         "orders than it has points (they alias onto each other)"
-                         % (kmax - kmin + 1, n))
     centre = complex(np.mean(c))
     rad = np.abs(c - centre)
     r = float(rad.mean())
