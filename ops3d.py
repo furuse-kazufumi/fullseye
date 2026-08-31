@@ -73,6 +73,8 @@ import render_tonemap
 import render_beauty  # capstone: 全品質層を一発合成する hero レンダラ
 # --- Wave C: 3-D metrology fits (measure.py の (depth,row,col) 版) ---
 import measure3d
+# --- Wave D: RLE 領域(効率レイヤ。2-D HALCON region の run-length を voxel 界へ)---
+import volregion
 
 _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "feat_shot": feat_shot, "feat_fpfh": feat_fpfh, "fuse3d": fuse3d,
