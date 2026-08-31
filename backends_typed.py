@@ -209,5 +209,5 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
         base = fn if adapter is None else (
             lambda *a, _f=fn, _ad=adapter, **k: _ad(_f(*a, **k)))
         out.append(Op("tb_" + name, "typed", "", in_sort, out_sort,
-                      _make_runner(base, kwargs, out_sort)))
+                      _make_runner(base, kwargs, tunable, out_sort)))
     return out

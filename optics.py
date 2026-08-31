@@ -126,7 +126,7 @@ __all__ = [
     "jones_element", "jones_apply", "stokes_from_jones",
     "mueller_element", "mueller_apply", "stokes_analyze",
     "OPTICS", "MAX_GRID", "MAX_FIELD_ELEMENTS", "MAX_SYSTEM_ELEMENTS",
-    "MAX_ZERNIKE_TERMS", "JONES_KINDS", "MUELLER_KINDS",
+    "MAX_ZERNIKE_TERMS", "MAX_ZERNIKE_ORDER", "JONES_KINDS", "MUELLER_KINDS",
 ]
 
 #: The public optics operators, by name (introspection / facade wiring).
@@ -923,7 +923,8 @@ def psf_to_mtf(psf, pixel_pitch_um=1.0):
     """
     p = _require_image(psf, "psf", "psf_to_mtf")
     pitch = _positive(pixel_pitch_um, "pixel_pitch_um")
-    total = float(p.sum())
+    with np.errstate(over="ignore", invalid="ignore"):
+        total = float(p.sum())
     if not (total > 0.0):
         raise ValueError("psf_to_mtf: the PSF sums to %g — the DC normalisation "
                          "|OTF(0)| would be 0/0. An all-zero or net-negative "
@@ -1069,8 +1070,21 @@ def wavefront_stats(coeffs, radial=128, angular=192):
     **Raises** ``ValueError``: *coeffs* is not a dict, is empty, holds more than
     :data:`MAX_ZERNIKE_TERMS` terms, has a key that is not an ``(n, m)`` int
     pair or is not a valid Zernike index (``n >= 0``, ``|m| <= n``, ``n-|m|``
-    even), or a non-finite coefficient; *radial* / *angular* outside
+    even), or a non-finite coefficient; a radial order above
+    :data:`MAX_ZERNIKE_ORDER` (40 — the shared basis builder's factorial
+    recurrence breaks its own ``|Z| <= 1`` bound at ``n = 46``, measured, and
+    the same bound is re-checked at runtime); *radial* / *angular* outside
     ``[8, MAX_GRID]``.
+
+    The radial quadrature is discrete, so its error grows with the order being
+    integrated: measured, the relative RMS error tracks ``(n_max/radial)^2``
+    within a factor 2 — 1.2e-4 at ``n_max=2``, 1.7e-3 at ``n_max=6`` and 4.3e-2
+    at ``n_max=20``, all at the default ``radial=128``. Below
+    ``radial >= 16*n_max`` a ``RuntimeWarning`` says so rather than letting a
+    12%-wrong Strehl look authoritative. Raising *radial* fixes it at
+    ``O(1/radial^2)``, but note the basis is built for *all* orders up to
+    ``n_max``, so the working set grows as ``n_max^2 * radial * angular`` and is
+    capped by :data:`MAX_FIELD_ELEMENTS`.
 
     Marechal is a small-aberration approximation and the RMS is over the *fitted*
     expansion, so it says nothing about wavefront structure finer than ``n_max``
@@ -1082,6 +1096,30 @@ def wavefront_stats(coeffs, radial=128, angular=192):
     nr = _count(radial, "radial", 8, MAX_GRID)
     nt = _count(angular, "angular", 8, MAX_GRID)
     n_max = max(n for n, _m in terms)
+    # The shared basis builder evaluates *every* (n, m) up to n_max on the whole
+    # polar grid, so the working set is (n_max+1)(n_max+2)/2 * nr * nt float64 —
+    # quadratic in an argument that looks innocent. Measured: n_max=40 with
+    # radial=angular=4096 asks for 1.4e10 elements = 108 GB from a call whose
+    # inputs are one dict and two ints. Refuse it up front.
+    rows = (n_max + 1) * (n_max + 2) // 2
+    need = rows * nr * nt
+    if need > MAX_FIELD_ELEMENTS:
+        raise ValueError("wavefront_stats: the Zernike basis for n_max=%d on a "
+                         "%dx%d grid needs %d elements (%.1f GB), over the %d "
+                         "cap (optics.MAX_FIELD_ELEMENTS) — lower radial/angular "
+                         "or fit fewer orders"
+                         % (n_max, nr, nt, need, need * 8 / 2 ** 30,
+                            MAX_FIELD_ELEMENTS))
+    if nr < 16 * n_max:
+        # Measured 2026-09-01: the relative RMS error of the radial quadrature
+        # tracks (n_max/radial)^2 to within a factor 2 — 1.7e-3 at n=6/nr=128,
+        # 4.3e-2 at n=20/nr=128, 1.2e-1 at n=40/nr=128. Silence there would be
+        # a quietly wrong Strehl.
+        warnings.warn("wavefront_stats: radial=%d is under-sampled for n_max=%d "
+                      "— the radial quadrature error grows as (n_max/radial)^2 "
+                      "(measured ~%.1e relative here); raise radial to >= %d"
+                      % (nr, n_max, (n_max / nr) ** 2, 16 * n_max),
+                      RuntimeWarning, stacklevel=2)
     # match3d owns the Zernike basis (fit_zernike uses the same builder), so the
     # fitting and the statistics cannot disagree about normalisation. It is pure
     # numpy; the import is lazy only to keep this module's import cheap.

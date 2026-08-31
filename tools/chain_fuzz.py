@@ -61,6 +61,23 @@ def _mesh(rng):
     return meshrepair.convex_hull(_points(rng, 60))
 
 
+def _jones_vec(rng):
+    """Jones ベクトル (Ex, Ey): 長さ 2 の complex。単位強度に正規化。"""
+    v = rng.standard_normal(2) + 1j * rng.standard_normal(2)
+    n = float(np.linalg.norm(v))
+    return v / n if n > 0 else np.array([1.0 + 0j, 0.0 + 0j])
+
+
+def _stokes_vec(rng):
+    """Stokes ベクトル (S0..S3): 長さ 4 の実で、偏光度 <= 1 を必ず満たす。
+
+    ここを満たさない値を入れると mueller_apply/stokes_analyze の fail-closed が
+    正しく発火するだけで、偏光ファミリの実経路は一度も通らない。"""
+    d = rng.standard_normal(3)
+    d /= max(float(np.linalg.norm(d)), 1e-12)
+    return np.concatenate([[1.0], d * float(rng.uniform(0.0, 1.0))])
+
+
 def make_generators():
     return {
         "voxel": _ball_vol,
@@ -94,6 +111,11 @@ def make_generators():
         # 写像 op の像(退化した輪郭)が下流へ回って敵対入力にもなる
         "cpoints": lambda rng: np.exp(
             2j * np.pi * np.arange(64, dtype=np.float64) / 64.0),
+        # 光学ファミリ(opsoptics)の偏光 2 語。長さ固定 + 物理制約つきなので
+        # signal/cpoints へ相乗りさせると常に CONTRACT にしかならない(=偏光
+        # 連鎖を一度も通らない)ため専用プールにする
+        "jones": _jones_vec,
+        "stokes": _stokes_vec,
     }
 
 
@@ -137,7 +159,38 @@ def _b_register_cross(pool, rng):
     return (a, "points", b, "points"), {"method": "icp"}
 
 
+def _b_abcd(pool, rng):
+    """ABCD 素子リスト。半分は妥当な系(実経路を通す)、半分は pool の table
+    (dict や他 op の返り)= 敵対入力で fail-closed を叩く。"""
+    if rng.random() < 0.5:
+        tables = pool.get("table") or []
+        if tables:
+            return (tables[int(rng.integers(len(tables)))],), {}
+    kinds = [("free", float(rng.uniform(0.0, 200.0))),
+             ("lens", float(rng.uniform(10.0, 200.0)) * rng.choice([-1.0, 1.0])),
+             ("mirror", float(rng.uniform(10.0, 500.0))),
+             ("interface", 1.0, float(rng.uniform(1.1, 2.0))),
+             ("curved", 1.0, float(rng.uniform(1.1, 2.0)),
+              float(rng.uniform(10.0, 500.0)))]
+    k = int(rng.integers(1, 4))
+    return ([kinds[int(rng.integers(len(kinds)))] for _ in range(k)],), {}
+
+
+def _b_wavefront(pool, rng):
+    """Zernike 係数 dict。半分は妥当な波面(match3d.fit_zernike と同形式)、
+    半分は pool の table = 敵対入力。"""
+    if rng.random() < 0.5:
+        tables = pool.get("table") or []
+        if tables:
+            return (tables[int(rng.integers(len(tables)))],), {}
+    idx = [(0, 0), (2, 0), (2, 2), (2, -2), (3, 1), (4, 0)]
+    k = int(rng.integers(1, len(idx) + 1))
+    return ({idx[i]: float(rng.normal(0.0, 0.05)) for i in range(k)},), {}
+
+
 OP_ARG_BUILDERS = {
+    "abcd_matrix": _b_abcd,
+    "wavefront_stats": _b_wavefront,
     "fuse_to_voxel": _b_fuse,
     "register_cross": _b_register_cross,
     "to_points": lambda pool, rng: ((pool["points"][0], "points"), {})
@@ -159,6 +212,12 @@ OP_PARAM_HINTS = {
     ("cplx_mobius", "d"): lambda rng: 1j,
 }
 
+#: 文書化済みの非有限を返す op(光学)。docstring が契約として明記している:
+#: depth_of_field は過焦点距離以遠で far/depth = inf(それが過焦点距離の定義)、
+#: gaussian_beam はウエストで wavefront_radius = inf(平面波面の曲率半径)。
+#: どちらも有限の逆数(curvature_per_mm)や bool を併せて返す。
+NONFINITE_BY_CONTRACT_OPTICS = {"depth_of_field", "gaussian_beam"}
+
 #: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
 #: (型忠実の一級メタデータ)に委譲し、ファザー固有の追加だけここに置く
 def _registry_adapters():
@@ -168,6 +227,8 @@ def _registry_adapters():
     d = dict(ops3d.RESULT_ADAPTERS)
     d.update(ops1d.RESULT_ADAPTERS)
     d.update(opsmath.RESULT_ADAPTERS)
+    import opsoptics
+    d.update(opsoptics.RESULT_ADAPTERS)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -210,6 +271,12 @@ def catalog():
     for n, m in opsmath.OPSMATH.items():
         if m["func"] is not None:
             ops.append((n, "math", list(m["in"]), m["out"], m["func"]))
+    # 光学ファミリ(opsoptics 台帳)。opsmath と同じく adapter 層を持たない=
+    # 素の返りが宣言型であることを TYPEMISS 検査がそのまま機械検証する
+    import opsoptics
+    for n, m in opsoptics.OPSOPTICS.items():
+        if m["func"] is not None:
+            ops.append((n, "optics", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -276,6 +343,13 @@ TYPE_CHECKS = {
     # cscalar = 複素スカラ(∮f dz / f(w) / 留数)。measurement(実スカラのみ)へ
     # 混ぜると下流の実数 op が生 TypeError で落ちるため型を分ける
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
+    # jones = Jones ベクトル(長さ 2 固定の complex)。cpoints(輪郭)と形は
+    # 同じでも意味が違い、長さが違えば必ず ValueError なので別プール
+    "jones": lambda v: isinstance(v, np.ndarray) and v.shape == (2,)
+    and v.dtype.kind == "c",
+    # stokes = Stokes ベクトル(長さ 4 固定の実、偏光度 <= 1 が物理制約)
+    "stokes": lambda v: isinstance(v, np.ndarray) and v.shape == (4,)
+    and v.dtype.kind == "f",
 }
 
 
@@ -285,7 +359,8 @@ TYPE_CHECKS = {
 #: mat_cond は「厳密特異なら inf を返す(raise しない)」を docstring 契約
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
-                         "sdf_smooth_union", "sdf_offset", "mat_cond"}
+                         "sdf_smooth_union", "sdf_offset", "mat_cond"
+                         } | NONFINITE_BY_CONTRACT_OPTICS
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に
