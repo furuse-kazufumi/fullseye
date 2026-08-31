@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-31 21:53:50
+- **最終更新**: 2026-08-31 22:38:39
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-a09fe6ea 記事(ja/en)追記4: 3D 大増強+RLE の正体+1D 発掘+敵対検証 9 バグ(Qiita PATCH 済み)
-42497cde auto: fullseye_overview_qiita_en.md 編集前 (2026-08-31 21:52)
-475da862 第2波: 3D ギャップ 15op+RLE集合演算+1D 発掘+敵対検証 9 バグ修正(6,535 passed)
-5b0272d2 auto: test_volregion.py 編集前 (2026-08-31 21:39)
-7426b773 auto: test_volprobe.py 編集前 (2026-08-31 21:39)
-adfecae2 auto: test_volprobe.py 編集前 (2026-08-31 21:39)
-dad8311e auto: test_studio.py 編集前 (2026-08-31 21:39)
-c20ac5f6 auto: test_volgray.py 編集前 (2026-08-31 21:38)
-260d226b auto: test_volfreq_restore.py 編集前 (2026-08-31 21:38)
-353ab745 auto: volregion.py 編集前 (2026-08-31 21:38)
+18c1d19f auto: studio.py 編集前 (2026-08-31 22:38)
+19a52dfd auto: studio.py 編集前 (2026-08-31 22:38)
+d3d53145 auto: studio.py 編集前 (2026-08-31 22:38)
+3b0a9717 auto: studio.py 編集前 (2026-08-31 22:35)
+7dbb7e80 auto: test_studio.py 編集前 (2026-08-31 22:34)
+2802f1e0 auto: studio.py 編集前 (2026-08-31 22:32)
+01aef054 auto: studio.py 編集前 (2026-08-31 22:32)
+08f8c35f auto: studio.py 編集前 (2026-08-31 22:32)
+2be751c4 auto: studio.py 編集前 (2026-08-31 22:32)
+c4a79d9d auto: studio.py 編集前 (2026-08-31 22:32)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M studio.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:52 docs/articles/fullseye_overview_qiita_en.md
-21:52 docs/articles/fullseye_overview_qiita_ja.md
-21:43 fullseye/OP_CATALOG.md
-21:43 docs/OP_CATALOG.md
-21:43 studio_assets/op_help/guide_handpose.html
-21:43 studio_assets/op_help/guide_gallery2d_texture_freq.html
-21:43 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
-21:43 studio_assets/op_help/guide_gallery2d_segmentation.html
-21:43 studio_assets/op_help/guide_gallery2d_region.html
-21:43 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
-21:43 studio_assets/op_help/guide_gallery2d_morphology.html
-21:43 studio_assets/op_help/guide_gallery2d_halcon_ext.html
-21:43 studio_assets/op_help/guide_gallery2d_gray_arith.html
-21:43 studio_assets/op_help/guide_gallery2d_geometry.html
-21:43 studio_assets/op_help/guide_gallery2d_features.html
+22:38 studio.py
+22:35 .pytest_cache/v/cache/nodeids
+22:34 tests/test_studio.py
+22:25 docs/NEXT_OPS_PLAN_2026-08-31.md
+22:25 fullseye/OP_CATALOG.md
+22:25 docs/OP_CATALOG.md
+22:25 tools/gen_op_catalog.py
+22:24 pyproject.toml
+22:24 opsmath.py
+22:17 tests/test_mathops.py
+22:17 mathops.py
+22:13 tools/chain_fuzz.py
+22:13 ops3d.py
+22:13 ops1d.py
+22:12 match3d.py
 ```
 
 ---

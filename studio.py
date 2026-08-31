@@ -1890,6 +1890,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self.setMouseTracking(False)
             self._P = np.zeros((0, 3))          # displayed points (mesh: its vertices)
             self._colors = None                 # explicit per-point colors, or None
+            self._ramp = None                   # cached height-ramp colors (per cloud)
             self._F = None                      # mesh faces, or None for a cloud
             self._V = None                      # mesh vertices proper (wireframe)
             self._VN = None                     # normals for the splat cloud
