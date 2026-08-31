@@ -197,13 +197,13 @@ def vol_profile_line(vol, p0, p1, n=None, spacing=None, order=1):
     if n is None:
         n = max(2, int(np.ceil(length_idx)) + 1)
     else:
-        n = int(n)
+        n = _exact_int(n, "n")                        # 5.7 is rejected, never truncated
         if n < 2:
             raise ValueError("n must be >= 2 samples, got %d" % n)
         if n > MAX_VOXELS:
             raise ValueError("n=%d exceeds the %d cap (volprobe.MAX_VOXELS)"
                              % (n, MAX_VOXELS))
-    order = int(order)
+    order = _exact_int(order, "order")                # 1.9 is rejected, never truncated
     if order < 0 or order > 5:
         raise ValueError("order must be an integer in [0, 5], got %d" % order)
 
