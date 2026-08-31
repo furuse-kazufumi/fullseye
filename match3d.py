@@ -998,6 +998,7 @@ def refine_translation_lk(scene, template, init_pos, device="cpu", iters=30, tol
       (線形ランプで実測 32.0)。真の勾配へ正規化して Δp のスケールを正す。
     - H には微小 Levenberg 正則化を加え、勾配の乏しい平坦テンプレートでの数値破綻を防ぐ。
     """
+    init_pos = _init_pos3(init_pos, "refine_translation_lk")
     D, H, W = np.asarray(scene).shape
     Td, Th, Tw = np.asarray(template).shape
     scene_t = torch.as_tensor(np.asarray(scene, np.float32)[None, None], device=device)
