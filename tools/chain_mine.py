@@ -486,7 +486,13 @@ def contract(cands, ops, gens, identity_eps=IDENTITY_EPS, const_eps=CONST_EPS,
         if d["size"] == 0:
             dropped["no_numeric_output"] += 1
             continue
-        if d["rel_std"] is not None and d["rel_std"] < const_eps:
+        if d["rel_std"] is None:
+            # 数値はあるのに統計が測れない = 集約が溢れた(|v| ~ 1e308)。
+            # 後段の判定器に null 統計を渡しても使えないので落とす — ただし
+            # 無言ではなく理由つきで数える
+            dropped["unmeasurable_stats"] += 1
+            continue
+        if d["rel_std"] < const_eps:
             dropped["const_output"] += 1
             continue
         if d["sec"] > slow_s:
