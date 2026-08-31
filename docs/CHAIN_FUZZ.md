@@ -87,6 +87,7 @@ min/max 代数が正確に伝播しただけで無実、一方で同family の `
 | wave-6 | **非 CONTRACT 0** | 収束(白 63 種のみ) |
 | math 追加 | 2 | `mat_svd`/`mat_eigh` の型の嘘を初走行で即検出 |
 | wave-7 | 172(NONFINITE 2) | 引数抽選の乱数を位置独立にした = **探索経路が変わり新しい発見**。`poly_eval` の float64 オーバーフロー無言 inf、`chamfer_distance` の空点群無言 NaN(→ metrics3d の 5 兄弟を一掃) |
+| optics 追加 | 18(全 CONTRACT) | 光学 18 op を登録(`opsoptics`、新語彙 `jones`/`stokes`)。**非 CONTRACT 0** — バグは登録前の敵対監査で 6 件取り切っていた(文字列が長さとして通る / MTF の無言 NaN / determinant の無言 inf / 高次 Zernike 基底の桁落ち / 108GB の内部確保 / 未報告の求積誤差)。行列の形が決まっている `abcd_trace`/`jones_apply`/`mueller_apply` は一様抽選だと実経路を一度も通らないため(実測 800 連鎖で 0 回)、`OP_ARG_BUILDERS` で半分は妥当な行列を合成する |
 
 wave-7 の 2 件はどちらも `--minimize` が 5→2 / 4→2 op に削り、その最小再現を
 手で実行して初めて原因が確定しました(前者は「長い信号を係数に取り違え」、
@@ -97,6 +98,14 @@ wave-7 の 2 件はどちらも `--minimize` が 5→2 / 4→2 op に削り、�
 
 - **新しい op family を catalog に足す**: `catalog()` に目録を追加。型語彙が
   増えるなら `TYPE_CHECKS` と `make_generators()` にも足すこと。
+- **形や物理制約が決まっている入力**(2x2 の ABCD、4x4 の Mueller、長さ 4 で
+  偏光度 <= 1 の Stokes)は、型が合っていても一様抽選ではまず妥当な値に当たらず
+  **CONTRACT しか出ない = 実経路が一度も走らない**。`OP_ARG_BUILDERS` に
+  「半分は妥当な値を合成・半分は pool から敵対入力」の builder を足すこと
+  (先例: `abcd_matrix` / `wavefront_stats` / `abcd_trace` / `jones_apply` /
+  `mueller_apply`)。
+- **文書化済みの非有限を返す op**は `NONFINITE_BY_CONTRACT` に載せる
+  (先例: `mat_cond`、光学の `depth_of_field` / `gaussian_beam`)。
 - **返りが宣言型と違う**なら、素の関数は数学/慣習どおりの返り(tuple など)を
   保ったまま、目録側に `RESULT_ADAPTERS` を登録して `call()` が宣言型を返す形に
   します(先例: `mat_svd` → `{"U","s","Vt"}`)。

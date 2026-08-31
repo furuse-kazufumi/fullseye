@@ -674,6 +674,8 @@ def main(argv=None):
     ap.add_argument("--arg-keys", help="--replay の抽選回数カンマ区切り")
     args = ap.parse_args(argv)
 
+    global TRACE_OPS
+    TRACE_OPS = args.trace_ops
     ops, gens = cf.catalog(), cf.make_generators()
 
     if args.replay is not None:
