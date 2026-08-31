@@ -1947,7 +1947,7 @@ def fit_line_3d(points):
 
 def fit_plane_3d(points):
     """点群 → 最小二乗平面(通過点=重心, 法線=最小主軸, 残差 RMS)。返り値 (point, normal, resid)。"""
-    P = np.asarray(points, float); c = P.mean(0)
+    P = _pts(points, "fit_plane_3d", 3); c = P.mean(0)
     w, v = np.linalg.eigh((P - c).T @ (P - c))
     # 完全平面では最小固有値が BLAS により -1e-16 側に落ちることがある(sqrt→nan)。
     # A perfectly planar cloud can yield a tiny NEGATIVE smallest eigenvalue on
