@@ -192,6 +192,33 @@ def _score_single_stage(prob, ops, op_name, a, b, cfg, split_seed_offset):
         return float("-inf")
 
 
+#: 「既存語彙の最良 1 段」のキャッシュ。候補ごとに再計算していたが、**この値は
+#: 候補に依存しない**(problem と split と走査範囲だけで決まる)。60 候補を判定
+#: すると 60 倍の重複計算になっていた — 実測で気づいた無駄。キーに語彙サイズを
+#: 含めるのは、語彙が増えた後に古い最良を使い回さないため。
+_BEST_EXISTING_CACHE: dict = {}
+
+
+def _best_existing(ops, prob, pname, a, b, cfg, offset, exclude, max_existing):
+    """その problem における既存語彙の最良 1 段。→ (スコア, op 名)。"""
+    key = (pname, offset, a, b, cfg["n_holdout"], cfg["size"], cfg["seed"],
+           max_existing, len(ops.REGISTRY))
+    cached = _BEST_EXISTING_CACHE.get(key)
+    if cached is not None and cached[1] != exclude:
+        return cached
+    best, best_name = float("-inf"), None
+    pool = [o for o in ops.REGISTRY if o.in_sort == prob.in_sort and o.name != exclude]
+    if max_existing is not None:
+        pool = pool[:max_existing]
+    for op in pool:
+        s = _score_single_stage(prob, ops, op.name, a, b, cfg, offset)
+        if s > best:
+            best, best_name = s, op.name
+    if exclude is None or best_name != exclude:
+        _BEST_EXISTING_CACHE[key] = (best, best_name)
+    return best, best_name
+
+
 def counterfactual_utility(ops, problems, op_name, a=0.5, b=0.5, cfg=None,
                            split="locked", max_existing=None, verbose=False):
     """候補 op の反実仮想効用を全 problem で測る。
