@@ -334,6 +334,7 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
     for t, g in gens.items():
         pool[t] = [g(rng)]
     trace = []
+    occ = {}
     by_name = {o[0]: o for o in ops} if script is not None else None
     for i in range(len(script) if script is not None else length):
         if script is not None:
