@@ -677,6 +677,52 @@ def viewer3d_project(points, cam, center, radius, zoom, pan, size):
     return xy, V[:, 2]
 
 
+def viewer3d_camera_fp(yaw_deg, pitch_deg):
+    """First-person camera -> world-to-view rotation (3, 3).
+
+    Same row convention as :func:`viewer3d_camera` (right, down-screen,
+    forward) and — deliberately — the same rotation math: yaw spins about the
+    world z axis, positive pitch tilts the LOOK direction up toward +z.
+    ``yaw=0, pitch=0`` looks along +y with +z up on screen. The eye position is
+    NOT part of the rotation; :func:`viewer3d_project_persp` subtracts it.
+    Headless."""
+    return viewer3d_camera(yaw_deg, pitch_deg)
+
+
+def viewer3d_fp_axes(yaw_deg, pitch_deg):
+    """WASD movement basis for the first-person camera -> (forward, right, up).
+
+    forward is the full look direction (fly-style, pitch included — a museum
+    walkthrough wants to glide toward whatever is being looked at), right is
+    the horizontal strafe axis (independent of pitch by construction: the
+    camera's right row never leaves the ground plane), up is world +z.
+    Headless — unit tested against known yaw/pitch."""
+    cam = viewer3d_camera_fp(yaw_deg, pitch_deg)
+    return cam[2].copy(), cam[0].copy(), np.array([0.0, 0.0, 1.0])
+
+
+def viewer3d_project_persp(points, cam, eye, fov_deg, size, near=1e-6):
+    """Perspective projection through a first-person camera ->
+    ``(xy (n, 2), depth (n,), visible (n,) bool)``.
+
+    view = cam @ (P - eye); the vertical field of view *fov_deg* sets the focal
+    length ``f = (size/2) / tan(fov/2)`` and screen xy is the classic
+    ``view.xy * f / view.z`` about the frame centre. depth is the view-space
+    forward coordinate; *visible* is the near-plane clip ``depth > near`` —
+    points at or behind the eye MUST be dropped (their xy is meaningless and a
+    negative z would mirror them across the centre). Headless — the unit tests
+    pin forward points to the frame centre and reject points behind the eye."""
+    P = np.asarray(points, np.float64).reshape(-1, 3)
+    V = (P - np.asarray(eye, np.float64)) @ np.asarray(cam, np.float64).T
+    z = V[:, 2]
+    visible = z > float(near)
+    f = 0.5 * float(size) / np.tan(np.radians(float(fov_deg)) / 2.0)
+    zs = np.where(visible, z, 1.0)                # dummy divisor for clipped points
+    xy = V[:, :2] * (f / zs)[:, None]
+    xy += float(size) / 2.0
+    return xy, z, visible
+
+
 def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
                         pan=(0.0, 0.0), size=480, point_px=2,
                         center=None, radius=None, background=(0.070, 0.078, 0.106)):
