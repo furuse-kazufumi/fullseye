@@ -60,6 +60,12 @@ def estimate_point_normals(points, k=16, orient_ref=None):
     """
     from scipy.spatial import cKDTree
     P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3 or len(P) < 3:
+        # 実測: 1-2 点だと cKDTree.query が欠損近傍を境界外 index で埋め、
+        # P[idx] が生 IndexError 化する。法線の局所 PCA は 3 点未満で未定義。
+        raise ValueError("estimate_point_normals: points must be an (N, 3) "
+                         "array with N >= 3 (got %r) — normals are undefined "
+                         "on fewer points" % (P.shape,))
     n = len(P)
     k = max(3, min(k, n - 1))
     tree = cKDTree(P)
