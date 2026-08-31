@@ -135,6 +135,53 @@ def find_behavioural_duplicate(ops, fn, in_sort, a=0.5, b=0.5, limit=None):
     return None
 
 
+class temp_op:                                            # noqa: N801 - context manager
+    """候補を**登録せずに**採点するための一時 op。
+
+    昇格ゲートは「まだ語彙に無いもの」を判定する道具なので、判定のために本登録
+    するのは順序が逆(却下しても痕跡が残る)。``ops`` の名前解決表へ一時的に
+    差し込み、抜けるときに必ず元へ戻す。既存名を上書きしそうな場合は拒否する
+    (静かに既存 op を壊さない)。
+    """
+
+    def __init__(self, ops_mod, name, fn, in_sort, out_sort):
+        self.ops, self.name, self.fn = ops_mod, name, fn
+        self.in_sort, self.out_sort = in_sort, out_sort
+
+    def __enter__(self):
+        if self.name in self.ops._BY_NAME:
+            raise ValueError(f"temp_op: {self.name!r} は既存 op と衝突する")
+        Op = type(self.ops.REGISTRY[0])
+        op = Op(self.name, "candidate", "", self.in_sort, self.out_sort, self.fn)
+        self.ops._BY_NAME[self.name] = op
+        self.ops.RT[self.name] = self.fn
+        self.ops.REGISTRY.append(op)
+        return op
+
+    def __exit__(self, *exc):
+        self.ops._BY_NAME.pop(self.name, None)
+        self.ops.RT.pop(self.name, None)
+        self.ops.REGISTRY[:] = [o for o in self.ops.REGISTRY if o.name != self.name]
+        return False
+
+
+def stages_runner(ops, stages_spec):
+    """名前ピン留めされた stage 列を ``fn(v, a, b)`` 規約の 1 個の op にする。
+
+    ``backends_macro`` と同じ「champion を凍結して 1 op にする」変換だが、
+    こちらは**登録しない**(ゲート判定用)。a, b は凍結 — 進化が選んだ値を
+    ゲートで動かしたら、判定対象が別物になってしまう。
+    """
+    stages = ops.decode_by_names(stages_spec)
+
+    def _run(v, a, b):                                    # noqa: ARG001 - 凍結
+        try:
+            return ops.run_stages(stages, v)
+        except Exception:                                 # noqa: BLE001 - fail-soft
+            return np.asarray(v)
+    return _run
+
+
 def _score_single_stage(prob, ops, op_name, a, b, cfg, split_seed_offset):
     """1 段パイプライン(その op 単体)の split スコア。失敗は -inf 扱い。"""
     data = prob.make(cfg["n_holdout"], cfg["size"], cfg["seed"] + split_seed_offset)
