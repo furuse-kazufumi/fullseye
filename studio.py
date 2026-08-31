@@ -1845,7 +1845,8 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 return C if idx is None else C[idx]
             if self._VN is not None:
                 VN = self._VN if idx is None else self._VN[idx]
-                cam = viewer3d_camera(self._yaw, self._pitch)
+                cam = (viewer3d_camera_fp(self._fp_yaw, self._fp_pitch) if self._fp
+                       else viewer3d_camera(self._yaw, self._pitch))
                 lam = np.clip(VN @ -cam[2], 0.0, 1.0) * 0.82 + 0.16
                 return lam[:, None] * np.array([0.78, 0.82, 0.88])
             if self._colors is None or idx is None:
