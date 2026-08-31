@@ -224,8 +224,9 @@ def _op_md(rec, path, by_name):
         lines.append(f'- **呼び出し**: `fullseye.apply(img, "{name}", a=0.5, b=0.5)` '
                      "(2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)")
     else:
+        reg_mod = {"3d": "ops3d", "math": "opsmath"}.get(dim, rec["module"])
         lines.append(f"- **呼び出し**: `import {rec['module']}; {rec['module']}.{name}{rec['sig']}` "
-                     f'(または `ops3d.get("{name}")`)')
+                     f'(または `{reg_mod}.get("{name}")`)')
     if rec["halcon"]:
         lines.append(f"- **HALCON 相当**: `{rec['halcon']}`(意味・パラメータは HALCON リファレンスが参考になる)")
     if rec.get("gpu"):
