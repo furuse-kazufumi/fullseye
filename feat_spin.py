@@ -1,15 +1,9 @@
 """Spin Image 記述子 + RANSAC 剛体登録(Johnson & Hebert)(workflow 並行探索・実測検証済、初期推定なしの大回転+部分重なり登録)。"""
 import numpy as np
 
-try:
-    import torch
-except ImportError:                       # torch は optional(gpu/threed extra)
-    class _TorchMissing:
-        def __getattr__(self, name):
-            raise ImportError(
-                "this operator needs the optional 'torch' backend — "
-                "install with: pip install \"fullseye[gpu]\"")
-    torch = _TorchMissing()
+# torch は optional(gpu/threed extra)かつ import が重い(~700 ms)ため遅延。
+# torch_lazy が初回属性アクセスで実 torch を読み、不在なら同じ ImportError を出す。
+from torch_lazy import torch  # noqa: F401
 
 
 def _estimate_normals(points, k=18, orient_ref=None):

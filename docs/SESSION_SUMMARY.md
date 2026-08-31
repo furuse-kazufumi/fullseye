@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-01 06:25:59
+- **最終更新**: 2026-09-01 06:43:33
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-f02e1627 chain-fuzz: 数学ファミリを拡散収束ファザーの catalog に追加 — 初走行で型の嘘 2 件検出・修正
-4cfc4879 auto: chain_fuzz.py 編集前 (2026-09-01 06:24)
-6cf6fca3 auto: opsmath.py 編集前 (2026-09-01 06:23)
-5157c172 auto: chain_fuzz.py 編集前 (2026-09-01 06:22)
-1833bc0b auto: chain_fuzz.py 編集前 (2026-09-01 06:22)
-3d21f79f auto: chain_fuzz.py 編集前 (2026-09-01 06:22)
-6cab2d19 docs: Qiita 記事 ja/en に追記5(拡散収束ファザー・第6家系・inf契約論)— PATCH 済み
-649d10e3 auto: fullseye_overview_qiita_en.md 編集前 (2026-09-01 06:20)
-ad38f3eb chain-fuzz: 拡散収束ループ完全収束 — wave-6 非CONTRACT署名 0 件(2000連鎖)
-93c5b561 auto: match3d.py 編集前 (2026-09-01 06:10)
+77be7521 auto: feat_spin.py 編集前 (2026-09-01 06:43)
+b73ecfb4 auto: README.md 編集前 (2026-09-01 06:43)
+8b2b1dac auto: feat_shot.py 編集前 (2026-09-01 06:43)
+f0e63115 auto: feat_harris.py 編集前 (2026-09-01 06:43)
+eecf5b80 auto: feat_fpfh.py 編集前 (2026-09-01 06:43)
+caa95efc auto: match3d.py 編集前 (2026-09-01 06:43)
+f60ac3fd auto: accel_match.py 編集前 (2026-09-01 06:42)
+dc912b15 auto: test_chain_fuzz_minimize.py 編集前 (2026-09-01 06:41)
+5ff873f5 auto: chain_fuzz.py 編集前 (2026-09-01 06:41)
+665e7a00 auto: chain_fuzz.py 編集前 (2026-09-01 06:41)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M feat_spin.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-06:25 .pytest_cache/v/cache/nodeids
-06:25 tests/test_chain_type_contracts.py
-06:24 tools/chain_fuzz.py
-06:23 opsmath.py
-06:20 docs/articles/fullseye_overview_qiita_en.md
-06:20 docs/articles/fullseye_overview_qiita_ja.md
-06:14 docs/SESSION_SUMMARY.md
-06:11 studio_assets/op_help/guide_math_metrology.html
-06:11 studio_assets/op_help/guide_handpose.html
-06:11 studio_assets/op_help/guide_gallery2d_texture_freq.html
-06:11 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
-06:11 studio_assets/op_help/guide_gallery2d_segmentation.html
-06:11 studio_assets/op_help/guide_gallery2d_region.html
-06:11 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
-06:11 studio_assets/op_help/guide_gallery2d_morphology.html
+06:43 feat_spin.py
+06:43 docs/README.md
+06:43 feat_shot.py
+06:43 feat_harris.py
+06:43 feat_fpfh.py
+06:43 docs/CHAIN_FUZZ.md
+06:43 match3d.py
+06:42 accel_match.py
+06:42 torch_lazy.py
+06:42 .pytest_cache/v/cache/nodeids
+06:41 tests/test_chain_fuzz_minimize.py
+06:41 tools/chain_fuzz.py
+06:40 backends_kornia.py
+06:40 backends_dl.py
+06:26 docs/SESSION_SUMMARY.md
 ```
 
 ---
