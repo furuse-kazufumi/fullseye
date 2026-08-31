@@ -73,6 +73,24 @@ def mine(chains, length, seed, out_path):
     return cands
 
 
+def _sort_of(type_name):
+    """型名 → 進化の sort。カタログ型名(``voxel``/``image2d``)と進化 sort 名
+    (``volume``/``image``)の**どちらで来ても**解決する。
+
+    採掘器はカタログ型名で連鎖を記録するが、進化側の記録や手書きの候補は sort 名を
+    使う。ここを片方だけにすると、正しい候補を「型が不明」として黙って捨てる
+    (実測でそれが起きた)。解決できなければ None — 推測で寄せない。
+    """
+    import backends_typed as bt
+    import ops as _ops
+
+    mapped = bt.TYPE_TO_SORT.get(type_name)
+    if mapped is not None:
+        return mapped
+    known = {o.in_sort for o in _ops.REGISTRY} | {o.out_sort for o in _ops.REGISTRY}
+    return type_name if type_name in known else None
+
+
 def screen(candidates, problems, max_len=MAX_CHAIN_LEN):
     """安い判定で候補を絞る。→ (残った候補, 落とした理由の内訳)。
 
@@ -83,7 +101,6 @@ def screen(candidates, problems, max_len=MAX_CHAIN_LEN):
 
     # ワークロードが実際に受け付ける入力型(進化の problem が持つ sort)
     accepted_sorts = {p.in_sort for p in problems.PROBLEMS.values()}
-    import backends_typed as bt
     kept, dropped = [], Counter()
     for c in candidates:
         ops_chain = c.get("ops") or []
@@ -96,7 +113,7 @@ def screen(candidates, problems, max_len=MAX_CHAIN_LEN):
         if not c.get("deterministic", False):
             dropped["非決定的"] += 1
             continue
-        in_sort = bt.TYPE_TO_SORT.get(c.get("start"))
+        in_sort = _sort_of(c.get("start"))
         if in_sort is None or in_sort not in accepted_sorts:
             dropped[f"課題が受け付けない入力型({c.get('start')})"] += 1
             continue
@@ -125,7 +142,6 @@ def gate(candidates, ops, problems, max_existing=None, capacity=None, verbose=Fa
     → (通った候補 [(候補, 理由, 詳細)], 落ちた候補 [(候補, 理由)])。
     """
     from promote_gate import DNA_CAPACITY, gate_candidate, stages_runner
-    import backends_typed as bt
 
     cap = DNA_CAPACITY if capacity is None else capacity
     passed, failed = [], []
@@ -140,8 +156,8 @@ def gate(candidates, ops, problems, max_existing=None, capacity=None, verbose=Fa
             # IMGEVOLVE_WIDE_VOCAB=1 で 125 op まで広がる。
             failed.append((c, f"進化レジストリに無い op: {exc}"))
             continue
-        in_sort = bt.TYPE_TO_SORT.get(c["start"])
-        out_sort = bt.TYPE_TO_SORT.get(c.get("out_type")) or in_sort
+        in_sort = _sort_of(c["start"])
+        out_sort = _sort_of(c.get("out_type")) or in_sort
         name = "_cand_%03d" % i
         try:
             ok, reason, detail = gate_candidate(
