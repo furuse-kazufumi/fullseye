@@ -86,6 +86,8 @@ __all__ = [
     "vol_distance_transform", "vol_label", "vol_region_props",
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "volume_downsample",
+    "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
+    "vol_boundary", "vol_boundary_points",
     "VOLOPS", "MAX_VOXELS", "MAX_EIGEN_VOXELS",
 ]
 
@@ -95,6 +97,8 @@ VOLOPS = [
     "vol_distance_transform", "vol_label", "vol_region_props",
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "volume_downsample",
+    "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
+    "vol_boundary", "vol_boundary_points",
 ]
 
 #: Refuse a volume larger than this for the *cheap* N-D ops (label / EDT /
