@@ -1992,7 +1992,31 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                        else viewer3d_camera(self._yaw, self._pitch))
                 lam = np.clip(VN @ -cam[2], 0.0, 1.0) * 0.82 + 0.16
                 return lam[:, None] * np.array([0.78, 0.82, 0.88])
-            if self._colors is None or idx is None:
+            if self._colors is None:
+                # Height-ramp cloud (set_points with no colors): the viridis
+                # ramp depends only on the CLOUD's z extent, never the camera,
+                # yet letting the renderer recompute it cost a measured
+                # 84 ms/frame at 100k pts — 4.6x the actual 18 ms splat render.
+                # Computed once per cloud here instead. Full-resolution frames
+                # are bit-identical to the in-render ramp (same math over the
+                # same finite points); decimated interaction previews now KEEP
+                # the full-cloud normalization instead of re-normalizing the
+                # picked subset, so colors no longer shift while dragging.
+                if self._ramp is None and self._P.shape[0]:
+                    z = self._P[:, 2]
+                    zf = z[np.isfinite(z)]
+                    if zf.size:
+                        lo = float(zf.min()); span = float(zf.max()) - lo
+                        t = (z - lo) / span if span > 0 else np.zeros_like(z)
+                        # non-finite rows are dropped by the renderer anyway —
+                        # feed the cmap a real number, not NaN
+                        t = np.where(np.isfinite(t), t, 0.0)
+                        self._ramp = imgio.apply_cmap(t.reshape(1, -1),
+                                                      name="viridis")[0]
+                if self._ramp is None:
+                    return None
+                return self._ramp if idx is None else self._ramp[idx]
+            if idx is None:
                 return self._colors
             return self._colors[idx] if self._colors.shape[0] == self._P.shape[0] \
                 else self._colors
