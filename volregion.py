@@ -41,6 +41,8 @@ import numpy as np
 __all__ = [
     "VolRLE", "vol_rle_encode", "vol_rle_decode",
     "vol_rle_volume", "vol_rle_bbox", "vol_rle_centroid",
+    "vol_rle_union", "vol_rle_intersect", "vol_rle_difference",
+    "vol_rle_components",
     "VOLREGION_OPS",
 ]
 
@@ -48,6 +50,8 @@ __all__ = [
 VOLREGION_OPS = [
     "vol_rle_encode", "vol_rle_decode",
     "vol_rle_volume", "vol_rle_bbox", "vol_rle_centroid",
+    "vol_rle_union", "vol_rle_intersect", "vol_rle_difference",
+    "vol_rle_components",
 ]
 
 #: Same voxel budget as the cheap ops in :mod:`volops` (~134 M voxels).
@@ -207,3 +211,110 @@ def vol_rle_centroid(region, spacing=None):
                              % (spacing,))
         c = c * np.asarray(sp)
     return float(c[0]), float(c[1]), float(c[2])
+
+
+# --------------------------------------------------------------------------- #
+# set algebra on runs — union / intersection / difference without decoding     #
+# --------------------------------------------------------------------------- #
+def _rle_boolean(a: "VolRLE", b: "VolRLE", keep) -> "VolRLE":
+    """Shared sweep engine for the set operations.
+
+    Both regions are mapped onto one global integer line with a stride of
+    ``W + 1`` per plane row (the extra +1 guarantees runs of neighbouring rows
+    can never merge). Every run start/end becomes an event carrying a per-region
+    counter delta; between consecutive distinct event positions the coverage
+    pair ``(inside_a, inside_b)`` is constant, so *keep* decides membership per
+    interval and maximal kept spans become the result runs. O(n log n) in the
+    run count — the voxel count never appears."""
+    A, B = _require_rle(a, "a"), _require_rle(b, "b")
+    if A.shape != B.shape:
+        raise ValueError("regions live in different volumes: %r vs %r"
+                         % (A.shape, B.shape))
+    D, H, W = A.shape
+    stride = W + 1
+    ga = A.rows.astype(np.int64) * stride
+    gb = B.rows.astype(np.int64) * stride
+    pos = np.concatenate([ga + A.starts, ga + A.ends, gb + B.starts, gb + B.ends])
+    da = np.concatenate([np.ones(len(A), np.int64), -np.ones(len(A), np.int64),
+                         np.zeros(2 * len(B), np.int64)])
+    db = np.concatenate([np.zeros(2 * len(A), np.int64),
+                         np.ones(len(B), np.int64), -np.ones(len(B), np.int64)])
+    if not len(pos):
+        return VolRLE(np.zeros(0, np.int32), np.zeros(0, np.int32),
+                      np.zeros(0, np.int32), A.shape)
+    upos, inv = np.unique(pos, return_inverse=True)
+    ca = np.zeros(len(upos), np.int64)
+    cb = np.zeros(len(upos), np.int64)
+    np.add.at(ca, inv, da)
+    np.add.at(cb, inv, db)
+    inside = keep(np.cumsum(ca) > 0, np.cumsum(cb) > 0)[:-1]  # state on [upos_i, upos_i+1)
+    # maximal kept spans over the interval decomposition
+    prev = np.concatenate([[False], inside])
+    nxt = np.concatenate([inside, [False]])
+    span_s = upos[:-1][inside & ~prev[:-1]]
+    span_e = upos[1:][inside & ~nxt[1:]]
+    rows = (span_s // stride).astype(np.int32)
+    starts = (span_s % stride).astype(np.int32)
+    ends = (starts + (span_e - span_s)).astype(np.int32)
+    return VolRLE(rows, starts, ends, A.shape)
+
+
+def vol_rle_union(a, b):
+    """Union of two RLE regions, computed on the runs (no decode). Cost scales
+    with the run counts, not the voxel counts — merging two 512**3 masks never
+    touches 512**3 anything. Regions must share the same volume shape."""
+    return _rle_boolean(a, b, lambda ia, ib: ia | ib)
+
+
+def vol_rle_intersect(a, b):
+    """Intersection of two RLE regions on the runs (no decode)."""
+    return _rle_boolean(a, b, lambda ia, ib: ia & ib)
+
+
+def vol_rle_difference(a, b):
+    """Set difference ``a \ b`` on the runs (no decode)."""
+    return _rle_boolean(a, b, lambda ia, ib: ia & ~ib)
+
+
+# --------------------------------------------------------------------------- #
+# connected components as a list of regions — the "thousands of masks" case    #
+# --------------------------------------------------------------------------- #
+def vol_rle_components(vol_binary, connectivity=26):
+    """Split a binary volume into per-component ``VolRLE`` regions.
+
+    *The* use case run-length regions exist for: holding every component of a
+    segmentation as its own region at run-proportional cost, instead of one
+    dense label volume or N dense masks. Uses the key structural fact that a
+    run is x-connected, so a component label is constant along each run — the
+    volume is labelled once (dense, same 6/18/26 semantics as
+    ``volops.vol_label``) and then each *run* is assigned by its first voxel's
+    label; no per-component dense mask is ever built.
+
+    Returns a list of ``VolRLE`` ordered by label id (1..n). An empty mask
+    returns an empty list.
+    """
+    from scipy import ndimage                       # lazy: keep import cost low
+    if float(connectivity) != int(connectivity):
+        rank = None
+    else:
+        rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity))
+    if rank is None:
+        raise ValueError("connectivity must be 6, 18 or 26 (3-D neighbourhoods),"
+                         " got %r" % (connectivity,))
+    whole = vol_rle_encode(vol_binary)
+    if not len(whole):
+        return []
+    D, H, W = whole.shape
+    # dense labelling once (unavoidable: connectivity is a global property),
+    # then read one label per run
+    dense = vol_rle_decode(whole) > 0.5
+    labels, n = ndimage.label(dense, structure=ndimage.generate_binary_structure(3, rank))
+    z = whole.rows // H
+    y = whole.rows % H
+    run_label = labels[z, y, whole.starts]
+    out = []
+    for lab in range(1, n + 1):
+        sel = run_label == lab
+        out.append(VolRLE(whole.rows[sel], whole.starts[sel], whole.ends[sel],
+                          whole.shape))
+    return out
