@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-31 22:58:41
+- **最終更新**: 2026-08-31 23:10:00
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+575eb8fd auto: test_deform3d.py 編集前 (2026-08-31 23:07)
+b01ee1b5 auto: deform3d.py 編集前 (2026-08-31 23:06)
+0aad84e5 auto: deform3d.py 編集前 (2026-08-31 23:06)
+e54b017b auto: deform3d.py 編集前 (2026-08-31 23:06)
+9a1089d2 auto: deform3d.py 編集前 (2026-08-31 23:06)
+472f823e auto: deform3d.py 編集前 (2026-08-31 23:05)
+682d107b auto: deform3d.py 編集前 (2026-08-31 23:05)
+b6b11294 auto: deform3d.py 編集前 (2026-08-31 23:05)
 55aebb13 auto: test_opdocs.py 編集前 (2026-08-31 22:58)
 27ac2d6f auto: test_volprobe.py 編集前 (2026-08-31 22:57)
-ce93728e auto: test_opdocs.py 編集前 (2026-08-31 22:57)
-d418632f auto: opdocs.py 編集前 (2026-08-31 22:56)
-9024bda5 auto: ops3d.py 編集前 (2026-08-31 22:56)
-22095555 auto: ops3d.py 編集前 (2026-08-31 22:56)
-1918f431 auto: ops3d.py 編集前 (2026-08-31 22:56)
-7dc5cad1 auto: ops3d.py 編集前 (2026-08-31 22:55)
-f346ee93 auto: ops3d.py 編集前 (2026-08-31 22:55)
-014a7fdc auto: chain_fuzz.py 編集前 (2026-08-31 22:54)
 ```
 
 ## 現在の git status
 
 ```
-M tests/test_opdocs.py
+M tests/test_deform3d.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:58 .pytest_cache/v/cache/nodeids
-22:58 .pytest_cache/v/cache/lastfailed
-22:58 tests/test_opdocs.py
-22:57 tests/test_volprobe.py
-22:57 studio_assets/op_help/guide_math_metrology.html
-22:57 studio_assets/op_help/guide_handpose.html
-22:57 studio_assets/op_help/guide_gallery2d_texture_freq.html
-22:57 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
-22:57 studio_assets/op_help/guide_gallery2d_segmentation.html
-22:57 studio_assets/op_help/guide_gallery2d_region.html
-22:57 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
-22:57 studio_assets/op_help/guide_gallery2d_morphology.html
-22:57 studio_assets/op_help/guide_gallery2d_halcon_ext.html
-22:57 studio_assets/op_help/guide_gallery2d_gray_arith.html
-22:57 studio_assets/op_help/guide_gallery2d_geometry.html
+23:09 .pytest_cache/v/cache/nodeids
+23:08 studio_assets/op_help/guide_math_metrology.html
+23:08 studio_assets/op_help/guide_handpose.html
+23:08 studio_assets/op_help/guide_gallery2d_texture_freq.html
+23:08 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
+23:08 studio_assets/op_help/guide_gallery2d_segmentation.html
+23:08 studio_assets/op_help/guide_gallery2d_region.html
+23:08 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
+23:08 studio_assets/op_help/guide_gallery2d_morphology.html
+23:08 studio_assets/op_help/guide_gallery2d_halcon_ext.html
+23:08 studio_assets/op_help/guide_gallery2d_gray_arith.html
+23:08 studio_assets/op_help/guide_gallery2d_geometry.html
+23:08 studio_assets/op_help/guide_gallery2d_features.html
+23:08 studio_assets/op_help/math/stat_zscore.html
+23:08 studio_assets/op_help/math/stat_histogram.html
 ```
 
 ---

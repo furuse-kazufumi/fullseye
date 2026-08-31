@@ -283,6 +283,39 @@ def test_register_cpd_rigid_rejects_bad_w():
         d3.register_cpd_rigid(rng.random((10, 3)), rng.random((10, 3)), w=1.0)
 
 
+# --------------------------------------------------------------------------- #
+# 密行列の暗黙前提を fail-closed に(連鎖ファザー wave-4: K≈4万で 12GB/実質ハング) #
+# --------------------------------------------------------------------------- #
+def test_tps_fit_rejects_too_many_control_points():
+    """TPS_MAX_CTRL 超の制御点は O(K³) 密系を組む前に ValueError。"""
+    n = d3.TPS_MAX_CTRL + 1
+    # 実際に巨大行列を確保しないことの検証を兼ねる(確保したら遅くて落ちる)
+    pts = np.random.default_rng(0).random((n, 3))
+    with pytest.raises(ValueError, match="TPS_MAX_CTRL"):
+        d3.tps_fit(pts, pts + 0.01)
+
+
+def test_register_cpd_rigid_rejects_too_many_pairs(monkeypatch):
+    """CPD_MAX_PAIRS 超の N×M は密責務行列を組む前に ValueError。"""
+    monkeypatch.setattr(d3, "CPD_MAX_PAIRS", 100)   # 実データを小さく保つ
+    rng = np.random.default_rng(0)
+    with pytest.raises(ValueError, match="CPD"):
+        d3.register_cpd_rigid(rng.random((11, 3)), rng.random((11, 3)))
+
+
+def test_tps_warp_chunked_bitwise_equals_unchunked(monkeypatch):
+    """チャンク評価は一括評価とビット一致(数学は行独立)。"""
+    rng = np.random.default_rng(1)
+    src = rng.random((30, 3))
+    dst = src + 0.05 * rng.standard_normal((30, 3))
+    model = d3.tps_fit(src, dst, lam=0.01)
+    q = rng.random((1000, 3))
+    full = d3.tps_warp(model, q)                    # 既定チャンク(一括相当)
+    monkeypatch.setattr(d3, "_TPS_WARP_CHUNK", 7)   # わざと細切れに
+    chunked = d3.tps_warp(model, q)
+    assert np.array_equal(full, chunked)
+
+
 if __name__ == "__main__":
     import sys
     sys.exit(pytest.main([__file__, "-q"]))
