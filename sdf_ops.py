@@ -78,15 +78,24 @@ def sdf_smooth_union(a, b, k):
     ``smin(s*a,s*b,s*k)=s*smin(a,b,k)``(スケール整合)。
 
     ``k`` は距離次元の丸め半径。硬い min が欲しければ ``sdf_union`` を使う。
+    ``±inf`` を含む入力(``esdf`` の「全自由なら +inf」契約との相互運用)では、
+    ブレンド帯 ``|a-b|<k`` が退化するため厳密に ``min(a,b)`` を返す。
     Raises ValueError for k<=0(0 除算を避けるため fail-closed)。"""
     a = np.asarray(a, np.float64)
     b = np.asarray(b, np.float64)
     k = float(k)
     if not (k > 0.0):                           # fail-closed: k=0 は sdf_union、k<0 は無意味
         raise ValueError("k must be positive; use sdf_union for the hard (k->0) min")
-    h = np.clip(0.5 + 0.5 * (b - a) / k, 0.0, 1.0)
-    mix = b * (1.0 - h) + a * h                 # mix(b, a, h) = lerp from b to a
-    return mix - k * h * (1.0 - h)
+    # inf を含む要素は smooth 式が inf-inf / inf*0 = NaN に化ける(連鎖ファザー
+    # wave-5 派生の実測)。数学的には |a-b|>=k でブレンド項は 0 なので min が厳密解。
+    with np.errstate(invalid="ignore"):
+        h = np.clip(0.5 + 0.5 * (b - a) / k, 0.0, 1.0)
+        mix = b * (1.0 - h) + a * h             # mix(b, a, h) = lerp from b to a
+        out = mix - k * h * (1.0 - h)
+    inf_in = np.isinf(a) | np.isinf(b)
+    if np.any(inf_in):
+        out = np.where(inf_in, np.minimum(a, b), out)
+    return out
 
 
 def sdf_offset(sdf, r):
