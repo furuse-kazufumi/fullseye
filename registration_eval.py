@@ -76,8 +76,13 @@ def _as_points(P, name: str = "points") -> np.ndarray:
 
 
 def _check_thresh(thresh, name: str = "thresh") -> float:
-    """正の有限しきい値として検証。非正・非有限は ValueError(fail-closed)。"""
-    t = float(thresh)
+    """正の有限しきい値として検証。非数値・非正・非有限は ValueError(fail-closed)。"""
+    try:
+        t = float(thresh)
+    except (TypeError, ValueError) as e:
+        raise ValueError(
+            f"{name} must be a positive finite scalar "
+            f"(got {type(thresh).__name__})") from e
     if not np.isfinite(t) or t <= 0.0:
         raise ValueError(f"{name} must be a positive finite value (got {thresh})")
     return t
