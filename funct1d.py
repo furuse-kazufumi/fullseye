@@ -581,6 +581,11 @@ def match_funct_1d_trans(y1, y2):
     Honest limitations: integer lag only (no sub-sample refinement), no x-scale
     or y-offset model beyond the mean subtraction, and a length-1 input
     degenerates to ``shift 0, score 0`` (mean subtraction leaves nothing).
+    Because the correlation is **unnormalised**, a strong amplitude envelope
+    (e.g. an exponentially decaying oscillation) can bias the peak by a few
+    samples toward the high-amplitude overlap; whiten first (e.g. match the
+    :func:`derivate_funct_1d` of both signals) when the envelope is not flat —
+    ``examples/signal_funct1d.py`` demonstrates exact recovery this way.
 
     :param y1: 1-D function, at least 1 sample.
     :param y2: 1-D function, at least 1 sample (lengths may differ).
