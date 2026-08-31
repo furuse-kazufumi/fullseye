@@ -92,9 +92,13 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12):
     5-30 is the practical range (see the module notes on semi-convergence).
 
     Returns the deblurred ``(D, H, W)`` float64 volume (non-negative).
-    Measured on the worked example (sphere pair blurred by a sigma-2 Gaussian):
-    10 iterations cut the RMSE to the ground truth by half and restore the
-    edge contrast the blur removed.
+    Measured on the test scene (binary sphere pair blurred by a sigma-2
+    Gaussian): the RMSE to ground truth falls to 0.81x the blurred
+    observation's at 10 iterations and 0.68x at 50 — genuine but *gradual*,
+    because the residual is dominated by the spheres' hard edges, which RL
+    recovers slowly. What converges fast is the *forward consistency*:
+    re-blurring the estimate reproduces the observation almost exactly (that
+    is the quantity the RL update actually optimises).
     """
     v = _require_volume(vol)
     if (v < 0.0).any():
