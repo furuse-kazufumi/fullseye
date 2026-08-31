@@ -85,6 +85,12 @@ def _check_cutoff(c, name):
     if not np.isfinite(c) or c <= 0.0:
         raise ValueError("%s must be a positive finite frequency, got %r"
                          % (name, c))
+    if c * c == 0.0:
+        # the Gaussian transfer divides by 2*c**2 — a cutoff whose square
+        # underflows to 0 would silently produce a NaN volume (0/0 at DC)
+        raise ValueError("%s=%r is so small that its square underflows to 0 "
+                         "(the transfer function would be 0/0 = NaN); use a "
+                         "representable cutoff (> ~1.5e-154)" % (name, c))
     return c
 
 
