@@ -53,7 +53,7 @@ _CATALOG = {
         ("highpass", "dsp", ["signal"], "signal"),
         ("bandpass", "dsp", ["signal"], "signal"),
         ("envelope", "dsp", ["signal"], "signal"),
-        ("rms", "dsp", ["signal"], "signal"),
+        ("rms", "dsp", ["signal"], "measurement"),   # frame= で framewise 配列
         ("resample", "dsp", ["signal"], "signal"),
         ("spectrum", "dsp", ["signal"], "pairs"),
         ("spectrogram", "dsp", ["signal"], "image2d"),
