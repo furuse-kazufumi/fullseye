@@ -818,8 +818,10 @@ def vol_boundary(vol_binary, connectivity=6, side="inner"):
     which neighbours count as "touching" — 6 uses face neighbours only (the
     thinnest shell); 26 also counts a diagonal background contact, so shells at
     convex corners come out thicker. The volume border counts as background
-    (a mask reaching the border has a boundary there — the same convention as
-    the surface-area estimate in :func:`vol_region_props`).
+    for the *inner* shell (a mask reaching the border has a boundary there —
+    the same convention as the surface-area estimate in
+    :func:`vol_region_props`); the *outer* shell can only occupy voxels that
+    exist, so a mask filling the whole volume has an empty outer boundary.
 
     A solid region's interior drops out entirely: the shell of a solid ball of
     radius ``r`` voxels is roughly a ``3/r`` fraction of it (surface over
