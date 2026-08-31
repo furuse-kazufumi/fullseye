@@ -12,11 +12,17 @@ import handpose as H
 
 
 def _straight_hand():
-    """全指が +x に伸びきった合成 world 座標(21,3)— 屈曲 0° の GT。"""
+    """全指が伸びきった合成 world 座標(21,3)— 屈曲 0° の GT。
+
+    屈曲角は「手首→付け根」も 1 節として測るので、各指は**原点(手首)からの
+    放射直線**上に置く(y 一定のオフセットだと付け根で折れて 18° 出る)。
+    """
     w = np.zeros((21, 3))
     for f, chain in enumerate(H.FINGERS.values()):
+        d = np.array([1.0, 0.15 * f, 0.0])
+        d /= np.linalg.norm(d)
         for j, idx in enumerate(chain):
-            w[idx] = (0.03 * (j + 1), 0.01 * f, 0.0)   # 手首(原点)から一直線
+            w[idx] = 0.03 * (j + 1) * d
     return w
 
 
