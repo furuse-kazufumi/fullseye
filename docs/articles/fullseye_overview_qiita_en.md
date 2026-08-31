@@ -1225,6 +1225,22 @@ There was one more round the same evening, so here it is — three topics, each 
 
 **Bonus: the "hands" door is now open.** Hand 21-keypoint detection (`hand_landmarks`) and per-finger flexion angles (`finger_flexions`) landed as an optional extra (detection depends on MediaPipe; without it you get an explicit error with install instructions). The aim is the Physical AI bridge — the *hand version* of the pipeline that taught a robot to walk from human motion capture: video → 21 keypoints → finger flexion angles → target commands for a robot hand. So far it covers the geometry (machine-tested: fully extended = 0°, right angle = 90°) and the wiring; real-footage runs come next.
 
+## Addendum 3 (2026-08-31): a "processing domain" and "boundaries" for 3-D, plus Minecraft-style walkthroughs
+
+> **Status: Production-ready / Verified** (this addendum takes the 3-D side from **279 → 285 ops**, with dedicated tests and a ground-truth example)
+
+Both items in this addendum started from **my (the author's) own observations**. The first was a question: "**What exists in 2-D but not in 3-D? Does HALCON's *domain* (processing region) concept exist on the 3-D side? What about boundary operators? Both feel necessary for keeping memory in check.**" Cross-checking the catalogs proved the hunch right on both counts — none of the 55 3-D families had a domain or a voxel boundary anywhere.
+
+**1. The domain family (4 ops): stop carrying the whole 512³ CT around.** `vol_reduce_domain` (silence everything outside a mask) → `vol_crop_domain` (cut out the tight box around the foreground, **returning the offset needed to go back**) → process → `vol_uncrop` (paste the result back into the original frame, exactly). In the verification example, cropping a synthetic 96³ CT down to just the target sphere cuts memory to **1/34 (measured)**. The 3-D Hessian operators (vessel enhancement and friends) have a memory-motivated size cap; this family is the honest way *through* that cap rather than around it.
+
+**2. The boundary family (2 ops): throw away the inside, keep the shell.** `vol_boundary` is the voxel version of 2-D `region_boundary` (6/18/26 connectivity, inner/outer), and `vol_boundary_points` turns the shell straight into a point cloud in physical millimetres. A solid ball slims down to **19% (measured)** as its shell — and a sphere fit on that slimmed point cloud still closes with **0.000 mm center error** (radius 4.33 vs 4.5 mm: inner-boundary voxel centers sit half a voxel inside the surface, so **reading slightly small is the correct behaviour** — the example states and verifies that systematic bias explicitly). It is also the cheapest bridge from the voxel world into the point-cloud world.
+
+Here too, adversarial review ran *before* shipping and pulled two bugs out of my own code (the default crop mask thresholded at 0.5 and dropped gray voxels; an absurd target shape could integer-overflow past the memory cap).
+
+**3. Minecraft-style walkthrough (Studio).** The second observation: "**if you could change viewpoints and walk around inside 3-D data, you'd get the presence of seeing the real thing in a museum or a science center.**" Studio's 3-D viewer only had an orbit camera (circling the object); now **F enters a first-person mode** — WASD to walk, drag to look around, wheel to change walking speed, R to return to the entrance. The core of the presence is **perspective projection** (near things large, far things small); since the renderer is our own software rasteriser, I verified it independently against the analytic pinhole-camera equations — they **agree to 10⁻¹³**. Brightness and point size also fall off with distance. Not a single line of the orbit-camera path changed (178 existing tests, zero regressions).
+
+Walking through a CT scan hunting for defects, or through a scanned archaeological site — when "looking at data" turns into "standing inside data," you notice different things.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
