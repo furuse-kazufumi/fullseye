@@ -688,10 +688,36 @@ def cmd_html():
                 html3d = md_to_html(md).replace('href="op:', 'href="op3d:')
                 if _write_generated(os.path.join(d3out, f[:-3] + ".html"), html3d):
                     n3 += 1
-    # family guides -> guide_<family>.html (always generated from guide md)
+    # per-op math pages from their Markdown notes -> op_help/math/<name>.html (namespaced
+    # like 3-D; sibling/next-op anchors become opmath:, the guide anchor guidemath:, for a
+    # future maths-operator browser — Studio's 2-D lookup dir stays uncluttered).
+    nm = 0
+    dmout = os.path.join(HELP_ROOT, "math")
+    dmsrc = os.path.join(DOCS, "math")
+    if os.path.isdir(dmsrc):
+        os.makedirs(dmout, exist_ok=True)
+        for cat in sorted(os.listdir(dmsrc)):
+            cdir = os.path.join(dmsrc, cat)
+            if not os.path.isdir(cdir) or cat == "guides":
+                continue
+            for f in sorted(os.listdir(cdir)):
+                if not f.endswith(".md"):
+                    continue
+                with open(os.path.join(cdir, f), encoding="utf-8") as fh:
+                    md = fh.read()
+                htmlm = (md_to_html(md)
+                         .replace('href="op:', 'href="opmath:')
+                         .replace('href="guide2d:', 'href="guidemath:'))
+                if _write_generated(os.path.join(dmout, f[:-3] + ".html"), htmlm):
+                    nm += 1
+    # family guides -> guide_<family>.html (always generated from guide md; the 2-D
+    # gallery guides and the math family guide share the flat guide_ namespace —
+    # stems are distinct by construction: gallery2d_* / handpose / math_metrology)
     g = 0
-    gdir = os.path.join(DOCS, "2d", "guides")
-    if os.path.isdir(gdir):
+    for gdim in ("2d", "math"):
+        gdir = os.path.join(DOCS, gdim, "guides")
+        if not os.path.isdir(gdir):
+            continue
         for f in sorted(os.listdir(gdir)):
             if not f.endswith(".md"):
                 continue
@@ -700,7 +726,7 @@ def cmd_html():
             _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), md_to_html(md))
             g += 1
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
-          f"+ {n3} 3-D op pages + {g} family guides to {HELP_ROOT}")
+          f"+ {n3} 3-D op pages + {nm} math op pages + {g} family guides to {HELP_ROOT}")
 
 
 def main(argv):
