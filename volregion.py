@@ -59,7 +59,8 @@ class VolRLE:
     """A binary 3-D region as x-runs. ``rows[i]`` is the flattened plane-row id
     ``z * H + y``; run *i* covers ``vol[z, y, starts[i]:ends[i]]``. ``shape`` is
     the ``(D, H, W)`` of the volume the region lives in."""
-    rows: np.ndarray      # int64, sorted ascending (row-major, runs left-to-right)
+    rows: np.ndarray      # int32, sorted ascending (row-major, runs left-to-right).
+    #                       int32 is safe: row ids are < D*H <= MAX_VOXELS = 2**27
     starts: np.ndarray    # int32
     ends: np.ndarray      # int32, exclusive; ends > starts
     shape: tuple          # (D, H, W)
