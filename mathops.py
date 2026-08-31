@@ -468,6 +468,10 @@ def stat_histogram(x, bins=10, range=None, density=False):
     v = _require_vector(x, "x")
     if not (isinstance(bins, (int, np.integer)) and not isinstance(bins, bool)) or bins < 1:
         raise ValueError("bins must be a positive integer, got %r" % (bins,))
+    if bins > MAX_ELEMENTS:
+        raise ValueError("stat_histogram: %d bins exceeds the %d cap "
+                         "(mathops.MAX_ELEMENTS) — the edge/count arrays would "
+                         "allocate gigabytes for no statistical gain" % (bins, MAX_ELEMENTS))
     if range is not None:
         try:
             lo, hi = (float(r) for r in range)
