@@ -77,6 +77,10 @@ def make_generators():
         "pointmap": lambda rng: rng.random((16, 16, 3)) * 8.0,
         "normalmap": lambda rng: np.dstack([np.zeros((16, 16)), np.zeros((16, 16)),
                                             np.ones((16, 16))]),
+        # 数学ファミリ(opsmath): matrix は image2d(32²固定)より小さい一般行列
+        "matrix": lambda rng: rng.standard_normal(
+            (int(rng.integers(2, 12)), int(rng.integers(2, 12)))),
+        "roots": lambda rng: rng.standard_normal(6) + 1j * rng.standard_normal(6),
     }
 
 
