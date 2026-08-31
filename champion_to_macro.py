@@ -177,6 +177,14 @@ def main() -> int:
     ap.add_argument("--allow-regression", action="store_true",
                     help="register even if the macro does NOT beat the hand baseline on the "
                          "locked holdout (off by default — the honesty guard is enforced, not just printed)")
+    ap.add_argument("--utility-gate", action="store_true",
+                    help="also require the counterfactual-utility gate (tools/promote_gate): "
+                         "the candidate must reach where the best EXISTING single op cannot, "
+                         "must not duplicate an existing op's behaviour, and the DNA library "
+                         "must be under its capacity bound. Off by default so the historical "
+                         "capture path is unchanged; recommended for anything automated.")
+    ap.add_argument("--utility-max-existing", type=int, default=None,
+                    help="limit how many existing ops the utility gate scans (faster, coarser)")
     ap.add_argument("--dry-run", action="store_true", help="print the entry; do not write the file")
     a = ap.parse_args()
 
