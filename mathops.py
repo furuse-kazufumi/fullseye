@@ -1089,11 +1089,15 @@ def cplx_winding_number(z, w=0.0):
     exact multiple of ``2*pi``, so the result is an exact integer, not an
     estimate (the rounding merely removes ~1e-14 of accumulated float error).
 
-    Honest limitation: this is the winding number of the **polygon through the
-    samples**, which equals that of the underlying curve only if the sampling
-    resolves it. The failure mode is detected rather than hidden: a segment
-    that turns the ray to *w* by half a turn or more is ambiguous (which side
-    did it pass?) and raises instead of silently choosing a branch.
+    Honest limitation — **the count can alias low, and no local check can stop
+    it**: this is the winding number of the polygon *through the samples*,
+    which equals that of the underlying curve only if the sampling resolves it.
+    A segment that turns the ray to *w* by ``>= pi`` is ambiguous (which side
+    did it pass?) and raises. Below that there is no contradiction to detect:
+    ``z**5`` sampled on a 4-point circle turns exactly ``pi/2`` per step and
+    counts **1** instead of 5 (measured). From ``pi/2`` up, a
+    ``RuntimeWarning`` says so (``WIND_ALIAS_WARN``); the only real remedy is
+    the classical one — refine until the count stops changing.
 
     **Raises** ``ValueError``: *w* coincides with a vertex or lies on a segment
     (the winding number is undefined on the contour), a segment subtends
