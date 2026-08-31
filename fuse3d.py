@@ -54,6 +54,14 @@ def fuse_to_voxel(items, size=64, bounds=None, device="cpu", smooth=0.8):
 
     mesh(topology)+ points(sample)+ depth(観測)等の相補的な構造を 1 表現に。返り値 (voxel, bounds)。
     """
+    # fail-closed: items は [(data, kind, params), ...]。生データを渡す誤用は
+    # 素の TypeError で深部から落ちる(連鎖ファザー実測)ので入口で明示拒否
+    if not isinstance(items, (list, tuple)) or not items or not all(
+            isinstance(it, (list, tuple)) and len(it) == 3
+            and isinstance(it[2], dict) for it in items):
+        raise ValueError("items must be a non-empty list of (data, kind, "
+                         "params_dict) triples — e.g. [((V, F), 'mesh', {}), "
+                         "(pts, 'points', {})], got %r" % (type(items).__name__,))
     allpts = [to_points(d, k, **p) for d, k, p in items]
     P = np.vstack(allpts)
     if bounds is None:

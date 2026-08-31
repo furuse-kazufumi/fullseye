@@ -675,3 +675,20 @@ def test_curvature_maps_curvedness_absolute_calibration():
     assert sh.any()
     curv = float(np.median(C[sh])); rad = float(np.median(r[sh]))
     assert abs(curv * rad - 1.0) < 0.05                 # curvedness == 1/R within 5%
+
+
+def test_fuse_to_voxel_rejects_raw_data_with_clear_error():
+    """Regression (chain fuzz): a bare structure instead of (data, kind, params)
+    triples used to die deep inside with a raw TypeError."""
+    import pytest
+    import fuse3d
+    with pytest.raises(ValueError, match="triples"):
+        fuse3d.fuse_to_voxel(0.5)                      # a stray scalar
+    with pytest.raises(ValueError, match="triples"):
+        fuse3d.fuse_to_voxel(np.random.rand(10, 3))    # raw points, no kind
+    with pytest.raises(ValueError, match="triples"):
+        fuse3d.fuse_to_voxel([])                       # empty
+    # the documented form still works
+    pts = np.random.default_rng(0).random((50, 3))
+    vox, bounds = fuse3d.fuse_to_voxel([(pts, "points", {})], size=8)
+    assert vox.shape == (8, 8, 8)
