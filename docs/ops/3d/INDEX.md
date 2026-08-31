@@ -1,4 +1,4 @@
-# 3D operator help — 279 ops in 55 categories
+# 3D operator help — 285 ops in 57 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -7,6 +7,10 @@
 ### augment (6)
 
 [cutout](augment/cutout.md) · [elastic_deform](augment/elastic_deform.md) · [jitter](augment/jitter.md) · [random_dropout](augment/random_dropout.md) · [random_rotation](augment/random_rotation.md) · [random_scale](augment/random_scale.md)
+
+### boundary (2)
+
+[vol_boundary](boundary/vol_boundary.md) · [vol_boundary_points](boundary/vol_boundary_points.md)
 
 ### bounds (4)
 
@@ -43,6 +47,10 @@
 ### detect (2)
 
 [hough_plane_3d](detect/hough_plane_3d.md) · [hough_sphere_3d](detect/hough_sphere_3d.md)
+
+### domain (4)
+
+[vol_bounding_box](domain/vol_bounding_box.md) · [vol_crop_domain](domain/vol_crop_domain.md) · [vol_reduce_domain](domain/vol_reduce_domain.md) · [vol_uncrop](domain/vol_uncrop.md)
 
 ### edges (5)
 

@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(5 例)
+### 2-D 画像/信号/幾何(18 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -30,7 +30,22 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **interpolation**
 - **スプライン補間(開/閉曲線・2D/3D・時間変形)** — 疎な点列を滑らかに補間・再サンプル。輪郭は閉曲線(滑らかに閉じる)、軌跡は開曲線、3D空間曲線も同API。座標を時間で補間すれば時間軸の変形も表せる。 `py -3.11 examples/spline_curve.py`
 
-### 3-D 点群/体積/曲面(105 例)
+**family_coverage**
+- **平滑化・ランク・復元フィルタ族を総なめ** — gaussian/median/bilateral/rank/restoration など平滑化フィルタ族の全 op を実行し、有限性・out_sort・決定性を機械検証(代表 op は beat-the-null GT)。 `py -3.11 examples/gallery2d_smoothing_rank.py`
+- **エッジ・微分・コーナー演算子族を総なめ** — sobel/laplace/canny/harris などエッジ・勾配・コーナー検出族の全 op を GT 検証。 `py -3.11 examples/gallery2d_edges.py`
+- **モルフォロジー(形態学)op 族を総なめ** — 収縮/膨張/開閉/tophat/skeleton などグレー・二値形態学の全 op を GT 検証。 `py -3.11 examples/gallery2d_morphology.py`
+- **領域(region)op 族を総なめ** — 穴埋め/最大成分/距離変換/外接内接/RLE など region・region-morphology・region-transform を GT 検証。 `py -3.11 examples/gallery2d_region.py`
+- **セグメンテーション演算子族を総なめ** — otsu/dyn_threshold/watershed/local_max などしきい値・領域分割族の全 op を GT 検証。 `py -3.11 examples/gallery2d_segmentation.py`
+- **特徴抽出・テクスチャ・形状記述子族を総なめ** — 特徴点/テクスチャ/形状記述/自己相似の全 op を有限性・決定性で GT 検証。 `py -3.11 examples/gallery2d_features.py`
+- **2-D 幾何オペレータ族を総なめ** — アフィン/射影/回転/リサンプル/座標変換など幾何変換族の全 op を GT 検証。 `py -3.11 examples/gallery2d_geometry.py`
+- **濃淡・階調変換・算術・定義域 op 族を総なめ** — gamma/contrast/算術演算/domain(定義域)など濃淡・階調族の全 op を GT 検証。 `py -3.11 examples/gallery2d_gray_arith.py`
+- **輪郭・1次元計測・テンプレート照合族を総なめ** — 輪郭抽出/subpix/1D 計測/テンプレートマッチ族の全 op を GT 検証。 `py -3.11 examples/gallery2d_contour_measure.py`
+- **テクスチャ・周波数・分解 op 族を総なめ** — FFT/gabor/wavelet/分解(decomposition)などテクスチャ・周波数族の全 op を GT 検証。 `py -3.11 examples/gallery2d_texture_freq.py`
+- **色・芸術・拡張(sim2real)op 族を総なめ** — 色空間変換/芸術効果/augmentation など色・拡張族の全 op を GT 検証。 `py -3.11 examples/gallery2d_color_artistic.py`
+- **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
+- **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
+
+### 3-D 点群/体積/曲面(106 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -93,7 +108,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **点群に大域整合した外向き法線を付与(PCA推定→MST向き伝播)** — 符号未定のPCA法線を Hoppe MST で外向きに揃える。球面サンプルで生法線の外向き一致0.50(コイン投げ)を向き付け1.00へ改善、接平面精度1.00。退化入力は捏造せず拒否。 `py -3.11 examples_3d/oriented_normals.py`
 - **球面調和記述子による回転不変な3D形状検索** — 向き未知の形状(球/箱/円柱の回転コピー)を SH 帯域エネルギー記述子で照合。検索3/3正解・分離マージン>0で、回転で全マスが入れ替わる素ボクセル占有の1/3を上回る。 `py -3.11 examples_3d/shape_descriptor.py`
 - **3Dボリュームのエッジ検出(canny3d: NMS+ヒステリシス)** — なだらかな内部を持つ中実ボールの外周だけを1ボクセルに細線化。オンシェル率1.000・内部誤検出0で、生勾配の固定しきい値null(0.464・誤検出4012)を+0.536上回る。 `py -3.11 examples_3d/edges_3d.py`
-- **3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)** — 球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps(内部で s… `py -3.11 examples_3d/diff_features.py`
+- **3-D 微分特徴の抽出と検証(勾配・Hessian・曲率・距離場・black-hat)** — 球状ソリッド部品を題材に、3-D スカラー場から 5 種の微分/形態特徴を抽出し、それぞれ解析的な真値で裏取りする。(1) 既知の 2 次多項式場で sobel3d が勾配を(分離 conv 利得 32 で割ると)機械精度 ~1.9e-5、hessian3d が 6 独立成分を ~6.3e-5 で解析勾配・解析 Hessian を厳密復元。定数場で勾配≈0・線形場で Hessian≈0 の null も確認。(2) curvature_maps が球殻=cap(S≈+1)/円柱=ridge(S≈+0.5)を判別分離し、curvedness は 1/r を絶対値で復元(c·r≈1.0、2026-08-30 の利得補正後は真の 1/voxel 単位)… `py -3.11 examples_3d/diff_features.py`
 - **実メッシュ曲率が詳細形状を判別(Stanford Dragon)** — DL実データStanford Dragon(87万面)をread_mesh→vertex_curvature(cotangent Laplace-Beltrami)。正規化曲率はmedian9.2・MAD6.2・|Hn|>2が88%と広く分布し、同スケールの滑球null(median1.00・0%)をMAD比1.4e7倍で判別。未取得時はSKIPしexit0。 `py -3.11 examples_3d/dl_mesh_curvature.py`
 - **FPFH記述子で部分ビュー間の点対応を張る** — 同一物体の2部分ビュー(58度回転+並進・重なり1514点)で法線推定→FPFH記述子(33次元)を計算し記述子最近傍で対応。幾何正答率0.633がランダム対応0.0034・記述子シャッフル0.0020(チャンス率)を約185倍上回る。register全体でなく記述子マッチ品質を直接測る。 `py -3.11 examples_3d/fpfh_correspondence.py`
 
@@ -128,6 +143,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **球面調和記述子による回転不変な3D形状検索** — 球/立方体/トーラス/円柱/円錐の5クラスをボクセル化しsh_descriptor化。一様ランダム3D回転したクエリをmatch_sh_descriptorで検索→30/30=100%正解・分離マージン0.312。非回転不変null(軸周辺分布)は回転で100%→37%に崩れSHが+63pt上回る。 `py -3.11 examples_3d/sh_descriptor_retrieval.py`
 
 **shape_analysis**
+- **CT の管・粒・肉厚を Hessian 特徴と物理量で計測** — vol_frangi/sato(管状度)と vol_hessian_blobness(粒状度)が相互否定対照で逆転、vol_local_maxima がピーク座標一致、vol_label の 26/6 連結規約、vol_region_props/vol_distance_transform が spacing 物理量(mm^3/mm)で手計算一致。 `py -3.11 examples_3d/vessel_metrology.py`
 - **中軸骨格と位相署名で形状を区別** — 中実円柱の芯を skeletonize_vol/medial_axis_points で抽出(既知中心軸上)、topology_signature+medial_match でトーラス(genus1)を球/円柱と区別。ランダム署名の零点を上回る。 `py -3.11 examples_3d/medial_topology.py`
 - **曲面上の測地距離と最遠点サンプリング** — 球面点群で kNN グラフ上の geodesic_distances が大円距離と一致(誤差1.7%)、farthest_point_sampling で均等な代表点。直線ユークリッド距離は曲面上で系統的に過小。 `py -3.11 examples_3d/geodesic_distance.py`
 - **3D空間曲線の微分幾何(曲率κ・捩率τ・弧長・Frenet標構)** — 順序付き点列からκ/τ/弧長とFrenet標構を求め、ヘリックスの解析解と相対誤差<0.01%で一致。直線(κ=0)・平面円(τ=0)の零点を判別的に上回り、変速でもGram-Schmidt射影の正しさを確認。 `py -3.11 examples_3d/space_curve.py`
@@ -239,7 +255,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 265 ops / 55 categories。_
+_計 285 ops / 57 categories。_
 
 
 ### augment(6)
@@ -249,6 +265,10 @@ _計 265 ops / 55 categories。_
 - `random_dropout` (`points → points`) — 点の ``ratio`` 割合をランダム除去し ``(kept, kept_idx)`` を返す(欠損の模倣)。 · 例: `augment_pointcloud`
 - `elastic_deform` (`points → points`) — 滑らかな乱数変位場で弾性変形(相関距離 ``sigma``, RMS 振幅 ``alpha``)。 · 例: `sensor_seg`
 - `cutout` (`points → points`) — 空間的な軸平行ボックス領域を除去し ``(kept, kept_idx)`` を返す(局所欠損の模倣)。 · 例: `sensor_seg`
+
+### boundary(2)
+- `vol_boundary` (`voxel → voxel`) — Boundary shell of a binary volume (the 3-D ``region_boundary``). · 例: `roi_domain_boundary`
+- `vol_boundary_points` (`voxel → points`) — Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order. · 例: `roi_domain_boundary`
 
 ### bounds(4)
 - `convex_hull` (`points → mesh`) — Convex hull of a point set -> ``(V, F)`` with outward-oriented triangles. · 例: `hull_bounds`
@@ -265,7 +285,7 @@ _計 265 ops / 55 categories。_
 - `principal_curvatures` (`points → curvature`) — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`
 - `mean_curvature` (`points → measurement`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`
 - `gaussian_curvature` (`points → measurement`) — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
-- `shape_index` (`points → descriptor`) — Koenderink の shape index s∈[-1,1](凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
+- `shape_index` (`points → descriptor`) — Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
 - `estimate_normals` (`points → normals`) — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `feature_register`, `oriented_normals`
 
 ### curve(5)
@@ -299,6 +319,12 @@ _計 265 ops / 55 categories。_
 - `hough_plane_3d` (`voxel → primitive`) — 平面検出(2D Hough 直線の 3D リフト)。勾配=法線を使い (法線 n, 距離 d) 空間へ投票。 · 例: `detect_primitives_3d`
 - `hough_sphere_3d` (`voxel → primitive`) — 球検出(2D Hough 円の 3D リフト)。中心 = p + sgn·r·n を半径 r ごとに投票。 · 例: `detect_primitives_3d`
 
+### domain(4)
+- `vol_reduce_domain` (`voxel, voxel → voxel`) — Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise). · 例: `roi_domain_boundary`
+- `vol_bounding_box` (`voxel → primitive`) — Tight axis-aligned bounding box of a mask's foreground, in voxel indices. · 例: `roi_domain_boundary`
+- `vol_crop_domain` (`voxel → voxel`) — Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``). · 例: `roi_domain_boundary`
+- `vol_uncrop` (`voxel → voxel`) — Paste a cropped sub-volume back into the full frame (inverse of · 例: `roi_domain_boundary`
+
 ### edges(5)
 - `gradient3d` (`voxel → gradient`) — ガウス平滑後の中心差分勾配を計算する。 · 例: `edges_3d`
 - `canny3d` (`voxel → voxel`) — 3D Canny エッジ検出(非最大抑制 + ヒステリシス)。 · 例: `edges_3d`
@@ -306,11 +332,16 @@ _計 265 ops / 55 categories。_
 - `link_edges` (`voxel → voxel`) — エッジ mask を 26 近傍で連結成分ラベリングする。 · 例: `sensor_seg`
 - `edge_points` (`voxel → points`) — エッジ mask を (M,3) の座標点群にする(下流の chamfer / Hough 用)。 · 例: `edges_3d`
 
-### feature(4)
+### feature(9)
 - `sobel3d` (`voxel → gradient`) — 3D 勾配 (gz,gy,gx)。導関数[-1,0,1]×平滑[1,2,1] の分離 conv3d。 · 例: `diff_features`
 - `hessian3d` (`voxel → hessian`) — 3D Hessian の 6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)。分離 conv3d(2 階/1 階×平滑)。 · 例: `diff_features`
 - `curvature_maps` (`voxel → curvature`) — level-set の主曲率 → shape index S(Koenderink)と curvedness。閉形式(Kindlmann 2003)。 · 例: `diff_features`
 - `edt_jfa` (`voxel → sdf`) — 3D ユークリッド距離変換 = Jump Flooding Algorithm(GPU)。各 voxel → 最近 seed 距離。 · 例: `diff_features`
+- `vol_frangi` (`voxel → voxel`) — 3-D Frangi vesselness — multiscale tubular-structure enhancement. · 例: `vessel_metrology`, `volume_downsampling`
+- `vol_sato` (`voxel → voxel`) — 3-D Sato tubeness — the simpler two-eigenvalue line filter. · 例: `vessel_metrology`
+- `vol_hessian_blobness` (`voxel → voxel`) — Blob-like (spherical) response from the Hessian eigenvalues at one *scale*. · 例: `vessel_metrology`
+- `vol_gradient_magnitude` (`voxel → voxel`) — 3-D Sobel gradient magnitude ``sqrt(gz**2 + gy**2 + gx**2)``. · 例: `vessel_metrology`
+- `vol_local_maxima` (`voxel → points`) — 3-D local-maxima (peak) detection. · 例: `molecule_atom_count`, `vessel_metrology`
 
 ### feature_register(7)
 - `harris3d_keypoints` (`voxel → keypoints`) — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: `feature_register`
@@ -356,7 +387,7 @@ _計 265 ops / 55 categories。_
 - `fit_circle_3d` (`points → primitive`) — 点群 → 3D 円(平面フィット → 面内で 2D 円フィット)。返り値 (center, radius, normal)。 · 例: `geometry_metrology`
 - `fit_line3` (`points → primitive`) — Total-least-squares 3-D line fit to ``(depth, row, col)`` points — the · 例: `primitive_fitting_3d`
 - `fit_plane3` (`points → primitive`) — Least-squares 3-D plane fit to ``(depth, row, col)`` points — the plane · 例: `primitive_fitting_3d`
-- `fit_sphere3` (`points → primitive`) — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`
+- `fit_sphere3` (`points → primitive`) — Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points: · 例: `primitive_fitting_3d`, `roi_domain_boundary`
 - `fit_circle3` (`points → primitive`) — 3-D circle fit to ``(depth, row, col)`` points: fit the supporting plane, · 例: `primitive_fitting_3d`
 - `smallest_box3_axis` (`points → primitive`) — Axis-aligned bounding box (the 3-D ``smallest_rectangle1``). Returns the · 例: `oriented_bounding_box`
 - `fit_box3` (`points → primitive`) — Oriented box fit by PCA (fast, noise-tolerant; the same construction as · 例: `oriented_bounding_box`
@@ -386,12 +417,17 @@ _計 265 ops / 55 categories。_
 - `moment_axes` (`points → axes`) — 点群/重み付き点の **重心 + 主軸**(慣性テンソルの固有ベクトル)。姿勢推定の基礎。 · 例: `itokawa_pose_canonical`
 - `match_logpolar_z` (`voxel, voxel → rot_scale`) — log-polar × 位相相関(Fourier-Mellin)で **z 軸回転 + 等方スケール**を復元。 · 例: `shape_desc_pose`
 
-### medial(5)
+### medial(10)
 - `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
 - `skeletonize_vol` (`voxel → voxel`) — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
 - `medial_axis_points` (`voxel → points`) — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
 - `topology_signature` (`voxel → descriptor`) — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。 · 例: `medial_topology`
 - `medial_match` (`voxel, voxel → measurement`) — 2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。 · 例: `medial_topology`
+- `skeleton_junctions3d` (`voxel → voxel`) — 3D 骨格の分岐点(joint、26 近傍に骨格 voxel が 3 個以上)を voxel マスクで返す。 · 例: `medial_topology`
+- `skeleton_endpoints3d` (`voxel → voxel`) — 3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。 · 例: `medial_topology`
+- `skeleton_prune3d` (`voxel → voxel`) — 3D 骨格のヒゲ(短い枝)を刈る。端点除去を length 回反復 = 枝長 <=length を除去。 · 例: `medial_topology`
+- `skeleton_branches3d` (`voxel → voxel`) — 3D 骨格を分岐点で切って枝(線分)に分割する。2D の `r2_split_skeleton_lines` の 3D 版。 · 例: `medial_topology`
+- `vol_distance_transform` (`voxel → voxel`) — Exact Euclidean distance transform of a binary volume. · 例: `molecule_atom_count`, `vessel_metrology`
 
 ### mesh_process(7)
 - `laplacian_smooth` (`mesh → mesh`) — umbrella Laplacian による三角形メッシュ平滑化。→ (verts, faces)。 · 例: `mesh_smooth`
@@ -417,9 +453,11 @@ _計 265 ops / 55 categories。_
 - `central_moments` (`points → descriptor`) — 重心中心化した中心モーメント μ_{pqr}(並進不変、キー=(p,q,r))を返す。 · 例: `moment_invariants`
 - `inertia_tensor` (`points → matrix`) — 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。 · 例: `moment_invariants`
 
-### morphology(5)
-- `morph_dilate3d` (`voxel → voxel`) — 3D グレースケール dilation(cube SE 半径 r の局所 max)。明領域を膨張。 · 例: `morphology_3d`
-- `morph_erode3d` (`voxel → voxel`) — 3D グレースケール erosion(cube SE の局所 min)。明領域を収縮。 · 例: `morphology_3d`
+### morphology(7)
+- `morph_dilate3d` (`voxel → voxel`) — 3D グレースケール dilation(SE 半径 r の局所 max)。明領域を膨張。 · 例: `morphology_3d`
+- `morph_erode3d` (`voxel → voxel`) — 3D グレースケール erosion(SE の局所 min)。明領域を収縮。se は dilate と同じ。 · 例: `morphology_3d`
+- `morph_open3d` (`voxel → voxel`) — 3D opening = erosion → dilation。SE より小さい**明構造(棘・粒)**を除く。 · 例: `morphology_3d`
+- `morph_close3d` (`voxel → voxel`) — 3D closing = dilation → erosion。SE より小さい**暗構造(隙間・空洞)**を埋める。 · 例: `morphology_3d`
 - `morph_gradient3d` (`voxel → voxel`) — 3D モルフォロジー勾配 = dilation − erosion。**境界/表面**を抽出(sobel 代替のエッジ源)。 · 例: `morphology_3d`
 - `morph_tophat3d` (`voxel → voxel`) — 3D white top-hat = vol − opening。SE より小さい **明構造**を抽出(keypoint 前処理)。 · 例: `diff_features`, `morphology_3d`
 - `morph_blackhat3d` (`voxel → voxel`) — 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。 · 例: `diff_features`
@@ -496,12 +534,14 @@ _計 265 ops / 55 categories。_
 - `icp_point2point_3d` (`points, points → pose`) — 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。 · 例: `gicp_register`, `itokawa_self_register`, `itokawa_shape_match`, `partial_overlap_icp`
 - `icp_point2plane` (`points, points, normals → pose`) — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。 · 例: `refinement`
 
-### regionprops(5)
+### regionprops(7)
 - `label_components` (`voxel → voxel`) — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
 - `region_props` (`voxel → measurement`) — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
 - `largest_component` (`voxel → voxel`) — 最大(最多ボクセル)連結成分の bool マスクを返す。 · 例: `region_props_3d`
 - `filter_by_volume` (`voxel → voxel`) — min_voxels 未満の連結成分を除去した bool マスクを返す。 · 例: `region_props_3d`
 - `inner_box3` (`voxel → primitive`) — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の · 例: `inner_box_inspection`
+- `vol_label` (`voxel → labels`) — 3-D connected-component labelling with a selectable neighbourhood. · 例: `ct_bone_segmentation`, `molecule_atom_count`, `vessel_metrology`
+- `vol_region_props` (`labels → measurement`) — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
 
 ### registration_metrics(4)
 - `inlier_ratio` (`points, points → measurement`) — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `pose_estimation`, `ransac_prim`, `reg_eval`
@@ -618,17 +658,22 @@ _計 265 ops / 55 categories。_
 - `sampson_distance` (`image2d, image2d → measurement`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 735 ops / 46 categories。_
+_計 742 ops / 46 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
 
-### 3d(7)
+### 3d(12)
 - `vol_gaussian` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 - `vol_median` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 - `vol_erode` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 - `vol_dilate` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 - `vol_threshold` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_reg_dilate` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_reg_erode` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_dilation_ball` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_erosion_ball` `volume → volume` · 例: `gallery2d_physics_alife_3d`
+- `vol_opening_ball` `volume → volume` · 例: `gallery2d_physics_alife_3d`
 - `vol_mip` `volume → image` · 例: `gallery2d_physics_alife_3d`
 - `vol_slice` `volume → image` · 例: `gallery2d_physics_alife_3d`
 
@@ -1163,7 +1208,7 @@ _計 735 ops / 46 categories。_
 - `xsk2_rank_geomean` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xkor_median` `image → image` · 例: `gallery2d_smoothing_rank`
 
-### region(76)
+### region(78)
 - `reg_erode` (halcon: `erosion_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_dilate` (halcon: `dilation_circle`) `region → region` · 例: `gallery2d_region`
 - `reg_open` (halcon: `opening_circle`) `region → region` · 例: `gallery2d_region`
@@ -1230,6 +1275,8 @@ _計 735 ops / 46 categories。_
 - `r2_partition_rectangle` (halcon: `partition_rectangle`) `region → region` · 例: `gallery2d_region`
 - `r2_runlength_features` (halcon: `runlength_features`) `region → feature` · 例: `gallery2d_region`
 - `r2_split_skeleton_lines` (halcon: `split_skeleton_lines`) `region → region` · 例: `gallery2d_region`
+- `em_skeleton` `region → region` · 例: `gallery2d_region`
+- `r2_endpoints_skeleton` `region → region` · 例: `gallery2d_region`
 - `r3_background_seg` (halcon: `background_seg`) `region → region` · 例: `gallery2d_region`
 - `r3_clip_region` (halcon: `clip_region`) `region → region` · 例: `gallery2d_region`
 - `r3_eliminate_runs` (halcon: `eliminate_runs`) `region → region` · 例: `gallery2d_region`

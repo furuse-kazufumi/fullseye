@@ -4,7 +4,7 @@ dim: 3d
 category: geometry
 in: points
 out: primitive
-examples: [primitive_fitting_3d]
+examples: [primitive_fitting_3d, roi_domain_boundary]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -27,6 +27,7 @@ Algebraic (Kåsa) least-squares sphere fit to ``(depth, row, col)`` points:
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [primitive_fitting_3d](../../../../examples_3d/primitive_fitting_3d.py) — `py -3.11 examples_3d/primitive_fitting_3d.py`
+- [roi_domain_boundary](../../../../examples_3d/roi_domain_boundary.py) — `py -3.11 examples_3d/roi_domain_boundary.py`
 
 ## 型が繋がる次の op(`primitive` を入力に取れる)
 
