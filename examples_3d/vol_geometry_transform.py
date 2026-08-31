@@ -71,7 +71,7 @@ M[:3, 3] = -t
 moved = vol_affine(vol, M, order=0)
 bb_in = np.array([np.argwhere(vol > 0.5).min(axis=0), np.argwhere(vol > 0.5).max(axis=0)])
 bb_mv = np.array([np.argwhere(moved > 0.5).min(axis=0), np.argwhere(moved > 0.5).max(axis=0)])
-print(f"affine 平行移動 +{tuple(t)} : bbox {bb_in.tolist()} -> {bb_mv.tolist()}")
+print(f"affine 平行移動 +{tuple(int(x) for x in t)} : bbox {bb_in.tolist()} -> {bb_mv.tolist()}")
 assert np.array_equal(bb_mv, bb_in + t), f"bbox シフト不一致: {bb_mv} != {bb_in + t}"
 assert int(moved.sum()) == n_in, "平行移動で voxel 数が変わった(フレーム外に出た?)"
 
@@ -86,5 +86,5 @@ assert n_out == 8 * n_in, f"2 倍拡大で voxel 数が 8 倍でない: {n_out} 
 assert abs(vol_mm3_in - vol_mm3_out) < 1e-9 * vol_mm3_in, "物理体積が保存されていない"
 
 print(f"PASS: rotate 90°x4 恒等(最大差 {maxdiff})・resize 2x 重心 2c+0.5 一致・"
-      f"affine +{tuple(t)} bbox 厳密シフト・物理体積 {vol_mm3_in:.4f} mm^3 保存 "
+      f"affine +{tuple(int(x) for x in t)} bbox 厳密シフト・物理体積 {vol_mm3_in:.4f} mm^3 保存 "
       f"= volxform 3 op の規約を真値で機械検証")
