@@ -190,9 +190,9 @@ _CATALOG = {
         ("vol_affine", "volxform", ["voxel"], "voxel", False),
     ],
     "probe": [  # virtual probe(measure1d の 3D 版 = 産業 CT 肉厚計測の核)
-        ("vol_profile_line", "volprobe", ["voxel"], "measurement", False),
-        ("vol_edge_probe", "volprobe", ["voxel"], "measurement", False),
-        ("vol_wall_thickness", "volprobe", ["voxel"], "measurement", False),
+        ("vol_profile_line", "volprobe", ["voxel"], "pairs", False),
+        ("vol_edge_probe", "volprobe", ["voxel"], "table", False),
+        ("vol_wall_thickness", "volprobe", ["voxel"], "signal", False),
     ],
     "frequency": [  # 3D FFT フィルタ(2D frequency 19op の voxel 版第一陣)
         ("vol_fft_lowpass", "volfreq", ["voxel"], "voxel", False),
