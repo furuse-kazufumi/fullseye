@@ -75,9 +75,26 @@ def categories():
     return list(_CATALOG.keys())
 
 
+#: 宣言 out 型と素の返りの橋渡し(ops3d/ops1d と同じ一級機構)。素の関数は
+#: 数学慣習の tuple(``U, s, Vt = mat_svd(A)``)を保ち、台帳経由 :func:`call`
+#: は宣言どおり table(dict)を返す。連鎖ファザーが宣言との一致を機械検証する
+#: (2026-09-01 math 次元追加の初走行で mat_svd/mat_eigh の型の嘘として検出)。
+RESULT_ADAPTERS = {
+    "mat_svd": lambda r: {"U": r[0], "s": r[1], "Vt": r[2]},
+    "mat_eigh": lambda r: {"w": r[0], "V": r[1]},
+}
+
+
 def get(name):
-    """op 名 → 実体(callable)。"""
+    """op 名 → 実体(callable、素の返り型)。宣言型が欲しければ :func:`call`。"""
     return OPSMATH[name]["func"]
+
+
+def call(name, *args, **kwargs):
+    """op を実行し、**台帳の宣言 out 型どおりの値**を返す(adapter 適用)。"""
+    result = OPSMATH[name]["func"](*args, **kwargs)
+    ad = RESULT_ADAPTERS.get(name)
+    return result if ad is None else ad(result)
 
 
 def info(name):
