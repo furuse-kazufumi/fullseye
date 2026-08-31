@@ -218,10 +218,21 @@ domain(4op)/ boundary(2op)/ rle_region(5op)/ vol_tiled_map は実装済み。
 - **tier 1(済・敵対検証済)**: linalg 6 / stats 5 / interp+poly 5 = 16 op。
   数学系 RAD コーパス 4 分野で選定裏取り。敵対検証で complex 無言切り捨て等
   3 バグ修正(53 テスト)
-- **tier 2(複素解析の計算可能面)**: Cauchy 積分(数値周回積分)/ 偏角の原理
-  による領域内零点・極の勘定 / 等角写像(Joukowski・Schwarz–Christoffel 数値、
-  画像ワープと接続)/ 冪級数(収束半径推定・Padé)/ 調和共役・Poisson 積分。
-  2D 位相 unwrap(complexops 既存)と接続
+- **tier 2(複素解析の計算可能面)**: ✅ **実装済 10 op**(2026-09-01、mathops
+  の `complex` カテゴリ)。輪郭を複素点列(新語彙 `cpoints`)として持つ設計に
+  倒し、`cplx_contour_circle` / `cplx_poly_eval` / `cplx_contour_integral` /
+  `cplx_winding_number` / `cplx_cauchy_value` / `cplx_argument_principle` /
+  `cplx_laurent_coeffs`(留数 = c₋₁)/ `cplx_joukowski` / `cplx_mobius` /
+  `cplx_cr_residual`。全 op が閉形式 GT テスト(∮dz/z=2πi の 2 次収束・
+  z³−1 の零点数・w=2cos t・1/k!・conj(z)→2)で固定、敵対検証で 3 バグ修正
+  (np.gradient 既定の 1 次端点で正則な z² が 2.5% 残差 / Laurent の r^-k
+  overflow が無言のゼロ / str が数値として黙って解釈)。**未実装のまま残す**:
+  Schwarz–Christoffel 数値写像、Padé 近似・収束半径推定、Poisson 積分・
+  調和共役(次の波の候補)
+- **tier 2 の正直な限界(記録)**: 巻き数・偏角の原理は標本多角形の量なので
+  粗い輪郭では**低く数える**(z⁵ を 4 点円で数えると 1)。原理的に局所検出
+  できないため π/2 で `RuntimeWarning` を出し、「分点を倍にして安定するまで」
+  を正典として文書化した
 - **tier 3**: 最適化(1D 求根 brent・黄金分割 / 多変数 BFGS ラッパ / 線形計画)、
   特殊関数(erf/gamma/bessel = scipy.special の fail-closed 面)、ODE 初期値
 - **tier 4**: 確率(分布のあてはめ・検定)、数論の実用切り口(合同・CRT =
