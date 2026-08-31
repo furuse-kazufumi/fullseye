@@ -636,6 +636,10 @@ RESULT_ADAPTERS = {
     # probe: (t_mm, values) → (2, n) pairs / list[float] → 1-D signal
     "vol_profile_line": lambda r: np.stack(r) if isinstance(r, tuple) else r,
     "vol_wall_thickness": lambda r: np.asarray(r, np.float64),
+    # curve/metrology(wave-4 TYPEMISS 修正): 同格対は stack、補助つきは本体を剥がす
+    "curvature_torsion": lambda r: np.stack(r),     # (kappa, tau) → (2, N) pairs
+    "arc_length": lambda r: r[1],                   # (cumulative, total) → 全長 float
+    "surface_form_error": lambda r: r[2],           # (residual, rms, pv) → pv float
 }
 
 
