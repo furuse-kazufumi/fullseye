@@ -1215,6 +1215,13 @@ def refine_rotation_z(scene, template, init_angle_deg=0.0, device="cpu",
         raise ValueError("refine_rotation_z: both volumes must share one shape "
                          "(got %r vs %r) — this operator correlates them "
                          "voxel-for-voxel" % (_va.shape, _vb.shape))
+    if not isinstance(init_angle_deg, (int, float, np.integer, np.floating)):
+        # 連鎖ファザー実測(wave-4): 本 op 自身の返り値 (angle, n_iters) tuple が
+        # そのまま init_angle_deg に流れ込み float() が生 TypeError で落ちていた。
+        raise ValueError("refine_rotation_z: init_angle_deg must be a scalar "
+                         "angle in degrees (got %s) — this op returns "
+                         "(angle_deg, n_iters); pass result[0] when chaining"
+                         % type(init_angle_deg).__name__)
     scene_t = torch.as_tensor(np.asarray(scene, np.float32)[None, None], device=device)
     tmpl_t = torch.as_tensor(np.asarray(template, np.float32)[None, None], device=device)
     D, H, W = tmpl_t.shape[2:]
