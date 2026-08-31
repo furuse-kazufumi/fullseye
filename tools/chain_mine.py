@@ -363,6 +363,19 @@ def _thread_args(ins, cur_type, cur_val, pool, arng):
     return args
 
 
+def _elems(args):
+    """引数の総要素数(バイト数では捕まらない計算量の目安)。"""
+    n = 0
+    for a in args:
+        if isinstance(a, np.ndarray):
+            n += a.size
+        elif isinstance(a, (list, tuple)):
+            n += _elems(a)
+        elif isinstance(a, dict):
+            n += _elems(list(a.values()))
+    return n
+
+
 def _run_step(op, cur_type, cur_val, pool, arng, tally, verbose):
     """1 op を実行して (ok, result)。失敗理由は *tally* に理由別で積む。"""
     name, _dim, ins, out, fn = op
