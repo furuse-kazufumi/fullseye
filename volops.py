@@ -739,9 +739,10 @@ def vol_crop_domain(vol, domain=None, margin=0):
     defines the crop — pair with :func:`vol_reduce_domain` first if voxels
     outside the mask but inside the box must read 0).
 
-    *domain* defaults to the volume's own non-zero support (``vol > 0.5`` —
-    handy straight after a threshold). *margin* is forwarded to
-    :func:`vol_bounding_box`.
+    *domain* defaults to the volume's own **non-zero support** (``vol != 0`` —
+    a gray volume is cropped to wherever it has any signal; note this differs
+    from the ``> 0.5`` convention used when an explicit binary *domain* is
+    passed). *margin* is forwarded to :func:`vol_bounding_box`.
 
     Returns ``(cropped, offset)`` — the ``(d, h, w)`` float64 sub-volume and the
     ``(z0, y0, x0)`` voxel offset of its origin in the input frame. Keep the
