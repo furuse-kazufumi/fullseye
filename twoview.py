@@ -49,9 +49,11 @@ def _normalize_points(pts):
 
 
 def fundamental_8point(pts1, pts2):
-    """正規化 8 点法で基礎行列 F を推定(rank-2 強制)。→ F (3,3)。8 点以上必要。"""
-    p1 = np.asarray(pts1, float)
-    p2 = np.asarray(pts2, float)
+    """正規化 8 点法で基礎行列 F を推定(rank-2 強制)。→ F (3,3)。8 点以上必要。
+
+    Raises ValueError: 点が (N,2) でない/非有限/8 点未満/対応数不一致。"""
+    p1 = _require_pts2d(pts1, "pts1")
+    p2 = _require_pts2d(pts2, "pts2")
     if len(p1) < 8 or len(p2) < 8:
         raise ValueError("8-point algorithm requires at least 8 points")
     if len(p1) != len(p2):
