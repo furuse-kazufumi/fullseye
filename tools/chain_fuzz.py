@@ -91,6 +91,14 @@ PARAM_HINTS = {
     "x": lambda rng: 1.0, "step": lambda rng: 2,
 }
 
+#: op 固有の必須引数(名前が汎用ヒントと衝突する/型が op ごとに違うもの)
+OP_PARAM_HINTS = {
+    ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
+    ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
+        np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
+    ("cx_apply_transfer_function", "H"): lambda rng: rng.random((32, 32)),
+}
+
 #: 出力を pool 型へ合わせる梱包アダプタ(catalog の out 型と実際の返りの橋)
 ADAPTERS = {
     "vol_label": lambda r: r[0],
