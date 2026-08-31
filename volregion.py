@@ -135,7 +135,7 @@ def vol_rle_encode(vol_binary) -> VolRLE:
     rows, starts = np.nonzero(edge == 1)
     rows2, ends = np.nonzero(edge == -1)
     # per-row the +1/-1 columns interleave strictly, so the row vectors agree
-    return VolRLE(rows.astype(np.int64), starts.astype(np.int32),
+    return VolRLE(rows.astype(np.int32), starts.astype(np.int32),
                   ends.astype(np.int32), (D, H, W))
 
 
