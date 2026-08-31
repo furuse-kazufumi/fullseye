@@ -34,7 +34,7 @@ _CATALOG = {
         ("local_min_max_funct_1d", "funct1d", ["signal"], "indices"),
         ("abs_funct_1d", "funct1d", ["signal"], "signal"),
         ("negate_funct_1d", "funct1d", ["signal"], "signal"),
-        ("invert_funct_1d", "funct1d", ["signal"], "signal"),
+        ("invert_funct_1d", "funct1d", ["signal"], "pairs"),
         ("scale_y_funct_1d", "funct1d", ["signal"], "signal"),
         ("transform_funct_1d", "funct1d", ["signal"], "pairs"),
         ("compose_funct_1d", "funct1d", ["signal", "signal"], "signal"),
