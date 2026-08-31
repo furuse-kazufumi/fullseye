@@ -1952,6 +1952,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._VN = np.concatenate([mesh_vertex_normals(Va, self._F), fn])
             self._edges = mesh_edges(self._F)
             self._colors = None
+            self._ramp = None
             self._clusters, self._selected = [], None
             self._refit()
             self.info = {"kind": "mesh", "n_points": int(Va.shape[0]),
