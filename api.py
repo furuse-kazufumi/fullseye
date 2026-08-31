@@ -274,6 +274,8 @@ __all__ = [
     "decimate_qem", "convex_hull", "inertia_tensor", "components",
     "volops", "vol_frangi", "vol_sato", "vol_hessian_blobness", "vol_distance_transform",
     "vol_label", "vol_region_props", "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
+    "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
+    "vol_boundary", "vol_boundary_points",
     "handpose", "hand_landmarks", "finger_flexions", "hand_skeleton_edges", "draw_hand_landmarks",
     "complexops", "cx_fft", "cx_ifft", "cx_magnitude", "cx_phase", "cx_real", "cx_imag",
     "cx_log_magnitude", "cx_from_mag_phase", "phase_unwrap", "cx_wiener_deconvolve",
