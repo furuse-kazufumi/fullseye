@@ -119,3 +119,47 @@ def test_probes_are_deterministic_and_non_degenerate():
             assert np.array_equal(x, y), f"{sort}: プローブが非決定的"
         assert float(np.std(np.abs(a[0]))) > 1e-6, f"{sort}: プローブが定数"
         assert not np.array_equal(a[0], a[1]), f"{sort}: プローブに多様性が無い"
+
+
+# --------------------------------------------------------------------------- #
+# 4. 未登録候補の判定(champion_to_macro からの入口)                            #
+# --------------------------------------------------------------------------- #
+def test_temp_op_is_always_removed_even_on_error():
+    """判定のために本登録するのは順序が逆。一時 op は必ず外れる。"""
+    from promote_gate import temp_op
+
+    before = len(ops.REGISTRY)
+    with temp_op(ops, "_probe_tmp_op", lambda v, a, b: v, "image", "image"):
+        assert "_probe_tmp_op" in ops._BY_NAME and "_probe_tmp_op" in ops.RT
+    assert "_probe_tmp_op" not in ops._BY_NAME
+    assert "_probe_tmp_op" not in ops.RT
+    assert len(ops.REGISTRY) == before
+    # 例外で抜けても残さない
+    with pytest.raises(RuntimeError):
+        with temp_op(ops, "_probe_tmp_op", lambda v, a, b: v, "image", "image"):
+            raise RuntimeError("boom")
+    assert "_probe_tmp_op" not in ops._BY_NAME
+    assert len(ops.REGISTRY) == before
+
+
+def test_temp_op_refuses_to_shadow_an_existing_op():
+    """既存 op を黙って差し替えない(判定中だけ挙動が変わる事故を防ぐ)。"""
+    from promote_gate import temp_op
+
+    with pytest.raises(ValueError, match="衝突"):
+        with temp_op(ops, "gaussian", lambda v, a, b: v, "image", "image"):
+            pass
+
+
+def test_stages_runner_reproduces_the_pipeline_and_is_fail_soft():
+    """凍結した stage 列が 1 op として動き、壊れても入力を返す(進化を止めない)。"""
+    from promote_gate import stages_runner
+
+    spec = [{"op": "gaussian", "a": 0.5, "b": 0.5},
+            {"op": "sobel_mag", "a": 0.5, "b": 0.5}]
+    fn = stages_runner(ops, spec)
+    img = _probe_inputs("image")[0]
+    got = fn(img, 0.9, 0.1)                      # a,b は凍結 = 結果に影響しない
+    want = ops.run_stages(ops.decode_by_names(spec), img)
+    assert np.allclose(got, want)
+    assert np.allclose(fn(img, 0.1, 0.9), want), "a,b が凍結されていない"

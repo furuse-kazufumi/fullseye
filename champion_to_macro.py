@@ -201,6 +201,41 @@ def main() -> int:
             f"(beats_hand_on_locked_holdout=False). Refusing to register a non-improving "
             f"DNA op. Pass --allow-regression to override deliberately (disclosed in provenance).")
 
+    if a.utility_gate:
+        # 「その problem で hand を超えた」だけでは語彙に足す理由にならない。
+        # 既存語彙の最良 1 段では届かないこと・既存 op の複製でないこと・
+        # 語彙が容量上限内であることを、全 problem に対して確かめる。
+        import sys as _sys
+        _sys.path.insert(0, os.path.join(HERE, "tools"))
+        import ops as _ops
+        import problems as _problems
+        from promote_gate import gate_candidate, stages_runner
+
+        spec = [{"op": s["op"], "a": s["a"], "b": s["b"]} for s in entry["stages"]]
+        cand_fn = stages_runner(_ops, spec)
+        print("\n[utility gate] counterfactual utility を全 problem で測定中…")
+        passed, why, detail = gate_candidate(
+            _ops, _problems, "_candidate_" + a.name, cand_fn,
+            entry["in_sort"], entry["out_sort"],
+            max_existing=a.utility_max_existing, verbose=True)
+        entry["provenance"]["utility_gate"] = {
+            "passed": bool(passed), "reason": why,
+            "duplicate_of": detail["duplicate_of"],
+            "problems_improved": detail["utility"]["problems_improved"],
+            "problems_evaluated": detail["utility"]["problems_evaluated"],
+            "best_relative_gain": detail["utility"]["best_relative_gain"],
+            "per_problem": detail["utility"]["per_problem"],
+            "method": detail["utility"]["utility_method"],
+            "library_size": detail["library_size"], "capacity": detail["capacity"],
+        }
+        print(f"[utility gate] {'PASS' if passed else 'FAIL'} — {why}")
+        if not passed:
+            raise SystemExit(
+                f"[abort] {a.name} は counterfactual-utility ゲートを通らなかった: {why}. "
+                "語彙に足す価値が測定できない op を入れると、それを引く将来の探索を "
+                "すべて汚染する。--utility-gate を外して意図的に通すこともできるが、"
+                "その判断は provenance に残らない。")
+
     entries = []
     if os.path.exists(DNA_PATH):
         entries = json.loads(open(DNA_PATH, encoding="utf-8").read() or "[]")
