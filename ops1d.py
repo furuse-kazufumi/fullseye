@@ -93,8 +93,6 @@ RESULT_ADAPTERS = {
     "spectrum": lambda r: np.stack(r) if isinstance(r, tuple) else r,  # pairs
 }
 
-import numpy as np  # noqa: E402  (RESULT_ADAPTERS 用)
-
 
 def call(name, *args, **kwargs):
     """op を呼び、目録の out 型どおりの値を返す(補助情報つきタプルは剥がす)。"""
