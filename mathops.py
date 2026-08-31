@@ -1263,6 +1263,16 @@ def cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4):
     coefficients) · ``center`` · ``radius``. The centre is the sample mean,
     which is exact for a uniformly sampled circle.
 
+    **Orientation, and how it differs from the rest of the family**: the sum
+    runs over the sample *set*, not the sample *order*, so this op always
+    returns the coefficients of the positively oriented circle — the standard
+    definition — whatever order the points arrive in. Feed a clockwise circle
+    and ``c_-1`` still comes back ``+`` the residue, while
+    ``cplx_contour_integral / (2*pi*i)`` on the same points returns ``-`` it
+    (verified). Both are right; they answer different questions (the intrinsic
+    coefficient vs the integral along *this* traversal). Do not cross-check one
+    against the other without fixing the orientation first.
+
     Honest limitation — **aliasing**: the discrete sum cannot distinguish
     ``c_k`` from ``c_{k+n}``, so a coefficient carries the alias sum
     ``sum_m c_{k+m n} r^{m n}``. That is negligible for a rapidly converging
