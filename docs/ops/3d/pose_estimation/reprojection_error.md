@@ -7,7 +7,7 @@ out: measurement
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # reprojection_error — 3D `pose_estimation` op
@@ -31,7 +31,7 @@ version: 0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
 
 ## 同カテゴリ(`pose_estimation`)
 

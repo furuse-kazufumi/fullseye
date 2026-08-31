@@ -1,4 +1,4 @@
-# 3D operator help — 291 ops in 58 categories
+# 3D operator help — 310 ops in 63 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -68,6 +68,10 @@
 
 [eval_bspline_curve](freeform/eval_bspline_curve.md) · [eval_bspline_surface](freeform/eval_bspline_surface.md) · [fit_bspline_curve](freeform/fit_bspline_curve.md) · [fit_bspline_surface](freeform/fit_bspline_surface.md) · [surface_residual](freeform/surface_residual.md)
 
+### frequency (3)
+
+[vol_fft_bandpass](frequency/vol_fft_bandpass.md) · [vol_fft_highpass](frequency/vol_fft_highpass.md) · [vol_fft_lowpass](frequency/vol_fft_lowpass.md)
+
 ### fusion (2)
 
 [fuse_to_voxel](fusion/fuse_to_voxel.md) · [register_cross](fusion/register_cross.md)
@@ -76,6 +80,10 @@
 
 [farthest_point_sampling](geodesic/farthest_point_sampling.md) · [geodesic_distances](geodesic/geodesic_distances.md) · [geodesic_mesh](geodesic/geodesic_mesh.md) · [knn_graph](geodesic/knn_graph.md)
 
+### geom_transform (3)
+
+[vol_affine](geom_transform/vol_affine.md) · [vol_resize](geom_transform/vol_resize.md) · [vol_rotate](geom_transform/vol_rotate.md)
+
 ### geometry (23)
 
 [angle_3points](geometry/angle_3points.md) · [angle_between_lines](geometry/angle_between_lines.md) · [angle_between_planes](geometry/angle_between_planes.md) · [angle_line_plane](geometry/angle_line_plane.md) · [distance_line_line](geometry/distance_line_line.md) · [distance_point_line](geometry/distance_point_line.md) · [distance_point_plane](geometry/distance_point_plane.md) · [fit_box3](geometry/fit_box3.md) · [fit_circle3](geometry/fit_circle3.md) · [fit_circle_3d](geometry/fit_circle_3d.md) · [fit_line3](geometry/fit_line3.md) · [fit_line_3d](geometry/fit_line_3d.md) · [fit_plane3](geometry/fit_plane3.md) · [fit_plane_3d](geometry/fit_plane_3d.md) · [fit_sphere3](geometry/fit_sphere3.md) · [fit_sphere_3d](geometry/fit_sphere_3d.md) · [intersect_line_plane](geometry/intersect_line_plane.md) · [intersect_planes](geometry/intersect_planes.md) · [line_from_2points](geometry/line_from_2points.md) · [plane_from_3points](geometry/plane_from_3points.md) · [smallest_box3](geometry/smallest_box3.md) · [smallest_box3_axis](geometry/smallest_box3_axis.md) · [smallest_sphere3](geometry/smallest_sphere3.md)
@@ -83,6 +91,10 @@
 ### gicp (2)
 
 [estimate_covariances](gicp/estimate_covariances.md) · [gicp](gicp/gicp.md)
+
+### gray (4)
+
+[vol_equalize](gray/vol_equalize.md) · [vol_gamma](gray/vol_gamma.md) · [vol_stretch](gray/vol_stretch.md) · [vol_window_level](gray/vol_window_level.md)
 
 ### lidar_projection (3)
 
@@ -156,6 +168,10 @@
 
 [mls_smooth](preprocess/mls_smooth.md) · [radius_outlier_removal](preprocess/radius_outlier_removal.md) · [statistical_outlier_removal](preprocess/statistical_outlier_removal.md) · [volume_downsample](preprocess/volume_downsample.md) · [voxel_grid_downsample](preprocess/voxel_grid_downsample.md)
 
+### probe (3)
+
+[vol_edge_probe](probe/vol_edge_probe.md) · [vol_profile_line](probe/vol_profile_line.md) · [vol_wall_thickness](probe/vol_wall_thickness.md)
+
 ### range_image (4)
 
 [bearing_angle_image](range_image/bearing_angle_image.md) · [depth_to_organized_points](range_image/depth_to_organized_points.md) · [normals_from_depth](range_image/normals_from_depth.md) · [occlusion_edges](range_image/occlusion_edges.md)
@@ -180,9 +196,13 @@
 
 [ambient_occlusion](render/ambient_occlusion.md) · [antialias](render/antialias.md) · [cast_shadow](render/cast_shadow.md) · [edge_alias_energy](render/edge_alias_energy.md) · [matcap_shade](render/matcap_shade.md) · [phong_shade](render/phong_shade.md) · [project_points](render/project_points.md) · [render_beauty](render/render_beauty.md) · [render_point_depth](render/render_point_depth.md) · [render_shaded](render/render_shaded.md) · [render_volume_projection](render/render_volume_projection.md) · [supersample_mesh](render/supersample_mesh.md) · [tonemap_aces](render/tonemap_aces.md) · [tonemap_reinhard](render/tonemap_reinhard.md)
 
-### rle_region (5)
+### restoration (2)
 
-[vol_rle_bbox](rle_region/vol_rle_bbox.md) · [vol_rle_centroid](rle_region/vol_rle_centroid.md) · [vol_rle_decode](rle_region/vol_rle_decode.md) · [vol_rle_encode](rle_region/vol_rle_encode.md) · [vol_rle_volume](rle_region/vol_rle_volume.md)
+[vol_gaussian_psf](restoration/vol_gaussian_psf.md) · [vol_richardson_lucy](restoration/vol_richardson_lucy.md)
+
+### rle_region (9)
+
+[vol_rle_bbox](rle_region/vol_rle_bbox.md) · [vol_rle_centroid](rle_region/vol_rle_centroid.md) · [vol_rle_components](rle_region/vol_rle_components.md) · [vol_rle_decode](rle_region/vol_rle_decode.md) · [vol_rle_difference](rle_region/vol_rle_difference.md) · [vol_rle_encode](rle_region/vol_rle_encode.md) · [vol_rle_intersect](rle_region/vol_rle_intersect.md) · [vol_rle_union](rle_region/vol_rle_union.md) · [vol_rle_volume](rle_region/vol_rle_volume.md)
 
 ### robust_fit (7)
 

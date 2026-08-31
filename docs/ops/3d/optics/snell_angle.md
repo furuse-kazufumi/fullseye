@@ -7,7 +7,7 @@ out: measurement
 examples: [snell_refraction]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # snell_angle — 3D `optics` op
@@ -30,7 +30,7 @@ version: 0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](fresnel_reflectance.md)
+[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](fresnel_reflectance.md)
 
 ## 同カテゴリ(`optics`)
 

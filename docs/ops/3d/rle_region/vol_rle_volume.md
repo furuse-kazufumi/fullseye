@@ -7,7 +7,7 @@ out: measurement
 examples: [rle_region_efficiency]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # vol_rle_volume — 3D `rle_region` op
@@ -30,11 +30,11 @@ Voxel count of the region, computed on the runs (no decode). Measured
 
 ## 型が繋がる次の op(`measurement` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
 
 ## 同カテゴリ(`rle_region`)
 
-[vol_rle_encode](vol_rle_encode.md) · [vol_rle_decode](vol_rle_decode.md) · [vol_rle_bbox](vol_rle_bbox.md) · [vol_rle_centroid](vol_rle_centroid.md)
+[vol_rle_encode](vol_rle_encode.md) · [vol_rle_decode](vol_rle_decode.md) · [vol_rle_bbox](vol_rle_bbox.md) · [vol_rle_centroid](vol_rle_centroid.md) · [vol_rle_union](vol_rle_union.md) · [vol_rle_intersect](vol_rle_intersect.md) · [vol_rle_difference](vol_rle_difference.md) · [vol_rle_components](vol_rle_components.md)
 
 ---
 *Provenance: volregion.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*

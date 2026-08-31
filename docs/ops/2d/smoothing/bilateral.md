@@ -8,7 +8,7 @@ halcon: bilateral_filter
 examples: [gallery2d_smoothing_rank, quickstart]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # bilateral — 2D `smoothing` op

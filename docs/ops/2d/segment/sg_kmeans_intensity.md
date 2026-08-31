@@ -7,7 +7,7 @@ out: region
 examples: [gallery2d_segmentation]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # sg_kmeans_intensity — 2D `segment` op

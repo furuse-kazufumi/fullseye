@@ -7,7 +7,7 @@ out: labels
 examples: [ct_bone_segmentation, molecule_atom_count, vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # vol_label — 3D `regionprops` op

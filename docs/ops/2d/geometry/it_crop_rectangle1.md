@@ -8,7 +8,7 @@ halcon: crop_rectangle1
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # it_crop_rectangle1 — 2D `geometry` op

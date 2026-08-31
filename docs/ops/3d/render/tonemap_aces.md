@@ -7,7 +7,7 @@ out: image2d
 examples: [render_tonemap]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # tonemap_aces — 3D `render` op

@@ -8,7 +8,7 @@ halcon: euler_number
 examples: [gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # euler_number — 2D `features` op

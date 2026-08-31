@@ -45,7 +45,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **HALCON 拡充 tier(hx_ 一族)を総なめ** — HALCON 互換の拡充 op(``hx_`` prefix, category=halcon_ext)の全 op を GT 検証。 `py -3.11 examples/gallery2d_halcon_ext.py`
 - **物理PDE・人工生命・トモグラフィ・3Dボリューム op 族を総なめ** — 拡散/反応拡散/CA/tomography/volume など物理・人工生命・3D 族の全 op を GT 検証。 `py -3.11 examples/gallery2d_physics_alife_3d.py`
 
-### 3-D 点群/体積/曲面(108 例)
+### 3-D 点群/体積/曲面(112 例)
 
 **registration**
 - **CADモデルをノイズ入り3Dスキャンに位置合わせ** — 初期姿勢なしで CAD 設計形状を実物スキャン点群に合わせ、置かれた向きと位置を復元する(FPFH+RANSACで粗く→ICPでセンサノイズ床まで)。 `py -3.11 examples_3d/cad_to_scan.py`
@@ -54,6 +54,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2視点からの相対カメラ姿勢(SfM初期化)** — 2枚の画像の対応点から基礎/基本行列を解き、相対カメラ姿勢と3D点を復元する(単眼SfM/VOの初手)。 `py -3.11 examples_3d/two_view_pose.py`
 - **N視点バンドル調整による精緻化** — 全カメラ姿勢と3D構造を再投影誤差最小で同時最適化し、摂動から機械精度へ回復する。 `py -3.11 examples_3d/bundle_adjust.py`
 - **ループ閉じ込みのポーズグラフSLAMバックエンド** — ノイズ入りオドメトリ+ループ閉じ辺を最適化し、蓄積したドリフトを低減する。 `py -3.11 examples_3d/pose_graph_slam.py`
+- **3D 幾何変換 — rotate 90°x4 恒等・resize の物理体積保存・affine 厳密シフト** — vol_rotate は np.rot90 と bit 一致で回転方向規約を機械固定、vol_resize は spacing 再計算で物理体積 230.4 mm^3 厳密保存、vol_affine は pull 規約(out[o]=vol[M@o+offset])を voxel 単位で検証。 `py -3.11 examples_3d/vol_geometry_transform.py`
 - **小惑星の姿勢を主成分で正準化** — 不明な向きで届いた小惑星形状を、慣性主軸で形状固有の正準姿勢へ整える(カタログ化・比較用)。 `py -3.11 examples_3d/itokawa_pose_canonical.py`
 - **未知姿勢で置かれた小惑星スキャンの位置合わせ** — 未知の探査機姿勢で撮った小惑星スキャンを ICP で基準形状に戻す。不規則形状は球と違い登録できる。 `py -3.11 examples_3d/itokawa_self_register.py`
 - **平面主体スキャンのGICP位置合わせ** — 床+直交2壁のコーナーを既知変換で動かし gicp(共分散重みマハラノビス)で復元。回転<1度、平面が滑る状況で点対点ICPを約6.5倍上回る。 `py -3.11 examples_3d/gicp_register.py`
@@ -65,7 +66,8 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **真球度/丸さ検査** — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。 `py -3.11 examples_3d/roundness.py`
 - **30%外れ値下での頑健プリミティブ適合** — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。 `py -3.11 examples_3d/ransac_prim.py`
 - **domain(処理領域)と boundary(境界殻)でメモリを絞って計測** — vol_reduce_domain で治具を消し vol_crop_domain でメモリ 1/34(実測)、vol_boundary の殻 19% を vol_boundary_points で物理mm点群化して fit_sphere3 が中心誤差 0.000mm、vol_uncrop は元フレームへ bit 一致で貼り戻し。 `py -3.11 examples_3d/roi_domain_boundary.py`
-- **RLE 領域 — HALCON region の効率の正体を voxel 界へ** — vol_rle_encode が 192^3 部品マスクを dense bool の 1/73(実測)に、volume/bbox/centroid は run 直接演算で dense と厳密一致かつ 93x 速(実測)、vol_rle_decode は往復 bit 一致、改竄 RLE は decode 前に fail-closed 拒否。 `py -3.11 examples_3d/rle_region_efficiency.py`
+- **RLE 領域 — HALCON region の効率の正体を voxel 界へ** — vol_rle_encode が 192^3 部品マスクを dense bool の 1/73(実測)に、volume/bbox/centroid は run 直接演算で dense と厳密一致かつ 93x 速(実測)、和/積/差の集合演算 3.1ms(run のみ)、vol_rle_components の成分分解、vol_tiled_map は gaussian 全量計算と最大差 0、往復 bit 一致、改竄 RLE は fail-closed 拒否。 `py -3.11 examples_3d/rle_region_efficiency.py`
+- **virtual probe — パイプ壁厚をプローブ 1 本で計測** — vol_profile_line(異方 spacing の物理距離厳密)→ vol_edge_probe(サブボクセル 4 エッジ、極性 +,-,+,-)→ vol_wall_thickness が壁厚 2.042/2.042 mm(真値 2.000、誤差 0.042mm=0.085voxel)。measure1d の 3D 版。 `py -3.11 examples_3d/wall_thickness_probe.py`
 - **曲座標展開: 極/円筒/Zernike/LiDAR円筒投影で回転体の m 回対称を一貫復元** — 回転体(3枚羽根=m=3回対称)の検査を、中心を原点にした曲座標へ展開する4つのopで横断検証する事例。fit_zernikeは既知の波面係数(piston/tilt/defocus/astigmatism)で合成した円板を極座標直交基底(n,m)へ分解し、各係数を誤差5e-5で復元(非点収差=m=2角モードが立つ)。polar_unwrapは2D画像の円板を(θ×r)へ展開しθ軸FFTでm=3を検出(power@m=179で他ビンを圧倒)、回転対称画像は… `py -3.11 examples_3d/curvilinear_proj.py`
 - **幾何メトロロジー: 直線/平面/球/円の当てはめ→角度・距離・交線計測** — 1 個の機械加工ブロック(2 面が稜線で交わり、面上に球と円穴が乗る)を舞台に、当てはめ op(fit_line_3d/fit_plane_3d/fit_sphere_3d/fit_circle_3d/ransac_line)の出力を計測 op(angle_3points/angle_between_lines/angle_between_planes/angle_line_plane/distance_point_plane/distance_point… `py -3.11 examples_3d/geometry_metrology.py`
 - **3-D プリミティブ当てはめ(直線/平面/球/円/最小包含球)** — 点群から直線・平面・球・円を最小二乗で当て、中心/半径/向き/残差を (depth,row,col) で復元(機械精度)。各残差は『わざと外した』null を桁違いに下回る。measure3d.fit_line3/fit_plane3/fit_sphere3/fit_circle3/smallest_sphere3。2-D fit_line/fit_circle の 3-D 版。 `py -3.11 examples_3d/primitive_fitting_3d.py`
@@ -75,14 +77,17 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **平歯車の歯数をSDFジオメトリから逆計測** — sdf_opsのCSGで平歯車を手続き生成し、歯先帯r=0.44の占有を角度サンプルしてラン計数で歯数N=12→12/20→20を厳密復元(0.2度ジッタでも不変)。歯なし円板null=0本・誤半径 内1/外0本で判別的。 `py -3.11 examples_3d/gear_metrology.py`
 - **円筒軸メトロロジー(30%外れ値ロバスト)** — 汚れた産業スキャン(30%グロス外れ値・2000点)からパイプの軸方向と半径を計測。fit_cylinder_ransacで半径誤差1.27%・軸誤差0.78°・面残差0.00165m。非ロバスト全点フィット(半径誤差101%)と誤プリミティブ平面RANSAC(残差0.058m)を5倍超マージンで判別的に上回る。 `py -3.11 examples_3d/cylinder_axis_metrology.py`
 
-**depth**
-- **2視点プレーンスイープ・ステレオ深度** — 既知カメラの2画像から、深度平面を掃引して photo-consistency 最小の深度を画素ごとに選ぶ。 `py -3.11 examples_3d/plane_sweep_depth.py`
-- **エッジ保存の深度デノイズ+穴埋め** — 段差を跨がずにノイズを平滑化し、浅い穴を調和補間で埋める(深い穴はNaNのまま残す)。 `py -3.11 examples_3d/depth_denoise.py`
-- **骨格CTからX線ラジオグラフ(DRR)を合成** — 手骨のCT密度ボリュームを厚み方向に積算し、2次元の手のX線像(DRR)を合成する。 `py -3.11 examples_3d/ct_hand_radiograph.py`
-- **低線量スパースビューCT再構成(radon→SART)** — 指の断面をX線投影し、SART(反復)とFBPで再構成する。低線量ゆえの控えめな品質を正直に評価。 `py -3.11 examples_3d/ct_sparse_view_recon.py`
-- **ステレオ視差からの多深度パッチ奥行き復元** — 校正済みステレオ対(f*B=96)に近8/中16/遠32mの3テクスチャパッチを視差12/6/3pxで合成し、disparity_map→depth_from_disparityで復元。パッチ内部の相対誤差0.00%・near>mid>far順序も正。最良定数null63.9%・視差ゼロnull(∞)を判別的に上回る。 `py -3.11 examples_3d/stereo_depth_scene.py`
+**segmentation**
+- **CT windowing — 窓の選択が「見える構造」を入れ替える** — vol_window_level の軟部窓は軟部 Δ0.50 が立ち骨は飽和、骨窓は骨が立ち軟部は背景と同化(実測)。vol_equalize(mask domain LUT)/ vol_gamma(γ=2 で 0.5→0.25 厳密)/ vol_stretch(パーセンタイル厳密写像)も検証。 `py -3.11 examples_3d/gray_window_level.py`
+- **ビンピッキング: 台平面除去→物体クラスタリング** — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。 `py -3.11 examples_3d/object_segmentation.py`
+- **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。 `py -3.11 examples_3d/region_props_3d.py`
+- **センサ幾何と領域処理パイプライン(角シーンの denoise→傾き→面分割→計画格子)** — 深度センサが捉えた「2つの傾いた面が稜線で出会う角」の1シーンを、実際の知覚パイプラインの順に8opで連結処理する例。清浄ガイドで joint_bilateral して段差を残しつつノイズを削り(RMS 0.112→0.019、素のGaussianぼかしnullは稜線段差を-5.8→-1.16に潰すが本opは-5.79を保存)、bearing_angle_image で各面の傾きを degrees(atan(s)) と厳密一致で数値化(左26.565°/右… `py -3.11 examples_3d/sensor_seg.py`
+- **接触物体の分離(距離変換ベース3D watershed)** — 接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。 `py -3.11 examples_3d/watershed3d.py`
+- **分子の接触原子カウント(距離変換+マーカ分水嶺)** — シクロヘキサンC6椅子型を6原子球の和集合(41万voxel・1連結成分)にボクセル化。距離変換+マーカ分水嶺で接触原子を6個に分離・重心を真値へ最大0.52voxel。素朴な連結成分null=1個に融合(43voxelずれ)を個数6vs1で上回る。 `py -3.11 examples_3d/molecule_atom_count.py`
+- **屋外LiDARシーンの地面除去→物体分割** — 傾斜地面(~5.4度)上の4物体(球/箱/円柱/円錐)のLiDAR点群5316点を、fit_plane_ransac+height_above_planeで地面除去→euclidean_clustersで分割。検出4==K=4・重心を真物体へ全単射(最大0.128m)。地面除去なしnullは全物体癒着で1クラスタ。 `py -3.11 examples_3d/lidar_scene_segmentation.py`
 
 **reconstruction**
+- **顕微鏡スタック復元 — 3D FFT フィルタ + Richardson-Lucy** — vol_fft_lowpass+highpass=入力の恒等式、照明ドリフト成分を 1/17 に抑制(線形性で分離計測、ガウス伝達のトレードオフごと開示)、vol_richardson_lucy 50 回で RMSE 0.68x(漸進と正直に主張)+前方一貫性 0.021x+総強度保存。 `py -3.11 examples_3d/deconv_fft_restore.py`
 - **進化探索で見つけた点群デノイズ・パイプライン** — 外れ値除去・平滑化・間引きの順番を遺伝的アルゴリズムに探させ、無処理と人手の定番を上回る。 `py -3.11 examples_3d/denoise_evolution.py`
 - **複数深度フレームをTSDFで融合し表面抽出** — 複数視点の深度観測を TSDF に融合し、単一観測よりノイズに頑健な表面を得る。 `py -3.11 examples_3d/tsdf_fusion_demo.py`
 - **複数断層の2D輪郭を積層して3D曲面(メッシュ)に** — 各スライスの閉輪郭を塗って voxel 積層→marching cubes で曲面メッシュ化。頂点は球面に乗り体積も一致(断面一定=円柱仮定は1.5倍過大)。輪郭→領域→voxel→メッシュの表現変換。 `py -3.11 examples_3d/contours_to_surface.py`
@@ -92,6 +97,13 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **2視点SfMから表面再構成まで一つの球で通す** — 中心[0,0,6]・半径1.5の単一の球を題材に、2視点SfMから表面再構成・観測合成までを6つのopで鎖状に接続し、すべて既知真値と照合する(ノイズ無し合成)。essential_8pointは球面上の対応点+Kから本質行列Eを復元し、真のE=[t]×Rと符号/スケールを除き|cos|=1.000000で一致・正規化エピポーラ残差1.1e-15を確認(直交並進+40度回転の誤E nullは|cos|=0.002・残差0.35)。triangulateは真… `py -3.11 examples_3d/sfm_recon.py`
 - **トーラス点群のalpha shape再構成で穴(genus1)を保持** — 中実トーラス(主R1.0/管r0.35)9000点をestimate_alpha+alpha_shape_meshで再構成。z軸穴プローブ41点の内包率がalpha=0.000(穴を保持)、凸包null=1.000(穴を充填・厳密Delaunayでも1.000)。オイラー標数χ_alpha=0(トーラス)対χ_hull=2(球)でも判別的。 `py -3.11 examples_3d/alpha_shape_topology.py`
 - **Poisson軽量表面再構成(向き付き点群→水密メッシュ)** — でこぼこ閉曲面(外向き法線を勾配で厳密算出)の向き付き点群6000点をrecon3d.poisson_liteで水密メッシュ(V11788/F23572)へ。真曲面との正規化chamfer0.01006が外接球null(0.081=8倍)・乱数法線null(0.041=4倍)より桁違いに小さい。 `py -3.11 examples_3d/poisson_surface_recon.py`
+
+**depth**
+- **2視点プレーンスイープ・ステレオ深度** — 既知カメラの2画像から、深度平面を掃引して photo-consistency 最小の深度を画素ごとに選ぶ。 `py -3.11 examples_3d/plane_sweep_depth.py`
+- **エッジ保存の深度デノイズ+穴埋め** — 段差を跨がずにノイズを平滑化し、浅い穴を調和補間で埋める(深い穴はNaNのまま残す)。 `py -3.11 examples_3d/depth_denoise.py`
+- **骨格CTからX線ラジオグラフ(DRR)を合成** — 手骨のCT密度ボリュームを厚み方向に積算し、2次元の手のX線像(DRR)を合成する。 `py -3.11 examples_3d/ct_hand_radiograph.py`
+- **低線量スパースビューCT再構成(radon→SART)** — 指の断面をX線投影し、SART(反復)とFBPで再構成する。低線量ゆえの控えめな品質を正直に評価。 `py -3.11 examples_3d/ct_sparse_view_recon.py`
+- **ステレオ視差からの多深度パッチ奥行き復元** — 校正済みステレオ対(f*B=96)に近8/中16/遠32mの3テクスチャパッチを視差12/6/3pxで合成し、disparity_map→depth_from_disparityで復元。パッチ内部の相対誤差0.00%・near>mid>far順序も正。最良定数null63.9%・視差ゼロnull(∞)を判別的に上回る。 `py -3.11 examples_3d/stereo_depth_scene.py`
 
 **modeling**
 - **SDFのCSG合成(和/差)でソリッドを作りメッシュ化** — 符号付き距離場の集合演算(球∪箱−小球)で陰関数ソリッドを作り、等値面をメッシュへ。 `py -3.11 examples_3d/sdf_csg.py`
@@ -121,14 +133,6 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 **pose_estimation**
 - **外れ値ありの3D-2D対応からカメラ6自由度姿勢を推定(PnP+RANSAC)** — 既知寸法の箱の3D-2D対応(30%外れ値・0.5px雑音)から pnp_ransac で姿勢復元。回転<2度・並進<2%で、恒等姿勢や素のDLTを明確に上回る。 `py -3.11 examples_3d/pose_estimation.py`
 - **誤対応4割下のカメラ姿勢推定(PnP+RANSAC)** — 200点の3D-2D対応の40%が誤対応でもpnp_ransacが姿勢復元: 回転誤差0.11度・inlier再投影0.66px・inlier適合率100%。同じ汚染データの素dlt_pose(RANSACなし)は33.7度に破綻し319倍判別的に上回る。 `py -3.11 examples_3d/pnp_pose_outliers.py`
-
-**segmentation**
-- **ビンピッキング: 台平面除去→物体クラスタリング** — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。 `py -3.11 examples_3d/object_segmentation.py`
-- **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。 `py -3.11 examples_3d/region_props_3d.py`
-- **センサ幾何と領域処理パイプライン(角シーンの denoise→傾き→面分割→計画格子)** — 深度センサが捉えた「2つの傾いた面が稜線で出会う角」の1シーンを、実際の知覚パイプラインの順に8opで連結処理する例。清浄ガイドで joint_bilateral して段差を残しつつノイズを削り(RMS 0.112→0.019、素のGaussianぼかしnullは稜線段差を-5.8→-1.16に潰すが本opは-5.79を保存)、bearing_angle_image で各面の傾きを degrees(atan(s)) と厳密一致で数値化(左26.565°/右… `py -3.11 examples_3d/sensor_seg.py`
-- **接触物体の分離(距離変換ベース3D watershed)** — 接触して1連結成分に融合した2球をwatershedで2個に分離。重心を真値へ最大0.31voxel・体積誤差<5%。連結成分(null)はcount=1に融合し重心が10voxelずれる — 個数でも重心でも上回る。CT/粉体/細胞の計数。 `py -3.11 examples_3d/watershed3d.py`
-- **分子の接触原子カウント(距離変換+マーカ分水嶺)** — シクロヘキサンC6椅子型を6原子球の和集合(41万voxel・1連結成分)にボクセル化。距離変換+マーカ分水嶺で接触原子を6個に分離・重心を真値へ最大0.52voxel。素朴な連結成分null=1個に融合(43voxelずれ)を個数6vs1で上回る。 `py -3.11 examples_3d/molecule_atom_count.py`
-- **屋外LiDARシーンの地面除去→物体分割** — 傾斜地面(~5.4度)上の4物体(球/箱/円柱/円錐)のLiDAR点群5316点を、fit_plane_ransac+height_above_planeで地面除去→euclidean_clustersで分割。検出4==K=4・重心を真物体へ全単射(最大0.128m)。地面除去なしnullは全物体癒着で1クラスタ。 `py -3.11 examples_3d/lidar_scene_segmentation.py`
 
 **mapping**
 - **占有格子+ESDFで連続クリアランスを問い合わせ** — 部屋点群から occupancy_grid→esdf を作り、自由空間点で最近接障害物までの連続距離を query_distance。占有0/1のみの零点を約39倍上回る(衝突回避マージン判定)。 `py -3.11 examples_3d/occupancy_esdf.py`
@@ -257,7 +261,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - `spline_curve_resample(points, n, closed=False, smooth=0.0)` — 曲線点列を n 点に滑らかに再サンプルして (n,D) を返す(2D/3D、閉曲線はシーム非重複)。
 
 ## 3-D operators(ops3d)by category
-_計 291 ops / 58 categories。_
+_計 310 ops / 63 categories。_
 
 
 ### augment(6)
@@ -362,6 +366,11 @@ _計 291 ops / 58 categories。_
 - `fit_bspline_curve` (`points → surface`) — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: `bspline_freeform`
 - `eval_bspline_curve` (`surface → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
 
+### frequency(3)
+- `vol_fft_lowpass` (`voxel → voxel`) — Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or · 例: `deconv_fft_restore`
+- `vol_fft_highpass` (`voxel → voxel`) — Gaussian high-pass — the exact complement ``1 - lowpass`` (the two sum · 例: `deconv_fft_restore`
+- `vol_fft_bandpass` (`voxel → voxel`) — Gaussian band-pass ``lowpass(high) - lowpass(low)``: keeps structure · 例: `deconv_fft_restore`
+
 ### fusion(2)
 - `register_cross` (`any, any → pose`) — 異種構造間の剛体登録。両者を点群へ変換 → 登録器(fpfh=大回転/icp=要 coarse init)。 · 例: `transforms_repr`
 - `fuse_to_voxel` (`any → voxel`) — 複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。 · 例: `transforms_repr`
@@ -371,6 +380,11 @@ _計 291 ops / 58 categories。_
 - `geodesic_mesh` (`mesh → measurement`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
 - `farthest_point_sampling` (`points → keypoints`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
 - `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: `pcl_geodesic`
+
+### geom_transform(3)
+- `vol_resize` (`voxel → voxel`) — Resample a volume to a new grid (``scipy.ndimage.zoom``, cell semantics). · 例: `vol_geometry_transform`
+- `vol_rotate` (`voxel → voxel`) — Rotate a volume in the plane of an axis pair (``scipy.ndimage.rotate``). · 例: `vol_geometry_transform`
+- `vol_affine` (`voxel → voxel`) — General affine resampling (``scipy.ndimage.affine_transform``). · 例: `vol_geometry_transform`
 
 ### geometry(23)
 - `line_from_2points` (`points → primitive`) — 2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。 · 例: `geometry_metrology`
@@ -400,6 +414,12 @@ _計 291 ops / 58 categories。_
 ### gicp(2)
 - `gicp` (`points, points → pose`) — Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。 · 例: `gicp_register`
 - `estimate_covariances` (`points → descriptor`) — 各点の局所共分散を固有値 (ε,1,1) に置換した plane-to-plane 共分散 (N,3,3)。 · 例: `gicp_register`
+
+### gray(4)
+- `vol_window_level` (`voxel → voxel`) — CT window/level (HU windowing) — the radiologist's daily linear remap. · 例: `gray_window_level`
+- `vol_equalize` (`voxel → voxel`) — Histogram equalisation of a volume (HALCON ``equ_histo_image``). · 例: `gray_window_level`
+- `vol_gamma` (`voxel → voxel`) — Gamma (power-law) correction on the volume's own range (HALCON ``pow_image``). · 例: `gray_window_level`
+- `vol_stretch` (`voxel → voxel`) — Percentile contrast stretch to ``[0, 1]`` (robust ``scale_image_max``). · 例: `gray_window_level`
 
 ### lidar_projection(3)
 - `project_spherical` (`points → image2d`) — 回転式 LiDAR の球面レンジ画像へ投影 (v_res, h_res)。空セル=0, 近い点優先(最小 range)。 · 例: `lidar_projection`
@@ -517,6 +537,11 @@ _計 291 ops / 58 categories。_
 - `mls_smooth` (`points → points`) — 各点を局所多項式曲面へ射影してノイズを落とす(Moving Least Squares 平滑)。 · 例: `pcl_geodesic`
 - `volume_downsample` (`voxel → voxel`) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き). · 例: `volume_downsampling`
 
+### probe(3)
+- `vol_profile_line` (`voxel → measurement`) — Gray-value profile along the straight probe ``p0 -> p1``. · 例: `wall_thickness_probe`
+- `vol_edge_probe` (`voxel → measurement`) — Sub-sample edges along the probe ``p0 -> p1``. · 例: `wall_thickness_probe`
+- `vol_wall_thickness` (`voxel → measurement`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT · 例: `wall_thickness_probe`
+
 ### range_image(4)
 - `depth_to_organized_points` (`depth → points`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
 - `normals_from_depth` (`depth → normals`) — organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。 · 例: `range_image`
@@ -568,12 +593,20 @@ _計 291 ops / 58 categories。_
 - `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
 - `render_beauty` (`mesh → image2d`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `render_beauty`
 
-### rle_region(5)
+### restoration(2)
+- `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or · 例: `deconv_fft_restore`
+- `vol_richardson_lucy` (`voxel, voxel → voxel`) — Richardson–Lucy deconvolution of a non-negative volume by a known PSF. · 例: `deconv_fft_restore`
+
+### rle_region(9)
 - `vol_rle_encode` (`voxel → rle_region`) — Encode a binary volume as x-runs (the 3-D HALCON-region representation). · 例: `rle_region_efficiency`
 - `vol_rle_decode` (`rle_region → voxel`) — Decode a ``VolRLE`` back to a dense ``(D, H, W)`` float64 ``{0, 1}`` · 例: `rle_region_efficiency`
 - `vol_rle_volume` (`rle_region → measurement`) — Voxel count of the region, computed on the runs (no decode). Measured · 例: `rle_region_efficiency`
 - `vol_rle_bbox` (`rle_region → primitive`) — Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds) · 例: `rle_region_efficiency`
 - `vol_rle_centroid` (`rle_region → position`) — Centroid ``(z, y, x)`` of the region, computed on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_union` (`rle_region, rle_region → rle_region`) — Union of two RLE regions, computed on the runs (no decode). Cost scales · 例: `rle_region_efficiency`
+- `vol_rle_intersect` (`rle_region, rle_region → rle_region`) — Intersection of two RLE regions on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_difference` (`rle_region, rle_region → rle_region`) — Set difference ``a \ b`` on the runs (no decode). · 例: `rle_region_efficiency`
+- `vol_rle_components` (`voxel → rle_region`) — Split a binary volume into per-component ``VolRLE`` regions. · 例: `rle_region_efficiency`
 
 ### robust_fit(7)
 - `ransac_plane` (`points → primitive`) — 外れ値に頑健な RANSAC 平面適合。 · 例: `ransac_prim`

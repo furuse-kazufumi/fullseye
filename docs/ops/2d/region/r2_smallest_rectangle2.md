@@ -8,7 +8,7 @@ halcon: smallest_rectangle2
 examples: [gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # r2_smallest_rectangle2 — 2D `region` op

@@ -8,7 +8,7 @@ halcon: find_bar_code
 examples: [gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # decode_barcode — 2D `barcode` op

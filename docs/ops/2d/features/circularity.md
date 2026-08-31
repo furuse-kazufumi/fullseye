@@ -8,7 +8,7 @@ halcon: circularity
 examples: [draw_annotate, gallery2d_features]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # circularity — 2D `features` op

@@ -8,7 +8,7 @@ gpu: true
 examples: [shape_desc_pose]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # match_logpolar_z — 3D `match_pose` op

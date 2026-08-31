@@ -7,7 +7,7 @@ out: surface
 examples: [contours_to_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # fit_poly_surface — 3D `surface_fit` op

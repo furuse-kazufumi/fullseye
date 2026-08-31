@@ -7,7 +7,7 @@ out: points
 examples: [augment_pointcloud, sh_descriptor_retrieval, shape_retrieval]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # random_rotation — 3D `augment` op

@@ -8,7 +8,7 @@ halcon: critical_points_sub_pix
 examples: [gallery2d_geometry]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # sp_critical_points_sub_pix — 2D `subpix` op

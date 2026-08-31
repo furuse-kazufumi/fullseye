@@ -1,6 +1,6 @@
 # Fullseye 3-D ビジョン — 事例ギャラリー(EXAMPLES_3D)
 
-Fullseye の 3-D オペレータ群(`ops3d` = 291 の型付き op)を、**実問題を解く実行可能な事例**（全 108 件）で示します。
+Fullseye の 3-D オペレータ群(`ops3d` = 310 の型付き op)を、**実問題を解く実行可能な事例**（全 112 件）で示します。
 各事例は自己完結・自己検証のスクリプト(`examples_3d/<id>.py`)で、データを読み・op を呼び・**ground truth を print して assert** します。
 一覧は `examples3d.py` レジストリが正本で、`examples3d.validate()` が全件を実行して**動くものだけ**を掲示します。
 
@@ -21,7 +21,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ## 実データ源
 
-- **合成データ(制御GT)** — 82 事例
+- **合成データ(制御GT)** — 86 事例
 - **手続き生成(GTは幾何/解析)** — 14 事例
 - **骨格CT(MS-Human-700 実解剖骨)** — 4 事例
 - **小惑星イトカワ(Gaskell形状モデル/JAXA)** — 5 事例
@@ -39,6 +39,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **2視点からの相対カメラ姿勢(SfM初期化)** (`two_view_pose`, synthetic) — 2枚の画像の対応点から基礎/基本行列を解き、相対カメラ姿勢と3D点を復元する(単眼SfM/VOの初手)。
 - **N視点バンドル調整による精緻化** (`bundle_adjust`, synthetic) — 全カメラ姿勢と3D構造を再投影誤差最小で同時最適化し、摂動から機械精度へ回復する。
 - **ループ閉じ込みのポーズグラフSLAMバックエンド** (`pose_graph_slam`, synthetic) — ノイズ入りオドメトリ+ループ閉じ辺を最適化し、蓄積したドリフトを低減する。
+- **3D 幾何変換 — rotate 90°x4 恒等・resize の物理体積保存・affine 厳密シフト** (`vol_geometry_transform`, synthetic) — vol_rotate は np.rot90 と bit 一致で回転方向規約を機械固定、vol_resize は spacing 再計算で物理体積 230.4 mm^3 厳密保存、vol_affine は pull 規約(out[o]=vol[M@o+offset])を voxel 単位で検証。
 - **小惑星の姿勢を主成分で正準化** (`itokawa_pose_canonical`, itokawa) — 不明な向きで届いた小惑星形状を、慣性主軸で形状固有の正準姿勢へ整える(カタログ化・比較用)。
 - **未知姿勢で置かれた小惑星スキャンの位置合わせ** (`itokawa_self_register`, itokawa) — 未知の探査機姿勢で撮った小惑星スキャンを ICP で基準形状に戻す。不規則形状は球と違い登録できる。
 - **平面主体スキャンのGICP位置合わせ** (`gicp_register`, synthetic) — 床+直交2壁のコーナーを既知変換で動かし gicp(共分散重みマハラノビス)で復元。回転<1度、平面が滑る状況で点対点ICPを約6.5倍上回る。
@@ -47,6 +48,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ### 再構成
 
+- **顕微鏡スタック復元 — 3D FFT フィルタ + Richardson-Lucy** (`deconv_fft_restore`, synthetic) — vol_fft_lowpass+highpass=入力の恒等式、照明ドリフト成分を 1/17 に抑制(線形性で分離計測、ガウス伝達のトレードオフごと開示)、vol_richardson_lucy 50 回で RMSE 0.68x(漸進と正直に主張)+前方一貫性 0.021x+総強度保存。
 - **進化探索で見つけた点群デノイズ・パイプライン** (`denoise_evolution`, synthetic) — 外れ値除去・平滑化・間引きの順番を遺伝的アルゴリズムに探させ、無処理と人手の定番を上回る。
 - **複数深度フレームをTSDFで融合し表面抽出** (`tsdf_fusion_demo`, synthetic) — 複数視点の深度観測を TSDF に融合し、単一観測よりノイズに頑健な表面を得る。
 - **複数断層の2D輪郭を積層して3D曲面(メッシュ)に** (`contours_to_surface`, synthetic) — 各スライスの閉輪郭を塗って voxel 積層→marching cubes で曲面メッシュ化。頂点は球面に乗り体積も一致(断面一定=円柱仮定は1.5倍過大)。輪郭→領域→voxel→メッシュの表現変換。
@@ -115,7 +117,8 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 - **真球度/丸さ検査** (`roundness`, synthetic) — 点群に球を当て、真球からの偏差=真球度を測る。完全な球ほど偏差が小さいことを確認。
 - **30%外れ値下での頑健プリミティブ適合** (`ransac_prim`, synthetic) — 平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。
 - **domain(処理領域)と boundary(境界殻)でメモリを絞って計測** (`roi_domain_boundary`, synthetic) — vol_reduce_domain で治具を消し vol_crop_domain でメモリ 1/34(実測)、vol_boundary の殻 19% を vol_boundary_points で物理mm点群化して fit_sphere3 が中心誤差 0.000mm、vol_uncrop は元フレームへ bit 一致で貼り戻し。
-- **RLE 領域 — HALCON region の効率の正体を voxel 界へ** (`rle_region_efficiency`, synthetic) — vol_rle_encode が 192^3 部品マスクを dense bool の 1/73(実測)に、volume/bbox/centroid は run 直接演算で dense と厳密一致かつ 93x 速(実測)、vol_rle_decode は往復 bit 一致、改竄 RLE は decode 前に fail-closed 拒否。
+- **RLE 領域 — HALCON region の効率の正体を voxel 界へ** (`rle_region_efficiency`, synthetic) — vol_rle_encode が 192^3 部品マスクを dense bool の 1/73(実測)に、volume/bbox/centroid は run 直接演算で dense と厳密一致かつ 93x 速(実測)、和/積/差の集合演算 3.1ms(run のみ)、vol_rle_components の成分分解、vol_tiled_map は gaussian 全量計算と最大差 0、往復 bit 一致、改竄 RLE は fail-closed 拒否。
+- **virtual probe — パイプ壁厚をプローブ 1 本で計測** (`wall_thickness_probe`, synthetic) — vol_profile_line(異方 spacing の物理距離厳密)→ vol_edge_probe(サブボクセル 4 エッジ、極性 +,-,+,-)→ vol_wall_thickness が壁厚 2.042/2.042 mm(真値 2.000、誤差 0.042mm=0.085voxel)。measure1d の 3D 版。
 - **曲座標展開: 極/円筒/Zernike/LiDAR円筒投影で回転体の m 回対称を一貫復元** (`curvilinear_proj`, synthetic) — 回転体(3枚羽根=m=3回対称)の検査を、中心を原点にした曲座標へ展開する4つのopで横断検証する事例。fit_zernikeは既知の波面係数(piston/tilt/defocus/astigmatism)で合成した円板を極座標直交基底(n,m)へ分解し、各係数を誤差5e-5で復元(非点収差=m=2角モードが立つ)。polar_unwrapは2D画像の円板を(θ×r)へ展開しθ軸FFTでm=3を検出(power@m=179で他ビンを圧倒)、回転対称画像は…
 - **幾何メトロロジー: 直線/平面/球/円の当てはめ→角度・距離・交線計測** (`geometry_metrology`, synthetic) — 1 個の機械加工ブロック(2 面が稜線で交わり、面上に球と円穴が乗る)を舞台に、当てはめ op(fit_line_3d/fit_plane_3d/fit_sphere_3d/fit_circle_3d/ransac_line)の出力を計測 op(angle_3points/angle_between_lines/angle_between_planes/angle_line_plane/distance_point_plane/distance_point…
 - **3-D プリミティブ当てはめ(直線/平面/球/円/最小包含球)** (`primitive_fitting_3d`, synthetic) — 点群から直線・平面・球・円を最小二乗で当て、中心/半径/向き/残差を (depth,row,col) で復元(機械精度)。各残差は『わざと外した』null を桁違いに下回る。measure3d.fit_line3/fit_plane3/fit_sphere3/fit_circle3/smallest_sphere3。2-D fit_line/fit_circle の 3-D 版。
@@ -135,6 +138,7 @@ PYTHONPATH=<repo> PYTHONUTF8=1 py -3.11 examples_3d/<id>.py
 
 ### セグメンテーション
 
+- **CT windowing — 窓の選択が「見える構造」を入れ替える** (`gray_window_level`, synthetic) — vol_window_level の軟部窓は軟部 Δ0.50 が立ち骨は飽和、骨窓は骨が立ち軟部は背景と同化(実測)。vol_equalize(mask domain LUT)/ vol_gamma(γ=2 で 0.5→0.25 厳密)/ vol_stretch(パーセンタイル厳密写像)も検証。
 - **ビンピッキング: 台平面除去→物体クラスタリング** (`object_segmentation`, synthetic) — 地面平面を plane_segmentation で剥がし、残りを euclidean_cluster で3物体に分離。クラスタ数・重心が真値一致、全点1クラスタ扱いの零点を上回る。
 - **3Dボリュームの連結成分ラベリングと塊ごとの計測(個数/体積/重心)** (`region_props_3d`, synthetic) — 複数ブロブを連結成分で分離し、体積誤差0voxel・重心誤差0.0で計測。largest_componentで最大塊、filter_by_volumeで小塊除去。全前景を1領域とする零点(重心ズレ13.5voxel)を上回る。
 - **センサ幾何と領域処理パイプライン(角シーンの denoise→傾き→面分割→計画格子)** (`sensor_seg`, synthetic) — 深度センサが捉えた「2つの傾いた面が稜線で出会う角」の1シーンを、実際の知覚パイプラインの順に8opで連結処理する例。清浄ガイドで joint_bilateral して段差を残しつつノイズを削り(RMS 0.112→0.019、素のGaussianぼかしnullは稜線段差を-5.8→-1.16に潰すが本opは-5.79を保存)、bearing_angle_image で各面の傾きを degrees(atan(s)) と厳密一致で数値化(左26.565°/右…

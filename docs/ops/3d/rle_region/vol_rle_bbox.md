@@ -7,7 +7,7 @@ out: primitive
 examples: [rle_region_efficiency]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0  # fullseye lib version this note was generated for
+version: 0.1.0  # fullseye lib version this note was generated for
 ---
 
 # vol_rle_bbox — 3D `rle_region` op
@@ -34,7 +34,7 @@ Tight bounding box ``(z0, y0, x0, z1, y1, x1)`` (exclusive upper bounds)
 
 ## 同カテゴリ(`rle_region`)
 
-[vol_rle_encode](vol_rle_encode.md) · [vol_rle_decode](vol_rle_decode.md) · [vol_rle_volume](vol_rle_volume.md) · [vol_rle_centroid](vol_rle_centroid.md)
+[vol_rle_encode](vol_rle_encode.md) · [vol_rle_decode](vol_rle_decode.md) · [vol_rle_volume](vol_rle_volume.md) · [vol_rle_centroid](vol_rle_centroid.md) · [vol_rle_union](vol_rle_union.md) · [vol_rle_intersect](vol_rle_intersect.md) · [vol_rle_difference](vol_rle_difference.md) · [vol_rle_components](vol_rle_components.md)
 
 ---
 *Provenance: volregion.py — 3D operator registry. この per-op ノートは `tools/opdocs.py md` が自動生成(手編集しない)。*
