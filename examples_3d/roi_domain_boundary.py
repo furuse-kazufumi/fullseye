@@ -84,7 +84,11 @@ def main():
     print(f"  box = {box}")
     assert box == (39, 42, 42, 58, 79, 79), f"AABB が手計算と不一致: {box}"
     box_m = vol_bounding_box(part_mask, margin=3)
-    assert box_m == (36, 39, 39, 61, 82, 82), f"margin+クリップ不一致: {box_m}"
+    assert box_m == (36, 39, 39, 61, 82, 82), f"margin=3 が手計算と不一致: {box_m}"
+    # margin=3 はどの辺にも当たらない(36..61 / 39..82 ⊂ 0..96)。クリップの検証は
+    # 実際に境界へ当たる margin=50 で行う: 39-50<0 → 0、58+50>96 → 96(全軸)
+    box_c = vol_bounding_box(part_mask, margin=50)
+    assert box_c == (0, 0, 0, 96, 96, 96), f"クリップ不一致: {box_c}"
 
     # 3) 切り出し = メモリ削減の本丸
     part, offset = vol_crop_domain(vol, part_mask)
