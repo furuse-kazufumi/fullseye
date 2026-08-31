@@ -131,3 +131,31 @@ def test_register_fpfh_rejects_degenerate_clouds():
         feat_fpfh.register_fpfh({"p": 1}, good)          # dict も同系穴
     with pytest.raises(ValueError, match="non-empty"):
         feat_fpfh.voxel_downsample(empty, 0.5)           # 兄弟 util 単体も fail-closed
+
+
+def test_register_spin_shot_reject_degenerate_clouds():
+    """Regression (chain fuzz wave-4 兄弟一掃): register_spin/register_shot も
+    dict → 生 TypeError / 空 → numpy 内部エラーの同クラス穴があった。"""
+    rng = np.random.default_rng(0)
+    good = rng.random((60, 3)) * 5
+    empty = np.zeros((0, 3))
+    for fn, name in [(feat_spin.register_spin, "register_spin"),
+                     (feat_shot.register_shot, "register_shot")]:
+        with pytest.raises(ValueError, match=name):
+            fn({"p": 1}, good)
+        with pytest.raises(ValueError, match="at least 3 points"):
+            fn(empty, good)
+        with pytest.raises(ValueError, match="at least 3 points"):
+            fn(good, empty)
+
+
+def test_register_fpfh_rejects_downsample_collapse():
+    """Regression (chain fuzz wave-4 派生実測): 疎な極小雲では自動 voxel_size が
+    雲を 1-2 点へ潰し、estimate_point_normals の P[idx] が生 IndexError 化していた。"""
+    rng = np.random.default_rng(0)
+    a = rng.random((6, 3))
+    b = rng.random((6, 3)) * 100 + 500     # 解像度が粗い → 自動 voxel が過大
+    with pytest.raises(ValueError, match="collapsed"):
+        feat_fpfh.register_fpfh(a, b)
+    with pytest.raises(ValueError, match="N >= 3"):
+        feat_fpfh.estimate_point_normals(np.zeros((1, 3)))

@@ -276,8 +276,23 @@ def register_shot(src, dst, radius=None, normal_k=16, ratio=0.9,
               信頼不可として False + 単位変換を返す)。
     """
     from scipy.spatial import cKDTree
-    src = np.asarray(src.cpu().numpy() if isinstance(src, torch.Tensor) else src, np.float64)
-    dst = np.asarray(dst.cpu().numpy() if isinstance(dst, torch.Tensor) else dst, np.float64)
+    try:
+        src = np.asarray(src.cpu().numpy() if isinstance(src, torch.Tensor) else src, np.float64)
+        dst = np.asarray(dst.cpu().numpy() if isinstance(dst, torch.Tensor) else dst, np.float64)
+    except (TypeError, ValueError) as e:
+        # 連鎖ファザー wave-4 兄弟一掃: dict 等の非数値プール産物が np.asarray で
+        # 生 TypeError 化する穴(register_fpfh と同クラス)。fail-closed に拒否。
+        raise ValueError("register_shot: src/dst must be numeric (N, 3) point "
+                         "arrays (got %s / %s)"
+                         % (type(src).__name__, type(dst).__name__)) from e
+    if src.ndim != 2 or src.shape[1] != 3 or dst.ndim != 2 or dst.shape[1] != 3:
+        raise ValueError("register_shot: src/dst must be (N, 3) point arrays, "
+                         "got %r / %r" % (src.shape, dst.shape))
+    if len(src) < 3 or len(dst) < 3:
+        raise ValueError("register_shot: need at least 3 points on each side "
+                         "(got %d / %d) — a rigid pose is undefined below that; "
+                         "an upstream filter may have emptied the cloud"
+                         % (len(src), len(dst)))
 
     # スケールは各点群自身の広がりから(並進不変)。結合 bbox は GT 並進で
     # 対角が水増しされ radius/閾値が狂うため使わない。
