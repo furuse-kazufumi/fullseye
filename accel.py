@@ -799,7 +799,11 @@ def parity(device="cpu"):
     import ops
     rng = np.random.default_rng(7)
     imgs = [np.clip(rng.random((64, 64)) * 0.6 + 0.2 * (np.mgrid[0:64, 0:64][1] / 64), 0, 1)
-            for _ in range(6)]
+            for _ in range(4)]
+    # 敵対レビュー 2026-08-31 P1/P3: 乱数画像だけでは (a) 平坦入力での _norm 系の
+    # 雑音増幅、(b) f32 丸めによる otsu の bin ずれ、を捕捉できない
+    imgs.append(np.full((64, 64), 0.42))                      # 定数(平坦)画像
+    imgs.append(np.round(imgs[0] * 255.0) / 255.0)            # uint8 量子化画像
     rows = []
     for name, (fn, core_name, halcon) in ACCEL.items():
         if core_name not in ops.RT:
