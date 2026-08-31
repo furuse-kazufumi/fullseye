@@ -32,6 +32,18 @@ IMAGE, REGION, FEATURE, ANY = "image", "region", "feature", "any"
 CONTOUR, MATCH = "contour", "match"   # XLD subpixel contours / template-match result
 VOLUME = "volume"                     # 3D voxel array (CT/MRI/depth stacks)
 COLOR = "color"                       # multichannel H x W x 3 (RGB); reached via cfa_to_rgb
+# Sorts opened by the typed bridge (backends_typed): the evolution vocabulary and
+# the typed op catalogs (ops3d / ops1d / opsmath / opsoptics) were two disjoint
+# universes — 742 ops vs 382 ops overlapping in only 3 names (measured
+# 2026-09-01), so evolution could never combine a point-cloud or 1-D operator.
+# These sorts are BRAND NEW, which is what makes the bridge safe: `_candidates`
+# filters on `in_sort`, so adding ops under a sort nothing used before cannot
+# change the candidate list length of any existing sort — and it is that length
+# that decides which op a genome decodes to (see docs/WAVE0_STABLE_SLOTS.md).
+POINTS = "points"                     # (N,3) point cloud
+SIGNAL = "signal"                     # 1-D array (profiles, spectra, sensor series)
+MATRIX = "matrix"                     # general 2-D numeric matrix (linear algebra)
+CIMAGE = "cimage"                     # 2-D complex image (HALCON complex format)
 
 
 # Matching context: the locate problem sets a reference template here before scoring

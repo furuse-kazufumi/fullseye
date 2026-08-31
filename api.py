@@ -78,6 +78,7 @@ import algo_difftest as _algo_difftest  # noqa: E402  (honest gate: Python==orac
 import synth  # noqa: E402  (learn an image's features -> synthesise a similar image; classical texture synthesis)
 import funct1d  # noqa: E402  (HALCON funct_1d family: 1-D function/profile analysis on the index grid)
 import mathops  # noqa: E402  (math for visual metrology: linalg / stats / interp / poly)
+import optics  # noqa: E402  (optics for imaging systems: geometric / wave / imaging / polarisation)
 from videops import (  # noqa: E402,F401
     temporal_mean, temporal_median, temporal_std, temporal_max, temporal_min,
     frame_difference, background_subtraction, temporal_gradient, motion_energy,
@@ -269,6 +270,13 @@ from mathops import (  # noqa: E402,F401
     cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
     cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
 )
+from optics import (  # noqa: E402,F401
+    thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
+    airy_pattern, angular_spectrum_propagate, fraunhofer_pattern, gaussian_beam,
+    psf_to_mtf, mtf_diffraction, wavefront_stats,
+    jones_element, jones_apply, stokes_from_jones,
+    mueller_element, mueller_apply, stokes_analyze,
+)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
@@ -379,6 +387,13 @@ __all__ = [
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
+    "relative_illumination",
+    "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
+    "gaussian_beam",
+    "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "jones_element", "jones_apply", "stokes_from_jones",
+    "mueller_element", "mueller_apply", "stokes_analyze",
 ]
 
 

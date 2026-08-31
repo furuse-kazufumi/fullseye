@@ -136,6 +136,13 @@ with warnings.catch_warnings():
         cplx_contour_circle, cplx_poly_eval, cplx_contour_integral,
         cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
         cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
+        optics, thin_lens, abcd_matrix, abcd_trace, depth_of_field,
+        relative_illumination,
+        airy_pattern, angular_spectrum_propagate, fraunhofer_pattern,
+        gaussian_beam,
+        psf_to_mtf, mtf_diffraction, wavefront_stats,
+        jones_element, jones_apply, stokes_from_jones,
+        mueller_element, mueller_apply, stokes_analyze,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
@@ -294,5 +301,12 @@ __all__ = [
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
+    "relative_illumination",
+    "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
+    "gaussian_beam",
+    "psf_to_mtf", "mtf_diffraction", "wavefront_stats",
+    "jones_element", "jones_apply", "stokes_from_jones",
+    "mueller_element", "mueller_apply", "stokes_analyze",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
 ]
