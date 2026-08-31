@@ -666,3 +666,203 @@ def volume_downsample(vol, factor, mode="mean"):
     vt = v[:d * fz, :h * fy, :w * fx].reshape(d, fz, h, fy, w, fx)
     out = vt.mean(axis=(1, 3, 5)) if mode == "mean" else vt.max(axis=(1, 3, 5))
     return np.ascontiguousarray(out)
+
+
+# --------------------------------------------------------------------------- #
+# domain (processing region) — the voxel version of HALCON's domain concept    #
+# --------------------------------------------------------------------------- #
+def vol_reduce_domain(vol, domain):
+    """Restrict a volume to a *domain* mask (HALCON ``reduce_domain``, voxel-wise).
+
+    Every voxel outside the foreground of *domain* is set to ``0`` — the same
+    "outside the domain is undefined -> 0" convention the 2-D ``it_crop_domain``
+    op uses (a plain numpy array cannot carry a separate domain channel, so the
+    restriction is materialised). A non-``{0, 1}`` *domain* is thresholded at
+    ``> 0.5``. Use it to silence everything a downstream operator must not see
+    (metal artefacts, the scanner bed, a neighbouring part); combine with
+    :func:`vol_crop_domain` when you also want the *memory* of the volume
+    reduced, not just its values.
+
+    Returns a ``(D, H, W)`` float64 volume of the same shape.
+    """
+    v = _require_volume(vol)
+    _check_voxels(v, MAX_VOXELS, "vol_reduce_domain", "MAX_VOXELS")
+    m = _as_binary(domain, "domain")
+    if m.shape != v.shape:
+        raise ValueError("domain shape %r must match the volume shape %r"
+                         % (m.shape, v.shape))
+    return np.ascontiguousarray(np.where(m, v, 0.0), dtype=np.float64)
+
+
+def vol_bounding_box(domain, margin=0):
+    """Tight axis-aligned bounding box of a mask's foreground, in voxel indices.
+
+    Returns ``(z0, y0, x0, z1, y1, x1)`` with **exclusive** upper bounds, i.e.
+    ``vol[z0:z1, y0:y1, x0:x1]`` is the smallest sub-volume containing every
+    foreground voxel. *margin* (an int ``>= 0``) grows the box by that many
+    voxels per side, clipped to the volume — headroom for operators with a
+    spatial footprint (a Gaussian of sigma s needs ~``3*s`` voxels of context).
+    A non-``{0, 1}`` input is thresholded at ``> 0.5``.
+
+    An **empty** mask raises ``ValueError`` (fail-closed): there is no box, and
+    silently returning the full volume would defeat the point of cropping.
+    """
+    m = _as_binary(domain, "domain")
+    _check_voxels(m, MAX_VOXELS, "vol_bounding_box", "MAX_VOXELS")
+    if int(margin) != margin or int(margin) < 0:
+        raise ValueError("margin must be a non-negative integer, got %r" % (margin,))
+    mg = int(margin)
+    if not m.any():
+        raise ValueError("domain is empty (no foreground voxel) — a bounding box "
+                         "is undefined; check the threshold/segmentation upstream")
+    lo, hi = [], []
+    for ax in range(3):
+        prof = np.any(m, axis=tuple(i for i in range(3) if i != ax))
+        idx = np.flatnonzero(prof)
+        lo.append(max(0, int(idx[0]) - mg))
+        hi.append(min(m.shape[ax], int(idx[-1]) + 1 + mg))
+    return (lo[0], lo[1], lo[2], hi[0], hi[1], hi[2])
+
+
+def vol_crop_domain(vol, domain=None, margin=0):
+    """Crop a volume to the tight bounding box of a domain (HALCON ``crop_domain``).
+
+    **This is the memory lever of the domain family**: a 512**3 CT scan whose
+    part of interest fits in 128**3 costs 64x less memory and compute once
+    cropped — and the Hessian operators (:func:`vol_frangi` / :func:`vol_sato`),
+    capped at ``MAX_EIGEN_VOXELS``, often become *possible* only after this
+    step. Gray values inside the box are kept verbatim (the box, not the mask,
+    defines the crop — pair with :func:`vol_reduce_domain` first if voxels
+    outside the mask but inside the box must read 0).
+
+    *domain* defaults to the volume's own non-zero support (``vol > 0.5`` —
+    handy straight after a threshold). *margin* is forwarded to
+    :func:`vol_bounding_box`.
+
+    Returns ``(cropped, offset)`` — the ``(d, h, w)`` float64 sub-volume and the
+    ``(z0, y0, x0)`` voxel offset of its origin in the input frame. Keep the
+    offset: :func:`vol_uncrop` maps results back, and
+    :func:`vol_boundary_points` accepts it as *origin* so point coordinates stay
+    in the uncropped frame. An empty domain raises ``ValueError`` (fail-closed).
+    """
+    v = _require_volume(vol)
+    _check_voxels(v, MAX_VOXELS, "vol_crop_domain", "MAX_VOXELS")
+    dom = v if domain is None else domain
+    z0, y0, x0, z1, y1, x1 = vol_bounding_box(dom, margin=margin)
+    if domain is not None and _as_binary(dom, "domain").shape != v.shape:
+        raise ValueError("domain shape must match the volume shape %r" % (v.shape,))
+    part = np.ascontiguousarray(v[z0:z1, y0:y1, x0:x1], dtype=np.float64)
+    return part, (z0, y0, x0)
+
+
+def vol_uncrop(part, offset, shape, fill=0.0):
+    """Paste a cropped sub-volume back into the full frame (inverse of
+    :func:`vol_crop_domain`).
+
+    *part* is placed at voxel *offset* ``(z0, y0, x0)`` inside a new
+    ``(D, H, W)`` float64 volume of the given *shape*, everything else set to
+    *fill* (the 2-D ``full_domain`` restoration, made explicit — the cropped
+    result must land at exactly the coordinates it came from). The part must fit
+    entirely inside *shape* at *offset*; anything else raises ``ValueError``
+    rather than silently clipping data.
+    """
+    p = _require_volume(part, "part")
+    try:
+        off = tuple(int(o) for o in offset)
+        shp = tuple(int(s) for s in shape)
+    except (TypeError, ValueError):
+        raise ValueError("offset and shape must be length-3 integer sequences, "
+                         "got offset=%r shape=%r" % (offset, shape)) from None
+    if len(off) != 3 or len(shp) != 3:
+        raise ValueError("offset and shape must have length 3, got offset=%r "
+                         "shape=%r" % (offset, shape))
+    if any(s < 1 for s in shp):
+        raise ValueError("shape must be positive, got %r" % (shape,))
+    if int(np.prod(shp)) > MAX_VOXELS:
+        raise ValueError("vol_uncrop: target shape %r exceeds the %d-voxel cap "
+                         "(volops.MAX_VOXELS)" % (shp, MAX_VOXELS))
+    if any(o < 0 for o in off) or any(o + p.shape[i] > shp[i] for i, o in enumerate(off)):
+        raise ValueError("part of shape %r at offset %r does not fit inside %r "
+                         "— refusing to clip data" % (p.shape, off, shp))
+    out = np.full(shp, float(fill), dtype=np.float64)
+    out[off[0]:off[0] + p.shape[0],
+        off[1]:off[1] + p.shape[1],
+        off[2]:off[2] + p.shape[2]] = p
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# boundary — the voxel version of the 2-D region_boundary                      #
+# --------------------------------------------------------------------------- #
+def _boundary_structure(connectivity, op: str):
+    rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity))
+    if rank is None:
+        raise ValueError("%s: connectivity must be 6, 18 or 26 (3-D "
+                         "neighbourhoods), got %r" % (op, connectivity))
+    return ndimage.generate_binary_structure(3, rank)
+
+
+def vol_boundary(vol_binary, connectivity=6, side="inner"):
+    """Boundary shell of a binary volume (the 3-D ``region_boundary``).
+
+    ``side='inner'`` keeps the foreground voxels that touch background:
+    ``mask & ~erode(mask)``. ``side='outer'`` keeps the background voxels that
+    touch foreground: ``dilate(mask) & ~mask``. *connectivity* (6/18/26) decides
+    which neighbours count as "touching" — 6 uses face neighbours only (the
+    thinnest shell); 26 also counts a diagonal background contact, so shells at
+    convex corners come out thicker. The volume border counts as background
+    (a mask reaching the border has a boundary there — the same convention as
+    the surface-area estimate in :func:`vol_region_props`).
+
+    A solid region's interior drops out entirely: a 256**3 solid ball keeps
+    only ~1-2%% of its voxels, which is exactly why boundary representations
+    (and :func:`vol_boundary_points`) are the memory-frugal way to hand a shape
+    to the point-cloud / metrology operators.
+
+    Returns a ``(D, H, W)`` float64 ``{0, 1}`` volume (chainable into
+    :func:`vol_label`, :func:`vol_boundary_points`, ...).
+    """
+    if side not in ("inner", "outer"):
+        raise ValueError("side must be 'inner' or 'outer', got %r" % (side,))
+    m = _as_binary(vol_binary)
+    _check_voxels(m, MAX_VOXELS, "vol_boundary", "MAX_VOXELS")
+    st = _boundary_structure(connectivity, "vol_boundary")
+    if side == "inner":
+        shell = m & ~ndimage.binary_erosion(m, structure=st, border_value=0)
+    else:
+        shell = ndimage.binary_dilation(m, structure=st) & ~m
+    return np.ascontiguousarray(shell, dtype=np.float64)
+
+
+def vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 0)):
+    """Boundary shell as an ``(N, 3)`` point cloud in ``(z, y, x)`` order.
+
+    The bridge from the voxel world to the point-cloud world at minimal memory:
+    only the *surface* voxels of the mask become points (inner boundary, see
+    :func:`vol_boundary`), so a solid object of a million voxels typically
+    yields a few tens of thousands of points — ready for ``fit_sphere3`` /
+    ``smallest_box3`` / ``register_fpfh`` and friends without ever materialising
+    the full grid as points.
+
+    Coordinates are ``(index + origin) * spacing`` per axis: pass *spacing*
+    ``(sz, sy, sx)`` (or a :class:`volio.VolumeMeta`) for physical millimetre
+    coordinates, and pass the offset returned by :func:`vol_crop_domain` as
+    *origin* so points from a cropped volume land in the uncropped frame. An
+    empty mask returns an empty ``(0, 3)`` array (a valid question with a valid
+    empty answer — unlike a crop, which needs a box to exist).
+
+    Returns an ``(N, 3)`` float64 array, rows ordered z-major (deterministic).
+    """
+    shell = vol_boundary(vol_binary, connectivity=connectivity, side="inner")
+    sp = _spacing_tuple(spacing) or (1.0, 1.0, 1.0)
+    try:
+        org = tuple(float(o) for o in origin)
+    except (TypeError, ValueError):
+        raise ValueError("origin must be a length-3 (z0, y0, x0) sequence, "
+                         "got %r" % (origin,)) from None
+    if len(org) != 3:
+        raise ValueError("origin must have length 3, got %r" % (origin,))
+    idx = np.argwhere(shell > 0.5).astype(np.float64)
+    if idx.size == 0:
+        return np.zeros((0, 3), dtype=np.float64)
+    return np.ascontiguousarray((idx + np.asarray(org)) * np.asarray(sp))
