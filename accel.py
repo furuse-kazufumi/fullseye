@@ -830,11 +830,23 @@ def parity(device="cpu"):
             got = run_batch(name, imgs, a, b, device)
             for i, im in enumerate(imgs):
                 ref = np.clip(ops.RT[core_name](im.copy(), a, b), 0, 1)
-                d = np.abs(ref - got[i])
+                g = np.asarray(got[i])
+                d = np.abs(ref - g)
                 if name in circular:
                     d = np.minimum(d, 1.0 - d)
-                full = max(full, float(np.max(d)))
-                inter = max(inter, _interior_max(d, np.zeros_like(d), m))
+                binary = (set(np.unique(ref)) <= {0.0, 1.0}
+                          and set(np.unique(g)) <= {0.0, 1.0})
+                if binary:
+                    # 二値出力 op は max-diff だと「刃の上の 1 画素」(量子化入力の
+                    # 有理数同値 — core 自身の答えが f64 丸め雑音で決まる不定画素)
+                    # で即 1.0 になる。系統誤差は不一致率で十分捕まる(P2 の
+                    # ramp+b=0.5 は 50% 不一致)ので、二値は不一致率で測る
+                    full = max(full, float(d.mean()))
+                    inter = max(inter, float(d[m:-m, m:-m].mean())
+                                if d.shape[0] > 2 * m else float(d.mean()))
+                else:
+                    full = max(full, float(np.max(d)))
+                    inter = max(inter, _interior_max(d, np.zeros_like(d), m))
         rows.append((name, halcon, full, inter))
     return rows
 
