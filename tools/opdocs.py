@@ -10,9 +10,10 @@ is produced by **bulk-converting** that Markdown — never authored twice. The s
 Markdown tree is shaped as an AI-usage corpus (file-per-note) so an assistant can
 grasp *how to use* each op.
 
-Dimensions: ``2d`` (ops.REGISTRY), ``3d`` (ops3d.OPS3D), ``math`` (opsmath.OPSMATH —
-the maths-operator ledger; notes land in ``docs/ops/math/<category>/<op>.md`` and
-help pages in ``op_help/math/``, namespaced like 3-D).
+Dimensions: ``2d`` (ops.REGISTRY), ``3d`` (ops3d.OPS3D), ``math`` (opsmath.OPSMATH)
+and ``optics`` (opsoptics.OPSOPTICS). The two *ledger* dimensions share one code
+path (:data:`LEDGER_DIMS`): notes land in ``docs/ops/<dim>/<category>/<op>.md``
+and help pages in ``op_help/<dim>/``, namespaced like 3-D.
 
 Subcommands (all idempotent; safe to re-run)::
 
@@ -46,6 +47,17 @@ _AMBER = "#f5a524"
 _TEAL = "#17b8a6"
 _MUTE = "#8b91a0"
 _CODE = "#22d3bf"
+
+#: Ledger dimensions — registries that describe their ops with a typed catalog
+#: instead of a 2-D/3-D op table. They share one notes/TOC/HTML code path; each
+#: gets its own ``docs/ops/<dim>/`` tree, ``op_help/<dim>/`` help dir, anchor
+#: namespace (``op<dim>:`` / ``guide<dim>:``) and one authored family guide.
+LEDGER_DIMS = {
+    "math": {"registry": "opsmath", "table": "OPSMATH", "module": "mathops",
+             "family": "math_metrology"},
+    "optics": {"registry": "opsoptics", "table": "OPSOPTICS", "module": "optics",
+               "family": "optics_imaging"},
+}
 
 _AUTHOR = "Kazufumi Furuse"
 _LICENSE = "Apache-2.0"
@@ -149,35 +161,36 @@ def _records():
             })
     except Exception as e:  # ops3d needs torch-soft deps; corpus still builds for 2-D
         print(f"  (3-D registry unavailable: {e})", file=sys.stderr)
-    try:
-        import opsmath
-        from op_example_index import _index_for
-        # math ops are demonstrated by scripts under examples/ (same dir as 2-D);
-        # index them with the same call-detection used for the other dims.
-        idxmath = _index_for(sorted(opsmath.OPSMATH), "examples")
-        for name, info in opsmath.OPSMATH.items():
-            fn = info.get("func")
-            try:
-                sig = str(inspect.signature(fn)) if fn is not None else "(...)"
-            except (TypeError, ValueError):
-                sig = "(...)"
-            ins = info["in"]
-            ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else str(ins)
-            doc = getattr(fn, "__doc__", None) or ""
-            recs.append({
-                "dim": "math", "name": name, "category": info["category"],
-                "in": ins, "out": info["out"],
-                # cleandoc: function docstrings carry the 4-space continuation indent,
-                # which Markdown would misread as a code block — dedent first.
-                "halcon": "", "doc": inspect.cleandoc(doc).strip() if doc else "",
-                "module": info.get("module", "mathops"), "sig": sig,
-                "examples": sorted(idxmath.get(name, [])),
-                # single usage guide for the whole maths family, named after the
-                # coverage example that exercises all its ops (2-D の gallery 命名と同型)
-                "family": "math_metrology",
-            })
-    except Exception as e:  # corpus still builds without the math ledger
-        print(f"  (math registry unavailable: {e})", file=sys.stderr)
+    for _dim, _meta in LEDGER_DIMS.items():
+        try:
+            ledger = getattr(__import__(_meta["registry"]), _meta["table"])
+            from op_example_index import _index_for
+            # ledger ops are demonstrated by scripts under examples/ (same dir as
+            # 2-D); index them with the same call-detection used for the other dims.
+            idx = _index_for(sorted(ledger), "examples")
+            for name, info in ledger.items():
+                fn = info.get("func")
+                try:
+                    sig = str(inspect.signature(fn)) if fn is not None else "(...)"
+                except (TypeError, ValueError):
+                    sig = "(...)"
+                ins = info["in"]
+                ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else str(ins)
+                doc = getattr(fn, "__doc__", None) or ""
+                recs.append({
+                    "dim": _dim, "name": name, "category": info["category"],
+                    "in": ins, "out": info["out"],
+                    # cleandoc: function docstrings carry the 4-space continuation
+                    # indent, which Markdown would misread as a code block.
+                    "halcon": "", "doc": inspect.cleandoc(doc).strip() if doc else "",
+                    "module": info.get("module", _meta["module"]), "sig": sig,
+                    "examples": sorted(idx.get(name, [])),
+                    # one usage guide per ledger family, named after the coverage
+                    # example that exercises its ops (2-D の gallery 命名と同型)
+                    "family": _meta["family"],
+                })
+        except Exception as e:  # corpus still builds without a ledger
+            print(f"  ({_dim} registry unavailable: {e})", file=sys.stderr)
     # mark ops whose name is registered more than once in their dim: a backend override
     # (e.g. backends_auto's _safe wrapper) shadows a core fallback of the same op. The note
     # for such a name describes the winner; flag it so the override is stated, not hidden.
@@ -227,7 +240,9 @@ def _op_md(rec, path, by_name):
         lines.append(f'- **呼び出し**: `fullseye.apply(img, "{name}", a=0.5, b=0.5)` '
                      "(2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)")
     else:
-        reg_mod = {"3d": "ops3d", "math": "opsmath"}.get(dim, rec["module"])
+        reg_mod = ({"3d": "ops3d"}.get(dim)
+                   or (LEDGER_DIMS[dim]["registry"] if dim in LEDGER_DIMS
+                       else rec["module"]))
         lines.append(f"- **呼び出し**: `import {rec['module']}; {rec['module']}.{name}{rec['sig']}` "
                      f'(または `{reg_mod}.get("{name}")`)')
     if rec["halcon"]:
@@ -249,6 +264,43 @@ def _op_md(rec, path, by_name):
         lines.append(f"型契約は `{ins} → {out}`。挙動の言語説明は下記のファミリ使い方ガイドと"
                      "実行可能サンプルを参照(ここでは推測を書かない)。")
     lines.append("")
+    if dim == "optics":
+        # family-wide fail-closed input contract for the optics ledger (grounded in
+        # optics._finite_scalar / _require_image / _require_vec / the size caps —
+        # every item below is a bug the 2026-09-01 adversarial pass actually found,
+        # or a trap it was written to close).
+        lines.append("## ファミリ共通の入力契約(fail-closed)")
+        lines.append("")
+        lines.append("optics の全 op は入力を検証してから計算する(黙って通さない):")
+        lines.append("")
+        lines.append("- **単位は引数名に埋め込む** — `_mm` / `_um` / `_deg` / `_mrad`。"
+                     "mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」"
+                     "なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。")
+        lines.append("- **文字列は `ValueError`** — `float('50')` は成功してしまうため、"
+                     "未パースの設定値が長さとして通り抜ける(実測: `thin_lens('50', '200')` が"
+                     "もっともらしい 66.667 mm を返していた)。bool も `True == 1` の"
+                     "暗黙昇格として拒否。")
+        lines.append("- **complex / masked array は `ValueError`**(実数枠のみ。虚部の"
+                     "無言切り捨て・マスク剥がしを拒否)。**NaN/Inf は全入力で `ValueError`**。")
+        lines.append("- **0 除算とその親戚を名指しで拒否**: 焦点距離 0・曲率半径 0・"
+                     "屈折率 <= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 <= 0 の PSF・"
+                     "S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。")
+        lines.append("- **非有限を返すのは 2 op だけ、しかも契約として明記**: "
+                     "`depth_of_field` の過焦点距離以遠の `far_mm = inf`(それが過焦点距離の"
+                     "定義)と `gaussian_beam` のウエストでの `wavefront_radius_mm = inf`"
+                     "(平面波面の曲率半径)。どちらも有限の相棒(`far_is_infinite` / "
+                     "`curvature_per_mm`)を併せて返す。**それ以外の無言 NaN/Inf は内部で"
+                     "検出して `ValueError`** —「float64 が溢れた」と「答えが無限大」は"
+                     "別の主張なので、後者の顔で前者を返さない。")
+        lines.append("- **サイズ上限**: 生成格子は `optics.MAX_GRID`(4096)、供給された"
+                     "場/PSF/開口は `optics.MAX_FIELD_ELEMENTS`(2^24)、ABCD 素子列は "
+                     "`optics.MAX_SYSTEM_ELEMENTS`(1024)、Zernike は "
+                     "`MAX_ZERNIKE_TERMS`(512)/ `MAX_ZERNIKE_ORDER`(40)/ "
+                     "`MAX_ZERNIKE_BASIS`(2^25)。小さな引数から巨大な内部確保が起きる経路"
+                     "(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。")
+        lines.append("- **物理的に不可能な状態も拒否**: 偏光度 > 1 の Stokes ベクトル、"
+                     "負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。")
+        lines.append("")
     if dim == "math":
         # family-wide fail-closed input contract, stated once per note (grounded in
         # mathops._as_float64 / _require_* / _check_elements — the 2026-08 adversarial
@@ -270,7 +322,7 @@ def _op_md(rec, path, by_name):
         lines.append("")
     # family guide
     if rec.get("family"):
-        gp = os.path.join(DOCS, "math" if dim == "math" else "2d",
+        gp = os.path.join(DOCS, dim if dim in LEDGER_DIMS else "2d",
                           "guides", rec["family"] + ".md")
         lines.append("## 詳しい使い方ガイド")
         lines.append("")
@@ -346,7 +398,8 @@ def cmd_md():
         n += 1
     # ensure guides dirs exist (authored separately)
     os.makedirs(os.path.join(DOCS, "2d", "guides"), exist_ok=True)
-    os.makedirs(os.path.join(DOCS, "math", "guides"), exist_ok=True)
+    for _d in LEDGER_DIMS:
+        os.makedirs(os.path.join(DOCS, _d, "guides"), exist_ok=True)
     print(f"opdocs md: wrote {n} per-op notes under {DOCS}")
     return recs
 
@@ -435,7 +488,8 @@ def _walk_ops(dim: str):
 
 def cmd_toc():
     written = 0
-    dims = [d for d in ("2d", "3d", "math") if os.path.isdir(os.path.join(DOCS, d))]
+    dims = [d for d in ("2d", "3d", *LEDGER_DIMS)
+            if os.path.isdir(os.path.join(DOCS, d))]
     # per-dimension INDEX
     dim_counts = {}
     for dim in dims:
@@ -692,13 +746,16 @@ def cmd_html():
                 html3d = md_to_html(md).replace('href="op:', 'href="op3d:')
                 if _write_generated(os.path.join(d3out, f[:-3] + ".html"), html3d):
                     n3 += 1
-    # per-op math pages from their Markdown notes -> op_help/math/<name>.html (namespaced
-    # like 3-D; sibling/next-op anchors become opmath:, the guide anchor guidemath:, for a
-    # future maths-operator browser — Studio's 2-D lookup dir stays uncluttered).
+    # per-op ledger pages (math / optics) from their Markdown notes ->
+    # op_help/<dim>/<name>.html (namespaced like 3-D; sibling/next-op anchors become
+    # op<dim>:, the guide anchor guide<dim>:, for a future ledger-operator browser —
+    # Studio's 2-D lookup dir stays uncluttered).
     nm = 0
-    dmout = os.path.join(HELP_ROOT, "math")
-    dmsrc = os.path.join(DOCS, "math")
-    if os.path.isdir(dmsrc):
+    for ldim in LEDGER_DIMS:
+        dmsrc = os.path.join(DOCS, ldim)
+        if not os.path.isdir(dmsrc):
+            continue
+        dmout = os.path.join(HELP_ROOT, ldim)
         os.makedirs(dmout, exist_ok=True)
         for cat in sorted(os.listdir(dmsrc)):
             cdir = os.path.join(dmsrc, cat)
@@ -710,15 +767,16 @@ def cmd_html():
                 with open(os.path.join(cdir, f), encoding="utf-8") as fh:
                     md = fh.read()
                 htmlm = (md_to_html(md)
-                         .replace('href="op:', 'href="opmath:')
-                         .replace('href="guide2d:', 'href="guidemath:'))
+                         .replace('href="op:', 'href="op%s:' % ldim)
+                         .replace('href="guide2d:', 'href="guide%s:' % ldim))
                 if _write_generated(os.path.join(dmout, f[:-3] + ".html"), htmlm):
                     nm += 1
     # family guides -> guide_<family>.html (always generated from guide md; the 2-D
-    # gallery guides and the math family guide share the flat guide_ namespace —
-    # stems are distinct by construction: gallery2d_* / handpose / math_metrology)
+    # gallery guides and the ledger family guides share the flat guide_ namespace —
+    # stems are distinct by construction: gallery2d_* / handpose / math_metrology /
+    # optics_imaging)
     g = 0
-    for gdim in ("2d", "math"):
+    for gdim in ("2d", *LEDGER_DIMS):
         gdir = os.path.join(DOCS, gdim, "guides")
         if not os.path.isdir(gdir):
             continue
@@ -730,7 +788,8 @@ def cmd_html():
             _write_generated(os.path.join(HELP_ROOT, "guide_" + f[:-3] + ".html"), md_to_html(md))
             g += 1
     print(f"opdocs html: wrote {n} 2-D op pages ({skipped} hand-authored preserved) "
-          f"+ {n3} 3-D op pages + {nm} math op pages + {g} family guides to {HELP_ROOT}")
+          f"+ {n3} 3-D op pages + {nm} ledger op pages ({'/'.join(LEDGER_DIMS)}) "
+          f"+ {g} family guides to {HELP_ROOT}")
 
 
 def main(argv):

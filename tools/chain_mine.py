@@ -206,17 +206,24 @@ def _delta_corr(x, y):
         return None, None
     if not (np.isfinite(xa).all() and np.isfinite(ya).all()):
         return None, None
-    nx, ny = float(np.linalg.norm(xa)), float(np.linalg.norm(ya))
+    # ノルムは要素が有限でも溢れる(|v| ~ 1e308 の配列 → inf)。溢れたら
+    # inf/inf = NaN が出るので、**測れなかった**と正直に None を返す
+    nx, ny, nd = (float(np.linalg.norm(xa)), float(np.linalg.norm(ya)),
+                  float(np.linalg.norm(ya - xa)))
+    if not (math.isfinite(nx) and math.isfinite(ny) and math.isfinite(nd)):
+        return None, None
     den = nx + ny
-    delta = 0.0 if den <= 0 else float(np.linalg.norm(ya - xa) / den)
+    delta = 0.0 if den <= 0 else nd / den
     corr = None
     if xa.size >= 2:
         xr, yr = np.abs(xa) if np.iscomplexobj(xa) else xa.real, \
                  np.abs(ya) if np.iscomplexobj(ya) else ya.real
         sx, sy = float(xr.std()), float(yr.std())
-        if sx > 0 and sy > 0:
-            corr = float(np.clip(np.corrcoef(xr, yr)[0, 1], -1.0, 1.0))
-    return round(delta, 6), (None if corr is None else round(corr, 6))
+        if math.isfinite(sx) and math.isfinite(sy) and sx > 0 and sy > 0:
+            corr = _num(np.clip(np.corrcoef(xr, yr)[0, 1], -1.0, 1.0))
+    delta = _num(delta)
+    return (None if delta is None else round(delta, 6),
+            None if corr is None else round(corr, 6))
 
 
 def describe(x_in, y_out, in_type, out_type, ops_seq, sec):
