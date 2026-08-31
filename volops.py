@@ -769,18 +769,39 @@ def vol_uncrop(part, offset, shape, fill=0.0):
     *fill* (the 2-D ``full_domain`` restoration, made explicit — the cropped
     result must land at exactly the coordinates it came from). The part must fit
     entirely inside *shape* at *offset*; anything else raises ``ValueError``
-    rather than silently clipping data.
+    rather than silently clipping data. *offset* and *shape* must be whole
+    voxel counts (a fractional value is rejected, never truncated — a silent
+    ``int(1.5) -> 1`` would shift the data one voxel with no warning), and
+    *fill* must be a finite number: every operator in this module refuses
+    NaN/Inf voxels, so a non-finite fill would produce a volume nothing
+    downstream will accept.
     """
     p = _require_volume(part, "part")
+
+    def _ivec3(seq, what):
+        try:
+            vals = tuple(float(v) for v in seq)
+        except (TypeError, ValueError):
+            raise ValueError("offset and shape must be length-3 integer sequences, "
+                             "got offset=%r shape=%r" % (offset, shape)) from None
+        if len(vals) != 3:
+            raise ValueError("offset and shape must have length 3, got offset=%r "
+                             "shape=%r" % (offset, shape))
+        if any(not np.isfinite(v) or v != int(v) for v in vals):
+            raise ValueError("%s must be whole voxel values, got %r — refusing to "
+                             "truncate (a fractional %s would silently shift the "
+                             "data)" % (what, seq, what))
+        return tuple(int(v) for v in vals)
+
+    off = _ivec3(offset, "offset")
+    shp = _ivec3(shape, "shape")
     try:
-        off = tuple(int(o) for o in offset)
-        shp = tuple(int(s) for s in shape)
+        fv = float(fill)
     except (TypeError, ValueError):
-        raise ValueError("offset and shape must be length-3 integer sequences, "
-                         "got offset=%r shape=%r" % (offset, shape)) from None
-    if len(off) != 3 or len(shp) != 3:
-        raise ValueError("offset and shape must have length 3, got offset=%r "
-                         "shape=%r" % (offset, shape))
+        raise ValueError("fill must be a finite real number, got %r" % (fill,)) from None
+    if not np.isfinite(fv):
+        raise ValueError("fill must be finite, got %r — a NaN/Inf fill would poison "
+                         "the output (every volop rejects non-finite voxels)" % (fill,))
     if any(s < 1 for s in shp):
         raise ValueError("shape must be positive, got %r" % (shape,))
     # plain-int product: np.prod would overflow int64 on absurd shapes and slip
