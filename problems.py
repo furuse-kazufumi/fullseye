@@ -323,6 +323,102 @@ def _make_vol_count(n, size, seed, noise=0.1):
     return {"input": inp, "items": counts}
 
 
+# --------------------------------------------------------------------------- #
+# 新 sort の課題(2026-09-01)                                                   #
+#                                                                             #
+# 型付きカタログを進化語彙へ橋渡し(backends_typed)した結果、点群 24 op /       #
+# 信号 22 op が探索できるようになった。**しかし課題が image / volume しか       #
+# 無かったため、その語彙は一度も報酬を受け取れなかった** — 進化ループを本番      #
+# 規模で回して実測した所見: 採掘 205 候補のうち 145 件が「課題が受け付けない     #
+# 入力型」で落ちた。語彙を広げたら課題も広げないと、増えた op は評価不能な       #
+# まま探索空間を薄めるだけになる。                                             #
+# --------------------------------------------------------------------------- #
+def _points_stack(n, size, seed):
+    """球面 + 平面のきれいな点群(n 個)。size は 1 雲あたりの点数の目安。"""
+    rng = np.random.default_rng(seed)
+    out = []
+    for _ in range(n):
+        m = max(64, int(size))
+        half = m // 2
+        # 球面(法線が全方向を向く)+ 平面(法線が一定)= 曲率の異なる 2 領域
+        v = rng.standard_normal((half, 3))
+        v /= np.linalg.norm(v, axis=1, keepdims=True).clip(1e-12)
+        sphere = v * 3.0 + np.array([5.0, 5.0, 5.0])
+        plane = np.column_stack([rng.uniform(0, 10, m - half),
+                                 rng.uniform(0, 10, m - half),
+                                 np.zeros(m - half)])
+        out.append(np.vstack([sphere, plane]))
+    return out
+
+
+def _make_points_denoise(n, size, seed, noise=0.25):
+    """点群デノイズ: ガウスノイズ + 外れ値を載せた雲 → 元の雲に近づける。
+
+    指標は clean への Chamfer 距離(小さいほど良い)を 1/(1+d) にしたもの。
+    外れ値を入れるのは、平滑化だけでなく**除去**が要る課題にするため。
+    """
+    clean = _points_stack(n, size, seed)
+    rng = np.random.default_rng(seed + 1)
+    noisy = []
+    for c in clean:
+        p = c + rng.normal(0, noise, c.shape)
+        k = max(1, len(c) // 20)                      # 5% を外れ値に
+        p = np.vstack([p, rng.uniform(-5, 15, (k, 3))])
+        noisy.append(p)
+    return {"input": noisy, "items": clean}
+
+
+def _score_points(final, clean):
+    """点群の一致度。点群を返さなかった場合は 0(型を外したら報酬ゼロ)。"""
+    import metrics3d
+    p = np.asarray(final) if isinstance(final, np.ndarray) else None
+    if p is None or p.ndim != 2 or p.shape[1] != 3 or len(p) < 1:
+        return 0.0
+    try:
+        return 1.0 / (1.0 + float(metrics3d.chamfer_distance(p, clean)))
+    except Exception:                                  # noqa: BLE001 - 空/非有限
+        return 0.0
+
+
+def _signal_stack(n, size, seed):
+    """減衰振動 + 高調波のきれいな 1-D 信号。"""
+    rng = np.random.default_rng(seed)
+    out = []
+    for _ in range(n):
+        m = max(64, int(size))
+        t = np.linspace(0, 8 * np.pi, m)
+        f1, f2 = rng.uniform(0.8, 1.2), rng.uniform(2.5, 3.5)
+        y = (np.sin(f1 * t) * np.exp(-t / (6 * np.pi))
+             + 0.3 * np.sin(f2 * t + rng.uniform(0, np.pi)))
+        out.append(y)
+    return out
+
+
+def _make_signal_denoise(n, size, seed, noise=0.25):
+    """1-D デノイズ: ノイズ付き信号 → 元の波形。指標は PSNR 相当。"""
+    clean = _signal_stack(n, size, seed)
+    rng = np.random.default_rng(seed + 1)
+    return {"input": [c + rng.normal(0, noise, c.shape) for c in clean],
+            "items": clean}
+
+
+def _score_signal(final, clean):
+    """1-D 波形の一致度。長さが変わった場合は比較可能な範囲だけで測る。
+
+    間引き系 op が「短くして楽をする」のを防ぐため、長さが変わったら
+    **その比率でペナルティ**を掛ける(黙って有利にしない)。
+    """
+    y = np.asarray(final, np.float64).ravel() if isinstance(final, np.ndarray) else None
+    if y is None or y.size < 2 or not np.isfinite(y).all():
+        return 0.0
+    m = min(len(y), len(clean))
+    err = float(np.mean((y[:m] - clean[:m]) ** 2))
+    if not np.isfinite(err):
+        return 0.0
+    base = 1.0 / (1.0 + err)
+    return base * (m / len(clean))                     # 短くしたら比例で減点
+
+
 PROBLEMS: dict[str, Problem] = {
     "denoise": Problem("denoise", "dB PSNR", _make_denoise,
                        lambda f, tgt: ops.psnr(_as_image(f, tgt.shape), tgt),
