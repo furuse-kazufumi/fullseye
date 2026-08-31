@@ -268,6 +268,14 @@ def register_fpfh(src, dst, src_normals=None, dst_normals=None,
     if voxel_size and voxel_size > 0:
         Ps = voxel_downsample(Ps, voxel_size)
         Pd = voxel_downsample(Pd, voxel_size)
+        if len(Ps) < 3 or len(Pd) < 3:
+            # 実測: 疎な極小雲では自動 voxel_size(2.5×解像度)が雲を 1-2 点へ
+            # 潰し、下流の法線推定が生 IndexError 化する。fail-closed に拒否。
+            raise ValueError("register_fpfh: voxel downsampling (voxel_size=%g) "
+                             "collapsed the clouds to %d / %d points — pass a "
+                             "smaller voxel_size (or voxel_size=0 to disable) "
+                             "for such sparse clouds"
+                             % (voxel_size, len(Ps), len(Pd)))
         src_normals = dst_normals = None                          # 座標が変わる→再推定
         res = float(np.median(cKDTree(Pd).query(Pd, k=2)[0][:, -1]))
 
