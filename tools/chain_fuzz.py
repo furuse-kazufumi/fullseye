@@ -390,21 +390,120 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
     return trace
 
 
+# --------------------------------------------------------------------------- #
+# 収束フェーズ: 発見を「最小再現の連鎖」へ削る(delta debugging)               #
+# --------------------------------------------------------------------------- #
+def signature(finding):
+    """findings を同一視する鍵(main の集約と --minimize で同じ定義を使う)。"""
+    return (finding["kind"], finding["op"], finding.get("exc", ""),
+            finding.get("msg", "")[:80])
+
+
+def reproduces(ops, gens, script, seed, target):
+    """*script* を強制実行して *target* 署名が再現するか。"""
+    log = []
+    run_chain(ops, gens, np.random.default_rng(seed), 0, log,
+              chain_seed=seed, script=script)
+    return any(signature(f) == target for f in log)
+
+
+def minimize_finding(ops, gens, finding, verbose=True):
+    """1 件の発見を最小の op 列へ削る。→ (script or None, 再現したか)。
+
+    貪欲な delta debugging: 末尾(当該 op)は残したまま、前段を 1 つずつ外して
+    署名が再現し続けるかを試す。**再現しなかった場合は正直に None を返す**
+    (この段階で「短縮できた」と嘘をつくと、その後の推測パッチを誘発する)。
+    """
+    target = signature(finding)
+    seed = finding.get("seed")
+    script = list(finding.get("trace") or [])
+    if seed is None or not script:
+        return None, False
+    if not reproduces(ops, gens, script, seed, target):
+        return None, False              # trace 単独では再現しない(honest)
+    i = 0
+    while i < len(script) - 1:          # 末尾 = 当該 op は落とさない
+        trial = script[:i] + script[i + 1:]
+        if reproduces(ops, gens, trial, seed, target):
+            script = trial              # 外しても再現 = その op は無関係
+            if verbose:
+                print(f"    - drop {len(script) + 1}->{len(script)} ops", flush=True)
+        else:
+            i += 1
+    return script, True
+
+
+def minimize_file(path, ops, gens, only=None):
+    """署名 jsonl の各行を最小化し、再現スクリプトを書き出す。"""
+    findings = [json.loads(ln) for ln in open(path, encoding="utf-8") if ln.strip()]
+    if only:
+        findings = [f for f in findings if f.get("op") == only]
+    print(f"== 最小化 {len(findings)} 署名 <- {path}")
+    out_lines, n_ok = [], 0
+    for f in findings:
+        head = f"[{f['kind']}] {f['op']}"
+        script, ok = minimize_finding(ops, gens, f, verbose=False)
+        if not ok:
+            print(f"  {head}: 再現せず(seed/trace 不足 or 非決定的)— 短縮なし")
+            out_lines.append(dict(f, minimal=None, reproduced=False))
+            continue
+        n_ok += 1
+        print(f"  {head}: {len(f.get('trace') or [])} -> {len(script)} ops  {script}")
+        out_lines.append(dict(f, minimal=script, reproduced=True))
+    dst = os.path.splitext(path)[0] + "_minimal.jsonl"
+    with open(dst, "w", encoding="utf-8") as fh:
+        for rec in out_lines:
+            rec.pop("tb", None)
+            fh.write(json.dumps(rec, ensure_ascii=False, default=str) + "\n")
+    print(f"== 再現できた {n_ok}/{len(findings)} 件 -> {dst}")
+    if n_ok:
+        print("== 再走コマンド例:")
+        for rec in out_lines[:3]:
+            if rec.get("minimal"):
+                print(f"   py -3.11 tools/chain_fuzz.py --replay {rec['seed']} "
+                      f"--script {','.join(rec['minimal'])}")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--chains", type=int, default=200)
     ap.add_argument("--length", type=int, default=6)
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--out", default=os.path.join(ROOT, "out", "chain_fuzz.jsonl"))
+    ap.add_argument("--minimize", metavar="JSONL",
+                    help="署名 jsonl を読み、各発見を最小の op 列へ削る")
+    ap.add_argument("--only", metavar="OP", help="--minimize をこの op に絞る")
+    ap.add_argument("--replay", type=int, metavar="SEED",
+                    help="--script を指定 seed で強制実行(最小再現の確認)")
+    ap.add_argument("--script", help="--replay で実行する op 名のカンマ区切り")
     args = ap.parse_args()
+    if args.minimize:
+        minimize_file(args.minimize, catalog(), make_generators(), only=args.only)
+        return 0
+    if args.replay is not None:
+        if not args.script:
+            print("--replay には --script が要る", file=sys.stderr)
+            return 2
+        script = [s for s in args.script.split(",") if s]
+        log = []
+        run_chain(catalog(), make_generators(), np.random.default_rng(args.replay),
+                  0, log, chain_seed=args.replay, script=script)
+        print(f"== replay seed={args.replay} script={script}")
+        for f in log:
+            print(f"  [{f['kind']}] {f['op']}: {f.get('exc', '')} {f.get('msg', '')[:120]}")
+        if not log:
+            print("  発見なし(この seed/script では再現しない)")
+        return 0
     ops = catalog()
     gens = make_generators()
-    rng = np.random.default_rng(args.seed)
     log = []
     used = set()
     t0 = time.perf_counter()
     for i in range(args.chains):
-        trace = run_chain(ops, gens, rng, args.length, log)
+        # 連鎖固有 seed: 後から i 番目だけを正確に再走できる(--minimize の前提)
+        chain_seed = args.seed * 1_000_003 + i
+        trace = run_chain(ops, gens, np.random.default_rng(chain_seed),
+                          args.length, log, chain_seed=chain_seed)
         used.update(trace)
         if (i + 1) % 50 == 0:
             print(f"  {i + 1}/{args.chains} chains, findings {len(log)}, "
@@ -414,7 +513,7 @@ def main():
     # 収束: 署名(kind, op, exc)でまとめる
     sig = {}
     for f in log:
-        key = (f["kind"], f["op"], f.get("exc", ""), f.get("msg", "")[:80])
+        key = signature(f)
         sig.setdefault(key, {"n": 0, "sample": f})
         sig[key]["n"] += 1
     os.makedirs(os.path.dirname(args.out), exist_ok=True)
@@ -439,7 +538,11 @@ def main():
         if kind == "CONTRACT":
             continue                      # 白は件数のみ(ファイルには残す)
         print(f"  [{kind}] {op} x{v['n']} {exc}: {msg}")
+    if len(sig) > sum(1 for k in sig if k[0] == "CONTRACT"):
+        print(f"
+== 収束(最小再現): py -3.11 tools/chain_fuzz.py --minimize {args.out}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
