@@ -74,6 +74,16 @@ def vol_gaussian_psf(sigma, truncate=4.0):
     if not np.isfinite(tr) or tr <= 0.0:
         raise ValueError("truncate must be positive and finite, got %r"
                          % (truncate,))
+    # PSF は本質的に小さいカーネル。sigma に桁違いの値が紛れると
+    # (2⌈truncate·σ⌉+1)³ を従順に確保してしまう(連鎖ファザー wave-4 実測:
+    # σ≈300 で 64GB / 90 秒)。暗黙の前提を fail-closed で明示する。
+    sides = 2 * np.ceil(tr * s).astype(np.int64) + 1
+    if int(np.prod(sides)) > PSF_MAX_ELEMENTS:
+        raise ValueError(
+            "PSF kernel would be %s voxels (> PSF_MAX_ELEMENTS=%d, ~%d MB); "
+            "PSFs are small by nature — check sigma=%r / truncate=%r"
+            % ("x".join(str(int(x)) for x in sides), PSF_MAX_ELEMENTS,
+               PSF_MAX_ELEMENTS * 8 // 2 ** 20, sigma, truncate))
     if (s * s <= 0.0).any():
         raise ValueError("sigma %r is so small that sigma**2 underflows to 0 — "
                          "the Gaussian would be 0/0 = NaN; use a representable "
