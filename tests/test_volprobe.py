@@ -54,7 +54,7 @@ def test_profile_axis_ramp_matches_analytic_line():
     """The axis-aligned profile of vol[z]=z must be the analytic line z(t)."""
     vol = _gradient_volume((16, 8, 8))
     p0, p1 = _z_probe(vol.shape)
-    t, vals = vol probe = volprobe.vol_profile_line(vol, p0, p1)
+    t, vals = volprobe.vol_profile_line(vol, p0, p1)
     assert len(t) == len(vals) == 16          # default: 1 sample per voxel-step
     np.testing.assert_allclose(vals, np.arange(16, dtype=np.float64), atol=1e-12)
     np.testing.assert_allclose(t, np.arange(16, dtype=np.float64), atol=1e-12)
