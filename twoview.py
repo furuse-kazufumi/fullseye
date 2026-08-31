@@ -125,9 +125,13 @@ def decompose_essential(E):
 
 
 def triangulate(pts1, pts2, P1, P2):
-    """DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。"""
-    p1 = np.asarray(pts1, float)
-    p2 = np.asarray(pts2, float)
+    """DLT 三角測量: 2 視点の対応点 + 射影行列 → 3D 点。→ (N,3)。
+
+    Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。"""
+    p1 = _require_pts2d(pts1, "pts1")
+    p2 = _require_pts2d(pts2, "pts2")
+    if len(p1) != len(p2):
+        raise ValueError("correspondence point counts do not match")
     P1 = np.asarray(P1, float)
     P2 = np.asarray(P2, float)
     out = np.zeros((len(p1), 3))
