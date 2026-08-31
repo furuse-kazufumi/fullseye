@@ -144,7 +144,7 @@ def test_set_algebra_edge_cases_and_canonical_runs():
     # ...but runs of NEIGHBOURING plane rows must never merge (the +1 stride)
     c = np.zeros((1, 2, 16), np.float64); c[0, 0, 12:16] = 1.0; c[0, 1, 0:4] = 1.0
     rc = vr.vol_rle_encode(c)
-    u2 = vr.vol_rle_union(rc, empty)
+    u2 = vr.vol_rle_union(rc, vr.vol_rle_encode(np.zeros(c.shape)))
     assert len(u2) == 2
     assert np.array_equal(vr.vol_rle_decode(u2), c)
     # different shapes are refused
