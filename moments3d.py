@@ -248,8 +248,16 @@ def shape_distance(inv_a, inv_b) -> float:
     float
         非負のユークリッド距離。
     """
-    a = np.asarray(inv_a, dtype=np.float64).ravel()
-    b = np.asarray(inv_b, dtype=np.float64).ravel()
+    try:
+        a = np.asarray(inv_a, dtype=np.float64).ravel()
+        b = np.asarray(inv_b, dtype=np.float64).ravel()
+    except (TypeError, ValueError) as e:
+        # 連鎖ファザー実測(wave-4): dict 等の非数値プール産物が np.asarray で
+        # 生 TypeError 化していた。fail-closed に明示 ValueError で拒否する。
+        raise ValueError(
+            f"shape_distance: invariant vectors must be numeric "
+            f"(got {type(inv_a).__name__} / {type(inv_b).__name__}) — "
+            f"pass moment_invariants() outputs") from e
     if a.shape != b.shape:
         raise ValueError(f"invariant vector lengths do not match: {a.shape} vs {b.shape}")
     if a.size == 0:
