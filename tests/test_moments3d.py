@@ -296,3 +296,13 @@ def test_degeneracy_check_is_scale_relative():
     # 一方、真に全点一致(広がり 0)は依然として ValueError で弾く(fail-closed 維持)。
     with pytest.raises(ValueError):
         M.moment_invariants(np.full((8, 3), 5.0))
+
+
+def test_shape_distance_rejects_non_numeric():
+    """Regression (chain fuzz wave-4): dict 等の非数値プール産物が np.asarray で
+    生 TypeError 化していた。明確な ValueError(fail-closed)で拒否する。"""
+    import pytest as _pytest
+    with _pytest.raises(ValueError, match="numeric"):
+        M.shape_distance({"rmse": 1.0}, np.ones(6))
+    with _pytest.raises(ValueError, match="numeric"):
+        M.shape_distance(np.ones(6), {"rmse": 1.0})

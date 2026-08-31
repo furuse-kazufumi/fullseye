@@ -692,3 +692,102 @@ def test_fuse_to_voxel_rejects_raw_data_with_clear_error():
     pts = np.random.default_rng(0).random((50, 3))
     vox, bounds = fuse3d.fuse_to_voxel([(pts, "points", {})], size=8)
     assert vox.shape == (8, 8, 8)
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Regression (chain fuzz wave-4): 契約の穴 = 生 TypeError/IndexError を
+# 明確な ValueError(fail-closed)で拒否する入力検証ガード。
+# ═══════════════════════════════════════════════════════════════════════════
+def test_metrology_rejects_dict_vector():
+    """Regression (chain fuzz wave-4): プール産物の dict が座標/方向引数へ流れ込み
+    np.asarray が生 TypeError で落ちていた(distance_point_plane x11, angle_line_plane x7)。"""
+    bad = {"rmse": 1.0, "iters": 3}
+    with pytest.raises(ValueError, match="distance_point_plane"):
+        X.distance_point_plane([0, 0, 0], [0, 0, 1], bad)
+    with pytest.raises(ValueError, match="distance_point_plane"):
+        X.distance_point_plane(bad, [0, 0, 1], [0, 0, 1])
+    with pytest.raises(ValueError, match="angle_line_plane"):
+        X.angle_line_plane(bad, [0, 0, 1])
+    # 同節の兄弟 op も同じ穴を一掃(dict → ValueError)
+    with pytest.raises(ValueError):
+        X.line_from_2points(bad, [1, 0, 0])
+    with pytest.raises(ValueError):
+        X.plane_from_3points([0, 0, 0], bad, [0, 1, 0])
+    with pytest.raises(ValueError):
+        X.angle_3points([1, 0, 0], bad, [0, 1, 0])
+    with pytest.raises(ValueError):
+        X.angle_between_lines(bad, [1, 0, 0])
+    with pytest.raises(ValueError):
+        X.angle_between_planes([0, 0, 1], bad)
+    with pytest.raises(ValueError):
+        X.distance_point_line(bad, [0, 0, 0], [1, 0, 0])
+    with pytest.raises(ValueError):
+        X.distance_line_line([0, 0, 0], bad, [0, 0, 5], [0, 1, 0])
+    with pytest.raises(ValueError):
+        X.intersect_line_plane([0, 0, -5], [0, 0, 1], bad, [0, 0, 1])
+    with pytest.raises(ValueError):
+        X.intersect_planes([0, 0, 0], [0, 0, 1], [0, 0, 0], bad)
+
+
+def test_metrology_rejects_bad_vector_shape():
+    """スカラー・行列・2D/3D 混在も明確な ValueError で拒否する。"""
+    with pytest.raises(ValueError, match="2- or 3-vector"):
+        X.distance_point_plane(5.0, [0, 0, 0], [0, 0, 1])          # スカラー
+    with pytest.raises(ValueError, match="2- or 3-vector"):
+        X.angle_line_plane(np.eye(3), [0, 0, 1])                   # 行列
+    with pytest.raises(ValueError, match="dimensionality"):
+        X.angle_between_lines([1, 0], [1, 0, 0])                   # 2D/3D 混在
+    # 正常系は従来どおり(2D も 3D も可)
+    assert abs(X.angle_between_lines([1, 0], [0, 1]) - 90) < 1e-6
+    assert abs(X.distance_point_plane([1, 2, 3], [0, 0, 0], [0, 0, 1]) - 3) < 1e-6
+
+
+def test_fit_ops_reject_bad_points():
+    """Regression (chain fuzz wave-4 兄弟一掃): fit 系 op の dict / 空 / 点数不足。"""
+    bad = {"a": 1}
+    for fn, need in [(X.fit_line_3d, 2), (X.fit_plane_3d, 3),
+                     (X.fit_sphere_3d, 4), (X.fit_circle_3d, 3)]:
+        with pytest.raises(ValueError):
+            fn(bad)
+        with pytest.raises(ValueError, match="at least"):
+            fn(np.zeros((need - 1, 3)))
+    # 正常系は従来どおり
+    pts = np.array([[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0]], float)
+    c, d = X.fit_line_3d(pts)
+    assert abs(abs(d[0]) - 1.0) < 1e-9                             # 第 0 成分方向の直線
+
+
+def test_refine_rotation_z_rejects_tuple_init():
+    """Regression (chain fuzz wave-4): 本 op 自身の返り値 (angle, n_iters) tuple が
+    init_angle_deg に流れ込み float() が生 TypeError で落ちていた。"""
+    vol = np.random.default_rng(0).random((8, 8, 8)).astype(np.float32)
+    with pytest.raises(ValueError, match="init_angle_deg must be a scalar"):
+        X.refine_rotation_z(vol, vol, init_angle_deg=(0.5, 4))
+    with pytest.raises(ValueError, match="init_angle_deg must be a scalar"):
+        X.refine_rotation_z(vol, vol, init_angle_deg={"angle": 0.5})
+
+
+def test_refine_lk_lm_reject_bad_init_pos():
+    """Regression (chain fuzz wave-4 兄弟一掃): init_pos に dict/長さ不正が来ると
+    float(init_pos[0]) が生 KeyError/TypeError 化していた。"""
+    vol = np.random.default_rng(0).random((8, 8, 8)).astype(np.float32)
+    for fn in (X.refine_translation_lk, X.refine_lm):
+        with pytest.raises(ValueError, match="init_pos"):
+            fn(vol, vol, {"z": 0})
+        with pytest.raises(ValueError, match="init_pos"):
+            fn(vol, vol, [1.0, 2.0])                               # 2 成分
+
+
+def test_icp_point2plane_rejects_normals_mismatch():
+    """Regression (chain fuzz wave-4): dst と別サイズの法線が最近傍 index 参照で
+    生 IndexError 化していた(index N is out of bounds x3)。"""
+    rng = np.random.default_rng(1)
+    src = rng.random((20, 3)); dst = rng.random((40, 3))
+    with pytest.raises(ValueError, match="one normal with each dst point"):
+        X.icp_point2plane(src, dst, rng.random((16, 3)))           # 長さ不整合
+    with pytest.raises(ValueError, match="dst_normals"):
+        X.icp_point2plane(src, dst, rng.random(40))                # (M,3) でない
+    with pytest.raises(ValueError, match="numeric"):
+        X.icp_point2plane(src, dst, {"n": 1})                      # dict
+    with pytest.raises(ValueError, match="numeric"):
+        X.icp_point2point_3d({"p": 1}, dst)                        # 兄弟 op の dict 穴

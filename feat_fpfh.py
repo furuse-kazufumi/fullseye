@@ -238,8 +238,23 @@ def register_fpfh(src, dst, src_normals=None, dst_normals=None,
     """
     from scipy.spatial import cKDTree
     rng = np.random.default_rng(seed)
-    Ps = np.asarray(src, np.float64)
-    Pd = np.asarray(dst, np.float64)
+    try:
+        Ps = np.asarray(src, np.float64)
+        Pd = np.asarray(dst, np.float64)
+    except (TypeError, ValueError) as e:
+        raise ValueError("register_fpfh: src/dst must be numeric (N, 3) point "
+                         "arrays (got %s / %s)"
+                         % (type(src).__name__, type(dst).__name__)) from e
+    if Ps.ndim != 2 or Ps.shape[1] != 3 or Pd.ndim != 2 or Pd.shape[1] != 3:
+        raise ValueError("register_fpfh: src/dst must be (N, 3) point arrays, "
+                         "got %r / %r" % (Ps.shape, Pd.shape))
+    if len(Ps) < 3 or len(Pd) < 3:
+        # 連鎖ファザー実測(wave-4): 空点群(radius_outlier_removal 等が全点除去
+        # した産物)が voxel_downsample の grp[-1] / KDTree 添字で生 IndexError 化。
+        raise ValueError("register_fpfh: need at least 3 points on each side "
+                         "(got %d / %d) — a rigid pose is undefined below that; "
+                         "an upstream filter may have emptied the cloud"
+                         % (len(Ps), len(Pd)))
 
     res = float(np.median(cKDTree(Pd).query(Pd, k=2)[0][:, -1]))   # dst 解像度
     if voxel_size is None:

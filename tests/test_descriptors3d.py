@@ -235,3 +235,13 @@ def test_degenerate_all_identical_points():
     h = D.d2_distribution(pts, seed=0)
     assert np.isclose(h.sum(), 1.0)                   # bin0 に質量
     assert h[0] == 1.0
+
+
+def test_shape_distance_rejects_non_numeric():
+    """Regression (chain fuzz wave-4): dict 等の非数値プール産物が np.asarray で
+    生 TypeError 化していた。明確な ValueError(fail-closed)で拒否する。"""
+    import pytest as _pytest
+    with _pytest.raises(ValueError, match="numeric"):
+        D.shape_distance({"rmse": 1.0}, np.ones(5))
+    with _pytest.raises(ValueError, match="numeric"):
+        D.shape_distance(np.ones(5), {"rmse": 1.0})

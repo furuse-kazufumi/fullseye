@@ -112,3 +112,22 @@ def test_fuse_multiple_structures_to_voxel():
         [((v1, f1), "mesh", {}), (pts, "points", {}),
          (depth, "depth", {"fx": 30, "fy": 30, "cx": 16, "cy": 16})], size=48)
     assert vol.shape == (48, 48, 48) and (vol > 0.01).sum() > 1000   # 3 構造が融合
+
+
+def test_register_fpfh_rejects_degenerate_clouds():
+    """Regression (chain fuzz wave-4): 空点群(上流 filter が全点除去した産物)が
+    voxel_downsample の grp[-1] / KDTree 添字で生 IndexError 化していた
+    (index -1 is out of bounds for axis 0 with size 0)。"""
+    rng = np.random.default_rng(0)
+    good = rng.random((50, 3))
+    empty = np.zeros((0, 3))
+    with pytest.raises(ValueError, match="at least 3 points"):
+        feat_fpfh.register_fpfh(empty, good)
+    with pytest.raises(ValueError, match="at least 3 points"):
+        feat_fpfh.register_fpfh(good, empty)
+    with pytest.raises(ValueError, match="at least 3 points"):
+        feat_fpfh.register_fpfh(good[:2], good)          # 1-2 点も pose 未定義
+    with pytest.raises(ValueError, match="numeric"):
+        feat_fpfh.register_fpfh({"p": 1}, good)          # dict も同系穴
+    with pytest.raises(ValueError, match="non-empty"):
+        feat_fpfh.voxel_downsample(empty, 0.5)           # 兄弟 util 単体も fail-closed

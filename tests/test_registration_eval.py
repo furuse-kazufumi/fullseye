@@ -299,3 +299,21 @@ def test_make_and_transform_roundtrip():
     got = re.transform_points(T, P)
     expected = P @ R.T + t  # 独立計算
     assert np.allclose(got, expected)
+
+
+def test_validators_reject_non_numeric_inputs():
+    """Regression (chain fuzz wave-4): rotation_translation_error に dict が来ると
+    _as_transform 内の np.asarray が形状チェックの前に生 TypeError 化していた。
+    検証層(_as_transform/_as_points/_check_thresh)で明示 ValueError に変える。"""
+    bad = {"rmse": 1.0, "iters": 3}
+    with pytest.raises(ValueError, match="4x4"):
+        re.rotation_translation_error(bad, np.eye(4))
+    with pytest.raises(ValueError, match="4x4"):
+        re.rotation_translation_error(np.eye(4), bad)
+    S = _cloud(5)
+    with pytest.raises(ValueError, match="point cloud"):
+        re.inlier_ratio(bad, S, np.eye(4), 0.1)          # points に dict
+    with pytest.raises(ValueError, match="thresh"):
+        re.inlier_ratio(S, S, np.eye(4), bad)            # thresh に dict
+    with pytest.raises(ValueError, match="numeric"):
+        re.make_transform(bad, np.zeros(3))              # 兄弟 util も同穴を一掃
