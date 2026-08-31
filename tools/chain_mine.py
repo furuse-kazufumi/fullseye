@@ -272,8 +272,14 @@ def describe(x_in, y_out, in_type, out_type, ops_seq, sec):
 # ビン分け(MAP-Elites の格子)                                                  #
 # --------------------------------------------------------------------------- #
 def _bucket(v, edges):
-    """*v* を *edges* で離散化。None は "na"(測れなかったことを潰さない)。"""
-    if v is None:
+    """*v* を *edges* で離散化。測れなかった値は "na"(潰さない)。
+
+    非有限も "na" に落とす。NaN は ``v < e`` が常に False なので、素通しすると
+    **黙って最上位ビンに着地する**(実測: delta=NaN が delta ビン 4 に入った)
+    = 壊れた測定が「最大変化の発見」に化ける。記述子側で既に None 化している
+    が、ここでも二重に止める。
+    """
+    if v is None or (isinstance(v, float) and not math.isfinite(v)):
         return "na"
     for i, e in enumerate(edges):
         if v < e:
