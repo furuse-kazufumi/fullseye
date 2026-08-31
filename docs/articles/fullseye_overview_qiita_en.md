@@ -1241,6 +1241,24 @@ Here too, adversarial review ran *before* shipping and pulled two bugs out of my
 
 Walking through a CT scan hunting for defects, or through a scanned archaeological site — when "looking at data" turns into "standing inside data," you notice different things.
 
+## Addendum 4 (late night, 2026-08-31): a big 3-D build-out, the true identity of HALCON regions, and "1-D wasn't missing — it was disconnected"
+
+> **Status: Production-ready / Verified** (this addendum takes the 3-D side from **285 → 310 ops**, adds a new **37-op 1-D catalog**, and the test suite to **6,535 passed**)
+
+After addendum 3 I kept digging — "what else is missing?", "is there a more efficient way?", "isn't 1-D under-served too?" — and the night produced three discoveries.
+
+**1. The true identity of HALCON regions is run-length encoding.** HALCON can hold thousands of regions of a 10-megapixel image in memory because a region is not a bitmap but a **list of horizontal runs**. Building the 3-D equivalent (the `vol_rle_encode` family, 9 ops) shrank a 384³ part mask to **1/145 (measured)** of the dense array, with volume and bounding box answered **300–1000x faster** straight on the runs, no decoding. Set algebra (union/intersection/difference) also runs on the runs — **3.1 ms** for two 192³ regions. And a structural fact — a run's label is necessarily constant along its length — makes connected-component splitting a per-run assignment. The memory trio is now complete: crop = *where* you compute, RLE = *what* you keep, tiling = *how much* sits in RAM at once.
+
+**2. Fifteen more 3-D gap ops landed in one night (three parallel AI work streams + integration).** CT windowing (the radiologist's daily "window" — machine-verified that the soft-tissue window saturates bone while the bone window makes soft tissue vanish into background), geometric transforms (the rotation-direction convention is pinned by **bit-identity with `np.rot90`** — sign flips being a classic adversarial failure, the test is now the convention's guard), a virtual probe (one probe line measures a pipe wall at 2.042 mm vs 2.000 mm ground truth), 3-D FFT filters, and Richardson–Lucy deconvolution.
+
+A confession here: my first RL docstring claimed "RMSE halves in 10 iterations." Measured: **0.81x**. I rewrote the claim with the reason it doesn't halve (the residual is dominated by hard edges, which RL repairs slowly) and pinned instead the quantity RL actually optimises — *forward consistency*: re-blurring the estimate matches the observation at 0.021x.
+
+Adversarial review then confirmed **nine real bugs**. The flagship: with an **even-sized PSF, RL's adjoint operator is off by one voxel and the estimate diverges to 10⁹¹ in ten iterations** — a genuine math bug in the 'same'-convolution cropping convention, which differs from the true adjoint on even axes. After the fix the adjoint inner-product identity holds to 0.0 error, and odd-sized PSFs are bit-identical to the old implementation (no behaviour change). Add three silent underflow-to-NaN paths and two silent truncations, and the two grand champions of adversarial testing reconfirmed themselves: **sign flips, and division-by-zero with its relatives (underflow, near-zero normalisation)**.
+
+**3. 1-D wasn't missing — it was disconnected.** An implementation of HALCON's funct_1d family (1-D function smoothing/derivatives/extrema/matching, 23 functions) existed in the repo as a **complete orphan** — imported by nothing, absent from packaging, no tests, invisible to every catalog. Worse: the facade's mapping table already referenced it, meaning **in the installed PyPI wheel all 23 funct_1d ops died with ModuleNotFoundError** (fixed as a shipping bug). It was adopted properly (fail-closed validation + 41 analytic ground-truth tests: derivative of sin ≈ cos, zero crossings at kπ, a damped oscillation's period/decay/lag all recovered exactly), and together with 16 signal-processing functions it now lives in a new **unified 37-op 1-D catalog**. The 2-D measure line, the 3-D probe, and sensor time series all converge on "extract a profile (x, y)" — and funct1d is what comes next. Three dimensionalities, one thread.
+
+One lesson for gap audits: hunting for *missing* ops is not enough. Hunt for ops that **exist but are disconnected from the world** — implemented and worth testing, yet with a broken link somewhere in the catalog, the packaging, or the facade. That hunt revived 23+16 functions today.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to
