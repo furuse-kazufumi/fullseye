@@ -624,6 +624,9 @@ RESULT_ADAPTERS = {
     if hasattr(r, "shape") and getattr(r, "ndim", 0) == 3 else r,
     # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
     "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
+    # probe: (t_mm, values) → (2, n) pairs / list[float] → 1-D signal
+    "vol_profile_line": lambda r: _np.stack(r) if isinstance(r, tuple) else r,
+    "vol_wall_thickness": lambda r: _np.asarray(r, _np.float64),
 }
 
 
