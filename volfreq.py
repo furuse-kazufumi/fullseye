@@ -98,7 +98,8 @@ def _apply_transfer(vol, spacing, transfer):
     v = _require_volume(vol)
     fr = _freq_radius(v.shape, spacing)
     spec = np.fft.rfftn(v)
-    out = np.fft.irfftn(spec * transfer(fr), s=v.shape)
+    # axes must be explicit alongside s= (NumPy 2.0 deprecation -> future error)
+    out = np.fft.irfftn(spec * transfer(fr), s=v.shape, axes=(0, 1, 2))
     return np.ascontiguousarray(out, dtype=np.float64)
 
 
