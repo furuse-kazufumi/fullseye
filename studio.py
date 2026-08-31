@@ -705,6 +705,7 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     if float(v.max()) == float(v.min()):
         raise ValueError("volume is constant — no surface to display")
     sp = np.asarray([float(s) for s in spacing], dtype=np.float64)
+    orig_shape = v.shape                          # BEFORE any downsampling
     factor = 1
     while True:
         # Otsu threshold via histogram (float64 accumulation, 256 bins)
