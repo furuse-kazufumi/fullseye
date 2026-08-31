@@ -236,15 +236,8 @@ def counterfactual_utility(ops, problems, op_name, a=0.5, b=0.5, cfg=None,
         cand = _score_single_stage(prob, ops, op_name, a, b, cfg, offset)
         if not np.isfinite(cand):
             continue                                      # その sort では動かない
-        best_existing, best_name = float("-inf"), None
-        pool = [o for o in ops.REGISTRY
-                if o.in_sort == prob.in_sort and o.name != op_name]
-        if max_existing is not None:
-            pool = pool[:max_existing]
-        for op in pool:
-            s = _score_single_stage(prob, ops, op.name, a, b, cfg, offset)
-            if s > best_existing:
-                best_existing, best_name = s, op.name
+        best_existing, best_name = _best_existing(
+            ops, prob, pname, a, b, cfg, offset, op_name, max_existing)
         if not np.isfinite(best_existing):
             continue
         denom = abs(best_existing) + 1e-12
