@@ -821,6 +821,29 @@ def poly_roots(coeffs, real_only=False, imag_tol=1e-9):
 # --------------------------------------------------------------------------- #
 # complex analysis (tier 2) — fail-closed input helpers                        #
 # --------------------------------------------------------------------------- #
+def _reject_text(x, name: str) -> None:
+    """Refuse str/bytes data — numpy *parses* it into numbers silently.
+
+    ``np.asarray(["0", "1", "1j"], dtype=complex)`` happily returns
+    ``[0, 1, 1j]``, and ``w="0"`` is accepted as the origin: a config string or
+    a mis-decoded CSV column would flow through the whole complex family
+    looking like data (confirmed by the 2026-09-01 adversarial probe). Text is
+    not a number here; parse it yourself if that is what you mean."""
+    if isinstance(x, (str, bytes)):
+        raise ValueError("%s must be a real or complex number, got %s — text is "
+                         "not silently parsed into numbers (numpy would accept "
+                         "\"0\" as the origin); convert it explicitly"
+                         % (name, type(x).__name__))
+    try:
+        raw = np.asanyarray(x)
+    except (TypeError, ValueError):
+        return                              # not array-like: the caller's coercion reports it
+    if raw.dtype.kind in "USV":
+        raise ValueError("%s has text/void dtype %r — numpy would silently parse "
+                         "the strings into numbers; convert them explicitly"
+                         % (name, raw.dtype))
+
+
 def _require_cvector(z, name="z", min_len=1):
     """Coerce to a strictly 1-D **complex128** vector or raise ``ValueError``.
 
@@ -835,6 +858,7 @@ def _require_cvector(z, name="z", min_len=1):
         raise ValueError("%s is a masked array with masked (invalid) entries — "
                          "coercion would silently strip the mask and use the raw "
                          "values underneath; fill or drop them explicitly" % (name,))
+    _reject_text(z, name)
     try:
         a = np.ascontiguousarray(z, dtype=np.complex128)
     except (TypeError, ValueError):
@@ -857,6 +881,7 @@ def _require_cscalar(w, name="w"):
     if np.ma.is_masked(w):
         raise ValueError("%s is a masked array with masked (invalid) entries — "
                          "fill or drop them explicitly" % (name,))
+    _reject_text(w, name)
     try:
         a = np.asarray(w, dtype=np.complex128)
     except (TypeError, ValueError):
@@ -1401,6 +1426,7 @@ def cplx_cr_residual(f, spacing=1.0):
     if np.ma.is_masked(f):
         raise ValueError("f is a masked array with masked (invalid) entries — "
                          "fill or drop them explicitly")
+    _reject_text(f, "f")
     try:
         a = np.ascontiguousarray(f, dtype=np.complex128)
     except (TypeError, ValueError):
