@@ -614,11 +614,17 @@ def airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5):
     Returns a ``(size, size)`` float64 intensity image.
 
     Ground truth it reproduces (measured, ``tests/test_optics.py``): the first
-    dark ring sits at ``r = 1.22*lambda*N`` — at ``lambda = 0.55 um``,
-    ``N = 5.6`` that is ``3.7576 um``, and the sampled minimum along the axis
-    lands within one pixel of it; the peak is exactly 1.0 at the centre; the
-    encircled energy inside the first dark ring is 83.8% of the total (the
-    textbook value), measured as 0.8378 on a 513-pixel grid at 0.02 um pitch.
+    dark ring sits at the first zero of ``J1``, ``r = 1.2197*lambda*N`` — at
+    ``lambda = 0.55 um``, ``N = 5.6`` that is ``3.7567 um``, and the sampled
+    radial minimum lands at ``3.760 um`` on a 0.01 um grid (0.3 of a sample
+    away, which is the sampling, not an error); the peak is exactly 1.0 at the
+    centre and the pattern is symmetric to 1e-16.
+
+    The encircled energy inside that ring is the textbook 83.8% of the *whole
+    infinite* pattern — which a finite grid cannot measure: the Airy tails fall
+    off only as ``1/r^3``, so a 25.6 um half-width grid reports 0.857 and a
+    51.2 um one 0.847 (both measured). The number is quoted here as physics,
+    not as something this op returns.
 
     The ``v -> 0`` limit is evaluated **explicitly** as 1.0 rather than left to
     ``0/0``: that division is the classic silent-NaN in every hand-rolled Airy
@@ -667,9 +673,10 @@ def angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0,
     Returns a complex128 array with the same shape as *field*.
 
     Ground truth it reproduces (measured): ``distance_um = 0`` returns the field
-    bit-identically; propagating ``+z`` then ``-z`` returns the original to a
-    relative L2 error of 1.4e-16 for a band-limited field (no evanescent
-    content); total power is conserved to 3.5e-16 relative. A field *with*
+    bit-identically (it short-circuits the transform pair); propagating ``+z``
+    then ``-z`` returns the original to a relative L2 error of 4.3e-16 for a
+    band-limited field (no evanescent content); total power is conserved to
+    1.7e-16 relative. A field *with*
     evanescent content does **not** round-trip — those components are gone by
     construction, in both directions, because that is what physically happens.
 
@@ -745,9 +752,10 @@ def fraunhofer_pattern(aperture, wavelength_um=0.55, distance_mm=100.0,
 
     Ground truth it reproduces (measured): a rectangular slit ``w`` pixels wide
     in an ``N``-pixel array puts its diffraction zeros exactly on the DFT bins
-    ``k*N/w``; a 4-pixel slit in a 64-pixel array has minima at bins +/-16,
-    +/-32 to a residual of 1.1e-33 of the peak; the pattern of a centred
-    symmetric aperture is symmetric to 1e-16.
+    ``k*N/w``; a 4-pixel-wide slit in a 64-pixel array has **exactly** 0.0 at
+    bins +/-16 and +/-32 from DC (the DFT of a boxcar vanishes there to the
+    last bit, not merely to rounding); the pattern of a centred symmetric
+    aperture is symmetric to 2.2e-16.
 
     **Raises** ``ValueError``: *aperture* is not 2-D / smaller than 2x2 / over
     the size cap / complex / masked / non-finite; a negative transmittance
@@ -864,10 +872,13 @@ def psf_to_mtf(psf, pixel_pitch_um=1.0):
     those rows are dropped rather than filled with a NaN).
 
     Ground truth it reproduces (measured): a delta PSF gives MTF == 1 at every
-    frequency to 2.2e-16; a Gaussian PSF of sigma pixels gives the closed form
-    ``exp(-2*pi^2*sigma^2*f^2)`` — with sigma = 2 px on a 128x128 grid the
-    maximum absolute deviation below half-Nyquist is 0.0011 (the residual is
-    the radial average over a square grid, not an error in the transform).
+    frequency **exactly** (max deviation 0.0); a Gaussian PSF of sigma pixels
+    gives the closed form ``exp(-2*pi^2*sigma^2*f^2)`` — the maximum absolute
+    deviation over the whole curve is 4.1e-4 at sigma = 2 px on 128x128,
+    8.3e-4 at sigma = 1.5 px on 64x64 and 2.4e-4 at sigma = 3 px on 256x256
+    (the residual is the radial average over a square grid, not an error in the
+    transform). Doubling *pixel_pitch_um* halves every reported frequency and
+    leaves the MTF column bit-identical.
 
     The PSF is **not** re-normalised or re-centred: a PSF whose energy is not
     centred carries a linear phase, which the modulus discards, so the MTF is
@@ -899,9 +910,13 @@ def psf_to_mtf(psf, pixel_pitch_um=1.0):
     keep = (idx >= 0) & (idx < nbins)
     counts = np.bincount(idx[keep], minlength=nbins)
     sums = np.bincount(idx[keep], weights=mtf.ravel()[keep], minlength=nbins)
+    # Report each bin at the *mean frequency of the pixels in it*, not at the
+    # geometric bin centre: the pixels are not uniformly distributed inside an
+    # annulus, and pinning the curve to the bin centre put the Gaussian
+    # reference 1.0e-2 off where the mean puts it 4.1e-4 off (measured).
+    fsum = np.bincount(idx[keep], weights=rho.ravel()[keep], minlength=nbins)
     ok = counts > 0
-    centres = 0.5 * (edges[:-1] + edges[1:])
-    out = np.column_stack([centres[ok] * 1e3, sums[ok] / counts[ok]])
+    out = np.column_stack([fsum[ok] / counts[ok] * 1e3, sums[ok] / counts[ok]])
     return np.ascontiguousarray(out, dtype=np.float64)
 
 
@@ -919,7 +934,7 @@ def mtf_diffraction(f_number=5.6, wavelength_um=0.55, samples=64):
 
     Ground truth it reproduces exactly (machine precision): ``MTF(0) = 1``,
     ``MTF(nu_c) = 0``, and at half the cutoff the textbook ``0.391``
-    (``(2/pi)*(pi/3 - sqrt(3)/4) = 0.39098...``). The cutoff itself at
+    (``(2/pi)*(pi/3 - sqrt(3)/4) = 0.3910022...``). The cutoff itself at
     ``lambda = 0.55 um``, ``N = 5.6`` is ``324.7 cycles/mm`` — which is why
     stopping a machine-vision lens past f/8 stops buying depth of field and
     starts buying blur (compare :func:`depth_of_field`).
@@ -993,11 +1008,14 @@ def wavefront_stats(coeffs, radial=128, angular=192):
 
     Ground truth it reproduces (measured at the defaults): pure defocus
     ``{(2, 0): 0.1}`` — for which ``Z = 2*rho^2 - 1`` has an exact pupil RMS of
-    ``1/sqrt(3)`` — gives ``rms_waves = 0.057710`` against the exact
-    ``0.0577350``, a relative error of 4.3e-4 from the discrete quadrature, and
-    ``pv_waves = 0.2`` exactly; the Strehl is 0.87678 against the exact
-    0.876714. Piston alone (``{(0, 0): c}``) gives rms 0 and Strehl 1 for any
-    ``c``, and RMS scales linearly in the coefficients.
+    ``1/sqrt(3)`` — gives ``rms_waves = 0.0577422`` against the exact
+    ``0.0577350``, a relative error of 1.2e-4 from the discrete quadrature
+    (3.1e-5 at ``radial=256``), and ``pv_waves = 0.2`` exactly; the Strehl is
+    0.8766676 against the exact 0.8766962. Pure astigmatism ``{(2, 2): 0.1}``
+    (exact RMS ``1/sqrt(6)``) gives 0.0408280 against 0.0408248. Piston alone
+    (``{(0, 0): c}``) gives rms 0 and Strehl 1 for any ``c``, and RMS scales
+    exactly linearly in the coefficients (doubling them doubles the RMS to
+    machine precision).
 
     **Raises** ``ValueError``: *coeffs* is not a dict, is empty, holds more than
     :data:`MAX_ZERNIKE_TERMS` terms, has a key that is not an ``(n, m)`` int
@@ -1031,8 +1049,9 @@ def wavefront_stats(coeffs, radial=128, angular=192):
     # Area element rho d(rho) d(theta), integrated with the trapezoidal rule in
     # rho. The basis grid is uniform in rho *including both endpoints*, so a
     # plain sum is the rectangle rule and converges only as O(1/nr): measured,
-    # it put the pure-defocus RMS 0.8% high at nr=128. Halving the two endpoint
-    # weights makes it O(1/nr^2) and drops the same error to 2.6e-5.
+    # it put the pure-defocus RMS 0.79% high at nr=128. Halving the two endpoint
+    # weights makes it O(1/nr^2): the same error becomes 1.2e-4 at nr=128 and
+    # 3.1e-5 at nr=256, a clean factor-4 per doubling (measured).
     tw = np.ones(nr, dtype=np.float64)
     tw[0] = tw[-1] = 0.5
     weight = rho * np.repeat(tw, nt)
