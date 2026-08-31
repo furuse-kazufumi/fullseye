@@ -120,7 +120,10 @@ def tps_fit(src_ctrl, dst_ctrl, lam=0.0):
             "lam"  使用した λ。
 
     例外:
-        ValueError: 形状不一致、制御点数不足、非有限値。
+        ValueError: 形状不一致、制御点数不足、非有限値、または制御点数が
+            ``TPS_MAX_CTRL``(10,000)超(密な (K+4)² 系は O(K³) のため。
+            対応点を間引いてから渡す — TPS は疎な制御点で滑らかな変形を
+            表現するのが本来の使い方)。
     """
     p = _as_points(src_ctrl, "src_ctrl")
     v = _as_points(dst_ctrl, "dst_ctrl")
