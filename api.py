@@ -157,6 +157,9 @@ from volops import (  # noqa: E402,F401
     vol_label, vol_region_props, vol_gradient_magnitude, vol_local_maxima,
     vol_watershed,
 )
+from handpose import (  # noqa: E402,F401
+    hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
+)
 from complexops import (  # noqa: E402,F401
     cx_fft, cx_ifft, cx_magnitude, cx_phase, cx_real, cx_imag, cx_log_magnitude,
     cx_from_mag_phase, phase_unwrap, cx_wiener_deconvolve, cx_apply_transfer_function,
