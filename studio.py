@@ -1989,6 +1989,12 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
 
         def wheelEvent(self, e):
             f = 1.25 if e.angleDelta().y() > 0 else 0.8
+            if self._fp:
+                # walking: the wheel tunes the WASD step size (HUD shows the
+                # multiplier) — the view itself does not change, no re-render race
+                self._fp_speed = float(np.clip(self._fp_speed * f, 0.05, 50.0))
+                self._repaint()
+                return
             self._zoom = float(np.clip(self._zoom * f, 0.02, 500.0))
             if self._P.shape[0] > self.DRAG_BUDGET:
                 # same decimated preview as a drag; a short timer restores the
