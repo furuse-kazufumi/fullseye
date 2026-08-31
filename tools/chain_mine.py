@@ -91,7 +91,8 @@ MIN_OPS = 2                # 1 op は「合成」ではない
 HIST_BINS = 32
 
 DROP_REASONS = ("identity_like", "const_output", "nondeterministic",
-                "too_slow", "no_numeric_output", "binned_duplicate")
+                "too_slow", "no_numeric_output", "unmeasurable_stats",
+                "binned_duplicate")
 SKIP_REASONS = ("exception", "nonfinite", "typemiss", "growth",
                 "unbindable_args", "adapter_none")
 
