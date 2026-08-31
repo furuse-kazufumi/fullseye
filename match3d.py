@@ -35,6 +35,22 @@ except Exception:  # pragma: no cover
 import accel_match as M   # 3D NCC / pyramid / sub-voxel
 
 
+def _f32_finite(arr, name):
+    """torch 経路の float32 キャスト安全版。
+
+    float64 では有限でも |x|>~3.4e38 は float32 で inf に化け、grid_sample/lstsq
+    の下流が NaN を**無言で**返す(連鎖ファザー第 3〜5 波で fit_zernike として
+    実測、同クラス=polar_unwrap/cylinder_unwrap/scene_flow_lk)。キャスト後の
+    有限性で契約を検証し fail-closed にする。"""
+    a = np.asarray(arr, np.float32)
+    if not np.isfinite(a).all():
+        raise ValueError(
+            "%s has non-finite value(s) after float32 cast — the input "
+            "contains NaN/Inf or exceeds the float32 range (~3.4e38); "
+            "rescale it first" % (name,))
+    return a
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # データ変換(構造 → 共通の voxel / 勾配 表現)
 # ═══════════════════════════════════════════════════════════════════════════
