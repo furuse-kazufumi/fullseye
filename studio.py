@@ -1931,6 +1931,31 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._pan = [0.0, 0.0]
             self._repaint()
 
+        def toggle_first_person(self):
+            """F key: orbit <-> first-person walkthrough. Entering places the
+            eye at the walkthrough entrance; leaving resumes the orbit camera
+            untouched (its yaw/pitch/zoom/pan are never written while walking)."""
+            self._fp = not self._fp
+            if self._fp:
+                self._fp_home()
+            self._repaint()
+
+        def _fp_home(self):
+            """Walkthrough entrance: continue the current orbit line of sight —
+            same yaw/pitch, eye on the scene perimeter at ``1.5 * radius`` from
+            the centre, looking at the centre (the toggle reads as 'step into
+            the view you were orbiting', not a camera jump)."""
+            self._fp_yaw, self._fp_pitch = self._yaw, self._pitch
+            cam = viewer3d_camera_fp(self._fp_yaw, self._fp_pitch)
+            self._eye = self._center - cam[2] * (1.5 * self._radius)
+            self._fp_speed = 1.0
+
+        def _fp_step(self, modifiers):
+            """Per-keypress walk distance: scene-proportional (radius/50) times
+            the wheel speed multiplier, x4 with Shift held."""
+            boost = 4.0 if modifiers & QtCore.Qt.ShiftModifier else 1.0
+            return self._radius / 50.0 * self._fp_speed * boost
+
         def mousePressEvent(self, e):
             mode = ("pan" if (e.button() == QtCore.Qt.MiddleButton
                               or e.modifiers() & QtCore.Qt.ShiftModifier) else "orbit")
@@ -1942,7 +1967,15 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             mode, last = self._drag
             pos = e.position().toPoint()
             dx, dy = pos.x() - last.x(), pos.y() - last.y()
-            if mode == "orbit":
+            if self._fp:
+                if mode == "orbit":               # mouse-look: drag right turns right,
+                    self._fp_yaw = (self._fp_yaw + 0.35 * dx) % 360.0      # drag up looks up
+                    self._fp_pitch = float(np.clip(self._fp_pitch - 0.35 * dy, -89.0, 89.0))
+                else:                             # strafe in the view plane (grab-the-world)
+                    _fwd, right, up = viewer3d_fp_axes(self._fp_yaw, self._fp_pitch)
+                    s = self._radius / 300.0
+                    self._eye = self._eye - right * (dx * s) + up * (dy * s)
+            elif mode == "orbit":
                 self._yaw = (self._yaw + 0.5 * dx) % 360.0
                 self._pitch = float(np.clip(self._pitch + 0.5 * dy, -89.0, 89.0))
             else:
