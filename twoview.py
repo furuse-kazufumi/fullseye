@@ -78,10 +78,16 @@ def fundamental_8point(pts1, pts2):
 
 
 def sampson_distance(F, pts1, pts2):
-    """エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。"""
+    """エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。
+
+    Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。"""
     F = np.asarray(F, float)
-    x1 = _to_homog(pts1)
-    x2 = _to_homog(pts2)
+    p1 = _require_pts2d(pts1, "pts1")
+    p2 = _require_pts2d(pts2, "pts2")
+    if len(p1) != len(p2):
+        raise ValueError("correspondence point counts do not match")
+    x1 = _to_homog(p1)
+    x2 = _to_homog(p2)
     Fx1 = (F @ x1.T).T       # (N,3)
     Ftx2 = (F.T @ x2.T).T    # (N,3)
     num = np.sum(x2 * Fx1, axis=1) ** 2
