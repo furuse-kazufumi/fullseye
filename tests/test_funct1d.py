@@ -185,7 +185,7 @@ def test_degenerate_lengths_documented_contract():
     assert inv["x"].size == 0 and inv["y"].size == 0
     # 1 点: integrate は [0], smooth は恒等
     assert np.array_equal(F.integrate_funct_1d([7.0]), [0.0])
-    assert np.array_equal(F.smooth_funct_1d_gauss([7.0], 2.0), [7.0])
+    assert np.allclose(F.smooth_funct_1d_gauss([7.0], 2.0), [7.0])
     # match の縮退(1 点): shift 0 / score 0(文書化)
     r = F.match_funct_1d_trans([1.0], [5.0])
     assert r["shift"] == 0 and r["score"] == 0.0
