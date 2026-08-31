@@ -155,7 +155,7 @@ def _require_matrix(a, name: str = "a") -> np.ndarray:
 
 def _require_vector(v, name: str = "v", min_len: int = 1) -> np.ndarray:
     """Coerce to a strictly 1-D float64 vector or raise ``ValueError``."""
-    a = np.ascontiguousarray(v, dtype=np.float64)
+    a = _as_float64(v, name)
     if a.ndim != 1:
         raise ValueError("%s must be a 1-D vector, got a %d-D array of shape %r "
                          "— flatten/reshape explicitly, nothing is coerced silently"
