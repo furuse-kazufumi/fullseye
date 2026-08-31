@@ -217,3 +217,17 @@ def test_gaussian_psf_sigma_underflow_rejected():
     # a small-but-representable sigma still yields a finite normalised kernel
     k = volrestore.vol_gaussian_psf(1e-100)
     assert np.isfinite(k).all() and k.sum() == pytest.approx(1.0)
+
+
+def test_gaussian_psf_absurd_sigma_rejected_before_allocation():
+    """Regression(連鎖ファザー wave-4): pool の measurement(数百)が sigma に
+    紛れ、64GB のカーネルを 90 秒かけて従順に確保していた。PSF_MAX_ELEMENTS 超は
+    確保前に ValueError(即時に返ることの検証を兼ねる)。"""
+    with pytest.raises(ValueError, match="PSF_MAX_ELEMENTS"):
+        volrestore.vol_gaussian_psf(300.0)
+    with pytest.raises(ValueError, match="PSF_MAX_ELEMENTS"):
+        volrestore.vol_gaussian_psf(1.0, truncate=1e6)
+    # 実用域(装置ボケ数十 voxel)は従来どおり通る
+    k = volrestore.vol_gaussian_psf(20.0)              # 161^3 ≈ 4.2M 要素
+    assert k.shape == (161, 161, 161)
+    assert k.sum() == pytest.approx(1.0)
