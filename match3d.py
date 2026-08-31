@@ -1490,7 +1490,14 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),
         n_iter(実反復数)。
     """
-    _s, _d = np.asarray(src, float), np.asarray(dst, float)
+    try:
+        _s, _d = np.asarray(src, float), np.asarray(dst, float)
+        _n = np.asarray(dst_normals, float)
+    except (TypeError, ValueError) as e:
+        raise ValueError("icp_point2plane: src/dst/dst_normals must be numeric "
+                         "(N, 3) arrays (got %s / %s / %s)"
+                         % (type(src).__name__, type(dst).__name__,
+                            type(dst_normals).__name__)) from e
     if _s.ndim != 2 or _s.shape[1] != 3 or _d.ndim != 2 or _d.shape[1] != 3:
         raise ValueError("icp_point2plane: src/dst must be (N, 3) point arrays, got %r / %r"
                          % (_s.shape, _d.shape))
@@ -1499,6 +1506,16 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         raise ValueError("icp_point2plane: need at least 3 points on each side "
                          "(got %d / %d) — a rigid pose is undefined below that"
                          % (len(_s), len(_d)))
+    if _n.ndim != 2 or _n.shape[1] != 3:
+        raise ValueError("icp_point2plane: dst_normals must be an (M, 3) normal "
+                         "array, got %r" % (_n.shape,))
+    if len(_n) != len(_d):
+        # 連鎖ファザー実測(wave-4): dst と別サイズの法線が最近傍 index 参照
+        # Nn[idx] で生 IndexError 化する(index N out of bounds)。
+        raise ValueError("icp_point2plane: dst_normals must pair one normal with "
+                         "each dst point (got %d normals for %d points) — "
+                         "estimate normals on this dst cloud (e.g. "
+                         "pointcloud.estimate_normals(dst))" % (len(_n), len(_d)))
     dt = torch.float64
     P0 = torch.as_tensor(np.asarray(src, np.float64), dtype=dt, device=device)
     Q = torch.as_tensor(np.asarray(dst, np.float64), dtype=dt, device=device)
