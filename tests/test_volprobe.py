@@ -100,6 +100,20 @@ def test_profile_explicit_n_and_rejections():
         volprobe.vol_profile_line(np.zeros((8, 8)), (0, 0, 0), (7, 0, 0))
 
 
+def test_profile_order_and_n_are_never_silently_truncated():
+    """Regression: ``order=1.9`` used to be truncated to 1 and ``n=5.7`` to 5
+    by a bare int() — a silent parameter change, against the module's own
+    fail-closed contract and the volxform convention (exact integers only)."""
+    vol = np.zeros((8, 8, 8), np.float64)
+    with pytest.raises(ValueError, match="order"):
+        volprobe.vol_profile_line(vol, (0, 0, 0), (7, 0, 0), order=1.9)
+    with pytest.raises(ValueError, match="n "):
+        volprobe.vol_profile_line(vol, (0, 0, 0), (7, 0, 0), n=5.7)
+    # exact float integers remain accepted (2.0 == 2)
+    t, vals = volprobe.vol_profile_line(vol, (0, 0, 0), (7, 0, 0), n=5.0, order=1.0)
+    assert len(t) == len(vals) == 5
+
+
 # --------------------------------------------------------------------------- #
 # vol_edge_probe                                                              #
 # --------------------------------------------------------------------------- #
