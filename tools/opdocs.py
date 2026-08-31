@@ -440,15 +440,14 @@ def cmd_toc():
         dim_counts[dim] = (len(cats), total)
         out = [f"# {dim.upper()} operator help — {total} ops in {len(cats)} categories", "",
                "自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/" + dim + "/<category>/<op>.md` を走査。", ""]
-        if dim == "2d":
-            guides = sorted(glob.glob(os.path.join(DOCS, "2d", "guides", "*.md")))
-            if guides:
-                out.append("## ファミリ使い方ガイド(用途→op の教材)")
-                out.append("")
-                for g in guides:
-                    stem = os.path.splitext(os.path.basename(g))[0]
-                    out.append(f"- [{stem}](guides/{stem}.md) — {_md_title(g)}")
-                out.append("")
+        guides = sorted(glob.glob(os.path.join(DOCS, dim, "guides", "*.md")))
+        if guides:
+            out.append("## ファミリ使い方ガイド(用途→op の教材)")
+            out.append("")
+            for g in guides:
+                stem = os.path.splitext(os.path.basename(g))[0]
+                out.append(f"- [{stem}](guides/{stem}.md) — {_md_title(g)}")
+            out.append("")
         out.append("## カテゴリ")
         out.append("")
         for cat in sorted(cats):
