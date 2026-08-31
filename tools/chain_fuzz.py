@@ -119,6 +119,23 @@ def catalog():
     for n, m in ops1d.OPS1D.items():
         if m["func"] is not None and m["category"] != "io":   # ファイル I/O は除外
             ops.append((n, "1d", list(m["in"]), m["out"], m["func"]))
+    # complexops = HALCON の complex 画像形式(2-D)。image2d <-> cimage の橋
+    import complexops as cx
+    for name, ins, out in [
+        ("cx_fft", ["image2d"], "cimage"),
+        ("cx_ifft", ["cimage"], "image2d"),
+        ("cx_magnitude", ["cimage"], "image2d"),
+        ("cx_phase", ["cimage"], "image2d"),
+        ("cx_real", ["cimage"], "image2d"),
+        ("cx_imag", ["cimage"], "image2d"),
+        ("cx_log_magnitude", ["cimage"], "image2d"),
+        ("cx_from_mag_phase", ["image2d", "image2d"], "cimage"),
+        ("phase_unwrap", ["image2d"], "image2d"),
+        ("cx_apply_transfer_function", ["cimage"], "cimage"),
+        ("cx_bandpass", ["image2d"], "image2d"),
+        ("cx_wiener_deconvolve", ["image2d"], "image2d"),
+    ]:
+        ops.append((name, "2d", ins, out, getattr(cx, name)))
     return ops
 
 
