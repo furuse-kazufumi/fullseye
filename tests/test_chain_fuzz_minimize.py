@@ -78,6 +78,22 @@ def test_minimize_reduces_and_preserves_the_signature(env):
     assert reduced_any, "5 件試して 1 件も短縮できない = 削り込みが効いていない"
 
 
+def test_arg_binding_rng_is_position_independent(env):
+    """引数抽選は「連鎖 seed × op 名 × 出現回数」で決まり、**前段の op 数に
+    依存しない**。これが崩れると、無関係な op を 1 つ落としただけで以降の
+    抽選が全部ずれ、最小化が再現しなくなる(実測: 分離前 48/65 → 後 58/58)。"""
+    ops, gens = env
+    # 同じ op を、前に無害な op を挟む/挟まないの 2 通りで実行して比較
+    a, b = [], []
+    run_chain(ops, gens, np.random.default_rng(11), 0, a, chain_seed=11,
+              script=["mat_eigh"])
+    run_chain(ops, gens, np.random.default_rng(11), 0, b, chain_seed=11,
+              script=["stat_zscore", "mat_eigh"])
+    got_a = [signature(f) for f in a if f["op"] == "mat_eigh"]
+    got_b = [signature(f) for f in b if f["op"] == "mat_eigh"]
+    assert got_a == got_b, "前段の有無で mat_eigh の引数抽選が変わっている"
+
+
 def test_minimize_is_honest_when_it_cannot_reproduce(env):
     """seed を持たない発見(旧形式 jsonl)は「再現せず」を返す。捏造しない。"""
     ops, gens = env
