@@ -1811,82 +1811,136 @@ def _u(v):
     return v / np.linalg.norm(v).clip(1e-12)
 
 
+def _vec(v, op, name):
+    """幾何プリミティブ引数の検証: 数値の 2/3 ベクトルへ fail-closed に正規化。
+
+    連鎖ファザー実測(wave-4): プール産物の dict がそのまま座標引数へ流れ込み、
+    np.asarray(…, float) が生 TypeError で落ちていた。型・形状不正は明確な
+    ValueError で拒否する(契約=CONTRACT に変える)。
+    """
+    try:
+        a = np.asarray(v, float)
+    except (TypeError, ValueError) as e:
+        raise ValueError("%s: %s must be a numeric coordinate/direction vector "
+                         "(got %s) — pass (x, y) or (x, y, z)"
+                         % (op, name, type(v).__name__)) from e
+    if a.ndim != 1 or a.shape[0] not in (2, 3):
+        raise ValueError("%s: %s must be a 2- or 3-vector (got shape %r) — "
+                         "pass (x, y) or (x, y, z)" % (op, name, a.shape))
+    return a
+
+
+def _vecs(op, **named):
+    """複数ベクトル引数を一括検証し、次元(2D/3D)の混在も拒否。→ kwargs 順の tuple。"""
+    out = [(k, _vec(v, op, k)) for k, v in named.items()]
+    dims = {a.shape[0] for _, a in out}
+    if len(dims) > 1:
+        raise ValueError("%s: all arguments must share one dimensionality "
+                         "(got %s) — mixing 2D and 3D coordinates is undefined"
+                         % (op, ", ".join("%s=%d-vector" % (k, a.shape[0])
+                                          for k, a in out)))
+    return tuple(a for _, a in out)
+
+
+def _pts(points, op, min_pts, name="points"):
+    """点群引数の検証: 数値 (N,3) 配列へ fail-closed に正規化(最小点数も強制)。"""
+    try:
+        P = np.asarray(points, float)
+    except (TypeError, ValueError) as e:
+        raise ValueError("%s: %s must be a numeric (N, 3) point array (got %s)"
+                         % (op, name, type(points).__name__)) from e
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("%s: %s must be an (N, 3) point array, got %r"
+                         % (op, name, P.shape))
+    if len(P) < min_pts:
+        raise ValueError("%s: need at least %d points (got %d) — the fit is "
+                         "undefined below that" % (op, min_pts, len(P)))
+    return P
+
+
 def line_from_2points(a, b):
     """2 点 → 直線(通過点, 単位方向)。2 座標で線が定まる(2D/3D 共通)。"""
-    a = np.asarray(a, float)
-    return a, _u(np.asarray(b, float) - a)
+    a, b = _vecs("line_from_2points", a=a, b=b)
+    return a, _u(b - a)
 
 
 def plane_from_3points(a, b, c):
     """3 点 → 平面(通過点, 単位法線)。3 座標で面が定まる(2D/3D 共通)。"""
-    a = np.asarray(a, float); b = np.asarray(b, float); c = np.asarray(c, float)
+    a, b, c = _vecs("plane_from_3points", a=a, b=b, c=c)
     return a, _u(np.cross(b - a, c - a))
 
 
 def angle_3points(a, b, c):
     """3 点のなす角(頂点 b、度)。∠ABC。"""
-    return float(np.degrees(np.arccos(np.clip(
-        _u(np.asarray(a, float) - np.asarray(b, float))
-        @ _u(np.asarray(c, float) - np.asarray(b, float)), -1, 1))))
+    a, b, c = _vecs("angle_3points", a=a, b=b, c=c)
+    return float(np.degrees(np.arccos(np.clip(_u(a - b) @ _u(c - b), -1, 1))))
 
 
 def angle_between_lines(d1, d2):
     """2 直線方向のなす鋭角(度)。"""
+    d1, d2 = _vecs("angle_between_lines", d1=d1, d2=d2)
     return float(np.degrees(np.arccos(np.clip(abs(_u(d1) @ _u(d2)), -1, 1))))
 
 
 def angle_between_planes(n1, n2):
     """2 平面の二面角(法線 n1,n2、度)。"""
+    n1, n2 = _vecs("angle_between_planes", n1=n1, n2=n2)
     return float(np.degrees(np.arccos(np.clip(abs(_u(n1) @ _u(n2)), -1, 1))))
 
 
 def angle_line_plane(d, n):
     """直線(方向 d)と平面(法線 n)のなす角(度)。"""
+    d, n = _vecs("angle_line_plane", d=d, n=n)
     return float(90.0 - np.degrees(np.arccos(np.clip(abs(_u(d) @ _u(n)), -1, 1))))
 
 
 def distance_point_plane(p, plane_pt, n):
     """点-平面距離(符号なし)。"""
-    return float(abs((np.asarray(p, float) - np.asarray(plane_pt, float)) @ _u(n)))
+    p, plane_pt, n = _vecs("distance_point_plane", p=p, plane_pt=plane_pt, n=n)
+    return float(abs((p - plane_pt) @ _u(n)))
 
 
 def distance_point_line(p, line_pt, d):
     """点-直線距離。"""
-    d = _u(d); w = np.asarray(p, float) - np.asarray(line_pt, float)
+    p, line_pt, d = _vecs("distance_point_line", p=p, line_pt=line_pt, d=d)
+    d = _u(d); w = p - line_pt
     return float(np.linalg.norm(w - (w @ d) * d))
 
 
 def distance_line_line(p1, d1, p2, d2):
     """2 直線間距離(ねじれの位置=skew も可)。平行なら点-線距離に退避。"""
+    p1, d1, p2, d2 = _vecs("distance_line_line", p1=p1, d1=d1, p2=p2, d2=d2)
     d1 = _u(d1); d2 = _u(d2); n = np.cross(d1, d2); ln = np.linalg.norm(n)
     if ln < 1e-9:
         return distance_point_line(p2, p1, d1)
-    return float(abs((np.asarray(p2, float) - np.asarray(p1, float)) @ (n / ln)))
+    return float(abs((p2 - p1) @ (n / ln)))
 
 
 def intersect_line_plane(line_pt, d, plane_pt, n):
     """直線 ∩ 平面 → 点(平行なら None)。"""
-    d = np.asarray(d, float); n = _u(n); dn = d @ n
+    line_pt, d, plane_pt, n = _vecs("intersect_line_plane",
+                                    line_pt=line_pt, d=d, plane_pt=plane_pt, n=n)
+    n = _u(n); dn = d @ n
     if abs(dn) < 1e-9:
         return None
-    t = (np.asarray(plane_pt, float) - np.asarray(line_pt, float)) @ n / dn
-    return np.asarray(line_pt, float) + t * d
+    t = (plane_pt - line_pt) @ n / dn
+    return line_pt + t * d
 
 
 def intersect_planes(p1, n1, p2, n2):
     """平面 ∩ 平面 → 直線(通過点, 方向)。平行なら None。"""
+    p1, n1, p2, n2 = _vecs("intersect_planes", p1=p1, n1=n1, p2=p2, n2=n2)
     n1 = _u(n1); n2 = _u(n2); d = np.cross(n1, n2); ld = np.linalg.norm(d)
     if ld < 1e-9:
         return None
     d = d / ld
-    A = np.array([n1, n2, d]); bb = np.array([n1 @ np.asarray(p1, float),
-                                              n2 @ np.asarray(p2, float), 0.0])
+    A = np.array([n1, n2, d]); bb = np.array([n1 @ p1, n2 @ p2, 0.0])
     return np.linalg.solve(A, bb), d
 
 
 def fit_line_3d(points):
     """点群 → 最小二乗直線(通過点=重心, 方向=最大主軸)。返り値 (point, direction)。"""
-    P = np.asarray(points, float); c = P.mean(0)
+    P = _pts(points, "fit_line_3d", 2); c = P.mean(0)
     _, v = np.linalg.eigh((P - c).T @ (P - c))
     return c, v[:, -1]
 
