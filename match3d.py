@@ -2095,8 +2095,10 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     円周方向に並ぶ特徴を「縦」に伸ばして通常の 2D 手法(直線探索/相関)を適用できる。grid_sample。
     θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない
     周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。
+
+    Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。
     """
-    img = np.asarray(image, np.float32); H, W = img.shape
+    img = _f32_finite(image, "polar_unwrap: image"); H, W = img.shape
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
