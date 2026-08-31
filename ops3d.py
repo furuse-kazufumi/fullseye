@@ -290,6 +290,8 @@ _CATALOG = {
     "surface_fit": [  # 曲面近似 z=f(x,y)
         ("fit_poly_surface", "match3d", ["image2d"], "surface", False),
         ("eval_poly_surface", "match3d", ["surface"], "image2d", False),
+        # (residual (H,W), rms, pv) → adapter で pv を剥がして measurement
+        # (形状誤差 = 残差の peak-to-valley が計測の正典。wave-4 TYPEMISS 修正)
         ("surface_form_error", "match3d", ["image2d"], "measurement", False),
         ("background_flatten", "match3d", ["image2d"], "image2d", False),
     ],
