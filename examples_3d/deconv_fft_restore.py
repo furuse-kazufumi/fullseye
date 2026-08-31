@@ -17,7 +17,10 @@ Ground truth(検証):
     合成シーンは真値既知 — 球 2 個(真の構造)を σ=2 の PSF でぼかし、
     低周波の照明ドリフトを加算。
     - 相補性: lowpass + highpass = 入力(float 精度、恒等式)
-    - ドリフト除去: highpass 後の残差ドリフトが元の 1/10 未満(実測)
+    - ドリフト除去: 線形性で分離したドリフト成分単独が 1/16(実測)。
+      ガウス伝達は緩く、ドリフト周波数(0.035 c/vox)の 3 倍の cutoff=0.1 で
+      ようやくこの抑制 — cutoff を上げると構造の粗い成分も削れるという
+      古典的トレードオフごと開示
     - RL: RMSE が観測比 0.81x(10 回)→ 0.68x(50 回)と漸進改善(実測。
       縁の階段が残差を支配するため「半減」はしない — 正直に漸進と書く)。
       前方一貫性(推定を再ぼかし → 観測)は 0.03x 未満 = RL が実際に最適化
@@ -51,17 +54,25 @@ def main():
     truth, psf, blurred, drift = build_scene()
     observed = blurred + drift
 
-    # 1)-2) 照明ドリフトの分離: 相補性は恒等式、除去率は実測で主張
-    lp = vol_fft_lowpass(observed, cutoff=0.04)
-    hp = vol_fft_highpass(observed, cutoff=0.04)
+    # 1)-2) 照明ドリフトの分離。highpass は線形なので
+    # hp(observed) = hp(blurred) + hp(drift) — ドリフト成分の抑制率は
+    # hp(drift) 単独で正確に測れる(構造から削れた分と混同しない)。
+    # ドリフトは |f|=0.035 c/vox に乗っており、ガウス伝達は緩いので
+    # cutoff=0.1 でようやく 1/16(実測)。cutoff を上げるほど構造の粗い成分も
+    # 削れる — この古典的トレードオフごと開示する
+    cutoff = 0.1
+    lp = vol_fft_lowpass(observed, cutoff=cutoff)
+    hp = vol_fft_highpass(observed, cutoff=cutoff)
     assert np.allclose(lp + hp, observed, atol=1e-10), "low+high が入力に戻らない"
-    resid_drift = float(np.abs((hp - (observed - drift - observed.mean()))).mean())
+    hp_drift = vol_fft_highpass(drift, cutoff=cutoff)
     base_drift = float(np.abs(drift).mean())
+    resid_drift = float(np.abs(hp_drift).mean())
+    supp = base_drift / max(resid_drift, 1e-12)
     print("[fft filters]")
     print(f"  相補性 lowpass+highpass=入力: 一致(atol 1e-10)")
-    print(f"  ドリフト平均振幅 {base_drift:.3f} → highpass 後の平均残差 {resid_drift:.3f}"
-          f"(1/{base_drift / max(resid_drift, 1e-12):.0f})")
-    assert resid_drift < base_drift / 10.0, "ドリフトが 1/10 未満に落ちていない"
+    print(f"  ドリフト成分単独: 平均振幅 {base_drift:.3f} → {resid_drift:.4f}"
+          f"(1/{supp:.0f})")
+    assert supp > 14.0, f"ドリフト抑制が実測想定未満: 1/{supp:.1f}"
 
     # 3) バンドパス: 球のスケール帯が最大シェアで残る(検算のみ、緩い assert)
     bp = vol_fft_bandpass(observed, low=0.01, high=0.2)
