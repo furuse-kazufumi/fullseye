@@ -918,13 +918,7 @@ def render_points_frame(points, colors=None, yaw=35.0, pitch=25.0, zoom=1.0,
     order = np.argsort(depth)[::-1]
     xi = np.floor(xy[order, 0]).astype(int)
     yi = np.floor(xy[order, 1]).astype(int)
-    Co = C[order]
-    px = max(1, int(point_px))
-    for dy in range(px):
-        for dx in range(px):
-            xs, ys = xi + dx, yi + dy
-            ok = (xs >= 0) & (xs < size) & (ys >= 0) & (ys < size)
-            img[ys[ok], xs[ok]] = Co[ok]
+    _splat_points(img, xi, yi, C[order], max(1, int(point_px)))
     return img
 
 
