@@ -156,6 +156,8 @@ from volops import (  # noqa: E402,F401
     vol_frangi, vol_sato, vol_hessian_blobness, vol_distance_transform,
     vol_label, vol_region_props, vol_gradient_magnitude, vol_local_maxima,
     vol_watershed,
+    vol_reduce_domain, vol_bounding_box, vol_crop_domain, vol_uncrop,
+    vol_boundary, vol_boundary_points,
 )
 from handpose import (  # noqa: E402,F401
     hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
