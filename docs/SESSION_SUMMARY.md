@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-31 22:47:05
+- **最終更新**: 2026-08-31 22:58:41
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-b90e5cbe Studio FP ラウンド3: FOV 可変+QTimer 滑らか移動+FP 中 wireframe+ランプキャッシュ(-28%)
-28780005 auto: test_studio.py 編集前 (2026-08-31 22:40)
-26d49248 auto: studio.py 編集前 (2026-08-31 22:40)
-a879fdba auto: test_studio.py 編集前 (2026-08-31 22:39)
-6447b6ca auto: studio.py 編集前 (2026-08-31 22:38)
-d2f07b8c auto: studio.py 編集前 (2026-08-31 22:38)
-ddd2400e auto: studio.py 編集前 (2026-08-31 22:38)
-902156c3 auto: studio.py 編集前 (2026-08-31 22:38)
-18c1d19f auto: studio.py 編集前 (2026-08-31 22:38)
-19a52dfd auto: studio.py 編集前 (2026-08-31 22:38)
+55aebb13 auto: test_opdocs.py 編集前 (2026-08-31 22:58)
+27ac2d6f auto: test_volprobe.py 編集前 (2026-08-31 22:57)
+ce93728e auto: test_opdocs.py 編集前 (2026-08-31 22:57)
+d418632f auto: opdocs.py 編集前 (2026-08-31 22:56)
+9024bda5 auto: ops3d.py 編集前 (2026-08-31 22:56)
+22095555 auto: ops3d.py 編集前 (2026-08-31 22:56)
+1918f431 auto: ops3d.py 編集前 (2026-08-31 22:56)
+7dc5cad1 auto: ops3d.py 編集前 (2026-08-31 22:55)
+f346ee93 auto: ops3d.py 編集前 (2026-08-31 22:55)
+014a7fdc auto: chain_fuzz.py 編集前 (2026-08-31 22:54)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M tests/test_opdocs.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-22:44 .pytest_cache/v/cache/nodeids
-22:40 tests/test_studio.py
-22:40 studio.py
-22:38 docs/SESSION_SUMMARY.md
-22:25 docs/NEXT_OPS_PLAN_2026-08-31.md
-22:25 fullseye/OP_CATALOG.md
-22:25 docs/OP_CATALOG.md
-22:25 tools/gen_op_catalog.py
-22:24 pyproject.toml
-22:24 opsmath.py
-22:17 tests/test_mathops.py
-22:17 mathops.py
-22:13 tools/chain_fuzz.py
-22:13 ops3d.py
-22:13 ops1d.py
+22:58 .pytest_cache/v/cache/nodeids
+22:58 .pytest_cache/v/cache/lastfailed
+22:58 tests/test_opdocs.py
+22:57 tests/test_volprobe.py
+22:57 studio_assets/op_help/guide_math_metrology.html
+22:57 studio_assets/op_help/guide_handpose.html
+22:57 studio_assets/op_help/guide_gallery2d_texture_freq.html
+22:57 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
+22:57 studio_assets/op_help/guide_gallery2d_segmentation.html
+22:57 studio_assets/op_help/guide_gallery2d_region.html
+22:57 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
+22:57 studio_assets/op_help/guide_gallery2d_morphology.html
+22:57 studio_assets/op_help/guide_gallery2d_halcon_ext.html
+22:57 studio_assets/op_help/guide_gallery2d_gray_arith.html
+22:57 studio_assets/op_help/guide_gallery2d_geometry.html
 ```
 
 ---

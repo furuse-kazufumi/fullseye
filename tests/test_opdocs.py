@@ -186,6 +186,100 @@ def test_3d_help_pages_carry_marker_and_have_no_stray_2d_anchors():
     assert not stray, f"3-D help pages carry bare 2-D op: anchors (should be op3d:): {stray[:20]}"
 
 
+# --------------------------------------------------------------------------- #
+# math ops (opsmath ledger): same md=source-of-truth pipeline as 2-D/3-D —
+# notes under docs/ops/math/<category>/, help pages in op_help/math/<name>.html
+# (namespaced like 3-D; op-jump anchors are opmath:, the guide anchor guidemath:),
+# and one authored family guide (docs/ops/math/guides/math_metrology.md).
+# --------------------------------------------------------------------------- #
+_MATH_RECS = [r for r in _RECS if r["dim"] == "math"]
+_HELPMATH = os.path.join(ROOT, "studio_assets", "op_help", "math")
+_MATH_GUIDE = os.path.join(ROOT, "docs", "ops", "math", "guides", "math_metrology.md")
+
+
+def test_math_registry_is_connected():
+    """Every op in the opsmath ledger flows into the docs corpus (and only those)."""
+    import opsmath
+    have = {r["name"] for r in _MATH_RECS}
+    assert have == set(opsmath.OPSMATH), (
+        f"docs corpus and opsmath ledger disagree: only-in-docs={have - set(opsmath.OPSMATH)}, "
+        f"only-in-ledger={set(opsmath.OPSMATH) - have}")
+    assert len(_MATH_RECS) >= 16                       # tier-1: linalg 6 + stats 5 + interp_poly 5
+    assert {"linalg", "stats", "interp_poly"} <= {r["category"] for r in _MATH_RECS}
+
+
+def test_every_math_op_has_a_studio_help_page():
+    missing = [r["name"] for r in _MATH_RECS
+               if not os.path.exists(os.path.join(_HELPMATH, r["name"] + ".html"))]
+    assert not missing, f"{len(missing)} math ops lack an op_help/math page: {missing}"
+
+
+def test_math_help_is_generated_from_markdown_no_drift():
+    """Each math help page == md_to_html of its committed note, with op-jump anchors
+    namespaced op: -> opmath: and the guide anchor guide2d: -> guidemath:."""
+    drift = []
+    for r in _MATH_RECS:
+        html_path = os.path.join(_HELPMATH, r["name"] + ".html")
+        md_path = OD._op_path(r)
+        if not (os.path.exists(html_path) and os.path.exists(md_path)):
+            continue
+        with open(html_path, encoding="utf-8") as f:
+            on_disk = f.read()
+        with open(md_path, encoding="utf-8") as f:
+            md = f.read()
+        expected = (OD._GEN_MARK + "\n"
+                    + OD.md_to_html(md)
+                    .replace('href="op:', 'href="opmath:')
+                    .replace('href="guide2d:', 'href="guidemath:'))
+        if on_disk != expected:
+            drift.append(os.path.relpath(html_path, ROOT))
+    assert not drift, ("math help pages are stale — run `py -3.11 tools/opdocs.py html`:\n"
+                       + "\n".join(drift[:30]))
+
+
+def test_math_help_pages_carry_marker_and_are_namespaced():
+    unmarked, stray = [], []
+    for r in _MATH_RECS:
+        p = os.path.join(_HELPMATH, r["name"] + ".html")
+        if not os.path.exists(p):
+            continue
+        with open(p, encoding="utf-8") as f:
+            txt = f.read()
+        if OD._GEN_MARK not in txt:
+            unmarked.append(r["name"])
+        if 'href="op:' in txt or 'href="guide2d:' in txt:
+            stray.append(r["name"])
+    assert not unmarked, f"math help pages missing the generated marker: {unmarked}"
+    assert not stray, f"math help pages carry non-namespaced op:/guide2d: anchors: {stray}"
+
+
+def test_math_family_guide_is_well_formed():
+    """The maths family has one authored usage guide, held to the same bar as the
+    2-D gallery guides: frontmatter, author, a mermaid diagram, a runnable python
+    snippet, and grounded mentions of its own ops."""
+    assert os.path.exists(_MATH_GUIDE), "docs/ops/math/guides/math_metrology.md missing"
+    with open(_MATH_GUIDE, encoding="utf-8") as f:
+        md = f.read()
+    assert md.lstrip().startswith("---"), "math guide: missing YAML frontmatter"
+    assert "Kazufumi Furuse" in md, "math guide: missing author/copyright"
+    assert "```mermaid" in md, "math guide: missing a mermaid pipeline diagram"
+    assert "```python" in md, "math guide: missing a runnable python snippet"
+    import opsmath
+    hit = {n for n in opsmath.OPSMATH
+           if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
+    assert len(hit) >= 3, f"math guide names too few of its own ops ({len(hit)}/{len(opsmath.OPSMATH)})"
+
+
+def test_math_notes_link_their_family_guide():
+    """Every math note points at the family guide (the AI-usage entry point)."""
+    unlinked = []
+    for r in _MATH_RECS:
+        with open(OD._op_path(r), encoding="utf-8") as f:
+            if "../guides/math_metrology.md" not in f.read():
+                unlinked.append(r["name"])
+    assert not unlinked, f"math notes without a family-guide link: {unlinked}"
+
+
 def test_no_dangling_relative_links_in_corpus():
     """Every relative Markdown link under docs/ops resolves. This guards against an op
     docstring accidentally forming a link — e.g. a range 's∈[-1,1](凸球+1・...)' parses as
