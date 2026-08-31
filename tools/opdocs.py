@@ -341,8 +341,9 @@ def cmd_md():
         with open(p, "w", encoding="utf-8") as f:
             f.write(_op_md(rec, p, by_name))
         n += 1
-    # ensure guides dir exists (authored separately)
+    # ensure guides dirs exist (authored separately)
     os.makedirs(os.path.join(DOCS, "2d", "guides"), exist_ok=True)
+    os.makedirs(os.path.join(DOCS, "math", "guides"), exist_ok=True)
     print(f"opdocs md: wrote {n} per-op notes under {DOCS}")
     return recs
 
