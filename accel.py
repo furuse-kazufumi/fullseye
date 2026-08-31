@@ -391,7 +391,11 @@ def _highpass(t, a, b, dev):
 def _grad_dir(t, a, b, dev):
     gx = _conv(t, np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], np.float32), dev)
     gy = _conv(t, np.array([[-1, -2, -1], [0, 0, 0], [1, 2, 1]], np.float32), dev)
-    return (torch.atan2(gy, gx) + np.pi) / (2 * np.pi)
+    ang = (torch.atan2(gy, gx) + np.pi) / (2 * np.pi)
+    # 勾配が f32 雑音床以下の画素は core の atan2(0,0)=0 → 0.5 に合わせる
+    # (P1: 平坦画像で雑音の位相がランダムになり mean 0.25 へ崩れていた)
+    flat = torch.hypot(gx, gy) < 1e-6
+    return torch.where(flat, torch.full_like(ang, 0.5), ang)
 
 
 def _equalize(t, a, b, dev):
