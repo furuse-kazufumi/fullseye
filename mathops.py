@@ -1210,9 +1210,13 @@ def cplx_argument_principle(z, fz):
       * The result is multiplied by the winding number of the contour itself,
         so it equals ``Z - P`` only for a **simple, positively-oriented**
         contour (a clockwise one returns ``-(Z - P)``).
-      * It is the winding of the *sampled* image polygon. If the contour is too
-        coarse the image can jump by half a turn between samples; that is
-        detected and raised (see below), not silently miscounted.
+      * It is the winding of the *sampled* image polygon, so it **aliases low**
+        on a coarse contour. A half-turn jump between samples is detected and
+        raised; anything below that is indistinguishable from a genuine slower
+        turn — ``f = z**5`` on a 4-point circle returns 1, not 5 (measured).
+        A ``RuntimeWarning`` fires from ``pi/2`` per step onward
+        (:data:`WIND_ALIAS_WARN`); the verification that actually works is to
+        double ``n`` until the count repeats.
 
     **Raises** ``ValueError``: ``f`` vanishes at a sample point (a zero *on*
     the path — the count is undefined there), the image curve is undersampled
