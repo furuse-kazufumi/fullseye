@@ -150,6 +150,13 @@ OP_PARAM_HINTS = {
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
     ("cx_apply_transfer_function", "H"): lambda rng: rng.random((32, 32)),
+    # tier2 複素解析: w = 輪郭の内側にありそうな点(外・線上なら fail-closed
+    # の CONTRACT が出るのが正しい)。Möbius の 4 係数は ad-bc≠0 の実例
+    ("cplx_cauchy_value", "w"): lambda rng: 0.1 + 0.1j,
+    ("cplx_mobius", "a"): lambda rng: 1.0,
+    ("cplx_mobius", "b"): lambda rng: -1j,
+    ("cplx_mobius", "c"): lambda rng: 1.0,
+    ("cplx_mobius", "d"): lambda rng: 1j,
 }
 
 #: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
