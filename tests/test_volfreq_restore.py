@@ -11,9 +11,11 @@ import volrestore
 # volfreq                                                                      #
 # --------------------------------------------------------------------------- #
 def _two_scale_volume(n=32):
-    """A slow z-gradient (low frequency) + a fine checkerboard (Nyquist)."""
+    """A slow single-period sine along z (f=1/32 c/vox — genuinely periodic,
+    unlike a ramp, whose wrap-around jump leaks energy into all frequencies:
+    the documented periodicity limitation) + a fine checkerboard (Nyquist)."""
     z, y, x = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
-    slow = z / n
+    slow = np.sin(2 * np.pi * z / n)
     fine = 0.25 * ((-1.0) ** (z + y + x))
     return slow, fine, slow + fine
 
@@ -21,8 +23,9 @@ def _two_scale_volume(n=32):
 def test_lowpass_keeps_slow_and_kills_fine():
     slow, fine, v = _two_scale_volume()
     lp = volfreq.vol_fft_lowpass(v, cutoff=0.1)
-    # the checkerboard (|f| ~ 0.87 cycles/voxel diag) is crushed, the ramp stays
-    assert np.abs(lp - slow).max() < 0.05
+    # the checkerboard (|f| ~ 0.87 cycles/voxel diag) is crushed, the slow
+    # sine (0.031 c/vox, transfer exp(-0.031^2/(2*0.1^2)) = 0.95) survives
+    assert np.abs(lp - 0.95 * slow).max() < 0.02
     assert np.abs(lp - v).max() > 0.2                # it genuinely removed something
 
 
