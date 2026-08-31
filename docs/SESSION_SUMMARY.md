@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-31 19:49:33
+- **最終更新**: 2026-08-31 21:04:40
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-79e0a06b examples3d レジストリに roi_domain_boundary 登録 + EXAMPLES_3D.md 再生成(107例/285op)
-bc858765 記事(ja/en)追記3: 3D domain/boundary+一人称ウォークスルー(Qiita PATCH 済み)
-309d4605 auto: fullseye_overview_qiita_en.md 編集前 (2026-08-31 19:27)
-c0382a55 3D domain/boundary ファミリ + Studio 一人称ウォークスルー
-468954bd auto: test_volops.py 編集前 (2026-08-31 19:25)
-f3d9a3c7 auto: volops.py 編集前 (2026-08-31 19:25)
-a106fb57 auto: volops.py 編集前 (2026-08-31 19:25)
-80d7c1e1 auto: roi_domain_boundary.py 編集前 (2026-08-31 19:22)
-fb13dda0 auto: roi_domain_boundary.py 編集前 (2026-08-31 19:21)
-a95cfc44 auto: roi_domain_boundary.py 編集前 (2026-08-31 19:21)
+c7b80c66 auto: api.py 編集前 (2026-08-31 21:04)
+342a9738 auto: rle_region_efficiency.py 編集前 (2026-08-31 21:02)
+08e295cb auto: rle_region_efficiency.py 編集前 (2026-08-31 21:02)
+2fd507b5 auto: rle_region_efficiency.py 編集前 (2026-08-31 21:02)
+c7a7a9b7 auto: ops3d.py 編集前 (2026-08-31 21:02)
+e2d14201 auto: __init__.py 編集前 (2026-08-31 21:02)
+0e94c35f auto: __init__.py 編集前 (2026-08-31 21:02)
+bd37cd5b auto: api.py 編集前 (2026-08-31 21:02)
+b3195058 auto: api.py 編集前 (2026-08-31 21:01)
+fac622c6 auto: examples3d.py 編集前 (2026-08-31 20:58)
 ```
 
 ## 現在の git status
 
 ```
-M docs/SESSION_SUMMARY.md
+M api.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-19:42 docs/SESSION_SUMMARY.md
-19:38 .pytest_cache/v/cache/nodeids
-19:30 docs/EXAMPLES_3D.md
-19:30 .pytest_cache/v/cache/lastfailed
-19:30 examples3d.py
-19:27 docs/articles/fullseye_overview_qiita_en.md
-19:27 docs/articles/fullseye_overview_qiita_ja.md
-19:25 studio_assets/op_help/guide_handpose.html
-19:25 studio_assets/op_help/guide_gallery2d_texture_freq.html
-19:25 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
-19:25 studio_assets/op_help/guide_gallery2d_segmentation.html
-19:25 studio_assets/op_help/guide_gallery2d_region.html
-19:25 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
-19:25 studio_assets/op_help/guide_gallery2d_morphology.html
-19:25 studio_assets/op_help/guide_gallery2d_halcon_ext.html
+21:04 api.py
+21:03 docs/NEXT_OPS_PLAN_2026-08-31.md
+21:03 docs/EXAMPLES_3D.md
+21:03 fullseye/OP_CATALOG.md
+21:03 docs/OP_CATALOG.md
+21:02 studio_assets/op_help/guide_handpose.html
+21:02 studio_assets/op_help/guide_gallery2d_texture_freq.html
+21:02 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
+21:02 studio_assets/op_help/guide_gallery2d_segmentation.html
+21:02 studio_assets/op_help/guide_gallery2d_region.html
+21:02 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
+21:02 studio_assets/op_help/guide_gallery2d_morphology.html
+21:02 studio_assets/op_help/guide_gallery2d_halcon_ext.html
+21:02 studio_assets/op_help/guide_gallery2d_gray_arith.html
+21:02 studio_assets/op_help/guide_gallery2d_geometry.html
 ```
 
 ---
