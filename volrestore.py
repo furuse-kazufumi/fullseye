@@ -74,6 +74,10 @@ def vol_gaussian_psf(sigma, truncate=4.0):
     if not np.isfinite(tr) or tr <= 0.0:
         raise ValueError("truncate must be positive and finite, got %r"
                          % (truncate,))
+    if (s * s <= 0.0).any():
+        raise ValueError("sigma %r is so small that sigma**2 underflows to 0 — "
+                         "the Gaussian would be 0/0 = NaN; use a representable "
+                         "sigma (> ~1.5e-154)" % (sigma,))
     axes = []
     for si in s:
         r = int(np.ceil(tr * si))
