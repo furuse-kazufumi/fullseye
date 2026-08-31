@@ -8,8 +8,9 @@
 funct1d に既存で、ここでは重複させない。
 
 拡張ロードマップ(tier、docs/NEXT_OPS_PLAN_2026-08-31.md §F が正本):
-  tier1 線形代数/統計/補間・多項式(済)→ tier2 複素解析の計算可能な切り口
-  (Cauchy 積分・偏角の原理・等角写像)→ tier3 最適化/特殊関数 → …
+  tier1 線形代数/統計/補間・多項式(済 16op)→ tier2 複素解析の計算可能な
+  切り口(済 10op: 周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・
+  Joukowski/Möbius 等角写像・Cauchy-Riemann 残差)→ tier3 最適化/特殊関数 → …
 
 使い方:
     import opsmath
