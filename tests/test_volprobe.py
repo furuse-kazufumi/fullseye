@@ -105,9 +105,9 @@ def test_profile_order_and_n_are_never_silently_truncated():
     by a bare int() — a silent parameter change, against the module's own
     fail-closed contract and the volxform convention (exact integers only)."""
     vol = np.zeros((8, 8, 8), np.float64)
-    with pytest.raises(ValueError, match="order"):
+    with pytest.raises(ValueError, match="exact integer"):
         volprobe.vol_profile_line(vol, (0, 0, 0), (7, 0, 0), order=1.9)
-    with pytest.raises(ValueError, match="n "):
+    with pytest.raises(ValueError, match="exact integer"):
         volprobe.vol_profile_line(vol, (0, 0, 0), (7, 0, 0), n=5.7)
     # exact float integers remain accepted (2.0 == 2)
     t, vals = volprobe.vol_profile_line(vol, (0, 0, 0), (7, 0, 0), n=5.0, order=1.0)

@@ -3,52 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-08-31 21:29:40
+- **最終更新**: 2026-08-31 21:39:24
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-275790ca auto: gen_op_catalog.py 編集前 (2026-08-31 21:27)
-c58eede6 auto: gen_op_catalog.py 編集前 (2026-08-31 21:27)
-8a736db6 auto: studio.py 編集前 (2026-08-31 21:24)
-5895d36c auto: studio.py 編集前 (2026-08-31 21:24)
-156f8062 auto: studio.py 編集前 (2026-08-31 21:24)
-731de81c auto: examples3d.py 編集前 (2026-08-31 21:20)
-6e5cfb28 auto: __init__.py 編集前 (2026-08-31 21:19)
-0c582855 auto: __init__.py 編集前 (2026-08-31 21:19)
-292cb212 auto: api.py 編集前 (2026-08-31 21:19)
-0528094b auto: api.py 編集前 (2026-08-31 21:19)
+7426b773 auto: test_volprobe.py 編集前 (2026-08-31 21:39)
+adfecae2 auto: test_volprobe.py 編集前 (2026-08-31 21:39)
+dad8311e auto: test_studio.py 編集前 (2026-08-31 21:39)
+c20ac5f6 auto: test_volgray.py 編集前 (2026-08-31 21:38)
+260d226b auto: test_volfreq_restore.py 編集前 (2026-08-31 21:38)
+353ab745 auto: volregion.py 編集前 (2026-08-31 21:38)
+f069a1df auto: volprobe.py 編集前 (2026-08-31 21:38)
+0b9479dc auto: volprobe.py 編集前 (2026-08-31 21:37)
+1047331c auto: studio.py 編集前 (2026-08-31 21:37)
+e2fb395d auto: studio.py 編集前 (2026-08-31 21:37)
 ```
 
 ## 現在の git status
 
 ```
-M docs/NEXT_OPS_PLAN_2026-08-31.md
- M docs/OP_CATALOG.md
- M fullseye/OP_CATALOG.md
- M tools/gen_op_catalog.py
+M tests/test_volprobe.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-21:29 docs/NEXT_OPS_PLAN_2026-08-31.md
-21:28 fullseye/OP_CATALOG.md
-21:28 docs/OP_CATALOG.md
-21:27 tools/gen_op_catalog.py
-21:27 ops1d.py
-21:24 .pytest_cache/v/cache/nodeids
-21:24 tests/test_studio.py
-21:24 studio.py
-21:21 docs/SESSION_SUMMARY.md
-21:20 studio_assets/op_help/guide_handpose.html
-21:20 studio_assets/op_help/guide_gallery2d_texture_freq.html
-21:20 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
-21:20 studio_assets/op_help/guide_gallery2d_segmentation.html
-21:20 studio_assets/op_help/guide_gallery2d_region.html
-21:20 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
+21:39 tests/test_volprobe.py
+21:39 .pytest_cache/v/cache/nodeids
+21:39 pyproject.toml
+21:39 tests/test_studio.py
+21:38 tests/test_volgray.py
+21:38 tests/test_volfreq_restore.py
+21:38 volregion.py
+21:38 volprobe.py
+21:37 studio.py
+21:37 volgray.py
+21:37 funct1d.py
+21:37 volfreq.py
+21:37 examples/signal_funct1d.py
+21:37 volrestore.py
+21:34 .pytest_cache/v/cache/lastfailed
 ```
 
 ---
