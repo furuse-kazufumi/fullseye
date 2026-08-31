@@ -201,6 +201,107 @@ def test_growth_guard_shares_the_fuzzer_limit():
     assert MAX_POOL_BYTES == cf.MAX_POOL_BYTES
 
 
+# --------------------------------------------------------------------------- #
+# 極値: 有限な入力から集約が溢れる / ビンが刻めない幅                            #
+# --------------------------------------------------------------------------- #
+#: 本番規模の採掘で ``np.histogram`` を落とした実測パターン(hi > lo でも
+#: 幅が bin 数に対して小さすぎる / 幅が inf)。
+UNFORMABLE_RANGES = [
+    (1.0, 1.0 + 5e-16),        # 2 ULP しかない
+    (0.0, 1e-323),             # 非正規化数
+    (-1e308, 1e308),           # 幅が inf に溢れる
+]
+
+
+@pytest.mark.parametrize("lo,hi", UNFORMABLE_RANGES)
+def test_entropy_is_zero_when_bins_cannot_be_formed(lo, hi):
+    """ビンを刻めない幅は「事実上の定数」= エントロピー 0(落ちない)。"""
+    from tools.chain_mine import _bins_are_formable, _entropy01
+    assert _bins_are_formable(lo, hi) is False
+    assert _entropy01(np.array([lo, hi])) == 0.0
+    assert _entropy01(np.linspace(lo, hi, 64)) == 0.0
+
+
+def test_bins_are_formable_matches_numpy_exactly():
+    """述語は np.histogram の成立条件と一致する(推測でなく実測で合わせる)。"""
+    from tools.chain_mine import HIST_BINS, _bins_are_formable
+    ok_ranges = [(0.0, 1.0), (-3.0, 7.5), (0.0, 1e-300),
+                 (1.0, 1.0 + HIST_BINS * np.spacing(1.0))]
+    for lo, hi in ok_ranges + UNFORMABLE_RANGES:
+        formable = _bins_are_formable(lo, hi)
+        try:
+            np.histogram(np.array([lo, hi]), bins=HIST_BINS, range=(lo, hi))
+            numpy_ok = True
+        except ValueError:
+            numpy_ok = False
+        assert formable == numpy_ok, (lo, hi, formable, numpy_ok)
+
+
+def test_normal_entropy_is_unchanged_by_the_guard():
+    """正常系は素通し(fail-safe が普通の値を潰していない)。"""
+    from tools.chain_mine import _entropy01
+    flat = np.random.default_rng(0).random(4096)
+    assert 0.9 < _entropy01(flat) <= 1.0
+    assert _entropy01(np.linspace(0.0, 1.0, 1024)) > 0.99
+    assert _entropy01(np.full(100, 2.5)) == 0.0        # 真の定数
+
+
+HUGE = np.finfo(np.float64).max
+
+
+@pytest.mark.parametrize("y", [
+    np.full((8, 8), HUGE),                                    # 集約が inf に溢れる
+    np.array([[HUGE, -HUGE] * 4] * 8),                        # 幅が inf
+    np.linspace(1.0, 1.0 + 5e-16, 64).reshape(8, 8),          # 極小幅
+    np.full((8, 8), 5e-324),                                  # 非正規化数
+    np.where(np.eye(8) > 0, np.inf, 1.0),                     # 非有限が混ざる
+    np.where(np.eye(8) > 0, np.nan, 1.0),
+])
+def test_descriptor_never_emits_nan_or_inf(y):
+    """有限入力でも集約は溢れる。**記述子に NaN/Inf を残さない**。
+
+    NaN を素通しすると二重に害がある: ① 記録が strict JSON にならない
+    ② ``_bucket`` の比較は NaN で常に False なので**壊れた測定が黙って
+    「最大変化」ビンに着地する**(実測で delta=NaN が delta ビン 4 に入った)。
+    """
+    import json
+    x = np.ones((8, 8))
+    d = describe(x, y, "image2d", "image2d", ["a", "b"], 0.01)
+    bad = [k for k, v in d.items()
+           if isinstance(v, float) and not np.isfinite(v)]
+    assert bad == [], bad
+    json.dumps(d, allow_nan=False)                  # strict JSON であること
+    for slot in bin_key(d):
+        assert not (isinstance(slot, float) and not np.isfinite(slot))
+
+
+def test_unmeasurable_stats_are_dropped_with_a_reason(env):
+    """統計が溢れて測れない候補は、無言で通さず理由つきで落とす。"""
+    ops, gens = env
+    x, y = np.ones((8, 8)), np.full((8, 8), HUGE)
+    d = describe(x, y, "image2d", "image2d", ["a"], 0.01)
+    assert d["rel_std"] is None and d["size"] > 0
+    cand = {"seed": 1, "start": "image2d", "ops": ["a"], "arg_keys": [1],
+            "out_type": "image2d", "deterministic": True, "desc": d}
+    reps, dropped = contract([cand], ops, gens)
+    assert reps == []
+    assert dropped["unmeasurable_stats"] == 1
+
+
+def test_written_records_are_strict_json(env, mined, tmp_path):
+    """書き出した jsonl は NaN 抜きの strict JSON として読み直せる。"""
+    import json
+    from tools.chain_mine import _write
+    ops, gens = env
+    cands, _tally = mined
+    reps, _dropped = contract(cands, ops, gens)
+    p = tmp_path / "reps.jsonl"
+    _write(str(p), reps)
+    for line in p.read_text(encoding="utf-8").splitlines():
+        json.loads(line, parse_constant=lambda c: (_ for _ in ()).throw(
+            AssertionError("NaN/Infinity が記録に漏れている: " + c)))
+
+
 def test_chain_threads_the_input_through_every_step(env):
     """各 step は直前の産物を必ず食う(= 連鎖全体が 1 つの写像になっている)。"""
     ops, gens = env

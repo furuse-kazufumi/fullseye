@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">relative_illumination — OPTICS <code style="color:#22d3bf">geometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>pairs`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optics; optics.relative_illumination(half_angle_deg=20.0, samples=64, exponent=4.0)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;relative_illumination&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Natural vignetting: relative image-plane illuminance versus field angle.</p>
+<p>The cosine-fourth law `<code style="color:#22d3bf">E(theta)/E(0) = cos(theta)^4</code>` — one cosine from the</p>
+<p>inverse-square increase in distance to the off-axis point (twice), one from</p>
+<p>the tilt of the exit pupil as seen from there, one from the tilt of the</p>
+<p>image plane. Sampled uniformly in angle from 0 to *half_angle_deg*.</p>
+<p>Returns an `<code style="color:#22d3bf">(samples, 2)</code><code style="color:#22d3bf"> float64 </code><code style="color:#22d3bf">pairs</code>` array: column 0 the field</p>
+<p>angle in degrees, column 1 the relative illuminance in [0, 1].</p>
+<p>*exponent* exists because the fourth power is the *ideal symmetric* case:</p>
+<p>a lens with pupil aberration, or a telecentric design, or one with a tilted</p>
+<p>entrance pupil, falls off closer to `<code style="color:#22d3bf">cos^3</code>` (or is deliberately corrected</p>
+<p>flatter still). Setting the exponent is how you say which lens you have —</p>
+<p>it is not a fudge factor to be tuned after the fact.</p>
+<p>Ground truth it reproduces exactly: `<code style="color:#22d3bf">cos^4(45 deg) = 1/4</code>` and</p>
+<p>`<code style="color:#22d3bf">cos^4(60 deg) = 1/16</code>`, both to machine precision; the curve is 1.0 on</p>
+<p>axis and monotonically decreasing.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *half_angle_deg* outside </code><code style="color:#22d3bf">(0, 90)</code>` — at 90</p>
+<p>degrees the illuminance is exactly 0 and the &quot;relative&quot; curve carries no</p>
+<p>information; *samples* outside `<code style="color:#22d3bf">[2, MAX_GRID]</code>`; a negative or non-finite</p>
+<p>*exponent*.</p>
+<p>This is the *natural* falloff only. Mechanical vignetting (a stop clipping</p>
+<p>the oblique beam) is a separate, lens-specific effect that no closed form</p>
+<p>covers — measure it with a flat field.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• **文字列は <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array は <code style="color:#22d3bf">ValueError</code><b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。</b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code>** —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">geometric</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:thin_lens">thin_lens</a> · <a style="color:#22d3bf" href="opoptics:abcd_matrix">abcd_matrix</a> · <a style="color:#22d3bf" href="opoptics:abcd_trace">abcd_trace</a> · <a style="color:#22d3bf" href="opoptics:depth_of_field">depth_of_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

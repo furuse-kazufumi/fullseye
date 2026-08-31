@@ -1,0 +1,82 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">光学(レンズ・回折・偏光) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>レンズより上、画素より下</b>の層です。産業ビジョン(検査ライン)でも Physical AI(ロボット知覚)でも、画像処理を始める前に誰も撮っていない決定があります — どの焦点距離か、絞りはどこか、被写界深度はどれだけか、回折で潰れる最小欠陥は何 µm か、偏光板でテカりは消えるか。それらは全部<b>閉形式の計算</b>で、この族はそれを第一級の op にしたものです。18 op / 4 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsoptics.py</code>、実体は <code style="color:#22d3bf">optics.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>geometric(5)</b> — <code style="color:#22d3bf">thin_lens</code> / <code style="color:#22d3bf">abcd_matrix</code> / <code style="color:#22d3bf">abcd_trace</code> / <code style="color:#22d3bf">depth_of_field</code> / <code style="color:#22d3bf">relative_illumination</code>: ガウス結像、近軸光線伝達(系全体を 1 つの 2x2 に畳む ABCD 代数)、被写界深度の三点セット(近限界・遠限界・過焦点距離)、cos⁴ の自然口径食。</p>
+<p style="margin:2px 0 2px 12px">• <b>wave(4)</b> — <code style="color:#22d3bf">airy_pattern</code> / <code style="color:#22d3bf">angular_spectrum_propagate</code> / <code style="color:#22d3bf">fraunhofer_pattern</code> / <code style="color:#22d3bf">gaussian_beam</code>: 円形瞳の回折限界 PSF、角スペクトル法による<b>厳密な</b>自由空間伝搬(近軸近似をしない)、開口の遠方回折像、ガウシアンビームの q パラメータ伝搬。</p>
+<p style="margin:2px 0 2px 12px">• <b>imaging(3)</b> — <code style="color:#22d3bf">psf_to_mtf</code> / <code style="color:#22d3bf">mtf_diffraction</code> / <code style="color:#22d3bf">wavefront_stats</code>: 測った点像を分解能曲線に変える PSF → OTF → MTF の鎖、それと突き合わせる回折限界の閉形式、Zernike フィットから出す波面統計(RMS / PV / Strehl)。</p>
+<p style="margin:2px 0 2px 12px">• <b>polarization(6)</b> — <code style="color:#22d3bf">jones_element</code> / <code style="color:#22d3bf">jones_apply</code> / <code style="color:#22d3bf">stokes_from_jones</code> / <code style="color:#22d3bf">mueller_element</code> / <code style="color:#22d3bf">mueller_apply</code> / <code style="color:#22d3bf">stokes_analyze</code>: 完全偏光を扱う Jones 計算と、<b>部分偏光</b>まで運べる Stokes/Mueller 計算(偏光カメラが実際に測るのは後者)。</p>
+<p>データ種は既存語彙の再利用が基本です: <b>table</b>(dict、計測値の束/ABCD 素子リスト)、<b>matrix</b>(ABCD 2x2・Mueller 4x4 の実行列 — <code style="color:#22d3bf">mat_svd</code> や <code style="color:#22d3bf">mat_cond</code> にそのまま流せる)、<b>image2d</b>(PSF・開口・強度像)、<b>cimage</b>(2-D complex = 複素場と Jones 行列)、<b>pairs</b>((n,2) の曲線 = MTF・cos⁴)。新語は 2 つだけ、<b>jones</b>(長さ 2 固定の complex ベクトル)と <b>stokes</b>(長さ 4 固定 + 偏光度 ≤ 1 の物理制約)で、これは <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">cpoints</code> に相乗りさせると「256 点の正弦波を Stokes 枠に渡せる」という<b>型レベルの嘘</b>になるためです。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| 面で曲がる<b>実際の光線</b>(反射・Snell 屈折・Fresnel 反射率・全反射) | <code style="color:#22d3bf">reflect</code> / <code style="color:#22d3bf">refract</code> / <code style="color:#22d3bf">snell_angle</code> / <code style="color:#22d3bf">fresnel_reflectance</code> / <code style="color:#22d3bf">normal_from_reflection</code> | <code style="color:#22d3bf">match3d</code>(この族は近軸・スカラなので、光線と面の相互作用はそちら) |</p>
+<p>| 円板画像から Zernike 係数を<b>フィット</b>する | <code style="color:#22d3bf">fit_zernike</code> | <code style="color:#22d3bf">match3d</code>(<code style="color:#22d3bf">wavefront_stats</code> はその返り dict をそのまま食い、<b>match3d 自身の基底ビルダーを再利用</b>するので規約がずれない) |</p>
+<p>| PSF による<b>ぼかし・逆畳み込み</b> | <code style="color:#22d3bf">vol_gaussian_psf</code> / <code style="color:#22d3bf">vol_richardson_lucy</code> / <code style="color:#22d3bf">cx_wiener_deconvolve</code> | <code style="color:#22d3bf">volrestore</code> / <code style="color:#22d3bf">complexops</code>(<code style="color:#22d3bf">psf_to_mtf</code> は特性化するだけで復元はしない) |</p>
+<p>| FFT・複素画像・位相アンラップ | <code style="color:#22d3bf">cx_fft</code> 系 / <code style="color:#22d3bf">phase_unwrap</code> | <code style="color:#22d3bf">complexops</code> |</p>
+<p>| 位相シフト干渉法・縞投影(N-step) | <code style="color:#22d3bf">wrapped_phase</code> / <code style="color:#22d3bf">unwrap_phase_2d</code> / <code style="color:#22d3bf">phase_to_height</code> | <code style="color:#22d3bf">fringe</code>(一般 N-step が既にあるので 4-step PSI は置かない) |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>全 op が入力を検証してから計算します。以下は 2026-09-01 の敵対監査で<b>実際に見つかったバグ</b>か、それを塞ぐために書いた罠です:</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• **文字列は <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&quot;50&quot;)</code> は成功してしまうので、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&quot;50&quot;, &quot;200&quot;)</code> が 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array は <code style="color:#22d3bf">ValueError</code><b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。</b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 ≤ 0・不透明な開口(全 0 → 正規化が 0/0)・総和 ≤ 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code>** —「float64 が溢れた」と「答えが無限大」は別の主張だから。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子 <code style="color:#22d3bf">MAX_GRID</code>(4096)、供給された場/PSF/開口 <code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code>(2²⁴)、ABCD 素子列 <code style="color:#22d3bf">MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2²⁵)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n−|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>検査機を 1 台、紙の上で設計しきる筋(検証済み <code style="color:#22d3bf">examples/optics_imaging.py</code> そのもの)。倍率 → 系の行列 → 深度 → 回折限界 → 収差 → 偏光、とデータ種が <code style="color:#22d3bf">table → matrix → table → pairs → table</code> で繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[必要視野・センサ寸法] --&gt;|倍率 m| B[thin_lens 焦点距離・物体距離]
+    B --&gt;|素子リスト table| C[abcd_matrix 系全体 2x2]
+    C --&gt;|matrix| D[abcd_trace 結像判定 B=0 / det=1]
+    B --&gt; E[depth_of_field 近・遠・過焦点]
+    E --&gt;|決めた絞り N| F[mtf_diffraction 回折限界 pairs]
+    G[測った点像 image2d] --&gt; H[psf_to_mtf 実測 MTF pairs]
+    F --&gt; I{実測は限界を超えていないか}
+    H --&gt; I
+    J[match3d.fit_zernike 波面係数 table] --&gt; K[wavefront_stats RMS/PV/Strehl]
+    K --&gt; I</pre>
+<p>偏光の筋は独立した 2 本立てで、<b>互いの検算</b>になります(同じ素子を両方の代数で組み、同じ Stokes ベクトルに落ちることを確かめる — 符号規約の取り違えはこの突き合わせでしか捕まりません)。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    P[jones_element 偏光子/波長板/回転子] --&gt;|cimage 2x2| Q[jones_apply]
+    Q --&gt;|jones| R[stokes_from_jones]
+    S[mueller_element 同じ素子 + 減偏光子] --&gt;|matrix 4x4| T[mueller_apply]
+    R --&gt;|stokes| U[stokes_analyze 偏光度・方位・楕円率]
+    T --&gt;|stokes| U
+    R -.一致を検算.- T</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import optics as O
+
+# 20 mm の視野を倍率 -0.43 で撮る 50 mm レンズ
+lens = O.thin_lens(focal_mm=50.0, object_mm=50.0 * (1 - 1 / -0.43))
+system = O.abcd_matrix([(&quot;free&quot;, lens[&quot;object_mm&quot;]), (&quot;lens&quot;, 50.0),
+                        (&quot;free&quot;, lens[&quot;image_mm&quot;])])
+print(O.abcd_trace(system)[&quot;imaging&quot;])          # True = 本当に共役面
+
+# 許容錯乱円 2 画素(3.45 µm 画素)での被写界深度と、その絞りの回折限界
+dof = O.depth_of_field(50.0, 5.6, lens[&quot;object_mm&quot;], coc_mm=2 * 3.45e-3)
+mtf = O.mtf_diffraction(f_number=5.6, wavelength_um=0.55)
+print(dof[&quot;depth_mm&quot;], mtf[-1, 0])              # 深度 [mm], カットオフ [cyc/mm]
+
+# 金属面のテカりを直交偏光で消す(Jones)
+blocked = O.jones_apply(O.jones_element(&quot;polarizer&quot;, 90.0)
+                        @ O.jones_element(&quot;polarizer&quot;, 0.0), [1.0, 0.0])
+print(abs(blocked).max())                        # 0.0</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
+<p style="margin:2px 0 2px 12px">• <b>ガウス結像 / ABCD 行列</b>: Gauss (1841) の近軸結像式、行列光学は Kogelnik &amp; Li, *Laser Beams and Resonators*, Appl. Opt. 5(10), 1966(ガウシアンビームの q パラメータもここ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>被写界深度・過焦点距離</b>: 錯乱円モデルの標準式(例 Ray, *Applied Photographic Optics*, 3rd ed., 2002)。</p>
+<p style="margin:2px 0 2px 12px">• <b>cos⁴ 則</b>: 自然口径食の古典。距離の逆二乗が 2 回、射出瞳の傾きが 1 回、像面の傾きが 1 回。</p>
+<p style="margin:2px 0 2px 12px">• <b>Airy パターン</b>: Airy (1835)。第 1 暗環は J₁ の第 1 零点 3.8317 → 半径 1.2197 λN。</p>
+<p style="margin:2px 0 2px 12px">• <b>角スペクトル法</b>: Goodman, *Introduction to Fourier Optics*, §3.10(Helmholtz 方程式の<b>厳密</b>解。Fresnel と違い近軸近似が要らない)。</p>
+<p style="margin:2px 0 2px 12px">• <b>回折限界 MTF</b>: Goodman §6.3、<code style="color:#22d3bf">(2/π)(arccos x − x√(1−x²))</code>、カットオフ 1/(λN)。</p>
+<p style="margin:2px 0 2px 12px">• <b>Zernike 多項式と Maréchal の Strehl 近似</b>: Born &amp; Wolf, *Principles of Optics*, §9.2。<code style="color:#22d3bf">exp(−(2πσ)²)</code> は級数の打ち切りなので、RMS 0.1 波あたりから楽観側にずれます(<code style="color:#22d3bf">marechal_valid</code> がそれを明示)。</p>
+<p style="margin:2px 0 2px 12px">• <b>Jones 計算</b>: Jones (1941), *A New Calculus for the Treatment of Optical Systems*, JOSA 31(7)。<b>Stokes / Mueller</b>: Stokes (1852), Mueller (1943)。本族の符号規約は <code style="color:#22d3bf">exp(−iωt)</code>、<code style="color:#22d3bf">S3 &gt; 0</code> が右回り円偏光(テストで固定済み)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な限界</h3>
+<p style="margin:2px 0 2px 12px">• <b>幾何 op はすべて近軸・薄肉</b>。収差なし、厚みなし、瞳収差なし、機械的口径食なし。実レンズは <code style="color:#22d3bf">1/f = 1/s + 1/s&#x27;</code> からも cos⁴ からもずれます — <b>設計の出発点</b>であってレンズモデルではありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>スカラ回折</b>なので偏光と高 NA を無視します。<code style="color:#22d3bf">airy_pattern</code> / <code style="color:#22d3bf">mtf_diffraction</code> は円形・無遮蔽・無収差の瞳が前提(中央遮蔽のある反射望遠鏡はリング構造が変わります)。</p>
+<p style="margin:2px 0 2px 12px">• <b>角スペクトルの離散伝達関数は周期的</b>なので、配列の端を越えて回折した光は巻き込みます。場をパディングして伝搬後の広がりを内側に収めるのが実務上の対策で、配列だけからこれを確実に検出する方法はないため<b>警告を捏造していません</b>。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">wavefront_stats</code> の動径求積は離散**で、誤差は <code style="color:#22d3bf">(n_max/radial)²</code> に比例(実測 1.2e-4 @ n=2、1.7e-3 @ n=6、4.3e-2 @ n=20、いずれも既定 <code style="color:#22d3bf">radial=128</code>)。<code style="color:#22d3bf">radial &gt;= 16*n_max</code> を割ると <code style="color:#22d3bf">RuntimeWarning</code> が出ます。さらに共有基底ビルダーは高次で桁落ちするため(実測 max|Z| が n=46 で 1.41、n=50 で 71.5、理論上界は 1)、n &gt; 40 は拒否します。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">fraunhofer_pattern</code> の出力面は入力面と別のサンプル間隔**(<code style="color:#22d3bf">λz/(N·dx)</code>)。画像はそれを運べないので docstring の式で計算してください。Fresnel 数が 1 未満でなければ <code style="color:#22d3bf">RuntimeWarning</code> が出ます(返す値は要求どおりの Fourier 変換ですが、その距離の<b>物理</b>ではない、という意味です)。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

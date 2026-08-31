@@ -701,7 +701,7 @@ _計 310 ops / 63 categories。_
 - `sampson_distance` (`image2d, image2d → measurement`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 742 ops / 46 categories。_
+_計 801 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -925,7 +925,7 @@ _計 742 ops / 46 categories。_
 - `diameter_region` (halcon: `diameter_region`) `region → feature` · 例: `gallery2d_features`
 - `euler_number` (halcon: `euler_number`) `region → feature` · 例: `gallery2d_features`
 - `min_max_gray` (halcon: `min_max_gray`) `image → feature` · 例: `gallery2d_features`
-- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_features`
+- `intensity` (halcon: `intensity`) `image → feature` · 例: `gallery2d_features`, `optics_imaging`
 - `gray_histo_abs` (halcon: `gray_histo_abs`) `image → feature` · 例: `gallery2d_features`
 - `entropy_gray` (halcon: `entropy_gray`) `image → feature` · 例: `gallery2d_features`
 - `length_xld` (halcon: `length_xld`) `contour → feature` · 例: `gallery2d_features`
@@ -1528,6 +1528,67 @@ _計 742 ops / 46 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
+### typed(59)
+- `tb_points_to_voxel` `points → volume` · 例: なし
+- `tb_estimate_point_normals` `points → points` · 例: なし
+- `tb_iss_keypoints` `points → signal` · 例: なし
+- `tb_statistical_outlier_removal` `points → points` · 例: なし
+- `tb_radius_outlier_removal` `points → points` · 例: なし
+- `tb_mls_smooth` `points → points` · 例: なし
+- `tb_estimate_alpha` `points → feature` · 例: なし
+- `tb_arc_length` `points → feature` · 例: なし
+- `tb_resample_uniform` `points → points` · 例: なし
+- `tb_fit_spline_curve` `points → points` · 例: なし
+- `tb_mean_curvature` `points → signal` · 例: なし
+- `tb_gaussian_curvature` `points → signal` · 例: なし
+- `tb_estimate_normals` `points → points` · 例: なし
+- `tb_inertia_tensor` `points → matrix` · 例: なし
+- `tb_farthest_point_sampling` `points → signal` · 例: なし
+- `tb_jitter` `points → points` · 例: なし
+- `tb_random_rotation` `points → points` · 例: なし
+- `tb_random_scale` `points → points` · 例: なし
+- `tb_random_dropout` `points → points` · 例: なし
+- `tb_cutout` `points → points` · 例: なし
+- `tb_region_growing` `points → volume` · 例: なし
+- `tb_estimate_oriented_normals` `points → points` · 例: なし
+- `tb_project_spherical` `points → image` · 例: なし
+- `tb_project_cylindrical` `points → image` · 例: なし
+- `tb_create_funct_1d_array` `signal → signal` · 例: なし
+- `tb_smooth_funct_1d_gauss` `signal → signal` · 例: なし
+- `tb_smooth_funct_1d_mean` `signal → signal` · 例: なし
+- `tb_derivate_funct_1d` `signal → signal` · 例: なし
+- `tb_integrate_funct_1d` `signal → signal` · 例: なし
+- `tb_zero_crossings_funct_1d` `signal → signal` · 例: なし
+- `tb_abs_funct_1d` `signal → signal` · 例: なし
+- `tb_negate_funct_1d` `signal → signal` · 例: なし
+- `tb_scale_y_funct_1d` `signal → signal` · 例: なし
+- `tb_sample_funct_1d` `signal → signal` · 例: なし
+- `tb_num_points_funct_1d` `signal → feature` · 例: なし
+- `tb_get_y_value_funct_1d` `signal → feature` · 例: なし
+- `tb_lowpass` `signal → signal` · 例: なし
+- `tb_highpass` `signal → signal` · 例: なし
+- `tb_bandpass` `signal → signal` · 例: なし
+- `tb_envelope` `signal → signal` · 例: なし
+- `tb_rms` `signal → feature` · 例: なし
+- `tb_resample` `signal → signal` · 例: なし
+- `tb_spectrogram` `signal → image` · 例: なし
+- `tb_zero_crossing_rate` `signal → feature` · 例: なし
+- `tb_find_peaks` `signal → signal` · 例: なし
+- `tb_cx_ifft` `cimage → image` · 例: なし
+- `tb_cx_magnitude` `cimage → image` · 例: なし
+- `tb_cx_phase` `cimage → image` · 例: なし
+- `tb_cx_real` `cimage → image` · 例: なし
+- `tb_cx_imag` `cimage → image` · 例: なし
+- `tb_cx_log_magnitude` `cimage → image` · 例: なし
+- `tb_cx_apply_transfer_function` `cimage → cimage` · 例: なし
+- `tb_mat_pinv` `matrix → matrix` · 例: なし
+- `tb_mat_cond` `matrix → feature` · 例: なし
+- `tb_stat_covariance` `matrix → matrix` · 例: なし
+- `tb_stat_correlation` `matrix → matrix` · 例: なし
+- `tb_stat_zscore` `signal → signal` · 例: なし
+- `tb_cplx_cr_residual` `cimage → feature` · 例: なし
+- `tb_angular_spectrum_propagate` `cimage → cimage` · 例: なし
+
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
 - `xg_area_center` (halcon: `area_center_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
@@ -1628,6 +1689,38 @@ _計 26 ops / 4 categories。_
 - `stat_covariance` (`matrix → matrix`) — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
 - `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
+
+## Optics operators(opsoptics)by category
+_計 18 ops / 4 categories。_
+
+
+レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用(reflect / refract / fresnel_reflectance)と Zernike フィット(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、位相シフト干渉法は fringe が持ち場なので重複させていない。
+
+### geometric(5)
+- `thin_lens` (` → table`) — Gaussian thin-lens imaging: where the image lands and how big it is.
+- `abcd_matrix` (`table → matrix`) — Compose a paraxial system into one 2x2 ray-transfer (ABCD) matrix.
+- `abcd_trace` (`matrix → table`) — Propagate one paraxial ray through an ABCD matrix.
+- `depth_of_field` (` → table`) — Photographic depth of field: near limit, far limit and hyperfocal distance.
+- `relative_illumination` (` → pairs`) — Natural vignetting: relative image-plane illuminance versus field angle.
+
+### imaging(3)
+- `psf_to_mtf` (`image2d → pairs`) — Radially-averaged MTF of a measured point-spread function.
+- `mtf_diffraction` (` → pairs`) — The diffraction-limited MTF of a circular pupil (closed form).
+- `wavefront_stats` (`table → table`) — Wavefront error statistics from a Zernike expansion: RMS, PV and Strehl.
+
+### polarization(6)
+- `jones_element` (` → cimage`) — A 2x2 complex Jones matrix for one polarisation element.
+- `jones_apply` (`cimage, jones → jones`) — Push a Jones vector through a Jones matrix: ``[Ex', Ey'] = J @ [Ex, Ey]``.
+- `stokes_from_jones` (`jones → stokes`) — Jones vector -> Stokes vector (the four measurable intensities).
+- `mueller_element` (` → matrix`) — A 4x4 real Mueller matrix for one polarisation element.
+- `mueller_apply` (`matrix, stokes → stokes`) — Push a Stokes vector through a Mueller matrix: ``S' = M @ S``.
+- `stokes_analyze` (`stokes → table`) — Read a Stokes vector: degree of polarisation, azimuth, ellipticity.
+
+### wave(4)
+- `airy_pattern` (` → image2d`) — The diffraction-limited PSF of a circular pupil (Airy pattern).
+- `angular_spectrum_propagate` (`cimage → cimage`) — Exact scalar free-space propagation of a complex field (angular spectrum).
+- `fraunhofer_pattern` (`image2d → image2d`) — Far-field (Fraunhofer) diffraction intensity of an aperture.
+- `gaussian_beam` (` → table`) — Gaussian-beam propagation: spot size, wavefront curvature and Gouy phase.
 
 ## References(アルゴリズムの一次情報・further reading)
 

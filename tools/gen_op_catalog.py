@@ -242,6 +242,42 @@ def _opsmath_section() -> list[str]:
     return out
 
 
+def _opsoptics_section() -> list[str]:
+    out = ["## Optics operators(opsoptics)by category", "",
+           "レンズより上・画素より下の層。幾何光学(薄レンズ結像・ABCD 光線伝達・"
+           "被写界深度・cos⁴ 口径食)/ 波動光学(Airy パターン・角スペクトル伝搬・"
+           "Fraunhofer 回折・ガウシアンビーム)/ 結像品質(PSF→MTF・回折限界 MTF・"
+           "Zernike 波面統計)/ 偏光(Jones・Stokes・Mueller)。光線と面の相互作用"
+           "(reflect / refract / fresnel_reflectance)と Zernike フィット"
+           "(fit_zernike)は match3d、PSF 復元は volrestore、FFT は complexops、"
+           "位相シフト干渉法は fringe が持ち場なので重複させていない。", ""]
+    try:
+        import opsoptics
+        cats = opsoptics.categories()
+        catalog = getattr(opsoptics, "_CATALOG", {})
+    except Exception as e:
+        return out + [f"- (opsoptics を読めませんでした: {e})", ""]
+    total = 0
+    for cat in sorted(cats):
+        entries = catalog.get(cat, [])
+        if not entries:
+            continue
+        out.append(f"### {cat}({len(entries)})")
+        for entry in entries:
+            try:
+                name = entry[0]
+                info = opsoptics.info(name)
+                io_ = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
+                doc = info.get("doc", "") or ""
+                out.append(f"- `{name}` (`{io_}`) — {doc}")
+                total += 1
+            except Exception as ex:
+                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
+        out.append("")
+    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
+    return out
+
+
 def _ops2d_section() -> list[str]:
     out = ["## 2-D pipeline operators(ops registry)by category", "",
            "1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` の"
@@ -307,6 +343,7 @@ def build_catalog() -> str:
     lines: list[str] = []
     for section in (_preamble, _examples_section, _modules_section,
                     _ops3d_section, _ops2d_section, _ops1d_section, _opsmath_section,
+                    _opsoptics_section,
                     _references_section):
         try:
             lines += section()

@@ -71,7 +71,8 @@ def test_every_2d_op_has_a_studio_help_page():
 
 def test_index_and_samples_generated():
     for rel in ("docs/ops/INDEX.md", "docs/ops/2d/INDEX.md", "docs/ops/3d/INDEX.md",
-                "docs/ops/math/INDEX.md", "docs/ops/SAMPLES.md"):
+                "docs/ops/math/INDEX.md", "docs/ops/optics/INDEX.md",
+                "docs/ops/SAMPLES.md"):
         p = os.path.join(ROOT, rel)
         assert os.path.exists(p), f"missing generated index: {rel}"
         with open(p, encoding="utf-8") as f:
@@ -278,6 +279,119 @@ def test_math_notes_link_their_family_guide():
             if "../guides/math_metrology.md" not in f.read():
                 unlinked.append(r["name"])
     assert not unlinked, f"math notes without a family-guide link: {unlinked}"
+
+
+# --------------------------------------------------------------------------- #
+# optics ops (opsoptics ledger, 2026-09-01): the second *ledger* dimension, on
+# the same md=source-of-truth pipeline as math — notes under
+# docs/ops/optics/<category>/, help pages in op_help/optics/<name>.html
+# (anchors opoptics: / guideoptics:), and one authored family guide
+# (docs/ops/optics/guides/optics_imaging.md). These tests are the math block's
+# twin: when a third ledger dimension arrives, generalise both together.
+# --------------------------------------------------------------------------- #
+_OPT_RECS = [r for r in _RECS if r["dim"] == "optics"]
+_HELPOPT = os.path.join(ROOT, "studio_assets", "op_help", "optics")
+_OPT_GUIDE = os.path.join(ROOT, "docs", "ops", "optics", "guides",
+                          "optics_imaging.md")
+
+
+def test_optics_registry_is_connected():
+    """Every op in the opsoptics ledger flows into the docs corpus (and only those)."""
+    import opsoptics
+    have = {r["name"] for r in _OPT_RECS}
+    assert have == set(opsoptics.OPSOPTICS), (
+        "docs corpus and opsoptics ledger disagree: "
+        f"only-in-docs={have - set(opsoptics.OPSOPTICS)}, "
+        f"only-in-ledger={set(opsoptics.OPSOPTICS) - have}")
+    assert len(_OPT_RECS) == 18
+    assert {"geometric", "wave", "imaging", "polarization"} == {
+        r["category"] for r in _OPT_RECS}
+
+
+def test_every_optics_op_has_a_studio_help_page():
+    missing = [r["name"] for r in _OPT_RECS
+               if not os.path.exists(os.path.join(_HELPOPT, r["name"] + ".html"))]
+    assert not missing, f"{len(missing)} optics ops lack an op_help/optics page: {missing}"
+
+
+def test_optics_help_is_generated_from_markdown_no_drift():
+    """Each optics help page == md_to_html of its committed note, with op-jump
+    anchors namespaced op: -> opoptics: and guide2d: -> guideoptics:."""
+    drift = []
+    for r in _OPT_RECS:
+        html_path = os.path.join(_HELPOPT, r["name"] + ".html")
+        md_path = OD._op_path(r)
+        if not (os.path.exists(html_path) and os.path.exists(md_path)):
+            continue
+        with open(html_path, encoding="utf-8") as f:
+            on_disk = f.read()
+        with open(md_path, encoding="utf-8") as f:
+            md = f.read()
+        expected = (OD._GEN_MARK + "\n"
+                    + OD.md_to_html(md)
+                    .replace('href="op:', 'href="opoptics:')
+                    .replace('href="guide2d:', 'href="guideoptics:'))
+        if on_disk != expected:
+            drift.append(os.path.relpath(html_path, ROOT))
+    assert not drift, ("optics help pages are stale — run `py -3.11 tools/opdocs.py html`:\n"
+                       + "\n".join(drift[:30]))
+
+
+def test_optics_help_pages_carry_marker_and_are_namespaced():
+    unmarked, stray = [], []
+    for r in _OPT_RECS:
+        p = os.path.join(_HELPOPT, r["name"] + ".html")
+        if not os.path.exists(p):
+            continue
+        with open(p, encoding="utf-8") as f:
+            txt = f.read()
+        if OD._GEN_MARK not in txt:
+            unmarked.append(r["name"])
+        if 'href="op:' in txt or 'href="guide2d:' in txt:
+            stray.append(r["name"])
+    assert not unmarked, f"optics help pages missing the generated marker: {unmarked}"
+    assert not stray, f"optics help pages carry non-namespaced anchors: {stray}"
+
+
+def test_optics_family_guide_is_well_formed():
+    assert os.path.exists(_OPT_GUIDE), "docs/ops/optics/guides/optics_imaging.md missing"
+    with open(_OPT_GUIDE, encoding="utf-8") as f:
+        md = f.read()
+    assert md.lstrip().startswith("---"), "optics guide: missing YAML frontmatter"
+    assert "Kazufumi Furuse" in md, "optics guide: missing author/copyright"
+    assert "```mermaid" in md, "optics guide: missing a mermaid pipeline diagram"
+    assert "```python" in md, "optics guide: missing a runnable python snippet"
+    import opsoptics
+    hit = {n for n in opsoptics.OPSOPTICS
+           if re.search(r"(?<![\w])" + re.escape(n) + r"(?![\w])", md)}
+    assert len(hit) >= 12, (
+        f"optics guide names too few of its own ops ({len(hit)}/{len(opsoptics.OPSOPTICS)})")
+
+
+def test_optics_notes_link_their_family_guide():
+    unlinked = []
+    for r in _OPT_RECS:
+        with open(OD._op_path(r), encoding="utf-8") as f:
+            if "../guides/optics_imaging.md" not in f.read():
+                unlinked.append(r["name"])
+    assert not unlinked, f"optics notes without a family-guide link: {unlinked}"
+
+
+def test_optics_notes_state_the_fail_closed_contract():
+    """Each ledger dimension states its family-wide input contract once per note;
+    the optics one names the units rule and the two documented infinities."""
+    for r in _OPT_RECS:
+        with open(OD._op_path(r), encoding="utf-8") as f:
+            txt = f.read()
+        assert "ファミリ共通の入力契約(fail-closed)" in txt, r["name"]
+        assert "_mm" in txt and "far_is_infinite" in txt, r["name"]
+
+
+def test_every_optics_op_has_a_worked_example():
+    """The optics ledger keeps the same 100%-example invariant the 2-D/3-D
+    registries are held to (tests/test_op_example_coverage.py)."""
+    uncovered = sorted(r["name"] for r in _OPT_RECS if not r["examples"])
+    assert not uncovered, f"optics ops with no worked example: {uncovered}"
 
 
 def test_no_dangling_relative_links_in_corpus():

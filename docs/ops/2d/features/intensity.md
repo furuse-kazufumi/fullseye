@@ -5,7 +5,7 @@ category: features
 in: image
 out: feature
 halcon: intensity
-examples: [gallery2d_features]
+examples: [gallery2d_features, optics_imaging]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
+- [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
 
 ## 型が繋がる次の op(`feature` を入力に取れる)
 

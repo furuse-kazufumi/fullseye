@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">psf_to_mtf — OPTICS <code style="color:#22d3bf">imaging</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import optics; optics.psf_to_mtf(psf, pixel_pitch_um=1.0)</code> (または <code style="color:#22d3bf">opsoptics.get(&quot;psf_to_mtf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Radially-averaged MTF of a measured point-spread function.</p>
+<p>`<code style="color:#22d3bf">OTF = FFT{PSF}</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">MTF = |OTF| / |OTF(0)|</code>`, then averaged over annuli of</p>
+<p>constant spatial frequency out to the Nyquist limit `<code style="color:#22d3bf">1/(2*pitch)</code>`. This</p>
+<p>is the measurement side of resolution: image a point source (or a slit, or</p>
+<p>differentiate a knife edge), hand the spot here, and compare the curve with</p>
+<p>the diffraction limit from :func:<code style="color:#22d3bf">mtf_diffraction</code>.</p>
+<p>Returns an `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> float64 </code><code style="color:#22d3bf">pairs</code>` array: column 0 the spatial</p>
+<p>frequency in <b>cycles per millimetre</b>, column 1 the MTF in [0, 1]. One row</p>
+<p>per non-empty radial bin (a very anisotropic array can leave a bin empty;</p>
+<p>those rows are dropped rather than filled with a NaN).</p>
+<p>Ground truth it reproduces (measured): a delta PSF gives MTF == 1 at every</p>
+<p>frequency <b>exactly</b> (max deviation 0.0); a Gaussian PSF of sigma pixels</p>
+<p>gives the closed form `<code style="color:#22d3bf">exp(-2*pi^2*sigma^2*f^2)</code>` — the maximum absolute</p>
+<p>deviation over the whole curve is 4.1e-4 at sigma = 2 px on 128x128,</p>
+<p>8.3e-4 at sigma = 1.5 px on 64x64 and 2.4e-4 at sigma = 3 px on 256x256</p>
+<p>(the residual is the radial average over a square grid, not an error in the</p>
+<p>transform). Doubling *pixel_pitch_um* halves every reported frequency and</p>
+<p>leaves the MTF column bit-identical.</p>
+<p>The PSF is <b>not</b> re-normalised or re-centred: a PSF whose energy is not</p>
+<p>centred carries a linear phase, which the modulus discards, so the MTF is</p>
+<p>unaffected — but the *phase* transfer function, which is where a</p>
+<p>decentred/asymmetric PSF shows up, is deliberately not summarised here.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: *psf* is not 2-D / smaller than 2x2 / over the</p>
+<p>size cap / complex / masked / non-finite; a PSF that sums to zero or less</p>
+<p>(the DC normalisation would be 0/0 — an all-zero &quot;PSF&quot; is not a PSF);</p>
+<p>non-positive or non-finite *pixel_pitch_um*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>
+<p style="margin:2px 0 2px 12px">• **文字列は <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&#x27;50&#x27;)</code> は成功してしまうため、未パースの設定値が長さとして通り抜ける(実測: <code style="color:#22d3bf">thin_lens(&#x27;50&#x27;, &#x27;200&#x27;)</code> がもっともらしい 66.667 mm を返していた)。bool も <code style="color:#22d3bf">True == 1</code> の暗黙昇格として拒否。</p>
+<p style="margin:2px 0 2px 12px">• **complex / masked array は <code style="color:#22d3bf">ValueError</code><b>(実数枠のみ。虚部の無言切り捨て・マスク剥がしを拒否)。</b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 焦点距離 0・曲率半径 0・屈折率 &lt;= 0・不透明な開口(全 0 なので正規化が 0/0)・総和 &lt;= 0 の PSF・S0 = 0 の Stokes ベクトル・物体が前側焦点にある(像が無限遠)。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返すのは 2 op だけ、しかも契約として明記</b>: <code style="color:#22d3bf">depth_of_field</code> の過焦点距離以遠の <code style="color:#22d3bf">far_mm = inf</code>(それが過焦点距離の定義)と <code style="color:#22d3bf">gaussian_beam</code> のウエストでの <code style="color:#22d3bf">wavefront_radius_mm = inf</code>(平面波面の曲率半径)。どちらも有限の相棒(<code style="color:#22d3bf">far_is_infinite</code> / <code style="color:#22d3bf">curvature_per_mm</code>)を併せて返す。**それ以外の無言 NaN/Inf は内部で検出して <code style="color:#22d3bf">ValueError</code>** —「float64 が溢れた」と「答えが無限大」は別の主張なので、後者の顔で前者を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 生成格子は <code style="color:#22d3bf">optics.MAX_GRID</code>(4096)、供給された場/PSF/開口は <code style="color:#22d3bf">optics.MAX_FIELD_ELEMENTS</code>(2^24)、ABCD 素子列は <code style="color:#22d3bf">optics.MAX_SYSTEM_ELEMENTS</code>(1024)、Zernike は <code style="color:#22d3bf">MAX_ZERNIKE_TERMS</code>(512)/ <code style="color:#22d3bf">MAX_ZERNIKE_ORDER</code>(40)/ <code style="color:#22d3bf">MAX_ZERNIKE_BASIS</code>(2^25)。小さな引数から巨大な内部確保が起きる経路(実測: n_max=40 × 4096² で 108 GB)を fail-closed で塞ぐ。</p>
+<p style="margin:2px 0 2px 12px">• <b>物理的に不可能な状態も拒否</b>: 偏光度 &gt; 1 の Stokes ベクトル、負の透過率、負の強度、n-|m| が奇数などの不正な Zernike 添字。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideoptics:optics_imaging">optics_imaging ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:optics_imaging">optics_imaging</a> — <code style="color:#22d3bf">py -3.11 examples/optics_imaging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">imaging</code>)</h3>
+<p><a style="color:#22d3bf" href="opoptics:mtf_diffraction">mtf_diffraction</a> · <a style="color:#22d3bf" href="opoptics:wavefront_stats">wavefront_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: optics.py — OPTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
