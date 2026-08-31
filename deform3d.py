@@ -356,6 +356,13 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
 
     M, D = Y.shape
     N = X.shape[0]
+    if N * M > CPD_MAX_PAIRS:
+        raise ValueError(
+            f"register_cpd_rigid got {N} x {M} points; CPD builds a dense "
+            f"(N,M) responsibility matrix every EM iteration, impractical "
+            f"beyond N*M={CPD_MAX_PAIRS:,} (~{CPD_MAX_PAIRS * 8 // 2**20} MB "
+            f"per array). Subsample both clouds first (CPD needs shape, not "
+            f"density).")
 
     R = np.eye(D, dtype=np.float64)
     t = np.zeros(D, dtype=np.float64)
