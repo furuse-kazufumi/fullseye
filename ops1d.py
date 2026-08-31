@@ -33,7 +33,9 @@ _CATALOG = {
         ("derivate_funct_1d", "funct1d", ["signal"], "signal"),
         ("integrate_funct_1d", "funct1d", ["signal"], "signal"),
         ("zero_crossings_funct_1d", "funct1d", ["signal"], "indices"),
-        ("local_min_max_funct_1d", "funct1d", ["signal"], "indices"),
+        # {"max": indices, "min": indices} の dict — 両極値は同格で片方だけ剥がすと
+        # 情報が欠けるため table 宣言(連鎖ファザー wave-4 TYPEMISS 修正)
+        ("local_min_max_funct_1d", "funct1d", ["signal"], "table"),
         ("abs_funct_1d", "funct1d", ["signal"], "signal"),
         ("negate_funct_1d", "funct1d", ["signal"], "signal"),
         ("invert_funct_1d", "funct1d", ["signal"], "pairs"),
