@@ -44,8 +44,15 @@ __all__ = [
 # 入力検証(fail-closed)
 # ─────────────────────────────────────────────────────────────────────────
 def _as_transform(T, name: str = "transform") -> np.ndarray:
-    """4×4 同次変換として検証。形状不正・非有限は ValueError(fail-closed)。"""
-    A = np.asarray(T, np.float64)
+    """4×4 同次変換として検証。型・形状不正・非有限は ValueError(fail-closed)。"""
+    try:
+        A = np.asarray(T, np.float64)
+    except (TypeError, ValueError) as e:
+        # 連鎖ファザー実測(wave-4): dict 等の非数値プール産物が np.asarray で
+        # 形状チェックに届く前に生 TypeError 化していた。明示 ValueError で拒否。
+        raise ValueError(
+            f"{name}: a numeric 4x4 homogeneous transform is required "
+            f"(got {type(T).__name__})") from e
     if A.shape != (4, 4):
         raise ValueError(f"{name}: a 4x4 homogeneous transform is required (got shape {A.shape})")
     if not np.all(np.isfinite(A)):
