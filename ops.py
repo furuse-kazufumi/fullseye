@@ -856,12 +856,23 @@ def decode(genome, start: str = IMAGE) -> list[Stage]:
     return out
 
 
+#: 値域が [0,1] と決まっている sort。``_apply`` の段間クリップはこの規約のもの。
+#: 座標や振幅を運ぶ新 sort(points/signal/matrix/cimage)に同じクリップを掛けると
+#: **データを破壊する** — 実測 2026-09-01: 点群 (N,3) は 2-D ndarray なので
+#: クリップ対象になり、[0,10] の座標が [0,1] に潰れて hand baseline が trivial を
+#: 下回った(0.194 vs 0.684)。既存 sort の挙動は 1 ビットも変えないため、
+#: 「新 sort だけを除外する」形で書く(既存 champion のスコアは不変)。
+_UNCLIPPED_SORTS = frozenset({POINTS, SIGNAL, MATRIX, CIMAGE})
+
+
 def _apply(stages, img):
     v = np.asarray(img, np.float64)
     for st in stages:
         v = RT[st.op](v, st.a, st.b)
         if isinstance(v, np.ndarray) and v.ndim in (2, 3):
-            v = np.clip(v, 0.0, 1.0)
+            op = _BY_NAME.get(st.op)
+            if op is None or op.out_sort not in _UNCLIPPED_SORTS:
+                v = np.clip(v, 0.0, 1.0)
     return v
 
 
