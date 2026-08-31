@@ -177,7 +177,22 @@ def register_spin(src, dst, device="cpu", n_keypoints=220, normal_k=18,
             return a.detach().cpu().numpy().astype(np.float64)
         return np.asarray(a, np.float64)
 
-    S, D = _np(src), _np(dst)
+    try:
+        S, D = _np(src), _np(dst)
+    except (TypeError, ValueError) as e:
+        # 連鎖ファザー wave-4 兄弟一掃: dict 等の非数値プール産物が np.asarray で
+        # 生 TypeError 化する穴(register_fpfh と同クラス)。fail-closed に拒否。
+        raise ValueError("register_spin: src/dst must be numeric (N, 3) point "
+                         "arrays (got %s / %s)"
+                         % (type(src).__name__, type(dst).__name__)) from e
+    if S.ndim != 2 or S.shape[1] != 3 or D.ndim != 2 or D.shape[1] != 3:
+        raise ValueError("register_spin: src/dst must be (N, 3) point arrays, "
+                         "got %r / %r" % (S.shape, D.shape))
+    if len(S) < 3 or len(D) < 3:
+        raise ValueError("register_spin: need at least 3 points on each side "
+                         "(got %d / %d) — a rigid pose is undefined below that; "
+                         "an upstream filter may have emptied the cloud"
+                         % (len(S), len(D)))
     rng = np.random.default_rng(seed)
 
     # スケール自動決定: 各点群個別の bbox 対角の大きい方(未知並進に汚されない)
