@@ -96,8 +96,14 @@ def _conv(t, ker, device):
 
 
 def _norm_b(t):
-    mx = t.abs().amax(dim=(2, 3), keepdim=True).clamp_min(1e-8)
-    return t / mx
+    """core _norm のバッチ版。**素通し分岐が必須**: 旧版は clamp_min(1e-8) で必ず
+    除算し、平坦画像の float32 丸め残差(~3e-8)をフルスケール 1.0 に増幅していた
+    (敵対レビュー 2026-08-31 P1: sobel/canny 等 13 op が定数入力で全面破綻)。
+    閾値は float32 雑音床(~3e-8)より上の 1e-6 に置く。core(f64, 閾値 1e-8)との
+    差は「真の応答最大値が 1e-8..1e-6 の画像」でのみ生じるが、その帯域は f32 では
+    どのみち表現不能なので、平坦入力を正しく通すことを優先する。"""
+    mx = t.abs().amax(dim=(2, 3), keepdim=True)
+    return torch.where(mx > 1e-6, t / mx.clamp_min(1e-12), t)
 
 
 def _k(a):
