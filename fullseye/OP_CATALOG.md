@@ -832,7 +832,7 @@ _計 742 ops / 46 categories。_
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `signal_funct1d`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
 - `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
 - `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
@@ -1547,29 +1547,29 @@ _計 37 ops / 3 categories。_
 プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。
 
 ### function(23)
-- `create_funct_1d_array` (`signal → signal`) — 等間隔サンプル配列から 1D 関数を作る(create_funct_1d_array)。
-- `create_funct_1d_pairs` (`signal, signal → pairs`) — (x,y) 対から等間隔 1D 関数へ再標本化(create_funct_1d_pairs)。
-- `smooth_funct_1d_gauss` (`signal → signal`) — 1D ガウス平滑化(smooth_funct_1d_gauss)。
-- `smooth_funct_1d_mean` (`signal → signal`) — 1D 移動平均平滑化(smooth_funct_1d_mean)。
-- `derivate_funct_1d` (`signal → signal`) — 1D 微分(中心差分、derivate_funct_1d)。
-- `integrate_funct_1d` (`signal → signal`) — 1D 累積積分(台形則、integrate_funct_1d)。
-- `zero_crossings_funct_1d` (`signal → indices`) — 符号が変わる位置(ゼロ交差)の index を返す(zero_crossings_funct_1d)。
-- `local_min_max_funct_1d` (`signal → indices`) — 局所極大/極小の index を返す(local_min_max_funct_1d)。
-- `abs_funct_1d` (`signal → signal`) — y 値の絶対値(abs_funct_1d)。
-- `negate_funct_1d` (`signal → signal`) — y 値の符号反転(negate_funct_1d)。
-- `invert_funct_1d` (`signal → signal`) — 関数 y=f(x) を x=f^-1(y) へ反転(単調区間で線形補間)(invert_funct_1d)。
-- `scale_y_funct_1d` (`signal → signal`) — y 値を線形変換 mult*y+add(scale_y_funct_1d)。
-- `transform_funct_1d` (`signal → pairs`) — 1D 関数のアフィン変換(x,y 独立、transform_funct_1d)。(x,y) 対を返す。
-- `compose_funct_1d` (`signal, signal → signal`) — 2 関数の合成 y1(y2)(値域を index として参照、compose_funct_1d)。
-- `sample_funct_1d` (`signal → signal`) — 関数を step 間隔で再標本化(sample_funct_1d)。
-- `match_funct_1d_trans` (`signal, signal → measurement`) — 2 つの 1D 関数間の最良シフト(相互相関ピーク)を推定(match_funct_1d_trans)。
-- `distance_funct_1d` (`signal, signal → measurement`) — 2 関数間の距離(max=上限, mean=平均、distance_funct_1d)。
-- `num_points_funct_1d` (`signal → measurement`) — 関数の点数(num_points_funct_1d)。
-- `x_range_funct_1d` (`signal → measurement`) — 関数の x 範囲(min,max)(x_range_funct_1d)。
-- `y_range_funct_1d` (`signal → measurement`) — 関数の y 範囲(min,max)(y_range_funct_1d)。
-- `get_pair_funct_1d` (`signal → measurement`) — index の (x, y) 対を返す(get_pair_funct_1d)。
-- `get_y_value_funct_1d` (`signal → measurement`) — 指定 x での y 値(線形補間可)(get_y_value_funct_1d)。
-- `funct_1d_to_pairs` (`signal → pairs`) — 1D 関数を (x, y) の対に変換(funct_1d_to_pairs)。
+- `create_funct_1d_array` (`signal → signal`) — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
+- `create_funct_1d_pairs` (`signal, signal → pairs`) — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an
+- `smooth_funct_1d_gauss` (`signal → signal`) — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``).
+- `smooth_funct_1d_mean` (`signal → signal`) — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``).
+- `derivate_funct_1d` (`signal → signal`) — First derivative by central differences (HALCON ``derivate_funct_1d``).
+- `integrate_funct_1d` (`signal → signal`) — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``).
+- `zero_crossings_funct_1d` (`signal → indices`) — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``).
+- `local_min_max_funct_1d` (`signal → indices`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
+- `abs_funct_1d` (`signal → signal`) — Absolute value of the y-values (HALCON ``abs_funct_1d``).
+- `negate_funct_1d` (`signal → signal`) — Sign-flipped y-values (HALCON ``negate_funct_1d``).
+- `invert_funct_1d` (`signal → signal`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
+- `scale_y_funct_1d` (`signal → signal`) — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
+- `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
+- `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
+- `sample_funct_1d` (`signal → signal`) — Every *step*-th sample (HALCON ``sample_funct_1d``).
+- `match_funct_1d_trans` (`signal, signal → measurement`) — Best integer translation between two functions by cross-correlation
+- `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
+- `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
+- `x_range_funct_1d` (`signal → measurement`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
+- `y_range_funct_1d` (`signal → measurement`) — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).
+- `get_pair_funct_1d` (`signal → measurement`) — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``).
+- `get_y_value_funct_1d` (`signal → measurement`) — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``).
+- `funct_1d_to_pairs` (`signal → pairs`) — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``).
 
 ### io(3)
 - `read_wav` (`file → signal`) — Read a WAV file (stdlib) -> ``(x float64 [-1,1], rate)``. Multi-channel is

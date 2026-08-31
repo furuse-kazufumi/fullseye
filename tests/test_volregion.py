@@ -173,3 +173,9 @@ def test_components_respect_connectivity_and_conserve_volume():
     assert vr.vol_rle_components(np.zeros((3, 3, 3))) == []
     with pytest.raises(ValueError, match="connectivity"):
         vr.vol_rle_components(v, connectivity=6.5)
+    # regression: None / non-numeric used to escape as a raw TypeError from
+    # float(), against the documented ValueError contract
+    with pytest.raises(ValueError, match="connectivity"):
+        vr.vol_rle_components(v, connectivity=None)
+    with pytest.raises(ValueError, match="connectivity"):
+        vr.vol_rle_components(v, connectivity="all")
