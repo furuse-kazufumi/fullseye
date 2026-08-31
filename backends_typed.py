@@ -157,9 +157,12 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort):
             got = _coerce(fn(v, **kw), out_sort)
         except Exception:                                 # noqa: BLE001 - fail-soft
             return _fallback(v, in_sort, out_sort)
-        # 型の嘘も fail-soft と同じ扱い: 宣言と違う形が下流へ漏れると、失敗が
-        # 1 段先の無関係な op で顕在化して原因が追えなくなる
-        if out_sort != "feature" and not isinstance(got, np.ndarray):
+        # 型の嘘も fail-soft と同じ扱い。**形まで検証する**のが要点で、
+        # 「ndarray かどうか」では足りない: 宣言 volume の op が 2-D を返すと、
+        # 下流の vol_* が「次元が合わない」と落ちて**無関係な場所で**失敗が
+        # 顕在化する(実測 2026-09-01: scipy binary_dilation の
+        # "structure and input must have same dimensionality")。
+        if not _sort_ok(got, out_sort):
             return _fallback(v, in_sort, out_sort)
         return got
     return _run
