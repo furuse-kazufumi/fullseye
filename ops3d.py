@@ -400,8 +400,11 @@ _CATALOG = {
         ("estimate_alpha", "recon3d", ["points"], "measurement", False),
     ],
     "curve": [  # 空間曲線の微分幾何(曲率・捩率・Frenet・弧長・スプライン平滑)
-        ("curvature_torsion", "curve3d", ["points"], "measurement", False),
+        # (kappa (N,), tau (N,)) の同格対 → adapter で stack して (2,N) pairs
+        # (vol_profile_line と同流儀。wave-4 TYPEMISS 修正)
+        ("curvature_torsion", "curve3d", ["points"], "pairs", False),
         ("frenet_frame", "curve3d", ["points"], "frame", False),
+        # (cumulative (N,), total float) → adapter で全長スカラを剥がして measurement
         ("arc_length", "curve3d", ["points"], "measurement", False),
         ("resample_uniform", "curve3d", ["points"], "points", False),
         ("fit_spline_curve", "curve3d", ["points"], "points", False),
