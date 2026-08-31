@@ -682,6 +682,8 @@ def main(argv=None):
     ap.add_argument("--slow-sec", type=float, default=SLOW_S)
     ap.add_argument("--no-determinism", action="store_true",
                     help="決定性チェックを省く(速いが (c) の絞り込みが効かない)")
+    ap.add_argument("--max-op-elems", type=int, default=MAX_OP_ELEMS,
+                    help="1 op に渡す総要素数の上限(時間の暴走を止める)")
     ap.add_argument("--trace-ops", action="store_true",
                     help="全 op を実行前に print(戻ってこない op の名指し用)")
     ap.add_argument("--no-timing", action="store_true",
