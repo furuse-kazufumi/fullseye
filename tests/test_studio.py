@@ -3519,11 +3519,11 @@ def test_viewer3d_fp_wireframe_perspective_and_near_clip():
 
 
 def test_viewer3d_height_ramp_cached_and_bit_identical():
-    """Plain-cloud height ramp: computed once per cloud in the widget (it was
-    a measured 84 ms/frame at 100k pts when recomputed inside every render —
-    4.6x the splat render itself), with the full-resolution frame bit-identical
-    to the renderer's own internal ramp path, invalidation on a new cloud, and
-    NaN vertices unable to poison the normalization."""
+    """Plain-cloud height ramp: computed once per cloud in the widget (it cost
+    a measured 7.4 ms per frame at 100k pts — 28% of the frame — when
+    recomputed inside every render), with the full-resolution frame
+    bit-identical to the renderer's own internal ramp path, invalidation on a
+    new cloud, and NaN vertices unable to poison the normalization."""
     _app()
     win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
     v = win._viewer3d_class()
