@@ -89,6 +89,11 @@ def make_generators():
         "matrix": lambda rng: rng.standard_normal(
             (int(rng.integers(2, 12)), int(rng.integers(2, 12)))),
         "roots": lambda rng: rng.standard_normal(6) + 1j * rng.standard_normal(6),
+        # cpoints = 複素平面の順序つき点列(閉曲線)。tier2 複素解析の入口は
+        # 「一様サンプルの単位円」— これなら Laurent 係数(円限定)も通り、
+        # 写像 op の像(退化した輪郭)が下流へ回って敵対入力にもなる
+        "cpoints": lambda rng: np.exp(
+            2j * np.pi * np.arange(64, dtype=np.float64) / 64.0),
     }
 
 
