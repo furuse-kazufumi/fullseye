@@ -249,6 +249,17 @@ from synth import (  # noqa: E402,F401
     learn_features, synthesize_like, match_histogram, radial_power_spectrum,
     feature_distance, patch_novelty, pyramid_stat_distance,
 )
+from funct1d import (  # noqa: E402,F401
+    smooth_funct_1d_gauss, smooth_funct_1d_mean,
+    derivate_funct_1d, integrate_funct_1d,
+    zero_crossings_funct_1d, local_min_max_funct_1d,
+    funct_1d_to_pairs, abs_funct_1d, negate_funct_1d, scale_y_funct_1d,
+    compose_funct_1d, num_points_funct_1d, distance_funct_1d,
+    sample_funct_1d, get_pair_funct_1d, invert_funct_1d,
+    transform_funct_1d, x_range_funct_1d, y_range_funct_1d,
+    get_y_value_funct_1d, create_funct_1d_array, create_funct_1d_pairs,
+    match_funct_1d_trans,
+)
 
 __all__ = [
     "apply", "run_pipeline", "find_op", "list_ops", "op_names",
