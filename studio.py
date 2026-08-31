@@ -770,6 +770,54 @@ def viewer3d_fp_axes(yaw_deg, pitch_deg):
     return cam[2].copy(), cam[0].copy(), np.array([0.0, 0.0, 1.0])
 
 
+#: first-person movement keys -> direction in the (forward, right, up) basis of
+#: :func:`viewer3d_fp_axes` (module-level so the headless math is testable).
+FP_MOVES = {"W": (1, 0, 0), "S": (-1, 0, 0), "A": (0, -1, 0), "D": (0, 1, 0),
+            "E": (0, 0, 1), "Q": (0, 0, -1), "Space": (0, 0, 1)}
+
+#: first-person vertical field of view (degrees): bounds, entrance default and
+#: the per-keypress step for the +/- (or [ ]) keys.
+FP_FOV_MIN, FP_FOV_MAX = 40.0, 100.0
+FP_FOV_DEFAULT, FP_FOV_STEP = 70.0, 5.0
+
+
+def fp_fov_adjust(fov_deg, delta_deg):
+    """One +/- keypress on the first-person FOV: add *delta_deg* and clamp into
+    ``[FP_FOV_MIN, FP_FOV_MAX]``. Headless — unit tested at both bounds."""
+    return float(np.clip(float(fov_deg) + float(delta_deg), FP_FOV_MIN, FP_FOV_MAX))
+
+
+def fp_move_vector(pressed, yaw_deg, pitch_deg):
+    """World-space walk direction for a SET of held movement keys -> (3,) float.
+
+    Sums the :data:`FP_MOVES` entries over *pressed* (unknown names are
+    ignored) in the (forward, right, up) basis of :func:`viewer3d_fp_axes` —
+    W+S cancels to zero, W+D walks the diagonal. The smooth-walk timer calls
+    this every tick and multiplies by the per-tick step, replacing the old
+    reliance on the OS key auto-repeat. Headless."""
+    fwd, right, up = viewer3d_fp_axes(yaw_deg, pitch_deg)
+    v = np.zeros(3)
+    for name in pressed:
+        d = FP_MOVES.get(name)
+        if d is not None:
+            v = v + fwd * d[0] + right * d[1] + up * d[2]
+    return v
+
+
+def fp_visible_edge_mask(edges, visible):
+    """Near-plane clip for the first-person wireframe: keep only edges whose
+    BOTH endpoints are visible. A segment with one endpoint at/behind the eye
+    must be dropped whole — that endpoint's projected xy is meaningless (a
+    negative view z would mirror it across the frame centre), so drawing the
+    segment would smear a line through the view. edges (E, 2) int indices,
+    visible (n,) bool -> (E,) bool mask. Headless."""
+    E = np.asarray(edges, int)
+    vis = np.asarray(visible, bool)
+    if E.size == 0:
+        return np.zeros((0,), bool)
+    return vis[E[:, 0]] & vis[E[:, 1]]
+
+
 def viewer3d_project_persp(points, cam, eye, fov_deg, size, near=1e-6):
     """Perspective projection through a first-person camera ->
     ``(xy (n, 2), depth (n,), visible (n,) bool)``.
