@@ -1919,6 +1919,12 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._fp_yaw, self._fp_pitch = 0.0, 0.0
             self._eye = np.zeros(3)             # first-person camera position (world)
             self._fp_speed = 1.0                # walk-speed multiplier (wheel)
+            self._fp_fov = FP_FOV_DEFAULT       # vertical FOV in degrees (+/- keys)
+            self._fp_keys = set()               # currently held movement key names
+            self._fp_mods = QtCore.Qt.NoModifier   # modifiers seen on the last key event
+            self._move_timer = QtCore.QTimer(self)  # smooth continuous walk (~33 Hz)
+            self._move_timer.setInterval(30)
+            self._move_timer.timeout.connect(self._move_tick)
             self._drag = None                   # (mode, last QPoint) while a button is down
             self._frame = None                  # last rendered numpy frame (tests/screenshots)
             self._n_drawn = 0                   # points actually splatted last frame (HUD honesty)
