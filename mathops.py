@@ -1115,9 +1115,10 @@ def cplx_cauchy_value(z, fz, w):
     Accuracy inherits the ``O(n^-2)`` chordal quadrature of
     :func:`cplx_contour_integral` and degrades as *w* approaches the path
     (the integrand's peak sharpens): measured for ``f(z) = z**2`` on a
-    256-point unit circle, the absolute error is 9.0e-6 at
-    ``w = 0.3`` and 8.1e-5 at ``w = 0.9`` — three orders of
-    magnitude worse for a point ten times closer to the contour.
+    256-point unit circle, the absolute error is 9.0e-6 at ``w = 0.3`` and
+    8.1e-5 at ``w = 0.9`` — 9x worse for a point 7x closer to the path
+    (0.7 -> 0.1 of clearance). The blow-up is real but gradual; what it does
+    *not* survive is clearance below one sampling step, which is refused.
 
     **Raises** ``ValueError``: *w* outside the contour (winding 0 — the
     integral is then 0 and returning it as "f(w)" would be a lie), *w* closer
