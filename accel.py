@@ -298,7 +298,14 @@ def _dyn_threshold(t, a, b, dev):
     ker = torch.ones(1, 1, k, k, device=dev) / (k * k)
     r = k // 2
     m = F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
-    return (t > m + (b - 0.5) * 0.4).float()
+    # b=0.5 でオフセットが厳密 0 になり「t > mean(t)」の同値比較になる(P2)。
+    # 定数/線形入力では core(f64)は厳密同値 → False、f32 は ±ulp で符号が
+    # ランダムに割れる。|t−m| が f32 床以下なら同値(diff=0)とみなして core の
+    # 同値セマンティクスに合わせる。実画像でこの帯域に載る画素は刃の上の
+    # 画素だけで、そこは f64 でも撮像雑音以下の判定になっている
+    d = t - m
+    d = torch.where(d.abs() < 1e-6, torch.zeros_like(d), d)
+    return (d > (b - 0.5) * 0.4).float()
 
 
 def _canny(t, a, b, dev):
