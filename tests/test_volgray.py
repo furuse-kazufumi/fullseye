@@ -114,6 +114,22 @@ def test_equalize_constant_passthrough():
     assert out is not v                               # a copy, not the input object
 
 
+def test_equalize_near_constant_dust_does_not_crash():
+    """Regression: a constant volume plus one voxel of 1-ulp dust has a range
+    (~1e-16) far below nbins * ulp — np.histogram's bin edges collapsed and it
+    raised its internal 'Too many bins for data range' error. The bincount
+    binning equalises it fine: the two values land in the first and last bin
+    and the output is a valid monotone LUT mapping in (0, 1]."""
+    v = np.full((4, 4, 4), 1.0)
+    v[0, 0, 0] = np.nextafter(1.0, 2.0)               # +1 ulp of dust
+    out = volgray.vol_equalize(v, nbins=256)
+    assert out.shape == v.shape
+    assert np.isfinite(out).all()
+    assert 0.0 < out.min() <= out.max() <= 1.0
+    # monotone: the dust voxel maps at least as high as the rest
+    assert out[0, 0, 0] >= out[1, 1, 1]
+
+
 def test_equalize_mask_uses_masked_histogram_only():
     """Changing *only* voxels outside the mask must not change the LUT: the
     masked region's output stays identical (up to the shared [min, max] binning
