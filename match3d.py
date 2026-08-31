@@ -173,6 +173,11 @@ def match_phase_3d(a, b, device="cpu"):
     Reddy & Chatterji の 3D 版。相互パワースペクトルの逆 FFT のピーク = 平行移動。テンプレート
     不要・全 volume・O(N log N)。回転/スケールは別途(PCA / log-polar)。
     """
+    _va, _vb = np.asarray(a), np.asarray(b)
+    if _va.shape != _vb.shape:
+        raise ValueError("match_phase_3d: both volumes must share one shape "
+                         "(got %r vs %r) — this operator correlates them "
+                         "voxel-for-voxel" % (_va.shape, _vb.shape))
     A = torch.fft.fftn(torch.as_tensor(np.asarray(a, np.float32), device=device))
     B = torch.fft.fftn(torch.as_tensor(np.asarray(b, np.float32), device=device))
     R = A * B.conj()
@@ -1205,6 +1210,11 @@ def refine_rotation_z(scene, template, init_angle_deg=0.0, device="cpu",
     -------
     (angle_deg, n_iters) : (float, int)  精緻化角(deg)と実行反復数。
     """
+    _va, _vb = np.asarray(scene), np.asarray(template)
+    if _va.shape != _vb.shape:
+        raise ValueError("refine_rotation_z: both volumes must share one shape "
+                         "(got %r vs %r) — this operator correlates them "
+                         "voxel-for-voxel" % (_va.shape, _vb.shape))
     scene_t = torch.as_tensor(np.asarray(scene, np.float32)[None, None], device=device)
     tmpl_t = torch.as_tensor(np.asarray(template, np.float32)[None, None], device=device)
     D, H, W = tmpl_t.shape[2:]
@@ -1555,6 +1565,11 @@ def scene_flow_lk(vol0, vol1, device="cpu", win=3, levels=3, iters=3, reg=1e-3):
     実測: 一様並進 [1.5,-2,1] を中央領域平均で誤差 0.044 voxel、拡大場で外向き発散を正しく検出。
     grad_scale=32 は sobel3d(deriv[-1,0,1]×smooth[1,2,1]²)の実測スケール。GPU 対応(全 conv3d)。
     """
+    _va, _vb = np.asarray(vol0), np.asarray(vol1)
+    if _va.shape != _vb.shape:
+        raise ValueError("scene_flow_lk: both volumes must share one shape "
+                         "(got %r vs %r) — this operator correlates them "
+                         "voxel-for-voxel" % (_va.shape, _vb.shape))
     v0 = torch.as_tensor(np.asarray(vol0, np.float32)[None, None], device=device)
     v1 = torch.as_tensor(np.asarray(vol1, np.float32)[None, None], device=device)
     pyr0 = [v0]; pyr1 = [v1]

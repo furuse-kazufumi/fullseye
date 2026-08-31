@@ -101,11 +101,11 @@ def _b_fuse(pool, rng):
 
 
 def _b_register_cross(pool, rng):
-    pts = pool.get("points")
-    if not pts or len(pts) < 1:
+    cands = [p for p in pool.get("points", []) if _is_pts(p)]
+    if not cands:
         return None
-    a = pts[int(rng.integers(len(pts)))]
-    b = a + rng.standard_normal(3) * 0.1
+    a = cands[int(rng.integers(len(cands)))]
+    b = a + rng.standard_normal(a.shape) * 0.1
     return (a, "points", b, "points"), {"method": "icp"}
 
 
