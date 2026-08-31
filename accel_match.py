@@ -20,12 +20,11 @@ from __future__ import annotations
 
 import numpy as np
 
-try:
-    import torch
-    import torch.nn.functional as F
-    _HAS_TORCH = True
-except Exception:  # pragma: no cover
-    _HAS_TORCH = False
+# torch は起動時に import しない(~700 ms)。torch_lazy が初回属性アクセスで
+# 実 torch を読み込むので、以下の `torch.` / `F.` は書き方も意味も変わらない。
+# Lazy: the GPU stack loads on first use, not at `import api`.
+from torch_lazy import F, torch  # noqa: F401
+from torch_lazy import HAS_TORCH as _HAS_TORCH
 
 
 def ncc_map_batch(images, template, device="cpu"):
