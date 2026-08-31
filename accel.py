@@ -361,9 +361,11 @@ def _bilateral(t, a, b, dev):
 
 
 def _signed01_b(t):
-    """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。"""
+    """backend_safe.signed01 のバッチ版: 0->0.5, ±max->0/1(符号を保存)。
+    閾値は f32 雑音床より上の 1e-6(P1/P6: FFT 残差が 1e-8 を超えて分岐が
+    逆に倒れ、非 2 冪サイズの平坦画像で highpass が 0.5 ずれていた)。"""
     m = t.abs().amax(dim=(2, 3), keepdim=True)
-    return torch.where(m > 1e-8, (t / (2 * m) + 0.5).clamp(0, 1),
+    return torch.where(m > 1e-6, (t / (2 * m) + 0.5).clamp(0, 1),
                        torch.full_like(t, 0.5))
 
 
