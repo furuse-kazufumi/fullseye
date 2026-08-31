@@ -451,6 +451,18 @@ PROBLEMS: dict[str, Problem] = {
                          lambda f, gt: 1.0 / (1.0 + abs(_as_count(f) - gt)),
                          lambda: [ops.stage("vol_gaussian", 0.3, 0.0), ops.stage("vol_threshold", 0.4, 0.0),
                                   ops.stage("vol_count", 0.0, 0.0)], in_sort="volume"),
+    # 橋渡しで開いた新 sort の課題。hand baseline は「その分野で標準的な 1 手」
+    # (点群 = 統計的外れ値除去、信号 = ガウス平滑)であって最強手ではない。
+    # ゲートはこれを超えることを要求するので、baseline が弱すぎると意味が無い
+    # 一方、強すぎると正当な発見も落ちる。標準手に置くのが公平。
+    "points_denoise": Problem(
+        "points_denoise", "1/(1+chamfer)", _make_points_denoise, _score_points,
+        lambda: [ops.stage("tb_statistical_outlier_removal", 0.5, 0.5)],
+        in_sort="points"),
+    "signal_denoise": Problem(
+        "signal_denoise", "1/(1+mse)", _make_signal_denoise, _score_signal,
+        lambda: [ops.stage("tb_smooth_funct_1d_gauss", 0.5, 0.5)],
+        in_sort="signal"),
 }
 
 
