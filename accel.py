@@ -181,7 +181,7 @@ def _median(t, a, b, dev):
 
 
 def _percentile(t, a, b, dev):
-    # scipy percentile_filter は rank_filter(rank = int(p/100*(n-1)))で並べ替え第 rank 位。
+    # scipy percentile_filter は rank_filter(rank = int(p/100*n))で並べ替え第 rank 位。
     # torch.quantile の補間法とはずれるので、同じ rank 規則で sort して取り出す。
     k = _k(a)
     n = k * k
