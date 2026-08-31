@@ -148,6 +148,12 @@ def _num(v):
     return f if math.isfinite(f) else None
 
 
+def _r(v, n):
+    """有限なら丸め、非有限/None なら None(記録に NaN を残さない)。"""
+    v = _num(v)
+    return None if v is None else round(v, n)
+
+
 def _bins_are_formable(lo, hi, bins=HIST_BINS):
     """[lo, hi] を *bins* 本の有限幅ビンに刻めるか(np.histogram の成立条件)。
 
