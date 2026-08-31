@@ -2159,8 +2159,18 @@ def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72):
     理論上直交のモード間に**最大 ~10% のクロストーク**が残る(例: 純 (2,0) defocus 入力で
     係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が
     要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。
+
+    Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。
     """
-    img = np.asarray(disk_image, np.float32); H, W = img.shape
+    img = _f32_finite(disk_image, "fit_zernike: disk_image")
+    if img.ndim != 2:
+        raise ValueError("fit_zernike: disk_image must be 2-D, got %d-D"
+                         % (img.ndim,))
+    H, W = img.shape
+    if H < 2 or W < 2:
+        raise ValueError("fit_zernike: disk_image must be at least 2x2, "
+                         "got %dx%d (the polar grid divides by W-1/H-1)"
+                         % (H, W))
     nr, nt = int(nr), int(nt)
     B, idx, rho = _zernike_basis(nr, nt, n_max)
     cy, cx = (H - 1) / 2, (W - 1) / 2; rad = min(H, W) / 2 - 1
