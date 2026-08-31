@@ -19,17 +19,17 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**.
 
-    Singular values below ``rcond * s_max`` are treated as zero — that cutoff
-    *is* the regularisation, so it is a named, documented parameter here
-    (default ``1e-12``) rather than a hidden library default: raising it
-    discards noisy directions (stabler, more biased), lowering it keeps them
-    (exact for well-conditioned *A*, explosive near rank deficiency).
+Singular values below ``rcond * s_max`` are treated as zero — that cutoff
+*is* the regularisation, so it is a named, documented parameter here
+(default ``1e-12``) rather than a hidden library default: raising it
+discards noisy directions (stabler, more biased), lowering it keeps them
+(exact for well-conditioned *A*, explosive near rank deficiency).
 
-    Works for any ``(m, n)``: ``pinv(A) @ b`` is the least-squares solution for
-    ``m > n`` and the minimum-norm solution for ``m < n``.
+Works for any ``(m, n)``: ``pinv(A) @ b`` is the least-squares solution for
+``m > n`` and the minimum-norm solution for ``m < n``.
 
-    HALCON: no direct operator — HALCON reaches the same result through
-    ``svd_matrix`` + reciprocal singular values.
+HALCON: no direct operator — HALCON reaches the same result through
+``svd_matrix`` + reciprocal singular values.
 
 ## ファミリ共通の入力契約(fail-closed)
 

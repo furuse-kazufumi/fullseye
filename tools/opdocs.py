@@ -163,10 +163,13 @@ def _records():
                 sig = "(...)"
             ins = info["in"]
             ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else str(ins)
+            doc = getattr(fn, "__doc__", None) or ""
             recs.append({
                 "dim": "math", "name": name, "category": info["category"],
                 "in": ins, "out": info["out"],
-                "halcon": "", "doc": (getattr(fn, "__doc__", None) or "").strip(),
+                # cleandoc: function docstrings carry the 4-space continuation indent,
+                # which Markdown would misread as a code block — dedent first.
+                "halcon": "", "doc": inspect.cleandoc(doc).strip() if doc else "",
                 "module": info.get("module", "mathops"), "sig": sig,
                 "examples": sorted(idxmath.get(name, [])),
                 # single usage guide for the whole maths family, named after the

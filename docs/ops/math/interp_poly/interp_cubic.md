@@ -19,24 +19,24 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Cubic-spline interpolation (``scipy.interpolate.CubicSpline``).
 
-    C²-smooth through all nodes — the step up from :func:`interp_linear` when
-    the underlying curve is smooth (a lens-distortion or gamma curve). Needs at
-    least 4 points. *bc_type* is the boundary condition: ``'not-a-knot'``
-    (default — reproduces a global cubic polynomial *exactly*, the property the
-    tests pin), ``'natural'`` (zero second derivative at the ends; slightly
-    smoother-looking, but it will NOT reproduce a cubic), or ``'clamped'``.
+C²-smooth through all nodes — the step up from :func:`interp_linear` when
+the underlying curve is smooth (a lens-distortion or gamma curve). Needs at
+least 4 points. *bc_type* is the boundary condition: ``'not-a-knot'``
+(default — reproduces a global cubic polynomial *exactly*, the property the
+tests pin), ``'natural'`` (zero second derivative at the ends; slightly
+smoother-looking, but it will NOT reproduce a cubic), or ``'clamped'``.
 
-    Same strict grid and the same explicit *out_of_range* policy as
-    :func:`interp_linear` ('raise' by default, 'clamp' to hold end values) —
-    spline **extrapolation diverges cubically** and is refused outright.
+Same strict grid and the same explicit *out_of_range* policy as
+:func:`interp_linear` ('raise' by default, 'clamp' to hold end values) —
+spline **extrapolation diverges cubically** and is refused outright.
 
-    Honest note: between nodes a spline can overshoot (it is a minimum-
-    curvature interpolant, not shape-preserving); for monotone data whose
-    interpolant must stay monotone, use a PCHIP-type method instead — not
-    provided here, stated so nobody assumes otherwise.
+Honest note: between nodes a spline can overshoot (it is a minimum-
+curvature interpolant, not shape-preserving); for monotone data whose
+interpolant must stay monotone, use a PCHIP-type method instead — not
+provided here, stated so nobody assumes otherwise.
 
-    HALCON: no cubic tuple interpolation operator (``create_funct_1d_pairs``
-    feeds linear interpolation only).
+HALCON: no cubic tuple interpolation operator (``create_funct_1d_pairs``
+feeds linear interpolation only).
 
 ## ファミリ共通の入力契約(fail-closed)
 

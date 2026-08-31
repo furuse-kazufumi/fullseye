@@ -18,26 +18,26 @@ version: 0.1.0  # fullseye lib version this note was generated for
 ## 使い方
 
 Least-squares solution of an over-determined system ``A x ≈ b``
-    (LAPACK ``gelsd``, SVD-based).
+(LAPACK ``gelsd``, SVD-based).
 
-    *a* is ``(m, n)`` with ``m >= n`` (at least as many equations as unknowns;
-    an under-determined system is refused — its minimum-norm answer is a
-    different question, ask :func:`mat_pinv`). *b* is ``(m,)`` or ``(m, k)``.
-    *rcond* is the singular-value cutoff relative to the largest (``None`` =
-    numpy's machine-precision default); singular values below it are treated
-    as zero, which is what keeps a noisy rank-deficient fit stable.
+*a* is ``(m, n)`` with ``m >= n`` (at least as many equations as unknowns;
+an under-determined system is refused — its minimum-norm answer is a
+different question, ask :func:`mat_pinv`). *b* is ``(m,)`` or ``(m, k)``.
+*rcond* is the singular-value cutoff relative to the largest (``None`` =
+numpy's machine-precision default); singular values below it are treated
+as zero, which is what keeps a noisy rank-deficient fit stable.
 
-    Returns a dict — the fit **and** its honesty telemetry together:
+Returns a dict — the fit **and** its honesty telemetry together:
 
-    ``x`` solution ``(n,)`` or ``(n, k)`` · ``residual_ss`` sum of squared
-    residuals ``||b - A x||²`` (float, or ``(k,)`` per column — computed
-    explicitly, so it is present even when the matrix is rank-deficient) ·
-    ``rank`` effective rank at *rcond* · ``singular_values`` of *A*
-    (descending). ``rank < n`` means the data does not determine every
-    parameter — report that, don't hide it.
+``x`` solution ``(n,)`` or ``(n, k)`` · ``residual_ss`` sum of squared
+residuals ``||b - A x||²`` (float, or ``(k,)`` per column — computed
+explicitly, so it is present even when the matrix is rank-deficient) ·
+``rank`` effective rank at *rcond* · ``singular_values`` of *A*
+(descending). ``rank < n`` means the data does not determine every
+parameter — report that, don't hide it.
 
-    HALCON: ``solve_matrix`` on a non-square system (same normal-equation
-    machinery behind ``vector_to_hom_mat2d`` and friends).
+HALCON: ``solve_matrix`` on a non-square system (same normal-equation
+machinery behind ``vector_to_hom_mat2d`` and friends).
 
 ## ファミリ共通の入力契約(fail-closed)
 

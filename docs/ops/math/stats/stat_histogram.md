@@ -19,24 +19,24 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Histogram of a 1-D sample with the binning **explicit**.
 
-    *bins* is a positive integer count of equal-width bins; *range* is an
-    explicit ``(lo, hi)`` (finite, ``lo < hi``) or ``None`` to span the data
-    (values exactly at ``hi`` land in the last bin, numpy's convention; with an
-    explicit *range*, values outside it are excluded from every bin — they
-    simply do not count, which is why passing *range* explicitly is the honest
-    choice when comparing histograms across datasets). With ``density=False``
-    (default) *counts* are occurrence **frequencies** (int64, summing to the
-    number of in-range samples); with ``density=True`` they form a
-    **probability density** (float64, integrating to 1 over the range).
-    A *range* that excludes **every** sample raises ``ValueError`` under
-    ``density=True`` (the density would be 0/0 — silent NaNs refused) while
-    ``density=False`` honestly returns all-zero counts. *bins* is capped at
-    ``MAX_ELEMENTS`` (the edge/count arrays are allocations too).
+*bins* is a positive integer count of equal-width bins; *range* is an
+explicit ``(lo, hi)`` (finite, ``lo < hi``) or ``None`` to span the data
+(values exactly at ``hi`` land in the last bin, numpy's convention; with an
+explicit *range*, values outside it are excluded from every bin — they
+simply do not count, which is why passing *range* explicitly is the honest
+choice when comparing histograms across datasets). With ``density=False``
+(default) *counts* are occurrence **frequencies** (int64, summing to the
+number of in-range samples); with ``density=True`` they form a
+**probability density** (float64, integrating to 1 over the range).
+A *range* that excludes **every** sample raises ``ValueError`` under
+``density=True`` (the density would be 0/0 — silent NaNs refused) while
+``density=False`` honestly returns all-zero counts. *bins* is capped at
+``MAX_ELEMENTS`` (the edge/count arrays are allocations too).
 
-    Returns ``(counts, edges)`` — ``edges`` has ``bins + 1`` entries;
-    bin *i* is ``[edges[i], edges[i+1])``.
+Returns ``(counts, edges)`` — ``edges`` has ``bins + 1`` entries;
+bin *i* is ``[edges[i], edges[i+1])``.
 
-    HALCON: ``tuple_histo_range`` (and ``gray_histo`` for whole images).
+HALCON: ``tuple_histo_range`` (and ``gray_histo`` for whole images).
 
 ## ファミリ共通の入力契約(fail-closed)
 

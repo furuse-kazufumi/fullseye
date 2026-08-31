@@ -18,25 +18,25 @@ version: 0.1.0  # fullseye lib version this note was generated for
 ## 使い方
 
 All roots of a polynomial (coefficients highest-power-first) — complex
-    included.
+included.
 
-    Roots are the eigenvalues of the companion matrix (``np.roots``); the
-    polynomial must have degree ≥ 1 and a **non-zero leading coefficient**
-    (fail-closed: a zero leading coefficient means the stated degree is a lie —
-    trim it explicitly rather than have it silently dropped).
+Roots are the eigenvalues of the companion matrix (``np.roots``); the
+polynomial must have degree ≥ 1 and a **non-zero leading coefficient**
+(fail-closed: a zero leading coefficient means the stated degree is a lie —
+trim it explicitly rather than have it silently dropped).
 
-    Returns complex128, sorted by real part then imaginary part
-    (deterministic). Complex answers are honest answers: ``x² + 1`` really does
-    have roots ``±i``, and hiding them would misreport the polynomial. Pass
-    ``real_only=True`` to keep only roots whose imaginary part is negligible
-    (``|imag| <= imag_tol * max(1, |root|)``) and get them back as a sorted
-    float64 array — possibly **empty**, which is the correct answer for
-    ``x² + 1``.
+Returns complex128, sorted by real part then imaginary part
+(deterministic). Complex answers are honest answers: ``x² + 1`` really does
+have roots ``±i``, and hiding them would misreport the polynomial. Pass
+``real_only=True`` to keep only roots whose imaginary part is negligible
+(``|imag| <= imag_tol * max(1, |root|)``) and get them back as a sorted
+float64 array — possibly **empty**, which is the correct answer for
+``x² + 1``.
 
-    Numerical note: root-finding conditioning degrades with degree and with
-    clustered roots (a double root moves ~``sqrt(eps)`` under coefficient
-    noise — Wilkinson's classic analysis); treat high-degree roots as
-    approximate. HALCON: no root-finding tuple operator.
+Numerical note: root-finding conditioning degrades with degree and with
+clustered roots (a double root moves ~``sqrt(eps)`` under coefficient
+noise — Wilkinson's classic analysis); treat high-degree roots as
+approximate. HALCON: no root-finding tuple operator.
 
 ## ファミリ共通の入力契約(fail-closed)
 

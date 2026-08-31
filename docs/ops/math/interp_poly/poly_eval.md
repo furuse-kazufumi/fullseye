@@ -19,14 +19,14 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Evaluate a polynomial (coefficients highest-power-first) at *x*.
 
-    *coeffs* is the 1-D array :func:`poly_fit` returns in ``"coeffs"`` (or any
-    hand-written one, ``[c_d, ..., c_1, c_0]``); *x* is a finite scalar or 1-D
-    array. A scalar returns a Python float, an array returns float64.
-    Evaluation is by Horner's scheme (``np.polyval``) — numerically the right
-    way to evaluate, though it cannot repair a badly-conditioned *fit* (see
-    :func:`poly_fit`'s ``cond``).
+*coeffs* is the 1-D array :func:`poly_fit` returns in ``"coeffs"`` (or any
+hand-written one, ``[c_d, ..., c_1, c_0]``); *x* is a finite scalar or 1-D
+array. A scalar returns a Python float, an array returns float64.
+Evaluation is by Horner's scheme (``np.polyval``) — numerically the right
+way to evaluate, though it cannot repair a badly-conditioned *fit* (see
+:func:`poly_fit`'s ``cond``).
 
-    HALCON: no polynomial tuple operator (compose ``tuple_pow`` + arithmetic).
+HALCON: no polynomial tuple operator (compose ``tuple_pow`` + arithmetic).
 
 ## ファミリ共通の入力契約(fail-closed)
 

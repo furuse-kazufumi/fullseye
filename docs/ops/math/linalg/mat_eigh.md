@@ -19,24 +19,24 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Eigen-decomposition of a **symmetric** matrix (LAPACK ``syevd``).
 
-    Returns ``(w, V)``: eigenvalues ``w`` in **ascending** order (all real —
-    guaranteed by symmetry) and orthonormal eigenvectors as the **columns** of
-    ``V`` (``A @ V[:, i] == w[i] * V[:, i]``).
+Returns ``(w, V)``: eigenvalues ``w`` in **ascending** order (all real —
+guaranteed by symmetry) and orthonormal eigenvectors as the **columns** of
+``V`` (``A @ V[:, i] == w[i] * V[:, i]``).
 
-    **Symmetric input only, verified**: ``max|A - A.T|`` above ``1e-10`` of the
-    matrix scale raises ``ValueError``. This is deliberate fail-closing of two
-    traps at once — a symmetric solver fed a non-symmetric matrix silently
-    reads one triangle and returns a *plausible wrong* answer, and a general
-    matrix has complex eigenvalues this real-valued API cannot even represent.
-    For a covariance / Hessian / Gram matrix (the metrology cases) symmetry
-    holds by construction; symmetrise explicitly (``(A + A.T) / 2``) if yours
-    is symmetric-up-to-noise.
+**Symmetric input only, verified**: ``max|A - A.T|`` above ``1e-10`` of the
+matrix scale raises ``ValueError``. This is deliberate fail-closing of two
+traps at once — a symmetric solver fed a non-symmetric matrix silently
+reads one triangle and returns a *plausible wrong* answer, and a general
+matrix has complex eigenvalues this real-valued API cannot even represent.
+For a covariance / Hessian / Gram matrix (the metrology cases) symmetry
+holds by construction; symmetrise explicitly (``(A + A.T) / 2``) if yours
+is symmetric-up-to-noise.
 
-    **Sign trap (honest)**: each eigenvector is defined only up to sign, and
-    eigenvectors of a *repeated* eigenvalue only up to rotation in that
-    subspace. Compare ``|v·w|`` or subspaces, never raw columns.
+**Sign trap (honest)**: each eigenvector is defined only up to sign, and
+eigenvectors of a *repeated* eigenvalue only up to rotation in that
+subspace. Compare ``|v·w|`` or subspaces, never raw columns.
 
-    HALCON: ``eigenvalues_symmetric_matrix``.
+HALCON: ``eigenvalues_symmetric_matrix``.
 
 ## ファミリ共通の入力契約(fail-closed)
 

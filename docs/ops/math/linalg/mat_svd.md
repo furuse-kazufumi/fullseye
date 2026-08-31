@@ -19,18 +19,18 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Singular value decomposition ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``).
 
-    Returns ``(U, s, Vt)`` with ``s`` descending and non-negative. With the
-    default ``full_matrices=False`` the *thin* SVD is returned (``U`` is
-    ``(m, r)``, ``Vt`` is ``(r, n)``, ``r = min(m, n)``) — enough to
-    reconstruct ``A`` exactly and what every rank/PCA use wants; pass ``True``
-    for the full orthogonal bases.
+Returns ``(U, s, Vt)`` with ``s`` descending and non-negative. With the
+default ``full_matrices=False`` the *thin* SVD is returned (``U`` is
+``(m, r)``, ``Vt`` is ``(r, n)``, ``r = min(m, n)``) — enough to
+reconstruct ``A`` exactly and what every rank/PCA use wants; pass ``True``
+for the full orthogonal bases.
 
-    **Sign trap (honest)**: each singular-vector pair ``(u_i, v_i)`` is defined
-    only up to a simultaneous sign flip, and vectors within a *degenerate*
-    (equal-``s``) block only up to rotation. Assert on ``s``, on
-    ``U diag(s) Vt``, or on projectors — never on raw ``U``/``Vt`` entries.
+**Sign trap (honest)**: each singular-vector pair ``(u_i, v_i)`` is defined
+only up to a simultaneous sign flip, and vectors within a *degenerate*
+(equal-``s``) block only up to rotation. Assert on ``s``, on
+``U diag(s) Vt``, or on projectors — never on raw ``U``/``Vt`` entries.
 
-    HALCON: ``svd_matrix``.
+HALCON: ``svd_matrix``.
 
 ## ファミリ共通の入力契約(fail-closed)
 

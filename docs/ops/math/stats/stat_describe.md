@@ -19,19 +19,19 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Five-number-plus summary of a 1-D sample, as a plain dict.
 
-    Returns ``{"n", "mean", "std", "min", "max", "percentiles"}`` where
-    ``percentiles`` is ``{"p5", "p25", "p50", "p75", "p95"}`` (linear
-    interpolation between order statistics, numpy's default). ``std`` is the
-    **population** standard deviation (``ddof=0`` — well-defined down to a
-    single sample; multiply by ``sqrt(n/(n-1))`` for the sample estimator,
-    which is what :func:`stat_covariance` uses, documented there).
+Returns ``{"n", "mean", "std", "min", "max", "percentiles"}`` where
+``percentiles`` is ``{"p5", "p25", "p50", "p75", "p95"}`` (linear
+interpolation between order statistics, numpy's default). ``std`` is the
+**population** standard deviation (``ddof=0`` — well-defined down to a
+single sample; multiply by ``sqrt(n/(n-1))`` for the sample estimator,
+which is what :func:`stat_covariance` uses, documented there).
 
-    The tails matter in metrology: ``mean``/``std`` of residuals say how good
-    the fit is *on average*; ``p5``/``p95`` say how bad the *outliers* are —
-    report both, a fit can pass on RMS and fail on extremes.
+The tails matter in metrology: ``mean``/``std`` of residuals say how good
+the fit is *on average*; ``p5``/``p95`` say how bad the *outliers* are —
+report both, a fit can pass on RMS and fail on extremes.
 
-    HALCON: ``tuple_mean`` / ``tuple_deviation`` / ``tuple_min`` /
-    ``tuple_max`` (the percentile row has no single HALCON tuple operator).
+HALCON: ``tuple_mean`` / ``tuple_deviation`` / ``tuple_min`` /
+``tuple_max`` (the percentile row has no single HALCON tuple operator).
 
 ## ファミリ共通の入力契約(fail-closed)
 

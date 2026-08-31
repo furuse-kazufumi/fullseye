@@ -18,19 +18,19 @@ version: 0.1.0  # fullseye lib version this note was generated for
 ## 使い方
 
 Solve the square linear system ``A x = b`` (LAPACK ``gesv``, LU with
-    partial pivoting).
+partial pivoting).
 
-    *a* must be square ``(n, n)``; *b* is ``(n,)`` or ``(n, k)`` (multiple
-    right-hand sides). An exactly singular *A* raises ``ValueError``.
+*a* must be square ``(n, n)``; *b* is ``(n,)`` or ``(n, k)`` (multiple
+right-hand sides). An exactly singular *A* raises ``ValueError``.
 
-    **Do not trust the answer of an ill-conditioned system**: a solve loses
-    about ``log10(cond(A))`` significant digits, so at ``cond > 1e12`` maybe 3
-    of float64's ~16 digits survive — and *this function cannot tell you that*,
-    because a near-singular system still "solves". Check :func:`mat_cond`
-    first; for a rank-deficient or noisy system use :func:`mat_lstsq` /
-    :func:`mat_pinv` with an explicit ``rcond`` instead.
+**Do not trust the answer of an ill-conditioned system**: a solve loses
+about ``log10(cond(A))`` significant digits, so at ``cond > 1e12`` maybe 3
+of float64's ~16 digits survive — and *this function cannot tell you that*,
+because a near-singular system still "solves". Check :func:`mat_cond`
+first; for a rank-deficient or noisy system use :func:`mat_lstsq` /
+:func:`mat_pinv` with an explicit ``rcond`` instead.
 
-    HALCON: ``solve_matrix``. Returns float64, same trailing shape as *b*.
+HALCON: ``solve_matrix``. Returns float64, same trailing shape as *b*.
 
 ## ファミリ共通の入力契約(fail-closed)
 

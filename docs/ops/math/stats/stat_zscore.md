@@ -19,18 +19,18 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
-    The result has mean 0 and standard deviation 1 — the common currency for
-    comparing residuals across scales and flagging outliers (``|z| > 3``).
+The result has mean 0 and standard deviation 1 — the common currency for
+comparing residuals across scales and flagging outliers (``|z| > 3``).
 
-    **A constant input raises ``ValueError``** — the decision, stated: with
-    zero variance the z-score is 0/0. Returning silent zeros would claim "every
-    point is perfectly average", which is *a* convention but hides upstream
-    breakage (a sensor stuck at one value would sail through an outlier gate).
-    Fail-closed instead; a caller who wants the all-zeros convention can catch
-    this and substitute deliberately.
+**A constant input raises ``ValueError``** — the decision, stated: with
+zero variance the z-score is 0/0. Returning silent zeros would claim "every
+point is perfectly average", which is *a* convention but hides upstream
+breakage (a sensor stuck at one value would sail through an outlier gate).
+Fail-closed instead; a caller who wants the all-zeros convention can catch
+this and substitute deliberately.
 
-    HALCON: no direct tuple operator (compose ``tuple_mean`` +
-    ``tuple_deviation`` + arithmetic).
+HALCON: no direct tuple operator (compose ``tuple_mean`` +
+``tuple_deviation`` + arithmetic).
 
 ## ファミリ共通の入力契約(fail-closed)
 

@@ -19,28 +19,28 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Least-squares polynomial fit with its conditioning **on the record**.
 
-    Fits ``y ≈ c[0] x^d + ... + c[d]`` (coefficients highest-power-first, the
-    :func:`poly_eval` / ``np.polyval`` convention) by SVD least squares on the
-    Vandermonde matrix. *degree* must be an integer ``>= 0`` with at least
-    ``degree + 1`` samples (fail-closed: an exactly-determined fit is allowed,
-    an under-determined one is not).
+Fits ``y ≈ c[0] x^d + ... + c[d]`` (coefficients highest-power-first, the
+:func:`poly_eval` / ``np.polyval`` convention) by SVD least squares on the
+Vandermonde matrix. *degree* must be an integer ``>= 0`` with at least
+``degree + 1`` samples (fail-closed: an exactly-determined fit is allowed,
+an under-determined one is not).
 
-    Returns a dict — the fit and its health, inseparable:
+Returns a dict — the fit and its health, inseparable:
 
-    ``coeffs`` ``(degree + 1,)`` float64 · ``degree`` · ``cond`` the Vandermonde
-    condition number (:func:`mat_cond` of the design matrix) · ``rms_residual``
-    root-mean-square of ``y - p(x)``.
+``coeffs`` ``(degree + 1,)`` float64 · ``degree`` · ``cond`` the Vandermonde
+condition number (:func:`mat_cond` of the design matrix) · ``rms_residual``
+root-mean-square of ``y - p(x)``.
 
-    **The conditioning mechanism**: when ``cond > POLY_COND_WARN`` (1e10) a
-    ``RuntimeWarning`` is emitted *and* the number is in the result — an
-    equispaced degree-10 fit on raw pixel coordinates is already past it. High
-    degree on a raw coordinate range is the classic double trap: the
-    Vandermonde columns become near-collinear (digits lost, coefficients
-    unstable) and the fit oscillates between nodes (Runge phenomenon, Runge
-    1901). Centre and scale x to ``[-1, 1]`` first, or keep degree ≤ ~6.
+**The conditioning mechanism**: when ``cond > POLY_COND_WARN`` (1e10) a
+``RuntimeWarning`` is emitted *and* the number is in the result — an
+equispaced degree-10 fit on raw pixel coordinates is already past it. High
+degree on a raw coordinate range is the classic double trap: the
+Vandermonde columns become near-collinear (digits lost, coefficients
+unstable) and the fit oscillates between nodes (Runge phenomenon, Runge
+1901). Centre and scale x to ``[-1, 1]`` first, or keep degree ≤ ~6.
 
-    HALCON: no public polynomial-fitting tuple operator (fitting of this kind
-    lives inside HALCON's calibration internals).
+HALCON: no public polynomial-fitting tuple operator (fitting of this kind
+lives inside HALCON's calibration internals).
 
 ## ファミリ共通の入力契約(fail-closed)
 

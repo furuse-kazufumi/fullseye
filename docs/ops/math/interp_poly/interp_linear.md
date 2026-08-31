@@ -19,20 +19,20 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.
 
-    *x* must be strictly increasing (fail-closed: an unsorted or duplicated
-    grid raises rather than being silently reordered). *xq* is a scalar or a
-    1-D array; a scalar query returns a Python float, an array returns float64.
+*x* must be strictly increasing (fail-closed: an unsorted or duplicated
+grid raises rather than being silently reordered). *xq* is a scalar or a
+1-D array; a scalar query returns a Python float, an array returns float64.
 
-    **Out-of-range is an explicit choice**, never silent: ``'raise'`` (default)
-    refuses any query outside ``[x[0], x[-1]]`` — a calibration table queried
-    beyond its calibrated range is a wrong answer waiting to happen — while
-    ``'clamp'`` holds the boundary values (the honest flat extension; there is
-    deliberately no silent linear extrapolation mode).
+**Out-of-range is an explicit choice**, never silent: ``'raise'`` (default)
+refuses any query outside ``[x[0], x[-1]]`` — a calibration table queried
+beyond its calibrated range is a wrong answer waiting to happen — while
+``'clamp'`` holds the boundary values (the honest flat extension; there is
+deliberately no silent linear extrapolation mode).
 
-    Exact on the nodes and exact for data that is genuinely piecewise linear.
-    HALCON: ``get_y_value_funct_1d`` interpolates function pairs the same way
-    (see :mod:`funct1d`, which works HALCON's index-grid convention; this op
-    takes an arbitrary strictly-increasing x grid).
+Exact on the nodes and exact for data that is genuinely piecewise linear.
+HALCON: ``get_y_value_funct_1d`` interpolates function pairs the same way
+(see :mod:`funct1d`, which works HALCON's index-grid convention; this op
+takes an arbitrary strictly-increasing x grid).
 
 ## ファミリ共通の入力契約(fail-closed)
 

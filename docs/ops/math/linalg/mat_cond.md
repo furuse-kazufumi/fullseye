@@ -18,23 +18,23 @@ version: 0.1.0  # fullseye lib version this note was generated for
 ## 使い方
 
 Spectral (2-norm) condition number ``s_max / s_min`` — the numerical
-    canary of the whole linalg family.
+canary of the whole linalg family.
 
-    ``cond == 1`` for an orthogonal/orthonormal matrix (the best possible);
-    ``inf`` (returned, not raised — the question "how conditioned is it?" has
-    that honest answer) for an exactly singular one. A solve against *A* loses
-    roughly ``log10(cond(A))`` significant digits (Golub & Van Loan §2.6):
+``cond == 1`` for an orthogonal/orthonormal matrix (the best possible);
+``inf`` (returned, not raised — the question "how conditioned is it?" has
+that honest answer) for an exactly singular one. A solve against *A* loses
+roughly ``log10(cond(A))`` significant digits (Golub & Van Loan §2.6):
 
-      * ``cond ~ 1e3``  — comfortable, ~13 digits survive.
-      * ``cond ~ 1e8``  — half the digits are gone; residuals may still look
-        small while parameters are off.
-      * ``cond > 1e12`` — **do not trust** :func:`mat_solve` here: at best ~3
-        digits remain. Rescale/centre the problem, or switch to
-        :func:`mat_lstsq` / :func:`mat_pinv` with an honest ``rcond``.
+  * ``cond ~ 1e3``  — comfortable, ~13 digits survive.
+  * ``cond ~ 1e8``  — half the digits are gone; residuals may still look
+    small while parameters are off.
+  * ``cond > 1e12`` — **do not trust** :func:`mat_solve` here: at best ~3
+    digits remain. Rescale/centre the problem, or switch to
+    :func:`mat_lstsq` / :func:`mat_pinv` with an honest ``rcond``.
 
-    Defined for any rectangular ``(m, n)`` matrix (via its singular values).
-    HALCON: no direct operator (combine ``norm_matrix`` of *A* and of its
-    inverse).
+Defined for any rectangular ``(m, n)`` matrix (via its singular values).
+HALCON: no direct operator (combine ``norm_matrix`` of *A* and of its
+inverse).
 
 ## ファミリ共通の入力契約(fail-closed)
 
