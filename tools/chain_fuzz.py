@@ -91,6 +91,31 @@ PARAM_HINTS = {
     "x": lambda rng: 1.0, "step": lambda rng: 2,
 }
 
+#: シグネチャが「型リスト=先頭位置引数」の素直な形でない op の専用ビルダー。
+#: pool と rng から (args, kwargs) を組み立てる(None を返すとこの回スキップ)
+def _b_fuse(pool, rng):
+    pts = pool.get("points")
+    if not pts:
+        return None
+    return ([(pts[int(rng.integers(len(pts)))], "points", {})],), {"size": 8}
+
+
+def _b_register_cross(pool, rng):
+    pts = pool.get("points")
+    if not pts or len(pts) < 1:
+        return None
+    a = pts[int(rng.integers(len(pts)))]
+    b = a + rng.standard_normal(3) * 0.1
+    return (a, "points", b, "points"), {"method": "icp"}
+
+
+OP_ARG_BUILDERS = {
+    "fuse_to_voxel": _b_fuse,
+    "register_cross": _b_register_cross,
+    "to_points": lambda pool, rng: ((pool["points"][0], "points"), {})
+    if pool.get("points") else None,
+}
+
 #: op 固有の必須引数(名前が汎用ヒントと衝突する/型が op ごとに違うもの)
 OP_PARAM_HINTS = {
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
