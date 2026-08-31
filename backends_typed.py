@@ -111,11 +111,30 @@ def _fallback(v, sort):
     return np.asarray(v)
 
 
-def _make_runner(fn, kwargs, out_sort):
-    """``fn(v, a, b)`` 規約のランナー。a, b は凍結(モジュール docstring 参照)。"""
-    def _run(v, a, b):                                    # noqa: ARG001 - 規約
+def _scaled(default, knob):
+    """著者の既定値を中心にした相対スケール(既定の 1/4 〜 2 倍)。
+
+    整数既定は整数へ丸め、最低 1 を保証する(近傍数 k=0 のような無意味な値を
+    作らない)。範囲の根拠はモジュール docstring を参照。
+    """
+    val = float(default) * (0.25 + 1.75 * float(knob))
+    if isinstance(default, int):
+        return max(1, int(round(val)))
+    return val
+
+
+def _make_runner(fn, kwargs, tunable, out_sort):
+    """``fn(v, a, b)`` 規約のランナー。
+
+    *tunable* は ``[(param 名, 既定値), ...]`` を最大 2 個(a に第 1、b に第 2)。
+    空なら a, b は未使用(その op には調整点が無い)。
+    """
+    def _run(v, a, b):
+        kw = dict(kwargs)
+        for (pname, default), knob in zip(tunable, (a, b)):
+            kw[pname] = _scaled(default, knob)
         try:
-            return _coerce(fn(v, **kwargs), out_sort)
+            return _coerce(fn(v, **kw), out_sort)
         except Exception:                                 # noqa: BLE001 - fail-soft
             return _fallback(v, out_sort)
     return _run

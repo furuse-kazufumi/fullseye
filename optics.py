@@ -154,6 +154,15 @@ MAX_SYSTEM_ELEMENTS = 1024
 #: Largest number of Zernike terms :func:`wavefront_stats` will accept.
 MAX_ZERNIKE_TERMS = 512
 
+#: Largest radial order ``n`` :func:`wavefront_stats` will accept. The shared
+#: basis builder (``match3d._zernike_basis``) evaluates the radial polynomial
+#: from its factorial definition, which cancels catastrophically at high order:
+#: measured 2026-09-01, ``max|Z_n^m|`` over the unit disk is exactly 1.0 (the
+#: analytic bound) through ``n = 44``, then 1.41 at ``n = 46``, 71.5 at
+#: ``n = 50`` and 2.8e5 at ``n = 60``. Past the cap the numbers are garbage that
+#: looks like a wavefront, so they are refused rather than returned.
+MAX_ZERNIKE_ORDER = 40
+
 #: Jones element kinds accepted by :func:`jones_element`.
 JONES_KINDS = ("polarizer", "retarder", "quarter_wave", "half_wave", "rotator")
 
@@ -182,6 +191,14 @@ def _finite_scalar(v, name: str) -> float:
     if isinstance(v, (bool, np.bool_)):
         raise ValueError("%s is a bool — refusing the silent True==1 promotion"
                          % (name,))
+    if isinstance(v, (str, bytes, np.str_, np.bytes_)):
+        # float("50") succeeds, so without this a *string* passes as a length
+        # and the caller never learns their config was never parsed. Confirmed
+        # by the 2026-09-01 adversarial pass: thin_lens("50", "200") returned a
+        # perfectly plausible 66.667 mm.
+        raise ValueError("%s is a string (%r) — a length/angle must be a number; "
+                         "float('50') would silently succeed and hide an "
+                         "unparsed configuration value" % (name, v))
     try:
         f = float(v)
     except (TypeError, ValueError):
@@ -478,7 +495,16 @@ def abcd_trace(matrix, height_mm=1.0, angle_mrad=0.0):
                          "abcd_matrix)" % (m.shape,))
     y = _finite_scalar(height_mm, "height_mm")
     th = _finite_scalar(angle_mrad, "angle_mrad") * 1e-3
-    det = float(m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0])
+    with np.errstate(over="ignore", invalid="ignore"):
+        det = float(m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0])
+    if not np.isfinite(det):
+        # Confirmed 2026-09-01: diag(1e200, 1e200) traced a *finite* ray while
+        # handing back determinant = inf in the dict — a silent non-finite that
+        # every downstream check would have believed.
+        raise ValueError("abcd_trace: the determinant overflowed float64 "
+                         "(matrix entries up to %g) — this is not a physically "
+                         "scaled ray-transfer matrix; work in millimetres"
+                         % (float(np.abs(m).max()),))
     if det == 0.0:
         raise ValueError("abcd_trace: matrix is singular (det = 0) — a "
                          "ray-transfer matrix has det = n_in/n_out > 0; this "
@@ -609,7 +635,12 @@ def airy_pattern(size=64, wavelength_um=0.55, f_number=5.6, pixel_pitch_um=0.5):
     ``I(r) = [2*J1(v)/v]^2`` with ``v = pi*r/(lambda*N)``, ``r`` the radial
     distance in the image plane, ``N`` the working f-number. Sampled on a
     ``size x size`` grid centred between pixels for even *size* and on a pixel
-    for odd *size*, with peak normalised to exactly 1.0.
+    for odd *size*. The normalisation is **analytic** (``I(0) = 1`` by the
+    ``v -> 0`` limit), not a division by the sampled maximum: for odd *size*
+    the centre pixel is therefore exactly 1.0, and for even *size* the true
+    peak falls between pixels so the largest *sample* is below it (0.9679 at
+    ``size = 8`` with the defaults, measured). Rescaling to the sampled maximum
+    instead would quietly change the physics with the parity of the grid.
 
     Returns a ``(size, size)`` float64 intensity image.
 
@@ -897,8 +928,20 @@ def psf_to_mtf(psf, pixel_pitch_um=1.0):
         raise ValueError("psf_to_mtf: the PSF sums to %g — the DC normalisation "
                          "|OTF(0)| would be 0/0. An all-zero or net-negative "
                          "array is not a point-spread function" % (total,))
-    otf = np.fft.fft2(p)
-    mtf = np.abs(otf) / abs(complex(otf[0, 0]))
+    with np.errstate(over="ignore", invalid="ignore"):
+        otf = np.fft.fft2(p)
+    dc = abs(complex(otf[0, 0]))
+    if not np.isfinite(dc) or dc == 0.0 or not np.isfinite(otf).all():
+        # Confirmed 2026-09-01: a PSF of 1e308 overflows the transform, so
+        # |OTF| and |OTF(0)| are both inf and the MTF came back as a column of
+        # silent NaN. The sum test above does not catch it — the sum overflows
+        # to +inf too, which is > 0.
+        raise ValueError("psf_to_mtf: the transform overflowed float64 "
+                         "(|OTF(0)| = %r) — the PSF's dynamic range is beyond "
+                         "what an FFT of this size can carry; rescale it (the "
+                         "MTF is scale-invariant, so dividing the PSF by its "
+                         "sum costs nothing)" % (dc,))
+    mtf = np.abs(otf) / dc
     h, w = p.shape
     fy = np.fft.fftfreq(h, d=pitch)[:, None]
     fx = np.fft.fftfreq(w, d=pitch)[None, :]
@@ -981,6 +1024,12 @@ def _zernike_terms(coeffs, op: str):
         if n < 0 or abs(m) > n or (n - abs(m)) % 2 != 0:
             raise ValueError("%s: (%d, %d) is not a valid Zernike index — need "
                              "n >= 0, |m| <= n and n-|m| even" % (op, n, m))
+        if n > MAX_ZERNIKE_ORDER:
+            raise ValueError("%s: radial order n=%d exceeds the %d cap "
+                             "(optics.MAX_ZERNIKE_ORDER) — the shared basis "
+                             "builder's factorial recurrence loses all accuracy "
+                             "above n~44 (measured max|Z| = 71.5 at n=50 against "
+                             "the analytic bound of 1)" % (op, n, MAX_ZERNIKE_ORDER))
         out[(n, m)] = _finite_scalar(val, "%s: coefficient (%d, %d)" % (op, n, m))
     return out
 
@@ -1038,6 +1087,15 @@ def wavefront_stats(coeffs, radial=128, angular=192):
     # numpy; the import is lazy only to keep this module's import cheap.
     from match3d import _zernike_basis
     basis, idx, rho = _zernike_basis(nr, nt, n_max)
+    peak = float(np.abs(basis).max())
+    if not np.isfinite(peak) or peak > 1.0 + 1e-6:
+        # Belt and braces over MAX_ZERNIKE_ORDER: every Zernike polynomial is
+        # bounded by 1 on the unit disk, so a basis that is not says the
+        # evaluation lost precision — checked rather than assumed.
+        raise ValueError("wavefront_stats: the Zernike basis up to n_max=%d "
+                         "violates its own |Z| <= 1 bound (max %g) — the "
+                         "polynomial evaluation lost precision at this order; "
+                         "fit fewer terms" % (n_max, peak))
     lookup = {k: i for i, k in enumerate(idx)}
     w = np.zeros(basis.shape[1], dtype=np.float64)
     for key, c in terms.items():
