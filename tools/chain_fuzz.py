@@ -188,28 +188,26 @@ def _b_wavefront(pool, rng):
     return ({idx[i]: float(rng.normal(0.0, 0.05)) for i in range(k)},), {}
 
 
-def _pick_shaped(pool, kind, shape, rng):
-    """pool[kind] から *shape* の産物を優先的に引く(半分は素の一様抽選)。
+def _b_shaped(kind, shape, make, *extra):
+    """先頭引数が **形の決まった行列**の op 用 builder を作る。
 
-    光学の abcd_trace / jones_apply / mueller_apply は 2x2・4x4 という**形の
-    決まった**行列を食う。pool の一様抽選だけだと 32x32 や (11,3) ばかり当たり、
-    800 連鎖回しても実経路を一度も通らない(= CONTRACT しか出ない)ことを実測。
-    半々にすると happy path と fail-closed の両方が回る。"""
-    cands = pool.get(kind) or []
-    if not cands:
-        return None
-    if rng.random() < 0.5:
-        fit = [c for c in cands
-               if isinstance(c, np.ndarray) and c.shape == shape]
-        if fit:
-            return fit[int(rng.integers(len(fit)))]
-    return cands[int(rng.integers(len(cands)))]
-
-
-def _b_shaped(kind, shape, *extra):
-    """(shape 優先の行列 + extra 型の pool 産物)を引数に組む builder を作る。"""
+    光学の abcd_trace(2x2)/ jones_apply(2x2)/ mueller_apply(4x4)は、
+    pool の一様抽選では実経路をまず通らない: 目録 400 op × 連鎖長 8 では
+    「生成元の op(abcd_matrix / jones_element / mueller_element)と消費側が
+    同一連鎖に、しかもこの順で入る」確率が ~0.03% しかなく、800 連鎖でも
+    happy path 0 回・CONTRACT だけ、と実測した。そこで半分は *make* が作る
+    妥当な行列(実経路)、半分は pool の一様抽選(敵対入力 → fail-closed)。
+    ``_b_abcd`` / ``_b_wavefront`` と同じ「半分は妥当・半分は敵対」方針。"""
     def build(pool, rng):
-        m = _pick_shaped(pool, kind, shape, rng)
+        m = None
+        if rng.random() < 0.5:
+            fit = [c for c in (pool.get(kind) or [])
+                   if isinstance(c, np.ndarray) and c.shape == shape]
+            m = fit[int(rng.integers(len(fit)))] if fit else make(rng)
+        else:
+            cands = pool.get(kind) or []
+            if cands:
+                m = cands[int(rng.integers(len(cands)))]
         if m is None:
             return None
         args = [m]
@@ -222,12 +220,32 @@ def _b_shaped(kind, shape, *extra):
     return build
 
 
+def _mk_abcd(rng):
+    import optics
+    return optics.abcd_matrix([("free", float(rng.uniform(0.0, 200.0))),
+                               ("lens", float(rng.uniform(10.0, 200.0)))])
+
+
+def _mk_jones(rng):
+    import optics
+    return optics.jones_element(str(rng.choice(list(optics.JONES_KINDS))),
+                                float(rng.uniform(-90.0, 90.0)),
+                                float(rng.uniform(0.0, 360.0)))
+
+
+def _mk_mueller(rng):
+    import optics
+    return optics.mueller_element(str(rng.choice(list(optics.MUELLER_KINDS))),
+                                  float(rng.uniform(-90.0, 90.0)),
+                                  float(rng.uniform(0.0, 360.0)))
+
+
 OP_ARG_BUILDERS = {
     "abcd_matrix": _b_abcd,
     "wavefront_stats": _b_wavefront,
-    "abcd_trace": _b_shaped("matrix", (2, 2)),
-    "jones_apply": _b_shaped("cimage", (2, 2), "jones"),
-    "mueller_apply": _b_shaped("matrix", (4, 4), "stokes"),
+    "abcd_trace": _b_shaped("matrix", (2, 2), _mk_abcd),
+    "jones_apply": _b_shaped("cimage", (2, 2), _mk_jones, "jones"),
+    "mueller_apply": _b_shaped("matrix", (4, 4), _mk_mueller, "stokes"),
     "fuse_to_voxel": _b_fuse,
     "register_cross": _b_register_cross,
     "to_points": lambda pool, rng: ((pool["points"][0], "points"), {})
