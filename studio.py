@@ -687,7 +687,10 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     ``(z, y, x)`` points plus per-point grayscale colors from the original
     intensities. An over-large volume is mean-pooled down (factor-of-2 steps)
     until the shell fits *max_points* — decimation is reported in the returned
-    info dict, never silent.
+    info dict, never silent. Downsampling stops once the smallest axis reaches
+    8 voxels (further pooling would destroy the surface), so with an extreme
+    *max_points* the returned cloud can still exceed the budget — check
+    ``info["n_points"]``.
 
     Returns ``(P, C, info)``: points (N, 3) float64 in physical units, colors
     (N, 3) in [0, 1], and ``info = {"shape", "downsampled_by", "threshold",
