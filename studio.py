@@ -2052,14 +2052,24 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 y0 = (self.height() - qi.height()) // 2
                 p.drawImage(x0, y0, qi)
                 if (self._wire and self._edges is not None and self._drag is None
-                        and not self._fp):    # wire overlay is orbit-projected only
+                        and not self._fp_keys):   # skip while walking, like drags
+                    # project only the true vertices (self._V): edges never
+                    # reference the appended face centroids, and _P[:len(V)]
+                    # is exactly _V — identical output, half the projection.
                     size = qi.width()
-                    xy, _ = viewer3d_project(
-                        self._P, viewer3d_camera(self._yaw, self._pitch),
-                        self._center, self._radius, self._zoom, self._pan, size)
+                    if self._fp:                  # perspective wire (walkthrough)
+                        xy, _, vis = viewer3d_project_persp(
+                            self._V, viewer3d_camera_fp(self._fp_yaw, self._fp_pitch),
+                            self._eye, self._fp_fov, size, near=1e-3 * self._radius)
+                        edges = self._edges[fp_visible_edge_mask(self._edges, vis)]
+                    else:                         # orthographic wire (orbit)
+                        xy, _ = viewer3d_project(
+                            self._V, viewer3d_camera(self._yaw, self._pitch),
+                            self._center, self._radius, self._zoom, self._pan, size)
+                        edges = self._edges
                     pen = QtGui.QPen(QtGui.QColor(23, 184, 166, 90)); pen.setWidthF(1.0)
                     p.setPen(pen)
-                    for a, b in self._edges:
+                    for a, b in edges:
                         p.drawLine(QtCore.QPointF(x0 + xy[a, 0], y0 + xy[a, 1]),
                                    QtCore.QPointF(x0 + xy[b, 0], y0 + xy[b, 1]))
             dec = (" · preview %d pts" % self._n_drawn
