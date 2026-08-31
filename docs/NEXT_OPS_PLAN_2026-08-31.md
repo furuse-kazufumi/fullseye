@@ -207,3 +207,25 @@ domain(4op)/ boundary(2op)/ rle_region(5op)/ vol_tiled_map は実装済み。
 - 残 backlog: opdocs の per-op ノートに dim="1d" を通す(生成系の次元追加)、
   1D の追加 op 候補(変化点検出/自己相関周期推定/1D median/ロバスト平滑)は
   funct1d 接続後の需要を見て
+
+## F. 数学 op ファミリのロードマップ(2026-08-31 ユーザー方針)
+
+**北極星**: 「数学辞典に載る問題を全て扱えるくらいの op 量」+「岡潔の数学
+(多変数複素関数論)まで」— 長期プログラムとして tier で積む。正直な整理:
+岡の定理そのもの(連接性・Cousin 問題)は数値 op にならないが、計算可能な
+切り口は豊富。台帳 = opsmath.py(OP_CATALOG に Math 節)。
+
+- **tier 1(済・敵対検証済)**: linalg 6 / stats 5 / interp+poly 5 = 16 op。
+  数学系 RAD コーパス 4 分野で選定裏取り。敵対検証で complex 無言切り捨て等
+  3 バグ修正(53 テスト)
+- **tier 2(複素解析の計算可能面)**: Cauchy 積分(数値周回積分)/ 偏角の原理
+  による領域内零点・極の勘定 / 等角写像(Joukowski・Schwarz–Christoffel 数値、
+  画像ワープと接続)/ 冪級数(収束半径推定・Padé)/ 調和共役・Poisson 積分。
+  2D 位相 unwrap(complexops 既存)と接続
+- **tier 3**: 最適化(1D 求根 brent・黄金分割 / 多変数 BFGS ラッパ / 線形計画)、
+  特殊関数(erf/gamma/bessel = scipy.special の fail-closed 面)、ODE 初期値
+- **tier 4**: 確率(分布のあてはめ・検定)、数論の実用切り口(合同・CRT =
+  位相 unwrap の親戚)、グラフ理論(最短路 = geodesic3d と接続)
+- 規律: 各 tier とも「解析 GT テスト+HALCON/一次文献対応+敵対検証」の
+  三点セットを通ってから目録へ。scipy にあるものは「fail-closed の顔」を
+  付ける(無言 NaN・無言型強制の封鎖)のが Fullseye の付加価値

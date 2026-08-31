@@ -236,8 +236,7 @@ def _opsmath_section() -> list[str]:
             except Exception as ex:
                 out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
         out.append("")
-    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_
-")
+    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
     return out
 
 

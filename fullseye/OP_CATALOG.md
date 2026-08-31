@@ -303,7 +303,7 @@ _計 310 ops / 63 categories。_
 
 ### curvilinear(3)
 - `polar_unwrap` (`image2d → image2d`) — 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。 · 例: `curvilinear_proj`
-- `cylinder_unwrap` (`voxel → image2d`) — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: `curvilinear_proj`
+- `cylinder_unwrap` (`voxel → voxel`) — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: `curvilinear_proj`
 - `fit_zernike` (`image2d → descriptor`) — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: `curvilinear_proj`
 
 ### deform(4)
@@ -352,7 +352,7 @@ _計 310 ops / 63 categories。_
 
 ### feature_register(7)
 - `harris3d_keypoints` (`voxel → keypoints`) — 3D Harris キーポイント検出(2D Harris コーナー検出の 3D 版)。 · 例: `feature_register`
-- `iss_keypoints` (`points → keypoints`) — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: `feature_register`
+- `iss_keypoints` (`points → indices`) — ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。 · 例: `feature_register`
 - `compute_fpfh` (`points, normals → descriptor`) — FPFH 記述子 (N, 3*n_bins) を計算(Rusu 2009)。 · 例: `fpfh_correspondence`
 - `shot_descriptor` (`points, normals → descriptor`) — SHOT 記述子(Tombari 2010)。各キーポイントに LRF を張り、球状支持を · 例: `feature_register`
 - `register_spin` (`points, points → pose`) — Spin Image 記述子 + RANSAC による初期推定なし疎特徴剛体位置合わせ。 · 例: `feature_register`
@@ -378,7 +378,7 @@ _計 310 ops / 63 categories。_
 ### geodesic(4)
 - `geodesic_distances` (`points → measurement`) — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: `geodesic_distance`
 - `geodesic_mesh` (`mesh → measurement`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
-- `farthest_point_sampling` (`points → keypoints`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
+- `farthest_point_sampling` (`points → indices`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
 - `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: `pcl_geodesic`
 
 ### geom_transform(3)
@@ -504,17 +504,17 @@ _計 310 ops / 63 categories。_
 - `query_distance` (`sdf, points → measurement`) — 任意 world 座標 (M,3) での ESDF 値 (M,) を返す(``mode``='trilinear' 補間 or 'nearest')。 · 例: `occupancy_esdf`
 
 ### optics(5)
-- `reflect` (`vector, normals → vector`) — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `sensor_seg`, `snell_refraction`
-- `refract` (`vector, normals → vector`) — Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。 · 例: `snell_refraction`
+- `reflect` (`vector, normals → normals`) — 入射方向 d を法線 n の面で鏡面反射。r = d − 2(d·n)n。 · 例: `sensor_seg`, `snell_refraction`
+- `refract` (`vector, normals → normals`) — Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き法線, 屈折率 eta1→eta2。 · 例: `snell_refraction`
 - `fresnel_reflectance` (`measurement → measurement`) — Fresnel 反射率(無偏光=s/p 平均)。透明体界面で反射/透過に分かれる割合。 · 例: `snell_refraction`
-- `normal_from_reflection` (`vector, vector → normals`) — 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。 · 例: `sensor_seg`
+- `normal_from_reflection` (`vector, vector → vector`) — 入射+反射から鏡面の法線を復元(deflectometry)。n ∝ (r − d)、入射に逆らう向きへ。 · 例: `sensor_seg`
 - `snell_angle` (`measurement → measurement`) — 入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。 · 例: `snell_refraction`
 
 ### photometric(4)
-- `photometric_stereo` (`images → normals`) — Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。 · 例: `photometric_stereo`
-- `surface_normals` (`image2d → normals`) — 高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。 · 例: `photometric_stereo`
-- `integrate_normals` (`normals → image2d`) — 法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。 · 例: `photometric_stereo`
-- `render_lambertian` (`normals → image2d`) — 法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。 · 例: `photometric_stereo`, `render_shade`
+- `photometric_stereo` (`images → normalmap`) — Lambertian フォトメトリックステレオ: 既知光源方向の N 枚から法線とアルベドを復元。→ (normals HxWx3, albedo HxW)。 · 例: `photometric_stereo`
+- `surface_normals` (`image2d → normalmap`) — 高さ場 z(HxW)→ 単位法線 (H,W,3)。n ∝ (-dz/dx, -dz/dy, 1)。深度→法線の順変換。 · 例: `photometric_stereo`
+- `integrate_normals` (`normalmap → image2d`) — 法線場 → 高さ場 z を Frankot-Chellappa 積分。→ z HxW(定数分の自由度あり・平均0基準)。 · 例: `photometric_stereo`
+- `render_lambertian` (`normalmap → image2d`) — 法線 + アルベド + 光源方向 → Lambertian 画像(検査サンプル生成 / GT 検証 / 逆レンダの順方向)。→ HxW。 · 例: `photometric_stereo`, `render_shade`
 
 ### plane_sweep_stereo(2)
 - `plane_sweep_depth` (`image2d, image2d → depth`) — plane-sweep stereo で密な深度マップを推定。→ (H,W) depth。 · 例: `plane_sweep_depth`
@@ -543,8 +543,8 @@ _計 310 ops / 63 categories。_
 - `vol_wall_thickness` (`voxel → measurement`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT · 例: `wall_thickness_probe`
 
 ### range_image(4)
-- `depth_to_organized_points` (`depth → points`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
-- `normals_from_depth` (`depth → normals`) — organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。 · 例: `range_image`
+- `depth_to_organized_points` (`depth → pointmap`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
+- `normals_from_depth` (`depth → normalmap`) — organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点の外積(格子構造を利用、O(HW))。 · 例: `range_image`
 - `occlusion_edges` (`depth → image2d`) — 深度の不連続(前景/背景境界 = 遮蔽エッジ)を検出。→ bool HxW。 · 例: `range_image`
 - `bearing_angle_image` (`depth → image2d`) — bearing-angle 画像: 走査方向に沿った視線と局所面のなす角(range image の古典記述子)。→ HxW(度)。 · 例: `sensor_seg`
 
@@ -564,12 +564,12 @@ _計 310 ops / 63 categories。_
 
 ### regionprops(7)
 - `label_components` (`voxel → voxel`) — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
-- `region_props` (`voxel → measurement`) — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
+- `region_props` (`voxel → table`) — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
 - `largest_component` (`voxel → voxel`) — 最大(最多ボクセル)連結成分の bool マスクを返す。 · 例: `region_props_3d`
 - `filter_by_volume` (`voxel → voxel`) — min_voxels 未満の連結成分を除去した bool マスクを返す。 · 例: `region_props_3d`
 - `inner_box3` (`voxel → primitive`) — 二値ボクセル領域に完全に内接する最大の軸平行ボックス(2-D ``inner_rectangle1`` の · 例: `inner_box_inspection`
 - `vol_label` (`voxel → labels`) — 3-D connected-component labelling with a selectable neighbourhood. · 例: `ct_bone_segmentation`, `molecule_atom_count`, `vessel_metrology`
-- `vol_region_props` (`labels → measurement`) — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
+- `vol_region_props` (`labels → table`) — Per-component quantitative descriptors from a label volume. · 例: `vessel_metrology`
 
 ### registration_metrics(4)
 - `inlier_ratio` (`points, points → measurement`) — 対応集合の inlier 率 = ‖T·source[i] − target[i]‖ < thresh の割合。→ [0,1]。 · 例: `pose_estimation`, `ransac_prim`, `reg_eval`
@@ -581,11 +581,11 @@ _計 310 ops / 63 categories。_
 - `project_points` (`points → image2d`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
 - `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: `sfm_recon`
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。 · 例: `ct_hand_radiograph`
-- `render_shaded` (`normals → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。 · 例: `render_ao`
+- `render_shaded` (`normalmap → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。 · 例: `render_ao`
 - `ambient_occlusion` (`mesh → image2d`) — メッシュを AO マップ画像 ``(H, W)`` [0,1] にレンダリングして返す。 · 例: `render_ao`
 - `cast_shadow` (`mesh, vector → image2d`) — メッシュのキャスト影 / ソフトシャドウを計算し、可視性マップ (H,W) ∈ [0,1] を返す。 · 例: `render_beauty`, `render_shadow`
-- `phong_shade` (`normals → image2d`) — Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + **鏡面**)。→ ``(H, W)``。 · 例: `render_beauty`, `render_shade`
-- `matcap_shade` (`normals, image2d → image2d`) — MatCap: 視空間法線を lit-sphere テクスチャに写して素材の見えを転写。→ ``(H, W[, C])``。 · 例: `render_shade`
+- `phong_shade` (`normalmap → image2d`) — Phong 反射モデルで法線マップを陰影付け(環境光 + 拡散 + **鏡面**)。→ ``(H, W)``。 · 例: `render_beauty`, `render_shade`
+- `matcap_shade` (`normalmap, image2d → image2d`) — MatCap: 視空間法線を lit-sphere テクスチャに写して素材の見えを転写。→ ``(H, W[, C])``。 · 例: `render_shade`
 - `supersample_mesh` (`mesh → image2d`) — メッシュを SSAA でアンチエイリアス描画 -> float 画像 ``(H, W)`` (or ``(H, W, C)``)。 · 例: `render_ssaa`
 - `antialias` (`image2d → image2d`) — 高解像画像を整数倍 ``ss`` で縮小(area-average anti-aliasing)。 · 例: `render_ssaa`
 - `edge_alias_energy` (`image2d → measurement`) — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。 · 例: `render_beauty`, `render_ssaa`
@@ -680,7 +680,7 @@ _計 310 ops / 63 categories。_
 - `mesh_to_voxel` (`mesh → voxel`) — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: `transforms_repr`
 - `mesh_to_points` (`mesh → points`) — mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。 · 例: `mesh_decimate`
 - `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `transforms_repr`
-- `voxel_to_mips` (`voxel → image2d`) — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: `transforms_repr`
+- `voxel_to_mips` (`voxel → images`) — 3D → 直交 3 方向の最大値投影(MIP)。2D 手法(accel の 2D NCC 等)を適用する入口。 · 例: `transforms_repr`
 - `voxel_to_mesh` (`voxel → mesh`) — voxel → mesh(marching cubes、skimage)。返り値 (verts, faces, normals)。voxel→mesh 変換。 · 例: `mesh_smooth`
 - `tsdf_from_depth` (`depth → sdf`) — 深度マップ(2.5D)→ TSDF volume(RGB-D 再構成の標準表現)。depth→TSDF 変換。 · 例: `transforms_repr`
 - `signed_distance_field` (`voxel → sdf`) — occupancy/密度 voxel → 符号付き距離場 SDF(内側<0・外側>0)。edt_jfa を両側に。 · 例: `transforms_repr`
@@ -1557,7 +1557,7 @@ _計 37 ops / 3 categories。_
 - `local_min_max_funct_1d` (`signal → indices`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
 - `abs_funct_1d` (`signal → signal`) — Absolute value of the y-values (HALCON ``abs_funct_1d``).
 - `negate_funct_1d` (`signal → signal`) — Sign-flipped y-values (HALCON ``negate_funct_1d``).
-- `invert_funct_1d` (`signal → signal`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
+- `invert_funct_1d` (`signal → pairs`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
 - `scale_y_funct_1d` (`signal → signal`) — Linear map of the y-values, ``mult * y + add`` (HALCON ``scale_y_funct_1d``).
 - `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
 - `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
@@ -1565,9 +1565,9 @@ _計 37 ops / 3 categories。_
 - `match_funct_1d_trans` (`signal, signal → measurement`) — Best integer translation between two functions by cross-correlation
 - `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
 - `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
-- `x_range_funct_1d` (`signal → measurement`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
-- `y_range_funct_1d` (`signal → measurement`) — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).
-- `get_pair_funct_1d` (`signal → measurement`) — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``).
+- `x_range_funct_1d` (`signal → pairs`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
+- `y_range_funct_1d` (`signal → pairs`) — The value range ``(min(y), max(y))`` (HALCON ``y_range_funct_1d``).
+- `get_pair_funct_1d` (`signal → pairs`) — The ``(x, y)`` pair at *index* (HALCON ``get_pair_funct_1d``).
 - `get_y_value_funct_1d` (`signal → measurement`) — The y-value at (fractional) position *x* (HALCON ``get_y_value_funct_1d``).
 - `funct_1d_to_pairs` (`signal → pairs`) — The function as explicit ``(x, y)`` pairs (HALCON ``funct_1d_to_pairs``).
 
@@ -1581,13 +1581,41 @@ _計 37 ops / 3 categories。_
 - `highpass` (`signal → signal`) — Butterworth high-pass. Same Nyquist / length contract as :func:`lowpass`.
 - `bandpass` (`signal → signal`) — Butterworth band-pass between *low* and *high* Hz. Both edges must be inside
 - `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
-- `rms` (`signal → signal`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
+- `rms` (`signal → measurement`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
 - `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
 - `spectrum` (`signal → pairs`) — Single-sided magnitude spectrum -> ``(freqs, magnitude)`` (real FFT).
 - `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
 - `zero_crossing_rate` (`signal → measurement`) — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
 - `find_peaks` (`signal → indices`) — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.
-- `signal_features` (`signal → measurement`) — A compact acoustic/vibration feature vector for anomaly detection:
+- `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
+
+## Math operators(opsmath)by category
+_計 16 ops / 3 categories。_
+
+
+視覚計測を支える数学 op(線形代数/統計/補間・多項式)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
+
+### interp_poly(5)
+- `interp_linear` (`signal, signal, signal → signal`) — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.
+- `interp_cubic` (`signal, signal, signal → signal`) — Cubic-spline interpolation (``scipy.interpolate.CubicSpline``).
+- `poly_fit` (`signal, signal → table`) — Least-squares polynomial fit with its conditioning **on the record**.
+- `poly_eval` (`signal, signal → signal`) — Evaluate a polynomial (coefficients highest-power-first) at *x*.
+- `poly_roots` (`signal → roots`) — All roots of a polynomial (coefficients highest-power-first) — complex
+
+### linalg(6)
+- `mat_solve` (`matrix, signal → signal`) — Solve the square linear system ``A x = b`` (LAPACK ``gesv``, LU with
+- `mat_lstsq` (`matrix, signal → table`) — Least-squares solution of an over-determined system ``A x ≈ b``
+- `mat_svd` (`matrix → table`) — Singular value decomposition ``A = U @ diag(s) @ Vt`` (LAPACK ``gesdd``).
+- `mat_eigh` (`matrix → table`) — Eigen-decomposition of a **symmetric** matrix (LAPACK ``syevd``).
+- `mat_pinv` (`matrix → matrix`) — Moore-Penrose pseudo-inverse via SVD, with the cutoff **explicit**.
+- `mat_cond` (`matrix → measurement`) — Spectral (2-norm) condition number ``s_max / s_min`` — the numerical
+
+### stats(5)
+- `stat_describe` (`signal → table`) — Five-number-plus summary of a 1-D sample, as a plain dict.
+- `stat_histogram` (`signal → pairs`) — Histogram of a 1-D sample with the binning **explicit**.
+- `stat_covariance` (`matrix → matrix`) — Sample covariance matrix of ``(N, D)`` observations → ``(D, D)``.
+- `stat_correlation` (`matrix → matrix`) — Pearson correlation matrix of ``(N, D)`` observations → ``(D, D)``.
+- `stat_zscore` (`signal → signal`) — Standardise a 1-D sample: ``(x - mean) / std`` (population ``ddof=0``).
 
 ## References(アルゴリズムの一次情報・further reading)
 
