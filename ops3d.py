@@ -11,6 +11,8 @@ op の入力)を機械的に列挙・スコアリングでき、指数的な拡�
     ops3d.get("match_shape_3d")(...)        # 実体を取得して呼ぶ
     ops3d.compatible("register_fpfh")       # 出力が別 op の入力になる後続候補
 """
+import numpy as np
+
 import match3d
 import feat_harris
 import feat_spin
