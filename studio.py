@@ -1909,10 +1909,18 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                                    QtCore.QPointF(x0 + xy[b, 0], y0 + xy[b, 1]))
             dec = (" · preview %d pts" % self._n_drawn
                    if 0 < self._n_drawn < self._P.shape[0] else "")
-            hint = ("%s · %d pts%s%s   drag=orbit · wheel=zoom · shift/middle-drag=pan · R=reset%s"
+            head = ("%s · %d pts%s%s"
                     % (self.info.get("kind"), self.info.get("n_points", self._P.shape[0]),
                        (" · %d faces" % self.info["n_faces"]) if self._F is not None else "",
-                       dec, " · W=wire" if self._edges is not None else ""))
+                       dec))
+            if self._fp:
+                hint = (head + " · walk x%.2g   WASD=move · Q/E/Space=down/up"
+                        " · Shift=fast · drag=look · wheel=speed · R=entrance · F=orbit"
+                        % self._fp_speed)
+            else:
+                hint = (head + "   drag=orbit · wheel=zoom · shift/middle-drag=pan"
+                        " · R=reset · F=walk%s"
+                        % (" · W=wire" if self._edges is not None else ""))
             p.setPen(QtGui.QColor(MUTED))
             p.drawText(8, self.height() - 8, hint)
             p.end()
