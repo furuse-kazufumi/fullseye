@@ -348,7 +348,9 @@ def register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-8):
               (変換後 src の最近傍 RMSE)。
 
     例外:
-        ValueError: 形状不正、点数不足、w 範囲外。
+        ValueError: 形状不正、点数不足、w 範囲外、または ``N*M`` が
+            ``CPD_MAX_PAIRS``(25M)超(密な (N,M) 責務行列を毎反復組むため。
+            両点群を間引いてから渡す)。
     """
     from scipy.spatial import cKDTree
 
