@@ -990,12 +990,7 @@ def render_points_frame_fp(points, colors=None, eye=(0.0, 0.0, 0.0), yaw=0.0,
         order = np.argsort(depth[sel])[::-1]
         xi = np.floor(xy[sel][order, 0]).astype(int)
         yi = np.floor(xy[sel][order, 1]).astype(int)
-        Co = C[sel][order]
-        for dy in range(p):
-            for dx in range(p):
-                xs, ys = xi + dx, yi + dy
-                ok = (xs >= 0) & (xs < size) & (ys >= 0) & (ys < size)
-                img[ys[ok], xs[ok]] = Co[ok]
+        _splat_points(img, xi, yi, C[sel][order], p)
     return img
 
 
