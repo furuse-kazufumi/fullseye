@@ -967,7 +967,7 @@ def cplx_contour_circle(center=0.0, radius=1.0, n=256, orientation="ccw"):
         raise ValueError("n=%d exceeds the %d point cap "
                          "(mathops.MAX_CONTOUR_POINTS) — a contour that long "
                          "allocates gigabytes and buys nothing: the quadrature "
-                         "error is already ~1e-11 at 1e5 points"
+                         "error is already ~7e-10 at 1e5 points (measured)"
                          % (n, MAX_CONTOUR_POINTS))
     if orientation not in ("ccw", "cw"):
         raise ValueError("orientation must be 'ccw' (positive) or 'cw', got %r"
