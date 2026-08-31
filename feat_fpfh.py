@@ -31,6 +31,11 @@ def voxel_downsample(points, voxel_size):
     返り値: (M,3) ダウンサンプル点群(M<=N)。
     """
     P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3 or len(P) == 0:
+        # 連鎖ファザー実測(wave-4): 空点群が grp[-1] で生 IndexError 化する
+        raise ValueError("voxel_downsample: points must be a non-empty (N, 3) "
+                         "array, got %r — an upstream filter may have emptied "
+                         "the cloud" % (P.shape,))
     key = np.floor(P / voxel_size).astype(np.int64)
     order = np.lexsort((key[:, 2], key[:, 1], key[:, 0]))
     ks = key[order]; Ps = P[order]
