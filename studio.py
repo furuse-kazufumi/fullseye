@@ -2184,29 +2184,61 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             self._repaint()                       # frame is sized to the widget: re-render
 
         #: first-person movement keys -> direction in the (forward, right, up)
-        #: basis of :func:`viewer3d_fp_axes` (class-level so tests can read it)
-        FP_MOVES = {"W": (1, 0, 0), "S": (-1, 0, 0), "A": (0, -1, 0), "D": (0, 1, 0),
-                    "E": (0, 0, 1), "Q": (0, 0, -1), "Space": (0, 0, 1)}
+        #: basis of :func:`viewer3d_fp_axes` (module-level FP_MOVES; kept as a
+        #: class attribute so tests and callers can read it off the widget)
+        FP_MOVES = FP_MOVES
+
+        #: Qt key -> movement-key name (shared by press and release handlers)
+        FP_KEYNAMES = {QtCore.Qt.Key_W: "W", QtCore.Qt.Key_S: "S",
+                       QtCore.Qt.Key_A: "A", QtCore.Qt.Key_D: "D",
+                       QtCore.Qt.Key_E: "E", QtCore.Qt.Key_Q: "Q",
+                       QtCore.Qt.Key_Space: "Space"}
+
+        def _apply_fp_move(self, keys):
+            """Advance the eye one step along the combined direction of *keys*
+            (a set of FP_MOVES names) — the shared core of the immediate
+            on-press step and the smooth-walk timer tick."""
+            v = fp_move_vector(keys, self._fp_yaw, self._fp_pitch)
+            if not v.any():
+                return
+            self._eye = self._eye + v * self._fp_step(self._fp_mods)
+            if self._P.shape[0] > self.DRAG_BUDGET:
+                # walking burst = same decimated preview as a wheel-zoom
+                # burst; full re-render shortly after the last step
+                self._wheeling = True
+                self._wheel_timer.start()
+            self._repaint()
+
+        def _move_tick(self):
+            """~30 ms continuous-walk tick while movement keys are held. The
+            timer replaces the OS key auto-repeat (jerky, rate-dependent, no
+            diagonals): press events only edit the held-key SET, this tick
+            does the moving. Step per tick stays radius/50 * speed (* 4 with
+            Shift) — the same feel as one auto-repeat used to give."""
+            if not self._fp or not self._fp_keys:
+                self._move_timer.stop()
+                return
+            self._apply_fp_move(self._fp_keys)
 
         def keyPressEvent(self, e):
             if e.key() == QtCore.Qt.Key_F:
-                self.toggle_first_person()
+                if not e.isAutoRepeat():          # holding F must not flicker modes
+                    self.toggle_first_person()
                 return
             if self._fp:
-                name = {QtCore.Qt.Key_W: "W", QtCore.Qt.Key_S: "S",
-                        QtCore.Qt.Key_A: "A", QtCore.Qt.Key_D: "D",
-                        QtCore.Qt.Key_E: "E", QtCore.Qt.Key_Q: "Q",
-                        QtCore.Qt.Key_Space: "Space"}.get(e.key())
+                self._fp_mods = e.modifiers()     # Shift boost read at each tick
+                name = self.FP_KEYNAMES.get(e.key())
                 if name is not None:
-                    fwd, right, up = viewer3d_fp_axes(self._fp_yaw, self._fp_pitch)
-                    df, dr, du = self.FP_MOVES[name]
-                    self._eye = self._eye + (fwd * df + right * dr + up * du) \
-                        * self._fp_step(e.modifiers())
-                    if self._P.shape[0] > self.DRAG_BUDGET:
-                        # walking burst = same decimated preview as a wheel-zoom
-                        # burst; full re-render shortly after the last step
-                        self._wheeling = True
-                        self._wheel_timer.start()
+                    if not e.isAutoRepeat():      # auto-repeat is the timer's job now
+                        self._fp_keys.add(name)
+                        self._apply_fp_move({name})   # immediate step: stays responsive
+                        self._move_timer.start()
+                elif e.key() in (QtCore.Qt.Key_Plus, QtCore.Qt.Key_Equal,
+                                 QtCore.Qt.Key_BracketRight):
+                    self._fp_fov = fp_fov_adjust(self._fp_fov, FP_FOV_STEP)
+                    self._repaint()
+                elif e.key() in (QtCore.Qt.Key_Minus, QtCore.Qt.Key_BracketLeft):
+                    self._fp_fov = fp_fov_adjust(self._fp_fov, -FP_FOV_STEP)
                     self._repaint()
                 elif e.key() == QtCore.Qt.Key_R:
                     self._fp_home()
@@ -2221,6 +2253,25 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 self._repaint()
             else:
                 super().keyPressEvent(e)
+
+        def keyReleaseEvent(self, e):
+            if self._fp and not e.isAutoRepeat():
+                self._fp_mods = e.modifiers()
+                name = self.FP_KEYNAMES.get(e.key())
+                if name is not None:
+                    self._fp_keys.discard(name)
+                    if not self._fp_keys:
+                        self._move_timer.stop()
+                        self._repaint()           # full-res re-render after the walk
+                    return
+            super().keyReleaseEvent(e)
+
+        def focusOutEvent(self, e):
+            # focus loss eats the key-release events — a key must never stay
+            # 'held' (endless walk) because the user Alt-Tabbed mid-step
+            self._fp_keys.clear()
+            self._move_timer.stop()
+            super().focusOutEvent(e)
     return Viewer3D
 
 
