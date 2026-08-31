@@ -1072,6 +1072,7 @@ def refine_lm(scene, template, init_pos, device="cpu", iters=50,
         gain  : 輝度ゲイン(gain=False なら 1.0)
         cost  : 最終 SSD、rms: 1voxel あたり残差 RMS、iters: 実行反復数
     """
+    init_pos = _init_pos3(init_pos, "refine_lm")
     dev = device
     sc = torch.as_tensor(np.asarray(scene, np.float64)[None, None], device=dev)   # (1,1,D,H,W)
     tp = torch.as_tensor(np.asarray(template, np.float64)[None, None], device=dev)
