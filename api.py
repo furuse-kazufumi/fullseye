@@ -67,6 +67,7 @@ import odometry  # noqa: E402  (visual/RGB-D odometry: frame-to-frame camera mot
 import grasp  # noqa: E402  (antipodal grasp synthesis: force-closure + Ferrari-Canny quality)
 import meshrepair  # noqa: E402  (watertight/repair/decimate + exact inertia -> sim-ready body)
 import volops  # noqa: E402  (3-D volume analysis: Frangi/Sato/label/distance/region props)
+import handpose  # noqa: E402  (hand 21-keypoint pose + finger flexions; detection needs optional mediapipe)
 import complexops  # noqa: E402  (complex/FFT-domain ops + 2-D phase unwrap [HALCON has none])
 import specops  # noqa: E402  (multispectral/hyperspectral cube: ENVI + SAM + unmix + band math)
 import videops  # noqa: E402  (video / temporal (T,H,W): temporal denoise, bg-subtract, motion, spatiotemporal filters)
