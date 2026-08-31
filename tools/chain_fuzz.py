@@ -73,6 +73,10 @@ def make_generators():
                                   "w": np.full(40, 1.0 / 40)},
         # HALCON の complex 画像形式に対応(cx_fft の出力レイアウト = 中心 DC)
         "cimage": lambda rng: np.fft.fftshift(np.fft.fft2(rng.random((32, 32)))),
+        # organized 系(H,W,3)— (N,3) の points/normals とは別型
+        "pointmap": lambda rng: rng.random((16, 16, 3)) * 8.0,
+        "normalmap": lambda rng: np.dstack([np.zeros((16, 16)), np.zeros((16, 16)),
+                                            np.ones((16, 16))]),
     }
 
 
@@ -89,6 +93,13 @@ PARAM_HINTS = {
     "markers": lambda rng: None,
     "rate": lambda rng: 100.0, "new_rate": lambda rng: 50.0,
     "x": lambda rng: 1.0, "step": lambda rng: 2,
+    "radius": lambda rng: 1.5, "ratio": lambda rng: 0.2,
+    "extent": lambda rng: 1.0, "lo": lambda rng: 0.8, "hi": lambda rng: 1.2,
+    "strength": lambda rng: 0.5, "voxel": lambda rng: 0.5,
+    "lights": lambda rng: (lambda L: L / np.linalg.norm(L, axis=1, keepdims=True))(
+        np.array([[0.3, 0.3, 1.0], [-0.3, 0.3, 1.0], [0.3, -0.3, 1.0],
+                  [-0.2, -0.2, 1.0]])),
+    "k": lambda rng: 8, "n": lambda rng: 64, "size": lambda rng: 8,
 }
 
 #: シグネチャが「型リスト=先頭位置引数」の素直な形でない op の専用ビルダー。
@@ -124,13 +135,19 @@ OP_PARAM_HINTS = {
     ("cx_apply_transfer_function", "H"): lambda rng: rng.random((32, 32)),
 }
 
-#: 出力を pool 型へ合わせる梱包アダプタ(catalog の out 型と実際の返りの橋)
-ADAPTERS = {
-    "vol_label": lambda r: r[0],
-    "vol_crop_domain": lambda r: r[0],
-    "vol_rle_components": lambda r: r[0] if r else None,
-    "label_components": lambda r: r[0] if isinstance(r, tuple) else r,
-}
+#: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
+#: (型忠実の一級メタデータ)に委譲し、ファザー固有の追加だけここに置く
+def _registry_adapters():
+    import ops1d
+    import ops3d
+    d = dict(ops3d.RESULT_ADAPTERS)
+    d.update(ops1d.RESULT_ADAPTERS)
+    d["vol_rle_components"] = lambda r: r[0] if r else None
+    d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
+    return d
+
+
+ADAPTERS = _registry_adapters()
 
 
 def catalog():
@@ -207,7 +224,17 @@ TYPE_CHECKS = {
     "signal": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
     "measurement": lambda v: True,
     "rle_region": lambda v: type(v).__name__ == "VolRLE",
+    "pointmap": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[2] == 3,
+    "normalmap": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[2] == 3,
+    "images": lambda v: isinstance(v, (list, tuple)) and all(
+        isinstance(x, np.ndarray) and x.ndim == 2 for x in v),
+    "vector": lambda v: isinstance(v, np.ndarray) and v.shape == (3,),
+    "pairs": lambda v: True,
 }
+
+
+#: docstring が非有限を明示契約している op(例: esdf は「全自由なら +inf」)
+NONFINITE_BY_CONTRACT = {"esdf"}
 
 
 def _classify(exc):
@@ -274,7 +301,7 @@ def run_chain(ops, gens, rng, length, log):
             result = ADAPTERS[name](result)
         if result is None:
             continue
-        if not _finite_ok(result):
+        if not _finite_ok(result) and name not in NONFINITE_BY_CONTRACT:
             log.append({"kind": "NONFINITE", "op": name, "dim": dim,
                         "trace": trace + [name]})
             continue                      # 毒は pool に入れない

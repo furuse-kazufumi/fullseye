@@ -284,5 +284,9 @@ __all__ = [
     "transform_funct_1d", "x_range_funct_1d", "y_range_funct_1d",
     "get_y_value_funct_1d", "create_funct_1d_array", "create_funct_1d_pairs",
     "match_funct_1d_trans",
+    "mathops", "mat_solve", "mat_lstsq", "mat_svd", "mat_eigh", "mat_pinv", "mat_cond",
+    "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
+    "stat_zscore",
+    "interp_linear", "interp_cubic", "poly_fit", "poly_eval", "poly_roots",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
 ]
