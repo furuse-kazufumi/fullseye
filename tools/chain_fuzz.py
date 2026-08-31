@@ -71,6 +71,8 @@ def make_generators():
         "sdf": lambda rng: _ball_vol(rng) - 0.5,
         "gaussians": lambda rng: {"mu": _points(rng, 40), "sigma": np.full(40, 0.3),
                                   "w": np.full(40, 1.0 / 40)},
+        # HALCON の complex 画像形式に対応(cx_fft の出力レイアウト = 中心 DC)
+        "cimage": lambda rng: np.fft.fftshift(np.fft.fft2(rng.random((32, 32)))),
     }
 
 
