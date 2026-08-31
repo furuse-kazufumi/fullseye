@@ -2079,9 +2079,10 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                        (" · %d faces" % self.info["n_faces"]) if self._F is not None else "",
                        dec))
             if self._fp:
-                hint = (head + " · walk x%.2g   WASD=move · Q/E/Space=down/up"
-                        " · Shift=fast · drag=look · wheel=speed · R=entrance · F=orbit"
-                        % self._fp_speed)
+                hint = (head + " · walk x%.2g · fov %.0f°   WASD=move · Q/E/Space=down/up"
+                        " · Shift=fast · +/-=fov · drag=look · wheel=speed"
+                        " · R=entrance · F=orbit"
+                        % (self._fp_speed, self._fp_fov))
             else:
                 hint = (head + "   drag=orbit · wheel=zoom · shift/middle-drag=pan"
                         " · R=reset · F=walk%s"
