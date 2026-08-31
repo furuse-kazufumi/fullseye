@@ -494,11 +494,25 @@ def mine(ops, gens, chains, length, seed, check_determinism=True,
     return cands, tally, time.perf_counter() - t0
 
 
-def _write(path, reps):
+#: 記録のうち **測定値ゆえに再走で一致しない**唯一のフィールド(壁時計)。
+#: これ以外は同じ seed なら必ずビット一致する — 選抜も格子も秒に依存させない。
+TIMING_FIELDS = ("sec",)
+
+
+def stable_record(rec):
+    """壁時計を除いた記録。同じ seed の 2 回走で**必ず一致する**部分。"""
+    r = dict(rec)
+    r["desc"] = {k: v for k, v in rec["desc"].items() if k not in TIMING_FIELDS}
+    return r
+
+
+def _write(path, reps, timing=True):
+    """代表を jsonl へ。*timing* を落とすと同じ seed でビット一致する。"""
     os.makedirs(os.path.dirname(os.path.abspath(path)) or ".", exist_ok=True)
     with open(path, "w", encoding="utf-8") as fh:
         for r in reps:
-            fh.write(json.dumps(r, ensure_ascii=False, default=str,
+            rec = r if timing else stable_record(r)
+            fh.write(json.dumps(rec, ensure_ascii=False, default=str,
                                 sort_keys=True) + "\n")
 
 
