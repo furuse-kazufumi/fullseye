@@ -2082,9 +2082,18 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
     θ 軸は endpoint 無し(行 k の角度 = k·2π/ntheta)= 0° と 360° を重複サンプルしない
     周期グリッド(θ 方向 FFT/循環相関の前提を満たす。2026-08-30 修正、旧版は先頭行=末尾行)。
 
-    Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。
+    Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。
     """
-    img = _f32_finite(image, "polar_unwrap: image"); H, W = img.shape
+    img = _f32_finite(image, "polar_unwrap: image")
+    if img.ndim != 2:
+        raise ValueError("polar_unwrap: image must be 2-D, got %d-D" % (img.ndim,))
+    H, W = img.shape
+    # 幅 or 高さ 1 だと正規化格子の (W-1) / (H-1) が 0 除算になり、grid_sample が
+    # 全 NaN を無言で返す(連鎖ファザー wave-8 実測: spectrogram の (129,1)
+    # 産物。fit_zernike と同クラスで、そちらだけ塞いでいた取りこぼし)。
+    if H < 2 or W < 2:
+        raise ValueError("polar_unwrap: image must be at least 2x2, got %dx%d "
+                         "(the polar grid divides by W-1/H-1)" % (H, W))
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1

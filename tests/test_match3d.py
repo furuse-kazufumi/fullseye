@@ -816,3 +816,18 @@ def test_float32_overflow_rejected_not_silent_nan():
     # 退化形状(1 列)は W-1 除算前に明示拒否
     with pytest.raises(ValueError, match="2x2"):
         X.fit_zernike(np.zeros((32, 1)))
+
+
+def test_polar_unwrap_rejects_degenerate_shape():
+    """幅 or 高さ 1 の画像は正規化格子の (W-1)/(H-1) が 0 除算になり、
+    grid_sample が全 NaN を無言で返す(連鎖ファザー wave-8 実測: spectrogram の
+    (129,1) 産物)。fit_zernike と同クラスで、そちらだけ塞いでいた取りこぼし。"""
+    import pytest
+    rng = np.random.default_rng(0)
+    for shape in ((129, 1), (1, 32), (1, 1)):
+        with pytest.raises(ValueError, match="2x2"):
+            X.polar_unwrap(rng.random(shape))
+    with pytest.raises(ValueError, match="2-D"):
+        X.polar_unwrap(rng.random((4, 4, 4)))
+    # 正常系は不変(既定 ntheta=360, nr=64)
+    assert X.polar_unwrap(rng.random((32, 32))).shape == (360, 64)
