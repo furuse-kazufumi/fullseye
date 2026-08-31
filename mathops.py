@@ -1285,12 +1285,32 @@ def cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4):
                          "sampled (angular gaps deviate by up to %g from %g) — "
                          "the discrete sum assumes equal weights"
                          % (float(np.abs(gaps - step).max()), step))
+    if kmax - kmin + 1 > n:
+        raise ValueError("cplx_laurent_coeffs: %d coefficients requested from %d "
+                         "samples — the discrete transform cannot resolve more "
+                         "orders than it has points (they alias onto each other)"
+                         % (kmax - kmin + 1, n))
     ks = np.arange(kmin, kmax + 1, dtype=np.int64)
     phase = np.exp(-1j * np.outer(ks.astype(np.float64), np.angle(c - centre)))
-    coeffs = (phase @ f) / (n * np.power(r, ks.astype(np.float64)))
+    # The r**k normaliser must be checked *before* dividing: it overflows to inf
+    # for a small radius and a large negative order, and x/inf is a silent 0 —
+    # the op then returned "all coefficients vanish" for a function with genuine
+    # poles, with only a numpy RuntimeWarning (which tests/conftest.py ignores)
+    # as evidence. Underflow to 0 is the mirror trap (x/0 -> inf). Both are the
+    # documented ValueError now (2026-09-01 adversarial probe).
+    with np.errstate(over="ignore", under="ignore"):
+        scale = n * np.power(r, ks.astype(np.float64))
+    if not (np.isfinite(scale).all() and np.all(scale != 0.0)):
+        raise ValueError("cplx_laurent_coeffs: r**k left float64 range for radius "
+                         "%g and orders %d..%d (the normaliser is %r) — the "
+                         "coefficients would silently come back as zeros or "
+                         "infinities; rescale the circle or narrow kmin..kmax"
+                         % (r, kmin, kmax,
+                            scale[~np.isfinite(scale) | (scale == 0.0)][0]))
+    coeffs = (phase @ f) / scale
     _finite_result(coeffs, "cplx_laurent_coeffs",
-                   "r**-k overflowed for the requested orders (a small radius with "
-                   "a large negative order); rescale or narrow kmin..kmax")
+                   "the coefficient sum itself overflowed float64 — the sampled "
+                   "values are too large for this radius")
     return {"k": np.ascontiguousarray(ks),
             "c": np.ascontiguousarray(coeffs, dtype=np.complex128),
             "center": centre, "radius": r}
