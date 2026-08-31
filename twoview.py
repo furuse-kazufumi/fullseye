@@ -222,8 +222,8 @@ def recover_pose(pts1, pts2, K1, K2=None, planar_tol=1e-2):
     """
     K1 = np.asarray(K1, float)
     K2 = K1 if K2 is None else np.asarray(K2, float)
-    p1 = np.asarray(pts1, float)
-    p2 = np.asarray(pts2, float)
+    p1 = _require_pts2d(pts1, "pts1")
+    p2 = _require_pts2d(pts2, "pts2")
     if len(p1) < 8 or len(p2) < 8:
         raise ValueError("8-point algorithm requires at least 8 points")
     if len(p1) != len(p2):
