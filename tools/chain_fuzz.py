@@ -278,6 +278,14 @@ def run_chain(ops, gens, rng, length, log):
             log.append({"kind": "NONFINITE", "op": name, "dim": dim,
                         "trace": trace + [name]})
             continue                      # 毒は pool に入れない
+        check = TYPE_CHECKS.get(out)
+        if check is not None and not check(result):
+            log.append({"kind": "TYPEMISS", "op": name, "dim": dim,
+                        "exc": out, "msg": "declared %r but returned %s%s" % (
+                            out, type(result).__name__,
+                            getattr(result, "shape", "")),
+                        "trace": trace + [name]})
+            continue                      # 型の嘘も pool に入れない
         trace.append(name)
         pool.setdefault(out, []).append(result)
     return trace
