@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">curvature_torsion — 3D <code style="color:#22d3bf">curve</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import curve3d; curve3d.curvature_torsion(curve)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;curvature_torsion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。</p>
@@ -10,8 +10,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:space_curve">space_curve</a> — <code style="color:#22d3bf">py -3.11 examples_3d/space_curve.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:torus_knot_curve">torus_knot_curve</a> — <code style="color:#22d3bf">py -3.11 examples_3d/torus_knot_curve.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">curve</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:frenet_frame">frenet_frame</a> · <a style="color:#22d3bf" href="op3d:arc_length">arc_length</a> · <a style="color:#22d3bf" href="op3d:resample_uniform">resample_uniform</a> · <a style="color:#22d3bf" href="op3d:fit_spline_curve">fit_spline_curve</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

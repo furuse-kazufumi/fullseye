@@ -3,7 +3,7 @@ op: curvature_torsion
 dim: 3d
 category: curve
 in: points
-out: measurement
+out: pairs
 examples: [space_curve, torus_knot_curve]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # curvature_torsion — 3D `curve` op
 
-- **データ種**: `points` → `measurement`
+- **データ種**: `points` → `pairs`
 - **呼び出し**: `import curve3d; curve3d.curvature_torsion(curve)` (または `ops3d.get("curvature_torsion")`)
 
 ## 使い方
@@ -29,9 +29,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [space_curve](../../../../examples_3d/space_curve.py) — `py -3.11 examples_3d/space_curve.py`
 - [torus_knot_curve](../../../../examples_3d/torus_knot_curve.py) — `py -3.11 examples_3d/torus_knot_curve.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`pairs` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`curve`)
 

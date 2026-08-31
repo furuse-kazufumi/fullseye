@@ -3,7 +3,7 @@ op: gaussian_curvature
 dim: 3d
 category: curvature
 in: points
-out: measurement
+out: signal
 examples: [curvature_grasp, curvature_shape_index]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # gaussian_curvature — 3D `curvature` op
 
-- **データ種**: `points` → `measurement`
+- **データ種**: `points` → `signal`
 - **呼び出し**: `import curvature3d; curvature3d.gaussian_curvature(points, k=25)` (または `ops3d.get("gaussian_curvature")`)
 
 ## 使い方
@@ -29,9 +29,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [curvature_grasp](../../../../examples_3d/curvature_grasp.py) — `py -3.11 examples_3d/curvature_grasp.py`
 - [curvature_shape_index](../../../../examples_3d/curvature_shape_index.py) — `py -3.11 examples_3d/curvature_shape_index.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`curvature`)
 

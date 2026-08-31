@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">gaussian_curvature — 3D <code style="color:#22d3bf">curvature</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import curvature3d; curvature3d.gaussian_curvature(points, k=25)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;gaussian_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。</p>
@@ -10,8 +10,8 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:curvature_grasp">curvature_grasp</a> — <code style="color:#22d3bf">py -3.11 examples_3d/curvature_grasp.py</code></p>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:curvature_shape_index">curvature_shape_index</a> — <code style="color:#22d3bf">py -3.11 examples_3d/curvature_shape_index.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">curvature</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:principal_curvatures">principal_curvatures</a> · <a style="color:#22d3bf" href="op3d:mean_curvature">mean_curvature</a> · <a style="color:#22d3bf" href="op3d:shape_index">shape_index</a> · <a style="color:#22d3bf" href="op3d:estimate_normals">estimate_normals</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

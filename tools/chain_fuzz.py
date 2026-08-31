@@ -237,8 +237,9 @@ TYPE_CHECKS = {
 }
 
 
-#: docstring が非有限を明示契約している op(例: esdf は「全自由なら +inf」)
-NONFINITE_BY_CONTRACT = {"esdf"}
+#: docstring が非有限を明示契約している op(例: esdf は「全自由なら +inf」、
+#: register_spin/register_fpfh は「対応なしなら rmse=inf」の文書化済み番兵値)
+NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh"}
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
 #: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に
