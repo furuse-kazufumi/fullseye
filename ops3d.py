@@ -159,6 +159,12 @@ _CATALOG = {
         ("vol_rle_volume", "volregion", ["rle_region"], "measurement", False),
         ("vol_rle_bbox", "volregion", ["rle_region"], "primitive", False),
         ("vol_rle_centroid", "volregion", ["rle_region"], "position", False),
+        # run のままの集合演算(HALCON region 演算の本体。voxel 数に一切触れない)
+        ("vol_rle_union", "volregion", ["rle_region", "rle_region"], "rle_region", False),
+        ("vol_rle_intersect", "volregion", ["rle_region", "rle_region"], "rle_region", False),
+        ("vol_rle_difference", "volregion", ["rle_region", "rle_region"], "rle_region", False),
+        # 成分分解(run 内はラベル一定、という構造事実で run 単位に振り分け)
+        ("vol_rle_components", "volregion", ["voxel"], "rle_region", False),
     ],
     "morphology": [  # 3D モルフォロジー(前処理/特徴抽出。torch 不在時は scipy 経路)
         ("morph_dilate3d", "match3d", ["voxel"], "voxel", True),
