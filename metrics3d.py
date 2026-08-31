@@ -62,13 +62,19 @@ def hausdorff_distance(a, b):
 
 
 def accuracy(a, b, tau):
-    """正確性 = a の点のうち b から tau 以内にある割合(precision)。→ [0,1]。"""
-    return float(np.mean(_nn_dist(a, b) < tau))
+    """正確性 = a の点のうち b から tau 以内にある割合(precision)。→ [0,1]。
+
+    Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = 無言 NaN)。"""
+    return float(np.mean(_nn_dist(_require_cloud(a, "a"),
+                                  _require_cloud(b, "b")) < tau))
 
 
 def completeness(a, b, tau):
-    """完全性 = b の点のうち a から tau 以内にある割合(recall)。→ [0,1]。"""
-    return float(np.mean(_nn_dist(b, a) < tau))
+    """完全性 = b の点のうち a から tau 以内にある割合(recall)。→ [0,1]。
+
+    Raises ValueError: どちらかが空 or (N,3) でない場合(空の平均 = 無言 NaN)。"""
+    return float(np.mean(_nn_dist(_require_cloud(b, "b"),
+                                  _require_cloud(a, "a")) < tau))
 
 
 def fscore(a, b, tau):

@@ -23,6 +23,20 @@ _MOD = {"mathops": mathops}
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 #   種別語彙: matrix(2-D)/ signal(1-D array)/ measurement / table(dict)/
 #   pairs / roots(complex 配列)
+#
+# tier2(complex)で足した語彙と、その理由(既存語彙で表現できないもののみ追加):
+#   * cpoints  — 複素平面上の**順序つき点列**(閉曲線・写像の像)。`roots` も
+#     complex 1-D だが意味が違う: roots は「解の集合」で順序に意味が無く、
+#     閉じてもいない。周回積分・偏角の原理は**点の順序と閉性**が結果そのもの
+#     (順序を入れ替えれば巻き数が変わる)なので、roots を輪郭として食える型に
+#     すると型レベルの嘘になる。`signal` は実 1-D なので不可。
+#   * cscalar  — 複素スカラ(∮f dz、f(w)、留数)。`measurement` は
+#     「スカラのみ」と決めた実数プール(chain_fuzz の TYPE_CHECKS が
+#     int/float に限定)で、複素を混ぜると下流の実数 op が生 TypeError で
+#     落ちる(= 第 3 波で実測されたプール汚染)。分けるのが正解。
+#   * cimage   — 2-D complex 画像。**新語ではなく complexops(cx_*)が既に
+#     使っている語彙の再利用**で、cx_fft → cplx_cr_residual のように
+#     FFT 系と数学系が型で繋がる。
 _CATALOG = {
     "linalg": [
         ("mat_solve", "mathops", ["matrix", "signal"], "signal"),
