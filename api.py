@@ -265,7 +265,9 @@ from mathops import (  # noqa: E402,F401
     mat_solve, mat_lstsq, mat_svd, mat_eigh, mat_pinv, mat_cond,
     stat_describe, stat_histogram, stat_covariance, stat_correlation,
     stat_zscore,
-    interp_linear, interp_cubic, poly_fit, poly_eval, poly_roots,
+    interp_linear, interp_cubic, poly_fit, poly_eval, poly_roots,    cplx_contour_circle, cplx_poly_eval, cplx_contour_integral,
+    cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
+    cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
 )
 
 __all__ = [
@@ -374,6 +376,9 @@ __all__ = [
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "poly_fit", "poly_eval", "poly_roots",
+    "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
+    "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
+    "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
 ]
 
 

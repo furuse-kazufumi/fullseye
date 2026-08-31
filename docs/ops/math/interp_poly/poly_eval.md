@@ -28,6 +28,12 @@ way to evaluate, though it cannot repair a badly-conditioned *fit* (see
 
 HALCON: no polynomial tuple operator (compose ``tuple_pow`` + arithmetic).
 
+Raises ValueError when a finite input overflows float64 — a degree-*d*
+polynomial at ``|x|`` well above 1 grows like ``|x|**d``, so mixing up the
+two arguments (a long signal used as coefficients) silently produced ``inf``
+before this guard (chain fuzzer wave-7: 256 coefficients evaluated at
+``|x|<=22`` -> ``22**255``). An unusable ``inf`` must not flow downstream.
+
 ## ファミリ共通の入力契約(fail-closed)
 
 mathops の全 op は入力を検証してから計算する(黙って通さない):

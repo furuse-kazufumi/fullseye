@@ -11,11 +11,12 @@ version: 0.1.0
 
 ## この族は何をする道具箱か
 
-Fullseye の計測を **裏で支えている数学** を、第一級の op として表に出した族です。カメラ較正は最小二乗問題、ノイズ雲は共分散行列、主軸は固有ベクトル、歪みモデルは多項式、逆引きは補間 — `measure` / `measure3d` / `camera` の計測 op はすべてこの層の上で動いています。第一陣は 3 分野 16 op(numpy + scipy のみ、台帳は `opsmath.py`):
+Fullseye の計測を **裏で支えている数学** を、第一級の op として表に出した族です。カメラ較正は最小二乗問題、ノイズ雲は共分散行列、主軸は固有ベクトル、歪みモデルは多項式、逆引きは補間 — `measure` / `measure3d` / `camera` の計測 op はすべてこの層の上で動いています。現在 4 分野 26 op(numpy + scipy のみ、台帳は `opsmath.py`):
 
 - **linalg(6)** — `mat_solve` / `mat_lstsq` / `mat_svd` / `mat_eigh` / `mat_pinv` / `mat_cond`: 密行列の線形代数。数値の健全性の見張り役(`mat_cond`)を隠さず明示。
 - **stats(5)** — `stat_describe` / `stat_histogram` / `stat_covariance` / `stat_correlation` / `stat_zscore`: 残差・ノイズの特徴づけ。
 - **interp / poly(5)** — `interp_linear` / `interp_cubic` / `poly_fit` / `poly_eval` / `poly_roots`: 較正曲線とその逆引き。
+- **complex(10、tier2)** — `cplx_contour_circle` / `cplx_poly_eval` / `cplx_contour_integral` / `cplx_winding_number` / `cplx_cauchy_value` / `cplx_argument_principle` / `cplx_laurent_coeffs` / `cplx_joukowski` / `cplx_mobius` / `cplx_cr_residual`: 複素解析の **計算可能な切り口**。閉曲線を点列として持つだけで、Cauchy の積分公式・偏角の原理(零点と極を数える)・Laurent 係数/留数・古典的な等角写像がすべて numpy の和に落ちます。op は Python の関数を呼び戻さない(輪郭上の `f` は呼び手がサンプルする)ので、**式でも実測データ(位相画像・伝達関数)でも同じ形**で扱えます。
 
 データ種は画像ではなく数値配列: **matrix**(厳密に 2-D)、**signal**(厳密に 1-D)、標本集合は **(N, D)**(行 = 観測、列 = 変数)。**table**(dict)・**pairs**(counts, edges)・**measurement**(スカラ)・**roots**(complex 配列)を返す op もあります。FFT / 複素演算(`complexops` / `volfreq` / `dsp`)、1-D フィルタ(`dsp` / `funct1d`)、幾何フィット(`measure` / `measure3d` / `pcseg`)、codegen 参照実装の数値計算(`algo`)は既存モジュールの持ち場なので、ここには **重複させていません**。
 
@@ -24,6 +25,7 @@ Fullseye の計測を **裏で支えている数学** を、第一級の op と�
 全 op が入力を検証してから計算します(2026-08 の敵対監査で確定したバグ族を、黙って通さず明示拒否):
 
 - **complex 入力は `ValueError`** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。`.real` / `.imag` / `abs()` を明示するか、複素対応の `complexops` を使う。
+- **例外は `cplx_*` 族だけ** — こちらは虚部こそがデータなので複素(実数も昇格して)を受けます。代わりに **str/bytes を拒否**(numpy は `"0"` を 0 と解釈してしまう)、そして **op の内部で溢れた結果**(Inf/NaN)も `ValueError`: 「積分が発散した」と「float64 が尽きた」は別の主張なので、後者を前者の顔で返さない。
 - **masked array(masked 要素あり)は `ValueError`** — マスクを剥がして下の生値を使う暗黙変換を拒否。
 - **NaN/Inf は全入力で `ValueError`**(非有限の件数を明示して拒否)。
 - **形状は厳格**: 1-D↔2-D の暗黙昇格・ブロードキャスト無し。vector 枠に matrix(逆も)は `ValueError`。
@@ -86,6 +88,33 @@ flowchart TB
 - **poly_fit**`(x, y, degree)` — Vandermonde 行列の SVD 最小二乗フィット。戻り dict `{coeffs(最高次から), degree, cond, rms_residual}` — フィットと健康診断を不可分に。**`cond > POLY_COND_WARN`(1e10)で `RuntimeWarning`** かつ数値も結果に同梱。高次 × 生座標は二重の罠(Vandermonde 列の近共線 + Runge 振動)— x を [-1, 1] へ中心化・スケールするか次数 ≤ ~6 に。`degree + 1` 点未満(劣決定)は拒否。
 - **poly_eval**`(coeffs, x)` — Horner 法(`np.polyval`)で評価。係数は最高次から(`poly_fit` の `"coeffs"` そのまま)。スカラ入力はスカラ、配列は float64 を返す。評価は正しくできても悪条件な**フィット**は直せない(`poly_fit` の `cond` を見る)。
 - **poly_roots**`(coeffs, real_only=False, imag_tol=1e-9)` — companion 行列の固有値として全根(複素含む)を決定的順序(実部→虚部)で返す。`x² + 1` の根は本当に `±i` — 隠すと多項式を偽ることになる。`real_only=True` で実根のみ float64(**空も正解**: `x² + 1` に実根は無い)。先頭係数 0 は「宣言次数が嘘」なので `ValueError`(明示 trim を要求)。高次・接近根の条件数悪化(Wilkinson)にも正直な注記あり。
+
+### complex(複素解析 — 閉曲線は「点列」である)
+
+輪郭は **複素点の 1-D 配列(`cpoints`)**、閉じる辺は暗黙(先頭点を末尾で繰り返さない)。向きが答えの符号そのものなので `orientation` は明示引数です。
+
+```mermaid
+flowchart LR
+    C[cplx_contour_circle 閉曲線] --> P[cplx_poly_eval 輪郭上で f をサンプル]
+    P --> I[cplx_contour_integral ∮f dz]
+    P --> AP[cplx_argument_principle 零点-極の数]
+    P --> CV[cplx_cauchy_value 内部の値 f w]
+    P --> L[cplx_laurent_coeffs 係数・留数]
+    C --> W[cplx_winding_number 巻き数]
+    C --> J[cplx_joukowski / cplx_mobius 等角写像]
+    IMG[cx_fft などの複素場] --> CR[cplx_cr_residual 正則性の残差]
+```
+
+- **cplx_contour_circle**`(center=0, radius=1, n=256, orientation="ccw")` — 積分路の標準形。`n` は `MAX_CONTOUR_POINTS`(2^22)で頭打ち(`n=10**9` を 16 GB の確保にしない)。正直な限界: これは円の**多角形近似**で、弦の求積は `O(n^-2)`。
+- **cplx_poly_eval**`(coeffs, z)` — `poly_eval` の複素版(Horner)。`poly_eval` は複素を意図的に拒否する(虚部の黙った切り捨て)ので、輪郭上のサンプルはこちらで作ります。溢れた結果は `ValueError`。
+- **cplx_contour_integral**`(z, fz)` — 弦の台形則による `∮f dz`。GT: `∮dz/z = 2πi`(実測 n=256 で相対誤差 1.0e-4、n=1024 で 6.3e-6 = 2 次収束)。時計回りなら符号が反転します。
+- **cplx_winding_number**`(z, w=0)` — 巻き数(整数)。輪郭**上**の点は `ValueError`、1 辺が半回転以上を張る(= 粗すぎ)場合も `ValueError`。π/2 を超えたら `RuntimeWarning`: **数え落としは原理的に検出できない**(z⁵ を 4 点円で数えると 1)ので、分点を倍にして安定するまで確かめるのが唯一の検算です。
+- **cplx_cauchy_value**`(z, fz, w)` — 境界の値から内部の値を復元。巻き数で割るので時計回り・二重巻きでも同じ答え。外の点(巻き数 0)と、輪郭から 1 標本刻み以内の点は `ValueError`(積分の峰が解像されていない)。
+- **cplx_argument_principle**`(z, fz)` — 微分も求根もせず `Z - P` を数える(像曲線の原点まわりの巻き数)。**差しか出ない**(零点と極は分離できない)/ 単純・正の向きの輪郭でのみ `Z - P` に一致 / 粗いと低く数える、の 3 点を正直に。
+- **cplx_laurent_coeffs**`(z, fz, kmin=-1, kmax=4)` — 一様サンプルの**円限定**(任意の輪郭では拒否)。`c₋₁` が留数、`k >= 0` は Taylor 係数。円上の台形則は指数収束します。標本の**順序を使わない**ので常に正の向きの係数を返す(`cplx_contour_integral` は向きで符号が変わる)— 突き合わせるときは向きを揃えてから。
+- **cplx_joukowski**`(z, c=1.0)` — `w = z + c²/z`。単位円 → 実軸線分 `[-2c, 2c]`(`w = 2c cos t`、厳密)、半径 `R` の円 → 半軸 `R ± c²/R` の楕円、`z = c` を通るずらした円 → 尖った後縁の翼型。
+- **cplx_mobius**`(z, a, b, c, d)` — `(az+b)/(cz+d)`。円と直線を円と直線に写す。`ad - bc ≈ 0`(定数写像に潰れる)と極 `z = -d/c` は `ValueError`。
+- **cplx_cr_residual**`(f, spacing=1.0)` — 標本場の Cauchy-Riemann 残差(0 = 正則、2 = 共役)。**行が虚部の増える向き**という規約が答えの符号を決めます(画像配列は行が下向きなので、そのまま渡すと共役を測って 2 が出ます — `f[::-1]` で反転)。中心差分は 2 次まで厳密(`z²` は 0)、それ以上は `O(h²)` の床(実測: `z³` で h=0.05 のとき 1.7e-3、h/2 で 4.2e-4)。
 
 ## 動く最小例(検証済み)
 
@@ -197,6 +226,9 @@ $$
 - Wilkinson, J. H. (1984), "The perfidious polynomial" — 係数摂動に対する根の条件数悪化(`poly_roots` の注記の根拠)。
 - Pearson, K. (1896), "Mathematical Contributions to the Theory of Evolution. III. Regression, Heredity, and Panmixia" — 積率相関係数(`stat_correlation`)。
 - de Boor, C. (1978), *A Practical Guide to Splines*, Springer — 3 次スプラインと not-a-knot 境界条件(`interp_cubic`)。
+- Cauchy, A.-L. (1831), *Mémoire sur la mécanique céleste et sur un nouveau calcul appelé calcul des limites* — 積分公式と偏角の原理(`cplx_cauchy_value` / `cplx_argument_principle`)。
+- Trefethen, L. N. & Weideman, J. A. C. (2014), "The exponentially convergent trapezoidal rule", *SIAM Review* 56(3) — 円周上の台形則が指数収束する根拠(`cplx_laurent_coeffs`)。
+- Zhukovsky, N. E. (1910), "Über die Konturen der Tragflächen der Drachenflieger" — Joukowski 翼型写像(`cplx_joukowski`)。
 
 ---
 © 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.

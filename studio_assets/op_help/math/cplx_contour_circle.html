@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cplx_contour_circle — MATH <code style="color:#22d3bf">complex</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>cpoints`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import mathops; mathops.cplx_contour_circle(center=0.0, radius=1.0, n=256, orientation=&#x27;ccw&#x27;)</code> (または <code style="color:#22d3bf">opsmath.get(&quot;cplx_contour_circle&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Sample a circle as a closed contour — the standard integration path.</p>
+<p>Returns `<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> complex points </code><code style="color:#22d3bf">center + radius * exp(±i * 2*pi*k/n)</code>`,</p>
+<p>`<code style="color:#22d3bf">k = 0..n-1</code><code style="color:#22d3bf">. The closing segment </code><code style="color:#22d3bf">z[-1] -&gt; z[0]</code>` is <b>implicit</b>: the</p>
+<p>first point is *not* repeated (every contour op in this family closes the</p>
+<p>polygon itself; repeating it would only add a zero-length segment).</p>
+<p>*orientation* is explicit because in complex analysis the sign of every</p>
+<p>result depends on it: `<code style="color:#22d3bf">&#x27;ccw&#x27;</code>` (default) is the positive/mathematical</p>
+<p>direction — the one for which the residue theorem, the Cauchy formula and</p>
+<p>the argument principle carry a `<code style="color:#22d3bf">+</code><code style="color:#22d3bf"> sign — and </code><code style="color:#22d3bf">&#x27;cw&#x27;</code>` negates all three.</p>
+<p>Honest limitation: this is a <b>polygon</b> through samples of the circle, not</p>
+<p>the circle. Its enclosed area is short by a factor `<code style="color:#22d3bf">sinc</code>`-like in</p>
+<p>`<code style="color:#22d3bf">2*pi/n</code><code style="color:#22d3bf">, and every quadrature on it converges as </code><code style="color:#22d3bf">O(n^-2)</code>`</p>
+<p>(:func:<code style="color:#22d3bf">cplx_contour_integral</code> documents the measured rate).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: non-finite *center*/*radius*, </code><code style="color:#22d3bf">radius &lt;= 0</code>`,</p>
+<p>`<code style="color:#22d3bf">n</code><code style="color:#22d3bf"> not an integer in </code><code style="color:#22d3bf">[3, MAX_CONTOUR_POINTS]</code>` (a fail-closed size cap</p>
+<p>— `<code style="color:#22d3bf">n=10**9</code>` would allocate 16 GB), unknown *orientation*.</p>
+<p>HALCON: no complex-plane operator (`<code style="color:#22d3bf">gen_circle_contour_xld</code>` draws the</p>
+<p>same geometry as an XLD contour for image space).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
+<p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>
+<p style="margin:2px 0 2px 12px">• **masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code>** — マスクを剥がして下の生値を使う暗黙変換を拒否。埋める/落とすを明示する。</p>
+<p style="margin:2px 0 2px 12px">• **NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>**(件数を明示して拒否 — 結果全体に伝播するため)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D と 2-D を暗黙昇格・ブロードキャストしない(vector 枠に matrix、matrix 枠に vector は <code style="color:#22d3bf">ValueError</code>。reshape を明示する)。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_complex">math_complex</a> — <code style="color:#22d3bf">py -3.11 examples/math_complex.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">cpoints</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">complex</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:cplx_poly_eval">cplx_poly_eval</a> · <a style="color:#22d3bf" href="opmath:cplx_contour_integral">cplx_contour_integral</a> · <a style="color:#22d3bf" href="opmath:cplx_winding_number">cplx_winding_number</a> · <a style="color:#22d3bf" href="opmath:cplx_cauchy_value">cplx_cauchy_value</a> · <a style="color:#22d3bf" href="opmath:cplx_argument_principle">cplx_argument_principle</a> · <a style="color:#22d3bf" href="opmath:cplx_laurent_coeffs">cplx_laurent_coeffs</a> · <a style="color:#22d3bf" href="opmath:cplx_joukowski">cplx_joukowski</a> · <a style="color:#22d3bf" href="opmath:cplx_mobius">cplx_mobius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -210,7 +210,9 @@ def _ops1d_section() -> list[str]:
 
 def _opsmath_section() -> list[str]:
     out = ["## Math operators(opsmath)by category", "",
-           "視覚計測を支える数学 op(線形代数/統計/補間・多項式)。北極星は"
+           "視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の"
+           "計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/"
+           "留数・等角写像・Cauchy-Riemann 残差)。北極星は"
            "「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・"
            "volfreq、1-D 関数は funct1d を参照。", ""]
     try:

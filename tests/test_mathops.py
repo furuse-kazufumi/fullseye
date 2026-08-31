@@ -8,6 +8,8 @@ constant / out-of-range refusal). Sign-indeterminate quantities (eigenvectors,
 singular vectors) are asserted through invariants (reconstruction,
 orthogonality, |dot|), never raw entries — per the module's honest disclosure.
 """
+import warnings
+
 import numpy as np
 import pytest
 
@@ -512,7 +514,7 @@ def test_histogram_bins_capped():
 # facade / registry wiring                                                     #
 # --------------------------------------------------------------------------- #
 def test_mathops_registry_names_resolve():
-    assert len(mathops.MATHOPS) == 16
+    assert len(mathops.MATHOPS) == 26            # tier1 16 + tier2 complex 10
     for name in mathops.MATHOPS:
         assert callable(getattr(mathops, name)), name
         assert name in mathops.__all__
@@ -538,3 +540,395 @@ def test_poly_eval_overflow_is_rejected_not_silent_inf():
     assert np.allclose(got, [-1.0, 0.0, 3.0])
     # 高次でも |x|<=1 なら通る(次数だけを理由に拒否しない)
     assert np.isfinite(mathops.poly_eval(coeffs, np.linspace(-1.0, 1.0, 8))).all()
+
+
+# --------------------------------------------------------------------------- #
+# tier 2 — complex analysis: contours, Cauchy, argument principle, maps        #
+#                                                                              #
+# Every assertion is against a closed-form truth (2*pi*i, 2*cos(t), 1/k!, the   #
+# number of roots of a factored polynomial), checked at two resolutions where   #
+# the quadrature is only second order so the *rate* is pinned, not just a       #
+# tolerance. Signs are asserted through orientation — where a contour op lies.  #
+# --------------------------------------------------------------------------- #
+TWO_PI_I = 2.0j * np.pi
+
+
+def test_contour_circle_is_the_analytic_circle():
+    z = mathops.cplx_contour_circle(1.0 + 2.0j, 3.0, 8)
+    assert z.shape == (8,) and z.dtype == np.complex128
+    assert np.allclose(np.abs(z - (1.0 + 2.0j)), 3.0, atol=1e-12)
+    assert z[0] == pytest.approx(4.0 + 2.0j)              # theta = 0
+    assert z[2] == pytest.approx(1.0 + 5.0j)              # theta = pi/2 (ccw)
+    # the first point is NOT repeated (the closing segment is implicit)
+    assert abs(z[-1] - z[0]) > 1.0
+    cw = mathops.cplx_contour_circle(0.0, 1.0, 8, orientation="cw")
+    assert np.allclose(cw, np.conj(mathops.cplx_contour_circle(0.0, 1.0, 8)))
+
+
+def test_contour_circle_fail_closed():
+    with pytest.raises(ValueError, match="MAX_CONTOUR_POINTS"):
+        mathops.cplx_contour_circle(0.0, 1.0, 10 ** 9)     # no 16 GB allocation
+    with pytest.raises(ValueError, match="at least 3"):
+        mathops.cplx_contour_circle(0.0, 1.0, 2)
+    with pytest.raises(ValueError, match="integer"):
+        mathops.cplx_contour_circle(0.0, 1.0, 2.5)
+    with pytest.raises(ValueError, match="positive real"):
+        mathops.cplx_contour_circle(0.0, 0.0, 16)
+    with pytest.raises(ValueError, match="positive real"):
+        mathops.cplx_contour_circle(0.0, 1.0 + 1.0j, 16)
+    with pytest.raises(ValueError, match="finite"):
+        mathops.cplx_contour_circle(np.nan, 1.0, 16)
+    with pytest.raises(ValueError, match="orientation"):
+        mathops.cplx_contour_circle(0.0, 1.0, 16, orientation="CCW")
+
+
+def test_contour_integral_cauchy_ground_truth_and_second_order():
+    # closed form: the integral of dz/z around the origin is 2*pi*i (Cauchy).
+    # The chordal trapezoid is second order, so 4x refinement must cut the error
+    # ~16x — the rate is the honest claim; a lone tolerance would hide a wrong
+    # quadrature that happens to be small.
+    errs = {}
+    for n in (256, 1024):
+        z = mathops.cplx_contour_circle(0.0, 1.0, n)
+        errs[n] = abs(mathops.cplx_contour_integral(z, 1.0 / z) - TWO_PI_I) / (2 * np.pi)
+    assert errs[256] < 2e-4 and errs[1024] < 1e-5
+    assert 14.0 < errs[256] / errs[1024] < 18.0            # measured 16.0
+    # exact identities: the integral of z**k vanishes for every analytic integrand
+    z = mathops.cplx_contour_circle(0.0, 2.0, 64)
+    for k in (0, 1, 2, 5):
+        assert abs(mathops.cplx_contour_integral(z, z ** k)) < 1e-9
+    # pole outside the contour -> 0
+    assert abs(mathops.cplx_contour_integral(z, 1.0 / (z - 10.0))) < 1e-9
+
+
+def test_contour_integral_orientation_flips_the_sign():
+    ccw = mathops.cplx_contour_circle(0.0, 1.0, 256)
+    cw = mathops.cplx_contour_circle(0.0, 1.0, 256, orientation="cw")
+    a = mathops.cplx_contour_integral(ccw, 1.0 / ccw)
+    b = mathops.cplx_contour_integral(cw, 1.0 / cw)
+    assert a.imag > 0 and b.imag < 0
+    assert a == pytest.approx(-b, rel=1e-12)
+
+
+def test_contour_integral_fail_closed():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 16)
+    with pytest.raises(ValueError, match="at least 3"):
+        mathops.cplx_contour_integral(z[:2], z[:2])
+    with pytest.raises(ValueError, match="same length"):
+        mathops.cplx_contour_integral(z, z[:5])
+    with pytest.raises(ValueError, match="degenerate contour"):
+        mathops.cplx_contour_integral(np.full(8, 1.0 + 0.0j), np.ones(8, complex))
+    with pytest.raises(ValueError, match="non-finite"):
+        mathops.cplx_contour_integral(z, np.full(16, np.nan))
+    with pytest.raises(ValueError, match="1-D"):
+        mathops.cplx_contour_integral(np.ones((4, 4), complex), np.ones(16, complex))
+
+
+def test_winding_number_counts_turns_with_sign():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    assert mathops.cplx_winding_number(z, 0.0) == 1
+    assert mathops.cplx_winding_number(z, 0.5 + 0.2j) == 1
+    assert mathops.cplx_winding_number(z, 5.0) == 0                   # outside
+    assert mathops.cplx_winding_number(
+        mathops.cplx_contour_circle(0.0, 1.0, 64, orientation="cw"), 0.0) == -1
+    # a doubly-wound circle really is 2 (not 1, not 0)
+    th = np.linspace(0.0, 4.0 * np.pi, 512, endpoint=False)
+    assert mathops.cplx_winding_number(np.exp(1j * th), 0.0) == 2
+    # repeating the first point (a zero-length closing segment) changes nothing
+    assert mathops.cplx_winding_number(np.concatenate([z, z[:1]]), 0.0) == 1
+
+
+def test_winding_number_refuses_points_on_the_contour():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    with pytest.raises(ValueError, match="coincides with contour vertex"):
+        mathops.cplx_winding_number(z, complex(z[7]))
+    square = np.array([-1 + 0j, 1 + 0j, 1 + 1j, -1 + 1j])
+    with pytest.raises(ValueError, match="subtends"):            # on segment #0
+        mathops.cplx_winding_number(square, 0.0 + 0.0j)
+
+
+def test_winding_number_warns_before_it_aliases():
+    """Adversarial finding (2026-09-01): a coarse contour can alias the count
+    DOWN with no local jump to detect — f = z**5 on a 4-point circle turns
+    exactly pi/2 per step and counts 1 instead of 5. Undetectable in principle,
+    so the op warns from pi/2 onward and the docstring says refine-until-stable."""
+    z4 = mathops.cplx_contour_circle(0.0, 1.0, 4)
+    with pytest.warns(RuntimeWarning, match="alias"):
+        assert mathops.cplx_argument_principle(z4, z4 ** 5) == 1     # wrong, warned
+    z64 = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")                               # no warning here
+        assert mathops.cplx_argument_principle(z64, z64 ** 5) == 5   # true value
+
+
+def test_cauchy_value_recovers_interior_values():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 256)
+    assert mathops.cplx_cauchy_value(z, z ** 2, 0.3) == pytest.approx(0.09, abs=1e-4)
+    assert mathops.cplx_cauchy_value(z, np.exp(z), 0.2 + 0.1j) == pytest.approx(
+        np.exp(0.2 + 0.1j), abs=5e-4)          # measured 1.2e-4 at n = 256
+    # a clockwise contour (winding -1) gives the same value: the formula divides
+    # by the winding number, so orientation must NOT leak into f(w)
+    cw = mathops.cplx_contour_circle(0.0, 1.0, 256, orientation="cw")
+    assert mathops.cplx_cauchy_value(cw, cw ** 2, 0.3) == pytest.approx(0.09, abs=1e-4)
+    # ... and neither does winding twice
+    th = np.linspace(0.0, 4.0 * np.pi, 512, endpoint=False)
+    z2 = np.exp(1j * th)
+    assert mathops.cplx_cauchy_value(z2, z2 ** 2, 0.3) == pytest.approx(0.09, abs=1e-4)
+
+
+def test_cauchy_value_accuracy_degrades_toward_the_contour():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 256)
+    near = abs(mathops.cplx_cauchy_value(z, z ** 2, 0.9) - 0.81)
+    mid = abs(mathops.cplx_cauchy_value(z, z ** 2, 0.3) - 0.09)
+    assert mid < 2e-5 and near < 2e-4                    # measured 9.0e-6 / 8.1e-5
+    assert near > mid                                    # the documented direction
+
+
+def test_cauchy_value_fail_closed():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    with pytest.raises(ValueError, match="outside the contour"):
+        mathops.cplx_cauchy_value(z, z ** 2, 5.0)        # winding 0: not f(w)
+    with pytest.raises(ValueError, match="within one sampling step"):
+        mathops.cplx_cauchy_value(z, z ** 2, 0.999)      # unresolved 1/(z-w) peak
+    with pytest.raises(ValueError, match="coincides with contour vertex"):
+        mathops.cplx_cauchy_value(z, z ** 2, complex(z[0]))
+
+
+def test_argument_principle_counts_zeros_and_poles():
+    p = np.array([1.0, 0.0, 0.0, -1.0])                  # z^3 - 1, roots on |z|=1
+    big = mathops.cplx_contour_circle(0.0, 2.0, 512)
+    small = mathops.cplx_contour_circle(0.0, 0.5, 512)
+    one = mathops.cplx_contour_circle(1.0, 0.3, 512)     # encircles the root z=1 only
+    assert mathops.cplx_argument_principle(big, mathops.cplx_poly_eval(p, big)) == 3
+    assert mathops.cplx_argument_principle(small, mathops.cplx_poly_eval(p, small)) == 0
+    assert mathops.cplx_argument_principle(one, mathops.cplx_poly_eval(p, one)) == 1
+    # poles count negative, with multiplicity
+    z = mathops.cplx_contour_circle(0.0, 1.0, 256)
+    assert mathops.cplx_argument_principle(z, 1.0 / z ** 2) == -2
+    # a zero and a double pole inside: Z - P = 1 - 2 = -1 (the honest difference)
+    assert mathops.cplx_argument_principle(z, (z - 0.5) / (z - 0.1) ** 2) == -1
+    # orientation negates the count
+    cw = mathops.cplx_contour_circle(0.0, 2.0, 512, orientation="cw")
+    assert mathops.cplx_argument_principle(cw, mathops.cplx_poly_eval(p, cw)) == -3
+
+
+def test_argument_principle_fail_closed():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    with pytest.raises(ValueError, match="vanishes at sample"):
+        mathops.cplx_argument_principle(z, z - z[0])     # zero sitting on the path
+    with pytest.raises(ValueError, match="same length"):
+        mathops.cplx_argument_principle(z, z[:8])
+
+
+def test_laurent_coefficients_and_residue_ground_truth():
+    # f = 1/(z - a) with |a| < 1: c_-1 = 1 (the residue), c_-k = a^(k-1), c_k>=0 = 0
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    out = mathops.cplx_laurent_coeffs(z, 1.0 / (z - 0.5), kmin=-3, kmax=2)
+    k = list(out["k"])
+    assert k == [-3, -2, -1, 0, 1, 2]
+    assert out["c"][k.index(-1)] == pytest.approx(1.0, abs=1e-12)      # residue
+    assert out["c"][k.index(-2)] == pytest.approx(0.5, abs=1e-12)
+    assert out["c"][k.index(-3)] == pytest.approx(0.25, abs=1e-12)
+    assert abs(out["c"][k.index(0)]) < 1e-12
+    assert out["center"] == pytest.approx(0.0, abs=1e-15)
+    assert out["radius"] == pytest.approx(1.0, abs=1e-15)
+    # Taylor side: exp(z) has c_k = 1/k!
+    out = mathops.cplx_laurent_coeffs(z, np.exp(z), kmin=0, kmax=5)
+    fact = np.array([1.0, 1.0, 2.0, 6.0, 24.0, 120.0])
+    assert np.allclose(out["c"].real, 1.0 / fact, atol=1e-12)
+    assert np.allclose(out["c"].imag, 0.0, atol=1e-12)
+    # the residue agrees with the contour integral / (2 pi i) on the same circle
+    f = 1.0 / (z - 0.5)
+    integral = mathops.cplx_contour_integral(z, f) / TWO_PI_I
+    res = mathops.cplx_laurent_coeffs(z, f, -1, -1)["c"][0]
+    # measured 1.6e-3 at n = 64: the gap IS the trapezoid's O(n^-2) error, since
+    # the Fourier form converges geometrically — they agree to ~1e-9 at n = 512
+    assert abs(integral - res) < 3e-3
+
+
+def test_laurent_ignores_sample_order_unlike_the_integral():
+    """Documented asymmetry: the coefficient sum runs over the sample *set*, so
+    it always reports the positively-oriented coefficients; the contour integral
+    follows the traversal and flips sign. Cross-checking the two without fixing
+    orientation is the trap this pins."""
+    z = mathops.cplx_contour_circle(0.0, 1.0, 128)
+    cw = mathops.cplx_contour_circle(0.0, 1.0, 128, orientation="cw")
+    res_ccw = mathops.cplx_laurent_coeffs(z, 1.0 / (z - 0.5), -1, -1)["c"][0]
+    res_cw = mathops.cplx_laurent_coeffs(cw, 1.0 / (cw - 0.5), -1, -1)["c"][0]
+    assert res_ccw == pytest.approx(1.0, abs=1e-12)
+    assert res_cw == pytest.approx(1.0, abs=1e-12)          # NOT -1
+    assert (mathops.cplx_contour_integral(cw, 1.0 / (cw - 0.5)) / TWO_PI_I).real < 0
+
+
+def test_laurent_fail_closed():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    # a genuinely non-concyclic quadrilateral (note a square would be ACCEPTED:
+    # its four corners really are a uniform 4-sample of its circumcircle)
+    quad = np.array([0 + 0j, 1 + 0j, 1 + 1j, 0 + 3j])
+    with pytest.raises(ValueError, match="not a circle"):
+        mathops.cplx_laurent_coeffs(quad, np.ones(4), -1, 1)
+    rect = np.array([0 + 0j, 2 + 0j, 2 + 1j, 0 + 1j])       # concyclic but not uniform
+    with pytest.raises(ValueError, match="not uniformly"):
+        mathops.cplx_laurent_coeffs(rect, np.ones(4), -1, 1)
+    # unevenly spaced samples OF a real circle are caught one check earlier: the
+    # centre is estimated as the sample mean, which only lands on the true centre
+    # for uniform sampling, so the radii stop agreeing
+    with pytest.raises(ValueError, match="not a circle"):
+        mathops.cplx_laurent_coeffs(np.exp(1j * np.array([0.0, 0.1, 1.0, 3.0, 4.0, 5.0])),
+                                    np.ones(6), -1, 1)
+    with pytest.raises(ValueError, match="cannot resolve more"):
+        mathops.cplx_laurent_coeffs(z, 1.0 / z, -100, 100)
+    with pytest.raises(ValueError, match="must not exceed"):
+        mathops.cplx_laurent_coeffs(z, 1.0 / z, 5, -5)
+    with pytest.raises(ValueError, match="integer"):
+        mathops.cplx_laurent_coeffs(z, 1.0 / z, -1.5, 2)
+
+
+def test_laurent_overflowing_normaliser_raises_not_silent_zeros():
+    """Adversarial finding (2026-09-01): r**k overflowed to inf for a tiny
+    circle and a large negative order, and ``x / inf`` handed back a silent 0 —
+    "no poles here" for a function full of them, with only a numpy
+    RuntimeWarning (which conftest ignores) as evidence."""
+    tiny = mathops.cplx_contour_circle(0.0, 1e-30, 64)
+    with pytest.raises(ValueError, match="left float64 range"):
+        mathops.cplx_laurent_coeffs(tiny, np.ones(64), kmin=-40, kmax=-1)
+    # a representable radius/order pair still works: f = 1/z^2 on r = 1e-3
+    small = mathops.cplx_contour_circle(0.0, 1e-3, 64)
+    out = mathops.cplx_laurent_coeffs(small, 1.0 / small ** 2, kmin=-3, kmax=1)
+    assert out["c"][list(out["k"]).index(-2)] == pytest.approx(1.0, abs=1e-9)
+
+
+def test_joukowski_maps_the_circle_to_the_plate_and_the_ellipse():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 128)
+    w = mathops.cplx_joukowski(z, 1.0)
+    # |z| = c folds onto the segment [-2c, 2c]: w = 2 cos(t), exactly
+    assert np.abs(w.imag).max() < 1e-14
+    assert np.allclose(w.real, 2.0 * np.cos(np.angle(z)), atol=1e-14)
+    assert w.real.min() == pytest.approx(-2.0, abs=1e-14)
+    assert w.real.max() == pytest.approx(2.0, abs=1e-14)
+    # R > c maps to the ellipse with semi-axes R + c^2/R and R - c^2/R
+    for R in (2.0, 5.0):
+        we = mathops.cplx_joukowski(mathops.cplx_contour_circle(0.0, R, 128), 1.0)
+        a, b = R + 1.0 / R, R - 1.0 / R
+        assert np.abs(we.real ** 2 / a ** 2 + we.imag ** 2 / b ** 2 - 1.0).max() < 1e-12
+
+
+def test_joukowski_fail_closed():
+    with pytest.raises(ValueError, match="pole"):
+        mathops.cplx_joukowski(np.array([0 + 0j, 1 + 0j]))
+    with pytest.raises(ValueError, match="positive real"):
+        mathops.cplx_joukowski(np.array([1 + 0j]), c=0.0)
+    with pytest.raises(ValueError, match="positive real"):
+        mathops.cplx_joukowski(np.array([1 + 0j]), c=1j)
+    with pytest.raises(ValueError, match="1-D"):
+        mathops.cplx_joukowski(np.ones((2, 2), complex))
+
+
+def test_mobius_cayley_and_inversion_ground_truth():
+    # Cayley transform (z - i)/(z + i): real axis -> unit circle, i -> 0
+    x = np.linspace(-50.0, 50.0, 501) + 0j
+    w = mathops.cplx_mobius(x, 1.0, -1j, 1.0, 1j)
+    assert np.abs(np.abs(w) - 1.0).max() < 1e-12
+    assert abs(mathops.cplx_mobius(np.array([1j]), 1.0, -1j, 1.0, 1j)[0]) < 1e-15
+    # inversion 1/z maps the unit circle onto itself
+    z = mathops.cplx_contour_circle(0.0, 1.0, 64)
+    assert np.abs(np.abs(mathops.cplx_mobius(z, 0.0, 1.0, 1.0, 0.0)) - 1.0).max() < 1e-14
+    # identity coefficients really are the identity
+    assert np.allclose(mathops.cplx_mobius(z, 1.0, 0.0, 0.0, 1.0), z, atol=1e-15)
+
+
+def test_mobius_fail_closed():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 16)
+    with pytest.raises(ValueError, match="degenerate"):
+        mathops.cplx_mobius(z, 1.0, 2.0, 2.0, 4.0)       # ad - bc = 0: constant map
+    with pytest.raises(ValueError, match="pole"):
+        mathops.cplx_mobius(np.array([-1 + 0j, 0 + 0j]), 1.0, 0.0, 1.0, 1.0)
+    with pytest.raises(ValueError, match="scalar"):
+        mathops.cplx_mobius(z, np.ones(3), 0.0, 0.0, 1.0)
+
+
+def test_cr_residual_separates_holomorphic_from_conjugate():
+    x = np.linspace(-1.0, 1.0, 41)
+    h = float(x[1] - x[0])
+    X, Y = np.meshgrid(x, x)                 # rows = increasing imaginary axis
+    Z = X + 1j * Y
+    assert mathops.cplx_cr_residual(Z ** 2, spacing=h) < 1e-12      # exact to degree 2
+    assert mathops.cplx_cr_residual(np.conj(Z), spacing=h) == pytest.approx(2.0, abs=1e-12)
+    assert mathops.cplx_cr_residual(np.full((5, 5), 3 + 4j)) == 0.0  # constant: analytic
+    # an image-convention array (rows running downward) measures the conjugate
+    assert mathops.cplx_cr_residual((Z ** 2)[::-1], spacing=h) == pytest.approx(
+        2.0, rel=0.2)
+
+
+def test_cr_residual_is_second_order_in_the_grid():
+    """Central differences are exact to degree 2, so z**3 shows the floor:
+    measured 1.7e-3 at h and 4.2e-4 at h/2 — the O(h^2) rate, not a tolerance."""
+    res = {}
+    for n in (41, 81):
+        x = np.linspace(-1.0, 1.0, n)
+        h = float(x[1] - x[0])
+        X, Y = np.meshgrid(x, x)
+        res[n] = mathops.cplx_cr_residual((X + 1j * Y) ** 3, spacing=h)
+    assert res[41] < 3e-3 and res[81] < 1e-3
+    assert 3.5 < res[41] / res[81] < 4.5                 # measured 4.00
+
+
+def test_cr_residual_fail_closed():
+    with pytest.raises(ValueError, match="2-D"):
+        mathops.cplx_cr_residual(np.ones(9))
+    with pytest.raises(ValueError, match="at least 3x3"):
+        mathops.cplx_cr_residual(np.ones((2, 5)))
+    with pytest.raises(ValueError, match="positive real"):
+        mathops.cplx_cr_residual(np.ones((4, 4)), spacing=0.0)
+    with pytest.raises(ValueError, match="non-finite"):
+        mathops.cplx_cr_residual(np.full((4, 4), np.nan))
+
+
+def test_cplx_poly_eval_is_the_complex_twin_of_poly_eval():
+    c = np.array([2.0, -3.0, 1.0])                       # 2x^2 - 3x + 1
+    q = np.linspace(-2.0, 2.0, 7)
+    assert np.allclose(mathops.cplx_poly_eval(c, q), mathops.poly_eval(c, q), atol=1e-15)
+    assert isinstance(mathops.cplx_poly_eval(c, 2.0), complex)
+    # roots evaluate to zero, including the complex ones poly_eval cannot take
+    r = mathops.poly_roots([1.0, 0.0, 1.0])              # x^2 + 1 -> +-i
+    assert np.abs(mathops.cplx_poly_eval([1.0, 0.0, 1.0], r)).max() < 1e-15
+    with pytest.raises(ValueError, match="not finite"):
+        mathops.cplx_poly_eval(np.full(400, 9.0), np.array([10.0 + 0j]))
+
+
+def test_complex_family_rejects_text_instead_of_parsing_it():
+    """Adversarial finding (2026-09-01): numpy parses "0" / b"0" / an array of
+    "1j" strings straight into numbers, so a config string or a mis-decoded CSV
+    column flowed through the whole family looking like data."""
+    z = mathops.cplx_contour_circle(0.0, 1.0, 16)
+    with pytest.raises(ValueError, match="text is not silently parsed"):
+        mathops.cplx_winding_number(z, "0")
+    with pytest.raises(ValueError, match="text is not silently parsed"):
+        mathops.cplx_winding_number(z, b"0")
+    with pytest.raises(ValueError, match="text/void dtype"):
+        mathops.cplx_contour_integral(np.array(["0", "1", "1j"]), np.ones(3))
+    with pytest.raises(ValueError, match="text/void dtype"):
+        mathops.cplx_cr_residual(np.array([["1", "2", "3"]] * 3))
+
+
+def test_complex_family_rejects_masked_and_nonfinite():
+    z = mathops.cplx_contour_circle(0.0, 1.0, 16)
+    m = np.ma.masked_array(z, mask=[True] + [False] * 15)
+    with pytest.raises(ValueError, match="masked"):
+        mathops.cplx_contour_integral(m, np.ones(16, complex))
+    with pytest.raises(ValueError, match="non-finite"):
+        mathops.cplx_winding_number(np.array([1 + 0j, np.inf + 0j, 1j]))
+    # a masked array with nothing masked loses nothing -> accepted
+    assert mathops.cplx_winding_number(np.ma.masked_array(z, mask=False), 0.0) == 1
+
+
+def test_opsmath_complex_category_is_registered():
+    import opsmath
+    names = opsmath.list_ops("complex")
+    assert len(names) == 10
+    assert set(names) <= set(mathops.MATHOPS)
+    assert opsmath.missing() == []
+    # the declared output vocabulary is the one the chain fuzzer validates
+    from tools.chain_fuzz import TYPE_CHECKS
+    for n in names:
+        assert opsmath.OPSMATH[n]["out"] in TYPE_CHECKS, n

@@ -133,6 +133,9 @@ with warnings.catch_warnings():
         stat_describe, stat_histogram, stat_covariance, stat_correlation,
         stat_zscore,
         interp_linear, interp_cubic, poly_fit, poly_eval, poly_roots,
+        cplx_contour_circle, cplx_poly_eval, cplx_contour_integral,
+        cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
+        cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
     )
     from engine import FullseyeEngine, diagnose_stages  # noqa: E402,F401  (pipeline runtime)
     import graphengine  # noqa: E402,F401  (DAG pipeline runtime)
@@ -288,5 +291,8 @@ __all__ = [
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "poly_fit", "poly_eval", "poly_roots",
+    "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
+    "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
+    "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
     "vision", "vision_ops", "Image", "Pipeline", "pipeline",
 ]

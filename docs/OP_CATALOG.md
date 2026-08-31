@@ -289,13 +289,13 @@ _計 310 ops / 63 categories。_
 
 ### curvature(5)
 - `principal_curvatures` (`points → curvature`) — 各点の主曲率 (k1>=k2)。→ (k1 (N,), k2 (N,))。 · 例: `curvature_grasp`, `itokawa_curvature`
-- `mean_curvature` (`points → measurement`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`
-- `gaussian_curvature` (`points → measurement`) — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
+- `mean_curvature` (`points → signal`) — 平均曲率 H=(k1+k2)/2。→ (N,)。向きに依存する量。 · 例: `curvature_shape_index`
+- `gaussian_curvature` (`points → signal`) — ガウス曲率 K=k1·k2(法線の反転に不変)。→ (N,)。 · 例: `curvature_grasp`, `curvature_shape_index`
 - `shape_index` (`points → descriptor`) — Koenderink の shape index s∈[-1,1] (凸球+1・円柱+0.5・鞍点0・凹球-1)。→ (N,)。 · 例: `curvature_grasp`, `itokawa_curvature`
 - `estimate_normals` (`points → normals`) — 外向き(近傍重心から離れる)に統一した点群法線。→ (N,3)。 · 例: `cylinder_axis_metrology`, `feature_register`, `oriented_normals`
 
 ### curve(5)
-- `curvature_torsion` (`points → measurement`) — 各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。 · 例: `space_curve`, `torus_knot_curve`
+- `curvature_torsion` (`points → pairs`) — 各点の曲率 κ と捩率 τ(再パラメータ化不変な閉形式)。→ (kappa (N,), tau (N,))。 · 例: `space_curve`, `torus_knot_curve`
 - `frenet_frame` (`points → frame`) — Frenet 標構(接線 T, 主法線 N, 陪法線 B)を各点で。→ (T, N, B) 各 (Npts,3) 単位ベクトル。 · 例: `space_curve`, `torus_knot_curve`
 - `arc_length` (`points → measurement`) — 曲線の累積弧長と全長。→ (cumulative (N,), total float)。 · 例: `space_curve`, `torus_knot_curve`
 - `resample_uniform` (`points → points`) — 弧長で等間隔に n 点へ再サンプル(線形補間)。→ (n,3)。 · 例: `bspline_freeform`
@@ -538,9 +538,9 @@ _計 310 ops / 63 categories。_
 - `volume_downsample` (`voxel → voxel`) — Block-pool a ``(D, H, W)`` volume by an integer *factor* per axis (data 間引き). · 例: `volume_downsampling`
 
 ### probe(3)
-- `vol_profile_line` (`voxel → measurement`) — Gray-value profile along the straight probe ``p0 -> p1``. · 例: `wall_thickness_probe`
-- `vol_edge_probe` (`voxel → measurement`) — Sub-sample edges along the probe ``p0 -> p1``. · 例: `wall_thickness_probe`
-- `vol_wall_thickness` (`voxel → measurement`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT · 例: `wall_thickness_probe`
+- `vol_profile_line` (`voxel → pairs`) — Gray-value profile along the straight probe ``p0 -> p1``. · 例: `wall_thickness_probe`
+- `vol_edge_probe` (`voxel → table`) — Sub-sample edges along the probe ``p0 -> p1``. · 例: `wall_thickness_probe`
+- `vol_wall_thickness` (`voxel → signal`) — Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT · 例: `wall_thickness_probe`
 
 ### range_image(4)
 - `depth_to_organized_points` (`depth → pointmap`) — organized 深度画像 → 格子整列 3D 点 (H,W,3)。 · 例: `range_image`
@@ -1554,7 +1554,7 @@ _計 37 ops / 3 categories。_
 - `derivate_funct_1d` (`signal → signal`) — First derivative by central differences (HALCON ``derivate_funct_1d``).
 - `integrate_funct_1d` (`signal → signal`) — Cumulative integral by the trapezoidal rule (HALCON ``integrate_funct_1d``).
 - `zero_crossings_funct_1d` (`signal → indices`) — Indices where the function changes sign (HALCON ``zero_crossings_funct_1d``).
-- `local_min_max_funct_1d` (`signal → indices`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
+- `local_min_max_funct_1d` (`signal → table`) — Indices of strict local maxima / minima (HALCON ``local_min_max_funct_1d``).
 - `abs_funct_1d` (`signal → signal`) — Absolute value of the y-values (HALCON ``abs_funct_1d``).
 - `negate_funct_1d` (`signal → signal`) — Sign-flipped y-values (HALCON ``negate_funct_1d``).
 - `invert_funct_1d` (`signal → pairs`) — Swap the roles of x and y: ``x = f^-1(y)`` (HALCON ``invert_funct_1d``).
@@ -1562,7 +1562,7 @@ _計 37 ops / 3 categories。_
 - `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
 - `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
 - `sample_funct_1d` (`signal → signal`) — Every *step*-th sample (HALCON ``sample_funct_1d``).
-- `match_funct_1d_trans` (`signal, signal → measurement`) — Best integer translation between two functions by cross-correlation
+- `match_funct_1d_trans` (`signal, signal → table`) — Best integer translation between two functions by cross-correlation
 - `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
 - `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
 - `x_range_funct_1d` (`signal → pairs`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
@@ -1590,10 +1590,22 @@ _計 37 ops / 3 categories。_
 - `signal_features` (`signal → table`) — A compact acoustic/vibration feature vector for anomaly detection:
 
 ## Math operators(opsmath)by category
-_計 16 ops / 3 categories。_
+_計 26 ops / 4 categories。_
 
 
-視覚計測を支える数学 op(線形代数/統計/補間・多項式)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
+視覚計測を支える数学 op(線形代数/統計/補間・多項式)+ 複素解析の計算可能な切り口(周回積分・Cauchy 積分公式・偏角の原理・Laurent 係数/留数・等角写像・Cauchy-Riemann 残差)。北極星は「数学辞典級の網羅」(NEXT_OPS_PLAN §F)。FFT/複素画像は complexops・volfreq、1-D 関数は funct1d を参照。
+
+### complex(10)
+- `cplx_contour_circle` (` → cpoints`) — Sample a circle as a closed contour — the standard integration path.
+- `cplx_poly_eval` (`signal, cpoints → cpoints`) — Evaluate a polynomial on the complex plane (Horner, complex-capable).
+- `cplx_contour_integral` (`cpoints, cpoints → cscalar`) — Closed contour integral ``∮ f(z) dz`` by the chordal trapezoidal rule.
+- `cplx_winding_number` (`cpoints → measurement`) — Winding number of a closed contour around a point (turning number).
+- `cplx_cauchy_value` (`cpoints, cpoints → cscalar`) — Cauchy's integral formula: recover ``f(w)`` **inside** a contour from its
+- `cplx_argument_principle` (`cpoints, cpoints → measurement`) — Argument principle: count zeros minus poles enclosed by a contour, from
+- `cplx_laurent_coeffs` (`cpoints, cpoints → table`) — Laurent (and Taylor) coefficients on a **uniformly sampled circle** —
+- `cplx_joukowski` (`cpoints → cpoints`) — Joukowski (Zhukovsky) conformal map ``w = z + c^2 / z``.
+- `cplx_mobius` (`cpoints → cpoints`) — Möbius (linear fractional) map ``w = (a z + b) / (c z + d)``.
+- `cplx_cr_residual` (`cimage → measurement`) — Cauchy-Riemann residual of a sampled complex field — "is this field
 
 ### interp_poly(5)
 - `interp_linear` (`signal, signal, signal → signal`) — Piecewise-linear interpolation of ``(x, y)`` samples at query *xq*.

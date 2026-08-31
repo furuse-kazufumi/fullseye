@@ -11,6 +11,11 @@
 <p>way to evaluate, though it cannot repair a badly-conditioned *fit* (see</p>
 <p>:func:<code style="color:#22d3bf">poly_fit</code>&#x27;s `<code style="color:#22d3bf">cond</code>`).</p>
 <p>HALCON: no polynomial tuple operator (compose `<code style="color:#22d3bf">tuple_pow</code>` + arithmetic).</p>
+<p>Raises ValueError when a finite input overflows float64 — a degree-*d*</p>
+<p>polynomial at `<code style="color:#22d3bf">|x|</code><code style="color:#22d3bf"> well above 1 grows like </code><code style="color:#22d3bf">|x|**d</code>`, so mixing up the</p>
+<p>two arguments (a long signal used as coefficients) silently produced `<code style="color:#22d3bf">inf</code>`</p>
+<p>before this guard (chain fuzzer wave-7: 256 coefficients evaluated at</p>
+<p>`<code style="color:#22d3bf">|x|&lt;=22</code><code style="color:#22d3bf"> -&gt; </code><code style="color:#22d3bf">22**255</code><code style="color:#22d3bf">). An unusable </code><code style="color:#22d3bf">inf</code>` must not flow downstream.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>mathops の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• **complex 入力は <code style="color:#22d3bf">ValueError</code>** — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> を明示するか、複素対応の complexops を使う。</p>

@@ -139,8 +139,10 @@ def test_surface_form_error_measurement():
 
 def test_opsmath_call_returns_declared_types():
     """math 次元追加(2026-09-01)の初走行で mat_svd/mat_eigh が「宣言 table・
-    実際 tuple」の型の嘘として検出された回帰。opsmath.call() が全 16 op で
-    宣言 out 型どおり返すことを TYPE_CHECKS で固定する。"""
+    実際 tuple」の型の嘘として検出された回帰。opsmath.call() が全 26 op
+    (tier1 16 + tier2 complex 10)で宣言 out 型どおり返すことを TYPE_CHECKS で
+    固定する。tier2 は cpoints/cscalar という新語彙を足したので、その語彙が
+    ファザー側に登録されているか(= 未検査で素通りしないか)もここで担保する。"""
     import opsmath
     rng = np.random.default_rng(0)
     A = rng.standard_normal((6, 4))
@@ -160,6 +162,22 @@ def test_opsmath_call_returns_declared_types():
         "poly_fit": (x, y, 3), "poly_eval": (np.array([1.0, 0.0, -1.0]), x),
         "poly_roots": (np.array([1.0, 0.0, -1.0]),),
     }
+    # tier2 complex: 単位円の輪郭とその上の標本値(全て閉形式で検証済みの入力)
+    zc = np.exp(2j * np.pi * np.arange(64) / 64.0)
+    gx = np.linspace(-1.0, 1.0, 9)
+    gX, gY = np.meshgrid(gx, gx)
+    args.update({
+        "cplx_contour_circle": (),
+        "cplx_poly_eval": (np.array([1.0, 0.0, -1.0]), zc),
+        "cplx_contour_integral": (zc, 1.0 / zc),
+        "cplx_winding_number": (zc,),
+        "cplx_cauchy_value": (zc, zc ** 2, 0.3),
+        "cplx_argument_principle": (zc, zc ** 3),
+        "cplx_laurent_coeffs": (zc, 1.0 / (zc - 0.5)),
+        "cplx_joukowski": (zc,),
+        "cplx_mobius": (zc, 1.0, -1j, 1.0, 1j),
+        "cplx_cr_residual": ((gX + 1j * gY) ** 2,),
+    })
     from tools.chain_fuzz import TYPE_CHECKS
     missing = [n for n in opsmath.OPSMATH if n not in args]
     assert not missing, f"test args missing for: {missing}"
