@@ -817,6 +817,9 @@ def parity(device="cpu"):
     imgs.append(np.full((64, 64), 0.42))                      # 定数(平坦)画像
     imgs.append(np.round(imgs[0] * 255.0) / 255.0)            # uint8 量子化画像
     rows = []
+    # 方向(角度)op は値が mod 1 の円環量: 勾配 ~0 の画素で atan2 が −π/+π に
+    # 割れると線形差は 1.0 になるが 0.0 と 1.0 は同一方向。円環距離で測る
+    circular = {"gradient_direction", "sobel_dir"}
     for name, (fn, core_name, halcon) in ACCEL.items():
         if core_name not in ops.RT:
             continue
@@ -826,8 +829,11 @@ def parity(device="cpu"):
             got = run_batch(name, imgs, a, b, device)
             for i, im in enumerate(imgs):
                 ref = np.clip(ops.RT[core_name](im.copy(), a, b), 0, 1)
-                full = max(full, float(np.max(np.abs(ref - got[i]))))
-                inter = max(inter, _interior_max(ref, got[i], m))
+                d = np.abs(ref - got[i])
+                if name in circular:
+                    d = np.minimum(d, 1.0 - d)
+                full = max(full, float(np.max(d)))
+                inter = max(inter, _interior_max(d, np.zeros_like(d), m))
         rows.append((name, halcon, full, inter))
     return rows
 
