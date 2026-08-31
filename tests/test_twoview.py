@@ -153,3 +153,28 @@ def test_recover_pose_robust_to_small_pixel_noise():
     u_est = t_est / np.linalg.norm(t_est)
     u_true = t_true / np.linalg.norm(t_true)
     assert np.dot(u_est, u_true) > 0.98, np.dot(u_est, u_true)
+
+
+def test_pts_shape_contract_rejected_at_entry():
+    # 連鎖ファザー wave-5 実測: (N,1) 列ベクトルが _normalize_points の重心 c[1] で
+    # 生 IndexError に化けていた。入口で (N,2) 契約を ValueError として明示する。
+    good = np.zeros((8, 2))
+    col = np.zeros((8, 1))
+    with pytest.raises(ValueError, match=r"\(N, 2\)"):
+        twoview.fundamental_8point(col, good)
+    with pytest.raises(ValueError, match=r"\(N, 2\)"):
+        twoview.sampson_distance(np.eye(3), good, col)
+    with pytest.raises(ValueError, match=r"\(N, 2\)"):
+        twoview.triangulate(col, good, np.zeros((3, 4)), np.zeros((3, 4)))
+    with pytest.raises(ValueError, match=r"\(N, 2\)"):
+        twoview.recover_pose(col, good, np.eye(3))
+    # 1-D signal(ファザーのプール産物)も同じ入口で拒否される
+    with pytest.raises(ValueError, match=r"\(N, 2\)"):
+        twoview.fundamental_8point(np.zeros(16), np.zeros(16))
+    # 非有限も入口で拒否
+    bad = good.copy(); bad[0, 0] = np.nan
+    with pytest.raises(ValueError, match="non-finite"):
+        twoview.fundamental_8point(bad, good)
+    # 対応数不一致は triangulate/sampson でも明示拒否
+    with pytest.raises(ValueError, match="do not match"):
+        twoview.triangulate(good, np.zeros((5, 2)), np.zeros((3, 4)), np.zeros((3, 4)))

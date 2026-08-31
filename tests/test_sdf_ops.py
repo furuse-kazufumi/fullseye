@@ -259,3 +259,29 @@ def test_grid_coords_rejects_degenerate():
         sdf_ops.grid_coords([[0, 0], [0, 1], [0, 1]], 8)        # zero-span axis
     with pytest.raises(ValueError):
         sdf_ops.grid_coords([[0, 1], [0, 1], [0, 1]], 0)        # res<=0
+
+
+# --------------------------------------------------------------------------- #
+# inf interop: esdf documents +inf ("all free"); CSG must propagate exactly.  #
+# --------------------------------------------------------------------------- #
+def test_csg_propagates_esdf_inf_exactly():
+    # min/max algebra: min(a,+inf)=a, max(a,+inf)=+inf, max(a,-(+inf))=a
+    a = np.array([1.0, -2.0, np.inf])
+    b = np.full(3, np.inf)
+    assert np.array_equal(sdf_ops.sdf_union(a, b), a)
+    assert np.all(np.isposinf(sdf_ops.sdf_intersect(a, b)))
+    assert np.array_equal(sdf_ops.sdf_subtract(a, b), a)
+    assert np.all(np.isposinf(sdf_ops.sdf_offset(b, 1.0)))
+
+
+def test_smooth_union_degrades_to_min_on_inf_not_nan():
+    # 連鎖ファザー wave-5 派生の実測: 修正前は inf 要素が inf-inf/inf*0 で全 NaN。
+    # |a-b|>=k でブレンド項は 0 なので、inf 要素は厳密に min(a,b) が正解。
+    a = np.array([1.0, -2.0, np.inf, -np.inf])
+    b = np.array([np.inf, np.inf, np.inf, 3.0])
+    out = sdf_ops.sdf_smooth_union(a, b, 0.5)
+    assert np.array_equal(out, np.array([1.0, -2.0, np.inf, -np.inf]))
+    # 有限側の性質は不変: smin <= min、a==b で k/4 のくぼみ
+    x = np.array([2.0])
+    dip = sdf_ops.sdf_smooth_union(x, x, 0.5)
+    assert np.isclose(dip[0], 2.0 - 0.5 / 4.0)

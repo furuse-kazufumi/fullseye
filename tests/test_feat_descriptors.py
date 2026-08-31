@@ -159,3 +159,30 @@ def test_register_fpfh_rejects_downsample_collapse():
         feat_fpfh.register_fpfh(a, b)
     with pytest.raises(ValueError, match="N >= 3"):
         feat_fpfh.estimate_point_normals(np.zeros((1, 3)))
+
+
+def test_compute_fpfh_entry_contract():
+    # 連鎖ファザー wave-5 実測: 別点群の法線(160 行)を 200 点に混ぜると近傍 index が
+    # normals の範囲を越え生 IndexError(index 160 / size 160)。入口契約で明示拒否。
+    rng = np.random.default_rng(0)
+    P = rng.normal(size=(200, 3))
+    with pytest.raises(ValueError, match="pair one normal"):
+        feat_fpfh.compute_fpfh(P, rng.normal(size=(160, 3)))
+    with pytest.raises(ValueError, match="at least 4 points"):
+        feat_fpfh.compute_fpfh(P[:2], P[:2])
+    bad = P.copy(); bad[0, 0] = np.inf
+    with pytest.raises(ValueError, match="non-finite"):
+        feat_fpfh.compute_fpfh(bad, P)
+    with pytest.raises(ValueError, match=r"\(N, 3\)"):
+        feat_fpfh.compute_fpfh(rng.normal(size=(50, 2)), rng.normal(size=(50, 2)))
+
+
+def test_shot_descriptor_normals_pairing_contract():
+    # compute_fpfh と同クラスの兄弟一掃: shot_descriptor も点と法線の対を要求
+    import feat_shot
+    from scipy.spatial import cKDTree
+    rng = np.random.default_rng(1)
+    P = rng.normal(size=(60, 3))
+    tree = cKDTree(P)
+    with pytest.raises(ValueError, match="pair one normal"):
+        feat_shot.shot_descriptor(P, rng.normal(size=(40, 3)), [0, 1], tree, 0.5)
