@@ -459,6 +459,10 @@ def stat_histogram(x, bins=10, range=None, density=False):
     (default) *counts* are occurrence **frequencies** (int64, summing to the
     number of in-range samples); with ``density=True`` they form a
     **probability density** (float64, integrating to 1 over the range).
+    A *range* that excludes **every** sample raises ``ValueError`` under
+    ``density=True`` (the density would be 0/0 — silent NaNs refused) while
+    ``density=False`` honestly returns all-zero counts. *bins* is capped at
+    ``MAX_ELEMENTS`` (the edge/count arrays are allocations too).
 
     Returns ``(counts, edges)`` — ``edges`` has ``bins + 1`` entries;
     bin *i* is ``[edges[i], edges[i+1])``.
