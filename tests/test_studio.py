@@ -3205,6 +3205,148 @@ def test_viewer3d_interaction_decimation_hits_budget():
     v.deleteLater()
 
 
+def test_viewer3d_first_person_math_pins_known_geometry():
+    """First-person camera + perspective projection, pinned numerically: a point
+    straight ahead lands at the frame centre, a point behind the eye is clipped,
+    perspective magnifies near offsets, and yaw=90 keeps the right-handed frame
+    (right -> -y, up-screen -> +z)."""
+    cam = studio.viewer3d_camera_fp(0, 0)
+    xy, depth, ok = studio.viewer3d_project_persp(
+        np.array([[0.0, 5.0, 0.0]]), cam, (0, 0, 0), 70.0, 100)
+    assert ok[0] and np.allclose(xy[0], [50, 50]) and abs(depth[0] - 5.0) < 1e-12
+    # behind the eye -> near-clipped out
+    _, _, ok2 = studio.viewer3d_project_persp(
+        np.array([[0.0, -5.0, 0.0]]), cam, (0, 0, 0), 70.0, 100)
+    assert not ok2[0]
+    # perspective: the SAME lateral offset subtends more screen when nearer
+    xyn, _, _ = studio.viewer3d_project_persp(
+        np.array([[1.0, 2.0, 0.0], [1.0, 8.0, 0.0]]), cam, (0, 0, 0), 70.0, 100)
+    assert (xyn[0, 0] - 50) > (xyn[1, 0] - 50) > 0
+    # yaw=90: +x becomes the look direction; right maps to -y, +z stays up-screen
+    cam90 = studio.viewer3d_camera_fp(90, 0)
+    xy9, d9, ok9 = studio.viewer3d_project_persp(
+        np.array([[5.0, 0, 0], [5.0, -1.0, 0], [5.0, 0, 1.0]]),
+        cam90, (0, 0, 0), 70.0, 100)
+    assert ok9.all() and np.allclose(xy9[0], [50, 50]) and abs(d9[0] - 5.0) < 1e-12
+    assert xy9[1, 0] > 50                                   # -y is screen-right at yaw=90
+    assert xy9[2, 1] < 50                                   # +z is up (screen y shrinks)
+    # the eye translates the world: same point, eye moved forward -> depth shrinks
+    _, dmov, _ = studio.viewer3d_project_persp(
+        np.array([[0.0, 5.0, 0.0]]), cam, (0, 2.0, 0), 70.0, 100)
+    assert abs(dmov[0] - 3.0) < 1e-12
+
+
+def test_viewer3d_fp_axes_follow_camera():
+    """WASD basis tracks the camera: forward is the full look direction (pitch
+    included), right stays horizontal regardless of pitch, up is world +z."""
+    fwd, right, up = studio.viewer3d_fp_axes(0, 0)
+    assert np.allclose(fwd, [0, 1, 0]) and np.allclose(right, [1, 0, 0])
+    assert np.allclose(up, [0, 0, 1])
+    fwd9, right9, _ = studio.viewer3d_fp_axes(90, 0)
+    assert np.allclose(fwd9, [1, 0, 0]) and np.allclose(right9, [0, -1, 0])
+    fwd60, right60, _ = studio.viewer3d_fp_axes(0, 60)
+    c60, s60 = np.cos(np.radians(60)), np.sin(np.radians(60))
+    assert np.allclose(fwd60, [0, c60, s60])                # positive pitch looks UP
+    assert np.allclose(right60, [1, 0, 0])                  # strafe stays horizontal
+    for v in (fwd, right, up, fwd9, right9, fwd60):
+        assert abs(np.linalg.norm(v) - 1.0) < 1e-12
+
+
+def test_render_points_frame_fp_splats_and_depth_cue():
+    """The first-person rasteriser: a point straight ahead splats at the frame
+    centre, a cloud entirely behind the eye leaves the background untouched, and
+    the brightness depth cue makes the SAME red point dimmer when farther."""
+    red = np.array([[1.0, 0, 0]])
+    near = studio.render_points_frame_fp(np.array([[0.0, 1.0, 0.0]]), colors=red,
+                                         eye=(0, 0, 0), yaw=0, pitch=0,
+                                         size=64, radius=5.0)
+    assert near.shape == (64, 64, 3)
+    assert near[32, 32, 0] > 0.9 and near[32, 32, 2] < 0.1  # centre splat, red, barely dimmed
+    far = studio.render_points_frame_fp(np.array([[0.0, 12.0, 0.0]]), colors=red,
+                                        eye=(0, 0, 0), yaw=0, pitch=0,
+                                        size=64, radius=5.0)
+    assert 0.0 < far[32, 32, 0] < near[32, 32, 0]           # farther -> dimmer, still visible
+    behind = studio.render_points_frame_fp(np.array([[0.0, -3.0, 0.0]]), colors=red,
+                                           eye=(0, 0, 0), yaw=0, pitch=0,
+                                           size=64, radius=5.0)
+    assert np.allclose(behind, behind[0, 0])                # nothing splatted
+
+
+def test_viewer3d_first_person_widget_toggle_move_look():
+    """The widget mode: F enters walking at the scene perimeter continuing the
+    orbit line of sight, WASD moves along the camera axes (radius/50 per press,
+    x4 with Shift), the wheel tunes the walk speed instead of zooming, drag
+    looks around with the pitch clamped, R returns to the entrance, F resumes
+    orbit untouched."""
+    _app()
+    from PySide6 import QtCore, QtGui, QtWidgets
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(300, 300)
+    v.set_points(studio.demo_cluster_cloud(n_per=30)[0])
+    orbit0 = (v._yaw, v._pitch, v._zoom, list(v._pan))
+
+    def key(k, mod=QtCore.Qt.NoModifier):
+        v.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, k, mod))
+
+    key(QtCore.Qt.Key_F)                                    # enter first-person
+    assert v._fp is True
+    assert (v._fp_yaw, v._fp_pitch) == (v._yaw, v._pitch)   # continues the orbit view
+    cam = studio.viewer3d_camera_fp(v._fp_yaw, v._fp_pitch)
+    home = v._center - cam[2] * (1.5 * v._radius)
+    assert np.allclose(v._eye, home)                        # entrance on the perimeter
+    fr = v.frame_rgb()
+    assert fr.shape[0] == fr.shape[1] and fr.shape[2] == 3  # perspective path renders
+    step = v._radius / 50.0
+    fwd, right, up = studio.viewer3d_fp_axes(v._fp_yaw, v._fp_pitch)
+    key(QtCore.Qt.Key_W)                                    # forward follows the camera
+    assert np.allclose(v._eye, home + fwd * step)
+    key(QtCore.Qt.Key_S)                                    # and back
+    assert np.allclose(v._eye, home)
+    key(QtCore.Qt.Key_D, QtCore.Qt.ShiftModifier)           # Shift = x4 strafe
+    assert np.allclose(v._eye, home + right * 4 * step)
+    key(QtCore.Qt.Key_A, QtCore.Qt.ShiftModifier)
+    key(QtCore.Qt.Key_Q)                                    # down = -world z
+    assert np.allclose(v._eye, home - up * step)
+    key(QtCore.Qt.Key_Space)                                # Space = up, back home
+    assert np.allclose(v._eye, home)
+    # turn the camera: W now moves along the NEW look direction
+    v._fp_yaw, v._fp_pitch = 90.0, 0.0
+    key(QtCore.Qt.Key_W)
+    assert np.allclose(v._eye, home + np.array([step, 0.0, 0.0]))
+    # wheel tunes the walk speed, NOT the orbit zoom
+    ev = QtGui.QWheelEvent(
+        QtCore.QPointF(150, 150), QtCore.QPointF(150, 150),
+        QtCore.QPoint(0, 0), QtCore.QPoint(0, 120),
+        QtCore.Qt.NoButton, QtCore.Qt.NoModifier,
+        QtCore.Qt.ScrollUpdate, False)
+    QtWidgets.QApplication.sendEvent(v, ev)
+    assert v._fp_speed > 1.0 and v._zoom == orbit0[2]
+
+    class _Move:                                            # minimal mouse-move stand-in
+        def __init__(self, x, y):
+            self._p = QtCore.QPointF(x, y)
+
+        def position(self):
+            return self._p
+
+    v._fp_yaw, v._fp_pitch = 0.0, 0.0
+    v._drag = ("orbit", QtCore.QPoint(10, 10))
+    v.mouseMoveEvent(_Move(30, 4))                          # drag right+up
+    assert abs(v._fp_yaw - 0.35 * 20) < 1e-9                # turns right
+    assert abs(v._fp_pitch - 0.35 * 6) < 1e-9               # looks up
+    v._fp_pitch = 88.0
+    v.mouseMoveEvent(_Move(30, -400))
+    assert v._fp_pitch == 89.0                              # pitch clamp
+    v._drag = None
+    key(QtCore.Qt.Key_R)                                    # R = back to the entrance
+    assert np.allclose(v._eye, home) and v._fp is True
+    key(QtCore.Qt.Key_F)                                    # leave: orbit untouched
+    assert v._fp is False
+    assert (v._yaw, v._pitch, v._zoom, list(v._pan)) == orbit0
+    v.deleteLater()
+
+
 def test_feature_inspection_reopen_releases_old_dialog():
     """Leak regression (2026-08-30 finding): Ctrl+F5 reopen must destroy the
     previous dialog (WA_DeleteOnClose + deleteLater), not stack hidden copies
