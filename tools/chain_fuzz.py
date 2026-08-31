@@ -178,6 +178,12 @@ def catalog():
         ("cx_wiener_deconvolve", ["image2d"], "image2d"),
     ]:
         ops.append((name, "2d", ins, out, getattr(cx, name)))
+    # 数学ファミリ(opsmath 台帳)。adapter 層を持たない=素の返りが宣言型で
+    # あることを TYPEMISS 検査がそのまま機械検証する
+    import opsmath
+    for n, m in opsmath.OPSMATH.items():
+        if m["func"] is not None:
+            ops.append((n, "math", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
