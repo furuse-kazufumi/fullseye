@@ -2030,6 +2030,11 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                     df, dr, du = self.FP_MOVES[name]
                     self._eye = self._eye + (fwd * df + right * dr + up * du) \
                         * self._fp_step(e.modifiers())
+                    if self._P.shape[0] > self.DRAG_BUDGET:
+                        # walking burst = same decimated preview as a wheel-zoom
+                        # burst; full re-render shortly after the last step
+                        self._wheeling = True
+                        self._wheel_timer.start()
                     self._repaint()
                 elif e.key() == QtCore.Qt.Key_R:
                     self._fp_home()
