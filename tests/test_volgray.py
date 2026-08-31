@@ -198,15 +198,13 @@ def test_gamma_constant_passthrough_and_bad_gamma():
 # vol_stretch — exact percentile mapping on constructed data                   #
 # --------------------------------------------------------------------------- #
 def test_stretch_known_percentiles_map_exactly():
-    """101 evenly spaced values 0..100 (each repeated equally): the p-th
-    percentile is exactly p, so stretch(10, 90) maps 10 -> 0, 50 -> 0.5,
-    90 -> 1, and clips 0 and 100."""
-    base = np.repeat(np.arange(101, dtype=np.float64), 10)   # 1010 values
-    v = np.resize(base, (10, 10, 11)).astype(np.float64)     # contains 0..100
-    v = np.sort(v.ravel()).reshape(10, 10, 10 + 1)
-    out = volgray.vol_stretch(v, p_low=10.0, p_high=90.0)
+    """The 101 values 0..100: with linear interpolation the p-th percentile is
+    exactly p, so stretch(10, 90) maps 10 -> 0, 50 -> 0.5, 90 -> 1, and clips
+    0 and 100."""
+    v = np.arange(101, dtype=np.float64).reshape(1, 1, 101)
     lo, hi = np.percentile(v, [10.0, 90.0])
     assert lo == pytest.approx(10.0) and hi == pytest.approx(90.0)
+    out = volgray.vol_stretch(v, p_low=10.0, p_high=90.0)
     # exact mapping of hand-picked values
     pick = lambda val: out[v == val]
     assert np.allclose(pick(10.0), 0.0)
