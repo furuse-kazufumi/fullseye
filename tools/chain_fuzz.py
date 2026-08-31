@@ -139,9 +139,9 @@ def catalog():
     return ops
 
 
-def _bind_args(fn, data_args, rng):
-    """先頭の必須位置引数へ data_args を割り当て、残る必須引数を名前ヒントで束縛。
-    束縛できない必須引数が残れば None(この op はこの回スキップ)。"""
+def _bind_args(op_name, fn, data_args, rng):
+    """先頭の必須位置引数へ data_args を割り当て、残る必須引数を op 固有 →
+    名前ヒントの順で束縛。束縛できない必須引数が残れば None(スキップ)。"""
     import inspect
     try:
         sig = inspect.signature(fn)
@@ -154,7 +154,7 @@ def _bind_args(fn, data_args, rng):
     for p in params[len(args):]:
         if p.default is not inspect.Parameter.empty:
             continue
-        hint = PARAM_HINTS.get(p.name)
+        hint = OP_PARAM_HINTS.get((op_name, p.name)) or PARAM_HINTS.get(p.name)
         if hint is None:
             return None
         val = hint(rng)
