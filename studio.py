@@ -1927,6 +1927,7 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             height ramp. Resets clusters/mesh state, keeps the camera."""
             self._P = np.asarray(points, np.float64).reshape(-1, 3)
             self._colors = None if colors is None else np.asarray(colors, np.float64)
+            self._ramp = None                   # height ramp is per-cloud: recompute
             self._F = self._VN = self._edges = self._V = None
             self._clusters, self._selected = [], None
             self._refit(); self.info = {"kind": "points", "n_points": int(self._P.shape[0])}
