@@ -78,7 +78,10 @@ __all__ = [
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "poly_fit", "poly_eval", "poly_roots",
-    "MATHOPS", "MAX_ELEMENTS", "POLY_COND_WARN",
+    "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
+    "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
+    "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "MATHOPS", "MAX_ELEMENTS", "POLY_COND_WARN", "MAX_CONTOUR_POINTS",
 ]
 
 #: The public math operators, by name (introspection / facade wiring).
@@ -87,6 +90,9 @@ MATHOPS = [
     "stat_describe", "stat_histogram", "stat_covariance", "stat_correlation",
     "stat_zscore",
     "interp_linear", "interp_cubic", "poly_fit", "poly_eval", "poly_roots",
+    "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
+    "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
+    "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
 ]
 
 #: Refuse an array larger than this (~67M float64 = 512 MB) — the SVD/eigen
