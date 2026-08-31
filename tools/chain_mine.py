@@ -673,6 +673,7 @@ def _write(path, reps, timing=True):
 
 
 def main(argv=None):
+    global TRACE_OPS, MAX_OP_ELEMS
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--chains", type=int, default=200)
     ap.add_argument("--length", type=int, default=6)
