@@ -1122,6 +1122,14 @@ def cplx_winding_number(z, w=0.0):
                          "branch cannot tell which side it passed. Refine the "
                          "contour (or move the point off it)."
                          % (int(bad[0]), p))
+    peak = float(np.abs(inc).max())
+    if peak >= WIND_ALIAS_WARN:
+        warnings.warn("cplx_winding_number: the ray to %r turns by up to %.3f rad "
+                      "between consecutive samples (%.0f%% of the pi limit) — the "
+                      "count can alias LOW without any detectable jump; refine the "
+                      "contour until the count stops changing"
+                      % (p, peak, 100.0 * peak / np.pi),
+                      RuntimeWarning, stacklevel=2)
     turns = float(inc.sum()) / (2.0 * np.pi)
     k = float(np.round(turns))
     if abs(turns - k) > _WIND_INT_TOL:
