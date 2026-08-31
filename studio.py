@@ -2100,21 +2100,27 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
         def toggle_first_person(self):
             """F key: orbit <-> first-person walkthrough. Entering places the
             eye at the walkthrough entrance; leaving resumes the orbit camera
-            untouched (its yaw/pitch/zoom/pan are never written while walking)."""
+            untouched (its yaw/pitch/zoom/pan are never written while walking)
+            and releases any still-held movement keys."""
             self._fp = not self._fp
             if self._fp:
                 self._fp_home()
+            else:
+                self._fp_keys.clear()
+                self._move_timer.stop()
             self._repaint()
 
         def _fp_home(self):
             """Walkthrough entrance: continue the current orbit line of sight —
             same yaw/pitch, eye on the scene perimeter at ``1.5 * radius`` from
             the centre, looking at the centre (the toggle reads as 'step into
-            the view you were orbiting', not a camera jump)."""
+            the view you were orbiting', not a camera jump). Walk speed and
+            FOV reset to their defaults (R = 'take me back to the start')."""
             self._fp_yaw, self._fp_pitch = self._yaw, self._pitch
             cam = viewer3d_camera_fp(self._fp_yaw, self._fp_pitch)
             self._eye = self._center - cam[2] * (1.5 * self._radius)
             self._fp_speed = 1.0
+            self._fp_fov = FP_FOV_DEFAULT
 
         def _fp_step(self, modifiers):
             """Per-keypress walk distance: scene-proportional (radius/50) times
