@@ -189,6 +189,27 @@ def _bind_args(op_name, fn, data_args, rng):
     return args, kwargs
 
 
+#: pool 投入前の型検証(catalog の out 申告と実際の返りの乖離 = TYPEMISS を検出)
+def _is_pts(v):
+    return isinstance(v, np.ndarray) and v.ndim == 2 and v.shape[1] == 3
+
+
+TYPE_CHECKS = {
+    "points": _is_pts,
+    "normals": _is_pts,
+    "keypoints": lambda v: _is_pts(v) or (isinstance(v, np.ndarray) and v.ndim == 2),
+    "voxel": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    "sdf": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
+    "labels": lambda v: isinstance(v, np.ndarray) and v.ndim >= 1,
+    "image2d": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
+    "depth": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
+    "cimage": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.dtype.kind == "c",
+    "signal": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
+    "measurement": lambda v: True,
+    "rle_region": lambda v: type(v).__name__ == "VolRLE",
+}
+
+
 def _classify(exc):
     if isinstance(exc, ValueError):
         return "CONTRACT"
