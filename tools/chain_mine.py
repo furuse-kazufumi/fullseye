@@ -366,14 +366,26 @@ def _run_step(op, cur_type, cur_val, pool, arng, tally, verbose):
         return False, None
     a, kw = bound
     big = sum(cf._nbytes(v) for v in a)
-    if big > BIG_INPUT_BYTES and verbose:
+    if TRACE_OPS:
+        # 戻ってこない op を名指しするための予告(--trace-ops)。バイト数が
+        # 小さくてもストールは起きる: 実測で 23,040 点の雲に対する
+        # ``icp_point2plane`` が 40s、``ransac_plane`` 系がさらに長かった。
+        # **サイズ上限では捕まらない**(0.5MB でも数十秒)ので、犯人を
+        # 特定する手段はログしかない
+        print(f"      -> {name} ({_elems(a)} elems)", flush=True)
+    elif big > BIG_INPUT_BYTES and verbose:
         # 重い入力は実行前に予告(万一のストールでもログだけで犯人が判る)
         print(f"  big-input: {name} ({big / 2 ** 20:.0f} MB)", flush=True)
+    t0 = time.perf_counter()
     try:
         result = fn(*a, **kw)
     except Exception:                     # noqa: BLE001 — 失敗はファザーの領分
         tally["exception"] = tally.get("exception", 0) + 1
         return False, None
+    dt = time.perf_counter() - t0
+    if dt > SLOW_OP_S and verbose:
+        # 事後の名指し。記録(jsonl)には載せない = 決定性を壊さない
+        print(f"  slow-op: {name} {dt:.1f}s ({_elems(a)} elems)", flush=True)
     if name in cf.ADAPTERS:
         result = cf.ADAPTERS[name](result)
     if result is None:
