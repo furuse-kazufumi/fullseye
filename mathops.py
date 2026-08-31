@@ -940,6 +940,13 @@ MAX_CONTOUR_POINTS = 1 << 22
 #: the segment, or the contour is undersampled around it).
 _HALF_TURN_TOL = 1e-9
 
+#: :func:`cplx_winding_number` emits a ``RuntimeWarning`` once the per-step turn
+#: reaches this (half of the ``pi`` hard limit). Between ``pi/2`` and ``pi`` the
+#: count is still *computable* but no longer *trustworthy*: a curve that winds
+#: several times can alias down to a smaller integer without any local jump to
+#: detect (measured: ``f = z**5`` on a 4-point circle counts 1 instead of 5).
+WIND_ALIAS_WARN = np.pi / 2.0
+
 #: How far the accumulated turn may sit from an exact integer number of turns
 #: before :func:`cplx_winding_number` refuses (defensive: for a closed polygon
 #: the sum is an integer multiple of 2*pi up to rounding, ~1e-14 at n = 1e4).
