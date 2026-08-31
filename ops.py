@@ -802,7 +802,13 @@ if _os.environ.get("IMGEVOLVE_NO_BACKENDS", "") != "1":
                  # self-expanding registry: macro ("DNA") ops condensed from evolved
                  # champions (backends_macro.py). LAST, so it can reference any backend
                  # op and minimally perturbs existing registration indices.
-                 "backends_macro"):
+                 "backends_macro",
+                 # typed bridge: the ops3d / ops1d / opsmath / opsoptics catalogs
+                 # exposed to evolution. AFTER macro so every existing SLOTS index
+                 # (macro ops included) is preserved. Registers only NEW in_sorts by
+                 # default, which is what keeps decode byte-identical — see
+                 # backends_typed's docstring and docs/WAVE0_STABLE_SLOTS.md.
+                 "backends_typed"):
         try:
             _b = __import__(_mod)
             _extra += _b.build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin)
