@@ -244,6 +244,9 @@ TYPE_CHECKS = {
         isinstance(x, np.ndarray) and x.ndim == 2 for x in v),
     "vector": lambda v: isinstance(v, np.ndarray) and v.shape == (3,),
     "pairs": lambda v: True,
+    "matrix": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
+    "roots": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+    and v.dtype.kind == "c",
 }
 
 
