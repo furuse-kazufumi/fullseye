@@ -169,7 +169,7 @@ def _require_vector(v, name: str = "v", min_len: int = 1) -> np.ndarray:
 
 def _require_rhs(b, rows: int, name: str = "b") -> np.ndarray:
     """A right-hand side: 1-D ``(rows,)`` or 2-D ``(rows, k)`` — nothing else."""
-    a = np.ascontiguousarray(b, dtype=np.float64)
+    a = _as_float64(b, name)
     if a.ndim not in (1, 2):
         raise ValueError("%s must be a 1-D (n,) or 2-D (n, k) right-hand side, "
                          "got a %d-D array" % (name, a.ndim))
