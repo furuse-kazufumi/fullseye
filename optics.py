@@ -714,9 +714,11 @@ def angular_spectrum_propagate(field, wavelength_um=0.55, distance_um=100.0,
 
     Ground truth it reproduces (measured): ``distance_um = 0`` returns the field
     bit-identically (it short-circuits the transform pair); propagating ``+z``
-    then ``-z`` returns the original to a relative L2 error of 4.3e-16 for a
-    band-limited field (no evanescent content); total power is conserved to
-    1.7e-16 relative. A field *with*
+    then ``-z`` returns the original to a relative L2 error of 4.3e-16 to
+    5.3e-16 for a band-limited field (measured on three: 64x64 random at
+    +/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um);
+    total power is conserved to between 0 and 3.5e-16 relative on the same
+    three. A field *with*
     evanescent content does **not** round-trip — those components are gone by
     construction, in both directions, because that is what physically happens.
 

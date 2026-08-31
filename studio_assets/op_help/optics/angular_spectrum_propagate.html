@@ -17,9 +17,11 @@
 <p>Returns a complex128 array with the same shape as *field*.</p>
 <p>Ground truth it reproduces (measured): `<code style="color:#22d3bf">distance_um = 0</code>` returns the field</p>
 <p>bit-identically (it short-circuits the transform pair); propagating `<code style="color:#22d3bf">+z</code>`</p>
-<p>then `<code style="color:#22d3bf">-z</code>` returns the original to a relative L2 error of 4.3e-16 for a</p>
-<p>band-limited field (no evanescent content); total power is conserved to</p>
-<p>1.7e-16 relative. A field *with*</p>
+<p>then `<code style="color:#22d3bf">-z</code>` returns the original to a relative L2 error of 4.3e-16 to</p>
+<p>5.3e-16 for a band-limited field (measured on three: 64x64 random at</p>
+<p>+/-50 um, a 64x64 Gaussian at +/-250 um, a 128x128 random at +/-500 um);</p>
+<p>total power is conserved to between 0 and 3.5e-16 relative on the same</p>
+<p>three. A field *with*</p>
 <p>evanescent content does <b>not</b> round-trip — those components are gone by</p>
 <p>construction, in both directions, because that is what physically happens.</p>
 <p>*field* is a field in the <b>space</b> domain, not a spectrum: do not hand it</p>

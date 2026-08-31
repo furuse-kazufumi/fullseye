@@ -240,3 +240,48 @@ domain(4op)/ boundary(2op)/ rle_region(5op)/ vol_tiled_map は実装済み。
 - 規律: 各 tier とも「解析 GT テスト+HALCON/一次文献対応+敵対検証」の
   三点セットを通ってから目録へ。scipy にあるものは「fail-closed の顔」を
   付ける(無言 NaN・無言型強制の封鎖)のが Fullseye の付加価値
+
+## G. 光学 op ファミリ(2026-09-01 ユーザー方針「光学系で使うような演算 op が充実するといいな」)
+
+**位置づけ**: fullseye は産業ビジョン(検査ライン)と Physical AI(ロボット知覚)の
+両方に足場がある。その**手前**にあるのが「どの焦点距離か / 絞りはどこか /
+被写界深度は / 回折で潰れる最小欠陥は何 µm か / 偏光板でテカりは消えるか」という
+閉形式の計算 — レンズより上、画素より下の層。台帳 = `opsoptics.py`、実体 =
+`optics.py`(OP_CATALOG に Optics 節、docs/ops に `optics` 次元)。
+
+- **第一陣(済・敵対検証済)**: 18 op / 4 カテゴリ。
+  - geometric 5: `thin_lens` / `abcd_matrix` / `abcd_trace` / `depth_of_field` /
+    `relative_illumination`
+  - wave 4: `airy_pattern` / `angular_spectrum_propagate` / `fraunhofer_pattern` /
+    `gaussian_beam`
+  - imaging 3: `psf_to_mtf` / `mtf_diffraction` / `wavefront_stats`
+  - polarization 6: `jones_element` / `jones_apply` / `stokes_from_jones` /
+    `mueller_element` / `mueller_apply` / `stokes_analyze`
+- **選定基準**: (1) 閉形式の真値と突き合わせられる (2) numpy+scipy だけ
+  (3) 既存 op と型で繋がる。全 op が GT テストで固定(1/f=1/s+1/s' が機械精度、
+  det(ABCD)=1、過焦点で near=H/2、Airy 第 1 暗環 1.2197λN、回折 MTF の半カットオフ
+  0.391、Gaussian PSF の閉形式 MTF、Zernike デフォーカスの瞳面 RMS=1/√3、
+  Malus 則、角スペクトルの往復可逆性)。**Jones 経路と Mueller 経路を突き合わせる**
+  テストが符号規約の取り違えを捕まえる唯一の構成。
+- **重複を作らなかった線引き**: 光線と面の相互作用(`reflect`/`refract`/
+  `snell_angle`/`fresnel_reflectance`/`normal_from_reflection`)= match3d、
+  Zernike **フィット** = `match3d.fit_zernike`(`wavefront_stats` はその返り dict を
+  食い、match3d 自身の基底ビルダーを再利用)、PSF 復元 = volrestore/complexops、
+  FFT = complexops、位相シフト干渉法 = fringe(一般 N-step が既にあるので 4-step PSI は置かない)。
+- **新語彙は 2 つだけ**: `jones`(長さ 2 固定 complex)/ `stokes`(長さ 4 固定
+  実 + 偏光度 ≤ 1)。ABCD/Mueller は既存の `matrix`、Jones 行列は既存の `cimage`、
+  素子リストと計測値束は `table`、MTF 曲線は `pairs` を再利用。
+- **敵対検証で実際に見つけた 6 件**(全て最小再現つきで回帰固定): ①`float("50")` が
+  成功するため**文字列が長さとして通っていた**(`thin_lens("50","200")` が 66.667 mm
+  を返す) ②1e308 の PSF で FFT が溢れ **MTF が無言 NaN** ③diag(1e200) で
+  **determinant が無言 inf** ④共有 Zernike 基底が n=46 で |Z|≤1 を破り
+  (n=50 で 71.5、n=60 で 2.8e5)、60 次の「波面」が RMS 3032 波を返していた
+  ⑤n_max=40 × 4096² が dict と int 2 個の呼び出しから **108 GB を確保しにいく**
+  ⑥動径求積が (n_max/radial)² で誤差を持ち、n=20 で 4.3% ずれた Strehl を
+  黙って返していた(RuntimeWarning 化)。
+- **次の波の候補**(未実装・重複しないもの): Fresnel 伝搬(単一 FFT の近軸版で
+  角スペクトルより広い距離域)、Seidel 5 収差 ↔ Zernike 変換、色収差
+  (Abbe 数からの軸上色収差)、Fabry-Perot 透過率・薄膜多層反射(コーティング設計)、
+  二光束干渉縞の合成、Scheimpflug 条件、テレセントリック性の判定、
+  中央遮蔽つき瞳の MTF(反射望遠鏡)、偏光カメラの 0/45/90/135 度画像 → Stokes 画像
+  (image2d 4 枚 → Stokes マップ = fringe の N-step と同型の設計になる)。

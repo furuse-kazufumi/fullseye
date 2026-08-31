@@ -122,6 +122,24 @@ def test_same_seed_gives_identical_records(env):
     assert [stable_record(r) for r in ra] == [stable_record(r) for r in rb]
 
 
+def test_determinism_flag_does_not_depend_on_the_wall_clock(env, monkeypatch):
+    """``deterministic`` を**秒で左右させない**(記録がマシン負荷に依存する)。
+
+    検査を掛けるかどうかを ``sec > SLOW_S`` で決めていた版は、CPU 負荷で
+    検査の有無が変わりフラグが None <-> True で反転した(実測: 閾値を
+    跨がせると 40 連鎖中 6 件)。並列ジョブの隣で走らせただけで
+    「同じ seed なら同じ記録」が崩れる。
+    """
+    import tools.chain_mine as cm
+    ops, gens = env
+    got = []
+    for slow in (5.0, 0.002):                 # 全連鎖が「遅い」ことになる閾値
+        monkeypatch.setattr(cm, "SLOW_S", slow)
+        cands, _t, _w = cm.mine(ops, gens, 40, 4, 11)
+        got.append([(c["seed"], c["deterministic"]) for c in cands])
+    assert got[0] == got[1]
+
+
 def test_replay_reproduces_the_mined_output(env):
     """記録した (seed, 開始型, op 列, 抽選回数) で出力がビット単位で再現する。
 
