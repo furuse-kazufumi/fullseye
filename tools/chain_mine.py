@@ -132,13 +132,50 @@ def _flat(val):
     return np.concatenate(parts)
 
 
+def _num(v):
+    """有限な float だけを通す(非有限は「測れなかった」= None)。
+
+    集約は入力が有限でも溢れる: |v| ~ 1e308 の配列は ``norm`` も ``mean`` も
+    inf になり、inf/inf = NaN が記述子へ漏れる。NaN を素通しすると二重に害が
+    ある — ① ``json.dumps`` が strict JSON にならない ② ``_bucket`` の比較は
+    NaN で必ず False なので**壊れた測定が黙って「最大変化」ビンに入る**
+    (実測で delta=NaN が delta ビン 4 に着地した)。None にすれば "na" ビンへ
+    行き、絞り込みの ``is not None`` 判定も正しく素通しになる。
+    """
+    if v is None:
+        return None
+    f = float(v)
+    return f if math.isfinite(f) else None
+
+
+def _bins_are_formable(lo, hi, bins=HIST_BINS):
+    """[lo, hi] を *bins* 本の有限幅ビンに刻めるか(np.histogram の成立条件)。
+
+    ``hi > lo`` だけでは足りない。幅が bin 数に対して小さすぎると端点が同値に
+    潰れ、np.histogram は "Too many bins for data range" で落ちる。実測の破綻例:
+    ``(1.0, 1.0+5e-16)`` = 2 ULP しかない / ``(0.0, 1e-323)`` = 非正規化数 /
+    ``(-1e308, 1e308)`` = 幅が inf。**対症療法の try/except ではなく条件を書く**:
+    幅が有限かつ正で、境界 33 本が狭義単調ならビンは刻める。これは numpy 自身の
+    判定と厳密に一致する(1e-323〜1e308 の 39,358 組でランダム照合、不一致 0)。
+    """
+    width = hi - lo
+    if not (math.isfinite(width) and width > 0.0):
+        return False
+    edges = np.linspace(lo, hi, bins + 1)
+    return bool(np.all(np.isfinite(edges)) and np.all(edges[:-1] < edges[1:]))
+
+
 def _entropy01(flat):
-    """ヒストグラムの Shannon エントロピー / log(bins) ∈ [0,1]。定数なら 0。"""
+    """ヒストグラムの Shannon エントロピー / log(bins) ∈ [0,1]。
+
+    ビンを刻めない幅(極小幅・非正規化数・幅が inf)は**事実上の定数**なので
+    0.0 を返す — fail-safe だが無言ではなく、条件は上の述語に明示してある。
+    """
     f = flat[np.isfinite(flat)]
     if f.size < 2:
         return 0.0
     lo, hi = float(f.min()), float(f.max())
-    if not math.isfinite(lo) or not math.isfinite(hi) or hi <= lo:
+    if not _bins_are_formable(lo, hi):
         return 0.0
     counts, _ = np.histogram(f, bins=HIST_BINS, range=(lo, hi))
     p = counts.astype(np.float64)
