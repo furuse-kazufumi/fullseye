@@ -15,6 +15,18 @@ operators, in three families:
     ``stat_correlation`` / ``stat_zscore``: residual and noise characterisation.
   * **interp / poly** — ``interp_linear`` / ``interp_cubic`` / ``poly_fit`` /
     ``poly_eval`` / ``poly_roots``: calibration curves and their inversion.
+  * **complex** — ``cplx_contour_circle`` / ``cplx_poly_eval`` /
+    ``cplx_contour_integral`` / ``cplx_winding_number`` /
+    ``cplx_cauchy_value`` / ``cplx_argument_principle`` /
+    ``cplx_laurent_coeffs`` / ``cplx_joukowski`` / ``cplx_mobius`` /
+    ``cplx_cr_residual``: the *computable* face of complex analysis — a closed
+    contour is a point list, so Cauchy's integral formula, the argument
+    principle (count zeros and poles without finding them), Laurent
+    coefficients / residues and the classical conformal maps all reduce to
+    numpy sums over that list. Nothing here calls back into Python for ``f``:
+    the caller samples ``f`` on the contour, which keeps every op a pure array
+    operation and lets a *measured* field (a phase image, a transfer function)
+    take the place of a formula.
 
 Deliberately **not** here (already owned elsewhere — no duplication): FFT /
 complex arithmetic (:mod:`complexops`, :mod:`volfreq`, :mod:`dsp`), 1-D signal
