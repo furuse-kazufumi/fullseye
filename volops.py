@@ -783,7 +783,9 @@ def vol_uncrop(part, offset, shape, fill=0.0):
                          "shape=%r" % (offset, shape))
     if any(s < 1 for s in shp):
         raise ValueError("shape must be positive, got %r" % (shape,))
-    if int(np.prod(shp)) > MAX_VOXELS:
+    # plain-int product: np.prod would overflow int64 on absurd shapes and slip
+    # past the cap as a negative number, crashing later in the allocation
+    if shp[0] * shp[1] * shp[2] > MAX_VOXELS:
         raise ValueError("vol_uncrop: target shape %r exceeds the %d-voxel cap "
                          "(volops.MAX_VOXELS)" % (shp, MAX_VOXELS))
     if any(o < 0 for o in off) or any(o + p.shape[i] > shp[i] for i, o in enumerate(off)):
