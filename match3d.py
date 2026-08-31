@@ -1313,7 +1313,12 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         info: dict。"rmse"(採用対応上の最終RMSE), "iters"(実反復数),
               "converged"(bool), "inliers"(採用対応数), "rmse_history"(list)。
     """
-    _s, _d = np.asarray(src, float), np.asarray(dst, float)
+    try:
+        _s, _d = np.asarray(src, float), np.asarray(dst, float)
+    except (TypeError, ValueError) as e:
+        raise ValueError("icp_point2point_3d: src/dst must be numeric (N, 3) "
+                         "point arrays (got %s / %s)"
+                         % (type(src).__name__, type(dst).__name__)) from e
     if _s.ndim != 2 or _s.shape[1] != 3 or _d.ndim != 2 or _d.shape[1] != 3:
         raise ValueError("icp_point2point_3d: src/dst must be (N, 3) point arrays, got %r / %r"
                          % (_s.shape, _d.shape))
