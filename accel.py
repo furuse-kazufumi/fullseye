@@ -244,10 +244,11 @@ def _std_filter(t, a, b, dev):
     m = F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
     m2 = F.conv2d(_pad_sym(_pad_sym(t * t, r, 3), r, 2), ker)
     var = m2 - m * m
-    # E[x²]−E[x]² は f32 で桁落ちし、平坦画像でも ~1e-8 の偽分散が残る。
-    # sqrt が 1e-4 級へ増幅し _norm_b の素通し閾値を超えてフルスケール化する
-    # (P1 の std 変種)。f32 桁落ち床以下の分散は 0 とみなす
-    var = torch.where(var > 1e-7, var, torch.zeros_like(var))
+    # E[x²]−E[x]² は f32 で桁落ちし、平坦画像でも偽分散が残る(実測 k=9 で
+    # 2.4e-7)。sqrt が 1e-4 級へ増幅し _norm_b の素通し閾値を超えてフルスケール化
+    # する(P1 の std 変種)。桁落ち床の 4 倍 = 1e-6 未満の分散は 0 とみなす
+    # (σ < 1e-3 は f32 では雑音と不可分)
+    var = torch.where(var > 1e-6, var, torch.zeros_like(var))
     return _norm_b(torch.sqrt(var))
 
 
