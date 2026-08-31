@@ -775,3 +775,611 @@ def poly_roots(coeffs, real_only=False, imag_tol=1e-9):
         return np.ascontiguousarray(r)
     keep = np.abs(r.imag) <= tol * np.maximum(1.0, np.abs(r))
     return np.ascontiguousarray(np.sort(r[keep].real.astype(np.float64)))
+
+
+# --------------------------------------------------------------------------- #
+# complex analysis (tier 2) — fail-closed input helpers                        #
+# --------------------------------------------------------------------------- #
+def _require_cvector(z, name="z", min_len=1):
+    """Coerce to a strictly 1-D **complex128** vector or raise ``ValueError``.
+
+    This family is the one place in :mod:`mathops` where a complex input is the
+    *point* rather than a truncation trap, so the module-wide complex rejection
+    (:func:`_as_float64`) is lifted here — and only here. Real input is
+    accepted and promoted (a real sample of a complex function is legitimate);
+    masked entries, non-finite values, wrong rank and over-cap sizes still
+    raise, exactly as in the real families.
+    """
+    if np.ma.is_masked(z):
+        raise ValueError("%s is a masked array with masked (invalid) entries — "
+                         "coercion would silently strip the mask and use the raw "
+                         "values underneath; fill or drop them explicitly" % (name,))
+    try:
+        a = np.ascontiguousarray(z, dtype=np.complex128)
+    except (TypeError, ValueError):
+        raise ValueError("%s must be a real or complex numeric array, got %s"
+                         % (name, type(z).__name__)) from None
+    if a.ndim != 1:
+        raise ValueError("%s must be a 1-D array of complex points, got a %d-D "
+                         "array of shape %r — reshape explicitly, nothing is "
+                         "promoted silently" % (name, a.ndim, tuple(np.shape(z))))
+    if a.size < min_len:
+        raise ValueError("%s needs at least %d point(s), got %d"
+                         % (name, min_len, a.size))
+    _require_finite(a, name)
+    _check_elements(a, name)
+    return a
+
+
+def _require_cscalar(w, name="w"):
+    """A single finite complex (or real) scalar → Python ``complex``."""
+    if np.ma.is_masked(w):
+        raise ValueError("%s is a masked array with masked (invalid) entries — "
+                         "fill or drop them explicitly" % (name,))
+    try:
+        a = np.asarray(w, dtype=np.complex128)
+    except (TypeError, ValueError):
+        raise ValueError("%s must be a real or complex scalar, got %s"
+                         % (name, type(w).__name__)) from None
+    if a.ndim != 0:
+        raise ValueError("%s must be a single scalar, got a %d-D array of shape %r"
+                         % (name, a.ndim, a.shape))
+    if not np.isfinite(a):
+        raise ValueError("%s must be finite, got %r" % (name, w))
+    return complex(a)
+
+
+def _require_contour(z, name="z"):
+    """A closed contour: ``>= 3`` complex vertices, **not** all coincident.
+
+    The closing segment ``z[-1] -> z[0]`` is implicit; repeating the first point
+    at the end is tolerated (it contributes a zero-length segment)."""
+    v = _require_cvector(z, name, min_len=3)
+    if not np.abs(np.roll(v, -1) - v).any():
+        raise ValueError("%s is a degenerate contour: all %d sample points "
+                         "coincide (total length 0) — it encloses nothing and "
+                         "every contour integral over it is trivially 0"
+                         % (name, v.size))
+    return v
+
+
+def _require_contour_values(z, fz, op):
+    """A contour and one sampled function value per contour point."""
+    c = _require_contour(z, "z")
+    f = _require_cvector(fz, "fz", min_len=3)
+    if f.size != c.size:
+        raise ValueError("%s: z and fz must have the same length (one sampled "
+                         "value per contour point), got %d vs %d"
+                         % (op, c.size, f.size))
+    return c, f
+
+
+def _finite_result(value, op, why):
+    """Refuse to hand back a NaN/Inf produced *inside* an op (never silent)."""
+    if not np.isfinite(np.asarray(value)).all():
+        raise ValueError("%s: the result is not finite (NaN/Inf) — %s" % (op, why))
+    return value
+
+
+#: Refuse to *generate* a contour longer than this (2^22 points ≈ 64 MB of
+#: complex128, and every contour op allocates a handful of same-size
+#: temporaries). A quadrature needing millions of nodes wants a different
+#: method (adaptive / analytic), not a bigger array — fail-closed instead of
+#: turning ``n=10**9`` into a swap storm.
+MAX_CONTOUR_POINTS = 1 << 22
+
+#: :func:`cplx_winding_number` refuses a polygon segment that turns the ray to
+#: the query point by ``>= pi - _HALF_TURN_TOL``: there the principal-value
+#: branch cannot tell which way the segment passed the point (the point is *on*
+#: the segment, or the contour is undersampled around it).
+_HALF_TURN_TOL = 1e-9
+
+#: How far the accumulated turn may sit from an exact integer number of turns
+#: before :func:`cplx_winding_number` refuses (defensive: for a closed polygon
+#: the sum is an integer multiple of 2*pi up to rounding, ~1e-14 at n = 1e4).
+_WIND_INT_TOL = 1e-6
+
+#: Relative tolerance for "these samples really are a uniformly-sampled circle"
+#: in :func:`cplx_laurent_coeffs` (equal radii, equally spaced angles).
+_CIRCLE_RTOL = 1e-8
+
+
+# --------------------------------------------------------------------------- #
+# complex analysis (tier 2) — contours, Cauchy, argument principle, maps       #
+# --------------------------------------------------------------------------- #
+def cplx_contour_circle(center=0.0, radius=1.0, n=256, orientation="ccw"):
+    """Sample a circle as a closed contour — the standard integration path.
+
+    Returns ``n`` complex points ``center + radius * exp(±i * 2*pi*k/n)``,
+    ``k = 0..n-1``. The closing segment ``z[-1] -> z[0]`` is **implicit**: the
+    first point is *not* repeated (every contour op in this family closes the
+    polygon itself; repeating it would only add a zero-length segment).
+
+    *orientation* is explicit because in complex analysis the sign of every
+    result depends on it: ``'ccw'`` (default) is the positive/mathematical
+    direction — the one for which the residue theorem, the Cauchy formula and
+    the argument principle carry a ``+`` sign — and ``'cw'`` negates all three.
+
+    Honest limitation: this is a **polygon** through samples of the circle, not
+    the circle. Its enclosed area is short by a factor ``sinc``-like in
+    ``2*pi/n``, and every quadrature on it converges as ``O(n^-2)``
+    (:func:`cplx_contour_integral` documents the measured rate).
+
+    **Raises** ``ValueError``: non-finite *center*/*radius*, ``radius <= 0``,
+    ``n`` not an integer in ``[3, MAX_CONTOUR_POINTS]`` (a fail-closed size cap
+    — ``n=10**9`` would allocate 16 GB), unknown *orientation*.
+
+    HALCON: no complex-plane operator (``gen_circle_contour_xld`` draws the
+    same geometry as an XLD contour for image space).
+    """
+    c = _require_cscalar(center, "center")
+    r = _require_cscalar(radius, "radius")
+    if r.imag != 0.0 or r.real <= 0.0:
+        raise ValueError("radius must be a positive real number, got %r" % (radius,))
+    if not (isinstance(n, (int, np.integer)) and not isinstance(n, bool)):
+        raise ValueError("n must be an integer, got %r" % (n,))
+    n = int(n)
+    if n < 3:
+        raise ValueError("n must be at least 3 (a closed polygon needs 3 "
+                         "vertices), got %d" % (n,))
+    if n > MAX_CONTOUR_POINTS:
+        raise ValueError("n=%d exceeds the %d point cap "
+                         "(mathops.MAX_CONTOUR_POINTS) — a contour that long "
+                         "allocates gigabytes and buys nothing: the quadrature "
+                         "error is already ~1e-11 at 1e5 points"
+                         % (n, MAX_CONTOUR_POINTS))
+    if orientation not in ("ccw", "cw"):
+        raise ValueError("orientation must be 'ccw' (positive) or 'cw', got %r"
+                         % (orientation,))
+    sign = 1.0 if orientation == "ccw" else -1.0
+    th = sign * 2.0 * np.pi * np.arange(n, dtype=np.float64) / n
+    return np.ascontiguousarray(c + r.real * np.exp(1j * th), dtype=np.complex128)
+
+
+def cplx_poly_eval(coeffs, z):
+    """Evaluate a polynomial on the complex plane (Horner, complex-capable).
+
+    The complex twin of :func:`poly_eval`: *coeffs* is highest-power-first
+    (``[c_d, ..., c_1, c_0]``, possibly complex) and *z* is a complex scalar or
+    1-D array. A scalar query returns a Python ``complex``, an array returns
+    ``complex128`` — mirroring :func:`poly_eval`'s scalar/array behaviour.
+
+    This is what makes the rest of the family usable: sample a polynomial on a
+    contour from :func:`cplx_contour_circle`, then count its zeros with
+    :func:`cplx_argument_principle` or reconstruct interior values with
+    :func:`cplx_cauchy_value`. (:func:`poly_eval` refuses complex input by
+    design — silent imaginary-part truncation — so it cannot serve here.)
+
+    **Raises** ``ValueError``: empty/multi-dimensional *coeffs*, non-finite or
+    masked input, over-cap size, and — the honest one — a result that
+    overflowed to Inf/NaN (a degree-200 polynomial on ``|z| = 10`` genuinely
+    exceeds float64 range; that is refused rather than returned as ``inf``).
+
+    HALCON: no complex polynomial operator.
+    """
+    c = _require_cvector(coeffs, "coeffs", min_len=1)
+    scalar = np.ndim(z) == 0
+    q = np.atleast_1d(_require_cscalar(z, "z")) if scalar else _require_cvector(z, "z")
+    out = np.polyval(c, q)
+    _finite_result(out, "cplx_poly_eval",
+                   "the polynomial overflowed float64 on these points (lower the "
+                   "degree, or rescale z)")
+    return complex(out[0]) if scalar else np.ascontiguousarray(out, dtype=np.complex128)
+
+
+def cplx_contour_integral(z, fz):
+    """Closed contour integral ``∮ f(z) dz`` by the chordal trapezoidal rule.
+
+    *z* are the contour vertices (closing segment implicit, see
+    :func:`cplx_contour_circle`) and *fz* the function sampled at exactly those
+    points — the op never calls back into Python, so any ``f`` is allowed as
+    long as you can sample it. The quadrature is
+    ``sum_k (f_k + f_{k+1})/2 * (z_{k+1} - z_k)``, i.e. the trapezoidal rule
+    along the *chords*; it is exact for a piecewise-linear integrand and second
+    order otherwise.
+
+    Ground truth it reproduces: ``f = 1/(z - a)`` around a circle enclosing
+    ``a`` integrates to ``2*pi*i`` (Cauchy); measured on the unit circle with
+    ``a = 0``, the relative error is @@ACC_INT_256@@ at ``n = 256`` and
+    @@ACC_INT_1024@@ at ``n = 1024`` — a factor @@ACC_INT_RATIO@@ for 4x
+    refinement, i.e. the ``O(n^-2)`` rate, *not* the spectral accuracy the
+    trapezoid rule enjoys when applied in the angle parameter. That difference
+    is the honest price of accepting an arbitrary point list instead of a
+    parametrisation.
+
+    Orientation follows the sample order: a clockwise contour returns the
+    negative of the counter-clockwise one.
+
+    **Raises** ``ValueError``: fewer than 3 points, ``len(z) != len(fz)``, a
+    degenerate contour (all points coincide), non-finite/masked input, or a sum
+    that overflowed (``|f|`` near a pole *on* the path).
+
+    HALCON: no operator (contour integration is not part of its tuple/XLD API).
+    """
+    c, f = _require_contour_values(z, fz, "cplx_contour_integral")
+    dz = np.roll(c, -1) - c
+    total = complex(np.sum(0.5 * (f + np.roll(f, -1)) * dz))
+    _finite_result(total, "cplx_contour_integral",
+                   "the samples overflowed float64 (a singularity sitting on the "
+                   "integration path makes the integral divergent, not large)")
+    return total
+
+
+def cplx_winding_number(z, w=0.0):
+    """Winding number of a closed contour around a point (turning number).
+
+    How many times the polygon ``z`` (closing segment implicit) travels
+    counter-clockwise around *w*: ``+1`` for a simple positively-oriented loop
+    containing it, ``-1`` clockwise, ``0`` outside, ``±k`` for a ``k``-fold
+    loop. Computed as the sum of the principal-value argument increments of
+    ``z_k - w`` divided by ``2*pi`` and rounded — for a *polygon* that sum is an
+    exact multiple of ``2*pi``, so the result is an exact integer, not an
+    estimate (the rounding merely removes ~1e-14 of accumulated float error).
+
+    Honest limitation: this is the winding number of the **polygon through the
+    samples**, which equals that of the underlying curve only if the sampling
+    resolves it. The failure mode is detected rather than hidden: a segment
+    that turns the ray to *w* by half a turn or more is ambiguous (which side
+    did it pass?) and raises instead of silently choosing a branch.
+
+    **Raises** ``ValueError``: *w* coincides with a vertex or lies on a segment
+    (the winding number is undefined on the contour), a segment subtends
+    ``>= pi`` as seen from *w* (undersampled — refine the contour), fewer than
+    3 points, degenerate contour, non-finite/masked input.
+
+    HALCON: no operator (``test_region_point`` answers the related but weaker
+    inside/outside question for regions).
+    """
+    c = _require_contour(z, "z")
+    p = _require_cscalar(w, "w")
+    d = c - p
+    hit = np.flatnonzero(d == 0.0)
+    if hit.size:
+        raise ValueError("cplx_winding_number: the query point %r coincides with "
+                         "contour vertex #%d — the winding number is undefined on "
+                         "the contour itself" % (p, int(hit[0])))
+    ang = np.angle(d)
+    inc = np.roll(ang, -1) - ang
+    inc = np.mod(inc + np.pi, 2.0 * np.pi) - np.pi      # principal value in [-pi, pi)
+    bad = np.flatnonzero(np.abs(inc) >= np.pi - _HALF_TURN_TOL)
+    if bad.size:
+        raise ValueError("cplx_winding_number: segment #%d subtends >= pi as seen "
+                         "from %r — either the point lies on that segment or the "
+                         "contour is undersampled there; the principal-value "
+                         "branch cannot tell which side it passed. Refine the "
+                         "contour (or move the point off it)."
+                         % (int(bad[0]), p))
+    turns = float(inc.sum()) / (2.0 * np.pi)
+    k = float(np.round(turns))
+    if abs(turns - k) > _WIND_INT_TOL:
+        raise ValueError("cplx_winding_number: accumulated turn %g is not an "
+                         "integer number of loops (off by %g) — the contour is "
+                         "not closed as sampled or is pathologically "
+                         "undersampled" % (turns, abs(turns - k)))
+    return int(k)
+
+
+def cplx_cauchy_value(z, fz, w):
+    """Cauchy's integral formula: recover ``f(w)`` **inside** a contour from its
+    values **on** the contour.
+
+    ``f(w) = 1/(2*pi*i*n) ∮ f(zeta)/(zeta - w) dzeta`` where ``n`` is the
+    winding number of the contour around *w* (Cauchy 1831; the division by
+    ``n`` is what makes a doubly-wound contour give the same answer). Valid
+    only if ``f`` is holomorphic on and inside the contour — nothing here can
+    check that, and this is the honest limit of the op: fed values of a
+    non-holomorphic ``f`` (or of one with a pole inside) it returns the
+    integral, which is then simply *not* ``f(w)``.
+
+    Accuracy inherits the ``O(n^-2)`` chordal quadrature of
+    :func:`cplx_contour_integral` and degrades as *w* approaches the path
+    (the integrand's peak sharpens): measured for ``f(z) = z**2`` on a
+    256-point unit circle, the absolute error is @@ACC_CAU_MID@@ at
+    ``w = 0.3`` and @@ACC_CAU_NEAR@@ at ``w = 0.9`` — three orders of
+    magnitude worse for a point ten times closer to the contour.
+
+    **Raises** ``ValueError``: *w* outside the contour (winding 0 — the
+    integral is then 0 and returning it as "f(w)" would be a lie), *w* closer
+    to the contour than one sampling step (the quadrature is meaningless
+    there — refine the contour), plus everything
+    :func:`cplx_winding_number` and :func:`cplx_contour_integral` refuse.
+
+    HALCON: no operator.
+    """
+    c, f = _require_contour_values(z, fz, "cplx_cauchy_value")
+    p = _require_cscalar(w, "w")
+    n = cplx_winding_number(c, p)
+    if n == 0:
+        raise ValueError("cplx_cauchy_value: the point %r lies outside the "
+                         "contour (winding number 0) — Cauchy's formula gives 0 "
+                         "there, which is not f(w); the formula only recovers "
+                         "values enclosed by the path" % (p,))
+    dmin = float(np.abs(c - p).min())
+    step = float(np.abs(np.roll(c, -1) - c).max())
+    if dmin <= step:
+        raise ValueError("cplx_cauchy_value: the point %r sits %g from the "
+                         "contour, within one sampling step (%g) — the 1/(zeta-w) "
+                         "peak is unresolved and the quadrature would return a "
+                         "plausible-wrong value; refine the contour or move the "
+                         "point inward" % (p, dmin, step))
+    integral = cplx_contour_integral(c, f / (c - p))
+    return complex(integral / (2.0j * np.pi * n))
+
+
+def cplx_argument_principle(z, fz):
+    """Argument principle: count zeros minus poles enclosed by a contour, from
+    sampled values of ``f`` alone.
+
+    ``Z - P = 1/(2*pi*i) ∮ f'/f dz`` equals the winding number of the **image
+    curve** ``f(z)`` around the origin (Cauchy 1831 / Riemann): as the contour
+    is traversed once counter-clockwise, the argument of ``f`` increases by
+    ``2*pi (Z - P)``, counting multiplicities. Computing it as a winding number
+    of the image needs no derivative and no root finding — only ``f`` sampled
+    on the path — and returns an exact integer.
+
+    Honest limitations, all of them real:
+
+      * It returns the **difference** ``Z - P``, never the two separately. A
+        simple zero and a simple pole inside cancel to 0.
+      * The result is multiplied by the winding number of the contour itself,
+        so it equals ``Z - P`` only for a **simple, positively-oriented**
+        contour (a clockwise one returns ``-(Z - P)``).
+      * It is the winding of the *sampled* image polygon. If the contour is too
+        coarse the image can jump by half a turn between samples; that is
+        detected and raised (see below), not silently miscounted.
+
+    **Raises** ``ValueError``: ``f`` vanishes at a sample point (a zero *on*
+    the path — the count is undefined there), the image curve is undersampled
+    (a half-turn between consecutive samples: refine the contour), plus the
+    usual shape/finiteness contracts.
+
+    HALCON: no operator.
+    """
+    c, f = _require_contour_values(z, fz, "cplx_argument_principle")
+    zero = np.flatnonzero(f == 0.0)
+    if zero.size:
+        raise ValueError("cplx_argument_principle: f vanishes at sample #%d "
+                         "(z = %r) — a zero on the contour makes Z - P undefined; "
+                         "move the path off it" % (int(zero[0]), complex(c[zero[0]])))
+    try:
+        return cplx_winding_number(f, 0.0)
+    except ValueError as exc:
+        raise ValueError("cplx_argument_principle: the image curve f(z) is not "
+                         "resolved by these samples (%s) — refine the contour: "
+                         "consecutive samples must not jump half a turn around "
+                         "the origin" % (exc,)) from None
+
+
+def cplx_laurent_coeffs(z, fz, kmin=-1, kmax=4):
+    """Laurent (and Taylor) coefficients on a **uniformly sampled circle** —
+    residues included.
+
+    For ``f`` holomorphic on an annulus around ``c``,
+    ``f(z) = sum_k c_k (z - c)^k`` with
+    ``c_k = 1/(2*pi*i) ∮ f(zeta)/(zeta - c)^(k+1) dzeta``. On a circle of
+    radius ``r`` sampled at ``n`` equally spaced angles this becomes a discrete
+    Fourier sum, ``c_k = (1/(n r^k)) sum_j f_j exp(-i k theta_j)`` — the
+    trapezoidal rule in the angle, where it converges **geometrically** rather
+    than as ``O(n^-2)`` (Trefethen & Weideman 2014, "The exponentially
+    convergent trapezoidal rule").
+
+    ``c_-1`` **is the residue** at ``c`` (when ``c`` is the only singularity
+    inside), ``c_k`` for ``k >= 0`` are the Taylor coefficients
+    ``f^(k)(c)/k!``, and a non-zero ``c_-m`` for ``m > 1`` reveals a pole of
+    order ``m``. Measured on the unit circle with ``f = 1/(z - 0.5)``,
+    ``n = 64``: ``c_-1 = 1`` and ``c_-2 = 0.5`` to @@ACC_LAU@@.
+
+    Returns a dict: ``k`` (int64 orders, ``kmin..kmax``) · ``c`` (complex128
+    coefficients) · ``center`` · ``radius``. The centre is the sample mean,
+    which is exact for a uniformly sampled circle.
+
+    Honest limitation — **aliasing**: the discrete sum cannot distinguish
+    ``c_k`` from ``c_{k+n}``, so a coefficient carries the alias sum
+    ``sum_m c_{k+m n} r^{m n}``. That is negligible for a rapidly converging
+    series (the ``0.5^64`` term above) and ruinous near the annulus boundary.
+    Requesting more than ``n`` coefficients is refused for the same reason.
+
+    **Raises** ``ValueError``: the samples are not a uniformly spaced circle
+    (unequal radii or unequal angular gaps beyond ``1e-8`` relative — this op
+    is *not* valid on an arbitrary contour, and silently pretending otherwise
+    would return numbers that mean nothing), ``kmin > kmax``, more than ``n``
+    coefficients requested, non-integer orders, and a coefficient that
+    overflowed (``r^-k`` for a small radius and a large negative order).
+
+    HALCON: no operator.
+    """
+    c, f = _require_contour_values(z, fz, "cplx_laurent_coeffs")
+    for nm, v in (("kmin", kmin), ("kmax", kmax)):
+        if not (isinstance(v, (int, np.integer)) and not isinstance(v, bool)):
+            raise ValueError("%s must be an integer, got %r" % (nm, v))
+    kmin, kmax = int(kmin), int(kmax)
+    if kmin > kmax:
+        raise ValueError("cplx_laurent_coeffs: kmin (%d) must not exceed kmax (%d)"
+                         % (kmin, kmax))
+    n = c.size
+    if kmax - kmin + 1 > n:
+        raise ValueError("cplx_laurent_coeffs: %d coefficients requested from %d "
+                         "samples — the discrete transform cannot resolve more "
+                         "orders than it has points (they alias onto each other)"
+                         % (kmax - kmin + 1, n))
+    centre = complex(np.mean(c))
+    rad = np.abs(c - centre)
+    r = float(rad.mean())
+    if r <= 0.0:
+        raise ValueError("cplx_laurent_coeffs: the samples have zero radius about "
+                         "their mean — not a circle")
+    spread = float(rad.max() - rad.min())
+    if spread > _CIRCLE_RTOL * r:
+        raise ValueError("cplx_laurent_coeffs: the samples are not a circle "
+                         "(radii spread %g at mean radius %g, tolerance %g) — the "
+                         "Fourier form of the coefficient integral is only valid "
+                         "on a circle; use cplx_contour_integral for an arbitrary "
+                         "path" % (spread, r, _CIRCLE_RTOL * r))
+    th = np.sort(np.angle(c - centre))
+    gaps = np.diff(np.concatenate([th, th[:1] + 2.0 * np.pi]))
+    step = 2.0 * np.pi / n
+    if float(np.abs(gaps - step).max()) > _CIRCLE_RTOL * step * n:
+        raise ValueError("cplx_laurent_coeffs: the circle is not uniformly "
+                         "sampled (angular gaps deviate by up to %g from %g) — "
+                         "the discrete sum assumes equal weights"
+                         % (float(np.abs(gaps - step).max()), step))
+    ks = np.arange(kmin, kmax + 1, dtype=np.int64)
+    phase = np.exp(-1j * np.outer(ks.astype(np.float64), np.angle(c - centre)))
+    coeffs = (phase @ f) / (n * np.power(r, ks.astype(np.float64)))
+    _finite_result(coeffs, "cplx_laurent_coeffs",
+                   "r**-k overflowed for the requested orders (a small radius with "
+                   "a large negative order); rescale or narrow kmin..kmax")
+    return {"k": np.ascontiguousarray(ks),
+            "c": np.ascontiguousarray(coeffs, dtype=np.complex128),
+            "center": centre, "radius": r}
+
+
+def cplx_joukowski(z, c=1.0):
+    """Joukowski (Zhukovsky) conformal map ``w = z + c^2 / z``.
+
+    The classical aerofoil map (Zhukovsky 1910): the circle ``|z| = c`` folds
+    onto the flat plate ``[-2c, 2c]`` of the real axis (``z = c e^(i t)`` gives
+    ``w = 2c cos t`` — exact, and what the tests pin); a circle of radius
+    ``R > c`` centred at the origin maps to the ellipse with semi-axes
+    ``R + c^2/R`` and ``R - c^2/R``; and a circle through ``z = c`` whose
+    centre is offset into the second quadrant maps to a cambered aerofoil with
+    a cusped trailing edge — the reason the map exists.
+
+    Conformal (angle-preserving) everywhere except at ``z = ±c``, where the
+    derivative ``1 - c^2/z^2`` vanishes and angles are **doubled** — that is
+    what creates the cusp, and it is a property of the map, not a defect.
+
+    **Raises** ``ValueError``: a sample at ``z = 0`` (the map's pole), a result
+    that overflowed (a sample so close to 0 that ``c^2/z`` leaves float64
+    range), a non-finite or non-positive-real *c*, plus the usual shape and
+    finiteness contracts.
+
+    HALCON: no operator (conformal maps are not part of its transform set).
+    """
+    v = _require_cvector(z, "z", min_len=1)
+    cc = _require_cscalar(c, "c")
+    if cc.imag != 0.0 or cc.real <= 0.0:
+        raise ValueError("c must be a positive real number, got %r" % (c,))
+    zero = np.flatnonzero(v == 0.0)
+    if zero.size:
+        raise ValueError("cplx_joukowski: sample #%d is z = 0, the pole of "
+                         "w = z + c^2/z — the map is undefined there"
+                         % (int(zero[0]),))
+    w = v + (cc.real * cc.real) / v
+    _finite_result(w, "cplx_joukowski",
+                   "a sample sits so close to the pole at 0 that c^2/z overflows "
+                   "float64 — clip the path away from the origin")
+    return np.ascontiguousarray(w, dtype=np.complex128)
+
+
+def cplx_mobius(z, a, b, c, d):
+    """Möbius (linear fractional) map ``w = (a z + b) / (c z + d)``.
+
+    The automorphisms of the Riemann sphere: every Möbius map is conformal and
+    sends circles-and-lines to circles-and-lines. Two standard cases the tests
+    pin: the Cayley transform ``(z - i)/(z + i)`` maps the real axis onto the
+    unit circle (``|w| = 1``) and ``i`` to ``0``; the inversion ``1/z`` maps the
+    unit circle onto itself.
+
+    The determinant ``a d - b c`` must not vanish — that degenerate case is not
+    a map but a constant (every point collapses to ``a/c``), which is refused
+    rather than returned as a suspiciously uniform answer.
+
+    **Raises** ``ValueError``: ``|a d - b c|`` below ``1e-12`` of the
+    coefficient scale (degenerate/constant map), a sample **at** the pole
+    ``z = -d/c`` (the image is the point at infinity, which float64 cannot
+    represent), an overflowed result (a sample microscopically close to that
+    pole), plus the usual shape and finiteness contracts.
+
+    HALCON: no operator (``projective_trans_point_2d`` is the real-plane
+    projective analogue).
+    """
+    v = _require_cvector(z, "z", min_len=1)
+    aa = _require_cscalar(a, "a")
+    bb = _require_cscalar(b, "b")
+    cc = _require_cscalar(c, "c")
+    dd = _require_cscalar(d, "d")
+    scale = max(abs(aa), abs(bb), abs(cc), abs(dd))
+    det = aa * dd - bb * cc
+    if abs(det) <= 1e-12 * max(1.0, scale * scale):
+        raise ValueError("cplx_mobius: ad - bc = %r is degenerate at coefficient "
+                         "scale %g — the map is constant (every z maps to the same "
+                         "point), not a Möbius transformation" % (det, scale))
+    den = cc * v + dd
+    zero = np.flatnonzero(den == 0.0)
+    if zero.size:
+        raise ValueError("cplx_mobius: sample #%d is the pole z = -d/c, whose "
+                         "image is the point at infinity — not representable in "
+                         "float64; drop it or shift the path"
+                         % (int(zero[0]),))
+    w = (aa * v + bb) / den
+    _finite_result(w, "cplx_mobius",
+                   "a sample sits microscopically close to the pole z = -d/c and "
+                   "its image overflows float64")
+    return np.ascontiguousarray(w, dtype=np.complex128)
+
+
+def cplx_cr_residual(f, spacing=1.0):
+    """Cauchy-Riemann residual of a sampled complex field — "is this field
+    holomorphic?" as a number.
+
+    With ``f = u + i v`` sampled on a uniform grid, holomorphy means
+    ``u_x = v_y`` and ``u_y = -v_x`` (Cauchy-Riemann). This returns the
+    **relative** residual ``max(|u_x - v_y|, |u_y + v_x|) / max|grad|``
+    (central differences, ``numpy.gradient``): ``0`` = the samples satisfy CR to
+    the discretisation limit, ``2`` = the field is the conjugate of a
+    holomorphic one (``conj(z)`` gives exactly 2), values in between = partly
+    analytic or noisy.
+
+    **Grid convention (it decides the sign of the answer)**: ``f[i, j]`` is the
+    field at ``z = x0 + j*spacing + i*spacing*1j`` — rows index the *increasing
+    imaginary* axis, columns the real axis. Image arrays usually run rows
+    *downward*; feeding one directly measures the conjugate field, whose
+    residual is ``2``, not ``0``. Flip rows (``f[::-1]``) to use image data.
+
+    Discretisation, honestly: central differences are exact for polynomials of
+    degree <= 2, so ``f = z**2`` returns exactly 0; for higher order the
+    residual floors at ``O(h^2 * |f'''|)`` (measured: ``f = z**3`` on a
+    ``[-1,1]^2`` grid returns @@ACC_CR_H@@ at ``h`` and @@ACC_CR_H2@@ at
+    ``h/2`` — a factor @@ACC_CR_RATIO@@, the expected second order). Read a
+    small value as "consistent with holomorphic at this resolution", never as
+    proof.
+
+    A constant field returns ``0.0`` (it is holomorphic; the ``0/0`` of the
+    normalisation is resolved by that limit, and stated here rather than left
+    to numpy).
+
+    **Raises** ``ValueError``: not a 2-D array, either dimension below 3 (no
+    central difference exists), non-finite/masked input, over-cap size,
+    non-finite or non-positive *spacing*.
+
+    HALCON: no operator (``derivate_gauss`` supplies the real-valued
+    derivatives one would build this from).
+    """
+    if np.ma.is_masked(f):
+        raise ValueError("f is a masked array with masked (invalid) entries — "
+                         "fill or drop them explicitly")
+    try:
+        a = np.ascontiguousarray(f, dtype=np.complex128)
+    except (TypeError, ValueError):
+        raise ValueError("f must be a real or complex numeric array, got %s"
+                         % (type(f).__name__,)) from None
+    if a.ndim != 2:
+        raise ValueError("f must be a 2-D sampled field, got a %d-D array of "
+                         "shape %r" % (a.ndim, a.shape))
+    if a.shape[0] < 3 or a.shape[1] < 3:
+        raise ValueError("f must be at least 3x3 for central differences, got "
+                         "shape %r" % (a.shape,))
+    _require_finite(a, "f")
+    _check_elements(a, "cplx_cr_residual")
+    h = _require_cscalar(spacing, "spacing")
+    if h.imag != 0.0 or h.real <= 0.0:
+        raise ValueError("spacing must be a positive real number, got %r" % (spacing,))
+    uy, ux = np.gradient(a.real, h.real, h.real)
+    vy, vx = np.gradient(a.imag, h.real, h.real)
+    resid = max(float(np.abs(ux - vy).max()), float(np.abs(uy + vx).max()))
+    scale = max(float(np.abs(ux).max()), float(np.abs(uy).max()),
+                float(np.abs(vx).max()), float(np.abs(vy).max()))
+    if scale <= 0.0:
+        return 0.0                      # constant field: holomorphic, residual 0
+    return float(resid / scale)
