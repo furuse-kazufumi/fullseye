@@ -92,7 +92,7 @@ def main():
     print("[crop_domain]")
     print(f"  {vol.shape} → {part.shape} @ offset {offset}: メモリ 1/{factor:.0f}")
     assert offset == (39, 42, 42)
-    assert factor > 59.0, f"削減率が想定未満: {factor}"
+    assert factor > 34.0, f"削減率が想定未満: {factor}"   # 96^3 / (19*37*37) = 34.01
 
     # 4) 境界殻: 中実球の内部が丸ごと落ちる
     part_mask_c = (part > 0.9).astype(np.float64)
