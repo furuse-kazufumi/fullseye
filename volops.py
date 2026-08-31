@@ -752,10 +752,10 @@ def vol_crop_domain(vol, domain=None, margin=0):
     """
     v = _require_volume(vol)
     _check_voxels(v, MAX_VOXELS, "vol_crop_domain", "MAX_VOXELS")
-    dom = v if domain is None else domain
-    z0, y0, x0, z1, y1, x1 = vol_bounding_box(dom, margin=margin)
+    dom = (v != 0.0) if domain is None else domain
     if domain is not None and _as_binary(dom, "domain").shape != v.shape:
         raise ValueError("domain shape must match the volume shape %r" % (v.shape,))
+    z0, y0, x0, z1, y1, x1 = vol_bounding_box(dom, margin=margin)
     part = np.ascontiguousarray(v[z0:z1, y0:y1, x0:x1], dtype=np.float64)
     return part, (z0, y0, x0)
 
