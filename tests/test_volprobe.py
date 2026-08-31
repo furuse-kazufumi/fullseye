@@ -211,3 +211,34 @@ def test_all_ops_reject_nonfinite(bad):
         volprobe.vol_edge_probe(vol, p0, p1)
     with pytest.raises(ValueError):
         volprobe.vol_wall_thickness(vol, p0, p1)
+
+
+# --------------------------------------------------------------------------- #
+# ops3d 目録との型契約(連鎖ファザー wave-4 が検出した TYPEMISS の回帰)        #
+# --------------------------------------------------------------------------- #
+def test_ops3d_call_returns_declared_types():
+    """probe 3 op は宣言どおり pairs/(2,n) / table/list / signal/1-D を返す。
+
+    素の関数は (t_mm, values) タプル・dict のリスト・float のリストを返すが、
+    目録は measurement を宣言していた(型の嘘)。ops3d.call() のアダプタ経由で
+    宣言型に揃うことを固定する。
+    """
+    import ops3d
+    vol = _slab_volume((40, 8, 8), [(16, 24)])
+    p0, p1 = _z_probe(vol.shape)
+
+    prof = ops3d.call("vol_profile_line", vol, p0, p1)
+    assert isinstance(prof, np.ndarray) and prof.ndim == 2 and prof.shape[0] == 2
+
+    edges = ops3d.call("vol_edge_probe", vol, p0, p1, sigma=1.0, threshold=0.05)
+    assert isinstance(edges, list)
+    assert all(isinstance(e, dict) for e in edges)
+
+    th = ops3d.call("vol_wall_thickness", vol, p0, p1, sigma=1.0, threshold=0.05)
+    assert isinstance(th, np.ndarray) and th.ndim == 1
+    assert th.dtype == np.float64
+
+    declared = {name: meta["out"] for name, meta in ops3d.OPS3D.items()}
+    assert declared["vol_profile_line"] == "pairs"
+    assert declared["vol_edge_probe"] == "table"
+    assert declared["vol_wall_thickness"] == "signal"
