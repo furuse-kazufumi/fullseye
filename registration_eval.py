@@ -61,8 +61,13 @@ def _as_transform(T, name: str = "transform") -> np.ndarray:
 
 
 def _as_points(P, name: str = "points") -> np.ndarray:
-    """(N,3) 非空点群として検証。形状不正・非有限は ValueError(fail-closed)。"""
-    A = np.asarray(P, np.float64)
+    """(N,3) 非空点群として検証。型・形状不正・非有限は ValueError(fail-closed)。"""
+    try:
+        A = np.asarray(P, np.float64)
+    except (TypeError, ValueError) as e:
+        raise ValueError(
+            f"{name}: a numeric (N,3) point cloud is required "
+            f"(got {type(P).__name__})") from e
     if A.ndim != 2 or A.shape[1] != 3 or A.shape[0] < 1:
         raise ValueError(f"{name}: a non-empty (N,3) point cloud is required (got shape {A.shape})")
     if not np.all(np.isfinite(A)):
