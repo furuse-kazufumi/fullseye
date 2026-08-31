@@ -71,7 +71,7 @@ def test_every_2d_op_has_a_studio_help_page():
 
 def test_index_and_samples_generated():
     for rel in ("docs/ops/INDEX.md", "docs/ops/2d/INDEX.md", "docs/ops/3d/INDEX.md",
-                "docs/ops/SAMPLES.md"):
+                "docs/ops/math/INDEX.md", "docs/ops/SAMPLES.md"):
         p = os.path.join(ROOT, rel)
         assert os.path.exists(p), f"missing generated index: {rel}"
         with open(p, encoding="utf-8") as f:
