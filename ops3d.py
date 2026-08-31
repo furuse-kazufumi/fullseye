@@ -134,6 +134,18 @@ _CATALOG = {
         ("vol_gradient_magnitude", "volops", ["voxel"], "voxel", False),
         ("vol_local_maxima", "volops", ["voxel"], "points", False),
     ],
+    "domain": [  # 処理領域(HALCON domain 概念の voxel 版。crop がメモリ削減の要 —
+        #          512^3 → ROI 128^3 で 64x。Hessian 系の MAX_EIGEN_VOXELS 突破の正攻法)
+        ("vol_reduce_domain", "volops", ["voxel", "voxel"], "voxel", False),
+        ("vol_bounding_box", "volops", ["voxel"], "primitive", False),
+        ("vol_crop_domain", "volops", ["voxel"], "voxel", False),
+        ("vol_uncrop", "volops", ["voxel"], "voxel", False),
+    ],
+    "boundary": [  # 境界抽出(2-D region_boundary の voxel 版 + voxel→points 橋渡し。
+        #            中実領域は殻だけ残して 1-2% に落ちる = 省メモリ表現)
+        ("vol_boundary", "volops", ["voxel"], "voxel", False),
+        ("vol_boundary_points", "volops", ["voxel"], "points", False),
+    ],
     "morphology": [  # 3D モルフォロジー(前処理/特徴抽出。torch 不在時は scipy 経路)
         ("morph_dilate3d", "match3d", ["voxel"], "voxel", True),
         ("morph_erode3d", "match3d", ["voxel"], "voxel", True),
