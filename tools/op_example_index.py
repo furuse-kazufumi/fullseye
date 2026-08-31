@@ -49,8 +49,22 @@ def _op_names_3d() -> list:
 
 
 def _op_names_2d() -> list:
+    """例が要る 2-D op の名前。
+
+    除外するもの:
+      * ``identity`` — 何もしない op に例は書けない。
+      * **橋渡し op(``category == "typed"``、``tb_`` 接頭辞)** — これは新しい
+        能力ではなく、型付きカタログ側の既存 op を進化語彙から引くための
+        **別名**である。実体の例・ドキュメント・テストは ``docs/ops`` 配下に
+        カタログ名で既にあり、例は実 op 名で書かれるので ``tb_`` 名が一致する
+        ことは原理的に無い。ここで数えると「例の無い op が 59 個ある」という
+        **誤った赤**になり、本当に例が欠けている op を隠してしまう
+        (実測 2026-09-01: 橋渡し導入直後にこの不変条件が赤くなった)。
+        橋渡し op の品質は ``tests/test_backends_typed.py`` が別途固定する。
+    """
     import ops
-    return [o.name for o in ops.REGISTRY if o.name != "identity"]
+    return [o.name for o in ops.REGISTRY
+            if o.name != "identity" and o.category != "typed"]
 
 
 def _called(name: str, src: str) -> bool:
