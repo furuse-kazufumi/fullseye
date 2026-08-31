@@ -58,12 +58,19 @@ def _require_volume(vol, name: str = "vol") -> np.ndarray:
     return v
 
 
+#: vol_gaussian_psf のカーネル要素数上限(≈256³、float64 で 128MB)。PSF は
+#: 装置のボケ幅(数〜数十 voxel)を表す小さなカーネルであり、これを超える
+#: 要求は sigma/truncate の入力事故(fail-closed で拒否)。
+PSF_MAX_ELEMENTS = 2 ** 24
+
+
 def vol_gaussian_psf(sigma, truncate=4.0):
     """A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or
     ``(sz, sy, sx)`` in voxels; the kernel spans ``+-truncate*sigma`` per axis
     (odd size, centre at the middle voxel). The convenient companion to
     :func:`vol_richardson_lucy` when the instrument PSF is well approximated
-    as Gaussian."""
+    as Gaussian. Kernels above ``PSF_MAX_ELEMENTS`` (~256^3) raise
+    ``ValueError`` — a PSF that large is an input mistake, not an instrument."""
     s = np.atleast_1d(np.asarray(sigma, dtype=np.float64))
     if s.size == 1:
         s = np.repeat(s, 3)
