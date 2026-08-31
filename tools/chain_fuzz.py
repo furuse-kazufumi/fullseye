@@ -202,7 +202,7 @@ def run_chain(ops, gens, rng, length, log):
         for t in ins:
             src = pool[t] if t != "any" else pool[rng.choice(list(pool.keys()))]
             data_args.append(src[rng.integers(len(src))])
-        bound = _bind_args(fn, data_args, rng)
+        bound = _bind_args(name, fn, data_args, rng)
         if bound is None:
             continue
         args, kwargs = bound
