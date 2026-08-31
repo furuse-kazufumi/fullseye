@@ -493,6 +493,11 @@ def test_boundary_points_physical_coordinates_and_origin():
     assert empty.shape == (0, 3) and empty.dtype == np.float64
     with pytest.raises(ValueError, match="origin"):
         volops.vol_boundary_points(one, origin=(1, 2))
+    # regression: a NaN/Inf origin used to poison every coordinate silently
+    with pytest.raises(ValueError, match="origin"):
+        volops.vol_boundary_points(one, origin=(np.nan, 0, 0))
+    with pytest.raises(ValueError, match="origin"):
+        volops.vol_boundary_points(one, origin=(np.inf, 0, 0))
 
 
 def test_crop_then_boundary_points_land_in_uncropped_frame():
