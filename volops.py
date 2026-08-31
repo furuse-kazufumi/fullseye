@@ -87,7 +87,7 @@ __all__ = [
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "volume_downsample",
     "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
-    "vol_boundary", "vol_boundary_points",
+    "vol_boundary", "vol_boundary_points", "vol_tiled_map",
     "VOLOPS", "MAX_VOXELS", "MAX_EIGEN_VOXELS",
 ]
 
@@ -98,7 +98,7 @@ VOLOPS = [
     "vol_gradient_magnitude", "vol_local_maxima", "vol_watershed",
     "volume_downsample",
     "vol_reduce_domain", "vol_bounding_box", "vol_crop_domain", "vol_uncrop",
-    "vol_boundary", "vol_boundary_points",
+    "vol_boundary", "vol_boundary_points", "vol_tiled_map",
 ]
 
 #: Refuse a volume larger than this for the *cheap* N-D ops (label / EDT /
@@ -416,7 +416,9 @@ def vol_label(vol_binary, connectivity=26):
     The neighbourhood genuinely matters: two blobs meeting only at a corner are
     *two* components under 6-connectivity but *one* under 26.
     """
-    rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity))
+    # strict: 6.5 must not silently become 6 — accept only exact 6/18/26
+    rank = ({6: 1, 18: 2, 26: 3}.get(int(connectivity))
+            if float(connectivity) == int(connectivity) else None)
     if rank is None:
         raise ValueError("connectivity must be 6, 18 or 26 (3-D neighbourhoods), got %r"
                          % (connectivity,))
@@ -823,7 +825,9 @@ def vol_uncrop(part, offset, shape, fill=0.0):
 # boundary — the voxel version of the 2-D region_boundary                      #
 # --------------------------------------------------------------------------- #
 def _boundary_structure(connectivity, op: str):
-    rank = {6: 1, 18: 2, 26: 3}.get(int(connectivity))
+    # strict: 6.5 must not silently become 6 — accept only exact 6/18/26
+    rank = ({6: 1, 18: 2, 26: 3}.get(int(connectivity))
+            if float(connectivity) == int(connectivity) else None)
     if rank is None:
         raise ValueError("%s: connectivity must be 6, 18 or 26 (3-D "
                          "neighbourhoods), got %r" % (op, connectivity))
@@ -902,3 +906,58 @@ def vol_boundary_points(vol_binary, spacing=None, connectivity=6, origin=(0, 0, 
     if idx.size == 0:
         return np.zeros((0, 3), dtype=np.float64)
     return np.ascontiguousarray((idx + np.asarray(org)) * np.asarray(sp))
+
+# --------------------------------------------------------------------------- #
+# tiled processing — bounded peak memory for local operators                   #
+# --------------------------------------------------------------------------- #
+def vol_tiled_map(vol, fn, tile=64, overlap=8):
+    """Apply a shape-preserving volume operator in overlapping z-slabs, so peak
+    working memory is bounded by the slab — not the volume.
+
+    The third leg of the memory family: :func:`vol_crop_domain` shrinks *where*
+    you compute, :mod:`volregion` shrinks *what you keep*, and this bounds *how
+    much lives in RAM at once*. Each slab ``vol[z0-overlap : z1+overlap]`` is
+    run through *fn* and only the core ``[z0:z1)`` of the result is kept, so a
+    volume far above an operator's comfortable size streams through in
+    constant-memory pieces (measured: peak working set of a Gaussian drops with
+    the slab size while the output stays exact — see the test).
+
+    **Correctness contract (the honest part)**: the result equals ``fn(vol)``
+    exactly only for *local* operators whose spatial footprint along z is at
+    most *overlap* voxels on each side (a Gaussian of sigma s with scipy's
+    default truncation needs ``overlap >= round(4 * s)``; a morphology with a
+    k-voxel structuring element needs ``overlap >= k``). A *global* operator
+    (Otsu, normalisation, anything that looks at the whole histogram) is
+    silently WRONG under tiling — this function cannot detect that, so it is
+    documented instead: do not tile global operators.
+
+    Parameters: *fn* is any callable mapping a ``(d, H, W)`` float64 volume to
+    an array of the same shape (e.g. ``lambda v: vol_gradient_magnitude(v)``).
+    *tile* is the slab thickness (>= 1), *overlap* the per-side context
+    (>= 0). A slab result of the wrong shape raises ``ValueError`` immediately
+    (fail-closed — a shape-changing fn would silently corrupt the assembly).
+    """
+    v = _require_volume(vol)
+    if not callable(fn):
+        raise ValueError("fn must be callable (volume -> same-shape volume), got %r"
+                         % (type(fn).__name__,))
+    t, ov = int(tile), int(overlap)
+    if t != tile or t < 1:
+        raise ValueError("tile must be a positive integer, got %r" % (tile,))
+    if ov != overlap or ov < 0:
+        raise ValueError("overlap must be a non-negative integer, got %r" % (overlap,))
+    D = v.shape[0]
+    out = None
+    for z0 in range(0, D, t):
+        z1 = min(D, z0 + t)
+        a, b = max(0, z0 - ov), min(D, z1 + ov)
+        piece = np.asarray(fn(v[a:b]))
+        if piece.shape != (b - a,) + v.shape[1:]:
+            raise ValueError("fn changed the slab shape (%r -> %r) — vol_tiled_map "
+                             "needs a shape-preserving operator" %
+                             ((b - a,) + v.shape[1:], piece.shape))
+        if out is None:
+            out = np.empty(v.shape, dtype=np.float64)
+        out[z0:z1] = piece[z0 - a:z0 - a + (z1 - z0)]
+    return out
+

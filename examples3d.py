@@ -79,6 +79,9 @@ EXAMPLES = [
     {"id": "roi_domain_boundary", "task": "metrology", "data": "synthetic",
      "name": "domain(処理領域)と boundary(境界殻)でメモリを絞って計測",
      "summary": "vol_reduce_domain で治具を消し vol_crop_domain でメモリ 1/34(実測)、vol_boundary の殻 19% を vol_boundary_points で物理mm点群化して fit_sphere3 が中心誤差 0.000mm、vol_uncrop は元フレームへ bit 一致で貼り戻し。"},
+    {"id": "rle_region_efficiency", "task": "metrology", "data": "synthetic",
+     "name": "RLE 領域 — HALCON region の効率の正体を voxel 界へ",
+     "summary": "vol_rle_encode が 192^3 部品マスクを dense bool の 1/73(実測)に、volume/bbox/centroid は run 直接演算で dense と厳密一致かつ 93x 速(実測)、vol_rle_decode は往復 bit 一致、改竄 RLE は decode 前に fail-closed 拒否。"},
     # -- depth ------------------------------------------------------------------- #
     {"id": "plane_sweep_depth", "task": "depth", "data": "synthetic",
      "name": "2視点プレーンスイープ・ステレオ深度",

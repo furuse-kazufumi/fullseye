@@ -1,19 +1,18 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
-<h2 style="color:#f5a524;margin:0 0 4px 0">vol_bounding_box — 3D <code style="color:#22d3bf">domain</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volops; volops.vol_bounding_box(domain, margin=0)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_bounding_box&quot;)</code>)</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_bbox — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">rle_region</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import volregion; volregion.vol_rle_bbox(region)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_bbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Tight axis-aligned bounding box of a mask&#x27;s foreground, in voxel indices.</p>
+<p>Tight bounding box `<code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code>` (exclusive upper bounds)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:rle_region_efficiency">rle_region_efficiency</a> — <code style="color:#22d3bf">py -3.11 examples_3d/rle_region_efficiency.py</code></p>
-<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:roi_domain_boundary">roi_domain_boundary</a> — <code style="color:#22d3bf">py -3.11 examples_3d/roi_domain_boundary.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">primitive</code> を入力に取れる)</h3>
 <p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:intersect_line_plane">intersect_line_plane</a></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">domain</code>)</h3>
-<p><a style="color:#22d3bf" href="op3d:vol_reduce_domain">vol_reduce_domain</a> · <a style="color:#22d3bf" href="op3d:vol_crop_domain">vol_crop_domain</a> · <a style="color:#22d3bf" href="op3d:vol_uncrop">vol_uncrop</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">rle_region</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_rle_encode">vol_rle_encode</a> · <a style="color:#22d3bf" href="op3d:vol_rle_decode">vol_rle_decode</a> · <a style="color:#22d3bf" href="op3d:vol_rle_volume">vol_rle_volume</a> · <a style="color:#22d3bf" href="op3d:vol_rle_centroid">vol_rle_centroid</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">
-<p>*Provenance: volops.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>*Provenance: volregion.py — 3D operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
 <p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

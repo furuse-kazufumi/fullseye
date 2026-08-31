@@ -1,4 +1,4 @@
-# 3D operator help — 285 ops in 57 categories
+# 3D operator help — 290 ops in 58 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/3d/<category>/<op>.md` を走査。
 
@@ -179,6 +179,10 @@
 ### render (14)
 
 [ambient_occlusion](render/ambient_occlusion.md) · [antialias](render/antialias.md) · [cast_shadow](render/cast_shadow.md) · [edge_alias_energy](render/edge_alias_energy.md) · [matcap_shade](render/matcap_shade.md) · [phong_shade](render/phong_shade.md) · [project_points](render/project_points.md) · [render_beauty](render/render_beauty.md) · [render_point_depth](render/render_point_depth.md) · [render_shaded](render/render_shaded.md) · [render_volume_projection](render/render_volume_projection.md) · [supersample_mesh](render/supersample_mesh.md) · [tonemap_aces](render/tonemap_aces.md) · [tonemap_reinhard](render/tonemap_reinhard.md)
+
+### rle_region (5)
+
+[vol_rle_bbox](rle_region/vol_rle_bbox.md) · [vol_rle_centroid](rle_region/vol_rle_centroid.md) · [vol_rle_decode](rle_region/vol_rle_decode.md) · [vol_rle_encode](rle_region/vol_rle_encode.md) · [vol_rle_volume](rle_region/vol_rle_volume.md)
 
 ### robust_fit (7)
 

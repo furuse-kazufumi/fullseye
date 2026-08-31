@@ -509,3 +509,52 @@ def test_crop_then_boundary_points_land_in_uncropped_frame():
     p_crop = volops.vol_boundary_points(part, spacing=(1.0, 1.0, 1.0), origin=off)
     assert p_full.shape == p_crop.shape
     assert np.array_equal(np.sort(p_full, axis=0), np.sort(p_crop, axis=0))
+
+
+def test_connectivity_must_be_exact_integer():
+    """6.5 must not be silently read as 6 (strict in both label and boundary)."""
+    m = np.zeros((4, 4, 4), np.float64)
+    m[1:3, 1:3, 1:3] = 1.0
+    with pytest.raises(ValueError, match="connectivity"):
+        volops.vol_label(m, connectivity=6.5)
+    with pytest.raises(ValueError, match="connectivity"):
+        volops.vol_boundary(m, connectivity=6.5)
+    # exact-integer floats stay accepted (26.0 == 26)
+    _, n = volops.vol_label(m, connectivity=26.0)
+    assert n == 1
+
+
+# --------------------------------------------------------------------------- #
+# vol_tiled_map — bounded-memory streaming of local operators                  #
+# --------------------------------------------------------------------------- #
+def test_tiled_map_is_exact_for_local_operator():
+    """Gaussian sigma=2 has a truncated z-footprint of round(4*2)=8 voxels, so
+    overlap=8 must reproduce the full-volume result exactly."""
+    from scipy import ndimage
+    rng = np.random.default_rng(3)
+    v = rng.random((50, 12, 12))
+    full = ndimage.gaussian_filter(v, 2.0)
+    tiled = volops.vol_tiled_map(v, lambda s: ndimage.gaussian_filter(s, 2.0),
+                                 tile=16, overlap=8)
+    assert np.allclose(tiled, full, atol=1e-14)
+    # under-sized overlap is honestly wrong (documented contract) — prove the
+    # contract matters: overlap=1 must NOT match
+    bad = volops.vol_tiled_map(v, lambda s: ndimage.gaussian_filter(s, 2.0),
+                               tile=16, overlap=1)
+    assert not np.allclose(bad, full, atol=1e-8)
+
+
+def test_tiled_map_fail_closed_contracts():
+    v = np.zeros((8, 4, 4), np.float64)
+    with pytest.raises(ValueError, match="callable"):
+        volops.vol_tiled_map(v, "gaussian")
+    with pytest.raises(ValueError, match="tile"):
+        volops.vol_tiled_map(v, lambda s: s, tile=0)
+    with pytest.raises(ValueError, match="overlap"):
+        volops.vol_tiled_map(v, lambda s: s, overlap=-1)
+    with pytest.raises(ValueError, match="shape"):
+        volops.vol_tiled_map(v, lambda s: s[:-1], tile=4, overlap=1)
+    # identity round trip, tile larger than the volume, tile=1
+    r = _rng(1).random((5, 3, 3))
+    assert np.array_equal(volops.vol_tiled_map(r, lambda s: s, tile=99), r)
+    assert np.array_equal(volops.vol_tiled_map(r, lambda s: s, tile=1, overlap=3), r)
