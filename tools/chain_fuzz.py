@@ -303,6 +303,10 @@ def run_chain(ops, gens, rng, length, log):
         if bound is None:
             continue
         args, kwargs = bound
+        big = sum(_nbytes(a) for a in args)
+        if big > 32 * 2 ** 20:
+            # 重い入力は実行前に予告(万一のストールでもログだけで犯人が判る)
+            print(f"  big-input: {name} ({big / 2**20:.0f} MB)", flush=True)
         t0 = time.perf_counter()
         try:
             result = fn(*args, **kwargs)
