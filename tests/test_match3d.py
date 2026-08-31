@@ -791,3 +791,28 @@ def test_icp_point2plane_rejects_normals_mismatch():
         X.icp_point2plane(src, dst, {"n": 1})                      # dict
     with pytest.raises(ValueError, match="numeric"):
         X.icp_point2point_3d({"p": 1}, dst)                        # 兄弟 op の dict 穴
+
+
+def test_float32_overflow_rejected_not_silent_nan():
+    # 連鎖ファザー第 3〜5 波の実測: float64 では有限な 1e39 級の入力が float32
+    # キャストで inf に化け、grid_sample/lstsq の下流が NaN を無言で返していた
+    # (第 3 波から追っていたグレー NONFINITE fit_zernike の根本原因)。
+    # 同クラス一掃: polar_unwrap / cylinder_unwrap / scene_flow_lk。
+    import pytest
+    big2d = np.full((32, 32), 1e39)
+    big3d = np.full((12, 16, 16), 1e39)
+    with pytest.raises(ValueError, match="float32"):
+        X.fit_zernike(big2d)
+    with pytest.raises(ValueError, match="float32"):
+        X.polar_unwrap(big2d)
+    with pytest.raises(ValueError, match="float32"):
+        X.cylinder_unwrap(big3d)
+    with pytest.raises(ValueError, match="float32"):
+        X.scene_flow_lk(big3d, big3d)
+    # 正常系は不変: 有限入力で係数は有限
+    img = np.random.default_rng(0).normal(size=(32, 32))
+    coef = X.fit_zernike(img)
+    assert np.isfinite(np.array(list(coef.values()))).all()
+    # 退化形状(1 列)は W-1 除算前に明示拒否
+    with pytest.raises(ValueError, match="2x2"):
+        X.fit_zernike(np.zeros((32, 1)))

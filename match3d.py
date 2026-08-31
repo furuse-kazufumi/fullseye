@@ -1654,8 +1654,10 @@ def scene_flow_lk(vol0, vol1, device="cpu", win=3, levels=3, iters=3, reg=1e-3):
         raise ValueError("scene_flow_lk: both volumes must share one shape "
                          "(got %r vs %r) — this operator correlates them "
                          "voxel-for-voxel" % (_va.shape, _vb.shape))
-    v0 = torch.as_tensor(np.asarray(vol0, np.float32)[None, None], device=device)
-    v1 = torch.as_tensor(np.asarray(vol1, np.float32)[None, None], device=device)
+    v0 = torch.as_tensor(_f32_finite(vol0, "scene_flow_lk: vol0")[None, None],
+                         device=device)
+    v1 = torch.as_tensor(_f32_finite(vol1, "scene_flow_lk: vol1")[None, None],
+                         device=device)
     pyr0 = [v0]; pyr1 = [v1]
     for _ in range(levels - 1):
         pyr0.append(F.avg_pool3d(pyr0[-1], 2)); pyr1.append(F.avg_pool3d(pyr1[-1], 2))
