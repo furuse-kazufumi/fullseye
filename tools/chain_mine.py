@@ -566,7 +566,7 @@ def main(argv=None):
     reps, dropped = contract(cands, ops, gens, identity_eps=args.identity_eps,
                              slow_s=args.slow_sec,
                              check_determinism=not args.no_determinism)
-    _write(args.out, reps)
+    _write(args.out, reps, timing=not args.no_timing)
 
     print(f"\n== 拡散 {args.chains} 連鎖 x len {args.length}"
           f"(seed {args.seed}, {wall:.0f}s)")
