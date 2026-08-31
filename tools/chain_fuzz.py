@@ -306,19 +306,33 @@ def _finite_ok(val):
     return True
 
 
-def run_chain(ops, gens, rng, length, log):
-    """1 連鎖 = 型付き pool を育てながら length op を実行。発見は log に積む。"""
+def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
+    """1 連鎖 = 型付き pool を育てながら op を実行。発見は log に積む。
+
+    *script* に op 名の列を渡すと**その順で強制実行**する(--minimize の再走)。
+    型が揃わない step は黙って飛ばす = その短縮では再現しない、と判定される。
+    *chain_seed* は findings に載せて再現に使う。
+    """
     pool = {}
     for t, g in gens.items():
         pool[t] = [g(rng)]
     trace = []
-    for _ in range(length):
-        # pool にある型を食える op を候補化
-        cands = [o for o in ops
-                 if all((t in pool and pool[t]) or t == "any" for t in o[2])]
-        if not cands:
-            break
-        name, dim, ins, out, fn = cands[rng.integers(len(cands))]
+    by_name = {o[0]: o for o in ops} if script is not None else None
+    for i in range(len(script) if script is not None else length):
+        if script is not None:
+            op = by_name.get(script[i])
+            if op is None:
+                continue
+            name, dim, ins, out, fn = op
+            if not all((t in pool and pool[t]) or t == "any" for t in ins):
+                continue          # 入力型が揃わない = この短縮では到達不能
+        else:
+            # pool にある型を食える op を候補化
+            cands = [o for o in ops
+                     if all((t in pool and pool[t]) or t == "any" for t in o[2])]
+            if not cands:
+                break
+            name, dim, ins, out, fn = cands[rng.integers(len(cands))]
         if name in OP_ARG_BUILDERS:
             bound = OP_ARG_BUILDERS[name](pool, rng)
         else:
@@ -342,26 +356,26 @@ def run_chain(ops, gens, rng, length, log):
             if kind != "OPTIONAL":
                 log.append({"kind": kind, "op": name, "dim": dim,
                             "exc": type(exc).__name__, "msg": str(exc)[:200],
-                            "trace": trace + [name],
+                            "trace": trace + [name], "seed": chain_seed,
                             "tb": traceback.format_exc(limit=3)})
             continue
         dt = time.perf_counter() - t0
         if dt > SLOW_S:
             log.append({"kind": "SLOW", "op": name, "dim": dim, "sec": round(dt, 1),
-                        "trace": trace + [name]})
+                        "trace": trace + [name], "seed": chain_seed})
         if name in ADAPTERS:
             result = ADAPTERS[name](result)
         if result is None:
             continue
         if not _finite_ok(result) and name not in NONFINITE_BY_CONTRACT:
             log.append({"kind": "NONFINITE", "op": name, "dim": dim,
-                        "trace": trace + [name]})
+                        "trace": trace + [name], "seed": chain_seed})
             continue                      # 毒は pool に入れない
         nb = _nbytes(result)
         if nb > MAX_POOL_BYTES:
             log.append({"kind": "GROWTH", "op": name, "dim": dim,
                         "mb": round(nb / 2 ** 20, 1),
-                        "trace": trace + [name]})
+                        "trace": trace + [name], "seed": chain_seed})
             continue                      # 巨大産物は pool に入れない(指数増殖防止)
         check = TYPE_CHECKS.get(out)
         if check is not None and not check(result):
@@ -369,7 +383,7 @@ def run_chain(ops, gens, rng, length, log):
                         "exc": out, "msg": "declared %r but returned %s%s" % (
                             out, type(result).__name__,
                             getattr(result, "shape", "")),
-                        "trace": trace + [name]})
+                        "trace": trace + [name], "seed": chain_seed})
             continue                      # 型の嘘も pool に入れない
         trace.append(name)
         pool.setdefault(out, []).append(result)
