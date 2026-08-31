@@ -162,7 +162,8 @@ from volops import (  # noqa: E402,F401
 )
 from volregion import (  # noqa: E402,F401
     VolRLE, vol_rle_encode, vol_rle_decode, vol_rle_volume, vol_rle_bbox,
-    vol_rle_centroid,
+    vol_rle_centroid, vol_rle_union, vol_rle_intersect, vol_rle_difference,
+    vol_rle_components,
 )
 from handpose import (  # noqa: E402,F401
     hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
