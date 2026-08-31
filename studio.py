@@ -1996,9 +1996,9 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
                 # Height-ramp cloud (set_points with no colors): the viridis
                 # ramp depends only on the CLOUD's z extent, never the camera,
                 # yet letting the renderer recompute it cost a measured
-                # 84 ms/frame at 100k pts — 4.6x the actual 18 ms splat render.
-                # Computed once per cloud here instead. Full-resolution frames
-                # are bit-identical to the in-render ramp (same math over the
+                # 7.4 ms/frame at 100k pts (26.8 -> 19.4 ms, -28%). Computed
+                # once per cloud here instead. Full-resolution frames are
+                # bit-identical to the in-render ramp (same math over the
                 # same finite points); decimated interaction previews now KEEP
                 # the full-cloud normalization instead of re-normalizing the
                 # picked subset, so colors no longer shift while dragging.
