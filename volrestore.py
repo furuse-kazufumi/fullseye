@@ -120,12 +120,26 @@ def vol_richardson_lucy(vol, psf, iterations=10, clip_tiny=1e-12):
     if n != iterations or n < 1:
         raise ValueError("iterations must be a positive integer, got %r"
                          % (iterations,))
+    ct = float(clip_tiny)
+    if not np.isfinite(ct) or ct <= 0.0:
+        raise ValueError("clip_tiny must be a small positive finite number "
+                         "(it floors the RL denominator against 0/0 = NaN), "
+                         "got %r" % (clip_tiny,))
     k = k / k.sum()
     k_mirror = k[::-1, ::-1, ::-1]
-    est = np.full(v.shape, max(float(v.mean()), clip_tiny))
+    # Exact adjoint K^T: 'same'-cropped convolution by k starts its crop at
+    # (m-1)//2 per axis, so its adjoint is the FULL correlation cropped at
+    # m//2 per axis. For odd kernel sizes this equals
+    # fftconvolve(..., k_mirror, mode='same') exactly; for EVEN sizes 'same'
+    # would be off by one voxel per even axis — the update then feeds each
+    # correction to the wrong voxel and the estimate diverges (measured:
+    # a 2x2x2 delta PSF blew a flat volume up to ~1e91 in 10 iterations).
+    adj_crop = tuple(slice(ks // 2, ks // 2 + vs)
+                     for ks, vs in zip(k.shape, v.shape))
+    est = np.full(v.shape, max(float(v.mean()), ct))
     for _ in range(n):
         denom = fftconvolve(est, k, mode="same")
-        ratio = v / np.maximum(denom, clip_tiny)
-        est = est * fftconvolve(ratio, k_mirror, mode="same")
+        ratio = v / np.maximum(denom, ct)
+        est = est * fftconvolve(ratio, k_mirror, mode="full")[adj_crop]
         np.maximum(est, 0.0, out=est)
     return np.ascontiguousarray(est, dtype=np.float64)
