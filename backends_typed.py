@@ -183,9 +183,14 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
             continue
         params = [p for p in sig.parameters.values()
                   if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
-        kwargs, ok = {}, True
+        kwargs, ok, tunable = {}, True, []
         for p in params[1:]:
             if p.default is not inspect.Parameter.empty:
+                # 正の数値既定 = 進化が触れる調整点(最大 2 個を a, b に割り当て)
+                if (isinstance(p.default, (int, float))
+                        and not isinstance(p.default, bool)
+                        and p.default > 0 and len(tunable) < 2):
+                    tunable.append((p.name, p.default))
                 continue
             hint = cf.OP_PARAM_HINTS.get((name, p.name))
             if hint is None and p.name in hint_names:
