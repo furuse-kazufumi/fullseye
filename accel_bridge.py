@@ -167,14 +167,18 @@ def coverage(stages_or_genome, start=ops.IMAGE) -> dict:
     }
 
 
-def validate_champion(stages_or_genome, imgs, device="cpu", start=ops.IMAGE, m=3) -> dict:
+def validate_champion(stages_or_genome, imgs, device="cpu", start=ops.IMAGE, m=None) -> dict:
     """bridge 出力 vs 純 core 出力の interior 画素差(端 m px 除外)。
 
-    accel の reflect/pool 規約が scipy と端で違うので bit 一致はしない。faithful op だけを
+    accel の pool 規約が scipy と端で違い得るので bit 一致は要求しない。faithful op だけを
     GPU に載せているので **interior は小さい**はず。これが「GPU 化が champion を壊していない」
     ことの実データ根拠(honest 検証)。画像出力の champion 用(feature 出力段は無視)。
+    m 省略時はチェーン中の最大カーネル半径 +1(最低 3)— 固定 3px は a>=0.75 の
+    k=9 で端リングがめり込む(敵対レビュー 2026-08-31 P7、accel.parity と同基準)。
     """
     stages = _as_stages(stages_or_genome, start)
+    if m is None:
+        m = max([3] + [accel._k(s.a) // 2 + 1 for s in stages])
     bridge_out = run(stages, imgs, device=device, start=start)
     core_out = [ops.run_stages(stages, np.asarray(im, np.float64)) for im in imgs]
     diffs = []
