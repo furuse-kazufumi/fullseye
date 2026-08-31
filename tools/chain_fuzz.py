@@ -351,14 +351,16 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
             if not cands:
                 break
             name, dim, ins, out, fn = cands[rng.integers(len(cands))]
+        occ[name] = occ.get(name, 0) + 1
+        arng = _step_rng(chain_seed, name, occ[name], rng)
         if name in OP_ARG_BUILDERS:
-            bound = OP_ARG_BUILDERS[name](pool, rng)
+            bound = OP_ARG_BUILDERS[name](pool, arng)
         else:
             data_args = []
             for t in ins:
-                src = pool[t] if t != "any" else pool[rng.choice(list(pool.keys()))]
-                data_args.append(src[rng.integers(len(src))])
-            bound = _bind_args(name, fn, data_args, rng)
+                src = pool[t] if t != "any" else pool[arng.choice(sorted(pool))]
+                data_args.append(src[arng.integers(len(src))])
+            bound = _bind_args(name, fn, data_args, arng)
         if bound is None:
             continue
         args, kwargs = bound
