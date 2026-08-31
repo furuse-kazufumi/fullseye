@@ -199,7 +199,11 @@ def test_cond_orthogonal_is_one():
 
 def test_cond_known_diagonal_and_singular():
     assert abs(mathops.mat_cond(np.diag([10.0, 0.1])) - 100.0) < 1e-10
-    assert mathops.mat_cond(np.array([[1.0, 2.0], [2.0, 4.0]])) == np.inf
+    # An exact zero singular value (zero column) -> inf.
+    assert mathops.mat_cond(np.array([[1.0, 0.0], [2.0, 0.0]])) == np.inf
+    # A rank-1 matrix built from finite floats: the smallest singular value is
+    # rounding dust (~eps), so cond is finite but past every trust threshold.
+    assert mathops.mat_cond(np.array([[1.0, 2.0], [2.0, 4.0]])) > 1e15
 
 
 # --------------------------------------------------------------------------- #

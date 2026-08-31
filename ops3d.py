@@ -114,7 +114,8 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
 #   voxel / points(N,3) / mesh / depth / sdf / normals(N,3) / gaussians / image2d /
 #   pose(R,t) / transform-params(angle,scale,shift) / position / primitive(plane/sphere/...) /
 #   descriptor / keypoints / flow / measurement(scalar) / render(image2d) /
-#   pointmap(H,W,3 organized 点群) / normalmap(H,W,3 organized 法線) / images(list)
+#   pointmap(H,W,3 organized 点群) / normalmap(H,W,3 organized 法線) / images(list) /
+#   indices(元配列への index 列) / table(dict の列=多物体プロパティ)
 #   ※ organized 系は (N,3) と別型(連鎖ファザー 2026-08-31 で申告と実返却の乖離
 #     20 種を検出し、型語彙を実態に合わせて分離した)
 
@@ -246,7 +247,7 @@ _CATALOG = {
     ],
     "feature_register": [  # 疎特徴 keypoint + 記述子 + RANSAC(初期推定なし大回転)
         ("harris3d_keypoints", "feat_harris", ["voxel"], "keypoints", True),
-        ("iss_keypoints", "feat_shot", ["points"], "keypoints", False),
+        ("iss_keypoints", "feat_shot", ["points"], "indices", False),
         ("compute_fpfh", "feat_fpfh", ["points", "normals"], "descriptor", False),
         ("shot_descriptor", "feat_shot", ["points", "normals"], "descriptor", False),
         ("register_spin", "feat_spin", ["points", "points"], "pose", False),
@@ -296,8 +297,8 @@ _CATALOG = {
         ("fit_zernike", "match3d", ["image2d"], "descriptor", True),
     ],
     "optics": [  # 鏡面/透明体
-        ("reflect", "match3d", ["vector", "normals"], "vector", False),
-        ("refract", "match3d", ["vector", "normals"], "vector", False),
+        ("reflect", "match3d", ["vector", "normals"], "normals", False),
+        ("refract", "match3d", ["vector", "normals"], "normals", False),
         ("fresnel_reflectance", "match3d", ["measurement"], "measurement", False),
         ("normal_from_reflection", "match3d", ["vector", "vector"], "vector", False),
         ("snell_angle", "match3d", ["measurement"], "measurement", False),
@@ -424,7 +425,7 @@ _CATALOG = {
     ],
     "regionprops": [  # 3D 連結成分の多物体計測(検査で複数部品を一括)
         ("label_components", "regionprops3d", ["voxel"], "voxel", False),
-        ("region_props", "regionprops3d", ["voxel"], "measurement", False),
+        ("region_props", "regionprops3d", ["voxel"], "table", False),
         ("largest_component", "regionprops3d", ["voxel"], "voxel", False),
         ("filter_by_volume", "regionprops3d", ["voxel"], "voxel", False),
         ("inner_box3", "regionprops3d", ["voxel"], "primitive", False),  # 最大内接ボックス(inner_rectangle1 の 3D 版)
@@ -433,7 +434,7 @@ _CATALOG = {
         # 注: vol_label は (labels, n) のタプルを返すので、連鎖はタプルを外して
         # labels, n = vol_label(m); vol_region_props(labels) と書く(examples 参照)
         ("vol_label", "volops", ["voxel"], "labels", False),
-        ("vol_region_props", "volops", ["labels"], "measurement", False),
+        ("vol_region_props", "volops", ["labels"], "table", False),
     ],
     "two_view": [  # 2視点エピポーラ幾何(対応点 → 相対姿勢 + 構造、単眼 SfM/VO の核)
         ("fundamental_8point", "twoview", ["image2d", "image2d"], "matrix", False),
@@ -459,7 +460,7 @@ _CATALOG = {
     "geodesic": [  # 曲面上の測地距離(TRIZ 線→面: EDT の曲面版)
         ("geodesic_distances", "geodesic3d", ["points"], "measurement", False),
         ("geodesic_mesh", "geodesic3d", ["mesh"], "measurement", False),
-        ("farthest_point_sampling", "geodesic3d", ["points"], "keypoints", False),
+        ("farthest_point_sampling", "geodesic3d", ["points"], "indices", False),
         ("knn_graph", "geodesic3d", ["points"], "graph", False),
     ],
     "space_carving": [  # シルエットからの空間彫刻/visual hull(多視点 → voxel)
@@ -616,6 +617,11 @@ RESULT_ADAPTERS = {
     "register_nonrigid": lambda r: r[0],            # (warped, info, info)
     "fuse_to_voxel": lambda r: r[0],                # (voxel, bounds)
     "vol_resize": lambda r: r[0] if isinstance(r, tuple) else r,  # spacing 付き時
+    "random_dropout": lambda r: r[0] if isinstance(r, tuple) else r,
+    "cutout": lambda r: r[0] if isinstance(r, tuple) else r,
+    "photometric_stereo": lambda r: r[0] if isinstance(r, tuple) else r,
+    "synthesize_fringes": lambda r: [r[i] for i in range(r.shape[0])]
+    if hasattr(r, "shape") and getattr(r, "ndim", 0) == 3 else r,
     # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
     "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
 }

@@ -1285,6 +1285,15 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         info: dict。"rmse"(採用対応上の最終RMSE), "iters"(実反復数),
               "converged"(bool), "inliers"(採用対応数), "rmse_history"(list)。
     """
+    _s, _d = np.asarray(src, float), np.asarray(dst, float)
+    if _s.ndim != 2 or _s.shape[1] != 3 or _d.ndim != 2 or _d.shape[1] != 3:
+        raise ValueError("icp_point2point_3d: src/dst must be (N, 3) point arrays, got %r / %r"
+                         % (_s.shape, _d.shape))
+    if len(_s) < 3 or len(_d) < 3:
+        # 連鎖ファザー実測: 空/1点入力が深部の index/SVD で生エラー・NaN 化する
+        raise ValueError("icp_point2point_3d: need at least 3 points on each side "
+                         "(got %d / %d) — a rigid pose is undefined below that"
+                         % (len(_s), len(_d)))
     from scipy.spatial import cKDTree
 
     dev = torch.device(device)
@@ -1474,6 +1483,15 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),
         n_iter(実反復数)。
     """
+    _s, _d = np.asarray(src, float), np.asarray(dst, float)
+    if _s.ndim != 2 or _s.shape[1] != 3 or _d.ndim != 2 or _d.shape[1] != 3:
+        raise ValueError("icp_point2plane: src/dst must be (N, 3) point arrays, got %r / %r"
+                         % (_s.shape, _d.shape))
+    if len(_s) < 3 or len(_d) < 3:
+        # 連鎖ファザー実測: 空/1点入力が深部の index/SVD で生エラー・NaN 化する
+        raise ValueError("icp_point2plane: need at least 3 points on each side "
+                         "(got %d / %d) — a rigid pose is undefined below that"
+                         % (len(_s), len(_d)))
     dt = torch.float64
     P0 = torch.as_tensor(np.asarray(src, np.float64), dtype=dt, device=device)
     Q = torch.as_tensor(np.asarray(dst, np.float64), dtype=dt, device=device)
@@ -2074,6 +2092,11 @@ def fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5):
 
     垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。
     """
+    try:
+        cos_i = float(cos_i)
+    except (TypeError, ValueError):
+        raise ValueError("fresnel_reflectance: cos_i must be a real scalar, got %r"
+                         % (type(cos_i).__name__,)) from None
     ci = abs(float(cos_i)); s2 = (eta1 / eta2) ** 2 * (1 - ci * ci)
     if s2 > 1:
         return 1.0
@@ -2096,6 +2119,11 @@ def normal_from_reflection(incident, reflected):
 
 def snell_angle(theta_i_deg, eta1=1.0, eta2=1.5):
     """入射角(度)→ 屈折角(度)。n1 sinθi = n2 sinθt。臨界角超は NaN(全反射)。"""
+    try:
+        theta_i_deg = float(theta_i_deg)
+    except (TypeError, ValueError):
+        raise ValueError("snell_angle: theta_i_deg must be a real scalar, got %r"
+                         % (type(theta_i_deg).__name__,)) from None
     st = eta1 / eta2 * np.sin(np.radians(theta_i_deg))
     return float(np.degrees(np.arcsin(np.clip(st, -1, 1)))) if abs(st) <= 1 else float("nan")
 

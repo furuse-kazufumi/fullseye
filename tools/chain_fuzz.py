@@ -222,7 +222,11 @@ TYPE_CHECKS = {
     "depth": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "cimage": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.dtype.kind == "c",
     "signal": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
-    "measurement": lambda v: True,
+    # measurement = スカラのみ(tuple/dict がここに紛れると下流 op が生 TypeError
+    # で落ちる — 第 3 波でプール汚染として実測)
+    "measurement": lambda v: isinstance(v, (int, float, np.floating, np.integer)),
+    "indices": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
+    "table": lambda v: isinstance(v, (list, dict)),
     "rle_region": lambda v: type(v).__name__ == "VolRLE",
     "pointmap": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[2] == 3,
     "normalmap": lambda v: isinstance(v, np.ndarray) and v.ndim == 3 and v.shape[2] == 3,
