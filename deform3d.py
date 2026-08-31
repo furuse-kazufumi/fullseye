@@ -85,6 +85,10 @@ TPS_MAX_CTRL = 10_000
 #: メモリを チャンク×K に有界化する(結果は一括評価とビット一致)。
 _TPS_WARP_CHUNK = 65_536
 
+#: register_cpd_rigid の N×M 上限(密な責務行列を EM 毎反復で組むため)。
+#: 25M ペア ≈ 配列 1 本 200MB。同種の暗黙前提を fail-closed で明示する。
+CPD_MAX_PAIRS = 25_000_000
+
 
 def tps_kernel(r):
     """3D TPS の放射基底関数 U(r) = r を返す(要素ごと)。
