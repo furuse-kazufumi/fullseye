@@ -266,13 +266,16 @@ def _illuminate(t, a, b, dev):
 #    その先の region morphology 島へ GPU 常駐のまま入れず転送が分断される。
 def _otsu(t, a, b, dev):
     """core _otsu の逐語移植: 256-bin ヒストグラム → 間クラス分散 argmax → x > mid。"""
+    # ヒストグラムと最終比較は float64 で行う(P3: f32 だと bin 境界直下の値が
+    # 境界へ丸まり argmax が動く。histc の f64 規約は np.histogram と完全一致を実測)
     x = t.clamp(0, 1)
     B = x.shape[0]
     outs = []
-    edges = torch.linspace(0.0, 1.0, 257, device=t.device)
+    edges = torch.linspace(0.0, 1.0, 257, dtype=torch.float64, device=t.device)
     mids = (edges[:-1] + edges[1:]) / 2
     for i in range(B):
-        hist = torch.histc(x[i], bins=256, min=0.0, max=1.0)
+        xi = x[i].double()
+        hist = torch.histc(xi, bins=256, min=0.0, max=1.0)
         p = hist / hist.sum().clamp_min(1.0)
         omega = torch.cumsum(p, 0)
         mu = torch.cumsum(p * mids, 0)
@@ -281,7 +284,7 @@ def _otsu(t, a, b, dev):
         sb = torch.where(den > 1e-12,
                          (mu_t * omega - mu) ** 2 / den.clamp_min(1e-12),
                          torch.zeros_like(den))
-        outs.append((x[i] > mids[int(sb.argmax())]).float())
+        outs.append((xi > mids[int(sb.argmax())]).float())
     return torch.stack(outs)
 
 
