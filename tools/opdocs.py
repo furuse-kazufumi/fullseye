@@ -149,6 +149,32 @@ def _records():
             })
     except Exception as e:  # ops3d needs torch-soft deps; corpus still builds for 2-D
         print(f"  (3-D registry unavailable: {e})", file=sys.stderr)
+    try:
+        import opsmath
+        from op_example_index import _index_for
+        # math ops are demonstrated by scripts under examples/ (same dir as 2-D);
+        # index them with the same call-detection used for the other dims.
+        idxmath = _index_for(sorted(opsmath.OPSMATH), "examples")
+        for name, info in opsmath.OPSMATH.items():
+            fn = info.get("func")
+            try:
+                sig = str(inspect.signature(fn)) if fn is not None else "(...)"
+            except (TypeError, ValueError):
+                sig = "(...)"
+            ins = info["in"]
+            ins = " × ".join(ins) if isinstance(ins, (list, tuple)) else str(ins)
+            recs.append({
+                "dim": "math", "name": name, "category": info["category"],
+                "in": ins, "out": info["out"],
+                "halcon": "", "doc": (getattr(fn, "__doc__", None) or "").strip(),
+                "module": info.get("module", "mathops"), "sig": sig,
+                "examples": sorted(idxmath.get(name, [])),
+                # single usage guide for the whole maths family, named after the
+                # coverage example that exercises all its ops (2-D の gallery 命名と同型)
+                "family": "math_metrology",
+            })
+    except Exception as e:  # corpus still builds without the math ledger
+        print(f"  (math registry unavailable: {e})", file=sys.stderr)
     # mark ops whose name is registered more than once in their dim: a backend override
     # (e.g. backends_auto's _safe wrapper) shadows a core fallback of the same op. The note
     # for such a name describes the winner; flag it so the override is stated, not hidden.
