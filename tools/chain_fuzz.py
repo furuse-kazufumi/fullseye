@@ -3,18 +3,25 @@
 
 進化レジストリの流儀を目録全体へ: 型互換な op をランダムに連鎖(拡散)し、
 失敗を署名でまとめて最小再現に絞る(収束)。狙いは「単体テストは通るが
-**op の出力を次の op が食うと壊れる**」клас の不具合 — 型契約の嘘、
+**op の出力を次の op が食うと壊れる**」クラスの不具合 — 型契約の嘘、
 タプル/リスト梱包の不一致、NaN の漏出、想定外の例外種。
 
 判定の分類:
   CONTRACT  ValueError で明確な文言 = fail-closed が仕事をした(白)
   SUSPECT   それ以外の例外(TypeError/IndexError/KeyError/…)= 契約の穴
   NONFINITE 有限入力から NaN/Inf が無言で出た = 毒の漏出
+  TYPEMISS  目録の宣言 out 型と実際の返りが違う = 型の嘘
+  GROWTH    産物が pool 上限超(拡大系の指数増殖)= 記録して捨てる
   SLOW      1 op が閾値超(既定 10s)= 性能スメル
+
+再現性: 連鎖 i は master seed から導いた **連鎖固有 seed** で回る(共有 rng
+だと i 番目だけを後から再現できないため)。各 findings はその ``seed`` を
+持つので、``--minimize`` が正確に再走できる。
 
 使い方:
     py -3.11 tools/chain_fuzz.py --chains 400 --length 6 --seed 0
-    py -3.11 tools/chain_fuzz.py --minimize <chain.json>   # 収束(最小再現)
+    py -3.11 tools/chain_fuzz.py --minimize out/chain_fuzz.jsonl   # 全署名を短縮
+    py -3.11 tools/chain_fuzz.py --minimize out/chain_fuzz.jsonl --only vol_frangi
 """
 from __future__ import annotations
 
