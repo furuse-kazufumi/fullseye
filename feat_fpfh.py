@@ -120,11 +120,28 @@ def compute_fpfh(points, normals, k=60, n_bins=11):
 
     引数: points (N,3), normals (N,3), k(FPFH 近傍数), n_bins(1特徴あたりのビン数)。
     返り値: (N, 3*n_bins) の記述子行列。
+    Raises ValueError: points/normals が (N,3) でない・行数不一致・非有限・N<4
+    (k-NN が k>=3 を要求するため)。
     """
     from scipy.spatial import cKDTree
     P = np.asarray(points, np.float64)
     Nn = np.asarray(normals, np.float64)
+    # 入口契約: 別点群の法線を混ぜると近傍 index が normals の範囲を越え、深部で
+    # 生 IndexError になる(連鎖ファザー wave-5 実測: index 160 / size 160)。
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("compute_fpfh: points must be (N, 3), got shape %r"
+                         % (np.shape(points),))
+    if Nn.shape != P.shape:
+        raise ValueError("compute_fpfh: normals must pair one normal with each "
+                         "point — points %r vs normals %r"
+                         % (P.shape, np.shape(normals)))
+    if not (np.isfinite(P).all() and np.isfinite(Nn).all()):
+        raise ValueError("compute_fpfh: points/normals contain non-finite "
+                         "value(s) (NaN/Inf)")
     n = len(P)
+    if n < 4:
+        raise ValueError("compute_fpfh: need at least 4 points for k-NN "
+                         "(k >= 3), got %d" % n)
     k = max(3, min(k, n - 1))
     tree = cKDTree(P)
     dists, idx = tree.query(P, k=k + 1)             # 自身含む
