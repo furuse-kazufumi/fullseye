@@ -3,7 +3,7 @@ op: iss_keypoints
 dim: 3d
 category: feature_register
 in: points
-out: keypoints
+out: indices
 examples: [feature_register]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # iss_keypoints — 3D `feature_register` op
 
-- **データ種**: `points` → `keypoints`
+- **データ種**: `points` → `indices`
 - **呼び出し**: `import feat_shot; feat_shot.iss_keypoints(points, radius, nms_radius=None, gamma21=0.99, gamma32=0.99, max_kp=400, min_neighbors=8)` (または `ops3d.get("iss_keypoints")`)
 
 ## 使い方
@@ -28,7 +28,7 @@ ISS(Intrinsic Shape Signatures、3D Harris 相当)キーポイント検出。
 
 - [feature_register](../../../../examples_3d/feature_register.py) — `py -3.11 examples_3d/feature_register.py`
 
-## 型が繋がる次の op(`keypoints` を入力に取れる)
+## 型が繋がる次の op(`indices` を入力に取れる)
 
 [fuse_to_voxel](../fusion/fuse_to_voxel.md)
 

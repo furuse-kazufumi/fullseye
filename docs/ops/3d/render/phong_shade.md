@@ -2,7 +2,7 @@
 op: phong_shade
 dim: 3d
 category: render
-in: normals
+in: normalmap
 out: image2d
 examples: [render_beauty, render_shade]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # phong_shade — 3D `render` op
 
-- **データ種**: `normals` → `image2d`
+- **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import render_shade; render_shade.phong_shade(normals, view=(0.0, 0.0, 1.0), light=(0.0, 0.0, 1.0), ambient: 'float' = 0.1, diffuse: 'float' = 0.8, specular: 'float' = 0.5, shininess: 'float' = 32.0, clip: 'bool' = True) -> 'np.ndarray'` (または `ops3d.get("phong_shade")`)
 
 ## 使い方

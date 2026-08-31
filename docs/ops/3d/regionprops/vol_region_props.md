@@ -3,7 +3,7 @@ op: vol_region_props
 dim: 3d
 category: regionprops
 in: labels
-out: measurement
+out: table
 examples: [vessel_metrology]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # vol_region_props — 3D `regionprops` op
 
-- **データ種**: `labels` → `measurement`
+- **データ種**: `labels` → `table`
 - **呼び出し**: `import volops; volops.vol_region_props(labels, spacing=None, surface='auto')` (または `ops3d.get("vol_region_props")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ Per-component quantitative descriptors from a label volume.
 
 - [vessel_metrology](../../../../examples_3d/vessel_metrology.py) — `py -3.11 examples_3d/vessel_metrology.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`regionprops`)
 

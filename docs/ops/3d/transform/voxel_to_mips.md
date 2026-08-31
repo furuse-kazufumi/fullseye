@@ -3,7 +3,7 @@ op: voxel_to_mips
 dim: 3d
 category: transform
 in: voxel
-out: image2d
+out: images
 examples: [transforms_repr]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # voxel_to_mips — 3D `transform` op
 
-- **データ種**: `voxel` → `image2d`
+- **データ種**: `voxel` → `images`
 - **呼び出し**: `import match3d; match3d.voxel_to_mips(vol)` (または `ops3d.get("voxel_to_mips")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [transforms_repr](../../../../examples_3d/transforms_repr.py) — `py -3.11 examples_3d/transforms_repr.py`
 
-## 型が繋がる次の op(`image2d` を入力に取れる)
+## 型が繋がる次の op(`images` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](../surface_fit/fit_poly_surface.md) · [surface_form_error](../surface_fit/surface_form_error.md) · [background_flatten](../surface_fit/background_flatten.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](../render/matcap_shade.md) · [antialias](../render/antialias.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [photometric_stereo](../photometric/photometric_stereo.md) · [wrapped_phase](../structured_light/wrapped_phase.md) · [graycode_decode](../structured_light/graycode_decode.md) · [decode_fringe](../structured_light/decode_fringe.md) · [carve](../space_carving/carve.md) · [visual_hull](../space_carving/visual_hull.md)
 
 ## 同カテゴリ(`transform`)
 

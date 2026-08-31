@@ -3,7 +3,7 @@ op: refract
 dim: 3d
 category: optics
 in: vector × normals
-out: vector
+out: normals
 examples: [snell_refraction]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # refract — 3D `optics` op
 
-- **データ種**: `vector × normals` → `vector`
+- **データ種**: `vector × normals` → `normals`
 - **呼び出し**: `import match3d; match3d.refract(d, n, eta1=1.0, eta2=1.5)` (または `ops3d.get("refract")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ Snell 屈折(ベクトル形)。d=入射(面へ向かう), n=入射側外向き�
 
 - [snell_refraction](../../../../examples_3d/snell_refraction.py) — `py -3.11 examples_3d/snell_refraction.py`
 
-## 型が繋がる次の op(`vector` を入力に取れる)
+## 型が繋がる次の op(`normals` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](reflect.md) · [normal_from_reflection](normal_from_reflection.md) · [cast_shadow](../render/cast_shadow.md)
+[icp_point2plane](../refine/icp_point2plane.md) · [compute_fpfh](../feature_register/compute_fpfh.md) · [shot_descriptor](../feature_register/shot_descriptor.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](reflect.md) · [normal_consistency](../metrics/normal_consistency.md) · [ransac_cylinder](../robust_fit/ransac_cylinder.md) · [orient_normals](../normals_orient/orient_normals.md)
 
 ## 同カテゴリ(`optics`)
 

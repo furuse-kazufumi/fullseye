@@ -2,7 +2,7 @@
 op: matcap_shade
 dim: 3d
 category: render
-in: normals × image2d
+in: normalmap × image2d
 out: image2d
 examples: [render_shade]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # matcap_shade — 3D `render` op
 
-- **データ種**: `normals × image2d` → `image2d`
+- **データ種**: `normalmap × image2d` → `image2d`
 - **呼び出し**: `import render_shade; render_shade.matcap_shade(normals, matcap) -> 'np.ndarray'` (または `ops3d.get("matcap_shade")`)
 
 ## 使い方

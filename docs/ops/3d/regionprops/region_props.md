@@ -3,7 +3,7 @@ op: region_props
 dim: 3d
 category: regionprops
 in: voxel
-out: measurement
+out: table
 examples: [region_props_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # region_props — 3D `regionprops` op
 
-- **データ種**: `voxel` → `measurement`
+- **データ種**: `voxel` → `table`
 - **呼び出し**: `import regionprops3d; regionprops3d.region_props(vol, connectivity: 'int' = 26) -> 'list[dict]'` (または `ops3d.get("region_props")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [region_props_3d](../../../../examples_3d/region_props_3d.py) — `py -3.11 examples_3d/region_props_3d.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`regionprops`)
 

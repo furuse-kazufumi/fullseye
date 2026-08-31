@@ -3,7 +3,7 @@ op: vol_wall_thickness
 dim: 3d
 category: probe
 in: voxel
-out: measurement
+out: signal
 examples: [wall_thickness_probe]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # vol_wall_thickness — 3D `probe` op
 
-- **データ種**: `voxel` → `measurement`
+- **データ種**: `voxel` → `signal`
 - **呼び出し**: `import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)` (または `ops3d.get("vol_wall_thickness")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ Wall thicknesses along the probe ``p0 -> p1`` — the industrial-CT
 
 - [wall_thickness_probe](../../../../examples_3d/wall_thickness_probe.py) — `py -3.11 examples_3d/wall_thickness_probe.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`probe`)
 

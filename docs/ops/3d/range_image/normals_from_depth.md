@@ -3,7 +3,7 @@ op: normals_from_depth
 dim: 3d
 category: range_image
 in: depth
-out: normals
+out: normalmap
 examples: [range_image]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # normals_from_depth — 3D `range_image` op
 
-- **データ種**: `depth` → `normals`
+- **データ種**: `depth` → `normalmap`
 - **呼び出し**: `import range_image; range_image.normals_from_depth(depth, fx=None, fy=None, cx=None, cy=None, orient_to_camera=True)` (または `ops3d.get("normals_from_depth")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ organized 深度 → 向き付き単位法線 (H,W,3)。隣接画素の 3D 点�
 
 - [range_image](../../../../examples_3d/range_image.py) — `py -3.11 examples_3d/range_image.py`
 
-## 型が繋がる次の op(`normals` を入力に取れる)
+## 型が繋がる次の op(`normalmap` を入力に取れる)
 
-[icp_point2plane](../refine/icp_point2plane.md) · [compute_fpfh](../feature_register/compute_fpfh.md) · [shot_descriptor](../feature_register/shot_descriptor.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](../optics/reflect.md) · [refract](../optics/refract.md) · [render_shaded](../render/render_shaded.md) · [phong_shade](../render/phong_shade.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [render_shaded](../render/render_shaded.md) · [phong_shade](../render/phong_shade.md) · [matcap_shade](../render/matcap_shade.md) · [integrate_normals](../photometric/integrate_normals.md) · [render_lambertian](../photometric/render_lambertian.md)
 
 ## 同カテゴリ(`range_image`)
 

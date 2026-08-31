@@ -3,7 +3,7 @@ op: cylinder_unwrap
 dim: 3d
 category: curvilinear
 in: voxel
-out: image2d
+out: voxel
 gpu: true
 examples: [curvilinear_proj]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # cylinder_unwrap — 3D `curvilinear` op
 
-- **データ種**: `voxel` → `image2d`
+- **データ種**: `voxel` → `voxel`
 - **呼び出し**: `import match3d; match3d.cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device='cpu')` (または `ops3d.get("cylinder_unwrap")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
@@ -30,9 +30,9 @@ voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の�
 
 - [curvilinear_proj](../../../../examples_3d/curvilinear_proj.py) — `py -3.11 examples_3d/curvilinear_proj.py`
 
-## 型が繋がる次の op(`image2d` を入力に取れる)
+## 型が繋がる次の op(`voxel` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](../surface_fit/fit_poly_surface.md) · [surface_form_error](../surface_fit/surface_form_error.md) · [background_flatten](../surface_fit/background_flatten.md) · [polar_unwrap](polar_unwrap.md) · [fit_zernike](fit_zernike.md) · [matcap_shade](../render/matcap_shade.md) · [antialias](../render/antialias.md)
+[voxel_to_mips](../transform/voxel_to_mips.md) · [voxel_to_mesh](../transform/voxel_to_mesh.md) · [signed_distance_field](../transform/signed_distance_field.md) · [to_points](../transform/to_points.md) · [sobel3d](../feature/sobel3d.md) · [hessian3d](../feature/hessian3d.md) · [curvature_maps](../feature/curvature_maps.md) · [edt_jfa](../feature/edt_jfa.md)
 
 ## 同カテゴリ(`curvilinear`)
 

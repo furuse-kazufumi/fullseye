@@ -2,7 +2,7 @@
 op: render_lambertian
 dim: 3d
 category: photometric
-in: normals
+in: normalmap
 out: image2d
 examples: [photometric_stereo, render_shade]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # render_lambertian — 3D `photometric` op
 
-- **データ種**: `normals` → `image2d`
+- **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import photometric; photometric.render_lambertian(normals, albedo, light, ambient=0.0)` (または `ops3d.get("render_lambertian")`)
 
 ## 使い方

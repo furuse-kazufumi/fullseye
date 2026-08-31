@@ -3,7 +3,7 @@ op: farthest_point_sampling
 dim: 3d
 category: geodesic
 in: points
-out: keypoints
+out: indices
 examples: [geodesic_distance, pointcloud_downsampling]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # farthest_point_sampling — 3D `geodesic` op
 
-- **データ種**: `points` → `keypoints`
+- **データ種**: `points` → `indices`
 - **呼び出し**: `import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -> numpy.ndarray` (または `ops3d.get("farthest_point_sampling")`)
 
 ## 使い方
@@ -29,7 +29,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [geodesic_distance](../../../../examples_3d/geodesic_distance.py) — `py -3.11 examples_3d/geodesic_distance.py`
 - [pointcloud_downsampling](../../../../examples_3d/pointcloud_downsampling.py) — `py -3.11 examples_3d/pointcloud_downsampling.py`
 
-## 型が繋がる次の op(`keypoints` を入力に取れる)
+## 型が繋がる次の op(`indices` を入力に取れる)
 
 [fuse_to_voxel](../fusion/fuse_to_voxel.md)
 

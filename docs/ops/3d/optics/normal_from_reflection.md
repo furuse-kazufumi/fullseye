@@ -3,7 +3,7 @@ op: normal_from_reflection
 dim: 3d
 category: optics
 in: vector × vector
-out: normals
+out: vector
 examples: [sensor_seg]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # normal_from_reflection — 3D `optics` op
 
-- **データ種**: `vector × vector` → `normals`
+- **データ種**: `vector × vector` → `vector`
 - **呼び出し**: `import match3d; match3d.normal_from_reflection(incident, reflected)` (または `ops3d.get("normal_from_reflection")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [sensor_seg](../../../../examples_3d/sensor_seg.py) — `py -3.11 examples_3d/sensor_seg.py`
 
-## 型が繋がる次の op(`normals` を入力に取れる)
+## 型が繋がる次の op(`vector` を入力に取れる)
 
-[icp_point2plane](../refine/icp_point2plane.md) · [compute_fpfh](../feature_register/compute_fpfh.md) · [shot_descriptor](../feature_register/shot_descriptor.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](reflect.md) · [refract](refract.md) · [render_shaded](../render/render_shaded.md) · [phong_shade](../render/phong_shade.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](reflect.md) · [refract](refract.md) · [cast_shadow](../render/cast_shadow.md)
 
 ## 同カテゴリ(`optics`)
 

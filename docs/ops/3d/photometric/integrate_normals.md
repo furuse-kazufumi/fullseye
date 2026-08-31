@@ -2,7 +2,7 @@
 op: integrate_normals
 dim: 3d
 category: photometric
-in: normals
+in: normalmap
 out: image2d
 examples: [photometric_stereo]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # integrate_normals — 3D `photometric` op
 
-- **データ種**: `normals` → `image2d`
+- **データ種**: `normalmap` → `image2d`
 - **呼び出し**: `import photometric; photometric.integrate_normals(normals, mask=None)` (または `ops3d.get("integrate_normals")`)
 
 ## 使い方

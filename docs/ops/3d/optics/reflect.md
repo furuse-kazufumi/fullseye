@@ -3,7 +3,7 @@ op: reflect
 dim: 3d
 category: optics
 in: vector × normals
-out: vector
+out: normals
 examples: [sensor_seg, snell_refraction]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # reflect — 3D `optics` op
 
-- **データ種**: `vector × normals` → `vector`
+- **データ種**: `vector × normals` → `normals`
 - **呼び出し**: `import match3d; match3d.reflect(d, n)` (または `ops3d.get("reflect")`)
 
 ## 使い方
@@ -29,9 +29,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [sensor_seg](../../../../examples_3d/sensor_seg.py) — `py -3.11 examples_3d/sensor_seg.py`
 - [snell_refraction](../../../../examples_3d/snell_refraction.py) — `py -3.11 examples_3d/snell_refraction.py`
 
-## 型が繋がる次の op(`vector` を入力に取れる)
+## 型が繋がる次の op(`normals` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [refract](refract.md) · [normal_from_reflection](normal_from_reflection.md) · [cast_shadow](../render/cast_shadow.md)
+[icp_point2plane](../refine/icp_point2plane.md) · [compute_fpfh](../feature_register/compute_fpfh.md) · [shot_descriptor](../feature_register/shot_descriptor.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [refract](refract.md) · [normal_consistency](../metrics/normal_consistency.md) · [ransac_cylinder](../robust_fit/ransac_cylinder.md) · [orient_normals](../normals_orient/orient_normals.md)
 
 ## 同カテゴリ(`optics`)
 
