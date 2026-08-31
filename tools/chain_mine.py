@@ -399,6 +399,11 @@ def _run_step(op, cur_type, cur_val, pool, arng, tally, verbose):
         tally["unbindable_args"] = tally.get("unbindable_args", 0) + 1
         return False, None
     a, kw = bound
+    n_el = _elems(a)
+    if n_el > MAX_OP_ELEMS:
+        # 拡大系の連鎖が育てた巨大産物を食わせない。無言で捨てず理由つきで数える
+        tally["oversize_input"] = tally.get("oversize_input", 0) + 1
+        return False, None
     big = sum(cf._nbytes(v) for v in a)
     if TRACE_OPS:
         # 戻ってこない op を名指しするための予告(--trace-ops)。バイト数が
