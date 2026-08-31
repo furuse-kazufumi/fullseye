@@ -526,6 +526,9 @@ def main(argv=None):
     ap.add_argument("--slow-sec", type=float, default=SLOW_S)
     ap.add_argument("--no-determinism", action="store_true",
                     help="決定性チェックを省く(速いが (c) の絞り込みが効かない)")
+    ap.add_argument("--no-timing", action="store_true",
+                    help="記録から実測秒を落とす(唯一の非再現フィールド)= "
+                         "同じ seed の 2 回走で jsonl がビット一致する")
     ap.add_argument("--replay", type=int, metavar="SEED",
                     help="採掘済み候補を厳密に再走(--start/--script/--arg-keys)")
     ap.add_argument("--start", help="--replay の開始型")
