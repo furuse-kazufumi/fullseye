@@ -243,7 +243,12 @@ def _std_filter(t, a, b, dev):
     r = k // 2
     m = F.conv2d(_pad_sym(_pad_sym(t, r, 3), r, 2), ker)
     m2 = F.conv2d(_pad_sym(_pad_sym(t * t, r, 3), r, 2), ker)
-    return _norm_b(torch.sqrt((m2 - m * m).clamp_min(0.0)))
+    var = m2 - m * m
+    # E[x²]−E[x]² は f32 で桁落ちし、平坦画像でも ~1e-8 の偽分散が残る。
+    # sqrt が 1e-4 級へ増幅し _norm_b の素通し閾値を超えてフルスケール化する
+    # (P1 の std 変種)。f32 桁落ち床以下の分散は 0 とみなす
+    var = torch.where(var > 1e-7, var, torch.zeros_like(var))
+    return _norm_b(torch.sqrt(var))
 
 
 def _unsharp(t, a, b, dev):
