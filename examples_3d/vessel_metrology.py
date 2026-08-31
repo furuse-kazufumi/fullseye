@@ -151,7 +151,8 @@ def main():
     assert abs(center - 10.0) < 1e-6, f"EDT が spacing を反映していない: {center}"
 
     print(
-        "\nPASS: frangi/sato は管を、blobness は球を選び(相互否定対照で逆転)、"
+        "\nPASS: frangi は管を、blobness は球を選び(相互否定対照で逆転。"
+        "sato は blob 抑制項が無く球にも応答するため検出力と方向のみ)、"
         f"勾配は表面に乗り、ピーク {len(got)}/2 座標一致、26/6 連結が仕様どおり、"
         f"体積 {comp['volume']:.0f} mm^3 = voxel x sz、板中心 EDT 10.0 mm 一致。"
     )
