@@ -150,6 +150,20 @@ def _point3(p, shape, name: str) -> np.ndarray:
     return np.array(q, np.float64)
 
 
+def _exact_int(x, name: str) -> int:
+    """*x* as an exact integer or ``ValueError`` — a 1.9 must never be silently
+    truncated to a different interpolation order / sample count (same
+    convention as ``volxform._check_order``)."""
+    try:
+        f = float(x)
+    except (TypeError, ValueError):
+        raise ValueError("%s must be an integer, got %r" % (name, x)) from None
+    if not np.isfinite(f) or f != int(f):
+        raise ValueError("%s must be an exact integer (never truncated), got %r"
+                         % (name, x))
+    return int(f)
+
+
 # --------------------------------------------------------------------------- #
 # 1) intensity profile along the probe                                        #
 # --------------------------------------------------------------------------- #
