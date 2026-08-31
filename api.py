@@ -77,6 +77,7 @@ import algo_codegen  # noqa: E402  (standalone Python/C emission for the general
 import algo_difftest as _algo_difftest  # noqa: E402  (honest gate: Python==oracle, C==Python bit-for-bit)
 import synth  # noqa: E402  (learn an image's features -> synthesise a similar image; classical texture synthesis)
 import funct1d  # noqa: E402  (HALCON funct_1d family: 1-D function/profile analysis on the index grid)
+import mathops  # noqa: E402  (math for visual metrology: linalg / stats / interp / poly)
 from videops import (  # noqa: E402,F401
     temporal_mean, temporal_median, temporal_std, temporal_max, temporal_min,
     frame_difference, background_subtraction, temporal_gradient, motion_energy,

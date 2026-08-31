@@ -84,6 +84,22 @@ def _build():
 
 OPS1D = _build()
 
+#: 宣言 out 型の値を実返却から取り出すアダプタ(ops3d.RESULT_ADAPTERS と同思想)
+RESULT_ADAPTERS = {
+    "resample": lambda r: r[0],       # (signal, new_rate)
+    "spectrogram": lambda r: r[2],    # (freqs, times, S) — S が本体
+    "spectrum": lambda r: np.stack(r) if isinstance(r, tuple) else r,  # pairs
+}
+
+import numpy as np  # noqa: E402  (RESULT_ADAPTERS 用)
+
+
+def call(name, *args, **kwargs):
+    """op を呼び、目録の out 型どおりの値を返す(補助情報つきタプルは剥がす)。"""
+    result = OPS1D[name]["func"](*args, **kwargs)
+    adapter = RESULT_ADAPTERS.get(name)
+    return adapter(result) if adapter is not None else result
+
 
 def list_ops(category=None):
     """op 名の一覧(category 指定で絞る)。"""
