@@ -45,32 +45,37 @@ def main():
     print(f"平滑化: 平均誤差 生={err_raw:.4f} → gauss={err_sm:.4f} / mean={err_mn:.4f}")
     assert err_sm < 0.5 * err_raw and err_mn < 0.7 * err_raw
 
+    # 減衰末尾(t>0.9s は振幅 ~0.1 未満)はノイズが極値を偽造するので、
+    # SNR が十分な最初の 0.9 秒だけを周期・包絡線解析に使う(honest な窓選択)。
+    win = int(0.9 / dt)
+    sm_w, t_w = sm[:win], t[:win]
+
     # ---- 2) 極値の間隔 → 周期(真値 1/f0 = 0.2 s) ----------------------- #
-    ext = F.local_min_max_funct_1d(sm)
+    ext = F.local_min_max_funct_1d(sm_w)
     peaks = ext["max"]
     period = float(np.mean(np.diff(peaks))) * dt
     print(f"周期推定: 極大 {len(peaks)} 個, 間隔平均 {period:.4f} s(真値 {1 / f0:.4f} s)")
     assert abs(period - 1 / f0) < 0.05 / f0            # 5% 以内
 
     # ---- 3) ゼロ交差の間隔 → 半周期(真値 1/(2f0) = 0.1 s) -------------- #
-    zc = F.zero_crossings_funct_1d(sm)
+    zc = F.zero_crossings_funct_1d(sm_w)
     half = float(np.mean(np.diff(zc))) * dt
     print(f"半周期推定: ゼロ交差 {len(zc)} 個, 間隔平均 {half:.4f} s(真値 {1 / (2 * f0):.4f} s)")
     assert abs(half - 1 / (2 * f0)) < 0.05 / (2 * f0)
 
     # ---- 4) 微分と積分は往復で恒等(∫f' = f - f(0)) --------------------- #
-    dsm = F.derivate_funct_1d(sm)
+    dsm = F.derivate_funct_1d(sm_w)
     back = F.integrate_funct_1d(dsm)
-    round_err = F.distance_funct_1d(back, sm - sm[0], mode="max")
+    round_err = F.distance_funct_1d(back, sm_w - sm_w[0], mode="max")
     print(f"微分→積分の往復: 最大誤差 {round_err:.2e}(信号振幅 ~1)")
     assert round_err < 5e-3
     # 極大点では微分 ≈ 0(1次条件)
     assert float(np.max(np.abs(dsm[peaks]))) < 0.02 * float(np.max(np.abs(dsm)))
 
     # ---- 5) ピーク包絡線 → 減衰時定数 τ(真値 0.4 s) -------------------- #
-    env = F.abs_funct_1d(sm)
+    env = F.abs_funct_1d(sm_w)
     peak_amp = np.array([F.get_pair_funct_1d(env, int(i))[1] for i in peaks])
-    slope = np.polyfit(t[peaks], np.log(peak_amp), 1)[0]   # log 包絡は直線, 傾き -1/τ
+    slope = np.polyfit(t_w[peaks], np.log(peak_amp), 1)[0]  # log 包絡は直線, 傾き -1/τ
     tau_est = -1.0 / slope
     print(f"減衰時定数: τ推定 {tau_est:.3f} s(真値 {tau} s)")
     assert abs(tau_est - tau) < 0.2 * tau              # 20% 以内
