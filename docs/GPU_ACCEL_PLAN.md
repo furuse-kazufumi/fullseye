@@ -60,6 +60,35 @@
   grindpeak = champion 残 2 op)/ 終端 reduction(count_obj, intensity 等 =
   D2H を画像→スカラー化、bridge の feature 出力対応が前提)/ RTX 5090 で速度実測。
 
+## 2026-08-31 敵対レビュー第 2 波(P1〜P7)と修正
+
+同日の敵対的検証(3 視点並列)が Batch 0〜3 に残る欠陥を発見 → 全て修正済み:
+
+- **P1(最重大)**: `_norm_b`/`_signed01_b` が clamp_min で**必ず除算**し、平坦画像の
+  f32 丸め残差(~3e-8)をフルスケール 1.0 に増幅 → sobel/canny/dog/std 等 13 op が
+  定数入力で全面破綻(canny は全面前景化して後段 region 区間ごと破壊)。
+  → core と同じ**素通し分岐** + 閾値を f32 雑音床より上の 1e-6 へ。grad_dir は
+  勾配 <1e-6 を core の atan2(0,0)=0.5 に合わせる。std は分散の桁落ち床
+  (実測 2.4e-7)未満を 0 に
+- **P2**: b=0.5 の threshold 系は「t > mean(t)」の同値比較になり、定数/線形入力で
+  f32 の ±ulp が符号をランダムに割る → |t−m|<1e-6 を同値(False 側)とする tie 処理。
+  量子化入力の有理数同値画素は **core 自身の答えも f64 雑音で決まる不定画素**なので、
+  二値出力 op の parity は max-diff でなく**不一致率**で測る計量に変更
+- **P3**: otsu の f32 bin ずれ(0.1〜0.3% の画像で 2 画素差)→ ヒストグラムと比較を
+  f64 内部計算に(histc の f64 規約は np.histogram と完全一致を実測)
+- **P4**: cv_sharpen が 1px 幅/高さでクラッシュ → 長さ 1 の次元は replicate
+  (reflect101 と同値)で pad
+- **P5**: projective_trans_region が core の _rebinarise({0,1} 契約回復)を欠いた
+  まま「metric 例外」として GPU に流れていた → 再二値化を追加し **faithful 化**
+  (例外消滅)。image 版 twin は core も連続のままなので連続 kernel を維持
+- **P7**: validate_champion の固定 3px マージン → カーネル半径連動へ
+- **parity 画像集合**: 乱数 4 + **定数 + uint8 量子化** の 6 枚に強化。
+  方向(角度)op は円環距離(0.0 と 1.0 は同一方向)で測る
+- 修正後: **90/90 faithful**(強化画像集合で)
+- **honest 注意**: この 90/90 は skimage/cv2 が入った install での主張。
+  backends_auto の `_fp` は skimage 不在時に disk→cross へ暗黙フォールバックする
+  ため、素の install では core 自体が別物になる(accel 側の検出は将来課題)
+
 ## 設計原則(honest parity gate)
 - accel op は **core registry と interior <5e-3 一致(faithful)** を満たすものだけ載せる。
   満たせない op は accel に載せず CPU に委ねる。**「速いが違う」を作らない**。
