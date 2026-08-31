@@ -76,6 +76,9 @@ EXAMPLES = [
     {"id": "ransac_prim", "task": "metrology", "data": "synthetic",
      "name": "30%外れ値下での頑健プリミティブ適合",
      "summary": "平面/球/円柱を RANSAC で当て、外れ値30%が混じってもパラメータを正しく復元する。"},
+    {"id": "roi_domain_boundary", "task": "metrology", "data": "synthetic",
+     "name": "domain(処理領域)と boundary(境界殻)でメモリを絞って計測",
+     "summary": "vol_reduce_domain で治具を消し vol_crop_domain でメモリ 1/34(実測)、vol_boundary の殻 19% を vol_boundary_points で物理mm点群化して fit_sphere3 が中心誤差 0.000mm、vol_uncrop は元フレームへ bit 一致で貼り戻し。"},
     # -- depth ------------------------------------------------------------------- #
     {"id": "plane_sweep_depth", "task": "depth", "data": "synthetic",
      "name": "2視点プレーンスイープ・ステレオ深度",
