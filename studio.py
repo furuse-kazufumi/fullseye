@@ -1880,9 +1880,15 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
     (museum-style): WASD moves (fly along the look direction), Q/E/Space move
     down/up, Shift quadruples the step, left-drag looks around (mouse-look —
     pointer lock is fragile in Qt, drag-look is not), middle-/Shift-drag
-    strafes in the view plane, the wheel adjusts the walk speed and ``R``
-    returns to the walkthrough entrance; orbit state is untouched while
-    walking, so ``F`` again resumes the orbit view exactly where it was.
+    strafes in the view plane, the wheel adjusts the walk speed, ``+``/``-``
+    (or ``]``/``[``) widen/narrow the field of view (40°–100°, shown in the
+    HUD) and ``R`` returns to the walkthrough entrance and the default FOV;
+    orbit state is untouched while walking, so ``F`` again resumes the orbit
+    view exactly where it was. Movement is driven by a ~30 ms QTimer over the
+    SET of held keys (auto-repeat events are ignored), so walking is smooth
+    and diagonal (W+D) instead of at the mercy of the OS key auto-repeat; the
+    mesh wireframe overlay also draws in first-person (perspective-projected,
+    with segments touching the near plane clipped whole).
     Meshes draw as lambert-shaded vertex splats (vertex
     normals x view-direction light) plus an optional QPainter wireframe; very
     large clouds decimate uniformly to ``DRAG_BUDGET`` points during a drag or
