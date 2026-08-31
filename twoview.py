@@ -20,6 +20,21 @@ def _to_homog(pts):
     return np.hstack([p, np.ones((len(p), 1))])
 
 
+def _require_pts2d(pts, name):
+    """2D 対応点 (N,2) の入口検証(fail-closed)。
+
+    形状の嘘は深部で無関係な例外に化ける(連鎖ファザー wave-5 実測: (N,1) の
+    列ベクトルが _normalize_points の重心 c[1] で生 IndexError)。契約は入口で
+    ValueError として明示する。"""
+    p = np.asarray(pts, float)
+    if p.ndim != 2 or p.shape[1] != 2:
+        raise ValueError("%s must be (N, 2) image points, got shape %r"
+                         % (name, np.shape(pts)))
+    if not np.isfinite(p).all():
+        raise ValueError("%s has non-finite value(s) (NaN/Inf)" % (name,))
+    return p
+
+
 def _normalize_points(pts):
     """Hartley 正規化: 重心を原点・平均距離 √2 に。→ (正規化点 (N,2), 変換 T (3,3))。"""
     p = np.asarray(pts, float)
