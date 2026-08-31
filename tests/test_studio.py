@@ -3445,3 +3445,44 @@ def test_feature_inspection_sorted_table_keeps_region_mapping():
 def _qt_editrole():
     from PySide6 import QtCore
     return QtCore.Qt.EditRole
+
+
+# --------------------------------------------------------------------------- #
+# volume_to_shell_points — CT/volume file -> walkable shell cloud (headless)   #
+# --------------------------------------------------------------------------- #
+def test_volume_to_shell_points_ball_geometry():
+    """A bright ball becomes a shell of points on (near) the sphere surface,
+    in physical units, with intensity colors."""
+    z, y, x = np.mgrid[0:48, 0:48, 0:48].astype(np.float64)
+    ball = (((z - 24) ** 2 + (y - 24) ** 2 + (x - 24) ** 2) <= 14.0 ** 2)
+    vol = np.where(ball, 1.0, 0.0)
+    P, C, info = studio.volume_to_shell_points(vol, spacing=(2.0, 1.0, 1.0))
+    assert P.shape[1] == 3 and C.shape == (len(P), 3)
+    assert info["downsampled_by"] == 1 and info["n_points"] == len(P)
+    # shell radii in PHYSICAL units cluster near 14 voxels (x/y) but the
+    # z-radius doubles under spacing sz=2 — check the physical extents
+    center = P.mean(axis=0)
+    assert np.allclose(center, [24 * 2.0, 24.0, 24.0], atol=0.5)
+    assert abs(float(P[:, 0].max() - P[:, 0].min()) - 2.0 * 28.0) < 4.5
+    assert abs(float(P[:, 1].max() - P[:, 1].min()) - 28.0) < 2.5
+    assert np.all((C >= 0.0) & (C <= 1.0))
+
+
+def test_volume_to_shell_points_decimates_and_reports():
+    """An over-budget shell triggers factor-2 pooling, reported in info."""
+    z, y, x = np.mgrid[0:64, 0:64, 0:64].astype(np.float64)
+    ball = (((z - 32) ** 2 + (y - 32) ** 2 + (x - 32) ** 2) <= 24.0 ** 2)
+    vol = np.where(ball, 1.0, 0.0)
+    P, _C, info = studio.volume_to_shell_points(vol, max_points=500)
+    assert info["downsampled_by"] >= 2
+    assert len(P) <= 4000                          # far below the raw ~7k shell
+
+
+def test_volume_to_shell_points_fail_closed():
+    with pytest.raises(ValueError, match="3-D"):
+        studio.volume_to_shell_points(np.zeros((4, 4)))
+    with pytest.raises(ValueError, match="constant"):
+        studio.volume_to_shell_points(np.full((6, 6, 6), 0.5))
+    bad = np.zeros((4, 4, 4)); bad[0, 0, 0] = np.nan
+    with pytest.raises(ValueError, match="non-finite"):
+        studio.volume_to_shell_points(bad)

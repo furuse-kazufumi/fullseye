@@ -6203,7 +6203,7 @@ def build_window(model=None):
             return "points", P, None, C
         if ext == ".npy":                          # a saved 3-D array is a volume
             arr = np.load(str(path), allow_pickle=False)
-            if arr.ndim == 3 and arr.shape[1] != 3:
+            if arr.ndim == 3:                      # point files are (N, 3) = 2-D
                 P, C, _info = volume_to_shell_points(arr)
                 return "points", P, None, C
         if ext in (".obj", ".off", ".stl", ".ply"):
