@@ -111,9 +111,12 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
         "measure3d": measure3d}
 
 # 入出力の「種別」語彙(op 連結の型検査に使う):
-#   voxel / points / mesh / depth / sdf / normals / gaussians / image2d /
+#   voxel / points(N,3) / mesh / depth / sdf / normals(N,3) / gaussians / image2d /
 #   pose(R,t) / transform-params(angle,scale,shift) / position / primitive(plane/sphere/...) /
-#   descriptor / keypoints / flow / measurement(scalar) / render(image2d)
+#   descriptor / keypoints / flow / measurement(scalar) / render(image2d) /
+#   pointmap(H,W,3 organized 点群) / normalmap(H,W,3 organized 法線) / images(list)
+#   ※ organized 系は (N,3) と別型(連鎖ファザー 2026-08-31 で申告と実返却の乖離
+#     20 種を検出し、型語彙を実態に合わせて分離した)
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別, gpu)]
 _CATALOG = {
@@ -123,7 +126,7 @@ _CATALOG = {
         ("mesh_to_voxel", "match3d", ["mesh"], "voxel", True),
         ("mesh_to_points", "match3d", ["mesh"], "points", False),
         ("depth_to_points", "match3d", ["depth"], "points", False),
-        ("voxel_to_mips", "match3d", ["voxel"], "image2d", False),
+        ("voxel_to_mips", "match3d", ["voxel"], "images", False),
         ("voxel_to_mesh", "match3d", ["voxel"], "mesh", False),
         ("tsdf_from_depth", "match3d", ["depth"], "sdf", False),
         ("signed_distance_field", "match3d", ["voxel"], "sdf", True),
@@ -289,25 +292,25 @@ _CATALOG = {
     ],
     "curvilinear": [  # 曲座標系への展開
         ("polar_unwrap", "match3d", ["image2d"], "image2d", True),
-        ("cylinder_unwrap", "match3d", ["voxel"], "image2d", True),
+        ("cylinder_unwrap", "match3d", ["voxel"], "voxel", True),
         ("fit_zernike", "match3d", ["image2d"], "descriptor", True),
     ],
     "optics": [  # 鏡面/透明体
         ("reflect", "match3d", ["vector", "normals"], "vector", False),
         ("refract", "match3d", ["vector", "normals"], "vector", False),
         ("fresnel_reflectance", "match3d", ["measurement"], "measurement", False),
-        ("normal_from_reflection", "match3d", ["vector", "vector"], "normals", False),
+        ("normal_from_reflection", "match3d", ["vector", "vector"], "vector", False),
         ("snell_angle", "match3d", ["measurement"], "measurement", False),
     ],
     "render": [  # 射影/レンダリング(3D → 2D 合成、ループを閉じる)
         ("project_points", "match3d", ["points"], "image2d", False),
         ("render_point_depth", "match3d", ["points"], "depth", False),
         ("render_volume_projection", "match3d", ["voxel"], "image2d", True),
-        ("render_shaded", "match3d", ["normals"], "image2d", False),
+        ("render_shaded", "match3d", ["normalmap"], "image2d", False),
         ("ambient_occlusion", "render_ao", ["mesh"], "image2d", False),
         ("cast_shadow", "render_shadow", ["mesh", "vector"], "image2d", False),
-        ("phong_shade", "render_shade", ["normals"], "image2d", False),
-        ("matcap_shade", "render_shade", ["normals", "image2d"], "image2d", False),
+        ("phong_shade", "render_shade", ["normalmap"], "image2d", False),
+        ("matcap_shade", "render_shade", ["normalmap", "image2d"], "image2d", False),
         ("supersample_mesh", "render_ssaa", ["mesh"], "image2d", False),
         ("antialias", "render_ssaa", ["image2d"], "image2d", False),
         ("edge_alias_energy", "render_ssaa", ["image2d"], "measurement", False),
@@ -316,14 +319,14 @@ _CATALOG = {
         ("render_beauty", "render_beauty", ["mesh"], "image2d", False),
     ],
     "photometric": [  # フォトメトリックステレオ・法線積分(既知光源 → 法線 → 高さ)
-        ("photometric_stereo", "photometric", ["images"], "normals", False),
-        ("surface_normals", "photometric", ["image2d"], "normals", False),
-        ("integrate_normals", "photometric", ["normals"], "image2d", False),
-        ("render_lambertian", "photometric", ["normals"], "image2d", False),
+        ("photometric_stereo", "photometric", ["images"], "normalmap", False),
+        ("surface_normals", "photometric", ["image2d"], "normalmap", False),
+        ("integrate_normals", "photometric", ["normalmap"], "image2d", False),
+        ("render_lambertian", "photometric", ["normalmap"], "image2d", False),
     ],
     "range_image": [  # organized 深度画像(depth camera → 特徴の橋渡し)
-        ("depth_to_organized_points", "range_image", ["depth"], "points", False),
-        ("normals_from_depth", "range_image", ["depth"], "normals", False),
+        ("depth_to_organized_points", "range_image", ["depth"], "pointmap", False),
+        ("normals_from_depth", "range_image", ["depth"], "normalmap", False),
         ("occlusion_edges", "range_image", ["depth"], "image2d", False),
         ("bearing_angle_image", "range_image", ["depth"], "image2d", False),
     ],
