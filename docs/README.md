@@ -49,6 +49,7 @@
 |---|---|
 | [ACCURACY_BENCH.md](ACCURACY_BENCH.md) | 進化 champion vs null（holdout）の常設精度テーブル |
 | [CHAIN_FUZZ.md](CHAIN_FUZZ.md) | 連鎖ファザー（op を鎖にして揺さぶる第三の品質保証層。拡散→収束→最小再現） |
+| [EVOLUTION_ENVIRONMENT.md](EVOLUTION_ENVIRONMENT.md) | 進化型アルゴリズム開発環境（拡散→収縮→昇格。counterfactual utility ゲートと 2 つの op 宇宙の橋） |
 | [PROVENANCE.md](PROVENANCE.md) | 公開アルゴリズムからの自作である旨の来歴 |
 | [REFERENCES.md](REFERENCES.md) | 各オペレータの文献的裏付け |
 | [REPRODUCE.md](REPRODUCE.md) | seed 駆動・決定論的な数値の再現手順 |
