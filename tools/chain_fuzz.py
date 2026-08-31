@@ -31,6 +31,7 @@ import os
 import sys
 import time
 import traceback
+import zlib
 
 import numpy as np
 
