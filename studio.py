@@ -824,9 +824,14 @@ def render_points_frame_fp(points, colors=None, eye=(0.0, 0.0, 0.0), yaw=0.0,
     C = np.clip(np.asarray(colors, np.float64).reshape(-1, 3), 0.0, 1.0)
     if C.shape[0] != P.shape[0]:
         C = np.broadcast_to(C[:1], (P.shape[0], 3)).copy()
+    # near plane scales with the scene (radius is floored at 1e-12 above, so
+    # this is always > 0). It must NOT have an absolute floor: a cloud of
+    # extent < ~1e-9 world units would then be entirely near-clipped (the eye
+    # stands 1.5 * radius out, so max depth is ~2.5 * radius) and the FP view
+    # would go permanently blank while the scale-free orbit view shows it fine.
     xy, depth, visible = viewer3d_project_persp(
         P, viewer3d_camera_fp(yaw, pitch), eye, fov_deg, size,
-        near=max(1e-9, 1e-3 * radius))
+        near=1e-3 * radius)
     if not visible.any():
         return img
     xy, depth, C = xy[visible], depth[visible], C[visible]
