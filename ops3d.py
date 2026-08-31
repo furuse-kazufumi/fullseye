@@ -595,6 +595,41 @@ def _build():
 
 OPS3D = _build()
 
+#: 「宣言した出力型の値」を実返却から取り出すアダプタ(型忠実呼び出しの要)。
+#: 多くの op は本体値+補助情報のタプルを返す(例: vol_label → (labels, n))。
+#: 目録の out 型で連鎖する消費者(Studio パイプライン/連鎖ファザー)は
+#: :func:`call` を使えば常に宣言型の値を受け取れる。素の関数呼び出しの
+#: 返り値仕様は互換のため不変(補助情報が要る呼び手はそのまま直接呼ぶ)。
+#: 連鎖ファザー(tools/chain_fuzz.py、2026-08-31)が申告と実返却の乖離を
+#: 20 種検出したのを受けて整備した。
+RESULT_ADAPTERS = {
+    "vol_label": lambda r: r[0],                    # (labels, n)
+    "vol_crop_domain": lambda r: r[0],              # (part, offset)
+    "distance_ridge": lambda r: r[0],               # (ridge, dist)
+    "medial_axis_points": lambda r: r[0],           # (points, radii)
+    "link_edges": lambda r: r[0],                   # (linked, n)
+    "statistical_outlier_removal": lambda r: r[0],  # (kept, mask)
+    "radius_outlier_removal": lambda r: r[0] if isinstance(r, tuple) else r,
+    "harris3d_keypoints": lambda r: r[0],           # (keypoints, scores)
+    "random_rotation": lambda r: r[0],              # (points, R)
+    "random_scale": lambda r: r[0] if isinstance(r, tuple) else r,
+    "register_nonrigid": lambda r: r[0],            # (warped, info, info)
+    "fuse_to_voxel": lambda r: r[0],                # (voxel, bounds)
+    "vol_resize": lambda r: r[0] if isinstance(r, tuple) else r,  # spacing 付き時
+    # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
+    "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
+}
+
+
+def call(name, *args, **kwargs):
+    """op を呼び、**目録の out 型どおりの値**を返す(補助情報つきタプルは剥がす)。
+
+    連鎖・パイプライン用の型忠実入口。素の :func:`get` は互換のため
+    生の返り値のまま。"""
+    result = OPS3D[name]["func"](*args, **kwargs)
+    adapter = RESULT_ADAPTERS.get(name)
+    return adapter(result) if adapter is not None else result
+
 
 def list_ops(category=None):
     """op 名の一覧(category 指定で絞る)。"""
