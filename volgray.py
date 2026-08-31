@@ -225,13 +225,21 @@ def vol_equalize(vol, nbins=256, mask=None):
         return v.copy()
     if sample is None:
         sample = v.ravel()
-    # histogram over the *full* volume range so the LUT covers every voxel,
-    # even when the mask spans a narrower intensity band
-    hist, _ = np.histogram(sample, bins=nb, range=(vmin, vmax))
+    # Histogram over the *full* volume range so the LUT covers every voxel,
+    # even when the mask spans a narrower intensity band. Binned by the SAME
+    # index formula the LUT lookup uses (bincount, not np.histogram): the two
+    # binnings can never disagree at a bin edge, and a near-constant volume
+    # whose range is below nbins*ulp — where np.histogram's bin edges collapse
+    # and it raises its internal "Too many bins" error — equalises fine (its
+    # two values land in the first and last bin).
+    scale = nb / (vmax - vmin)
+    sidx = ((sample - vmin) * scale).astype(np.int64)
+    np.clip(sidx, 0, nb - 1, out=sidx)                # vmax lands in the last bin
+    hist = np.bincount(sidx, minlength=nb)
     cdf = np.cumsum(hist, dtype=np.float64)
     lut = cdf / cdf[-1]                               # monotone, ends at 1.0
-    idx = ((v - vmin) / (vmax - vmin) * nb).astype(np.int64)
-    np.clip(idx, 0, nb - 1, out=idx)                  # vmax lands in the last bin
+    idx = ((v - vmin) * scale).astype(np.int64)
+    np.clip(idx, 0, nb - 1, out=idx)
     return lut[idx]
 
 
