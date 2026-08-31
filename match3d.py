@@ -2114,8 +2114,10 @@ def polar_unwrap(image, center=None, r_in=0.0, r_out=None, ntheta=360, nr=64, de
 def cylinder_unwrap(vol, center=None, r_in=0.0, r_out=None, ntheta=180, nr=32, device="cpu"):
     """voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。
 
-    θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。"""
-    v = np.asarray(vol, np.float32); D, H, W = v.shape
+    θ 軸は endpoint 無しの周期グリッド(polar_unwrap と同じ 2026-08-30 修正)。
+
+    Raises ValueError: 入力に NaN/Inf/float32 桁あふれがある場合。"""
+    v = _f32_finite(vol, "cylinder_unwrap: vol"); D, H, W = v.shape
     cy, cx = ((H - 1) / 2, (W - 1) / 2) if center is None else center
     if r_out is None:
         r_out = min(H, W) / 2 - 1
