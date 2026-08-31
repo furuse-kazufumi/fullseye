@@ -1733,7 +1733,14 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
     at measured interactive rates for this repo's data sizes. Interaction:
     left-drag orbits (turntable), wheel zooms at the view centre, middle- or
     Shift-drag pans, ``R`` resets the home view, ``W`` toggles the mesh
-    wireframe overlay. Meshes draw as lambert-shaded vertex splats (vertex
+    wireframe overlay. ``F`` toggles a first-person walkthrough mode
+    (museum-style): WASD moves (fly along the look direction), Q/E/Space move
+    down/up, Shift quadruples the step, left-drag looks around (mouse-look —
+    pointer lock is fragile in Qt, drag-look is not), middle-/Shift-drag
+    strafes in the view plane, the wheel adjusts the walk speed and ``R``
+    returns to the walkthrough entrance; orbit state is untouched while
+    walking, so ``F`` again resumes the orbit view exactly where it was.
+    Meshes draw as lambert-shaded vertex splats (vertex
     normals x view-direction light) plus an optional QPainter wireframe; very
     large clouds decimate uniformly to ``DRAG_BUDGET`` points during a drag or
     a wheel-zoom burst (the HUD then shows the honest "preview N pts" count)
