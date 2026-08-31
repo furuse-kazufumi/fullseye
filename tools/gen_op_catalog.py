@@ -177,6 +177,37 @@ def _ops3d_section() -> list[str]:
     return out
 
 
+def _ops1d_section() -> list[str]:
+    out = ["## 1-D operators(ops1d)by category", "",
+           "プロファイル/信号の 1-D op。源流は 2-D の measure1d・3-D の probe・"
+           "音声/センサー系列(dsp)— 取り出した (x, y) 列を funct1d/dsp で加工して測る。", ""]
+    try:
+        import ops1d
+        cats = ops1d.categories()
+        catalog = getattr(ops1d, "_CATALOG", {})
+    except Exception as e:
+        return out + [f"- (ops1d を読めませんでした: {e})", ""]
+    total = 0
+    for cat in sorted(cats):
+        entries = catalog.get(cat, [])
+        if not entries:
+            continue
+        out.append(f"### {cat}({len(entries)})")
+        for entry in entries:
+            try:
+                name = entry[0]
+                info = ops1d.info(name)
+                io = f"{', '.join(info.get('in', []))} → {info.get('out', '')}"
+                doc = info.get("doc", "") or ""
+                out.append(f"- `{name}` (`{io}`) — {doc}")
+                total += 1
+            except Exception as ex:
+                out.append(f"- `{entry[0] if entry else '?'}` (introspection failed: {ex})")
+        out.append("")
+    out.insert(1, f"_計 {total} ops / {len([c for c in cats if catalog.get(c)])} categories。_\n")
+    return out
+
+
 def _ops2d_section() -> list[str]:
     out = ["## 2-D pipeline operators(ops registry)by category", "",
            "1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` の"
