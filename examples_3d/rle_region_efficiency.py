@@ -100,7 +100,37 @@ def main():
     assert np.array_equal(back, mask)
     print("[decode] 往復 bit 一致")
 
-    # 6) 三本目の脚 vol_tiled_map: 「一度に RAM に載る量」を有界化。
+    # 6) run のままの集合演算(voxel 数に一切触れない = HALCON region 演算の本体)。
+    #    球だけ・円柱だけの 2 領域を作り、和/積/差が dense の論理演算と厳密一致
+    z, y, x = np.mgrid[0:192, 0:192, 0:192].astype(np.float32)
+    c = 96.0
+    sph = (((z - c) ** 2 + (y - c) ** 2 + (x - c) ** 2) <= (192 * 0.22) ** 2)
+    cyl = (((y - c) ** 2 + (x - c) ** 2) <= (192 * 0.06) ** 2)
+    del z, y, x
+    rs, rc_ = vol_rle_encode(sph), vol_rle_encode(cyl)
+    t0 = time.perf_counter()
+    union = vol_rle_union(rs, rc_)
+    inter = vol_rle_intersect(rs, rc_)
+    diff = vol_rle_difference(rs, rc_)
+    t_set = time.perf_counter() - t0
+    assert np.array_equal(vol_rle_decode(union) > 0.5, sph | cyl)
+    assert np.array_equal(vol_rle_decode(inter) > 0.5, sph & cyl)
+    assert np.array_equal(vol_rle_decode(diff) > 0.5, sph & ~cyl)
+    assert vol_rle_volume(union) == int((sph | cyl).sum())
+    print(f"[set algebra] 和/積/差 3 演算 {t_set * 1e3:.1f} ms(run のみ、"
+          f"decode 検算で dense 論理演算と厳密一致)")
+
+    # 7) 成分分解: 球と(球に刺さらない)独立小片 → 成分ごとの VolRLE
+    frag = np.zeros(mask.shape, np.float64)
+    frag[5:15, 5:15, 5:15] = 1.0
+    two = vol_rle_decode(vol_rle_union(vol_rle_encode(mask), vol_rle_encode(frag)))
+    comps = vol_rle_components(two, connectivity=6)
+    print(f"[components] 2 物体 → {len(comps)} 成分(体積 "
+          + ", ".join(f"{vol_rle_volume(cp):,}" for cp in comps) + ")")
+    assert len(comps) == 2
+    assert sum(vol_rle_volume(cp) for cp in comps) == int(two.sum())
+
+    # 8) 三本目の脚 vol_tiled_map: 「一度に RAM に載る量」を有界化。
     #    局所 op(gaussian σ=2 → z footprint = round(4σ) = 8)は overlap=8 で
     #    全量計算と厳密一致(この契約が破れる overlap では一致しない=正直な限界)
     tiled = volops.vol_tiled_map(
