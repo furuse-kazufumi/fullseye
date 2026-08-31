@@ -3486,3 +3486,14 @@ def test_volume_to_shell_points_fail_closed():
     bad = np.zeros((4, 4, 4)); bad[0, 0, 0] = np.nan
     with pytest.raises(ValueError, match="non-finite"):
         studio.volume_to_shell_points(bad)
+
+
+def test_volume_to_shell_points_reports_original_shape_for_list_input():
+    """Regression: info['shape'] fell back to `v.shape` for inputs without a
+    .shape attribute — but `v` had been reassigned by the decimation loop, so
+    a list input reported the DOWNSAMPLED shape instead of the original."""
+    vol = np.zeros((32, 32, 32))
+    vol[8:24, 8:24, 8:24] = 1.0
+    _P, _C, info = studio.volume_to_shell_points(vol.tolist(), max_points=10)
+    assert info["downsampled_by"] >= 2                 # decimation genuinely ran
+    assert info["shape"] == (32, 32, 32)               # original, not downsampled
