@@ -395,6 +395,38 @@ def test_uncrop_roundtrips_and_refuses_clipping():
         volops.vol_uncrop(part, (0, 0), vol.shape)
 
 
+def test_uncrop_refuses_fractional_offset_and_shape():
+    """Regression: a fractional offset used to be silently int()-truncated,
+    landing the part one voxel off with no warning (coordinate corruption).
+    Integral-valued floats (what ``vol_crop_domain`` never emits but a user
+    might) stay accepted, matching the ``margin=2.0`` convention."""
+    part = np.ones((2, 2, 2), np.float64)
+    with pytest.raises(ValueError, match="whole voxel"):
+        volops.vol_uncrop(part, (1.5, 0, 0), (5, 5, 5))
+    with pytest.raises(ValueError, match="whole voxel"):
+        volops.vol_uncrop(part, (0, 0, 0), (4.7, 5, 5))
+    with pytest.raises(ValueError, match="whole voxel"):
+        volops.vol_uncrop(part, (np.nan, 0, 0), (5, 5, 5))
+    out = volops.vol_uncrop(part, (1.0, 2.0, 3.0), (5.0, 5.0, 5.0))
+    assert out.shape == (5, 5, 5) and out[1, 2, 3] == 1.0
+
+
+def test_uncrop_refuses_non_finite_fill():
+    """Regression: fill=NaN/Inf used to be accepted, producing a volume that
+    every other volop rejects (the module-wide non-finite ban); fill=complex
+    raised TypeError instead of the contracted ValueError."""
+    part = np.ones((2, 2, 2), np.float64)
+    with pytest.raises(ValueError, match="fill"):
+        volops.vol_uncrop(part, (0, 0, 0), (4, 4, 4), fill=np.nan)
+    with pytest.raises(ValueError, match="fill"):
+        volops.vol_uncrop(part, (0, 0, 0), (4, 4, 4), fill=np.inf)
+    with pytest.raises(ValueError, match="fill"):
+        volops.vol_uncrop(part, (0, 0, 0), (4, 4, 4), fill=1 + 2j)
+    # a finite fill keeps working, including negative values
+    out = volops.vol_uncrop(part, (0, 0, 0), (4, 4, 4), fill=-3.5)
+    assert out[3, 3, 3] == -3.5
+
+
 # --------------------------------------------------------------------------- #
 # boundary (shell / points)                                                    #
 # --------------------------------------------------------------------------- #
