@@ -192,6 +192,12 @@ def _require_samples(x, name: str = "x") -> np.ndarray:
 
 def _query_points(xq, name: str = "xq"):
     """A query: a finite scalar or a 1-D array. Returns ``(array, is_scalar)``."""
+    if np.ma.is_masked(xq):
+        raise ValueError("%s is a masked array with masked (invalid) entries — "
+                         "fill or drop them explicitly" % (name,))
+    if np.iscomplexobj(xq):
+        raise ValueError("%s is complex — coercion to float64 would silently "
+                         "discard the imaginary part" % (name,))
     a = np.asarray(xq, dtype=np.float64)
     if a.ndim == 0:
         if not np.isfinite(a):
