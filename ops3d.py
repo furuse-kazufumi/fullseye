@@ -142,6 +142,9 @@ _CATALOG = {
         ("vol_bounding_box", "volops", ["voxel"], "primitive", False),
         ("vol_crop_domain", "volops", ["voxel"], "voxel", False),
         ("vol_uncrop", "volops", ["voxel"], "voxel", False),
+        # z スラブ streaming(局所 op 限定・overlap >= 空間 footprint で厳密一致。
+        # crop=どこを計算するか / RLE=何を保持するか / tiled=一度に RAM に載る量)
+        ("vol_tiled_map", "volops", ["voxel"], "voxel", False),
     ],
     "boundary": [  # 境界抽出(2-D region_boundary の voxel 版 + voxel→points 橋渡し。
         #            中実領域は殻だけ残して 1-2% に落ちる = 省メモリ表現)
