@@ -240,6 +240,23 @@ TYPE_CHECKS = {
 #: docstring が非有限を明示契約している op(例: esdf は「全自由なら +inf」)
 NONFINITE_BY_CONTRACT = {"esdf"}
 
+#: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
+#: 体積が指数増殖し、後段の全 op が実質ハングする(wave-4 実測: ~34GB の voxel に
+#: r=1 の morph_blackhat3d が 20 分+スラッシング)。上限超過は黙って捨てず
+#: GROWTH として記録する(silent cap 禁止)。128MB ≈ float32 で 320³ 相当。
+MAX_POOL_BYTES = 128 * 2 ** 20
+
+
+def _nbytes(val):
+    """産物の概算バイト数(ndarray は厳密、入れ物は再帰和、その他 0)。"""
+    if isinstance(val, np.ndarray):
+        return val.nbytes
+    if isinstance(val, (list, tuple)):
+        return sum(_nbytes(v) for v in val)
+    if isinstance(val, dict):
+        return sum(_nbytes(v) for v in val.values())
+    return 0
+
 
 def _classify(exc):
     if isinstance(exc, ValueError):
