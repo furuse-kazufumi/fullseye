@@ -590,12 +590,16 @@ def _projective_warp(t, a, b, dev):
     gx = (2.0 * sx + 1.0) / W - 1.0                      # align_corners=False の画素中心写像
     gy = (2.0 * sy + 1.0) / H - 1.0
     grid = torch.stack([gx, gy], dim=-1).unsqueeze(0).expand(Bn, H, W, 2)
-    out = F.grid_sample(t, grid, mode="bilinear", padding_mode="reflection",
-                        align_corners=False)
-    # core は _rebinarise(>0.5)で region 契約 {0,1} を回復する。旧版は補間の
-    # 中間値をそのまま返し契約違反 + region→feature で値が壊れた(P5)。
-    # 再二値化後の集合は core と IoU 1.000(実測)
-    return (out > 0.5).float()
+    return F.grid_sample(t, grid, mode="bilinear", padding_mode="reflection",
+                         align_corners=False).clamp(0, 1)
+
+
+def _projective_region(t, a, b, dev):
+    """region 版: core は _rebinarise(>0.5)で {0,1} 契約を回復するので合わせる。
+    旧版は補間の中間値をそのまま返し契約違反 + region→feature で値が壊れた(P5)。
+    再二値化後の集合は core と IoU 1.000(実測)。image 版の twin
+    (projective_trans_image)は core も連続のままなので _projective_warp を使う。"""
+    return (_projective_warp(t, a, b, dev) > 0.5).float()
 
 
 # accel op name -> (fn, the CORE registry op NAME it reproduces, its HALCON name)
