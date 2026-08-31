@@ -677,6 +677,69 @@ def viewer3d_project(points, cam, center, radius, zoom, pan, size):
     return xy, V[:, 2]
 
 
+def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
+    """A (D, H, W) volume -> walkable boundary-shell point cloud. Headless.
+
+    The bridge that lets the 3-D viewer (and the first-person walkthrough) open
+    a CT/MRI volume directly: Otsu-threshold the volume, keep only the
+    *boundary shell* of the foreground (volops.vol_boundary — the memory-frugal
+    surface representation), and return the shell voxels as physical
+    ``(z, y, x)`` points plus per-point grayscale colors from the original
+    intensities. An over-large volume is mean-pooled down (factor-of-2 steps)
+    until the shell fits *max_points* — decimation is reported in the returned
+    info dict, never silent.
+
+    Returns ``(P, C, info)``: points (N, 3) float64 in physical units, colors
+    (N, 3) in [0, 1], and ``info = {"shape", "downsampled_by", "threshold",
+    "n_points"}``. Raises ``ValueError`` on a non-3-D or constant volume (no
+    surface exists to walk around)."""
+    import volops                                 # lazy: keep studio import light
+    v = np.ascontiguousarray(vol, dtype=np.float64)
+    if v.ndim != 3:
+        raise ValueError("volume must be 3-D (D, H, W), got %d-D" % (v.ndim,))
+    if not np.isfinite(v).all():
+        raise ValueError("volume has non-finite voxels (NaN/Inf) — refusing")
+    if float(v.max()) == float(v.min()):
+        raise ValueError("volume is constant — no surface to display")
+    sp = np.asarray([float(s) for s in spacing], dtype=np.float64)
+    factor = 1
+    while True:
+        # Otsu threshold via histogram (float64 accumulation, 256 bins)
+        hist, edges = np.histogram(v.ravel(), bins=256)
+        w = hist.astype(np.float64)
+        centers = (edges[:-1] + edges[1:]) / 2.0
+        w0 = np.cumsum(w)
+        w1 = w0[-1] - w0
+        m0 = np.cumsum(w * centers)
+        mu0 = np.divide(m0, w0, out=np.zeros_like(m0), where=w0 > 0)
+        mu1 = np.divide(m0[-1] - m0, w1, out=np.zeros_like(m0), where=w1 > 0)
+        between = w0 * w1 * (mu0 - mu1) ** 2
+        thr = float(centers[int(np.argmax(between))])
+        mask = (v > thr).astype(np.float64)
+        if not mask.any() or mask.all():          # degenerate split: fall back to mean
+            thr = float(v.mean())
+            mask = (v > thr).astype(np.float64)
+        shell = volops.vol_boundary(mask, connectivity=6)
+        n = int(shell.sum())
+        if n <= max_points or min(v.shape) <= 8:
+            break
+        v = volops.volume_downsample(v, 2, mode="mean")
+        sp = sp * 2.0
+        factor *= 2
+    idx = np.argwhere(shell > 0.5)
+    if not len(idx):
+        raise ValueError("no boundary voxels above the Otsu threshold %.4g" % thr)
+    P = idx.astype(np.float64) * sp
+    vals = v[idx[:, 0], idx[:, 1], idx[:, 2]]
+    lo, hi = float(vals.min()), float(vals.max())
+    g = (vals - lo) / (hi - lo) if hi > lo else np.full(len(vals), 0.7)
+    C = np.repeat((0.25 + 0.75 * g)[:, None], 3, axis=1)   # dark-to-light gray
+    info = {"shape": tuple(int(s) for s in vol.shape) if hasattr(vol, "shape")
+            else v.shape, "downsampled_by": factor, "threshold": thr,
+            "n_points": len(P)}
+    return P, C, info
+
+
 def viewer3d_camera_fp(yaw_deg, pitch_deg):
     """First-person camera -> world-to-view rotation (3, 3).
 
