@@ -3375,6 +3375,185 @@ def test_viewer3d_first_person_widget_toggle_move_look():
     v.deleteLater()
 
 
+def test_fp_headless_math_fov_move_and_edge_clip():
+    """Headless first-person math: FOV clamp, held-key-set movement vector,
+    wireframe near-plane edge clip."""
+    # FOV: one keypress adds FP_FOV_STEP, clamped into [FP_FOV_MIN, FP_FOV_MAX]
+    assert studio.fp_fov_adjust(70, 5) == 75.0
+    assert studio.fp_fov_adjust(98, 5) == studio.FP_FOV_MAX == 100.0
+    assert studio.fp_fov_adjust(42, -5) == studio.FP_FOV_MIN == 40.0
+    assert studio.FP_FOV_MIN <= studio.FP_FOV_DEFAULT <= studio.FP_FOV_MAX
+    # movement: sum of FP_MOVES over the held set, in the fp (fwd, right, up) basis
+    fwd, right, up = studio.viewer3d_fp_axes(30.0, 10.0)
+    assert np.allclose(studio.fp_move_vector({"W"}, 30.0, 10.0), fwd)
+    assert np.allclose(studio.fp_move_vector({"W", "S"}, 30.0, 10.0), 0.0)
+    assert np.allclose(studio.fp_move_vector({"W", "D"}, 30.0, 10.0), fwd + right)
+    assert np.allclose(studio.fp_move_vector({"Space", "Q"}, 30.0, 10.0), 0.0)
+    assert np.allclose(studio.fp_move_vector(set(), 0.0, 0.0), 0.0)
+    assert np.allclose(studio.fp_move_vector({"nope"}, 0.0, 0.0), 0.0)  # unknown: ignored
+    # wireframe clip: an edge survives only when BOTH endpoints are visible
+    edges = np.array([[0, 1], [1, 2], [2, 0]])
+    vis = np.array([True, True, False])
+    assert studio.fp_visible_edge_mask(edges, vis).tolist() == [True, False, False]
+    assert studio.fp_visible_edge_mask(np.zeros((0, 2), int), vis).shape == (0,)
+
+
+def test_viewer3d_fp_fov_keys_and_reset():
+    """Widget FOV wiring: +/- (and [ ] / unshifted =) adjust the walkthrough
+    FOV inside 40°-100°, the perspective render actually uses it, and R (the
+    entrance reset) restores the default."""
+    _app()
+    from PySide6 import QtCore, QtGui
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(240, 240)
+    v.set_points(studio.demo_cluster_cloud(n_per=40)[0])
+
+    def key(k, mod=QtCore.Qt.NoModifier):
+        v.keyPressEvent(QtGui.QKeyEvent(QtCore.QEvent.KeyPress, k, mod))
+
+    key(QtCore.Qt.Key_F)                                    # enter first-person
+    assert v._fp_fov == studio.FP_FOV_DEFAULT
+    key(QtCore.Qt.Key_Plus)
+    assert v._fp_fov == studio.FP_FOV_DEFAULT + studio.FP_FOV_STEP
+    key(QtCore.Qt.Key_BracketLeft)                          # [ narrows too
+    key(QtCore.Qt.Key_Minus)
+    assert v._fp_fov == studio.FP_FOV_DEFAULT - studio.FP_FOV_STEP
+    for _ in range(30):
+        key(QtCore.Qt.Key_Minus)
+    assert v._fp_fov == studio.FP_FOV_MIN                   # clamped at the bottom
+    narrow = v.frame_rgb()
+    for _ in range(30):
+        key(QtCore.Qt.Key_Equal)                            # unshifted + on US layouts
+    assert v._fp_fov == studio.FP_FOV_MAX                   # clamped at the top
+    wide = v.frame_rgb()
+    assert not np.array_equal(narrow, wide)                 # the render uses the FOV
+    key(QtCore.Qt.Key_R)                                    # entrance reset includes FOV
+    assert v._fp_fov == studio.FP_FOV_DEFAULT
+    key(QtCore.Qt.Key_F)                                    # orbit mode: keys untouched
+    v.deleteLater()
+
+
+def test_viewer3d_fp_smooth_walk_timer_key_set():
+    """Smooth walking: a press gives one immediate step and joins the held-key
+    set driving the ~30 ms timer; auto-repeat events are ignored; a release
+    empties the set and stops the timer; focus loss or leaving first-person
+    can never leave a key stuck."""
+    _app()
+    from PySide6 import QtCore, QtGui
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(240, 240)
+    v.set_points(studio.demo_cluster_cloud(n_per=40)[0])
+
+    def key(k, mod=QtCore.Qt.NoModifier, autorep=False, release=False):
+        t = QtCore.QEvent.KeyRelease if release else QtCore.QEvent.KeyPress
+        ev = QtGui.QKeyEvent(t, k, mod, "", autorep)
+        (v.keyReleaseEvent if release else v.keyPressEvent)(ev)
+
+    key(QtCore.Qt.Key_F)                                    # enter first-person
+    home = v._eye.copy()
+    step = v._radius / 50.0
+    fwd, right, _up = studio.viewer3d_fp_axes(v._fp_yaw, v._fp_pitch)
+    key(QtCore.Qt.Key_W)                                    # immediate first step
+    assert np.allclose(v._eye, home + fwd * step)
+    assert v._fp_keys == {"W"} and v._move_timer.isActive()
+    key(QtCore.Qt.Key_W, autorep=True)                      # OS auto-repeat: ignored
+    assert np.allclose(v._eye, home + fwd * step)
+    key(QtCore.Qt.Key_D)                                    # second held key
+    assert v._fp_keys == {"W", "D"}
+    eye0 = v._eye.copy()
+    v._move_tick()                                          # one tick walks the diagonal
+    assert np.allclose(v._eye, eye0 + (fwd + right) * step)
+    v._fp_mods = QtCore.Qt.ShiftModifier                    # Shift boost applies per tick
+    eye1 = v._eye.copy()
+    v._move_tick()
+    assert np.allclose(v._eye, eye1 + (fwd + right) * 4 * step)
+    v._fp_mods = QtCore.Qt.NoModifier
+    key(QtCore.Qt.Key_D, release=True)
+    assert v._fp_keys == {"W"} and v._move_timer.isActive()
+    key(QtCore.Qt.Key_W, release=True, autorep=True)        # auto-repeat release: ignored
+    assert v._fp_keys == {"W"}
+    key(QtCore.Qt.Key_W, release=True)
+    assert v._fp_keys == set() and not v._move_timer.isActive()
+    key(QtCore.Qt.Key_W)                                    # stuck-key guard: focus loss
+    v.focusOutEvent(QtGui.QFocusEvent(QtCore.QEvent.FocusOut))
+    assert v._fp_keys == set() and not v._move_timer.isActive()
+    key(QtCore.Qt.Key_S)
+    key(QtCore.Qt.Key_F)                                    # leaving FP releases all
+    assert v._fp is False
+    assert v._fp_keys == set() and not v._move_timer.isActive()
+    v.deleteLater()
+
+
+def test_viewer3d_fp_wireframe_perspective_and_near_clip():
+    """The mesh wireframe overlay now draws in first-person (perspective
+    projection), and a mesh entirely behind the eye draws no wire at all —
+    the per-segment near-plane clip, end to end through paintEvent."""
+    _app()
+    win, _ = studio.build_window(studio.PipelineModel(studio.demo_image(48)))
+    v = win._viewer3d_class()
+    v.resize(240, 240)
+    V = np.array([[0.0, 0, 0], [1.0, 0, 0], [0, 1.0, 0], [0, 0, 1.0]])
+    F = np.array([[0, 1, 2], [0, 1, 3], [0, 2, 3], [1, 2, 3]])
+    v.set_mesh(V, F)
+    v.toggle_first_person()
+    assert v._fp is True
+    base = v.grab().toImage()
+    v._wire = True
+    v._repaint()
+    wired = v.grab().toImage()
+    assert wired != base                        # wire overlay visible while walking
+    # walk far past the mesh, keep looking forward: every vertex is now behind
+    # the eye, so every segment is near-clipped and the wire adds nothing
+    fwd, _r, _u = studio.viewer3d_fp_axes(v._fp_yaw, v._fp_pitch)
+    v._eye = v._center + fwd * (3.0 * v._radius)
+    v._wire = False
+    v._repaint()
+    plain_behind = v.grab().toImage()
+    v._wire = True
+    v._repaint()
+    wired_behind = v.grab().toImage()
+    assert wired_behind == plain_behind
+    v.deleteLater()
+
+
+def test_splat_points_bit_identical_to_reference():
+    """The padded-canvas splat fast path must reproduce the naive per-offset
+    bounds-masked assignment EXACTLY — same pixels, same winner on duplicate
+    hits — for px = 1, 2, 3, including splats far off canvas and straddling
+    every border (this pins the 2026-08-31 render optimization to the old
+    behavior bit for bit)."""
+    rng = np.random.default_rng(11)
+
+    def reference(img, xi, yi, colors, px):     # the pre-optimization inline loop
+        h, w = img.shape[:2]
+        for dy in range(px):
+            for dx in range(px):
+                xs, ys = xi + dx, yi + dy
+                ok = (xs >= 0) & (xs < w) & (ys >= 0) & (ys < h)
+                img[ys[ok], xs[ok]] = colors[ok]
+        return img
+
+    for px in (1, 2, 3):
+        n, size = 4000, 80
+        xi = rng.integers(-25, size + 25, n)    # off-canvas + border-straddling
+        yi = rng.integers(-25, size + 25, n)
+        colors = rng.random((n, 3))
+        a = np.full((size, size, 3), 0.5)
+        b = a.copy()
+        reference(a, xi, yi, colors, px)
+        studio._splat_points(b, xi, yi, colors, px)
+        assert np.array_equal(a, b), "px=%d diverged from the reference" % px
+    # all-on-canvas fast path (keep.all() -> no filtering copy) stays identical
+    xi = rng.integers(2, 70, 1000); yi = rng.integers(2, 70, 1000)
+    colors = rng.random((1000, 3))
+    a = np.zeros((80, 80, 3)); b = a.copy()
+    reference(a, xi, yi, colors, 2)
+    studio._splat_points(b, xi, yi, colors, 2)
+    assert np.array_equal(a, b)
+
+
 def test_feature_inspection_reopen_releases_old_dialog():
     """Leak regression (2026-08-30 finding): Ctrl+F5 reopen must destroy the
     previous dialog (WA_DeleteOnClose + deleteLater), not stack hidden copies
