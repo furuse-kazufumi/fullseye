@@ -157,7 +157,11 @@ from volops import (  # noqa: E402,F401
     vol_label, vol_region_props, vol_gradient_magnitude, vol_local_maxima,
     vol_watershed,
     vol_reduce_domain, vol_bounding_box, vol_crop_domain, vol_uncrop,
-    vol_boundary, vol_boundary_points,
+    vol_boundary, vol_boundary_points, vol_tiled_map,
+)
+from volregion import (  # noqa: E402,F401
+    VolRLE, vol_rle_encode, vol_rle_decode, vol_rle_volume, vol_rle_bbox,
+    vol_rle_centroid,
 )
 from handpose import (  # noqa: E402,F401
     hand_landmarks, finger_flexions, hand_skeleton_edges, draw_hand_landmarks,
