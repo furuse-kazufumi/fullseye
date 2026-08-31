@@ -586,8 +586,10 @@ def _write(path, reps, timing=True):
     with open(path, "w", encoding="utf-8") as fh:
         for r in reps:
             rec = r if timing else stable_record(r)
+            # allow_nan=False = fail-closed。NaN/Inf が記述子に漏れたら黙って
+            # 不正な JSON("NaN" は strict parser が拒む)を書かず、ここで落ちる
             fh.write(json.dumps(rec, ensure_ascii=False, default=str,
-                                sort_keys=True) + "\n")
+                                sort_keys=True, allow_nan=False) + "\n")
 
 
 def main(argv=None):
