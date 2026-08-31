@@ -106,8 +106,10 @@ HIST_BINS = 32
 DROP_REASONS = ("identity_like", "const_output", "nondeterministic",
                 "too_slow", "no_numeric_output", "unmeasurable_stats",
                 "binned_duplicate")
+#: 連鎖の途中で step を読み飛ばした理由(= ファザーの領分。ここでは数えるだけ)。
+#: ``chain_too_short`` だけは step ではなく連鎖単位の結末(2 op に届かなかった)。
 SKIP_REASONS = ("exception", "nonfinite", "typemiss", "growth",
-                "unbindable_args", "adapter_none")
+                "unbindable_args", "adapter_none", "chain_too_short")
 
 
 # --------------------------------------------------------------------------- #
