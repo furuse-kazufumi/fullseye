@@ -428,6 +428,15 @@ def test_boundary_outer_and_volume_border_conventions():
     # so the inner boundary is the border shell: 6^3 - 4^3 = 152
     full = np.ones((6, 6, 6), np.float64)
     assert int(volops.vol_boundary(full, 6).sum()) == 216 - 64
+    # ... but the outer shell has nowhere to live: empty (documented convention)
+    assert int(volops.vol_boundary(full, 6, side="outer").sum()) == 0
+
+
+def test_uncrop_cap_rejects_absurd_shape_cleanly():
+    """An int64-overflowing target shape must hit the cap, not a MemoryError."""
+    part = np.zeros((2, 2, 2), np.float64)
+    with pytest.raises(ValueError, match="MAX_VOXELS"):
+        volops.vol_uncrop(part, (0, 0, 0), (1 << 21, 1 << 21, 1 << 21))
 
 
 def test_boundary_is_the_memory_frugal_representation():
