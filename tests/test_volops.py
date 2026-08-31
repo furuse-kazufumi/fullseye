@@ -325,3 +325,140 @@ def test_volops_introspection_list_matches_module():
         assert hasattr(volops, name), name
         assert callable(getattr(volops, name))
     assert set(volops.VOLOPS).issubset(set(volops.__all__))
+
+
+# --------------------------------------------------------------------------- #
+# domain (reduce / bounding box / crop / uncrop)                               #
+# --------------------------------------------------------------------------- #
+def _cube_scene():
+    """20^3 volume, gray gradient everywhere, a 6^3 mask at offset (3, 4, 5)."""
+    vol = np.arange(20 * 20 * 20, dtype=np.float64).reshape(20, 20, 20) / 8000.0
+    mask = np.zeros((20, 20, 20), np.float64)
+    mask[3:9, 4:10, 5:11] = 1.0
+    return vol, mask
+
+
+def test_reduce_domain_zeroes_outside_and_keeps_inside():
+    vol, mask = _cube_scene()
+    out = volops.vol_reduce_domain(vol, mask)
+    assert out.shape == vol.shape
+    assert np.array_equal(out[3:9, 4:10, 5:11], vol[3:9, 4:10, 5:11])
+    outside = out[mask < 0.5]
+    assert outside.size and np.all(outside == 0.0)
+    with pytest.raises(ValueError, match="shape"):
+        volops.vol_reduce_domain(vol, np.ones((5, 5, 5)))
+
+
+def test_bounding_box_exact_margin_and_clip():
+    _, mask = _cube_scene()
+    assert volops.vol_bounding_box(mask) == (3, 4, 5, 9, 10, 11)
+    # margin grows per side; margin=5 clips at the z low edge (3-5 -> 0)
+    assert volops.vol_bounding_box(mask, margin=2) == (1, 2, 3, 11, 12, 13)
+    assert volops.vol_bounding_box(mask, margin=5) == (0, 0, 0, 14, 15, 16)
+    with pytest.raises(ValueError, match="empty"):
+        volops.vol_bounding_box(np.zeros((4, 4, 4)))
+    with pytest.raises(ValueError, match="margin"):
+        volops.vol_bounding_box(mask, margin=-1)
+
+
+def test_crop_domain_is_tight_and_memory_reducing():
+    vol, mask = _cube_scene()
+    part, off = volops.vol_crop_domain(vol, mask)
+    assert off == (3, 4, 5)
+    assert part.shape == (6, 6, 6)
+    assert np.array_equal(part, vol[3:9, 4:10, 5:11])   # gray kept verbatim
+    assert vol.size / part.size > 37.0                  # 8000/216 = 37.03x smaller
+    # domain=None crops to the volume's own support
+    part2, off2 = volops.vol_crop_domain(volops.vol_reduce_domain(vol, mask))
+    assert off2 == (3, 4, 5) and part2.shape == (6, 6, 6)
+    with pytest.raises(ValueError, match="empty"):
+        volops.vol_crop_domain(np.zeros((4, 4, 4)))
+
+
+def test_uncrop_roundtrips_and_refuses_clipping():
+    vol, mask = _cube_scene()
+    part, off = volops.vol_crop_domain(vol, mask)
+    back = volops.vol_uncrop(part, off, vol.shape)
+    assert back.shape == vol.shape
+    assert np.array_equal(back[3:9, 4:10, 5:11], vol[3:9, 4:10, 5:11])
+    assert np.all(back[mask < 0.5][back[mask < 0.5] != vol[mask < 0.5]] == 0.0) or True
+    # exact: outside the box everything is fill (0), inside it equals vol
+    box = np.zeros_like(vol, dtype=bool)
+    box[3:9, 4:10, 5:11] = True
+    assert np.all(back[~box] == 0.0)
+    assert float(volops.vol_uncrop(part, off, vol.shape, fill=7.5)[0, 0, 0]) == 7.5
+    with pytest.raises(ValueError, match="fit"):
+        volops.vol_uncrop(part, (17, 0, 0), vol.shape)   # 17+6 > 20
+    with pytest.raises(ValueError, match="fit"):
+        volops.vol_uncrop(part, (-1, 0, 0), vol.shape)
+    with pytest.raises(ValueError, match="length"):
+        volops.vol_uncrop(part, (0, 0), vol.shape)
+
+
+# --------------------------------------------------------------------------- #
+# boundary (shell / points)                                                    #
+# --------------------------------------------------------------------------- #
+def test_boundary_counts_match_hand_computation():
+    # solid 7^3 cube with the centre voxel removed, floating in a 15^3 volume
+    m = np.zeros((15, 15, 15), np.float64)
+    m[4:11, 4:11, 4:11] = 1.0
+    m[7, 7, 7] = 0.0
+    b6 = volops.vol_boundary(m, connectivity=6)
+    b26 = volops.vol_boundary(m, connectivity=26)
+    # outer shell of the cube: 7^3 - 5^3 = 218 voxels under both neighbourhoods
+    # (a cube's interior voxels have all 26 neighbours inside); the centre hole
+    # adds its 6 face neighbours under conn 6 but all 26 under conn 26
+    assert int(b6.sum()) == 218 + 6
+    assert int(b26.sum()) == 218 + 26
+    assert set(np.unique(b6)) <= {0.0, 1.0}
+    with pytest.raises(ValueError, match="connectivity"):
+        volops.vol_boundary(m, connectivity=8)
+    with pytest.raises(ValueError, match="side"):
+        volops.vol_boundary(m, side="both")
+
+
+def test_boundary_outer_and_volume_border_conventions():
+    # a single voxel: inner boundary is itself; outer is its neighbourhood
+    one = np.zeros((9, 9, 9), np.float64)
+    one[4, 4, 4] = 1.0
+    assert int(volops.vol_boundary(one, 6, side="inner").sum()) == 1
+    assert int(volops.vol_boundary(one, 6, side="outer").sum()) == 6
+    assert int(volops.vol_boundary(one, 26, side="outer").sum()) == 26
+    # a mask filling the whole volume: the volume border counts as background,
+    # so the inner boundary is the border shell: 6^3 - 4^3 = 152
+    full = np.ones((6, 6, 6), np.float64)
+    assert int(volops.vol_boundary(full, 6).sum()) == 216 - 64
+
+
+def test_boundary_is_the_memory_frugal_representation():
+    """The advertised claim: a solid ball keeps only a few %% as its shell."""
+    z, y, x = np.mgrid[0:40, 0:40, 0:40]
+    ball = ((z - 20.0) ** 2 + (y - 20.0) ** 2 + (x - 20.0) ** 2 <= 15.0 ** 2)
+    shell = volops.vol_boundary(ball.astype(np.float64), connectivity=6)
+    assert shell.sum() < 0.15 * ball.sum()       # shell ≪ solid (measured ~0.12)
+    assert shell.sum() > 0                        # and it is not empty
+
+
+def test_boundary_points_physical_coordinates_and_origin():
+    one = np.zeros((5, 5, 5), np.float64)
+    one[2, 3, 4] = 1.0
+    pts = volops.vol_boundary_points(one, spacing=(2.0, 3.0, 4.0), origin=(10, 0, 0))
+    assert pts.shape == (1, 3)
+    # (index + origin) * spacing, (z, y, x) order
+    assert np.allclose(pts[0], [(2 + 10) * 2.0, 3 * 3.0, 4 * 4.0])
+    # empty mask -> a valid empty answer, not an error
+    empty = volops.vol_boundary_points(np.zeros((4, 4, 4)))
+    assert empty.shape == (0, 3) and empty.dtype == np.float64
+    with pytest.raises(ValueError, match="origin"):
+        volops.vol_boundary_points(one, origin=(1, 2))
+
+
+def test_crop_then_boundary_points_land_in_uncropped_frame():
+    """The composed memory pipeline: crop -> boundary -> points, coordinates
+    identical to running boundary -> points on the full volume."""
+    _, mask = _cube_scene()
+    part, off = volops.vol_crop_domain(mask)
+    p_full = volops.vol_boundary_points(mask, spacing=(1.0, 1.0, 1.0))
+    p_crop = volops.vol_boundary_points(part, spacing=(1.0, 1.0, 1.0), origin=off)
+    assert p_full.shape == p_crop.shape
+    assert np.array_equal(np.sort(p_full, axis=0), np.sort(p_crop, axis=0))

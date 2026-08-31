@@ -2011,7 +2011,32 @@ def _viewer3d_class(QtWidgets, QtGui, QtCore):
             super().resizeEvent(e)
             self._repaint()                       # frame is sized to the widget: re-render
 
+        #: first-person movement keys -> direction in the (forward, right, up)
+        #: basis of :func:`viewer3d_fp_axes` (class-level so tests can read it)
+        FP_MOVES = {"W": (1, 0, 0), "S": (-1, 0, 0), "A": (0, -1, 0), "D": (0, 1, 0),
+                    "E": (0, 0, 1), "Q": (0, 0, -1), "Space": (0, 0, 1)}
+
         def keyPressEvent(self, e):
+            if e.key() == QtCore.Qt.Key_F:
+                self.toggle_first_person()
+                return
+            if self._fp:
+                name = {QtCore.Qt.Key_W: "W", QtCore.Qt.Key_S: "S",
+                        QtCore.Qt.Key_A: "A", QtCore.Qt.Key_D: "D",
+                        QtCore.Qt.Key_E: "E", QtCore.Qt.Key_Q: "Q",
+                        QtCore.Qt.Key_Space: "Space"}.get(e.key())
+                if name is not None:
+                    fwd, right, up = viewer3d_fp_axes(self._fp_yaw, self._fp_pitch)
+                    df, dr, du = self.FP_MOVES[name]
+                    self._eye = self._eye + (fwd * df + right * dr + up * du) \
+                        * self._fp_step(e.modifiers())
+                    self._repaint()
+                elif e.key() == QtCore.Qt.Key_R:
+                    self._fp_home()
+                    self._repaint()
+                else:
+                    super().keyPressEvent(e)
+                return
             if e.key() == QtCore.Qt.Key_R:
                 self.reset_view()
             elif e.key() == QtCore.Qt.Key_W and self._edges is not None:
