@@ -450,8 +450,10 @@ _CATALOG = {
     ],
     "curvature": [  # 点群の主曲率/shape index(把持アフォーダンス・凸凹鞍点分類)
         ("principal_curvatures", "curvature3d", ["points"], "curvature", False),
-        ("mean_curvature", "curvature3d", ["points"], "measurement", False),
-        ("gaussian_curvature", "curvature3d", ["points"], "measurement", False),
+        # 点ごとの曲率列 (N,) — スカラでなく 1-D 配列なので signal 宣言
+        # (vol_wall_thickness と同流儀。wave-4 TYPEMISS 修正)
+        ("mean_curvature", "curvature3d", ["points"], "signal", False),
+        ("gaussian_curvature", "curvature3d", ["points"], "signal", False),
         ("shape_index", "curvature3d", ["points"], "descriptor", False),
         ("estimate_normals", "curvature3d", ["points"], "normals", False),
     ],
