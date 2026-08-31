@@ -306,6 +306,22 @@ def _finite_ok(val):
     return True
 
 
+def _step_rng(chain_seed, name, occurrence, fallback):
+    """引数束縛用の**位置に依存しない**乱数源。
+
+    候補抽選(連鎖 rng)と引数抽選を分けるのが肝: 連鎖 rng は「次にどの op を
+    引くか」で消費量が変わるため、op を 1 つ外すと以降の抽選が全部ずれ、
+    最小化の再走が原理的に再現しなくなる(実測: 再現 48/65)。鍵を
+    (連鎖 seed, op 名, その op の出現回数)にすると、**無関係な前段を落としても
+    当該 op の引数抽選は不変**になり、pool の中身の違いだけが再現可否を決める
+    = 削り込みが本来見たい依存関係そのものになる。
+    """
+    if chain_seed is None:
+        return fallback                    # 旧来の呼び方(再現性を要求しない)
+    key = zlib.crc32(name.encode("utf-8"))
+    return np.random.default_rng((int(chain_seed) & 0xFFFFFFFF, key, occurrence))
+
+
 def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
     """1 連鎖 = 型付き pool を育てながら op を実行。発見は log に積む。
 
