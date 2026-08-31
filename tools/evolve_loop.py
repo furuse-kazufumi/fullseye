@@ -104,6 +104,21 @@ def screen(candidates, problems, max_len=MAX_CHAIN_LEN):
     return kept, dropped
 
 
+def _registry_name(ops, catalog_name):
+    """採掘器のカタログ名 → 進化レジストリ名。
+
+    橋渡し(``backends_typed``)は名前空間の衝突を避けるため ``tb_`` を前置する。
+    採掘器はカタログ名で連鎖を作るので、ここで対応づける。どちらにも無ければ
+    ``KeyError`` — **勝手に似た名前へ寄せない**(別の op を実行してしまう)。
+    """
+    if catalog_name in ops._BY_NAME:
+        return catalog_name
+    bridged = "tb_" + catalog_name
+    if bridged in ops._BY_NAME:
+        return bridged
+    raise KeyError(catalog_name)
+
+
 def gate(candidates, ops, problems, max_existing=None, capacity=None, verbose=False):
     """高い判定: counterfactual utility + 重複排除 + 容量上限。
 

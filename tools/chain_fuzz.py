@@ -188,9 +188,46 @@ def _b_wavefront(pool, rng):
     return ({idx[i]: float(rng.normal(0.0, 0.05)) for i in range(k)},), {}
 
 
+def _pick_shaped(pool, kind, shape, rng):
+    """pool[kind] から *shape* の産物を優先的に引く(半分は素の一様抽選)。
+
+    光学の abcd_trace / jones_apply / mueller_apply は 2x2・4x4 という**形の
+    決まった**行列を食う。pool の一様抽選だけだと 32x32 や (11,3) ばかり当たり、
+    800 連鎖回しても実経路を一度も通らない(= CONTRACT しか出ない)ことを実測。
+    半々にすると happy path と fail-closed の両方が回る。"""
+    cands = pool.get(kind) or []
+    if not cands:
+        return None
+    if rng.random() < 0.5:
+        fit = [c for c in cands
+               if isinstance(c, np.ndarray) and c.shape == shape]
+        if fit:
+            return fit[int(rng.integers(len(fit)))]
+    return cands[int(rng.integers(len(cands)))]
+
+
+def _b_shaped(kind, shape, *extra):
+    """(shape 優先の行列 + extra 型の pool 産物)を引数に組む builder を作る。"""
+    def build(pool, rng):
+        m = _pick_shaped(pool, kind, shape, rng)
+        if m is None:
+            return None
+        args = [m]
+        for t in extra:
+            vals = pool.get(t) or []
+            if not vals:
+                return None
+            args.append(vals[int(rng.integers(len(vals)))])
+        return tuple(args), {}
+    return build
+
+
 OP_ARG_BUILDERS = {
     "abcd_matrix": _b_abcd,
     "wavefront_stats": _b_wavefront,
+    "abcd_trace": _b_shaped("matrix", (2, 2)),
+    "jones_apply": _b_shaped("cimage", (2, 2), "jones"),
+    "mueller_apply": _b_shaped("matrix", (4, 4), "stokes"),
     "fuse_to_voxel": _b_fuse,
     "register_cross": _b_register_cross,
     "to_points": lambda pool, rng: ((pool["points"][0], "points"), {})
