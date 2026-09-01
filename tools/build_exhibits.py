@@ -122,7 +122,7 @@ def check_body(body: str, where: str, asset_base: str, *, require_exhibits: bool
             if not tail or not _CAPTION_RE.match(tail[0]):
                 raise BuildError(
                     f"{where}: the image on line {i + 1} has no '*↑ **...' caption after it")
-    if n_caption == 0:
+    if require_exhibits and n_caption == 0:
         raise BuildError(f"{where}: no exhibits found (a wing with no caption line is empty)")
     return n_caption
 
