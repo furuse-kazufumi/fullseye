@@ -138,7 +138,7 @@
 
 [![テクスチャの見分け —— 特徴量で模様を分ける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing2d_texture_zoo_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing2d_texture_zoo.png)
 
-*↑ **テクスチャの見分け —— 特徴量で模様を分ける** ―― 3 種類の模様を 64×64 px の小片 48 枚に切り分け、GLCM energy・entropy・標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして leave-one-out の最近傍重心で分類したところ 47/48 = 97.9% が正解だった。見た目が似ていても、GLCM energy は 0.236 / 0.148 / 0.212 と離れている —— 「模様」は数字にできる。Gabor は 4 方向を当てたときの向き差が効いていて、織り目では θ=0°/45°/90°/135° の平均応答が 0.0176 / 0.0132 / 0.0178 / 0.0132 (最大÷最小 1.3 倍)、方向を持たない 1/f 粒状では 1.3 倍しか開かない。この比は `gabor` がカーネル L1 で割る**固定スケール**を返すからこそ意味を持つ (画像ごとの最大値で割る正規化では、向きごとに別の数で割ってしまい差が消える)。使用 op: `cooc_feature_matrix`, `entropy_gray`, `gray_histo_abs`, `estimate_noise`, `gabor`, `sk_lbp`。*
+*↑ **テクスチャの見分け —— 特徴量で模様を分ける** ―― 3 種類の模様を 64×64 px の小片 48 枚に切り分け、GLCM energy・entropy・標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして leave-one-out の最近傍重心で分類したところ 47/48 = 97.9% が正解だった。見た目が似ていても、GLCM energy は 0.236 / 0.148 / 0.212 と離れている —— 「模様」は数字にできる。Gabor の 4 方向は、模様が向きを持つかどうかをそのまま映す: レンガは横目地が効いて θ=0°/45°/90°/135° の平均応答が 0.01072 / 0.00680 / 0.02997 / 0.00676 と θ=90° に偏り (最大÷最小 4.43 倍)、縦横が同居する織り目は 0.01763 と 0.01778 でほぼ同値、方向を持たない 1/f 粒状も同じ 1.35 倍にとどまる。**向きで割れない織り目と粒状を分けているのは応答の絶対値**で (0° の平均が 0.01763 対 0.01292)、これは `gabor` がカーネルの L1 ノルムで割る固定スケールを返すから残る量だ —— 画像ごとの最大値で割る正規化では、向きごと・模様ごとに別の数で割ってしまいこの差は消える。使用 op: `cooc_feature_matrix`, `entropy_gray`, `gray_histo_abs`, `estimate_noise`, `gabor`, `sk_lbp`。*
 
 <!-- 生成: tools/gen_wing2d_gallery.py::subject_texture_zoo() / PNG / 12 パネル / Fullseye の synth で合成したテクスチャ 3 種 (レンガ / 織り目 / 1/f 粒状) -->
 
