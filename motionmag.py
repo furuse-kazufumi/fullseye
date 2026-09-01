@@ -895,6 +895,7 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     bank = _filter_bank(h, w, ns, no)
 
     gain = a - 1.0
+    scale = float(np.abs(vid).max())
     spec = np.fft.fft2(vid, axes=(1, 2))
     acc = np.zeros((t, h, w), np.complex128)
     max_shift = 0.0
@@ -902,12 +903,23 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
         sub = np.fft.ifft2(spec * filt[None], axes=(1, 2))
         if bank["kinds"][j] == _ORIENTED and gain != 0.0:
             ref = sub.mean(axis=0)
+            amp = np.abs(ref)
+            amp_max = float(amp.max())
+            # A band with no contrast carries no phase, only rounding noise —
+            # and unwrapping that noise in time manufactures multi-radian jumps
+            # that would be reported as the clip's phase shift. Skip the band,
+            # and inside a kept band mute the pixels whose amplitude is at the
+            # rounding floor (they contribute nothing to the sum either way).
+            if amp_max <= _AMP_FLOOR * max(scale, 1.0):
+                acc += filt[None] * np.fft.fft2(sub, axes=(1, 2))
+                continue
+            live = amp > _AMP_LIVE * amp_max
             dphi = np.angle(sub * np.conj(ref)[None])
             dphi = np.unwrap(dphi, axis=0)
             tspec = np.fft.fft(dphi, axis=0)
             tspec[~mask] = 0.0
             dphi = np.real(np.fft.ifft(tspec, axis=0))
-            shift = gain * dphi
+            shift = gain * dphi * live[None]
             m = float(np.abs(shift).max()) if shift.size else 0.0
             if m > max_shift:
                 max_shift = m
