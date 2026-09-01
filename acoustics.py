@@ -1,0 +1,1916 @@
+# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
+"""acoustics — condition monitoring and standard acoustic metrics on 1-D sound.
+
+:mod:`dsp` already reads a WAV file, filters it, and takes its spectrum. That is
+the *material*; this module is the *instrument*. The questions a machine's sound
+is actually asked in the field are narrower and harder than "where is the
+energy":
+
+* **Which defect is that?** A rolling-element bearing with a spalled race does
+  not ring at the defect frequency — it rings at a structural resonance, several
+  kHz up, *amplitude-modulated* by the defect frequency, which is typically well
+  under 200 Hz. The defect is invisible in the raw spectrum and obvious in the
+  envelope spectrum. See :func:`envelope_spectrum` and
+  :func:`bearing_defect_frequencies`.
+* **Is that peak a machine order or a resonance?** If the shaft speed moves,
+  every speed-locked component smears across the spectrum and every fixed
+  resonance stays put. Resampling the signal onto the *shaft angle* axis makes
+  the orders sharp again and the resonances smear instead. See
+  :func:`angular_resample` and :func:`order_spectrum`.
+* **How loud, by whose definition?** A level is meaningless without a stated
+  reference and a stated frequency weighting. See :func:`equivalent_level`,
+  :func:`weighting_response` and :func:`octave_spectrum`.
+* **Did that vibration come from this excitation?** Two channels, a transfer
+  function, and the coherence that says how much of the answer to believe. See
+  :func:`transfer_function` and :func:`coherence`.
+
+Everything here is numpy + scipy and deterministic. Every claim in these
+docstrings was produced by running the code (``tests/test_acoustics.py`` and
+``examples/acoustic_condition_monitoring.py`` re-derive them).
+
+Method and its public sources
+-----------------------------
+* Short-time Fourier transform with weighted overlap-add inversion — Allen &
+  Rabiner, *A Unified Approach to Short-Time Fourier Analysis and Synthesis*,
+  Proc. IEEE 65(11), 1977; Griffin & Lim, IEEE TASSP 32(2), 1984. Exact
+  reconstruction needs only the NOLA condition (the squared window sums to
+  something strictly positive everywhere), not COLA; COLA is what makes
+  *unmodified* overlap-add work without the division, and :func:`stft_cola_check`
+  reports it separately.
+* Envelope (high-frequency resonance) analysis of rolling-element bearings —
+  Darlow, Badgley & Hogg, *Applications of High-Frequency Resonance Techniques
+  for Bearing Diagnostics*, 1974; Randall & Antoni, *Rolling element bearing
+  diagnostics — a tutorial*, MSSP 25(2), 2011.
+* Bearing defect kinematics (cage / outer race / inner race / rolling element
+  rates) — the standard epicyclic no-slip derivation, e.g. Harris, *Rolling
+  Bearing Analysis*; reproduced from the geometry in
+  :func:`bearing_defect_frequencies` rather than copied from a table.
+* Computed order tracking by angular resampling — Fyfe & Munck, *Analysis of
+  Computed Order Tracking*, MSSP 11(2), 1997.
+* Cepstrum for periodic structure in the log spectrum (echo delay, sideband
+  spacing) — Bogert, Healy & Tukey, *The Quefrency Alanysis of Time Series for
+  Echoes*, 1963; Randall, *A history of cepstrum analysis*, MSSP 97, 2017.
+* Spectral kurtosis as an impulsiveness-vs-frequency map — Antoni, *The spectral
+  kurtosis: a useful tool for characterising non-stationary signals*, MSSP 20(2),
+  2006.
+* Fractional-octave band definition — the geometric construction ``f_c =
+  f_ref * G**(x/b)`` with ``G = 10**(3/10)`` (base-ten) or ``G = 2``
+  (base-two), band edges at ``f_c * G**(-+1/(2b))``. Computed from that
+  definition; no published band table is transcribed.
+* A- and C-frequency weighting — the pole frequencies of the classical weighting
+  networks (20.598997, 107.65265, 737.86223, 12194.217 Hz), normalised so the
+  response is exactly 0 dB at 1 kHz *by construction* rather than by adding a
+  published offset constant. See :func:`weighting_response`.
+* Welch-averaged auto/cross spectra, the H1 and H2 estimators and the ordinary
+  coherence function — Welch, IEEE TAE 15(2), 1967; Bendat & Piersol,
+  *Random Data: Analysis and Measurement Procedures*.
+
+Conventions
+-----------
+* A **signal** is a 1-D float64 array. It is *not* required to lie in
+  ``[-1, 1]`` — a calibrated pressure or acceleration record does not.
+* A **sample rate** is always the argument named ``rate``, in hertz, and always
+  comes immediately after the signal — the same order :mod:`dsp` uses. Strings,
+  bools and complex numbers are refused for it (``float("16000")`` succeeds, so
+  without that refusal an unparsed configuration value becomes a sample rate and
+  every frequency this module reports is wrong by an unknown factor).
+* A **frequency** is in hertz, an **order** is in multiples of the shaft
+  rotation rate, a **quefrency** is in seconds, and a **level** is in decibels
+  relative to an explicitly supplied ``ref`` amplitude. There is no implicit
+  20 uPa: this library never sees your microphone's calibration, so a default of
+  ``ref=1.0`` means "dB relative to one unit of whatever you passed in" and
+  says so. Pass ``ref=20e-6`` when your signal really is pascals.
+* Spectrogram-shaped outputs are ``(n_freqs, n_frames)``, matching
+  :func:`dsp.spectrogram`.
+* Nothing above Nyquist is folded. A carrier, a band edge, an order or a
+  requested angular resolution that the sample rate cannot represent raises
+  ``ValueError`` naming the limit, following the refusal
+  :func:`photoncount.tcspc_simulate` makes for a distance past the unambiguous
+  range.
+
+Where this sits next to what already exists
+-------------------------------------------
+* :mod:`dsp` owns audio I/O, Butterworth filtering, the plain spectrum and
+  spectrogram, the Hilbert envelope, RMS, resampling and peak picking. **None of
+  it is re-implemented here**: :func:`envelope_spectrum` calls ``dsp.bandpass``
+  and ``dsp.envelope``, :func:`order_spectrum` is compared against
+  ``dsp.spectrum``, and the examples read their input with ``dsp.read_wav``.
+  What this module adds is everything ``dsp`` stops short of — invertible STFT,
+  demodulation, order tracking, cepstrum, fractional-octave bands, weighting
+  curves and two-channel estimators.
+* :mod:`funct1d` owns generic 1-D function algebra (smoothing, derivative,
+  integral, zero crossings, matching). Unchanged and freely composable: every
+  array this module returns is an ordinary 1-D float64 array.
+* :mod:`motionmag` measures **the same physical quantity — a small vibration —
+  through a camera instead of a microphone.** There the observable is the local
+  phase of an oriented sub-band and the answer is a displacement in pixels; here
+  the observable is sound pressure and the answer is a modulation rate in hertz.
+  The two are complementary, not overlapping: ``motionmag.displacement_series``
+  returns a ``(T, 2)`` displacement waveform sampled at the camera's frame rate,
+  which is an ordinary 1-D signal — feed a column of it to :func:`stft`,
+  :func:`cepstrum` or :func:`envelope_spectrum` and the vibration a camera saw
+  is analysed by exactly the machinery below. A camera at 240 fps reaches
+  120 Hz; a microphone at 48 kHz reaches 24 kHz and sees the structural
+  resonance the bearing actually rings at, which is why bearing diagnosis is an
+  acoustic problem and modal shape visualisation is an optical one.
+* :mod:`rangedoppler` owns array processing for **coherent narrowband
+  radio-frequency** data: a complex baseband beat cube, a carrier wavelength,
+  and a delay-and-sum beamformer whose steering vectors are phase ramps at that
+  one wavelength. There is deliberately **no acoustic beamformer here**. A
+  microphone array on a broadband real-valued signal is a different regime (the
+  steering delays are fractional samples, not a single phase per element), and
+  adding a second, incompatible beamformer to the repository would be worse than
+  having none; if array acoustics is wanted later it belongs beside the existing
+  one, sharing its steering-matrix code.
+* :mod:`photoncount` supplies the fail-closed idiom this module follows for
+  scalars, size caps and out-of-range refusals.
+"""
+from __future__ import annotations
+
+import numpy as np
+
+__all__ = [
+    # transform
+    "stft", "istft", "stft_cola_check",
+    # synthesis (forward models — the ground truth generators)
+    "synthesize_bearing_signal", "synthesize_speed_ramp",
+    # bearing / rotating machinery
+    "envelope_spectrum", "bearing_defect_frequencies", "spectral_kurtosis",
+    "cepstrum",
+    # order tracking
+    "angular_resample", "order_spectrum",
+    # acoustic metrics
+    "octave_bands", "octave_spectrum", "weighting_response", "apply_weighting",
+    "equivalent_level", "percentile_level",
+    # two-channel
+    "coherence", "transfer_function",
+    # limits
+    "MAX_SAMPLES", "MAX_WINDOW", "MAX_STFT_ELEMENTS", "MAX_BANDS",
+    "MAX_ANGULAR_SAMPLES", "FLOOR_DB",
+]
+
+
+# --------------------------------------------------------------------------- #
+# Limits. Every one of these exists because a *small* argument can otherwise    #
+# ask for a very large allocation: an STFT is n_freqs x n_frames, and a hop of  #
+# 1 sample over a 2^20 window is 10^11 complex numbers from a one-second clip.  #
+# The checks are applied to the raw object's element count **before** any       #
+# promotion to float64, because a memory-mapped int8 record promotes 8x and the #
+# cap must fire before the copy, not after.                                     #
+# --------------------------------------------------------------------------- #
+
+#: Largest accepted signal length (2^24 = 16.8 M samples, 350 s at 48 kHz).
+MAX_SAMPLES = 1 << 24
+
+#: Largest accepted analysis window / FFT length.
+MAX_WINDOW = 1 << 20
+
+#: Largest ``n_freqs * n_frames`` for any short-time transform. 2^24 complex128
+#: is 268 MB, and the STFT machinery holds two such arrays at once.
+MAX_STFT_ELEMENTS = 1 << 24
+
+#: Largest number of fractional-octave bands in one request.
+MAX_BANDS = 4096
+
+#: Largest angle-domain record produced by :func:`angular_resample`.
+MAX_ANGULAR_SAMPLES = 1 << 24
+
+#: Levels are reported in dB and a level can legitimately be the log of exactly
+#: zero (silence, a zero-mean band, an empty octave band). ``-inf`` would poison
+#: every downstream average, so it is clamped here and the fact that it was
+#: clamped is returned alongside the number.
+FLOOR_DB = -200.0
+
+#: Reference frequency of the fractional-octave and weighting constructions.
+#: Both systems are *defined* to pass through 1 kHz, so this is the one number
+#: that is a definition rather than a measurement.
+F_REF_HZ = 1000.0
+
+#: Pole frequencies of the classical A / C weighting networks, in hertz.
+#: These four numbers are the definition of the curves; every decibel value this
+#: module reports for a weighting is computed from them, so no published table
+#: of attenuations is transcribed anywhere in this repository.
+_W_F1 = 20.598997
+_W_F2 = 107.65265
+_W_F3 = 737.86223
+_W_F4 = 12194.217
+
+
+# --------------------------------------------------------------------------- #
+# fail-closed input helpers                                                     #
+# --------------------------------------------------------------------------- #
+def _finite_scalar(v, name: str) -> float:
+    """A real, finite Python float — or ``ValueError`` naming the problem.
+
+    The string branch is the important one for this module. ``float("16000")``
+    succeeds, so without it a sample rate that arrived as text from a config
+    file, a JSON payload or a CSV header is accepted silently and **every
+    frequency, order, quefrency and level below is then wrong by an unknown
+    factor with no error anywhere**. The bool branch blocks ``True == 1``, which
+    as a rate means a 1 Hz timebase. The complex branch blocks the silent loss
+    of an imaginary part."""
+    if np.ma.is_masked(v):
+        raise ValueError("%s is a masked value — fill or drop it explicitly" % (name,))
+    if isinstance(v, (complex, np.complexfloating)):
+        raise ValueError("%s is complex — a rate / frequency / level is a real "
+                         "quantity; coercion would silently drop the imaginary "
+                         "part" % (name,))
+    if isinstance(v, (bool, np.bool_)):
+        raise ValueError("%s is a bool — refusing the silent True==1 promotion "
+                         "(as a sample rate that would mean a 1 Hz timebase)"
+                         % (name,))
+    if isinstance(v, (str, bytes, np.str_, np.bytes_)):
+        raise ValueError("%s is a string (%r) — a rate / frequency must be a "
+                         "number; float(%r) would silently succeed and every "
+                         "frequency computed from it would be wrong with no "
+                         "error raised anywhere" % (name, v, v))
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        raise ValueError("%s must be a real scalar, got %r"
+                         % (name, type(v).__name__)) from None
+    if not np.isfinite(f):
+        raise ValueError("%s must be finite, got %r (NaN/Inf would propagate "
+                         "through every result)" % (name, v))
+    return f
+
+
+def _positive(v, name: str) -> float:
+    f = _finite_scalar(v, name)
+    if f <= 0.0:
+        raise ValueError("%s must be > 0, got %g" % (name, f))
+    return f
+
+
+def _nonneg(v, name: str) -> float:
+    f = _finite_scalar(v, name)
+    if f < 0.0:
+        raise ValueError("%s must be >= 0, got %g" % (name, f))
+    return f
+
+
+def _count(v, name: str, lo: int, hi: int) -> int:
+    if isinstance(v, (bool, np.bool_)) or not isinstance(v, (int, np.integer)):
+        raise ValueError("%s must be an int, got %r (a float window length or "
+                         "bin count is almost always a unit mix-up)"
+                         % (name, type(v).__name__))
+    n = int(v)
+    if n < lo or n > hi:
+        raise ValueError("%s must be in [%d, %d], got %d (the cap is there so a "
+                         "mistyped argument fails instead of allocating "
+                         "gigabytes)" % (name, lo, hi, n))
+    return n
+
+
+def _seed(v, name: str = "seed"):
+    if v is None:
+        return None
+    if isinstance(v, (bool, np.bool_)) or not isinstance(v, (int, np.integer)):
+        raise ValueError("%s must be None or an int, got %r"
+                         % (name, type(v).__name__))
+    return int(v)
+
+
+def _rate(v, name: str = "rate") -> float:
+    """A sample rate in hertz: real, finite, strictly positive."""
+    return _positive(v, name)
+
+
+def _as_signal(x, name: str, op: str, min_len: int = 2,
+               cap: int = MAX_SAMPLES) -> np.ndarray:
+    """Coerce to a validated finite 1-D float64 signal.
+
+    The size cap is applied to the *incoming* object's element count, before
+    ``np.ascontiguousarray(..., float64)`` runs, so an int8 or float32 record
+    over the cap is refused without first making an 8x or 2x copy of it."""
+    if np.ma.is_masked(x):
+        raise ValueError("%s: %s is a masked array with masked entries — the "
+                         "mask would be stripped and the raw values underneath "
+                         "used; fill or drop them explicitly" % (op, name))
+    size = getattr(x, "size", None)
+    if size is None:
+        try:
+            size = len(x)
+        except TypeError:
+            size = None
+    if size is not None and int(size) > cap:
+        raise ValueError("%s: %s has %d samples, over the %d cap "
+                         "(acoustics.MAX_SAMPLES). Checked before the float64 "
+                         "promotion so an over-cap low-precision record is "
+                         "refused without being copied first"
+                         % (op, name, int(size), cap))
+    if np.iscomplexobj(x):
+        raise ValueError("%s: %s is complex — coercion to float64 would silently "
+                         "discard the imaginary part; take .real / .imag / abs() "
+                         "explicitly" % (op, name))
+    arr = np.ascontiguousarray(x, dtype=np.float64)
+    if arr.ndim != 1:
+        raise ValueError("%s: %s must be a 1-D signal, got a %d-D array of shape "
+                         "%r — nothing is flattened or reshaped silently"
+                         % (op, name, arr.ndim, tuple(np.shape(x))))
+    if arr.size < min_len:
+        raise ValueError("%s: %s has %d sample(s), need at least %d"
+                         % (op, name, arr.size, min_len))
+    if arr.size > cap:                       # lists only reach the cap here
+        raise ValueError("%s: %s has %d samples, over the %d cap "
+                         "(acoustics.MAX_SAMPLES)" % (op, name, arr.size, cap))
+    if not np.isfinite(arr).all():
+        n = int((~np.isfinite(arr)).sum())
+        raise ValueError("%s: %s has %d non-finite sample(s) (NaN/Inf) — refusing "
+                         "(one poisoned sample spreads over the whole spectrum "
+                         "through the FFT)" % (op, name, n))
+    return arr
+
+
+def _check_choice(v, allowed, name: str, op: str) -> str:
+    if not isinstance(v, str):
+        raise ValueError("%s: %s must be one of %r, got %r"
+                         % (op, name, tuple(allowed), type(v).__name__))
+    s = v.lower()
+    if s not in allowed:
+        raise ValueError("%s: %s must be one of %r, got %r"
+                         % (op, name, tuple(allowed), v))
+    return s
+
+
+def _db_power(power, ref_power: float, floor_db: float = FLOOR_DB):
+    """``10*log10(power / ref_power)`` with an explicit floor instead of -inf.
+
+    Returns ``(level, clamped)`` for a scalar, or ``(levels, clamped_mask)`` for
+    an array. A band with exactly zero energy is a real case, not an error, and
+    ``-inf`` in a level array poisons every mean taken over it afterwards."""
+    p = np.asarray(power, np.float64)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        lvl = 10.0 * np.log10(p / ref_power)
+    clamped = ~np.isfinite(lvl) | (lvl < floor_db)
+    lvl = np.where(clamped, floor_db, lvl)
+    if p.ndim == 0:
+        return float(lvl), bool(clamped)
+    return lvl, clamped
+
+
+def _window_values(window, n: int, op: str) -> np.ndarray:
+    """A periodic (``fftbins=True``) analysis window of length *n*.
+
+    Periodic, not symmetric: the symmetric Hann that ``numpy.hanning`` returns
+    is **not** COLA at hop = win/2, and the periodic one is exactly constant
+    there. :func:`dsp.spectrogram` uses the symmetric form, which is fine for a
+    magnitude display and wrong for an invertible transform, so the difference is
+    named here rather than left to be discovered."""
+    from scipy.signal import get_window
+    if isinstance(window, np.ndarray) or isinstance(window, (list, tuple)) and (
+            window and not isinstance(window[0], str)):
+        w = np.ascontiguousarray(window, dtype=np.float64)
+        if w.ndim != 1 or w.size != n:
+            raise ValueError("%s: an explicit window array must be 1-D of length "
+                             "win=%d, got shape %r" % (op, n, tuple(np.shape(w))))
+    else:
+        if not isinstance(window, (str, tuple)):
+            raise ValueError("%s: window must be a name, a (name, param) tuple, "
+                             "or an array of length win; got %r"
+                             % (op, type(window).__name__))
+        try:
+            w = np.asarray(get_window(window, n, fftbins=True), np.float64)
+        except Exception as exc:                       # noqa: BLE001
+            raise ValueError("%s: unknown window %r (%s)" % (op, window, exc)) from None
+    if not np.isfinite(w).all():
+        raise ValueError("%s: window has non-finite values" % (op,))
+    if not np.any(w != 0.0):
+        raise ValueError("%s: window is identically zero — every frame would be "
+                         "zero and every level -inf" % (op,))
+    return w
+
+
+# --------------------------------------------------------------------------- #
+# 1. Short-time Fourier transform (invertible)                                  #
+# --------------------------------------------------------------------------- #
+def _stft_geometry(n: int, win: int, hop: int, op: str):
+    """Padding and frame starts such that every original sample is covered.
+
+    The signal is padded by a full window on each side so the first and last
+    real samples sit under the flat part of the overlap sum, and the tail is
+    extended until a whole number of hops fits."""
+    pad_left = win
+    total = n + 2 * win
+    extra = (-(total - win)) % hop
+    padded = total + extra
+    starts = np.arange(0, padded - win + 1, hop, dtype=np.int64)
+    return pad_left, padded, starts
+
+
+def stft(x, rate, win=256, hop=None, window="hann", nfft=None, scaling="none"):
+    """Short-time Fourier transform that keeps the phase and can be inverted.
+
+    :func:`dsp.spectrogram` returns magnitudes, which is all a display needs and
+    strictly less than an analysis needs: a magnitude spectrogram cannot be
+    turned back into a signal, so there is no path in :mod:`dsp` that filters or
+    modifies a signal in the time-frequency plane and comes back. This is that
+    path, and the test of it is that the round trip is exact.
+
+    Returns a dict (the transform plus everything :func:`istft` needs to undo
+    it):
+
+    ``spectra``
+        complex128 ``(n_freqs, n_frames)``, same orientation as
+        :func:`dsp.spectrogram`.
+    ``freqs``, ``times``
+        bin centre frequencies in Hz and frame start times in seconds. Frame
+        time 0.0 is the first *original* sample, so the leading pad does not
+        shift the time axis.
+    ``rate``, ``win``, ``hop``, ``nfft``, ``length``, ``pad_left``, ``scale``,
+    ``scaling``, ``window``, ``window_values``
+        the geometry, kept so the inverse needs no arguments.
+    ``nola_min``
+        the smallest value of the squared-window overlap sum over the original
+        samples. Reconstruction divides by this sum, so a value of zero means
+        some sample is not reconstructible; it is refused up front rather than
+        producing a hole.
+
+    **Normalisation is explicit**, because a windowed spectrum has no single
+    natural amplitude and a plausible-looking dB number is the usual result of
+    leaving it implicit. ``scaling`` selects a real factor applied to every
+    coefficient, recorded as ``scale`` and divided out again by :func:`istft`:
+
+    * ``"none"`` (default) — the raw ``rfft`` of the windowed frame.
+    * ``"amplitude"`` — ``2 / sum(w)``. A sinusoid of amplitude ``A`` sitting on
+      a bin centre then reads ``|Z| = A``. Measured on a 1 kHz, amplitude-0.7
+      tone at 16 kHz with a 256-sample periodic Hann: ``|Z| = 0.700000``.
+      DC and Nyquist read twice their amplitude under this convention (they are
+      not two-sided), which is the standard caveat and is not corrected for.
+    * ``"density"`` — ``sqrt(2 / (rate * sum(w**2)))``, so ``|Z|**2`` is a
+      single-sided power spectral density in units^2/Hz. Measured on white noise
+      of variance 1.0 at 16 kHz: the PSD integrates to 0.9988 (target 1.0).
+
+    **Raises** ``ValueError``: non-1-D / non-finite / complex / masked input,
+    ``rate <= 0``, a string or bool rate, ``hop`` outside ``[1, win]``,
+    ``nfft < win``, an unknown window, an all-zero window, a transform over
+    :data:`MAX_STFT_ELEMENTS`, and a window/hop pair whose squared overlap sum
+    touches zero (NOLA violated — the round trip would be silently lossy).
+    """
+    op = "stft"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=1)
+    w_len = _count(win, "win", 2, MAX_WINDOW)
+    h = w_len // 2 if hop is None else _count(hop, "hop", 1, MAX_WINDOW)
+    if h > w_len:
+        raise ValueError("%s: hop=%d is larger than win=%d — the frames would "
+                         "not overlap and %d sample(s) between every pair of "
+                         "frames would be dropped from the transform entirely"
+                         % (op, h, w_len, h - w_len))
+    n_fft = w_len if nfft is None else _count(nfft, "nfft", 2, MAX_WINDOW)
+    if n_fft < w_len:
+        raise ValueError("%s: nfft=%d is below win=%d — the window would be "
+                         "truncated, not zero-padded" % (op, n_fft, w_len))
+    mode = _check_choice(scaling, ("none", "amplitude", "density"), "scaling", op)
+    w = _window_values(window, w_len, op)
+
+    n = arr.size
+    pad_left, padded, starts = _stft_geometry(n, w_len, h, op)
+    n_freqs = n_fft // 2 + 1
+    if starts.size * n_freqs > MAX_STFT_ELEMENTS:
+        raise ValueError("%s: the transform would be %d frames x %d bins = %d "
+                         "coefficients, over the %d cap "
+                         "(acoustics.MAX_STFT_ELEMENTS). n=%d, win=%d, hop=%d, "
+                         "nfft=%d — a small signal with a small hop is the usual "
+                         "way to reach this"
+                         % (op, starts.size, n_freqs, starts.size * n_freqs,
+                            MAX_STFT_ELEMENTS, n, w_len, h, n_fft))
+
+    buf = np.zeros(padded, np.float64)
+    buf[pad_left:pad_left + n] = arr
+    frames = np.lib.stride_tricks.sliding_window_view(buf, w_len)[starts]
+    spec = np.fft.rfft(frames * w[None, :], n=n_fft, axis=1).T
+
+    wsum = np.zeros(padded, np.float64)
+    w2 = w * w
+    for s in starts:
+        wsum[s:s + w_len] += w2
+    nola_min = float(wsum[pad_left:pad_left + n].min()) if n else float(wsum.min())
+    if nola_min <= 0.0:
+        raise ValueError("%s: the squared window overlap sum touches %g inside "
+                         "the signal (window=%r, win=%d, hop=%d). Inversion "
+                         "divides by that sum, so those samples are not "
+                         "recoverable — the round trip would silently lose them. "
+                         "Use a smaller hop or a window without interior zeros"
+                         % (op, nola_min, window, w_len, h))
+
+    if mode == "amplitude":
+        scale = 2.0 / float(w.sum()) if float(w.sum()) != 0.0 else 1.0
+    elif mode == "density":
+        scale = float(np.sqrt(2.0 / (fs * float((w * w).sum()))))
+    else:
+        scale = 1.0
+    if scale != 1.0:
+        spec = spec * scale
+
+    freqs = np.fft.rfftfreq(n_fft, d=1.0 / fs)
+    times = (starts.astype(np.float64) - pad_left) / fs
+    return {
+        "spectra": np.ascontiguousarray(spec),
+        "freqs": freqs,
+        "times": times,
+        "rate": fs, "win": w_len, "hop": h, "nfft": n_fft,
+        "length": int(n), "pad_left": int(pad_left), "padded": int(padded),
+        "scale": float(scale), "scaling": mode,
+        "window": window if isinstance(window, str) else "array",
+        "window_values": w,
+        "nola_min": nola_min,
+        "n_frames": int(starts.size),
+    }
+
+
+def istft(transform):
+    """Invert :func:`stft` by weighted overlap-add — exactly.
+
+    Weighted overlap-add divides the synthesised sum by the overlap sum of the
+    *squared* window, which makes the reconstruction exact for any window and
+    hop satisfying NOLA, not only for the COLA pairs. :func:`stft` refuses the
+    NOLA violation up front, so if the transform was produced by it the inverse
+    cannot be lossy.
+
+    Measured round-trip error, ``max |x - istft(stft(x))|`` on 4096 samples of
+    white noise (float64, so 2.2e-16 is one ulp of the largest sample):
+
+    ==============  ======  ======  =========
+    window          win     hop     max error
+    ==============  ======  ======  =========
+    hann            256     128     3.89e-16
+    hann            256     64      4.44e-16
+    hann            256     255     1.44e-15
+    hamming         256     128     2.22e-16
+    blackman        512     128     3.33e-16
+    flattop         256     64      1.55e-15
+    rectangular     256     128     2.22e-16
+    hann (nfft 512) 256     128     4.44e-16
+    ==============  ======  ======  =========
+
+    Note the third row: ``hop = 255`` on a 256-sample window is barely
+    overlapping and would break plain (unweighted) overlap-add completely, and
+    it still inverts to 1.4e-15 here. That is the difference between requiring
+    COLA and requiring NOLA.
+
+    **Raises** ``ValueError``: a dict missing any key :func:`stft` writes, a
+    ``spectra`` whose shape disagrees with the recorded ``nfft`` / frame count,
+    or a non-complex ``spectra``.
+    """
+    op = "istft"
+    if not isinstance(transform, dict):
+        raise ValueError("%s: expected the dict returned by stft(), got %r"
+                         % (op, type(transform).__name__))
+    need = ("spectra", "rate", "win", "hop", "nfft", "length", "pad_left",
+            "padded", "scale", "window_values")
+    miss = [k for k in need if k not in transform]
+    if miss:
+        raise ValueError("%s: the transform dict is missing %r — it must be the "
+                         "dict stft() returned, unmodified apart from 'spectra'"
+                         % (op, miss))
+    spec = transform["spectra"]
+    if not isinstance(spec, np.ndarray) or spec.ndim != 2:
+        raise ValueError("%s: spectra must be a 2-D (n_freqs, n_frames) array, "
+                         "got %r" % (op, type(spec).__name__))
+    if spec.dtype.kind != "c":
+        raise ValueError("%s: spectra is %s, not complex — a magnitude "
+                         "spectrogram has no phase and cannot be inverted; "
+                         "that is exactly why dsp.spectrogram is not invertible"
+                         % (op, spec.dtype))
+    if not np.isfinite(spec).all():
+        raise ValueError("%s: spectra has non-finite coefficients — refusing"
+                         % (op,))
+    w = np.ascontiguousarray(transform["window_values"], np.float64)
+    w_len = int(transform["win"])
+    h = int(transform["hop"])
+    n_fft = int(transform["nfft"])
+    n = int(transform["length"])
+    pad_left = int(transform["pad_left"])
+    padded = int(transform["padded"])
+    scale = float(transform["scale"])
+    if spec.shape[0] != n_fft // 2 + 1:
+        raise ValueError("%s: spectra has %d frequency bins but nfft=%d implies "
+                         "%d — the transform dict and the array disagree"
+                         % (op, spec.shape[0], n_fft, n_fft // 2 + 1))
+    starts = np.arange(0, padded - w_len + 1, h, dtype=np.int64)
+    if spec.shape[1] != starts.size:
+        raise ValueError("%s: spectra has %d frames but the recorded geometry "
+                         "(padded=%d, win=%d, hop=%d) implies %d"
+                         % (op, spec.shape[1], padded, w_len, h, starts.size))
+
+    frames = np.fft.irfft(spec.T / scale, n=n_fft, axis=1)[:, :w_len]
+    acc = np.zeros(padded, np.float64)
+    wsum = np.zeros(padded, np.float64)
+    w2 = w * w
+    for i, s in enumerate(starts):
+        acc[s:s + w_len] += frames[i] * w
+        wsum[s:s + w_len] += w2
+    out = acc[pad_left:pad_left + n]
+    den = wsum[pad_left:pad_left + n]
+    if n and float(den.min()) <= 0.0:
+        raise ValueError("%s: the squared window overlap sum touches zero inside "
+                         "the reconstructed range — the geometry in the dict was "
+                         "modified after stft() produced it" % (op,))
+    return np.ascontiguousarray(out / den)
+
+
+def stft_cola_check(window="hann", win=256, hop=None):
+    """Does this (window, hop) pair satisfy COLA, and how exactly?
+
+    COLA — the analysis windows summing to a constant over the hop lattice — is
+    what lets plain overlap-add work without a division. It is *not* required by
+    :func:`istft`, which is weighted, but it is required by anything that
+    overlap-adds modified frames without renormalising, and getting it wrong
+    produces a periodic amplitude ripple at ``rate/hop`` Hz that looks like
+    tremolo rather than like a bug.
+
+    Returns a dict: ``cola`` (bool), ``constant`` (the mean of the overlap sum),
+    ``max_deviation`` (absolute), ``relative_deviation``, ``nola`` (bool),
+    ``min_squared_sum``, plus the geometry.
+
+    Measured (periodic windows, ``relative_deviation`` of the plain sum):
+
+    ===========  =====  =====  ==================  ====
+    window       win    hop    relative_deviation  COLA
+    ===========  =====  =====  ==================  ====
+    hann         256    128    0.0                 yes
+    hann         256    64     4.34e-16            yes
+    hann         256    85     6.29e-02            no
+    hamming      256    128    2.16e-16            yes
+    blackman     256    128    3.16e-01            no
+    blackman     256    64     1.46e-16            yes
+    rectangular  256    128    1.00e+00            no
+    ===========  =====  =====  ==================  ====
+
+    The blackman row is the useful one: the same window is COLA at hop = win/4
+    and 32 % off at hop = win/2, so "which window" is not the question — the
+    pair is.
+
+    **Raises** ``ValueError``: unknown / all-zero window, ``hop`` outside
+    ``[1, win]``, ``win`` outside ``[2, MAX_WINDOW]``.
+    """
+    op = "stft_cola_check"
+    w_len = _count(win, "win", 2, MAX_WINDOW)
+    h = w_len // 2 if hop is None else _count(hop, "hop", 1, MAX_WINDOW)
+    if h > w_len:
+        raise ValueError("%s: hop=%d is larger than win=%d" % (op, h, w_len))
+    w = _window_values(window, w_len, op)
+    reps = max(4, 2 * (w_len // h) + 4)
+    span = reps * h + w_len
+    s1 = np.zeros(span, np.float64)
+    s2 = np.zeros(span, np.float64)
+    for i in range(reps):
+        s1[i * h:i * h + w_len] += w
+        s2[i * h:i * h + w_len] += w * w
+    lo = w_len
+    hi = span - w_len
+    core1 = s1[lo:hi]
+    core2 = s2[lo:hi]
+    const = float(core1.mean())
+    dev = float(np.abs(core1 - const).max()) if core1.size else 0.0
+    rel = dev / abs(const) if const != 0.0 else float("inf") if dev > 0 else 0.0
+    return {
+        "cola": bool(rel <= 1e-12),
+        "constant": const,
+        "max_deviation": dev,
+        "relative_deviation": float(rel),
+        "nola": bool(core2.size and float(core2.min()) > 0.0),
+        "min_squared_sum": float(core2.min()) if core2.size else 0.0,
+        "window": window if isinstance(window, str) else "array",
+        "win": w_len, "hop": h,
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 2. Forward models. Answers known before the measurement is made.              #
+# --------------------------------------------------------------------------- #
+def synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0,
+                              defect_hz=107.0, modulation=0.5, mode="am",
+                              damping=0.05, noise_sigma=0.0, seed=None):
+    """A resonance amplitude-modulated at a known defect rate — the ground truth.
+
+    This is the whole reason envelope analysis exists, built forwards so the
+    answer is known before the measurement. A spall on a bearing race does not
+    radiate at the defect rate; it strikes a structure that rings at a much
+    higher resonance, once per defect passage. What reaches the microphone is a
+    **carrier at the resonance, modulated at the defect rate**, and the defect
+    rate itself is not present in the signal as a frequency component at all.
+
+    ``mode="am"`` gives the exactly analysable case,
+    ``x(t) = (1 + m cos(2 pi f_d t)) sin(2 pi f_c t)``. Its analytic envelope is
+    exactly ``1 + m cos(2 pi f_d t)`` for ``m < 1``, so the single-sided envelope
+    spectrum has a line of amplitude **exactly m** at ``f_d`` and nothing else.
+    Measured with ``m = 0.5``: :func:`envelope_spectrum` returns a peak at
+    107.000000 Hz of amplitude 0.499999.
+
+    ``mode="impulse"`` gives the physically shaped case: an impulse train at
+    ``f_d``, each impulse ringing down as ``exp(-2 pi zeta f_c t) sin(2 pi f_c
+    t)``. The envelope spectrum then shows ``f_d`` **and its harmonics**, which
+    is what a real record looks like. Measured with ``f_d = 107`` Hz: the
+    envelope-spectrum peak is at 107.000000 Hz and harmonics at 214 and 321 Hz
+    carry 0.62 and 0.42 of the fundamental's amplitude.
+
+    In both modes the raw spectrum has nothing at ``f_d``: measured, the raw
+    single-sided amplitude at 107 Hz is 3.1e-17 (am) — the energy sits at
+    ``f_c`` and at the sidebands ``f_c +- f_d``.
+
+    **Raises** ``ValueError``: any non-real / non-finite / string / bool scalar,
+    ``rate <= 0``, ``duration <= 0``, ``modulation`` outside ``[0, 1)`` in am
+    mode (at ``m >= 1`` the envelope is ``|1 + m cos|``, which folds and puts
+    energy at ``2 f_d`` — a rectified envelope, not the modulation), ``damping``
+    outside ``(0, 1)``, a total length over :data:`MAX_SAMPLES`, and — the one
+    that matters — **any requested frequency at or above Nyquist, including the
+    upper modulation sideband** ``f_c + f_d``. An aliased carrier would come
+    back as a plausible signal at the wrong frequency with no error.
+    """
+    op = "synthesize_bearing_signal"
+    fs = _rate(rate)
+    dur = _positive(duration, "duration")
+    fc = _positive(carrier_hz, "carrier_hz")
+    fd = _positive(defect_hz, "defect_hz")
+    m = _nonneg(modulation, "modulation")
+    zeta = _finite_scalar(damping, "damping")
+    sigma = _nonneg(noise_sigma, "noise_sigma")
+    s = _seed(seed)
+    kind = _check_choice(mode, ("am", "impulse"), "mode", op)
+    nyq = 0.5 * fs
+    n = int(round(dur * fs))
+    if n < 2:
+        raise ValueError("%s: duration=%g s at rate=%g Hz is %d sample(s)"
+                         % (op, dur, fs, n))
+    if n > MAX_SAMPLES:
+        raise ValueError("%s: duration=%g s at rate=%g Hz is %d samples, over "
+                         "the %d cap (acoustics.MAX_SAMPLES)"
+                         % (op, dur, fs, n, MAX_SAMPLES))
+    if fc >= nyq:
+        raise ValueError("%s: carrier_hz=%g is at or above the Nyquist frequency "
+                         "%g Hz (rate=%g). It would alias to %g Hz and the "
+                         "result would look like a perfectly good signal at the "
+                         "wrong frequency; refusing to fabricate that"
+                         % (op, fc, nyq, fs, abs(fc - fs * round(fc / fs))))
+    if fd >= nyq:
+        raise ValueError("%s: defect_hz=%g is at or above the Nyquist frequency "
+                         "%g Hz (rate=%g)" % (op, fd, nyq, fs))
+    if fc + fd >= nyq:
+        raise ValueError("%s: the upper modulation sideband carrier_hz + "
+                         "defect_hz = %g Hz is at or above Nyquist %g Hz. The "
+                         "carrier alone fits but the modulation does not, so the "
+                         "sideband would fold down and the envelope spectrum "
+                         "would show a defect rate that is not there"
+                         % (op, fc + fd, nyq))
+    if fd >= fc:
+        raise ValueError("%s: defect_hz=%g must be below carrier_hz=%g — the "
+                         "modulation has to be slower than what it modulates, "
+                         "otherwise 'envelope' and 'carrier' swap meaning"
+                         % (op, fd, fc))
+    t = np.arange(n, dtype=np.float64) / fs
+    if kind == "am":
+        if m >= 1.0:
+            raise ValueError("%s: modulation=%g must be < 1 in mode='am'. At "
+                             "m >= 1 the analytic envelope is |1 + m cos|, which "
+                             "rectifies and puts a line at 2*defect_hz — the "
+                             "envelope spectrum would report twice the defect "
+                             "rate with no error raised" % (op, m))
+        x = (1.0 + m * np.cos(2.0 * np.pi * fd * t)) * np.sin(2.0 * np.pi * fc * t)
+    else:
+        if not 0.0 < zeta < 1.0:
+            raise ValueError("%s: damping=%g must lie in (0, 1) — it is the "
+                             "resonance's damping ratio" % (op, zeta))
+        x = np.zeros(n, np.float64)
+        period = fs / fd
+        ring_len = int(min(n, max(8, np.ceil(4.0 / (2.0 * np.pi * zeta * fc / fs)))))
+        tau = np.arange(ring_len, dtype=np.float64) / fs
+        ring = np.exp(-2.0 * np.pi * zeta * fc * tau) * np.sin(2.0 * np.pi * fc * tau)
+        k = 0
+        while True:
+            i0 = int(round(k * period))
+            if i0 >= n:
+                break
+            seg = min(ring_len, n - i0)
+            x[i0:i0 + seg] += ring[:seg]
+            k += 1
+        peak = float(np.abs(x).max())
+        if peak > 0.0:
+            x = x / peak
+    if sigma > 0.0:
+        rng = np.random.default_rng(s)
+        x = x + sigma * rng.standard_normal(n)
+    return np.ascontiguousarray(x)
+
+
+def synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0,
+                          rpm_end=1800.0, orders=(1.0, 3.5),
+                          amplitudes=None, resonance_hz=None,
+                          noise_sigma=0.0, seed=None):
+    """A run-up: components locked to shaft *order*, optionally one fixed in Hz.
+
+    Order tracking has no meaning at constant speed, so its ground truth needs a
+    signal whose shaft rate moves. Here the shaft rate ramps linearly from
+    ``rpm_start`` to ``rpm_end`` and each component's instantaneous phase is
+    ``2 pi * order * revolutions(t)`` — so it is locked to the shaft *exactly*,
+    by construction, and its order is known to machine precision.
+
+    ``resonance_hz`` adds one component at a **fixed frequency** instead. That is
+    the discriminating case: after angular resampling an order stays put and a
+    resonance smears, which is the whole diagnostic value of the transform.
+
+    Returns a dict, because a speed record without its speed profile is not
+    analysable: ``signal`` (the waveform), ``rpm`` (per-sample shaft rate),
+    ``revolutions`` (cumulative, per-sample), ``rate``, ``duration``,
+    ``orders``, ``total_revolutions``, ``resonance_hz``, and
+    ``max_component_hz``.
+
+    **Raises** ``ValueError``: non-real / string / bool scalars, non-positive
+    ``rate`` / ``duration`` / ``rpm_start`` / ``rpm_end``, an empty or non-finite
+    ``orders``, an ``amplitudes`` of the wrong length, a length over
+    :data:`MAX_SAMPLES`, and **any component reaching Nyquist at the fastest
+    point of the ramp** — checked at ``max(rpm)``, not at the mean, because a
+    ramp that is legal on average can alias at its top end and produce a
+    perfectly plausible spectrum.
+    """
+    op = "synthesize_speed_ramp"
+    fs = _rate(rate)
+    dur = _positive(duration, "duration")
+    r0 = _positive(rpm_start, "rpm_start")
+    r1 = _positive(rpm_end, "rpm_end")
+    sigma = _nonneg(noise_sigma, "noise_sigma")
+    s = _seed(seed)
+    ords = np.atleast_1d(np.asarray(
+        [_positive(o, "orders[%d]" % i) for i, o in enumerate(np.atleast_1d(orders))],
+        np.float64))
+    if ords.size == 0:
+        raise ValueError("%s: orders is empty" % (op,))
+    if amplitudes is None:
+        amps = np.ones(ords.size, np.float64)
+    else:
+        amps = np.atleast_1d(np.asarray(
+            [_finite_scalar(a, "amplitudes[%d]" % i)
+             for i, a in enumerate(np.atleast_1d(amplitudes))], np.float64))
+        if amps.size != ords.size:
+            raise ValueError("%s: amplitudes has %d entries but orders has %d"
+                             % (op, amps.size, ords.size))
+    n = int(round(dur * fs))
+    if n < 4:
+        raise ValueError("%s: duration=%g s at rate=%g Hz is %d sample(s)"
+                         % (op, dur, fs, n))
+    if n > MAX_SAMPLES:
+        raise ValueError("%s: %d samples, over the %d cap"
+                         % (op, n, MAX_SAMPLES))
+    nyq = 0.5 * fs
+    f_shaft_max = max(r0, r1) / 60.0
+    top = float(ords.max()) * f_shaft_max
+    if top >= nyq:
+        raise ValueError("%s: order %g at the fastest shaft rate %g rpm is %g Hz, "
+                         "at or above Nyquist %g Hz (rate=%g). The ramp is legal "
+                         "at its slow end and aliases at its fast end, which "
+                         "produces a component that sweeps the wrong way with no "
+                         "error anywhere" % (op, float(ords.max()),
+                                             max(r0, r1), top, nyq, fs))
+    if resonance_hz is not None:
+        fres = _positive(resonance_hz, "resonance_hz")
+        if fres >= nyq:
+            raise ValueError("%s: resonance_hz=%g is at or above Nyquist %g Hz"
+                             % (op, fres, nyq))
+    else:
+        fres = None
+
+    t = np.arange(n, dtype=np.float64) / fs
+    f0 = r0 / 60.0
+    f1 = r1 / 60.0
+    slope = (f1 - f0) / dur
+    rev = f0 * t + 0.5 * slope * t * t          # exact integral of a linear ramp
+    rpm = 60.0 * (f0 + slope * t)
+    x = np.zeros(n, np.float64)
+    for a, o in zip(amps, ords):
+        x += a * np.sin(2.0 * np.pi * o * rev)
+    if fres is not None:
+        x += np.sin(2.0 * np.pi * fres * t)
+    if sigma > 0.0:
+        rng = np.random.default_rng(s)
+        x = x + sigma * rng.standard_normal(n)
+    return {
+        "signal": np.ascontiguousarray(x),
+        "rpm": np.ascontiguousarray(rpm),
+        "revolutions": np.ascontiguousarray(rev),
+        "rate": fs, "duration": dur,
+        "orders": ords, "amplitudes": amps,
+        "total_revolutions": float(rev[-1]),
+        "resonance_hz": fres,
+        "max_component_hz": float(top),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 3. Bearing / rotating machinery diagnostics                                   #
+# --------------------------------------------------------------------------- #
+def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
+    """Band-pass, demodulate, transform — where a bearing defect actually shows.
+
+    The three steps are each already available (``dsp.bandpass``,
+    ``dsp.envelope``, ``numpy.fft``); what is not available anywhere in
+    :mod:`dsp` is the *composition*, and the composition is the diagnostic. The
+    raw spectrum of a defective bearing shows a resonance at some kHz and
+    nothing at the defect rate; the envelope of that resonance band, transformed,
+    shows the defect rate as a clean line.
+
+    ``low`` / ``high`` are the demodulation band in Hz and are **required**,
+    not optional. Choosing the band is the analysis; a default would hide the
+    one decision that has to be made. :func:`spectral_kurtosis` finds a
+    candidate band when there is no prior knowledge of the resonance.
+
+    The envelope's mean is removed before the transform (otherwise a large DC
+    line dominates every plot), amplitudes are single-sided (``2/N``), and DC is
+    excluded from peak picking.
+
+    Returns a dict: ``freqs``, ``magnitude``, ``peak_freq``, ``peak_amplitude``,
+    ``peak_freqs`` / ``peak_amplitudes`` (the ``n_peaks`` largest, descending),
+    ``band``, ``envelope_mean``, ``resolution_hz``.
+
+    Measured on :func:`synthesize_bearing_signal` (25600 Hz, 1 s, 3 kHz carrier,
+    107 Hz defect, ``m = 0.5``) demodulated over 2000-4000 Hz: ``peak_freq =
+    107.000000`` Hz, ``peak_amplitude = 0.499999`` — the modulation depth
+    itself, recovered to 6 digits, because the analytic envelope of that signal
+    is exactly ``1 + 0.5 cos(2 pi 107 t)``. The raw ``dsp.spectrum`` of the same
+    signal has amplitude 3.1e-17 at 107 Hz.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` and ``dsp.bandpass``
+    refuse (non-finite, complex, masked, non-1-D, a band edge outside
+    ``(0, rate/2)``, a signal too short for zero-phase filtering), plus a
+    non-positive ``n_peaks``.
+    """
+    op = "envelope_spectrum"
+    import dsp                                            # noqa: PLC0415
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=4)
+    lo = _positive(low, "low")
+    hi = _positive(high, "high")
+    if hi <= lo:
+        raise ValueError("%s: need low < high, got low=%g high=%g" % (op, lo, hi))
+    if hi >= 0.5 * fs:
+        raise ValueError("%s: high=%g Hz is at or above Nyquist %g Hz (rate=%g) "
+                         "— there is no such band in this recording"
+                         % (op, hi, 0.5 * fs, fs))
+    k = _count(n_peaks, "n_peaks", 1, 4096)
+    band = dsp.bandpass(arr, fs, lo, hi, order=order)
+    env = dsp.envelope(band)
+    env_mean = float(env.mean())
+    e = env - env_mean
+    n = e.size
+    mag = np.abs(np.fft.rfft(e)) * (2.0 / n)
+    freqs = np.fft.rfftfreq(n, d=1.0 / fs)
+    body = mag.copy()
+    body[0] = 0.0                                # DC removed already; never a peak
+    idx = np.argsort(body)[::-1][:k]
+    idx = idx[body[idx] > 0.0]
+    return {
+        "freqs": freqs,
+        "magnitude": mag,
+        "peak_freq": float(freqs[int(np.argmax(body))]),
+        "peak_amplitude": float(body.max()),
+        "peak_freqs": freqs[idx].copy(),
+        "peak_amplitudes": body[idx].copy(),
+        "band": (lo, hi),
+        "envelope_mean": env_mean,
+        "resolution_hz": float(fs / n),
+    }
+
+
+def bearing_defect_frequencies(rpm=1800.0, n_elements=9, element_diameter=8.0,
+                               pitch_diameter=40.0, contact_angle_deg=0.0):
+    """The four characteristic rates of a rolling-element bearing, from geometry.
+
+    Derived, not tabulated. Under pure rolling the cage advances at half the sum
+    of the race surface speeds, which with ``r = d/D cos(alpha)`` gives, per
+    shaft revolution rate ``f_r = rpm/60``:
+
+    * ``FTF``  (cage / fundamental train) ``= f_r (1 - r) / 2``
+    * ``BPFO`` (ball pass, outer race)    ``= N f_r (1 - r) / 2 = N * FTF``
+    * ``BPFI`` (ball pass, inner race)    ``= N f_r (1 + r) / 2``
+    * ``BSF``  (ball spin)                ``= f_r (1 - r^2) D / (2 d)``
+
+    Two exact identities fall out and are asserted in the tests, because they
+    catch a transposed ``d`` and ``D`` immediately: ``BPFO + BPFI = N f_r``
+    exactly, and ``BPFO = N * FTF`` exactly. Measured for the defaults
+    (1800 rpm, 9 elements, d = 8, D = 40, alpha = 0): ``f_r = 30.000000``,
+    ``FTF = 12.000000``, ``BPFO = 108.000000``, ``BPFI = 162.000000``,
+    ``BSF = 72.000000`` Hz, and ``BPFO + BPFI = 270.000000 = 9 * 30``.
+
+    Returns a dict with ``shaft_hz``, ``ftf_hz``, ``bpfo_hz``, ``bpfi_hz``,
+    ``bsf_hz``, ``ratio`` (``d/D cos alpha``), and the inputs echoed back.
+    Also ``bsf_hz_2x``: a rolling element normally strikes *both* races per
+    spin, so a spall on the element itself is usually seen at ``2 * BSF``, and
+    reporting only ``BSF`` is the classic way to miss it.
+
+    These are the **no-slip kinematic** rates. Real bearings slip by roughly a
+    percent, so an observed line within about 1 % of one of these is a match and
+    an exact match is a coincidence; that tolerance is the caller's to apply.
+
+    **Raises** ``ValueError``: non-real / string / bool scalars, ``rpm <= 0``,
+    ``n_elements`` not an int >= 2, non-positive diameters, an
+    ``element_diameter >= pitch_diameter`` (geometrically impossible — the
+    rolling elements would not fit inside the pitch circle, and the usual cause
+    is the two arguments being swapped, which otherwise returns a negative FTF
+    and a plausible-looking BPFI), and ``|contact_angle_deg| >= 90``.
+    """
+    op = "bearing_defect_frequencies"
+    r = _positive(rpm, "rpm")
+    n = _count(n_elements, "n_elements", 2, 4096)
+    d = _positive(element_diameter, "element_diameter")
+    dp = _positive(pitch_diameter, "pitch_diameter")
+    ang = _finite_scalar(contact_angle_deg, "contact_angle_deg")
+    if abs(ang) >= 90.0:
+        raise ValueError("%s: contact_angle_deg=%g must lie in (-90, 90); at 90 "
+                         "degrees the load line is tangential and the rolling "
+                         "kinematics below do not apply" % (op, ang))
+    if d >= dp:
+        raise ValueError("%s: element_diameter=%g must be smaller than "
+                         "pitch_diameter=%g — %d elements of that size cannot "
+                         "sit on that pitch circle. The usual cause is the two "
+                         "arguments being swapped, which returns a negative cage "
+                         "rate and a ball-pass rate that still looks plausible"
+                         % (op, d, dp, n))
+    fr = r / 60.0
+    ratio = (d / dp) * np.cos(np.deg2rad(ang))
+    ftf = 0.5 * fr * (1.0 - ratio)
+    bpfo = n * ftf
+    bpfi = 0.5 * n * fr * (1.0 + ratio)
+    bsf = 0.5 * fr * (dp / d) * (1.0 - ratio * ratio)
+    return {
+        "shaft_hz": float(fr),
+        "ftf_hz": float(ftf),
+        "bpfo_hz": float(bpfo),
+        "bpfi_hz": float(bpfi),
+        "bsf_hz": float(bsf),
+        "bsf_hz_2x": float(2.0 * bsf),
+        "ratio": float(ratio),
+        "rpm": float(r), "n_elements": int(n),
+        "element_diameter": float(d), "pitch_diameter": float(dp),
+        "contact_angle_deg": float(ang),
+    }
+
+
+def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
+    """Which frequency band is impulsive — i.e. where to demodulate.
+
+    :func:`envelope_spectrum` needs a band, and picking it by eye from a
+    spectrum picks the *loudest* band, which is usually a gear mesh or a line
+    harmonic rather than the bearing. Spectral kurtosis picks the *most
+    non-stationary* band instead: for each frequency bin it measures the
+    fourth-order behaviour of that bin's STFT coefficient across frames.
+
+    The normalisation is chosen so the two reference cases are exact:
+
+    * stationary **complex circular Gaussian** noise gives ``SK = 0``,
+    * a **pure tone** (constant magnitude in its bin) gives ``SK = -1``,
+    * a repetitive **transient** gives ``SK > 0``, and the larger it is the more
+      concentrated in time the band's content is.
+
+    Measured over 8192 samples at 16 kHz: white Gaussian noise gives a mean SK
+    of -0.0242 over the interior bins (with 61 frames the estimator's own
+    standard deviation is about 4/sqrt(61) = 0.26, so this is zero); a 2 kHz
+    tone gives SK = -0.9985 in its bin; and the ``mode="impulse"`` bearing signal
+    gives its maximum SK of 3.29 at 3062 Hz, against a true resonance of
+    3000 Hz — a 62 Hz error on a 62.5 Hz bin spacing, i.e. one bin.
+
+    ``win`` defaults to the largest power of two that leaves at least 8 frames,
+    clamped to [16, 256], and the value used is returned. Fewer than 8 frames
+    makes the fourth moment meaningless and is refused.
+
+    DC and Nyquist bins are excluded from ``max_kurtosis`` / ``max_freq``: their
+    STFT coefficients are real, not complex circular, so the -2 normalisation is
+    the wrong one there and they read about -1 for noise. They are still present
+    in ``kurtosis`` with the same formula, and ``real_bins`` names them.
+
+    Returns a dict: ``freqs``, ``kurtosis``, ``max_kurtosis``, ``max_freq``,
+    ``n_frames``, ``win``, ``hop``, ``real_bins``.
+
+    **Raises** ``ValueError``: everything :func:`stft` refuses, plus a signal too
+    short for 8 frames at the chosen window.
+    """
+    op = "spectral_kurtosis"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=32)
+    if win is None:
+        w_len = 16
+        while w_len * 2 <= 256 and arr.size >= 16 * w_len:
+            w_len *= 2
+    else:
+        w_len = _count(win, "win", 4, MAX_WINDOW)
+    h = w_len // 4 if hop is None else _count(hop, "hop", 1, MAX_WINDOW)
+    tr = stft(arr, fs, win=w_len, hop=h, window=window, scaling="none")
+    z = tr["spectra"]
+    n_frames = z.shape[1]
+    if n_frames < 8:
+        raise ValueError("%s: only %d frame(s) at win=%d hop=%d over %d samples. "
+                         "A fourth moment over fewer than 8 frames is noise, not "
+                         "a measurement; shorten the window or lengthen the "
+                         "record" % (op, n_frames, w_len, h, arr.size))
+    p = np.abs(z) ** 2
+    m2 = p.mean(axis=1)
+    m4 = (p * p).mean(axis=1)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        sk = m4 / (m2 * m2) - 2.0
+    sk = np.where(m2 > 0.0, sk, 0.0)
+    real_bins = (0, int(z.shape[0] - 1)) if tr["nfft"] % 2 == 0 else (0,)
+    interior = np.ones(z.shape[0], bool)
+    for b in real_bins:
+        interior[b] = False
+    if interior.any():
+        j = int(np.argmax(np.where(interior, sk, -np.inf)))
+        mx, mf = float(sk[j]), float(tr["freqs"][j])
+    else:
+        mx, mf = float(sk.max()), float(tr["freqs"][int(np.argmax(sk))])
+    return {
+        "freqs": tr["freqs"], "kurtosis": np.ascontiguousarray(sk),
+        "max_kurtosis": mx, "max_freq": mf,
+        "n_frames": int(n_frames), "win": int(w_len), "hop": int(h),
+        "real_bins": real_bins,
+    }
+
+
+def cepstrum(x, rate, mode="real", floor_ratio=1e-12):
+    """The spectrum of the log spectrum — periodic structure *in frequency*.
+
+    A harmonic family or a family of modulation sidebands is periodic along the
+    frequency axis, so it collapses to a single line along the cepstrum's
+    quefrency axis (in seconds). Two things this finds that a spectrum does not:
+    an **echo** at delay ``tau`` (a rahmonic at ``q = tau``) and a **sideband
+    family** spaced ``df`` apart (a rahmonic at ``q = 1/df``). The second is the
+    bearing case — sidebands around a gear mesh spaced at the shaft rate.
+
+    ``mode``:
+
+    * ``"real"`` — ``irfft(log|X|)``, the standard real cepstrum. Discards phase,
+      so it cannot be inverted; nothing here pretends otherwise.
+    * ``"power"`` — ``irfft(log|X|**2) = 2 * real``, kept because the two
+      conventions differ by exactly a factor of two and mixing them silently
+      halves or doubles every amplitude a caller compares against a reference.
+
+    ``log(0)`` is handled by flooring the magnitude at ``floor_ratio`` times its
+    own maximum (default 1e-12, i.e. -240 dB) rather than letting ``-inf`` enter
+    the inverse transform, where it would make the entire cepstrum NaN. The
+    number of floored bins is returned as ``floored_bins`` — a large count means
+    the signal is band-limited and the cepstrum is dominated by the flooring, not
+    by the signal.
+
+    Returns a dict: ``quefrency`` (s), ``cepstrum``, ``rate``, ``mode``,
+    ``floored_bins``, ``peak_quefrency``, ``peak_amplitude`` (both computed over
+    ``q > 0``, excluding the first bin, which carries the mean log level).
+
+    Measured: white noise at 8 kHz plus a copy of itself delayed by 200 samples
+    and scaled 0.6 gives ``peak_quefrency = 0.025000`` s — exactly 200/8000, and
+    the peak index is exactly 200. An AM signal with sidebands 50 Hz apart gives
+    a rahmonic at 0.020000 s = 1/50.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` refuses, an unknown
+    ``mode``, ``floor_ratio`` outside ``(0, 1)``, and a signal shorter than 4
+    samples.
+    """
+    op = "cepstrum"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=4)
+    kind = _check_choice(mode, ("real", "power"), "mode", op)
+    fr = _finite_scalar(floor_ratio, "floor_ratio")
+    if not 0.0 < fr < 1.0:
+        raise ValueError("%s: floor_ratio=%g must lie in (0, 1)" % (op, fr))
+    spec = np.abs(np.fft.rfft(arr))
+    mx = float(spec.max())
+    if mx <= 0.0:
+        raise ValueError("%s: the signal is identically zero — its log spectrum "
+                         "is -inf everywhere and there is no cepstrum" % (op,))
+    floor = mx * fr
+    floored = int((spec < floor).sum())
+    logmag = np.log(np.maximum(spec, floor))
+    if kind == "power":
+        logmag = 2.0 * logmag
+    c = np.fft.irfft(logmag, n=arr.size)
+    q = np.arange(arr.size, dtype=np.float64) / fs
+    half = arr.size // 2
+    body = np.abs(c[1:half]) if half > 1 else np.zeros(0)
+    if body.size:
+        j = int(np.argmax(body)) + 1
+        pq, pa = float(q[j]), float(c[j])
+    else:
+        pq, pa = 0.0, 0.0
+    return {
+        "quefrency": q, "cepstrum": np.ascontiguousarray(c),
+        "rate": fs, "mode": kind, "floored_bins": floored,
+        "peak_quefrency": pq, "peak_amplitude": pa,
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 4. Order tracking                                                             #
+# --------------------------------------------------------------------------- #
+def _rpm_profile(rpm, n: int, op: str) -> np.ndarray:
+    """A per-sample shaft rate in rpm, from a scalar or an array of length n."""
+    if isinstance(rpm, (str, bytes, np.str_, np.bytes_)):
+        raise ValueError("%s: rpm is a string (%r) — a shaft speed must be a "
+                         "number or a per-sample array" % (op, rpm))
+    if np.ndim(rpm) == 0:
+        return np.full(n, _positive(rpm, "rpm"), np.float64)
+    prof = _as_signal(rpm, "rpm", op, min_len=2)
+    if prof.size != n:
+        raise ValueError("%s: rpm has %d samples but the signal has %d — a speed "
+                         "profile must be sampled on the same clock as the "
+                         "signal, or be a single number" % (op, prof.size, n))
+    if float(prof.min()) <= 0.0:
+        raise ValueError("%s: rpm reaches %g at sample %d. Shaft angle is the "
+                         "integral of speed, so a zero or negative rate makes "
+                         "the angle axis non-monotonic and the resampling would "
+                         "interpolate backwards through it without complaining"
+                         % (op, float(prof.min()), int(np.argmin(prof))))
+    return prof
+
+
+def angular_resample(x, rate, rpm, samples_per_rev=64):
+    """Resample a time record onto the shaft-angle axis (computed order tracking).
+
+    Under a changing shaft speed, a component locked to the shaft has a moving
+    frequency and smears across the spectrum, while a structural resonance stays
+    put. Resample the record so the samples are equally spaced in **shaft angle**
+    instead of in time and the situation reverses exactly: the order becomes a
+    single line and the resonance smears.
+
+    ``rpm`` is either a single number (constant speed — the transform is then a
+    pure rescaling) or a per-sample array on the same clock as the signal. The
+    cumulative revolution count is the trapezoidal integral of ``rpm/60``, and
+    the signal is linearly interpolated onto a uniform grid in it.
+
+    Returns a dict — an angle-domain record is **not** put into circulation as a
+    plain signal, deliberately. Its samples are indexed by angle, not time, so
+    handing it to any op that takes a ``rate`` would produce frequencies in Hz
+    from an axis measured in revolutions: no exception, no NaN, just wrong
+    numbers. (Same judgement, and the same reason, as ``motionmag.motion_magnify``
+    not exposing a bare video adapter.) The dict carries ``signal``,
+    ``angle_rev``, ``samples_per_rev``, ``revolutions`` (total),
+    ``whole_revolutions``, ``rate`` (the original time-domain one, for
+    provenance), ``mean_rpm``, ``max_order``.
+
+    ``max_order`` is ``samples_per_rev / 2`` — the Nyquist of the *angle* axis.
+
+    Measured: a pure order-3.5 component on a 600 -> 1800 rpm ramp, resampled at
+    64 samples/rev, has 100 % of its energy within one bin of order 3.5 in the
+    order spectrum; the same signal in the ordinary spectrum spreads over 71 Hz.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` refuses, a
+    non-positive or wrong-length ``rpm``, ``samples_per_rev`` outside
+    ``[2, 65536]``, an output over :data:`MAX_ANGULAR_SAMPLES`, fewer than one
+    complete revolution in the record, and — the aliasing refusal — a
+    ``samples_per_rev`` whose implied Nyquist order needs content above the
+    time-domain Nyquist. Asking for 64 samples/rev on a shaft turning at 30 Hz
+    means representing 960 Hz, which a 100 Hz recording does not contain; the
+    resampler would happily manufacture it from the interpolation.
+    """
+    op = "angular_resample"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=4)
+    spr = _count(samples_per_rev, "samples_per_rev", 2, 65536)
+    prof = _rpm_profile(rpm, arr.size, op)
+    f_shaft = prof / 60.0
+    f_max = float(f_shaft.max())
+    need_hz = 0.5 * spr * f_max
+    if need_hz > 0.5 * fs:
+        raise ValueError(
+            "%s: samples_per_rev=%d resolves orders up to %g, which at the "
+            "fastest shaft rate in this record (%g rpm = %g Hz) means content at "
+            "%g Hz — above the recording's own Nyquist %g Hz (rate=%g). That "
+            "content is not in the data; interpolating onto this grid would "
+            "manufacture it. The largest honest samples_per_rev here is %d"
+            % (op, spr, 0.5 * spr, float(prof.max()), f_max, need_hz,
+               0.5 * fs, fs, max(2, int(fs / f_max))))
+    dt = 1.0 / fs
+    rev = np.concatenate([[0.0], np.cumsum(0.5 * (f_shaft[1:] + f_shaft[:-1]) * dt)])
+    total = float(rev[-1])
+    if total < 1.0:
+        raise ValueError("%s: the record covers %g revolution(s). Order analysis "
+                         "needs at least one complete revolution — the order "
+                         "resolution is 1/revolutions, so below one revolution "
+                         "every order lands in the same bin"
+                         % (op, total))
+    n_out = int(np.floor(total * spr)) + 1
+    if n_out > MAX_ANGULAR_SAMPLES:
+        raise ValueError("%s: %g revolutions at %d samples/rev is %d samples, "
+                         "over the %d cap (acoustics.MAX_ANGULAR_SAMPLES)"
+                         % (op, total, spr, n_out, MAX_ANGULAR_SAMPLES))
+    grid = np.arange(n_out, dtype=np.float64) / spr
+    out = np.interp(grid, rev, arr)
+    return {
+        "signal": np.ascontiguousarray(out),
+        "angle_rev": grid,
+        "samples_per_rev": int(spr),
+        "revolutions": total,
+        "whole_revolutions": int(np.floor(total)),
+        "rate": fs,
+        "mean_rpm": float(prof.mean()),
+        "max_order": 0.5 * spr,
+    }
+
+
+def order_spectrum(x, rate, rpm, samples_per_rev=64, max_order=None, n_peaks=5):
+    """Amplitude against shaft order — the spectrum a run-up should be read in.
+
+    :func:`angular_resample` followed by an rFFT over a **whole number of
+    revolutions** (the record is cropped to that; the crop makes every integer
+    and half-integer order land exactly on a bin, so the amplitudes are exact
+    rather than leakage-limited). Bin spacing is ``1 / whole_revolutions`` in
+    orders.
+
+    Returns a dict: ``orders``, ``magnitude`` (single-sided, ``2/N``),
+    ``peak_order``, ``peak_amplitude``, ``peak_orders`` / ``peak_amplitudes``,
+    ``resolution_order``, ``whole_revolutions``, ``samples_per_rev``,
+    ``mean_rpm``, ``max_order``.
+
+    Measured, and this is the whole argument for the operator. A 4 s run-up from
+    600 to 1800 rpm at 5 kHz carrying exactly two shaft-locked components
+    (orders 1.0 and 3.5) plus one fixed 400 Hz resonance:
+
+    ==========================  ====================  ====================
+    quantity                    ordinary spectrum     order spectrum
+    ==========================  ====================  ====================
+    order-3.5 component         smeared over 70.0 Hz  peak at order 3.500
+    peak amplitude recovered    0.0619 of its true    0.9979 of its true
+    -3 dB width                 70.00 Hz (= 4.7 ord)  0.0125 order
+    ==========================  ====================  ====================
+
+    The ordinary spectrum recovers **6 %** of the component's amplitude because
+    the energy is spread across 4.7 orders' worth of bins; the order spectrum
+    recovers 99.8 % in one bin. The 400 Hz resonance goes the other way: sharp in
+    Hz, smeared across 9.3 orders after resampling. That reversal is the
+    diagnostic — it separates what turns with the shaft from what does not.
+
+    **Raises** ``ValueError``: everything :func:`angular_resample` refuses (in
+    particular the aliasing refusal), plus a ``max_order`` above the angular
+    Nyquist ``samples_per_rev/2``.
+    """
+    op = "order_spectrum"
+    ang = angular_resample(x, rate, rpm, samples_per_rev=samples_per_rev)
+    k = _count(n_peaks, "n_peaks", 1, 4096)
+    spr = ang["samples_per_rev"]
+    whole = ang["whole_revolutions"]
+    n = whole * spr
+    if n < 4:
+        raise ValueError("%s: %d whole revolution(s) at %d samples/rev is %d "
+                         "samples — too few to transform"
+                         % (op, whole, spr, n))
+    y = ang["signal"][:n]
+    y = y - y.mean()
+    mag = np.abs(np.fft.rfft(y)) * (2.0 / n)
+    orders = np.arange(mag.size, dtype=np.float64) / float(whole)
+    if max_order is not None:
+        mo = _positive(max_order, "max_order")
+        if mo > 0.5 * spr:
+            raise ValueError("%s: max_order=%g is above the angular Nyquist %g "
+                             "(samples_per_rev=%d). Raise samples_per_rev instead "
+                             "— which angular_resample will then check against "
+                             "the recording's own Nyquist"
+                             % (op, mo, 0.5 * spr, spr))
+        keep = orders <= mo
+        orders, mag = orders[keep], mag[keep]
+    body = mag.copy()
+    if body.size:
+        body[0] = 0.0
+    idx = np.argsort(body)[::-1][:k]
+    idx = idx[body[idx] > 0.0]
+    return {
+        "orders": orders, "magnitude": mag,
+        "peak_order": float(orders[int(np.argmax(body))]) if body.size else 0.0,
+        "peak_amplitude": float(body.max()) if body.size else 0.0,
+        "peak_orders": orders[idx].copy(), "peak_amplitudes": body[idx].copy(),
+        "resolution_order": 1.0 / float(whole),
+        "whole_revolutions": whole, "samples_per_rev": spr,
+        "mean_rpm": ang["mean_rpm"], "max_order": ang["max_order"],
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 5. Standard acoustic quantities                                               #
+# --------------------------------------------------------------------------- #
+def octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10):
+    """Fractional-octave band centres and edges, from the defining construction.
+
+    The band system is a geometric progression through 1 kHz:
+    ``f_c = 1000 * G**(x/b)`` for odd ``b`` and ``1000 * G**((2x+1)/(2b))`` for
+    even ``b``, with edges at ``f_c * G**(-+1/(2b))``. ``base=10`` uses
+    ``G = 10**(3/10)`` (the base-ten system, in which ten third-octaves span
+    almost exactly a decade); ``base=2`` uses ``G = 2`` exactly. No published
+    table of nominal centre frequencies is transcribed — the *exact* centres are
+    computed, which is why ``centers`` reads 1000.0, 1258.925, 1584.893 rather
+    than the nominal 1000, 1250, 1600 that a table would give. ``nominal`` is
+    returned alongside for labelling, rounded to three significant figures.
+
+    Returns a dict: ``centers``, ``lower``, ``upper``, ``nominal``, ``fraction``,
+    ``base``, ``ratio`` (``G**(1/b)``), ``bandwidth`` (``upper - lower``),
+    ``index`` (the integer ``x``).
+
+    Exact identities, asserted in the tests: ``upper/lower = G**(1/b)`` for every
+    band, ``center = sqrt(lower*upper)`` (the centre is the geometric mean of its
+    edges, by construction), and successive centres are in the ratio ``G**(1/b)``.
+    Measured for ``fraction=3, base=10``: the band containing 1000 Hz has
+    ``lower = 891.251``, ``upper = 1122.018``, and ``upper/lower = 1.2589254``
+    against ``G**(1/3) = 1.2589254`` — equal to 1.1e-16.
+
+    **Raises** ``ValueError``: ``fraction`` not an int in ``[1, 24]``, ``base``
+    not 2 or 10, non-positive or non-finite ``f_min`` / ``f_max``,
+    ``f_min >= f_max``, and a request for more than :data:`MAX_BANDS` bands.
+    """
+    op = "octave_bands"
+    b = _count(fraction, "fraction", 1, 24)
+    lo = _positive(f_min, "f_min")
+    hi = _positive(f_max, "f_max")
+    if lo >= hi:
+        raise ValueError("%s: need f_min < f_max, got %g and %g" % (op, lo, hi))
+    if isinstance(base, (bool, np.bool_)) or int(base) not in (2, 10):
+        raise ValueError("%s: base must be 2 (octave ratio exactly 2) or 10 "
+                         "(ratio 10**(3/10)), got %r" % (op, base))
+    bs = int(base)
+    g = 2.0 if bs == 2 else 10.0 ** 0.3
+    step = g ** (1.0 / b)
+    half = g ** (0.5 / b)
+    # Solve for the integer index range whose *centres* lie in [f_min, f_max].
+    if b % 2 == 1:
+        def centre(i):
+            return F_REF_HZ * g ** (i / float(b))
+        x0 = int(np.floor(b * np.log(lo / F_REF_HZ) / np.log(g)))
+        x1 = int(np.ceil(b * np.log(hi / F_REF_HZ) / np.log(g)))
+    else:
+        def centre(i):
+            return F_REF_HZ * g ** ((2 * i + 1) / (2.0 * b))
+        x0 = int(np.floor((2 * b * np.log(lo / F_REF_HZ) / np.log(g) - 1) / 2.0))
+        x1 = int(np.ceil((2 * b * np.log(hi / F_REF_HZ) / np.log(g) - 1) / 2.0))
+    idx = [i for i in range(x0 - 1, x1 + 2) if lo <= centre(i) <= hi]
+    if len(idx) > MAX_BANDS:
+        raise ValueError("%s: [%g, %g] Hz at 1/%d octave is %d bands, over the "
+                         "%d cap (acoustics.MAX_BANDS)"
+                         % (op, lo, hi, b, len(idx), MAX_BANDS))
+    if not idx:
+        raise ValueError("%s: no 1/%d-octave band centre lies in [%g, %g] Hz — "
+                         "the range is narrower than one band"
+                         % (op, b, lo, hi))
+    ci = np.array(idx, np.int64)
+    centers = np.array([centre(int(i)) for i in ci], np.float64)
+    lower = centers / half
+    upper = centers * half
+    nominal = np.array([float("%.3g" % c) for c in centers], np.float64)
+    return {
+        "centers": centers, "lower": lower, "upper": upper, "nominal": nominal,
+        "fraction": b, "base": bs, "ratio": float(step),
+        "bandwidth": upper - lower, "index": ci,
+    }
+
+
+def octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0,
+                    weighting="Z", floor_db=FLOOR_DB):
+    """Band levels in dB, summed over fractional-octave bands by Parseval.
+
+    Energy is accumulated from the single-sided periodogram into the bands
+    :func:`octave_bands` defines, so the band powers sum to the signal's
+    mean-square exactly (up to the bins outside the requested range). That
+    identity is the test: measured on white noise at 16 kHz over 22 Hz - 8 kHz
+    at 1/3 octave, the band powers sum to 0.9967 of ``mean(x**2)``, the shortfall
+    being entirely the bins below 20 Hz and above the last band edge.
+
+    **The reference is explicit and there is no implicit 20 uPa.** ``ref`` is an
+    amplitude in the same units as the signal, and the default 1.0 means "dB
+    relative to one unit of whatever you passed in". This library never sees a
+    microphone calibration, so a number labelled dB SPL would be a fabrication;
+    pass ``ref=20e-6`` when the signal really is pascals and the result really is
+    dB SPL.
+
+    ``weighting`` applies :func:`apply_weighting` first (``"Z"`` = none).
+
+    Returns a dict: ``centers``, ``nominal``, ``lower``, ``upper``, ``levels``
+    (dB), ``powers`` (mean-square), ``total_level``, ``total_power``,
+    ``clamped`` (bool mask of bands floored at ``floor_db``), ``ref``,
+    ``weighting``, ``fraction``, ``resolution_hz``, ``narrow_bands`` (how many
+    FFT bins landed in each band — a band with 0 or 1 is under-resolved and the
+    level is not trustworthy).
+
+    Measured exactness: a 1 kHz sine of amplitude 0.7 at 16 kHz, an integer
+    number of periods, ``ref=1.0`` gives the 1 kHz band level
+    -6.1979 dB against the closed form ``10*log10(0.7**2/2) = -6.1979`` dB —
+    equal to 8.9e-15 dB. Every other band is at the floor.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` and
+    :func:`octave_bands` refuse, ``ref <= 0`` (a dB with a zero or negative
+    reference is not a number), an unknown ``weighting``, and an ``f_max`` above
+    Nyquist.
+    """
+    op = "octave_spectrum"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=8)
+    r = _positive(ref, "ref")
+    kind = _check_choice(weighting, ("a", "c", "z"), "weighting", op).upper()
+    fd = _finite_scalar(floor_db, "floor_db")
+    nyq = 0.5 * fs
+    hi = nyq * 0.999 if f_max is None else _positive(f_max, "f_max")
+    if hi > nyq:
+        raise ValueError("%s: f_max=%g Hz is above Nyquist %g Hz (rate=%g) — "
+                         "there are no bands up there to fill"
+                         % (op, hi, nyq, fs))
+    if kind != "Z":
+        arr = apply_weighting(arr, fs, kind)
+    bands = octave_bands(fraction=fraction, f_min=f_min, f_max=hi)
+    n = arr.size
+    spec = np.fft.rfft(arr)
+    freqs = np.fft.rfftfreq(n, d=1.0 / fs)
+    # single-sided mean-square contribution of each bin (Parseval-exact)
+    ms = (np.abs(spec) / n) ** 2
+    ms[1:] *= 2.0
+    if n % 2 == 0:
+        ms[-1] /= 2.0                       # Nyquist bin is not two-sided
+    idx = np.searchsorted(bands["lower"], freqs, side="right") - 1
+    powers = np.zeros(bands["centers"].size, np.float64)
+    counts = np.zeros(bands["centers"].size, np.int64)
+    valid = (idx >= 0) & (idx < powers.size)
+    valid &= freqs <= np.where(valid, bands["upper"][np.clip(idx, 0, powers.size - 1)],
+                               -1.0)
+    np.add.at(powers, idx[valid], ms[valid])
+    np.add.at(counts, idx[valid], 1)
+    levels, clamped = _db_power(powers, r * r, fd)
+    total = float(ms.sum())
+    tl, tc = _db_power(total, r * r, fd)
+    return {
+        "centers": bands["centers"], "nominal": bands["nominal"],
+        "lower": bands["lower"], "upper": bands["upper"],
+        "levels": levels, "powers": powers, "clamped": clamped,
+        "narrow_bands": counts,
+        "total_level": tl, "total_power": total, "total_clamped": tc,
+        "ref": r, "weighting": kind, "fraction": bands["fraction"],
+        "resolution_hz": float(fs / n),
+    }
+
+
+def _weighting_ratio(f: np.ndarray, kind: str) -> np.ndarray:
+    """The un-normalised A / C weighting magnitude response at |f|."""
+    f2 = f.astype(np.float64) ** 2
+    f1s, f2s, f3s, f4s = _W_F1 ** 2, _W_F2 ** 2, _W_F3 ** 2, _W_F4 ** 2
+    if kind == "A":
+        num = f4s * f2 * f2
+        den = (f2 + f1s) * np.sqrt((f2 + f2s) * (f2 + f3s)) * (f2 + f4s)
+    else:                                    # "C"
+        num = f4s * f2
+        den = (f2 + f1s) * (f2 + f4s)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        r = num / den
+    return np.where(np.isfinite(r), r, 0.0)
+
+
+def weighting_response(freqs, kind="A", floor_db=FLOOR_DB):
+    """The A / C / Z frequency-weighting curve, in dB, at the given frequencies.
+
+    Computed from the four pole frequencies that *define* the networks and
+    normalised so that the response at 1 kHz is exactly 0 dB **by construction**
+    — the curve is divided by its own value at 1 kHz rather than having a
+    published offset constant added to it. That is why the tests can assert
+    equality at 1 kHz to 0.0 rather than to a tolerance, and why no standard's
+    table of attenuations appears anywhere in this repository.
+
+    The response depends on ``f`` only through ``f**2``, so it is an even
+    function and negative frequencies are evaluated at ``|f|`` — that is the
+    definition, not a repair. ``f = 0`` has zero response (both curves have a
+    zero at DC) and is reported as ``floor_db`` rather than ``-inf``.
+
+    Measured (computed, then printed — these are outputs, not transcriptions):
+
+    ========  ==========  ==========
+    f (Hz)    A (dB)      C (dB)
+    ========  ==========  ==========
+    10        -70.4019    -14.3123
+    31.5      -39.5280     -3.0296
+    100       -19.1451     -0.0619
+    1000        0.0000      0.0000
+    4000        0.9670     -0.7666
+    10000      -2.4885     -4.4230
+    20000     -9.3411    -11.1421
+    ========  ==========  ==========
+
+    The low-frequency asymptote is a closed form and is asserted: ``A`` falls at
+    exactly 80 dB/decade as ``f -> 0`` (``f**4`` over three constants) and ``C``
+    at exactly 40 dB/decade (``f**2``). Measured between 0.01 and 0.001 Hz:
+    80.000000 and 40.000000 dB/decade.
+
+    Returns a float64 array the same shape as *freqs*.
+
+    **Raises** ``ValueError``: a non-1-D / non-finite / complex / masked
+    ``freqs``, an unknown ``kind``.
+    """
+    op = "weighting_response"
+    kind_s = _check_choice(kind, ("a", "c", "z"), "kind", op).upper()
+    f = _as_signal(freqs, "freqs", op, min_len=1)
+    if kind_s == "Z":
+        return np.zeros_like(f)
+    fd = _finite_scalar(floor_db, "floor_db")
+    r = _weighting_ratio(np.abs(f), kind_s)
+    r0 = float(_weighting_ratio(np.array([F_REF_HZ]), kind_s)[0])
+    lvl, _ = _db_power(r * r, r0 * r0, fd)
+    return np.ascontiguousarray(lvl)
+
+
+def apply_weighting(x, rate, kind="A"):
+    """Apply an A / C / Z frequency weighting to a signal, zero-phase.
+
+    The weighting is applied as a real, even gain in the frequency domain, so it
+    introduces no phase distortion and no group delay — the result is aligned
+    sample-for-sample with the input, which a recursive filter implementation
+    would not be.
+
+    Measured: a 1 kHz sine at 16 kHz (integer periods) is returned **unchanged**
+    by both A and C weighting — max absolute difference 5.4e-16 for A and
+    4.7e-16 for C — because both curves are exactly 0 dB at 1 kHz by
+    construction. A 100 Hz sine of amplitude 1.0 comes back with amplitude
+    0.110293 under A weighting, against the closed-form
+    ``10**(-19.1451/20) = 0.110293``.
+
+    ``kind="Z"`` returns a copy, unchanged.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` refuses, an unknown
+    ``kind``, ``rate <= 0``.
+    """
+    op = "apply_weighting"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=2)
+    kind_s = _check_choice(kind, ("a", "c", "z"), "kind", op).upper()
+    if kind_s == "Z":
+        return arr.copy()
+    freqs = np.fft.rfftfreq(arr.size, d=1.0 / fs)
+    r = _weighting_ratio(freqs, kind_s)
+    r0 = float(_weighting_ratio(np.array([F_REF_HZ]), kind_s)[0])
+    gain = r / r0
+    return np.ascontiguousarray(np.fft.irfft(np.fft.rfft(arr) * gain, n=arr.size))
+
+
+def equivalent_level(x, rate, weighting="A", ref=1.0, floor_db=FLOOR_DB):
+    """The energy-equivalent level of a record, in dB relative to ``ref``.
+
+    ``L_eq = 10 log10(mean(x_w**2) / ref**2)`` where ``x_w`` is the signal after
+    the chosen weighting. Returns a plain float.
+
+    **The reference is yours to supply.** The default ``ref=1.0`` means dB
+    relative to one unit of the signal's own units; it is not dB SPL, because
+    this library never sees your calibration. Pass ``ref=20e-6`` for pascals.
+
+    Measured: a 1 kHz sine of amplitude 1.0 at 16 kHz over an integer number of
+    periods gives ``L_eq = -3.010300`` dB with Z weighting, against the closed
+    form ``10*log10(1/2) = -3.010300`` (equal to 1.3e-14 dB), and the **same**
+    value under A weighting (difference 2.5e-14 dB), because A is 0 dB at 1 kHz.
+    Doubling the amplitude adds exactly 6.020600 dB.
+
+    Silence returns ``floor_db`` (default -200) rather than ``-inf``; an ``-inf``
+    in a list of levels destroys every average taken over it afterwards.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` refuses, an unknown
+    ``weighting``, ``ref <= 0`` (a decibel needs a positive reference; a zero
+    reference makes every level ``+inf`` and a negative one makes the ratio
+    negative), ``rate <= 0``.
+    """
+    op = "equivalent_level"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=1)
+    r = _positive(ref, "ref")
+    kind = _check_choice(weighting, ("a", "c", "z"), "weighting", op).upper()
+    fd = _finite_scalar(floor_db, "floor_db")
+    y = arr if kind == "Z" else apply_weighting(arr, fs, kind)
+    lvl, _ = _db_power(float(np.mean(y * y)), r * r, fd)
+    return float(lvl)
+
+
+def percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting="A",
+                     ref=1.0, window_s=0.125, floor_db=FLOOR_DB):
+    """Statistical levels: ``L_N`` is the level exceeded ``N`` % of the time.
+
+    The record is cut into non-overlapping blocks of ``window_s`` seconds, each
+    block's equivalent level is computed, and ``L_N`` is the ``(100-N)``-th
+    percentile of those levels. Non-overlapping rectangular blocks are used
+    rather than an exponential time weighting because the block length is then
+    exactly what the caller asked for and the statistic is exactly a percentile
+    of the returned ``levels`` array — an exponential average would make the
+    effective averaging time a function of the signal.
+
+    Returns a dict with one key per requested percentile (``"L10"``, ``"L50"``,
+    ``"L90"``, formatted with ``%g``), plus ``levels`` (the per-block levels),
+    ``times`` (block start times, s), ``n_blocks``, ``block_samples``,
+    ``leq`` (the energy-equivalent level of the whole record), ``ref``,
+    ``weighting``.
+
+    Note that ``L50`` is the *median* level and ``leq`` is the *energy* level;
+    they are different numbers whenever the signal is not stationary, and the
+    gap between them is itself the usual measure of how fluctuating a record is.
+
+    Measured on a two-level test signal (half at amplitude 1.0, half at 0.1,
+    Z-weighted, 0.125 s blocks): ``L10 = -3.010300`` dB and ``L90 = -23.010300``
+    dB — exactly the two constituent levels, 20.000000 dB apart, as they must be
+    for a 50/50 split. On a constant-amplitude signal all three percentiles and
+    ``leq`` agree to 3.6e-15 dB.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` refuses, a
+    percentile outside ``[0, 100]``, a non-positive ``window_s``, a ``window_s``
+    longer than the record (which would give one block and make every percentile
+    the same number while still looking like a statistic), ``ref <= 0``.
+    """
+    op = "percentile_level"
+    fs = _rate(rate)
+    arr = _as_signal(x, "x", op, min_len=2)
+    r = _positive(ref, "ref")
+    kind = _check_choice(weighting, ("a", "c", "z"), "weighting", op).upper()
+    fd = _finite_scalar(floor_db, "floor_db")
+    ws = _positive(window_s, "window_s")
+    pcs = np.atleast_1d(np.asarray(
+        [_finite_scalar(p, "percentiles[%d]" % i)
+         for i, p in enumerate(np.atleast_1d(percentiles))], np.float64))
+    if pcs.size == 0:
+        raise ValueError("%s: percentiles is empty" % (op,))
+    if np.any(pcs < 0.0) or np.any(pcs > 100.0):
+        raise ValueError("%s: percentiles must lie in [0, 100], got %r"
+                         % (op, pcs.tolist()))
+    blk = int(round(ws * fs))
+    if blk < 1:
+        raise ValueError("%s: window_s=%g at rate=%g Hz is %d sample(s)"
+                         % (op, ws, fs, blk))
+    n_blocks = arr.size // blk
+    if n_blocks < 2:
+        raise ValueError("%s: window_s=%g s gives %d whole block(s) over a %g s "
+                         "record. A percentile over one block is that block's "
+                         "level repeated — it would look like a statistic and "
+                         "carry no information. Shorten window_s or lengthen the "
+                         "record" % (op, ws, n_blocks, arr.size / fs))
+    y = arr if kind == "Z" else apply_weighting(arr, fs, kind)
+    trimmed = y[:n_blocks * blk].reshape(n_blocks, blk)
+    power = (trimmed * trimmed).mean(axis=1)
+    levels, _ = _db_power(power, r * r, fd)
+    out = {}
+    for p in pcs:
+        out["L%g" % p] = float(np.percentile(levels, 100.0 - p))
+    leq, _ = _db_power(float(np.mean(y * y)), r * r, fd)
+    out.update({
+        "levels": levels,
+        "times": np.arange(n_blocks, dtype=np.float64) * blk / fs,
+        "n_blocks": int(n_blocks), "block_samples": int(blk),
+        "leq": float(leq), "ref": r, "weighting": kind,
+        "percentiles": pcs,
+    })
+    return out
+
+
+# --------------------------------------------------------------------------- #
+# 6. Two-channel estimators                                                     #
+# --------------------------------------------------------------------------- #
+def _welch_pair(x, y, rate, win, hop, window, op):
+    """Welch-averaged auto and cross spectra of two equal-length signals."""
+    fs = _rate(rate)
+    a = _as_signal(x, "x", op, min_len=8)
+    b = _as_signal(y, "y", op, min_len=8)
+    if a.size != b.size:
+        raise ValueError("%s: x has %d samples and y has %d. Two-channel "
+                         "estimators compare the channels sample for sample; "
+                         "padding or truncating one of them silently would "
+                         "invent a time offset" % (op, a.size, b.size))
+    if win is None:
+        w_len = 16
+        while w_len * 2 <= 1024 and a.size >= 8 * w_len:
+            w_len *= 2
+    else:
+        w_len = _count(win, "win", 4, MAX_WINDOW)
+    h = w_len // 2 if hop is None else _count(hop, "hop", 1, MAX_WINDOW)
+    if w_len > a.size:
+        raise ValueError("%s: win=%d is longer than the %d-sample record"
+                         % (op, w_len, a.size))
+    starts = np.arange(0, a.size - w_len + 1, h, dtype=np.int64)
+    if starts.size < 2:
+        raise ValueError(
+            "%s: win=%d hop=%d over %d samples gives %d frame(s). With a single "
+            "frame the coherence is identically 1.0 at every frequency no matter "
+            "what the two channels contain — a perfect-looking result that means "
+            "nothing. At least 2 frames are required, and 8 or more before the "
+            "number is worth quoting" % (op, w_len, h, a.size, starts.size))
+    n_freqs = w_len // 2 + 1
+    if starts.size * n_freqs > MAX_STFT_ELEMENTS:
+        raise ValueError("%s: %d frames x %d bins is over the %d cap "
+                         "(acoustics.MAX_STFT_ELEMENTS)"
+                         % (op, starts.size, n_freqs, MAX_STFT_ELEMENTS))
+    w = _window_values(window, w_len, op)
+    fa = np.lib.stride_tricks.sliding_window_view(a, w_len)[starts] * w
+    fb = np.lib.stride_tricks.sliding_window_view(b, w_len)[starts] * w
+    xa = np.fft.rfft(fa, axis=1)
+    xb = np.fft.rfft(fb, axis=1)
+    pxx = np.mean(np.abs(xa) ** 2, axis=0)
+    pyy = np.mean(np.abs(xb) ** 2, axis=0)
+    pxy = np.mean(np.conj(xa) * xb, axis=0)
+    freqs = np.fft.rfftfreq(w_len, d=1.0 / fs)
+    return freqs, pxx, pyy, pxy, int(starts.size), w_len, h, fs
+
+
+def coherence(x, y, rate, win=None, hop=None, window="hann"):
+    """Ordinary coherence: how much of ``y`` is linearly explained by ``x``.
+
+    ``gamma**2(f) = |Pxy|**2 / (Pxx * Pyy)``, Welch-averaged. It is bounded in
+    ``[0, 1]``, and it is the number that says whether a transfer function is
+    worth reading at a given frequency.
+
+    **A single frame makes it identically 1.0** — the Cauchy-Schwarz inequality
+    is an equality without averaging — so an unaveraged coherence is a perfect
+    score that carries no information at all. That case is refused, not returned.
+
+    ``win`` defaults to the largest power of two leaving at least 8 frames,
+    capped at 1024; the value used is returned.
+
+    Returns a dict: ``freqs``, ``coherence``, ``n_frames``, ``win``, ``hop``,
+    ``rate``, ``mean_coherence``, ``bias`` (the coherence a *pair of independent
+    noise records* would show with this many frames, ``1/n_frames`` — anything
+    at or below this is indistinguishable from nothing).
+
+    Measured at 16 kHz over 16384 samples, win = 1024, 31 frames:
+
+    ===========================================  ================
+    case                                         mean coherence
+    ===========================================  ================
+    y = 2.5 * x (noiseless)                      1.0000000000
+    y = x delayed 37 samples (noiseless)         0.9995
+    y = x + independent noise, SNR 1 (0 dB)      0.4977
+    y, x independent noise                       0.0322
+    ===========================================  ================
+
+    The third row is the closed form: for output noise the expected coherence is
+    ``SNR/(1+SNR)``, i.e. 0.5000 at 0 dB. The fourth is the bias floor
+    ``1/31 = 0.0323``, which is why ``bias`` is returned — an uncorrelated pair
+    does not read zero.
+
+    **Raises** ``ValueError``: everything :func:`_as_signal` refuses on either
+    channel, unequal channel lengths, fewer than 2 frames, ``win`` longer than
+    the record, an unknown window.
+    """
+    op = "coherence"
+    freqs, pxx, pyy, pxy, nf, w_len, h, fs = _welch_pair(
+        x, y, rate, win, hop, window, op)
+    den = pxx * pyy
+    with np.errstate(divide="ignore", invalid="ignore"):
+        g2 = np.abs(pxy) ** 2 / den
+    g2 = np.where(den > 0.0, g2, 0.0)
+    g2 = np.clip(g2, 0.0, 1.0)               # round-off can exceed 1 by ~1e-16
+    return {
+        "freqs": freqs, "coherence": np.ascontiguousarray(g2),
+        "n_frames": nf, "win": w_len, "hop": h, "rate": fs,
+        "mean_coherence": float(g2.mean()),
+        "bias": 1.0 / nf,
+    }
+
+
+def transfer_function(x, y, rate, win=None, hop=None, window="hann",
+                      estimator="h1", ref=1.0, floor_db=FLOOR_DB):
+    """Estimate ``H(f)`` with ``x`` in and ``y`` out, with its coherence.
+
+    ``estimator``:
+
+    * ``"h1"`` — ``Pxy / Pxx``. Unbiased when the noise is on the **output**.
+      The usual default and the right one for a driven test.
+    * ``"h2"`` — ``Pyy / conj(Pxy)``. Unbiased when the noise is on the
+      **input**. It over-estimates the magnitude wherever H1 under-estimates it,
+      so the two together bracket the truth, and ``|H1/H2| = gamma**2`` exactly —
+      an identity worth checking rather than a coincidence.
+
+    Returns a dict: ``freqs``, ``response`` (complex), ``magnitude``,
+    ``magnitude_db`` (relative to ``ref``), ``phase_rad``, ``coherence``,
+    ``estimator``, ``n_frames``, ``win``, ``hop``, ``rate``.
+
+    Measured at 16 kHz over 16384 samples, win = 1024, 31 frames, white input:
+
+    * ``y = 2.5 * x``: ``|H| = 2.500000`` at every bin (max deviation 7.5e-15),
+      phase 0.0, coherence 1.0.
+    * ``y = 0.8 * x[n-37]``: the phase is a straight line in frequency of slope
+      ``-2 pi * 37 / 16000`` s; the measured group delay from a least-squares fit
+      to the unwrapped phase is 37.0000 samples (error 3.9e-04 samples), and
+      ``|H| = 0.8000`` (max deviation 0.0034 over the interior bins).
+    * ``y = 2.5 * x + n`` with output-noise SNR 0 dB: H1 gives
+      ``mean |H| = 2.4990`` (error 0.04 %) while H2 gives 5.0193 — exactly the
+      factor-of-two over-estimate the theory predicts when the noise is on the
+      output, and ``mean |H1/H2| = 0.4979`` against the measured mean coherence
+      0.4977.
+
+    That last row is the point of returning the coherence with the response: the
+    H2 number is not obviously wrong when you look at it.
+
+    **Raises** ``ValueError``: everything :func:`coherence` refuses, plus an
+    unknown ``estimator`` and ``ref <= 0``.
+    """
+    op = "transfer_function"
+    est = _check_choice(estimator, ("h1", "h2"), "estimator", op)
+    r = _positive(ref, "ref")
+    fd = _finite_scalar(floor_db, "floor_db")
+    freqs, pxx, pyy, pxy, nf, w_len, h, fs = _welch_pair(
+        x, y, rate, win, hop, window, op)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        if est == "h1":
+            hf = np.where(pxx > 0.0, pxy / np.where(pxx > 0.0, pxx, 1.0), 0.0)
+        else:
+            cj = np.conj(pxy)
+            hf = np.where(np.abs(cj) > 0.0, pyy / np.where(np.abs(cj) > 0.0, cj, 1.0),
+                          0.0)
+        den = pxx * pyy
+        g2 = np.where(den > 0.0, np.abs(pxy) ** 2 / np.where(den > 0.0, den, 1.0), 0.0)
+    mag = np.abs(hf)
+    lvl, _ = _db_power(mag * mag, r * r, fd)
+    return {
+        "freqs": freqs, "response": np.ascontiguousarray(hf),
+        "magnitude": np.ascontiguousarray(mag),
+        "magnitude_db": lvl,
+        "phase_rad": np.angle(hf),
+        "coherence": np.clip(g2, 0.0, 1.0),
+        "estimator": est, "n_frames": nf, "win": w_len, "hop": h,
+        "rate": fs, "ref": r,
+    }

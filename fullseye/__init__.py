@@ -363,10 +363,9 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
-    "dsp",
-    "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
-    "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
-    "signal_features", "resample", "zero_crossing_rate",
+    # dsp の 12 名は上流で既に export 済み。ここで足すのは module 参照と
+    # 漏れていた 2 つだけ(2026-09-01: 全部足して重複させた回帰)
+    "dsp", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage",
     "iqft2", "monogenic_amplitude", "monogenic_orientation",
     "monogenic_phase", "monogenic_signal", "qft2", "quat_color_filter",
