@@ -1179,26 +1179,45 @@ def ex_weighting_ac(log):
     fs = 48000.0
     dur = 0.5
     amp = 1.0
-    tones = np.logspace(np.log10(20.0), np.log10(16000.0), 34)
+    n = int(round(dur * fs))
+    t = np.arange(n) / fs
+    bin_hz = 1.0 / dur                       # この記録の周波数分解能
+    # **bin 中心の音**だけを掃引する。理由は下の off-bin 対照で測ってある:
+    # 矩形窓の漏れ込みが重み付けの効いた総和を支配し、低域では 11 dB 以上ずれる。
+    tones = np.unique(np.round(np.logspace(np.log10(20.0), np.log10(16000.0), 34)
+                               / bin_hz).astype(int)) * bin_hz
     leq_z_closed = 10.0 * np.log10(amp * amp / 2.0)
     rows = []
     for f0 in tones:
-        t = np.arange(int(round(dur * fs))) / fs
         x = amp * np.sin(2.0 * np.pi * f0 * t)
         lz = A.equivalent_level(x, fs, weighting="Z", ref=1.0)
         la = A.equivalent_level(x, fs, weighting="A", ref=1.0)
         lc = A.equivalent_level(x, fs, weighting="C", ref=1.0)
         wa = float(A.weighting_response(np.array([f0]), "A")[0])
         wc = float(A.weighting_response(np.array([f0]), "C")[0])
+        # 対照: 同じ音を bin から半分ずらす(記録に半端な周期が残る)
+        f_off = float(f0) + 0.5 * bin_hz
+        xo = amp * np.sin(2.0 * np.pi * f_off * t)
+        lzo = A.equivalent_level(xo, fs, weighting="Z", ref=1.0)
+        lao = A.equivalent_level(xo, fs, weighting="A", ref=1.0)
+        wao = float(A.weighting_response(np.array([f_off]), "A")[0])
         rows.append({"f": float(f0), "lz": float(lz), "la": float(la), "lc": float(lc),
                      "wa": wa, "wc": wc, "da": float(la - lz) - wa,
-                     "dc": float(lc - lz) - wc, "wave": x[:int(round(0.006 * fs))]})
+                     "dc": float(lc - lz) - wc,
+                     "f_off": f_off, "da_off": float(lao - lzo) - wao,
+                     "wave": x[:int(round(0.006 * fs))]})
     worst_a = max(abs(r["da"]) for r in rows)
     worst_c = max(abs(r["dc"]) for r in rows)
+    worst_off = max(abs(r["da_off"]) for r in rows)
+    k_off = int(np.argmax([abs(r["da_off"]) for r in rows]))
     log(f"  L_eq(Z) closed form {leq_z_closed:.6f} dB; measured "
         f"{rows[0]['lz']:.6f} .. {rows[-1]['lz']:.6f} dB")
-    log(f"  max |(L_A - L_Z) - A(f)| = {worst_a:.4e} dB, "
-        f"max |(L_C - L_Z) - C(f)| = {worst_c:.4e} dB over {len(rows)} tones")
+    log(f"  bin-centred tones ({len(rows)}, resolution {bin_hz:g} Hz): "
+        f"max |(L_A - L_Z) - A(f)| = {worst_a:.4e} dB, "
+        f"max |(L_C - L_Z) - C(f)| = {worst_c:.4e} dB")
+    log(f"  off-bin control (same tones + {0.5 * bin_hz:g} Hz): the same difference "
+        f"reaches {worst_off:.4f} dB at {rows[k_off]['f_off']:.1f} Hz "
+        f"-- rectangular-window leakage, weighted at a different gain")
 
     W, H = GIF_W, GIF_H
     i1k = int(np.argmin(np.abs(tones - 1000.0)))
