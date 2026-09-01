@@ -1968,7 +1968,10 @@ def ex_illumination(log):
 def ex_pixel_pitch(log):
     """同じ欠陥をピッチ違いで撮り、Nyquist を割った瞬間に消える様子。"""
     size_um = 130.0
-    pitches = np.linspace(1.4, 13.5, 38)
+    # 130 um の欠陥が 2 画素を割るのはピッチ 13.79 um。上端を 13.5 にしていた
+    # ときは**区間内に根が無く**、二分法が None を返して落ちた(境界を含む
+    # 範囲を掃かないと、見せたい瞬間そのものが画面に出ない)。
+    pitches = np.linspace(1.4, 18.0, 40)
     tile = 160
     seeds = 5
 
@@ -2009,7 +2012,7 @@ def ex_pixel_pitch(log):
     def px_at(pt):
         g, _ = _limits(pixel_pitch_um=float(pt))
         return size_um / g["um_per_pixel"] - 2.0
-    pitch_nyq = _bisect(px_at, 1.4, 13.5, tol=1e-9)
+    pitch_nyq = _bisect(px_at, 1.4, 18.0, tol=1e-9)
     last_det = [r["pitch"] for r in rows if r["rate"] is not None and r["rate"] >= 0.5]
     log(f"  a {size_um:g} um defect drops below 2 pixels at pitch "
         f"{pitch_nyq:.4f} um; 50 % detection survives to pitch "
@@ -2045,25 +2048,25 @@ def ex_pixel_pitch(log):
                 canvas, [(xx0 - 1, pan_y - 1), (xx0 + disp, pan_y - 1),
                          (xx0 + disp, pan_y + disp), (xx0 - 1, pan_y + disp)],
                 color=C_GRID, width=1, closed=True)
-        p = Plot(canvas, plot_box, (1.4, 13.5), (0.0, 12.0))
+        p = Plot(canvas, plot_box, (1.4, 18.0), (0.0, 22.0))
         p.bg()
-        p.band_x(pitch_nyq, 13.5, (0.17, 0.14, 0.13))
-        p.grid_y([2, 4, 6, 8, 10])
+        p.band_x(pitch_nyq, 18.0, (0.17, 0.14, 0.13))
+        p.grid_y([2, 5, 10, 15, 20])
         p.frame()
         p.curve([q["pitch"] for q in rows], [q["px"] for q in rows], C_OPT, 2)
         p.hline(2.0, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.vline(pitch_nyq, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.marker(r["pitch"], r["px"], (1.0, 1.0, 1.0), 5, "cross", 2)
-        p.ticks_y([2, 4, 6, 8, 10])
-        # 検出率(0..1 を 0..12 の軸に載せ替えて重ねる)。**p.c から続ける**。
-        p2 = Plot(p.c, plot_box, (1.4, 13.5), (0.0, 1.06))
+        p.ticks_y([2, 5, 10, 15, 20])
+        # 検出率(0..1 を同じ枠に載せ替えて重ねる)。**p.c から続ける**。
+        p2 = Plot(p.c, plot_box, (1.4, 18.0), (0.0, 1.06))
         p2.curve([q["pitch"] for q in rows if q["rate"] is not None],
                  [q["rate"] for q in rows if q["rate"] is not None], C_CURVE, 2)
-        p2.ticks_x([2, 4, 6, 8, 10, 12])
+        p2.ticks_x([2, 6, 10, 14, 18])
         canvas = p2.c
-        for t in (2, 4, 6, 8, 10, 12):
+        for t in (2, 6, 10, 14, 18):
             labels.append((int(p.px(t)) - 5, plot_box[3] + 6, f"{t}", C_DIM, 11, False))
-        for t in (2, 4, 6, 8, 10):
+        for t in (2, 5, 10, 15, 20):
             labels.append((plot_box[0] - 24, int(p.py(t)) - 7, f"{t}", C_OPT, 11, False))
         yi = pan_y + disp + 10
         det_txt = ("no image (below one pixel)" if r["img"] is None

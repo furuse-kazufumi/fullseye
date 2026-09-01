@@ -1812,18 +1812,23 @@ def subject_resample_loss(log=print) -> dict:
     src = _load_gray("camera.png")[::2, ::2]         # 256x256
     step_deg = 10.0
     a_step = (step_deg + 45.0) / 90.0
+    def _detail(x):
+        """細かさの尺度 = 画像 − ローパス の標準偏差 (正規化されない実量).
+
+        `highpass` op は出力を最大絶対値で正規化するので、その std は
+        「細かさ」ではなく相対値になる (実測: 回すほど 112% に増えてしまった)。
+        `gauss_image` は正規化しないので、差を取れば絶対量として比べられる。
+        """
+        lo = np.asarray(fs.apply(np.asarray(x, np.float64), "gauss_image",
+                                 0.4, 0.5), np.float64)
+        return float(np.std(np.asarray(x, np.float64) - lo))
+
     cur = src.copy()
-    hist = [{"n": 0, "img": src.copy(), "psnr": 99.0,
-             "std": float(fs.apply(src, "gray_histo_abs", 0.5, 0.5)),
-             "hp": float(np.std(np.asarray(fs.apply(src, "highpass", 0.4, 0.5))))}]
+    hist = [{"n": 0, "img": src.copy(), "psnr": 99.0}]
     for i in range(1, 37):
         cur = np.asarray(fs.apply(cur, "rotate_image", a_step, 0.5), np.float64)
-        ref = src if i % 36 == 0 else None
-        hist.append({
-            "n": i, "img": cur.copy(),
-            "psnr": _psnr(src, cur) if ref is not None else float("nan"),
-            "std": float(fs.apply(cur, "gray_histo_abs", 0.5, 0.5)),
-            "hp": float(np.std(np.asarray(fs.apply(cur, "highpass", 0.4, 0.5))))})
+        hist.append({"n": i, "img": cur.copy(),
+                     "psnr": _psnr(src, cur) if i % 36 == 0 else float("nan")})
     picks = [0, 1, 6, 12, 24, 36]
     # rotate_image は reshape=False + mode="reflect" なので、回すたびに四隅が
     # 反射で汚れる。それを「補間で失われた分」と混ぜると誤読するので、
@@ -1831,8 +1836,7 @@ def subject_resample_loss(log=print) -> dict:
     m = src.shape[0] // 5
     psnr_full = _psnr(src, hist[36]["img"])
     psnr_core = _psnr(src[m:-m, m:-m], hist[36]["img"][m:-m, m:-m])
-    hp_core = [float(np.std(np.asarray(
-        fs.apply(h["img"][m:-m, m:-m], "highpass", 0.4, 0.5)))) for h in hist]
+    hp_core = [_detail(h["img"][m:-m, m:-m]) for h in hist]
     # 3 つの zoom 系 op が同じ出力かどうかを実測 (推測しない)
     z = {op: np.asarray(fs.apply(src, op, 0.9, 0.5), np.float64)
          for op in ("zoom_image_factor", "zoom_image_size", "rescale_img")}
@@ -1846,7 +1850,7 @@ def subject_resample_loss(log=print) -> dict:
                 ("累計 %.0f° = 一周して元の向きに戻った\n中央だけの PSNR %.2f dB"
                  % (k * step_deg, psnr_core) if k == 36 else
                  "累計 %.0f°" % (k * step_deg)))
-        labels.append("%d 回目 (%s)\n中央の高周波 std %.4f (元の %.1f%%)"
+        labels.append("%d 回目 (%s)\n中央の細かさ %.4f (元の %.1f%%)"
                       % (k, tail.replace("\n", " / "), hp_core[k],
                          100 * hp_core[k] / hp_core[0]))
     panels.append(_cmap(np.abs(src - hist[36]["img"]), "magma",
@@ -1857,12 +1861,13 @@ def subject_resample_loss(log=print) -> dict:
     curve = _plot(
         [{"x": [h["n"] for h in hist],
           "y": [100 * v / hp_core[0] for v in hp_core],
-          "color": (255, 196, 80), "label": "中央の高周波 std (元を 100% とする)"}],
+          "color": (255, 196, 80),
+          "label": "中央の細かさ = std(画像 − ローパス) (元を 100% とする)"}],
         520, 520, xlim=(0, 36), ylim=(0, 105),
         title="回すたびに細かい模様が減っていく",
         xlabel="10° 回転を掛けた回数", legend_pos="tr")
     panels.append(curve.astype(np.float64) / 255.0)
-    labels.append("失われる量は回すほど積み上がる\n36 回で中央の高周波 std は %.1f%% に"
+    labels.append("失われる量は回すほど積み上がる\n36 回で中央の細かさは %.1f%% に"
                   % (100 * hp_core[36] / hp_core[0]))
     sheet = E.contact_sheet(
         panels, labels, ncols=4, panel_px=272, label_h=56, font_size=16,
@@ -1875,7 +1880,7 @@ def subject_resample_loss(log=print) -> dict:
         "bytes": info["png_bytes"], "size": list(info["size"]), "panels": len(panels),
         "sha256": info["png_sha256"],
         "title": "回し続けると何が失われるか (リサンプリング損失)",
-        "ops": ["rotate_image", "highpass", "gray_histo_abs",
+        "ops": ["rotate_image", "gauss_image",
                 "zoom_image_factor", "zoom_image_size", "rescale_img"],
         "data": "skimage.data camera (BSD / public domain) を 1/2 に間引いたもの",
         "measured": {
@@ -1884,8 +1889,9 @@ def subject_resample_loss(log=print) -> dict:
             "psnr_after_full_turn_centre_only_db": round(psnr_core, 3),
             "border_note": ("rotate_image は reshape=False + mode='reflect' なので"
                             "四隅が反射で汚れる。端 20% を落とした中央のみの値も併記"),
-            "highpass_std_ratio_pct_centre": [round(100 * v / hp_core[0], 2)
-                                              for v in hp_core],
+            "detail_metric": "std(image - gauss_image(0.4)) — 正規化しない実量",
+            "detail_ratio_pct_centre": [round(100 * v / hp_core[0], 2)
+                                        for v in hp_core],
             "max_abs_diff_after_full_turn": round(
                 float(np.max(np.abs(src - hist[36]["img"]))), 4),
             "mean_abs_diff_after_full_turn": round(
@@ -1897,7 +1903,7 @@ def subject_resample_loss(log=print) -> dict:
         "caption": (
             "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに"
             "戻る。だが画素は戻らない —— 中央部だけで測っても元画像との PSNR は "
-            "%.2f dB、中央の高周波成分の標準偏差は元の %.1f%% まで落ちる。"
+            "%.2f dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の %.1f%% まで落ちる。"
             "画像全体では %.2f dB とさらに悪いが、その差の大半は端の処理 "
             "(rotate_image は reshape=False + mode='reflect') によるもので、"
             "補間そのものの損失ではない —— なので両方の数字を出している。"

@@ -1,0 +1,682 @@
+{
+ "generated_by": "tools/gen_wingevo_gallery.py",
+ "exhibits": {
+  "champions": [
+   {
+    "stem": "wingevo_champion_photon_denoise",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_photon_denoise.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_photon_denoise_thumb.jpg",
+     "size": [
+      1060,
+      352
+     ],
+     "png_bytes": 23417,
+     "thumb_bytes": 23344,
+     "png_sha256": "47defb719f8ce4568834a286141949dc50a5445c525b45b96c7a39af0fd5994d"
+    },
+    "numbers": {
+     "locked_trivial": 0.4174,
+     "locked_hand": 0.5536,
+     "locked_champion": 0.7845,
+     "unit": "1/(1+mse of shape)"
+    },
+    "provenance": "champion=out/rb_ph/champion_photon_denoise.json / スコアは本スクリプトで実測"
+   },
+   {
+    "stem": "wingevo_champion_vibration_map",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_vibration_map.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_vibration_map_thumb.jpg",
+     "size": [
+      956,
+      326
+     ],
+     "png_bytes": 23279,
+     "thumb_bytes": 30743,
+     "png_sha256": "b53e7f72f95ea9b9e578db395296bc9baa1c6c4d770025f2e27de079f5bb310c"
+    },
+    "numbers": {
+     "locked_trivial": 0.0,
+     "locked_hand": 0.7163,
+     "locked_champion": 0.8941,
+     "unit": "corr"
+    },
+    "provenance": "champion=out/rb_vibration_map/champion_vibration_map.json / スコアは本スクリプトで実測"
+   },
+   {
+    "stem": "wingevo_champion_lf_slope",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_lf_slope.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_lf_slope_thumb.jpg",
+     "size": [
+      956,
+      326
+     ],
+     "png_bytes": 28350,
+     "thumb_bytes": 38264,
+     "png_sha256": "0434d9975338b9a9b6800d58d97da0bad0229e1c97b7d351e9df54b56378be3e"
+    },
+    "numbers": {
+     "locked_trivial": 0.0,
+     "locked_hand": 0.5219,
+     "locked_champion": 0.5465,
+     "unit": "corr"
+    },
+    "provenance": "champion=out/rb_lf/champion_lf_slope.json / スコアは本スクリプトで実測"
+   },
+   {
+    "stem": "wingevo_champion_specular_removal",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_specular_removal.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_champion_specular_removal_thumb.jpg",
+     "size": [
+      1060,
+      352
+     ],
+     "png_bytes": 58277,
+     "thumb_bytes": 31483,
+     "png_sha256": "4cc55f9ca64a7751d5273e66096d47940d684ce1038d5c1c8cf86865c9ad1e6a"
+    },
+    "numbers": {
+     "locked_trivial": 0.4905,
+     "locked_hand": 0.8343,
+     "locked_champion": 0.6277,
+     "unit": "1/(1+100*mse)"
+    },
+    "provenance": "champion=out/rb_specular_removal/champion_specular_removal.json / スコアは本スクリプトで実測"
+   }
+  ],
+  "beat_null": [
+   {
+    "stem": "wingevo_beat_null",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_beat_null.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_beat_null_thumb.jpg",
+     "size": [
+      1120,
+      746
+     ],
+     "png_bytes": 85919,
+     "thumb_bytes": 60505,
+     "png_sha256": "93e779a1100875a595e5b5e6b0d468919bef8844033c15da5b7252142448691e"
+    },
+    "numbers": {
+     "photon_denoise": [
+      0.4174,
+      0.5536,
+      0.7845
+     ],
+     "vibration_map": [
+      0.0,
+      0.7163,
+      0.8941
+     ],
+     "lf_slope": [
+      0.0,
+      0.5219,
+      0.5465
+     ],
+     "specular_removal": [
+      0.4905,
+      0.8343,
+      0.6277
+     ],
+     "points_denoise": [
+      0.6693,
+      0.7209,
+      0.7182
+     ],
+     "signal_denoise": [
+      0.9455,
+      0.9694,
+      0.9736
+     ]
+    },
+    "provenance": "本スクリプトで locked split を実測(champion は out/rb_* / out/fix_*)"
+   }
+  ],
+  "observed_vs_locked": [
+   {
+    "stem": "wingevo_observed_vs_locked",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_observed_vs_locked.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_observed_vs_locked_thumb.jpg",
+     "size": [
+      1120,
+      620
+     ],
+     "png_bytes": 74104,
+     "thumb_bytes": 48058,
+     "png_sha256": "face6db90f58b7e56e1a6308741b1fa80227d6d7fa0af10e02ce899f7da70239"
+    },
+    "numbers": {
+     "vibration_map": {
+      "seed": 1,
+      "train": 0.8967,
+      "holdout": 0.8783,
+      "locked_holdout": 0.8941,
+      "pipeline": "tb_temporal_band_power(a=0.03,b=0.86) -> xsp_savgol(a=0.62,b=0.80) -> percentile(a=0.75,b=0.57) -> iv_wiener_deconv_spatial(a=0.21,b=0.93)"
+     },
+     "photon_denoise": {
+      "seed": 2,
+      "train": 0.8307,
+      "holdout": 0.7944,
+      "locked_holdout": 0.7845,
+      "pipeline": "tb_tcspc_irf_convolve(a=1.00,b=0.66) -> tb_tcspc_background_subtract(a=0.52,b=0.87) -> tb_spad_deadtime_correct(a=0.65,b=0.44) -> tb_spad_deadtime_correct(a=1.00,b=1.00)"
+     },
+     "lf_slope": {
+      "seed": 1,
+      "train": 0.4744,
+      "holdout": 0.5075,
+      "locked_holdout": 0.5465,
+      "pipeline": "tb_lf_epi_slope(a=0.31,b=0.44) -> xkor_unsharp(a=0.57,b=0.40) -> xsk2_wiener(a=0.43,b=0.79) -> binomial_filter(a=0.52,b=0.22)"
+     },
+     "specular_removal": {
+      "seed": 1,
+      "train": 0.7454,
+      "holdout": 0.7761,
+      "locked_holdout": 0.6277,
+      "pipeline": "tb_rgb_to_quaternion(a=0.57,b=0.39) -> tb_quat_color_rotate(a=0.31,b=1.00) -> tb_quaternion_to_rgb(a=0.56,b=0.54) -> tb_specular_diffuse_split(a=0.84,b=0.13)"
+     }
+    },
+    "provenance": "out/rb_vibration_map/robust_vibration_map.json; out/rb_ph/robust_photon_denoise.json; out/rb_lf/robust_lf_slope.json; out/rb_specular_removal/robust_specular_removal.json"
+   }
+  ],
+  "seed_spread": [
+   {
+    "stem": "wingevo_seed_spread",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_seed_spread.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_seed_spread_thumb.jpg",
+     "frames": 8,
+     "size": [
+      1100,
+      640
+     ],
+     "gif_bytes": 280228,
+     "gif_sha256": "e68f1d56315e4bc93c8dc304de13167ca4e578a05101a79a224774bf6e749695",
+     "colors": null,
+     "fps": 2,
+     "thumb_bytes": 42815
+    },
+    "numbers": {
+     "photon_denoise": [
+      0.7056,
+      0.7884,
+      0.7967,
+      0.7974,
+      0.7495,
+      0.7986,
+      0.798,
+      0.8007
+     ],
+     "specular_removal": [
+      0.3353,
+      0.3166,
+      0.8188,
+      0.2389,
+      0.4126,
+      0.8427,
+      0.3163,
+      0.4367
+     ]
+    },
+    "provenance": "本スクリプトで実走(evolve.run, seed 0..N-1)"
+   }
+  ],
+  "generations": [
+   {
+    "stem": "wingevo_generations",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_generations.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_generations_thumb.jpg",
+     "frames": 24,
+     "size": [
+      1120,
+      660
+     ],
+     "gif_bytes": 1023524,
+     "gif_sha256": "3eccc43de5168eacfc5195590874eea188028522c45c3929dee25b39b2ab9e8f",
+     "colors": null,
+     "fps": 3,
+     "thumb_bytes": 40905
+    },
+    "numbers": {
+     "train": [
+      0.6926,
+      0.7003,
+      0.7005,
+      0.7057,
+      0.7102,
+      0.7102,
+      0.7202,
+      0.7202,
+      0.7212,
+      0.7302,
+      0.7382,
+      0.7382,
+      0.7701,
+      0.7714,
+      0.7715,
+      0.7739,
+      0.777,
+      0.7779,
+      0.78,
+      0.78,
+      0.7806,
+      0.7806,
+      0.7866,
+      0.7881
+     ],
+     "holdout": [
+      0.5287,
+      0.5419,
+      0.5422,
+      0.5506,
+      0.5588,
+      0.5588,
+      0.5783,
+      0.5783,
+      0.5801,
+      0.5994,
+      0.6189,
+      0.6189,
+      0.7026,
+      0.7052,
+      0.7051,
+      0.7218,
+      0.7288,
+      0.7308,
+      0.7352,
+      0.7352,
+      0.7355,
+      0.7355,
+      0.7387,
+      0.7476
+     ],
+     "len": [
+      5,
+      4,
+      4,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      5,
+      4,
+      5,
+      5,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4,
+      4
+     ]
+    },
+    "provenance": "本スクリプトで実走(evolve.run gens=1..24)"
+   }
+  ],
+  "stage_photon": [
+   {
+    "stem": "wingevo_stage_photon",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_stage_photon.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_stage_photon_thumb.jpg",
+     "frames": 6,
+     "size": [
+      880,
+      532
+     ],
+     "gif_bytes": 121635,
+     "gif_sha256": "7832cd20f094a567495143f836f4bae6beb87acc398091bb463281df037ae06f",
+     "colors": null,
+     "fps": 1.2,
+     "thumb_bytes": 35660
+    },
+    "numbers": {
+     "per_stage": [
+      0.7965,
+      0.8793,
+      0.8794,
+      0.8794
+     ],
+     "ops": [
+      "tb_tcspc_irf_convolve",
+      "tb_tcspc_background_subtract",
+      "tb_spad_deadtime_correct",
+      "tb_spad_deadtime_correct"
+     ]
+    },
+    "provenance": "champion=out/rb_ph/champion_photon_denoise.json / 中間値は本スクリプトで実測"
+   }
+  ],
+  "stage_specular": [
+   {
+    "stem": "wingevo_stage_specular",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_stage_specular.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_stage_specular_thumb.jpg",
+     "frames": 6,
+     "size": [
+      576,
+      668
+     ],
+     "gif_bytes": 305602,
+     "gif_sha256": "2483b4e5b4924421926de700f07bcc3b9eb8393ebb554e06e0f13d554720db8a",
+     "colors": null,
+     "fps": 1.2,
+     "thumb_bytes": 37855
+    },
+    "numbers": {
+     "per_stage": [
+      0.0,
+      0.0,
+      0.5411,
+      0.5411
+     ],
+     "ops": [
+      "tb_rgb_to_quaternion",
+      "tb_quat_color_rotate",
+      "tb_quaternion_to_rgb",
+      "tb_specular_diffuse_split"
+     ],
+     "observed": 0.7761,
+     "locked": 0.6277,
+     "hand": 0.8343
+    },
+    "provenance": "champion=out/rb_specular_removal/champion_specular_removal.json / 中間値は本スクリプトで実測"
+   }
+  ],
+  "signature_collapse": [
+   {
+    "stem": "wingevo_signature_collapse",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_signature_collapse.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_signature_collapse_thumb.jpg",
+     "frames": 40,
+     "size": [
+      1100,
+      620
+     ],
+     "gif_bytes": 1472274,
+     "gif_sha256": "37c3adb4406cc46ed921600d54b8287af640568b9e9964ae5638c1d0d7dfc7c0",
+     "colors": null,
+     "fps": 6,
+     "thumb_bytes": 34438
+    },
+    "numbers": {
+     "findings": 220,
+     "sig_raw": 72,
+     "sig_masked": 53
+    },
+    "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"
+   }
+  ],
+  "type_fixpoint": [
+   {
+    "stem": "wingevo_type_fixpoint",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_type_fixpoint.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_type_fixpoint_thumb.jpg",
+     "frames": 5,
+     "size": [
+      1100,
+      720
+     ],
+     "gif_bytes": 372491,
+     "gif_sha256": "b21b0eedccbe7d08c12fe11c398e080f540bec0170dd98ec4891d5d11fca4284",
+     "colors": null,
+     "fps": 0.6,
+     "thumb_bytes": 52516
+    },
+    "numbers": {
+     "rounds": [
+      0,
+      64,
+      353,
+      494,
+      506
+     ],
+     "unreachable": [
+      "fuse_to_voxel",
+      "register_cross"
+     ]
+    },
+    "provenance": "本スクリプトで計算(chain_fuzz.catalog / make_generators)"
+   }
+  ],
+  "coverage_families": [
+   {
+    "stem": "wingevo_coverage_families",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_coverage_families.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_coverage_families_thumb.jpg",
+     "size": [
+      1120,
+      816
+     ],
+     "png_bytes": 78046,
+     "thumb_bytes": 56628,
+     "png_sha256": "be8176fca7c7570e01e326677542aba71d3473f999dbd485464dd84e6f5ce3f9"
+    },
+    "numbers": {
+     "now": {
+      "3d": [
+       239,
+       71
+      ],
+      "1d": [
+       34,
+       0
+      ],
+      "2d": [
+       12,
+       0
+      ],
+      "math": [
+       20,
+       6
+      ],
+      "optics": [
+       16,
+       2
+      ],
+      "lightfield": [
+       17,
+       0
+      ],
+      "photon": [
+       17,
+       0
+      ],
+      "specular": [
+       13,
+       0
+      ],
+      "motionmag": [
+       8,
+       1
+      ],
+      "quat": [
+       19,
+       0
+      ],
+      "rangedoppler": [
+       7,
+       1
+      ],
+      "acoustics": [
+       18,
+       1
+      ],
+      "interferometry": [
+       9,
+       0
+      ],
+      "cadmap": [
+       4,
+       0
+      ]
+     },
+     "wave8": {
+      "source": "out/fuzz_wave8_coverage.json",
+      "total": 434,
+      "covered": 318,
+      "by_family": {
+       "1d": [
+        34,
+        0
+       ],
+       "2d": [
+        12,
+        0
+       ],
+       "3d": [
+        206,
+        104
+       ],
+       "lightfield": [
+        17,
+        0
+       ],
+       "math": [
+        21,
+        5
+       ],
+       "optics": [
+        18,
+        0
+       ],
+       "photon": [
+        10,
+        7
+       ]
+      }
+     }
+    },
+    "provenance": "左=本スクリプトで実走 / 右=out/fuzz_wave8_coverage.json"
+   }
+  ],
+  "diffusion": [
+   {
+    "stem": "wingevo_diffusion",
+    "kind": "gif",
+    "info": {
+     "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingevo_diffusion.gif",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_diffusion_thumb.jpg",
+     "frames": 40,
+     "size": [
+      1100,
+      600
+     ],
+     "gif_bytes": 1585883,
+     "gif_sha256": "6325d6b8098eb47e960dd3c8b2a4b9207f3ff489e382bdcbe634f6e58e63d476",
+     "colors": null,
+     "fps": 6,
+     "thumb_bytes": 32053
+    },
+    "numbers": {
+     "covered": 433,
+     "kinds": {
+      "CONTRACT": 220
+     }
+    },
+    "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"
+   }
+  ],
+  "silent_bug": [
+   {
+    "stem": "wingevo_silent_bug",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_silent_bug.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_silent_bug_thumb.jpg",
+     "size": [
+      1120,
+      780
+     ],
+     "png_bytes": 136810,
+     "thumb_bytes": 62764,
+     "png_sha256": "d4c866e285d3f479503f6875356409d5163cddf8d10ac66f4ac066ec3230a350"
+    },
+    "numbers": {
+     "blob_count": {
+      "conn8": 1.0,
+      "conn4": 2.0
+     },
+     "relative_gain_blowup": {
+      "problem": "vibration_map",
+      "unit": "corr",
+      "candidate": 0.72448,
+      "best_existing": 0.0,
+      "best_existing_op": "tb_temporal_bandpass",
+      "relative_gain": 724476067514.2847
+     },
+     "identity_score": 0.0
+    },
+    "provenance": "本スクリプトで実測(ops / promote_gate を直接呼ぶ)"
+   }
+  ],
+  "promotion_gate": [
+   {
+    "stem": "wingevo_promotion_gate",
+    "kind": "png",
+    "info": {
+     "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_promotion_gate.png",
+     "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_promotion_gate_thumb.jpg",
+     "size": [
+      1120,
+      860
+     ],
+     "png_bytes": 122944,
+     "thumb_bytes": 67013,
+     "png_sha256": "60267245c2b4f7f892d17b854a191a1b488dad946689adc60d5fb6d02e770c76"
+    },
+    "numbers": {
+     "macro_denoise": {
+      "promote": true,
+      "reason": "improves 2 problem(s); best relative gain +0.1244",
+      "best_relative_gain": 0.12437
+     },
+     "tb_lf_epi_slope": {
+      "promote": false,
+      "reason": "behavioural duplicate of 'tb_lf_to_mla'",
+      "best_relative_gain": 0.37902
+     }
+    },
+    "provenance": "本スクリプトで実走(promote_gate、max_existing=40)"
+   }
+  ]
+ },
+ "measurement_config": {
+  "locked_split": {
+   "n": 8,
+   "size": 64,
+   "seed_offset": 20000
+  },
+  "fuzz_chains": 600,
+  "trajectory_gens": 24
+ }
+}
