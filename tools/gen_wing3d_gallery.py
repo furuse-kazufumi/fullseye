@@ -2670,7 +2670,7 @@ def ex_oblique(log) -> dict:
                       "短径 最大 %.4f mm(spacing %.2f mm の %.2f 画素ぶん)。"
              % (len(rows), max_major_err, max_minor_err, sp, max_major_err / sp),
              C_D, 13, True),
-            (18, 596, "測り方は 50 %% 等値面の交差位置を線形補間して求めた "
+            (18, 596, "測り方は 50 % 等値面の交差位置を線形補間して求めた "
                       "— 二値の voxel 数を直径と呼ぶと必ず 1 画素ぶん狂う。",
              C_DIM, 12, False),
         ])
