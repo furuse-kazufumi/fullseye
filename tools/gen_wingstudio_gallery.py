@@ -1358,18 +1358,19 @@ def ex_studio_walk():
     shot("軌道カメラ(通常モード)")
     _tap(v3, QtCore.Qt.Key_F)                       # F: 一人称へ
     shot("F を押した直後 = ウォークスルー入口")
-    for i in range(9):                              # W: 前進(1 タップ = 1 歩)
+    # 歩数は「近づくが、まだ表面の手前」に収める。踏み込みすぎると点群の内側に
+    # 入って画面がほぼ空になる(実測: 前進 15 歩だと 24 コマ中 14 コマが空)。
+    for i in range(6):                              # W: 前進(1 タップ = 1 歩)
         _tap(v3, QtCore.Qt.Key_W)
-        if i % 3 == 2:
+        if i % 2 == 1:
             shot("W で前進 (%d 歩)" % (i + 1))
     cx, cy = v3.width() // 2, v3.height() // 2
     for i in range(4):                              # ドラッグで見回す
         _drag(v3, cx, cy, cx + 46, cy - 6, steps=6)
         shot("左ドラッグで見回す")
-    for i in range(6):
+    for i in range(2):
         _tap(v3, QtCore.Qt.Key_W)
-        if i % 3 == 2:
-            shot("さらに前進")
+        shot("さらに前進 (%d 歩)" % (7 + i))
     for i in range(4):                              # +: 視野角を広げる
         _tap(v3, QtCore.Qt.Key_Plus)
         shot("+ で視野角 %.0f 度" % v3._fp_fov)
