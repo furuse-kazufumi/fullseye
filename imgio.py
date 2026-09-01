@@ -150,6 +150,25 @@ def apply_cmap(x, name: str = "viridis", vmin=None, vmax=None, invalid=(0, 0, 0)
 
     Values are normalised over [vmin, vmax] (auto from finite data if None).
     Non-finite cells (e.g. ``inf`` in a depth map) are painted *invalid*.
+
+    ★★ 正規化は「渡した配列の中だけ」で行う(2026-09-02 に明文化)★★
+        ``vmin`` / ``vmax`` を省くと **その呼び出しで渡された配列の min/max** が
+        両端になる。したがって
+
+        * **1 点ずつ呼ぶと必ず同じ色になる**。要素が 1 つなら min==max なので
+          ``normalize`` が ``hi = lo + 1`` に倒し、``t = 0`` = カラーマップの下端に
+          なる(実測: ``apply_cmap([[0.0]])`` / ``[[0.3]]`` / ``[[0.9]]`` はどれも
+          viridis の (0.267, 0.005, 0.329))。**警告も例外も出ない**ので、
+          値が色に効いていないことに気づけない。
+        * 同じ理由で、**複数の画像を別々に呼ぶと色スケールが揃わない**
+          (各画像が自分の min/max で伸ばされる)。
+
+        値と色の対応を固定したい / 複数枚を比較したいときは **必ず ``vmin`` と
+        ``vmax`` を明示**すること::
+
+            rgb = apply_cmap(depth, "viridis", vmin=0.0, vmax=5.0)   # 常に同じ尺度
+
+        1 点だけ色にしたい場合も同じ(``apply_cmap([[v]], vmin=lo, vmax=hi)``)。
     """
     a = np.asarray(x, np.float64)
     fin = np.isfinite(a)
