@@ -116,6 +116,12 @@ def make_generators():
         # 連鎖を一度も通らない)ため専用プールにする
         "jones": _jones_vec,
         "stokes": _stokes_vec,
+        # ライトフィールド = 4-D (V,U,H,W)。空間サイズを image2d と揃えた 32x32
+        # にしてあるので、2 入力の lf_all_in_focus(lightfield + image2d)が
+        # ファザーの中で実際に噛み合う
+        "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
+            (0.0, 1.0), angular=(3, 3), shape=(32, 32),
+            seed=int(rng.integers(0, 1000)))[0],
     }
 
 
