@@ -1346,6 +1346,16 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
             "returning the band edge would be a plausible, finite, wrong height."
             % (op, k, work.size, (l0 - lref) * disp,
                (l0 + (work.size - 1) * dl - lref) * disp, lref))
+    tied = int((x == x.max()).sum())
+    if tied > 1:
+        raise ValueError(
+            "%s: %d bins share the maximum value %g — the spectrometer is "
+            "saturated (or the spectrum has been clipped), so the top of the "
+            "confocal peak is missing and the three-point fit is being handed a "
+            "plateau. Measured, a peak clipped at 30 %% of its height reads "
+            "2.5500 um where the truth is 3.0000 um, with nothing else in the "
+            "spectrum to show for it. Reduce the exposure, or pass the "
+            "unclipped data." % (op, tied, float(x.max())))
     if bins_min > 0.0:
         top = float(work[k])
         above = int((work >= 0.5 * top).sum())
