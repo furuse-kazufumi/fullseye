@@ -61,7 +61,9 @@ MEDIA = os.path.join(ASSETS, "media")
 THUMBS = os.path.join(ASSETS, "thumbs")
 EXHIBITS_DIR = os.path.join(_ROOT, "docs", "articles", "exhibits")
 META_PATH = os.path.join(ASSETS, "_wingstudio_meta.json")
-CAPTION_PATH = os.path.join(EXHIBITS_DIR, "wingstudio.md")
+#: キャプション原稿は言語ごとに 1 枚(``build_exhibits`` の規約 ``<id>.<lang>.md``)。
+CAPTION_PATHS = {"ja": os.path.join(EXHIBITS_DIR, "wingstudio.ja.md"),
+                 "en": os.path.join(EXHIBITS_DIR, "wingstudio.en.md")}
 RAW_BASE = ("https://raw.githubusercontent.com/furuse-kazufumi/fullseye/"
             "master/docs/articles/assets/")
 
