@@ -302,7 +302,9 @@ DECLARED_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex),
     "table": lambda v: isinstance(v, (dict, list)),
     "gaussians": lambda v: isinstance(v, dict) and {"mu", "sigma", "w"} <= set(v),
-    "flow": lambda v: len(getattr(v, "shape", ())) in (2, 4),
+    # 密と散在は 2026-09-02 に別の型へ分かれた。どの 1 つの値も両方を満たせない。
+    "flow_dense": lambda v: len(getattr(v, "shape", ())) == 4,
+    "flow_scattered": lambda v: len(getattr(v, "shape", ())) == 2,
     "deformation": lambda v: isinstance(v, dict) and "ctrl" in v,
 }
 
@@ -325,7 +327,8 @@ def _sample_inputs(rng):
         "indices": np.unique(rng.integers(0, 160, size=32)),
         "labels": (rng.random((24, 24)) > 0.7).astype(np.int32),
         "image2d": (rng.random((32, 32)) > 0.9).astype(float),
-        "flow": np.stack([rng.standard_normal((12, 12, 12)) for _ in range(3)]),
+        "flow_dense": np.stack([rng.standard_normal((12, 12, 12)) for _ in range(3)]),
+        "flow_scattered": _unit(rng.standard_normal((160, 3))) * 0.5,
         "gaussians": rc.points_to_gaussians(pts),
         "score": vox,
         "voxel": vox,
@@ -790,7 +793,8 @@ class TestAdversarial:
         """袋小路だった型に、本当に出口ができたか(台帳レベルで機械確認)。"""
         opened = {a for a, _ in opsreprconv.conversion_edges()}
         for t in ("pairs", "indices", "curvature", "descriptor", "keypoints",
-                  "normals", "position", "flow", "gaussians", "score",
+                  "normals", "position", "flow_dense", "flow_scattered",
+                  "gaussians", "score",
                   "cscalar", "countrate", "angle", "shift", "rot_scale", "deformation"):
             assert t in opened, f"{t} still has no single-input conversion out"
 

@@ -3,50 +3,51 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 03:49:55
+- **最終更新**: 2026-09-02 04:13:58
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-8845e02df auto: gallery2d_halcon_ext.py 編集前 (2026-09-02 03:49)
-7c76eae00 auto: backends_halcon_ext.py 編集前 (2026-09-02 03:40)
-8e7d469e0 auto: gen_wing2d_gallery.py 編集前 (2026-09-02 03:38)
-d0046d463 auto: gen_wing2d_gallery.py 編集前 (2026-09-02 03:38)
-b965a57b1 auto: gen_wing2d_gallery.py 編集前 (2026-09-02 03:38)
-6b0787075 auto: specular_photometric.md 編集前 (2026-09-02 03:38)
-5cc6024a2 auto: test_fix_op_name_and_range_2026_09_02.py 編集前 (2026-09-02 03:35)
-984d665c3 auto: backends.py 編集前 (2026-09-02 03:35)
-c20b017bb auto: gen_wing3d_gallery.py 編集前 (2026-09-02 03:33)
-b94442aec auto: gallery2d_features.py 編集前 (2026-09-02 03:32)
+0f21fcf28 auto: opsreprconv.py 編集前 (2026-09-02 04:09)
+af2a60641 auto: conversion_matrix.py 編集前 (2026-09-02 04:08)
+814a13090 auto: conversion_matrix.py 編集前 (2026-09-02 04:08)
+48f9ca4dc auto: conversion_matrix.py 編集前 (2026-09-02 04:08)
+8c674d489 auto: conversion_matrix.py 編集前 (2026-09-02 04:08)
+183d9b19e auto: conversion_matrix.py 編集前 (2026-09-02 04:08)
+63f5f7782 auto: pyproject.toml 編集前 (2026-09-02 04:07)
+6802918d3 auto: __init__.py 編集前 (2026-09-02 04:07)
+cdfd9c778 auto: __init__.py 編集前 (2026-09-02 04:07)
+2b017c719 auto: api.py 編集前 (2026-09-02 04:07)
 ```
 
 ## 現在の git status
 
 ```
-M examples/gallery2d_halcon_ext.py
-?? docs/ARTICLE_INTEGRATION_TODO.md
+M docs/articles/assets/media/wing2d_denoise_compare.gif
+ M opsreprconv.py
+ M tests/test_reprconv.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-03:49 docs/articles/assets/thumbs/wing3d_visual_hull_thumb.jpg
-03:49 docs/articles/assets/media/wing3d_visual_hull.mp4
-03:49 docs/articles/assets/media/wing3d_visual_hull.gif
-03:49 docs/ARTICLE_INTEGRATION_TODO.md
-03:49 examples/gallery2d_halcon_ext.py
-03:48 docs/articles/assets/thumbs/wing3d_richardson_lucy_thumb.jpg
-03:48 docs/articles/assets/media/wing3d_richardson_lucy.mp4
-03:48 docs/articles/assets/media/wing3d_richardson_lucy.gif
-03:48 docs/articles/assets/thumbs/wingct_view_sweep_thumb.jpg
-03:48 docs/articles/assets/media/wingct_view_sweep.gif
-03:48 docs/FULLSEYE_OP_ARTICLE_SPEC.md
-03:48 docs/SESSION_SUMMARY.md
-03:47 docs/articles/assets/wing3d_wall_thickness_thumb.jpg
-03:47 docs/articles/assets/wing3d_wall_thickness.png
-03:47 docs/articles/assets/thumbs/wing3d_skeleton_graph_thumb.jpg
+04:13 docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg
+04:13 docs/articles/assets/media/wing2d_denoise_compare.gif
+04:13 docs/articles/assets/thumbs/wingopt_cos4_falloff_thumb.jpg
+04:13 docs/articles/assets/media/wingopt_cos4_falloff.gif
+04:13 docs/articles/assets/thumbs/wing2d_freq_sweep_720.jpg
+04:13 docs/articles/assets/media/wing2d_freq_sweep.gif
+04:13 docs/articles/assets/thumbs/wingopt_limit_crossover_thumb.jpg
+04:13 docs/articles/assets/media/wingopt_limit_crossover.gif
+04:13 docs/articles/assets/thumbs/wing2d_morph_quartet_720.jpg
+04:13 docs/articles/assets/media/wing2d_morph_quartet.gif
+04:13 docs/articles/assets/wingopt_defect_atlas_thumb.jpg
+04:13 docs/articles/assets/wingopt_defect_atlas.png
+04:13 docs/articles/assets/thumbs/wingopt_pipeline_flow_thumb.jpg
+04:13 docs/articles/assets/media/wingopt_pipeline_flow.gif
+04:09 .pytest_cache/v/cache/nodeids
 ```
 
 ---

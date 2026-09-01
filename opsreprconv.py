@@ -122,12 +122,16 @@ _CATALOG = {
         ("pairs_to_image2d", "reprconv", ["pairs"], "image2d"),
         ("pairs_to_table", "reprconv", ["pairs"], "table"),
     ],
-    # フロー。**密と散在で op を分けてある**(同じ型名の下に別物が 2 つある)
+    # フロー。**密と散在で型が分かれた**(2026-09-02)。もともと `flow` という
+    # 1 つの型名の下に別物が 2 つ同居していて、述語も無かったので**どちらも黙って
+    # 同じプールに入っていた**。分割の根拠は実測 ―― 4 つの消費 op に両方の形を
+    # 渡すと、密用 2 op は散在を、散在用 2 op は密を、それぞれ名指しで拒否する。
+    # **どの 1 つの値も両方を満たせない**ので 1 つの述語では書けない。
     "flow": [
-        ("flow_magnitude", "reprconv", ["flow"], "voxel"),
-        ("flow_to_rgbimage", "reprconv", ["flow"], "rgbimage"),
-        ("flow_speed", "reprconv", ["flow"], "signal"),
-        ("flow_apply", "reprconv", ["points", "flow"], "points"),
+        ("flow_magnitude", "reprconv", ["flow_dense"], "voxel"),
+        ("flow_to_rgbimage", "reprconv", ["flow_dense"], "rgbimage"),
+        ("flow_speed", "reprconv", ["flow_scattered"], "signal"),
+        ("flow_apply", "reprconv", ["points", "flow_scattered"], "points"),
     ],
     # ガウシアン。**入口が無かった型**なので points_to_gaussians が入口
     "gaussians": [
