@@ -2337,6 +2337,371 @@ def ex_envelope_truncation(log):
 
 
 # =========================================================================== #
+# 展示 13: 欠陥周波数が出てくるまで(工程)               (フリップブック GIF)  #
+# =========================================================================== #
+def ex_envelope_flow(log):
+    """同じ寸法のコマで工程が進むので ``flipbook`` に束ねる(並べるより速い)。"""
+    rpm, n_el, d_el, d_pitch = 1800.0, 9, 8.0, 40.0
+    geo = A.bearing_defect_frequencies(rpm, n_el, d_el, d_pitch, 0.0)
+    fd = float(geo["bpfo_hz"])                       # 外輪剥離の通過周波数
+    fs, dur, fc = 25600.0, 1.0, 3000.0
+    x = A.synthesize_bearing_signal(fs, dur, carrier_hz=fc, defect_hz=fd,
+                                    modulation=0.5, mode="impulse",
+                                    noise_sigma=0.12, seed=5)
+    t = np.arange(x.size) / fs
+    freqs, mag = dsp.spectrum(x, fs)
+    amp = mag * (2.0 / x.size)
+    i_fd = int(np.argmin(np.abs(freqs - fd)))
+    sk = A.spectral_kurtosis(x, fs, win=64)
+    lo = max(1.0, sk["max_freq"] - sk["bin_hz"])
+    hi = sk["max_freq"] + sk["bin_hz"]
+    band = dsp.bandpass(x, fs, lo, hi, order=4)
+    env = dsp.envelope(band)
+    es = A.envelope_spectrum(x, fs, lo, hi)
+    # 手で組み直した合成が op の返りと一致することを確かめる(同じ経路のはず)
+    e0 = env - env.mean()
+    mag_manual = np.abs(np.fft.rfft(e0)) * (2.0 / e0.size)
+    agree = float(np.max(np.abs(mag_manual - es["magnitude"])))
+    lines = {"FTF": geo["ftf_hz"], "BPFO": geo["bpfo_hz"], "BPFI": geo["bpfi_hz"],
+             "BSF": geo["bsf_hz"], "2xBSF": geo["bsf_hz_2x"]}
+    best_name = min(lines, key=lambda k: abs(lines[k] - es["peak_freq"]))
+    rel = 100.0 * abs(lines[best_name] - es["peak_freq"]) / lines[best_name]
+    log(f"  geometry: BPFO {geo['bpfo_hz']:.6f} Hz (synthesised at that rate)")
+    log(f"  raw amplitude at {fd:g} Hz = {amp[i_fd]:.6e}; the record's peak is "
+        f"{amp.max():.6f} at {freqs[int(np.argmax(amp))]:.0f} Hz")
+    log(f"  SK win {sk['win']} -> band {lo:.0f}-{hi:.0f} Hz "
+        f"(max SK {sk['max_kurtosis']:.4f} at {sk['max_freq']:.0f} Hz)")
+    log(f"  envelope spectrum peak {es['peak_freq']:.6f} Hz amp "
+        f"{es['peak_amplitude']:.6f} band_fraction {es['band_fraction']:.6f} "
+        f"prominence {es['peak_prominence']:.1f}")
+    log(f"  manual dsp.bandpass -> dsp.envelope -> rfft agrees with "
+        f"envelope_spectrum to {agree:.3e}")
+    log(f"  closest kinematic rate: {best_name} = {lines[best_name]:.6f} Hz "
+        f"({rel:.4f} % away)")
+
+    PW, PH = 940, 430
+    ms = 60                                          # 抜粋する時間窓 [ms]
+    keep = t <= ms / 1000.0
+    steps = []
+
+    def _base(title, sub):
+        fig = Fig(PW, PH)
+        fig.box(0, 0, PW, 32, (0.085, 0.095, 0.115))
+        fig.text(12, 6, title, C_TEXT, 14, True)
+        fig.text(12 + 9.0 * len(title) + 16, 9, sub, C_DIM, 11)
+        return fig
+
+    # 1. 生波形
+    fig = _base("1. the raw record",
+                f"impulse bearing signal, {fs:g} Hz x {dur:g} s, noise sigma 0.12")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, ms),
+            (-float(np.abs(x).max()) * 1.1, float(np.abs(x).max()) * 1.1))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 10, 20, 30, 40, 50, 60], "%.0f")
+    ax.yticks(ink, [-1, 0, 1], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    ink = fig.ink()
+    ax.curve(ink, t[keep] * 1e3, x[keep], width=1)
+    fig.stamp(ink, C_A)
+    fig.text(82, PH - 44, f"first {ms} ms of {x.size} samples. Nothing here says "
+                          f"{fd:.0f} Hz - the impacts are buried under the ringing.",
+             C_DIM, 12)
+    fig.text(PW - 130, PH - 22, "time [ms] ->", C_DIM, 11)
+    steps.append(fig.u8())
+
+    # 2. 生スペクトル
+    fig = _base("2. the raw spectrum", "dsp.spectrum x 2/N - the resonance is loud, "
+                                       "the defect rate is not there")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, 8000.0), (0.0, amp.max() * 1.12))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 1000, 2000, 3000, 4000, 6000, 8000], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    ink = fig.ink()
+    ax.curve(ink, freqs, amp, width=2)
+    fig.stamp(ink, C_A)
+    ink = fig.ink()
+    ax.vline(ink, fd, width=2, dashed=True)
+    fig.stamp(ink, C_WARN)
+    fig.text(ax.X(fd) + 8, 66, f"defect {fd:.0f} Hz", C_WARN, 11, True)
+    fig.text(ax.X(fd) + 8, 82, f"amplitude {amp[i_fd]:.3e}", C_WARN, 11, True)
+    fig.text(82, PH - 44, f"peak {amp.max():.6f} at "
+                          f"{freqs[int(np.argmax(amp))]:.0f} Hz (the structure's "
+                          f"resonance). Reading this spectrum finds the wrong thing.",
+             C_DIM, 12)
+    fig.text(PW - 170, PH - 22, "frequency [Hz] ->", C_DIM, 11)
+    steps.append(fig.u8())
+
+    # 3. スペクトル尖度で帯域を選ぶ
+    fig = _base("3. let the machine pick the band",
+                f"acoustics.spectral_kurtosis, win {sk['win']} = "
+                f"{sk['window_seconds'] * 1e3:.2f} ms")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, fs / 2.0),
+            (min(-1.2, float(sk["kurtosis"].min()) * 1.2),
+             float(sk["max_kurtosis"]) * 1.15))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 2000, 4000, 6000, 8000, 10000, 12000], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    fig.box(ax.X(lo), ax.y0, ax.X(hi), ax.y1, (0.14, 0.16, 0.10))
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.hline(ink, 0.0, width=1)
+    fig.stamp(ink, C_AXIS)
+    ink = fig.ink()
+    ax.curve(ink, sk["freqs"], sk["kurtosis"], width=2)
+    fig.stamp(ink, C_D)
+    ink = fig.ink()
+    ink.marks([(ax.X(sk["max_freq"]), ax.Y(sk["max_kurtosis"]))], size=8,
+              shape="cross", width=2)
+    fig.stamp(ink, C_E)
+    fig.text(ax.X(hi) + 8, 66, f"band {lo:.0f} - {hi:.0f} Hz", C_B, 12, True)
+    fig.text(ax.X(hi) + 8, 84, f"max SK {sk['max_kurtosis']:.4f}", C_E, 11, True)
+    fig.text(82, PH - 44, "the operator returns a BAND, not a line: max_freq +- one "
+                          f"bin ({sk['bin_hz']:.0f} Hz). The true resonance is "
+                          f"{fc:.0f} Hz.", C_DIM, 12)
+    steps.append(fig.u8())
+
+    # 4. 帯域通過
+    fig = _base("4. band-pass that band", f"dsp.bandpass({lo:.0f}, {hi:.0f} Hz, order 4)")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, ms),
+            (-float(np.abs(x).max()) * 1.1, float(np.abs(x).max()) * 1.1))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 10, 20, 30, 40, 50, 60], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    ink = fig.ink()
+    ax.curve(ink, t[keep] * 1e3, x[keep], width=1)
+    fig.stamp(ink, C_DIM)
+    ink = fig.ink()
+    ax.curve(ink, t[keep] * 1e3, band[keep], width=1)
+    fig.stamp(ink, C_B)
+    _legend(fig, PW - 230, 64, [("raw", C_DIM), ("band-passed", C_B)])
+    fig.text(82, PH - 44, f"band_fraction {es['band_fraction']:.6f} - the share of the "
+                          f"record's RMS that lives in this band. That number is how "
+                          f"you tell a real find from noise.", C_DIM, 12)
+    steps.append(fig.u8())
+
+    # 5. 包絡線
+    fig = _base("5. take the envelope", "dsp.envelope (analytic / Hilbert)")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, ms),
+            (-float(np.abs(band).max()) * 1.15, float(np.abs(band).max()) * 1.15))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 10, 20, 30, 40, 50, 60], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    ink = fig.ink()
+    ax.curve(ink, t[keep] * 1e3, band[keep], width=1)
+    fig.stamp(ink, C_DIM)
+    ink = fig.ink()
+    ax.curve(ink, t[keep] * 1e3, env[keep], width=2)
+    fig.stamp(ink, C_C)
+    ink = fig.ink()
+    for j in range(int(ms / (1000.0 / fd)) + 1):
+        ax.vline(ink, j * 1000.0 / fd, width=1, dashed=True)
+    fig.stamp(ink, C_TRUE, alpha=0.6)
+    _legend(fig, PW - 250, 64, [("band-passed", C_DIM), ("envelope", C_C),
+                                (f"every 1/{fd:.0f} s", C_TRUE)])
+    fig.text(82, PH - 44, f"the impacts are now visible as bumps in the envelope, "
+                          f"one every {1000.0 / fd:.3f} ms. The carrier is gone; only "
+                          f"the modulation is left.", C_DIM, 12)
+    steps.append(fig.u8())
+
+    # 6. 包絡線スペクトル
+    fig = _base("6. transform the envelope", "acoustics.envelope_spectrum")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, 600.0),
+            (0.0, float(es["peak_amplitude"]) * 1.2))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 108, 216, 324, 432, 500, 600], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    ink = fig.ink()
+    ax.curve(ink, es["freqs"], es["magnitude"], width=2)
+    fig.stamp(ink, C_C)
+    ink = fig.ink()
+    ink.marks([(ax.X(es["peak_freq"]), ax.Y(es["peak_amplitude"]))], size=8,
+              shape="cross", width=2)
+    fig.stamp(ink, C_TRUE)
+    fig.text(ax.X(es["peak_freq"]) + 8, 66,
+             f"peak {es['peak_freq']:.6f} Hz", C_TRUE, 12, True)
+    fig.text(ax.X(es["peak_freq"]) + 8, 84,
+             f"prominence {es['peak_prominence']:.1f}", C_C, 11, True)
+    fig.text(82, PH - 44, f"resolution {es['resolution_hz']:.6f} Hz/bin. Rebuilt by "
+                          f"hand from dsp.bandpass + dsp.envelope + rfft, the two "
+                          f"agree to {agree:.2e}.", C_DIM, 12)
+    steps.append(fig.u8())
+
+    # 7. 幾何と照合
+    fig = _base("7. match it against the geometry",
+                f"acoustics.bearing_defect_frequencies({rpm:g} rpm, N={n_el}, "
+                f"d={d_el:g}, D={d_pitch:g})")
+    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, 200.0), (-0.6, 5.2))
+    ax.panel()
+    ink = fig.ink()
+    ax.frame(ink)
+    ax.xticks(ink, [0, 25, 50, 75, 100, 125, 150, 175, 200], "%.0f")
+    fig.stamp(ink, C_AXIS)
+    for bi, (nm, val) in enumerate(lines.items()):
+        yy = ax.Y(4.6 - bi)
+        col = C_E if nm == best_name else C_D
+        ink = fig.ink()
+        ink.line((ax.X(0.0), yy), (ax.X(min(val, 200.0)), yy), width=11)
+        fig.stamp(ink, col)
+        fig.text(84, yy - 24, f"{nm} {val:.4f} Hz", col, 11, True)
+    ink = fig.ink()
+    ax.vline(ink, es["peak_freq"], width=3)
+    fig.stamp(ink, C_TRUE)
+    fig.text(ax.X(es["peak_freq"]) + 8, 62,
+             f"measured {es['peak_freq']:.4f} Hz", C_TRUE, 12, True)
+    fig.text(82, PH - 44, f"closest kinematic rate: {best_name} at "
+                          f"{lines[best_name]:.4f} Hz, {rel:.4f} % away. A real bearing "
+                          f"slips ~1 %, so this is a match - and an exact one would be "
+                          f"a coincidence.", C_DIM, 12)
+    steps.append(fig.u8())
+
+    step_labels = [
+        f"生の記録 — {ms} ms 抜粋、{x.size} サンプル",
+        f"生スペクトル — 欠陥率 {fd:.0f} Hz の振幅は {amp[i_fd]:.2e}(何も無い)",
+        f"スペクトル尖度 — 復調帯域 {lo:.0f}–{hi:.0f} Hz を機械が選ぶ",
+        f"帯域通過 — band_fraction {es['band_fraction']:.4f}",
+        f"包絡線 — {1000.0 / fd:.3f} ms ごとの衝撃が見える",
+        f"包絡線スペクトル — ピーク {es['peak_freq']:.4f} Hz、突出度 "
+        f"{es['peak_prominence']:.0f}",
+        f"幾何と照合 — {best_name} {lines[best_name]:.4f} Hz と {rel:.4f} % 一致",
+    ]
+    info = save_flipbook(steps, "envelope_flow", step_labels, ms=1500, hold_ms=3000,
+                         title="欠陥周波数が出てくるまで(工程)", log=log)
+    facts = {
+        "rpm": rpm, "n_elements": n_el, "element_diameter_mm": d_el,
+        "pitch_diameter_mm": d_pitch,
+        "bpfo_hz": geo["bpfo_hz"], "bpfi_hz": geo["bpfi_hz"],
+        "ftf_hz": geo["ftf_hz"], "bsf_hz": geo["bsf_hz"],
+        "synth_defect_hz": fd, "carrier_hz": fc, "rate_hz": fs, "duration_s": dur,
+        "raw_amplitude_at_defect": float(amp[i_fd]),
+        "raw_peak_amplitude": float(amp.max()),
+        "raw_peak_hz": float(freqs[int(np.argmax(amp))]),
+        "sk_max_kurtosis": sk["max_kurtosis"], "sk_max_freq": sk["max_freq"],
+        "sk_bin_hz": sk["bin_hz"], "sk_win": sk["win"],
+        "band_low_hz": lo, "band_high_hz": hi,
+        "envelope_peak_freq": es["peak_freq"],
+        "envelope_peak_amplitude": es["peak_amplitude"],
+        "envelope_band_fraction": es["band_fraction"],
+        "envelope_prominence": es["peak_prominence"],
+        "envelope_resolution_hz": es["resolution_hz"],
+        "manual_vs_operator_max_abs_diff": agree,
+        "closest_rate_name": best_name, "closest_rate_hz": lines[best_name],
+        "closest_rate_error_pct": rel,
+        "steps": len(steps),
+        "ops": ["bearing_defect_frequencies", "synthesize_bearing_signal", "spectrum",
+                "spectral_kurtosis", "bandpass", "envelope", "envelope_spectrum"],
+    }
+    return info, facts
+
+
+# =========================================================================== #
+# 展示 14: 分数オクターブ帯域の一族                             (タイル PNG)  #
+# =========================================================================== #
+def ex_octave_family(log):
+    """同じ軸に fraction 違いを当てた 6 枚 = 並べて比べるもの → ``contact_sheet``。"""
+    fs, dur, a = 48000.0, 0.5, 0.7
+    t = np.arange(int(round(dur * fs))) / fs
+    x = a * np.sin(2.0 * np.pi * 1000.0 * t)
+    closed = 10.0 * np.log10(a * a / 2.0)
+    fractions = (1, 2, 3, 6, 12, 24)
+    panels, labels, rows = [], [], []
+    for fr in fractions:
+        b = A.octave_bands(fraction=fr, f_min=22.0, f_max=20000.0)
+        s = A.octave_spectrum(x, fs, fraction=fr, f_min=22.0, f_max=20000.0, ref=1.0)
+        c, L = s["centers"], s["levels"]
+        k = int(np.argmax(L))
+        exact = bool(np.any(np.abs(c - 1000.0) < 1e-9))
+        n_clamped = int(np.sum(s["clamped"]))
+        rows.append({"fraction": fr, "n_bands": int(c.size), "max_level": float(L[k]),
+                     "max_center": float(c[k]), "exact_1k": exact,
+                     "diff_from_closed": float(L[k] - closed),
+                     "clamped": n_clamped,
+                     "total_level": float(s["total_level"]),
+                     "nominal_at_max": float(s["nominal"][k]),
+                     "bandwidth_at_max": float(b["upper"][k] - b["lower"][k])})
+        log(f"  1/{fr:<2d}: {c.size:3d} bands  max {L[k]:10.6f} dB @ "
+            f"{c[k]:9.4f} Hz  exact 1 kHz centre: {exact}  "
+            f"diff from 10log10(A^2/2) {L[k] - closed:+.3e} dB  "
+            f"floored bands {n_clamped}")
+
+        PW, PH = 470, 340
+        fig = Fig(PW, PH)
+        fig.box(0, 0, PW, 28, (0.085, 0.095, 0.115))
+        fig.text(10, 5, f"1/{fr} octave  ({c.size} bands)", C_TEXT, 13, True)
+        ax = Ax(fig, 60, 46, PW - 16, PH - 52, (22.0, 20000.0), (-72.0, 4.0),
+                logx=True)
+        ax.panel()
+        ink = fig.ink()
+        ax.frame(ink)
+        ax.xticks(ink, [31.5, 125, 500, 2000, 8000], "%g", size=9)
+        ax.yticks(ink, [0, -20, -40, -60], "%.0f", size=9)
+        fig.stamp(ink, C_AXIS)
+        ink = fig.ink()
+        ax.hline(ink, closed, width=1, dashed=True)
+        fig.stamp(ink, C_TRUE)
+        # 帯域を階段で描く(帯域端から端まで水平、間を垂直に繋ぐ)
+        pts = []
+        for lo_e, hi_e, lv in zip(b["lower"], b["upper"], L):
+            v = max(lv, -70.0)
+            pts.append((ax.X(lo_e), ax.Y(v)))
+            pts.append((ax.X(hi_e), ax.Y(v)))
+        ink = fig.ink()
+        ink.poly(pts, width=2)
+        fig.stamp(ink, C_A)
+        ink = fig.ink()
+        ax.vline(ink, 1000.0, width=1, dashed=True)
+        fig.stamp(ink, C_B)
+        ink = fig.ink()
+        ink.marks([(ax.X(c[k]), ax.Y(L[k]))], size=7, shape="cross", width=2)
+        fig.stamp(ink, C_E)
+        fig.text(ax.X(1000.0) - 52, 50, "1 kHz", C_B, 10, True)
+        fig.text(24, 150, "dB", C_DIM, 10)
+        fig.text(PW - 130, PH - 44, "frequency [Hz]", C_DIM, 10)
+        fig.text(12, PH - 42,
+                 f"max {L[k]:.6f} dB at {c[k]:.3f} Hz",
+                 C_E, 11, True)
+        fig.text(12, PH - 26,
+                 ("a band is centred at 1000.000 Hz" if exact else
+                  "NO band is centred at 1000 Hz (even fraction)"),
+                 C_C if exact else C_WARN, 11, True)
+        panels.append(fig.u8())
+        labels.append(f"1/{fr} oct — {c.size} 帯域 / 最大 {L[k]:.6f} dB @ "
+                      f"{c[k]:.2f} Hz / 1 kHz 中心 {'あり' if exact else 'なし'}")
+
+    odd = [r for r in rows if r["exact_1k"]]
+    even = [r for r in rows if not r["exact_1k"]]
+    worst = max(abs(r["diff_from_closed"]) for r in rows)
+    log(f"  closed form 10log10({a}^2/2) = {closed:.6f} dB; every fraction reports it "
+        f"to within {worst:.3e} dB")
+    log(f"  exact 1 kHz centre exists for fractions "
+        f"{[r['fraction'] for r in odd]} and not for {[r['fraction'] for r in even]}")
+
+    info = save_sheet(panels, "octave_family", labels, ncols=3,
+                      title="分数オクターブ帯域 — 偶数分数には 1 kHz 帯域が無い",
+                      panel_px=470, log=log)
+    facts = {
+        "tone_hz": 1000.0, "tone_amplitude": a, "rate_hz": fs, "duration_s": dur,
+        "closed_form_db": closed, "max_abs_diff_from_closed_db": worst,
+        "fractions_with_exact_1k": [r["fraction"] for r in odd],
+        "fractions_without_exact_1k": [r["fraction"] for r in even],
+        "table": rows,
+        "ops": ["octave_bands", "octave_spectrum"],
+    }
+    return info, facts
+
+
+# =========================================================================== #
 # キャプション原稿                                                             #
 # =========================================================================== #
 CAPTIONS = {

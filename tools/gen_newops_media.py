@@ -1253,7 +1253,7 @@ def build_quaternion(log, frames: int = 31):
     W = MARGIN + 2 * (PAN + GAP) + PLOT_W + MARGIN
     HUD = 28
     PANY = HUD + 22
-    H = PANY + PAN + 100
+    H = PANY + PAN + 120
     px0, px1 = MARGIN + 2 * (PAN + GAP) + 58, W - MARGIN - 12
     head = ("quaternion colour rotation q x q* (quatimage.quat_color_rotate): a 3-D "
             "rotation of the colour vector about the blue axis")
@@ -1271,8 +1271,8 @@ def build_quaternion(log, frames: int = 31):
         ax = Axes(px0, PANY, px1, PANY + PAN - 30, 0.0, 90.0, 0.0, 1.55)
         ax.bg(canvas)
         canvas = ax.grid_y(canvas, [0.5, 1.0, 1.5])
-        canvas = ax.series(canvas, angles[:i + 1], maxdiff[:i + 1], C_AMBR, 3)
-        canvas = ax.series(canvas, angles[:i + 1], opnorm[:i + 1], C_VIOL, 2)
+        canvas = ax.series(canvas, angles[:i + 1], opnorm[:i + 1], C_VIOL, 4)
+        canvas = ax.series(canvas, angles[:i + 1], maxdiff[:i + 1], C_AMBR, 2)
         canvas = ax.markers(canvas, [a], [maxdiff[i]], C_WHITE, 5, "cross", 2)
         canvas = ax.axis(canvas)
         canvas, tx = ax.xticks(canvas, [0, 30, 45, 60, 90], ["0", "30", "45", "60", "90"])
@@ -1287,27 +1287,26 @@ def build_quaternion(log, frames: int = 31):
         labels = [
             (MARGIN, 6, head, C_TEXT, 12, False),
             (MARGIN, PANY - 18, f"quaternion rotation, {a:5.1f} deg", C_TEAL, 13, True),
-            (x2, PANY - 18, "best per-channel gain (diagonal matrix)", C_ROSE, 13, True),
+            (x2, PANY - 18, "per-channel gain (diagonal)", C_ROSE, 13, True),
             (px0 - 58, PANY - 18, "how far apart the two are", C_TEXT, 13, True),
             (MARGIN + 4, PANY + PAN + 8,
-             f"pure red (1,0,0) -> ({red_q[i][0]:+.3f}, {red_q[i][1]:+.3f}, "
-             f"{red_q[i][2]:+.3f})", C_TEXT, 12, True),
+             f"red -> ({red_q[i][0]:+.3f}, {red_q[i][1]:+.3f}, {red_q[i][2]:+.3f})",
+             C_TEXT, 12, True),
             (x2 + 4, PANY + PAN + 8,
-             f"pure red (1,0,0) -> ({red_d[i][0]:+.3f}, {red_d[i][1]:+.3f}, "
-             f"{red_d[i][2]:+.3f})", C_TEXT, 12, True),
+             f"red -> ({red_d[i][0]:+.3f}, {red_d[i][1]:+.3f}, {red_d[i][2]:+.3f})",
+             C_TEXT, 12, True),
             (MARGIN + 4, sw_y + 4, "red goes:", C_DIM, 12, False),
             (x2 + 4, sw_y + 4, "red goes:", C_DIM, 12, False),
             (MARGIN + 4, PANY + PAN + 76,
-             f"max |difference| over the image {maxdiff[i]:.4f}   "
-             f"||R - diag(R)||_2 {opnorm[i]:.4f}   a per-channel gain can only scale "
-             f"the zero in the green channel, so it can never turn red into green.",
-             C_AMBR, 12, True),
+             f"max |difference| over the image {maxdiff[i]:.4f}, equal to "
+             f"||R - diag(R)||_2 = {opnorm[i]:.4f} to {abs(maxdiff[i] - opnorm[i]):.0e}: "
+             f"the pure-red patch is the worst case, and a per-channel gain can only "
+             f"scale the zero in its green channel.", C_AMBR, 12, True),
+            (MARGIN + 4, PANY + PAN + 96,
+             f"the same rotation written as an explicit 3x3 matrix differs by "
+             f"{mat_err:.1e} -- quaternions beat per-channel gains, not matrices.",
+             C_DIM, 12, False),
             (px1 - 112, ax.y1 + 22, "rotation angle [deg]", C_DIM, 11, False),
-            (px0 + 8, ax.y1 + 42,
-             f"vs an explicit 3x3 rotation matrix: {mat_err:.1e}", C_DIM, 11, False),
-            (px0 + 8, ax.y1 + 56,
-             "(quaternions do not beat matrices, only per-channel gains)",
-             C_DIM, 11, False),
         ]
         labels += _legend(px0 + 10, ax.y0 + 4, [
             (C_AMBR, "max |quat - diagonal| (image)"),
@@ -1378,7 +1377,7 @@ def build_fmcw(log, frames: int = 25):
     MAPY = HUD + 24
     x1p, x2p = 40, 40 + MAP_W + 52
     axP = Axes(100, MAPY + MAP_H + 46, W - 20, MAPY + MAP_H + 206, 0.0, 63.0, -78.0, 2.0)
-    axT = Axes(100, axP.y1 + 62, W - 20, axP.y1 + 174, -56.0, -16.0, -60.0, -14.0)
+    axT = Axes(100, axP.y1 + 62, W - 20, axP.y1 + 174, -56.0, -16.0, -60.0, -8.0)
     H = axT.y1 + 74
     DB_LO, DB_HI = -70.0, 0.0
 
@@ -1416,7 +1415,7 @@ def build_fmcw(log, frames: int = 25):
         canvas = _frame_box(canvas, axP.y0, axP.y1, axP.x0, axP.x1)
 
         axT.bg(canvas)
-        canvas = axT.grid_y(canvas, [-50, -40, -30, -20])
+        canvas = axT.grid_y(canvas, [-50, -40, -30, -20, -10])
         canvas = axT.series(canvas, levels, levels, C_DIM, 1)
         for w, col in (("rect", C_ROSE), ("hann", C_TEAL)):
             ys = [meas[j][w]["weak_db"] for j in range(k + 1)]
@@ -1425,16 +1424,16 @@ def build_fmcw(log, frames: int = 25):
         canvas = axT.axis(canvas)
         canvas, tT = axT.xticks(canvas, [-20, -30, -40, -50],
                                 ["-20", "-30", "-40", "-50"])
-        canvas, tTy = axT.yticks(canvas, [-20, -30, -40, -50],
-                                 ["-20", "-30", "-40", "-50"])
+        canvas, tTy = axT.yticks(canvas, [-10, -20, -30, -40, -50],
+                                 ["-10", "-20", "-30", "-40", "-50"])
         canvas = _frame_box(canvas, axT.y0, axT.y1, axT.x0, axT.x1)
 
         r, hn = meas[k]["rect"], meas[k]["hann"]
         labels = [
             (14, 6, f"FMCW range-Doppler: a strong target at range bin {strong_rb} "
-                    f"(half a bin off) and a weak one at bin {weak_rb}, both at Doppler "
-                    f"bin +{dop}.  Sweeping how weak the weak one is.   "
-                    f"bin = {dr:.4f} m / {dv:.4f} m/s", C_TEXT, 12, False),
+                    f"(half a bin off) plus a weak one at bin {weak_rb}, both at Doppler "
+                    f"+{dop}  --  sweeping how weak.   bin {dr:.4f} m / {dv:.4f} m/s",
+             C_TEXT, 12, False),
             (100, axP.y0 - 22,
              f"range profile through Doppler bin +{dop}  [dB relative to the peak]",
              C_TEXT, 13, True),
@@ -1442,7 +1441,7 @@ def build_fmcw(log, frames: int = 25):
              "measured height of the weak target vs the height it was given [dB]",
              C_TEXT, 13, True),
             (axP.x1 - 100, axP.y1 + 22, "range bin ->", C_DIM, 11, False),
-            (axT.x1 - 132, axT.y1 + 22, "true weak-target level [dB] ->", C_DIM, 11, False),
+            (axT.x1 - 212, axT.y1 - 20, "true weak-target level [dB] ->", C_DIM, 11, False),
             (14, H - 56,
              f"weak target given {db:+6.1f} dB    rect reads {r['weak_db']:+7.2f} dB "
              f"({'local max' if r['is_local_max'] else 'NOT a local max'})    "
@@ -1459,10 +1458,9 @@ def build_fmcw(log, frames: int = 25):
              f"({r['peak'] / hn['peak']:.2f}x) and a wider main lobe.  The rect peak is "
              f"the half-bin scalloping loss 2/pi = {2 / np.pi:.4f}.", C_DIM, 11, False),
             (x1p + 2, MAPY + MAP_H + 6,
-             f"colour = dB, {DB_LO:.0f}..{DB_HI:.0f}; rows = Doppler bin -16..+15, "
-             f"columns = range bin 0..63", C_DIM, 11, False),
-            (x2p + 2, MAPY + MAP_H + 6,
-             "white circle = strong target, amber circle = weak target", C_DIM, 11, False),
+             f"colour = magnitude in dB ({DB_LO:.0f}..{DB_HI:.0f}), rows = Doppler bin "
+             f"-16..+15, columns = range bin 0..63;   white circle = strong target, "
+             f"amber circle = weak target", C_DIM, 11, False),
         ]
         labels += heads
         labels += _legend(axP.x0 + 8, axP.y1 - 44, [(C_ROSE, "rect"), (C_TEAL, "hann")])
@@ -1548,7 +1546,7 @@ def build_specular(log, frames: int = 24):
     H = PANY + PAN + 74
     px0 = MARGIN + 3 * (PAN + GAP) + 54
     head = ("dichromatic separation: one glossy image -> diffuse + specular "
-            "(specularity.specular_diffuse_split), highlight moving and changing strength")
+            "(specular_diffuse_split); the highlight moves and changes strength")
 
     out = []
     for i, r in enumerate(rows):
@@ -1593,10 +1591,9 @@ def build_specular(log, frames: int = 24):
              f"coefficient map m_s {r['e_c']:.2e}   diffuse+specular-input "
              f"{r['closure']:.2e}", C_TEAL, 12, True),
             (MARGIN, PANY + PAN + 46,
-             f"the separation is a projection onto the illuminant colour, not an "
-             f"optimisation -- which is why it stays at machine precision while the "
-             f"highlight moves (worst over the loop: {worst['e_d']:.2e})",
-             C_DIM, 12, False),
+             f"a projection onto the illuminant colour, not an optimisation -- which "
+             f"is why it holds at machine precision as the highlight moves "
+             f"(worst {worst['e_d']:.2e})", C_DIM, 12, False),
             (ax.x0 + 6, ax.y1 + 22, "frame ->", C_DIM, 11, False),
         ]
         labels += _legend(ax.x0 + 6, ax.y0 + 4,
@@ -1610,7 +1607,7 @@ def build_specular(log, frames: int = 24):
         "worst_coefficient_error": worst["e_c"], "worst_closure": worst["closure"],
         "peak_m_s_range": [min(r["peak"] for r in rows), max(r["peak"] for r in rows)],
     }
-    return out, facts, 8, 0
+    return out, facts, 8, int(0.75 * len(rows))
 
 
 def build_photometric_shadow(log):
@@ -1724,7 +1721,7 @@ def build_photometric_shadow(log):
             labels.append((xp + 2, MAPY + PAN + 6,
                            f"{m}  mean {curves[m][k]:9.4f} deg", col, 12, True))
             labels.append((xp + 2, MAPY + PAN + 24,
-                           (f"believed {inliers[m][k]:.0%} of the blocked lights"
+                           (f"blocked lights believed: {inliers[m][k]:.0%}"
                             if k else "no lights blocked"), C_DIM, 11, False))
         labels += [
             (MARGIN, MAPY + PAN + 48,
@@ -1732,9 +1729,9 @@ def build_photometric_shadow(log):
              f"median {curves['median'][k]:8.4f} deg, ransac {curves['ransac'][k]:8.4f} deg",
              (C_ROSE if broke else C_TEAL), 13, True),
             (MARGIN, MAPY + PAN + 66,
-             (f"half the lights are gone: 'shadowed' and 'black surface' are the same "
-              f"model, and a majority vote cannot choose. The robust methods break here, "
-              f"and this is disclosed rather than hidden."
+             (f"half the lights are gone: 'shadowed' and 'black surface' are the "
+              f"same model and a majority vote cannot choose -- the robust methods "
+              f"break here, and that is disclosed rather than hidden."
               if broke else
               f"{curves['ransac'][k]:.4f} deg is the float32 output floor ({floor:.4f} "
               f"deg), not an error. Plain least squares is already "
@@ -1834,7 +1831,7 @@ def build_motionmag(log, frames: int = 32):
     W = MARGIN + 2 * (PAN + GAP) + PLOT_W + MARGIN
     HUD = 28
     PANY = HUD + 22
-    H = PANY + PAN + 108
+    H = PANY + PAN + 124
     px0, px1 = MARGIN + 2 * (PAN + GAP) + 56, W - MARGIN - 12
     head = (f"motion magnification: a {D0} px vibration at {FREQ:.0f} Hz "
             f"(pass band {BAND[0]:.0f}-{BAND[1]:.0f} Hz, {FPS:.0f} fps), alpha = {ALPHA:.0f}")
@@ -1885,12 +1882,12 @@ def build_motionmag(log, frames: int = 32):
             (MARGIN, bar_y - 16,
              f"this frame: original {d_in[t]:+.4f} px   magnified {d_out[t]:+.4f} px   "
              f"measured gain {gain:.4f} (requested {ALPHA:.0f})", C_TEXT, 12, True),
-            (MARGIN, bar_y + 36,
+            (MARGIN, bar_y + 50,
              f"peak {np.abs(d_in).max():.4f} -> {np.abs(d_out).max():.4f} px.  image SNR "
              f"{res['image_snr_change_db']:+.3f} dB, motion SNR "
              f"{res['motion_snr_change_db']:+.3f} dB: magnification shows motion, it "
              f"does not add certainty.", C_DIM, 12, False),
-            (MARGIN, bar_y + 54,
+            (MARGIN, bar_y + 68,
              f"the input clip matches its closed form to {err_in:.1e} px, so every "
              f"number here is a measurement rather than a setting.", C_DIM, 12, False),
             (px1 - 152, ax.y1 + 22, "true amplitude [px] ->", C_DIM, 11, False),
