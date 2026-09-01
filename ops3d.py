@@ -351,7 +351,15 @@ _CATALOG = {
         ("edge_alias_energy", "render_ssaa", ["image2d"], "measurement", False),
         ("tonemap_reinhard", "render_tonemap", ["image2d"], "image2d", False),
         ("tonemap_aces", "render_tonemap", ["image2d"], "image2d", False),
-        ("render_beauty", "render_beauty", ["mesh"], "image2d", False),
+        # ★ out は image2d ではなく **rgbimage**(2026-09-02 実測)。docstring も
+        # 実装も「RGB (size, size, 3) float [0,1]」で、この行だけが 2-D の
+        # 輝度画像を名乗っていた。mesh の種を入れて初めてこの op が実行され、
+        # 型述語が「declared 'image2d' but returned ndarray(512,512,3)」と
+        # TYPEMISS を出して顕在化した(それまでは (V,F) を 2 位置引数に割る
+        # 形のせいで**一度も実行されていなかった**)。他の render_* 3 op
+        # (ambient_occlusion / cast_shadow / supersample_mesh)は実測どおり
+        # 2-D なので image2d のままでよい ― 嘘だったのはここ 1 行だけ。
+        ("render_beauty", "render_beauty", ["mesh"], "rgbimage", False),
     ],
     "photometric": [  # フォトメトリックステレオ・法線積分(既知光源 → 法線 → 高さ)
         ("photometric_stereo", "photometric", ["images"], "normalmap", False),
