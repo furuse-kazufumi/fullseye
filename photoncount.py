@@ -1284,6 +1284,13 @@ def dtof_depth(hist, bin_ps=100.0, mode="peak", offset_ps=0.0,
                              "count — more than half the bins are at or above "
                              "the peak, so this histogram is background only "
                              "(no detectable return).")
+    if m != "centroid" and float(work.max()) == float(work.min()):
+        raise ValueError(
+            "dtof_depth: every bin holds exactly %g count(s) — a flat histogram "
+            "has no peak, so argmax would silently pick bin 0 and report %g m. "
+            "There is no detectable return here. (A uniform (D, H, W) voxel "
+            "volume mistaken for a histogram lands exactly on this.)"
+            % (float(work.max()), SPEED_OF_LIGHT_M_S * 0.5 * dt * 1e-12 / 2.0))
     idx, ok = _fractional_peak(work, m, "dtof_depth")
     if not bool(ok):
         n = int(work.size)
