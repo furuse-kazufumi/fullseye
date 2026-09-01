@@ -597,8 +597,7 @@ def vol_select_labels(labels, props=None, spacing=None, relabel: bool = False,
     active = {k: v for k, v in criteria.items() if v is not None}
 
     if props is None:
-        need_shape = any(_CRITERIA[k][0] in ("elongation", "isotropy") for k in active)
-        props = vol_label_shape_stats(L, spacing=spacing, shape=need_shape or True)
+        props = vol_label_shape_stats(L, spacing=spacing, shape=True)
     if not isinstance(props, (list, tuple)):
         raise ValueError("props must be a list of per-label dicts (from "
                          "vol_label_shape_stats or volops.vol_region_props), got %r"
