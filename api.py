@@ -286,6 +286,16 @@ from visiondesign import (  # noqa: E402,F401
 from visionlab import (  # noqa: E402,F401
     VisionSystem, render_part, inspection_sweep, detection_report,
 )
+# ライトフィールド(plenoptic): 4-D (V,U,H,W) を扱う族。1 回の露光から視点・
+# リフォーカス・深度を出す経路で、既存の stereo / focus_stack とは入力が違う。
+import lightfield  # noqa: E402  (4-D light field: views / refocus / depth)
+from lightfield import (  # noqa: E402,F401
+    lf_synthesize, lf_from_mla, lf_to_mla, lf_stats,
+    lf_subaperture, lf_center_view, lf_views, lf_epi,
+    lf_refocus, lf_focal_stack, lf_aperture_mask, lf_synthetic_aperture,
+    lf_depth_from_focus, lf_epi_slope, lf_disparity_to_depth, lf_all_in_focus,
+    lf_plenoptic_design,
+)
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
     airy_pattern, angular_spectrum_propagate, fraunhofer_pattern, gaussian_beam,
