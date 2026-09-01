@@ -57,7 +57,7 @@ if _ROOT not in sys.path:
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets")
 MEDIA = os.path.join(ASSETS, "media")
 THUMBS = os.path.join(ASSETS, "thumbs")
-EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
+EXHIBITS_DIR = os.path.join(_ROOT, "docs", "articles", "exhibits")
 META_PATH = os.path.join(ASSETS, "_wingstudio_meta.json")
 CAPTION_PATH = os.path.join(EXHIBITS, "wingstudio.md")
 RAW_BASE = ("https://raw.githubusercontent.com/furuse-kazufumi/fullseye/"
