@@ -113,6 +113,27 @@ def _quat_image(rng):
         (0.80, 0.55, 0.35), (0.30, 0.20, 1.0), specular=0.5, shininess=48.0))
 
 
+def _beat_cube(rng):
+    """FMCW ビート立方体(アンテナ, チャープ, サンプル)の複素。
+
+    **4 素子で出すのが要点**: 既定の 1 素子だと開口が無く、ビームフォーミング
+    2 op が毎回「開口が無い」で fail-closed になって一度も実行されない
+    (= 「頑健だから発見ゼロ」と「未実行」が区別できなくなる)。
+    """
+    import rangedoppler                                  # noqa: PLC0415
+    d = rangedoppler.fmcw_design(n_samples=32, n_chirps=16, n_antennas=4)
+    dr, dv = d["range_bin_m"], d["velocity_bin_ms"]
+    n = int(rng.integers(1, 4))
+    return rangedoppler.fmcw_beat_simulate(
+        ranges_m=[float(rng.integers(1, 30)) * dr for _ in range(n)],
+        velocities_ms=[float(rng.integers(-7, 8)) * dv for _ in range(n)],
+        angles_deg=[float(rng.uniform(-60.0, 60.0)) for _ in range(n)],
+        amplitudes=[float(rng.uniform(0.3, 1.0)) for _ in range(n)],
+        n_samples=32, n_chirps=16, n_antennas=4,
+        noise_sigma=float(rng.uniform(0.0, 0.05)),
+        seed=int(rng.integers(0, 1 << 31)))
+
+
 def _photon_counts(rng):
     """光子カウントヒストグラム(非負・時間 bin 添字)。
 
@@ -191,6 +212,9 @@ def make_generators():
             seed=int(rng.integers(0, 1000)))[0],
         # 四元数画像 (H,W,4)、順序 (w,x,y,z)
         "qimage": _quat_image,
+        # FMCW ビート立方体。既知の (距離, 速度, 到来角, 振幅) から合成するので
+        # 2D FFT のピークがどこに立つべきかが閉形式で分かっている
+        "beatcube": _beat_cube,
         # 偏光子掃引。既定の 0/45/90/135 度は面偏光センサの実配置で、
         # polarization_render の逆が polarization_separate なので鎖が閉じる
         "polsweep": lambda rng: __import__("specularity").polarization_render(
@@ -508,6 +532,9 @@ OP_PARAM_HINTS = {
     ("quat_color_filter", "mode"): lambda rng: "remove" if rng.random() < 0.5 else "keep",
     # PARAM_HINTS["alpha"] は 1.0(恒等利得)。motion_magnify と同じ理由で上書き
     ("riesz_motion_magnify", "alpha"): lambda rng: 2.0,
+    # 既定 n_antennas=1 だとプールに 1 素子の立方体が入り、ビームフォーミング
+    # 2 op が毎回「開口が無い」で弾かれて一度も実行されない
+    ("fmcw_beat_simulate", "n_antennas"): lambda rng: 4,
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
@@ -548,6 +575,8 @@ def _registry_adapters():
     d.update(opsmotionmag.RESULT_ADAPTERS)  # 意図的に空(下の理由を参照)
     import opsquat
     d.update(opsquat.RESULT_ADAPTERS)       # 空: 19 op とも宣言型を素で返す
+    import opsrangedoppler
+    d.update(opsrangedoppler.RESULT_ADAPTERS)   # 空(意図的)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -633,6 +662,16 @@ def catalog():
     for n, m in opsquat.OPSQUAT.items():
         if m["func"] is not None:
             ops.append((n, "quat", list(m["in"]), m["out"], m["func"]))
+    # FMCW レンジ-ドップラー(opsrangedoppler 台帳)。新語彙 `beatcube` は
+    # (アンテナ, チャープ, サンプル) の**複素** 3-D。histcube (非負の光子カウント)
+    # と形は一致するが dtype だけが違い、**キャスト 1 回で相互に通ってしまう**
+    # (実測: np.abs(beatcube) を dtof_cube_depth に渡すと例外なく深度が返り、
+    # histcube.astype(complex) を range_doppler_map に渡すとマップが返る)ので
+    # 宣言型のレベルで分ける
+    import opsrangedoppler
+    for n, m in opsrangedoppler.OPSRANGEDOPPLER.items():
+        if m["func"] is not None:
+            ops.append((n, "rangedoppler", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -728,6 +767,11 @@ TYPE_CHECKS = {
     "pose": lambda v: isinstance(v, (tuple, list)) and len(v) >= 2
     and tuple(getattr(v[0], "shape", ())) == (3, 3)
     and tuple(getattr(v[1], "shape", ())) == (3,),
+    # beatcube = (アンテナ, チャープ, サンプル) の**複素**立方体。3-D complex の
+    # 既存語彙は無い(cimage は 2-D)。real を弾くのがこの型の契約の本体で、
+    # 実の histcube と形は同じだが dtype だけが違う
+    "beatcube": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.dtype.kind == "c" and v.shape[1] >= 2 and v.shape[2] >= 2,
     # qimage = (H,W,4) の四元数画像。**voxel / sdf / labels / video / score /
     # histcube の述語も同時に満たす**(どれも ndim==3)ので、宣言型が qimage の
     # op だけがこのプールを食う設計に頼っている。逆向き(既存の種が qimage を

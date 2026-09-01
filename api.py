@@ -345,6 +345,15 @@ from dsp import (  # noqa: E402,F401
     highpass, bandpass, envelope, rms, find_peaks, signal_features,
     resample, zero_crossing_rate,
 )
+# FMCW レンジ-ドップラー: 既存の lidar_* が幾何(レイキャスト)だけで信号処理層が
+# 空だったところを埋める層。距離と**速度を同時に**出し、遅延和ビームフォーミングで
+# 到来角も出す。photoncount(dToF)とは原理が逆で、型も分けてある。
+import rangedoppler  # noqa: E402  (FMCW range-Doppler / delay-and-sum beamforming)
+from rangedoppler import (  # noqa: E402,F401
+    beamform_delay_sum, beamform_doa, fmcw_beat_simulate, fmcw_design,
+    fmcw_range_profile, fmcw_window_apply, range_doppler_map,
+    range_doppler_peaks,
+)
 import quatimage  # noqa: E402  (quaternion images / Riesz + monogenic signal)
 from quatimage import (  # noqa: E402,F401
     iqft2, monogenic_amplitude, monogenic_orientation, monogenic_phase,
@@ -505,7 +514,10 @@ __all__ = [
     "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
     "signal_features", "resample", "zero_crossing_rate",
-    "specularity", "motionmag", "pose_quat", "quatimage",
+    "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
+    "beamform_delay_sum", "beamform_doa", "fmcw_beat_simulate",
+    "fmcw_design", "fmcw_range_profile", "fmcw_window_apply",
+    "range_doppler_map", "range_doppler_peaks",
     "iqft2", "monogenic_amplitude", "monogenic_orientation",
     "monogenic_phase", "monogenic_signal", "qft2", "quat_color_filter",
     "quat_color_rotate", "quat_conjugate_image", "quat_correlate",

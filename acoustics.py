@@ -70,10 +70,25 @@ Conventions
 * A **signal** is a 1-D float64 array. It is *not* required to lie in
   ``[-1, 1]`` — a calibrated pressure or acceleration record does not.
 * A **sample rate** is always the argument named ``rate``, in hertz, and always
-  comes immediately after the signal — the same order :mod:`dsp` uses. Strings,
-  bools and complex numbers are refused for it (``float("16000")`` succeeds, so
-  without that refusal an unparsed configuration value becomes a sample rate and
-  every frequency this module reports is wrong by an unknown factor).
+  comes immediately after the signal — the same order :mod:`dsp` uses.
+
+  **The sample rate is the one error this module cannot catch, so it is worth
+  being blunt about.** It is not in the array; it is a separate number, and a
+  wrong one produces no exception, no NaN and no warning. Measured, on a
+  correct recording of a bearing with a 107 Hz defect at 25600 Hz:
+
+  =============  ==========================  =========  ==================
+  rate passed    defect reported             A-w. Leq   loudest 1/3 octave
+  =============  ==========================  =========  ==================
+  25600 (true)   107.0000 Hz                 -1.2708    3162.3 Hz
+  48000 (wrong)  **200.6250 Hz**             -2.2506    6309.6 Hz
+  =============  ==========================  =========  ==================
+
+  Every number moved, every number is plausible, and 200.6 Hz would be matched
+  against the wrong bearing kinematics. What *can* be done is refuse the ways a
+  wrong rate arrives silently, and that is done: strings, bools and complex
+  numbers all raise. ``float("16000")`` succeeds, so without that refusal an
+  unparsed configuration value becomes a sample rate; ``True`` promotes to 1 Hz.
 * A **frequency** is in hertz, an **order** is in multiples of the shaft
   rotation rate, a **quefrency** is in seconds, and a **level** is in decibels
   relative to an explicitly supplied ``ref`` amplitude. There is no implicit

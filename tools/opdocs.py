@@ -67,6 +67,8 @@ LEDGER_DIMS = {
                   "module": "motionmag", "family": "motion_magnification"},
     "quat": {"registry": "opsquat", "table": "OPSQUAT",
              "module": "quatimage", "family": "quaternion_monogenic"},
+    "rangedoppler": {"registry": "opsrangedoppler", "table": "OPSRANGEDOPPLER",
+                     "module": "rangedoppler", "family": "fmcw_range_doppler"},
 }
 
 _AUTHOR = "Kazufumi Furuse"
