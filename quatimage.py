@@ -1067,13 +1067,23 @@ def _riesz_kernels(h: int, w: int):
 
     Zero at DC, where the direction of the frequency vector is undefined. Both
     are purely imaginary and odd, so ``H(-w) = conj(H(w))`` and the transform of
-    a real image is real — except at the self-conjugate Nyquist row/column of an
-    even-sized grid, where ``-w`` maps to ``w`` and no purely imaginary
-    multiplier can be self-conjugate. The imaginary residue there is discarded by
-    taking the real part, which is the projection onto the Hermitian part and
-    therefore the right thing rather than a fudge; measured on a 64x64 random
-    image the discarded energy is 1.9e-02 % of the band's, and it is exactly zero
-    for any image with no Nyquist content."""
+    a real image is real — except at the (at most four) self-conjugate points of
+    an even-sized grid, where ``-w`` maps to ``w`` and no purely imaginary
+    multiplier can be self-conjugate. Taking the real part discards the residue
+    there, which is not a fudge but the projection onto the Hermitian part, and
+    is *identical* to zeroing the multiplier at those bins (their transform
+    coefficient is real, so ``i*F`` is purely imaginary and ``Re`` kills it
+    exactly).
+
+    **How much is discarded is a property of the image, not a rounding error,
+    and it can be large.** On a 64x64 uniform-random image the discarded
+    imaginary part is 1.617e-01 of the real part in L1 — 16 %, because a random
+    image has substantial energy at the Nyquist corners. On a band-passed image
+    it is **exactly zero**: the log-radial band of :func:`monogenic_signal`
+    evaluates to 0.0 at all three non-DC self-conjugate bins, so the residue
+    there is 4.1e-17 against a signal of 2.1e-01. That is one of the reasons the
+    monogenic signal band-passes first, and the reason to read
+    :func:`riesz_transform` of a raw image with care."""
     fv = np.fft.fftfreq(h)[:, None]
     fu = np.fft.fftfreq(w)[None, :]
     r = np.sqrt(fu * fu + fv * fv)
