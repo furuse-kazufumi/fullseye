@@ -581,7 +581,8 @@ def _split_known_body(I, gamma, body_rgb, op):
 
 
 def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
-                           body_rgb=None, max_rank_ratio=0.1):
+                           body_rgb=None, max_rank_ratio=0.1,
+                           max_negative_frac=0.02):
     """Split a linear-RGB image into its diffuse (body) and specular (interface) parts. → (diffuse, specular), both (H, W, 3).
 
     Shafer's dichromatic reflection model writes the radiance of a dielectric as
