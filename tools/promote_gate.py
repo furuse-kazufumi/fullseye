@@ -439,8 +439,9 @@ def main():
                                   split=args.split, max_existing=args.max_existing,
                                   verbose=True)
     print(f"   評価 {util['problems_evaluated']} problem / 改善 "
-          f"{util['problems_improved']} / 最良 {util['best_relative_gain']:+.4f} "
-          f"({time.perf_counter() - t1:.1f}s)")
+          f"{util['problems_improved']} / 最良相対 {util['best_relative_gain']:+.4f} "
+          f"/ 比が未定義 {util['problems_with_undefined_ratio']}(絶対で判定、最良 "
+          f"{util['best_absolute_gain']:+.5f}) ({time.perf_counter() - t1:.1f}s)")
 
     lib = _load_library()
     ok, reason = decide(util, dup, len(lib), args.capacity)
