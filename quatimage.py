@@ -43,12 +43,14 @@ states it everywhere it matters:
   diagonal matrix and cannot create a channel out of a zero. Measured: the best
   diagonal approximation to the grey-axis projection is off by 0.4714 on a pure
   red pixel, against 0.0 here (:func:`quat_color_filter`).
-* against a **3x3 colour-matrix** baseline — no capability difference at all.
-  What differs is representation cost (4 numbers vs 9), exact closure under
-  composition, and ``slerp``; measured drift over 100,000 composed random
-  rotations is 0.0 for the renormalised quaternion against
-  ``|R^T R - I| = 4.4e-10`` for the plainly multiplied matrix
-  (:func:`quat_color_rotate`). Real, and small.
+* against a **3x3 colour-matrix** baseline — no capability difference at all,
+  and the representation advantage is **much smaller than this module first
+  claimed**. Measured drift over 100,000 composed random rotations is 0.0 for
+  the renormalised quaternion against ``|R^T R - I| = 4.33e-14`` for the plainly
+  multiplied matrix (:func:`quat_color_rotate`). An earlier revision measured
+  ``4.4e-10`` there and read it as a real advantage; it was not, it was a
+  library bug (see :func:`quat_color_rotate`), and the honest number is four
+  orders of magnitude smaller.
 * the **QFT is not faster** than three channel FFTs and this module never
   suggests otherwise: it moves four real transforms' worth of data where the
   channelwise route moves three, and pays for the symplectic pack on top.
