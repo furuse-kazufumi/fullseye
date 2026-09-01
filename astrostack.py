@@ -515,9 +515,9 @@ def synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5,
                        **starfield_kw):
     """同じ星野を ``n_frames`` 枚、**別々のノイズと別々のディザ**で撮り直す。
 
-    星の座標・フラックスは全フレームで同じ(seed を固定して星の抽選を再現し、
-    ``shift_row`` / ``shift_col`` だけを振る)なので、位置合わせ・合成・drizzle の
-    正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる
+    星の座標・フラックスは全フレームで同じ(``field_seed`` を固定して星の抽選を
+    再現し、観測ごとの ``seed`` と ``shift_row`` / ``shift_col`` だけを振る)ので、
+    位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる
     —— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと
     :func:`lucky_select` が選ぶ理由が無くなる。
 
