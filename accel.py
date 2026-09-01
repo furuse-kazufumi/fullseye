@@ -253,8 +253,11 @@ def _std_filter(t, a, b, dev):
 
 
 def _unsharp(t, a, b, dev):
+    # core (`ops._unsharp`) と同じく出口で [0,1] に clip(2026-09-02)。
+    # unsharp は定義上オーバーシュートするので、clip が片側だけだと
+    # `apply(..., device="cuda")` と CPU で違う生値が返る。
     g = _sep_conv(t, _gauss_kernel(0.5 + 1.5 * b, dev))
-    return t + (1.5 * a) * (t - g)
+    return (t + (1.5 * a) * (t - g)).clamp(0, 1)
 
 
 def _sigmoid(t, a, b, dev):
