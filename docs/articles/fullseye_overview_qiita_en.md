@@ -3441,7 +3441,23 @@ peaks = fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]   # dr, dv = b
 
 **Without `dr, dv`, the returned `range_m` is a bin index, not metres** (3.0 vs 3.5131928671875). The unit trap is concentrated in this one place.
 
-**Specular separation (13 ops)** either removes glare by colour (one material, white illuminant) or recovers normals from multiple lights. **The shared breaking point is k=4**: once 4 of 8 lights are occluded, plain least squares collapses and both median and RANSAC fall to the noise floor. If you expect more occlusion than that, adding lights is the only remedy.
+**Specular separation (13 ops)** either removes glare by colour (one material, white illuminant) or recovers normals from multiple lights.
+
+The first published version **had the breaking point wrong**, so here it is with the correction. It originally said "**once 4 of 8 lights are occluded, it collapses**". That number was real — 70.5° mean normal error at k=4. But at the same moment, **the estimator reported that it trusted all 8 lights**. At its most wrong, the diagnostic warned about nothing.
+
+The root cause is in Woodham's model, `I = a·max(n·L, 0)`. **A measured zero is the inequality `n·L ≤ 0`**, and a linear solver reads it as the equality `n·L = 0`. Worse, the zero-albedo degenerate solution **reproduces every blacked-out frame exactly**, so the set of occluded lights can outscore the truth **as a self-consistent hypothesis**. Median and RANSAC alike were choosing the blacked-out side as the majority.
+
+Changing the rule to "**the fit explains it within tolerance, and the measurement itself is further from zero than that same tolerance**" gives:
+
+| Occluded lights | Mean error before | After |
+|---|---|---|
+| 0–3 | 0.0001° | 0.0001° |
+| **4** | **70.5°** (reported 8/8 lights trusted) | **0.000115°** |
+| 6 (2 live lights) | 8.99° (**answers**) | **NaN everywhere** (says it cannot be solved) |
+
+The last row is the point. Two live lights means **3 unknowns and 2 equations** — not solvable in principle. Before the fix it returned a plausible 8.99°, which was only close because the surface was a shallow dome; on another shape it would have been quietly far off.
+
+**And the real breaking point is not occlusion but highlight contamination.** Adding a positive outlier of `+3.0` to 4 of 8 lights gives 65.4° for RANSAC and 7.4° for median (0.0001° at 1–3 lights). **The median's breakdown point is exactly 50 %, so failing at 4/8 is theory, not a bug.** Occlusion turned out to be a misread model; contamination remains as the genuine limit.
 
 **Motion magnification (9 ops)** measures and displays a 0.2-pixel vibration. The important part is that **the cliff has a closed form**: the phase reference follows `c·J₀(k·A)`, so beyond the first zero at **2.4048/k = 3.0619 pixels** the measurement inverts.
 
@@ -3804,7 +3820,7 @@ Here is what `pip install -U fullseye` gives you, listed by capability.
 | Photon-level metrology with error bars | `tcspc_simulate` / `dtof_depth` / `photon_uncertainty` | Poisson: variance = mean (no calibration) |
 | 3-D rotation in colour space | `rgb_to_quaternion` / `quat_color_rotate` | the **only** quaternion-specific gain |
 | Range, velocity, angle of arrival | `fmcw_beat_simulate` / `range_doppler_map` | without bin widths, the units are bin indices |
-| Glare removal / robust normals | `specular_diffuse_split` / `photometric_stereo_robust` | breaking point is **k=4** occluded lights |
+| Glare removal / robust normals | `specular_diffuse_split` / `photometric_stereo_robust` | occlusion is solvable; the limit is **highlight contamination at 4/8** |
 | Measure and show invisible vibration | `displacement_series` / `motion_magnify` | the cliff is **3.0619 px** (first zero of J₀) |
 | Not carrying big 3-D data around | `vol_crop_domain` / `vol_boundary` / `vol_rle_encode` | 1/34 · 19 % · 1/145 |
 | Reading a skeleton as a graph | `apply(mask, "em_skeleton")` / `junctions_skeleton` / `skeleton_branches3d` | pixel-exact against EM93 |
