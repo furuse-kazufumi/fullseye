@@ -1032,10 +1032,16 @@ def test_ledger_call_returns_the_declared_type():
     sys.path.insert(0, os.path.join(ROOT, "tools"))
     from chain_fuzz import TYPE_CHECKS
     checks = dict(TYPE_CHECKS)
-    checks.setdefault("rgbimage", RGBIMAGE_CHECK)
+    for sort, predicate in NEW_SORTS.items():
+        checks.setdefault(sort, predicate)
     if "rgbimage" in TYPE_CHECKS:                # once the parent wires it
         assert TYPE_CHECKS["rgbimage"](np.zeros((4, 4, 3)))
         assert not TYPE_CHECKS["rgbimage"](np.zeros((4, 4)))
+    if "polsweep" in TYPE_CHECKS:
+        assert TYPE_CHECKS["polsweep"](np.zeros((4, 8, 8)))
+        assert not TYPE_CHECKS["polsweep"](np.zeros((2, 8, 8)))     # N < 3
+        assert not TYPE_CHECKS["polsweep"](-np.ones((4, 8, 8)))      # negative
+        assert not TYPE_CHECKS["polsweep"]([np.zeros((8, 8))] * 4)   # not ndarray
     args = _ledger_args()
     assert set(args) == set(opsspecular.OPSSPECULAR), "ledger args missing"
     for name, (a, kw) in args.items():
