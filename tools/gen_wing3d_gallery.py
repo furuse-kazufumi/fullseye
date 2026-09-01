@@ -1681,7 +1681,10 @@ def ex_visual_hull(log) -> dict:
     frames = []
     for m in range(1, n_views + 1):
         occ = occ_by_m[m]
-        idx = np.argwhere(occ).astype(np.float64)
+        # 彫り残し(真の形の外側)だけをアンバーで出す。真の形の上に重ねて塗ると
+        # 灰が完全に隠れて「削れているのかどうか」が読めなくなるため。
+        excess = occ & ~gt
+        idx = np.argwhere(excess).astype(np.float64)
         world = origin + (idx + 0.5) * cell               # 既に (x, y, z)
         gt_idx = np.argwhere(gt).astype(np.float64)
         gt_world = origin + (gt_idx + 0.5) * cell
