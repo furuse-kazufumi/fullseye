@@ -644,8 +644,21 @@ def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
     return diffuse, specular
 
 
+def _split_guards(max_rank_ratio, max_negative_frac):
+    """Validate the two uniform-body guards (shared by the split and the map)."""
+    if max_rank_ratio is not None:
+        max_rank_ratio = _positive(max_rank_ratio, "max_rank_ratio")
+    if max_negative_frac is not None:
+        max_negative_frac = _finite_scalar(max_negative_frac, "max_negative_frac")
+        if not (0.0 <= max_negative_frac <= 1.0):
+            raise ValueError("max_negative_frac must be in [0, 1], got %g"
+                             % max_negative_frac)
+    return max_rank_ratio, max_negative_frac
+
+
 def specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
-                             body_rgb=None, max_rank_ratio=0.1):
+                             body_rgb=None, max_rank_ratio=0.1,
+                             max_negative_frac=0.02):
     """The scalar interface (specular) coefficient of the dichromatic model. → (H, W).
 
     The same decomposition as :func:`specular_diffuse_split`, returning the
