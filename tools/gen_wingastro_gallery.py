@@ -442,7 +442,8 @@ def ex_lucky_sweep():
                              hold_last_ms=2200)
     data = {"rows": rows,
             "fwhm_gain_pct": 100 * (1 - rows[-1]["fwhm"] / rows[0]["fwhm"]),
-            "rms_cost_x": rows[-1]["rms"] / rows[0]["rms"]}
+            "sigma_cost_x": rows[-1]["sigma"] / rows[0]["sigma"],
+            "sqrt_n_expected": np.sqrt(rows[0]["kept"] / rows[-1]["kept"])}
     return info, data
 
 
