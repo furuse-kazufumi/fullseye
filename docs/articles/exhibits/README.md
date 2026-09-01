@@ -77,6 +77,32 @@ save_animation(book, "wing2d_measure_flow")          # gif + thumbs/_thumb.jpg
 
 画像 URL に `?v=2` のようなキャッシュ外しを付けるのは可(実在確認では落とされる)。
 
+## 配色は自分で選ばない ―― 役割で引く(`palette`)
+
+図ごとに作者が色を選ぶと、**同じ意味に違う色が付く**。実際この repo でも、ある展示は
+「赤枠 = 誤り / 緑枠 = 正しい」で描かれ、別の展示は同じ意味を青-黒-橙で描いていた。
+どちらが良いかを図ごとに議論しても片付かないので、**流儀を op に閉じ込めてある**。
+
+```python
+import fullseye as fs
+
+p  = fs.semantic_palette()                 # 既定 = Okabe–Ito(赤と緑を対にしない)
+ng = fs.role_rgb8("wrong")                 # PIL/imagedraw にそのまま渡せる (213, 94, 0)
+lut = fs.diverging_lut(256)                # 符号つきの量: wrong ← 暗中央 → right
+label = f"{fs.ROLE_MARKERS['wrong']} spacing なし"     # -> "× spacing なし"
+```
+
+役割は `right` / `wrong` / `neutral` / `emphasis` / `baseline` / `reference` の 6 つ。
+**図は色ではなく役割の名前で書く**ので、流儀を変えても図のコードは 1 行も直らない。
+
+* 既定が Okabe–Ito なのは、**赤緑の対が色覚特性によっては情報量ゼロになる**ため
+  (日本人男性の約 5 %)。`right`/`wrong` は色相だけでなく**明度も離してある**ので、
+  白黒印刷でも分かれる。
+* **色だけに意味を載せない。** `ROLE_MARKERS` の記号をキャプションや凡例に併記する。
+* `"red_green"` は互換のためだけに残してあり、`assert_not_red_green_pair` が
+  **既定に選ぶことを拒否**する。未知の scheme も fail-closed(黙って既定へ落とすと、
+  流儀が割れていることに誰も気づけない)。
+
 ## 公開前の点検(機械生成物は必ず最後に見る)
 
 自動生成した図は**それらしく見えるのが致命的に簡単**なので、目視だけにも機械だけにも頼らない。
