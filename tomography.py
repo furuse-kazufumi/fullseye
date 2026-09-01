@@ -473,9 +473,18 @@ def projection_angles(n_angles=180, span_deg=180.0, scheme="uniform",
       covers only a wedge, so an interrupted uniform scan is a limited-angle scan.
     * ``"golden"`` — increments of ``180/phi = 111.246...`` degrees, wrapped into
       ``[start, start+span)``. Every prefix is near-uniform, so an interrupted
-      golden scan is a *sparse* scan, which is a far easier problem. Measured on
-      the Shepp-Logan phantom, the largest angular gap after 32 of 180 planned
-      views is 5.63 degrees for golden against 175.00 degrees for uniform.
+      golden scan is a *sparse* scan, which is a far easier problem. Largest
+      angular gap left by a scan that stops early, measured:
+
+        scheme          after 32 of 180    all 180
+        uniform            149.000 deg     1.000 deg
+        golden              10.031 deg     1.464 deg
+        bit-reversed         8.000 deg     1.000 deg
+
+      Uniform's 149-degree hole is the entire limited-angle problem arriving by
+      accident. Bit-reversed is the only one of the three that is good at both
+      ends; golden's price for working at *every* prefix length rather than only
+      at powers of two is a completed set 1.46x less even than the grid.
     * ``"bit-reversed"`` — the uniform grid, visited in bit-reversed order. Same
       guarantee as golden for power-of-two prefixes and exactly uniform at the
       end, which golden is not.
