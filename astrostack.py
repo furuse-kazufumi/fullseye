@@ -1498,7 +1498,7 @@ def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
     return np.ascontiguousarray(M), info
 
 
-def align_frames(frames, reference=0, order=1, **align_kw):
+def align_frames(frames, reference=0, order=3, **align_kw):
     """フレーム列を 1 枚の基準へ重ね合わせる。
 
     各フレームについて :func:`frame_align` で変換を推定し、
