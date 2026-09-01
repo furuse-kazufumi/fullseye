@@ -124,6 +124,8 @@ IMGFORENSICS = [
     "error_level_map", "jpeg_quality_estimate", "jpeg_ghost_map",
     "jpeg_ghost_quality", "noise_inconsistency_map", "copy_move_regions",
     "watermark_embed", "watermark_extract", "watermark_capacity",
+    # 証拠量を解釈できる形にする層(しきい値は同梱せず、手元の清浄データから測る)
+    "null_distribution", "evidence_quantile",
 ]
 
 #: 画素数の上限。PRNU は画像 1 枚あたり float64 の一時配列を 5〜6 本作り、
