@@ -148,7 +148,28 @@ def spectrum(x, rate=1.0):
 
 def spectrogram(x, rate=1.0, win=256, hop=None):
     """STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
-    ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``."""
+    ``(n_freqs, n_frames)``. Hann-windowed; *hop* defaults to ``win//2``.
+
+    **Same raw convention as :func:`spectrum`, but a different divisor.** Each
+    column is the unnormalised ``|rfft(frame * hann(win))|``, so it is not an
+    amplitude either — and dividing by ``2/win`` is *wrong* here, because the
+    Hann window has already thrown away part of the signal. The correct one-sided
+    amplitude conversion divides by the window's coherent gain::
+
+        w = np.hanning(win)
+        amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()
+
+    Measured on a unit sine at a bin centre (``rate = 16000`` Hz, 1000 Hz,
+    amplitude exactly 1.0, ``win = 256``): the raw column peak is
+    ``63.7497786196906``; ``* 2/win`` gives ``0.49804514546633283`` (too small by
+    exactly the Hann coherent gain ``sum(w)/win = 0.498046875``), while
+    ``* 2/sum(w)`` gives ``0.9999965273676957``. Only the second one is the
+    amplitude that was actually in the signal.
+
+    Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected
+    by either factor. This function returns magnitudes only — the phase is
+    discarded, so it cannot be inverted; use ``acoustics.stft`` / ``acoustics.istft``
+    for a round-trip."""
     x = _require_finite(x)
     win = int(win)
     hop = win // 2 if hop is None else int(hop)
