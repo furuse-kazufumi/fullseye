@@ -516,8 +516,12 @@ def _clahe(v, a, b):
     nb = 2 + int(a * 3)
     H, W = v.shape
     x = np.clip(np.asarray(v, np.float64), 0, 1)
-    # clip limit を「ビン平均カウントの何倍か」で持つ。256 倍 = 切り取り不能 = AHE。
-    clip_mult = 256.0 ** float(np.clip(b, 0.0, 1.0))
+    # clip limit を「その領域の全画素数に対する割合」で持つ。
+    #   b=1 -> 256**0 = 1.0 (きっかり) -> climit = n -> どのビンも超えられない = 素の AHE
+    #   b=0 -> 256**-1 = 1/256        -> climit = 平均カウント -> 完全平坦 = 強調ゼロ
+    # b=1 で climit が n と **厳密に**一致するようこの形で書く(倍率を掛けてから
+    # 256 で割ると丸めで n をわずかに下回り、定数タイルで余計な再配分が起きる)。
+    clip_frac = 256.0 ** (float(np.clip(b, 0.0, 1.0)) - 1.0)
     ys = np.linspace(0, H, nb + 1).astype(int)
     xs = np.linspace(0, W, nb + 1).astype(int)
     cy = (ys[:-1] + ys[1:]) / 2.0                       # tile centres (pixel coords)
@@ -528,7 +532,7 @@ def _clahe(v, a, b):
     # Global CDF: the fallback map for degenerate (empty) tiles, which linspace
     # can produce when nb exceeds the image side.
     ghist, _ = np.histogram(x, 256, (0, 1))
-    gcdf = _clip_limit_cdf(ghist, clip_mult * ghist.sum() / 256.0)
+    gcdf = _clip_limit_cdf(ghist, clip_frac * float(x.size))
 
     cdfs = np.empty((nb, nb, 256), np.float64)          # per-tile tone maps at bin mids
     for i in range(nb):
@@ -536,8 +540,8 @@ def _clahe(v, a, b):
             blk = x[ys[i]:ys[i + 1], xs[j]:xs[j + 1]]
             if blk.size:
                 hist, _ = np.histogram(blk, 256, (0, 1))
-                # clip limit はタイル画素数 / ビン数 (= 平均カウント) の倍数
-                cdfs[i, j] = _clip_limit_cdf(hist, clip_mult * blk.size / 256.0)
+                # clip limit はタイルの画素数に対する割合(b=1 で blk.size = 切り取り無効)
+                cdfs[i, j] = _clip_limit_cdf(hist, clip_frac * float(blk.size))
             else:
                 cdfs[i, j] = gcdf
 
