@@ -44,28 +44,26 @@ _BANNED = (
     "allied vision", "teledyne", "baumer", "ids imaging", "matrox", "euresys",
 )
 
-#: 相互運用の識別子として通すもの。**キーは禁止語、値は (許可するパス, 理由)**。
-#: パスは repo 相対の接頭辞で照合する。ここに無いものは一律で失格。
+#: **repo 全体で通す相互運用の識別子**。値は理由。
+#:
+#: op ごとの ``halcon=`` 別名フィールドは、別ツールから来た利用者が op を名前で引く
+#: ための alias 名前空間であり、**1194 op のほぼ全てに付いている横断的な設計**である
+#: (2026-08 の op カタログ整備で確定した既存の意思決定)。従ってパスで囲うことはでき
+#: ない。囲えないものを囲ったふりをするより、**全面的に許可したうえで理由を明記する**
+#: ほうが監査可能である。
+_GLOBAL_INTEROP = {
+    "halcon": "op の別名(alias)名前空間。lookup 専用であり、互換性・提携の主張ではない",
+    "mvtec": "上の alias 表の出所を示す出典表記",
+    "hdevelop": "operator カタログの表示様式を指す用法(出典表記)",
+}
+
+#: **パスを限って通す**相互運用の識別子。キーは禁止語、値は (許可するパス片, 理由)。
+#: ここに無い語は、コード面のどこに現れても失格。
 _INTEROP_ALLOWLIST = {
     "basler": (
         ("acquire.py",),
         "カメラ driver を選ぶ backend 識別子。実在する機材を名指しているだけで、"
         "fullseye 側の何かに名前を付けてはいない",
-    ),
-    "halcon": (
-        # op ごとの別名フィールドと、その別名表を作る/使う側。
-        ("api.py", "ops.py", "catalog.py", "halcon_", "gen_halcon_", "backends_halcon_ext.py",
-         "tools/", "examples/", "spikes/", "parity.py", "codegen.py", "fscript.py",
-         "unified.py", "studio.py", "engine.py", "problems.py", "auto_specs_data.py",
-         "gen_auto_specs_data.py", "verify_auto.py", "lib_coverage.py", "honest_summary.py",
-         "dispositions.py", "bench", "final_genuine"),
-        "別ツールから来た利用者が op を引くための alias 名前空間。lookup 専用で、"
-        "互換性の主張ではない",
-    ),
-    "mvtec": (("halcon_", "tools/", "docs/"), "上の alias 表の出所を示す出典表記"),
-    "hdevelop": (
-        ("tools/", "studio.py", "docs/", "examples", "op_help"),
-        "operator カタログの表示様式を指す一般名詞的用法(出典表記)",
     ),
 }
 
