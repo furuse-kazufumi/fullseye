@@ -23,24 +23,80 @@
 <p>1    31.70 deg  0.00011 deg  0.00011 deg</p>
 <p>2    53.11 deg  0.00011 deg  0.00011 deg</p>
 <p>3    64.40 deg  0.00011 deg  0.00011 deg</p>
-<p>4    70.52 deg  70.52 deg    70.20 deg</p>
+<p>4    70.52 deg  0.00011 deg  0.00011 deg</p>
+<p>5    ---        <b>NaN</b>      0.00011 deg</p>
+<p>6    ---        <b>NaN</b>      <b>NaN</b></p>
 <p>==== ========== ============ ============</p>
 <p>0.00011 degrees is not &quot;almost right&quot;, it is <b>the floor</b>: the returned</p>
 <p>normals are float32 (:mod:<code style="color:#22d3bf">photometric</code>&#x27;s convention), and casting the</p>
 <p>exact normals to float32 and back measures the same 0.000115 degrees.</p>
-<p>The `<code style="color:#22d3bf">k = 4</code>` row is the breakdown point and it is in the table rather</p>
-<p>than omitted — with half the lights blocked, the four zeroed measurements</p>
-<p>are themselves a perfectly consistent &quot;black surface&quot; model, so no</p>
-<p>consensus rule can prefer the true one.</p>
+<p>`<code style="color:#22d3bf">NaN</code>` means *this pixel is not solvable from what was believed there* —</p>
+<p>see &quot;unsolvable pixels&quot; below.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;ransac&quot;</code>` — Fischler-Bolles maximum consensus. Every 3-light subset is</p>
 <p>solved exactly, residuals are counted against *threshold*, and the subset</p>
 <p>with the largest consensus wins per pixel; the normal is then refitted by</p>
-<p>least squares on that consensus set. Tolerates up to `<code style="color:#22d3bf">N - 3</code>` bad lights</p>
-<p>if the good ones agree.</p>
+<p>least squares on that consensus set. Tolerates up to `<code style="color:#22d3bf">N - 3</code>` blocked</p>
+<p>lights if the survivors agree — at `<code style="color:#22d3bf">k = 5</code>` of 8 exactly three lights are</p>
+<p>left and the answer is still exact.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;median&quot;</code>` — Rousseeuw&#x27;s least median of squares. The subset minimising</p>
 <p>the median residual wins. Needs <b>more than half</b> the lights to be good,</p>
 <p>and needs no threshold at all — use it when the outlier magnitude is</p>
-<p>unknown.</p>
+<p>unknown. Its 50 % breakdown point is why the `<code style="color:#22d3bf">k = 5</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">k = 6</code>` rows</p>
+<p>are NaN rather than wrong: past half, its winning subset is one that</p>
+<p>believes nothing, and that is reported as &quot;not solved&quot;.</p>
+<p><b>A measurement of zero is not evidence.</b> Woodham&#x27;s model is</p>
+<p>`<code style="color:#22d3bf">I = albedo * max(n.L, 0)</code>`, so a shadowed measurement of zero states</p>
+<p>`<code style="color:#22d3bf">n.L &lt;= 0</code>` — an *inequality*. The linear solve reads it as the equation</p>
+<p>`<code style="color:#22d3bf">n.L = 0</code><code style="color:#22d3bf">, which is a different and stronger claim, and </code><code style="color:#22d3bf">g = 0</code>`</p>
+<p>reproduces every zeroed frame exactly. A set of blocked lights is therefore</p>
+<p>a perfectly self-consistent &quot;black surface&quot; hypothesis that can outscore the</p>
+<p>truth. Found by adversarial audit, and it did not raise anything:</p>
+<p>=====  ================  =====================  ==============================</p>
+<p>k of 8  before, `<code style="color:#22d3bf">median</code>`  inlier mask said     what was actually true</p>
+<p>=====  ================  =====================  ==============================</p>
+<p>4      70.52 deg wrong   <b>8 of 8 believed</b>    4 of the 8 frames were zero</p>
+<p>5      8.99 deg          5 believed             the 5 believed were the *zeros*</p>
+<p>6      8.99 deg          6 believed             the 6 believed were the *zeros*</p>
+<p>=====  ================  =====================  ==============================</p>
+<p>The `<code style="color:#22d3bf">k = 4</code>` row is the one to look at: at the worst estimate the diagnostic</p>
+<p>reported a clean bill of health. The `<code style="color:#22d3bf">k = 5</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">k = 6</code>` rows are worse</p>
+<p>than they look — 8.99 degrees is not a near miss, it is the degenerate</p>
+<p>`<code style="color:#22d3bf">albedo = 0</code><code style="color:#22d3bf"> solution falling back to </code><code style="color:#22d3bf">(0, 0, 1)</code>`, which happens to be</p>
+<p>close on a shallow bump and would be arbitrary on any other surface, and the</p>
+<p>mask named the zeroed lights as the believed ones.</p>
+<p>So a light is believed at a pixel only when **the fit explains its</p>
+<p>measurement to within the method&#x27;s tolerance and its measurement is farther</p>
+<p>from zero than that same tolerance** — the same tolerance in both clauses,</p>
+<p>whichever tolerance the method uses (`<code style="color:#22d3bf">threshold * peak</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">&quot;ransac&quot;</code>`,</p>
+<p>`<code style="color:#22d3bf">max(2.5 sigma, 1e-9 * peak)</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">&quot;median&quot;</code>`). Counting a measurement</p>
+<p>that is itself inside the tolerance of zero is counting a tautology, since</p>
+<p>zero albedo predicts it under *every* normal. The rule is exact, not</p>
+<p>heuristic: on a scene with one light at grazing incidence the believed mask</p>
+<p>equals `<code style="color:#22d3bf">I_n &gt; threshold * peak</code>` pixel for pixel (verified by array</p>
+<p>equality, 40x40, believed at 93.2 % of pixels, error 0.00011 deg).</p>
+<p>That single change also repairs the estimates, because the zeroed frames</p>
+<p>stop winning the consensus: `<code style="color:#22d3bf">k = 4</code>` goes from 70.52 to 0.00011 degrees for</p>
+<p>both methods, and `<code style="color:#22d3bf">ransac</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">k = 5</code>` from 8.99 degrees to 0.00011. It</p>
+<p>does <b>not</b> repair a general outlier, and is not claimed to — a highlight</p>
+<p>is positive and the zero test cannot see it. Measured with `<code style="color:#22d3bf">j</code>` of 8 frames</p>
+<p>given a `<code style="color:#22d3bf">+3.0</code>` additive spike, the true 50 % breakdown is unchanged and</p>
+<p>still disclosed:</p>
+<p>==== ============ ============</p>
+<p>j    `<code style="color:#22d3bf">median</code><code style="color:#22d3bf">   </code><code style="color:#22d3bf">ransac</code>`</p>
+<p>==== ============ ============</p>
+<p>1    0.00011 deg  0.00011 deg</p>
+<p>2    0.00011 deg  0.00011 deg</p>
+<p>3    0.00011 deg  0.00011 deg</p>
+<p>4    7.42 deg     65.42 deg</p>
+<p>==== ============ ============</p>
+<p><b>The error is not monotone in the number of blocked lights, and never was.</b></p>
+<p>Before the repair the sequence over `<code style="color:#22d3bf">k = 0..6</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">&quot;median&quot;</code>` ran</p>
+<p>0.00011, 0.00011, 0.00011, 0.00011, <b>70.52</b>, 8.99, 8.99 — the worst value</p>
+<p>sits in the middle. That is the median&#x27;s 50 % breakdown point, not a bug: at</p>
+<p>`<code style="color:#22d3bf">k = 4</code>` the two hypotheses have equal support and the wrong one is picked</p>
+<p>at full confidence, while at `<code style="color:#22d3bf">k = 5, 6</code>` the &quot;black surface&quot; wins outright</p>
+<p>and the degenerate `<code style="color:#22d3bf">(0, 0, 1)</code>` fallback happens to be near the truth on a</p>
+<p>shallow surface. Do not read a small error at large `<code style="color:#22d3bf">k</code>` as recovery.</p>
 <p>*threshold* is <b>relative to the brightest measurement at that pixel</b>, so</p>
 <p>the decision is invariant to exposure: scaling every image by 1e-3, 1e3 or</p>
 <p>1e6 returns a <b>bit-identical inlier mask</b> and normals that differ by at</p>
@@ -56,11 +112,22 @@
 <p>Returns `<code style="color:#22d3bf">(normals, albedo, inliers)</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(H, W, 3)</code>` float32</p>
 <p>unit vectors in :mod:<code style="color:#22d3bf">photometric</code>&#x27;s convention (`<code style="color:#22d3bf">(0, 0, 1)</code>` where the</p>
 <p>albedo is degenerate), `<code style="color:#22d3bf">albedo</code><code style="color:#22d3bf"> </code><code style="color:#22d3bf">(H, W)</code><code style="color:#22d3bf"> float32, and </code><code style="color:#22d3bf">inliers</code>`</p>
-<p>`<code style="color:#22d3bf">(N, H, W)</code>` bool — <b>which lights were believed at which pixel</b>. Pixels</p>
-<p>with fewer than *min_inliers* believed lights keep the winning subset&#x27;s</p>
-<p>solution and are visible as a thin inlier count in that mask; that is the</p>
-<p>honest signal that the normal there rests on the minimum three</p>
-<p>measurements.</p>
+<p>`<code style="color:#22d3bf">(N, H, W)</code>` bool — <b>which lights were believed at which pixel</b>, after</p>
+<p>the zero test above, so a blocked light is never named as believed.</p>
+<p>**Unsolvable pixels are `<code style="color:#22d3bf">NaN</code>`.** Three unknowns need three independent</p>
+<p>equations; a pixel whose believed lights number fewer than *min_inliers*</p>
+<p>(default and minimum 3), or whose believed directions are coplanar so the</p>
+<p>3x3 normal matrix is singular, gets `<code style="color:#22d3bf">NaN</code>` in both *normals* and *albedo*.</p>
+<p>It used to keep the winning 3-light subset&#x27;s solution instead, which is how</p>
+<p>an underdetermined pixel came back as a confident 1.3-degree answer: the</p>
+<p>minimum-norm solution of 3 unknowns in 2 equations is near the truth only</p>
+<p>when the surface happens to be nearly flat. The two arrays therefore agree</p>
+<p>with the mask by construction — `<code style="color:#22d3bf">numpy.isnan(albedo)</code>` is exactly</p>
+<p>`<code style="color:#22d3bf">inliers.sum(axis=0) &lt; min_inliers</code>` plus the singular pixels — and a</p>
+<p>caller that never checks will get `<code style="color:#22d3bf">NaN</code>` propagating rather than a</p>
+<p>plausible number. `<code style="color:#22d3bf">method=&quot;lstsq&quot;</code>` is exempt: it is the deliberately</p>
+<p>non-robust baseline, it uses every light at every pixel, and its all-true</p>
+<p>mask says exactly that.</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *images* is not an </code><code style="color:#22d3bf">(N, H, W)</code>` stack or exceeds</p>
 <p>:data:<code style="color:#22d3bf">MAX_LIGHTS</code> / :data:<code style="color:#22d3bf">MAX_STACK_ELEMENTS</code> / :data:<code style="color:#22d3bf">MAX_ROBUST_PIXELS</code>;</p>
 <p>*lights* is not `<code style="color:#22d3bf">(N, 3)</code>` matching the frames or contains a zero-length</p>

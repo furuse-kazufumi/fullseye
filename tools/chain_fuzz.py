@@ -1011,7 +1011,22 @@ TYPE_CHECKS = {
     "images": lambda v: isinstance(v, (list, tuple)) and all(
         isinstance(x, np.ndarray) and x.ndim == 2 for x in v),
     "vector": lambda v: isinstance(v, np.ndarray) and v.shape == (3,),
-    "pairs": lambda v: True,
+    # pairs = **(N,2) の (x, y) 列、または同じ長さの 1-D 配列 2 本のタプル**。
+    #
+    # ★ 2026-09-02 まで ``lambda v: True`` だった = **述語が「有る」と数えられている
+    # ぶん、無いより悪い**(点検スクリプトも「述語あり」に数えてしまう)。実測で
+    # None / 42 / 文字列 / dict まで通していた。
+    #
+    # 正典は消費側 6 op(reprconv の pairs_to_signal / pairs_to_image2d /
+    # pairs_to_table / angles_to_normals / shape_index_to_curvature /
+    # polar_to_cscalar)を**全部実行して**決めた: 6 op とも上の 2 形だけを受け、
+    # それ以外は "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays"
+    # で名指しの fail-closed になる(実測)。**(2,N) は受けない**ので、
+    # 2-tuple を np.stack で (2,N) に潰していた adapter 3 件は axis=1 へ直した。
+    # 長さの違う 2 本(histogram の counts/edges)も「対」ではないので弾く。
+    "pairs": lambda v: (len(_shape(v)) == 2 and _shape(v)[1] == 2)
+    or (_is_seq(v, 2) and len(_shape(v[0])) == 1
+        and _shape(v[0]) == _shape(v[1])),
     "matrix": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "roots": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
     and v.dtype.kind == "c",
