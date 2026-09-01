@@ -37,14 +37,20 @@ So this module picks a canon and says it out loud:
   the conversion explicit when a caller wants to stay in that space, and
   :func:`alpha_composite_premul` is the linear operator itself.
 
-What the confusion actually costs, measured: a white disc with an
-anti-aliased edge composited over black. Feeding its *straight* buffer to a
-routine that assumes premultiplied gives a maximum error of **0.500** and a mean
-error over the edge band of **0.253** (bright halo — every partially covered
-pixel is drawn at full colour). Feeding a *premultiplied* buffer to a routine
-that assumes straight gives a maximum error of **0.250**, mean **0.130** (dark
-halo — coverage is applied twice). Both pictures are finite, plausible, and
-wrong. Reproduced by ``tests/test_gfx2d.py::test_alpha_convention_confusion_is_measured``.
+What the confusion actually costs has a closed form, and the closed form was
+measured. Take a white disc with an anti-aliased edge, composited over black
+(188 partially covered pixels at 64x64):
+
+* **Straight fed to a premultiplied consumer** — the multiply is skipped, so the
+  error is ``(1 - a) * C_s``: it *grows as the coverage shrinks*, which is why
+  the halo is brightest exactly where the object is faintest. Measured over the
+  edge band: max **0.9375**, mean **0.4428**.
+* **Premultiplied fed to a straight consumer** — the coverage is applied twice,
+  so the error is ``a (1 - a) * C_s``, whose maximum over ``a`` is exactly
+  **0.25** at ``a = 0.5``. Measured: max **0.2500**, mean **0.1590** (dark halo).
+
+Both pictures are finite, plausible, and wrong. Reproduced by
+``tests/test_gfx2d.py::test_alpha_convention_confusion_is_measured``.
 
 :func:`premultiply`'s output is checked on the way back in: a premultiplied
 pixel must satisfy ``colour <= alpha``. That check catches a straight buffer
