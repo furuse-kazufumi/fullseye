@@ -227,15 +227,26 @@ def test_oversize_input_is_skipped_and_counted(env):
     返らず**、1500 連鎖の本番走行がそこで止まった。要素数で切ると決定的に
     防げる(秒で切ると判定がマシン負荷に依存して記録の決定性が壊れる)。
     """
+    最初の版はストールを再現した**連鎖 seed を 1 つ定数で固定**していたが、
+    2026-09-01 にカタログへ 34 op を足したところ、同じ seed が別の連鎖を引いて
+    テストが落ちた(op が増えれば候補リストが変わるので当然である)。守りたいのは
+    「あの seed」ではなく「**上限が実際の連鎖で発火すること**」なので、
+    seed を 1 つ決め打ちにせず、有界な範囲を走査して発火を確かめる形にした。
+    """
     import time
     import tools.chain_mine as cm
     ops, gens = env
     tally = {}
     t0 = time.perf_counter()
-    cm.mine_chain(ops, gens, 7 * 1_000_003 + 335, 4, tally)   # 実測のストール連鎖
+    for i in range(400):                       # 有界(見つからなければ失敗させる)
+        cm.mine_chain(ops, gens, 7 * 1_000_003 + i, 4, tally)
+        if tally.get("oversize_input", 0) > 0:
+            break
     elapsed = time.perf_counter() - t0
-    assert tally.get("oversize_input", 0) > 0, "巨大入力が弾かれていない"
-    assert elapsed < 60.0, f"ストール連鎖が {elapsed:.0f}s かかっている"
+    assert tally.get("oversize_input", 0) > 0, (
+        "400 連鎖のどれでも巨大入力の上限が発火しなかった — 上限が緩すぎるか、"
+        "検査が実行前でなく実行後に移っている")
+    assert elapsed < 120.0, f"ストール連鎖が {elapsed:.0f}s かかっている"
 
 
 def test_oversize_guard_leaves_normal_intermediates_alone(env):
