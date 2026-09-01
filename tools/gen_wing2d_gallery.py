@@ -53,7 +53,10 @@ THUMBS_DIR = os.path.join(ASSETS_DIR, "thumbs")
 EXHIBITS_DIR = os.path.join(REPO, "docs", "articles", "exhibits")
 SAMPLES_IMG = os.path.join(REPO, "studio_assets", "sample_images")
 META_PATH = os.path.join(ASSETS_DIR, "_wing2d_meta.json")
-CAPTIONS_PATH = os.path.join(EXHIBITS_DIR, "wing2d.md")
+# ja 原稿はここが単一真実源。en 版 (`wing2d.en.md`) は同じ実測値を人手で英語に
+# 書き起こしたもので、この生成器は触らない (build_exhibits は `<id>.<lang>.md` を
+# 優先し、ja に限り `<id>.md` も拾う — 両方あると古い方が残るので ja も接尾辞つき)。
+CAPTIONS_PATH = os.path.join(EXHIBITS_DIR, "wing2d.ja.md")
 RAW_BASE = ("https://raw.githubusercontent.com/furuse-kazufumi/fullseye/"
             "master/docs/articles/assets/")
 
