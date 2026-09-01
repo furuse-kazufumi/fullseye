@@ -609,13 +609,19 @@ _CATALOG = {
         ("warp_by_plane", "plane_sweep", ["image2d"], "image2d", False),
     ],
     "sdf_csg": [  # 符号付き距離場の CSG 合成(陰関数ソリッドモデリング、marching cubes へ橋渡し)
-        # プリミティブが取るのは **ボクセル中心の座標場 (nx,ny,nz,3)** であって
-        # (N,3) の点群ではない。旧宣言 ["points"] → "sdf" は二重に嘘で、点群を
-        # 渡すと返りは (N,) の 1-D になり、"sdf"(3-D 場)にならない。座標場を
-        # 産む grid_coords は実在するのに未登録で、そのため嘘が露見しなかった
-        ("grid_coords", "sdf_ops", [], "coordgrid", False),
-        ("sphere_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
-        ("box_sdf", "sdf_ops", ["coordgrid"], "sdf", False),
+        # ★既知の乖離(2026-09-01 実測、**あえて未修正**): プリミティブが取るのは
+        # ボクセル中心の座標場 (nx,ny,nz,3) であって (N,3) の点群ではない。
+        # 点群を渡すと返りは (N,) の 1-D で、宣言の "sdf"(3-D 場)にならない。
+        # 座標場を産む sdf_ops.grid_coords は実在するのに未登録なので、正しい形は
+        #   ("grid_coords", "sdf_ops", [], "coordgrid", False) を足したうえで
+        #   sphere_sdf / box_sdf の in を ["coordgrid"] にする。
+        # ただしそれは (a) points sort の候補リストから tb_sphere_sdf / tb_box_sdf を
+        # 落とす(docs/WAVE0_STABLE_SLOTS.md: 長さが変わると既存 champion を黙って
+        # 書き換える)、(b) 新 op の per-op ノート/help ページ生成を伴う、の 2 点で
+        # 単独判断すべきでないため、tests/test_ops3d_ledger.py の KNOWN_LEDGER_GAPS に
+        # 記録して据え置く。
+        ("sphere_sdf", "sdf_ops", ["points"], "sdf", False),
+        ("box_sdf", "sdf_ops", ["points"], "sdf", False),
         ("sdf_union", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_intersect", "sdf_ops", ["sdf", "sdf"], "sdf", False),
         ("sdf_subtract", "sdf_ops", ["sdf", "sdf"], "sdf", False),
