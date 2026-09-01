@@ -32,7 +32,7 @@ import os
 
 import numpy as np
 
-from backend_safe import signed01
+from backend_safe import gradient_normals, signed01, subpixel_refine_edges
 from scipy import ndimage
 
 HERE = os.path.dirname(os.path.abspath(__file__))
