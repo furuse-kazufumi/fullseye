@@ -882,6 +882,7 @@ def test_ledger_out_types_match_the_actual_return_values():
         "anscombe_transform": (counts,),
         "anscombe_inverse": (PC.anscombe_transform(counts),),
         "spad_deadtime_apply": (rates,), "spad_deadtime_correct": (rates,),
+        # (the two above are the only countrate consumers; see the ledger notes)
         "tcspc_coates_correct": (hist, 100000),
         "tcspc_simulate": (), "tcspc_irf_convolve": (hist,),
         "tcspc_background_subtract": (hist,), "tcspc_stats": (hist,),
@@ -889,15 +890,20 @@ def test_ledger_out_types_match_the_actual_return_values():
         "dtof_cube_simulate": (depth,), "dtof_cube_depth": (cube, 200.0),
         "lifetime_fit": (decay, 200.0), "lifetime_phasor": (decay, 200.0),
     }
+    # Exactly the TYPE_CHECKS entries tools/chain_fuzz.py needs for this family.
+    # Kept in sync here so a ledger edit cannot drift away from the fuzzer.
     checks = {
         "image2d": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
-        "signal": lambda v: isinstance(v, np.ndarray) and v.ndim == 1,
         "depth": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
         "table": lambda v: isinstance(v, (list, dict)),
         "measurement": lambda v: isinstance(v, (int, float, np.floating,
                                                 np.integer)),
+        "counts": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+        and v.dtype.kind == "f" and v.size >= 2 and (v >= 0.0).all(),
+        "countrate": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+        and v.dtype.kind == "f" and v.size >= 1 and (v >= 0.0).all(),
         "histcube": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
-        and v.shape[2] >= 2,
+        and v.dtype.kind == "f" and v.shape[2] >= 2 and (v >= 0.0).all(),
     }
     assert set(args) == set(opsphoton.OPSPHOTON)
     for name, a in args.items():
@@ -909,10 +915,51 @@ def test_ledger_out_types_match_the_actual_return_values():
 
 
 def test_ledger_declared_input_types_are_real_words():
-    known = {"image2d", "signal", "depth", "histcube"}
+    known = {"image2d", "depth", "counts", "countrate", "histcube"}
     for name, meta in opsphoton.OPSPHOTON.items():
         assert set(meta["in"]) <= known, (name, meta["in"])
         assert meta["doc"], name                 # every op has a summary line
+
+
+def test_no_op_declares_the_generic_signal_type():
+    """The 2026-09-01 chain-fuzz finding, pinned so it cannot regress.
+
+    With ``signal`` declared, 7 of the 17 photon ops were never executed in a
+    1200-chain run (seed 7001): the fuzzer's signal pool is a sine wave with
+    negative values, and every photon op refuses negative counts, so they always
+    produced CONTRACT. The fail-closed check was perfect and that is exactly the
+    problem — "zero findings" looked like robustness while the ops had never
+    run. Separating the type is the same call opsoptics made for jones/stokes.
+    """
+    for name, meta in opsphoton.OPSPHOTON.items():
+        assert "signal" not in meta["in"], (name, meta["in"])
+        assert meta["out"] != "signal", (name, meta["out"])
+    # ...and the family is still seeded from nothing, so the counts pool fills
+    # even on the first step of a chain (the airy_pattern role in optics).
+    seed_ops = [n for n, m in opsphoton.OPSPHOTON.items()
+                if not m["in"] and m["out"] == "counts"]
+    assert seed_ops == ["tcspc_simulate"]
+    assert opsphoton.call("tcspc_simulate").ndim == 1
+
+
+def test_counts_and_countrate_are_genuinely_different_quantities():
+    """Why two words and not one: a counts-scale array through a rate op is a
+    silent near-identity, so the dead-time physics would never be exercised.
+
+    Measured: a histogram peaking at ~250 counts, read as 250 Hz against the
+    default 50 ns dead time, comes back changed by 1.2e-05 relative — the op
+    "runs" but its saturation branch, its 1/tau guard and the paralysable
+    non-injectivity are all untouched. A real rate array (1e3-1e7 Hz) moves by
+    up to 33%.
+    """
+    hist = PC.tcspc_simulate(2.0, bins=256, bin_ps=100.0, signal_photons=5000.0,
+                             ambient_photons=100.0, noise=False)
+    as_rate = PC.spad_deadtime_apply(hist)              # counts misread as Hz
+    moved = float(np.abs(as_rate - hist).max() / max(hist.max(), 1e-30))
+    assert moved < 1e-4                                  # a silent near-identity
+    real = np.logspace(3.0, 7.0, 32)
+    assert float(np.abs(PC.spad_deadtime_apply(real) - real).max()
+                 / real.max()) > 0.3                     # a real rate really moves
 
 
 def test_every_op_documents_what_it_raises():

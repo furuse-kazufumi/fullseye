@@ -265,6 +265,13 @@ def inspection_sweep(system, defect_um_grid, kind="scratch", detector=None,
         "table": rows,
         "detection_limit_um": (min(detected) if detected else None),
         "optical_limit_um": optical["limit_um"],
+        # 横分解能だけで見た限界。閉形式なので grid に依らず必ず数値になる。
+        # optical_limit_um が None でもこちらは出るので、「レンズが足りない」と
+        # 「ピントの範囲が足りない」を取り違えずに済む
+        "lateral_limit_um": optical["resolution_object_um"],
+        "depth_of_field_ok": optical["depth_of_field_ok"],
+        "depth_of_field_mm": optical["depth_of_field_mm"],
+        "depth_tolerance_mm": optical["depth_tolerance_mm"],
         "limited_by": optical["limited_by"],
         "system": repr(system),
     }
