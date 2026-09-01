@@ -85,6 +85,15 @@ TYPE_TO_SORT = {
     "counts": "counts",
     "countrate": "counts",
     "histcube": "histcube",
+    # 2026-09-01 後半に足した族。いずれも**族の中に産出 op がある**ので、
+    # 消費側だけの死んだ語彙にはならない(実測の消費/産出/自己ループ:
+    # rgbimage 4/4/2 · video 9/2/1 · qimage 11/11/6 · beatcube 5/2/1)。
+    # polsweep は消費 3・自己ループ 0 で「1 手で外へ出るだけ」に近く、
+    # histcube と同じ理由で見送る(選択肢が 3 つある点だけ histcube より良い)。
+    "rgbimage": "rgbimage",
+    "video": "video",
+    "qimage": "qimage",
+    "beatcube": "beatcube",
 }
 
 #: 既定で登録する入力 sort(すべて新設 = 既存の候補リストに触れない)。
@@ -116,7 +125,8 @@ TYPE_TO_SORT = {
 #: 手の基準線と同じ 1 手しか組めない。**使える仕事が無い語彙は足さない**。
 #: wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)では従来どおり入る。
 _NEW_SORTS = frozenset({"points", "signal", "matrix", "cimage",
-                        "lightfield", "counts"})
+                        "lightfield", "counts",
+                        "rgbimage", "video", "qimage", "beatcube"})
 
 
 def _coerce(value, sort):

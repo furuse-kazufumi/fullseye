@@ -537,8 +537,12 @@ def test_ledger_is_complete_and_declares_real_types():
     for name in opsacoustics.list_ops():
         m = opsacoustics.info(name)
         assert m["out"] in ("signal", "table", "measurement")
-        assert all(i == "signal" for i in m["in"])
+        # only existing sorts are used — no new type vocabulary was introduced
+        assert all(i in ("signal", "table") for i in m["in"])
         assert m["doc"], name
+    # istft is the one op that consumes a table: an invertible transform cannot
+    # be a bare array, and complex_steerable_reconstruct sets the precedent
+    assert opsacoustics.info("istft")["in"] == ["table"]
     assert opsacoustics.RESULT_ADAPTERS == {}
 
 
