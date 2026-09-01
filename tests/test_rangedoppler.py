@@ -726,7 +726,9 @@ class TestBugsFoundAdversarially:
         cfg, d = _cfg()
         cube = _cube(cfg, [3 * d["range_bin_m"]], [0.0], amplitudes=[1e307])
         assert np.isfinite(cube).all()
-        assert not np.isfinite(np.fft.fft(cube, axis=2)).all()   # the raw hazard
+        with warnings.catch_warnings():                          # the raw hazard
+            warnings.simplefilter("ignore", RuntimeWarning)
+            assert not np.isfinite(np.fft.fft(cube, axis=2)).all()
         with pytest.raises(ValueError, match="overflowed"):
             RD.range_doppler_map(cube)
 
