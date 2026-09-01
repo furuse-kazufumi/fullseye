@@ -305,6 +305,13 @@ def _as_float_array(a, name: str, cap: int, op: str) -> np.ndarray:
     return arr
 
 
+def _unit_interval(v, name: str, op: str) -> float:
+    f = _finite_scalar(v, name)
+    if not (0.0 <= f <= 1.0):
+        raise ValueError("%s: %s must be in [0, 1], got %g" % (op, name, f))
+    return f
+
+
 def _estimator(mode, op: str) -> str:
     if not isinstance(mode, str):
         raise ValueError("%s: mode must be one of %r, got %r"
