@@ -560,7 +560,7 @@ def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
     0.0``, ``hit_fraction = 0.0`` で残す — 消すと「CAD の外にあった欠陥」が
     表から静かに消えるため。"""
     V, F = _mesh(mesh)
-    lab = _int_array(labels, "labels")
+    lab = _int_array(labels, "labels", allow_bool=True)
     if lab.ndim != 2:
         raise ValueError("labels must be a 2-D (H, W) label image, got %r"
                          % (lab.shape,))
