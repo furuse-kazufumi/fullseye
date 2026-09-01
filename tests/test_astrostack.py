@@ -755,7 +755,7 @@ class TestSynthesis:
 
     def test_a_moffat_profile_has_heavier_wings_than_a_gaussian(self):
         """同じ FWHM でも Moffat の方が裾が重い(大気の星像がそうであるように)。"""
-        g, _ = _one_star(1.5, size=64, margin=28.0)
+        g, _, _ = _one_star(1.5, size=64, margin=28.0)
         m, tm = A.synth_starfield(shape=(64, 64), n_stars=1, flux_min=10000.0,
                                   flux_max=10000.0, fwhm_px=1.5 * A.FWHM_PER_SIGMA,
                                   psf="moffat", moffat_beta=2.5, sky=0.0,
