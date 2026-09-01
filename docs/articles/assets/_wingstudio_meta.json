@@ -190,6 +190,85 @@
     },
     {
       "kind": "gif",
+      "name": "cadmap",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_cadmap.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_cadmap_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1440,
+        572
+      ],
+      "fps": 10,
+      "bytes": 347815,
+      "thumb_bytes": 36364,
+      "thumb_frame": 5,
+      "mean_abs_delta": 1.441,
+      "sha256": "a882a93a6b1c7863fc9b7f03e03bcaacb3eaa4066e7a1caaf355c1537f5b4b4c",
+      "thumb_sha256": "65151c21f3870e774c2dc68faf17d4a9df36d13e3cc42a3427930b40eaed2dee",
+      "facts": {
+        "n_faces": 1400,
+        "n_vertices": 702,
+        "surface_area": 8856.655,
+        "image": [
+          240,
+          240
+        ],
+        "hit_pixels": 15981,
+        "hit_fraction": 0.27745,
+        "faces_seen": 355,
+        "coverage_faces": 0.25357,
+        "coverage_area": 0.50777,
+        "sample_points": 26000,
+        "point_visible_fraction": 0.86119,
+        "point_occluded_fraction": 0.13881,
+        "defects": [
+          {
+            "label": 1,
+            "n_pixels": 377,
+            "n_hit": 377,
+            "hit_fraction": 1.0,
+            "n_faces": 4,
+            "area": 83.1185,
+            "area_naive": 55.0836,
+            "depth_mean": 123.8343
+          },
+          {
+            "label": 2,
+            "n_pixels": 197,
+            "n_hit": 197,
+            "hit_fraction": 1.0,
+            "n_faces": 2,
+            "area": 55.893,
+            "area_naive": 35.5978,
+            "depth_mean": 137.7109
+          },
+          {
+            "label": 3,
+            "n_pixels": 253,
+            "n_hit": 0,
+            "hit_fraction": 0.0,
+            "n_faces": 0,
+            "area": 0.0,
+            "area_naive": 0.0,
+            "depth_mean": NaN
+          },
+          {
+            "label": 4,
+            "n_pixels": 149,
+            "n_hit": 0,
+            "hit_fraction": 0.0,
+            "n_faces": 0,
+            "area": 0.0,
+            "area_naive": 0.0,
+            "depth_mean": NaN
+          }
+        ],
+        "frames": 24
+      },
+      "seconds": 38.67
+    },
+    {
+      "kind": "gif",
       "name": "crop3d",
       "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_crop3d.gif",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_crop3d_thumb.jpg",

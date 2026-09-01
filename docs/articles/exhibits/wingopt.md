@@ -5,13 +5,21 @@
 再生成: `py -3.11 tools/gen_wingopt_gallery.py`(展示単位なら `--exhibits <name,...>`)。
 図に焼かれた数字はすべて `optics` / `visiondesign` / `defectgen` / `visionlab` を実際に呼んだ実測値で、決定的です(`--verify` で SHA-256 一致を確認できます)。
 
-## 横分解能 対 被写界深度
+## Airy パターンと Rayleigh 基準
 
-![横分解能 対 被写界深度](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_res_vs_dof.gif)
+![Airy パターンと Rayleigh 基準](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_airy_rayleigh.gif)
 
-*↑ **横分解能 対 被写界深度** ―― 横分解能と被写界深度は**独立な 2 軸**です。60 µm の欠陥が解像できるのは **f/7.82 まで**、部品の1 mm 公差が収まるのは **f/5.38 から** —— 使える窓は **f/5.38 〜 f/7.82** の帯だけです。これを 1 つの `resolvable` に畳むと「光学限界に未到達」と出てしまい、**読んだ人はレンズを買いに行きます**(直すべきは絞りか公差かフォーカス機構)。 使用 op: `resolving_power`, `depth_of_field`, `system_geometry`, `draw_polyline`。*
+*↑ **Airy パターンと Rayleigh 基準** ―― 円形瞳の Airy 像で 2 点を近づけていくと、谷は**崖ではなく連続に**浅くなります。第 1 暗環の実測位置は **3.760 µm**(理論 1.2197λN = 3.757 µm)、Rayleigh 間隔 3.758 µm での谷は実測 **0.7336**(教科書の 0.735)で、谷がそもそも現れ始めるのは 3.000 µm からです。 使用 op: `airy_pattern`, `draw_polyline`, `draw_line`。*
 
-<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_res_vs_dof_thumb.jpg`)。43 フレーム / 10 fps / 1000×548 px / 0.33 MB。</small>
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_airy_rayleigh_thumb.jpg`)。37 フレーム / 10 fps / 1000×516 px / 2.50 MB。</small>
+
+## 偏光で金属のテカりを消す
+
+![偏光で金属のテカりを消す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_polarizer.gif)
+
+*↑ **偏光で金属のテカりを消す** ―― 鏡面反射(完全偏光)を Jones 行列で、拡散反射(無偏光)を Mueller 行列で通し、検光子を 0° → 180° で回します。鏡面成分の透過強度は Malus 則で **1.0000 → 0.0000(厳密に 0)**、拡散成分は角度に依らず 0.5 のまま —— 飽和画素が **18.08 % → 0.00 %** に減り、テカりに埋もれていた傷の IoU が **0.126 → 0.635** へ回復して検出に転じます。 使用 op: `jones_element`, `jones_apply`, `stokes_from_jones`, `mueller_element`, `mueller_apply`, `defect_scratch`, `surface_texture`, `image_formation`, `draw_circle`。*
+
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_polarizer_thumb.jpg`)。37 フレーム / 10 fps / 1000×652 px / 4.60 MB。</small>
 
 ---
 
@@ -19,4 +27,5 @@
 
 | 展示 | 形式 | 画素 | フレーム | サイズ | SHA-256(先頭 16) |
 |---|---|---|---|---|---|
-| 横分解能 対 被写界深度 | GIF | 1000×548 | 43 | 327 kB | `b89bed20b13b8978` |
+| Airy パターンと Rayleigh 基準 | GIF | 1000×516 | 37 | 2500 kB | `fa760d6fb63dd6d0` |
+| 偏光で金属のテカりを消す | GIF | 1000×652 | 37 | 4597 kB | `3f0eb504b1e1eddc` |

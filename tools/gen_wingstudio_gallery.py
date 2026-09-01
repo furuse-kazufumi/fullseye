@@ -1026,8 +1026,7 @@ def ex_cadmap():
     blobs = [(1, 96, 104, 11), (2, 150, 78, 8), (3, 70, 160, 9), (4, 30, 34, 7)]
     for lid, cy, cx, rad in blobs:
         labels[((yy - cy) ** 2 + (xx - cx) ** 2) <= rad * rad] = lid
-    table = cadmap.cad_defect_to_cad((V, F), labels, K=Kk, R=Rw, t=tw,
-                                     image_size=(RES, RES))
+    table = cadmap.cad_defect_to_cad((V, F), labels, K=Kk, R=Rw, t=tw)
     defect_rgb = shaded.copy()
     pal = {1: (0.98, 0.72, 0.22), 2: (0.13, 0.85, 0.80),
            3: (0.66, 0.55, 0.95), 4: (0.95, 0.45, 0.45)}

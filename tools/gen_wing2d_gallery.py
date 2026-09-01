@@ -1162,11 +1162,16 @@ def subject_subpixel_edge(log=print) -> dict:
         im = Image.fromarray(vis, "RGB")
         d = ImageDraw.Draw(im)
         px_w = 460.0 / zoom.shape[1]
-        for name, val, col in (("真値 x0", r["x0"], (255, 230, 90)),
-                               ("サブピクセル", r["sub"], (120, 235, 160)),
-                               ("画素単位", r["pix"], (255, 120, 120))):
+        # 3 本が重なると 1 本にしか見えないので、縦方向に描き分ける
+        # (真値=全高、サブピクセル=上、画素単位=下)。
+        for val, col, y0, y1, wd in (
+                (r["x0"], (255, 230, 90), 0, 459, 3),
+                (r["sub"], (120, 235, 160), 0, 200, 5),
+                (r["pix"], (255, 120, 120), 262, 459, 5)):
             xx = (val - (int(x_base) - 8)) * px_w
-            d.line([xx, 0, xx, 459], fill=col, width=3)
+            d.line([xx, y0, xx, y1], fill=col, width=wd)
+        _text(d, (8, 208), "上=サブピクセル / 中央の細線=真値 / 下=画素単位",
+              size=16, fill=INK_DIM)
         _text(d, (8, 8), "1 画素 = %.0f px に拡大表示" % px_w, size=17, fill=INK_DIM)
         plot = _plot(
             [{"x": offsets[:i + 1], "y": e_sub[:i + 1], "color": (120, 235, 160),
@@ -1241,7 +1246,9 @@ def subject_shape_match(log=print) -> dict:
     rng = np.random.default_rng(SEED)
     H, W = 380, 480
     bg = 0.10 + 0.06 * rng.random((H, W))            # 決定的な背景ノイズ
-    angles = np.arange(0.0, 360.0, 20.0)
+    # 探索格子 (5°) の倍数を避けた角度 —— 格子に乗る角度だけ試すと
+    # 「誤差 0°」しか出ず、量子化の実力を隠してしまう。
+    angles = np.arange(0.0, 360.0, 23.0) + 1.0
     search = list(range(0, 360, 5))
     r0, c0 = 190, 240
     rows, t0 = [], time.perf_counter()
@@ -1346,20 +1353,20 @@ def subject_shape_match(log=print) -> dict:
 def _doc_with_barcode() -> tuple:
     """文字行 + バーコードを持つ合成の帳票と、バーの真の本数を返す."""
     from PIL import Image, ImageDraw
-    W, H = 640, 420
+    W, H = 960, 630
     im = Image.new("L", (W, H), 245)
     d = ImageDraw.Draw(im)
-    f = _font(22)
+    f = _font(33)
     for i, txt in enumerate(["FULLSEYE INSPECTION LOG",
                              "LOT 2026-09-02   LINE 3",
                              "OPERATOR   K. FURUSE"]):
-        d.text((60, 40 + i * 36), txt, font=f, fill=25)
-    x, n = 60, 0
-    for i, w in enumerate([6, 10, 6, 16, 6, 10, 20, 6, 10, 6, 16, 10, 6, 14, 6, 10]):
+        d.text((90, 60 + i * 54), txt, font=f, fill=25)
+    x, n = 90, 0
+    for i, w in enumerate([9, 15, 9, 24, 9, 15, 30, 9, 15, 9, 24, 15, 9, 21, 9, 15]):
         if i % 2 == 0:
-            d.rectangle([x, 200, x + w, 340], fill=0)
+            d.rectangle([x, 300, x + w, 510], fill=0)
             n += 1
-        x += w + 8
+        x += w + 12
     return np.asarray(im, np.float64) / 255.0, n
 
 
@@ -1466,17 +1473,19 @@ def subject_fit_residual(log=print) -> dict:
     """円と直線を輪郭に当てはめ、真値との差と残差を実測して色で示す工程."""
     import measure as M
     E = _tile_mod()
-    H, W = 420, 520
-    cy, cx, R0 = 210.0, 180.0, 118.0
+    H, W = 700, 960
+    cy, cx, R0 = 350.0, 320.0, 210.0
     rng = np.random.default_rng(SEED)
     from PIL import Image, ImageDraw
     im = Image.new("L", (W, H), 18)
     d = ImageDraw.Draw(im)
     d.ellipse([cx - R0, cy - R0, cx + R0, cy + R0], fill=226)
-    d.rectangle([cx - 20, cy - R0 - 10, cx + 20, cy - R0 + 34], fill=18)  # 欠け
-    ly0, ly1 = 60.0, 380.0
-    lx0, lx1 = 380.0, 470.0
-    d.line([lx0, ly0, lx1, ly1], fill=226, width=9)
+    notch_w = 72
+    d.rectangle([cx - notch_w / 2, cy - R0 - 18, cx + notch_w / 2,
+                 cy - R0 + 60], fill=18)                     # 欠け
+    ly0, ly1 = 90.0, 620.0
+    lx0, lx1 = 700.0, 860.0
+    d.line([lx0, ly0, lx1, ly1], fill=226, width=15)
     scene = np.asarray(im, np.float64) / 255.0
     scene = np.clip(scene + 0.035 * rng.standard_normal(scene.shape), 0, 1)
 
@@ -1488,6 +1497,11 @@ def subject_fit_residual(log=print) -> dict:
     if float(np.ptp(line_pts[:, 1])) > float(np.ptp(circ_pts[:, 1])):
         circ_pts, line_pts = line_pts, circ_pts
     cf = M.fit_circle(circ_pts)
+    # 欠けの縁は円の上に乗っていない —— 当てはめを引っ張る外れ値。
+    # 一度当てて、残差が大きい点を落としてから当て直す (実測で効果を出す)。
+    d0 = np.linalg.norm(circ_pts - np.array([cf["cy"], cf["cx"]]), axis=1) - cf["r"]
+    inlier = np.abs(d0) <= 3.0 * float(np.std(d0))
+    cf2 = M.fit_circle(circ_pts[inlier])
     lf = M.fit_line(line_pts)
     true_line_deg = float(np.degrees(np.arctan2(ly1 - ly0, lx1 - lx0)))
     d_r = np.linalg.norm(circ_pts - np.array([cf["cy"], cf["cx"]]), axis=1) - cf["r"]
@@ -1503,6 +1517,10 @@ def subject_fit_residual(log=print) -> dict:
                          np.stack([cf["cy"] + cf["r"] * np.sin(tt),
                                    cf["cx"] + cf["r"] * np.cos(tt)], 1),
                          (255, 196, 80), 3)
+    fit_vis = _draw_poly(fit_vis,
+                         np.stack([cf2["cy"] + cf2["r"] * np.sin(tt),
+                                   cf2["cx"] + cf2["r"] * np.cos(tt)], 1),
+                         (120, 235, 160), 3)
     tl = np.linspace(-260, 260, 2)
     fit_vis = _draw_poly(fit_vis,
                          np.stack([lf["cy"] + lf["dy"] * tl,
@@ -1532,9 +1550,9 @@ def subject_fit_residual(log=print) -> dict:
         "sobel_amp でエッジ強度",
         "threshold → opening → gen_contour_region_xld で輪郭 %d 点 / %d 点"
         % (len(circ_pts), len(line_pts)),
-        "fit_circle: 半径 %.3f px (真値 %.1f・誤差 %+.3f) / 中心ずれ %.3f px"
-        % (cf["r"], R0, cf["r"] - R0,
-           float(np.hypot(cf["cy"] - cy, cf["cx"] - cx))),
+        "橙 = 全点で fit_circle 半径 %.2f px (誤差 %+.2f) / "
+        "緑 = 外れ値 %d 点を落として再当てはめ 半径 %.2f px (誤差 %+.2f)"
+        % (cf["r"], cf["r"] - R0, int((~inlier).sum()), cf2["r"], cf2["r"] - R0),
         "残差を色で — RMS %.3f px、欠けの縁だけが赤く浮く" % cf["rms"],
         "fit_line: %.2f° (真値 %.2f°・誤差 %+.3f°) / 残差 RMS %.3f px"
         % (lf["angle_deg"], true_line_deg, lf["angle_deg"] - true_line_deg,
@@ -1550,6 +1568,7 @@ def subject_fit_residual(log=print) -> dict:
         "title": "輪郭の当てはめと残差",
         "ops": ["threshold", "opening_circle", "gen_contour_region_xld",
                 "sobel_amp", "fit_circle", "fit_line"],
+        "panels_note": "橙 = 全点の当てはめ / 緑 = 外れ値を落とした再当てはめ",
         "data": "Pillow で描いた合成の円 (欠けあり) と直線 + 決定的なガウスノイズ",
         "measured": {
             "true_radius_px": R0, "fitted_radius_px": round(cf["r"], 4),
@@ -1559,6 +1578,12 @@ def subject_fit_residual(log=print) -> dict:
             "center_error_px": round(float(np.hypot(cf["cy"] - cy,
                                                     cf["cx"] - cx)), 4),
             "circle_rms_px": round(cf["rms"], 4),
+            "refit_radius_px": round(cf2["r"], 4),
+            "refit_radius_error_px": round(cf2["r"] - R0, 4),
+            "refit_center_error_px": round(float(np.hypot(cf2["cy"] - cy,
+                                                          cf2["cx"] - cx)), 4),
+            "refit_rms_px": round(cf2["rms"], 4),
+            "outliers_dropped": int((~inlier).sum()),
             "circle_max_residual_px": round(float(resid.max()), 4),
             "true_line_angle_deg": round(true_line_deg, 4),
             "fitted_line_angle_deg": round(lf["angle_deg"], 4),
@@ -1569,12 +1594,13 @@ def subject_fit_residual(log=print) -> dict:
         },
         "caption": (
             "縁が %d px ぶん欠けた円と 1 本の直線に、輪郭からの当てはめを掛けた 6 コマ。"
-            "円は真値 %.1f px に対して %.3f px と当たり (誤差 %+.3f px・中心ずれ %.3f px)、"
-            "直線は真値 %.2f° に対して %.2f° (誤差 %+.3f°)。残差を色で塗ると、欠けの縁"
-            "だけが最大 %.2f px に跳ね、それ以外は RMS %.3f px に収まっている —— "
+            "輪郭の全点で当てると半径は真値 %.1f px に対し %.2f px (誤差 %+.2f px、"
+            "中心ずれ %.2f px、残差 RMS %.2f px) —— 欠けの縁が当てはめを引っ張っている。"
+            "残差 3σ を超える %d 点を落として当て直すと %.2f px (誤差 %+.2f px、"
+            "RMS %.2f px) まで戻る。直線の方は真値 %.2f° に対し %.2f° (誤差 %+.3f°)。"
             "「当てはまった値」より「合わなかった場所」の方が、たいてい情報が多い。"
-            % (40, R0, cf["r"], cf["r"] - R0,
-               float(np.hypot(cf["cy"] - cy, cf["cx"] - cx)),
-               true_line_deg, lf["angle_deg"], lf["angle_deg"] - true_line_deg,
-               float(resid.max()), cf["rms"])),
+            % (notch_w, R0, cf["r"], cf["r"] - R0,
+               float(np.hypot(cf["cy"] - cy, cf["cx"] - cx)), cf["rms"],
+               int((~inlier).sum()), cf2["r"], cf2["r"] - R0, cf2["rms"],
+               true_line_deg, lf["angle_deg"], lf["angle_deg"] - true_line_deg)),
     }
