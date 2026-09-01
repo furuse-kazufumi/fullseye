@@ -394,7 +394,7 @@ def _window_values(window, n: int, op: str) -> np.ndarray:
                              % (op, type(window).__name__))
         try:
             w = np.asarray(get_window(window, n, fftbins=True), np.float64)
-        except Exception as exc:                       # noqa: BLE001
+        except Exception as exc:
             raise ValueError("%s: unknown window %r (%s)" % (op, window, exc)) from None
     if not np.isfinite(w).all():
         raise ValueError("%s: window has non-finite values" % (op,))
@@ -1027,7 +1027,7 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
     non-positive ``n_peaks``.
     """
     op = "envelope_spectrum"
-    import dsp                                            # noqa: PLC0415
+    import dsp
     fs = _rate(rate)
     arr = _as_signal(x, "x", op, min_len=4)
     lo = _positive(low, "low")

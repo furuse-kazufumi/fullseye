@@ -53,8 +53,8 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import acoustics as A  # noqa: E402
-import dsp  # noqa: E402
+import acoustics as A
+import dsp
 
 
 def main():
@@ -137,7 +137,7 @@ def main():
     lo = max(1.0, sk["max_freq"] - sk["bin_hz"])
     hi = sk["max_freq"] + sk["bin_hz"]
     auto = A.envelope_spectrum(imp, fs_b, lo, hi)
-    print(f"\n4) 復調帯域の自動選択(共振周波数を人が知らない場合):")
+    print("\n4) 復調帯域の自動選択(共振周波数を人が知らない場合):")
     print(f"   スペクトル尖度: 最大 {sk['max_kurtosis']:.3f} @ "
           f"{sk['max_freq']:.0f} Hz(窓 {sk['window_seconds'] * 1e3:.2f} ms、"
           f"推定器の標準偏差 {sk['noise_sigma']:.3f})")
@@ -247,14 +247,14 @@ def main():
     oct3 = A.octave_spectrum(0.7 * one_k, fs, fraction=3, ref=1.0)
     k1 = int(np.argmin(np.abs(oct3["centers"] - 1000.0)))
     closed = 10.0 * np.log10(0.7 ** 2 / 2.0)
-    print(f"   1/3 オクターブ(振幅 0.7 の 1 kHz 正弦、ref=1.0):")
+    print("   1/3 オクターブ(振幅 0.7 の 1 kHz 正弦、ref=1.0):")
     print(f"     1 kHz 帯域 {oct3['levels'][k1]:.10f} dB  "
           f"閉形式 10log10(0.7^2/2) = {closed:.10f}  差 "
           f"{abs(oct3['levels'][k1] - closed):.3e}")
     print(f"     床打ちした帯域 {int(oct3['clamped'].sum())}/"
           f"{oct3['clamped'].size}(-inf ではなく {A.FLOOR_DB:.0f} dB を返す)")
-    print(f"   等価騒音レベル Leq(ref=1.0 = 「渡した単位の 1 に対する dB」、"
-          f"dB SPL ではない):")
+    print("   等価騒音レベル Leq(ref=1.0 = 「渡した単位の 1 に対する dB」、"
+          "dB SPL ではない):")
     print(f"     1 kHz 正弦 振幅1.0: Z {A.equivalent_level(one_k, fs, 'Z'):.6f}  "
           f"A {A.equivalent_level(one_k, fs, 'A'):.6f}  "
           f"(A は 1 kHz で 0 dB なので一致)")
