@@ -939,14 +939,18 @@ def tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0):
     Gaussian (erf differences), normalised to sum 1, truncated at
     ``+-truncate*sigma`` and forced to odd length so the convolution is centred.
 
-    Ground truth: convolving a unit spike with ``irf_fwhm_ps = 500`` at
-    ``bin_ps = 50`` returns a profile whose measured FWHM (via
-    :func:`tcspc_stats`) is 500.0 ps, and whose centroid is unmoved to 1.1e-13 ps.
+    Ground truth: convolving a unit spike in the middle of a 256-bin window with
+    ``irf_fwhm_ps = 500`` at ``bin_ps = 50`` leaves the centroid **exactly**
+    where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a
+    profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the
+    *measurement*, not the kernel: :func:`tcspc_stats` finds the half-maximum
+    crossings by linear interpolation between bins, which slightly overestimates
+    the width of a Gaussian.
 
     Total counts are preserved *except* at the window edges, where
-    ``mode='same'`` discards the tail that falls outside — measured 1.4e-10 loss
-    for a pulse in the middle of the window, but a genuine loss for a pulse
-    within a few sigma of either end.
+    ``mode='same'`` discards the tail that falls outside — measured loss exactly
+    0 for that centred spike, but a genuine loss for a pulse within a few sigma
+    of either end.
 
     Returns a float64 1-D histogram of the same length as *hist*.
 
