@@ -1238,9 +1238,10 @@ def displacement_series(video, f_lo, f_hi, fps, scales: int = 4,
     towards zero. A clip with no valid pixel anywhere (a constant image) returns
     exact zeros rather than a division by zero.
 
-    Sub-pixel accuracy inherits from :func:`phase_displacement`; measured on the
-    64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px amplitude is recovered as
-    0.50000615 px (1.2e-05 relative)."""
+    Sub-pixel accuracy and its cliff inherit from :func:`phase_displacement`;
+    measured on the 64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px amplitude is
+    recovered as 0.50000000 px (6.7e-16 relative), and a true 0.001 px amplitude
+    as 0.00100000 px (8.7e-15)."""
     field = phase_displacement(video, f_lo, f_hi, fps, scales, orientations)
     wgt = field["weight"] * field["valid"]
     total = float(wgt.sum())
