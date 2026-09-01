@@ -1274,6 +1274,315 @@ def ex_crop3d():
 
 
 # --------------------------------------------------------------------------- #
+# Studio 展示(すべて実 UI の grab。モックアップなし)                           #
+# --------------------------------------------------------------------------- #
+WIN_W, WIN_H = 1280, 800
+
+
+def _studio_main(win, size=(WIN_W, WIN_H)):
+    win.resize(*size)
+    win.show()
+    _pump(14)
+    return win
+
+
+def _maximize_mdi(win, sub):
+    """MDI サブウィンドウを最大化して「3D ビューアだけの画面」にする。"""
+    sub.showMaximized()
+    _pump(8)
+
+
+def ex_studio_walk():
+    """F キーの一人称ウォークスルー —— 実 Studio を実キーイベントで歩く。"""
+    from PySide6 import QtCore
+    import mesh as meshmod
+    import studio
+    app, win, model = _studio_app()
+    _studio_main(win)
+    stl = os.path.join(_ROOT, "data", "sample_3d_cache", "itokawa_f0049152.stl")
+    if not os.path.exists(stl):
+        raise RuntimeError("Itokawa STL キャッシュが無い: %s "
+                           "(py -3.11 tools/gen_sample_3d.py itokawa)" % stl)
+    V, F = meshmod.read_mesh(stl)
+    sub = win._open_viewer3d_window(("mesh", V, F, None),
+                                    title="3D viewer — itokawa_f0049152.stl")
+    v3 = sub._fs_viewer3d
+    _maximize_mdi(win, sub)
+    v3.setFocus()
+    _pump(6)
+
+    frames, notes = [], []
+
+    def shot(note):
+        v3._fp_keys.clear(); v3._drag = None; v3._wheeling = False
+        v3._repaint()
+        frames.append(_grab(win))
+        notes.append(note)
+
+    shot("軌道カメラ(通常モード)")
+    _tap(v3, QtCore.Qt.Key_F)                       # F: 一人称へ
+    shot("F を押した直後 = ウォークスルー入口")
+    for i in range(9):                              # W: 前進(1 タップ = 1 歩)
+        _tap(v3, QtCore.Qt.Key_W)
+        if i % 3 == 2:
+            shot("W で前進 (%d 歩)" % (i + 1))
+    cx, cy = v3.width() // 2, v3.height() // 2
+    for i in range(4):                              # ドラッグで見回す
+        _drag(v3, cx, cy, cx + 46, cy - 6, steps=6)
+        shot("左ドラッグで見回す")
+    for i in range(6):
+        _tap(v3, QtCore.Qt.Key_W)
+        if i % 3 == 2:
+            shot("さらに前進")
+    for i in range(4):                              # +: 視野角を広げる
+        _tap(v3, QtCore.Qt.Key_Plus)
+        shot("+ で視野角 %.0f 度" % v3._fp_fov)
+    for i in range(6):                              # A: 左へ平行移動
+        _tap(v3, QtCore.Qt.Key_A)
+        if i % 3 == 2:
+            shot("A で左へ")
+    for i in range(5):
+        _tap(v3, QtCore.Qt.Key_Minus)
+        shot("- で視野角 %.0f 度" % v3._fp_fov)
+    _tap(v3, QtCore.Qt.Key_R)
+    shot("R で入口へ戻る")
+    _tap(v3, QtCore.Qt.Key_F)
+    shot("F でもう一度押すと軌道カメラへ復帰")
+
+    facts = {"n_vertices": int(V.shape[0]), "n_faces": int(F.shape[0]),
+             "splat_points": int(v3._P.shape[0]), "radius": round(float(v3._radius), 6),
+             "fov_default": studio.FP_FOV_DEFAULT,
+             "fov_range": [studio.FP_FOV_MIN, studio.FP_FOV_MAX],
+             "window": [WIN_W, WIN_H], "frames": len(frames),
+             "step_per_tap": round(float(v3._radius) / 50.0, 6)}
+    return save_gif("studio_walk", frames, facts, fps=4, thumb_index=6)
+
+
+def ex_studio_turntable():
+    """軌道カメラのターンテーブル —— 実 Studio を実マウスドラッグで回す。
+
+    データは同梱の骨格 CT。Studio の ``volume_to_shell_points`` を通した
+    「ボリュームをそのまま 3D ビューアで開く」経路そのもの。
+    """
+    import studio
+    app, win, model = _studio_app()
+    _studio_main(win)
+    vol = _load_ct()
+    P, C, info = studio.volume_to_shell_points(vol)
+    sub = win._open_viewer3d_window(("points", P, None, C),
+                                    title="3D viewer — skeleton_ct.npy (境界シェル)")
+    v3 = sub._fs_viewer3d
+    _maximize_mdi(win, sub)
+    v3.setFocus(); _pump(6)
+    cx, cy = v3.width() // 2, v3.height() // 2
+    frames = []
+    n = 30
+    for i in range(n):
+        # 実マウスドラッグ 1 回 = yaw +12 度(mouseMoveEvent は 0.5 * dx)
+        _drag(v3, cx, cy, cx + 24, cy, steps=4)
+        v3._drag = None; v3._wheeling = False
+        v3._repaint()
+        frames.append(_grab(win))
+    facts = {"volume_shape": [int(s) for s in info["shape"]],
+             "n_points": int(info["n_points"]),
+             "otsu_threshold": round(float(info["threshold"]), 6),
+             "downsampled_by": int(info["downsampled_by"]),
+             "yaw_per_drag_deg": 12.0, "frames": n,
+             "yaw_final": round(float(v3._yaw), 2), "window": [WIN_W, WIN_H]}
+    return save_gif("studio_turntable", frames, facts, fps=10, thumb_index=8)
+
+
+def ex_studio_help():
+    """op ヘルプ —— 実 Studio のヘルプダイアログを実際に開いて渡り歩く。"""
+    from PySide6 import QtCore
+    import ops3d
+    import studio
+    app, win, model = _studio_app()
+    _studio_main(win, (900, 300))
+    dlg = win._help["dialog"]
+    dlg.resize(1000, 720)
+    dlg.show(); _pump(8)
+    pages = [("2d", "gaussian"), ("2d", "canny"), ("2d", "watershed"),
+             ("2d", "fft"), ("3d", "icp_point2plane"), ("3d", "principal_curvatures"),
+             ("3d", "sample_object_model_3d"), ("3d", "fit_primitives_3d")]
+    have3d = set(ops3d.OPS3D)
+    names2d = {r["name"] for r in win._help["entries"].values()
+               if r[0] == "2d"} if False else None
+    frames, shown = [], []
+    for dim, name in pages:
+        if dim == "3d" and name not in have3d:
+            continue
+        try:
+            win._help["show"](name, dim)
+        except Exception:
+            continue
+        _pump(8)
+        html = win._help["browser"].toPlainText()
+        if not html.strip():
+            continue
+        authored = os.path.exists(os.path.join(
+            _ROOT, "studio_assets", "op_help",
+            *(("3d", name + ".html") if dim == "3d" else (name + ".html",))))
+        shown.append({"dim": dim, "name": name, "authored": authored,
+                      "chars": len(html)})
+        frames.append(_grab(dlg))
+    if len(frames) < 4:
+        raise RuntimeError("ヘルプページが 4 枚も開けなかった: %r" % shown)
+    # 各ページ 3 フレーム保持(GIF はフレーム複製でしか「間」を作れない)
+    held = [f for f in frames for _ in range(3)]
+    n_2d = len(os.listdir(os.path.join(_ROOT, "studio_assets", "op_help")))
+    n_3d = len(os.listdir(os.path.join(_ROOT, "studio_assets", "op_help", "3d")))
+    # Studio が到達できない族(op_help/<族>/ に生成済みだが 2d/3d のどちらでもない)
+    orphan = {}
+    base = os.path.join(_ROOT, "studio_assets", "op_help")
+    for d in sorted(os.listdir(base)):
+        p = os.path.join(base, d)
+        if os.path.isdir(p) and d != "3d":
+            orphan[d] = len(os.listdir(p))
+    facts = {"pages": shown, "help_files_2d": n_2d, "help_files_3d": n_3d,
+             "orphan_family_help_dirs": orphan,
+             "orphan_total": int(sum(orphan.values())),
+             "frames": len(held), "dialog": [1000, 720]}
+    return save_gif("studio_help", held, facts, fps=3, thumb_index=1)
+
+
+_EDITOR_CODE = '''"""Studio の Python エディタで実行するデモ(F5 で走る)。"""
+import numpy as np
+import fullseye as fs
+
+img = fs.to_float01(fs.load("studio_assets/sample_images/coins.png"))
+if img.ndim == 3:
+    img = fs.apply(img, "rgb1_to_gray")
+print("image", img.shape, "range [%.3f, %.3f]" % (img.min(), img.max()))
+
+mask = fs.apply(fs.apply(img, "gaussian", 0.30, 0.0), "otsu", 0.5, 0.5)
+mask = fs.apply(mask, "opening_circle", 0.60, 0.5)
+mask = fs.apply(mask, "sk_clear_border", 0.5, 0.5)
+print("foreground fraction = %.4f" % float(np.mean(mask > 0.5)))
+
+objs = fs.segment_objects(mask)
+areas = sorted(int(o["area"]) for o in objs)
+print("objects =", len(objs))
+print("area  min/median/max = %d / %d / %d" % (areas[0], areas[len(areas) // 2], areas[-1]))
+'''
+
+
+def ex_studio_editor():
+    """タブエディタ —— 書いて F5 で走らせ、出力が出るまでを本物の UI で。"""
+    import time as _time
+    app, win, model = _studio_app()
+    _studio_main(win, (900, 300))
+    win._act_pyedit.trigger(); _pump(8)
+    pe = win._pyedit
+    dlg = pe["dlg"]
+    dlg.resize(1060, 740); _pump(6)
+    ed = pe["open_tab"]("", "wingstudio_demo.py")
+    _pump(4)
+    lines = _EDITOR_CODE.splitlines(True)
+    frames = []
+    # 1) 打ち込んでいく(3 行ずつ)
+    for i in range(0, len(lines), 3):
+        ed.setPlainText("".join(lines[:i + 3]))
+        _pump(3)
+        frames.append(_grab(dlg))
+    # 2) F5 で実行 -> 出力が流れる
+    frames.append(_grab(dlg))
+    pe["run"]()
+    t0 = _time.time()
+    while getattr(dlg, "_proc", None) is not None:
+        _pump(2, 40)
+        if _time.time() - t0 > 180:
+            raise RuntimeError("F5 の実行が 180 秒で終わらなかった")
+        frames.append(_grab(dlg))
+    _pump(8)
+    out = pe["output"].toPlainText()
+    status = pe["status"].text()
+    for _ in range(6):
+        frames.append(_grab(dlg))
+    if "objects =" not in out:
+        raise RuntimeError("実行出力に期待した行が無い:\n%s" % out[-500:])
+    facts = {"code_lines": len(lines), "frames": len(frames),
+             "status": status, "output_lines": len(out.strip().splitlines()),
+             "output_tail": out.strip().splitlines()[-3:],
+             "dialog": [1060, 740]}
+    return save_gif("studio_editor", frames, facts, fps=6,
+                    thumb_index=len(frames) - 1)
+
+
+def ex_studio_opsearch():
+    """op ツリーと検索 —— 900 超の op から目的の 1 個へ辿り着くまで。"""
+    app, win, model = _studio_app()
+    _studio_main(win)
+    search = win._search
+    total = win._op_list.count()
+    frames, steps = [], []
+    query = "watershed"
+    search.setText(""); _pump(4)
+    frames.append(_grab(win)); steps.append(("", total))
+    for i in range(1, len(query) + 1):
+        search.setText(query[:i]); _pump(3)
+        n = win._op_list.count()
+        frames.append(_grab(win)); steps.append((query[:i], n))
+    # 見つけた op を選ぶ(シグネチャ欄に in_sort -> out_sort が出る)
+    hit = win._select_op_in_list("xcv_watershed_markers")
+    _pump(6)
+    frames += [_grab(win)] * 4
+    n_final = win._op_list.count()
+    # 2 例目: 分類コンボで絞る
+    search.setText("cad"); _pump(4)
+    frames += [_grab(win)] * 3
+    steps.append(("cad", win._op_list.count()))
+    facts = {"total_ops": int(total), "query": query,
+             "steps": [{"text": t, "matches": int(n)} for t, n in steps],
+             "final_matches": int(n_final), "selected_found": bool(hit),
+             "frames": len(frames), "window": [WIN_W, WIN_H]}
+    return save_gif("studio_opsearch", frames, facts, fps=4, thumb_index=6)
+
+
+def ex_studio_pipeline():
+    """パイプラインの組み立て —— 型が合わない op を挟むと Problems に出る。"""
+    from PySide6 import QtCore
+    import engine
+    app, win, model = _studio_app()
+    _studio_main(win)
+    win._load_sample_image("coins"); _pump(6)
+    prog = win._program
+    steps = [
+        ("gaussian (0.300, 0.000)\n", "① 平滑化だけ"),
+        ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n", "② Otsu で 2 値化"),
+        ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n"
+         "opening_circle (0.600, 0.500)\n", "③ 円形オープニングで粒を分ける"),
+        ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n"
+         "opening_circle (0.600, 0.500)\nsk_clear_border (0.500, 0.500)\n",
+         "④ 枠に触れた領域を捨てる"),
+        ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n"
+         "opening_circle (0.600, 0.500)\nsk_clear_border (0.500, 0.500)\n"
+         "area_center (0.500, 0.500)\n", "⑤ わざと型の合わない op を足す"),
+        ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n"
+         "opening_circle (0.600, 0.500)\nsk_clear_border (0.500, 0.500)\n",
+         "⑥ 外して元に戻す"),
+    ]
+    frames, records = [], []
+    for text, note in steps:
+        prog["edit"].setPlainText(text)
+        prog["apply"]()
+        _pump(12)
+        probs = list(engine.diagnose_stages(model.stages))
+        plist = win._problems_list
+        rows = [plist.item(i).text() for i in range(plist.count())]
+        records.append({"note": note, "stages": len(model.stages),
+                        "problems": [p["message"] for p in probs],
+                        "problem_rows": rows})
+        frames += [_grab(win)] * 4
+    # 最後に領域オーバーレイ表示へ
+    for cb in win.findChildren(type(win._problems_list).__mro__[0]):
+        break
+    facts = {"steps": records, "frames": len(frames), "window": [WIN_W, WIN_H]}
+    return save_gif("studio_pipeline", frames, facts, fps=4,
+                    thumb_index=len(frames) - 5)
+
+
+# --------------------------------------------------------------------------- #
 # キャプション原稿                                                              #
 # --------------------------------------------------------------------------- #
 #: name -> (見出し, 使用 op/機能, 本文を組み立てる関数(facts, rec) -> str)
