@@ -135,11 +135,17 @@ def _phase_on(s, pattern):
 
     パターンは ``(on, off, on, off, ...)`` の画素長。周期 ``sum(pattern)`` で巻き、
     偶数番目の run(0, 2, ...)を点灯とする。
+
+    run の境界にちょうど乗ったサンプルは **次の run** に入れる。判定前に周期の
+    1e-9 倍だけ進めるのは、弧長が ``t * 線分長`` の積で出るため境界値が
+    13.999999999 のように揺れ、点灯/消灯が浮動小数の最下位ビットで入れ替わるのを
+    止めるため(実測: 長さ 140 の水平線に ``[7,7]`` を引くと、この補正なしでは
+    点灯 69 画素・補正ありで閉形式どおりの 71 画素)。
     """
     pat = np.asarray(pattern, dtype=np.float64)
     period = float(pat.sum())
     edges = np.concatenate([[0.0], np.cumsum(pat)])
-    phase = np.mod(np.asarray(s, dtype=np.float64), period)
+    phase = np.mod(np.asarray(s, dtype=np.float64) + period * 1e-9, period)
     idx = np.clip(np.searchsorted(edges, phase, side="right") - 1, 0, pat.size - 1)
     return (idx % 2) == 0
 
