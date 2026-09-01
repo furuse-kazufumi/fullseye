@@ -440,6 +440,16 @@ def stft(x, rate, win=256, hop=None, window="hann", nfft=None, scaling="none"):
         bin centre frequencies in Hz and frame start times in seconds. Frame
         time 0.0 is the first *original* sample, so the leading pad does not
         shift the time axis.
+
+        **``times[0]`` is therefore negative**, and that is the consequence of
+        the sentence above rather than an error: the first frames start inside
+        the leading pad. Measured on 1.0 s at 16 kHz with ``win=256, hop=128``,
+        ``times[0] = -0.016000`` and ``times[-1] = 1.000000``, a span 1.6 %
+        wider than the record. Do not hand ``times[0]`` and ``times[-1]``
+        straight to a plot's time extent — the picture then claims a
+        time-frequency surface wider than the recording, whose outermost columns
+        are half-empty frames. Use ``times[interior]``, whose first value is
+        exactly ``0.000000``, for anything that has to line up with the signal.
     ``rate``, ``win``, ``hop``, ``nfft``, ``length``, ``pad_left``, ``scale``,
     ``scaling``, ``window``, ``window_values``
         the geometry, kept so the inverse needs no arguments.
