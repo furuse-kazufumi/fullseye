@@ -1736,22 +1736,31 @@ def weighting_response(freqs, kind="A", floor_db=FLOOR_DB):
 
     Measured (computed, then printed — these are outputs, not transcriptions):
 
-    ========  ==========  ==========
-    f (Hz)    A (dB)      C (dB)
-    ========  ==========  ==========
-    10        -70.4019    -14.3123
-    31.5      -39.5280     -3.0296
-    100       -19.1451     -0.0619
-    1000        0.0000      0.0000
-    4000        0.9670     -0.7666
-    10000      -2.4885     -4.4230
-    20000     -9.3411    -11.1421
-    ========  ==========  ==========
+    ========  =========  =========
+    f (Hz)    A (dB)     C (dB)
+    ========  =========  =========
+    10        -70.4304   -14.3300
+    31.5      -39.5250    -3.0305
+    100       -19.1428    -0.2996
+    1000        0.0000     0.0000
+    4000        0.9633    -0.8260
+    10000      -2.4918    -4.4055
+    20000      -9.3469   -11.2786
+    ========  =========  =========
 
-    The low-frequency asymptote is a closed form and is asserted: ``A`` falls at
-    exactly 80 dB/decade as ``f -> 0`` (``f**4`` over three constants) and ``C``
-    at exactly 40 dB/decade (``f**2``). Measured between 0.01 and 0.001 Hz:
-    80.000000 and 40.000000 dB/decade.
+    ``A(1000)`` and ``C(1000)`` are exactly ``0.0`` — the Python float, not a
+    rounding — because of the construction. The low-frequency asymptote is a
+    closed form and is asserted in the tests: ``A`` falls at exactly
+    80 dB/decade as ``f -> 0`` (``f**4`` over three constants) and ``C`` at
+    exactly 40 dB/decade (``f**2``). Measured between 0.001 and 0.01 Hz with the
+    floor lowered out of the way: **79.999998** and **39.999998** dB/decade.
+
+    That last caveat is real and is why the floor is an argument: with the
+    default ``floor_db = -200`` the A curve reaches the floor below about
+    0.35 Hz (unfloored, ``A(0.1) = -228.55`` dB), so the asymptote measured
+    against the default floor comes out as 0.0 dB/decade between 0.01 and
+    0.1 Hz — a clamp, correctly reported, that would look like a bug if the
+    floor were not visible.
 
     Returns a float64 array the same shape as *freqs*.
 
