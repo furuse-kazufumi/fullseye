@@ -527,7 +527,9 @@ _CATALOG = {
     ],
     "superquadric": [  # スーパー2次曲面フィット(把持・物体モデリングの汎用形状族)
         ("fit_superquadric", "superquadric", ["points"], "primitive", False),
-        ("sample_surface", "superquadric", ["primitive"], "points", False),
+        # 第 1 引数は primitive(dict)ではなく半径 (a1,a2,a3) の 3-ベクトル。
+        # eps・姿勢は別引数なので、既存語彙で正しいのは vector
+        ("sample_surface", "superquadric", ["vector"], "points", False),
         ("inside_outside", "superquadric", ["points"], "measurement", False),
         ("superquadric_residual", "superquadric", ["points"], "measurement", False),
     ],
