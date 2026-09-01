@@ -278,9 +278,14 @@ def part8_post():
     print(f"   ★クリップで消える情報: 画素の {100 * (raw > 1).mean():.2f} % が飽和し、"
           f"全エネルギーの {100 * (raw.sum() - out.sum()) / raw.sum():.2f} % が捨てられる")
     print("     (この量は返り値に含めない —— 含めないことを docstring に書いてある)")
-    v = G.vignette(img, strength=0.7)
-    print(f"   vignette: 中心は厳密に不変 {np.abs(v[32, 32] - img[32, 32]).max():.1e} / "
-          f"隅は {v[0, 0].max() / img[0, 0].max():.3f} 倍")
+    odd = np.clip(rng.random((65, 65, 3)) * 0.6 + 0.3, 0, 1)
+    v = G.vignette(odd, strength=0.7)
+    print(f"   vignette(奇数サイズ): 中心画素は厳密に不変 "
+          f"{np.abs(v[32, 32] - odd[32, 32]).max():.1e} / "
+          f"隅は {v[0, 0].max() / odd[0, 0].max():.3f} 倍")
+    print(f"     (偶数サイズには中心画素が存在しない。最内の 4 画素は 0.707 px 外側なので"
+          f"既に {G.vignette(img, 0.7)[32, 32].max() / img[32, 32].max():.4f} 倍に落ちる"
+          f" —— 丸め誤差ではなく幾何)")
     ca = G.chromatic_aberration(img, 0.02)
     print(f"   色収差: 緑は基準チャネルなので不変 "
           f"{np.abs(ca[..., 1] - img[..., 1]).max():.1e}、赤は動く "
@@ -362,7 +367,7 @@ def part9_fail_closed():
     img[:] = 0.5
     partial = np.zeros((10, 10, 3))
     partial[:6, :6] = img[10:16, 10:16]
-    print(f"     10x10 のうち {100 * (partial == 0).mean() / 3 * 3:.0f} % が"
+    print(f"     10x10 のうち {100 * (partial == 0).mean():.0f} % が"
           f"「黒い画素」として下流へ流れる —— 例外でなく**もっともらしい暗いフレーム**")
     print("     だから viewport は clip せず raise する(sprite_blit は逆に clip する。")
     print("     スプライトが画面外へ出るのは正常、カメラが存在しない行を要求するのは算術の誤り)")

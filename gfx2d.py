@@ -1503,9 +1503,13 @@ def bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6):
 def vignette(rgb, strength=0.6, radius=1.0, power=2.0):
     """Darken towards the corners: ``out = rgb * (1 - strength * t**power)``.
 
-    ``t`` is the distance from the centre divided by ``radius`` times the
-    half-diagonal, clipped at 1. The centre pixel is multiplied by exactly 1, so
-    ``strength=0`` — and the centre of any vignette — is the exact identity.
+    ``t`` is the distance from the geometric centre ``((h-1)/2, (w-1)/2)``
+    divided by ``radius`` times the half-diagonal, clipped at 1. The factor at
+    ``t = 0`` is exactly 1, so ``strength=0`` is the exact identity and — for an
+    **odd-sized** image, where a pixel actually sits on the centre — that pixel
+    is returned untouched. An even-sized image has no centre pixel: its four
+    innermost pixels are 0.707 px out and are already attenuated, which is
+    geometry rather than a rounding error.
     """
     img = _require_rgb(rgb, "rgb")
     st = _scalar(strength, "strength", 0.0, 1.0)
