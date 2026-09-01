@@ -3,13 +3,15 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-01 09:04:13
+- **最終更新**: 2026-09-01 09:09:00
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+c78d6f3a docs: 進化型アルゴリズム開発環境に狭いsortの知見と端から端までの実証を追記
+7ad394d8 auto: EVOLUTION_ENVIRONMENT.md 編集前 (2026-09-01 09:07)
 dd47f4b6 evolution: 進化が新 sort で機能するようになった(点群 0.193 → 0.7182)
 e52a10eb auto: ops.py 編集前 (2026-09-01 09:01)
 df49932c auto: evolve.py 編集前 (2026-09-01 09:00)
@@ -18,25 +20,23 @@ df49932c auto: evolve.py 編集前 (2026-09-01 09:00)
 8dac4a69 evolution: 新 sort の課題を追加 + 橋渡しで露出した型契約バグ3件を修正
 38583040 auto: backends_typed.py 編集前 (2026-09-01 08:44)
 634728ef auto: backends_typed.py 編集前 (2026-09-01 08:44)
-25c73ed3 auto: test_backends_typed.py 編集前 (2026-09-01 08:43)
-92a0c5e9 auto: backends_typed.py 編集前 (2026-09-01 08:43)
 ```
 
 ## 現在の git status
 
 ```
-M docs/EVOLUTION_ENVIRONMENT.md
+(clean)
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-09:03 docs/EVOLUTION_ENVIRONMENT.md
+09:07 docs/EVOLUTION_ENVIRONMENT.md
+09:04 docs/SESSION_SUMMARY.md
 09:02 .pytest_cache/v/cache/nodeids
 09:02 tests/test_backends_typed.py
 09:01 ops.py
 09:00 evolve.py
-08:58 docs/SESSION_SUMMARY.md
 08:44 .pytest_cache/v/cache/lastfailed
 08:44 backends_typed.py
 08:40 tools/op_example_index.py
