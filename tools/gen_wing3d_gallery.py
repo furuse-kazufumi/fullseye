@@ -2712,10 +2712,12 @@ def ex_oblique(log) -> dict:
         "facts": {"radius_mm": r_mm, "spacing_mm": sp, "angles_deg": angles,
                   "rows": rows, "max_major_err_mm": max_major_err,
                   "max_minor_err_mm": max_minor_err},
-        "caption": (f"半径 {r_mm:.2f} mm の合成円柱を、切断面を 0° から 80° まで倒しながら"
+        "caption": (f"半径 {r_mm:.2f} mm の合成円柱を、切断面を {angles[0]}° から "
+                    f"{angles[-1]}° まで倒しながら"
                     f"切る(`vol_rotate` の逆回し)。短径は角度によらず "
                     f"{rows[0]['minor_mm']:.3f} mm のままなのに、長径は "
-                    f"**2r / cos θ** に沿って伸び、80° では {rows[-1]['major_mm']:.3f} mm "
+                    f"**2r / cos θ** に沿って伸び、{angles[-1]}° では "
+                    f"{rows[-1]['major_mm']:.3f} mm "
                     f"= {rows[-1]['major_mm'] / rows[0]['minor_mm']:.2f} 倍になる。"
                     f"{len(rows)} 角度({angles[0]}°〜{angles[-1]}°)すべてで理論値との差は"
                     f"最大 {max_major_err:.4f} mm({max_major_err / sp:.2f} 画素)。"
