@@ -1616,7 +1616,8 @@ def ex_studio_pipeline():
          "④ 枠に触れた領域を捨てる"),
         ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n"
          "opening_circle (0.600, 0.500)\nsk_clear_border (0.500, 0.500)\n"
-         "area_center (0.500, 0.500)\n", "⑤ わざと型の合わない op を足す"),
+         "circularity_xld (0.500, 0.500)\n",
+         "⑤ わざと型の合わない op(region → contour)を足す"),
         ("gaussian (0.300, 0.000)\notsu (0.500, 0.500)\n"
          "opening_circle (0.600, 0.500)\nsk_clear_border (0.500, 0.500)\n",
          "⑥ 外して元に戻す"),

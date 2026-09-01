@@ -395,43 +395,55 @@
       "name": "studio_help",
       "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_help.gif",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_help_thumb.jpg",
-      "frames": 18,
+      "frames": 24,
       "size": [
         1000,
         720
       ],
       "fps": 3,
-      "bytes": 390663,
-      "thumb_bytes": 39489,
+      "bytes": 533709,
+      "thumb_bytes": 50014,
       "thumb_frame": 1,
-      "mean_abs_delta": 1.275,
-      "sha256": "13aa8be21b9414ef2b1ba7199c4ff25a9b14d50ec47229c470b7d30847a02c13",
-      "thumb_sha256": "551ccc11261ca887b328549757d8f8bee76110ff54a321a722e970a4da033201",
+      "mean_abs_delta": 0.727,
+      "sha256": "01b8bd80f77113db0b8224dca1618918676d9bb88390ee463a50eb6d0da22675",
+      "thumb_sha256": "c3901ee2fe3af20ee67c344cd7e93db22d1812562a647e3a504c9ee83381186f",
       "facts": {
         "pages": [
           {
             "dim": "2d",
-            "name": "gaussian",
+            "name": "tb_lf_refocus",
             "authored": true,
-            "chars": 922
+            "chars": 925
           },
           {
             "dim": "2d",
-            "name": "canny",
+            "name": "tb_range_doppler_map",
             "authored": true,
-            "chars": 1033
+            "chars": 935
           },
           {
             "dim": "2d",
-            "name": "watershed",
-            "authored": false,
-            "chars": 252
+            "name": "tb_monogenic_phase",
+            "authored": true,
+            "chars": 927
           },
           {
             "dim": "2d",
-            "name": "fft",
-            "authored": false,
-            "chars": 240
+            "name": "tb_spad_deadtime_apply",
+            "authored": true,
+            "chars": 983
+          },
+          {
+            "dim": "2d",
+            "name": "tb_beamform_delay_sum",
+            "authored": true,
+            "chars": 1035
+          },
+          {
+            "dim": "2d",
+            "name": "tb_angular_spectrum_propagate",
+            "authored": true,
+            "chars": 998
           },
           {
             "dim": "3d",
@@ -448,26 +460,69 @@
         ],
         "help_files_2d": 879,
         "help_files_3d": 310,
-        "orphan_family_help_dirs": {
-          "acoustics": 19,
-          "interferometry": 9,
-          "lightfield": 17,
-          "math": 26,
-          "motionmag": 9,
-          "optics": 18,
-          "photon": 17,
-          "quat": 19,
-          "rangedoppler": 8,
-          "specular": 13
+        "family_help": {
+          "acoustics": {
+            "help_pages": 19,
+            "reachable_via_tb": 3,
+            "unreachable": 16
+          },
+          "interferometry": {
+            "help_pages": 9,
+            "reachable_via_tb": 0,
+            "unreachable": 9
+          },
+          "lightfield": {
+            "help_pages": 17,
+            "reachable_via_tb": 8,
+            "unreachable": 9
+          },
+          "math": {
+            "help_pages": 26,
+            "reachable_via_tb": 6,
+            "unreachable": 20
+          },
+          "motionmag": {
+            "help_pages": 9,
+            "reachable_via_tb": 2,
+            "unreachable": 7
+          },
+          "optics": {
+            "help_pages": 18,
+            "reachable_via_tb": 1,
+            "unreachable": 17
+          },
+          "photon": {
+            "help_pages": 17,
+            "reachable_via_tb": 6,
+            "unreachable": 11
+          },
+          "quat": {
+            "help_pages": 19,
+            "reachable_via_tb": 12,
+            "unreachable": 7
+          },
+          "rangedoppler": {
+            "help_pages": 8,
+            "reachable_via_tb": 4,
+            "unreachable": 4
+          },
+          "specular": {
+            "help_pages": 13,
+            "reachable_via_tb": 3,
+            "unreachable": 10
+          }
         },
-        "orphan_total": 155,
-        "frames": 18,
+        "family_help_total": 155,
+        "family_reachable_total": 45,
+        "family_unreachable_total": 110,
+        "typed_tb_ops_in_registry": 105,
+        "frames": 24,
         "dialog": [
           1000,
           720
         ]
       },
-      "seconds": 2.24
+      "seconds": 2.78
     },
     {
       "kind": "gif",
@@ -590,12 +645,12 @@
         800
       ],
       "fps": 4,
-      "bytes": 480061,
-      "thumb_bytes": 41967,
+      "bytes": 491072,
+      "thumb_bytes": 41321,
       "thumb_frame": 19,
-      "mean_abs_delta": 2.274,
-      "sha256": "88b0e3779421c7ee09cb10f64dbd2fed14c44ee36f32d2a0f3c621f236b34079",
-      "thumb_sha256": "4322a63305342b02b5e07b966c2f59968551577bdbce1f1883993199a2778feb",
+      "mean_abs_delta": 2.273,
+      "sha256": "c7d90678baa3e80c38098797e8c24cdafdf354fb2056b2d8001ee7f180f2f37d",
+      "thumb_sha256": "53877485cd449b5fd84e59ebe0e8f469726325f6fa169d8827df0781657f3af6",
       "facts": {
         "steps": [
           {
@@ -631,11 +686,13 @@
             ]
           },
           {
-            "note": "⑤ わざと型の合わない op を足す",
+            "note": "⑤ わざと型の合わない op(region → contour)を足す",
             "stages": 5,
-            "problems": [],
+            "problems": [
+              "stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
+            ],
             "problem_rows": [
-              "no problems"
+              "! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
             ]
           },
           {
@@ -651,9 +708,10 @@
         "window": [
           1280,
           800
-        ]
+        ],
+        "mismatch_detected": true
       },
-      "seconds": 3.6
+      "seconds": 3.87
     }
   ]
 }
