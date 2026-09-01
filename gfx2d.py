@@ -282,6 +282,8 @@ def _check_hw(h, w, name):
 
 def _clip01(arr, name, what="value"):
     """Reject values outside ``[0, 1]`` beyond :data:`RANGE_TOL`; clip the rest."""
+    if arr.size == 0:
+        return arr  # an empty array has no out-of-range value; the emptiness is caught
     lo, hi = float(arr.min()), float(arr.max())
     if lo < -RANGE_TOL or hi > 1.0 + RANGE_TOL:
         raise ValueError(f"{name}: {what} must lie in [0, 1], got [{lo:.6g}, {hi:.6g}]")
@@ -1452,7 +1454,11 @@ def shadow_cast_2d(occluder, x, y, steps=None, softness=0.0):
     ci = np.clip(np.rint(sx), 0, w - 1).astype(np.intp)
     ri = np.clip(np.rint(sy), 0, h - 1).astype(np.intp)
     inside = (sx >= -0.5) & (sx <= w - 0.5) & (sy >= -0.5) & (sy <= h - 0.5)
-    blocked = np.max(occ[ri, ci] * inside, axis=0)
+    # A sample that rounds back onto the pixel it started from is not an occlusion
+    # of that pixel: without this, every occluder shadows itself and the "lit on its
+    # own light-facing surface" convention silently stops holding.
+    own = (ri == np.rint(yy)[None].astype(np.intp)) & (ci == np.rint(xx)[None].astype(np.intp))
+    blocked = np.max(occ[ri, ci] * inside * ~own, axis=0)
     vis = 1.0 - blocked
     if soft > 0.0:
         vis = np.clip(ndimage.gaussian_filter(vis, soft, mode="nearest"), 0.0, 1.0)

@@ -119,7 +119,7 @@ def test_alpha_convention_confusion_is_measured():
 
     wrong_pm = np.clip(spr[..., :3] + dst[..., :3] * (1 - a), 0, 1)
     err = np.abs(wrong_pm - correct)[edge]
-    closed = (1.0 - spr[..., 3])[edge]
+    closed = (1.0 - spr[..., 3])[edge][:, None]
     assert np.abs(err - closed).max() < 1e-15, "not the closed form (1-a)*C_s"
     assert err.max() == pytest.approx(0.9375, abs=1e-12)
     assert err.mean() == pytest.approx(0.4428, abs=5e-4)
@@ -127,7 +127,7 @@ def test_alpha_convention_confusion_is_measured():
     pm = g.premultiply(spr)
     wrong_st = np.clip(pm[..., :3] * a + dst[..., :3] * (1 - a), 0, 1)
     err2 = np.abs(wrong_st - correct)[edge]
-    closed2 = (spr[..., 3] * (1.0 - spr[..., 3]))[edge]
+    closed2 = (spr[..., 3] * (1.0 - spr[..., 3]))[edge][:, None]
     assert np.abs(err2 - closed2).max() < 1e-15, "not the closed form a(1-a)*C_s"
     assert err2.max() == pytest.approx(0.25, abs=1e-12), "a(1-a) peaks at exactly 1/4"
     assert err2.mean() == pytest.approx(0.1590, abs=5e-4)
@@ -140,15 +140,15 @@ def test_premultiplied_type_check_catches_only_what_it_can():
     bright = g.sprite_synthesize("disc", 24, (1.0, 1.0, 1.0))
     with pytest.raises(ValueError, match="not premultiplied"):
         g.unpremultiply(bright)                     # colour > alpha at the edge: caught
-    dark = g.sprite_synthesize("disc", 24, (0.0, 0.0, 0.0))
-    g.unpremultiply(dark)                            # colour <= alpha everywhere: slips by
-    # ...and slipping by is not harmless: the picture differs from the truth.
-    assert np.abs(g.unpremultiply(dark) - dark).max() >= 0.0  # black sprite: numerically equal
-    grey = g.sprite_synthesize("disc", 24, (0.15, 0.15, 0.15))
-    grey[..., :3] *= (grey[..., 3:4] > 0)
-    slipped = g.unpremultiply(grey)                  # accepted, and wrong
-    live = grey[..., 3] > 0.2
-    assert np.abs(slipped[..., :3][live] - grey[..., :3][live]).max() > 0.1
+    # A sprite darker than its own coverage satisfies colour <= alpha everywhere and
+    # slips straight through the guard. The smallest non-zero coverage on the 4x4
+    # supersampled edge is 1/16, so any colour below that is invisible to the check.
+    dark = g.sprite_synthesize("disc", 24, (0.05, 0.05, 0.05))
+    dark[..., :3] *= (dark[..., 3:4] > 0)
+    assert dark[..., 3][dark[..., 3] > 0].min() == pytest.approx(1.0 / 16.0)
+    slipped = g.unpremultiply(dark)                  # accepted, and wrong
+    edge = (dark[..., 3] > 0) & (dark[..., 3] < 0.3)
+    assert np.abs(slipped[..., :3][edge] - dark[..., :3][edge]).max() > 0.1,         "the guard let a wrong picture through, which is the point being documented"
 
 
 # =========================================================================== #
@@ -400,7 +400,7 @@ def test_particle_emit_and_render_are_deterministic():
         assert hashlib.sha256(a[k].tobytes()).hexdigest() == \
             hashlib.sha256(b[k].tobytes()).hexdigest(), k
     c = g.particle_emit(500, 43, origin=(32.0, 32.0), size=(1.0, 4.0))
-    assert not np.array_equal(a["pos"], c["pos"]), "a different seed must differ"
+    assert not np.array_equal(a["vel"], c["vel"]), "a different seed must differ"
     img1 = g.particle_render(a, 64, 64)
     img2 = g.particle_render(b, 64, 64)
     assert hashlib.sha256(img1.tobytes()).hexdigest() == \
@@ -674,7 +674,7 @@ def test_wrong_channel_counts_are_named():
 
 
 def test_unknown_string_arguments_list_what_is_known():
-    with pytest.raises(ValueError, match="unknown blend mode"):
+    with pytest.raises(ValueError, match="unknown value 'vivid_light'"):
         g.blend_mode(np.zeros((4, 4, 3)), np.zeros((4, 4, 3)), "vivid_light")
     with pytest.raises(ValueError, match="unknown value"):
         g.sprite_transform(g.sprite_synthesize("disc", 8), 10.0, 1.0, "lanczos")

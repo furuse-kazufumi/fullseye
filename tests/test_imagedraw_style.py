@@ -258,6 +258,12 @@ def test_role_on_gray_image_uses_the_channel_mean():
     assert a[20, 30] == pytest.approx(float(np.mean(palette.role_color("wrong"))))
 
 
+def test_zero_dim_array_colour_still_fills_every_channel():
+    """0 次元配列の色は「全チャンネル同値」―― 長さ 1 のシーケンスに落とさない。"""
+    a = D.draw_line(np.zeros((10, 10, 3)), (0, 0), (5, 5), np.array(0.5))
+    assert np.allclose(a[3, 3], (0.5, 0.5, 0.5))
+
+
 def test_explicit_color_argument_beats_the_style():
     st = DrawStyle(color="wrong")
     a = D.draw_line(np.zeros((40, 60, 3)), (2, 20), (55, 20), (1.0, 1.0, 1.0), style=st)

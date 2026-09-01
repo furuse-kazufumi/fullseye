@@ -83,10 +83,10 @@ def main() -> int:
     print(f"   組み直して流し直しても同じバイト列: {det}  sha = {_sha(later)[:16]}…")
 
     # --- 2. 絵になる前に検査する ------------------------------------------- #
-    # 文字の下敷きを描く層(annotate)はまだ無くてよい ―― 検査は列の上で行われるので、
-    # ラスタ化に到達する前に落ちる。
+    # 検査は列の上で行うので、ラスタ化に到達する前に落ちる。文字幅は実際の描画層の
+    # 計測器(あれば)で測るので、見積りではなく実測で判定している。
     bad = build(DrawList((H, W, 3)))
-    bad.text_box((12, 158), "この注記は画像の幅にはどうやっても収まらない長さの文字列です",
+    bad.text_box((12, 136), "この注記は画像の幅にはどうやっても収まらない長さの文字列です",
                  font_size=14, z=4.0)
     caught = None
     try:
@@ -97,14 +97,21 @@ def main() -> int:
     print(f"2. はみ出す注記を描く前に捕捉: {caught}")
 
     fits = build(DrawList((H, W, 3)))
-    fits.text_box((12, 158), "ok", font_size=12, z=4.0)
+    fits.text_box((12, 136), "ok", font_size=12, z=4.0)
     issues = fits.inspect()
     ok &= issues == []
     print(f"   収まる注記は素通し: 指摘 {len(issues)} 件")
 
+    # 下端で 10 px だけはみ出す ―― 絵を見ても気づきにくいが、列の上では数字で出る。
+    edge = build(DrawList((H, W, 3)))
+    edge.text_box((12, 158), "ok", font_size=12, z=4.0)
+    edge_issue = edge.inspect()
+    ok &= len(edge_issue) == 1 and edge_issue[0]["code"] == "text_does_not_fit"
+    print(f"   下端 10 px のはみ出しも検出: {edge_issue[0]['message']}")
+
     # --- 3. 図の差分を「なぜ違うか」で取る ---------------------------------- #
     before = build(DrawList((H, W, 3)))
-    before.text_box((12, 158), "before", font_size=12, z=4.0)
+    before.text_box((12, 136), "before", font_size=12, z=4.0)
     after = DrawList.from_json(before.to_json())
     round_trip_exact = after.commands == before.commands
     ok &= round_trip_exact
