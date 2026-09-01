@@ -1845,9 +1845,219 @@ CAPTIONS = {
 }
 
 
+#: 英語版のキャプション。**数値・単位・op 名は ja と完全に一致**させること
+#: (文章は逐語訳でなくてよいが、実測値がずれたら片方が嘘になる)。
+CAPTIONS_EN = {
+    "volume_turntable": (
+        "Spinning a CT — surface and grain, at the same angle",
+        "`marching_cubes`, `phong_shade`, `vol_boundary`, `render_points_frame`",
+        lambda f, r: (
+            "The bundled skeleton CT ({0}×{1}×{2} voxels) meshed at the iso-level "
+            "mean+std = {3:.4f} into {4:,} triangles / {5:,} vertices, shown beside the "
+            "boundary shell of that same threshold — {6:,} shell voxels — "
+            "**spun at the same yaw and the same elevation**. Surface on the left, "
+            "grains on the right. The same shape turning the same way is the best "
+            "evidence there is that no axis got swapped ({7} frames)."
+        ).format(f["volume_shape"][0], f["volume_shape"][1], f["volume_shape"][2],
+                 f["iso_level"], f["n_faces"], f["n_vertices"],
+                 f["n_shell_points"], r["frames"])),
+    "zslices": (
+        "One z slice at a time",
+        "`vol_mip`, `apply_cmap`, nearest-neighbour integer upscaling",
+        lambda f, r: (
+            "The same CT, one slice at a time from z = 0 to {0} (all {1} frames; the bar "
+            "shows the current position). On the right is the MIP over every z. The "
+            "single slice on the left carries a per-frame measurement of the bone "
+            "fraction and the min / max / mean, so an off-by-one — **a missing or a "
+            "duplicated end slice** — cannot hide here. The magnification is "
+            "nearest-neighbour ×{2} (no interpolation — the coarseness of the pixels is "
+            "itself information)."
+        ).format(f["volume_shape"][0] - 1, r["frames"], f["upscale"])),
+    "registration": (
+        "Registering point clouds — from initial offset to convergence",
+        "`registration.icp` (trimmed), `render_points_frame`, `imagedraw.draw_polyline`",
+        lambda f, r: (
+            "Real data (the Itokawa surface, {0:,} points) displaced by a known rigid "
+            "transform of {1:g} degrees plus a translation of {2:.3f}, with isotropic "
+            "noise σ = {3:.4f}; trimmed ICP then runs **one iteration at a time**, {4} "
+            "times. The raw mean point-to-point distance before any correspondence is "
+            "{5:.3f}, the first iteration gives {6:.3f} and the last {7:.3f} "
+            "({8:.1f}× better) — it settles almost exactly on the σ that was injected. "
+            "If the curve bottoms out but the orange has not landed on the blue, you "
+            "have converged without aligning — a failure the numbers alone will not "
+            "show you, and the picture will."
+        ).format(f["n_points"], f["rotation_deg"], f["translation"], f["noise_sigma"],
+                 f["n_iter"], f["rmse_raw_before"], f["rmse_first"], f["rmse_last"],
+                 f["improve_x"])),
+    "normals": (
+        "The colour of normals — the first picture to look at when debugging 3-D",
+        "`render_mesh`, `phong_shade`, world normals as RGB",
+        lambda f, r: (
+            "{0} ({1:,} triangles / {2:,} vertices, surface area {3:.3f}) shot from the "
+            "front and from 180 degrees behind, with the shading placed beside **the "
+            "world normals taken straight to RGB**. A world normal is \"colour = "
+            "direction\", so a surface that joins smoothly joins smoothly in colour too; "
+            "a salt-and-pepper mottle is the sign of broken winding. Measured: {4:,} / "
+            "{1:,} = {5:.1f} % of the faces point outward (the remaining 1 % is what an "
+            "\"outward from the centroid?\" test misses on a non-convex asteroid). "
+            "Coverage is {6:,} px from the front and {7:,} px from the back."
+        ).format(f["source"], f["n_faces"], f["n_vertices"], f["surface_area"],
+                 f["outward_faces"], f["outward_fraction"] * 100.0,
+                 f["coverage_front_px"], f["coverage_back_px"])),
+    "lightfield": (
+        "Moving the viewpoint in a light field — shooting with 49 cameras",
+        "`lf_synthesize`, `lf_subaperture`, `lf_epi`, `lf_refocus`, `lf_stats`",
+        lambda f, r: (
+            "A synthetic light field of {0}×{1} = {2} views × {3}×{4} pixels; the clip "
+            "walks once around the rim of the aperture (all {5} frames). Nearer things "
+            "move further — the difference against the centre view *is* the picture of "
+            "what lies in front. The measured maximum disparity is {6:.2f} px, and the "
+            "slope of the lines in the EPI (row y = {7}) corresponds to it. The "
+            "refocused variance is {8:.5f} at slope = 0 and {9:.5f} at slope = 3."
+        ).format(f["angular"][0], f["angular"][1], f["n_views"], f["spatial"][0],
+                 f["spatial"][1], r["frames"], f["max_slope_px"], f["epi_row"],
+                 f["refocus_var_slope0"], f["refocus_var_slope3"])),
+    "depth3d": (
+        "Lifting a depth map into 3-D",
+        "`render_mesh`, `camera.backproject`, `render_points_frame`",
+        lambda f, r: (
+            "{0} rendered to a {1}×{1} px depth image, of which the {2:,} valid pixels "
+            "({3:.1f} %) — and only those — are back-projected into a solid. Depth runs "
+            "{4:.4f} to {5:.4f}. What matters here is the **pixel-centre convention**: "
+            "`render3d`, `camera.depth_to_points` and `cadmap` all put pixel centres on "
+            "**integer indices**, so projecting the back-projected points again leaves a "
+            "residual of {6:.2e} px rms — rounding error. Add 0.5 by mistake and the "
+            "whole cloud shifts {7:.5f} world units, every point to the same side."
+        ).format(f["source"], f["resolution"], f["n_points"],
+                 f["valid_fraction"] * 100.0, f["depth_min"], f["depth_max"],
+                 f["reprojection_rms_px"], f["offset_if_half_pixel_added"])),
+    "cadmap": (
+        "Mapping defects back onto CAD faces, and counting the faces never seen",
+        "`cad_pixel_to_surface`, `cad_defect_to_cad`, `cad_visible_faces`, "
+        "`cad_surface_to_pixel`",
+        lambda f, r: (
+            "A stepped part built from an SDF ({0:,} triangles, surface area {1:.1f}) "
+            "imaged by a {2}×{2} px inspection camera, in four panels: ① what the camera "
+            "sees ② pixel → CAD face ID ③ the inverse mapping of four defect labels "
+            "drawn on the image ④ faces seen (green) versus faces never seen (red). "
+            "{3:,} pixels hit ({4:.1f} %). {5:.1f} % of the area faces the camera, but "
+            "the tower hides its own base, so **only {6:.1f} % was actually seen** "
+            "({7:,} / {0:,} = {8:.1f} % by face count). {9:,} surface points agree: "
+            "{10:.1f} % visible / {11:.1f} % occluded. Defects #3 and #4 fall outside the "
+            "CAD (zero hits) and stay at zero real area — the point being that they do "
+            "not quietly disappear."
+        ).format(f["n_faces"], f["surface_area"], f["image"][0], f["hit_pixels"],
+                 f["hit_fraction"] * 100.0, f["front_facing_area_fraction"] * 100.0,
+                 f["coverage_area"] * 100.0, f["faces_seen"],
+                 f["coverage_faces"] * 100.0, f["sample_points"],
+                 f["point_visible_fraction"] * 100.0,
+                 f["point_occluded_fraction"] * 100.0)),
+    "crop3d": (
+        "A 3-D processing domain — crop it, process it, paste it back",
+        "`vol_crop_domain`, `vol_gradient_magnitude`, `vol_uncrop`, `vol_boundary`",
+        lambda f, r: (
+            "Cropping y ∈ [20, 56) with margin 2 out of the {0}×{1}×{2} CT gives {3} "
+            "(offset (z,y,x) = {4}). The gradient is computed inside that box alone and "
+            "pasted back into the original coordinate frame; the four stages are shown "
+            "in 3-D (on the right the original whole is overlaid in grey). The round "
+            "trip measures **max {5:g} outside the box (exactly zero) / a maximum "
+            "difference of {6:g} against the original inside it (bit-identical)**. "
+            "A one-voxel slip on the paste-back is invisible in a 2-D table, and obvious "
+            "the moment you overlay and spin."
+        ).format(f["volume_shape"][0], f["volume_shape"][1], f["volume_shape"][2],
+                 "×".join(str(s) for s in f["crop_shape"]),
+                 "(%d, %d, %d)" % tuple(f["offset"]),
+                 f["outside_box_max_after_uncrop"], f["roundtrip_max_abs_error"])),
+    "studio_walk": (
+        "Walking inside 3-D data with the F key (the real Studio screen)",
+        "the first-person mode of Studio's 3-D viewer (`render_points_frame_fp`), "
+        "`viewer3d_project_persp`",
+        lambda f, r: (
+            "The real Fullseye Studio ({0}×{1} px, offscreen) with Itokawa's actual "
+            "shape model open (vertices {2:,} / triangles {3:,}, {4:,} splat points), "
+            "driven by **genuine QKeyEvents**: F, then W to walk forward, drag to look "
+            "around, +/- for the field of view, A to strafe left, R for the entrance, "
+            "F back to the orbit camera — {5} frames. The projection is perspective, so "
+            "what is near grows as you approach, and changing the field of view changes "
+            "the sense of depth itself. One tap = radius/50 = {6:.5f} of a step "
+            "(default FOV {7:.0f} degrees, adjustable {8:.0f}–{9:.0f}). The thin band "
+            "along the bottom is this GIF's progress bar, not part of the UI."
+        ).format(f["window"][0], f["window"][1], f["n_vertices"], f["n_faces"],
+                 f["splat_points"], r["frames"], f["step_per_tap"],
+                 f["fov_default"], f["fov_range"][0], f["fov_range"][1])),
+    "studio_turntable": (
+        "Spinning with the orbit camera — opening a volume straight in the 3-D viewer",
+        "`volume_to_shell_points` (Otsu → boundary shell), the orbit camera of "
+        "Studio's 3-D viewer",
+        lambda f, r: (
+            "The bundled skeleton CT ({0}×{1}×{2}) through exactly the path Studio takes "
+            "when it opens a \"volume file\". Otsu's threshold {3:.4f} picks the "
+            "foreground, and **only its boundary shell** is dropped into {4:,} "
+            "physical-coordinate points (decimation 1/{5}) for display. The rotation is "
+            "not synthesised: it is {7} **real left-drags** (one = yaw +{6:.0f} degrees), "
+            "ending at yaw {8:.0f} degrees."
+        ).format(f["volume_shape"][0], f["volume_shape"][1], f["volume_shape"][2],
+                 f["otsu_threshold"], f["n_points"], f["downsampled_by"],
+                 f["yaw_per_drag_deg"], r["frames"], f["yaw_final"])),
+    "studio_help": (
+        "Opening the new families' op help inside Studio",
+        "Studio's help dialog (`op_help_html` / `op_help_html_3d`), HTML generated by "
+        "`tools/opdocs.py`",
+        lambda f, r: (
+            "Light field → FMCW range-Doppler → quaternion monogenic → photon counting "
+            "(SPAD) → acoustic beamforming → interferometry (angular-spectrum "
+            "propagation) → 3-D ICP and principal curvatures: {0} pages actually opened "
+            "and scrolled from top to bottom, {1} frames. The help text is generated from "
+            "`docs/ops/**/*.md` into real files (2D {2} / 3D {3}). The per-family "
+            "directories hold {4} pages in all, of which only the {5} reachable through "
+            "`tb_*` typed ops can be opened from Studio; the other {6} still cannot be "
+            "reached from the screen (interferometry: 0 of 9)."
+        ).format(len(f["pages"]), r["frames"], f["help_files_2d"], f["help_files_3d"],
+                 f["family_help_total"], f["family_reachable_total"],
+                 f["family_unreachable_total"])),
+    "studio_editor": (
+        "Write it, run it with F5, watch the result arrive",
+        "Studio's Python editor (tabs + F5), `fullseye.apply`, "
+        "`fullseye.segment_objects`",
+        lambda f, r: (
+            "{0} lines typed into the tabbed editor, run with F5, and the output console "
+            "read down to the end — {1} frames (a {2}×{3} px dialog). The run is a real "
+            "child process, not a mock, and the status reads \"{4}\". The last of the "
+            "{5} output lines are {6} — the result of segmenting the coins."
+        ).format(f["code_lines"], r["frames"], f["dialog"][0], f["dialog"][1],
+                 f["status"], f["output_lines"],
+                 " / ".join("`%s`" % x for x in f["output_tail"]))),
+    "studio_opsearch": (
+        "From 900-plus ops to the one you want",
+        "Studio's operator search (across name / HALCON alias / category / docstring)",
+        lambda f, r: (
+            "Typing \"{0}\" one character at a time into the search box narrows a list of "
+            "{1:,} ops down to {2} (measured: {3}). Selecting one puts its "
+            "`in_sort → out_sort` signature in the bottom right — the types are visible, "
+            "so what can be attached next is answered on the spot. A final search for "
+            "\"cad\" returns {4}."
+        ).format(f["query"], f["total_ops"], f["final_matches"],
+                 " → ".join("%s:%d" % (s["text"] or "(empty)", s["matches"])
+                            for s in f["steps"][:len(f["query"]) + 1]),
+                 f["steps"][-1]["matches"])),
+    "studio_pipeline": (
+        "Building a pipeline — a type mismatch shows up in Problems",
+        "Studio's Program panel (HDevelop-style) + Problems, `engine.diagnose_stages`",
+        lambda f, r: (
+            "`gaussian → otsu → opening_circle → sk_clear_border` is added to the coins "
+            "sample one stage at a time; at ⑤ `circularity_xld` (which takes a contour) "
+            "is added on purpose, and it **cannot accept a region**. Problems then says "
+            "\"{0}\" — Fullseye does not fall over after you connect things, it tells you "
+            "about the type mismatch the moment you connect them. Removing it at ⑥ "
+            "returns to \"no problems\" (all {1} frames)."
+        ).format(next((p for s in f["steps"] for p in s["problems"]), "—"),
+                 r["frames"])),
+}
+
+
 #: 可視化を作る過程で「見た目がおかしい」から辿り着いた実測ベースの気づき。
-#: op のコードは一切変更していない(最小再現と期待値・実測値だけを残す)。
-_FINDINGS = r"""
+#: 5 件は本体側で修正済み(「こうだった → こう直った」)、2 件は未解決として残す。
+_FINDINGS_JA_OLD = r"""
 ## 付録: この展示を作る過程で見つかった「見た目の異常」
 
 可視化はバグ発見の道具でもある、という前提で作りました。以下はすべて**実測**で、
