@@ -1220,6 +1220,16 @@ def ex_vesselness(log) -> dict:
     return {
         "name": "wing3d_vesselness_control",
         "title": "Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる",
+        "title_en": "Frangi vs Sato — only a negative control (blobness) settles it",
+        "caption_en": (
+            "A synthetic CT holding one straight tube and two balls, run through two "
+            "tubeness filters and one blobness filter. `vol_frangi` answers "
+            f"**{res['vol_frangi']['ratio']:.2f}x** stronger on the tube than on the "
+            f"balls, but `vol_sato` gives **{res['vol_sato']['ratio']:.2f}x** — it barely "
+            f"tells them apart. The negative control `vol_hessian_blobness` gives "
+            f"**{res['vol_hessian_blobness']['ratio']:.2f}x**, i.e. it prefers the balls, "
+            "so the direction cleanly reverses. \"The vessels lit up\" is not by itself "
+            "evidence of tubeness — that obvious point, drawn."),
         "ops": ["vol_frangi", "vol_sato", "vol_hessian_blobness"],
         "facts": res,
         "caption": ("管 1 本と球 2 個だけの合成 CT に、管状度 2 種と粒状度 1 種を掛けた。"
