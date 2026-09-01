@@ -685,22 +685,39 @@ def ex_drizzle_pair():
     n_driz = len(A.star_detect(view, threshold_sigma=5.0, min_separation=2))
     n_raw = len(A.star_detect(sci, threshold_sigma=5.0, min_separation=2))
 
+    # ★ 原寸で並べると「2 個検出した」が**目では確かめられない**(44x44 の
+    # 中で 1.6 画素の対は数画素の塊にしかならない)。検出器の言い分だけを
+    # 信じさせる図にしないため、対の周りを同じ物理範囲だけ切って拡大する。
+    def _zoom(img, r, c, half_in, scale):
+        r0 = int(round((r + 0.5) * scale - 0.5 - half_in * scale))
+        c0 = int(round((c + 0.5) * scale - 0.5 - half_in * scale))
+        n = int(round(2 * half_in * scale))
+        r0 = max(0, min(img.shape[0] - n, r0))
+        c0 = max(0, min(img.shape[1] - n, c0))
+        return img[r0:r0 + n, c0:c0 + n]
+
+    half_in = 5.0                       # 対の左右 5 入力画素ぶんだけ見る
+    z_single = _zoom(frames[0], 22.0, 21.0 + sep / 2, half_in, 1)
+    z_naive = _zoom(naive, 22.0, 21.0 + sep / 2, half_in, 1)
+    z_view = _zoom(view, 22.0, 21.0 + sep / 2, half_in, 3)
+    z_sci = _zoom(sci, 22.0, 21.0 + sep / 2, half_in, 3)
     panels = [
-        _label(_fit(_gray(frames[0]), 420),
-               ["1 枚(44x44、間隔 %.1f 画素)" % sep,
-                "sigma = 0.55 px = 完全な標本化不足"]),
-        _label(_fit(_gray(naive), 420),
-               ["24 枚を平均",
+        _label(_fit(_gray(z_single), 420),
+               ["1 枚(対の周り %.0f 入力画素を拡大)" % (2 * half_in),
+                "間隔 %.1f px / sigma 0.55 px = 標本化不足" % sep]),
+        _label(_fit(_gray(z_naive), 420),
+               ["24 枚を平均(同じ範囲)",
                 "%s 検出できた星 %d 個" % (M["wrong"], n_naive)]),
-        _label(_fit(_gray(view), 420),
+        _label(_fit(_gray(z_view), 420),
                ["drizzle x3 pixfrac 0.4(sci/wht)",
-                "%s 検出できた星 %d 個" % (M["right"], n_driz)]),
-        _label(_fit(_gray(sci), 420),
+                "%s 検出できた星 %d 個" % (M["right"], n_driz),
+                "2 つの峰が目でも分かれる"]),
+        _label(_fit(_gray(z_sci), 420),
                ["同じ drizzle の生の sci(割らない)",
-                "%s 検出 %d 個 = 被覆の格子" % (M["wrong"], n_raw),
-                "保存則の像と見る像は別物"]),
+                "%s 全画面で検出 %d 個 = 被覆の格子" % (M["wrong"], n_raw),
+                "保存則の像と、見る像は別物"]),
     ]
-    labels = ["1 枚", "平均合成 — %d 個" % n_naive,
+    labels = ["1 枚(拡大)", "平均合成 — %d 個" % n_naive,
               "drizzle x3 (sci/wht) — %d 個" % n_driz,
               "割らないと格子が星に化ける — %d 個" % n_raw]
     sheet = et.contact_sheet(panels, labels, ncols=4, panel_px=420,

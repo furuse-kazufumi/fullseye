@@ -130,23 +130,39 @@ TRUE_SHIFT = (110.0, 128.0)          # forge() の既定 (150,160) - (40,32)
 # (0) 台帳と既存資産の整合                                                      #
 # =========================================================================== #
 def test_registry_is_complete_and_matches_the_module():
-    """台帳の 14 op がすべて実体を持ち、モジュールの公開一覧と一致する。"""
+    """台帳の op がすべて実体を持ち、モジュールの公開一覧と一致する。
+
+    2026-09-02 の TRIZ 点検で ``null_distribution`` / ``evidence_quantile``
+    を足して 14 → 16。両方とも ``measurement`` の**消費側**で、それまで
+    ``hash_distance`` が産むだけの袋小路だった。
+    """
     assert opsimgforensics.missing() == []
     assert sorted(opsimgforensics.list_ops()) == sorted(F.IMGFORENSICS)
-    assert len(F.IMGFORENSICS) == 14
+    assert len(F.IMGFORENSICS) == 16
 
 
 def test_new_sorts_are_not_dead_ends():
-    """新語彙 phash / fingerprint に **産む op も食う op も**あること。
+    """新語彙 phash / fingerprint / measurement に **産む op も食う op も**あること。
 
     片方しか無い語彙は袋小路(または到達不能)で、検査面を増やしたつもりで
     増えていない状態になる。この repo の台帳の規律をここで機械的に固定する。
+
+    ``measurement`` は 2026-09-02 の点検まで**産む 1・食う 0** だった ――
+    「証拠は返すが判定は返さない」設計が正しい一方で、**その証拠を解釈する
+    手段が無い**という穴になっていた。しきい値を同梱すると嘘になるので、
+    利用者自身の清浄データから帰無分布を測る 2 op を消費側に置いて塞いだ。
     """
     d = opsimgforensics.new_sorts()
     assert d["phash"]["producers"] and d["phash"]["consumers"]
     assert d["fingerprint"]["producers"] and d["fingerprint"]["consumers"]
     # fingerprint は image2d への出口を必ず持つ(でないと行き止まり)
     assert ("fingerprint", "image2d") in opsimgforensics.conversion_edges()
+
+    reg = opsimgforensics.OPSIMGFORENSICS
+    produced = {op for op, m in reg.items() if m["out"] == "measurement"}
+    consumed = {op for op, m in reg.items() if "measurement" in m["in"]}
+    assert produced == {"hash_distance"}
+    assert consumed == {"evidence_quantile"}
 
 
 def test_luma_table_is_the_shared_one():
