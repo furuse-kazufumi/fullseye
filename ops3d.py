@@ -725,6 +725,18 @@ RESULT_ADAPTERS = {
     "label_components": lambda r: r[0],             # (labels, n) → labels
     "fscore": lambda r: r[0],                       # (f, precision, recall) → F 値
     "rmse_inliers": lambda r: r[0],                 # (rmse, n_inliers) → rmse
+    # --- wave-6(2026-09-02): `mesh` 型の述語を入れて初めて顕在化した乖離 ---
+    # marching cubes は (verts, faces, normals) を返すが、**この repo の mesh
+    # sort の正典は (verts, faces) の 2-tuple** である。実測: mesh を 1 引数で
+    # 受ける consumer(mesh_props の face_normals / vertex_normals / mesh_area /
+    # vertex_curvature)は 3-tuple に対して "mesh must be a 2-element tuple
+    # (vertices, faces)" を送出し、render3d._mesh_arrays と cadmap._mesh も
+    # 2 要素しか受けない。つまり宣言 out="mesh" のまま 3-tuple を流すと、
+    # 下流の mesh 消費 op が全滅する(pose を dict で名乗っていたのと同じ形)。
+    # 法線自体は正直な情報なので**関数側は削らず**(get() は生の 3-tuple のまま)、
+    # 台帳の型を名乗る call() 側で正典の並びを取り出す。
+    "voxel_to_mesh": lambda r: (r[0], r[1])
+    if isinstance(r, (tuple, list)) and len(r) == 3 else r,
 }
 
 
