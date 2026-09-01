@@ -101,7 +101,7 @@ def test_every_op_runs_and_returns_its_declared_type():
 
 def test_ledger_declares_only_types_the_fuzzer_can_check():
     """The ledger must not invent an out type nobody produces or checks."""
-    assert set(m["out"] for m in opsmotionmag.OPSMOTIONMAG.values()) == {
+    assert {m["out"] for m in opsmotionmag.OPSMOTIONMAG.values()} == {
         "video", "image2d", "table", "pairs"}
     # `video` is a new vocabulary word, so something in this family must *make*
     # one, or it is a dead sort no chain can ever reach.
