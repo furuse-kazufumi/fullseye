@@ -1221,11 +1221,14 @@ def ex_generations(data, log=print):
     # フレームを畳む**ので、書いた枚数と読み戻した枚数が食い違って
     # save_animation の検証に落ちる。溜めは hold_last_ms が担当する。
     info = save_gif(frames, "wingevo_generations", fps=3)
+    swap_gen, gone, came = _first_op_swap(hist)
+    swap = (f"、第 {swap_gen} 世代で `{gone}` が `{came}` に入れ替わった"
+            if swap_gen else "")
     cap = (f"**世代が進むとパイプラインが伸びる/縮む** ―― `{tj['problem']}` を "
            f"seed {tj['seed']} / pop {tj['pop']} で {tj['gens']} 世代、実際に走らせた軌跡。"
-           f"train は {trains[0]:.4f} → {trains[-1]:.4f}、op 数は {lens[0]} → "
-           f"{min(lens)} → {lens[-1]} と伸び縮みし、第 13 世代で "
-           f"`tb_spad_deadtime_correct` が `tb_tcspc_coates_correct` に入れ替わった。"
+           f"train は {trains[0]:.4f} → {trains[-1]:.4f}、op 数は "
+           + " → ".join(str(v) for v in _runs(lens)) + " と伸び縮みし" + swap +
+           "。観測用 holdout は上下する(選択に使っていないので単調ではない)。"
            "使用 op: `evolve.run`, `ops.decode_by_names`。")
     log(f"    wingevo_generations: {info['frames']} frames "
         f"{info['gif_bytes'] / 1e6:.2f} MB")
