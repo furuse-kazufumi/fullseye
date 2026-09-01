@@ -217,12 +217,16 @@ import acoustics as A
 x = A.synthesize_bearing_signal(25600.0, 1.0, carrier_hz=3000.0,
                                 defect_hz=107.0, modulation=0.5)
 
-# 復調帯域を機械に選ばせて、欠陥率を出す
+# 共振の位置を知っているなら、帯域はそのまま渡す
+env = A.envelope_spectrum(x, 25600.0, 2000.0, 4000.0)
+print(env["peak_freq"], env["band_fraction"])    # 107.0 と 0.9999 = 本物
+
+# 知らないなら機械に選ばせる。帯域は spectral_kurtosis が組み立てて返す
+# (band_lo / band_hi。max_freq ± bin_hz を手で組んではいけない ―― 後述)
 sk = A.spectral_kurtosis(x, 25600.0)
-env = A.envelope_spectrum(x, 25600.0,
-                          max(1.0, sk["max_freq"] - sk["bin_hz"]),
-                          sk["max_freq"] + sk["bin_hz"])
-print(env["peak_freq"], env["band_fraction"])    # 107.0 と ~1.0 = 本物
+auto = A.envelope_spectrum(x, 25600.0, sk["band_lo"], sk["band_hi"])
+print(sk["max_kurtosis"], sk["noise_sigma"])     # -0.2725 と 0.1001 = 発見なし
+print(auto["peak_freq"], auto["band_fraction"])  # 1.0 と 5.08e-05 = 中身なし
 
 # 幾何から出した特徴周波数と突き合わせる(1 % 程度のすべりは呼び出し側の裁量)
 b = A.bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)
