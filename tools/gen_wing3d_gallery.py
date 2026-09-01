@@ -2896,7 +2896,10 @@ def ex_isosurface(log) -> dict:
         # 断面での等値線(level のどこを切っているかを 2D でも見せる)
         c2, s2 = _slice_panel(c, vol[48], 440, 92, 260, "viridis", 0, 1, border=C_C)
         c = c2
-        band = np.abs(vol[48] - lv) < 0.022
+        # 等値線は「しきい値を超えた領域の境界」で描く。|value - level| < eps の帯だと
+        # 勾配が急なところで線が途切れて、閉じていない等値線に見えてしまう。
+        above = vol[48] > lv
+        band = above & ~ndi.binary_erosion(above, structure=np.ones((3, 3), bool))
         ys, xs = np.nonzero(band)
         if ys.size:
             sub2 = c[92:92 + 260, 440:440 + 260]
