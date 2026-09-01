@@ -204,12 +204,47 @@ def test_ssim_of_an_image_with_itself_is_one():
     assert M.ssim(a, a.copy()) == pytest.approx(1.0, abs=1e-12)
 
 
+def _structured_image(n=96):
+    """なだらかな勾配 + 矩形 + 円。**構造のある絵**。
+
+    純粋な一様乱数に雑音を足しても SSIM はあまり落ちない(構造が最初から
+    無いので「構造の類似」が壊れない)。実測では σ=0.2 の雑音でも 0.83 に
+    留まる ―― SSIM は雑音の量ではなく**構造**を測る指標なので、これは
+    指標の性質であってバグではない。だから雑音耐性を見る絵は構造を持たせる。
+    """
+    y, x = np.mgrid[0:n, 0:n] / (n - 1.0)
+    img = 0.25 + 0.5 * x
+    img[n // 5: n // 2, n // 5: n // 2] = 0.95
+    img[(y - 0.7) ** 2 + (x - 0.7) ** 2 < 0.02] = 0.05
+    return img
+
+
 def test_ssim_falls_as_noise_grows():
     rng = np.random.default_rng(3)
-    a = rng.random((64, 64))
-    vals = [M.ssim(a, np.clip(a + s * rng.standard_normal(a.shape), 0, 1)) for s in (0.01, 0.05, 0.2)]
-    assert vals[0] > vals[1] > vals[2]
-    assert vals[2] < 0.5
+    a = _structured_image()
+    vals = [M.ssim(a, np.clip(a + s * rng.standard_normal(a.shape), 0, 1), data_range=1.0)
+            for s in (0.01, 0.05, 0.2)]
+    assert vals[0] > vals[1] > vals[2], vals
+    assert vals[0] > 0.9 and vals[2] < 0.3, vals
+
+
+def test_ssim_measures_structure_not_noise_amplitude():
+    """同じ雑音でも、構造のある絵は大きく落ち、雑音そのものは落ちない。
+
+    SSIM を「雑音の量」と読み違えると、雑音だらけの絵で高い値が出たときに
+    「よく復元できた」と誤読する。その差を数値で残しておく。
+    """
+    rng = np.random.default_rng(31)
+    noise_sigma = 0.2
+    structured = _structured_image()
+    pure_noise = rng.random((96, 96))
+    s_struct = M.ssim(structured,
+                      np.clip(structured + noise_sigma * rng.standard_normal((96, 96)), 0, 1),
+                      data_range=1.0)
+    s_noise = M.ssim(pure_noise,
+                     np.clip(pure_noise + noise_sigma * rng.standard_normal((96, 96)), 0, 1),
+                     data_range=1.0)
+    assert s_noise > s_struct + 0.3, (s_noise, s_struct)
 
 
 def test_ssim_agrees_with_an_independent_implementation():
