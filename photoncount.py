@@ -748,7 +748,7 @@ def anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0,
 # --------------------------------------------------------------------------- #
 # spad: dead time and pile-up                                                  #
 # --------------------------------------------------------------------------- #
-def spad_deadtime_apply(rate_hz, dead_time_ns, paralyzable=False):
+def spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False):
     """Distort a true photon rate by the detector's dead time (counts lost).
 
     After every detection a SPAD is blind for a recharge (dead) time ``tau``, so
