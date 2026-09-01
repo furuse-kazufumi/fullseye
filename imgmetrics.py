@@ -837,7 +837,11 @@ def compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False):
         "psnr": psnr(a, b, data_range=dr),
         "ssim": ssim(a, b, data_range=dr, channel_axis=channel_axis),
         "mutual_information": mutual_information(a, b, bins=bins, data_range=dr),
-        "ncd": ncd(np.asarray(a), np.asarray(b)),
+        # float は 256 段に量子化してから測る(生の float では、よく似た 2 枚でも
+        # バイト列の共通部分が消えて「無関係」と読める値が出る ―― ncd の注記)。
+        "ncd": ncd(np.asarray(a), np.asarray(b),
+                   levels=256 if np.issubdtype(np.asarray(a).dtype, np.floating) else None,
+                   data_range=dr if np.issubdtype(np.asarray(a).dtype, np.floating) else None),
     }
     try:
         out["normalized_mutual_information"] = normalized_mutual_information(
