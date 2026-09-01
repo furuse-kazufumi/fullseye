@@ -2252,6 +2252,253 @@ def ex_distance(log) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# 展示 15 — 連結性 6 / 18 / 26 と inner / outer(タイルで比べる)                  #
+# --------------------------------------------------------------------------- #
+def ex_connectivity(log) -> dict:
+    """同じ球の殻を 6 通りの設定で取り、``contact_sheet`` で 1 枚に束ねる。"""
+    n = 96
+    r = 30.0
+    ball = (_aa_ball((n, n, n), (48., 48., 48.), r) > 0.5).astype(np.float64)
+    solid = int(ball.sum())
+    variants, panels, labels = [], [], []
+    R = _rot(28.0, 20.0)
+    center = np.array([48.0, 48.0, 48.0])
+    ps = 300
+    rng = np.random.default_rng(SEED)
+    for side in ("inner", "outer"):
+        for conn in (6, 18, 26):
+            sh = np.asarray(G("vol_boundary")(ball, connectivity=conn, side=side))
+            cnt = int(sh.sum())
+            pct = 100.0 * cnt / solid
+            variants.append({"side": side, "connectivity": conn, "voxels": cnt,
+                             "pct_of_solid": pct})
+            log(f"    side={side:5s} conn={conn:2d} -> {cnt:6d} voxel  {pct:5.2f} %")
+            pts = np.argwhere(sh > 0.5).astype(np.float64)
+            if pts.shape[0] > 16000:
+                pts = pts[np.sort(rng.choice(pts.shape[0], 16000, replace=False))]
+            # 半分に切って殻の「厚み」が見えるようにする(手前側を削ぐ)
+            keep = pts[:, 1] <= 48.0
+            pts = pts[keep]
+            panel = _canvas(ps, ps, C_PANEL)
+            u, v, d = _project(pts[:, [2, 1, 0]], R, 3.6, ps / 2, ps / 2,
+                               center[[2, 1, 0]])
+            _splat(panel, u, v, d, C_B if side == "inner" else C_A, radius=1, shade=0.55)
+            panel = _axis_gizmo(panel, R, 38, ps - 38, size=24)
+            panels.append(panel)
+            labels.append("side='%s'  connectivity=%d  ->  %d voxel (%.2f %%)"
+                          % (side, conn, cnt, pct))
+
+    sheet = et.contact_sheet(
+        panels, labels, ncols=3, panel_px=300,
+        title="vol_boundary の 6 通り ― 同じ球(%d voxel)の殻を、"
+              "触れ方の定義だけ変えて取る(手前半分を切って厚みを見せている)" % solid,
+        title_font_size=20, font_size=15)
+    info = _save_png(sheet, "wing3d_boundary_connectivity", log)
+    thin = variants[0]; thick = variants[5]
+    return {
+        "name": "wing3d_boundary_connectivity",
+        "title": "連結性の定義だけで殻の厚みが %.1f 倍変わる" % (
+            thick["voxels"] / thin["voxels"]),
+        "ops": ["vol_boundary"],
+        "facts": {"solid_voxels": solid, "radius_voxel": r, "variants": variants},
+        "caption": (f"半径 {r:.0f} voxel の合成球({solid:,} voxel)の殻を、`vol_boundary` の "
+                    "`connectivity`(6 / 18 / 26)と `side`(inner / outer)だけ変えて 6 通り"
+                    f"取った。面だけ触れる 6 近傍の内側殻は {thin['voxels']:,} voxel"
+                    f"({thin['pct_of_solid']:.2f} %)、斜めの接触も数える 26 近傍の外側殻は "
+                    f"{thick['voxels']:,} voxel({thick['pct_of_solid']:.2f} %)で、"
+                    f"**同じ形なのに {thick['voxels'] / thin['voxels']:.2f} 倍**違う。"
+                    "「表面のボクセル数」という言い方が定義抜きでは意味を持たない、"
+                    "という 6 枚。手前半分を切って厚みが見えるようにしてある。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
+# 展示 16 — 計測パイプラインのフリップブック                                      #
+# --------------------------------------------------------------------------- #
+def ex_pipeline(log) -> dict:
+    """CT から寸法が出るまでの 7 工程を ``flipbook`` でコマ送りにする。"""
+    n = 112
+    sp = (0.6, 0.6, 0.6)
+    parts = [((14, 56, 34), (98, 56, 34), 8.0),
+             ((44, 30, 34), (44, 84, 82), 5.0),
+             ((78, 84, 36), (78, 30, 82), 4.0)]
+    obj = np.zeros((n, n, n), bool)
+    for p0, p1, rr in parts:
+        obj |= _capsule((n, n, n), p0, p1, rr)
+    # 「CT らしさ」— HU 値を振り、ノイズを乗せる(seed 固定)
+    rng = np.random.default_rng(SEED)
+    hu = np.where(obj, 900.0, -1000.0)
+    hu = hu + rng.normal(0.0, 60.0, hu.shape)
+
+    steps = []
+    win = np.asarray(G("vol_window_level")(hu, 300.0, 1600.0))
+    binv = (win > 0.62).astype(np.float64)
+    lab, nlab = G("vol_label")(binv, connectivity=26)
+    lab = np.asarray(lab)
+    props = G("vol_region_props")(lab, spacing=sp)
+    biggest = max(props, key=lambda p: p["voxel_count"])
+    keep = (lab == biggest["label"]).astype(np.float64)
+    part, off = G("vol_crop_domain")(keep, keep, margin=2)
+    part = np.asarray(part)
+    sk_part = np.asarray(G("skeletonize_vol")(part))
+    sk = np.asarray(G("vol_uncrop")(sk_part.astype(np.float64), off, keep.shape))
+    dt = np.asarray(G("vol_distance_transform")(keep, spacing=sp))
+    ep = np.asarray(G("skeleton_endpoints3d")(sk > 0.5))
+    ju = np.asarray(G("skeleton_junctions3d")(sk > 0.5))
+    br = np.asarray(G("skeleton_branches3d")(sk > 0.5))
+    import scipy.ndimage as ndi
+    st = np.ones((3, 3, 3), int)
+    n_br = ndi.label(br, structure=st)[1]
+    n_ep = ndi.label(ep, structure=st)[1]
+    n_ju = ndi.label(ju, structure=st)[1]
+    max_r = float(dt.max())
+    log(f"    labels {nlab}  largest {biggest['voxel_count']:,} voxel "
+        f"= {biggest['volume']:.1f} mm^3  sphericity {biggest['sphericity']:.4f}")
+    log(f"    crop {keep.shape} -> {part.shape}  "
+        f"memory 1/{keep.nbytes / part.nbytes:.1f}")
+    log(f"    skeleton {int(sk.sum())} voxel  branches {n_br} endpoints {n_ep} "
+        f"junctions {n_ju}   max inscribed radius {max_r:.4f} mm")
+
+    # --- 同じ寸法のコマを作る(flipbook は寸法不一致を例外にする) ---
+    FW, FH = 900, 430
+    pw = 400
+    zc = 56
+    center = np.array([n / 2.0] * 3)
+    Rv = _rot(32.0, 20.0)
+
+    def frame(slice_img, cmap_name, pts, pts_col, note_lines, extra=None):
+        c = _canvas(FW, FH, C_BG)
+        from PIL import Image
+        im = Image.fromarray(_to_u8(_cmap(np.clip(slice_img, 0, 1), cmap_name))).resize(
+            (pw, pw), Image.NEAREST)
+        _paste(c, np.asarray(im, np.float64) / 255.0, 14, 14)
+        c = imagedraw.draw_polyline(
+            c, [(14, 14), (14 + pw - 1, 14), (14 + pw - 1, 14 + pw - 1), (14, 14 + pw - 1)],
+            color=C_RULE, width=1, closed=True)
+        _fill(c, 428, 14, 428 + pw, 14 + pw, C_PANEL)
+        sub = c[14:14 + pw, 428:428 + pw]
+        for p, col, rad in (extra or []):
+            if p is not None and len(p):
+                uu, vv, dd = _project(p[:, [2, 1, 0]], Rv, 2.9, pw / 2, pw / 2,
+                                      center[[2, 1, 0]])
+                _splat(sub, uu, vv, dd, col, radius=rad, shade=0.4)
+        if pts is not None and len(pts):
+            uu, vv, dd = _project(pts[:, [2, 1, 0]], Rv, 2.9, pw / 2, pw / 2,
+                                  center[[2, 1, 0]])
+            _splat(sub, uu, vv, dd, pts_col, radius=1, shade=0.5)
+        c = imagedraw.draw_polyline(
+            c, [(428, 14), (428 + pw - 1, 14), (428 + pw - 1, 14 + pw - 1),
+                (428, 14 + pw - 1)], color=C_RULE, width=1, closed=True)
+        c = _axis_gizmo(c, Rv, 428 + 40, 14 + pw - 40, size=26)
+        c = _text(c, [(18, 18, "断面 z = %d" % zc, C_DIM, 12, True),
+                      (432, 18, "3-D(点で表示)", C_DIM, 12, True)])
+        items = []
+        for i, s in enumerate(note_lines):
+            items.append((14, 14 + pw + 8 + i * 18, s, C_TEXT if i == 0 else C_DIM,
+                          13 if i == 0 else 12, i == 0))
+        return _text(c, items)
+
+    def sample(mask, k=14000):
+        p = np.argwhere(mask).astype(np.float64)
+        if p.shape[0] > k:
+            p = p[np.sort(rng.choice(p.shape[0], k, replace=False))]
+        return p
+
+    dt_col = _cmap(np.clip(dt[keep > 0.5] / max_r, 0, 1), "rainbow")
+    dt_pts = np.argwhere(keep > 0.5).astype(np.float64)
+    if dt_pts.shape[0] > 14000:
+        pick = np.sort(rng.choice(dt_pts.shape[0], 14000, replace=False))
+        dt_pts, dt_col = dt_pts[pick], dt_col[pick]
+
+    steps = [
+        frame(_norm01(hu[zc], -1200, 1400), "gray", sample(hu > 300.0), (0.55, 0.57, 0.62),
+              ["1. 入力 — 合成 CT(HU、ガウスノイズ sigma 60)",
+               "%d^3 voxel, spacing %.1f mm。まだ「物」ではなく数字の塊。" % (n, sp[0]),
+               "この段階の閾値は決めていない。"]),
+        frame(win[zc], "gray", sample(win > 0.62), C_A,
+              ["2. vol_window_level(center 300 HU / width 1600 HU)",
+               "HU を [0,1] に写す。黒潰れ %.1f %% / 白飛び %.1f %%。"
+               % (100 * (win <= 0).mean(), 100 * (win >= 1).mean()),
+               "窓を決めた時点で、あとの二値化の意味が決まる。"]),
+        frame(binv[zc], "gray", sample(binv > 0.5), C_A,
+              ["3. 二値化 + vol_label(26 連結)",
+               "連結成分 %d 個。ノイズ由来の小片が混ざっている。" % nlab,
+               "最大成分は %d voxel = %.1f mm^3。"
+               % (biggest["voxel_count"], biggest["volume"])]),
+        frame(keep[zc], "gray", sample(keep > 0.5), C_D,
+              ["4. 最大成分だけ残す(vol_region_props で選ぶ)",
+               "体積 %.1f mm^3 / 表面積 %.1f mm^2 / 球形度 %.4f"
+               % (biggest["volume"], biggest["surface_area"], biggest["sphericity"]),
+               "重心 (z,y,x) = (%.1f, %.1f, %.1f) voxel"
+               % tuple(biggest["centroid"])]),
+        frame(keep[zc], "gray", sample(keep > 0.5), C_D,
+              ["5. vol_crop_domain — 処理領域だけ持ち歩く",
+               "%s -> %s、メモリ 1/%.1f。offset (z,y,x) = %s"
+               % (tuple(keep.shape), tuple(part.shape),
+                  keep.nbytes / part.nbytes, tuple(off)),
+               "以降の重い op はこの小さい箱の中だけで動く。"]),
+        frame(np.clip(keep[zc] * 0.25 + (sk[zc] > 0.5) * 1.0, 0, 1), "gray",
+              np.argwhere(sk > 0.5).astype(np.float64), (0.95, 0.96, 0.94),
+              ["6. skeletonize_vol — 1 voxel 幅の針金へ",
+               "%d voxel -> %d voxel(%.2f %%)。枝 %d / 分岐 %d / 端点 %d。"
+               % (int(keep.sum()), int(sk.sum()), 100 * sk.sum() / keep.sum(),
+                  n_br, n_ju, n_ep),
+               "つながり方(トポロジー)はここで確定する。"],
+              extra=[(sample(keep > 0.5, 9000), (0.20, 0.22, 0.26), 1)]),
+        frame(_norm01(dt[zc], 0, max_r), "rainbow", None, C_B,
+              ["7. vol_distance_transform — 局所の太さを mm で読む",
+               "最大内接半径 %.4f mm(いちばん太い管の真値 %.3f mm、差 %+.4f mm)"
+               % (max_r, parts[0][2] * sp[0], max_r - parts[0][2] * sp[0]),
+               "虹は 0 mm(紫)から %.2f mm(赤)。ここまで来て初めて寸法になる。" % max_r],
+              extra=[(dt_pts, dt_col, 1)]),
+    ]
+    labels = ["入力(合成 CT)", "vol_window_level", "二値化 + vol_label",
+              "最大成分を選ぶ", "vol_crop_domain", "skeletonize_vol",
+              "vol_distance_transform"]
+    book = et.flipbook(steps, labels,
+                       title="CT のかたまりが寸法になるまで ― 3-D 計測の 7 工程",
+                       font_size=19, title_font_size=23)
+    res = et.save_animation(book, "wing3d_pipeline_flow",
+                            duration_ms=1500, hold_last_ms=2600)
+    log(f"    gif  {os.path.basename(res['gif'])}  {res['frames']} frames  "
+        f"{res['size'][0]}x{res['size'][1]}  {res['gif_bytes'] / 1e6:.2f} MB")
+    info = {"kind": "gif", "gif": res["gif"], "mp4": None, "thumb": res["thumb"],
+            "frames": res["frames"], "fps": None,
+            "gif_shape": (res["size"][1], res["size"][0], 3),
+            "mp4_shape": None, "gif_colors": None,
+            "gif_bytes": res["gif_bytes"], "mp4_bytes": 0,
+            "thumb_bytes": os.path.getsize(res["thumb"]), "thumb_frame": 0,
+            "gif_sha256": res["gif_sha256"], "mp4_sha256": None}
+    return {
+        "name": "wing3d_pipeline_flow",
+        "title": "CT のかたまりが寸法になるまで(7 工程)",
+        "ops": ["vol_window_level", "vol_label", "vol_region_props", "vol_crop_domain",
+                "vol_uncrop", "skeletonize_vol", "skeleton_branches3d",
+                "skeleton_endpoints3d", "skeleton_junctions3d",
+                "vol_distance_transform"],
+        "facts": {"shape": [n, n, n], "spacing_mm": list(sp), "labels": int(nlab),
+                  "largest_voxels": int(biggest["voxel_count"]),
+                  "largest_volume_mm3": float(biggest["volume"]),
+                  "largest_surface_mm2": float(biggest["surface_area"]),
+                  "sphericity": float(biggest["sphericity"]),
+                  "crop_shape": list(part.shape),
+                  "crop_memory_ratio": float(keep.nbytes / part.nbytes),
+                  "skeleton_voxels": int(sk.sum()), "branches": int(n_br),
+                  "endpoints": int(n_ep), "junctions": int(n_ju),
+                  "max_inscribed_radius_mm": max_r,
+                  "truth_radius_mm": parts[0][2] * sp[0]},
+        "caption": (f"ノイズ付きの合成 CT({n}³、spacing {sp[0]} mm)が寸法になるまでの 7 工程を"
+                    "コマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 "
+                    f"{nlab} 個)→ 最大成分({biggest['volume']:.1f} mm³、球形度 "
+                    f"{biggest['sphericity']:.4f})→ `vol_crop_domain` でメモリ "
+                    f"**1/{keep.nbytes / part.nbytes:.1f}** → 細線化(枝 {n_br} / 分岐 "
+                    f"{n_ju} / 端点 {n_ep})→ 距離変換で最大内接半径 "
+                    f"**{max_r:.4f} mm**(真値 {parts[0][2] * sp[0]:.3f} mm)。"
+                    "各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
 # 一覧と実行                                                                     #
 # --------------------------------------------------------------------------- #
 _EXHIBITS = [
