@@ -1063,8 +1063,8 @@ def _stack_envelope(stack, op, remove_bias):
 
 def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
                    mode="gaussian", remove_bias=True, min_visibility=0.30,
-                   max_edge_envelope=0.05, on_invalid="raise",
-                   fill_value=float("nan")):
+                   max_edge_envelope=0.05, carrier_tolerance=2.0,
+                   on_invalid="raise", fill_value=float("nan")):
     """Height map from a ``(Z, H, W)`` coherence-scanning stack — the CSI inversion.
 
     The per-pixel :func:`csi_peak_position`, vectorised. **The scan axis is
