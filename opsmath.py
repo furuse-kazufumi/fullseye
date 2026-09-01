@@ -17,6 +17,8 @@ funct1d に既存で、ここでは重複させない。
     opsmath.list_ops("linalg")
     opsmath.get("mat_svd")(...)
 """
+import numpy as np
+
 import mathops
 
 _MOD = {"mathops": mathops}
