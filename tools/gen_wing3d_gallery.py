@@ -66,7 +66,11 @@ MEDIA = os.path.join(ASSETS, "media")
 THUMBS = os.path.join(ASSETS, "thumbs")
 EXHIBITS = os.path.join(_ROOT, "docs", "articles", "exhibits")
 META_PATH = os.path.join(ASSETS, "_wing3d_meta.json")
-CAPTION_PATH = os.path.join(EXHIBITS, "wing3d.md")
+MANIFEST_PATH = os.path.join(ASSETS, "_wing3d_manifest.md")
+# ``tools/build_exhibits.py`` は ``<id>.<lang>.md`` を優先し、ja に限り ``<id>.md`` も
+# 受ける(en は ja を流用しない)。記事は ja/en 両方を組むので 2 枚とも出す。
+CAPTION_PATH = os.path.join(EXHIBITS, "wing3d.md")          # ja(legacy 名で受理される)
+CAPTION_PATH_EN = os.path.join(EXHIBITS, "wing3d.en.md")
 RAW_BASE = ("https://raw.githubusercontent.com/furuse-kazufumi/fullseye/"
             "master/docs/articles/assets/")
 
