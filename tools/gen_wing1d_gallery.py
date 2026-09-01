@@ -2023,8 +2023,11 @@ def ex_peak_match(log):
         f"(up to sigma {max(r['sigma'] for r in exact):.3f})")
 
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"雑音 σ={r['sigma']:.3f}  /  生の極大 {r['n_raw']} 個  →  "
+                      f"平滑+門で {r['n_strong']} 個(真値 {len(centres)})  /  "
+                      f"テンプレート lag {r['shifts']}")
         fig = Fig(W, H)
         _header(fig, "Finding the peaks, then matching a template to them",
                 f"four gaussian peaks (sigma {width:g} samples) at "
