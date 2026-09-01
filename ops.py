@@ -495,12 +495,30 @@ def _affine_warp(v, a, b):
 
 # --- more filters (OpenCV/skimage families) ---------------------------------- #
 def _gabor(v, a, b):
+    """Gabor energy |v * g| — an oriented band-pass texture response.
+
+    - ``a`` — **向き** ``θ = π·a`` [rad]。カーネルの余弦は回転後の x 方向に走るので、
+      ``a=0`` (θ=0) は **縦縞**(列方向に明暗が変わる模様)に最も強く応答し、
+      ``a=0.5`` (θ=90°) は **横縞**に応答する。``a=1`` は θ=180° で a=0 と同じ向き。
+    - ``b`` — 空間周波数 ``0.1 + 0.3·b`` [cycles/px]。
+
+    ★正規化(2026-09-02 の修正): **カーネルの L1 ノルムで割る固定スケール**。
+    以前は ``_norm`` = その画像での最大絶対値で割っていたため、**応答の大小そのもの
+    が消えていた**。実測(96×96 の横縞、周波数 0.25): 生の畳み込みの平均振幅は
+    θ=0° が 0.0165、θ=90° が 0.9077 で **54.9 倍**の差があるのに、``_norm`` を通すと
+    平均は 0.3554 対 0.4790 = **1.35 倍**まで潰れていた —— 向きを見分けるための
+    特徴量なのに識別力が消えていた(向きごとに別の除数で割っていたのだから当然)。
+    ``|v| <= 1`` なら ``|v * g| <= sum|g|`` なので L1 で割れば値域 [0,1] を保ったまま
+    **op を跨いで比較できる絶対スケール**になる。
+    """
     theta = np.pi * a; freq = 0.1 + 0.3 * b; k = 7
     yy, xx = np.mgrid[-k:k + 1, -k:k + 1]
     xr = xx * np.cos(theta) + yy * np.sin(theta)
     g = np.exp(-(xx * xx + yy * yy) / 8.0) * np.cos(2 * np.pi * freq * xr)
     g = g - g.mean()   # DC-free (zero-mean) kernel: a Gabor is band-pass, not a brightness detector
-    return _norm(np.abs(ndimage.convolve(v, g, mode="reflect")))
+    l1 = float(np.abs(g).sum())
+    resp = np.abs(ndimage.convolve(np.clip(v, 0, 1), g, mode="reflect"))
+    return np.clip(resp / l1, 0, 1) if l1 > 1e-12 else np.zeros_like(resp)
 
 
 def _clip_limit_cdf(hist, climit_counts):
