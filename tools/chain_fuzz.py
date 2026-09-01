@@ -451,6 +451,10 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # histcube = (H, W, T) の到達時刻ヒストグラム。voxel と ndim は同じだが
+    # 時間軸が最後という約束が違う(voxel を渡すと黙って間違った深度が出る)
+    "histcube": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.shape[2] >= 2 and v.dtype.kind == "f",
     # jones = Jones ベクトル(長さ 2 固定の complex)。cpoints(輪郭)と形は
     # 同じでも意味が違い、長さが違えば必ず ValueError なので別プール
     "jones": lambda v: isinstance(v, np.ndarray) and v.shape == (2,)
