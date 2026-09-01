@@ -834,7 +834,10 @@ _DEFS = [
     ("ncc_locate", "matching", "find_ncc_model", IMAGE, MATCH, _ncc_locate),
     # geometry (calibration/rectification basis)
     ("rotate_img", "geometry", "rotate_image", IMAGE, IMAGE, _rotate_img),
-    ("rescale_img", "geometry", "zoom_image_size", IMAGE, IMAGE, _rescale_img),
+    # halcon 名は zoom_image_size → zoom_image_factor へ訂正(2026-09-02): この op は
+    # 目標サイズではなく **倍率** で駆動する。目標サイズ版は backends_auto の
+    # `zoom_image_size` が本当に実装している。
+    ("rescale_img", "geometry", "zoom_image_factor", IMAGE, IMAGE, _rescale_img),
     ("affine_warp", "geometry", "affine_trans_image", IMAGE, IMAGE, _affine_warp),
     # extra filters
     ("gabor", "texture", "gen_gabor", IMAGE, IMAGE, _gabor),
