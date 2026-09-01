@@ -27,9 +27,11 @@ def _seed(sort, seed=0):
         "signal": lambda: np.sin(np.linspace(0, 8 * np.pi, 256)),
         "matrix": lambda: rng.standard_normal((6, 4)),
         "cimage": lambda: np.fft.fftshift(np.fft.fft2(rng.random((32, 32)))),
-        # wide 語彙でだけ現れる 3 sort。image を入力に取る入口 op と一緒に
-        # 有効化されるので、既定モードでは呼ばれない
+        # ここから下は wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)でだけ現れる。
+        # 既定モードでは 1 つも呼ばれない
         "image": lambda: rng.random((32, 32)),
+        "volume": lambda: rng.random((12, 16, 16)),
+        "feature": lambda: 0.5,
         "lightfield": lambda: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32), seed=seed)[0],
         # 非負であることが契約(負のカウントは物理的に存在しない)
