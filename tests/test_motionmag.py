@@ -29,7 +29,6 @@ from scipy import special
 import motionmag as mm
 import opsmotionmag
 
-
 # --------------------------------------------------------------------------- #
 # Constructed inputs with a closed-form answer                                 #
 # --------------------------------------------------------------------------- #

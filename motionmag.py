@@ -110,10 +110,15 @@ from math import comb
 import numpy as np
 
 __all__ = [
+    "band_snr",
+    "complex_steerable_decompose",
+    "complex_steerable_reconstruct",
+    "displacement_series",
+    "motion_magnify",
+    "phase_displacement",
     "synthesize_translation",
-    "complex_steerable_decompose", "complex_steerable_reconstruct",
-    "temporal_bandpass", "temporal_band_power", "band_snr",
-    "motion_magnify", "phase_displacement", "displacement_series",
+    "temporal_band_power",
+    "temporal_bandpass",
 ]
 
 # --------------------------------------------------------------------------- #
@@ -999,8 +1004,7 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
             dphi = np.real(np.fft.ifft(tspec, axis=0))
             shift = gain * dphi * live[None]
             m = float(np.abs(shift).max()) if shift.size else 0.0
-            if m > max_shift:
-                max_shift = m
+            max_shift = max(max_shift, m)
             wgt = (amp * amp) * live
             w_shift2 += float((wgt[None] * shift * shift).sum())
             w_total += float(wgt.sum()) * t
@@ -1185,8 +1189,7 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
         coh_num += float((ewgt * amp).sum())
         coh_den += float((ewgt * mabs).sum())
         km = float(np.sqrt(kx * kx + ky * ky).max())
-        if km > kmax:
-            kmax = km
+        kmax = max(kmax, km)
 
     # Minimum-norm least squares via the closed-form 2x2 symmetric eigenvalues.
     # A plain inverse is wrong here: where every contributing band shares an

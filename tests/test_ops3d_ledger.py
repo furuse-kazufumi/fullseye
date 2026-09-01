@@ -256,6 +256,14 @@ KNOWN_LEDGER_GAPS = {
         "ローカル adapter(r[0])を後掛けしており、そこを直さないと "
         "'table' 宣言に対して VolRLE が返って新たな TYPEMISS になる。"
         "chain_fuzz.py は親が編集中で触れないため、台帳側も現状維持として記録する。",
+    "sphere_sdf":
+        "宣言 in 'points' / out 'sdf' の組が成立しない。実体はボクセル中心の座標場 "
+        "(nx,ny,nz,3) を取り grid.shape[:-1] を返すので、(N,3) 点群を渡すと (N,) の "
+        "1-D になり 'sdf'(3-D 場)にならない。正しくは未登録の sdf_ops.grid_coords を "
+        "台帳に足し、in を新語彙 'coordgrid' にする。単独で入れなかったのは "
+        "(a) points sort の候補リスト長が変わり既存 champion を黙って書き換える "
+        "(docs/WAVE0_STABLE_SLOTS.md)、(b) 新 op の per-op ノート/help 生成を伴う、ため。",
+    "box_sdf": "sphere_sdf と同じ(座標場 op を points 宣言している)。",
 }
 
 
