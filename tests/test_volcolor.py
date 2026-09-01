@@ -353,33 +353,43 @@ def test_spacing_is_fail_closed(bad):
 # --------------------------------------------------------------------------- #
 # (6) 性能 —— 病的入力で二次爆発しないこと                                       #
 # --------------------------------------------------------------------------- #
-def test_shape_stats_is_linear_on_one_label_per_voxel():
-    """1 ボクセル 1 ラベルでボクセル数を 8 倍ずつ増やし、時間の伸びを測る。
+def _best_of(fn, repeats: int = 3) -> float:
+    """3 回のうち最小 —— 時間の測定は上振れしかしないので min が最も安定。"""
+    fn()                                                # warm-up(import / 初回確保)
+    return min(_timed(fn) for _ in range(repeats))
 
-    二次なら 8 倍あたり 64 倍になる。実測(2026-09-02):9.5 / 7.3 / 9.0 倍。
-    ここでは環境差を吸収して **8 倍あたり 20 倍未満**を要求する。
+
+def _timed(fn) -> float:
+    t = time.perf_counter()
+    fn()
+    return time.perf_counter() - t
+
+
+def test_shape_stats_does_not_blow_up_quadratically():
+    """1 ボクセル 1 ラベルでボクセル数を **64 倍**にし、時間の伸びを測る。
+
+    16**3 (512 成分) -> 64**3 (32768 成分) はボクセルも成分も 64 倍。
+    線形なら約 64 倍、二次なら約 4096 倍になる。実測(2026-09-02、best-of-3):
+    0.0037 s -> 0.2556 s = **69 倍**。ここでは環境差を吸収して
+    **400 倍未満**(= 二次の 1/10 以下)を要求する。
     """
-    times, sizes = [], []
-    for side in (16, 32, 64):
-        lab, n = volops.vol_label(checkerboard(side), connectivity=26)
-        assert n == (side // 2) ** 3                    # 本当に 1 ボクセル 1 ラベル
-        t = time.perf_counter()
-        st = volcolor.vol_label_shape_stats(lab)
-        times.append(time.perf_counter() - t)
-        sizes.append(side ** 3)
-        assert len(st) == n
-    for a, b in zip(times, times[1:]):
-        assert b / max(a, 1e-6) < 20.0, (times, sizes)
+    small, n_s = volops.vol_label(checkerboard(16), connectivity=26)
+    big, n_b = volops.vol_label(checkerboard(64), connectivity=26)
+    assert (n_s, n_b) == (512, 32768)                   # 本当に 1 ボクセル 1 ラベル
+    assert big.size / small.size == 64.0
+    t_s = _best_of(lambda: volcolor.vol_label_shape_stats(small))
+    t_b = _best_of(lambda: volcolor.vol_label_shape_stats(big))
+    ratio = t_b / max(t_s, 1e-6)
+    assert len(volcolor.vol_label_shape_stats(big)) == n_b
+    assert ratio < 400.0, (t_s, t_b, ratio)
 
 
-def test_colorize_is_linear_and_cheap_on_many_labels():
-    times = []
-    for side in (32, 64):
-        lab, _ = volops.vol_label(checkerboard(side), connectivity=26)
-        t = time.perf_counter()
-        volcolor.vol_colorize_labels(lab)
-        times.append(time.perf_counter() - t)
-    assert times[1] / max(times[0], 1e-6) < 20.0
+def test_colorize_does_not_blow_up_quadratically():
+    small, _ = volops.vol_label(checkerboard(16), connectivity=26)
+    big, _ = volops.vol_label(checkerboard(64), connectivity=26)
+    t_s = _best_of(lambda: volcolor.vol_colorize_labels(small))
+    t_b = _best_of(lambda: volcolor.vol_colorize_labels(big))
+    assert t_b / max(t_s, 1e-6) < 400.0, (t_s, t_b)
 
 
 def test_label_value_explosion_is_refused_before_allocating():

@@ -1431,12 +1431,17 @@ def ex_studio_help():
     dlg = win._help["dialog"]
     dlg.resize(1000, 720)
     dlg.show(); _pump(8)
-    pages = [("2d", "gaussian"), ("2d", "canny"), ("2d", "watershed"),
-             ("2d", "fft"), ("3d", "icp_point2plane"), ("3d", "principal_curvatures"),
-             ("3d", "sample_object_model_3d"), ("3d", "fit_primitives_3d")]
+    # 新しい族(干渉・音響・ライトフィールド・光子計数・四元数・FMCW・鏡面・
+    # モーション増幅)を、Studio が実際に開ける ``tb_*`` 型付き op で渡り歩く。
+    pages = [("2d", "tb_lf_refocus"),                 # ライトフィールド
+             ("2d", "tb_range_doppler_map"),          # FMCW レンジドップラ
+             ("2d", "tb_monogenic_phase"),            # 四元数 / モノジェニック
+             ("2d", "tb_spad_deadtime_apply"),        # 光子計数 (SPAD)
+             ("2d", "tb_beamform_delay_sum"),         # 音響ビームフォーミング
+             ("2d", "tb_angular_spectrum_propagate"),  # 干渉 / 角スペクトル伝搬
+             ("3d", "icp_point2plane"),
+             ("3d", "principal_curvatures")]
     have3d = set(ops3d.OPS3D)
-    names2d = {r["name"] for r in win._help["entries"].values()
-               if r[0] == "2d"} if False else None
     frames, shown = [], []
     for dim, name in pages:
         if dim == "3d" and name not in have3d:
@@ -1465,16 +1470,25 @@ def ex_studio_help():
     held = frames
     n_2d = len(os.listdir(os.path.join(_ROOT, "studio_assets", "op_help")))
     n_3d = len(os.listdir(os.path.join(_ROOT, "studio_assets", "op_help", "3d")))
-    # Studio が到達できない族(op_help/<族>/ に生成済みだが 2d/3d のどちらでもない)
-    orphan = {}
+    # 族ごとの生成済みヘルプのうち、Studio から開けるのは tb_* 経由の分だけ。
+    import api as _api
+    reg = {r["name"] for r in _api.list_ops(include_algo=True)}
     base = os.path.join(_ROOT, "studio_assets", "op_help")
+    fam = {}
     for d in sorted(os.listdir(base)):
-        p = os.path.join(base, d)
-        if os.path.isdir(p) and d != "3d":
-            orphan[d] = len(os.listdir(p))
+        pd = os.path.join(base, d)
+        if not os.path.isdir(pd) or d == "3d":
+            continue
+        names = [f[:-5] for f in os.listdir(pd) if f.endswith(".html")]
+        reach = [n for n in names if ("tb_" + n) in reg]
+        fam[d] = {"help_pages": len(names), "reachable_via_tb": len(reach),
+                  "unreachable": len(names) - len(reach)}
     facts = {"pages": shown, "help_files_2d": n_2d, "help_files_3d": n_3d,
-             "orphan_family_help_dirs": orphan,
-             "orphan_total": int(sum(orphan.values())),
+             "family_help": fam,
+             "family_help_total": int(sum(v["help_pages"] for v in fam.values())),
+             "family_reachable_total": int(sum(v["reachable_via_tb"] for v in fam.values())),
+             "family_unreachable_total": int(sum(v["unreachable"] for v in fam.values())),
+             "typed_tb_ops_in_registry": int(sum(1 for n in reg if n.startswith("tb_"))),
              "frames": len(held), "dialog": [1000, 720]}
     return save_gif("studio_help", _with_progress(held), facts, fps=3, thumb_index=1)
 
@@ -1585,6 +1599,11 @@ def ex_studio_pipeline():
     import engine
     app, win, model = _studio_app()
     _studio_main(win)
+    # Problems リスト(型不一致の行き先)は pipeline ドックにあり既定で隠れている
+    d = win._docks.get("pipeline")
+    if d is not None:
+        d.show()
+    _pump(6)
     win._load_sample_image("coins"); _pump(6)
     prog = win._program
     steps = [
@@ -1614,10 +1633,8 @@ def ex_studio_pipeline():
                         "problems": [p["message"] for p in probs],
                         "problem_rows": rows})
         frames += [_grab(win)] * 4
-    # 最後に領域オーバーレイ表示へ
-    for cb in win.findChildren(type(win._problems_list).__mro__[0]):
-        break
-    facts = {"steps": records, "frames": len(frames), "window": [WIN_W, WIN_H]}
+    facts = {"steps": records, "frames": len(frames), "window": [WIN_W, WIN_H],
+             "mismatch_detected": any(r["problems"] for r in records)}
     return save_gif("studio_pipeline", _with_progress(frames), facts, fps=4,
                     thumb_index=len(frames) - 5)
 
