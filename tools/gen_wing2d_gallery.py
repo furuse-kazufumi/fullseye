@@ -1931,19 +1931,25 @@ def subject_texture_zoo(log=print) -> dict:
         g0 = np.asarray(fs.apply(texs[k], "gabor", 0.0, 0.5))
         g9 = np.asarray(fs.apply(texs[k], "gabor", 0.5, 0.5))
         lbp = np.asarray(fs.apply(texs[k], "sk_lbp", 0.34, 0.5))
-        panels += [texs[k], g0, g9, lbp]
         # 向きの取り違えに注意: gabor の a=0 (θ=0°) は列方向に振動する核なので
         # **縦縞**に、a=0.5 (θ=90°) は行方向に振動するので **横縞**に反応する。
         # ★2026-09-02: gabor はカーネルの L1 ノルムで割る固定スケールになり、
         #   **op を跨いで比べられる絶対値**を返すようになった。それまでは
         #   「その画像での最大絶対値」で割っていたので、向きごとに別の除数で
         #   割ることになり、応答の大小そのもの = 向きの識別力が潰れていた。
+        #   その代わり返り値は [0,1] のうち下端の狭い範囲 (この 3 模様では平均
+        #   0.007〜0.030) に収まるので、**そのまま貼ると 3 枚とも真っ黒**になる。
+        #   絵は 1〜99%tile で伸長して見せ、ラベルの数字は伸長前の実測値を出す
+        #   (freq_sweep の highpass パネルと同じ約束)。
+        panels += [texs[k], _stretch(g0), _stretch(g9), lbp]
         labels += [
             "%s\nGLCM %.3f / entropy %.3f"
             % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5)),
                float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))),
-            "gabor θ=0°（縦縞）\n平均応答 %.4f" % float(np.mean(g0)),
-            "gabor θ=90°（横縞）\n平均応答 %.4f" % float(np.mean(g9)),
+            "gabor θ=0°（縦縞）— 表示は 1〜99%%tile 伸長\n平均応答 %.5f (伸長前)"
+            % float(np.mean(g0)),
+            "gabor θ=90°（横縞）— 表示は 1〜99%%tile 伸長\n平均応答 %.5f (伸長前)"
+            % float(np.mean(g9)),
             "sk_lbp（局所二値パターン）\nstd %.4f"
             % float(fs.apply(lbp, "gray_histo_abs", 0.5, 0.5))]
     sheet = E.contact_sheet(
