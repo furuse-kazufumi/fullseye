@@ -3,49 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 07:21:38
+- **最終更新**: 2026-09-02 07:45:12
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-d0646a810 auto: test_imgmetrics.py 編集前 (2026-09-02 07:20)
-c74f3b249 auto: imgforensics.py 編集前 (2026-09-02 07:20)
-1514baceb auto: imgmetrics.py 編集前 (2026-09-02 07:19)
-ceb97db4f auto: imgmetrics.py 編集前 (2026-09-02 07:19)
-9d9d07b86 auto: imgmetrics.py 編集前 (2026-09-02 07:19)
-b8d0882d4 auto: pyproject.toml 編集前 (2026-09-02 07:18)
-4a2ad693a auto: __init__.py 編集前 (2026-09-02 07:18)
-69f053801 auto: __init__.py 編集前 (2026-09-02 07:18)
-86cf4ad47 auto: api.py 編集前 (2026-09-02 07:18)
-aaf3bf6fd auto: api.py 編集前 (2026-09-02 07:18)
+981ef5ccb auto: pyproject.toml 編集前 (2026-09-02 07:44)
+8b014b3d0 auto: pyproject.toml 編集前 (2026-09-02 07:43)
+60a9c4716 auto: __init__.py 編集前 (2026-09-02 07:43)
+d7eacedf2 auto: __init__.py 編集前 (2026-09-02 07:43)
+59c796dc4 auto: api.py 編集前 (2026-09-02 07:43)
+e21af2ae5 auto: api.py 編集前 (2026-09-02 07:42)
+633a8892b auto: test_colortransport.py 編集前 (2026-09-02 07:41)
+ff1727f98 auto: colortransport.py 編集前 (2026-09-02 07:41)
+052c30c4c auto: test_colortransport.py 編集前 (2026-09-02 07:40)
+6f5285fc9 auto: test_colortransport.py 編集前 (2026-09-02 07:40)
 ```
 
 ## 現在の git status
 
 ```
-M tests/test_imgmetrics.py
+M pyproject.toml
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:20 .pytest_cache/v/cache/nodeids
-07:20 tests/test_imgmetrics.py
-07:20 astrostack.py
-07:20 imgforensics.py
-07:19 imgmetrics.py
-07:18 pyproject.toml
-07:18 fullseye/__init__.py
-07:18 api.py
-07:17 opsimgmetrics.py
-07:16 .pytest_cache/v/cache/lastfailed
-07:03 docs/SESSION_SUMMARY.md
-06:51 gfx2d.py
-06:51 .ruff_cache/0.16.0/12647664543369260150
-06:51 .ruff_cache/0.16.0/8687138234577503176
-06:51 .ruff_cache/0.16.0/2128910586982079947
+07:44 .pytest_cache/v/cache/nodeids
+07:44 .pytest_cache/v/cache/lastfailed
+07:44 pyproject.toml
+07:43 fullseye/__init__.py
+07:43 api.py
+07:42 opscolortransport.py
+07:41 tests/test_colortransport.py
+07:41 colortransport.py
+07:40 tests/test_imgforensics.py
+07:39 .ruff_cache/0.16.0/8453783446838252932
+07:39 .ruff_cache/0.16.0/5923801791895731384
+07:39 imgforensics.py
+07:39 tests/test_astrostack.py
+07:39 .ruff_cache/0.16.0/7548216809114560901
+07:39 .ruff_cache/0.16.0/12423457018775039278
 ```
 
 ---
