@@ -755,17 +755,33 @@ def subject_denoise_compare(log=print) -> dict:
             "psnr_db": {k: [round(r["psnr"][k], 2) for r in rows]
                         for k in ("noisy", "median", "bilateral", "sk_nlm")},
             "sigma_estimated_by_op": [round(r["sigma_est"], 4) for r in rows],
+            "sigma_estimate_over_true_pct": [
+                round(100.0 * r["sigma_est"] / float(s), 2)
+                for r, s in zip(rows, sigma)],
+            "sigma_estimate_is_monotone": bool(
+                all(rows[i]["sigma_est"] < rows[i + 1]["sigma_est"]
+                    for i in range(len(rows) - 1))),
+            "sigma_estimate_saturated_points": int(
+                sum(1 for r in rows if r["sigma_est"] >= 0.999)),
             "winner_per_sigma": win,
+            "winner_changes": n_swap,
         },
         "caption": (
             "同じ写真に σ=%.3f→%.3f の白色ノイズを乗せ、median・bilateral・"
             "non-local means を固定パラメータで当てて PSNR を実測した 6 パネル。"
             "弱いノイズ (σ=%.3f) では %s が %.2f dB で最良だが、強いノイズ (σ=%.3f) では "
             "%s が %.2f dB で逆転する —— 「どれが一番強いか」はノイズ量と設定次第で、"
-            "掃引の途中で順位が 2 度入れ替わった。ノイズ画像そのものは %.2f→%.2f dB。"
+            "掃引の途中で順位が %d 度入れ替わった。ノイズ画像そのものは %.2f→%.2f dB。"
+            "同じ画像を `estimate_noise` に渡すと %.4f→%.4f が返り、真値の "
+            "%.0f%%→%.0f%% にあたる —— 上端に張り付く点は %d/%d で、σ が 3 倍違えば"
+            "返り値も違う (この op は σ そのものを返す契約になった)。"
             % (sigma[0], sigma[-1], sigma[0], win[0], rows[0]["psnr"][win[0]],
-               sigma[-1], win[-1], rows[-1]["psnr"][win[-1]],
-               rows[0]["psnr"]["noisy"], rows[-1]["psnr"]["noisy"])),
+               sigma[-1], win[-1], rows[-1]["psnr"][win[-1]], n_swap,
+               rows[0]["psnr"]["noisy"], rows[-1]["psnr"]["noisy"],
+               rows[0]["sigma_est"], rows[-1]["sigma_est"],
+               100.0 * rows[0]["sigma_est"] / sigma[0],
+               100.0 * rows[-1]["sigma_est"] / sigma[-1],
+               sum(1 for r in rows if r["sigma_est"] >= 0.999), len(rows))),
     }
 
 
