@@ -556,6 +556,12 @@ def lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False):
                          "crop=True to accept the crop explicitly, or fix the "
                          "offset/pitch." % (op, avail_h, avail_w, V, U, rh, rw))
     Hs, Ws = avail_h // V, avail_w // U
+    if Hs > MAX_SPATIAL or Ws > MAX_SPATIAL:
+        raise ValueError("%s: the decoded sub-aperture images would be %dx%d, "
+                         "over the %d cap (lightfield.MAX_SPATIAL) — the raw "
+                         "frame is %dx%d and _require_image does not bound it, "
+                         "so the bound lives here"
+                         % (op, Hs, Ws, MAX_SPATIAL, Hr, Wr))
     if V * U * Hs * Ws > MAX_LF_ELEMENTS:
         raise ValueError("%s: decoded light field would be %d elements "
                          "((%d, %d, %d, %d)), over the %d cap "
