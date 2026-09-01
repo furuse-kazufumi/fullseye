@@ -499,7 +499,7 @@ class TestFailClosed:
     def test_allocation_caps_fail_closed(self):
         with pytest.raises(ValueError, match="MAX_LF_ELEMENTS"):
             LF.lf_synthesize((0.0,), (64, 64), (512, 512))
-        with pytest.raises(ValueError, match="MAX_ANGULAR"):
+        with pytest.raises(ValueError, match=r"must be in \[1, %d\]" % LF.MAX_ANGULAR):
             LF.lf_synthesize((0.0,), (128, 5))
         with pytest.raises(ValueError, match="MAX_STACK_SLICES"):
             LF.lf_focal_stack(self.lf, np.linspace(-1, 1, 5000))
