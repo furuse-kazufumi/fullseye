@@ -667,6 +667,8 @@ def cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None,
     tol = _num(depth_tol, "depth_tol")
     if tol < 0.0:
         raise ValueError("depth_tol must be >= 0")
+    F, winding_fixed = _orient_for_culling(V, F, cull_backfaces, strict,
+                                           "cad_surface_to_pixel", reports=True)
     K, R, t = _resolve_camera(V, K, R, t, width, height)
 
     uv, depth = camera.project_points(P, K, R, t)
