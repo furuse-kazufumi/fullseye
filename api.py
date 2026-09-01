@@ -296,6 +296,18 @@ from lightfield import (  # noqa: E402,F401
     lf_depth_from_focus, lf_epi_slope, lf_disparity_to_depth, lf_all_in_focus,
     lf_plenoptic_design,
 )
+# 光子計数・時間分解: 光が「連続した明るさ」でなく**数えられる粒**になる領域。
+# 加法ガウス雑音を足す aug_* とは雑音モデルが違い(乗法的なショット雑音)、
+# 到達時刻ヒストグラムから距離・寿命を出す経路をまとめて持つ。
+import photoncount  # noqa: E402  (photon counting / SPAD / TCSPC / dToF / lifetime)
+from photoncount import (  # noqa: E402,F401
+    photon_sample, photon_statistics, photon_uncertainty,
+    anscombe_transform, anscombe_inverse,
+    spad_deadtime_apply, spad_deadtime_correct, tcspc_coates_correct,
+    tcspc_simulate, tcspc_irf_convolve, tcspc_background_subtract, tcspc_stats,
+    dtof_depth, dtof_cube_simulate, dtof_cube_depth,
+    lifetime_fit, lifetime_phasor,
+)
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
     airy_pattern, angular_spectrum_propagate, fraunhofer_pattern, gaussian_beam,
