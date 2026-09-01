@@ -761,6 +761,46 @@ RESULT_ADAPTERS = {
     # 台帳の型を名乗る call() 側で正典の並びを取り出す。
     "voxel_to_mesh": lambda r: (r[0], r[1])
     if isinstance(r, (tuple, list)) and len(r) == 3 else r,
+    # --- wave-7(2026-09-02): 述語の無かった 17 型に述語を入れて顕在化した乖離 ---
+    #
+    # ★ position の正典は **[z, y, x] の 3 成分**。多数決ではなく**消費側を実行
+    # して**決めた: refine_translation_lk / refine_lm は 4 成分を渡すと
+    # "init_pos must have exactly 3 components [z, y, x] (got 4)" で fail-closed
+    # する(実測)。生成器も (8.0, 8.0, 8.0) の 3 成分。ところが match_* 系は
+    # docstring どおり **[score, d, h, w] の 4 成分**を返しており、宣言 out が
+    # "position" のまま流すと後段の精緻化 op が全滅する = 型の嘘。
+    # score 自体は正直な情報なので**関数側は削らず**(get() は 4 成分のまま)、
+    # 台帳の型を名乗る call() 側で座標だけを取り出す(project_points と同じ扱い)。
+    "match_shape_3d": lambda r: r[1:] if len(getattr(r, "shape", ())) == 1
+    and r.shape[0] == 4 else r,
+    "match_chamfer_3d": lambda r: r[1:] if len(getattr(r, "shape", ())) == 1
+    and r.shape[0] == 4 else r,
+    "match_curvature_3d": lambda r: r[1:] if len(getattr(r, "shape", ())) == 1
+    and r.shape[0] == 4 else r,
+    "match_points_ncc": lambda r: r[1:] if len(getattr(r, "shape", ())) == 1
+    and r.shape[0] == 4 else r,
+    "refine_peak_newton": lambda r: r[1:] if len(getattr(r, "shape", ())) == 1
+    and r.shape[0] == 4 else r,
+    # match_hough_3d は **(topk, 4) の投票表**([votes, d, h, w] の votes 降順)。
+    # 複数インスタンスを返せるのがこの op の差別化点なので生の返りは削らないが、
+    # 宣言 out は単数の "position" なので最上位票の座標を取り出す。
+    "match_hough_3d": lambda r: r[0][1:] if len(getattr(r, "shape", ())) == 2
+    and r.shape[1] == 4 else r,
+    # refine_rotation_z は (angle_deg, n_iters) を返す。**op 自身の fail-closed が
+    # 「this op returns (angle_deg, n_iters); pass result[0] when chaining」と
+    # 書いている**(実測: 自分の返りを init_angle_deg へ渡すとこの ValueError)。
+    # つまり angle の正典はスカラ角で、正典の取り出し先も op が明記している
+    "refine_rotation_z": lambda r: r[0] if isinstance(r, (tuple, list)) else r,
+    # sobel3d は conv3d の出力を squeeze せず **(1, 1, D, H, W)** で返す
+    # (関数内のコメントもそう書いている)。同じ match3d の兄弟 hessian3d は
+    # (D,H,W) を 6 本返し、gradient3d も (D,H,W) と (D,H,W,3) なので、
+    # **gradient sort の正典は先頭に batch/channel 軸を持たない場**である。
+    # 内部利用(_unit_grad3d → match_shape_3d の conv3d)は 5-D を前提にしている
+    # ので関数側は変えず、台帳の型を名乗る call() 側で先頭の長さ 1 軸を落とす。
+    "sobel3d": lambda r: tuple(
+        g[0, 0] if len(getattr(g, "shape", ())) == 5 and g.shape[0] == 1
+        and g.shape[1] == 1 else g for g in r)
+    if isinstance(r, (tuple, list)) else r,
 }
 
 
