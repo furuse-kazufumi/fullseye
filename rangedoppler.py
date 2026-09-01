@@ -1091,6 +1091,9 @@ def _cell_snapshot(arr, op, range_bin, doppler_bin):
             "silently beamform a different target than the one you asked for."
             % (op, range_bin, doppler_bin))
     zero = nc // 2
+    spec = np.fft.fftshift(
+        _fft_checked(_fft_checked(arr, 2, op, "range (fast time)"), 1, op,
+                     "Doppler (slow time)"), axes=1)
     if range_bin is None or doppler_bin is None:
         power = np.abs(spec).mean(axis=0)
         if float(power.max()) <= 0.0:

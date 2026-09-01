@@ -450,7 +450,7 @@ def _sigma_from(coherence_length_um, envelope_sigma_um, op: str) -> float:
 # --------------------------------------------------------------------------- #
 def csi_signal_simulate(surface_um=5.0, z_start_um=0.0, z_step_um=0.05,
                         n_planes=241, wavelength_um=0.6,
-                        coherence_length_um=2.8, envelope_sigma_um=None,
+                        envelope_fwhm_um=2.8, envelope_sigma_um=None,
                         bias=0.5, amplitude=0.4, reflectivity=1.0,
                         noise=0.0, seed=0):
     """Synthesise the z-scan interferogram of one pixel over a known surface height.
@@ -506,7 +506,7 @@ def csi_signal_simulate(surface_um=5.0, z_start_um=0.0, z_step_um=0.05,
     dz = _positive(z_step_um, "z_step_um")
     n = _count(n_planes, "n_planes", 3, MAX_SCAN_POINTS)
     lam = _positive(wavelength_um, "wavelength_um")
-    sigma = _sigma_from(coherence_length_um, envelope_sigma_um,
+    sigma = _sigma_from(envelope_fwhm_um, envelope_sigma_um,
                         "csi_signal_simulate")
     a = _nonneg(bias, "bias")
     b = _nonneg(amplitude, "amplitude")
@@ -530,7 +530,7 @@ def csi_signal_simulate(surface_um=5.0, z_start_um=0.0, z_step_um=0.05,
 
 
 def csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241,
-                       wavelength_um=0.6, coherence_length_um=2.8,
+                       wavelength_um=0.6, envelope_fwhm_um=2.8,
                        envelope_sigma_um=None, bias=0.5, amplitude=0.4,
                        reflectivity=None, noise=0.0, seed=0):
     """Synthesise the ``(Z, H, W)`` scan stack an interference microscope records.
@@ -581,7 +581,7 @@ def csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241,
     dz = _positive(z_step_um, "z_step_um")
     n = _count(n_planes, "n_planes", 3, MAX_SCAN_POINTS)
     lam = _positive(wavelength_um, "wavelength_um")
-    sigma = _sigma_from(coherence_length_um, envelope_sigma_um, op)
+    sigma = _sigma_from(envelope_fwhm_um, envelope_sigma_um, op)
     a = _nonneg(bias, "bias")
     b = _nonneg(amplitude, "amplitude")
     sig_n = _nonneg(noise, "noise")
