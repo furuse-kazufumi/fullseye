@@ -2364,6 +2364,13 @@ def ex_envelope_flow(log):
     band = dsp.bandpass(x, fs, lo, hi, order=4)
     env = dsp.envelope(band)
     es = A.envelope_spectrum(x, fs, lo, hi)
+    # 対照 2 本 — 「その数字は本物か」を数で決めるための材料。
+    #   (a) 真の共振をまたぐ帯域(人が答えを知っている場合の理想)
+    #   (b) 同じ帯域に入れた白色雑音(中身が無いときに何が返るか)
+    res_lo, res_hi = fc - 400.0, fc + 400.0
+    es_res = A.envelope_spectrum(x, fs, res_lo, res_hi)
+    ctrl = np.random.default_rng(1).normal(0.0, 1.0, x.size)
+    es_ctrl = A.envelope_spectrum(ctrl, fs, lo, hi)
     # 手で組み直した合成が op の返りと一致することを確かめる(同じ経路のはず)
     e0 = env - env.mean()
     mag_manual = np.abs(np.fft.rfft(e0)) * (2.0 / e0.size)
