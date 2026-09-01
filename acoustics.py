@@ -1853,11 +1853,19 @@ def octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0,
     levels, clamped = _db_power(powers, r * r, fd)
     total = float(ms.sum())
     tl, tc = _db_power(total, r * r, fd)
+    # A band whose upper edge is above Nyquist was only partly measured: the
+    # bins past Nyquist do not exist, so its level is the level of whatever
+    # fraction of the band fits. `f_max` bounds band *centres*, so the top
+    # band's edge always overhangs it by half a band width — at the canonical
+    # 44100 Hz rate the default band set's top third-octave runs to 22387.2 Hz
+    # against a Nyquist of 22050 and loses 336 of the 4604 bins it spans, with
+    # nothing in the old return value saying so.
+    truncated = np.asarray(bands["upper"] > nyq)
     return {
         "centers": bands["centers"], "nominal": bands["nominal"],
         "lower": bands["lower"], "upper": bands["upper"],
         "levels": levels, "powers": powers, "clamped": clamped,
-        "narrow_bands": counts,
+        "narrow_bands": counts, "truncated": truncated,
         "total_level": tl, "total_power": total, "total_clamped": tc,
         "ref": r, "weighting": kind, "fraction": bands["fraction"],
         "resolution_hz": float(fs / n),
