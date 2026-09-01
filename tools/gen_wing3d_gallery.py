@@ -653,10 +653,14 @@ def ex_domain(log) -> dict:
         for _ in range(rep):
             t = time.perf_counter(); fn(); best = min(best, time.perf_counter() - t)
         return best
-    t_full = _timeit(lambda: G("vol_gradient_magnitude")(vol))
-    t_part = _timeit(lambda: G("vol_gradient_magnitude")(np.asarray(part)))
-    log(f"    vol_gradient_magnitude  full {t_full * 1e3:.1f} ms -> "
-        f"cropped {t_part * 1e3:.1f} ms  = {t_full / t_part:.1f}x")
+    t_full_raw = _timeit(lambda: G("vol_gradient_magnitude")(vol))
+    t_part_raw = _timeit(lambda: G("vol_gradient_magnitude")(np.asarray(part)))
+    # 図に焼くのは 1 桁に丸めた値(生の値は meta に残す)= 再生成しても画素が変わらない
+    t_full = _sig1(t_full_raw * 1e3)
+    t_part = _sig1(t_part_raw * 1e3)
+    log(f"    vol_gradient_magnitude  full {t_full_raw * 1e3:.1f} ms -> "
+        f"cropped {t_part_raw * 1e3:.1f} ms  = {t_full_raw / t_part_raw:.1f}x "
+        f"(図には 1 桁丸めで {t_full:.0f} ms -> {t_part:.0f} ms = {t_full / t_part:.0f}x)")
 
     W, H = 1120, 690
     pw = 236
