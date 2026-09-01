@@ -303,7 +303,7 @@ def _check_budget(n_rays: int, n_faces: int) -> None:
 
 
 def _intersect(origin: np.ndarray, dirs: np.ndarray, A: np.ndarray,
-               e1: np.ndarray, e2: np.ndarray, cull: bool):
+               e1: np.ndarray, e2: np.ndarray, cull: bool, t_eps: float):
     """Möller-Trumbore(1997)を光線 × 面で総当たりし、**最も手前の当たり**を返す。
 
     → ``(face_id (N,) int64, tpar (N,), bary (N,3))``。当たりが無い光線は
@@ -318,6 +318,9 @@ def _intersect(origin: np.ndarray, dirs: np.ndarray, A: np.ndarray,
     if n_rays == 0 or n_faces == 0:
         return face_id, tbest, bary
 
+    tvec = origin[None, :] - A                                # (M,3) 光線に依らない
+    qvec = np.cross(tvec, e1)                                 # (M,3) 同上
+    tnum = np.einsum("mk,mk->m", e2, qvec)[None, :]           # 同上
     step = max(1, int(RAY_CHUNK_TESTS // max(n_faces, 1)))
     for s in range(0, n_rays, step):
         d = dirs[s:s + step]                                  # (n,3)
@@ -329,14 +332,12 @@ def _intersect(origin: np.ndarray, dirs: np.ndarray, A: np.ndarray,
         else:
             ok = np.abs(det) > _DET_EPS
         inv = np.where(ok, 1.0 / np.where(ok, det, 1.0), 0.0)
-        tvec = origin[None, :] - A                            # (M,3)
         u = np.einsum("mk,nmk->nm", tvec, pvec) * inv
         ok &= (u >= -_BARY_EPS) & (u <= 1.0 + _BARY_EPS)
-        qvec = np.cross(tvec, e1)                             # (M,3)
         v = np.einsum("nk,mk->nm", d, qvec) * inv
         ok &= (v >= -_BARY_EPS) & (u + v <= 1.0 + _BARY_EPS)
-        tt = np.einsum("mk,mk->m", e2, qvec)[None, :] * inv
-        ok &= tt > _T_EPS
+        tt = tnum * inv
+        ok &= tt > t_eps
         tt = np.where(ok, tt, np.inf)
         idx = np.argmin(tt, axis=1)                           # 同点は最小 face index
         rows = np.arange(tt.shape[0])
@@ -349,6 +350,12 @@ def _intersect(origin: np.ndarray, dirs: np.ndarray, A: np.ndarray,
         vv = v[rows, idx][hit]
         bary[gid[hit]] = np.stack([1.0 - uu - vv, uu, vv], axis=1)
     return face_id, tbest, bary
+
+
+def _t_eps(V: np.ndarray) -> float:
+    """光線パラメータの下限(mesh のスケールに比例)。単位非依存にするため。"""
+    diag = float(np.linalg.norm(V.max(axis=0) - V.min(axis=0))) if V.size else 1.0
+    return _T_EPS_REL * max(diag, 1.0)
 
 
 def _face_geometry(V: np.ndarray, F: np.ndarray):
@@ -424,7 +431,7 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
 
     origin, dirs, _ = _rays_from_pixels(uv, K, R, t)
     A, e1, e2, unit = _face_geometry(V, F)
-    face_id, tpar, bary = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces))
+    face_id, tpar, bary = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces), _t_eps(V))
     hit = face_id >= 0
 
     n = uv.shape[0]
@@ -492,7 +499,7 @@ def cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None,
 
     origin, dirs, _ = _rays_from_pixels(uv, K, R, t)
     A, e1, e2, _ = _face_geometry(V, F)
-    face_id, tpar, _ = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces))
+    face_id, tpar, _ = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces), _t_eps(V))
     blocked = (face_id >= 0) & (tpar < depth * (1.0 - tol) - tol)
     occluder = np.where(blocked, face_id, -1).astype(np.int64)
     visible = in_front & in_image & ~blocked
@@ -559,7 +566,7 @@ def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
     uv = np.stack([cols.astype(np.float64), rows.astype(np.float64)], axis=1)
     origin, dirs, inv_cos_alpha = _rays_from_pixels(uv, K, R, t)
     A, e1, e2, unit = _face_geometry(V, F)
-    face_id, tpar, bary = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces))
+    face_id, tpar, bary = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces), _t_eps(V))
     hit = face_id >= 0
 
     # 面積要素(当たった画素のみ)
@@ -641,6 +648,6 @@ def cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64,
     uv = np.stack([uu.ravel().astype(np.float64), vv.ravel().astype(np.float64)], 1)
     origin, dirs, _ = _rays_from_pixels(uv, K, R, t)
     A, e1, e2, _ = _face_geometry(V, F)
-    face_id, _, _ = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces))
+    face_id, _, _ = _intersect(origin, dirs, A, e1, e2, bool(cull_backfaces), _t_eps(V))
     seen = face_id[face_id >= 0]
     return np.unique(seen).astype(np.int64)
