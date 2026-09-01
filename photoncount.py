@@ -1196,12 +1196,19 @@ def dtof_depth(hist, bin_ps=100.0, mode="peak", offset_ps=0.0,
       * ``"gaussian"`` — the same parabola fitted to the **log** of those three
         samples, which is the exact vertex for a Gaussian pulse.
 
-    Measured on a noiseless simulated return at 2.4371 m (256 bins x 100 ps,
-    500 ps IRF), absolute error: ``peak`` 4.5 mm, ``centroid`` (background
-    subtracted) 1.2e-11 mm, ``parabolic`` 0.86 mm, ``gaussian`` 0.0093 mm. With
-    Poisson noise at 200 signal / 200 ambient photons the same four give 4.5 mm,
-    2.5 mm, 3.7 mm and 3.2 mm — i.e. **once shot noise dominates, the estimator
-    hardly matters**, which is the honest reason not to over-engineer it.
+    Measured on a **noiseless** simulated return at 2.4371 m (256 bins x 100 ps,
+    500 ps IRF), absolute error: ``peak`` 1.29 mm, ``centroid`` 4.4e-16 m,
+    ``parabolic`` 0.067 mm, ``gaussian`` 9.4e-9 m — three orders of magnitude
+    between the crudest and the sharpest.
+
+    With **Poisson noise** (200 signal + 200 ambient photons, seed 0) the same
+    four give 13.7 mm, 146.5 mm (with ``subtract_background=True``), 8.5 mm and
+    8.0 mm. Two honest readings of that: once shot noise dominates the sub-bin
+    estimators buy about 1.6x, not three orders of magnitude, and the centroid
+    **collapses** because a median-subtracted ambient floor still leaves noise
+    across the whole window that drags the first moment toward the centre. Use
+    ``"gaussian"`` or ``"parabolic"`` on noisy data; use ``"centroid"`` only when
+    the background is genuinely gone.
 
     *offset_ps* is a **system delay to remove**: ``t_flight = t_measured -
     offset_ps``, so a positive offset makes the answer *closer*. Returns the
