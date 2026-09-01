@@ -595,18 +595,30 @@ def ex_kurtosis_band(log):
                      "peak_freq": e["peak_freq"], "peak_amp": e["peak_amplitude"],
                      "band_fraction": e["band_fraction"],
                      "prominence": e["peak_prominence"],
+                     "hit": bool(abs(e["peak_freq"] - fd) < 0.5),
                      "freqs": e["freqs"], "magnitude": e["magnitude"]})
     best = int(np.argmax([r["band_fraction"] for r in rows]))
     sk_pick = int(np.argmin(np.abs(centres - sk["max_freq"])))
+    hits = [r for r in rows if r["hit"]]
+    miss = [r for r in rows if not r["hit"]]
     log(f"  band sweep: strongest band_fraction {rows[best]['band_fraction']:.4f} at "
         f"{rows[best]['centre']:.0f} Hz; SK picked {sk['max_freq']:g} Hz "
         f"(frame {sk_pick}, band_fraction {rows[sk_pick]['band_fraction']:.4f})")
+    log(f"  {len(hits)} of {len(rows)} bands return the defect rate {fd:g} Hz; the "
+        f"other {len(miss)} return an arbitrary but finite frequency "
+        f"({min(r['peak_freq'] for r in miss):.0f}-{max(r['peak_freq'] for r in miss):.0f} Hz)")
+    log(f"  band_fraction separates them: hits {min(r['band_fraction'] for r in hits):.4f}"
+        f"-{max(r['band_fraction'] for r in hits):.4f} vs misses "
+        f"{min(r['band_fraction'] for r in miss):.4f}-"
+        f"{max(r['band_fraction'] for r in miss):.4f}")
 
     W, H = GIF_W, GIF_H
     frames, labels = [], []
     for k, r in enumerate(rows):
         labels.append(f"復調帯域 {r['low']:.0f}–{r['high']:.0f} Hz  /  包絡線ピーク "
-                      f"{r['peak_freq']:.1f} Hz  /  band_fraction {r['band_fraction']:.4f}"
+                      f"{r['peak_freq']:.1f} Hz"
+                      + ("(= 欠陥率)" if r["hit"] else "(欠陥率ではない)")
+                      + f"  /  band_fraction {r['band_fraction']:.4f}"
                       + ("  ← SK が選んだ帯域" if k == sk_pick else ""))
         fig = Fig(W, H)
         _header(fig, "Spectral kurtosis picks the demodulation band",
@@ -674,9 +686,12 @@ def ex_kurtosis_band(log):
         fig.text(828, 212, f"{r['band_fraction']:.5f}", C_TEXT, 12, True)
         fig.text(828, 236, "prominence", C_DIM, 11)
         fig.text(828, 252, f"{r['prominence']:.1f}", C_TEXT, 12, True)
+        fig.text(828, 276, ("peak IS the defect rate" if r["hit"] else
+                            "peak is NOT the defect rate"),
+                 C_C if r["hit"] else C_WARN, 12, True)
         if k == sk_pick:
-            fig.text(828, 282, "<- the band SK chose", C_E, 11, True)
-        fig.text(828, 302, f"defect truth {fd:g} Hz", C_DIM, 11)
+            fig.text(828, 296, "<- the band SK chose", C_E, 11, True)
+        fig.text(828, 314, f"defect truth {fd:g} Hz", C_DIM, 11)
 
         # 下: この帯域の包絡線スペクトル
         axe = Ax(fig, 76, 396, W - 30, 552, (0.0, 600.0),
@@ -701,9 +716,25 @@ def ex_kurtosis_band(log):
         fig.text(axe.X(fd) + 6, 400, f"defect truth {fd:g} Hz", C_WARN, 11, True)
         fig.text(axe.x0 + 6, axe.y0 + 4, "amp", C_DIM, 11)
         fig.text(W - 250, 572, "envelope frequency [Hz] ->", C_DIM, 11)
-        fig.text(14, H - 26,
-                 "the peak stays at the defect rate everywhere; what moves is "
-                 "band_fraction - how much of the record is actually in the band.",
+        # 掃引した全帯域の当たり外れを 1 本の帯にして常時見せる
+        strip_y = H - 44
+        fig.box(76, strip_y, W - 30, strip_y + 12, (0.10, 0.11, 0.13))
+        for j, rr in enumerate(rows):
+            x0s = 76 + int(round((W - 106) * j / len(rows)))
+            x1s = 76 + int(round((W - 106) * (j + 1) / len(rows))) - 2
+            fig.box(x0s, strip_y, x1s, strip_y + 12,
+                    C_C if rr["hit"] else (0.32, 0.20, 0.20))
+        fig.box(76 + int(round((W - 106) * k / len(rows))), strip_y - 4,
+                76 + int(round((W - 106) * (k + 1) / len(rows))) - 2, strip_y + 16,
+                C_TRUE)
+        fig.text(76, H - 62, f"across the {len(rows)} swept bands: {len(hits)} return "
+                             f"{fd:g} Hz (teal), {len(miss)} return something else "
+                             f"(dark). The peak frequency alone cannot tell them apart;",
+                 C_DIM, 12)
+        fig.text(76, H - 26, f"band_fraction can: {min(r['band_fraction'] for r in hits):.4f}"
+                             f"-{max(r['band_fraction'] for r in hits):.4f} on the hits "
+                             f"against {min(r['band_fraction'] for r in miss):.4f}"
+                             f"-{max(r['band_fraction'] for r in miss):.4f} on the misses.",
                  C_DIM, 12)
         frames.append(fig.u8())
 
@@ -719,6 +750,14 @@ def ex_kurtosis_band(log):
         "band_width_hz": width_hz,
         "best_band_centre": rows[best]["centre"],
         "best_band_fraction": rows[best]["band_fraction"],
+        "bands_total": len(rows), "bands_returning_defect_rate": len(hits),
+        "bands_returning_something_else": len(miss),
+        "miss_peak_freq_range": (min(r["peak_freq"] for r in miss),
+                                 max(r["peak_freq"] for r in miss)),
+        "hit_band_fraction_range": (min(r["band_fraction"] for r in hits),
+                                    max(r["band_fraction"] for r in hits)),
+        "miss_band_fraction_range": (min(r["band_fraction"] for r in miss),
+                                     max(r["band_fraction"] for r in miss)),
         "sk_band_fraction": rows[sk_pick]["band_fraction"],
         "sk_band_peak_freq": rows[sk_pick]["peak_freq"],
         "worst_band_fraction": min(r["band_fraction"] for r in rows),

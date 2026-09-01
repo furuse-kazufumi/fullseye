@@ -806,8 +806,17 @@ class TestFailClosed:
             tg.beam_hardening_apply(self.sino() - 5.0)
 
     def test_hardening_beyond_what_the_beam_can_produce(self):
-        with pytest.raises(ValueError, match="saturat"):
+        with pytest.raises(ValueError, match="not in line-integral units"):
             tg.beam_hardening_correct(self.sino() * 1e6, 0.5, 0.4)
+
+    def test_the_hardening_curve_does_not_overflow_to_inf(self):
+        """The bug the domain check replaced: past p~745 both exponentials
+        underflow and the direct formula returns +inf, silently."""
+        big = np.full((4, 8), 900.0)
+        out = tg.beam_hardening_apply(big, 0.5, 0.4)
+        assert np.isfinite(out).all()
+        # asymptotically k*p - ln(w)
+        assert out[0, 0] == pytest.approx(0.4 * 900.0 - np.log(0.5), rel=1e-9)
 
     def test_a_float_mask_is_refused(self):
         with pytest.raises(ValueError, match="boolean"):

@@ -61,18 +61,18 @@
 
 *↑ **死んだ型 `flow` が「見える」ようになった** ―— `flow` は単入力で産む op も食う op も無い完全な孤島だった。密なシーンフロー [3, 24, 96, 96] を大きさ(voxel)と色相環(rgbimage)へ出す 2 つの出口を作り、**色の意味の凡例を同じ図に焼いた**。この repo の `flow` は (3,D,H,W) の密フローと (N,3) の散在フローが**同じ型名で同居している**ので、密用 ['flow_magnitude', 'flow_to_rgbimage'] と散在用 ['flow_speed', 'flow_apply'] でop を分け、相手の形は fail-closed にしてある。*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 516x516 px, 0.06 MB)
+- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.07 MB)
 - サムネ: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
-- SHA-256: `39eb8224f7566db882529c4153fddb5cca86cb8b6d19585631b28b3df9c99e13`
+- SHA-256: `ce75caad5b7d998107f9c879883e480fb2da06c7b04bef349cad4d9c20e15ebf`
 
 ## 7. 軸・単位・spacing の取り違えは例外を出さずに通る
 [![軸・単位・spacing の取り違えは例外を出さずに通る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
 
 *↑ **軸・単位・spacing の取り違えは例外を出さずに通る** ―— (u,v) を (v,u) と読むと重心が 0.2 ずれ、spacing を既定のままにするとピークが [4, 5, 6] でなく[10, 12, 14] に立ち、π/6 rad を「度」として渡すと0.5236 度だけ回る。積算窓を 1 ms でなく 1 s と読めば計数は 1000 倍になる。**どれも例外は出ず、有限で、もっともらしい絵が返る** ―― だから op 名に軸を書き、単位を引数にした。*
 
-- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 164x506 px, 0.03 MB)
+- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.04 MB)
 - サムネ: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
-- SHA-256: `834896fc28d838fabcab996262837b6ed8c08a77828df5da953ced99c017b822`
+- SHA-256: `fa59d4e883d82e75021b56f39e6615d2c1359c151b7df1d7a80cecd1ecf70b8a`
 
 ## 8. 死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型
 [![死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)

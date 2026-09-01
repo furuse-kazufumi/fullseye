@@ -684,11 +684,14 @@ def build_flow_colorwheel(log):
              "dense_ops": ["flow_magnitude", "flow_to_rgbimage"],
              "scattered_ops": ["flow_speed", "flow_apply"]}
 
+    # contact_sheet は**拡大しない**(無い解像度があるように見せないため)ので、
+    # 小さい合成パネルはこちらで最近傍拡大してから渡す(補間で滑らかにしない
+    # ＝ 画素の粒が見えるほうが「合成データである」ことが正直に伝わる)。
     panels = [
-        cmap_gray(mag[d // 2], 0.0, float(mag.max())),
-        rgb,
-        wheel,
-        cmap_gray(np.abs(vy[d // 2]), 0.0, float(np.abs(vy).max())),
+        _fit(cmap_gray(mag[d // 2], 0.0, float(mag.max())), 320),
+        _fit(rgb, 320),
+        _fit(wheel, 320),
+        _fit(cmap_gray(np.abs(vy[d // 2]), 0.0, float(np.abs(vy).max())), 320),
     ]
     labels = [
         f"|v| の大きさだけ(最大 {mag.max():.3f})",
@@ -696,7 +699,7 @@ def build_flow_colorwheel(log):
         "凡例: 色相環(角度 = 向き、半径 = 速さ)",
         "面内 1 成分だけ(dz は捨てている)",
     ]
-    sheet = contact_sheet(panels, labels, ncols=2, panel_px=330,
+    sheet = contact_sheet(panels, labels, ncols=2, panel_px=320,
                           title="死んだ型 flow が「見える」ようになった "
                                 "―― 大きさ・向き・凡例")
     info = _png(sheet, "flow_colorwheel", log)
@@ -761,11 +764,11 @@ def build_axis_unit_traps(log):
              "counts_gate_1ms": c_ms, "counts_gate_1s": c_s,
              "counts_ratio": c_s / c_ms}
 
-    panels = [
+    panels = [_fit(x, 300) for x in (
         cmap_gray(right, 0, 1), cmap_gray(wrong, 0, 1),
         cmap_gray(ok.max(0), 0, float(ok.max())), cmap_gray(ng.max(0), 0, float(ng.max())),
         cmap_gray(deg_img, 0, 1), cmap_gray(rad_img, 0, 1),
-    ]
+    )]
     labels = [
         "正: (u,v) = (列, 行)",
         f"★誤り例: (v,u) と読む(重心が {swap_shift:.1f} ずれる。例外は出ない)",

@@ -61,18 +61,18 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 
 *↑ **The dead type `flow` becomes visible** — `flow` was a complete island: no single-input op produced or consumed it. Dense scene flow [3, 24, 96, 96] now exits as magnitude (voxel) and as a colour wheel (rgbimage), **with the colour legend burnt into the same figure**. In this repo `flow` holds two different things under one name — dense (3,D,H,W) and scattered (N,3) — so the dense ops ['flow_magnitude', 'flow_to_rgbimage'] and scattered ops ['flow_speed', 'flow_apply'] are separate and fail closed on the other shape.*
 
-- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 516x516 px, 0.06 MB)
+- PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.07 MB)
 - Thumbnail: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
-- SHA-256: `39eb8224f7566db882529c4153fddb5cca86cb8b6d19585631b28b3df9c99e13`
+- SHA-256: `ce75caad5b7d998107f9c879883e480fb2da06c7b04bef349cad4d9c20e15ebf`
 
 ## 7. Axis, unit and spacing mix-ups pass without raising
 [![Axis, unit and spacing mix-ups pass without raising](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
 
 *↑ **Axis, unit and spacing mix-ups pass without raising** — Reading (u,v) as (v,u) shifts the centroid by 0.2; leaving `spacing` at its default puts the peak at [10, 12, 14] instead of [4, 5, 6]; passing π/6 radians as degrees rotates by 0.5236 degrees; reading the gate as 1 s instead of 1 ms multiplies counts by 1000. **None of these raise; all return finite, plausible pictures** — which is why the axis is in the op name and the unit is an explicit argument.*
 
-- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 164x506 px, 0.03 MB)
+- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.04 MB)
 - Thumbnail: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
-- SHA-256: `834896fc28d838fabcab996262837b6ed8c08a77828df5da953ced99c017b822`
+- SHA-256: `fa59d4e883d82e75021b56f39e6615d2c1359c151b7df1d7a80cecd1ecf70b8a`
 
 ## 8. Dead vocabulary — types that are produced but lead nowhere
 [![Dead vocabulary — types that are produced but lead nowhere](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)
