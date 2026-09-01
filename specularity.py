@@ -1076,9 +1076,26 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     * ``"lstsq"`` — the plain least-squares solution, delegated to
       :func:`photometric.photometric_stereo`. Present so the non-robust baseline
       is available through the same call and its failure is a measurement rather
-      than a claim: with 3 of 8 lights blocked, the plain solve reaches 27.85
-      degrees mean angular error where ``"ransac"`` reaches 0.00 degrees
-      (measured in ``tests/test_specularity.py``).
+      than a claim. On a Gaussian bump lit by 8 lights, with ``k`` of them
+      blocked by a cast shadow, the mean angular error is (all measured in
+      ``tests/test_specularity.py``):
+
+      ==== ========== ============ ============
+      k    ``lstsq``  ``median``   ``ransac``
+      ==== ========== ============ ============
+      1    31.70 deg  0.00011 deg  0.00011 deg
+      2    53.11 deg  0.00011 deg  0.00011 deg
+      3    64.40 deg  0.00011 deg  0.00011 deg
+      4    70.52 deg  70.52 deg    70.20 deg
+      ==== ========== ============ ============
+
+      0.00011 degrees is not "almost right", it is **the floor**: the returned
+      normals are float32 (:mod:`photometric`'s convention), and casting the
+      exact normals to float32 and back measures the same 0.000115 degrees.
+      The ``k = 4`` row is the breakdown point and it is in the table rather
+      than omitted — with half the lights blocked, the four zeroed measurements
+      are themselves a perfectly consistent "black surface" model, so no
+      consensus rule can prefer the true one.
     * ``"ransac"`` — Fischler-Bolles maximum consensus. Every 3-light subset is
       solved exactly, residuals are counted against *threshold*, and the subset
       with the largest consensus wins per pixel; the normal is then refitted by
