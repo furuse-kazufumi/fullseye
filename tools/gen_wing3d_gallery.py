@@ -346,7 +346,12 @@ class Plot:
             c, [(x0, y0), (x0 + w - 1, y0), (x0 + w - 1, y0 + h - 1), (x0, y0 + h - 1)],
             color=C_RULE, width=1, closed=True)
         self.c = c
-        for t in (xticks or []):
+        # 範囲外の目盛りは描かない — 描くと枠の外に数字と線が漏れる(黙って壊れる)
+        xticks = [t for t in (xticks or [])
+                  if min(xlim) - 1e-12 <= t <= max(xlim) + 1e-12]
+        yticks = [t for t in (yticks or [])
+                  if min(ylim) - 1e-12 <= t <= max(ylim) + 1e-12]
+        for t in xticks:
             px = self.px(t)
             self.c = imagedraw.draw_line(self.c, (px, y0 + h - 1), (px, y0 + h - 6),
                                          color=C_RULE, width=1)
