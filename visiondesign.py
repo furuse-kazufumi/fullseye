@@ -195,13 +195,17 @@ def system_feasibility(defect_um=50.0, focal_mm=50.0, working_distance_mm=500.0,
     dof = optics.depth_of_field(focal_mm=geo["focal_mm"], f_number=float(f_number),
                                 subject_mm=geo["working_distance_mm"],
                                 coc_mm=_pos(pixel_pitch_um, "pixel_pitch_um") * 1e-3)
-    dof_total = dof.get("total_mm")
-    dof_ok = bool(dof_total is not None and np.isfinite(dof_total)
-                  and dof_total >= tol)
+    # ``optics.depth_of_field`` は近点/遠点/被写界深度/過焦点距離を返す。
+    # 遠点が無限大なら深度も無限 — その場合はどんな公差も収まる。
+    dof_total = float(dof["depth_mm"])
+    dof_ok = bool(dof.get("far_is_infinite") or
+                  (np.isfinite(dof_total) and dof_total >= tol))
     half_angle_deg = float(np.degrees(np.arctan2(
         geo["sensor_diagonal_mm"] / 2.0, geo["image_distance_mm"])))
-    illum = optics.relative_illumination(half_angle_deg=half_angle_deg)
-    corner = float(np.asarray(illum)[..., -1].ravel()[-1]) if np.size(illum) else 1.0
+    # ``relative_illumination`` は (角度, 相対照度) の曲線。最終行 = 視野の角。
+    illum = np.asarray(optics.relative_illumination(half_angle_deg=half_angle_deg),
+                       dtype=np.float64)
+    corner = float(illum[-1, 1]) if illum.ndim == 2 and illum.shape[1] >= 2 else 1.0
     resolvable = defect >= res["resolution_object_um"]
     verdict = ("resolvable" if resolvable and dof_ok
                else "marginal" if resolvable else "not_resolvable")
