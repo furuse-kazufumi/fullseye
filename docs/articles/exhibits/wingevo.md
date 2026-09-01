@@ -60,21 +60,21 @@
 
 ![世代ごとの champion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingevo_generations.gif)
 
-*↑ **世代が進むとパイプラインが伸びる/縮む** ―― `photon_denoise` を seed 0 / pop 16 で 24 世代、実際に走らせた軌跡。train は 0.6926 → 0.7881、op 数は 5 → 4 → 4 と伸び縮みし、第 13 世代で `tb_spad_deadtime_correct` が `tb_tcspc_coates_correct` に入れ替わった。使用 op: `evolve.run`, `ops.decode_by_names`。*
+*↑ **世代が進むとパイプラインが伸びる/縮む** ―― `photon_denoise` を seed 0 / pop 16 で 24 世代、実際に走らせた軌跡。train は 0.6926 → 0.7881、op 数は 5 → 4 → 5 → 4 → 5 → 4 と伸び縮みし、第 13 世代で `tb_spad_deadtime_correct` が `tb_spad_deadtime_apply` に入れ替わった。観測用 holdout は上下する(選択に使っていないので単調ではない)。使用 op: `evolve.run`, `ops.decode_by_names`。*
 
 
 ### 6. champion のパイプライン図(各段の中間値)
 
 ![champion の各段(光子計数)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingevo_stage_photon.gif)
 
-*↑ **champion のパイプライン図(各段の中間値)** ―― `tb_tcspc_irf_convolve` → `tb_tcspc_background_subtract` → `tb_spad_deadtime_correct` → `tb_spad_deadtime_correct` の 4 段。各段を最終出力とみなしたスコアは 0.7965 → 0.8793 → 0.8794 → 0.8794(恒等 0.4174 / 手 0.5536 / 鎖ぜんぶで 0.7845)。光子族だけで閉じた合成 = 新しい族が「単体で使える op」ではなく「op を繋いだ手順」として価値を出した最初の例。*
+*↑ **champion のパイプライン図(各段の中間値)** ―― `tb_tcspc_irf_convolve` → `tb_tcspc_background_subtract` → `tb_spad_deadtime_correct` → `tb_spad_deadtime_correct` の 4 段。各段を最終出力とみなしたときのスコアは 0.7965 → 0.8793 → 0.8794 → 0.8794(**locked holdout の 1 枚目に対する値**。図に映るのがこの 1 枚なので、8 枚の平均である恒等 0.4174 / 手 0.5536 / champion 0.7845 とは直接は比べられない)。光子族だけで閉じた合成 = 新しい族が「単体で使える op」ではなく「op を繋いだ手順」として価値を出した最初の例。*
 
 
 ### 7. 負けた champion の中身(族をまたいだ寄り道)
 
 ![負けた champion の各段](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingevo_stage_specular.gif)
 
-*↑ **族をまたいだ寄り道が「惜しく見えた」例** ―― `specular_removal` の champion は `tb_rgb_to_quaternion` → `tb_quat_color_rotate` → `tb_quaternion_to_rgb` → `tb_specular_diffuse_split`。RGB を四元数に持ち上げて色空間で回し、戻してから鏡面分離する。観測用 holdout では 0.7761 と手に迫って見えたのに、locked では 0.6277 で手 0.8343 に**負けている**。1 枚目の item に対する段ごとのスコアは 0.0000 → 0.0000 → 0.5411 → 0.5411 で、四元数へ持ち上げている間は 2 段とも 0.0000(型が合わないので採点対象にならない)。*
+*↑ **族をまたいだ寄り道が「惜しく見えた」例** ―― `specular_removal` の champion は `tb_rgb_to_quaternion` → `tb_quat_color_rotate` → `tb_quaternion_to_rgb` → `tb_specular_diffuse_split`。RGB を四元数に持ち上げて色空間で回し、戻してから鏡面分離する。観測用 holdout では 0.7761 と手に迫って見えたのに、locked では 0.6277 で手 0.8343 に**負けている**。locked の 1 枚目に対する段ごとのスコアは 0.0000 → 0.0000 → 0.5411 → 0.5411 で、四元数へ持ち上げている間は 2 段とも 0.0000(型が合わないので採点対象にならない)。最後の段は色を捨てた出力になっているのにスコアが残るのは、この課題の指標が RGB を輝度に落としてから比べるため。*
 
 
 ### 8. 署名の収束

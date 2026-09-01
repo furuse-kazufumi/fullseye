@@ -244,11 +244,11 @@
       1120,
       660
      ],
-     "gif_bytes": 1025476,
-     "gif_sha256": "5c1912361c2ad43f036bd0d86bbb90bd75b7d2da0a6a158192e8f796776e8850",
+     "gif_bytes": 1029544,
+     "gif_sha256": "08ea37284242d9662d2817a24aaa46b0189d014aa73e443f1f307805ac967879",
      "colors": null,
      "fps": 3,
-     "thumb_bytes": 40551
+     "thumb_bytes": 40801
     },
     "numbers": {
      "train": [

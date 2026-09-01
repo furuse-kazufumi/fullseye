@@ -3015,6 +3015,15 @@ def ex_window_sweep(log) -> dict:
     return {
         "name": "wing3d_window_sweep",
         "title": "CT の窓を掃引する ―― 見えるものは窓が決めている",
+        "title_en": "Sweeping the CT window — what you can see is decided by the window",
+        "caption_en": (
+            f"The same single slice with nothing but the `vol_window_level` window changed, "
+            f"{len(rows)} ways. Moving the centre shifts the brightness reference; moving the "
+            "width changes how much is thrown away. Every frame carries the real centre / "
+            "width values, the fraction crushed to black and blown to white, and what colour "
+            "each of six tissues currently reads as. In the soft-tissue window bone saturates "
+            "at 1.00; in the bone window soft tissue and lung sink towards 0 — both are "
+            "discarding information, and one clip shows it."),
         "ops": ["vol_window_level"],
         "facts": {"steps": len(rows), "z": z,
                   "center_range": [min(r["center"] for r in rows),
