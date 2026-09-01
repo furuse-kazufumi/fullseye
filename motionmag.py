@@ -1104,7 +1104,8 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
                          "not in the input" % (op,))
     return {"dx": dx, "dy": dy, "weight": weight, "valid": valid,
             "fps": fs, "band_hz": (lo, hi), "frames": t,
-            "wrap_limit_px": (np.pi / kmax) if kmax > 0.0 else 0.0}
+            "wrap_limit_px": (np.pi / kmax) if kmax > 0.0 else 0.0,
+            "reference_coherence": float(coh_num / coh_den) if coh_den > 0.0 else 1.0}
 
 
 def displacement_series(video, f_lo, f_hi, fps, scales: int = 4,
