@@ -73,9 +73,20 @@ Measured on :func:`synthesize_bearing_signal` (25600 Hz, 1 s, 3 kHz carrier,
 107 Hz defect, ``m = 0.5``) demodulated over 2000-4000 Hz: ``peak_freq =
 107.000000`` Hz, ``peak_amplitude = 0.499677`` — the modulation depth
 itself, because the analytic envelope of that signal is exactly
-``1 + 0.5 cos(2 pi 107 t)``. The raw ``dsp.spectrum`` of the same signal has
-amplitude 4.3e-16 at 107 Hz: the defect rate is not present as a frequency
-component at all, which is the entire point of the operator.
+``1 + 0.5 cos(2 pi 107 t)``. The ordinary spectrum of the same signal has a
+one-sided amplitude of **4.291662e-16** at 107 Hz: the defect rate is not
+present as a frequency component at all, which is the entire point of the
+operator.
+
+**That number needs a scaling step that used to be missing from this
+sentence.** ``dsp.spectrum`` returns the raw ``|rfft|``, not an amplitude —
+the raw value in that bin is **5.493328e-12**, and the one-sided amplitude
+above is ``mag * (2.0 / len(x))``, here ``2/25600 = 7.8125e-05``. This
+operator and :func:`order_spectrum` apply that ``2/N`` *internally* and so
+return amplitudes directly (carrier 3000 Hz: raw 12800, amplitude
+1.000000; sidebands 2893 / 3107 Hz: raw 3200, amplitude 0.250000 = m/2).
+The two conventions coexist in the library, so do not apply ``2/N`` twice
+when comparing a ``dsp`` spectrum against one of these.
 
 **Raises** ``ValueError``: everything :func:`_as_signal` and ``dsp.bandpass``
 refuse (non-finite, complex, masked, non-1-D, a band edge outside

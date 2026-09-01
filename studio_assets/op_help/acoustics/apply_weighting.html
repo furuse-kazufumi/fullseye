@@ -15,6 +15,73 @@
 <p>amplitude <b>0.110373</b> under A weighting, against the closed form</p>
 <p>`<code style="color:#22d3bf">10**(-19.1428/20) = 0.110373</code>`.</p>
 <p>`<code style="color:#22d3bf">kind=&quot;Z&quot;</code>` returns a copy, unchanged.</p>
+<p>**A tone that is not a whole number of periods in the record reads too</p>
+<p>loud, by up to 17 dB, and nothing raises.** The multiplication is over the</p>
+<p>record&#x27;s own DFT, which treats it as periodic; a tone that does not close</p>
+<p>on itself leaks across every bin. That leakage would be harmless if the</p>
+<p>weighting were flat, but A weighting spans about 40 dB between 20 Hz and</p>
+<p>1 kHz, so a sidelobe 40 dB below a 31.5 Hz tone arrives at 1 kHz weighted</p>
+<p>40 dB *higher* and takes over the sum. Measured, 0.5 s at 48 kHz, error</p>
+<p>against the closed-form `<code style="color:#22d3bf">A(f)</code>` for a pure tone:</p>
+<p>==========  =============  ==========  ==============</p>
+<p>f (Hz)      periods        error (dB)  bin-centred?</p>
+<p>==========  =============  ==========  ==============</p>
+<p>22.0        11.0           <b>+0.0000</b>  yes</p>
+<p>31.5        15.75          <b>+7.7986</b>  no</p>
+<p>20.5        10.25          <b>+17.2116</b> no (worst, 20-200 Hz)</p>
+<p>63.0        31.5           +0.1121      no</p>
+<p>100.0       50.0           +0.0000      yes</p>
+<p>1000.0      500.0          -0.0000      yes</p>
+<p>==========  =============  ==========  ==============</p>
+<p><b>31.5 Hz is a nominal one-third-octave centre</b>, so this is a path a real</p>
+<p>measurement walks into rather than a contrived one. The error is always</p>
+<p>*positive* — leakage only ever adds power at frequencies the curve favours.</p>
+<p>Two things confirm the diagnosis is dynamic range and not arithmetic. The</p>
+<p>same 31.5 Hz tone under <b>C</b> weighting, whose tilt over the same span is a</p>
+<p>few dB rather than forty, is off by only <b>+0.0493 dB</b>. And lengthening the</p>
+<p>record to where the tone *does* close on itself removes it entirely: at</p>
+<p>31.5 Hz the error is +7.7524 dB over 0.25 s, +7.7986 over 0.5 s, +0.4615</p>
+<p>over 1 s, and <b>-0.0000</b> over 2 s and 4 s (63 and 126 whole periods).</p>
+<p>Two candidate cures were measured (error in dB against the closed form,</p>
+<p>0.5 s at 48 kHz):</p>
+<p>===================================  ========  ========  ========</p>
+<p>treatment                            31.5 Hz   20.5 Hz   22.0 Hz</p>
+<p>===================================  ========  ========  ========</p>
+<p>as implemented (rectangular)         +7.7986   +17.2116  +0.0000</p>
+<p>zero-pad x4 (linear convolution)     +5.5620   +14.3352  +0.7969</p>
+<p>Hann window, corrected for its gain  <b>+0.0534</b>  <b>+0.1841</b>  +0.1505</p>
+<p>===================================  ========  ========  ========</p>
+<p>Padding barely helps — zero-padding a tone puts an abrupt edge into the</p>
+<p>record and an edge is broadband. <b>A Hann window does essentially cure it</b>,</p>
+<p>turning +17 dB into +0.18 dB, at the cost of the bin-centred columns which</p>
+<p>go from exactly 0 to about 0.15 dB. So why is it not the default?</p>
+<p><b>Because it would trade a loud error for a quiet one.</b> `<code style="color:#22d3bf">L_eq</code>` is an</p>
+<p>*energy average over the record*, and a window is not energy-preserving for</p>
+<p>anything that is not stationary. Measured with Z weighting (so the window is</p>
+<p>the only thing acting) on a 50 ms 1 kHz burst inside a 0.5 s record, all</p>
+<p>three placements being `<code style="color:#22d3bf">-13.0103</code>` dB unwindowed as they must be:</p>
+<p>==============  ============  ===========</p>
+<p>burst position  Hann (dB)     difference</p>
+<p>==============  ============  ===========</p>
+<p>start           -36.0587      <b>-23.05</b></p>
+<p>centre          -8.8218       +4.19</p>
+<p>end             -36.0587      <b>-23.05</b></p>
+<p>==============  ============  ===========</p>
+<p>A window makes the answer depend on *where in the record the sound happened*,</p>
+<p>which is precisely the &quot;plausible wrong number&quot; this module refuses to ship</p>
+<p>by default. So the rectangular behaviour stays, and the Hann estimate is</p>
+<p>available by asking for it: `<code style="color:#22d3bf">equivalent_level(..., window=&quot;hann&quot;)</code>`. Use it</p>
+<p>when the record is stationary and tonal — which is exactly when the leakage</p>
+<p>bites — and never when the level of a transient is the point.</p>
+<p>A cure with neither cost is a different implementation entirely: the</p>
+<p>standard cascade of A-weighting biquads in the time domain, which would give</p>
+<p>up the exact-0-dB-at-1-kHz-by-construction property this function is built</p>
+<p>on, and the zero group delay promised above.</p>
+<p><b>Also worth doing</b>: give the analysis enough record that the content is</p>
+<p>many periods long, prefer durations that are whole multiples of the period</p>
+<p>you care about, and read a low-frequency A-weighted level from</p>
+<p>:func:<code style="color:#22d3bf">octave_spectrum</code> (which reports per-band power, so leakage is visible</p>
+<p>as energy in bands where none belongs) rather than from a single number.</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses, an unknown</p>
 <p>`<code style="color:#22d3bf">kind</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rate &lt;= 0</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

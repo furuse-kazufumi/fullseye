@@ -793,6 +793,20 @@ def _sh_region_feat(p):
         if metric == "count":
             st = ndimage.generate_binary_structure(2, 2 if connectivity == 8 else 1)
             return np.float64(ndimage.label(m, structure=st)[1])
+        if metric == "area_center":
+            # HALCON area_center = (Area, Row, Column)。1 スカラでは表せないので
+            # match sort の 1-D ベクトルで 3 つとも返す(`ops._ncc_locate` と同形)。
+            # 3 成分とも **解像度に依らない** よう [0,1] 正規化する:
+            #   [0] 面積 / 画像画素数、[1] 重心行 / (H-1)、[2] 重心列 / (W-1)。
+            # 領域が空のときは (0, 0.5, 0.5) = 面積ゼロ・中心は画像中心(fail-soft)。
+            H, W = m.shape[:2]
+            area = float(m.sum())
+            if area <= 0:
+                return np.array([0.0, 0.5, 0.5])
+            ys, xs = np.nonzero(m)
+            return np.array([area / float(m.size),
+                             float(ys.mean()) / max(H - 1, 1),
+                             float(xs.mean()) / max(W - 1, 1)])
         big, lab, n = _largest_label(m)
         if metric == "area":
             return np.float64(np.mean(m))

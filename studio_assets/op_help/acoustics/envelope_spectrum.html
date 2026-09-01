@@ -50,9 +50,19 @@
 <p>107 Hz defect, `<code style="color:#22d3bf">m = 0.5</code><code style="color:#22d3bf">) demodulated over 2000-4000 Hz: </code>`peak_freq =</p>
 <p>107.000000`<code style="color:#22d3bf"> Hz, </code><code style="color:#22d3bf">peak_amplitude = 0.499677</code>` — the modulation depth</p>
 <p>itself, because the analytic envelope of that signal is exactly</p>
-<p>`<code style="color:#22d3bf">1 + 0.5 cos(2 pi 107 t)</code><code style="color:#22d3bf">. The raw </code><code style="color:#22d3bf">dsp.spectrum</code>` of the same signal has</p>
-<p>amplitude 4.3e-16 at 107 Hz: the defect rate is not present as a frequency</p>
-<p>component at all, which is the entire point of the operator.</p>
+<p>`<code style="color:#22d3bf">1 + 0.5 cos(2 pi 107 t)</code>`. The ordinary spectrum of the same signal has a</p>
+<p>one-sided amplitude of <b>4.291662e-16</b> at 107 Hz: the defect rate is not</p>
+<p>present as a frequency component at all, which is the entire point of the</p>
+<p>operator.</p>
+<p>**That number needs a scaling step that used to be missing from this</p>
+<p>sentence.** `<code style="color:#22d3bf">dsp.spectrum</code><code style="color:#22d3bf"> returns the raw </code><code style="color:#22d3bf">|rfft|</code>`, not an amplitude —</p>
+<p>the raw value in that bin is <b>5.493328e-12</b>, and the one-sided amplitude</p>
+<p>above is `<code style="color:#22d3bf">mag * (2.0 / len(x))</code><code style="color:#22d3bf">, here </code><code style="color:#22d3bf">2/25600 = 7.8125e-05</code>`. This</p>
+<p>operator and :func:<code style="color:#22d3bf">order_spectrum</code> apply that `<code style="color:#22d3bf">2/N</code>` *internally* and so</p>
+<p>return amplitudes directly (carrier 3000 Hz: raw 12800, amplitude</p>
+<p>1.000000; sidebands 2893 / 3107 Hz: raw 3200, amplitude 0.250000 = m/2).</p>
+<p>The two conventions coexist in the library, so do not apply `<code style="color:#22d3bf">2/N</code>` twice</p>
+<p>when comparing a `<code style="color:#22d3bf">dsp</code>` spectrum against one of these.</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal<code style="color:#22d3bf"> and </code><code style="color:#22d3bf">dsp.bandpass</code>`</p>
 <p>refuse (non-finite, complex, masked, non-1-D, a band edge outside</p>
 <p>`<code style="color:#22d3bf">(0, rate/2)</code>`, a signal too short for zero-phase filtering), plus a</p>
