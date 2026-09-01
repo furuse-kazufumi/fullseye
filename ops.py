@@ -216,7 +216,15 @@ def _fft_mask(v, cutoff, high):
 
 def _lowpass(v, a, b): return np.clip(_fft_mask(v, 0.05 + 0.4 * a, False), 0, 1)
 def _highpass(v, a, b): return _signed01(_fft_mask(v, 0.02 + 0.3 * a, True))
-def _unsharp(v, a, b): return v + (1.5 * a) * (v - ndimage.gaussian_filter(v, 0.5 + 1.5 * b))
+def _unsharp(v, a, b):
+    """Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。
+
+    ``v + k*(v - blur)`` は定義上オーバーシュートする(実測 min=-0.1499 /
+    max=+1.1499)。`_apply` は段間で同じ clip を掛けるので **パイプライン結果は
+    ビット不変**だが、`fullseye.apply` を単発で呼ぶ経路だけは生値が出ていて、
+    `image` の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側
+    (`accel._unsharp`)も同じ clip を持つ。"""
+    return np.clip(v + (1.5 * a) * (v - ndimage.gaussian_filter(v, 0.5 + 1.5 * b)), 0, 1)
 
 
 # --- image -> region (segmentation) ------------------------------------------ #
