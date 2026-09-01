@@ -389,6 +389,271 @@
         ]
       },
       "seconds": 4.71
+    },
+    {
+      "kind": "gif",
+      "name": "studio_help",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_help.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_help_thumb.jpg",
+      "frames": 18,
+      "size": [
+        1000,
+        720
+      ],
+      "fps": 3,
+      "bytes": 390663,
+      "thumb_bytes": 39489,
+      "thumb_frame": 1,
+      "mean_abs_delta": 1.275,
+      "sha256": "13aa8be21b9414ef2b1ba7199c4ff25a9b14d50ec47229c470b7d30847a02c13",
+      "thumb_sha256": "551ccc11261ca887b328549757d8f8bee76110ff54a321a722e970a4da033201",
+      "facts": {
+        "pages": [
+          {
+            "dim": "2d",
+            "name": "gaussian",
+            "authored": true,
+            "chars": 922
+          },
+          {
+            "dim": "2d",
+            "name": "canny",
+            "authored": true,
+            "chars": 1033
+          },
+          {
+            "dim": "2d",
+            "name": "watershed",
+            "authored": false,
+            "chars": 252
+          },
+          {
+            "dim": "2d",
+            "name": "fft",
+            "authored": false,
+            "chars": 240
+          },
+          {
+            "dim": "3d",
+            "name": "icp_point2plane",
+            "authored": true,
+            "chars": 993
+          },
+          {
+            "dim": "3d",
+            "name": "principal_curvatures",
+            "authored": true,
+            "chars": 866
+          }
+        ],
+        "help_files_2d": 879,
+        "help_files_3d": 310,
+        "orphan_family_help_dirs": {
+          "acoustics": 19,
+          "interferometry": 9,
+          "lightfield": 17,
+          "math": 26,
+          "motionmag": 9,
+          "optics": 18,
+          "photon": 17,
+          "quat": 19,
+          "rangedoppler": 8,
+          "specular": 13
+        },
+        "orphan_total": 155,
+        "frames": 18,
+        "dialog": [
+          1000,
+          720
+        ]
+      },
+      "seconds": 2.32
+    },
+    {
+      "kind": "gif",
+      "name": "studio_editor",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_editor.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_editor_thumb.jpg",
+      "frames": 316,
+      "size": [
+        1060,
+        740
+      ],
+      "fps": 6,
+      "bytes": 1067648,
+      "thumb_bytes": 49457,
+      "thumb_frame": 315,
+      "mean_abs_delta": 0.01,
+      "sha256": "73dff36ab884cab6f76fed0dc6cc2ad0301d642a2cb01cf9e2548e7231bfd0be",
+      "thumb_sha256": "71d9ef593ce29d09d6b32664fd6a3ab0c4d65170864eb005c4f4498a403a4694",
+      "facts": {
+        "code_lines": 18,
+        "frames": 316,
+        "status": "PASS ✓ (exit 0)",
+        "output_lines": 6,
+        "output_tail": [
+          "foreground fraction = 0.2995",
+          "objects = 21",
+          "area  min/median/max = 1118 / 1494 / 3084"
+        ],
+        "dialog": [
+          1060,
+          740
+        ]
+      },
+      "seconds": 22.06
+    },
+    {
+      "kind": "gif",
+      "name": "studio_opsearch",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_opsearch.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_opsearch_thumb.jpg",
+      "frames": 17,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 4,
+      "bytes": 540210,
+      "thumb_bytes": 41223,
+      "thumb_frame": 6,
+      "mean_abs_delta": 0.403,
+      "sha256": "6825e2853ee81a051c5fd0af8c03edd8e06f55c8a0a2414391a4ca428fedb047",
+      "thumb_sha256": "5fa25da2e6baa9224b4423e955dfd6522699c51c7dd60383f01721ca291d67a0",
+      "facts": {
+        "total_ops": 903,
+        "query": "watershed",
+        "steps": [
+          {
+            "text": "",
+            "matches": 903
+          },
+          {
+            "text": "w",
+            "matches": 77
+          },
+          {
+            "text": "wa",
+            "matches": 11
+          },
+          {
+            "text": "wat",
+            "matches": 4
+          },
+          {
+            "text": "wate",
+            "matches": 4
+          },
+          {
+            "text": "water",
+            "matches": 4
+          },
+          {
+            "text": "waters",
+            "matches": 4
+          },
+          {
+            "text": "watersh",
+            "matches": 4
+          },
+          {
+            "text": "watershe",
+            "matches": 4
+          },
+          {
+            "text": "watershed",
+            "matches": 4
+          },
+          {
+            "text": "cad",
+            "matches": 0
+          }
+        ],
+        "final_matches": 4,
+        "selected_found": true,
+        "frames": 17,
+        "window": [
+          1280,
+          800
+        ]
+      },
+      "seconds": 2.77
+    },
+    {
+      "kind": "gif",
+      "name": "studio_pipeline",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_pipeline.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_pipeline_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 4,
+      "bytes": 480061,
+      "thumb_bytes": 41967,
+      "thumb_frame": 19,
+      "mean_abs_delta": 2.274,
+      "sha256": "88b0e3779421c7ee09cb10f64dbd2fed14c44ee36f32d2a0f3c621f236b34079",
+      "thumb_sha256": "4322a63305342b02b5e07b966c2f59968551577bdbce1f1883993199a2778feb",
+      "facts": {
+        "steps": [
+          {
+            "note": "① 平滑化だけ",
+            "stages": 1,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "② Otsu で 2 値化",
+            "stages": 2,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "③ 円形オープニングで粒を分ける",
+            "stages": 3,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "④ 枠に触れた領域を捨てる",
+            "stages": 4,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "⑤ わざと型の合わない op を足す",
+            "stages": 5,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          },
+          {
+            "note": "⑥ 外して元に戻す",
+            "stages": 4,
+            "problems": [],
+            "problem_rows": [
+              "no problems"
+            ]
+          }
+        ],
+        "frames": 24,
+        "window": [
+          1280,
+          800
+        ]
+      },
+      "seconds": 3.71
     }
   ]
 }

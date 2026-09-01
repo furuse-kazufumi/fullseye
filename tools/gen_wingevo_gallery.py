@@ -1251,14 +1251,25 @@ def ex_stage_photon(data, log=print):
              "provenance": f"champion={src} / 中間値は本スクリプトで実測"}]
 
 
-def _rgbish(a, px=576):
-    """(H,W,3) はそのまま、(H,W,4)(四元数)はベクトル部 3 成分を色として出す。"""
+def _rgbish(a, scale, px=512, w=1000, h=560):
+    """(H,W,3) はそのまま、(H,W,4)(四元数)はベクトル部 3 成分を色として出す。
+
+    明るさは**全コマ共通の scale** で割る(コマごとに自動で伸ばすと、暗く
+    なったのか明るくなったのかが消える)。コマ送りに載せるので幅は固定。
+    """
     arr = np.asarray(a, np.float64)
+    note = None
     if arr.ndim == 3 and arr.shape[2] == 4:
         arr = arr[:, :, 1:4]
-    arr = np.clip(arr / max(1e-9, float(np.max(np.abs(arr)))), 0.0, 1.0)
+        note = "quaternion"
+    arr = np.clip(arr / scale, 0.0, 1.0)
     k = max(1, px // max(1, arr.shape[0]))
-    return upscale(to_rgb(arr), k)
+    pan = upscale(to_rgb(arr), k)
+    frame = canvas(w, h, C_BG)
+    ph, pw = pan.shape[:2]
+    y0, x0 = (h - ph) // 2, (w - pw) // 2
+    frame[y0:y0 + ph, x0:x0 + pw] = pan
+    return frame, note
 
 
 def ex_stage_specular(data, log=print):
