@@ -87,12 +87,15 @@ def dlt_pose(points_3d, points_2d, K):
     x ≅ P X(P=K[R|t])を SVD で解き、M=K⁻¹P から R を正規直交化・scale と符号を depth 正で確定。
     """
     X = np.asarray(points_3d, float)
-    x = np.asarray(points_2d, float)
+    x = _as_image_points(points_2d)
     n = len(X)
+    if X.ndim != 2 or X.shape[1] != 3:
+        raise ValueError(f"points_3d must be (N, 3), got shape {X.shape}")
     if n < 6:
         raise ValueError("DLT pose estimation requires at least 6 points")
     if len(x) != n:
-        raise ValueError("3D and 2D point counts do not match")
+        raise ValueError(
+            f"3D and 2D point counts do not match ({n} vs {len(x)})")
     # 共平面性ガード(fail-closed): 共平面な 3D 点では DLT の係数行列が縮退し、
     # 例外も警告も無く巨大誤差の姿勢を返す。平面ターゲット(チェッカーボード等)は
     # DLT でなくホモグラフィ/IPPE を使うべきなので、ここで明示拒否する。
