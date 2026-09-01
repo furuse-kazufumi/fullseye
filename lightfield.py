@@ -1198,8 +1198,8 @@ def lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *,
     return out
 
 
-def lf_all_in_focus(lf, slope_map, levels=None, *, interp="linear",
-                    edge="nearest"):
+def lf_all_in_focus(lf, slope_map, levels=None, *, n_levels=16,
+                    interp="linear", edge="nearest"):
     """Composite one everywhere-sharp image by refocusing each pixel at its own slope.
 
     Builds a focal stack at *levels* and, for every pixel, takes the slice whose
@@ -1207,20 +1207,26 @@ def lf_all_in_focus(lf, slope_map, levels=None, *, interp="linear",
     a plenoptic camera delivers, at the full depth range rather than the depth of
     field of one focus setting.
 
-    *levels* defaults to the distinct values already present in *slope_map* —
-    which is exactly the sweep grid when the map came from
-    :func:`lf_depth_from_focus` with ``subpixel=False``. A sub-pixel-refined or
-    EPI-derived map is continuous, so its distinct values run into the tens of
-    thousands; that is a ``ValueError`` telling you to pass *levels* explicitly
-    (e.g. the sweep you used), not a request that quietly allocates a
-    ten-thousand-slice stack.
+    *levels* controls which refocus planes are actually rendered, and the
+    ``None`` default has two documented branches — a continuous slope map has
+    one distinct value per pixel, and rendering a refocus plane for each of
+    those would be tens of thousands of full-frame shifts:
+
+      * if *slope_map* holds at most *n_levels* distinct values (the case when
+        it came from :func:`lf_depth_from_focus` with ``subpixel=False``), those
+        exact values are used and the composite is exact;
+      * otherwise the map's range is quantised to *n_levels* evenly spaced
+        planes (default 16), which is a real approximation: a pixel whose true
+        slope falls between two planes is refocused at the nearer one. Pass
+        *levels* explicitly — e.g. the sweep you handed
+        :func:`lf_depth_from_focus` — when that matters.
 
     Returns a ``(H, W)`` 2-D image.
 
     **Raises** ``ValueError``: *lf* not a valid light field, a *slope_map* that
     is not 2-D / not ``(H, W)`` / non-finite, *levels* empty or over the stack
-    caps, a *slope_map* with more distinct values than :data:`MAX_STACK_SLICES`
-    when *levels* is ``None``, unknown *interp* / *edge*.
+    caps, *n_levels* outside ``[1, MAX_STACK_SLICES]``, unknown *interp* /
+    *edge*.
     """
     op = "lf_all_in_focus"
     arr = _require_lf(lf, op)
@@ -1230,15 +1236,14 @@ def lf_all_in_focus(lf, slope_map, levels=None, *, interp="linear",
         raise ValueError("%s: slope_map shape %r does not match the light "
                          "field's spatial shape (%d, %d)" % (op, sm.shape, H, W))
     if levels is None:
+        nl = _count(n_levels, op + ": n_levels", 1, MAX_STACK_SLICES)
         uniq = np.unique(sm)
-        if uniq.size > MAX_STACK_SLICES:
-            raise ValueError("%s: slope_map has %d distinct values, over the %d "
-                             "cap — it is a continuous map (sub-pixel or EPI "
-                             "derived), so pass levels=<the slope sweep you "
-                             "want> instead of asking for a %d-slice stack"
-                             % (op, int(uniq.size), MAX_STACK_SLICES,
-                                int(uniq.size)))
-        lv = _check_slopes(tuple(float(x) for x in uniq), H * W, op)
+        if uniq.size <= nl:
+            want = tuple(float(x) for x in uniq)
+        else:
+            want = tuple(float(x) for x in
+                         np.linspace(float(sm.min()), float(sm.max()), nl))
+        lv = _check_slopes(want, H * W, op)
     else:
         lv = _check_slopes(levels, H * W, op)
     stack = np.stack(lf_focal_stack(arr, lv, interp=interp, edge=edge), axis=0)
