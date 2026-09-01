@@ -478,6 +478,17 @@ def _limits(**over):
     return geo, res
 
 
+#: 自分でシーンを組む展示では ``vignetting=False`` で撮る。理由(実測):
+#: ``visiondesign.image_formation`` の cos^4 は**配列の正規化半径**に掛かるので、
+#: 配列の角が常に「画角 45 度」(cos^4 = 0.25)として扱われる。16x16 の切り出しでも
+#: 2448x2048 の全面でも角は 0.2500 で同じだった。ここで使う 232 画素のタイルが
+#: 実際に張る半画角は 0.764 度 = cos^4 0.99964 なので、既定のままだと**実物の
+#: 2800 倍の周辺光量落ち**を絵に焼くことになる。展示 3(cos4_falloff)では
+#: この量を系の実画角から別途正しく計算して見せている。
+VIGNETTE_NOTE = ("vignetting off: a 232 px crop spans 0.764 deg of field, "
+                 "where cos^4 = 0.99964")
+
+
 def _detect(img, mask):
     """基準検出器を通し、``(pred, iou, detected)``。visionlab と同じ判定。"""
     pred = vl._default_detector(img)
