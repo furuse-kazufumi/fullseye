@@ -660,7 +660,7 @@ def test_residual_is_large_exactly_where_the_model_broke():
     quiet = S.photometric_residual(clean, L, nrm, alb)
     loud = S.photometric_residual(shadowed, L, nrm, alb)
     assert loud.min() > 1e4 * max(quiet.max(), 1e-16)
-    assert loud.max() > 0.1                             # measured 0.187
+    assert loud.max() > 0.1                    # measured 0.501 vs 1.4e-16 clean
 
 
 def test_residual_scales_linearly_with_radiance():
