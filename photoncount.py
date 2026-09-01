@@ -796,7 +796,7 @@ def spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False):
     return np.ascontiguousarray(r / (1.0 + r * tau))
 
 
-def spad_deadtime_correct(measured_hz, dead_time_ns):
+def spad_deadtime_correct(measured_hz, dead_time_ns=50.0):
     """Recover the true photon rate from a dead-time-distorted measured rate.
 
     The exact inverse of the **non-paralysable** law of
