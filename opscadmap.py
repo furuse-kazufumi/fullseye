@@ -124,7 +124,46 @@ def _suggested_mesh_generator(rng):
     return V, np.array([[0, 2, 1], [0, 3, 2]], np.int64)
 
 
-SUGGESTED_GENERATOR = {"mesh": _suggested_mesh_generator}
+def _suggested_labels_generator(rng):
+    """2-D 整数ラベル画像(欠陥領域 2-3 個 + 背景 0)。
+
+    **これが無いと ``cad_defect_to_cad`` は永久に実行されない**(実測)。
+    ``labels`` を出す既存 op は 7 つあるが、``label_components`` /
+    ``vol_label`` / ``vol_watershed`` は **(D,H,W) の 3-D**、``region_growing`` /
+    ``euclidean_cluster`` / ``plane_segmentation`` / ``segment_rigid_motions``
+    は **(N,) の 1-D** で、**2-D のラベル画像を産む op が 1 つも無い**。
+    その結果 1200 連鎖で ``cad_defect_to_cad`` は 2 回しか引かれず、2 回とも
+    ``labels must be a 2-D (H, W) label image, got (160,)`` で fail-closed し、
+    **一度も実行されないまま「発見ゼロ」に見えた**。
+    (同じ穴は既存の ``illuminant_from_dichromatic_planes`` も踏んでいるはずで、
+    あちらは専用 arg builder で自前のラベルを作って回避している。)
+
+    ★ 注意: この種を入れると ``vol_region_props``(3-D ラベルを期待)に 2-D が
+    渡る組が生まれ、CONTRACT が出る可能性がある。それは**回帰ではなく発見**で、
+    どちらの型が正典かを決めるのは親の仕事。
+    """
+    import numpy as np
+    h = int(rng.integers(24, 49))
+    w = int(rng.integers(24, 49))
+    lab = np.zeros((h, w), np.int32)
+    for k in range(1, int(rng.integers(2, 4))):
+        r0 = int(rng.integers(0, h - 6))
+        c0 = int(rng.integers(0, w - 6))
+        lab[r0:r0 + int(rng.integers(3, 7)), c0:c0 + int(rng.integers(3, 7))] = k
+    return lab
+
+
+SUGGESTED_GENERATOR = {"mesh": _suggested_mesh_generator,
+                       "labels": _suggested_labels_generator}
+
+#: 非有限を **docstring で契約している** op(``chain_fuzz.NONFINITE_BY_CONTRACT``
+#: へ足す必要がある)。実測: これを足さないと ``cad_pixel_to_surface`` は
+#: 「当たらない画素は NaN」という文書化済みの返りのせいで毎回 NONFINITE 判定に
+#: なり、pool にも trace にも入らず**実行されていないように見える**。
+#:   * ``cad_pixel_to_surface`` — miss の ``bary``/``point``/``depth`` が NaN。
+#:   * ``cad_defect_to_cad`` — 当たり 0 の領域の ``centroid``/``depth_mean`` が NaN。
+#: ``cad_surface_to_pixel`` と ``cad_visible_faces`` は非有限を返さない。
+NONFINITE_BY_CONTRACT = {"cad_pixel_to_surface", "cad_defect_to_cad"}
 
 
 def _build():
