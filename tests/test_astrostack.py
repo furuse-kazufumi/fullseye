@@ -546,9 +546,13 @@ class TestCosmicRays:
         # 真の星 25 + 宇宙線 10)ので、除去すれば数は当然減る。見るべきは
         # 「植えた 25 星がそれぞれ今も立っているか」。
         after = A.star_detect(cleaned)
-        for r, c in zip(truth["rows"], truth["cols"]):
+        before = A.star_detect(frame)
+        real = [(r, c) for r, c in zip(truth["rows"], truth["cols"])
+                if np.hypot(before[:, 0] - r, before[:, 1] - c).min() < 1.0]
+        assert len(real) >= 15, "the planted stars must be visible to begin with"
+        for r, c in real:
             assert np.hypot(after[:, 0] - r, after[:, 1] - c).min() < 1.0, (r, c)
-        assert len(after) < len(A.star_detect(frame))     # 偽の星は消えた
+        assert len(after) < len(before)                   # 偽の星は消えた
 
     def test_rejection_actually_removes_the_flux_it_flagged(self):
         frame, truth = A.synth_starfield(shape=(96, 96), n_stars=10,
