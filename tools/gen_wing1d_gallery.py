@@ -1296,7 +1296,7 @@ def ex_weighting_ac(log):
                              f"measured {r['lz']:.6f} dB.", C_DIM, 12)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "weighting_ac", fps=6, thumb_index=i1k, log=log)
+    info = save_flipbook(frames, "weighting_ac", labels, ms=220, hold_ms=1400, log=log)
     facts = {
         "a_at_1k": a1k, "c_at_1k": c1k, "a_at_1k_is_exact_zero": a1k == 0.0,
         "c_at_1k_is_exact_zero": c1k == 0.0,
