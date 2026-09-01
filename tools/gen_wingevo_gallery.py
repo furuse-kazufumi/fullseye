@@ -153,6 +153,11 @@ def text(frame_u8, items):
         x, y, s, col, size, bold = it[:6]
         anchor = it[6] if len(it) > 6 else "la"
         mono = it[7] if len(it) > 7 else False
+        # 等幅(consola)は日本語の字形を持たないので、非 ASCII が 1 文字でも
+        # 入っていたら日本語フォントへ落とす。落とさないと豆腐(□)になり、
+        # **図の中に読めない文字が残っていることに誰も気づけない**。
+        if mono and not s.isascii():
+            mono = False
         d.text((x, y), s, fill=tuple(int(round(255 * v)) for v in col),
                font=_font(size, bold, mono), anchor=anchor)
     return np.asarray(im)

@@ -86,24 +86,24 @@
       "frames": 96,
       "fps": 15,
       "gif_shape": [
-        660,
+        748,
         1120,
         3
       ],
       "mp4_shape": [
-        660,
+        748,
         1120,
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 1151195,
-      "mp4_bytes": 148139,
-      "thumb_bytes": 42930,
+      "gif_bytes": 1156073,
+      "mp4_bytes": 158619,
+      "thumb_bytes": 46179,
       "thumb_frame": 48,
-      "gif_sha256": "b3aa03fc7220032e14c420fb3f143ccd4912385c19df7f14866f5d6d8939d658",
-      "mp4_sha256": "2fbc8c04570c7499931edbb53eb315e42f957b771bff35129c857c911b692d93",
+      "gif_sha256": "59e378261b580ace622e33e1cc67a9e087d27e48568fa60c1fcc017e4154ff4d",
+      "mp4_sha256": "e9bcadbcbc5ba036537320167d378d6d05a4dfe2b49db1ac75eed0130a389e60",
       "exhibit": "zsweep",
-      "seconds": 42.79305410012603
+      "seconds": 47.98782549984753
     },
     {
       "name": "wing3d_mpr_crosshair",

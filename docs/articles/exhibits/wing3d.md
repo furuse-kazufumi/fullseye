@@ -32,6 +32,6 @@
 | 展示 | 形式 | ファイル | 実測 |
 |---|---|---|---|
 | rle | PNG | `wing3d_rle_compression.png` | 1120x720, 52 kB |
-| zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x660, 1.15 MB, 256 色, mp4 0.15 MB |
+| zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
