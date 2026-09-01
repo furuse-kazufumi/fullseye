@@ -1083,21 +1083,30 @@ def lf_epi_slope(lf, *, window=9, min_energy=1e-10):
     """
     op = "lf_epi_slope"
     arr = _require_lf(lf, op)
-    V, U = arr.shape[0], arr.shape[1]
-    if V < 2 and U < 2:
-        raise ValueError("%s: the angular grid is 1x1 — a single view has no "
-                         "parallax at all, so no slope exists to estimate "
-                         "(need V >= 2 or U >= 2)" % (op,))
+    V, U, H, W = arr.shape
+    # Both a second view *and* a second pixel are needed along a direction: the
+    # constraint is E_u + s*E_x = 0, so a single-column field (W == 1) has no
+    # E_x and the horizontal EPI carries no slope information at all. The 2026
+    # -09-01 adversarial pass hit this as a raw numpy "Shape of array too small
+    # to calculate a numerical gradient" leaking out of np.gradient.
+    use_h = U >= 2 and W >= 2
+    use_v = V >= 2 and H >= 2
+    if not (use_h or use_v):
+        raise ValueError("%s: no direction carries slope information — the "
+                         "horizontal EPI needs U >= 2 and W >= 2 (got %d, %d) "
+                         "and the vertical EPI needs V >= 2 and H >= 2 (got %d, "
+                         "%d). A single view, or a single-pixel-wide image, has "
+                         "no parallax to measure." % (op, U, W, V, H))
     win = _odd_window(window, "window", op)
     eps = _positive(min_energy, op + ": min_energy")
     num = np.zeros(arr.shape[2:], dtype=np.float64)
     den = np.zeros(arr.shape[2:], dtype=np.float64)
-    if U >= 2:
+    if use_h:
         e_u = np.gradient(arr, axis=1)
         e_x = np.gradient(arr, axis=3)
         num += (e_u * e_x).sum(axis=(0, 1))
         den += (e_x * e_x).sum(axis=(0, 1))
-    if V >= 2:
+    if use_v:
         e_v = np.gradient(arr, axis=0)
         e_y = np.gradient(arr, axis=2)
         num += (e_v * e_y).sum(axis=(0, 1))
