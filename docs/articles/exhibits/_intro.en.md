@@ -1,0 +1,6 @@
+Time to relax the shoulders a little. This corner is meant to be wandered **the way you'd wander the exhibit halls of a science museum**. Everything below is **real output** from Fullseye's registered ops — not a single mockup. The provenance of the materials splits two ways:
+
+- **Real data**: public data from the Smithsonian (CC0), the Metropolitan Museum of Art (CC0), and NASA (public domain) only. Source links are in the captions. (One cell-microscopy dataset was initially included under a CC-BY label, but checking its official page revealed it is actually CC BY-NC-SA — incompatible with this repository's licensing — so the exhibit was withdrawn before publication. That kind of check-and-retract is part of honest disclosure too.)
+- **AI-generated simulated data**: for fields where license-clean real data is hard to find (medical imaging, for example), the materials were produced with an image-generation AI (Google gemini-2.5-flash-image), and **"AI-generated" is stated both inside the image and in the caption**. These are not real specimens, patients, or scans.
+
+The star throughout is **the processing**. Each caption names the ops used, so you can reverse-look-up "which op makes this picture?" Full resolution and additional exhibits are in the [results gallery (docs/GALLERY.md)](https://github.com/furuse-kazufumi/fullseye/blob/master/docs/GALLERY.md).

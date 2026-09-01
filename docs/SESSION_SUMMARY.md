@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 01:47:47
+- **最終更新**: 2026-09-02 01:53:45
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+4808de42 auto: ARTICLE_RESTRUCTURE_PLAN.md 編集前 (2026-09-02 01:53)
 32e47171 docs: 記事の追記1〜7 を機能別の5章へ組み替え、書き方を「使える技術」へ
 57a057c5 auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
 f2e0347c auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
@@ -19,18 +20,19 @@ f2e0347c auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
 d9abeed6 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
 6388c172 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
 4e5f3b18 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
-84e8e36a auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
 ```
 
 ## 現在の git status
 
 ```
-(clean)
+M docs/ARTICLE_RESTRUCTURE_PLAN.md
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
+01:53 docs/ARTICLE_RESTRUCTURE_PLAN.md
+01:47 docs/SESSION_SUMMARY.md
 01:47 docs/articles/fullseye_overview_qiita_en.md
 01:47 docs/articles/fullseye_overview_qiita_ja.md
 01:45 tools/chain_fuzz.py
@@ -44,8 +46,6 @@ d9abeed6 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
 01:44 studio_assets/op_help/guide_coherence_scanning.html
 01:44 studio_assets/op_help/guide_acoustic_condition_monitoring.html
 01:44 studio_assets/op_help/guide_optics_imaging.html
-01:44 studio_assets/op_help/guide_math_metrology.html
-01:44 studio_assets/op_help/guide_lightfield_depth.html
 ```
 
 ---

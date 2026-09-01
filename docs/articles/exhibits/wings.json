@@ -1,0 +1,25 @@
+{
+  "asset_base": "https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/",
+  "chapter_title": {
+    "ja": "紙面の科学館 ―― op で遊ぶ {n} の展示",
+    "en": "A Science Museum on Paper — {n} Exhibits of Playing With Ops"
+  },
+  "wings": [
+    {
+      "id": "science",
+      "order": 10,
+      "title": {
+        "ja": "科学館ウィング ―― 画像処理の原理を「きれいな絵」で",
+        "en": "The Science-Museum Wing — Image-Processing Principles as \"Beautiful Pictures\""
+      }
+    },
+    {
+      "id": "museum",
+      "order": 20,
+      "title": {
+        "ja": "博物館ウィング ―― 学問分野を横断する 30 の展示",
+        "en": "The Museum Wing — 30 Exhibits Across the Academic Disciplines"
+      }
+    }
+  ]
+}
