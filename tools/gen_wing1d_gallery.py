@@ -236,7 +236,7 @@ class Ax:
                 (np.log10(self.xhi) - np.log10(self.xlo))
         else:
             t = (v - self.xlo) / (self.xhi - self.xlo)
-        return self.x0 + (self.x1 - self.x0) * np.clip(t, -0.02, 1.02)
+        return self.x0 + (self.x1 - self.x0) * np.clip(t, 0.0, 1.0)
 
     def Y(self, v):
         v = np.asarray(v, np.float64)
@@ -245,7 +245,7 @@ class Ax:
             t = (np.log10(v) - np.log10(self.ylo)) / (np.log10(self.yhi) - np.log10(self.ylo))
         else:
             t = (v - self.ylo) / (self.yhi - self.ylo)
-        return self.y1 - (self.y1 - self.y0) * np.clip(t, -0.02, 1.02)
+        return self.y1 - (self.y1 - self.y0) * np.clip(t, 0.0, 1.0)
 
     # -- 部品 ------------------------------------------------------------- #
     def panel(self, color=C_PANEL) -> None:
@@ -913,7 +913,7 @@ def ex_order_tracking(log):
         ang = A.angular_resample(seg, fs, seg_rpm, samples_per_rev=64)
         rev_even = int(ang["whole_revolutions"]) // 2 * 2        # 偶数回転で切る
         os_ = A.order_spectrum(seg, fs, seg_rpm, samples_per_rev=64,
-                               revolutions=rev_even, max_order=25.0)
+                               revolutions=rev_even, max_order=31.9)
         shaft = float(np.mean(seg_rpm)) / 60.0
         rows.append({
             "t0": s0 / fs, "shaft_hz": shaft, "rpm": float(np.mean(seg_rpm)),
@@ -988,11 +988,11 @@ def ex_order_tracking(log):
         fig.text(axf.x0 + 6, axf.y0 + 4, "amp", C_DIM, 11)
 
         # 下: 次数スペクトル
-        axo = Ax(fig, 76, 410, W - 30, 552, (0.0, 25.0), (0.0, m_hi * 1.12))
+        axo = Ax(fig, 76, 410, W - 30, 552, (0.0, 32.0), (0.0, m_hi * 1.12))
         axo.panel()
         ink = fig.ink()
         axo.frame(ink)
-        axo.xticks(ink, [0, 1, 3.5, 5, 10, 15, 20, 25], "%g")
+        axo.xticks(ink, [0, 1, 3.5, 5, 10, 15, 20, 25, 30], "%g")
         axo.yticks(ink, [0.0, 0.25, 0.5, 0.75, 1.0], "%.2f")
         fig.stamp(ink, C_AXIS)
         ink = fig.ink()
@@ -1007,11 +1007,11 @@ def ex_order_tracking(log):
         fig.stamp(ink, C_TRUE)
         fig.text(80, 392, "order spectrum [shaft order] - the shaft components stay, "
                           "the resonance moves", C_TEXT, 12, True)
-        fig.text(axo.X(r["o400"]) + 6, 414,
+        fig.text(min(float(axo.X(r["o400"])) + 6, axo.x1 - 216), 414,
                  f"400 Hz = order {r['o400']:.2f} (moves)", C_TRUE, 11, True)
         fig.text(axo.X(3.5) + 4, 436, "order 3.5 (fixed)", C_B, 11, True)
         fig.text(axo.x0 + 6, axo.y0 + 4, "amp", C_DIM, 11)
-        _xunit(fig, axo, "shaft order ->")
+        fig.text(axo.x0 + 168, axo.y0 + 4, "shaft order ->", C_DIM, 11)
 
         fig.box(76, 574, W - 30, H - 12, C_PANEL2)
         fig.text(88, 580, f"cropped to {r['rev']} whole revolutions (even, so order 3.5 "

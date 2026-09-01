@@ -3271,7 +3271,7 @@ def ex_pipeline(log) -> dict:
     # --- 同じ寸法のコマを作る(flipbook は寸法不一致を例外にする) ---
     FW, FH = 900, 430
     pw = 400
-    zc = 56
+    zc = 50                      # 枝が 1 本出ている高さ(工程の違いが見える断面)
     center = np.array([n / 2.0] * 3)
     Rv = _rot(32.0, 20.0)
 

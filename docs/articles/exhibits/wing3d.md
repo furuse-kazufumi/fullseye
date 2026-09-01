@@ -67,7 +67,7 @@
 
 ![CT のかたまりが寸法になるまで(7 工程)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_pipeline_flow.gif)
 
-*↑ **CT のかたまりが寸法になるまで(7 工程)** ―― ノイズ付きの合成 CT(112³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 1 個)→ 最大成分(5508.2 mm³、球形度 0.4811)→ `vol_crop_domain` でメモリ **1/2.3** → 細線化(枝 5 / 分岐 2 / 端点 4)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。 使用 op: `vol_window_level`, `vol_label`, `vol_region_props`, `vol_crop_domain`, `vol_uncrop`, `skeletonize_vol`, `skeleton_branches3d`, `skeleton_endpoints3d`, `skeleton_junctions3d`, `vol_distance_transform`。*
+*↑ **CT のかたまりが寸法になるまで(7 工程)** ―― ノイズ付きの合成 CT(176³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 1 個)→ 最大成分(5816.9 mm³、球形度 0.4702)→ `vol_crop_domain` でメモリ **1/7.7** → 細線化(枝 5 / 分岐 2 / 端点 4)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。 使用 op: `vol_window_level`, `vol_label`, `vol_region_props`, `vol_crop_domain`, `vol_uncrop`, `skeletonize_vol`, `skeleton_branches3d`, `skeleton_endpoints3d`, `skeleton_junctions3d`, `vol_distance_transform`。*
 
 ![断層を送る ―― `z = 48 / 95` は 38.40 mm のこと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_slice_zsweep.gif)
 
@@ -113,7 +113,7 @@
 | mip | GIF+mp4 | `media/wing3d_mip_turntable.gif` | 36 フレーム, 1120x640, 2.61 MB, 64 色, mp4 0.41 MB |
 | distance | GIF+mp4 | `media/wing3d_distance_transform.gif` | 46 フレーム, 1120x660, 0.61 MB, 256 色, mp4 0.09 MB |
 | connectivity | PNG | `wing3d_boundary_connectivity.png` | 948x748, 219 kB |
-| pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x522, 0.28 MB |
+| pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x522, 0.30 MB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |

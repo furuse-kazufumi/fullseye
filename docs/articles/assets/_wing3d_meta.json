@@ -960,9 +960,9 @@
       ],
       "facts": {
         "shape": [
-          112,
-          112,
-          112
+          176,
+          176,
+          176
         ],
         "spacing_mm": [
           0.6,
@@ -970,24 +970,24 @@
           0.6
         ],
         "labels": 1,
-        "largest_voxels": 25501,
-        "largest_volume_mm3": 5508.216,
-        "largest_surface_mm2": 3134.9759359551877,
-        "sphericity": 0.48112422132441834,
+        "largest_voxels": 26930,
+        "largest_volume_mm3": 5816.88,
+        "largest_surface_mm2": 3326.826238769798,
+        "sphericity": 0.4701618747189201,
         "crop_shape": [
-          105,
-          90,
-          64
+          109,
+          96,
+          68
         ],
-        "crop_memory_ratio": 2.322962962962963,
-        "skeleton_voxels": 172,
+        "crop_memory_ratio": 7.66180967799964,
+        "skeleton_voxels": 184,
         "branches": 5,
         "endpoints": 4,
         "junctions": 2,
         "max_inscribed_radius_mm": 4.8373546489791295,
         "truth_radius_mm": 4.8
       },
-      "caption": "ノイズ付きの合成 CT(112³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 1 個)→ 最大成分(5508.2 mm³、球形度 0.4811)→ `vol_crop_domain` でメモリ **1/2.3** → 細線化(枝 5 / 分岐 2 / 端点 4)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。",
+      "caption": "ノイズ付きの合成 CT(176³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 1 個)→ 最大成分(5816.9 mm³、球形度 0.4702)→ `vol_crop_domain` でメモリ **1/7.7** → 細線化(枝 5 / 分岐 2 / 端点 4)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_pipeline_flow.gif",
       "mp4": null,
@@ -1001,14 +1001,14 @@
       ],
       "mp4_shape": null,
       "gif_colors": null,
-      "gif_bytes": 283215,
+      "gif_bytes": 295248,
       "mp4_bytes": 0,
-      "thumb_bytes": 39443,
+      "thumb_bytes": 42913,
       "thumb_frame": 0,
-      "gif_sha256": "5c5c33d6b8e55b31204832fa2f70e27b899dc28c805377998548a1ea7b7704dd",
+      "gif_sha256": "6a51732d3290ed56b812cdddb8ec70471ee44067a57748e89576592c13d5f799",
       "mp4_sha256": null,
       "exhibit": "pipeline",
-      "seconds": 1.6773465999867767
+      "seconds": 3.349782600067556
     },
     {
       "name": "wing3d_slice_zsweep",

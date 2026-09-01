@@ -173,7 +173,7 @@ def test_image_formation_preserves_shape_range_and_only_blurs():
     rng = np.random.default_rng(0)
     img = np.zeros((64, 64))
     img[28:36, 20:44] = 1.0
-    cap = vd.image_formation(img, f_number=8.0, pixel_pitch_um=3.45)
+    cap = vd.image_formation(img, f_number=8.0, pixel_pitch_um=3.45, vignetting=False)
     assert cap.shape == img.shape
     assert cap.dtype == np.float64
     assert 0.0 <= cap.min() and cap.max() <= 1.0
@@ -181,7 +181,8 @@ def test_image_formation_preserves_shape_range_and_only_blurs():
     assert np.abs(np.diff(cap, axis=1)).sum() < np.abs(np.diff(img, axis=1)).sum()
     # 決定的(乱数を含まない)
     assert np.array_equal(cap, vd.image_formation(img, f_number=8.0,
-                                                  pixel_pitch_um=3.45))
+                                                  pixel_pitch_um=3.45,
+                                                  vignetting=False))
     _ = rng                                                # 乱数は使わない契約
 
 
