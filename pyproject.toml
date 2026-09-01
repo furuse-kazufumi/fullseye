@@ -96,7 +96,7 @@ py-modules = [
   "halcon_coverage", "halcon_rad_ingest", "halcon_scrape", "imgevolve",
   "fscript", "fslib", "fsruntime", "fsi18n",
   # --- geometric / math / drawing op modules + 2-D examples gallery (対話で追加) ---
-  "imagemorph", "fourierdesc", "imagedraw", "signal1d", "examples2d",
+  "imagemorph", "fourierdesc", "imagedraw", "drawstyle", "signal1d", "examples2d",
   # --- 3-D vision toolkit (ops3d registry + method modules) + examples gallery ---
   "examples3d", "ops3d", "measure3d", "pipeline3d", "pipeline_evolve", "evolve_params", "metrics3d", "match3d", "bspline_surf", "bundle3d", "curvature3d", "curve3d", "deform3d", "depth_bilateral", "descriptors3d", "edges3d", "feat_fpfh", "feat_harris", "feat_shot", "feat_spin", "fringe", "fuse3d", "geodesic3d", "gicp", "medial", "moments3d", "motion_seg3d", "normals_orient", "pcl_augment", "pcl_filter", "photometric", "plane_sweep", "pnp3d", "pose_graph", "range_image", "ransac_fit", "recon3d", "regionprops3d", "registration_eval", "scene_flow3d", "sdf_ops", "segment3d", "spherical_proj", "superquadric", "symmetry3d", "tsdf_fusion", "twoview", "visualhull",
   # 3-D mesh / rendering support (imported by ops3d.py + render_beauty.py)
