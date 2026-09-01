@@ -977,10 +977,16 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     # the magnified clip credits alpha^2 more in-band power against an unchanged
     # noise estimate and reports an improvement that did not happen (measured:
     # +6.86 dB at alpha=2 on a clip whose true motion SNR cannot have moved).
-    # The gain the in-band noise actually received is known here, so it is
-    # applied: this is the number that belongs next to the magnified video.
-    noise_out = snr_out["noise_power_per_bin"] * snr_out["band_bins"] * a * a
+    # The noise floor is a property of the recording, so the *input's* per-bin
+    # density is the right reference, scaled by the gain the in-band content
+    # actually received.
+    noise_out = snr_in["noise_power_per_bin"] * snr_in["band_bins"] * a * a
     motion_out_db, _c = _db(max(snr_out["band_power"] - noise_out, 0.0), noise_out)
+    # How far the magnification stayed linear, measured rather than assumed: in
+    # the linear regime the in-band power scales exactly as alpha^2, and the
+    # deficit is the energy the phase modulation threw into harmonics.
+    denom = snr_in["band_power"] * a * a
+    band_ratio = (snr_out["band_power"] / denom) if denom > 0.0 else 1.0
     return {
         "video": out, "alpha": a, "band_hz": (lo, hi), "fps": fs,
         "scales": ns, "orientations": no,
