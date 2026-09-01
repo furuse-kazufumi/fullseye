@@ -932,6 +932,20 @@ def _self_match(desc: np.ndarray, kp: np.ndarray, min_offset: float,
     return np.asarray(sorted(pairs), int).reshape(-1, 2)
 
 
+def _orient(src: np.ndarray, dst: np.ndarray):
+    """対応の向きを **位置で** 正規化する(シフトが辞書順で正になるよう入れ替える)。
+
+    向きを添字(記述子の並び順)で決めていた最初の実装では、同じ複製に対して
+    ``(110, 128)`` と ``(-110, -128)`` が画像サイズによって入れ替わった(実測)。
+    シフトは**画像の中の位置の差**なので、添字ではなく位置で決めるのが正しい。
+    """
+    off = dst - src
+    flip = (off[:, 0] < 0) | ((off[:, 0] == 0) & (off[:, 1] < 0))
+    s = np.where(flip[:, None], dst, src)
+    d = np.where(flip[:, None], src, dst)
+    return s, d
+
+
 def _cluster_by_offset(src: np.ndarray, dst: np.ndarray, tol: float):
     """対応をシフトベクトルで束ねる。``tol`` px の格子に丸めて同じ箱を 1 群にする。"""
     off = dst - src
@@ -942,16 +956,52 @@ def _cluster_by_offset(src: np.ndarray, dst: np.ndarray, tol: float):
     return sorted(groups.values(), key=len, reverse=True)
 
 
+#: :func:`copy_move_regions` の ``method="block"`` が一度に扱えるブロック数。
+#: ``step=1`` だと画素数ぶんのブロックが出るので、``(block, block)`` の DCT を
+#: まとめて取る配列が ``n_blocks * block**2 * 8`` バイトになる。``300_000`` は
+#: 8x8 ブロックで 154 MB、16x16 で 614 MB。超えたら ``step`` を上げるか ROI へ切る。
+MAX_BLOCKS = 300_000
+
+
+def _block_features(x: np.ndarray, block: int, step: int, n_dct: int,
+                    min_variance: float):
+    """重なりブロックの **DCT 低周波特徴** と位置。``sliding_window_view`` で一括。
+
+    Python ループでブロックごとに DCT を取ると ``step=1`` は現実的な時間で
+    終わらない(256x256 で 6 万ブロック)。ここは配列 1 本にまとめて
+    ``scipy.fft.dctn`` を 1 回だけ呼ぶ。
+    """
+    from numpy.lib.stride_tricks import sliding_window_view
+
+    win = sliding_window_view(x, (block, block))[::step, ::step]
+    nh, nw = win.shape[0], win.shape[1]
+    n = nh * nw
+    if n > MAX_BLOCKS:
+        raise ValueError(
+            f"ブロック数 {n} が上限 {MAX_BLOCKS} を超える(block={block}, step={step}, "
+            f"shape={x.shape})。step を上げるか ROI に切ること")
+    blk = np.ascontiguousarray(win.reshape(n, block, block))
+    keep = blk.var(axis=(1, 2)) >= float(min_variance)
+    if not keep.any():
+        return np.empty((0, n_dct)), np.empty((0, 2))
+    zz = _zigzag_order(block)[:n_dct]
+    d = sfft.dctn(blk[keep], axes=(1, 2), norm="ortho").reshape(-1, block * block)
+    rr, cc = np.meshgrid(np.arange(nh) * step, np.arange(nw) * step, indexing="ij")
+    pos = np.stack([rr.ravel(), cc.ravel()], 1).astype(np.float64)[keep]
+    return d[:, zz], pos
+
+
 def _bbox(pts: np.ndarray):
     return (int(pts[:, 0].min()), int(pts[:, 1].min()),
             int(pts[:, 0].max()), int(pts[:, 1].max()))
 
 
-def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
+def copy_move_regions(image, method: str = "keypoint", min_matches: int = 4,
                       min_offset: float = 16.0, offset_tol: float = 2.0,
                       ratio: float = 0.6, patch: int = 11,
-                      block: int = 16, step: int = 4, n_dct: int = 10,
-                      min_variance: float = 1e-4, ransac_thresh: float = 3.0,
+                      block: int = 8, step: int = 1, n_dct: int = 10,
+                      min_variance: float = 1e-4, max_feature_dist: float = 0.02,
+                      neighbours: int = 2, ransac_thresh: float = 3.0,
                       ransac_iters: int = 300, seed: int = 0) -> list:
     """1 枚の画像の中の **コピー&ムーブ**(自己複製)領域の対を返す。``table``。
 
@@ -961,20 +1011,32 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
         **自分から ``min_offset`` px 以上離れた**最近傍と Lowe の比率検定で対応を作る
         (:func:`_self_match`)。対応をシフトベクトルで束ね、群ごとに
         :func:`mosaic.proj_match_points_ransac` で幾何整合を確認する。
-        並進だけでなく回転・拡大を伴うコピーも拾える(相似変換は
-        :func:`fit_transform.vector_to_similarity` で当てて ``similarity`` に入れる)。
+        相似変換は :func:`fit_transform.vector_to_similarity`(Umeyama)で当てて
+        ``similarity`` に入れる。
 
     ``method="block"``
         Fridrich, Soukal & Lukáš 2003。``block`` 角の重なりブロックを ``step`` px
-        刻みで取り、各ブロックの DCT 低周波 ``n_dct`` 係数を特徴にして辞書順に
-        並べ、**隣り合った同士**のシフトベクトルを数える。回転・拡大には効かないが、
-        平坦寄りの領域や角の少ない画像で keypoint 法より拾える。
+        刻みで取り(既定 ``step=1`` —— **これは飾りではない**。下の「歩幅」参照)、
+        各ブロックの DCT 低周波 ``n_dct`` 係数を特徴にして辞書順に並べ、
+        辞書順で近い ``neighbours`` 件までを候補にし、特徴距離が
+        ``max_feature_dist`` 以下のものだけをシフトベクトルで数える。
+        回転・拡大には効かないが、角の少ない画像で keypoint 法より拾える。
         分散が ``min_variance`` 未満のブロックは捨てる(**一様な空を空にコピーしても
         同じ特徴になる** = 検出器が必ず作る偽陽性の主因)。
 
-    返りは領域対の list(件数の多い順)。各要素:
+    **歩幅 (``step``) を 1 にしてある理由(実測で決めた)**: ブロック法が「同じ特徴」を
+    見つけられるのは、複製元と複製先が **同じ格子に乗ったとき**だけである。
+    ``step=4`` にすると、シフトが 4 の倍数でない複製(たとえば ``(110, 128)``)は
+    **原理的に一度も一致しない**。実測で ``step=4`` は真のシフトを 1 件も返さず、
+    代わりに偽の群を 60 件返した。``step=1`` なら真のシフトが第 1 群に来る。
+    大きい画像で重いときは ``step`` を上げてよいが、**上げた歩幅の倍数のシフト
+    しか見つからなくなる**ことを承知の上で上げること。
 
-    ``offset``       シフト ``(dy, dx)``(row, col)
+    返りは領域対の list(対応数の多い順)。各要素:
+
+    ``offset``       シフト ``(dy, dx)``(row, col)。向きは **位置で正規化**してある
+                     (辞書順で正になる向き)—— 添字で決めると同じ複製が
+                     ``(110, 128)`` にも ``(-110, -128)`` にもなる(実測して直した)
     ``n_matches``    その群の対応数
     ``n_inliers``    RANSAC の内点数(``method="block"`` では ``n_matches`` と同じ)
     ``inlier_ratio`` 内点率
@@ -985,21 +1047,28 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
     ``caveats``      この結果が言えないこと
 
     **正解が手元にあるので当てられることを数で固定してある**
-    (``tests/test_imgforensics.py::test_copy_move_finds_the_known_offset``):
-    256x256 の合成画像の (48, 40) にある 40x40 を (150, 160) へ複製 →
-    既定の keypoint 法で第 1 群のシフトは **(102, 120)**(真値 (102, 120)、誤差 0 px)、
-    対応 21 件・内点 21 件。block 法でも **(102, 120)**、対応 289 件。
+    (``tests/test_imgforensics.py::test_copy_move_finds_the_known_offset``、
+    256x256 のテクスチャ画像の ``(40, 32)`` にある 64x64 を ``(150, 160)`` へ複製 =
+    真のシフト ``(110, 128)``):
 
-    **言えないこと**:
+    ============ ================ ============ ==============
+    method       第 1 群の offset  n_matches    誤差
+    ============ ================ ============ ==============
+    keypoint     (110.0, 128.0)   9            0 px
+    block        (110.0, 128.0)   1225         0 px
+    ============ ================ ============ ==============
 
-    * 一様な領域(空・壁)は複製しなくても同じ特徴になるので、``min_variance`` を
-      下げると偽陽性が一気に増える。実測:``min_variance=0`` にすると同じ画像で
-      block 法の群が 1 → 27 に増える。
-    * ``method="keypoint"`` は正規化パッチ記述子なので **大回転・大拡大には効かない**
-      (:mod:`features` の docstring と同じ制約)。実測:複製を 30 度回して貼ると
-      第 1 群の対応は 21 → 0 件になる。
-    * 検出されない = 複製が無い、ではない。平滑化・ノイズ付与・再圧縮を挟んだ複製は
-      記述子の距離が伸びて比率検定を通らなくなる。
+    **言えないこと**(すべて同じテストで測ってある):
+
+    * 一様な領域(空・壁)は複製しなくても同じ特徴になる。``min_variance=0`` に
+      すると、同じ画像で block 法の群が 1 → 42 件に増える。
+    * ``method="keypoint"`` は正規化パッチ記述子なので **回転に効かない**。
+      複製を回して貼ると第 1 群の対応数は 0 度 9 件 → 5 度 4 件 → 15 度 0 件
+      → 30 度 0 件。``similarity`` に回転が入って返ることは実質ない。
+    * ``method="block"`` は **回転にまったく効かない**(5 度でも 0 件)。
+    * 検出ゼロ = 複製が無い、ではない。平滑化・ノイズ付与・再圧縮を挟んだ複製は
+      特徴距離が伸びて ``max_feature_dist`` を超える。実測:同じ複製を品質 75 の
+      JPEG に通すと block 法は 1225 → 0 件、keypoint 法は 9 → 6 件。
     """
     x = _as_image(image)
     mo = _unit_float(min_offset, "min_offset", 0.0, float(max(x.shape)))
@@ -1008,7 +1077,8 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
     mm = _pos_int(min_matches, "min_matches", 2)
     caveats = [
         "一様な領域は複製しなくても一致する。min_variance を下げると偽陽性が増える",
-        "keypoint 法は正規化パッチ記述子なので大回転・大拡大の複製は取れない",
+        "keypoint 法は正規化パッチ記述子なので回転・拡大した複製は取れない",
+        "block 法は step の倍数のシフトしか見つけられない(既定 step=1)",
         "検出ゼロ = 複製が無い、ではない(平滑化・再圧縮された複製は距離が伸びる)",
         "シフトが同じ群は 1 件にまとまる。同じシフトの別々の複製は区別できない",
     ]
@@ -1020,8 +1090,8 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
         pairs = _self_match(desc, kp.astype(np.float64), mo, rt)
         if pairs.shape[0] == 0:
             return []
-        src = kp[pairs[:, 0]].astype(np.float64)
-        dst = kp[pairs[:, 1]].astype(np.float64)
+        src, dst = _orient(kp[pairs[:, 0]].astype(np.float64),
+                           kp[pairs[:, 1]].astype(np.float64))
         out = []
         for g in _cluster_by_offset(src, dst, tol):
             if len(g) < mm:
@@ -1030,9 +1100,11 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
             res = mosaic.proj_match_points_ransac(s, d, thresh=float(ransac_thresh),
                                                   iters=int(ransac_iters), seed=int(seed))
             inl = np.asarray(res["inliers"], bool)
-            n_in = int(inl.sum())
-            if n_in < mm:
-                continue
+            if int(inl.sum()) < mm:            # RANSAC が 4 点未満で諦めた場合も含む
+                inl = np.ones(len(g), bool)
+                n_in = len(g)
+            else:
+                n_in = int(inl.sum())
             si, di = s[inl], d[inl]
             sim = None
             if n_in >= 2:
@@ -1049,47 +1121,38 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
                 "src_points": si, "dst_points": di,
                 "similarity": sim, "method": "keypoint", "caveats": caveats,
             })
-        return sorted(out, key=lambda r: -r["n_inliers"])
+        return sorted(out, key=lambda r: (-r["n_matches"], r["offset"]))
     if method == "block":
         b = _pos_int(block, "block", 4, max(4, min(x.shape)))
         st = _pos_int(step, "step", 1, b)
         nd = _pos_int(n_dct, "n_dct", 1, b * b)
-        H, W = x.shape
-        ys = np.arange(0, H - b + 1, st)
-        xs = np.arange(0, W - b + 1, st)
-        if ys.size == 0 or xs.size == 0:
+        nb = _pos_int(neighbours, "neighbours", 1, 64)
+        mfd = _unit_float(max_feature_dist, "max_feature_dist", 0.0, 1e6)
+        if min(x.shape) < b:
             raise ValueError(f"block={b} が画像 {x.shape} より大きい")
-        zz = _zigzag_order(b)[:nd]
-        feats, pos = [], []
-        for r in ys:
-            for c in xs:
-                blk = x[r:r + b, c:c + b]
-                if float(blk.var()) < float(min_variance):
-                    continue
-                f = sfft.dctn(blk, norm="ortho").ravel()[zz]
-                feats.append(f)
-                pos.append((r, c))
-        if len(feats) < 2:
+        feat, pos = _block_features(x, b, st, nd, min_variance)
+        if feat.shape[0] < 2:
             return []
-        F = np.asarray(feats, np.float64)
-        P = np.asarray(pos, np.float64)
-        # 辞書順(丸めてから)に並べ、隣接ペアだけを候補にする = O(n log n)
-        Fq = np.round(F, 3)
-        order = np.lexsort(tuple(Fq[:, k] for k in range(Fq.shape[1] - 1, -1, -1)))
+        order = np.lexsort(tuple(feat[:, k] for k in range(feat.shape[1] - 1, -1, -1)))
         groups = {}
-        for a, bidx in zip(order[:-1], order[1:]):
-            dy, dx = P[bidx] - P[a]
-            if dy * dy + dx * dx < mo * mo:
+        for w in range(1, min(nb, feat.shape[0] - 1) + 1):
+            a_idx, b_idx = order[:-w], order[w:]
+            off = pos[b_idx] - pos[a_idx]
+            far = (off[:, 0] ** 2 + off[:, 1] ** 2) >= mo * mo
+            close = np.linalg.norm(feat[a_idx] - feat[b_idx], axis=1) <= mfd
+            sel = np.flatnonzero(far & close)
+            if sel.size == 0:
                 continue
-            if (dy, dx) < (0.0, 0.0):
-                a, bidx, dy, dx = bidx, a, -dy, -dx
-            groups.setdefault((int(round(dy / tol)), int(round(dx / tol))), []).append((a, bidx))
+            s, d = _orient(pos[a_idx[sel]], pos[b_idx[sel]])
+            key = np.round((d - s) / tol).astype(int)
+            for i in range(sel.size):
+                groups.setdefault((int(key[i, 0]), int(key[i, 1])), []).append((s[i], d[i]))
         out = []
         for _, items in sorted(groups.items(), key=lambda kv: -len(kv[1])):
             if len(items) < mm:
                 continue
-            s = np.asarray([P[i] for i, _ in items], np.float64)
-            d = np.asarray([P[j] for _, j in items], np.float64)
+            s = np.asarray([p for p, _ in items], np.float64)
+            d = np.asarray([q for _, q in items], np.float64)
             out.append({
                 "offset": (float(np.median(d[:, 0] - s[:, 0])),
                            float(np.median(d[:, 1] - s[:, 1]))),
@@ -1101,6 +1164,7 @@ def copy_move_regions(image, method: str = "keypoint", min_matches: int = 8,
             })
         return out
     raise ValueError(f"method は 'keypoint' / 'block'、{method!r} が来た")
+
 
 
 # =========================================================================== #
