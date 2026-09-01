@@ -377,6 +377,10 @@ def make_generators():
         "sprites": lambda rng: [rng.random((8, 8, 4)) for _ in range(3)],
         "lut": lambda rng: rng.random((17, 17, 17, 3)),
         "text": lambda rng: "ラベル " + str(int(rng.integers(0, 100))),
+        # axes は annotate の 5 op が要求する。実体を通して作る(rect と
+        # xlim/ylim の整合が取れていないと、下流が「軸の外」で fail-closed する)
+        "axes": lambda rng: __import__("annotate").axes_transform(
+            (8, 8, 100, 80), (0.0, 10.0), (0.0, 5.0)),
         "entries": lambda rng: [("right", (0.3, 0.7, 0.9)), ("wrong", (0.8, 0.4, 0.1))],
         # 断層: sinogram = (角度, 検出器)。**アーチファクトを含む**もの
         # (まれに強い筋)を混ぜる ―― きれいな正弦波だけだと、実データで効く
