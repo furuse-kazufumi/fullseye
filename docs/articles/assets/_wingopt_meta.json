@@ -4,8 +4,8 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_illumination.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_illumination_thumb.jpg",
-   "bytes": 325364,
-   "thumb_bytes": 40547,
+   "bytes": 294841,
+   "thumb_bytes": 43750,
    "size": [
     1000,
     502
@@ -13,8 +13,8 @@
    "frames": 33,
    "fps": 10,
    "colors": 256,
-   "thumb_frame": 29,
-   "sha256": "773d0b14fd8043573069ffa77bbce85edfdfad5274c6cc2308fa36ad8987c2d6"
+   "thumb_frame": 3,
+   "sha256": "4bca22a65a9b2dc76feee7303a1ab149fe8f218308ae4130e1fd63ae6d675190"
   },
   "title": "照明を変えると何が見えるか",
   "ops": [
@@ -25,8 +25,11 @@
   ],
   "facts": {
    "defect_um": 60.0,
+   "defect_px": 3.6890645586297754,
    "seeds": 5,
-   "bright_50pct_contrast": 0.02125,
+   "dark_level": 0.1,
+   "dark_texture_scale": 0.5,
+   "bright_50pct_contrast": 0.043750000000000004,
    "dark_50pct_contrast": 0.0175,
    "optical_limit_um": 32.52857142857143,
    "rows": [
@@ -34,232 +37,298 @@
      "contrast": 0.01,
      "bright_rate": 0.0,
      "bright_iou": 0.0,
+     "bright_level": 0.48939069530960966,
      "dark_rate": 0.0,
-     "dark_iou": 0.0
+     "dark_iou": 0.0,
+     "dark_level": 0.09476562501755503
     },
     {
      "contrast": 0.01375,
      "bright_rate": 0.0,
      "bright_iou": 0.0,
+     "bright_level": 0.48938059190703276,
      "dark_rate": 0.4,
-     "dark_iou": 0.010067114093959731
+     "dark_iou": 0.010067114093959731,
+     "dark_level": 0.09479066320365592
     },
     {
      "contrast": 0.0175,
-     "bright_rate": 0.2,
-     "bright_iou": 0.06196213425129088,
+     "bright_rate": 0.0,
+     "bright_iou": 0.0,
+     "bright_level": 0.4893592773018852,
      "dark_rate": 0.6,
-     "dark_iou": 0.028960817717206135
+     "dark_iou": 0.028960817717206135,
+     "dark_level": 0.0948391635315001
     },
     {
      "contrast": 0.02125,
-     "bright_rate": 0.6,
-     "bright_iou": 0.10627177700348432,
+     "bright_rate": 0.0,
+     "bright_iou": 0.0,
+     "bright_level": 0.4893592773018851,
      "dark_rate": 0.6,
-     "dark_iou": 0.08290155440414508
+     "dark_iou": 0.08290155440414508,
+     "dark_level": 0.0948587155263454
     },
     {
      "contrast": 0.025,
-     "bright_rate": 0.8,
-     "bright_iou": 0.10954063604240283,
+     "bright_rate": 0.0,
+     "bright_iou": 0.0,
+     "bright_level": 0.4893533091979144,
      "dark_rate": 0.8,
-     "dark_iou": 0.10839160839160839
+     "dark_iou": 0.10839160839160839,
+     "dark_level": 0.09487838269359285
     },
     {
      "contrast": 0.028750000000000005,
-     "bright_rate": 1.0,
-     "bright_iou": 0.11151079136690648,
+     "bright_rate": 0.2,
+     "bright_iou": 0.0017006802721088435,
+     "bright_level": 0.48934180204037325,
      "dark_rate": 0.8,
-     "dark_iou": 0.11071428571428571
+     "dark_iou": 0.11071428571428571,
+     "dark_level": 0.09488808035674087
     },
     {
      "contrast": 0.0325,
-     "bright_rate": 1.0,
-     "bright_iou": 0.11376146788990826,
+     "bright_rate": 0.2,
+     "bright_iou": 0.048027444253859346,
+     "bright_level": 0.4893418020403732,
      "dark_rate": 1.0,
-     "dark_iou": 0.11231884057971014
+     "dark_iou": 0.11231884057971014,
+     "dark_level": 0.09488808035674084
     },
     {
      "contrast": 0.036250000000000004,
-     "bright_rate": 1.0,
-     "bright_iou": 0.11632270168855535,
+     "bright_rate": 0.2,
+     "bright_iou": 0.0690846286701209,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.11481481481481481
+     "dark_iou": 0.11481481481481481,
+     "dark_level": 0.0948901641836854
     },
     {
      "contrast": 0.04,
-     "bright_rate": 1.0,
-     "bright_iou": 0.11877394636015326,
+     "bright_rate": 0.2,
+     "bright_iou": 0.09342560553633218,
+     "bright_level": 0.4893418020403731,
      "dark_rate": 1.0,
-     "dark_iou": 0.11742424242424243
+     "dark_iou": 0.11742424242424243,
+     "dark_level": 0.09489425816102609
     },
     {
      "contrast": 0.043750000000000004,
-     "bright_rate": 1.0,
-     "bright_iou": 0.12156862745098039,
+     "bright_rate": 0.6,
+     "bright_iou": 0.1082024432809773,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.12015503875968993
+     "dark_iou": 0.12015503875968993,
+     "dark_level": 0.09489425816102606
     },
     {
      "contrast": 0.04750000000000001,
-     "bright_rate": 1.0,
-     "bright_iou": 0.12424849699398798,
+     "bright_rate": 0.8,
+     "bright_iou": 0.10877192982456141,
+     "bright_level": 0.4893418020403731,
      "dark_rate": 1.0,
-     "dark_iou": 0.1220472440944882
+     "dark_iou": 0.1220472440944882,
+     "dark_level": 0.09489425816102605
     },
     {
      "contrast": 0.051250000000000004,
-     "bright_rate": 1.0,
-     "bright_iou": 0.128099173553719,
+     "bright_rate": 0.8,
+     "bright_iou": 0.1103202846975089,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.12525252525252525
+     "dark_iou": 0.12525252525252525,
+     "dark_level": 0.09489425816102608
     },
     {
      "contrast": 0.05500000000000001,
      "bright_rate": 1.0,
-     "bright_iou": 0.13333333333333333,
+     "bright_iou": 0.1111111111111111,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.12916666666666668
+     "dark_iou": 0.12916666666666668,
+     "dark_level": 0.09489425816102606
     },
     {
      "contrast": 0.058750000000000004,
      "bright_rate": 1.0,
-     "bright_iou": 0.13870246085011187,
+     "bright_iou": 0.11171171171171171,
+     "bright_level": 0.4893418020403732,
      "dark_rate": 1.0,
-     "dark_iou": 0.13247863247863248
+     "dark_iou": 0.13247863247863248,
+     "dark_level": 0.09489425816102608
     },
     {
      "contrast": 0.0625,
      "bright_rate": 1.0,
-     "bright_iou": 0.14285714285714285,
+     "bright_iou": 0.11293260473588343,
+     "bright_level": 0.4893418020403732,
      "dark_rate": 1.0,
-     "dark_iou": 0.1341991341991342
+     "dark_iou": 0.1341991341991342,
+     "dark_level": 0.09489425816102609
     },
     {
      "contrast": 0.06625,
      "bright_rate": 1.0,
-     "bright_iou": 0.14485981308411214,
+     "bright_iou": 0.11397058823529412,
+     "bright_level": 0.4893418020403731,
      "dark_rate": 1.0,
-     "dark_iou": 0.13537117903930132
+     "dark_iou": 0.13537117903930132,
+     "dark_level": 0.09489425816102606
     },
     {
      "contrast": 0.07,
      "bright_rate": 1.0,
-     "bright_iou": 0.1497584541062802,
+     "bright_iou": 0.1150278293135436,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.13808463251670378
+     "dark_iou": 0.13808463251670378,
+     "dark_level": 0.09489425816102605
     },
     {
      "contrast": 0.07375,
      "bright_rate": 1.0,
-     "bright_iou": 0.15121951219512195,
+     "bright_iou": 0.1167608286252354,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.14123006833712984
+     "dark_iou": 0.14123006833712984,
+     "dark_level": 0.09489425816102606
     },
     {
      "contrast": 0.0775,
      "bright_rate": 1.0,
-     "bright_iou": 0.15346534653465346,
+     "bright_iou": 0.1180952380952381,
+     "bright_level": 0.4893418020403732,
      "dark_rate": 1.0,
-     "dark_iou": 0.14385150812064965
+     "dark_iou": 0.14385150812064965,
+     "dark_level": 0.09489695633892448
     },
     {
      "contrast": 0.08125,
      "bright_rate": 1.0,
-     "bright_iou": 0.15538847117794485,
+     "bright_iou": 0.11923076923076924,
+     "bright_level": 0.4893418020403731,
      "dark_rate": 1.0,
-     "dark_iou": 0.14761904761904762
+     "dark_iou": 0.14761904761904762,
+     "dark_level": 0.09489695633892449
     },
     {
      "contrast": 0.085,
      "bright_rate": 1.0,
-     "bright_iou": 0.15346534653465346,
+     "bright_iou": 0.12062256809338522,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.15085158150851583
+     "dark_iou": 0.15085158150851583,
+     "dark_level": 0.0948969563389245
     },
     {
      "contrast": 0.08875,
      "bright_rate": 1.0,
-     "bright_iou": 0.15196078431372548,
+     "bright_iou": 0.1220472440944882,
+     "bright_level": 0.4893418020403731,
      "dark_rate": 1.0,
-     "dark_iou": 0.15897435897435896
+     "dark_iou": 0.15897435897435896,
+     "dark_level": 0.09489695633892448
     },
     {
      "contrast": 0.0925,
      "bright_rate": 1.0,
-     "bright_iou": 0.15346534653465346,
+     "bright_iou": 0.12350597609561753,
+     "bright_level": 0.48934180204037303,
      "dark_rate": 1.0,
-     "dark_iou": 0.15938303341902313
+     "dark_iou": 0.15938303341902313,
+     "dark_level": 0.0948969563389245
     },
     {
      "contrast": 0.09625,
      "bright_rate": 1.0,
-     "bright_iou": 0.15577889447236182,
+     "bright_iou": 0.125,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.16145833333333334
+     "dark_iou": 0.16145833333333334,
+     "dark_level": 0.09489695633892448
     },
     {
      "contrast": 0.1,
      "bright_rate": 1.0,
-     "bright_iou": 0.1561712846347607,
+     "bright_iou": 0.12678936605316973,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.16756756756756758
+     "dark_iou": 0.16756756756756758,
+     "dark_level": 0.09489695633892448
     },
     {
      "contrast": 0.10375000000000001,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.12916666666666668,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.16986301369863013
+     "dark_iou": 0.16986301369863013,
+     "dark_level": 0.0948969563389245
     },
     {
      "contrast": 0.1075,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.13219616204690832,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.1781609195402299
+     "dark_iou": 0.1781609195402299,
+     "dark_level": 0.0948969563389245
     },
     {
      "contrast": 0.11125,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.13390928725701945,
+     "bright_level": 0.4893418020403732,
      "dark_rate": 1.0,
-     "dark_iou": 0.18397626112759644
+     "dark_iou": 0.18397626112759644,
+     "dark_level": 0.09489695633892452
     },
     {
      "contrast": 0.115,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.13566739606126915,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.19135802469135801
+     "dark_iou": 0.19135802469135801,
+     "dark_level": 0.09489695633892453
     },
     {
      "contrast": 0.11875000000000001,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.1393258426966292,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.2012987012987013
+     "dark_iou": 0.2012987012987013,
+     "dark_level": 0.0948969563389245
     },
     {
      "contrast": 0.1225,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.14123006833712984,
+     "bright_level": 0.48934180204037314,
      "dark_rate": 1.0,
-     "dark_iou": 0.21016949152542372
+     "dark_iou": 0.21016949152542372,
+     "dark_level": 0.09489695633892449
     },
     {
      "contrast": 0.12625,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.14285714285714285,
+     "bright_level": 0.48934180204037325,
      "dark_rate": 1.0,
-     "dark_iou": 0.21908127208480566
+     "dark_iou": 0.21908127208480566,
+     "dark_level": 0.09489695633892452
     },
     {
      "contrast": 0.13,
      "bright_rate": 1.0,
-     "bright_iou": 0.15776081424936386,
+     "bright_iou": 0.1445221445221445,
+     "bright_level": 0.48934180204037303,
      "dark_rate": 1.0,
-     "dark_iou": 0.22142857142857142
+     "dark_iou": 0.22142857142857142,
+     "dark_level": 0.09489695633892449
     }
    ]
   }

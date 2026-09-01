@@ -1891,8 +1891,8 @@ def ex_illumination(log):
 
     rows = []
     for m in mags:
-        bright = run(-float(m), 1.0)             # 明視野風: 明るい面に暗い傷
-        dark = run(+float(m), 0.24)              # 暗視野風: 暗い場に光る傷
+        bright = run(-float(m), False)           # 明視野: 明るい面に暗い傷
+        dark = run(+float(m), True)              # 暗視野: 暗い場に光る傷
         rows.append({"mag": float(m), "bright": bright, "dark": dark})
     b_first = next((r["mag"] for r in rows if r["bright"]["rate"] >= 0.5), None)
     d_first = next((r["mag"] for r in rows if r["dark"]["rate"] >= 0.5), None)
@@ -1924,7 +1924,7 @@ def ex_illumination(log):
                 canvas, [(xx0 - 1, pan_y - 1), (xx0 + disp, pan_y - 1),
                          (xx0 + disp, pan_y + disp), (xx0 - 1, pan_y + disp)],
                 color=C_GRID, width=1, closed=True)
-        p = Plot(canvas, plot_box, (0.0, 0.36), (0.0, 1.06))
+        p = Plot(canvas, plot_box, (0.0, 0.14), (0.0, 1.06))
         p.bg()
         p.grid_y([0.25, 0.5, 0.75, 1.0])
         p.frame()
@@ -1934,28 +1934,30 @@ def ex_illumination(log):
         p.vline(r["mag"], (0.95, 0.95, 0.92), 1, dashed=True, dash=5, gap=5)
         p.marker(r["mag"], r["bright"]["rate"], C_CURVE, 4, "cross", 2)
         p.marker(r["mag"], r["dark"]["rate"], C_OPT, 4, "cross", 2)
-        p.ticks_x([0.0, 0.1, 0.2, 0.3])
+        p.ticks_x([0.0, 0.04, 0.08, 0.12])
         p.ticks_y([0.5, 1.0])
         canvas = p.c
-        for t in (0.0, 0.1, 0.2, 0.3):
-            labels.append((int(p.px(t)) - 12, plot_box[3] + 6, f"{t:.1f}", C_DIM, 11, False))
+        for t in (0.0, 0.04, 0.08, 0.12):
+            labels.append((int(p.px(t)) - 14, plot_box[3] + 6, f"{t:.2f}", C_DIM, 11, False))
         for t in (0.5, 1.0):
             labels.append((plot_box[0] - 34, int(p.py(t)) - 7, f"{t:.1f}", C_DIM, 11, False))
         yi = pan_y + disp + 10
         labels += [
-            (x1 + 4, pan_y - 18, "bright field style: dark defect, bright surface",
+            (x1 + 4, pan_y - 18, "bright field: dark defect, bright surface",
              (0.95, 0.95, 0.92), 12, True),
-            (x2 + 4, pan_y - 18, "dark field style: bright defect, dark surround",
+            (x2 + 4, pan_y - 18, "dark field: bright defect, dark surround",
              (0.95, 0.95, 0.92), 12, True),
             (plot_box[0] + 6, plot_box[1] + 4, "detection rate over 5 seeds", C_DIM, 11, False),
             (plot_box[0] + 6, plot_box[1] + 20, "bright field", C_CURVE, 11, True),
             (plot_box[0] + 6, plot_box[1] + 36, "dark field", C_OPT, 11, True),
             (plot_box[2] - 122, plot_box[3] - 16, "|contrast| ->", C_DIM, 11, False),
             (18, yi,
-             f"|contrast| {r['mag']:.3f}   bright field: IoU {r['bright']['iou']:.3f}, "
-             f"rate {r['bright']['rate']:.0%}   dark field: IoU "
-             f"{r['dark']['iou']:.3f}, rate {r['dark']['rate']:.0%}",
-             C_TEXT, 14, True),
+             f"|contrast| {r['mag']:.3f}    bright field (median level "
+             f"{r['bright']['level']:.2f}): IoU {r['bright']['iou']:.3f}, rate "
+             f"{r['bright']['rate']:.0%}    dark field (median level "
+             f"{r['dark']['level']:.2f}): IoU {r['dark']['iou']:.3f}, rate "
+             f"{r['dark']['rate']:.0%}",
+             C_TEXT, 13, True),
             (18, yi + 20,
              (f"bright field reaches 50 % at |contrast| "
               f"{'n/a' if b_first is None else f'{b_first:.3f}'}"
@@ -1963,9 +1965,10 @@ def ex_illumination(log):
               f"{'n/a' if d_first is None else f'{d_first:.3f}'}"),
              C_HIT, 14, True),
             (18, yi + 44,
-             "honest limit: this is defectgen's appearance model (the sign of the "
-             "contrast plus an exposure), not a light-transport simulation of a "
-             "dark-field ring light", C_DIM, 11, False),
+             f"honest limit: only two things differ -- the SIGN of the contrast, and "
+             f"the fact that a dark-field surround returns less light "
+             f"({dark_level:g}) AND less surface texture (x{dark_texture:g}) to the "
+             f"lens; no light transport is solved", C_DIM, 11, False),
             (18, yi + 60,
              f"optical limit is {res['resolution_object_um']:.2f} um and the defect "
              f"is {size_um:g} um -- the optics carry it in both panels; only the "
@@ -1973,15 +1976,18 @@ def ex_illumination(log):
         ]
         frames.append(_text(_to_u8(canvas), labels))
 
-    thumb = int(np.argmin([abs(r["mag"] - 0.12) for r in rows]))
-    facts = {"defect_um": size_um, "seeds": seeds,
+    thumb = int(np.argmin([abs(r["mag"] - 0.022) for r in rows]))
+    facts = {"defect_um": size_um, "defect_px": size_px, "seeds": seeds,
+             "dark_level": dark_level, "dark_texture_scale": dark_texture,
              "bright_50pct_contrast": b_first, "dark_50pct_contrast": d_first,
              "optical_limit_um": res["resolution_object_um"],
              "rows": [{"contrast": r["mag"],
                        "bright_rate": r["bright"]["rate"],
                        "bright_iou": r["bright"]["iou"],
+                       "bright_level": r["bright"]["level"],
                        "dark_rate": r["dark"]["rate"],
-                       "dark_iou": r["dark"]["iou"]} for r in rows]}
+                       "dark_iou": r["dark"]["iou"],
+                       "dark_level": r["dark"]["level"]} for r in rows]}
     return {"frames": frames, "facts": facts, "fps": 10, "thumb_index": thumb}
 
 

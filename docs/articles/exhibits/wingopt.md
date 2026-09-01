@@ -9,9 +9,9 @@
 
 ![照明を変えると何が見えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_illumination.gif)
 
-*↑ **照明を変えると何が見えるか** ―― 同じ幾何の 60 µm の傷を、明視野風(明るい面に暗い傷)と暗視野風(暗い場に光る傷)で並べ、コントラストを掃きます。50 % 検出に届くのは明視野風が |contrast| **0.021**、暗視野風が **0.018** で、光学限界 32.53 µm は両方とも余裕で超えています —— **差はレンズではなく見せ方**です(これは `defectgen` の appearance モデル = 符号と露光であって、リング照明の光輸送計算ではありません)。 使用 op: `render_part`, `defect_scratch`, `image_formation`, `draw_polyline`。*
+*↑ **照明を変えると何が見えるか** ―― 同じ幾何の 60 µm の傷を、明視野風(明るい面に暗い傷)と暗視野風(暗い場に光る傷)で並べ、コントラストを掃きます。50 % 検出に届くのは明視野風が |contrast| **0.044**、暗視野風が **0.018** で、光学限界 32.53 µm は両方とも余裕で超えています —— **差はレンズではなく見せ方**です(これは `defectgen` の appearance モデル = 符号と露光であって、リング照明の光輸送計算ではありません)。 使用 op: `render_part`, `defect_scratch`, `image_formation`, `draw_polyline`。*
 
-<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_illumination_thumb.jpg`)。33 フレーム / 10 fps / 1000×502 px / 0.33 MB。</small>
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_illumination_thumb.jpg`)。33 フレーム / 10 fps / 1000×502 px / 0.29 MB。</small>
 
 ---
 
@@ -19,4 +19,4 @@
 
 | 展示 | 形式 | 画素 | フレーム | サイズ | SHA-256(先頭 16) |
 |---|---|---|---|---|---|
-| 照明を変えると何が見えるか | GIF | 1000×502 | 33 | 325 kB | `773d0b14fd804357` |
+| 照明を変えると何が見えるか | GIF | 1000×502 | 33 | 295 kB | `4bca22a65a9b2dc7` |

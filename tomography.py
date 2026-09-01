@@ -885,27 +885,50 @@ def filtered_backprojection(sinogram, angles_deg=None, size=None,
 
     Filter each projection along the detector axis with the ramp ``|f|`` (times an
     optional apodisation window), then back-project. This is the discretised
-    inverse Radon transform, and with enough views it is exact: reconstructing a
+    inverse Radon transform, and with enough samples it is exact: reconstructing a
     uniform disc of density 1.0 from its **analytic** sinogram returns an interior
-    mean of **0.9989** and a peak-normalised RMS error of **0.0104** (measured),
-    which pins the ordinary-versus-angular frequency convention in the ramp — the
-    other convention would return ``2*pi`` times this.
+    mean of **0.9954** with 363 detector bins and **0.9997** with 727, converging
+    on the truth as the *detector* is refined and not as the view count is (180,
+    360 and 720 views give the same 0.9954 to six figures). That absolute value is
+    what pins the ordinary-versus-angular frequency convention in the ramp: the
+    other convention, equally defensible and printed in the same textbooks, would
+    return ``2*pi`` times this, and a CT slice has no absolute grey level for
+    anyone to notice against.
 
-    Where it breaks, measured on the Shepp-Logan phantom (256 px, analytic
-    sinogram, normalised RMS error against the truth):
+    Where it breaks, measured on the Shepp-Logan phantom (256 px, **analytic**
+    sinogram so the projector contributes no error of its own; normalised RMS
+    error against the truth):
 
-        views     FBP (ramp)    SART (10 sweeps)
-          180        0.0166          0.0230
-           90        0.0175          0.0233
-           45        0.0257          0.0243
-           32        0.0331          0.0252
-           16        0.0605          0.0289
-            8        0.1128          0.0367
+        views     FBP (ramp)    SART (10 sweeps)    FBP/SART
+          180        0.0250          0.0175           1.43
+           90        0.0454          0.0195           2.33
+           45        0.1039          0.0353           2.95
+           32        0.1362          0.0497           2.74
+           16        0.2341          0.0859           2.72
+            8        0.3635          0.1257           2.89
 
-    The crossing is at **45 views** for this phantom. Below it the streaks from
-    the missing views cost FBP more than the algebraic method's own regularisation
-    costs it, and by 8 views FBP is 3.1x worse. That is the entire argument for
-    iterative reconstruction in sparse-view CT, in one table.
+    **There is no crossing point, and the expectation that there would be one was
+    wrong.** The received story is that FBP wins when the data is complete and
+    loses only in the sparse regime; measured here, SART with a non-negativity
+    constraint is better at *every* view count — by 1.43x at 180 views and by
+    about 2.9x once the scan is sparse. What changes with the view count is the
+    price, not the ranking: at 180 views SART costs **312x** the wall clock
+    (37.7 s against 0.12 s for a 256-px slice) to buy that 1.43x, which is why
+    filtered back-projection is what production scanners run. At the sparse end
+    the same 2.9x comes nearly free, because both methods scale with the views.
+
+    With noise the ranking holds but the margins change, and the apodisation
+    windows stop being decoration (Poisson counts at ``I0 = 2e4``, same phantom):
+
+        views    FBP ramp    FBP hann    SART (10 sweeps)
+          180      0.0360      0.0371         0.0291
+           45      0.1159      0.0766         0.0385
+           16      0.2481      0.1921         0.0864
+            8      0.3813      0.3093         0.1259
+
+    At 180 views the exact ramp beats Hann — the data is complete and the roll-off
+    only blurs. At 45 views and below Hann beats the exact inverse by up to 1.5x,
+    because the frequencies the ramp is busy amplifying were never measured.
 
     Filters, and what they trade: ``"ramp"`` is the exact inverse and therefore
     the sharpest and the noisiest; ``"shepp-logan"``, ``"cosine"``, ``"hann"`` and

@@ -1,0 +1,1369 @@
+[
+  {
+    "name": "blob_select",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_blob_select.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_blob_select_thumb.jpg",
+    "frames": 6,
+    "bytes": 91528,
+    "size": [
+      960,
+      812
+    ],
+    "panels": 6,
+    "title": "ブロブ解析 —— 真円度で粒を選り分ける",
+    "ops": [
+      "threshold",
+      "fill_up",
+      "blob_count",
+      "colorize_labels",
+      "circularity",
+      "eccentricity",
+      "rectangularity",
+      "area_center"
+    ],
+    "data": "Pillow で描いた合成の粒シーン (決定的)",
+    "measured": {
+      "blob_count": 13,
+      "labelled": 13,
+      "circularity_threshold": 0.85,
+      "accepted": 8,
+      "rejected": 5,
+      "circularity_accepted": [
+        0.912,
+        0.912,
+        0.913,
+        0.913,
+        0.914,
+        0.914,
+        0.916,
+        0.916
+      ],
+      "circularity_rejected": [
+        0.416,
+        0.532,
+        0.666,
+        0.789,
+        0.797
+      ],
+      "per_blob": [
+        {
+          "id": 1,
+          "px": 4645,
+          "area_frac": 0.0067,
+          "circ": 0.9159,
+          "ecc": 0.0,
+          "rect": 0.7834
+        },
+        {
+          "id": 2,
+          "px": 6493,
+          "area_frac": 0.0094,
+          "circ": 0.9122,
+          "ecc": 0.0,
+          "rect": 0.7841
+        },
+        {
+          "id": 3,
+          "px": 7377,
+          "area_frac": 0.0107,
+          "circ": 0.9145,
+          "ecc": 0.0,
+          "rect": 0.784
+        },
+        {
+          "id": 4,
+          "px": 14729,
+          "area_frac": 0.0213,
+          "circ": 0.9129,
+          "ecc": 0.0,
+          "rect": 0.7848
+        },
+        {
+          "id": 5,
+          "px": 21609,
+          "area_frac": 0.0313,
+          "circ": 0.4159,
+          "ecc": 0.983,
+          "rect": 1.0
+        },
+        {
+          "id": 6,
+          "px": 18769,
+          "area_frac": 0.0272,
+          "circ": 0.797,
+          "ecc": 0.0,
+          "rect": 1.0
+        },
+        {
+          "id": 7,
+          "px": 7635,
+          "area_frac": 0.011,
+          "circ": 0.7889,
+          "ecc": 0.8546,
+          "rect": 0.7849
+        },
+        {
+          "id": 8,
+          "px": 6493,
+          "area_frac": 0.0094,
+          "circ": 0.9122,
+          "ecc": 0.0,
+          "rect": 0.7841
+        },
+        {
+          "id": 9,
+          "px": 10733,
+          "area_frac": 0.0155,
+          "circ": 0.9131,
+          "ecc": 0.0,
+          "rect": 0.7841
+        },
+        {
+          "id": 10,
+          "px": 7377,
+          "area_frac": 0.0107,
+          "circ": 0.9145,
+          "ecc": 0.0,
+          "rect": 0.784
+        },
+        {
+          "id": 11,
+          "px": 4645,
+          "area_frac": 0.0067,
+          "circ": 0.9159,
+          "ecc": 0.0,
+          "rect": 0.7834
+        },
+        {
+          "id": 12,
+          "px": 12629,
+          "area_frac": 0.0183,
+          "circ": 0.6664,
+          "ecc": 0.9066,
+          "rect": 1.0
+        },
+        {
+          "id": 13,
+          "px": 4744,
+          "area_frac": 0.0069,
+          "circ": 0.5324,
+          "ecc": 0.7321,
+          "rect": 0.4853
+        }
+      ]
+    },
+    "caption": "円 8 個・楕円 1・四角 1・板 2・三角 1 を混ぜた合成シーンを二値化 → 穴埋め → ラベル付けし、blob_count が 13 個と数えた。真円度 (circularity) 0.85 をしきい値にすると採用 8 個 (真円度 0.912〜0.916)、不採用 5 個 (0.416〜0.797) にきれいに割れる —— 特徴空間の散布図でも 2 つの群がしきい値をまたいで重なっていない。",
+    "sha256": {
+      "wing2d_blob_select.gif": "e923db3d819b48c32928fbbeb6f120fadf0c7679213a34dfa9fecfa1f8aaf875",
+      "wing2d_blob_select_thumb.jpg": "8d9c46db6ed7b0fa41f3eb6ba52449d0a61d57653152759d402ed27f9a447329"
+    }
+  },
+  {
+    "name": "colour_tour",
+    "kind": "png",
+    "file": "docs/articles/assets/wing2d_colour_tour.png",
+    "thumb": "docs/articles/assets/wing2d_colour_tour_thumb.jpg",
+    "frames": 1,
+    "bytes": 155259,
+    "size": [
+      1038,
+      992
+    ],
+    "panels": 9,
+    "sha256": {
+      "wing2d_colour_tour.png": "e2f8c518947a016f3b8cc0a2cf49a7634c407d3b077751d806155d79b85a802b",
+      "wing2d_colour_tour_thumb.jpg": "7cc740d6150cb43fd6ed33b50747353bf7743287477433119fe8456c5baf1fb8"
+    },
+    "title": "色空間ツアー —— どの空間なら分けられるか",
+    "ops": [
+      "trans_from_rgb",
+      "access_channel",
+      "rgb1_to_gray"
+    ],
+    "data": "numpy で合成した色つきシーン (左→右に照明勾配)",
+    "measured": {
+      "target": "同じ赤で塗った 2 つの円 (片方は 0.35 倍の照明、片方は 1.0 倍)",
+      "best_iou_by_channel": {
+        "RGB の R": 0.6667,
+        "HSV の H (色相)": 1.0,
+        "HSV の S (彩度)": 0.5097,
+        "HSV の V (明度)": 0.3916,
+        "Lab の L (明るさ)": 0.25,
+        "Lab の a (赤-緑)": 1.0
+      },
+      "best_threshold_by_channel": {
+        "RGB の R": 0.27,
+        "HSV の H (色相)": 0.02,
+        "HSV の S (彩度)": 0.83,
+        "HSV の V (明度)": 0.34,
+        "Lab の L (明るさ)": 0.32,
+        "Lab の a (赤-緑)": 0.62
+      },
+      "winner": "HSV の H (色相)",
+      "loser": "Lab の L (明るさ)",
+      "hue_unit_note": "HSV の H は cv2 の 0..179 を 255 で割った値 = 度/510。純緑 120° が 0.2353 として返る (実測)"
+    },
+    "caption": "同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした合成シーンを 6 つのチャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を取り切れるかを IoU で測ると、HSV の H (色相) が 1.000 で最良、Lab の L (明るさ) は最良でも 0.250 —— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。(HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る。純緑 120° が 0.2353 —— 実測して確かめた単位です。)"
+  },
+  {
+    "name": "denoise_compare",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_denoise_compare.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg",
+    "frames": 12,
+    "bytes": 2869299,
+    "size": [
+      948,
+      1094
+    ],
+    "panels": 6,
+    "title": "ノイズ除去の比較 —— median / bilateral / NLM",
+    "ops": [
+      "add_noise_white",
+      "median",
+      "bilateral",
+      "sk_nlm",
+      "estimate_noise"
+    ],
+    "data": "skimage.data camera (BSD / public domain) + 決定的な白色ノイズ",
+    "measured": {
+      "sigma": [
+        0.02,
+        0.045,
+        0.07,
+        0.095,
+        0.12,
+        0.145,
+        0.17,
+        0.195,
+        0.22
+      ],
+      "psnr_db": {
+        "noisy": [
+          34.04,
+          27.08,
+          23.36,
+          20.86,
+          18.99,
+          17.5,
+          16.28,
+          15.24,
+          14.34
+        ],
+        "median": [
+          27.92,
+          27.58,
+          27.05,
+          26.4,
+          25.71,
+          25.02,
+          24.36,
+          23.71,
+          23.09
+        ],
+        "bilateral": [
+          30.0,
+          29.73,
+          29.17,
+          28.18,
+          26.73,
+          24.99,
+          23.18,
+          21.45,
+          19.88
+        ],
+        "sk_nlm": [
+          29.2,
+          29.27,
+          29.28,
+          28.97,
+          27.77,
+          25.17,
+          21.77,
+          18.77,
+          16.54
+        ]
+      },
+      "sigma_estimated_by_op": [
+        0.3523,
+        0.6677,
+        0.9695,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "winner_per_sigma": [
+        "bilateral",
+        "bilateral",
+        "sk_nlm",
+        "sk_nlm",
+        "sk_nlm",
+        "sk_nlm",
+        "median",
+        "median",
+        "median"
+      ]
+    },
+    "caption": "同じ写真に σ=0.020→0.220 の白色ノイズを乗せ、median・bilateral・non-local means を固定パラメータで当てて PSNR を実測した 6 パネル。弱いノイズ (σ=0.020) では bilateral が 30.00 dB で最良だが、強いノイズ (σ=0.220) では median が 23.09 dB で逆転する —— 「どれが一番強いか」はノイズ量と設定次第で、掃引の途中で順位が 2 度入れ替わった。ノイズ画像そのものは 34.04→14.34 dB。",
+    "sha256": {
+      "wing2d_denoise_compare.gif": "83bf4817c82af75b669c345ed41c7d2c853728eb93ac8747dfbd786cf13069ed",
+      "wing2d_denoise_compare_720.jpg": "561a25d9b318973e147d31a4b00f2165530f221d03b553b7c5ca347962dacb02"
+    }
+  },
+  {
+    "name": "doc_deskew",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_doc_deskew.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_doc_deskew_thumb.jpg",
+    "frames": 6,
+    "bytes": 207092,
+    "size": [
+      960,
+      722
+    ],
+    "panels": 6,
+    "title": "帳票の傾き補正 → 二値化 → バーを数える",
+    "ops": [
+      "rotate_image",
+      "otsu",
+      "decode_barcode"
+    ],
+    "data": "Pillow で描いた合成の帳票 (バーコードは本数だけが意味を持つ模擬)",
+    "measured": {
+      "true_bars": 8,
+      "applied_skew_deg": 11.0,
+      "estimated_skew_deg": 11.0,
+      "estimate_error_deg": 0.0,
+      "search_step_deg": 0.5,
+      "count_before_deskew": 8.0,
+      "count_after_deskew": 8.0,
+      "sweep_deg": [
+        0.0,
+        3.0,
+        6.0,
+        9.0,
+        12.0,
+        15.0,
+        18.0,
+        21.0,
+        24.0,
+        27.0,
+        30.0,
+        33.0,
+        36.0,
+        39.0,
+        42.0
+      ],
+      "count_raw_by_skew": [
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        7.0,
+        6.0,
+        5.0,
+        5.0,
+        5.0
+      ],
+      "count_fixed_by_skew": [
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0,
+        8.0
+      ],
+      "estimate_error_by_skew_deg": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "first_skew_where_raw_count_wrong_deg": 30.0
+    },
+    "caption": "合成の帳票を 11° 傾け、回転角を 0.5° 刻みで振りながら「行方向プロファイルの分散が最大になる角」を探した。推定 11.0°(真値 11.0°・誤差 +0.0°)。0→42° の掃引でも推定誤差は最大 0.0° に収まり、補正後の `decode_barcode` は全域で真値どおり 8 本。補正しない場合は 30° を超えたところで 5 本まで取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。",
+    "sha256": {
+      "wing2d_doc_deskew.gif": "39ca287538ec5217afe9445914568536d07ea0817679aec9ea9d8fb6140f9279",
+      "wing2d_doc_deskew_thumb.jpg": "978e97735fa3161061119f5e8b91773107c467db493bb1d9a80b68146b75c818"
+    }
+  },
+  {
+    "name": "face_morph",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_face_morph.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_face_morph_thumb.jpg",
+    "frames": 13,
+    "bytes": 1052190,
+    "size": [
+      948,
+      832
+    ],
+    "panels": 6,
+    "title": "対応点モーフ —— 単純合成との違い",
+    "ops": [
+      "morph (imagemorph)",
+      "warp_piecewise_affine",
+      "warp_tps_image",
+      "blend"
+    ],
+    "data": "Pillow で描いた合成の顔 2 枚 (実在の人物ではない)",
+    "measured": {
+      "landmarks": 7,
+      "alpha": [
+        0.0,
+        0.083,
+        0.167,
+        0.25,
+        0.333,
+        0.417,
+        0.5,
+        0.583,
+        0.667,
+        0.75,
+        0.833,
+        0.917,
+        1.0
+      ],
+      "mean_abs_diff_affine_vs_tps": [
+        0.0,
+        0.00244,
+        0.00456,
+        0.00631,
+        0.00778,
+        0.0098,
+        0.01018,
+        0.01009,
+        0.00938,
+        0.00807,
+        0.00611,
+        0.00347,
+        0.0
+      ],
+      "psnr_alpha0_vs_A_db": 99.0,
+      "psnr_alpha1_vs_B_db": 99.0
+    },
+    "caption": "対応点 7 個だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は目や口の位置を対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.01018 にとどまる。",
+    "sha256": {
+      "wing2d_face_morph.gif": "b69f52822c988cbd288972637138c78c0d5fe47fe91bf7c78adb6abe7ba28459",
+      "wing2d_face_morph_thumb.jpg": "6e4e7bacb37bdfc4906d91bd117e6c66c96d0fd701b4aee1e67970d4a429c69b"
+    }
+  },
+  {
+    "name": "fit_residual",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_fit_residual.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_fit_residual_thumb.jpg",
+    "frames": 6,
+    "bytes": 2324899,
+    "size": [
+      960,
+      792
+    ],
+    "panels": 6,
+    "title": "輪郭の当てはめと残差",
+    "ops": [
+      "threshold",
+      "opening_circle",
+      "gen_contour_region_xld",
+      "sobel_amp",
+      "fit_circle",
+      "fit_line"
+    ],
+    "panels_note": "橙 = 全点の当てはめ / 緑 = 外れ値を落とした再当てはめ",
+    "data": "Pillow で描いた合成の円 (欠けあり) と直線 + 決定的なガウスノイズ",
+    "measured": {
+      "true_radius_px": 210.0,
+      "fitted_radius_px": 206.9521,
+      "radius_error_px": -3.0479,
+      "true_center": [
+        350.0,
+        320.0
+      ],
+      "fitted_center": [
+        355.472,
+        320.0
+      ],
+      "center_error_px": 5.4718,
+      "circle_rms_px": 12.9647,
+      "refit_radius_px": 209.1923,
+      "refit_radius_error_px": -0.8077,
+      "refit_center_error_px": 2.1661,
+      "refit_rms_px": 6.2084,
+      "outliers_dropped": 91,
+      "circle_max_residual_px": 51.9803,
+      "true_line_angle_deg": 73.2016,
+      "fitted_line_angle_deg": 73.2071,
+      "line_angle_error_deg": 0.0055,
+      "line_rms_px": 7.683,
+      "contour_points_circle": 1791,
+      "contour_points_line": 1413
+    },
+    "caption": "縁が 72 px ぶん欠けた円と 1 本の直線に、輪郭からの当てはめを掛けた 6 コマ。輪郭の全点で当てると半径は真値 210.0 px に対し 206.95 px (誤差 -3.05 px、中心ずれ 5.47 px、残差 RMS 12.96 px) —— 欠けの縁が当てはめを引っ張っている。残差 3σ を超える 91 点を落として当て直すと 209.19 px (誤差 -0.81 px、RMS 6.21 px) まで戻る。直線の方は真値 73.20° に対し 73.21° (誤差 +0.006°)。「当てはまった値」より「合わなかった場所」の方が、たいてい情報が多い。",
+    "sha256": {
+      "wing2d_fit_residual.gif": "706855c7912a4d64c583a790526b55d63b12c624304408c332a76e084b7e7751",
+      "wing2d_fit_residual_thumb.jpg": "59ea3d92cc1c010a331225c45cececa13db6fbcd9984e6df9a77f50befcdbf9d"
+    }
+  },
+  {
+    "name": "fourier_desc",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_fourier_desc.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_fourier_desc_thumb.jpg",
+    "frames": 24,
+    "bytes": 609068,
+    "size": [
+      928,
+      552
+    ],
+    "panels": 2,
+    "title": "楕円フーリエ記述子 —— 何次で形が戻るか",
+    "ops": [
+      "gen_region_polygon_filled",
+      "gen_contour_region_xld",
+      "elliptic_fourier",
+      "reconstruct"
+    ],
+    "data": "Fullseye の region 生成 op で作った合成の葉形 (r = 146 + 40sin3θ + 20cos5θ + 12sin9θ)",
+    "measured": {
+      "contour_points": 1557,
+      "rms_px_by_harmonic": [
+        25.391,
+        15.129,
+        15.344,
+        8.093,
+        7.077,
+        4.933,
+        4.993,
+        4.103,
+        4.026,
+        2.44,
+        2.372,
+        1.505,
+        1.297,
+        1.035,
+        0.848,
+        0.766,
+        0.697,
+        0.645,
+        0.625,
+        0.595,
+        0.525,
+        0.51,
+        0.474,
+        0.451
+      ],
+      "area_ratio_by_harmonic": [
+        1.0089,
+        0.9588,
+        0.9583,
+        0.9937,
+        0.9883,
+        0.9992,
+        0.9989,
+        0.9977,
+        0.9976,
+        0.9979,
+        0.9979,
+        1.0002,
+        0.9999,
+        1.0002,
+        1.0004,
+        1.0004,
+        1.0003,
+        1.0002,
+        1.0002,
+        1.0003,
+        1.0002,
+        1.0002,
+        1.0002,
+        1.0001
+      ],
+      "first_harmonic_under_1px": 15,
+      "rms_drop_when_adding_harmonic": {
+        "2": 10.262,
+        "3": -0.214,
+        "4": 7.251,
+        "5": 1.016,
+        "6": 2.143,
+        "7": -0.06,
+        "8": 0.89,
+        "9": 0.077,
+        "10": 1.586,
+        "11": 0.068,
+        "12": 0.867,
+        "13": 0.208,
+        "14": 0.262,
+        "15": 0.187,
+        "16": 0.081,
+        "17": 0.069,
+        "18": 0.053,
+        "19": 0.019,
+        "20": 0.03,
+        "21": 0.07,
+        "22": 0.015,
+        "23": 0.036,
+        "24": 0.023
+      },
+      "mean_drop_even_harmonics_px": 1.9554,
+      "mean_drop_odd_harmonics_px": 0.1341
+    },
+    "caption": "1557 点の輪郭を楕円フーリエ記述子に直し、高調波を 1 次から 24 次まで足しながら復元した。1 次 (楕円 1 個) では最近傍 RMS 誤差 25.39 px、15 次で 1 px を切り、24 次では 0.45 px。誤差が大きく落ちるのは 2・4・6 次を足したときで、偶数次を足したときの平均低下 1.955 px に対し奇数次では 0.134 px しか下がらない —— r = 146 + 40sin3θ + 20cos5θ + 12sin9θ という作り方が、閉曲線としては n±1 次(= 偶数次)に現れるためだ。",
+    "sha256": {
+      "wing2d_fourier_desc.gif": "7ffffbc9c8bef00ae9da90edcc90453a16c0384ca8a3d930d72f8697fc6d1034",
+      "wing2d_fourier_desc_thumb.jpg": "c7453ca860ecc1cf9e5a3e62ce33a29b9102aaef7fa5a77329c4af4122ed5fcd"
+    }
+  },
+  {
+    "name": "freq_sweep",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_freq_sweep.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_freq_sweep_720.jpg",
+    "frames": 12,
+    "bytes": 2830833,
+    "size": [
+      1038,
+      1154
+    ],
+    "title": "周波数フィルタの効き",
+    "ops": [
+      "fft_image",
+      "lowpass",
+      "highpass",
+      "bandpass_image"
+    ],
+    "data": "skimage.data camera (BSD / public domain)",
+    "measured": {
+      "cutoff_normalised": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3,
+        0.35,
+        0.4,
+        0.45
+      ],
+      "lowpass_psnr_db": [
+        22.33,
+        24.95,
+        27.2,
+        28.74,
+        30.04,
+        31.25,
+        32.59,
+        34.14,
+        36.13
+      ],
+      "energy_kept_pct": [
+        98.275,
+        99.055,
+        99.437,
+        99.605,
+        99.707,
+        99.778,
+        99.837,
+        99.886,
+        99.928
+      ]
+    },
+    "caption": "同じ写真にローパス・ハイパス・バンドパスを当て、遮断周波数を 0.05→0.45 (正規化) で掃引した。ローパスの遮断を 0.05 から 0.45 へ上げると 元画像との PSNR は 22.33→36.13 dB。一方その通過帯に入っているスペクトルエネルギーは遮断 0.05 の時点ですでに 98.27% —— 「エネルギーのほとんどは低周波にあるのに、見た目は高周波が決めている」という画像の癖がそのまま数字に出る。",
+    "sha256": {
+      "wing2d_freq_sweep.gif": "655f45e3c3d93f975ac9f5fd0bc2b481649f1effaaaf2f7d0741bad1a8c02472",
+      "wing2d_freq_sweep_720.jpg": "4ef8a9f4b234aa595803be32e0d2d0026bcd0c8d70e8c9419b48f7e57fd66c2d"
+    }
+  },
+  {
+    "name": "hist_shaping",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_hist_shaping.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_hist_shaping_720.jpg",
+    "frames": 15,
+    "bytes": 2834601,
+    "size": [
+      1108,
+      688
+    ],
+    "panels": 6,
+    "title": "ヒストグラム整形 —— equalize と clahe",
+    "ops": [
+      "equalize",
+      "clahe",
+      "gray_histo_abs",
+      "entropy_gray"
+    ],
+    "data": "skimage.data page (BSD / public domain)",
+    "measured": {
+      "contrast_factor": [
+        1.0,
+        0.924,
+        0.847,
+        0.771,
+        0.695,
+        0.618,
+        0.542,
+        0.465,
+        0.389,
+        0.313,
+        0.236,
+        0.16
+      ],
+      "std": {
+        "low": [
+          0.2228,
+          0.2058,
+          0.1888,
+          0.1718,
+          0.1547,
+          0.1377,
+          0.1207,
+          0.1037,
+          0.0867,
+          0.0697,
+          0.0527,
+          0.0356
+        ],
+        "eq": [
+          0.2931,
+          0.2912,
+          0.2914,
+          0.2914,
+          0.2919,
+          0.292,
+          0.2925,
+          0.2939,
+          0.2933,
+          0.2957,
+          0.2964,
+          0.2994
+        ],
+        "cl": [
+          0.2379,
+          0.2352,
+          0.2346,
+          0.2349,
+          0.236,
+          0.2364,
+          0.2382,
+          0.2412,
+          0.2402,
+          0.2451,
+          0.2458,
+          0.251
+        ]
+      },
+      "entropy_norm": {
+        "low": [
+          0.9133,
+          0.8942,
+          0.8705,
+          0.8515,
+          0.8262,
+          0.8019,
+          0.7643,
+          0.7313,
+          0.6947,
+          0.6433,
+          0.5711,
+          0.4883
+        ],
+        "eq": [
+          0.9934,
+          0.9843,
+          0.9853,
+          0.9819,
+          0.9856,
+          0.9769,
+          0.9809,
+          0.9808,
+          0.9878,
+          0.9874,
+          0.9899,
+          0.9883
+        ],
+        "cl": [
+          0.9551,
+          0.954,
+          0.9531,
+          0.9533,
+          0.9549,
+          0.9544,
+          0.9557,
+          0.9579,
+          0.956,
+          0.9591,
+          0.957,
+          0.9589
+        ]
+      }
+    },
+    "caption": "文書画像のコントラストを 1.00→0.16 倍まで潰していき、equalize と clahe で戻せるかを追った。入力の標準偏差は 0.2228→0.0356 まで落ちるが、equalize 後は 0.2931→0.2994、clahe 後は 0.2379→0.2510 にとどまる。ヒストグラムは入力が針のように細くなっても、平坦化した側は幅を保ったままだ。",
+    "sha256": {
+      "wing2d_hist_shaping.gif": "d8f8df3a9de9a862f2137d2fc219a3ac9658eeb364c29fd453f27f03ab784989",
+      "wing2d_hist_shaping_720.jpg": "5508cc2dce6356cb7b1702c30c49a799b6913f6f3839101f4fe8225ff7bda002"
+    }
+  },
+  {
+    "name": "morph_quartet",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_morph_quartet.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_morph_quartet_720.jpg",
+    "frames": 7,
+    "bytes": 364172,
+    "size": [
+      1092,
+      1010
+    ],
+    "title": "形態学の 4 兄弟 —— どれが何を消すのか",
+    "ops": [
+      "threshold",
+      "erosion_circle",
+      "dilation_circle",
+      "opening_circle",
+      "closing_circle",
+      "morph_grad"
+    ],
+    "data": "Fullseye の描画 op (imagedraw.draw_circle) で作った合成テスト図形",
+    "measured": {
+      "area_src_px": 36172,
+      "area_by_radius": {
+        "1": {
+          "ero": 33212,
+          "dil": 39148,
+          "open": 35968,
+          "close": 36356
+        },
+        "2": {
+          "ero": 30468,
+          "dil": 41960,
+          "open": 35572,
+          "close": 36712
+        },
+        "3": {
+          "ero": 27816,
+          "dil": 44748,
+          "open": 35012,
+          "close": 37228
+        },
+        "4": {
+          "ero": 25456,
+          "dil": 47296,
+          "open": 34244,
+          "close": 37228
+        }
+      },
+      "bar_widths_px": [
+        2,
+        4,
+        6,
+        8,
+        10
+      ],
+      "slit_widths_px": [
+        2,
+        4,
+        6
+      ],
+      "bars_surviving_opening": {
+        "1": [
+          4,
+          6,
+          8,
+          10
+        ],
+        "2": [
+          6,
+          8,
+          10
+        ],
+        "3": [
+          8,
+          10
+        ],
+        "4": [
+          10
+        ]
+      },
+      "slits_filled_by_closing": {
+        "1": [
+          2
+        ],
+        "2": [
+          2,
+          4
+        ],
+        "3": [
+          2,
+          4,
+          6
+        ],
+        "4": [
+          2,
+          4,
+          6
+        ]
+      }
+    },
+    "caption": "幅 2/4/6/8/10 px の棒と幅 2/4/6 px のスリットを刻んだ図形に、4 つの形態学 op を半径 1→4 px で当てた。膨張は面積を 39148→47296 px に増やし、収縮は 33212→25456 px に減らす。開は面積をほぼ保ったまま細い棒だけを落とし (r=1 で 4/6/8/10 px が生き残り、r=4 では 10 px だけ)、閉は細い隙間だけを埋める (r=1 で幅 2 px、r=4 で幅 2/4/6 px のスリットが消える)。",
+    "sha256": {
+      "wing2d_morph_quartet.gif": "f6553936bf929145ad78550fcf94a7859dc48dc9988e6cdc0b5ea85c7020789c",
+      "wing2d_morph_quartet_720.jpg": "0656998498bf045b0d192d471de8a83c0bd0f9c8e9ccfaff4bb8ea3d606dcd15"
+    }
+  },
+  {
+    "name": "resample_loss",
+    "kind": "png",
+    "file": "docs/articles/assets/wing2d_resample_loss.png",
+    "thumb": "docs/articles/assets/wing2d_resample_loss_thumb.jpg",
+    "frames": 1,
+    "bytes": 580720,
+    "size": [
+      1148,
+      720
+    ],
+    "panels": 8,
+    "sha256": {
+      "wing2d_resample_loss.png": "f1678993176d427b622cbcdd94f01d1aa031c18ac02e0dc683d68e93ea448d85",
+      "wing2d_resample_loss_thumb.jpg": "674ec7dacd52fffff35715a4d1bae8c25ea35daaf16029223ecd31bfaa061368"
+    },
+    "title": "回し続けると何が失われるか (リサンプリング損失)",
+    "ops": [
+      "rotate_image",
+      "gauss_image",
+      "zoom_image_factor",
+      "zoom_image_size",
+      "rescale_img"
+    ],
+    "data": "skimage.data camera (BSD / public domain) を 1/2 に間引いたもの",
+    "measured": {
+      "step_deg": 10.0,
+      "rotations": 36,
+      "psnr_after_full_turn_db": 23.98,
+      "psnr_after_full_turn_centre_only_db": 26.815,
+      "border_note": "rotate_image は reshape=False + mode='reflect' なので四隅が反射で汚れる。端 20% を落とした中央のみの値も併記",
+      "detail_metric": "std(image - gauss_image(0.4)) — 正規化しない実量",
+      "detail_ratio_pct_centre": [
+        100.0,
+        95.67,
+        92.21,
+        89.61,
+        87.47,
+        84.56,
+        80.63,
+        78.37,
+        78.16,
+        77.64,
+        78.37,
+        78.36,
+        78.16,
+        77.58,
+        75.8,
+        72.7,
+        71.16,
+        71.48,
+        71.42,
+        72.35,
+        72.69,
+        72.86,
+        72.58,
+        71.08,
+        68.21,
+        66.88,
+        67.34,
+        67.4,
+        68.35,
+        68.82,
+        69.14,
+        69.01,
+        67.67,
+        64.95,
+        63.74,
+        64.26,
+        64.37
+      ],
+      "max_abs_diff_after_full_turn": 0.6424,
+      "mean_abs_diff_after_full_turn": 0.02934,
+      "zoom_ops_max_abs_difference": {
+        "zoom_image_factor vs zoom_image_size": 0.0,
+        "zoom_image_factor vs rescale_img": 3.6359804056473877e-14
+      }
+    },
+    "caption": "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻る。だが画素は戻らない —— 中央部だけで測っても元画像との PSNR は 26.81 dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の 64.4% まで落ちる。画像全体では 23.98 dB とさらに悪いが、その差の大半は端の処理 (rotate_image は reshape=False + mode='reflect') によるもので、補間そのものの損失ではない —— なので両方の数字を出している。(ついでの実測: `zoom_image_factor` / `zoom_image_size` / `rescale_img` の 3 op は同じ入力に対して最大差 4e-14。現状は同じ実装に相乗りしています。)"
+  },
+  {
+    "name": "shape_match",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_shape_match.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_shape_match_thumb.jpg",
+    "frames": 16,
+    "bytes": 2316164,
+    "size": [
+      1006,
+      472
+    ],
+    "panels": 3,
+    "title": "形状マッチング —— 回っていても見つける",
+    "ops": [
+      "create_shape_model",
+      "find_shape_model (角度探索つき)"
+    ],
+    "data": "Pillow で描いた合成の六角ナット + 決定的な背景ノイズ",
+    "measured": {
+      "true_angle_deg": [
+        1.0,
+        24.0,
+        47.0,
+        70.0,
+        93.0,
+        116.0,
+        139.0,
+        162.0,
+        185.0,
+        208.0,
+        231.0,
+        254.0,
+        277.0,
+        300.0,
+        323.0,
+        346.0
+      ],
+      "found_angle_deg": [
+        0.0,
+        25.0,
+        45.0,
+        70.0,
+        95.0,
+        115.0,
+        140.0,
+        160.0,
+        185.0,
+        210.0,
+        230.0,
+        255.0,
+        275.0,
+        300.0,
+        325.0,
+        345.0
+      ],
+      "angle_error_deg": [
+        -1.0,
+        1.0,
+        -2.0,
+        0.0,
+        2.0,
+        -1.0,
+        1.0,
+        -2.0,
+        0.0,
+        2.0,
+        -1.0,
+        1.0,
+        -2.0,
+        0.0,
+        2.0,
+        -1.0
+      ],
+      "position_error_px": [
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          0
+        ]
+      ],
+      "score": [
+        0.987,
+        0.9425,
+        0.8813,
+        0.995,
+        0.8747,
+        0.946,
+        0.9443,
+        0.8833,
+        0.993,
+        0.8639,
+        0.9557,
+        0.9414,
+        0.8788,
+        0.9929,
+        0.868,
+        0.9469
+      ],
+      "angle_search_step_deg": 5,
+      "max_abs_angle_error_deg": 2.0,
+      "max_abs_position_error_px": 0,
+      "min_score": 0.8639,
+      "seconds_per_search": 2.506,
+      "device": "cpu"
+    },
+    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.51 秒(CPU、72 角度ぶんの探索を含む)。",
+    "sha256": {
+      "wing2d_shape_match.gif": "648329a37173f614dddf4123ccc37e388c41f47cf7562f101b0f92540f99e660",
+      "wing2d_shape_match_thumb.jpg": "24fa528407b8781f24ca5adc195f3fbd91abb660bd992b660676073a547e02a7"
+    }
+  },
+  {
+    "name": "subpixel_edge",
+    "kind": "gif",
+    "file": "docs/articles/assets/media/wing2d_subpixel_edge.gif",
+    "thumb": "docs/articles/assets/thumbs/wing2d_subpixel_edge_thumb.jpg",
+    "frames": 21,
+    "bytes": 775430,
+    "size": [
+      928,
+      552
+    ],
+    "panels": 2,
+    "title": "サブピクセル計測 —— 画素より細かく測る",
+    "ops": [
+      "gen_measure_rectangle2",
+      "measure_pos (m1_measure_pos)"
+    ],
+    "data": "解析式で作った合成のガウスぼけステップ (真値は式で与えた x0 そのもの)",
+    "measured": {
+      "true_x0": [
+        109.0,
+        109.05,
+        109.1,
+        109.15,
+        109.2,
+        109.25,
+        109.3,
+        109.35,
+        109.4,
+        109.45,
+        109.5,
+        109.55,
+        109.6,
+        109.65,
+        109.7,
+        109.75,
+        109.8,
+        109.85,
+        109.9,
+        109.95,
+        110.0
+      ],
+      "subpixel_measured": [
+        109.0,
+        109.0457,
+        109.0917,
+        109.1382,
+        109.1854,
+        109.2335,
+        109.283,
+        109.334,
+        109.3869,
+        109.4421,
+        109.5,
+        109.5579,
+        109.6131,
+        109.666,
+        109.717,
+        109.7665,
+        109.8146,
+        109.8618,
+        109.9083,
+        109.9543,
+        110.0
+      ],
+      "subpixel_error_px": [
+        0.0,
+        -0.0043,
+        -0.0083,
+        -0.0118,
+        -0.0146,
+        -0.0165,
+        -0.017,
+        -0.016,
+        -0.0131,
+        -0.0079,
+        0.0,
+        0.0079,
+        0.0131,
+        0.016,
+        0.017,
+        0.0165,
+        0.0146,
+        0.0118,
+        0.0083,
+        0.0043,
+        0.0
+      ],
+      "pixel_level_error_px": [
+        0.0,
+        -0.05,
+        -0.1,
+        -0.15,
+        -0.2,
+        -0.25,
+        -0.3,
+        -0.35,
+        -0.4,
+        -0.45,
+        0.5,
+        0.45,
+        0.4,
+        0.35,
+        0.3,
+        0.25,
+        0.2,
+        0.15,
+        0.1,
+        0.05,
+        0.0
+      ],
+      "subpixel_rms_px": 0.0119,
+      "subpixel_max_abs_px": 0.017,
+      "pixel_level_rms_px": 0.2824,
+      "pixel_level_max_abs_px": 0.5
+    },
+    "caption": "ガウスぼけしたエッジの真の位置を 0.05 px 刻みで 1 画素ぶん動かし、`measure_pos` の推定と「勾配が最大の画素」を比べた。サブピクセル推定の誤差は RMS 0.0119 px・最大 0.0170 px、画素単位の推定は RMS 0.282 px・最大 0.50 px。同じ画像・同じエッジで **24 倍**の差が出る —— 画素の格子は、測れる細かさの限界ではない。",
+    "sha256": {
+      "wing2d_subpixel_edge.gif": "bf30a9905530e81b746ebdb8e70d2ca1d7abc3407f6a3d2977658f0143cc7b72",
+      "wing2d_subpixel_edge_thumb.jpg": "a94c7b70363d7980095ac2dafb9c0635656df5dd7d45bbd3c986a4330a42b981"
+    }
+  },
+  {
+    "name": "texture_zoo",
+    "kind": "png",
+    "file": "docs/articles/assets/wing2d_texture_zoo.png",
+    "thumb": "docs/articles/assets/wing2d_texture_zoo_thumb.jpg",
+    "frames": 1,
+    "bytes": 1078666,
+    "size": [
+      1084,
+      1022
+    ],
+    "panels": 12,
+    "sha256": {
+      "wing2d_texture_zoo.png": "d2ffca874025c6fabed05dbc05400122673fd864a48f59405408505a6d549796",
+      "wing2d_texture_zoo_thumb.jpg": "52bfc087d5623266137c92539b91e91f5f2b28c492a6b0b3313f46291d58fb2b"
+    },
+    "title": "テクスチャの見分け —— 特徴量で模様を分ける",
+    "ops": [
+      "cooc_feature_matrix",
+      "entropy_gray",
+      "gray_histo_abs",
+      "estimate_noise",
+      "gabor",
+      "sk_lbp"
+    ],
+    "data": "Fullseye の synth で合成したテクスチャ 3 種 (レンガ / 織り目 / 1/f 粒状)",
+    "measured": {
+      "patches": 48,
+      "patch_px": 64,
+      "features": [
+        "GLCM energy",
+        "entropy",
+        "std",
+        "noise est",
+        "gabor θ=0°",
+        "gabor θ=45°",
+        "gabor θ=90°",
+        "gabor θ=135°"
+      ],
+      "loo_nearest_centroid_accuracy": 0.9792,
+      "correct": 47,
+      "per_texture_glcm_energy": {
+        "レンガ (image quilting 合成)": 0.2364,
+        "布の織り目 (スペクトル合成)": 0.1485,
+        "1/f 粒状 (スペクトル合成)": 0.212
+      },
+      "per_texture_entropy": {
+        "レンガ (image quilting 合成)": 0.8473,
+        "布の織り目 (スペクトル合成)": 0.8879,
+        "1/f 粒状 (スペクトル合成)": 0.8113
+      }
+    },
+    "caption": "3 種類の模様を 64×64 px の小片 48 枚に切り分け、GLCM energy・entropy・標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして leave-one-out の最近傍重心で分類したところ 47/48 = 97.9% が正解だった。見た目が似ていても、GLCM energy は 0.236 / 0.148 / 0.212 と離れている —— 「模様」は数字にできる。"
+  }
+]
