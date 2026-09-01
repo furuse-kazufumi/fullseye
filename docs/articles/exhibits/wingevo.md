@@ -81,7 +81,7 @@
 
 ![署名の収束](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingevo_signature_collapse.gif)
 
-*↑ **署名の収束** ―― 良いエラーメッセージほど実行固有の数を含むので、素の文字列で同一視すると同じ 1 件が毎回別署名になる。実走 600 連鎖で、生の発見 220 件 → 素の文字列で 72 署名 → **数値を伏せて 53 署名**(26% 減)。使用 op: `chain_fuzz.run_chain`, `chain_fuzz.signature`。*
+*↑ **署名の収束** ―― 良いエラーメッセージほど実行固有の数を含むので、素の文字列で同一視すると同じ 1 件が毎回別署名になる。実走 600 連鎖で、生の発見 216 件 → 素の文字列で 70 署名 → **数値を伏せて 51 署名**(27% 減)。使用 op: `chain_fuzz.run_chain`, `chain_fuzz.signature`。*
 
 
 ### 9. 型到達可能性の不動点
@@ -95,14 +95,14 @@
 
 [![族ごとのカバレッジ内訳](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingevo_coverage_families_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingevo_coverage_families.png)
 
-*↑ **族ごとのカバレッジ内訳** ―― 全体の数(今回の実走 433/515)だけでは、残りが頑健なのか到達不能なのかを区別できない。族に割ると、記録に残る wave-8 では photon 族が 10/17(fail-closed が効きすぎて実行されない)と一目で出る。使用 op: `chain_fuzz.catalog`, `chain_fuzz.run_chain`。*
+*↑ **族ごとのカバレッジ内訳** ―― 全体の数(今回の実走 435/515)だけでは、残りが頑健なのか到達不能なのかを区別できない。族に割ると、記録に残る wave-8 では photon 族が 10/17(fail-closed が効きすぎて実行されない)と一目で出る。使用 op: `chain_fuzz.catalog`, `chain_fuzz.run_chain`。*
 
 
 ### 11. 拡散と収束
 
 ![拡散と収束](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingevo_diffusion.gif)
 
-*↑ **拡散と収束** ―― ランダム連鎖を 600 本張ると到達 op は 138(50 連鎖)→ 339(200 連鎖)→ 433/515 と伸びが鈍る一方、新しい署名は最後まで細く出続ける。この走行の発見は CONTRACT 220。使用 op: `chain_fuzz.run_chain`。*
+*↑ **拡散と収束** ―― ランダム連鎖を 600 本張ると到達 op は 138(50 連鎖)→ 339(200 連鎖)→ 435/515 と伸びが鈍る一方、新しい署名は最後まで細く出続ける。この走行の発見は CONTRACT 216。使用 op: `chain_fuzz.run_chain`。*
 
 
 ### 12. 無言のバグの見え方

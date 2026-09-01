@@ -90,10 +90,10 @@
 
 *↑ **窓長を間違えると負の尖度が出る** ―― 衝撃が 9.346 ms ごとに来る軸受信号(真の共振 3000 Hz)で窓長を 16 から 512 まで掃引した。窓が衝撃の間隔より長くなるとどのフレームにも衝撃が 1 個ずつ入り、その帯域は構成上「定常」に見える。窓 256(10.00 ms)で最大 SK は -0.1269 ―― 負の値を、共振から 9200 Hz 離れた 12200 Hz で報告する。例外は出ない。窓を掃引することはこの op の使い方の一部であって最適化ではない。 使用 op: `synthesize_bearing_signal`, `spectral_kurtosis`。*
 
-- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.68 MB, 380 ms/コマ・最終コマ 1800 ms)
+- GIF: `docs/articles/assets/media/wing1d_window_sweep.gif` (22 コマ, 1000x668 px, 0.69 MB, 380 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_window_sweep_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `4ed982b67bb6a13fc76c2ff779a732d96cba2e9483d4bef28198a08fb2255ba4`
+- SHA-256: `4b96a00432b8f4dbe8c1711942a41c15f5dfd735fba4db3f93ac34573c6827ff`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -225,7 +225,7 @@
 - GIF: `docs/articles/assets/media/wing1d_order_tracking.gif` (30 コマ, 1000x668 px, 1.07 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_order_tracking_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `30fe2f66e04ac66b20d3d0c8795ae2746582c43498478d1a7c3af623d136b09f`
+- SHA-256: `79d7f6109868894c27f38a4d5d2099ce62ed38cbb55354762c88f4c96afde036`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -262,7 +262,7 @@
 - GIF: `docs/articles/assets/media/wing1d_bearing_geometry.gif` (36 コマ, 1000x668 px, 1.40 MB, 200 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_bearing_geometry_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `0b62fa0683a450fa898dbd92cb4f413f3dc7f0e3f85301875a5c032999ae182f`
+- SHA-256: `0c390c422878a4f7bd24b3fe175cc2883707c0cb0ed0ef56113e2f7f3959df87`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -423,10 +423,10 @@
 
 *↑ **平滑化のトレードオフ** ―― 減衰 5 Hz 振動 + N(0, 0.06) にガウス平滑を掛け、σ を 31 段掃引した。生の信号は真値 6 個の極大に対して 196 個を報告する(`local_min_max_funct_1d` は狭義不等式で、雑音モデルを持たない)。RMS 誤差は σ = 3.219 で最小の 0.021952(生の 2.73 倍良い)になり、そのときピーク高さは真値から -2.77 %。掛けすぎると σ = 40.0 で RMS 誤差が 0.249561 まで悪化し、ピークは -59.56 % なまる。雑音は減るが極値はなまる ―― 最小点はあるが、無料ではない。 使用 op: `smooth_funct_1d_gauss`, `local_min_max_funct_1d`。*
 
-- GIF: `docs/articles/assets/media/wing1d_smoothing_tradeoff.gif` (32 コマ, 1000x668 px, 1.07 MB, 220 ms/コマ・最終コマ 1600 ms)
+- GIF: `docs/articles/assets/media/wing1d_smoothing_tradeoff.gif` (32 コマ, 1000x668 px, 1.06 MB, 220 ms/コマ・最終コマ 1600 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_smoothing_tradeoff_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `11925ead92d9a0349ddaa503498da3096b21e7c94a2ca4b61d70f93cb045b651`
+- SHA-256: `98a6eaff19a41a10f97d71410a577d5c54de58fd2574f66dc729f0aa38cd03da`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -459,10 +459,10 @@
 
 *↑ **サンプリングとエイリアシング** ―― 300 Hz の純音は一度も変えず、サンプリング周波数だけを 1300 Hz から 340 Hz へ 31 段下げた(0.5 s 記録、bin 2 Hz)。fs = 596 Hz(Nyquist 298 Hz)から折り返しが始まり、最後は fs = 340 Hz で 40.00 Hz に振幅 1.000000 の線が立つ ―― 高さは満額のまま、周波数だけが嘘。全 31 段で実測ピークと折り返しの予測 |f − fs·k| の差は最大 0.000 Hz。Nyquist の線から右は、この記録に原理的に存在し得ない領域として焼いてある。 使用 op: `spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_aliasing.gif` (31 コマ, 1000x668 px, 1.13 MB, 260 ms/コマ・最終コマ 1800 ms)
+- GIF: `docs/articles/assets/media/wing1d_aliasing.gif` (31 コマ, 1000x668 px, 1.14 MB, 260 ms/コマ・最終コマ 1800 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_aliasing_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `17745b7f5cecec5930e800bce7c73dbd45ac9808fb5bf82174d3582a47a23ebe`
+- SHA-256: `221239e2f9d4e21e0f353b38e8621bf18b7c046d8d8b24f15bd0aa8c46d38176`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -652,7 +652,7 @@
 - GIF: `docs/articles/assets/media/wing1d_peak_match.gif` (30 コマ, 1000x668 px, 1.46 MB, 240 ms/コマ・最終コマ 1600 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_peak_match_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `cc73ed4008cb9f65c0fd2d4ebda3e0cdbeaff703683318b94ca9419eacbd5aa3`
+- SHA-256: `b522dcee8c7acf1aa0c6729d25dd8ad4079efb0e1f85fe32a48daee40abc5db7`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -790,7 +790,7 @@
 - GIF: `docs/articles/assets/media/wing1d_envelope_flow.gif` (7 コマ, 940x522 px, 0.18 MB, 1500 ms/コマ・最終コマ 3000 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_envelope_flow_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `4bf1d58036affa859817326d975c6502b7d4ddc2100f5b0177559e69be081092`
+- SHA-256: `b437cde7351aeaac59a4aed6f0a757a0cdd6f5d019d1a97f7ab392e2c141dc04`
 
 <details><summary>この図に焼いた実測値</summary>
 

@@ -418,16 +418,16 @@
       1100,
       620
      ],
-     "gif_bytes": 1472274,
-     "gif_sha256": "37c3adb4406cc46ed921600d54b8287af640568b9e9964ae5638c1d0d7dfc7c0",
+     "gif_bytes": 1474350,
+     "gif_sha256": "41302871423c9a9105d3ea00843eccb5fa3b55f00b0ca84f2f5632ebf7d8aea6",
      "colors": null,
      "fps": 6,
-     "thumb_bytes": 34438
+     "thumb_bytes": 34426
     },
     "numbers": {
-     "findings": 220,
-     "sig_raw": 72,
-     "sig_masked": 53
+     "findings": 216,
+     "sig_raw": 70,
+     "sig_masked": 51
     },
     "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"
    }
@@ -444,17 +444,17 @@
       1100,
       790
      ],
-     "gif_bytes": 343481,
-     "gif_sha256": "2c75bb6ac1666468db5b16866d81b53972e93edc8f5d3900c3dfa658161b6818",
+     "gif_bytes": 342823,
+     "gif_sha256": "21a5d93e7a421b44b95addc35a1976b3adda48bf529218ef7bedb0627e544ddc",
      "colors": null,
      "fps": 0.6,
-     "thumb_bytes": 50556
+     "thumb_bytes": 50560
     },
     "numbers": {
      "rounds": [
       0,
       64,
-      353,
+      352,
       494,
       506
      ],
@@ -477,15 +477,15 @@
       1120,
       816
      ],
-     "png_bytes": 80010,
-     "thumb_bytes": 57064,
-     "png_sha256": "8712890485053de4cab76e02a36219133422c8bce273eb380552a98fd70f4282"
+     "png_bytes": 79819,
+     "thumb_bytes": 57006,
+     "png_sha256": "271a09f28cd2e51305d86e235b108118143b8fb089f8853c4431c7d3ad916f43"
     },
     "numbers": {
      "now": {
       "3d": [
-       239,
-       71
+       240,
+       70
       ],
       "1d": [
        34,
@@ -524,8 +524,8 @@
        0
       ],
       "rangedoppler": [
-       7,
-       1
+       8,
+       0
       ],
       "acoustics": [
        18,
@@ -591,16 +591,16 @@
       1100,
       600
      ],
-     "gif_bytes": 1585883,
-     "gif_sha256": "6325d6b8098eb47e960dd3c8b2a4b9207f3ff489e382bdcbe634f6e58e63d476",
+     "gif_bytes": 1585726,
+     "gif_sha256": "30982f2f90bc5a1564a46ffffbfc0773f5fd7fe78e735a3a3f87107b478c4a06",
      "colors": null,
      "fps": 6,
-     "thumb_bytes": 32053
+     "thumb_bytes": 32040
     },
     "numbers": {
-     "covered": 433,
+     "covered": 435,
      "kinds": {
-      "CONTRACT": 220
+      "CONTRACT": 216
      }
     },
     "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"

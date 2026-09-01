@@ -932,10 +932,15 @@ def subject_fourier_desc(log=print) -> dict:
 # 展示 6: 対応点で顔をモーフする / landmark-driven image morphing                #
 # --------------------------------------------------------------------------- #
 def _synthetic_face(kind: int, size: int = 320) -> tuple:
-    """合成の顔 (実在しない) と対応点 11 個を返す. 戻り (image, points[row,col]).
+    """合成の顔 (実在しない) と対応点 11 個を返す. 戻り (image, points[x, y]).
 
     対応点は輪郭の楕円上 8 点 + 両目 + 口。7 点 (輪郭 4 点) では楕円の弧の途中が
     対応せず、モーフの途中に二重像が残っていた —— 実際に見て分かった不足。
+
+    ★点は **(x, y) = (列, 行)** で返す。`imagemorph` はこの並びを期待しており、
+    (row, col) で渡しても例外にならず「それらしく間違った」絵が出る
+    (目と口が転置した位置に対応づき、二重像が消えない)。同じライブラリでも
+    `fourierdesc.from_xld` は (row, col) を返すので、変換はここに閉じ込める。
     """
     from PIL import Image, ImageDraw
     im = Image.new("L", (size, size), 36)
@@ -959,11 +964,11 @@ def _synthetic_face(kind: int, size: int = 320) -> tuple:
     d.arc(list(mouth[:4]), mouth[4], mouth[5], fill=max(0, ink - 8), width=7)
     cx, cy = (head[0] + head[2]) / 2.0, (head[1] + head[3]) / 2.0
     ax, ay = (head[2] - head[0]) / 2.0, (head[3] - head[1]) / 2.0
-    pts = [(cy + ay * np.sin(t), cx + ax * np.cos(t))          # 楕円上 8 点
+    pts = [(cx + ax * np.cos(t), cy + ay * np.sin(t))          # 楕円上 8 点 (x, y)
            for t in np.arange(8) * (np.pi / 4.0)]
-    for e in eyes:                                             # 両目の中心
-        pts.append(((e[1] + e[3]) / 2.0, (e[0] + e[2]) / 2.0))
-    pts.append(((mouth[1] + mouth[3]) / 2.0, (mouth[0] + mouth[2]) / 2.0))
+    for e in eyes:                                             # 両目の中心 (x, y)
+        pts.append(((e[0] + e[2]) / 2.0, (e[1] + e[3]) / 2.0))
+    pts.append(((mouth[0] + mouth[2]) / 2.0, (mouth[1] + mouth[3]) / 2.0))
     return np.asarray(im, np.float64) / 255.0, np.asarray(pts, np.float64)
 
 

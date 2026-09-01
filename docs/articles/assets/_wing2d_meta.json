@@ -427,7 +427,7 @@
     "file": "docs/articles/assets/media/wing2d_face_morph.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_face_morph_thumb.jpg",
     "frames": 13,
-    "bytes": 1042658,
+    "bytes": 979376,
     "size": [
       948,
       832
@@ -460,25 +460,25 @@
       ],
       "mean_abs_diff_affine_vs_tps": [
         0.0,
-        0.0028,
-        0.00499,
-        0.00655,
-        0.00771,
-        0.00835,
-        0.0085,
-        0.00825,
-        0.00754,
-        0.00641,
-        0.00481,
-        0.00271,
+        0.00264,
+        0.0047,
+        0.00624,
+        0.00725,
+        0.00788,
+        0.00802,
+        0.00773,
+        0.00702,
+        0.00594,
+        0.00446,
+        0.00243,
         0.0
       ],
       "psnr_alpha0_vs_A_db": 99.0,
       "psnr_alpha1_vs_B_db": 99.0
     },
-    "caption": "対応点 11 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.00850 にとどまる。",
+    "caption": "対応点 11 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.00802 にとどまる。",
     "sha256": {
-      "wing2d_face_morph.gif": "aa25c54c45f213b8ddde6de2289c38c05ebe75d040b655f4715b4a74a8d69b73",
+      "wing2d_face_morph.gif": "2c4db2124bcb0c0d9c4f4f64a5caa9e7d39f4093b8b53ea5d8ac54c2c3bc7ea0",
       "wing2d_face_morph_thumb.jpg": "5fa58bb01478a04e1c91246adbae494743bb4661eebb3cd6eb126dda7e3d00a3"
     }
   },

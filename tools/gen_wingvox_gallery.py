@@ -499,19 +499,20 @@ def ex_mesh_turntable(log):
             shade = (0.28 + 0.72 * lam)[..., None] * np.asarray(md["color"])
             img[hit] = np.clip(shade[hit], 0.0, 1.0)
             zbuf[hit] = r["depth"][hit]
-        canvas = _canvas(size + 58, size)
+        canvas = _canvas(size + 66, size)
         _paste(canvas, _frame_border(img), 0, 0)
         canvas = _text(canvas, [
-            (6, size + 8, "方位 %3d 度   %d 粒子 / 三角形 %d 枚" % (
-                int(round(np.rad2deg(az))), len(meshes), tris), FG, "la"),
-            (6, size + 32, "色は断面図とまったく同じ ―― 同じパレットの同じ行",
-             MUTED + (13,), "la"),
-        ], size=15)
+            (8, size + 8, "方位 %3d 度   %d 粒子 / 三角形 %d 枚" % (
+                int(round(np.rad2deg(az))), len(meshes), tris), FG + (16,), "la"),
+            (8, size + 36, "色は断面図とまったく同じ ―― 同じパレットの同じ行",
+             MUTED + (14,), "la"),
+        ], size=16, where="mesh_turntable")
         frames.append(canvas)
 
+    title = "成分ごとに marching cubes をかけた色付きメッシュ"
     book = flipbook(frames, ["方位 %d 度" % int(round(360.0 * f / n_az))
                              for f in range(n_az)],
-                    title="成分ごとに marching cubes をかけた色付きメッシュ")
+                    title=title, title_font_size=_fit_size(title, size, 24))
     info = save_animation(book, "wingvox_mesh_turntable", duration_ms=110,
                           hold_last_ms=700)
     pal = VC.vol_label_palette(int(labels.max()), seed=SEED)

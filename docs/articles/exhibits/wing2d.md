@@ -70,7 +70,7 @@
 
 ![対応点モーフ —— 単純合成との違い](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_face_morph.gif)
 
-*↑ **対応点モーフ —— 単純合成との違い** ―― 対応点 11 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.00850 にとどまる。使用 op: `morph (imagemorph)`, `warp_piecewise_affine`, `warp_tps_image`, `blend`。*
+*↑ **対応点モーフ —— 単純合成との違い** ―― 対応点 11 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.00802 にとどまる。使用 op: `morph (imagemorph)`, `warp_piecewise_affine`, `warp_tps_image`, `blend`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_face_morph_thumb.jpg -->
 
