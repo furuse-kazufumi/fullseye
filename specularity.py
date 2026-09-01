@@ -1243,10 +1243,15 @@ def photometric_residual(images, lights, normals=None, albedo=None,
 
     ``sqrt(mean_n (albedo * (n.L_n) - I_n)^2)`` — the root-mean-square
     disagreement between the linear model and the measurements, in the units of
-    the input radiance. Zero to machine precision on a synthetic Lambertian
-    surface (measured maximum 1.3e-16 in ``tests/test_specularity.py``), and
-    large exactly where the assumption broke: cast shadows, highlights,
-    interreflections.
+    the input radiance. On a synthetic Lambertian surface with the true
+    float64 normals and albedo supplied it measures 1.4e-16 at worst; with them
+    omitted the floor rises to 4.5e-08, because
+    :func:`photometric.photometric_stereo` returns float32 and that is its
+    precision, not a modelling error (supplying the *same* truth cast to
+    float32 reproduces 4.5e-08 exactly). It is large where the assumption
+    actually broke: 0.19 at worst on the same scene with 3 of 8 lights blocked
+    by a cast shadow. All four numbers measured in
+    ``tests/test_specularity.py``.
 
     This is the diagnostic that tells you *whether* you need
     :func:`photometric_stereo_robust` before you reach for it, and it is the
