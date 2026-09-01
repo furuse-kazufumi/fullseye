@@ -1541,10 +1541,16 @@ def octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10):
     even ``b``, with edges at ``f_c * G**(-+1/(2b))``. ``base=10`` uses
     ``G = 10**(3/10)`` (the base-ten system, in which ten third-octaves span
     almost exactly a decade); ``base=2`` uses ``G = 2`` exactly. No published
-    table of nominal centre frequencies is transcribed — the *exact* centres are
+    table of centre frequencies is transcribed — the *exact* centres are
     computed, which is why ``centers`` reads 1000.0, 1258.925, 1584.893 rather
-    than the nominal 1000, 1250, 1600 that a table would give. ``nominal`` is
-    returned alongside for labelling, rounded to three significant figures.
+    than the 1000, 1250, 1600 a published series would give.
+
+    ``nominal`` is the exact centre rounded to three significant figures, for
+    labelling only. It is a rounding, **not** the published nominal series, and
+    it differs from it: measured, the 1/1-octave centres round to 31.6, 63.1,
+    126.0, 251.0, 501.0, 1000.0, 2000.0, 3980.0, 7940.0, 15800.0, where the
+    published series has 125 and 250 where this has 126 and 251. Do arithmetic
+    with ``centers`` and supply your own labels if they have to match a report.
 
     Returns a dict: ``centers``, ``lower``, ``upper``, ``nominal``, ``fraction``,
     ``base``, ``ratio`` (``G**(1/b)``), ``bandwidth`` (``upper - lower``),
@@ -1553,9 +1559,13 @@ def octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10):
     Exact identities, asserted in the tests: ``upper/lower = G**(1/b)`` for every
     band, ``center = sqrt(lower*upper)`` (the centre is the geometric mean of its
     edges, by construction), and successive centres are in the ratio ``G**(1/b)``.
-    Measured for ``fraction=3, base=10``: the band containing 1000 Hz has
-    ``lower = 891.251``, ``upper = 1122.018``, and ``upper/lower = 1.2589254``
-    against ``G**(1/3) = 1.2589254`` — equal to 1.1e-16.
+    Measured for ``fraction=3, base=10`` over 22 Hz - 22.05 kHz (30 bands): the
+    band containing 1000 Hz has ``lower = 891.250938``, ``center = 1000.000000``,
+    ``upper = 1122.018454``; ``upper/lower - G**(1/3) = 2.2e-16``;
+    ``|center - sqrt(lower*upper)| <= 1.8e-12`` over all bands; and successive
+    centre ratios deviate from ``G**(1/3)`` by at most 6.7e-16. With ``base=2``
+    the octave centres come out exactly 31.25, 62.5, 125, 250, 500, 1000, 2000,
+    4000, 8000, 16000 Hz.
 
     **Raises** ``ValueError``: ``fraction`` not an int in ``[1, 24]``, ``base``
     not 2 or 10, non-positive or non-finite ``f_min`` / ``f_max``,
