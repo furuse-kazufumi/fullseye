@@ -151,13 +151,20 @@ def resolve_color(color, scheme: str = "okabe_ito"):
     return tuple(float(v) for v in arr)
 
 
-def _check_width(width) -> int:
-    if isinstance(width, str) or not np.isscalar(width) or not np.isfinite(float(width)):
+def check_width(width):
+    """線幅の検証。**値は丸めずそのまま返す**。
+
+    丸めないのは :func:`imagedraw.draw_circle` が ``width / 2`` を輪郭帯の半幅に
+    使うため ―― ここで int に丸めると小数幅の既存呼び出しの結果が変わる。
+
+    Raises ValueError: 非数値 / 非有限 / 1 画素未満。
+    """
+    if isinstance(width, str) or not np.isscalar(width):
         raise ValueError(f"width must be a finite number of pixels, got {width!r}")
-    w = int(round(float(width)))
-    if w < 1:
-        raise ValueError(f"width must be >= 1 pixel, got {width!r}")
-    return w
+    w = float(width)
+    if not np.isfinite(w) or w < 1.0:
+        raise ValueError(f"width must be a finite number >= 1 pixel, got {width!r}")
+    return width
 
 
 @dataclass(frozen=True)
