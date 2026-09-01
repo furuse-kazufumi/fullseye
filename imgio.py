@@ -74,7 +74,11 @@ def to_uint8(x):
 
 def normalize(x, vmin=None, vmax=None):
     """Linearly rescale finite values to [0, 1] over [vmin, vmax] (auto if None).
-    Non-finite entries are left as-is (callers usually mask them)."""
+    Non-finite entries are left as-is (callers usually mask them).
+
+    退化ケース(``hi <= lo``、定数配列や 1 要素配列)では ``hi = lo + 1`` に倒すので
+    **出力は一様 0** になる。値の大小は失われるが例外は出ない —— 尺度を固定したい
+    呼び出し側は ``vmin`` / ``vmax`` を明示すること(:func:`apply_cmap` の注記)。"""
     a = np.asarray(x, np.float64)
     fin = np.isfinite(a)
     if not fin.any():
