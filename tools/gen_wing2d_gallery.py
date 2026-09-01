@@ -1872,10 +1872,21 @@ def subject_resample_loss(log=print) -> dict:
     psnr_core = _psnr(src[m:-m, m:-m], hist[36]["img"][m:-m, m:-m])
     hp_core = [_detail(h["img"][m:-m, m:-m]) for h in hist]
     # 3 つの zoom 系 op が同じ出力かどうかを実測 (推測しない)
+    # ★2026-09-02: 3 op は別実装になった(以前は geom "zoom" に相乗りで同一)。
+    #   `zoom_image_size` は目標サイズ指定なので **出力 shape が変わる** ため、
+    #   引き算の前に shape 一致を確かめる(shape が違えば「別物」= NaN ではなく
+    #   その事実を文字列で残す)。
     z = {op: np.asarray(fs.apply(src, op, 0.9, 0.5), np.float64)
          for op in ("zoom_image_factor", "zoom_image_size", "rescale_img")}
-    zoom_maxdiff = float(np.max(np.abs(z["zoom_image_factor"] - z["zoom_image_size"])))
-    zoom_maxdiff2 = float(np.max(np.abs(z["zoom_image_factor"] - z["rescale_img"])))
+
+    def _maxdiff(p, q):
+        """同 shape なら最大絶対差、shape が違えば None(= 形からして別物)。"""
+        a, b = z[p], z[q]
+        return float(np.max(np.abs(a - b))) if a.shape == b.shape else None
+
+    zoom_maxdiff = _maxdiff("zoom_image_factor", "zoom_image_size")
+    zoom_maxdiff2 = _maxdiff("zoom_image_factor", "rescale_img")
+    zoom_shapes = {op: list(z[op].shape) for op in z}
     panels, labels = [], []
     for k in picks:
         h = hist[k]

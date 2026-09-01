@@ -16,18 +16,30 @@ Generate the "3-D metrology wing" exhibits for the Qiita science-museum article.
   ``save_exhibit`` / ``markdown`` を通すので、記事では必ず「サムネイル +
   クリックで原寸」になる。
 * 乱数は ``SEED`` 固定 + ``np.random.default_rng`` で決定的。同じコマンドで
-  再生成すると PNG / GIF は SHA-256 が一致する。
+  再生成すると PNG / GIF / mp4 は SHA-256 が一致する。そのため **壁時計の実測時間は
+  図にもキャプションにも焼かない**(焼いた瞬間に画素が毎回変わるため)。時間も実測
+  しているが、値は ``_wing3d_meta.json`` にだけ残す。図に焼くのは厳密に決まる量
+  (メモリの実測 nbytes / voxel 数 / run 数 / 測長 mm)だけ。
 * アニメーションは **静止フレーム 1 枚だけでも意味が分かる**よう、凡例・軸・単位・
   実測値を毎フレームに焼き込む。
 
 出力 / outputs
 --------------
-``docs/articles/assets/wing3d_<name>.png``            静止展示(フル解像度)
-``docs/articles/assets/wing3d_<name>_thumb.jpg``      幅 900px サムネ
-``docs/articles/assets/media/wing3d_<name>.gif``      動く展示(+ 同一フレーム列の .mp4)
+``docs/articles/assets/wing3d_<name>.png``              静止展示(フル解像度)
+``docs/articles/assets/wing3d_<name>_thumb.jpg``        幅 720px サムネ
+``docs/articles/assets/media/wing3d_<name>.gif``        動く展示(+ 同一フレーム列の .mp4)
 ``docs/articles/assets/thumbs/wing3d_<name>_thumb.jpg`` 動く展示のサムネ
-``docs/articles/exhibits/wing3d.md``                  記事貼付け用キャプション原稿
-``docs/articles/assets/_wing3d_meta.json``            使用 op・実測値・ファイル情報
+``docs/articles/exhibits/wing3d.md``                    キャプション原稿(ja)
+``docs/articles/exhibits/wing3d.en.md``                 キャプション原稿(en)
+``docs/articles/assets/_wing3d_meta.json``              使用 op・実測値・ファイル情報
+``docs/articles/assets/_wing3d_manifest.md``            生成物の実測一覧(記事には入れない)
+
+``docs/articles/exhibits/wings.json`` は複数の作業者が触る共有ファイルなので
+**このスクリプトは書き換えない**。章に組み込むときは手で 1 行足すこと::
+
+    { "id": "wing3d", "order": 40,
+      "title": { "ja": "3-D 計測ウィング ―― ボクセルと点群を「測る」",
+                 "en": "The 3-D Metrology Wing — Measuring Voxels and Point Clouds" } }
 
 使い方 / run
 ------------
@@ -1197,12 +1209,16 @@ def ex_vesselness(log) -> dict:
     c = _header(c, "管を光らせる op と、粒を光らせる op — 否定対照で確かめる",
                 "合成 CT(まっすぐな管 1 本 + 球 2 個)。「管状度」が本当に管だけを "
                 "選んでいるかは、粒だけを選ぶ op と並べないと分からない。")
-    z = 43
-    panels = [("入力(合成 CT の 1 枚)", _cmap(_norm01(vol[z]), "gray"), C_TEXT),
-              ("vol_frangi(管状度)", _cmap(_norm01(fr[z], 0, 1), "inferno"), C_B),
-              ("vol_sato(管状度・別定式)", _cmap(_norm01(sa[z], 0, 1), "inferno"), C_C),
-              ("vol_hessian_blobness(粒状度)", _cmap(_norm01(bl[z], 0, 1), "viridis"), C_D)]
+    # 管の軸を含む断面(y 一定)を見る。軸に直交する断面だと管が「点」になり、
+    # 球は別の z にあるので写らず、「管 1 本 + 球 2 個」が絵から読めなくなる。
+    y0v = 44
+    panels = [("入力(合成 CT)", _cmap(_norm01(vol[:, y0v, :]), "gray"), C_TEXT),
+              ("vol_frangi(管状度)", _cmap(_norm01(fr[:, y0v, :], 0, 1), "inferno"), C_B),
+              ("vol_sato(管状度・別定式)", _cmap(_norm01(sa[:, y0v, :], 0, 1), "inferno"), C_C),
+              ("vol_hessian_blobness(粒状度)",
+               _cmap(_norm01(bl[:, y0v, :], 0, 1), "viridis"), C_D)]
     from PIL import Image
+    sc = pw / n
     for i, (title, img, col) in enumerate(panels):
         px = 18 + i * (pw + 14)
         im = Image.fromarray(_to_u8(img)).resize((pw, pw), Image.NEAREST)
@@ -1210,15 +1226,22 @@ def ex_vesselness(log) -> dict:
         c = imagedraw.draw_polyline(
             c, [(px, 84), (px + pw - 1, 84), (px + pw - 1, 84 + pw - 1), (px, 84 + pw - 1)],
             color=col, width=2, closed=True)
-        sc = pw / n
         # 管と球の在り処を毎回示す(応答が 0 でも「そこに何があるか」が読める)
-        c = imagedraw.draw_circle(c, (px + 26 * sc, 84 + 44 * sc), 7 * sc,
-                                  color=(0.95, 0.95, 0.95), width=1)
-        c = imagedraw.draw_circle(c, (px + 60 * sc, 84 + 46 * sc), 9 * sc,
+        c = imagedraw.draw_polyline(
+            c, [(px + 19 * sc, 84 + 4 * sc), (px + 33 * sc, 84 + 4 * sc),
+                (px + 33 * sc, 84 + 83 * sc), (px + 19 * sc, 84 + 83 * sc)],
+            color=(0.95, 0.95, 0.95), width=1, closed=True)
+        c = imagedraw.draw_circle(c, (px + 60 * sc, 84 + 26 * sc), 9 * sc,
+                                  color=(0.62, 0.64, 0.68), width=1)
+        c = imagedraw.draw_circle(c, (px + 60 * sc, 84 + 60 * sc), 9 * sc,
                                   color=(0.62, 0.64, 0.68), width=1)
         c = _text(c, [(px, 84 + pw + 6, title, col, 12, True)])
-    c = _text(c, [(18 + 26 * (pw / n) + 8, 84 + 30, "管", (0.95, 0.95, 0.95), 12, True),
-                  (18 + 60 * (pw / n) + 10, 84 + 40, "球", (0.62, 0.64, 0.68), 12, True)])
+    c = _text(c, [
+        (18 + 34 * sc + 4, 84 + 8 * sc, "管", (0.95, 0.95, 0.95), 12, True),
+        (18 + 70 * sc + 4, 84 + 22 * sc, "球", (0.62, 0.64, 0.68), 12, True),
+        (18 + 70 * sc + 4, 84 + 56 * sc, "球", (0.62, 0.64, 0.68), 12, True),
+        (18, 84 + pw + 26, "断面 vol[:, y=%d, :]  横 = x ->   縦 = z (下向き)。"
+         "管は軸を含めて縦の帯、球は 2 つの円として同時に写る。" % y0v, C_DIM, 11, False)])
 
     names = list(res.keys())
     p = Plot(c, 110, 400, 470, 170, (-0.5, 2.5), (0, 1.05),
@@ -1440,7 +1463,7 @@ def ex_wall(log) -> dict:
                                                  threshold=0.05, spacing=sp))
         log(f"      sigma={sg:.1f} -> {['%.4f' % v for v in sweep[sg]]}")
 
-    W, H = 1120, 680
+    W, H = 1120, 792
     c = _canvas(W, H)
     c = _header(c, "virtual probe ―― パイプ断面にプローブを 1 本刺して壁厚を測る",
                 "合成パイプ(外径 10.000 mm / 内径 8.000 mm、spacing 0.25 mm/voxel、"
@@ -1469,17 +1492,21 @@ def ex_wall(log) -> dict:
                    C_DIM, 12, False)])
 
     # 右: プロファイルとエッジ
-    p = Plot(c, 500, 100, 590, 200, (0, float(t_mm[-1])), (-0.05, 1.1),
-             xlabel="プローブに沿った距離 [mm] ->", ylabel="濃淡値(0-1)",
+    p = Plot(c, 500, 116, 590, 180, (0, float(t_mm[-1])), (-0.05, 1.1),
+             xlabel="プローブに沿った距離 [mm] ->",
              xticks=[0, 4, 8, 12, 16, 20, 24], yticks=[0, 0.5, 1.0],
              xfmt="%d", yfmt="%.1f")
+    p.items.append((500, 96, "縦 = 濃淡値(0-1)。破線が 50 % 等値面、縦線が検出したエッジ",
+                    C_DIM, 11, False))
     p.series(t_mm, prof, C_TEXT, width=2)
     p.hline(0.5, C_DIM, width=1)
-    for e in edges:
+    for j, e in enumerate(edges):
         col = C_A if e["polarity"] > 0 else C_E
         p.c = imagedraw.draw_line(p.c, (p.px(e["t_mm"]), p.y0),
                                   (p.px(e["t_mm"]), p.y0 + p.h - 1), color=col, width=1)
-        p.items.append((p.px(e["t_mm"]) - 18, p.y0 - 16, "%.3f" % e["t_mm"], col, 10, True))
+        # ラベルは枠の内側に上下 2 段で置く(枠外に出すと軸名と重なる)
+        p.items.append((p.px(e["t_mm"]) - 18, p.y0 + 6 + 16 * (j % 2),
+                        "%.3f" % e["t_mm"], col, 10, True))
     c = p.done()
 
     rows = ["エッジ(vol_edge_probe, sigma=1.0, threshold=0.05)"]
@@ -1493,34 +1520,37 @@ def ex_wall(log) -> dict:
     for i, v in enumerate(th):
         rows.append("  壁 %d :  %.4f mm   (真値 %.4f mm, 差 %+.4f mm)"
                     % (i + 1, v, truth, v - truth))
-    items = [(500, 340 + i * 21, s, C_TEXT if s.startswith("  ") else C_DIM,
+    items = [(500, 344 + i * 21, s, C_TEXT if s.startswith("  ") else C_DIM,
               13, not s.startswith("  ")) for i, s in enumerate(rows)]
     c = _text(c, items)
 
-    p2 = Plot(c, 560, 520, 530, 118, (0.3, 4.2), (1.95, 2.20),
-              xlabel="平滑化 sigma [サンプル] ->", ylabel="測った壁厚 [mm]",
-              xticks=[0.5, 1, 2, 3, 4], yticks=[2.00, 2.05, 2.10, 2.15],
-              xfmt="%.1f", yfmt="%.2f")
+    p2 = Plot(c, 620, 616, 470, 120, (0.3, 4.2), (1.95, 2.50),
+              xlabel="平滑化 sigma [サンプル] ->",
+              xticks=[0.5, 1, 2, 3, 4], yticks=[2.0, 2.1, 2.2, 2.3, 2.4],
+              xfmt="%.1f", yfmt="%.1f")
+    p2.items.append((620, 596, "縦 = 測った壁厚 [mm](真値 2.000 mm)", C_DIM, 11, False))
     xs = sorted(sweep.keys())
     ys = [sweep[s][0] for s in xs]
     p2.series(xs, ys, C_B, width=2, markers=True)
     p2.hline(truth, C_D, width=1)
     p2.items.append((p2.px(0.55), p2.py(truth) - 16, "真値 2.000 mm", C_D, 11, True))
     c = p2.done()
-    c = _text(c, [(18, 520, "平滑化を強めると測長は太る側へ壊れる", C_TEXT, 15, True),
-                  (18, 546, "sigma=1.0 では %.4f mm(誤差 %+.4f mm)。" % (th[0], th[0] - truth),
+    c = _text(c, [(18, 566, "平滑化を強めると測長は太る側へ壊れる", C_TEXT, 15, True),
+                  (18, 594, "sigma=1.0 では %.4f mm(誤差 %+.4f mm)。" % (th[0], th[0] - truth),
                    C_TEXT, 13, False),
-                  (18, 566, "sigma=3.0 では %.4f mm(誤差 %+.4f mm)= %.1f %% の偏り。"
+                  (18, 616, "sigma=3.0 では %.4f mm(誤差 %+.4f mm)= %.1f %% の偏り。"
                    % (sweep[3.0][0], sweep[3.0][0] - truth,
                       100 * (sweep[3.0][0] - truth) / truth), C_B, 13, True),
-                  (18, 590, "ノイズを抑えるつもりの平滑化が、そのまま寸法の偏りに変わる。",
+                  (18, 638, "sigma=4.0 なら %.4f mm(%+.1f %%)。"
+                   % (sweep[4.0][0], 100 * (sweep[4.0][0] - truth) / truth), C_B, 13, True),
+                  (18, 664, "ノイズを抑えるつもりの平滑化が、そのまま寸法の偏りに変わる。",
                    C_DIM, 12, False),
-                  (18, 612, "反エイリアスしていない二値パイプで同じことをすると",
+                  (18, 690, "反エイリアスしていない二値パイプで同じことをすると、",
                    C_DIM, 12, False),
-                  (18, 630, "離散化だけで +0.125 mm ずれる(内外の境界が半 voxel 動くため)。",
+                  (18, 710, "離散化だけで +0.125 mm ずれる(内外の境界が半 voxel 動くため)。",
                    C_DIM, 12, False)])
     c = _footer(c, "使用 op: vol_profile_line / vol_edge_probe / vol_wall_thickness  "
-                   "— 合成データ", y_off=18)
+                   "— 合成データ", y_off=22)
     info = _save_png(c, "wing3d_wall_thickness", log)
     return {
         "name": "wing3d_wall_thickness",
@@ -1820,7 +1850,7 @@ def ex_visual_hull(log) -> dict:
             "matter how many views are stacked — that is not implementation slop but the "
             "principled limit of a visual hull, and the figure shows the convergence "
             "target is not the truth."),
-        "ops": ["look_at", "synthesize_silhouette", "visual_hull"],
+        "ops": ["visualhull.look_at", "synthesize_silhouette", "visual_hull"],
         "facts": {"res": res, "views": n_views, "gt_voxels": gt_n,
                   "per_view": {str(k): v for k, v in stats.items()}},
         "caption": (f"L 字の合成物体を {n_views} 方向から撮ったシルエットで `visual_hull` を"
@@ -3451,23 +3481,25 @@ def ex_connectivity(log) -> dict:
             pts = np.argwhere(sh > 0.5).astype(np.float64)
             if pts.shape[0] > 16000:
                 pts = pts[np.sort(rng.choice(pts.shape[0], 16000, replace=False))]
-            # 半分に切って殻の「厚み」が見えるようにする(手前側を削ぐ)
-            keep = pts[:, 1] <= 48.0
-            pts = pts[keep]
             panel = _canvas(ps, ps, C_PANEL)
             u, v, d = _project(pts[:, [2, 1, 0]], R, 3.6, ps / 2, ps / 2,
                                center[[2, 1, 0]])
-            _splat(panel, u, v, d, C_B if side == "inner" else C_A, radius=1, shade=0.55)
+            # **画面の奥行き**で半分に切る(手前側を落とす)。世界座標の軸で切ると
+            # 視線の向き次第では切り口がこちらを向かず、ただの球に見えてしまう。
+            far = d <= 0.0
+            _splat(panel, u[far], v[far], d[far],
+                   C_B if side == "inner" else C_A, radius=1, shade=0.55)
             panel = _axis_gizmo(panel, R, 38, ps - 38, size=24)
             panels.append(panel)
-            labels.append("side='%s'  connectivity=%d  ->  %d voxel (%.2f %%)"
-                          % (side, conn, cnt, pct))
+            labels.append("%s / %d 近傍   %s voxel (%.2f %%)"
+                          % ("内側" if side == "inner" else "外側", conn,
+                             format(cnt, ","), pct))
 
     sheet = et.contact_sheet(
         panels, labels, ncols=3, panel_px=300,
-        title="vol_boundary の 6 通り ― 同じ球(%d voxel)の殻を、"
-              "触れ方の定義だけ変えて取る(手前半分を切って厚みを見せている)" % solid,
-        title_font_size=20, font_size=15)
+        title="vol_boundary の 6 通り ― 同じ球(%s voxel)の殻を、触れ方の定義だけ変えて取る"
+              % format(solid, ","),
+        title_font_size=19, font_size=14)
     info = _save_png(sheet, "wing3d_boundary_connectivity", log)
     thin = variants[0]; thick = variants[5]
     return {
