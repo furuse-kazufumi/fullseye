@@ -671,6 +671,8 @@ def _registry_adapters():
     d.update(opsacoustics.RESULT_ADAPTERS)      # 空(意図的)
     import opsinterferometry
     d.update(opsinterferometry.RESULT_ADAPTERS)  # 空(意図的)
+    import opscadmap
+    d.update(opscadmap.RESULT_ADAPTERS)          # 空(意図的): 素の返りが宣言型
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
