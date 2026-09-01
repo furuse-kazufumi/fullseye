@@ -1647,7 +1647,8 @@ def ex_diffusion(data, log=print):
     last = rows[-1]
     cap = ("**拡散と収束** ―― ランダム連鎖を "
            f"{fz['chains']} 本張ると到達 op は {rows[min(49, len(rows) - 1)]['covered']}"
-           f"(50 連鎖)→ {last['covered']}/{fz['n_ops']} と飽和していく一方、"
+           f"(50 連鎖)→ {rows[min(199, len(rows) - 1)]['covered']}(200 連鎖)"
+           f"→ {last['covered']}/{fz['n_ops']} と伸びが鈍る一方、"
            f"新しい署名は最後まで細く出続ける。この走行の発見は "
            + ", ".join(f"{k} {v}" for k, v in sorted(fz["kinds"].items())) +
            "。使用 op: `chain_fuzz.run_chain`。")

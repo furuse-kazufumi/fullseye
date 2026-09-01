@@ -1944,9 +1944,9 @@ def ex_profile_sources(log):
     fig.text(410, 56, "2. 3D volume (synthetic shell), slice z = 48", C_C, 12, True)
     fig.text(414, 282, f"vol_profile_line (48,48,2) -> (48,48,93): {prof3d.size} samples",
              C_DIM, 11)
-    fig.text(414, 298, "vol_wall_thickness pairs rising->falling edges: "
-                       + " / ".join("%.2f" % w for w in walls)
-                       + " voxel units", C_DIM, 11)
+    fig.text(414, 298, "vol_wall_thickness -> "
+                       + " / ".join("%.1f" % w for w in walls)
+                       + " voxels", C_DIM, 11)
 
     # (3) センサー波形
     axs = Ax(fig, 800, 74, W - 30, 250, (0.0, 0.25),
@@ -1996,10 +1996,9 @@ def ex_profile_sources(log):
     fig.text(30, H - 44, "The 1-D wing has no source type of its own on purpose: an "
                          "arbitrary real 1-D array is a genuine profile from any of "
                          "these instruments,", C_DIM, 12)
-    fig.text(30, H - 26, "so a dedicated type would only cut the connection. Note the "
-                         "3D probe reports 0 local maxima: local_min_max_funct_1d uses "
-                         "STRICT inequalities, and a plateau top is not a maximum.",
-             C_DIM, 12)
+    fig.text(30, H - 26, "so a dedicated type would only cut the connection. Note "
+                         "the 3D probe reports 0 local maxima - the extremum test is "
+                         "STRICT, and a plateau top is not a maximum.", C_DIM, 12)
 
     frame = fig.u8()
     info = save_png(frame, "profile_sources", log)
