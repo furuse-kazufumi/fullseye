@@ -79,6 +79,8 @@ def _py_files():
 
 
 def _allowed(word: str, relpath: str) -> bool:
+    if word in _GLOBAL_INTEROP:
+        return True
     entry = _INTEROP_ALLOWLIST.get(word)
     if entry is None:
         return False
