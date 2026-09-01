@@ -1058,6 +1058,7 @@ def _cell_snapshot(arr, op, range_bin, doppler_bin):
             "honoured, and defaulting the other half to the strongest cell would "
             "silently beamform a different target than the one you asked for."
             % (op, range_bin, doppler_bin))
+    zero = nc // 2
     if range_bin is None or doppler_bin is None:
         power = np.abs(spec).mean(axis=0)
         if float(power.max()) <= 0.0:
@@ -1069,7 +1070,10 @@ def _cell_snapshot(arr, op, range_bin, doppler_bin):
                 "measurement." % (op,))
         di, rj = np.unravel_index(int(np.argmax(power)), power.shape)
     else:
-        di = _count(doppler_bin, "doppler_bin", 0, nc - 1)
+        # doppler_bin is the **signed** velocity bin, the same convention
+        # range_doppler_peaks reports and beamform_doa returns, so a detection
+        # can be handed straight back in. range_bin is a plain 0..N_s-1 index.
+        di = _count(doppler_bin, "doppler_bin", -zero, nc - zero - 1) + zero
         rj = _count(range_bin, "range_bin", 0, ns - 1)
     snap = spec[:, int(di), int(rj)]
     if not np.any(np.abs(snap) > 0.0):
