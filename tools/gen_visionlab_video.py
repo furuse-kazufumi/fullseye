@@ -517,7 +517,7 @@ def build_design_frames(*, focal_mm=35.0, pixel_pitch_um=3.45, f_number=4.0,
             (PLOT_X0 - 34, int(y0) - 2, f"{o_hi:.0f}", C_DIM, 11, False),
             (PLOT_X0 - 34, int(y1) - 12, f"{o_lo:.0f}", C_DIM, 11, False),
             (PLOT_X0 + 4, y0 + 2, "optical limit [um]", C_OPTICAL, 11, False),
-            (PLOT_X1 - 190, int(y_def) - 14, f"defect {defect_um:g} um", C_MISS, 11, True),
+            (PLOT_X0 + 8, int(y_def) + 3, f"defect {defect_um:g} um", C_MISS, 11, True),
             (PLOT_X1 - 158, y0 + 2, "working distance [mm] ->", C_DIM, 11, False),
         ]
         for t in np.linspace(wd_lo, wd_hi, 5):
