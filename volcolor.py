@@ -768,8 +768,7 @@ def vol_label_overlay(vol, labels, seed: int = 0, alpha: float = 0.5,
 
 
 def vol_label_legend(labels, props=None, seed: int = 0, spacing=None,
-                     measure: str = "volume", top=None,
-                     background=(0.0, 0.0, 0.0)):
+                     measure: str = "volume", top=None):
     """「どの色がどの成分で、その計測値は幾つか」の凡例表を返す。
 
     色だけを出して意味の読めない図を作らないための op。返りは ``list[dict]``:
