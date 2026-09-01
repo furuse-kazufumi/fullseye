@@ -1118,7 +1118,7 @@ def ex_generations(data, log=print):
             (40, 414, f"第 {h['gen']} 世代の champion({len(h['ops'])} 段)",
              C_TEXT, 16, True),
             (W - 40, 414,
-             f"train {h['train']:.4f}   観測用 {h['holdout']:.4f}   "
+             f"train {h['train']:.4f}   observed {h['holdout']:.4f}   "
              f"locked {h['locked']:.4f}", C_TEXT, 15, True, "ra", True),
         ]
         # 下段の注記
