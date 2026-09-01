@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_irf_convolve — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_irf_convolve(hist, bin_ps=100.0, irf_fwhm_ps=200.0, truncate=4.0)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_irf_convolve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Blur an arrival-time histogram by the instrument response (timing jitter).</p>
+<p>The temporal analogue of a PSF convolution: a detector&#x27;s timing uncertainty</p>
+<p>(SPAD jitter + TDC quantisation + laser pulse width) smears every arrival</p>
+<p>time by the instrument response function, here a Gaussian of full width at</p>
+<p>half maximum *irf_fwhm_ps*. The kernel is the <b>exact bin integral</b> of that</p>
+<p>Gaussian (erf differences), normalised to sum 1, truncated at</p>
+<p>`<code style="color:#22d3bf">+-truncate*sigma</code>` and forced to odd length so the convolution is centred.</p>
+<p>Ground truth: convolving a unit spike in the middle of a 256-bin window with</p>
+<p>`<code style="color:#22d3bf">irf_fwhm_ps = 500</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">bin_ps = 50</code>` leaves the centroid <b>exactly</b></p>
+<p>where it was (measured shift 0.0 ps — the kernel is symmetric) and gives a</p>
+<p>profile whose measured FWHM is 501.22 ps. That 0.24% excess over 500 is the</p>
+<p>*measurement*, not the kernel: :func:<code style="color:#22d3bf">tcspc_stats</code> finds the half-maximum</p>
+<p>crossings by linear interpolation between bins, which slightly overestimates</p>
+<p>the width of a Gaussian.</p>
+<p>Total counts are preserved *except* at the window edges, where</p>
+<p>`<code style="color:#22d3bf">mode=&#x27;same&#x27;</code>` discards the tail that falls outside — measured loss exactly</p>
+<p>0 for that centred spike, but a genuine loss for a pulse within a few sigma</p>
+<p>of either end.</p>
+<p>Returns a float64 1-D histogram of the same length as *hist*.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
+<p>non-positive *bin_ps* / *irf_fwhm_ps* / *truncate*, an IRF sigma below</p>
+<p>1e-3 bins (the kernel would be a delta and the op a no-op — say so instead</p>
+<p>of pretending to blur), and a kernel that would be longer than the</p>
+<p>:data:<code style="color:#22d3bf">MAX_BINS</code> cap.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">counts</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_coates_correct">tcspc_coates_correct</a> · <a style="color:#22d3bf" href="opphoton:tcspc_background_subtract">tcspc_background_subtract</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a> · <a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:lifetime_fit">lifetime_fit</a> · <a style="color:#22d3bf" href="opphoton:lifetime_phasor">lifetime_phasor</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tcspc</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_simulate">tcspc_simulate</a> · <a style="color:#22d3bf" href="opphoton:tcspc_background_subtract">tcspc_background_subtract</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

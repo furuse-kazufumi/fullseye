@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photon_sample — PHOTON <code style="color:#22d3bf">counting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.photon_sample(image, photons_per_unit=100.0, dark_rate=0.0, seed=0)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;photon_sample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Poisson-sample an expected-photon image into an actual photon count image.</p>
+<p>*image* is a non-negative 2-D map of scene radiance in arbitrary units;</p>
+<p>`<code style="color:#22d3bf">lambda = image * photons_per_unit + dark_rate</code>` is the expected number of</p>
+<p>photons in each pixel over the exposure, and the result is one Poisson</p>
+<p>realisation of it. *dark_rate* is the dark-count contribution (a SPAD counts</p>
+<p>thermally generated carriers even in the dark) in the same photon units.</p>
+<p>Returns the <b>counts themselves</b> as a float64 `<code style="color:#22d3bf">(H, W)</code>` image (integer</p>
+<p>valued). That is the deliberate difference from</p>
+<p>:func:<code style="color:#22d3bf">backends_aug.aug_shot_noise</code>, which returns `<code style="color:#22d3bf">Poisson(v*K)/K</code>` clipped</p>
+<p>to `<code style="color:#22d3bf">[0, 1]</code>` for training-data augmentation: every operator downstream here</p>
+<p>(Fano factor, Anscombe, Coates, dToF) needs `<code style="color:#22d3bf">N</code>`, and the rescale-and-clip</p>
+<p>is not invertible.</p>
+<p>`<code style="color:#22d3bf">seed</code>` is a required non-negative integer and the RNG is</p>
+<p>`<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>` — same seed, same frame, on any machine.</p>
+<p>Ground truth it reproduces (pinned in `<code style="color:#22d3bf">tests/test_photoncount.py</code>`): the</p>
+<p>sample mean and sample variance both converge to `<code style="color:#22d3bf">lambda</code>`. Measured on a</p>
+<p>flat `<code style="color:#22d3bf">lambda = 100</code>` field of 512x512 pixels at seed 0 — mean 99.9796,</p>
+<p>Fano factor 1.001089, so the photon-limited SNR is `<code style="color:#22d3bf">sqrt(lambda)</code>`: 9.9990</p>
+<p>predicted from the mean, 9.9935 actually achieved.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative or non-finite *image*, negative</p>
+<p>*photons_per_unit* / *dark_rate*, a non-integer or negative *seed*, an image</p>
+<p>over :data:<code style="color:#22d3bf">MAX_IMAGE_ELEMENTS</code>, and — instead of letting numpy fail deep</p>
+<p>inside the sampler — any `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf"> over :data:</code>MAX_LAMBDA`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_statistics">photon_statistics</a> · <a style="color:#22d3bf" href="opphoton:photon_uncertainty">photon_uncertainty</a> · <a style="color:#22d3bf" href="opphoton:anscombe_transform">anscombe_transform</a> · <a style="color:#22d3bf" href="opphoton:anscombe_inverse">anscombe_inverse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">counting</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_statistics">photon_statistics</a> · <a style="color:#22d3bf" href="opphoton:photon_uncertainty">photon_uncertainty</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

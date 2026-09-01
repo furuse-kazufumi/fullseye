@@ -1,0 +1,64 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lifetime_fit — PHOTON <code style="color:#22d3bf">lifetime</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0, start_bin=None)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;lifetime_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Mono-exponential fluorescence lifetime from a TCSPC decay histogram.</p>
+<p>Fits `<code style="color:#22d3bf">I(t) = A*exp(-t/tau) + b</code>` by a **Poisson-weighted log-linear least</p>
+<p>squares**: the background is removed, the logarithm of the remaining counts</p>
+<p>is linear in `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> with slope </code><code style="color:#22d3bf">-1/tau</code>`, and each bin is weighted by its own</p>
+<p>counts because `<code style="color:#22d3bf">var(ln N) ~ 1/N</code>` — which is exactly the Poisson error bar</p>
+<p>:func:<code style="color:#22d3bf">photon_uncertainty</code> reports.</p>
+<p>The fit starts at the <b>peak</b> bin by default (or at *start_bin* if given):</p>
+<p>the rising edge before the peak is the instrument response convolved with the</p>
+<p>decay, not the decay, and including it flattens the log slope and so biases</p>
+<p>the lifetime <b>long</b>. Measured on a 2000 ps decay blurred by a 600 ps IRF</p>
+<p>(256 bins x 100 ps): starting at the peak (bin 4) gives 2008.0 ps (+0.40%),</p>
+<p>forcing `<code style="color:#22d3bf">start_bin=0</code>` gives 2100.7 ps (+5.0%) — a 12x worse bias from four</p>
+<p>extra bins. Only bins with more than *min_counts* counts after background</p>
+<p>removal take part (the</p>
+<p>logarithm of 0 is `<code style="color:#22d3bf">-inf</code>`, and single-count tail bins carry almost no</p>
+<p>information but huge log-scatter).</p>
+<p>*background* is the flat pedestal per bin; `<code style="color:#22d3bf">None</code>` (default) estimates it as</p>
+<p>the median of the <b>last decile</b> of bins, which for a decay is tail. Pass</p>
+<p>`<code style="color:#22d3bf">0.0</code>` to state that the data are already background free.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">lifetime_ps</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">amplitude</code><code style="color:#22d3bf"> (the fitted </code><code style="color:#22d3bf">A</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">t=0</code>`</p>
+<p>of the fit window, in counts per bin) · `<code style="color:#22d3bf">background</code>` (the level used) ·</p>
+<p>`<code style="color:#22d3bf">start_bin</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">n_bins_used</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">r_squared</code>` (of the weighted log fit).</p>
+<p>Ground truth: on a <b>noiseless</b> exponential the recovery is exact —</p>
+<p>`<code style="color:#22d3bf">lifetime_ps</code><code style="color:#22d3bf"> came back as 2000.000000000 ps for </code><code style="color:#22d3bf">tau = 2000 ps</code>` (256</p>
+<p>bins x 100 ps), a measured relative error of 0.0, with `<code style="color:#22d3bf">r_squared</code>` 1.0.</p>
+<p>*That stays true when the histogram is built by integrating the exponential</p>
+<p>over each bin* rather than sampling it, because bin integration multiplies</p>
+<p>every bin by the same constant and so cannot change the slope.</p>
+<p>With Poisson noise the log-linear estimator is <b>biased high</b>, and the size</p>
+<p>of the bias is worth knowing: at 20000 total photons, seed 0,</p>
+<p>`<code style="color:#22d3bf">min_counts=1</code>` gives 2058.8 ps (+2.9%) from 133 bins, and raising</p>
+<p>`<code style="color:#22d3bf">min_counts</code>` to 10 gives 2047.3 ps (+2.4%) from 94 bins. Averaged over</p>
+<p>seeds 0-19 at `<code style="color:#22d3bf">min_counts=10</code>` the mean is 2014.3 ps (**+0.72% systematic</p>
+<p>bias**) with a 18.2 ps (0.9%) seed-to-seed spread — so seed 0 is a</p>
+<p>2-sigma-high draw, and the bias, not the scatter, is the thing to remember.</p>
+<p>It comes from `<code style="color:#22d3bf">E[ln N] &lt; ln E[N]</code>` in the sparse tail; a full Poisson MLE</p>
+<p>would remove it and is not what this op does.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *decay*, a</p>
+<p>non-positive *bin_ps*, a negative *background* / *min_counts*, a *start_bin*</p>
+<p>outside the histogram, fewer than 2 usable bins after the background and</p>
+<p>threshold cuts (a straight line needs two points), a degenerate fit (all</p>
+<p>usable bins at the same time), and — instead of returning a negative</p>
+<p>lifetime — a fitted slope that is zero or positive, i.e. a profile that does</p>
+<p>not decay.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">lifetime</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:lifetime_phasor">lifetime_phasor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spad_deadtime_apply — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">countrate</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_apply&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Distort a true photon rate by the detector&#x27;s dead time (counts lost).</p>
+<p>After every detection a SPAD is blind for a recharge (dead) time `<code style="color:#22d3bf">tau</code>`, so</p>
+<p>the *measured* rate `<code style="color:#22d3bf">m</code><code style="color:#22d3bf"> is always below the *true* incident rate </code><code style="color:#22d3bf">n</code>`.</p>
+<p>Two classical laws, and this op implements both:</p>
+<p style="margin:2px 0 2px 12px">• <b>non-paralysable</b> (default) — an arriving photon during the dead time is</p>
+<p>simply lost: `<code style="color:#22d3bf">m = n / (1 + n*tau)</code><code style="color:#22d3bf">. Monotonic, saturating at </code><code style="color:#22d3bf">1/tau</code>`.</p>
+<p style="margin:2px 0 2px 12px">• <b>paralysable</b> (`<code style="color:#22d3bf">paralyzable=True</code>`) — an arriving photon *restarts* the</p>
+<p>dead time: `<code style="color:#22d3bf">m = n * exp(-n*tau)</code><code style="color:#22d3bf">. This law **peaks** at </code><code style="color:#22d3bf">n = 1/tau</code>`</p>
+<p>(where `<code style="color:#22d3bf">m = 1/(e*tau)</code>`) and then falls, so a bright scene can read</p>
+<p>*darker* than a dim one. That is why no inverse op exists for it (see</p>
+<p>:func:<code style="color:#22d3bf">spad_deadtime_correct</code>).</p>
+<p>*rate_hz* is a 1-D array of true rates in counts per second; *dead_time_ns*</p>
+<p>is the dead time in nanoseconds, defaulting to 50 — the middle of the</p>
+<p>10-100 ns range a passively quenched SPAD occupies, and a placeholder to be</p>
+<p>replaced by the datasheet value, never a measurement of your detector.</p>
+<p>Returns the measured rates as a float64 1-D array of the same length.</p>
+<p>Ground truth (pinned in the tests): at `<code style="color:#22d3bf">n = 1/tau</code>` the non-paralysable law</p>
+<p>gives exactly `<code style="color:#22d3bf">n/2</code>`; the paralysable law&#x27;s maximum is exactly</p>
+<p>`<code style="color:#22d3bf">1/(e*tau)</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">n = 1/tau</code><code style="color:#22d3bf">; both reduce to </code><code style="color:#22d3bf">m = n</code><code style="color:#22d3bf"> as </code><code style="color:#22d3bf">n*tau -&gt; 0</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *rate_hz*, a</p>
+<p>non-positive *dead_time_ns*, and a non-bool *paralyzable*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">countrate</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:spad_deadtime_correct">spad_deadtime_correct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">spad</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:spad_deadtime_correct">spad_deadtime_correct</a> · <a style="color:#22d3bf" href="opphoton:tcspc_coates_correct">tcspc_coates_correct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

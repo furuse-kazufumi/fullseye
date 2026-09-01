@@ -1,0 +1,140 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">光子計数・時間分解(SPAD・TCSPC・dToF・寿命) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>画素値になる前</b>の層です。普通のセンサーは光子を積分して階調にしますが、単一光子検出器(SPAD)は<b>光子を何個数えたか</b>と<b>いつ届いたか</b>を返します。そこから先は算術が変わります — 測定値は Poisson カウントで、雑音は調整項ではなく <code style="color:#22d3bf">sqrt(N)</code>、検出器は 1 個数えるたびに一定時間目が見えなくなり、到達時刻のヒストグラムには距離(直接飛行時間 = dToF)と蛍光寿命が入っています。それらは全部<b>閉形式の計算</b>で、この族はそれを第一級の op にしたものです。17 op / 6 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsphoton.py</code>、実体は <code style="color:#22d3bf">photoncount.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>counting(3)</b> — <code style="color:#22d3bf">photon_sample</code> / <code style="color:#22d3bf">photon_statistics</code> / <code style="color:#22d3bf">photon_uncertainty</code>: 期待光子数を Poisson 実現に変える(seed で決定的)、そのフレームが本当にショット雑音限界か測る(Fano 因子、<code style="color:#22d3bf">SNR = sqrt(N)</code>)、画素ごとに誤差棒を付ける。</p>
+<p style="margin:2px 0 2px 12px">• <b>transform(2)</b> — <code style="color:#22d3bf">anscombe_transform</code> / <code style="color:#22d3bf">anscombe_inverse</code>: 分散安定化変換。古典形と一般化形(gain + 読み出し雑音)、代数逆と厳密不偏逆の両方。</p>
+<p style="margin:2px 0 2px 12px">• <b>spad(3)</b> — <code style="color:#22d3bf">spad_deadtime_apply</code> / <code style="color:#22d3bf">spad_deadtime_correct</code> / <code style="color:#22d3bf">tcspc_coates_correct</code>: 非麻痺型・麻痺型のデッドタイム則、非麻痺型の<b>厳密逆</b>、そして TCSPC のパイルアップ(先頭光子だけを記録することによる早い側への偏り)を<b>厳密に</b>戻す Coates 推定量。</p>
+<p style="margin:2px 0 2px 12px">• <b>tcspc(4)</b> — <code style="color:#22d3bf">tcspc_simulate</code> / <code style="color:#22d3bf">tcspc_irf_convolve</code> / <code style="color:#22d3bf">tcspc_background_subtract</code> / <code style="color:#22d3bf">tcspc_stats</code>: 答えの分かっている合成到達時刻ヒストグラム、装置応答(タイミングジッタ)の畳み込み、背景光の床除去、ヒストグラム記述子(ピーク・重心・半値全幅・背景・信号対背景比)。</p>
+<p style="margin:2px 0 2px 12px">• <b>dtof(3)</b> — <code style="color:#22d3bf">dtof_depth</code> / <code style="color:#22d3bf">dtof_cube_simulate</code> / <code style="color:#22d3bf">dtof_cube_depth</code>: 到達時刻から距離 <code style="color:#22d3bf">d = c*t/2</code> を、1 画素分と <b>(H, W, T) ヒストグラム立方体</b>の両方で(後者が SPAD アレイが実際に吐くもの)。</p>
+<p style="margin:2px 0 2px 12px">• <b>lifetime(2)</b> — <code style="color:#22d3bf">lifetime_fit</code> / <code style="color:#22d3bf">lifetime_phasor</code>: 単一指数減衰のフィットと、単一指数の軌跡が universal semicircle になる phasor(周波数領域)表現。</p>
+<p>データ種は既存語彙の再利用が基本です: <b>image2d</b>(光子カウント画像 — 整数値を float64 に載せた 2-D なので既存のフィルタ・閾値・morphology がそのまま意味を持つ)、<b>depth</b>((H, W) の距離マップ = stereo / range_image 側の depth op へ直結)、<b>measurement</b>(単一画素の距離)、<b>table</b>(統計・フィット結果の dict)。</p>
+<p>新語は 3 つ、いずれも「既存語彙で宣言すると型レベルの嘘になる」ものだけです:</p>
+<p style="margin:2px 0 2px 12px">• <b>counts</b> — 時間 bin で添字づけられた<b>非負</b>の光子カウント列(1-D)。</p>
+<p style="margin:2px 0 2px 12px">• <b>countrate</b> — SPAD の<b>計数レート列(Hz)</b>(1-D、非負)。counts と形は同じですが値域が 7 桁違う別の量です。</p>
+<p style="margin:2px 0 2px 12px">• <b>histcube</b> — 画素ごとの到達時刻立方体 <b>(H, W, T)、時間軸が最後</b>。既存の <code style="color:#22d3bf">voxel</code> は (D, H, W) の空間格子で、軸の意味が違います。</p>
+<p>この 3 語を分けた理由は次節の入力契約と合わせて読んでください(特に <b>counts</b> は、分けなかったせいで op が一度も実行されない事故が実際に起きています)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| <b>加法ガウス読み出し雑音</b>(アンプ + ADC、信号に依存しない) | <code style="color:#22d3bf">aug_read_noise</code> | <code style="color:#22d3bf">backends_aug</code>。こちらは<b>乗法的</b>(分散 = 平均)な光子ショット雑音。両者が出会う唯一の場所が <code style="color:#22d3bf">anscombe_transform</code> の一般化形で、<code style="color:#22d3bf">gain</code> / <code style="color:#22d3bf">read_sigma</code> は <code style="color:#22d3bf">aug_read_noise</code> が注入するパラメータそのもの |</p>
+<p>| 学習データ増強としての正規化ショット雑音 | <code style="color:#22d3bf">aug_shot_noise</code> | <code style="color:#22d3bf">backends_aug</code>(<code style="color:#22d3bf">Poisson(v*K)/K</code> を [0, 1] にクリップして返す)。<code style="color:#22d3bf">photon_sample</code> は<b>カウント N そのもの</b>を返す — Fano / Anscombe / Coates / dToF はすべて N が要るので、再スケール + クリップは不可逆 |</p>
+<p>| <b>Poisson 逆畳み込み</b>(光子制限データのデブラー) | <code style="color:#22d3bf">vol_gaussian_psf</code> / <code style="color:#22d3bf">vol_richardson_lucy</code> | <code style="color:#22d3bf">volrestore</code>。Richardson–Lucy は<b>まさにこの族が生成する Poisson モデル下の最尤デブラー</b>なので、両者は合成関係にあります: <code style="color:#22d3bf">photon_sample</code> または <code style="color:#22d3bf">dtof_cube_simulate</code> が光子制限データを作り、そちらが復元する。ここでは一切デブラーしないし、あちらは一切サンプリングしない |</p>
+<p>| 光学設計(PSF・MTF・回折・被写界深度) | <code style="color:#22d3bf">airy_pattern</code> / <code style="color:#22d3bf">psf_to_mtf</code> / <code style="color:#22d3bf">depth_of_field</code> ほか | <code style="color:#22d3bf">optics</code>。<code style="color:#22d3bf">tcspc_irf_convolve</code> はその<b>時間軸版</b>であり、空間側は複製しない |</p>
+<p>| 1-D 信号処理(フィルタ・スペクトル・リサンプル) | <code style="color:#22d3bf">lowpass</code> / <code style="color:#22d3bf">envelope</code> / <code style="color:#22d3bf">spectrum</code> / <code style="color:#22d3bf">smooth_funct_1d_gauss</code> ほか | <code style="color:#22d3bf">dsp</code> / <code style="color:#22d3bf">funct1d</code>。ヒストグラムは素の 1-D float64 配列なので<b>そのまま渡せます</b>(ラップし直していません)。非対称なのは意図的で、ヒストグラムは常に signal op に渡せますが、任意の signal はヒストグラムではありません(光子カウントは非負) |</p>
+<p>| 位相シフト干渉法・縞投影(位相からの距離) | <code style="color:#22d3bf">wrapped_phase</code> / <code style="color:#22d3bf">phase_to_height</code> | <code style="color:#22d3bf">fringe</code>。あれは<b>間接</b>飛行時間(位相)、こちらは<b>直接</b>飛行時間(到達時刻)。原理が違うので別族です |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>全 op が入力を検証してから計算します。以下は 2026-09-01 の敵対監査で<b>実際に見つかったバグ</b>か、それを塞ぐために書いた罠です。<b>罠を仕掛けた理由も併記</b>します — 「なぜそこを守るのか」が分からないと、後から善意で外されるからです。</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_ps</code> / <code style="color:#22d3bf">_ns</code> / <code style="color:#22d3bf">_hz</code> / <code style="color:#22d3bf">_m</code>。ピコ秒とナノ秒の取り違えは crash ではなく<b>距離が 1000 倍ずれた、もっともらしい答え</b>になります。大きさから単位を推測する処理は一切しません。</p>
+<p style="margin:2px 0 2px 12px">• <b>bin の代表時刻は中心</b> — bin <code style="color:#22d3bf">k</code> は <code style="color:#22d3bf">[k*dt, (k+1)*dt)</code> を覆い、代表時刻は <code style="color:#22d3bf">(k + 0.5)*dt</code>。全 op(ピーク・重心・サブ bin 補間・シミュレータ)が同じ規約なので、<code style="color:#22d3bf">t0</code> に立てたパルスは <code style="color:#22d3bf">t0</code> で返ってきます。</p>
+<p style="margin:2px 0 2px 12px">• **系遅延 <code style="color:#22d3bf">offset_ps</code> は「引く」向き** — <code style="color:#22d3bf">t_flight = t_measured - offset_ps</code>。正の offset は距離を<b>近く</b>します。符号を間違えて負の飛行時間になる設定は、負の距離を返さず <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>決定性は契約</b> — 標本化 op は必ず整数 <code style="color:#22d3bf">seed</code> を取り <code style="color:#22d3bf">numpy.random.default_rng(seed)</code> を使います。グローバル RNG も <code style="color:#22d3bf">seed=None</code> の逃げ道もありません。<code style="color:#22d3bf">noise=False</code> は標本化を一切せず<b>厳密な期待値</b>を返し、それが閉形式テストの突き合わせ相手です。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">実際に見つかった 5 件のバグと、そこに置いた罠</h3>
+<p>1. <b>denormal による無言 NaN(最も危険だったもの)</b>。<code style="color:#22d3bf">irf_fwhm_ps=5e-324</code>(正の最小の double)は <code style="color:#22d3bf">&gt; 0</code> の検査を通りますが、<code style="color:#22d3bf">5e-324 / 2.3548</code> は <b>0.0 に underflow</b> します。すると erf の引数 <code style="color:#22d3bf">(edge - t0)/0</code> はほぼ全域で <code style="color:#22d3bf">inf</code>(erf は飽和して正しく見える)、しかし **bin 境界がパルス中心に一致した画素だけ <code style="color:#22d3bf">0/0</code> = NaN** になります。最小再現 <code style="color:#22d3bf">tcspc_simulate(0.0149896229, bins=8, bin_ps=100.0, irf_fwhm_ps=5e-324, noise=False)</code> は <code style="color:#22d3bf">[nan, nan, 0, 0, 0, 0, 0, 0]</code> を<b>例外なしで</b>返していました。「有限を返す」と書いてある op から無言の NaN が出るのが最悪なので、sigma が 0 に落ちた時点で <code style="color:#22d3bf">ValueError</code> にしています。教訓は「正の数かどうか」と「割り算に使える数かどうか」は別の検査だ、ということです。</p>
+<p>2. **flat ヒストグラムで <code style="color:#22d3bf">argmax</code> が bin 0 を拾う**。全 bin が同じ値のヒストグラムにピークはありませんが、<code style="color:#22d3bf">argmax</code> は黙って 0 を返し、<code style="color:#22d3bf">dtof_depth</code> は最初の bin の距離(100 ps bin なら 0.0075 m)を<b>測定値として</b>返していました。例外も警告も出ません。これは一様な (D, H, W) ボリュームを立方体として渡したときにちょうど起きる経路でもあります(実測: 全画素 0.0075 m)。いまは 1-D 側は <code style="color:#22d3bf">ValueError</code>、立方体側は該当画素を empty 判定します(二重防御)。**<code style="color:#22d3bf">histcube</code> を <code style="color:#22d3bf">voxel</code> から分けたのはこの経路を型で塞ぐため**で、型と実行時検査の両方で守っています。</p>
+<p>3. <b>文字列の暗黙パース</b>。<code style="color:#22d3bf">dtof_cube_depth(cube, empty_value=&quot;3&quot;)</code> が成功していました。<code style="color:#22d3bf">float(&quot;3&quot;)</code> はパースに成功するので、<b>一度も解釈されなかった設定値が「深度 3 m」として通り抜ける</b>。長さ・時刻・レートを取る全引数で str / bool / complex を名指しで拒否しています。</p>
+<p>4. <b>型レベルの嘘</b>。<code style="color:#22d3bf">anscombe_transform(np.arange(5.0))</code> が 1-D を返していました。台帳は <code style="color:#22d3bf">image2d -&gt; image2d</code> と宣言しているので、これは連鎖ファザーが検出すべき TYPEMISS を素通りさせる穴です。厳密 2-D 化しました(1-D ヒストグラムを安定化したいなら <code style="color:#22d3bf">hist[None, :]</code> と明示的に書く)。</p>
+<p>5. <b>既定値の地雷</b>。<code style="color:#22d3bf">leading_bins=8</code> が固定だったため、8 bin 未満のヒストグラムでは <code style="color:#22d3bf">method=&quot;leading&quot;</code> の<b>既定呼び出しが必ず失敗</b>していました。誰も選んでいない定数のために失敗するのは契約ではなく事故なので、<code style="color:#22d3bf">None</code> → <code style="color:#22d3bf">min(8, len(hist))</code> に変えています。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">型語彙を分けた理由(連鎖ファザーの実測に基づく)</h3>
+<p><code style="color:#22d3bf">counts</code> を最初は既存の <code style="color:#22d3bf">signal</code> で宣言していました。<b>1200 連鎖 × 長さ 6(seed 7001)の実測で、photon 族 17 op のうち 7 op が一度も実行されていない</b>ことが分かりました。ファザーの <code style="color:#22d3bf">signal</code> プールは<b>負値を持つ正弦波</b>で、光子カウントを要求する op は毎回こう落ちます:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">dtof_depth: hist has 127 negative bin(s) (min -1.17595) — a photon count cannot be negative</pre>
+<p>fail-closed は完璧に効いていました。<b>そしてそれが問題でした</b> — 「発見ゼロ」が頑健さの証拠に見えて、実際には未実行だったからです。これは <code style="color:#22d3bf">opsoptics</code> が <code style="color:#22d3bf">jones</code> / <code style="color:#22d3bf">stokes</code> を専用プールにしたのと同じ状況(「signal へ相乗りさせると常に CONTRACT にしかならない = 偏光連鎖を一度も通らない」)で、同じ判断をしました。新語彙にしたあとは <b>17/17 op が実行され、CONTRACT も TYPEMISS もゼロ</b>です。</p>
+<p><code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> からさらに分けたのは、2 つの実測理由によります。(a) 値域が 7 桁違うため、counts スケールの配列を <code style="color:#22d3bf">spad_deadtime_apply</code> に渡すと<b>恒等写像に限りなく近い値が例外なく返る</b>(実測: ピーク 2212.5 カウントで相対変化 1.11e-04、既定の <code style="color:#22d3bf">tcspc_simulate()</code> のピーク 23.0 なら 1.15e-06。本物のレート列 1e3–1e7 Hz は 33.3% 動く)。op は「到達」しても、飽和・<code style="color:#22d3bf">1/tau</code> の fail-closed・麻痺型の非単射性は一度も踏まれません。(b) 物理が違います。デッドタイムは<b>検出器のレート流</b>に効くのであって、TCSPC の時間 bin ヒストグラムに bin ごとに掛かるものではありません(ヒストグラムに対する正しい歪みモデルは Coates)。同じ語彙にすると、進化探索が「ヒストグラムにデッドタイム補正を掛ける」という物理的に誤った連鎖を<b>正当な型接続として</b>学習します。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>単一光子距離計を 1 台仕立てる筋(検証済み <code style="color:#22d3bf">examples/photon_timeresolved.py</code> そのもの)。<code style="color:#22d3bf">counts</code> を軸に、<code style="color:#22d3bf">counts -&gt; counts</code> で整形し、<code style="color:#22d3bf">table</code> / <code style="color:#22d3bf">measurement</code> / <code style="color:#22d3bf">depth</code> へ抜けます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[tcspc_simulate 既知距離の合成波形] --&gt;|counts| B[tcspc_irf_convolve ジッタ]
+    B --&gt;|counts| C[tcspc_coates_correct パイルアップ除去]
+    C --&gt;|counts| D[tcspc_background_subtract 背景光の床]
+    D --&gt;|counts| E[tcspc_stats ピーク・重心・半値幅]
+    D --&gt;|counts| F[dtof_depth 距離 measurement]
+    D --&gt;|counts| G[lifetime_fit 単一指数 table]
+    D --&gt;|counts| H[lifetime_phasor g,s と円からのずれ table]
+    G -.単一指数の仮定を検算.- H</pre>
+<p>SPAD アレイ(画素配列)の筋は <code style="color:#22d3bf">depth</code> で入って <code style="color:#22d3bf">depth</code> で出るので、既存の 3-D 知覚族へそのまま繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    P[深度マップ depth + 反射率] --&gt; Q[dtof_cube_simulate]
+    Q --&gt;|histcube H,W,T| R[dtof_cube_depth peak/centroid/parabolic/gaussian]
+    R --&gt;|depth| S[既存の depth 族 平面当てはめ・点群化・走行可能性]</pre>
+<p>光子制限画像の筋は、デノイズと復元で既存族へ橋渡しします。<b>線形平滑には Anscombe を挟まないのが正解</b>である点に注意(実測は次節)。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    I[期待光子数 image2d] --&gt; J[photon_sample Poisson 実現]
+    J --&gt; K[photon_statistics Fano・SNR table]
+    J --&gt; L[photon_uncertainty 誤差棒 image2d]
+    J --&gt; M[anscombe_transform 分散 1 へ]
+    M --&gt; N[絶対雑音スケールを引数に持つデノイザ]
+    N --&gt; O[anscombe_inverse unbiased]
+    J --&gt; V[volrestore.vol_richardson_lucy Poisson 逆畳み込み]</pre>
+<p>計数レートの筋は独立した 2 op で、互いに厳密逆です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    W[真の入射レート countrate] --&gt; X[spad_deadtime_apply 非麻痺型/麻痺型]
+    X --&gt;|countrate| Y[spad_deadtime_correct 非麻痺型の厳密逆]
+    Y -.往復は機械精度.- W</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import photoncount as P
+
+# 3 m 先の対象。256 bin x 100 ps = 一意測距範囲 3.84 m、1 bin = 1.50 cm
+hist = P.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0,
+                        signal_photons=300.0, ambient_photons=1500.0, seed=0)
+clean = P.tcspc_background_subtract(hist, &quot;median&quot;)     # 屋外の日射を引く
+print(P.dtof_depth(clean, bin_ps=100.0, mode=&quot;gaussian&quot;))   # ≈ 3.0 m
+
+# 光子計数画像の誤差棒は校正不要 — Poisson は分散 = 平均
+counts = P.photon_sample(scene, photons_per_unit=100.0, seed=0)
+print(P.photon_statistics(counts)[&quot;fano_factor&quot;])       # ≈ 1.0 なら本当に Poisson
+sigma = P.photon_uncertainty(counts)                    # sqrt(N)
+
+# 蛍光寿命は 2 通りで出して突き合わせる
+fit = P.lifetime_fit(decay, bin_ps=25.0, background=0.0)
+ph = P.lifetime_phasor(decay, bin_ps=25.0)
+print(fit[&quot;lifetime_ps&quot;], ph[&quot;tau_phi_ps&quot;], ph[&quot;semicircle_residual&quot;])</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測値(この族の性能と、その正直な内訳)</h3>
+<p>すべて実測です。Poisson の期待値表は<b>標本化せず pmf を直接足した厳密値</b>なので、誰でも再現できます。</p>
+<p>| 量 | 実測値 | 条件 |</p>
+<p>|---|---|---|</p>
+<p>| Fano 因子(平坦場) | 1.001089 | λ=100、512x512、seed 0(平均 99.9796、SNR 実測 9.9935 / 理論 9.9990) |</p>
+<p>| Fano 因子(傾斜場) | 22.4102 | 同じ検出器で 20→180 光子のランプ。<b>両方とも「正しい」が意味があるのは一方だけ</b> |</p>
+<p>| <code style="color:#22d3bf">var(A)</code>(Anscombe) | 0.717443 / 0.924297 / 0.998754 / 1.000910 / 1.000006 | λ = 1 / 2 / 4 / 10 / 100(厳密) |</p>
+<p>| 代数逆変換の往復 | 最大絶対誤差 2.7e-12、最大相対誤差 3.7e-16 | x を [0, 1e4] に 100001 点、相対は x &gt; 1 |</p>
+<p>| デッドタイム往復 | 最大要素別相対誤差 6.0e-16 | τ=50 ns、1e3–5e7 Hz を 2000 点(飽和の 71.4% まで) |</p>
+<p>| Coates の逆変換 | 最大相対誤差 1.6e-15 | 最終 bin が真値の 14.8% まで潰れた重いパイルアップから |</p>
+<p>| dToF 重心(雑音なし) | 4.4e-16 m | 2.4371 m、256 bin x 100 ps、IRF 500 ps |</p>
+<p>| 立方体の重心(雑音なし) | RMS 3.2e-16 m | 32x32、1.0–3.0 m の傾斜平面 |</p>
+<p>| 寿命フィット(雑音なし) | 相対誤差 0.0、R² = 1.0 | τ=2000 ps。bin 積分で作っても厳密(全 bin が同じ定数倍なので傾きが変わらない) |</p>
+<p>| phasor の離散化誤差 | 残差 +6.07e-05 → 3.79e-06 | 256 bin → 1024 bin で<b>ちょうど 16.00 倍</b>改善(= <code style="color:#22d3bf">O(bin^2)</code> の中点則、偏りではない) |</p>
+<p><b>推定量の選択は、雑音が入ると意味を失います。</b> 2.4371 m の合成復路での距離誤差:</p>
+<p>| mode | 雑音なし | ショット雑音下(信号 200 + 背景 200 光子、seed 0) |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">peak</code> | 1.286 mm | 13.7 mm |</p>
+<p>| <code style="color:#22d3bf">centroid</code> | 4.4e-16 m | 146.5 mm(背景除去つき) |</p>
+<p>| <code style="color:#22d3bf">parabolic</code> | 0.067 mm | 8.5 mm |</p>
+<p>| <code style="color:#22d3bf">gaussian</code> | 9.4e-09 m | 8.0 mm |</p>
+<p>雑音なしでは 3 桁の差が付きますが、ショット雑音下では <code style="color:#22d3bf">peak</code> と <code style="color:#22d3bf">gaussian</code> の差は 1.7 倍しかありません。<b>推定量を凝る前に光子を増やすべき</b>、というのがこの表の読み方です。重心だけは崩れます(中央値で床を引いても窓全体に残る雑音が一次モーメントを中央へ引くため)。</p>
+<p><b>平均値だけを見ると誤解する例</b>も残しておきます。32x32 の傾斜平面を反射率 0.3–1.0、光子 20 個/画素 + 背景 5 で撮ると、深度誤差は<b>中央値 14.9 mm に対し RMS 165.6 mm</b>。10 cm を超える外れ値が 3.0% あり(暗い列では 1 画素 4–6 光子)、それが RMS を支配しています。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">docstring の数値を自分で 3 件訂正した話</h3>
+<p>この族の docstring には「実測してから書く」規律を当てていますが、<b>最初に書いた数値のうち 3 件は間違っていて、自分の検証で見つけて直しました</b>。どれも「もっともらしいので誰も疑わない」種類の誤りです。</p>
+<p>1. <b>厳密不偏逆変換が負になる点</b>。「D = 0.6867 あたりで負に転じる」と書いていました。実際に測ると、閉形式の**正の根は厳密に <code style="color:#22d3bf">A(0) = 1.2247448714</code>**(根と <code style="color:#22d3bf">A(0)</code> の差は 0.0)で、これは <code style="color:#22d3bf">anscombe_transform</code> が返しうる最小値そのものです。したがって<b>有効域では丸め誤差しか負になりません</b>(A(0) から 6 までを 500001 点で測って最小 -1.11e-16)。最初の -3.97e-05 という値は、<code style="color:#22d3bf">1.2247</code> と桁を切って<b>有効域の外側</b>を測っていたための誤りでした。有効域の外(D = 1.20 で -0.0217)は本当に負なので、そこは clip ではなく拒否しています。</p>
+<p>2. <b>立ち上がりを含めると寿命は「短く」出る、が逆だった</b>。直感的には「立ち上がりを入れると速く見える」ですが、実測は逆です。2000 ps の減衰を 600 ps の IRF でぼかした波形で、ピーク(bin 4)から始めると 2008.0 ps(+0.40%)、<code style="color:#22d3bf">start_bin=0</code> を強制すると <b>2100.7 ps(+5.0%)</b> — 4 bin 余分に入れるだけで偏りが 12 倍悪化し、しかも<b>長い側</b>へ動きます(立ち上がりが log の傾きを寝かせるため)。</p>
+<p>3. <b>「Anscombe を挟むとデノイズが良くなる」が、線形平滑では成り立たない</b>。ガウシアンフィルタを直接カウントに掛けると RMSE 2.387、Anscombe 経由だと 2.459 で<b>わずかに負け</b>ます。当然で、Poisson カウントの平均を取るのは既に正しい操作なので、先に分散を安定化しても得がありません。変換が効くのは<b>絶対雑音スケールを引数に持つ</b>デノイザ(閾値・シグマフィルタ・ウェーブレット収縮・NLM・BM3D)で、そこでは 1 個の定数が全域で正しくなります。実測(4 と 64 光子/画素の 2 段シーン、seed 5、5x5 シグマフィルタ):変換域で 3σ 閾値 → <b>1.191</b>、生カウント域で同じ 3σ 則を全体推定 sigma で当てて <b>2.307</b>。ただし<b>真値を知って掃引した「神託」閾値 24 なら生カウント域でも 1.080</b> に届くので、正直な見出しは「常に勝つ」ではなく「<b>調整済みの当て推量が、原理的な定数 1 個で置き換わる</b>」です。</p>
+<p>三件とも、テストに測定値ごと固定してあるので docstring が静かに元へ戻ることはありません。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な限界(この族にできないこと)</h3>
+<p style="margin:2px 0 2px 12px">• <b>Poisson だけです。</b> <code style="color:#22d3bf">photon_statistics</code> は Fano 因子を返しますが、<code style="color:#22d3bf">Fano = 1</code> が Poisson 統計の証拠になるのは<b>平坦場のときだけ</b>です。構造のある被写体ではシーン自身の空間分散が支配して、比は大きく無意味になります(実測 22.4102)。op はどちらの状況かを判別できませんし、しようともしていません。数字ではなく docstring を読んでください。</p>
+<p style="margin:2px 0 2px 12px">• <b>デッドタイムの逆変換は非麻痺型だけです。</b> 麻痺型 <code style="color:#22d3bf">m = n*exp(-n*tau)</code> は単射ではなく(<code style="color:#22d3bf">n = 1/tau</code> で最大 <code style="color:#22d3bf">1/(e*tau)</code> を取り、その先は<b>減る</b>)、測定レート 1 つに真のレートが 2 つ対応します。片方を黙って選ぶのは補正ではなく捏造なので、麻痺型の補正 op は<b>置いていません</b>。分岐は独立な測定(減光フィルタを 1 段入れる等)で決めてください。</p>
+<p style="margin:2px 0 2px 12px">• <b>Coates は 1 サイクル 1 検出を仮定します。</b> 古典的な先頭光子 TCSPC のパイルアップモデルの厳密逆であって、それ以外ではありません。アフターパルス、サイクル内の先頭光子則を超えるデッドタイム、1 サイクル複数光子を扱う電子回路はモデルに入っていません。</p>
+<p style="margin:2px 0 2px 12px">• <b>単一指数フィットは単一指数です。</b> 実際の蛍光は多成分であることが多く、<code style="color:#22d3bf">lifetime_fit</code> は二成分の減衰にも 1 つの数を平然と返します(実測: 500 ps と 4000 ps の等量混合に 2379 ps)。その正直な相棒が <code style="color:#22d3bf">lifetime_phasor</code> で、多成分は universal semicircle の<b>内側</b>に落ちます(実測 残差 -0.0924 に対し単一指数は +6.07e-05、1500 倍の差)。</p>
+<p style="margin:2px 0 2px 12px">• <b>log 線形フィットは Poisson 雑音下で高めに偏ります。</b> 20000 光子・<code style="color:#22d3bf">min_counts=10</code> で seed 0–19 を平均して 2014.3 ps(<b>+0.72% の系統偏り</b>)、seed 間のばらつきは 18.2 ps(0.9%)。偏りは疎な裾での <code style="color:#22d3bf">E[ln N] &lt; ln E[N]</code> から来ます。完全な Poisson 最尤なら消せますが、この op はそれをしていません。</p>
+<p style="margin:2px 0 2px 12px">• <b>半値全幅の推定量は太めに出ます。</b> <code style="color:#22d3bf">tcspc_stats</code> は半値交差を bin 間の線形補間で探すので、ガウシアンの幅を系統的に過大評価します(実測: 真値 500 ps に対し 100 ps bin で 508.41、50 ps bin で 503.07)。bin を細かくすれば縮む、推定量側の性質です。</p>
+<p style="margin:2px 0 2px 12px">• <b>一意測距範囲の外は「戻す」のではなく拒否します。</b> 実センサーは折り返して短い距離として記録しますが、この族はそれを<b>捏造しません</b>(<code style="color:#22d3bf">ValueError</code> で範囲を明示)。位相アンラップに相当する距離のアンラップ機能はありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>IRF はガウシアンだけです。</b> 実際の SPAD は裾を引く非対称な応答(拡散尾)を持ちますが、<code style="color:#22d3bf">tcspc_irf_convolve</code> と 2 つのシミュレータはガウシアンを仮定します。<code style="color:#22d3bf">gaussian</code> モードのサブ bin 補間もその仮定に乗っています。</p>
+<p style="margin:2px 0 2px 12px">• <b>すべて単一画素・単一チャンネルの時間モデルです。</b> SPAD 画素間のクロストーク、背景光の空間相関、光学的マルチパス(2 回目の反射が「そこに面が無い」場所に返り値を作る現象)、センサーのタイリング/ビニング幾何は一切入っていません。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限で fail-closed</b>: <code style="color:#22d3bf">MAX_BINS</code>(2²⁰)、<code style="color:#22d3bf">MAX_IMAGE_ELEMENTS</code>(2²⁴)、<code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code>(2²³)、<code style="color:#22d3bf">MAX_LAMBDA</code>(1e12)。立方体は <code style="color:#22d3bf">H*W*T</code> で伸びるので(512x512x256 は上限の 8 倍)、小さな引数から巨大な確保が起きる経路を型ではなく数で塞いでいます。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
+<p style="margin:2px 0 2px 12px">• <b>分散安定化変換</b>: Anscombe, *The transformation of Poisson, binomial and negative-binomial data*, Biometrika 35(3-4), 1948。一般化形(gain + 読み出し雑音)は Starck, Murtagh &amp; Bijaoui, *Image Processing and Data Analysis*, CUP 1998。</p>
+<p style="margin:2px 0 2px 12px">• <b>厳密不偏逆変換の閉形式</b>: Makitalo &amp; Foi, *Optimal inversion of the Anscombe transformation in low-count Poisson image denoising*, IEEE TIP 20(1), 2011。</p>
+<p style="margin:2px 0 2px 12px">• <b>パイルアップ補正</b>: Coates, *The correction for photon &#x27;pile-up&#x27; in the measurement of radiative lifetimes*, J. Phys. E 1(8), 1968。</p>
+<p style="margin:2px 0 2px 12px">• <b>デッドタイムの 2 法則(麻痺型・非麻痺型)</b>: Knoll, *Radiation Detection and Measurement*, Wiley。</p>
+<p style="margin:2px 0 2px 12px">• <b>TCSPC のヒストグラム形成と寿命フィット</b>: Becker, *Advanced Time-Correlated Single Photon Counting Techniques*, Springer 2005。</p>
+<p style="margin:2px 0 2px 12px">• <b>phasor 表現と universal semicircle</b>: Digman, Caiolfa, Zamai &amp; Gratton, *The phasor approach to fluorescence lifetime imaging analysis*, Biophys. J. 94(2), 2008。単一指数で <code style="color:#22d3bf">g = 1/(1+(w*tau)^2)</code>、<code style="color:#22d3bf">s = w*tau/(1+(w*tau)^2)</code> が厳密になるのは、周期励起の下で 1 周期を積分するときです(本族はその規約)。</p>
+<p style="margin:2px 0 2px 12px">• <b>光速</b>: <code style="color:#22d3bf">c = 299792458</code> m/s(1983 年以降 SI 定義値)。距離は真空/空気換算で、屈折率 n の媒質ではこれを割ってください。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

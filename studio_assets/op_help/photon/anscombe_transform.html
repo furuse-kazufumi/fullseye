@@ -1,0 +1,71 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">anscombe_transform — PHOTON <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;anscombe_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Anscombe variance-stabilising transform: Poisson counts -&gt; ~unit-variance.</p>
+<p>Photon-limited data has signal-dependent noise, which every classical</p>
+<p>denoiser (Gaussian, bilateral, NLM, wavelet, BM3D) assumes away. The Anscombe</p>
+<p>transform `<code style="color:#22d3bf">A(x) = 2*sqrt(x + 3/8)</code>` makes the variance approximately 1</p>
+<p>*independently of the signal*, so the standard route is transform -&gt; denoise</p>
+<p>with a unit-sigma Gaussian denoiser -&gt; :func:<code style="color:#22d3bf">anscombe_inverse</code>.</p>
+<p>The <b>generalised</b> form (Starck/Murtagh/Bijaoui) also absorbs the sensor&#x27;s</p>
+<p>analogue chain, and takes exactly the parameters</p>
+<p>:func:<code style="color:#22d3bf">backends_aug.aug_read_noise</code> injects::</p>
+<p>A(x) = (2/g) * sqrt(g*(x - offset) + (3/8)*g^2 + sigma_r^2)</p>
+<p>with *gain* `<code style="color:#22d3bf">g</code>` in ADU per photon, *read_sigma* the Gaussian read noise in</p>
+<p>ADU and *offset* the black level in ADU. The defaults ``g=1, sigma_r=0,</p>
+<p>offset=0`` reduce it to the classical form exactly.</p>
+<p>Measured stabilisation — `<code style="color:#22d3bf">var(A(X))</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">X ~ Poisson(lambda)</code>`, computed</p>
+<p><b>exactly</b> by summing the Poisson pmf (no sampling, so anyone can reproduce</p>
+<p>these; `<code style="color:#22d3bf">tests/test_photoncount.py</code>` pins them and the sampled versions):</p>
+<p>========  ========</p>
+<p>lambda    var(A)</p>
+<p>========  ========</p>
+<p>1         0.717443</p>
+<p>2         0.924297</p>
+<p>4         0.998754</p>
+<p>10        1.000910</p>
+<p>100       1.000006</p>
+<p>========  ========</p>
+<p>So &quot;variance 1&quot; is true from about 4 photons/pixel upward and **false below</p>
+<p>it** — at 1 photon/pixel the variance is 0.717, a 28% shortfall, which is</p>
+<p>the honest statement of the transform&#x27;s low-count limit. Below a few photons</p>
+<p>an exact Poisson method (or the exact unbiased inverse, see</p>
+<p>:func:<code style="color:#22d3bf">anscombe_inverse</code>) is required.</p>
+<p><b>It does not help a linear smoother, and the tests say so.</b> Measured on a</p>
+<p>two-level scene (4 and 64 photons/pixel, seed 5): a plain Gaussian filter</p>
+<p>applied to the raw counts reaches RMSE 2.387, and the same filter through</p>
+<p>the Anscombe route reaches 2.459 — i.e. *slightly worse*. That is expected:</p>
+<p>averaging is already the right thing to do to Poisson counts, so stabilising</p>
+<p>the variance first buys nothing. The transform pays off for denoisers whose</p>
+<p><b>parameter is an absolute noise scale</b> — thresholds, sigma filters,</p>
+<p>wavelet shrinkage, NLM, BM3D — because that parameter becomes one constant</p>
+<p>instead of a per-pixel function. Measured with a 5x5 sigma filter at a</p>
+<p>3-sigma threshold on that same scene: 1.191 through the transform against</p>
+<p>2.307 in the raw domain using the same 3-sigma rule with a globally</p>
+<p>estimated sigma. (An *oracle* raw threshold, swept against ground truth one</p>
+<p>does not have in practice, reaches 1.080 — so the honest headline is</p>
+<p>&quot;one principled constant instead of a tuned guess&quot;, not &quot;always better&quot;.)</p>
+<p>Returns a float64 array of the same shape as *image*.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *image*, non-positive *gain*, negative</p>
+<p>*read_sigma*, and — unless `<code style="color:#22d3bf">clip=True</code>` — any pixel whose argument under the</p>
+<p>square root is negative (which can happen for real read-noise data dipping</p>
+<p>below the black level). `<code style="color:#22d3bf">clip=True</code>` floors the argument at 0 and is the</p>
+<p>documented, opt-in behaviour; the default refuses rather than quietly</p>
+<p>manufacturing a value.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_sample">photon_sample</a> · <a style="color:#22d3bf" href="opphoton:photon_statistics">photon_statistics</a> · <a style="color:#22d3bf" href="opphoton:photon_uncertainty">photon_uncertainty</a> · <a style="color:#22d3bf" href="opphoton:anscombe_inverse">anscombe_inverse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:anscombe_inverse">anscombe_inverse</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

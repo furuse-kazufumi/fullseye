@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photon_uncertainty — PHOTON <code style="color:#22d3bf">counting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.photon_uncertainty(counts, relative=False, zero_floor=0.0)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;photon_uncertainty&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Per-pixel Poisson error bar of a photon-count frame.</p>
+<p>For a Poisson variable the variance *equals* the mean, so the one-sigma</p>
+<p>uncertainty of a single measurement `<code style="color:#22d3bf">N</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">sqrt(N)</code>` — no calibration, no</p>
+<p>noise model to fit. With `<code style="color:#22d3bf">relative=True</code>` the returned map is the relative</p>
+<p>uncertainty `<code style="color:#22d3bf">1/sqrt(N)</code>` instead (its reciprocal is the per-pixel SNR).</p>
+<p>*zero_floor* replaces counts below it before the square root. It exists</p>
+<p>because `<code style="color:#22d3bf">N = 0</code><code style="color:#22d3bf"> gives </code><code style="color:#22d3bf">sqrt(0) = 0</code>`, i.e. &quot;this pixel is exactly zero</p>
+<p>with no uncertainty&quot;, which is wrong: the 95% Poisson upper limit for a</p>
+<p>single observed zero is about 3 photons. Set `<code style="color:#22d3bf">zero_floor=1.0</code>` for the</p>
+<p>common &quot;one-count prior&quot; convention. It is <b>not</b> applied silently — the</p>
+<p>default is 0.0 and the absolute map really does return 0 there.</p>
+<p>Returns a float64 `<code style="color:#22d3bf">(H, W)</code>` image.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-2-D *counts*, a</p>
+<p>negative *zero_floor*, and — instead of returning `<code style="color:#22d3bf">inf</code>` —</p>
+<p>`<code style="color:#22d3bf">relative=True</code>` with any pixel at 0 after the floor (that is the division</p>
+<p>`<code style="color:#22d3bf">1/sqrt(0)</code><code style="color:#22d3bf">; pass </code><code style="color:#22d3bf">zero_floor &gt; 0</code>` to say what a zero should mean).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_sample">photon_sample</a> · <a style="color:#22d3bf" href="opphoton:photon_statistics">photon_statistics</a> · <a style="color:#22d3bf" href="opphoton:anscombe_transform">anscombe_transform</a> · <a style="color:#22d3bf" href="opphoton:anscombe_inverse">anscombe_inverse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">counting</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_sample">photon_sample</a> · <a style="color:#22d3bf" href="opphoton:photon_statistics">photon_statistics</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

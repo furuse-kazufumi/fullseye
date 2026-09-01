@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_coates_correct — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_coates_correct(hist, cycles)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_coates_correct&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Undo TCSPC pile-up exactly (Coates&#x27;s estimator) — the early-photon bias.</p>
+<p>Classical TCSPC records <b>at most one photon per excitation cycle</b>: the</p>
+<p>first one. Late bins are therefore starved, because the cycles in which an</p>
+<p>early photon arrived never reach them, and the measured histogram is biased</p>
+<p>toward short arrival times — a dToF depth read straight off a piled-up</p>
+<p>histogram is *too close*, and a fluorescence lifetime is *too short*.</p>
+<p>Coates&#x27;s estimator inverts that exactly. With `<code style="color:#22d3bf">N_k</code>` the measured counts in</p>
+<p>bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">C</code>` the number of excitation cycles, the number of cycles that</p>
+<p>survived to reach bin `<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">D_k = C - sum_{j&lt;k} N_j</code>`, the per-cycle</p>
+<p>detection probability in that bin is `<code style="color:#22d3bf">p_k = N_k / D_k</code>` and the pile-up-free</p>
+<p>per-cycle intensity is `<code style="color:#22d3bf">lambda_k = -ln(1 - p_k)</code>`. This op returns</p>
+<p>`<code style="color:#22d3bf">C * lambda_k</code>` — the histogram the same scene would have produced if the</p>
+<p>detector could record every photon — so it is directly comparable to the</p>
+<p>measured one.</p>
+<p>This is an <b>exact</b> inverse, not a linearisation: build a histogram from a</p>
+<p>known `<code style="color:#22d3bf">lambda</code><code style="color:#22d3bf"> through the forward model </code>`N_k = C * exp(-sum_{j&lt;k}</p>
+<p>lambda_j) * (1 - exp(-lambda_k))`<code style="color:#22d3bf"> and Coates returns </code><code style="color:#22d3bf">lambda</code>` to machine</p>
+<p>precision (measured max relative error 1.6e-15 in the tests, on a pile-up so</p>
+<p>severe that the last bin was suppressed to 14.8% of its true counts).</p>
+<p>*hist* is the 1-D measured histogram (counts per bin); *cycles* the number of</p>
+<p>excitation cycles (laser pulses) that produced it.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
+<p>non-positive or non-integer *cycles*, a histogram whose total exceeds</p>
+<p>*cycles* (impossible: at most one photon per cycle — a sure sign that</p>
+<p>*cycles* is wrong or the data are not first-photon TCSPC), and any bin that</p>
+<p>consumed every remaining cycle (`<code style="color:#22d3bf">p_k = 1</code><code style="color:#22d3bf">, where </code><code style="color:#22d3bf">-ln(0)</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">inf</code>`).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">counts</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_background_subtract">tcspc_background_subtract</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a> · <a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:lifetime_fit">lifetime_fit</a> · <a style="color:#22d3bf" href="opphoton:lifetime_phasor">lifetime_phasor</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">spad</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:spad_deadtime_apply">spad_deadtime_apply</a> · <a style="color:#22d3bf" href="opphoton:spad_deadtime_correct">spad_deadtime_correct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

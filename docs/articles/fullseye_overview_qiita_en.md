@@ -1277,6 +1277,161 @@ Two more families of entry-contract holes got closed (feeding FPFH descriptors *
 
 The convergence in numbers: first run **103 signatures** → 22 type lies and the contract holes fixed in three stages → final run (2000 chains, same seed) shows **0 suspicious signatures — only 63 documented-ValueError kinds (white) remain**. "Diffusion and convergence" is not a metaphor: you can watch the signature count monotonically shrink run over run. Alongside unit tests and adversarial verification, this fuzzer is now the **third standing layer of quality assurance**, CI-grade equipment.
 
+## Addendum 6 (2026-09-01): Checking "will it even be visible?" on video, before buying the parts — a virtual machine-vision lab, and two new fields
+
+> **Status: Measured / Verified** — 34 new operators, **zero suspect signatures** across 1,500 fuzz chains with both new families at **17/17 reached**, and **7,300+ tests** green.
+
+While the fuzzer from Addendum 5 was running, three more requests arrived from the author: *"it would be good to have features that connect to the sort of thing in the vision awards"*, *"a virtual machine-vision environment is clearly the better thing to have — that's why I've been assembling the optics operators"*, and *"it would be nice to be able to demo it on video"*. This addendum is the few days that answered all three.
+
+### Start with the video — seeing at how many µm a defect becomes findable
+
+![A defect swept from 20 to 400 µm, with the optical limit and the measured onset of detection side by side](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/visionlab_sweep.gif)
+
+On the left is a captured image of a virtual part; on the right is the inspector's answer overlaid on the ground-truth mask. As the defect grows through **48 steps from 20 µm to 400 µm**, detection switches on quite suddenly. Every number on screen is computed on the spot — none of it is decoration written to match the picture.
+
+For this system (f=35 mm, working distance 200 mm, f/4, 3.45 µm pixels, 2448×2048) the measured values are:
+
+| quantity | value | where it comes from |
+|---|---|---|
+| object-space pixel size | **16.264 µm/px** | magnification 0.21212 from the Gaussian conjugate equation |
+| sampling limit (Nyquist) | **32.53 µm** | two pixel pitches, referred to object space |
+| diffraction limit (Airy criterion) | **30.67 µm** | 2.44λN(1+m), working f-number 4.848 |
+| **optical limit (sampling-limited)** | **32.53 µm** | the larger of the two above |
+| **measured onset of detection** | **45.80 µm** (2.82 px) | 5 seeds × 48 sizes |
+
+The answer for this configuration is that a defect must be **1.41× the optical limit**. That ratio is the whole point: **large means the problem is the algorithm or the lighting, close to 1 means the problem is the lens.** No amount of staring at datasheets produces that number.
+
+The second clip sweeps the other way — **change the design and the limit moves**.
+
+![Working distance swept from 120 to 700 mm, showing the same 100 µm defect becoming invisible](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/visionlab_design.gif)
+
+The defect is pinned at 100 µm while only the working distance moves, 120 mm to 700 mm. Pixel size swells from 8.38 to 65.55 µm and the optical limit degrades from 18.40 to 131.13 µm. Three things are worth watching: **which limit binds actually switches over** (diffraction-limited below 160.5 mm, sampling-limited above it), **the optical limit overtakes 100 µm at about 551.6 mm** (past which it is impossible in principle), and **detection in practice only survives to about 403.3 mm**. The practical wall arrives some 150 mm before the theoretical one.
+
+Both clips are deterministic — regenerating them reproduces the same files down to the **SHA-256**. The drawing is done with Fullseye's own `imagedraw` operators and numpy compositing, not matplotlib (only the numeric labels go through Pillow's text rendering). GIF and mp4 are written from the *same* frame list, and the frame count is read back and checked after writing — video is dangerously easy to make *look* right, so without a check I would not trust it myself.
+
+### How it works — returning *limits* rather than making images
+
+The lab is three layers. **`visiondesign`** does closed-form optics (Gaussian conjugates, Nyquist, the Airy criterion, circle of confusion, the cos⁴ law), **`defectgen`** generates defects from mathematics, and **`visionlab`** joins the whole thing into one chain: design → limits → build a part → capture → inspect → verdict.
+
+The constraint of **having no renderer** is what settled the design. Monte-Carlo light transport fits neither the dependency policy nor the compute policy here. So the layer leans on returning **limits instead of images**. Resolution, depth of field, illumination falloff and contrast transfer are all closed forms that have been in textbooks for decades; the module is an *arrangement* of them.
+
+`defectgen` takes the view that a defect is stochastic geometry: a scratch is a random walk, pitting is a point process, a crack is a branching path, surface texture is band-limited noise. **The payoff is not that the pictures look nice — it is that a pixel-perfect ground-truth mask falls out of the definition for free.** There is no annotation step to do.
+
+### "Don't mix up the reasons for a miss" — twice
+
+Two of the defects adversarial testing caught in this layer share a shape: **something other than a genuine miss gets folded into "not detected."**
+
+The first was in the sweep tally. Trials that were **too small to render at all** (sub-pixel) and trials where a **caller-supplied inspector raised** were both being counted as 0% detection. Mixing them blames the design or the algorithm unfairly. `unrenderable` and `detector_failed` are now counted separately, and when nothing could be evaluated the rate is `None`, not `0%`.
+
+The second was worse: **the report said "optical limit not reached" while the lens was in fact resolving the defect perfectly well.** The cause was folding two independent axes — *lateral resolution* and *depth of field* — into the single verdict `resolvable`. In one configuration the lateral limit is 30.7 µm, so a 60 µm defect is resolved with room to spare, yet a depth of field of 0.52 mm falls short of the 1.00 mm tolerance, so nothing is ever promoted to `resolvable` — and the headline reads "optical limit not reached". **Someone reading that goes shopping for a lens, when the thing to change is the aperture, the tolerance, or a focus mechanism.**
+
+The two axes are now always reported apart:
+
+```
+optical limit  : 30.7 um (diffraction-limited)
+detection limit: 60.0 um
+depth of field : 0.52 mm < 1.00 mm required — resolvable laterally, but the part drifts out of focus
+  -> nothing is rated "resolvable" for that reason alone; the lens is not the thing to change.
+```
+
+The lateral limit is closed form, so **it is always a number**, whatever grid the sweep used. It was never a place where "not reached" could honestly be printed.
+
+### Turning industry awards into a standing input for operator ideas
+
+From the author's remark — *"it might be worth considering new operators from the information at this kind of vision event"* — came a written procedure (`docs/INDUSTRY_SIGNALS.md`) for reading industrial-vision trade fairs and awards from primary sources. The reason is that they **judge on a different axis** than a paper corpus. A reviewer asks "is this academically novel?"; an award jury asks "is industry paying for this right now?" The latter means **the specification is settled and there are numbers to verify against**.
+
+The inventory check nearly went wrong once, so that trap is in the procedure too. **Never conclude "zero" from a single keyword** — searching `hyperspect` and `spectral` almost produced "we have no hyperspectral", when in fact there are 14 operators behind the `spec_` prefix. The same trap exists elsewhere, so findings are now recorded in four states rather than two: present, **present but unregistered**, **present but off-policy**, and absent.
+
+And **thirteen rejected ideas are kept with their reasons**. Camera transport interfaces are "not operators, they are a transport layer" and permanently out of scope; edge-AI processors are hardware; learned defect classification violates the dependency policy *and* has no closed-form ground truth; a light-transport renderer is an honest "we cannot". **Without that record the same round trip happens again next time.**
+
+### Two new fields — light field and photon counting
+
+Of the areas that came back **zero across all three inventory surfaces**, two are now implemented. (The remaining four — specular/diffuse separation, motion magnification, Doppler, and coherence-scanning interferometry — are recorded as the next candidates.)
+
+**Light field (17 operators)** handles a 4-D array of (view V, view U, height H, width W): pull out a viewpoint, change focus after the fact, extract depth — all from one exposure. Its input differs from stereo (two eyes) and from focus stacking (a real camera refocusing), so the types are kept separate.
+
+The number I like most here is the textbook result that **refocusing gain equals angular resolution**, reproduced independently by the implementation:
+
+| angular resolution | depth of field (pixel-based) | depth of field (after refocus) | ratio |
+|---|---|---|---|
+| 6×6 | 1.656 mm | 9.939 mm | **6.0016** |
+| 8×8 | 1.656 mm | 13.254 mm | **8.0038** |
+| 10×10 | 1.656 mm | 16.573 mm | **10.0075** |
+
+The ratio is not hard-coded — it comes out of **two calls to `depth_of_field` with different circles of confusion**. The 0.0016 in 6.0016 is the difference between those two computations, not a rounded figure. The price is in the same table: spatial resolution drops from 2048×2448 to 341×408 / 256×306 / 204×244. **What you gain and what you pay both fall out of the same calculation**, which is the satisfying part of this family.
+
+**Photon counting and time-resolved sensing (17 operators)** covers the regime where light stops being a continuous brightness and becomes **countable grains**: Poisson sampling, the Anscombe variance-stabilising transform, SPAD dead time, TCSPC arrival-time histograms, and the distance and fluorescence lifetime derived from them. The noise model differs from the existing `aug_read_noise` (additive Gaussian read noise); the only place the two meet is the generalised Anscombe form.
+
+The dead-time implementation matches the textbook `m = n/(1+nτ)` **bit for bit**, and its inverse round-trips to 1.7e-16. Asked for 1.5 m, the dToF estimator returns **1.5000003 m** (log-parabola fit).
+
+### "Zero findings" was masquerading as robustness — three holes in the fuzzer
+
+Wiring the 34 new operators into the chain fuzzer exposed **three holes in the fuzzer itself**. All three have the same shape: they cannot distinguish **"there is no bug"** from **"it never ran at all."** Addendum 5 called the fuzzer a third layer of quality assurance; this is the story of that layer being capable of lying.
+
+**One — arguments with defaults could never be overridden.** If an operator's default does not fit the pool's fixed sizes, it is rejected with a ValueError every single time and is counted under "zero findings" **without ever having executed**. `lf_from_mla`'s default `angular=(5,5)` does not divide 32×32, and it had not run once in 1,200 chains. Fixed by letting only the op-name-targeted hints override defaults (letting name-level hints do it would change the behaviour of every existing operator at once, so that path stays frozen).
+
+**Two — coverage was only ever a number.** "304/417" cannot tell you whether the other 113 are **robust** or **unreachable**. Breaking the count down per family immediately showed the photon family at `10/17` — meaning **fail-closed validation worked so well that 7 operators never executed**. The fuzzer's generic `signal` pool is a sine wave with negative values, and a photon count is non-negative by contract, so they were being cleanly rejected every time. The guard worked perfectly, and **as a result nothing behind the guard was ever tested.**
+
+**Three — signatures were splitting on numbers.** The better the error message, the more likely it contains **run-specific numbers** ("127 negative bins, minimum -1.176"). Comparing raw strings makes one single problem produce a fresh signature on every run — nearly the whole jump from 99 to 238 signatures was this. Masking numbers before forming the signature fixes it.
+
+The run after all three fixes:
+
+```
+== diffusion: 1500 chains x len 6 (seed 7001, 45s)
+== op coverage: 321/434
+== per family: 1d 34/34  2d 12/12  3d 204/310  lightfield 17/17  math 20/26  optics 17/18  photon 17/17
+== findings (raw): {'CONTRACT': 284} / 40 signatures
+```
+
+Both new families at **17/17**, **zero** suspect signatures, and the signature count converged from **238 to 40**.
+
+### Splitting a type, twice
+
+Not putting every "non-negative 1-D array" into one type was a decision made from measurement. Feed a photon-count histogram (values 0 to a few thousand) into the SPAD dead-time law and it **raises nothing and returns something almost exactly equal to the input** — a relative change of 1.1e-4. A real count rate (1e3–1e7 Hz) changes by 33.3%. Which means **saturation, the fail-closed branch, and the non-invertibility of the paralysable model are never once exercised**. Without the type split, that plausible-looking pass-through is undetectable forever.
+
+The physics differs too. Dead time applies to a detector's **rate stream**, not bin-by-bin to a time histogram (the correct distortion model on the histogram side is a different one). Merging the types would teach **the evolutionary search that a physically wrong chain is a legitimate type connection.**
+
+The same call was made for the 4-D light field: collapsing it into the existing "list of images" type erases *which viewpoint*, and then neither refocusing nor the epipolar plane can be defined. **A type is not the shape of the container; it is a promise about meaning.**
+
+### Did the evolution vocabulary grow? Measurement says: it had not
+
+An honest note. **Adding 34 operators to the catalogue grew the evolutionary search vocabulary by exactly zero** — no bridge operators at all. The reason came in two stages.
+
+First, there was no evolution-side sort for the new types. That part is easy to add. But adding it is not enough, because each family's **entry point** (image → light field, depth → arrival-time cube) **takes an existing image sort as input**. Putting those into the default vocabulary shifts the candidate list of an existing sort, which changes the genome→operator mapping and **silently rewrites past champions**. Yet adding only the consumers without the entry points grows **vocabulary that nothing produces and nothing can ever reach** — the very trap the fuzzer had just walked into.
+
+The conclusion: **entry points and consumers always go into the same mode, together.** The default vocabulary stays at 801 operators, untouched (the mapping invariant holds), while the wide, opt-in vocabulary goes from 873 to **890**, and bridges into the two new families from 5 to **22**. The invariant is pinned by a test that fails when a sort has consumers in the vocabulary but no producer.
+
+### Turning the provenance rule from prose into a check
+
+The author also asked a sharp question: *"is it a problem to implement something under the same name?"*
+
+The answer matters, because **however independently the code was written, provenance is whatever you wrote down.** And in fact a commercial product name did get written into a new module's docstring as *the reason the module exists*. The code had been derived from public literature independently — the record was contaminated anyway.
+
+So the rule was rewritten as a three-way distinction and **turned into a check**:
+
+| use | verdict | why |
+|---|---|---|
+| naming **our own** things after a product (module, operator, API, or "this exists because X does it") | **banned** | it fabricates a provenance record regardless of how the code was written |
+| **interoperation identifiers** (the string that selects a vendor's driver; an alias table for people arriving from another tool) | allowed | a factual name for something that exists outside us; removing it makes the code less usable, not more independent |
+| **cited attribution in a research log** ("award A went to company C", with the source URL) | allowed | this is a citation, and removing it makes the claim unverifiable. **Attribution is the opposite of appropriation** |
+
+The test to apply: **does the name describe something of ours, or something of theirs?** Describing theirs with a source is a citation; attaching theirs to ours is the thing that must never happen.
+
+The old rule said such names must never appear *anywhere* — and **the repository itself did not obey it**. A rule nothing obeys cannot be audited, so it was rewritten to match reality and backed by a machine check (module names, function and class names, module docstrings and public docstrings, with every exemption required to carry a written reason).
+
+### The numbers for this stretch
+
+| item | before | after |
+|---|---|---|
+| typed catalogue | 400 ops | **434 ops** |
+| evolution vocabulary (default) | 801 ops | **801 ops** — deliberately frozen to preserve the mapping |
+| evolution vocabulary (wide, opt-in) | 873 ops | **890 ops** |
+| per-operator documentation | 1,155 notes | **1,189 notes** |
+| fuzzer signatures (1,500 chains) | 238 | **40** |
+| reach of the two new families | — | **17/17 and 17/17** |
+
+Real bugs found by adversarial testing and fixed: three in the light-field family (a silent Inf, a raw numpy error leaking out, a missing size cap), five in photon counting (a silent NaN from denormal underflow, a type lie, implicit string parsing, `argmax` picking bin 0 on a flat histogram, a landmine default), and three in the virtual lab. On top of that, **the authors corrected three of their own docstring numbers by re-measuring**: "including the rise makes the lifetime come out short" is measurably **the opposite — it comes out long**, and "going through Anscombe denoises better" **loses** under linear smoothing. Not keeping only the flattering results applies here too.
+
 ## Summary
 
 **Fullseye** carries roughly **1,000 explainable classical-vision algorithms as "skills,"** and lets you choose, behind one typed interface, whether to

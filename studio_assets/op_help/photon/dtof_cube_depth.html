@@ -1,0 +1,55 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dtof_cube_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">histcube</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_depth(cube, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, min_counts=1.0, empty_value=0.0, subtract_background=False)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Depth map from a `<code style="color:#22d3bf">(H, W, T)</code>` photon histogram cube — the dToF inversion.</p>
+<p>The array version of :func:<code style="color:#22d3bf">dtof_depth</code>, with the same four *mode* estimators</p>
+<p>and the same `<code style="color:#22d3bf">t_flight = t_measured - offset_ps</code>` sign convention. The time</p>
+<p>axis is <b>last</b>: a `<code style="color:#22d3bf">(D, H, W)</code>` voxel volume passed in here would be read as</p>
+<p>`<code style="color:#22d3bf">W</code>` time bins and return a plausible-wrong depth map, so the shape is</p>
+<p>checked and the error message says exactly that.</p>
+<p>Pixels whose total counts are below *min_counts* — and, in the peak-based</p>
+<p>modes, pixels whose histogram is exactly <b>flat</b> (no peak to find, so</p>
+<p>`<code style="color:#22d3bf">argmax</code>` would report bin 0 for every one of them) — are set to</p>
+<p>*empty_value* (default 0.0, a value no real return can have since</p>
+<p>`<code style="color:#22d3bf">d &gt; 0</code>`). Set</p>
+<p>`<code style="color:#22d3bf">empty_value=float(&#x27;nan&#x27;)</code>` if you would rather propagate a NaN — that is an</p>
+<p>opt-in, never the default, because a NaN depth map silently poisons every</p>
+<p>downstream reduction.</p>
+<p>Where a sub-bin *mode* cannot be applied to a pixel — the peak is in the</p>
+<p>first or last bin, or the three samples are flat / non-positive for the log</p>
+<p>fit — that pixel **falls back to the bin-centre (`<code style="color:#22d3bf">&quot;peak&quot;</code>`) estimate**. A</p>
+<p>per-pixel exception would be useless on a megapixel cube; the fallback is</p>
+<p>documented here and pinned in the tests, and it degrades to the coarser</p>
+<p>estimator rather than to a wrong one.</p>
+<p>Ground truth: on a noiseless simulated cube of a tilted plane from 1.0 to</p>
+<p>3.0 m (32x32 pixels, 256 bins x 100 ps, 500 ps IRF) the RMS depth error is</p>
+<p>4.39 mm for `<code style="color:#22d3bf">&quot;peak&quot;</code><code style="color:#22d3bf">, 3.2e-16 m for </code><code style="color:#22d3bf">&quot;centroid&quot;</code>`, 0.114 mm for</p>
+<p>`<code style="color:#22d3bf">&quot;parabolic&quot;</code><code style="color:#22d3bf"> and 1.6e-8 m for </code><code style="color:#22d3bf">&quot;gaussian&quot;</code>`. With Poisson noise (20</p>
+<p>signal + 5 ambient photons per pixel, seed 0) the same four give 19.9 mm,</p>
+<p>164.8 mm (background subtracted), 18.7 mm and 19.2 mm — at 20 photons the</p>
+<p>estimator choice is worth about 6%, and the centroid is 8x worse than doing</p>
+<p>nothing clever at all.</p>
+<p>Returns a float64 `<code style="color:#22d3bf">(H, W)</code>` depth map in metres.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a cube that is not 3-D / has fewer than 2 time</p>
+<p>bins / holds negative counts / exceeds :data:<code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code>, a</p>
+<p>non-positive *bin_ps*, an unknown *mode*, a negative *min_counts*, a</p>
+<p>non-finite *empty_value* other than NaN, and — instead of returning negative</p>
+<p>distances — an *offset_ps* that exceeds the measured arrival time of any</p>
+<p>valid pixel (a mis-signed or mis-scaled calibration delay).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">depth</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_cube_simulate">dtof_cube_simulate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dtof</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:dtof_cube_simulate">dtof_cube_simulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

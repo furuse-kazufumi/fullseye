@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_simulate — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>counts`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_simulate(distance_m=3.0, bins=256, bin_ps=100.0, signal_photons=50.0, ambient_photons=20.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Synthesise a single-pixel photon arrival-time histogram with a known answer.</p>
+<p>The generative model of a direct time-of-flight (dToF) / TCSPC measurement::</p>
+<p>lambda_k = signal_photons * P(pulse in bin k) + ambient_photons / bins</p>
+<p>N_k      ~ Poisson(lambda_k)</p>
+<p>where the pulse is a Gaussian of full width at half maximum *irf_fwhm_ps*</p>
+<p>centred at the round-trip time `<code style="color:#22d3bf">t0 = 2*distance_m/c</code><code style="color:#22d3bf">, and </code>`P(pulse in bin</p>
+<p>k)`` is its <b>exact</b> integral over the bin (an erf difference, not a</p>
+<p>midpoint sample) — so with `<code style="color:#22d3bf">noise=False</code>` the returned histogram is an</p>
+<p>analytic ground truth, not an approximation of one. *ambient_photons* is the</p>
+<p>total background (sunlight, dark counts) spread uniformly over the window.</p>
+<p>`<code style="color:#22d3bf">noise=False</code><code style="color:#22d3bf"> returns </code><code style="color:#22d3bf">lambda_k</code><code style="color:#22d3bf"> itself (no sampling); </code><code style="color:#22d3bf">noise=True</code>`</p>
+<p>draws one Poisson realisation from `<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>`.</p>
+<p>Returns a float64 1-D histogram of length *bins*. The unambiguous range is</p>
+<p>`<code style="color:#22d3bf">c * bins * bin_ps / 2</code>` — 3.84 m at the defaults (256 bins x 100 ps), with</p>
+<p>a bin resolution of 1.50 cm.</p>
+<p>The pulse is <b>not</b> renormalised to the window: a target near the far edge</p>
+<p>genuinely loses the tail of its pulse, exactly as a real sensor does, and the</p>
+<p>total signal comes back slightly below *signal_photons*. Renormalising would</p>
+<p>have made the truncated pulse asymmetric and biased its centroid.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-positive *distance_m*, a *bins* outside</p>
+<p>`<code style="color:#22d3bf">[2, MAX_BINS]</code>`, a non-positive *bin_ps* / *irf_fwhm_ps*, negative photon</p>
+<p>budgets, a non-integer or negative *seed*, a non-bool *noise*, and — instead</p>
+<p>of wrapping the pulse silently to a short distance — a *distance_m* whose</p>
+<p>round-trip time falls outside the `<code style="color:#22d3bf">bins * bin_ps</code>` window.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">counts</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_coates_correct">tcspc_coates_correct</a> · <a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_background_subtract">tcspc_background_subtract</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a> · <a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:lifetime_fit">lifetime_fit</a> · <a style="color:#22d3bf" href="opphoton:lifetime_phasor">lifetime_phasor</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tcspc</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_background_subtract">tcspc_background_subtract</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

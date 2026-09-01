@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dtof_cube_simulate — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">histcube</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Synthesise the `<code style="color:#22d3bf">(H, W, T)</code>` photon histogram cube a SPAD array produces.</p>
+<p>The per-pixel version of :func:<code style="color:#22d3bf">tcspc_simulate</code>: every pixel of the *depth*</p>
+<p>map (metres, one-way distance) gets a Gaussian return at its own round-trip</p>
+<p>time `<code style="color:#22d3bf">2d/c</code>`, scaled by *signal_photons* times that pixel&#x27;s *reflectivity*,</p>
+<p>on a uniform ambient pedestal of `<code style="color:#22d3bf">ambient_photons/bins</code>` per bin, Poisson</p>
+<p>sampled with `<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>`.</p>
+<p>The output is the cube that :func:<code style="color:#22d3bf">dtof_cube_depth</code> inverts, and the axis</p>
+<p>order is <b>(H, W, T) with time LAST</b> — the same layout a SPAD array streams.</p>
+<p>That is not the `<code style="color:#22d3bf">(D, H, W)</code><code style="color:#22d3bf"> of a :mod:</code>volops` voxel volume; the two are</p>
+<p>both 3-D float arrays and swapping them silently produces a plausible-wrong</p>
+<p>depth map, which is why :func:<code style="color:#22d3bf">dtof_cube_depth</code> checks and says so.</p>
+<p>`<code style="color:#22d3bf">noise=False</code>` returns the exact expectation cube (no sampling).</p>
+<p>Ground truth: with `<code style="color:#22d3bf">noise=False</code>` the per-pixel centroid of the cube returns</p>
+<p>the input depth map to an RMS error of 3.2e-16 m (pinned in the tests) — the</p>
+<p>pulse integral is analytic, so the only error is float round-off.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D, non-finite or non-positive *depth*, a</p>
+<p>*reflectivity* that is negative or not the same shape as *depth*, a *bins*</p>
+<p>outside `<code style="color:#22d3bf">[2, MAX_BINS]</code>`, non-positive *bin_ps* / *irf_fwhm_ps*, negative</p>
+<p>photon budgets, a non-integer *seed*, a cube over</p>
+<p>:data:<code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code> (`<code style="color:#22d3bf">H*W*bins</code>` grows fast — 512x512x256 is 8x the</p>
+<p>cap), and any depth whose round-trip time falls outside the time window</p>
+<p>(which a real sensor would alias into a short distance).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">histcube</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_cube_depth">dtof_cube_depth</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dtof</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:dtof_cube_depth">dtof_cube_depth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

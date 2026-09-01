@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_background_subtract — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_background_subtract(hist, method=&#x27;median&#x27;, leading_bins=None, quantile=0.5, scale=1.0)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_background_subtract&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Remove the ambient-light / dark-count floor from an arrival-time histogram.</p>
+<p>Outdoors, most of what a dToF sensor counts is sunlight: a roughly uniform</p>
+<p>pedestal under the return pulse. It biases the centroid toward the middle of</p>
+<p>the window (a floor of `<code style="color:#22d3bf">b</code>` per bin pulls the first moment toward</p>
+<p>`<code style="color:#22d3bf">window/2</code>`) and it inflates the apparent signal, so it is removed before</p>
+<p>any depth or lifetime estimate.</p>
+<p>The level is estimated by *method* and then <b>subtracted</b> (the sign trap:</p>
+<p>the result is `<code style="color:#22d3bf">hist - level</code><code style="color:#22d3bf">, clipped at 0, never </code><code style="color:#22d3bf">hist + level</code>`):</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;median&quot;</code>` (default) — the median of every bin. Robust while the pulse</p>
+<p>occupies well under half the window, which is the normal dToF case.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;leading&quot;</code>` — the mean of the first *leading_bins* bins, the classical</p>
+<p>choice when the pulse is known to arrive late (a far target).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;trailing&quot;</code>` — the mean of the last *leading_bins* bins, for</p>
+<p>fluorescence decays where the tail is background.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;quantile&quot;</code>` — the given *quantile* of all bins, for tuning by hand.</p>
+<p>*leading_bins* defaults to `<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> = </code><code style="color:#22d3bf">min(8, len(hist))</code>`, so the default</p>
+<p>call works on a short histogram instead of raising over a constant nobody</p>
+<p>chose (a fixed default of 8 made `<code style="color:#22d3bf">method=&quot;leading&quot;</code>` fail on any histogram</p>
+<p>with fewer than 8 bins).</p>
+<p>*scale* multiplies the estimated level before subtraction (`<code style="color:#22d3bf">scale=1.2</code>` for</p>
+<p>a deliberately aggressive removal). Clipping at 0 means the result is a valid</p>
+<p>non-negative histogram that the rest of this module will accept.</p>
+<p>Ground truth: on a noiseless histogram with a known flat pedestal of 20</p>
+<p>counts/bin under a 5000-photon pulse covering 5.1% of the window, the median</p>
+<p>estimate recovers 20.000000 and the returned histogram equals the pedestal-</p>
+<p>free pulse <b>exactly</b> (measured area error 0.0, pinned in the tests).</p>
+<p>Returns a float64 1-D histogram of the same length as *hist*.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, an unknown</p>
+<p>*method*, a *leading_bins* outside `<code style="color:#22d3bf">[1, len(hist)]</code>`, a *quantile* outside</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>`, and a negative *scale*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">counts</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_coates_correct">tcspc_coates_correct</a> · <a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a> · <a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:lifetime_fit">lifetime_fit</a> · <a style="color:#22d3bf" href="opphoton:lifetime_phasor">lifetime_phasor</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tcspc</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_simulate">tcspc_simulate</a> · <a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

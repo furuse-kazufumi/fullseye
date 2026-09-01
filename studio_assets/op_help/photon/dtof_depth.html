@@ -1,0 +1,56 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dtof_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.dtof_depth(hist, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, subtract_background=False)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;dtof_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Distance from a photon arrival-time histogram: `<code style="color:#22d3bf">d = c*t/2</code>`.</p>
+<p>Direct time-of-flight. The light travels to the target and back, so the</p>
+<p>one-way distance is <b>half</b> the round-trip time times the speed of light.</p>
+<p>*bin_ps* is the width of one time bin (a 100 ps bin is 1.50 cm of depth).</p>
+<p>Four estimators, from crudest to sharpest:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;peak&quot;</code>` — the centre of the fullest bin. Quantised to the bin grid;</p>
+<p>the error is uniform in `<code style="color:#22d3bf">+-half</code><code style="color:#22d3bf"> a bin (</code><code style="color:#22d3bf">+-0.75 cm</code>` at 100 ps).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;centroid&quot;</code>` — the first moment of the whole histogram. Exact for a</p>
+<p>symmetric pulse *with no background*, and badly biased toward the middle</p>
+<p>of the window with one — pass `<code style="color:#22d3bf">subtract_background=True</code>`.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;parabolic&quot;</code>` — a parabola through the peak bin and its two neighbours.</p>
+<p>Sub-bin, cheap, and biased for a Gaussian pulse.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;gaussian&quot;</code>` — the same parabola fitted to the <b>log</b> of those three</p>
+<p>samples, which is the exact vertex for a Gaussian pulse.</p>
+<p>Measured on a <b>noiseless</b> simulated return at 2.4371 m (256 bins x 100 ps,</p>
+<p>500 ps IRF), absolute error: `<code style="color:#22d3bf">peak</code><code style="color:#22d3bf"> 1.29 mm, </code><code style="color:#22d3bf">centroid</code>` 4.4e-16 m,</p>
+<p>`<code style="color:#22d3bf">parabolic</code><code style="color:#22d3bf"> 0.067 mm, </code><code style="color:#22d3bf">gaussian</code>` 9.4e-9 m — three orders of magnitude</p>
+<p>between the crudest and the sharpest.</p>
+<p>With <b>Poisson noise</b> (200 signal + 200 ambient photons, seed 0) the same</p>
+<p>four give 13.7 mm, 146.5 mm (with `<code style="color:#22d3bf">subtract_background=True</code>`), 8.5 mm and</p>
+<p>8.0 mm. Two honest readings of that: once shot noise dominates the sub-bin</p>
+<p>estimators buy about 1.6x, not three orders of magnitude, and the centroid</p>
+<p><b>collapses</b> because a median-subtracted ambient floor still leaves noise</p>
+<p>across the whole window that drags the first moment toward the centre. Use</p>
+<p>`<code style="color:#22d3bf">&quot;gaussian&quot;</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">&quot;parabolic&quot;</code><code style="color:#22d3bf"> on noisy data; use </code><code style="color:#22d3bf">&quot;centroid&quot;</code>` only when</p>
+<p>the background is genuinely gone.</p>
+<p>*offset_ps* is a <b>system delay to remove</b>: ``t_flight = t_measured -</p>
+<p>offset_ps``, so a positive offset makes the answer *closer*. Returns the</p>
+<p>distance in metres as a float.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite, non-1-D or all-zero *hist*,</p>
+<p>a non-positive *bin_ps*, an unknown *mode*, a non-finite *offset_ps*, a</p>
+<p><b>flat</b> histogram in a peak-based mode (`<code style="color:#22d3bf">argmax</code>` would silently pick bin 0</p>
+<p>and report the first bin&#x27;s depth), a peak in the first or last bin with a</p>
+<p>sub-bin *mode* (there is no neighbour to fit to — use `<code style="color:#22d3bf">&quot;peak&quot;</code>`), a</p>
+<p>degenerate three-sample fit, and — instead of returning a negative distance —</p>
+<p>an *offset_ps* larger than the measured arrival time.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">measurement</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dtof</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_cube_simulate">dtof_cube_simulate</a> · <a style="color:#22d3bf" href="opphoton:dtof_cube_depth">dtof_cube_depth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

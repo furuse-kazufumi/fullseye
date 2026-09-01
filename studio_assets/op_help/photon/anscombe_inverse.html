@@ -1,0 +1,68 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">anscombe_inverse — PHOTON <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0, mode=&#x27;algebraic&#x27;)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;anscombe_inverse&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Invert :func:<code style="color:#22d3bf">anscombe_transform</code> — algebraically, or without bias.</p>
+<p>`<code style="color:#22d3bf">mode=&quot;algebraic&quot;</code>` is the exact algebraic inverse of</p>
+<p>:func:<code style="color:#22d3bf">anscombe_transform</code>::</p>
+<p>x = ((g*A/2)^2 - (3/8)*g^2 - sigma_r^2)/g + offset</p>
+<p>so `<code style="color:#22d3bf">anscombe_inverse(anscombe_transform(x)) == x</code>` to machine precision</p>
+<p>(measured over 100001 values of `<code style="color:#22d3bf">x</code><code style="color:#22d3bf"> spanning </code><code style="color:#22d3bf">[0, 1e4]</code>`: max absolute</p>
+<p>error 2.7e-12, max relative error 3.7e-16 for `<code style="color:#22d3bf">x &gt; 1</code>`). It is, however,</p>
+<p><b>biased</b>: `<code style="color:#22d3bf">E[A(X)] != A(E[X])</code>`, so applying it to a *denoised* (i.e.</p>
+<p>averaged) Anscombe image underestimates the intensity.</p>
+<p>`<code style="color:#22d3bf">mode=&quot;unbiased&quot;</code>` is the closed-form exact unbiased inverse of Makitalo &amp;</p>
+<p>Foi (IEEE TIP 2011)::</p>
+<p>x = D^2/4 + (1/4)*sqrt(3/2)/D - (11/8)/D^2 + (5/8)*sqrt(3/2)/D^3 - 1/8</p>
+<p>which is defined for the <b>classical</b> transform only (`<code style="color:#22d3bf">gain=1</code>`,</p>
+<p>`<code style="color:#22d3bf">read_sigma=0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">offset=0</code>`) — passing generalised parameters with this</p>
+<p>mode raises rather than returning a formula that does not apply.</p>
+<p>Measured bias — apply the inverse to the *ideal denoised* value</p>
+<p>`<code style="color:#22d3bf">D = E[A(X)]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">X ~ Poisson(lambda)</code><code style="color:#22d3bf">, and compare with </code><code style="color:#22d3bf">lambda</code>`. Both</p>
+<p>computed <b>exactly</b> from the Poisson pmf (no sampling):</p>
+<p>========  ==================  ==================</p>
+<p>lambda    algebraic bias      unbiased bias</p>
+<p>========  ==================  ==================</p>
+<p>1         -0.179361           -0.003668</p>
+<p>2         -0.231074           -0.006374</p>
+<p>4         -0.249688           +0.003779</p>
+<p>10        -0.250227           +0.016904</p>
+<p>30        -0.250019           +0.017041</p>
+<p>100       -0.250002           +0.011960</p>
+<p>========  ==================  ==================</p>
+<p>The algebraic inverse converges to a <b>constant -1/4 photon</b> offset, which</p>
+<p>at 1 photon/pixel is a 18% error; the closed form keeps the worst case to</p>
+<p>0.017 photons (a 49x reduction at `<code style="color:#22d3bf">lambda = 1</code>`, 15x at its own worst point</p>
+<p>near `<code style="color:#22d3bf">lambda = 10-30</code>`). It is a closed-form *approximation* of the exact</p>
+<p>unbiased inverse, so it is not bias-free — those +0.017 are the honest</p>
+<p>residual, not round-off.</p>
+<p>The result is clipped at 0 — stated here rather than done quietly — but the</p>
+<p>clip essentially never fires: the closed form&#x27;s positive root is</p>
+<p><b>exactly</b> `<code style="color:#22d3bf">A(0) = 2*sqrt(3/8) = 1.2247448714</code>` (measured: the root and</p>
+<p>`<code style="color:#22d3bf">A(0)</code>` agree to 0.0), which is also the smallest value</p>
+<p>:func:<code style="color:#22d3bf">anscombe_transform</code> can produce, so over the whole valid domain the</p>
+<p>formula is non-negative to round-off (measured minimum -1.11e-16 over</p>
+<p>`<code style="color:#22d3bf">D</code><code style="color:#22d3bf"> in </code><code style="color:#22d3bf">[A(0), 6]</code><code style="color:#22d3bf"> on 500001 samples). Below </code><code style="color:#22d3bf">A(0)</code>` it does go</p>
+<p>genuinely negative (-0.0217 at `<code style="color:#22d3bf">D = 1.20</code>`), which is why values there are</p>
+<p>refused outright rather than clipped.</p>
+<p>Returns a float64 array of the same shape as *values*.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-finite *values*, an unknown *mode*, a</p>
+<p>non-positive *gain*, a negative *read_sigma*, `<code style="color:#22d3bf">mode=&quot;unbiased&quot;</code>` combined</p>
+<p>with any non-default generalised parameter, and — instead of dividing by</p>
+<p>zero — `<code style="color:#22d3bf">mode=&quot;unbiased&quot;</code><code style="color:#22d3bf"> with any value </code><code style="color:#22d3bf">&lt;= 0</code><code style="color:#22d3bf"> (the </code><code style="color:#22d3bf">1/D^3</code>` term).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opphoton:photon_sample">photon_sample</a> · <a style="color:#22d3bf" href="opphoton:photon_statistics">photon_statistics</a> · <a style="color:#22d3bf" href="opphoton:photon_uncertainty">photon_uncertainty</a> · <a style="color:#22d3bf" href="opphoton:anscombe_transform">anscombe_transform</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:anscombe_transform">anscombe_transform</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

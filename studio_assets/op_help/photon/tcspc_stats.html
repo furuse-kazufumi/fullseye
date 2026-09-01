@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_stats — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import photoncount; photoncount.tcspc_stats(hist, bin_ps=100.0)</code> (または <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Descriptors of an arrival-time histogram: peak, centroid, width, background.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">total_counts</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">peak_bin</code><code style="color:#22d3bf"> (int) · </code><code style="color:#22d3bf">peak_counts</code>` ·</p>
+<p>`<code style="color:#22d3bf">peak_time_ps</code><code style="color:#22d3bf"> (the **centre** of the peak bin, </code><code style="color:#22d3bf">(k + 0.5)*bin_ps</code>`) ·</p>
+<p>`<code style="color:#22d3bf">centroid_ps</code>` (the first moment over the whole histogram, background</p>
+<p>included — run :func:<code style="color:#22d3bf">tcspc_background_subtract</code> first if that matters) ·</p>
+<p>`<code style="color:#22d3bf">fwhm_ps</code>` (full width at half maximum *above the background*, by linear</p>
+<p>interpolation of the two half-crossings around the peak) ·</p>
+<p>`<code style="color:#22d3bf">background_per_bin</code>` (the median bin, the same robust estimate</p>
+<p>:func:<code style="color:#22d3bf">tcspc_background_subtract</code> uses) · `<code style="color:#22d3bf">signal_counts</code>`</p>
+<p>(`<code style="color:#22d3bf">total - background*bins</code><code style="color:#22d3bf">) · </code><code style="color:#22d3bf">sbr</code>` (signal-to-background ratio, or</p>
+<p>`<code style="color:#22d3bf">None</code><code style="color:#22d3bf"> when the background estimate is 0) · </code><code style="color:#22d3bf">n_bins</code><code style="color:#22d3bf"> · </code><code style="color:#22d3bf">window_ps</code>`.</p>
+<p>`<code style="color:#22d3bf">fwhm_ps</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">None</code>` — never a fabricated number — when the profile does</p>
+<p>not cross the half-maximum on both sides of the peak, which is exactly what a</p>
+<p>monotone fluorescence decay does (its peak is bin 0). A `<code style="color:#22d3bf">None</code>` here means</p>
+<p>&quot;this histogram has no width in the FWHM sense&quot;, not &quot;the measurement</p>
+<p>failed&quot;.</p>
+<p>Ground truth: for a noiseless Gaussian return of FWHM 500 ps, `<code style="color:#22d3bf">centroid_ps</code>`</p>
+<p>matches the analytic `<code style="color:#22d3bf">2d/c</code><code style="color:#22d3bf"> to 1.8e-12 ps. </code><code style="color:#22d3bf">fwhm_ps</code>` comes back as 508.41</p>
+<p>at 100 ps bins and 503.07 at 50 ps bins — the linear interpolation between</p>
+<p>two bins on either flank systematically <b>overestimates</b> a Gaussian&#x27;s width,</p>
+<p>by 1.7% and 0.6% respectively, and the error shrinks with the bin width.</p>
+<p>That bias is a property of the estimator; it is reported here rather than</p>
+<p>hidden behind a &quot;500&quot; that only holds in the continuum limit.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: negative, non-finite or non-1-D *hist*, a</p>
+<p>non-positive *bin_ps*, and an all-zero histogram (no photon arrived, so</p>
+<p>there is no arrival time; the centroid would be `<code style="color:#22d3bf">0/0</code>`).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tcspc</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_simulate">tcspc_simulate</a> · <a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_background_subtract">tcspc_background_subtract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
