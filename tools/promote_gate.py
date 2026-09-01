@@ -233,6 +233,59 @@ def _best_existing(ops, prob, pname, a, b, cfg, offset, exclude, max_existing):
     return best, best_name
 
 
+#: 「比が定義できない」ときに使う problem 固有の尺度のキャッシュ(候補に依存しない)。
+_SCALE_CACHE: dict = {}
+
+
+def _reference_scale(prob, pname, cfg, offset):
+    """既存最良が 0 のときに絶対改善を測る**単位**(その problem 固有)。
+
+    スコアの単位は problem ごとに違う(dB / 相関 / 1/(1+mse))ので、絶対改善に
+    固定のしきい値は置けない。そこで **その課題自身が持っている尺度** ―― 手の
+    基準線と恒等写像のスコア ―― の大きい方を単位に使う。0 を上回るだけでは
+    通さず、``MIN_RELATIVE_GAIN`` をこの単位に掛けた分だけ上回ることを求める。
+
+    正直な限界: 候補が手の基準線そのものだと単位が候補自身に依存する。単位は
+    「どれだけ上回れば意味があるか」の物差しであって越えるべき閾値ではないので
+    判定は歪まないが、**単位の出どころは必ず ``scale_reference_from`` に出す**。
+    """
+    key = (pname, offset, cfg["n_holdout"], cfg["size"], cfg["seed"])
+    if key in _SCALE_CACHE:
+        return _SCALE_CACHE[key]
+    data = prob.make(cfg["n_holdout"], cfg["size"], cfg["seed"] + offset)
+    best, src = 0.0, "none"
+    for label, stages in (("hand", prob.hand_stages()), ("identity", [])):
+        try:
+            v = abs(float(prob.score_stages(stages, data)))
+        except Exception:                                 # noqa: BLE001
+            continue
+        if np.isfinite(v) and v > best:
+            best, src = v, label
+    _SCALE_CACHE[key] = (best, src)
+    return best, src
+
+
+def _gain(cand, best_existing, prob, pname, cfg, offset):
+    """候補と既存最良の差を、**比が定義できるときだけ比で**表す。
+
+    → ``(relative_gain|None, absolute_gain, improved, basis, scale, scale_from)``
+    """
+    absolute = float(cand - best_existing)
+    if abs(best_existing) > RATIO_FLOOR:
+        rel = absolute / abs(best_existing)
+        return (rel, absolute, rel > MIN_RELATIVE_GAIN, "relative",
+                abs(float(best_existing)), "best_existing")
+    scale, src = _reference_scale(prob, pname, cfg, offset)
+    if scale > RATIO_FLOOR:
+        # 比は定義できない(既存語彙がこの課題で 0)。課題自身の尺度で絶対判定。
+        return (None, absolute, absolute > MIN_RELATIVE_GAIN * scale,
+                "absolute (existing vocabulary scores ~0 here; ratio undefined)",
+                scale, src)
+    # 尺度そのものが 0 = この課題は誰にも解けていない。判定材料が無いので通さない。
+    return (None, absolute, False,
+            "undefined (no non-zero reference on this problem)", 0.0, "none")
+
+
 def counterfactual_utility(ops, problems, op_name, a=0.5, b=0.5, cfg=None,
                            split="locked", max_existing=None, verbose=False):
     """候補 op の反実仮想効用を全 problem で測る。
