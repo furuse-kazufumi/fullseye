@@ -1201,6 +1201,17 @@ def subject_blob_select(log=print) -> dict:
     picked = np.clip(_overlay_mask(np.stack([scene] * 3, -1) * 0.35,
                                    sel_mask, (110, 235, 150), 0.85), 0, 1)
     picked = np.clip(_overlay_mask(picked, rej_mask, (235, 110, 110), 0.55), 0, 1)
+    # `area_center` が返した中心を画素に戻して十字で打つ (採用 = 白、不採用 = 灰)
+    from PIL import Image as _Im, ImageDraw as _Dw
+    _pk = _Im.fromarray(_to_u8(picked), "RGB")
+    _dw = _Dw.Draw(_pk)
+    for f in feats:
+        cy, cx, r = f["row"], f["col"], 11
+        col = (255, 255, 255) if f["id"] in keep else (150, 152, 166)
+        _dw.line([cx - r, cy, cx + r, cy], fill=col, width=3)
+        _dw.line([cx, cy - r, cx, cy + r], fill=col, width=3)
+    picked = np.asarray(_pk, np.float64) / 255.0
+    ctr_err = max(max(abs(f["row_err_px"]), abs(f["col_err_px"])) for f in feats)
     scatter = _plot(
         [{"x": [f["circ"] for f in feats if f["circ"] >= circ_thr],
           "y": [f["px"] for f in feats if f["circ"] >= circ_thr],
