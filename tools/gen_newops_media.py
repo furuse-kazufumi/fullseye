@@ -689,8 +689,8 @@ def build_bearing(log):
         frame = _to_u8(canvas)
         found = hit[i]
         labels = [
-            (14, 6, f"bearing: a {FC:.0f} Hz resonance amplitude-modulated at the "
-                    f"{FD:.0f} Hz defect rate (m = {M}), {FS / 1000:.1f} kHz x 1.0 s "
+            (14, 6, f"bearing: a {FC:.0f} Hz resonance modulated at the {FD:.0f} Hz "
+                    f"defect rate (m = {M}), {FS / 1000:.1f} kHz x 1.0 s "
                     f"-- sweeping the demodulation band", C_TEXT, 12, False),
             (92, 42, "1  raw spectrum (dsp.spectrum), log amplitude -- shaded = the "
                      "band being demodulated", C_TEXT, 13, True),
@@ -700,7 +700,7 @@ def build_bearing(log):
              C_TEXT, 13, True),
             (axR.x1 - 128, axR.y1 + 22, "frequency [Hz] ->", C_DIM, 11, False),
             (axE.x1 - 128, axE.y1 + 22, "frequency [Hz] ->", C_DIM, 11, False),
-            (axP.x1 - 168, axP.y1 - 20, "demodulation band centre [Hz] ->", C_DIM, 11, False),
+            (axP.x1 - 196, axP.y1 - 20, "demodulation band centre [Hz] ->", C_DIM, 11, False),
             (int(axR.X(FD)) + 8, axR.y0 + 4,
              f"{FD:.0f} Hz: {a_def:.1e}", C_ROSE, 11, True),
             (int(axR.X(FD)) + 8, axR.y0 + 18,
@@ -722,8 +722,8 @@ def build_bearing(log):
              (C_TEAL if found else C_ROSE), 12, True),
             (14, H - 20,
              f"choosing the band without knowing the resonance: spectral_kurtosis on "
-             f"the impulsive record of the same bearing picks {k_lo:.0f}-{k_hi:.0f} Hz "
-             f"-> envelope peak {env_auto['peak_freq']:.4f} Hz", C_DIM, 11, False),
+             f"an impulsive record picks {k_lo:.0f}-{k_hi:.0f} Hz -> envelope peak "
+             f"{env_auto['peak_freq']:.4f} Hz", C_DIM, 11, False),
         ]
         labels += tR + tRy + tE + tEy + tP + tPy
         out.append(_text(frame, labels))
@@ -1174,9 +1174,9 @@ def build_photon(log, frames: int = 24):
              f", error bar {rel[i] * 100:5.2f} % (1/sqrt(N) = {theory[i] * 100:5.2f} %)",
              C_AMBR, 13, True),
             (MARGIN + 4, PANY + PAN + 44,
-             f"the noise is not a setting, it is sqrt(N): from 10 photons up the bar "
-             f"tracks 1/sqrt(N) to {dev_high:.1%}; below that the rule itself weakens "
-             f"({dev:.0%} at {ns[0]:.0f} photon/px)", C_DIM, 12, False),
+             f"sqrt(N) is not a setting: from 10 photons up the bar tracks 1/sqrt(N) "
+             f"to {dev_high:.1%} (the rule itself weakens below that)",
+             C_DIM, 12, False),
             (bx1 - 130, axU.y1 - 18, "photons per unit ->", C_DIM, 11, False),
         ]
         labels += _legend(bx0 + 10, axB.y0 + 4,
@@ -1277,7 +1277,7 @@ def build_quaternion(log, frames: int = 31):
     W = MARGIN + 2 * (PAN + GAP) + PLOT_W + MARGIN
     HUD = 28
     PANY = HUD + 22
-    H = PANY + PAN + 120
+    H = PANY + PAN + 138
     px0, px1 = MARGIN + 2 * (PAN + GAP) + 58, W - MARGIN - 12
     head = ("quaternion colour rotation q x q* (quatimage.quat_color_rotate): a 3-D "
             "rotation of the colour vector about the blue axis")
@@ -1325,10 +1325,12 @@ def build_quaternion(log, frames: int = 31):
              f"max |difference| over the image {maxdiff[i]:.4f} = ||R - diag(R)||_2 "
              f"{opnorm[i]:.4f} to {abs(maxdiff[i] - opnorm[i]):.0e}", C_AMBR, 12, True),
             (MARGIN + 4, PANY + PAN + 94,
-             f"the pure-red patch is the worst case: a per-channel gain can only scale "
-             f"the zero already in its green channel.  Written as an explicit 3x3 "
-             f"matrix the same rotation differs by {mat_err:.1e} -- quaternions beat "
-             f"per-channel gains, not matrices.", C_DIM, 12, False),
+             "the pure-red patch is the worst case: a per-channel gain can only scale "
+             "the zero already in its green channel.", C_DIM, 12, False),
+            (MARGIN + 4, PANY + PAN + 112,
+             f"written as an explicit 3x3 matrix the same rotation differs by "
+             f"{mat_err:.1e} -- quaternions beat per-channel gains, not matrices.",
+             C_DIM, 12, False),
             (px1 - 112, ax.y1 + 22, "rotation angle [deg]", C_DIM, 11, False),
         ]
         labels += _legend(px0 + 10, ax.y0 + 4, [
@@ -1401,7 +1403,7 @@ def build_fmcw(log, frames: int = 25):
     x1p, x2p = 40, 40 + MAP_W + 52
     axP = Axes(100, MAPY + MAP_H + 46, W - 20, MAPY + MAP_H + 206, 0.0, 63.0, -78.0, 2.0)
     axT = Axes(100, axP.y1 + 62, W - 20, axP.y1 + 174, -56.0, -16.0, -60.0, -8.0)
-    H = axT.y1 + 74
+    H = axT.y1 + 92
     DB_LO, DB_HI = -70.0, 0.0
 
     out = []
@@ -1455,8 +1457,7 @@ def build_fmcw(log, frames: int = 25):
         labels = [
             (14, 6, f"FMCW range-Doppler: a strong target at range bin {strong_rb} "
                     f"and a weak one at bin {weak_rb}, both at Doppler +{dop}  --  "
-                    f"sweeping how weak  (bin {dr:.3f} m / {dv:.3f} m/s)",
-             C_TEXT, 12, False),
+                    f"sweeping how weak the weak one is", C_TEXT, 12, False),
             (100, axP.y0 - 22,
              f"range profile through Doppler bin +{dop}  [dB relative to the peak]",
              C_TEXT, 13, True),
@@ -1465,21 +1466,24 @@ def build_fmcw(log, frames: int = 25):
              C_TEXT, 13, True),
             (axP.x1 - 100, axP.y1 + 22, "range bin ->", C_DIM, 11, False),
             (axT.x1 - 212, axT.y1 - 20, "true weak-target level [dB] ->", C_DIM, 11, False),
-            (14, H - 56,
+            (14, H - 74,
              f"weak target given {db:+6.1f} dB    rect reads {r['weak_db']:+7.2f} dB "
              f"({'local max' if r['is_local_max'] else 'NOT a local max'})    "
              f"hann reads {hn['weak_db']:+7.2f} dB "
              f"({'local max' if hn['is_local_max'] else 'NOT a local max'})",
              C_TEXT, 13, True),
-            (14, H - 38,
+            (14, H - 56,
              f"rect error {r['weak_db'] - db:+6.2f} dB, hann error "
-             f"{hn['weak_db'] - db:+6.2f} dB.  Unwindowed, the answer stops depending on "
-             f"the target once it is below the leakage skirt (about {rect_floor:.1f} dB) "
-             f"-- and nothing warns you.", C_ROSE, 12, True),
+             f"{hn['weak_db'] - db:+6.2f} dB.  Unwindowed, the answer stops depending "
+             f"on the target once it is below", C_ROSE, 12, True),
+            (14, H - 38,
+             f"the leakage skirt (about {rect_floor:.1f} dB) -- and nothing warns you.",
+             C_ROSE, 12, True),
             (14, H - 20,
              f"the cost of the window: peak height {r['peak']:.4f} -> {hn['peak']:.4f} "
-             f"({r['peak'] / hn['peak']:.2f}x) and a wider main lobe.  The rect peak is "
-             f"the half-bin scalloping loss 2/pi = {2 / np.pi:.4f}.", C_DIM, 11, False),
+             f"({r['peak'] / hn['peak']:.2f}x) and a wider main lobe; the rect peak is "
+             f"the half-bin scalloping loss 2/pi = {2 / np.pi:.4f}.  "
+             f"bin {dr:.4f} m / {dv:.4f} m/s.", C_DIM, 11, False),
             (x1p + 2, MAPY + MAP_H + 6,
              f"colour = dB ({DB_LO:.0f}..{DB_HI:.0f}), rows = Doppler bin -16..+15, "
              f"columns = range bin 0..63;  white circle = strong, amber = weak",
@@ -1681,7 +1685,7 @@ def build_photometric_shadow(log):
     HUD = 28
     TILEY = HUD + 22
     MAPY = TILEY + TILE + 34
-    H = MAPY + PAN + 92
+    H = MAPY + PAN + 110
     ERR_HI = 30.0
 
     out = []
@@ -1726,6 +1730,20 @@ def build_photometric_shadow(log):
         canvas = _frame_box(canvas, MAPY, MAPY + PAN - 26, cbx, cbx + 12)
 
         broke = curves["ransac"][k] > 1.0
+        if broke:
+            note = ("half the lights are gone: 'shadowed' and 'black surface' are the "
+                    "same model and a majority vote cannot choose --",
+                    "the robust methods break here, and that is disclosed rather than "
+                    "hidden.")
+        elif k:
+            note = (f"{curves['ransac'][k]:.4f} deg is the float32 output floor "
+                    f"({floor:.4f} deg), not an error;",
+                    f"plain least squares is already {curves['lstsq'][k]:.1f} deg wrong.")
+        else:
+            note = (f"with every light visible all three agree at the float32 floor "
+                    f"({floor:.4f} deg).",
+                    f"N.L stays positive (min {ndl.min():.4f}), so every failure later "
+                    f"is the blocked lights and nothing else.")
         labels = [
             (MARGIN, 6, f"photometric stereo under cast shadows: {n_lights} lights, "
                         f"blocking them one at a time  "
@@ -1751,18 +1769,8 @@ def build_photometric_shadow(log):
              f"k = {k} of {n_lights} blocked   ->   lstsq {curves['lstsq'][k]:8.4f} deg, "
              f"median {curves['median'][k]:8.4f} deg, ransac {curves['ransac'][k]:8.4f} deg",
              (C_ROSE if broke else C_TEAL), 13, True),
-            (MARGIN, MAPY + PAN + 66,
-             (f"half the lights are gone: 'shadowed' and 'black surface' are the "
-              f"same model and a majority vote cannot choose -- the robust methods "
-              f"break here, and that is disclosed rather than hidden."
-              if broke else
-              f"{curves['ransac'][k]:.4f} deg is the float32 output floor ({floor:.4f} "
-              f"deg), not an error. Plain least squares is already "
-              f"{curves['lstsq'][k]:.1f} deg wrong." if k else
-              f"with every light visible all three agree at the float32 floor "
-              f"({floor:.4f} deg). N.L stays positive (min {ndl.min():.4f}), so every "
-              f"failure later is the blocked lights and nothing else."),
-             C_DIM, 12, False),
+            (MARGIN, MAPY + PAN + 66, note[0], C_DIM, 12, False),
+            (MARGIN, MAPY + PAN + 84, note[1], C_DIM, 12, False),
             (ax.x1 - 152, ax.y1 + 22, "blocked lights k (of 8) ->", C_DIM, 11, False),
         ]
         labels += _legend(ax.x0 + 6, ax.y0 + 4,

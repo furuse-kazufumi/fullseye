@@ -1701,7 +1701,22 @@ def sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02):
     :param sinogram: ``(n_angles, n_detectors)``, rows = angles.
     :param angles_deg: view angles; ``None`` -> uniform ``[0, 180)``.
     :param min_condition: smallest acceptable reciprocal condition number of the
-        3-column design matrix.
+        ``[cos, sin, 1]`` design matrix. The default of **0.02** is calibrated,
+        not chosen — the reciprocal condition number and the error it lets
+        through, on a sinogram with a true 1.00-px shift:
+
+            span      rcond      estimate    error
+            180 deg   2.15e-01   +0.9939     0.0061 px
+            120 deg   8.92e-02   +0.9900     0.0100 px
+             90 deg   4.85e-02   +0.9485     0.0515 px
+             60 deg   2.09e-02   +0.8993     0.1007 px   <- the default admits this
+             45 deg   1.17e-02   +0.7041     0.2959 px   <- and refuses this
+             20 deg   2.26e-03   +1.7113     0.7113 px
+             10 deg   5.54e-04   -6.9765     7.9765 px
+
+        The 10-degree row is why the check exists at all: the answer is finite,
+        the sign is wrong, and the magnitude is eight pixels on a one-pixel
+        error. Nothing about it looks like a failure.
     :returns: ``float`` — the axis offset in detector bins, positive towards
         higher bin indices.
     :raises ValueError: on a sinogram whose total mass is zero, on fewer than 3
