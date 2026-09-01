@@ -1316,7 +1316,7 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
         "n_frames": int(n_frames), "win": int(w_len), "hop": int(h),
         "real_bins": real_bins,
         "window_seconds": float(w_len) / fs,
-        "bin_hz": float(fs) / float(tr["nfft"]),
+        "bin_hz": df,
         "noise_sigma": 4.0 / np.sqrt(float(n_frames)),
     }
 

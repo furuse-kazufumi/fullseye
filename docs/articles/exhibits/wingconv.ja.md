@@ -68,11 +68,11 @@
 ## 7. 軸・単位・spacing の取り違えは例外を出さずに通る
 [![軸・単位・spacing の取り違えは例外を出さずに通る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
 
-*↑ **軸・単位・spacing の取り違えは例外を出さずに通る** ―— (u,v) を (v,u) と読むと重心が 0.2 ずれ、spacing を既定のままにするとピークが [4, 5, 6] でなく[10, 12, 14] に立ち、π/6 rad を「度」として渡すと0.5236 度だけ回る。積算窓を 1 ms でなく 1 s と読めば計数は 1000 倍になる。**どれも例外は出ず、有限で、もっともらしい絵が返る** ―― だから op 名に軸を書き、単位を引数にした。*
+*↑ **軸・単位・spacing の取り違えは例外を出さずに通る** ―— (u,v) を (v,u) と読むと重心が 39.5 px ずれて 元図形との重なりは 0.0% まで落ち、spacing を既定のままにするとピークが [4, 5, 6] でなく[10, 12, 14] に立ち、π/6 rad を「度」として渡すと0.5236 度だけ回る。積算窓を 1 ms でなく 1 s と読めば計数は 1000 倍になる。**どれも例外は出ず、有限で、もっともらしい絵が返る** ―― だから op 名に軸を書き、単位を引数にした。*
 
-- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.04 MB)
+- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.03 MB)
 - サムネ: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
-- SHA-256: `fa59d4e883d82e75021b56f39e6615d2c1359c151b7df1d7a80cecd1ecf70b8a`
+- SHA-256: `1a8a74cd5671f2ea3baf3509509f198334d266dc3e94d16de3d28a6672411d61`
 
 ## 8. 死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型
 [![死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)

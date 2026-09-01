@@ -729,14 +729,18 @@ def build_flow_colorwheel(log):
 # --------------------------------------------------------------------------- #
 def build_axis_unit_traps(log):
     n = 64
-    # (a) (u,v) を (v,u) と読む
-    tt = np.linspace(0.0, 2.0 * np.pi, 200)
-    kp = np.stack([32.0 + 24.0 * np.cos(tt), 32.0 + 8.0 * np.sin(tt)], 1)
+    # (a) (u,v) を (v,u) と読む。**わざと画面の中心から外した非対称な形**にする ——
+    # 中心対称な図形だと入れ替えても重心がほとんど動かず、「ずれ」を数字で言えない
+    # (最初に中心の楕円で描いて 0.2 px しか動かず、主張の根拠にならなかった)。
+    tt = np.linspace(0.0, 2.0 * np.pi, 240)
+    kp = np.stack([16.0 + 11.0 * np.cos(tt), 44.0 + 5.0 * np.sin(tt)], 1)
     right = R.keypoints_to_image2d(kp, shape=(n, n))
     wrong = R.keypoints_to_image2d(kp[:, ::-1], shape=(n, n))
-    swap_shift = float(np.linalg.norm(
-        np.asarray(R.points_to_position(R.keypoints_uv_to_points(kp)))
-        - np.asarray(R.points_to_position(R.keypoints_uv_to_points(kp[:, ::-1])))))
+    c_ok = np.asarray(R.points_to_position(R.keypoints_uv_to_points(kp)))
+    c_ng = np.asarray(R.points_to_position(R.keypoints_uv_to_points(kp[:, ::-1])))
+    swap_shift = float(np.linalg.norm(c_ok - c_ng))
+    overlap = float(np.count_nonzero((right > 0) & (wrong > 0))) / float(
+        np.count_nonzero(right > 0))
 
     # (b) spacing を無視する
     g = {"mu": np.array([[10.0, 12.0, 14.0]]), "sigma": np.array([0.5]),
@@ -744,8 +748,8 @@ def build_axis_unit_traps(log):
     ok = R.gaussians_to_voxel(g, shape=(24,) * 3, origin=(2.0,) * 3,
                               spacing=(2.0,) * 3, truncate=4.0)
     ng = R.gaussians_to_voxel(g, shape=(24,) * 3, truncate=4.0)
-    p_ok = np.unravel_index(int(np.argmax(ok)), ok.shape)
-    p_ng = np.unravel_index(int(np.argmax(ng)), ng.shape)
+    p_ok = tuple(int(v) for v in np.unravel_index(int(np.argmax(ok)), ok.shape))
+    p_ng = tuple(int(v) for v in np.unravel_index(int(np.argmax(ng)), ng.shape))
 
     # (c) 角度にラジアンを渡す
     base = np.zeros((n, n))
@@ -774,9 +778,8 @@ def build_axis_unit_traps(log):
     c_ms = float(R.countrate_to_counts(cr, 1e-3)[0])
     c_s = float(R.countrate_to_counts(cr, 1.0)[0])
 
-    facts = {"uv_swap_centroid_shift": swap_shift,
-             "spacing_peak_correct": [int(v) for v in p_ok],
-             "spacing_peak_wrong": [int(v) for v in p_ng],
+    facts = {"uv_swap_centroid_shift": swap_shift, "uv_swap_overlap": overlap,
+             "spacing_peak_correct": list(p_ok), "spacing_peak_wrong": list(p_ng),
              "deg_30_recovered": float(R.matrix_to_angle(R.angle_to_matrix(30.0))),
              "rad_as_deg_recovered": float(rad_back),
              "counts_gate_1ms": c_ms, "counts_gate_1s": c_s,
@@ -787,17 +790,18 @@ def build_axis_unit_traps(log):
         cmap_gray(ok.max(0), 0, float(ok.max())), cmap_gray(ng.max(0), 0, float(ng.max())),
         cmap_gray(deg_img, 0, 1), cmap_gray(rad_img, 0, 1),
     )]
+    # ラベルは**短く**。長いとタイルの幅からはみ出して隣と重なる
     labels = [
         "正: (u,v) = (列, 行)",
-        f"★誤り例: (v,u) と読む(重心が {swap_shift:.1f} ずれる。例外は出ない)",
-        f"正: origin/spacing を渡す → ピーク {tuple(int(v) for v in p_ok)}",
-        f"★誤り例: spacing 既定のまま → ピーク {tuple(int(v) for v in p_ng)}",
+        f"★誤: (v,u) と読む — 重心 {swap_shift:.1f} px",
+        f"正: origin/spacing 指定 -> {p_ok}",
+        f"★誤: spacing 既定 -> {p_ng}",
         "正: 30 [度] を渡す",
-        f"★誤り例: π/6 rad を「度」として渡す(復元 {rad_back:.4f} 度)",
+        f"★誤: pi/6 rad を度扱い — {rad_back:.3f} 度",
     ]
-    sheet = contact_sheet(panels, labels, ncols=2, panel_px=300,
-                          title="軸・単位・spacing の取り違えは "
-                                "**例外を出さずに**通る(★= 誤り例)")
+    sheet = contact_sheet(panels, labels, ncols=2, panel_px=300, font_size=16,
+                          title="軸・単位・spacing の取り違えは例外を出さずに通る"
+                                "(★ = 誤り例)")
     info = _png(sheet, "axis_unit_traps", log)
     return info, facts
 
@@ -938,7 +942,8 @@ CAPTION_JA = {
         "op を分け、相手の形は fail-closed にしてある。"),
     "axis_unit_traps": (
         "軸・単位・spacing の取り違えは例外を出さずに通る",
-        "(u,v) を (v,u) と読むと重心が {uv_swap_centroid_shift:.1f} ずれ、"
+        "(u,v) を (v,u) と読むと重心が {uv_swap_centroid_shift:.1f} px ずれて "
+        "元図形との重なりは {uv_swap_overlap:.1%} まで落ち、"
         "spacing を既定のままにするとピークが {spacing_peak_correct} でなく"
         "{spacing_peak_wrong} に立ち、π/6 rad を「度」として渡すと"
         "{rad_as_deg_recovered:.4f} 度だけ回る。積算窓を 1 ms でなく 1 s と読めば"
@@ -1006,7 +1011,9 @@ CAPTION_EN = {
         "{scattered_ops} are separate and fail closed on the other shape."),
     "axis_unit_traps": (
         "Axis, unit and spacing mix-ups pass without raising",
-        "Reading (u,v) as (v,u) shifts the centroid by {uv_swap_centroid_shift:.1f}; "
+        "Reading (u,v) as (v,u) shifts the centroid by "
+        "{uv_swap_centroid_shift:.1f} px and drops the overlap with the original to "
+        "{uv_swap_overlap:.1%}; "
         "leaving `spacing` at its default puts the peak at {spacing_peak_wrong} instead "
         "of {spacing_peak_correct}; passing π/6 radians as degrees rotates by "
         "{rad_as_deg_recovered:.4f} degrees; reading the gate as 1 s instead of 1 ms "

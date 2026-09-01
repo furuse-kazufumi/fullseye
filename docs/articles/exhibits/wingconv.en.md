@@ -68,11 +68,11 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 ## 7. Axis, unit and spacing mix-ups pass without raising
 [![Axis, unit and spacing mix-ups pass without raising](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
 
-*↑ **Axis, unit and spacing mix-ups pass without raising** — Reading (u,v) as (v,u) shifts the centroid by 0.2; leaving `spacing` at its default puts the peak at [10, 12, 14] instead of [4, 5, 6]; passing π/6 radians as degrees rotates by 0.5236 degrees; reading the gate as 1 s instead of 1 ms multiplies counts by 1000. **None of these raise; all return finite, plausible pictures** — which is why the axis is in the op name and the unit is an explicit argument.*
+*↑ **Axis, unit and spacing mix-ups pass without raising** — Reading (u,v) as (v,u) shifts the centroid by 39.5 px and drops the overlap with the original to 0.0%; leaving `spacing` at its default puts the peak at [10, 12, 14] instead of [4, 5, 6]; passing π/6 radians as degrees rotates by 0.5236 degrees; reading the gate as 1 s instead of 1 ms multiplies counts by 1000. **None of these raise; all return finite, plausible pictures** — which is why the axis is in the op name and the unit is an explicit argument.*
 
-- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.04 MB)
+- PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.03 MB)
 - Thumbnail: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
-- SHA-256: `fa59d4e883d82e75021b56f39e6615d2c1359c151b7df1d7a80cecd1ecf70b8a`
+- SHA-256: `1a8a74cd5671f2ea3baf3509509f198334d266dc3e94d16de3d28a6672411d61`
 
 ## 8. Dead vocabulary — types that are produced but lead nowhere
 [![Dead vocabulary — types that are produced but lead nowhere](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)
