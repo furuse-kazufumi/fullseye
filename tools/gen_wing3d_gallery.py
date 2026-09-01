@@ -431,25 +431,21 @@ def _sha256(path: str) -> str:
 
 
 def _save_png(canvas: np.ndarray, name: str, log) -> dict:
+    """共通部品 ``exhibit_tile.save_exhibit`` で PNG + サムネを書く。
+
+    記事は必ず「サムネイル + クリックで原寸」の形にする(縦に伸びるのを抑える)。
+    書き出したあとに読み戻して寸法・バイト数・SHA-256 を実測する。
+    """
     from PIL import Image
-    os.makedirs(ASSETS, exist_ok=True)
-    path = os.path.join(ASSETS, f"{name}.png")
-    Image.fromarray(_to_u8(canvas), "RGB").save(path, optimize=True)
-    thumb = os.path.join(ASSETS, f"{name}_thumb.jpg")
-    with Image.open(path) as im:
-        im = im.convert("RGB")
-        if im.width > THUMB_W:
-            im = im.resize((THUMB_W, max(2, round(im.height * THUMB_W / im.width))),
-                           Image.LANCZOS)
-        im.save(thumb, format="JPEG", quality=88, optimize=True)
-    # 読み戻して実測
-    with Image.open(path) as im:
+    res = et.save_exhibit(np.clip(np.asarray(canvas, np.float64), 0.0, 1.0), name)
+    with Image.open(res["png"]) as im:                       # 読み戻して実測
         size = im.size
-    info = {"kind": "png", "png": path, "png_bytes": os.path.getsize(path),
-            "png_size": size, "png_sha256": _sha256(path),
-            "thumb": thumb, "thumb_bytes": os.path.getsize(thumb)}
-    log(f"    png  {os.path.basename(path)}  {size[0]}x{size[1]}  "
-        f"{info['png_bytes'] / 1e3:.0f} kB  sha {info['png_sha256'][:12]}")
+    info = {"kind": "png", "png": res["png"], "png_bytes": res["png_bytes"],
+            "png_size": size, "png_sha256": res["png_sha256"],
+            "thumb": res["thumb"], "thumb_bytes": res["thumb_bytes"]}
+    log(f"    png  {os.path.basename(res['png'])}  {size[0]}x{size[1]}  "
+        f"{info['png_bytes'] / 1e3:.0f} kB  thumb {info['thumb_bytes'] / 1e3:.0f} kB"
+        f"  sha {info['png_sha256'][:12]}")
     return info
 
 
