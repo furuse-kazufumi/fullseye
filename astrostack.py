@@ -546,6 +546,9 @@ def synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5,
     if "shift_row" in starfield_kw or "shift_col" in starfield_kw:
         raise ValueError("%s: shift_row / shift_col are set per frame by "
                          "dither_px — pass dither_px instead" % op)
+    if "field_seed" in starfield_kw:
+        raise ValueError("%s: field_seed is pinned to seed so every frame sees "
+                         "the same sky — that is what makes this a series" % op)
 
     golden = np.pi * (3.0 - np.sqrt(5.0))           # 黄金角(決定的な散らし)
     shifts = np.zeros((nf, 2), dtype=np.float64)
