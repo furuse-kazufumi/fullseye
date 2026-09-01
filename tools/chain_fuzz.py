@@ -362,6 +362,40 @@ def make_generators():
         # vol_region_props(3-D 要求)が「同じ連鎖で先に vol_label が引かれた場合
         # だけ」到達する — 詳細は _labels の docstring
         "labels": _labels,
+        # --- 2026-09-02 に登録した 9 台帳の入口型の種 -----------------------
+        # 種が無いと、その型を要求する op は**永久に走らない**。実測: 台帳を
+        # 登録した直後は annotate 3/25・gfx2d 6/32・tomography 8/17 しか到達
+        # しなかった。ここが「発見ゼロが未実行の偽装だった」の一番よくある入口。
+        # 構造の要る型は**実体を通して作る**(手で組むと相関や不変量が実物と
+        # 違う種になり、下流の検査が別の物を測ってしまう)。
+        "rgb": lambda rng: rng.random((24, 32, 3)),
+        "rgbimage": lambda rng: rng.random((24, 32, 3)),
+        "rgba": lambda rng: rng.random((24, 32, 4)),
+        "rgba_premul": lambda rng: (lambda a: np.concatenate(
+            [rng.random((24, 32, 3)) * a, a], axis=-1))(rng.random((24, 32, 1))),
+        "rgbvolume": lambda rng: rng.random((8, 16, 16, 3)),
+        "sprites": lambda rng: [rng.random((8, 8, 4)) for _ in range(3)],
+        "lut": lambda rng: rng.random((17, 17, 17, 3)),
+        "text": lambda rng: "ラベル " + str(int(rng.integers(0, 100))),
+        "entries": lambda rng: [("right", (0.3, 0.7, 0.9)), ("wrong", (0.8, 0.4, 0.1))],
+        # 断層: sinogram = (角度, 検出器)。**アーチファクトを含む**もの
+        # (まれに強い筋)を混ぜる ―― きれいな正弦波だけだと、実データで効く
+        # はずの補正 op が「何もしなくても良い」入力しか見ない
+        "sinogram": lambda rng: (lambda s: np.where(rng.random(s.shape) < 0.02, s * 6.0, s))(
+            np.abs(np.sin(np.linspace(0, np.pi, 60))[:, None] * np.hanning(64)[None, :]) * 100.0
+            + rng.random((60, 64))),
+        "sinostack": lambda rng: np.stack(
+            [np.abs(np.sin(np.linspace(0, np.pi, 40))[:, None] * np.hanning(48)[None, :]) * 100.0
+             + rng.random((40, 48)) for _ in range(3)]),
+        # lab / metrics / transport_plan / phash / fingerprint は実体から作る
+        "lab": lambda rng: __import__("imgmetrics").rgb_to_lab(rng.random((24, 32, 3))),
+        "metrics": lambda rng: (lambda M, a: M.compare_images(a, np.clip(a + 0.02, 0, 1)))(
+            __import__("imgmetrics"), rng.random((32, 32))),
+        "transport_plan": lambda rng: __import__("colortransport").transport_plan_1d(
+            rng.random(12), rng.random(9)),
+        "phash": lambda rng: __import__("imgforensics").perceptual_hash(rng.random((32, 32))),
+        "fingerprint": lambda rng: __import__("imgforensics").sensor_fingerprint(
+            [rng.random((32, 32)) * 0.4 + 0.3 for _ in range(4)]),
     }
 
 
