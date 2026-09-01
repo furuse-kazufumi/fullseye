@@ -405,6 +405,30 @@ from imgmetrics import (  # noqa: E402,F401
     compressed_size, ncd, compare_images, data_range_of,
     D65_WHITE, MS_SSIM_WEIGHTS, CIEDE2000_TEST_PAIRS,
 )
+# 分布を運ぶ層。imgmetrics が「どれだけ違うかを測る」側なら、こちらは「相手に
+# 合わせる」側で、測る op と直す op が対になる。ここも検算できるのが特徴 ―
+# 1 次元の最適輸送は総当たりの割当解と差 0.00e+00、Poisson 合成は「内部の
+# ラプラシアンが元と一致(1.78e-15)・マスク外は貼り先と厳密一致」という
+# 構成上の不変量を出力だけから確かめられる。
+import colortransport  # noqa: E402  (optimal transport / colour transfer / Poisson blending)
+import opscolortransport  # noqa: E402  (the colour-transport op ledger)
+from colortransport import (  # noqa: E402,F401
+    wasserstein_1d, transport_plan_1d, histogram_match, color_transfer,
+    sinkhorn, sinkhorn_distance, gaussian_transport_map, poisson_blend,
+    COLOR_TRANSFER_METHODS,
+)
+# 画像フォレンジック層。カタログ全文の実測(2026-09-02)で prnu / ela / copy_move /
+# jpeg_ghost / phash / watermark が **一件も無かった**。この族は「改竄側を自分で
+# 作れるので正解が手元にある」のが強み(defectgen と自前合成)。どの op も
+# 「加工されている」と**断定しない** ― 証拠量と、その証拠が何を意味しないかを返す。
+import imgforensics  # noqa: E402  (perceptual hashing, PRNU, ELA, copy-move, watermarking)
+import opsimgforensics  # noqa: E402  (the forensics op ledger)
+from imgforensics import (  # noqa: E402,F401
+    perceptual_hash, hash_distance, sensor_fingerprint, fingerprint_correlate,
+    fingerprint_strength_map, error_level_map, jpeg_quality_estimate,
+    jpeg_ghost_map, jpeg_ghost_quality, noise_inconsistency_map,
+    copy_move_regions, watermark_embed, watermark_extract, watermark_capacity,
+)
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
 from annotate import (  # noqa: E402,F401
