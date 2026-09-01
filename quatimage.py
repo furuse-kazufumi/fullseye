@@ -1237,9 +1237,11 @@ def monogenic_amplitude(qimage) -> np.ndarray:
     metric quantity), in the same spirit as ``complexops.cx_magnitude``.
 
     For a unit-contrast grating at the band centre it is exactly 1.0 (measured
-    spread 2.2e-16 over a 64x64 frame) and, unlike a squared oriented-filter
+    spread 8.9e-16 over a 64x64 frame) and, unlike a squared oriented-filter
     response, it is *isotropic*: rotating the grating does not change it.
-    Measured over eight orientations, the amplitude varies by 4.4e-16.
+    Measured over eight grid-exact orientations the amplitude spans
+    ``[0.99999999999999911, 1.0000000000000011]`` — a total spread of 2.0e-15
+    across all of them, which is the isotropy claim as a number.
 
     **Raises** ``ValueError``: the input is not a valid quaternion field, or its
     ``k`` component is non-zero (see :func:`_require_monogenic`)."""
