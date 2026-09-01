@@ -1521,16 +1521,23 @@ def ex_studio_editor():
     # 2) F5 で実行 -> 出力が流れる
     frames.append(_grab(dlg))
     pe["run"]()
-    t0 = _time.time()
+    t0, tick, run_frames = _time.time(), 0, 0
     while getattr(dlg, "_proc", None) is not None:
         _pump(2, 40)
         if _time.time() - t0 > 180:
             raise RuntimeError("F5 の実行が 180 秒で終わらなかった")
-        frames.append(_grab(dlg))
+        tick += 1
+        # 実行中のポーリングは 30 Hz 近く回るので間引く(全部撮ると 300 枚超)
+        if tick % 10 == 0 and run_frames < 12:
+            frames.append(_grab(dlg)); run_frames += 1
     _pump(8)
     out = pe["output"].toPlainText()
     status = pe["status"].text()
-    for _ in range(6):
+    # 出力コンソールを実際にスクロールして読ませる(同一フレームの水増しはしない)
+    obar = pe["output"].verticalScrollBar()
+    for frac in (0.0, 0.3, 0.6, 1.0, 1.0):
+        obar.setValue(int(round(obar.maximum() * frac)))
+        _pump(4)
         frames.append(_grab(dlg))
     if "objects =" not in out:
         raise RuntimeError("実行出力に期待した行が無い:\n%s" % out[-500:])

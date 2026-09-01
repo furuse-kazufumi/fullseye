@@ -1647,14 +1647,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 1471053,
-      "mp4_bytes": 204373,
-      "thumb_bytes": 44332,
+      "gif_bytes": 1438782,
+      "mp4_bytes": 197430,
+      "thumb_bytes": 45687,
       "thumb_frame": 29,
-      "gif_sha256": "2aa8f41658bf90fcd88d3e7a3e65ee33555a20e346bf065c091d27083e1e35c3",
-      "mp4_sha256": "28e35cf86c7a8965669110b532fb23da01b8f90ffcda92170c294157eed2a95f",
+      "gif_sha256": "2bb491b5e7634356f8b896f9e3a11ae862a5f8b39466a1830aba0423373a5298",
+      "mp4_sha256": "329902f35f5e07a73ab57f95d89e9077f466876d0ef1cd321e11adfc8ce15e01",
       "exhibit": "windowsweep",
-      "seconds": 61.805661499965936
+      "seconds": 65.53564910008572
     },
     {
       "name": "wing3d_isosurface_sweep",
@@ -2088,14 +2088,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 1051364,
-      "mp4_bytes": 293102,
-      "thumb_bytes": 38744,
+      "gif_bytes": 1148982,
+      "mp4_bytes": 308214,
+      "thumb_bytes": 38656,
       "thumb_frame": 20,
-      "gif_sha256": "93605765d75695b8451a22a33147355b4b7a0ae81c9a8a39c04a58aa2a1ab45f",
-      "mp4_sha256": "b0366ced22fcefb143d2129d79bb086a62049fc97fc46d3deb8b7992f9b80bf3",
+      "gif_sha256": "8ca517a6abc35998412d4424601c7b5e364d89358ffcc67e5b1d39cab554364e",
+      "mp4_sha256": "172d5e6da4ca31d413edf21824f5da05cabb0b3c5d6b52295055fe7211a7fc9a",
       "exhibit": "isosurface",
-      "seconds": 20.859849100001156
+      "seconds": 21.832656299928203
     },
     {
       "name": "wing3d_vessel_reslice",
@@ -2666,24 +2666,24 @@
       "frames": 49,
       "fps": 10,
       "gif_shape": [
-        660,
+        664,
         1120,
         3
       ],
       "mp4_shape": [
-        660,
+        664,
         1120,
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 1042614,
-      "mp4_bytes": 144196,
-      "thumb_bytes": 46948,
+      "gif_bytes": 979736,
+      "mp4_bytes": 147485,
+      "thumb_bytes": 47028,
       "thumb_frame": 24,
-      "gif_sha256": "ebaa7359688a50a055b3ed6ef3fad573c7308f52d3e31521573a1ac3baae5e4c",
-      "mp4_sha256": "bbe118c242c737321a1d9647dbfb11a47b26debc3edf04c9d8d9c2059b361ecd",
+      "gif_sha256": "eadcab509317352b932f1fd1326f256c3b927ed1697e0702a4e901626f559341",
+      "mp4_sha256": "35b5482b5e3ef0e3d54ea2748f13245c4e0dc704d0b4a27b52eb14a4e5ded6e2",
       "exhibit": "vessel",
-      "seconds": 29.13003890006803
+      "seconds": 28.32395439990796
     }
   ]
 }

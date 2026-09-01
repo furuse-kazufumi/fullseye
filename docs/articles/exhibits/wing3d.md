@@ -47,6 +47,6 @@
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
-| windowsweep | GIF+mp4 | `media/wing3d_window_sweep.gif` | 70 フレーム, 1120x660, 1.47 MB, 256 色, mp4 0.20 MB |
-| isosurface | GIF+mp4 | `media/wing3d_isosurface_sweep.gif` | 40 フレーム, 1120x640, 1.05 MB, 256 色, mp4 0.29 MB |
-| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x660, 1.04 MB, 256 色, mp4 0.14 MB |
+| windowsweep | GIF+mp4 | `media/wing3d_window_sweep.gif` | 70 フレーム, 1120x660, 1.44 MB, 256 色, mp4 0.20 MB |
+| isosurface | GIF+mp4 | `media/wing3d_isosurface_sweep.gif` | 40 フレーム, 1120x640, 1.15 MB, 256 色, mp4 0.31 MB |
+| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x664, 0.98 MB, 256 色, mp4 0.15 MB |

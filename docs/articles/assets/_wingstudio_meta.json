@@ -474,21 +474,21 @@
       "name": "studio_editor",
       "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_editor.gif",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_editor_thumb.jpg",
-      "frames": 316,
+      "frames": 24,
       "size": [
         1060,
         740
       ],
       "fps": 6,
-      "bytes": 1067648,
-      "thumb_bytes": 49457,
-      "thumb_frame": 315,
-      "mean_abs_delta": 0.01,
-      "sha256": "73dff36ab884cab6f76fed0dc6cc2ad0301d642a2cb01cf9e2548e7231bfd0be",
-      "thumb_sha256": "71d9ef593ce29d09d6b32664fd6a3ab0c4d65170864eb005c4f4498a403a4694",
+      "bytes": 357850,
+      "thumb_bytes": 49465,
+      "thumb_frame": 23,
+      "mean_abs_delta": 0.141,
+      "sha256": "f8ca44dbb6f06e4ec35d39af1488b8c260cedef9684e3db6a88735bb6dca2bd8",
+      "thumb_sha256": "47bef6107cffe1aede1c6ed71dcfb08d1dce7fad3217a3a9bafea34c0f1d5665",
       "facts": {
         "code_lines": 18,
-        "frames": 316,
+        "frames": 24,
         "status": "PASS ✓ (exit 0)",
         "output_lines": 6,
         "output_tail": [
@@ -501,7 +501,7 @@
           740
         ]
       },
-      "seconds": 22.06
+      "seconds": 3.98
     },
     {
       "kind": "gif",

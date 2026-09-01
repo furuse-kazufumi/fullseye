@@ -1278,18 +1278,20 @@ def ex_stage_specular(data, log=print):
     row = data["champions"]["rows"][problem]
     rb = data["robust"][problem]
     prob, specs, states, scores, tgt, src = _stage_states(problem)
-    frames = [_rgbish(states[0])]
-    labels = [f"入力(テカりのある色画像。恒等 {row['locked_trivial']:.4f})"]
+    scale = max(1e-9, float(np.max(np.abs(states[0]))))   # 全コマ共通の明るさ
+    f0, _ = _rgbish(states[0], scale)
+    frames, labels = [f0], [
+        f"入力(テカりのある色画像。恒等 {row['locked_trivial']:.4f})"]
     for i, s in enumerate(specs):
-        frames.append(_rgbish(states[i + 1]))
-        note = "(四元数: ベクトル部を色で表示)" if \
-            np.asarray(states[i + 1]).shape[-1] == 4 else ""
-        labels.append(f"{s['op']}{note}  →  {scores[i]:.4f}")
-    frames.append(_rgbish(tgt))
-    labels.append(f"正解(テカりが無ければ見えていた絵)")
-    book = flipbook(frames, labels, title=(
-        "負けた champion の中身 — 四元数へ寄り道する鎖 "
-        f"[{row['unit']}]"))
+        fr, note = _rgbish(states[i + 1], scale)
+        frames.append(fr)
+        tag = "(四元数: ベクトル部を色で表示)" if note else ""
+        labels.append(f"{s['op']}{tag} → {scores[i]:.4f}")
+    ft, _ = _rgbish(tgt, scale)
+    frames.append(ft)
+    labels.append("正解(テカりが無ければ見えていた絵)")
+    book = flipbook(frames, labels,
+                    title="負けた champion の各段 — specular_removal")
     info = save_gif(book, "wingevo_stage_specular", fps=1.2)
     cap = ("**族をまたいだ寄り道が「惜しく見えた」例** ―― `specular_removal` の "
            "champion は " + " → ".join(f"`{s['op']}`" for s in specs) +
