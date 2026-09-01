@@ -567,6 +567,15 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
       * ``hit``      (N,) bool。
       * ``camera``   実際に使われた ``K``/``R``/``t``/``width``/``height``。
         既定に落ちた場合もここを見れば分かる。
+      * ``winding_fixed`` bool — 内向きに巻かれた閉メッシュを検出して**この
+        呼び出しの中で巻きを直した**かどうか。常に入る(``False`` でも入る)。
+
+    ``cull_backfaces=True``(既定)で mesh が閉じていて符号つき体積が負なら、
+    既定では巻きを直して ``winding_fixed=True`` を返す。``strict=True`` にすると
+    直さず ``ValueError`` で拒否する。``cull_backfaces=False`` のときは裏面判定を
+    しないので巻き方向は結果に効かず、検査もせず ``winding_fixed`` は常に
+    ``False``(``normal`` は入力の巻きどおりの符号で返る)。詳細は
+    :func:`_orient_for_culling`。
 
     ``K``/``R``/``t`` を省くと mesh を画像に収める既定カメラを作る
     (``R = I``、カメラは重心の -Z 側)。``image_size`` を省くと**与えた画素の
