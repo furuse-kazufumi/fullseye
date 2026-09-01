@@ -566,15 +566,120 @@ def test_the_float32_floor_is_the_floor_and_not_an_error():
 
 
 def test_robust_breakdown_point_is_disclosed_not_hidden():
-    """With half the lights blocked, the zeroed frames are themselves a
-    consistent 'black surface' model and no consensus rule can prefer the true
-    one. Measured 70.5 / 70.2 degrees at k=4 of 8 — recorded here so the
-    docstring's table is not an optimistic excerpt."""
-    _c, shadowed, L, nrm, _a = shadow_scene(k_blocked=4)
+    """The real breakdown point, shown with a corruption the zero test cannot
+    see. A highlight is a *positive* measurement, so it carries an equation and
+    is only rejectable by consensus; with 4 of 8 frames spiked by +3.0 the
+    consensus is tied and the wrong hypothesis can win. Measured mean angular
+    error at j=4: median 7.42 deg, ransac 65.42 deg (j=1..3 are all 0.00011).
+
+    This test used to make the same point with 4 of 8 frames *zeroed*, which was
+    not a breakdown at all but the black-surface bug — see
+    ``test_robust_does_not_believe_a_blocked_light``."""
+    clean, _s, L, nrm, _a = shadow_scene(k_blocked=0)
+    for j in (1, 2, 3):
+        spiked = clean.copy()
+        spiked[:j] += 3.0
+        for method in ("median", "ransac"):
+            n = S.photometric_stereo_robust(spiked, L, method=method)[0]
+            assert PM.angular_error_deg(n, nrm).max() < 1e-3, (j, method)
+    spiked = clean.copy()
+    spiked[:4] += 3.0
+    errs = {m: PM.angular_error_deg(
+        S.photometric_stereo_robust(spiked, L, method=m)[0], nrm).mean()
+        for m in ("median", "ransac")}
+    assert errs["ransac"] > 50.0, errs                  # measured 65.42 deg
+    assert errs["median"] > 1.0, errs                   # measured  7.42 deg
+    # ...and it is a wrong answer, not a NaN: a spiked frame is a real equation,
+    # so the pixels stay "solvable" and only the consensus is fooled. That is
+    # the honest limit of any consensus rule at 50 % contamination.
+    assert not np.isnan(
+        S.photometric_stereo_robust(spiked, L, method="ransac")[0]).any()
+
+
+def test_robust_does_not_believe_a_blocked_light():
+    """The inlier mask must never name a zeroed frame as believed.
+
+    Before the repair, ``median`` at k=4 of 8 reported **8 of 8 believed** while
+    being 70.52 degrees wrong — a clean bill of health at the worst estimate —
+    and at k=5 / k=6 the believed set was precisely the *zeroed* frames (the
+    'black surface' hypothesis reproduces them exactly, so it outscores the
+    truth). Measured per-light believed fractions before the repair:
+
+        k=4 median  [1,1,1,1,1,1,1,1]   err 70.52 deg
+        k=5 both    [1,1,1,1,1,0,0,0]   err  8.99 deg   (lights 5,6,7 were the live ones)
+        k=6 both    [1,1,1,1,1,1,0,0]   err  8.99 deg   (lights 6,7 were the live ones)
+    """
+    for k in range(1, 7):
+        _c, shadowed, L, _n, _a = shadow_scene(k_blocked=k)
+        for method in ("median", "ransac"):
+            inl = S.photometric_stereo_robust(shadowed, L, method=method)[2]
+            assert not inl[:k].any(), (k, method, inl[:k].mean())
+
+
+def test_robust_zeroed_lights_stop_winning_the_consensus():
+    """Excluding measurements that are within tolerance of zero also *repairs*
+    the estimate, because the black-surface hypothesis can no longer score.
+    Measured mean angular error, 8 lights, k zeroed, before -> after:
+
+        k=4 median 70.5230 -> 0.000115     k=4 ransac 70.2048 -> 0.000115
+        k=5 ransac  8.9969 -> 0.000115     (exactly 3 live lights left)
+    """
+    for k, methods in ((4, ("median", "ransac")), (5, ("ransac",))):
+        _c, shadowed, L, nrm, alb = shadow_scene(k_blocked=k)
+        for method in methods:
+            n, a, inl = S.photometric_stereo_robust(shadowed, L, method=method)
+            assert not np.isnan(n).any(), (k, method)
+            assert PM.angular_error_deg(n, nrm).max() < 1e-3, (k, method)
+            assert np.abs(a - alb).max() < 1e-6, (k, method)
+            assert inl.sum(axis=0).min() >= 3, (k, method)
+
+
+def test_robust_marks_underdetermined_pixels_nan_instead_of_answering():
+    """2 live lights of 8 is 3 unknowns in 2 equations. The old code returned
+    the winning subset's minimum-norm solution with no warning at all — measured
+    8.9969 degrees mean error, which looked like a *success* only because the
+    degenerate albedo-zero fallback is (0, 0, 1) and this bump is shallow. On a
+    steeper surface the same silence would be arbitrarily wrong."""
+    _c, shadowed, L, _n, _a = shadow_scene(k_blocked=6)
     for method in ("median", "ransac"):
-        err = PM.angular_error_deg(
-            S.photometric_stereo_robust(shadowed, L, method=method)[0], nrm)
-        assert err.mean() > 50.0, method
+        n, a, inl = S.photometric_stereo_robust(shadowed, L, method=method)
+        assert np.isnan(n).all(), method
+        assert np.isnan(a).all(), method
+        assert inl.sum(axis=0).max() < 3, method        # 2 for ransac, 0 for median
+
+
+def test_robust_nan_is_exactly_the_pixels_the_mask_calls_undetermined():
+    """The two outputs cannot disagree: a pixel is NaN iff its believed lights
+    are fewer than min_inliers (no singular-but-numerous case arises here)."""
+    for k in (0, 3, 4, 5, 6):
+        _c, shadowed, L, _n, _a = shadow_scene(k_blocked=k)
+        for method in ("median", "ransac"):
+            n, a, inl = S.photometric_stereo_robust(shadowed, L, method=method)
+            assert np.array_equal(np.isnan(a), inl.sum(axis=0) < 3), (k, method)
+            assert np.array_equal(np.isnan(a), np.isnan(n[..., 0])), (k, method)
+
+
+def test_robust_belief_rule_is_exact_not_heuristic():
+    """A faint but perfectly consistent light: the believed mask equals
+    ``I_n > threshold * peak`` pixel for pixel, by array equality. Built by
+    tilting one light towards the horizon so its measurement is dim while the
+    scene stays exactly Lambertian — no outlier anywhere."""
+    ang = np.linspace(0, 2 * np.pi, 8, endpoint=False)
+    L = np.array([[np.cos(a), np.sin(a), 2.2] for a in ang])
+    L[3] = [np.cos(ang[3]), np.sin(ang[3]), 0.22]       # grazing incidence
+    L = L / np.linalg.norm(L, axis=1, keepdims=True)
+    nrm = bump_normals(40, 40, amp=4.0)
+    ndl = np.einsum("hwc,nc->nhw", nrm, L)
+    assert ndl.min() > 0.0, "no attached shadow — the dim light is still lit"
+    img = 0.7 * ndl
+    n, _a, inl = S.photometric_stereo_robust(img, L, method="ransac",
+                                             threshold=0.05)
+    ratio = img[3] / img.max(axis=0)
+    assert ratio.min() < 0.05 < ratio.max(), "the probe must straddle the cut"
+    assert np.array_equal(inl[3], ratio > 0.05)
+    # dropping the faint light costs nothing: 7 lights still determine the normal
+    assert PM.angular_error_deg(n, nrm).max() < 1e-3
+    assert not np.isnan(n).any()
 
 
 def test_robust_survives_a_highlight_corrupted_light():
