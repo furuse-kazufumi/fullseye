@@ -270,10 +270,10 @@
     "file": "docs/articles/assets/media/wing2d_denoise_compare.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg",
     "frames": 12,
-    "bytes": 2898339,
+    "bytes": 3027790,
     "size": [
-      948,
-      1094
+      864,
+      1038
     ],
     "panels": 6,
     "title": "ノイズ除去の比較 —— median / bilateral / NLM",
@@ -382,8 +382,8 @@
     },
     "caption": "同じ写真に σ=0.020→0.220 の白色ノイズを乗せ、median・bilateral・non-local means を固定パラメータで当てて PSNR を実測した 6 パネル。弱いノイズ (σ=0.020) では bilateral が 30.00 dB で最良だが、強いノイズ (σ=0.220) では median が 23.09 dB で逆転する —— 「どれが一番強いか」はノイズ量と設定次第で、掃引の途中で順位が 2 度入れ替わった。ノイズ画像そのものは 34.04→14.34 dB。同じ画像を `estimate_noise` に渡すと 0.0263→0.1920 が返り、真値の 131%→87% にあたる —— 上端に張り付く点は 0/9 で、σ が 3 倍違えば返り値も違う (この op は σ そのものを返す契約になった)。",
     "sha256": {
-      "wing2d_denoise_compare.gif": "6a8d8d9926433ff573615f3c3098dc839c460614c798856a826752e2abd1df57",
-      "wing2d_denoise_compare_720.jpg": "3122167dc9ad4f030b341d7fd059f5ccd1a6b1b54369e2d1587671f87e988618"
+      "wing2d_denoise_compare.gif": "5ef99151057aeb445b17dc64493092f5af72d246328d2204dc0f7f43bbd0bffe",
+      "wing2d_denoise_compare_720.jpg": "5fe358cfc8f4dd7a6d4f4784690a988faae2531e90a0c2b4d162deda292fb501"
     }
   },
   {

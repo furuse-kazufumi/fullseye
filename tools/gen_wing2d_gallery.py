@@ -711,9 +711,9 @@ def subject_denoise_compare(log=print) -> dict:
              "sk_nlm (non-local means)\nPSNR %.2f dB (%+.2f)"
              % (R["psnr"]["sk_nlm"], R["psnr"]["sk_nlm"] - R["psnr"]["noisy"]),
              "勝者 %s の残差 |元 − 出力|\n明るいほど復元できていない" % best],
-            3, tile=(300, 300), label_h=56,
+            3, tile=(272, 272), label_h=56,
             title="ノイズ除去の比較 —— 同じノイズに 3 つの流儀",
-            sub="ノイズ σ = %.3f (add_noise_white b=%.2f)" % (sigma[i], b))
+            sub="add_noise_white b=%.2f → σ %.3f" % (b, sigma[i]))
         plot = _plot(
             [{"x": sigma[:i + 1], "y": [r["psnr"][k] for r in rows[:i + 1]],
               "color": cols[k], "label": lab}
