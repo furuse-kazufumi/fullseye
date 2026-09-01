@@ -1637,34 +1637,51 @@ def riesz_displacement(video, f_lo, f_hi, fps, scales: int = 4) -> dict:
     coh_den = 0.0
     for G in bank["bands"]:
         I, R1, R2 = _band_monogenic(spec, G, bank)
-        nx, ny, zbar, z, live, amp, amp_max = _band_reference(I, R1, R2)
+        nx, ny, zbar, z, live, amp, amp_max, Ibar, R1b, R2b, rmag = \
+            _band_reference(I, R1, R2)
         if amp_max <= _AMP_FLOOR * max(scale, 1.0):
             continue                       # contrast-free band votes zero anyway
-        amp2 = np.where(live, amp * amp, 0.0)
-        rspec = np.fft.fft2(zbar)
-        dzdx = np.fft.ifft2(rspec * (2j * np.pi * fu))
-        dzdy = np.fft.ifft2(rspec * (2j * np.pi * fv))
-        den = np.where(amp2 > 0.0, amp2, 1.0)
-        kdir = (nx * np.imag(np.conj(zbar) * dzdx)
-                + ny * np.imag(np.conj(zbar) * dzdy)) / den
-        kdir = np.where(amp2 > 0.0, kdir, 0.0)
-        kx, ky = kdir * nx, kdir * ny
+        # Local wave vector, from the closed-form monogenic identity rather than
+        # from the phase gradient. For a local plane wave A*cos(psi) the band and
+        # its Riesz pair satisfy  d/dx I = -|k| * R1  and  d/dy I = -|k| * R2
+        # *exactly* — both sides flip together when the orientation flips, so the
+        # estimate is immune to the modulo-pi ambiguity. Taking Im(conj z dz)/|z|^2
+        # instead (the steerable route's formula) is **wrong here** and was
+        # measured to be: the monogenic reference has Im >= 0 by construction, so
+        # its phase is folded into [0, pi] and the derivative of a folded phase
+        # is the wrong sign on half the image. That produced a *constant* 23.42 %
+        # displacement bias — no exception, no NaN, and no dependence on the
+        # displacement, which is exactly the kind of error that survives review.
+        rmag2 = rmag * rmag
+        gate = live & (rmag2 > (_AMP_LIVE * amp_max) ** 2)
+        ispec = np.fft.fft2(Ibar)
+        Ix = np.real(np.fft.ifft2(ispec * (2j * np.pi * fu)))
+        Iy = np.real(np.fft.ifft2(ispec * (2j * np.pi * fv)))
+        den = np.where(gate, rmag2, 1.0)
+        kmagn = np.where(gate, -(Ix * R1b + Iy * R2b) / den, 0.0)
+        kx, ky = kmagn * nx, kmagn * ny
         dphi = np.angle(z * np.conj(zbar)[None])
         tspec = np.fft.fft(dphi, axis=0)
         tspec[~mask] = 0.0
         dphi = np.real(np.fft.ifft(tspec, axis=0))
 
-        a00 += amp2 * kx * kx
-        a01 += amp2 * kx * ky
-        a11 += amp2 * ky * ky
-        b0 -= (amp2 * kx)[None] * dphi
-        b1 -= (amp2 * ky)[None] * dphi
-        weight += amp2
+        # Weight by |R|^2, not by the amplitude: the *constraint* is only as good
+        # as the wave vector, and the wave vector is what dies where the Riesz
+        # vector does (at an even-symmetric point, local phase 0 or pi, the
+        # amplitude is at full strength but the orientation is undefined). See
+        # the honest-limitation paragraph in this function's docstring.
+        wgt = np.where(gate, rmag2, 0.0)
+        a00 += wgt * kx * kx
+        a01 += wgt * kx * ky
+        a11 += wgt * ky * ky
+        b0 -= (wgt * kx)[None] * dphi
+        b1 -= (wgt * ky)[None] * dphi
+        weight += wgt
         mabs = np.abs(z).mean(axis=0)
         ewgt = np.where(live, mabs * mabs, 0.0)
         coh_num += float((ewgt * amp).sum())
         coh_den += float((ewgt * mabs).sum())
-        kmax = max(kmax, float(np.abs(kdir).max()))
+        kmax = max(kmax, float(np.abs(kmagn).max()))
 
     # Minimum-norm least squares via the closed-form 2x2 symmetric eigenvalues —
     # the same guard motionmag uses and for the same reason: where every
