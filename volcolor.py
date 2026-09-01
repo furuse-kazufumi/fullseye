@@ -847,8 +847,7 @@ def vol_label_legend(labels, props=None, seed: int = 0, spacing=None,
 # 3-D 表示 / 投影                                                               #
 # --------------------------------------------------------------------------- #
 def vol_labels_to_meshes(labels, ids=None, spacing=None, seed: int = 0,
-                         level: float = 0.5, axes: str = "xyz",
-                         background=(0.0, 0.0, 0.0)):
+                         level: float = 0.5, axes: str = "xyz"):
     """成分ごとに marching cubes をかけ、**色付きメッシュの集合**にする。
 
     返りは ``list[dict]``、各要素が ``{"label", "vertices" (nv, 3) float64,
