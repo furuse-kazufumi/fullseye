@@ -701,18 +701,44 @@ def ex_drizzle_pair():
     z_naive = _zoom(naive, 22.0, 21.0 + sep / 2, half_in, 1)
     z_view = _zoom(view, 22.0, 21.0 + sep / 2, half_in, 3)
     z_sci = _zoom(sci, 22.0, 21.0 + sep / 2, half_in, 3)
+
+    def _dip(z):
+        """対を横切る行の「2 つの峰の低い方」に対する谷の深さ(%)。
+
+        「目でも分かれる」は主観なので、**谷の深さ**という数で言い直す。
+        谷が無ければ 0 %(= 分かれていない)。
+        """
+        row = z[z.shape[0] // 2]
+        i = int(np.argmax(row))
+        lo, hi = max(0, i - 6), min(len(row), i + 7)
+        seg = row[lo:hi]
+        peaks = [k for k in range(1, len(seg) - 1)
+                 if seg[k] >= seg[k - 1] and seg[k] > seg[k + 1]]
+        if len(peaks) < 2:
+            return 0.0
+        a, b = peaks[0], peaks[-1]
+        valley = float(seg[a:b + 1].min())
+        weaker = float(min(seg[a], seg[b]))
+        return 100.0 * (1.0 - valley / weaker) if weaker > 0 else 0.0
+
+    dip_naive, dip_view = _dip(z_naive), _dip(z_view)
+    # 表示は線形(ガンマ 1、上端は最大値)。ガンマを掛けると芯が飽和して
+    # 2 つの峰が 1 つに潰れて見える —— 図の主張と表示が食い違う。
+    show = dict(low=2.0, high=100.0, gamma=1.0)
     panels = [
-        _label(_fit(_gray(z_single), 420),
+        _label(_fit(_gray(z_single, **show), 420),
                ["1 枚(対の周り %.0f 入力画素を拡大)" % (2 * half_in),
-                "間隔 %.1f px / sigma 0.55 px = 標本化不足" % sep]),
-        _label(_fit(_gray(z_naive), 420),
+                "間隔 %.1f px / sigma 0.55 px = 標本化不足" % sep,
+                "表示は線形(全パネル共通)"]),
+        _label(_fit(_gray(z_naive, **show), 420),
                ["24 枚を平均(同じ範囲)",
-                "%s 検出できた星 %d 個" % (M["wrong"], n_naive)]),
-        _label(_fit(_gray(z_view), 420),
+                "%s 検出できた星 %d 個" % (M["wrong"], n_naive),
+                "峰の間の谷 %.1f %%(= 分かれていない)" % dip_naive]),
+        _label(_fit(_gray(z_view, **show), 420),
                ["drizzle x3 pixfrac 0.4(sci/wht)",
                 "%s 検出できた星 %d 個" % (M["right"], n_driz),
-                "2 つの峰が目でも分かれる"]),
-        _label(_fit(_gray(z_sci), 420),
+                "峰の間の谷 %.1f %%" % dip_view]),
+        _label(_fit(_gray(z_sci, **show), 420),
                ["同じ drizzle の生の sci(割らない)",
                 "%s 全画面で検出 %d 個 = 被覆の格子" % (M["wrong"], n_raw),
                 "保存則の像と、見る像は別物"]),
