@@ -41,6 +41,22 @@
 
 *↑ **外から抱く箱(OBB)と中に入る箱(inner_box3)** ―― z 軸まわりに 30° 傾けた合成直方体(13,617 voxel)に 3 つの箱を同時に描いた。軸平行の AABB は **1.99 倍**まで膨らむが、`obb`(PCA で向きを合わせた外接箱)は **0.94 倍**、半幅は 19.99 / 10.00 / 8.00 voxel (真値 20 / 10 / 8)。逆に `inner_box3` の最大内接箱は **0.32 倍**まで痩せる。掴み幅なら OBB、部品が通るかなら内接箱。 使用 op: `obb`, `inner_box3`, `vol_bounding_box`。*
 
+![点群レジストレーション ―― ICP 29 回 / GICP 5 回](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_icp_registration.gif)
+
+*↑ **点群レジストレーション ―― ICP 29 回 / GICP 5 回** ―― 合成した表面点群(3100 点)を 22° 回して平行移動したものを、`icp_point2point_3d` で戻す。初期 RMSE 3.804 が **29 反復**で 1.8e-14 まで落ち、復元した姿勢の誤差は回転 1.7e-06 度・並進 5.6e-15。面の共分散を使う `gicp` は同じ答えに **5 反復**で着く。 使用 op: `icp_point2point_3d`, `gicp`。*
+
+[![異方性ボクセル ―― spacing を忘れると体積が 4.17 倍](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_anisotropic_voxel_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_anisotropic_voxel.png)
+
+*↑ **異方性ボクセル ―― spacing を忘れると体積が 4.17 倍** ―― z だけ粗い spacing (1.5, 0.4, 0.4) mm/voxel でサンプリングした合成だ円体(真の体積 19301.9 mm³)。`vol_region_props` に spacing を渡せば 19273.2 mm³(**-0.15 %**)だが、渡し忘れると 80305(**+316 %**、4.17 倍)になる。例外は飛ばない。もっともらしい数字が静かに返るだけ、というのがこの展示の要点。 使用 op: `vol_label`, `vol_region_props`, `vol_boundary_points`。*
+
+![MIP と X 線投影のターンテーブル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_mip_turntable.gif)
+
+*↑ **MIP と X 線投影のターンテーブル** ―― 合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を 1.3 秒(**17 ms/枚**)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。 使用 op: `vol_window_level`, `render_volume_projection`。*
+
+![距離変換で局所の太さを測る(最大内接半径 4.528 mm)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_distance_transform.gif)
+
+*↑ **距離変換で局所の太さを測る(最大内接半径 4.528 mm)** ―― 合成した 3 本の管に `vol_distance_transform` を掛けると、各ボクセルが「ふちから何 mm 離れているか」になる。その最大値が最大内接球の半径 = 局所の太さで、実測 **4.5277 mm**(真値 4.500 mm、差 +0.0277 mm — 離散格子でふちが半 voxel 内側に来るぶん)。虹の等高線は 0.5 mm ごと。 使用 op: `vol_distance_transform`。*
+
 ![断層を送る ―― `z = 48 / 95` は 38.40 mm のこと](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_slice_zsweep.gif)
 
 *↑ **断層を送る ―― `z = 48 / 95` は 38.40 mm のこと** ―― 合成 CT(96×128×128、spacing (0.8, 0.3, 0.3) mm)を 1 スライスずつ 96 コマ送る。各コマに**添字と物理位置の両方**(`z = 48 / 95` = 38.40 mm)と位置バーを焼いた。1 スライス送りは 0.80 mm、面内 1 画素は 0.30 mm = **0.37 倍**なので、下の折れ線のとおり「添字を 1 つ動かす」は軸ごとに違う距離を意味する ―― 異方性 CT でいちばん踏みやすい段差。 使用 op: `vol_window_level`。*
@@ -79,6 +95,10 @@
 | rl | GIF+mp4 | `media/wing3d_richardson_lucy.gif` | 18 フレーム, 1120x660, 0.63 MB, 256 色, mp4 0.09 MB |
 | visualhull | GIF+mp4 | `media/wing3d_visual_hull.gif` | 16 フレーム, 1120x690, 0.73 MB, 256 色, mp4 0.27 MB |
 | obb | GIF+mp4 | `media/wing3d_obb_innerbox.gif` | 48 フレーム, 1120x700, 2.26 MB, 256 色, mp4 0.40 MB |
+| icp | GIF+mp4 | `media/wing3d_icp_registration.gif` | 18 フレーム, 1120x660, 0.58 MB, 256 色, mp4 0.43 MB |
+| anisotropic | PNG | `wing3d_anisotropic_voxel.png` | 1120x700, 92 kB |
+| mip | GIF+mp4 | `media/wing3d_mip_turntable.gif` | 36 フレーム, 1120x640, 2.61 MB, 64 色, mp4 0.41 MB |
+| distance | GIF+mp4 | `media/wing3d_distance_transform.gif` | 46 フレーム, 1120x660, 0.67 MB, 256 色, mp4 0.10 MB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |

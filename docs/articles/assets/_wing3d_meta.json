@@ -592,6 +592,238 @@
       "seconds": 40.67021090001799
     },
     {
+      "name": "wing3d_icp_registration",
+      "title": "点群レジストレーション ―― ICP 29 回 / GICP 5 回",
+      "ops": [
+        "icp_point2point_3d",
+        "gicp"
+      ],
+      "facts": {
+        "points": 3100,
+        "applied_rotation_deg": 22.0,
+        "applied_translation": [
+          6.0,
+          -4.0,
+          3.0
+        ],
+        "icp_iters": 29,
+        "icp_rmse": 1.7773578724934097e-14,
+        "icp_inliers": 3100,
+        "icp_rmse_history": [
+          3.804415319090149,
+          3.067474694547205,
+          2.6286623785578787,
+          2.3324540091646426,
+          2.109732086206808,
+          1.9184857119692504,
+          1.7575291089029397,
+          1.6169357527909878,
+          1.4994177856454358,
+          1.3907413802071342,
+          1.292996579801135,
+          1.204709201666837,
+          1.1250876334727604,
+          1.0544945201820495,
+          0.9944701909143037,
+          0.9422111790527907,
+          0.8977289748398405,
+          0.8609978395916638,
+          0.8258950525268322,
+          0.7917077655866516,
+          0.7566116595790526,
+          0.7224065878519575,
+          0.6839238989005887,
+          0.6347861989713396,
+          0.5613417526286032,
+          0.4175500994479893,
+          0.17679701893993444,
+          0.016153664587095287,
+          1.608595261607671e-14,
+          1.7773578724934097e-14
+        ],
+        "gicp_iterations": 5,
+        "gicp_rmse": 4.233753707741105e-15,
+        "rotation_error_deg": 1.7075472925031877e-06,
+        "translation_error": 5.634860374059478e-15
+      },
+      "caption": "合成した表面点群(3100 点)を 22° 回して平行移動したものを、`icp_point2point_3d` で戻す。初期 RMSE 3.804 が **29 反復**で 1.8e-14 まで落ち、復元した姿勢の誤差は回転 1.7e-06 度・並進 5.6e-15。面の共分散を使う `gicp` は同じ答えに **5 反復**で着く。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_icp_registration.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_icp_registration.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_icp_registration_thumb.jpg",
+      "frames": 18,
+      "fps": 4,
+      "gif_shape": [
+        660,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        660,
+        1120,
+        3
+      ],
+      "gif_colors": 256,
+      "gif_bytes": 581402,
+      "mp4_bytes": 426399,
+      "thumb_bytes": 42636,
+      "thumb_frame": 17,
+      "gif_sha256": "7fa6f0a6cec5647fd2b0db61eb833e9565fb02448d50962bef81eefae32dbaea",
+      "mp4_sha256": "6f1d5e1d8af308252ba339de7c3386fb975b93b61835b33552587da941400f99",
+      "exhibit": "icp",
+      "seconds": 10.121783500071615
+    },
+    {
+      "name": "wing3d_anisotropic_voxel",
+      "title": "異方性ボクセル ―― spacing を忘れると体積が 4.17 倍",
+      "ops": [
+        "vol_label",
+        "vol_region_props",
+        "vol_boundary_points"
+      ],
+      "facts": {
+        "spacing_mm": [
+          1.5,
+          0.4,
+          0.4
+        ],
+        "semi_axes_mm": [
+          18.0,
+          16.0,
+          16.0
+        ],
+        "truth_mm3": 19301.94526365569,
+        "volume_with_spacing": 19273.200000000004,
+        "volume_without_spacing": 80305.0,
+        "err_with_spacing_pct": -0.14892417972923178,
+        "err_without_spacing_pct": 316.0461492511281,
+        "ratio": 4.166666666666666,
+        "surface_with_spacing": 4077.938458309176,
+        "surface_without_spacing": 12782.677734375,
+        "sphericity_with": 0.8524704676004559,
+        "sphericity_without": 0.7041913327565098,
+        "extent_with_spacing_mm": [
+          36.0,
+          32.0,
+          32.0
+        ],
+        "extent_without_spacing_voxel": [
+          24.0,
+          80.0,
+          80.0
+        ]
+      },
+      "caption": "z だけ粗い spacing (1.5, 0.4, 0.4) mm/voxel でサンプリングした合成だ円体(真の体積 19301.9 mm³)。`vol_region_props` に spacing を渡せば 19273.2 mm³(**-0.15 %**)だが、渡し忘れると 80305(**+316 %**、4.17 倍)になる。例外は飛ばない。もっともらしい数字が静かに返るだけ、というのがこの展示の要点。",
+      "kind": "png",
+      "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_anisotropic_voxel.png",
+      "png_bytes": 91962,
+      "png_size": [
+        1120,
+        700
+      ],
+      "png_sha256": "f44819cdeb1d83046b2f132e30e61e399604bce83e210aed473fd3ab7cf28b93",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_anisotropic_voxel_thumb.jpg",
+      "thumb_bytes": 44521,
+      "exhibit": "anisotropic",
+      "seconds": 0.3832064000889659
+    },
+    {
+      "name": "wing3d_mip_turntable",
+      "title": "MIP と X 線投影のターンテーブル",
+      "ops": [
+        "vol_window_level",
+        "render_volume_projection"
+      ],
+      "facts": {
+        "volume": [
+          96,
+          96,
+          96
+        ],
+        "frames": 36,
+        "elevation_deg": 12.0,
+        "render_seconds_total": 1.2530622999183834,
+        "ms_per_projection": 17.40364305442199,
+        "mip_max": 0.8000001907348633,
+        "xray_max": 87.39982604980469
+      },
+      "caption": "合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を 1.3 秒(**17 ms/枚**)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mip_turntable.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mip_turntable.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_mip_turntable_thumb.jpg",
+      "frames": 36,
+      "fps": 12,
+      "gif_shape": [
+        640,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        640,
+        1120,
+        3
+      ],
+      "gif_colors": 64,
+      "gif_bytes": 2613890,
+      "mp4_bytes": 409346,
+      "thumb_bytes": 53344,
+      "thumb_frame": 5,
+      "gif_sha256": "b9e058612fef85c8af436a38883ed784c6fdcc23d8873b6b9eb38a9e0291a9b2",
+      "mp4_sha256": "d3879eb1651612c177a44457cefbcf7d8d6c405b6cce6942cbddfb3711625dab",
+      "exhibit": "mip",
+      "seconds": 17.9562019999139
+    },
+    {
+      "name": "wing3d_distance_transform",
+      "title": "距離変換で局所の太さを測る(最大内接半径 4.528 mm)",
+      "ops": [
+        "vol_distance_transform"
+      ],
+      "facts": {
+        "spacing_mm": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "max_radius_mm": 4.527692569068709,
+        "max_radius_voxel": 9.055385138137417,
+        "argmax_zyx": [
+          16,
+          56,
+          30
+        ],
+        "truth_radius_mm": 4.5,
+        "radius_err_mm": 0.02769256906870865
+      },
+      "caption": "合成した 3 本の管に `vol_distance_transform` を掛けると、各ボクセルが「ふちから何 mm 離れているか」になる。その最大値が最大内接球の半径 = 局所の太さで、実測 **4.5277 mm**(真値 4.500 mm、差 +0.0277 mm — 離散格子でふちが半 voxel 内側に来るぶん)。虹の等高線は 0.5 mm ごと。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_distance_transform.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_distance_transform.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_distance_transform_thumb.jpg",
+      "frames": 46,
+      "fps": 12,
+      "gif_shape": [
+        660,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        660,
+        1120,
+        3
+      ],
+      "gif_colors": 256,
+      "gif_bytes": 674164,
+      "mp4_bytes": 100770,
+      "thumb_bytes": 41649,
+      "thumb_frame": 11,
+      "gif_sha256": "cf5c9a51da82c23d3ef9d7f439bf492bb5e73b0c0c551631bbb7c142da094183",
+      "mp4_sha256": "9f78658e1ab68f638dc01531cdf459a342fd31aadf58e563ad24b55693b76e4f",
+      "exhibit": "distance",
+      "seconds": 78.63467260007747
+    },
+    {
       "name": "wing3d_slice_zsweep",
       "title": "断層を送る ―― `z = 48 / 95` は 38.40 mm のこと",
       "ops": [

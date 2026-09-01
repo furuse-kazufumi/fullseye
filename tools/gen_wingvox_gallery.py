@@ -214,34 +214,34 @@ def ex_slice_flow(log):
     stats = VC.vol_label_shape_stats(labels, spacing=SPACING)
     by_id = {s["label"]: s for s in stats}
     D, H, W = labels.shape
-    k = 6
+    k = 9
     pw = W * k
+    pal = VC.vol_label_palette(int(labels.max()), seed=SEED)
 
     frames = []
     for z in range(D):
         sl = VC.vol_label_slice_rgb(rgbvol, z, "z")
         panel = _frame_border(_up(sl, k))
-        canvas = _canvas(pw + 76, pw)
+        canvas = _canvas(pw + 92, pw)
         _paste(canvas, panel, 0, 0)
         here = sorted(int(i) for i in np.unique(labels[z]) if i > 0)
         vol_mm3 = sum(by_id[i]["volume"] for i in here)
         # 断面に写っている粒子の色見本(ボリューム由来なので断面が変わっても不動)
-        x = 6
-        for i in here[:14]:
-            _swatch(canvas, x, pw + 40, 16, 16, VC.vol_label_palette(
-                int(labels.max()), seed=SEED)[i])
-            x += 20
+        x = 8
+        for i in here[:16]:
+            _swatch(canvas, x, pw + 36, 18, 18, pal[i])
+            x += 22
         canvas = _text(canvas, [
-            (6, pw + 8, "z = %2d / %d   断面に写る粒子 %2d 個" % (z, D - 1, len(here)),
-             FG, "la"),
-            (pw - 6, pw + 8, "それらの総体積 %6.3f mm3" % vol_mm3, MUTED, "ra"),
-            (6, pw + 60, "色はボリューム全体で 1 度だけ決めた ―― 断面が変わっても動かない",
-             ACCENT + (13,), "la"),
-        ], size=15)
+            (8, pw + 8, "z = %2d / %d   写る粒子 %2d 個   総体積 %6.3f mm3"
+             % (z, D - 1, len(here), vol_mm3), FG + (16,), "la"),
+            (8, pw + 62, "色はボリューム全体で 1 度だけ決めた ―― 断面が変わっても動かない",
+             ACCENT + (14,), "la"),
+        ], size=16, where="slice_flow")
         frames.append(canvas)
 
-    book = flipbook(frames, ["z=%d" % z for z in range(D)],
-                    title="色分けしたボクセルの断面送り(16 粒子・26 連結)")
+    title = "色分けしたボクセルの断面送り(16 粒子・26 連結)"
+    book = flipbook(frames, ["z=%d" % z for z in range(D)], title=title,
+                    title_font_size=_fit_size(title, pw, 24))
     info = save_animation(book, "wingvox_slice_flow", duration_ms=260, hold_last_ms=1200)
     facts = {"components": int(n), "slices": int(D), "shape": list(labels.shape),
              "spacing_mm": list(SPACING),
