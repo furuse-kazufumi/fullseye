@@ -1598,6 +1598,16 @@ def ex_rl(log) -> dict:
         "name": "wing3d_richardson_lucy",
         "title": "Richardson-Lucy ―― 前方一貫性 %.3fx に対し真値 RMSE は %.3fx" % (
             min(r_fw.values()), min(r_gt.values())),
+        "title_en": ("Richardson-Lucy — forward consistency %.3fx, but RMSE to truth "
+                     "only %.3fx" % (min(r_fw.values()), min(r_gt.values()))),
+        "caption_en": (
+            "A synthetic volume blurred by a sigma-2.0 Gaussian PSF and deconvolved "
+            "iteratively with `vol_richardson_lucy`. Re-blurring the estimate and "
+            "comparing it with the observation — the **forward consistency — drops to "
+            f"{min(r_fw.values()):.3f}x** almost immediately, while the **RMSE against "
+            f"the ground truth only reaches {min(r_gt.values()):.3f}x**. What is left is "
+            "the staircase at the balls' rims: \"it explains the observation well\" is "
+            "not \"it is close to the truth\", and the counter-example is the exhibit."),
         "ops": ["vol_gaussian_psf", "vol_richardson_lucy"],
         "facts": {"psf_sigma": 2.0, "psf_shape": list(psf.shape),
                   "blurred_rmse": base,
