@@ -122,6 +122,12 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # histcube = (H, W, T) の到達時刻ヒストグラム立方体。時間軸が最後で、
+        # 128 bin x 200 ps = 一意測距範囲 3.84 m
+        "histcube": lambda rng: __import__("photoncount").dtof_cube_simulate(
+            1.0 + rng.random((16, 16)), bins=128, bin_ps=200.0,
+            signal_photons=60.0, ambient_photons=10.0,
+            seed=int(rng.integers(0, 1 << 31))),
     }
 
 
