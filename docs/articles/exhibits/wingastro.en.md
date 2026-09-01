@@ -10,7 +10,7 @@
 
 ![How much to keep — sharpness bought with noise](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingastro_lucky_sweep.gif)
 
-*↑ **How much to keep — sharpness bought with noise** — Going from all 16 frames down to the best 12 % (2 frames) improves the stacked FWHM from 4.319 to 3.294 px, **a 23.7 % gain** — and costs a residual RMS of 25.211 rising to 61.348 e-, **2.43 times worse**. Lucky imaging is a trade, not an improvement, and both sides belong in the same figure. Ops used: `lucky_select`, `sigma_clip_stack`, `frame_quality`.*
+*↑ **How much to keep — sharpness bought with noise** — Going from all 16 frames down to the best 12 % (2 frames) improves the stacked FWHM from 4.319 to 3.294 px, **a 23.7 % gain** — and, with 8x fewer frames, costs a background noise sigma rising from 3.517 to 8.675 e-, **2.47 times worse** against the sqrt(16/2) = 2.83 the counting predicts. Lucky imaging is a trade, not an improvement, and both sides belong in the same figure. Note the noise is *not* measured as the residual against the truth: this experiment deliberately varies the per-frame FWHM, so a residual would also contain the change in the PSF and could not tell noise from a different image. Ops used: `lucky_select`, `sigma_clip_stack`, `frame_quality`.*
 
 [![How a cosmic ray disappears — by sharpness, or by counting frames](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic.png)
 

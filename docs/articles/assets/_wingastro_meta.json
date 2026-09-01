@@ -95,42 +95,43 @@
   },
   "lucky_sweep": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingastro_lucky_sweep.gif",
-   "sha256": "259be8b11b5aa4140a2acc765e1444c8fc57e670c429d3f9ef81c54ed265c4e7",
+   "sha256": "02e4e706bd564251b9735c6b47cede35f4b9bbf129a52afb4fd4ab094d0d76f3",
    "data": {
     "rows": [
      {
       "fraction": 1.0,
       "kept": 16,
       "fwhm": 4.319068301699438,
-      "rms": 25.21074996262808
+      "sigma": 3.516523753035696
      },
      {
       "fraction": 0.75,
       "kept": 12,
       "fwhm": 4.081350969848881,
-      "rms": 32.7300622121976
+      "sigma": 3.904507795422603
      },
      {
       "fraction": 0.5,
       "kept": 8,
       "fwhm": 3.8029989870877157,
-      "rms": 42.11230575128718
+      "sigma": 4.55578854603093
      },
      {
       "fraction": 0.25,
       "kept": 4,
       "fwhm": 3.476252532164213,
-      "rms": 54.02325379619344
+      "sigma": 6.124123084173354
      },
      {
       "fraction": 0.125,
       "kept": 2,
       "fwhm": 3.2935086091081622,
-      "rms": 61.348222336231906
+      "sigma": 8.675370906571297
      }
     ],
     "fwhm_gain_pct": 23.744928789103547,
-    "rms_cost_x": 2.4334152068928256
+    "sigma_cost_x": 2.4670303731297545,
+    "sqrt_n_expected": 2.8284271247461903
    }
   },
   "cosmic": {

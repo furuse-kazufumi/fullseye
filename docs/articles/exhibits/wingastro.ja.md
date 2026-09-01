@@ -10,7 +10,7 @@
 
 ![上位何 % を採るか —— 鋭さと雑音の取引](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingastro_lucky_sweep.gif)
 
-*↑ **上位何 % を採るか —— 鋭さと雑音の取引** ―― 全部(16 枚)から上位 12 %(2 枚)まで絞ると、合成後の FWHM は 4.319 -> 3.294 px と **23.7 % 良くなる**。ただし枚数が減るぶん残差 RMS は 25.211 -> 61.348 e- と **2.43 倍**に増える。lucky imaging は「改善」ではなく**取引**であり、その両側を同じ図に出すのが正直な出し方。使用 op: `lucky_select`, `sigma_clip_stack`, `frame_quality`。*
+*↑ **上位何 % を採るか —— 鋭さと雑音の取引** ―― 全部(16 枚)から上位 12 %(2 枚)まで絞ると、合成後の FWHM は 4.319 -> 3.294 px と **23.7 % 良くなる**。ただし枚数が 8 分の 1 になるので背景の雑音 σ は 3.517 -> 8.675 e- と **2.47 倍**に増える(sqrt(16/2) = 2.83 倍という予測とほぼ一致)。lucky imaging は「改善」ではなく**取引**であり、その両側を同じ図に出すのが正直な出し方。なお雑音の指標には「真値との残差 RMS」を**使っていない** —— この実験はわざとフレームごとに FWHM を変えているので、残差には PSF のずれまで入ってしまい、増えたのが雑音のせいか像が変わったせいか区別できない。使用 op: `lucky_select`, `sigma_clip_stack`, `frame_quality`。*
 
 [![宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic.png)
 

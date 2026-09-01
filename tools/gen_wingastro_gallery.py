@@ -1120,20 +1120,30 @@ def _captions(meta):
         "上位何 % を採るか —— 鋭さと雑音の取引",
         "How much to keep — sharpness bought with noise",
         "全部(%d 枚)から上位 %d %%(%d 枚)まで絞ると、合成後の FWHM は "
-        "%.3f -> %.3f px と **%.1f %% 良くなる**。ただし枚数が減るぶん残差 RMS は "
-        "%.3f -> %.3f e- と **%.2f 倍**に増える。lucky imaging は「改善」ではなく"
-        "**取引**であり、その両側を同じ図に出すのが正直な出し方。"
+        "%.3f -> %.3f px と **%.1f %% 良くなる**。ただし枚数が %d 分の 1 に"
+        "なるので背景の雑音 σ は %.3f -> %.3f e- と **%.2f 倍**に増える"
+        "(sqrt(%d/%d) = %.2f 倍という予測とほぼ一致)。lucky imaging は"
+        "「改善」ではなく**取引**であり、その両側を同じ図に出すのが正直な出し方。"
+        "なお雑音の指標には「真値との残差 RMS」を**使っていない** —— この実験は"
+        "わざとフレームごとに FWHM を変えているので、残差には PSF のずれまで"
+        "入ってしまい、増えたのが雑音のせいか像が変わったせいか区別できない。"
         % (r0["kept"], round(100 * rl["fraction"]), rl["kept"], r0["fwhm"],
-           rl["fwhm"], l2["fwhm_gain_pct"], r0["rms"], rl["rms"],
-           l2["rms_cost_x"]),
+           rl["fwhm"], l2["fwhm_gain_pct"], r0["kept"] // rl["kept"],
+           r0["sigma"], rl["sigma"], l2["sigma_cost_x"], r0["kept"],
+           rl["kept"], l2["sqrt_n_expected"]),
         "Going from all %d frames down to the best %d %% (%d frames) improves "
-        "the stacked FWHM from %.3f to %.3f px, **a %.1f %% gain** — and costs "
-        "a residual RMS of %.3f rising to %.3f e-, **%.2f times worse**. Lucky "
-        "imaging is a trade, not an improvement, and both sides belong in the "
-        "same figure."
+        "the stacked FWHM from %.3f to %.3f px, **a %.1f %% gain** — and, with "
+        "%dx fewer frames, costs a background noise sigma rising from %.3f to "
+        "%.3f e-, **%.2f times worse** against the sqrt(%d/%d) = %.2f the "
+        "counting predicts. Lucky imaging is a trade, not an improvement, and "
+        "both sides belong in the same figure. Note the noise is *not* measured "
+        "as the residual against the truth: this experiment deliberately varies "
+        "the per-frame FWHM, so a residual would also contain the change in the "
+        "PSF and could not tell noise from a different image."
         % (r0["kept"], round(100 * rl["fraction"]), rl["kept"], r0["fwhm"],
-           rl["fwhm"], l2["fwhm_gain_pct"], r0["rms"], rl["rms"],
-           l2["rms_cost_x"]))
+           rl["fwhm"], l2["fwhm_gain_pct"], r0["kept"] // rl["kept"],
+           r0["sigma"], rl["sigma"], l2["sigma_cost_x"], r0["kept"],
+           rl["kept"], l2["sqrt_n_expected"]))
 
     c = d["cosmic"]
     add("cosmic",
