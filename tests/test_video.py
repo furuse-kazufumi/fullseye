@@ -189,3 +189,109 @@ def test_max_frames_zero_returns_empty(tmp_path):
     p = str(tmp_path / "clip.gif")
     video.write_video(p, _frames(t=5), fps=10)
     assert list(video.iter_frames(p, max_frames=0)) == []
+
+
+# ---- frame-count preservation (duplicate frames must not be merged) ------- #
+def _held(t=5, h=24, w=32, level=0.04):
+    """*t* pixel-identical frames — what a "held beat" in an exhibit clip is."""
+    return [np.full((h, w), float(level)) for _ in range(t)]
+
+
+def test_gif_keeps_identical_frames(tmp_path):
+    """Pillow's animated-GIF writer merges a frame into an identical predecessor,
+    which used to collapse 18 written frames down to 1 with no warning."""
+    p = str(tmp_path / "dup.gif")
+    video.write_video(p, _held(t=18, h=32, w=32), fps=10)
+    assert video.read_frames(p).shape == (18, 32, 32)
+
+
+def test_mp4_keeps_identical_frames(tmp_path):
+    p = str(tmp_path / "dup.mp4")
+    video.write_video(p, _held(t=18, h=32, w=40), fps=10)
+    assert video.read_frames(p).shape[0] == 18
+
+
+def test_gif_keeps_leading_and_trailing_beats(tmp_path):
+    """A clip padded with a held still at each end: both the frame count and the
+    per-frame content survive the round trip."""
+    base = np.full((24, 32), 0.2)
+    moving = []
+    for i in range(5):
+        f = base.copy()
+        f[6:14, 4 + 4 * i: 10 + 4 * i] = 0.9          # a block that walks right
+        moving.append(f)
+    clip = _held(t=5) + moving + [moving[-1].copy() for _ in range(5)]
+    p = str(tmp_path / "beat.gif")
+    video.write_video(p, clip, fps=10)
+    back = video.read_frames(p, gray=True)
+
+    assert back.shape == (15, 24, 32)                  # 5 + 5 + 5, nothing folded
+    # content survives: only 8-bit quantisation of the source floats
+    assert np.abs(back - np.stack(clip)).max() <= 2.0 / 255
+    for i in range(5):                                 # leading beat still held
+        assert np.array_equal(back[i], back[0])
+    for i in range(10, 15):                            # trailing beat still held
+        assert np.array_equal(back[i], back[9])
+    for i in range(5, 9):                              # the middle really moves
+        assert not np.array_equal(back[i], back[i + 1])
+    assert not np.array_equal(back[4], back[5])        # beat -> motion transition
+
+
+def test_gif_duplicate_frames_keep_per_frame_delay(tmp_path):
+    """Preserving the frames must not also collapse the timing: 6 held frames at
+    5 fps stay 6 x 200 ms rather than becoming one 1200 ms frame."""
+    Image = pytest.importorskip("PIL.Image")
+    p = str(tmp_path / "durdup.gif")
+    video.write_video(p, _held(t=6, h=16, w=16), fps=5)
+    im = Image.open(p)
+    durs = []
+    try:
+        while True:
+            durs.append(im.info.get("duration"))
+            im.seek(im.tell() + 1)
+    except EOFError:
+        pass
+    assert len(durs) == 6
+    assert all(abs(d - 200) <= 40 for d in durs if d)
+
+
+def test_write_video_verifies_frame_count(tmp_path, monkeypatch):
+    """The read-back check must actually fire. Stand in a writer that merges
+    duplicates (exactly what plain ``imageio.mimsave`` does) and confirm
+    write_video raises instead of silently losing frames."""
+    imageio = pytest.importorskip("imageio.v2")
+    monkeypatch.setattr(
+        video, "_write_gif_all_frames",
+        lambda path, seq, duration_ms, loop=0: imageio.mimsave(
+            path, seq, duration=duration_ms))
+    p = str(tmp_path / "collapse.gif")
+    with pytest.raises(RuntimeError) as ei:
+        video.write_video(p, _held(t=18, h=16, w=16), fps=10)
+    assert "18" in str(ei.value)                       # says how many were written
+
+
+def test_verify_false_skips_the_check(tmp_path, monkeypatch):
+    imageio = pytest.importorskip("imageio.v2")
+    monkeypatch.setattr(
+        video, "_write_gif_all_frames",
+        lambda path, seq, duration_ms, loop=0: imageio.mimsave(
+            path, seq, duration=duration_ms))
+    p = str(tmp_path / "collapse_ok.gif")
+    video.write_video(p, _held(t=18, h=16, w=16), fps=10, verify=False)
+    assert video._count_stored_frames(p) == 1          # frames really were lost
+
+
+def test_verify_raises_when_file_cannot_be_read_back(tmp_path, monkeypatch):
+    """An unverifiable write is an error, not a silent pass."""
+    monkeypatch.setattr(video, "_count_stored_frames", lambda path: None)
+    with pytest.raises(RuntimeError):
+        video.write_video(str(tmp_path / "unreadable.gif"), _held(t=3, h=8, w=8))
+
+
+def test_count_stored_frames_matches_reader(tmp_path):
+    p = str(tmp_path / "count.gif")
+    video.write_video(p, _frames(t=7), fps=10)
+    assert video._count_stored_frames(p) == 7 == len(video.read_frames(p))
+    p2 = str(tmp_path / "count.mp4")
+    video.write_video(p2, _frames(t=7), fps=10)
+    assert video._count_stored_frames(p2) == 7 == len(video.read_frames(p2))
