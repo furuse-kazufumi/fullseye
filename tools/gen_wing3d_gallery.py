@@ -3269,7 +3269,7 @@ def ex_pipeline(log) -> dict:
         f"junctions {n_ju}   max inscribed radius {max_r:.4f} mm")
 
     # --- 同じ寸法のコマを作る(flipbook は寸法不一致を例外にする) ---
-    FW, FH = 900, 430
+    FW, FH = 900, 496            # パネル 400 + 下に説明 3 行(はみ出さない高さ)
     pw = 400
     zc = 50                      # 枝が 1 本出ている高さ(工程の違いが見える断面)
     center = np.array([n / 2.0] * 3)

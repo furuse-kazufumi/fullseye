@@ -238,7 +238,7 @@ def ex_slice_flow(log):
             _swatch(canvas, x, pw + 36, 18, 18, pal[i])
             x += 22
         canvas = _text(canvas, [
-            _line(8, pw + 8, "z = %2d / %d   写る粒子 %2d 個   総体積 %6.3f mm3"
+            _line(8, pw + 8, "z = %2d / %d   写る粒子 %2d 個   その粒子全体で %6.3f mm3"
                   % (z, D - 1, len(here), vol_mm3), FG, width=pw),
             _line(8, pw + 62,
                   "色はボリューム全体で 1 度だけ決めた ―― 断面が変わっても動かない",
@@ -484,7 +484,7 @@ def ex_mesh_turntable(log):
     radius = float(np.linalg.norm(allV - centre, axis=1).max())
     size = 380
     K = render3d.intrinsics_from_fov(38.0, size, size)
-    dist = 1.30 * radius / np.tan(np.deg2rad(38.0) * 0.5)
+    dist = 1.02 * radius / np.tan(np.deg2rad(38.0) * 0.5)
     light = np.array([0.35, 0.45, 0.82])
     light = light / np.linalg.norm(light)
 
@@ -492,7 +492,7 @@ def ex_mesh_turntable(log):
     n_az = 24
     for f in range(n_az):
         az = np.deg2rad(360.0 * f / n_az)
-        el = np.deg2rad(22.0)
+        el = np.deg2rad(48.0)
         eye = centre + dist * np.array([np.cos(el) * np.cos(az),
                                         np.cos(el) * np.sin(az), np.sin(el)])
         pose = render3d.look_at(eye, centre, up=(0.0, 0.0, 1.0))
@@ -545,7 +545,7 @@ def ex_legend(log):
     stats = {s["label"]: s for s in VC.vol_label_shape_stats(labels, spacing=SPACING)}
     legend = VC.vol_label_legend(labels, props, seed=SEED, measure="volume")
 
-    row_h, head_h, foot_h = 28, 86, 70
+    row_h, head_h, foot_h = 28, 86, 92
     width = 900
     #                swatch  label   volume  bar   pct   eqdia  spher  elong  border
     C = {"lab": 60, "vol": 190, "bar": 290, "pct": 434, "dia": 512, "sph": 636,
@@ -586,9 +586,11 @@ def ex_legend(log):
         _line(16, fy + 10, "合計 %.4f mm3(比率の合計 %.6f)。体積は voxel 数 x %.4f mm3。"
               % (sum(r["value"] for r in legend), sum(r["share"] for r in legend),
                  SPACING[0] * SPACING[1] * SPACING[2]), MUTED, width=width, start=15),
-        _line(16, fy + 36, "球形度は volops.vol_region_props(surface='faces')、"
-              "伸長度は volcolor.vol_label_shape_stats の sqrt(l1/l2)。",
+        _line(16, fy + 36, "球形度は volops.vol_region_props(surface='faces') ―― "
+              "面数えは階段効果で表面積を過大に見るので、真球でも 1 を下回る。",
               MUTED, width=width, start=14),
+        _line(16, fy + 58, "伸長度は volcolor.vol_label_shape_stats の "
+              "sqrt(l1/l2)(共分散固有値の比)。", MUTED, width=width, start=14),
     ]
     img = _text(img, items, where="legend")
     info = save_exhibit(img, "wingvox_legend")

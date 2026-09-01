@@ -995,20 +995,20 @@
       "frames": 7,
       "fps": null,
       "gif_shape": [
-        522,
+        588,
         900,
         3
       ],
       "mp4_shape": null,
       "gif_colors": null,
-      "gif_bytes": 295248,
+      "gif_bytes": 326890,
       "mp4_bytes": 0,
-      "thumb_bytes": 42913,
+      "thumb_bytes": 46818,
       "thumb_frame": 0,
-      "gif_sha256": "6a51732d3290ed56b812cdddb8ec70471ee44067a57748e89576592c13d5f799",
+      "gif_sha256": "79f70ee88eb6cbcf507a30a2ebcdad85de289d852b45ec3a06a2b9440bd7cdbd",
       "mp4_sha256": null,
       "exhibit": "pipeline",
-      "seconds": 3.349782600067556
+      "seconds": 3.873589899856597
     },
     {
       "name": "wing3d_slice_zsweep",

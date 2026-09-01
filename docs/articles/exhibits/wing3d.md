@@ -113,7 +113,7 @@
 | mip | GIF+mp4 | `media/wing3d_mip_turntable.gif` | 36 フレーム, 1120x640, 2.61 MB, 64 色, mp4 0.41 MB |
 | distance | GIF+mp4 | `media/wing3d_distance_transform.gif` | 46 フレーム, 1120x660, 0.61 MB, 256 色, mp4 0.09 MB |
 | connectivity | PNG | `wing3d_boundary_connectivity.png` | 948x748, 219 kB |
-| pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x522, 0.30 MB |
+| pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x588, 0.33 MB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
