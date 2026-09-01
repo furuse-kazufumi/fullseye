@@ -1554,7 +1554,8 @@ def compare_frame(left, right, layout="h", labels=None, divider=3, gap=0,
 
 def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05,
                title=None, title_h=0, font_size=15, min_font_size=9, font_path=None,
-               text_color=None, border=0, border_color="neutral", scheme="okabe_ito"):
+               text_color=None, border=0, border_color="neutral", scheme="okabe_ito",
+               style=None):
     """パネルを格子に並べ、各枠の下にラベルを敷く(montage / contact sheet)。
 
     生成器 6 本がそれぞれ別実装を持っていた、**この repo で最も重複していた図の
