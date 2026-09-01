@@ -688,10 +688,11 @@ def quat_image_multiply(qimage, other, side) -> np.ndarray:
     ``side="left"`` computes ``other * qimage``; ``side="right"`` computes
     ``qimage * other``. **There is no default** — see :func:`_require_side`. The
     two results are genuinely different objects, not a sign convention: measured
-    on a random ``(32, 32)`` field against a random unit rotor,
-    ``max|left - right| = 2.79`` on components whose own range is ``[-1, 1]``,
-    and ``mean|left - right| = 0.62``. Neither raises, neither is NaN, and both
-    look like a perfectly good quaternion image.
+    on a standard-normal ``(32, 32, 4)`` field against a unit rotor,
+    ``max|left - right| = 3.143`` and ``mean|left - right| = 0.4948`` on data
+    whose own extreme is 3.372 — that is, the two answers differ by as much as
+    the data itself. Neither raises, neither is NaN, and both look like a
+    perfectly good quaternion image.
 
     *other* is either a single quaternion (a ``(4,)`` array-like) or a full
     ``(H, W, 4)`` field of the same shape; anything else is refused rather than
