@@ -115,14 +115,6 @@ RESULT_ADAPTERS = {
     "x_range_funct_1d": lambda r: np.asarray(r, np.float64).reshape(1, 2),
     "y_range_funct_1d": lambda r: np.asarray(r, np.float64).reshape(1, 2),
     "get_pair_funct_1d": lambda r: np.asarray(r, np.float64).reshape(1, 2),
-    # stat_histogram は np.histogram 規約の (counts (b,), edges (b+1,)) を返す。
-    # **長さが違うので「対」ではない**(実測 10 と 11)。捨てずに、bin 中心と度数の
-    # 対 (b,2) へ組み直す = funct_1d_to_pairs が x 列を作るのと同じ読み方。
-    # 素の (counts, edges) は ops1d.get() 側でそのまま取れる
-    "stat_histogram": lambda r: np.stack(
-        [(np.asarray(r[1][:-1]) + np.asarray(r[1][1:])) / 2.0,
-         np.asarray(r[0], np.float64)], axis=1)
-    if isinstance(r, tuple) and len(r) == 2 else r,
 }
 
 

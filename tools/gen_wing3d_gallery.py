@@ -1899,10 +1899,10 @@ def ex_obb(log) -> dict:
             ("inner_box3 の全幅", "%.0f x %.0f x %.0f voxel (d,r,c)" % tuple(ib["size"]), C_D),
             ("inner_box3 の中心", "(%.1f, %.1f, %.1f)" % (ib["cd"], ib["cr"], ib["cc"]), C_D),
         ]
-        items = [(760, 90, "実測", C_DIM, 13, False)]
+        items = [(760, 88, "実測", C_DIM, 13, False)]
         for i, (kk, vv, col) in enumerate(rows):
-            items.append((760, 116 + i * 26, kk, C_DIM, 12, False))
-            items.append((760, 133 + i * 26, vv, col, 13, True))
+            items.append((760, 114 + i * 40, kk, C_DIM, 12, False))
+            items.append((760, 133 + i * 40, vv, col, 13, True))
         c = _text(c, items)
         c = _text(c, [
             (18, 548, "AABB は %.2f 倍まで膨らむのに、向きを合わせた obb は %.2f 倍まで縮む。"
