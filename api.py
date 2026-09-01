@@ -402,7 +402,7 @@ from imgmetrics import (  # noqa: E402,F401
     mse, rmse, psnr, ssim, ssim_map, ms_ssim,
     joint_histogram, image_entropy, joint_entropy,
     mutual_information, normalized_mutual_information,
-    compressed_size, ncd, compare_images, data_range_of,
+    compressed_size, ncd, compare_images, data_range_of, measure_with, metrics_table,
     D65_WHITE, MS_SSIM_WEIGHTS, CIEDE2000_TEST_PAIRS,
 )
 # 分布を運ぶ層。imgmetrics が「どれだけ違うかを測る」側なら、こちらは「相手に
@@ -414,7 +414,8 @@ import colortransport  # noqa: E402  (optimal transport / colour transfer / Pois
 import opscolortransport  # noqa: E402  (the colour-transport op ledger)
 from colortransport import (  # noqa: E402,F401
     wasserstein_1d, transport_plan_1d, histogram_match, color_transfer,
-    sinkhorn, sinkhorn_distance, gaussian_transport_map, poisson_blend,
+    sinkhorn, sinkhorn_distance, sinkhorn_divergence, transport_cost,
+    apply_transport, gaussian_transport_map, poisson_blend,
     COLOR_TRANSFER_METHODS,
 )
 # 画像フォレンジック層。カタログ全文の実測(2026-09-02)で prnu / ela / copy_move /
@@ -696,11 +697,13 @@ __all__ = [
     "joint_histogram", "image_entropy", "joint_entropy",
     "mutual_information", "normalized_mutual_information",
     "compressed_size", "ncd", "compare_images", "data_range_of",
+    "measure_with", "metrics_table",
     "D65_WHITE", "MS_SSIM_WEIGHTS", "CIEDE2000_TEST_PAIRS",
     # 分布を運ぶ層(測る imgmetrics と対)
     "colortransport", "opscolortransport",
     "wasserstein_1d", "transport_plan_1d", "histogram_match", "color_transfer",
-    "sinkhorn", "sinkhorn_distance", "gaussian_transport_map", "poisson_blend",
+    "sinkhorn", "sinkhorn_distance", "sinkhorn_divergence", "transport_cost",
+    "apply_transport", "gaussian_transport_map", "poisson_blend",
     "COLOR_TRANSFER_METHODS",
     # 画像フォレンジック層(断定せず証拠量を返す)
     "imgforensics", "opsimgforensics",

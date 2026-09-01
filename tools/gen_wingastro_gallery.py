@@ -772,10 +772,17 @@ def ex_clip_breakdown():
             ["汚染 %d %%(%d / %d 枚に +%.0f e-)"
              % (round(100 * r["contam"]), r["k"], n, boost),
              "全コマ共通の表示尺度"], size=14)
+        # ★ 誤差図は**符号ではなく大きさ**を塗る。最初の版は発散配色で塗って
+        # いたが、この実験の誤差は常に正なので「正 = right の青」になり、
+        # **壊れている状態が「正しい」色で塗られる**という逆の意味になった。
+        # ここで読者に伝えたいのは向きではなく「どれだけ間違っているか」なので、
+        # wrong の 1 色で濃さだけを変える(色だけに意味を載せないよう、
+        # 記号と数値も併記する)。
+        err_map = np.clip(np.abs(r["image"] - ideal) / lim, 0.0, 1.0) ** 0.6
+        c_wrong = np.asarray(C_WRONG, np.float64) / 255.0
         right = _label(
-            _fit(_signed(r["image"] - ideal, lim), panel_px),
-            ["真値との差(%s 減 / %s 増、±%.0f e-)"
-             % (M["wrong"], M["right"], lim),
+            _fit(err_map[..., None] * c_wrong[None, None, :], panel_px),
+            ["%s |真値との差| を 0〜%.0f e- で塗る" % (M["wrong"], lim),
              "%s κ-σ 合成の誤差 %+.2f e-" % (mark, r["clip_err"]),
              "棄却率 %.1f %%" % (100 * r["rejected"]),
              "(参考)単純平均 %+.1f e-" % r["mean_err"]],
