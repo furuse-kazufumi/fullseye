@@ -399,6 +399,7 @@ _CATALOG = {
     "metrics": [  # 評価メトリクス(進化探索の fitness 土台 = 一致度を数値化)
         ("chamfer_distance", "metrics3d", ["points", "points"], "measurement", False),
         ("hausdorff_distance", "metrics3d", ["points", "points"], "measurement", False),
+        # (f, precision, recall) を返す → adapter で F 値を剥がして measurement
         ("fscore", "metrics3d", ["points", "points"], "measurement", False),
         ("rmse_correspondence", "metrics3d", ["points", "points"], "measurement", False),
         ("normal_consistency", "metrics3d", ["points", "normals"], "measurement", False),
