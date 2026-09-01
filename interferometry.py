@@ -954,14 +954,27 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     first**; see :func:`csi_stack_simulate` for why that is checked rather than
     inferred.
 
-    A pixel is *invalid* when its envelope prominence is below *min_visibility*
-    (no fringes ever formed there — a hole, a dark or specular-dropout pixel) or
-    when its envelope peaks on the first or last plane (the surface is at or past
-    the end of the scan). What happens then is a decision, not a default:
+    A pixel is *invalid* when any of three things is true, and all three are the
+    same trap in different shapes — each would otherwise yield a finite, plausible,
+    wrong height:
+
+      1. its envelope prominence is below *min_visibility* — no fringes ever
+         formed there (a hole, a dark or specular-dropout pixel, a facet tilted
+         out of the aperture);
+      2. its envelope peaks on the first or last plane — the surface is at or past
+         the end of the scan;
+      3. its envelope is still above *max_edge_envelope* of its peak at the ends
+         of the scan — most of the coherence peak is outside the scan even though
+         the argmax is on an interior plane. This is the one that has no natural
+         alarm: measured, a surface at 0.500 um with an edge level of 0.639 reads
+         **0.119 um** and nothing else about the result looks wrong. See
+         :func:`_edge_level`.
+
+    What happens then is a decision, not a default:
 
       * ``on_invalid="raise"`` (**the default**) — raise, naming how many pixels
-        and why. Fail-closed: a height map with silently wrong pixels in it is
-        worse than no height map.
+        failed which of the three checks. Fail-closed: a height map with silently
+        wrong pixels in it is worse than no height map.
       * ``on_invalid="fill"`` — write *fill_value* (default NaN) at those pixels
         and return. Opt in to this when you intend to mask afterwards; a NaN
         height poisons every downstream reduction, which is precisely why it is
@@ -972,20 +985,29 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     Returns a float64 ``(H, W)`` height map, in the units of *z_start_um* /
     *z_step_um*.
 
-    Ground truth: on a noiseless simulated stack of a tilted plane spanning
-    2.0-10.0 um (32x32 pixels, 241 planes x 0.05 um, 2.8 um coherence length) the
-    RMS height error is 2.50e-02 um for ``"peak"``, 3.15e-06 um for
-    ``"centroid"``, 2.87e-06 um for ``"parabolic"`` and 4.24e-09 um for
-    ``"gaussian"``. On the *same* surface, phase-shifting interferometry via
-    :mod:`fringe` is exact below a lambda/4 = 0.15 um step and wrong by exact
-    multiples of lambda/2 = 0.30 um above it.
+    Ground truth (measured, 32x32 pixels, 241 planes x 0.05 um, 0.60 um
+    wavelength, 2.83 um envelope FWHM). On a tilted plane spanning **5.0-7.0 um**,
+    i.e. comfortably inside a 0-12 um scan, the RMS height error is 1.42e-02 um
+    for ``"peak"``, 3.81e-05 um for ``"centroid"``, 4.02e-06 um for
+    ``"parabolic"`` and 2.08e-06 um for ``"gaussian"``. Widen the same plane to
+    **2.0-10.0 um** — pixels now within 2 um of the ends of the scan — and the
+    errors become 1.91e-02 / 5.98e-02 / 7.06e-03 / 7.06e-03 um: the local fits
+    lose three decades and the centroid loses four, entirely to envelope
+    truncation at the scan ends. Accuracy here is a property of the *scan layout*,
+    not of the estimator, and this is the number to look at when a real
+    measurement disappoints.
+
+    On that same surface, phase-shifting interferometry via :mod:`fringe` is exact
+    below a lambda/4 = 0.15 um step and wrong by exact multiples of
+    lambda/2 = 0.30 um above it.
 
     **Raises** ``ValueError``: a non-3-D stack, fewer than 3 planes, an empty
     spatial extent, a stack over :data:`MAX_STACK_ELEMENTS` (checked before the
     float64 promotion), a non-finite / complex / masked stack, an unknown *mode*
-    or *on_invalid*, a *z_step_um* at or past the ``wavelength_um/4`` Nyquist
-    ceiling, a non-finite *fill_value*  when it is not NaN, and — under the
-    default ``on_invalid="raise"`` — any invalid pixel.
+    or *on_invalid*, a *min_visibility* / *max_edge_envelope* outside ``[0, 1]``,
+    a *z_step_um* at or past the ``wavelength_um/4`` Nyquist ceiling, a
+    non-numeric *fill_value*, and — under the default ``on_invalid="raise"`` —
+    any invalid pixel.
     """
     op = "csi_height_map"
     dz = _positive(z_step_um, "z_step_um")
@@ -996,10 +1018,8 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
         raise ValueError("%s: on_invalid must be 'raise' or 'fill', got %r — "
                          "there is no option that reports the boundary plane as "
                          "a height" % (op, on_invalid))
-    vis_min = _finite_scalar(min_visibility, "min_visibility")
-    if not (0.0 <= vis_min <= 1.0):
-        raise ValueError("%s: min_visibility must be in [0, 1], got %g"
-                         % (op, vis_min))
+    vis_min = _unit_interval(min_visibility, "min_visibility", op)
+    edge_max = _unit_interval(max_edge_envelope, "max_edge_envelope", op)
     if isinstance(fill_value, (str, bytes, bool, np.bool_, complex,
                                np.complexfloating)):
         raise ValueError("%s: fill_value must be a real number or NaN, got %r"
@@ -1010,20 +1030,24 @@ def csi_height_map(stack, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     _, env = _stack_envelope(stack, op, remove_bias)
     n = env.shape[-1]
     idx = _peak_index(env)
-    vis = _visibility(env)
-    bad_vis = vis < vis_min
+    bad_vis = _visibility(env) < vis_min
     bad_edge = (idx == 0) | (idx == n - 1)
-    bad = bad_vis | bad_edge
+    bad_trunc = _edge_level(env) > edge_max
+    bad = bad_vis | bad_edge | bad_trunc
     if bad.any() and on_invalid == "raise":
         raise ValueError(
             "%s: %d of %d pixel(s) have no usable coherence peak — %d with "
             "envelope prominence below min_visibility=%.3f (no fringes ever "
-            "formed there) and %d peaking on the first or last plane (the "
-            "surface is at or past the end of the scan range [%g, %g] um). "
-            "Refusing to return a map with plausible-wrong pixels in it; pass "
-            "on_invalid='fill' if you intend to mask them."
+            "formed there), %d peaking on the first or last plane (the surface is "
+            "at or past the end of the scan range [%g, %g] um), and %d whose "
+            "envelope is still above max_edge_envelope=%.3f at the scan ends (the "
+            "coherence peak is mostly outside the scan; measured, that is where "
+            "a 0.500 um surface reads 0.119 um). Refusing to return a map with "
+            "plausible-wrong pixels in it; pass on_invalid='fill' if you intend "
+            "to mask them, or extend the scan."
             % (op, int(bad.sum()), int(bad.size), int(bad_vis.sum()), vis_min,
-               int(bad_edge.sum()), z0, z0 + dz * (n - 1)))
+               int(bad_edge.sum()), z0, z0 + dz * (n - 1), int(bad_trunc.sum()),
+               edge_max))
 
     safe = np.clip(idx, 1, n - 2)
     off = _refine(env, safe, m)
