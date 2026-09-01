@@ -340,8 +340,30 @@ def _as_float_array(a, name: str) -> np.ndarray:
     return arr
 
 
+def _precheck_size(a, name: str, op: str, cap: int, cap_name: str) -> None:
+    """Reject an oversized array **before** it is copied to float64.
+
+    A size cap checked after the coercion does not prevent the allocation it
+    exists to prevent: a float32 8192x8192x3 image is 0.8 GB, and coercing it
+    to float64 asks the machine for 1.6 GB more *and then* raises. The shape of
+    an ndarray is free to read, so the cap is applied first for the case that
+    matters. Sequences fall through to the post-coercion check, which is the
+    same bound reached one step later.
+    """
+    if isinstance(a, np.ndarray):
+        n = 1
+        for d in a.shape:
+            n *= int(d)
+        if n > cap:
+            raise ValueError("%s: %s has %d elements (shape %r), over the %d cap "
+                             "(specularity.%s) — refused before conversion, so "
+                             "the copy is never allocated"
+                             % (op, name, n, tuple(a.shape), cap, cap_name))
+
+
 def _require_rgb(a, name: str, op: str) -> np.ndarray:
     """A strictly (H, W, 3) finite float image, size-capped."""
+    _precheck_size(a, name, op, MAX_PIXELS * 3, "MAX_PIXELS")
     arr = _as_float_array(a, name)
     if arr.ndim != 3 or arr.shape[2] != 3:
         raise ValueError("%s: %s must have shape (H, W, 3) — linear RGB, one "
