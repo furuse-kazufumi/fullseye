@@ -95,7 +95,9 @@ glare = SP.specular_coefficient_map(image_rgb) > 0.2      # 閾値でテカり�
 # 8 灯のうち何灯かが遮蔽されている前提で形状を復元する
 normals, albedo, inliers = SP.photometric_stereo_robust(images, lights,
                                                         method="ransac")
-print(inliers.mean(axis=(1, 2)))        # どの灯を、どれだけ信じたか
+print(inliers.mean(axis=(1, 2)))        # どの灯を、どれだけ信じたか(ゼロの灯は入らない)
+solved = ~np.isnan(albedo)              # ★信じた灯が 3 本未満の画素は NaN で返る
+print(solved.mean())                    # 解けた画素の割合。確認せずに使わないこと
 
 # 偏光板を回した 4 枚から分離し、Stokes を光学族へ渡す
 import optics as O
