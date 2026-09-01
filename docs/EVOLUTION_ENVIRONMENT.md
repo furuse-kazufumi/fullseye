@@ -369,6 +369,14 @@ locked split で測り直すと手は **0.5219** で、実際の差は **+4.7%**
   `polsweep` は消費 3・自己ループ 0 で「1 手で外へ出るだけ」に近いため
   `histcube` と同じ理由で語彙に入れていない。
 - **counterfactual utility は 1 段置換の近似**(上記)。
+- **既存最良が 0 の課題では相対改善(比)が定義できない**。`denom = abs(best) + 1e-12`
+  は例外を出さずに `rel = +724476067514.28` を返し、判定は **PROMOTE** だった
+  (実測 2026-09-02: `vibration_map` の既存 video op は `tb_temporal_bandpass` の
+  1 個だけで locked スコアがちょうど 0.0000)。いまは比を `None` にして
+  「比が定義できない」と印を付け、その課題自身の尺度(手 / 恒等の基準線)に対する
+  **絶対改善**で判定し、相対の集計からは除外する。非退化ケースの相対値は 1 つも
+  動かない。回帰テスト = `tests/test_promote_gate.py` の
+  `test_zero_baseline_no_longer_explodes_the_relative_gain` ほか 5 件。
 - **昇格の実書き込みは champion 経由のみ**。採掘候補を直接 DNA 化する経路は未実装で、
   現状は「通過候補を進化の初期値に使う」のが想定運用。
 
