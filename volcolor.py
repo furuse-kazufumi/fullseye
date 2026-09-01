@@ -1024,9 +1024,11 @@ def vol_label_color_flicker(vol_binary, axis="z", seed: int = 0,
     (1 つの 3-D 成分が 1 断面で複数の 2-D 片に割れることがあるため、代表は
     最頻色。同数の場合は RGB の辞書順で小さい方 = 決定的)。
 
-    実測(``(24, 48, 48)``・16 成分の参照体、seed=0、axis="z"):
-    ``slices_with_change=21 / 24``、``changed_pairs=96``、
-    ``changed_components=15 / 16``、B 側はすべて 0。
+    実測(``(24, 48, 48)``・16 球の参照ファントム、seed=0、axis="z"、
+    ``connectivity=26`` / ``connectivity_2d=8``):``pairs_checked=108``、
+    ``slices_with_change=20 / 24``、``changed_pairs=62``(57.4 %)、
+    ``changed_components=16 / 16``。B 側は 3 つとも 0 ―― **構造上 0 であって、
+    たまたま 0 なのではない**(ラベル番号がボリューム全体で一意だから)。
 
     Raises ``ValueError`` for a bad volume, an unknown *axis*, or a *connectivity*
     that is not 6 / 18 / 26 (2-D: 4 / 8).

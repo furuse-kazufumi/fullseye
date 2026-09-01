@@ -626,7 +626,8 @@ def ex_kurtosis_band(log):
         fig.text(80, 44, "STFT magnitude (log), interior frames only", C_TEXT, 12, True)
         fig.text(24, 180, "Hz", C_DIM, 11)
         fig.text(axp.x1 - 116, axp.y1 + 22, "time [s] ->", C_DIM, 11)
-        fig.text(axp.x0 + 8, axp.Y(fc) - 16, f"true resonance {fc:g} Hz", C_TRUE, 11, True)
+        fig.text(axp.x1 - 148, axp.Y(fc) + 6, f"true resonance {fc:g} Hz",
+                 C_TRUE, 11, True)
 
         # 右: SK 曲線(周波数を縦に取り、平面と軸を揃える)
         axk = Ax(fig, 600, 62, 800, 330, (-1.5, max(4.0, sk["max_kurtosis"] * 1.15)),
@@ -652,6 +653,7 @@ def ex_kurtosis_band(log):
         fig.text(604, 360, f"win {sk['win']} = {sk['window_seconds'] * 1e3:.2f} ms, "
                            f"bin {sk['bin_hz']:.0f} Hz", C_DIM, 11)
         fig.text(604, 376, f"estimator sigma {sk['noise_sigma']:.4f}", C_DIM, 11)
+        fig.text(760, 344, "SK ->", C_DIM, 11)
 
         # 右端: 読み取り値
         fig.box(818, 62, W - 14, 332, C_PANEL2)
@@ -691,7 +693,7 @@ def ex_kurtosis_band(log):
         fig.text(80, 378, "envelope spectrum of the current band", C_TEXT, 12, True)
         fig.text(axe.X(fd) + 6, 400, f"defect truth {fd:g} Hz", C_WARN, 11, True)
         fig.text(24, 460, "amp", C_DIM, 11)
-        fig.text(W - 250, 558, "envelope frequency [Hz] ->", C_DIM, 11)
+        fig.text(W - 250, 572, "envelope frequency [Hz] ->", C_DIM, 11)
         fig.text(14, H - 26,
                  "the peak stays at the defect rate everywhere; what moves is "
                  "band_fraction - how much of the record is actually in the band.",
@@ -1231,8 +1233,7 @@ def ex_weighting_ac(log):
                       f"{r['da']:+.2e} dB")
         fig = Fig(W, H)
         _header(fig, "A and C weighting: 1 kHz is exactly 0 dB by construction",
-                "computed from the four defining pole frequencies - no published "
-                "table is transcribed")
+                "computed from the four defining pole frequencies")
         axw = Ax(fig, 84, 76, W - 300, 400, (8.0, 20000.0), (-75.0, 8.0), logx=True)
         axw.panel()
         ink = fig.ink()
@@ -1264,11 +1265,11 @@ def ex_weighting_ac(log):
         _legend(fig, W - 292, 84, [("A weighting", C_A), ("C weighting", C_C),
                                    ("Z (flat, 0 dB)", C_DIM),
                                    ("current tone", C_B)])
-        fig.text(axw.X(1000.0) + 6, 92, "1 kHz", C_DIM, 11, True)
-        fig.text(axw.X(1000.0) + 6, 108, f"A = {a1k:.1f} dB exactly", C_A, 11, True)
-        fig.text(axw.X(1000.0) + 6, 124, f"C = {c1k:.1f} dB exactly", C_C, 11, True)
+        fig.text(axw.X(1000.0) + 8, 220, "at 1 kHz", C_DIM, 11, True)
+        fig.text(axw.X(1000.0) + 8, 236, f"A = {a1k:.1f} dB exactly", C_A, 11, True)
+        fig.text(axw.X(1000.0) + 8, 252, f"C = {c1k:.1f} dB exactly", C_C, 11, True)
         fig.text(30, 220, "dB", C_DIM, 11)
-        fig.text(W - 470, 406, "frequency [Hz] ->", C_DIM, 11)
+        fig.text(W - 470, 424, "frequency [Hz] ->", C_DIM, 11)
 
         # 右: 現在のトーンと実測レベル
         fig.box(W - 292, 160, W - 24, 400, C_PANEL2)
@@ -1285,7 +1286,7 @@ def ex_weighting_ac(log):
 
         # 下: 誤差の推移 — bin 中心 vs bin から半分ずらした対照
         lim = max(1.0, worst_off * 1.15)
-        axe = Ax(fig, 84, 452, 540, 556, (20.0, 16000.0), (-lim, lim), logx=True)
+        axe = Ax(fig, 84, 450, 540, 542, (20.0, 16000.0), (-lim, lim), logx=True)
         axe.panel(C_PANEL2)
         ink = fig.ink()
         axe.frame(ink)
@@ -1306,16 +1307,15 @@ def ex_weighting_ac(log):
                   [rr["dc"] for rr in rows[:k + 1]], width=2)
         fig.stamp(ink, C_C)
         fig.text(88, 434, "(L_weighted - L_Z) minus the curve value [dB]", C_TEXT, 12, True)
-        _legend(fig, 300, 458, [("tone ON a bin", C_C),
+        _legend(fig, 292, 456, [("tone ON a bin", C_C),
                                 (f"same tone +{0.5 * bin_hz:g} Hz (off bin)", C_WARN)])
-        fig.text(88, 560, f"on-bin worst so far   A {max(abs(rr['da']) for rr in rows[:k+1]):.2e} dB"
-                          f"   C {max(abs(rr['dc']) for rr in rows[:k+1]):.2e} dB",
+        fig.text(88, 566, f"on-bin  worst so far  A {max(abs(rr['da']) for rr in rows[:k+1]):.2e} dB"
+                          f"  C {max(abs(rr['dc']) for rr in rows[:k+1]):.2e} dB",
                  C_C, 12, True)
-        fig.text(88, 578, f"off-bin worst so far  {max(abs(rr['da_off']) for rr in rows[:k+1]):8.4f} dB"
-                          f"   <- rectangular-window leakage, weighted at another gain",
-                 C_WARN, 12, True)
+        fig.text(88, 586, f"off-bin worst so far  {max(abs(rr['da_off']) for rr in rows[:k+1]):7.4f} dB"
+                          f"  <- rectangular-window leakage", C_WARN, 12, True)
 
-        axs = Ax(fig, 596, 452, W - 24, 556, (0.0, 6.0), (-1.25, 1.25))
+        axs = Ax(fig, 596, 450, W - 24, 542, (0.0, 6.0), (-1.25, 1.25))
         axs.panel(C_PANEL2)
         ink = fig.ink()
         axs.frame(ink)
@@ -1326,9 +1326,11 @@ def ex_weighting_ac(log):
         axs.curve(ink, tw, r["wave"], width=2)
         fig.stamp(ink, C_B)
         fig.text(600, 434, "the tone itself (first 6 ms)", C_TEXT, 12, True)
-        fig.text(W - 130, 562, "time [ms] ->", C_DIM, 11)
-        fig.text(600, 580, f"L_eq(Z) = 10 log10(A^2/2) = {leq_z_closed:.6f} dB "
-                           f"by closed form; measured {r['lz']:.6f} dB.", C_DIM, 12)
+        fig.text(W - 128, 548, "time [ms] ->", C_DIM, 11)
+        fig.text(600, 566, f"L_eq(Z) closed form 10log10(A^2/2) = "
+                           f"{leq_z_closed:.6f} dB", C_DIM, 12)
+        fig.text(600, 586, f"L_eq(Z) measured             "
+                           f"{r['lz']:.6f} dB", C_DIM, 12)
         frames.append(fig.u8())
 
     info = save_flipbook(frames, "weighting_ac", labels, ms=220, hold_ms=1400, log=log)
