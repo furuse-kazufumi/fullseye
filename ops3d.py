@@ -405,7 +405,12 @@ _CATALOG = {
         ("distance_ridge", "medial", ["voxel"], "voxel", False),
         ("skeletonize_vol", "medial", ["voxel"], "voxel", False),
         ("medial_axis_points", "medial", ["voxel"], "points", False),
-        ("topology_signature", "medial", ["voxel"], "descriptor", False),
+        # 返りは {endpoints, branches, normal, isolated, total, degree_hist} の
+        # **入れ子 dict**。shape_distance が dict を fail-closed するので
+        # descriptor は名乗れない(fit_zernike と同じクラス)。次数ヒストグラムを
+        # 平坦化すると「次数 10 まで」という別の約束を勝手に作ることになるので、
+        # 素の dict = table が正直
+        ("topology_signature", "medial", ["voxel"], "table", False),
         ("medial_match", "medial", ["voxel", "voxel"], "measurement", False),
         # 骨格グラフ要素(2D の junctions/endpoints/pruning/split の 3D 版。
         # HALCON に voxel 骨格のグラフ op は無い = 差別化領域)
