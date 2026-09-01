@@ -1470,8 +1470,11 @@ def bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6):
     input bit for bit, and a black image stays black.
 
     The added energy is *not* conserved by the clip at the end. The suite
-    measures how much: on a centred bright blob the blur preserves the bright
-    mass to 4e-13 relative, and everything lost after that is the clip.
+    measures both halves: on a centred bright blob the Gaussian preserves the
+    bright mass to **5.0e-16** relative, so everything lost after that is the
+    clip — on a random scene with a saturated square, 2.69 % of the pixels clip
+    and 1.65 % of the total energy is thrown away, and neither number is
+    returned to the caller.
     """
     img = _require_rgb(rgb, "rgb")
     thr = _scalar(threshold, "threshold", 0.0, 1.0)
