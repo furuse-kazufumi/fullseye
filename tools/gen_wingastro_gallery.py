@@ -427,15 +427,15 @@ def ex_lucky_sweep():
         if scale_ref is None:
             scale_ref = stack
         fwhm = _fwhm_of(stack)
-        rms = float(np.sqrt(np.mean((stack - ideal) ** 2)))
-        rows.append({"fraction": f, "kept": k, "fwhm": fwhm, "rms": rms})
+        sig = A.noise_sigma(stack)
+        rows.append({"fraction": f, "kept": k, "fwhm": fwhm, "sigma": sig})
         shots.append(_label(
             _fit(_gray(stack, frame_for_scale=scale_ref), 520),
             ["上位 %d %%(%d / %d 枚)" % (round(100 * f), k, len(frames)),
-             "%s FWHM %.3f px" % (M["right"], fwhm),
-             "%s 残差 RMS %.3f e-" % (M["wrong"], rms)]))
-        labels.append("上位 %d %% — FWHM %.3f px / 残差 %.3f"
-                      % (round(100 * f), fwhm, rms))
+             "%s 像は鋭く: FWHM %.3f px" % (M["right"], fwhm),
+             "%s 雑音は増える: 背景 σ %.3f e-" % (M["wrong"], sig)]))
+        labels.append("上位 %d %% — FWHM %.3f px / 背景 σ %.3f e-"
+                      % (round(100 * f), fwhm, sig))
     book = et.flipbook(shots, labels,
                        title="採る割合を絞ると像は鋭くなり、雑音は増える")
     info = et.save_animation(book, "wingastro_lucky_sweep", duration_ms=1100,
