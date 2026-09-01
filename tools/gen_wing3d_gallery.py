@@ -2285,6 +2285,16 @@ def ex_mip(log) -> dict:
     info = _save_clip(frames, "wing3d_mip_turntable", fps=12, thumb_index=5, log=log)
     return {
         "name": "wing3d_mip_turntable", "title": "MIP と X 線投影のターンテーブル",
+        "title_en": "A turntable of MIP and X-ray projection",
+        "caption_en": (
+            f"A synthetic CT volume ({n}³) turned through a full revolution by "
+            "`render_volume_projection`. On the left, maximum-intensity projection (MIP, "
+            "bone window) keeps only the brightest sample along each ray, so bone floats "
+            "out; on the right, attenuation summing (X-ray) accumulates along the ray, so "
+            f"thickness shows. {2 * nf} projections in {dt:.1f} s "
+            f"(**{1e3 * dt / (2 * nf):.0f} ms each**). The normalisation ceiling is shared "
+            "across all frames on purpose — normalise per frame and the brightness "
+            "flickers as it turns, which is indistinguishable from the shape changing."),
         "ops": ["vol_window_level", "render_volume_projection"],
         "facts": {"volume": [n, n, n], "frames": nf, "elevation_deg": 12.0,
                   "render_seconds_total": dt,
