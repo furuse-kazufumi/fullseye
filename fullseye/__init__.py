@@ -198,9 +198,11 @@ with warnings.catch_warnings():
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
     )
     from device import DigitalIO, pulse, signal_result, signal_verdict, wait_input  # noqa: E402,F401  (device control)
+    import dsp  # noqa: E402,F401  (1-D signal / acoustic / vibration)
     from dsp import (  # noqa: E402,F401  (1-D signal / acoustic / vibration — beyond images)
         read_wav, write_wav, read_audio, spectrum, spectrogram,
         lowpass, highpass, bandpass, envelope, rms, find_peaks, signal_features,
+        resample, zero_crossing_rate,
     )
     # 統一視覚 I/F(要件 F1/F2/F3): 600 の HALCON facade op を単一 registry + 章別名前空間で公開。
     # 例: fullseye.vision.contour.gen_circle_contour_xld(row=50, col=50, radius=10)
@@ -361,6 +363,10 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
+    "dsp",
+    "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
+    "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
+    "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage",
     "iqft2", "monogenic_amplitude", "monogenic_orientation",
     "monogenic_phase", "monogenic_signal", "qft2", "quat_color_filter",

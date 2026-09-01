@@ -89,14 +89,34 @@ TYPE_TO_SORT = {
 
 #: 既定で登録する入力 sort(すべて新設 = 既存の候補リストに触れない)。
 #:
-#: lightfield / counts / histcube を**ここには入れない**のは、その族の入口 op
+#: **2026-09-01 に一度判断を誤り、実測で訂正した**ので経緯を残す。当初は
+#: lightfield / counts / histcube を除外していた。理由は「その族の入口 op
 #: (``lf_from_mla``: image2d → lightfield、``dtof_cube_simulate``: depth →
-#: histcube)が **既存の image sort を入力に取る**ためである。入口を既定に
-#: 入れれば image の候補リストが動き、ゲノム → op の写像が変わってしまう
-#: (docs/WAVE0_STABLE_SLOTS.md)。かといって入口抜きで消費側だけ既定に足すと、
-#: **誰もその sort を産まないので死んだ語彙**が増えるだけになる。よって
-#: 入口と消費側を**一緒に** wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)へ置く。
-_NEW_SORTS = frozenset({"points", "signal", "matrix", "cimage"})
+#: histcube)が既存の image sort を入力に取るので、既定に入れると image の
+#: 候補リストが動いてゲノム → op の写像が変わる」というものだった。
+#:
+#: 前半は正しいが**結論が過剰だった**。``_candidates`` は **in_sort でしか
+#: 絞らない**ので、除外すべきなのは入口 op(in_sort=image)だけであり、
+#: それは in_sort=image が本集合に無いことで既に除外されている。消費側
+#: (in_sort=lightfield/counts/histcube)を足しても**動くのは新設 sort の
+#: 候補リストだけ**で、既存 sort は 1 件も変わらない。実測 2026-09-01:
+#: image 523→523 / region 130→130 / points 33→33 /(全 sort 不変)、
+#: レジストリ全体は 809 → 824。
+#:
+#: 「誰も産まないので死んだ語彙になる」という懸念も、**画像から始まる探索に
+#: 限った話**だった。``Problem.in_sort`` がその sort なら入力は課題が供給する
+#: ので、入口 op が無くても消費側は生きて動く。実際 counts / lightfield /
+#: histcube の課題を足すために、この訂正が必要だった。
+#:
+#: 入口 op(既存 sort を入力に取るもの)は従来どおり ``IMGEVOLVE_WIDE_VOCAB=1``
+#: の opt-in でのみ加わる。そこは変えていない。
+#: **histcube は入れない**(2026-09-01 の実測判断)。この sort を消費する op は
+#: ``dtof_cube_depth`` 1 つだけで、しかも出口が image なので、既定語彙に入れても
+#: 「1 手で外へ出るだけ」= 進化する余地がゼロの死んだ枠になる。課題を足しても
+#: 手の基準線と同じ 1 手しか組めない。**使える仕事が無い語彙は足さない**。
+#: wide 語彙(IMGEVOLVE_WIDE_VOCAB=1)では従来どおり入る。
+_NEW_SORTS = frozenset({"points", "signal", "matrix", "cimage",
+                        "lightfield", "counts"})
 
 
 def _coerce(value, sort):

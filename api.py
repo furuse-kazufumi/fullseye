@@ -334,6 +334,17 @@ from pose_quat import (  # noqa: E402,F401
 # 四元数の純虚部 (0,R,G,B) は 3 次元ベクトルで、q·x·q* が**色空間の 3 次元
 # 回転**になる — チャンネルごとの複素演算では構造的に書けない操作。加えて
 # Riesz 変換 / モノジェニック信号(解析信号の 2 次元一般化)を持つ。
+# 1-D 信号 / 音響 / 振動。**画像の外**の入力を同じ op 体系で扱う層で、
+# 音声 I/O とスペクトログラム・帯域通過・包絡線・実効値まで持つ。
+# 振動を「映像から測る」経路は motionmag、「音から測る」経路がこちら。
+# **api にだけ無く fullseye にはある**という食い違いがあったので揃えた
+# (2026-09-01 実測: api.__all__ に bandpass が無く fullseye にはあった)。
+import dsp  # noqa: E402  (1-D signal / acoustic / vibration)
+from dsp import (  # noqa: E402,F401
+    read_wav, write_wav, read_audio, spectrum, spectrogram, lowpass,
+    highpass, bandpass, envelope, rms, find_peaks, signal_features,
+    resample, zero_crossing_rate,
+)
 import quatimage  # noqa: E402  (quaternion images / Riesz + monogenic signal)
 from quatimage import (  # noqa: E402,F401
     iqft2, monogenic_amplitude, monogenic_orientation, monogenic_phase,
@@ -490,6 +501,10 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
+    "dsp",
+    "read_wav", "write_wav", "read_audio", "spectrum", "spectrogram",
+    "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
+    "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage",
     "iqft2", "monogenic_amplitude", "monogenic_orientation",
     "monogenic_phase", "monogenic_signal", "qft2", "quat_color_filter",

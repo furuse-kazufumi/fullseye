@@ -66,10 +66,17 @@ def test_only_new_sorts_by_default():
     """
     if os.environ.get("IMGEVOLVE_WIDE_VOCAB") == "1":
         pytest.skip("wide vocab は opt-in の別モード")
-    assert {o.in_sort for o in TYPED} <= {"points", "signal", "matrix", "cimage"}
-    # 既存 sort の候補には typed op が 1 つも混ざらない
+    # **守るべきは「新設 sort の集合」ではなく「既存 sort の候補が動かないこと」**。
+    # 2026-09-01 に集合を lightfield/counts/histcube まで広げたが、_candidates が
+    # in_sort でしか絞らないので既存 sort は 1 件も動かなかった(実測:
+    # image 523→523 / region 130→130 / points 33→33、レジストリ全体 809→824)。
+    # 集合そのものを固定すると、この安全な追加まで落としてしまう。
     for sort in ("image", "region", "feature", "contour", "volume", "color", "match"):
-        assert not [o for o in ops._candidates(sort) if o.category == "typed"]
+        assert not [o for o in ops._candidates(sort) if o.category == "typed"], (
+            "%s の候補に typed op が混ざった = ゲノム→op 写像が動く" % sort)
+    # 逆向きの確認: typed op の入力 sort は必ず「進化が元から持っていなかった」もの
+    legacy = {"image", "region", "feature", "contour", "volume", "color", "match"}
+    assert not (set(o.in_sort for o in TYPED) & legacy)
 
 
 def test_a_new_sort_never_arrives_without_something_that_produces_it():
@@ -91,11 +98,18 @@ def test_a_new_sort_never_arrives_without_something_that_produces_it():
     """
     produced = {o.out_sort for o in TYPED}
     consumed = {o.in_sort for o in TYPED}
-    orphans = sorted(s for s in consumed - produced
+    # 課題が入力を供給する sort は「産む op が無くても生きている」。
+    # 2026-09-01 の訂正: 当初この検査は「産む op が無ければ死んだ語彙」と
+    # していたが、それは**画像から始まる探索に限った話**だった。
+    # Problem.in_sort がその sort なら、入口 op が無くても消費側は動く。
+    import problems
+    seeded_by_a_problem = {p.in_sort for p in problems.PROBLEMS.values()}
+    orphans = sorted(s for s in consumed - produced - seeded_by_a_problem
                      if s in ("lightfield", "counts", "histcube"))
     assert not orphans, (
-        "この sort を消費する op はあるが、産む op が語彙に無い: %s "
-        "— 入口 op を同じモードへ入れるか、消費側を外すこと" % orphans)
+        "この sort を消費する op はあるが、**産む op も、入力を供給する課題も**"
+        "語彙に無い = 永久に到達不能: %s — 入口 op を同じモードへ入れるか、"
+        "その sort の課題を足すか、消費側を外すこと" % orphans)
 
 
 def test_every_bridge_op_runs_and_returns_its_sort():

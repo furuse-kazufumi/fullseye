@@ -419,6 +419,103 @@ def _score_signal(final, clean):
     return base * (m / len(clean))                     # 短くしたら比例で減点
 
 
+
+# --------------------------------------------------------------------------- #
+# 新しい型の課題(2026-09-01)                                                   #
+#                                                                             #
+# 語彙は 742 -> 824 op へ広げたのに、**課題は 12 件すべてが古い型**のままだった。
+# 実際 evolve_loop を回すと落選理由の筆頭が「課題が受け付けない入力型」で、
+# 光子計数もライトフィールドも**進化が一度も使えない**状態だった。
+# 「増やす経路(拡散)と通さない規律(ゲート)を同じループに置く」という設計は、
+# **その語彙を使える仕事が無いと空回りする** — ここはその穴を塞ぐ。
+#
+# どちらも真値は閉形式で作れる(前方モデルから合成しているので、答えを
+# 知ったうえで入力を作れる)。手の基準線も既存 op で用意する。
+# --------------------------------------------------------------------------- #
+def _make_photon_denoise(n, size, seed):
+    """光子制限のヒストグラム → **信号成分だけ**の期待形。
+
+    入力は「既知距離の復路 + 背景光」を Poisson 標本化した実データと同じ形。
+    目標は背景を含まない雑音なしの信号成分なので、**背景の推定と除去が
+    本質的に効く**課題になる(答えを知って作っているので真値は厳密)。
+    """
+    import photoncount
+    rng = np.random.default_rng(seed)
+    inp, tgt = [], []
+    for i in range(n):
+        d = float(rng.uniform(0.6, 3.2))
+        sig = float(rng.uniform(200.0, 1500.0))
+        amb = float(rng.uniform(50.0, 400.0))
+        kw = dict(distance_m=d, bins=256, bin_ps=100.0, irf_fwhm_ps=500.0)
+        inp.append(photoncount.tcspc_simulate(
+            signal_photons=sig, ambient_photons=amb, seed=seed + i, **kw))
+        tgt.append(photoncount.tcspc_simulate(
+            signal_photons=sig, ambient_photons=0.0, noise=False, **kw))
+    return {"input": inp, "items": tgt}
+
+
+def _score_photon(final, clean):
+    """形の一致だけを見る(全体のスケールは問わない)。
+
+    カウントの絶対値は光量で動くので、**面積で正規化した形**で比べる。
+    そうしないと「全部 0 にする」や「定数倍する」が得をする。長さを変える
+    op が楽をするのを防ぐため、``_score_signal`` と同じ比例減点を掛ける。
+    """
+    y = np.asarray(final, np.float64).ravel() if isinstance(final, np.ndarray) else None
+    if y is None or y.size < 2 or not np.isfinite(y).all():
+        return 0.0
+    m = min(len(y), len(clean))
+    a, b = y[:m], np.asarray(clean, np.float64)[:m]
+    sa, sb = float(a.sum()), float(b.sum())
+    if not np.isfinite(sa) or sa <= 0.0 or sb <= 0.0:
+        return 0.0
+    err = float(np.mean((a / sa - b / sb) ** 2)) * float(m) ** 2
+    if not np.isfinite(err):
+        return 0.0
+    return (1.0 / (1.0 + err)) * (m / len(clean))
+
+
+def _make_lf_slope(n, size, seed):
+    """ライトフィールド → **視差スロープ地図**(既知)。
+
+    ``lf_synthesize`` は層ごとに既知のスロープを置いて合成するので、真値の
+    スロープ地図がそのまま返る。深度推定の 2 経路(焦点掃引 / EPI 傾き)が
+    どちらも語彙にあり、**偏りの違いが実測で出ている**題材でもある。
+    """
+    import lightfield
+    rng = np.random.default_rng(seed)
+    inp, tgt = [], []
+    for i in range(n):
+        lo = float(rng.uniform(-1.5, 0.0))
+        hi = float(rng.uniform(0.5, 2.0))
+        lf, slope = lightfield.lf_synthesize(
+            (lo, hi), angular=(5, 5), shape=(32, 32), seed=seed + i)
+        inp.append(lf)
+        tgt.append(np.asarray(slope, np.float64))
+    return {"input": inp, "items": tgt}
+
+
+def _score_lf_slope(final, truth):
+    """スロープ地図の一致度。**尺度と定数のずれは許す**(相関で測る)。
+
+    経路によって単位が px/view だったり焦点位置だったりするので、絶対値を
+    要求すると「正しい形を出しているのに 0 点」になる。形が合っているかを
+    相関で測り、負の相関(符号が逆)は 0 に丸める。
+    """
+    a = np.asarray(final, np.float64) if isinstance(final, np.ndarray) else None
+    if a is None or a.ndim != 2 or not np.isfinite(a).all():
+        return 0.0
+    b = np.asarray(truth, np.float64)
+    if a.shape != b.shape:
+        return 0.0
+    a = a - a.mean()
+    b = b - b.mean()
+    da, db = float(np.sqrt((a * a).sum())), float(np.sqrt((b * b).sum()))
+    if da <= 1e-12 or db <= 1e-12:            # 定数を返したら 0(相関が定義できない)
+        return 0.0
+    return max(0.0, float((a * b).sum() / (da * db)))
+
+
 PROBLEMS: dict[str, Problem] = {
     "denoise": Problem("denoise", "dB PSNR", _make_denoise,
                        lambda f, tgt: ops.psnr(_as_image(f, tgt.shape), tgt),
@@ -463,6 +560,25 @@ PROBLEMS: dict[str, Problem] = {
         "signal_denoise", "1/(1+mse)", _make_signal_denoise, _score_signal,
         lambda: [ops.stage("tb_smooth_funct_1d_gauss", 0.5, 0.5)],
         in_sort="signal"),
+    # 光子計数: 背景光を含む Poisson ヒストグラム → 信号成分の形。
+    # 手の基準線は背景除去 1 段(この課題で最も素直な一手)。
+    "photon_denoise": Problem(
+        "photon_denoise", "1/(1+mse of shape)", _make_photon_denoise, _score_photon,
+        lambda: [ops.stage("tb_tcspc_background_subtract", 0.5, 0.5)],
+        in_sort="counts"),
+    # ライトフィールド: 4-D 光場 → 視差スロープ地図。
+    #
+    # 手の基準線は最初 ``tb_lf_depth_from_focus`` を置いたが、昇格ゲートが
+    # 「既存 op 単体の最良」を全探索した結果 **``tb_lf_epi_slope`` が 0.4694 で
+    # 焦点掃引法の 0.2127 を 2 倍以上上回る**と実測で示した。弱い方を手として
+    # 置くと課題が実際より易しく見えるので、強い方へ差し替えた。
+    # (EPI 傾き法には sigma によって最大 27% 過小に出るという別の実測があり、
+    # 相関で測る本課題ではその尺度ずれが効かない ― 指標の選び方まで含めて
+    # 「何を測っているか」が結果を決める例。)
+    "lf_slope": Problem(
+        "lf_slope", "corr", _make_lf_slope, _score_lf_slope,
+        lambda: [ops.stage("tb_lf_epi_slope", 0.5, 0.5)],
+        in_sort="lightfield"),
 }
 
 
