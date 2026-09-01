@@ -299,11 +299,11 @@ locked +41.7% / 観測 +79.2% と大きく違う。**どちらか一方だけを
 tb_rgb_to_quaternion -> tb_quat_color_rotate -> tb_quaternion_to_rgb -> ...
 ```
 
-観測 holdout では 0.776 と手(0.84)に迫って見えたのに、**locked では 0.628**
-まで落ちた。しかも locked の seed 間ばらつきが min 0.304 / max 0.755 /
-std 0.190 と大きい。train で選んだ champion が汎化しなかった典型で、
+観測 holdout では 0.7761 と手(0.8730)に迫って見えたのに、**locked では 0.6277**
+(手 0.8343)まで落ちた。しかも locked の seed 間ばらつきが min 0.3037 /
+max 0.7549 / std 0.1900 と大きい。train で選んだ champion が汎化しなかった典型で、
 **観測 holdout だけ見ていたら「惜しい」と読んでいた**。勝った
-`vibration_map` は逆に locked のばらつきが std 0.001 と極端に小さい。
+`vibration_map` は逆に locked のばらつきが std 0.0006 と極端に小さい。
 **ばらつきの開示が効いた実例**として残す。
 
 `photon_denoise` の champion は **光子族だけで閉じた合成**だった:
