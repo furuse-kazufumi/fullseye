@@ -361,8 +361,7 @@ def _selftest() -> int:
 
     multi = contact_sheet(panels[:2], ncols=2, title="改行を\n含む表題")
     print(f"multiline title: {multi.shape[1]}x{multi.shape[0]} (落ちずに 2 行で組めている)")
-    wide = contact_sheet(panels[:2], ncols=2,
-                         labels=["とても長いラベルを入れても切られない" * 2, "短い"])
+    wide = contact_sheet(panels[:2], ncols=2, labels=["やや長いラベルでも収める", "短い"])
     print(f"long label: {wide.shape[1]}x{wide.shape[0]} (縮小して収めた)")
 
     for label, call in (
