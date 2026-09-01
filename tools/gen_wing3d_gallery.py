@@ -720,6 +720,16 @@ def ex_domain(log) -> dict:
                       thumb_index=nf // 2, log=log)
     return {
         "name": "wing3d_domain_memory", "title": "処理領域(domain)でメモリが 1/%.0f になる" % ratio,
+        "title_en": "A processing domain cuts memory to 1/%.0f" % ratio,
+        "caption_en": (
+            "A synthetic part floating in a 192³ field, stepped through slice by slice, "
+            "with the full volume, the domain mask, the cropped sub-volume and the "
+            "pasted-back result side by side. Only "
+            f"{100 * float(dom.mean()):.2f} % of the field is foreground, so "
+            f"`vol_crop_domain` takes memory from {full_mb:.2f} MB to {part_mb:.3f} MB "
+            f"(**1/{ratio:.1f}**) and the very same `vol_gradient_magnitude` goes from "
+            f"{t_full * 1e3:.1f} ms to {t_part * 1e3:.1f} ms "
+            f"(**{t_full / t_part:.1f}x faster**). `vol_uncrop` puts it back bit-identically."),
         "ops": ["vol_bounding_box", "vol_crop_domain", "vol_reduce_domain", "vol_uncrop",
                 "vol_gradient_magnitude"],
         "facts": {"full_shape": list(vol.shape), "part_shape": list(np.asarray(part).shape),
