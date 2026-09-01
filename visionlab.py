@@ -211,7 +211,9 @@ def inspection_sweep(system, defect_um_grid, kind="scratch", detector=None,
 
     rows = []
     for size in np.sort(grid):
-        hits, ious, skipped = 0, [], 0
+        # 落とした理由を混ぜない: 「描けなかった」と「検査器が壊れた」は
+        # 別の問題で、混ぜると設計とアルゴリズムのどちらを直すか判らなくなる
+        hits, ious, unrenderable, detector_failed = 0, [], 0, 0
         for s in range(int(seeds)):
             try:
                 img, mask, _ = render_part(system, float(size), kind=kind,
@@ -220,23 +222,37 @@ def inspection_sweep(system, defect_um_grid, kind="scratch", detector=None,
                                            defocus_px=defocus_px, seed=s)
             except ValueError:
                 # 1 画素未満などで描けないサイズ。**黙って 0 件に混ぜない**
-                skipped += 1
+                unrenderable += 1
                 continue
-            pred = np.asarray(det(img))
-            if pred.shape != mask.shape or pred.dtype != bool:
-                pred = np.asarray(pred).astype(bool).reshape(mask.shape)
+            # 検査器は外から渡される任意の関数なので、**壊れた返り値で掃引全体を
+            # 落とさない**。ただし黙って直すのも危険(形が違う = 別の画像を見て
+            # いる可能性がある)。形が合わないものは「その回は評価できなかった」
+            # として数え、検出率の分母から外す — 0% に混ぜると検査器の性能を
+            # 不当に低く報告してしまう(敵対的検証で実測: 形違いで掃引が
+            # ValueError で停止していた)。
+            try:
+                pred = np.asarray(det(img))
+            except Exception:                              # noqa: BLE001
+                detector_failed += 1
+                continue
+            if pred.shape != mask.shape:
+                detector_failed += 1
+                continue
+            if pred.dtype != bool:
+                pred = pred.astype(bool)
             inter = float(np.sum(pred & mask))
             union = float(np.sum(pred | mask))
             iou = inter / union if union > 0 else 0.0
             ious.append(iou)
             hits += int(iou >= min_iou)
-        evaluated = int(seeds) - skipped
+        evaluated = int(seeds) - unrenderable - detector_failed
         rows.append({
             "defect_um": float(size),
             "defect_px": system.px_for_um(size),
             "detection_rate": (hits / evaluated) if evaluated else None,
             "mean_iou": (float(np.mean(ious)) if ious else None),
-            "evaluated": evaluated, "unrenderable": skipped,
+            "evaluated": evaluated, "unrenderable": unrenderable,
+            "detector_failed": detector_failed,
             "optical_verdict": system.limits(float(size))["verdict"],
         })
     detected = [r["defect_um"] for r in rows
@@ -283,7 +299,11 @@ def detection_report(sweep):
                      "contrast, illumination and the detector, not the lens.")
     for r in sweep["table"]:
         rate = "n/a" if r["detection_rate"] is None else "%.0f%%" % (100 * r["detection_rate"])
-        note = "" if not r["unrenderable"] else "  (%d unrenderable)" % r["unrenderable"]
+        note = ""
+        if r["unrenderable"]:
+            note += "  (%d unrenderable)" % r["unrenderable"]
+        if r.get("detector_failed"):
+            note += "  (%d detector errors)" % r["detector_failed"]
         lines.append("  %8.1f um (%5.1f px)  detected %4s  iou %s  optics: %s%s"
                      % (r["defect_um"], r["defect_px"], rate,
                         "n/a" if r["mean_iou"] is None else "%.2f" % r["mean_iou"],
