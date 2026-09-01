@@ -559,7 +559,9 @@ def arrow(img, p0, p1, color="emphasis", width=2, head_len=12.0, head_width=9.0,
     p0, p1 : (x, y)
         起点・先端。**x=col, y=row**。
     head_len, head_width : float
-        矢じりの長さ・幅[px]。``0`` で線分のみ。
+        矢じりの長さ・幅[px]。``0`` で線分のみ。軸より矢じりが長い短距離の
+        矢印では、矢じりを軸長の 8 割まで**相似に縮める**(そうしないと
+        矢じりの根元が起点の手前に来て、軸が逆向きに描かれる)。
     style : dict or None
         軸線を引く :func:`imagedraw.draw_line` への素通し引数(破線など)。
 
