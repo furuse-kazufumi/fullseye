@@ -1404,19 +1404,29 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
     if carr_max > 0.0 and x.size >= 16:
         ac = np.abs(np.fft.rfft((x - x.mean()) * np.hanning(x.size))) ** 2
         ac[0] = 0.0
-        where = float(np.argmax(ac)) / float(ac.size - 1)
-        if where > carr_max:
+        top = int(np.argmax(ac))
+        where = float(top) / float(ac.size - 1)
+        med = float(np.median(ac[1:]))
+        # Both conditions are required, and the second is why: on a *noisy*
+        # confocal spectrum the argmax of the AC power is wherever the noise
+        # happened to be largest, which can land anywhere. A real carrier is not
+        # just high in frequency, it is overwhelmingly *strong* — measured
+        # peak-to-median 1.6 to 7.2 for noise-dominated confocal spectra against
+        # 80 for an interferogram buried in 20 % noise.
+        strong = ac[top] > _CARRIER_DOMINANCE * med if med > 0.0 else True
+        if where > carr_max and strong:
             raise ValueError(
                 "%s: the dominant oscillation in this spectrum sits at %.3f of "
-                "the Nyquist frequency, above max_carrier_fraction=%.3f. A "
-                "confocal response is a single smooth peak, whose alternating "
-                "content is all at low frequency (measured 0.010 for a 4 nm peak, "
-                "0.010 for a 1 nm peak, 0.015 with 5 %% noise). A value up here "
-                "means this is an *interferogram* — a fringe carrier at 0.333 is "
-                "what a z scan looks like — and reading its carrier's argmax as a "
+                "the Nyquist frequency (above max_carrier_fraction=%.3f) and "
+                "carries %.0fx the median AC power. A confocal response is one "
+                "smooth peak, whose alternating content is all at low frequency "
+                "(measured 0.010 for a 4 nm peak, 0.013 for an 8 nm peak with "
+                "1 %% noise). A strong component up here means this is an "
+                "*interferogram* — a fringe carrier at 0.333 of Nyquist is what a "
+                "z scan looks like — and reading its carrier's argmax as a "
                 "focused wavelength would return a plausible, finite, wrong "
                 "height. Pass max_carrier_fraction=0 to skip this check."
-                % (op, where, carr_max))
+                % (op, where, carr_max, ac[top] / med if med > 0 else float("inf")))
 
     vis = float(_visibility(x))
     if vis < vis_min:
