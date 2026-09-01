@@ -728,10 +728,11 @@ def vol_label_overlay(vol, labels, seed: int = 0, alpha: float = 0.5,
     ``"fill"``(成分全体を塗る)か ``"boundary"``(6 近傍で隣が別ラベルの
     ボクセルだけを塗る = 輪郭表示、下の構造が完全に見える)。
 
-    実測(``(24, 48, 48)``・16 成分・ノイズ入りグレー体、``mode="fill"``):
-    前景ボクセルにおける元画像との平均絶対差は alpha=0.00 で 0.000、
-    0.25 で 0.106、0.50 で 0.212、0.75 で 0.318、1.00 で 0.424。
-    背景ボクセルは alpha に依らず 0.000(色は前景にしか乗らない)。
+    実測(``(24, 48, 48)``・16 成分・ノイズ入りグレー体、seed=0、``mode="fill"``):
+    前景ボクセルにおける元画像との平均絶対差は alpha=0.00 で 0.0000、
+    0.25 で 0.0679、0.50 で 0.1359、0.75 で 0.2038、1.00 で 0.2718 ――
+    alpha に対して直線(合成が線形であることの確認)。**背景ボクセルは
+    alpha に依らず 0.0000**(色は前景にしか乗らない)。
 
     Raises ``ValueError`` when *vol* and *labels* differ in shape, on a non-finite
     *vol*, on ``vmin >= vmax``, on an *alpha* outside [0, 1], or on an unknown *mode*.
