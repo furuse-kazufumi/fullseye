@@ -742,8 +742,15 @@ def specular_coefficient_map(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
     value of :func:`specular_diffuse_split` exactly, by construction — the two
     operators share one core.
 
-    Arguments and failure modes are identical to
-    :func:`specular_diffuse_split`.
+    Arguments, guards and honest limits are identical to
+    :func:`specular_diffuse_split` — including the fact that the two guards
+    bound gross violations only.
+
+    **Raises** ``ValueError``: exactly the same conditions as
+    :func:`specular_diffuse_split` (invalid image, invalid illuminant,
+    identically zero image, body colour parallel to the illuminant, either
+    guard firing, fewer than 3 pixels on the uniform-body route, invalid
+    *body_rgb*).
     """
     op = "specular_coefficient_map"
     I = _require_rgb(image_rgb, "image_rgb", op)
