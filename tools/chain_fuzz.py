@@ -799,6 +799,24 @@ NONFINITE_BY_CONTRACT_SPECULAR = {"photometric_stereo_robust"}
 #: ``compare_images`` は psnr を内に含むので同じ理由で載る。
 NONFINITE_BY_CONTRACT_METRICS = {"psnr", "compare_images"}
 
+#: 文書化済みの非有限を返す op(astrostack / imgforensics)。**「答えられない」を
+#: NaN で言うのが契約**で、0 で埋めると「測れた」に化ける。2026-09-02 に台帳を
+#: ファザーへ登録した直後の実走で 4 op が挙がり、1 件ずつ実測して確認した:
+#:
+#:   * frame_quality — 星が 0 個の絵で fwhm_px / roundness / peak_snr が NaN
+#:     (n_stars=0, score=0.0 が併せて返るので判別できる)。FWHM を 0 と答えると
+#:     「非常に鋭い絵」に化ける。
+#:   * psf_fit — 当てはめ箱が画像からはみ出すと converged=False, rms/fwhm_px が
+#:     NaN、``reason="box falls outside the image"`` を添えて返す。
+#:   * aperture_photometry — 検出でない位置ではフラックスが負になり、
+#:     **負のフラックスの等級は存在しない**ので mag_instrumental が NaN
+#:     (flux / snr は有限のまま負値で返るので、何が起きたか読める)。
+#:   * jpeg_quality_estimate — 櫛が立たない(無圧縮の)絵で quality=None,
+#:     fit_error=NaN。「品質 17」のような当てずっぽうを返さないための設計。
+NONFINITE_BY_CONTRACT_ASTRO_FORENSICS = {
+    "frame_quality", "psf_fit", "aperture_photometry", "jpeg_quality_estimate",
+}
+
 #: 出力を pool 型へ合わせる梱包アダプタ。基本はレジストリの RESULT_ADAPTERS
 #: (型忠実の一級メタデータ)に委譲し、ファザー固有の追加だけここに置く
 def _registry_adapters():
@@ -829,7 +847,8 @@ def _registry_adapters():
     import opscadmap
     d.update(opscadmap.RESULT_ADAPTERS)          # 空(意図的): 素の返りが宣言型
     for _mod in ("opstomography", "opsvolcolor", "opsreprconv", "opsannotate",
-                 "opsgfx2d", "opsimgforensics", "opsastrostack"):
+                 "opsgfx2d", "opsimgmetrics", "opscolortransport",
+                 "opsimgforensics", "opsastrostack"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
         except Exception as _e:                       # 台帳が無い環境でも動く
@@ -1439,7 +1458,8 @@ TYPE_CHECKS = {
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond"
-                         } | NONFINITE_BY_CONTRACT_METRICS \n                         | NONFINITE_BY_CONTRACT_OPTICS \
+                         } | NONFINITE_BY_CONTRACT_METRICS \n                         | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
+                         | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR
 
 #: pool へ入れる 1 産物の上限バイト数。拡大系 op(upsample/uncrop/resize)の連鎖で
