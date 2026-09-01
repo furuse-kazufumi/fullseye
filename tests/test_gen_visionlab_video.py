@@ -47,7 +47,9 @@ def test_overlaid_optical_limit_comes_from_the_optics_function():
     """画面の光学限界は resolving_power の返り値そのもの(表示用の再実装をしない)。"""
     frames, facts = gvv.build_sweep_frames(frames=3, seeds=1, log=_quiet)
     geo = facts["geometry"]
-    res = vd.resolving_power(geo["focal_mm"] and 3.45, 4.0, geo["magnification"], 0.55)
+    # build_sweep_frames の既定と同じ引数で独立に呼び直す(値の出所を二重化しない)
+    res = vd.resolving_power(pixel_pitch_um=3.45, f_number=4.0,
+                             magnification=geo["magnification"], wavelength_um=0.55)
     assert facts["optical_limit_um"] == pytest.approx(res["resolution_object_um"], rel=1e-12)
     assert facts["limited_by"] == res["limited_by"]
     assert facts["optical_limit_um"] > 0.0
