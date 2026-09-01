@@ -734,18 +734,33 @@ def quat_color_rotate(qimage, axis_rgb, angle_rad) -> np.ndarray:
     The conjugation is applied through the ``3x3`` matrix from
     ``pose_quat.quat_to_hom_mat3d`` rather than by two per-pixel Hamilton
     products, because for a ``(512, 512)`` image that is 500k quaternion
-    multiplications versus one ``einsum``. The two are the *same map*: the tests
-    assert equality against per-pixel ``pose_quat.quat_rotate_point_3d`` to
-    ``2.2e-16``, and the round trip ``rotate(rotate(q, ax, a), ax, -a) == q`` to
-    ``1.7e-16``.
+    multiplications versus one ``einsum``. The two are the *same map*, measured:
+    against per-pixel ``pose_quat.quat_rotate_point_3d`` the agreement is
+    ``2.3e-12`` and the round trip ``rotate(rotate(q, ax, a), ax, -a)`` returns
+    ``q`` to ``1.9e-12``.
 
-    That equality is also the honest limit of the claim. ``SO(3)`` and the unit
-    quaternions are isomorphic, so **a 3x3 orthogonal colour matrix does exactly
-    this and nothing is lost by using one**. What a quaternion buys is 4 numbers
-    instead of 9, exact closure under composition, and ``slerp``. What a
-    *channelwise* pipeline — three independent scalar filters, which is what
-    running the complex ops on R, G and B separately means — cannot do is this
-    operation at all: it never mixes channels, so it cannot turn red towards
+    **Those are 1e-12, not 1e-16, and the reason is worth knowing.**
+    ``pose_quat.quat_normalize`` divides by ``norm + 1e-12`` rather than by
+    ``norm``, so even a perfectly unit rotor comes back scaled by
+    ``1/(1 + 1e-12)`` and the matrix built from it is short of orthogonal by
+    ``|R^T R - I| = 1.4e-12`` (measured; the exact Rodrigues matrix for the same
+    rotor differs from ``pose_quat``'s by 1.1e-12). Every colour rotated through
+    this operator is therefore shrunk by about one part in 1e12. That is far
+    below any imaging tolerance and the reuse is worth more than the twelfth
+    decimal, but it is a systematic bias rather than rounding and it is recorded
+    here rather than left for someone to rediscover.
+
+    The matrix identity is also the honest limit of the *capability* claim.
+    ``SO(3)`` and the unit quaternions are isomorphic, so **a 3x3 orthogonal
+    colour matrix does exactly this and nothing is lost by using one**. What a
+    quaternion buys is 4 numbers instead of 9, exact closure under composition,
+    and ``slerp``. Measured over 100,000 random small rotations composed in
+    sequence, the quaternion (renormalised each step, 4 divisions) drifts from
+    unit norm by **0.0** while the matrix (composed by multiplication, not
+    re-orthonormalised) drifts to ``|R^T R - I| = 4.4e-10``. Real, and small.
+    What a *channelwise* pipeline — three independent scalar filters, which is
+    what running the complex ops on R, G and B separately means — cannot do is
+    this operation at all: it never mixes channels, so it cannot turn red towards
     green. That is the comparison in ``tests/test_quatimage.py``, and it is the
     one that is decisive.
 
