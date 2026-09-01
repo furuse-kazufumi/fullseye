@@ -775,7 +775,7 @@ def volume_to_shell_points(vol, spacing=(1.0, 1.0, 1.0), max_points=2_000_000):
     # list-like input `v.shape` here would misreport the DOWNSAMPLED shape
     info = {"shape": tuple(int(s) for s in orig_shape),
             "downsampled_by": factor, "threshold": thr,
-            "n_points": len(P)}
+            "n_points": len(P), "axis_order": "xyz"}
     return P, C, info
 
 

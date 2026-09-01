@@ -146,8 +146,7 @@ def main():
     # 格子で digitise しただけの体積 = 再構成が完璧でも越えられない天井
     v_digital, n_vox, _ = measure_volume(truth_vol, thr)
     print(f"   この格子で二値化した真ファントムの体積 = {v_digital:.1f} mm^3 "
-          f"({n_vox} ボクセル, 真値比 {v_digital / v_true:+.1%} … "
-          f"誤差 {100 * (v_digital / v_true - 1):+.1f} %)")
+          f"({n_vox} ボクセル, 誤差 {v_digital / v_true - 1:+.2%})")
     print("   ★これが digitisation の天井。以降の誤差はこの上に乗る。")
 
     print()
@@ -235,9 +234,11 @@ def main():
     print(f"   vol_boundary_points  -> 境界点群 {np.asarray(shell).shape} "
           f"(mm 単位、(z,y,x) 順)")
     rle = fs.vol_rle_encode(binary)
-    n_runs = len(getattr(rle, "runs", []))
+    n_runs = int(np.asarray(rle.starts).size)
+    occupied = int(binary.sum())
     print(f"   vol_rle_encode       -> {n_runs} run "
-          f"(占有 {int(binary.sum())} ボクセルを run 長で圧縮)")
+          f"(占有 {occupied} ボクセルを x 方向の run に圧縮、"
+          f"{occupied / max(n_runs, 1):.1f} ボクセル/run)")
     cropped = fs.vol_crop_domain(rec, binary > 0.5)
     crop_shape = np.asarray(cropped[0] if isinstance(cropped, tuple)
                             else cropped).shape
