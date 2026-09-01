@@ -979,19 +979,28 @@ def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
     Why it exists next to :func:`filtered_backprojection`: FBP inverts an integral
     transform and therefore *needs* the transform to have been sampled; SART
     solves a linear system and merely does worse when the system is
-    underdetermined. On the Shepp-Logan phantom the two cross at 45 views (table
-    in :func:`filtered_backprojection`) and at 8 views SART is 3.1x better.
+    underdetermined. Measured, it is better at every view count tested (the table
+    in :func:`filtered_backprojection`), by 1.43x at 180 views and 2.9x at 8.
 
-    The cost is honest: 10 sweeps over 180 views is 1800 forward *and* 1800 back
-    projections against FBP's 180 back-projections, measured at **9.9 s** against
-    **0.19 s** for a 256-px reconstruction — a factor of 52. Sparse view is also
-    where the factor shrinks, because both scale with the view count.
+    The cost is honest and it is the reason this is not the default: 10 sweeps
+    over 180 views is 1800 forward *and* 1800 back-projections against FBP's 180
+    back-projections, measured at **37.7 s** against **0.12 s** for a 256-px
+    reconstruction — a factor of **312**. At 8 views it is 2.14 s against 0.01 s,
+    the same ratio applied to a much smaller number.
 
     ``nonnegative=True`` clips the estimate at zero after every sweep. Attenuation
     coefficients cannot be negative, so this is a genuine constraint and not a
-    cosmetic clip; it is what most of the sparse-view advantage above comes from.
-    Turn it off to see the unconstrained solver, which at 8 views is 0.0431
-    normalised RMS against 0.0367 with it.
+    cosmetic clip, and it carries a large part of the advantage above — measured
+    on the analytic Shepp-Logan sinogram, normalised RMS with the constraint
+    against without:
+
+        views     with     without
+          180    0.0175    0.0300
+           45    0.0353    0.0626
+            8    0.1257    0.1428
+
+    so at 180 views the constraint alone is worth 1.7x, and it is the *only*
+    reason SART leads FBP there at all (FBP scores 0.0250, between the two).
 
     :param sinogram: ``(n_angles, n_detectors)``, rows = angles.
     :param angles_deg: view angles; ``None`` -> uniform ``[0, 180)``.
