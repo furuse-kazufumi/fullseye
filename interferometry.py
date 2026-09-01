@@ -422,12 +422,11 @@ def _edge_level(env: np.ndarray) -> np.ndarray:
     FWHM on a 12 um scan, the ``"gaussian"`` estimator's error against the true
     surface height goes:
 
-        edge level  0.0000 -> 3e-14 um     (surface centred in the scan)
-        edge level  0.0013 -> 1.9e-06 um
-        edge level  0.0078 -> 1.3e-03 um
-        edge level  0.0373 -> 7.8e-03 um
-        edge level  0.1831 -> 2.7e-02 um
-        edge level  0.6394 -> **-0.38 um**, on a true height of 0.50 um
+        edge level  0.0000 -> 3e-14 um     (surface centred at 6.0 um)
+        edge level  0.0000 -> 1.9e-06 um   (surface at 4.32 um)
+        edge level  0.0107 -> 7.8e-03 um   (surface at 2.77 um)
+        edge level  0.1746 -> 2.7e-02 um   (surface at 2.00 um)
+        edge level  0.6364 -> **-0.38 um**, on a true height of 0.50 um
 
     That last row is the point. The envelope peak is at plane 2 of 241 — an
     *interior* plane, so a first-or-last-plane check does not fire — and the
@@ -435,7 +434,7 @@ def _edge_level(env: np.ndarray) -> np.ndarray:
     76 % wrong. The cause is physical, not an FFT artefact: the analytic signal is
     a global transform and a truncated envelope is genuinely a different signal.
     Zero-padding and reflect-padding were both measured and both made it *worse*
-    (-3.3e-02 and -3.7e-02 against -2.7e-02 plain, at edge level 0.183), so there
+    (-3.3e-02 and -3.7e-02 against -2.7e-02 plain, on the 2.00 um row), so there
     is nothing to fix and the input is refused instead.
     """
     base = np.median(env, axis=-1)
@@ -522,7 +521,7 @@ def _sigma_from(envelope_fwhm_um, envelope_sigma_um, op: str) -> float:
 # --------------------------------------------------------------------------- #
 # 1. forward model — where the ground truth comes from                         #
 # --------------------------------------------------------------------------- #
-def csi_signal_simulate(surface_um=5.0, z_start_um=0.0, z_step_um=0.05,
+def csi_signal_simulate(surface_um=6.0, z_start_um=0.0, z_step_um=0.05,
                         n_planes=241, wavelength_um=0.6,
                         envelope_fwhm_um=2.8, envelope_sigma_um=None,
                         bias=0.5, amplitude=0.4, reflectivity=1.0,
