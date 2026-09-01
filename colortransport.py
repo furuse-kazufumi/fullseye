@@ -366,7 +366,23 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
             f"(last change {float(np.max(np.abs(u - u_prev))):.3e} > tol={tol!r}); "
             "returning the last iterate would hand on a plan whose marginals do not match"
         )
-    return u[:, None] * K * v[None, :]
+
+    plan = u[:, None] * K * v[None, :]
+    # **収束したことと、正しい答えに収束したことは別**。reg が小さいと K の大半が
+    # アンダーフローし、生き残った少数の要素だけで反復が止まる ―― u は動かなく
+    # なるのに、行和・列和は要求した周辺分布から外れたままになる。入力側の検査
+    # (行・列に非零があるか)ではここを取りこぼすことを実測で確認したので、
+    # 出したものを測ってから返す(2026-09-02)。
+    err = max(float(np.max(np.abs(plan.sum(axis=1) - a))),
+              float(np.max(np.abs(plan.sum(axis=0) - b))))
+    if err > max(1e-6, 1e3 * tol):
+        raise RuntimeError(
+            f"sinkhorn converged at reg={reg!r} but to a plan whose marginals are off by "
+            f"{err:.3e}: exp(-cost/reg) has underflowed for most of the matrix, so the mass "
+            "cannot be routed as requested. Use a larger reg, or wasserstein_1d for an exact "
+            "1-D answer"
+        )
+    return plan
 
 
 def sinkhorn_distance(a, b, cost, reg=0.05, **kw):
