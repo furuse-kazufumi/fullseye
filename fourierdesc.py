@@ -15,6 +15,16 @@ Contour" (CGIP 18, 1982) の閉形式(区分線形輪郭に対する厳密式)�
     points: (N,2) 配列。順序づいた閉輪郭の頂点。座標系は問わない(EFD は 2D 形状に
     対して座標軸に依らず定義される)。既存 XLD 輪郭 dict の ``contour["cs"][i]``
     ((row,col) の Nx2)をそのまま渡せる(:func:`from_xld` を用意)。
+
+★★ 座標順の落とし穴(2026-09-02 に明文化)★★
+    ここが返す/受け取る点は XLD と同じ **(row, col) = (行, 列)**。
+    いっぽう ``imagemorph``(``morph`` / ``warp_piecewise_affine`` /
+    ``warp_tps_image``)の点は **(x, y) = (列, 行)** で **順序が逆**。
+    どちらも (N,2) float なので取り違えても **例外は出ず**、「それらしく間違った」
+    ワープになる(実測: 中間コマに二重像、affine–TPS 平均差 0.01018 →
+    正しい (x,y) では 0.00802)。橋渡しは必ず列の入れ替えで::
+
+        pts_xy = np.asarray(from_xld(contour))[:, ::-1]    # (row,col) -> (x,y)
 """
 from __future__ import annotations
 
