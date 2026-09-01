@@ -364,7 +364,25 @@ def studio_view_from_render3d(yaw_deg, pitch_deg):
             STUDIO_PITCH_SIGN * float(pitch_deg))
 
 
-def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, fill=0.9, dist_r=30.0):
+def view_radius(points, yaws, pitch_deg):
+    """与えた yaw 群・pitch で、点群が**画面内で占める最大半径**(world 単位)。
+
+    ターンテーブルでは外接球半径で正規化すると細長い物体が小さくしか映らない。
+    実際に投影して最大値を測り、それに合わせて倍率を決めるための実測値。
+    """
+    import studio
+    P = np.asarray(points, np.float64).reshape(-1, 3)
+    c = 0.5 * (P.min(0) + P.max(0))
+    best = 0.0
+    for y in yaws:
+        cam = studio.viewer3d_camera(y, pitch_deg)
+        v = (P - c) @ cam.T
+        best = max(best, float(np.linalg.norm(v[:, :2], axis=1).max()))
+    return c, (best or 1.0)
+
+
+def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, fill=0.9, dist_r=30.0,
+                center=None, radius=None):
     """render3d + phong で三角メッシュを 1 枚描く(matplotlib 不使用)。
 
     V は **world (x, y, z)** で渡すこと(``render3d.marching_cubes`` は
