@@ -66,6 +66,28 @@ never re-implemented):
     :mod:`funct1d`. An arrival-time histogram *is* a 1-D ``signal``, so those
     ops apply to it directly and are not re-wrapped here.
 
+Provenance — every method here is textbook or cited public literature, and
+nothing is derived from any commercial product (see ``docs/PROVENANCE.md``):
+
+  * F. J. Anscombe, "The transformation of Poisson, binomial and
+    negative-binomial data", *Biometrika* 35(3-4):246-254, 1948 — the
+    variance-stabilising transform.
+  * J.-L. Starck, F. Murtagh & A. Bijaoui, *Image Processing and Data
+    Analysis*, CUP 1998 — the generalised (gain + read-noise) Anscombe form.
+  * M. Makitalo & A. Foi, "Optimal inversion of the Anscombe transformation in
+    low-count Poisson image denoising", *IEEE TIP* 20(1):99-109, 2011 — the
+    closed-form exact unbiased inverse.
+  * P. B. Coates, "The correction for photon 'pile-up' in the measurement of
+    radiative lifetimes", *J. Phys. E* 1(8):878-879, 1968 — the pile-up
+    estimator.
+  * G. F. Knoll, *Radiation Detection and Measurement*, Wiley — the
+    paralysable and non-paralysable dead-time models.
+  * W. Becker, *Advanced Time-Correlated Single Photon Counting Techniques*,
+    Springer 2005 — TCSPC histogram formation and lifetime fitting.
+  * M. A. Digman, V. R. Caiolfa, M. Zamai & E. Gratton, "The phasor approach to
+    fluorescence lifetime imaging analysis", *Biophys. J.* 94(2):L14-L16, 2008 —
+    the phasor representation and its universal semicircle.
+
 Units are encoded in every parameter name — ``_ps``, ``_ns``, ``_hz``, ``_m`` —
 because a silent picosecond/nanosecond swap is a plausible-wrong answer (a
 factor of 1000 in distance), not a crash. Nothing is normalised behind your back.
