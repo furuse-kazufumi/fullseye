@@ -923,7 +923,6 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
                 continue
             live = amp > _AMP_LIVE * amp_max
             dphi = np.angle(sub * np.conj(ref)[None])
-            dphi = np.unwrap(dphi, axis=0)
             tspec = np.fft.fft(dphi, axis=0)
             tspec[~mask] = 0.0
             dphi = np.real(np.fft.ifft(tspec, axis=0))
