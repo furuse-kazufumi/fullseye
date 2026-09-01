@@ -70,7 +70,7 @@ PANEL_Y = HUD_H + 6
 INFO_Y = PANEL_Y + PANEL
 PLOT_Y = INFO_Y + INFO_H
 H = PLOT_Y + PLOT_H + AXIS_H + 6                     # 640
-PLOT_X0, PLOT_X1 = 62, W - 22
+PLOT_X0, PLOT_X1 = 74, W - 22
 
 # 配色(赤緑対で意味を担わせない = 色覚に依らず読める組み合わせ)
 C_BG = (0.055, 0.062, 0.075)
