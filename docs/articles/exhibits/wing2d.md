@@ -146,6 +146,6 @@
 
 [![回し続けると何が失われるか (リサンプリング損失)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing2d_resample_loss_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing2d_resample_loss.png)
 
-*↑ **回し続けると何が失われるか (リサンプリング損失)** ―― 同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻るのに、画素は戻らない。中央部だけで測っても元画像との PSNR は 26.81 dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の 64.4% まで落ちる(画像全体では 23.98 dB。その差の大半は端の処理 —— rotate_image は reshape=False + mode='reflect' —— によるもので補間の損失ではない)。ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の 3 op は それぞれ別実装で、出力の形も zoom_image_factor=256x256 / zoom_image_size=358x256 / rescale_img=256x256(`zoom_image_size` だけが目標サイズ指定なので形が変わる)。使用 op: `rotate_image`, `gauss_image`, `zoom_image_factor`, `zoom_image_size`, `rescale_img`。*
+*↑ **回し続けると何が失われるか (リサンプリング損失)** ―― 同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻るのに、画素は戻らない。中央部だけで測っても元画像との PSNR は 26.81 dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の 64.4% まで落ちる(画像全体では 23.98 dB。その差の大半は端の処理 —— rotate_image は reshape=False + mode='reflect' —— によるもので補間の損失ではない)。ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の 3 op は それぞれ別実装で、同じ入力 (a=0.9, b=0.5) に対する最大差は factor↔size 0.973 / factor↔rescale 0.966。使用 op: `rotate_image`, `gauss_image`, `zoom_image_factor`, `zoom_image_size`, `rescale_img`。*
 
 <!-- 生成: tools/gen_wing2d_gallery.py::subject_resample_loss() / PNG / 8 パネル / skimage.data camera (BSD / public domain) を 1/2 に間引いたもの -->

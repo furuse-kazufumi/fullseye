@@ -4,11 +4,11 @@
 
 ![投影数を増やすと像が立ち上がる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingct_view_sweep.gif)
 
-*↑ **投影数を増やすと像が立ち上がる** ―― 同じ被写体を 8 / 16 / 32 / 64 / 128 本で撮り直す。再構成の nRMS は 0.3635 → 0.0334 と 10.9 倍改善するのに、**体積は +3.4% → +0.3% でほとんど動かない**。ストリークは正負が対称に出るので体積では相殺してしまう。壊れを教えるのは連結成分の数(175 個 対 1 個)。使用 op: `projection_angles`, `ellipse_sinogram`, `filtered_backprojection`。*
+*↑ **投影数を増やすと像が立ち上がる、が体積はそれを教えない** ―― 同じ被写体を 8 / 16 / 32 / 64 / 128 本で撮り直す。**16 本以降**、再構成の nRMS は 0.2341 → 0.0334 と 7.0 倍良くなるのに、体積は +0.38% → +0.34% と 0.04% しか動かない ―― ストリークは物体のまわりに正負が対称に出るので、体積という 1 つの積分量では相殺して消えてしまう。**8 本だけは別**で、そこは体積 +3.4% も含めて指標そのものが信用できない領域(同じ部品を面内 128 画素で測り直すと -0.0% になり再現しない)。壊れを教えるのは体積ではなく連結成分の数(175 個 対 1 個)。使用 op: `projection_angles`, `ellipse_sinogram`, `filtered_backprojection`。*
 
 [![投影数と体積誤差のタイル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingct_view_tiles_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingct_view_tiles.png)
 
-*↑ **同じものをタイルでも** ―― 左上が真値、以下が 8 / 16 / 32 / 64 / 128 本。ラベルは再構成 nRMS と体積誤差。8 本ではストリークで頭蓋の内側が読めないのに、体積誤差は +3.4% しかない。使用 op: `ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`。*
+*↑ **同じものをタイルでも** ―― 左上が真値、以下が 8 / 16 / 32 / 64 / 128 本。ラベルは再構成 nRMS と体積誤差。8 本ではストリークで頭蓋の内側がまったく読めず、16 本でもまだ縞が残る。ところが体積誤差のほうは 16 本ですでに +0.38% で、128 本の +0.34% と見分けがつかない ―― **絵が良くなっていく過程が、体積という 1 つの数字には現れない**。使用 op: `ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`。*
 
 ![回転中心のずれ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingct_center_shift.gif)
 
@@ -28,4 +28,4 @@
 
 [![体積の答え合わせ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingct_volume_check_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingct_volume_check.png)
 
-*↑ **体積の答え合わせ ―― 何が効いて、何が効かないか** ―― 真値 16839 mm³(閉形式)、この格子で二値化しただけの天井が 16863 mm³。左は投影数 8→128 で振れ幅 522 mm³、右は二値化しきい値 0.30→0.70 で振れ幅 533 mm³。**しきい値の任意性のほうが 1 倍効く**ので、体積を報告するときに書くべきなのは「何本で撮ったか」より「どのしきい値で切ったか」。使用 op: `radon_volume`, `fbp_volume`, `vol_label`, `vol_region_props`。*
+*↑ **体積の答え合わせ ―― 何が効いて、何が効かないか** ―― 真値 16839 mm³(閉形式)、この格子で二値化しただけの天井が 16863 mm³。左は投影数 16→128 で振れ幅 8 mm³(8 本を含めると 522 mm³ になるが、その点は格子を変えると再現しない)、右は二値化しきい値 0.30→0.70 で振れ幅 533 mm³。**しきい値の任意性のほうが 71 倍効く**ので、体積を報告するときに書くべきなのは「何本で撮ったか」より「どのしきい値で切ったか」。使用 op: `radon_volume`, `fbp_volume`, `vol_label`, `vol_region_props`。*

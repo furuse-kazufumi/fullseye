@@ -1950,12 +1950,14 @@ def subject_resample_loss(log=print) -> dict:
             "ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の "
             "3 op は %s。"
             % (psnr_core, 100 * hp_core[36] / hp_core[0], psnr_full,
-               ("同じ入力に対して最大差 %.1g で、同じ実装に相乗りしている"
+               ("同じ入力に対して最大差 %.1g しかなく、同じ実装に相乗りしている"
                 % max(d for d in (zoom_maxdiff, zoom_maxdiff2) if d is not None))
-               if all(d is not None for d in (zoom_maxdiff, zoom_maxdiff2))
-               else ("それぞれ別実装で、出力の形も " + " / ".join(
-                   "%s=%dx%d" % (k, v[0], v[1]) for k, v in zoom_shapes.items())
-                   + "(`zoom_image_size` だけが目標サイズ指定なので形が変わる)"))),
+               if all(d is not None and d < 1e-9
+                      for d in (zoom_maxdiff, zoom_maxdiff2))
+               else ("それぞれ別実装で、同じ入力 (a=0.9, b=0.5) に対する最大差は "
+                     "factor↔size %s / factor↔rescale %s"
+                     % (("%.3g" % zoom_maxdiff) if zoom_maxdiff is not None else "形が違う",
+                        ("%.3g" % zoom_maxdiff2) if zoom_maxdiff2 is not None else "形が違う")))),
     }
 
 
