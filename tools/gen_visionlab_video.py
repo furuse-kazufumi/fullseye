@@ -367,9 +367,9 @@ def build_sweep_frames(*, focal_mm=35.0, working_distance_mm=200.0,
             (x2 + 6, PANEL_Y + PANEL - 40, "missed", C_MISS, 12, True),
             (x2 + 6, PANEL_Y + PANEL - 24, "false alarm", C_FALSE, 12, True),
             (MARGIN + 8, INFO_Y + 5,
-             f"defect {r['defect_um']:6.1f} um = {r['defect_px']:5.2f} px"
-             f"    optical limit {optical_um:5.1f} um ({res['limited_by']}-limited)"
-             f"    optics: {verdict}",
+             (f"defect {r['defect_um']:6.1f} um = {r['defect_px']:5.2f} px"
+              f"    optical limit {optical_um:5.1f} um ({res['limited_by']}-limited)"
+              f"    optics: {verdict}"),
              C_TEXT, 14, True),
             (MARGIN + 8, INFO_Y + 25,
              f"IoU {r['iou']:.3f}   detection rate {r['detection_rate']:.0%}"
@@ -503,9 +503,9 @@ def build_design_frames(*, focal_mm=35.0, pixel_pitch_um=3.45, f_number=4.0,
             (MARGIN + 6, PANEL_Y + 6, "captured image", (0.95, 0.95, 0.92), 13, True),
             (x2 + 6, PANEL_Y + 6, "detector vs ground truth", (0.95, 0.95, 0.92), 13, True),
             (MARGIN + 8, INFO_Y + 5,
-             f"WD {r['wd_mm']:6.1f} mm   {geo['um_per_pixel']:6.2f} um/px   "
-             f"FOV {geo['fov_w_mm']:5.1f}x{geo['fov_h_mm']:5.1f} mm   "
-             f"defect = {defect_um / geo['um_per_pixel']:5.2f} px",
+             (f"WD {r['wd_mm']:6.1f} mm   {geo['um_per_pixel']:6.2f} um/px   "
+              f"FOV {geo['fov_w_mm']:5.1f}x{geo['fov_h_mm']:5.1f} mm   "
+              f"defect = {defect_um / geo['um_per_pixel']:5.2f} px"),
              C_TEXT, 14, True),
             (MARGIN + 8, INFO_Y + 25,
              f"optical limit {r['optical_um']:6.1f} um ({r['res']['limited_by']})"

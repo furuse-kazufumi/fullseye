@@ -23,8 +23,8 @@ pytest.importorskip("PIL")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "tools"))
 
-import gen_visionlab_video as gvv                       # noqa: E402
-import visiondesign as vd                               # noqa: E402
+import gen_visionlab_video as gvv
+import visiondesign as vd
 
 
 def _quiet(_msg):
@@ -45,7 +45,7 @@ def test_sweep_frames_are_deterministic_and_well_formed():
 
 def test_overlaid_optical_limit_comes_from_the_optics_function():
     """画面の光学限界は resolving_power の返り値そのもの(表示用の再実装をしない)。"""
-    frames, facts = gvv.build_sweep_frames(frames=3, seeds=1, log=_quiet)
+    _frames, facts = gvv.build_sweep_frames(frames=3, seeds=1, log=_quiet)
     geo = facts["geometry"]
     # build_sweep_frames の既定と同じ引数で独立に呼び直す(値の出所を二重化しない)
     res = vd.resolving_power(pixel_pitch_um=3.45, f_number=4.0,
