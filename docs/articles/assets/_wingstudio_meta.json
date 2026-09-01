@@ -197,16 +197,16 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_cadmap_thumb.jpg",
       "frames": 24,
       "size": [
-        1440,
-        572
+        1200,
+        518
       ],
       "fps": 10,
-      "bytes": 468694,
-      "thumb_bytes": 43524,
+      "bytes": 497630,
+      "thumb_bytes": 51203,
       "thumb_frame": 5,
-      "mean_abs_delta": 2.003,
-      "sha256": "6b3436dea6cc6eacf919c922321d139e38abf37f9f8b3d624377655ee564f8c0",
-      "thumb_sha256": "779922cc5af58af6e8234b1e539f150f66a5dbd5fd8482fa6e858913a1ec98df",
+      "mean_abs_delta": 1.582,
+      "sha256": "9537345acb9d7e99ffc3f365d3fbddfd0bbfc9eac4749b2c1c76d129c31db26c",
+      "thumb_sha256": "f396aa21f6dd2374b8b469b52c1fd1a71c59c7e9e01af5278cb45ae9acafddc9",
       "facts": {
         "n_faces": 1400,
         "n_vertices": 702,
@@ -269,7 +269,7 @@
         ],
         "frames": 24
       },
-      "seconds": 46.72
+      "seconds": 47.74
     },
     {
       "kind": "gif",

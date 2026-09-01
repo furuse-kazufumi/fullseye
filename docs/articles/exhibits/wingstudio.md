@@ -74,7 +74,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **欠陥を CAD 面へ逆写像し、見えていない面を数える** —— SDF から作った段付き部品(三角形 1,400 枚、表面積 8856.6)を 240×240 px の検査カメラで撮り、①見え方 ②画素 → CAD 面 ID ③画像上の欠陥ラベル 4 件の逆写像 ④見えた面(緑)/ 見えない面(赤)を並べました。命中画素 15,980(27.7 %)。カメラを向いている面積は 48.3 % ですが、塔が自分の台座を隠すため **実際に見えたのは 46.8 %**(面数では 608 / 1,400 = 43.4 %)。表面点 26,000 でも可視 41.3 % / 遮蔽 58.7 % と一致します。欠陥 #3 #4 は CAD の外(命中 0)なので実面積 0 のまま残る —— 黙って消えないのが大事なところです。 使用 op / 機能: `cad_pixel_to_surface`, `cad_defect_to_cad`, `cad_visible_faces`, `cad_surface_to_pixel`。*
 
-<sub>`wingstudio_cadmap.gif` — 24 フレーム / 10 fps / 1440×572 px / 0.47 MB / SHA-256 `6b3436dea6cc6eac`</sub>
+<sub>`wingstudio_cadmap.gif` — 24 フレーム / 10 fps / 1200×518 px / 0.50 MB / SHA-256 `9537345acb9d7e99`</sub>
 
 ---
 
@@ -191,7 +191,7 @@ pose, K = render3d.auto_view(V, width=200, height=200)      # K[0,2] = 100.0
 buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=200, height=200)
 P_int  = camera.backproject(pix,       buf["depth"][valid], K)   # 添字
 P_half = camera.backproject(pix + 0.5, buf["depth"][valid], K)   # 添字 + 0.5
-# 実測: 平均 |P_half - P_int| = 0.00238 world 単位 = ちょうど 0.5 px 相当
+# 実測: 平均 |P_half - P_int| = 0.0022879 world 単位 = ちょうど 0.5 px 相当
 ```
 絵としては見えませんが、寸法計測に使うと系統誤差になります。
 

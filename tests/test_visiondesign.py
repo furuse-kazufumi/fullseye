@@ -177,8 +177,12 @@ def test_image_formation_preserves_shape_range_and_only_blurs():
     assert cap.shape == img.shape
     assert cap.dtype == np.float64
     assert 0.0 <= cap.min() and cap.max() <= 1.0
-    # ぼけ = 分散が増え、勾配の総量が減る
-    assert np.abs(np.diff(cap, axis=1)).sum() < np.abs(np.diff(img, axis=1)).sum()
+    # ぼけ = **勾配の最大値**が下がる。総量(総変動)ではない ―― 単調な段差を
+    # ぼかしても総変動は保存されるので、総量で書くと「ぼけの検査」にならない。
+    # 実際この行は総量で書かれていて、2026-09 まで通っていたのは周辺光量落ちが
+    # 画像を暗くしていたから(その周辺光量落ち自体がバグだった)。vignetting を
+    # 切ると 16.000000000000032 対 16.0 で、ぼけは総変動を 1 ミリも減らしていない。
+    assert np.abs(np.diff(cap, axis=1)).max() < np.abs(np.diff(img, axis=1)).max()
     # 決定的(乱数を含まない)
     assert np.array_equal(cap, vd.image_formation(img, f_number=8.0,
                                                   pixel_pitch_um=3.45,
