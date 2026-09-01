@@ -1286,8 +1286,8 @@ def dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None,
     ``noise=False`` returns the exact expectation cube (no sampling).
 
     Ground truth: with ``noise=False`` the per-pixel centroid of the cube returns
-    the input depth map to 8.9e-15 m (pinned in the tests) — the pulse integral
-    is analytic, so the only error is float round-off.
+    the input depth map to an RMS error of 3.2e-16 m (pinned in the tests) — the
+    pulse integral is analytic, so the only error is float round-off.
 
     **Raises** ``ValueError``: a non-2-D, non-finite or non-positive *depth*, a
     *reflectivity* that is negative or not the same shape as *depth*, a *bins*
