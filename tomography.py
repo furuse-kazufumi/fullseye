@@ -1435,25 +1435,26 @@ def sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=1e-6):
     with ``(x0, y0)`` the centre of mass in the slice and ``c`` the offset of the
     rotation axis from the detector centre. Fitting the three unknowns by least
     squares over all views gives *c* directly. Measured on the Shepp-Logan
-    phantom with 180 views, recovering a deliberately introduced shift:
+    phantom with 180 views, recovering a deliberately introduced shift, together
+    with the cost of not correcting it (normalised RMS error of the FBP
+    reconstruction against the truth):
 
-        true shift    estimated       error
-          0.00 px      -0.0000 px     0.0000
-          0.50 px       0.5000 px     0.0000
-          1.00 px       1.0000 px     0.0000
-          2.00 px       2.0000 px     0.0001
+        true shift   estimated    error     uncorrected   after this fix
+          0.00 px    +0.0029 px   0.0029      0.0250          0.0249
+          0.50 px    +0.5029 px   0.0029      0.0537          0.0358
+          1.00 px    +1.0029 px   0.0029      0.1016          0.0249
+          2.00 px    +2.0029 px   0.0029      0.1630          0.0249
 
-    and the cost of *not* correcting it, as the normalised RMS error of the
-    reconstruction against the truth:
-
-        shift   FBP nRMS   what it looks like
-         0.0     0.0166    correct
-         0.5     0.0301    edges softened, 1.8x error
-         1.0     0.0509    visible doubling, 3.1x error
-         2.0     0.0876    unmistakable double image, 5.3x error
-
-    Half a pixel is already a doubling of the error and is *not* obvious by eye,
-    which is why this is a measurement and not an inspection.
+    Three things in that table are worth reading twice. **Half a pixel already
+    doubles the error** (0.0250 -> 0.0537) and does not look like a mistake — it
+    looks like a slightly soft reconstruction, which is why this is a measurement
+    and not an inspection. The estimator's own bias is a **constant 0.0029 px**
+    across every shift, so it is a property of the phantom and the detector
+    sampling, not of the size of the error being measured. And the half-pixel row
+    is the only one the fix does not fully repair (0.0358 against 0.0249),
+    because correcting a *fractional* shift means resampling, and the linear
+    interpolation costs more than the integer shifts do — see
+    :func:`sinogram_center_shift`.
 
     Two things this needs, both refused rather than assumed. The object must be
     **entirely inside the field of view** — the identity is about the whole mass,
