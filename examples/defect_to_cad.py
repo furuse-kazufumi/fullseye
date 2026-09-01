@@ -195,11 +195,28 @@ def main() -> bool:
         print("   [FAIL] miss が最寄りの面に化けた")
         return False
 
+    # 2026-09-02: 閉じた mesh を裏返すと「全部裏面」になり、裏面カリングが手前の
+    # 壁を消して奥の面を『見えている』と返していた。いまは巻きを直したうえで
+    # winding_fixed=True を返す(黙って直さない)。
     flipped = cadmap.cad_pixel_to_surface((V, F[:, ::-1].copy()),
                                           np.array([[W / 2.0, H / 2.0]]), K=K,
                                           R=R, t=t, image_size=(W, H))
-    print(f"   巻きを反転(= 全部裏面): 手前の面は当たらない -> "
-          f"face_id={flipped['face_id'][0]}(遠い面 or miss)")
+    print(f"   巻きを反転(閉じた mesh): winding_fixed={flipped['winding_fixed']} "
+          f"-> 直したうえで手前の面 face_id={flipped['face_id'][0]} を返す")
+    if not flipped["winding_fixed"]:
+        print("   [FAIL] 内向きの巻きが検出されず、黙って通った")
+        return False
+    strict_ok = False
+    try:
+        cadmap.cad_pixel_to_surface((V, F[:, ::-1].copy()),
+                                    np.array([[W / 2.0, H / 2.0]]), K=K, R=R, t=t,
+                                    image_size=(W, H), strict=True)
+    except ValueError:
+        strict_ok = True
+    print(f"   strict=True なら直さず拒否: {strict_ok}")
+    if not strict_ok:
+        print("   [FAIL] strict=True が内向きの巻きを拒否しなかった")
+        return False
 
     for bad, why in ((np.array([["100", "100"]]), "文字列の画素"),
                      (np.array([[True, False]]), "真偽値の画素"),
