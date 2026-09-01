@@ -928,8 +928,8 @@ def range_doppler_map(cube, combine="incoherent", antenna=None, normalize=False)
         k = _count(antenna, "antenna", 0, na - 1)
         arr = arr[k:k + 1]
         na = 1
-    spec = np.fft.fft(arr, axis=2)                     # fast time -> range
-    spec = np.fft.fft(spec, axis=1)                    # slow time -> Doppler
+    spec = _fft_checked(arr, 2, op, "range (fast time)")
+    spec = _fft_checked(spec, 1, op, "Doppler (slow time)")
     spec = np.fft.fftshift(spec, axes=1)               # zero velocity at centre
     if mode == "coherent":
         m = np.abs(spec.mean(axis=0))
