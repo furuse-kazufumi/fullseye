@@ -1764,6 +1764,16 @@ def ex_visual_hull(log) -> dict:
     info = _save_clip(frames, "wing3d_visual_hull", fps=3, thumb_index=n_views - 1, log=log)
     return {
         "name": "wing3d_visual_hull", "title": "visual hull ―― 影を重ねて形を削り出す",
+        "title_en": "Visual hull — carving a shape out of stacked shadows",
+        "caption_en": (
+            f"An L-shaped synthetic object carved by `visual_hull` from silhouettes taken "
+            f"in {n_views} directions. One view gives a column-like blob at "
+            f"**{stats[1]['over']:.2f}x** the true volume; adding views shrinks it to "
+            f"**{stats[n_views]['over']:.2f}x** (IoU {stats[n_views]['iou']:.3f}) at "
+            f"{n_views} views. The concave notch of the L, though, never fills in no "
+            "matter how many views are stacked — that is not implementation slop but the "
+            "principled limit of a visual hull, and the figure shows the convergence "
+            "target is not the truth."),
         "ops": ["look_at", "synthesize_silhouette", "visual_hull"],
         "facts": {"res": res, "views": n_views, "gt_voxels": gt_n,
                   "per_view": {str(k): v for k, v in stats.items()}},
