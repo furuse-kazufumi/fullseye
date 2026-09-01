@@ -652,20 +652,28 @@ def _captions(meta):
         f"`vol_boundary_points`。"))
     ja.append(et.markdown_animation(
         "wingct_view_sweep", "投影数を増やすと像が立ち上がる",
-        f"**投影数を増やすと像が立ち上がる** ―― 同じ被写体を 8 / 16 / 32 / 64 / 128 本で"
-        f"撮り直す。再構成の nRMS は {vs[8]['nrms']:.4f} → {vs[128]['nrms']:.4f} と "
-        f"{vs[8]['nrms']/vs[128]['nrms']:.1f} 倍改善するのに、**体積は "
-        f"{vs[8]['rel_err']:+.1%} → {vs[128]['rel_err']:+.1%} でほとんど動かない**。"
-        f"ストリークは正負が対称に出るので体積では相殺してしまう。壊れを教えるのは"
-        f"連結成分の数({vs[8]['components']} 個 対 {vs[128]['components']} 個)。"
-        f"使用 op: `projection_angles`, `ellipse_sinogram`, "
-        f"`filtered_backprojection`。"))
+        f"**投影数を増やすと像が立ち上がる、が体積はそれを教えない** ―― 同じ被写体を "
+        f"8 / 16 / 32 / 64 / 128 本で撮り直す。**16 本以降**、再構成の nRMS は "
+        f"{vs[16]['nrms']:.4f} → {vs[128]['nrms']:.4f} と "
+        f"{vs[16]['nrms']/vs[128]['nrms']:.1f} 倍良くなるのに、体積は "
+        f"{vs[16]['rel_err']:+.2%} → {vs[128]['rel_err']:+.2%} と "
+        f"{abs(vs[16]['rel_err']-vs[128]['rel_err']):.2%} しか動かない ―― "
+        f"ストリークは物体のまわりに正負が対称に出るので、体積という 1 つの積分量では"
+        f"相殺して消えてしまう。**8 本だけは別**で、そこは体積 "
+        f"{vs[8]['rel_err']:+.1%} も含めて指標そのものが信用できない領域"
+        f"(同じ部品を面内 128 画素で測り直すと -0.0% になり再現しない)。"
+        f"壊れを教えるのは体積ではなく連結成分の数({vs[8]['components']} 個 対 "
+        f"{vs[128]['components']} 個)。使用 op: `projection_angles`, "
+        f"`ellipse_sinogram`, `filtered_backprojection`。"))
     ja.append(et.markdown(
         "wingct_view_tiles", "投影数と体積誤差のタイル",
         f"**同じものをタイルでも** ―― 左上が真値、以下が 8 / 16 / 32 / 64 / 128 本。"
-        f"ラベルは再構成 nRMS と体積誤差。8 本ではストリークで頭蓋の内側が読めないのに、"
-        f"体積誤差は {vs[8]['rel_err']:+.1%} しかない。使用 op: `ellipse_phantom`, "
-        f"`ellipse_sinogram`, `filtered_backprojection`。"))
+        f"ラベルは再構成 nRMS と体積誤差。8 本ではストリークで頭蓋の内側がまったく"
+        f"読めず、16 本でもまだ縞が残る。ところが体積誤差のほうは 16 本ですでに "
+        f"{vs[16]['rel_err']:+.2%} で、128 本の {vs[128]['rel_err']:+.2%} と"
+        f"見分けがつかない ―― **絵が良くなっていく過程が、体積という 1 つの数字には"
+        f"現れない**。使用 op: `ellipse_phantom`, `ellipse_sinogram`, "
+        f"`filtered_backprojection`。"))
     ja.append(et.markdown_animation(
         "wingct_center_shift", "回転中心のずれ",
         f"**回転中心が半画素ずれると、もう二重像になる** ―― 0 / 0.5 / 1 / 2 画素。"
@@ -706,10 +714,12 @@ def _captions(meta):
         "wingct_volume_check", "体積の答え合わせ",
         f"**体積の答え合わせ ―― 何が効いて、何が効かないか** ―― 真値 "
         f"{vc['true_mm3']:.0f} mm³(閉形式)、この格子で二値化しただけの天井が "
-        f"{vc['digitised_mm3']:.0f} mm³。左は投影数 8→128 で振れ幅 "
-        f"{vc['span_views_mm3']:.0f} mm³、右は二値化しきい値 0.30→0.70 で振れ幅 "
+        f"{vc['digitised_mm3']:.0f} mm³。左は投影数 16→128 で振れ幅 "
+        f"{vc['span_views16_mm3']:.0f} mm³(8 本を含めると "
+        f"{vc['span_views_mm3']:.0f} mm³ になるが、その点は格子を変えると再現しない)、"
+        f"右は二値化しきい値 0.30→0.70 で振れ幅 "
         f"{vc['span_threshold_mm3']:.0f} mm³。**しきい値の任意性のほうが "
-        f"{vc['span_threshold_mm3']/max(vc['span_views_mm3'],1e-9):.0f} 倍効く**ので、"
+        f"{vc['span_threshold_mm3']/max(vc['span_views16_mm3'],1e-9):.0f} 倍効く**ので、"
         f"体積を報告するときに書くべきなのは「何本で撮ったか」より"
         f"「どのしきい値で切ったか」。使用 op: `radon_volume`, `fbp_volume`, "
         f"`vol_label`, `vol_region_props`。"))
@@ -728,22 +738,30 @@ def _captions(meta):
         f"`vol_boundary_points`."))
     en.append(et.markdown_animation(
         "wingct_view_sweep", "More projections, and the image stands up",
-        f"**More projections, and the image stands up** — the same object at 8, 16, "
-        f"32, 64 and 128 views. Reconstruction nRMS improves "
-        f"{vs[8]['nrms']:.4f} → {vs[128]['nrms']:.4f}, a factor of "
-        f"{vs[8]['nrms']/vs[128]['nrms']:.1f}, while **the volume barely moves**: "
-        f"{vs[8]['rel_err']:+.1%} → {vs[128]['rel_err']:+.1%}. Streaks appear "
-        f"symmetrically in sign, so they cancel in a single integrated quantity. "
-        f"What does reveal the damage is the component count "
-        f"({vs[8]['components']} against {vs[128]['components']}). Ops used: "
-        f"`projection_angles`, `ellipse_sinogram`, `filtered_backprojection`."))
+        f"**More projections, and the image stands up — but the volume never says "
+        f"so** — the same object at 8, 16, 32, 64 and 128 views. **From 16 views "
+        f"on**, reconstruction nRMS improves {vs[16]['nrms']:.4f} → "
+        f"{vs[128]['nrms']:.4f}, a factor of "
+        f"{vs[16]['nrms']/vs[128]['nrms']:.1f}, while the volume moves by only "
+        f"{abs(vs[16]['rel_err']-vs[128]['rel_err']):.2%} "
+        f"({vs[16]['rel_err']:+.2%} → {vs[128]['rel_err']:+.2%}): streaks appear "
+        f"symmetrically in sign around the object, so they cancel inside a single "
+        f"integrated quantity. **The 8-view point is different** — there the "
+        f"measure itself is untrustworthy (its {vs[8]['rel_err']:+.1%} does not "
+        f"reproduce; the same part on a 128-pixel grid gives -0.0%). What does "
+        f"reveal the damage is the component count ({vs[8]['components']} against "
+        f"{vs[128]['components']}). Ops used: `projection_angles`, "
+        f"`ellipse_sinogram`, `filtered_backprojection`."))
     en.append(et.markdown(
         "wingct_view_tiles", "View count and volume error, tiled",
         f"**The same thing as a tile** — the truth top left, then 8 / 16 / 32 / 64 / "
         f"128 views. Labels carry the reconstruction nRMS and the volume error. At "
-        f"8 views the inside of the skull is unreadable through the streaks, yet "
-        f"the volume is off by only {vs[8]['rel_err']:+.1%}. Ops used: "
-        f"`ellipse_phantom`, `ellipse_sinogram`, `filtered_backprojection`."))
+        f"8 views the inside of the skull is lost entirely in streaks and at 16 the "
+        f"fringes are still visible, yet the volume error is already "
+        f"{vs[16]['rel_err']:+.2%} at 16 views and indistinguishable from the "
+        f"{vs[128]['rel_err']:+.2%} at 128 — **the visible improvement does not "
+        f"show up in the number**. Ops used: `ellipse_phantom`, "
+        f"`ellipse_sinogram`, `filtered_backprojection`."))
     en.append(et.markdown_animation(
         "wingct_center_shift", "A miscentred axis of rotation",
         f"**Half a pixel of centre error is already a double image** — 0, 0.5, 1 and "
@@ -789,12 +807,14 @@ def _captions(meta):
         f"**Checking the volume — what matters, and what does not** — the closed-form "
         f"truth is {vc['true_mm3']:.0f} mm³, and merely digitising it on this grid "
         f"already gives {vc['digitised_mm3']:.0f} mm³. On the left, sweeping the "
-        f"view count from 8 to 128 moves the answer by "
-        f"{vc['span_views_mm3']:.0f} mm³; on the right, sweeping the binarisation "
+        f"view count from 16 to 128 moves the answer by "
+        f"{vc['span_views16_mm3']:.0f} mm³ (including the 8-view point makes it "
+        f"{vc['span_views_mm3']:.0f} mm³, but that point does not reproduce on a "
+        f"different grid); on the right, sweeping the binarisation "
         f"threshold from 0.30 to 0.70 moves it by "
         f"{vc['span_threshold_mm3']:.0f} mm³. **The arbitrariness of the threshold "
         f"matters "
-        f"{vc['span_threshold_mm3']/max(vc['span_views_mm3'],1e-9):.0f}x more than "
+        f"{vc['span_threshold_mm3']/max(vc['span_views16_mm3'],1e-9):.0f}x more than "
         f"the view count**, so the number to publish alongside a volume is which "
         f"threshold cut it, not how many views took it. Ops used: `radon_volume`, "
         f"`fbp_volume`, `vol_label`, `vol_region_props`."))

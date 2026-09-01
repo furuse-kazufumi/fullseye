@@ -201,11 +201,17 @@ def run_ground_truth() -> int:
     checks += 1
 
     # 2) hx_gabor: DC 除去済みなので平坦画像には無反応(分散≈0)、テクスチャには反応。
+    #    2026-09-02: 正規化を「画像ごとの min–max 引き伸ばし」から **カーネル L1 で割る
+    #    固定スケール** に変えたので、応答の絶対値は約 1/10 になった(実測 var
+    #    8.86e-05、std 0.00941、max 0.0861)。ここで見たいのは「平坦 = 0 に対して
+    #    テクスチャは反応する」ことなので、引き伸ばし後の大きさに合わせた魔法の数
+    #    (旧 var > 1e-4)ではなく **平坦との比** で書く。
     const = np.full((n, n), 0.42)
     resp_tex = by["hx_gabor"].fn(img, 0.3, 0.5)
     resp_flat = by["hx_gabor"].fn(const, 0.3, 0.5)
     assert float(resp_flat.var()) < 1e-12, "gabor が平坦画像に反応した(DC 漏れ)"
-    assert float(resp_tex.var()) > 1e-4, "gabor がテクスチャに無反応(beat-the-null: 平坦=0)"
+    assert float(resp_tex.std()) > 100.0 * float(resp_flat.std()) + 1e-4, (
+        "gabor がテクスチャに無反応(beat-the-null: 平坦=0)")
     checks += 1
 
     # 3) hx_char_threshold: 出力は二値、かつ暗い文字画素を選ぶ=前景平均 < 全体平均。

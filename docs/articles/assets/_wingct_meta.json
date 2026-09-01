@@ -22,5 +22,278 @@
     "vol_boundary_points"
    ]
   }
+ },
+ "view_sweep": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingct_view_sweep.gif",
+  "sha256": "fe860888293fe5bd7fc6a44c1891d2cb45fa7587d07bc504ae9c3f13c189d32a",
+  "data": {
+   "rows": [
+    {
+     "views": 8,
+     "nrms": 0.3635,
+     "volume_mm3": 17417.5,
+     "rel_err": 0.03436,
+     "components": 175
+    },
+    {
+     "views": 16,
+     "nrms": 0.2341,
+     "volume_mm3": 16903.0,
+     "rel_err": 0.00381,
+     "components": 59
+    },
+    {
+     "views": 32,
+     "nrms": 0.1362,
+     "volume_mm3": 16900.3,
+     "rel_err": 0.00364,
+     "components": 1
+    },
+    {
+     "views": 64,
+     "nrms": 0.0668,
+     "volume_mm3": 16900.3,
+     "rel_err": 0.00364,
+     "components": 1
+    },
+    {
+     "views": 128,
+     "nrms": 0.0334,
+     "volume_mm3": 16895.5,
+     "rel_err": 0.00336,
+     "components": 1
+    }
+   ],
+   "ops": [
+    "projection_angles",
+    "ellipse_sinogram",
+    "filtered_backprojection",
+    "radon_volume",
+    "fbp_volume",
+    "vol_label",
+    "vol_region_props"
+   ]
+  }
+ },
+ "view_tiles": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_view_tiles.png",
+  "sha256": "5eb87d5aa3605ea755228024dfc52a04c981d2e082540b55c7535ec320370cfa",
+  "data": {
+   "rows": [
+    {
+     "views": 8,
+     "nrms": 0.3635,
+     "rel_err": 0.03436
+    },
+    {
+     "views": 16,
+     "nrms": 0.2341,
+     "rel_err": 0.00381
+    },
+    {
+     "views": 32,
+     "nrms": 0.1362,
+     "rel_err": 0.00364
+    },
+    {
+     "views": 64,
+     "nrms": 0.0668,
+     "rel_err": 0.00364
+    },
+    {
+     "views": 128,
+     "nrms": 0.0334,
+     "rel_err": 0.00336
+    }
+   ],
+   "ops": [
+    "ellipse_phantom",
+    "ellipse_sinogram",
+    "filtered_backprojection"
+   ]
+  }
+ },
+ "center_shift": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingct_center_shift.gif",
+  "sha256": "68ad26531c7e59bcfff9c868a74015e70aec164d376011b16b2bfa7c4f1f1ed7",
+  "data": {
+   "rows": [
+    {
+     "shift_px": 0.0,
+     "estimate_px": 0.0029,
+     "nrms": 0.025
+    },
+    {
+     "shift_px": 0.5,
+     "estimate_px": 0.5029,
+     "nrms": 0.0537
+    },
+    {
+     "shift_px": 1.0,
+     "estimate_px": 1.0029,
+     "nrms": 0.1016
+    },
+    {
+     "shift_px": 2.0,
+     "estimate_px": 2.0029,
+     "nrms": 0.163
+    }
+   ],
+   "ops": [
+    "sinogram_center_shift",
+    "sinogram_center_of_rotation",
+    "filtered_backprojection"
+   ]
+  }
+ },
+ "limited_angle": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_limited_angle.png",
+  "sha256": "88bbbfbe30a7e2a069c4e6995dcf3bf03f3029e0d3f00d0781012671e28eda31",
+  "data": {
+   "rows": [
+    {
+     "span_deg": 180.0,
+     "nrms": 0.025,
+     "sector_energy": [
+      0.966,
+      0.947,
+      0.943,
+      0.944,
+      0.947,
+      0.968
+     ]
+    },
+    {
+     "span_deg": 120.0,
+     "nrms": 0.1302,
+     "sector_energy": [
+      0.933,
+      0.941,
+      0.955,
+      0.913,
+      0.079,
+      0.121
+     ]
+    },
+    {
+     "span_deg": 90.0,
+     "nrms": 0.1591,
+     "sector_energy": [
+      0.933,
+      0.939,
+      0.956,
+      0.175,
+      0.067,
+      0.132
+     ]
+    },
+    {
+     "span_deg": 60.0,
+     "nrms": 0.1811,
+     "sector_energy": [
+      0.933,
+      0.921,
+      0.105,
+      0.073,
+      0.054,
+      0.119
+     ]
+    }
+   ],
+   "ops": [
+    "ellipse_sinogram",
+    "filtered_backprojection"
+   ]
+  }
+ },
+ "beam_hardening": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_beam_hardening.png",
+  "sha256": "0fae3a08cb5cdeb6befe8bb3361f0cf15165f8b328d9e9c8d7b1d5b69dae269b",
+  "data": {
+   "cup_clean": 1.0006,
+   "cup_hardened": 0.9335,
+   "cup_corrected": 1.0006,
+   "roundtrip_max": 3.396201175842606e-08,
+   "ops": [
+    "ellipse_sinogram",
+    "beam_hardening_apply",
+    "beam_hardening_correct",
+    "filtered_backprojection"
+   ]
+  }
+ },
+ "rings": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_rings.png",
+  "sha256": "2c51613ba1bb5f301166b9fb4da5f822867db412b35019007f65fd48383b050b",
+  "data": {
+   "nrms_clean": 0.025,
+   "nrms_ringed": 0.0643,
+   "nrms_fixed": 0.0358,
+   "recovered": 0.723,
+   "ops": [
+    "ring_artifact_apply",
+    "ring_artifact_remove",
+    "filtered_backprojection"
+   ]
+  }
+ },
+ "volume_check": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_volume_check.png",
+  "sha256": "d6710e55e9d200e87581e8ac6d850ea396f2f09ea443f1fd1aa7f4cfe5fc010e",
+  "data": {
+   "true_mm3": 16838.9,
+   "digitised_mm3": 16862.6,
+   "views": [
+    8,
+    16,
+    32,
+    64,
+    128
+   ],
+   "volume_by_views": [
+    17417.5,
+    16903.0,
+    16900.3,
+    16900.3,
+    16895.5
+   ],
+   "components_by_views": [
+    175,
+    59,
+    1,
+    1,
+    1
+   ],
+   "nrms_by_views": [
+    0.2218,
+    0.1317,
+    0.0717,
+    0.0352,
+    0.0177
+   ],
+   "threshold_fracs": [
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7
+   ],
+   "volume_by_threshold": [
+    17157.5,
+    17019.7,
+    16895.5,
+    16774.8,
+    16624.5
+   ],
+   "span_views_mm3": 522.0,
+   "span_views16_mm3": 7.5,
+   "span_threshold_mm3": 533.0,
+   "ops": [
+    "radon_volume",
+    "fbp_volume",
+    "vol_label",
+    "vol_region_props"
+   ]
+  }
  }
 }
