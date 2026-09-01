@@ -216,7 +216,7 @@
     "file": "docs/articles/assets/media/wing2d_denoise_compare.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg",
     "frames": 12,
-    "bytes": 2869299,
+    "bytes": 2864662,
     "size": [
       948,
       1094
@@ -290,15 +290,15 @@
         ]
       },
       "sigma_estimated_by_op": [
-        0.3523,
-        0.6677,
-        0.9695,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0,
-        1.0
+        0.0263,
+        0.0498,
+        0.0723,
+        0.094,
+        0.1151,
+        0.1352,
+        0.1548,
+        0.1737,
+        0.192
       ],
       "winner_per_sigma": [
         "bilateral",
@@ -314,8 +314,8 @@
     },
     "caption": "同じ写真に σ=0.020→0.220 の白色ノイズを乗せ、median・bilateral・non-local means を固定パラメータで当てて PSNR を実測した 6 パネル。弱いノイズ (σ=0.020) では bilateral が 30.00 dB で最良だが、強いノイズ (σ=0.220) では median が 23.09 dB で逆転する —— 「どれが一番強いか」はノイズ量と設定次第で、掃引の途中で順位が 2 度入れ替わった。ノイズ画像そのものは 34.04→14.34 dB。",
     "sha256": {
-      "wing2d_denoise_compare.gif": "83bf4817c82af75b669c345ed41c7d2c853728eb93ac8747dfbd786cf13069ed",
-      "wing2d_denoise_compare_720.jpg": "561a25d9b318973e147d31a4b00f2165530f221d03b553b7c5ca347962dacb02"
+      "wing2d_denoise_compare.gif": "09f41e965737336e86b5167bf1b767ddaa9023a73a5a968890261a86a6fe5bab",
+      "wing2d_denoise_compare_720.jpg": "fbe03283134c3c06e74af1e1f8eccecb0b24b60485600de387cb2b73e2d4c228"
     }
   },
   {
@@ -714,7 +714,7 @@
     "file": "docs/articles/assets/media/wing2d_hist_shaping.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_hist_shaping_720.jpg",
     "frames": 15,
-    "bytes": 2791162,
+    "bytes": 2773965,
     "size": [
       1108,
       688
@@ -773,18 +773,18 @@
           0.2994
         ],
         "cl": [
-          0.2379,
-          0.2352,
-          0.2346,
-          0.2349,
-          0.236,
-          0.2364,
-          0.2382,
-          0.2412,
-          0.2402,
-          0.2451,
-          0.2458,
-          0.251
+          0.2403,
+          0.2362,
+          0.2363,
+          0.2336,
+          0.2333,
+          0.2308,
+          0.2297,
+          0.2284,
+          0.2232,
+          0.2171,
+          0.203,
+          0.1709
         ]
       },
       "entropy_norm": {
@@ -817,25 +817,25 @@
           0.9883
         ],
         "cl": [
-          0.9551,
-          0.954,
-          0.9531,
-          0.9533,
-          0.9549,
-          0.9544,
-          0.9557,
-          0.9579,
-          0.956,
-          0.9591,
-          0.957,
-          0.9589
+          0.9569,
+          0.9526,
+          0.952,
+          0.9482,
+          0.945,
+          0.9416,
+          0.938,
+          0.9338,
+          0.9218,
+          0.9061,
+          0.8749,
+          0.8191
         ]
       }
     },
-    "caption": "文書画像のコントラストを 1.00→0.16 倍まで潰していき、equalize と clahe で戻せるかを追った。入力の標準偏差は 0.2228→0.0356 まで落ちるが、equalize 後は 0.2931→0.2994、clahe 後は 0.2379→0.2510 にとどまる。ヒストグラムは入力が針のように細くなっても、平坦化した側は幅を保ったままだ。",
+    "caption": "文書画像のコントラストを 1.00→0.16 倍まで潰していき、equalize と clahe で戻せるかを追った。入力の標準偏差は 0.2228→0.0356 まで落ちるが、equalize 後は 0.2931→0.2994、clahe 後は 0.2403→0.1709 にとどまる。ヒストグラムは入力が針のように細くなっても、平坦化した側は幅を保ったままだ。",
     "sha256": {
-      "wing2d_hist_shaping.gif": "5afe9abef5865c5ab38babbffd4e1746e6ef72d83bb4c98362faffa3ce1730ae",
-      "wing2d_hist_shaping_720.jpg": "9499cf0489d3916e59011e6375ba5459cfa0825ee59c52a6608477db511f80b3"
+      "wing2d_hist_shaping.gif": "9bb6464ddd93a3a8b8a5a3a0f9a8b8ecee22e04e8ea9cb453e2dbf877875472a",
+      "wing2d_hist_shaping_720.jpg": "0929bcd08bc958bc002dcd69afe9a383b5e83971b9b3108c227269c4b1f91ef3"
     }
   },
   {
@@ -1201,10 +1201,10 @@
       "max_abs_angle_error_deg": 2.0,
       "max_abs_position_error_px": 0,
       "min_score": 0.8639,
-      "seconds_per_search": 2.523,
+      "seconds_per_search": 2.43,
       "device": "cpu"
     },
-    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり約 2.5 秒(CPU、72 角度ぶんの探索を含む)。",
+    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり約 2.4 秒(CPU、72 角度ぶんの探索を含む)。",
     "sha256": {
       "wing2d_shape_match.gif": "e6654500e8863b0c4fb1e2416dfb5c3c542ace5f94a68814a4aa3bf97fb21919",
       "wing2d_shape_match_thumb.jpg": "447c90115fcddd869488e096101525c81748c9b43a04755d151cf1502a733e84"
@@ -1338,15 +1338,15 @@
     "file": "docs/articles/assets/wing2d_texture_zoo.png",
     "thumb": "docs/articles/assets/wing2d_texture_zoo_thumb.jpg",
     "frames": 1,
-    "bytes": 1066526,
+    "bytes": 893560,
     "size": [
       1084,
       1022
     ],
     "panels": 12,
     "sha256": {
-      "wing2d_texture_zoo.png": "63d3d0114bfacda8e8b88691ff94265df86d9e7dd1241d6af31cdc4482ea1d66",
-      "wing2d_texture_zoo_thumb.jpg": "bfbacdbcbfc4be90e2d6957f01c8b4baf5708c0920562771fdc0837e2d2a359d"
+      "wing2d_texture_zoo.png": "563500a2580eef74f6e7bab5875ab2447fa819633b405989805b51ad16fd4e68",
+      "wing2d_texture_zoo_thumb.jpg": "abbd32e03c0b26cd0074ef0beed70aebcaf63c0a64429b918a4eccb74817d516"
     },
     "title": "テクスチャの見分け —— 特徴量で模様を分ける",
     "ops": [

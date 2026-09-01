@@ -50,7 +50,7 @@
 
 ![ヒストグラム整形 —— equalize と clahe](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_hist_shaping.gif)
 
-*↑ **ヒストグラム整形 —— equalize と clahe** ―― 文書画像のコントラストを 1.00→0.16 倍まで潰していき、equalize と clahe で戻せるかを追った。入力の標準偏差は 0.2228→0.0356 まで落ちるが、equalize 後は 0.2931→0.2994、clahe 後は 0.2379→0.2510 にとどまる。ヒストグラムは入力が針のように細くなっても、平坦化した側は幅を保ったままだ。使用 op: `equalize`, `clahe`, `gray_histo_abs`, `entropy_gray`。*
+*↑ **ヒストグラム整形 —— equalize と clahe** ―― 文書画像のコントラストを 1.00→0.16 倍まで潰していき、equalize と clahe で戻せるかを追った。入力の標準偏差は 0.2228→0.0356 まで落ちるが、equalize 後は 0.2931→0.2994、clahe 後は 0.2403→0.1709 にとどまる。ヒストグラムは入力が針のように細くなっても、平坦化した側は幅を保ったままだ。使用 op: `equalize`, `clahe`, `gray_histo_abs`, `entropy_gray`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_hist_shaping_720.jpg -->
 
@@ -100,7 +100,7 @@
 
 ![形状マッチング —— 回っていても見つける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_shape_match.gif)
 
-*↑ **形状マッチング —— 回っていても見つける** ―― 96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり約 2.5 秒(CPU、72 角度ぶんの探索を含む)。使用 op: `create_shape_model`, `find_shape_model (角度探索つき)`。*
+*↑ **形状マッチング —— 回っていても見つける** ―― 96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり約 2.4 秒(CPU、72 角度ぶんの探索を含む)。使用 op: `create_shape_model`, `find_shape_model (角度探索つき)`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_shape_match_thumb.jpg -->
 
