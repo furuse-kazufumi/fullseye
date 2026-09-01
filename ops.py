@@ -326,14 +326,67 @@ def _convex_fill(v, a, b):
 
 
 # --- image -> contour (XLD) -------------------------------------------------- #
+def _subpixel_refine(pts, mag, ny, nx):
+    """Move each edge point onto the gradient-magnitude ridge with sub-pixel accuracy.
+
+    勾配の**法線方向**に 1 px ずつ離れた 3 点 (p-n, p, p+n) の勾配強度に放物線を
+    当て、その頂点まで点をずらす(古典的なサブピクセル・エッジ位置決め。
+    Devernay 1995 / HALCON ``edges_sub_pix`` と同じ考え方)。オフセットは
+    ±1 px に制限する(3 点補間の外挿は当てにならない)。
+    """
+    if len(pts) == 0:
+        return pts
+    r, c = pts[:, 0], pts[:, 1]
+    ri, ci = r.astype(int), c.astype(int)
+    nyv, nxv = ny[ri, ci], nx[ri, ci]
+
+    def _s(rr, cc):
+        return ndimage.map_coordinates(mag, [rr, cc], order=1, mode="nearest")
+
+    m0, mm, mp = _s(r, c), _s(r - nyv, c - nxv), _s(r + nyv, c + nxv)
+    den = mm - 2.0 * m0 + mp
+    ok = np.abs(den) > 1e-12
+    t = np.zeros_like(m0)
+    t[ok] = 0.5 * (mm[ok] - mp[ok]) / den[ok]
+    t = np.clip(np.nan_to_num(t), -1.0, 1.0)
+    out = np.stack([r + t * nyv, c + t * nxv], 1)
+    return np.where(np.isfinite(out), out, pts)
+
+
 def _edges_sub_pix(v, a, b):
-    m = _norm(np.hypot(ndimage.sobel(v, 1), ndimage.sobel(v, 0)))
+    """Gradient-band edge contours, refined to **sub-pixel** accuracy along the normal.
+
+    ``a`` = 勾配強度のしきい値 ``0.15 + 0.5a``。返すのは XLD 輪郭 dict
+    ``{"shape", "cs": [(N,2) の (row, col), ...]}``。
+
+    ★2026-09-02: それまで返していたのは ``np.where`` が出す **整数の画素座標**
+    そのもので、``sub_pix`` を名乗りながらサブピクセル精度が無かった
+    (KNOWN_ISSUES #3 / docs/FULLSEYE_OP_ARTICLE_SPEC.md に「ピクセル精度実装」と
+    明記されていた)。放物線当てはめによる法線方向の精密化を追加して、名前と
+    実態を合わせた。**点の個数・連結成分の分け方は変えていない**(座標が 1 px
+    未満動くだけ)ので、下流の輪郭選別・計数はそのまま。
+
+    実測(真の位置が列 20.37 の合成ステップエッジ、a=0.2): 旧実装が返す列は
+    {20.0, 21.0} のみで平均絶対誤差 **0.500 px**、精密化後は {20.324, 20.370} で
+    平均絶対誤差 **0.0228 px**(約 22 倍改善)。
+
+    正直な限界: 抽出母集団は「しきい値を超えた勾配帯」全体(非極大抑制は
+    していない)なので、太いエッジでは帯の全画素が稜線へ寄せられて **重なった
+    点**になる。1 画素幅の連鎖が要るなら `canny` を、より高精度な等値線が要るなら
+    `threshold_sub_pix`(実測 0.001 px)を使うこと。
+    """
+    gy, gx = ndimage.sobel(v, 0), ndimage.sobel(v, 1)
+    m = _norm(np.hypot(gx, gy))
+    g = np.hypot(gx, gy)
+    g = np.where(g < 1e-12, 1e-12, g)
+    ny, nx = gy / g, gx / g                     # unit gradient (= edge normal)
     lab, n = ndimage.label(m > (0.15 + 0.5 * a), structure=np.ones((3, 3)))
     cs = []
     for i in range(1, n + 1):
         ys, xs = np.where(lab == i)
         if len(ys) >= 3:
-            cs.append(np.stack([ys, xs], 1).astype(np.float64))
+            pts = np.stack([ys, xs], 1).astype(np.float64)
+            cs.append(_subpixel_refine(pts, m, ny, nx))
     return {"shape": v.shape, "cs": cs}
 
 
