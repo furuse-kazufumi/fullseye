@@ -2544,19 +2544,31 @@ def ex_envelope_flow(log):
     ax.yticks(ink, [0.0, 0.025, 0.05, 0.075], "%.3f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
+    ax.curve(ink, es_ctrl["freqs"], es_ctrl["magnitude"], width=1)
+    fig.stamp(ink, C_DIM)
+    ink = fig.ink()
     ax.curve(ink, es["freqs"], es["magnitude"], width=2)
     fig.stamp(ink, C_C)
     ink = fig.ink()
     ink.marks([(ax.X(es["peak_freq"]), ax.Y(es["peak_amplitude"]))], size=8,
               shape="cross", width=2)
     fig.stamp(ink, C_TRUE)
-    fig.text(ax.X(es["peak_freq"]) + 8, 66,
+    _legend(fig, PW - 300, 62, [("this record", C_C),
+                                ("white-noise control, same band", C_DIM)])
+    fig.text(ax.X(es["peak_freq"]) + 8, 110,
              f"peak {es['peak_freq']:.6f} Hz", C_TRUE, 12, True)
-    fig.text(ax.X(es["peak_freq"]) + 8, 84,
+    fig.text(ax.X(es["peak_freq"]) + 8, 128,
              f"prominence {es['peak_prominence']:.1f}", C_C, 11, True)
-    fig.text(82, PH - 40, f"resolution {es['resolution_hz']:.6f} Hz/bin. Rebuilt by "
+    fig.text(ax.X(es["peak_freq"]) + 8, 144,
+             f"control  {es_ctrl['peak_prominence']:.1f} at "
+             f"{es_ctrl['peak_freq']:.0f} Hz", C_DIM, 11, True)
+    fig.text(82, PH - 58, f"resolution {es['resolution_hz']:.6f} Hz/bin. Rebuilt by "
                           f"hand from dsp.bandpass + dsp.envelope + rfft, the two "
                           f"agree to {agree:.2e}.", C_DIM, 12)
+    fig.text(82, PH - 40, f"prominence separates what band_fraction could not: "
+                          f"{es['peak_prominence']:.0f} against the control's "
+                          f"{es_ctrl['peak_prominence']:.0f}. Return numbers, not a "
+                          f"verdict - that is the design.", C_C, 12)
     steps.append(fig.u8())
 
     # 7. 幾何と照合
