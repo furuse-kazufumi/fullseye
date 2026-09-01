@@ -961,6 +961,22 @@ TYPE_CHECKS = {
     # stokes = Stokes ベクトル(長さ 4 固定の実、偏光度 <= 1 が物理制約)
     "stokes": lambda v: isinstance(v, np.ndarray) and v.shape == (4,)
     and v.dtype.kind == "f",
+    # mesh = ``(V (nv,3), F (nf,3))`` の **2 要素**タプル。pose と同じく
+    # **型ではなく形**で判定する(GPU backend を持つ op は torch.Tensor を返す
+    # のがこの repo の約束で、isinstance(np.ndarray) と書くと述語の側が間違う)。
+    #
+    # ★ 「2 要素ちょうど」は pose(`len >= 2` で info を許す)と**わざと違う**。
+    # 実測 2026-09-02: mesh を 1 引数で受ける既存 consumer 4 件
+    # (face_normals / vertex_normals / mesh_area / vertex_curvature)は
+    # 3-tuple に対して "mesh must be a 2-element tuple (vertices, faces)" を
+    # 送出し、cadmap の `_mesh` と render3d._mesh_arrays も 2 要素しか受けない。
+    # つまり **この repo の mesh sort の正典は 2-tuple** で、余分な要素は
+    # 「情報が多い」のではなく下流が全滅する型の嘘になる。唯一の例外だった
+    # `voxel_to_mesh`((v, f, n) を返す)は ops3d.RESULT_ADAPTERS で正典の
+    # 並びを取り出すようにした(gicp / vol_label と同じ扱い)。
+    "mesh": lambda v: isinstance(v, (tuple, list)) and len(v) == 2
+    and len(getattr(v[0], "shape", ())) == 2 and tuple(v[0].shape)[1:] == (3,)
+    and len(getattr(v[1], "shape", ())) == 2 and tuple(v[1].shape)[1:] == (3,),
 }
 
 
