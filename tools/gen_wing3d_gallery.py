@@ -1827,7 +1827,13 @@ def ex_obb(log) -> dict:
     sel = np.sort(rng.choice(pts.shape[0], size=min(12000, pts.shape[0]), replace=False))
     shown = pts[sel]
 
-    obb_corners = np.asarray(o["corners"], np.float64)[:, [2, 1, 0]]     # -> (x,y,z)
+    # ワイヤフレームは center/axes/extents から自分で 8 隅を組む。
+    # o["corners"] の並び順は仕様化されていないので、「各頂点から近い 3 本が辺」
+    # という推測で結ぶと **面対角線を辺として描いてしまう**(20x10x8 の箱では
+    # 面対角 25.6 < 長辺 40 なので実際に起きた)。順序の分かる作り方に寄せる。
+    obb_axes_xyz = np.asarray(o["axes"], np.float64)[[2, 1, 0], :]       # 行を (x,y,z) へ
+    obb_corners = _box_corners(np.asarray(o["center"], np.float64)[[2, 1, 0]],
+                               np.asarray(o["extents"], np.float64), obb_axes_xyz)
     ib_min = np.asarray(ib["min"], np.float64); ib_max = np.asarray(ib["max"], np.float64)
     ib_c = (ib_min + ib_max) / 2.0
     ib_h = (ib_max - ib_min) / 2.0
