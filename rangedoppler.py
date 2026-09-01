@@ -1018,8 +1018,8 @@ def range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1,
     if not 0.0 <= frac <= 1.0:
         raise ValueError("%s: min_fraction must be in [0, 1], got %g" % (op, frac))
     nd, nr = m.shape
-    if nd < 3 or nr < 3:
-        raise ValueError("%s: rdmap is %dx%d; a local maximum needs at least 3 "
+    if nd < 2 or nr < 2:
+        raise ValueError("%s: rdmap is %dx%d; a local maximum needs at least 2 "
                          "cells along each axis" % (op, nd, nr))
     peak = float(m.max())
     if peak <= 0.0:
