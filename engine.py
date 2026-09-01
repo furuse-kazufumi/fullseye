@@ -43,12 +43,24 @@ def diagnose_stages(stages) -> list[dict]:
 
     Returns a list of problem dicts ``{"index", "op", "severity", "message"}``
     (``severity`` = ``"error"`` for an unknown operator, ``"warning"`` for a
-    sort mismatch between adjacent stages). An empty list means the pipeline is
-    structurally sound. Pure / Qt-free — reused by the Studio diagnostics panel.
+    sort mismatch between adjacent stages). A sort-mismatch dict additionally
+    carries ``"prev_index"`` / ``"prev_op"`` — the upstream stage that produced
+    the incompatible sort. An empty list means the pipeline is structurally
+    sound. Pure / Qt-free — reused by the Studio diagnostics panel.
+
+    **Numbering (2026-09-02).** ``index`` / ``prev_index`` are **0-based**
+    (they index *stages* directly, so they can be used to select a row).
+    ``message`` is prose meant for a human and numbers stages **1-based** —
+    the same numbering Studio's Problems panel and the Program view show. The
+    two used to be mixed inside a single rendered line ("stage 5
+    (circularity_xld): stage 3 (sk_clear_border) ...", where sk_clear_border is
+    the 4th stage on screen), which sent readers to the wrong stage. Format the
+    dict yourself from ``prev_index`` if you need a different convention.
     """
     problems = []
     prev_out = None
     prev_name = None
+    prev_index = None
     for i, st in enumerate(stages):
         name = st[0] if isinstance(st, (tuple, list)) else st
         op = api.find_op(name)
@@ -57,14 +69,19 @@ def diagnose_stages(stages) -> list[dict]:
                              "message": "unknown operator %r" % name})
             prev_out = _ANY            # don't cascade sort warnings past an unknown op
             prev_name = name
+            prev_index = i
             continue
         if prev_out is not None and not _compatible(prev_out, op.in_sort):
             problems.append({
                 "index": i, "op": op.name, "severity": "warning",
+                "prev_index": prev_index, "prev_op": prev_name,
+                # 1-based in the prose, to match the Problems-panel heading that
+                # renders this same line's own index as index+1.
                 "message": "stage %d (%s) outputs '%s' but %s expects '%s'"
-                           % (i - 1, prev_name, prev_out, op.name, op.in_sort)})
+                           % (prev_index + 1, prev_name, prev_out, op.name, op.in_sort)})
         prev_out = op.out_sort
         prev_name = op.name
+        prev_index = i
     return problems
 
 

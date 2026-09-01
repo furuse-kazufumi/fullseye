@@ -31,7 +31,7 @@
 <p>| <code style="color:#22d3bf">find_peaks</code> | 両方のピーク報告 op が使っていない。単側振幅正規化と DC 除外を先に適用する必要があり、返すのは自前の雑音床に対する突出度だから |</p>
 <p>| <code style="color:#22d3bf">rms</code> | <code style="color:#22d3bf">percentile_level</code> は**厳密に <code style="color:#22d3bf">window_s</code> 幅の非重複ブロック**が要る。<code style="color:#22d3bf">dsp.rms</code> のフレーム版は既定が 50 % 重複で、そのまま使うと相関した標本上のパーセンタイルになってしまう |</p>
 <p><b>音響ビームフォーマは意図的に置いていません。</b> <code style="color:#22d3bf">rangedoppler</code> が複素ベースバンドのビートキューブと単一搬送波長の位相ランプで組んだ遅延和を既に持っています。広帯域の実信号を扱うマイクアレイは別レジームで(操舵遅延が素子ごとの位相 1 個ではなく<b>非整数サンプル遅延</b>になる)、互換性のない 2 つ目のビームフォーマを repo に足すのは 0 個より悪い。将来やるなら<b>既存の隣に置いて操舵行列のコードを共有する</b>のが筋です。</p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)— 見つけた実バグ 5 件</h3>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)— 見つけた実バグ 6 件</h3>
 <p>全 op が入力を検証してから計算します。探したのは「例外が出る」ことではなく「<b>黙って間違った数字を返す</b>」ことでした。以下は敵対監査で<b>実際に見つかったバグ</b>と、それを塞ぐために仕掛けた罠です。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">1. パッドを跨ぐフレームが「最も衝撃的」に見えて、白色雑音から過渡を捏造する</h3>
 <p><code style="color:#22d3bf">stft</code> は逆変換を厳密にするために信号の両端を窓 1 つ分ゼロで埋めます。その結果、先頭と末尾のフレームは<b>半分が空</b>になります。半分が空のフレームというのは、この世でいちばん衝撃的な信号です。<code style="color:#22d3bf">spectral_kurtosis</code> が全フレームを平均していたので、<b>中身が何もない白色雑音から強い過渡が生えました</b>。嘘の大きさはパッドがフレームに占める割合で決まります(内側だけの平均、パッド込みの平均、パッド込みの最大値):</p>
@@ -51,7 +51,7 @@
 <p>| 64 | 2.50 ms | 5.38 | 2000 Hz | 400 Hz |</p>
 <p>| 128 | 5.00 ms | 1.66 | 1600 Hz | 200 Hz |</p>
 <p>| <b>256</b> | <b>10.00 ms</b> | <b>−0.13</b> | <b>12200 Hz</b> | 100 Hz |</p>
-<p>最後の行が失敗の形です。10 ms のフレームを 9.35 ms 間隔の衝撃に当てると、<b>負の</b>尖度を、共振とまったく関係ない 12200 Hz で報告します。<b>ここでも例外は出ません。</b> 対策は既定窓を短く(上限 256 → 64)し、<code style="color:#22d3bf">window_seconds</code> を返して「期待する反復周期と比べてください」と言えるようにしたこと。窓を掃引することはこの op の<b>使い方の一部</b>であって最適化ではない、と明記しました。掃引を超えて残るのは 1 本の bin ではなく<b>帯域</b>です(雑音入り信号の win=64 での上位 6 bin は 2000 / 2400 / 1600 / 4000 / 3600 / 1200 Hz で、真の 3000 Hz を挟むがどれも 3000 ではない)。それで十分で、<code style="color:#22d3bf">max_freq ± 1 bin</code> をそのまま <code style="color:#22d3bf">envelope_spectrum</code> に渡すと <b>107.0000 Hz</b> が出ます。</p>
+<p>最後の行が失敗の形です。10 ms のフレームを 9.35 ms 間隔の衝撃に当てると、<b>負の</b>尖度を、共振とまったく関係ない 12200 Hz で報告します。<b>ここでも例外は出ません。</b> 対策は既定窓を短く(上限 256 → 64)し、<code style="color:#22d3bf">window_seconds</code> を返して「期待する反復周期と比べてください」と言えるようにしたこと。窓を掃引することはこの op の<b>使い方の一部</b>であって最適化ではない、と明記しました。掃引を超えて残るのは 1 本の bin ではなく<b>帯域</b>です(雑音入り信号の win=64 での上位 6 bin は 2000 / 2400 / 1600 / 4000 / 3600 / 1200 Hz で、真の 3000 Hz を挟むがどれも 3000 ではない)。それで十分で、この op が返す帯域(<code style="color:#22d3bf">band_lo</code> / <code style="color:#22d3bf">band_hi</code>)をそのまま <code style="color:#22d3bf">envelope_spectrum</code> に渡すと <b>107.0000 Hz</b> が出ます(帯域を呼び出し側で <code style="color:#22d3bf">max_freq ± bin_hz</code> と組んではいけない理由は下の 6 番)。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">3. 何もないところからピーク周波数を返す</h3>
 <p><code style="color:#22d3bf">envelope_spectrum</code> は<b>必ず</b>ピーク周波数を返します。中身が無いときも返します。<b>定数</b>信号を 100–2000 Hz で帯域通過すると、包絡線は丸め誤差でできていて、この op は <code style="color:#22d3bf">peak_freq = 8.0000 Hz</code> を報告しました。例外も NaN も出ず、8 Hz は書き留めるのに何の違和感もない数字です。</p>
 <p>ここで<b>閾値を発明しなかった</b>のが設計上の判断です。雑音に 20 dB 埋もれた欠陥は本物の発見であり、それを拒否するのは報告するより悪い。かわりに<b>区別できる数を返す</b>ことにしました ―― 突出度(ピーク / スペクトル中央値)と <code style="color:#22d3bf">band_fraction</code>(帯域通過後の RMS / 入力の RMS = 記録のうちどれだけがその復調帯域に居るか)。実測、4 つの入力は返り値の上で分かれます:</p>
@@ -70,6 +70,17 @@
 <p>|---:|---:|---:|---:|</p>
 <p>| 79(既定) | 0.012658 | 0.999967 | <b>0.636961</b> |</p>
 <p>| 78(偶数) | 0.012821 | 1.000009 | 0.999371 |</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">6. 兄弟 op が推奨した帯域を、もう一方が fail-closed で拒否する</h3>
+<p><code style="color:#22d3bf">spectral_kurtosis</code> は「どこで復調すべきか」を答え、<code style="color:#22d3bf">envelope_spectrum</code> はその帯域を受け取る ―― <b>この 2 つは組で使うように書かれています</b>。ところが帯域の組み立てを呼び出し側に任せていたため、ガイドも例も次の式を書いていました:</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">A.envelope_spectrum(x, rate, sk[&quot;max_freq&quot;] - sk[&quot;bin_hz&quot;], sk[&quot;max_freq&quot;] + sk[&quot;bin_hz&quot;])</pre>
+<p><code style="color:#22d3bf">spectral_kurtosis</code> の <code style="color:#22d3bf">freqs</code> は <b>Nyquist を含みます</b>。<code style="color:#22d3bf">max_freq</code> は内部 bin から選ばれるので最大でも「最上位の内部 bin」= <code style="color:#22d3bf">Nyquist − bin_hz</code> であり、そこが勝った瞬間に上端は <code style="color:#22d3bf">Nyquist</code> ちょうどに乗ります。<code style="color:#22d3bf">envelope_spectrum</code> は「その帯域はこの記録に存在しない」と正しく拒否します。実測(25600 Hz、1 s、搬送波 3 kHz、欠陥 107 Hz、m = 0.5 の AM 信号 ―― <b>ガイドの最小例そのもの</b>):</p>
+<p>| 呼び出し側が組んだ帯域 | 値 | 結果 |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">max_freq ± bin_hz</code> | 12000.0 – <b>12800.0</b> Hz | <code style="color:#22d3bf">ValueError: high=12800 Hz is at or above Nyquist 12800 Hz</code> |</p>
+<p>| <code style="color:#22d3bf">band_lo</code> / <code style="color:#22d3bf">band_hi</code>(修正後) | 12000.0 – <b>12600.0</b> Hz | 返る |</p>
+<p><b>どちらの op も単体では正しい</b>のが、この形の質の悪いところです。<code style="color:#22d3bf">envelope_spectrum</code> の拒否は妥当(Nyquist の帯域は本当に無い)、<code style="color:#22d3bf">spectral_kurtosis</code> の <code style="color:#22d3bf">max_freq</code> も妥当。壊れているのは<b>受け渡しの契約</b>で、ガイドと例が通っていたのは「勝つ bin がたまたま上端でなかったから」に過ぎません。</p>
+<p>対策は <code style="color:#22d3bf">envelope_spectrum</code> の fail-closed を<b>緩めない</b>こと ―― かわりに <code style="color:#22d3bf">spectral_kurtosis</code> が <b>そのまま渡せる帯域</b> <code style="color:#22d3bf">band_lo</code> / <code style="color:#22d3bf">band_hi</code> を返します。<code style="color:#22d3bf">(0, rate/2)</code> の内側へ<b>半 bin</b>だけクランプしてあります(端は元々 <code style="color:#22d3bf">bin_hz</code> より細かく置けないので、半 bin が「境界から識別できる最小の距離」。ε も rate 依存のごまかしも要りません)。<code style="color:#22d3bf">max_freq</code> は構成上どちらの境界からも 1 bin 以上離れているので、<code style="color:#22d3bf">band_lo &lt; band_hi</code> は常に成り立ちます。</p>
+<p>なお <b>返ることと、見つかったことは別</b>です。上表の AM 信号は <code style="color:#22d3bf">max_kurtosis</code> <b>−0.2725</b> に対して <code style="color:#22d3bf">noise_sigma</code> <b>0.1001</b> ―― 振幅変調された純音はどの bin でも定常なので、そもそも探すべき帯域がありません。その帯域で復調すれば <code style="color:#22d3bf">peak_freq</code> <b>1.0000</b> Hz、<code style="color:#22d3bf">band_fraction</code> <b>5.08e-05</b>(同じ信号を既知の共振 2000–4000 Hz で復調すると <code style="color:#22d3bf">peak_freq</code> <b>107.0000</b>、<code style="color:#22d3bf">band_fraction</code> <b>0.9999</b>)。この修正が保証するのは<b>受け渡しが合法であること</b>だけで、答えの良し悪しは今までどおり <code style="color:#22d3bf">max_kurtosis</code> / <code style="color:#22d3bf">noise_sigma</code> / <code style="color:#22d3bf">band_fraction</code> が語ります。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">塞いである罠(上記以外)</h3>
 <p style="margin:2px 0 2px 12px">• <b>サンプリング周波数の型</b> — <code style="color:#22d3bf">float(&quot;16000&quot;)</code> は成功してしまうので、<code style="color:#22d3bf">rate</code> の**文字列は <code style="color:#22d3bf">ValueError</code><b>(未パースの設定値がサンプリング周波数として通り抜けるのを止める)。</b>bool も拒否**(<code style="color:#22d3bf">True == 1</code> は 1 Hz のタイムベースという別物)。<b>complex も拒否</b>(虚部の無言切り捨て)。配列側は complex / masked / NaN / Inf をすべて <code style="color:#22d3bf">ValueError</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>エイリアシングは折り返さず拒否</b> — Nyquist 以上の搬送波、**上側変調側帯波 <code style="color:#22d3bf">f_c + f_d</code><b>(搬送波単体は収まるのに変調が収まらない場合)、ランプの</b>最速点**での次数、Nyquist を超える帯域端・<code style="color:#22d3bf">f_max</code>、そして記録の Nyquist が支えられない <code style="color:#22d3bf">samples_per_rev</code>。<code style="color:#22d3bf">photoncount.dtof_cube_simulate</code> が一意測距範囲を超えた距離を拒否するのと同じ規律です。</p>
@@ -115,7 +126,7 @@
 <p>軸受を 1 個、音だけで診断する筋(検証済み <code style="color:#22d3bf">examples/acoustic_condition_monitoring.py</code> そのもの)。共振の位置を人が知らなくても閉じます。</p>
 <p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
     A[dsp.read_wav 波形 + rate] --&gt; B[spectral_kurtosis どこが衝撃的か]
-    B --&gt;|max_freq ± 1 bin| C[envelope_spectrum 帯域通過→包絡線→変換]
+    B --&gt;|band_lo / band_hi| C[envelope_spectrum 帯域通過→包絡線→変換]
     A --&gt;|窓を掃引| B
     C --&gt;|peak_freq| D{どの特徴周波数と一致するか}
     E[bearing_defect_frequencies 幾何 + rpm] --&gt;|FTF/BPFO/BPFI/BSF| D
@@ -148,12 +159,16 @@
 x = A.synthesize_bearing_signal(25600.0, 1.0, carrier_hz=3000.0,
                                 defect_hz=107.0, modulation=0.5)
 
-# 復調帯域を機械に選ばせて、欠陥率を出す
+# 共振の位置を知っているなら、帯域はそのまま渡す
+env = A.envelope_spectrum(x, 25600.0, 2000.0, 4000.0)
+print(env[&quot;peak_freq&quot;], env[&quot;band_fraction&quot;])    # 107.0 と 0.9999 = 本物
+
+# 知らないなら機械に選ばせる。帯域は spectral_kurtosis が組み立てて返す
+# (band_lo / band_hi。max_freq ± bin_hz を手で組んではいけない ―― 後述)
 sk = A.spectral_kurtosis(x, 25600.0)
-env = A.envelope_spectrum(x, 25600.0,
-                          max(1.0, sk[&quot;max_freq&quot;] - sk[&quot;bin_hz&quot;]),
-                          sk[&quot;max_freq&quot;] + sk[&quot;bin_hz&quot;])
-print(env[&quot;peak_freq&quot;], env[&quot;band_fraction&quot;])    # 107.0 と ~1.0 = 本物
+auto = A.envelope_spectrum(x, 25600.0, sk[&quot;band_lo&quot;], sk[&quot;band_hi&quot;])
+print(sk[&quot;max_kurtosis&quot;], sk[&quot;noise_sigma&quot;])     # -0.2725 と 0.1001 = 発見なし
+print(auto[&quot;peak_freq&quot;], auto[&quot;band_fraction&quot;])  # 1.0 と 5.08e-05 = 中身なし
 
 # 幾何から出した特徴周波数と突き合わせる(1 % 程度のすべりは呼び出し側の裁量)
 b = A.bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)
