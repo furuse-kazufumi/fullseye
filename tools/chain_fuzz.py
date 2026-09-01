@@ -1458,7 +1458,8 @@ TYPE_CHECKS = {
 NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "sdf_union", "sdf_intersect", "sdf_subtract",
                          "sdf_smooth_union", "sdf_offset", "mat_cond"
-                         } | NONFINITE_BY_CONTRACT_METRICS \n                         | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
+                         } | NONFINITE_BY_CONTRACT_METRICS \
+                         | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \
     | NONFINITE_BY_CONTRACT_CADMAP | NONFINITE_BY_CONTRACT_SPECULAR
 
