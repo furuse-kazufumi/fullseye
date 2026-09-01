@@ -143,8 +143,7 @@ def render(manifest: dict, lang: str) -> tuple[str, int]:
         total += check_body(body, f"{wing['id']}.{lang}", asset_base)
         parts.append(f"### {wing['title'][lang]}\n\n{body}")
 
-    check_body(intro + "\n\n*↑ **placeholder** ―― intro has no exhibit of its own.*",
-               f"_intro.{lang}", asset_base)
+    check_body(intro, f"_intro.{lang}", asset_base, require_exhibits=False)
 
     title = manifest["chapter_title"][lang].format(n=total)
     out = "\n\n".join([BEGIN, f"## {title}", intro, *parts, END])
