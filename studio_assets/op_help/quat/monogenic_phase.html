@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">monogenic_phase — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.monogenic_phase(qimage, display: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;monogenic_phase&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Local phase `<code style="color:#22d3bf">atan2(|R|, f)</code>` of a monogenic signal. → (H, W).</p>
+<p>In `<code style="color:#22d3bf">[0, pi]</code>` — the monogenic phase is measured against the *magnitude* of</p>
+<p>the Riesz vector, whose sign is carried by the orientation instead, so the</p>
+<p>range is a half turn rather than a full one. That is the standard</p>
+<p>convention (Felsberg &amp; Sommer) and it is stated here because a caller</p>
+<p>arriving from `<code style="color:#22d3bf">complexops.cx_phase</code><code style="color:#22d3bf"> (whose raw range is </code><code style="color:#22d3bf">(-pi, pi]</code>`) will</p>
+<p>otherwise assume a full turn and see a &quot;wrapped&quot; map that is not wrapped.</p>
+<p>`<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> maps </code><code style="color:#22d3bf">[0, pi]</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">[0, 1]</code>` for viewing; the default is</p>
+<p>`<code style="color:#22d3bf">False</code><code style="color:#22d3bf"> — the **opposite** of </code><code style="color:#22d3bf">cx_phase</code>`&#x27;s default, deliberately,</p>
+<p>because the consumers of this quantity in this module are numerical, and a</p>
+<p>display scaling that arrives silently in a measurement is a factor of `<code style="color:#22d3bf">pi</code>`</p>
+<p>that nothing announces.</p>
+<p>Phase is the quantity a translation shifts linearly, which is why the whole</p>
+<p>motion half of this module reads it. For an edge, phase 0 means the peak of</p>
+<p>a bright line, `<code style="color:#22d3bf">pi/2</code><code style="color:#22d3bf"> a step edge and </code><code style="color:#22d3bf">pi</code>` the peak of a dark line — the</p>
+<p>local *structure type*, independent of contrast.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
+<p>`<code style="color:#22d3bf">k</code>` component is non-zero; *display* is not a bool.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">riesz</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

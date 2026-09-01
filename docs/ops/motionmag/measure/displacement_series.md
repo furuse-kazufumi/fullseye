@@ -4,7 +4,7 @@ dim: motionmag
 category: measure
 in: video
 out: pairs
-examples: [motion_magnification]
+examples: [motion_magnification, quaternion_monogenic]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -47,6 +47,7 @@ as 0.00100000 px (8.7e-15).
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [motion_magnification](../../../../examples/motion_magnification.py) — `py -3.11 examples/motion_magnification.py`
+- [quaternion_monogenic](../../../../examples/quaternion_monogenic.py) — `py -3.11 examples/quaternion_monogenic.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)
 

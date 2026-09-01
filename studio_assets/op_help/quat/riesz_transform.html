@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">riesz_transform — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.riesz_transform(image) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;riesz_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The 2-D Riesz transform of an image, as a pure quaternion field. → (H, W, 4).</p>
+<p>The isotropic generalisation of the Hilbert transform: a *pair* of filters</p>
+<p>with frequency responses `<code style="color:#22d3bf">-i*u/|w|</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">-i*v/|w|</code>`, returned as the</p>
+<p>quaternion `<code style="color:#22d3bf">(0, R1 f, R2 f, 0)</code>`. It is the 2-D object that has no complex</p>
+<p>analogue — the 1-D analytic signal needs a direction to say which way &quot;90</p>
+<p>degrees later&quot; is, and in 2-D there is no single direction, so the answer</p>
+<p>needs two components and therefore an algebra with room for them.</p>
+<p>Closed form, which is how this is tested rather than eyeballed</p>
+<p>-------------------------------------------------------------</p>
+<p>For a grating `<code style="color:#22d3bf">cos(2*pi*(u0*x + v0*y))</code>` sampled on the DFT grid,</p>
+<p>`<code style="color:#22d3bf">R1 = (u0/|w0|) * sin(2*pi*(u0*x + v0*y))</code>`,</p>
+<p>`<code style="color:#22d3bf">R2 = (v0/|w0|) * sin(...)</code>`</p>
+<p>exactly. Measured over a table of eight grid-exact orientations from 0 to</p>
+<p>159.4 degrees on a 64x64 frame, the largest absolute deviation from that</p>
+<p>closed form is <b>6.1e-15</b>, and the orientation recovered through</p>
+<p>:func:<code style="color:#22d3bf">monogenic_orientation</code> matches the grating&#x27;s to <b>3.6e-15 rad</b> at</p>
+<p>every one of them. There is no tolerance to choose.</p>
+<p>Note the scalar component is 0, so this is the Riesz *transform* and not the</p>
+<p>monogenic signal — feeding it to :func:<code style="color:#22d3bf">monogenic_phase</code> gives `<code style="color:#22d3bf">pi/2</code>`</p>
+<p>everywhere, correctly but uselessly. Use :func:<code style="color:#22d3bf">monogenic_signal</code>, which</p>
+<p>keeps the band-pass image in the scalar slot.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image* is not a finite real </code><code style="color:#22d3bf">(H, W)</code>` array with</p>
+<p>`<code style="color:#22d3bf">H, W &gt;= 2</code><code style="color:#22d3bf">, or exceeds :data:</code>MAX_PIXELS`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a> · <a style="color:#22d3bf" href="opquat:quat_conjugate_image">quat_conjugate_image</a> · <a style="color:#22d3bf" href="opquat:quat_normalize_image">quat_normalize_image</a> · <a style="color:#22d3bf" href="opquat:quat_image_multiply">quat_image_multiply</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">riesz</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

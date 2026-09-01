@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">monogenic_signal — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.monogenic_signal(image, wavelength_px=8.0, bandwidth_octaves=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;monogenic_signal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The monogenic signal of an image at one scale. → (H, W, 4).</p>
+<p>Felsberg &amp; Sommer (2001). The image is band-passed by a log-radial raised</p>
+<p>cosine centred at `<code style="color:#22d3bf">1/wavelength_px</code>` cycles/pixel with half-width</p>
+<p>*bandwidth_octaves*, and the result is packed with its Riesz pair as the</p>
+<p>quaternion `<code style="color:#22d3bf">(band-pass image, R1, R2, 0)</code>`. From that single object</p>
+<p>:func:<code style="color:#22d3bf">monogenic_amplitude</code>, :func:<code style="color:#22d3bf">monogenic_phase</code> and</p>
+<p>:func:<code style="color:#22d3bf">monogenic_orientation</code> read the local contrast, the local phase and</p>
+<p>the local orientation — the 2-D analogue of what `<code style="color:#22d3bf">|z|</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">arg z</code>` give</p>
+<p>a 1-D analytic signal, with orientation as the extra degree of freedom that</p>
+<p>only exists in 2-D.</p>
+<p>The band-pass is applied *before* the Riesz kernels because the Riesz</p>
+<p>multiplier has a jump at DC: without a band that excludes DC the &quot;local</p>
+<p>phase&quot; of the image mean is undefined, not merely noisy.</p>
+<p>Closed form</p>
+<p>-----------</p>
+<p>A grating exactly at the band centre passes with gain 1, so for</p>
+<p>`<code style="color:#22d3bf">contrast * cos(2*pi*(u0*x+v0*y) + p)</code><code style="color:#22d3bf"> the amplitude is </code><code style="color:#22d3bf">contrast</code>`</p>
+<p>everywhere, the phase is the grating&#x27;s own phase, and the orientation is</p>
+<p>`<code style="color:#22d3bf">atan2(v0, u0) mod pi</code>`. Measured on a 64x64 frame with an 8 px grating of</p>
+<p>unit contrast and phase 0.7: amplitude mean exactly `<code style="color:#22d3bf">1.0</code>` with a spread of</p>
+<p>`<code style="color:#22d3bf">8.9e-16</code><code style="color:#22d3bf"> across the frame, phase error </code><code style="color:#22d3bf">5.3e-15</code>` rad, orientation error</p>
+<p>`<code style="color:#22d3bf">0.0</code>` rad.</p>
+<p><b>Honest limit.</b> The phase is well defined only where the amplitude is; in a</p>
+<p>flat region the amplitude is at the rounding floor and the phase is the angle</p>
+<p>of numerical dust. Nothing here suppresses that — the amplitude map *is* the</p>
+<p>confidence map and it is returned in the same object, so a caller can mask on</p>
+<p>it. The operators that consume the signal (:func:<code style="color:#22d3bf">riesz_displacement</code>,</p>
+<p>:func:<code style="color:#22d3bf">riesz_motion_magnify</code>) do mask, with the same relative thresholds</p>
+<p>:mod:<code style="color:#22d3bf">motionmag</code> uses, so their numbers are comparable.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *image* is not a finite real </code><code style="color:#22d3bf">(H, W)</code>` array;</p>
+<p>*wavelength_px* is not `<code style="color:#22d3bf">&gt; 2</code>` (a shorter wavelength is past Nyquist and the</p>
+<p>band would be empty); *bandwidth_octaves* is not `<code style="color:#22d3bf">&gt; 0</code>`; the band contains</p>
+<p>no frequency bin of this frame size.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a> · <a style="color:#22d3bf" href="opquat:quat_conjugate_image">quat_conjugate_image</a> · <a style="color:#22d3bf" href="opquat:quat_normalize_image">quat_normalize_image</a> · <a style="color:#22d3bf" href="opquat:quat_image_multiply">quat_image_multiply</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">riesz</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

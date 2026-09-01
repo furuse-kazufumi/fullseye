@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">monogenic_amplitude — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.monogenic_amplitude(qimage) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;monogenic_amplitude&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Local amplitude `<code style="color:#22d3bf">sqrt(f^2 + R1^2 + R2^2)</code>` of a monogenic signal. → (H, W).</p>
+<p>The local contrast at the signal&#x27;s scale, and the confidence map for</p>
+<p>:func:<code style="color:#22d3bf">monogenic_phase</code> / :func:<code style="color:#22d3bf">monogenic_orientation</code>, which mean nothing</p>
+<p>where this is at the rounding floor. <b>Raw / unnormalised</b> (a contrast is a</p>
+<p>metric quantity), in the same spirit as `<code style="color:#22d3bf">complexops.cx_magnitude</code>`.</p>
+<p>For a unit-contrast grating at the band centre it is exactly 1.0 (measured</p>
+<p>spread 8.9e-16 over a 64x64 frame) and, unlike a squared oriented-filter</p>
+<p>response, it is *isotropic*: rotating the grating does not change it.</p>
+<p>Measured over eight grid-exact orientations the amplitude spans</p>
+<p>`<code style="color:#22d3bf">[0.99999999999999911, 1.0000000000000011]</code>` — a total spread of 2.0e-15</p>
+<p>across all of them, which is the isotropy claim as a number.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
+<p>`<code style="color:#22d3bf">k</code><code style="color:#22d3bf"> component is non-zero (see :func:</code>_require_monogenic`).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">riesz</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -245,7 +245,9 @@ _CATALOG = {
     "refine": [  # 粗推定 → 高精度収束
         ("refine_peak_newton", "match3d", ["score", "position"], "position", True),
         ("refine_translation_lk", "match3d", ["voxel", "voxel", "position"], "position", True),
-        ("refine_lm", "match3d", ["voxel", "voxel", "position"], "pose", True),
+        # refine_lm の返りは {cost, gain, iters, pos} で **R も t も持たない**
+        # (並進の精緻化なので姿勢ではない)。pose を名乗っていたのは型の嘘
+        ("refine_lm", "match3d", ["voxel", "voxel", "position"], "table", True),
         ("refine_rotation_z", "match3d", ["voxel", "voxel", "angle"], "angle", True),
         ("icp_point2point_3d", "match3d", ["points", "points"], "pose", False),
         ("icp_point2plane", "match3d", ["points", "points", "normals"], "pose", False),
@@ -679,6 +681,14 @@ OPS3D = _build()
 #: 連鎖ファザー(tools/chain_fuzz.py、2026-08-31)が申告と実返却の乖離を
 #: 20 種検出したのを受けて整備した。
 RESULT_ADAPTERS = {
+    # 剛体変換を dict で返す 3 op。**pose の正典は (R(3,3), t(3,), …) の並び**
+    # で、生成器も大多数の op もその形。dict のまま宣言型を名乗ると、下流の
+    # pose 消費 op が `v[0]` を引いた瞬間にキー文字列を掴む(2026-09-01 に
+    # `pose` の型述語を入れて初めて顕在化した — 述語が無いあいだ 3 通りの
+    # 意味が同居していた)。返り自体は情報が多くて正直なので削らず、
+    # adapter で正典の並びを取り出す
+    "gicp": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
+    "rigid_flow": lambda r: (r["R"], r["t"]) if isinstance(r, dict) else r,
     "vol_label": lambda r: r[0],                    # (labels, n)
     "vol_crop_domain": lambda r: r[0],              # (part, offset)
     "distance_ridge": lambda r: r[0],               # (ridge, dist)

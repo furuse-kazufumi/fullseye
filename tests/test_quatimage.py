@@ -248,7 +248,7 @@ def test_color_rotate_is_the_quaternion_sandwich():
 def test_color_rotate_preserves_the_colour_magnitude():
     q = qi.rgb_to_quaternion(colour_image(seed=6, h=16, w=16))
     out = qi.quat_color_rotate(q, (0.0, 0.0, 1.0), 0.77)
-    assert np.abs(qi.quat_norm(out) - qi.quat_norm(q)).max() < 1e-12
+    assert np.abs(qi.quat_norm(out) - qi.quat_norm(q)).max() < 1e-14
 
 
 def test_color_rotate_matches_a_3x3_matrix_exactly():
@@ -259,7 +259,7 @@ def test_color_rotate_matches_a_3x3_matrix_exactly():
     c, s = np.cos(ang), np.sin(ang)
     R = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
     out = qi.quat_color_rotate(qi.rgb_to_quaternion(rgb), axis, ang)
-    assert np.abs(out[..., 1:] - rgb @ R.T).max() < 1e-11
+    assert np.abs(out[..., 1:] - rgb @ R.T).max() < 1e-14
 
 
 def test_a_channelwise_pipeline_cannot_rotate_colour():
@@ -269,7 +269,7 @@ def test_a_channelwise_pipeline_cannot_rotate_colour():
     rgb[..., 0] = 1.0                                   # pure red
     out = qi.quat_color_rotate(qi.rgb_to_quaternion(rgb), (0.0, 0.0, 1.0),
                                np.radians(90.0))
-    assert np.abs(out[..., 1:] - np.array([0.0, 1.0, 0.0])).max() < 1e-11
+    assert np.abs(out[..., 1:] - np.array([0.0, 1.0, 0.0])).max() < 1e-14
     # any per-channel gain (real or complex, any value) leaves green at zero
     for gain in (0.0, 1.0, -3.5, 1e6):
         assert (rgb[..., 1] * gain == 0.0).all()
@@ -607,30 +607,44 @@ def test_the_two_sides_really_do_disagree():
     assert np.isfinite(L).all() and np.isfinite(R).all()
 
 
-def test_a_zero_rotation_axis_is_refused_not_turned_into_the_identity():
-    """``pose_quat.axis_angle_to_quat`` normalises with ``n/(norm+1e-12)``, so a
-    zero axis silently becomes a no-op — and at angle pi it becomes the identity
-    for *any* axis, because the rotor is then [0,0,0,0] whose normalisation is
-    zero and whose matrix is I. Both are demonstrated here on pose_quat itself
-    and then shown to be blocked by quatimage."""
-    assert np.allclose(pose_quat.quat_to_hom_mat3d([0.0, 0.0, 0.0, 0.0])[:3, :3],
-                       np.eye(3))                        # the trap, in pose_quat
-    zero_rotor = pose_quat.axis_angle_to_quat(0.0, 0.0, 0.0, 1.0)
-    assert np.linalg.norm(zero_rotor) < 0.9              # not a unit rotor
+def test_a_zero_rotation_axis_is_refused_by_both_layers():
+    """A degenerate rotor must be refused, and it is now refused **twice**.
+
+    History: ``pose_quat`` used to normalise with ``n / (norm + 1e-12)``, so
+    ``quat_to_hom_mat3d([0,0,0,0])`` returned the **identity matrix** and
+    ``axis_angle_to_quat(0,0,0,1.0)`` returned a non-unit rotor of norm 0.878 —
+    a rotation request silently becoming a no-op. That was reported from this
+    module and fixed upstream on 2026-09-01; both calls now raise.
+
+    The upstream fix does not retire the guard in :func:`quat_color_rotate`.
+    A check that only holds while a dependency behaves is not a check, and the
+    caller of *this* module should get *this* module's error message naming the
+    offending argument. So both layers are asserted here."""
+    # upper layer: pose_quat now fail-closes on the degenerate rotor itself
+    for call in (lambda: pose_quat.quat_to_hom_mat3d([0.0, 0.0, 0.0, 0.0]),
+                 lambda: pose_quat.quat_normalize([0.0, 0.0, 0.0, 0.0]),
+                 lambda: pose_quat.axis_angle_to_quat(0.0, 0.0, 0.0, 1.0)):
+        with pytest.raises(ValueError, match="zero length"):
+            call()
+    # a valid rotor is now exactly unit, where it used to be 0.9999999999990
+    assert np.linalg.norm(pose_quat.axis_angle_to_quat(0.0, 0.0, 1.0, np.pi)) == 1.0
+    # lower layer: quatimage refuses first, with its own message, and keeps doing
+    # so whatever the dependency does
     q = qi.rgb_to_quaternion(colour_image(seed=24, h=4, w=4))
     for axis in ([0.0, 0.0, 0.0], np.zeros(3), (0, 0, 0)):
-        with pytest.raises(ValueError, match="zero vector"):
+        with pytest.raises(ValueError, match="axis_rgb is the zero vector"):
             qi.quat_color_rotate(q, axis, 1.0)
 
 
 def test_a_180_degree_rotation_is_a_real_rotation_not_the_identity():
     """The dangerous corner of the trap above: quatimage must still perform a
-    genuine pi rotation, which pose_quat's own path would collapse if the axis
-    were degenerate."""
+    genuine pi rotation. Before the 2026-09-01 pose_quat fix the rotor at exactly
+    pi was [6.1e-17, 0, 0, 1] with norm 0.9999999999990; it is now exactly
+    [0, 0, 0, 1] with norm 1, and the rotated red comes back at 1.2e-16."""
     rgb = np.zeros((4, 4, 3))
     rgb[..., 0] = 1.0
     out = qi.quat_color_rotate(qi.rgb_to_quaternion(rgb), (0.0, 0.0, 1.0), np.pi)
-    assert np.abs(out[..., 1:] - np.array([-1.0, 0.0, 0.0])).max() < 1e-11
+    assert np.abs(out[..., 1:] - np.array([-1.0, 0.0, 0.0])).max() < 1e-14
 
 
 def test_a_zero_pixel_is_refused_by_normalize_not_divided_by_epsilon():

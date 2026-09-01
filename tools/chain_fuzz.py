@@ -713,6 +713,21 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # pose = 剛体変換。**述語が無いあいだ 3 通りの意味が同居していた**
+    # (実測 2026-09-01: (R,t,…) タプル 10 op / dict 3 op / 4x4 同次行列を
+    # 要求する消費側)。多数派かつ生成器が出す形である「先頭 2 要素が
+    # R(3,3) と t(3,)」を正典とし、それ以外は TYPEMISS として顕在化させる。
+    # dict を返すのが正直な op は RESULT_ADAPTERS で (R,t) を取り出すか、
+    # 中身が姿勢でないなら table を名乗るのが筋(refine_lm の返りは
+    # {cost,gain,iters,pos} で R も t も持っていなかった)
+    # 判定は **型ではなく形**で行う: GPU backend を持つ登録 op は torch.Tensor を
+    # 返すのがこの repo の約束で(`backends_typed._coerce` が numpy へ落とす)、
+    # `isinstance(..., np.ndarray)` で書くと**述語の側が間違う**。実際 1 度
+    # 間違えて register_spin / icp_point2point_3d / register_fpfh を誤って
+    # TYPEMISS に挙げた ― 中身は正しい (R(3,3), t(3,), info) だった
+    "pose": lambda v: isinstance(v, (tuple, list)) and len(v) >= 2
+    and tuple(getattr(v[0], "shape", ())) == (3, 3)
+    and tuple(getattr(v[1], "shape", ())) == (3,),
     # qimage = (H,W,4) の四元数画像。**voxel / sdf / labels / video / score /
     # histcube の述語も同時に満たす**(どれも ndim==3)ので、宣言型が qimage の
     # op だけがこのプールを食う設計に頼っている。逆向き(既存の種が qimage を

@@ -1,0 +1,66 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quat_correlate — QUAT <code style="color:#22d3bf">match</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage × qimage</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.quat_correlate(qimage, template) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;quat_correlate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Quaternion cross-correlation `<code style="color:#22d3bf">sum_s conj(a(s)) * b(s+t)</code>`. → (H, W, 4).</p>
+<p>Colour template matching that keeps the <b>colour geometry</b>, not just the</p>
+<p>colour magnitude. The scalar part of the result is</p>
+<p>`<code style="color:#22d3bf">sum (a_R b_R + a_G b_G + a_B b_B)</code>` — exactly the sum of the three</p>
+<p>per-channel correlations, i.e. what a channelwise pipeline computes and all</p>
+<p>it computes. The *vector* part is `<code style="color:#22d3bf">-sum (a x b)</code>`, the accumulated colour</p>
+<p>cross-product, and it is zero exactly when the two colour fields are</p>
+<p>parallel. So the same call answers &quot;how well does it match?&quot; (scalar part)</p>
+<p><b>and</b> &quot;in what way does the colour fail to line up?&quot; (vector part).</p>
+<p>Measured on a 32x32 patch whose colours lie in the red-green plane, matched</p>
+<p>against a copy of itself rotated about the blue axis. The scalar part is</p>
+<p>`<code style="color:#22d3bf">cos(angle)</code>` times the self-correlation, exactly, and</p>
+<p>`<code style="color:#22d3bf">atan2(|vector|, scalar)</code>` returns the rotation angle:</p>
+<p>===========  ==================  =================  ==================</p>
+<p>rotation     scalar/self ratio   `<code style="color:#22d3bf">cos(angle)</code>`     angle recovered</p>
+<p>===========  ==================  =================  ==================</p>
+<p>0 deg        1.000000            1.000000           0.000000 deg</p>
+<p>30 deg       0.866025            0.866025           30.000000 deg</p>
+<p>90 deg       0.000000            0.000000           90.000000 deg</p>
+<p>===========  ==================  =================  ==================</p>
+<p>with the vector direction at `<code style="color:#22d3bf">(0.000, 0.000, -1.000)</code>` — the <b>negative</b> of</p>
+<p>the rotation axis, because the conjugate sits on the left of the product. A</p>
+<p>channelwise pipeline has no term that can produce any of that: the</p>
+<p>cross-products are *cross*-channel products, and three independent channel</p>
+<p>correlations never form them. (Verified in the same test: the scalar part</p>
+<p>equals the summed per-channel correlation to 0.0 exactly, so the channelwise</p>
+<p>baseline recovers the scalar part and nothing else.)</p>
+<p>**The exact reading needs the colours to lie in the plane orthogonal to the</p>
+<p>rotation axis, and the docstring says so because the general case is</p>
+<p>biased.** For a colour field with a component along the axis, the vector part</p>
+<p>picks up terms in `<code style="color:#22d3bf">a_z</code>` and the recovered angle is wrong: measured on a</p>
+<p>uniform-random colour patch rotated 30 degrees about blue, the same formula</p>
+<p>returns <b>22.524 degrees</b> on an axis of `<code style="color:#22d3bf">(0.247, 0.419, -0.874)</code>` instead</p>
+<p>of `<code style="color:#22d3bf">(0, 0, -1)</code>`. That is a quiet wrong number, it is inherent to summing</p>
+<p>per-pixel cross products, and it is not detectable from the result — so the</p>
+<p>precondition is part of the contract.</p>
+<p>Both inputs must be pure quaternion images for any of the above to hold; a</p>
+<p>non-zero scalar part is not refused (it is algebraically fine) but it</p>
+<p>contributes to both parts and the colour interpretation stops applying.</p>
+<p><b>The correlation is circular</b> (computed with FFTs, like</p>
+<p>`<code style="color:#22d3bf">filters_freq</code>`&#x27;s family): a template near the border wraps around. Pad the</p>
+<p>inputs if that matters. Shapes must match exactly; a smaller template must be</p>
+<p>zero-padded into the image&#x27;s shape by the caller, because silently choosing</p>
+<p>a padding origin would move the peak.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: either input is not a valid </code><code style="color:#22d3bf">(H, W, 4)</code>` field,</p>
+<p>or the two shapes differ.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a> · <a style="color:#22d3bf" href="opquat:quat_conjugate_image">quat_conjugate_image</a> · <a style="color:#22d3bf" href="opquat:quat_normalize_image">quat_normalize_image</a> · <a style="color:#22d3bf" href="opquat:quat_image_multiply">quat_image_multiply</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">match</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

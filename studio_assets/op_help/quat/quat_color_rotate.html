@@ -1,0 +1,81 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quat_color_rotate — QUAT <code style="color:#22d3bf">color</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.quat_color_rotate(qimage, axis_rgb, angle_rad) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;quat_color_rotate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Rotate every pixel&#x27;s colour about an RGB axis: `<code style="color:#22d3bf">q x conj(q)</code>`. → (H, W, 4).</p>
+<p>The operation a complex pixel cannot express. `<code style="color:#22d3bf">axis_rgb</code>` is a direction in</p>
+<p>RGB space and `<code style="color:#22d3bf">angle_rad</code>` the rotation about it; the rotor</p>
+<p>`<code style="color:#22d3bf">q = cos(a/2) + sin(a/2) * axis</code>` is built with</p>
+<p>`<code style="color:#22d3bf">pose_quat.axis_angle_to_quat</code>` and the conjugation is applied to the vector</p>
+<p>part of every pixel, leaving the scalar part untouched (a conjugation cannot</p>
+<p>move it).</p>
+<p>Exactness and what it is worth</p>
+<p>------------------------------</p>
+<p>The conjugation is applied through the `<code style="color:#22d3bf">3x3</code>` matrix from</p>
+<p>`<code style="color:#22d3bf">pose_quat.quat_to_hom_mat3d</code>` rather than by two per-pixel Hamilton</p>
+<p>products, because for a `<code style="color:#22d3bf">(512, 512)</code>` image that is 500k quaternion</p>
+<p>multiplications versus one `<code style="color:#22d3bf">einsum</code>`. The two are the *same map*, measured:</p>
+<p>against per-pixel `<code style="color:#22d3bf">pose_quat.quat_rotate_point_3d</code>` the agreement is</p>
+<p>`<code style="color:#22d3bf">4.44e-16</code><code style="color:#22d3bf">, the round trip </code><code style="color:#22d3bf">rotate(rotate(q, ax, a), ax, -a)</code>` returns</p>
+<p>`<code style="color:#22d3bf">q</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">2.22e-16</code><code style="color:#22d3bf">, and the colour magnitude is preserved to </code><code style="color:#22d3bf">2.22e-16</code>`.</p>
+<p>The matrix identity is also the honest limit of the *capability* claim.</p>
+<p>`<code style="color:#22d3bf">SO(3)</code>` and the unit quaternions are isomorphic, so **a 3x3 orthogonal</p>
+<p>colour matrix does exactly this and nothing is lost by using one** — measured</p>
+<p>against an explicit `<code style="color:#22d3bf">Rz(30 deg)</code><code style="color:#22d3bf">, the agreement is </code><code style="color:#22d3bf">2.22e-16</code>`. What a</p>
+<p>quaternion buys is 4 numbers instead of 9, exact closure under composition,</p>
+<p>and `<code style="color:#22d3bf">slerp</code>`. Measured over 100,000 random small rotations composed in</p>
+<p>sequence, the quaternion (renormalised each step, 4 divisions) drifts from</p>
+<p>unit norm by <b>0.0</b> while the matrix (composed by multiplication, not</p>
+<p>re-orthonormalised) drifts to `<code style="color:#22d3bf">|R^T R - I| = 4.33e-14</code>`.</p>
+<p>**That advantage is real but it is nearly nothing, and an earlier revision of</p>
+<p>this file oversold it by four orders of magnitude.** The same measurement</p>
+<p>then read `<code style="color:#22d3bf">4.4e-10</code>` for the matrix, which looked like a decisive argument</p>
+<p>for quaternions. It was not an argument about quaternions at all: it was the</p>
+<p>`<code style="color:#22d3bf">pose_quat</code>` defect described below, feeding a slightly non-orthogonal</p>
+<p>matrix into every one of the 100,000 steps. With that fixed the honest figure</p>
+<p>is `<code style="color:#22d3bf">4.33e-14</code>`, i.e. ordinary rounding over 100k products. The lesson is the</p>
+<p>repository&#x27;s own: a number that flatters the thing you are building is the</p>
+<p>one to re-measure first.</p>
+<p>What a *channelwise* pipeline — three independent scalar filters, which is</p>
+<p>what running the complex ops on R, G and B separately means — cannot do is</p>
+<p>this operation at all: it never mixes channels, so it cannot turn red towards</p>
+<p>green. Pure red rotated 90 degrees about the blue axis comes back as</p>
+<p>`<code style="color:#22d3bf">(-2.2e-16, 1.0, 0.0)</code>`; no per-channel gain can put anything in the green</p>
+<p>channel, because it starts at zero. That is the comparison in</p>
+<p>`<code style="color:#22d3bf">tests/test_quatimage.py</code>`, and it is the one that is decisive.</p>
+<p>Two traps in the rotor, both refused here regardless of the dependency</p>
+<p>---------------------------------------------------------------------</p>
+<p>`<code style="color:#22d3bf">pose_quat</code><code style="color:#22d3bf"> used to normalise as </code><code style="color:#22d3bf">n / (norm + 1e-12)</code>`. A <b>zero axis</b></p>
+<p>then returned `<code style="color:#22d3bf">[cos(a/2), 0, 0, 0]</code><code style="color:#22d3bf">, which </code><code style="color:#22d3bf">quat_to_hom_mat3d</code>`</p>
+<p>re-normalised to the identity: a rotation request silently became a no-op.</p>
+<p>Worse, at `<code style="color:#22d3bf">angle_rad = pi</code><code style="color:#22d3bf"> that same path produced </code><code style="color:#22d3bf">[0, 0, 0, 0]</code>`, whose</p>
+<p>normalisation was `<code style="color:#22d3bf">0/(0+1e-12) = 0</code>` and whose matrix was again the identity</p>
+<p>— a *180-degree* colour rotation silently becoming a copy. Both were reported</p>
+<p>and <b>have since been fixed in</b> `<code style="color:#22d3bf">pose_quat</code>` <b>itself</b> (zero length now</p>
+<p>raises; `<code style="color:#22d3bf">axis_angle_to_quat(0, 0, 1, pi)</code>` now returns exactly</p>
+<p>`<code style="color:#22d3bf">[0, 0, 0, 1]</code>` with norm 1, where it used to return norm 0.9999999999990).</p>
+<p>This operator nevertheless keeps both of its own guards —</p>
+<p>:func:<code style="color:#22d3bf">_require_direction</code> on the axis, and an explicit unit-norm assertion</p>
+<p>on the finished rotor (tolerance :data:<code style="color:#22d3bf">_UNIT_TOL</code>). A check that only holds</p>
+<p>while a dependency behaves is not a check, and the caller of this module</p>
+<p>should get this module&#x27;s error message. A genuine pi rotation still works:</p>
+<p>pure red about the blue axis gives `<code style="color:#22d3bf">(-1.0, 1.2e-16, 0.0)</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *qimage* is not a valid </code><code style="color:#22d3bf">(H, W, 4)</code>` field;</p>
+<p>*axis_rgb* is not a finite non-zero 3-vector; *angle_rad* is not a finite</p>
+<p>real scalar; the constructed rotor is not unit norm.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a> · <a style="color:#22d3bf" href="opquat:quat_conjugate_image">quat_conjugate_image</a> · <a style="color:#22d3bf" href="opquat:quat_normalize_image">quat_normalize_image</a> · <a style="color:#22d3bf" href="opquat:quat_image_multiply">quat_image_multiply</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">color</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:quat_color_filter">quat_color_filter</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

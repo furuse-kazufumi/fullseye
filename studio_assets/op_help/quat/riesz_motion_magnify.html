@@ -1,0 +1,78 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">riesz_motion_magnify — QUAT <code style="color:#22d3bf">motion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;riesz_motion_magnify&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Scale a clip&#x27;s in-band motion by *alpha*, by the Riesz route. → dict.</p>
+<p>The Riesz-pyramid magnifier of Wadhwa et al. (2014), and the direct</p>
+<p>counterpart of `<code style="color:#22d3bf">motionmag.motion_magnify</code><code style="color:#22d3bf">: same contract, same </code><code style="color:#22d3bf">alpha</code>`</p>
+<p>convention (a <b>displacement gain</b> — 1 is the identity, 2 doubles the</p>
+<p>motion, -1 reverses it), same honesty block, different decomposition.</p>
+<p>Each radial sub-band is turned into a monogenic signal, projected onto the</p>
+<p>band&#x27;s temporal-mean orientation to give a complex analytic signal `<code style="color:#22d3bf">z</code>`, and</p>
+<p>the temporal phase deviation `<code style="color:#22d3bf">angle(z * conj(z_mean))</code>` is band-passed and</p>
+<p>multiplied by `<code style="color:#22d3bf">alpha - 1</code>`. The band is then re-rendered as</p>
+<p>`<code style="color:#22d3bf">I*cos(shift) - R_proj*sin(shift)</code><code style="color:#22d3bf"> — the real part of </code><code style="color:#22d3bf">z * exp(i*shift)</code>`</p>
+<p>— and the bands are summed. Because the radial filters are an *amplitude*</p>
+<p>partition of unity, that sum is the reconstruction: at `<code style="color:#22d3bf">alpha = 1</code>` the</p>
+<p>output equals the input to <b>5.55e-16</b> (measured on a 64x64x64 clip;</p>
+<p>`<code style="color:#22d3bf">motionmag.motion_magnify</code>` gives 7.77e-16 on the same clip).</p>
+<p>The gain really is the gain. Measuring the magnified clip&#x27;s displacement with</p>
+<p>the *independent* steerable estimator `<code style="color:#22d3bf">motionmag.displacement_series</code>`, on a</p>
+<p>single-grating clip of true amplitude 0.1 px:</p>
+<p>========  ==========================  ==========================</p>
+<p>alpha     Riesz measured gain         steerable measured gain</p>
+<p>========  ==========================  ==========================</p>
+<p>0.0        0.000000000000              0.000000000000</p>
+<p>2.0        2.000000000000              2.000000000000</p>
+<p>4.0        4.000000000000              4.000000000000</p>
+<p>-1.0      -1.000000000000             -1.000000000000</p>
+<p>20.0      20.000000000000             20.000000000000</p>
+<p>========  ==========================  ==========================</p>
+<p>— twelve decimal places, for both, including the reversal.</p>
+<p>Returns the same shape of dict `<code style="color:#22d3bf">motionmag.motion_magnify</code>` returns —</p>
+<p>``{&quot;video&quot;, &quot;alpha&quot;, &quot;band_hz&quot;, &quot;fps&quot;, &quot;scales&quot;, &quot;snr_in&quot;, &quot;snr_out&quot;,</p>
+<p>&quot;image_snr_change_db&quot;, &quot;motion_snr_out_db&quot;, &quot;motion_snr_change_db&quot;,</p>
+<p>&quot;band_power_ratio&quot;, &quot;phase_shift_max_rad&quot;, &quot;phase_shift_rms_rad&quot;,</p>
+<p>&quot;linear_regime&quot;, &quot;reference_coherence&quot;}`` — and it is the same dict because</p>
+<p>the SNR block is computed by <b>calling</b> `<code style="color:#22d3bf">motionmag.band_snr</code>` rather than</p>
+<p>re-deriving it. Two magnifiers that disagree about how to measure their own</p>
+<p>cost cannot be compared, so they share the measurement.</p>
+<p><b>Magnification never improves the motion SNR</b>, here as there: scaling the</p>
+<p>in-band phase scales the in-band noise by the same factor. What degrades is</p>
+<p>the image SNR. Measured on the shared 64x64x64 / 32 fps / 0.2 px / 4 Hz</p>
+<p>synthetic under sigma = 0.01 noise, band 3-5 Hz, against</p>
+<p>`<code style="color:#22d3bf">motionmag.motion_magnify</code>` on the identical clip:</p>
+<p>======  ==================  ==================  ==============  ==============</p>
+<p>alpha   image change (dB)   image change (dB)   band ratio      band ratio</p>
+<p>Riesz               steerable           Riesz           steerable</p>
+<p>======  ==================  ==================  ==============  ==============</p>
+<p>2       -4.8611             -4.8260             0.937704        0.935433</p>
+<p>4       -10.3616            -10.3504            0.861162        0.858130</p>
+<p>8       -15.3515            -15.5097            0.629948        0.628597</p>
+<p>======  ==================  ==================  ==============  ==============</p>
+<p>The two magnifiers cost essentially the same — within 0.16 dB and 0.3 % of</p>
+<p>band-power linearity at every gain. So the choice between them is <b>not</b></p>
+<p>about magnification quality; it is about the displacement measurement (where</p>
+<p>the Riesz route has a 13 % failure mode on multi-orientation texture, see</p>
+<p>:func:<code style="color:#22d3bf">riesz_displacement</code>) and about cost (this one is 2.09x faster on the</p>
+<p>same clip: 0.1034 s against 0.2163 s, best of 7).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *video* is not a valid </code><code style="color:#22d3bf">(T, H, W)</code>` clip or is</p>
+<p>over :data:<code style="color:#22d3bf">MAX_PYRAMID_ELEMENTS</code>; `<code style="color:#22d3bf">|alpha|</code><code style="color:#22d3bf"> is over :data:</code>MAX_ALPHA`;</p>
+<p>the pass-band is empty, reaches DC, or exceeds Nyquist; *scales* is outside</p>
+<p>`<code style="color:#22d3bf">[1, MAX_SCALES]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">motion</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_displacement">riesz_displacement</a> · <a style="color:#22d3bf" href="opquat:riesz_displacement_series">riesz_displacement_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

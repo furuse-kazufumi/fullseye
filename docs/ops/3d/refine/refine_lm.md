@@ -3,7 +3,7 @@ op: refine_lm
 dim: 3d
 category: refine
 in: voxel × voxel × position
-out: pose
+out: table
 gpu: true
 examples: [refinement]
 author: Kazufumi Furuse
@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # refine_lm — 3D `refine` op
 
-- **データ種**: `voxel × voxel × position` → `pose`
+- **データ種**: `voxel × voxel × position` → `table`
 - **呼び出し**: `import match3d; match3d.refine_lm(scene, template, init_pos, device='cpu', iters=50, scale=True, gain=False, lam0=0.001, tol=1e-08)` (または `ops3d.get("refine_lm")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
@@ -30,9 +30,9 @@ Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブ�
 
 - [refinement](../../../../examples_3d/refinement.py) — `py -3.11 examples_3d/refinement.py`
 
-## 型が繋がる次の op(`pose` を入力に取れる)
+## 型が繋がる次の op(`table` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [optimize_pose_graph](../pose_graph/optimize_pose_graph.md) · [relative_pose](../pose_graph/relative_pose.md) · [mean_edge_error](../pose_graph/mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`refine`)
 

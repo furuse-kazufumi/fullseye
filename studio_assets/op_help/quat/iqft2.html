@@ -1,0 +1,38 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">iqft2 — QUAT <code style="color:#22d3bf">fourier</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.iqft2(spectrum, side, mu=None) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;iqft2&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Inverse quaternion Fourier transform of a <b>centred</b> spectrum. → (H, W, 4).</p>
+<p>The exact inverse of :func:<code style="color:#22d3bf">qft2</code> <b>for the same side and the same mu</b>:</p>
+<p>measured round-trip error `<code style="color:#22d3bf">2.22e-15</code>` for both sides on a standard-normal</p>
+<p>`<code style="color:#22d3bf">(32, 32, 4)</code><code style="color:#22d3bf"> field. The kernel is </code><code style="color:#22d3bf">exp(+mu * 2*pi*(...))</code>` applied on the</p>
+<p>side named, and the `<code style="color:#22d3bf">1/(H*W)</code>` normalisation is carried here, as in</p>
+<p>`<code style="color:#22d3bf">numpy.fft.ifft2</code>`.</p>
+<p><b>Using the wrong side does not raise.</b> `<code style="color:#22d3bf">iqft2(qft2(q, &quot;left&quot;), &quot;right&quot;)</code>`</p>
+<p>returns a finite, plausible quaternion image that is simply not `<code style="color:#22d3bf">q</code>`:</p>
+<p>measured `<code style="color:#22d3bf">max|err| = 1.113</code>` on a random colour image whose own range is</p>
+<p>`<code style="color:#22d3bf">0.9994</code><code style="color:#22d3bf"> (another seed: 1.063 against 1.0), and — the dangerous case — only </code><code style="color:#22d3bf">0.054</code>` against a range of</p>
+<p>`<code style="color:#22d3bf">1.076</code>` on a grey-axis-dominated one, which is small enough to survive a</p>
+<p>look at the picture. The `<code style="color:#22d3bf">side</code>` argument is required at both ends for</p>
+<p>exactly this reason, and the two calls must agree: nothing in the data</p>
+<p>records which transform produced it, so nothing downstream can catch the</p>
+<p>mismatch for you.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: *spectrum* is not a valid </code><code style="color:#22d3bf">(H, W, 4)</code>` field;</p>
+<p>*side* is not `<code style="color:#22d3bf">&#x27;left&#x27;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&#x27;right&#x27;</code>`; *mu* is not a finite non-zero</p>
+<p>3-vector.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">qimage</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a> · <a style="color:#22d3bf" href="opquat:quat_conjugate_image">quat_conjugate_image</a> · <a style="color:#22d3bf" href="opquat:quat_normalize_image">quat_normalize_image</a> · <a style="color:#22d3bf" href="opquat:quat_image_multiply">quat_image_multiply</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">fourier</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:qft2">qft2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,45 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">monogenic_orientation — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.monogenic_orientation(qimage, display: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;monogenic_orientation&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Local orientation `<code style="color:#22d3bf">atan2(R2, R1)</code>` of a monogenic signal. → (H, W).</p>
+<p>Radians in `<code style="color:#22d3bf">[0, pi)</code><code style="color:#22d3bf">: an orientation is defined modulo </code><code style="color:#22d3bf">pi</code>` (a grating at</p>
+<p>10 degrees and one at 190 degrees are the same grating), and the value is</p>
+<p>folded into that range rather than left in `<code style="color:#22d3bf">(-pi, pi]</code>` where the same</p>
+<p>structure would read as two different numbers on either side of a contrast</p>
+<p>reversal. `<code style="color:#22d3bf">display=True</code><code style="color:#22d3bf"> maps it to </code><code style="color:#22d3bf">[0, 1]</code>`.</p>
+<p><b>Continuous, not quantised</b> — the angle is read directly from two filters,</p>
+<p>for any angle, where a steerable bank with `<code style="color:#22d3bf">K</code>` orientations interpolates</p>
+<p>between its `<code style="color:#22d3bf">K</code>`. Measured against eight grid-exact grating orientations the</p>
+<p>error is at most <b>3.6e-15 rad</b>, including the obliques. (Whether that</p>
+<p>buys anything downstream is a separate question, and the measured answer is</p>
+<p>mostly *no* — see :func:<code style="color:#22d3bf">riesz_displacement</code>.)</p>
+<p><b>Where it is undefined, and the mask is not the one you expect.</b> The</p>
+<p>orientation dies where the *Riesz vector* dies, which is at every</p>
+<p>even-symmetric point — local phase 0 or pi, the crest of a bright or dark</p>
+<p>line — and <b>the amplitude is at full strength there</b>. Measured on a 45-degree</p>
+<p>grating, the worst orientation error over the whole frame is 0.2764 rad, at a</p>
+<p>pixel where `<code style="color:#22d3bf">|R| = 6.8e-16</code><code style="color:#22d3bf"> and :func:</code>monogenic_amplitude` reads</p>
+<p>`<code style="color:#22d3bf">1.0000</code>`. So masking on the amplitude does not protect you; mask on</p>
+<p>`<code style="color:#22d3bf">hypot(q[..., 1], q[..., 2])</code>`, the Riesz magnitude. With that mask the</p>
+<p>error over the same eight orientations is at most 3.6e-15 rad.</p>
+<p>Where the Riesz vector is exactly zero, `<code style="color:#22d3bf">atan2(0, 0) = 0</code>` is returned —</p>
+<p>a *value*, not a measurement.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: the input is not a valid quaternion field, or its</p>
+<p>`<code style="color:#22d3bf">k</code>` component is non-zero; *display* is not a bool.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">riesz</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">riesz_displacement_series — QUAT <code style="color:#22d3bf">motion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import quatimage; quatimage.riesz_displacement_series(video, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code> (または <code style="color:#22d3bf">opsquat.get(&quot;riesz_displacement_series&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Whole-frame displacement waveform from the monogenic phase. → (T, 2).</p>
+<p>The contrast-weighted spatial mean of :func:<code style="color:#22d3bf">riesz_displacement</code>: the</p>
+<p>rigid-body motion of the scene in pixels, one `<code style="color:#22d3bf">(dx, dy)</code>` row per frame.</p>
+<p>The `<code style="color:#22d3bf">(n, 2)</code><code style="color:#22d3bf"> layout is the shared 1-D convention (</code><code style="color:#22d3bf">dsp.spectrum</code>`,</p>
+<p>`<code style="color:#22d3bf">funct1d</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">opsoptics</code>`&#x27;s MTF curves), so the trace can be handed to</p>
+<p>`<code style="color:#22d3bf">dsp.spectrum</code>` to read off a resonant frequency without any repacking.</p>
+<p>Weights are the `<code style="color:#22d3bf">|z|^2</code>` contrast the field solve uses, restricted to the</p>
+<p>pixels marked `<code style="color:#22d3bf">valid</code>`, so blank regions do not drag the average towards</p>
+<p>zero. A clip with no valid pixel anywhere (a constant image) returns exact</p>
+<p>zeros rather than dividing by zero.</p>
+<p>Accuracy, the `<code style="color:#22d3bf">J0</code>` cliff and the multi-orientation failure all inherit from</p>
+<p>:func:<code style="color:#22d3bf">riesz_displacement</code> — read its head-to-head table before trusting a</p>
+<p>number from here. On a single-grating 64x64x64 / 8 px / 4 Hz clip a true</p>
+<p>0.5 px amplitude is recovered as <b>0.50000000000000 px</b> (2.2e-16 relative);</p>
+<p>on the two-grating `<code style="color:#22d3bf">motionmag.synthesize_translation</code>` default the same</p>
+<p>0.5 px comes back 13.0 % low, with nothing to signal it.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">pairs</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">motion</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_motion_magnify">riesz_motion_magnify</a> · <a style="color:#22d3bf" href="opquat:riesz_displacement">riesz_displacement</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

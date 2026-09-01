@@ -145,7 +145,6 @@ def run():
     print("   同じ回転を 3x3 直交行列でやった場合との差: %.3e"
           % np.abs(quat_out - mat_out).max())
     print("   → **行列に対しては勝たない**(SO(3) と単位四元数は同型)。")
-    print("      1e-12 の床は pose_quat.quat_normalize が norm+1e-12 で割るため。")
     print()
     rng = np.random.default_rng(3)
     q_acc, R_acc = np.array([1.0, 0, 0, 0]), np.eye(3)
@@ -158,7 +157,10 @@ def run():
         R_acc = R_acc @ pose_quat.quat_to_hom_mat3d(qq)[:3, :3]
     print("   10 万回合成したときの逸脱: 四元数 |q|-1 = %.3e / 行列 |RᵀR-I| = %.3e"
           % (abs(np.linalg.norm(q_acc) - 1.0), np.abs(R_acc.T @ R_acc - np.eye(3)).max()))
-    print("   → 四元数の取り柄は「表現量 4 vs 9」と「合成の閉性」。小さいが本物。")
+    print("   → 四元数の取り柄は「表現量 4 vs 9」と「合成の閉性」だけ。**極めて小さい**。")
+    print("      履歴: 以前この行は行列側 4.4e-10 と出ていて決定的な差に見えたが、")
+    print("      正体は pose_quat が norm+1e-12 で割っていたこと(2026-09-01 に修正)。")
+    print("      自分に都合の良い数字が出たら、まずそれを測り直す。")
 
     # ------------------------------------------------------------------ #
     # 3) 色選択フィルタ                                                    #
