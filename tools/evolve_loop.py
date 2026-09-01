@@ -233,10 +233,18 @@ def main():
         print(f"\n   ★ {' -> '.join(c['ops'])}")
         print(f"      {reason}")
         for row in detail["utility"]["per_problem"]:
-            if row["relative_gain"] > 0:
-                print(f"        {row['problem']}: {row['candidate']} vs "
-                      f"{row['best_existing']} ({row['best_existing_op']}) "
-                      f"{row['relative_gain']:+.4f} {row['unit']}")
+            # relative_gain は **None になりうる**: 既存最良が 0 の課題では比が
+            # 定義できないので promote_gate が None を入れ、絶対改善で判定する
+            # (以前は 1e-12 を足して +7e11 を作っていた)。None を数値として
+            # 扱うと TypeError で落ちるので、比の有無で表示を分ける。
+            rel = row["relative_gain"]
+            if not row.get("improved", (rel or 0.0) > 0):
+                continue
+            shown = "rel undefined (abs %+.4f)" % row["absolute_gain"] \
+                if rel is None else "%+.4f" % rel
+            print(f"        {row['problem']}: {row['candidate']} vs "
+                  f"{row['best_existing']} ({row['best_existing_op']}) "
+                  f"{shown} {row['unit']}")
 
     rec = {
         "vocabulary_size": ops.N_OPS,
