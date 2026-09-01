@@ -156,7 +156,125 @@ def test_intrinsics_from_fov_values():
     K = render3d.intrinsics_from_fov(90.0, 100, 200)
     assert K.shape == (3, 3)
     assert np.isclose(K[1, 1], (200 / 2) / np.tan(np.deg2rad(45.0)))   # f = h/2 / tan(fov/2)
-    assert np.isclose(K[0, 2], 50.0) and np.isclose(K[1, 2], 100.0)
+    # Pixel centres are integers (columns 0..w-1), so the image centre — and thus
+    # the principal point — is (w-1)/2, (h-1)/2. NOT w/2, h/2: that is the centre
+    # only under the OpenGL "pixel corners are integers" convention, which this
+    # library does not use. See test_principal_point_is_the_image_centre below for
+    # the behavioural consequence.
+    assert np.isclose(K[0, 2], 49.5) and np.isclose(K[1, 2], 99.5)
+
+
+# --------------------------------------------------------------------------- #
+# pixel-centre convention: render3d <-> camera must agree to machine precision #
+# --------------------------------------------------------------------------- #
+# A tilted plane is the discriminating scene: its depth varies across the image,
+# so a half-pixel sampling offset becomes a measurable depth bias. A
+# frontoparallel plane would hide the bug entirely (constant depth).
+PLANE_D, PLANE_A, PLANE_B = 2.0, 0.3, 0.2      # z_cam = -(D + a*x + b*y)
+
+
+def _tilted_plane_mesh(extent=2.0):
+    """Two triangles spanning a tilted plane, in render3d camera space (identity
+    pose), large enough to cover the whole image at the intrinsics used below."""
+    xy = [(-extent, -extent), (extent, -extent), (extent, extent), (-extent, extent)]
+    V = np.array([[x, y, -(PLANE_D + PLANE_A * x + PLANE_B * y)] for x, y in xy],
+                 np.float64)
+    F = np.array([[0, 1, 2], [0, 2, 3]], np.int64)
+    return V, F
+
+
+def _plane_depth(u, v, K):
+    """Analytic depth of the tilted plane along the ray through the *continuous*
+    image point (u, v). Worked out by hand from the pinhole model, independent of
+    render3d: a render3d camera-space point at depth d is
+    ((u-cx)/fx*d, -(v-cy)/fy*d, -d); substituting into z = -(D + a x + b y) gives
+    d * (1 - a*(u-cx)/fx + b*(v-cy)/fy) = D."""
+    fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]
+    return PLANE_D / (1.0 - PLANE_A * (u - cx) / fx + PLANE_B * (v - cy) / fy)
+
+
+def test_render_samples_pixel_centres_at_integer_coordinates():
+    # Regression guard for the half-pixel convention clash: render3d used to
+    # sample at (col+0.5, row+0.5) (OpenGL corners-at-integers) while the rest of
+    # the library — camera.depth_to_points, cadmap, visualhull — reads pixel
+    # centres as integers. Silent half-pixel bias, straight into any measurement.
+    Wp = Hp = 200
+    K = render3d.intrinsics_from_fov(45.0, Wp, Hp)
+    V, F = _tilted_plane_mesh()
+    out = render3d.render_mesh(V, F, pose=np.eye(4), intrinsics=K,
+                               width=Wp, height=Hp)
+    depth, sil = out["depth"], out["silhouette"]
+    assert sil.sum() == Wp * Hp                       # the plane covers everything
+
+    rows, cols = np.mgrid[0:Hp, 0:Wp].astype(np.float64)
+    d_integer = _plane_depth(cols, rows, K)           # this library's convention
+    d_half = _plane_depth(cols + 0.5, rows + 0.5, K)  # the OpenGL convention
+
+    err_integer = float(np.abs(depth - d_integer).max())
+    err_half = float(np.abs(depth - d_half).max())
+    assert err_integer < 1e-12, err_integer
+    # ...and the wrong convention really is distinguishable here, so this test
+    # would fail loudly if the +0.5 came back (measured gap: ~6.6e-4 world units).
+    assert err_half > 1e-5, err_half
+
+
+def test_render_depth_to_points_roundtrip_closes():
+    # depth -> camera.depth_to_points -> (a) reproject to the same pixels and
+    # (b) land on the true plane. Both must close to ~machine precision; with the
+    # old half-pixel mismatch (b) was biased by ~3.9e-4 world units, all one sign.
+    Wp = Hp = 200
+    K = render3d.intrinsics_from_fov(45.0, Wp, Hp)
+    V, F = _tilted_plane_mesh()
+    depth = render3d.render_mesh(V, F, pose=np.eye(4), intrinsics=K,
+                                 width=Wp, height=Hp)["depth"]
+
+    # render3d's depth is already the positive +Z that camera.py expects.
+    grid = camera.depth_to_points(depth, K, organized=True)      # camera.py frame
+    assert grid.shape == (Hp, Wp, 3)
+    good = np.isfinite(grid).all(axis=-1)
+    assert good.all()
+
+    # (a) reprojection returns the original *integer* pixel coordinates.
+    rows, cols = np.mgrid[0:Hp, 0:Wp].astype(np.float64)
+    uv, _ = camera.project_points(grid.reshape(-1, 3), K)
+    assert np.abs(uv[:, 0] - cols.ravel()).max() < 1e-9
+    assert np.abs(uv[:, 1] - rows.ravel()).max() < 1e-9
+
+    # (b) the points lie on the true plane. camera.py is y-down / +Z-forward and
+    # render3d is y-up / -Z-forward, so convert: (x,y,z)_r3d = (x, -y, -z)_cam.
+    # That is a handedness difference, not a pixel-centre one — it must be
+    # applied whichever pixel convention is in force.
+    P = grid.reshape(-1, 3)
+    Pr = np.stack([P[:, 0], -P[:, 1], -P[:, 2]], axis=1)
+    n = np.array([PLANE_A, PLANE_B, 1.0])
+    signed = (Pr @ n + PLANE_D) / np.linalg.norm(n)               # world units
+    assert np.abs(signed).max() < 1e-12, float(np.abs(signed).max())
+    # The old failure was a *bias*, not noise: guard the mean too, so a future
+    # regression cannot hide behind a symmetric tolerance.
+    assert abs(float(signed.mean())) < 1e-13
+
+
+def test_principal_point_is_the_image_centre():
+    # Behavioural check that cx = (w-1)/2 is right under integer pixel centres:
+    # mirroring the geometry about x = 0 must render to the exactly mirrored
+    # image. With cx = w/2 the optical axis sits half a pixel off centre and this
+    # fails (measured: 54 of 4096 silhouette pixels differ, depth off by 0.15).
+    Wp = Hp = 64
+    K = render3d.intrinsics_from_fov(45.0, Wp, Hp)
+    V = np.array([[-0.6, -0.5, -3.0], [0.7, -0.4, -3.0],
+                  [0.1, 0.65, -3.4], [-0.3, 0.2, -2.6]], np.float64)
+    F = np.array([[0, 1, 2], [0, 2, 3]], np.int64)
+    Vm = V * np.array([-1.0, 1.0, 1.0])                # mirror about x = 0
+    Fm = F[:, ::-1].copy()                             # keep the winding outward
+
+    a = render3d.render_mesh(V, F, pose=np.eye(4), intrinsics=K, width=Wp, height=Hp)
+    b = render3d.render_mesh(Vm, Fm, pose=np.eye(4), intrinsics=K, width=Wp, height=Hp)
+    assert a["silhouette"].sum() > 100                 # the scene is actually there
+    assert np.array_equal(a["silhouette"], np.fliplr(b["silhouette"]))
+    da, db = a["depth"], np.fliplr(b["depth"])
+    both = np.isfinite(da) & np.isfinite(db)
+    assert both.sum() > 100
+    assert np.abs(da[both] - db[both]).max() < 1e-12
 
 
 # --------------------------------------------------------------------------- #
