@@ -348,6 +348,11 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
         ここまで縮めても入らなければ **ValueError**(黙って切らない)。
     line_spacing : float
         行送り係数。
+    wrap : bool
+        True(既定)なら ``max_width`` で**折り返す**。False なら折り返さず
+        **1 行のままフォントを縮めて**収める(格子のラベルのように、2 行に
+        なると版が崩れる場所で使う ―― ``exhibit_tile._fit_label`` と同じ流儀)。
+        どちらでも ``min_font_size`` まで来て入らなければ例外。
 
     Returns
     -------
