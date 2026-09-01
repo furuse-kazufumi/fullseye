@@ -968,7 +968,7 @@ def fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False):
         arr = arr[_count(antenna, "antenna", 0, na - 1)][None, :, :]
     if chirp is not None:
         arr = arr[:, _count(chirp, "chirp", 0, nc - 1), :][:, None, :]
-    prof = np.abs(np.fft.fft(arr, axis=2)).mean(axis=(0, 1))
+    prof = np.abs(_fft_checked(arr, 2, op, "range (fast time)")).mean(axis=(0, 1))
     if norm:
         prof = prof / float(ns)
     return np.ascontiguousarray(prof)
