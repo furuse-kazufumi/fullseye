@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""gen_newops_media — 新しく足した 8 つの op 族の「やれることが目で分かる」図を作る。
+"""gen_newops_media — 新しく足した op 族の「やれることが目で分かる」デモを作る。
 
     py -3.11 tools/gen_newops_media.py                    # 全部
     py -3.11 tools/gen_newops_media.py --figs csi,fmcw    # 一部だけ
@@ -14,25 +14,24 @@
 * GIF と mp4 は**同一のフレーム列**から書き(撮り直さない)、書き出したあと
   **読み戻してフレーム数と形を照合**する。一致しなければ例外。
 * **図に焼く数字はすべてその場の実測**。飾りの数字は 1 つも無い。
+* すべて**動く図**にしてある(掃引・収束・視点移動・時間発展)。止まって見ても
+  分かるよう、軸・単位・凡例は毎フレーム焼き込む。
 
-作る 8 点(1 族 1 点):
+作る 10 点:
 
-  1. ``newops_csi_step_sweep``    (静止画) コヒーレンス走査干渉 — 位相シフト法が
-     λ/4 で飛び、誤差が λ/2 の整数倍になるのに対し、コヒーレンス法が追従する。
-  2. ``newops_bearing_envelope``  (静止画) 音響・振動診断 — 同じ軸受信号の生
-     スペクトル(欠陥周波数に何も無い)対 包絡線スペクトル(そこにピーク)。
-  3. ``newops_lightfield_refocus`` (GIF)  ライトフィールド — 1 枚の光場から
-     スロープを掃引してリフォーカス。ピントが手前の層から奥の層へ移る。
-  4. ``newops_photon_buildup``    (GIF)  光子計数 — 1→1000 photon/px で粒が絵に
-     なり、``photon_uncertainty`` の誤差棒が √N で縮む。
-  5. ``newops_quaternion_rotate`` (GIF)  四元数画像 — 色空間の 3 次元回転と、
-     チャンネルごとの利得(最良の対角近似)では作れないことの対比。
-  6. ``newops_fmcw_window``       (静止画) FMCW レンジ-ドップラー — 矩形窓では
-     漏れに埋没する弱い標的が hann 窓で復活する。
-  7. ``newops_specular_split``    (静止画) 鏡面反射の分離 + 遮蔽灯 k=0..6 で
-     法線誤差が k=4 で崩れる曲線。
-  8. ``newops_motion_magnify``    (GIF)  モーション増幅 — 0.2 px の振動の増幅
-     前後と、振幅を上げると J₀ 第一零点で測定が反転する崖。
+  1. ``newops_csi_step_sweep``      段差を 0.10→1.00 um で掃引。位相シフト法が
+     λ/4 で飛び、誤差が λ/2 の整数倍になるのに対しコヒーレンス法が追従する。
+  2. ``newops_bearing_envelope``    復調帯域を 400→11800 Hz で掃引。共振を含む
+     帯域に来た瞬間だけ、生スペクトルに無い欠陥周波数が包絡線に立つ。
+  3. ``newops_lightfield_refocus``  1 枚の光場からスロープ掃引でリフォーカス。
+  4. ``newops_lightfield_parallax`` 同じ光場で**視点だけ**を周回させる(視差)。
+  5. ``newops_photon_buildup``      1→1000 photon/px。粒が絵になり、誤差棒が √N。
+  6. ``newops_quaternion_rotate``   色空間の 3 次元回転 vs 最良の対角近似。
+  7. ``newops_fmcw_window``         弱い標的の真の高さを -18→-54 dB で掃引し、
+     矩形窓が漏れの床で頭打ちになるのに hann が追従するのを見る。
+  8. ``newops_specular_split``      ハイライトを動かしながら鏡面/拡散に分ける。
+  9. ``newops_photometric_shadow``  遮蔽灯 k=0→6。k=4 で頑健版も崩れる。
+ 10. ``newops_motion_magnify``      0.2 px の振動の増幅前後 + J₀ 第一零点の崖。
 """
 from __future__ import annotations
 
@@ -54,6 +53,16 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
 _MEDIA_DIR = os.path.join(_ROOT, "docs", "articles", "assets", "media")
 _THUMB_DIR = os.path.join(_ROOT, "docs", "articles", "assets", "thumbs")
+
+#: 見た目の異常(軸の入れ替わり・符号反転・off-by-one・NaN・フレーム重複)を
+#: 見つけたらここに積む。op は直さず、最後にまとめて報告する。
+ANOMALIES: list = []
+
+
+def _flag(where: str, message: str) -> None:
+    ANOMALIES.append(f"{where}: {message}")
+    print(f"    [ANOMALY] {where}: {message}", flush=True)
+
 
 # --------------------------------------------------------------------------- #
 # 配色 — 赤緑の対で意味を担わせない(色覚に依らず読める組み合わせ)             #
@@ -93,12 +102,12 @@ def _font(size: int = 13, bold: bool = False):
 
 
 def _canvas(h: int, w: int) -> np.ndarray:
-    c = np.empty((h, w, 3), np.float64)
+    c = np.empty((int(h), int(w), 3), np.float64)
     c[:, :] = np.asarray(C_BG)
     return c
 
 
-def _fill(canvas: np.ndarray, y0: int, y1: int, x0: int, x1: int, color) -> None:
+def _fill(canvas: np.ndarray, y0, y1, x0, x1, color) -> None:
     """矩形をベタ塗り(op を通すまでもない下地)。"""
     canvas[int(y0):int(y1), int(x0):int(x1), :] = np.asarray(color, np.float64)
 
@@ -110,6 +119,20 @@ def _upscale(a: np.ndarray, k: int) -> np.ndarray:
 
 def _gray_to_rgb(img: np.ndarray) -> np.ndarray:
     return np.repeat(np.clip(np.asarray(img, np.float64), 0.0, 1.0)[:, :, None], 3, axis=2)
+
+
+def _check_display(name: str, a: np.ndarray, lo: float, hi: float) -> np.ndarray:
+    """表示前の見張り: NaN/inf と、レンジ外に落ちて黒/白に潰れる画素を数える。"""
+    a = np.asarray(a, np.float64)
+    bad = int((~np.isfinite(a)).sum())
+    if bad:
+        _flag(name, f"{bad} non-finite pixel(s) would have been displayed silently")
+        a = np.nan_to_num(a, nan=lo, posinf=hi, neginf=lo)
+    clipped = float(((a < lo) | (a > hi)).mean())
+    if clipped > 0.02:
+        _flag(name, f"{clipped:.1%} of the pixels fall outside the display range "
+                    f"[{lo:g}, {hi:g}] and would saturate")
+    return a
 
 
 def _norm01(a: np.ndarray, lo=None, hi=None) -> np.ndarray:
@@ -139,17 +162,26 @@ def _cmap(v01: np.ndarray) -> np.ndarray:
     return _CMAP_ANCHORS[i] * (1.0 - f) + _CMAP_ANCHORS[i + 1] * f
 
 
+def _colourbar(canvas, y0, y1, x0, x1, flip=False):
+    """縦の色見本(下=0、上=1)。``_cmap`` と同じランプであることを保証する。"""
+    n = int(y1 - y0)
+    ramp = np.linspace(1.0, 0.0, n) if not flip else np.linspace(0.0, 1.0, n)
+    bar = _cmap(np.repeat(ramp[:, None], int(x1 - x0), axis=1))
+    canvas[int(y0):int(y1), int(x0):int(x1), :] = bar
+    return canvas
+
+
 def _place(canvas: np.ndarray, img_rgb: np.ndarray, y: int, x: int) -> None:
     h, w = img_rgb.shape[:2]
-    canvas[y:y + h, x:x + w, :] = np.clip(img_rgb, 0.0, 1.0)
+    canvas[int(y):int(y) + h, int(x):int(x) + w, :] = np.clip(img_rgb, 0.0, 1.0)
 
 
-def _frame_box(canvas: np.ndarray, y0, y1, x0, x1, color=C_GRID, width=1) -> np.ndarray:
+def _frame_box(canvas, y0, y1, x0, x1, color=C_GRID, width=1):
     pts = [(x0, y0), (x1 - 1, y0), (x1 - 1, y1 - 1), (x0, y1 - 1)]
     return imagedraw.draw_polyline(canvas, pts, color=color, width=width, closed=True)
 
 
-def _dashed(canvas: np.ndarray, p0, p1, color, width=1, dash=6, gap=5) -> np.ndarray:
+def _dashed(canvas, p0, p1, color, width=1, dash=6, gap=5):
     """破線 — ``imagedraw.draw_line`` を短い区間に分けて重ねる。"""
     x0, y0 = float(p0[0]), float(p0[1])
     x1, y1 = float(p1[0]), float(p1[1])
@@ -230,6 +262,11 @@ class Axes:
         return _dashed(canvas, p0, p1, color, width) if dashed else \
             imagedraw.draw_line(canvas, p0, p1, color=color, width=width)
 
+    def band(self, canvas, xa, xb, color):
+        _fill(canvas, self.y0, self.y1, int(round(float(self.X(xa)))),
+              max(int(round(float(self.X(xa)))) + 1, int(round(float(self.X(xb))))), color)
+        return canvas
+
     def series(self, canvas, xs, ys, color, width=2):
         pts = [(float(self.X(x)), float(self.Y(y))) for x, y in zip(xs, ys)]
         if len(pts) >= 2:
@@ -243,13 +280,13 @@ class Axes:
                                             shape=shape, width=width)
         return canvas
 
-    def xticks(self, canvas, values, labels, color=C_DIM, size=11, dy=4):
+    def xticks(self, canvas, values, labels, color=C_DIM, size=11, dy=6):
         out = []
         for v, s in zip(values, labels):
             xt = float(self.X(v))
             canvas = imagedraw.draw_line(canvas, (xt, self.y1), (xt, self.y1 + 4),
                                          color=color, width=1)
-            out.append((xt - 3.2 * len(s), self.y1 + dy + 2, s, color, size, False))
+            out.append((xt - 3.2 * len(s), self.y1 + dy, s, color, size, False))
         return canvas, out
 
     def yticks(self, canvas, values, labels, color=C_DIM, size=11):
@@ -258,7 +295,7 @@ class Axes:
             yt = float(self.Y(v))
             canvas = imagedraw.draw_line(canvas, (self.x0 - 4, yt), (self.x0, yt),
                                          color=color, width=1)
-            out.append((self.x0 - 8 - 7 * len(s), yt - 7, s, color, size, False))
+            out.append((self.x0 - 9 - 6.6 * len(s), yt - 7, s, color, size, False))
         return canvas, out
 
     def grid_y(self, canvas, values, color=C_GRID):
@@ -269,11 +306,11 @@ class Axes:
 
 
 def _legend(x, y, entries, size=12, step=17):
-    """凡例 = 色つきの ``■`` + 文字。``_text`` に渡す項目列を返す。"""
+    """凡例 = 色つきの四角 + 文字。``_text`` に渡す項目列を返す。"""
     out = []
     for i, (col, label) in enumerate(entries):
         out.append((x, y + i * step, "\u25a0", col, size, True))
-        out.append((x + 14, y + i * step, label, C_TEXT, size, False))
+        out.append((x + 15, y + i * step, label, C_TEXT, size, False))
     return out
 
 
@@ -286,6 +323,20 @@ def _sha256(path: str) -> str:
         for chunk in iter(lambda: fh.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+def _check_frames(stem: str, frames: Sequence[np.ndarray]) -> None:
+    """アニメーションの見張り: 形が揃っているか、連続フレームが重複していないか。"""
+    shapes = {f.shape for f in frames}
+    if len(shapes) != 1:
+        _flag(stem, f"frames have mixed shapes {sorted(shapes)}")
+    if len(frames) < 2:
+        return
+    dup = [i for i in range(1, len(frames))
+           if np.array_equal(frames[i], frames[i - 1])]
+    if dup:
+        _flag(stem, f"{len(dup)} duplicated frame(s) at indices {dup[:8]}"
+                    f"{' ...' if len(dup) > 8 else ''} (the animation stalls there)")
 
 
 def _verify(path: str, expected: int, log: Callable[[str], None]) -> dict:
@@ -321,10 +372,11 @@ def _thumb(frame_u8: np.ndarray, stem: str, thumb_dir: str,
     return {"path": path, "bytes": os.path.getsize(path), "sha256": _sha256(path)}
 
 
-def _write(frames_u8: Sequence[np.ndarray], stem: str, *, fps: int, thumb_index: int,
-           out_dir: str, thumb_dir: str, log: Callable[[str], None]) -> dict:
-    """1 枚なら PNG、複数なら**同一フレーム列**から GIF + mp4。どちらも読み戻す。"""
+def _write(frames_u8, stem: str, *, fps: int, thumb_index: int, out_dir: str,
+           thumb_dir: str, log: Callable[[str], None]) -> dict:
+    """**同一フレーム列**から GIF + mp4(1 枚なら PNG)。どちらも読み戻して照合。"""
     os.makedirs(out_dir, exist_ok=True)
+    _check_frames(stem, frames_u8)
     info: dict = {"fps": fps, "n_frames": len(frames_u8),
                   "size": [int(frames_u8[0].shape[1]), int(frames_u8[0].shape[0])]}
     if len(frames_u8) == 1:
@@ -339,6 +391,8 @@ def _write(frames_u8: Sequence[np.ndarray], stem: str, *, fps: int, thumb_index:
         video.write_video(gif, frames_u8, fps=fps)
         info["gif"] = _verify(gif, len(frames_u8), log)
         info["mp4"] = _verify(mp4, len(frames_u8), log)
+        if info["gif"]["bytes"] > 3.0e6:
+            _flag(stem, f"GIF is {info['gif']['bytes'] / 1e6:.2f} MB (> 3 MB budget)")
     idx = int(np.clip(thumb_index, 0, len(frames_u8) - 1))
     info["thumb"] = _thumb(frames_u8[idx], stem, thumb_dir, log)
     info["thumb"]["frame_index"] = idx
@@ -346,147 +400,179 @@ def _write(frames_u8: Sequence[np.ndarray], stem: str, *, fps: int, thumb_index:
 
 
 # =========================================================================== #
-# 1) コヒーレンス走査干渉 — 位相シフト法が λ/4 で飛ぶ                          #
+# 1) コヒーレンス走査干渉 — 段差の掃引(GIF)                                   #
 # =========================================================================== #
-def build_csi(log: Callable[[str], None]):
+def build_csi(log):
     import fringe
     import interferometry as I
 
     LAM, SIGMA, DZ, NP = 0.60, 1.2, 0.05, 241
+    BASE = 5.0
     gain = 4.0 * np.pi / LAM                    # rad/um(往復 = 1 縞が λ/2)
-    steps = np.round(np.arange(0.10, 1.0001, 0.01), 6)
+    fine = np.round(np.arange(0.10, 1.0001, 0.01), 6)
 
     psi, csi = [], []
-    for h in steps:
+    for h in fine:
         hh = np.zeros((16, 32))
         hh[:, 16:] = float(h)
         imgs = fringe.synthesize_fringes(hh, n_steps=4, freq=0.0, phase_gain=gain,
                                          bias=0.5, amplitude=0.4)
         rec = fringe.decode_fringe(imgs, k=1.0 / gain)
         psi.append(float(rec[:, 16:].mean() - rec[:, :16].mean()))
-        st = I.csi_stack_simulate(hh + 5.0, 0.0, DZ, NP, LAM,
+        st = I.csi_stack_simulate(hh + BASE, 0.0, DZ, NP, LAM,
                                   envelope_fwhm_um=None, envelope_sigma_um=SIGMA)
         cm = I.csi_height_map(st, DZ, 0.0, LAM, mode="gaussian")
         csi.append(float(cm[:, 16:].mean() - cm[:, :16].mean()))
-    psi = np.asarray(psi)
-    csi = np.asarray(csi)
+    psi, csi = np.asarray(psi), np.asarray(csi)
 
-    e_psi = psi - steps
-    e_csi = csi - steps
+    e_psi, e_csi = psi - fine, csi - fine
     orders = e_psi / (LAM / 2.0)
-    frac = float(np.abs(orders - np.round(orders)).max())          # 整数からのずれ
-    broke = steps[np.abs(e_psi) > 1e-6]
+    frac = float(np.abs(orders - np.round(orders)).max())
+    broke = fine[np.abs(e_psi) > 1e-6]
     first_break = float(broke.min()) if broke.size else float("nan")
-    last_ok = float(steps[steps < first_break].max())
-    csi_max = float(np.abs(e_csi).max())
-    csi_rms = float(np.sqrt(np.mean(e_csi ** 2)))
+    last_ok = float(fine[fine < first_break].max())
+    csi_max, csi_rms = float(np.abs(e_csi).max()), float(np.sqrt(np.mean(e_csi ** 2)))
     n_orders = int(len(np.unique(np.round(orders).astype(int))))
     des = I.csi_design(wavelength_um=LAM, bandwidth_um=0.10, z_range_um=12.0,
                        width_px=320, height_px=240)
+    if abs(des["max_z_step_um"] - LAM / 4.0) > 1e-12:
+        _flag("csi", f"Nyquist z-step {des['max_z_step_um']} != lambda/4 {LAM / 4}")
 
     log(f"  lambda/4 = {LAM / 4:.3f} um, lambda/2 = {LAM / 2:.3f} um")
-    log(f"  phase-shifting first breaks at {first_break:.2f} um "
-        f"(last correct {last_ok:.2f} um); error is an integer multiple of "
-        f"lambda/2 to {frac:.2e}; {n_orders} distinct fringe orders")
+    log(f"  phase shifting is exact to {last_ok:.2f} um and first breaks at "
+        f"{first_break:.2f} um; the error is an integer multiple of lambda/2 to "
+        f"{frac:.2e} ({n_orders} distinct fringe orders)")
     log(f"  coherence method: max |error| {csi_max:.3e} um, RMS {csi_rms:.3e} um")
 
-    W, H = 1120, 786
-    PX0, PX1 = 96, W - 22
-    canvas = _canvas(H, W)
-    _fill(canvas, 0, 30, 0, W, C_PANEL)
+    # z 走査の生信号(段差の両側)— アニメで見せる「測っているもの」そのもの
+    z = DZ * np.arange(NP)
+    steps = np.round(np.linspace(0.10, 1.00, 28), 6)
+    idx = [int(np.argmin(np.abs(fine - s))) for s in steps]
 
-    axA = Axes(PX0, 62, PX1, 336, 0.10, 1.00, -0.22, 1.06)
-    axB = Axes(PX0, 402, PX1, 588, 0.10, 1.00, -3.6, 0.6)
-    axC = Axes(PX0, 654, PX1, 760, 0.10, 1.00, -0.25, 0.25)
+    W = 920
+    HUD = 28
+    axA = Axes(78, 58, W - 14, 232, 0.10, 1.00, -0.22, 1.06)
+    axB = Axes(78, 268, W - 14, 382, 0.10, 1.00, -3.6, 0.6)
+    axZ = Axes(78, 436, W - 14, 552, 3.6, 8.8, -0.05, 0.95)
+    H = 630
 
-    for ax in (axA, axB, axC):
-        ax.bg(canvas)
-    # A: 真値の直線・λ/4 の縦線・2 方式の測定値
-    canvas = axA.grid_y(canvas, [0.0, 0.25, 0.5, 0.75, 1.0])
-    canvas = axA.series(canvas, steps, steps, C_DIM, 1)
-    canvas = axA.vline(canvas, LAM / 4.0, C_AMBR, 2, dashed=True)
-    canvas = axA.vline(canvas, first_break, C_ROSE, 2)
-    canvas = axA.series(canvas, steps, csi, C_TEAL, 3)
-    canvas = axA.series(canvas, steps, psi, C_BLUE, 2)
-    canvas = axA.axis(canvas)
-    canvas, tA = axA.xticks(canvas, [0.1, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0],
-                            ["0.10", "0.15", "0.30", "0.45", "0.60", "0.75", "0.90", "1.00"])
-    canvas, tAy = axA.yticks(canvas, [0.0, 0.25, 0.5, 0.75, 1.0],
-                             ["0.00", "0.25", "0.50", "0.75", "1.00"])
-    # B: 位相シフト法の誤差 / (λ/2) = 縞次数(整数の階段)
-    canvas = axB.grid_y(canvas, [0.0, -1.0, -2.0, -3.0])
-    canvas = axB.series(canvas, steps, orders, C_BLUE, 3)
-    canvas = axB.markers(canvas, steps[::4], orders[::4], C_WHITE, 4, "cross", 1)
-    canvas = axB.vline(canvas, LAM / 4.0, C_AMBR, 2, dashed=True)
-    canvas = axB.axis(canvas)
-    canvas, tB = axB.xticks(canvas, [0.1, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0],
-                            ["0.10", "0.15", "0.30", "0.45", "0.60", "0.75", "0.90", "1.00"])
-    canvas, tBy = axB.yticks(canvas, [0.0, -1.0, -2.0, -3.0], ["0", "-1", "-2", "-3"])
-    # C: コヒーレンス法の誤差 [nm]
-    canvas = axC.grid_y(canvas, [0.0])
-    canvas = axC.series(canvas, steps, e_csi * 1000.0, C_TEAL, 2)
-    canvas = axC.axis(canvas)
-    canvas, tC = axC.xticks(canvas, [0.1, 0.3, 0.5, 0.7, 0.9, 1.0],
-                            ["0.10", "0.30", "0.50", "0.70", "0.90", "1.00"])
-    canvas, tCy = axC.yticks(canvas, [-0.2, 0.0, 0.2], ["-0.2", "0.0", "+0.2"])
-    for ax in (axA, axB, axC):
-        canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+    out = []
+    for k, s in enumerate(steps):
+        i = idx[k]
+        canvas = _canvas(H, W)
+        _fill(canvas, 0, HUD, 0, W, C_PANEL)
 
-    labels = [
-        (14, 7, "coherence scanning interferometry  vs  phase shifting  "
-                f"(lambda = {LAM:.2f} um, envelope sigma {SIGMA:.1f} um, "
-                f"{NP} planes x {DZ:.2f} um)", C_TEXT, 13, False),
-        (PX0, 42, "measured step height [um]  -- one surface, two methods",
-         C_TEXT, 14, True),
-        (PX0, 382, "phase-shifting error / (lambda/2) = fringe order  "
-                   "(integer to %.1e)" % frac, C_TEXT, 14, True),
-        (PX0, 634, "coherence-method error [nm]", C_TEXT, 14, True),
-        (PX1 - 150, 340, "true step height [um] ->", C_DIM, 11, False),
-        (PX1 - 150, 592, "true step height [um] ->", C_DIM, 11, False),
-        (PX1 - 150, 764, "true step height [um] ->", C_DIM, 11, False),
-        (int(axA.X(LAM / 4.0)) + 6, 68, f"lambda/4 = {LAM / 4:.2f} um", C_AMBR, 12, True),
-        (int(axA.X(first_break)) + 6, 88,
-         f"first wrong answer at {first_break:.2f} um", C_ROSE, 12, True),
-    ]
-    labels += _legend(PX0 + 12, 300, [
-        (C_TEAL, "csi_height_map  (coherence envelope peak)"),
-        (C_BLUE, "decode_fringe   (4-step phase shifting)"),
-        (C_DIM, "ground truth (y = x)"),
-    ])
-    labels += [
-        (PX0 + 12, 410,
-         f"every error is -{1:d}, -2, -3 x lambda/2 -- never anything in between "
-         f"(max deviation from an integer: {frac:.2e})", C_DIM, 12, False),
-        (PX0 + 12, 660,
-         f"max |error| {csi_max * 1000:.4f} nm   RMS {csi_rms * 1000:.4f} nm   "
-         f"over {len(steps)} step heights 0.10-1.00 um", C_TEAL, 12, True),
-        (14, 766,
-         f"design: coherence length {des['coherence_length_um']:.3f} um  "
-         f"envelope FWHM {des['envelope_fwhm_um']:.3f} um  "
-         f"Nyquist z-step {des['max_z_step_um']:.3f} um  "
-         f"phase-shifting unambiguous step {des['phase_unambiguous_step_um']:.3f} um",
-         C_DIM, 11, False),
-    ]
-    labels += tA + tAy + tB + tBy + tC + tCy
-    frame = _text(_to_u8(canvas), labels)
+        for ax in (axA, axB, axZ):
+            ax.bg(canvas)
+        # A: 真値の直線・λ/4 の縦線・2 方式の測定値(掃引済みの所まで濃く)
+        canvas = axA.grid_y(canvas, [0.0, 0.25, 0.5, 0.75, 1.0])
+        canvas = axA.series(canvas, fine, fine, C_DIM, 1)
+        canvas = axA.vline(canvas, LAM / 4.0, C_AMBR, 2, dashed=True)
+        canvas = axA.series(canvas, fine, csi, (0.07, 0.35, 0.34), 2)
+        canvas = axA.series(canvas, fine, psi, (0.16, 0.31, 0.44), 1)
+        canvas = axA.series(canvas, fine[:i + 1], csi[:i + 1], C_TEAL, 3)
+        canvas = axA.series(canvas, fine[:i + 1], psi[:i + 1], C_BLUE, 2)
+        canvas = axA.markers(canvas, [fine[i], fine[i]], [csi[i], psi[i]], C_WHITE, 5, "cross", 2)
+        canvas = axA.axis(canvas)
+        canvas, tA = axA.xticks(canvas, [0.1, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0],
+                                ["0.10", "0.15", "0.30", "0.45", "0.60", "0.75", "0.90", "1.00"])
+        canvas, tAy = axA.yticks(canvas, [0.0, 0.25, 0.5, 0.75, 1.0],
+                                 ["0.00", "0.25", "0.50", "0.75", "1.00"])
+        # B: 位相シフト法の誤差 / (λ/2) = 縞次数(整数の階段)
+        canvas = axB.grid_y(canvas, [0.0, -1.0, -2.0, -3.0])
+        canvas = axB.series(canvas, fine, orders, (0.16, 0.31, 0.44), 1)
+        canvas = axB.series(canvas, fine[:i + 1], orders[:i + 1], C_BLUE, 3)
+        canvas = axB.markers(canvas, [fine[i]], [orders[i]], C_WHITE, 5, "cross", 2)
+        canvas = axB.vline(canvas, LAM / 4.0, C_AMBR, 2, dashed=True)
+        canvas = axB.axis(canvas)
+        canvas, tB = axB.xticks(canvas, [0.1, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9, 1.0],
+                                ["0.10", "0.15", "0.30", "0.45", "0.60", "0.75", "0.90", "1.00"])
+        canvas, tBy = axB.yticks(canvas, [0.0, -1.0, -2.0, -3.0], ["0", "-1", "-2", "-3"])
+
+        # Z: そのとき実際に取れている 2 本の走査信号と包絡線
+        sig_lo = I.csi_signal_simulate(BASE, 0.0, DZ, NP, LAM, envelope_fwhm_um=None,
+                                       envelope_sigma_um=SIGMA)
+        sig_hi = I.csi_signal_simulate(BASE + float(s), 0.0, DZ, NP, LAM,
+                                       envelope_fwhm_um=None, envelope_sigma_um=SIGMA)
+        env_lo = I.csi_envelope(sig_lo, remove_bias=True)
+        env_hi = I.csi_envelope(sig_hi, remove_bias=True)
+        p_lo = I.csi_peak_position(sig_lo, DZ, 0.0, LAM, mode="gaussian")
+        p_hi = I.csi_peak_position(sig_hi, DZ, 0.0, LAM, mode="gaussian")
+        canvas = axZ.series(canvas, z, sig_lo - 0.5 + 0.32, (0.20, 0.40, 0.55), 1)
+        canvas = axZ.series(canvas, z, sig_hi - 0.5 + 0.32, (0.45, 0.32, 0.20), 1)
+        canvas = axZ.series(canvas, z, env_lo + 0.32, C_BLUE, 2)
+        canvas = axZ.series(canvas, z, env_hi + 0.32, C_AMBR, 2)
+        canvas = axZ.vline(canvas, p_lo, C_BLUE, 1, dashed=True)
+        canvas = axZ.vline(canvas, p_hi, C_AMBR, 1, dashed=True)
+        canvas = axZ.axis(canvas)
+        canvas, tZ = axZ.xticks(canvas, [4.0, 5.0, 6.0, 7.0, 8.0],
+                                ["4.0", "5.0", "6.0", "7.0", "8.0"])
+        for ax in (axA, axB, axZ):
+            canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+
+        frame = _to_u8(canvas)
+        wrong = abs(psi[i] - fine[i]) > 1e-6
+        labels = [
+            (14, 6, f"coherence scanning interferometry vs 4-step phase shifting  "
+                    f"(lambda {LAM:.2f} um, envelope sigma {SIGMA:.1f} um, "
+                    f"{NP} planes x {DZ:.2f} um)", C_TEXT, 12, False),
+            (78, 40, "measured step height [um] -- one surface, two methods",
+             C_TEXT, 13, True),
+            (78, 250, f"phase-shifting error / (lambda/2) = fringe order "
+                      f"(integer to {frac:.1e})", C_TEXT, 13, True),
+            (78, 418, f"what is actually measured: the z-scan signal on both sides of the "
+                      f"step (peaks {p_lo:.4f} and {p_hi:.4f} um)", C_TEXT, 13, True),
+            (axA.x1 - 152, axA.y1 + 22, "true step height [um] ->", C_DIM, 11, False),
+            (axB.x1 - 152, axB.y1 + 22, "true step height [um] ->", C_DIM, 11, False),
+            (axZ.x1 - 110, axZ.y1 + 22, "scan position z [um] ->", C_DIM, 11, False),
+            (int(axA.X(LAM / 4.0)) + 6, axA.y0 + 4, f"lambda/4 = {LAM / 4:.2f} um",
+             C_AMBR, 11, True),
+            (14, H - 52,
+             f"true step {s:5.3f} um    coherence {csi[i]:+8.5f} um "
+             f"(error {e_csi[i]:+.2e})    phase shifting {psi[i]:+8.5f} um "
+             f"(error {e_psi[i]:+.4f} = {orders[i]:+.3f} x lambda/2)",
+             (C_ROSE if wrong else C_TEAL), 13, True),
+            (14, H - 34,
+             ("phase shifting has returned a plausible, finite, WRONG number since "
+              f"{first_break:.2f} um -- no exception, no NaN"
+              if wrong else
+              f"below lambda/4 both agree; phase shifting starts lying at "
+              f"{first_break:.2f} um"), C_DIM, 12, False),
+            (14, H - 16,
+             f"coherence method over the whole sweep: max |error| {csi_max * 1000:.4f} nm, "
+             f"RMS {csi_rms * 1000:.4f} nm, {len(fine)} step heights   |   design: "
+             f"coherence length {des['coherence_length_um']:.3f} um, Nyquist z-step "
+             f"{des['max_z_step_um']:.3f} um", C_DIM, 11, False),
+        ]
+        labels += _legend(axA.x0 + 10, axA.y0 + 6, [
+            (C_TEAL, "csi_height_map (coherence envelope peak)"),
+            (C_BLUE, "decode_fringe (4-step phase shifting)"),
+            (C_DIM, "ground truth y = x"),
+        ])
+        labels += _legend(axZ.x0 + 10, axZ.y0 + 4, [
+            (C_BLUE, f"low side, surface {BASE:.2f} um"),
+            (C_AMBR, f"high side, surface {BASE + s:.2f} um"),
+        ])
+        labels += tA + tAy + tB + tBy + tZ
+        out.append(_text(frame, labels))
 
     facts = {
         "wavelength_um": LAM, "lambda_over_4_um": LAM / 4.0, "lambda_over_2_um": LAM / 2.0,
-        "n_steps": int(len(steps)), "psi_first_break_um": first_break,
-        "psi_last_correct_um": last_ok, "psi_max_integer_deviation": frac,
-        "psi_distinct_fringe_orders": n_orders,
+        "n_fine_steps": int(len(fine)), "n_frames": int(len(steps)),
+        "psi_first_break_um": first_break, "psi_last_correct_um": last_ok,
+        "psi_max_integer_deviation": frac, "psi_distinct_fringe_orders": n_orders,
         "psi_error_range_um": [float(e_psi.min()), float(e_psi.max())],
         "csi_max_abs_error_um": csi_max, "csi_rms_error_um": csi_rms,
         "design": {k: float(v) for k, v in des.items()
                    if isinstance(v, (int, float)) and not isinstance(v, bool)},
     }
-    return [frame], facts, 12, 0
+    return out, facts, 6, int(np.argmin(np.abs(steps - 0.5)))
 
 
 # =========================================================================== #
-# 2) 音響・振動診断 — 生スペクトル 対 包絡線スペクトル                          #
+# 2) 音響・振動診断 — 復調帯域の掃引(GIF)                                     #
 # =========================================================================== #
-def build_bearing(log: Callable[[str], None]):
+def build_bearing(log):
     import acoustics as A
     import dsp
 
@@ -495,156 +581,216 @@ def build_bearing(log: Callable[[str], None]):
     freqs, mag = dsp.spectrum(sig, FS)
     amp = mag * 2.0 / sig.size
     df = FS / sig.size
-    i_def = int(round(FD / df))
-    a_def = float(amp[i_def])
+    if abs(df - 1.0) > 1e-9:
+        _flag("bearing", f"spectrum resolution {df} Hz is not 1 Hz; the bin indices "
+                         f"used for the annotations assume 1 Hz")
+    a_def = float(amp[int(round(FD / df))])
     a_car = float(amp[int(round(FC / df))])
     a_lo = float(amp[int(round((FC - FD) / df))])
     a_hi = float(amp[int(round((FC + FD) / df))])
-    env = A.envelope_spectrum(sig, FS, 2000.0, 4000.0)
 
-    # 同じ軸受の**衝撃型**の記録。共振周波数を人が知らないとき、どの帯域で復調
-    # するかをスペクトル尖度に選ばせる(3 つ目の op)。
+    BW = 2000.0
+    centres = np.round(np.linspace(1200.0, 11600.0, 30), 3)
+    peaks, amps, envs, bands = [], [], [], []
+    for c in centres:
+        lo = max(1.0, float(c) - BW / 2.0)
+        hi = min(FS / 2.0 - 1.0, float(c) + BW / 2.0)
+        e = A.envelope_spectrum(sig, FS, lo, hi)
+        bands.append((lo, hi))
+        envs.append(e)
+        j = int(round(FD / e["resolution_hz"]))
+        amps.append(float(e["magnitude"][j]))
+        peaks.append(float(e["peak_freq"]))
+    amps = np.asarray(amps)
+    hit = np.array([abs(p - FD) < 0.5 for p in peaks])
+    best = int(np.argmax(amps))
+
+    # 同じ軸受の衝撃型の記録では、共振を知らなくても尖度が帯域を選ぶ
     imp = A.synthesize_bearing_signal(FS, 1.0, FC, FD, mode="impulse", damping=0.05,
                                       noise_sigma=0.05, seed=3)
     sk = A.spectral_kurtosis(imp, FS)
-    lo = max(1.0, sk["max_freq"] - sk["bin_hz"])
-    hi = min(FS / 2.0 - 1.0, sk["max_freq"] + sk["bin_hz"])
-    env_auto = A.envelope_spectrum(imp, FS, lo, hi)
+    k_lo = max(1.0, sk["max_freq"] - sk["bin_hz"])
+    k_hi = min(FS / 2.0 - 1.0, sk["max_freq"] + sk["bin_hz"])
+    env_auto = A.envelope_spectrum(imp, FS, k_lo, k_hi)
     kin = A.bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)
 
-    ratio = env["peak_amplitude"] / max(a_def, 1e-300)
     log(f"  raw spectrum at {FD:.0f} Hz = {a_def:.3e} (carrier {a_car:.6f}, "
-        f"sidebands {a_lo:.6f}/{a_hi:.6f} = m/2)")
-    log(f"  envelope spectrum peak {env['peak_freq']:.4f} Hz amplitude "
-        f"{env['peak_amplitude']:.6f} (modulation m = {M}), prominence "
-        f"{env['peak_prominence']:.1f}")
-    log(f"  spectral kurtosis picks {lo:.0f}-{hi:.0f} Hz (max {sk['max_kurtosis']:.3f} "
-        f"@ {sk['max_freq']:.0f} Hz) -> envelope peak {env_auto['peak_freq']:.4f} Hz")
+        f"sidebands {a_lo:.6f} / {a_hi:.6f} = m/2)")
+    log(f"  band sweep {centres[0]:.0f} -> {centres[-1]:.0f} Hz (width {BW:.0f}): the "
+        f"{FD:.0f} Hz line is found in {int(hit.sum())} of {len(centres)} bands; best "
+        f"amplitude {amps[best]:.6f} at centre {centres[best]:.0f} Hz "
+        f"(modulation m = {M})")
+    log(f"  spectral kurtosis on the impulsive record picks {k_lo:.0f}-{k_hi:.0f} Hz "
+        f"(max {sk['max_kurtosis']:.3f} @ {sk['max_freq']:.0f} Hz) -> envelope peak "
+        f"{env_auto['peak_freq']:.4f} Hz")
 
-    W, H = 1120, 830
-    PX0, PX1 = 104, W - 22
-    canvas = _canvas(H, W)
-    _fill(canvas, 0, 30, 0, W, C_PANEL)
+    W, HUD = 940, 28
+    axR = Axes(92, 60, W - 14, 218, 0.0, 12800.0, 1e-17, 3.0, logy=True)
+    axE = Axes(92, 264, W - 14, 400, 0.0, 700.0, 0.0, 0.58)
+    axP = Axes(92, 452, W - 14, 556, 1000.0, 11800.0, 1e-17, 1.2, logy=True)
+    H = 634
 
-    axR = Axes(PX0, 66, PX1, 296, 0.0, 4000.0, 1e-17, 3.0, logy=True)
-    axE = Axes(PX0, 362, PX1, 566, 0.0, 700.0, 0.0, 0.58)
-    axK = Axes(PX0, 632, PX1, 780, 0.0, 12800.0, -1.4, 5.2)
+    out = []
+    for i, c in enumerate(centres):
+        lo, hi = bands[i]
+        e = envs[i]
+        canvas = _canvas(H, W)
+        _fill(canvas, 0, HUD, 0, W, C_PANEL)
+        for ax in (axR, axE, axP):
+            ax.bg(canvas)
 
-    for ax in (axR, axE, axK):
-        ax.bg(canvas)
+        canvas = axR.band(canvas, lo, hi, (0.15, 0.19, 0.25))
+        canvas = axR.grid_y(canvas, [1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1.0])
+        canvas = axR.series(canvas, freqs, np.maximum(amp, 1e-17), C_BLUE, 1)
+        canvas = axR.vline(canvas, FD, C_AMBR, 1, dashed=True)
+        canvas = axR.markers(canvas, [FD], [max(a_def, 1e-17)], C_ROSE, 7, "cross", 2)
+        canvas = axR.axis(canvas)
+        canvas, tR = axR.xticks(canvas, [0, 2000, 3000, 4000, 6000, 8000, 10000, 12800],
+                                ["0", "2000", "3000", "4000", "6000", "8000", "10000", "12800"])
+        canvas, tRy = axR.yticks(canvas, [1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1.0],
+                                 ["1e-15", "1e-12", "1e-9", "1e-6", "1e-3", "1"])
 
-    sel = freqs <= 4000.0
-    canvas = axR.grid_y(canvas, [1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1.0])
-    canvas = axR.series(canvas, freqs[sel], np.maximum(amp[sel], 1e-17), C_BLUE, 1)
-    canvas = axR.vline(canvas, FD, C_AMBR, 2, dashed=True)
-    canvas = axR.markers(canvas, [FD], [max(a_def, 1e-17)], C_ROSE, 7, "cross", 2)
-    canvas = axR.axis(canvas)
-    canvas, tR = axR.xticks(canvas, [0, 107, 1000, 2000, 2893, 3000, 3107, 4000],
-                            ["0", "107", "1000", "2000", "2893", "3000", "3107", "4000"])
-    canvas, tRy = axR.yticks(canvas, [1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1.0],
-                             ["1e-15", "1e-12", "1e-9", "1e-6", "1e-3", "1"])
+        sel = e["freqs"] <= 700.0
+        canvas = axE.grid_y(canvas, [0.1, 0.2, 0.3, 0.4, 0.5])
+        canvas = axE.series(canvas, e["freqs"][sel], e["magnitude"][sel], C_TEAL, 2)
+        canvas = axE.vline(canvas, FD, C_AMBR, 1, dashed=True)
+        canvas = axE.markers(canvas, [FD], [amps[i]], C_WHITE, 6, "cross", 2)
+        canvas = axE.axis(canvas)
+        canvas, tE = axE.xticks(canvas, [0, 107, 214, 321, 428, 535, 700],
+                                ["0", "107", "214", "321", "428", "535", "700"])
+        canvas, tEy = axE.yticks(canvas, [0.0, 0.25, 0.5], ["0.00", "0.25", "0.50"])
 
-    esel = env["freqs"] <= 700.0
-    canvas = axE.grid_y(canvas, [0.1, 0.2, 0.3, 0.4, 0.5])
-    canvas = axE.series(canvas, env["freqs"][esel], env["magnitude"][esel], C_TEAL, 2)
-    canvas = axE.vline(canvas, FD, C_AMBR, 2, dashed=True)
-    canvas = axE.markers(canvas, [env["peak_freq"]], [env["peak_amplitude"]],
-                         C_WHITE, 6, "cross", 2)
-    canvas = axE.axis(canvas)
-    canvas, tE = axE.xticks(canvas, [0, 107, 214, 321, 428, 535, 700],
-                            ["0", "107", "214", "321", "428", "535", "700"])
-    canvas, tEy = axE.yticks(canvas, [0.0, 0.25, 0.5], ["0.00", "0.25", "0.50"])
+        canvas = axP.grid_y(canvas, [1e-15, 1e-10, 1e-5, 1.0])
+        canvas = axP.hline(canvas, M, C_AMBR, 1, dashed=True)
+        canvas = axP.series(canvas, centres[:i + 1], np.maximum(amps[:i + 1], 1e-17),
+                            C_TEAL, 2)
+        canvas = axP.markers(canvas, [c], [max(amps[i], 1e-17)], C_WHITE, 5, "cross", 2)
+        canvas = axP.axis(canvas)
+        canvas, tP = axP.xticks(canvas, [2000, 4000, 6000, 8000, 10000],
+                                ["2000", "4000", "6000", "8000", "10000"])
+        canvas, tPy = axP.yticks(canvas, [1e-15, 1e-10, 1e-5, 1.0],
+                                 ["1e-15", "1e-10", "1e-5", "1"])
+        for ax in (axR, axE, axP):
+            canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
 
-    canvas = axK.grid_y(canvas, [0.0, 2.0, 4.0])
-    _fill(canvas, axK.y0, axK.y1, int(axK.X(lo)), int(axK.X(hi)), (0.14, 0.17, 0.21))
-    canvas = axK.series(canvas, sk["freqs"], sk["kurtosis"], C_VIOL, 2)
-    canvas = axK.markers(canvas, [sk["max_freq"]], [sk["max_kurtosis"]], C_WHITE, 6, "cross", 2)
-    canvas = axK.axis(canvas)
-    canvas, tK = axK.xticks(canvas, [0, 2000, 4000, 6000, 8000, 10000, 12800],
-                            ["0", "2000", "4000", "6000", "8000", "10000", "12800"])
-    canvas, tKy = axK.yticks(canvas, [0.0, 2.0, 4.0], ["0", "2", "4"])
-    for ax in (axR, axE, axK):
-        canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
-
-    labels = [
-        (14, 7, f"rolling-element bearing: {FC:.0f} Hz resonance amplitude-modulated at "
-                f"the {FD:.0f} Hz defect rate (m = {M}), {FS / 1000:.1f} kHz x 1.0 s",
-         C_TEXT, 13, False),
-        (PX0, 46, "1  raw spectrum  (dsp.spectrum)   -- log amplitude",
-         C_TEXT, 14, True),
-        (PX0, 342, "2  envelope spectrum of the 2000-4000 Hz band  "
-                   "(acoustics.envelope_spectrum)   -- linear amplitude", C_TEXT, 14, True),
-        (PX0, 612, "3  spectral kurtosis picks the demodulation band without being told "
-                   "the resonance  (acoustics.spectral_kurtosis, impulsive record)",
-         C_TEXT, 14, True),
-        (PX1 - 130, 300, "frequency [Hz] ->", C_DIM, 11, False),
-        (PX1 - 130, 570, "frequency [Hz] ->", C_DIM, 11, False),
-        (PX1 - 130, 784, "frequency [Hz] ->", C_DIM, 11, False),
-        (int(axR.X(FD)) + 6, 84, f"{FD:.0f} Hz: amplitude {a_def:.2e}", C_ROSE, 12, True),
-        (int(axR.X(FD)) + 6, 100, "the defect rate is NOT in the raw signal", C_ROSE, 12, True),
-        (int(axR.X(FC)) - 170, 72, f"carrier {a_car:.4f}", C_BLUE, 12, True),
-        (int(axR.X(FC)) - 170, 88,
-         f"sidebands {a_lo:.4f} / {a_hi:.4f} = m/2", C_BLUE, 12, False),
-        (int(axE.X(FD)) + 8, 374,
-         f"peak {env['peak_freq']:.4f} Hz   amplitude {env['peak_amplitude']:.6f} "
-         f"= the modulation depth m itself", C_TEAL, 13, True),
-        (int(axE.X(FD)) + 8, 392,
-         f"prominence {env['peak_prominence']:.0f} x median   "
-         f"band fraction {env['band_fraction']:.4f}   "
-         f"resolution {env['resolution_hz']:.2f} Hz", C_DIM, 12, False),
-        (int(axE.X(FD)) + 8, 410,
-         f"{env['peak_amplitude'] / max(a_def, 1e-300):.1e} times the raw-spectrum "
-         f"amplitude at the same frequency", C_AMBR, 12, True),
-        (int(axK.X(lo)) + 6, 640,
-         f"selected {lo:.0f}-{hi:.0f} Hz  (max kurtosis {sk['max_kurtosis']:.3f} @ "
-         f"{sk['max_freq']:.0f} Hz, window {sk['window_seconds'] * 1e3:.2f} ms)",
-         C_VIOL, 12, True),
-        (int(axK.X(lo)) + 6, 658,
-         f"-> envelope peak {env_auto['peak_freq']:.4f} Hz  (true {FD:.0f} Hz), "
-         f"amplitude {env_auto['peak_amplitude']:.4f}", C_TEAL, 12, True),
-        (14, 800,
-         f"kinematics (1800 rpm, 9 rolling elements, d=8 D=40 mm): shaft "
-         f"{kin['shaft_hz']:.3f} / FTF {kin['ftf_hz']:.3f} / BPFO {kin['bpfo_hz']:.3f} / "
-         f"BPFI {kin['bpfi_hz']:.3f} / BSF {kin['bsf_hz']:.3f} Hz   "
-         f"check |BPFO+BPFI-N*f_r| = "
-         f"{abs(kin['bpfo_hz'] + kin['bpfi_hz'] - 9 * kin['shaft_hz']):.1e}",
-         C_DIM, 11, False),
-    ]
-    labels += tR + tRy + tE + tEy + tK + tKy
-    frame = _text(_to_u8(canvas), labels)
+        frame = _to_u8(canvas)
+        found = hit[i]
+        labels = [
+            (14, 6, f"bearing: a {FC:.0f} Hz resonance amplitude-modulated at the "
+                    f"{FD:.0f} Hz defect rate (m = {M}), {FS / 1000:.1f} kHz x 1.0 s   "
+                    f"-- sweeping the demodulation band", C_TEXT, 12, False),
+            (92, 42, "1  raw spectrum (dsp.spectrum), log amplitude -- shaded = the "
+                     "band being demodulated", C_TEXT, 13, True),
+            (92, 246, "2  envelope spectrum of that band (acoustics.envelope_spectrum), "
+                      "linear amplitude", C_TEXT, 13, True),
+            (92, 434, f"3  amplitude found at {FD:.0f} Hz vs where the band sits",
+             C_TEXT, 13, True),
+            (axR.x1 - 128, axR.y1 + 22, "frequency [Hz] ->", C_DIM, 11, False),
+            (axE.x1 - 128, axE.y1 + 22, "frequency [Hz] ->", C_DIM, 11, False),
+            (axP.x1 - 168, axP.y1 + 22, "demodulation band centre [Hz] ->", C_DIM, 11, False),
+            (int(axR.X(FD)) + 8, axR.y0 + 4,
+             f"{FD:.0f} Hz in the raw spectrum: {a_def:.2e}", C_ROSE, 11, True),
+            (int(axR.X(FD)) + 8, axR.y0 + 18,
+             "the defect rate is not a component of the signal", C_ROSE, 11, True),
+            (int(axR.X(FC)) + 10, axR.y0 + 4,
+             f"carrier {a_car:.4f}, sidebands {a_lo:.4f} / {a_hi:.4f} = m/2",
+             C_BLUE, 11, True),
+            (14, H - 56,
+             f"band {lo:6.0f} - {hi:6.0f} Hz    peak {e['peak_freq']:8.3f} Hz    "
+             f"amplitude at {FD:.0f} Hz = {amps[i]:.6f}    prominence "
+             f"{e['peak_prominence']:8.1f}    band fraction {e['band_fraction']:.4f}",
+             (C_TEAL if found else C_DIM), 13, True),
+            (14, H - 38,
+             (f"the {FD:.0f} Hz line is there -- amplitude {amps[i]:.4f} against "
+              f"{a_def:.1e} in the raw spectrum ({amps[i] / max(a_def, 1e-300):.1e} x)"
+              if found else
+              f"nothing at {FD:.0f} Hz: this band carries only "
+              f"{e['band_fraction']:.1e} of the record. The band IS the analysis."),
+             (C_TEAL if found else C_ROSE), 12, True),
+            (14, H - 20,
+             f"choosing it without knowing the resonance: spectral_kurtosis on the "
+             f"impulsive record of the same bearing picks {k_lo:.0f}-{k_hi:.0f} Hz "
+             f"(max {sk['max_kurtosis']:.3f} @ {sk['max_freq']:.0f} Hz) -> envelope peak "
+             f"{env_auto['peak_freq']:.4f} Hz.  kinematics: BPFO {kin['bpfo_hz']:.3f} / "
+             f"BPFI {kin['bpfi_hz']:.3f} Hz", C_DIM, 11, False),
+        ]
+        labels += tR + tRy + tE + tEy + tP + tPy
+        out.append(_text(frame, labels))
 
     facts = {
         "rate_hz": FS, "carrier_hz": FC, "defect_hz": FD, "modulation": M,
         "raw_amplitude_at_defect": a_def, "raw_amplitude_carrier": a_car,
         "raw_amplitude_sidebands": [a_lo, a_hi],
-        "envelope_peak_hz": float(env["peak_freq"]),
-        "envelope_peak_amplitude": float(env["peak_amplitude"]),
-        "envelope_prominence": float(env["peak_prominence"]),
-        "envelope_band_fraction": float(env["band_fraction"]),
-        "envelope_over_raw_ratio": float(ratio),
-        "kurtosis_max": float(sk["max_kurtosis"]), "kurtosis_max_freq_hz": float(sk["max_freq"]),
-        "kurtosis_band_hz": [float(lo), float(hi)],
+        "band_width_hz": BW, "band_centres_hz": [float(v) for v in centres],
+        "amplitude_at_defect_per_band": [float(v) for v in amps],
+        "bands_that_found_the_defect": int(hit.sum()),
+        "best_band_centre_hz": float(centres[best]),
+        "best_amplitude": float(amps[best]),
+        "kurtosis_max": float(sk["max_kurtosis"]),
+        "kurtosis_max_freq_hz": float(sk["max_freq"]),
+        "kurtosis_band_hz": [float(k_lo), float(k_hi)],
         "kurtosis_auto_envelope_peak_hz": float(env_auto["peak_freq"]),
         "bearing_kinematics_hz": {k: float(v) for k, v in kin.items()
                                   if isinstance(v, (int, float))},
     }
-    return [frame], facts, 12, 0
+    return out, facts, 5, best
 
 
 # =========================================================================== #
-# 3) ライトフィールド — 1 枚の光場からリフォーカス(GIF)                       #
+# 3/4) ライトフィールド — リフォーカスと視差                                    #
 # =========================================================================== #
-def build_lightfield(log: Callable[[str], None], frames: int = 27):
+_LF_CACHE: dict = {}
+
+
+def _lightfield():
+    if "lf" not in _LF_CACHE:
+        import lightfield as L
+        ANG, SIZE, NEAR, FAR = 9, 112, 3.0, 0.0
+        lf, truth = L.lf_synthesize((NEAR, FAR), (ANG, ANG), (SIZE, SIZE),
+                                    occlusion=True, coverage=0.40, texture_sigma=2.0,
+                                    edge="wrap", seed=5)
+        _LF_CACHE["lf"] = (lf, truth, ANG, SIZE, NEAR, FAR)
+    return _LF_CACHE["lf"]
+
+
+def _shift_of(a: np.ndarray, b: np.ndarray, limit: int) -> tuple:
+    """``b`` を ``a`` に重ねる整数シフト ``(dy, dx)`` を FFT 相互相関で測る。
+
+    規約は runtime に自己検定してある(``_shift_selftest``)。
+    """
+    A = np.fft.fft2(a - a.mean())
+    B = np.fft.fft2(b - b.mean())
+    cc = np.real(np.fft.ifft2(A * np.conj(B)))
+    n, m = cc.shape
+    k = np.arange(-limit, limit + 1)
+    sub = cc[np.ix_(k % n, k % m)]
+    p = np.unravel_index(int(np.argmax(sub)), sub.shape)
+    # ifft(A conj(B)) のピークは -shift に立つ(b = roll(a, s) のとき n = -s)。
+    # 符号は _shift_selftest が np.roll で毎回確かめる。
+    return -int(k[p[0]]), -int(k[p[1]])
+
+
+def _shift_selftest() -> bool:
+    """既知の ``np.roll`` で符号・軸の規約を確かめる(取り違え検出)。"""
+    rng = np.random.default_rng(0)
+    a = rng.random((64, 64))
+    for dy, dx in ((3, -5), (-2, 7)):
+        b = np.roll(a, (dy, dx), axis=(0, 1))
+        got = _shift_of(a, b, 12)
+        if got != (dy, dx):
+            _flag("_shift_of", f"roll({dy},{dx}) measured as {got} -- the "
+                               f"cross-correlation convention is not (dy, dx)")
+            return False
+    return True
+
+
+def build_lightfield(log, frames: int = 26):
     import lightfield as L
 
-    ANG, SIZE = 9, 112
-    NEAR, FAR = 3.0, 0.0
-    lf, truth = L.lf_synthesize((NEAR, FAR), (ANG, ANG), (SIZE, SIZE), occlusion=True,
-                                coverage=0.40, texture_sigma=2.0, edge="wrap", seed=5)
+    lf, truth, ANG, SIZE, NEAR, FAR = _lightfield()
     near_mask = truth > (NEAR + FAR) / 2.0
     far_mask = ~near_mask
     st = L.lf_stats(lf)
-
     slopes = np.round(np.linspace(3.6, -0.6, int(frames)), 6)
 
     def _sharp(img, mask):
@@ -657,43 +803,44 @@ def build_lightfield(log: Callable[[str], None], frames: int = 27):
         imgs.append(r)
         s_near.append(_sharp(r, near_mask))
         s_far.append(_sharp(r, far_mask))
-    s_near = np.asarray(s_near)
-    s_far = np.asarray(s_far)
+    s_near, s_far = np.asarray(s_near), np.asarray(s_far)
     peak_near = float(slopes[int(s_near.argmax())])
     peak_far = float(slopes[int(s_far.argmax())])
     smax = float(max(s_near.max(), s_far.max()))
+    if abs(peak_near - NEAR) > (slopes[0] - slopes[1]) * 1.01:
+        _flag("lightfield", f"front-layer sharpness peaks at slope {peak_near}, not at "
+                            f"the synthesised {NEAR} -- possible sign/axis mix-up")
+    if abs(peak_far - FAR) > (slopes[0] - slopes[1]) * 1.01:
+        _flag("lightfield", f"back-layer sharpness peaks at slope {peak_far}, not at "
+                            f"the synthesised {FAR}")
 
-    # 全視点を平均せずに 1 視点だけ見た場合(= 普通のカメラ)との比較
     centre = L.lf_center_view(lf)
     c_near, c_far = _sharp(centre, near_mask), _sharp(centre, far_mask)
-    log(f"  light field {lf.shape}, near layer covers {near_mask.mean():.0%} of the frame")
-    log(f"  sharpness peaks: near layer at slope {peak_near:+.2f} (true {NEAR:+.1f}), "
-        f"far layer at slope {peak_far:+.2f} (true {FAR:+.1f})")
-    log(f"  best/worst near-layer sharpness across the sweep: "
-        f"{s_near.max():.5f} / {s_near.min():.5f} "
-        f"({s_near.max() / max(s_near.min(), 1e-12):.1f}x)")
+    log(f"  light field {lf.shape}; the front layer covers {near_mask.mean():.0%}")
+    log(f"  sharpness peaks: front at slope {peak_near:+.2f} (synthesised {NEAR:+.1f}), "
+        f"back at {peak_far:+.2f} (synthesised {FAR:+.1f})")
+    log(f"  front-layer sharpness across the sweep {s_near.min():.5f} .. "
+        f"{s_near.max():.5f} ({s_near.max() / max(s_near.min(), 1e-12):.1f}x)")
 
-    SC = 2
-    PAN = SIZE * SC                                    # 224
-    MARGIN, GAP = 12, 16
+    SC, MARGIN, GAP = 2, 12, 16
+    PAN = SIZE * SC
     PLOT_W = 604
-    W = MARGIN + PAN + GAP + PLOT_W + MARGIN           # 872
-    HUD = 30
+    W = MARGIN + PAN + GAP + PLOT_W + MARGIN
+    HUD = 28
     PANY = HUD + 22
-    H = PANY + PAN + 66                                # 342
-    px0 = MARGIN + PAN + GAP + 62
-    px1 = W - MARGIN - 12
-
-    head = (f"light field {ANG}x{ANG} views x {SIZE}x{SIZE} px  "
-            f"(lf_synthesize -> lf_refocus)   two layers: slope {NEAR:+.1f} in front "
+    H = PANY + PAN + 68
+    px0, px1 = MARGIN + PAN + GAP + 62, W - MARGIN - 12
+    head = (f"one light field, {ANG}x{ANG} views of {SIZE}x{SIZE} px "
+            f"(lf_synthesize -> lf_refocus): two layers, slope {NEAR:+.1f} in front "
             f"covering {near_mask.mean():.0%}, slope {FAR:+.1f} behind")
+
     out = []
     for i, s in enumerate(slopes):
         canvas = _canvas(H, W)
         _fill(canvas, 0, HUD, 0, W, C_PANEL)
-        _place(canvas, _upscale(_gray_to_rgb(_norm01(imgs[i], 0.15, 0.85)), SC),
-               PANY, MARGIN)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN, C_GRID, 1)
+        shown = _check_display("lightfield refocus", imgs[i], 0.15, 0.85)
+        _place(canvas, _upscale(_gray_to_rgb(_norm01(shown, 0.15, 0.85)), SC), PANY, MARGIN)
+        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN)
 
         ax = Axes(px0, PANY, px1, PANY + PAN - 26, -0.6, 3.6, 0.0, smax * 1.12)
         ax.bg(canvas)
@@ -702,44 +849,40 @@ def build_lightfield(log: Callable[[str], None], frames: int = 27):
         canvas = ax.vline(canvas, FAR, C_AMBR, 1, dashed=True)
         canvas = ax.series(canvas, slopes[:i + 1], s_near[:i + 1], C_TEAL, 2)
         canvas = ax.series(canvas, slopes[:i + 1], s_far[:i + 1], C_VIOL, 2)
-        canvas = ax.markers(canvas, [s], [s_near[i]], C_WHITE, 5, "cross", 2)
-        canvas = ax.markers(canvas, [s], [s_far[i]], C_WHITE, 5, "cross", 2)
+        canvas = ax.markers(canvas, [s, s], [s_near[i], s_far[i]], C_WHITE, 5, "cross", 2)
         canvas = ax.vline(canvas, float(s), C_WHITE, 1)
         canvas = ax.axis(canvas)
         canvas, tx = ax.xticks(canvas, [-0.5, 0.0, 1.0, 2.0, 3.0, 3.5],
                                ["-0.5", "0.0", "1.0", "2.0", "3.0", "3.5"])
         canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
 
-        frame = _to_u8(canvas)
-        focus = ("front layer" if abs(s - NEAR) < abs(s - FAR) else "back layer")
+        focus = "front layer" if abs(s - NEAR) < abs(s - FAR) else "back layer"
         labels = [
-            (MARGIN, 7, head, C_TEXT, 12, False),
+            (MARGIN, 6, head, C_TEXT, 12, False),
             (MARGIN, PANY - 18, f"refocused at slope {s:+.2f} px/view", C_TEXT, 13, True),
             (px0 - 60, PANY - 18, "gradient sharpness measured inside each layer",
              C_TEXT, 13, True),
-            (MARGIN + 6, PANY + PAN + 6,
-             f"sharpness  front {s_near[i]:.5f}   back {s_far[i]:.5f}   "
-             f"-> in focus: {focus}", C_TEXT, 13, True),
-            (MARGIN + 6, PANY + PAN + 26,
-             f"one raw capture, {st['n_views']} views, max measurable slope "
-             f"{st['max_slope_px']:.1f} px/view   |   sweep peaks at "
-             f"{peak_near:+.2f} (front, true {NEAR:+.1f}) and {peak_far:+.2f} "
-             f"(back, true {FAR:+.1f})", C_DIM, 12, False),
-            (MARGIN + 6, PANY + PAN + 44,
-             f"a single view cannot do this: centre view sharpness front "
-             f"{c_near:.5f} / back {c_far:.5f} at the same time", C_DIM, 12, False),
-            (px1 - 150, ax.y1 + 22, "refocus slope [px/view]", C_DIM, 11, False),
+            (MARGIN + 4, PANY + PAN + 6,
+             f"sharpness  front {s_near[i]:.5f}   back {s_far[i]:.5f}   -> in focus: "
+             f"{focus}", C_TEXT, 13, True),
+            (MARGIN + 4, PANY + PAN + 26,
+             f"sweep peaks at {peak_near:+.2f} (front, synthesised {NEAR:+.1f}) and "
+             f"{peak_far:+.2f} (back, synthesised {FAR:+.1f}); max measurable slope "
+             f"{st['max_slope_px']:.1f} px/view from {st['n_views']} views",
+             C_DIM, 12, False),
+            (MARGIN + 4, PANY + PAN + 44,
+             f"a single photograph cannot do this: the centre view is stuck at "
+             f"front {c_near:.5f} / back {c_far:.5f} at the same time", C_DIM, 12, False),
+            (px1 - 152, ax.y1 + 22, "refocus slope [px/view]", C_DIM, 11, False),
             (int(ax.X(NEAR)) + 5, ax.y0 + 4, f"front {NEAR:+.1f}", C_AMBR, 11, True),
             (int(ax.X(FAR)) + 5, ax.y0 + 4, f"back {FAR:+.1f}", C_AMBR, 11, True),
         ]
         labels += _legend(px0 + 10, ax.y0 + 24, [
             (C_TEAL, "front layer (slope +3.0)"),
-            (C_VIOL, "back layer  (slope  0.0)"),
-        ])
+            (C_VIOL, "back layer  (slope  0.0)")])
         labels += tx
-        out.append(_text(frame, labels))
+        out.append(_text(_to_u8(canvas), labels))
 
-    thumb_index = int(np.argmin(np.abs(slopes - NEAR)))
     facts = {
         "views": [ANG, ANG], "shape": [SIZE, SIZE], "true_slopes": [NEAR, FAR],
         "near_coverage": float(near_mask.mean()),
@@ -750,84 +893,204 @@ def build_lightfield(log: Callable[[str], None], frames: int = 27):
         "centre_view_sharpness": [c_near, c_far],
         "max_measurable_slope_px": float(st["max_slope_px"]),
     }
-    return out, facts, 8, thumb_index
+    return out, facts, 7, int(np.argmin(np.abs(slopes - NEAR)))
+
+
+def build_parallax(log):
+    """視点だけを動かす — 光場の角度方向。手前の層が奥より大きく動く。"""
+    lf, truth, ANG, SIZE, NEAR, FAR = _lightfield()
+    near_mask = truth > (NEAR + FAR) / 2.0
+    ok = _shift_selftest()
+    c = (ANG - 1) // 2
+
+    # 9x9 の外周を 1 周(重複フレームが出ない道順)
+    ring = ([(0, u) for u in range(ANG)] + [(v, ANG - 1) for v in range(1, ANG)]
+            + [(ANG - 1, u) for u in range(ANG - 2, -1, -1)]
+            + [(v, 0) for v in range(ANG - 2, 0, -1)])
+    centre = lf[c, c]
+    rows = []
+    for v, u in ring:
+        view = lf[v, u]
+        dy, dx = _shift_of(centre * near_mask, view * near_mask, 14)
+        rows.append({"v": v, "u": u, "expect": (NEAR * (v - c), NEAR * (u - c)),
+                     "measured": (dy, dx)})
+    err = max(max(abs(r["measured"][0] - r["expect"][0]),
+                  abs(r["measured"][1] - r["expect"][1])) for r in rows)
+    if ok and err > 0.51:
+        _flag("lightfield parallax",
+              f"measured view shift disagrees with the closed form by up to {err:.2f} px "
+              f"(expected s*(v-vc), s*(u-uc) with s={NEAR})")
+    log(f"  orbiting {len(ring)} distinct sub-aperture views around the {ANG}x{ANG} array")
+    log(f"  measured front-layer parallax matches s*(v-vc, u-uc) to {err:.2f} px "
+        f"(max over the orbit)")
+
+    SC, MARGIN, GAP = 2, 12, 16
+    PAN = SIZE * SC
+    GRID = 176
+    PLOT = 224
+    W = MARGIN + PAN + GAP + GRID + GAP + PLOT + MARGIN
+    HUD = 28
+    PANY = HUD + 22
+    H = PANY + PAN + 86
+    gx = MARGIN + PAN + GAP
+    px = gx + GRID + GAP
+
+    out = []
+    for i, r in enumerate(rows):
+        v, u = r["v"], r["u"]
+        canvas = _canvas(H, W)
+        _fill(canvas, 0, HUD, 0, W, C_PANEL)
+        view = _check_display("lightfield view", lf[v, u], 0.15, 0.85)
+        _place(canvas, _upscale(_gray_to_rgb(_norm01(view, 0.15, 0.85)), SC), PANY, MARGIN)
+        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN)
+
+        # 視点格子(どの (v,u) を見ているか)
+        _fill(canvas, PANY, PANY + GRID, gx, gx + GRID, C_PLOT)
+        cell = GRID / ANG
+        pts = [(gx + (uu + 0.5) * cell, PANY + (vv + 0.5) * cell)
+               for vv in range(ANG) for uu in range(ANG)]
+        canvas = imagedraw.draw_markers(canvas, pts, color=C_GRID, size=3,
+                                        shape="square", width=1)
+        path = [(gx + (rr["u"] + 0.5) * cell, PANY + (rr["v"] + 0.5) * cell)
+                for rr in rows[:i + 1]]
+        if len(path) >= 2:
+            canvas = imagedraw.draw_polyline(canvas, path, color=C_VIOL, width=2)
+        canvas = imagedraw.draw_markers(
+            canvas, [(gx + (c + 0.5) * cell, PANY + (c + 0.5) * cell)],
+            color=C_DIM, size=5, shape="cross", width=1)
+        canvas = imagedraw.draw_markers(
+            canvas, [(gx + (u + 0.5) * cell, PANY + (v + 0.5) * cell)],
+            color=C_AMBR, size=7, shape="cross", width=2)
+        canvas = _frame_box(canvas, PANY, PANY + GRID, gx, gx + GRID)
+
+        # 実測シフト vs 閉形式
+        ax = Axes(px + 28, PANY, px + PLOT, PANY + PLOT - 28, -14, 14, -14, 14)
+        ax.bg(canvas)
+        canvas = ax.grid_y(canvas, [-12, -6, 0, 6, 12])
+        canvas = imagedraw.draw_line(canvas, (ax.X(0), ax.y0), (ax.X(0), ax.y1),
+                                     color=C_GRID, width=1)
+        exp_pts = [(float(ax.X(rr["expect"][1])), float(ax.Y(rr["expect"][0])))
+                   for rr in rows]
+        canvas = imagedraw.draw_polyline(canvas, exp_pts, color=(0.30, 0.32, 0.36),
+                                         width=1, closed=True)
+        mea = [(float(ax.X(rr["measured"][1])), float(ax.Y(rr["measured"][0])))
+               for rr in rows[:i + 1]]
+        canvas = imagedraw.draw_markers(canvas, mea, color=C_TEAL, size=3,
+                                        shape="square", width=1)
+        canvas = imagedraw.draw_markers(
+            canvas, [(float(ax.X(r["measured"][1])), float(ax.Y(r["measured"][0])))],
+            color=C_WHITE, size=6, shape="cross", width=2)
+        canvas = ax.axis(canvas)
+        canvas, tx = ax.xticks(canvas, [-12, 0, 12], ["-12", "0", "+12"])
+        canvas, ty = ax.yticks(canvas, [-12, 0, 12], ["-12", "0", "+12"])
+        canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+
+        labels = [
+            (MARGIN, 6, f"the same light field, moving only the viewpoint: "
+                        f"sub-aperture view (v, u) of {ANG}x{ANG}  "
+                        f"(lf[v, u] -- no refocusing, no interpolation)", C_TEXT, 12, False),
+            (MARGIN, PANY - 18, f"view (v, u) = ({v}, {u})", C_TEXT, 13, True),
+            (gx, PANY - 18, "which view", C_TEXT, 13, True),
+            (px + 28, PANY - 18, "front-layer shift [px]", C_TEXT, 13, True),
+            (gx, PANY + GRID + 10, f"orbit step {i + 1:2d} / {len(rows)}", C_DIM, 12, False),
+            (gx, PANY + GRID + 28, f"centre view ({c}, {c})", C_DIM, 12, False),
+            (MARGIN, PANY + PAN + 6,
+             f"front layer moves by (dy, dx) = ({r['measured'][0]:+d}, "
+             f"{r['measured'][1]:+d}) px, closed form s*(v-vc, u-uc) = "
+             f"({r['expect'][0]:+.0f}, {r['expect'][1]:+.0f}) px", C_TEAL, 13, True),
+            (MARGIN, PANY + PAN + 26,
+             f"the back layer (slope {FAR:+.1f}) does not move at all: that difference "
+             f"is the parallax, and it is where the depth comes from", C_DIM, 12, False),
+            (MARGIN, PANY + PAN + 44,
+             f"measured over the whole orbit, the shift matches the closed form to "
+             f"{err:.2f} px (FFT cross-correlation, convention self-tested against "
+             f"np.roll)", C_DIM, 12, False),
+            (MARGIN, PANY + PAN + 62,
+             "a plenoptic sensor records all of these in one exposure; an ordinary "
+             "camera records exactly one of them.", C_DIM, 12, False),
+            (ax.x1 - 44, ax.y1 + 22, "dx", C_DIM, 11, False),
+        ]
+        labels += tx + ty
+        out.append(_text(_to_u8(canvas), labels))
+
+    facts = {
+        "views": [ANG, ANG], "orbit_length": len(rows), "slope_front": NEAR,
+        "max_parallax_error_px": float(err),
+        "shift_convention_selftest_passed": bool(ok),
+        "orbit": [{"v": r["v"], "u": r["u"], "expect": list(map(float, r["expect"])),
+                   "measured": list(r["measured"])} for r in rows],
+    }
+    return out, facts, 8, 0
 
 
 # =========================================================================== #
-# 4) 光子計数 — 1 → 1000 photon/px(GIF)                                       #
+# 5) 光子計数 — 1 → 1000 photon/px                                             #
 # =========================================================================== #
-def _photon_scene(n: int = 128) -> tuple:
+def _photon_scene(n: int = 128):
     """決定的な合成シーン: 上が絵(円と縞)、下が 5 段のステップウェッジ。"""
     y, x = np.mgrid[0:n, 0:n].astype(np.float64)
     img = np.full((n, n), 0.10)
-    img += 0.55 * np.exp(-(((x - 0.34 * n) ** 2 + (y - 0.34 * n) ** 2) / (2 * (0.16 * n) ** 2)))
-    ring = np.hypot(x - 0.68 * n, y - 0.36 * n)
-    img[(ring > 0.16 * n) & (ring < 0.23 * n)] = 0.85
-    bars = (np.floor(x / (n / 16.0)).astype(int) % 2 == 0) & (y > 0.56 * n) & (y < 0.70 * n)
+    img += 0.55 * np.exp(-(((x - 0.34 * n) ** 2 + (y - 0.32 * n) ** 2) / (2 * (0.15 * n) ** 2)))
+    ring = np.hypot(x - 0.70 * n, y - 0.34 * n)
+    img[(ring > 0.15 * n) & (ring < 0.22 * n)] = 0.85
+    inbar = (y > 0.55 * n) & (y < 0.70 * n)
+    bars = (np.floor(x / (n / 16.0)).astype(int) % 2 == 0) & inbar
+    img[inbar] = 0.15
     img[bars] = 0.95
-    img[(y > 0.56 * n) & (y < 0.70 * n) & ~bars] = 0.15
     levels = (0.10, 0.30, 0.50, 0.75, 1.00)
     wedge = {}
     y0, y1 = int(0.76 * n), int(0.96 * n)
     for k, lv in enumerate(levels):
-        xa = int(n * (0.04 + 0.185 * k))
-        xb = int(n * (0.04 + 0.185 * k + 0.15))
+        xa, xb = int(n * (0.04 + 0.19 * k)), int(n * (0.04 + 0.19 * k + 0.15))
         img[y0:y1, xa:xb] = lv
         wedge[lv] = (slice(y0, y1), slice(xa, xb))
     return np.clip(img, 0.0, 1.0), levels, wedge
 
 
-def build_photon(log: Callable[[str], None], frames: int = 24):
+def build_photon(log, frames: int = 24):
     import photoncount as P
 
     scene, levels, wedge = _photon_scene(128)
     ns = np.unique(np.round(np.logspace(0.0, 3.0, int(frames)), 3))
-    counts, stats, rel = [], [], []
-    bars = []                                # 各水準の推定放射輝度と ±sqrt(N)/N
+    counts, stats, rel, bars = [], [], [], []
     for n in ns:
         c = P.photon_sample(scene, photons_per_unit=float(n), seed=0)
         counts.append(c)
-        st = P.photon_statistics(c)
-        stats.append(st)
+        stats.append(P.photon_statistics(c))
         sig = P.photon_uncertainty(c)
-        row = []
-        for lv in levels:
-            sl = wedge[lv]
-            m = float(c[sl].mean())
-            e = float(sig[sl].mean())
-            row.append((m / n, e / n))
-        bars.append(row)
-        bright = wedge[1.00]
-        rel.append(float(P.photon_uncertainty(c)[bright].mean()
-                         / max(c[bright].mean(), 1e-12)))
+        if not np.allclose(sig, np.sqrt(c)):
+            _flag("photon", "photon_uncertainty is not sqrt(counts)")
+        bars.append([(float(c[wedge[lv]].mean()) / n, float(sig[wedge[lv]].mean()) / n)
+                     for lv in levels])
+        b = wedge[1.00]
+        rel.append(float(sig[b].mean() / max(c[b].mean(), 1e-12)))
     rel = np.asarray(rel)
     theory = 1.0 / np.sqrt(ns)
     dev = float(np.abs(rel / theory - 1.0).max())
-    log(f"  photon sweep {ns[0]:.2f} -> {ns[-1]:.1f} photons/px, {len(ns)} frames")
-    log(f"  relative uncertainty on the 1.00 patch: {rel[0]:.4f} -> {rel[-1]:.4f}; "
-        f"matches 1/sqrt(N) to {dev:.1%}")
+    log(f"  photon sweep {ns[0]:.2f} -> {ns[-1]:.1f} photons/unit, {len(ns)} frames")
+    log(f"  relative uncertainty on the brightest patch {rel[0]:.4f} -> {rel[-1]:.4f}; "
+        f"tracks 1/sqrt(N) to {dev:.1%}")
 
-    SC = 2
-    PAN = 128 * SC                                     # 256
-    MARGIN, GAP = 12, 16
+    SC, MARGIN, GAP = 2, 12, 16
+    PAN = 128 * SC
     PLOT_W = 620
-    W = MARGIN + PAN + GAP + PLOT_W + MARGIN           # 916
-    HUD = 30
+    W = MARGIN + PAN + GAP + PLOT_W + MARGIN
+    HUD = 28
     PANY = HUD + 22
-    H = PANY + PAN + 66
+    H = PANY + PAN + 68
     bx0, bx1 = MARGIN + PAN + GAP + 64, W - MARGIN - 12
-    head = ("single-photon imaging: the same scene sampled with photon_sample(), "
-            "1 -> 1000 photons per unit radiance (Poisson)")
+    head = ("single-photon imaging: the same scene through photon_sample(), "
+            "1 -> 1000 photons per unit radiance (Poisson, seed fixed)")
 
     out = []
     for i, n in enumerate(ns):
         canvas = _canvas(H, W)
         _fill(canvas, 0, HUD, 0, W, C_PANEL)
-        shown = _norm01(counts[i], 0.0, max(1.0, float(np.quantile(counts[i], 0.995))))
-        _place(canvas, _upscale(_gray_to_rgb(shown), SC), PANY, MARGIN)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN, C_GRID, 1)
+        top = max(1.0, float(np.quantile(counts[i], 0.995)))
+        _place(canvas, _upscale(_gray_to_rgb(_norm01(counts[i], 0.0, top)), SC),
+               PANY, MARGIN)
+        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN)
 
-        # 上: 5 水準の推定放射輝度 ± photon_uncertainty/N(誤差棒が縮む)
         axB = Axes(bx0, PANY, bx1, PANY + 116, -0.6, 4.6, 0.0, 1.45)
         axB.bg(canvas)
         canvas = axB.grid_y(canvas, [0.25, 0.5, 0.75, 1.0, 1.25])
@@ -836,22 +1099,19 @@ def build_photon(log: Callable[[str], None], frames: int = 24):
             xk = float(axB.X(k))
             canvas = imagedraw.draw_line(canvas, (xk, axB.Y(m - e)), (xk, axB.Y(m + e)),
                                          color=C_AMBR, width=3)
-            canvas = imagedraw.draw_line(canvas, (xk - 7, axB.Y(m - e)), (xk + 7, axB.Y(m - e)),
-                                         color=C_AMBR, width=2)
-            canvas = imagedraw.draw_line(canvas, (xk - 7, axB.Y(m + e)), (xk + 7, axB.Y(m + e)),
-                                         color=C_AMBR, width=2)
-            canvas = imagedraw.draw_line(canvas, (xk - 11, axB.Y(lv)), (xk + 11, axB.Y(lv)),
-                                         color=C_TEAL, width=2)
+            for yy in (m - e, m + e):
+                canvas = imagedraw.draw_line(canvas, (xk - 7, axB.Y(yy)),
+                                             (xk + 7, axB.Y(yy)), color=C_AMBR, width=2)
+            canvas = imagedraw.draw_line(canvas, (xk - 12, axB.Y(lv)),
+                                         (xk + 12, axB.Y(lv)), color=C_TEAL, width=2)
             canvas = imagedraw.draw_markers(canvas, [(xk, float(axB.Y(m)))],
                                             color=C_WHITE, size=4, shape="cross", width=2)
         canvas = axB.axis(canvas)
-        canvas, tB = axB.xticks(canvas, list(range(5)),
-                                [f"{lv:.2f}" for lv in levels])
+        canvas, tB = axB.xticks(canvas, list(range(5)), [f"{lv:.2f}" for lv in levels])
         canvas, tBy = axB.yticks(canvas, [0.0, 0.5, 1.0], ["0.0", "0.5", "1.0"])
         canvas = _frame_box(canvas, axB.y0, axB.y1, axB.x0, axB.x1)
 
-        # 下: 相対不確かさ 対 光子数(両対数)と 1/sqrt(N)
-        axU = Axes(bx0, PANY + 146, bx1, PANY + PAN - 12, 0.9, 1100.0, 0.02, 1.4,
+        axU = Axes(bx0, PANY + 148, bx1, PANY + PAN - 12, 0.9, 1100.0, 0.02, 1.4,
                    logx=True, logy=True)
         axU.bg(canvas)
         canvas = axU.grid_y(canvas, [0.03, 0.1, 0.3, 1.0])
@@ -866,36 +1126,34 @@ def build_photon(log: Callable[[str], None], frames: int = 24):
         canvas = _frame_box(canvas, axU.y0, axU.y1, axU.x0, axU.x1)
 
         st = stats[i]
-        frame = _to_u8(canvas)
         labels = [
-            (MARGIN, 7, head, C_TEXT, 12, False),
+            (MARGIN, 6, head, C_TEXT, 12, False),
             (MARGIN, PANY - 18,
              f"{n:7.2f} photons/unit   {counts[i].sum():.0f} photons in the frame   "
              f"empty pixels {st['zero_fraction']:.1%}", C_TEXT, 13, True),
-            (bx0 - 62, PANY - 18,
-             "estimated radiance +/- photon_uncertainty / N  (5 step-wedge patches)",
+            (bx0 - 64, PANY - 18,
+             "estimated radiance +/- photon_uncertainty / N   (5 step-wedge patches)",
              C_TEXT, 12, True),
-            (bx0 - 62, PANY + 130,
+            (bx0 - 64, PANY + 132,
              "relative uncertainty of the brightest patch vs photon count",
              C_TEXT, 12, True),
-            (MARGIN + 6, PANY + PAN + 6,
-             f"mean {st['mean']:8.3f}   variance {st['variance']:9.3f}   "
-             f"Fano {st['fano_factor']:.4f} (Poisson = 1)", C_TEXT, 13, True),
-            (MARGIN + 6, PANY + PAN + 26,
+            (MARGIN + 4, PANY + PAN + 6,
+             f"mean {st['mean']:8.3f}   variance {st['variance']:9.3f}   Fano "
+             f"{st['fano_factor']:.4f} (Poisson = 1)", C_TEXT, 13, True),
+            (MARGIN + 4, PANY + PAN + 26,
              f"SNR measured {st['snr_measured']:7.3f}   sqrt(N) {st['snr_poisson']:7.3f}"
-             f"   error bar on the 1.00 patch {rel[i] * 100:6.2f} %  "
-             f"(1/sqrt(N) = {theory[i] * 100:6.2f} %)", C_AMBR, 13, True),
-            (MARGIN + 6, PANY + PAN + 44,
-             f"noise here is not a setting: it is sqrt(N). Over the whole sweep the "
-             f"measured bar tracks 1/sqrt(N) to {dev:.1%}.", C_DIM, 12, False),
-            (bx1 - 118, axU.y1 + 22, "photons per unit ->", C_DIM, 11, False),
+             f"   error bar {rel[i] * 100:6.2f} %  (1/sqrt(N) = {theory[i] * 100:6.2f} %)",
+             C_AMBR, 13, True),
+            (MARGIN + 4, PANY + PAN + 44,
+             f"the noise is not a setting here, it is sqrt(N): over the sweep the "
+             f"measured bar tracks 1/sqrt(N) to {dev:.1%}", C_DIM, 12, False),
+            (bx1 - 120, axU.y1 + 22, "photons per unit ->", C_DIM, 11, False),
         ]
-        labels += _legend(bx0 + 10, axB.y0 + 6, [
-            (C_TEAL, "true radiance"), (C_AMBR, "measurement +/- 1 sigma")])
-        labels += _legend(bx0 + 10, axU.y0 + 6, [
-            (C_AMBR, "measured"), (C_DIM, "1/sqrt(N)")])
+        labels += _legend(bx0 + 10, axB.y0 + 4,
+                          [(C_TEAL, "true radiance"), (C_AMBR, "measurement +/- 1 sigma")])
+        labels += _legend(bx0 + 10, axU.y0 + 4, [(C_AMBR, "measured"), (C_DIM, "1/sqrt(N)")])
         labels += tB + tBy + tU + tUy
-        out.append(_text(frame, labels))
+        out.append(_text(_to_u8(canvas), labels))
 
     facts = {
         "photons_per_unit": [float(v) for v in ns],
@@ -907,11 +1165,11 @@ def build_photon(log: Callable[[str], None], frames: int = 24):
                                      float(stats[-1]["zero_fraction"])],
         "wedge_levels": [float(v) for v in levels],
     }
-    return out, facts, 8, len(ns) - 1
+    return out, facts, 7, len(ns) - 1
 
 
 # =========================================================================== #
-# 5) 四元数画像 — 色空間の 3 次元回転(GIF)                                     #
+# 6) 四元数画像 — 色空間の 3 次元回転                                           #
 # =========================================================================== #
 def _colour_scene(n: int = 112) -> np.ndarray:
     """決定的な色見本: 中央に色相の円盤、四隅に純色・白のパッチ。"""
@@ -926,25 +1184,25 @@ def _colour_scene(n: int = 112) -> np.ndarray:
     v = np.where(r <= 1.0, 1.0, 0.0)
     p, q, t = v * (1 - s), v * (1 - s * f), v * (1 - s * (1 - f))
     rgb = np.zeros((n, n, 3))
-    for k, (rr, gg, bb) in enumerate(((v, t, p), (q, v, p), (p, v, t),
-                                      (p, q, v), (t, p, v), (v, p, q))):
+    for k, chans in enumerate(((v, t, p), (q, v, p), (p, v, t),
+                               (p, q, v), (t, p, v), (v, p, q))):
         m = i == k
-        rgb[m] = np.stack([rr, gg, bb], -1)[m]
+        rgb[m] = np.stack(chans, -1)[m]
     rgb[r > 1.0] = 0.08
     e = int(0.20 * n)
-    rgb[:e, :e] = (1.0, 0.0, 0.0)                 # 純赤
-    rgb[:e, -e:] = (0.0, 1.0, 0.0)                # 純緑
-    rgb[-e:, :e] = (0.0, 0.0, 1.0)                # 純青
-    rgb[-e:, -e:] = (1.0, 1.0, 1.0)               # 白
+    rgb[:e, :e] = (1.0, 0.0, 0.0)
+    rgb[:e, -e:] = (0.0, 1.0, 0.0)
+    rgb[-e:, :e] = (0.0, 0.0, 1.0)
+    rgb[-e:, -e:] = (1.0, 1.0, 1.0)
     return rgb
 
 
-def build_quaternion(log: Callable[[str], None], frames: int = 31):
+def build_quaternion(log, frames: int = 31):
     import quatimage as qi
 
     rgb = _colour_scene(112)
     q = qi.rgb_to_quaternion(rgb)
-    axis = (0.0, 0.0, 1.0)                          # 青軸まわり = 赤 <-> 緑 の面
+    axis = (0.0, 0.0, 1.0)
     angles = np.round(np.linspace(0.0, 90.0, int(frames)), 6)
 
     quat_imgs, diag_imgs, maxdiff, opnorm, red_q, red_d = [], [], [], [], [], []
@@ -953,7 +1211,7 @@ def build_quaternion(log: Callable[[str], None], frames: int = 31):
         rot = qi.quaternion_to_rgb(qi.quat_color_rotate(q, axis, rad))
         c, s = np.cos(rad), np.sin(rad)
         R = np.array([[c, -s, 0.0], [s, c, 0.0], [0.0, 0.0, 1.0]])
-        D = np.diag(np.diag(R))                     # チャンネルごとの最良の利得
+        D = np.diag(np.diag(R))
         dia = rgb @ D.T
         quat_imgs.append(rot)
         diag_imgs.append(dia)
@@ -961,33 +1219,38 @@ def build_quaternion(log: Callable[[str], None], frames: int = 31):
         opnorm.append(float(np.linalg.norm(R - D, 2)))
         red_q.append(R @ np.array([1.0, 0.0, 0.0]))
         red_d.append(D @ np.array([1.0, 0.0, 0.0]))
-    maxdiff = np.asarray(maxdiff)
-    opnorm = np.asarray(opnorm)
+    maxdiff, opnorm = np.asarray(maxdiff), np.asarray(opnorm)
 
-    # 行列表現との一致(四元数が「勝たない」相手)を 1 度だけ実測して焼く
     rad90 = np.radians(90.0)
-    c90, s90 = np.cos(rad90), np.sin(rad90)
-    R90 = np.array([[c90, -s90, 0.0], [s90, c90, 0.0], [0.0, 0.0, 1.0]])
-    mat_err = float(np.abs(qi.quaternion_to_rgb(qi.quat_color_rotate(q, axis, rad90))
-                           - rgb @ R90.T).max())
-    log(f"  quaternion rotation about the blue axis, 0 -> 90 deg in {len(angles)} steps")
+    R90 = np.array([[0.0, -1.0, 0.0], [1.0, 0.0, 0.0], [0.0, 0.0, 1.0]])
+    got90 = qi.quaternion_to_rgb(qi.quat_color_rotate(q, axis, rad90))
+    mat_err = float(np.abs(got90 - rgb @ np.array(
+        [[np.cos(rad90), -np.sin(rad90), 0.0], [np.sin(rad90), np.cos(rad90), 0.0],
+         [0.0, 0.0, 1.0]]).T).max())
+    if mat_err > 1e-12:
+        _flag("quaternion", f"quat_color_rotate differs from the equivalent 3x3 "
+                            f"rotation matrix by {mat_err:.2e} (expected ~1e-16); "
+                            f"check the rotation direction convention")
+    red_at_90 = qi.quaternion_to_rgb(qi.quat_color_rotate(
+        qi.rgb_to_quaternion(np.array([[[1.0, 0.0, 0.0]]])), axis, rad90))[0, 0]
+    log(f"  rotation about the blue axis, 0 -> 90 deg in {len(angles)} steps")
+    log(f"  pure red at 90 deg -> {np.round(red_at_90, 12).tolist()} (green)")
     log(f"  max |quaternion - best per-channel gain| grows to {maxdiff.max():.4f}; "
-        f"||R - diag(R)||_2 grows to {opnorm.max():.4f}")
-    log(f"  quaternion vs an explicit 3x3 rotation matrix at 90 deg: {mat_err:.2e} "
-        f"(the same map -- quaternions do not beat matrices, only per-channel gains)")
+        f"||R - diag(R)||_2 to {opnorm.max():.4f}")
+    log(f"  vs an explicit 3x3 rotation matrix: {mat_err:.2e} -- the same map "
+        f"(quaternions beat per-channel gains, not matrices)")
+    _ = R90
 
-    SC = 2
-    PAN = 112 * SC                                  # 224
-    MARGIN, GAP = 12, 16
+    SC, MARGIN, GAP = 2, 12, 16
+    PAN = 112 * SC
     PLOT_W = 500
-    W = MARGIN + PAN + GAP + PAN + GAP + PLOT_W + MARGIN
-    HUD = 30
+    W = MARGIN + 2 * (PAN + GAP) + PLOT_W + MARGIN
+    HUD = 28
     PANY = HUD + 22
-    H = PANY + PAN + 88
-    px0 = MARGIN + 2 * (PAN + GAP) + 58
-    px1 = W - MARGIN - 12
-    head = ("quaternion colour rotation q x q*  (quatimage.quat_color_rotate) -- "
-            "a 3-D rotation of the colour vector, about the blue axis")
+    H = PANY + PAN + 100
+    px0, px1 = MARGIN + 2 * (PAN + GAP) + 58, W - MARGIN - 12
+    head = ("quaternion colour rotation q x q* (quatimage.quat_color_rotate): a 3-D "
+            "rotation of the colour vector about the blue axis")
 
     out = []
     for i, a in enumerate(angles):
@@ -996,8 +1259,8 @@ def build_quaternion(log: Callable[[str], None], frames: int = 31):
         _place(canvas, np.clip(quat_imgs[i], 0, 1), PANY, MARGIN)
         x2 = MARGIN + PAN + GAP
         _place(canvas, np.clip(diag_imgs[i], 0, 1), PANY, x2)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN, C_GRID, 1)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, x2, x2 + PAN, C_GRID, 1)
+        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN)
+        canvas = _frame_box(canvas, PANY, PANY + PAN, x2, x2 + PAN)
 
         ax = Axes(px0, PANY, px1, PANY + PAN - 30, 0.0, 90.0, 0.0, 1.55)
         ax.bg(canvas)
@@ -1010,43 +1273,41 @@ def build_quaternion(log: Callable[[str], None], frames: int = 31):
         canvas, ty = ax.yticks(canvas, [0.0, 0.5, 1.0, 1.5], ["0.0", "0.5", "1.0", "1.5"])
         canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
 
-        # 純赤パッチの行き先を色見本で並べる
-        sw_y = PANY + PAN + 44
-        for k, (col, lab_x) in enumerate(((red_q[i], MARGIN + 92), (red_d[i], x2 + 92))):
-            _fill(canvas, sw_y, sw_y + 22, lab_x, lab_x + 46, np.clip(col, 0, 1))
-            canvas = _frame_box(canvas, sw_y, sw_y + 22, lab_x, lab_x + 46, C_GRID, 1)
+        sw_y = PANY + PAN + 46
+        for col, sx in ((red_q[i], MARGIN + 96), (red_d[i], x2 + 96)):
+            _fill(canvas, sw_y, sw_y + 22, sx, sx + 48, np.clip(col, 0, 1))
+            canvas = _frame_box(canvas, sw_y, sw_y + 22, sx, sx + 48)
 
-        frame = _to_u8(canvas)
         labels = [
-            (MARGIN, 7, head, C_TEXT, 12, False),
+            (MARGIN, 6, head, C_TEXT, 12, False),
             (MARGIN, PANY - 18, f"quaternion rotation, {a:5.1f} deg", C_TEAL, 13, True),
             (x2, PANY - 18, "best per-channel gain (diagonal matrix)", C_ROSE, 13, True),
             (px0 - 58, PANY - 18, "how far apart the two are", C_TEXT, 13, True),
-            (MARGIN + 6, PANY + PAN + 8,
+            (MARGIN + 4, PANY + PAN + 8,
              f"pure red (1,0,0) -> ({red_q[i][0]:+.3f}, {red_q[i][1]:+.3f}, "
              f"{red_q[i][2]:+.3f})", C_TEXT, 12, True),
-            (x2 + 6, PANY + PAN + 8,
+            (x2 + 4, PANY + PAN + 8,
              f"pure red (1,0,0) -> ({red_d[i][0]:+.3f}, {red_d[i][1]:+.3f}, "
              f"{red_d[i][2]:+.3f})", C_TEXT, 12, True),
-            (MARGIN + 6, sw_y + 4, "red goes:", C_DIM, 12, False),
-            (x2 + 6, sw_y + 4, "red goes:", C_DIM, 12, False),
-            (MARGIN + 6, PANY + PAN + 70,
+            (MARGIN + 4, sw_y + 4, "red goes:", C_DIM, 12, False),
+            (x2 + 4, sw_y + 4, "red goes:", C_DIM, 12, False),
+            (MARGIN + 4, PANY + PAN + 76,
              f"max |difference| over the image {maxdiff[i]:.4f}   "
-             f"||R - diag(R)||_2 {opnorm[i]:.4f}   "
-             f"a per-channel gain can never turn red into green: it can only scale "
-             f"the zero in the green channel.", C_AMBR, 12, True),
-            (px1 - 110, ax.y1 + 22, "rotation angle [deg]", C_DIM, 11, False),
+             f"||R - diag(R)||_2 {opnorm[i]:.4f}   a per-channel gain can only scale "
+             f"the zero in the green channel, so it can never turn red into green.",
+             C_AMBR, 12, True),
+            (px1 - 112, ax.y1 + 22, "rotation angle [deg]", C_DIM, 11, False),
             (px0 + 8, ax.y1 + 42,
              f"vs an explicit 3x3 rotation matrix: {mat_err:.1e}", C_DIM, 11, False),
-            (px0 + 8, ax.y1 + 56, "(quaternions do not beat matrices, only gains)",
+            (px0 + 8, ax.y1 + 56,
+             "(quaternions do not beat matrices, only per-channel gains)",
              C_DIM, 11, False),
         ]
-        labels += _legend(px0 + 10, ax.y0 + 6, [
+        labels += _legend(px0 + 10, ax.y0 + 4, [
             (C_AMBR, "max |quat - diagonal| (image)"),
-            (C_VIOL, "||R - diag(R)||_2 (operator)"),
-        ])
+            (C_VIOL, "||R - diag(R)||_2 (operator)")])
         labels += tx + ty
-        out.append(_text(frame, labels))
+        out.append(_text(_to_u8(canvas), labels))
 
     facts = {
         "axis": list(axis), "angles_deg": [float(v) for v in angles],
@@ -1054,141 +1315,173 @@ def build_quaternion(log: Callable[[str], None], frames: int = 31):
         "operator_norm_at_90deg": float(opnorm[-1]),
         "red_under_quaternion_at_90deg": [float(v) for v in red_q[-1]],
         "red_under_diagonal_at_90deg": [float(v) for v in red_d[-1]],
+        "pure_red_image_at_90deg": [float(v) for v in red_at_90],
         "quaternion_vs_matrix_max_error": mat_err,
     }
-    return out, facts, 10, len(angles) - 1
+    return out, facts, 9, len(angles) - 1
 
 
 # =========================================================================== #
-# 6) FMCW レンジ-ドップラー — 矩形窓 対 hann 窓                                #
+# 7) FMCW レンジ-ドップラー — 弱い標的の高さを掃引                              #
 # =========================================================================== #
-def build_fmcw(log: Callable[[str], None]):
+def build_fmcw(log, frames: int = 25):
     import rangedoppler as RD
 
     wave = dict(n_samples=64, n_chirps=32, sample_rate_hz=1.0e7,
                 slope_hz_per_s=2.0e13, chirp_period_s=5.0e-5, wavelength_m=3.8934e-3)
     des = RD.fmcw_design(**wave)
     dr, dv = des["range_bin_m"], des["velocity_bin_ms"]
-    weak_db = -45.0
-    strong_rb, weak_rb, dop_bin = 10.5, 20.0, 6
-    cube = RD.fmcw_beat_simulate([strong_rb * dr, weak_rb * dr],
-                                 [dop_bin * dv, dop_bin * dv],
-                                 amplitudes=[1.0, 10.0 ** (weak_db / 20.0)], **wave)
+    strong_rb, weak_rb, dop = 10.5, 20, 6
+    levels = np.round(np.linspace(-18.0, -54.0, int(frames)), 4)
 
-    maps, profiles, meas = {}, {}, {}
-    for w in ("rect", "hann"):
-        m = RD.range_doppler_map(RD.fmcw_window_apply(cube, w, "both"), normalize=True)
-        maps[w] = m
-        i, j = np.unravel_index(int(np.argmax(m)), m.shape)
-        row = m[i]
-        profiles[w] = row
-        lvl = 20.0 * np.log10(row[int(weak_rb)] / row.max())
-        meas[w] = {
-            "peak": float(row.max()), "peak_bin": int(j), "doppler_bin": int(i) - 16,
-            "weak_db": float(lvl),
-            "is_local_max": bool(row[int(weak_rb)] > row[int(weak_rb) - 1]
-                                 and row[int(weak_rb)] > row[int(weak_rb) + 1]),
-            "peak_loss_db": float(20.0 * np.log10(row.max())),
-        }
-        log(f"  {w:5s}: peak {row.max():.4f} at range bin {j}, doppler bin {i - 16}; "
-            f"weak target at bin {int(weak_rb)} sits {lvl:+.2f} dB down, "
-            f"local maximum = {meas[w]['is_local_max']}")
+    maps, profs, meas = [], [], []
+    for db in levels:
+        cube = RD.fmcw_beat_simulate([strong_rb * dr, weak_rb * dr], [dop * dv, dop * dv],
+                                     amplitudes=[1.0, 10.0 ** (db / 20.0)], **wave)
+        mm, pp, rr = {}, {}, {}
+        for w in ("rect", "hann"):
+            m = RD.range_doppler_map(RD.fmcw_window_apply(cube, w, "both"), normalize=True)
+            i, j = np.unravel_index(int(np.argmax(m)), m.shape)
+            if int(i) - m.shape[0] // 2 != dop:
+                _flag("fmcw", f"peak Doppler bin {int(i) - m.shape[0] // 2} != requested "
+                              f"{dop} (fftshift convention)")
+            row = m[i]
+            mm[w] = m
+            pp[w] = row
+            rr[w] = {"weak_db": float(20.0 * np.log10(row[weak_rb] / row.max())),
+                     "peak": float(row.max()), "peak_bin": int(j),
+                     "is_local_max": bool(row[weak_rb] > row[weak_rb - 1]
+                                          and row[weak_rb] > row[weak_rb + 1])}
+        maps.append(mm)
+        profs.append(pp)
+        meas.append(rr)
+    rect_seen = [levels[k] for k in range(len(levels)) if meas[k]["rect"]["is_local_max"]]
+    hann_seen = [levels[k] for k in range(len(levels)) if meas[k]["hann"]["is_local_max"]]
+    rect_floor = float(np.median([meas[k]["rect"]["weak_db"]
+                                  for k in range(len(levels)) if levels[k] < -35.0]))
+    log(f"  weak-target sweep {levels[0]:.0f} -> {levels[-1]:.0f} dB")
+    log(f"  rect: still a local maximum down to {min(rect_seen):.1f} dB "
+        f"({len(rect_seen)}/{len(levels)} levels); below that it flattens onto the "
+        f"leakage skirt at about {rect_floor:.1f} dB")
+    log(f"  hann: a local maximum at {len(hann_seen)}/{len(levels)} levels, down to "
+        f"{min(hann_seen):.1f} dB")
 
-    MAP_H, MAP_W = maps["rect"].shape                 # (32, 64)
-    SC = 7
-    PANH, PANW = MAP_H * SC, MAP_W * SC               # 224 x 448
-    MARGIN, GAP = 14, 18
-    W = MARGIN + PANW + GAP + PANW + MARGIN           # 942
-    HUD = 30
-    MAPY = HUD + 26
-    PLOTY = MAPY + PANH + 62
-    PLOTH = 208
-    H = PLOTY + PLOTH + 78
-
-    canvas = _canvas(H, W)
-    _fill(canvas, 0, HUD, 0, W, C_PANEL)
+    SC = 6
+    MAP_H, MAP_W = 32 * SC, 64 * SC             # 192 x 384
+    W, HUD = 940, 28
+    MAPY = HUD + 24
+    x1p, x2p = 40, 40 + MAP_W + 52
+    axP = Axes(100, MAPY + MAP_H + 46, W - 20, MAPY + MAP_H + 206, 0.0, 63.0, -78.0, 2.0)
+    axT = Axes(100, axP.y1 + 62, W - 20, axP.y1 + 174, -56.0, -16.0, -60.0, -14.0)
+    H = axT.y1 + 74
     DB_LO, DB_HI = -70.0, 0.0
-    label_extra = []
-    for k, w in enumerate(("rect", "hann")):
-        m = maps[w]
-        db = 20.0 * np.log10(np.maximum(m, 1e-12) / m.max())
-        x = MARGIN + k * (PANW + GAP)
-        _place(canvas, _upscale(_cmap(_norm01(db, DB_LO, DB_HI)), SC), MAPY, x)
-        canvas = _frame_box(canvas, MAPY, MAPY + PANH, x, x + PANW, C_GRID, 1)
-        # 標的の在り処を円で指し示す(imagedraw op)
-        for rb, col in ((strong_rb, C_WHITE), (weak_rb, C_AMBR)):
-            cxp = x + (rb + 0.5) * SC
-            cyp = MAPY + (dop_bin + MAP_H // 2 + 0.5) * SC
-            canvas = imagedraw.draw_circle(canvas, (cxp, cyp), 13.0, color=col, width=2)
-        label_extra.append((x + 6, MAPY - 20,
-                            f"{w} window   peak {m.max():.4f}", C_TEXT, 13, True))
 
-    ax = Axes(MARGIN + 62, PLOTY, W - MARGIN - 12, PLOTY + PLOTH, 0.0, 63.0, -78.0, 2.0)
-    ax.bg(canvas)
-    canvas = ax.grid_y(canvas, [-60.0, -45.0, -30.0, -15.0, 0.0])
-    canvas = ax.hline(canvas, weak_db, C_AMBR, 1, dashed=True)
-    for w, col in (("rect", C_ROSE), ("hann", C_TEAL)):
-        row = profiles[w]
-        db = 20.0 * np.log10(np.maximum(row, 1e-12) / row.max())
-        canvas = ax.series(canvas, np.arange(len(db)), db, col, 2)
-    canvas = ax.vline(canvas, weak_rb, C_AMBR, 1, dashed=True)
-    canvas = ax.axis(canvas)
-    canvas, tx = ax.xticks(canvas, [0, 10, 20, 30, 40, 50, 60],
-                           ["0", "10", "20", "30", "40", "50", "60"])
-    canvas, ty = ax.yticks(canvas, [0, -15, -30, -45, -60],
-                           ["0", "-15", "-30", "-45", "-60"])
-    canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+    out = []
+    for k, db in enumerate(levels):
+        canvas = _canvas(H, W)
+        _fill(canvas, 0, HUD, 0, W, C_PANEL)
+        heads = []
+        for w, xp in (("rect", x1p), ("hann", x2p)):
+            m = maps[k][w]
+            dbm = 20.0 * np.log10(np.maximum(m, 1e-12) / m.max())
+            _place(canvas, _upscale(_cmap(_norm01(dbm, DB_LO, DB_HI)), SC), MAPY, xp)
+            canvas = _frame_box(canvas, MAPY, MAPY + MAP_H, xp, xp + MAP_W)
+            cy = MAPY + (dop + 16 + 0.5) * SC
+            canvas = imagedraw.draw_circle(canvas, (xp + (strong_rb + 0.5) * SC, cy),
+                                           12.0, color=C_WHITE, width=2)
+            canvas = imagedraw.draw_circle(canvas, (xp + (weak_rb + 0.5) * SC, cy),
+                                           12.0, color=C_AMBR, width=2)
+            heads.append((xp + 2, MAPY - 20,
+                          f"{w} window   peak {m.max():.4f}", C_TEXT, 13, True))
 
-    frame = _to_u8(canvas)
-    labels = [
-        (14, 7, f"FMCW range-Doppler: a strong target at range bin {strong_rb} "
-                f"(half a bin off) and a {weak_db:.0f} dB weaker one at bin "
-                f"{weak_rb:.0f}, both at Doppler bin +{dop_bin}   "
-                f"(bin {dr:.4f} m / {dv:.4f} m/s)", C_TEXT, 12, False),
-        (MARGIN + 62, PLOTY - 22,
-         f"range profile through Doppler bin +{dop_bin}  [dB relative to the peak]",
-         C_TEXT, 13, True),
-        (ax.x1 - 96, ax.y1 + 24, "range bin ->", C_DIM, 11, False),
-        (int(ax.X(weak_rb)) + 6, ax.y0 + 6,
-         f"true level of the weak target: {weak_db:.0f} dB", C_AMBR, 12, True),
-        (MARGIN + 76, ax.y0 + 6,
-         f"rect: the weak target sits at {meas['rect']['weak_db']:+.2f} dB "
-         f"({meas['rect']['weak_db'] - weak_db:+.1f} dB above where it should be) and is "
-         f"{'a' if meas['rect']['is_local_max'] else 'NOT a'} local maximum "
-         f"-- buried in the leakage skirt", C_ROSE, 12, True),
-        (MARGIN + 76, ax.y0 + 24,
-         f"hann: {meas['hann']['weak_db']:+.2f} dB "
-         f"({meas['hann']['weak_db'] - weak_db:+.1f} dB) and IS a local maximum "
-         f"-- recovered, at the cost of {meas['rect']['peak'] / meas['hann']['peak']:.2f}x "
-         f"peak height and a wider main lobe", C_TEAL, 12, True),
-        (14, H - 52,
-         f"measured peak sidelobe level of the windows themselves (module's own "
-         f"numbers): rect -13.25 dB, hann -31.47 dB.  The rect peak "
-         f"{meas['rect']['peak']:.4f} is the half-bin scalloping loss 2/pi = "
-         f"{2 / np.pi:.4f}.", C_DIM, 11, False),
-        (14, H - 34,
-         f"colour = magnitude in dB, {DB_LO:.0f} .. {DB_HI:.0f}.  white circle = strong "
-         f"target, amber circle = weak target.  vertical axis = Doppler bin "
-         f"(-16 .. +15), horizontal = range bin (0 .. 63).", C_DIM, 11, False),
-    ]
-    labels += label_extra
-    labels += _legend(ax.x0 + 8, ax.y1 - 44, [(C_ROSE, "rect"), (C_TEAL, "hann")])
-    labels += tx + ty
-    frame = _text(frame, labels)
+        axP.bg(canvas)
+        canvas = axP.grid_y(canvas, [-60.0, -45.0, -30.0, -15.0, 0.0])
+        canvas = axP.hline(canvas, float(db), C_AMBR, 1, dashed=True)
+        for w, col in (("rect", C_ROSE), ("hann", C_TEAL)):
+            row = profs[k][w]
+            canvas = axP.series(canvas, np.arange(len(row)),
+                                20.0 * np.log10(np.maximum(row, 1e-12) / row.max()), col, 2)
+        canvas = axP.vline(canvas, float(weak_rb), C_AMBR, 1, dashed=True)
+        canvas = axP.axis(canvas)
+        canvas, tP = axP.xticks(canvas, [0, 10, 20, 30, 40, 50, 60],
+                                ["0", "10", "20", "30", "40", "50", "60"])
+        canvas, tPy = axP.yticks(canvas, [0, -15, -30, -45, -60],
+                                 ["0", "-15", "-30", "-45", "-60"])
+        canvas = _frame_box(canvas, axP.y0, axP.y1, axP.x0, axP.x1)
+
+        axT.bg(canvas)
+        canvas = axT.grid_y(canvas, [-50, -40, -30, -20])
+        canvas = axT.series(canvas, levels, levels, C_DIM, 1)
+        for w, col in (("rect", C_ROSE), ("hann", C_TEAL)):
+            ys = [meas[j][w]["weak_db"] for j in range(k + 1)]
+            canvas = axT.series(canvas, levels[:k + 1], ys, col, 2)
+            canvas = axT.markers(canvas, [db], [ys[-1]], C_WHITE, 4, "cross", 2)
+        canvas = axT.axis(canvas)
+        canvas, tT = axT.xticks(canvas, [-20, -30, -40, -50],
+                                ["-20", "-30", "-40", "-50"])
+        canvas, tTy = axT.yticks(canvas, [-20, -30, -40, -50],
+                                 ["-20", "-30", "-40", "-50"])
+        canvas = _frame_box(canvas, axT.y0, axT.y1, axT.x0, axT.x1)
+
+        r, hn = meas[k]["rect"], meas[k]["hann"]
+        labels = [
+            (14, 6, f"FMCW range-Doppler: a strong target at range bin {strong_rb} "
+                    f"(half a bin off) and a weak one at bin {weak_rb}, both at Doppler "
+                    f"bin +{dop}.  Sweeping how weak the weak one is.   "
+                    f"bin = {dr:.4f} m / {dv:.4f} m/s", C_TEXT, 12, False),
+            (100, axP.y0 - 22,
+             f"range profile through Doppler bin +{dop}  [dB relative to the peak]",
+             C_TEXT, 13, True),
+            (100, axT.y0 - 22,
+             "measured height of the weak target vs the height it was given [dB]",
+             C_TEXT, 13, True),
+            (axP.x1 - 100, axP.y1 + 22, "range bin ->", C_DIM, 11, False),
+            (axT.x1 - 132, axT.y1 + 22, "true weak-target level [dB] ->", C_DIM, 11, False),
+            (14, H - 56,
+             f"weak target given {db:+6.1f} dB    rect reads {r['weak_db']:+7.2f} dB "
+             f"({'local max' if r['is_local_max'] else 'NOT a local max'})    "
+             f"hann reads {hn['weak_db']:+7.2f} dB "
+             f"({'local max' if hn['is_local_max'] else 'NOT a local max'})",
+             C_TEXT, 13, True),
+            (14, H - 38,
+             f"rect error {r['weak_db'] - db:+6.2f} dB, hann error "
+             f"{hn['weak_db'] - db:+6.2f} dB.  Unwindowed, the answer stops depending on "
+             f"the target once it is below the leakage skirt (about {rect_floor:.1f} dB) "
+             f"-- and nothing warns you.", C_ROSE, 12, True),
+            (14, H - 20,
+             f"the cost of the window: peak height {r['peak']:.4f} -> {hn['peak']:.4f} "
+             f"({r['peak'] / hn['peak']:.2f}x) and a wider main lobe.  The rect peak is "
+             f"the half-bin scalloping loss 2/pi = {2 / np.pi:.4f}.", C_DIM, 11, False),
+            (x1p + 2, MAPY + MAP_H + 6,
+             f"colour = dB, {DB_LO:.0f}..{DB_HI:.0f}; rows = Doppler bin -16..+15, "
+             f"columns = range bin 0..63", C_DIM, 11, False),
+            (x2p + 2, MAPY + MAP_H + 6,
+             "white circle = strong target, amber circle = weak target", C_DIM, 11, False),
+        ]
+        labels += heads
+        labels += _legend(axP.x0 + 8, axP.y1 - 44, [(C_ROSE, "rect"), (C_TEAL, "hann")])
+        labels += _legend(axT.x0 + 8, axT.y0 + 4,
+                          [(C_DIM, "y = x (a truthful reading)")])
+        labels += tP + tPy + tT + tTy
+        out.append(_text(_to_u8(canvas), labels))
 
     facts = {
         "range_bin_m": float(dr), "velocity_bin_ms": float(dv),
         "sweep_bandwidth_hz": float(des["sweep_bandwidth_hz"]),
-        "targets": {"strong_range_bin": strong_rb, "weak_range_bin": weak_rb,
-                    "doppler_bin": dop_bin, "weak_true_db": weak_db},
-        "measured": meas,
+        "strong_range_bin": strong_rb, "weak_range_bin": weak_rb, "doppler_bin": dop,
+        "true_levels_db": [float(v) for v in levels],
+        "rect_measured_db": [float(m["rect"]["weak_db"]) for m in meas],
+        "hann_measured_db": [float(m["hann"]["weak_db"]) for m in meas],
+        "rect_local_max_down_to_db": float(min(rect_seen)),
+        "hann_local_max_down_to_db": float(min(hann_seen)),
+        "rect_leakage_floor_db": rect_floor,
         "half_bin_scalloping_2_over_pi": float(2 / np.pi),
     }
-    return [frame], facts, 12, 0
+    return out, facts, 6, len(levels) - 1
 
 
 # =========================================================================== #
-# 7) 鏡面反射の分離 + 遮蔽灯 k=0..6 の崖                                        #
+# 8/9) 鏡面反射の分離 と 遮蔽下のフォトメトリックステレオ                        #
 # =========================================================================== #
 def _bump_normals(h=64, w=64, amp=6.0, sigma=14.0):
     """ガウス丘の float64 の単位法線(float32 に丸めると測定の床が上がるため)。"""
@@ -1199,7 +1492,7 @@ def _bump_normals(h=64, w=64, amp=6.0, sigma=14.0):
     return n / np.linalg.norm(n, axis=-1, keepdims=True)
 
 
-def build_specular(log: Callable[[str], None]):
+def build_specular(log, frames: int = 24):
     import photometric as PM
     import specularity as SP
 
@@ -1211,20 +1504,114 @@ def build_specular(log: Callable[[str], None]):
     shading = PM.render_lambertian(normals, 1.0, light).astype(np.float64)
     diffuse_true = albedo * shading[..., None]
     y, x = np.mgrid[0:h, 0:w]
-    m_s_true = 0.7 * np.exp(-(((x - 26.0) ** 2 + (y - 24.0) ** 2) / 26.0))
-    m_s_true[m_s_true < 1e-3] = 0.0
-    image = diffuse_true + m_s_true[..., None] * WHITE_L
 
-    diffuse, specular = SP.specular_diffuse_split(image)
-    err_d = float(np.abs(diffuse - diffuse_true).max())
-    err_s = float(np.abs(specular - m_s_true[..., None] * WHITE_L).max())
-    err_part = float(np.abs(diffuse + specular - image).max())
-    coeff = SP.specular_coefficient_map(image)
-    err_c = float(np.abs(coeff - m_s_true).max())
-    log(f"  dichromatic split: diffuse max error {err_d:.2e}, specular {err_s:.2e}, "
-        f"closure {err_part:.2e}, coefficient map {err_c:.2e}")
+    ts = np.linspace(0.0, 2.0 * np.pi, int(frames), endpoint=False)
+    rows = []
+    for t in ts:
+        cx = 32.0 + 16.0 * np.cos(t)
+        cy = 26.0 + 10.0 * np.sin(t)
+        peak = 0.45 + 0.30 * (0.5 + 0.5 * np.cos(t))
+        m_s = peak * np.exp(-(((x - cx) ** 2 + (y - cy) ** 2) / 30.0))
+        m_s[m_s < 1e-3] = 0.0
+        img = diffuse_true + m_s[..., None] * WHITE_L
+        dif, spec = SP.specular_diffuse_split(img)
+        coeff = SP.specular_coefficient_map(img)
+        rows.append({
+            "cx": cx, "cy": cy, "peak": float(m_s.max()), "img": img,
+            "dif": dif, "spec": spec, "coeff": coeff,
+            "free": float((m_s == 0.0).mean()),
+            "e_d": float(np.abs(dif - diffuse_true).max()),
+            "e_s": float(np.abs(spec - m_s[..., None] * WHITE_L).max()),
+            "e_c": float(np.abs(coeff - m_s).max()),
+            "closure": float(np.abs(dif + spec - img).max()),
+        })
+    worst = {k: max(r[k] for r in rows) for k in ("e_d", "e_s", "e_c", "closure")}
+    log(f"  moving highlight, {len(rows)} positions: worst diffuse error "
+        f"{worst['e_d']:.2e}, specular {worst['e_s']:.2e}, coefficient map "
+        f"{worst['e_c']:.2e}, closure {worst['closure']:.2e}")
+    if worst["e_d"] > 1e-12:
+        _flag("specular", f"diffuse recovery is only accurate to {worst['e_d']:.2e}; "
+                          f"the docstring claims < 1e-14")
 
-    # 遮蔽灯 k = 0..6 で法線誤差がどこで崩れるか
+    SC, MARGIN, GAP = 3, 12, 16
+    PAN = h * SC
+    PLOT_W = 260
+    W = MARGIN + 3 * (PAN + GAP) + PLOT_W + MARGIN
+    HUD = 28
+    PANY = HUD + 22
+    H = PANY + PAN + 74
+    px0 = MARGIN + 3 * (PAN + GAP) + 54
+    head = ("dichromatic separation: one glossy image -> diffuse + specular "
+            "(specularity.specular_diffuse_split), highlight moving and changing strength")
+
+    out = []
+    for i, r in enumerate(rows):
+        canvas = _canvas(H, W)
+        _fill(canvas, 0, HUD, 0, W, C_PANEL)
+        gain = 1.0 / max(float(r["spec"].max()), 1e-12)
+        for k, (title, img) in enumerate((
+                ("input (glossy)", np.clip(r["img"], 0, 1)),
+                ("diffuse", np.clip(r["dif"], 0, 1)),
+                (f"specular (x{gain:.2f})", np.clip(r["spec"] * gain, 0, 1)))):
+            xp = MARGIN + k * (PAN + GAP)
+            _place(canvas, _upscale(img, SC), PANY, xp)
+            canvas = _frame_box(canvas, PANY, PANY + PAN, xp, xp + PAN)
+
+        ax = Axes(px0, PANY, W - MARGIN - 12, PANY + PAN - 26, 0, len(rows) - 1,
+                  1e-17, 1e-12, logy=True)
+        ax.bg(canvas)
+        canvas = ax.grid_y(canvas, [1e-16, 1e-15, 1e-14, 1e-13])
+        canvas = ax.series(canvas, range(i + 1),
+                           [max(rows[j]["e_d"], 1e-17) for j in range(i + 1)], C_TEAL, 2)
+        canvas = ax.series(canvas, range(i + 1),
+                           [max(rows[j]["e_s"], 1e-17) for j in range(i + 1)], C_VIOL, 2)
+        canvas = ax.axis(canvas)
+        canvas, tx = ax.xticks(canvas, [0, len(rows) // 2, len(rows) - 1],
+                               ["0", f"{len(rows) // 2}", f"{len(rows) - 1}"])
+        canvas, ty = ax.yticks(canvas, [1e-16, 1e-14],
+                               ["1e-16", "1e-14"])
+        canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+
+        heads = [(MARGIN + k * (PAN + GAP) + 2, PANY - 18, t, C_TEXT, 13, True)
+                 for k, t in enumerate(("input (glossy)", "diffuse",
+                                        f"specular (x{gain:.2f} for display)"))]
+        labels = [
+            (MARGIN, 6, head, C_TEXT, 12, False),
+            (px0 - 54, PANY - 18, "max error [linear units]", C_TEXT, 13, True),
+            (MARGIN, PANY + PAN + 8,
+             f"highlight at ({r['cx']:5.1f}, {r['cy']:5.1f}) px, peak m_s "
+             f"{r['peak']:.3f}, {r['free']:.0%} of the pixels carry no specular "
+             f"component", C_TEXT, 13, True),
+            (MARGIN, PANY + PAN + 28,
+             f"diffuse error {r['e_d']:.2e}   specular error {r['e_s']:.2e}   "
+             f"coefficient map m_s {r['e_c']:.2e}   diffuse+specular-input "
+             f"{r['closure']:.2e}", C_TEAL, 12, True),
+            (MARGIN, PANY + PAN + 46,
+             f"the separation is a projection onto the illuminant colour, not an "
+             f"optimisation -- which is why it stays at machine precision while the "
+             f"highlight moves (worst over the loop: {worst['e_d']:.2e})",
+             C_DIM, 12, False),
+            (ax.x0 + 6, ax.y1 + 22, "frame ->", C_DIM, 11, False),
+        ]
+        labels += _legend(ax.x0 + 6, ax.y0 + 4,
+                          [(C_TEAL, "diffuse"), (C_VIOL, "specular")])
+        labels += heads + tx + ty
+        out.append(_text(_to_u8(canvas), labels))
+
+    facts = {
+        "n_positions": len(rows),
+        "worst_diffuse_error": worst["e_d"], "worst_specular_error": worst["e_s"],
+        "worst_coefficient_error": worst["e_c"], "worst_closure": worst["closure"],
+        "peak_m_s_range": [min(r["peak"] for r in rows), max(r["peak"] for r in rows)],
+    }
+    return out, facts, 8, 0
+
+
+def build_photometric_shadow(log):
+    import photometric as PM
+    import specularity as SP
+
+    h = w = 64
     n_lights = 8
     L = np.array([[np.cos(a), np.sin(a), 2.2]
                   for a in np.linspace(0, 2 * np.pi, n_lights, endpoint=False)])
@@ -1232,133 +1619,151 @@ def build_specular(log: Callable[[str], None]):
     surface = _bump_normals(h, w, amp=4.0)
     alb_map = 0.7 + 0.2 * np.cos(np.linspace(0, 3, h))[:, None] * np.ones((1, w))
     ndl = np.einsum("hwc,nc->nhw", surface, L)
+    if ndl.min() <= 0.0:
+        _flag("photometric", f"N.L goes negative (min {ndl.min():.4f}): attached "
+                             f"shadows would confound the cast-shadow experiment")
     clean = alb_map[None] * ndl
     methods = ("lstsq", "median", "ransac")
     ks = list(range(0, 7))
     curves = {m: [] for m in methods}
+    emaps = {m: [] for m in methods}
+    inliers = {m: [] for m in methods}
     for k in ks:
         obs = clean.copy()
         if k:
             obs[:k] = 0.0
         for m in methods:
-            nrm, _alb, _inl = SP.photometric_stereo_robust(obs, L, method=m)
-            curves[m].append(float(PM.angular_error_deg(nrm, surface).mean()))
+            nrm, _alb, inl = SP.photometric_stereo_robust(obs, L, method=m)
+            e = PM.angular_error_deg(nrm, surface)
+            curves[m].append(float(e.mean()))
+            emaps[m].append(np.asarray(e, np.float64))
+            inliers[m].append(float(inl[:k].mean()) if k else 1.0)
     for m in methods:
         curves[m] = np.asarray(curves[m])
     floor = float(PM.angular_error_deg(surface.astype(np.float32), surface).max())
     cliff = next((k for k in ks if curves["ransac"][k] > 1.0), None)
-    log(f"  N.L min over the frame {ndl.min():.4f} (no attached shadows -- "
-        f"only the blocked lights matter)")
     for m in methods:
         log(f"  {m:7s}: " + "  ".join(f"k={k}:{curves[m][k]:.4f}" for k in ks))
-    log(f"  robust methods break at k = {cliff} of {n_lights} lights; "
-        f"float32 quantisation floor {floor:.6f} deg")
+    log(f"  robust methods break at k = {cliff} of {n_lights}; float32 output floor "
+        f"{floor:.6f} deg; N.L min {ndl.min():.4f}")
 
-    SC = 4
-    PAN = h * SC                                   # 256
-    MARGIN, GAP = 14, 18
-    W = MARGIN + 3 * PAN + 2 * GAP + MARGIN        # 830
-    HUD = 30
-    PANY = HUD + 26
-    PLOTY = PANY + PAN + 76
-    PLOTH = 230
-    H = PLOTY + PLOTH + 96
+    SC, MARGIN, GAP = 3, 12, 14
+    PAN = h * SC                                    # 192
+    TILE = 64
+    PLOT_W = 292
+    W = MARGIN + 3 * (PAN + GAP) + PLOT_W + MARGIN
+    HUD = 28
+    TILEY = HUD + 22
+    MAPY = TILEY + TILE + 34
+    H = MAPY + PAN + 92
+    ERR_HI = 30.0
 
-    canvas = _canvas(H, W)
-    _fill(canvas, 0, HUD, 0, W, C_PANEL)
-    gain = 1.0 / max(float(specular.max()), 1e-12)
-    panels = [("input (glossy)", np.clip(image, 0, 1), 1.0),
-              ("diffuse  (specular_diffuse_split)", np.clip(diffuse, 0, 1), 1.0),
-              (f"specular (x{gain:.2f} for display)", np.clip(specular * gain, 0, 1), gain)]
-    heads = []
-    for k, (title, img, _g) in enumerate(panels):
-        x = MARGIN + k * (PAN + GAP)
-        _place(canvas, _upscale(img, SC), PANY, x)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, x, x + PAN, C_GRID, 1)
-        heads.append((x + 4, PANY - 20, title, C_TEXT, 13, True))
+    out = []
+    for k in ks:
+        canvas = _canvas(H, W)
+        _fill(canvas, 0, HUD, 0, W, C_PANEL)
+        obs = clean.copy()
+        if k:
+            obs[:k] = 0.0
+        for n in range(n_lights):
+            xt = MARGIN + n * (TILE + 6)
+            _place(canvas, _gray_to_rgb(_norm01(obs[n], 0.0, float(clean.max()))),
+                   TILEY, xt)
+            canvas = _frame_box(canvas, TILEY, TILEY + TILE, xt, xt + TILE,
+                                C_ROSE if n < k else C_GRID, 2 if n < k else 1)
 
-    ax = Axes(MARGIN + 74, PLOTY, W - MARGIN - 12, PLOTY + PLOTH, -0.3, 6.3,
-              5e-5, 200.0, logy=True)
-    ax.bg(canvas)
-    canvas = ax.grid_y(canvas, [1e-4, 1e-2, 1.0, 100.0])
-    canvas = ax.hline(canvas, floor, C_DIM, 1, dashed=True)
-    for m, col in (("lstsq", C_ROSE), ("median", C_BLUE), ("ransac", C_TEAL)):
-        canvas = ax.series(canvas, ks, np.maximum(curves[m], 5e-5), col, 2)
-        canvas = ax.markers(canvas, ks, np.maximum(curves[m], 5e-5), col, 5, "circle", 2)
-    if cliff is not None:
-        canvas = ax.vline(canvas, float(cliff) - 0.5, C_AMBR, 2, dashed=True)
-    canvas = ax.axis(canvas)
-    canvas, tx = ax.xticks(canvas, ks, [str(k) for k in ks])
-    canvas, ty = ax.yticks(canvas, [1e-4, 1e-2, 1.0, 100.0],
-                           ["1e-4", "0.01", "1", "100"])
-    canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+        for j, m in enumerate(methods):
+            xp = MARGIN + j * (PAN + GAP)
+            _place(canvas, _upscale(_cmap(_norm01(emaps[m][k], 0.0, ERR_HI)), SC),
+                   MAPY, xp)
+            canvas = _frame_box(canvas, MAPY, MAPY + PAN, xp, xp + PAN)
 
-    frame = _to_u8(canvas)
-    labels = [
-        (14, 7, "specular / diffuse separation (dichromatic reflectance) and "
-                "photometric stereo under cast shadows", C_TEXT, 13, False),
-        (MARGIN, PANY + PAN + 10,
-         f"the split is a projection, not an optimisation: diffuse max error "
-         f"{err_d:.2e}, specular {err_s:.2e}, diffuse+specular-input {err_part:.2e}, "
-         f"coefficient map m_s {err_c:.2e}", C_TEAL, 12, True),
-        (MARGIN, PANY + PAN + 30,
-         f"peak highlight m_s {m_s_true.max():.3f}; {float((m_s_true == 0).mean()):.0%} of "
-         f"the pixels carry no specular component at all (that is what makes the "
-         f"separation solvable)", C_DIM, 12, False),
-        (MARGIN + 74, PLOTY - 22,
-         f"mean normal error [deg] vs number of blocked lights, {n_lights} lights total "
-         f"(photometric_stereo_robust)", C_TEXT, 13, True),
-        (ax.x1 - 156, ax.y1 + 24, "blocked lights k (of 8) ->", C_DIM, 11, False),
-        (int(ax.X(0)) + 8, ax.y0 + 6,
-         f"plain least squares is already {curves['lstsq'][1]:.1f} deg wrong with one "
-         f"blocked light", C_ROSE, 12, True),
-        (int(ax.X(0)) + 8, ax.y0 + 24,
-         f"median / ransac hold at {curves['ransac'][3]:.4f} deg through k=3 "
-         f"-- that is the float32 output floor ({floor:.4f} deg), not an error",
-         C_TEAL, 12, True),
-        (int(ax.X(max(cliff - 0.5, 0.0))) + 8, ax.y0 + 44,
-         f"k={cliff}: half the lights blocked -> ransac {curves['ransac'][cliff]:.2f} deg, "
-         f"median {curves['median'][cliff]:.2f} deg. A majority vote cannot pick "
-         f"between 'shadowed' and 'black surface'.", C_AMBR, 12, True),
-        (14, H - 74,
-         f"N.L is positive everywhere (min {ndl.min():.4f}), so every failure below is "
-         f"the blocked lights and nothing else.", C_DIM, 11, False),
-        (14, H - 56,
-         "  k : " + "   ".join(f"{k}" for k in ks), C_DIM, 11, False),
-    ]
-    for i, (m, col) in enumerate((("lstsq", C_ROSE), ("median", C_BLUE), ("ransac", C_TEAL))):
-        labels.append((14, H - 40 + i * 14,
-                       f"{m:7s}: " + "  ".join(f"{curves[m][k]:8.4f}" for k in ks),
-                       col, 11, False))
-    labels += heads
-    labels += _legend(ax.x0 + 8, ax.y1 - 62,
-                      [(C_ROSE, "lstsq"), (C_BLUE, "median"), (C_TEAL, "ransac")])
-    labels += tx + ty
-    frame = _text(frame, labels)
+        px0 = MARGIN + 3 * (PAN + GAP) + 56
+        ax = Axes(px0, MAPY, W - MARGIN - 30, MAPY + PAN - 26, -0.3, 6.3,
+                  5e-5, 200.0, logy=True)
+        ax.bg(canvas)
+        canvas = ax.grid_y(canvas, [1e-4, 1e-2, 1.0, 100.0])
+        canvas = ax.hline(canvas, floor, C_DIM, 1, dashed=True)
+        for m, col in (("lstsq", C_ROSE), ("median", C_BLUE), ("ransac", C_TEAL)):
+            canvas = ax.series(canvas, ks[:k + 1],
+                               np.maximum(curves[m][:k + 1], 5e-5), col, 2)
+            canvas = ax.markers(canvas, ks[:k + 1],
+                                np.maximum(curves[m][:k + 1], 5e-5), col, 5, "square", 2)
+        canvas = ax.axis(canvas)
+        canvas, tx = ax.xticks(canvas, ks, [str(v) for v in ks])
+        canvas, ty = ax.yticks(canvas, [1e-4, 1e-2, 1.0, 100.0],
+                               ["1e-4", "0.01", "1", "100"])
+        canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
+        # 誤差マップの色見本
+        cbx = W - MARGIN - 24
+        canvas = _colourbar(canvas, MAPY, MAPY + PAN - 26, cbx, cbx + 12)
+        canvas = _frame_box(canvas, MAPY, MAPY + PAN - 26, cbx, cbx + 12)
+
+        broke = curves["ransac"][k] > 1.0
+        labels = [
+            (MARGIN, 6, f"photometric stereo under cast shadows: {n_lights} lights, "
+                        f"blocking them one at a time  "
+                        f"(specularity.photometric_stereo_robust)", C_TEXT, 12, False),
+            (MARGIN, TILEY - 18,
+             f"the {n_lights} observations -- {k} blocked (outlined)", C_TEXT, 13, True),
+            (MARGIN, MAPY - 20, "normal error map [deg], 0 (dark) .. "
+                                f"{ERR_HI:.0f}+ (bright)", C_TEXT, 13, True),
+            (px0 - 56, MAPY - 20, "mean normal error [deg]", C_TEXT, 13, True),
+            (cbx - 26, MAPY - 2, f"{ERR_HI:.0f}", C_DIM, 11, False),
+            (cbx - 26, MAPY + PAN - 40, "0", C_DIM, 11, False),
+        ]
+        for j, (m, col) in enumerate((("lstsq", C_ROSE), ("median", C_BLUE),
+                                      ("ransac", C_TEAL))):
+            xp = MARGIN + j * (PAN + GAP)
+            labels.append((xp + 2, MAPY + PAN + 6,
+                           f"{m}  mean {curves[m][k]:9.4f} deg", col, 12, True))
+            labels.append((xp + 2, MAPY + PAN + 24,
+                           (f"believed {inliers[m][k]:.0%} of the blocked lights"
+                            if k else "no lights blocked"), C_DIM, 11, False))
+        labels += [
+            (MARGIN, MAPY + PAN + 48,
+             f"k = {k} of {n_lights} blocked   ->   lstsq {curves['lstsq'][k]:8.4f} deg, "
+             f"median {curves['median'][k]:8.4f} deg, ransac {curves['ransac'][k]:8.4f} deg",
+             (C_ROSE if broke else C_TEAL), 13, True),
+            (MARGIN, MAPY + PAN + 66,
+             (f"half the lights are gone: 'shadowed' and 'black surface' are the same "
+              f"model, and a majority vote cannot choose. The robust methods break here, "
+              f"and this is disclosed rather than hidden."
+              if broke else
+              f"{curves['ransac'][k]:.4f} deg is the float32 output floor ({floor:.4f} "
+              f"deg), not an error. Plain least squares is already "
+              f"{curves['lstsq'][k]:.1f} deg wrong." if k else
+              f"with every light visible all three agree at the float32 floor "
+              f"({floor:.4f} deg). N.L stays positive (min {ndl.min():.4f}), so every "
+              f"failure later is the blocked lights and nothing else."),
+             C_DIM, 12, False),
+            (ax.x1 - 152, ax.y1 + 22, "blocked lights k (of 8) ->", C_DIM, 11, False),
+        ]
+        labels += _legend(ax.x0 + 6, ax.y0 + 4,
+                          [(C_ROSE, "lstsq"), (C_BLUE, "median"), (C_TEAL, "ransac")])
+        labels += tx + ty
+        out.append(_text(_to_u8(canvas), labels))
 
     facts = {
-        "split_max_error_diffuse": err_d, "split_max_error_specular": err_s,
-        "split_closure": err_part, "coefficient_map_max_error": err_c,
-        "peak_highlight_m_s": float(m_s_true.max()),
-        "specular_free_pixel_fraction": float((m_s_true == 0).mean()),
         "n_lights": n_lights, "blocked_k": ks,
         "mean_normal_error_deg": {m: [float(v) for v in curves[m]] for m in methods},
+        "blocked_light_inlier_rate": {m: [float(v) for v in inliers[m]] for m in methods},
         "float32_floor_deg": floor, "break_at_k": cliff, "min_n_dot_l": float(ndl.min()),
     }
-    return [frame], facts, 12, 0
+    return out, facts, 1, (cliff if cliff is not None else 0)
 
 
 # =========================================================================== #
-# 8) モーション増幅 — 0.2 px の振動と J0 第一零点の崖(GIF)                     #
+# 10) モーション増幅 — 0.2 px の振動と J0 第一零点の崖                          #
 # =========================================================================== #
-def build_motionmag(log: Callable[[str], None], frames: int = 32):
+def build_motionmag(log, frames: int = 32):
     import motionmag as M
 
     H_IM = W_IM = 96
     T = int(frames)
     FPS, FREQ, BAND = 32.0, 4.0, (3.0, 5.0)
     D0, ALPHA = 0.2, 20.0
-    CYC_X = 8                                   # 既定の 8 px 成分
+    CYC_X = 8
     K_X = 2.0 * np.pi * CYC_X / W_IM
 
     vid = M.synthesize_translation((H_IM, W_IM), T, D0, FREQ, FPS)
@@ -1373,81 +1778,78 @@ def build_motionmag(log: Callable[[str], None], frames: int = 32):
     gain = float(np.abs(d_out).max() / np.abs(d_in).max())
     truth_d = D0 * np.sin(2.0 * np.pi * FREQ * np.arange(T) / FPS)
     err_in = float(np.abs(d_in - truth_d).max())
+    if err_in > 1e-11:
+        _flag("motionmag", f"the synthesised clip departs from its closed form by "
+                           f"{err_in:.2e} px (expected ~1e-15)")
+    if abs(gain - ALPHA) / ALPHA > 0.02:
+        _flag("motionmag", f"measured magnification {gain:.4f} vs requested {ALPHA}")
 
-    # 崖: 振幅を上げていくと J0(k*A) の第一零点で計測が反転する
     try:
         from scipy.special import jn_zeros
         j0_zero = float(jn_zeros(0, 1)[0])
-    except Exception:                            # scipy が無ければ既知の定数
+    except Exception:
         j0_zero = 2.404825557695773
     cliff_px = j0_zero / K_X
     amps = np.round(np.concatenate([np.linspace(0.25, 2.75, 11),
-                                    np.linspace(2.9, 3.35, 10),
-                                    np.linspace(3.5, 6.0, 6)]), 6)
-    meas = []
-    for a in amps:
-        v = M.synthesize_translation((64, 64), 64, float(a), FREQ, FPS)
-        meas.append(float(np.abs(M.displacement_series(v, *BAND, FPS)[:, 0]).max()))
-    meas = np.asarray(meas)
+                                    np.linspace(2.90, 3.35, 10),
+                                    np.linspace(3.50, 6.00, 6)]), 6)
+    meas = np.asarray([
+        float(np.abs(M.displacement_series(
+            M.synthesize_translation((64, 64), 64, float(a), FREQ, FPS),
+            *BAND, FPS)[:, 0]).max()) for a in amps])
     rel = np.abs(meas - amps) / amps
-    good = amps[rel < 1e-9]
-    bad = amps[rel >= 1e-9]
+    good, bad = amps[rel < 1e-9], amps[rel >= 1e-9]
     last_ok = float(good.max()) if good.size else float("nan")
     first_bad = float(bad.min()) if bad.size else float("nan")
+    if not (last_ok < cliff_px < first_bad):
+        _flag("motionmag", f"the measured cliff ({last_ok:.4f} .. {first_bad:.4f} px) "
+                           f"does not bracket the J0 first zero {cliff_px:.4f} px")
 
-    log(f"  magnify {D0} px by alpha={ALPHA:.0f}: measured gain {gain:.6f}, "
-        f"peak displacement {np.abs(d_in).max():.4f} -> {np.abs(d_out).max():.4f} px")
-    log(f"  input clip matches the closed form to {err_in:.2e} px")
-    log(f"  image SNR change {res['image_snr_change_db']:+.4f} dB, motion SNR change "
+    log(f"  magnify {D0} px by alpha={ALPHA:.0f}: measured gain {gain:.6f}, peak "
+        f"displacement {np.abs(d_in).max():.4f} -> {np.abs(d_out).max():.4f} px")
+    log(f"  the input clip matches its closed form to {err_in:.2e} px")
+    log(f"  image SNR {res['image_snr_change_db']:+.4f} dB, motion SNR "
         f"{res['motion_snr_change_db']:+.4f} dB (never positive)")
-    log(f"  measurement holds to {last_ok:.4f} px and breaks at {first_bad:.4f} px; "
+    log(f"  measurement is exact to {last_ok:.4f} px and inverts from {first_bad:.4f} px; "
         f"J0 first zero {j0_zero:.10f} / k = {cliff_px:.4f} px")
 
-    SC = 2
-    PAN = H_IM * SC                              # 192
-    MARGIN, GAP = 12, 16
+    SC, MARGIN, GAP = 2, 12, 16
+    PAN = H_IM * SC
     PLOT_W = 494
-    W = MARGIN + PAN + GAP + PAN + GAP + PLOT_W + MARGIN
-    HUD = 30
-    PANY = HUD + 24
-    H = PANY + PAN + 94
-    px0 = MARGIN + 2 * (PAN + GAP) + 56
-    px1 = W - MARGIN - 12
+    W = MARGIN + 2 * (PAN + GAP) + PLOT_W + MARGIN
+    HUD = 28
+    PANY = HUD + 22
+    H = PANY + PAN + 108
+    px0, px1 = MARGIN + 2 * (PAN + GAP) + 56, W - MARGIN - 12
     head = (f"motion magnification: a {D0} px vibration at {FREQ:.0f} Hz "
-            f"(band {BAND[0]:.0f}-{BAND[1]:.0f} Hz, {FPS:.0f} fps), alpha = {ALPHA:.0f}")
+            f"(pass band {BAND[0]:.0f}-{BAND[1]:.0f} Hz, {FPS:.0f} fps), alpha = {ALPHA:.0f}")
 
-    # 崖のプロットは全フレーム共通(静止していても意味が分かるように)
-    axC_geom = (px0, PANY, px1, PANY + PAN - 24)
     out = []
     for t in range(T):
         canvas = _canvas(H, W)
         _fill(canvas, 0, HUD, 0, W, C_PANEL)
-        _place(canvas, _upscale(_gray_to_rgb(np.clip(vid[t], 0, 1)), SC), PANY, MARGIN)
         x2 = MARGIN + PAN + GAP
-        _place(canvas, _upscale(_gray_to_rgb(np.clip(mag[t], 0, 1)), SC), PANY, x2)
-        # 動きの基準になる固定の縦線(op で描く)。これが無いと 0.2 px は見えない。
-        for x0 in (MARGIN, x2):
-            canvas = imagedraw.draw_line(canvas, (x0 + PAN // 2, PANY),
-                                         (x0 + PAN // 2, PANY + PAN), color=C_AMBR, width=1)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN, C_GRID, 1)
-        canvas = _frame_box(canvas, PANY, PANY + PAN, x2, x2 + PAN, C_GRID, 1)
+        for xp, clip in ((MARGIN, vid), (x2, mag)):
+            _place(canvas, _upscale(_gray_to_rgb(np.clip(clip[t], 0, 1)), SC), PANY, xp)
+            canvas = imagedraw.draw_line(canvas, (xp + PAN // 2, PANY),
+                                         (xp + PAN // 2, PANY + PAN), color=C_AMBR, width=1)
+            canvas = _frame_box(canvas, PANY, PANY + PAN, xp, xp + PAN)
 
-        ax = Axes(*axC_geom, 0.0, 6.2, 0.0, 4.0)
+        ax = Axes(px0, PANY, px1, PANY + PAN - 24, 0.0, 6.2, 0.0, 4.0)
         ax.bg(canvas)
         canvas = ax.grid_y(canvas, [1.0, 2.0, 3.0])
         canvas = ax.series(canvas, amps, amps, C_DIM, 1)
         canvas = ax.vline(canvas, cliff_px, C_AMBR, 2, dashed=True)
         canvas = ax.series(canvas, amps, meas, C_TEAL, 2)
-        canvas = ax.markers(canvas, amps, meas, C_TEAL, 3, "circle", 1)
+        canvas = ax.markers(canvas, amps, meas, C_TEAL, 3, "square", 1)
         canvas = ax.axis(canvas)
         canvas, tx = ax.xticks(canvas, [0, 1, 2, 3, 4, 5, 6],
                                ["0", "1", "2", "3", "4", "5", "6"])
         canvas, ty = ax.yticks(canvas, [0, 1, 2, 3, 4], ["0", "1", "2", "3", "4"])
         canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
 
-        # 現在フレームの変位を数直線で(op の draw_markers)
-        bar_y = PANY + PAN + 30
-        bax = Axes(MARGIN + 56, bar_y, x2 + PAN - 6, bar_y + 26, -4.6, 4.6, -1.0, 1.0)
+        bar_y = PANY + PAN + 34
+        bax = Axes(MARGIN + 54, bar_y, x2 + PAN - 6, bar_y + 26, -4.6, 4.6, -1.0, 1.0)
         bax.bg(canvas, C_PLOT)
         canvas = imagedraw.draw_line(canvas, (bax.X(0.0), bax.y0), (bax.X(0.0), bax.y1),
                                      color=C_GRID, width=1)
@@ -1458,40 +1860,35 @@ def build_motionmag(log: Callable[[str], None], frames: int = 32):
         canvas, tb = bax.xticks(canvas, [-4, -2, 0, 2, 4], ["-4", "-2", "0", "+2", "+4"])
         canvas = _frame_box(canvas, bax.y0, bax.y1, bax.x0, bax.x1)
 
-        frame = _to_u8(canvas)
         labels = [
-            (MARGIN, 7, head, C_TEXT, 12, False),
-            (MARGIN, PANY - 20, f"original   frame {t + 1:2d}/{T}", C_BLUE, 13, True),
-            (x2, PANY - 20, f"magnified  alpha = {ALPHA:.0f}", C_TEAL, 13, True),
-            (px0 - 56, PANY - 20,
-             "measured displacement vs true amplitude  (displacement_series)",
+            (MARGIN, 6, head, C_TEXT, 12, False),
+            (MARGIN, PANY - 18, f"original   frame {t + 1:2d}/{T}", C_BLUE, 13, True),
+            (x2, PANY - 18, f"magnified  alpha = {ALPHA:.0f}", C_TEAL, 13, True),
+            (px0 - 56, PANY - 18,
+             "measured displacement vs true amplitude (displacement_series)",
              C_TEXT, 12, True),
             (MARGIN, bar_y - 16,
-             f"displacement this frame:  original {d_in[t]:+.4f} px    "
-             f"magnified {d_out[t]:+.4f} px    measured gain {gain:.4f} "
-             f"(requested {ALPHA:.0f})", C_TEXT, 12, True),
-            (MARGIN, bar_y + 34,
-             f"peak {np.abs(d_in).max():.4f} -> {np.abs(d_out).max():.4f} px.  "
-             f"image SNR {res['image_snr_change_db']:+.3f} dB, motion SNR "
-             f"{res['motion_snr_change_db']:+.3f} dB: magnification shows motion, "
-             f"it does not add certainty.", C_DIM, 12, False),
-            (MARGIN, bar_y + 52,
+             f"this frame: original {d_in[t]:+.4f} px   magnified {d_out[t]:+.4f} px   "
+             f"measured gain {gain:.4f} (requested {ALPHA:.0f})", C_TEXT, 12, True),
+            (MARGIN, bar_y + 36,
+             f"peak {np.abs(d_in).max():.4f} -> {np.abs(d_out).max():.4f} px.  image SNR "
+             f"{res['image_snr_change_db']:+.3f} dB, motion SNR "
+             f"{res['motion_snr_change_db']:+.3f} dB: magnification shows motion, it "
+             f"does not add certainty.", C_DIM, 12, False),
+            (MARGIN, bar_y + 54,
              f"the input clip matches its closed form to {err_in:.1e} px, so every "
-             f"number above is a measurement, not a setting.", C_DIM, 12, False),
-            (px1 - 150, ax.y1 + 22, "true amplitude [px] ->", C_DIM, 11, False),
-            (int(ax.X(cliff_px)) - 168, ax.y0 + 6,
+             f"number here is a measurement rather than a setting.", C_DIM, 12, False),
+            (px1 - 152, ax.y1 + 22, "true amplitude [px] ->", C_DIM, 11, False),
+            (int(ax.X(cliff_px)) - 172, ax.y0 + 4,
              f"J0 first zero {j0_zero:.4f} / k", C_AMBR, 11, True),
-            (int(ax.X(cliff_px)) - 168, ax.y0 + 20,
-             f"= {cliff_px:.4f} px", C_AMBR, 11, True),
-            (ax.x0 + 8, ax.y0 + 44,
-             f"exact to {last_ok:.3f} px,", C_TEAL, 11, True),
-            (ax.x0 + 8, ax.y0 + 58,
-             f"inverts from {first_bad:.3f} px", C_ROSE, 11, True),
-            (ax.x0 + 8, ax.y1 - 30, "measured [px]", C_TEAL, 11, True),
-            (ax.x0 + 8, ax.y1 - 16, "y = x (truth)", C_DIM, 11, False),
+            (int(ax.X(cliff_px)) - 172, ax.y0 + 18, f"= {cliff_px:.4f} px", C_AMBR, 11, True),
+            (ax.x0 + 8, ax.y0 + 44, f"exact to {last_ok:.3f} px,", C_TEAL, 11, True),
+            (ax.x0 + 8, ax.y0 + 58, f"inverts from {first_bad:.3f} px", C_ROSE, 11, True),
+            (ax.x0 + 8, ax.y1 - 32, "measured [px]", C_TEAL, 11, True),
+            (ax.x0 + 8, ax.y1 - 18, "y = x (truth)", C_DIM, 11, False),
         ]
         labels += tx + ty + tb
-        out.append(_text(frame, labels))
+        out.append(_text(_to_u8(canvas), labels))
 
     facts = {
         "amplitude_px": D0, "alpha": ALPHA, "fps": FPS, "band_hz": list(BAND),
@@ -1515,17 +1912,19 @@ BUILDERS = {
     "csi": ("newops_csi_step_sweep", build_csi),
     "bearing": ("newops_bearing_envelope", build_bearing),
     "lightfield": ("newops_lightfield_refocus", build_lightfield),
+    "parallax": ("newops_lightfield_parallax", build_parallax),
     "photon": ("newops_photon_buildup", build_photon),
     "quaternion": ("newops_quaternion_rotate", build_quaternion),
     "fmcw": ("newops_fmcw_window", build_fmcw),
     "specular": ("newops_specular_split", build_specular),
+    "shadow": ("newops_photometric_shadow", build_photometric_shadow),
     "motionmag": ("newops_motion_magnify", build_motionmag),
 }
 
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(
-        description="新しい op 族 8 つの記事用デモ図(静止画 / GIF + mp4)")
+        description="新しい op 族の記事用デモ(すべて GIF + mp4)")
     ap.add_argument("--figs", default=",".join(BUILDERS),
                     help="comma list of: " + ", ".join(BUILDERS))
     ap.add_argument("--out", default=_MEDIA_DIR)
@@ -1560,7 +1959,13 @@ def main(argv=None) -> int:
         kinds = [k for k in ("png", "gif", "mp4") if k in i]
         parts = "  ".join(f"{k} {i[k]['bytes'] / 1e6:.2f}MB" for k in kinds)
         log(f"  {name:11s} {i['n_frames']:3d} frame(s) "
-            f"{i['size'][0]}x{i['size'][1]}  {parts}")
+            f"{i['size'][0]}x{i['size'][1]} fps={i['fps']}  {parts}")
+    if ANOMALIES:
+        log(f"--- {len(ANOMALIES)} anomaly/anomalies noticed while drawing ---")
+        for a in ANOMALIES:
+            log(f"  * {a}")
+    else:
+        log("--- no display anomalies noticed ---")
     return 0
 
 
