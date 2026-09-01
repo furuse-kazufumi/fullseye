@@ -176,9 +176,11 @@ def test_split_works_under_a_coloured_illuminant():
     img, diffuse, _s, _m, _n, _sh = known_split(illuminant=g / np.linalg.norm(g))
     d, _ = S.specular_diffuse_split(img, illuminant_rgb=g)
     assert np.abs(d - diffuse).max() < 1e-14        # measured 1.1e-15
-    # only the *direction* matters: scaling the illuminant changes nothing
+    # Only the *direction* matters. Not bit-identical though: normalising g and
+    # g*1e5 differs in the last bit, so the honest claim is agreement to
+    # rounding (measured 4.4e-16), not equality.
     d2, _ = S.specular_diffuse_split(img, illuminant_rgb=g * 1e5)
-    assert np.array_equal(d, d2)
+    assert np.abs(d - d2).max() < 1e-14
 
 
 @pytest.mark.parametrize("body_rgb", [None, (0.80, 0.55, 0.35)])
