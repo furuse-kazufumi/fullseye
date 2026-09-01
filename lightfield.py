@@ -130,7 +130,9 @@ Honest disclosure (what these ops cannot do):
     angular grid costs a factor ``U*V`` of pixels; :func:`lf_plenoptic_design`
     prints that trade instead of hiding it.
   * **Bilinear resampling blurs.** Every fractional-slope shift costs contrast.
-    Integer slopes are exact (verified to 2.2e-16 on a round trip); fractional
+    Integer slopes are exact (a 25-view integer-slope refocus reproduces the
+    source texture to 5.6e-16, and the raw <-> light-field re-sort is
+    bit-identical); fractional
     ones are not, and stacking many of them in :func:`lf_all_in_focus` is
     visible. Pass ``interp="cubic"`` when that matters.
 
@@ -427,7 +429,7 @@ def lf_synthesize(slopes=(0.0,), angular=(5, 5), shape=(64, 64), *,
 
     ``edge="wrap"`` (default) makes the scene periodic so an integer slope is a
     pure ``np.roll`` and the whole pipeline is bit-exact end to end (measured
-    round-trip error 2.2e-16); ``edge="nearest"`` reproduces a real camera's
+    round-trip error 5.6e-16); ``edge="nearest"`` reproduces a real camera's
     border clamping.
 
     **Raises** ``ValueError``: an empty or over-long *slopes* list
@@ -770,7 +772,7 @@ def lf_refocus(lf, slope=0.0, *, interp="linear", edge="nearest"):
     Ground truth it reproduces exactly (pinned in ``tests/test_lightfield.py``):
     a single-layer field synthesised at slope ``s0`` and refocused at ``s0``
     with ``edge="wrap"`` and an integer ``s0`` returns the original texture to
-    2.2e-16; sweeping the slope, the variance of the result peaks at ``s0``
+    5.6e-16; sweeping the slope, the variance of the result peaks at ``s0``
     (measured exactly on the sweep grid in all 18 texture/slope combinations
     listed in the module docstring), and refocusing at ``-s0`` does *not* —
     which is the check that catches a flipped shift sign.

@@ -1575,11 +1575,19 @@ def lifetime_phasor(decay, bin_ps=100.0, harmonic=1, background=0.0):
     Honest accuracy: the analytic formula is the *continuous* integral over one
     excitation period, while this op sums over bins, so the two differ by the
     midpoint-rule error. Measured on an exactly bin-integrated single exponential
-    (``tau = 2000 ps``, 256 bins x 100 ps, i.e. a 25.6 ns period): ``g`` and
-    ``s`` match the analytic values to 2.0e-3 and 4.7e-4, ``tau_phi_ps`` comes
-    back as 2004.7 ps (0.23% high) and ``semicircle_residual`` is -2.3e-04. At
-    1024 bins over the same window the errors fall by 16x (2.9e-5 residual),
-    confirming the ``O(bin^2)`` midpoint behaviour rather than a bias.
+    (``tau = 2000 ps``, 256 bins x 100 ps, i.e. a 25.6 ns period): ``g`` is
+    0.805809 against the analytic 0.805830 (-2.0e-05), ``s`` is 0.395653 against
+    0.395561 (+9.2e-05), ``tau_phi_ps`` comes back as 2000.52 ps (+0.026%),
+    ``tau_m_ps`` as 1999.74 ps (-0.013%) and ``semicircle_residual`` is
+    +6.07e-05. Quadrupling to 1024 bins over the same window divides the residual
+    by exactly 16.00 (to 3.79e-06) and the ``tau_phi`` error by 16 — the
+    ``O(bin^2)`` midpoint behaviour, not a bias in the op.
+
+    And the reason ``semicircle_residual`` earns its place: the same window with
+    a **two**-component decay (equal photon budgets at 500 ps and 4000 ps) gives
+    a residual of -0.0924, i.e. 1500x further inside the circle than the
+    single-exponential round-off. :func:`lifetime_fit` would have returned one
+    confident number for that same histogram.
 
     **Raises** ``ValueError``: negative, non-finite, non-1-D or all-zero *decay*,
     a non-positive *bin_ps*, a *harmonic* outside ``[1, bins//2]`` (above
