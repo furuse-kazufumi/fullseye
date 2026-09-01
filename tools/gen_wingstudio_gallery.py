@@ -342,7 +342,12 @@ def _panel(canvas, y0, x0, h, w, img01, title=None, border=(0.20, 0.23, 0.28)):
     _fill(canvas, y0 - 1, y0 + h + 1, x0 - 1, x0 + w + 1, border)
     _fill(canvas, y0, y0 + h, x0, x0 + w, C_PANEL)
     _paste(canvas, _fit_box(np.asarray(img01, np.float64), w, h), y0, x0)
-    return [(x0 + 6, y0 + 5, title, (0.96, 0.96, 0.93), 13, True)] if title else []
+    if not title:
+        return []
+    # タイトルの下敷き: 明るい画像(viridis の黄など)の上に白文字を置くと読めない
+    band = canvas[y0:y0 + 22, x0:x0 + w, :]
+    canvas[y0:y0 + 22, x0:x0 + w, :] = 0.30 * band + 0.70 * np.asarray((0.05, 0.06, 0.07))
+    return [(x0 + 6, y0 + 4, title, (0.96, 0.96, 0.93), 13, True)]
 
 
 def _plot_axes(canvas, x0, x1, y0, y1):
