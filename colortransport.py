@@ -53,7 +53,7 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy import ndimage, sparse
+from scipy import sparse
 from scipy.sparse import linalg as sparse_linalg
 
 import imgmetrics as _M
