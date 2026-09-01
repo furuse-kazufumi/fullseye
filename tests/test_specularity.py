@@ -120,19 +120,55 @@ def test_split_with_a_known_body_colour_is_exact():
     assert np.abs(s - specular).max() < 1e-13       # measured 2.9e-15
 
 
-def test_split_with_a_per_pixel_body_map_handles_a_textured_surface():
-    """The uniform-body route cannot do this; the known-body route can."""
-    h = w = 48
+def _ramp_texture(h=48, w=48, strong=False):
     y, x = np.mgrid[0:h, 0:w]
-    tex = np.stack([0.9 - 0.5 * (x / 47.0), 0.2 + 0.1 * (y / 47.0),
-                    0.15 + 0.05 * (x / 47.0)], axis=-1)
-    _i, _d, specular, m_s, n, shading = known_split()
+    if strong:                       # chromaticity leaves the line: rank 2
+        return np.stack([0.9 - 0.7 * (x / (w - 1.0)),
+                         0.15 + 0.7 * (y / (h - 1.0)),
+                         0.15 + 0.0 * x], axis=-1)
+    return np.stack([0.9 - 0.5 * (x / (w - 1.0)),   # gentle: stays near one line
+                     0.2 + 0.1 * (y / (h - 1.0)),
+                     0.15 + 0.05 * (x / (w - 1.0))], axis=-1)
+
+
+@pytest.mark.parametrize("strong", [False, True])
+def test_split_with_a_per_pixel_body_map_handles_a_textured_surface(strong):
+    """The uniform-body route cannot do this; the known-body route can."""
+    tex = _ramp_texture(strong=strong)
+    _i, _d, specular, _m, _n, shading = known_split()
     diffuse = tex * shading[..., None]
+    d, _s = S.specular_diffuse_split(diffuse + specular, body_rgb=tex)
+    assert np.abs(d - diffuse).max() < 1e-13        # measured 2.9e-15 / 3.4e-15
+
+
+def test_the_guards_bound_gross_violations_not_subtle_ones():
+    """An honest limit, pinned as a measurement rather than left implicit.
+
+    A texture whose chromaticity swings off the line is caught (measured rank
+    ratio 0.633). A texture whose chromaticity merely drifts *along* the line is
+    **not** — measured rank ratio 0.0641, under the 0.1 default, with every body
+    coefficient positive so the second guard is silent too — and the uniform-body
+    route then returns a diffuse map wrong by 0.198.
+
+    No threshold can separate that case from noise, because they are the same
+    measurement: 1% Gaussian noise on this scene gives 0.0348 and 2% gives
+    0.0694, and the texture sits between them. The guards therefore bound
+    *gross* violations only, and the operator's answer for a possibly textured
+    surface is ``body_rgb``, not a cleverer threshold.
+    """
+    _i, _d, specular, _m, _n, shading = known_split()
+    strong = _ramp_texture(strong=True)
+    with pytest.raises(ValueError, match="rank"):
+        S.specular_diffuse_split(strong * shading[..., None] + specular)
+
+    gentle = _ramp_texture(strong=False)
+    diffuse = gentle * shading[..., None]
     img = diffuse + specular
-    d, _s = S.specular_diffuse_split(img, body_rgb=tex)
-    assert np.abs(d - diffuse).max() < 1e-13        # measured 2.9e-15
-    with pytest.raises(ValueError, match="rank|negative"):
-        S.specular_diffuse_split(img)               # and it refuses to guess
+    quiet = S.specular_diffuse_split(img)[0]        # no exception: measured
+    assert np.abs(quiet - diffuse).max() == pytest.approx(0.198, abs=0.01)
+    # the documented remedy does work on exactly the same image
+    assert np.abs(S.specular_diffuse_split(img, body_rgb=gentle)[0]
+                  - diffuse).max() < 1e-13
 
 
 def test_split_works_under_a_coloured_illuminant():
