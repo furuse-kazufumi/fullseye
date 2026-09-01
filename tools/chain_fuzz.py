@@ -300,6 +300,8 @@ def _registry_adapters():
     d.update(opsoptics.RESULT_ADAPTERS)
     import opslightfield
     d.update(opslightfield.RESULT_ADAPTERS)
+    import opsphoton
+    d.update(opsphoton.RESULT_ADAPTERS)     # 現状は空(全 op が宣言型を素で返す)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
