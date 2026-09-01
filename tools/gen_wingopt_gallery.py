@@ -2580,16 +2580,27 @@ def _caption(name: str, facts: dict, info: dict) -> str:
                 f"独立な閉形式 `depth_of_field` の {d['near_mm']:.3f}〜{d['far_mm']:.3f} mm と"
                 f"格子の刻みぶんだけの差で一致します。")
     if name == "detect_map":
+        # 「境界は限界の右に寝ている」と決め打ちにしない ―― 周辺光量落ちの cos^4 が
+        # 画角で決まるようになって(2026-09)タイルの角が暗くならなくなり、高コント
+        # ラスト側では 50 % 等高線が**限界より左**に出るようになった。左右は измеり
+        # 直すたびに変わりうるので、何段が左かを数えてそのまま書く。
         cont = [(c, s) for c, s in zip(f["contrasts"], f["contour_50pct_um"])
                 if s is not None]
         lo, hi = cont[0], cont[-1]
+        limit = f["optical_limit_um"]
+        n_left = sum(1 for _, s in cont if s < limit)
+        side = (f"{len(cont)} 段のうち {n_left} 段は境界が限界より**左**に出ます"
+                f"(ここの検出は IoU ≥ {MIN_IOU:g} の当たり判定であって、"
+                f"2 画素に分かれて見えること = 解像ではありません)"
+                if n_left else "境界はどの段でも限界の右に寝ています")
         return (f"欠陥サイズ(横・対数)とコントラスト(縦)の平面で検出率を測ると、"
-                f"**光学限界 {f['optical_limit_um']:.2f} µm({f['limited_by']} 律速)は"
+                f"**光学限界 {limit:.2f} µm({f['limited_by']} 律速)は"
                 f"縦の直線として動かず**、実際の検出境界(白線 = 実測 50 % 等高線)は"
-                f"その右に寝ています。コントラスト {lo[0]:.2f} では "
-                f"{lo[1]:.0f} µm(限界の {lo[1] / f['optical_limit_um']:.2f} 倍)必要なのに、"
+                f"コントラストだけで {lo[1]:.1f} → {hi[1]:.1f} µm と動きます。"
+                f"コントラスト {lo[0]:.2f} では "
+                f"{lo[1]:.0f} µm(限界の {lo[1] / limit:.2f} 倍)必要なのに、"
                 f"{hi[0]:.2f} まで上げると {hi[1]:.0f} µm"
-                f"({hi[1] / f['optical_limit_um']:.2f} 倍)で足ります —— "
+                f"({hi[1] / limit:.2f} 倍)で足ります —— {side}。"
                 f"**右側はレンズの問題ではありません**。")
     if name == "illumination":
         b = f["bright_50pct_contrast"]
