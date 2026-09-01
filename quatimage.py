@@ -958,22 +958,25 @@ def qft2(qimage, side, mu=None) -> np.ndarray:
     the left transform both with the standard kernel, for the right one of them
     with the conjugate kernel. **That reduction is what makes left and right
     differ**, and it is verified against a brute-force ``O(N^2)`` quaternion DFT
-    on a 4x4 image in the tests (max error 3.6e-15 for both sides), so the fast
-    path is checked against the definition rather than against itself.
+    written straight from the definition, on a 4x4 image, for three different
+    ``mu`` and both sides: the largest disagreement over all six combinations is
+    **8.2e-15**. The fast path is checked against the definition, not against
+    itself. The choice of the internal ``nu`` is likewise verified not to matter
+    (two different ``nu``, max difference 1.4e-14 — see :func:`_mu_basis`).
 
     Honest accounting against the channelwise baseline
     --------------------------------------------------
     Because the decomposition above is *linear* in the channels, the QFT is a
-    fixed recombination of the three per-channel complex FFTs and their
-    frequency-reversed conjugates: reconstructing ``qft2`` from three
-    ``numpy.fft.fft2`` calls agrees to ``max|err| = 3.3e-16``. So this transform
-    **buys no information a channelwise FFT does not already contain**, and this
-    module does not claim it does. It also does not buy speed — it moves four
-    real transforms' worth of data where the channelwise route moves three, and
-    the measured wall-clock ratio on ``(256, 256)`` is **1.34x slower**
-    (``2.05 ms`` vs ``1.53 ms``, best of 20). What it buys is that the four
-    numbers stay one algebraic object, so a rotor can be applied to the spectrum
-    and the colour meaning of ``mu`` survives the transform.
+    fixed recombination of the three per-channel complex FFTs: rebuilding
+    ``qft2(q, "left")`` from three ``numpy.fft.fft2`` calls on the R, G and B
+    planes agrees to ``max|err| = 1.14e-13``. So this transform **buys no
+    information a channelwise FFT does not already contain**, and this module
+    does not claim it does. It also does not buy speed — it moves four real
+    transforms' worth of data where the channelwise route moves three, and pays
+    for the symplectic pack/unpack on top: measured on ``(256, 256)``, best of
+    20, **8.246 ms against 3.409 ms, i.e. 2.42x slower**. What it buys is that
+    the four numbers stay one algebraic object, so a rotor can be applied to the
+    spectrum and the colour meaning of ``mu`` survives the transform.
 
     **Raises** ``ValueError``: *qimage* is not a valid ``(H, W, 4)`` field;
     *side* is not ``'left'`` / ``'right'``; *mu* is not a finite non-zero
