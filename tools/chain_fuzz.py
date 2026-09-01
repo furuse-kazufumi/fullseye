@@ -908,6 +908,33 @@ def _is_pts(v):
     return isinstance(v, np.ndarray) and v.ndim == 2 and v.shape[1] == 3
 
 
+def _shape(v):
+    """*v* の形。**型ではなく形で判定する**ための共通入口。
+
+    GPU backend を持つ登録 op は ``torch.Tensor`` を返すのがこの repo の約束
+    なので、``isinstance(np.ndarray)`` で書くと**述語の側が間違う**
+    (`pose` の述語で実際に 6 件中 4 件を誤検出した — TYPE_CHECKS["pose"] の
+    コメント参照)。配列でないものは ``()`` を返すので、
+    ``_shape(v) == (3,)`` のように長さと寸法だけを見れば backend を跨げる。
+    """
+    s = getattr(v, "shape", ())
+    try:
+        return tuple(s)
+    except TypeError:                       # shape が呼べない別物(念のため)
+        return ()
+
+
+def _is_scalar(v):
+    """実スカラ(bool を除く)。`measurement` の述語と同じ判定を共有する。"""
+    return isinstance(v, (int, float, np.floating, np.integer)) \
+        and not isinstance(v, bool)
+
+
+def _is_seq(v, *lengths):
+    """タプル/リストで、長さが *lengths* のどれか(空指定なら長さを問わない)。"""
+    return isinstance(v, (tuple, list)) and (not lengths or len(v) in lengths)
+
+
 TYPE_CHECKS = {
     "points": _is_pts,
     "normals": _is_pts,
