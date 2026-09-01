@@ -170,24 +170,33 @@ def test_every_declared_type_has_a_producer_or_a_seed(env):
         "この op は入力型を誰も産まないので永久に実行されない: %s" % blocked)
 
 
-def test_targeted_diffusion_reaches_more_ops_than_uniform(env):
-    """連鎖ごとに目標 op を決める拡散は、一様抽選より多くの op に触ること。
+def test_targeted_diffusion_actually_steers_toward_its_target(env):
+    """狙い撃ち拡散が**実際に目標 op へ寄せている**こと。
 
-    候補が数百ある中で特定の op が長さ 6 の枠に入る確率は低く、一様だと
-    「構造的には到達可能なのに一度も引かれない」op が大量に残る。
-    先に試した「まだプールに無い型を産む op を優先」する型空間バイアスは
-    **効かなかった**(1500 連鎖で 321 -> 322 op)ので、目標 op へ寄せる方式に
-    した。ここでは小さな走行で向きだけを固定する(絶対値は走行条件で動く)。
+    以前この検査は「狙い撃ちの方が一様より多くの op に触る」と書いていたが、
+    **小規模では逆になる**(60 連鎖 x 長さ 5 の実測で 67 op vs 一様 167 op)。
+    狙い撃ちは 1 連鎖の幅を捨てて希少 op への到達を買う取引なので、集計値の
+    大小は走行規模で反転する。よって固定するのは集計値ではなく**機構**にする。
+
+    なお 1500 連鎖・長さ 6・同一コードでの実測は次のとおりで、**狙い撃ちの
+    寄与は +5 op しかない**(336 -> 341)。カバレッジが 321 -> 336 と伸びたのは
+    引数ヒントを足して「必須引数を束縛できず黙ってスキップ」を解消した効果で
+    あって、狙い撃ちの効果ではない ―― 混ぜて報告しないこと。
+
+        explore=0.0  336/434   署名 55
+        explore=0.3  340/434   署名 68
+        explore=0.7  341/434   署名 62
     """
     ops, gens = env
-    def _reach(explore):
-        seen = set()
-        for i in range(60):
-            cs = 991 * 1_000_003 + i
-            seen.update(run_chain(ops, gens, np.random.default_rng(cs), 5, [],
-                                  chain_seed=cs, explore=explore))
-        return seen
-    uniform, targeted = _reach(0.0), _reach(0.9)
-    assert len(targeted) > len(uniform), (
-        "狙いを持った拡散が一様抽選を上回っていない: %d vs %d"
-        % (len(targeted), len(uniform)))
+    hits = 0
+    for i in range(120):
+        cs = 991 * 1_000_003 + i
+        target = ops[int(np.random.default_rng(
+            __import__("zlib").crc32(b"target|%d" % cs)).integers(len(ops)))][0]
+        trace = run_chain(ops, gens, np.random.default_rng(cs), 5, [],
+                          chain_seed=cs, explore=0.9)
+        hits += int(target in trace)
+    # 一様抽選なら 5 手で特定の 1 op を踏む確率は 434 分の数手 = 1% 前後。
+    # 寄せが効いていれば桁で上回る
+    assert hits >= 12, ("目標 op に寄せられていない: 120 連鎖中 %d 回しか"
+                        "目標を実行していない" % hits)
