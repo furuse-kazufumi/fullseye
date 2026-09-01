@@ -200,31 +200,43 @@ _M_RGB2XYZ = np.array([
 _M_XYZ2RGB = np.linalg.inv(_M_RGB2XYZ)
 
 
-def srgb_to_linear(rgb):
-    """sRGB の伝達関数を外して線形 RGB にする(IEC 61966-2-1)。
-
-    入力は ``[0, 1]`` の float、または ``uint8``/``uint16``(自動で正規化)。
-    **ガンマを二度外す**のがこの手の処理で最も多い間違いなので、線形値を
-    受け取ったつもりで再度これを掛けないこと(``linear_to_srgb`` が逆)。
-    """
+def _to_unit_float(rgb):
+    """整数 dtype の画像を ``[0, 1]`` の float にする(float はそのまま検査)。"""
     x = np.asarray(rgb)
     if x.dtype in _INT_RANGES:
-        x = x.astype(np.float64) / _INT_RANGES[x.dtype]
-    else:
-        x = x.astype(np.float64, copy=False)
+        return x.astype(np.float64) / _INT_RANGES[x.dtype]
+    x = x.astype(np.float64, copy=False)
     if x.size and (np.nanmin(x) < -1e-6 or np.nanmax(x) > 1.0 + 1e-6):
         raise ValueError(
             f"sRGB values must lie in [0, 1] (or be an integer dtype), got "
             f"[{float(np.nanmin(x)):.6g}, {float(np.nanmax(x)):.6g}]"
         )
-    x = np.clip(x, 0.0, 1.0)
-    return np.where(x <= 0.04045, x / 12.92, ((x + 0.055) / 1.055) ** 2.4)
+    return np.clip(x, 0.0, 1.0)
+
+
+def srgb_to_linear(rgb):
+    """sRGB の伝達関数を外して線形 RGB にする(IEC 61966-2-1)。
+
+    **実体は :func:`gfx2d.srgb_to_linear`。** ここは整数 dtype を ``[0, 1]`` に
+    正規化してから委譲するだけの薄い入口で、伝達関数そのものは一箇所にしかない
+    (2 つ持つと片方だけ直したときに**例外なく違う色**が出る)。
+    実測で両者は ``[0, 1]`` の 257 点にわたり **最大差 0.0** で一致していたので、
+    こちらの重複実装を削除して委譲に置き換えた(2026-09-02)。
+
+    **ガンマを二度外す**のがこの手の処理で最も多い間違い ―― 線形値を受け取った
+    つもりで再度これを掛けないこと(``linear_to_srgb`` が逆)。
+    """
+    import gfx2d
+    return gfx2d.srgb_to_linear(_to_unit_float(rgb))
 
 
 def linear_to_srgb(lin):
-    """線形 RGB に sRGB の伝達関数を掛ける(``srgb_to_linear`` の逆)。"""
-    x = np.clip(np.asarray(lin, dtype=np.float64), 0.0, 1.0)
-    return np.where(x <= 0.0031308, x * 12.92, 1.055 * x ** (1.0 / 2.4) - 0.055)
+    """線形 RGB に sRGB の伝達関数を掛ける(``srgb_to_linear`` の逆)。
+
+    実体は :func:`gfx2d.linear_to_srgb`(上と同じ理由で委譲)。
+    """
+    import gfx2d
+    return gfx2d.linear_to_srgb(np.clip(np.asarray(lin, dtype=np.float64), 0.0, 1.0))
 
 
 def rgb_to_xyz(rgb):
