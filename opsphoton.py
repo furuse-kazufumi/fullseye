@@ -134,24 +134,24 @@ _CATALOG = {
         ("anscombe_inverse", "photoncount", ["image2d"], "image2d"),
     ],
     "spad": [
-        ("spad_deadtime_apply", "photoncount", ["signal"], "signal"),
-        ("spad_deadtime_correct", "photoncount", ["signal"], "signal"),
-        ("tcspc_coates_correct", "photoncount", ["signal"], "signal"),
+        ("spad_deadtime_apply", "photoncount", ["countrate"], "countrate"),
+        ("spad_deadtime_correct", "photoncount", ["countrate"], "countrate"),
+        ("tcspc_coates_correct", "photoncount", ["counts"], "counts"),
     ],
     "tcspc": [
-        ("tcspc_simulate", "photoncount", [], "signal"),
-        ("tcspc_irf_convolve", "photoncount", ["signal"], "signal"),
-        ("tcspc_background_subtract", "photoncount", ["signal"], "signal"),
-        ("tcspc_stats", "photoncount", ["signal"], "table"),
+        ("tcspc_simulate", "photoncount", [], "counts"),
+        ("tcspc_irf_convolve", "photoncount", ["counts"], "counts"),
+        ("tcspc_background_subtract", "photoncount", ["counts"], "counts"),
+        ("tcspc_stats", "photoncount", ["counts"], "table"),
     ],
     "dtof": [
-        ("dtof_depth", "photoncount", ["signal"], "measurement"),
+        ("dtof_depth", "photoncount", ["counts"], "measurement"),
         ("dtof_cube_simulate", "photoncount", ["depth"], "histcube"),
         ("dtof_cube_depth", "photoncount", ["histcube"], "depth"),
     ],
     "lifetime": [
-        ("lifetime_fit", "photoncount", ["signal"], "table"),
-        ("lifetime_phasor", "photoncount", ["signal"], "table"),
+        ("lifetime_fit", "photoncount", ["counts"], "table"),
+        ("lifetime_phasor", "photoncount", ["counts"], "table"),
     ],
 }
 
