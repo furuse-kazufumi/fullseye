@@ -139,6 +139,9 @@ PARAM_HINTS = {
     "rate": lambda rng: 100.0, "new_rate": lambda rng: 50.0,
     "x": lambda rng: 1.0, "step": lambda rng: 2,
     "radius": lambda rng: 1.5, "ratio": lambda rng: 0.2,
+    # 角度分解能。既定の (5,5) はファザーの 32x32 image2d を割り切れず
+    # lf_from_mla が必ず ValueError になるので、割り切れる (4,4) を渡す
+    "angular": lambda rng: (4, 4),
     "extent": lambda rng: 1.0, "lo": lambda rng: 0.8, "hi": lambda rng: 1.2,
     "strength": lambda rng: 0.5, "voxel": lambda rng: 0.5,
     "lights": lambda rng: (lambda L: L / np.linalg.norm(L, axis=1, keepdims=True))(
