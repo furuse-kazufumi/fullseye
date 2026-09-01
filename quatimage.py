@@ -33,24 +33,35 @@ Honest scope of the second claim — measured, not assumed
 The unit quaternions and ``SO(3)`` are isomorphic, so **every colour rotation
 this module performs is also performed exactly by a 3x3 orthogonal matrix**, and
 the quaternion Fourier transform below is a fixed linear recombination of the
-three per-channel complex FFTs (:func:`qft2`'s docstring gives the measured
-identity, max error 3.3e-16). The honest separation is therefore three-way and
-this module states it everywhere it matters:
+three per-channel complex FFTs (:func:`qft2` gives the measured identity, max
+error 1.14e-13). The honest separation is therefore three-way and this module
+states it everywhere it matters:
 
 * against a **channelwise** baseline — three independent scalar pipelines, which
   is what "run the existing complex ops on R, G and B" means — the quaternion
   ops do things that are *provably impossible*, because a per-channel gain is a
-  diagonal matrix and cannot create a channel out of a zero. Measured in
-  ``tests/test_quatimage.py``.
+  diagonal matrix and cannot create a channel out of a zero. Measured: the best
+  diagonal approximation to the grey-axis projection is off by 0.4714 on a pure
+  red pixel, against 0.0 here (:func:`quat_color_filter`).
 * against a **3x3 colour-matrix** baseline — no capability difference at all.
   What differs is representation cost (4 numbers vs 9), exact closure under
-  composition, and ``slerp``; measured drift under 100k random compositions is
-  1.5e-15 (quaternion, renormalised) vs 4.6e-15 (matrix, Gram-Schmidt-free).
-  That is a small, real, and *not* dramatic difference and is reported as such.
+  composition, and ``slerp``; measured drift over 100,000 composed random
+  rotations is 0.0 for the renormalised quaternion against
+  ``|R^T R - I| = 4.4e-10`` for the plainly multiplied matrix
+  (:func:`quat_color_rotate`). Real, and small.
 * the **QFT is not faster** than three channel FFTs and this module never
   suggests otherwise: it moves four real transforms' worth of data where the
-  channelwise route moves three. Measured ratio 1.34x-1.61x slower, in
-  :func:`qft2`.
+  channelwise route moves three, and pays for the symplectic pack on top.
+  Measured 2.42x *slower* on ``(256, 256)``, in :func:`qft2`.
+
+The same accounting applies to the Riesz half, and there the losses are larger.
+:func:`riesz_displacement` is exact to rounding *and* about twice as accurate as
+the steerable route under noise *and* 1.2x-2.1x faster — but it carries a **13 %
+silent displacement bias** on the repository's own default motion synthetic,
+because a radial band has no orientation index and two gratings at different
+orientations in one octave break the single-plane-wave model the monogenic signal
+assumes. The full head-to-head table, including that loss, is in
+:func:`riesz_displacement`.
 
 Non-commutativity is an API problem, not just a maths problem
 -------------------------------------------------------------
