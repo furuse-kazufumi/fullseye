@@ -325,7 +325,15 @@ _CATALOG = {
     "curvilinear": [  # 曲座標系への展開
         ("polar_unwrap", "match3d", ["image2d"], "image2d", True),
         ("cylinder_unwrap", "match3d", ["voxel"], "voxel", True),
-        ("fit_zernike", "match3d", ["image2d"], "descriptor", True),
+        # 返りは {(n,m): 係数} の dict。**descriptor ではなく table**:
+        # descriptor 型の唯一の消費側 `shape_distance` は dict を
+        # "descriptors must be numeric vectors (got dict / dict)" で fail-closed
+        # し(2026-09-02 実測)、逆に実際の消費側 `wavefront_stats` は in を
+        # 'table' と宣言して「この dict がそのまま契約」と docstring に書き、
+        # tests/test_optics.py::test_wavefront_stats_consumes_fit_zernike_output
+        # がそれを固定している。descriptor を名乗っていたのが型の嘘
+        # (refine_lm が pose を名乗っていたのと同じ形)
+        ("fit_zernike", "match3d", ["image2d"], "table", True),
     ],
     "optics": [  # 鏡面/透明体
         ("reflect", "match3d", ["vector", "normals"], "normals", False),
