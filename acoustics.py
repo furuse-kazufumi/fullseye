@@ -1787,12 +1787,12 @@ def apply_weighting(x, rate, kind="A"):
     sample-for-sample with the input, which a recursive filter implementation
     would not be.
 
-    Measured: a 1 kHz sine at 16 kHz (integer periods) is returned **unchanged**
-    by both A and C weighting — max absolute difference 5.4e-16 for A and
-    4.7e-16 for C — because both curves are exactly 0 dB at 1 kHz by
-    construction. A 100 Hz sine of amplitude 1.0 comes back with amplitude
-    0.110293 under A weighting, against the closed-form
-    ``10**(-19.1451/20) = 0.110293``.
+    Measured: a 1 kHz sine at 16 kHz (16000 samples, exactly 1000 periods) is
+    returned **unchanged** by both A and C weighting — max absolute difference
+    1.078e-13 for A and 1.225e-13 for C — because both curves are exactly 0 dB
+    at 1 kHz by construction. A 100 Hz sine of amplitude 1.0 comes back with
+    amplitude **0.110373** under A weighting, against the closed form
+    ``10**(-19.1428/20) = 0.110373``.
 
     ``kind="Z"`` returns a copy, unchanged.
 
