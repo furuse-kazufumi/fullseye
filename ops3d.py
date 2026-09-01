@@ -442,16 +442,28 @@ _CATALOG = {
         ("shape_distance", "descriptors3d", ["descriptor", "descriptor"], "measurement", False),
     ],
     "freeform": [  # B スプライン自由曲面/曲線(多項式より柔軟な自由形状計測)
-        ("fit_bspline_surface", "bspline_surf", ["points"], "surface", False),
-        ("eval_bspline_surface", "bspline_surf", ["surface"], "image2d", False),
-        ("surface_residual", "bspline_surf", ["points", "surface"], "measurement", False),
-        ("fit_bspline_curve", "bspline_surf", ["points"], "surface", False),
-        ("eval_bspline_curve", "bspline_surf", ["surface"], "points", False),
+        # 曲面(bisplrep の tck)と曲線(splprep の tck)も別語彙。どちらも list だが
+        # 要素の意味が違い([tx,ty,c,kx,ky] vs (t,c,k))、取り違えると bisplev /
+        # splev が生の例外で落ちる。surface_fit のコメントと同じ判断。
+        ("fit_bspline_surface", "bspline_surf", ["image2d", "image2d", "image2d"],
+         "bspline_surface", False),
+        ("eval_bspline_surface", "bspline_surf",
+         ["bspline_surface", "image2d", "image2d"], "image2d", False),
+        # (rms, max, pv) の dict → adapter で pv を剥がして measurement
+        # (surface_form_error と同じ「形状誤差 = 残差の peak-to-valley」の正典)
+        ("surface_residual", "bspline_surf",
+         ["image2d", "image2d", "image2d", "bspline_surface"], "measurement", False),
+        ("fit_bspline_curve", "bspline_surf", ["points"], "bspline_curve", False),
+        ("eval_bspline_curve", "bspline_surf", ["bspline_curve"], "points", False),
     ],
     "pose_estimation": [  # PnP: 3D-2D 対応 → カメラ姿勢(射影の逆問題)
-        ("dlt_pose", "pnp3d", ["points", "image2d"], "pose", False),
-        ("pnp_ransac", "pnp3d", ["points", "image2d"], "pose", False),
-        ("reprojection_error", "pnp3d", ["points", "pose"], "measurement", False),
+        # 第 2 引数は **画像平面の (N,2) 点列**であって画像ではない。旧宣言の
+        # "image2d" は型の嘘で、ファザーが宣言どおり 32x32 の画像を渡すと
+        # 生の IndexError になっていた(2026-09-01 実測 22 回)。既存語彙の
+        # keypoints((N,2) 等)が正しい — 産出元は project_points / harris3d_keypoints。
+        ("dlt_pose", "pnp3d", ["points", "keypoints"], "pose", False),
+        ("pnp_ransac", "pnp3d", ["points", "keypoints"], "pose", False),
+        ("reprojection_error", "pnp3d", ["points", "keypoints"], "measurement", False),
     ],
     "regionprops": [  # 3D 連結成分の多物体計測(検査で複数部品を一括)
         ("label_components", "regionprops3d", ["voxel"], "voxel", False),
