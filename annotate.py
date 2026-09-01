@@ -1631,7 +1631,7 @@ def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05
                            anchor="cm", pad=2, box_alpha=0.0, font_size=font_size,
                            min_font_size=min_font_size, font_path=font_path,
                            text_color=text_color, max_width=cw, scheme=scheme,
-                           min_contrast=1.0)
+                           min_contrast=1.0, wrap=False)
     if title is not None:
         out = text_box(out, title, (W // 2, int(title_h) // 2), anchor="cm", pad=2,
                        box_alpha=0.0, font_size=font_size + 3, min_font_size=min_font_size,
