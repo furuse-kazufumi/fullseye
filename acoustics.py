@@ -2054,20 +2054,23 @@ def transfer_function(x, y, rate, win=None, hop=None, window="hann",
 
     Measured at 16 kHz over 16384 samples, win = 1024, 31 frames, white input:
 
-    * ``y = 2.5 * x``: ``|H| = 2.500000`` at every bin (max deviation 7.5e-15),
-      phase 0.0, coherence 1.0.
+    * ``y = 2.5 * x``: ``mean |H| = 2.5000000000``, max deviation from 2.5 over
+      all bins **1.78e-15**, mean ``|phase|`` 2.7e-17, mean coherence
+      1.0000000000.
     * ``y = 0.8 * x[n-37]``: the phase is a straight line in frequency of slope
-      ``-2 pi * 37 / 16000`` s; the measured group delay from a least-squares fit
-      to the unwrapped phase is 37.0000 samples (error 3.9e-04 samples), and
-      ``|H| = 0.8000`` (max deviation 0.0034 over the interior bins).
-    * ``y = 2.5 * x + n`` with output-noise SNR 0 dB: H1 gives
-      ``mean |H| = 2.4990`` (error 0.04 %) while H2 gives 5.0193 — exactly the
-      factor-of-two over-estimate the theory predicts when the noise is on the
-      output, and ``mean |H1/H2| = 0.4979`` against the measured mean coherence
-      0.4977.
+      ``-2 pi * 37 / 16000`` s. A least-squares fit to the unwrapped phase over
+      200-7000 Hz gives a group delay of **37.000004 samples** against a true 37
+      (error 4.3e-06 samples), and ``mean |H| = 0.792220`` over the same bins
+      against a true 0.8 (max deviation 0.050).
+    * ``y = 2.5 * x + n`` with output noise at 0 dB SNR: H1 gives
+      ``mean |H| = 2.523390`` — 0.94 % from the truth — while H2 gives
+      **5.043020**, a factor of 2.0 too large, exactly as the theory predicts
+      when the noise sits on the output. And ``|H1/H2|`` equals the coherence
+      pointwise to **5.6e-16** (both mean 0.509143), which is the identity worth
+      knowing: the ratio of the two estimators *is* the coherence.
 
-    That last row is the point of returning the coherence with the response: the
-    H2 number is not obviously wrong when you look at it.
+    That third row is why the coherence is returned with the response. The H2
+    number is off by 100 % and there is nothing about 5.04 that looks wrong.
 
     **Raises** ``ValueError``: everything :func:`coherence` refuses, plus an
     unknown ``estimator`` and ``ref <= 0``.

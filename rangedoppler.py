@@ -79,7 +79,7 @@ Sign and axis conventions — the traps, stated once:
     and the message names the fix.
   * **Units are in every parameter name** — ``_m``, ``_ms`` (metres per second),
     ``_s``, ``_hz``, ``_deg``. A wavelength/frequency swap or a km/h/(m/s) swap
-     is a plausible-wrong answer, not a crash; see the honest-limits section.
+    is a plausible-wrong answer, not a crash; see the honest-limits section.
 
 Deliberately **not** here (owned elsewhere, imported or composed, never
 re-implemented):
