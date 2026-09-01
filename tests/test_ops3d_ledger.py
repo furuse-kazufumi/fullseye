@@ -211,8 +211,8 @@ EXTRA_PARAM_HINTS = {
     "P1": np.hstack([K_32, np.zeros((3, 1))]),
     "P2": np.hstack([K_32 @ np.eye(3), (K_32 @ np.array([1.0, 0.0, 0.0]))[:, None]]),
     "depth_candidates": np.linspace(1.0, 2.0, 8),
-    "scales": lambda rng: np.full(40, 0.3),
-    "opacities": lambda rng: np.full(40, 0.5),
+    "scales": lambda rng: np.full(160, 0.3),      # points プールと同じ点数
+    "opacities": lambda rng: np.full(160, 0.5),
     "offset": (0, 0, 0), "shape": (16, 16, 16),
     "fn": (lambda block: block),
 }
