@@ -1194,8 +1194,8 @@ def ex_generations(data, log=print):
              "観測用 holdout は上下する — そこが「選択に使っていない」証拠。",
              C_DIM, 13, False),
             (28, 630,
-             f"op 数は {lens[0]} → {min(lens)} → {lens[-1]} と伸び縮みする。"
-             "長い方が強いとは限らない。", C_DIM, 13, False),
+             "op 数は " + " → ".join(str(v) for v in _runs(lens)) +
+             " と伸び縮みする。長い方が強いとは限らない。", C_DIM, 13, False),
         ]
         frames.append(text(to_u8(c), items))
     # 末尾を複製して「溜め」を作らない — PIL の GIF 最適化は**連続する同一
