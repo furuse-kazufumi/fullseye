@@ -1,17 +1,98 @@
 {
+ "pipeline_flow": {
+  "info": {
+   "kind": "gif",
+   "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_pipeline_flow.gif",
+   "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_pipeline_flow_thumb.jpg",
+   "bytes": 192175,
+   "thumb_bytes": 30155,
+   "size": [
+    940,
+    514
+   ],
+   "frames": 6,
+   "fps": null,
+   "step_ms": 700,
+   "colors": null,
+   "thumb_frame": 0,
+   "sha256": "1c0db4d086a5b9b5caee1656738c2c729e7920f8095109d5e485729d858bd337"
+  },
+  "title": "設計から判定までの一本道",
+  "ops": [
+   "system_geometry",
+   "resolving_power",
+   "system_feasibility",
+   "surface_texture",
+   "defect_scratch",
+   "composite_defect",
+   "defect_stats",
+   "image_formation",
+   "draw_polyline",
+   "draw_circle"
+  ],
+  "facts": {
+   "system": "VisionSystem(f=35mm, WD=200mm, f/4, 16.26um/px, FOV 39.8x33.3mm)",
+   "defect_um": 120.0,
+   "um_per_pixel": 16.264285714285716,
+   "defect_px": 7.378129117259551,
+   "optical_limit_um": 32.52857142857143,
+   "limited_by": "sampling",
+   "feasibility": {
+    "verdict": "marginal",
+    "defect_um": 120.0,
+    "pixels_across": 7.378129117259551,
+    "resolution_object_um": 32.52857142857143,
+    "limited_by": "sampling",
+    "um_per_pixel": 16.264285714285716,
+    "fov_w_mm": 39.81497142857143,
+    "fov_h_mm": 33.30925714285715,
+    "depth_of_field_mm": 0.7435127729527835,
+    "depth_tolerance_mm": 1.0,
+    "depth_of_field_ok": false,
+    "corner_illumination": 0.9671480234033091,
+    "half_angle_deg": 7.394357200404169
+   },
+   "mask_stats": {
+    "area_px": 260,
+    "empty": false,
+    "bbox_h_px": 13,
+    "bbox_w_px": 35,
+    "major_axis_px": 39.47094152942889,
+    "minor_axis_px": 9.687581214362071,
+    "fill_ratio": 0.5714285714285714,
+    "major_axis_um": 641.9666704464971,
+    "minor_axis_um": 157.5615887507317,
+    "area_um2": 68777.0173469388
+   },
+   "iou": 0.34210526315789475,
+   "detected": true,
+   "intersection_px": 260,
+   "union_px": 760,
+   "flagged_px": 760,
+   "rms_capture_change": 0.22317585747990967,
+   "steps": [
+    "設計 — 視野と µm/画素を決める",
+    "限界 — 標本化と回折のどちらが律速か",
+    "仮想の部品 — 欠陥と画素完全なマスク",
+    "撮像 — この系で実際に撮れる画像",
+    "検査 — 検査アルゴリズムの生の出力",
+    "判定 — 正解と突き合わせて IoU"
+   ]
+  }
+ },
  "defect_atlas": {
   "info": {
    "kind": "png",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas.png",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas_thumb.jpg",
-   "bytes": 88396,
-   "thumb_bytes": 42312,
+   "bytes": 128902,
+   "thumb_bytes": 44913,
    "size": [
     998,
-    884
+    882
    ],
    "frames": 1,
-   "sha256": "57fecc928dd0d2b4b692f971551c3a2cc2b5634087a145ec827a0d23e076bf3f"
+   "sha256": "a98b659a6601c8cdac26f1fd5abf5e3a43ca2bc6e9a2dd58f071638ceb7525fe"
   },
   "title": "欠陥ジェネレータの見本帳",
   "ops": [
@@ -33,97 +114,124 @@
    "rows": [
     {
      "kind": "scratch",
-     "size_um": 220.0,
-     "defect_px": 13.526570048309177,
-     "stats": {
-      "area_px": 873,
-      "empty": false,
-      "bbox_h_px": 45,
-      "bbox_w_px": 38,
-      "major_axis_px": 50.249120979529245,
-      "minor_axis_px": 32.72065872693982,
-      "fill_ratio": 0.5105263157894737,
-      "major_axis_um": 817.2660605027721,
-      "minor_axis_um": 532.1781422945855,
-      "area_um2": 230932.0620918368
+     "order": "長さ2863µm × 幅73µm",
+     "params": {
+      "length_px": 176.0,
+      "width_px": 4.5,
+      "angle_deg": 22.0,
+      "wander": 0.11,
+      "contrast": -0.3,
+      "seed": 7
      },
-     "iou": 0.4386292834890966,
+     "stats": {
+      "area_px": 520,
+      "empty": false,
+      "bbox_h_px": 90,
+      "bbox_w_px": 54,
+      "major_axis_px": 123.72347003918327,
+      "minor_axis_px": 21.081115724614936,
+      "fill_ratio": 0.10699588477366255,
+      "major_axis_um": 2012.2738662801453,
+      "minor_axis_um": 342.86928932105866,
+      "area_um2": 137554.0346938776
+     },
+     "iou": 0.4655326768128917,
      "detected": true
     },
     {
      "kind": "pits",
-     "size_um": 90.0,
-     "defect_px": 5.533596837944663,
-     "stats": {
-      "area_px": 209,
-      "empty": false,
-      "bbox_h_px": 231,
-      "bbox_w_px": 210,
-      "major_axis_px": 306.47243169652506,
-      "minor_axis_px": 222.9278641994279,
-      "fill_ratio": 0.004308390022675737,
-      "major_axis_um": 4984.555192664197,
-      "minor_axis_um": 3625.762477014981,
-      "area_um2": 55286.14086734695
+     "order": "16 個 直径130µm",
+     "params": {
+      "count": 16,
+      "radius_px": 4.0,
+      "radius_sigma": 0.35,
+      "contrast": -0.34,
+      "clustering": 0.45,
+      "seed": 7
      },
-     "iou": 0.5870786516853933,
+     "stats": {
+      "area_px": 949,
+      "empty": false,
+      "bbox_h_px": 112,
+      "bbox_w_px": 159,
+      "major_axis_px": 197.2634951582525,
+      "minor_axis_px": 120.93012627076945,
+      "fill_ratio": 0.05329065588499551,
+      "major_axis_um": 3208.349846252436,
+      "minor_axis_um": 1966.8421251324432,
+      "area_um2": 251036.11331632658
+     },
+     "iou": 0.6906841339155749,
      "detected": true
     },
     {
      "kind": "crack",
-     "size_um": 200.0,
-     "defect_px": 12.296881862099251,
-     "stats": {
-      "area_px": 692,
-      "empty": false,
-      "bbox_h_px": 47,
-      "bbox_w_px": 24,
-      "major_axis_px": 50.32970057433011,
-      "minor_axis_px": 20.075788453373733,
-      "fill_ratio": 0.6134751773049646,
-      "major_axis_um": 818.5766300553548,
-      "minor_axis_um": 326.51835934522853,
-      "area_um2": 183052.67693877555
+     "order": "長さ2440µm × 幅49µm",
+     "params": {
+      "length_px": 150.0,
+      "width_px": 3.0,
+      "angle_deg": 104.0,
+      "branch_prob": 0.22,
+      "wander": 0.3,
+      "contrast": -0.36,
+      "seed": 7
      },
-     "iou": 0.4506503442999235,
+     "stats": {
+      "area_px": 458,
+      "empty": false,
+      "bbox_h_px": 52,
+      "bbox_w_px": 46,
+      "major_axis_px": 65.05557005767959,
+      "minor_axis_px": 46.65699426675035,
+      "fill_ratio": 0.19147157190635453,
+      "major_axis_um": 1058.0823787238317,
+      "minor_axis_um": 758.8426853242183,
+      "area_um2": 121153.36132653065
+     },
+     "iou": 0.544589774078478,
      "detected": true
     },
     {
      "kind": "blob",
-     "size_um": 340.0,
-     "defect_px": 20.90469916556873,
-     "stats": {
-      "area_px": 347,
-      "empty": false,
-      "bbox_h_px": 22,
-      "bbox_w_px": 24,
-      "major_axis_px": 22.46311488419547,
-      "minor_axis_px": 20.12276039482974,
-      "fill_ratio": 0.6571969696969697,
-      "major_axis_um": 365.3465185093792,
-      "minor_axis_um": 327.28232442162374,
-      "area_um2": 91790.8654591837
+     "order": "直径878µm",
+     "params": {
+      "radius_px": 27.0,
+      "roughness": 0.4,
+      "contrast": 0.26,
+      "seed": 7
      },
-     "iou": 0.38838709677419353,
+     "stats": {
+      "area_px": 2318,
+      "empty": false,
+      "bbox_h_px": 59,
+      "bbox_w_px": 63,
+      "major_axis_px": 58.730494044934964,
+      "minor_axis_px": 51.7985605556838,
+      "fill_ratio": 0.6236211998923863,
+      "major_axis_um": 955.209535287978,
+      "minor_axis_um": 842.4665884663716,
+      "area_um2": 613173.5623469389
+     },
+     "iou": 0.24395029431000653,
      "detected": true
     },
     {
      "kind": "composite",
-     "size_um": null,
-     "defect_px": null,
+     "order": "scratch+pits+blob",
+     "params": null,
      "stats": {
-      "area_px": 2172,
+      "area_px": 1749,
       "empty": false,
-      "bbox_h_px": 196,
+      "bbox_h_px": 194,
       "bbox_w_px": 188,
-      "major_axis_px": 212.7588361280985,
-      "minor_axis_px": 144.8917416571391,
-      "fill_ratio": 0.0589448545375597,
-      "major_axis_um": 3460.370499026288,
-      "minor_axis_um": 2356.5606839521843,
-      "area_um2": 574552.6218367348
+      "major_axis_px": 205.17200534617828,
+      "minor_axis_px": 147.7014982615652,
+      "fill_ratio": 0.047954595305988154,
+      "major_axis_um": 3336.9761155232,
+      "minor_axis_um": 2402.2593681541716,
+      "area_um2": 462657.7051530613
      },
-     "iou": 0.45197168857431747,
+     "iou": 0.451931330472103,
      "detected": true
     }
    ]

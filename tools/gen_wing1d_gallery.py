@@ -55,8 +55,13 @@ import funct1d as F              # noqa: E402  1-D 関数代数(HALCON funct_1d)
 import imagedraw                 # noqa: E402  Fullseye の描画 op(唯一の描画経路)
 import interferometry as I       # noqa: E402  コヒーレンス走査(包絡線の切断)
 import measure                   # noqa: E402  2D 測定線
-import video                     # noqa: E402  GIF 書き出し
 import volprobe                  # noqa: E402  3D プローブ
+
+# 束ね方の共通部品(著者提供・自己テスト済み)。
+#   contact_sheet = 並べて比べる / flipbook = 同寸で工程が進む / 原寸 1 枚 = 主張そのもの
+sys.path.insert(0, _HERE_TOOLS := os.path.dirname(os.path.abspath(__file__)))
+from exhibit_tile import (contact_sheet, flipbook, markdown,   # noqa: E402
+                          markdown_animation, save_animation, save_exhibit)
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
