@@ -753,8 +753,7 @@ def ex_window_sweep(log):
     for r in rows:
         fig = Fig(W, H)
         _header(fig, "Get the window wrong and the kurtosis reports the opposite",
-                f"impulses every {period_ms:.3f} ms (defect {fd:g} Hz), "
-                f"true resonance {fc:g} Hz, {fs:g} Hz")
+                f"impulses every {period_ms:.3f} ms, resonance {fc:g} Hz")
         # 上: 波形 + 窓の長さ
         axw = Ax(fig, 76, 66, W - 30, 210, (0.0, 50.0),
                  (-float(np.abs(seg).max()) * 1.1, float(np.abs(seg).max()) * 1.1))
@@ -782,7 +781,7 @@ def ex_window_sweep(log):
         fig.text(wx1 + 8, axw.y0 + 5, f"win = {r['win']} = {r['ms']:.2f} ms", C_B, 12, True)
         fig.text(axw.X(period_ms) + 4, axw.y1 - 30,
                  f"impact period {period_ms:.3f} ms", C_TRUE, 11, True)
-        fig.text(W - 190, 216, "time [ms] ->", C_DIM, 11)
+        fig.text(W - 120, 216, "time [ms] ->", C_DIM, 11)
 
         # 中: SK 曲線
         axk = Ax(fig, 76, 280, W - 30, 486, (0.0, fs / 2.0),
@@ -2286,11 +2285,12 @@ def ex_envelope_truncation(log):
                  C_TRUE, 11, True)
         fig.text(axz.X(r["forced"]) + 6, 96, f"returned {r['forced']:.4f} um",
                  C_E if abs(r["rel"]) > 1.0 else C_C, 11, True)
-        fig.text(88, 300, "the two squares are the envelope at the scan ends - "
-                          "when they lift off the floor, part of the peak is outside "
-                          "the scan", C_WARN, 11)
+        fig.text(88, 334, "the two squares are the envelope at the scan ends: when "
+                          "they lift off the floor,", C_WARN, 11)
+        fig.text(88, 350, "part of the coherence peak is outside the scan and the "
+                          "Hilbert transform sees a different signal", C_WARN, 11)
         fig.text(axz.x0 + 6, axz.y0 + 4, "I(z)", C_DIM, 11)
-        fig.text(W - 430, 326, "scan position z [um] ->", C_DIM, 11)
+        fig.text(W - 420, 350, "scan position z [um] ->", C_DIM, 11)
 
         fig.box(W - 252, 70, W - 24, 320, C_PANEL2)
         fig.text(W - 242, 78, "readout", C_TEXT, 12, True)
@@ -2343,7 +2343,7 @@ def ex_envelope_truncation(log):
         if first_refusal is not None:
             fig.text(axe.x0 + 8, 404, "operator refuses in here", C_WARN, 11, True)
             fig.text(axe.x0 + 8, 420, "(edge level above 0.05)", C_WARN, 11)
-        fig.text(W - 430, 558, "true surface height [um] ->", C_DIM, 11)
+        fig.text(W - 460, 574, "true surface height [um] ->", C_DIM, 11)
 
         fig.box(W - 252, 400, W - 24, 552, C_PANEL2)
         if r["refused"]:

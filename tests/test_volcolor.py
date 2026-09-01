@@ -645,6 +645,46 @@ def test_legend_top_and_physical_units():
         volcolor.vol_label_legend(L, top=0)
 
 
+def test_legend_refuses_props_without_a_volume_column():
+    """``volume`` が無い props を voxel_count で埋めない。
+
+    埋めると「mm**3」の見出しの下にボクセル数が並ぶ表ができ、単位だけが黙って
+    嘘になる(数字自体は妥当な大きさなので、誰も気づかない)。
+    """
+    L, _ = labelled_phantom()
+    stripped = [{k: v for k, v in r.items() if k != "volume"}
+                for r in volcolor.vol_label_shape_stats(L)]
+    with pytest.raises(ValueError, match="no 'volume' key"):
+        volcolor.vol_label_legend(L, stripped, measure="voxel_count")
+
+
+def test_dead_parameters_were_removed_not_ignored():
+    """色を置かない op に ``background`` を残さない(効かない引数は静かな嘘)。"""
+    L, _ = labelled_phantom()
+    for fn, args in ((volcolor.vol_label_overlay, (np.zeros(L.shape), L)),
+                     (volcolor.vol_label_legend, (L,)),
+                     (volcolor.vol_labels_to_meshes, (L,))):
+        with pytest.raises(TypeError):
+            fn(*args, background=(1.0, 0.0, 0.0))
+    # 逆に、本当に背景を塗る 3 op では効く
+    assert np.allclose(volcolor.vol_label_palette(2, background=(1, 0, 0))[0], (1, 0, 0))
+    empty = np.zeros((4, 4, 4), np.int64)
+    assert np.allclose(volcolor.vol_colorize_labels(empty, background=(1, 0, 0)),
+                       np.tile((1.0, 0.0, 0.0), (4, 4, 4, 1)))
+    assert np.allclose(volcolor.vol_label_volume_render(empty, background=(0, 1, 0)),
+                       np.tile((0.0, 1.0, 0.0), (4, 4, 1)))
+
+
+def test_select_refuses_shape_criteria_on_stats_without_shape():
+    L, _ = labelled_phantom()
+    lean = volcolor.vol_label_shape_stats(L, shape=False)
+    assert "elongation" not in lean[0]
+    with pytest.raises(ValueError, match="elongation"):
+        volcolor.vol_select_labels(L, lean, max_elongation=2.0)
+    out, kept = volcolor.vol_select_labels(L, lean, min_voxels=1)    # 体積なら通る
+    assert kept.size == 16
+
+
 def test_legend_accepts_vol_region_props_measures():
     L, _ = labelled_phantom()
     props = volops.vol_region_props(L, surface="faces")
