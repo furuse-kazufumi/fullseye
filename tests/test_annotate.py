@@ -259,7 +259,7 @@ def test_mask_shaped_like_the_transpose_is_refused():
 def test_text_box_anchor_places_the_plate_where_it_says():
     img = _canvas(0.0)
     out = A.text_box(img, "AB", (150, 100), anchor="rb", pad=4, box_alpha=1.0,
-                     box_color=(1.0, 1.0, 1.0), font_size=12)
+                     box_color=(1.0, 1.0, 1.0), text_color=(0.0, 0.0, 0.0), font_size=12)
     lit = np.argwhere(out[..., 0] > 0.9)
     assert lit[:, 1].max() == 150 - 1 or lit[:, 1].max() == 150   # 右端がアンカー
     assert lit[:, 0].max() <= 100
