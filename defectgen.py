@@ -87,6 +87,19 @@ def _num(value, name, *, lo=None, hi=None, sign="positive"):
     return v
 
 
+def _require_drawn(mask, name, hint):
+    """1 画素も描かれなかった注文を**成功として返さない**。
+
+    掃引では「欠陥が無い画像」が「検出できなかった結果」として集計され、
+    アルゴリズムのせいにされる。生成側が黙って空を返すのが一番たちが悪いので、
+    ここで止めて理由を告げる。0 個を明示的に頼んだ場合(``count=0``)は
+    呼び出し側で先に返すので、ここには来ない。
+    """
+    if not mask.any():
+        raise ValueError("%s produced no pixels — %s" % (name, hint))
+    return mask
+
+
 def _stamp(mask, yy, xx, radius):
     """(yy, xx) を中心に半径 *radius* の円盤をマスクへ焼き付ける。
 
@@ -145,6 +158,9 @@ def defect_scratch(shape=(256, 256), length_px=120.0, width_px=3.0,
         theta += rng.normal(0.0, wander) if wander > 0 else 0.0
         y += np.sin(theta)
         x += np.cos(theta)
+    _require_drawn(mask, "defect_scratch",
+                   "the ordered geometry falls entirely outside the %dx%d image; "
+                   "shorten length_px, move `start`, or enlarge the shape" % (h, w))
     img = np.full((h, w), 0.5, np.float64)
     img[mask] += c
     return np.clip(img, 0.0, 1.0), mask
@@ -186,6 +202,10 @@ def defect_pits(shape=(256, 256), count=25, radius_px=4.0, radius_sigma=0.4,
         r = float(r_mean * np.exp(rng.normal(0.0, r_sigma))) if r_sigma > 0 else r_mean
         _stamp(mask, y, x, max(0.5, r))
         placed.append((y, x))
+    if int(count) > 0:
+        _require_drawn(mask, "defect_pits",
+                       "every pit landed outside the %dx%d image — check "
+                       "radius_px and clustering" % (h, w))
     img = np.full((h, w), 0.5, np.float64)
     img[mask] += c
     return np.clip(img, 0.0, 1.0), mask
@@ -223,6 +243,13 @@ def defect_crack(shape=(256, 256), length_px=90.0, width_px=2.0, angle_deg=90.0,
     todo = [(h / 2.0 - 0.5 * length * np.sin(theta0),
              w / 2.0 - 0.5 * length * np.cos(theta0), theta0, length, width)]
     branches = 0
+    # 画像の外へ出ても歩き続ける(``_stamp`` が範囲外を落とす)。以前はここで
+    # ``break`` していたため、**画像より長い割れを頼むと開始点が画像外になり、
+    # 何も描かれないまま成功したふりをしていた**(実測: 80x80 に長さ 90 を頼むと
+    # 空の結果が返り、seed を変えても同じだった)。掃引では「欠陥が無い画像」を
+    # 「検出できなかった」と読み違えるので、これは黙って起きてはいけない。
+    # 遠くへ行きすぎた枝だけは打ち切る(戻って来ないので計算の無駄)。
+    far = 2.0 * max(h, w)
     while todo:
         y, x, theta, remain, wid = todo.pop()
         for _ in range(max(2, int(np.ceil(remain)))):
@@ -230,7 +257,7 @@ def defect_crack(shape=(256, 256), length_px=90.0, width_px=2.0, angle_deg=90.0,
             theta += rng.normal(0.0, wan) if wan > 0 else 0.0
             y += np.sin(theta)
             x += np.cos(theta)
-            if not (0 <= y < h and 0 <= x < w):
+            if not (-far <= y <= h + far and -far <= x <= w + far):
                 break
             if branches < max_branches and bp > 0 and rng.random() < bp / remain:
                 branches += 1
@@ -238,6 +265,9 @@ def defect_crack(shape=(256, 256), length_px=90.0, width_px=2.0, angle_deg=90.0,
                 todo.append((y, x, theta + rng.choice([-1, 1]) * rng.uniform(0.4, 1.0),
                              remain * rng.uniform(0.4, 0.7),
                              max(1.0, wid * rng.uniform(0.6, 0.8))))
+    _require_drawn(mask, "defect_crack",
+                   "the ordered geometry falls entirely outside the %dx%d image; "
+                   "shorten length_px or enlarge the shape" % (h, w))
     img = np.full((h, w), 0.5, np.float64)
     img[mask] += c
     return np.clip(img, 0.0, 1.0), mask
@@ -272,6 +302,9 @@ def defect_blob(shape=(256, 256), radius_px=20.0, roughness=0.35, contrast=0.25,
     boundary = r0 * (1.0 + sum(a * np.cos((k + 1) * ang + p)
                                for k, (a, p) in enumerate(zip(amps, phases))))
     mask = rad <= np.maximum(boundary, 0.5)
+    _require_drawn(mask, "defect_blob",
+                   "the blob centre lies outside the %dx%d image or the radius "
+                   "collapsed — check radius_px and centre" % (h, w))
     img = np.full((h, w), 0.5, np.float64)
     img[mask] += c
     return np.clip(img, 0.0, 1.0), mask
