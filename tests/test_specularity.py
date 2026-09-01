@@ -183,11 +183,15 @@ def test_split_works_under_a_coloured_illuminant():
     assert np.abs(d - d2).max() < 1e-14
 
 
-@pytest.mark.parametrize("body_rgb", [None, (0.80, 0.55, 0.35)])
-def test_split_is_a_partition_of_the_input(body_rgb):
+@pytest.mark.parametrize("body_rgb,tol", [(None, 1e-15),
+                                          ((0.80, 0.55, 0.35), 1e-14)])
+def test_split_is_a_partition_of_the_input(body_rgb, tol):
+    """Measured 1.1e-16 on the uniform-body route, which builds the diffuse as
+    ``image - specular``, and 2.1e-15 on the known-body route, which builds both
+    parts from the solved coefficients and so accumulates a little more."""
     img, *_ = known_split()
     d, s = S.specular_diffuse_split(img, body_rgb=body_rgb)
-    assert np.abs(d + s - img).max() < 1e-15        # measured 1.1e-16
+    assert np.abs(d + s - img).max() < tol
 
 
 def test_coefficient_map_is_the_scalar_behind_the_specular_image():
