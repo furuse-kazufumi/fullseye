@@ -2773,7 +2773,7 @@ def ex_window_sweep(log) -> dict:
                             p.y0 - 32 + 16 * (j % 2), name, col, 10, True))
         c = p.done()
         # 各組織が「いま何色に見えるか」の帯
-        bx, by, bw, bh = 530, 400, 550, 26
+        bx, by, bw, bh = 530, 408, 550, 26
         c = _text(c, [(bx, by - 20, "この窓での各組織の見え方(0 = 真っ黒, 1 = 真っ白)",
                        C_DIM, 12, False)])
         seg = bw // len(tissue)
