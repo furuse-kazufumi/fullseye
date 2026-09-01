@@ -1006,7 +1006,8 @@ def ex_order_tracking(log):
                           f"(true amplitude 1.0 for both)", C_C, 13, True)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "order_tracking", fps=6, thumb_index=len(rows) // 2, log=log)
+    info = save_flipbook(frames, "order_tracking", labels, ms=220, hold_ms=1400,
+                         log=log)
     facts = {
         "rpm_start": 600.0, "rpm_end": 1800.0, "duration_s": dur, "rate_hz": fs,
         "total_revolutions": run["total_revolutions"],
