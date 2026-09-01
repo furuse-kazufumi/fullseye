@@ -3359,10 +3359,11 @@ An outer-race spall in a rolling bearing does not ring at the defect frequency. 
 | Raw spectrum | **4.3e-16** ← the component is not there |
 | Envelope spectrum | **0.499677** (peak at **107.000000 Hz**) |
 
+*(The raw figure is `dsp.spectrum(...)[1] * 2/N` — after conversion to a single-sided amplitude. The bare return of `dsp.spectrum` is `5.493328e-12`, with the carrier at 12800 and the sidebands at 3200 in the same run. **The ratio is unchanged, so the claim stands**, but the first published version omitted that `× 2/N` and therefore did not reproduce from the call as printed.)*
+
 ```python
 sk  = fs.spectral_kurtosis(x, 25600.0)                      # let the machine pick the band
-env = fs.envelope_spectrum(x, 25600.0, sk["max_freq"] - sk["bin_hz"],
-                                        sk["max_freq"] + sk["bin_hz"])
+env = fs.envelope_spectrum(x, 25600.0, sk["band_lo"], sk["band_hi"])
 print(env["peak_freq"], env["band_fraction"])               # 107.0 and ~1.0 = genuine
 ```
 
