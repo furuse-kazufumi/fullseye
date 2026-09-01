@@ -455,10 +455,20 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # counts = 時間 bin で添字づけられた**非負**の光子カウント列。既存 signal と
+    # 構造は同じだが、signal プール(正弦波 = 負値あり)を渡すと必ず CONTRACT に
+    # なり photon 族が一度も実行されない(実測 7/17 未到達)。jones/stokes と同じ判断
+    "counts": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+    and v.dtype.kind == "f" and v.size >= 2 and (v >= 0.0).all(),
+    # countrate = SPAD の計数レート列 [Hz]。counts と形は同じだが値域が 7 桁違い、
+    # counts を渡すとデッドタイム則が恒等写像に潰れて物理が一度も踏まれない
+    # (実測: ヒストグラムを渡すと相対変化 1.1e-4、本物のレートなら 33%)
+    "countrate": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+    and v.dtype.kind == "f" and v.size >= 1 and (v >= 0.0).all(),
     # histcube = (H, W, T) の到達時刻ヒストグラム。voxel と ndim は同じだが
     # 時間軸が最後という約束が違う(voxel を渡すと黙って間違った深度が出る)
     "histcube": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
-    and v.shape[2] >= 2 and v.dtype.kind == "f",
+    and v.shape[2] >= 2 and v.dtype.kind == "f" and (v >= 0.0).all(),
     # jones = Jones ベクトル(長さ 2 固定の complex)。cpoints(輪郭)と形は
     # 同じでも意味が違い、長さが違えば必ず ValueError なので別プール
     "jones": lambda v: isinstance(v, np.ndarray) and v.shape == (2,)
