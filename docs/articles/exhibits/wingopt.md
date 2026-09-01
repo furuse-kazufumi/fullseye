@@ -11,7 +11,7 @@
 
 *↑ **律速の入れ替わり** ―― 作動距離を 120 → 320 mm と掃くと、**回折律速と標本化律速が入れ替わります**。閉形式で解いた交点は **WD 157.64 mm**、そこでは 2 本の限界がどちらも **24.18 µm** で一致します(倍率 0.28539)。記事本文の 44 段掃引が入れ替わりを最初に報告するのは 160.5 mm —— その差は物理ではなく**格子の粗さ**です。 使用 op: `system_geometry`, `resolving_power`, `thin_lens`, `draw_polyline`, `draw_line`。*
 
-<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_limit_crossover_thumb.jpg`)。42 フレーム / 10 fps / 1000×444 px / 0.43 MB。</small>
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_limit_crossover_thumb.jpg`)。42 フレーム / 10 fps / 1000×474 px / 0.46 MB。</small>
 
 ---
 
@@ -19,4 +19,4 @@
 
 | 展示 | 形式 | 画素 | フレーム | サイズ | SHA-256(先頭 16) |
 |---|---|---|---|---|---|
-| 律速の入れ替わり | GIF | 1000×444 | 42 | 435 kB | `085144c2c95e6c0a` |
+| 律速の入れ替わり | GIF | 1000×474 | 42 | 459 kB | `353cbabaa24686ab` |

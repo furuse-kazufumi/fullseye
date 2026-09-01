@@ -4,17 +4,17 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_limit_crossover.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_limit_crossover_thumb.jpg",
-   "bytes": 434562,
-   "thumb_bytes": 38350,
+   "bytes": 459031,
+   "thumb_bytes": 39510,
    "size": [
     1000,
-    444
+    474
    ],
    "frames": 42,
    "fps": 10,
    "colors": 256,
    "thumb_frame": 8,
-   "sha256": "085144c2c95e6c0a2bb803a92856f23e438d416540a64013d97231103608f876"
+   "sha256": "353cbabaa24686ab5f9f5237eba540422c62adaaa7888978dd64efc70921044a"
   },
   "title": "律速の入れ替わり",
   "ops": [
