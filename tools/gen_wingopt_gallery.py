@@ -1362,7 +1362,7 @@ def ex_airy_rayleigh(log):
              "the rings)", (0.95, 0.95, 0.92), 11, True),
             (plot_box[0] + 6, plot_box[1] + 4,
              "profile along the dashed line, normalised", C_DIM, 11, False),
-            (plot_box[2] - 118, plot_box[3] - 16, "position [um] ->", C_DIM, 11, False),
+            (plot_box[2] - 118, plot_box[1] + 4, "position [um] ->", C_DIM, 11, False),
             (18, yi,
              f"separation {r['sep_um']:5.3f} um = {r['k']:.2f} x Rayleigh "
              f"({rayleigh_um:.3f} um)     dip / peak = {r['dip_over_peak']:.4f}",
@@ -1656,6 +1656,8 @@ def ex_abcd_rays(log):
             (diag[2] - 190, diag[1] + 20, "distance from the lens [mm] ->", C_DIM, 11, False),
             (int(p.px(0.0)) - 16, diag[1] + 22, "lens", (0.75, 0.79, 0.86), 11, True),
             (int(p.px(sensor_mm)) - 96, diag[1] + 40, "sensor", C_MISS, 11, True),
+            (int(p.px(sensor_mm)) - 168, int(p.py(max(r["hits"]))) - 18,
+             f"blur {r['blur_mm'] * 1e3:.1f} um ->", (1.0, 1.0, 1.0), 11, True),
             (max(diag[0] + 4, int(p.px(so_x)) - 24), int(p.py(obj_h)) - 18,
              "object", C_HIT, 11, True),
             (18, yi,
