@@ -97,8 +97,14 @@ _CATALOG = {
         ("ncd", "imgmetrics", ["image2d", "image2d"], "scalar"),
     ],
     # まとめ。metrics が新語(数値と条件を一緒に持つ)
+    # まとめ。**metrics を消費する側も置く** ―― 2026-09-02 の点検まで
+    # compare_images だけが metrics を産んで誰も食わない袋小路だった。
+    # measure_with は「前と同じ条件で測り直す」= 出力を入力へ戻す形で、
+    # data_range を毎回書かせる煩雑さと、条件が消える事故を同時に片付ける。
     "report": [
         ("compare_images", "imgmetrics", ["image2d", "image2d"], "metrics"),
+        ("measure_with", "imgmetrics", ["metrics", "image2d", "image2d"], "metrics"),
+        ("metrics_table", "imgmetrics", ["metrics"], "table"),
         ("data_range_of", "imgmetrics", ["image2d"], "scalar"),
     ],
 }
