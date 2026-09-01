@@ -230,13 +230,19 @@ def test_color_rotate_is_the_quaternion_sandwich():
     rot = pose_quat.axis_angle_to_quat(axis[0], axis[1], axis[2], ang)
     ref = np.stack([[pose_quat.quat_rotate_point_3d(rot, *rgb[i, j])
                      for j in range(8)] for i in range(8)])
-    # 1e-12, not 1e-16: pose_quat.quat_normalize divides by norm + 1e-12, so its
-    # rotation matrix is short of orthogonal by that much. Documented, measured,
-    # and asserted here so a change in either direction is noticed.
-    assert np.abs(out[..., 1:] - ref).max() < 1e-11
-    assert np.abs(out[..., 1:] - ref).max() > 1e-14
+    # HISTORY, kept deliberately. Until 2026-09-01 this assertion had to be
+    # bracketed from *below* as well (> 1e-14), because the error had a floor at
+    # 1e-12 that was not rounding: pose_quat normalised with `norm + 1e-12`, so
+    # even a perfectly unit rotor came back scaled by 1/(1 + 1e-12) and the
+    # matrix built from it was short of orthogonal by 1.4e-12. The effect was
+    # doubled because quat_to_hom_mat3d calls quat_normalize internally, which is
+    # why reproducing only the outer expression does not reproduce the number.
+    # pose_quat now divides exactly and fail-closes on zero length, so the floor
+    # is gone and the bound is tightened to machine precision. Measured after the
+    # fix: 4.44e-16 here, 2.22e-16 for the round trip.
+    assert np.abs(out[..., 1:] - ref).max() < 1e-14
     back = qi.quat_color_rotate(out, axis, -ang)
-    assert np.abs(back - q).max() < 1e-11
+    assert np.abs(back - q).max() < 1e-14
 
 
 def test_color_rotate_preserves_the_colour_magnitude():
