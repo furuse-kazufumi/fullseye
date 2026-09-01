@@ -1326,12 +1326,8 @@ peaks = fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]   # dr, dv = b
 **モーション増幅(9 op)** は、0.2 画素の振動を測り、見せます。**崖の位置が閉形式で決まる**のがこの族の要点です ―― 位相基準は `c·J₀(k·A)` に従うので、第一零点 **2.4048/k = 3.0619 画素**を越える振幅では測定が反転します。
 
 ```python
-import fullseye as fs
-clip = fs.synthesize_translation((64, 64), 64, amplitude_px=0.2,
-                                 frequency_hz=4.0, fps=32.0, noise_sigma=0.01)
-print(abs(fs.displacement_series(clip, 3.0, 5.0, 32.0)[:, 0]).max())   # 0.2003 px
-r = fs.motion_magnify(clip, alpha=8.0, f_lo=3.0, f_hi=5.0, fps=32.0)
-print(r["snr_in"]["image_snr_db"], r["snr_out"]["image_snr_db"])       # 29.25 -> 13.74 dB
+print(abs(fs.displacement_series(clip, 3.0, 5.0, 32.0)[:, 0]).max())   # 0.2003 px(真値 0.2)
+r = fs.motion_magnify(clip, alpha=8.0, f_lo=3.0, f_hi=5.0, fps=32.0)   # 帯域 [Hz], fps
 print(r["motion_snr_change_db"], r["band_power_ratio"])                # -2.18 dB, 0.629
 ```
 
