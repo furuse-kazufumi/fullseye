@@ -338,10 +338,18 @@ def sinkhorn(a, b, cost, reg=0.05, n_iter=2000, tol=1e-9):
         raise ValueError(f"reg must be a positive finite number, got {reg!r}")
 
     K = np.exp(-cost / reg)
-    if not np.any(K > 0):
+    # 「全体が 0」だけを見るのは弱い。質量のある行/列が 1 つでも全滅すると、
+    # その行の質量を運ぶ先が無くなり、割り算の下駄(1e-300)で**でたらめな計画が
+    # 黙って返る**。行・列ごとに見るのが正しい検査(2026-09-02 の実測で判明)。
+    live_rows = (K > 0).any(axis=1) | (a <= 0)
+    live_cols = (K > 0).any(axis=0) | (b <= 0)
+    if not (live_rows.all() and live_cols.all()):
+        dead = int((~live_rows).sum()) + int((~live_cols).sum())
         raise ValueError(
             f"reg={reg!r} is too small for this cost matrix: exp(-cost/reg) underflowed to zero "
-            f"everywhere (cost range [{cost.min():.3g}, {cost.max():.3g}]). "
+            f"for {dead} row(s)/column(s) that still carry mass "
+            f"(cost range [{cost.min():.3g}, {cost.max():.3g}]). Their mass has nowhere to go, "
+            "so the iteration would return a plan whose marginals are meaningless. "
             "Use a larger reg, or wasserstein_1d for an exact 1-D answer"
         )
     u = np.ones_like(a)
