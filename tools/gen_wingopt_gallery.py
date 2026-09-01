@@ -56,7 +56,8 @@ import imagedraw                                          # Fullseye の描画 o
 import optics                                             # noqa: E402
 import visiondesign as vd                                 # noqa: E402
 import visionlab as vl                                    # noqa: E402
-from exhibit_tile import contact_sheet, markdown, save_exhibit   # noqa: E402
+from exhibit_tile import (contact_sheet, flipbook, markdown,      # noqa: E402
+                          markdown_animation, save_animation, save_exhibit)
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
