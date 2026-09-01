@@ -125,3 +125,40 @@ def test_non_array_return_is_treated_as_failure():
     run = bt._make_runner(lambda v, **kw: {"not": "an array"}, {}, [], "points", "volume")
     got = run(_seed("points"), 0.5, 0.5)
     assert isinstance(got, np.ndarray) and got.ndim == 3
+
+
+def test_genome_and_name_paths_agree_on_the_trivial_pipeline():
+    """「何もしない」が 2 つの経路で同じ結果になること。
+
+    実測 2026-09-01: 同じ全 identity パイプラインが、ゲノム経路 0.2016 /
+    名前経路 0.6616 と食い違っていた。原因は identity の out_sort が ANY で、
+    段間クリップの除外(新 sort は [0,1] に押し込めない)がすり抜けたこと。
+    ゲノム経路は 6 スロットを identity で埋めるので 6 回クリップされ、
+    名前経路は stage 0 個なので一度もクリップされない、という非対称だった。
+
+    この食い違いは進化を無意味にする — trivial baseline に到達できないので
+    「baseline を超えたか」の比較が成立しない。
+    """
+    import problems
+
+    for name in ("points_denoise", "signal_denoise"):
+        if name not in problems.PROBLEMS:
+            continue
+        prob = problems.PROBLEMS[name]
+        data = prob.make(4, 64, 0)
+        g = ops.genome_for_names([], prob.in_sort)
+        assert g is not None, f"{name}: 全 identity ゲノムが作れない"
+        by_genome = prob.score(g, data)
+        by_names = prob.score_stages(ops.decode_by_names([]), data)
+        assert by_genome == pytest.approx(by_names, rel=1e-9), (
+            f"{name}: ゲノム経路 {by_genome} != 名前経路 {by_names}")
+
+
+def test_identity_does_not_clip_new_sorts():
+    """identity(out_sort=ANY)が新 sort の値域を壊さないこと。"""
+    pts = _seed("points")                      # 座標は [0,10]
+    stages = ops.decode_by_names([{"op": "identity", "a": 0.5, "b": 0.5}] * 3)
+    for st in stages:
+        st.sort = "points"                     # decode() が通す sort を再現
+    out = ops.run_stages(stages, pts)
+    assert np.allclose(out, pts), "identity が点群をクリップしている"

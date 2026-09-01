@@ -865,13 +865,27 @@ def decode(genome, start: str = IMAGE) -> list[Stage]:
 _UNCLIPPED_SORTS = frozenset({POINTS, SIGNAL, MATRIX, CIMAGE})
 
 
+def _effective_out_sort(st):
+    """その stage を出た値の sort。
+
+    ``identity`` のように ``out_sort == ANY`` の op は「入ってきた sort を保つ」
+    という意味なので、宣言をそのまま読むと sort を見失う。実測 2026-09-01:
+    ANY を素直に読んだせいで、**何もしない 6 段が点群を [0,1] にクリップして
+    いた** — 同じ「何もしないパイプライン」がゲノム経路 0.2016 / 名前経路
+    0.6616 と食い違い、進化が trivial baseline に到達できない真因だった。
+    """
+    op = _BY_NAME.get(st.op)
+    if op is None:
+        return None
+    return st.sort if op.out_sort == ANY else op.out_sort
+
+
 def _apply(stages, img):
     v = np.asarray(img, np.float64)
     for st in stages:
         v = RT[st.op](v, st.a, st.b)
         if isinstance(v, np.ndarray) and v.ndim in (2, 3):
-            op = _BY_NAME.get(st.op)
-            if op is None or op.out_sort not in _UNCLIPPED_SORTS:
+            if _effective_out_sort(st) not in _UNCLIPPED_SORTS:
                 v = np.clip(v, 0.0, 1.0)
     return v
 
