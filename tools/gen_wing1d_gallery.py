@@ -1541,8 +1541,11 @@ def ex_smoothing_tradeoff(log):
 
     rmse_hi = max(r["rmse"] for r in rows) * 1.12
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"ガウス σ={r['sigma']:.2f}  /  RMS 誤差 {r['rmse']:.6f}  /  "
+                      f"極大 {r['nmax']} 個(真値 {true_max})  /  ピーク "
+                      f"{100 * (r['peak'] / true_peak - 1):+.2f} %")
         fig = Fig(W, H)
         _header(fig, "Smoothing: the noise falls and the extrema flatten",
                 "damped 5 Hz oscillation + N(0, 0.06), gaussian smoothing swept")
