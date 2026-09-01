@@ -1209,17 +1209,50 @@ def cepstrum(x, rate, mode="real", floor_ratio=1e-12, min_quefrency=0.0):
     the signal is band-limited and the cepstrum is dominated by the flooring, not
     by the signal.
 
-    Returns a dict: ``quefrency`` (s), ``cepstrum``, ``rate``, ``mode``,
-    ``floored_bins``, ``peak_quefrency``, ``peak_amplitude`` (both computed over
-    ``q > 0``, excluding the first bin, which carries the mean log level).
+    ``min_quefrency`` (seconds) excludes the low-quefrency region from the peak
+    search. This is not cosmetic. The first few bins carry the **spectral
+    envelope** — the overall shape of the spectrum, which is large and has
+    nothing to do with periodic structure — and they dominate. Measured on an AM
+    tone with sidebands 50 Hz apart, the five largest cepstral values sit at
+    0.000125, 0.00025, 0.000375, 0.000625 and 0.001 s, i.e. all of them are the
+    envelope, and the default peak search returns 0.000125 s rather than the
+    1/50 = 0.02 s a reader would expect. Excluding the envelope is the standard
+    practice ("liftering") and is the caller's decision, so it is an argument
+    with a visible default of 0.
 
-    Measured: white noise at 8 kHz plus a copy of itself delayed by 200 samples
-    and scaled 0.6 gives ``peak_quefrency = 0.025000`` s — exactly 200/8000, and
-    the peak index is exactly 200. An AM signal with sidebands 50 Hz apart gives
-    a rahmonic at 0.020000 s = 1/50.
+    Returns a dict: ``quefrency`` (s), ``cepstrum``, ``rate``, ``mode``,
+    ``floored_bins``, ``min_quefrency``, ``peak_quefrency``, ``peak_amplitude``,
+    ``peak_rate_hz`` (``1/peak_quefrency`` — the sideband spacing or repetition
+    rate the rahmonic corresponds to). The peak is taken over
+    ``min_quefrency < q < n/(2*rate)``; the cepstrum is symmetric past that.
+
+    Measured ground truths:
+
+    * **Echo.** White noise at 8 kHz plus 0.6 times itself delayed by 200
+      samples: ``peak_quefrency = 0.025000`` s, peak index exactly **200**, and
+      ``floored_bins = 0``.
+    * **A periodic family of lines.** A 50 Hz impulse train convolved with a
+      random 64-tap FIR (so the spectrum is broadband with lines every 50 Hz):
+      peak at ``0.020000`` s = **50.00 Hz** exactly, with
+      ``min_quefrency=0.002``.
+    * **What it looks like when the fundamental is not the largest.** The
+      ``mode="impulse"`` bearing signal repeats every 1/107 s, and the largest
+      rahmonic above 2 ms is at 0.037383 s — which is ``4/107``, the *fourth*
+      rahmonic, not the first. A cepstrum reports a **family**, and reading only
+      its maximum gives an answer that is off by an exact integer factor and
+      looks entirely reasonable.
+    * **Where it stops working.** An AM tone has three spectral lines and
+      nothing else; every other bin is floored, the log spectrum is mostly the
+      floor, and there is no 1/50 s rahmonic to find at all. Cepstral sideband
+      analysis needs a *broadband* signal — a gear mesh, not a tone.
+
+    ``mode="power"`` is exactly twice ``mode="real"`` (measured max difference
+    0.000e+00).
 
     **Raises** ``ValueError``: everything :func:`_as_signal` refuses, an unknown
-    ``mode``, ``floor_ratio`` outside ``(0, 1)``, and a signal shorter than 4
+    ``mode``, ``floor_ratio`` outside ``(0, 1)``, a negative ``min_quefrency``, a
+    ``min_quefrency`` at or past the half-length of the record (nothing would be
+    left to search), an identically zero signal, and a signal shorter than 4
     samples.
     """
     op = "cepstrum"
