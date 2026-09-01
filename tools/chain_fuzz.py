@@ -62,6 +62,21 @@ def _mesh(rng):
     return meshrepair.convex_hull(_points(rng, 60))
 
 
+def _photon_counts(rng):
+    """光子カウントヒストグラム(非負・時間 bin 添字)。
+
+    合成ではなく **実データと同じ作り方**にしてある: 既知距離の dToF 復路と
+    背景光を足して Poisson 標本化する。適当な非負乱数を渡すと「山が 1 つある」
+    という前提の op(ピーク探索・寿命フィット)が現実に無い形を食うことになる。
+    """
+    import photoncount                                   # noqa: PLC0415
+    return photoncount.tcspc_simulate(
+        distance_m=float(rng.uniform(0.5, 3.5)), bins=256, bin_ps=100.0,
+        signal_photons=float(rng.uniform(100.0, 2000.0)),
+        ambient_photons=float(rng.uniform(0.0, 500.0)),
+        irf_fwhm_ps=500.0, seed=int(rng.integers(0, 1 << 31)))
+
+
 def _jones_vec(rng):
     """Jones ベクトル (Ex, Ey): 長さ 2 の complex。単位強度に正規化。"""
     v = rng.standard_normal(2) + 1j * rng.standard_normal(2)
