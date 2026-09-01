@@ -590,6 +590,12 @@ def arrow(img, p0, p1, color="emphasis", width=2, head_len=12.0, head_width=9.0,
             "(imagedraw would clamp it to the border and draw a wrong line)")
     col = _channel_color(a, color, scheme)
     if head_len > 0.0 and head_width > 0.0:
+        # 矢じりが軸より長いと、根元が起点の**手前**に来て軸が逆向きに描かれる。
+        # 短い矢印では矢じりを相似に縮める(絵は「p0 から p1 への矢印」のまま)。
+        span = math.hypot(float(p1[0] - p0[0]), float(p1[1] - p0[1]))
+        if head_len > 0.8 * span:
+            k = (0.8 * span) / head_len
+            head_len, head_width = head_len * k, head_width * k
         tri, base = _head_polygon(p0, p1, head_len, head_width)
         a = imagedraw.draw_line(a, p0, base, color=col, **_style(style, width))
         a = filled_polygon(a, tri, color=color, scheme=scheme)
