@@ -94,9 +94,11 @@ def main() -> int:
 
     prob = problems.PROBLEMS[a.problem]
     wd = Path(a.workdir); wd.mkdir(parents=True, exist_ok=True)
-    tr = prob.make(a.n_train, a.size, a.seed)
-    ho = prob.make(a.n_holdout, a.size, a.seed + 10_000)
-    lo = prob.make(a.n_holdout, a.size, a.seed + 20_000)   # LOCKED split (robust.py's *_locked tally)
+    cfg = {"n_train": a.n_train, "n_holdout": a.n_holdout, "size": a.size, "seed": a.seed}
+    tr = split_data(prob, cfg, "train")
+    ho = split_data(prob, cfg, "holdout")
+    # LOCKED split (robust.py's *_locked tally) is scored inside measure_baselines.
+    floors = measure_baselines(prob, cfg)
 
     hand = prob.hand_stages()
     rng = np.random.default_rng(a.seed + 777)
