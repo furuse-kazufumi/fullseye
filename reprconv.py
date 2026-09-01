@@ -140,6 +140,23 @@ def _arr(value, what, *, dtype=float):
     非有限を通すと下流で NaN が「暗い画素」や「小さい誤差」に化けて、誰も
     気づけない形で結果を汚す。入口で止めるのが唯一の実効策。
     """
+    # ★ 整数 dtype への変換は **キャストの前に** 生の値を検査する。
+    # 敵対的検査で見つけた穴(2026-09-02): ``np.asarray(nan, dtype=int64)`` は
+    # 例外を出さず INT_MIN を返し、キャスト後は ``dtype.kind == 'i'`` なので
+    # 下の非有限検査を素通りする。3.7 のような非整数も黙って 3 に切り詰まる ——
+    # **添字が 1 ずれた結果が、例外もなく返る**。まさに変換 op の嘘そのもの。
+    if np.dtype(dtype).kind in "iu":
+        raw = np.asarray(value)
+        if raw.dtype.kind in "fc":
+            if raw.size and not np.all(np.isfinite(raw)):
+                n_bad = int(np.count_nonzero(~np.isfinite(raw)))
+                raise ValueError(f"{what}: contains {n_bad} non-finite value(s) (NaN/Inf) "
+                                 f"— casting these to an integer index would silently "
+                                 f"produce INT_MIN, not an error")
+            if raw.size and not np.all(raw == np.rint(raw)):
+                bad = float(raw[raw != np.rint(raw)].ravel()[0])
+                raise ValueError(f"{what}: must hold whole numbers to be used as indices; "
+                                 f"got {bad} (casting would silently truncate)")
     try:
         a = np.asarray(value, dtype=dtype)
     except (TypeError, ValueError) as exc:
