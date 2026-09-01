@@ -1385,12 +1385,13 @@ def dtof_cube_depth(cube, bin_ps=100.0, mode="peak", offset_ps=0.0,
     estimator rather than to a wrong one.
 
     Ground truth: on a noiseless simulated cube of a tilted plane from 1.0 to
-    3.0 m (256 bins x 100 ps) the RMS depth error is 4.3 mm for ``"peak"``,
-    8.9e-15 m for ``"centroid"``, 0.79 mm for ``"parabolic"`` and 6.4e-6 m for
-    ``"gaussian"``. With Poisson noise (20 signal / 5 ambient photons per pixel)
-    the same four give 5.5 mm, 0.24 m, 5.0 mm and 4.7 mm — the centroid
-    collapses because the ambient pedestal dominates, which is why
-    ``subtract_background=True`` exists.
+    3.0 m (32x32 pixels, 256 bins x 100 ps, 500 ps IRF) the RMS depth error is
+    4.39 mm for ``"peak"``, 3.2e-16 m for ``"centroid"``, 0.114 mm for
+    ``"parabolic"`` and 1.6e-8 m for ``"gaussian"``. With Poisson noise (20
+    signal + 5 ambient photons per pixel, seed 0) the same four give 19.9 mm,
+    164.8 mm (background subtracted), 18.7 mm and 19.2 mm — at 20 photons the
+    estimator choice is worth about 6%, and the centroid is 8x worse than doing
+    nothing clever at all.
 
     Returns a float64 ``(H, W)`` depth map in metres.
 
