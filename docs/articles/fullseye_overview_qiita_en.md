@@ -3468,7 +3468,7 @@ An outer-race spall in a rolling bearing does not ring at the defect frequency. 
 | Raw spectrum | **4.3e-16** ← the component is not there |
 | Envelope spectrum | **0.499677** (peak at **107.000000 Hz**) |
 
-*(The raw figure is `dsp.spectrum(...)[1] * 2/N` — after conversion to a single-sided amplitude. The bare return of `dsp.spectrum` is `5.493328e-12`, with the carrier at 12800 and the sidebands at 3200 in the same run. **The ratio is unchanged, so the claim stands**, but the first published version omitted that `× 2/N` and therefore did not reproduce from the call as printed.)*
+*(The raw figure is `dsp.spectrum(...)[1] * 2/N` = a single-sided amplitude. The bare return is `5.493328e-12` (carrier 12800, sidebands 3200 in the same run), so **the ratio is the same**. **Correction, 2026-09-02**: the first published version omitted that `× 2/N`.)*
 
 ```python
 sk  = fs.spectral_kurtosis(x, 25600.0)                      # let the machine pick the band
@@ -3552,21 +3552,19 @@ peaks = fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]   # dr, dv = b
 
 **Specular separation (13 ops)** either removes glare by colour (one material, white illuminant) or recovers normals from multiple lights.
 
-The first published version **had the breaking point wrong**, so here it is with the correction. It originally said "**once 4 of 8 lights are occluded, it collapses**". That number was real — 70.5° mean normal error at k=4. But at the same moment, **the estimator reported that it trusted all 8 lights**. At its most wrong, the diagnostic warned about nothing.
+**The breaking point is highlight contamination, not occlusion.** Adding a positive outlier of `+3.0` to 4 of 8 lights gives 65.4° for RANSAC and 7.4° for median (0.0001° at 1–3 lights). The median's breakdown point is exactly 50 %, so failing at 4/8 is theory.
 
-The root cause is in Woodham's model, `I = a·max(n·L, 0)`. **A measured zero is the inequality `n·L ≤ 0`**, and a linear solver reads it as the equality `n·L = 0`. Worse, the zero-albedo degenerate solution **reproduces every blacked-out frame exactly**, so the set of occluded lights can outscore the truth **as a self-consistent hypothesis**. Median and RANSAC alike were choosing the blacked-out side as the majority.
+**Occlusion, by contrast, is solvable.** A measured zero is the *inequality* `n·L ≤ 0`, which a linear solver reads as the equality `n·L = 0` — and the zero-albedo degenerate solution reproduces every blacked-out frame exactly, so **the set of occluded lights can outscore the truth as a self-consistent hypothesis**. Changing the rule to "the fit explains it within tolerance, **and the measurement itself is further from zero than that same tolerance**" gives:
 
-Changing the rule to "**the fit explains it within tolerance, and the measurement itself is further from zero than that same tolerance**" gives:
-
-| Occluded lights | Mean error before | After |
+| Occluded lights | Before | After |
 |---|---|---|
 | 0–3 | 0.0001° | 0.0001° |
-| **4** | **70.5°** (reported 8/8 lights trusted) | **0.000115°** |
+| **4** | **70.5°** (while reporting 8/8 lights trusted) | **0.000115°** |
 | 6 (2 live lights) | 8.99° (**answers**) | **NaN everywhere** (says it cannot be solved) |
 
-The last row is the point. Two live lights means **3 unknowns and 2 equations** — not solvable in principle. Before the fix it returned a plausible 8.99°, which was only close because the surface was a shallow dome; on another shape it would have been quietly far off.
+The last row is the point: two live lights means **3 unknowns and 2 equations**, unsolvable in principle.
 
-**And the real breaking point is not occlusion but highlight contamination.** Adding a positive outlier of `+3.0` to 4 of 8 lights gives 65.4° for RANSAC and 7.4° for median (0.0001° at 1–3 lights). **The median's breakdown point is exactly 50 %, so failing at 4/8 is theory, not a bug.** Occlusion turned out to be a misread model; contamination remains as the genuine limit.
+> **Correction, 2026-09-02**: the first published version called occlusion the breaking point. The number (70.5°) was real, but the cause was a misread model; once fixed, occlusion is solvable.
 
 **Motion magnification (9 ops)** measures and displays a 0.2-pixel vibration. The important part is that **the cliff has a closed form**: the phase reference follows `c·J₀(k·A)`, so beyond the first zero at **2.4048/k = 3.0619 pixels** the measurement inverts.
 
@@ -3843,19 +3841,14 @@ That is the first case where a new family delivered value **as a chained procedu
 
 > **Rule**: looking only at the observed split, this reads as "so close". **Until you report the locked holdout and the spread together, nothing has been won.**
 
-### This table was itself built by breaking that rule once
-
-A correction. **The first published version of the table above took its baseline and its champion from different draws, within a single row.**
-
-After publication the table turned out not to reproduce against the current code. An exhaustive search found where the old numbers came from: the baselines `0.2664 / 0.5371` match the locked split at **cfg seed 2**, while `0.6973`, `0.5794` and `0.4115 / 0.8406` match the locked split at **cfg seed 1** — and the champions were run at **cfg seed 0**. So the baseline and the evolved value came from different draws, **with a different cfg seed per problem**. The evolved column itself (`0.7760 / 0.8868 / 0.5907 / 0.6039`) reproduces at no cfg seed and appears in none of the saved artifacts. What *was* saved (`0.7845 / 0.8941 / 0.5465 / 0.6277`) matches today's re-measurement to four digits.
-
-**An article that tells you to compare on the same split had broken that rule in its headline table.**
-
-The hole is identifiable. If the baseline file was missing, `robust.py` carried on with **an empty dict and wrote the baselines out as `null`**. No exception. And in fact no baseline file existed in any of those run directories — **nobody had measured them**. The numbers in the table were not read from the artifacts; they were computed separately, which is exactly why they could not be checked afterwards.
-
-Three things changed. `robust.py` now **measures the baselines itself before evolution starts** (resolving the split by the same rule `evolve.run` uses); a leftover `null` **aborts** (fail-closed); and if a baseline file on disk disagrees, **both values are kept** rather than one silently winning.
-
-One more trap surfaced. **If a baseline JSON is present in the workdir, `evolve.run` replaces individual 0 of the initial population with a randomly-sampled best genome — so the evolution result itself changes.** That is why the command above names an empty directory.
+> **Correction, 2026-09-02**: the first published version of this table took **its baseline and its
+> champion from different draws, within a single row** (baselines at cfg seed 1–2, champions at cfg
+> seed 0, with a different seed per problem). The cause was `robust.py` passing a missing baseline
+> file through as `null` — no exception. It now **measures the baselines itself before evolution
+> starts and aborts if any stays `null`**. The table above is the re-measurement, and it matches the
+> evolved values that were saved in the artifacts to four digits. Note also that **a baseline JSON
+> left in the workdir makes `evolve.run` swap out the initial population and changes the result** —
+> hence the empty directory in the command above.
 
 ## Building "Honesty" Into the System (continued)
 
