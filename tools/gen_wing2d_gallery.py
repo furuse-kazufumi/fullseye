@@ -834,20 +834,24 @@ def subject_hist_shaping(log=print) -> dict:
     frames = []
     for i, k in enumerate(K):
         R = rows[i]
+        # ★_panel_grid のラベルは折り返さず、幅を超えると隣とぶつかって読めなく
+        #   なる (tile 262px / font 19-17px なので 1 行 ≈ 全角 12 文字が限度)。
+        #   倍率の意味は表題と副題に逃がし、パネルには短い名前と数字だけ置く。
         grid = _panel_grid(
             [R["img"]["low"], R["img"]["eq"]]
             + [R["img"]["cl%.2f" % b] for b in BS],
-            ["コントラストを %.2f 倍に圧縮 (元は std %.4f)\nstd %.4f / entropy %.3f"
-             % (k, rows[0]["std"]["low"], R["std"]["low"], R["ent"]["low"]),
-             "equalize (画像全体で 1 枚の平坦化)\nstd %.4f / entropy %.3f"
+            ["圧縮した入力 ×%.2f\nstd %.4f / ent %.3f"
+             % (k, R["std"]["low"], R["ent"]["low"]),
+             "equalize (画像全体)\nstd %.4f / ent %.3f"
              % (R["std"]["eq"], R["ent"]["eq"])]
-            + ["clahe %s\nstd %.4f / entropy %.3f"
-               % (B_LAB[b], R["std"]["cl%.2f" % b], R["ent"]["cl%.2f" % b])
+            + ["clahe b=%.2f (×%d)\nstd %.4f / ent %.3f"
+               % (b, round(256.0 ** b), R["std"]["cl%.2f" % b],
+                  R["ent"]["cl%.2f" % b])
                for b in BS],
             5, tile=(262, 262), label_h=56,
-            title="clahe の clip limit を振る —— 「どこまで強調するか」の 1 本のつまみ",
-            sub="入力コントラスト %.2f 倍 / タイル 4×4 / b=0↔b=1 の最大差 %.4f"
-                % (k, R["b_span"]))
+            title="clahe の clip limit を振る (b → ビン平均の 256^b 倍)",
+            sub="b=0↔b=1 の画素最大差 %.4f / タイル 4×4 / 元の std %.4f"
+                % (R["b_span"], rows[0]["std"]["low"]))
         hist = _hist_panel(
             [R["img"]["low"], R["img"]["eq"]]
             + [R["img"]["cl%.2f" % b] for b in BS],
