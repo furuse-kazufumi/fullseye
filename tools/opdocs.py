@@ -69,6 +69,10 @@ LEDGER_DIMS = {
              "module": "quatimage", "family": "quaternion_monogenic"},
     "rangedoppler": {"registry": "opsrangedoppler", "table": "OPSRANGEDOPPLER",
                      "module": "rangedoppler", "family": "fmcw_range_doppler"},
+    "acoustics": {"registry": "opsacoustics", "table": "OPSACOUSTICS",
+                  "module": "acoustics", "family": "acoustic_condition_monitoring"},
+    "interferometry": {"registry": "opsinterferometry", "table": "OPSINTERFEROMETRY",
+                       "module": "interferometry", "family": "coherence_scanning"},
 }
 
 _AUTHOR = "Kazufumi Furuse"

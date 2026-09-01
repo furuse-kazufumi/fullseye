@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stft_cola_check — ACOUSTICS <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.stft_cola_check(window=&#x27;hann&#x27;, win=256, hop=None)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;stft_cola_check&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Does this (window, hop) pair satisfy COLA, and how exactly?</p>
+<p>COLA — the analysis windows summing to a constant over the hop lattice — is</p>
+<p>what lets plain overlap-add work without a division. It is *not* required by</p>
+<p>:func:<code style="color:#22d3bf">istft</code>, which is weighted, but it is required by anything that</p>
+<p>overlap-adds modified frames without renormalising, and getting it wrong</p>
+<p>produces a periodic amplitude ripple at `<code style="color:#22d3bf">rate/hop</code>` Hz that looks like</p>
+<p>tremolo rather than like a bug.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">cola</code><code style="color:#22d3bf"> (bool), </code><code style="color:#22d3bf">constant</code>` (the mean of the overlap sum),</p>
+<p>`<code style="color:#22d3bf">max_deviation</code><code style="color:#22d3bf"> (absolute), </code><code style="color:#22d3bf">relative_deviation</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nola</code>` (bool),</p>
+<p>`<code style="color:#22d3bf">min_squared_sum</code>`, plus the geometry.</p>
+<p>Measured (periodic windows, `<code style="color:#22d3bf">relative_deviation</code>` of the plain sum):</p>
+<p>========  ====  ====  ==================  ========  ====</p>
+<p>window    win   hop   relative_deviation  constant  COLA</p>
+<p>========  ====  ====  ==================  ========  ====</p>
+<p>hann      256   128   4.44e-16            1.00      yes</p>
+<p>hann      256   64    2.22e-16            2.00      yes</p>
+<p>hann      256   85    1.48e-03            1.506     no</p>
+<p>hamming   256   128   2.06e-16            1.08      yes</p>
+<p>blackman  256   128   1.91e-01            0.84      no</p>
+<p>blackman  256   64    3.97e-16            1.68      yes</p>
+<p>boxcar    256   128   0.00e+00            2.00      yes</p>
+<p>========  ====  ====  ==================  ========  ====</p>
+<p>The two blackman rows are the useful ones: the same window is COLA at</p>
+<p>hop = win/4 and 19 % off at hop = win/2, so &quot;which window&quot; is not the</p>
+<p>question — the pair is. The boxcar row was worth measuring rather than</p>
+<p>assuming: a rectangular window at 50 % overlap sums to exactly 2 and is</p>
+<p>COLA, which is the opposite of the usual intuition about it. Note also that</p>
+<p>the constant is not 1 in general — an overlap-add that does not divide by it</p>
+<p>is off by a *gain*, which is the failure that looks like a working system.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: unknown / all-zero window, </code><code style="color:#22d3bf">hop</code>` outside</p>
+<p>`<code style="color:#22d3bf">[1, win]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">[2, MAX_WINDOW]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:stft">stft</a> · <a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

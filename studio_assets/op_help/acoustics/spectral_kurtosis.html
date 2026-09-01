@@ -1,0 +1,79 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spectral_kurtosis — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.spectral_kurtosis(x, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;spectral_kurtosis&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Which frequency band is impulsive — i.e. where to demodulate.</p>
+<p>:func:<code style="color:#22d3bf">envelope_spectrum</code> needs a band, and picking it by eye from a</p>
+<p>spectrum picks the *loudest* band, which is usually a gear mesh or a line</p>
+<p>harmonic rather than the bearing. Spectral kurtosis picks the *most</p>
+<p>non-stationary* band instead: for each frequency bin it measures the</p>
+<p>fourth-order behaviour of that bin&#x27;s STFT coefficient across frames.</p>
+<p>The normalisation is chosen so the two reference cases are exact:</p>
+<p style="margin:2px 0 2px 12px">• stationary <b>complex circular Gaussian</b> noise gives `<code style="color:#22d3bf">SK = 0</code>`,</p>
+<p style="margin:2px 0 2px 12px">• a <b>pure tone</b> (constant magnitude in its bin) gives `<code style="color:#22d3bf">SK = -1</code>`,</p>
+<p style="margin:2px 0 2px 12px">• a repetitive <b>transient</b> gives `<code style="color:#22d3bf">SK &gt; 0</code>`, and the larger it is the more</p>
+<p>concentrated in time the band&#x27;s content is.</p>
+<p>Measured over 8192 samples at 16 kHz at the default window (64, 509 interior</p>
+<p>frames): white Gaussian noise gives a mean SK of <b>-0.0444</b> over the</p>
+<p>interior bins, against the estimator&#x27;s own standard deviation</p>
+<p>`<code style="color:#22d3bf">4/sqrt(509) = 0.1773</code>`, so it is zero; and a 2 kHz tone gives <b>-1.0000</b></p>
+<p>in its bin. Both reference cases land on their closed forms.</p>
+<p>**The answer is a band, and it depends on the window — measured, not</p>
+<p>asserted.** The frame has to be *shorter than the gap between transients*,</p>
+<p>or every frame contains one and the band looks perfectly stationary. On the</p>
+<p>`<code style="color:#22d3bf">mode=&quot;impulse&quot;</code>` bearing signal (25.6 kHz, resonance 3000 Hz, impulses</p>
+<p>every 9.35 ms, ring time constant 1.06 ms):</p>
+<p>======  ==========  =======  ==========  =============</p>
+<p>win     frame (ms)  max SK   at (Hz)     bin spacing</p>
+<p>======  ==========  =======  ==========  =============</p>
+<p>16      0.62        29.58    6400        1600 Hz</p>
+<p>32      1.25        12.86    1600        800 Hz</p>
+<p>64      2.50         5.38    2000        400 Hz</p>
+<p>128     5.00         1.66    1600        200 Hz</p>
+<p>256    10.00        -0.13   12200        100 Hz</p>
+<p>======  ==========  =======  ==========  =============</p>
+<p>The last row is the failure mode: at a 10 ms frame against a 9.35 ms impulse</p>
+<p>spacing, every frame holds exactly one impulse, the band is stationary by</p>
+<p>construction, and the operator reports a *negative* kurtosis at an unrelated</p>
+<p>frequency. Nothing raises. So `<code style="color:#22d3bf">window_seconds</code>` is returned, to be compared</p>
+<p>against the repetition period you expect, and sweeping `<code style="color:#22d3bf">win</code>` is part of</p>
+<p>using this operator rather than an optimisation.</p>
+<p>What survives the sweep is the *band*, not the bin. On the same signal with</p>
+<p>`<code style="color:#22d3bf">noise_sigma=0.05</code>` (the noiseless one is impulsive in every bin at once</p>
+<p>and its top six bins differ by 0.03, which is itself worth knowing), the six</p>
+<p>highest bins at `<code style="color:#22d3bf">win=64</code>` are 2000, 2400, 1600, 4000, 3600 and 1200 Hz —</p>
+<p>bracketing the true 3000 Hz resonance without any of them being it. And that</p>
+<p>is enough: feeding the band `<code style="color:#22d3bf">max_freq +- one bin</code>` straight into</p>
+<p>:func:<code style="color:#22d3bf">envelope_spectrum</code> recovers the defect rate exactly — measured</p>
+<p><b>107.0000 Hz</b> from the 1600-2400 Hz band the operator chose by itself,</p>
+<p>with no knowledge of the resonance.</p>
+<p>`<code style="color:#22d3bf">win</code>` defaults to the largest power of two that leaves at least 8 interior</p>
+<p>frames, clamped to [16, 64] — short, for the reason in the table — and the</p>
+<p>value used is returned. Fewer than 8 interior frames makes the fourth moment</p>
+<p>meaningless and is refused.</p>
+<p>DC and Nyquist bins are excluded from `<code style="color:#22d3bf">max_kurtosis</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">max_freq</code>`: their</p>
+<p>STFT coefficients are real, not complex circular, so the -2 normalisation is</p>
+<p>the wrong one there and they read about -1 for noise. They are still present</p>
+<p>in `<code style="color:#22d3bf">kurtosis</code><code style="color:#22d3bf"> with the same formula, and </code><code style="color:#22d3bf">real_bins</code>` names them.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">kurtosis</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_kurtosis</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_freq</code>`,</p>
+<p>`<code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">real_bins</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">window_seconds</code>`,</p>
+<p>`<code style="color:#22d3bf">bin_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">noise_sigma</code>` (the estimator&#x27;s own standard deviation,</p>
+<p>`<code style="color:#22d3bf">4/sqrt(n_frames)</code>` — a peak below this is not a finding).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>stft` refuses, plus a signal too</p>
+<p>short for 8 frames at the chosen window.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">bearing</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:envelope_spectrum">envelope_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:bearing_defect_frequencies">bearing_defect_frequencies</a> · <a style="color:#22d3bf" href="opacoustics:cepstrum">cepstrum</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

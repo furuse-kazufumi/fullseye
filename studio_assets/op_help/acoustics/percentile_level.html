@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">percentile_level — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.percentile_level(x, rate, percentiles=(10.0, 50.0, 90.0), weighting=&#x27;A&#x27;, ref=1.0, window_s=0.125, floor_db=-200.0)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;percentile_level&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Statistical levels: `<code style="color:#22d3bf">L_N</code><code style="color:#22d3bf"> is the level exceeded </code><code style="color:#22d3bf">N</code>` % of the time.</p>
+<p>The record is cut into non-overlapping blocks of `<code style="color:#22d3bf">window_s</code>` seconds, each</p>
+<p>block&#x27;s equivalent level is computed, and `<code style="color:#22d3bf">L_N</code><code style="color:#22d3bf"> is the </code><code style="color:#22d3bf">(100-N)</code>`-th</p>
+<p>percentile of those levels. Non-overlapping rectangular blocks are used</p>
+<p>rather than an exponential time weighting because the block length is then</p>
+<p>exactly what the caller asked for and the statistic is exactly a percentile</p>
+<p>of the returned `<code style="color:#22d3bf">levels</code>` array — an exponential average would make the</p>
+<p>effective averaging time a function of the signal.</p>
+<p>Returns a dict with one key per requested percentile (`<code style="color:#22d3bf">&quot;L10&quot;</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">&quot;L50&quot;</code>`,</p>
+<p>`<code style="color:#22d3bf">&quot;L90&quot;</code><code style="color:#22d3bf">, formatted with </code><code style="color:#22d3bf">%g</code><code style="color:#22d3bf">), plus </code><code style="color:#22d3bf">levels</code>` (the per-block levels),</p>
+<p>`<code style="color:#22d3bf">times</code><code style="color:#22d3bf"> (block start times, s), </code><code style="color:#22d3bf">n_blocks</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">block_samples</code>`,</p>
+<p>`<code style="color:#22d3bf">leq</code><code style="color:#22d3bf"> (the energy-equivalent level of the whole record), </code><code style="color:#22d3bf">ref</code>`,</p>
+<p>`<code style="color:#22d3bf">weighting</code>`.</p>
+<p>Note that `<code style="color:#22d3bf">L50</code><code style="color:#22d3bf"> is the *median* level and </code><code style="color:#22d3bf">leq</code>` is the *energy* level;</p>
+<p>they are different numbers whenever the signal is not stationary, and the</p>
+<p>gap between them is itself the usual measure of how fluctuating a record is.</p>
+<p>Measured on a two-level test signal (1 s at 16 kHz, first half a 1 kHz sine</p>
+<p>of amplitude 1.0, second half the same at 0.1, Z-weighted, 0.125 s blocks,</p>
+<p>8 blocks): `<code style="color:#22d3bf">L10 = -3.010300</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">L90 = -23.010300</code>` dB — exactly the two</p>
+<p>constituent levels, <b>20.000000</b> dB apart, as they must be for a 50/50</p>
+<p>split. `<code style="color:#22d3bf">L50 = -13.010300</code>` is the interpolated midpoint of the two clusters</p>
+<p>and `<code style="color:#22d3bf">leq = -5.977386</code><code style="color:#22d3bf">, which is 17 dB above </code><code style="color:#22d3bf">L90</code>`: the energy level sits</p>
+<p>near the loud half while the median sits between them. On a</p>
+<p>constant-amplitude signal all three percentiles and `<code style="color:#22d3bf">leq</code>` agree to</p>
+<p>3.6e-15 dB.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses, a</p>
+<p>percentile outside `<code style="color:#22d3bf">[0, 100]</code><code style="color:#22d3bf">, a non-positive </code><code style="color:#22d3bf">window_s</code><code style="color:#22d3bf">, a </code><code style="color:#22d3bf">window_s</code>`</p>
+<p>longer than the record (which would give one block and make every percentile</p>
+<p>the same number while still looking like a statistic), `<code style="color:#22d3bf">ref &lt;= 0</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">level</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:octave_bands">octave_bands</a> · <a style="color:#22d3bf" href="opacoustics:octave_spectrum">octave_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:weighting_response">weighting_response</a> · <a style="color:#22d3bf" href="opacoustics:apply_weighting">apply_weighting</a> · <a style="color:#22d3bf" href="opacoustics:equivalent_level">equivalent_level</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

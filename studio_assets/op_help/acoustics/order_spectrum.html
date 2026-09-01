@@ -1,0 +1,68 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">order_spectrum — ACOUSTICS <code style="color:#22d3bf">order</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;order_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Amplitude against shaft order — the spectrum a run-up should be read in.</p>
+<p>:func:<code style="color:#22d3bf">angular_resample</code> followed by an rFFT over a **whole number of</p>
+<p>revolutions** (the record is cropped to that). Bin spacing is</p>
+<p>`<code style="color:#22d3bf">1 / whole_revolutions</code>` in orders.</p>
+<p>`<code style="color:#22d3bf">revolutions</code>` overrides how many whole revolutions to keep, and it matters</p>
+<p>more than it looks. An order `<code style="color:#22d3bf">o</code>` lands exactly on a bin only when</p>
+<p>`<code style="color:#22d3bf">o * revolutions</code>` is an integer; otherwise it straddles two and both read</p>
+<p>low. Measured on the run-up below, which happens to cover 79.994</p>
+<p>revolutions:</p>
+<p>==============  ==========  =============  =============</p>
+<p>revolutions     resolution  amp at o=1.0   amp at o=3.5</p>
+<p>==============  ==========  =============  =============</p>
+<p>79 (default)    0.012658    0.999967       <b>0.636961</b></p>
+<p>78 (even)       0.012821    1.000009       0.999371</p>
+<p>==============  ==========  =============  =============</p>
+<p>That 0.637 is the classic two-bin scallop loss, and nothing raises: the peak</p>
+<p>is at the right order and 36 % too small, with a second peak of almost equal</p>
+<p>height one bin away (measured 0.6370 at order 3.4937 and 0.6353 at 3.5063).</p>
+<p>Cropping to an <b>even</b> number of revolutions puts every half-integer order</p>
+<p>on a bin. The default is the largest whole number available; pass</p>
+<p>`<code style="color:#22d3bf">revolutions</code>` when the order you care about is fractional.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">orders</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">magnitude</code><code style="color:#22d3bf"> (single-sided, </code><code style="color:#22d3bf">2/N</code>`),</p>
+<p>`<code style="color:#22d3bf">peak_order</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_amplitude</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_orders</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">peak_amplitudes</code>`,</p>
+<p>`<code style="color:#22d3bf">resolution_order</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">whole_revolutions</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">samples_per_rev</code>`,</p>
+<p>`<code style="color:#22d3bf">mean_rpm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_order</code>`.</p>
+<p>Measured, and this is the whole argument for the operator. A 4 s run-up from</p>
+<p>600 to 1800 rpm at 5 kHz carrying exactly two shaft-locked components</p>
+<p>(orders 1.0 and 3.5, unit amplitude) plus one fixed 400 Hz resonance, read</p>
+<p>with `<code style="color:#22d3bf">revolutions=78</code>`:</p>
+<p>==========================  =====================  ====================</p>
+<p>quantity                    ordinary spectrum      order spectrum</p>
+<p>==========================  =====================  ====================</p>
+<p>order-3.5 peak amplitude    0.070203 (of true 1)   0.999371 (of true 1)</p>
+<p>its -3 dB width             66.50 Hz (= 3.33 ord)  0.00000 order</p>
+<p>400 Hz resonance amplitude  1.0000, one bin        0.0517, over 26.7 ord</p>
+<p>==========================  =====================  ====================</p>
+<p>The ordinary spectrum recovers <b>7 %</b> of the shaft-locked component&#x27;s</p>
+<p>amplitude, because the energy is spread over 3.3 orders&#x27; worth of bins; the</p>
+<p>order spectrum recovers <b>99.94 %</b> of it in a single bin whose -3 dB width</p>
+<p>is one bin. The 400 Hz resonance goes the other way — sharp in hertz,</p>
+<p>smeared across 26.7 orders after resampling. That <b>reversal</b> is the</p>
+<p>diagnostic, and it is why both spectra are worth computing: what stays sharp</p>
+<p>under angular resampling turns with the shaft, and what stays sharp under</p>
+<p>ordinary transformation does not.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>angular_resample` refuses (in</p>
+<p>particular the aliasing refusal), a `<code style="color:#22d3bf">revolutions</code>` larger than the record</p>
+<p>actually contains, and a `<code style="color:#22d3bf">max_order</code>` above the angular Nyquist</p>
+<p>`<code style="color:#22d3bf">samples_per_rev/2</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">order</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:angular_resample">angular_resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

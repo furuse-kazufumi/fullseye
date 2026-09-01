@@ -216,7 +216,7 @@ for p in R.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]:
 
 ```python
 R.range_doppler_peaks(rdmap)["peaks"][0]["range_m"]          # 3.0  <- ビン番号
-R.range_doppler_peaks(rdmap, dr, dv)["peaks"][0]["range_m"]  # 3.5132 <- メートル
+R.range_doppler_peaks(rdmap, dr, dv)["peaks"][0]["range_m"]  # 3.5131928671875 <- メートル
 ```
 
 これは実際に踏まれた落とし穴です(配線時の一次検証で「距離が合わない」と読まれ、原因は bin 幅を渡さずに既定のまま呼んだことでした)。返り値のフィールド名が `range_m` / `velocity_ms` なので、渡し忘れると**単位の名前だけが正しく、値がビン番号**という状態になります。

@@ -1,0 +1,54 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_bearing_signal — ACOUSTICS <code style="color:#22d3bf">synthesis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>signal`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.synthesize_bearing_signal(rate=25600.0, duration=1.0, carrier_hz=3000.0, defect_hz=107.0, modulation=0.5, mode=&#x27;am&#x27;, damping=0.05, noise_sigma=0.0, seed=None)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;synthesize_bearing_signal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>A resonance amplitude-modulated at a known defect rate — the ground truth.</p>
+<p>This is the whole reason envelope analysis exists, built forwards so the</p>
+<p>answer is known before the measurement. A spall on a bearing race does not</p>
+<p>radiate at the defect rate; it strikes a structure that rings at a much</p>
+<p>higher resonance, once per defect passage. What reaches the microphone is a</p>
+<p><b>carrier at the resonance, modulated at the defect rate</b>, and the defect</p>
+<p>rate itself is not present in the signal as a frequency component at all.</p>
+<p>`<code style="color:#22d3bf">mode=&quot;am&quot;</code>` gives the exactly analysable case,</p>
+<p>`<code style="color:#22d3bf">x(t) = (1 + m cos(2 pi f_d t)) sin(2 pi f_c t)</code>`. Its analytic envelope is</p>
+<p>exactly `<code style="color:#22d3bf">1 + m cos(2 pi f_d t)</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">m &lt; 1</code>`, so the single-sided envelope</p>
+<p>spectrum has a line of amplitude <b>exactly m</b> at `<code style="color:#22d3bf">f_d</code>` and nothing else.</p>
+<p>Measured with `<code style="color:#22d3bf">m = 0.5</code><code style="color:#22d3bf">: :func:</code>envelope_spectrum` returns a peak at</p>
+<p>107.000000 Hz of amplitude 0.499677 (the 0.06 % shortfall is the band-pass</p>
+<p>filter rolling off across the two sidebands, not the demodulation).</p>
+<p>`<code style="color:#22d3bf">mode=&quot;impulse&quot;</code>` gives the physically shaped case: an impulse train at</p>
+<p>`<code style="color:#22d3bf">f_d</code><code style="color:#22d3bf">, each impulse ringing down as </code>`exp(-2 pi zeta f_c t) sin(2 pi f_c</p>
+<p>t)`<code style="color:#22d3bf">. The envelope spectrum then shows </code><code style="color:#22d3bf">f_d</code>` <b>and its harmonics</b>, which</p>
+<p>is what a real record looks like. Measured with `<code style="color:#22d3bf">f_d = 107</code>` Hz: the</p>
+<p>envelope-spectrum peak is at 107.000000 Hz and the harmonics at 214 and</p>
+<p>321 Hz carry 0.6542 and 0.4748 of the fundamental&#x27;s amplitude.</p>
+<p>In am mode the raw spectrum has <b>nothing</b> at `<code style="color:#22d3bf">f_d</code>`: measured, the raw</p>
+<p>single-sided amplitude at 107 Hz is 4.3e-16, while the carrier reads</p>
+<p>1.000000 and each sideband at 2893 and 3107 Hz reads 0.250000 — exactly</p>
+<p>`<code style="color:#22d3bf">m/2</code>`, as amplitude modulation requires. In impulse mode the raw amplitude</p>
+<p>at 107 Hz is 0.01165, not zero (an impulse train is not a pure product), but</p>
+<p>still 18x below what the envelope spectrum recovers from the same record.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: any non-real / non-finite / string / bool scalar,</p>
+<p>`<code style="color:#22d3bf">rate &lt;= 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">duration &lt;= 0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">modulation</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">[0, 1)</code>` in am</p>
+<p>mode (at `<code style="color:#22d3bf">m &gt;= 1</code><code style="color:#22d3bf"> the envelope is </code><code style="color:#22d3bf">|1 + m cos|</code>`, which folds and puts</p>
+<p>energy at `<code style="color:#22d3bf">2 f_d</code><code style="color:#22d3bf"> — a rectified envelope, not the modulation), </code><code style="color:#22d3bf">damping</code>`</p>
+<p>outside `<code style="color:#22d3bf">(0, 1)</code><code style="color:#22d3bf">, a total length over :data:</code>MAX_SAMPLES`, and — the one</p>
+<p>that matters — **any requested frequency at or above Nyquist, including the</p>
+<p>upper modulation sideband** `<code style="color:#22d3bf">f_c + f_d</code>`. An aliased carrier would come</p>
+<p>back as a plausible signal at the wrong frequency with no error.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:stft">stft</a> · <a style="color:#22d3bf" href="opacoustics:envelope_spectrum">envelope_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:spectral_kurtosis">spectral_kurtosis</a> · <a style="color:#22d3bf" href="opacoustics:cepstrum">cepstrum</a> · <a style="color:#22d3bf" href="opacoustics:angular_resample">angular_resample</a> · <a style="color:#22d3bf" href="opacoustics:order_spectrum">order_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:octave_spectrum">octave_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:weighting_response">weighting_response</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">synthesis</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:synthesize_speed_ramp">synthesize_speed_ramp</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

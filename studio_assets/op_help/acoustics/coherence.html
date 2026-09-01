@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">coherence — ACOUSTICS <code style="color:#22d3bf">dual</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.coherence(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;coherence&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Ordinary coherence: how much of `<code style="color:#22d3bf">y</code><code style="color:#22d3bf"> is linearly explained by </code><code style="color:#22d3bf">x</code>`.</p>
+<p>`<code style="color:#22d3bf">gamma**2(f) = |Pxy|**2 / (Pxx * Pyy)</code>`, Welch-averaged. It is bounded in</p>
+<p>`<code style="color:#22d3bf">[0, 1]</code>`, and it is the number that says whether a transfer function is</p>
+<p>worth reading at a given frequency.</p>
+<p><b>A single frame makes it identically 1.0</b> — the Cauchy-Schwarz inequality</p>
+<p>is an equality without averaging — so an unaveraged coherence is a perfect</p>
+<p>score that carries no information at all. That case is refused, not returned.</p>
+<p>`<code style="color:#22d3bf">win</code>` defaults to the largest power of two leaving at least 8 frames,</p>
+<p>capped at 1024; the value used is returned.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">coherence</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code>`,</p>
+<p>`<code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">mean_coherence</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bias</code>` (the coherence a *pair of independent</p>
+<p>noise records* would show with this many frames, `<code style="color:#22d3bf">1/n_frames</code>` — anything</p>
+<p>at or below this is indistinguishable from nothing).</p>
+<p>Measured at 16 kHz over 16384 samples, win = 1024, 31 frames:</p>
+<p>=======================================  ==============  ========</p>
+<p>case                                     mean coherence  min</p>
+<p>=======================================  ==============  ========</p>
+<p>y = 2.5 * x (noiseless)                  1.000000        1.0000</p>
+<p>y = 0.8 * x delayed 37 samples           0.983003        0.9661</p>
+<p>y = 2.5 x + independent noise, 0 dB SNR  0.509143        0.2219</p>
+<p>y, x independent noise                   0.035640        0.0001</p>
+<p>=======================================  ==============  ========</p>
+<p>Row three against its closed form: for output noise the expected coherence</p>
+<p>is `<code style="color:#22d3bf">SNR/(1+SNR)</code>` = 0.5000 at 0 dB, measured 0.5091. Row four against the</p>
+<p>bias floor `<code style="color:#22d3bf">1/n_frames = 1/31 = 0.0323</code>`, measured 0.0356 — which is why</p>
+<p>`<code style="color:#22d3bf">bias</code>` is returned: <b>an uncorrelated pair does not read zero</b>, and</p>
+<p>reading 0.03 as &quot;a little bit of coupling&quot; is the mistake this number</p>
+<p>prevents. Row two shows the other honest limit: a pure delay is a perfectly</p>
+<p>linear system and still reads 0.983, not 1, because a delay of 37 samples</p>
+<p>moves signal across the frame boundaries the estimator averages over.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses on either</p>
+<p>channel, unequal channel lengths, fewer than 2 frames, `<code style="color:#22d3bf">win</code>` longer than</p>
+<p>the record, an unknown window.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dual</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:transfer_function">transfer_function</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

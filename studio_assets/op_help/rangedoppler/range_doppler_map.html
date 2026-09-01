@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">range_doppler_map — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_map(cube, combine=&#x27;incoherent&#x27;, antenna=None, normalize=False)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The 2-D FFT of a beat cube -&gt; a `<code style="color:#22d3bf">(n_doppler, n_range)</code>` magnitude map.</p>
+<p>Fast time transforms to <b>range</b> (last axis, not shifted: bin `<code style="color:#22d3bf">j</code>` is</p>
+<p>`<code style="color:#22d3bf">j * c*f_s/(2*S*N_s)</code>` metres, and a physical range is always positive so</p>
+<p>the whole `<code style="color:#22d3bf">[0, f_s)</code>` band is used). Slow time transforms to <b>velocity</b></p>
+<p>(middle axis, `<code style="color:#22d3bf">fftshift</code>`ed so the map is centred on zero velocity: bin</p>
+<p>`<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">(i - N_c//2) * lambda/(2*N_c*T_c)</code>` metres per second, positive =</p>
+<p>receding).</p>
+<p>The antenna axis is collapsed by *combine*: `<code style="color:#22d3bf">&quot;incoherent&quot;</code>` (default) is the</p>
+<p><b>mean of the magnitudes</b>, which is angle independent and therefore the</p>
+<p>right default for detection; `<code style="color:#22d3bf">&quot;coherent&quot;</code>` is the <b>magnitude of the mean</b>,</p>
+<p>i.e. a beam pointed at boresight, which attenuates an off-boresight target on</p>
+<p>purpose. `<code style="color:#22d3bf">antenna=k</code><code style="color:#22d3bf"> uses element </code><code style="color:#22d3bf">k</code>` alone. For a single-element cube</p>
+<p>all three agree exactly.</p>
+<p>`<code style="color:#22d3bf">normalize=True</code><code style="color:#22d3bf"> divides by </code><code style="color:#22d3bf">N_c * N_s</code>`, so a bin-centred target of</p>
+<p>amplitude `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> peaks at exactly </code><code style="color:#22d3bf">a</code>` (measured: 1.0 for a unit target,</p>
+<p>absolute error 0.0). The default `<code style="color:#22d3bf">False</code>` keeps the raw FFT magnitude.</p>
+<p>No window is applied — compose :func:<code style="color:#22d3bf">fmcw_window_apply</code> first if you want</p>
+<p>one. The output is a plain 2-D float64 array, so every 2-D operator in</p>
+<p>Fullseye (threshold, morphology, labelling, blob measurement — the pieces a</p>
+<p>CFAR detector is made of) applies to it directly.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a real-valued cube (it would put a mirror ghost of</p>
+<p>every target at a fabricated range), fewer than 2 chirps or 2 samples, an</p>
+<p>out-of-range *antenna* index, an unknown *combine*, a cube over the element</p>
+<p>cap, an FFT that overflows to NaN, or NaN/Inf on the way in.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">image2d</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:range_doppler_peaks">range_doppler_peaks</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">process</code>)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:fmcw_window_apply">fmcw_window_apply</a> · <a style="color:#22d3bf" href="oprangedoppler:range_doppler_peaks">range_doppler_peaks</a> · <a style="color:#22d3bf" href="oprangedoppler:fmcw_range_profile">fmcw_range_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

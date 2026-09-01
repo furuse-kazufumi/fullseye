@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">istft — ACOUSTICS <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.istft(transform)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;istft&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Invert :func:<code style="color:#22d3bf">stft</code> by weighted overlap-add — exactly.</p>
+<p>Weighted overlap-add divides the synthesised sum by the overlap sum of the</p>
+<p>*squared* window, which makes the reconstruction exact for any window and</p>
+<p>hop satisfying NOLA, not only for the COLA pairs. :func:<code style="color:#22d3bf">stft</code> refuses the</p>
+<p>NOLA violation up front, so if the transform was produced by it the inverse</p>
+<p>cannot be lossy.</p>
+<p>Measured round-trip error, `<code style="color:#22d3bf">max |x - istft(stft(x))|</code>` on 4096 samples of</p>
+<p>white noise (float64, so 2.2e-16 is one ulp of the largest sample):</p>
+<p>===============  ====  ====  =========  =========</p>
+<p>window           win   hop   max error  nola_min</p>
+<p>===============  ====  ====  =========  =========</p>
+<p>hann             256   128   1.33e-15   0.5</p>
+<p>hann             256   64    1.33e-15   1.5</p>
+<p>hann             256   255   2.73e-12   2.27e-08</p>
+<p>hamming          256   128   1.33e-15   0.5832</p>
+<p>blackman         512   128   1.33e-15   1.206</p>
+<p>flattop          256   64    1.33e-15   0.396</p>
+<p>boxcar           256   128   8.88e-16   2.0</p>
+<p>hann (nfft 512)  256   128   1.33e-15   0.5</p>
+<p>===============  ====  ====  =========  =========</p>
+<p>Read the third row&#x27;s two columns together. `<code style="color:#22d3bf">hop = 255</code>` on a 256-sample</p>
+<p>window overlaps by one sample, which breaks plain (unweighted) overlap-add</p>
+<p>completely; weighted overlap-add still inverts it, but only to 2.7e-12</p>
+<p>rather than 1.3e-15, because the squared-window overlap sum falls to</p>
+<p>2.3e-08 and the reconstruction divides by it. NOLA is satisfied and the</p>
+<p>result is four orders of magnitude less accurate than every other row —</p>
+<p>which is why `<code style="color:#22d3bf">nola_min</code>` is *returned* and not merely checked. A NOLA</p>
+<p>minimum that is small but positive is a conditioning warning, and there is</p>
+<p>no threshold at which it stops being one, so no threshold is invented here.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: a dict missing any key :func:</code>stft` writes, a</p>
+<p>`<code style="color:#22d3bf">spectra</code><code style="color:#22d3bf"> whose shape disagrees with the recorded </code><code style="color:#22d3bf">nfft</code>` / frame count,</p>
+<p>or a non-complex `<code style="color:#22d3bf">spectra</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:stft">stft</a> · <a style="color:#22d3bf" href="opacoustics:envelope_spectrum">envelope_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:spectral_kurtosis">spectral_kurtosis</a> · <a style="color:#22d3bf" href="opacoustics:cepstrum">cepstrum</a> · <a style="color:#22d3bf" href="opacoustics:angular_resample">angular_resample</a> · <a style="color:#22d3bf" href="opacoustics:order_spectrum">order_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:octave_spectrum">octave_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:weighting_response">weighting_response</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:stft">stft</a> · <a style="color:#22d3bf" href="opacoustics:stft_cola_check">stft_cola_check</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

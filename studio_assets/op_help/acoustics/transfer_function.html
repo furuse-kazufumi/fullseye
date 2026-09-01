@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">transfer_function — ACOUSTICS <code style="color:#22d3bf">dual</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.transfer_function(x, y, rate, win=None, hop=None, window=&#x27;hann&#x27;, estimator=&#x27;h1&#x27;, ref=1.0, floor_db=-200.0)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;transfer_function&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Estimate `<code style="color:#22d3bf">H(f)</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> in and </code><code style="color:#22d3bf">y</code>` out, with its coherence.</p>
+<p>`<code style="color:#22d3bf">estimator</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;h1&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">Pxy / Pxx</code>`. Unbiased when the noise is on the <b>output</b>.</p>
+<p>The usual default and the right one for a driven test.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;h2&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">Pyy / conj(Pxy)</code>`. Unbiased when the noise is on the</p>
+<p><b>input</b>. It over-estimates the magnitude wherever H1 under-estimates it,</p>
+<p>so the two together bracket the truth, and `<code style="color:#22d3bf">|H1/H2| = gamma**2</code>` exactly —</p>
+<p>an identity worth checking rather than a coincidence.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">response</code><code style="color:#22d3bf"> (complex), </code><code style="color:#22d3bf">magnitude</code>`,</p>
+<p>`<code style="color:#22d3bf">magnitude_db</code><code style="color:#22d3bf"> (relative to </code><code style="color:#22d3bf">ref</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">phase_rad</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">coherence</code>`,</p>
+<p>`<code style="color:#22d3bf">estimator</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">n_frames</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rate</code>`.</p>
+<p>Measured at 16 kHz over 16384 samples, win = 1024, 31 frames, white input:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">y = 2.5 * x</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">mean |H| = 2.5000000000</code>`, max deviation from 2.5 over</p>
+<p>all bins <b>1.78e-15</b>, mean `<code style="color:#22d3bf">|phase|</code>` 2.7e-17, mean coherence</p>
+<p>1.0000000000.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">y = 0.8 * x[n-37]</code>`: the phase is a straight line in frequency of slope</p>
+<p>`<code style="color:#22d3bf">-2 pi * 37 / 16000</code>` s. A least-squares fit to the unwrapped phase over</p>
+<p>200-7000 Hz gives a group delay of <b>37.000004 samples</b> against a true 37</p>
+<p>(error 4.3e-06 samples), and `<code style="color:#22d3bf">mean |H| = 0.792220</code>` over the same bins</p>
+<p>against a true 0.8 (max deviation 0.050).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">y = 2.5 * x + n</code>` with output noise at 0 dB SNR: H1 gives</p>
+<p>`<code style="color:#22d3bf">mean |H| = 2.523390</code>` — 0.94 % from the truth — while H2 gives</p>
+<p><b>5.043020</b>, a factor of 2.0 too large, exactly as the theory predicts</p>
+<p>when the noise sits on the output. And `<code style="color:#22d3bf">|H1/H2|</code>` equals the coherence</p>
+<p>pointwise to <b>5.6e-16</b> (both mean 0.509143), which is the identity worth</p>
+<p>knowing: the ratio of the two estimators *is* the coherence.</p>
+<p>That third row is why the coherence is returned with the response. The H2</p>
+<p>number is off by 100 % and there is nothing about 5.04 that looks wrong.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>coherence` refuses, plus an</p>
+<p>unknown `<code style="color:#22d3bf">estimator</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">ref &lt;= 0</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">dual</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:coherence">coherence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

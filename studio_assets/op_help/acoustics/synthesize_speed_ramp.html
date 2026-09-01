@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_speed_ramp — ACOUSTICS <code style="color:#22d3bf">synthesis</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.synthesize_speed_ramp(rate=5000.0, duration=4.0, rpm_start=600.0, rpm_end=1800.0, orders=(1.0, 3.5), amplitudes=None, resonance_hz=None, noise_sigma=0.0, seed=None)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;synthesize_speed_ramp&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>A run-up: components locked to shaft *order*, optionally one fixed in Hz.</p>
+<p>Order tracking has no meaning at constant speed, so its ground truth needs a</p>
+<p>signal whose shaft rate moves. Here the shaft rate ramps linearly from</p>
+<p>`<code style="color:#22d3bf">rpm_start</code><code style="color:#22d3bf"> to </code><code style="color:#22d3bf">rpm_end</code>` and each component&#x27;s instantaneous phase is</p>
+<p>`<code style="color:#22d3bf">2 pi * order * revolutions(t)</code>` — so it is locked to the shaft *exactly*,</p>
+<p>by construction, and its order is known to machine precision.</p>
+<p>`<code style="color:#22d3bf">resonance_hz</code>` adds one component at a <b>fixed frequency</b> instead. That is</p>
+<p>the discriminating case: after angular resampling an order stays put and a</p>
+<p>resonance smears, which is the whole diagnostic value of the transform.</p>
+<p>Returns a dict, because a speed record without its speed profile is not</p>
+<p>analysable: `<code style="color:#22d3bf">signal</code><code style="color:#22d3bf"> (the waveform), </code><code style="color:#22d3bf">rpm</code>` (per-sample shaft rate),</p>
+<p>`<code style="color:#22d3bf">revolutions</code><code style="color:#22d3bf"> (cumulative, per-sample), </code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">duration</code>`,</p>
+<p>`<code style="color:#22d3bf">orders</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">total_revolutions</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">resonance_hz</code>`, and</p>
+<p>`<code style="color:#22d3bf">max_component_hz</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-real / string / bool scalars, non-positive</p>
+<p>`<code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">duration</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rpm_start</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">rpm_end</code>`, an empty or non-finite</p>
+<p>`<code style="color:#22d3bf">orders</code><code style="color:#22d3bf">, an </code><code style="color:#22d3bf">amplitudes</code>` of the wrong length, a length over</p>
+<p>:data:<code style="color:#22d3bf">MAX_SAMPLES</code>, and **any component reaching Nyquist at the fastest</p>
+<p>point of the ramp** — checked at `<code style="color:#22d3bf">max(rpm)</code>`, not at the mean, because a</p>
+<p>ramp that is legal on average can alias at its top end and produce a</p>
+<p>perfectly plausible spectrum.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">synthesis</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:synthesize_bearing_signal">synthesize_bearing_signal</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

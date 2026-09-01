@@ -5,7 +5,7 @@ category: frequency
 in: image
 out: image
 halcon: phase_rad
-examples: [gallery2d_texture_freq]
+examples: [acoustic_condition_monitoring, gallery2d_texture_freq]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -33,6 +33,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [acoustic_condition_monitoring](../../../../examples/acoustic_condition_monitoring.py) — `py -3.11 examples/acoustic_condition_monitoring.py`
 - [gallery2d_texture_freq](../../../../examples/gallery2d_texture_freq.py) — `py -3.11 examples/gallery2d_texture_freq.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

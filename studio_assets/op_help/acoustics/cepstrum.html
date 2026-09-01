@@ -1,0 +1,79 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cepstrum — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.cepstrum(x, rate, mode=&#x27;real&#x27;, floor_ratio=1e-12, min_quefrency=0.0)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;cepstrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The spectrum of the log spectrum — periodic structure *in frequency*.</p>
+<p>A harmonic family or a family of modulation sidebands is periodic along the</p>
+<p>frequency axis, so it collapses to a single line along the cepstrum&#x27;s</p>
+<p>quefrency axis (in seconds). Two things this finds that a spectrum does not:</p>
+<p>an <b>echo</b> at delay `<code style="color:#22d3bf">tau</code><code style="color:#22d3bf"> (a rahmonic at </code><code style="color:#22d3bf">q = tau</code>`) and a **sideband</p>
+<p>family** spaced `<code style="color:#22d3bf">df</code><code style="color:#22d3bf"> apart (a rahmonic at </code><code style="color:#22d3bf">q = 1/df</code>`). The second is the</p>
+<p>bearing case — sidebands around a gear mesh spaced at the shaft rate.</p>
+<p>`<code style="color:#22d3bf">mode</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;real&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">irfft(log|X|)</code>`, the standard real cepstrum. Discards phase,</p>
+<p>so it cannot be inverted; nothing here pretends otherwise.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;power&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">irfft(log|X|**2) = 2 * real</code>`, kept because the two</p>
+<p>conventions differ by exactly a factor of two and mixing them silently</p>
+<p>halves or doubles every amplitude a caller compares against a reference.</p>
+<p>`<code style="color:#22d3bf">log(0)</code><code style="color:#22d3bf"> is handled by flooring the magnitude at </code><code style="color:#22d3bf">floor_ratio</code>` times its</p>
+<p>own maximum (default 1e-12, i.e. -240 dB) rather than letting `<code style="color:#22d3bf">-inf</code>` enter</p>
+<p>the inverse transform, where it would make the entire cepstrum NaN. The</p>
+<p>number of floored bins is returned as `<code style="color:#22d3bf">floored_bins</code>` — a large count means</p>
+<p>the signal is band-limited and the cepstrum is dominated by the flooring, not</p>
+<p>by the signal.</p>
+<p>`<code style="color:#22d3bf">min_quefrency</code>` (seconds) excludes the low-quefrency region from the peak</p>
+<p>search. This is not cosmetic. The first few bins carry the **spectral</p>
+<p>envelope** — the overall shape of the spectrum, which is large and has</p>
+<p>nothing to do with periodic structure — and they dominate. Measured on an AM</p>
+<p>tone with sidebands 50 Hz apart, the five largest cepstral values sit at</p>
+<p>0.000125, 0.00025, 0.000375, 0.000625 and 0.001 s, i.e. all of them are the</p>
+<p>envelope, and the default peak search returns 0.000125 s rather than the</p>
+<p>1/50 = 0.02 s a reader would expect. Excluding the envelope is the standard</p>
+<p>practice (&quot;liftering&quot;) and is the caller&#x27;s decision, so it is an argument</p>
+<p>with a visible default of 0.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">quefrency</code><code style="color:#22d3bf"> (s), </code><code style="color:#22d3bf">cepstrum</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">mode</code>`,</p>
+<p>`<code style="color:#22d3bf">floored_bins</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">min_quefrency</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_quefrency</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_amplitude</code>`,</p>
+<p>`<code style="color:#22d3bf">peak_rate_hz</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">1/peak_quefrency</code>` — the sideband spacing or repetition</p>
+<p>rate the rahmonic corresponds to). The peak is taken over</p>
+<p>`<code style="color:#22d3bf">min_quefrency &lt; q &lt; n/(2*rate)</code>`; the cepstrum is symmetric past that.</p>
+<p>Measured ground truths:</p>
+<p style="margin:2px 0 2px 12px">• <b>Echo.</b> White noise at 8 kHz plus 0.6 times itself delayed by 200</p>
+<p>samples: `<code style="color:#22d3bf">peak_quefrency = 0.025000</code>` s, peak index exactly <b>200</b>, and</p>
+<p>`<code style="color:#22d3bf">floored_bins = 0</code>`.</p>
+<p style="margin:2px 0 2px 12px">• <b>A periodic family of lines.</b> A 50 Hz impulse train convolved with a</p>
+<p>random 64-tap FIR (so the spectrum is broadband with lines every 50 Hz):</p>
+<p>peak at `<code style="color:#22d3bf">0.020000</code>` s = <b>50.00 Hz</b> exactly, with</p>
+<p>`<code style="color:#22d3bf">min_quefrency=0.002</code>`.</p>
+<p style="margin:2px 0 2px 12px">• <b>What it looks like when the fundamental is not the largest.</b> The</p>
+<p>`<code style="color:#22d3bf">mode=&quot;impulse&quot;</code>` bearing signal repeats every 1/107 s, and the largest</p>
+<p>rahmonic above 2 ms is at 0.037383 s — which is `<code style="color:#22d3bf">4/107</code>`, the *fourth*</p>
+<p>rahmonic, not the first. A cepstrum reports a <b>family</b>, and reading only</p>
+<p>its maximum gives an answer that is off by an exact integer factor and</p>
+<p>looks entirely reasonable.</p>
+<p style="margin:2px 0 2px 12px">• <b>Where it stops working.</b> An AM tone has three spectral lines and</p>
+<p>nothing else; every other bin is floored, the log spectrum is mostly the</p>
+<p>floor, and there is no 1/50 s rahmonic to find at all. Cepstral sideband</p>
+<p>analysis needs a *broadband* signal — a gear mesh, not a tone.</p>
+<p>`<code style="color:#22d3bf">mode=&quot;power&quot;</code><code style="color:#22d3bf"> is exactly twice </code><code style="color:#22d3bf">mode=&quot;real&quot;</code>` (measured max difference</p>
+<p>0.000e+00).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses, an unknown</p>
+<p>`<code style="color:#22d3bf">mode</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">floor_ratio</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">(0, 1)</code><code style="color:#22d3bf">, a negative </code><code style="color:#22d3bf">min_quefrency</code>`, a</p>
+<p>`<code style="color:#22d3bf">min_quefrency</code>` at or past the half-length of the record (nothing would be</p>
+<p>left to search), an identically zero signal, and a signal shorter than 4</p>
+<p>samples.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">bearing</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:envelope_spectrum">envelope_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:bearing_defect_frequencies">bearing_defect_frequencies</a> · <a style="color:#22d3bf" href="opacoustics:spectral_kurtosis">spectral_kurtosis</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

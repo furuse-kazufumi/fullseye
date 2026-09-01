@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_beat_simulate — RANGEDOPPLER <code style="color:#22d3bf">simulate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>beatcube`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None, amplitudes=None, n_samples=64, n_chirps=32, n_antennas=1, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, element_spacing_m=None, phase_deg=0.0, noise_sigma=0.0, seed=0)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_beat_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Synthesise the complex `<code style="color:#22d3bf">(A, C, S)</code>` beat cube for known targets.</p>
+<p>The forward model. Every target `<code style="color:#22d3bf">t</code>` contributes</p>
+<p>`<code style="color:#22d3bf">a_t * exp(1j*(2*pi*f_b_t*n/f_s + 2*pi*f_d_t*m*T_c + 2*pi*d*k*sin(th_t)/lam + phi))</code>`</p>
+<p>over fast-time sample `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">, chirp </code><code style="color:#22d3bf">m</code><code style="color:#22d3bf"> and antenna </code><code style="color:#22d3bf">k</code>`, with</p>
+<p>`<code style="color:#22d3bf">f_b = 2*S*R/c</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">f_d = 2*v/lambda</code>`. Contributions add linearly, which</p>
+<p>is what makes a multi-target cube a valid ground truth: each target&#x27;s peak</p>
+<p>stands at its own bin regardless of the others.</p>
+<p><b>Sign conventions</b> (see the module docstring): `<code style="color:#22d3bf">velocities_ms</code>` is</p>
+<p>`<code style="color:#22d3bf">dR/dt</code>`, so <b>positive is receding</b> and lands in a positive Doppler bin;</p>
+<p>`<code style="color:#22d3bf">angles_deg</code>` is measured from array boresight and a positive angle advances</p>
+<p>the phase of the higher-index elements.</p>
+<p>*amplitudes* defaults to 1.0 for every target — there is no radar equation</p>
+<p>here, no `<code style="color:#22d3bf">1/R^4</code>`, no propagation loss (module docstring, honest limits).</p>
+<p>*noise_sigma* adds circular complex Gaussian noise with that per-component</p>
+<p>standard deviation, drawn from `<code style="color:#22d3bf">numpy.random.default_rng(seed)</code>`; the</p>
+<p>default 0.0 returns the exact noiseless cube, which is what the closed-form</p>
+<p>tests compare against.</p>
+<p>Ground truth: a target placed at an exact bin centre — `<code style="color:#22d3bf">R = j*dR</code>` and</p>
+<p>`<code style="color:#22d3bf">v = i*dv</code><code style="color:#22d3bf"> from :func:</code>fmcw_design` — puts the whole of its energy in bin</p>
+<p>`<code style="color:#22d3bf">(i, j)</code><code style="color:#22d3bf"> of :func:</code>range_doppler_map`, whose peak magnitude is then exactly</p>
+<p>`<code style="color:#22d3bf">a * N_s * N_c</code>`. Measured on the default configuration: the peak magnitude</p>
+<p>is bit-exactly 2048.0 (`<code style="color:#22d3bf">N_s*N_c</code>`, relative error 0.0), the largest other</p>
+<p>cell in the map is 2.6e-16 of it, and with three targets at different bins</p>
+<p>and different amplitudes the recovered ranges and velocities are exact to</p>
+<p>0.0 metres and 0.0 m/s with amplitudes within 5.6e-17. See</p>
+<p>`<code style="color:#22d3bf">tests/test_rangedoppler.py</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: a range at or beyond </code><code style="color:#22d3bf">c*f_s/(2S)</code>`, a speed at or</p>
+<p>beyond `<code style="color:#22d3bf">lambda/(4*T_c)</code><code style="color:#22d3bf">, an angle at or beyond </code><code style="color:#22d3bf">asin(lambda/(2d))</code>` — the</p>
+<p>three aliasing limits, refused rather than folded silently; a non-positive</p>
+<p>range; mismatched target-list lengths; a cube over</p>
+<p>:data:<code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code> (checked *before* allocation); a negative</p>
+<p>amplitude or noise sigma; a non-integer seed; and the usual</p>
+<p>string/bool/complex/NaN scalar refusals.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">beatcube</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:fmcw_window_apply">fmcw_window_apply</a> · <a style="color:#22d3bf" href="oprangedoppler:range_doppler_map">range_doppler_map</a> · <a style="color:#22d3bf" href="oprangedoppler:fmcw_range_profile">fmcw_range_profile</a> · <a style="color:#22d3bf" href="oprangedoppler:beamform_delay_sum">beamform_delay_sum</a> · <a style="color:#22d3bf" href="oprangedoppler:beamform_doa">beamform_doa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">simulate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

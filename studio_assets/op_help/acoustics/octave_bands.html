@@ -1,0 +1,61 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">octave_bands — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.octave_bands(fraction=3, f_min=22.0, f_max=22050.0, base=10)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;octave_bands&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Fractional-octave band centres and edges, from the defining construction.</p>
+<p>The band system is a geometric progression through 1 kHz:</p>
+<p>`<code style="color:#22d3bf">f_c = 1000 * G**(x/b)</code><code style="color:#22d3bf"> for odd </code><code style="color:#22d3bf">b</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">1000 * G**((2x+1)/(2b))</code>` for</p>
+<p>even `<code style="color:#22d3bf">b</code><code style="color:#22d3bf">, with edges at </code><code style="color:#22d3bf">f_c * G**(-+1/(2b))</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">base=10</code>` uses</p>
+<p>`<code style="color:#22d3bf">G = 10**(3/10)</code>` (the base-ten system, in which ten third-octaves span</p>
+<p>almost exactly a decade); `<code style="color:#22d3bf">base=2</code><code style="color:#22d3bf"> uses </code><code style="color:#22d3bf">G = 2</code>` exactly. No published</p>
+<p>table of centre frequencies is transcribed — the *exact* centres are</p>
+<p>computed, which is why `<code style="color:#22d3bf">centers</code>` reads 1000.0, 1258.925, 1584.893 rather</p>
+<p>than the 1000, 1250, 1600 a published series would give.</p>
+<p>**The parity of `<code style="color:#22d3bf">fraction</code>` changes where 1 kHz sits, and this surprises</p>
+<p>people.** With an odd `<code style="color:#22d3bf">b</code>` (1/1, 1/3) there is a band *centred* on exactly</p>
+<p>1000.0 Hz. With an even `<code style="color:#22d3bf">b</code>` (1/2, 1/6, 1/12, 1/24) the offset in the</p>
+<p>exponent means there is <b>no 1 kHz band at all</b> — instead 1000.0 Hz is</p>
+<p>exactly a band *edge*, shared by two bands. Measured across</p>
+<p>`<code style="color:#22d3bf">fraction</code>` = 1, 2, 3, 6, 12, 24: a centre lands on 1000.0 for 1 and 3, and</p>
+<p>a lower edge lands on it for 2, 6, 12 and 24, in every case to within</p>
+<p>`<code style="color:#22d3bf">rtol=1e-12</code>`. That is the defining construction, not an artefact, and it</p>
+<p>matters when a level is quoted &quot;at 1 kHz&quot;: in an even system that number</p>
+<p>comes from one of two adjacent half-bands, not from a band on the tone.</p>
+<p>`<code style="color:#22d3bf">nominal</code>` is the exact centre rounded to three significant figures, for</p>
+<p>labelling only. It is a rounding, <b>not</b> the published nominal series, and</p>
+<p>it differs from it: measured, the 1/1-octave centres round to 31.6, 63.1,</p>
+<p>126.0, 251.0, 501.0, 1000.0, 2000.0, 3980.0, 7940.0, 15800.0, where the</p>
+<p>published series has 125 and 250 where this has 126 and 251. Do arithmetic</p>
+<p>with `<code style="color:#22d3bf">centers</code>` and supply your own labels if they have to match a report.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">centers</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">lower</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">upper</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nominal</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">fraction</code>`,</p>
+<p>`<code style="color:#22d3bf">base</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">G**(1/b)</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">bandwidth</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">upper - lower</code>`),</p>
+<p>`<code style="color:#22d3bf">index</code><code style="color:#22d3bf"> (the integer </code><code style="color:#22d3bf">x</code>`).</p>
+<p>Exact identities, asserted in the tests: `<code style="color:#22d3bf">upper/lower = G**(1/b)</code>` for every</p>
+<p>band, `<code style="color:#22d3bf">center = sqrt(lower*upper)</code>` (the centre is the geometric mean of its</p>
+<p>edges, by construction), and successive centres are in the ratio `<code style="color:#22d3bf">G**(1/b)</code>`.</p>
+<p>Measured for `<code style="color:#22d3bf">fraction=3, base=10</code>` over 22 Hz - 22.05 kHz (30 bands): the</p>
+<p>band containing 1000 Hz has `<code style="color:#22d3bf">lower = 891.250938</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">center = 1000.000000</code>`,</p>
+<p>`<code style="color:#22d3bf">upper = 1122.018454</code><code style="color:#22d3bf">; </code><code style="color:#22d3bf">upper/lower - G**(1/3) = 2.2e-16</code>`;</p>
+<p>`<code style="color:#22d3bf">|center - sqrt(lower*upper)| &lt;= 1.8e-12</code>` over all bands; and successive</p>
+<p>centre ratios deviate from `<code style="color:#22d3bf">G**(1/3)</code><code style="color:#22d3bf"> by at most 6.7e-16. With </code><code style="color:#22d3bf">base=2</code>`</p>
+<p>the octave centres come out exactly 31.25, 62.5, 125, 250, 500, 1000, 2000,</p>
+<p>4000, 8000, 16000 Hz.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">fraction</code><code style="color:#22d3bf"> not an int in </code><code style="color:#22d3bf">[1, 24]</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">base</code>`</p>
+<p>not 2 or 10, non-positive or non-finite `<code style="color:#22d3bf">f_min</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">f_max</code>`,</p>
+<p>`<code style="color:#22d3bf">f_min &gt;= f_max</code><code style="color:#22d3bf">, and a request for more than :data:</code>MAX_BANDS` bands.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">level</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:octave_spectrum">octave_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:weighting_response">weighting_response</a> · <a style="color:#22d3bf" href="opacoustics:apply_weighting">apply_weighting</a> · <a style="color:#22d3bf" href="opacoustics:equivalent_level">equivalent_level</a> · <a style="color:#22d3bf" href="opacoustics:percentile_level">percentile_level</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

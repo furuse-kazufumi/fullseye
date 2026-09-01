@@ -348,6 +348,17 @@ from dsp import (  # noqa: E402,F401
 # FMCW レンジ-ドップラー: 既存の lidar_* が幾何(レイキャスト)だけで信号処理層が
 # 空だったところを埋める層。距離と**速度を同時に**出し、遅延和ビームフォーミングで
 # 到来角も出す。photoncount(dToF)とは原理が逆で、型も分けてある。
+# 音響・振動診断: 「1-D が扱えるなら音響も扱える」を道具にした層。反転可能な
+# 短時間フーリエ変換、軸受欠陥の包絡線スペクトル、次数比分析、オクターブ帯域と
+# 周波数重み付け。motionmag が「映像から測る振動」、こちらが「音から測る振動」。
+import acoustics  # noqa: E402  (STFT / bearing envelope / order tracking / sound level)
+from acoustics import (  # noqa: E402,F401
+    angular_resample, apply_weighting, bearing_defect_frequencies,
+    cepstrum, coherence, envelope_spectrum, equivalent_level, istft,
+    octave_bands, octave_spectrum, order_spectrum, percentile_level,
+    spectral_kurtosis, stft, stft_cola_check, synthesize_bearing_signal,
+    synthesize_speed_ramp, transfer_function, weighting_response,
+)
 import rangedoppler  # noqa: E402  (FMCW range-Doppler / delay-and-sum beamforming)
 from rangedoppler import (  # noqa: E402,F401
     beamform_delay_sum, beamform_doa, fmcw_beat_simulate, fmcw_design,
@@ -515,6 +526,13 @@ __all__ = [
     "lowpass", "highpass", "bandpass", "envelope", "rms", "find_peaks",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
+    "acoustics",
+    "angular_resample", "apply_weighting", "bearing_defect_frequencies",
+    "cepstrum", "coherence", "envelope_spectrum", "equivalent_level",
+    "istft", "octave_bands", "octave_spectrum", "order_spectrum",
+    "percentile_level", "spectral_kurtosis", "stft", "stft_cola_check",
+    "synthesize_bearing_signal", "synthesize_speed_ramp",
+    "transfer_function", "weighting_response",
     "beamform_delay_sum", "beamform_doa", "fmcw_beat_simulate",
     "fmcw_design", "fmcw_range_profile", "fmcw_window_apply",
     "range_doppler_map", "range_doppler_peaks",

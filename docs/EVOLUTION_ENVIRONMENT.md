@@ -230,10 +230,26 @@ honesty guard が捕まえるために存在する現象です。仮に train �
 | 課題 | 入力 sort | 恒等 | 手(既存 op 単体の最良) | 進化 champion | 手比 |
 |---|---|---|---|---|---|
 | `photon_denoise` | `counts` | 0.2664 | 0.5371 | **0.7760** | **+44.5%** |
+| `vibration_map` | `video` | 0.0000 | 0.6973 | **0.8868** | **+27.2%** |
 | `lf_slope` | `lightfield` | 0.0000 | 0.5794 | 0.5907 | +2.0% |
+| `specular_removal` | `rgbimage` | 0.4115 | 0.8406 | 0.6039 | **−28.2%** |
 
 いずれも **locked holdout(seed+20000、champion に対して一度だけ採点する
 本当に触れていない split)** の数字。3 seed / 12 世代 / 個体 12 の小さな走行。
+
+**負けた 1 件がいちばん教育的**だった。`specular_removal` の champion は
+**四元数族を経由する族をまたいだ経路**を見つけている:
+
+```
+tb_rgb_to_quaternion -> tb_quat_color_rotate -> tb_quaternion_to_rgb -> ...
+```
+
+観測 holdout では 0.776 と手(0.84)に迫って見えたのに、**locked では 0.628**
+まで落ちた。しかも locked の seed 間ばらつきが min 0.304 / max 0.755 /
+std 0.190 と大きい。train で選んだ champion が汎化しなかった典型で、
+**観測 holdout だけ見ていたら「惜しい」と読んでいた**。勝った
+`vibration_map` は逆に locked のばらつきが std 0.001 と極端に小さい。
+**ばらつきの開示が効いた実例**として残す。
 
 `photon_denoise` の champion は **光子族だけで閉じた合成**だった:
 
@@ -262,9 +278,10 @@ locked split で測り直すと手は 0.5794 で、実際の差は **+2.0%**。
 
 - **橋渡しは 382 カタログ op のうち 58(既定)/ 125(wide)**。多入力 op(99 件)は
   1 入力 1 出力の合成モデルに載らないので、別の合成モデルが要る。
-- **課題が 14 件でまだ薄い**。2026-09-01 に `counts` / `lightfield` を足したが、
-  `rgbimage` / `video` / `polsweep` / `qimage` 始まりの課題はまだ無く、鏡面分離・
-  モーション増幅・四元数の 3 族は**進化から使えないまま**(ファザーからは使える)。
+- **課題が 16 件。** `counts` / `lightfield` / `rgbimage` / `video` を足したが、
+  `qimage` / `beatcube` 始まりの課題はまだ無い(語彙には入れてある)。
+  `polsweep` は消費 3・自己ループ 0 で「1 手で外へ出るだけ」に近いため
+  `histcube` と同じ理由で語彙に入れていない。
 - **counterfactual utility は 1 段置換の近似**(上記)。
 - **昇格の実書き込みは champion 経由のみ**。採掘候補を直接 DNA 化する経路は未実装で、
   現状は「通過候補を進化の初期値に使う」のが想定運用。

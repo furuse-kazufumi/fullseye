@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">beamform_delay_sum — RANGEDOPPLER <code style="color:#22d3bf">beamform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.beamform_delay_sum(cube, wavelength_m=0.0038934, element_spacing_m=None, angles_deg=None, range_bin=None, doppler_bin=None, normalize=False)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;beamform_delay_sum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Delay-and-sum (Bartlett) angle spectrum for one range-Doppler cell.</p>
+<p>Takes the per-antenna complex value at a single range-Doppler cell — by</p>
+<p>default the strongest one — and for each steering angle removes the expected</p>
+<p>inter-element phase and sums:</p>
+<p>`<code style="color:#22d3bf">P(theta) = |sum_k conj(exp(1j*2*pi*d*k*sin(theta)/lambda)) * x_k|^2</code>`</p>
+<p>which peaks at the true arrival angle with value `<code style="color:#22d3bf">(N_a * |a|)^2</code>`: the</p>
+<p>aperture gives `<code style="color:#22d3bf">N_a</code><code style="color:#22d3bf"> in amplitude, </code><code style="color:#22d3bf">N_a^2</code>` in power. That is the exact</p>
+<p>ground truth the tests pin. Measured with 8 elements: the peak power is</p>
+<p>bit-exactly `<code style="color:#22d3bf">(N_a*N_c*N_s)^2 = 268435456</code>` (relative error 0.0), and</p>
+<p>sweeping the true angle from -80 to +80 degrees in 5-degree steps (33 cases)</p>
+<p>the reported angle matches the truth with a maximum error of 0.0 degrees.</p>
+<p>The steering grid defaults to `<code style="color:#22d3bf">arange(-90, 90.5, 1.0)</code><code style="color:#22d3bf">. </code><code style="color:#22d3bf">normalize=True</code>`</p>
+<p>divides by `<code style="color:#22d3bf">N_a^2 * N_c^2 * N_s^2</code>` so that a unit-amplitude bin-centred</p>
+<p>target peaks at 1.0.</p>
+<p>Returns a 1-D float64 array of powers, one per grid angle — a plain signal,</p>
+<p>so :mod:<code style="color:#22d3bf">dsp</code>&#x27;s `<code style="color:#22d3bf">find_peaks</code><code style="color:#22d3bf"> and :mod:</code>funct1d`&#x27;s smoothing apply to it.</p>
+<p>Use :func:<code style="color:#22d3bf">beamform_doa</code> if you want the angles themselves.</p>
+<p>*range_bin* is a plain `<code style="color:#22d3bf">0..N_s-1</code>` index; *doppler_bin* is the <b>signed</b></p>
+<p>velocity bin, the same convention :func:<code style="color:#22d3bf">range_doppler_peaks</code> reports, so a</p>
+<p>detection can be handed straight back in. Both or neither — half a cell</p>
+<p>address raises rather than quietly beamforming the strongest cell instead.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: <b>no aperture</b> — either a single element, or many</p>
+<p>elements packed into under ~0.28 wavelengths. In both cases the spectrum is</p>
+<p>flat to within float noise and `<code style="color:#22d3bf">argmax</code>` returns the first grid angle, i.e.</p>
+<p>a confident report of -90 degrees that is pure tie-breaking (measured: 8</p>
+<p>elements at 1e-12 m spacing gave a peak-to-trough spread of exactly 0.0 and</p>
+<p>reported -90.0). Also: an all-zero cube or an all-zero selected cell; only</p>
+<p>one of *range_bin* / *doppler_bin*; an out-of-bounds bin index; an angle grid</p>
+<p>outside `<code style="color:#22d3bf">[-90, 90]</code>`; an FFT that overflows to NaN; plus the usual cube and</p>
+<p>scalar refusals.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">beamform</code>)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:beamform_doa">beamform_doa</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

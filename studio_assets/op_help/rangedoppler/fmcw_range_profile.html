@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_range_profile — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_range_profile(cube, chirp=None, antenna=None, normalize=False)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_range_profile&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Range-only profile: the fast-time FFT magnitude, averaged over the rest.</p>
+<p>The 1-D marginal of :func:<code style="color:#22d3bf">range_doppler_map</code> — what a static scene needs,</p>
+<p>and what a single chirp can give. Magnitudes are averaged (never the complex</p>
+<p>values) over chirps and antennas, so the average is independent of the</p>
+<p>target&#x27;s velocity and angle: `<code style="color:#22d3bf">|FFT|</code>` does not rotate with the Doppler</p>
+<p>phase, only the phase does.</p>
+<p>Bin `<code style="color:#22d3bf">j</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">j * c*f_s/(2*S*N_s)</code><code style="color:#22d3bf"> metres. With </code><code style="color:#22d3bf">normalize=True</code>` a</p>
+<p>bin-centred target of amplitude `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> peaks at exactly </code><code style="color:#22d3bf">a</code>`.</p>
+<p>*chirp* / *antenna* select one slice instead of averaging. Returns a 1-D</p>
+<p>float64 array of length `<code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf"> — a plain signal, so :mod:</code>dsp` and</p>
+<p>:mod:<code style="color:#22d3bf">funct1d</code> (`<code style="color:#22d3bf">find_peaks</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">smooth_funct_1d_gauss</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">spectrum</code>`)</p>
+<p>apply to it directly.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>range_doppler_map`, plus an</p>
+<p>out-of-bounds *chirp* index.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">process</code>)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:fmcw_window_apply">fmcw_window_apply</a> · <a style="color:#22d3bf" href="oprangedoppler:range_doppler_map">range_doppler_map</a> · <a style="color:#22d3bf" href="oprangedoppler:range_doppler_peaks">range_doppler_peaks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

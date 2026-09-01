@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bearing_defect_frequencies — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: `<code style="color:#22d3bf"> → </code>table`</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.bearing_defect_frequencies(rpm=1800.0, n_elements=9, element_diameter=8.0, pitch_diameter=40.0, contact_angle_deg=0.0)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;bearing_defect_frequencies&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>The four characteristic rates of a rolling-element bearing, from geometry.</p>
+<p>Derived, not tabulated. Under pure rolling the cage advances at half the sum</p>
+<p>of the race surface speeds, which with `<code style="color:#22d3bf">r = d/D cos(alpha)</code>` gives, per</p>
+<p>shaft revolution rate `<code style="color:#22d3bf">f_r = rpm/60</code>`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">FTF</code><code style="color:#22d3bf">  (cage / fundamental train) </code><code style="color:#22d3bf">= f_r (1 - r) / 2</code>`</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">BPFO</code><code style="color:#22d3bf"> (ball pass, outer race)    </code><code style="color:#22d3bf">= N f_r (1 - r) / 2 = N * FTF</code>`</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">BPFI</code><code style="color:#22d3bf"> (ball pass, inner race)    </code><code style="color:#22d3bf">= N f_r (1 + r) / 2</code>`</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">BSF</code><code style="color:#22d3bf">  (ball spin)                </code><code style="color:#22d3bf">= f_r (1 - r^2) D / (2 d)</code>`</p>
+<p>Two exact identities fall out and are asserted in the tests, because they</p>
+<p>catch a transposed `<code style="color:#22d3bf">d</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">D</code><code style="color:#22d3bf"> immediately: </code><code style="color:#22d3bf">BPFO + BPFI = N f_r</code>`</p>
+<p>exactly, and `<code style="color:#22d3bf">BPFO = N * FTF</code>` exactly. Measured for the defaults</p>
+<p>(1800 rpm, 9 elements, d = 8, D = 40, alpha = 0): `<code style="color:#22d3bf">ratio = 0.200000</code>`,</p>
+<p>`<code style="color:#22d3bf">f_r = 30.000000</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">FTF = 12.000000</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">BPFO = 108.000000</code>`,</p>
+<p>`<code style="color:#22d3bf">BPFI = 162.000000</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">BSF = 72.000000</code>` Hz, with</p>
+<p>`<code style="color:#22d3bf">BPFO + BPFI - 9 f_r = 0.000e+00</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">BPFO - 9 FTF = 0.000e+00</code>` —</p>
+<p>exactly zero in float64, not merely small.</p>
+<p>Returns a dict with `<code style="color:#22d3bf">shaft_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ftf_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bpfo_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">bpfi_hz</code>`,</p>
+<p>`<code style="color:#22d3bf">bsf_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">d/D cos alpha</code>`), and the inputs echoed back.</p>
+<p>Also `<code style="color:#22d3bf">bsf_hz_2x</code>`: a rolling element normally strikes *both* races per</p>
+<p>spin, so a spall on the element itself is usually seen at `<code style="color:#22d3bf">2 * BSF</code>`, and</p>
+<p>reporting only `<code style="color:#22d3bf">BSF</code>` is the classic way to miss it.</p>
+<p>These are the <b>no-slip kinematic</b> rates. Real bearings slip by roughly a</p>
+<p>percent, so an observed line within about 1 % of one of these is a match and</p>
+<p>an exact match is a coincidence; that tolerance is the caller&#x27;s to apply.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: non-real / string / bool scalars, </code><code style="color:#22d3bf">rpm &lt;= 0</code>`,</p>
+<p>`<code style="color:#22d3bf">n_elements</code>` not an int &gt;= 2, non-positive diameters, an</p>
+<p>`<code style="color:#22d3bf">element_diameter &gt;= pitch_diameter</code>` (geometrically impossible — the</p>
+<p>rolling elements would not fit inside the pitch circle, and the usual cause</p>
+<p>is the two arguments being swapped, which otherwise returns a negative FTF</p>
+<p>and a plausible-looking BPFI), and `<code style="color:#22d3bf">|contact_angle_deg| &gt;= 90</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">bearing</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:envelope_spectrum">envelope_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:spectral_kurtosis">spectral_kurtosis</a> · <a style="color:#22d3bf" href="opacoustics:cepstrum">cepstrum</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

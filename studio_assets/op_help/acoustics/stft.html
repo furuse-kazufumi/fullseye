@@ -1,0 +1,75 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stft — ACOUSTICS <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.stft(x, rate, win=256, hop=None, window=&#x27;hann&#x27;, nfft=None, scaling=&#x27;none&#x27;)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;stft&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Short-time Fourier transform that keeps the phase and can be inverted.</p>
+<p>:func:<code style="color:#22d3bf">dsp.spectrogram</code> returns magnitudes, which is all a display needs and</p>
+<p>strictly less than an analysis needs: a magnitude spectrogram cannot be</p>
+<p>turned back into a signal, so there is no path in :mod:<code style="color:#22d3bf">dsp</code> that filters or</p>
+<p>modifies a signal in the time-frequency plane and comes back. This is that</p>
+<p>path, and the test of it is that the round trip is exact.</p>
+<p>Returns a dict (the transform plus everything :func:<code style="color:#22d3bf">istft</code> needs to undo</p>
+<p>it):</p>
+<p>`<code style="color:#22d3bf">spectra</code>`</p>
+<p>complex128 `<code style="color:#22d3bf">(n_freqs, n_frames)</code>`, same orientation as</p>
+<p>:func:<code style="color:#22d3bf">dsp.spectrogram</code>.</p>
+<p>`<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">times</code>`</p>
+<p>bin centre frequencies in Hz and frame start times in seconds. Frame</p>
+<p>time 0.0 is the first *original* sample, so the leading pad does not</p>
+<p>shift the time axis.</p>
+<p>`<code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nfft</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">length</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">pad_left</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">scale</code>`,</p>
+<p>`<code style="color:#22d3bf">scaling</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">window_values</code>`</p>
+<p>the geometry, kept so the inverse needs no arguments.</p>
+<p>`<code style="color:#22d3bf">nola_min</code>`</p>
+<p>the smallest value of the squared-window overlap sum over the original</p>
+<p>samples. Reconstruction divides by this sum, so a value of zero means</p>
+<p>some sample is not reconstructible; it is refused up front rather than</p>
+<p>producing a hole.</p>
+<p>`<code style="color:#22d3bf">interior</code>`</p>
+<p>boolean mask over frames, true for the frames that lie **entirely inside</p>
+<p>the original signal**. The transform pads by a full window at each end so</p>
+<p>that inversion is exact, and the frames straddling that pad see part</p>
+<p>zeros — they are correct as coefficients but they are not representative,</p>
+<p>and any statistic averaged over *all* frames is therefore biased low.</p>
+<p>Measured on 16384 samples of unit-variance white noise, win = 1024,</p>
+<p>hop = 512: the `<code style="color:#22d3bf">&quot;density&quot;</code>` spectrum integrates to 0.9073 over all 35</p>
+<p>frames and to 0.9933 over the 31 interior ones (the signal&#x27;s own variance</p>
+<p>is 0.9923). :func:<code style="color:#22d3bf">spectral_kurtosis</code> uses this mask for exactly that</p>
+<p>reason — a half-empty frame looks impulsive.</p>
+<p><b>Normalisation is explicit</b>, because a windowed spectrum has no single</p>
+<p>natural amplitude and a plausible-looking dB number is the usual result of</p>
+<p>leaving it implicit. `<code style="color:#22d3bf">scaling</code>` selects a real factor applied to every</p>
+<p>coefficient, recorded as `<code style="color:#22d3bf">scale</code><code style="color:#22d3bf"> and divided out again by :func:</code>istft`:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;none&quot;</code><code style="color:#22d3bf"> (default) — the raw </code><code style="color:#22d3bf">rfft</code>` of the windowed frame.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;amplitude&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">2 / sum(w)</code><code style="color:#22d3bf">. A sinusoid of amplitude </code><code style="color:#22d3bf">A</code>` sitting on</p>
+<p>a bin centre then reads `<code style="color:#22d3bf">|Z| = A</code>`. Measured on a 1 kHz, amplitude-0.7</p>
+<p>tone at 16 kHz with a 256-sample periodic Hann, over the interior frames:</p>
+<p>`<code style="color:#22d3bf">|Z|</code>` ranges 0.699999999999999 to 0.700000000000001.</p>
+<p>DC and Nyquist read twice their amplitude under this convention (they are</p>
+<p>not two-sided), which is the standard caveat and is not corrected for.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;density&quot;</code><code style="color:#22d3bf"> — </code><code style="color:#22d3bf">sqrt(2 / (rate * sum(w**2)))</code><code style="color:#22d3bf">, so </code><code style="color:#22d3bf">|Z|**2</code>` is a</p>
+<p>single-sided power spectral density in units^2/Hz. Measured on 16384</p>
+<p>samples of white noise at 16 kHz (win 1024, hop 512): the PSD integrates</p>
+<p>to 0.9933 over the interior frames against the record&#x27;s own variance</p>
+<p>0.9923, and to 0.9073 if the pad frames are included — see `<code style="color:#22d3bf">interior</code>`.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: non-1-D / non-finite / complex / masked input,</p>
+<p>`<code style="color:#22d3bf">rate &lt;= 0</code><code style="color:#22d3bf">, a string or bool rate, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf"> outside </code><code style="color:#22d3bf">[1, win]</code>`,</p>
+<p>`<code style="color:#22d3bf">nfft &lt; win</code>`, an unknown window, an all-zero window, a transform over</p>
+<p>:data:<code style="color:#22d3bf">MAX_STFT_ELEMENTS</code>, and a window/hop pair whose squared overlap sum</p>
+<p>touches zero (NOLA violated — the round trip would be silently lossy).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a> · <a style="color:#22d3bf" href="opacoustics:stft_cola_check">stft_cola_check</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

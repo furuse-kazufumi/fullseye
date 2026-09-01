@@ -1,0 +1,52 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">angular_resample — ACOUSTICS <code style="color:#22d3bf">order</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.angular_resample(x, rate, rpm, samples_per_rev=64)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;angular_resample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Resample a time record onto the shaft-angle axis (computed order tracking).</p>
+<p>Under a changing shaft speed, a component locked to the shaft has a moving</p>
+<p>frequency and smears across the spectrum, while a structural resonance stays</p>
+<p>put. Resample the record so the samples are equally spaced in <b>shaft angle</b></p>
+<p>instead of in time and the situation reverses exactly: the order becomes a</p>
+<p>single line and the resonance smears.</p>
+<p>`<code style="color:#22d3bf">rpm</code>` is either a single number (constant speed — the transform is then a</p>
+<p>pure rescaling) or a per-sample array on the same clock as the signal. The</p>
+<p>cumulative revolution count is the trapezoidal integral of `<code style="color:#22d3bf">rpm/60</code>`, and</p>
+<p>the signal is linearly interpolated onto a uniform grid in it.</p>
+<p>Returns a dict — an angle-domain record is <b>not</b> put into circulation as a</p>
+<p>plain signal, deliberately. Its samples are indexed by angle, not time, so</p>
+<p>handing it to any op that takes a `<code style="color:#22d3bf">rate</code>` would produce frequencies in Hz</p>
+<p>from an axis measured in revolutions: no exception, no NaN, just wrong</p>
+<p>numbers. (Same judgement, and the same reason, as `<code style="color:#22d3bf">motionmag.motion_magnify</code>`</p>
+<p>not exposing a bare video adapter.) The dict carries `<code style="color:#22d3bf">signal</code>`,</p>
+<p>`<code style="color:#22d3bf">angle_rev</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">samples_per_rev</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">revolutions</code>` (total),</p>
+<p>`<code style="color:#22d3bf">whole_revolutions</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rate</code>` (the original time-domain one, for</p>
+<p>provenance), `<code style="color:#22d3bf">mean_rpm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_order</code>`.</p>
+<p>`<code style="color:#22d3bf">max_order</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">samples_per_rev / 2</code>` — the Nyquist of the *angle* axis.</p>
+<p>Measured: a pure order-3.5 component on a 600 -&gt; 1800 rpm ramp, resampled at</p>
+<p>64 samples/rev over 78 whole revolutions, reads amplitude 0.999371 in a</p>
+<p>single bin of the order spectrum; the same component in the ordinary</p>
+<p>spectrum peaks at 0.070203 and is 66.5 Hz wide.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses, a</p>
+<p>non-positive or wrong-length `<code style="color:#22d3bf">rpm</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">samples_per_rev</code>` outside</p>
+<p>`<code style="color:#22d3bf">[2, 65536]</code><code style="color:#22d3bf">, an output over :data:</code>MAX_ANGULAR_SAMPLES`, fewer than one</p>
+<p>complete revolution in the record, and — the aliasing refusal — a</p>
+<p>`<code style="color:#22d3bf">samples_per_rev</code>` whose implied Nyquist order needs content above the</p>
+<p>time-domain Nyquist. Asking for 64 samples/rev on a shaft turning at 30 Hz</p>
+<p>means representing 960 Hz, which a 100 Hz recording does not contain; the</p>
+<p>resampler would happily manufacture it from the interpolation.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• (まだありません)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">order</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:order_spectrum">order_spectrum</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,74 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">envelope_spectrum — ACOUSTICS <code style="color:#22d3bf">bearing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.envelope_spectrum(x, rate, low, high, order=4, n_peaks=5)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;envelope_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Band-pass, demodulate, transform — where a bearing defect actually shows.</p>
+<p>The three steps are each already available (`<code style="color:#22d3bf">dsp.bandpass</code>`,</p>
+<p>`<code style="color:#22d3bf">dsp.envelope</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">numpy.fft</code>`); what is not available anywhere in</p>
+<p>:mod:<code style="color:#22d3bf">dsp</code> is the *composition*, and the composition is the diagnostic. The</p>
+<p>raw spectrum of a defective bearing shows a resonance at some kHz and</p>
+<p>nothing at the defect rate; the envelope of that resonance band, transformed,</p>
+<p>shows the defect rate as a clean line.</p>
+<p>`<code style="color:#22d3bf">low</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">high</code>` are the demodulation band in Hz and are <b>required</b>,</p>
+<p>not optional. Choosing the band is the analysis; a default would hide the</p>
+<p>one decision that has to be made. :func:<code style="color:#22d3bf">spectral_kurtosis</code> finds a</p>
+<p>candidate band when there is no prior knowledge of the resonance.</p>
+<p>The envelope&#x27;s mean is removed before the transform (otherwise a large DC</p>
+<p>line dominates every plot), amplitudes are single-sided (`<code style="color:#22d3bf">2/N</code>`), and DC is</p>
+<p>excluded from peak picking.</p>
+<p>Returns a dict: `<code style="color:#22d3bf">freqs</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">magnitude</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_freq</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">peak_amplitude</code>`,</p>
+<p>`<code style="color:#22d3bf">peak_freqs</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">peak_amplitudes</code><code style="color:#22d3bf"> (the </code><code style="color:#22d3bf">n_peaks</code>` largest, descending),</p>
+<p>`<code style="color:#22d3bf">band</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">envelope_mean</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">resolution_hz</code>`, plus two numbers that exist</p>
+<p>because **this operator always returns a peak frequency, including when</p>
+<p>there is nothing there**:</p>
+<p>`<code style="color:#22d3bf">peak_prominence</code>`</p>
+<p>the peak divided by the median of the magnitude spectrum.</p>
+<p>`<code style="color:#22d3bf">band_fraction</code>`</p>
+<p>the RMS of the band-passed signal divided by the RMS of the input — how</p>
+<p>much of the record actually lives in the demodulation band.</p>
+<p>Found by adversarial audit and not repaired by an exception, because there</p>
+<p>is nothing invalid to refuse: a <b>constant</b> signal band-passed over</p>
+<p>100-2000 Hz has an envelope made of rounding error, and this operator dutifully</p>
+<p>reported `<code style="color:#22d3bf">peak_freq = 8.0000 Hz</code>`. Nothing raised, nothing was NaN, and</p>
+<p>`<code style="color:#22d3bf">8 Hz</code>` is a perfectly plausible number to write down. Measured, the four</p>
+<p>cases separate on the returned numbers rather than on any invented</p>
+<p>threshold:</p>
+<p>================  ========  =========  ===========  =============</p>
+<p>input             peak Hz   peak amp   prominence   band_fraction</p>
+<p>================  ========  =========  ===========  =============</p>
+<p>AM, defect 107    107.0000  4.997e-01     10018.6      9.999e-01</p>
+<p>impulse + noise   107.0000  1.968e-01      9384.7      9.201e-01</p>
+<p>white noise       128.0000  2.785e-02        365.2     3.745e-01</p>
+<p>constant signal     8.0000  1.691e-12        173.0     1.995e-12</p>
+<p>================  ========  =========  ===========  =============</p>
+<p>No cut-off is imposed here: a defect that is genuinely 20 dB into the noise</p>
+<p>is a real finding and refusing it would be worse than reporting it. The</p>
+<p>numbers are returned so the caller can see the difference between row 1 and</p>
+<p>row 4, which `<code style="color:#22d3bf">peak_freq</code>` alone does not show.</p>
+<p>Measured on :func:<code style="color:#22d3bf">synthesize_bearing_signal</code> (25600 Hz, 1 s, 3 kHz carrier,</p>
+<p>107 Hz defect, `<code style="color:#22d3bf">m = 0.5</code><code style="color:#22d3bf">) demodulated over 2000-4000 Hz: </code>`peak_freq =</p>
+<p>107.000000`<code style="color:#22d3bf"> Hz, </code><code style="color:#22d3bf">peak_amplitude = 0.499677</code>` — the modulation depth</p>
+<p>itself, because the analytic envelope of that signal is exactly</p>
+<p>`<code style="color:#22d3bf">1 + 0.5 cos(2 pi 107 t)</code><code style="color:#22d3bf">. The raw </code><code style="color:#22d3bf">dsp.spectrum</code>` of the same signal has</p>
+<p>amplitude 4.3e-16 at 107 Hz: the defect rate is not present as a frequency</p>
+<p>component at all, which is the entire point of the operator.</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal<code style="color:#22d3bf"> and </code><code style="color:#22d3bf">dsp.bandpass</code>`</p>
+<p>refuse (non-finite, complex, masked, non-1-D, a band edge outside</p>
+<p>`<code style="color:#22d3bf">(0, rate/2)</code>`, a signal too short for zero-phase filtering), plus a</p>
+<p>non-positive `<code style="color:#22d3bf">n_peaks</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">bearing</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:bearing_defect_frequencies">bearing_defect_frequencies</a> · <a style="color:#22d3bf" href="opacoustics:spectral_kurtosis">spectral_kurtosis</a> · <a style="color:#22d3bf" href="opacoustics:cepstrum">cepstrum</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -212,6 +212,27 @@ def make_generators():
             seed=int(rng.integers(0, 1000)))[0],
         # 四元数画像 (H,W,4)、順序 (w,x,y,z)
         "qimage": _quat_image,
+        # z 走査スタック (Z,H,W)。既知の高さ地図から合成するので真値が厳密
+        "zscan": lambda rng: __import__("interferometry").csi_stack_simulate(
+            5.0 + 2.0 * rng.random((16, 16)), 0.0, 0.05, 241, 0.6,
+            envelope_fwhm_um=2.8258,
+            reflectivity=0.4 + 0.6 * rng.random((16, 16)),
+            noise=float(rng.uniform(0.0, 0.01)),
+            seed=int(rng.integers(0, 1 << 31))),
+        # 掃引 1-D。**2 種を必ず混ぜる**(干渉信号とスペクトル)。片方だけだと
+        # 相手側の op が永久に fail-closed のまま「発見ゼロ」に見える
+        "sweep": lambda rng: (
+            __import__("interferometry").csi_signal_simulate(
+                4.0 + 4.0 * rng.random(), 0.0, 0.05, 241, 0.6,
+                envelope_fwhm_um=2.8258, reflectivity=0.5 + rng.random(),
+                noise=float(rng.uniform(0.0, 0.01)),
+                seed=int(rng.integers(0, 1 << 31)))
+            if rng.random() < 0.5 else
+            __import__("interferometry").chromatic_confocal_simulate(
+                -15.0 + 30.0 * rng.random(), 500.0, 0.5, 401, 0.20, 600.0,
+                peak_fwhm_nm=float(rng.uniform(2.0, 8.0)),
+                noise=float(rng.uniform(0.0, 10.0)),
+                seed=int(rng.integers(0, 1 << 31)))),
         # FMCW ビート立方体。既知の (距離, 速度, 到来角, 振幅) から合成するので
         # 2D FFT のピークがどこに立つべきかが閉形式で分かっている
         "beatcube": _beat_cube,
@@ -327,6 +348,10 @@ PARAM_HINTS = {
     # 時間軸の単位。T=32 / fps=32 なので 4 Hz はちょうど bin に乗り、
     # 3-5 Hz の通過帯域が空にならない
     "fps": lambda rng: 32.0, "f_lo": lambda rng: 3.0, "f_hi": lambda rng: 5.0,
+    # 回転数。既定 rate=100 Hz・samples_per_rev=64 では 60 rpm が 32 Hz で
+    # Nyquist 50 Hz に収まる。1800 rpm だとエイリアス検査で毎回弾かれ、
+    # 次数比分析 2 op が一度も実行されない
+    "rpm": lambda rng: 60.0,
     # 四元数の積は**非可換**なので、左右は既定に頼らせず必ず引く
     "side": lambda rng: "left" if rng.random() < 0.5 else "right",
     "axis_rgb": lambda rng: (lambda v: v / np.linalg.norm(v))(
@@ -535,6 +560,8 @@ OP_PARAM_HINTS = {
     # 既定 n_antennas=1 だとプールに 1 素子の立方体が入り、ビームフォーミング
     # 2 op が毎回「開口が無い」で弾かれて一度も実行されない
     ("fmcw_beat_simulate", "n_antennas"): lambda rng: 4,
+    # 生成器の走査範囲と辻褄を合わせる(既定 2.8 でも動くが端切れが増える)
+    ("csi_stack_simulate", "envelope_fwhm_um"): lambda rng: 2.8258,
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
@@ -577,6 +604,10 @@ def _registry_adapters():
     d.update(opsquat.RESULT_ADAPTERS)       # 空: 19 op とも宣言型を素で返す
     import opsrangedoppler
     d.update(opsrangedoppler.RESULT_ADAPTERS)   # 空(意図的)
+    import opsacoustics
+    d.update(opsacoustics.RESULT_ADAPTERS)      # 空(意図的)
+    import opsinterferometry
+    d.update(opsinterferometry.RESULT_ADAPTERS)  # 空(意図的)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -672,6 +703,26 @@ def catalog():
     for n, m in opsrangedoppler.OPSRANGEDOPPLER.items():
         if m["func"] is not None:
             ops.append((n, "rangedoppler", list(m["in"]), m["out"], m["func"]))
+    # 音響・振動診断(opsacoustics 台帳)。**新しい型語彙を作らない**判断:
+    # 任意の実 1-D 配列は本当に妥当な音響信号なので、専用型を宣言しても嘘に
+    # ならない代わりに守るものが無い(counts と違って破る制約が無い)。危険は
+    # 配列でなく **rate スカラ**の側にある — 同じ録音を 25600 でなく 48000 Hz
+    # として読むと欠陥周波数が 107 Hz でなく 200.625 Hz と報告され、例外は
+    # 出ない。よって防御はスカラ検証に置き、既存 dsp / funct1d との接続を保つ
+    import opsacoustics
+    for n, m in opsacoustics.OPSACOUSTICS.items():
+        if m["func"] is not None:
+            ops.append((n, "acoustics", list(m["in"]), m["out"], m["func"]))
+    # コヒーレンス走査干渉(opsinterferometry 台帳)。型語彙 2 つ:
+    # `zscan` = (Z,H,W) の走査スタック(**走査軸が先頭**)、`sweep` = 1-D の
+    # 非負掃引。zscan を分けたのは実測で**片側だけが黙って通る**から —
+    # zscan を video / histcube へ渡すと 4 op すべてが例外も NaN も出さずに
+    # 「増幅結果」「深度」を返すが、逆向きは fail-closed する。実行時検査に
+    # 頼れないので宣言型で分ける
+    import opsinterferometry
+    for n, m in opsinterferometry.OPSINTERFEROMETRY.items():
+        if m["func"] is not None:
+            ops.append((n, "interferometry", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -767,6 +818,15 @@ TYPE_CHECKS = {
     "pose": lambda v: isinstance(v, (tuple, list)) and len(v) >= 2
     and tuple(getattr(v[0], "shape", ())) == (3, 3)
     and tuple(getattr(v[1], "shape", ())) == (3,),
+    # zscan = (Z,H,W) の走査スタック。video (T,H,W) / histcube (H,W,T) /
+    # voxel と述語を相互に満たすので、型を分けないと軸の意味だけが黙って
+    # すり替わる(実測: zscan を motion_magnify に渡すと有限の「増幅結果」が返る)
+    "zscan": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.dtype.kind == "f" and v.shape[0] >= 3
+    and v.shape[1] >= 2 and v.shape[2] >= 2,
+    # sweep = 非負の 1-D 掃引(干渉信号 or 戻りスペクトル)
+    "sweep": lambda v: isinstance(v, np.ndarray) and v.ndim == 1
+    and v.dtype.kind == "f" and v.size >= 16 and (v >= 0.0).all(),
     # beatcube = (アンテナ, チャープ, サンプル) の**複素**立方体。3-D complex の
     # 既存語彙は無い(cimage は 2-D)。real を弾くのがこの型の契約の本体で、
     # 実の histcube と形は同じだが dtype だけが違う

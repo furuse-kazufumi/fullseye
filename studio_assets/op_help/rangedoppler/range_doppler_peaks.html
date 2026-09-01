@@ -1,0 +1,51 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">range_doppler_peaks — RANGEDOPPLER <code style="color:#22d3bf">process</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import rangedoppler; rangedoppler.range_doppler_peaks(rdmap, range_bin_m=1.0, velocity_bin_ms=1.0, n_peaks=1, min_fraction=0.1, doppler_shifted=True)</code> (または <code style="color:#22d3bf">opsrangedoppler.get(&quot;range_doppler_peaks&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Detections from a range-Doppler map: bin indices back to metres and m/s.</p>
+<p>Finds strict local maxima of the 2-D magnitude map — greater than all eight</p>
+<p>neighbours, <b>cyclically</b> along the Doppler axis (velocity really is</p>
+<p>periodic in the FFT: the fastest receding bin is adjacent to the fastest</p>
+<p>approaching one) and <b>openly</b> along the range axis (a cell in the first or</p>
+<p>last range bin competes only against the neighbours that exist, so a target</p>
+<p>in the last bin is a detection, not a discard) — keeps those at least</p>
+<p>*min_fraction* of the global maximum, and returns the strongest *n_peaks*.</p>
+<p>Range bin 0 is reported like any other. In a real receiver it is the</p>
+<p>transmitter-leakage / DC bin rather than a target, but suppressing it here</p>
+<p>would be a silent policy applied to somebody else&#x27;s data; threshold it</p>
+<p>yourself if you want it gone.</p>
+<p>Index -&gt; physical value, closed form and the exact inverse of</p>
+<p>:func:<code style="color:#22d3bf">fmcw_beat_simulate</code>:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">range_m = j * range_bin_m</code><code style="color:#22d3bf">, with </code><code style="color:#22d3bf">range_bin_m = c*f_s/(2*S*N_s)</code>`</p>
+<p>from :func:<code style="color:#22d3bf">fmcw_design</code>;</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">velocity_ms = (i - n_doppler//2) * velocity_bin_ms</code>` when</p>
+<p>*doppler_shifted* (the layout :func:<code style="color:#22d3bf">range_doppler_map</code> produces), or</p>
+<p>`<code style="color:#22d3bf">i</code><code style="color:#22d3bf"> wrapped into </code><code style="color:#22d3bf">[-N_c/2, N_c/2)</code>` when the map is unshifted.</p>
+<p>The bin widths are <b>required parameters with placeholder defaults of 1.0</b>,</p>
+<p>which means the default output is in bins, not metres. That is deliberate:</p>
+<p>inventing a default waveform here would let a caller read metres off a map</p>
+<p>that was never that waveform&#x27;s.</p>
+<p>Returns a `<code style="color:#22d3bf">dict</code><code style="color:#22d3bf"> with </code><code style="color:#22d3bf">peaks</code>` (a list of per-detection dicts holding</p>
+<p>`<code style="color:#22d3bf">range_m</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">velocity_ms</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">magnitude</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">range_bin</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">doppler_bin</code>`),</p>
+<p>`<code style="color:#22d3bf">n_found</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">max_magnitude</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">noise_floor</code>` (the median of the map).</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a non-2-D, complex, negative, or non-finite map; a</p>
+<p>map whose maximum is 0 (an all-zero map has no cell to detect and returning</p>
+<p>cell (0,0) — which is what `<code style="color:#22d3bf">argmax</code>` does — would be a fabricated</p>
+<p>detection); a non-positive bin width; *n_peaks* &lt; 1; a *min_fraction*</p>
+<p>outside `<code style="color:#22d3bf">[0, 1]</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler ファミリ ガイド</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">process</code>)</h3>
+<p><a style="color:#22d3bf" href="oprangedoppler:fmcw_window_apply">fmcw_window_apply</a> · <a style="color:#22d3bf" href="oprangedoppler:range_doppler_map">range_doppler_map</a> · <a style="color:#22d3bf" href="oprangedoppler:fmcw_range_profile">fmcw_range_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
