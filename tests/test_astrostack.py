@@ -416,8 +416,16 @@ class TestStarsAndPsf:
         """雑音が 0 ならしきい値が定義できない。全画素を星にしない。"""
         assert A.star_detect(np.full((32, 32), 7.0)).shape == (0, 2)
 
-    def test_psf_fit_recovers_the_planted_fwhm(self):
-        """3 つの FWHM で 1 % 以内。尺度を 3 つ取るので単位の取り違えが隠れない。"""
+    def test_psf_fit_recovers_the_planted_fwhm_plus_the_pixel_box(self):
+        """当てはめは真の FWHM ではなく **``sqrt(sigma^2 + 1/12)``** を返す。
+
+        画素は連続分布を幅 1 の箱で積分した値で、一様な箱の分散は ``1/12``。
+        だから連続ガウシアンを当てると必ずその分だけ太い。これは推定の誤差
+        ではなく**画像がそうできている**ので、閉形式の予測ごと固定する ——
+        「1 % 以内で当たる」と書いて 3.7 % ずれるのを許容値で飲み込むと、
+        本当の由来が誰にも分からなくなる。3 つの尺度で確かめるので、
+        ``1/12`` が偶然合っているだけ、ということも起こらない。
+        """
         for fwhm in (2.5, 3.5, 5.0):
             frame, truth = A.synth_starfield(
                 shape=(96, 96), n_stars=6, fwhm_px=fwhm, flux_min=40000.0,
@@ -425,7 +433,14 @@ class TestStarsAndPsf:
                 margin_px=16.0)
             fits = A.psf_fit(frame, A.star_detect(frame), box=15)
             got = np.median([f["fwhm_px"] for f in fits])
-            assert got == pytest.approx(fwhm, rel=0.01), (fwhm, got)
+            sigma = fwhm / A.FWHM_PER_SIGMA
+            predicted = A.FWHM_PER_SIGMA * np.sqrt(sigma ** 2 + 1.0 / 12.0)
+            assert got == pytest.approx(predicted, rel=0.01), (fwhm, got,
+                                                               predicted)
+            # 箱を外せば真の値に戻る(補正が本当に 1/12 であることの裏取り)
+            corrected = A.FWHM_PER_SIGMA * np.sqrt(
+                (got / A.FWHM_PER_SIGMA) ** 2 - 1.0 / 12.0)
+            assert corrected == pytest.approx(fwhm, rel=0.012), (fwhm, corrected)
 
     def test_psf_fit_recovers_a_moffat_profile_with_its_own_model(self):
         """Moffat で撒いた星は Moffat で当てる(FWHM は 3 % 以内)。"""
