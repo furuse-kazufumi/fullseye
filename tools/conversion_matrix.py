@@ -47,7 +47,8 @@ def load():
     ops = CF.catalog()
     checks = set(CF.TYPE_CHECKS)
     gens = set(CF.make_generators())
-    return ops, checks, gens
+    builders = set(getattr(CF, "OP_ARG_BUILDERS", {}))
+    return ops, checks, gens, builders
 
 
 def analyse() -> dict:
