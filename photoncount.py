@@ -1369,7 +1369,7 @@ def dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None,
             "unambiguous range here is %g m; refusing to alias it silently."
             % (float(d.max()), float(t0.max()), window, n, dt,
                SPEED_OF_LIGHT_M_S * window * 1e-12 / 2.0))
-    sigma = fwhm / FWHM_PER_SIGMA
+    sigma = _pulse_sigma(fwhm, "dtof_cube_simulate")
     edges = np.arange(n + 1, dtype=np.float64) * dt
     probs = _gauss_bin_probs(edges[None, None, :], t0[:, :, None], sigma)
     lam = sig * refl[:, :, None] * probs + amb / float(n)
