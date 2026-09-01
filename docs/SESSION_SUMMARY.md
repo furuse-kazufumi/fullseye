@@ -3,13 +3,14 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 01:01:23
+- **最終更新**: 2026-09-02 01:06:03
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
+772eada8 docs: 記事の章構成 組み替え計画(未実施)+ 「読者の ROI」を削る基準に
 72006104 docs: Qiita 記事 ja/en に追記7 — 5 分野の実装と「発見ゼロ」が嘘をつく話
 b67ee407 docs: 3 族のファミリガイド + 音響の未実測コメントを実測表へ差し替え
 7a0328d4 auto: coherence_scanning.md 編集前 (2026-09-01 22:06)
@@ -19,7 +20,6 @@ b67ee407 docs: 3 族のファミリガイド + 音響の未実測コメントを
 ac9e7cd2 auto: opsacoustics.py 編集前 (2026-09-01 21:45)
 16803643 auto: opsacoustics.py 編集前 (2026-09-01 21:45)
 583a6a71 auto: opsacoustics.py 編集前 (2026-09-01 21:45)
-af6bcc6a auto: acoustic_condition_monitoring.py 編集前 (2026-09-01 21:44)
 ```
 
 ## 現在の git status
@@ -31,6 +31,8 @@ af6bcc6a auto: acoustic_condition_monitoring.py 編集前 (2026-09-01 21:44)
 ## 直近 2 時間に変更されたファイル
 
 ```
+01:05 docs/ARTICLE_RESTRUCTURE_PLAN.md
+01:01 docs/SESSION_SUMMARY.md
 00:59 docs/articles/fullseye_overview_qiita_en.md
 00:58 docs/articles/fullseye_overview_qiita_ja.md
 ```
