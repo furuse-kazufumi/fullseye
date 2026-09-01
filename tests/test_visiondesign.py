@@ -227,10 +227,18 @@ def test_vignetting_is_physical_not_normalised_to_the_array_corner():
     tile = vd.image_formation(np.ones((232, 232)), **kw)
     assert tile[0, 0] > 0.999, "小さな切り出しはほとんど落ちない(旧実装は 0.2500)"
 
-    # 像距離を変えれば答えが変わること = 物理量に反応している証拠
+    # 像距離を変えれば答えが変わること = 物理量に反応している証拠。
+    # 232x232 の角は光軸から 0.566 mm なので、像距離 2 mm では画角 15.8 度 →
+    # cos^4 = 0.858。旧実装ならどちらも 0.2500 で、区別がつかなかった。
     near = vd.image_formation(np.ones((232, 232)), f_number=4.0, pixel_pitch_um=3.45,
                               vignetting=True, image_distance_mm=2.0)
-    assert near[0, 0] < 0.5
+    assert near[0, 0] == pytest.approx(0.858, abs=0.01)
+    assert near[0, 0] < tile[0, 0] - 0.1, "像距離が短いほど強く落ちること"
+
+    # 画素ピッチを変えても答えが変わる(旧実装はここにも反応しなかった)
+    coarse = vd.image_formation(np.ones((232, 232)), f_number=4.0, pixel_pitch_um=13.8,
+                                vignetting=True, image_distance_mm=geo["image_distance_mm"])
+    assert coarse[0, 0] < tile[0, 0], "同じ画素数でもピッチが粗いほど広い画角"
 
 
 def test_vignetting_without_image_distance_fails_closed():
