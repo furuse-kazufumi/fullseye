@@ -114,14 +114,24 @@ re-implemented):
 Honest disclosure (what these ops cannot do):
 
   * **The beat model drops the residual video phase.** The exact dechirped phase
-    contains a ``pi*S*tau^2`` term; it is omitted here, as in every textbook
-    treatment, because ``S*tau^2`` is ~1e-10 cycles at the ranges this module is
-    parameterised for. It is *not* negligible for a very long-range, very
-    high-slope configuration, and nothing here warns you about that.
+    contains a ``pi*S*tau^2`` term, omitted here as in every textbook treatment.
+    It is **not** small in absolute terms — computed for the default waveform, it
+    is 0.034 rad at 3.5 m but **15.7 rad (2.5 cycles) at the far end of the
+    unambiguous range**. It is dropped anyway because it does not depend on fast
+    time, so it moves no range bin; across slow time its slope relative to the
+    Doppler slope is ``S*tau*lambda/c``, computed as 6.1e-6 at 3.5 m and 1.3e-4
+    at 74.9 m — i.e. a velocity bias under 1e-4 of a bin. That ratio grows
+    linearly with both slope and range, so a far higher-slope, far longer-range
+    configuration would need the term, and nothing here warns you when you reach
+    one. (An earlier draft of this paragraph asserted "~1e-10 cycles", which was
+    wrong by ten orders of magnitude and is corrected here rather than quietly
+    deleted.)
   * **Range-Doppler coupling is not modelled.** The target is taken to sit in one
-    range bin for the whole coherent processing interval. A target that migrates
-    across range bins during the acquisition smears, and this forward model does
-    not produce that smear.
+    range bin for the whole coherent processing interval. For the default
+    waveform that is a good approximation — at the maximum unambiguous velocity a
+    target moves 0.031 m in the 1.6 ms interval, 2.7% of a range bin — but a
+    target that does migrate across bins smears, and this forward model does not
+    produce that smear.
   * **No propagation, no radar equation, no clutter.** *amplitudes* are whatever
     you pass in. There is no ``1/R^4``, no atmospheric loss, no ground return, no
     multipath, and no receiver noise figure — only an optional additive circular
