@@ -31,10 +31,12 @@ Six families of operator:
     ``V``; the factor 4 (not 2) is the double pass down to the surface and back.
   * **envelope** — :func:`csi_envelope`: the analytic-signal (Hilbert) envelope of
     a scan, after the DC pedestal is removed. Removing the pedestal is not
-    cosmetic: on the reference signal the envelope error is **2.4e-07** with the
-    bias removed and **0.5** (i.e. the whole pedestal) without it.
+    cosmetic: on the reference signal the envelope error is **1.8e-07** with the
+    bias removed and **0.5** (i.e. the whole pedestal) without it — and
+    ``dsp.envelope`` applied to the raw interferogram gives that same 0.5, which
+    is why this operator exists at all.
   * **locate** — :func:`csi_peak_position`: where along the scan that envelope
-    peaks, by four estimators whose biases differ by six orders of magnitude and
+    peaks, by four estimators whose biases differ by five orders of magnitude and
     which *swap places* once noise is present (see the table below).
   * **surface** — :func:`csi_height_map` / :func:`csi_contrast_map`: the same
     inversion over a ``(Z, H, W)`` scan stack, giving a height map and the fringe
@@ -53,22 +55,34 @@ Noiseless, envelope sigma 1.2 um, step 0.05 um, true peak placed at four
 sub-step offsets; and the same with 1 % additive noise, 200 trials:
 
     estimator    noiseless max |error|      noisy RMS error (sigma_n = 0.01)
-    peak         2.50e-02 um  (= step/2)    0.1102 um
-    centroid     1.00e-06 um                0.0324 um
-    parabolic    4.07e-06 um                0.1084 um
-    gaussian     4.33e-09 um                0.1084 um
+    peak         2.50e-02 um  (= step/2)    0.1395 um
+    centroid     4.55e-07 um                0.0219 um
+    parabolic    4.21e-06 um                0.1403 um
+    gaussian     1.43e-07 um                0.1403 um
 
-Read that table twice. Noiseless, ``"gaussian"`` wins by six orders of magnitude
-(the logarithm of a sampled Gaussian is *exactly* a parabola, so the three-point
-log fit is exact). With noise, ``"centroid"`` wins by 3.3x, because the three
-local estimators only look at three samples around an ``argmax`` that noise moves
-around a broad, flat envelope, whereas the centroid averages the whole scan. The
-default is ``"gaussian"`` because it is the one that is exact when the data is
-good; **there is no single best estimator here and the module does not pretend
+Read that table twice. Noiseless, ``"gaussian"`` is 30x better than
+``"parabolic"`` (the logarithm of a sampled Gaussian is *exactly* a parabola, so
+the three-point log fit is exact — on the analytic envelope it is exact to 3e-14,
+and the 1.43e-07 floor above is the Hilbert envelope's own error, not the fit's).
+With noise, ``"centroid"`` wins by 6.4x, because the three local estimators only
+look at three samples around an ``argmax`` that noise moves around a broad, flat
+envelope, whereas the centroid averages all 241 planes. The default is
+``"gaussian"`` because it is the one that is exact when the data is good;
+**there is no single best estimator here and the module does not pretend
 otherwise.** The centroid's own failure mode is disclosed in
 :func:`csi_peak_position`: it is biased by where the peak sits in the scan window
-(+0.19 um noiseless, +0.87 um with a 2 % noise floor, when the surface is 2 um
+(+0.189 um noiseless, +0.873 um with a 2 % noise floor, when the surface is 2 um
 from a 12 um window's edge).
+
+A third number matters more than either: **accuracy here is a property of the
+scan layout, not of the estimator.** With the surface centred in the scan the
+``"gaussian"`` estimator is exact to 3e-14 um; move it to 2 um from the end of a
+12 um scan and the same estimator gives 2.7e-02 um, because part of the coherence
+envelope is now outside the scan and the analytic signal is a global transform.
+Push further — a surface at 0.500 um — and it returns **0.119 um** without any
+first-or-last-plane check firing. That is a silent, plausible, 76 %-wrong answer,
+and it is what ``max_edge_envelope`` exists to refuse. Zero-padding and
+reflect-padding were both measured as fixes and both made it worse.
 
 Provenance — textbook and cited public literature only, nothing derived from any
 commercial instrument (see ``docs/PROVENANCE.md``):
@@ -83,8 +97,10 @@ commercial instrument (see ``docs/PROVENANCE.md``):
     light interferometry", *JOSA A* 13(4):832-843, 1996 — the five-sample
     envelope algorithms this module's Hilbert route is the general case of.
   * M. Born & E. Wolf, *Principles of Optics*, 7th ed., Section 7.5.8 — the
-    coherence length of a Gaussian source, ``l_c = (2 ln2 / pi) * lambda^2 /
-    delta_lambda``, verified numerically in :func:`csi_design`'s test.
+    coherence length of a Gaussian source, ``l_c = (4 ln2 / pi) * lambda^2 /
+    delta_lambda`` in **optical path difference** (so half that along the scan
+    axis, since the double pass makes OPD = 2z), verified numerically in
+    :func:`csi_design`'s test.
   * ISO 25178-604 and ISO 25178-602 — the standard vocabulary for
     coherence-scanning interferometry and for chromatic confocal probes.
   * H. J. Tiziani & H.-M. Uhde, "Three-dimensional image sensing by chromatic
@@ -158,7 +174,7 @@ INTERFEROMETRY = [
 #: Envelope-peak estimators accepted by :func:`csi_peak_position`,
 #: :func:`csi_height_map` and :func:`chromatic_confocal_height`.
 #: Their measured biases are tabulated in the module docstring — they differ by
-#: six orders of magnitude and the ranking *inverts* once noise is present.
+#: five orders of magnitude and the ranking *inverts* once noise is present.
 ESTIMATORS = ("peak", "centroid", "parabolic", "gaussian")
 
 #: ``FWHM = FWHM_PER_SIGMA * sigma`` for a Gaussian (``2*sqrt(2*ln 2)``).
@@ -377,7 +393,7 @@ def _visibility(env: np.ndarray) -> np.ndarray:
     carrier, a constant, a plane of the scan that never came into focus — has a
     flat envelope whose median *is* its maximum, so this is close to 0. Measured
     on the chain fuzzer's ``signal`` pool (a sinusoid plus 10 % noise) it is
-    0.176; on a real interferogram, 1.000.
+    0.241; on a real interferogram, 0.958; on a constant, 0.000.
     """
     top = env.max(axis=-1)
     mid = np.median(env, axis=-1)
@@ -524,8 +540,12 @@ def csi_signal_simulate(surface_um=5.0, z_start_um=0.0, z_step_um=0.05,
     z_start_um/z_step_um/n_planes: the scan grid,
                           ``z_k = z_start_um + k*z_step_um``.
     wavelength_um:        mean wavelength of the source.
-    coherence_length_um:  the envelope **FWHM**. Give this *or*
-                          ``envelope_sigma_um``, never both.
+    envelope_fwhm_um:     the FWHM of the envelope **along the scan axis**. Give
+                          this *or* ``envelope_sigma_um``, never both. It is
+                          **half** the source coherence length, because the
+                          double pass makes OPD = 2z;
+                          :func:`csi_design` returns both under separate names
+                          for exactly that reason.
     bias/amplitude:       the intensity pedestal ``a`` and fringe amplitude ``b``.
     reflectivity:         per-pixel scale on the fringe amplitude (>= 0). It
                           scales the envelope and therefore
@@ -540,9 +560,11 @@ def csi_signal_simulate(surface_um=5.0, z_start_um=0.0, z_step_um=0.05,
 
     Returns a 1-D float64 array of ``n_planes`` intensities.
 
-    Ground truth: with ``noise=0`` the ``"gaussian"`` estimator of
-    :func:`csi_peak_position` returns *surface_um* to 4.3e-09 um over sub-step
-    offsets (pinned in the tests).
+    Ground truth: with ``noise=0`` and the surface centred in the scan, the
+    ``"gaussian"`` estimator of :func:`csi_peak_position` returns *surface_um* to
+    1.43e-07 um over sub-step offsets, and to 2.9e-14 um when the envelope is
+    given analytically instead of through the Hilbert transform (both pinned in
+    the tests).
 
     **Raises** ``ValueError``: a non-real / non-finite / string / bool parameter,
     a non-positive ``z_step_um`` / ``wavelength_um`` / envelope width, a negative
@@ -608,10 +630,13 @@ def csi_stack_simulate(height_um, z_start_um=0.0, z_step_um=0.05, n_planes=241,
 
     Returns a float64 ``(n_planes, H, W)`` stack.
 
-    Ground truth: with ``noise=0``, ``csi_height_map(stack, ...,
-    mode="gaussian")`` returns *height_um* with an RMS error of 4.2e-09 um over a
-    tilted plane (pinned in the tests) — the only error is the three-point fit's
-    round-off.
+    Ground truth: with ``noise=0``, ``csi_height_map(stack, ..., mode="gaussian")``
+    returns *height_um* with an RMS error of **2.08e-06 um** over a tilted plane
+    spanning 5.0-7.0 um of a 0-12 um scan, and the per-pixel result is bit-for-bit
+    identical to running :func:`csi_peak_position` on each column separately
+    (both pinned in the tests). Widening the same plane to 2.0-10.0 um degrades
+    that to 7.06e-03 um — envelope truncation at the scan ends, not the
+    estimator.
 
     **Raises** ``ValueError``: everything :func:`csi_signal_simulate` raises, plus
     a non-2-D / empty *height_um*, a *reflectivity* that is negative or a
@@ -719,8 +744,12 @@ def chromatic_confocal_simulate(surface_um=0.0, wavelength_start_nm=500.0,
     clip is stated here rather than left as a surprise).
 
     Ground truth: with ``noise=0`` the ``"gaussian"`` estimator recovers
-    *surface_um* to 3.6e-13 um, at any peak width, because the logarithm of a
-    sampled Gaussian is exactly a parabola (pinned in the tests).
+    *surface_um* **exactly** (measured 0.0e+00 to 3.6e-15 um over heights from
+    -15 to +18 um), at any peak width and even with the peak two bins from the
+    band edge, because the logarithm of a sampled Gaussian is exactly a parabola
+    and the three-point fit is *local* — there is no Hilbert transform here, so
+    the truncation failure that limits the coherence-scanning side does not exist
+    on this one (pinned in the tests).
 
     **Raises** ``ValueError``: non-real / non-finite / string / bool parameters, a
     non-positive step / width / dispersion, negative *peak_counts* /
@@ -772,12 +801,14 @@ def csi_envelope(signal, remove_bias=True):
     term passes through the Hilbert transform untouched and dominates.
 
     Measured on the module's reference scan (``a = 0.5``, ``b = 0.4``, envelope
-    sigma 1.2 um): with the bias removed the envelope matches the analytic
-    ``b*V(z)`` to **2.4e-07**; without it, the error is **0.5** — the entire
-    pedestal — and the recovered "envelope" never goes near zero. That is why
-    ``remove_bias`` defaults to ``True``; ``False`` is available for a scan whose
-    pedestal you have already removed some other way, and it is your statement
-    that you did.
+    sigma 1.2 um, surface centred): with the bias removed the envelope matches the
+    analytic ``b*V(z)`` to **1.83e-07**; without it, the error is **0.5** — the
+    entire pedestal — and the recovered "envelope" never goes near zero.
+    ``dsp.envelope`` called directly on the same raw interferogram gives that
+    identical 0.5, which is the honest statement of what this operator adds. That
+    is why ``remove_bias`` defaults to ``True``; ``False`` is available for a scan
+    whose pedestal you have already removed some other way, and it is your
+    statement that you did.
 
     signal:      1-D scan intensities (``(n,)``, n >= 3).
     remove_bias: subtract the scan mean before the transform.
@@ -1070,8 +1101,12 @@ def csi_contrast_map(stack, remove_bias=True):
          decide which heights from :func:`csi_height_map` to trust.
       2. **Reflectance.** In the forward model the envelope peak is exactly
          ``amplitude * reflectivity``, so with a known *amplitude* this map *is*
-         the reflectivity, to machine precision. Verified in the tests: a known
-         reflectivity map is recovered with a maximum error of 1.2e-07.
+         the reflectivity. Verified in the tests: a known reflectivity map over a
+         5.0-7.0 um surface is recovered with a maximum error of 7.32e-05 (the
+         residual is envelope truncation again — the same surface spread over
+         2.0-10.0 um gives 4.03e-04). It is a contrast map, not a photometric
+         measurement, and it is accurate to about four decimal places, not to
+         machine precision.
       3. **Focus.** It is the interferometric analogue of a focus measure, and it
          peaks where :func:`csi_height_map` says the surface is.
 
@@ -1114,10 +1149,11 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
 
     The four *mode* estimators are :data:`ESTIMATORS`, identical to
     :func:`csi_peak_position`'s and sharing its implementation. ``"gaussian"`` is
-    exact for a Gaussian confocal response (measured 3.6e-13 um), *including when
-    the peak is narrower than one bin* — the logarithm of a sampled Gaussian is a
-    parabola whatever its width. That exactness is a property of noiseless data
-    only, which is what *min_peak_bins* is about.
+    exact for a Gaussian confocal response (measured 0.0e+00 to 3.6e-15 um),
+    *including when the peak is narrower than one bin and when it sits two bins
+    from the band edge* — the logarithm of a sampled Gaussian is a parabola
+    whatever its width, and the fit is local. That exactness is a property of
+    noiseless data only, which is what *min_peak_bins* is about.
 
     spectrum:             1-D non-negative intensities across the spectrometer.
     wavelength_start_nm / wavelength_step_nm: the spectrometer axis.
@@ -1133,11 +1169,25 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
     min_peak_bins:        refuse a peak whose full width at half maximum spans
                           fewer than this many bins. Undersampling does not break
                           the noiseless algebra, but it destroys its noise
-                          rejection: measured with 1 % noise, a peak spanning 8
-                          bins is located to 0.010 nm while the same peak
-                          spanning 1 bin is located to 0.216 nm — 21x worse from
-                          a spectrum that looks perfectly healthy. Set to 0 to
-                          disable the check if you know your data is clean.
+                          rejection. Measured at 1 % noise (1000 peak counts,
+                          sigma_n = 10, 100 trials), RMS error in locating the
+                          peak against the number of bins across its FWHM:
+
+                              0.5 bins -> 0.256 nm
+                              1.0 bins -> 0.137 nm
+                              2.0 bins -> 0.010 nm
+                              4.0 bins -> 0.030 nm
+                              8.0 bins -> 0.118 nm
+
+                          Two bins is the optimum and a half-bin peak is **25x**
+                          worse, from a spectrum that looks perfectly healthy —
+                          hence the default of 2. Note the curve turns around
+                          again: a very *broad* peak is also bad, because the
+                          three-point fit then sits where the curvature is tiny
+                          and noise dominates it. "More samples is better" is
+                          false here and this operator does not claim it. Set to
+                          0 to disable the check if you know your data is
+                          clean.
 
     Returns the height as a float, in micrometres. It may be negative — a height
     is signed, unlike a time-of-flight distance.
@@ -1319,6 +1369,9 @@ def csi_design(wavelength_um=0.6, bandwidth_um=0.1, z_range_um=12.0,
     capture = 2.0 * sigma * np.sqrt(2.0 * np.log(1.0 / vis))
     n_planes = int(np.ceil(zr / rec_step)) + 1
     elems = n_planes * w * h
+    if elems > (1 << 62):                                  # pragma: no cover
+        raise ValueError("%s: the requested scan is absurd (%d elements)"
+                         % (op, elems))
     return {
         "wavelength_um": lam,
         "bandwidth_um": dlam,
