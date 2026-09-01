@@ -668,7 +668,8 @@ def ex_domain(log) -> dict:
         if sub is not None:
             pc[y0:y0 + sub.shape[0], x0:x0 + sub.shape[1], :] = _cmap(
                 _norm01(sub, 0, 1.0), "gray")
-        panels.append(("vol_crop_domain 後", pc, "cropped"))
+        panels.append(("vol_crop_domain 後(%dx%dx%d)" % np.asarray(part).shape,
+                       pc, "cropped"))
         # 4) 貼り戻し
         panels.append(("vol_uncrop で貼り戻し", np.asarray(_cmap(_norm01(np.asarray(back)[z], 0, 1.0), "gray")), "restored"))
 
