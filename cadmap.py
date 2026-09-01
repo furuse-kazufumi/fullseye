@@ -823,7 +823,7 @@ def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
 # op 4 — 実際に見えている面(検査カバレッジ)                                   #
 # --------------------------------------------------------------------------- #
 def cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64,
-                      cull_backfaces=True):
+                      cull_backfaces=True, strict=True):
     """このカメラから**実際に見えている**面の ID(昇順、``indices`` sort)。
 
     画像格子(``width`` x ``height``、画素中心は整数座標)へ光線を撃ち、最も
