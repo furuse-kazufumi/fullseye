@@ -481,6 +481,107 @@ def ex_zslices():
 
 
 # --------------------------------------------------------------------------- #
+# キャプション原稿                                                              #
+# --------------------------------------------------------------------------- #
+#: name -> (見出し, 使用 op/機能, 本文を組み立てる関数(facts, rec) -> str)
+CAPTIONS = {
+    "volume_turntable": (
+        "CT を回す —— 面と粒、同じ角度で",
+        "`marching_cubes`, `phong_shade`, `vol_boundary`, `render_points_frame`",
+        lambda f, r: (
+            "同梱の骨格 CT ({0}×{1}×{2} voxel)を等値面 (mean+std = {3:.4f}) で"
+            "三角形 {4:,} 枚 / 頂点 {5:,} のメッシュにしたものと、同じ閾値の境界シェル "
+            "{6:,} voxel を、**同じ yaw・同じ仰角で並べて回して**います。"
+            "左は面、右は粒。同じ形が同じ向きに回ることが、軸を取り違えていない"
+            "何よりの証拠になります({7} フレーム)。"
+        ).format(f["volume_shape"][0], f["volume_shape"][1], f["volume_shape"][2],
+                 f["iso_level"], f["n_faces"], f["n_vertices"],
+                 f["n_shell_points"], r["frames"])),
+    "zslices": (
+        "z スライスを 1 枚ずつ送る",
+        "`vol_mip`, `apply_cmap`, 最近傍整数拡大",
+        lambda f, r: (
+            "同じ CT を z = 0 から {0} まで 1 枚ずつ送ります(全 {1} フレーム、"
+            "下のバーが現在位置)。右は全 z を潰した MIP。左の 1 枚には毎フレーム"
+            "実測した骨占有率・最小/最大/平均を出しているので、**端の 1 枚が欠けている"
+            "/ 重複している**といった off-by-one はここで必ず露見します。"
+            "拡大は最近傍 ×{2}(補間しない —— 画素の粗さ自体が情報)。"
+        ).format(f["volume_shape"][0] - 1, r["frames"], f["upscale"])),
+}
+
+
+def _md_image(rec: dict) -> str:
+    """記事に貼る Markdown 行(raw.githubusercontent の絶対 URL)。"""
+    name = rec["name"]
+    if rec["kind"] == "gif":
+        return "![%s](%smedia/%s%s.gif)" % (CAPTIONS[name][0], RAW_BASE, PREFIX, name)
+    return "[![%s](%sthumbs_placeholder)](x)" % (CAPTIONS[name][0], RAW_BASE)
+
+
+def write_captions() -> str:
+    """``docs/articles/exhibits/wingstudio.md`` を meta から組み立てる。
+
+    記事本体 (``docs/articles/*.md``) は**触らない**。ここは新規ファイルなので可。
+    """
+    if not os.path.exists(META_PATH):
+        raise RuntimeError("meta が無い: %s" % META_PATH)
+    with open(META_PATH, encoding="utf-8") as f:
+        meta = json.load(f)
+    os.makedirs(EXHIBITS_DIR, exist_ok=True)
+    lines = [
+        "# Studio 画面 / 3D 表示ウィング —— 展示キャプション原稿",
+        "",
+        "生成元: `tools/gen_wingstudio_gallery.py`(再実行で全点を再生成)。",
+        "Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** の "
+        "`widget.grab()`(オフスクリーン)で、モックアップはありません。",
+        "3D 展示は fullseye の op と numpy 合成だけで描いています"
+        "(matplotlib 不使用、文字のみ Pillow)。**数字はすべて実測値**です。",
+        "",
+        "**このファイルは納品原稿です。記事 md への転記は手動で行ってください**"
+        "(記事本体は意図的に編集していません)。",
+        "",
+        "---",
+        "",
+    ]
+    for rec in meta.get("exhibits", []):
+        name = rec["name"]
+        if name not in CAPTIONS:
+            continue
+        title, ops, body = CAPTIONS[name]
+        if rec["kind"] == "gif":
+            url = "%smedia/%s%s.gif" % (RAW_BASE, PREFIX, name)
+            thumb = "%sthumbs/%s%s_thumb.jpg" % (RAW_BASE, PREFIX, name)
+            img = "![%s](%s)" % (title, url)
+            extra = ("%d フレーム / %d fps / %d×%d px / %.2f MB"
+                     % (rec["frames"], rec["fps"], rec["size"][0], rec["size"][1],
+                        rec["bytes"] / 1e6))
+        else:
+            url = "%s%s%s.png" % (RAW_BASE, PREFIX, name)
+            thumb = "%s%s%s_thumb.jpg" % (RAW_BASE, PREFIX, name)
+            img = "[![%s](%s)](%s)" % (title, thumb, url)
+            extra = "%d×%d px / %.0f kB" % (rec["size"][0], rec["size"][1],
+                                            rec["bytes"] / 1e3)
+        lines += [
+            "## %s" % title,
+            "",
+            img,
+            "",
+            "*↑ **%s** —— %s 使用 op / 機能: %s。*" % (title, body(rec["facts"], rec), ops),
+            "",
+            "<sub>`%s%s.%s` — %s / SHA-256 `%s`</sub>"
+            % (PREFIX, name, "gif" if rec["kind"] == "gif" else "png",
+               extra, rec["sha256"][:16]),
+            "",
+            "---",
+            "",
+        ]
+    with open(CAPTION_PATH, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines))
+    print("captions ->", CAPTION_PATH)
+    return CAPTION_PATH
+
+
+# --------------------------------------------------------------------------- #
 # 展示レジストリ + CLI                                                          #
 # --------------------------------------------------------------------------- #
 #: name -> (builder, needs_studio, 1 行説明)
