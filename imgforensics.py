@@ -672,25 +672,38 @@ def _blocks_dct(x: np.ndarray, block: int = 8, offset=(0, 0)) -> np.ndarray:
     return sfft.dctn(blk, axes=(1, 2), norm="ortho")
 
 
-def _estimate_step(vals: np.ndarray, max_step: int = 64) -> float:
+def _estimate_step(vals: np.ndarray, max_step: int = 64, *,
+                   min_periods: float = 4.0, min_r: float = 0.5) -> float:
     """1 つの DCT 係数の列 → 量子化ステップの推定(Fan & de Queiroz 2003)。
 
-    量子化された係数は ``q`` の倍数に集まる(櫛状)。候補 ``q`` それぞれについて
-    「``q`` の倍数からのずれ」の集中度 ``|mean(exp(2πi·v/q))|`` を測り、最大の
-    ``q`` を採る(円周統計の合成長。ヒストグラムの箱の切り方に依存しない)。
-    集中度が低ければ「櫛が無い」= 量子化されていない、として 0 を返す。
+    量子化された係数は ``q`` の倍数に集まる(櫛状)。候補 ``q`` ごとに円周統計の
+    合成長 ``r(q) = |mean(exp(2πi·v/q))|`` を測る(ヒストグラムの箱の切り方に
+    依存しない集中度)。
+
+    **どの ``q`` を選ぶかが要点**で、ここは 1 度間違えて実測で直した箇所である。
+
+    * 真のステップ ``q*`` では ``v/q* `` が整数になるので ``r ≈ 1``。
+    * ``q*`` の **約数** でも ``v/q`` は整数なので ``r ≈ 1``(2q* のような倍数では
+      半整数になり ``r ≈ 0``)。よって条件を満たす ``q`` の中で **最大**を採る。
+    * ``q`` が係数の値域より大きいと、全部が 1 周期の一部に収まるので
+      ``r ≈ 1`` が**無条件に**立つ。最初の実装はこれを踏み、**無圧縮 PNG に
+      「品質 17」という答えを返していた**(実測)。値域が少なくとも
+      ``min_periods`` 周期ぶんある ``q`` だけを候補にすることで潰す。
+
+    どの候補も条件を満たさなければ「櫛が無い」= 量子化されていない、として
+    ``0.0`` を返す(「品質 100」とは答えない —— 無圧縮とほぼ無劣化を同じ答えに
+    しないため)。
     """
     v = vals[np.abs(vals) > 1e-9]
     if v.size < 32:
         return 0.0
-    best_q, best_r = 0.0, 0.0
-    for q in range(1, int(max_step) + 1):
-        r = float(np.abs(np.mean(np.exp(2j * np.pi * v / q))))
-        # q が真のステップの倍数でも櫛は立つ。最小の q を優先するため、
-        # 「同点なら小さい方」を残す(> ではなく明確な改善のみ採用)。
-        if r > best_r + 1e-3:
-            best_r, best_q = r, float(q)
-    return best_q if best_r > 0.5 else 0.0
+    span = float(np.ptp(v))
+    for q in range(int(max_step), 0, -1):
+        if span < min_periods * q:
+            continue                       # 値域が狭すぎて「集中」が無条件に立つ域
+        if float(np.abs(np.mean(np.exp(2j * np.pi * v / q)))) > min_r:
+            return float(q)
+    return 0.0
 
 
 def _ijg_table(quality: int) -> np.ndarray:
