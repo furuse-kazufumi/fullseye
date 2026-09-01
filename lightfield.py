@@ -100,14 +100,16 @@ Honest disclosure (what these ops cannot do):
     It is an ordinary least-squares fit of ``E_u + s*E_x = 0`` on
     finite-difference gradients, so it needs the EPI line to move less than
     about one texture correlation length per view. Measured 2026-09-01 on a
-    5x5x64x64 synthetic field of Gaussian-smoothed noise, median estimate over
-    the interior against the true slope: at texture ``sigma = 1.5`` px, true
+    5x5x64x64 synthetic field of Gaussian-smoothed noise (``seed=0``,
+    ``occlusion=False``, ``edge="wrap"``), median estimate over the interior
+    against the true slope: at texture ``sigma = 1.5`` px, true
     ``+1.00 -> +1.0004``, ``+0.50 -> +0.5285``, ``+1.50 -> +1.3018``,
-    ``+2.00 -> +1.4614``; at ``sigma = 5.0`` px the same slopes give ``+0.9999``,
-    ``+0.5029``, ``+1.4807``, ``+1.9411``. It is fast and dense, not accurate at
-    ``|s| > 1``. :func:`lf_depth_from_focus` has no such bias (its peak landed
-    exactly on the true slope in all 18 of those cases) but only resolves what
-    you put in ``slopes``.
+    ``+2.00 -> +1.4614``; at ``sigma = 5.0`` px the same slopes give ``+1.0003``,
+    ``+0.5029``, ``+1.4827``, ``+1.9482``. It is fast and dense, not accurate at
+    ``|s| > 1``. :func:`lf_depth_from_focus` has no such bias — over those same
+    18 combinations (6 slopes x 3 texture scales) its argmax landed **exactly**
+    on the true slope 18 times out of 18 — but it only resolves what you put in
+    ``slopes``.
   * **No sub-pixel MLA calibration.** :func:`lf_from_mla` re-sorts on an
     *integer* pixel grid with an integer ``offset``. Real plenoptic decoding
     starts by fitting the microlens centres to sub-pixel accuracy from a white

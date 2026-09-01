@@ -270,6 +270,22 @@ from mathops import (  # noqa: E402,F401
     cplx_winding_number, cplx_cauchy_value, cplx_argument_principle,
     cplx_laurent_coeffs, cplx_joukowski, cplx_mobius, cplx_cr_residual,
 )
+# 仮想マシンビジョン環境: 部品を買う前に「その構成で狙う欠陥が見つかるか」を
+# 閉形式の光学 + 数式で作った欠陥 + 撮像連鎖で先に確かめる層。
+import defectgen  # noqa: E402  (mathematical defect models with pixel-perfect masks)
+import visiondesign  # noqa: E402  (closed-form feasibility: resolution / DOF / falloff)
+import visionlab  # noqa: E402  (the whole loop: design -> part -> capture -> inspect)
+from defectgen import (  # noqa: E402,F401
+    defect_scratch, defect_pits, defect_crack, defect_blob,
+    surface_texture, composite_defect, defect_stats,
+)
+from visiondesign import (  # noqa: E402,F401
+    system_geometry, resolving_power, system_feasibility, image_formation,
+    detectability_limit,
+)
+from visionlab import (  # noqa: E402,F401
+    VisionSystem, render_part, inspection_sweep, detection_report,
+)
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
     airy_pattern, angular_spectrum_propagate, fraunhofer_pattern, gaussian_beam,
@@ -387,6 +403,12 @@ __all__ = [
     "cplx_contour_circle", "cplx_poly_eval", "cplx_contour_integral",
     "cplx_winding_number", "cplx_cauchy_value", "cplx_argument_principle",
     "cplx_laurent_coeffs", "cplx_joukowski", "cplx_mobius", "cplx_cr_residual",
+    "visiondesign", "system_geometry", "resolving_power", "system_feasibility",
+    "image_formation", "detectability_limit",
+    "defectgen", "defect_scratch", "defect_pits", "defect_crack", "defect_blob",
+    "surface_texture", "composite_defect", "defect_stats",
+    "visionlab", "VisionSystem", "render_part", "inspection_sweep",
+    "detection_report",
     "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",
