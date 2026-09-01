@@ -1908,6 +1908,19 @@ def ex_obb(log) -> dict:
     info = _save_clip(frames, "wing3d_obb_innerbox", fps=14, thumb_index=10, log=log)
     return {
         "name": "wing3d_obb_innerbox", "title": "外から抱く箱(OBB)と中に入る箱(inner_box3)",
+        "title_en": "The box that holds it (OBB) and the box that fits inside (inner_box3)",
+        "caption_en": (
+            f"A synthetic cuboid tilted 30° about z ({int(box.sum()):,} voxels) with three "
+            f"boxes drawn on it at once, turned through a full revolution. The "
+            f"axis-aligned AABB swells to **{aabb_vol / int(box.sum()):.2f}x** the voxel "
+            f"count, while `obb` (a PCA-oriented bounding box) shrinks to "
+            f"**{obb_vol / int(box.sum()):.2f}x** with half-extents "
+            f"{o['extents'][0]:.2f} / {o['extents'][1]:.2f} / {o['extents'][2]:.2f} voxels "
+            f"(truth {half[0]:.0f} / {half[1]:.0f} / {half[2]:.0f}). It reads below 1.0 "
+            "because the point set is voxel *centres* and the box bounds those (the "
+            "half-voxel rim is outside). The largest inscribed box from `inner_box3` goes "
+            f"the other way, down to **{ib_vol / int(box.sum()):.2f}x**. Grip width: OBB. "
+            "Will the part pass through: inner box."),
         "ops": ["obb", "inner_box3", "vol_bounding_box"],
         "facts": {"object_voxels": int(box.sum()), "rotation_deg": ang,
                   "true_half_extents": list(half),
