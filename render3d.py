@@ -244,8 +244,8 @@ def intrinsics_from_fov(fov_deg: float, width: int, height: int) -> np.ndarray:
     if not np.isfinite(fov) or fov <= 0.0 or fov >= 180.0:
         raise ValueError("fov_deg must be in (0, 180), got %r" % (fov_deg,))
     f = (h * 0.5) / np.tan(np.deg2rad(fov) * 0.5)
-    K = np.array([[f, 0.0, (w - 1) * 0.5],
-                  [0.0, f, (h - 1) * 0.5],
+    K = np.array([[f, 0.0, w * 0.5],
+                  [0.0, f, h * 0.5],
                   [0.0, 0.0, 1.0]], np.float64)
     return K
 
