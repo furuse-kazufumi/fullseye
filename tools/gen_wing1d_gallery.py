@@ -2290,7 +2290,7 @@ def ex_envelope_truncation(log):
         fig.text(88, 350, "part of the coherence peak is outside the scan and the "
                           "Hilbert transform sees a different signal", C_WARN, 11)
         fig.text(axz.x0 + 6, axz.y0 + 4, "I(z)", C_DIM, 11)
-        fig.text(W - 420, 350, "scan position z [um] ->", C_DIM, 11)
+        fig.text(W - 196, 350, "scan position z [um] ->", C_DIM, 11)
 
         fig.box(W - 252, 70, W - 24, 320, C_PANEL2)
         fig.text(W - 242, 78, "readout", C_TEXT, 12, True)
@@ -2583,12 +2583,12 @@ def ex_envelope_flow(log):
     # 6. 包絡線スペクトル
     fig = _base("6. transform the envelope", "acoustics.envelope_spectrum")
     ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, 600.0),
-            (0.0, float(es["peak_amplitude"]) * 1.2))
+            (0.0, float(es["peak_amplitude"]) * 1.35))
     ax.panel()
     ink = fig.ink()
     ax.frame(ink)
     ax.xticks(ink, [0, 108, 216, 324, 432, 500, 600], "%.0f")
-    ax.yticks(ink, [0.0, 0.025, 0.05, 0.075], "%.3f")
+    ax.yticks(ink, [0.0, 0.02, 0.04], "%.3f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
     ax.curve(ink, es_ctrl["freqs"], es_ctrl["magnitude"], width=1)
@@ -2614,8 +2614,7 @@ def ex_envelope_flow(log):
                           f"agree to {agree:.2e}.", C_DIM, 12)
     fig.text(82, PH - 40, f"prominence separates what band_fraction could not: "
                           f"{es['peak_prominence']:.0f} against the control's "
-                          f"{es_ctrl['peak_prominence']:.0f}. Return numbers, not a "
-                          f"verdict - that is the design.", C_C, 12)
+                          f"{es_ctrl['peak_prominence']:.0f}.", C_C, 12)
     steps.append(fig.u8())
 
     # 7. 幾何と照合

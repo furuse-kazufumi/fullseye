@@ -1066,6 +1066,152 @@ TYPE_CHECKS = {
     "mesh": lambda v: isinstance(v, (tuple, list)) and len(v) == 2
     and len(getattr(v[0], "shape", ())) == 2 and tuple(v[0].shape)[1:] == (3,)
     and len(getattr(v[1], "shape", ())) == 2 and tuple(v[1].shape)[1:] == (3,),
+
+    # ======================================================================= #
+    # wave-7(2026-09-02): **述語が 1 つも無かった 17 型**                      #
+    #                                                                         #
+    # tools/conversion_matrix.py で型変換を行列として点検したところ、変換を行う
+    # 443 op ののべのうち **76 op が「出力型に述語の無い型」を宣言していた** =
+    # 何を返しても TYPEMISS にならない穴だった。voxel_to_mesh の 3-tuple、
+    # render_beauty の RGB、project_points のタプル、alpha_shape_boundary の
+    # 添字はどれも「述語を足した瞬間に出てきた」ので、ここは未採掘の鉱脈である。
+    #
+    # 各型の「正典」は**多数決ではなく消費側を実行して**決めた。消費側が無い
+    # 出力専用の型(axes/curvature/flow/frame/gradient/graph/hessian/rot_scale/
+    # shift)は、産む op を全部実行して**全員が満たす一番強い不変条件**を書く
+    # (= 弱くしすぎて何も守らない述語も、強くしすぎて正しい op を責める述語も
+    # 避ける)。判定は全て **型ではなく形**(_shape)で行う。
+    # ======================================================================= #
+
+    # angle = **スカラ角(度)**。正典は消費側が決めた: 唯一の消費側
+    # refine_rotation_z(scene, template, init_angle_deg) にタプルを渡すと
+    # "init_angle_deg must be a scalar angle in degrees (got tuple) — this op
+    # returns (angle_deg, n_iters); pass result[0] when chaining" で fail-closed
+    # する(実測)。生成器も float。唯一の producer が (角, 反復数) を返すのは
+    # ops3d.RESULT_ADAPTERS で剥がした
+    "angle": _is_scalar,
+
+    # axes = moment_axes の **(centroid(3,), axes(3,3), eigvals(3,))**。
+    # 消費側が無い出力専用の型で producer も 1 つなので、その 1 つの契約
+    # (docstring「返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))」)を
+    # そのまま固定する。3x3 が真ん中に来ることが姿勢正準化の本体
+    "axes": lambda v: _is_seq(v, 3) and _shape(v[0]) == (3,)
+    and _shape(v[1]) == (3, 3) and _shape(v[2]) == (3,),
+
+    # bspline_curve = FITPACK の **tck = (t, c, k)**。消費側 eval_bspline_curve の
+    # docstring が「fit_bspline_curve が返した (t, c, k)」と明記し、渡し間違いを
+    # "curve tck" 名指しで弾く(tests/test_ops3d_ledger.py が固定済み)。
+    # c は次元ごとの係数列(parametric splprep なので list of 1-D)
+    "bspline_curve": lambda v: _is_seq(v, 3) and len(_shape(v[0])) == 1
+    and isinstance(v[1], (tuple, list, np.ndarray))
+    and isinstance(v[2], (int, np.integer)),
+
+    # bspline_surface = FITPACK の **[tx, ty, c, kx, ky]**(bisplrep)。
+    # 消費側 eval_bspline_surface / surface_residual がこの 5 要素を要求し、
+    # 曲線 tck(3 要素)や多項式 model(dict)は名指しで fail-closed する
+    "bspline_surface": lambda v: _is_seq(v, 5) and len(_shape(v[0])) == 1
+    and len(_shape(v[1])) == 1 and len(_shape(v[2])) == 1
+    and isinstance(v[3], (int, np.integer)) and isinstance(v[4], (int, np.integer)),
+
+    # curvature = **曲率の場**。消費側は無いので producer 3 つを全部実行して
+    # 一番強い共通条件を採った(実測 2026-09-02):
+    #   vertex_curvature       -> (nv,) の 1 本(平均曲率の大きさ)
+    #   principal_curvatures   -> ((N,), (N,)) の 2 本(k1, k2)
+    #   curvature_maps         -> (S, curvedness, mask, |g|) の 4 本 (D,H,W)
+    # つまり「1 本の場」または「**同じ形**の場を 2〜4 本」。形が揃っていることが
+    # 効く条件で、揃っていない詰め合わせ(補助情報つきタプル)は弾く
+    "curvature": lambda v: (len(_shape(v)) >= 1 and not _is_seq(v))
+    or (_is_seq(v, 2, 3, 4) and all(len(_shape(x)) >= 1 for x in v)
+        and len({_shape(x) for x in v}) == 1),
+
+    # deformation = tps_fit の TPS モデル dict。消費側 tps_warp が
+    # f(x) = [1,x,y,z]·a + Σ w_i·U(‖x−p_i‖) を評価するのに ctrl / w / a を引く
+    "deformation": lambda v: isinstance(v, dict) and {"ctrl", "w", "a"} <= set(v),
+
+    # descriptor = **数値配列**。正典は消費側が決めた: 唯一の消費側
+    # shape_distance に dict を渡すと "descriptors must be numeric vectors
+    # (got dict / dict)" で fail-closed し、ndarray なら (64,) の分布でも
+    # (160,33) の per-point FPFH でも (160,3,3) の共分散でも通る(実測)。
+    # よって次元数ではなく「配列であること」が契約。dict を返していた 3 op
+    # (fit_zernike / central_moments / topology_signature)は out を 'table' へ
+    # 直した(ops3d の該当行にコメント)
+    "descriptor": lambda v: not isinstance(v, (tuple, list, dict))
+    and len(_shape(v)) >= 1,
+
+    # flow = **3 次元変位の場**。消費側は無いので producer 4 つを実行(実測):
+    #   estimate_flow / nearest_neighbor_flow / smooth_flow -> (N,3) 散布
+    #   scene_flow_lk                                       -> (3,D,H,W) 組織化
+    # points と pointmap を分けているのと同じ「散布 / 組織化」の 2 形で、どちらも
+    # 3 成分が要。成分軸の位置が違う(末尾 / 先頭)ので両方を明示的に許す
+    "flow": lambda v: not _is_seq(v) and (
+        (len(_shape(v)) == 2 and _shape(v)[1] == 3)
+        or (len(_shape(v)) == 4 and _shape(v)[0] == 3)),
+
+    # frame = frenet_frame の **(T, N, B) 各 (Npts,3) 単位ベクトル**。
+    # 3 本が同じ点数で揃っていることが標構の意味そのもの(1 本でも欠けたら
+    # 曲線上の直交系にならない)
+    "frame": lambda v: _is_seq(v, 3) and all(
+        len(_shape(x)) == 2 and _shape(x)[1] == 3 for x in v) \
+    and len({_shape(x)[0] for x in v}) == 1,
+
+    # gradient = **先頭に batch/channel 軸を持たない勾配場の組**。producer 2 つ:
+    #   gradient3d -> (gmag (D,H,W), gvec (D,H,W,3))
+    #   sobel3d    -> (gz, gy, gx) 各 (D,H,W)
+    # 兄弟の hessian3d が (D,H,W) を 6 本返すことも合わせて、sort の正典は
+    # 「空間 3 軸が先頭に来る場」。sobel3d は conv3d の出力を squeeze せず
+    # (1,1,D,H,W) を返していた(この述語で顕在化)ので ops3d.RESULT_ADAPTERS で
+    # 落とした。空間 3 軸が全要素で一致することを見る
+    "gradient": lambda v: _is_seq(v, 2, 3) and all(
+        len(_shape(x)) in (3, 4) for x in v) \
+    and len({_shape(x)[:3] for x in v}) == 1,
+
+    # graph = knn_graph の **(idx (N,k) int, dist (N,k) float)**。同じ形の 2 枚で、
+    # 片方が添字(整数)であることが「グラフ」たる所以。float の添字を渡されると
+    # 下流は黙って丸めるので dtype の種別まで見る
+    "graph": lambda v: _is_seq(v, 2) and len(_shape(v[0])) == 2
+    and _shape(v[0]) == _shape(v[1])
+    and getattr(getattr(v[0], "dtype", None), "kind", "i") in "iu",
+
+    # hessian = hessian3d の **6 独立成分 (fzz,fyy,fxx,fzy,fzx,fyx)**。対称行列の
+    # 上三角なので 6 本ちょうどで、全部が同じ (D,H,W) であることが対称性の表現
+    "hessian": lambda v: _is_seq(v, 6) and all(len(_shape(x)) == 3 for x in v) \
+    and len({_shape(x) for x in v}) == 1,
+
+    # poly_surface = fit_poly_surface の model dict。消費側 eval_poly_surface が
+    # model["degree"] / coef / powers を引き、B スプラインの tck(list)を渡すと
+    # "fit_poly_surface" 名指しで fail-closed する(tests/test_ops3d_ledger.py の
+    # test_surface_models_are_separate_types が固定済み)
+    "poly_surface": lambda v: isinstance(v, dict)
+    and {"coef", "powers", "degree"} <= set(v),
+
+    # position = **[z, y, x] の 3 成分**。正典は消費側を実行して決めた(実測):
+    # refine_translation_lk / refine_lm に 4 成分を渡すと "init_pos must have
+    # exactly 3 components [z, y, x] (got 4)" で fail-closed する。生成器も
+    # (8.0, 8.0, 8.0)。match_* 系が返す [score, d, h, w] の 4 成分と
+    # match_hough_3d の (topk,4) 投票表は ops3d.RESULT_ADAPTERS で座標だけに剥がした
+    "position": lambda v: (_is_seq(v, 3) and all(_is_scalar(x) for x in v)) \
+    or _shape(v) == (3,),
+
+    # primitive = **幾何原始形状の記述**。33 の producer を全部実行したところ、
+    # 名前つき dict(fit_plane3 / obb / ransac_* …)と位置つきタプル
+    # (aabb=(min,max) / fit_plane_3d=(点,法線,rms) / vol_bounding_box=6 整数 …)の
+    # 2 系統が同居していた。**単一の正典は無い** — 台帳の消費側 8 op
+    # (angle_between_lines(d1,d2) など)は primitive オブジェクトではなく
+    # 生のベクトルを 2 本取る宣言で、primitive を制約していない(実測)。
+    # そこで「弱いが本当に全員が満たす」条件だけを書く: 部品に名前がついた dict
+    # か、2 つ以上の部品を並べたタプル/リスト。裸の配列やスカラは
+    # 「どの原始形状なのか」を運べないので嘘として弾く
+    "primitive": lambda v: isinstance(v, dict) or _is_seq(v) and len(v) >= 2,
+
+    # rot_scale = match_logpolar_z の **(angle_deg, scale)**。docstring が
+    # 「返り値 (angle_deg, scale)」と明記。2 つのスカラで、片方だけ返すと
+    # Fourier-Mellin の意味(回転とスケールの同時推定)が失われる
+    "rot_scale": lambda v: _is_seq(v, 2) and all(_is_scalar(x) for x in v),
+
+    # shift = match_phase_3d の **整数シフト (dz,dy,dx)**。位相相関の答えは
+    # 格子上の平行移動なので 3 成分ちょうど(サブボクセルは refine_* の仕事)
+    "shift": lambda v: (_is_seq(v, 3) and all(_is_scalar(x) for x in v)) \
+    or _shape(v) == (3,),
 }
 
 
