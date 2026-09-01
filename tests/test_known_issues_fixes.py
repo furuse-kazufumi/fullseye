@@ -208,6 +208,12 @@ def test_moore_fallback_handles_degenerate_components():
 # --------------------------------------------------------------------------- #
 # #4 clahe: no visible tile seams (bilinear inter-tile blending)              #
 # --------------------------------------------------------------------------- #
+#: `b` は 2026-09-02 に **clip limit** になった(それまで完全に死んだ引数)。
+#: この節が測っているのはタイル境界の継ぎ目なので、切り取りが一度も効かない端
+#: (= 素の AHE、clip limit 導入前とビット一致)で呼ぶ。
+AHE_B = 1.0
+
+
 def _clahe_no_interp(v, a):
     """Replica of the PRE-FIX clahe (independent per-tile equalisation) — the
     seam baseline the fix is measured against."""
@@ -244,7 +250,7 @@ def _seam_ratio(out, a):
 def test_clahe_tile_seams_are_gone(a):
     v = _gradient_noise()
     r_old = _seam_ratio(_clahe_no_interp(v, a), a)
-    r_new = _seam_ratio(np.asarray(ops.RT["clahe"](v, a, 0.0), np.float64), a)
+    r_new = _seam_ratio(np.asarray(ops.RT["clahe"](v, a, AHE_B), np.float64), a)
     assert r_old > 4.0, f"baseline lost its seam (ratio {r_old:.1f}) — metric broken?"
     assert r_new < r_old / 3, f"seam barely improved: {r_old:.1f} -> {r_new:.1f}"
     assert r_new < 2.5, f"tile boundary still an outlier: ratio {r_new:.1f}"
@@ -258,7 +264,7 @@ def test_clahe_correlates_better_with_cv_clahe_than_before():
     v = _gradient_noise(256)
     ref = np.asarray(ops.RT["cv_clahe"](v, 0.5, 0.5), np.float64)
     old = _clahe_no_interp(v, 0.5)
-    new = np.asarray(ops.RT["clahe"](v, 0.5, 0.0), np.float64)
+    new = np.asarray(ops.RT["clahe"](v, 0.5, AHE_B), np.float64)
     c_old = float(np.corrcoef(old.ravel(), ref.ravel())[0, 1])
     c_new = float(np.corrcoef(new.ravel(), ref.ravel())[0, 1])
     assert c_new > c_old, f"correlation with cv_clahe did not improve: {c_old:.4f} -> {c_new:.4f}"
@@ -270,6 +276,6 @@ def test_clahe_still_equalises_locally():
     rng = np.random.default_rng(3)
     v = np.concatenate([0.05 + 0.05 * rng.random((64, 32)),
                         0.80 + 0.05 * rng.random((64, 32))], axis=1)
-    out = np.asarray(ops.RT["clahe"](v, 0.5, 0.0), np.float64)
+    out = np.asarray(ops.RT["clahe"](v, 0.5, AHE_B), np.float64)
     assert float(out[:, :32].std()) > 3 * float(v[:, :32].std())
     assert float(out[:, 32:].std()) > 3 * float(v[:, 32:].std())
