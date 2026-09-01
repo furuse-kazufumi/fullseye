@@ -604,9 +604,10 @@ def anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0,
         x = ((g*A/2)^2 - (3/8)*g^2 - sigma_r^2)/g + offset
 
     so ``anscombe_inverse(anscombe_transform(x)) == x`` to machine precision
-    (measured max relative error 2.2e-16 over ``x`` in ``[0, 1e4]``). It is,
-    however, **biased**: ``E[A(X)] != A(E[X])``, so applying it to a *denoised*
-    (i.e. averaged) Anscombe image underestimates the intensity at low counts.
+    (measured over 100001 values of ``x`` spanning ``[0, 1e4]``: max absolute
+    error 2.7e-12, max relative error 3.7e-16 for ``x > 1``). It is, however,
+    **biased**: ``E[A(X)] != A(E[X])``, so applying it to a *denoised* (i.e.
+    averaged) Anscombe image underestimates the intensity.
 
     ``mode="unbiased"`` is the closed-form exact unbiased inverse of Makitalo &
     Foi (IEEE TIP 2011)::
