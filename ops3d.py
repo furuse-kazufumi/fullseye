@@ -584,6 +584,9 @@ _CATALOG = {
         ("project_cylindrical", "spherical_proj", ["points"], "image2d", False),
     ],
     "motion_segment": [  # 剛体運動セグメンテーション(2点群→運動が一致する剛体ごとに分割、動的シーン)
+        # dict{"labels","motions"} を返す(シグネチャ自身が -> dict)。motions は
+        # この op の存在理由なので返りは削らず、adapter で labels を取り出す
+        # (opslightfield の lf_depth_from_focus と同じ流儀)
         ("segment_rigid_motions", "motion_seg3d", ["points", "points"], "labels", False),
         ("estimate_flow", "motion_seg3d", ["points", "points"], "flow", False),
         ("fit_rigid", "motion_seg3d", ["points", "points"], "pose", False),
