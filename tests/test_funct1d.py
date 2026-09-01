@@ -97,6 +97,148 @@ def test_match_funct_1d_trans_recovers_known_shift_and_is_scale_invariant():
     assert r["shift"] == -7
 
 
+def _four_peak_record_and_one_peak_template(n=400, centres=(60, 150, 245, 330), width=9.0):
+    """4 山の記録と、その 1 山だけを持つ**同じ長さ**のテンプレート。
+
+    テンプレートの山は既に centres[0] にあるので、正解の shift は測る前から 0。
+    山の間隔は最小 85 サンプル ≒ 9.4σ なので、山同士の交差項は exp(-22) ≈ 1e-10 ――
+    「テンプレートの山をどの記録の山に載せるか」の 4 通りは数学的に等価である。
+    """
+    idx = np.arange(n, dtype=float)
+    rec = np.zeros(n)
+    for c in centres:
+        rec += np.exp(-0.5 * ((idx - c) / width) ** 2)
+    tmpl = np.exp(-0.5 * ((idx - float(centres[0])) / width) ** 2)
+    return rec, tmpl
+
+
+def test_match_funct_1d_trans_is_not_fooled_by_a_shrinking_overlap():
+    """同じ長さの入力で、短い重なりを持つ端の lag が勝ってしまう回帰の門。
+
+    旧実装(重なりだけの非正規化相関和)は shift=270 / score=11.2403 を返した ――
+    例外も NaN も無く、もっともらしい数字で。重なりは lag 0 で 400、lag 270 で
+    130 しかなく、和は打ち切られた分だけ罰を免れる。文書の「長さの違う候補を
+    比べるな」は効かない: この入力は**同じ長さ**である。
+    """
+    rec, tmpl = _four_peak_record_and_one_peak_template()
+    r = F.match_funct_1d_trans(rec, tmpl)
+    assert r["shift"] == 0                       # 旧実装は 270(実測)
+    assert 0.0 <= r["score"] <= 1.0              # 旧 score は 11.2403 = 係数ではない
+    assert r["score"] == pytest.approx(0.430110, abs=1e-6)   # 実測 0.4301102692709698
+
+    # 4 通りの重ね方は等価 —— 測る前から分かっている対称性を数値で確認する。
+    lags, scores = F._match_scores(rec - rec.mean(), tmpl - tmpl.mean())
+    four = np.array([scores[int(np.where(lags == L)[0][0])] for L in (0, 90, 185, 270)])
+    assert four.max() - four.min() < 1e-9        # 実測の広がり 2.804e-10
+    assert four.max() == pytest.approx(r["score"], abs=F._MATCH_TIE_ATOL)
+    # 同点でないものはきちんと離れている(隣の lag 269 は実測 0.428164)
+    others = scores[~np.isin(lags, (0, 90, 185, 270))]
+    assert others.max() < four.min() - 1e-3
+
+
+def test_match_score_is_a_correlation_coefficient():
+    """score の意味の固定: 固定窓上の Pearson 係数 ―― [-1,1]、振幅にも長さにも依らない。"""
+    t = np.linspace(0, 8 * np.pi, 400)
+    y1 = np.sin(t) * np.exp(-t / 20)
+
+    # 自分自身は厳密に 1.0(係数の定義そのもの)
+    assert F.match_funct_1d_trans(y1, y1) == {"shift": 0, "score": 1.0}
+    # 正のアフィン変換 (a*y+b, a>0) で score も shift も不変
+    plain = F.match_funct_1d_trans(y1, np.roll(y1, 7))
+    scaled = F.match_funct_1d_trans(y1, 1000.0 * np.roll(y1, 7) - 4.0)
+    assert scaled["shift"] == plain["shift"] == -7
+    assert scaled["score"] == pytest.approx(plain["score"], rel=1e-9)
+    # y1 側の振幅にも依らない(旧 score は振幅と重なり長で青天井に伸びた)
+    assert F.match_funct_1d_trans(0.001 * y1, np.roll(y1, 7))["score"] == \
+        pytest.approx(plain["score"], rel=1e-9)
+    assert plain["score"] == pytest.approx(0.999704, abs=1e-6)   # 実測 0.9997035437
+
+    # 全 lag が [-1,1] に入り、NaN は 1 つも無い
+    lags, scores = F._match_scores(y1 - y1.mean(), np.roll(y1, 7) - y1.mean())
+    assert np.all(np.isfinite(scores)) and scores.min() >= -1.0 and scores.max() <= 1.0
+
+    # 同点は最小の |shift| に倒す(周期 100 の正弦は lag 0,±100,±200,... が厳密同点。
+    # 旧実装は argmax が最初の同点 = 最も負の lag を拾った)
+    per = np.sin(np.arange(400) * 2 * np.pi / 100.0)
+    assert F.match_funct_1d_trans(per, per) == {"shift": 0, "score": 1.0}
+
+
+def test_match_never_scores_a_degenerate_window():
+    """縮退窓の門: 重なりだけで正規化する実装が壊れる入力を、係数のまま拒む。
+
+    重なり 2 サンプルの Pearson は必ず ±1 になる(2 点は必ず直線に乗る)。窓を
+    y1 の定義域に固定し y2 を端値で延長することで、この縮退そのものが起きない。
+    """
+    rec, tmpl = _four_peak_record_and_one_peak_template()
+
+    # 2 サンプルだけのテンプレート: 重なり正規化なら必ず |r| = 1 が出る入力
+    two = tmpl[55:57]
+    lags, scores = F._match_scores(rec - rec.mean(), two - two.mean())
+    assert np.all(np.isfinite(scores))
+    assert np.abs(scores).max() < 0.5            # 実測 0.2515(重なり正規化なら 1.0)
+    assert abs(F.match_funct_1d_trans(rec, two)["score"]) < 0.5
+
+    # y2 を窓の外へ完全に押し出す lag は「形が無い」= 厳密に 0.0
+    assert scores[0] == 0.0 and scores[-1] == 0.0
+
+    # 定数入力は分散が無い → shift 0 / score 0.0、NaN は返さない
+    const = np.ones(50)
+    wave = np.sin(np.arange(50) / 3.0)
+    for a, b in ((const, wave), (wave, const), (const, const)):
+        r = F.match_funct_1d_trans(a, b)
+        assert r == {"shift": 0, "score": 0.0}
+
+
+def test_match_scores_equal_the_direct_per_lag_definition():
+    """prefix-sum のベクトル化が、lag ごとに窓を作る素朴な定義と一致すること。"""
+    def direct(a, b):
+        n1, n2 = a.size, b.size
+        out = []
+        for L in range(-(n2 - 1), n1):
+            v = b[np.clip(np.arange(n1) - L, 0, n2 - 1)]
+            uc, vc = a - a.mean(), v - v.mean()
+            nu, nv = np.linalg.norm(uc), np.linalg.norm(vc)
+            out.append(0.0 if nu == 0 or nv <= 1e-12 * np.linalg.norm(v)
+                       else float(uc @ vc / (nu * nv)))
+        return np.array(out)
+
+    rng = np.random.default_rng(11)
+    worst = 0.0
+    for _ in range(12):
+        n1, n2 = int(rng.integers(1, 60)), int(rng.integers(1, 60))
+        a = rng.normal(0, rng.uniform(0.1, 50), n1) + rng.uniform(-1e3, 1e3)
+        b = rng.normal(0, rng.uniform(0.1, 50), n2) + rng.uniform(-1e3, 1e3)
+        _, fast = F._match_scores(a - a.mean(), b - b.mean())
+        worst = max(worst, float(np.max(np.abs(fast - direct(a - a.mean(), b - b.mean())))))
+    assert worst < 1e-11                          # 実測 5.769e-14(60 対で最悪)
+
+
+def test_match_shift_estimate_is_unbiased_across_true_shifts():
+    """真の shift が 0 でなくても同じ精度で当たること(旧実装は 0 へ約 0.8 縮んだ)。
+
+    幅 81 の窓とテンプレート、雑音 σ=0.20、独立に 150 回。旧実装の平均推定は
+    真値 -5 に対し -4.21、真値 +12 に対し +11.22 ―― 「真値 0 のときだけ良く当たる」
+    のは精度ではなく偏りだった(実測 exact 率 0.865 / 0.295 / 0.307)。
+    """
+    half, width, n = 40, 9.0, 400
+    idx = np.arange(n, dtype=float)
+    base = np.zeros(n)
+    centres = [60, 150, 245, 330]
+    for c in centres:
+        base += np.exp(-0.5 * ((idx - c) / width) ** 2)
+    tmpl = np.exp(-0.5 * ((np.arange(2 * half + 1) - float(half)) / width) ** 2)
+
+    for true_shift in (0, -5, 12):
+        got = []
+        for seed in range(150):
+            y = base + np.random.default_rng(seed).normal(0.0, 0.20, n)
+            lo = centres[seed % 4] - half - true_shift
+            got.append(F.match_funct_1d_trans(y[lo:lo + 2 * half + 1], tmpl)["shift"])
+        bias = float(np.mean(got)) - true_shift
+        assert abs(bias) < 0.15, f"true {true_shift}: bias {bias:+.3f} samples"
+        assert np.mean(np.abs(np.array(got) - true_shift)) < 0.7   # 実測 ~0.48
+
+
 def test_distance_symmetry_identity_and_modes():
     a = np.array([1.0, 2.0, 3.0])
     b = np.array([2.0, 2.0, 5.0])
