@@ -10,6 +10,11 @@ Generate the "3-D metrology wing" exhibits for the Qiita science-museum article.
 * 描画は Fullseye の ``imagedraw`` op(線・折れ線・円・マーカー)と numpy 合成。
   **matplotlib は使わない**。文字だけは Fullseye にテキスト op が無いため PIL で焼く
   (``gen_visionlab_video.py`` と同じ流儀)。
+* 版面の方針は ``tools/exhibit_tile.py`` の判断基準に従う。**同じ被写体の
+  パラメータ違いを 3 枚以上並べるものは ``contact_sheet`` でタイルに束ね**、
+  図中の数値が主役のもの・軸ラベル付きのグラフ・GIF は原寸で置く。静止画は
+  ``save_exhibit`` / ``markdown`` を通すので、記事では必ず「サムネイル +
+  クリックで原寸」になる。
 * 乱数は ``SEED`` 固定 + ``np.random.default_rng`` で決定的。同じコマンドで
   再生成すると PNG / GIF は SHA-256 が一致する。
 * アニメーションは **静止フレーム 1 枚だけでも意味が分かる**よう、凡例・軸・単位・
