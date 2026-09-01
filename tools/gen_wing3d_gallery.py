@@ -2183,6 +2183,15 @@ def ex_anisotropic(log) -> dict:
         "name": "wing3d_anisotropic_voxel",
         "title": "異方性ボクセル ―― spacing を忘れると体積が %.2f 倍" % (
             pr_no["volume"] / pr_sp["volume"]),
+        "title_en": "Anisotropic voxels — forget the spacing and the volume is %.2fx off" % (
+            pr_no["volume"] / pr_sp["volume"]),
+        "caption_en": (
+            f"A synthetic ellipsoid sampled at ({sp[0]}, {sp[1]}, {sp[2]}) mm/voxel — coarse "
+            f"in z only — with a true volume of {truth:.1f} mm³. Hand `vol_region_props` the "
+            f"spacing and it answers {pr_sp['volume']:.1f} mm³ (**{err_sp:+.2f} %**); forget "
+            f"to and it answers {pr_no['volume']:.0f} (**{err_no:+.0f} %**, "
+            f"{pr_no['volume'] / pr_sp['volume']:.2f}x). No exception is raised. A plausible "
+            "number is returned quietly — which is the whole point of this exhibit."),
         "ops": ["vol_label", "vol_region_props", "vol_boundary_points"],
         "facts": {"spacing_mm": list(sp), "semi_axes_mm": list(semi_mm),
                   "truth_mm3": truth, "volume_with_spacing": float(pr_sp["volume"]),
