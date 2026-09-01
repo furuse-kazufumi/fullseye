@@ -951,10 +951,10 @@ def range_doppler_map(cube, combine="incoherent", antenna=None, normalize=False)
     Fullseye (threshold, morphology, labelling, blob measurement — the pieces a
     CFAR detector is made of) applies to it directly.
 
-    **Raises** ``ValueError``: a real-valued cube (the sign of the velocity does
-    not exist in a real beat spectrum), fewer than 2 chirps or 2 samples, an
+    **Raises** ``ValueError``: a real-valued cube (it would put a mirror ghost of
+    every target at a fabricated range), fewer than 2 chirps or 2 samples, an
     out-of-range *antenna* index, an unknown *combine*, a cube over the element
-    cap, or NaN/Inf.
+    cap, an FFT that overflows to NaN, or NaN/Inf on the way in.
     """
     op = "range_doppler_map"
     arr = _as_beat_cube(cube, "cube", op)
