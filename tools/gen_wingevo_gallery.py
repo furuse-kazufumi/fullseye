@@ -886,7 +886,7 @@ def ex_observed_vs_locked(data, log=print):
               C_TEXT, 22, True),
              (28, 58, "観測用 (seed+10000) は毎世代スコアを見ている分割。"
                       "locked (seed+20000) は champion に一度だけ当てる分割。"
-                      "選択に使っていないのは両方だが、**見た回数が違う**。",
+                      "選択に使っていないのは両方だが、見た回数が違う。",
               C_DIM, 13, False)]
     for i, n in enumerate(names):
         d = rb[n]
