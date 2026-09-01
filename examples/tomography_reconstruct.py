@@ -25,11 +25,19 @@ V = 4/3 π (a b c − a' b' c')。しかも楕円体の z 断面はちょうど�
 スライスは `ellipse_phantom` / `ellipse_sinogram` の厳密な入力になる。
 
 【この例が数字にすること】
-(1) 投影数を減らすと体積誤差がどう動くか(**1 つの数字で「投影が足りない」が出る**)
+(1) 投影数を減らすと体積誤差がどう動くか
+    ―― 実測の答えは「**ほとんど動かない**」。投影 8 本の再構成は nRMS が 9 倍
+    悪く、見た目はストリークで壊れているのに、体積は 128 本と 0.1 % しか違わない。
+    ストリークは物体のまわりに正負が対称に出るので、体積という 1 つの積分量では
+    相殺して消える。**体積は「投影が足りない」を教えてくれない**。壊れたことを
+    教えるのは体積ではなく**成分数**(8 本で 43 個、128 本で 1 個)。
 (2) 誤差の内訳: **格子の粗さ(digitisation)** と **再構成** のどちらが効くか
 (3) 異方性 spacing (z だけ粗い = CT の常態) を無視すると体積が何倍ずれるか
+    ―― spacing なしで 2.0 倍、等方と思い込んで 0.25 倍。例外は出ない。
 (4) 二値化しきい値を動かすと体積がどれだけ動くか
-    ―― **再構成の誤差より、しきい値の任意性の方が効く**なら、それは正直に書く
+    ―― しきい値 0.30-0.70 RHO の振れ幅が 800 mm^3 に対し、投影数 8-128 の
+    振れ幅は 56 mm^3。**しきい値の任意性のほうが 14 倍効く**。体積を報告する
+    ときに書くべきなのは「何本で撮ったか」ではなく「どのしきい値で切ったか」。
 
 【前提】面内 0.5 mm/画素、スライス間隔 2.0 mm(**異方性 4:1**)。実機 CT の常態。
 """
@@ -163,16 +171,32 @@ def main():
         nrms = float(np.sqrt(((rec - truth_vol) ** 2).mean())
                      / (truth_vol.max() - truth_vol.min()))
         v_meas, _, n_comp = measure_volume(rec, thr)
-        rows.append((n_views, nrms, v_meas))
+        rows.append((n_views, nrms, v_meas, n_comp))
         print(f"   {n_views:5d} |   {nrms:10.4f} | {v_meas:9.1f} | "
               f"{v_meas / v_true - 1:+6.1%} | {v_meas / v_digital - 1:+5.1%} | "
               f"{n_comp:5d}")
-    best = rows[-1]
-    worst = rows[0]
-    print(f"   ★投影 {worst[0]} 本と {best[0]} 本で体積は "
-          f"{abs(worst[2] - best[2]):.1f} mm^3 違う "
-          f"({abs(worst[2] - best[2]) / v_true:.1%} of 真値)。"
-          f"再構成 nRMS は {worst[1] / best[1]:.1f} 倍。")
+    best, worst = rows[-1], rows[0]
+    print(f"   投影 {worst[0]} 本と {best[0]} 本で体積の差は "
+          f"{abs(worst[2] - best[2]):.1f} mm^3 "
+          f"({abs(worst[2] - best[2]) / v_true:.1%} of 真値)、"
+          f"一方 再構成 nRMS は {worst[1] / best[1]:.1f} 倍。")
+    print()
+    print("   ★★正直な結論 ―― **体積は「投影が足りない」を教えてくれない**。")
+    print(f"     投影 8 本の再構成は nRMS が {worst[1]:.4f} "
+          f"({best[1]:.4f} の {worst[1] / best[1]:.1f} 倍) で、"
+          f"見た目はストリークで壊れている。")
+    print(f"     それでも体積は {worst[2]:.1f} mm^3 = 真値比 "
+          f"{worst[2] / v_true - 1:+.1%} で、128 本の {best[2] / v_true - 1:+.1%} "
+          f"と実質同じ。")
+    print("     理由は打ち消し: ストリークは物体のまわりに**正負が対称に**出るので、"
+          "しきい値を")
+    print("     越えて増えた画素と、割り込んで減った画素がほぼ相殺する。"
+          "体積は 1 つの積分量で、")
+    print("     符号の付いた誤差はそこで消える。")
+    print(f"     壊れていることを教えるのは体積ではなく**成分数**: "
+          f"{worst[0]} 本で {worst[3]} 個、{best[0]} 本で {best[3]} 個。")
+    print("     体積 1 個だけを報告して「投影数は足りていた」と言うのは、"
+          "ここでは成り立たない。")
 
     # 以降は 128 views の再構成を使う
     ang = T.projection_angles(128, 180.0, "uniform")
@@ -204,7 +228,7 @@ def main():
         sweep.append((frac, v))
         print(f"   {frac:17.2f} | {v:9.1f} | {v / v_true - 1:+6.1%}")
     span_thr = max(v for _, v in sweep) - min(v for _, v in sweep)
-    span_views = max(v for _, _, v in rows) - min(v for _, _, v in rows)
+    span_views = max(r[2] for r in rows) - min(r[2] for r in rows)
     print(f"   ★しきい値 0.30-0.70 の振れ幅 = {span_thr:.1f} mm^3 "
           f"({span_thr / v_true:.1%} of 真値)")
     print(f"     投影数 8-128 の振れ幅       = {span_views:.1f} mm^3 "
