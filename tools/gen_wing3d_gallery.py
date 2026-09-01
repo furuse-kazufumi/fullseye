@@ -56,6 +56,10 @@ import ops3d                                        # Fullseye の 3-D op レジ
 import video                                        # Fullseye の書き出し
 import visualhull                                   # look_at / synthesize_silhouette
 
+sys.path.insert(0, _HERE_TOOLS) if False else None  # (下で tools/ を通す)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import exhibit_tile as et                           # 共通の版面部品(タイル/保存/md)
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets")
