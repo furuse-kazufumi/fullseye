@@ -1839,7 +1839,9 @@ def ex_profile_sources(log):
     vol = 0.08 + 0.75 * ((rr < 34.0) & (rr > 19.0)) + 0.35 * (rr < 9.0)
     t_mm, prof3d = volprobe.vol_profile_line(vol, (48.0, 48.0, 2.0),
                                             (48.0, 48.0, 93.0))
-    wall = volprobe.vol_wall_thickness(vol, (48.0, 48.0, 2.0), (48.0, 48.0, 93.0))
+    # 立ち上がり -> 立ち下がりの対だけを厚みにするので、殻を 2 回横切れば 2 個返る。
+    walls = [float(w["thickness"]) for w in
+             volprobe.vol_wall_thickness(vol, (48.0, 48.0, 2.0), (48.0, 48.0, 93.0))]
 
     # (3) センサー時系列 — 音響記録
     fs = 2000.0
