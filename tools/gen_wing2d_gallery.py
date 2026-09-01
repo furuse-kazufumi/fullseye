@@ -1948,9 +1948,14 @@ def subject_resample_loss(log=print) -> dict:
             "(画像全体では %.2f dB。その差の大半は端の処理 —— rotate_image は "
             "reshape=False + mode='reflect' —— によるもので補間の損失ではない)。"
             "ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の "
-            "3 op は同じ入力に対して最大差 %.1g で、現状は同じ実装に相乗りしている。"
+            "3 op は %s。"
             % (psnr_core, 100 * hp_core[36] / hp_core[0], psnr_full,
-               max(zoom_maxdiff, zoom_maxdiff2))),
+               ("同じ入力に対して最大差 %.1g で、同じ実装に相乗りしている"
+                % max(d for d in (zoom_maxdiff, zoom_maxdiff2) if d is not None))
+               if all(d is not None for d in (zoom_maxdiff, zoom_maxdiff2))
+               else ("それぞれ別実装で、出力の形も " + " / ".join(
+                   "%s=%dx%d" % (k, v[0], v[1]) for k, v in zoom_shapes.items())
+                   + "(`zoom_image_size` だけが目標サイズ指定なので形が変わる)"))),
     }
 
 

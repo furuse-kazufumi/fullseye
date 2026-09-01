@@ -1020,11 +1020,25 @@
       "max_abs_diff_after_full_turn": 0.6424,
       "mean_abs_diff_after_full_turn": 0.02934,
       "zoom_ops_max_abs_difference": {
-        "zoom_image_factor vs zoom_image_size": 0.0,
-        "zoom_image_factor vs rescale_img": 3.6359804056473877e-14
+        "zoom_image_factor vs zoom_image_size": null,
+        "zoom_image_factor vs rescale_img": 0.965744951100725
+      },
+      "zoom_ops_output_shapes": {
+        "zoom_image_factor": [
+          256,
+          256
+        ],
+        "zoom_image_size": [
+          358,
+          256
+        ],
+        "rescale_img": [
+          256,
+          256
+        ]
       }
     },
-    "caption": "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻るのに、画素は戻らない。中央部だけで測っても元画像との PSNR は 26.81 dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の 64.4% まで落ちる(画像全体では 23.98 dB。その差の大半は端の処理 —— rotate_image は reshape=False + mode='reflect' —— によるもので補間の損失ではない)。ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の 3 op は同じ入力に対して最大差 4e-14 で、現状は同じ実装に相乗りしている。"
+    "caption": "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに戻るのに、画素は戻らない。中央部だけで測っても元画像との PSNR は 26.81 dB、中央の「細かさ」(画像 − ローパスの標準偏差) は元の 64.4% まで落ちる(画像全体では 23.98 dB。その差の大半は端の処理 —— rotate_image は reshape=False + mode='reflect' —— によるもので補間の損失ではない)。ついでの実測として `zoom_image_factor` / `zoom_image_size` / `rescale_img` の 3 op は それぞれ別実装で、出力の形も zoom_image_factor=256x256 / zoom_image_size=358x256 / rescale_img=256x256(`zoom_image_size` だけが目標サイズ指定なので形が変わる)。"
   },
   {
     "name": "shape_match",
