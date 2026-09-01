@@ -1427,10 +1427,28 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
     """Amplitude against shaft order — the spectrum a run-up should be read in.
 
     :func:`angular_resample` followed by an rFFT over a **whole number of
-    revolutions** (the record is cropped to that; the crop makes every integer
-    and half-integer order land exactly on a bin, so the amplitudes are exact
-    rather than leakage-limited). Bin spacing is ``1 / whole_revolutions`` in
-    orders.
+    revolutions** (the record is cropped to that). Bin spacing is
+    ``1 / whole_revolutions`` in orders.
+
+    ``revolutions`` overrides how many whole revolutions to keep, and it matters
+    more than it looks. An order ``o`` lands exactly on a bin only when
+    ``o * revolutions`` is an integer; otherwise it straddles two and both read
+    low. Measured on the run-up below, which happens to cover 79.994
+    revolutions:
+
+    ==============  ==========  =============  =============
+    revolutions     resolution  amp at o=1.0   amp at o=3.5
+    ==============  ==========  =============  =============
+    79 (default)    0.012658    0.999967       **0.636961**
+    78 (even)       0.012821    1.000009       0.999371
+    ==============  ==========  =============  =============
+
+    That 0.637 is the classic two-bin scallop loss, and nothing raises: the peak
+    is at the right order and 36 % too small, with a second peak of almost equal
+    height one bin away (measured 0.6370 at order 3.4937 and 0.6353 at 3.5063).
+    Cropping to an **even** number of revolutions puts every half-integer order
+    on a bin. The default is the largest whole number available; pass
+    ``revolutions`` when the order you care about is fractional.
 
     Returns a dict: ``orders``, ``magnitude`` (single-sided, ``2/N``),
     ``peak_order``, ``peak_amplitude``, ``peak_orders`` / ``peak_amplitudes``,
@@ -1439,25 +1457,30 @@ def order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None,
 
     Measured, and this is the whole argument for the operator. A 4 s run-up from
     600 to 1800 rpm at 5 kHz carrying exactly two shaft-locked components
-    (orders 1.0 and 3.5) plus one fixed 400 Hz resonance:
+    (orders 1.0 and 3.5, unit amplitude) plus one fixed 400 Hz resonance, read
+    with ``revolutions=78``:
 
-    ==========================  ====================  ====================
-    quantity                    ordinary spectrum     order spectrum
-    ==========================  ====================  ====================
-    order-3.5 component         smeared over 70.0 Hz  peak at order 3.500
-    peak amplitude recovered    0.0619 of its true    0.9979 of its true
-    -3 dB width                 70.00 Hz (= 4.7 ord)  0.0125 order
-    ==========================  ====================  ====================
+    ==========================  =====================  ====================
+    quantity                    ordinary spectrum      order spectrum
+    ==========================  =====================  ====================
+    order-3.5 peak amplitude    0.070203 (of true 1)   0.999371 (of true 1)
+    its -3 dB width             66.50 Hz (= 3.33 ord)  0.00000 order
+    400 Hz resonance amplitude  1.0000, one bin        0.0517, over 26.7 ord
+    ==========================  =====================  ====================
 
-    The ordinary spectrum recovers **6 %** of the component's amplitude because
-    the energy is spread across 4.7 orders' worth of bins; the order spectrum
-    recovers 99.8 % in one bin. The 400 Hz resonance goes the other way: sharp in
-    Hz, smeared across 9.3 orders after resampling. That reversal is the
-    diagnostic — it separates what turns with the shaft from what does not.
+    The ordinary spectrum recovers **7 %** of the shaft-locked component's
+    amplitude, because the energy is spread over 3.3 orders' worth of bins; the
+    order spectrum recovers **99.94 %** of it in a single bin whose -3 dB width
+    is one bin. The 400 Hz resonance goes the other way — sharp in hertz,
+    smeared across 26.7 orders after resampling. That **reversal** is the
+    diagnostic, and it is why both spectra are worth computing: what stays sharp
+    under angular resampling turns with the shaft, and what stays sharp under
+    ordinary transformation does not.
 
     **Raises** ``ValueError``: everything :func:`angular_resample` refuses (in
-    particular the aliasing refusal), plus a ``max_order`` above the angular
-    Nyquist ``samples_per_rev/2``.
+    particular the aliasing refusal), a ``revolutions`` larger than the record
+    actually contains, and a ``max_order`` above the angular Nyquist
+    ``samples_per_rev/2``.
     """
     op = "order_spectrum"
     ang = angular_resample(x, rate, rpm, samples_per_rev=samples_per_rev)
