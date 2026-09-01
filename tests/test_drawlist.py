@@ -395,6 +395,21 @@ def test_scale_multiplies_geometry_but_not_colours_or_z():
     assert dl.commands[0]["args"]["radius"] == 30.0        # 元の列は変わらない
 
 
+def test_scale_divides_the_per_pixel_physical_scale():
+    """``units_per_pixel`` は倍率で **割る**。掛けると図の寸法表示が静かに嘘になる。
+
+    2 倍の解像度で描けば 1 画素が表す物理長は半分になる。バーの物理長
+    (``length``)は世界の量なので変わらない。
+    """
+    dl = DrawList((H, W, 3)).scalebar(50.0, 0.8, thickness=5, xy=(20, 100))
+    big = dl.scale(2.0).commands[0]["args"]
+    assert big["length"] == 50.0                           # 物理量は不変
+    assert big["units_per_pixel"] == pytest.approx(0.4)    # 画素あたりは半分
+    assert big["thickness"] == 10.0 and big["xy"] == [40.0, 200.0]
+    # 図に出る「バーの画素長」= length / units_per_pixel は倍になる(= 正しい)
+    assert (50.0 / 0.8) * 2 == pytest.approx(big["length"] / big["units_per_pixel"])
+
+
 def test_scale_refuses_a_factor_that_leaves_no_pixels():
     with pytest.raises(ValueError):
         DrawList((4, 4)).scale(0.0)

@@ -409,7 +409,7 @@ from annotate import (  # noqa: E402,F401
 import drawlist  # noqa: E402  (deferred draw-command list: inspect / diff / rescale)
 from drawlist import (  # noqa: E402,F401
     DrawList, DrawListError, diff_command_lists, format_diff, flush_buffer,
-    default_text_metrics, COMMAND_SPECS, TEXT_ADVANCE_RATIO,
+    default_text_metrics, measured_text_metrics, COMMAND_SPECS, TEXT_ADVANCE_RATIO,
 )
 # 描画状態(色・線幅・線種・塗り)と、ラスタ描画。HALCON は装置に状態を持たせる
 # (set_color / set_draw / set_line_width / set_line_style)が、ここは**不変値**の
@@ -650,7 +650,7 @@ __all__ = [
     "axes_transform", "data_to_pixel", "nice_ticks", "axes_frame", "grid_lines",
     "ticks", "plot_series", "overlay_labels", "zoom_inset", "compare_frame",
     "panel_grid", "rounded_rect", "filled_polygon", "arc", "ellipse",
-    "drawlist", "DrawList", "DrawListError", "diff_command_lists", "format_diff", "flush_buffer", "default_text_metrics", "COMMAND_SPECS", "TEXT_ADVANCE_RATIO",
+    "drawlist", "DrawList", "DrawListError", "diff_command_lists", "format_diff", "flush_buffer", "default_text_metrics", "measured_text_metrics", "COMMAND_SPECS", "TEXT_ADVANCE_RATIO",
     "drawstyle", "DrawStyle", "draw_style", "current_style", "set_color", "set_line_width", "set_line_style", "set_draw", "resolve_pattern", "resolve_color", "LINE_STYLES", "DRAW_MODES",
     "imagedraw", "draw_line", "draw_polyline", "draw_circle", "draw_markers", "draw_contour", "new_canvas",
     "tomography", "projection_angles", "sinogram_design", "ellipse_phantom",
