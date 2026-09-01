@@ -1363,10 +1363,11 @@ def ex_stage_specular(data, log=print):
            f"観測用 holdout では {rb['selected_by_train']['holdout']:.4f} と手に迫って"
            f"見えたのに、locked では {row['locked_champion']:.4f} で手 "
            f"{row['locked_hand']:.4f} に**負けている**。"
-           f"1 枚目の item に対する段ごとのスコアは "
+           f"locked の 1 枚目に対する段ごとのスコアは "
            + " → ".join(f"{v:.4f}" for v in scores) +
            " で、四元数へ持ち上げている間は 2 段とも 0.0000(型が合わないので"
-           "採点対象にならない)。")
+           "採点対象にならない)。最後の段は色を捨てた出力になっているのに"
+           "スコアが残るのは、この課題の指標が RGB を輝度に落としてから比べるため。")
     log(f"    wingevo_stage_specular: {info['frames']} frames "
         f"{info['gif_bytes'] / 1e6:.2f} MB")
     return [{"stem": "wingevo_stage_specular", "kind": "gif", "info": info,
