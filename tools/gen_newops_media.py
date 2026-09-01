@@ -1911,6 +1911,126 @@ def build_motionmag(log, frames: int = 32):
     return out, facts, 10, T // 4
 
 
+# =========================================================================== #
+# 束ねる展示 — 工程のフリップブックと、族の見本帳                                #
+# =========================================================================== #
+def build_lightfield_flow(log, out_dir: str, thumb_dir: str) -> dict:
+    """生 MLA 画像 → 復号 → リフォーカス → 全焦点 → 深度 を 1 本のコマ送りに。
+
+    ``exhibit_tile.flipbook`` は**寸法が揃っていること**を要求するので、各工程を
+    同じ 336x336 の RGB パネルに揃えてから渡す(拡大は最近傍 = 画素の粗さを
+    ごまかさない)。
+    """
+    sys.path.insert(0, _HERE)
+    import lightfield as L
+    from exhibit_tile import flipbook, markdown_animation, save_animation
+
+    lf, truth, ANG, SIZE, NEAR, FAR = _lightfield()
+    P = SIZE * 3                                       # 336
+    raw = L.lf_to_mla(lf)
+    decoded = L.lf_from_mla(raw, (ANG, ANG))
+    exact = bool(np.array_equal(decoded, lf))
+    if not exact:
+        _flag("lightfield flow", "lf_to_mla -> lf_from_mla is not a bit-exact round trip")
+    centre = L.lf_center_view(lf)
+    near = L.lf_refocus(lf, NEAR, edge="wrap")
+    far = L.lf_refocus(lf, FAR, edge="wrap")
+    levels = tuple(np.round(np.linspace(-1.0, 4.0, 21), 6))
+    slope_map, _conf = L.lf_depth_from_focus(lf, levels, edge="wrap", subpixel=False)
+    aif = L.lf_all_in_focus(lf, slope_map, levels=levels, edge="wrap")
+
+    def _sharp(img):
+        gy, gx = np.gradient(np.asarray(img, np.float64))
+        return float((gy ** 2 + gx ** 2).mean())
+
+    slices = [_sharp(s) for s in L.lf_focal_stack(lf, levels, edge="wrap")]
+    agree = float((np.abs(slope_map - truth) < 1e-9).mean())
+    lo, hi = 0.15, 0.85
+    panels = [
+        _gray_to_rgb(_norm01(raw[:P, :P], lo, hi)),                       # 生 MLA(等倍)
+        _upscale(_gray_to_rgb(_norm01(centre, lo, hi)), 3),
+        _upscale(_gray_to_rgb(_norm01(near, lo, hi)), 3),
+        _upscale(_gray_to_rgb(_norm01(far, lo, hi)), 3),
+        _upscale(_gray_to_rgb(_norm01(aif, lo, hi)), 3),
+        _upscale(_cmap(_norm01(slope_map, FAR - 0.5, NEAR + 0.5)), 3),
+    ]
+    for k, p in enumerate(panels):
+        if p.shape[:2] != (P, P):
+            _flag("lightfield flow", f"panel {k} is {p.shape[:2]}, expected {(P, P)}")
+    labels = [
+        f"MLA 生画像({SIZE}x{SIZE} 画素の各点に {ANG}x{ANG} のレンズ像)",
+        f"復号して中心視点(lf_to_mla → lf_from_mla の往復ビット一致 = {exact})",
+        f"リフォーカス slope {NEAR:+.1f} = 手前の層(鮮鋭度 {_sharp(near):.5f})",
+        f"リフォーカス slope {FAR:+.1f} = 奥の層(鮮鋭度 {_sharp(far):.5f})",
+        f"全焦点 {_sharp(aif):.5f} > 最良の単一スライス {max(slices):.5f}",
+        f"スロープ地図(真値と一致した画素 {agree:.1%}、暗い=奥 明るい=手前)",
+    ]
+    book = flipbook(panels, labels,
+                    title="ライトフィールド 1 回の撮像から深度まで(lightfield 17 op)")
+    info = save_animation(book, "newops_lightfield_flow")
+    log(f"    flipbook newops_lightfield_flow: {info['frames']} frames "
+        f"{info['size']}, {info['gif_bytes'] / 1e6:.2f} MB")
+    log(f"    round trip bit-exact {exact}; all-in-focus {_sharp(aif):.5f} > best "
+        f"slice {max(slices):.5f}; slope map agrees with the truth on {agree:.1%}")
+    info["markdown"] = markdown_animation(
+        "newops_lightfield_flow", "ライトフィールドの処理の流れ",
+        f"1 回の撮像 → 復号 → リフォーカス → 全焦点 → 深度。往復はビット一致、"
+        f"全焦点はどの単一スライスより鋭く({_sharp(aif):.5f} > {max(slices):.5f})、"
+        f"スロープ地図は真値と {agree:.1%} 一致。使用 op: `lf_synthesize`, `lf_to_mla`, "
+        f"`lf_from_mla`, `lf_center_view`, `lf_refocus`, `lf_depth_from_focus`, "
+        f"`lf_all_in_focus`。")
+    info["facts"] = {"round_trip_bit_exact": exact, "all_in_focus_sharpness": _sharp(aif),
+                     "best_single_slice_sharpness": float(max(slices)),
+                     "slope_map_agreement": agree, "panel_px": P}
+    return info
+
+
+def _sampler_label(name: str, f: dict) -> str:
+    """見本帳のラベル。数字はすべて、その図を作ったときの実測値から引く。"""
+    return {
+        "csi": lambda: f"コヒーレンス走査干渉 — 位相シフト法は {f['psi_first_break_um']:.2f} "
+                       f"um から λ/2 の整数倍だけ外す",
+        "bearing": lambda: f"包絡線解析 — 生スペクトル {f['raw_amplitude_at_defect']:.1e} → "
+                           f"包絡線 {f['best_amplitude']:.4f}",
+        "lightfield": lambda: f"リフォーカス — 鮮鋭度が slope "
+                              f"{f['sharpness_peak_near_slope']:+.1f} と "
+                              f"{f['sharpness_peak_far_slope']:+.1f} で立つ",
+        "parallax": lambda: f"視差 — {f['orbit_length']} 視点の実測シフトが閉形式と "
+                            f"{f['max_parallax_error_px']:.2f} px 一致",
+        "photon": lambda: f"光子計数 — 誤差棒 {f['relative_uncertainty_first_last'][0]:.1%} → "
+                          f"{f['relative_uncertainty_first_last'][1]:.1%}",
+        "quaternion": lambda: f"四元数の色回転 — 対角近似との差 "
+                              f"{f['max_difference_at_90deg']:.2f}",
+        "fmcw": lambda: f"窓関数 — rect は {f['rect_leakage_floor_db']:.1f} dB で頭打ち、"
+                        f"hann は追従",
+        "specular": lambda: f"鏡面分離 — ハイライトを動かしても最悪誤差 "
+                            f"{f['worst_diffuse_error']:.1e}",
+        "shadow": lambda: f"遮蔽下の法線 — k={f['break_at_k']} 灯で頑健版も崩れる",
+        "motionmag": lambda: f"モーション増幅 — {f['first_broken_amplitude_px']:.2f} px で"
+                             f"測定が反転(J0 零点 {f['cliff_px']:.2f} px)",
+    }[name]()
+
+
+def build_sampler(log, results: dict) -> dict:
+    """族の見本帳 — 各展示の代表 1 コマを 1 枚のタイルに束ねる。"""
+    sys.path.insert(0, _HERE)
+    from exhibit_tile import contact_sheet, markdown, save_exhibit
+
+    order = [n for n in BUILDERS if n in results]
+    panels = [results[n]["frame"] for n in order]
+    labels = [_sampler_label(n, results[n]["facts"]) for n in order]
+    sheet = contact_sheet(panels, labels, ncols=2, panel_px=460,
+                          title="新しい 8 族の展示(各図の代表 1 コマ。すべて動く図の一部)")
+    info = save_exhibit(sheet, "newops_family_sampler")
+    log(f"    sampler newops_family_sampler: {info['size']}, "
+        f"png {info['png_bytes'] / 1e6:.2f} MB, thumb {info['thumb_bytes'] / 1e3:.0f} kB")
+    info["markdown"] = markdown(
+        "newops_family_sampler", "新しい op 族の見本帳",
+        "8 族 10 点の代表コマ。1 枚ずつ原寸で並べる代わりに束ねてある — "
+        "各図の中身は本文のアニメーションで見てほしい。")
+    return info
+
+
 # --------------------------------------------------------------------------- #
 # CLI                                                                           #
 # --------------------------------------------------------------------------- #
