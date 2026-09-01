@@ -623,7 +623,7 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
 # op 2 — 面上の点 → 画素(遮蔽を隠さない順方向)                                #
 # --------------------------------------------------------------------------- #
 def cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None,
-                         cull_backfaces=True, depth_tol=1e-6):
+                         cull_backfaces=True, depth_tol=1e-6, strict=False):
     """3-D 点 (N,3) → 画素 + **可視性**(遮蔽・背面・画枠外を区別して返す)。
 
     ``camera.project_points`` で投影したうえで、**同じ画素へ光線を撃ち直して**
