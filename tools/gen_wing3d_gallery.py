@@ -2756,19 +2756,21 @@ def ex_window_sweep(log) -> dict:
              % (r["center"] - r["width"] / 2, r["center"] + r["width"] / 2),
              C_TEXT, 15, True),
         ])
-        p = Plot(c, 530, 200, 550, 150, (-1200, 1400), (-0.05, 1.05),
-                 xlabel="HU ->", ylabel="窓の出力 [0,1]",
-                 xticks=[-1000, -500, 0, 500, 1000], yticks=[0, 0.5, 1.0],
-                 xfmt="%d", yfmt="%.1f")
+        p = Plot(c, 530, 214, 550, 142, (-1200, 1400), (-0.05, 1.05),
+                 xlabel="HU ->", xticks=[-1000, -500, 0, 500, 1000],
+                 yticks=[0, 0.5, 1.0], xfmt="%d", yfmt="%.1f")
+        p.items.append((470, 194, "窓の出力 [0,1]", C_DIM, 11, False))
         lo, hi = r["center"] - r["width"] / 2, r["center"] + r["width"] / 2
         p.series([-1200, lo, hi, 1400], [0, 0, 1, 1], C_B, width=3)
-        for name, v, col in tissue:
+        for j, (name, v, col) in enumerate(tissue):
             p.c = imagedraw.draw_line(p.c, (p.px(v), p.y0), (p.px(v), p.y0 + p.h - 1),
                                       color=(0.28, 0.30, 0.34), width=1)
             y = r["vals"][name]
             p.c = imagedraw.draw_markers(p.c, [(p.px(v), p.py(y))], color=col,
                                          size=5, shape="dot", width=2)
-            p.items.append((p.px(v) - _text_w(name, 10) / 2, p.y0 - 15, name, col, 10, True))
+            # 上下 2 段に振り分ける(HU 軸上で近い組織のラベルが重ならないように)
+            p.items.append((p.px(v) - _text_w(name, 10, True) / 2,
+                            p.y0 - 32 + 16 * (j % 2), name, col, 10, True))
         c = p.done()
         # 各組織が「いま何色に見えるか」の帯
         bx, by, bw, bh = 530, 400, 550, 26
