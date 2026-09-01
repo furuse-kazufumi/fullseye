@@ -1378,7 +1378,7 @@ def beam_hardening_apply(sinogram, high_energy_fraction=0.5,
             "been through something (a filter, a subtraction) that the exponential "
             "model does not describe, and hardening it would return a plausible "
             "array with no physical meaning" % (op, bad))
-    return -np.log((1.0 - w) * np.exp(-sino) + w * np.exp(-k * sino))
+    return _hardened(sino, w, k)
 
 
 def beam_hardening_correct(sinogram, high_energy_fraction=0.5,
