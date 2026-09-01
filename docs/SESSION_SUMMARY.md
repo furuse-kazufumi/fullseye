@@ -3,49 +3,50 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 03:09:40
+- **最終更新**: 2026-09-02 03:29:12
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-fbd2f8596 auto: cadmap.py 編集前 (2026-09-02 03:09)
-85a59cea1 auto: cadmap.py 編集前 (2026-09-02 03:09)
-1bc148ad3 auto: test_camera.py 編集前 (2026-09-02 03:09)
-f3a249461 auto: cadmap.py 編集前 (2026-09-02 03:09)
-9893d3e35 auto: cadmap.py 編集前 (2026-09-02 03:09)
-3a78791ff auto: test_render3d.py 編集前 (2026-09-02 03:09)
-de281b834 auto: cadmap.py 編集前 (2026-09-02 03:09)
-f06eef31f auto: cadmap.py 編集前 (2026-09-02 03:09)
-104b1d57d auto: cadmap.py 編集前 (2026-09-02 03:08)
-f1e9d9cd7 auto: cadmap.py 編集前 (2026-09-02 03:08)
+98dd69398 auto: shapematch.py 編集前 (2026-09-02 03:28)
+65fcf7b14 auto: funct1d.py 編集前 (2026-09-02 03:28)
+c2bffa68c auto: test_ops3d_ledger.py 編集前 (2026-09-02 03:28)
+4811b868e auto: cadmap.py 編集前 (2026-09-02 03:28)
+49cf30407 auto: test_ops3d_ledger.py 編集前 (2026-09-02 03:28)
+bea51e70a auto: gen_wing3d_gallery.py 編集前 (2026-09-02 03:27)
+2f4c1670e auto: fourierdesc.py 編集前 (2026-09-02 03:27)
+c5ffbe1cd auto: fourierdesc.py 編集前 (2026-09-02 03:27)
+2237b4505 auto: imagemorph.py 編集前 (2026-09-02 03:27)
+68ecf9311 auto: backends_auto.py 編集前 (2026-09-02 03:26)
 ```
 
 ## 現在の git status
 
 ```
-M cadmap.py
+M docs/CONVERSION_MATRIX.md
+ M shapematch.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-03:09 docs/articles/assets/thumbs/wingevo_generations_thumb.jpg
-03:09 docs/articles/assets/media/wingevo_generations.gif
-03:09 cadmap.py
-03:09 .pytest_cache/v/cache/lastfailed
-03:09 .pytest_cache/v/cache/nodeids
-03:09 docs/articles/assets/thumbs/wingevo_seed_spread_thumb.jpg
-03:09 docs/articles/assets/media/wingevo_seed_spread.gif
-03:09 tests/test_camera.py
-03:09 tests/test_render3d.py
-03:09 docs/articles/assets/thumbs/wing3d_richardson_lucy_thumb.jpg
-03:09 docs/articles/assets/media/wing3d_richardson_lucy.mp4
-03:09 docs/articles/assets/media/wing3d_richardson_lucy.gif
-03:09 docs/articles/assets/thumbs/wingct_pipeline_thumb.jpg
-03:09 docs/articles/assets/media/wingct_pipeline.gif
-03:08 docs/articles/assets/wingevo_observed_vs_locked_thumb.jpg
+03:29 docs/articles/assets/wing3d_rle_compression_thumb.jpg
+03:29 docs/articles/assets/wing3d_rle_compression.png
+03:29 docs/articles/assets/thumbs/wing3d_domain_memory_thumb.jpg
+03:29 docs/articles/assets/media/wing3d_domain_memory.mp4
+03:29 docs/articles/assets/media/wing3d_domain_memory.gif
+03:28 .pytest_cache/v/cache/nodeids
+03:28 docs/CONVERSION_MATRIX.md
+03:28 shapematch.py
+03:28 funct1d.py
+03:28 docs/articles/exhibits/wing3d.md
+03:28 docs/articles/exhibits/wing3d.en.md
+03:28 docs/articles/assets/_wing3d_meta.json
+03:28 docs/articles/assets/_wing3d_manifest.md
+03:28 docs/articles/assets/thumbs/wing3d_mip_turntable_thumb.jpg
+03:28 docs/articles/assets/media/wing3d_mip_turntable.mp4
 ```
 
 ---

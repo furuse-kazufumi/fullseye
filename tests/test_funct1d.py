@@ -210,7 +210,8 @@ def test_match_scores_equal_the_direct_per_lag_definition():
         b = rng.normal(0, rng.uniform(0.1, 50), n2) + rng.uniform(-1e3, 1e3)
         _, fast = F._match_scores(a - a.mean(), b - b.mean())
         worst = max(worst, float(np.max(np.abs(fast - direct(a - a.mean(), b - b.mean())))))
-    assert worst < 1e-11                          # 実測 5.769e-14(60 対で最悪)
+    # 実測: この seed で最悪 4.108e-15。別途 60 対(オフセット ±1e9 まで)で 4.549e-12。
+    assert worst < 1e-11
 
 
 def test_match_shift_estimate_is_unbiased_across_true_shifts():
