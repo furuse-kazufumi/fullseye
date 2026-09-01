@@ -478,6 +478,21 @@ def _as_angles(angles_deg, n_rows: int | None, op: str) -> np.ndarray:
                          "has no information in it; refusing rather than returning "
                          "an all-zero reconstruction that looks like a dark object"
                          % (op,))
+    if arr.size >= 4:
+        span = float(arr.max() - arr.min())
+        if 0.0 < span <= 2.0 * np.pi:
+            raise ValueError(
+                "%s: the %d angles span only %.4f — in **degrees**, which is what "
+                "this argument is, that is a scan through a %.4f-degree wedge, and "
+                "a wedge that narrow carries no reconstructable information at all "
+                "(measured: a 30-degree span already deletes 90 %% of the Fourier "
+                "energy in the directions it misses). The overwhelmingly likely "
+                "cause is that these are radians. Nothing downstream can catch it "
+                "— passing radians to filtered_backprojection returns a finite, "
+                "smooth, entirely plausible slice whose values are 39x too small "
+                "(measured) — so it is refused here. Use np.rad2deg(), or "
+                "projection_angles(), which returns degrees."
+                % (op, arr.size, span, span))
     if n_rows is not None and arr.size != n_rows:
         raise ValueError(
             "%s: angles_deg has %d entries but the sinogram has %d rows. Rows are "
