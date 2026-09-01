@@ -678,14 +678,14 @@ def quat_conjugate_image(qimage) -> np.ndarray:
 def quat_normalize_image(qimage) -> np.ndarray:
     """Per-pixel normalisation to unit modulus. → (H, W, 4).
 
-    **Fail-closed on a zero pixel**, which is the difference from
-    ``pose_quat.quat_normalize``: that helper divides by ``norm + 1e-12``, so a
-    zero quaternion comes back as (approximately) zero and, if it is then used as
-    a rotor, ``pose_quat.quat_to_hom_mat3d`` normalises it *again* and returns
-    the **identity rotation** — a wrong answer with no exception and no NaN. A
-    quaternion image routinely contains exact zeros (a black pixel is
-    ``(0,0,0,0)``), so the case is not hypothetical and it is refused by name,
-    with the count and the first offending pixel in the message.
+    **Fail-closed on a zero pixel.** A quaternion image routinely contains exact
+    zeros — a black pixel is ``(0,0,0,0)`` — so the case is not hypothetical, and
+    a zero quaternion has no direction to normalise towards. It is refused by
+    name, with the count and the first offending pixel's row and column in the
+    message, rather than divided by ``norm + eps``: that idiom returns zero, and
+    a zero used as a rotor becomes the **identity rotation** with no exception
+    and no NaN to mark it. (``pose_quat.quat_normalize`` did exactly that until
+    2026-09-01 and now fail-closes too; see :func:`quat_color_rotate`.)
 
     **Raises** ``ValueError``: any pixel has modulus 0."""
     op = "quat_normalize_image"
