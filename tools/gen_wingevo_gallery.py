@@ -676,7 +676,14 @@ def _photon_panel(y, target, label_color, px=PANEL_PX):
 
 
 def problem_panels(name, row):
-    """課題 1 件ぶんの 5 パネル(入力 / 正解 / 恒等 / 手 / 進化)を作る。"""
+    """課題 1 件ぶんの 4 パネル(入力=恒等 / 手 / 進化 / 正解)を作る。
+
+    「入力」と「恒等」は定義上まったく同じ絵なので、列を分けない(同じ絵を 2 度
+    並べても記事が縦に伸びるだけ)。ラベルに恒等のスコアを書く。
+
+    画像系のパネルは **入力の最大値で共通に正規化**する。パネルごとに自動で
+    伸ばすと、明るさの違いという実際の差が消えてしまう。
+    """
     import ops
     import problems
     prob = problems.PROBLEMS[name]
@@ -687,23 +694,20 @@ def problem_panels(name, row):
     out_evo = ops.run_stages(ops.decode_by_names(ch["pipeline_stages"]), inp)
 
     if name == "photon_denoise":
-        return [
-            _photon_panel(inp, tgt, C_IDENT),
-            _photon_panel(tgt, tgt, C_TRUE),
-            _photon_panel(inp, tgt, C_IDENT),
-            _photon_panel(out_hand, tgt, C_HAND),
-            _photon_panel(out_evo, tgt, C_EVO),
-        ]
+        return [_photon_panel(v, tgt, col) for v, col in
+                ((inp, C_IDENT), (out_hand, C_HAND), (out_evo, C_EVO),
+                 (tgt, C_TRUE))]
     if name == "signal_denoise":
         x = np.arange(len(tgt))
+
         def sig(y, col):
             y = np.asarray(y, np.float64).ravel()
             return curve_panel(PANEL_PX,
                                [{"x": x, "y": tgt, "color": C_TRUE, "width": 2},
                                 {"x": np.arange(len(y)), "y": y, "color": col,
                                  "width": 2}], ylim=(-1.6, 1.6))
-        return [sig(inp, C_IDENT), sig(tgt, C_TRUE), sig(inp, C_IDENT),
-                sig(out_hand, C_HAND), sig(out_evo, C_EVO)]
+        return [sig(inp, C_IDENT), sig(out_hand, C_HAND), sig(out_evo, C_EVO),
+                sig(tgt, C_TRUE)]
     if name == "points_denoise":
         def cloud(pts, col):
             p = np.asarray(pts, np.float64)
@@ -712,37 +716,33 @@ def problem_panels(name, row):
             pl.grid(yticks=(0, 5, 10), xticks=(0, 5, 10)).frame()
             pl.marks(p[:, 0], p[:, 2], col, size=1, shape="dot")
             return pl.c
-        return [cloud(inp, C_IDENT), cloud(tgt, C_TRUE), cloud(inp, C_IDENT),
-                cloud(out_hand, C_HAND), cloud(out_evo, C_EVO)]
+        return [cloud(inp, C_IDENT), cloud(out_hand, C_HAND),
+                cloud(out_evo, C_EVO), cloud(tgt, C_TRUE)]
     if name == "vibration_map":
-        frame0 = np.asarray(inp)[0]
         return [
-            cmap_panel(frame0, "bone", PANEL_PX),
-            cmap_panel(np.asarray(tgt), "viridis", PANEL_PX, border=C_TRUE),
-            cmap_panel(np.asarray(inp).mean(axis=0), "bone", PANEL_PX,
-                       border=C_IDENT),
+            cmap_panel(np.asarray(inp)[0], "bone", PANEL_PX, border=C_IDENT),
             cmap_panel(np.asarray(out_hand), "viridis", PANEL_PX, border=C_HAND),
             cmap_panel(np.asarray(out_evo), "viridis", PANEL_PX, border=C_EVO),
+            cmap_panel(np.asarray(tgt), "viridis", PANEL_PX, border=C_TRUE),
         ]
     if name == "lf_slope":
         lf = np.asarray(inp)
         centre = lf[lf.shape[0] // 2, lf.shape[1] // 2]
         return [
-            cmap_panel(centre, "bone", PANEL_PX),
-            cmap_panel(np.asarray(tgt), "turbo", PANEL_PX, border=C_TRUE),
             cmap_panel(centre, "bone", PANEL_PX, border=C_IDENT),
             cmap_panel(np.asarray(out_hand), "turbo", PANEL_PX, border=C_HAND),
             cmap_panel(np.asarray(out_evo), "turbo", PANEL_PX, border=C_EVO),
+            cmap_panel(np.asarray(tgt), "turbo", PANEL_PX, border=C_TRUE),
         ]
     if name == "specular_removal":
+        scale = max(1e-9, float(np.max(inp)))     # 全パネル共通の正規化
+
         def rgb(a, border):
-            p = upscale(to_rgb(np.asarray(a, np.float64) /
-                               max(1e-9, float(np.max(a)))), 8)
-            p = np.array(p)
+            p = np.array(upscale(to_rgb(np.asarray(a, np.float64) / scale), 8))
             p[:2], p[-2:], p[:, :2], p[:, -2:] = border, border, border, border
             return p
-        return [rgb(inp, C_PANEL), rgb(tgt, C_TRUE), rgb(inp, C_IDENT),
-                rgb(out_hand, C_HAND), rgb(out_evo, C_EVO)]
+        return [rgb(inp, C_IDENT), rgb(out_hand, C_HAND), rgb(out_evo, C_EVO),
+                rgb(tgt, C_TRUE)]
     raise KeyError(name)
 
 

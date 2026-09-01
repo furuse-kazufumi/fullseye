@@ -226,7 +226,11 @@ class Axes:
         self.logx, self.logy = bool(logx), bool(logy)
 
     def X(self, v):
-        v = np.clip(np.asarray(v, np.float64), self.xlo, self.xhi)
+        # 反転軸(lo > hi)でも効くよう、clip は min/max に直してから当てる。
+        # np.clip(v, lo, hi) は lo > hi のとき黙って hi を返すので、全点が
+        # 端に貼り付いた図になる(実際にそれで 1 度騙された)。
+        v = np.clip(np.asarray(v, np.float64), min(self.xlo, self.xhi),
+                    max(self.xlo, self.xhi))
         if self.logx:
             t = (np.log10(v) - np.log10(self.xlo)) / (np.log10(self.xhi) - np.log10(self.xlo))
         else:
@@ -234,7 +238,8 @@ class Axes:
         return self.x0 + (self.x1 - self.x0) * t
 
     def Y(self, v):
-        v = np.clip(np.asarray(v, np.float64), self.ylo, self.yhi)
+        v = np.clip(np.asarray(v, np.float64), min(self.ylo, self.yhi),
+                    max(self.ylo, self.yhi))
         if self.logy:
             t = (np.log10(v) - np.log10(self.ylo)) / (np.log10(self.yhi) - np.log10(self.ylo))
         else:
@@ -829,10 +834,10 @@ def build_lightfield(log, frames: int = 26):
     HUD = 28
     PANY = HUD + 22
     H = PANY + PAN + 68
-    px0, px1 = MARGIN + PAN + GAP + 62, W - MARGIN - 12
+    px0, px1 = MARGIN + PAN + GAP + 72, W - MARGIN - 12
     head = (f"one light field, {ANG}x{ANG} views of {SIZE}x{SIZE} px "
-            f"(lf_synthesize -> lf_refocus): two layers, slope {NEAR:+.1f} in front "
-            f"covering {near_mask.mean():.0%}, slope {FAR:+.1f} behind")
+            f"(lf_refocus): slope {NEAR:+.1f} in front over "
+            f"{near_mask.mean():.0%} of the frame, slope {FAR:+.1f} behind")
 
     out = []
     for i, s in enumerate(slopes):
@@ -854,6 +859,9 @@ def build_lightfield(log, frames: int = 26):
         canvas = ax.axis(canvas)
         canvas, tx = ax.xticks(canvas, [-0.5, 0.0, 1.0, 2.0, 3.0, 3.5],
                                ["-0.5", "0.0", "1.0", "2.0", "3.0", "3.5"])
+        canvas, ty = ax.yticks(canvas, [0.0, smax * 0.5, smax],
+                               ["0.000", f"{smax * 0.5:.3f}", f"{smax:.3f}"])
+        tx = tx + ty
         canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
 
         focus = "front layer" if abs(s - NEAR) < abs(s - FAR) else "back layer"
@@ -867,8 +875,7 @@ def build_lightfield(log, frames: int = 26):
              f"{focus}", C_TEXT, 13, True),
             (MARGIN + 4, PANY + PAN + 26,
              f"sweep peaks at {peak_near:+.2f} (front, synthesised {NEAR:+.1f}) and "
-             f"{peak_far:+.2f} (back, synthesised {FAR:+.1f}); max measurable slope "
-             f"{st['max_slope_px']:.1f} px/view from {st['n_views']} views",
+             f"{peak_far:+.2f} (back, synthesised {FAR:+.1f});  {st['n_views']} views",
              C_DIM, 12, False),
             (MARGIN + 4, PANY + PAN + 44,
              f"a single photograph cannot do this: the centre view is stuck at "
@@ -1011,11 +1018,10 @@ def build_parallax(log):
              f"({r['expect'][0]:+.0f}, {r['expect'][1]:+.0f}) px", C_TEAL, 13, True),
             (MARGIN, PANY + PAN + 26,
              f"the back layer (slope {FAR:+.1f}) does not move at all -- that "
-             f"difference is the parallax, and the depth comes from it", C_DIM, 12, False),
+             f"difference is the parallax", C_DIM, 12, False),
             (MARGIN, PANY + PAN + 44,
-             f"over the orbit the measured shift matches the closed form to "
-             f"{err:.2f} px (FFT correlation, sign self-tested on np.roll)",
-             C_DIM, 12, False),
+             f"over the orbit it matches the closed form to {err:.2f} px "
+             f"(FFT correlation, sign self-tested on np.roll)", C_DIM, 12, False),
             (MARGIN, PANY + PAN + 62,
              "one exposure holds all 81 of these views; an ordinary camera keeps one.",
              C_DIM, 12, False),
