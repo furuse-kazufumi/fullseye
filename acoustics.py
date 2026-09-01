@@ -425,6 +425,17 @@ def stft(x, rate, win=256, hop=None, window="hann", nfft=None, scaling="none"):
         samples. Reconstruction divides by this sum, so a value of zero means
         some sample is not reconstructible; it is refused up front rather than
         producing a hole.
+    ``interior``
+        boolean mask over frames, true for the frames that lie **entirely inside
+        the original signal**. The transform pads by a full window at each end so
+        that inversion is exact, and the frames straddling that pad see part
+        zeros — they are correct as coefficients but they are not representative,
+        and any statistic averaged over *all* frames is therefore biased low.
+        Measured on 16384 samples of unit-variance white noise, win = 1024,
+        hop = 512: the ``"density"`` spectrum integrates to 0.9073 over all 35
+        frames and to 0.9933 over the 31 interior ones (the signal's own variance
+        is 0.9923). :func:`spectral_kurtosis` uses this mask for exactly that
+        reason — a half-empty frame looks impulsive.
 
     **Normalisation is explicit**, because a windowed spectrum has no single
     natural amplitude and a plausible-looking dB number is the usual result of
