@@ -1111,6 +1111,25 @@ def ex_seed_spread(data, log=print):
 # --------------------------------------------------------------------------- #
 # 展示 5 — 世代とパイプラインの伸縮(GIF)                                       #
 # --------------------------------------------------------------------------- #
+def _runs(seq):
+    """連続する重複を畳んだ列(``[5,5,4,4,5]`` → ``[5,4,5]``)。"""
+    out = []
+    for v in seq:
+        if not out or out[-1] != v:
+            out.append(v)
+    return out
+
+
+def _first_op_swap(hist):
+    """champion の op 集合が最初に入れ替わった世代と、その中身を返す。"""
+    for i in range(1, len(hist)):
+        before, after = set(hist[i - 1]["ops"]), set(hist[i]["ops"])
+        gone, came = sorted(before - after), sorted(after - before)
+        if gone and came:
+            return hist[i]["gen"], gone[0], came[0]
+    return None, None, None
+
+
 def ex_generations(data, log=print):
     tj = data["trajectory"]
     hist = tj["history"]
