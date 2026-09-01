@@ -1323,10 +1323,9 @@ def ex_weighting_ac(log):
         axs.curve(ink, tw, r["wave"], width=2)
         fig.stamp(ink, C_B)
         fig.text(600, 434, "the tone itself (first 6 ms)", C_TEXT, 12, True)
-        fig.text(W - 130, 566, "time [ms] ->", C_DIM, 11)
-        fig.text(14, H - 22, f"L_eq(Z) of an amplitude-{amp:g} sine is "
-                             f"10 log10(A^2/2) = {leq_z_closed:.6f} dB by closed form; "
-                             f"measured {r['lz']:.6f} dB.", C_DIM, 12)
+        fig.text(W - 130, 562, "time [ms] ->", C_DIM, 11)
+        fig.text(600, 580, f"L_eq(Z) = 10 log10(A^2/2) = {leq_z_closed:.6f} dB "
+                           f"by closed form; measured {r['lz']:.6f} dB.", C_DIM, 12)
         frames.append(fig.u8())
 
     info = save_flipbook(frames, "weighting_ac", labels, ms=220, hold_ms=1400, log=log)
