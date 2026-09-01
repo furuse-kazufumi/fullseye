@@ -396,8 +396,9 @@ def _shade_mesh(V, F, yaw_deg, pitch_deg=18.0, size=420, fill=0.9, dist_r=30.0,
     import render3d
     import render_shade
     V = np.asarray(V, np.float64)
-    c = 0.5 * (V.min(0) + V.max(0))
-    r = float(np.linalg.norm(V - c, axis=1).max()) or 1.0
+    c = 0.5 * (V.min(0) + V.max(0)) if center is None else np.asarray(center, np.float64)
+    r = (float(np.linalg.norm(V - c, axis=1).max()) or 1.0) if radius is None \
+        else float(radius)
     a, e = np.radians(yaw_deg), np.radians(pitch_deg)
     eye = c + r * dist_r * np.array([np.cos(e) * np.cos(a),
                                      np.cos(e) * np.sin(a), np.sin(e)])
