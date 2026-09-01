@@ -994,12 +994,22 @@ def _ledger_args():
     }
 
 
-#: The check for the sort this family introduces. The chain fuzzer does not know
-#: ``rgbimage`` until the family is wired into ``tools/chain_fuzz.py``; until
-#: then this is the definition the wiring must use, and once it exists the test
-#: below asserts the two agree rather than drifting.
+#: The checks for the two sorts this family introduces. Each is the definition
+#: ``tools/chain_fuzz.py`` must use; once the wiring exists the tests below
+#: assert the two agree rather than drifting apart.
 RGBIMAGE_CHECK = (lambda v: isinstance(v, np.ndarray) and v.ndim == 3
                   and v.shape[2] == 3)
+
+#: A polariser sweep: ``(N, H, W)`` real frames through a linear analyser.
+#: ``N >= 3`` because the model has three unknowns (mean, amplitude, azimuth),
+#: and non-negative because radiance through an analyser cannot be negative.
+#: **That is the whole of what a predicate can honestly assert** — see
+#: :func:`test_the_polsweep_predicate_cannot_tell_a_sweep_from_a_light_stack`.
+POLSWEEP_CHECK = (lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+                  and v.shape[0] >= 3 and v.dtype.kind == "f"
+                  and np.isfinite(v).all() and (v >= 0.0).all())
+
+NEW_SORTS = {"rgbimage": RGBIMAGE_CHECK, "polsweep": POLSWEEP_CHECK}
 
 
 def test_ledger_is_complete_and_every_op_has_an_implementation():
