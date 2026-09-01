@@ -226,6 +226,12 @@ MAX_SCAN_POINTS = 1 << 20
 #: :data:`photoncount.MAX_CUBE_ELEMENTS`.
 MAX_STACK_ELEMENTS = 1 << 23
 
+#: How many times the median AC power a component must carry before
+#: :func:`chromatic_confocal_height` will call it a fringe carrier rather than
+#: noise. Measured separation: 1.6-7.2 for noise-dominated confocal spectra,
+#: 80 for an interferogram under 20 % noise, 945 under 5 %.
+_CARRIER_DOMINANCE = 20.0
+
 
 # --------------------------------------------------------------------------- #
 # fail-closed input helpers (same discipline as photoncount / optics)          #
