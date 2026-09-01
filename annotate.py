@@ -1595,7 +1595,8 @@ def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05
     # 文字を流し込むのが、この repo で文字が隣とぶつかっていた原因。
     if labels is not None and label_h > 0:
         need = max(measure_text(s, font_size=font_size, font_path=font_path,
-                                min_font_size=min_font_size, max_width=cw - 4)["height"]
+                                min_font_size=min_font_size, max_width=cw - 4,
+                                wrap=False)["height"]
                    for s in labels) + 4
         if need > label_h:
             raise ValueError(
