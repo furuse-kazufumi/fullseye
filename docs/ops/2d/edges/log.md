@@ -5,7 +5,7 @@ category: edges
 in: image
 out: image
 halcon: laplace_of_gauss
-examples: [gallery2d_edges, signal_funct1d]
+examples: [gallery2d_edges, photon_timeresolved, signal_funct1d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [gallery2d_edges](../../../../examples/gallery2d_edges.py) — `py -3.11 examples/gallery2d_edges.py`
+- [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [signal_funct1d](../../../../examples/signal_funct1d.py) — `py -3.11 examples/signal_funct1d.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)
