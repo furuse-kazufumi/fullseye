@@ -228,7 +228,7 @@ def system_feasibility(defect_um=50.0, focal_mm=50.0, working_distance_mm=500.0,
 
 def image_formation(scene, f_number=8.0, pixel_pitch_um=3.45,
                     wavelength_um=0.55, defocus_px=0.0, vignetting=True,
-                    exposure=1.0):
+                    exposure=1.0, image_distance_mm=None):
     """Turn an ideal image into what *this* system would capture.
 
     The chain, in the order light actually meets it:
@@ -245,11 +245,32 @@ def image_formation(scene, f_number=8.0, pixel_pitch_um=3.45,
     already models read noise, fixed pattern, rolling shutter and the rest, and
     duplicating it would give two sources of truth. Compose them.
 
+    ``image_distance_mm`` is **required when** ``vignetting=True``. The cos^4
+    falloff is set by the *field angle*, and the field angle needs a physical
+    distance from the exit pupil to the sensor — it cannot be recovered from the
+    array alone. Get it from :func:`system_geometry`'s ``image_distance_mm``
+    (``= focal * (1 + magnification)``), not from the focal length.
+
+    .. note::
+       Until 2026-09 this normalised the radius to the array's own corner and
+       took ``cos(arctan(r))**4`` of it, which put **every** array corner at 45°
+       — a fixed 0.2500 whatever the lens, the pitch or the crop. No exception,
+       just a plausible wrong number: for f=35 mm at WD=200 mm on 2448x2048 the
+       true corner is 0.9671, and a 232x232 tile of it is 0.9997. Passing the
+       image distance is what makes the answer a physical one, so it is now
+       demanded rather than defaulted.
+
+    The array is assumed to be **centred on the optical axis** and to span
+    ``n * pixel_pitch_um``; an off-axis crop gets the falloff of an on-axis
+    crop of the same size. Pass ``vignetting=False`` and apply the field
+    yourself when that matters.
+
     Returns the captured image as float64 in [0, 1], same shape as *scene*.
 
     Raises ValueError: *scene* is not 2-D, is non-finite, exceeds
-    ``MAX_IMAGE_PIXELS``, or any parameter is non-positive/non-finite
-    (``defocus_px`` may be 0).
+    ``MAX_IMAGE_PIXELS``, any parameter is non-positive/non-finite
+    (``defocus_px`` may be 0), or ``vignetting`` is on without
+    ``image_distance_mm``.
     """
     img = np.asarray(scene, dtype=np.float64)
     if img.ndim != 2:
