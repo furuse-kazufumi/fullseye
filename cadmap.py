@@ -593,8 +593,8 @@ def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
         if len(image_size) != 2:
             raise ValueError("image_size must be (width, height)")
         width, height = _size(image_size[0], "width"), _size(image_size[1], "height")
-    if not isinstance(cull_backfaces, (bool, np.bool_)):
-        raise ValueError("cull_backfaces must be a bool")
+    F, winding_fixed = _orient_for_culling(V, F, cull_backfaces, strict,
+                                           "cad_pixel_to_surface", reports=True)
     K, R, t = _resolve_camera(V, K, R, t, width, height)
 
     origin, dirs, _ = _rays_from_pixels(uv, K, R, t)
