@@ -422,7 +422,7 @@ def vol_label_shape_stats(labels, spacing=None, shape: bool = True):
 
     ``label`` ``voxel_count`` ``volume`` ``centroid`` ``bbox`` の 5 つは
     :func:`volops.vol_region_props` と**同一の定義・同一の値**である
-    (``tests/test_volcolor.py::test_stats_agree_with_vol_region_props`` が
+    (``tests/test_volcolor.py::test_stats_agree_with_vol_region_props_exactly`` が
     厳密一致で固定)。``bbox`` は ``(z0, z1, y0, y1, x0, x1)`` で上限は排他的。
 
     加えて返すもの:
@@ -791,7 +791,7 @@ def vol_label_legend(labels, props=None, seed: int = 0, spacing=None,
 
     実在するラベルは ``np.bincount`` の非ゼロから取る。``labels.max()`` を成分数と
     見なさないので、番号に欠番があっても件数も順位も狂わない
-    (``tests/test_volcolor.py::test_legend_ignores_gaps_in_numbering``)。
+    (``tests/test_volcolor.py::test_stats_do_not_invent_the_component_count_from_max``)。
 
     Raises ``ValueError`` when *measure* is not a numeric key of *props*, when
     *props* does not cover the labels present, or on a bad *top*.
@@ -874,7 +874,7 @@ def vol_labels_to_meshes(labels, ids=None, spacing=None, seed: int = 0,
         の ``centroid`` と同じ並びになる。
 
       **黙って取り違えると例外は出ない** ―― 出るのは上下と前後が入れ替わった、
-      それらしい絵である。``tests/test_volcolor.py::test_mesh_axes_order`` が
+      それらしい絵である。``tests/test_volcolor.py::test_mesh_axes_order_is_explicit`` が
       両方の重心を stats の重心と突き合わせて固定している。
 
     *spacing* を渡すと頂点は物理座標(mm)になる。*ids* で成分を絞れる

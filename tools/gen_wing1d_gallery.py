@@ -2863,9 +2863,16 @@ CAPTIONS = {
             f"{f['sk_max_kurtosis']:.4f} @ {f['sk_max_freq']:.0f} Hz(窓 {f['sk_win']} = "
             f"{f['sk_window_ms']:.2f} ms、bin {f['sk_bin_hz']:.0f} Hz、推定器の標準偏差 "
             f"{f['sk_noise_sigma']:.4f})で、その帯域の band_fraction は "
-            f"{f['sk_band_fraction']:.4f}(最悪の帯域は {f['worst_band_fraction']:.4f})。"
-            f"包絡線のピークはどの帯域でも欠陥率に立つ ―― 動くのは「記録のどれだけが"
-            f"その帯域に居るか」のほうである。"),
+            f"{f['sk_band_fraction']:.4f}。**帯域選びが効いていることが数で出ている**: "
+            f"掃引した {f['bands_total']} 帯域のうち欠陥率を返すのは "
+            f"{f['bands_returning_defect_rate']} 本だけで、残り "
+            f"{f['bands_returning_something_else']} 本は "
+            f"{f['miss_peak_freq_range'][0]:.0f}〜{f['miss_peak_freq_range'][1]:.0f} Hz の"
+            f"もっともらしい別の数を返す(例外も NaN も出ない)。ピーク周波数だけでは"
+            f"区別できず、分けるのは band_fraction である ―― 当たりは "
+            f"{f['hit_band_fraction_range'][0]:.4f}〜{f['hit_band_fraction_range'][1]:.4f}、"
+            f"外れは {f['miss_band_fraction_range'][0]:.4f}〜"
+            f"{f['miss_band_fraction_range'][1]:.4f}。"),
     },
     "window_sweep": {
         "title": "窓長を間違えると負の尖度が出る",
