@@ -357,6 +357,11 @@ OP_PARAM_HINTS = {
     # 既定 (5,5) はプールの 32x32 を割り切れず毎回 ValueError になり、この op が
     # 一度も実行されないまま「発見ゼロ」に見えていた。32 を割り切る (4,4) にする
     ("lf_from_mla", "angular"): lambda rng: (4, 4),
+    # 描画系の size は (H, W)。名前ヒントの "size"(=8、近傍サイズ等のスカラ)を
+    # そのまま渡すと生の TypeError になり、**op の契約の穴なのか入力が悪いのか**
+    # 区別がつかなくなる。まず正しい形を渡してから判定する
+    ("render_point_depth", "size"): lambda rng: (32, 32),
+    ("synthesize_silhouette", "size"): lambda rng: (32, 32),
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),

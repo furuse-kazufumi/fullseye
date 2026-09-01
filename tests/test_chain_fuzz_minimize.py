@@ -104,3 +104,90 @@ def test_minimize_is_honest_when_it_cannot_reproduce(env):
     # trace が空の場合も同様
     assert minimize_finding(ops, gens, {"kind": "SUSPECT", "op": "x", "seed": 1,
                                         "trace": []}, verbose=False) == (None, False)
+
+
+# --------------------------------------------------------------------------- #
+# 拡散側の契約(2026-09-01 追加): 「発見ゼロ」を頑健さと取り違えないこと          #
+# --------------------------------------------------------------------------- #
+def test_signature_ignores_run_specific_numbers():
+    """署名は**メッセージ中の数値を伏せて**比べる。
+
+    良いエラーメッセージほど「負の bin が 127 個、最小 -1.176」のように
+    その実行固有の数を含む。素の文字列で同一視すると、同じ 1 件の問題が
+    実行のたびに別署名になり、収束(拡散 → 署名でまとめる)が機能しない。
+    実測: photon 族を足した波で署名が 99 → 238 に膨れ、増分のほぼ全部が
+    この形だった。
+    """
+    a = {"kind": "CONTRACT", "op": "dtof_depth", "exc": "ValueError",
+         "msg": "dtof_depth: hist has 127 negative bin(s) (min -1.17595)"}
+    b = dict(a, msg="dtof_depth: hist has 3 negative bin(s) (min -0.0042)")
+    c = dict(a, msg="dtof_depth: hist must be 1-D, got shape (4, 4)")
+    assert signature(a) == signature(b), "同じ 1 件が数値違いで別署名になっている"
+    assert signature(a) != signature(c), "別の問題まで同じ署名に潰している"
+
+
+def test_op_specific_hints_can_override_a_default_argument(env):
+    """既定値つきの引数も **op 名で狙い撃ちすれば**上書きできること。
+
+    既定値がプールの寸法と噛み合わない op は、上書きできないと毎回
+    ValueError で弾かれ、**一度も実行されないまま「発見ゼロ」**に数えられる。
+    実測: ``lf_from_mla`` の既定 ``angular=(5,5)`` は 32x32 を割り切れず、
+    1200 連鎖で一度も走っていなかった(修正後 lightfield 族 16/17 -> 17/17)。
+    """
+    import inspect
+
+    from tools.chain_fuzz import OP_PARAM_HINTS, _bind_args
+    ops, _ = env
+    fn = next(o[4] for o in ops if o[0] == "lf_from_mla")
+    assert inspect.signature(fn).parameters["angular"].default == (5, 5), \
+        "前提が変わった: この検査は既定値つき引数の上書きを見ている"
+    assert ("lf_from_mla", "angular") in OP_PARAM_HINTS
+    _args, kwargs = _bind_args("lf_from_mla", fn, [np.zeros((32, 32))],
+                               np.random.default_rng(0))
+    assert kwargs.get("angular") == (4, 4), "既定値が上書きされていない"
+
+
+def test_every_declared_type_has_a_producer_or_a_seed(env):
+    """**誰も産まない型を食う op** は永久に到達不能 = 「発見ゼロ」の偽装。
+
+    型の到達可能性を不動点で解く。初期プール(生成器)の型から出発し、
+    入力が全部揃う op の出力型を足していって、増えなくなるまで回す。
+    実測(2026-09-01): 434 op 中 ``refine_peak_newton`` 1 件だけが
+    ``score`` 型の生産者不在で blocked だった → 種を追加して解消。
+    """
+    ops, gens = env
+    reach = set(gens) | {"any"}
+    changed = True
+    while changed:
+        changed = False
+        for _n, _f, ins, out, _fn in ops:
+            if all(t in reach for t in ins) and out not in reach:
+                reach.add(out)
+                changed = True
+    blocked = [(n, tuple(ins)) for n, _f, ins, _o, _fn in ops
+               if not all(t in reach for t in ins)]
+    assert not blocked, (
+        "この op は入力型を誰も産まないので永久に実行されない: %s" % blocked)
+
+
+def test_targeted_diffusion_reaches_more_ops_than_uniform(env):
+    """連鎖ごとに目標 op を決める拡散は、一様抽選より多くの op に触ること。
+
+    候補が数百ある中で特定の op が長さ 6 の枠に入る確率は低く、一様だと
+    「構造的には到達可能なのに一度も引かれない」op が大量に残る。
+    先に試した「まだプールに無い型を産む op を優先」する型空間バイアスは
+    **効かなかった**(1500 連鎖で 321 -> 322 op)ので、目標 op へ寄せる方式に
+    した。ここでは小さな走行で向きだけを固定する(絶対値は走行条件で動く)。
+    """
+    ops, gens = env
+    def _reach(explore):
+        seen = set()
+        for i in range(60):
+            cs = 991 * 1_000_003 + i
+            seen.update(run_chain(ops, gens, np.random.default_rng(cs), 5, [],
+                                  chain_seed=cs, explore=explore))
+        return seen
+    uniform, targeted = _reach(0.0), _reach(0.9)
+    assert len(targeted) > len(uniform), (
+        "狙いを持った拡散が一様抽選を上回っていない: %d vs %d"
+        % (len(targeted), len(uniform)))
