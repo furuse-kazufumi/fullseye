@@ -440,14 +440,22 @@ def ex_volume_turntable():
     S, PITCH = 462, 18.0
     W, H = 24 * 3 + S * 2, 646
     frames, n, ious = [], 36, []
+    yaws = [360.0 * i / n for i in range(n)]
+    # 両者を **同じ中心・同じ倍率** に合わせる(外接球で正規化すると細長い物体は
+    # 小さくしか映らないので、実際の投影半径の最大値で正規化する)
+    ctr, rad = view_radius(P, [studio_view_from_render3d(y, PITCH)[0] for y in yaws],
+                           studio_view_from_render3d(0.0, PITCH)[1])
+    zoom = 0.47 / 0.45                                   # 投影半径 -> 画面の 94%
     for i in range(n):
-        yaw = 360.0 * i / n
+        yaw = yaws[i]
         syaw, spitch = studio_view_from_render3d(yaw, PITCH)
         canvas = _canvas(W, H)
         _fill(canvas, 0, 34, 0, W, (0.088, 0.098, 0.118))
-        surf, cov = _shade_mesh(Vw, F, yaw, pitch_deg=PITCH, size=S)
-        pts = studio.render_points_frame(P, yaw=syaw, pitch=spitch, zoom=1.0,
-                                         size=S, point_px=2, background=C_PANEL)
+        surf, cov = _shade_mesh(Vw, F, yaw, pitch_deg=PITCH, size=S,
+                                fill=0.94 * 2.0, center=ctr, radius=rad)
+        pts = studio.render_points_frame(P, yaw=syaw, pitch=spitch, zoom=zoom,
+                                         size=S, point_px=3, center=ctr, radius=rad,
+                                         background=C_PANEL)
         # 目視だけに頼らない: 2 つのシルエットの IoU を毎フレーム実測して焼き込む
         a = (np.abs(surf - np.asarray(C_PANEL)).sum(2) > 0.02)
         b = (np.abs(pts - np.asarray(C_PANEL)).sum(2) > 0.02)
