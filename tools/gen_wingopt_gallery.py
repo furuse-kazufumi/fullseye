@@ -2478,14 +2478,16 @@ def _write_captions(results, log):
         lines.append(f"## {title}")
         lines.append("")
         if info["kind"] == "gif":
-            lines.append(f"![{title}]({RAW_BASE}media/{base})")
+            stem = os.path.splitext(base)[0]
+            lines.append(markdown_animation(
+                stem, title, f"**{title}** ―― {cap} 使用 op: {ops}。").rstrip())
             lines.append("")
-            lines.append(f"*↑ **{title}** ―― {cap} 使用 op: {ops}。*")
-            lines.append("")
+            pace = (f"{info['step_ms']} ms/コマ" if info.get("step_ms")
+                    else f"{info['fps']} fps")
             lines.append(
-                f"<small>静止フレームでも読めます(サムネ: "
+                f"<small>静止フレームでも読めます(静止サムネ: "
                 f"`{RAW_BASE}thumbs/{os.path.basename(info['thumb'])}`)。"
-                f"{info['frames']} フレーム / {info['fps']} fps / "
+                f"{info['frames']} フレーム / {pace} / "
                 f"{info['size'][0]}×{info['size'][1]} px / "
                 f"{info['bytes'] / 1e6:.2f} MB。</small>")
         else:
