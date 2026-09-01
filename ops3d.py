@@ -292,8 +292,27 @@ _CATALOG = {
         ("smallest_sphere3", "measure3d", ["points"], "primitive", False),
     ],
     "surface_fit": [  # 曲面近似 z=f(x,y)
-        ("fit_poly_surface", "match3d", ["image2d"], "surface", False),
-        ("eval_poly_surface", "match3d", ["surface"], "image2d", False),
+        # 曲面モデルの型は **多項式と B スプラインで分けてある**(旧: 両方 "surface")。
+        # 理由(2026-09-01、連鎖ファザーが 7 回叩いた実測を受けて):
+        #   * 中身が違う。fit_poly_surface は dict(coef/powers/degree/rms/pv)、
+        #     bspline 側は FITPACK の tck(曲面 [tx,ty,c,kx,ky] / 曲線 (t,c,k) の list)。
+        #     同じ "surface" と名乗ると eval_poly_surface(model["degree"])に list が
+        #     流れ、生の TypeError("list indices must be integers ...")になっていた。
+        #   * 「型を分けると誰も産まない死んだ語彙になる」実測もあるが、ここでは
+        #     **3 語すべてに台帳内の産出 op と消費 op が揃っている**ので該当しない
+        #     (poly_surface: fit_poly_surface → eval_poly_surface /
+        #      bspline_surface: fit_bspline_surface → eval_bspline_surface,
+        #      surface_residual / bspline_curve: fit_bspline_curve → eval_bspline_curve)。
+        #   * 型を分けても素の :func:`get` 呼び出しは守れないので、実体側にも
+        #     fail-closed の入口検証を入れてある(match3d.eval_poly_surface /
+        #     bspline_surf.eval_bspline_*)。型は連鎖を、検証は直接呼びを守る。
+        # なお fit/eval とも x, y(, z)が必須引数なので、in は座標場を明示的に
+        # 並べる(旧宣言は 1 入力で、残る座標は外側のヒント表任せだった = 実質
+        # 「宣言に無い必須入力」があり、長さが噛み合わず毎回 ValueError だった)。
+        ("fit_poly_surface", "match3d", ["image2d", "image2d", "image2d"],
+         "poly_surface", False),
+        ("eval_poly_surface", "match3d", ["poly_surface", "image2d", "image2d"],
+         "image2d", False),
         # (residual (H,W), rms, pv) → adapter で pv を剥がして measurement
         # (形状誤差 = 残差の peak-to-valley が計測の正典。wave-4 TYPEMISS 修正)
         ("surface_form_error", "match3d", ["image2d"], "measurement", False),
