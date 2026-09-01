@@ -544,7 +544,7 @@ def _cam_dict(K, R, t, width, height):
 # op 1 — 画素 → 面上の点                                                       #
 # --------------------------------------------------------------------------- #
 def cad_pixel_to_surface(mesh, pixels, K=None, R=None, t=None,
-                         cull_backfaces=True, image_size=None):
+                         cull_backfaces=True, image_size=None, strict=False):
     """画素 (N,2) → CAD 面上の ``(face_id, 重心座標, 3-D 点)``(閉形式)。
 
     画素ごとに視線を作り(``camera.py`` 規約: 中心は整数座標、``u`` = 列、
