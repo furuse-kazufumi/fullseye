@@ -188,8 +188,8 @@ def main():
             tag = f"  ← λ/2 の {round(orders):+d} 倍だけ間違い"
             broke.append(h)
             assert abs(orders - round(orders)) < 1e-6      # 縞次数ちょうど
-        print(f"   {h:.3f} um    {psi:+.4f} (誤差 {psi - h:+.4f}){tag}")
-        print(f"               {'':>21s}{csi:+.4f} (誤差 {csi - h:+.4f})")
+        print(f"   {h:.3f} um | {psi:+.4f} (誤差 {psi - h:+.4f}) | "
+              f"{csi:+.4f} (誤差 {csi - h:+.4f}){tag}")
         assert abs(csi - h) < 1e-4                          # コヒーレンス法は常に正しい
     print(f"   位相法が壊れ始めた段差 = {min(broke):.2f} um = λ/4。"
           f"**例外も NaN も出ず、もっともらしい数が返る**のが要点")
