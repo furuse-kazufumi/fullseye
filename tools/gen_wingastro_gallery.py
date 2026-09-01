@@ -1063,21 +1063,30 @@ def _captions(meta):
         "宇宙線は光学系を通っていないので**星より尖る**。ラプラシアンを 2 倍"
         "標本化して微細構造と比べると、植えた %d 画素に対し %d 画素を検出して"
         "適合率 **%.3f** / 再現率 **%.3f** ―― 星の中心を 1 つも拾わないことが"
-        "要点で、フレーム最大値は %.0f -> %.0f e- に落ちる。枚数がある場合は"
-        "もっと簡単で、素直な平均だと宇宙線は 1/8 に薄まって残る(最大 %.0f e-)"
-        "のに対し、κ-σ 合成は検出も置換もせずに %.0f e- まで落とす。"
+        "要点。合成なので「宇宙線だけ無い同じ観測」を作れて、正解との最大差が "
+        "%.0f -> %.0f e- に落ちることまで言える(**フレームの最大値では言えない**"
+        " —— それは一番明るい星の値であって、除去の前後でほとんど動かない)。"
+        "枚数がある場合はもっと簡単で、%d 枚を素直に平均しても宇宙線は 1/%d に"
+        "薄まって残り正解から %.0f e- ずれるのに対し、κ-σ 合成は検出も置換も"
+        "せずに %.0f e-、フレーム間比較で先に除去すれば %.0f e- になる。"
         % (c["truth_px"], c["detected_px"], c["precision"], c["recall"],
-           c["max_raw"], c["max_cleaned"], c["max_naive"], c["max_clipped"]),
+           c["residual_raw"], c["residual_cleaned"], c["n_frames"],
+           c["n_frames"], c["err_naive"], c["err_clipped"], c["err_fixed"]),
         "A cosmic ray never went through the optics, so **it is sharper than a "
         "star**. Comparing a 2x-subsampled Laplacian against the fine-structure "
         "image finds %d pixels against the %d planted — precision **%.3f**, "
-        "recall **%.3f** — and the point is that it flags no star core at all; "
-        "the frame maximum drops from %.0f to %.0f e-. With several frames it "
-        "is easier still: a plain mean only dilutes the hit to 1/8 (maximum "
-        "%.0f e-) while a kappa-sigma combine takes it to %.0f e- without "
-        "detecting or replacing anything."
+        "recall **%.3f** — and the point is that it flags no star core at all. "
+        "Because the data is synthetic we can also make the same exposure "
+        "*without* the cosmic rays, so the largest departure from the truth is "
+        "quotable: %.0f e- before, %.0f e- after. (**The frame maximum cannot "
+        "say this** — that is the brightest star, and it barely moves.) With "
+        "several frames it is easier still: plainly averaging %d frames only "
+        "dilutes each hit to 1/%d and still lands %.0f e- from the truth, while "
+        "a kappa-sigma combine reaches %.0f e- with no detection or replacement "
+        "at all, and rejecting frame-to-frame first reaches %.0f e-."
         % (c["detected_px"], c["truth_px"], c["precision"], c["recall"],
-           c["max_raw"], c["max_cleaned"], c["max_naive"], c["max_clipped"]))
+           c["residual_raw"], c["residual_cleaned"], c["n_frames"],
+           c["n_frames"], c["err_naive"], c["err_clipped"], c["err_fixed"]))
 
     z = d["drizzle_flux"]
     add("drizzle_flux",
