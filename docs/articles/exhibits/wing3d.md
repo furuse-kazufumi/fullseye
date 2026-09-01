@@ -31,11 +31,11 @@
 
 ![等値面のしきい値で面が育ち、くびれ、割れる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_isosurface_sweep.gif)
 
-*↑ **等値面のしきい値で面が育ち、くびれ、割れる** ―― 2 つの球をぼかして重ねた合成ボリュームに `voxel_to_mesh`(marching cubes)を掛け、level を 0.08 から 0.86 まで 40 段階で動かした。表面積は 6810 → 2446 voxel² へ縮み、この範囲では割れなかった。各コマに level・頂点数・三角形数・表面積・連結成分数を焼いてある。しきい値を書かない 3D 計測は再現できない、ということでもある。 使用 op: `voxel_to_mesh`, `mesh_area`。*
+*↑ **等値面のしきい値で面が育ち、くびれ、割れる** ―― 2 つの球をぼかして重ねた合成ボリュームに `voxel_to_mesh`(marching cubes)を掛け、level を 0.06 から 0.82 まで 40 段階で動かした。表面積は 6679 → 2842 voxel² へ縮み、level 0.742 を超えると 1 つだった面が **2 つに割れる**。各コマに level・頂点数・三角形数・表面積・連結成分数を焼いてある。しきい値を書かない 3D 計測は再現できない、ということでもある。 使用 op: `voxel_to_mesh`, `mesh_area`。*
 
 ![管に沿って切る ―― 軸に直交しないと内径が 1.13 倍に太る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_vessel_reslice.gif)
 
-*↑ **管に沿って切る ―― 軸に直交しないと内径が 1.13 倍に太る** ―― 28° 傾いた合成管(中央に狭窄)を 49 断面ぶん送る。軸に直交する断面で測った短径は真の内径をほぼそのまま返す(平均誤差 **0.0851 mm**)のに、素朴に z 方向へ切った断面の長径は 1/cos θ = **1.133 倍**に伸びて平均 0.5053 mm ずれる。狭窄部では真値 2.800 mm が素朴断面では 3.237 mm ―― 狭窄が浅く見えてしまう。 使用 op: `vol_rotate`。*
+*↑ **管に沿って切る ―― 軸に直交しないと内径が 1.13 倍に太る** ―― 28° 傾いた合成管(中央に狭窄)を 49 断面ぶん送る。軸に直交する断面で測った短径は真の内径をほぼそのまま返す(平均誤差 **0.0206 mm**)のに、素朴に z 方向へ切った断面の長径は 1/cos θ = **1.133 倍**に伸びて平均 0.5776 mm ずれる。狭窄部では真値 2.801 mm が素朴断面では 3.217 mm ―― 狭窄が浅く見えてしまう。 使用 op: `vol_rotate`。*
 
 ---
 
@@ -48,5 +48,5 @@
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
 | oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
 | windowsweep | GIF+mp4 | `media/wing3d_window_sweep.gif` | 70 フレーム, 1120x660, 1.47 MB, 256 色, mp4 0.20 MB |
-| isosurface | GIF+mp4 | `media/wing3d_isosurface_sweep.gif` | 40 フレーム, 1120x640, 1.12 MB, 256 色, mp4 0.29 MB |
-| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x660, 1.08 MB, 256 色, mp4 0.13 MB |
+| isosurface | GIF+mp4 | `media/wing3d_isosurface_sweep.gif` | 40 フレーム, 1120x640, 1.05 MB, 256 色, mp4 0.29 MB |
+| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x660, 1.04 MB, 256 色, mp4 0.14 MB |

@@ -1502,15 +1502,15 @@ def ex_coverage_families(data, log=print):
     rowh = 34
     H = top + rowh * len(fams) + 190
     c = canvas(W, H)
+    lx0, lx1 = 190, 560
+    rx0, rx1 = 700, 1024
+    tot_now = sum(v[0] for v in now.values()), sum(sum(v) for v in now.values())
     items = [(28, 24, f"「{tot_now[0]}/{tot_now[1]}」という 1 つの数では、"
                       "残りが頑健なのか到達不能なのか分からない",
               C_TEXT, 22, True),
              (28, 56, "同じ数を族ごとに割ると、その場で読める形になる。"
                       "左 = 本スクリプトの実走、右 = 記録に残る過去の走行。",
               C_DIM, 13, False)]
-    lx0, lx1 = 190, 560
-    rx0, rx1 = 700, 1024
-    tot_now = sum(v[0] for v in now.values()), sum(sum(v) for v in now.values())
     items += [
         (lx0, top - 40, f"今回の実走  {tot_now[0]}/{tot_now[1]}", C_TRUE, 16, True),
         (lx0, top - 18, f"{data['fuzz']['chains']} 連鎖 x 長さ "
