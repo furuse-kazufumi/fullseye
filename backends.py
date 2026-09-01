@@ -195,8 +195,13 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
              lambda v, a, b: signed01(feature.hessian_matrix_det(v, sigma=0.5 + 2.5 * a))),
             ("sk_corner_harris", "edges", "points_harris", IMAGE, IMAGE,
              lambda v, a, b: signed01(feature.corner_harris(v, sigma=0.5 + 2.0 * a))),
+            # gain > 1 は出力を 1 より上へ押し上げる(実測 max=1.1380, a=0.5)。
+            # `image` は [0,1] 契約なので出口で clip(2026-09-02)。`ops._apply` が
+            # 段間で掛けている clip と同じなので **パイプライン結果はビット不変**、
+            # 直接 `fullseye.apply` した時の白飛びだけが消える。
             ("sk_adjust_log", "gray", "log_image", IMAGE, IMAGE,
-             lambda v, a, b: exposure.adjust_log(np.clip(v, 0, 1), gain=0.5 + 1.5 * a)),
+             lambda v, a, b: np.clip(exposure.adjust_log(np.clip(v, 0, 1),
+                                                         gain=0.5 + 1.5 * a), 0, 1)),
             ("sk_rolling_ball", "smoothing", "", IMAGE, IMAGE,
              lambda v, a, b: np.clip(v - restoration.rolling_ball(v, radius=5 + int(a * 20)), 0, 1)),
             ("sk_nlm", "smoothing", "", IMAGE, IMAGE,
