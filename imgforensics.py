@@ -640,6 +640,11 @@ def fingerprint_strength_map(fingerprint, block: int = 16) -> np.ndarray:
     照合結果は弱い。``block`` 角の非重複ブロックごとの標準偏差を、元の ``(H, W)`` へ
     ブロック定数で戻して返す(端は端のブロックの値で埋める)。
 
+    実測(``tests/test_imgforensics.py::test_strength_map_marks_the_saturated_half``、
+    128x128 の左半分だけを飽和させた 8 枚から指紋を作る):飽和側の平均強度
+    **0.075** に対し通常側 **1.409** = **18.8 倍**。左半分では PRNU が乗る余地が
+    無い(乗法的な欠陥なので信号が要る)ことがそのまま出ている。
+
     これは ``fingerprint`` 語彙の **出口** でもある(袋小路を作らないため)。
     """
     k = _as_image(fingerprint, "fingerprint")
