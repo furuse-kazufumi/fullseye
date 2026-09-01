@@ -142,6 +142,41 @@ class TestFluxConservation:
         assert 0.0 <= loss < 0.062, loss
         assert loss == pytest.approx(0.01594, abs=2e-4)     # 実測を固定
 
+    def test_the_science_image_is_sci_over_wht_not_sci(self):
+        """保存則(``sci``)と見た目(``sci / wht``)は別の量。
+
+        ``sci`` は撒かれた量そのものなので被覆のむらが像に残る。小さい
+        ``pixfrac`` ではそれが格子になり、生の ``sci`` に検出をかけると格子が
+        星に化ける —— 実測で 200 個(上限)対 2 個。
+        """
+        sep, n, size = 1.6, 24, 44
+        golden = np.pi * (3.0 - np.sqrt(5.0))
+        import photoncount
+        frames, shifts = [], []
+        for i in range(n):
+            rad = 1.5 * (i / (n - 1))
+            dr, dc = rad * np.cos(golden * i), rad * np.sin(golden * i)
+            img = np.full((size, size), 25.0)
+            img += A._gaussian_star_exact(size, size, 22 + dr, 21 + dc,
+                                          26000.0, 0.55, 0.55)
+            img += A._gaussian_star_exact(size, size, 22 + dr, 21 + sep + dc,
+                                          26000.0, 0.55, 0.55)
+            frames.append(photoncount.photon_sample(img, 1.0, 0.0,
+                                                    seed=20260953 + i))
+            shifts.append((dr, dc))
+        sci, wht = A.drizzle_resample(frames, shifts=np.asarray(shifts),
+                                      scale=3.0, pixfrac=0.4)
+        science = np.where(wht > 1e-9, sci / np.maximum(wht, 1e-9), 0.0)
+        raw_n = len(A.star_detect(sci, threshold_sigma=5.0, min_separation=2))
+        sci_n = len(A.star_detect(science, threshold_sigma=5.0,
+                                  min_separation=2))
+        assert raw_n > 100, raw_n            # 被覆の格子が星に化ける
+        assert sci_n == 2, sci_n             # 割れば正しく 2 つ
+        # 平均合成では 1 つに潰れる(drizzle が情報を捨てていないことの対比)
+        naive, _ = A.sigma_clip_stack(frames, mode="mean")
+        assert len(A.star_detect(naive, threshold_sigma=5.0,
+                                 min_separation=1)) == 1
+
     def test_drizzle_refuses_a_shift_table_of_the_wrong_shape(self):
         frames, _ = A.synth_frame_series(shape=(24, 24), n_frames=3,
                                          n_stars=3, seed=1)
