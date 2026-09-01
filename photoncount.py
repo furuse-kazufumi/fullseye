@@ -1422,8 +1422,11 @@ def dtof_cube_depth(cube, bin_ps=100.0, mode="peak", offset_ps=0.0,
     ``W`` time bins and return a plausible-wrong depth map, so the shape is
     checked and the error message says exactly that.
 
-    Pixels whose total counts are below *min_counts* are set to *empty_value*
-    (default 0.0, a value no real return can have since ``d > 0``). Set
+    Pixels whose total counts are below *min_counts* — and, in the peak-based
+    modes, pixels whose histogram is exactly **flat** (no peak to find, so
+    ``argmax`` would report bin 0 for every one of them) — are set to
+    *empty_value* (default 0.0, a value no real return can have since
+    ``d > 0``). Set
     ``empty_value=float('nan')`` if you would rather propagate a NaN — that is an
     opt-in, never the default, because a NaN depth map silently poisons every
     downstream reduction.
