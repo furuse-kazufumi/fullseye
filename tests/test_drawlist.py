@@ -226,18 +226,34 @@ def test_check_codes_documents_every_code_the_inspector_emits():
 # --------------------------------------------------------------------------- #
 # 4. 遅延解決(層がまだ無くても、その op だけが落ちる)                            #
 # --------------------------------------------------------------------------- #
-def test_a_missing_layer_fails_only_that_command_and_says_so():
-    """まだ存在しない層のコマンドは、**その op だけ**が明示エラーになる。"""
+def test_a_missing_layer_fails_only_that_command_and_says_so(monkeypatch):
+    """まだ着地していない層のコマンドは、**その op だけ**が明示エラーになる。
+
+    ここでは「委譲先の層がまだ無い」状況を、存在しないモジュールを指す種別を
+    一時的に足して作る(``monkeypatch`` なので試験の後で必ず元に戻る)。
+    """
+    monkeypatch.setitem(DL.COMMAND_SPECS, "not_yet_a_layer",
+                        DL.CommandSpec("not_yet_a_layer", "layer_that_does_not_exist",
+                                       ("draw_something",)))
     dl = DrawList((H, W, 3))
     dl.line((5, 5), (100, 100), color=1.0)
-    dl.add("no_such_layer_op", 0.0, radius=3)
-    dl._cmds[1]["kind"] = "sprite"                         # 実在の種別だが層を隠す
-    hidden = DrawList((H, W, 3), handlers={})
-    hidden._cmds = [dict(c) for c in dl._cmds]
-    hidden._spec_override = None
-    # 同じ列でも、その op を外せば残りは描ける
+    dl.add("not_yet_a_layer", 0.0, radius=3)
+    with pytest.raises(DrawListError) as e:
+        dl.flush()
+    assert e.value.code == "handler_missing" and e.value.index == 1
+    assert "layer_that_does_not_exist" in str(e.value) and "handlers=" in str(e.value)
+    # 同じ列でも、その op を外せば残りは描ける(落ちるのは 1 コマンドだけ)
     ok = DrawList((H, W, 3)).line((5, 5), (100, 100), color=1.0).flush()
     assert ok.max() > 0
+
+
+def test_the_named_layers_resolve_to_the_real_functions():
+    """委譲表が **実在の関数**を指していること(名前の当て推量が残っていない)。"""
+    dl = DrawList((H, W, 3))
+    for kind, spec in sorted(DL.COMMAND_SPECS.items()):
+        fn = dl.resolve(kind)
+        assert callable(fn), kind
+        assert fn.__module__ in (spec.module, "fullseye", "api"), (kind, fn.__module__)
 
 
 def test_handlers_take_priority_over_the_named_layers():
