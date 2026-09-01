@@ -11,7 +11,14 @@ flows straight in::
     import volio, ops
     vol, meta = volio.read_volume("study/CT")          # a DICOM folder
     smoothed  = ops.RT["vol_gaussian"](vol, 0.5, 0.0)  # the existing 3-D op
-    mip       = ops.RT["vol_mip"](vol, 0.0, 0.0)       # volume -> 2-D image
+    mip       = ops.RT["vol_mip"](vol, 0.0, 0.0)       # volume -> 2-D image (NORMALISED)
+
+``vol_mip`` rescales the projection into ``[0, 1]`` for display. If you are
+measuring a *ratio* — "how much of the full projection has this cumulative MIP
+reached?" — take the raw projection ``vol.max(axis=0)`` instead: measured on the
+bundled skeleton CT, a cumulative MIP that is by construction the complete
+projection scores **122.6 %** against ``vol_mip`` and exactly **100.0 %** against
+``vol.max(axis=0)``. See the :mod:`volops` module docstring for the full note.
 
 Formats (dispatched by extension / by "is a directory"):
 
