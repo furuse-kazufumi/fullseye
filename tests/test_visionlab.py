@@ -85,6 +85,41 @@ def test_sweep_reports_both_limits_separately():
     assert "optical limit" in txt and "detection limit" in txt
 
 
+def test_lateral_resolution_and_depth_of_field_are_not_folded_together():
+    """「レンズで解像できない」と「ピントの範囲が足りない」を混ぜない。
+
+    敵対的検証で見つけた実バグの回帰。この系は 30.7 µm を解像できているのに、
+    被写界深度(0.52 mm)が要求公差(1.00 mm)に足りないせいでどのサイズも
+    ``resolvable`` に格上げされず、レポートが **「光学限界に未到達」** と
+    表示していた。読んだ人はレンズを買いに行くが、直すべきは絞りか公差か
+    フォーカス機構であって、レンズではない。
+    """
+    s = _sys(focal_mm=35.0, working_distance_mm=200.0, pixel_pitch_um=2.4,
+             width_px=1440, height_px=1080, f_number=4.0, depth_tolerance_mm=1.0)
+    sw = vl.inspection_sweep(s, [30.0, 60.0, 120.0], seeds=3)
+
+    # 横分解能は閉形式なので、grid が何であろうと必ず数値で出ること
+    assert sw["lateral_limit_um"] == pytest.approx(30.674, rel=1e-3)
+    assert sw["optical_limit_um"] is None, "この設定では何も resolvable にならない"
+    assert sw["depth_of_field_ok"] is False
+
+    txt = vl.detection_report(sw)
+    assert "optical limit  : 30.7 um" in txt, "解像できているのに未到達と書いている"
+    assert "depth of field" in txt and "drifts out of focus" in txt
+    assert "the lens is not the thing to change" in txt
+
+    # 深度公差を緩めれば同じ系が resolvable になる = 律速が深度側だった証拠
+    relaxed = vl.inspection_sweep(_sys(focal_mm=35.0, working_distance_mm=200.0,
+                                       pixel_pitch_um=2.4, width_px=1440,
+                                       height_px=1080, f_number=4.0,
+                                       depth_tolerance_mm=0.2),
+                                  [30.0, 60.0, 120.0], seeds=3)
+    assert relaxed["depth_of_field_ok"] is True
+    assert relaxed["optical_limit_um"] is not None
+    # 横分解能はレンズと画素だけで決まるので、公差を変えても動かないこと
+    assert relaxed["lateral_limit_um"] == pytest.approx(sw["lateral_limit_um"])
+
+
 def test_detection_rate_is_monotone_in_defect_size():
     """大きい欠陥ほど見つかる — 崩れていたら評価か生成が壊れている。"""
     s = _sys()

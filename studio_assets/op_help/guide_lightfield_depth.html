@@ -1,0 +1,129 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ライトフィールド(plenoptic 撮像・リフォーカス・深度) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>マイクロレンズアレイ(MLA)を撮像素子の前に置くと何が計算できるようになるか</b>、の族です。各マイクロレンズが主レンズの射出瞳を自分の画素ブロックへ結像するので、1 回の露光が「どこに何 lx 届いたか」だけでなく「<b>どの方向から</b>届いたか」まで記録します。それが 4-D のライトフィールド <code style="color:#22d3bf">L(v, u, y, x)</code> で、画素を並べ替えるだけで少しずつ視点のずれた画像のグリッドが出てきます。そこから、<b>単一センサ・単一ショット</b>で: 2D 画像 / 後から合焦し直せる焦点スタック / 絞りを変えられる(そして遮蔽物を<b>透かして</b>撮れる)合成開口 / 密な深度マップ、が全部出ます。single-shot depth はマシンビジョンで活発な領域ですが、その基礎になる演算が fullseye には 1 つもありませんでした — <code style="color:#22d3bf">light_field</code> / <code style="color:#22d3bf">plenoptic</code> / <code style="color:#22d3bf">refocus</code> / <code style="color:#22d3bf">sub_aperture</code> / <code style="color:#22d3bf">microlens</code> / <code style="color:#22d3bf">epi</code> は全 op 名でヒット 0(2026-09-01 実測)。17 op / 5 カテゴリ(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opslightfield.py</code>、実体は <code style="color:#22d3bf">lightfield.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>synthesis(1)</b> — <code style="color:#22d3bf">lf_synthesize</code>: <b>既知スロープ</b>の層でライトフィールドを合成する(遮蔽合成も可)。この族の全 op を「金画像」ではなく<b>閉形式の答え</b>と突き合わせるための土台で、返りは <code style="color:#22d3bf">(光場, スロープ地図)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>decode(3)</b> — <code style="color:#22d3bf">lf_from_mla</code> / <code style="color:#22d3bf">lf_to_mla</code> / <code style="color:#22d3bf">lf_stats</code>: MLA 生画像 ⇄ 4-D 光場の並べ替え(補間なし・データを一切作らない純粋な再ソート。往復は<b>ビット一致</b>)と、形状・角度中心・「この配列で測れる最大スロープ」の申告。</p>
+<p style="margin:2px 0 2px 12px">• <b>views(4)</b> — <code style="color:#22d3bf">lf_subaperture</code> / <code style="color:#22d3bf">lf_center_view</code> / <code style="color:#22d3bf">lf_views</code> / <code style="color:#22d3bf">lf_epi</code>: 1 視点、中心視点(plenoptic カメラが「ついでに」出す普通の 2D 画像)、全視点を素の 2-D 画像 list に潰す橋、そして<b>直線の傾きが視差そのもの</b>であるエピポーラ平面画像(EPI)。</p>
+<p style="margin:2px 0 2px 12px">• <b>refocus(4)</b> — <code style="color:#22d3bf">lf_refocus</code> / <code style="color:#22d3bf">lf_focal_stack</code> / <code style="color:#22d3bf">lf_aperture_mask</code> / <code style="color:#22d3bf">lf_synthetic_aperture</code>: shift-and-add による任意面へのリフォーカス、焦点スタック、開口重み(circle / square / gaussian / annulus)、開口整形 + <code style="color:#22d3bf">mean</code>/<code style="color:#22d3bf">median</code>/<code style="color:#22d3bf">max</code>/<code style="color:#22d3bf">min</code> 縮約。<b>median が遮蔽越しの縮約</b>です。</p>
+<p style="margin:2px 0 2px 12px">• <b>depth(5)</b> — <code style="color:#22d3bf">lf_depth_from_focus</code> / <code style="color:#22d3bf">lf_epi_slope</code> / <code style="color:#22d3bf">lf_disparity_to_depth</code> / <code style="color:#22d3bf">lf_all_in_focus</code> / <code style="color:#22d3bf">lf_plenoptic_design</code>: 焦点掃引の鮮鋭度ピーク(無バイアス・掃引の解像度が上限)、EPI 構造テンソルの最小二乗スロープ(1 パスで密・ただし <code style="color:#22d3bf">|s| &gt; 1</code> で過小評価)、<code style="color:#22d3bf">Z = f_px·b/|s|</code> の metric 換算、画素ごとに自分の面で合焦する全焦点合成、そしてカメラ自体の設計表。</p>
+<p>データ種は既存語彙の再利用が基本です: <b>image2d</b>(サブアパーチャ画像・中心視点・EPI・リフォーカス像・開口マスク・<b>スロープ地図</b>)、<b>images</b>(焦点スタック・視点リスト = 既存の多画像 op へ無変換で流れる)、<b>depth</b>(<code style="color:#22d3bf">lf_disparity_to_depth</code> の返りだけ)、<b>table</b>(<code style="color:#22d3bf">lf_stats</code> / <code style="color:#22d3bf">lf_plenoptic_design</code> の dict)。**スロープ地図を <code style="color:#22d3bf">depth</code> と宣言していないのは意図的**で、中身は px/視点であって距離ではないため、<code style="color:#22d3bf">depth</code> を名乗ると下流の距離 op に単位違いを渡せてしまいます。距離を名乗るのは metric 換算した後だけです。</p>
+<p>新語は 1 つだけ、<b>lightfield</b>(4-D の <code style="color:#22d3bf">(V, U, H, W)</code> 実配列)。角度 2 軸 + 空間 2 軸で、<b>角度がグリッドであること</b>が全 op の前提です(u と v の両方向で視差を取る / 開口マスクが <code style="color:#22d3bf">(V, U)</code> の 2-D / EPI が角度 1 軸と空間 1 軸の断面)。<code style="color:#22d3bf">images</code>(2-D の list)へ潰すと「どの視点か」が消えて refocus も EPI も定義できなくなり(<code style="color:#22d3bf">lf_views</code> がまさにその潰す操作)、<code style="color:#22d3bf">voxel</code> は 3-D、<code style="color:#22d3bf">pointmap</code> は <code style="color:#22d3bf">(H, W, 3)</code> 固定なので、4-D を表す既存語彙が台帳に 1 つも無く新設しました。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">規約(ここを間違えると「もっともらしく間違った絵」が出ます)</h3>
+<p style="margin:2px 0 2px 12px">• <b>並び</b> は <code style="color:#22d3bf">L[v, u, y, x]</code>。角度が先、空間が後なので <code style="color:#22d3bf">L[v, u]</code> は素の 2-D 画像になり、既存の画像 op がリシェイプ無しで乗ります。</p>
+<p style="margin:2px 0 2px 12px">• <b>角度中心</b> は <code style="color:#22d3bf">u_c = (U-1)/2</code>、<code style="color:#22d3bf">v_c = (V-1)/2</code>。偶数軸では<b>中心視点は実在しません</b> — <code style="color:#22d3bf">lf_center_view</code> は黙って隣を選ばず、<code style="color:#22d3bf">average</code>(中心を挟む 2 or 4 視点の平均)か <code style="color:#22d3bf">nearest</code>(半ステップずれることを承知で 1 視点)を明示させます。</p>
+<p style="margin:2px 0 2px 12px">• <b>スロープ</b> <code style="color:#22d3bf">s = dx/du = dy/dv</code> = 角度インデックス 1 ステップあたりの像の変位[px]。点は <code style="color:#22d3bf">x = x_c + s·(u - u_c)</code> に居ます。したがってリフォーカスは視点 <code style="color:#22d3bf">(v, u)</code> を <code style="color:#22d3bf">(-s·(v-v_c), -s·(u-u_c))</code> だけずらしてから平均する — <b>この符号が全部</b>で、逆にすると <code style="color:#22d3bf">-s</code> で鋭くなる完璧にもっともらしい絵が出ます。<code style="color:#22d3bf">s = 0</code> が既に合焦している面です。</p>
+<p style="margin:2px 0 2px 12px">• <b>符号の意味は decode 依存</b>なので <code style="color:#22d3bf">lf_disparity_to_depth</code> は <code style="color:#22d3bf">|s|</code> からしか距離を作りません(角度軸の向きは本モジュールには分からないため<b>推測しない</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">既存 op との棲み分け(重複させていないもの)</h3>
+<p>| やりたいこと | 使う op | 置き場所 |</p>
+<p>|---|---|---|</p>
+<p>| レンズ・絞り・被写界深度の算術(薄レンズ結像、許容錯乱円ベースの深度) | <code style="color:#22d3bf">thin_lens</code> / <code style="color:#22d3bf">depth_of_field</code> | <code style="color:#22d3bf">optics</code>。<b>再実装せず呼んでいます</b> — <code style="color:#22d3bf">lf_plenoptic_design</code> は <code style="color:#22d3bf">depth_of_field</code> を<b>2 回</b>呼び(錯乱円 = 画素ピッチ / MLA ピッチ)、その比がリフォーカスゲインです |</p>
+<p>| <b>2 眼</b>の視差・SGM・LR 整合 | <code style="color:#22d3bf">disparity_map</code> / <code style="color:#22d3bf">disparity_census</code> / <code style="color:#22d3bf">disparity_sgm</code> / <code style="color:#22d3bf">depth_from_disparity</code> / <code style="color:#22d3bf">lr_consistency</code> | <code style="color:#22d3bf">stereo</code>。ライトフィールドは「2 台のカメラ」ではなく<b>角度グリッド全体</b>を同時に使う(それが遮蔽ロバスト性と subpixel 視差の出所)。2 視点しか無いなら <code style="color:#22d3bf">stereo</code> の方が適任 |</p>
+<p>| <b>実カメラ</b>を物理的に N 回合焦し直して融合する | <code style="color:#22d3bf">focus_stack</code> の一式 | <code style="color:#22d3bf">focus_stack</code>。<code style="color:#22d3bf">lf_focal_stack</code> は同じものを<b>単一露光から計算で</b>作り、返りが素の 2-D 画像 list なので <code style="color:#22d3bf">focus_stack</code> の融合機構がそのまま乗ります |</p>
+<p>| 深度マップ → 点群 → 3-D フィット・位置合わせ | <code style="color:#22d3bf">depth_to_points</code> / ICP / RANSAC 一式 | <code style="color:#22d3bf">match3d</code> / <code style="color:#22d3bf">pointcloud</code> / <code style="color:#22d3bf">ransac_fit</code>。この族は metric depth map で止めます |</p>
+<p>| 汎用の鮮鋭度・Laplacian・局所分散フィルタ | <code style="color:#22d3bf">ops</code> / <code style="color:#22d3bf">filters_freq</code> の各 op | <code style="color:#22d3bf">ops</code> / <code style="color:#22d3bf">filters_freq</code>。<code style="color:#22d3bf">lf_depth_from_focus</code> の焦点尺度は<b>意図的に private ヘルパ</b>にしてあり、新しい公開 sharpness op は増やしていません |</p>
+<p>| FFT・複素画像・位相アンラップ | <code style="color:#22d3bf">cx_fft</code> 系 / <code style="color:#22d3bf">phase_unwrap</code> | <code style="color:#22d3bf">complexops</code> |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>全 op が入力を検証してから計算します。以下は 2026-09-01 の敵対監査で<b>実際に見つかったバグ</b>か、それを塞ぐために書いた罠です。</p>
+<p style="margin:2px 0 2px 12px">• <b>無言の Inf を 1 件潰した(実バグ)</b> — <code style="color:#22d3bf">lf_disparity_to_depth</code> は視差ゼロ(無限遠)の極を <code style="color:#22d3bf">far_depth</code> で明示させる設計にしていましたが、その先の <code style="color:#22d3bf">focal_px · baseline / |s|</code> <b>自体が float64 で溢れる</b>経路が残っていました。最小再現は <code style="color:#22d3bf">lf_disparity_to_depth(np.full((3,3), 1e-300), 1e300, 1e300, min_slope=1e-300)</code> で、<code style="color:#22d3bf">+inf</code> の配列が黙って返ってきます。返り値の有限性を検査して <code style="color:#22d3bf">ValueError</code> にしました。「単位が何桁もずれている」と「答えが無限大」は別の主張だからです。</p>
+<p style="margin:2px 0 2px 12px">• <b>numpy の生エラー漏れを 1 件潰した(実バグ)</b> — <code style="color:#22d3bf">lf_epi_slope</code> は「1 視点しか無ければ視差は無い」を <code style="color:#22d3bf">U &gt;= 2</code> で見ていましたが、<b>空間側の要件を見ていませんでした</b>。制約は <code style="color:#22d3bf">E_u + s·E_x = 0</code> なので、1 列しかない画像(<code style="color:#22d3bf">W == 1</code>)には <code style="color:#22d3bf">E_x</code> が存在しません。最小再現 <code style="color:#22d3bf">lf_epi_slope(np.zeros((3,3,8,1)))</code> が numpy の <code style="color:#22d3bf">Shape of array too small to calculate a numerical gradient</code> をそのまま漏らしていました。方向ごとの門(<code style="color:#22d3bf">use_h = U&gt;=2 and W&gt;=2</code> / <code style="color:#22d3bf">use_v = V&gt;=2 and H&gt;=2</code>)に直したので、<code style="color:#22d3bf">W == 1</code> でも縦方向が使えれば動きます — 一律拒否ではありません。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限の穴を 1 件潰した(実バグ)</b> — <code style="color:#22d3bf">lf_from_mla</code> の入力検証(2-D・有限)には要素数上限が無く、復号後の空間サイズが <code style="color:#22d3bf">MAX_SPATIAL</code> を<b>一度も検査していませんでした</b>。最小再現 <code style="color:#22d3bf">lf_from_mla(np.zeros((10000,12)), (2,2))</code> が 5000 px 側を通します。復号サイズの明示チェックを追加しました。</p>
+<p style="margin:2px 0 2px 12px">• <b>到達不能なガードを到達可能に直した</b> — <code style="color:#22d3bf">lf_synthesize</code> には「平滑化しすぎてテクスチャが定数になったら拒否」というガードを <code style="color:#22d3bf">1e-12</code> で置いていましたが、実測すると <code style="color:#22d3bf">texture_sigma = 400</code> を 8x8 に掛けてもレンジは 1e-6 台までしか落ちず(乱数系列によって 6.2e-7〜8.5e-7)、<b>一度も発火しない死んだコード</b>でした。閾値を <code style="color:#22d3bf">MIN_TEXTURE_RANGE = 1e-6</code> に直し、意味も「定数だから」ではなく「<b>float の塵を [0,1] に引き伸ばすと、視差の無いものが視差のあるテクスチャに化ける</b>から」に書き換えてあります。</p>
+<p style="margin:2px 0 2px 12px">• <b>オフバイワンは黙って切らない</b> — MLA ピッチで割り切れない生画像は既定で <code style="color:#22d3bf">ValueError</code>。端の半端なマイクロレンズ列を黙って捨てると<b>それ以降のマイクロレンズ中心が全部ずれ</b>、「見た目は正しく中身は間違った」光場になります。切りたいなら <code style="color:#22d3bf">crop=True</code> で明示的に同意します。<code style="color:#22d3bf">offset</code> も同じ理由で整数で明示。</p>
+<p style="margin:2px 0 2px 12px">• **文字列・bool・complex・masked array・NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code>** — <code style="color:#22d3bf">float(&quot;1.5&quot;)</code> が成功してしまうので、未パースの設定値がスロープとして通り抜ける経路を名指しで塞いでいます。</p>
+<p style="margin:2px 0 2px 12px">• <b>0 除算とその親戚を名指しで拒否</b>: 不透明な開口(全 0 のマスク → 加重平均が 0/0)、負の透過率、テクスチャの無い画素での構造テンソルの 0 除算(<code style="color:#22d3bf">min_energy</code> 未満は slope 0 + <code style="color:#22d3bf">energy</code> を返して<b>閾値は呼び手が切る</b>)、視差ゼロでの metric 換算。</p>
+<p style="margin:2px 0 2px 12px">• <b>非有限を返す op は 1 つも無い</b> — <code style="color:#22d3bf">optics</code> が <code style="color:#22d3bf">depth_of_field</code> の <code style="color:#22d3bf">far_mm = inf</code> を契約として返すのと対照的に、この族は無限遠を<b>値ではなく分岐</b>(<code style="color:#22d3bf">far_depth</code> の明示 or <code style="color:#22d3bf">ValueError</code>)で扱います。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: <code style="color:#22d3bf">MAX_LF_ELEMENTS</code>(2²⁴ = 1677 万要素 = float64 で 134 MB)/ <code style="color:#22d3bf">MAX_ANGULAR</code>(64)/ <code style="color:#22d3bf">MAX_SPATIAL</code>(4096)/ <code style="color:#22d3bf">MAX_STACK_SLICES</code>(256)/ <code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>(2²⁴)/ <code style="color:#22d3bf">MAX_LAYERS</code>(64)/ <code style="color:#22d3bf">MAX_ABS_SLOPE</code>(1024)。<code style="color:#22d3bf">V·U·H·W</code> は<b>それぞれ小さく見える 4 つの数の積</b>で、<code style="color:#22d3bf">(64, 64, 512, 512)</code> は何気なく読めて 10.7 億要素 = <b>8.6 GB</b> です。</p>
+<p>この契約は連鎖ファザーでも確認済みで、1200 連鎖 × 長さ 6(seed 7001)で <b>lightfield 族 17/17 が到達</b>し、走行全体の 364 件の発見は**すべて <code style="color:#22d3bf">CONTRACT</code>**(= docstring に書いた <code style="color:#22d3bf">ValueError</code> 契約どおりの拒否)、クラッシュ・型不整合はゼロでした。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>センサ生データから深度まで通す主筋(検証済み <code style="color:#22d3bf">examples/lightfield_depth.py</code> そのもの)。データ種が <code style="color:#22d3bf">image2d → lightfield → images/image2d → depth</code> で繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[画素ピッチ・MLA ピッチ・f 値] --&gt; B[lf_plenoptic_design 角度/空間分解能・基線]
+    B -.optics.thin_lens / depth_of_field を呼ぶ.-&gt; B
+    C[MLA 生画像 image2d] --&gt; D[lf_from_mla 並べ替え]
+    D --&gt;|lightfield| E[lf_stats 形状・測れる最大スロープ]
+    D --&gt; F[lf_center_view 2D 画像 image2d]
+    D --&gt; G[lf_focal_stack スロープ掃引 images]
+    G --&gt; H[lf_depth_from_focus 鮮鋭度ピーク image2d]
+    D --&gt; I[lf_epi_slope EPI 傾き 1 パス image2d]
+    H --&gt; J[lf_disparity_to_depth Z=f_px*b/|s| depth]
+    I --&gt; J
+    H --&gt; K[lf_all_in_focus 全焦点 image2d]
+    G --&gt; K
+    B --&gt;|focal_px・baseline| J</pre>
+<p>合成開口の筋。開口マスクで被写界深度を制御し、縮約を <code style="color:#22d3bf">median</code> に替えると<b>遮蔽物の裏</b>が出ます。<code style="color:#22d3bf">lf_synthesize</code> は同じ光場を既知の答えつきで作れるので、上の筋の検算に使えます。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid 図(ソース):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    S[lf_synthesize 既知スロープ + 遮蔽] --&gt;|lightfield| T[lf_refocus 素の shift-and-add]
+    M[lf_aperture_mask circle/square/gaussian/annulus] --&gt;|image2d V,U| U
+    S --&gt;|lightfield| U[lf_synthetic_aperture 開口整形 + 縮約]
+    U --&gt;|reduce=mean| V[絞るほど深度が伸びる]
+    U --&gt;|reduce=median| W[遮蔽の裏の背景を復元]
+    S -.スロープ地図 image2d.-&gt; X{推定と突き合わせ}
+    T --&gt; X
+    S --&gt;|lightfield| Y[lf_epi 角度x空間の断面 image2d]
+    Y --&gt; Z[直線の傾き = 視差 の目視確認]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(最小の 1 本)</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import lightfield as L
+
+# 0) カメラを設計する(optics を再実装せず呼ぶ)
+d = L.lf_plenoptic_design(focal_mm=50.0, f_number=8.0, object_mm=300.0,
+                          pixel_um=3.45, mla_pitch_um=27.6,
+                          sensor_px=(2048, 2448))
+print(d[&quot;angular_u&quot;], d[&quot;refocus_gain&quot;])        # 8, 8.0038 = 角度分解能
+
+# 1) 既知スロープ 2.0 px/視点 の場を合成 → MLA 生画像 → 復号(往復はビット一致)
+lf, truth = L.lf_synthesize((2.0,), angular=(9, 9), shape=(64, 64),
+                            occlusion=False, texture_sigma=3.0,
+                            edge=&quot;wrap&quot;, seed=0)
+assert np.array_equal(L.lf_from_mla(L.lf_to_mla(lf), (9, 9)), lf)
+
+# 2) 掃引して鮮鋭度ピークから深度を出す(argmax は真値ちょうど)
+sweep = np.round(np.linspace(-4.0, 4.0, 81), 6)
+slope, conf = L.lf_depth_from_focus(lf, sweep, edge=&quot;wrap&quot;, subpixel=False)
+print(float(np.median(slope)))                  # 2.0
+
+# 3) metric 深度へ。視差ゼロ(無限遠)は無言の inf ではなく ValueError
+f_px = 50.0 / 27.6e-3                           # サブアパーチャ画素 = MLA ピッチ
+z = L.lf_disparity_to_depth(slope, focal_px=f_px, baseline=d[&quot;baseline_mm&quot;])
+print(float(np.median(z)))                      # 808.747 mm = f_px*b/2.0
+
+# 4) 中心視点(= 普通の 2D 画像)と、その面に合焦した合成開口像
+plain = L.lf_center_view(lf)
+sharp = L.lf_refocus(lf, 2.0, edge=&quot;wrap&quot;)      # plain と 2.0e-15 以内で一致</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実測値(このガイドの主張の根拠)</h3>
+<p>すべて 2026-09-01 に本モジュールで測った値です。再現は <code style="color:#22d3bf">tests/test_lightfield.py</code>(125 件)と <code style="color:#22d3bf">examples/lightfield_depth.py</code>(通しで PASS / 終了コード 0)。</p>
+<p>| 主張 | 実測 |</p>
+<p>|---|---|</p>
+<p>| MLA 生画像 ⇄ 光場の往復 | <code style="color:#22d3bf">(1,1)</code> / <code style="color:#22d3bf">(2,3)</code> / <code style="color:#22d3bf">(5,5)</code> / <code style="color:#22d3bf">(3,7)</code> / <code style="color:#22d3bf">(9,9)</code> のすべてで **<code style="color:#22d3bf">np.array_equal</code> が True**(ビット一致) |</p>
+<p>| 整数スロープ + <code style="color:#22d3bf">edge=&quot;wrap&quot;</code> のリフォーカスは元テクスチャに戻る | 5x5(25 視点)で最大差 <b>5.6e-16</b>、9x9(81 視点)で <b>2.0e-15</b>(視点数ぶんの加算誤差) |</p>
+<p>| EPI の端視点間ラグ = <code style="color:#22d3bf">s·(U-1)</code> | 9x9 で s=1.0 → 実測 8 px / 理論 8 px、s=2.0 → <b>実測 16 px / 理論 16 px</b> |</p>
+<p>| <code style="color:#22d3bf">lf_depth_from_focus</code> の argmax は真値ちょうど | 121 点掃引 × (真値 0.0 / +0.5 / +1.0 / +1.5 / +2.0 / -1.0)×(テクスチャ σ = 1.5 / 3.0 / 5.0)= <b>18/18 で厳密一致</b>。サブピクセル補正もこの 18 件を動かさない |</p>
+<p>| <code style="color:#22d3bf">lf_epi_slope</code> は速いが <code style="color:#22d3bf">\|s\| &gt; 1</code> で過小評価 | σ=1.5: <code style="color:#22d3bf">+1.0→+1.0004</code> / <code style="color:#22d3bf">+0.5→+0.5285</code> / <code style="color:#22d3bf">+1.5→+1.3018</code> / <code style="color:#22d3bf">+2.0→+1.4614</code>(<b>26.9% 過小</b>)&lt;br&gt;σ=3.0: <code style="color:#22d3bf">+1.0→+1.0001</code> / <code style="color:#22d3bf">+2.0→+1.8716</code>&lt;br&gt;σ=5.0: <code style="color:#22d3bf">+1.0→+1.0003</code> / <code style="color:#22d3bf">+2.0→+1.9482</code>(2.6% 過小)。<code style="color:#22d3bf">s=0</code> は全 σ で厳密 0、符号は常に正しい |</p>
+<p>| median 合成開口は遮蔽の裏を<b>厳密に</b>復元する | 9x9、遮蔽が中心視点の 25% を覆い、隠れ画素で塞がる視点が最大 46%(過半未満)のとき、隠れた真背景との RMS は <b>median 0.0000 / mean 0.1590 / 中心視点 0.5607</b> |</p>
+<p>| ただし過半を超えると保証は消える | 被覆 35%(最大 60% の視点が塞がる)で <b>median 0.1329 / mean 0.2128</b>。median が mean より良いという話ではなく、<b>多数決が覆るかどうか</b>の話です |</p>
+<p>| リフォーカスゲイン = 角度分解能(教科書結果) | f=50 mm, f/8, 物体 300 mm で MLA 20.7 µm → 角度 6・ゲイン <b>6.0016</b>、27.6 µm → 8・<b>8.0038</b>、34.5 µm → 10・<b>10.0075</b> |</p>
+<p>| 角度分解能は空間分解能で買う | 2048x2448 センサが、角度 6 で 341x408 / 角度 8 で 256x306 / 角度 10 で 204x244 に。被写界深度は 1.656 mm → それぞれ 9.939 / 13.254 / 16.573 mm |</p>
+<p>| 絞ると非合焦面のボケが減る | 合焦面から外れた面での残存コントラスト(分散)が 全開 <b>0.0049</b> → 半径 1 に絞って <b>0.0264</b> |</p>
+<p>| 全焦点合成はどの単一スライスより鋭い | 2 層シーン(手前が 40% を遮蔽)で 勾配エネルギー <b>0.00574</b> 対 最良スライス <b>0.00490</b>(<b>1.17 倍</b>、最悪スライスは 0.00031) |</p>
+<p>| metric 換算は閉形式 | f_px=1811.6 px, b=0.8929 mm, s=2.0 → <b>808.747 mm</b>(<code style="color:#22d3bf">f_px·b/\|s\|</code> と機械精度で一致) |</p>
+<p>| 連鎖ファザーで全 op が到達可能 | 1200 連鎖 × 長さ 6(seed 7001)で <b>lightfield 17/17 到達</b>、走行全体の発見 364 件は**すべて <code style="color:#22d3bf">CONTRACT</code>** |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">アルゴリズムの正典(著者・年)</h3>
+<p style="margin:2px 0 2px 12px">• <b>plenoptic カメラ / 単一レンズ視差</b>: Adelson &amp; Wang, *Single Lens Stereo with a Plenoptic Camera*, IEEE TPAMI 14(2), 1992。</p>
+<p style="margin:2px 0 2px 12px">• <b>4-D ライトフィールドのパラメータ化と視点合成</b>: Levoy &amp; Hanrahan, *Light Field Rendering*, SIGGRAPH 1996。</p>
+<p style="margin:2px 0 2px 12px">• <b>EPI(直線の傾き = 視差)</b>: Bolles, Baker &amp; Marimont, *Epipolar-Plane Image Analysis*, IJCV 1(1), 1987。<code style="color:#22d3bf">lf_epi</code> / <code style="color:#22d3bf">lf_epi_slope</code> の土台。</p>
+<p style="margin:2px 0 2px 12px">• <b>shift-and-add リフォーカスと「角度分解能ぶん深度が伸びる」関係</b>: Ng et al., *Light Field Photography with a Hand-Held Plenoptic Camera*, Stanford Tech Report CTSR 2005-02。<code style="color:#22d3bf">lf_plenoptic_design</code> の <code style="color:#22d3bf">refocus_gain</code> はこれを数値で再現したもの。</p>
+<p style="margin:2px 0 2px 12px">• <b>EPI の構造テンソルによる密なスロープ推定</b>: Wanner &amp; Goldluecke, *Globally Consistent Depth Labeling of 4D Light Fields*, CVPR 2012。本族は総最小二乗ではなく<b>通常の最小二乗</b>を使っており、そのぶんのバイアスは上の表で開示しています。</p>
+<p style="margin:2px 0 2px 12px">• <b>遮蔽越しの合成開口(median その他のロバスト縮約)</b>: Vaish et al., *Reconstructing Occluded Surfaces Using Synthetic Apertures*, CVPR 2006。</p>
+<p style="margin:2px 0 2px 12px">• <b>焦点からの深度(鮮鋭度ピーク)</b>: Nayar &amp; Nakagawa, *Shape from Focus*, IEEE TPAMI 16(8), 1994(<code style="color:#22d3bf">measure=&quot;laplacian&quot;</code> は同論文の Sum-Modified-Laplacian)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">正直な限界</h3>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">lf_epi_slope</code> は偏る<b>。通常の最小二乗 + 有限差分なので、EPI の直線が 1 視点あたり「テクスチャの相関長」程度より速く動くと過小評価します(上表のとおり σ=1.5 で s=2.0 が 26.9% 低い)。</b>速くて密な初期値**であって最終解ではありません。精度が要るなら <code style="color:#22d3bf">lf_depth_from_focus</code>(無バイアス)と併用してください — ただしこちらは<b>掃引に入れた面しか見えません</b>。</p>
+<p style="margin:2px 0 2px 12px">• <b>サブピクセルの MLA 較正はしていない</b>。<code style="color:#22d3bf">lf_from_mla</code> は<b>整数</b>画素格子と整数 <code style="color:#22d3bf">offset</code> で並べ替えます。実機の復号は白画像からマイクロレンズ中心をサブピクセルでフィットするところから始まります(MLA ピッチは画素ピッチの整数倍にならず、完全には整列しないため)。ここには<b>既に矯正済み</b>の生画像を渡してください。</p>
+<p style="margin:2px 0 2px 12px">• <b>口径食なし・マイクロレンズ回折なし・六角配列なし</b>。復号は矩形・非重複・一様照度の格子を仮定します。実センサは瞳の縁へ向かって強い口径食が出ますし(**まさにそのために <code style="color:#22d3bf">lf_aperture_mask</code> がある**)、公開されている設計には六角配列も多いです。</p>
+<p style="margin:2px 0 2px 12px">• <b>リフォーカスは shift-and-add = Lambertian・正対平面モデル</b>。鏡面ハイライトは視点とともに動くので<b>融合しません</b>。傾いた面は区分的にしか合いません。<code style="color:#22d3bf">reduce=&quot;median&quot;</code> が非 Lambertian 現実への唯一の譲歩で、そのぶん解像度を払います。</p>
+<p style="margin:2px 0 2px 12px">• <b>遮蔽越しは多数決</b>であって魔法ではありません。隠れ画素で塞がる視点が過半を超えた時点で保証は消えます(上表の 25% と 35% の対比がそれ)。開口を広げるか、遮蔽物の視差を大きくするか、被覆を下げるか — どれもハードウェア側の話です。</p>
+<p style="margin:2px 0 2px 12px">• <b>角度分解能は空間分解能で買う</b>。<code style="color:#22d3bf">U·V</code> 倍の画素を角度に使うので、画像は <code style="color:#22d3bf">U·V</code> 分の 1 になります。<code style="color:#22d3bf">lf_plenoptic_design</code> はその取引を隠さず表に出します。</p>
+<p style="margin:2px 0 2px 12px">• <b>双線形リサンプリングはボケる</b>。整数スロープは厳密ですが(往復 5.6e-16)、非整数のずらしは毎回コントラストを落とします。<code style="color:#22d3bf">lf_all_in_focus</code> のように何枚も重ねると効いてくるので、そこが問題なら <code style="color:#22d3bf">interp=&quot;cubic&quot;</code> を渡してください。</p>
+<p style="margin:2px 0 2px 12px">• **<code style="color:#22d3bf">lf_synthesize</code> の遮蔽ありモードでは真値地図が「前面の層」しか言わない**。透過重ね合わせ(<code style="color:#22d3bf">occlusion=False</code>)では他の層も同じ画素に居るので、深度推定器が真値地図と食い違うのは<b>正しい振る舞い</b>です。厳密な検算をしたいなら 1 層で使ってください。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

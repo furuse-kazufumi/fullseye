@@ -2,6 +2,10 @@
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/lightfield/<category>/<op>.md` を走査。
 
+## ファミリ使い方ガイド(用途→op の教材)
+
+- [lightfield_depth](guides/lightfield_depth.md) — ライトフィールド(plenoptic 撮像・リフォーカス・深度) — 使い方ガイド
+
 ## カテゴリ
 
 ### decode (3)
