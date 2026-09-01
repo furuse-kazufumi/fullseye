@@ -755,7 +755,7 @@ def compressed_size(a, compressor="lzma"):
     return len(_COMPRESSORS[compressor](np.ascontiguousarray(np.asarray(a)).tobytes()))
 
 
-def ncd(a, b, compressor="lzma", levels=None, data_range=None):
+def ncd(a, b, compressor="lzma", levels=None, data_range=None, symmetric=True):
     """正規化圧縮距離(Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004)。
 
     ``NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))``。
