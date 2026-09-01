@@ -1196,7 +1196,13 @@ def grid_lines(img, axes, xticks=None, yticks=None, color="neutral", width=1,
     for v in np.atleast_1d(yt):
         _, py = data_to_pixel(axes, axes["xlim"][0], v)
         over = imagedraw.draw_line(over, (x, float(py)), (x + w - 1, float(py)), color=col, **kw)
-    return base * (1.0 - alpha) + over * alpha
+    # **線が乗った画素だけ**を混ぜる。全面に ``base*(1-a) + over*a`` を掛けると、
+    # 線の無いところも ``base*0.65 + base*0.35`` を通って 1 ulp 動き、格子を
+    # 重ねるたびに絵がじりじり変わる(重ねても等しいことを test が確かめている)。
+    touched = np.any(over != base, axis=-1) if base.ndim == 3 else (over != base)
+    return _blend(base, touched.astype(np.float64), 0.0, 0.0) if not touched.any() else \
+        np.where(touched[..., None] if base.ndim == 3 else touched,
+                 base * (1.0 - alpha) + over * alpha, base)
 
 
 def ticks(img, axes, xticks=None, yticks=None, color="neutral", width=1,
