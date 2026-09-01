@@ -382,6 +382,21 @@ from palette import (  # noqa: E402,F401
     semantic_palette, role_color, role_rgb8, diverging_lut,
     assert_not_red_green_pair, ROLES, ROLE_MARKERS, SCHEMES,
 )
+# 描画状態(色・線幅・線種・塗り)と、ラスタ描画。HALCON は装置に状態を持たせる
+# (set_color / set_draw / set_line_width / set_line_style)が、ここは**不変値**の
+# DrawStyle を正典にした ― 展示画像は再生成で SHA-256 が一致することが要件で、
+# 可変グローバルがあると「前に描いた図の設定」が混ざり、例外にならずに図だけが
+# 変わる。HALCON 名は相互運用の別名として残し、値を返す関数にしてある。
+import drawstyle  # noqa: E402  (immutable draw state: colour / width / line style / fill)
+from drawstyle import (  # noqa: E402,F401
+    DrawStyle, draw_style, current_style, set_color, set_line_width,
+    set_line_style, set_draw, resolve_pattern, resolve_color,
+    LINE_STYLES, DRAW_MODES,
+)
+import imagedraw  # noqa: E402  (raster annotation: lines / markers / circles / contours)
+from imagedraw import (  # noqa: E402,F401
+    draw_line, draw_polyline, draw_circle, draw_markers, draw_contour, new_canvas,
+)
 import tomography  # noqa: E402  (radon / FBP / SART / artifacts / CT-to-voxel)
 from tomography import (  # noqa: E402,F401
     projection_angles, sinogram_design, ellipse_phantom, ellipse_sinogram,
