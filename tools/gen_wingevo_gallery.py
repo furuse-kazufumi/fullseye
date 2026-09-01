@@ -1084,8 +1084,8 @@ def ex_generations(data, log=print):
         c = p.c
         items += [
             (168, 92, "適合度", C_TEXT, 15, True),
-            (240, 116, "train(選択に使う)", C_EVO, 13, True),
-            (240, 136, "観測用 holdout(見るだけ)", C_LOCK, 13, True),
+            (100, 288, "train(選択に使う)", C_EVO, 13, True),
+            (100, 308, "観測用 holdout(見るだけ)", C_LOCK, 13, True),
             (86, 358, "世代", C_DIM, 12, False),
             (676, 358, str(len(hist)), C_DIM, 12, False, "ra"),
         ]
