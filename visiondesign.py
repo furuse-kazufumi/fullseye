@@ -322,6 +322,20 @@ def detectability_limit(defect_um_grid, focal_mm=50.0, working_distance_mm=500.0
     real answer ("this design cannot do it"), not a failure, so it is returned
     rather than raised.
 
+    **Two independent things can block "resolvable", and they are reported
+    separately** because they are fixed by buying different hardware:
+
+      * ``lateral_limit_um`` — the smallest feature the optics can *resolve*
+        laterally (diffraction or sampling, whichever binds). This is closed
+        form, so it is always a number; it never depends on the grid.
+      * ``depth_of_field_ok`` — whether the required depth tolerance actually
+        fits inside the depth of field.
+
+    A design can resolve the defect perfectly and still never reach
+    ``"resolvable"`` because the part moves out of focus. Folding that into a
+    single "optical limit not reached" would send the reader shopping for a
+    lens when the fix is aperture, tolerance, or a focus mechanism.
+
     Raises ValueError: an empty grid, or any non-positive/non-finite size.
     """
     grid = np.atleast_1d(np.asarray(defect_um_grid, dtype=np.float64))
