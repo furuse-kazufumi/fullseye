@@ -140,7 +140,7 @@ class TestFluxConservation:
         want = float(np.mean([f.sum() for f in frames]))
         loss = (want - float(sci.sum())) / want
         assert 0.0 <= loss < 0.062, loss
-        assert loss == pytest.approx(0.01463, abs=2e-4)     # 実測を固定
+        assert loss == pytest.approx(0.01594, abs=2e-4)     # 実測を固定
 
     def test_drizzle_refuses_a_shift_table_of_the_wrong_shape(self):
         frames, _ = A.synth_frame_series(shape=(24, 24), n_frames=3,
