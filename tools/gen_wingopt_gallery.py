@@ -500,72 +500,87 @@ def _header(canvas, w, title, subtitle):
 # 1. 欠陥ジェネレータの見本帳(静止画)                                          #
 # =========================================================================== #
 def ex_defect_atlas(log):
-    """欠陥 4 種 × (撮れる画像 | 画素完全な正解マスク)。注釈作業が要らない証拠。"""
+    """欠陥 5 種 × (撮れる画像 | 画素完全な正解マスク)を 2 列の格子に束ねる。
+
+    1 枚ずつ原寸で並べると記事が縦に伸びるだけなので、共通部品
+    ``exhibit_tile.contact_sheet`` に載せる(左列 = 撮像、右列 = 正解マスク)。
+    ラベルに載る数字は ``defect_stats`` の実測値。
+    """
     system = _system()
     geo, res = _limits()
     upp = geo["um_per_pixel"]
-    tile = 224
+    tile = 256
     kinds = [("scratch", 220.0), ("pits", 90.0), ("crack", 200.0), ("blob", 340.0)]
 
-    cols = []
+    rows = []
     for kind, size_um in kinds:
         img, mask, meta = vl.render_part(system, size_um, kind=kind,
                                          contrast=-0.30, texture_strength=0.06,
                                          tile_px=tile, seed=7)
-        st = defectgen.defect_stats(mask, um_per_pixel=upp)
-        pred, iou, det = _detect(img, mask)
-        cols.append({"kind": kind, "size_um": size_um, "img": img, "mask": mask,
-                     "meta": meta, "stats": st, "iou": iou, "detected": det})
+        rows.append({"kind": kind, "size_um": size_um, "img": img, "mask": mask,
+                     "defect_px": float(meta["defect_px"])})
 
-    pad, gap = 16, 14
-    w = pad * 2 + 4 * tile + 3 * gap
-    lab_h, info_h = 22, 62
-    y_img = 34 + 8 + lab_h
-    y_msk = y_img + tile + 8 + lab_h
-    h = y_msk + tile + 10 + info_h
-    canvas = _canvas(h, w)
-    labels = _header(canvas, w,
-                     "DEFECT ATLAS  --  four generators, four pixel-perfect masks",
-                     f"{system!r}   {upp:.3f} um/px   "
-                     f"optical limit {res['resolution_object_um']:.2f} um "
-                     f"({res['limited_by']}-limited)   seed 7, deterministic")
-    labels.append((pad, 34 + 6, "captured image (what this system would record)",
-                   (0.95, 0.95, 0.92), 13, True))
-    labels.append((pad, y_img + tile + 8 - 1,
-                   "ground-truth mask (built from the geometry -- no annotation step)",
-                   (0.95, 0.95, 0.92), 13, True))
-    for i, c in enumerate(cols):
-        x = pad + i * (tile + gap)
-        canvas[y_img:y_img + tile, x:x + tile] = _gray_to_rgb(c["img"])
-        m = np.zeros((tile, tile, 3), np.float64)
-        m[:, :] = (0.07, 0.08, 0.10)
-        m[c["mask"]] = C_HIT
-        canvas[y_msk:y_msk + tile, x:x + tile] = m
-        canvas = imagedraw.draw_polyline(
-            canvas, [(x - 1, y_img - 1), (x + tile, y_img - 1),
-                     (x + tile, y_img + tile), (x - 1, y_img + tile)],
-            color=C_GRID, width=1, closed=True)
-        st = c["stats"]
-        yi = y_msk + tile + 8
+    # 5 段目 = composite: 3 種を 1 つの部品に重ねる(実ラインの部品は 1 種類の
+    # 欠陥しか出さない、という前提の方が非現実的なので)。マスクは論理和。
+    bg = defectgen.surface_texture((tile, tile), "orange_peel", strength=0.06,
+                                   seed=1007)
+    comp_ideal, comp_mask = None, np.zeros((tile, tile), bool)
+    scene = bg
+    parts = [
+        ("scratch", defectgen.defect_scratch(
+            (tile, tile), length_px=118.0, width_px=6.0, angle_deg=18.0,
+            wander=0.12, contrast=-0.30, seed=21)),
+        ("pits", defectgen.defect_pits(
+            (tile, tile), count=9, radius_px=4.5, radius_sigma=0.35,
+            contrast=-0.34, clustering=0.5, seed=22)),
+        ("blob", defectgen.defect_blob(
+            (tile, tile), radius_px=17.0, roughness=0.42, contrast=0.24,
+            seed=23, centre=(72.0, 186.0))),
+    ]
+    for _nm, (ideal, msk) in parts:
+        scene = defectgen.composite_defect(scene, ideal, msk)
+        comp_mask |= msk
+    comp_img = system.capture(scene)
+    rows.append({"kind": "composite", "size_um": None, "img": comp_img,
+                 "mask": comp_mask, "defect_px": None})
+
+    panels, labels = [], []
+    for r in rows:
+        st = defectgen.defect_stats(r["mask"], um_per_pixel=upp)
+        pred, iou, det = _detect(r["img"], r["mask"])
+        r["stats"], r["iou"], r["detected"] = st, iou, det
+        mask_rgb = np.zeros((tile, tile, 3), np.float64)
+        mask_rgb[:, :] = (0.07, 0.08, 0.10)
+        mask_rgb[r["mask"]] = C_HIT
+        panels += [_gray_to_rgb(r["img"]), mask_rgb]
+        if r["size_um"] is None:
+            left = (f"composite (scratch+pits+blob) — 撮像 / "
+                    f"IoU {iou:.3f} {'検出' if det else '未検出'}")
+        else:
+            left = (f"{r['kind']} {r['size_um']:.0f} µm = {r['defect_px']:.2f} px — "
+                    f"撮像 / IoU {iou:.3f} {'検出' if det else '未検出'}")
         labels += [
-            (x, yi, f"{c['kind']}  {c['size_um']:.0f} um", C_TEXT, 13, True),
-            (x, yi + 15,
-             f"{c['meta']['defect_px']:.2f} px  area {st['area_px']} px", C_DIM, 11, False),
-            (x, yi + 29,
-             f"axes {st['major_axis_um']:.0f} x {st['minor_axis_um']:.0f} um",
-             C_DIM, 11, False),
-            (x, yi + 43,
-             f"IoU {c['iou']:.3f}  " + ("detected" if c["detected"] else "not detected"),
-             (C_HIT if c["detected"] else C_BAD), 11, True),
+            left,
+            (f"正解マスク {st['area_px']} px  "
+             f"長軸 {st['major_axis_um']:.0f} × 短軸 {st['minor_axis_um']:.0f} µm"),
         ]
-    frame = _text(_to_u8(canvas), labels)
+
+    title = (f"欠陥ジェネレータ 5 種 —— 左=撮像 / 右=画素完全な正解マスク  "
+             f"({upp:.3f} µm/画素, 光学限界 {res['resolution_object_um']:.2f} µm "
+             f"{res['limited_by']} 律速, seed 固定)")
+    sheet = contact_sheet(panels, labels, ncols=2, panel_px=300, pad=14,
+                          label_h=30, title=title, title_h=48,
+                          font_size=15, title_font_size=20)
+    frame = _to_u8(sheet)
     facts = {
         "system": repr(system), "um_per_pixel": upp,
         "optical_limit_um": res["resolution_object_um"],
-        "limited_by": res["limited_by"],
-        "columns": [{k: v for k, v in c.items() if k not in ("img", "mask")}
-                    for c in cols],
+        "limited_by": res["limited_by"], "tile_px": tile,
+        "rows": [{k: v for k, v in r.items() if k not in ("img", "mask")}
+                 for r in rows],
     }
+    log(f"  {len(rows)} kinds on one contact sheet ({frame.shape[1]}x{frame.shape[0]}); "
+        + ", ".join(f"{r['kind']} IoU {r['iou']:.3f}" for r in rows))
     return {"frames": [frame], "facts": facts, "fps": None, "thumb_index": 0}
 
 
