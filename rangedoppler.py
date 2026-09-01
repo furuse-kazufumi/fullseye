@@ -1208,13 +1208,12 @@ def beamform_doa(cube, wavelength_m=3.8934e-3, element_spacing_m=None,
     if not 0.0 <= frac <= 1.0:
         raise ValueError("%s: min_fraction must be in [0, 1], got %g" % (op, frac))
     na = arr.shape[0]
-    if na < 2:
-        raise ValueError(
-            "%s: the cube has %d antenna element(s) — no aperture, so no "
-            "direction. See beamform_delay_sum for why a flat spectrum must not "
-            "be argmax'd." % (op, na))
+    _require_aperture(na, d, lam, op, float(grid[0]))
+    zero = arr.shape[1] // 2
     snap, di, rj = _cell_snapshot(arr, op, range_bin, doppler_bin)
-    power = beamform_delay_sum(arr, lam, d, grid, rj, di)
+    # di comes back as the *shifted* row index; beamform_delay_sum takes the
+    # signed velocity bin, so it must be converted, not forwarded raw.
+    power = beamform_delay_sum(arr, lam, d, grid, rj, di - zero)
 
     top = float(power.max())
     inner = power[1:-1]
