@@ -115,7 +115,9 @@ def check_body(body: str, where: str, asset_base: str, *, require_exhibits: bool
             url = m.group("url")
             if not url.startswith(asset_base):
                 raise BuildError(f"{where}: image URL is not under the asset base: {url}")
-            rel = url[len(asset_base):]
+            # ``?v=2`` は Qiita(imgix)のキャッシュを外すために付けるので、
+            # 実在確認では落としてからパスにする。
+            rel = url[len(asset_base):].split("?", 1)[0].split("#", 1)[0]
             local = ROOT / "docs" / "articles" / "assets" / rel
             if not local.exists():
                 raise BuildError(f"{where}: referenced asset does not exist: {local}")
