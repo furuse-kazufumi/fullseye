@@ -166,6 +166,105 @@ def save_exhibit(image: np.ndarray, stem: str, *, assets: Path | None = None,
     }
 
 
+def flipbook(frames: list, labels: list | None = None, *, title: str | None = None,
+             label_h: int = 40, title_h: int = 44, font_size: int = 20,
+             title_font_size: int = 24, bar_h: int = 8) -> list[np.ndarray]:
+    """**同じ寸法**のフレームを、工程が読めるコマ送りに仕立てて返す。
+
+    各コマに「今どの工程か」のラベルと、``i/N`` を示す進捗バーを焼き込む。
+    アニメーションは**止まった 1 コマだけ見ても意味が分かる**必要があるので、
+    表題・工程名・進捗を常に画面に置く(GIF は必ず途中で止まって見られる)。
+
+    寸法が揃っていない場合は例外にする ― 揃っていないものをコマ送りにすると、
+    工程ではなく「別の絵の羅列」になってしまう。そういうものは ``contact_sheet``。
+    """
+    from PIL import Image, ImageDraw
+
+    if len(frames) < 2:
+        raise ValueError("flipbook needs at least 2 frames (1 frame is a still, not a process)")
+    if labels is not None and len(labels) != len(frames):
+        raise ValueError(f"labels ({len(labels)}) must match frames ({len(frames)})")
+
+    panels = [_to_u8(f) for f in frames]
+    shapes = {p.shape for p in panels}
+    if len(shapes) != 1:
+        raise ValueError(
+            "flipbook needs frames of identical size; got "
+            + ", ".join(str(s) for s in sorted(shapes))
+            + " — use contact_sheet() for mixed sizes")
+
+    h, w = panels[0].shape[:2]
+    th = title_h if title else 0
+    lh = label_h if labels else 0
+    total_h = th + h + lh + bar_h
+    font, tfont = _font(font_size), _font(title_font_size)
+
+    out: list[np.ndarray] = []
+    n = len(panels)
+    for i, panel in enumerate(panels):
+        canvas = Image.new("RGB", (w, total_h), BG)
+        draw = ImageDraw.Draw(canvas)
+        if title:
+            draw.text((w // 2, th // 2), title, fill=FG, font=tfont, anchor="mm")
+        canvas.paste(Image.fromarray(panel, "RGB"), (0, th))
+        if labels:
+            draw.text((w // 2, th + h + lh // 2), f"{i + 1}/{n}  {labels[i]}",
+                      fill=FG, font=font, anchor="mm")
+        y = total_h - bar_h
+        draw.rectangle([0, y, w - 1, total_h - 1], fill=(38, 38, 52))
+        draw.rectangle([0, y, max(0, round(w * (i + 1) / n) - 1), total_h - 1], fill=(96, 168, 255))
+        out.append(np.asarray(canvas, np.uint8))
+    return out
+
+
+def save_animation(frames: list, stem: str, *, assets: Path | None = None,
+                   duration_ms: int = 700, hold_last_ms: int = 1400,
+                   loop: int = 0, thumb_width: int = 720, quality: int = 88) -> dict:
+    """コマ送りを GIF として書き、**読み戻してフレーム数を照合**した結果を返す。
+
+    GIF は「それらしく書けてしまう」ので、書きっぱなしにしない。サムネイルは
+    先頭フレームから作る(記事のサムネが静止画として意味を持つように)。
+    """
+    from PIL import Image, ImageSequence
+
+    out = Path(assets) if assets is not None else ASSETS / "media"
+    out.mkdir(parents=True, exist_ok=True)
+    imgs = [Image.fromarray(_to_u8(f), "RGB") for f in frames]
+    if len({im.size for im in imgs}) != 1:
+        raise ValueError("all animation frames must share one size")
+
+    gif = out / f"{stem}.gif"
+    durations = [duration_ms] * len(imgs)
+    durations[-1] = hold_last_ms
+    imgs[0].save(gif, save_all=True, append_images=imgs[1:], duration=durations,
+                 loop=loop, optimize=True, disposal=2)
+
+    with Image.open(gif) as re_read:
+        n_read = sum(1 for _ in ImageSequence.Iterator(re_read))
+    if n_read != len(imgs):
+        raise ValueError(f"{gif.name}: wrote {len(imgs)} frames but read back {n_read}")
+
+    thumbs = (ASSETS / "thumbs") if assets is None else out
+    thumbs.mkdir(parents=True, exist_ok=True)
+    first = imgs[0]
+    scale = min(1.0, thumb_width / first.width)
+    thumb_im = first if scale >= 1.0 else first.resize(
+        (max(1, round(first.width * scale)), max(1, round(first.height * scale))), Image.LANCZOS)
+    thumb = thumbs / f"{stem}_thumb.jpg"
+    thumb_im.save(thumb, quality=quality, optimize=True)
+
+    return {"gif": str(gif), "thumb": str(thumb), "frames": n_read,
+            "size": first.size, "gif_bytes": gif.stat().st_size,
+            "gif_sha256": hashlib.sha256(gif.read_bytes()).hexdigest()}
+
+
+def markdown_animation(stem: str, alt: str, caption: str, *,
+                       base: str = "https://raw.githubusercontent.com/furuse-kazufumi/"
+                                   "fullseye/master/docs/articles/") -> str:
+    """GIF 1 点ぶんの Markdown。GIF は動いてこそなので、直接埋め込む。"""
+    return f"![{alt}]({base}assets/media/{stem}.gif)\n\n*↑ {caption}*\n"
+
+
 def markdown(stem: str, alt: str, caption: str, *,
              base: str = "https://raw.githubusercontent.com/furuse-kazufumi/"
                          "fullseye/master/docs/articles/assets/") -> str:
