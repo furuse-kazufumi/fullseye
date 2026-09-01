@@ -2603,7 +2603,8 @@ def ex_envelope_flow(log):
         f"生の記録 — {ms} ms 抜粋、{x.size} サンプル",
         f"生スペクトル — 欠陥率 {fd:.0f} Hz の振幅は {amp[i_fd]:.2e}(何も無い)",
         f"スペクトル尖度 — 復調帯域 {lo:.0f}–{hi:.0f} Hz を機械が選ぶ",
-        f"帯域通過 — band_fraction {es['band_fraction']:.4f}",
+        f"帯域通過 — band_fraction {es['band_fraction']:.4f}"
+        f"(白色雑音の対照 {es_ctrl['band_fraction']:.4f}= 区別できない)",
         f"包絡線 — {1000.0 / fd:.3f} ms ごとの衝撃が見える",
         f"包絡線スペクトル — ピーク {es['peak_freq']:.4f} Hz、突出度 "
         f"{es['peak_prominence']:.0f}(白色雑音の対照は {es_ctrl['peak_prominence']:.0f})",
