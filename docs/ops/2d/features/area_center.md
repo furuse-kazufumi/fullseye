@@ -3,7 +3,7 @@ op: area_center
 dim: 2d
 category: features
 in: region
-out: feature
+out: match
 halcon: area_center
 examples: [gallery2d_features]
 author: Kazufumi Furuse
@@ -13,13 +13,13 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # area_center — 2D `features` op
 
-- **データ種**: `region` → `feature`
+- **データ種**: `region` → `match`
 - **呼び出し**: `fullseye.apply(img, "area_center", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 - **HALCON 相当**: `area_center`(意味・パラメータは HALCON リファレンスが参考になる)
 
 ## 使い方
 
-型契約は `region → feature`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+型契約は `region → match`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
 
 ## 詳しい使い方ガイド
 
@@ -35,7 +35,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 
-## 型が繋がる次の op(`feature` を入力に取れる)
+## 型が繋がる次の op(`match` を入力に取れる)
 
 [identity](../misc/identity.md)
 

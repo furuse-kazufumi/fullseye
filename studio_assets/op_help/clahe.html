@@ -3,9 +3,22 @@
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;clahe&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Adaptive (tiled) histogram equalization with inter-tile bilinear blending.</p>
+<p>Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended).</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> — タイル数 </code><code style="color:#22d3bf">nb = 2 + int(3a)</code>` (画像を nb×nb に分割)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> — **clip limit**。ビン平均カウントに対する倍率 </code><code style="color:#22d3bf">256**b</code>` で与える</p>
+<p>(`<code style="color:#22d3bf">b=0</code>` → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 =</p>
+<p>強調ゼロ、`<code style="color:#22d3bf">b=1</code>` → 256 倍 = 1 ビンが取り得る最大値なので切り取りが</p>
+<p>効かない = 素の AHE、`<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> → 16 倍。OpenCV の既定 </code><code style="color:#22d3bf">clipLimit=40</code>` は</p>
+<p>おおよそ `<code style="color:#22d3bf">b=0.665</code>`)。</p>
+<p>★2026-09-02(この修正): それまで `<code style="color:#22d3bf">b</code>` は <b>完全に死んでいた</b>(実測:</p>
+<p>`<code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code>` きっかり)。CLAHE の</p>
+<p>&quot;C&quot; は contrast <b>limited</b> の C であり、clip limit こそが AHE と CLAHE を</p>
+<p>分ける当のものなので、<b>実装は AHE であって CLAHE ではなかった</b> ——</p>
+<p>名前が嘘をついていた。ここで clip limit を実装して `<code style="color:#22d3bf">b</code>` に割り当て、</p>
+<p>`<code style="color:#22d3bf">b=1</code>` が旧実装とビット一致する端になるよう倍率を選んである</p>
+<p>(切り取りが起きない上限 = ビン数 256 倍)。</p>
 <p>Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the</p>
-<p>H % nb / W % nb remainder), each tile&#x27;s normalised CDF is its local tone map,</p>
+<p>H % nb / W % nb remainder), each tile&#x27;s clip-limited CDF is its local tone map,</p>
 <p>and every pixel blends the maps of its (up to) 4 nearest tile centres with</p>
 <p>bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).</p>
 <p>2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化</p>

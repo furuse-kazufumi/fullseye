@@ -19,7 +19,13 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 使い方
 
-型契約は `image → image`。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。
+Unsharp mask. ★出口で [0,1] に clip する(2026-09-02)。
+
+    ``v + k*(v - blur)`` は定義上オーバーシュートする(実測 min=-0.1499 /
+    max=+1.1499)。`_apply` は段間で同じ clip を掛けるので **パイプライン結果は
+    ビット不変**だが、`fullseye.apply` を単発で呼ぶ経路だけは生値が出ていて、
+    `image` の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側
+    (`accel._unsharp`)も同じ clip を持つ。
 
 ## 詳しい使い方ガイド
 

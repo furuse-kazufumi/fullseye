@@ -4,7 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;rotate_img&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">rotate_image</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Rotate about the image centre by `<code style="color:#22d3bf">-45° + 90°·a</code><code style="color:#22d3bf"> (a=0.5 → 0°). </code><code style="color:#22d3bf">b</code>` unused.</p>
+<p>★呼び出し規約(2026-09-02 に明文化。実装は変えていない):</p>
+<p style="margin:2px 0 2px 12px">• <b>キャンバスを変えない</b> (`<code style="color:#22d3bf">reshape=False</code>`)。出力の shape は入力と同じで、</p>
+<p>回転で枠外へ出た画素は捨てられる。</p>
+<p style="margin:2px 0 2px 12px">• <b>枠外は鏡映で埋める</b> (`<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>`)。つまり回すと **四隅に元画像が</p>
+<p>折り返して写り込む**(帳票を回すと隅に鏡文字が出る)。</p>
+<p>どちらが正典かは用途で割れる。**この op の正典は「連鎖しても常に同じ形・</p>
+<p>同じ値域の画像が出ること」** — 進化パイプラインは image を段間で無条件に</p>
+<p>繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・</p>
+<p>ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」で</p>
+<p>はなく画像自身の統計を保つので、この用途ではこちらを採る。</p>
+<p><b>deskew(帳票の傾き補正)には向かない</b>: 折り返した鏡文字が OCR / 二値化に</p>
+<p>そのまま乗る。背景色で埋めたい場合はこの op を使わず、</p>
+<p>`<code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code>` を</p>
+<p>直接呼ぶこと(`<code style="color:#22d3bf">fullseye.apply</code>` の 2 つまみ界面では背景色を渡せない)。</p>
+<p>同じ規約が backends_auto の `<code style="color:#22d3bf">rotate_image</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">_sh_geom</code>` kind=&quot;rotate&quot;)にも</p>
+<p>そのまま当てはまる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

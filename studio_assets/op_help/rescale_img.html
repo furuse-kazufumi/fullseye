@@ -2,9 +2,20 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">rescale_img — 2D <code style="color:#22d3bf">geometry</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;rescale_img&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">zoom_image_size</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">zoom_image_factor</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Isotropic centre-preserving rescale by `<code style="color:#22d3bf">s = 0.7 + 0.6·a</code>`, canvas kept.</p>
+<p>`<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> = **補間の次数** — </code><code style="color:#22d3bf">(0, 1, 3, 3)[min(3, int(4b))]</code>`(0 = 最近傍、</p>
+<p>1 = 双一次、3 = 三次スプライン)。`<code style="color:#22d3bf">b=0.5</code><code style="color:#22d3bf"> は 3 次で、</code><code style="color:#22d3bf">b</code>` が死んでいた頃の</p>
+<p>既定(`<code style="color:#22d3bf">ndimage</code>` の order=3)と <b>ビット一致</b>する。</p>
+<p>★2026-09-02: それまで `<code style="color:#22d3bf">rescale_img</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">zoom_image_factor</code>` /</p>
+<p>`<code style="color:#22d3bf">zoom_image_size</code>` は <b>3 つとも同じ実装</b>(実測: 相互の最大差 0.0 と</p>
+<p>4.9e-14)で、3 つとも `<code style="color:#22d3bf">b</code>` を使っていなかった。3 つの役割を分けた:</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">rescale_img</code>`      — 等方倍率 1 つ + <b>補間次数</b>(この関数)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">zoom_image_factor</code>`— 縦横 <b>2 つの倍率</b>(HALCON の ScaleHeight/ScaleWidth)</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">zoom_image_size</code>`  — <b>目標サイズ</b>指定(出力 shape が変わる)</p>
+<p>HALCON 名も実態に合わせて `<code style="color:#22d3bf">zoom_image_size</code><code style="color:#22d3bf"> → </code><code style="color:#22d3bf">zoom_image_factor</code>` へ</p>
+<p>付け替えた(この op はサイズではなく倍率で駆動するため)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

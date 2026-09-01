@@ -5,7 +5,7 @@ category: rank
 in: image
 out: image
 halcon: median_image
-examples: [consumer_onocollo, gallery2d_smoothing_rank, lightfield_depth, perception_pipeline, photon_timeresolved, quickstart, specular_photometric]
+examples: [consumer_onocollo, gallery2d_smoothing_rank, lightfield_depth, perception_pipeline, photon_timeresolved, quickstart, representation_roundtrip, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -39,6 +39,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [perception_pipeline](../../../../examples/perception_pipeline.py) — `py -3.11 examples/perception_pipeline.py`
 - [photon_timeresolved](../../../../examples/photon_timeresolved.py) — `py -3.11 examples/photon_timeresolved.py`
 - [quickstart](../../../../examples/quickstart.py) — `py -3.11 examples/quickstart.py`
+- [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 - [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

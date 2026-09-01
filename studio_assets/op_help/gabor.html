@@ -4,7 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;gabor&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">gen_gabor</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>型契約は <code style="color:#22d3bf">image → image</code>。挙動の言語説明は下記のファミリ使い方ガイドと実行可能サンプルを参照(ここでは推測を書かない)。</p>
+<p>Gabor energy |v * g| — an oriented band-pass texture response.</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">a</code><code style="color:#22d3bf"> — **向き** </code><code style="color:#22d3bf">θ = π·a</code>` [rad]。カーネルの余弦は回転後の x 方向に走るので、</p>
+<p>`<code style="color:#22d3bf">a=0</code>` (θ=0) は <b>縦縞</b>(列方向に明暗が変わる模様)に最も強く応答し、</p>
+<p>`<code style="color:#22d3bf">a=0.5</code><code style="color:#22d3bf"> (θ=90°) は **横縞**に応答する。</code><code style="color:#22d3bf">a=1</code>` は θ=180° で a=0 と同じ向き。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">b</code><code style="color:#22d3bf"> — 空間周波数 </code><code style="color:#22d3bf">0.1 + 0.3·b</code>` [cycles/px]。</p>
+<p>★正規化(2026-09-02 の修正): <b>カーネルの L1 ノルムで割る固定スケール</b>。</p>
+<p>以前は `<code style="color:#22d3bf">_norm</code>` = その画像での最大絶対値で割っていたため、**応答の大小そのもの</p>
+<p>が消えていた**。実測(96×96 の横縞、周波数 0.25): 生の畳み込みの平均振幅は</p>
+<p>θ=0° が 0.0165、θ=90° が 0.9077 で <b>54.9 倍</b>の差があるのに、`<code style="color:#22d3bf">_norm</code>` を通すと</p>
+<p>平均は 0.3554 対 0.4790 = <b>1.35 倍</b>まで潰れていた —— 向きを見分けるための</p>
+<p>特徴量なのに識別力が消えていた(向きごとに別の除数で割っていたのだから当然)。</p>
+<p>`<code style="color:#22d3bf">|v| &lt;= 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">|v * g| &lt;= sum|g|</code>` なので L1 で割れば値域 [0,1] を保ったまま</p>
+<p><b>op を跨いで比較できる絶対スケール</b>になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

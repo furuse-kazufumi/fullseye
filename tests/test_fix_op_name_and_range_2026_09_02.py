@@ -146,12 +146,22 @@ def test_clahe_zero_clip_limit_flattens_the_tone_map():
 
 
 @pytest.mark.parametrize("b", [0.0, 0.25, 0.5, 0.75, 1.0])
-def test_clahe_maps_the_maximum_to_one_at_every_clip_limit(b):
-    """切り取った分を再配分するので CDF の終端は常に 1.0(標準 CLAHE の性質)。"""
+def test_clahe_output_contract_holds_at_every_clip_limit(b):
+    """どの clip limit でも [0,1] の有限値、形は不変、最大画素は上位に残る。
+
+    正直な注記: 「画像の最大値が 1.0 に写る」のは **b=1(切り取り無効)のときだけ**。
+    切り取った分を全ビンへ再配分する標準 CLAHE では、画像の最大値より上の空ビンにも
+    質量が入るので、最大画素の写り先は 1.0 より下になる(実測 b=0 で 0.8290、
+    b=0.25 で 0.9051)。これは仕様であってバグではないので、そう書いて固定する。
+    """
     v = np.linspace(0.2, 0.8, 64 * 64).reshape(64, 64)
     out = np.asarray(RT["clahe"](v, 0.5, b), np.float64)
+    assert out.shape == v.shape and np.all(np.isfinite(out))
+    assert out.min() >= -1e-9 and out.max() <= 1 + 1e-9
     idx = np.unravel_index(int(np.argmax(v)), v.shape)
-    assert out[idx] == pytest.approx(1.0, abs=1e-9)
+    assert out[idx] >= np.percentile(out, 99), "最大画素が上位 1% に居ない"
+    if b == 1.0:
+        assert out[idx] == pytest.approx(1.0, abs=1e-9), "b=1 は素の AHE = 最大 -> 1.0"
 
 
 # --------------------------------------------------------------------------- #
