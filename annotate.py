@@ -1651,7 +1651,7 @@ def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05
         if border > 0:
             pts = [(x0, y0), (x0 + cw - 1, y0), (x0 + cw - 1, y0 + ch - 1), (x0, y0 + ch - 1)]
             out = imagedraw.draw_polyline(out, pts, color=_channel_color(out, border_color, scheme),
-                                          closed=True, width=int(border))
+                                          closed=True, **_style(style, int(border)))
         if labels is not None and label_h > 0:
             out = text_box(out, labels[i], (x0 + cw // 2, y0 + ch + int(label_h) // 2),
                            anchor="cm", pad=2, box_alpha=0.0, font_size=font_size,
