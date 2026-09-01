@@ -1017,9 +1017,11 @@ def bearing_defect_frequencies(rpm=1800.0, n_elements=9, element_diameter=8.0,
     Two exact identities fall out and are asserted in the tests, because they
     catch a transposed ``d`` and ``D`` immediately: ``BPFO + BPFI = N f_r``
     exactly, and ``BPFO = N * FTF`` exactly. Measured for the defaults
-    (1800 rpm, 9 elements, d = 8, D = 40, alpha = 0): ``f_r = 30.000000``,
-    ``FTF = 12.000000``, ``BPFO = 108.000000``, ``BPFI = 162.000000``,
-    ``BSF = 72.000000`` Hz, and ``BPFO + BPFI = 270.000000 = 9 * 30``.
+    (1800 rpm, 9 elements, d = 8, D = 40, alpha = 0): ``ratio = 0.200000``,
+    ``f_r = 30.000000``, ``FTF = 12.000000``, ``BPFO = 108.000000``,
+    ``BPFI = 162.000000``, ``BSF = 72.000000`` Hz, with
+    ``BPFO + BPFI - 9 f_r = 0.000e+00`` and ``BPFO - 9 FTF = 0.000e+00`` —
+    exactly zero in float64, not merely small.
 
     Returns a dict with ``shaft_hz``, ``ftf_hz``, ``bpfo_hz``, ``bpfi_hz``,
     ``bsf_hz``, ``ratio`` (``d/D cos alpha``), and the inputs echoed back.
