@@ -536,49 +536,51 @@ def ex_legend(log):
     stats = {s["label"]: s for s in VC.vol_label_shape_stats(labels, spacing=SPACING)}
     legend = VC.vol_label_legend(labels, props, seed=SEED, measure="volume")
 
-    row_h, head_h, foot_h = 26, 74, 60
-    width = 760
+    row_h, head_h, foot_h = 28, 86, 70
+    width = 900
+    #                swatch  label   volume  bar   pct   eqdia  spher  elong  border
+    C = {"lab": 60, "vol": 190, "bar": 290, "pct": 434, "dia": 512, "sph": 636,
+         "elo": 716, "bor": 800}
+    bar_w = 130.0
     img = _canvas(head_h + row_h * len(legend) + foot_h, width)
     items = [
-        (16, 12, "どの色がどの粒子か ―― 色だけの図は作らない", FG + (20,), "la"),
-        (16, 42, "16 粒子・(24,48,48) voxel・spacing (0.50, 0.20, 0.20) mm・26 連結",
-         MUTED + (14,), "la"),
-        (58, head_h - 22, "ラベル", MUTED + (13,), "la"),
-        (150, head_h - 22, "体積 mm3", MUTED + (13,), "la"),
-        (250, head_h - 22, "全体比", MUTED + (13,), "la"),
-        (340, head_h - 22, "等価直径 mm", MUTED + (13,), "la"),
-        (470, head_h - 22, "球形度", MUTED + (13,), "la"),
-        (560, head_h - 22, "伸長度", MUTED + (13,), "la"),
-        (650, head_h - 22, "端に接する", MUTED + (13,), "la"),
+        (16, 12, "どの色がどの粒子か ―― 色だけの図は作らない", FG + (21,), "la"),
+        (16, 46, "16 粒子・(24, 48, 48) voxel・spacing (0.50, 0.20, 0.20) mm・26 連結",
+         MUTED + (15,), "la"),
+        (C["lab"], head_h - 24, "ラベル / 色", MUTED + (14,), "la"),
+        (C["vol"], head_h - 24, "体積 mm3", MUTED + (14,), "la"),
+        (C["bar"], head_h - 24, "全体比", MUTED + (14,), "la"),
+        (C["dia"], head_h - 24, "等価直径 mm", MUTED + (14,), "la"),
+        (C["sph"], head_h - 24, "球形度", MUTED + (14,), "la"),
+        (C["elo"], head_h - 24, "伸長度", MUTED + (14,), "la"),
+        (C["bor"], head_h - 24, "端に接する", MUTED + (14,), "la"),
     ]
-    total_bar = 190.0
     for r in legend:
         y = head_h + row_h * (r["rank"] - 1)
         st = stats[r["label"]]
         pr = next(p for p in props if p["label"] == r["label"])
-        _swatch(img, 16, y + 4, 30, 17, r["rgb"])
-        img[y + 10:y + 16, 250:250 + int(round(total_bar * r["share"]))] = ACCENT
+        _swatch(img, 16, y + 4, 34, 18, r["rgb"])
+        img[y + 10:y + 17, C["bar"]:C["bar"] + int(round(bar_w * r["share"]))] = ACCENT
         items += [
-            (58, y + 5, "%2d  %s" % (r["label"], r["hex"]), FG + (14,), "la"),
-            (150, y + 5, "%7.4f" % r["value"], FG + (14,), "la"),
-            (250 + total_bar + 8, y + 5, "%4.1f %%" % (100 * r["share"]),
-             MUTED + (13,), "la"),
-            (340, y + 5, "%6.3f" % st["equivalent_diameter"], FG + (14,), "la"),
-            (470, y + 5, "%5.3f" % pr["sphericity"], FG + (14,), "la"),
-            (560, y + 5, "%5.2f" % st["elongation"], FG + (14,), "la"),
-            (650, y + 5, "はい" if st["touches_border"] else "いいえ",
-             MUTED + (13,), "la"),
+            (C["lab"], y + 4, "%2d  %s" % (r["label"], r["hex"]), FG + (15,), "la"),
+            (C["vol"], y + 4, "%7.4f" % r["value"], FG + (15,), "la"),
+            (C["pct"], y + 4, "%4.1f %%" % (100 * r["share"]), MUTED + (14,), "la"),
+            (C["dia"], y + 4, "%6.3f" % st["equivalent_diameter"], FG + (15,), "la"),
+            (C["sph"], y + 4, "%5.3f" % pr["sphericity"], FG + (15,), "la"),
+            (C["elo"], y + 4, "%5.2f" % st["elongation"], FG + (15,), "la"),
+            (C["bor"], y + 4, "はい" if st["touches_border"] else "いいえ",
+             MUTED + (14,), "la"),
         ]
     fy = head_h + row_h * len(legend)
     items += [
-        (16, fy + 8, "合計 %.4f mm3(比率の合計 %.6f)。体積は voxel 数 x %.4f mm3。"
+        (16, fy + 10, "合計 %.4f mm3(比率の合計 %.6f)。体積は voxel 数 x %.4f mm3。"
          % (sum(r["value"] for r in legend), sum(r["share"] for r in legend),
-            SPACING[0] * SPACING[1] * SPACING[2]), MUTED + (14,), "la"),
-        (16, fy + 32, "球形度は volops.vol_region_props(surface='faces')、"
+            SPACING[0] * SPACING[1] * SPACING[2]), MUTED + (15,), "la"),
+        (16, fy + 36, "球形度は volops.vol_region_props(surface='faces')、"
          "伸長度は volcolor.vol_label_shape_stats の sqrt(l1/l2)。",
-         MUTED + (13,), "la"),
+         MUTED + (14,), "la"),
     ]
-    img = _text(img, items)
+    img = _text(img, items, where="legend")
     info = save_exhibit(img, "wingvox_legend")
     facts = {"components": int(n), "spacing_mm": list(SPACING),
              "total_volume_mm3": round(sum(r["value"] for r in legend), 4),

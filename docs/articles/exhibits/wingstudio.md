@@ -124,7 +124,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **書いて、F5 で走らせて、結果が出るまで** —— タブエディタに 18 行のコードを打ち込み、F5 で実行して出力コンソールを読み下すまでの 24 フレームです(1060×740 px のダイアログ)。実行はモックではなく本物の子プロセスで、ステータスは「PASS ✓ (exit 0)」。出力 6 行の末尾は `foreground fraction = 0.2995` / `objects = 21` / `area  min/median/max = 1118 / 1494 / 3084` —— コインの分割結果です。 使用 op / 機能: Studio の Python エディタ(タブ + F5 実行)、`fullseye.apply`, `fullseye.segment_objects`。*
 
-<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.36 MB / SHA-256 `3591cb882ee4ca11`</sub>
+<sub>`wingstudio_studio_editor.gif` — 24 フレーム / 6 fps / 1060×740 px / 0.35 MB / SHA-256 `80307838551abd4c`</sub>
 
 ---
 
@@ -134,7 +134,7 @@ Studio 画面はすべて `studio.build_window()` が組み立てた**実 UI** �
 
 *↑ **900 超の op から目的の 1 個へ** —— 検索欄に 1 文字ずつ「watershed」と打つと、903 個の一覧が 4 件まで絞れます(実測の内訳: (空):903 → w:77 → wa:11 → wat:4 → wate:4 → water:4 → waters:4 → watersh:4 → watershe:4 → watershed:4)。選ぶと `in_sort → out_sort` のシグネチャが右下に出る —— 型が見えるので、次に何を繋げるかがその場で分かります。最後に「cad」で引くと 0 件。 使用 op / 機能: Studio の演算子検索(名前 / HALCON 別名 / 分類 / docstring を横断)。*
 
-<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `334714d58ef28bd5`</sub>
+<sub>`wingstudio_studio_opsearch.gif` — 17 フレーム / 4 fps / 1280×800 px / 0.54 MB / SHA-256 `0f07b77035141574`</sub>
 
 ---
 
