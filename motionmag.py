@@ -953,8 +953,13 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
             wgt = (amp * amp) * live
             w_shift2 += float((wgt[None] * shift * shift).sum())
             w_total += float(wgt.sum()) * t
-            coh_num += float((wgt * amp).sum())
-            coh_den += float((wgt * np.abs(sub).mean(axis=0)).sum())
+            # Coherence weights use the band's *own* energy mean_t|z|^2, never
+            # |z_mean|^2: the whole point is to notice when |z_mean| collapses,
+            # and weighting by the collapsing quantity would hide exactly that.
+            mabs = np.abs(sub).mean(axis=0)
+            ewgt = (mabs * mabs) * live
+            coh_num += float((ewgt * amp).sum())
+            coh_den += float((ewgt * mabs).sum())
             sub = sub * np.exp(1j * shift)
         acc += filt[None] * np.fft.fft2(sub, axes=(1, 2))
     out = _synthesise(acc, bank)
