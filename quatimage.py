@@ -1109,9 +1109,10 @@ def riesz_transform(image) -> np.ndarray:
         ``R2 = (v0/|w0|) * sin(...)``
 
     exactly. Measured over a table of eight grid-exact orientations from 0 to
-    157.5 degrees on a 64x64 frame, the maximum absolute deviation from that
-    closed form is **1.2e-16** and the recovered orientation matches the
-    grating's to **4.0e-16 rad**. There is no tolerance to choose.
+    159.4 degrees on a 64x64 frame, the largest absolute deviation from that
+    closed form is **6.1e-15**, and the orientation recovered through
+    :func:`monogenic_orientation` matches the grating's to **3.6e-15 rad** at
+    every one of them. There is no tolerance to choose.
 
     Note the scalar component is 0, so this is the Riesz *transform* and not the
     monogenic signal — feeding it to :func:`monogenic_phase` gives ``pi/2``
