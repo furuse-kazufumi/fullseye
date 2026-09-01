@@ -193,7 +193,7 @@ A.envelope_spectrum(x, rate, sk["max_freq"] - sk["bin_hz"], sk["max_freq"] + sk[
 ```mermaid
 flowchart LR
     A[dsp.read_wav 波形 + rate] --> B[spectral_kurtosis どこが衝撃的か]
-    B -->|max_freq ± 1 bin| C[envelope_spectrum 帯域通過→包絡線→変換]
+    B -->|band_lo / band_hi| C[envelope_spectrum 帯域通過→包絡線→変換]
     A -->|窓を掃引| B
     C -->|peak_freq| D{どの特徴周波数と一致するか}
     E[bearing_defect_frequencies 幾何 + rpm] -->|FTF/BPFO/BPFI/BSF| D
