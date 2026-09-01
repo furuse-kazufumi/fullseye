@@ -13,11 +13,11 @@
         431
       ],
       "fps": 12,
-      "bytes": 1118926,
+      "bytes": 1118945,
       "thumb_bytes": 34909,
       "thumb_frame": 6,
       "mean_abs_delta": 4.045,
-      "sha256": "c5277f4189bf59f1f374ad1470c0e2b875e60e6dd9e724796ca9ff1912bd208c",
+      "sha256": "1cb0def25c830444bd791287cf35a3328a806d3fb94e792731080cb27c0a8658",
       "thumb_sha256": "682fac7823514e07c56b90ce8c019460120276f6d85ce77cf898fa2c72516bfe",
       "facts": {
         "volume_shape": [
@@ -34,7 +34,7 @@
         "iou_min": 0.585,
         "iou_max": 0.837
       },
-      "seconds": 13.32
+      "seconds": 11.45
     },
     {
       "kind": "gif",
@@ -47,11 +47,11 @@
         726
       ],
       "fps": 5,
-      "bytes": 1295048,
+      "bytes": 1295067,
       "thumb_bytes": 69167,
       "thumb_frame": 10,
       "mean_abs_delta": 3.06,
-      "sha256": "d89832df12dd0ae31c2e239d59e696afe58b973a5c5a7087149d66e7d5e8df9c",
+      "sha256": "1241579b9480c1671f4fb887cdeba7d9a0aa2694c97869403b82177a89e20f84",
       "thumb_sha256": "b02698a38336ea5c99073aa639c69bc46351ee5ebd11eaa1217608683f0a1a7a",
       "facts": {
         "volume_shape": [
@@ -67,7 +67,7 @@
         ],
         "threshold": 0.510815
       },
-      "seconds": 2.19
+      "seconds": 1.83
     },
     {
       "kind": "gif",
@@ -80,11 +80,11 @@
         500
       ],
       "fps": 6,
-      "bytes": 524094,
+      "bytes": 524113,
       "thumb_bytes": 53184,
       "thumb_frame": 47,
       "mean_abs_delta": 1.655,
-      "sha256": "25a7ea2cfd2e6b4c6e27eed34ba94afdcbc1ceb45e6505f3f500738946455528",
+      "sha256": "995ef59ea259ded0401320324952c10ea9ed7f87ea8eda3e3dcefd1d979a1ef9",
       "thumb_sha256": "a5c054a3d1045cf3121a841eed565b6c857506c7f2470394a6fe36940d93e7af",
       "facts": {
         "n_points": 3000,
@@ -97,7 +97,7 @@
         "rmse_raw_before": 74.76265,
         "improve_x": 12.98
       },
-      "seconds": 5.56
+      "seconds": 4.59
     },
     {
       "kind": "png",
@@ -123,7 +123,7 @@
         "coverage_front_px": 38540,
         "coverage_back_px": 39686
       },
-      "seconds": 2.93
+      "seconds": 2.45
     },
     {
       "kind": "gif",
@@ -136,11 +136,11 @@
         484
       ],
       "fps": 8,
-      "bytes": 2332589,
+      "bytes": 2332608,
       "thumb_bytes": 74543,
       "thumb_frame": 3,
       "mean_abs_delta": 4.906,
-      "sha256": "96b9cf0e8fe3b147712b12e371cd4188ab3a08964e17c09a321dc85870e4968b",
+      "sha256": "bcca4f45d63d9d65ab47d646bee0ac6874d8eb32b167d83e187138bc2957a6c1",
       "thumb_sha256": "2cd504afdbbdd505b378634c6c21bb7b67c2591d4614cf9bc28d6a4ef9c08a48",
       "facts": {
         "angular": [
@@ -158,7 +158,7 @@
         "refocus_var_slope0": 0.006824,
         "refocus_var_slope3": 0.014866
       },
-      "seconds": 2.07
+      "seconds": 1.76
     },
     {
       "kind": "gif",
@@ -171,12 +171,12 @@
         620
       ],
       "fps": 10,
-      "bytes": 677068,
-      "thumb_bytes": 51503,
+      "bytes": 682790,
+      "thumb_bytes": 51742,
       "thumb_frame": 29,
       "mean_abs_delta": 0.943,
-      "sha256": "9979afba20ff75e6a39e2fee71691c3bcb322517275fd51c0dba9195f043ed83",
-      "thumb_sha256": "80ab0fa98f2d58fd36a048027b6488205dd638b38c81c2d6ea2070bd6a789391",
+      "sha256": "6ed4d91ac70099864da3225805e99f905ddaa1456e9294da1d3411235547932c",
+      "thumb_sha256": "58a46c3aac1e113b56a408cbacb266ebb57f209310526e387bd1d4e82839b428",
       "facts": {
         "source": "itokawa_f0049152.stl",
         "resolution": 200,
@@ -185,10 +185,11 @@
         "depth_min": 0.736283,
         "depth_max": 0.882694,
         "frames": 30,
-        "half_pixel_shift_world": 0.00228791,
+        "reprojection_rms_px": 1.3137015139780096e-14,
+        "offset_if_half_pixel_added": 0.00228791,
         "fx": 241.4214
       },
-      "seconds": 3.95
+      "seconds": 3.44
     },
     {
       "kind": "gif",
@@ -201,11 +202,11 @@
         518
       ],
       "fps": 10,
-      "bytes": 497630,
+      "bytes": 497649,
       "thumb_bytes": 51203,
       "thumb_frame": 5,
       "mean_abs_delta": 1.582,
-      "sha256": "9537345acb9d7e99ffc3f365d3fbddfd0bbfc9eac4749b2c1c76d129c31db26c",
+      "sha256": "eda5aa159d5dd0c40a0f70622509741d61d3e003a5fe848f9b61f88d4dca41c8",
       "thumb_sha256": "f396aa21f6dd2374b8b469b52c1fd1a71c59c7e9e01af5278cb45ae9acafddc9",
       "facts": {
         "n_faces": 1400,
@@ -269,7 +270,7 @@
         ],
         "frames": 24
       },
-      "seconds": 48.92
+      "seconds": 40.15
     },
     {
       "kind": "gif",
@@ -282,11 +283,11 @@
         491
       ],
       "fps": 8,
-      "bytes": 455816,
+      "bytes": 455835,
       "thumb_bytes": 42381,
       "thumb_frame": 31,
       "mean_abs_delta": 3.336,
-      "sha256": "862ef4b4faa3d367f9cd8faeafac2fd16b5b357b77d25ca19852dd0d86ac4c2d",
+      "sha256": "3902cbec3f0135925d41abe9ab133865cfd2df9b34a64c62bfdcbe45b223e4e1",
       "thumb_sha256": "80b5fc437aa4d8e80ba34fb3b9a1b13ef1b43bd6aedc04c9e3c376c0879abe92",
       "facts": {
         "volume_shape": [
@@ -316,7 +317,7 @@
         },
         "frames": 36
       },
-      "seconds": 2.9
+      "seconds": 2.36
     },
     {
       "kind": "gif",
@@ -329,11 +330,11 @@
         800
       ],
       "fps": 4,
-      "bytes": 1594324,
+      "bytes": 1594343,
       "thumb_bytes": 48556,
       "thumb_frame": 6,
       "mean_abs_delta": 3.043,
-      "sha256": "8debe840b41910090bcce038fcfdeef1940d4da287adce050cbdf27b8eaa9138",
+      "sha256": "31b9821596fb05f5f1553fe8cf313fe3777fb2d46e8b9a3ec39dfb9da49d1073",
       "thumb_sha256": "908485f14d47110fd6bc277131db3e0777bb47d54d376bcc819b59cf08b7df9e",
       "facts": {
         "n_vertices": 24578,
@@ -352,7 +353,7 @@
         "frames": 24,
         "step_per_tap": 0.005923
       },
-      "seconds": 5.53
+      "seconds": 4.44
     },
     {
       "kind": "gif",
@@ -365,12 +366,12 @@
         800
       ],
       "fps": 10,
-      "bytes": 922400,
-      "thumb_bytes": 39268,
+      "bytes": 923519,
+      "thumb_bytes": 38754,
       "thumb_frame": 8,
-      "mean_abs_delta": 2.173,
-      "sha256": "1ee6c8952c0409fe3459fbc8b59511d3bb842a227f927974c1e45bbb6cc20854",
-      "thumb_sha256": "5ed9b8a427f9c9b7b43b65525c18bb610bac23f74ef15f1f94b1288cfe4ee0db",
+      "mean_abs_delta": 2.12,
+      "sha256": "02c1ff44094868fe6865908f73bf3af389e0e259e3fdcad17fbe7a582eb49089",
+      "thumb_sha256": "9003068921f4243c2cf4d69597a674ec897d5a6a111cd43bd12f6818f4bfff58",
       "facts": {
         "volume_shape": [
           20,
@@ -388,7 +389,7 @@
           800
         ]
       },
-      "seconds": 5.11
+      "seconds": 4.05
     },
     {
       "kind": "gif",
@@ -401,11 +402,11 @@
         720
       ],
       "fps": 3,
-      "bytes": 533709,
+      "bytes": 533728,
       "thumb_bytes": 50014,
       "thumb_frame": 1,
       "mean_abs_delta": 0.727,
-      "sha256": "01b8bd80f77113db0b8224dca1618918676d9bb88390ee463a50eb6d0da22675",
+      "sha256": "c61185a31e5cbf8dec3ebbc19a1d6840e9180bd213a663ad119354f4e2d19920",
       "thumb_sha256": "c3901ee2fe3af20ee67c344cd7e93db22d1812562a647e3a504c9ee83381186f",
       "facts": {
         "pages": [
@@ -522,7 +523,7 @@
           720
         ]
       },
-      "seconds": 2.76
+      "seconds": 2.35
     },
     {
       "kind": "gif",
@@ -535,12 +536,12 @@
         740
       ],
       "fps": 6,
-      "bytes": 359499,
-      "thumb_bytes": 49477,
+      "bytes": 356333,
+      "thumb_bytes": 49474,
       "thumb_frame": 23,
       "mean_abs_delta": 0.141,
-      "sha256": "0f3ea741515bbd3685a6474b663907a866abbb3b8a35aa3a0ee00a7a43852226",
-      "thumb_sha256": "5a4a65a00f746bd1def1607f8015726a7382316d5c62dd343bfe824b23163169",
+      "sha256": "d3138c3e6439f2ba427ccd944af08fdd1af1ef0e18c8665ec35788e72b2af7ec",
+      "thumb_sha256": "4f452a9d5a0dfc372a1fd47fe49d006dde262bccf7d5ed30c964581bc25cbd6d",
       "facts": {
         "code_lines": 18,
         "frames": 24,
@@ -556,7 +557,7 @@
           740
         ]
       },
-      "seconds": 4.02
+      "seconds": 3.46
     },
     {
       "kind": "gif",
@@ -569,12 +570,12 @@
         800
       ],
       "fps": 4,
-      "bytes": 537119,
-      "thumb_bytes": 41223,
+      "bytes": 542756,
+      "thumb_bytes": 41205,
       "thumb_frame": 6,
-      "mean_abs_delta": 0.403,
-      "sha256": "80442fd0240b18bbce9419f2638e5ea0532681685cd617b9adf1e12d1a423785",
-      "thumb_sha256": "2c559fe5dbf0ee1cfa51f32d52bbb30c52d427285303f591acf37a7c533bb7a7",
+      "mean_abs_delta": 0.406,
+      "sha256": "c4405f6433fbc31798687ac62b87dfc03b9d90a7abd95a680d6f7b10f005669e",
+      "thumb_sha256": "aeaa3c6335236d4ceee35a8f3ca0e7b2af9ec5bb1b23c83fadbca1ce369c5487",
       "facts": {
         "total_ops": 903,
         "query": "watershed",
@@ -585,7 +586,7 @@
           },
           {
             "text": "w",
-            "matches": 77
+            "matches": 79
           },
           {
             "text": "wa",
@@ -632,7 +633,7 @@
           800
         ]
       },
-      "seconds": 2.81
+      "seconds": 2.31
     },
     {
       "kind": "gif",
@@ -645,11 +646,11 @@
         800
       ],
       "fps": 4,
-      "bytes": 491072,
+      "bytes": 491091,
       "thumb_bytes": 41321,
       "thumb_frame": 19,
       "mean_abs_delta": 2.273,
-      "sha256": "c7d90678baa3e80c38098797e8c24cdafdf354fb2056b2d8001ee7f180f2f37d",
+      "sha256": "7272fab7111d1e2bf73c391d74caf1fcb02103ed2c4513265cfac4c2e72ec670",
       "thumb_sha256": "53877485cd449b5fd84e59ebe0e8f469726325f6fa169d8827df0781657f3af6",
       "facts": {
         "steps": [
@@ -689,10 +690,10 @@
             "note": "⑤ わざと型の合わない op(region → contour)を足す",
             "stages": 5,
             "problems": [
-              "stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
+              "stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
             ],
             "problem_rows": [
-              "! stage 5 (circularity_xld): stage 3 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
+              "! stage 5 (circularity_xld): stage 4 (sk_clear_border) outputs 'region' but circularity_xld expects 'contour'"
             ]
           },
           {
@@ -711,7 +712,7 @@
         ],
         "mismatch_detected": true
       },
-      "seconds": 3.61
+      "seconds": 3.0
     }
   ]
 }

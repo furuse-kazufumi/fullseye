@@ -18,9 +18,66 @@ import ops
 import problems
 
 
+#: evolve.run's fallback split config, duplicated here ON PURPOSE. evolve.run reads
+#: ``baseline_<problem>.json`` for its ``config`` and falls back to exactly these
+#: numbers when the file is absent. robust.py must score the hand/trivial floors on
+#: the SAME split the champion was scored on, so it needs the same resolution rule
+#: without importing evolve (which would drag the whole ES in). Keep in sync with
+#: evolve.run: a drift here would silently compare two different extractions —
+#: the exact trap docs/EVOLUTION_ENVIRONMENT.md records ("+38%" that was really +2%).
+DEFAULT_CFG = {"n_train": 14, "n_holdout": 8, "size": 64, "seed": 0}
+
+#: split name -> seed offset. train = cfg seed; observed holdout = +10000 (scored
+#: every generation, never selected on); locked holdout = +20000 (scored once).
+SPLIT_OFFSET = {"train": 0, "holdout": 10_000, "locked": 20_000}
+
+
 def _stages_str(stages) -> str:
     parts = [f"{s.op}(a={s.a:.2f},b={s.b:.2f})" for s in stages if s.op != "identity"]
     return " -> ".join(parts) if parts else "identity"
+
+
+def resolve_cfg(workdir, problem) -> dict:
+    """The split config ``evolve.run`` will use for *problem* in *workdir*.
+
+    Mirrors ``evolve.run``: the ``config`` block of ``baseline_<problem>.json`` when
+    that file exists, else :data:`DEFAULT_CFG`. Callers that measure a baseline for a
+    champion MUST resolve the config this way — scoring the floor on a different
+    extraction than the champion is how a 2% gain got written up as 38%.
+    """
+    p = Path(workdir) / f"baseline_{problem}.json"
+    if p.exists():
+        try:
+            cfg = json.loads(p.read_text(encoding="utf-8")).get("config")
+        except (OSError, ValueError):
+            cfg = None
+        if isinstance(cfg, dict) and all(k in cfg for k in DEFAULT_CFG):
+            return dict(cfg)
+    return dict(DEFAULT_CFG)
+
+
+def split_data(prob, cfg, split):
+    """The *split* extraction for *prob* under *cfg* (``train``/``holdout``/``locked``)."""
+    n = cfg["n_train"] if split == "train" else cfg.get("n_locked", cfg["n_holdout"]) \
+        if split == "locked" else cfg["n_holdout"]
+    return prob.make(n, cfg["size"], cfg["seed"] + SPLIT_OFFSET[split])
+
+
+def measure_baselines(prob, cfg, splits=("train", "holdout", "locked")) -> dict:
+    """Score the trivial (identity) and hand pipelines on each split.
+
+    Returns ``{"trivial": {...}, "hand": {...}}`` with one rounded score per split
+    plus the pipeline string. Cheap (two pipelines over ``n_holdout`` items) and
+    deterministic — there is no reason for a run to report ``null`` floors.
+    """
+    hand = prob.hand_stages()
+    triv = problems.trivial_stages()
+    out = {"trivial": {"pipeline": "identity"}, "hand": {"pipeline": _stages_str(hand)}}
+    for split in splits:
+        data = split_data(prob, cfg, split)
+        out["trivial"][split] = round(prob.score_stages(triv, data), 4)
+        out["hand"][split] = round(prob.score_stages(hand, data), 4)
+    return out
 
 
 def main() -> int:
