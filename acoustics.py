@@ -1299,9 +1299,20 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
         mx, mf = float(sk[j]), float(tr["freqs"][j])
     else:
         mx, mf = float(sk.max()), float(tr["freqs"][int(np.argmax(sk))])
+    # The band, assembled here rather than by the caller. `freqs` includes
+    # Nyquist, so `max_freq + bin_hz` sits exactly on it whenever the winning bin
+    # is the topmost interior one, and `envelope_spectrum` fail-closes on that
+    # (rightly — there is no such band). Half a bin is the clamp margin: an edge
+    # is not placeable more finely than one bin, so half of one is the smallest
+    # resolvable step away from the boundary.
+    df = float(fs) / float(tr["nfft"])
+    margin = 0.5 * df
+    band_lo = max(mf - df, margin)
+    band_hi = min(mf + df, 0.5 * fs - margin)
     return {
         "freqs": tr["freqs"], "kurtosis": np.ascontiguousarray(sk),
         "max_kurtosis": mx, "max_freq": mf,
+        "band_lo": float(band_lo), "band_hi": float(band_hi),
         "n_frames": int(n_frames), "win": int(w_len), "hop": int(h),
         "real_bins": real_bins,
         "window_seconds": float(w_len) / fs,
