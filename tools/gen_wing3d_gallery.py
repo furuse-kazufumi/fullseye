@@ -2370,7 +2370,7 @@ def ex_slice_zsweep(log) -> dict:
     log(f"    1 スライス送り = {sp[0]:.2f} mm、面内 1 画素 = {sp[1]:.2f} mm "
         f"({sp[0] / sp[1]:.2f} 倍)")
 
-    W, H = 1120, 660
+    W, H = 1120, 748
     ps = 430
     frames = []
     for z in range(n_z):
