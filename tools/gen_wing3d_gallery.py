@@ -1276,9 +1276,9 @@ def ex_skeleton(log) -> dict:
             (18, 598, "白 = 分岐点, ローズ = 端点, 枝は連結成分ごとに色分け。"
                       "分岐 voxel は 26 近傍次数で拾うので複数 voxel に散る "
                       "— 個数は連結成分でまとめて数えている。", C_DIM, 12, False),
-            (18, 620, f"入力の枝の本数は {len(segs)} 本、端点の真値は 4 か所"
-                      f"(根元 + 3 つの葉先)。実測 {n_b} 本 / {n_e} 点。",
-             C_DIM, 12, False),
+            (18, 620, f"入力は円柱 {len(segs)} 本だが、まっすぐ続く 2 本は 1 本の枝に"
+                      f"なるので位相的な枝は 4 本・端点は 4 点が真値。実測 "
+                      f"{n_b} 本 / {n_e} 点で一致。", C_DIM, 12, False),
         ])
         c = _footer(c, "使用 op: skeletonize_vol / skeleton_branches3d / "
                        "skeleton_junctions3d / skeleton_endpoints3d  — 合成データ")
