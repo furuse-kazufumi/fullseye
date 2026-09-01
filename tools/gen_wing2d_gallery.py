@@ -1965,16 +1965,34 @@ def subject_texture_zoo(log=print) -> dict:
                 for k in keys},
             "per_texture_entropy": {names[k]: round(float(
                 fs.apply(texs[k], "entropy_gray", 0.5, 0.5)), 4) for k in keys},
+            "per_texture_gabor_mean": {
+                names[k]: {"θ=%.0f°" % (180 * a): round(gmean[k][a], 5)
+                           for a in gabor_a} for k in keys},
+            "gabor_orientation_ratio_max_over_min": {
+                names[k]: round(max(gmean[k].values())
+                                / max(min(gmean[k].values()), 1e-12), 2)
+                for k in keys},
+            "per_texture_noise_estimate": {
+                names[k]: round(float(fs.apply(texs[k], "estimate_noise", 0.5, 0.5)), 5)
+                for k in keys},
         },
         "caption": (
             "3 種類の模様を 64×64 px の小片 %d 枚に切り分け、GLCM energy・entropy・"
             "標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして "
             "leave-one-out の最近傍重心で分類したところ %d/%d = %.1f%% が正解だった。"
             "見た目が似ていても、GLCM energy は %.3f / %.3f / %.3f と離れている —— "
-            "「模様」は数字にできる。"
+            "「模様」は数字にできる。Gabor は 4 方向を当てたときの向き差が効いていて、"
+            "織り目では θ=0°/45°/90°/135° の平均応答が %.4f / %.4f / %.4f / %.4f "
+            "(最大÷最小 %.1f 倍)、方向を持たない 1/f 粒状では %.1f 倍しか開かない。"
+            "この比は `gabor` がカーネル L1 で割る**固定スケール**を返すからこそ"
+            "意味を持つ (画像ごとの最大値で割る正規化では、向きごとに別の数で"
+            "割ってしまい差が消える)。"
             % (len(Xn), correct, len(Xn), 100 * acc,
                *[float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5))
-                 for k in keys])),
+                 for k in keys],
+               *[gmean[k_weave][a] for a in gabor_a],
+               max(gmean[k_weave].values()) / max(min(gmean[k_weave].values()), 1e-12),
+               max(gmean[k_grain].values()) / max(min(gmean[k_grain].values()), 1e-12))),
     }
 
 
