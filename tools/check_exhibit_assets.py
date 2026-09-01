@@ -127,12 +127,15 @@ def main(argv: list[str]) -> int:
         by_hash[i["sha256"]].append(i["rel"])
     dupes = {h: names for h, names in by_hash.items() if len(names) > 1}
 
+    # サムネイルの命名は 2 系統ある(`<stem>_thumb.jpg` と `thumbs/<stem>_720.jpg`)。
+    # どちらでも「原寸より小さい派生が同名前置で存在する」ことを見る。
     stems = {Path(i["rel"]).stem for i in infos}
     no_thumb = sorted(
         Path(i["rel"]).stem for i in infos
         if i["rel"].endswith(".png") and not i["rel"].startswith("media/")
-        and f"{Path(i['rel']).stem}_thumb" not in stems
-        and not Path(i["rel"]).stem.endswith("_thumb"))
+        and not Path(i["rel"]).stem.endswith(("_thumb", "_720"))
+        and not any(s != Path(i["rel"]).stem and s.startswith(Path(i["rel"]).stem)
+                    for s in stems))
 
     print(f"点検 {len(infos)} 枚(参照 {len(rels)} / 欠落 {len(missing)})\n")
     print(f"{'file':52} {'size':>11} {'MB':>6} {'fr':>3} {'colors':>7}  notes")
