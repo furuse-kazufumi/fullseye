@@ -995,6 +995,15 @@ def ex_rle(log) -> dict:
     info = _save_png(c, "wing3d_rle_compression", log)
     return {
         "name": "wing3d_rle_compression", "title": "run-length で 1/%.0f" % ratio,
+        "title_en": "Run-length regions: 1/%.0f the memory" % ratio,
+        "caption_en": (
+            f"Holding a 256³ synthetic part as run-lengths costs **1/{ratio:.0f}** of the "
+            f"dense mask ({dense_bytes / 1e6:.2f} MB to {rle.nbytes / 1e6:.3f} MB, "
+            f"{len(rle):,} runs). And nothing has to be decoded: the volume of "
+            f"{vox:,} voxels comes back **{t_den_vol / t_rle_vol:.0f}x faster**, the "
+            f"bounding box **{t_den_bb / t_rle_bb:.0f}x faster**, and set operations "
+            f"(ball ∪ axle = {v_un:,} voxels) are solved on the runs themselves. The "
+            "decode round-trip is bit-identical."),
         "ops": ["vol_rle_encode", "vol_rle_decode", "vol_rle_volume", "vol_rle_bbox",
                 "vol_rle_centroid", "vol_rle_union", "vol_rle_intersect",
                 "vol_rle_difference"],
