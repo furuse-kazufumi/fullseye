@@ -413,11 +413,13 @@ def _as_beat_cube(a, name: str, op: str) -> np.ndarray:
         raise ValueError(
             "%s: %s is real-valued (dtype %r). A beat cube must be the complex "
             "(I/Q) signal: the spectrum of a real-sampled beat is conjugate-"
-            "symmetric, so an approaching and a receding target land in the SAME "
-            "Doppler bin and the sign of the velocity is not attenuated — it is "
-            "absent. Nothing here invents it: form the analytic signal "
-            "explicitly (scipy.signal.hilbert along the fast-time axis) or "
-            "sample I and Q."
+            "symmetric, so every target would come back TWICE — once where it "
+            "is, and once as an equal-amplitude ghost at range bin (N_s - k) "
+            "with the opposite velocity — at half amplitude, over half the "
+            "unambiguous range. Nothing in the map distinguishes the ghost from "
+            "the target. Form the analytic signal explicitly "
+            "(scipy.signal.hilbert along the fast-time axis, which is axis 2 "
+            "here) or sample I and Q."
             % (op, name, np.asarray(a).dtype.str))
     arr = np.ascontiguousarray(a, dtype=np.complex128)
     if not np.isfinite(arr).all():
