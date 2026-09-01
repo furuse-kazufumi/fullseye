@@ -97,7 +97,10 @@ Honest disclosure (what these operators cannot do):
     own maximum). What they cannot hide is a *negative* body coefficient, which
     one material can never produce, so ``max_negative_frac`` is the second test.
     Neither is decoration; the first one alone was written first and the
-    adversarial pass broke it.
+    adversarial pass broke it. **Both together still only bound gross
+    violations** — a texture drifting along the body direction passes both and
+    returns an answer wrong by 0.198 (measured), and no threshold separates that
+    from ordinary noise. Pass ``body_rgb`` when the surface might be textured.
   * **Polarisation separation equates "unpolarised" with "diffuse".** What the
     sinusoid fit recovers exactly is the unpolarised radiance ``2*I_min`` and
     the linearly polarised radiance ``I_max - I_min``. Calling the first diffuse
