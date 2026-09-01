@@ -483,7 +483,7 @@ class DrawList:
         pad = 0.0
         if kind == "circle":
             pad = float(args.get("radius", 0.0) or 0.0)
-        elif kind in ("markers", "particles"):
+        elif kind == "markers":
             pad = float(args.get("size", 4.0) or 0.0)
         pad += float(args.get("width", 1.0) or 0.0) / 2.0
         xs = [p[0] for p in pts]
