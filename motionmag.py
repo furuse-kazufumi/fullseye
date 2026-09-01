@@ -219,7 +219,8 @@ def _finite_scalar(v, name: str) -> float:
                          "part" % (name,))
     if isinstance(v, (bool, np.bool_)):
         raise ValueError("%s is a bool — refusing the silent True==1 promotion "
-                         "(True as an fps would mean a 1 Hz timebase)" % (name,))
+                         "(as an fps that would silently mean a 1 Hz timebase, "
+                         "as a gain it would mean the identity)" % (name,))
     if isinstance(v, (str, bytes, np.str_, np.bytes_)):
         raise ValueError("%s is a string (%r) — a frequency / rate / gain must be "
                          "a number; float('30') would silently succeed and hide "
