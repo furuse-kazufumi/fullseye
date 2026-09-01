@@ -1604,3 +1604,302 @@ def subject_fit_residual(log=print) -> dict:
                int((~inlier).sum()), cf2["r"], cf2["r"] - R0, cf2["rms"],
                true_line_deg, lf["angle_deg"], lf["angle_deg"] - true_line_deg)),
     }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 12: 色空間ツアー / colour-space tour                                      #
+# --------------------------------------------------------------------------- #
+def _colour_scene(H=420, W=560) -> tuple:
+    """照明が左から右へ 0.35→1.0 と変わる中に色つきの円を置いた合成シーン.
+
+    戻り ``(rgb, masks)``。masks は各円の真の領域 (評価の正解)。
+    """
+    yy, xx = np.mgrid[0:H, 0:W]
+    shade = 0.35 + 0.65 * (xx / (W - 1.0))
+    rgb = np.zeros((H, W, 3), np.float64)
+    rgb[...] = np.array([0.26, 0.30, 0.34])
+    spec = [((0.86, 0.16, 0.13), (120, 100)), ((0.16, 0.72, 0.26), (120, 290)),
+            ((0.15, 0.30, 0.88), (300, 170)), ((0.92, 0.78, 0.10), (300, 430)),
+            ((0.85, 0.17, 0.14), (120, 470))]     # 右端の赤 = 明るく照らされた同じ赤
+    masks = {}
+    for k, (col, (cy, cx)) in enumerate(spec):
+        m = ((yy - cy) ** 2 + (xx - cx) ** 2) < 72 ** 2
+        rgb[m] = col
+        masks.setdefault("red" if k in (0, 4) else "other_%d" % k,
+                         np.zeros((H, W), bool))
+        masks["red" if k in (0, 4) else "other_%d" % k] |= m
+    return np.clip(rgb * shade[..., None], 0, 1), masks
+
+
+def _best_iou(channel, target: np.ndarray) -> tuple:
+    """1 チャンネルを 1 しきい値で切ったときに届く最良 IoU としきい値を返す."""
+    ch = np.asarray(channel, np.float64)
+    best = (0.0, 0.0, False)
+    for t in np.linspace(0.02, 0.98, 97):
+        for invert in (False, True):
+            m = (ch <= t) if invert else (ch >= t)
+            inter = float(np.sum(m & target))
+            union = float(np.sum(m | target))
+            iou = inter / union if union else 0.0
+            if iou > best[0]:
+                best = (iou, float(t), invert)
+    return best
+
+
+def subject_colour_tour(log=print) -> dict:
+    """RGB / HSV / Lab を行き来し、「照明が変わっても赤を拾えるか」を実測する."""
+    E = _tile_mod()
+    rgb, masks = _colour_scene()
+    target = masks["red"]
+    hsv = np.asarray(fs.apply(rgb, "trans_from_rgb", 0.0, 0.5), np.float64)
+    lab = np.asarray(fs.apply(rgb, "trans_from_rgb", 0.3, 0.5), np.float64)
+    chans = {
+        "RGB の R": np.asarray(fs.apply(rgb, "access_channel", 0.0, 0.5), np.float64),
+        "HSV の H (色相)": hsv[..., 0],
+        "HSV の S (彩度)": hsv[..., 1],
+        "HSV の V (明度)": hsv[..., 2],
+        "Lab の L (明るさ)": lab[..., 0],
+        "Lab の a (赤-緑)": lab[..., 1],
+    }
+    scores = {k: _best_iou(v, target) for k, v in chans.items()}
+    winner = max(scores, key=lambda k: scores[k][0])
+    loser = min(scores, key=lambda k: scores[k][0])
+
+    def seg_panel(name):
+        iou, t, inv = scores[name]
+        ch = chans[name]
+        m = ((ch <= t) if inv else (ch >= t)).astype(np.float64)
+        return _overlay_mask(np.stack([np.asarray(
+            fs.apply(rgb, "rgb1_to_gray", 0.5)) * 0.45] * 3, -1), m,
+            (120, 235, 160) if name == winner else (255, 140, 120), 0.8)
+
+    panels = [rgb] + [_cmap(chans[k], "gray") for k in chans] + \
+             [seg_panel(winner), seg_panel(loser)]
+    labels = ["元のシーン (合成)\n左→右で照明 0.35→1.00 倍"] + \
+             ["%s\n単独しきい値の最良 IoU %.3f" % (k, scores[k][0]) for k in chans] + \
+             ["%s で最良のしきい値 %.2f\n赤い 2 円の IoU %.3f"
+              % (winner, scores[winner][1], scores[winner][0]),
+              "%s だと最良でも IoU %.3f\n照明差で同じ赤が割れる"
+              % (loser, scores[loser][0])]
+    sheet = E.contact_sheet(panels, labels, ncols=3, panel_px=330,
+                            title="色空間ツアー —— 照明が変わっても「赤」を拾えるか",
+                            label_h=52, font_size=17)
+    info = E.save_exhibit(sheet, "wing2d_colour_tour")
+    return {
+        "name": "colour_tour", "kind": "png", "file": info["png"],
+        "thumb": info["thumb"], "frames": 1,
+        "bytes": info["png_bytes"], "size": list(info["size"]), "panels": len(panels),
+        "sha256": info["png_sha256"],
+        "title": "色空間ツアー —— どの空間なら分けられるか",
+        "ops": ["trans_from_rgb", "access_channel", "rgb1_to_gray"],
+        "data": "numpy で合成した色つきシーン (左→右に照明勾配)",
+        "measured": {
+            "target": "同じ赤で塗った 2 つの円 (片方は 0.35 倍の照明、片方は 1.0 倍)",
+            "best_iou_by_channel": {k: round(v[0], 4) for k, v in scores.items()},
+            "best_threshold_by_channel": {k: round(v[1], 3) for k, v in scores.items()},
+            "winner": winner, "loser": loser,
+            "hue_unit_note": ("HSV の H は cv2 の 0..179 を 255 で割った値 = 度/510。"
+                              "純緑 120° が 0.2353 として返る (実測)"),
+        },
+        "caption": (
+            "同じ赤で塗った 2 つの円を、左は 0.35 倍・右は 1.0 倍の明るさで照らした"
+            "合成シーンを 6 つのチャンネルで見た 9 パネル。1 本のしきい値で赤い 2 円を"
+            "取り切れるかを IoU で測ると、%s が %.3f で最良、%s は最良でも %.3f "
+            "—— 明るさを含むチャンネルでは、同じ色が照明で 2 つに割れてしまう。"
+            "(HSV の H は cv2 由来で 0..179 を 255 で割った値、つまり度÷510 で返る。"
+            "純緑 120° が 0.2353 —— 実測して確かめた単位です。)"
+            % (winner, scores[winner][0], loser, scores[loser][0])),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 13: テクスチャの分類 / texture classification                             #
+# --------------------------------------------------------------------------- #
+def subject_texture_zoo(log=print) -> dict:
+    """3 種類の模様を特徴量で見分けられるかを、最近傍重心分類の正解率で実測."""
+    E = _tile_mod()
+    names = {"brick_quilt.png": "レンガ (image quilting 合成)",
+             "weave_synth.png": "布の織り目 (スペクトル合成)",
+             "grain_synth.png": "1/f 粒状 (スペクトル合成)"}
+    texs = {k: _load_gray(k)[:256, :256] for k in names}
+    feat_ops = [("cooc_feature_matrix", 0.3, 0.5, "GLCM energy"),
+                ("entropy_gray", 0.5, 0.5, "entropy"),
+                ("gray_histo_abs", 0.5, 0.5, "std"),
+                ("estimate_noise", 0.5, 0.5, "noise est")]
+    gabor_a = [0.0, 0.25, 0.5, 0.75]              # gabor の a = 向き (θ = πa)
+
+    def features(patch):
+        v = [float(fs.apply(patch, op, a, b)) for op, a, b, _ in feat_ops]
+        v += [float(np.mean(np.asarray(fs.apply(patch, "gabor", a, 0.5))))
+              for a in gabor_a]
+        return np.asarray(v, np.float64)
+
+    X, y, keys = [], [], list(names)
+    for ci, k in enumerate(keys):
+        t = texs[k]
+        for r in range(4):
+            for c in range(4):
+                X.append(features(t[r * 64:(r + 1) * 64, c * 64:(c + 1) * 64]))
+                y.append(ci)
+    X = np.asarray(X)
+    y = np.asarray(y)
+    Xn = (X - X.mean(0)) / (X.std(0) + 1e-12)      # 特徴ごとに標準化
+    correct = 0
+    for i in range(len(Xn)):                       # leave-one-out 最近傍重心
+        cents = np.stack([Xn[(y == c) & (np.arange(len(Xn)) != i)].mean(0)
+                          for c in range(len(keys))])
+        correct += int(np.argmin(np.linalg.norm(cents - Xn[i], axis=1)) == y[i])
+    acc = correct / len(Xn)
+    panels, labels = [], []
+    for k in keys:
+        panels.append(texs[k])
+        labels.append("%s\nGLCM energy %.3f / entropy %.3f"
+                      % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix",
+                                                  0.3, 0.5)),
+                         float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))))
+    for k in keys:
+        panels.append(np.asarray(fs.apply(texs[k], "gabor", 0.0, 0.5)))
+        labels.append("gabor θ=0° (横縞に反応)\n平均応答 %.4f"
+                      % float(np.mean(np.asarray(fs.apply(texs[k], "gabor",
+                                                          0.0, 0.5)))))
+    for k in keys:
+        panels.append(np.asarray(fs.apply(texs[k], "gabor", 0.5, 0.5)))
+        labels.append("gabor θ=90° (縦縞に反応)\n平均応答 %.4f"
+                      % float(np.mean(np.asarray(fs.apply(texs[k], "gabor",
+                                                          0.5, 0.5)))))
+    for k in keys:
+        panels.append(np.asarray(fs.apply(texs[k], "sk_lbp", 0.34, 0.5)))
+        labels.append("sk_lbp (局所二値パターン)\nstd %.4f"
+                      % float(fs.apply(np.asarray(fs.apply(texs[k], "sk_lbp",
+                                                           0.34, 0.5)),
+                                       "gray_histo_abs", 0.5, 0.5)))
+    sheet = E.contact_sheet(
+        panels, labels, ncols=3, panel_px=320, label_h=54, font_size=17,
+        title=("テクスチャの見分け —— 8 個の特徴量で %d 枚中 %d 枚を正しく分類 "
+               "(leave-one-out 最近傍重心 %.1f%%)" % (len(Xn), correct, 100 * acc)))
+    info = E.save_exhibit(sheet, "wing2d_texture_zoo")
+    return {
+        "name": "texture_zoo", "kind": "png", "file": info["png"],
+        "thumb": info["thumb"], "frames": 1,
+        "bytes": info["png_bytes"], "size": list(info["size"]), "panels": len(panels),
+        "sha256": info["png_sha256"],
+        "title": "テクスチャの見分け —— 特徴量で模様を分ける",
+        "ops": ["cooc_feature_matrix", "entropy_gray", "gray_histo_abs",
+                "estimate_noise", "gabor", "sk_lbp"],
+        "data": "Fullseye の synth で合成したテクスチャ 3 種 (レンガ / 織り目 / 1/f 粒状)",
+        "measured": {
+            "patches": int(len(Xn)), "patch_px": 64,
+            "features": [d for *_x, d in feat_ops] +
+                        ["gabor θ=%.0f°" % (180 * a) for a in gabor_a],
+            "loo_nearest_centroid_accuracy": round(acc, 4),
+            "correct": correct,
+            "per_texture_glcm_energy": {names[k]: round(float(
+                fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5)), 4)
+                for k in keys},
+            "per_texture_entropy": {names[k]: round(float(
+                fs.apply(texs[k], "entropy_gray", 0.5, 0.5)), 4) for k in keys},
+        },
+        "caption": (
+            "3 種類の模様を 64×64 px の小片 %d 枚に切り分け、GLCM energy・entropy・"
+            "標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして "
+            "leave-one-out の最近傍重心で分類したところ %d/%d = %.1f%% が正解だった。"
+            "見た目が似ていても、GLCM energy は %.3f / %.3f / %.3f と離れている —— "
+            "「模様」は数字にできる。"
+            % (len(Xn), correct, len(Xn), 100 * acc,
+               *[float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5))
+                 for k in keys])),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 14: 回し続けると何が失われるか / resampling loss                          #
+# --------------------------------------------------------------------------- #
+def subject_resample_loss(log=print) -> dict:
+    """同じ画像を 10° ずつ回し続け、リサンプリングで失われる量を実測する."""
+    E = _tile_mod()
+    src = _load_gray("camera.png")[::2, ::2]         # 256x256
+    step_deg = 10.0
+    a_step = (step_deg + 45.0) / 90.0
+    cur = src.copy()
+    hist = [{"n": 0, "img": src.copy(), "psnr": 99.0,
+             "std": float(fs.apply(src, "gray_histo_abs", 0.5, 0.5)),
+             "hp": float(np.std(np.asarray(fs.apply(src, "highpass", 0.4, 0.5))))}]
+    for i in range(1, 37):
+        cur = np.asarray(fs.apply(cur, "rotate_image", a_step, 0.5), np.float64)
+        ref = src if i % 36 == 0 else None
+        hist.append({
+            "n": i, "img": cur.copy(),
+            "psnr": _psnr(src, cur) if ref is not None else float("nan"),
+            "std": float(fs.apply(cur, "gray_histo_abs", 0.5, 0.5)),
+            "hp": float(np.std(np.asarray(fs.apply(cur, "highpass", 0.4, 0.5))))})
+    picks = [0, 1, 6, 12, 24, 36]
+    # 3 つの zoom 系 op が同じ出力かどうかを実測 (推測しない)
+    z = {op: np.asarray(fs.apply(src, op, 0.9, 0.5), np.float64)
+         for op in ("zoom_image_factor", "zoom_image_size", "rescale_img")}
+    zoom_maxdiff = float(np.max(np.abs(z["zoom_image_factor"] - z["zoom_image_size"])))
+    zoom_maxdiff2 = float(np.max(np.abs(z["zoom_image_factor"] - z["rescale_img"])))
+    panels, labels = [], []
+    for k in picks:
+        h = hist[k]
+        panels.append(h["img"])
+        tail = ("元画像" if k == 0 else
+                ("累計 %.0f° = 一周して元の向きに戻った\nPSNR %.2f dB"
+                 % (k * step_deg, h["psnr"]) if k == 36 else
+                 "累計 %.0f°" % (k * step_deg)))
+        labels.append("%d 回目 (%s)\n高周波の std %.4f (元の %.1f%%)"
+                      % (k, tail.replace("\n", " / "), h["hp"],
+                         100 * h["hp"] / hist[0]["hp"]))
+    panels.append(_cmap(np.abs(src - hist[36]["img"]), "magma",
+                        vmin=0.0, vmax=0.25))
+    labels.append("36 回転後と元画像の差\n最大 %.3f / 平均 %.4f"
+                  % (float(np.max(np.abs(src - hist[36]["img"]))),
+                     float(np.mean(np.abs(src - hist[36]["img"])))))
+    curve = _plot(
+        [{"x": [h["n"] for h in hist],
+          "y": [100 * h["hp"] / hist[0]["hp"] for h in hist],
+          "color": (255, 196, 80), "label": "高周波の std (元を 100% とする)"}],
+        520, 520, xlim=(0, 36), ylim=(0, 105),
+        title="回すたびに細かい模様が減っていく",
+        xlabel="10° 回転を掛けた回数", legend_pos="tr")
+    panels.append(curve.astype(np.float64) / 255.0)
+    labels.append("失われる量は回すほど積み上がる\n36 回で高周波 std は %.1f%% に"
+                  % (100 * hist[36]["hp"] / hist[0]["hp"]))
+    sheet = E.contact_sheet(
+        panels, labels, ncols=4, panel_px=300, label_h=54, font_size=17,
+        title=("回し続けると何が失われるか —— rotate_image を 10° ずつ 36 回 "
+               "(合計 360° = 元の向き)"))
+    info = E.save_exhibit(sheet, "wing2d_resample_loss")
+    return {
+        "name": "resample_loss", "kind": "png", "file": info["png"],
+        "thumb": info["thumb"], "frames": 1,
+        "bytes": info["png_bytes"], "size": list(info["size"]), "panels": len(panels),
+        "sha256": info["png_sha256"],
+        "title": "回し続けると何が失われるか (リサンプリング損失)",
+        "ops": ["rotate_image", "highpass", "gray_histo_abs",
+                "zoom_image_factor", "zoom_image_size", "rescale_img"],
+        "data": "skimage.data camera (BSD / public domain) を 1/2 に間引いたもの",
+        "measured": {
+            "step_deg": step_deg, "rotations": 36,
+            "psnr_after_full_turn_db": round(hist[36]["psnr"], 3),
+            "highpass_std_ratio_pct": [round(100 * h["hp"] / hist[0]["hp"], 2)
+                                       for h in hist],
+            "max_abs_diff_after_full_turn": round(
+                float(np.max(np.abs(src - hist[36]["img"]))), 4),
+            "mean_abs_diff_after_full_turn": round(
+                float(np.mean(np.abs(src - hist[36]["img"]))), 5),
+            "zoom_ops_max_abs_difference": {
+                "zoom_image_factor vs zoom_image_size": zoom_maxdiff,
+                "zoom_image_factor vs rescale_img": zoom_maxdiff2},
+        },
+        "caption": (
+            "同じ画像に 10° の回転を 36 回かけると、幾何としては一周して元の向きに"
+            "戻る。だが画素は戻らない —— 元画像との PSNR は %.2f dB、差の最大は %.3f、"
+            "高周波成分の標準偏差は元の %.1f%% まで落ちる。1 回ごとの補間はごく小さい"
+            "のに、掛け合わせると積み上がる。"
+            "(ついでの実測: `zoom_image_factor` / `zoom_image_size` / `rescale_img` の "
+            "3 op は同じ入力に対して最大差 %.1g —— 現状は同じ実装に相乗りしています。)"
+            % (hist[36]["psnr"],
+               float(np.max(np.abs(src - hist[36]["img"]))),
+               100 * hist[36]["hp"] / hist[0]["hp"],
+               max(zoom_maxdiff, zoom_maxdiff2))),
+    }

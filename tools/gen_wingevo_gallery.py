@@ -1625,7 +1625,10 @@ def ex_diffusion(data, log=print):
              f"署名 {sub[-1]['sig_masked']}  のべ発見 {sub[-1]['findings']}",
              C_TEXT, 15, True, "la", True),
             (28, 522,
-             "拡散は最初の 200 連鎖でほぼ飽和する一方、新しい署名はまだぽつぽつ出る"
+             "到達 op は " + " / ".join(
+                 f"{m} 連鎖 {rows[m - 1]['covered']}"
+                 for m in (100, 200, 400, len(rows)) if m <= len(rows)) +
+             f" と伸びが鈍る一方、新しい署名は最後まで細く出続ける"
              " — この 2 つは別の速さで進む。", C_DIM, 13, False),
             (28, 548,
              f"この走行の内訳: " + ", ".join(f"{k} {v}" for k, v in
