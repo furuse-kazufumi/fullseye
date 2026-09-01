@@ -2257,12 +2257,13 @@ def ex_pipeline_flow(log):
 # 展示の台帳とキャプション                                                       #
 # =========================================================================== #
 EXHIBIT_ORDER = [
-    "defect_atlas", "limit_crossover", "cos4_falloff", "mtf", "dof_coc",
-    "res_vs_dof", "airy_rayleigh", "polarizer", "abcd_rays", "detect_map",
-    "illumination", "pixel_pitch",
+    "pipeline_flow", "defect_atlas", "limit_crossover", "cos4_falloff", "mtf",
+    "dof_coc", "res_vs_dof", "airy_rayleigh", "polarizer", "abcd_rays",
+    "detect_map", "illumination", "pixel_pitch",
 ]
 
 BUILDERS = {
+    "pipeline_flow": ex_pipeline_flow,
     "defect_atlas": ex_defect_atlas,
     "limit_crossover": ex_limit_crossover,
     "cos4_falloff": ex_cos4_falloff,
