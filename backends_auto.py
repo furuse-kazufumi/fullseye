@@ -1184,6 +1184,7 @@ IMG = "image"
 REG = "region"
 FEA = "feature"
 CON = "contour"
+MAT = "match"       # 1-D vector result (score/座標を運ぶ。ops._ncc_locate と同じ形)
 
 SEED: list[tuple] = [
     # ---- Filters: pointwise math -----------------------------------------
