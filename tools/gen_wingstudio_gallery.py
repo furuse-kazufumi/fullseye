@@ -1365,9 +1365,11 @@ def ex_studio_walk():
         if i % 2 == 1:
             shot("W で前進 (%d 歩)" % (i + 1))
     cx, cy = v3.width() // 2, v3.height() // 2
-    for i in range(4):                              # ドラッグで見回す
-        _drag(v3, cx, cy, cx + 46, cy - 6, steps=6)
-        shot("左ドラッグで見回す")
+    # 見回しは「右へ 2 回 → 左へ 2 回」で必ず元の向きへ戻す。片方向に 4 回振ると
+    # 被写体が画角から外れ、以降のコマが空になる(実測: 24 コマ中 14 コマが空)。
+    for dx in (46, 46, -46, -46):
+        _drag(v3, cx, cy, cx + dx, cy - (6 if dx > 0 else -6), steps=6)
+        shot("%sドラッグで見回す" % ("右へ" if dx > 0 else "左へ戻して"))
     for i in range(2):
         _tap(v3, QtCore.Qt.Key_W)
         shot("さらに前進 (%d 歩)" % (7 + i))
