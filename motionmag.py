@@ -1098,18 +1098,46 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
         if km > kmax:
             kmax = km
 
+    # Minimum-norm least squares via the closed-form 2x2 symmetric eigenvalues.
+    # A plain inverse is wrong here: where every contributing band shares an
+    # orientation the normal equations are rank 1 (the aperture problem), and
+    # only the component along that orientation is observable. Inverting anyway
+    # returns a huge number in the unobservable direction; refusing the pixel
+    # throws away the component that *was* measured. The pseudo-inverse returns
+    # the observable part and exactly zero in the direction nothing constrained.
+    half = 0.5 * (a00 + a11)
+    disc = np.sqrt(np.maximum(0.25 * (a00 - a11) ** 2 + a01 * a01, 0.0))
+    lam1 = half + disc
+    lam2 = half - disc
+    peak = float(lam1.max()) if lam1.size else 0.0
+    alive = lam1 > 1e-12 * max(peak, np.finfo(float).tiny)
+    rank2 = alive & (lam2 > 1e-8 * np.where(alive, lam1, 1.0))
+    vx = a01
+    vy = lam1 - a00
+    norm = np.sqrt(vx * vx + vy * vy)
+    degenerate = norm <= 0.0
+    vx = np.where(degenerate, 1.0, vx / np.where(degenerate, 1.0, norm))
+    vy = np.where(degenerate, 0.0, vy / np.where(degenerate, 1.0, norm))
+    s_lam1 = np.where(alive, lam1, 1.0)
+    s_lam2 = np.where(rank2, lam2, 1.0)
+    # Full-rank branch: the ordinary 2x2 inverse.
     det = a00 * a11 - a01 * a01
-    trace = a00 + a11
-    tol = 1e-12 * np.maximum(trace * trace, np.finfo(float).tiny)
-    valid = det > tol
-    safe = np.where(valid, det, 1.0)
-    dx = np.where(valid[None], (a11[None] * b0 - a01[None] * b1) / safe[None], 0.0)
-    dy = np.where(valid[None], (a00[None] * b1 - a01[None] * b0) / safe[None], 0.0)
+    s_det = np.where(rank2, det, 1.0)
+    dx_full = (a11[None] * b0 - a01[None] * b1) / s_det[None]
+    dy_full = (a00[None] * b1 - a01[None] * b0) / s_det[None]
+    # Rank-1 branch: project the right-hand side onto the observable direction.
+    proj = (vx[None] * b0 + vy[None] * b1) / s_lam1[None]
+    dx_rank1 = proj * vx[None]
+    dy_rank1 = proj * vy[None]
+    dx = np.where(rank2[None], dx_full, np.where(alive[None], dx_rank1, 0.0))
+    dy = np.where(rank2[None], dy_full, np.where(alive[None], dy_rank1, 0.0))
+    del s_lam2
     if not (np.isfinite(dx).all() and np.isfinite(dy).all()):
         raise ValueError("%s: the least-squares solve produced non-finite "
-                         "displacements — this is a bug in the singularity guard, "
-                         "not in the input" % (op,))
-    return {"dx": dx, "dy": dy, "weight": weight, "valid": valid,
+                         "displacements — this is a bug in the rank guard, not "
+                         "in the input" % (op,))
+    rank = np.where(rank2, 2, np.where(alive, 1, 0)).astype(np.int8)
+    return {"dx": dx, "dy": dy, "weight": weight, "valid": alive, "rank": rank,
             "fps": fs, "band_hz": (lo, hi), "frames": t,
             "wrap_limit_px": (np.pi / kmax) if kmax > 0.0 else 0.0,
             "reference_coherence": float(coh_num / coh_den) if coh_den > 0.0 else 1.0}
