@@ -1646,10 +1646,13 @@ def octave_spectrum(x, rate, fraction=3, f_min=22.0, f_max=None, ref=1.0,
     FFT bins landed in each band — a band with 0 or 1 is under-resolved and the
     level is not trustworthy).
 
-    Measured exactness: a 1 kHz sine of amplitude 0.7 at 16 kHz, an integer
-    number of periods, ``ref=1.0`` gives the 1 kHz band level
-    -6.1979 dB against the closed form ``10*log10(0.7**2/2) = -6.1979`` dB —
-    equal to 8.9e-15 dB. Every other band is at the floor.
+    Measured exactness: a 1 kHz sine of amplitude 0.7 at 16 kHz over exactly
+    1000 periods, ``ref=1.0``, gives the 1 kHz band level
+    **-6.1083391564** dB against the closed form
+    ``10*log10(0.7**2/2) = -6.1083391564`` dB — the difference is
+    **0.000e+00**. 25 of the 26 bands are at the floor, and ``total_level``
+    equals the band level to the digit shown, because there is nothing else in
+    the record.
 
     **Raises** ``ValueError``: everything :func:`_as_signal` and
     :func:`octave_bands` refuse, ``ref <= 0`` (a dB with a zero or negative
