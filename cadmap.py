@@ -692,7 +692,7 @@ def cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None,
 # op 3 — 2-D 欠陥領域 → CAD 上の表                                             #
 # --------------------------------------------------------------------------- #
 def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
-                      min_pixels=1, background=0):
+                      min_pixels=1, background=0, strict=False):
     """2-D の欠陥ラベル画像 → **CAD 面上の表**(面 ID / 面上の面積 / 3-D 重心)。
 
     ``labels`` は (H, W) の整数ラベル画像(``background`` は無視、bool マスクも
