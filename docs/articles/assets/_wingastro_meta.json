@@ -4,7 +4,7 @@
  "exhibits": {
   "sqrt_n": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_stack_sqrtn.png",
-   "sha256": "15ba4f2c4ccec1fa4e48cdf400dd87b445a33ad8cd7fa7d099f0cdd4e6abda7d",
+   "sha256": "b56990b32c0acb3c787658ddaa507053bb1b521f460c14ad0e738d4e9087d22a",
    "data": {
     "base_rms": 16.50651462274706,
     "rms": {
@@ -135,32 +135,32 @@
   },
   "cosmic": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_cosmic.png",
-   "sha256": "2a9d53bceb34a4e15a05b61074ee575859d763863fa74f262041de8475108897",
+   "sha256": "85df216166db08c459cfcb3181045acae63e7503b70806e09b2bc03fb6486f49",
    "data": {
     "truth_px": 44,
     "detected_px": 39,
     "precision": 0.9487179487179487,
     "recall": 0.8409090909090909,
-    "max_raw": 7120.316258267805,
-    "max_cleaned": 7119.021141342307,
-    "max_naive": 2097.5160074167707,
-    "max_clipped": 2097.5160074167707,
-    "max_fixed": 2097.5160074167707,
-    "stack_truth_px": 44,
+    "residual_raw": 7000.0,
+    "residual_cleaned": 7000.0,
+    "err_naive": 1750.0000000000002,
+    "err_clipped": 44.63705335554937,
+    "err_fixed": 6.550045285343458,
     "stack_detected_px": 270,
     "n_stars_before": 46,
-    "n_stars_after": 31
+    "n_stars_after": 31,
+    "n_frames": 8
    }
   },
   "drizzle": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingastro_drizzle.gif",
-   "sha256": "d3bca0264ebc6294e3a8cb419484c9902d9b07d2289c3f7ffae2f1c76cf1d3ea",
+   "sha256": "13afa63bddc016d7c931704e8cfae22d8b144b400ab2e77524310cb3ef1ef510",
    "data": {
     "input_sum": 372862.06495988026,
     "rows": [
      {
       "pixfrac": 1.0,
-      "fwhm_in_px": 1.5736392148380505,
+      "fwhm_in_px": 1.5736392224543176,
       "sum": 369689.6384278184,
       "loss": 0.008508311330634238,
       "wht_min": 0.46517115569335243,
@@ -168,7 +168,7 @@
      },
      {
       "pixfrac": 0.6,
-      "fwhm_in_px": 1.450060352150736,
+      "fwhm_in_px": 1.449651781405079,
       "sum": 369948.3528458779,
       "loss": 0.007814450403571881,
       "wht_min": 0.17424664725551245,
@@ -176,7 +176,7 @@
      },
      {
       "pixfrac": 0.3,
-      "fwhm_in_px": 1.3954035041707455,
+      "fwhm_in_px": 1.3987829191411418,
       "sum": 370031.3985249237,
       "loss": 0.007591725468937468,
       "wht_min": 0.040860127382125695,
@@ -192,7 +192,7 @@
   },
   "drizzle_flux": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_drizzle_flux.png",
-   "sha256": "8c87cf386c7879fd6ad58a6e170f3da56b5e161a4f93767b293ae304a3ae7406",
+   "sha256": "c97bee2546fbdfd6a16ad7501cf24cdd8a25634f61c5c34857cb1f099c2903ee",
    "data": {
     "input_sum": 306035.5635362281,
     "grid": [
@@ -280,17 +280,18 @@
   },
   "drizzle_pair": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_drizzle_pair.png",
-   "sha256": "616a343caf50ed7b319cc98e132deb87401d403edc57118dd956c75bb951551e",
+   "sha256": "a0393fa88137c7d3e990d80b99bc6c32697fb18a7fd154168b19f39025fd85c4",
    "data": {
     "separation_px": 1.6,
     "n_naive": 1,
-    "n_drizzle": 200,
+    "n_drizzle": 2,
+    "n_raw_sci": 200,
     "n_frames": 24
    }
   },
   "clip_breakdown": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingastro_clip_breakdown.gif",
-   "sha256": "4c262ce119d55566dffe133a47a03d2230e44269b117003407a4d116deb972f9",
+   "sha256": "81ca4b1f48e877690cdc74d71741f30e5b82604d1186c3dc463c57419ea7f033",
    "data": {
     "boost": 900.0,
     "n_frames": 20,
@@ -374,7 +375,7 @@
   },
   "align": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_align.png",
-   "sha256": "6b774cf3d5ed99ad4f682f27894fe4367f867e02ca37b075b689ee596a87c2d4",
+   "sha256": "9a78f28d0b012c270425374e5c88d3b9a1ade48eb120f7ca27577a626fc5d990",
    "data": {
     "median_shift_err_px": 0.03585932226949002,
     "errors": [
@@ -398,7 +399,7 @@
   },
   "photometry": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_photometry.png",
-   "sha256": "f3372302aa73c0d79b4e0b0feb6d8079e897dc08a555d6451f320e4cec665260",
+   "sha256": "77d1599e8dcdd0fdceeaa8d70c22a069990f242ea116e4da68a373d3dc145fe0",
    "data": {
     "wide": [
      {

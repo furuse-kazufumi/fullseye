@@ -92,7 +92,7 @@ __all__ = [
     # 圧縮
     "compressed_size", "ncd",
     # まとめ
-    "compare_images", "data_range_of",
+    "compare_images", "data_range_of", "measure_with", "metrics_table",
 ]
 
 

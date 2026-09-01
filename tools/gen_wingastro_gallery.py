@@ -633,20 +633,22 @@ def ex_drizzle_flux():
         labels.append("pixfrac %.1f — 相対誤差 %.1e" % (pf, row[2]["rel"]))
 
     p = Plot(xlim=(1, 4), ylim=(1e-16, 1e-12), ylog=True,
-             margin=(78, 18, 46, 16))
+             margin=(80, 20, 44, 66))
     p.grid_x([1, 2, 3, 4], "x%d")
     p.grid_y([1e-16, 1e-15, 1e-14, 1e-13, 1e-12], "%.0e")
-    for pf, row, col in zip((1.0, 0.7, 0.4), grid, (C_RIGHT, C_EMPH, C_REF)):
+    for pf, row, col in zip((1.0, 0.7, 0.4),
+                            grid, (C_RIGHT, C_EMPH, fs.role_rgb8("baseline"))):
         ys = [max(c["rel"], 1e-16) for c in row]
         p.line([c["scale"] for c in row], ys, col, width=2)
         p.markers([c["scale"] for c in row], ys, col)
-    p.text(PANEL // 2, 6, "総フラックスの相対誤差(倍率 x pixfrac)", size=16,
+    p.text(PANEL // 2, 6, "総フラックスの相対誤差", size=17, anchor="ma")
+    p.text(PANEL // 2, 30, "縦 = 相対誤差 / 横 = 出力の倍率", et.MUTED, 13,
            anchor="ma")
-    p.text(96, 40, "%s pixfrac 1.0" % M["right"], C_RIGHT, 14)
-    p.text(96, 60, "%s pixfrac 0.7" % M["emphasis"], C_EMPH, 14)
-    p.text(96, 80, "%s pixfrac 0.4" % M["reference"], C_REF, 14)
-    p.text(96, 104, "最大でも %.1e = 倍精度の丸め" % worst, et.FG, 14)
-    p.text(14, PANEL - 24, "出力の倍率", et.MUTED, 14)
+    p.text(100, 88, "%s pixfrac 1.0" % M["right"], C_RIGHT, 14)
+    p.text(100, 108, "%s pixfrac 0.7" % M["emphasis"], C_EMPH, 14)
+    p.text(100, 128, "%s pixfrac 0.4" % M["baseline"],
+           fs.role_rgb8("baseline"), 14)
+    p.text(100, 152, "最大でも %.1e = 倍精度の丸め" % worst, et.FG, 14)
     panels.append(_fit(p.done()))
     labels.append("12 通りすべてで丸め誤差の桁")
 

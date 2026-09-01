@@ -558,3 +558,74 @@ def test_delta_e_map_needs_rgb_images():
 def test_delta_e_map_kind_is_checked():
     with pytest.raises(ValueError, match="kind must be"):
         M.delta_e_map(np.zeros((8, 8, 3)), np.zeros((8, 8, 3)), kind="1994")
+
+
+# =========================================================================
+# TRIZ による点検で見つかった欠陥(2026-09-02)
+# =========================================================================
+
+def test_ncd_is_symmetric_because_a_distance_must_be():
+    """**乱数で試している限り気づけない**種類の欠陥。
+
+    圧縮器は前から順に辞書を作るので ``C(xy) != C(yx)``。素朴に実装すると
+    「距離」を名乗りながら引数の順で値が変わる。実測(64x64 の縦縞と横縞):
+
+    * 対称化なし: lzma **0.571429 対 0.595238**(相対 4 %)/ zlib 0.854839 対 0.862903
+    * 一様乱数どうし: 差 **0.000e+00** ―― どちらも圧縮できないので順序が効かない
+
+    つまり乱数のテストは全部通ってしまい、構造のある実データで初めて破れる。
+    """
+    s = np.tile(np.arange(64, dtype=np.uint8), (64, 1))          # 縦縞
+    t = np.repeat(np.arange(64, dtype=np.uint8), 64).reshape(64, 64)   # 横縞
+
+    for comp in ("lzma", "zlib"):
+        raw_ab = M.ncd(s, t, compressor=comp, symmetric=False)
+        raw_ba = M.ncd(t, s, compressor=comp, symmetric=False)
+        assert raw_ab != raw_ba, comp                            # 素朴版は非対称
+        assert M.ncd(s, t, compressor=comp) == M.ncd(t, s, compressor=comp), comp
+
+    assert M.ncd(s, t, compressor="lzma", symmetric=False) == pytest.approx(0.571429, abs=1e-5)
+    assert M.ncd(t, s, compressor="lzma", symmetric=False) == pytest.approx(0.595238, abs=1e-5)
+
+
+def test_random_data_hides_the_asymmetry():
+    """乱数だと対称に見えることを、欠陥の見つけにくさとして記録しておく。"""
+    rng = np.random.default_rng(0)
+    a = (rng.random((64, 64)) * 255).astype(np.uint8)
+    b = (rng.random((64, 64)) * 255).astype(np.uint8)
+    assert M.ncd(a, b, symmetric=False) == M.ncd(b, a, symmetric=False)
+
+
+def test_measure_with_reuses_the_recorded_conditions_exactly():
+    """条件を持ち回れば、比べてはいけない 2 つの数値を並べられなくなる。"""
+    a = np.linspace(0, 1, 4096).reshape(64, 64)
+    b = np.clip(a + 0.02, 0, 1)
+    first = M.compare_images(a, b)
+    again = M.measure_with(first, a, b)
+    assert again["psnr"] == first["psnr"]
+    assert again["ssim"] == first["ssim"]
+    assert again["contract"] == first["contract"]
+
+
+def test_measure_with_refuses_a_pair_the_contract_does_not_fit():
+    """float の契約で測った表に、整数の対を足せない(NCD が比較不能になる)。"""
+    a = np.linspace(0, 1, 4096).reshape(64, 64)
+    report = M.compare_images(a, np.clip(a + 0.02, 0, 1))
+    u8 = (a * 255).astype(np.uint8)
+    with pytest.raises(ValueError, match="would not be comparable"):
+        M.measure_with(report, u8, u8.copy())
+
+
+def test_measure_with_rejects_something_that_is_not_a_report():
+    with pytest.raises(ValueError, match="compare_images"):
+        M.measure_with({"psnr": 30.0}, np.zeros((8, 8)), np.zeros((8, 8)))
+
+
+def test_metrics_table_always_carries_the_conditions():
+    """数値だけの表を作れないようにするのが、この op の唯一の目的。"""
+    a = np.linspace(0, 1, 1024).reshape(32, 32)
+    rows = M.metrics_table(M.compare_images(a, np.clip(a + 0.05, 0, 1)))
+    names = [n for n, _ in rows]
+    assert "psnr" in names
+    assert any(n.startswith("条件: ") for n in names)
+    assert "条件: data_range" in names
