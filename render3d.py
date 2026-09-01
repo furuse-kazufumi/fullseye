@@ -303,6 +303,14 @@ def render_mesh(V, F, pose=None, intrinsics=None, width: int = 256,
     frames the mesh. A correct barycentric **z-buffer** keeps the nearest surface
     per pixel (Catmull 1974); depth is perspective-correct (linear in ``1/z``).
 
+    **Pixel centres are at integer coordinates**: ``depth[r, c]`` is the depth
+    sampled by the ray through the continuous image point ``(u, v) = (c, r)`` —
+    *not* ``(c + 0.5, r + 0.5)``. This is the library-wide convention (see the
+    module docstring), so the result lines up pixel-for-pixel with
+    :func:`camera.depth_to_points`, :mod:`cadmap` and :mod:`visualhull`; feeding
+    ``depth`` to ``camera.depth_to_points(depth, K)`` back-projects onto the true
+    surface to machine precision instead of half a pixel off it.
+
     Vectorised per triangle (each triangle rasterises its own screen bounding box
     with numpy) — there is no Python loop over image pixels. Empty ``F`` yields an
     all-*background* image. Raises ``ValueError`` on a bad mesh, a degenerate
