@@ -160,6 +160,8 @@ class TestEstimators:
                                                noise=0.01, seed=t),
                                           DZ, 0.0, LAM, mode=mode)
                     - (6.0 + (t % 13) * DZ / 13.0) for t in range(200)]
+            # the edge guard never fires here: the surface is centred, and the
+            # baseline-referenced edge level reads 0.0000 even at 5 % noise
             rms[mode] = float(np.sqrt(np.mean(np.square(errs))))
         assert rms["centroid"] < 0.03                      # measured 0.0219
         assert rms["parabolic"] > 0.10                     # measured 0.1403
@@ -169,19 +171,25 @@ class TestEstimators:
 
     def test_centroid_window_bias(self):
         """The centroid's own failure: it is pulled toward the middle of the scan."""
+        # the surfaces at 2 and 10 um sit where the edge guard fires (that is a
+        # separate, correct refusal); lift it so the *centroid's* bias is what is
+        # being measured here rather than the guard
         clean = {z0: itf.csi_peak_position(scan(z0), DZ, 0.0, LAM,
-                                           mode="centroid") - z0
+                                           mode="centroid",
+                                           max_edge_envelope=1.0) - z0
                  for z0 in (2.0, 6.0, 10.0)}
         assert clean[2.0] > 0.15 and clean[10.0] < -0.15   # measured +-0.189
         assert abs(clean[6.0]) < 1e-4                      # centred: unbiased
         noisy = {z0: itf.csi_peak_position(scan(z0, noise=0.02, seed=1), DZ, 0.0,
-                                           LAM, mode="centroid") - z0
+                                           LAM, mode="centroid",
+                                           max_edge_envelope=1.0) - z0
                  for z0 in (2.0, 10.0)}
         assert noisy[2.0] > 0.5 and noisy[10.0] < -0.5     # measured +0.87/-0.85
         # the local estimators do not have this bias at all
         for z0 in (2.0, 10.0):
             assert abs(itf.csi_peak_position(scan(z0), DZ, 0.0, LAM,
-                                             mode="gaussian") - z0) < 0.05
+                                             mode="gaussian",
+                                             max_edge_envelope=1.0) - z0) < 0.05
 
     def test_accuracy_is_a_property_of_the_scan_layout(self):
         """Centre the surface and the estimator is exact; push it to the end of
@@ -252,12 +260,24 @@ class TestStack:
         hm = itf.csi_height_map(st, DZ, 0.0, LAM)
         assert float(np.sqrt(np.mean((hm - h) ** 2))) < 5e-6
 
-    def test_scan_axis_is_first_and_is_checked(self):
+    def test_scan_axis_is_first_and_what_that_check_can_actually_see(self):
+        """Honest scope. A 3-D array with fewer than 3 leading planes is named
+        exactly (the transposed-stack case); a 3-D array with the axes swapped
+        but enough of them is **not detectable from the array alone**, which is
+        the whole reason the ledger declares a separate ``zscan`` type instead of
+        relying on a runtime check."""
         st = stack_of(tilted(5.0, 7.0, 8))
-        with pytest.raises(ValueError, match="scan axis first"):
-            itf.csi_height_map(np.moveaxis(st, 0, -1)[..., :2], DZ)
+        with pytest.raises(ValueError, match="scan axis last, transpose it"):
+            itf.csi_height_map(np.moveaxis(st, 0, -1)[:2], DZ)
         with pytest.raises(ValueError, match="3-D"):
             itf.csi_height_map(st[0], DZ)
+        # the undetectable case: (H, W, Z) with H >= 3 passes every structural
+        # test and is rejected only by the *content* checks, which is luck, not
+        # a contract
+        swapped = np.moveaxis(st, 0, -1)
+        assert swapped.shape == (8, 8, NP)
+        with pytest.raises(ValueError, match="no usable coherence peak"):
+            itf.csi_height_map(swapped, DZ, 0.0, LAM)
 
 
 # --------------------------------------------------------------------------- #
@@ -477,9 +497,12 @@ class TestFailClosed:
                                    envelope_sigma_um=SIGMA, envelope_fwhm_um=None)
 
     def test_peak_on_the_first_or_last_plane_is_refused(self):
-        s = scan(11.98, n=NP)
+        s = scan(12.0, n=NP)                       # exactly the last plane
         with pytest.raises(ValueError, match="first or last plane"):
             itf.csi_peak_position(s, DZ, 0.0, LAM, max_edge_envelope=1.0)
+        s0 = scan(0.0, n=NP)                       # ... and the first
+        with pytest.raises(ValueError, match="first or last plane"):
+            itf.csi_peak_position(s0, DZ, 0.0, LAM, max_edge_envelope=1.0)
 
     def test_truncated_envelope_is_refused_because_it_lies(self):
         """The nastiest one: an *interior* argmax, no NaN, no warning, 76 % wrong."""
@@ -563,7 +586,7 @@ class TestFailClosed:
         being rejected. The cap is read off the shape, so a zero-strided view
         (0 bytes on disk, 2^25 logical elements) is refused without allocating."""
         huge = np.broadcast_to(np.uint8(1), (1 << 13, 1 << 12))   # 32 M elements
-        assert huge.nbytes <= 8                                   # nothing is stored
+        assert huge.base.nbytes <= 8                              # nothing is stored
         with pytest.raises(ValueError, match="before"):
             itf.csi_envelope(np.broadcast_to(np.uint8(1), (1 << 21,)))
         with pytest.raises(ValueError, match="over the"):
@@ -673,8 +696,8 @@ class TestTypeVocabulary:
         """The other direction of the same argument: photoncount reads axis 2 as
         time and returns a depth map in metres from a stack of interferograms."""
         import photoncount
-        h = tilted(5.0, 7.0, 16)
-        st = itf.csi_stack_simulate(h, 0.0, DZ, 64, LAM, envelope_sigma_um=SIGMA,
+        h = tilted(1.2, 1.8, 16)
+        st = itf.csi_stack_simulate(h, 0.0, DZ, 64, LAM, envelope_sigma_um=0.3,
                                     envelope_fwhm_um=None)
         d = photoncount.dtof_cube_depth(st)
         assert np.isfinite(d).all() and (d > 0).any()      # plausible, meaningless
@@ -707,7 +730,7 @@ class TestTypeVocabulary:
         vocabulary the family can never actually be exercised through."""
         s = itf.csi_signal_simulate()
         assert isinstance(s, np.ndarray) and s.ndim == 1
-        assert itf.csi_peak_position(s, 0.05, 0.0, 0.6) == pytest.approx(5.0,
-                                                                        abs=1e-6)
+        assert itf.csi_peak_position(s, 0.05, 0.0, 0.6) == pytest.approx(6.0,
+                                                                        abs=1e-9)
         sp = itf.chromatic_confocal_simulate()
         assert itf.chromatic_confocal_height(sp) == pytest.approx(0.0, abs=1e-9)

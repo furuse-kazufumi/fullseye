@@ -1275,16 +1275,25 @@ def cepstrum(x, rate, mode="real", floor_ratio=1e-12, min_quefrency=0.0):
     c = np.fft.irfft(logmag, n=arr.size)
     q = np.arange(arr.size, dtype=np.float64) / fs
     half = arr.size // 2
-    body = np.abs(c[1:half]) if half > 1 else np.zeros(0)
+    mq = _nonneg(min_quefrency, "min_quefrency")
+    lo = max(1, int(np.ceil(mq * fs)) if mq > 0.0 else 1)
+    if lo >= half:
+        raise ValueError("%s: min_quefrency=%g s is at or past the half-length "
+                         "%g s of the record — nothing would be left to search "
+                         "(the cepstrum is symmetric past the half-length)"
+                         % (op, mq, half / fs))
+    body = np.abs(c[lo:half])
     if body.size:
-        j = int(np.argmax(body)) + 1
+        j = int(np.argmax(body)) + lo
         pq, pa = float(q[j]), float(c[j])
     else:
         pq, pa = 0.0, 0.0
     return {
         "quefrency": q, "cepstrum": np.ascontiguousarray(c),
         "rate": fs, "mode": kind, "floored_bins": floored,
+        "min_quefrency": mq,
         "peak_quefrency": pq, "peak_amplitude": pa,
+        "peak_rate_hz": float(1.0 / pq) if pq > 0.0 else 0.0,
     }
 
 
