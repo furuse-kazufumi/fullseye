@@ -2050,13 +2050,13 @@ def _caption(name: str, facts: dict, info: dict) -> str:
     """記事と同じ書式の 1〜3 文。**数字は facts から引く**(手打ちしない)。"""
     f = facts
     if name == "defect_atlas":
-        cols = f["columns"]
-        kinds = " / ".join(c["kind"] for c in cols)
-        px = " / ".join(f"{c['meta']['defect_px']:.2f}" for c in cols)
-        return (f"欠陥 4 種({kinds})を同じ系(**{f['um_per_pixel']:.3f} µm/画素**)で"
-                f"撮り、上段が撮れる画像、下段が**画素完全な正解マスク**です。マスクは"
-                f"撮像前の幾何から作るので、ぼけても正解は動かず、**注釈作業が 1 秒も"
-                f"要りません** —— 4 列の欠陥はそれぞれ {px} 画素で、"
+        rows = f["rows"]
+        kinds = " / ".join(r["kind"] for r in rows)
+        areas = " / ".join(str(r["stats"]["area_px"]) for r in rows)
+        return (f"欠陥 5 種({kinds})を同じ系(**{f['um_per_pixel']:.3f} µm/画素**)で"
+                f"撮り、左列が撮れる画像、右列が**画素完全な正解マスク**です。マスクは"
+                f"撮像前の幾何から作るので、撮像でぼけても正解は動かず、**注釈作業が"
+                f"存在しません** —— 各行のマスク面積は実測で {areas} 画素、"
                 f"光学限界は {f['optical_limit_um']:.2f} µm"
                 f"({f['limited_by']} 律速)です。")
     if name == "limit_crossover":
