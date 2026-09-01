@@ -906,15 +906,22 @@ def ex_observed_vs_locked(data, log=print):
         hb = rows[n]["locked_hand"]
         p.c = dashed(p.c, (p.X(i - 0.42), p.Y(hb)), (p.X(i + 0.42), p.Y(hb)),
                      C_HAND, 2, 7, 5)
+        # 課題名は日本語だと隣と必ず重なる幅になるので、図の中では problem キー
+        # (ASCII)で並べる。日本語の呼び名はキャプション側にある。
         items += [
-            (p.X(i), H - 118, SHORT[n], C_TEXT, 14, True, "ma"),
+            (p.X(i), H - 152, n, C_TEXT, 14, True, "ma", True),
             (p.X(i - 0.16), p.Y(obs) - 6, f"{obs:.4f}", C_EVO, 13, True, "md", True),
             (p.X(i + 0.16), p.Y(lok) - 6, f"{lok:.4f}", C_LOCK, 13, True, "md", True),
-            (p.X(i + 0.42) + 6, p.Y(hb), f"手 {hb:.3f}", C_HAND, 11, True, "lm"),
-            (p.X(i), H - 96,
-             f"locked std {sp['std']:.4f}  (min {sp['min']:.3f} / max {sp['max']:.3f})",
-             C_DIM, 12, False, "ma"),
+            (p.X(i - 0.42) + 4, p.Y(hb) - 4, f"hand {hb:.3f}", C_HAND, 11, True,
+             "ld", True),
+            (p.X(i), H - 130, f"locked std {sp['std']:.4f}", C_DIM, 12, False,
+             "ma", True),
+            (p.X(i), H - 112,
+             f"min {sp['min']:.3f} / max {sp['max']:.3f}", C_DIM, 12, False,
+             "ma", True),
         ]
+    for v in np.arange(0, 1.01, 0.2):
+        items.append((112, p.Y(v), f"{v:.1f}", C_DIM, 11, False, "rm", True))
     c = p.c
     lx = W - 240
     fill(c, 120, 300, lx, W - 24, C_PANEL)
