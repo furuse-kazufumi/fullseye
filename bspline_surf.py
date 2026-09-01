@@ -35,6 +35,39 @@ __all__ = [
 # --------------------------------------------------------------------------- #
 # 曲面(散布データ z = f(x, y))                                                #
 # --------------------------------------------------------------------------- #
+def _check_tck(tck, want: int, kind: str):
+    """FITPACK の tck を **fail-closed** に検証する(要素数で曲面/曲線を判別)。
+
+    曲面は ``[tx, ty, c, kx, ky]``(5 要素)、曲線は ``(t, c, k)``(3 要素)。
+    どちらも list/tuple なので取り違えても素の呼び出しは通ってしまい、
+    scipy の奥で不可解な例外になる。多項式モデル(``match3d.fit_poly_surface``
+    の dict)を渡された場合も同様なので、ここで名指しで拒否する。
+
+    Raises
+    ------
+    ValueError
+        tck が list/tuple でない、または要素数が *want* と違う。
+    """
+    if isinstance(tck, dict):
+        raise ValueError(
+            f"{kind}: tck must be the FITPACK tuple/list from the matching fit "
+            "function, but a dict was given — that is a polynomial surface model "
+            "(match3d.fit_poly_surface); evaluate it with match3d.eval_poly_surface")
+    if not isinstance(tck, (list, tuple)):
+        raise ValueError(
+            f"{kind}: tck must be a list/tuple from the matching fit function "
+            f"(got {type(tck).__name__})")
+    if len(tck) != want:
+        other = "a curve tck (t, c, k)" if len(tck) == 3 else (
+            "a surface tck [tx, ty, c, kx, ky]" if len(tck) == 5 else
+            f"{len(tck)} elements")
+        raise ValueError(
+            f"{kind}: tck must have {want} elements, got {other}. "
+            "Surface models come from fit_bspline_surface and curve models from "
+            "fit_bspline_curve; they are not interchangeable")
+    return tck
+
+
 def _auto_surface_smooth(m: int) -> float:
     """点数 m から FITPACK 既定の平滑化係数 s = m - sqrt(2m) を算出(下限 0)。
 
