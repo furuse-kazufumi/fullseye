@@ -1280,28 +1280,37 @@ def ex_weighting_ac(log):
         fig.text(W - 282, 350, f"C(f) curve {r['wc']:+9.4f} dB", C_C, 12, True)
         fig.text(W - 282, 370, f"difference {r['dc']:+.3e} dB", C_TEXT, 12, True)
 
-        # 下: 波形と誤差の推移
-        axe = Ax(fig, 84, 452, 540, 560, (20.0, 16000.0),
-                 (-max(1e-13, worst_a * 1.2), max(1e-13, worst_a * 1.2)), logx=True)
+        # 下: 誤差の推移 — bin 中心 vs bin から半分ずらした対照
+        lim = max(1.0, worst_off * 1.15)
+        axe = Ax(fig, 84, 452, 540, 556, (20.0, 16000.0), (-lim, lim), logx=True)
         axe.panel(C_PANEL2)
         ink = fig.ink()
         axe.frame(ink)
         axe.xticks(ink, [20, 100, 1000, 10000], "%g")
+        axe.yticks(ink, [-10, 0, 10], "%.0f")
         fig.stamp(ink, C_AXIS)
         ink = fig.ink()
         axe.hline(ink, 0.0, width=1)
         fig.stamp(ink, C_DIM)
         ink = fig.ink()
         axe.curve(ink, [rr["f"] for rr in rows[:k + 1]],
+                  [rr["da_off"] for rr in rows[:k + 1]], width=2)
+        fig.stamp(ink, C_WARN)
+        ink = fig.ink()
+        axe.curve(ink, [rr["f"] for rr in rows[:k + 1]],
                   [rr["da"] for rr in rows[:k + 1]], width=2)
         axe.curve(ink, [rr["f"] for rr in rows[:k + 1]],
                   [rr["dc"] for rr in rows[:k + 1]], width=2)
-        fig.stamp(ink, C_E)
-        fig.text(88, 434, "(L_weighted - L_Z) minus the curve value [dB]  - "
-                          "the two paths agree to float64", C_TEXT, 12, True)
-        fig.text(88, 566, f"worst so far  A {max(abs(rr['da']) for rr in rows[:k+1]):.3e} dB   "
-                          f"C {max(abs(rr['dc']) for rr in rows[:k+1]):.3e} dB",
-                 C_E, 12, True)
+        fig.stamp(ink, C_C)
+        fig.text(88, 434, "(L_weighted - L_Z) minus the curve value [dB]", C_TEXT, 12, True)
+        _legend(fig, 300, 458, [("tone ON a bin", C_C),
+                                (f"same tone +{0.5 * bin_hz:g} Hz (off bin)", C_WARN)])
+        fig.text(88, 560, f"on-bin worst so far   A {max(abs(rr['da']) for rr in rows[:k+1]):.2e} dB"
+                          f"   C {max(abs(rr['dc']) for rr in rows[:k+1]):.2e} dB",
+                 C_C, 12, True)
+        fig.text(88, 578, f"off-bin worst so far  {max(abs(rr['da_off']) for rr in rows[:k+1]):8.4f} dB"
+                          f"   <- rectangular-window leakage, weighted at another gain",
+                 C_WARN, 12, True)
 
         axs = Ax(fig, 596, 452, W - 24, 560, (0.0, 6.0), (-1.25, 1.25))
         axs.panel(C_PANEL2)
