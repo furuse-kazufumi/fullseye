@@ -486,6 +486,16 @@ def _save_clip(frames: Sequence[np.ndarray], name: str, *, fps: int,
     os.makedirs(MEDIA, exist_ok=True)
     os.makedirs(THUMBS, exist_ok=True)
     u8 = [_to_u8(f) for f in frames]
+    # 連続する同一フレームがあると Pillow の optimize が黙って 1 枚に畳み、
+    # 読み戻したフレーム数が合わなくなる(= コマが飛んだアニメになる)。
+    # ここで先に見つけて落とす — 「送っているのに止まっている」画は作らない。
+    dup = [i for i in range(1, len(u8)) if np.array_equal(u8[i], u8[i - 1])]
+    if dup:
+        raise RuntimeError(
+            "%s: frame(s) %s are identical to the previous frame; the GIF writer "
+            "would collapse them and the animation would stall. Make every step "
+            "advance (check the easing / rounding of the sweep parameter)."
+            % (name, dup[:8]))
     gif = os.path.join(MEDIA, f"{name}.gif")
     mp4 = os.path.join(MEDIA, f"{name}.mp4")
 
