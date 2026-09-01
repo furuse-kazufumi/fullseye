@@ -94,7 +94,7 @@ MAX_RAY_FACE_TESTS = 1 << 28          # 268,435,456 テスト
 
 #: 交差計算 1 チャンクあたりの中間要素数。ピークメモリはおよそ
 #: ``RAY_CHUNK_TESTS * 8 byte * (作業配列の本数)`` で頭打ちになる。
-RAY_CHUNK_TESTS = 1 << 21             # 2,097,152 要素/チャンク
+RAY_CHUNK_TESTS = 1 << 19             # 524,288 要素/チャンク
 
 #: ``image_size`` を省略し、かつ画素から推定もできないときの既定の画像サイズ。
 DEFAULT_IMAGE_SIZE = (256, 256)       # (width, height)
