@@ -713,8 +713,7 @@ def _label_boundary_mask(L: np.ndarray) -> np.ndarray:
 
 
 def vol_label_overlay(vol, labels, seed: int = 0, alpha: float = 0.5,
-                      vmin=None, vmax=None, mode: str = "fill",
-                      background=(0.0, 0.0, 0.0)):
+                      vmin=None, vmax=None, mode: str = "fill"):
     """元のグレーボリュームに色ラベルを重ねた ``(D, H, W, 3)`` を返す。
 
     医用 CT / 産業 CT で実際に使う形 ―― 「セグメンテーションだけの絵」は
