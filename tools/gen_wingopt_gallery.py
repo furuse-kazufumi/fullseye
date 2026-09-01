@@ -512,39 +512,54 @@ def ex_defect_atlas(log):
     geo, res = _limits()
     upp = geo["um_per_pixel"]
     tile = 232
-    kinds = [("scratch", 220.0), ("pits", 90.0), ("crack", 200.0), ("blob", 340.0)]
+    sh = (tile, tile)
 
-    rows = []
-    for kind, size_um in kinds:
-        img, mask, meta = vl.render_part(system, size_um, kind=kind,
-                                         contrast=-0.30, texture_strength=0.06,
-                                         tile_px=tile, seed=7)
-        rows.append({"kind": kind, "size_um": size_um, "img": img, "mask": mask,
-                     "defect_px": float(meta["defect_px"])})
+    def surf(seed):
+        return defectgen.surface_texture(sh, "orange_peel", strength=0.055,
+                                         scale_px=5.0, seed=seed)
 
-    # 5 段目 = composite: 3 種を 1 つの部品に重ねる(実ラインの部品は 1 種類の
-    # 欠陥しか出さない、という前提の方が非現実的なので)。マスクは論理和。
-    bg = defectgen.surface_texture((tile, tile), "orange_peel", strength=0.06,
-                                   seed=1007)
-    comp_ideal, comp_mask = None, np.zeros((tile, tile), bool)
-    scene = bg
-    parts = [
-        ("scratch", defectgen.defect_scratch(
-            (tile, tile), length_px=118.0, width_px=6.0, angle_deg=18.0,
-            wander=0.12, contrast=-0.30, seed=21)),
-        ("pits", defectgen.defect_pits(
-            (tile, tile), count=9, radius_px=4.5, radius_sigma=0.35,
-            contrast=-0.34, clustering=0.5, seed=22)),
-        ("blob", defectgen.defect_blob(
-            (tile, tile), radius_px=17.0, roughness=0.42, contrast=0.24,
-            seed=23, centre=(72.0, 186.0))),
+    # 幾何は画素で頼み、**µm は換算して表示する**(換算点は system.px_for_um と
+    # 同じ um_per_pixel 1 つだけ)。render_part は長さ/幅を 4:1 に固定するので、
+    # 見本帳ではその制約を外して各生成器の素の姿を見せる。
+    specs = [
+        ("scratch", dict(length_px=176.0, width_px=4.5, angle_deg=22.0,
+                         wander=0.11, contrast=-0.30, seed=7),
+         defectgen.defect_scratch, "長さ{L:.0f}µm × 幅{W:.0f}µm"),
+        ("pits", dict(count=16, radius_px=4.0, radius_sigma=0.35,
+                      contrast=-0.34, clustering=0.45, seed=7),
+         defectgen.defect_pits, "16 個 直径{D:.0f}µm"),
+        ("crack", dict(length_px=150.0, width_px=3.0, angle_deg=104.0,
+                       branch_prob=0.22, wander=0.30, contrast=-0.36, seed=7),
+         defectgen.defect_crack, "長さ{L:.0f}µm × 幅{W:.0f}µm"),
+        ("blob", dict(radius_px=27.0, roughness=0.40, contrast=0.26, seed=7),
+         defectgen.defect_blob, "直径{D:.0f}µm"),
     ]
-    for _nm, (ideal, msk) in parts:
+    rows = []
+    for i, (kind, kw, fn, tmpl) in enumerate(specs):
+        ideal, mask = fn(sh, **kw)
+        scene = defectgen.composite_defect(surf(1000 + i), ideal, mask)
+        order = tmpl.format(
+            L=kw.get("length_px", 0.0) * upp, W=kw.get("width_px", 0.0) * upp,
+            D=kw.get("radius_px", 0.0) * 2.0 * upp)
+        rows.append({"kind": kind, "order": order, "params": dict(kw),
+                     "img": system.capture(scene), "mask": mask})
+
+    # 5 段目 = composite: 3 種を 1 つの部品に重ねる(実ラインの部品が 1 種類の
+    # 欠陥しか出さない、という前提の方が非現実的なので)。マスクは論理和。
+    scene = surf(1004)
+    comp_mask = np.zeros(sh, bool)
+    for ideal, msk in (
+            defectgen.defect_scratch(sh, length_px=138.0, width_px=4.0,
+                                     angle_deg=18.0, wander=0.12,
+                                     contrast=-0.30, seed=21),
+            defectgen.defect_pits(sh, count=10, radius_px=3.6, radius_sigma=0.35,
+                                  contrast=-0.34, clustering=0.5, seed=22),
+            defectgen.defect_blob(sh, radius_px=16.0, roughness=0.42,
+                                  contrast=0.26, seed=23, centre=(64.0, 172.0))):
         scene = defectgen.composite_defect(scene, ideal, msk)
         comp_mask |= msk
-    comp_img = system.capture(scene)
-    rows.append({"kind": "composite", "size_um": None, "img": comp_img,
-                 "mask": comp_mask, "defect_px": None})
+    rows.append({"kind": "composite", "order": "scratch+pits+blob",
+                 "params": None, "img": system.capture(scene), "mask": comp_mask})
 
     panels, labels = [], []
     for r in rows:
@@ -555,15 +570,12 @@ def ex_defect_atlas(log):
         mask_rgb[:, :] = (0.07, 0.08, 0.10)
         mask_rgb[r["mask"]] = C_HIT
         panels += [_gray_to_rgb(r["img"]), mask_rgb]
-        left = ("composite 撮像" if r["size_um"] is None
-                else f"{r['kind']} {r['size_um']:.0f}µm = {r['defect_px']:.2f}px")
-        labels += [left, f"正解マスク {st['area_px']}px / IoU {iou:.3f}"]
+        labels += [f"{r['kind']} — {r['order']}",
+                   f"正解マスク {st['area_px']}px / IoU {iou:.3f}"]
 
-    title = (f"欠陥ジェネレータ 5 種 —— 対で「撮像 → 画素完全な正解マスク」  "
-             f"({upp:.3f} µm/画素, 光学限界 {res['resolution_object_um']:.2f} µm "
-             f"{res['limited_by']} 律速, seed 固定)")
+    title = f"欠陥 5 種 —— 対で「撮像 → 画素完全な正解マスク」({upp:.3f} µm/画素)"
     sheet = contact_sheet(panels, labels, ncols=4, panel_px=tile, pad=14,
-                          label_h=28, title=title, title_h=48,
+                          label_h=28, title=title, title_h=46,
                           font_size=13, title_font_size=19)
     frame = _to_u8(sheet)
     facts = {

@@ -687,13 +687,13 @@ def build_bearing(log):
              C_TEXT, 13, True),
             (axR.x1 - 128, axR.y1 + 22, "frequency [Hz] ->", C_DIM, 11, False),
             (axE.x1 - 128, axE.y1 + 22, "frequency [Hz] ->", C_DIM, 11, False),
-            (axP.x1 - 168, axP.y1 + 22, "demodulation band centre [Hz] ->", C_DIM, 11, False),
+            (axP.x1 - 168, axP.y1 - 20, "demodulation band centre [Hz] ->", C_DIM, 11, False),
             (int(axR.X(FD)) + 8, axR.y0 + 4,
-             f"{FD:.0f} Hz in the raw spectrum: {a_def:.2e}", C_ROSE, 11, True),
+             f"{FD:.0f} Hz: {a_def:.1e}", C_ROSE, 11, True),
             (int(axR.X(FD)) + 8, axR.y0 + 18,
-             "the defect rate is not a component of the signal", C_ROSE, 11, True),
-            (int(axR.X(FC)) + 10, axR.y0 + 4,
-             f"carrier {a_car:.4f}, sidebands {a_lo:.4f} / {a_hi:.4f} = m/2",
+             "not a component", C_ROSE, 11, True),
+            (axR.x1 - 386, axR.y0 + 4,
+             f"carrier {a_car:.4f}   sidebands {a_lo:.4f} / {a_hi:.4f} = m/2",
              C_BLUE, 11, True),
             (14, H - 56,
              f"band {lo:6.0f} - {hi:6.0f} Hz    peak {e['peak_freq']:8.3f} Hz    "
@@ -711,8 +711,7 @@ def build_bearing(log):
              f"choosing it without knowing the resonance: spectral_kurtosis on the "
              f"impulsive record of the same bearing picks {k_lo:.0f}-{k_hi:.0f} Hz "
              f"(max {sk['max_kurtosis']:.3f} @ {sk['max_freq']:.0f} Hz) -> envelope peak "
-             f"{env_auto['peak_freq']:.4f} Hz.  kinematics: BPFO {kin['bpfo_hz']:.3f} / "
-             f"BPFI {kin['bpfi_hz']:.3f} Hz", C_DIM, 11, False),
+             f"{env_auto['peak_freq']:.4f} Hz", C_DIM, 11, False),
         ]
         labels += tR + tRy + tE + tEy + tP + tPy
         out.append(_text(frame, labels))
@@ -1068,10 +1067,14 @@ def build_photon(log, frames: int = 24):
         rel.append(float(sig[b].mean() / max(c[b].mean(), 1e-12)))
     rel = np.asarray(rel)
     theory = 1.0 / np.sqrt(ns)
-    dev = float(np.abs(rel / theory - 1.0).max())
+    ratio = np.abs(rel / theory - 1.0)
+    dev = float(ratio.max())
+    dev_high = float(ratio[ns >= 10.0].max())
     log(f"  photon sweep {ns[0]:.2f} -> {ns[-1]:.1f} photons/unit, {len(ns)} frames")
     log(f"  relative uncertainty on the brightest patch {rel[0]:.4f} -> {rel[-1]:.4f}; "
-        f"tracks 1/sqrt(N) to {dev:.1%}")
+        f"tracks 1/sqrt(N) to {dev_high:.1%} for N >= 10 photons "
+        f"({dev:.1%} worst, at {ns[int(ratio.argmax())]:.2f} photons where "
+        f"E[sqrt(X)] != sqrt(E[X]))")
 
     SC, MARGIN, GAP = 2, 12, 16
     PAN = 128 * SC
@@ -1130,9 +1133,7 @@ def build_photon(log, frames: int = 24):
         st = stats[i]
         labels = [
             (MARGIN, 6, head, C_TEXT, 12, False),
-            (MARGIN, PANY - 18,
-             f"{n:7.2f} photons/unit   {counts[i].sum():.0f} photons in the frame   "
-             f"empty pixels {st['zero_fraction']:.1%}", C_TEXT, 13, True),
+            (MARGIN, PANY - 18, f"{n:7.2f} photons/unit", C_TEXT, 13, True),
             (bx0 - 64, PANY - 18,
              "estimated radiance +/- photon_uncertainty / N   (5 step-wedge patches)",
              C_TEXT, 12, True),
@@ -1140,15 +1141,18 @@ def build_photon(log, frames: int = 24):
              "relative uncertainty of the brightest patch vs photon count",
              C_TEXT, 12, True),
             (MARGIN + 4, PANY + PAN + 6,
-             f"mean {st['mean']:8.3f}   variance {st['variance']:9.3f}   Fano "
-             f"{st['fano_factor']:.4f} (Poisson = 1)", C_TEXT, 13, True),
+             f"{counts[i].sum():9.0f} photons in the frame   empty pixels "
+             f"{st['zero_fraction']:5.1%}   mean {st['mean']:8.3f}   variance "
+             f"{st['variance']:9.3f}   Fano {st['fano_factor']:.4f} (Poisson = 1)",
+             C_TEXT, 13, True),
             (MARGIN + 4, PANY + PAN + 26,
              f"SNR measured {st['snr_measured']:7.3f}   sqrt(N) {st['snr_poisson']:7.3f}"
              f"   error bar {rel[i] * 100:6.2f} %  (1/sqrt(N) = {theory[i] * 100:6.2f} %)",
              C_AMBR, 13, True),
             (MARGIN + 4, PANY + PAN + 44,
-             f"the noise is not a setting here, it is sqrt(N): over the sweep the "
-             f"measured bar tracks 1/sqrt(N) to {dev:.1%}", C_DIM, 12, False),
+             f"the noise is not a setting here, it is sqrt(N): from 10 photons up the "
+             f"measured bar tracks 1/sqrt(N) to {dev_high:.1%}; below that the rule "
+             f"itself weakens ({dev:.1%} at {ns[0]:.0f} photon/px)", C_DIM, 12, False),
             (bx1 - 120, axU.y1 + 22, "photons per unit ->", C_DIM, 11, False),
         ]
         labels += _legend(bx0 + 10, axB.y0 + 4,
@@ -1160,7 +1164,7 @@ def build_photon(log, frames: int = 24):
     facts = {
         "photons_per_unit": [float(v) for v in ns],
         "relative_uncertainty_first_last": [float(rel[0]), float(rel[-1])],
-        "sqrt_n_max_deviation": dev,
+        "sqrt_n_max_deviation": dev, "sqrt_n_max_deviation_above_10": dev_high,
         "fano_first_last": [float(stats[0]["fano_factor"]), float(stats[-1]["fano_factor"])],
         "snr_first_last": [float(stats[0]["snr_measured"]), float(stats[-1]["snr_measured"])],
         "zero_fraction_first_last": [float(stats[0]["zero_fraction"]),

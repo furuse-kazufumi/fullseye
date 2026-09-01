@@ -3,52 +3,50 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 01:59:20
+- **最終更新**: 2026-09-02 02:08:57
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-6f71918d docs: 展示章を「ソース + 自動組み立て + drift CI」にして、器を増やせる形にする
-628cfb2f auto: gen_wing2d_gallery.py 編集前 (2026-09-02 01:58)
-6a3434d5 auto: pyproject.toml 編集前 (2026-09-02 01:57)
-00ef6450 auto: test_ops3d_ledger.py 編集前 (2026-09-02 01:56)
-4fbbdbb5 auto: build_exhibits.py 編集前 (2026-09-02 01:56)
-5a5f827d auto: build_exhibits.py 編集前 (2026-09-02 01:56)
-6c33fe45 auto: build_exhibits.py 編集前 (2026-09-02 01:56)
-fd692536 auto: build_exhibits.py 編集前 (2026-09-02 01:55)
-65727803 auto: build_exhibits.py 編集前 (2026-09-02 01:55)
-21b14b07 auto: build_exhibits.py 編集前 (2026-09-02 01:55)
+db23dcb8d auto: gen_wingopt_gallery.py 編集前 (2026-09-02 02:08)
+04d6c6c3f auto: gen_wing3d_gallery.py 編集前 (2026-09-02 02:08)
+4fce745ca auto: gen_wing3d_gallery.py 編集前 (2026-09-02 02:08)
+10911f085 auto: gen_wing3d_gallery.py 編集前 (2026-09-02 02:08)
+0d19567cc auto: gen_wing3d_gallery.py 編集前 (2026-09-02 02:08)
+eae1a8a61 auto: gen_wing3d_gallery.py 編集前 (2026-09-02 02:07)
+e6c6fd8f4 tools: 展示の束ね方3種(タイル/フリップブックGIF/原寸)と、公開前の機械点検
+586d1baf8 auto: README.md 編集前 (2026-09-02 02:07)
+1ac74f565 auto: README.md 編集前 (2026-09-02 02:07)
+42b738d6b auto: gen_wingopt_gallery.py 編集前 (2026-09-02 02:07)
 ```
 
 ## 現在の git status
 
 ```
-M docs/articles/assets/media/wing2d_morph_quartet.gif
- M docs/articles/assets/thumbs/wing2d_morph_quartet_720.jpg
- M tools/gen_wing2d_gallery.py
-?? tools/gen_wingstudio_gallery.py
+M tools/gen_newops_media.py
+ M tools/gen_wingopt_gallery.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-01:59 docs/articles/assets/thumbs/wing2d_morph_quartet_720.jpg
-01:59 docs/articles/assets/media/wing2d_morph_quartet.gif
-01:59 tools/gen_wing2d_gallery.py
-01:58 tools/gen_wingstudio_gallery.py
-01:58 docs/articles/exhibits/README.md
-01:58 .pytest_cache/v/cache/nodeids
-01:58 tests/test_exhibits.py
-01:57 .pytest_cache/v/cache/lastfailed
-01:57 pyproject.toml
-01:56 docs/articles/fullseye_overview_qiita_en.md
-01:56 docs/articles/fullseye_overview_qiita_ja.md
-01:56 tests/test_ops3d_ledger.py
-01:56 tools/build_exhibits.py
-01:54 docs/articles/exhibits/wings.json
-01:54 docs/articles/exhibits/science.en.md
+02:08 tools/gen_newops_media.py
+02:08 tools/gen_wingopt_gallery.py
+02:08 tools/gen_wing3d_gallery.py
+02:08 docs/articles/assets/thumbs/wing2d_denoise_compare_720.jpg
+02:08 docs/articles/assets/media/wing2d_denoise_compare.gif
+02:07 tools/gen_wing2d_gallery.py
+02:07 docs/articles/assets/thumbs/newops_photon_buildup_720.jpg
+02:07 docs/articles/assets/media/newops_photon_buildup.gif
+02:07 docs/articles/assets/media/newops_photon_buildup.mp4
+02:07 docs/articles/exhibits/README.md
+02:07 docs/articles/assets/thumbs/newops_bearing_envelope_720.jpg
+02:07 docs/articles/assets/media/newops_bearing_envelope.gif
+02:07 docs/articles/assets/media/newops_bearing_envelope.mp4
+02:07 .pytest_cache/v/cache/nodeids
+02:07 docs/articles/exhibits/wingopt.md
 ```
 
 ---
