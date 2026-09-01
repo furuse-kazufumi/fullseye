@@ -1077,16 +1077,46 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     * a repetitive **transient** gives ``SK > 0``, and the larger it is the more
       concentrated in time the band's content is.
 
-    Measured over 8192 samples at 16 kHz: white Gaussian noise gives a mean SK
-    of -0.0242 over the interior bins (with 61 frames the estimator's own
-    standard deviation is about 4/sqrt(61) = 0.26, so this is zero); a 2 kHz
-    tone gives SK = -0.9985 in its bin; and the ``mode="impulse"`` bearing signal
-    gives its maximum SK of 3.29 at 3062 Hz, against a true resonance of
-    3000 Hz — a 62 Hz error on a 62.5 Hz bin spacing, i.e. one bin.
+    Measured over 8192 samples at 16 kHz, win = 256, 125 interior frames: white
+    Gaussian noise gives a mean SK of **-0.0259** over the interior bins (the
+    estimator's own standard deviation at 125 frames is about
+    ``4/sqrt(125) = 0.358``, so this is zero), and a 2 kHz tone gives
+    **-1.0000** in its bin. Both reference cases land on their closed forms.
 
-    ``win`` defaults to the largest power of two that leaves at least 8 frames,
-    clamped to [16, 256], and the value used is returned. Fewer than 8 frames
-    makes the fourth moment meaningless and is refused.
+    **The answer is a band, and it depends on the window — measured, not
+    asserted.** The frame has to be *shorter than the gap between transients*,
+    or every frame contains one and the band looks perfectly stationary. On the
+    ``mode="impulse"`` bearing signal (25.6 kHz, resonance 3000 Hz, impulses
+    every 9.35 ms, ring time constant 1.06 ms):
+
+    ======  ==========  =======  ==========  =============
+    win     frame (ms)  max SK   at (Hz)     bin spacing
+    ======  ==========  =======  ==========  =============
+    16      0.62        29.58    6400        1600 Hz
+    32      1.25        12.86    1600        800 Hz
+    64      2.50         5.38    2000        400 Hz
+    128     5.00         1.66    1600        200 Hz
+    256    10.00        -0.13   12200        100 Hz
+    ======  ==========  =======  ==========  =============
+
+    The last row is the failure mode: at a 10 ms frame against a 9.35 ms impulse
+    spacing, every frame holds exactly one impulse, the band is stationary by
+    construction, and the operator reports a *negative* kurtosis at an unrelated
+    frequency. Nothing raises. So ``window_seconds`` is returned, to be compared
+    against the repetition period you expect, and sweeping ``win`` is part of
+    using this operator rather than an optimisation.
+
+    What survives the sweep is the *band*, not the bin: at ``win=64`` the six
+    highest bins are 2000, 2400, 1600, 4000, 3600 and 1200 Hz, which brackets
+    the true 3000 Hz resonance without any of them being it. And that is enough
+    — feeding the band ``max_freq +- one bin`` straight into
+    :func:`envelope_spectrum` recovers the defect rate exactly: measured
+    107.0000 Hz from the 1600-2400 Hz band the operator chose by itself.
+
+    ``win`` defaults to the largest power of two that leaves at least 8 interior
+    frames, clamped to [16, 64] — short, for the reason in the table — and the
+    value used is returned. Fewer than 8 interior frames makes the fourth moment
+    meaningless and is refused.
 
     DC and Nyquist bins are excluded from ``max_kurtosis`` / ``max_freq``: their
     STFT coefficients are real, not complex circular, so the -2 normalisation is
