@@ -995,7 +995,20 @@ TYPE_CHECKS = {
     "keypoints": lambda v: _is_pts(v) or (isinstance(v, np.ndarray) and v.ndim == 2),
     "voxel": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
     "sdf": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,
-    "labels": lambda v: isinstance(v, np.ndarray) and v.ndim >= 1,
+    # labels = **整数のラベル配列**。1-D(点ごと)/ 2-D(画像)/ 3-D(volume)が
+    # 同じ型名に同居している(実測: 産む 7 op のうち label_components / vol_label /
+    # vol_watershed が (D,H,W)、region_growing / euclidean_cluster /
+    # plane_segmentation / segment_rigid_motions が (N,))。食う側も
+    # vol_region_props が 3-D、cad_defect_to_cad と
+    # illuminant_from_dichromatic_planes が 2-D を要求する。
+    # **分けなかった理由**: 取り違えは全て documented ValueError で fail-closed し
+    # (3 消費側とも実測)、「例外でなくもっともらしく間違う」条件を満たさない。
+    # 代わりに生成器へ 2-D と 3-D の両方を置いて、どちらの消費側も実際に走るように
+    # した(片方しか種が無いと相手側が永久に fail-closed = 「発見ゼロ」の偽装)。
+    # 述語は ``ndim >= 1`` の素通しをやめ、**整数であること**と 1〜3 次元だけに絞る
+    # (float の「ラベル」を渡されると下流は黙って丸める)。
+    "labels": lambda v: len(_shape(v)) in (1, 2, 3)
+    and getattr(getattr(v, "dtype", None), "kind", "") in "iub",
     "image2d": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "depth": lambda v: isinstance(v, np.ndarray) and v.ndim == 2,
     "cimage": lambda v: isinstance(v, np.ndarray) and v.ndim == 2 and v.dtype.kind == "c",
