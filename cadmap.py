@@ -684,7 +684,8 @@ def cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None,
     visible = in_front & in_image & ~blocked
     return {"uv": uv, "depth": depth, "in_front": in_front, "in_image": in_image,
             "occluded": blocked, "occluder_face": occluder, "visible": visible,
-            "camera": _cam_dict(K, R, t, width, height)}
+            "camera": _cam_dict(K, R, t, width, height),
+            "winding_fixed": bool(winding_fixed)}
 
 
 # --------------------------------------------------------------------------- #
