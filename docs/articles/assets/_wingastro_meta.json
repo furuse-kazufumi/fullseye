@@ -135,7 +135,7 @@
   },
   "cosmic": {
    "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingastro_cosmic.png",
-   "sha256": "85df216166db08c459cfcb3181045acae63e7503b70806e09b2bc03fb6486f49",
+   "sha256": "d2a87da276f1d0c6d4e70bbc11d8ce5f50efee1bc74d00eb47745ae939f2a650",
    "data": {
     "truth_px": 44,
     "detected_px": 39,
@@ -143,6 +143,12 @@
     "recall": 0.8409090909090909,
     "residual_raw": 7000.0,
     "residual_cleaned": 7000.0,
+    "bad_threshold": 100.0,
+    "n_bad_raw": 44,
+    "n_bad_cleaned": 9,
+    "sum_raw": 308000.0,
+    "sum_cleaned": 49808.38801245397,
+    "removed_pct": 83.82844545050196,
     "err_naive": 1750.0000000000002,
     "err_clipped": 44.63705335554937,
     "err_fixed": 6.550045285343458,

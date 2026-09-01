@@ -1154,16 +1154,21 @@ def _captions(meta):
         "image finds %d pixels against the %d planted — precision **%.3f**, "
         "recall **%.3f** — and the point is that it flags no star core at all. "
         "Because the data is synthetic we can also make the same exposure "
-        "*without* the cosmic rays, so the largest departure from the truth is "
-        "quotable: %.0f e- before, %.0f e- after. (**The frame maximum cannot "
-        "say this** — that is the brightest star, and it barely moves.) With "
-        "several frames it is easier still: plainly averaging %d frames only "
-        "dilutes each hit to 1/%d and still lands %.0f e- from the truth, while "
-        "a kappa-sigma combine reaches %.0f e- with no detection or replacement "
-        "at all, and rejecting frame-to-frame first reaches %.0f e-."
+        "*without* the cosmic rays and measure the departure from the truth "
+        "directly: pixels more than %.0f e- off drop from %d to %d, and "
+        "**%.0f %% of the total departure is removed**. Note what must *not* be "
+        "quoted here — the frame maximum, which goes %.0f to %.0f e- and barely "
+        "moves, because it belongs to the brightest star and because one missed "
+        "pixel pins it as long as recall is below 1. With several frames it is "
+        "easier still: plainly averaging %d frames only dilutes each hit to "
+        "1/%d and still lands %.0f e- from the truth, while a kappa-sigma "
+        "combine reaches %.0f e- with no detection or replacement at all, and "
+        "rejecting frame-to-frame first reaches %.0f e-."
         % (c["detected_px"], c["truth_px"], c["precision"], c["recall"],
-           c["residual_raw"], c["residual_cleaned"], c["n_frames"],
-           c["n_frames"], c["err_naive"], c["err_clipped"], c["err_fixed"]))
+           c["bad_threshold"], c["n_bad_raw"], c["n_bad_cleaned"],
+           c["removed_pct"], c["residual_raw"], c["residual_cleaned"],
+           c["n_frames"], c["n_frames"], c["err_naive"], c["err_clipped"],
+           c["err_fixed"]))
 
     z = d["drizzle_flux"]
     add("drizzle_flux",

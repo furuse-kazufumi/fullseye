@@ -14,7 +14,7 @@
 
 [![宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_cosmic.png)
 
-*↑ **宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける** ―― 宇宙線は光学系を通っていないので**星より尖る**。ラプラシアンを 2 倍標本化して微細構造と比べると、植えた 44 画素に対し 39 画素を検出して適合率 **0.949** / 再現率 **0.841** ―― 星の中心を 1 つも拾わないことが要点。合成なので「宇宙線だけ無い同じ観測」を作れて、正解との最大差が 7000 -> 7000 e- に落ちることまで言える(**フレームの最大値では言えない** —— それは一番明るい星の値であって、除去の前後でほとんど動かない)。枚数がある場合はもっと簡単で、8 枚を素直に平均しても宇宙線は 1/8 に薄まって残り正解から 1750 e- ずれるのに対し、κ-σ 合成は検出も置換もせずに 45 e-、フレーム間比較で先に除去すれば 7 e- になる。使用 op: `synth_starfield`, `cosmic_ray_reject`, `cosmic_ray_reject_stack`, `sigma_clip_stack`, `star_detect`。*
+*↑ **宇宙線の消え方 —— 尖りで見分ける / 枚数で見分ける** ―― 宇宙線は光学系を通っていないので**星より尖る**。ラプラシアンを 2 倍標本化して微細構造と比べると、植えた 44 画素に対し 39 画素を検出して適合率 **0.949** / 再現率 **0.841** ―― 星の中心を 1 つも拾わないことが要点。合成なので「宇宙線だけ無い同じ観測」を作れて、**正解からのずれそのもの**を測れる: 100 e- 以上ずれた画素は 44 -> 9、ずれの総量は **84 % 除去**される。ここで**フレームの最大値を指標にしてはいけない** —— それは一番明るい星の値で、除去の前後で 7000 -> 7000 e- と動かない(再現率が 1 未満である限り、見逃した 1 画素が最大値を押さえ続ける)。枚数がある場合はもっと簡単で、8 枚を素直に平均しても宇宙線は 1/8 に薄まって残り正解から 1750 e- ずれるのに対し、κ-σ 合成は検出も置換もせずに 45 e-、フレーム間比較で先に除去すれば 7 e- になる。使用 op: `synth_starfield`, `cosmic_ray_reject`, `cosmic_ray_reject_stack`, `sigma_clip_stack`, `star_detect`。*
 
 [![drizzle は面積を保存する](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_flux_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingastro_drizzle_flux.png)
 
