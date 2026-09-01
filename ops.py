@@ -436,13 +436,54 @@ def _ncc_locate(v, a, b):
 
 # --- geometry (image -> image; calibration/rectification building blocks) ----- #
 def _rotate_img(v, a, b):
+    """Rotate about the image centre by ``-45° + 90°·a`` (a=0.5 → 0°). ``b`` unused.
+
+    ★呼び出し規約(2026-09-02 に明文化。実装は変えていない):
+
+    * **キャンバスを変えない** (``reshape=False``)。出力の shape は入力と同じで、
+      回転で枠外へ出た画素は捨てられる。
+    * **枠外は鏡映で埋める** (``mode="reflect"``)。つまり回すと **四隅に元画像が
+      折り返して写り込む**(帳票を回すと隅に鏡文字が出る)。
+
+    どちらが正典かは用途で割れる。**この op の正典は「連鎖しても常に同じ形・
+    同じ値域の画像が出ること」** — 進化パイプラインは image を段間で無条件に
+    繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・
+    ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」で
+    はなく画像自身の統計を保つので、この用途ではこちらを採る。
+
+    **deskew(帳票の傾き補正)には向かない**: 折り返した鏡文字が OCR / 二値化に
+    そのまま乗る。背景色で埋めたい場合はこの op を使わず、
+    ``scipy.ndimage.rotate(v, ang, reshape=True, mode="constant", cval=bg)`` を
+    直接呼ぶこと(``fullseye.apply`` の 2 つまみ界面では背景色を渡せない)。
+    同じ規約が backends_auto の ``rotate_image`` (``_sh_geom`` kind="rotate")にも
+    そのまま当てはまる。
+    """
     return np.clip(ndimage.rotate(v, angle=-45 + 90 * a, reshape=False, mode="reflect"), 0, 1)
 
 
 def _rescale_img(v, a, b):
+    """Isotropic centre-preserving rescale by ``s = 0.7 + 0.6·a``, canvas kept.
+
+    ``b`` = **補間の次数** — ``(0, 1, 3, 3)[min(3, int(4b))]``(0 = 最近傍、
+    1 = 双一次、3 = 三次スプライン)。``b=0.5`` は 3 次で、``b`` が死んでいた頃の
+    既定(``ndimage`` の order=3)と **ビット一致**する。
+
+    ★2026-09-02: それまで ``rescale_img`` / ``zoom_image_factor`` /
+    ``zoom_image_size`` は **3 つとも同じ実装**(実測: 相互の最大差 0.0 と
+    4.9e-14)で、3 つとも ``b`` を使っていなかった。3 つの役割を分けた:
+
+    * ``rescale_img``      — 等方倍率 1 つ + **補間次数**(この関数)
+    * ``zoom_image_factor``— 縦横 **2 つの倍率**(HALCON の ScaleHeight/ScaleWidth)
+    * ``zoom_image_size``  — **目標サイズ**指定(出力 shape が変わる)
+
+    HALCON 名も実態に合わせて ``zoom_image_size`` → ``zoom_image_factor`` へ
+    付け替えた(この op はサイズではなく倍率で駆動するため)。
+    """
     s = 0.7 + 0.6 * a
+    order = (0, 1, 3, 3)[min(3, int(np.clip(b, 0.0, 1.0) * 4))]
     off = (v.shape[0] * (1 - 1 / s) / 2, v.shape[1] * (1 - 1 / s) / 2)
-    return np.clip(ndimage.affine_transform(v, np.array([1 / s, 1 / s]), offset=off, mode="reflect"), 0, 1)
+    return np.clip(ndimage.affine_transform(v, np.array([1 / s, 1 / s]), offset=off,
+                                            order=order, mode="reflect"), 0, 1)
 
 
 def _affine_warp(v, a, b):
