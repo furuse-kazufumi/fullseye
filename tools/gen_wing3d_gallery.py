@@ -2558,7 +2558,7 @@ def ex_mpr(log) -> dict:
     return {
         "name": "wing3d_mpr_crosshair",
         "title": "3 直交断面(MPR)とクロスヘア",
-        "ops": ["(numpy スライス + imagedraw)"],
+        "ops": ["vol_window_level", "imagedraw.draw_line"],
         "facts": {"shape": [n, n, n], "spacing_mm": list(sp), "frames": nf,
                   "landmarks": {"+x": "球", "-y": "横棒", "+z": "リング"}},
         "caption": ("同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal"
