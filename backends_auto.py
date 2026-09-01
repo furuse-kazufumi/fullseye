@@ -151,7 +151,12 @@ def _sh_lut(p):
         if kind == "sigmoid":
             return 1.0 / (1.0 + np.exp(-(4 + 12 * a) * (x - (0.2 + 0.6 * b))))
         if kind == "log_gain":
-            return skexp.adjust_log(x, gain=0.5 + 1.5 * a) if _HAS_SK else _norm(np.log1p(x))
+            # gain > 1 は log 変換の出力を 1 より上へ押し上げる(実測 max=1.1380,
+            # a=0.5)。`image` は [0,1] 契約なので op の出口で clip する
+            # (`ops._apply` は段間で同じ clip を掛けているので **パイプライン結果は
+            # ビット不変**、直接 `fullseye.apply` した時だけ白飛びが消える)。
+            return np.clip(skexp.adjust_log(x, gain=0.5 + 1.5 * a), 0, 1) if _HAS_SK \
+                else _norm(np.log1p(x))
         if kind == "equalize":
             hist, edges = np.histogram(x, 256, (0, 1))
             cdf = np.cumsum(hist).astype(np.float64)
