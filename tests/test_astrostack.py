@@ -935,9 +935,15 @@ class TestRegistry:
         どちらの姿を宣言しても嘘になる。ここが落ちたらその設計に戻したという
         合図。
         """
-        image, _ = A.synth_starfield(shape=(32, 32), n_stars=4, seed=1)
-        frames, _ = A.synth_frame_series(shape=(32, 32), n_frames=3,
-                                         n_stars=4, seed=1)
+        image, _ = A.synth_starfield(shape=(64, 64), n_stars=12,
+                                     flux_min=20000.0, flux_max=40000.0,
+                                     sky=60.0, read_sigma=5.0, seed=71,
+                                     margin_px=12.0)
+        frames, _ = A.synth_frame_series(shape=(64, 64), n_frames=3,
+                                         dither_px=1.0, n_stars=12,
+                                         flux_min=20000.0, flux_max=40000.0,
+                                         sky=60.0, read_sigma=5.0, seed=71,
+                                         margin_px=12.0)
         probes = {"synth_starfield": ((), {"shape": (16, 16), "n_stars": 2}),
                   "synth_frame_series": ((), {"shape": (16, 16), "n_frames": 3,
                                               "n_stars": 2}),
