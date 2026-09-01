@@ -85,6 +85,19 @@ def known_split(albedo=(0.80, 0.55, 0.35), illuminant=WHITE, h=48, w=48):
     return diffuse + specular, diffuse, specular, m_s, n, shading
 
 
+def _fuzzer_lights():
+    """The exact four directions ``chain_fuzz.PARAM_HINTS["lights"]`` supplies.
+
+    Written out rather than imported so the test does not depend on the fuzzer,
+    and **not rounded**: rounding these to three decimals moves the noise floor
+    of the recovered normals from 0.000115 to 0.052 degrees, which would have
+    quietly weakened the comparison below by a factor of 450.
+    """
+    L = np.array([[0.3, 0.3, 1.0], [-0.3, 0.3, 1.0], [0.3, -0.3, 1.0],
+                  [-0.2, -0.2, 1.0]])
+    return L / np.linalg.norm(L, axis=1, keepdims=True)
+
+
 def shadow_scene(n_lights=8, k_blocked=3, h=40, w=40):
     """Photometric stereo data where every ``N.L`` is positive and ``k`` frames
     are then zeroed — a *cast* shadow, the case the linear model cannot express
