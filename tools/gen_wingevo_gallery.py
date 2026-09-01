@@ -765,15 +765,14 @@ def ex_champions(data, log=print):
         row = data["champions"]["rows"][name]
         panels = problem_panels(name, row)
         labels = [
-            "入力(locked holdout)",
+            f"入力 = 恒等  {row['locked_trivial']:.4f}",
+            f"手(既存最良 1 段)  {row['locked_hand']:.4f}",
+            f"進化 champion  {row['locked_champion']:.4f}",
             "正解",
-            f"恒等 {row['locked_trivial']:.4f}",
-            f"手(既存最良 1 段) {row['locked_hand']:.4f}",
-            f"進化 champion {row['locked_champion']:.4f}",
         ]
         gain = (row["locked_champion"] - row["locked_hand"]) / abs(row["locked_hand"])
         sheet = contact_sheet(
-            panels, labels, ncols=5, panel_px=250, font_size=15,
+            panels, labels, ncols=4, panel_px=250, font_size=15,
             title=f"{TITLES[name]} — 手比 {gain * 100:+.1f}%  [{row['unit']}]")
         stem = f"wingevo_champion_{name}"
         info = save_exhibit(sheet, stem)
