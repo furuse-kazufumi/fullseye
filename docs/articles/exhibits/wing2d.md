@@ -70,7 +70,7 @@
 
 ![対応点モーフ —— 単純合成との違い](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_face_morph.gif)
 
-*↑ **対応点モーフ —— 単純合成との違い** ―― 対応点 7 個だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は目や口の位置を対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.01018 にとどまる。使用 op: `morph (imagemorph)`, `warp_piecewise_affine`, `warp_tps_image`, `blend`。*
+*↑ **対応点モーフ —— 単純合成との違い** ―― 対応点 11 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.00850 にとどまる。使用 op: `morph (imagemorph)`, `warp_piecewise_affine`, `warp_tps_image`, `blend`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_face_morph_thumb.jpg -->
 
@@ -100,7 +100,7 @@
 
 ![形状マッチング —— 回っていても見つける](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing2d_shape_match.gif)
 
-*↑ **形状マッチング —— 回っていても見つける** ―― 96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.50 秒(CPU、72 角度ぶんの探索を含む)。使用 op: `create_shape_model`, `find_shape_model (角度探索つき)`。*
+*↑ **形状マッチング —— 回っていても見つける** ―― 96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.49 秒(CPU、72 角度ぶんの探索を含む)。使用 op: `create_shape_model`, `find_shape_model (角度探索つき)`。*
 
 <!-- 静止サムネ: https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wing2d_shape_match_thumb.jpg -->
 

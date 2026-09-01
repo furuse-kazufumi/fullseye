@@ -324,7 +324,7 @@
     "file": "docs/articles/assets/media/wing2d_doc_deskew.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_doc_deskew_thumb.jpg",
     "frames": 6,
-    "bytes": 207092,
+    "bytes": 209499,
     "size": [
       960,
       722
@@ -417,7 +417,7 @@
     },
     "caption": "合成の帳票を 0→42° と傾けながら、回転角を 0.5° 刻みで振って「行方向プロファイルの分散が最大になる角」を探した。推定誤差は全域で最大 0.0°(11° のときは真値どおり 11.0°)で、補正後の `decode_barcode` はどの傾きでも真値の 8 本を返す。補正しないと 30° を超えたところで 5 本まで取りこぼす —— 前処理を 1 段挟むかどうかで、同じ op の答えが変わる。",
     "sha256": {
-      "wing2d_doc_deskew.gif": "39ca287538ec5217afe9445914568536d07ea0817679aec9ea9d8fb6140f9279",
+      "wing2d_doc_deskew.gif": "00dc37bfbc80519e90cb4ed49d3d09313cc6ff61e7b64ca15b4ca83b2a842bc4",
       "wing2d_doc_deskew_thumb.jpg": "978e97735fa3161061119f5e8b91773107c467db493bb1d9a80b68146b75c818"
     }
   },
@@ -427,7 +427,7 @@
     "file": "docs/articles/assets/media/wing2d_face_morph.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_face_morph_thumb.jpg",
     "frames": 13,
-    "bytes": 1052190,
+    "bytes": 1042658,
     "size": [
       948,
       832
@@ -442,7 +442,7 @@
     ],
     "data": "Pillow で描いた合成の顔 2 枚 (実在の人物ではない)",
     "measured": {
-      "landmarks": 7,
+      "landmarks": 11,
       "alpha": [
         0.0,
         0.083,
@@ -460,26 +460,26 @@
       ],
       "mean_abs_diff_affine_vs_tps": [
         0.0,
-        0.00244,
-        0.00456,
-        0.00631,
-        0.00778,
-        0.0098,
-        0.01018,
-        0.01009,
-        0.00938,
-        0.00807,
-        0.00611,
-        0.00347,
+        0.0028,
+        0.00499,
+        0.00655,
+        0.00771,
+        0.00835,
+        0.0085,
+        0.00825,
+        0.00754,
+        0.00641,
+        0.00481,
+        0.00271,
         0.0
       ],
       "psnr_alpha0_vs_A_db": 99.0,
       "psnr_alpha1_vs_B_db": 99.0
     },
-    "caption": "対応点 7 個だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は目や口の位置を対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.01018 にとどまる。",
+    "caption": "対応点 11 個 (輪郭の楕円上 8 点 + 両目 + 口) だけを与えて顔 A から顔 B へモーフさせた 6 パネル。対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は輪郭も目も口も対応させたまま連続的に動く。両端は入力を厳密に再現し (α=0 で A と PSNR 99.0 dB、α=1 で B と 99.0 dB = 完全一致の上限値)、2 つのワープ方式の差は α=0.5 で平均 0.00850 にとどまる。",
     "sha256": {
-      "wing2d_face_morph.gif": "b69f52822c988cbd288972637138c78c0d5fe47fe91bf7c78adb6abe7ba28459",
-      "wing2d_face_morph_thumb.jpg": "6e4e7bacb37bdfc4906d91bd117e6c66c96d0fd701b4aee1e67970d4a429c69b"
+      "wing2d_face_morph.gif": "aa25c54c45f213b8ddde6de2289c38c05ebe75d040b655f4715b4a74a8d69b73",
+      "wing2d_face_morph_thumb.jpg": "5fa58bb01478a04e1c91246adbae494743bb4661eebb3cd6eb126dda7e3d00a3"
     }
   },
   {
@@ -488,7 +488,7 @@
     "file": "docs/articles/assets/media/wing2d_fit_residual.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_fit_residual_thumb.jpg",
     "frames": 6,
-    "bytes": 2324899,
+    "bytes": 2324489,
     "size": [
       960,
       792
@@ -534,7 +534,7 @@
     },
     "caption": "縁が 72 px 欠けた円と直線に、輪郭からの当てはめを掛けた 6 コマ。輪郭の全点で当てると半径は真値 210.0 px に対し 206.95 px (誤差 -3.05 px、残差 RMS 12.96 px) —— 欠けの縁が当てはめを引っ張っており、残差 3σ を超える 91 点を落として当て直すと 209.19 px (誤差 -0.81 px、RMS 6.21 px) まで戻る。直線は真値 73.20° に対し 73.21°(誤差 +0.006°)で、「当てはまった値」より「合わなかった場所」の方が情報が多い。",
     "sha256": {
-      "wing2d_fit_residual.gif": "706855c7912a4d64c583a790526b55d63b12c624304408c332a76e084b7e7751",
+      "wing2d_fit_residual.gif": "85688a12fe0d1ddd0b4ddbe1ad4c441effb80101e2bdbdad175da426acdfbacb",
       "wing2d_fit_residual_thumb.jpg": "59ea3d92cc1c010a331225c45cececa13db6fbcd9984e6df9a77f50befcdbf9d"
     }
   },
@@ -714,7 +714,7 @@
     "file": "docs/articles/assets/media/wing2d_hist_shaping.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_hist_shaping_720.jpg",
     "frames": 15,
-    "bytes": 2834601,
+    "bytes": 2791162,
     "size": [
       1108,
       688
@@ -834,8 +834,8 @@
     },
     "caption": "文書画像のコントラストを 1.00→0.16 倍まで潰していき、equalize と clahe で戻せるかを追った。入力の標準偏差は 0.2228→0.0356 まで落ちるが、equalize 後は 0.2931→0.2994、clahe 後は 0.2379→0.2510 にとどまる。ヒストグラムは入力が針のように細くなっても、平坦化した側は幅を保ったままだ。",
     "sha256": {
-      "wing2d_hist_shaping.gif": "d8f8df3a9de9a862f2137d2fc219a3ac9658eeb364c29fd453f27f03ab784989",
-      "wing2d_hist_shaping_720.jpg": "5508cc2dce6356cb7b1702c30c49a799b6913f6f3839101f4fe8225ff7bda002"
+      "wing2d_hist_shaping.gif": "5afe9abef5865c5ab38babbffd4e1746e6ef72d83bb4c98362faffa3ce1730ae",
+      "wing2d_hist_shaping_720.jpg": "9499cf0489d3916e59011e6375ba5459cfa0825ee59c52a6608477db511f80b3"
     }
   },
   {
@@ -1032,7 +1032,7 @@
     "file": "docs/articles/assets/media/wing2d_shape_match.gif",
     "thumb": "docs/articles/assets/thumbs/wing2d_shape_match_thumb.jpg",
     "frames": 16,
-    "bytes": 2316599,
+    "bytes": 2344427,
     "size": [
       1006,
       472
@@ -1187,13 +1187,13 @@
       "max_abs_angle_error_deg": 2.0,
       "max_abs_position_error_px": 0,
       "min_score": 0.8639,
-      "seconds_per_search": 2.497,
+      "seconds_per_search": 2.487,
       "device": "cpu"
     },
-    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.50 秒(CPU、72 角度ぶんの探索を含む)。",
+    "caption": "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 (探索格子 5° の倍数を避けた角度) を 16 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 2.0°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 0 px、スコアは最低でも 0.864。1 シーンあたり 2.49 秒(CPU、72 角度ぶんの探索を含む)。",
     "sha256": {
-      "wing2d_shape_match.gif": "37363aa05234e5531748ccbf59304c2c3ce0c12a3845ec67a29df82e79dfe75e",
-      "wing2d_shape_match_thumb.jpg": "8953337aa5d2ba5bda9db03a8130add7c9f481bb07131b207df05416881007c6"
+      "wing2d_shape_match.gif": "b6809d2595f183d8755c53809abff912c64dea5f804c89f6966c1997e24cdbe0",
+      "wing2d_shape_match_thumb.jpg": "c0ba625bae641e2ba66034cdfcc2b76ccaf7a41d3e3bbeaa90237973d648c840"
     }
   },
   {

@@ -298,19 +298,20 @@ def ex_flicker(log):
                                      (0.75, 0.35, 0.20) if hit else (0.22, 0.24, 0.30)), 24, 0)
         _paste(canvas, _frame_border(_up(right_frames[z], k)), 24, pw + gap)
         canvas = _text(canvas, [
-            (pw // 2, 10, "A 断面ごとに色付け(imgio.colorize_labels)", FG, "ma"),
-            (pw + gap + pw // 2, 10, "B ボリュームで色付けしてから切る", FG, "ma"),
+            (pw // 2, 8, "A 断面ごとに色付け", FG + (17,), "ma"),
+            (pw + gap + pw // 2, 8, "B ボリュームで色付け", FG + (17,), "ma"),
             (pw // 2, pw + 34, "色が変わった断面 %2d / %2d" % (running, z + 1),
-             (1.0, 0.55, 0.35) if running else MUTED, "ma"),
+             ((1.0, 0.55, 0.35) if running else MUTED) + (16,), "ma"),
             (pw + gap + pw // 2, pw + 34, "色が変わった断面  0 / %2d" % (z + 1),
-             (0.45, 0.85, 0.60), "ma"),
-            (pw // 2, pw + 60, "z = %d" % z, MUTED, "ma"),
-            (pw + gap + pw // 2, pw + 60, "z = %d" % z, MUTED, "ma"),
-        ], size=15)
+             (0.45, 0.85, 0.60, 16), "ma"),
+            (pw // 2, pw + 58, "z = %d" % z, MUTED + (15,), "ma"),
+            (pw + gap + pw // 2, pw + 58, "z = %d" % z, MUTED + (15,), "ma"),
+        ], size=16, where="flicker")
         frames.append(canvas)
 
-    book = flipbook(frames, ["z=%d" % z for z in range(D)],
-                    title="同じボリューム・同じパレット ―― 違うのは色を付ける順序だけ")
+    title = "違うのは色を付ける順序だけ(同じパレット・同じ seed)"
+    book = flipbook(frames, ["z=%d" % z for z in range(D)], title=title,
+                    title_font_size=_fit_size(title, pw * 2 + gap, 24))
     info = save_animation(book, "wingvox_flicker", duration_ms=300, hold_last_ms=1800)
     facts = {"components": int(n), "slices": int(D),
              "per_slice_changed_slices": int(measured["slices_with_change"]),

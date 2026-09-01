@@ -1017,7 +1017,18 @@ def points_to_gaussians(points, k=6, scale=1.0):
     kk = min(kk, n - 1)
     d, _ = cKDTree(p).query(p, k=kk + 1)                   # 自分自身を含むので +1
     sigma = np.asarray(d, float)[:, 1:].mean(axis=1) * sc
-    sigma = np.maximum(sigma, np.finfo(float).tiny)        # 重複点で 0 にしない
+    # ★ 実バグの回帰点。最初ここを ``np.maximum(sigma, finfo.tiny)`` にしていた。
+    # 重複点で sigma = 2.2e-308 になり、``gaussians_to_voxel`` の
+    # ``sigma ** 3`` が **アンダーフローで 0** になって 0 除算 -> NaN。
+    # 「0 を避けた」つもりが、下流で NaN を生む値に置き換えていた
+    # (例外も出ないまま体積の一部が NaN になる = 黙って間違う典型)。
+    # 重複点は「間隔が測れない」のだから、番兵で埋めずに fail-closed にする。
+    bad = int(np.count_nonzero(sigma <= 0.0))
+    if bad:
+        raise ValueError(
+            f"points: {bad} point(s) coincide with all {kk} of their nearest neighbours, "
+            f"so the local spacing is 0 and sigma cannot be estimated — "
+            f"deduplicate first (e.g. voxel_downsample) instead of taking a sentinel sigma")
     return {"mu": p.copy(), "sigma": sigma, "w": np.full(n, 1.0 / n)}
 
 
