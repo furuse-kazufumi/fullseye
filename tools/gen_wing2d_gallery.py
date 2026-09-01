@@ -1919,6 +1919,11 @@ def subject_texture_zoo(log=print) -> dict:
                           for c in range(len(keys))])
         correct += int(np.argmin(np.linalg.norm(cents - Xn[i], axis=1)) == y[i])
     acc = correct / len(Xn)
+    # 模様まるごと (256×256) に 4 方向の gabor を当てた平均応答。固定スケールに
+    # なったので、向き間・模様間で直接比べてよい数になった。
+    gmean = {k: {a: float(np.mean(np.asarray(fs.apply(texs[k], "gabor", a, 0.5))))
+                 for a in gabor_a} for k in keys}
+    k_weave, k_grain = "weave_synth.png", "grain_synth.png"
     # 4 列 = 「模様 / gabor 0° / gabor 90° / LBP」が 1 行にそろう並び。
     panels, labels = [], []
     for k in keys:
