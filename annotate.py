@@ -1520,6 +1520,101 @@ def compare_frame(left, right, layout="h", labels=None, divider=3, gap=0,
     return out
 
 
+def panel_grid(panels, labels=None, ncols=3, pad=10, label_h=32, background=0.05,
+               title=None, title_h=0, font_size=15, min_font_size=9, font_path=None,
+               text_color=None, border=0, border_color="neutral", scheme="okabe_ito"):
+    """パネルを格子に並べ、各枠の下にラベルを敷く(montage / contact sheet)。
+
+    生成器 6 本がそれぞれ別実装を持っていた、**この repo で最も重複していた図の
+    部品**。ここでの流儀:
+
+    * **拡大しない** ―― 小さいパネルは中央に置いて余白で埋める。引き伸ばすと
+      「無い解像度がある」ように見える。
+    * **ラベルは測ってから描く** ―― 入らなければ縮め、駄目なら例外
+      (:func:`text_box` の境界検査に載る)。
+    * セルの大きさは全パネルの最大寸で、**格子は常に矩形**。
+
+    Parameters
+    ----------
+    panels : sequence of ndarray
+        並べる画像(``(H,W)`` / ``(H,W,C)``、大きさはばらばらでよい)。
+        チャンネルの並びは揃っていること。
+    labels : sequence of str or None
+        各パネルの見出し。``label_h`` が 0 なら描かない。
+    ncols : int
+        列数。行数は ``ceil(n/ncols)``。
+    title : str or None
+        全体の表題(``title_h`` が 0 なら ``font_size+14`` を自動で確保)。
+
+    Returns
+    -------
+    ndarray
+        新しい合成画像(float [0,1])。大きさは
+        ``W = 2*pad + ncols*cw + (ncols-1)*pad``、
+        ``H = title_h + 2*pad + nrows*(ch+label_h) + (nrows-1)*pad``。
+
+    Raises
+    ------
+    ValueError
+        panels が空 / チャンネル不一致 / ncols < 1 / 負の余白 /
+        labels の数が合わない。
+    """
+    ps = [_prep(p) for p in panels]
+    if not ps:
+        raise ValueError("panels is empty — an empty contact sheet says nothing")
+    ncols = int(ncols)
+    if ncols < 1:
+        raise ValueError(f"ncols must be >= 1 (got: {ncols})")
+    if pad < 0 or label_h < 0 or title_h < 0:
+        raise ValueError(f"pad/label_h/title_h must be >= 0 (got: {pad}, {label_h}, {title_h})")
+    nd = ps[0].ndim
+    nc = ps[0].shape[2] if nd == 3 else 0
+    for i, p in enumerate(ps):
+        if p.ndim != nd or (nd == 3 and p.shape[2] != nc):
+            raise ValueError(f"panels[{i}] has shape {p.shape}, incompatible with {ps[0].shape}")
+    if labels is not None:
+        labels = [str(s) for s in labels]
+        if len(labels) != len(ps):
+            raise ValueError(f"labels has {len(labels)} entries for {len(ps)} panels")
+    bgv = float(background)
+    if not math.isfinite(bgv) or not (0.0 <= bgv <= 1.0):
+        raise ValueError(f"background must be a finite value within [0,1] (got: {background})")
+    if title is not None and title_h <= 0:
+        title_h = int(font_size) + 14
+
+    cw = max(p.shape[1] for p in ps)
+    ch = max(p.shape[0] for p in ps)
+    nrows = (len(ps) + ncols - 1) // ncols
+    cell_h = ch + int(label_h)
+    W = 2 * pad + ncols * cw + (ncols - 1) * pad
+    H = int(title_h) + 2 * pad + nrows * cell_h + (nrows - 1) * pad
+    out = np.full((H, W) if nd == 2 else (H, W, nc), bgv, dtype=np.float64)
+
+    for i, p in enumerate(ps):
+        r, c = divmod(i, ncols)
+        x0 = pad + c * (cw + pad)
+        y0 = int(title_h) + pad + r * (cell_h + pad)
+        ox = x0 + (cw - p.shape[1]) // 2                      # 拡大せず中央に置く
+        oy = y0 + (ch - p.shape[0]) // 2
+        out[oy:oy + p.shape[0], ox:ox + p.shape[1]] = p
+        if border > 0:
+            pts = [(x0, y0), (x0 + cw - 1, y0), (x0 + cw - 1, y0 + ch - 1), (x0, y0 + ch - 1)]
+            out = imagedraw.draw_polyline(out, pts, color=_channel_color(out, border_color, scheme),
+                                          closed=True, width=int(border))
+        if labels is not None and label_h > 0:
+            out = text_box(out, labels[i], (x0 + cw // 2, y0 + ch + int(label_h) // 2),
+                           anchor="cm", pad=2, box_alpha=0.0, font_size=font_size,
+                           min_font_size=min_font_size, font_path=font_path,
+                           text_color=text_color, max_width=cw, scheme=scheme,
+                           min_contrast=1.0)
+    if title is not None:
+        out = text_box(out, title, (W // 2, int(title_h) // 2), anchor="cm", pad=2,
+                       box_alpha=0.0, font_size=font_size + 3, min_font_size=min_font_size,
+                       font_path=font_path, text_color=text_color, max_width=W - 2 * pad,
+                       scheme=scheme, min_contrast=1.0)
+    return out
+
+
 # ------------------------------------------------------------------ #
 # 図形(下敷き・囲み・角度)
 # ------------------------------------------------------------------ #
