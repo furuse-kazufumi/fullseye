@@ -317,6 +317,42 @@
         "frames": 36
       },
       "seconds": 3.3
+    },
+    {
+      "kind": "gif",
+      "name": "studio_walk",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_walk.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_walk_thumb.jpg",
+      "frames": 24,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 4,
+      "bytes": 1008982,
+      "thumb_bytes": 44521,
+      "thumb_frame": 6,
+      "mean_abs_delta": 1.264,
+      "sha256": "59b83e03fb2ec68fc339f8ea2ba1f6058843f7477f0d15d2cba2d5d59a990191",
+      "thumb_sha256": "056ddc6b1cb2505bf02c01e50e75d19bd3a6aa7db22224e92f0e79becc8a5803",
+      "facts": {
+        "n_vertices": 24578,
+        "n_faces": 49152,
+        "splat_points": 73730,
+        "radius": 0.296137,
+        "fov_default": 70.0,
+        "fov_range": [
+          40.0,
+          100.0
+        ],
+        "window": [
+          1280,
+          800
+        ],
+        "frames": 24,
+        "step_per_tap": 0.005923
+      },
+      "seconds": 4.4
     }
   ]
 }

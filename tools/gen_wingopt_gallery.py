@@ -1898,8 +1898,7 @@ def ex_illumination(log):
     d_first = next((r["mag"] for r in rows if r["dark"]["rate"] >= 0.5), None)
     log(f"  bright-field style reaches 50 % detection at |contrast| = "
         f"{b_first}; dark-field style at {d_first} "
-        f"(defect fixed at {size_um:g} um = "
-        f"{rows[0]['bright']['meta']['defect_px']:.2f} px)")
+        f"(defect fixed at {size_um:g} um = {size_px:.2f} px)")
 
     disp = tile * 2
     w, hdr = 1000, 34
@@ -1913,9 +1912,9 @@ def ex_illumination(log):
         labels = _header(
             canvas, w,
             "TWO ILLUMINATION STYLES  --  same geometry, opposite sign",
-            f"{system!r}   defect fixed at {size_um:g} um = "
-            f"{r['bright']['meta']['defect_px']:.2f} px   sweeping |contrast|   "
-            f"appearance model (sign + exposure), not light transport")
+            f"{system!r}   defect {size_um:g} um = {size_px:.2f} px   "
+            f"dark-field surround {dark_level:g}, texture x{dark_texture:g}   "
+            f"sweeping |contrast|")
         canvas[pan_y:pan_y + disp, x1:x1 + disp] = _upscale(
             _gray_to_rgb(r["bright"]["img"]), 2)
         canvas[pan_y:pan_y + disp, x2:x2 + disp] = _upscale(

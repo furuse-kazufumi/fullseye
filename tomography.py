@@ -819,12 +819,21 @@ def _recon_size(size, sino: np.ndarray, op: str) -> int:
 def backproject_sinogram(sinogram, angles_deg=None, size=None, span_deg=None):
     """Plain, **un-filtered** back-projection — the blurred baseline.
 
-    Smear each projection back along the rays it came from and average. The result
-    is the true slice convolved with ``1/|r|``, so it is correct in the large and
-    wrong everywhere in detail: measured on the Shepp-Logan phantom with 180
-    views, the normalised RMS error against the truth is **0.398** for this
-    operator against **0.0166** for :func:`filtered_backprojection` — a factor of
-    24 that is entirely the ramp filter's doing.
+    Smear each projection back along the rays it came from and sum. The result is
+    the true slice convolved with ``1/|r|``, so it is correct in the large and
+    wrong everywhere in detail.
+
+    Two numbers, because only one of them is the interesting one. Raw, on the
+    Shepp-Logan phantom with 180 views, this operator's values run 0.768 to 2.493
+    where the truth runs 0.0 to 0.0167 — the ``1/|r|`` kernel has no finite
+    integral, so an un-filtered back-projection has **no meaningful absolute
+    scale at all** and its normalised RMS error against the truth is 104. After
+    the best least-squares rescaling onto the truth — which is what any display
+    with an auto window does for you, silently — the error is **0.168** against
+    **0.0246** for :func:`filtered_backprojection`, a factor of **6.8**. That
+    second number is the ramp filter's real contribution; the first is a warning
+    that a picture which looks approximately right after auto-windowing can be
+    off by a factor of 100 in the numbers underneath it.
 
     It is a registered operator and not a private helper because the blur *is* the
     lesson, and because it is the correct starting point for iterative methods.

@@ -1704,6 +1704,18 @@ EXHIBITS = {
                "欠陥の CAD 面への逆写像 + 可視面カバレッジ"),
     "crop3d": (lambda: ex_crop3d(), False,
                "3D の処理領域 crop -> 処理 -> 貼り戻し"),
+    "studio_walk": (lambda: ex_studio_walk(), True,
+                    "Studio: F キーの一人称ウォークスルー"),
+    "studio_turntable": (lambda: ex_studio_turntable(), True,
+                         "Studio: 軌道カメラのターンテーブル"),
+    "studio_help": (lambda: ex_studio_help(), True,
+                    "Studio: op ヘルプを渡り歩く"),
+    "studio_editor": (lambda: ex_studio_editor(), True,
+                      "Studio: タブエディタで書いて F5 で走らせる"),
+    "studio_opsearch": (lambda: ex_studio_opsearch(), True,
+                        "Studio: op 検索で目的の op へ"),
+    "studio_pipeline": (lambda: ex_studio_pipeline(), True,
+                        "Studio: パイプライン組み立てと型不一致"),
 }
 
 

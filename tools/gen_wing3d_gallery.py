@@ -2797,11 +2797,11 @@ def ex_window_sweep(log) -> dict:
             (530, 540, "どちらも情報が消えている。窓は「見せ方」ではなく"
                        "「何を捨てるか」の選択。", C_D, 13, True),
         ])
-        c = _ruler(c, 18, 570, 420, 12, i / (len(rows) - 1), C_B,
+        c = _ruler(c, 18, 596, 420, 12, i / (len(rows) - 1), C_B,
                    "掃引 開始", "終了",
-                   "%d / %d" % (i + 1, len(rows)))
+                   "%d / %d コマ" % (i + 1, len(rows)))
         c = _footer(c, "使用 op: vol_window_level  — 合成 HU データ(実在の患者・"
-                       "スキャンではありません)", y_off=16)
+                       "スキャンではありません)", y_off=18)
         frames.append(c)
 
     info = _save_clip(frames, "wing3d_window_sweep", fps=12, thumb_index=29, log=log)
