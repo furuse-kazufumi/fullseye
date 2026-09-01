@@ -429,6 +429,16 @@ def test_style_is_passed_through_to_imagedraw_untouched(monkeypatch):
     assert seen["width"] == 3
 
 
+def test_short_arrow_does_not_draw_its_shaft_backwards():
+    """矢じりが軸より長いと、根元が起点の手前に来て軸が**逆向き**に伸びる。"""
+    img = _canvas(0.0)
+    out = A.arrow(img, (100, 60), (108, 60), color=(1.0, 1.0, 1.0), width=1,
+                  head_len=12.0, head_width=9.0)
+    cols = np.flatnonzero((out[..., 0] > 0.5).any(axis=0))
+    assert cols.min() >= 99, f"軸が起点 (x=100) より手前 x={cols.min()} まで伸びている"
+    assert cols.max() <= 109
+
+
 def test_style_cannot_smuggle_a_colour_past_the_palette():
     with pytest.raises(ValueError, match="must not carry 'color'"):
         A.arrow(_canvas(), (10, 10), (50, 50), style={"color": (1, 0, 0)})
