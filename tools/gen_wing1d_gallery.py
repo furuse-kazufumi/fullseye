@@ -406,7 +406,12 @@ def _header(fig: Fig, title: str, sub: str = "") -> None:
         fig.text(14 + 9.0 * len(title) + 18, 10, sub, C_DIM, 12, False)
 
 
-def _legend(fig: Fig, x: int, y: int, items, size: int = 11) -> None:
+def _legend(fig: Fig, x: int, y: int, items, size: int = 11,
+            backing: bool = True) -> None:
+    """凡例。曲線の上に重なっても読めるよう、既定で下敷きの箱を敷く。"""
+    if backing and items:
+        w = 4 + int(round(0.62 * size * (4 + max(len(s) for s, _ in items))))
+        fig.box(x - 6, y - 4, x + w, y + 15 * len(items) + 2, (0.06, 0.07, 0.085))
     for i, (label, col) in enumerate(items):
         fig.text(x, y + i * 15, "--- " + label, col, size, True)
 
