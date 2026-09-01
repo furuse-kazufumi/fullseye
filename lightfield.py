@@ -381,13 +381,16 @@ def _band_limited_texture(shape, sigma, rng) -> np.ndarray:
     """Gaussian-smoothed white noise, rescaled to [0, 1]. Periodic (wrap)."""
     t = _ndi.gaussian_filter(rng.standard_normal(shape), sigma, mode="wrap")
     lo, hi = float(t.min()), float(t.max())
-    if hi - lo < 1e-12:
-        # Degenerate only if sigma is so large the field is constant; a constant
-        # texture carries no parallax, so say so rather than divide by ~0.
-        raise ValueError("lf_synthesize: texture_sigma is so large that the "
-                         "generated texture is constant (range %g) — a "
-                         "featureless field has no measurable disparity"
-                         % (hi - lo,))
+    if hi - lo < MIN_TEXTURE_RANGE:
+        # Smoothing past the frame size drives the noise toward its mean; the
+        # residual is float dust, and rescaling it to [0, 1] would amplify that
+        # dust into a "texture" whose disparity is meaningless. Measured
+        # 2026-09-01: sigma = 400 on an 8x8 frame leaves a range of 6.2e-7.
+        raise ValueError("lf_synthesize: texture_sigma = %g smooths a %r frame "
+                         "down to a dynamic range of %.3g, below the %g floor — "
+                         "rescaling that to [0, 1] would amplify float dust into "
+                         "a texture with no meaningful disparity"
+                         % (sigma, tuple(shape), hi - lo, MIN_TEXTURE_RANGE))
     return (t - lo) / (hi - lo)
 
 
