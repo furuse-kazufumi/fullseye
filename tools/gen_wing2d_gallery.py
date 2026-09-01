@@ -1595,7 +1595,7 @@ def subject_doc_deskew(log=print) -> dict:
         "推定 %.1f° で逆回転 (真値 %.1f°・誤差 %+.1f°)" % (est, skew, est - skew),
         "otsu で二値化 — decode_barcode は %d 本 (真値 %d 本)"
         % (count_fix, n_true),
-        "傾き %.0f° を超えると補正なしでは本数が狂う。補正すれば 0〜42° 全域で %d 本"
+        "傾き %.0f° で補正なしの本数が狂い出す。補正すれば 0〜42° 全域で %d 本"
         % (min(broke) if broke else 42.0, n_true)]
     book = E.flipbook([_to_u8(s) for s in steps], labels,
                       title="帳票の傾き補正 —— バーを数えられる形に戻す")
