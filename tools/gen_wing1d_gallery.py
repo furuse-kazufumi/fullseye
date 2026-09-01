@@ -2848,6 +2848,39 @@ CAPTIONS = {
             f"{f['total_levels']} 段のうち {f['exact_lag_levels']} 段"
             f"(σ {f['exact_lag_up_to_sigma']:.3f} まで)で 4 点すべて lag = 0 を厳密に返す。"),
     },
+    "envelope_flow": {
+        "title": "欠陥周波数が出てくるまで(工程)",
+        "text": lambda f: (
+            f"幾何から出した外輪通過周波数 BPFO = {f['bpfo_hz']:.4f} Hz でわざと鳴らした"
+            f"軸受記録を、7 工程で診断まで持っていく。生スペクトルでは欠陥率の振幅は "
+            f"{f['raw_amplitude_at_defect']:.2e} しか無く、目立つのは "
+            f"{f['raw_peak_hz']:.0f} Hz の構造共振({f['raw_peak_amplitude']:.4f})。"
+            f"スペクトル尖度(窓 {f['sk_win']}、最大 {f['sk_max_kurtosis']:.4f} @ "
+            f"{f['sk_max_freq']:.0f} Hz)が復調帯域 {f['band_low_hz']:.0f}–"
+            f"{f['band_high_hz']:.0f} Hz を選び、帯域通過 → 包絡線 → 変換で "
+            f"{f['envelope_peak_freq']:.4f} Hz(突出度 {f['envelope_prominence']:.0f}、"
+            f"band_fraction {f['envelope_band_fraction']:.4f})。それが幾何の "
+            f"{f['closest_rate_name']} {f['closest_rate_hz']:.4f} Hz と "
+            f"{f['closest_rate_error_pct']:.4f} % で一致する。`dsp.bandpass` + "
+            f"`dsp.envelope` + rfft で手組みした結果と op の返りは "
+            f"{f['manual_vs_operator_max_abs_diff']:.1e} で一致した(作り直していない証拠)。"),
+    },
+    "octave_family": {
+        "title": "分数オクターブ帯域 ―― 偶数分数には 1 kHz 帯域が無い",
+        "text": lambda f: (
+            f"振幅 {f['tone_amplitude']} の {f['tone_hz']:.0f} Hz 純音を、1/1・1/2・1/3・"
+            f"1/6・1/12・1/24 オクターブで測った 6 枚。帯域レベルはどの分数でも閉形式 "
+            f"10log10(A²/2) = {f['closed_form_db']:.6f} dB を返す(最大差 "
+            f"{f['max_abs_diff_from_closed_db']:.1e} dB)。違うのは**どの帯域が**それを"
+            f"報告するかで、fraction が奇数 {f['fractions_with_exact_1k']} では "
+            f"1000.000 Hz ちょうどを中心とする帯域があるが、偶数 "
+            f"{f['fractions_without_exact_1k']} では指数のオフセットにより 1000 Hz が"
+            f"帯域**端**になり、同じエネルギーが "
+            f"{', '.join(f'{r['max_center']:.2f} Hz' for r in f['table'] if not r['exact_1k'])} "
+            f"を中心とする半端な帯域から報告される。定義であって不具合ではないが、"
+            f"「1 kHz でのレベル」を引用するときに知っていないと嘘になる。"
+            f"空の帯域は −inf ではなく床(−200 dB)に落ちる。"),
+    },
     "envelope_truncation": {
         "title": "包絡線の端が切れると 76 % 間違う",
         "text": lambda f: (
