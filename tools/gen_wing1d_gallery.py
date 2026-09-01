@@ -2944,6 +2944,12 @@ def _write_exhibit_md(results: dict, log) -> str:
         "図に焼いた数値は 1 つ残らずその場で op を呼んで得た実測値である。乱数は seed 固定、",
         "掃引格子も固定なので再生成でバイト列が一致する(`--verify` で検査)。",
         "",
+        "束ね方は `tools/exhibit_tile.py` の 3 種に従う ―― **コマ送り GIF**(`flipbook`、",
+        "掃引と工程。各コマに工程名と `i/N` の進捗バーが焼いてあるので止めても意味が分かる)、",
+        "**タイル**(`contact_sheet`、同じ軸にパラメータ違いを当てた小さなプロットを束ねる)、",
+        "**原寸 1 枚**(主張そのもの・軸と数値が読めないと意味が無い図)。静止画の Markdown は",
+        "すべて **サムネイル表示 + クリックで原寸** の形で出してある。",
+        "",
     ]
     for i, (name, _) in enumerate(EXHIBIT_ORDER, start=1):
         if name not in results:
