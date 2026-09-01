@@ -330,8 +330,8 @@ def _wrap(text, font, max_width):
 
 
 def measure_text(text, font_size=14, font_path=None, max_width=None,
-                 min_font_size=9, line_spacing=1.15):
-    """文字を**描く前に**測る。収まらないなら縮め、それでも駄目なら例外。
+                 min_font_size=9, line_spacing=1.15, wrap=True):
+    """文字を**描く前に**測る。収まらないなら折り返すか縮め、駄目なら例外。
 
     Parameters
     ----------
