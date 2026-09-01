@@ -341,12 +341,28 @@ def test_sinkhorn_refuses_when_only_some_rows_underflow():
     K = np.exp(-cost / 1e-3)
     assert np.any(K > 0) and np.count_nonzero(K) == 3
 
-    # 質量の配り方をずらすと、対角だけでは要求された周辺分布を作れない
+    # 質量の配り方をずらすと、対角だけでは要求された周辺分布を作れない。
+    # 反復は「収束」する(u が動かなくなる)が、答えは要求を満たしていない。
+    # 入力側の検査では通ってしまうので、**出した計画を測ってから返す**。
     a = np.array([0.6, 0.2, 0.2])
     b = np.array([0.2, 0.2, 0.6])
-    plan = CT.sinkhorn(a, b, cost, reg=1e-3, n_iter=5000, tol=1e-12)
-    # 行・列に生きた要素はあるので実行はされる。**返った計画は周辺分布を満たさない**
-    assert not np.allclose(plan.sum(axis=1), a, atol=1e-3), plan.sum(axis=1)
+    with pytest.raises(RuntimeError, match="marginals are off by"):
+        CT.sinkhorn(a, b, cost, reg=1e-3, n_iter=5000, tol=1e-12)
+
+
+def test_converging_is_not_the_same_as_converging_to_the_right_answer():
+    """上のケースが「発散」ではなく「間違った答えへの収束」であることの確認。
+
+    反復が止まらないなら既存の未収束チェックで捕まる。実際に危ないのは
+    **止まるのに答えが違う**場合で、それは出力を測らないと分からない。
+    """
+    cost = np.array([[0.0, 100.0], [100.0, 0.0]])
+    a = np.array([0.9, 0.1])
+    b = np.array([0.1, 0.9])
+    with pytest.raises(RuntimeError) as exc:
+        CT.sinkhorn(a, b, cost, reg=1e-3, n_iter=100000, tol=1e-12)
+    assert "did not converge" not in str(exc.value)      # 未収束ではない
+    assert "marginals are off by" in str(exc.value)
 
 
 def test_sinkhorn_raises_rather_than_returning_an_unconverged_plan():
