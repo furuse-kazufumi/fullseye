@@ -389,58 +389,56 @@ class DrawList:
         return self.add("contour", z, contour=contour, **kw)
 
     # -- 図注 --------------------------------------------------------------- #
-    def text_box(self, pos, text, size: float = 12.0, z: float = 0.0, **kw) -> "DrawList":
-        """下敷き付きの文字。``pos`` は箱の **左上** ``(x, y)``、``size`` は文字高(画素)。
+    def text_box(self, xy, text, font_size: float = 14.0, z: float = 0.0, **kw) -> "DrawList":
+        """下敷き付きの文字。``xy`` は ``anchor`` が指す隅、``font_size`` は文字高(画素)。
 
         フラッシュ前に、``text_metrics`` で測った箱が画像に収まるかを検査する。
-        収まらなければ **描かずに** :class:`DrawListError` になる。
+        収まらなければ **描かずに** :class:`DrawListError` になる。``anchor`` は
+        ``"lt"``(左上、既定)のように「横 ``l|c|r`` + 縦 ``t|c|b``」で書く。
         """
-        return self.add("text_box", z, pos=pos, text=text, size=size, **kw)
+        return self.add("text_box", z, text=text, xy=xy, font_size=font_size, **kw)
 
     def arrow(self, p0, p1, z: float = 0.0, **kw) -> "DrawList":
-        """``p0`` から ``p1`` への矢印(annotate 層へ委譲)。"""
+        """``p0`` から ``p1`` への矢印。"""
         return self.add("arrow", z, p0=p0, p1=p1, **kw)
 
-    def legend(self, pos, entries, z: float = 0.0, **kw) -> "DrawList":
-        """凡例(``entries`` は ``[[役割名, ラベル], ...]``)。"""
-        return self.add("legend", z, pos=pos, entries=entries, **kw)
+    def legend(self, xy, entries, z: float = 0.0, **kw) -> "DrawList":
+        """凡例(``entries`` は ``[[色または役割名, ラベル], ...]``)。"""
+        return self.add("legend", z, entries=entries, xy=xy, **kw)
 
-    def colorbar(self, pos, z: float = 0.0, **kw) -> "DrawList":
-        """カラーバー。"""
-        return self.add("colorbar", z, pos=pos, **kw)
+    def colorbar(self, lut, rect, z: float = 0.0, **kw) -> "DrawList":
+        """カラーバー(``lut`` は ``(N,3)``、``rect`` は画素の矩形)。"""
+        return self.add("colorbar", z, lut=lut, rect=rect, **kw)
 
-    def scalebar(self, pos, z: float = 0.0, **kw) -> "DrawList":
-        """スケールバー。"""
-        return self.add("scalebar", z, pos=pos, **kw)
+    def scalebar(self, length, units_per_pixel, z: float = 0.0, **kw) -> "DrawList":
+        """スケールバー。``length`` は **物理量**、``units_per_pixel`` が画素との橋。"""
+        return self.add("scalebar", z, length=length, units_per_pixel=units_per_pixel, **kw)
 
-    def axes(self, origin, z: float = 0.0, **kw) -> "DrawList":
-        """軸と目盛り。"""
-        return self.add("axes", z, origin=origin, **kw)
+    def axes(self, axes, z: float = 0.0, **kw) -> "DrawList":
+        """軸と目盛り(``axes`` は画素の枠とデータ範囲の複合記述)。"""
+        return self.add("axes", z, axes=axes, **kw)
 
-    def inset(self, pos, source, z: float = 0.0, **kw) -> "DrawList":
-        """拡大の差し込み(``source`` は元画像側の矩形)。"""
-        return self.add("inset", z, pos=pos, source=source, **kw)
+    def inset(self, src_rect, dst_xy, z: float = 0.0, **kw) -> "DrawList":
+        """拡大の差し込み(``src_rect`` を ``dst_xy`` へ拡大して置く)。"""
+        return self.add("inset", z, src_rect=src_rect, dst_xy=dst_xy, **kw)
 
     # -- 2-D グラフィックス -------------------------------------------------- #
-    def sprite(self, pos, z: float = 0.0, **kw) -> "DrawList":
-        """スプライト合成。"""
-        return self.add("sprite", z, pos=pos, **kw)
+    def sprite(self, sprite, x: float = 0.0, y: float = 0.0, z: float = 0.0,
+               **kw) -> "DrawList":
+        """スプライト合成(``sprite`` は入れ子リストの画素)。"""
+        return self.add("sprite", z, sprite=sprite, x=x, y=y, **kw)
 
-    def tile(self, z: float = 0.0, **kw) -> "DrawList":
-        """タイル敷き詰め。"""
-        return self.add("tile", z, **kw)
+    def vignette(self, z: float = 0.0, **kw) -> "DrawList":
+        """周辺減光(ポスト処理)。"""
+        return self.add("vignette", z, **kw)
 
-    def particles(self, points, z: float = 0.0, **kw) -> "DrawList":
-        """パーティクル。"""
-        return self.add("particles", z, points=points, **kw)
+    def bloom(self, z: float = 0.0, **kw) -> "DrawList":
+        """高輝度のにじみ(ポスト処理)。"""
+        return self.add("bloom", z, **kw)
 
-    def lighting(self, pos, z: float = 0.0, **kw) -> "DrawList":
-        """ライティング。"""
-        return self.add("lighting", z, pos=pos, **kw)
-
-    def post(self, z: float = 0.0, **kw) -> "DrawList":
-        """ポスト処理。"""
-        return self.add("post", z, **kw)
+    def color_grade(self, z: float = 0.0, **kw) -> "DrawList":
+        """色調整(ポスト処理)。"""
+        return self.add("color_grade", z, **kw)
 
     # -- 幾何 --------------------------------------------------------------- #
     def _spec(self, kind: str) -> CommandSpec | None:
