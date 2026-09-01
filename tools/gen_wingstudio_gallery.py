@@ -29,7 +29,8 @@
 * ``docs/articles/assets/wingstudio_<name>.png``      + ``_thumb.jpg``
 * ``docs/articles/assets/media/wingstudio_<name>.gif``
 * ``docs/articles/assets/thumbs/wingstudio_<name>_thumb.jpg``
-* ``docs/articles/exhibits/wingstudio.md``            キャプション原稿
+* ``docs/articles/exhibits/wingstudio.ja.md``        キャプション原稿(日本語)
+* ``docs/articles/exhibits/wingstudio.en.md``        キャプション原稿(英語)
 * ``docs/articles/assets/_wingstudio_meta.json``      実測値 + SHA-256
 
 使い方::
