@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | domain | GIF+mp4 | `media/wing3d_domain_memory.gif` | 40 フレーム, 1120x690, 0.48 MB, 256 色, mp4 0.07 MB | `8a3b89df7c282535` |
 | boundary | GIF+mp4 | `media/wing3d_boundary_shell.gif` | 36 フレーム, 1120x640, 2.74 MB, 128 色, mp4 1.59 MB | `d56e8ff18bc8163e` |
-| rle | PNG | `wing3d_rle_compression.png` | 1120x720, 107 kB | `5c87eb6953fa5df3` |
+| rle | PNG | `wing3d_rle_compression.png` | 1120x786, 109 kB | `5ed1e9464bf1367d` |
 | windowing | GIF+mp4 | `media/wing3d_ct_windowing.gif` | 40 フレーム, 1120x726, 0.50 MB, 256 色, mp4 0.08 MB | `5e745b230bbe437a` |
 | vesselness | PNG | `wing3d_vesselness_control.png` | 1120x700, 72 kB | `cc38dce5f5e7553b` |
 | skeleton | GIF+mp4 | `media/wing3d_skeleton_graph.gif` | 48 フレーム, 1120x660, 1.41 MB, 256 色, mp4 0.26 MB | `0c27c243f2169388` |

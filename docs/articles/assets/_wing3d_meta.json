@@ -160,12 +160,12 @@
           128.0,
           128.0
         ],
-        "volume_speedup_raw": 239.92201339382157,
-        "bbox_speedup_raw": 45.3061977902117,
-        "t_rle_volume_us_raw": 29.099872335791588,
-        "t_dense_volume_us_raw": 6981.699960306287,
-        "t_rle_bbox_us_raw": 44.40010525286198,
-        "t_dense_bbox_us_raw": 2011.599950492382,
+        "volume_speedup_raw": 238.76720914099815,
+        "bbox_speedup_raw": 35.0203727398582,
+        "t_rle_volume_us_raw": 29.19998951256275,
+        "t_dense_volume_us_raw": 6972.000002861023,
+        "t_rle_bbox_us_raw": 44.39987242221832,
+        "t_dense_bbox_us_raw": 1554.9000818282366,
         "dense_elements": 16777216,
         "rle_elements": 59292,
         "union_voxels": 1508456,
@@ -175,16 +175,16 @@
       "caption": "256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **dense を一度も作らずに**返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。所要時間も実測してあるが、壁時計は再生成のたびに変わるので図には焼かず `_wing3d_meta.json` に置いた。",
       "kind": "png",
       "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression.png",
-      "png_bytes": 106510,
+      "png_bytes": 109240,
       "png_size": [
         1120,
-        720
+        786
       ],
-      "png_sha256": "5c87eb6953fa5df3446affe5f767cd834a52203690eab35a545dc470aea58f7b",
+      "png_sha256": "5ed1e9464bf1367dbed51169f05999b952607c2de384f188976f5650218947e6",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression_thumb.jpg",
-      "thumb_bytes": 53440,
+      "thumb_bytes": 57181,
       "exhibit": "rle",
-      "seconds": 3.2084957000333816
+      "seconds": 3.2087077000178397
     },
     {
       "name": "wing3d_ct_windowing",

@@ -951,7 +951,7 @@ def ex_rle(log) -> dict:
         f"= {t_den_vol / t_rle_vol:.0f}x ;  bbox {t_den_bb / t_rle_bb:.0f}x "
         f"(いずれも図には焼かない)")
 
-    W, H = 1120, 720
+    W, H = 1120, 786
     c = _canvas(W, H)
     c = _header(c, "run-length で持つ — ビットマップを作らずに測る",
                 "256³ の合成部品(球 + 軸 + フランジ)。RLE は「x 方向に連続する区間」"
@@ -997,8 +997,8 @@ def ex_rle(log) -> dict:
               title="実際に保持している数値の個数(厳密値。RLE は 3 x run 数)")
     c = _bars(c, 430, 380, 672, 96,
               [float(v_un), float(v_in)],
-              ["union(球 U 軸)", "intersect(球 ^ 軸)"], [C_D, C_C], fmt="%.0f voxel",
-              title="run のまま解いた集合演算の結果(一度も展開していない)")
+              ["union(球 U 軸)", "intersect(球 ^ 軸)"], [C_D, C_C], fmt="%.0f",
+              title="run のまま解いた集合演算の結果 [voxel](一度も展開していない)")
 
     rows = [
         f"メモリ比            1/{ratio:.1f}  ({dense_bytes / 1e6:.2f} MB -> {rle.nbytes / 1e6:.3f} MB, run 数 {len(rle):,})",
@@ -1024,7 +1024,7 @@ def ex_rle(log) -> dict:
                    C_DIM, 12, False)])
     c = _footer(c, "使用 op: vol_rle_encode / vol_rle_decode / vol_rle_volume / "
                    "vol_rle_bbox / vol_rle_centroid / vol_rle_union / vol_rle_intersect / "
-                   "vol_rle_difference  — 合成データ")
+                   "vol_rle_difference  — 合成データ", y_off=24)
     info = _save_png(c, "wing3d_rle_compression", log)
     return {
         "name": "wing3d_rle_compression", "title": "run-length で 1/%.0f" % ratio,

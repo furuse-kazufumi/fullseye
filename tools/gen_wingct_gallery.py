@@ -525,48 +525,68 @@ def ex_volume_chart():
     lo = min(all_v) * 0.985
     hi = max(all_v) * 1.015
 
-    def panel(x0, y0, w, h, xs, ys, xlabels, title, sub):
+    def val_fmt(v):
+        return f"{v:.0f}"
+
+    def panel(x0, y0, w, h, xs, ys, xlabels, title, sub, mark=None):
         dr.text((x0 + w // 2, y0 - 22), title, fill=et.FG, font=f_a, anchor="mm")
         dr.rectangle([x0, y0, x0 + w, y0 + h], outline=(60, 60, 78))
-        # 真値と digitisation 天井の水平線
-        for val, col, tag in ((true_mm3, (250, 190, 90), "真値 (閉形式)"),
-                              (v_digital, (120, 190, 250), "この格子の天井")):
+        # 真値と digitisation 天井の水平線。ラベルは左右に振り分けて重ねない。
+        for val, col, tag, side in (
+                (true_mm3, (250, 190, 90),
+                 "真値(閉形式) %s" % val_fmt(true_mm3), "l"),
+                (v_digital, (120, 190, 250),
+                 "この格子の天井 %s" % val_fmt(v_digital), "r")):
             yy = y0 + h - (val - lo) / (hi - lo) * h
-            for xx in range(x0, x0 + w, 9):
+            for xx in range(x0 + 2, x0 + w - 2, 9):
                 dr.line([xx, yy, xx + 4, yy], fill=col)
-            dr.text((x0 + w - 6, yy - 11), f"{tag} {val:.0f}", fill=col,
-                    font=f_s, anchor="rm")
+            dy = -13 if side == "l" else 12
+            if side == "l":
+                dr.text((x0 + 8, yy + dy), tag, fill=col, font=f_s, anchor="lm")
+            else:
+                dr.text((x0 + w - 8, yy + dy), tag, fill=col, font=f_s, anchor="rm")
         pts = []
         for i, (xv, yv) in enumerate(zip(xs, ys)):
-            px = x0 + 34 + i * (w - 60) / max(len(xs) - 1, 1)
+            px = x0 + 40 + i * (w - 76) / max(len(xs) - 1, 1)
             py = y0 + h - (yv - lo) / (hi - lo) * h
             pts.append((px, py))
             dr.text((px, y0 + h + 15), xlabels[i], fill=et.MUTED, font=f_s,
                     anchor="mm")
-            dr.text((px, py - 15), f"{yv:.0f}", fill=et.FG, font=f_s, anchor="mm")
+            dr.text((px, py - 16), f"{yv:.0f}", fill=et.FG, font=f_s, anchor="mm")
         dr.line(pts, fill=(150, 210, 255), width=2)
         for px, py in pts:
             dr.ellipse([px - 4, py - 4, px + 4, py + 4], fill=(150, 210, 255))
+        if mark is not None:
+            px, py = pts[mark]
+            dr.ellipse([px - 9, py - 9, px + 9, py + 9], outline=(250, 140, 90),
+                       width=2)
+            dr.text((px + 14, py), "← 信用できない領域", fill=(250, 140, 90),
+                    font=f_s, anchor="lm")
         dr.text((x0 + w // 2, y0 + h + 40), sub, fill=et.MUTED, font=f_s,
                 anchor="mm")
 
-    span_v = max(measured) - min(measured)
+    span_v_all = max(measured) - min(measured)
+    span_v16 = max(measured[1:]) - min(measured[1:])
     span_t = max(thr_vols) - min(thr_vols)
     panel(70, 90, 470, 340, views, measured, [str(v) for v in views],
-          "投影数を変える", f"振れ幅 {span_v:.0f} mm3  "
-          f"({span_v / true_mm3:.1%} of 真値) / 横軸 = 投影数")
+          "投影数を変える",
+          f"16-128 本の振れ幅 {span_v16:.0f} mm3 ({span_v16 / true_mm3:.2%}) / "
+          f"8 本を含めると {span_v_all:.0f} mm3 / 横軸 = 投影数", mark=0)
     panel(640, 90, 470, 340, thr_fracs, thr_vols,
           [f"{f:.2f}" for f in thr_fracs], "二値化しきい値を変える",
-          f"振れ幅 {span_t:.0f} mm3  ({span_t / true_mm3:.1%} of 真値) / "
+          f"振れ幅 {span_t:.0f} mm3  ({span_t / true_mm3:.2%} of 真値) / "
           f"横軸 = しきい値 (減弱比)")
     dr.text((W // 2, H - 46),
-            f"しきい値の任意性のほうが投影数より {span_t / max(span_v, 1e-9):.0f} 倍効く。"
-            f"投影 8 本の再構成は nRMS {nrmses[0]:.3f}"
-            f"({nrmses[-1]:.3f} の {nrmses[0]/nrmses[-1]:.1f} 倍)で壊れているのに、",
+            f"投影 16 本以上では体積は {span_v16 / true_mm3:.2%} しか動かない"
+            f"(nRMS は {nrmses[1]:.3f} → {nrmses[-1]:.3f} と "
+            f"{nrmses[1]/nrmses[-1]:.1f} 倍改善するのに)。"
+            f"しきい値は {span_t / true_mm3:.1%} 動かす ―― "
+            f"{span_t / max(span_v16, 1e-9):.0f} 倍効く。",
             fill=et.FG, font=f_a, anchor="mm")
     dr.text((W // 2, H - 22),
-            f"体積は {measured[0]:.0f} mm3 ({measured[0]/true_mm3-1:+.1%}) と正しく見える。"
-            f"壊れを教えるのは体積でなく連結成分の数({comps[0]} 個 対 {comps[-1]} 個)。",
+            f"8 本の点だけは別で、体積 {measured[0]/true_mm3-1:+.1%} は再現しない"
+            f"(面内 128 画素では -0.0%)。壊れを教えるのは体積でなく連結成分の数"
+            f"({comps[0]} 個 対 {comps[-1]} 個)。",
             fill=et.FG, font=f_a, anchor="mm")
 
     info = et.save_exhibit(np.asarray(im, np.float64) / 255.0,
