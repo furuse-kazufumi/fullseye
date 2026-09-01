@@ -790,51 +790,80 @@ def subject_denoise_compare(log=print) -> dict:
 # 展示 4: ヒストグラム整形 / histogram shaping                                   #
 # --------------------------------------------------------------------------- #
 def subject_hist_shaping(log=print) -> dict:
-    """コントラストを潰していく入力に equalize / clahe を当て std と entropy を実測."""
+    """clahe の clip limit を振り、equalize と並べて std / entropy を実測.
+
+    ★2026-09-02 の書き直し: それまでこの展示は「入力を潰していっても平坦化した側は
+    幅を保つ」という 1 本の主張だったが、当時の `clahe` は **clip limit が実装されて
+    おらず `b` が完全に死んでいた**(`max|clahe(x,·,0) - clahe(x,·,1)| == 0.0` きっかり
+    = 実装は AHE)。clip limit が入った今、`b` は「どこまで強調するか」のつまみとして
+    生きているので、**その 1 本のつまみで絵と数字がどう動くか**をこの展示の主題にする。
+    `b` = ビン平均カウントに対する倍率 `256**b`(b=0 → ×1 = 強調ゼロ、b=1 → ×256 =
+    切り取りが起きない = 素の AHE = 旧実装とビット一致、OpenCV 既定の clipLimit=40 は
+    b≈0.665 相当)。
+    """
     src = _load_gray("page.png")                    # 照明ムラのある文書画像
     n = 12
     K = np.linspace(1.0, 0.16, n)                   # コントラスト圧縮率
+    BS = [0.0, 0.5, 1.0]                            # 振る clip limit (b)
+    B_LAB = {0.0: "b=0.00 (×1 = 強調ゼロ)",
+             0.5: "b=0.50 (×16)",
+             1.0: "b=1.00 (×256 = 切り取り無し)"}
     mid = float(np.mean(src))
+
+    def _std(v):
+        return float(fs.apply(np.asarray(v, np.float64), "gray_histo_abs", 0.5, 0.5))
+
+    def _ent(v):
+        return float(fs.apply(np.asarray(v, np.float64), "entropy_gray", 0.5, 0.5))
+
     rows = []
     for k in K:
         low = np.clip(mid + (src - mid) * k, 0, 1)  # 低コントラスト化 (numpy 合成)
         eq = np.asarray(fs.apply(low, "equalize", 0.5, 0.5), np.float64)
-        cl = np.asarray(fs.apply(low, "clahe", 0.67, 0.5), np.float64)
-        rows.append({
-            "low": low, "eq": eq, "cl": cl,
-            "std": {t: float(fs.apply(v, "gray_histo_abs", 0.5, 0.5))
-                    for t, v in (("low", low), ("eq", eq), ("cl", cl))},
-            "ent": {t: float(fs.apply(v, "entropy_gray", 0.5, 0.5))
-                    for t, v in (("low", low), ("eq", eq), ("cl", cl))}})
-    C_LOW, C_EQ, C_CL = (170, 170, 185), (255, 176, 96), (130, 220, 255)
+        cls = {b: np.asarray(fs.apply(low, "clahe", 0.67, float(b)), np.float64)
+               for b in BS}
+        imgs = {"low": low, "eq": eq}
+        imgs.update({"cl%.2f" % b: cls[b] for b in BS})
+        rows.append({"img": imgs,
+                     "std": {t: _std(v) for t, v in imgs.items()},
+                     "ent": {t: _ent(v) for t, v in imgs.items()},
+                     # clip limit を振ったときの「絵そのものの動き」も実測で残す
+                     "b_span": float(np.max(np.abs(cls[1.0] - cls[0.0])))})
+    C_LOW, C_EQ = (170, 170, 185), (255, 176, 96)
+    C_CL = {0.0: (120, 235, 160), 0.5: (130, 220, 255), 1.0: (238, 150, 255)}
     frames = []
     for i, k in enumerate(K):
         R = rows[i]
         grid = _panel_grid(
-            [src, R["low"], R["eq"], R["cl"]],
-            ["元の文書画像 (page.png)\nstd %.4f" % rows[0]["std"]["low"],
-             "コントラストを %.2f 倍に圧縮\nstd %.4f / entropy %.3f"
-             % (k, R["std"]["low"], R["ent"]["low"]),
-             "equalize (画像全体で平坦化)\nstd %.4f / entropy %.3f"
-             % (R["std"]["eq"], R["ent"]["eq"]),
-             "clahe (タイル 4×4 で平坦化)\nstd %.4f / entropy %.3f"
-             % (R["std"]["cl"], R["ent"]["cl"])],
-            4, tile=(262, 262), label_h=56,
-            title="ヒストグラム整形 —— どこまで戻せるか",
-            sub="入力コントラスト %.2f 倍" % k)
+            [R["img"]["low"], R["img"]["eq"]]
+            + [R["img"]["cl%.2f" % b] for b in BS],
+            ["コントラストを %.2f 倍に圧縮 (元は std %.4f)\nstd %.4f / entropy %.3f"
+             % (k, rows[0]["std"]["low"], R["std"]["low"], R["ent"]["low"]),
+             "equalize (画像全体で 1 枚の平坦化)\nstd %.4f / entropy %.3f"
+             % (R["std"]["eq"], R["ent"]["eq"])]
+            + ["clahe %s\nstd %.4f / entropy %.3f"
+               % (B_LAB[b], R["std"]["cl%.2f" % b], R["ent"]["cl%.2f" % b])
+               for b in BS],
+            5, tile=(262, 262), label_h=56,
+            title="clahe の clip limit を振る —— 「どこまで強調するか」の 1 本のつまみ",
+            sub="入力コントラスト %.2f 倍 / タイル 4×4 / b=0↔b=1 の最大差 %.4f"
+                % (k, R["b_span"]))
         hist = _hist_panel(
-            [R["low"], R["eq"], R["cl"]],
-            ["圧縮した入力", "equalize", "clahe"], [C_LOW, C_EQ, C_CL],
+            [R["img"]["low"], R["img"]["eq"]]
+            + [R["img"]["cl%.2f" % b] for b in BS],
+            ["圧縮した入力", "equalize"] + ["clahe b=%.2f" % b for b in BS],
+            [C_LOW, C_EQ] + [C_CL[b] for b in BS],
             grid.shape[1] // 2 - 4, 300, ylim=(0, 0.18),
             title="輝度ヒストグラム (64 bin・頻度は正規化)")
         curve = _plot(
             [{"x": K[:i + 1], "y": [r["std"][t] for r in rows[:i + 1]],
               "color": c, "label": lab}
-             for t, c, lab in (("low", C_LOW, "入力の std"),
-                               ("eq", C_EQ, "equalize 後の std"),
-                               ("cl", C_CL, "clahe 後の std"))],
+             for t, c, lab in ([("low", C_LOW, "入力の std"),
+                                ("eq", C_EQ, "equalize 後")]
+                               + [("cl%.2f" % b, C_CL[b], "clahe b=%.2f" % b)
+                                  for b in BS])],
             grid.shape[1] // 2 - 4, 300, xlim=(0.16, 1.0), ylim=(0, 0.32),
-            title="gray_histo_abs (標準偏差) で見た復元度",
+            title="gray_histo_abs (標準偏差) で見た戻り具合",
             xlabel="入力コントラスト倍率", legend_pos="bl")
         from PIL import Image
         row = Image.new("RGB", (grid.shape[1], 300), BG)
@@ -842,28 +871,43 @@ def subject_hist_shaping(log=print) -> dict:
         row.paste(Image.fromarray(curve, "RGB"), (grid.shape[1] - curve.shape[1], 0))
         frames.append(_stack_v([grid, np.asarray(row, np.uint8)], pad=6))
     info = _save_gif(frames, "wing2d_hist_shaping", fps=2.5, hold_last=3)
+    keys = ["low", "eq"] + ["cl%.2f" % b for b in BS]
     return {
         "name": "hist_shaping", "kind": "gif", "file": info["path"],
         "thumb": info["thumb"], "frames": info["frames"],
-        "bytes": info["bytes"], "size": info["size"], "panels": 6,
-        "title": "ヒストグラム整形 —— equalize と clahe",
+        "bytes": info["bytes"], "size": info["size"], "panels": 5,
+        "title": "ヒストグラム整形 —— clahe の clip limit を振る",
         "ops": ["equalize", "clahe", "gray_histo_abs", "entropy_gray"],
         "data": "skimage.data page (BSD / public domain)",
         "measured": {
             "contrast_factor": [round(float(x), 3) for x in K],
-            "std": {t: [round(r["std"][t], 4) for r in rows]
-                    for t in ("low", "eq", "cl")},
+            "clip_limit_b": BS,
+            "clip_limit_meaning": ("b はビン平均カウントに対する倍率 256**b。"
+                                   "b=0 → ×1 = 強調ゼロ、b=1 → ×256 = 切り取りが"
+                                   "起きない素の AHE (2026-09-02 以前の実装と"
+                                   "ビット一致)"),
+            "std": {t: [round(r["std"][t], 4) for r in rows] for t in keys},
             "entropy_norm": {t: [round(r["ent"][t], 4) for r in rows]
-                             for t in ("low", "eq", "cl")},
+                             for t in keys},
+            "max_abs_diff_b0_vs_b1": [round(r["b_span"], 4) for r in rows],
         },
         "caption": (
-            "文書画像のコントラストを 1.00→%.2f 倍まで潰していき、equalize と clahe で"
-            "戻せるかを追った。入力の標準偏差は %.4f→%.4f まで落ちるが、equalize 後は "
-            "%.4f→%.4f、clahe 後は %.4f→%.4f にとどまる。ヒストグラムは入力が針のように"
-            "細くなっても、平坦化した側は幅を保ったままだ。"
+            "文書画像のコントラストを 1.00→%.2f 倍まで潰していき、`equalize` と "
+            "`clahe` で戻せるかを追った。見どころは clahe の第 2 引数 `b` = **clip "
+            "limit**(ビン平均カウントに対する倍率 256^b。b=0 → ×1 = 強調ゼロ、"
+            "b=1 → ×256 = 切り取りが一度も効かない素の AHE、OpenCV 既定の "
+            "clipLimit=40 は b≈0.665 相当)。入力の標準偏差が %.4f→%.4f まで落ちる"
+            "とき、b=0.00 は %.4f→%.4f、b=0.50 は %.4f→%.4f、b=1.00 は %.4f→%.4f。"
+            "同じ 1 枚に対する b=0 と b=1 の画素差は最大 %.4f まで開く —— つまみ 1 本で"
+            "「入力の潰れをどこまで無視して持ち上げるか」が決まる。`equalize` は"
+            "画像全体を 1 枚の写像で平坦化するので %.4f→%.4f と最後まで幅を保つが、"
+            "その代わり照明ムラは残ったままだ。"
             % (K[-1], rows[0]["std"]["low"], rows[-1]["std"]["low"],
-               rows[0]["std"]["eq"], rows[-1]["std"]["eq"],
-               rows[0]["std"]["cl"], rows[-1]["std"]["cl"])),
+               rows[0]["std"]["cl0.00"], rows[-1]["std"]["cl0.00"],
+               rows[0]["std"]["cl0.50"], rows[-1]["std"]["cl0.50"],
+               rows[0]["std"]["cl1.00"], rows[-1]["std"]["cl1.00"],
+               max(r["b_span"] for r in rows),
+               rows[0]["std"]["eq"], rows[-1]["std"]["eq"])),
     }
 
 
