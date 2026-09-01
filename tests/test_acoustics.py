@@ -193,9 +193,76 @@ def test_spectral_kurtosis_selects_a_band_that_demodulates():
                                     damping=0.05, noise_sigma=0.05, seed=3)
     sk = A.spectral_kurtosis(x, fs)
     assert sk["max_kurtosis"] > 1.0
-    lo = max(1.0, sk["max_freq"] - sk["bin_hz"])
-    hi = sk["max_freq"] + sk["bin_hz"]
+    lo, hi = sk["band_lo"], sk["band_hi"]
+    # this bin is interior on both sides, so the band is the plain +- one bin
+    assert (lo, hi) == (sk["max_freq"] - sk["bin_hz"], sk["max_freq"] + sk["bin_hz"])
     assert abs(A.envelope_spectrum(x, fs, lo, hi)["peak_freq"] - fd) < 1e-9
+
+
+def test_spectral_kurtosis_band_survives_the_top_bin_handoff():
+    """The sibling-op handoff bug: `max_freq +- bin_hz` assembled by the caller
+    lands *on* Nyquist whenever the winning bin is the topmost interior one, and
+    `envelope_spectrum` fail-closes on it. Measured on the family's own minimal
+    example (AM, 25600 Hz, 3 kHz carrier, 107 Hz defect, m = 0.5), whose kurtosis
+    maximum is 12400 Hz with bin_hz 400 against a Nyquist of 12800.
+
+    Both operators are individually right; the contract between them was not.
+    `envelope_spectrum` keeps refusing (there really is no band at Nyquist) and
+    `spectral_kurtosis` now hands over a band that is legal by construction."""
+    fs = 25600.0
+    x = A.synthesize_bearing_signal(fs, 1.0, 3000.0, 107.0, modulation=0.5,
+                                    mode="am")
+    sk = A.spectral_kurtosis(x, fs)
+    # the precondition of the original bug, pinned so the test cannot go vacuous
+    assert sk["max_freq"] == 12400.0 and sk["bin_hz"] == 400.0
+    assert sk["freqs"][-1] == 0.5 * fs                 # freqs include Nyquist
+    assert sk["max_freq"] + sk["bin_hz"] == 0.5 * fs   # the hand-built edge
+
+    with pytest.raises(ValueError, match="at or above Nyquist"):
+        A.envelope_spectrum(x, fs, sk["max_freq"] - sk["bin_hz"],
+                            sk["max_freq"] + sk["bin_hz"])
+
+    assert (sk["band_lo"], sk["band_hi"]) == (12000.0, 12600.0)
+    env = A.envelope_spectrum(x, fs, sk["band_lo"], sk["band_hi"])
+    # returning is not the same as finding: SK itself says there is nothing here
+    assert sk["max_kurtosis"] < sk["noise_sigma"]
+    assert env["band_fraction"] < 1e-3
+    # ...whereas the known resonance band on the same signal is the real thing
+    assert abs(A.envelope_spectrum(x, fs, 2000.0, 4000.0)["peak_freq"] - 107.0) < 1e-9
+
+
+@pytest.mark.parametrize("fs,n,win", [
+    (25600.0, 25600, None), (25600.0, 25600, 16), (25600.0, 25600, 64),
+    (16000.0, 8192, 32), (48000.0, 16384, 64), (1000.0, 4096, 16),
+    (25600.0, 4096, 128),
+])
+def test_spectral_kurtosis_band_is_always_a_legal_envelope_spectrum_call(fs, n, win):
+    """Whatever bin wins, the band handed over is inside the open interval the
+    consumer accepts — checked against the consumer itself, not against a
+    re-implementation of its rule."""
+    x = A.synthesize_bearing_signal(fs, n / fs, 0.12 * fs, 107.0,
+                                    mode="impulse", damping=0.05,
+                                    noise_sigma=0.05, seed=11)
+    sk = A.spectral_kurtosis(x, fs, win=win)
+    assert 0.0 < sk["band_lo"] < sk["band_hi"] < 0.5 * fs
+    env = A.envelope_spectrum(x, fs, sk["band_lo"], sk["band_hi"])
+    assert env["band"] == (sk["band_lo"], sk["band_hi"])
+
+
+def test_acoustics_guide_python_snippets_actually_run():
+    """The documented recipe is executed, not just spell-checked. This guide's
+    minimal example *was* the failing handoff above: it was committed, read, and
+    copied into an article while raising ValueError on its own inputs."""
+    import os
+    import re
+    guide = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                         "docs", "ops", "acoustics", "guides",
+                         "acoustic_condition_monitoring.md")
+    with open(guide, encoding="utf-8") as f:
+        blocks = re.findall(r"```python\n(.*?)```", f.read(), re.S)
+    assert blocks, "the acoustics guide lost its runnable snippet"
+    for src in blocks:
+        exec(compile(src, guide, "exec"), {"__name__": "__guide__"})
 
 
 def test_spectral_kurtosis_window_must_be_shorter_than_the_repetition():
