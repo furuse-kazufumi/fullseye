@@ -74,7 +74,7 @@ def test_mla_index_arithmetic_is_the_documented_interleave():
     rng = np.random.default_rng(2)
     lf = rng.random((5, 4, 9, 6))
     raw = LF.lf_to_mla(lf)
-    for (v, u, t, s) in [(0, 0, 0, 0), (1, 3, 2, 7), (4, 2, 8, 5), (2, 1, 5, 3)]:
+    for (v, u, t, s) in [(0, 0, 0, 0), (1, 3, 2, 5), (4, 2, 8, 4), (2, 1, 5, 3)]:
         assert raw[t * 5 + v, s * 4 + u] == lf[v, u, t, s]
 
 
