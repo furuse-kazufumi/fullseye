@@ -972,12 +972,22 @@ def motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4,
     coherence = float(coh_num / coh_den) if coh_den > 0.0 else 1.0
     snr_in = band_snr(vid, lo, hi, fs)
     snr_out = band_snr(out, lo, hi, fs)
+    # band_snr estimates the in-band noise floor from the *out-of-band* bins,
+    # which magnification does not touch — so reading motion_snr_db straight off
+    # the magnified clip credits alpha^2 more in-band power against an unchanged
+    # noise estimate and reports an improvement that did not happen (measured:
+    # +6.86 dB at alpha=2 on a clip whose true motion SNR cannot have moved).
+    # The gain the in-band noise actually received is known here, so it is
+    # applied: this is the number that belongs next to the magnified video.
+    noise_out = snr_out["noise_power_per_bin"] * snr_out["band_bins"] * a * a
+    motion_out_db, _c = _db(max(snr_out["band_power"] - noise_out, 0.0), noise_out)
     return {
         "video": out, "alpha": a, "band_hz": (lo, hi), "fps": fs,
         "scales": ns, "orientations": no,
         "snr_in": snr_in, "snr_out": snr_out,
         "image_snr_change_db": snr_out["image_snr_db"] - snr_in["image_snr_db"],
-        "motion_snr_change_db": snr_out["motion_snr_db"] - snr_in["motion_snr_db"],
+        "motion_snr_out_db": motion_out_db,
+        "motion_snr_change_db": motion_out_db - snr_in["motion_snr_db"],
         "phase_shift_max_rad": max_shift,
         "phase_shift_rms_rad": rms_shift,
         "linear_regime": bool(rms_shift < np.pi),
