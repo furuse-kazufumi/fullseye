@@ -514,6 +514,18 @@ def test_ledger_call_returns_the_declared_pairs_type():
     assert np.allclose(pairs[:, 0], [0.0, 100.0])
 
 
+def test_public_facade_exposes_every_op_except_the_one_that_would_shadow():
+    """``fs.<op>`` で引ける。ただし ``overlay_mask`` だけは**わざと出さない**。"""
+    import fullseye as fs
+    missing = [n for n in A.__all__ if n != "overlay_mask" and not hasattr(fs, n)]
+    assert not missing, f"not reachable from the facade: {missing}"
+    assert fs.overlay_mask.__module__ == "imgio", (
+        "fs.overlay_mask must stay the existing imgio one — shadowing it with the "
+        "annotate version (different colour convention, different mask rule) would "
+        "silently change every existing caller's picture")
+    assert fs.annotate.overlay_mask.__module__ == "annotate"
+
+
 def test_example_gallery_runs():
     import importlib.util
     import os
