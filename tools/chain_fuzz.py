@@ -145,6 +145,9 @@ PARAM_HINTS = {
     "rate": lambda rng: 100.0, "new_rate": lambda rng: 50.0,
     "x": lambda rng: 1.0, "step": lambda rng: 2,
     "radius": lambda rng: 1.5, "ratio": lambda rng: 0.2,
+    # 励起サイクル数(パイルアップ補正の分母)。tcspc_simulate 既定の総カウント
+    # ~87 に対して十分大きくないと Coates 逆変換が定義域を外れる
+    "cycles": lambda rng: 1_000_000,
     # 角度分解能。既定の (5,5) はファザーの 32x32 image2d を割り切れず
     # lf_from_mla が必ず ValueError になるので、割り切れる (4,4) を渡す
     "angular": lambda rng: (4, 4),
