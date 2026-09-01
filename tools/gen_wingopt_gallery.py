@@ -2199,12 +2199,12 @@ def _write_captions(results, log):
                 f"{info['size'][0]}×{info['size'][1]} px / "
                 f"{info['bytes'] / 1e6:.2f} MB。</small>")
         else:
-            thumb = os.path.basename(info["thumb"])
-            lines.append(f"[![{title}]({RAW_BASE}{thumb})]({RAW_BASE}{base})")
+            # サムネイル表示 + クリックで原寸 = 共通部品 exhibit_tile.markdown の形。
+            stem = os.path.splitext(base)[0]
+            lines.append(markdown(stem, title,
+                                  f"**{title}** ―― {cap} 使用 op: {ops}。").rstrip())
             lines.append("")
-            lines.append(f"*↑ **{title}** ―― {cap} 使用 op: {ops}。*")
-            lines.append("")
-            lines.append(f"<small>フル解像度: {RAW_BASE}{base} "
+            lines.append(f"<small>クリックで原寸 "
                          f"({info['size'][0]}×{info['size'][1]} px / "
                          f"{info['bytes'] / 1e3:.0f} kB)。</small>")
         lines.append("")

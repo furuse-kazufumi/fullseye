@@ -453,7 +453,7 @@ def build_csi(log):
     HUD = 28
     axA = Axes(78, 58, W - 14, 232, 0.10, 1.00, -0.22, 1.06)
     axB = Axes(78, 268, W - 14, 382, 0.10, 1.00, -3.6, 0.6)
-    axZ = Axes(78, 436, W - 14, 552, 3.6, 8.8, -0.05, 0.95)
+    axZ = Axes(78, 436, W - 14, 552, 3.6, 8.8, -0.14, 0.95)
     H = 630
 
     out = []
@@ -525,7 +525,7 @@ def build_csi(log):
             (axA.x1 - 152, axA.y1 + 22, "true step height [um] ->", C_DIM, 11, False),
             (axB.x1 - 152, axB.y1 + 22, "true step height [um] ->", C_DIM, 11, False),
             (axZ.x1 - 110, axZ.y1 + 22, "scan position z [um] ->", C_DIM, 11, False),
-            (int(axA.X(LAM / 4.0)) + 6, axA.y0 + 4, f"lambda/4 = {LAM / 4:.2f} um",
+            (int(axA.X(LAM / 4.0)) + 6, axA.y1 - 34, f"lambda/4 = {LAM / 4:.2f} um",
              C_AMBR, 11, True),
             (14, H - 52,
              f"true step {s:5.3f} um    coherence {csi[i]:+8.5f} um "
@@ -540,11 +540,11 @@ def build_csi(log):
               f"{first_break:.2f} um"), C_DIM, 12, False),
             (14, H - 16,
              f"coherence method over the whole sweep: max |error| {csi_max * 1000:.4f} nm, "
-             f"RMS {csi_rms * 1000:.4f} nm, {len(fine)} step heights   |   design: "
+             f"RMS {csi_rms * 1000:.4f} nm over {len(fine)} step heights   |   "
              f"coherence length {des['coherence_length_um']:.3f} um, Nyquist z-step "
-             f"{des['max_z_step_um']:.3f} um", C_DIM, 11, False),
+             f"{des['max_z_step_um']:.2f} um", C_DIM, 11, False),
         ]
-        labels += _legend(axA.x0 + 10, axA.y0 + 6, [
+        labels += _legend(axA.x1 - 356, axA.y0 + 6, [
             (C_TEAL, "csi_height_map (coherence envelope peak)"),
             (C_BLUE, "decode_fringe (4-step phase shifting)"),
             (C_DIM, "ground truth y = x"),
