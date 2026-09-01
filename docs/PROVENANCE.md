@@ -48,13 +48,28 @@ The line is between **what to work on** and **how it works**:
 | Using the standard technical vocabulary of the field | Implying endorsement, partnership, or that we are compatible with a named product |
 
 **Naming rule.** Company and product names never appear in module names, operator
-names, API surface, docstrings, or documentation. Only the field's own
+names, API surface, or as the stated motivation for a module. Only the field's own
 established terminology is used — *photometric stereo*, *light field* /
 *plenoptic*, *SPAD*, *TCSPC*, *depth of field*, *MTF*. Those are textbook terms,
 not anyone's mark, and using them is what makes the operators findable. A
 commit message that says a module is "derived from" a commercial product is
 wrong even when the code is independent, because provenance is judged on what we
 wrote down, not on what we meant.
+
+**Three uses of a third-party name, and only one of them is banned.** An earlier
+draft of this rule said such names must never appear *anywhere*, which the
+repository itself does not obey — so the rule was unenforceable and therefore not
+auditable. The honest, checkable version separates three cases:
+
+| use | verdict | why | example in this repo |
+|---|---|---|---|
+| **Naming or motivating our own work** after a product — a module, an operator, an API name, or a docstring that says "this exists because product X does it" | **banned** | this is what creates a false provenance record, regardless of how the code was actually written | — (violations are removed on sight) |
+| **Interoperation identifier** — the string that selects a vendor's driver, or an alias table that lets someone arriving from another tool find our operator | allowed | it is a factual identifier for a thing that exists outside us; removing it would not make the code more independent, only less usable. It must not claim endorsement, partnership, or certified compatibility | the `"basler"` backend selector in `acquire.py`; the `halcon` alias field on each op, used only for name lookup |
+| **Cited attribution in a research log** — "award A in year Y went to company C", with the source URL | allowed | this is a citation, and the alternative is worse: an uncited claim that some area "matters" cannot be checked by anyone. Attribution is the opposite of appropriation | `docs/INDUSTRY_SIGNALS.md` |
+
+The test to apply: **does the name describe something of ours, or something of
+theirs?** Describing theirs, with a source, is a citation. Attaching theirs to
+ours is the thing that must never happen.
 
 **What this means concretely for the 2026 additions.** `visiondesign` computes
 field of view from the Gaussian conjugate equation, the sampling limit from
