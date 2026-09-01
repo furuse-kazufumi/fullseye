@@ -62,12 +62,9 @@ import volprobe                  # noqa: E402  3D プローブ
 
 # 束ね方の共通部品(著者提供・自己テスト済み)。
 #   contact_sheet = 並べて比べる / flipbook = 同寸で工程が進む / 原寸 1 枚 = 主張そのもの
-sys.path.insert(0, _HERE_TOOLS := os.path.dirname(os.path.abspath(__file__)))
 from exhibit_tile import (contact_sheet, flipbook, markdown,   # noqa: E402
                           markdown_animation, save_animation, save_exhibit)
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-_ROOT = os.path.dirname(_HERE)
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets")
 MEDIA = os.path.join(ASSETS, "media")
 THUMBS = os.path.join(ASSETS, "thumbs")
