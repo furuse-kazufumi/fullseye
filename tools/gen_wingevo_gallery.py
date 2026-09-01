@@ -319,51 +319,44 @@ def curve_panel(px, series, *, ylim=None, xlim=None, title=None, note=None,
 # --------------------------------------------------------------------------- #
 # 書き出し                                                                      #
 # --------------------------------------------------------------------------- #
-def save_gif(frames_u8, stem, *, fps=6, thumb_index=0, max_bytes=3_000_000):
-    """GIF を書き、**読み戻して**フレーム数を実測してから返す(でっち上げ禁止)。"""
-    from PIL import Image
-    os.makedirs(MEDIA, exist_ok=True)
-    os.makedirs(THUMBS, exist_ok=True)
-    path = os.path.join(MEDIA, f"{stem}.gif")
-    used_colors = 256
-    for colors in (256, 160, 96, 64):
-        pil = [Image.fromarray(f, "RGB").convert(
-            "P", palette=Image.ADAPTIVE, colors=colors) for f in frames_u8]
-        pil[0].save(path, save_all=True, append_images=pil[1:],
-                    duration=int(round(1000 / fps)), loop=0, optimize=True)
-        used_colors = colors
-        if os.path.getsize(path) <= max_bytes:
-            break
-    with Image.open(path) as im:
-        n = 0
-        try:
-            while True:
-                im.seek(n)
-                n += 1
-        except EOFError:
-            pass
-        shape = (im.height, im.width)
-    if n != len(frames_u8):
-        raise RuntimeError(f"{path}: 読み戻し {n} frames != 期待 {len(frames_u8)}")
-    idx = int(np.clip(thumb_index, 0, len(frames_u8) - 1))
-    tim = Image.fromarray(frames_u8[idx], "RGB")
-    tw = 720
-    if tim.width > tw:
-        tim = tim.resize((tw, max(2, round(tim.height * tw / tim.width))),
-                         Image.LANCZOS)
-    tpath = os.path.join(THUMBS, f"{stem}_720.jpg")
-    tim.save(tpath, quality=88, optimize=True)
-    with open(path, "rb") as fh:
-        sha = hashlib.sha256(fh.read()).hexdigest()
-    return {"gif": path, "thumb": tpath, "frames": n, "shape": shape,
-            "bytes": os.path.getsize(path), "thumb_bytes": os.path.getsize(tpath),
-            "colors": used_colors, "fps": fps, "sha256": sha,
-            "thumb_frame": idx}
+GIF_BUDGET = 3_000_000
 
 
-def gif_markdown(stem, alt, caption):
-    return (f"[![{alt}]({RAW_BASE}media/{stem}.gif)]({RAW_BASE}media/{stem}.gif)\n\n"
-            f"*↑ {caption}*\n")
+def save_gif(frames_u8, stem, *, fps=6, hold_last_ms=1400, max_bytes=GIF_BUDGET):
+    """共通部品 ``save_animation`` で書き、**予算超過なら減色して**書き直す。
+
+    ``save_animation`` は書き戻し検証つきなので基本はそちらに任せる。ただし
+    RGB のまま GIF にすると大きくなりすぎることがあるので、3 MB を超えたら
+    適応パレットで減色して書き直し、**同じ検証を自分でもう一度やる**。
+    """
+    from PIL import Image, ImageSequence
+    info = save_animation(frames_u8, stem, duration_ms=int(round(1000 / fps)),
+                          hold_last_ms=hold_last_ms)
+    colors = None
+    if info["gif_bytes"] > max_bytes:
+        path = info["gif"]
+        for n_col in (192, 128, 96, 64):
+            pil = [Image.fromarray(f, "RGB").convert(
+                "P", palette=Image.ADAPTIVE, colors=n_col) for f in frames_u8]
+            dur = [int(round(1000 / fps))] * len(pil)
+            dur[-1] = hold_last_ms
+            pil[0].save(path, save_all=True, append_images=pil[1:],
+                        duration=dur, loop=0, optimize=True, disposal=2)
+            colors = n_col
+            if os.path.getsize(path) <= max_bytes:
+                break
+        with Image.open(path) as im:
+            n_read = sum(1 for _ in ImageSequence.Iterator(im))
+        if n_read != len(frames_u8):
+            raise RuntimeError(f"{path}: 読み戻し {n_read} != 期待 {len(frames_u8)}")
+        with open(path, "rb") as fh:
+            info["gif_sha256"] = hashlib.sha256(fh.read()).hexdigest()
+        info["gif_bytes"] = os.path.getsize(path)
+        info["frames"] = n_read
+    info["colors"] = colors
+    info["fps"] = fps
+    info["thumb_bytes"] = os.path.getsize(info["thumb"])
+    return info
 
 
 # --------------------------------------------------------------------------- #
