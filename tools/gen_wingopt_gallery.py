@@ -1147,13 +1147,15 @@ def ex_res_vs_dof(log):
         p.curve([q["n"] for q in rows], [q["dif"] for q in rows], C_GRID, 1)
         p.hline(target_um, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.marker(r["n"], r["lat"], C_OPT, 5, "cross", 2)
-        # 第 2 の縦軸(右) = 被写界深度 [mm]
-        p2 = Plot(canvas, plot_box, (2.0, 16.0), (0.0, dof_hi))
+        p.ticks_y([25, 50, 75, 100, 125])
+        # 第 2 の縦軸(右) = 被写界深度 [mm]。**p.c から続ける** — imagedraw の
+        # op は新しい配列を返すので、元の canvas を渡すと p の描画が全部消える
+        # (実際に消えた: 青の横分解能曲線・枠・目盛りが 1 本も出なかった)。
+        p2 = Plot(p.c, plot_box, (2.0, 16.0), (0.0, dof_hi))
         p2.curve([q["n"] for q in rows], [q["dof"] for q in rows], C_CURVE, 2)
         p2.hline(tol, C_CURVE, 1, dashed=True, dash=4, gap=8)
         p2.marker(r["n"], r["dof"], C_CURVE, 5, "cross", 2)
         p2.ticks_x([2, 4, 6, 8, 10, 12, 14, 16])
-        p.ticks_y([25, 50, 75, 100, 125])
         canvas = p2.c
         for t in (2, 4, 6, 8, 10, 12, 14, 16):
             labels.append((int(p.px(t)) - 5, plot_box[3] + 6, f"{t}", C_DIM, 11, False))
@@ -1972,12 +1974,12 @@ def ex_pixel_pitch(log):
         p.hline(2.0, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.vline(pitch_nyq, C_MISS, 1, dashed=True, dash=7, gap=6)
         p.marker(r["pitch"], r["px"], (1.0, 1.0, 1.0), 5, "cross", 2)
-        # 検出率(0..1 を 0..12 の軸に載せ替えて重ねる)
-        p2 = Plot(canvas, plot_box, (1.4, 13.5), (0.0, 1.06))
+        p.ticks_y([2, 4, 6, 8, 10])
+        # 検出率(0..1 を 0..12 の軸に載せ替えて重ねる)。**p.c から続ける**。
+        p2 = Plot(p.c, plot_box, (1.4, 13.5), (0.0, 1.06))
         p2.curve([q["pitch"] for q in rows if q["rate"] is not None],
                  [q["rate"] for q in rows if q["rate"] is not None], C_CURVE, 2)
         p2.ticks_x([2, 4, 6, 8, 10, 12])
-        p.ticks_y([2, 4, 6, 8, 10])
         canvas = p2.c
         for t in (2, 4, 6, 8, 10, 12):
             labels.append((int(p.px(t)) - 5, plot_box[3] + 6, f"{t}", C_DIM, 11, False))

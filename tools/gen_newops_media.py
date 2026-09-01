@@ -930,7 +930,7 @@ def build_parallax(log):
     SC, MARGIN, GAP = 2, 12, 16
     PAN = SIZE * SC
     GRID = 176
-    PLOT = 224
+    PLOT = 300
     W = MARGIN + PAN + GAP + GRID + GAP + PLOT + MARGIN
     HUD = 28
     PANY = HUD + 22
@@ -974,7 +974,7 @@ def build_parallax(log):
         # 実測シフト vs 閉形式
         # 縦軸は下向きが正(画像座標と同じ向き)。上向き正にすると、絵が下へ
         # 動いているのに点が上へ行く = 軸の反転になって読み手を騙す。
-        ax = Axes(px + 28, PANY, px + PLOT, PANY + PLOT - 28, -14, 14, 14, -14)
+        ax = Axes(px + 40, PANY, px + PLOT, PANY + 196, -14, 14, 14, -14)
         ax.bg(canvas)
         canvas = ax.grid_y(canvas, [-12, -6, 0, 6, 12])
         canvas = imagedraw.draw_line(canvas, (ax.X(0), ax.y0), (ax.X(0), ax.y1),
@@ -1010,11 +1010,11 @@ def build_parallax(log):
              f"{r['measured'][1]:+d}) px, closed form s*(v-vc, u-uc) = "
              f"({r['expect'][0]:+.0f}, {r['expect'][1]:+.0f}) px", C_TEAL, 13, True),
             (MARGIN, PANY + PAN + 26,
-             f"the back layer (slope {FAR:+.1f}) does not move at all: that difference "
-             f"is the parallax, and it is where the depth comes from", C_DIM, 12, False),
+             f"the back layer (slope {FAR:+.1f}) does not move at all -- that "
+             f"difference is the parallax, and the depth comes from it", C_DIM, 12, False),
             (MARGIN, PANY + PAN + 44,
-             f"over the whole orbit the measured shift matches the closed form to "
-             f"{err:.2f} px  (FFT cross-correlation, sign self-tested against np.roll)",
+             f"over the orbit the measured shift matches the closed form to "
+             f"{err:.2f} px (FFT correlation, sign self-tested on np.roll)",
              C_DIM, 12, False),
             (MARGIN, PANY + PAN + 62,
              "one exposure holds all 81 of these views; an ordinary camera keeps one.",
@@ -1308,14 +1308,13 @@ def build_quaternion(log, frames: int = 31):
             (MARGIN + 4, sw_y + 4, "red goes:", C_DIM, 12, False),
             (x2 + 4, sw_y + 4, "red goes:", C_DIM, 12, False),
             (MARGIN + 4, PANY + PAN + 76,
-             f"max |difference| over the image {maxdiff[i]:.4f}, equal to "
-             f"||R - diag(R)||_2 = {opnorm[i]:.4f} to {abs(maxdiff[i] - opnorm[i]):.0e}: "
-             f"the pure-red patch is the worst case, and a per-channel gain can only "
-             f"scale the zero in its green channel.", C_AMBR, 12, True),
-            (MARGIN + 4, PANY + PAN + 96,
-             f"the same rotation written as an explicit 3x3 matrix differs by "
-             f"{mat_err:.1e} -- quaternions beat per-channel gains, not matrices.",
-             C_DIM, 12, False),
+             f"max |difference| over the image {maxdiff[i]:.4f} = ||R - diag(R)||_2 "
+             f"{opnorm[i]:.4f} to {abs(maxdiff[i] - opnorm[i]):.0e}", C_AMBR, 12, True),
+            (MARGIN + 4, PANY + PAN + 94,
+             f"the pure-red patch is the worst case: a per-channel gain can only scale "
+             f"the zero already in its green channel.  Written as an explicit 3x3 "
+             f"matrix the same rotation differs by {mat_err:.1e} -- quaternions beat "
+             f"per-channel gains, not matrices.", C_DIM, 12, False),
             (px1 - 112, ax.y1 + 22, "rotation angle [deg]", C_DIM, 11, False),
         ]
         labels += _legend(px0 + 10, ax.y0 + 4, [

@@ -2399,7 +2399,7 @@ def ex_envelope_flow(log):
     # 1. 生波形
     fig = _base("1. the raw record",
                 f"impulse bearing signal, {fs:g} Hz x {dur:g} s, noise sigma 0.12")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, ms),
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, ms),
             (-float(np.abs(x).max()) * 1.1, float(np.abs(x).max()) * 1.1))
     ax.panel()
     ink = fig.ink()
@@ -2410,16 +2410,16 @@ def ex_envelope_flow(log):
     ink = fig.ink()
     ax.curve(ink, t[keep] * 1e3, x[keep], width=1)
     fig.stamp(ink, C_A)
-    fig.text(82, PH - 44, f"first {ms} ms of {x.size} samples. Nothing here says "
+    fig.text(82, PH - 40, f"first {ms} ms of {x.size} samples. Nothing here says "
                           f"{fd:.0f} Hz - the impacts are buried under the ringing.",
              C_DIM, 12)
-    fig.text(PW - 130, PH - 22, "time [ms] ->", C_DIM, 11)
+    fig.text(PW - 130, PH - 18, "time [ms] ->", C_DIM, 11)
     steps.append(fig.u8())
 
     # 2. 生スペクトル
     fig = _base("2. the raw spectrum", "dsp.spectrum x 2/N - the resonance is loud, "
                                        "the defect rate is not there")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, 8000.0), (0.0, amp.max() * 1.12))
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, 8000.0), (0.0, amp.max() * 1.12))
     ax.panel()
     ink = fig.ink()
     ax.frame(ink)
@@ -2433,18 +2433,18 @@ def ex_envelope_flow(log):
     fig.stamp(ink, C_WARN)
     fig.text(ax.X(fd) + 8, 66, f"defect {fd:.0f} Hz", C_WARN, 11, True)
     fig.text(ax.X(fd) + 8, 82, f"amplitude {amp[i_fd]:.3e}", C_WARN, 11, True)
-    fig.text(82, PH - 44, f"peak {amp.max():.6f} at "
+    fig.text(82, PH - 40, f"peak {amp.max():.6f} at "
                           f"{freqs[int(np.argmax(amp))]:.0f} Hz (the structure's "
                           f"resonance). Reading this spectrum finds the wrong thing.",
              C_DIM, 12)
-    fig.text(PW - 170, PH - 22, "frequency [Hz] ->", C_DIM, 11)
+    fig.text(PW - 170, PH - 18, "frequency [Hz] ->", C_DIM, 11)
     steps.append(fig.u8())
 
     # 3. スペクトル尖度で帯域を選ぶ
     fig = _base("3. let the machine pick the band",
                 f"acoustics.spectral_kurtosis, win {sk['win']} = "
                 f"{sk['window_seconds'] * 1e3:.2f} ms")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, fs / 2.0),
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, fs / 2.0),
             (min(-1.2, float(sk["kurtosis"].min()) * 1.2),
              float(sk["max_kurtosis"]) * 1.15))
     ax.panel()
@@ -2466,14 +2466,14 @@ def ex_envelope_flow(log):
     fig.stamp(ink, C_E)
     fig.text(ax.X(hi) + 8, 66, f"band {lo:.0f} - {hi:.0f} Hz", C_B, 12, True)
     fig.text(ax.X(hi) + 8, 84, f"max SK {sk['max_kurtosis']:.4f}", C_E, 11, True)
-    fig.text(82, PH - 44, "the operator returns a BAND, not a line: max_freq +- one "
+    fig.text(82, PH - 40, "the operator returns a BAND, not a line: max_freq +- one "
                           f"bin ({sk['bin_hz']:.0f} Hz). The true resonance is "
                           f"{fc:.0f} Hz.", C_DIM, 12)
     steps.append(fig.u8())
 
     # 4. 帯域通過
     fig = _base("4. band-pass that band", f"dsp.bandpass({lo:.0f}, {hi:.0f} Hz, order 4)")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, ms),
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, ms),
             (-float(np.abs(x).max()) * 1.1, float(np.abs(x).max()) * 1.1))
     ax.panel()
     ink = fig.ink()
@@ -2487,14 +2487,14 @@ def ex_envelope_flow(log):
     ax.curve(ink, t[keep] * 1e3, band[keep], width=1)
     fig.stamp(ink, C_B)
     _legend(fig, PW - 230, 64, [("raw", C_DIM), ("band-passed", C_B)])
-    fig.text(82, PH - 44, f"band_fraction {es['band_fraction']:.6f} - the share of the "
+    fig.text(82, PH - 40, f"band_fraction {es['band_fraction']:.6f} - the share of the "
                           f"record's RMS that lives in this band. That number is how "
                           f"you tell a real find from noise.", C_DIM, 12)
     steps.append(fig.u8())
 
     # 5. 包絡線
     fig = _base("5. take the envelope", "dsp.envelope (analytic / Hilbert)")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, ms),
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, ms),
             (-float(np.abs(band).max()) * 1.15, float(np.abs(band).max()) * 1.15))
     ax.panel()
     ink = fig.ink()
@@ -2513,14 +2513,14 @@ def ex_envelope_flow(log):
     fig.stamp(ink, C_TRUE, alpha=0.6)
     _legend(fig, PW - 250, 64, [("band-passed", C_DIM), ("envelope", C_C),
                                 (f"every 1/{fd:.0f} s", C_TRUE)])
-    fig.text(82, PH - 44, f"the impacts are now visible as bumps in the envelope, "
+    fig.text(82, PH - 40, f"the impacts are now visible as bumps in the envelope, "
                           f"one every {1000.0 / fd:.3f} ms. The carrier is gone; only "
                           f"the modulation is left.", C_DIM, 12)
     steps.append(fig.u8())
 
     # 6. 包絡線スペクトル
     fig = _base("6. transform the envelope", "acoustics.envelope_spectrum")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, 600.0),
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, 600.0),
             (0.0, float(es["peak_amplitude"]) * 1.2))
     ax.panel()
     ink = fig.ink()
@@ -2538,7 +2538,7 @@ def ex_envelope_flow(log):
              f"peak {es['peak_freq']:.6f} Hz", C_TRUE, 12, True)
     fig.text(ax.X(es["peak_freq"]) + 8, 84,
              f"prominence {es['peak_prominence']:.1f}", C_C, 11, True)
-    fig.text(82, PH - 44, f"resolution {es['resolution_hz']:.6f} Hz/bin. Rebuilt by "
+    fig.text(82, PH - 40, f"resolution {es['resolution_hz']:.6f} Hz/bin. Rebuilt by "
                           f"hand from dsp.bandpass + dsp.envelope + rfft, the two "
                           f"agree to {agree:.2e}.", C_DIM, 12)
     steps.append(fig.u8())
@@ -2547,7 +2547,7 @@ def ex_envelope_flow(log):
     fig = _base("7. match it against the geometry",
                 f"acoustics.bearing_defect_frequencies({rpm:g} rpm, N={n_el}, "
                 f"d={d_el:g}, D={d_pitch:g})")
-    ax = Ax(fig, 78, 56, PW - 24, PH - 52, (0.0, 200.0), (-0.6, 5.2))
+    ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, 200.0), (-0.6, 5.2))
     ax.panel()
     ink = fig.ink()
     ax.frame(ink)
@@ -2565,7 +2565,7 @@ def ex_envelope_flow(log):
     fig.stamp(ink, C_TRUE)
     fig.text(ax.X(es["peak_freq"]) + 8, 62,
              f"measured {es['peak_freq']:.4f} Hz", C_TRUE, 12, True)
-    fig.text(82, PH - 44, f"closest kinematic rate: {best_name} at "
+    fig.text(82, PH - 40, f"closest kinematic rate: {best_name} at "
                           f"{lines[best_name]:.4f} Hz, {rel:.4f} % away. A real bearing "
                           f"slips ~1 %, so this is a match - and an exact one would be "
                           f"a coincidence.", C_DIM, 12)
