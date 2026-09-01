@@ -538,12 +538,25 @@ def anscombe_transform(image, gain=1.0, read_sigma=0.0, offset=0.0, clip=False):
     ADU and *offset* the black level in ADU. The defaults ``g=1, sigma_r=0,
     offset=0`` reduce it to the classical form exactly.
 
-    Measured stabilisation (seed 0, 512x512 pixels, ``tests/test_photoncount.py``
-    pins these): the variance of ``A(Poisson(lambda))`` is 0.9945 at
-    ``lambda = 4``, 1.0007 at ``lambda = 10``, 1.0055 at ``lambda = 100`` — and
-    only 0.7688 at ``lambda = 1``, which is the honest statement of the
-    transform's low-count limit (below about 4 photons/pixel the Anscombe route
-    is no longer a good approximation and an exact Poisson method is required).
+    Measured stabilisation — ``var(A(X))`` for ``X ~ Poisson(lambda)``, computed
+    **exactly** by summing the Poisson pmf (no sampling, so anyone can reproduce
+    these; ``tests/test_photoncount.py`` pins them and the sampled versions):
+
+    ========  ========
+    lambda    var(A)
+    ========  ========
+    1         0.717443
+    2         0.924297
+    4         0.998754
+    10        1.000910
+    100       1.000006
+    ========  ========
+
+    So "variance 1" is true from about 4 photons/pixel upward and **false below
+    it** — at 1 photon/pixel the variance is 0.717, a 28% shortfall, which is
+    the honest statement of the transform's low-count limit. Below a few photons
+    an exact Poisson method (or the exact unbiased inverse, see
+    :func:`anscombe_inverse`) is required.
 
     Returns a float64 array of the same shape as *image*.
 
