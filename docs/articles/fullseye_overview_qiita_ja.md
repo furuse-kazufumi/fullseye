@@ -3339,10 +3339,11 @@ h = fs.csi_height_map(stack, z_step_um=0.05, wavelength_um=0.6, mode="gaussian")
 | 生スペクトル | **4.3e-16** ← 成分として存在しない |
 | 包絡線スペクトル | **0.499677**(ピーク位置 **107.000000 Hz**) |
 
+*(生スペクトルの値は `dsp.spectrum(...)[1] * 2/N` ―― 片側振幅に直した後の数です。`dsp.spectrum` の生の返りは `5.493328e-12`、同じ系で搬送波が 12800、側帯波が 3200。**比は変わらないので主張は同じ**ですが、初出版はこの `× 2/N` を書き落としていて、載せたとおりに呼んでも再現しませんでした。)*
+
 ```python
 sk  = fs.spectral_kurtosis(x, 25600.0)                      # 復調帯域を機械に選ばせる
-env = fs.envelope_spectrum(x, 25600.0, sk["max_freq"] - sk["bin_hz"],
-                                        sk["max_freq"] + sk["bin_hz"])
+env = fs.envelope_spectrum(x, 25600.0, sk["band_lo"], sk["band_hi"])
 print(env["peak_freq"], env["band_fraction"])               # 107.0 と ~1.0 = 本物
 ```
 
