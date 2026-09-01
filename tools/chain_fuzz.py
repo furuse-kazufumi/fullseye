@@ -677,6 +677,20 @@ OP_ARG_BUILDERS = {
     "geodesic_mesh": _b_mesh_split(),
     "decimate_qem": _b_mesh_split(),
     "cast_shadow": _b_mesh_split("vector"),      # (V, F, light)
+    # 3-ベクトルだけを取る解析幾何 11 op(理由と実測は _b_vectors の docstring)。
+    # これを入れるまで 11 op すべてが未到達で、`primitive` / `position` の
+    # 述語がこの一族に一度も当たっていなかった
+    "line_from_2points": _b_vectors(2),          # (a, b)
+    "plane_from_3points": _b_vectors(3),         # (a, b, c)
+    "angle_3points": _b_vectors(3),              # (a, b, c)
+    "intersect_planes": _b_vectors(4),           # (p1, n1, p2, n2)
+    "intersect_line_plane": _b_vectors(4),       # (line_pt, d, plane_pt, n)
+    "angle_between_lines": _b_vectors(2),        # (d1, d2)
+    "angle_between_planes": _b_vectors(2),       # (n1, n2)
+    "angle_line_plane": _b_vectors(2),           # (d, n)
+    "distance_point_plane": _b_vectors(3),       # (p, plane_pt, n)
+    "distance_point_line": _b_vectors(3),        # (p, line_pt, d)
+    "distance_line_line": _b_vectors(4),         # (p1, d1, p2, d2)
 }
 
 OP_PARAM_HINTS = {
