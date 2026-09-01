@@ -870,7 +870,8 @@ def decode(genome, start: str = IMAGE) -> list[Stage]:
 #: クリップ対象になり、[0,10] の座標が [0,1] に潰れて hand baseline が trivial を
 #: 下回った(0.194 vs 0.684)。既存 sort の挙動は 1 ビットも変えないため、
 #: 「新 sort だけを除外する」形で書く(既存 champion のスコアは不変)。
-_UNCLIPPED_SORTS = frozenset({POINTS, SIGNAL, MATRIX, CIMAGE})
+_UNCLIPPED_SORTS = frozenset({POINTS, SIGNAL, MATRIX, CIMAGE,
+                              LIGHTFIELD, COUNTS, HISTCUBE})
 
 
 def _effective_out_sort(st):
