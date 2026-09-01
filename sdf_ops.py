@@ -133,7 +133,12 @@ def sphere_sdf(grid, center, R):
     Raises ValueError for R<0 or malformed grid/center。"""
     g = _as_coords(grid)
     c = np.asarray(center, np.float64).reshape(3)
-    R = float(R)
+    try:                                        # R は**半径のスカラ**(回転行列ではない)
+        R = float(R)
+    except (TypeError, ValueError) as exc:      # fail-closed: 生の TypeError を漏らさない
+        raise ValueError(
+            "sphere_sdf: R must be a scalar radius, not %r — note this argument is a "
+            "radius, not a rotation matrix" % (type(R).__name__,)) from exc
     if R < 0:                                   # fail-closed: 負半径は無意味
         raise ValueError("R must be non-negative")
     return np.linalg.norm(g - c, axis=-1) - R
