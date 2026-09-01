@@ -422,26 +422,37 @@ def _gauss_envelope(z: np.ndarray, z0, sigma: float) -> np.ndarray:
     return np.exp(-0.5 * ((z - z0) / sigma) ** 2)
 
 
-def _sigma_from(coherence_length_um, envelope_sigma_um, op: str) -> float:
-    """The envelope width, given either as a coherence length (FWHM) or a sigma.
+def _sigma_from(envelope_fwhm_um, envelope_sigma_um, op: str) -> float:
+    """The envelope width along **z**, given either as a FWHM or as a sigma.
 
     Exactly one of the two must be supplied. Accepting both and silently
     preferring one is how a 2.35x error in an envelope width gets into a result
     without anybody noticing.
+
+    Note the parameter is ``envelope_fwhm_um`` and **not** ``coherence_length_um``,
+    and the difference is a factor of two that a shared name would have hidden.
+    The source coherence length is a property of the *optical path difference*,
+    and in this geometry the light goes down to the surface and back, so
+    ``OPD = 2z`` and the envelope seen along the scan axis is **half** the
+    coherence length. :func:`csi_design` returns both, from the same source
+    spectrum, and the tests verify the coherence length against a numerical
+    Fourier transform of that spectrum.
     """
-    have_lc = coherence_length_um is not None
+    have_fw = envelope_fwhm_um is not None
     have_sg = envelope_sigma_um is not None
-    if have_lc and have_sg:
-        raise ValueError("%s: give either coherence_length_um (the envelope FWHM) "
-                         "or envelope_sigma_um, not both — they differ by a "
-                         "factor %.4f and silently preferring one would be a "
-                         "2.35x error in the envelope width"
-                         % (op, FWHM_PER_SIGMA))
-    if not (have_lc or have_sg):
-        raise ValueError("%s: give either coherence_length_um (the envelope FWHM) "
-                         "or envelope_sigma_um" % (op,))
-    if have_lc:
-        return _positive(coherence_length_um, "coherence_length_um") / FWHM_PER_SIGMA
+    if have_fw and have_sg:
+        raise ValueError("%s: give either envelope_fwhm_um or envelope_sigma_um, "
+                         "not both — they differ by a factor %.4f and silently "
+                         "preferring one would be a 2.35x error in the envelope "
+                         "width" % (op, FWHM_PER_SIGMA))
+    if not (have_fw or have_sg):
+        raise ValueError("%s: give either envelope_fwhm_um (the envelope width "
+                         "along the scan axis, = csi_design's "
+                         "'envelope_fwhm_um', which is HALF the source coherence "
+                         "length because the double pass makes OPD = 2z) or "
+                         "envelope_sigma_um" % (op,))
+    if have_fw:
+        return _positive(envelope_fwhm_um, "envelope_fwhm_um") / FWHM_PER_SIGMA
     return _positive(envelope_sigma_um, "envelope_sigma_um")
 
 
