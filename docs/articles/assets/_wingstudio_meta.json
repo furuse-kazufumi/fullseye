@@ -10,15 +10,15 @@
       "frames": 36,
       "size": [
         996,
-        646
+        431
       ],
       "fps": 12,
-      "bytes": 1137161,
-      "thumb_bytes": 38862,
+      "bytes": 1120917,
+      "thumb_bytes": 34578,
       "thumb_frame": 6,
-      "mean_abs_delta": 2.698,
-      "sha256": "a11d9f901a525f0e1faf27dafb6ea0a202d4edd23f2e0a025295a5ef16b9c779",
-      "thumb_sha256": "50774810a9ea18cd5d158fec2914cfd9b06b9aad9eaca140364d1fe05809e405",
+      "mean_abs_delta": 4.045,
+      "sha256": "2f4efe64bf9d85cd3cf0ba4cbd37aa01e03800bb266098439d623ce1c312596b",
+      "thumb_sha256": "dadbf2983d1ec572658adcf6672295e1ec065237da78d486037b0b960d1dc320",
       "facts": {
         "volume_shape": [
           20,
@@ -34,7 +34,7 @@
         "iou_min": 0.585,
         "iou_max": 0.837
       },
-      "seconds": 12.32
+      "seconds": 11.64
     },
     {
       "kind": "gif",
@@ -43,16 +43,16 @@
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_zslices_thumb.jpg",
       "frames": 20,
       "size": [
-        612,
-        633
+        896,
+        726
       ],
       "fps": 5,
-      "bytes": 709776,
-      "thumb_bytes": 56957,
+      "bytes": 1524326,
+      "thumb_bytes": 68214,
       "thumb_frame": 10,
-      "mean_abs_delta": 2.486,
-      "sha256": "46eddbd8fd732f1636282f8ba0f540700752ce3710f1d44a79fe7097da138490",
-      "thumb_sha256": "0bb82ce2a5822f50911b8e508bc2d8b06b2f57a8e51d9a2657994ab7c0ec21ef",
+      "mean_abs_delta": 3.082,
+      "sha256": "1bc4c82bd1de963cb09de5efb4affc781c63511cd0371297eb857f3fb032a61f",
+      "thumb_sha256": "970c342f5648fbde3d819ad34a35595e2950e9aeb26c30299f92bbeaa124a627",
       "facts": {
         "volume_shape": [
           20,
@@ -60,14 +60,14 @@
           28
         ],
         "frames": 20,
-        "upscale": 5,
+        "upscale": 6,
         "value_range": [
           0.0,
           1.22636
         ],
         "threshold": 0.510815
       },
-      "seconds": 1.17
+      "seconds": 1.86
     }
   ]
 }

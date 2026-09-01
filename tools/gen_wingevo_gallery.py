@@ -289,9 +289,9 @@ def cmap_panel(field, name="viridis", px=256, border=None):
 
 
 def curve_panel(px, series, *, ylim=None, xlim=None, title=None, note=None,
-                bg=C_PANEL, legend=()):
+                bg=C_PANEL, legend=(), h=None):
     """1-D の系列をパネル 1 枚に描く(``imagedraw`` の折れ線)。"""
-    h = px
+    h = px if h is None else h
     c = canvas(px, h, bg)
     box = (34, 26 if title else 12, px - 10, h - 26)
     xs_all = np.concatenate([np.asarray(s["x"], float) for s in series])
