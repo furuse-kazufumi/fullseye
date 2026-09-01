@@ -678,8 +678,10 @@ def subject_denoise_compare(log=print) -> dict:
     n = 9
     B = np.linspace(0.0, 1.0, n)
     sigma = 0.02 + 0.20 * B                          # add_noise_white の b -> σ
-    cols = {"median": (255, 140, 120), "bilateral": (120, 190, 255),
-            "sk_nlm": (150, 230, 160), "noisy": (170, 170, 185)}
+    # GIF は 3 MB の上限で色数を落とすので、線の色は**彩度を上げて**おく
+    # (淡い色は量子化で白に寄り、4 本とも同じに見えてしまう)。
+    cols = {"median": (255, 120, 90), "bilateral": (80, 150, 255),
+            "sk_nlm": (80, 220, 110), "noisy": (200, 200, 215)}
     rows = []
     for b in B:
         noisy = np.asarray(fs.apply(src, "add_noise_white", 0.5, float(b)),
