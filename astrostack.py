@@ -128,6 +128,11 @@ PSF_MODELS = ("gaussian", "moffat")
 ALIGN_MODELS = ("translation", "rigid", "similarity", "affine")
 NOISE_METHODS = ("mad", "clip")
 
+#: van Dokkum (2001) のラプラシアン核。2 倍標本化した格子に掛ける。
+_LAPLACE_KERNEL = np.array([[0.0, -1.0, 0.0],
+                            [-1.0, 4.0, -1.0],
+                            [0.0, -1.0, 0.0]])
+
 #: 台帳(opsastrostack)が読む op 名の並び。
 ASTROSTACK = [
     "synth_starfield", "synth_frame_series",
