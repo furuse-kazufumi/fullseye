@@ -2896,13 +2896,15 @@ def ex_isosurface(log) -> dict:
         # 断面での等値線(level のどこを切っているかを 2D でも見せる)
         c2, s2 = _slice_panel(c, vol[48], 440, 92, 260, "viridis", 0, 1, border=C_C)
         c = c2
-        band = np.abs(vol[48] - lv) < 0.012
+        band = np.abs(vol[48] - lv) < 0.022
         ys, xs = np.nonzero(band)
         if ys.size:
             sub2 = c[92:92 + 260, 440:440 + 260]
-            uu = np.clip(np.rint(xs * s2).astype(int), 0, 259)
-            vv2 = np.clip(np.rint(ys * s2).astype(int), 0, 259)
-            sub2[vv2, uu, :] = np.asarray(C_E)
+            uu = np.clip(np.rint(xs * s2).astype(int), 1, 258)
+            vv2 = np.clip(np.rint(ys * s2).astype(int), 1, 258)
+            for dy in (-1, 0, 1):                      # 3x3 に太らせて縮小でも消えない
+                for dx in (-1, 0, 1):
+                    sub2[vv2 + dy, uu + dx, :] = np.asarray(C_E)
         c = _text(c, [(440, 92 + 260 + 6, "z = 48 の断面(色 = 値)と等値線", C_C, 12, True),
                       (440, 92 + 260 + 24, "ローズの線が level = %.3f" % lv, C_E, 12, True)])
 

@@ -329,12 +329,12 @@
         800
       ],
       "fps": 4,
-      "bytes": 1008982,
-      "thumb_bytes": 44521,
+      "bytes": 1578060,
+      "thumb_bytes": 47842,
       "thumb_frame": 6,
-      "mean_abs_delta": 1.264,
-      "sha256": "59b83e03fb2ec68fc339f8ea2ba1f6058843f7477f0d15d2cba2d5d59a990191",
-      "thumb_sha256": "056ddc6b1cb2505bf02c01e50e75d19bd3a6aa7db22224e92f0e79becc8a5803",
+      "mean_abs_delta": 3.01,
+      "sha256": "9985ac67ffe5aa1a27b6018d591735428ecd166f51e10b145e6678eb976cf829",
+      "thumb_sha256": "61cf692c010bfd075427385e347b991161f4218956f209fecee56807f6a5d3b6",
       "facts": {
         "n_vertices": 24578,
         "n_faces": 49152,
@@ -352,7 +352,43 @@
         "frames": 24,
         "step_per_tap": 0.005923
       },
-      "seconds": 4.4
+      "seconds": 5.05
+    },
+    {
+      "kind": "gif",
+      "name": "studio_turntable",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_studio_turntable.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_studio_turntable_thumb.jpg",
+      "frames": 30,
+      "size": [
+        1280,
+        800
+      ],
+      "fps": 10,
+      "bytes": 860449,
+      "thumb_bytes": 38619,
+      "thumb_frame": 8,
+      "mean_abs_delta": 2.148,
+      "sha256": "5b809e1b43a5120888f414517ee2e23cc7cf14400cd189606f01339b33905b32",
+      "thumb_sha256": "bc91d98fdbf9dc583ca920cdc062fb36481b3786ef5428dd7dbdfc551be47e97",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "n_points": 2733,
+        "otsu_threshold": 0.538929,
+        "downsampled_by": 1,
+        "yaw_per_drag_deg": 12.0,
+        "frames": 30,
+        "yaw_final": 35.0,
+        "window": [
+          1280,
+          800
+        ]
+      },
+      "seconds": 4.71
     }
   ]
 }
