@@ -486,19 +486,40 @@ class TestFailClosed:
         cfg, d = _cfg(**kw)
         return _cube(cfg, [6 * d["range_bin_m"]], [0.0])
 
-    def test_a_real_cube_is_refused_because_the_sign_is_absent_not_noisy(self):
+    def test_a_real_cube_is_refused_because_it_ghosts_every_target(self):
+        """This test corrected the module. The first draft asserted that ``+v``
+        and ``-v`` land in the *same* bin in a real cube — and failed, because
+        that is only true of a range-only real signal. With both Fourier axes the
+        sign survives; what a real cube actually does is put an **equal-amplitude
+        ghost at a fabricated range with the opposite velocity**, at half the
+        true amplitude. Measured below, and the docstrings were rewritten to say
+        this instead of the thing that sounded right."""
         cube = self._c()
         with pytest.raises(ValueError, match="real-valued"):
             RD.range_doppler_map(cube.real)
         with pytest.raises(ValueError, match="real-valued"):
             RD.fmcw_range_profile(np.abs(cube))
-        # the reason, demonstrated: a real beat spectrum is conjugate symmetric,
-        # so +v and -v are literally the same bin
         cfg, d = _cfg()
-        up = _cube(cfg, [6 * d["range_bin_m"]], [+3 * d["velocity_bin_ms"]]).real
-        dn = _cube(cfg, [6 * d["range_bin_m"]], [-3 * d["velocity_bin_ms"]]).real
-        assert np.allclose(np.abs(np.fft.fft2(up[0])),
-                           np.abs(np.fft.fft2(dn[0])))
+        ns, nc = cfg["n_samples"], cfg["n_chirps"]
+        for vbin in (+4, -4):
+            real = _cube(cfg, [10 * d["range_bin_m"]],
+                         [vbin * d["velocity_bin_ms"]]).real
+            m = np.fft.fftshift(np.abs(np.fft.fft(np.fft.fft(real[0], axis=1),
+                                                  axis=0)), axes=0) / (nc * ns)
+            hits = {(int(i) - nc // 2, int(j)): float(m[i, j])
+                    for i, j in np.argwhere(m > 0.2 * m.max())}
+            assert set(hits) == {(vbin, 10), (-vbin, ns - 10)}
+            for amp in hits.values():
+                assert amp == pytest.approx(0.5, abs=1e-12)   # split, and equal
+            # the sign IS still readable — but only if you already know which of
+            # the two peaks is the target, which is exactly what is lost
+            assert (ns - 10) < ns and hits[(-vbin, ns - 10)] == hits[(vbin, 10)]
+        # the complex cube has one peak, at full amplitude
+        one = RD.range_doppler_map(_cube(cfg, [10 * d["range_bin_m"]],
+                                         [4 * d["velocity_bin_ms"]]),
+                                   normalize=True)
+        assert len(np.argwhere(one > 0.2 * one.max())) == 1
+        assert one.max() == 1.0
 
     def test_a_voxel_volume_is_not_a_beat_cube(self):
         """The histcube/voxel lesson: both are 3-D float arrays. Here the dtype
