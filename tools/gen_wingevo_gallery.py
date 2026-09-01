@@ -1126,7 +1126,7 @@ def _first_op_swap(hist):
         before, after = set(hist[i - 1]["ops"]), set(hist[i]["ops"])
         gone, came = sorted(before - after), sorted(after - before)
         if gone and came:
-            return hist[i]["gen"], gone[0], came[0]
+            return hist[i]["gen"], gone, came
     return None, None, None
 
 
