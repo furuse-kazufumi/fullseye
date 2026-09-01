@@ -800,3 +800,308 @@ def subject_hist_shaping(log=print) -> dict:
                rows[0]["std"]["eq"], rows[-1]["std"]["eq"],
                rows[0]["std"]["cl"], rows[-1]["std"]["cl"])),
     }
+
+
+# --------------------------------------------------------------------------- #
+# exhibit_tile (著者提供の共通部品) を使うための薄いブリッジ                     #
+# --------------------------------------------------------------------------- #
+def _tile_mod():
+    """tools/exhibit_tile.py を import する (contact_sheet / flipbook)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    import exhibit_tile
+    return exhibit_tile
+
+
+def _draw_poly(rgb_u8, pts_rc, color, width=2, closed=True):
+    """(row, col) 列の折れ線を RGB uint8 画像に描く (Pillow 線描)."""
+    from PIL import Image, ImageDraw
+    im = Image.fromarray(np.ascontiguousarray(rgb_u8), "RGB")
+    d = ImageDraw.Draw(im)
+    xy = [(float(c), float(r)) for r, c in np.asarray(pts_rc, np.float64)]
+    if closed and len(xy) > 2:
+        xy = xy + [xy[0]]
+    if len(xy) >= 2:
+        d.line([v for p in xy for v in p], fill=color, width=width, joint="curve")
+    return np.asarray(im, np.uint8)
+
+
+def _side_by_side(left, right, gap=8) -> np.ndarray:
+    from PIL import Image
+    a, b = _to_u8(left), _to_u8(right)
+    H = max(a.shape[0], b.shape[0])
+    im = Image.new("RGB", (a.shape[1] + gap + b.shape[1], H), BG)
+    im.paste(Image.fromarray(a, "RGB"), (0, (H - a.shape[0]) // 2))
+    im.paste(Image.fromarray(b, "RGB"), (a.shape[1] + gap, (H - b.shape[0]) // 2))
+    return np.asarray(im, np.uint8)
+
+
+# --------------------------------------------------------------------------- #
+# 展示 5: 楕円フーリエ記述子 / elliptic Fourier descriptors                      #
+# --------------------------------------------------------------------------- #
+def _leaf_region(H=340, W=340) -> np.ndarray:
+    """葉のようなギザギザ輪郭の領域を Fullseye の region 生成 op で作る."""
+    import regions_gen
+    t = np.linspace(0.0, 2.0 * np.pi, 720, endpoint=False)
+    r = 108.0 + 30.0 * np.sin(3 * t) + 15.0 * np.cos(5 * t) + 9.0 * np.sin(9 * t)
+    rows = H / 2.0 + r * np.sin(t)
+    cols = W / 2.0 + r * np.cos(t)
+    return np.asarray(regions_gen.gen_region_polygon_filled(rows, cols, H, W),
+                      np.float64)
+
+
+def subject_fourier_desc(log=print) -> dict:
+    """輪郭を楕円フーリエ記述子で低次から復元し、RMS 誤差 [px] を実測する."""
+    import fourierdesc as FD
+    E = _tile_mod()
+    reg = _leaf_region()
+    xld = fs.apply(reg, "gen_contour_region_xld", 0.5)
+    pts = FD.from_xld(xld, 0)                        # (N,2) = (row, col)
+    n_max = 24
+    model = FD.elliptic_fourier(pts, n_harmonics=n_max)
+    base = _to_u8(_overlay_mask(np.zeros(reg.shape), reg, (58, 62, 88), 1.0))
+    base = _draw_poly(base, pts, (235, 235, 245), 2)
+    rms, area_ratio, recs = [], [], []
+    ref = np.asarray(pts, np.float64)
+    for k in range(1, n_max + 1):
+        rec = FD.reconstruct(model, n_points=len(ref), n_harmonics=k)
+        # 復元点と元輪郭の最近傍距離 (弧長パラメータのずれを避けるため点対点でなく最近傍)
+        d = np.min(np.linalg.norm(ref[None, :, :] - rec[:, None, :], axis=2), axis=1)
+        rms.append(float(np.sqrt(np.mean(d ** 2))))
+        recs.append(rec)
+        # 復元輪郭が囲む面積 (シューレースの公式) を元の領域面積と比べる
+        x, y = rec[:, 0], rec[:, 1]
+        a_rec = 0.5 * abs(float(np.sum(x * np.roll(y, -1) - np.roll(x, -1) * y)))
+        area_ratio.append(a_rec / float(np.sum(reg)))
+    frames, labels = [], []
+    for k in range(1, n_max + 1):
+        left = _draw_poly(base.copy(), recs[k - 1], (255, 176, 72), 3)
+        right = _plot(
+            [{"x": np.arange(1, k + 1), "y": rms[:k], "color": (255, 176, 72),
+              "label": "最近傍 RMS 誤差 [px]"}],
+            base.shape[1], base.shape[0], xlim=(1, n_max), ylim=(0, 26),
+            title="次数を上げると輪郭はどこまで戻るか",
+            xlabel="使った高調波の数", legend_pos="tr",
+            marks=[{"x": k, "y": rms[k - 1], "color": (255, 255, 255)}])
+        frames.append(_side_by_side(left, right))
+        labels.append("高調波 %d 次まで — RMS %.2f px / 面積比 %.3f"
+                      % (k, rms[k - 1], area_ratio[k - 1]))
+    book = E.flipbook(frames, labels,
+                      title="楕円フーリエ記述子 —— 輪郭を低次から積み上げる")
+    info = E.save_animation(book, "wing2d_fourier_desc",
+                            duration_ms=340, hold_last_ms=1800)
+    k1 = next(k for k in range(1, n_max + 1) if rms[k - 1] < 1.0)
+    return {
+        "name": "fourier_desc", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 2,
+        "title": "楕円フーリエ記述子 —— 何次で形が戻るか",
+        "ops": ["gen_region_polygon_filled", "gen_contour_region_xld",
+                "elliptic_fourier", "reconstruct"],
+        "data": "Fullseye の region 生成 op で作った合成の葉形 (r = 108 + 30sin3θ + 15cos5θ + 9sin9θ)",
+        "measured": {
+            "contour_points": int(len(ref)),
+            "rms_px_by_harmonic": [round(v, 3) for v in rms],
+            "area_ratio_by_harmonic": [round(v, 4) for v in area_ratio],
+            "first_harmonic_under_1px": k1,
+        },
+        "caption": (
+            "%d 点の輪郭を楕円フーリエ記述子に直し、高調波を 1 次から %d 次まで"
+            "足しながら復元した。1 次 (楕円 1 個) では最近傍 RMS 誤差 %.2f px、"
+            "3 次で %.2f px、%d 次でついに 1 px を切り、%d 次では %.2f px。"
+            "この形は sin3θ・cos5θ・sin9θ で作ってあるので、3・5・9 次を跨ぐたびに"
+            "誤差がガクンと落ちる —— 形を作った周波数が、そのまま記述子に出てくる。"
+            % (len(ref), n_max, rms[0], rms[2], k1, n_max, rms[-1])),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 6: 対応点で顔をモーフする / landmark-driven image morphing                #
+# --------------------------------------------------------------------------- #
+def _synthetic_face(kind: int, size: int = 320) -> tuple:
+    """合成の顔 (実在しない) と対応点 7 個を返す. 戻り (image, points[row,col])."""
+    from PIL import Image, ImageDraw
+    im = Image.new("L", (size, size), 36)
+    d = ImageDraw.Draw(im)
+    if kind == 0:
+        d.ellipse([70, 46, 250, 286], fill=205)
+        d.ellipse([108, 118, 142, 148], fill=28)
+        d.ellipse([178, 118, 212, 148], fill=28)
+        d.polygon([(160, 150), (146, 196), (174, 196)], fill=150)
+        d.arc([118, 176, 202, 244], 20, 160, fill=18, width=7)
+        pts = [(133, 125), (133, 195), (196, 160), (60, 160),
+               (160, 84), (160, 236), (280, 160)]
+    else:
+        d.ellipse([48, 74, 272, 258], fill=168)
+        d.ellipse([96, 142, 140, 174], fill=22)
+        d.ellipse([180, 142, 224, 174], fill=22)
+        d.polygon([(160, 176), (142, 214), (178, 214)], fill=120)
+        d.arc([112, 186, 208, 252], 200, 340, fill=14, width=8)
+        pts = [(158, 118), (158, 202), (214, 160), (78, 160),
+               (160, 62), (160, 258), (252, 160)]
+    return np.asarray(im, np.float64) / 255.0, np.asarray(pts, np.float64)
+
+
+def subject_face_morph(log=print) -> dict:
+    """対応点駆動のワープ (piecewise affine / TPS) で A→B へ連続変形する."""
+    import imagemorph as IM
+    E = _tile_mod()
+    A, ptsA = _synthetic_face(0)
+    B, ptsB = _synthetic_face(1)
+    n = 13
+    alphas = np.linspace(0.0, 1.0, n)
+    seq_aff = [IM.morph(A, B, ptsA, ptsB, float(a), method="affine")
+               for a in alphas]
+    seq_tps = [IM.morph(A, B, ptsA, ptsB, float(a), method="tps") for a in alphas]
+    blend = [(1 - a) * A + a * B for a in alphas]     # 対応点を使わない単純合成
+    diff = [float(np.mean(np.abs(np.asarray(x) - np.asarray(y))))
+            for x, y in zip(seq_aff, seq_tps)]
+    end_psnr = (_psnr(A, seq_aff[0]), _psnr(B, seq_aff[-1]))
+    frames, labels = [], []
+    for i, a in enumerate(alphas):
+        panel = _panel_grid(
+            [A, np.asarray(blend[i]), np.asarray(seq_aff[i]),
+             np.asarray(seq_tps[i]), B,
+             _cmap(np.abs(np.asarray(seq_aff[i]) - np.asarray(seq_tps[i])),
+                   "magma", vmin=0.0, vmax=0.08)],
+            ["顔 A (合成・実在しない)", "単純合成 (1-α)A + αB\n二重像になる",
+             "morph piecewise affine\nα = %.2f" % a,
+             "morph TPS\nα = %.2f" % a, "顔 B (合成・実在しない)",
+             "affine と TPS の差\n平均 %.5f" % diff[i]],
+            3, tile=(268, 268), label_h=52, title=None, title_h=0)
+        frames.append(panel)
+        labels.append("α = %.2f — affine と TPS の平均差 %.5f" % (a, diff[i]))
+    book = E.flipbook(frames, labels,
+                      title="対応点モーフ —— 7 個の点だけで顔が別人になる")
+    info = E.save_animation(book, "wing2d_face_morph",
+                            duration_ms=340, hold_last_ms=1400)
+    return {
+        "name": "face_morph", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 6,
+        "title": "対応点モーフ —— 単純合成との違い",
+        "ops": ["morph (imagemorph)", "warp_piecewise_affine", "warp_tps_image",
+                "blend"],
+        "data": "Pillow で描いた合成の顔 2 枚 (実在の人物ではない)",
+        "measured": {
+            "landmarks": int(len(ptsA)),
+            "alpha": [round(float(x), 3) for x in alphas],
+            "mean_abs_diff_affine_vs_tps": [round(v, 5) for v in diff],
+            "psnr_alpha0_vs_A_db": round(end_psnr[0], 2),
+            "psnr_alpha1_vs_B_db": round(end_psnr[1], 2),
+        },
+        "caption": (
+            "対応点 7 個だけを与えて顔 A から顔 B へモーフさせた 6 パネル。"
+            "対応点を使わない単純合成は途中で二重像になるが、piecewise affine と TPS は"
+            "目や口の位置を対応させたまま連続的に動く。両端は入力を厳密に再現し "
+            "(α=0 で A と PSNR %.1f dB、α=1 で B と %.1f dB = 完全一致の上限値)、"
+            "2 つのワープ方式の差は α=0.5 で平均 %.5f にとどまる。"
+            % (end_psnr[0], end_psnr[1], diff[n // 2])),
+    }
+
+
+# --------------------------------------------------------------------------- #
+# 展示 7: ブロブ選別 / blob analysis                                            #
+# --------------------------------------------------------------------------- #
+def _grain_scene(H=420, W=560) -> np.ndarray:
+    """円・楕円・四角・棒・三角を混ぜた合成の粒シーン (決定的)."""
+    from PIL import Image, ImageDraw
+    im = Image.new("L", (W, H), 12)
+    d = ImageDraw.Draw(im)
+    circles = [(40, 40, 96, 96), (150, 34, 194, 78), (250, 50, 330, 130),
+               (400, 40, 452, 92), (60, 250, 128, 318), (300, 300, 356, 356),
+               (470, 230, 522, 282), (196, 320, 240, 364)]
+    for box in circles:
+        d.ellipse(box, fill=232)
+    d.rectangle([340, 180, 420, 260], fill=232)          # 四角
+    d.rectangle([30, 160, 230, 196], fill=232)           # 細長い棒
+    d.rectangle([440, 330, 540, 372], fill=232)          # 横長の板
+    d.polygon([(120, 360), (176, 400), (110, 408)], fill=232)   # 三角
+    d.ellipse([250, 200, 330, 240], fill=232)            # 扁平な楕円
+    return np.asarray(im, np.float64) / 255.0
+
+
+def subject_blob_select(log=print) -> dict:
+    """粒を数え、真円度と面積で選り分け、選ばれた粒だけ色を変える工程を見せる."""
+    from scipy import ndimage
+    E = _tile_mod()
+    scene = _grain_scene()
+    reg = fs.apply(scene, "threshold", 0.5)
+    filled = fs.apply(reg, "fill_up", 0.5)
+    n_blobs = int(fs.apply(filled, "blob_count", 0.5))
+    lab, n = ndimage.label(filled > 0.5,
+                           structure=ndimage.generate_binary_structure(2, 2))
+    feats = []
+    for i in range(1, n + 1):
+        m = (lab == i).astype(np.float64)
+        feats.append({
+            "id": i, "px": int(m.sum()),
+            "area_frac": float(fs.apply(m, "area_center", 0.5)),
+            "circ": float(fs.apply(m, "circularity", 0.5)),
+            "ecc": float(fs.apply(m, "eccentricity", 0.5)),
+            "rect": float(fs.apply(m, "rectangularity", 0.5))})
+    circ_thr = 0.85
+    keep = [f["id"] for f in feats if f["circ"] >= circ_thr]
+    colored = np.asarray(fs.colorize_labels(lab), np.float64)
+    if colored.max() > 1.0:
+        colored = colored / 255.0
+    sel_mask = np.isin(lab, keep).astype(np.float64)
+    rej_mask = ((lab > 0) & ~np.isin(lab, keep)).astype(np.float64)
+    picked = np.clip(_overlay_mask(np.stack([scene] * 3, -1) * 0.35,
+                                   sel_mask, (110, 235, 150), 0.85), 0, 1)
+    picked = np.clip(_overlay_mask(picked, rej_mask, (235, 110, 110), 0.55), 0, 1)
+    scatter = _plot(
+        [{"x": [f["circ"] for f in feats if f["circ"] >= circ_thr],
+          "y": [f["px"] for f in feats if f["circ"] >= circ_thr],
+          "color": (110, 235, 150), "style": "dots", "label": "採用 (真円度 ≥ 0.85)"},
+         {"x": [f["circ"] for f in feats if f["circ"] < circ_thr],
+          "y": [f["px"] for f in feats if f["circ"] < circ_thr],
+          "color": (235, 110, 110), "style": "dots", "label": "不採用"}],
+        scene.shape[1], scene.shape[0], xlim=(0.3, 1.0), ylim=(0, 9000),
+        title="真円度 (circularity) × 面積 [px] の特徴空間",
+        xlabel="circularity", legend_pos="tl")
+    steps = [np.stack([scene] * 3, -1),
+             np.stack([np.asarray(reg)] * 3, -1),
+             np.stack([np.asarray(filled)] * 3, -1),
+             colored, picked, scatter.astype(np.float64) / 255.0]
+    labels = [
+        "元のシーン (合成: 円 8・楕円 1・四角 1・板 2・三角 1)",
+        "threshold で二値化 — 前景 %d px" % int(np.sum(reg)),
+        "fill_up で穴埋め — blob_count = %d 個" % n_blobs,
+        "ラベル付け + colorize_labels — %d 個に色を配る" % n,
+        "circularity ≥ %.2f を採用 — 緑 %d 個 / 赤 %d 個"
+        % (circ_thr, len(keep), n - len(keep)),
+        "特徴空間で見ると 2 つの群にきれいに割れている"]
+    book = E.flipbook([_to_u8(s) for s in steps], labels,
+                      title="ブロブ解析 —— 数える・測る・選り分ける")
+    info = E.save_animation(book, "wing2d_blob_select",
+                            duration_ms=1200, hold_last_ms=2200)
+    circ_keep = sorted(round(f["circ"], 3) for f in feats if f["circ"] >= circ_thr)
+    circ_rej = sorted(round(f["circ"], 3) for f in feats if f["circ"] < circ_thr)
+    return {
+        "name": "blob_select", "kind": "gif", "file": info["gif"],
+        "thumb": info["thumb"], "frames": info["frames"],
+        "bytes": info["gif_bytes"], "size": list(info["size"]), "panels": 6,
+        "title": "ブロブ解析 —— 真円度で粒を選り分ける",
+        "ops": ["threshold", "fill_up", "blob_count", "colorize_labels",
+                "circularity", "eccentricity", "rectangularity", "area_center"],
+        "data": "Pillow で描いた合成の粒シーン (決定的)",
+        "measured": {
+            "blob_count": n_blobs, "labelled": n,
+            "circularity_threshold": circ_thr,
+            "accepted": len(keep), "rejected": n - len(keep),
+            "circularity_accepted": circ_keep,
+            "circularity_rejected": circ_rej,
+            "per_blob": [{k: (round(v, 4) if isinstance(v, float) else v)
+                          for k, v in f.items()} for f in feats],
+        },
+        "caption": (
+            "円 8 個・楕円 1・四角 1・板 2・三角 1 を混ぜた合成シーンを二値化 → 穴埋め → "
+            "ラベル付けし、blob_count が %d 個と数えた。真円度 (circularity) 0.85 を"
+            "しきい値にすると採用 %d 個 (真円度 %.3f〜%.3f)、不採用 %d 個 "
+            "(%.3f〜%.3f) にきれいに割れる —— 特徴空間の散布図でも 2 つの群が"
+            "しきい値をまたいで重なっていない。"
+            % (n_blobs, len(keep), circ_keep[0], circ_keep[-1], n - len(keep),
+               circ_rej[0], circ_rej[-1])),
+    }

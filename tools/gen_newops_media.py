@@ -1769,16 +1769,25 @@ def build_motionmag(log, frames: int = 32):
     T = int(frames)
     FPS, FREQ, BAND = 32.0, 4.0, (3.0, 5.0)
     D0, ALPHA = 0.2, 20.0
-    CYC_X = 8
-    K_X = 2.0 * np.pi * CYC_X / W_IM
+    # synthesize_translation の wavelength_px は **画素単位の波長**なので、
+    # 空間周波数は画面幅に依らず k = 2*pi/lambda。DFT の何番目のビンに乗るかは
+    # 幅に依るので、そこだけ W/lambda で数える(ここを 8 に決め打ちにすると、
+    # 幅 64 以外で静かに間違う)。
+    WAVELEN = 8.0
+    K_X = 2.0 * np.pi / WAVELEN
+    CYC_X = int(round(W_IM / WAVELEN))
+    if abs(W_IM / WAVELEN - CYC_X) > 1e-9:
+        _flag("motionmag", f"width {W_IM} is not a whole number of {WAVELEN} px "
+                           f"periods; the DFT read-out bin would be off")
 
     vid = M.synthesize_translation((H_IM, W_IM), T, D0, FREQ, FPS)
     res = M.motion_magnify(vid, ALPHA, *BAND, FPS)
     mag = res["video"]
 
     def read_dx(v):
+        """motionmag と無関係な経路での変位読み出し: 既知格子ビンの DFT 位相。"""
         spec = np.fft.fft2(v, axes=(1, 2))
-        return -np.unwrap(np.angle(spec[:, 0, CYC_X])) / (2.0 * np.pi * CYC_X / W_IM)
+        return -np.unwrap(np.angle(spec[:, 0, CYC_X])) / K_X
 
     d_in, d_out = read_dx(vid), read_dx(mag)
     gain = float(np.abs(d_out).max() / np.abs(d_in).max())

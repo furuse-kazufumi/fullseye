@@ -343,64 +343,56 @@ def _sha256(path: str) -> str:
     return h.hexdigest()
 
 
-def _thumb_from(frame_u8: np.ndarray, dst: str, width: int = THUMB_W) -> None:
-    from PIL import Image
-    im = Image.fromarray(frame_u8).convert("RGB")
-    if im.width > width:
-        im = im.resize((width, max(2, round(im.height * width / im.width))),
-                       Image.LANCZOS)
-    im.save(dst, quality=88)
-
-
 def save_png(frame_u8: np.ndarray, name: str, log) -> dict:
-    """PNG + 幅 720 サムネ。書いたあと**読み戻して**形を実測する。"""
-    from PIL import Image
-    os.makedirs(ASSETS, exist_ok=True)
-    path = os.path.join(ASSETS, f"wing1d_{name}.png")
-    thumb = os.path.join(ASSETS, f"wing1d_{name}_thumb.jpg")
-    Image.fromarray(frame_u8, "RGB").save(path, optimize=True)
-    _thumb_from(frame_u8, thumb)
-    with Image.open(path) as im:
-        shape = (im.height, im.width)
-    if shape != frame_u8.shape[:2]:
-        raise RuntimeError(f"{path}: read back {shape}, expected {frame_u8.shape[:2]}")
-    out = {"kind": "png", "path": path, "thumb": thumb, "frames": 1,
-           "shape": (shape[0], shape[1], 3), "bytes": os.path.getsize(path),
-           "thumb_bytes": os.path.getsize(thumb), "sha256": _sha256(path)}
-    log(f"    png  wing1d_{name}.png  {shape[1]}x{shape[0]}  "
+    """原寸 1 枚。``exhibit_tile.save_exhibit`` が PNG + 幅 720 サムネを書く。
+
+    記事側は必ず**サムネイル表示 + クリックで原寸**にする(``markdown()`` がその形)。
+    """
+    stem = f"wing1d_{name}"
+    r = save_exhibit(frame_u8, stem)
+    out = {"kind": "png", "path": r["png"], "thumb": r["thumb"], "frames": 1,
+           "shape": (r["size"][1], r["size"][0], 3), "bytes": r["png_bytes"],
+           "thumb_bytes": r["thumb_bytes"], "sha256": r["png_sha256"],
+           "stem": stem}
+    log(f"    png  {stem}.png  {r['size'][0]}x{r['size'][1]}  "
         f"{out['bytes'] / 1e3:.0f} kB  thumb {out['thumb_bytes'] / 1e3:.0f} kB")
     return out
 
 
-def save_gif(frames_u8, name: str, fps: int, thumb_index: int, log) -> dict:
-    """GIF + 幅 720 サムネ。書いたあと**読み戻して**フレーム数を照合する。"""
-    import imageio.v2 as imageio
-    os.makedirs(MEDIA, exist_ok=True)
-    os.makedirs(THUMBS, exist_ok=True)
-    path = os.path.join(MEDIA, f"wing1d_{name}.gif")
-    thumb = os.path.join(THUMBS, f"wing1d_{name}_720.jpg")
-    video.write_video(path, frames_u8, fps=fps)
-    n, shape = 0, None
-    reader = imageio.get_reader(path)
-    try:
-        for fr in reader:
-            if shape is None:
-                shape = tuple(np.asarray(fr).shape)
-            n += 1
-    finally:
-        reader.close()
-    if n != len(frames_u8):
-        raise RuntimeError(f"{path}: read back {n} frame(s), expected {len(frames_u8)}")
-    idx = int(np.clip(thumb_index, 0, len(frames_u8) - 1))
-    _thumb_from(frames_u8[idx], thumb)
-    out = {"kind": "gif", "path": path, "thumb": thumb, "frames": n,
-           "shape": shape, "bytes": os.path.getsize(path), "fps": fps,
-           "thumb_index": idx, "thumb_bytes": os.path.getsize(thumb),
-           "sha256": _sha256(path)}
-    log(f"    gif  wing1d_{name}.gif  {n} frames (== expected)  {shape}  "
-        f"{out['bytes'] / 1e6:.2f} MB  fps={fps}  thumb frame {idx}")
+def save_flipbook(frames_u8, name: str, labels, *, ms: int, hold_ms: int,
+                  title=None, log=print) -> dict:
+    """コマ送り GIF。``exhibit_tile.flipbook`` で **各コマに工程名と i/N の進捗バー**を
+    焼いてから ``save_animation`` で書く(読み戻してフレーム数を照合してくれる)。
+
+    止まった 1 コマだけ見ても意味が分かることを、この 2 つが構造的に保証する。
+    """
+    stem = f"wing1d_{name}"
+    book = flipbook(list(frames_u8), list(labels), title=title)
+    r = save_animation(book, stem, duration_ms=ms, hold_last_ms=hold_ms)
+    out = {"kind": "gif", "path": r["gif"], "thumb": r["thumb"], "frames": r["frames"],
+           "shape": (r["size"][1], r["size"][0], 3), "bytes": r["gif_bytes"],
+           "ms": ms, "hold_ms": hold_ms, "sha256": r["gif_sha256"], "stem": stem}
+    log(f"    gif  {stem}.gif  {r['frames']} frames (read back)  "
+        f"{r['size'][0]}x{r['size'][1]}  {out['bytes'] / 1e6:.2f} MB  "
+        f"{ms} ms/frame")
     if out["bytes"] > 3.0e6:
-        log(f"    !! wing1d_{name}.gif is {out['bytes'] / 1e6:.2f} MB (> 3 MB target)")
+        log(f"    !! {stem}.gif is {out['bytes'] / 1e6:.2f} MB (> 3 MB target)")
+    return out
+
+
+def save_sheet(panels, name: str, labels, *, ncols: int, title: str,
+               panel_px: int = 420, log=print) -> dict:
+    """タイル(コンタクトシート)。並べて比べるものを 1 点に束ねる。"""
+    stem = f"wing1d_{name}"
+    sheet = contact_sheet(list(panels), list(labels), ncols=ncols, title=title,
+                          panel_px=panel_px)
+    r = save_exhibit(sheet, stem)
+    out = {"kind": "sheet", "path": r["png"], "thumb": r["thumb"],
+           "frames": len(panels), "shape": (r["size"][1], r["size"][0], 3),
+           "bytes": r["png_bytes"], "thumb_bytes": r["thumb_bytes"],
+           "sha256": r["png_sha256"], "stem": stem, "ncols": ncols}
+    log(f"    tile {stem}.png  {len(panels)} panels  "
+        f"{r['size'][0]}x{r['size'][1]}  {out['bytes'] / 1e3:.0f} kB")
     return out
 
 
