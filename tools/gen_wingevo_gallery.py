@@ -1945,7 +1945,7 @@ def ex_promotion_gate(data, log=print):
             (40, y0 + 276,
              ("PROMOTE" if r["promote"] else "REJECT"),
              C_TRUE if r["promote"] else C_WARN, 24, True),
-            (40, y0 + 306, r["reason"][:44], C_DIM, 12, False),
+            (40, y0 + 306, r["reason"][:56], C_DIM, 12, False),
             (W - 292, y0 + 60,
              f"点線 = 昇格に要る最低改善 {g['min_relative_gain']:+.1%}",
              C_TRUE, 12, True),
