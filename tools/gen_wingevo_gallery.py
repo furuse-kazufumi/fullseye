@@ -1380,8 +1380,8 @@ def ex_type_fixpoint(data, log=print):
     rc = data["reach"]
     types = rc["all_types"]
     n = len(types)
-    W, H = 1100, 720
-    cx, cy, R = 520, 380, 268
+    W, H = 1100, 790
+    cx, cy, R = 470, 410, 226
     pos = {}
     for i, t in enumerate(types):
         a = 2 * np.pi * i / n - np.pi / 2
