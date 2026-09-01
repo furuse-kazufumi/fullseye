@@ -482,6 +482,102 @@ def test_equivalent_level_matches_the_closed_form():
                - 20.0 * np.log10(2.0)) < 1e-9
 
 
+def _a_weight_error_db(f0, fs=48000.0, duration=0.5):
+    """How far the measured A-weighted level of a pure tone sits from A(f0)."""
+    x = _tone(f0, fs, int(duration * fs), 1.0)
+    got = A.equivalent_level(x, fs, "A") - A.equivalent_level(x, fs, "Z")
+    return got - float(A.weighting_response(np.array([f0]), "A")[0])
+
+
+@pytest.mark.parametrize("f0", [22.0, 100.0, 1000.0, 250.0])
+def test_a_weighting_is_exact_when_the_tone_closes_on_itself(f0):
+    """Whole number of periods in the record -> no leakage -> exactly A(f0)."""
+    assert (f0 * 0.5) == int(f0 * 0.5), "the probe must be bin-centred"
+    assert abs(_a_weight_error_db(f0)) < 1e-9
+
+
+def test_a_weighting_reads_a_non_bin_centred_tone_too_loud():
+    """A found bug that is *not* repaired, pinned so the docstring cannot drift
+    away from it and so nobody reads a low-frequency A-level as trustworthy.
+
+    The weighting multiplies the record's own DFT, which treats it as periodic;
+    a tone that does not close on itself leaks into every bin, and A weighting
+    spans ~40 dB across the band, so leakage landing near 1 kHz outweighs the
+    attenuated fundamental. Measured, 0.5 s at 48 kHz:
+        31.5 Hz (15.75 periods, a nominal 1/3-octave centre)  +7.7986 dB
+        20.5 Hz (10.25 periods, worst over a 20-200 Hz sweep) +17.2116 dB
+    The error is always positive — leakage only adds power where the curve is
+    generous. Nothing raises and nothing is NaN.
+    """
+    assert _a_weight_error_db(31.5) == pytest.approx(7.7986, abs=1e-3)
+    assert _a_weight_error_db(20.5) == pytest.approx(17.2116, abs=1e-3)
+    worst = max(_a_weight_error_db(f) for f in np.linspace(20.0, 200.0, 361))
+    assert worst > 5.0, worst                      # the failure is not marginal
+
+
+def test_a_weighting_leakage_is_dynamic_range_not_arithmetic():
+    """Two controls that identify the cause, both pinned.
+
+    (1) C weighting has the same machinery but a far gentler tilt, so the same
+        31.5 Hz tone is off by only +0.0493 dB instead of +7.7986.
+    (2) Lengthening the record until the tone *does* close on itself removes it:
+        0.25 s +7.7524, 0.5 s +7.7986, 1 s +0.4615, 2 s -0.0000, 4 s -0.0000.
+    """
+    fs, f0 = 48000.0, 31.5
+    x = _tone(f0, fs, int(0.5 * fs), 1.0)
+    c_err = (A.equivalent_level(x, fs, "C") - A.equivalent_level(x, fs, "Z")
+             - float(A.weighting_response(np.array([f0]), "C")[0]))
+    assert abs(c_err) < 0.1, c_err                 # measured +0.0493
+    assert abs(_a_weight_error_db(f0, fs, 1.0)) == pytest.approx(0.4615, abs=1e-3)
+    for dur in (2.0, 4.0):                         # 63 and 126 whole periods
+        assert abs(_a_weight_error_db(f0, fs, dur)) < 1e-9
+
+
+def test_a_weighting_leakage_is_not_cured_by_windowing_or_padding():
+    """The negative result, pinned so the "obvious fix" is not attempted again.
+
+    Measured at 31.5 Hz / 0.5 s / 48 kHz: as implemented +7.7986 dB, zero-padded
+    x4 (linear convolution) +8.6055 — *worse*, because padding puts a broadband
+    edge into the record — and Hann-windowed with its power gain divided out
+    +3.0879, which also breaks the bin-centred cases that are exact today
+    (22 Hz goes from +0.0000 to +5.5586 dB). A real cure is a time-domain
+    biquad cascade, which would give up the exact 0 dB at 1 kHz this module is
+    built on.
+    """
+    fs, f0, n = 48000.0, 31.5, int(0.5 * 48000.0)
+
+    def gain(m):
+        f = np.fft.rfftfreq(m, d=1.0 / fs)
+        r = A._weighting_ratio(f, "A")
+        return r / float(A._weighting_ratio(np.array([A.F_REF_HZ]), "A")[0])
+
+    def leq_padded(x, pad=4):
+        m = pad * x.size
+        y = np.fft.irfft(np.fft.rfft(x, n=m) * gain(m), n=m)[:x.size]
+        return 10.0 * np.log10(np.mean(y * y))
+
+    def leq_hann(x):
+        w = 0.5 - 0.5 * np.cos(2 * np.pi * np.arange(x.size) / x.size)
+        y = np.fft.irfft(np.fft.rfft(x * w) * gain(x.size), n=x.size)
+        return 10.0 * np.log10(np.mean(y * y) / np.mean(w * w))
+
+    def z_padded(x, pad=4):
+        return 10.0 * np.log10(np.mean(x * x))
+
+    x = _tone(f0, fs, n, 1.0)
+    exact = float(A.weighting_response(np.array([f0]), "A")[0])
+    assert (leq_padded(x) - z_padded(x) - exact) == pytest.approx(8.6055, abs=2e-2)
+    hann_err = leq_hann(x) - 10.0 * np.log10(np.mean(x * x)) - exact
+    assert hann_err == pytest.approx(3.0879, abs=2e-2)
+    assert hann_err > 1.0, "Hann must not be mistaken for a cure"
+    # ...and it breaks a case that is exact today
+    x22 = _tone(22.0, fs, n, 1.0)
+    e22 = float(A.weighting_response(np.array([22.0]), "A")[0])
+    assert abs(_a_weight_error_db(22.0)) < 1e-9                 # exact now
+    assert (leq_hann(x22) - 10.0 * np.log10(np.mean(x22 * x22))
+            - e22) == pytest.approx(5.5586, abs=2e-2)           # broken by Hann
+
+
 def test_equivalent_level_reference_scales_the_answer():
     fs = 16000.0
     x = _tone(1000.0, fs, 16000, 1.0)
