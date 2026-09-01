@@ -363,8 +363,17 @@ def decide(utility, duplicate_of, library_size, capacity=DNA_CAPACITY):
     if library_size >= capacity:
         return False, (f"DNA library is at its capacity bound ({library_size}/"
                        f"{capacity}); displace the least-useful entry first")
-    return True, (f"improves {utility['problems_improved']} problem(s); "
-                  f"best relative gain {utility['best_relative_gain']:+.4f}")
+    # 比が定義できなかった problem を「相対 +0.0000」として黙って混ぜない。
+    # 何を根拠に通したのかを理由文に出す(0 割りの跳ね上がりで通っていた頃は、
+    # 理由文が +724476067514.28 という無意味な数を堂々と載せていた)。
+    n_undef = utility.get("problems_with_undefined_ratio", 0)
+    reason = (f"improves {utility['problems_improved']} problem(s); "
+              f"best relative gain {utility['best_relative_gain']:+.4f}")
+    if n_undef:
+        reason += (f" ({n_undef} problem(s) judged on absolute gain — the existing "
+                   f"vocabulary scores ~0 there so a ratio is undefined; best "
+                   f"absolute {utility.get('best_absolute_gain', 0.0):+.5f})")
+    return True, reason
 
 
 def gate_candidate(ops, problems, name, fn, in_sort, out_sort, a=0.5, b=0.5,
