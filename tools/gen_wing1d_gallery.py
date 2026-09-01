@@ -914,8 +914,11 @@ def ex_order_tracking(log):
     a_hi = max(float(np.max(r["a"][(r["f"] > 2.0) & (r["f"] < 600.0)])) for r in rows)
     m_hi = max(float(np.max(r["mag"][1:])) for r in rows)
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"窓 {r['t0']:.2f}–{r['t0'] + win_s:.2f} s  /  {r['rpm']:.0f} rpm  /  "
+                      f"Hz 軸の次数3.5 = {3.5 * r['shaft_hz']:.1f} Hz(動く)  /  "
+                      f"次数軸の振幅 {r['amp_o35']:.4f}(動かない)")
         fig = Fig(W, H)
         _header(fig, "Order tracking: which spectrum is sharp tells you what it is",
                 f"run-up 600 -> 1800 rpm, orders 1.0 and 3.5, fixed 400 Hz resonance")
