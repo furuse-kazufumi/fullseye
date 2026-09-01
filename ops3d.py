@@ -253,7 +253,10 @@ _CATALOG = {
         ("icp_point2plane", "match3d", ["points", "points", "normals"], "pose", False),
     ],
     "motion": [
-        ("scene_flow_lk", "match3d", ["voxel", "voxel"], "flow", True),
+        # 密なシーンフロー (3,D,H,W)。散在フロー (N,3) と **同じ型名に置けない**
+        # (消費側の要求が互いに排他 — tools/chain_fuzz.py の flow_dense の
+        # コメントに実測を書いた)ので型を分ける
+        ("scene_flow_lk", "match3d", ["voxel", "voxel"], "flow_dense", True),
     ],
     "feature_register": [  # 疎特徴 keypoint + 記述子 + RANSAC(初期推定なし大回転)
         ("harris3d_keypoints", "feat_harris", ["voxel"], "keypoints", True),
@@ -599,9 +602,10 @@ _CATALOG = {
         ("orient_normals", "normals_orient", ["points", "normals"], "normals", False),
     ],
     "scene_flow3d": [  # 点群ベース3Dシーンフロー(剛体/非剛体分解、match3dのvoxel版と別)
-        ("nearest_neighbor_flow", "scene_flow3d", ["points", "points"], "flow", False),
+        ("nearest_neighbor_flow", "scene_flow3d", ["points", "points"],
+         "flow_scattered", False),
         ("rigid_flow", "scene_flow3d", ["points", "points"], "pose", False),
-        ("smooth_flow", "scene_flow3d", ["points", "points"], "flow", False),
+        ("smooth_flow", "scene_flow3d", ["points", "points"], "flow_scattered", False),
     ],
     "occupancy": [  # 占有グリッド + ESDF + 膨張(ロボット計画用、3D)
         ("occupancy_grid", "occupancy", ["points"], "voxel", False),
@@ -625,7 +629,7 @@ _CATALOG = {
         # この op の存在理由なので返りは削らず、adapter で labels を取り出す
         # (opslightfield の lf_depth_from_focus と同じ流儀)
         ("segment_rigid_motions", "motion_seg3d", ["points", "points"], "labels", False),
-        ("estimate_flow", "motion_seg3d", ["points", "points"], "flow", False),
+        ("estimate_flow", "motion_seg3d", ["points", "points"], "flow_scattered", False),
         ("fit_rigid", "motion_seg3d", ["points", "points"], "pose", False),
     ],
     "plane_sweep_stereo": [  # 平面掃引ステレオ(2視点 image + カメラ→密深度、多視点 MVS の基本)
@@ -734,10 +738,13 @@ RESULT_ADAPTERS = {
     # torch Tensor を返す GPU op → numpy(catalog は配列型を宣言している)
     "edt_jfa": lambda r: r.detach().cpu().numpy() if hasattr(r, "detach") else r,
     # probe: (t_mm, values) → (2, n) pairs / list[float] → 1-D signal
-    "vol_profile_line": lambda r: np.stack(r) if isinstance(r, tuple) else r,
+    # ★ axis=1。`pairs` の正典は **(N,2)**(消費側 6 op が (2,N) を名指しで
+    # 拒否することを実測)。述語が `lambda v: True` だった間、ここは (2,n) を
+    # 作っており「どの消費側も受け取れない形」を宣言型として名乗っていた
+    "vol_profile_line": lambda r: np.stack(r, axis=1) if isinstance(r, tuple) else r,
     "vol_wall_thickness": lambda r: np.asarray(r, np.float64),
     # curve/metrology(wave-4 TYPEMISS 修正): 同格対は stack、補助つきは本体を剥がす
-    "curvature_torsion": lambda r: np.stack(r),     # (kappa, tau) → (2, N) pairs
+    "curvature_torsion": lambda r: np.stack(r, axis=1),   # (kappa,tau) → (N,2) pairs
     "arc_length": lambda r: r[1],                   # (cumulative, total) → 全長 float
     "surface_form_error": lambda r: r[2],           # (residual, rms, pv) → pv float
     # --- wave-5(2026-09-01): 「一度も実行されていなかったので見えなかった」乖離 ---

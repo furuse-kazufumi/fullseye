@@ -850,8 +850,9 @@ def cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64,
         raise ValueError("%dx%d = %.3g pixels exceeds render3d.MAX_PIXELS (%d)"
                          % (w, h, float(w) * float(h), render3d.MAX_PIXELS))
     _check_budget(w * h, F.shape[0])            # ★ float64 昇格の前に
-    F, _fixed = _orient_for_culling(V, F, cull_backfaces, strict,
-                                    "cad_visible_faces", reports=False)
+    # 返りが素の添字配列なので修正の事実を載せる先が無い(既定 strict=True で拒否)
+    F = _orient_for_culling(V, F, cull_backfaces, strict,
+                            "cad_visible_faces", reports=False)[0]
     K, R, t = _resolve_camera(V, K, R, t, w, h)
     vv, uu = np.mgrid[0:h, 0:w]                 # camera.depth_to_points と同じ規約
     uv = np.stack([uu.ravel().astype(np.float64), vv.ravel().astype(np.float64)], 1)
