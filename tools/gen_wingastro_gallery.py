@@ -573,13 +573,15 @@ def ex_drizzle():
     for pf in (1.0, 0.6, 0.3):
         sci, wht = A.drizzle_resample(frames, shifts=truth["shifts"], scale=2.0,
                                       pixfrac=pf)
-        fwhm_out = _fwhm_of(sci, threshold_sigma=4.0, psf_box=15) / 2.0
+        # 見る / 測る のは被覆で割った像。生の sci は保存則の側の量。
+        view = _science(sci, wht)
+        fwhm_out = _fwhm_of(view, threshold_sigma=4.0, psf_box=15) / 2.0
         loss = (want - float(sci.sum())) / want
         rows.append({"pixfrac": pf, "fwhm_in_px": fwhm_out,
                      "sum": float(sci.sum()), "loss": loss,
                      "wht_min": float(wht.min()), "wht_mean": float(wht.mean())})
-        shots.append(_label(_fit(_gray(sci, frame_for_scale=sci), 560),
-                            ["drizzle x2  pixfrac = %.1f" % pf,
+        shots.append(_label(_fit(_gray(view, frame_for_scale=view), 560),
+                            ["drizzle x2  pixfrac = %.1f(表示は sci/wht)" % pf,
                              "総フラックス %.1f e-(縁で %.2f %% だけ外へ)"
                              % (sci.sum(), 100 * loss),
                              "%s FWHM %.3f 入力画素" % (M["right"], fwhm_out),
@@ -589,8 +591,7 @@ def ex_drizzle():
                       % (pf, fwhm_out))
 
     book = et.flipbook(shots, labels,
-                       title="drizzle —— しずくを小さくすると像が立ち上がる"
-                             "(総フラックスは動かない)")
+                       title="drizzle —— しずくを小さくすると像が立つ")
     info = et.save_animation(book, "wingastro_drizzle", duration_ms=1200,
                              hold_last_ms=2400)
     data = {"input_sum": want, "rows": rows,
