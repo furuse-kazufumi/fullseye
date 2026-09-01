@@ -236,6 +236,120 @@ def _mesh(m):
     return Vv, Ff
 
 
+# --------------------------------------------------------------------------- #
+# 巻き方向の門番(裏面カリングを使う全 op が共有する 1 箇所)                   #
+# --------------------------------------------------------------------------- #
+#: 「閉じているのに符号つき体積が負」を内向きと判定するときの**相対**しきい値。
+#: 符号つき体積は長さの 3 乗なので、絶対値で持つと mesh の単位に依存する
+#: (1 辺 1 um の部品は真の体積が 1e-18 で、絶対しきい値では常に「判定不能」に
+#: 落ちる ―― ``_DET_EPS_REL`` で踏んだのと同じ罠)。実効しきい値は
+#: ``_WINDING_VOL_EPS_REL * (bbox 対角)^3``。
+_WINDING_VOL_EPS_REL = 1e-9
+
+
+def _signed_volume(V: np.ndarray, F: np.ndarray) -> float:
+    """閉メッシュの符号つき体積(発散定理 ``V = Σ A·(B×C) / 6``)。
+
+    外向き巻きなら正、内向き巻きなら負。**閉じていない mesh では意味を持たない**
+    ので、必ず :func:`_is_closed_surface` を通してから呼ぶ。
+
+    積む前に **bbox 中心を原点へ寄せる**。閉曲面の符号つき体積は原点の取り方に
+    依らない(発散定理の帰結)が、原点から遠い mesh をそのまま積むと大きな正負の
+    打ち消しで有効桁が落ちる ―― 寄せておけば符号だけは確実に読める。"""
+    c = 0.5 * (V.min(axis=0) + V.max(axis=0))
+    tri = V[F] - c
+    return float(np.einsum("ij,ij->i", tri[:, 0],
+                           np.cross(tri[:, 1], tri[:, 2])).sum() / 6.0)
+
+
+def _is_closed_surface(F: np.ndarray, n_vertices: int) -> bool:
+    """**全ての無向辺がちょうど 2 面で共有される**か(= watertight)。
+
+    符号つき体積が「内向き」を意味するのは閉曲面のときだけなので、巻き方向を
+    見る前にここを通す。開いた mesh(1 枚の板、片側だけのスキャン)は符号つき
+    体積が幾何と無関係な値になるため、**判定せず素通しする**のが正しい。
+
+    ``meshrepair.is_watertight`` と同じ判定だが、あちらを import しない:
+    ``meshrepair`` は scipy を要求し、本モジュールは **numpy だけで動く**という
+    約束を持っている。この 6 行を二重に持つほうが、import 依存を 1 つ増やすより
+    安い(``_mesh`` が ``render3d._mesh_arrays`` を再利用しているのは、あちらが
+    既に numpy だけの依存にあるから)。
+
+    辺は ``(lo, hi)`` を 1 つの int64 键へ畳んでから ``np.unique`` する。
+    ``np.unique(..., axis=0)`` は行ごとの比較になって面数が大きいと極端に遅く、
+    ここは ``cull_backfaces=True`` の呼び出し全部で必ず通る経路だから。"""
+    if F.shape[0] == 0:
+        return False
+    e = np.concatenate([F[:, [0, 1]], F[:, [1, 2]], F[:, [2, 0]]], axis=0)
+    lo = np.minimum(e[:, 0], e[:, 1]).astype(np.int64)
+    hi = np.maximum(e[:, 0], e[:, 1]).astype(np.int64)
+    nv = int(n_vertices)
+    if 0 < nv < 3037000499:                 # nv*nv が int64 に収まる範囲でだけ畳む
+        counts = np.unique(lo * nv + hi, return_counts=True)[1]
+    else:                                   # 桁あふれの恐れがあるときだけ遅い経路
+        counts = np.unique(np.stack([lo, hi], axis=1), axis=0,
+                           return_counts=True)[1]
+    return bool(np.all(counts == 2))
+
+
+def _orient_for_culling(V: np.ndarray, F: np.ndarray, cull_backfaces,
+                        strict, op_name: str, reports: bool):
+    """裏面カリングを掛ける前に巻き方向を検める **1 箇所**。→ ``(F, winding_fixed)``
+
+    ``cull_backfaces`` を使う 4 つの op がすべてここを通る(同じ判定を 4 箇所に
+    書くと、片方だけ直る事故になる)。
+
+    判定は 3 段で、**手前の段で決まったら後ろは見ない**:
+
+      1. ``cull_backfaces=False`` — 裏面判定そのものをしないので巻き方向は結果に
+         **一切効かない**。検査もせず素通しし、``winding_fixed`` は常に ``False``。
+         (内向きの mesh でも法線 ``normal`` の符号は入力の巻きどおりに返る。
+         符号を外向きに揃えたいなら ``cull_backfaces=True`` で呼ぶこと。)
+      2. **閉じているか**(全無向辺がちょうど 2 面)。閉じていなければ符号つき
+         体積は意味を持たないので、やはり素通しする。開いた板を「内向き」と
+         誤検出して壊さないための順序で、ここを飛ばしてはならない。
+      3. 符号つき体積が負(``< -_WINDING_VOL_EPS_REL * 対角^3``)なら内向き。
+         ``strict`` なら ``ValueError``、そうでなければ ``F[:, ::-1]`` で巻きを
+         裏返して ``winding_fixed=True`` を返す。面の**行番号は変えない**ので
+         ``face_id`` の意味は保たれ、``normal`` は外向きになる。
+
+    限界を正直に書いておく: これは**全体の符号**しか見ないので、閉じたまま巻きが
+    **混在**している mesh(半分だけ裏返っている)は捕まらない ―― 符号つき体積が
+    たまたま正になりうるし、全部裏返しても直らない。その場合は
+    ``cull_backfaces=False`` にするしかない(``meshrepair.orient_consistent``
+    で直してから渡すのが本筋)。"""
+    if not isinstance(cull_backfaces, (bool, np.bool_)):
+        raise ValueError("cull_backfaces must be a bool")
+    if not isinstance(strict, (bool, np.bool_)):
+        raise ValueError("strict must be a bool")
+    if not cull_backfaces:
+        return F, False
+    if not _is_closed_surface(F, V.shape[0]):
+        return F, False
+    vol = _signed_volume(V, F)
+    diag = float(np.linalg.norm(V.max(axis=0) - V.min(axis=0)))
+    if vol >= -(_WINDING_VOL_EPS_REL * diag ** 3):
+        return F, False                      # 外向き、または符号を読めない退化形
+    if strict:
+        raise ValueError(
+            "mesh is closed (watertight) but its signed volume is negative "
+            "(%.6g): the faces are wound inward. cull_backfaces=True then culls "
+            "the walls that are actually in front, rays pass straight through "
+            "the part, and %s reports points on the far side as visible "
+            "(measured on a 1400-face part: visible fraction 0.861 while only "
+            "0.517 of the area even faces the camera - occlusion can only "
+            "remove visibility, never add it). Fix the winding (F[:, ::-1], or "
+            "meshrepair.orient_consistent), or pass cull_backfaces=False if the "
+            "winding is genuinely mixed%s."
+            % (vol, op_name,
+               ", or strict=False to have this call flip it "
+               "(the result then carries winding_fixed=True)" if reports else
+               ", or strict=False to have this call flip it (note: this op "
+               "returns a bare index array, so the fix cannot be reported in "
+               "the return value - that is why it refuses by default)"))
+    return np.ascontiguousarray(F[:, ::-1]), True
+
+
 def _check_R(R) -> np.ndarray:
     R = _real_array(R, "R")
     if R.shape != (3, 3):
