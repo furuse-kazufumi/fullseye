@@ -481,14 +481,21 @@ class DrawList:
         return (min(xs) - pad, min(ys) - pad, max(xs) + pad, max(ys) + pad)
 
     def _text_box_extent(self, cmd: dict) -> tuple[float, float, float, float] | None:
+        """文字の箱 ``(x0, y0, x1, y1)``。``anchor`` を解いて実際に占める矩形を返す。"""
         args = cmd["args"]
-        pos = _as_points(args.get("pos"))
-        if not pos or not isinstance(args.get("text"), str):
+        xy = _as_points(args.get("xy"))
+        if not xy or not isinstance(args.get("text"), str):
             return None
-        w, h = self.text_metrics(args["text"], float(args.get("size", 12.0)))
-        pad = float(args.get("pad", 0.0) or 0.0)
-        x, y = pos[0]
-        return (x - pad, y - pad, x + w + pad, y + h + pad)
+        w, h = self.text_metrics(args["text"], float(args.get("font_size", 14.0)))
+        pad = float(args.get("pad", 5.0) or 0.0)
+        w, h = w + 2 * pad, h + 2 * pad
+        anchor = str(args.get("anchor", "lt"))
+        ax = anchor[0] if anchor else "l"
+        ay = anchor[1] if len(anchor) > 1 else "t"
+        x, y = xy[0]
+        x0 = x - (0.0 if ax == "l" else w / 2.0 if ax == "c" else w)
+        y0 = y - (0.0 if ay == "t" else h / 2.0 if ay == "c" else h)
+        return (x0, y0, x0 + w, y0 + h)
 
     # -- 検査 --------------------------------------------------------------- #
     def inspect(self) -> list[dict]:
