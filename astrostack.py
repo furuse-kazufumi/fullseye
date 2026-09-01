@@ -1286,23 +1286,44 @@ def cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None,
     済みであること** —— ずれたまま渡すと星が「一度しか来ない」ことになり、
     星の方が消える。
 
+    **枚数が少ないと MAD 自体が当てにならない、という実測。** 8 枚の背景で
+    MAD 推定は真の σ 9.22 に対し 7.89(-14.5 %)、しかも画素ごとに大きく散る
+    ので、``kappa=5`` のつもりが実質 4.3 になり、偽陽性が真陽性の 2.4 倍
+    (546 対 227 画素)出た。対策は 2 つ重ねてある:
+
+    1. :func:`_mad_correction`(Croux & Rousseeuw 1992)の小標本補正を掛ける。
+    2. *read_sigma* を渡すと、**このモジュールが持つ唯一のノイズモデル**
+       ``sigma = sqrt(median/gain + read_sigma^2)`` を尺度の**床**にする。
+       これは :func:`synth_starfield` が使っているのと同じ
+       「Poisson(信号) + Gauss(読み出し)」で、二つ目の理論ではない。
+       床を入れると、標本のゆらぎで MAD がたまたま小さく出た画素が
+       宇宙線に化けることが無くなる。
+
     Returns ``(cleaned, masks)``:
 
     * ``cleaned`` —— 長さ ``N`` の list、各 ``(H, W)`` float64(``images`` 語彙)。
     * ``masks`` —— ``(N, H, W)`` bool、``True`` = 宇宙線と判定した画素。
 
     **Raises** ``ValueError``: *frames* が list / tuple でない / 枚数が
-    *min_frames* 未満 / 形が揃っていない / *kappa* が非正の場合。
+    *min_frames* 未満 / 形が揃っていない / *kappa* が非正 / *gain* が非正 /
+    *read_sigma* が負の場合。
     """
     op = "cosmic_ray_reject_stack"
     mf = _count(min_frames, "min_frames", 3)
     cube = _require_frames(frames, op, min_frames=mf)
     k = _num(kappa, "kappa")
+    g = _num(gain, "gain")
+    rs = _num(read_sigma, "read_sigma", sign="non_negative") \
+        if read_sigma is not None else None
+    n = cube.shape[0]
     med = np.median(cube, axis=0)
-    mad = np.median(np.abs(cube - med), axis=0) * MAD_TO_SIGMA
+    mad = np.median(np.abs(cube - med), axis=0) * MAD_TO_SIGMA * _mad_correction(n)
     # MAD が 0 に潰れる(同じ値が並ぶ)画素は、全体の雑音で下支えする
     _, global_sigma = _robust_background(med, "mad")
     scale = np.where(mad > 0.0, mad, max(global_sigma, 1e-12))
+    if rs is not None:
+        model = np.sqrt(np.maximum(med, 0.0) / g + rs * rs)
+        scale = np.maximum(scale, model)
     masks = cube > (med + k * scale)
     cleaned = np.where(masks, med[None, :, :], cube)
     return [np.ascontiguousarray(c) for c in cleaned], masks
