@@ -764,8 +764,10 @@ def spad_deadtime_apply(rate_hz, dead_time_ns=50.0, paralyzable=False):
         :func:`spad_deadtime_correct`).
 
     *rate_hz* is a 1-D array of true rates in counts per second; *dead_time_ns*
-    is the dead time in nanoseconds (typical SPAD: 10-100 ns). Returns the
-    measured rates as a float64 1-D array of the same length.
+    is the dead time in nanoseconds, defaulting to 50 — the middle of the
+    10-100 ns range a passively quenched SPAD occupies, and a placeholder to be
+    replaced by the datasheet value, never a measurement of your detector.
+    Returns the measured rates as a float64 1-D array of the same length.
 
     Ground truth (pinned in the tests): at ``n = 1/tau`` the non-paralysable law
     gives exactly ``n/2``; the paralysable law's maximum is exactly
