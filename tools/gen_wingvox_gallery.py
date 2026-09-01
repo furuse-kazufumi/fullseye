@@ -755,7 +755,9 @@ CAPTIONS = {
                    "Marching cubes runs on each component's padded bounding box, giving %d "
                    "meshes and %d triangles for the %d components. Vertices are in physical "
                    "coordinates (spacing (%.2f, %.2f, %.2f) mm) and the frames are composited "
-                   "through ``render3d.render_mesh``'s z-buffer. **The colours are the same "
+                   "through ``render3d.render_mesh``'s z-buffer. The grains look stretched "
+                   "along z because they **are** — the slice pitch is 2.5x the in-plane "
+                   "pitch, the same point exhibit 4 makes. **The colours are the same "
                    "palette rows as the slice views**, so the same particle can be followed "
                    "between the cut and the rotation."
                    % (f["meshes"], f["triangles"], f["components"], *f["spacing_mm"]))),
