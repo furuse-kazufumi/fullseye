@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">surface_residual — 3D <code style="color:#22d3bf">freeform</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × surface</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">image2d × image2d × image2d × bspline_surface</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。</p>

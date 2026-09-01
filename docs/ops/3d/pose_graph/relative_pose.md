@@ -31,7 +31,7 @@ T_i⁻¹ ∘ T_j = i←j の相対姿勢。pose_* = [rvec|t] (6,)。→ (rvec_ij
 
 ## 型が繋がる次の op(`pose` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [reprojection_error](../pose_estimation/reprojection_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [optimize_pose_graph](optimize_pose_graph.md) · [mean_edge_error](mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [optimize_pose_graph](optimize_pose_graph.md) · [mean_edge_error](mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
 
 ## 同カテゴリ(`pose_graph`)
 

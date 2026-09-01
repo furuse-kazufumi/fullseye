@@ -2,7 +2,7 @@
 op: eval_bspline_curve
 dim: 3d
 category: freeform
-in: surface
+in: bspline_curve
 out: points
 examples: [bspline_freeform]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # eval_bspline_curve — 3D `freeform` op
 
-- **データ種**: `surface` → `points`
+- **データ種**: `bspline_curve` → `points`
 - **呼び出し**: `import bspline_surf; bspline_surf.eval_bspline_curve(tck, n=200)` (または `ops3d.get("eval_bspline_curve")`)
 
 ## 使い方
@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[points_to_voxel](../transform/points_to_voxel.md) · [estimate_point_normals](../transform/estimate_point_normals.md) · [to_points](../transform/to_points.md) · [match_points_ncc](../match_localize/match_points_ncc.md) · [match_pca](../match_pose/match_pca.md) · [moment_axes](../match_pose/moment_axes.md) · [icp_point2point_3d](../refine/icp_point2point_3d.md) · [icp_point2plane](../refine/icp_point2plane.md)
+[points_to_voxel](../transform/points_to_voxel.md) · [gaussians_to_voxel](../transform/gaussians_to_voxel.md) · [estimate_point_normals](../transform/estimate_point_normals.md) · [to_points](../transform/to_points.md) · [match_points_ncc](../match_localize/match_points_ncc.md) · [match_pca](../match_pose/match_pca.md) · [moment_axes](../match_pose/moment_axes.md) · [icp_point2point_3d](../refine/icp_point2point_3d.md)
 
 ## 同カテゴリ(`freeform`)
 

@@ -3,7 +3,7 @@ op: project_points
 dim: 3d
 category: render
 in: points
-out: image2d
+out: keypoints
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # project_points — 3D `render` op
 
-- **データ種**: `points` → `image2d`
+- **データ種**: `points` → `keypoints`
 - **呼び出し**: `import match3d; match3d.project_points(points, K, R=None, t=None)` (または `ops3d.get("project_points")`)
 
 ## 使い方
@@ -29,9 +29,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 - [pnp_pose_outliers](../../../../examples_3d/pnp_pose_outliers.py) — `py -3.11 examples_3d/pnp_pose_outliers.py`
 - [pose_estimation](../../../../examples_3d/pose_estimation.py) — `py -3.11 examples_3d/pose_estimation.py`
 
-## 型が繋がる次の op(`image2d` を入力に取れる)
+## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](../surface_fit/fit_poly_surface.md) · [surface_form_error](../surface_fit/surface_form_error.md) · [background_flatten](../surface_fit/background_flatten.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](matcap_shade.md) · [antialias](antialias.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [dlt_pose](../pose_estimation/dlt_pose.md) · [pnp_ransac](../pose_estimation/pnp_ransac.md) · [reprojection_error](../pose_estimation/reprojection_error.md)
 
 ## 同カテゴリ(`render`)
 

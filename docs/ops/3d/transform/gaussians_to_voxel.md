@@ -2,7 +2,7 @@
 op: gaussians_to_voxel
 dim: 3d
 category: transform
-in: gaussians
+in: points
 out: voxel
 gpu: true
 examples: [transforms_repr]
@@ -13,7 +13,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # gaussians_to_voxel — 3D `transform` op
 
-- **データ種**: `gaussians` → `voxel`
+- **データ種**: `points` → `voxel`
 - **呼び出し**: `import match3d; match3d.gaussians_to_voxel(means, scales, opacities, size, bounds, device='cpu')` (または `ops3d.get("gaussians_to_voxel")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 

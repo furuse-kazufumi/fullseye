@@ -3,7 +3,7 @@ op: geodesic_mesh
 dim: 3d
 category: geodesic
 in: mesh
-out: measurement
+out: signal
 examples: [pcl_geodesic]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # geodesic_mesh — 3D `geodesic` op
 
-- **データ種**: `mesh` → `measurement`
+- **データ種**: `mesh` → `signal`
 - **呼び出し**: `import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -> numpy.ndarray` (または `ops3d.get("geodesic_mesh")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [pcl_geodesic](../../../../examples_3d/pcl_geodesic.py) — `py -3.11 examples_3d/pcl_geodesic.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`geodesic`)
 

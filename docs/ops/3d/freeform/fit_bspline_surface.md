@@ -2,8 +2,8 @@
 op: fit_bspline_surface
 dim: 3d
 category: freeform
-in: points
-out: surface
+in: image2d × image2d × image2d
+out: bspline_surface
 examples: [bspline_freeform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # fit_bspline_surface — 3D `freeform` op
 
-- **データ種**: `points` → `surface`
+- **データ種**: `image2d × image2d × image2d` → `bspline_surface`
 - **呼び出し**: `import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)` (または `ops3d.get("fit_bspline_surface")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [bspline_freeform](../../../../examples_3d/bspline_freeform.py) — `py -3.11 examples_3d/bspline_freeform.py`
 
-## 型が繋がる次の op(`surface` を入力に取れる)
+## 型が繋がる次の op(`bspline_surface` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [eval_poly_surface](../surface_fit/eval_poly_surface.md) · [eval_bspline_surface](eval_bspline_surface.md) · [surface_residual](surface_residual.md) · [eval_bspline_curve](eval_bspline_curve.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [eval_bspline_surface](eval_bspline_surface.md) · [surface_residual](surface_residual.md)
 
 ## 同カテゴリ(`freeform`)
 

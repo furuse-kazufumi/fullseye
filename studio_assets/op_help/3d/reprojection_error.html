@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">reprojection_error — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × pose</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;reprojection_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。</p>

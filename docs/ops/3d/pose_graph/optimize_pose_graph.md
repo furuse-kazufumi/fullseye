@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`pose` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [reprojection_error](../pose_estimation/reprojection_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [relative_pose](relative_pose.md) · [mean_edge_error](mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [relative_pose](relative_pose.md) · [mean_edge_error](mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
 
 ## 同カテゴリ(`pose_graph`)
 

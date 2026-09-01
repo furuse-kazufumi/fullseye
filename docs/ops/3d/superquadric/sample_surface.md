@@ -2,7 +2,7 @@
 op: sample_surface
 dim: 3d
 category: superquadric
-in: primitive
+in: vector
 out: points
 examples: [mesh_lod_download, superquadric_fit]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # sample_surface — 3D `superquadric` op
 
-- **データ種**: `primitive` → `points`
+- **データ種**: `vector` → `points`
 - **呼び出し**: `import superquadric; superquadric.sample_surface(a, eps, n_u: 'int' = 40, n_v: 'int' = 40, R=None, t=None) -> 'np.ndarray'` (または `ops3d.get("sample_surface")`)
 
 ## 使い方
@@ -31,7 +31,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`points` を入力に取れる)
 
-[points_to_voxel](../transform/points_to_voxel.md) · [estimate_point_normals](../transform/estimate_point_normals.md) · [to_points](../transform/to_points.md) · [match_points_ncc](../match_localize/match_points_ncc.md) · [match_pca](../match_pose/match_pca.md) · [moment_axes](../match_pose/moment_axes.md) · [icp_point2point_3d](../refine/icp_point2point_3d.md) · [icp_point2plane](../refine/icp_point2plane.md)
+[points_to_voxel](../transform/points_to_voxel.md) · [gaussians_to_voxel](../transform/gaussians_to_voxel.md) · [estimate_point_normals](../transform/estimate_point_normals.md) · [to_points](../transform/to_points.md) · [match_points_ncc](../match_localize/match_points_ncc.md) · [match_pca](../match_pose/match_pca.md) · [moment_axes](../match_pose/moment_axes.md) · [icp_point2point_3d](../refine/icp_point2point_3d.md)
 
 ## 同カテゴリ(`superquadric`)
 

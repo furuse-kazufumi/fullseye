@@ -2,7 +2,7 @@
 op: eval_bspline_surface
 dim: 3d
 category: freeform
-in: surface
+in: bspline_surface × image2d × image2d
 out: image2d
 examples: [bspline_freeform]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # eval_bspline_surface — 3D `freeform` op
 
-- **データ種**: `surface` → `image2d`
+- **データ種**: `bspline_surface × image2d × image2d` → `image2d`
 - **呼び出し**: `import bspline_surf; bspline_surf.eval_bspline_surface(tck, x, y, grid=False)` (または `ops3d.get("eval_bspline_surface")`)
 
 ## 使い方
@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](../surface_fit/fit_poly_surface.md) · [surface_form_error](../surface_fit/surface_form_error.md) · [background_flatten](../surface_fit/background_flatten.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](../render/matcap_shade.md) · [antialias](../render/antialias.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](../surface_fit/fit_poly_surface.md) · [eval_poly_surface](../surface_fit/eval_poly_surface.md) · [surface_form_error](../surface_fit/surface_form_error.md) · [background_flatten](../surface_fit/background_flatten.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](../render/matcap_shade.md)
 
 ## 同カテゴリ(`freeform`)
 

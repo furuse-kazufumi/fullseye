@@ -2,8 +2,8 @@
 op: fit_poly_surface
 dim: 3d
 category: surface_fit
-in: image2d
-out: surface
+in: image2d × image2d × image2d
+out: poly_surface
 examples: [contours_to_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # fit_poly_surface — 3D `surface_fit` op
 
-- **データ種**: `image2d` → `surface`
+- **データ種**: `image2d × image2d × image2d` → `poly_surface`
 - **呼び出し**: `import match3d; match3d.fit_poly_surface(x, y, z, degree=2)` (または `ops3d.get("fit_poly_surface")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [contours_to_terrain](../../../../examples_3d/contours_to_terrain.py) — `py -3.11 examples_3d/contours_to_terrain.py`
 
-## 型が繋がる次の op(`surface` を入力に取れる)
+## 型が繋がる次の op(`poly_surface` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [eval_poly_surface](eval_poly_surface.md) · [eval_bspline_surface](../freeform/eval_bspline_surface.md) · [surface_residual](../freeform/surface_residual.md) · [eval_bspline_curve](../freeform/eval_bspline_curve.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [eval_poly_surface](eval_poly_surface.md)
 
 ## 同カテゴリ(`surface_fit`)
 

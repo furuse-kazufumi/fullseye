@@ -1,6 +1,6 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_bspline_curve — 3D <code style="color:#22d3bf">freeform</code> op</h2>
-<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">surface</code></p>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">bspline_curve</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)</code> (または <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。</p>
@@ -9,8 +9,8 @@
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bspline_freeform">bspline_freeform</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bspline_freeform.py</code></p>
-<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">surface</code> を入力に取れる)</h3>
-<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_surface">eval_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:surface_residual">surface_residual</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_curve">eval_bspline_curve</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">bspline_curve</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_curve">eval_bspline_curve</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">freeform</code>)</h3>
 <p><a style="color:#22d3bf" href="op3d:fit_bspline_surface">fit_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_surface">eval_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:surface_residual">surface_residual</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_curve">eval_bspline_curve</a></p>
 <hr style="border:0;border-top:1px solid #2c313f">

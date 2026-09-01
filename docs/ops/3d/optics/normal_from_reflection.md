@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`vector` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](reflect.md) · [refract](refract.md) · [cast_shadow](../render/cast_shadow.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [reflect](reflect.md) · [refract](refract.md) · [cast_shadow](../render/cast_shadow.md) · [sample_surface](../superquadric/sample_surface.md)
 
 ## 同カテゴリ(`optics`)
 

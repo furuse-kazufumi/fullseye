@@ -30,7 +30,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](fit_poly_surface.md) · [surface_form_error](surface_form_error.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](../render/matcap_shade.md) · [antialias](../render/antialias.md) · [edge_alias_energy](../render/edge_alias_energy.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](fit_poly_surface.md) · [eval_poly_surface](eval_poly_surface.md) · [surface_form_error](surface_form_error.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](../render/matcap_shade.md) · [antialias](../render/antialias.md)
 
 ## 同カテゴリ(`surface_fit`)
 

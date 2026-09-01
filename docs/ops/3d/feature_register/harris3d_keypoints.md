@@ -32,7 +32,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 ## 型が繋がる次の op(`keypoints` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [dlt_pose](../pose_estimation/dlt_pose.md) · [pnp_ransac](../pose_estimation/pnp_ransac.md) · [reprojection_error](../pose_estimation/reprojection_error.md)
 
 ## 同カテゴリ(`feature_register`)
 

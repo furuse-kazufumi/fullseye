@@ -2,7 +2,7 @@
 op: reprojection_error
 dim: 3d
 category: pose_estimation
-in: points × pose
+in: points × keypoints
 out: measurement
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # reprojection_error — 3D `pose_estimation` op
 
-- **データ種**: `points × pose` → `measurement`
+- **データ種**: `points × keypoints` → `measurement`
 - **呼び出し**: `import pnp3d; pnp3d.reprojection_error(points_3d, points_2d, K, R, t)` (または `ops3d.get("reprojection_error")`)
 
 ## 使い方

@@ -153,6 +153,16 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # rgbimage = (H,W,3) の色画像。二色性反射モデルは**色の方向**で拡散と
+        # 鏡面を分けるので、輝度画像 (image2d) では原理的に成立しない。
+        # 種は順方向モデル(既知の法線・アルベド・光源から描く)= 分離の真値が
+        # 分かっている画像にする
+        "rgbimage": lambda rng: __import__("specularity").dichromatic_render(
+            __import__("photometric").surface_normals(
+                6.0 * np.exp(-((np.arange(32)[:, None] - 16.0) ** 2
+                               + (np.arange(32)[None, :] - 16.0) ** 2) / 200.0)),
+            (0.80, 0.55, 0.35), (0.30, 0.20, 1.0),
+            specular=0.5, shininess=48.0),
         # score = ピークを持つ 3-D 相関/スコア volume。**カタログのどの op も
         # score を出力しない**ので、種を置かないと `refine_peak_newton` が
         # 構造的に到達不能なまま「発見ゼロ」に数えられる(型到達可能性の
@@ -396,6 +406,8 @@ def _registry_adapters():
     d.update(opslightfield.RESULT_ADAPTERS)
     import opsphoton
     d.update(opsphoton.RESULT_ADAPTERS)     # 現状は空(全 op が宣言型を素で返す)
+    import opsspecular
+    d.update(opsspecular.RESULT_ADAPTERS)
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -459,6 +471,13 @@ def catalog():
     for n, m in opsphoton.OPSPHOTON.items():
         if m["func"] is not None:
             ops.append((n, "photon", list(m["in"]), m["out"], m["func"]))
+    # 鏡面反射の分離 / 反射モデル(opsspecular 台帳)。新語彙 `rgbimage` は
+    # (H,W,3) で pointmap / normalmap と**構造は同じだが意味が違う**。実測で
+    # normalmap を分離 op に渡すと例外なく「分離結果」が返ることを確認済み
+    import opsspecular
+    for n, m in opsspecular.OPSSPECULAR.items():
+        if m["func"] is not None:
+            ops.append((n, "specular", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -539,6 +558,11 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # rgbimage = (H,W,3) の色画像。pointmap / normalmap と**構造は同じ**なので
+    # 型を分けないと、法線マップを鏡面分離に渡しても例外なく「分離結果」が
+    # 返る(実測確認済み)。型は入れ物の形でなく意味の約束
+    "rgbimage": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.shape[2] == 3,
     # score = ピークを持つ相関 volume。voxel と同じ 3-D だが、意味は「マッチの
     # 良さ」でありサブボクセル精緻化の入力になる
     "score": lambda v: isinstance(v, np.ndarray) and v.ndim == 3,

@@ -4,7 +4,7 @@ dim: optics
 category: polarization
 in: stokes
 out: table
-examples: [optics_imaging]
+examples: [optics_imaging, specular_photometric]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0  # fullseye lib version this note was generated for
@@ -71,6 +71,7 @@ optics の全 op は入力を検証してから計算する(黙って通さな�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [optics_imaging](../../../../examples/optics_imaging.py) — `py -3.11 examples/optics_imaging.py`
+- [specular_photometric](../../../../examples/specular_photometric.py) — `py -3.11 examples/specular_photometric.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

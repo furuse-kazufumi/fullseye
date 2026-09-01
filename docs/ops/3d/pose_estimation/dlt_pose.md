@@ -2,7 +2,7 @@
 op: dlt_pose
 dim: 3d
 category: pose_estimation
-in: points × image2d
+in: points × keypoints
 out: pose
 examples: [pnp_pose_outliers, pose_estimation]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # dlt_pose — 3D `pose_estimation` op
 
-- **データ種**: `points × image2d` → `pose`
+- **データ種**: `points × keypoints` → `pose`
 - **呼び出し**: `import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)` (または `ops3d.get("dlt_pose")`)
 
 ## 使い方
@@ -31,7 +31,7 @@ DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (
 
 ## 型が繋がる次の op(`pose` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [reprojection_error](reprojection_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [optimize_pose_graph](../pose_graph/optimize_pose_graph.md) · [relative_pose](../pose_graph/relative_pose.md) · [mean_edge_error](../pose_graph/mean_edge_error.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [pose_error](../metrics/pose_error.md) · [bundle_adjust](../bundle_adjust/bundle_adjust.md) · [mean_reprojection_error](../bundle_adjust/mean_reprojection_error.md) · [optimize_pose_graph](../pose_graph/optimize_pose_graph.md) · [relative_pose](../pose_graph/relative_pose.md) · [mean_edge_error](../pose_graph/mean_edge_error.md) · [rotation_translation_error](../registration_metrics/rotation_translation_error.md)
 
 ## 同カテゴリ(`pose_estimation`)
 

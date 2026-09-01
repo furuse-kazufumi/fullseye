@@ -2,7 +2,7 @@
 op: surface_residual
 dim: 3d
 category: freeform
-in: points × surface
+in: image2d × image2d × image2d × bspline_surface
 out: measurement
 examples: [bspline_freeform]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # surface_residual — 3D `freeform` op
 
-- **データ種**: `points × surface` → `measurement`
+- **データ種**: `image2d × image2d × image2d × bspline_surface` → `measurement`
 - **呼び出し**: `import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)` (または `ops3d.get("surface_residual")`)
 
 ## 使い方

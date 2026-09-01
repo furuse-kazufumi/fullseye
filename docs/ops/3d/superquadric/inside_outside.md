@@ -3,7 +3,7 @@ op: inside_outside
 dim: 3d
 category: superquadric
 in: points
-out: measurement
+out: signal
 examples: [superquadric_fit]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # inside_outside — 3D `superquadric` op
 
-- **データ種**: `points` → `measurement`
+- **データ種**: `points` → `signal`
 - **呼び出し**: `import superquadric; superquadric.inside_outside(points, a, eps, R=None, t=None) -> 'np.ndarray'` (または `ops3d.get("inside_outside")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [superquadric_fit](../../../../examples_3d/superquadric_fit.py) — `py -3.11 examples_3d/superquadric_fit.py`
 
-## 型が繋がる次の op(`measurement` を入力に取れる)
+## 型が繋がる次の op(`signal` を入力に取れる)
 
-[vol_gaussian_psf](../restoration/vol_gaussian_psf.md) · [fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fresnel_reflectance](../optics/fresnel_reflectance.md) · [snell_angle](../optics/snell_angle.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`superquadric`)
 

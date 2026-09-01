@@ -3,7 +3,7 @@ op: fit_bspline_curve
 dim: 3d
 category: freeform
 in: points
-out: surface
+out: bspline_curve
 examples: [bspline_freeform]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # fit_bspline_curve — 3D `freeform` op
 
-- **データ種**: `points` → `surface`
+- **データ種**: `points` → `bspline_curve`
 - **呼び出し**: `import bspline_surf; bspline_surf.fit_bspline_curve(points, smooth=0.0, k=3, nest=None)` (または `ops3d.get("fit_bspline_curve")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [bspline_freeform](../../../../examples_3d/bspline_freeform.py) — `py -3.11 examples_3d/bspline_freeform.py`
 
-## 型が繋がる次の op(`surface` を入力に取れる)
+## 型が繋がる次の op(`bspline_curve` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [eval_poly_surface](../surface_fit/eval_poly_surface.md) · [eval_bspline_surface](eval_bspline_surface.md) · [surface_residual](surface_residual.md) · [eval_bspline_curve](eval_bspline_curve.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [eval_bspline_curve](eval_bspline_curve.md)
 
 ## 同カテゴリ(`freeform`)
 

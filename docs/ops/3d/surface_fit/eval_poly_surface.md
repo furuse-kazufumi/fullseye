@@ -2,7 +2,7 @@
 op: eval_poly_surface
 dim: 3d
 category: surface_fit
-in: surface
+in: poly_surface × image2d × image2d
 out: image2d
 examples: [contours_to_terrain]
 author: Kazufumi Furuse
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # eval_poly_surface — 3D `surface_fit` op
 
-- **データ種**: `surface` → `image2d`
+- **データ種**: `poly_surface × image2d × image2d` → `image2d`
 - **呼び出し**: `import match3d; match3d.eval_poly_surface(model, x, y)` (または `ops3d.get("eval_poly_surface")`)
 
 ## 使い方

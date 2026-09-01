@@ -308,6 +308,17 @@ from photoncount import (  # noqa: E402,F401
     dtof_depth, dtof_cube_simulate, dtof_cube_depth,
     lifetime_fit, lifetime_phasor,
 )
+# 鏡面反射の分離と反射モデル: 光沢面・鏡面部品の検査で Lambertian 前提が
+# 破れる領域。二色性反射モデル(色の方向で分ける)・BRDF・影に強い
+# フォトメトリックステレオ・偏光による分離。
+import specularity  # noqa: E402  (dichromatic split / BRDF / robust photometric stereo)
+from specularity import (  # noqa: E402,F401
+    specular_diffuse_split, specular_free_transform,
+    specular_coefficient_map, illuminant_from_dichromatic_planes,
+    brdf_blinn_phong, brdf_microfacet, dichromatic_render,
+    photometric_stereo_robust, photometric_residual, polarization_render,
+    polarization_separate, polarization_dolp_map, polarization_stokes,
+)
 from optics import (  # noqa: E402,F401
     thin_lens, abcd_matrix, abcd_trace, depth_of_field, relative_illumination,
     airy_pattern, angular_spectrum_propagate, fraunhofer_pattern, gaussian_beam,
@@ -442,6 +453,13 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
+    "specularity",
+    "specular_diffuse_split", "specular_free_transform",
+    "specular_coefficient_map", "illuminant_from_dichromatic_planes",
+    "brdf_blinn_phong", "brdf_microfacet", "dichromatic_render",
+    "photometric_stereo_robust", "photometric_residual",
+    "polarization_render", "polarization_separate",
+    "polarization_dolp_map", "polarization_stokes",
     "optics", "thin_lens", "abcd_matrix", "abcd_trace", "depth_of_field",
     "relative_illumination",
     "airy_pattern", "angular_spectrum_propagate", "fraunhofer_pattern",

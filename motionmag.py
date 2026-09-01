@@ -1212,7 +1212,6 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     vx = np.where(degenerate, 1.0, vx / np.where(degenerate, 1.0, norm))
     vy = np.where(degenerate, 0.0, vy / np.where(degenerate, 1.0, norm))
     s_lam1 = np.where(alive, lam1, 1.0)
-    s_lam2 = np.where(rank2, lam2, 1.0)
     # Full-rank branch: the ordinary 2x2 inverse.
     det = a00 * a11 - a01 * a01
     s_det = np.where(rank2, det, 1.0)
@@ -1224,7 +1223,6 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     dy_rank1 = proj * vy[None]
     dx = np.where(rank2[None], dx_full, np.where(alive[None], dx_rank1, 0.0))
     dy = np.where(rank2[None], dy_full, np.where(alive[None], dy_rank1, 0.0))
-    del s_lam2
     if not (np.isfinite(dx).all() and np.isfinite(dy).all()):
         raise ValueError("%s: the least-squares solve produced non-finite "
                          "displacements — this is a bug in the rank guard, not "
