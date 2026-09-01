@@ -49,7 +49,8 @@ def panel_measure():
     """パネル 1 — 計測の図: マスク重ね・引き出し線・点のラベル・スケールバー。"""
     img, disks, _ = _scene()
     out = A.overlay_mask(img, disks, "right", alpha=0.45, outline=2)
-    out = A.leader_line(out, (18, 232), (110, 90), text="円板 A", cap="dot", cap_size=4)
+    out = A.leader_line(out, (96, 234), (110, 90), text="円板 A", cap="dot", cap_size=4,
+                        font_size=12)
     out = A.label_points(out, [(110, 90), (250, 165)], ["1", "2"], marker_size=6,
                          color="emphasis", font_size=12)
     out = A.scale_bar(out, 100.0, 0.5, unit="µm", anchor="rb", margin=16,
