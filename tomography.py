@@ -1319,6 +1319,28 @@ def sart_reconstruct(sinogram, angles_deg=None, size=None, n_iter=10,
 # --------------------------------------------------------------------------- #
 # 4. artefacts: the forward model and the correction, always as a pair         #
 # --------------------------------------------------------------------------- #
+#: Widest line-integral domain :func:`beam_hardening_correct` will build an
+#: inverse table over. 200 e-foldings is already ``e^-200``; anything past it is
+#: not a measurement, it is a unit error.
+_MAX_HARDENING_DOMAIN = 200.0
+
+
+def _hardened(p, w: float, k: float):
+    """The two-spectrum hardening curve, computed without underflow.
+
+    ``-ln((1-w) e^-p + w e^-kp)``, written as ``-logaddexp(ln(1-w) - p,
+    ln(w) - k p)``. The direct form underflows both exponentials to zero past
+    ``p ~ 745`` and returns ``+inf``, which is not a number any downstream check
+    of this module treats as a failure — the sinogram is validated on the way *in*
+    and this is computed after.
+    """
+    if w <= 0.0:
+        return np.asarray(p, dtype=np.float64) * 1.0
+    lo = np.log1p(-w) - np.asarray(p, dtype=np.float64)
+    hi = np.log(w) - k * np.asarray(p, dtype=np.float64)
+    return -np.logaddexp(lo, hi)
+
+
 def beam_hardening_apply(sinogram, high_energy_fraction=0.5,
                          attenuation_ratio=0.4):
     """Turn a monochromatic sinogram into a **polychromatic** one — cupping.
