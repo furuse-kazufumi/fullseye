@@ -79,10 +79,12 @@ Where this sits next to what already exists
 
 Honest limitations
 ------------------
-* **Phase wrap sets the largest measurable motion.** A displacement is recovered
-  from ``-k·d``; once ``|k·d|`` reaches ``pi`` the answer folds over. For a band
-  of wavelength ``L`` pixels that is ``|d| < L/2``. Measured breakdown table:
-  see :func:`phase_displacement` and ``tests/test_motionmag.py``.
+* **There is a largest measurable motion, and it is smaller than the obvious
+  bound.** Phase wrap puts a hard ceiling at ``|k·d| < pi`` (half a band
+  wavelength), but the temporal-mean phase reference gives out earlier, at the
+  first zero of ``J0(k·A) = 0``, i.e. ``k·A = 2.4048``. Measured breakdown table
+  and the runtime ``reference_coherence`` warning: see
+  :func:`phase_displacement`.
 * **Only the oriented sub-bands are magnified.** The low-pass and high-pass
   residuals are reconstructed untouched, because a residual has no well-defined
   local frequency to divide by. Content that lives entirely in a residual is not
