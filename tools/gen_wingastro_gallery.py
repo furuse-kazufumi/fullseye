@@ -1202,11 +1202,14 @@ def _captions(meta):
         "平均合成では **%d 個**しか立たないのに、同じ生データを drizzle x3 "
         "(pixfrac 0.4)に通すと **%d 個**に分かれる。解像度は「上げた」のでは"
         "なく、**ディザという形で既に撮れていた情報を捨てずに拾った**だけ。"
+        "「分かれた」を主観にしないため、対を横切る行の**谷の深さ**も測って"
+        "ある: 平均合成 %.1f %%(谷が無い)に対し drizzle は **%.1f %%**。"
         "4 枚目は同じ drizzle の生の ``sci``(被覆で割っていない像)で、"
         "そこに検出をかけると被覆の格子が **%d 個の偽の星**になる ―― "
         "総フラックスを保存する像と、目で見る像は別の量である。"
         % (dp["separation_px"], dp["n_frames"], dp["n_naive"],
-           dp["n_drizzle"], dp["n_raw_sci"]),
+           dp["n_drizzle"], dp["dip_naive_pct"], dp["dip_drizzle_pct"],
+           dp["n_raw_sci"]),
         "Two stars of sigma 0.55 px, %.1f px apart, shot %d times with dither. "
         "A mean stack yields **%d star**, while the same raw frames through "
         "drizzle x3 (pixfrac 0.4) separate into **%d**. Nothing was added: the "
