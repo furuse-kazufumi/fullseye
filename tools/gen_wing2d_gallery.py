@@ -1556,9 +1556,12 @@ def subject_fit_residual(log=print) -> dict:
     # 上限を全点の 98%tile にすると、欠けの縁 (数十 px) が上限を押し上げて
     # 内点が全部いちばん低い色に潰れる。内点の 3σ を上限にして飽和させる。
     vmax = max(3.0 * float(np.std(d0[inlier])), 1e-6)
+    # ★1 点ずつ apply_cmap を呼ぶと、その 1 点の中で正規化されて全部同じ色になる。
+    #   0..1 を張った LUT を 1 回だけ作り、そこから引く。
+    lut = np.asarray(_cmap(np.linspace(0.0, 1.0, 256)[None, :], "turbo",
+                           vmin=0.0, vmax=1.0)[0] * 255, np.uint8)
     for (rr, ccv), e in zip(circ_pts, resid):
-        t = min(1.0, e / vmax)
-        col = tuple(int(v) for v in (_cmap(np.array([[t]]), "turbo")[0, 0] * 255))
+        col = tuple(int(v) for v in lut[int(min(1.0, e / vmax) * 255)])
         rd.ellipse([ccv - 3, rr - 3, ccv + 3, rr + 3], fill=col)
     hist = _hist_panel([resid / max(resid.max(), 1e-9)], ["残差 (最大で正規化)"],
                        [(255, 196, 80)], W, H,

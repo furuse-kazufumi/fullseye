@@ -21,10 +21,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Flipping through colour-coded voxel slices** ―― 16 particles labelled with 26-connectivity, coloured **as a volume** and only then cut into 24 slices. Each particle keeps one colour from first slice to last (measured: all 16 components have exactly one colour). At a spacing of (0.50, 0.20, 0.20) mm they total 62.560 mm3. Ops used: `vol_label`, `vol_colorize_labels`, `vol_label_slice_rgb`, `vol_label_shape_stats`, `vol_label_palette`.*
 
-- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 frames, 288x456 px, 0.26 MB)
+- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 frames, 432x616 px, 0.32 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg`
 - Bundling: フリップブック GIF(断面が進む・寸法が揃っている)
-- SHA-256: `a7744152efe715ee29fae6a923a3584628c59ac3b6411e795e117cc897770a94`
+- SHA-256: `64cd9b53a8a3fbdce37e5e8be7aa30c823f2b6179d4b91a46aaf698e292b5783`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -55,10 +55,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Flicker, side by side — the only difference is the order** ―― On the left each slice is labelled in 2-D and coloured on its own, so the numbering is redrawn every slice: on **20 of 24 slices** at least one particle changes colour (62 of 108 (particle, slice) pairs = 57.4 %, and all 16 particles change at least once). On the right the volume is coloured first and cut afterwards: **0 slices, 0 pairs**. Same palette, same seed — only the order differs. Ops used: `vol_label`, `vol_label_color_flicker`, `vol_colorize_labels`, `vol_label_slice_rgb`, `colorize_labels`.*
 
-- GIF: `docs/articles/assets/media/wingvox_flicker.gif` (24 frames, 496x420 px, 0.34 MB)
+- GIF: `docs/articles/assets/media/wingvox_flicker.gif` (24 frames, 596x468 px, 0.37 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_flicker_thumb.jpg`
 - Bundling: フリップブック GIF(左右を 1 コマに合成して同時に進める)
-- SHA-256: `1c1fc2d475d81eb79170f355e4d608dfda4abc1fc283a837ed6ce488ba8ed68c`
+- SHA-256: `b22e88054154f9ce33e1504ed9e4b109955e2e7f86d24227cdff77f8fd732a41`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -85,10 +85,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **6 / 18 / 26 connectivity — the neighbourhood decides the count** ―― The same two cubes: touching at a single corner they are 2 components under 6-connectivity, 2 under 18 and **1** under 26; touching along an edge, 2 / **1** / 1. The number of colours follows the number of components exactly — merge two blobs and one colour disappears. Ops used: `vol_label`, `vol_label_volume_render`, `vol_label_palette`.*
 
-- PNG (contact sheet): `docs/articles/assets/wingvox_connectivity.png` (378x368 px, 26 kB, 6 panels / 3 columns)
-- Thumbnail (shown in the article): `docs/articles/assets/wingvox_connectivity_thumb.jpg` (31 kB)
+- PNG (contact sheet): `docs/articles/assets/wingvox_connectivity.png` (774x692 px, 31 kB, 6 panels / 3 columns)
+- Thumbnail (shown in the article): `docs/articles/assets/wingvox_connectivity_thumb.jpg` (57 kB)
 - Bundling: タイル(同じ被写体に近傍の定義違いを当てた 6 枚を比べる)
-- SHA-256: `6470982ff1c23c1eaba8c5ccad35c9742291d20eef6cdc6ba5c964715f4f578f`
+- SHA-256: `1e71d481fec54a3b648163520a0c954e2077d102f7859d1b9da06e36196a01d6`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -116,10 +116,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Sieving by volume without moving a single colour** ―― ``min_volume`` rises from 0 to 9.320 mm3 in 17 steps, dropping the particles one at a time. Those that fall out become background, but **the survivors do not change colour by a single pixel** (checked on all 17 frames). That holds because the labels are not renumbered (``relabel=False``); renumbering shifts the palette rows and repaints everything. Ops used: `vol_label`, `vol_label_shape_stats`, `vol_select_labels`, `vol_label_volume_render`, `vol_colorize_labels`.*
 
-- GIF: `docs/articles/assets/media/wingvox_sieve.gif` (17 frames, 288x458 px, 0.23 MB)
+- GIF: `docs/articles/assets/media/wingvox_sieve.gif` (17 frames, 432x616 px, 0.30 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_sieve_thumb.jpg`
 - Bundling: フリップブック GIF(閾値が進む)
-- SHA-256: `7269a7c3d62f924bf0dae7b5610d5bce36a5c122aa4e655111ef150c9b66bc28`
+- SHA-256: `ed2622bdcb2dbbd98d792fb9c4e15c65ef20c0c688f4e3f272345affcfc97bd6`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -242,12 +242,12 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![Overlaying colour labels on the original CT — sweeping alpha](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_overlay_alpha.gif)
 
-*↑ **Overlaying colour labels on the original CT — sweeping alpha** ―― At slice z=8 alpha sweeps from 0 to 1 and back. The mean change over the foreground runs 0.0000 -> 0.2620, **linear** in alpha, while the **background never moves at any alpha (0.0000)** — colour only lands on labelled voxels. In ``mode='boundary'`` only 1648 of the 3128 foreground voxels (52.7 %) are painted, so the structure underneath stays visible. Ops used: `vol_label`, `vol_label_overlay`, `vol_label_slice_rgb`.*
+*↑ **Overlaying colour labels on the original CT — sweeping alpha** ―― At slice z=8 alpha sweeps from 0 to 1 and back. The mean change over the foreground runs 0.0000 -> 0.0262, **linear** in alpha, while the **background never moves at any alpha (0.0000)** — colour only lands on labelled voxels. In ``mode='boundary'`` only 1648 of the 3128 foreground voxels (52.7 %) are painted, so the structure underneath stays visible. Ops used: `vol_label`, `vol_label_overlay`, `vol_label_slice_rgb`.*
 
-- GIF: `docs/articles/assets/media/wingvox_overlay_alpha.gif` (40 frames, 288x458 px, 1.32 MB)
+- GIF: `docs/articles/assets/media/wingvox_overlay_alpha.gif` (20 frames, 432x616 px, 0.99 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_overlay_alpha_thumb.jpg`
 - Bundling: フリップブック GIF(alpha を往復掃引)
-- SHA-256: `334c663083a911b3e766bf3fc709fafcb3dbc2df279d5e6a438a0af2e9f0dc7b`
+- SHA-256: `fcb879348b2dcf66cdf37bc2aad03a7cc786499ee3c358d304a6d6f6636c1ca7`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -255,16 +255,11 @@ as **a thumbnail linking to the full-size PNG**.
 {
  "slice": 8,
  "components": 16,
- "frames": 40,
+ "frames": 20,
  "sweep": [
   {
    "alpha": 0.0,
    "fg_mean_abs_diff": 0.0,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
-   "alpha": 0.05,
-   "fg_mean_abs_diff": 0.0131,
    "bg_mean_abs_diff": 0.0
   },
   {
@@ -273,18 +268,8 @@ as **a thumbnail linking to the full-size PNG**.
    "bg_mean_abs_diff": 0.0
   },
   {
-   "alpha": 0.15,
-   "fg_mean_abs_diff": 0.0393,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
    "alpha": 0.2,
    "fg_mean_abs_diff": 0.0524,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
-   "alpha": 0.25,
-   "fg_mean_abs_diff": 0.0655,
    "bg_mean_abs_diff": 0.0
   },
   {
@@ -293,18 +278,8 @@ as **a thumbnail linking to the full-size PNG**.
    "bg_mean_abs_diff": 0.0
   },
   {
-   "alpha": 0.35,
-   "fg_mean_abs_diff": 0.0917,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
    "alpha": 0.4,
    "fg_mean_abs_diff": 0.1048,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
-   "alpha": 0.45,
-   "fg_mean_abs_diff": 0.1179,
    "bg_mean_abs_diff": 0.0
   },
   {
@@ -313,18 +288,8 @@ as **a thumbnail linking to the full-size PNG**.
    "bg_mean_abs_diff": 0.0
   },
   {
-   "alpha": 0.55,
-   "fg_mean_abs_diff": 0.1441,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
    "alpha": 0.6,
    "fg_mean_abs_diff": 0.1572,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
-   "alpha": 0.65,
-   "fg_mean_abs_diff": 0.1703,
    "bg_mean_abs_diff": 0.0
   },
   {
@@ -333,18 +298,8 @@ as **a thumbnail linking to the full-size PNG**.
    "bg_mean_abs_diff": 0.0
   },
   {
-   "alpha": 0.75,
-   "fg_mean_abs_diff": 0.1965,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
    "alpha": 0.8,
    "fg_mean_abs_diff": 0.2096,
-   "bg_mean_abs_diff": 0.0
-  },
-  {
-   "alpha": 0.85,
-   "fg_mean_abs_diff": 0.2227,
    "bg_mean_abs_diff": 0.0
   },
   {
@@ -353,13 +308,53 @@ as **a thumbnail linking to the full-size PNG**.
    "bg_mean_abs_diff": 0.0
   },
   {
-   "alpha": 0.95,
-   "fg_mean_abs_diff": 0.2489,
+   "alpha": 1.0,
+   "fg_mean_abs_diff": 0.262,
    "bg_mean_abs_diff": 0.0
   },
   {
-   "alpha": 1.0,
-   "fg_mean_abs_diff": 0.262,
+   "alpha": 0.9,
+   "fg_mean_abs_diff": 0.2358,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.8,
+   "fg_mean_abs_diff": 0.2096,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.7,
+   "fg_mean_abs_diff": 0.1834,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.6,
+   "fg_mean_abs_diff": 0.1572,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.5,
+   "fg_mean_abs_diff": 0.131,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.4,
+   "fg_mean_abs_diff": 0.1048,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.3,
+   "fg_mean_abs_diff": 0.0786,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.2,
+   "fg_mean_abs_diff": 0.0524,
+   "bg_mean_abs_diff": 0.0
+  },
+  {
+   "alpha": 0.1,
+   "fg_mean_abs_diff": 0.0262,
    "bg_mean_abs_diff": 0.0
   }
  ],
@@ -378,10 +373,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **A turntable of colour-coded meshes** ―― Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
 
-- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 300x450 px, 0.35 MB)
+- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 380x538 px, 0.41 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`
 - Bundling: フリップブック GIF(方位が進む)
-- SHA-256: `b5810c287af8d5088fa551aa8ab6abcfcba010772f0ba251fa56206fb3537ffb`
+- SHA-256: `b5b35e30108a7b5743adf6e161eeb25af190eaf33aa9ff9c3b89472e95e22116`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -391,7 +386,7 @@ as **a thumbnail linking to the full-size PNG**.
  "meshes": 16,
  "triangles": 7088,
  "azimuth_steps": 24,
- "render_px": 300,
+ "render_px": 380,
  "spacing_mm": [
   0.5,
   0.2,
@@ -409,10 +404,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **A measurement table with its legend — which colour is which particle** ―― A colour-coded figure without a legend is merely decorative. This table lists all 16 particles: swatch, volume in mm3, share of the total, equivalent diameter, sphericity, elongation and whether the particle touches the field of view. Total 62.5600 mm3, shares summing to 1.000000, one voxel = 0.020000 mm3. The largest is #2ddc8a at 9.3200 mm3, the smallest #15d4c9 at 0.5600 mm3. Ops used: `vol_label`, `vol_region_props`, `vol_label_shape_stats`, `vol_label_legend`, `vol_label_palette`.*
 
-- PNG (full size): `docs/articles/assets/wingvox_legend.png` (760x550 px, 84 kB)
-- Thumbnail (shown in the article): `docs/articles/assets/wingvox_legend_thumb.jpg` (82 kB)
+- PNG (full size): `docs/articles/assets/wingvox_legend.png` (900x604 px, 95 kB)
+- Thumbnail (shown in the article): `docs/articles/assets/wingvox_legend_thumb.jpg` (74 kB)
 - Bundling: 原寸 1 枚(表の数値が主役 ―― 縮めると読めない)
-- SHA-256: `c241696388813ed2b6fc81bc69f943c095ffe7c239e1ddd25b60e240bd4960f6`
+- SHA-256: `b37104ede27f54858b08ec62c9237c334f3bc437203fa40c887b9237b3196453`
 
 <details><summary>The measured values burned into this figure</summary>
 

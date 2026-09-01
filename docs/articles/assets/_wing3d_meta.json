@@ -872,14 +872,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 674164,
-      "mp4_bytes": 100770,
+      "gif_bytes": 605530,
+      "mp4_bytes": 91793,
       "thumb_bytes": 41649,
       "thumb_frame": 11,
-      "gif_sha256": "cf5c9a51da82c23d3ef9d7f439bf492bb5e73b0c0c551631bbb7c142da094183",
-      "mp4_sha256": "9f78658e1ab68f638dc01531cdf459a342fd31aadf58e563ad24b55693b76e4f",
+      "gif_sha256": "548d5d82d1a75960aec4d228e5acb2e1890b4be627e36afdebff4102b8f507a1",
+      "mp4_sha256": "dc20765f83693b1d7c8c59fe5287197ad84d7d6e4967751708391ac7406688e2",
       "exhibit": "distance",
-      "seconds": 78.63467260007747
+      "seconds": 77.44832329987548
     },
     {
       "name": "wing3d_boundary_connectivity",
@@ -969,25 +969,25 @@
           0.6,
           0.6
         ],
-        "labels": 3,
-        "largest_voxels": 18657,
-        "largest_volume_mm3": 4029.912,
-        "largest_surface_mm2": 1975.2422581763922,
-        "sphericity": 0.6200034859682224,
+        "labels": 1,
+        "largest_voxels": 25501,
+        "largest_volume_mm3": 5508.216,
+        "largest_surface_mm2": 3134.9759359551877,
+        "sphericity": 0.48112422132441834,
         "crop_shape": [
           105,
-          21,
-          21
+          90,
+          64
         ],
-        "crop_memory_ratio": 30.340740740740742,
-        "skeleton_voxels": 83,
-        "branches": 1,
-        "endpoints": 2,
-        "junctions": 0,
+        "crop_memory_ratio": 2.322962962962963,
+        "skeleton_voxels": 172,
+        "branches": 5,
+        "endpoints": 4,
+        "junctions": 2,
         "max_inscribed_radius_mm": 4.8373546489791295,
         "truth_radius_mm": 4.8
       },
-      "caption": "ノイズ付きの合成 CT(112³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 3 個)→ 最大成分(4029.9 mm³、球形度 0.6200)→ `vol_crop_domain` でメモリ **1/30.3** → 細線化(枝 1 / 分岐 0 / 端点 2)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。",
+      "caption": "ノイズ付きの合成 CT(112³、spacing 0.6 mm)が寸法になるまでの 7 工程をコマ送りに束ねた。窓 → 二値化 → ラベリング(連結成分 1 個)→ 最大成分(5508.2 mm³、球形度 0.4811)→ `vol_crop_domain` でメモリ **1/2.3** → 細線化(枝 5 / 分岐 2 / 端点 4)→ 距離変換で最大内接半径 **4.8374 mm**(真値 4.800 mm)。各コマに工程名と進捗が焼いてあるので、止めた 1 コマでも読める。",
       "kind": "gif",
       "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_pipeline_flow.gif",
       "mp4": null,
@@ -1001,14 +1001,14 @@
       ],
       "mp4_shape": null,
       "gif_colors": null,
-      "gif_bytes": 268816,
+      "gif_bytes": 283215,
       "mp4_bytes": 0,
-      "thumb_bytes": 40325,
+      "thumb_bytes": 39443,
       "thumb_frame": 0,
-      "gif_sha256": "f1126d49660ab13986d4b89e8414dd680b282ae4e89aec7e2f0b6248babc0728",
+      "gif_sha256": "5c5c33d6b8e55b31204832fa2f70e27b899dc28c805377998548a1ea7b7704dd",
       "mp4_sha256": null,
       "exhibit": "pipeline",
-      "seconds": 1.5421285999473184
+      "seconds": 1.6773465999867767
     },
     {
       "name": "wing3d_slice_zsweep",

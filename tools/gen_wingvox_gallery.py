@@ -238,10 +238,11 @@ def ex_slice_flow(log):
             _swatch(canvas, x, pw + 36, 18, 18, pal[i])
             x += 22
         canvas = _text(canvas, [
-            (8, pw + 8, "z = %2d / %d   写る粒子 %2d 個   総体積 %6.3f mm3"
-             % (z, D - 1, len(here), vol_mm3), FG + (16,), "la"),
-            (8, pw + 62, "色はボリューム全体で 1 度だけ決めた ―― 断面が変わっても動かない",
-             ACCENT + (14,), "la"),
+            _line(8, pw + 8, "z = %2d / %d   写る粒子 %2d 個   総体積 %6.3f mm3"
+                  % (z, D - 1, len(here), vol_mm3), FG, width=pw),
+            _line(8, pw + 62,
+                  "色はボリューム全体で 1 度だけ決めた ―― 断面が変わっても動かない",
+                  ACCENT, width=pw, start=14),
         ], size=16, where="slice_flow")
         frames.append(canvas)
 
@@ -392,13 +393,14 @@ def ex_sieve(log):
         canvas = _canvas(pw + 92, pw)
         _paste(canvas, _frame_border(_up(img, k)), 0, 0)
         canvas = _text(canvas, [
-            (8, pw + 8, "min_volume = %6.3f mm3      残る粒子 %2d / %d"
-             % (t, kept.size, n), FG + (16,), "la"),
-            (8, pw + 36, "残った粒子の色は 1 画素も変わっていない: %s"
-             % ("はい" if stable else "いいえ"),
-             ((0.45, 0.85, 0.60) if stable else (1.0, 0.4, 0.3)) + (15,), "la"),
-            (8, pw + 62, "relabel=False = 番号を振り直さない = パレットの行が動かない",
-             MUTED + (14,), "la"),
+            _line(8, pw + 8, "min_volume = %6.3f mm3      残る粒子 %2d / %d"
+                  % (t, kept.size, n), FG, width=pw),
+            _line(8, pw + 36, "残った粒子の色は 1 画素も変わっていない: %s"
+                  % ("はい" if stable else "いいえ"),
+                  (0.45, 0.85, 0.60) if stable else (1.0, 0.4, 0.3),
+                  width=pw, start=15),
+            _line(8, pw + 62, "relabel=False = 番号を振り直さない = パレットの行が動かない",
+                  MUTED, width=pw, start=14),
         ], size=16, where="sieve")
         frames.append(canvas)
 
@@ -442,11 +444,12 @@ def ex_overlay_alpha(log):
         canvas = _canvas(pw + 92, pw)
         _paste(canvas, _frame_border(_up(sl, k)), 0, 0)
         canvas = _text(canvas, [
-            (8, pw + 8, "alpha = %.2f   前景の変化 %.4f   背景の変化 %.4f"
-             % (a, d_fg, d_bg), FG + (16,), "la"),
-            (8, pw + 36, "下の CT が見えるところと、色が勝つところ", ACCENT + (15,), "la"),
-            (8, pw + 62, "背景は alpha に依らず 0.0000 ―― 色はラベルの上にしか乗らない",
-             MUTED + (14,), "la"),
+            _line(8, pw + 8, "alpha = %.2f   前景の変化 %.4f   背景の変化 %.4f"
+                  % (a, d_fg, d_bg), FG, width=pw),
+            _line(8, pw + 36, "下の CT が見えるところと、色が勝つところ",
+                  ACCENT, width=pw, start=15),
+            _line(8, pw + 62, "背景は alpha に依らず 0.0000 ―― 色はラベルの上にしか乗らない",
+                  MUTED, width=pw, start=14),
         ], size=16, where="overlay_alpha")
         frames.append(canvas)
 
@@ -508,10 +511,10 @@ def ex_mesh_turntable(log):
         canvas = _canvas(size + 66, size)
         _paste(canvas, _frame_border(img), 0, 0)
         canvas = _text(canvas, [
-            (8, size + 8, "方位 %3d 度   %d 粒子 / 三角形 %d 枚" % (
-                int(round(np.rad2deg(az))), len(meshes), tris), FG + (16,), "la"),
-            (8, size + 36, "色は断面図とまったく同じ ―― 同じパレットの同じ行",
-             MUTED + (14,), "la"),
+            _line(8, size + 8, "方位 %3d 度   %d 粒子 / 三角形 %d 枚" % (
+                int(round(np.rad2deg(az))), len(meshes), tris), FG, width=size),
+            _line(8, size + 36, "色は断面図とまったく同じ ―― 同じパレットの同じ行",
+                  MUTED, width=size, start=14),
         ], size=16, where="mesh_turntable")
         frames.append(canvas)
 
@@ -551,8 +554,9 @@ def ex_legend(log):
     img = _canvas(head_h + row_h * len(legend) + foot_h, width)
     items = [
         (16, 12, "どの色がどの粒子か ―― 色だけの図は作らない", FG + (21,), "la"),
-        (16, 46, "16 粒子・(24, 48, 48) voxel・spacing (0.50, 0.20, 0.20) mm・26 連結",
-         MUTED + (15,), "la"),
+        _line(16, 46,
+              "16 粒子・(24, 48, 48) voxel・spacing (0.50, 0.20, 0.20) mm・26 連結",
+              MUTED, width=width, start=15),
         (C["lab"], head_h - 24, "ラベル / 色", MUTED + (14,), "la"),
         (C["vol"], head_h - 24, "体積 mm3", MUTED + (14,), "la"),
         (C["bar"], head_h - 24, "全体比", MUTED + (14,), "la"),
@@ -579,12 +583,12 @@ def ex_legend(log):
         ]
     fy = head_h + row_h * len(legend)
     items += [
-        (16, fy + 10, "合計 %.4f mm3(比率の合計 %.6f)。体積は voxel 数 x %.4f mm3。"
-         % (sum(r["value"] for r in legend), sum(r["share"] for r in legend),
-            SPACING[0] * SPACING[1] * SPACING[2]), MUTED + (15,), "la"),
-        (16, fy + 36, "球形度は volops.vol_region_props(surface='faces')、"
-         "伸長度は volcolor.vol_label_shape_stats の sqrt(l1/l2)。",
-         MUTED + (14,), "la"),
+        _line(16, fy + 10, "合計 %.4f mm3(比率の合計 %.6f)。体積は voxel 数 x %.4f mm3。"
+              % (sum(r["value"] for r in legend), sum(r["share"] for r in legend),
+                 SPACING[0] * SPACING[1] * SPACING[2]), MUTED, width=width, start=15),
+        _line(16, fy + 36, "球形度は volops.vol_region_props(surface='faces')、"
+              "伸長度は volcolor.vol_label_shape_stats の sqrt(l1/l2)。",
+              MUTED, width=width, start=14),
     ]
     img = _text(img, items, where="legend")
     info = save_exhibit(img, "wingvox_legend")

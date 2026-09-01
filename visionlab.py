@@ -96,10 +96,13 @@ class VisionSystem:
 
     def capture(self, ideal_image, defocus_px=0.0, exposure=1.0, vignetting=True):
         """理想画像 → この系で実際に撮れる画像。"""
+        # 周辺光量落ちは像距離で決まる(焦点距離ではない)。系が知っているので渡す
+        # ―― 渡さないと image_formation は fail-closed で拒否する。
         return visiondesign.image_formation(
             ideal_image, f_number=self.f_number,
             pixel_pitch_um=self.pixel_pitch_um, wavelength_um=self.wavelength_um,
-            defocus_px=defocus_px, vignetting=vignetting, exposure=exposure)
+            defocus_px=defocus_px, vignetting=vignetting, exposure=exposure,
+            image_distance_mm=self._geo["image_distance_mm"])
 
     def __repr__(self):
         g = self._geo
