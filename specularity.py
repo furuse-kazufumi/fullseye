@@ -1294,7 +1294,7 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
             take = score < best_score
             best_score = np.where(take, score, best_score)
         else:
-            score = (r <= tol[None, :]).sum(axis=0).astype(np.float64)
+            score = ((r <= tol[None, :]) & lit).sum(axis=0).astype(np.float64)
             tie = np.median(r, axis=0)
             take = (score > best_score) | ((score == best_score) & (tie < best_tie))
             best_score = np.where(take, score, best_score)
