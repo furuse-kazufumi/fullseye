@@ -616,18 +616,35 @@ def anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0,
 
     which is defined for the **classical** transform only (``gain=1``,
     ``read_sigma=0``, ``offset=0``) — passing generalised parameters with this
-    mode raises rather than returning a formula that does not apply. Measured
-    bias of ``inverse(mean of A(Poisson(lambda)))`` over 1e6 samples at seed 0:
-    at ``lambda = 1`` the algebraic inverse gives 0.6255 (bias -0.375) and the
-    unbiased one 1.0129 (bias +0.013); at ``lambda = 4``, 3.6273 (-0.373) versus
-    4.0006 (+0.001). That factor-of-30 bias reduction is the whole point of the
-    mode.
+    mode raises rather than returning a formula that does not apply.
 
-    The unbiased formula undershoots slightly below 0 for very small ``D``
-    (measured: it first goes negative at ``D = 0.6867``, i.e. below about 0.24
-    expected photons); the result is clipped at 0 because a negative photon count
-    is not a number this module will hand out, and that clip is stated here
-    rather than done quietly.
+    Measured bias — apply the inverse to the *ideal denoised* value
+    ``D = E[A(X)]``, ``X ~ Poisson(lambda)``, and compare with ``lambda``. Both
+    computed **exactly** from the Poisson pmf (no sampling):
+
+    ========  ==================  ==================
+    lambda    algebraic bias      unbiased bias
+    ========  ==================  ==================
+    1         -0.179361           -0.003668
+    2         -0.231074           -0.006374
+    4         -0.249688           +0.003779
+    10        -0.250227           +0.016904
+    30        -0.250019           +0.017041
+    100       -0.250002           +0.011960
+    ========  ==================  ==================
+
+    The algebraic inverse converges to a **constant -1/4 photon** offset, which
+    at 1 photon/pixel is a 18% error; the closed form keeps the worst case to
+    0.017 photons (a 49x reduction at ``lambda = 1``, 15x at its own worst point
+    near ``lambda = 10-30``). It is a closed-form *approximation* of the exact
+    unbiased inverse, so it is not bias-free — those +0.017 are the honest
+    residual, not round-off.
+
+    The formula dips slightly below 0 just above its root: measured minimum
+    -3.97e-05 over ``D`` in ``[1.2247, 3]``, where ``1.2247 = A(0)`` is the
+    smallest value the transform can produce. The result is clipped at 0 —
+    stated here rather than done quietly — because a negative photon count is
+    not a number this module hands out.
 
     Returns a float64 array of the same shape as *values*.
 
