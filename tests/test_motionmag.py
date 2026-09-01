@@ -290,11 +290,16 @@ def _snr_ladder(noise_sigma, seed=11, alphas=(1.0, 2.0, 4.0, 8.0)):
 def test_image_snr_falls_monotonically_as_alpha_rises(sigma):
     """Raising the gain always costs image SNR. Measured, not asserted."""
     ladder = [r["snr_out"]["image_snr_db"] for r in _snr_ladder(sigma)]
-    assert all(ladder[i] > ladder[i + 1] for i in range(len(ladder) - 1)), ladder
-    # and the loss approaches 20*log10(2) = 6.02 dB per doubling once the
-    # amplified band dominates the noise budget
-    assert 3.0 < ladder[0] - ladder[1] < 6.03
-    assert 3.0 < ladder[-2] - ladder[-1] < 6.03
+    steps = [ladder[i] - ladder[i + 1] for i in range(len(ladder) - 1)]
+    assert all(s > 0.0 for s in steps), ladder
+    # No step may exceed 20*log10(2) = 6.02 dB, the asymptote the algebra gives
+    # once the amplified band dominates the noise budget. The *early* steps fall
+    # short of it by design and that is not a defect: when the pass-band starts
+    # out below the broadband noise floor (large sigma), doubling the band only
+    # doubles a small part of the total fluctuation. Measured first steps:
+    # 5.92 dB at sigma=0.002 down to 0.17 dB at sigma=0.05.
+    assert all(s < 6.03 for s in steps), steps
+    assert steps[-1] > 4.0, steps          # by the last doubling the band leads
 
 
 def test_magnification_never_improves_the_motion_snr():
