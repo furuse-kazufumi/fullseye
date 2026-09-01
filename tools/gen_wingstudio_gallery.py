@@ -1578,10 +1578,10 @@ def ex_studio_opsearch():
     # NOTE: 検索欄は setClearButtonEnabled(True) なので、文字が入ると ✕ ボタンが
     # 遅延して現れる。pump が足りないと「✕ が描かれた/描かれていない」で grab が
     # 揺れて GIF が非決定的になった(実測: 2 回の生成で SHA-256 が不一致)。
-    search.setText(""); _pump(10)
+    search.setText(""); _pump(24, 30)
     frames.append(_grab(win)); steps.append(("", total))
     for i in range(1, len(query) + 1):
-        search.setText(query[:i]); _pump(10)
+        search.setText(query[:i]); _pump(24, 30)
         n = win._op_list.count()
         frames.append(_grab(win)); steps.append((query[:i], n))
     # 見つけた op を選ぶ(シグネチャ欄に in_sort -> out_sort が出る)
@@ -1590,7 +1590,7 @@ def ex_studio_opsearch():
     frames += [_grab(win)] * 4
     n_final = win._op_list.count()
     # 2 例目: 分類コンボで絞る
-    search.setText("cad"); _pump(10)
+    search.setText("cad"); _pump(24, 30)
     frames += [_grab(win)] * 3
     steps.append(("cad", win._op_list.count()))
     facts = {"total_ops": int(total), "query": query,

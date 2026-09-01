@@ -569,12 +569,12 @@
         800
       ],
       "fps": 4,
-      "bytes": 538301,
+      "bytes": 537711,
       "thumb_bytes": 41223,
       "thumb_frame": 6,
-      "mean_abs_delta": 0.402,
-      "sha256": "72fe0c0b4389df1ef65df87139d4cdde1957b655d071c4ecd03d4fefe25ae377",
-      "thumb_sha256": "5fa25da2e6baa9224b4423e955dfd6522699c51c7dd60383f01721ca291d67a0",
+      "mean_abs_delta": 0.403,
+      "sha256": "d46ddb66183f746767674777674d14d7c4d491d3ee68f425a2032e281999c6b5",
+      "thumb_sha256": "2c559fe5dbf0ee1cfa51f32d52bbb30c52d427285303f591acf37a7c533bb7a7",
       "facts": {
         "total_ops": 903,
         "query": "watershed",
@@ -632,7 +632,7 @@
           800
         ]
       },
-      "seconds": 2.44
+      "seconds": 3.05
     },
     {
       "kind": "gif",
