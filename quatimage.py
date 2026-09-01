@@ -1309,7 +1309,7 @@ def monogenic_orientation(qimage, display: bool = False) -> np.ndarray:
     error over the same eight orientations is at most 3.6e-15 rad.
 
     Where the Riesz vector is exactly zero, ``atan2(0, 0) = 0`` is returned —
-    a *value*, not a measurement."""
+    a *value*, not a measurement.
 
     **Raises** ``ValueError``: the input is not a valid quaternion field, or its
     ``k`` component is non-zero; *display* is not a bool."""
