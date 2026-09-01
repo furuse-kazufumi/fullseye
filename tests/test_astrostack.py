@@ -541,8 +541,14 @@ class TestCosmicRays:
         tp = int((mask & hit).sum())
         assert tp / mask.sum() > 0.9, "precision"
         assert tp / hit.sum() > 0.6, "recall"
-        # 星の位置が消えていないこと(除去後も同じ数の星が立つ)
-        assert len(A.star_detect(cleaned)) == len(A.star_detect(frame))
+        # **本物の星が 1 つも消えていないこと。** 検出数の一致では駄目で、
+        # 除去前は宇宙線そのものが「星」として検出されている(実測 35 個 =
+        # 真の星 25 + 宇宙線 10)ので、除去すれば数は当然減る。見るべきは
+        # 「植えた 25 星がそれぞれ今も立っているか」。
+        after = A.star_detect(cleaned)
+        for r, c in zip(truth["rows"], truth["cols"]):
+            assert np.hypot(after[:, 0] - r, after[:, 1] - c).min() < 1.0, (r, c)
+        assert len(after) < len(A.star_detect(frame))     # 偽の星は消えた
 
     def test_rejection_actually_removes_the_flux_it_flagged(self):
         frame, truth = A.synth_starfield(shape=(96, 96), n_stars=10,
