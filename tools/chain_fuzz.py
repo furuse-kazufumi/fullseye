@@ -628,6 +628,15 @@ OP_ARG_BUILDERS = {
     if pool.get("points") else None,
     "illuminant_from_dichromatic_planes": _b_dichromatic_planes,
     "complex_steerable_reconstruct": _b_steerable,
+    # (V, F) を 2 位置引数へ割る 8 op(理由と実測は _b_mesh_split の docstring)
+    "mesh_to_voxel": _b_mesh_split(),
+    "mesh_to_points": _b_mesh_split(),
+    "ambient_occlusion": _b_mesh_split(),
+    "supersample_mesh": _b_mesh_split(),
+    "render_beauty": _b_mesh_split(),
+    "geodesic_mesh": _b_mesh_split(),
+    "decimate_qem": _b_mesh_split(),
+    "cast_shadow": _b_mesh_split("vector"),      # (V, F, light)
 }
 
 OP_PARAM_HINTS = {
