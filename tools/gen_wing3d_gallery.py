@@ -2252,6 +2252,814 @@ def ex_distance(log) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# 断層まわりの共通部品 — 断面 1 枚を「読める形」で置く                             #
+# --------------------------------------------------------------------------- #
+def _slice_panel(c, sl, x, y, size, cmap_name="gray", lo=None, hi=None,
+                 border=C_RULE, nearest=True):
+    """スライス 1 枚を size x size に置いて枠を付ける。戻り (canvas, 画素/voxel)。"""
+    from PIL import Image
+    img = _cmap(_norm01(sl, lo, hi) if (lo is not None or hi is not None)
+                else np.clip(sl, 0, 1), cmap_name)
+    im = Image.fromarray(_to_u8(img)).resize(
+        (size, size), Image.NEAREST if nearest else Image.BILINEAR)
+    _paste(c, np.asarray(im, np.float64) / 255.0, x, y)
+    c = imagedraw.draw_polyline(
+        c, [(x, y), (x + size - 1, y), (x + size - 1, y + size - 1), (x, y + size - 1)],
+        color=border, width=1, closed=True)
+    return c, size / sl.shape[0]
+
+
+def _crosshair(c, x, y, size, u, v, color, gap=9):
+    """クロスヘア(中心に隙間を空けるので、指している画素そのものは隠れない)。"""
+    cxp, cyp = x + u, y + v
+    c = imagedraw.draw_line(c, (x, cyp), (cxp - gap, cyp), color=color, width=1)
+    c = imagedraw.draw_line(c, (cxp + gap, cyp), (x + size - 1, cyp), color=color, width=1)
+    c = imagedraw.draw_line(c, (cxp, y), (cxp, cyp - gap), color=color, width=1)
+    c = imagedraw.draw_line(c, (cxp, cyp + gap), (cxp, y + size - 1), color=color, width=1)
+    return c
+
+
+def _ruler(c, x, y, w, h, frac, color, label_lo, label_hi, cur_label):
+    """位置バー — いま断面がどこにあるかを 1 本の帯で示す(単位つき)。"""
+    _fill(c, x, y, x + w, y + h, (0.14, 0.15, 0.18))
+    px = int(x + (w - 1) * float(np.clip(frac, 0, 1)))
+    _fill(c, x, y, px, y + h, color)
+    c = imagedraw.draw_line(c, (px, y - 4), (px, y + h + 4), color=(1, 1, 1), width=1)
+    return _text(c, [(x, y + h + 4, label_lo, C_DIM, 11, False),
+                     (x + w - _text_w(label_hi, 11), y + h + 4, label_hi, C_DIM, 11, False),
+                     (min(max(x, px - _text_w(cur_label, 12, True) // 2),
+                          x + w - _text_w(cur_label, 12, True)), y - 20,
+                      cur_label, color, 12, True)])
+
+
+def _extent_50(sl, axis, spacing_mm):
+    """50 % 等値面の幅を mm で測る(voxel 数ではなく交差位置で測る)。
+
+    二値マスクの voxel 数を「直径」と呼ぶと必ず 1 voxel ぶん狂う。行/列ごとに
+    0.5 を跨ぐ位置を線形補間して、いちばん広い断面の幅を返す。
+    """
+    a = np.asarray(sl, np.float64)
+    best = 0.0
+    lines = a if axis == 0 else a.T
+    for line in lines:
+        idx = np.nonzero(line >= 0.5)[0]
+        if idx.size < 1:
+            continue
+        i0, i1 = idx[0], idx[-1]
+        lo = i0 - 0.5
+        if i0 > 0 and line[i0] > line[i0 - 1]:
+            lo = i0 - 1 + (0.5 - line[i0 - 1]) / max(line[i0] - line[i0 - 1], 1e-12)
+        hi = i1 + 0.5
+        if i1 + 1 < line.size and line[i1] > line[i1 + 1]:
+            hi = i1 + (line[i1] - 0.5) / max(line[i1] - line[i1 + 1], 1e-12)
+        best = max(best, (hi - lo) * spacing_mm)
+    return best
+
+
+# --------------------------------------------------------------------------- #
+# 展示 S1 — z スライス送り(添字と物理位置の両方)                                 #
+# --------------------------------------------------------------------------- #
+def ex_slice_zsweep(log) -> dict:
+    """異方性 spacing の CT を 1 スライスずつ送る。添字と mm を必ず併記する。"""
+    n_z, n_y, n_x = 96, 128, 128
+    sp = (0.8, 0.3, 0.3)                     # z だけ粗い(典型的な CT)
+    zz, yy, xx = np.mgrid[0:n_z, 0:n_y, 0:n_x].astype(np.float64)
+    hu = np.full((n_z, n_y, n_x), -1000.0)
+    body = ((yy - 64.) ** 2 + ((xx - 64.) / 1.08) ** 2) <= 52.0 ** 2
+    hu[body] = 40.0
+    lung = ((((yy - 58.) / 1.0) ** 2 + ((xx - 40.) / 1.3) ** 2) <= 24.0 ** 2) | \
+           ((((yy - 58.) / 1.0) ** 2 + ((xx - 88.) / 1.3) ** 2) <= 24.0 ** 2)
+    hu[lung & body] = -820.0
+    rr = np.sqrt((yy - 64.) ** 2 + ((xx - 64.) / 1.08) ** 2)
+    rib = (rr > 44) & (rr < 49) & ((zz % 10) < 3)
+    hu[rib & body] = 900.0
+    spine = ((yy - 98.) ** 2 + (xx - 64.) ** 2) <= 11.0 ** 2
+    hu[spine & body] = 1100.0
+    # 斜めに走る血管(スライス送りで動いて見えるもの = 送っている実感)
+    vessel = _capsule((n_z, n_y, n_x), (4, 50, 34), (92, 84, 96), 3.2)
+    hu[vessel] = 150.0
+    win = np.asarray(G("vol_window_level")(hu, 40.0, 400.0))
+    bone = np.asarray(G("vol_window_level")(hu, 500.0, 2000.0))
+    thick_mm = n_z * sp[0]
+    log(f"    volume {n_z}x{n_y}x{n_x}  spacing {sp} mm  z 全長 {thick_mm:.1f} mm")
+    log(f"    1 スライス送り = {sp[0]:.2f} mm、面内 1 画素 = {sp[1]:.2f} mm "
+        f"({sp[0] / sp[1]:.2f} 倍)")
+
+    W, H = 1120, 660
+    ps = 430
+    frames = []
+    for z in range(n_z):
+        c = _canvas(W, H)
+        c = _header(c, "断層を送る ―― 添字と物理位置は別物",
+                    f"合成 CT {n_z}x{n_y}x{n_x}、spacing (z, y, x) = "
+                    f"({sp[0]}, {sp[1]}, {sp[2]}) mm/voxel。1 スライス送りは "
+                    f"{sp[0]:.2f} mm、面内 1 画素は {sp[1]:.2f} mm。")
+        c, s1 = _slice_panel(c, win[z], 18, 84, ps, "gray", border=C_A)
+        c, _ = _slice_panel(c, bone[z], 18 + ps + 16, 84, ps, "gray", border=C_B)
+        c = _text(c, [(18, 84 + ps + 6, "軟部組織窓(center 40 / width 400 HU)",
+                       C_A, 13, True),
+                      (18 + ps + 16, 84 + ps + 6, "骨窓(center 500 / width 2000 HU)",
+                       C_B, 13, True),
+                      (18, 84 + ps + 26, "上が y=0(前)、左が x=0。表示は最近傍拡大 "
+                                         "%.2f 倍。" % s1, C_DIM, 11, False)])
+        # 位置の読み(添字 / mm / 全長比)
+        c = _text(c, [
+            (924, 96, "スライス添字", C_DIM, 12, False),
+            (924, 114, "z = %2d / %d" % (z, n_z - 1), C_TEXT, 22, True),
+            (924, 152, "物理位置", C_DIM, 12, False),
+            (924, 170, "%6.2f mm" % (z * sp[0]), C_D, 24, True),
+            (924, 206, "(= %d x %.2f mm)" % (z, sp[0]), C_DIM, 12, False),
+            (924, 232, "全長 %.1f mm の %.1f %%" % (thick_mm, 100 * z / (n_z - 1)),
+             C_DIM, 12, False),
+            (924, 268, "面内で同じ 1 画素は", C_DIM, 12, False),
+            (924, 286, "%.2f mm" % sp[1], C_E, 20, True),
+            (924, 312, "= 送り 1 コマの %.2f 倍" % (sp[1] / sp[0]), C_DIM, 12, False),
+            (924, 340, "「1 つ動かす」が軸で", C_TEXT, 12, True),
+            (924, 358, "違う距離を意味する。", C_TEXT, 12, True),
+        ])
+        c = _ruler(c, 18, 566, W - 200, 14, z / (n_z - 1), C_D,
+                   "0.0 mm (z=0)", "%.1f mm (z=%d)" % (thick_mm, n_z - 1),
+                   "z=%d  %.2f mm" % (z, z * sp[0]))
+        # 添字 -> mm の対応(軸ごとに傾きが違う)
+        p = Plot(c, 60, 606, 640, 44, (0, 127), (0, 105),
+                 xlabel="添字(voxel)->", xticks=[0, 32, 64, 96, 127],
+                 yticks=[0, 50, 100], xfmt="%d", yfmt="%d")
+        p.series([0, n_z - 1], [0, (n_z - 1) * sp[0]], C_D, width=2)
+        p.series([0, n_y - 1], [0, (n_y - 1) * sp[1]], C_E, width=2)
+        p.marker(z, z * sp[0], C_D, size=5)
+        p.items.append((66, 592, "z 軸 %.2f mm/voxel" % sp[0], C_D, 11, True))
+        p.items.append((210, 592, "y / x 軸 %.2f mm/voxel" % sp[1], C_E, 11, True))
+        p.items.append((380, 592, "縦は mm", C_DIM, 11, False))
+        c = p.done()
+        c = _footer(c, "使用 op: vol_window_level  — 合成 HU データ(実在の患者・"
+                       "スキャンではありません)", y_off=12)
+        frames.append(c)
+
+    info = _save_clip(frames, "wing3d_slice_zsweep", fps=15, thumb_index=n_z // 2, log=log)
+    return {
+        "name": "wing3d_slice_zsweep",
+        "title": "断層を送る ―― `z = 48 / 95` は %.2f mm のこと" % (48 * sp[0]),
+        "ops": ["vol_window_level"],
+        "facts": {"shape": [n_z, n_y, n_x], "spacing_mm": list(sp),
+                  "z_extent_mm": thick_mm, "mm_per_slice": sp[0],
+                  "mm_per_inplane_pixel": sp[1],
+                  "anisotropy_ratio": sp[0] / sp[1], "frames": n_z},
+        "caption": (f"合成 CT({n_z}×{n_y}×{n_x}、spacing ({sp[0]}, {sp[1]}, {sp[2]}) mm)を "
+                    f"1 スライスずつ {n_z} コマ送る。各コマに**添字と物理位置の両方**"
+                    f"(`z = 48 / 95` = {48 * sp[0]:.2f} mm)と位置バーを焼いた。"
+                    f"1 スライス送りは {sp[0]:.2f} mm、面内 1 画素は {sp[1]:.2f} mm "
+                    f"= **{sp[1] / sp[0]:.2f} 倍**なので、下の折れ線のとおり「添字を 1 つ"
+                    "動かす」は軸ごとに違う距離を意味する ―― 異方性 CT でいちばん"
+                    "踏みやすい段差。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
+# 展示 S2 — 3 直交断面(MPR)とクロスヘア                                         #
+# --------------------------------------------------------------------------- #
+def ex_mpr(log) -> dict:
+    """axial / coronal / sagittal を同時に動かし、交差線で見ている点を示す。"""
+    n = 128
+    sp = (0.5, 0.5, 0.5)
+    # 向きが一目で分かるよう、非対称なランドマークを入れる(左右反転の検出用)
+    zz, yy, xx = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
+    vol = np.zeros((n, n, n))
+    body = (((zz - 64.) / 52.) ** 2 + ((yy - 64.) / 44.) ** 2
+            + ((xx - 64.) / 38.) ** 2) <= 1.0
+    vol[body] = 0.35
+    # 右側(x 大)にだけ球、前側(y 小)にだけ棒、上側(z 大)にだけリング
+    vol[_aa_ball((n, n, n), (64., 64., 96.), 11.0) > 0.5] = 0.95
+    vol[_capsule((n, n, n), (30, 30, 64), (98, 30, 64), 5.0)] = 0.75
+    ring = (np.abs(zz - 100.) <= 3) & (np.abs(np.sqrt((yy - 64.) ** 2 + (xx - 64.) ** 2) - 26.) <= 3)
+    vol[ring] = 0.85
+    helix = np.zeros((n, n, n), bool)
+    for t in np.linspace(0, 1, 900):
+        z = 16 + t * 96
+        a = 2 * math.pi * 2.0 * t
+        y = 64 + 28 * math.sin(a)
+        x = 64 + 28 * math.cos(a)
+        helix |= _aa_ball((n, n, n), (z, y, x), 2.6) > 0.5
+    vol[helix] = 1.0
+    log(f"    volume {vol.shape} spacing {sp}  landmarks: +x 球 / -y 棒 / +z リング / らせん")
+
+    W, H = 1120, 620
+    ps = 300
+    nf = 60
+    frames = []
+    for k in range(nf):
+        t = k / nf
+        a = 2 * math.pi * 2.0 * t
+        cz = 16.0 + 96.0 * t
+        cy = 64.0 + 28.0 * math.sin(a)
+        cx = 64.0 + 28.0 * math.cos(a)
+        iz, iy, ix = int(round(cz)), int(round(cy)), int(round(cx))
+        c = _canvas(W, H)
+        c = _header(c, "3 直交断面(MPR)―― どの断面のどこを見ているか",
+                    "らせん状の目印を追いかけながら axial / coronal / sagittal を"
+                    "同時に動かす。3 本のクロスヘアは同じ 1 点を指している。")
+        # axial: vol[z] は (y, x) — 縦 y、横 x
+        c, s = _slice_panel(c, vol[iz], 18, 92, ps, "gray", border=C_A)
+        c = _crosshair(c, 18, 92, ps, ix * s, iy * s, C_A)
+        # coronal: vol[:, y, :] は (z, x) — 縦 z、横 x。z を上向きにするので上下反転
+        cor = vol[:, iy, :][::-1, :]
+        c, _ = _slice_panel(c, cor, 18 + ps + 16, 92, ps, "gray", border=C_B)
+        c = _crosshair(c, 18 + ps + 16, 92, ps, ix * s, (n - 1 - iz) * s, C_B)
+        # sagittal: vol[:, :, x] は (z, y) — 縦 z(上向き)、横 y
+        sag = vol[:, :, ix][::-1, :]
+        c, _ = _slice_panel(c, sag, 18 + 2 * (ps + 16), 92, ps, "gray", border=C_C)
+        c = _crosshair(c, 18 + 2 * (ps + 16), 92, ps, iy * s, (n - 1 - iz) * s, C_C)
+
+        c = _text(c, [
+            (18, 92 + ps + 8, "axial  vol[z=%d]" % iz, C_A, 14, True),
+            (18, 92 + ps + 28, "横 = x ->  縦 = y (下向き)", C_DIM, 12, False),
+            (18 + ps + 16, 92 + ps + 8, "coronal  vol[:, y=%d, :]" % iy, C_B, 14, True),
+            (18 + ps + 16, 92 + ps + 28, "横 = x ->  縦 = z (上向き・表示で反転)",
+             C_DIM, 12, False),
+            (18 + 2 * (ps + 16), 92 + ps + 8, "sagittal  vol[:, :, x=%d]" % ix, C_C, 14, True),
+            (18 + 2 * (ps + 16), 92 + ps + 28, "横 = y ->  縦 = z (上向き・表示で反転)",
+             C_DIM, 12, False),
+        ])
+        c = _text(c, [
+            (18, 470, "交点(z, y, x) = (%3d, %3d, %3d) voxel" % (iz, iy, ix),
+             C_TEXT, 17, True),
+            (18, 496, "        = (%.2f, %.2f, %.2f) mm  spacing %.1f mm/voxel"
+             % (iz * sp[0], iy * sp[1], ix * sp[2], sp[0]), C_D, 15, True),
+            (18, 524, "その点の値 %.3f" % float(vol[iz, iy, ix]), C_TEXT, 13, False),
+            (470, 466, "向きの確認用ランドマーク(取り違えたら図が壊れる)", C_DIM, 12, False),
+            (470, 488, "x が大きい側にだけ 明るい球     -> axial / coronal の右端",
+             C_TEXT, 12, False),
+            (470, 508, "y が小さい側にだけ 横棒         -> axial の上端 / sagittal の左端",
+             C_TEXT, 12, False),
+            (470, 528, "z が大きい側にだけ リング       -> coronal / sagittal の上端",
+             C_TEXT, 12, False),
+            (470, 552, "coronal / sagittal は z を上向きに見せるため表示時に上下反転して"
+                       "いる(配列そのものは反転していない)。", C_DIM, 12, False),
+        ])
+        c = _ruler(c, 18, 586, W - 40, 12, t, C_A, "z=0", "z=%d" % (n - 1),
+                   "z=%d (%.1f mm)" % (iz, iz * sp[0]))
+        frames.append(c)
+
+    info = _save_clip(frames, "wing3d_mpr_crosshair", fps=15, thumb_index=nf // 4, log=log)
+    return {
+        "name": "wing3d_mpr_crosshair",
+        "title": "3 直交断面(MPR)とクロスヘア",
+        "ops": ["(numpy スライス + imagedraw)"],
+        "facts": {"shape": [n, n, n], "spacing_mm": list(sp), "frames": nf,
+                  "landmarks": {"+x": "球", "-y": "横棒", "+z": "リング"}},
+        "caption": ("同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal"
+                    "(`vol[:, y, :]`)・sagittal(`vol[:, :, x]`)を横に並べ、"
+                    "らせん状の目印を追いながら 3 本のクロスヘアを同時に動かした。"
+                    "各パネルに**どの軸が横でどの軸が縦か**を書き、`+x` に球・`-y` に横棒・"
+                    "`+z` にリングという非対称なランドマークを入れてある ―― 軸の"
+                    "入れ替わりや左右反転が起きたら、この 3 つの位置がずれて必ず露見する。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
+# 展示 S3 — 斜め断面(円柱を斜めに切ると楕円になる)                               #
+# --------------------------------------------------------------------------- #
+def ex_oblique(log) -> dict:
+    """切断面を 0 -> 80 度まで倒し、切り口が円から楕円へ伸びるのを測る。"""
+    n = 160
+    sp = 0.25                                  # mm / voxel(等方)
+    r_vox = 20.0
+    r_mm = r_vox * sp
+    zz, yy, xx = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
+    rr = np.sqrt((yy - 80.) ** 2 + (xx - 80.) ** 2)
+    cyl = np.clip(r_vox - rr + 0.5, 0.0, 1.0)         # 軸 = z、反エイリアス
+    angles = list(range(0, 81, 2))
+    rows = []
+    slices = {}
+    for ang in angles:
+        v = np.asarray(G("vol_rotate")(cyl, float(ang), axes=(0, 1), order=1,
+                                       reshape=False, mode="constant", cval=0.0))
+        sl = v[n // 2]
+        slices[ang] = sl
+        minor = _extent_50(sl, 1, sp)          # x 方向(倒しても変わらない)
+        major = _extent_50(sl, 0, sp)          # y 方向(1/cos で伸びる)
+        truth_major = 2 * r_mm / math.cos(math.radians(ang))
+        rows.append({"angle_deg": ang, "minor_mm": minor, "major_mm": major,
+                     "truth_minor_mm": 2 * r_mm, "truth_major_mm": truth_major,
+                     "area_mm2": float((sl >= 0.5).sum()) * sp * sp,
+                     "truth_area_mm2": math.pi * r_mm ** 2 / math.cos(math.radians(ang))})
+    for r in rows[::8]:
+        log(f"    ang {r['angle_deg']:2d} deg  minor {r['minor_mm']:.3f} "
+            f"(truth {r['truth_minor_mm']:.3f})  major {r['major_mm']:.3f} "
+            f"(truth {r['truth_major_mm']:.3f})  err {r['major_mm'] - r['truth_major_mm']:+.3f} mm")
+    max_major_err = max(abs(r["major_mm"] - r["truth_major_mm"]) for r in rows)
+    max_minor_err = max(abs(r["minor_mm"] - r["truth_minor_mm"]) for r in rows)
+    log(f"    max |major err| {max_major_err:.4f} mm   max |minor err| {max_minor_err:.4f} mm")
+
+    W, H = 1120, 640
+    ps = 380
+    frames = []
+    for r in rows:
+        ang = r["angle_deg"]
+        c = _canvas(W, H)
+        c = _header(c, "斜めに切る ―― 円柱の切り口は角度で楕円に伸びる",
+                    f"半径 {r_mm:.2f} mm の合成円柱(軸 = z)。切断面を z-y 面内で "
+                    f"{ang:2d}° 倒して切る(vol_rotate の逆回しで実現)。")
+        c, s = _slice_panel(c, slices[ang], 18, 92, ps, "gray", border=C_B)
+        # 測った長短径を線で重ねる
+        m = slices[ang] >= 0.5
+        if m.any():
+            ys, xs = np.nonzero(m)
+            cyv = (ys.min() + ys.max()) / 2.0
+            cxv = (xs.min() + xs.max()) / 2.0
+            hy = r["major_mm"] / sp / 2.0
+            hx = r["minor_mm"] / sp / 2.0
+            c = imagedraw.draw_line(c, (18 + cxv * s, 92 + (cyv - hy) * s),
+                                    (18 + cxv * s, 92 + (cyv + hy) * s), color=C_E, width=2)
+            c = imagedraw.draw_line(c, (18 + (cxv - hx) * s, 92 + cyv * s),
+                                    (18 + (cxv + hx) * s, 92 + cyv * s), color=C_A, width=2)
+        c = _text(c, [(18, 92 + ps + 6, "切り口(vol_rotate 後の z 中央スライス)",
+                       C_B, 13, True),
+                      (18, 92 + ps + 26, "ローズ = 長径(y 方向) / シアン = 短径(x 方向)",
+                       C_DIM, 12, False)])
+        # 断面の作り方の模式(側面図)
+        sx, sy, sw, sh = 428, 92, 250, ps
+        _fill(c, sx, sy, sx + sw, sy + sh, C_PANEL)
+        cx0, cy0 = sx + sw / 2, sy + sh / 2
+        rw = 42.0
+        c = imagedraw.draw_polyline(
+            c, [(cx0 - rw, cy0 - 140), (cx0 + rw, cy0 - 140),
+                (cx0 + rw, cy0 + 140), (cx0 - rw, cy0 + 140)],
+            color=(0.30, 0.34, 0.40), width=2, closed=True)
+        th = math.radians(ang)
+        L = 118.0
+        c = imagedraw.draw_line(c, (cx0 - L * math.cos(th), cy0 + L * math.sin(th)),
+                                (cx0 + L * math.cos(th), cy0 - L * math.sin(th)),
+                                color=C_B, width=3)
+        c = imagedraw.draw_line(c, (cx0 - L, cy0), (cx0 + L, cy0), color=C_RULE, width=1)
+        c = imagedraw.draw_polyline(
+            c, [(sx, sy), (sx + sw - 1, sy), (sx + sw - 1, sy + sh - 1), (sx, sy + sh - 1)],
+            color=C_RULE, width=1, closed=True)
+        c = _text(c, [(sx + 8, sy + 8, "側面図(z 上, y 右)", C_DIM, 12, True),
+                      (sx + 8, sy + 28, "灰 = 円柱、黄 = 切断面", C_DIM, 11, False),
+                      (sx + 8, sy + sh - 26, "傾き %2d deg" % ang, C_B, 15, True),
+                      (sx, sy + sh + 6, "切断面の傾き", C_TEXT, 12, True)])
+
+        p = Plot(c, 760, 120, 330, 200, (0, 80), (0, 32),
+                 xlabel="切断面の傾き [deg] ->", ylabel="切り口の径 [mm]",
+                 xticks=[0, 20, 40, 60, 80], yticks=[0, 10, 20, 30],
+                 xfmt="%d", yfmt="%d")
+        p.series([x["angle_deg"] for x in rows], [x["truth_major_mm"] for x in rows],
+                 (0.55, 0.30, 0.36), width=3)
+        p.series([x["angle_deg"] for x in rows], [x["major_mm"] for x in rows], C_E, width=2)
+        p.series([x["angle_deg"] for x in rows], [x["minor_mm"] for x in rows], C_A, width=2)
+        p.marker(ang, r["major_mm"], C_E, size=6)
+        p.marker(ang, r["minor_mm"], C_A, size=6)
+        p.items.append((766, 124, "長径 = 2r / cos(theta)(太い暗線が理論値)", C_E, 11, True))
+        p.items.append((766, 142, "短径 = 2r(角度によらない)", C_A, 11, True))
+        c = p.done()
+        c = _text(c, [
+            (760, 360, "傾き %2d deg のとき" % ang, C_DIM, 12, False),
+            (760, 380, "短径 %.3f mm" % r["minor_mm"], C_A, 17, True),
+            (760, 404, " 真値 %.3f mm  (差 %+.3f)"
+             % (r["truth_minor_mm"], r["minor_mm"] - r["truth_minor_mm"]), C_DIM, 12, False),
+            (760, 428, "長径 %.3f mm" % r["major_mm"], C_E, 17, True),
+            (760, 452, " 真値 %.3f mm  (差 %+.3f)"
+             % (r["truth_major_mm"], r["major_mm"] - r["truth_major_mm"]), C_DIM, 12, False),
+            (760, 480, "面積 %.2f mm^2(真値 %.2f)"
+             % (r["area_mm2"], r["truth_area_mm2"]), C_TEXT, 12, False),
+            (18, 520, "斜めに切った断面で測った「直径」は、そのままでは部品の直径ではない。",
+             C_TEXT, 15, True),
+            (18, 546, "短径は角度によらず %.3f mm のままなのに、長径は 80 deg で %.3f mm "
+                      "= %.2f 倍になる。"
+             % (rows[0]["minor_mm"], rows[-1]["major_mm"],
+                rows[-1]["major_mm"] / rows[0]["minor_mm"]), C_TEXT, 13, False),
+            (18, 570, "全 %d 角度での実測と理論の差は 長径 最大 %.4f mm / "
+                      "短径 最大 %.4f mm(spacing %.2f mm の %.2f 画素ぶん)。"
+             % (len(rows), max_major_err, max_minor_err, sp, max_major_err / sp),
+             C_D, 13, True),
+            (18, 596, "測り方は 50 %% 等値面の交差位置を線形補間して求めた "
+                      "— 二値の voxel 数を直径と呼ぶと必ず 1 画素ぶん狂う。",
+             C_DIM, 12, False),
+        ])
+        c = _footer(c, "使用 op: vol_rotate  — 合成データ(反エイリアス円柱)", y_off=14)
+        frames.append(c)
+
+    info = _save_clip(frames, "wing3d_oblique_slice", fps=10,
+                      thumb_index=len(rows) * 3 // 4, log=log)
+    return {
+        "name": "wing3d_oblique_slice",
+        "title": "斜めに切ると円が楕円になる(長径は 1/cos で伸びる)",
+        "ops": ["vol_rotate"],
+        "facts": {"radius_mm": r_mm, "spacing_mm": sp, "angles_deg": angles,
+                  "rows": rows, "max_major_err_mm": max_major_err,
+                  "max_minor_err_mm": max_minor_err},
+        "caption": (f"半径 {r_mm:.2f} mm の合成円柱を、切断面を 0° から 80° まで倒しながら"
+                    f"切る(`vol_rotate` の逆回し)。短径は角度によらず "
+                    f"{rows[0]['minor_mm']:.3f} mm のままなのに、長径は "
+                    f"**2r / cos θ** に沿って伸び、80° では {rows[-1]['major_mm']:.3f} mm "
+                    f"= {rows[-1]['major_mm'] / rows[0]['minor_mm']:.2f} 倍になる。"
+                    f"{len(rows)} 角度すべてで理論値との差は最大 {max_major_err:.4f} mm"
+                    f"({max_major_err / sp:.2f} 画素)。「斜めの断面で測った直径」を"
+                    "そのまま寸法にしてはいけない、という一本。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
+# 展示 S4 — CT の窓を掃引する                                                    #
+# --------------------------------------------------------------------------- #
+def ex_window_sweep(log) -> dict:
+    """center / width を動かして、何が飽和し何が沈むかを 1 本で見せる。"""
+    n = 128
+    hu = _ct_phantom(n)
+    z = 64
+    tissue = [("空気", -1000.0, C_DIM), ("肺", -820.0, C_D), ("軟部", 40.0, C_A),
+              ("血管", 120.0, C_C), ("肋骨", 900.0, C_B), ("椎体", 1100.0, C_E)]
+    seq = []
+    for cc in np.linspace(-800, 900, 30):
+        seq.append((float(cc), 400.0, "center を掃引(width 400 HU 固定)"))
+    for ww in np.geomspace(150, 2600, 26):
+        seq.append((40.0, float(ww), "width を掃引(center 40 HU 固定)"))
+    for cc, ww in zip(np.linspace(40, 500, 14), np.linspace(400, 2000, 14)):
+        seq.append((float(cc), float(ww), "軟部窓 -> 骨窓へ移る"))
+    rows = []
+    outs = []
+    for cc, ww, phase in seq:
+        o = np.asarray(G("vol_window_level")(hu, cc, ww))
+        outs.append(o[z])
+        rows.append({"center": cc, "width": ww, "phase": phase,
+                     "sat_low_pct": 100 * float((o <= 0).mean()),
+                     "sat_high_pct": 100 * float((o >= 1).mean()),
+                     "vals": {name: float(np.clip((v - (cc - ww / 2)) / ww, 0, 1))
+                              for name, v, _ in tissue}})
+    log(f"    {len(seq)} 通りの窓を掃引 (center {min(r['center'] for r in rows):.0f} .. "
+        f"{max(r['center'] for r in rows):.0f} HU, width "
+        f"{min(r['width'] for r in rows):.0f} .. {max(r['width'] for r in rows):.0f} HU)")
+    for i in (0, 29, 42, 55, len(rows) - 1):
+        r = rows[i]
+        log(f"      c={r['center']:+7.1f} w={r['width']:7.1f}  "
+            f"黒潰れ {r['sat_low_pct']:5.1f} %  白飛び {r['sat_high_pct']:5.1f} %")
+
+    W, H = 1120, 660
+    ps = 420
+    frames = []
+    for i, (r, sl) in enumerate(zip(rows, outs)):
+        c = _canvas(W, H)
+        c = _header(c, "CT の窓を掃引する ―― 見えるものは窓が決めている",
+                    f"同じ 1 枚のスライス(z = {z})に `vol_window_level` の窓だけを"
+                    f"動かして当てる。{r['phase']}")
+        c, s = _slice_panel(c, sl, 18, 92, ps, "gray", border=C_A)
+        c = _text(c, [(18, 92 + ps + 6, "z = %d の軟部〜骨を含む断面" % z, C_A, 13, True),
+                      (18, 92 + ps + 26,
+                       "黒に潰れた %.1f %% / 白に飛んだ %.1f %%"
+                       % (r["sat_low_pct"], r["sat_high_pct"]), C_TEXT, 13, True)])
+        c = _text(c, [
+            (470, 96, "center", C_DIM, 12, False),
+            (470, 114, "%+7.1f HU" % r["center"], C_B, 26, True),
+            (700, 96, "width", C_DIM, 12, False),
+            (700, 114, "%7.1f HU" % r["width"], C_C, 26, True),
+            (470, 154, "窓の範囲  %+.0f .. %+.0f HU"
+             % (r["center"] - r["width"] / 2, r["center"] + r["width"] / 2),
+             C_TEXT, 15, True),
+        ])
+        p = Plot(c, 530, 200, 550, 150, (-1200, 1400), (-0.05, 1.05),
+                 xlabel="HU ->", ylabel="窓の出力 [0,1]",
+                 xticks=[-1000, -500, 0, 500, 1000], yticks=[0, 0.5, 1.0],
+                 xfmt="%d", yfmt="%.1f")
+        lo, hi = r["center"] - r["width"] / 2, r["center"] + r["width"] / 2
+        p.series([-1200, lo, hi, 1400], [0, 0, 1, 1], C_B, width=3)
+        for name, v, col in tissue:
+            p.c = imagedraw.draw_line(p.c, (p.px(v), p.y0), (p.px(v), p.y0 + p.h - 1),
+                                      color=(0.28, 0.30, 0.34), width=1)
+            y = r["vals"][name]
+            p.c = imagedraw.draw_markers(p.c, [(p.px(v), p.py(y))], color=col,
+                                         size=5, shape="dot", width=2)
+            p.items.append((p.px(v) - _text_w(name, 10) / 2, p.y0 - 15, name, col, 10, True))
+        c = p.done()
+        # 各組織が「いま何色に見えるか」の帯
+        bx, by, bw, bh = 530, 400, 550, 26
+        c = _text(c, [(bx, by - 20, "この窓での各組織の見え方(0 = 真っ黒, 1 = 真っ白)",
+                       C_DIM, 12, False)])
+        seg = bw // len(tissue)
+        items = []
+        for j, (name, v, col) in enumerate(tissue):
+            y = r["vals"][name]
+            _fill(c, bx + j * seg, by, bx + (j + 1) * seg - 4, by + bh,
+                  (y, y, y))
+            c = imagedraw.draw_polyline(
+                c, [(bx + j * seg, by), (bx + (j + 1) * seg - 5, by),
+                    (bx + (j + 1) * seg - 5, by + bh - 1), (bx + j * seg, by + bh - 1)],
+                color=col, width=1, closed=True)
+            items.append((bx + j * seg + 2, by + bh + 4, name, col, 11, True))
+            items.append((bx + j * seg + 2, by + bh + 20, "%.2f" % y, C_TEXT, 11, False))
+        c = _text(c, items)
+        c = _text(c, [
+            (530, 494, "軟部窓(center 40 / width 400)では肋骨も椎体も 1.00 = 白飛び。",
+             C_TEXT, 13, False),
+            (530, 516, "骨窓(center 500 / width 2000)では軟部と肺が 0 付近に沈む。",
+             C_TEXT, 13, False),
+            (530, 540, "どちらも情報が消えている。窓は「見せ方」ではなく"
+                       "「何を捨てるか」の選択。", C_D, 13, True),
+        ])
+        c = _ruler(c, 18, 570, 420, 12, i / (len(rows) - 1), C_B,
+                   "掃引 開始", "終了",
+                   "%d / %d" % (i + 1, len(rows)))
+        c = _footer(c, "使用 op: vol_window_level  — 合成 HU データ(実在の患者・"
+                       "スキャンではありません)", y_off=16)
+        frames.append(c)
+
+    info = _save_clip(frames, "wing3d_window_sweep", fps=12, thumb_index=29, log=log)
+    lo_soft = [r for r in rows if abs(r["center"] - 40) < 1 and abs(r["width"] - 400) < 60]
+    return {
+        "name": "wing3d_window_sweep",
+        "title": "CT の窓を掃引する ―― 見えるものは窓が決めている",
+        "ops": ["vol_window_level"],
+        "facts": {"steps": len(rows), "z": z,
+                  "center_range": [min(r["center"] for r in rows),
+                                   max(r["center"] for r in rows)],
+                  "width_range": [min(r["width"] for r in rows),
+                                  max(r["width"] for r in rows)],
+                  "rows": rows},
+        "caption": (f"同じ 1 枚の断面に `vol_window_level` の窓だけを {len(rows)} 通り当てる。"
+                    "center を動かすと明るさの基準が、width を動かすと捨てる範囲が変わる。"
+                    "各コマに center / width の実数値と、黒潰れ・白飛びの割合、"
+                    "6 つの組織が「いま何色に見えるか」を焼いた。軟部窓では骨が 1.00 で"
+                    "飽和し、骨窓では軟部と肺が 0 付近に沈む ―― どちらも情報を捨てている、"
+                    "というのが 1 本で見える。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
+# 展示 S5 — 等値面のしきい値を掃引する                                            #
+# --------------------------------------------------------------------------- #
+def ex_isosurface(log) -> dict:
+    """marching cubes の level を動かし、面が育つ/くびれて割れるのを測る。"""
+    n = 96
+    import scipy.ndimage as ndi
+    a = _aa_ball((n, n, n), (48., 40., 40.), 15.0)
+    b = _aa_ball((n, n, n), (48., 58., 58.), 13.0)
+    vol = ndi.gaussian_filter(np.maximum(a, b), 3.2)
+    vol = _norm01(vol)
+    levels = [round(x, 3) for x in np.linspace(0.08, 0.86, 40)]
+    rows, meshes = [], {}
+    st = np.ones((3, 3, 3), int)
+    for lv in levels:
+        try:
+            verts, faces, _ = G("voxel_to_mesh")(vol, iso=lv)
+        except Exception as exc:                     # 面が消えたら honest に記録
+            rows.append({"level": lv, "verts": 0, "faces": 0, "area": 0.0,
+                         "components": 0, "occupied": int((vol > lv).sum()),
+                         "note": str(exc)[:80]})
+            meshes[lv] = None
+            continue
+        area = float(G("mesh_area")((verts, faces)))
+        ncomp = int(ndi.label(vol > lv, structure=st)[1])
+        rows.append({"level": lv, "verts": int(len(verts)), "faces": int(len(faces)),
+                     "area": area, "components": ncomp,
+                     "occupied": int((vol > lv).sum()), "note": ""})
+        meshes[lv] = np.asarray(verts, np.float64)
+    for r in rows[::6]:
+        log(f"    level {r['level']:.3f}  verts {r['verts']:6d}  faces {r['faces']:6d}  "
+            f"area {r['area']:9.1f}  成分 {r['components']}  占有 {r['occupied']:7d}")
+    split = next((r["level"] for r in rows if r["components"] >= 2), None)
+    log(f"    2 つに割れ始める level = {split}")
+
+    W, H = 1120, 640
+    ps = 400
+    frames = []
+    center = np.array([48.0, 48.0, 48.0])
+    R = _rot(32.0, 20.0)
+    for i, r in enumerate(rows):
+        lv = r["level"]
+        c = _canvas(W, H)
+        c = _header(c, "等値面のしきい値を動かす ―― 面は育ち、くびれ、割れる",
+                    "2 つの球をぼかして重ねた合成ボリューム。`voxel_to_mesh`"
+                    "(marching cubes)の level だけを動かす。")
+        px, py = 18, 92
+        _fill(c, px, py, px + ps, py + ps, C_PANEL)
+        sub = c[py:py + ps, px:px + ps]
+        v = meshes[lv]
+        if v is not None and len(v):
+            u, vv, dd = _project(v[:, [2, 1, 0]], R, 3.5, ps / 2, ps / 2,
+                                 center[[2, 1, 0]])
+            _splat(sub, u, vv, dd, C_B if r["components"] < 2 else C_E,
+                   radius=1, shade=0.6)
+        c = imagedraw.draw_polyline(
+            c, [(px, py), (px + ps - 1, py), (px + ps - 1, py + ps - 1), (px, py + ps - 1)],
+            color=C_RULE, width=1, closed=True)
+        c = _axis_gizmo(c, R, px + 42, py + ps - 42, size=28)
+        c = _text(c, [(px, py + ps + 6, "等値面の頂点(%d 点)を点で表示" % r["verts"],
+                       C_TEXT, 12, True)])
+        # 断面での等値線(level のどこを切っているかを 2D でも見せる)
+        c2, s2 = _slice_panel(c, vol[48], 440, 92, 260, "viridis", 0, 1, border=C_C)
+        c = c2
+        band = np.abs(vol[48] - lv) < 0.012
+        ys, xs = np.nonzero(band)
+        if ys.size:
+            sub2 = c[92:92 + 260, 440:440 + 260]
+            uu = np.clip(np.rint(xs * s2).astype(int), 0, 259)
+            vv2 = np.clip(np.rint(ys * s2).astype(int), 0, 259)
+            sub2[vv2, uu, :] = np.asarray(C_E)
+        c = _text(c, [(440, 92 + 260 + 6, "z = 48 の断面(色 = 値)と等値線", C_C, 12, True),
+                      (440, 92 + 260 + 24, "ローズの線が level = %.3f" % lv, C_E, 12, True)])
+
+        p = Plot(c, 770, 130, 320, 190, (0.05, 0.9), (0, max(r2["area"] for r2 in rows) * 1.08),
+                 xlabel="level ->", ylabel="等値面の表面積 [voxel^2]",
+                 xticks=[0.1, 0.3, 0.5, 0.7, 0.9], yticks=[0, 5000, 10000, 15000],
+                 xfmt="%.1f", yfmt="%d")
+        p.series([r2["level"] for r2 in rows], [r2["area"] for r2 in rows], C_B, width=2)
+        p.marker(lv, r["area"], C_D, size=6)
+        if split is not None:
+            p.c = imagedraw.draw_line(p.c, (p.px(split), p.y0),
+                                      (p.px(split), p.y0 + p.h - 1), color=C_E, width=1)
+            p.items.append((p.px(split) + 4, p.y0 + 6, "ここで 2 つに割れる", C_E, 10, True))
+        c = p.done()
+        c = _text(c, [
+            (770, 356, "level", C_DIM, 12, False),
+            (770, 374, "%.3f" % lv, C_B, 26, True),
+            (770, 412, "頂点 %6d / 三角形 %6d" % (r["verts"], r["faces"]), C_TEXT, 13, False),
+            (770, 434, "表面積 %.1f voxel^2" % r["area"], C_TEXT, 13, False),
+            (770, 456, "内側の占有 %d voxel" % r["occupied"], C_TEXT, 13, False),
+            (770, 478, "連結成分 %d 個" % r["components"],
+             C_E if r["components"] >= 2 else C_D, 15, True),
+            (18, 528, "level を上げると等値面は内側へ縮み、表面積は %.0f -> %.0f voxel^2 "
+                      "へ %.2f 倍に。"
+             % (rows[0]["area"], rows[-1]["area"],
+                rows[-1]["area"] / max(rows[0]["area"], 1e-9)), C_TEXT, 14, True),
+            (18, 554, "%s"
+             % ("level %.3f を超えると 1 つだった面が 2 つに割れる(くびれが切れる)。"
+                % split if split is not None else "この範囲では割れなかった。"),
+             C_E, 14, True),
+            (18, 580, "「等値面の体積」は level を決めた時点で決まっている。"
+                      "しきい値を書かない 3D 計測は再現できない。", C_DIM, 13, False),
+        ])
+        c = _footer(c, "使用 op: voxel_to_mesh / mesh_area  — 合成データ", y_off=14)
+        frames.append(c)
+
+    info = _save_clip(frames, "wing3d_isosurface_sweep", fps=8,
+                      thumb_index=len(rows) // 2, log=log)
+    return {
+        "name": "wing3d_isosurface_sweep",
+        "title": "等値面のしきい値で面が育ち、くびれ、割れる",
+        "ops": ["voxel_to_mesh", "mesh_area"],
+        "facts": {"levels": levels, "rows": rows, "split_level": split},
+        "caption": ("2 つの球をぼかして重ねた合成ボリュームに `voxel_to_mesh`"
+                    f"(marching cubes)を掛け、level を {levels[0]:.2f} から "
+                    f"{levels[-1]:.2f} まで {len(levels)} 段階で動かした。表面積は "
+                    f"{rows[0]['area']:.0f} → {rows[-1]['area']:.0f} voxel² へ縮み、"
+                    + (f"level {split:.3f} を超えると 1 つだった面が **2 つに割れる**。"
+                       if split is not None else "この範囲では割れなかった。")
+                    + "各コマに level・頂点数・三角形数・表面積・連結成分数を焼いてある。"
+                      "しきい値を書かない 3D 計測は再現できない、ということでもある。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
+# 展示 S6 — 管の走行に沿って断面を送る                                            #
+# --------------------------------------------------------------------------- #
+def ex_vessel_reslice(log) -> dict:
+    """傾いた管を、軸に直交する断面と素朴な軸方向断面の両方で測って比べる。"""
+    sp = 0.2                                    # mm/voxel(等方)
+    n = 176
+    tilt = 28.0                                 # 管を z-y 面内で傾ける [deg]
+    th = math.radians(tilt)
+    zz, yy, xx = np.mgrid[0:n, 0:n, 0:n].astype(np.float64)
+    # 管の軸: 中心 (88,88,88) を通り、z-y 面内で tilt だけ傾いた直線
+    az = math.cos(th); ay = math.sin(th)
+    s = (zz - 88.) * az + (yy - 88.) * ay        # 軸に沿った座標 [voxel]
+    d2 = ((zz - 88.) - s * az) ** 2 + ((yy - 88.) - s * ay) ** 2 + (xx - 88.) ** 2
+    dist = np.sqrt(d2)
+    # 半径が軸に沿って変わる(狭窄をひとつ作る)
+    r_of_s = 11.0 - 4.0 * np.exp(-((s / 22.0) ** 2))
+    tube = np.clip(r_of_s - dist + 0.5, 0.0, 1.0)
+
+    # 軸に直交する断面 = 体積を -tilt だけ回してから z スライスを取る
+    rot = np.asarray(G("vol_rotate")(tube, -tilt, axes=(0, 1), order=1, reshape=False,
+                                     mode="constant", cval=0.0))
+    stations = list(range(40, 137, 2))
+    rows = []
+    for zc in stations:
+        naive = tube[zc]                                     # 素朴な軸方向(z)断面
+        ortho = rot[zc]                                      # 軸に直交する断面
+        s_here = (zc - 88.0) / az                            # 直交断面が対応する軸座標
+        truth_d = 2.0 * (11.0 - 4.0 * math.exp(-((s_here / 22.0) ** 2))) * sp
+        rows.append({
+            "z": zc,
+            "s_voxel": s_here,
+            "naive_major_mm": _extent_50(naive, 0, sp),
+            "naive_minor_mm": _extent_50(naive, 1, sp),
+            "ortho_major_mm": _extent_50(ortho, 0, sp),
+            "ortho_minor_mm": _extent_50(ortho, 1, sp),
+            "truth_diameter_mm": truth_d,
+        })
+    for r in rows[::8]:
+        log(f"    z {r['z']:3d}  直交断面 {r['ortho_major_mm']:.3f} x "
+            f"{r['ortho_minor_mm']:.3f} mm   素朴断面 {r['naive_major_mm']:.3f} mm   "
+            f"真値 {r['truth_diameter_mm']:.3f} mm")
+    ortho_err = [abs(r["ortho_minor_mm"] - r["truth_diameter_mm"]) for r in rows]
+    naive_err = [abs(r["naive_major_mm"] - r["truth_diameter_mm"]) for r in rows]
+    log(f"    直交断面の短径 誤差 平均 {np.mean(ortho_err):.4f} mm 最大 {max(ortho_err):.4f} mm")
+    log(f"    素朴断面の長径 誤差 平均 {np.mean(naive_err):.4f} mm 最大 {max(naive_err):.4f} mm")
+    i_min = int(np.argmin([r["truth_diameter_mm"] for r in rows]))
+    log(f"    狭窄の最小内径 真値 {rows[i_min]['truth_diameter_mm']:.4f} mm  "
+        f"直交断面で {rows[i_min]['ortho_minor_mm']:.4f} mm  "
+        f"素朴断面で {rows[i_min]['naive_major_mm']:.4f} mm")
+
+    W, H = 1120, 660
+    ps = 270
+    frames = []
+    for i, r in enumerate(rows):
+        zc = r["z"]
+        c = _canvas(W, H)
+        c = _header(c, "管の走行に沿って断面を送る ―― 軸に直交して切らないと太る",
+                    f"z-y 面内で {tilt:.0f}° 傾いた合成管(中央に狭窄あり、"
+                    f"spacing {sp} mm/voxel)。断面を軸に沿って送る。")
+        # 側面図(管の走行と、いま切っている場所)
+        side = tube[:, :, 88]
+        c, s_side = _slice_panel(c, side, 18, 92, 330, "gray", border=C_C)
+        c = imagedraw.draw_line(c, (18, 92 + zc * s_side), (18 + 329, 92 + zc * s_side),
+                                color=C_A, width=1)
+        # 軸に直交する断面の線(傾き -tilt)
+        L = 150.0
+        c = imagedraw.draw_line(
+            c, (18 + (88 - L * math.sin(th)) * s_side, 92 + (zc + L * math.cos(th) * 0) * s_side),
+            (18 + (88 + L * math.sin(th)) * s_side, 92 + zc * s_side),
+            color=C_A, width=1)
+        c = _text(c, [(18, 92 + 330 + 6, "側面図 vol[:, :, x=88]  横 = y ->  縦 = z (下向き)",
+                       C_C, 12, True),
+                      (18, 92 + 330 + 26, "シアンの線がいま切っている z", C_A, 12, False)])
+        c, s2 = _slice_panel(c, tube[zc], 370, 92, ps, "gray", border=C_E)
+        c, _ = _slice_panel(c, rot[zc], 370 + ps + 16, 92, ps, "gray", border=C_D)
+        c = _text(c, [
+            (370, 92 + ps + 6, "素朴な軸方向断面 vol[z=%d]" % zc, C_E, 13, True),
+            (370, 92 + ps + 26, "長径 %.3f mm / 短径 %.3f mm"
+             % (r["naive_major_mm"], r["naive_minor_mm"]), C_E, 12, True),
+            (370 + ps + 16, 92 + ps + 6, "管の軸に直交する断面", C_D, 13, True),
+            (370 + ps + 16, 92 + ps + 26, "長径 %.3f mm / 短径 %.3f mm"
+             % (r["ortho_major_mm"], r["ortho_minor_mm"]), C_D, 12, True),
+        ])
+        p = Plot(c, 80, 460, W - 120, 150, (rows[0]["z"], rows[-1]["z"]), (1.0, 5.6),
+                 xlabel="断面の位置 z(voxel)->", ylabel="測った内径 [mm]",
+                 xticks=[40, 60, 80, 100, 120, 136],
+                 yticks=[1.5, 2.5, 3.5, 4.5, 5.5], xfmt="%d", yfmt="%.1f")
+        p.series([x["z"] for x in rows], [x["truth_diameter_mm"] for x in rows],
+                 (0.60, 0.62, 0.66), width=3)
+        p.series([x["z"] for x in rows], [x["ortho_minor_mm"] for x in rows], C_D, width=2)
+        p.series([x["z"] for x in rows], [x["naive_major_mm"] for x in rows], C_E, width=2)
+        p.marker(zc, r["ortho_minor_mm"], C_D, size=6)
+        p.marker(zc, r["naive_major_mm"], C_E, size=6)
+        p.items.append((86, 464, "灰 = 真の内径", C_DIM, 11, True))
+        p.items.append((200, 464, "ミント = 軸に直交する断面(短径)", C_D, 11, True))
+        p.items.append((430, 464, "ローズ = 素朴な軸方向断面(長径)", C_E, 11, True))
+        c = p.done()
+        c = _text(c, [
+            (760, 100, "いまの断面", C_DIM, 12, False),
+            (760, 118, "z = %3d" % zc, C_TEXT, 22, True),
+            (760, 150, "真の内径", C_DIM, 12, False),
+            (760, 168, "%.3f mm" % r["truth_diameter_mm"], C_TEXT, 20, True),
+            (760, 198, "直交断面 短径", C_D, 12, True),
+            (760, 216, "%.3f mm (差 %+.3f)"
+             % (r["ortho_minor_mm"], r["ortho_minor_mm"] - r["truth_diameter_mm"]),
+             C_D, 15, True),
+            (760, 244, "素朴断面 長径", C_E, 12, True),
+            (760, 262, "%.3f mm (差 %+.3f)"
+             % (r["naive_major_mm"], r["naive_major_mm"] - r["truth_diameter_mm"]),
+             C_E, 15, True),
+            (760, 296, "素朴断面は 1/cos(%.0f deg) = %.3f 倍に" % (tilt, 1 / math.cos(th)),
+             C_DIM, 12, False),
+            (760, 314, "伸びる。狭窄が浅く見える。", C_DIM, 12, False),
+            (760, 344, "全 %d 断面での誤差(平均)" % len(rows), C_DIM, 12, False),
+            (760, 362, "直交 %.4f mm / 素朴 %.4f mm"
+             % (float(np.mean(ortho_err)), float(np.mean(naive_err))), C_TEXT, 13, True),
+            (760, 386, "最小内径 真値 %.3f mm ->" % rows[i_min]["truth_diameter_mm"],
+             C_DIM, 12, False),
+            (760, 404, "直交 %.3f / 素朴 %.3f mm"
+             % (rows[i_min]["ortho_minor_mm"], rows[i_min]["naive_major_mm"]),
+             C_TEXT, 13, True),
+        ])
+        c = _footer(c, "使用 op: vol_rotate  — 合成データ(反エイリアス管)", y_off=14)
+        frames.append(c)
+
+    info = _save_clip(frames, "wing3d_vessel_reslice", fps=10, thumb_index=i_min, log=log)
+    return {
+        "name": "wing3d_vessel_reslice",
+        "title": "管に沿って切る ―― 軸に直交しないと内径が %.2f 倍に太る" % (1 / math.cos(th)),
+        "ops": ["vol_rotate"],
+        "facts": {"tilt_deg": tilt, "spacing_mm": sp, "stations": len(rows),
+                  "rows": rows,
+                  "ortho_mean_err_mm": float(np.mean(ortho_err)),
+                  "ortho_max_err_mm": float(max(ortho_err)),
+                  "naive_mean_err_mm": float(np.mean(naive_err)),
+                  "naive_max_err_mm": float(max(naive_err)),
+                  "stenosis_truth_mm": rows[i_min]["truth_diameter_mm"],
+                  "stenosis_ortho_mm": rows[i_min]["ortho_minor_mm"],
+                  "stenosis_naive_mm": rows[i_min]["naive_major_mm"]},
+        "caption": (f"{tilt:.0f}° 傾いた合成管(中央に狭窄)を {len(rows)} 断面ぶん送る。"
+                    "軸に直交する断面で測った短径は真の内径をほぼそのまま返す"
+                    f"(平均誤差 **{float(np.mean(ortho_err)):.4f} mm**)のに、素朴に "
+                    "z 方向へ切った断面の長径は 1/cos θ = "
+                    f"**{1 / math.cos(th):.3f} 倍**に伸びて平均 "
+                    f"{float(np.mean(naive_err)):.4f} mm ずれる。狭窄部では真値 "
+                    f"{rows[i_min]['truth_diameter_mm']:.3f} mm が素朴断面では "
+                    f"{rows[i_min]['naive_major_mm']:.3f} mm ―― 狭窄が浅く見えてしまう。"),
+        **info}
+
+
+# --------------------------------------------------------------------------- #
 # 展示 15 — 連結性 6 / 18 / 26 と inner / outer(タイルで比べる)                  #
 # --------------------------------------------------------------------------- #
 def ex_connectivity(log) -> dict:
