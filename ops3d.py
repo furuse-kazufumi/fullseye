@@ -121,9 +121,7 @@ _MOD = {"match3d": match3d, "feat_harris": feat_harris, "feat_spin": feat_spin,
 #   indices(元配列への index 列) / table(dict の列=多物体プロパティ) /
 #   signal(1-D array=点ごと/サンプルごとの値列) / pairs((2,n)=x-y の対列) /
 #   poly_surface / bspline_surface / bspline_curve(いずれも曲面/曲線モデル。
-#     互換性が無いので別語彙 — 下の surface_fit / freeform のコメント参照)/
-#   coordgrid((nx,ny,nz,3) のボクセル中心座標場。CSG プリミティブの評価点で、
-#     (N,3) の points とは次元数から違う)
+#     互換性が無いので別語彙 — 下の surface_fit / freeform のコメント参照)
 #   ※ organized 系は (N,3) と別型(連鎖ファザー 2026-08-31 で申告と実返却の乖離
 #     20 種を検出し、型語彙を実態に合わせて分離した)
 
