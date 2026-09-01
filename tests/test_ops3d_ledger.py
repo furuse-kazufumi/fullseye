@@ -230,7 +230,9 @@ EXTRA_OP_HINTS = {
     ("occupancy_grid", "bounds"): ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
     ("extract_surface_points", "bounds"): (0.0, 0.0, 0.0, 10.0, 10.0, 10.0),
     ("gaussians_to_voxel", "size"): 16,
-    ("gaussians_to_voxel", "bounds"): (0.0, 0.0, 0.0, 10.0, 10.0, 10.0),
+    # ここの bounds は (lo(3,), hi(3,))。同じ名前で op ごとに 3 通りの形がある
+    # (平坦 6-tuple / ((min,max)x3) / (lo,hi))ので、名前ヒントでは足りない
+    ("gaussians_to_voxel", "bounds"): (np.zeros(3), np.full(3, 10.0)),
     ("vol_resize", "factor"): 1.0,
     ("angle_3points", "a"): np.array([1.0, 0.0, 0.0]),
     ("line_from_2points", "a"): np.array([1.0, 0.0, 0.0]),
