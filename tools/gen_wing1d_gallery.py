@@ -1058,8 +1058,14 @@ def ex_bearing_geometry(log):
         f"{max(abs(r['id2']) for r in rows):.3e}")
 
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
+    phase_ja = {"rolling elements N": "転動体数を振る",
+                "contact angle": "接触角を振る",
+                "element diameter": "転動体径を振る"}
     for i, r in enumerate(rows):
+        labels.append(f"{phase_ja[r['phase']]}  /  N={int(r['n_elements'])}  "
+                      f"d={r['element_diameter']:.2f} mm  α={r['contact_angle_deg']:.1f}°  /  "
+                      f"BPFO {r['bpfo_hz']:.4f} Hz  BPFI {r['bpfi_hz']:.4f} Hz")
         fig = Fig(W, H)
         _header(fig, "Bearing defect frequencies come out of the geometry",
                 f"{rpm:g} rpm, pitch diameter {D:g} mm - derived, never tabulated")

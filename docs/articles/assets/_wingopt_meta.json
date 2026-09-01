@@ -4,7 +4,7 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_pipeline_flow.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_pipeline_flow_thumb.jpg",
-   "bytes": 192175,
+   "bytes": 197655,
    "thumb_bytes": 30155,
    "size": [
     940,
@@ -15,7 +15,7 @@
    "step_ms": 700,
    "colors": null,
    "thumb_frame": 0,
-   "sha256": "1c0db4d086a5b9b5caee1656738c2c729e7920f8095109d5e485729d858bd337"
+   "sha256": "0cc45944f44d336f0457478816689ca9c6745523fda2b6c635e374db2c8aa1a5"
   },
   "title": "設計から判定までの一本道",
   "ops": [
@@ -64,12 +64,12 @@
     "minor_axis_um": 157.5615887507317,
     "area_um2": 68777.0173469388
    },
-   "iou": 0.34210526315789475,
+   "iou": 0.37900874635568516,
    "detected": true,
    "intersection_px": 260,
-   "union_px": 760,
-   "flagged_px": 760,
-   "rms_capture_change": 0.22317585747990967,
+   "union_px": 686,
+   "flagged_px": 686,
+   "rms_capture_change": 0.0004563720087405441,
    "steps": [
     "設計 — 視野と µm/画素を決める",
     "限界 — 標本化と回折のどちらが律速か",
@@ -85,14 +85,14 @@
    "kind": "png",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas.png",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas_thumb.jpg",
-   "bytes": 128902,
-   "thumb_bytes": 44913,
+   "bytes": 146055,
+   "thumb_bytes": 50779,
    "size": [
     998,
     882
    ],
    "frames": 1,
-   "sha256": "a98b659a6601c8cdac26f1fd5abf5e3a43ca2bc6e9a2dd58f071638ceb7525fe"
+   "sha256": "c732c5100726f75c5d833025434153faaaa43abe3ef4fc93fef430eb5dfedf40"
   },
   "title": "欠陥ジェネレータの見本帳",
   "ops": [
@@ -114,28 +114,28 @@
    "rows": [
     {
      "kind": "scratch",
-     "order": "長さ2863µm × 幅73µm",
+     "order": "長さ2440µm × 幅73µm",
      "params": {
-      "length_px": 176.0,
+      "length_px": 150.0,
       "width_px": 4.5,
       "angle_deg": 22.0,
-      "wander": 0.11,
+      "wander": 0.055,
       "contrast": -0.3,
       "seed": 7
      },
      "stats": {
-      "area_px": 520,
+      "area_px": 682,
       "empty": false,
-      "bbox_h_px": 90,
-      "bbox_w_px": 54,
-      "major_axis_px": 123.72347003918327,
-      "minor_axis_px": 21.081115724614936,
-      "fill_ratio": 0.10699588477366255,
-      "major_axis_um": 2012.2738662801453,
-      "minor_axis_um": 342.86928932105866,
-      "area_um2": 137554.0346938776
+      "bbox_h_px": 68,
+      "bbox_w_px": 132,
+      "major_axis_px": 171.60657330483335,
+      "minor_axis_px": 18.925409792808445,
+      "fill_ratio": 0.07598039215686274,
+      "major_axis_um": 2791.0583386793255,
+      "minor_axis_um": 307.8082721301774,
+      "area_um2": 180407.40704081638
      },
-     "iou": 0.4655326768128917,
+     "iou": 0.5576451349141456,
      "detected": true
     },
     {
@@ -161,7 +161,7 @@
       "minor_axis_um": 1966.8421251324432,
       "area_um2": 251036.11331632658
      },
-     "iou": 0.6906841339155749,
+     "iou": 0.7260902830910482,
      "detected": true
     },
     {
@@ -171,24 +171,24 @@
       "length_px": 150.0,
       "width_px": 3.0,
       "angle_deg": 104.0,
-      "branch_prob": 0.22,
-      "wander": 0.3,
+      "branch_prob": 0.3,
+      "wander": 0.11,
       "contrast": -0.36,
-      "seed": 7
+      "seed": 4
      },
      "stats": {
-      "area_px": 458,
+      "area_px": 441,
       "empty": false,
-      "bbox_h_px": 52,
-      "bbox_w_px": 46,
-      "major_axis_px": 65.05557005767959,
-      "minor_axis_px": 46.65699426675035,
-      "fill_ratio": 0.19147157190635453,
-      "major_axis_um": 1058.0823787238317,
-      "minor_axis_um": 758.8426853242183,
-      "area_um2": 121153.36132653065
+      "bbox_h_px": 125,
+      "bbox_w_px": 61,
+      "major_axis_px": 164.00957487950348,
+      "minor_axis_px": 17.282966976613544,
+      "fill_ratio": 0.05783606557377049,
+      "major_axis_um": 2667.4985857187817,
+      "minor_axis_um": 281.09511289820745,
+      "area_um2": 116656.40250000003
      },
-     "iou": 0.544589774078478,
+     "iou": 0.7603448275862069,
      "detected": true
     },
     {
@@ -212,7 +212,7 @@
       "minor_axis_um": 842.4665884663716,
       "area_um2": 613173.5623469389
      },
-     "iou": 0.24395029431000653,
+     "iou": 0.20491251682368775,
      "detected": true
     },
     {
@@ -231,7 +231,7 @@
       "minor_axis_um": 2402.2593681541716,
       "area_um2": 462657.7051530613
      },
-     "iou": 0.451931330472103,
+     "iou": 0.5090497737556561,
      "detected": true
     }
    ]
