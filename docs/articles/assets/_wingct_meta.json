@@ -1,0 +1,17 @@
+{
+ "rings": {
+  "file": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingct_rings.png",
+  "sha256": "7bc01bc8d362c78bf4a101df0e4d0349499b7ffd0c093b12d32cc2f7e54d2d20",
+  "data": {
+   "nrms_clean": 0.025,
+   "nrms_ringed": 0.0643,
+   "nrms_fixed": 0.0358,
+   "recovered": 0.723,
+   "ops": [
+    "ring_artifact_apply",
+    "ring_artifact_remove",
+    "filtered_backprojection"
+   ]
+  }
+ }
+}

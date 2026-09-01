@@ -191,7 +191,17 @@ def depth_to_points(depth, K, organized: bool = False):
     as "no return". With ``organized=False`` (default) returns the finite points
     (M, 3); with ``organized=True`` returns an (H, W, 3) grid with ``NaN`` where the
     depth is invalid (so it lines up pixel-for-pixel with the image, which
-    :func:`normals_from_depth` needs)."""
+    :func:`normals_from_depth` needs).
+
+    **Pixel centres are at integer coordinates**: ``depth[r, c]`` is taken to be
+    the depth at the continuous image point ``(u, v) = (c, r)``, *not* at
+    ``(c + 0.5, r + 0.5)`` — hence the plain integer ``np.mgrid[0:H, 0:W]`` below.
+    Any depth map handed to this function must have been sampled on that same
+    grid (``render3d.render_mesh`` and :mod:`cadmap` both are). Feeding a depth map
+    rendered on the OpenGL half-integer grid biases the whole cloud by half a
+    pixel, which shows up as a *systematic* offset from the true surface (measured
+    on a tilted plane at ``fx = 241.4``: every point 3.9e-4 world units off, all on
+    the same side) rather than as noise — so it will not look like an error."""
     Z = np.asarray(depth, np.float64)
     if Z.ndim != 2:
         raise ValueError("depth must be a 2-D (H, W) map")
