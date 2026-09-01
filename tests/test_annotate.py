@@ -429,6 +429,18 @@ def test_style_is_passed_through_to_imagedraw_untouched(monkeypatch):
     assert seen["width"] == 3
 
 
+def test_grid_lines_leaves_untouched_pixels_bit_identical():
+    """線の無い画素まで α を通すと、格子を重ねるたび絵が 1 ulp ずつ動く。"""
+    rng = np.random.default_rng(11)
+    img = rng.uniform(0.1, 0.9, (H, W, 3))
+    ax = A.axes_transform((20, 10, 120, 60), (0.0, 4.0), (0.0, 1.0))
+    once = A.grid_lines(img, ax, alpha=0.35)
+    twice = A.grid_lines(once, ax, alpha=0.35)
+    outside = np.s_[80:, 160:]                               # 軸の外(格子は来ない)
+    assert np.array_equal(once[outside], img[outside])
+    assert np.array_equal(twice[outside], img[outside])
+
+
 def test_short_arrow_does_not_draw_its_shaft_backwards():
     """矢じりが軸より長いと、根元が起点の手前に来て軸が**逆向き**に伸びる。"""
     img = _canvas(0.0)
