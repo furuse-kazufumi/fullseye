@@ -237,6 +237,20 @@ def _panel_grid(panels, labels, ncols, tile=(300, 300), pad=12,
     return np.asarray(im, np.uint8)
 
 
+def _num(v: float) -> str:
+    """軸ラベル用の読みやすい数値表記 (指数表記を避ける)."""
+    a = abs(v)
+    if a >= 1000:
+        return f"{v:,.0f}"
+    if a >= 10:
+        return f"{v:.0f}" if abs(v - round(v)) < 5e-3 else f"{v:.1f}"
+    if a >= 1:
+        return f"{v:.2f}".rstrip("0").rstrip(".")
+    if a == 0:
+        return "0"
+    return f"{v:.3f}".rstrip("0").rstrip(".")
+
+
 def _plot(series, w, h, *, xlim=None, ylim=None, xlabel="", ylabel="",
           title="", marks=None, hlines=(), grid_y=4, legend_pos="tr",
           bg=(20, 20, 30)) -> np.ndarray:
@@ -273,13 +287,13 @@ def _plot(series, w, h, *, xlim=None, ylim=None, xlabel="", ylabel="",
         yv = y0 + (y1 - y0) * k / grid_y
         yy = py(yv)
         draw.line([ml, yy, ml + pw, yy], fill=(40, 42, 56))
-        _text(draw, (ml - 8, yy), f"{yv:.4g}", size=14, fill=INK_DIM,
+        _text(draw, (ml - 8, yy), _num(yv), size=14, fill=INK_DIM,
               anchor="rm")
     for k in range(5):
         xv = x0 + (x1 - x0) * k / 4
         xx = px(xv)
         draw.line([xx, mt, xx, mt + ph], fill=(40, 42, 56))
-        _text(draw, (xx, mt + ph + 6), f"{xv:.4g}", size=14, fill=INK_DIM,
+        _text(draw, (xx, mt + ph + 6), _num(xv), size=14, fill=INK_DIM,
               anchor="ma")
     for hv, hc in hlines:
         yy = py(hv)
@@ -316,6 +330,20 @@ def _plot(series, w, h, *, xlim=None, ylim=None, xlabel="", ylabel="",
     return np.asarray(im, np.uint8)
 
 
+def _stack_v(parts, pad=0, bg=BG) -> np.ndarray:
+    """複数の RGB ブロックを縦に連結 (幅は最大幅へ中央寄せ)."""
+    from PIL import Image
+    arrs = [_to_u8(p) for p in parts]
+    W = max(a.shape[1] for a in arrs)
+    H = sum(a.shape[0] for a in arrs) + pad * (len(arrs) - 1)
+    im = Image.new("RGB", (W, H), bg)
+    y = 0
+    for a in arrs:
+        im.paste(Image.fromarray(a, "RGB"), ((W - a.shape[1]) // 2, y))
+        y += a.shape[0] + pad
+    return np.asarray(im, np.uint8)
+
+
 def _overlay_mask(gray, mask, color=(255, 96, 96), alpha=0.55) -> np.ndarray:
     """グレイ画像にマスクを半透明で重ねる (float [0,1] RGB)."""
     base = np.asarray(gray, np.float64)
@@ -338,100 +366,126 @@ def _psnr(ref, test) -> float:
 # --------------------------------------------------------------------------- #
 C_ERO, C_DIL, C_OPEN, C_CLOSE = ((255, 122, 122), (120, 190, 255),
                                  (150, 230, 160), (238, 180, 255))
+BAR_WIDTHS = (2, 4, 6, 8, 10)
+SLIT_WIDTHS = (2, 4, 6)
+_A_OF_RADIUS = {1: 0.0, 2: 0.34, 3: 0.67, 4: 1.0}   # _rad(a) = 1 + int(a*3)
+
+
+def _granulometry_figure() -> tuple:
+    """開/閉の効き方を「幅」で読ませるテスト図形を Fullseye の描画 op で作る.
+
+    戻り ``(region, bar_boxes, slit_boxes)``。棒は幅 2/4/6/8/10 px、
+    ブロックのスリットは幅 2/4/6 px —— 半径 r の opening は幅 2r 未満の棒を、
+    半径 r の closing は幅 2r 未満のスリットを消す(はず)、を実測で確かめる。
+    """
+    import imagedraw
+    H = W = 320
+    img = np.zeros((H, W), np.float64)
+    img = imagedraw.draw_circle(img, (96, 96), 72, color=1.0, fill=True)
+    img = imagedraw.draw_circle(img, (96, 96), 38, color=0.0, fill=True)
+    bars = []
+    x = 24
+    for w in BAR_WIDTHS:
+        img[210:300, x:x + w] = 1.0
+        bars.append((210, 300, x, x + w, w))
+        x += w + 26
+    img[196:300, 208:308] = 1.0                      # 塊 (スリットを刻む土台)
+    slits, sx = [], 220
+    for w in SLIT_WIDTHS:
+        img[204:292, sx:sx + w] = 0.0
+        slits.append((204, 292, sx, sx + w, w))
+        sx += w + 22
+    img[36:160, 208:308] = 1.0                       # 太い塊 (基準面積)
+    return img, bars, slits
 
 
 def subject_morph_quartet(log=print) -> dict:
-    """収縮/膨張/開/閉を同じ図形に当て、面積 [px] と元図形との IoU を実測する."""
-    clean = fs.apply(_load_gray("shapes.png"), "otsu")
-    rng = np.random.default_rng(SEED)
-    flip = rng.random(clean.shape) < 0.025          # 2.5% を反転 (塩胡椒ノイズ)
-    noisy = np.where(flip, 1.0 - clean, clean)
-    a_of = {1: 0.0, 2: 0.34, 3: 0.67, 4: 1.0}       # _rad(a)=1+int(a*3)
-
-    def iou(x):
-        inter = float(np.sum(np.minimum(x, clean)))
-        union = float(np.sum(np.maximum(x, clean)))
-        return inter / union if union else 0.0
-
-    rows, area_clean = {}, float(np.sum(clean))
-    for r, a in a_of.items():
-        e = fs.apply(noisy, "erosion_circle", a)
-        d = fs.apply(noisy, "dilation_circle", a)
-        o = fs.apply(noisy, "opening_circle", a)
-        c = fs.apply(noisy, "closing_circle", a)
-        oc = fs.apply(o, "closing_circle", a)
-        rows[r] = {"ero": e, "dil": d, "open": o, "close": c, "openclose": oc,
-                   "area": {k: float(np.sum(v)) for k, v in
-                            (("ero", e), ("dil", d), ("open", o),
-                             ("close", c), ("openclose", oc))},
-                   "iou": {k: iou(v) for k, v in
-                           (("open", o), ("close", c), ("openclose", oc))}}
-    radii = sorted(rows)
+    """収縮/膨張/開/閉を同じ図形に当て、面積 [px]・棒とスリットの生き死にを実測."""
+    base, bars, slits = _granulometry_figure()
+    src = fs.apply(base, "threshold", 0.25, 1.0)     # image -> region (二値化)
+    area0 = float(np.sum(src))
+    res = {}
+    for r, a in _A_OF_RADIUS.items():
+        e = fs.apply(src, "erosion_circle", a)
+        d = fs.apply(src, "dilation_circle", a)
+        o = fs.apply(src, "opening_circle", a)
+        c = fs.apply(src, "closing_circle", a)
+        bar_keep = [w for (r0, r1, c0, c1, w) in bars
+                    if float(np.sum(o[r0:r1, c0:c1])) > 0.5 * (r1 - r0) * w * 0.5]
+        slit_fill = [w for (r0, r1, c0, c1, w) in slits
+                     if float(np.sum(c[r0:r1, c0:c1])) > 0.5 * (r1 - r0) * w]
+        res[r] = {"ero": e, "dil": d, "open": o, "close": c,
+                  "lost": np.clip(src - o, 0, 1), "gain": np.clip(c - src, 0, 1),
+                  "area": {"ero": float(np.sum(e)), "dil": float(np.sum(d)),
+                           "open": float(np.sum(o)), "close": float(np.sum(c))},
+                  "bar_keep": bar_keep, "slit_fill": slit_fill}
+    radii = sorted(res)
     frames = []
-    order = radii + radii[-2:0:-1]                  # 1..4 → 3,2 (ピンポン)
-    for r in order:
-        R = rows[r]
+    for r in radii + radii[-2:0:-1]:
+        R = res[r]
         cur = radii.index(r) + 1
-        plot = _plot(
-            [{"x": radii[:cur], "y": [rows[k]["area"]["ero"] for k in radii[:cur]],
-              "color": C_ERO, "label": "erosion"},
-             {"x": radii[:cur], "y": [rows[k]["area"]["dil"] for k in radii[:cur]],
-              "color": C_DIL, "label": "dilation"},
-             {"x": radii[:cur], "y": [rows[k]["area"]["open"] for k in radii[:cur]],
-              "color": C_OPEN, "label": "opening"},
-             {"x": radii[:cur], "y": [rows[k]["area"]["close"] for k in radii[:cur]],
-              "color": C_CLOSE, "label": "closing"}],
-            520, 520, xlim=(1, 4), ylim=(0, 55000),
-            hlines=((area_clean, (120, 122, 140)),),
-            title="前景の面積 [px] (点線 = 元図形 %d px)" % round(area_clean),
-            xlabel="構造要素の半径 [px]", legend_pos="tl")
-        panels = [clean, noisy, R["ero"], R["dil"],
-                  R["open"], R["close"], R["openclose"], plot]
-        labels = [
-            "元の図形\n%d px" % round(area_clean),
-            "2.5%% 反転ノイズ入り\n%d px" % round(float(np.sum(noisy))),
-            "erosion_circle (r=%d)\n%d px" % (r, round(R["area"]["ero"])),
-            "dilation_circle (r=%d)\n%d px" % (r, round(R["area"]["dil"])),
-            "opening_circle (r=%d)\n%d px / IoU %.3f" % (
-                r, round(R["area"]["open"]), R["iou"]["open"]),
-            "closing_circle (r=%d)\n%d px / IoU %.3f" % (
-                r, round(R["area"]["close"]), R["iou"]["close"]),
-            "opening→closing (r=%d)\n%d px / IoU %.3f" % (
-                r, round(R["area"]["openclose"]), R["iou"]["openclose"]),
-            "面積は半径でどう動くか",
-        ]
-        frames.append(_panel_grid(
-            panels, labels, 4, tile=(260, 260), label_h=56,
+        grid = _panel_grid(
+            [src, R["ero"], R["dil"], R["open"],
+             R["close"], _overlay_mask(src, R["lost"], (255, 96, 96)),
+             _overlay_mask(src, R["gain"], (110, 180, 255)),
+             fs.apply(src, "morph_grad", 0.0)],
+            ["元の図形 (棒 2/4/6/8/10 px)\n%d px" % round(area0),
+             "erosion_circle\n%d px" % round(R["area"]["ero"]),
+             "dilation_circle\n%d px" % round(R["area"]["dil"]),
+             "opening_circle\n%d px" % round(R["area"]["open"]),
+             "closing_circle\n%d px" % round(R["area"]["close"]),
+             "開で消えた部分 (赤)\n生き残った棒: %s px" % (
+                 "/".join(str(w) for w in R["bar_keep"]) or "なし"),
+             "閉で埋まった部分 (青)\n埋まったスリット: %s px" % (
+                 "/".join(str(w) for w in R["slit_fill"]) or "なし"),
+             "morph_grad (輪郭)\n開−閉の差を見る基準",
+             ],
+            4, tile=(258, 258), label_h=56,
             title="形態学の 4 兄弟 —— 収縮・膨張・開・閉",
-            sub="構造要素 = 半径 %d px の円 (a=%.2f)" % (r, a_of[r]),
-            resample=None))
-    info = _save_gif(frames, "wing2d_morph_quartet", fps=1.6, hold_last=1)
-    best_r = max(radii, key=lambda k: rows[k]["iou"]["openclose"])
+            sub="構造要素 = 半径 %d px の円 (a=%.2f)" % (r, _A_OF_RADIUS[r]))
+        plot = _plot(
+            [{"x": radii[:cur], "y": [res[k]["area"]["ero"] for k in radii[:cur]],
+              "color": C_ERO, "label": "erosion（痩せる）"},
+             {"x": radii[:cur], "y": [res[k]["area"]["dil"] for k in radii[:cur]],
+              "color": C_DIL, "label": "dilation（太る）"},
+             {"x": radii[:cur], "y": [res[k]["area"]["open"] for k in radii[:cur]],
+              "color": C_OPEN, "label": "opening（細い棒だけ消える）"},
+             {"x": radii[:cur], "y": [res[k]["area"]["close"] for k in radii[:cur]],
+              "color": C_CLOSE, "label": "closing（細い隙間だけ埋まる）"}],
+            grid.shape[1], 300, xlim=(1, 4), ylim=(24000, 49000),
+            hlines=((area0, (130, 132, 150)),),
+            title="前景の面積 [px] を半径 1→4 px で追う（点線 = 元図形 %d px）"
+                  % round(area0),
+            xlabel="構造要素の半径 r [px]", legend_pos="tl")
+        frames.append(_stack_v([grid, plot], pad=6))
+    info = _save_gif(frames, "wing2d_morph_quartet", fps=1.5, hold_last=1)
     return {
         "name": "morph_quartet", "kind": "gif", "file": info["path"],
         "thumb": info["thumb"], "frames": info["frames"],
         "bytes": info["bytes"], "size": info["size"],
-        "title": "形態学の 4 兄弟",
-        "ops": ["otsu", "erosion_circle", "dilation_circle",
-                "opening_circle", "closing_circle"],
-        "data": "skimage 系 synthetic shapes.png (合成) + 決定的な 2.5% 反転ノイズ",
+        "title": "形態学の 4 兄弟 —— どれが何を消すのか",
+        "ops": ["threshold", "erosion_circle", "dilation_circle",
+                "opening_circle", "closing_circle", "morph_grad"],
+        "data": "Fullseye の描画 op (imagedraw.draw_circle) で作った合成テスト図形",
         "measured": {
-            "area_clean_px": round(area_clean),
-            "area_noisy_px": round(float(np.sum(noisy))),
+            "area_src_px": round(area0),
             "area_by_radius": {str(r): {k: round(v) for k, v in
-                                        rows[r]["area"].items()} for r in radii},
-            "iou_by_radius": {str(r): {k: round(v, 4) for k, v in
-                                       rows[r]["iou"].items()} for r in radii},
-            "best_openclose_radius": best_r,
-            "best_openclose_iou": round(rows[best_r]["iou"]["openclose"], 4),
+                                        res[r]["area"].items()} for r in radii},
+            "bar_widths_px": list(BAR_WIDTHS),
+            "slit_widths_px": list(SLIT_WIDTHS),
+            "bars_surviving_opening": {str(r): res[r]["bar_keep"] for r in radii},
+            "slits_filled_by_closing": {str(r): res[r]["slit_fill"] for r in radii},
         },
         "caption": (
-            "同じ図形に 4 つの形態学 op を当て、前景の面積 [px] を実測しながら "
-            "構造要素の半径を 1→4 px と往復させた。膨張は面積を %d→%d px へ増やし、"
-            "収縮は %d→%d px へ減らす。開と閉は面積をほぼ保ったまま、"
-            "開が白い粒を、閉が黒い穴を消す —— 半径 %d px の開→閉でノイズ前の図形との "
-            "IoU が %.3f まで戻る。"
-            % (round(rows[1]["area"]["dil"]), round(rows[4]["area"]["dil"]),
-               round(rows[1]["area"]["ero"]), round(rows[4]["area"]["ero"]),
-               best_r, rows[best_r]["iou"]["openclose"])),
+            "幅 2/4/6/8/10 px の棒と幅 2/4/6 px のスリットを刻んだ図形に、"
+            "4 つの形態学 op を半径 1→4 px で当てた。膨張は面積を %d→%d px に増やし、"
+            "収縮は %d→%d px に減らす。開は面積をほぼ保ったまま細い棒だけを落とし "
+            "(r=1 で %s px が生き残り、r=4 では %s px だけ)、閉は細い隙間だけを埋める "
+            "(r=1 で幅 %s px、r=4 で幅 %s px のスリットが消える)。"
+            % (round(res[1]["area"]["dil"]), round(res[4]["area"]["dil"]),
+               round(res[1]["area"]["ero"]), round(res[4]["area"]["ero"]),
+               "/".join(map(str, res[1]["bar_keep"])) or "なし",
+               "/".join(map(str, res[4]["bar_keep"])) or "なし",
+               "/".join(map(str, res[1]["slit_fill"])) or "なし",
+               "/".join(map(str, res[4]["slit_fill"])) or "なし")),
     }

@@ -3,49 +3,52 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 01:53:45
+- **最終更新**: 2026-09-02 01:59:20
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-4808de42 auto: ARTICLE_RESTRUCTURE_PLAN.md 編集前 (2026-09-02 01:53)
-32e47171 docs: 記事の追記1〜7 を機能別の5章へ組み替え、書き方を「使える技術」へ
-57a057c5 auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
-f2e0347c auto: fullseye_overview_qiita_en.md 編集前 (2026-09-02 01:47)
-0f5f1e77 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:47)
-861bfacb auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:46)
-4ee39583 auto: chain_fuzz.py 編集前 (2026-09-02 01:45)
-d9abeed6 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
-6388c172 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
-4e5f3b18 auto: fullseye_overview_qiita_ja.md 編集前 (2026-09-02 01:44)
+6f71918d docs: 展示章を「ソース + 自動組み立て + drift CI」にして、器を増やせる形にする
+628cfb2f auto: gen_wing2d_gallery.py 編集前 (2026-09-02 01:58)
+6a3434d5 auto: pyproject.toml 編集前 (2026-09-02 01:57)
+00ef6450 auto: test_ops3d_ledger.py 編集前 (2026-09-02 01:56)
+4fbbdbb5 auto: build_exhibits.py 編集前 (2026-09-02 01:56)
+5a5f827d auto: build_exhibits.py 編集前 (2026-09-02 01:56)
+6c33fe45 auto: build_exhibits.py 編集前 (2026-09-02 01:56)
+fd692536 auto: build_exhibits.py 編集前 (2026-09-02 01:55)
+65727803 auto: build_exhibits.py 編集前 (2026-09-02 01:55)
+21b14b07 auto: build_exhibits.py 編集前 (2026-09-02 01:55)
 ```
 
 ## 現在の git status
 
 ```
-M docs/ARTICLE_RESTRUCTURE_PLAN.md
+M docs/articles/assets/media/wing2d_morph_quartet.gif
+ M docs/articles/assets/thumbs/wing2d_morph_quartet_720.jpg
+ M tools/gen_wing2d_gallery.py
+?? tools/gen_wingstudio_gallery.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-01:53 docs/ARTICLE_RESTRUCTURE_PLAN.md
-01:47 docs/SESSION_SUMMARY.md
-01:47 docs/articles/fullseye_overview_qiita_en.md
-01:47 docs/articles/fullseye_overview_qiita_ja.md
-01:45 tools/chain_fuzz.py
-01:44 .pytest_cache/v/cache/lastfailed
-01:44 .pytest_cache/v/cache/nodeids
-01:44 studio_assets/op_help/guide_specular_photometric.html
-01:44 studio_assets/op_help/guide_quaternion_monogenic.html
-01:44 studio_assets/op_help/guide_photon_timeresolved.html
-01:44 studio_assets/op_help/guide_motion_magnification.html
-01:44 studio_assets/op_help/guide_fmcw_range_doppler.html
-01:44 studio_assets/op_help/guide_coherence_scanning.html
-01:44 studio_assets/op_help/guide_acoustic_condition_monitoring.html
-01:44 studio_assets/op_help/guide_optics_imaging.html
+01:59 docs/articles/assets/thumbs/wing2d_morph_quartet_720.jpg
+01:59 docs/articles/assets/media/wing2d_morph_quartet.gif
+01:59 tools/gen_wing2d_gallery.py
+01:58 tools/gen_wingstudio_gallery.py
+01:58 docs/articles/exhibits/README.md
+01:58 .pytest_cache/v/cache/nodeids
+01:58 tests/test_exhibits.py
+01:57 .pytest_cache/v/cache/lastfailed
+01:57 pyproject.toml
+01:56 docs/articles/fullseye_overview_qiita_en.md
+01:56 docs/articles/fullseye_overview_qiita_ja.md
+01:56 tests/test_ops3d_ledger.py
+01:56 tools/build_exhibits.py
+01:54 docs/articles/exhibits/wings.json
+01:54 docs/articles/exhibits/science.en.md
 ```
 
 ---
