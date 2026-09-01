@@ -1185,24 +1185,30 @@ def _stage_states(problem):
     return prob, specs, states, scores, tgt, src
 
 
-def _photon_frame(y, target, color, w=880, h=440):
-    """光子ヒストグラムのコマ 1 枚(面積で正規化して正解と重ねる)。"""
+def _photon_frame(y, target, color, vmax, w=1040, h=440):
+    """光子ヒストグラムのコマ 1 枚(面積で正規化して正解と重ねる)。
+
+    縦軸の上限 *vmax* は**全コマで共通**にする。コマごとに自動で伸ばすと、
+    山の高さが変わって見えて「形が変わった」と誤読させる(実際に変わるのは
+    背景の高さの方)。上限に当たって頭が平らになると嘘になるので余裕も取る。
+    """
     y = np.asarray(y, np.float64).ravel()
     t = np.asarray(target, np.float64).ravel()
     sy = y.sum() if y.sum() > 0 else 1.0
     st = t.sum() if t.sum() > 0 else 1.0
+    hi = vmax * 1.12
     c = canvas(w, h, C_PANEL)
-    p = Plot(c, (78, 26, w - 30, h - 44), (0, len(t) - 1), (-0.005, 0.075))
-    p.grid(yticks=np.linspace(0, 0.07, 8),
+    p = Plot(c, (86, 26, w - 30, h - 44), (0, len(t) - 1), (-0.015 * hi, hi))
+    p.grid(yticks=np.linspace(0, vmax, 5),
            xticks=np.arange(0, len(t), 32)).frame()
     p.line(np.arange(len(t)), t / st, C_TRUE, 2)
     p.line(np.arange(len(y)), y / sy, color, 2)
     u8 = to_u8(p.c)
-    items = [(78, h - 36, "時間ビン(0..255)", C_DIM, 13, False),
-             (92, 36, "正解(背景ゼロ・雑音なし)", C_TRUE, 13, True),
-             (92, 58, "現在の値(面積で正規化)", color, 13, True)]
-    for v in (0.0, 0.035, 0.07):
-        items.append((72, p.Y(v), f"{v:.3f}", C_DIM, 12, False, "rm", True))
+    items = [(86, h - 36, "時間ビン(0..255)", C_DIM, 13, False),
+             (100, 36, "正解(背景ゼロ・雑音なし)", C_TRUE, 13, True),
+             (100, 58, "現在の値(面積で正規化)", color, 13, True)]
+    for v in np.linspace(0, vmax, 5):
+        items.append((80, p.Y(v), f"{v:.3f}", C_DIM, 12, False, "rm", True))
     return np.asarray(text(u8, items), np.float64) / 255.0
 
 
