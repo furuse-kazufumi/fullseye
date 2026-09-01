@@ -3340,6 +3340,17 @@ def ex_vessel_reslice(log) -> dict:
     return {
         "name": "wing3d_vessel_reslice",
         "title": "管に沿って切る ―― 軸に直交しないと内径が %.2f 倍に太る" % (1 / math.cos(th)),
+        "title_en": "Reslicing along a vessel — cut off-axis and the bore reads %.2fx too wide" % (
+            1 / math.cos(th)),
+        "caption_en": (
+            f"A synthetic tube tilted {tilt:.0f}° with a stenosis in the middle, stepped through "
+            f"{len(rows)} cross-sections. The minor axis measured on planes orthogonal to the "
+            f"tube axis returns the true bore almost exactly (mean error "
+            f"**{float(np.mean(ortho_err)):.4f} mm**), while the major axis of a naive z-slice "
+            f"stretches by 1/cos θ = **{1 / math.cos(th):.3f}x** and is off by "
+            f"{float(np.mean(naive_err)):.4f} mm on average. At the stenosis a true "
+            f"{rows[i_min]['truth_diameter_mm']:.3f} mm reads as "
+            f"{rows[i_min]['naive_major_mm']:.3f} mm — the narrowing looks milder than it is."),
         "ops": ["vol_rotate"],
         "facts": {"tilt_deg": tilt, "spacing_mm": sp, "stations": len(rows),
                   "rows": rows,

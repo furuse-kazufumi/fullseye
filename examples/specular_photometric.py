@@ -204,13 +204,32 @@ def main():
     # ------------------------------------------------------------------ #
     # 6) 破綻点の開示 — 隠すと頑健性の主張が嘘になる                        #
     # ------------------------------------------------------------------ #
-    half = clean.copy()
-    half[:4] = 0.0
+    # 遮蔽(値がゼロ)は「方程式が無い」だけなので、ゼロ判定で切り分けられる。
+    # 8 灯中 6 灯が遮蔽されると生きた灯は 2 本 = 未知数 3・式 2 の劣決定になり、
+    # ここでは答えを返さず NaN を返す(以前は最小ノルム解を黙って返していた)。
+    for k in (4, 5, 6):
+        obs = clean.copy()
+        obs[:k] = 0.0
+        nrm, _alb, inl = SP.photometric_stereo_robust(obs, L, method="ransac")
+        nanfrac = float(np.isnan(nrm[..., 0]).mean())
+        e = PM.angular_error_deg(nrm, surface)
+        emean = float(np.nanmean(e)) if nanfrac < 1.0 else float("nan")
+        print(f"6) 遮蔽 {k}/8 灯: 信じた灯={inl.sum(axis=0).min()} 本  "
+              f"平均誤差={emean:.4f} deg  解けない画素={100 * nanfrac:.0f}%")
+        if k <= 5:
+            assert nanfrac == 0.0 and emean < 1e-3
+        else:
+            assert nanfrac == 1.0, "劣決定なら答えを返してはいけない"
+
+    # 本当の破綻点は「ゼロ」ではなく「正の外れ値」で出る。ハイライトは方程式を
+    # 持っているので、多数決が拮抗する 50% 汚染では誤った側が勝ちうる。
+    spiked = clean.copy()
+    spiked[:4] += 3.0
     broke = PM.angular_error_deg(
-        SP.photometric_stereo_robust(half, L, method="ransac")[0], surface).mean()
-    print(f"6) 破綻点: 8 灯中 4 灯(半分)が遮蔽されると ransac も"
-          f" {broke:.2f} deg で壊れる — 遮蔽された 4 枚は「真っ黒な面」という"
-          f"完全に無矛盾なモデルでもあり、多数決では選び分けられない")
+        SP.photometric_stereo_robust(spiked, L, method="ransac")[0], surface).mean()
+    print(f"   破綻点(正の外れ値): 8 灯中 4 灯(半分)にハイライトを足すと"
+          f" ransac は {broke:.2f} deg で壊れる — 汚染された 4 枚もそれ自体は"
+          f"無矛盾なモデルなので、多数決では選び分けられない")
     assert broke > 50.0
 
     # ------------------------------------------------------------------ #
