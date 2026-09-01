@@ -547,23 +547,28 @@ def istft(transform):
     Measured round-trip error, ``max |x - istft(stft(x))|`` on 4096 samples of
     white noise (float64, so 2.2e-16 is one ulp of the largest sample):
 
-    ==============  ======  ======  =========
-    window          win     hop     max error
-    ==============  ======  ======  =========
-    hann            256     128     3.89e-16
-    hann            256     64      4.44e-16
-    hann            256     255     1.44e-15
-    hamming         256     128     2.22e-16
-    blackman        512     128     3.33e-16
-    flattop         256     64      1.55e-15
-    rectangular     256     128     2.22e-16
-    hann (nfft 512) 256     128     4.44e-16
-    ==============  ======  ======  =========
+    ===============  ====  ====  =========  =========
+    window           win   hop   max error  nola_min
+    ===============  ====  ====  =========  =========
+    hann             256   128   1.33e-15   0.5
+    hann             256   64    1.33e-15   1.5
+    hann             256   255   2.73e-12   2.27e-08
+    hamming          256   128   1.33e-15   0.5832
+    blackman         512   128   1.33e-15   1.206
+    flattop          256   64    1.33e-15   0.396
+    boxcar           256   128   8.88e-16   2.0
+    hann (nfft 512)  256   128   1.33e-15   0.5
+    ===============  ====  ====  =========  =========
 
-    Note the third row: ``hop = 255`` on a 256-sample window is barely
-    overlapping and would break plain (unweighted) overlap-add completely, and
-    it still inverts to 1.4e-15 here. That is the difference between requiring
-    COLA and requiring NOLA.
+    Read the third row's two columns together. ``hop = 255`` on a 256-sample
+    window overlaps by one sample, which breaks plain (unweighted) overlap-add
+    completely; weighted overlap-add still inverts it, but only to 2.7e-12
+    rather than 1.3e-15, because the squared-window overlap sum falls to
+    2.3e-08 and the reconstruction divides by it. NOLA is satisfied and the
+    result is four orders of magnitude less accurate than every other row —
+    which is why ``nola_min`` is *returned* and not merely checked. A NOLA
+    minimum that is small but positive is a conditioning warning, and there is
+    no threshold at which it stops being one, so no threshold is invented here.
 
     **Raises** ``ValueError``: a dict missing any key :func:`stft` writes, a
     ``spectra`` whose shape disagrees with the recorded ``nfft`` / frame count,
