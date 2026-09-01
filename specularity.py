@@ -1342,9 +1342,9 @@ def photometric_residual(images, lights, normals=None, albedo=None,
     :func:`photometric.photometric_stereo` returns float32 and that is its
     precision, not a modelling error (supplying the *same* truth cast to
     float32 reproduces 4.5e-08 exactly). It is large where the assumption
-    actually broke: 0.19 at worst on the same scene with 3 of 8 lights blocked
-    by a cast shadow. All four numbers measured in
-    ``tests/test_specularity.py``.
+    actually broke: 0.50 at worst on the same scene with 3 of 8 lights blocked
+    by a cast shadow — fifteen orders of magnitude above the clean floor. All
+    four numbers measured in ``tests/test_specularity.py``.
 
     This is the diagnostic that tells you *whether* you need
     :func:`photometric_stereo_robust` before you reach for it, and it is the
