@@ -1030,9 +1030,12 @@ def lucky_select(frames, keep_fraction=0.3, min_keep=1, **quality_kw):
       捨てた理由を図にできるように、選別の結果ではなく素材を返す。
 
     Ground truth it reproduces(``tests/test_astrostack.py``): 同じ星野を
-    FWHM だけ変えて撮ったフレーム列では、点は FWHM の**単調減少関数**になる
-    —— 実測で FWHM 2.4 / 3.2 / 4.4 px の 3 枚の点は 0.0669 / 0.0416 / 0.0234
-    と順序どおりに並ぶ。
+    FWHM だけ変えて撮ったフレーム列では、点は FWHM とともに**下がる**。
+    96x96 に 20 星、FWHM を 3.462〜6.080 px で振った 12 枚の実測で
+    ``corr(fwhm, score) = -0.925``。上位 25 %(3 枚)を採って平均合成すると、
+    12 枚全部を平均した場合に比べて合成後の FWHM が 4.403 → 3.672 px、
+    **16.6 % 改善**する —— 枚数を 1/4 に減らしたのに像は鋭くなる、というのが
+    lucky imaging の主張そのもの(その代わり雑音は sqrt(4) = 2 倍になる)。
 
     **Raises** ``ValueError``: *frames* が list / tuple でない(3-D 配列は
     明示的に拒否)/ 枚数が 1 未満 / ``keep_fraction`` が (0, 1] の外 /
