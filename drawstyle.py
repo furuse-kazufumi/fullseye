@@ -185,14 +185,14 @@ class DrawStyle:
     """
 
     color: object = 1.0
-    width: int = 1
+    width: float = 1
     line_style: object = "solid"
     draw: str = "margin"
     fill_color: object = None
     scheme: str = "okabe_ito"
 
     def __post_init__(self):
-        object.__setattr__(self, "width", _check_width(self.width))
+        check_width(self.width)
         if self.draw not in DRAW_MODES:
             raise ValueError(f"draw must be one of {DRAW_MODES}, got {self.draw!r}")
         # 検証のみ(正規化した値は保持せず、呼び出し時に解決する ―― 役割名を残す方が
