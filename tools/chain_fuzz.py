@@ -332,6 +332,13 @@ def catalog():
     for n, m in opsoptics.OPSOPTICS.items():
         if m["func"] is not None:
             ops.append((n, "optics", list(m["in"]), m["out"], m["func"]))
+    # ライトフィールドファミリ(opslightfield 台帳)。4-D (V,U,H,W) の新語彙
+    # `lightfield` を持ち込む唯一の族で、`images` へ潰すと「どの視点か」が
+    # 消えて refocus も EPI も定義できなくなるため型を分けている
+    import opslightfield
+    for n, m in opslightfield.OPSLIGHTFIELD.items():
+        if m["func"] is not None:
+            ops.append((n, "lightfield", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
