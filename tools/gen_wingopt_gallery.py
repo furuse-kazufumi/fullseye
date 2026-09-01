@@ -668,10 +668,12 @@ def ex_limit_crossover(log):
         f"flags it at {grid_first:.1f} mm")
 
     w, hdr = 1000, 34
-    plot_box = (86, hdr + 96, w - 22, hdr + 96 + 268)
-    h = int(plot_box[3]) + 46
+    bar_x0, bar_x1 = 258, w - 168             # 右端に数値ラベルぶんの余白を残す
+    plot_box = (86, hdr + 128, w - 26, hdr + 128 + 262)
+    h = int(plot_box[3]) + 50
     y_lo = min(min(r["nyq"] for r in rows), min(r["dif"] for r in rows)) * 0.92
     y_hi = max(max(r["nyq"] for r in rows), max(r["dif"] for r in rows)) * 1.05
+    y_ticks = [20, 25, 30, 35, 40, 45, 50, 55]
 
     frames = []
     for i, r in enumerate(rows):
@@ -682,57 +684,58 @@ def ex_limit_crossover(log):
             f"f={f:g}mm  f/{fn:g}  pitch={pitch:g}um  lambda={lam:g}um  "
             f"{SYS['width_px']}x{SYS['height_px']}px   sweeping the working distance")
         # 上段: 2 本の限界を横棒で見せる(どちらが長いか = どちらが律速か)
-        bx0, bx1 = 250, w - 40
-        _fill(canvas, hdr + 6, hdr + 88, 14, w - 14, C_PANEL)
-        bar_hi = y_hi
+        _fill(canvas, hdr + 6, hdr + 120, 14, w - 14, C_PANEL)
         for k, (name, val, col) in enumerate((
                 ("sampling  (Nyquist)", r["nyq"], C_CURVE),
                 ("diffraction (Airy)", r["dif"], C_OPT))):
-            yb = hdr + 16 + k * 34
-            wpx = int(round((bx1 - bx0) * val / bar_hi))
-            _fill(canvas, yb, yb + 22, bx0, bx0 + max(1, wpx), col)
+            yb = hdr + 16 + k * 36
+            wpx = int(round((bar_x1 - bar_x0) * val / y_hi))
+            _fill(canvas, yb, yb + 26, bar_x0, bar_x0 + max(1, wpx), col)
             labels += [
-                (24, yb + 3, name, C_TEXT, 13, True),
-                (bx0 + max(1, wpx) + 8, yb + 3, f"{val:6.2f} um", col, 13, True),
+                (24, yb + 5, name, C_TEXT, 14, True),
+                (bar_x0 + max(1, wpx) + 10, yb + 5, f"{val:6.2f} um", col, 14, True),
             ]
-        binding = "sampling" if r["by"] == "sampling" else "diffraction"
-        labels.append((24, hdr + 68,
+        binding = r["by"]
+        labels.append((24, hdr + 92,
                        f"WD {r['wd']:6.1f} mm   m {r['m']:.5f}   {r['upp']:6.3f} um/px"
                        f"   N_eff {r['neff']:.3f}   ->  limited by {binding.upper()}"
                        f"  = {r['lim']:.2f} um",
-                       (C_CURVE if binding == "sampling" else C_OPT), 13, True))
-        # 下段: 2 本の曲線と交点
+                       (C_CURVE if binding == "sampling" else C_OPT), 14, True))
+        # 下段: 2 本の曲線と交点。掃引で通り過ぎた側を太く描く(コマ送りでも
+        # 「どこまで来たか」が読めるように)。
         p = Plot(canvas, plot_box, (wd_lo, wd_hi), (y_lo, y_hi))
         p.bg()
         p.band_x(wd_lo, cross_wd, (0.13, 0.15, 0.19))
-        p.grid_y([15, 20, 25, 30, 35, 40, 45])
+        p.grid_y(y_ticks)
         p.frame()
         wa = np.array([q["wd"] for q in rows])
-        p.curve(wa, [q["nyq"] for q in rows], C_CURVE, 2)
-        p.curve(wa, [q["dif"] for q in rows], C_OPT, 2)
+        p.curve(wa, [q["nyq"] for q in rows], (0.42, 0.38, 0.20), 1)
+        p.curve(wa, [q["dif"] for q in rows], (0.18, 0.33, 0.46), 1)
+        p.curve(wa[:i + 1], [q["nyq"] for q in rows[:i + 1]], C_CURVE, 2)
+        p.curve(wa[:i + 1], [q["dif"] for q in rows[:i + 1]], C_OPT, 2)
         p.vline(cross_wd, (0.95, 0.95, 0.92), 1, dashed=True, dash=6, gap=6)
         p.ticks_x([120, 160, 200, 240, 280, 320])
-        p.ticks_y([20, 25, 30, 35, 40])
+        p.ticks_y(y_ticks)
         p.marker(r["wd"], r["nyq"], C_CURVE, 5, "cross", 2)
         p.marker(r["wd"], r["dif"], C_OPT, 5, "cross", 2)
         p.dot(cross_wd, cross_um, (1.0, 1.0, 1.0), 3)
         canvas = p.c
         for t in (120, 160, 200, 240, 280, 320):
             labels.append((int(p.px(t)) - 12, plot_box[3] + 6, f"{t}", C_DIM, 11, False))
-        for t in (20, 25, 30, 35, 40):
+        for t in y_ticks:
             labels.append((plot_box[0] - 34, int(p.py(t)) - 7, f"{t}", C_DIM, 11, False))
         labels += [
             (plot_box[0] + 6, plot_box[1] + 4, "object-side limit [um]", C_DIM, 11, False),
-            (plot_box[2] - 178, plot_box[3] - 16, "working distance [mm] ->", C_DIM, 11, False),
+            (plot_box[2] - 178, plot_box[3] - 18, "working distance [mm] ->", C_DIM, 11, False),
             (int(p.px(cross_wd)) + 6, plot_box[1] + 6,
              f"crossover  WD {cross_wd:.2f} mm   both = {cross_um:.2f} um",
              (0.95, 0.95, 0.92), 12, True),
             (plot_box[0] + 8, plot_box[1] + 24, "diffraction binds", C_OPT, 11, True),
             (int(p.px(cross_wd)) + 6, plot_box[1] + 24, "sampling binds", C_CURVE, 11, True),
-            (plot_box[0] + 8, plot_box[3] - 34,
+            (14, plot_box[3] + 26,
              f"the 44-step sweep in the article first reports the swap at "
-             f"WD {grid_first:.1f} mm -- that is the grid, not the physics",
-             C_DIM, 11, False),
+             f"WD {grid_first:.1f} mm -- that is the grid step, not the physics",
+             C_DIM, 12, False),
         ]
         frames.append(_text(_to_u8(canvas), labels))
 

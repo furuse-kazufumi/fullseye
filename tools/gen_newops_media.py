@@ -746,7 +746,7 @@ def _lightfield():
         import lightfield as L
         ANG, SIZE, NEAR, FAR = 9, 112, 3.0, 0.0
         lf, truth = L.lf_synthesize((NEAR, FAR), (ANG, ANG), (SIZE, SIZE),
-                                    occlusion=True, coverage=0.40, texture_sigma=2.0,
+                                    occlusion=True, coverage=0.40, texture_sigma=3.0,
                                     edge="wrap", seed=5)
         _LF_CACHE["lf"] = (lf, truth, ANG, SIZE, NEAR, FAR)
     return _LF_CACHE["lf"]
@@ -943,6 +943,11 @@ def build_parallax(log):
         _fill(canvas, 0, HUD, 0, W, C_PANEL)
         view = _check_display("lightfield view", lf[v, u], 0.15, 0.85)
         _place(canvas, _upscale(_gray_to_rgb(_norm01(view, 0.15, 0.85)), SC), PANY, MARGIN)
+        # 固定の十字 — これが無いと「視点が動いた」ことが 1 コマでは分からない
+        canvas = imagedraw.draw_line(canvas, (MARGIN + PAN // 2, PANY),
+                                     (MARGIN + PAN // 2, PANY + PAN), color=C_AMBR, width=1)
+        canvas = imagedraw.draw_line(canvas, (MARGIN, PANY + PAN // 2),
+                                     (MARGIN + PAN, PANY + PAN // 2), color=C_AMBR, width=1)
         canvas = _frame_box(canvas, PANY, PANY + PAN, MARGIN, MARGIN + PAN)
 
         # 視点格子(どの (v,u) を見ているか)
@@ -965,7 +970,9 @@ def build_parallax(log):
         canvas = _frame_box(canvas, PANY, PANY + GRID, gx, gx + GRID)
 
         # 実測シフト vs 閉形式
-        ax = Axes(px + 28, PANY, px + PLOT, PANY + PLOT - 28, -14, 14, -14, 14)
+        # 縦軸は下向きが正(画像座標と同じ向き)。上向き正にすると、絵が下へ
+        # 動いているのに点が上へ行く = 軸の反転になって読み手を騙す。
+        ax = Axes(px + 28, PANY, px + PLOT, PANY + PLOT - 28, -14, 14, 14, -14)
         ax.bg(canvas)
         canvas = ax.grid_y(canvas, [-12, -6, 0, 6, 12])
         canvas = imagedraw.draw_line(canvas, (ax.X(0), ax.y0), (ax.X(0), ax.y1),
@@ -984,12 +991,13 @@ def build_parallax(log):
         canvas = ax.axis(canvas)
         canvas, tx = ax.xticks(canvas, [-12, 0, 12], ["-12", "0", "+12"])
         canvas, ty = ax.yticks(canvas, [-12, 0, 12], ["-12", "0", "+12"])
+        canvas = imagedraw.draw_line(canvas, (ax.x0, ax.Y(0)), (ax.x1, ax.Y(0)),
+                                     color=C_GRID, width=1)
         canvas = _frame_box(canvas, ax.y0, ax.y1, ax.x0, ax.x1)
 
         labels = [
             (MARGIN, 6, f"the same light field, moving only the viewpoint: "
-                        f"sub-aperture view (v, u) of {ANG}x{ANG}  "
-                        f"(lf[v, u] -- no refocusing, no interpolation)", C_TEXT, 12, False),
+                        f"sub-aperture view (v, u) of {ANG}x{ANG}", C_TEXT, 12, False),
             (MARGIN, PANY - 18, f"view (v, u) = ({v}, {u})", C_TEXT, 13, True),
             (gx, PANY - 18, "which view", C_TEXT, 13, True),
             (px + 28, PANY - 18, "front-layer shift [px]", C_TEXT, 13, True),
@@ -1003,13 +1011,13 @@ def build_parallax(log):
              f"the back layer (slope {FAR:+.1f}) does not move at all: that difference "
              f"is the parallax, and it is where the depth comes from", C_DIM, 12, False),
             (MARGIN, PANY + PAN + 44,
-             f"measured over the whole orbit, the shift matches the closed form to "
-             f"{err:.2f} px (FFT cross-correlation, convention self-tested against "
-             f"np.roll)", C_DIM, 12, False),
+             f"over the whole orbit the measured shift matches the closed form to "
+             f"{err:.2f} px  (FFT cross-correlation, sign self-tested against np.roll)",
+             C_DIM, 12, False),
             (MARGIN, PANY + PAN + 62,
-             "a plenoptic sensor records all of these in one exposure; an ordinary "
-             "camera records exactly one of them.", C_DIM, 12, False),
-            (ax.x1 - 44, ax.y1 + 22, "dx", C_DIM, 11, False),
+             "one exposure holds all 81 of these views; an ordinary camera keeps one.",
+             C_DIM, 12, False),
+            (ax.x1 - 92, ax.y1 + 22, "dx ->   dy down +", C_DIM, 11, False),
         ]
         labels += tx + ty
         out.append(_text(_to_u8(canvas), labels))

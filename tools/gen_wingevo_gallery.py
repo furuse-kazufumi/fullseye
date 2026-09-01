@@ -1131,10 +1131,15 @@ def ex_generations(data, log=print):
 
 
 # --------------------------------------------------------------------------- #
-# 展示 6/7 — champion のパイプライン図(タイル + 1 段ずつ歩く GIF)               #
+# 展示 6/7 — champion のパイプラインをコマ送りで(flipbook GIF)                   #
 # --------------------------------------------------------------------------- #
 def _stage_states(problem):
-    """champion の鎖を 1 段ずつ適用して中間値を返す。"""
+    """champion の鎖を 1 段ずつ適用して中間値とスコアを返す。
+
+    各段の値を**その場で最終出力とみなして**採点する。段ごとのスコアは単調とは
+    限らない ― 途中で下げてから最後に取り返す鎖を進化は平気で見つけるので、
+    そこが見えるようにしておく。
+    """
     import ops
     import problems
     prob = problems.PROBLEMS[problem]
@@ -1151,109 +1156,110 @@ def _stage_states(problem):
     return prob, specs, states, scores, tgt, src
 
 
-def ex_stage_tile(data, log=print):
+def _photon_frame(y, target, color, w=880, h=440):
+    """光子ヒストグラムのコマ 1 枚(面積で正規化して正解と重ねる)。"""
+    y = np.asarray(y, np.float64).ravel()
+    t = np.asarray(target, np.float64).ravel()
+    sy = y.sum() if y.sum() > 0 else 1.0
+    st = t.sum() if t.sum() > 0 else 1.0
+    c = canvas(w, h, C_PANEL)
+    p = Plot(c, (78, 26, w - 30, h - 44), (0, len(t) - 1), (-0.005, 0.075))
+    p.grid(yticks=np.linspace(0, 0.07, 8),
+           xticks=np.arange(0, len(t), 32)).frame()
+    p.line(np.arange(len(t)), t / st, C_TRUE, 2)
+    p.line(np.arange(len(y)), y / sy, color, 2)
+    u8 = to_u8(p.c)
+    items = [(78, h - 36, "時間ビン(0..255)", C_DIM, 13, False),
+             (92, 36, "正解(背景ゼロ・雑音なし)", C_TRUE, 13, True),
+             (92, 58, "現在の値(面積で正規化)", color, 13, True)]
+    for v in (0.0, 0.035, 0.07):
+        items.append((72, p.Y(v), f"{v:.3f}", C_DIM, 12, False, "rm", True))
+    return np.asarray(text(u8, items), np.float64) / 255.0
+
+
+def ex_stage_photon(data, log=print):
+    """勝った champion の中身 — 光子族だけで閉じた 4 段。"""
     problem = "photon_denoise"
+    row = data["champions"]["rows"][problem]
     prob, specs, states, scores, tgt, src = _stage_states(problem)
-    panels = [_photon_panel(states[0], tgt, C_IDENT)]
-    labels = [f"入力(恒等 {scores and data['champions']['rows'][problem]['locked_trivial']:.4f} 相当)"
-              if False else "入力(光子ヒストグラム)"]
+    frames = [_photon_frame(states[0], tgt, C_IDENT)]
+    labels = [f"入力(この時点のスコア {row['locked_trivial']:.4f})"]
     for i, s in enumerate(specs):
-        panels.append(_photon_panel(states[i + 1], tgt, C_EVO))
-        labels.append(f"{i + 1}. {s['op'].replace('tb_', '')}  →  {scores[i]:.4f}")
-    panels.append(_photon_panel(tgt, tgt, C_TRUE))
-    labels.append("正解(背景ゼロ・雑音なし)")
-    sheet = contact_sheet(panels, labels, ncols=3, panel_px=250, font_size=15,
-                          title=f"champion の鎖を 1 段ずつ({problem}) — "
-                                f"青緑が正解、黄が各段の出力")
-    stem = "wingevo_stage_tile"
-    info = save_exhibit(sheet, stem)
+        frames.append(_photon_frame(states[i + 1], tgt, C_EVO))
+        labels.append(f"{s['op']}  →  {scores[i]:.4f}")
+    frames.append(_photon_frame(tgt, tgt, C_TRUE))
+    labels.append(f"正解(手の基準線は {row['locked_hand']:.4f})")
+    book = flipbook(frames, labels, title=(
+        f"champion のパイプライン(各段の出力)— {problem} "
+        f"[{row['unit']}]"))
+    info = save_gif(book, "wingevo_stage_photon", fps=1.2)
     chain = " → ".join(f"`{s['op']}`" for s in specs)
-    cap = ("**champion のパイプライン図(各段の中間値)** ―― "
-           f"{chain} の 4 段。1 段ごとのスコアは "
+    cap = ("**champion のパイプライン図(各段の中間値)** ―― " + chain +
+           " の 4 段。各段を最終出力とみなしたスコアは "
            + " → ".join(f"{v:.4f}" for v in scores) +
-           f" と単調には上がらず、**最後の段で {scores[-1]:.4f} に届く**。"
-           "光子族だけで閉じた合成 = 新しい族が「単体で使える op」ではなく "
-           "「op を繋いだ手順」として価値を出した例。")
-    log(f"    {stem}: {info['size']}")
-    return [{"stem": stem, "kind": "png", "info": info,
-             "md": markdown(stem, "champion の各段", cap),
+           f"(恒等 {row['locked_trivial']:.4f} / 手 {row['locked_hand']:.4f} / "
+           f"鎖ぜんぶで {row['locked_champion']:.4f})。"
+           "光子族だけで閉じた合成 = 新しい族が「単体で使える op」ではなく"
+           "「op を繋いだ手順」として価値を出した最初の例。")
+    log(f"    wingevo_stage_photon: {info['frames']} frames "
+        f"{info['gif_bytes'] / 1e6:.2f} MB")
+    return [{"stem": "wingevo_stage_photon", "kind": "gif", "info": info,
+             "md": markdown_animation("wingevo_stage_photon",
+                                      "champion の各段(光子計数)", cap),
              "numbers": {"per_stage": scores,
                          "ops": [s["op"] for s in specs]},
              "provenance": f"champion={src} / 中間値は本スクリプトで実測"}]
 
 
-def ex_pipeline_walk(data, log=print):
-    problem = "photon_denoise"
-    prob, specs, states, scores, tgt, src = _stage_states(problem)
+def _rgbish(a, px=576):
+    """(H,W,3) はそのまま、(H,W,4)(四元数)はベクトル部 3 成分を色として出す。"""
+    arr = np.asarray(a, np.float64)
+    if arr.ndim == 3 and arr.shape[2] == 4:
+        arr = arr[:, :, 1:4]
+    arr = np.clip(arr / max(1e-9, float(np.max(np.abs(arr)))), 0.0, 1.0)
+    k = max(1, px // max(1, arr.shape[0]))
+    return upscale(to_rgb(arr), k)
+
+
+def ex_stage_specular(data, log=print):
+    """負けた champion の中身 — 族をまたいで四元数へ寄り道する鎖。"""
+    problem = "specular_removal"
     row = data["champions"]["rows"][problem]
-    W, H = 1100, 620
-    frames = []
-    for k in range(len(states)):
-        c = canvas(W, H)
-        items = [(28, 22, f"同じ鎖を 1 段ずつ歩く — {problem} の champion",
-                  C_TEXT, 22, True),
-                 (28, 54, "上 = op の鎖(現在の段を強調)。下 = その段を出た値と正解の重ね。",
-                  C_DIM, 13, False)]
-        # 鎖
-        fill(c, 92, 208, 24, W - 24, C_PANEL)
-        bw = (W - 90) // max(1, len(specs))
-        for i, s in enumerate(specs):
-            x = 44 + i * bw
-            active = (i == k - 1)
-            done = (i < k - 1)
-            col = C_EVO if active else (C_HAND if done else (0.28, 0.30, 0.35))
-            fill(c, 120, 178, x, x + bw - 14, (0.16, 0.17, 0.21))
-            fill(c, 120, 126, x, x + bw - 14, col)
-            items.append((x + (bw - 14) // 2, 150, s["op"].replace("tb_", ""),
-                          C_TEXT if (active or done) else C_DIM, 13, active, "mm"))
-            items.append((x + (bw - 14) // 2, 190,
-                          f"a={s['a']:.2f} b={s['b']:.2f}", C_DIM, 11, False, "ma"))
-            if i < len(specs) - 1:
-                items.append((x + bw - 7, 150, "→", C_DIM, 15, False, "mm"))
-        # 曲線
-        y = np.asarray(states[k], np.float64).ravel()
-        t = np.asarray(tgt, np.float64).ravel()
-        sy = y.sum() if y.sum() > 0 else 1.0
-        st = t.sum() if t.sum() > 0 else 1.0
-        fill(c, 232, 552, 24, W - 24, C_PANEL)
-        p = Plot(c, (96, 256, W - 60, 526), (0, len(t) - 1), (-0.005, 0.075))
-        p.grid(yticks=np.linspace(0, 0.07, 8),
-               xticks=np.arange(0, len(t), 32)).frame()
-        p.line(np.arange(len(t)), t / st, C_TRUE, 2)
-        p.line(np.arange(len(y)), y / sy, C_EVO if k else C_IDENT, 2)
-        c = p.c
-        stage_name = "入力(まだ何もしていない)" if k == 0 else \
-            f"{k} 段目 {specs[k - 1]['op']} を出たところ"
-        sc = row["locked_trivial"] if k == 0 else scores[k - 1]
-        items += [
-            (40, 240, stage_name, C_TEXT, 16, True),
-            (W - 40, 240, f"この値を最終出力としたときのスコア {sc:.4f} "
-                          f"[{row['unit']}]", C_TEXT, 14, True, "ra"),
-            (96, 532, "時間ビン(0..255)", C_DIM, 12, False),
-            (110, 268, "正解(背景ゼロ・雑音なし)", C_TRUE, 13, True),
-            (110, 288, "現在の値(面積で正規化)", C_EVO if k else C_IDENT, 13, True),
-            (28, 570,
-             f"鎖ぜんぶを通すと {row['locked_champion']:.4f}。"
-             f"手(既存最良 1 段)は {row['locked_hand']:.4f}、恒等は "
-             f"{row['locked_trivial']:.4f}。", C_DIM, 13, False),
-            (28, 594,
-             "段ごとのスコアは単調に上がらない — 途中で下げてから最後に取り返す鎖を、"
-             "進化は平気で見つける。", C_DIM, 13, False),
-        ]
-        frames.append(text(to_u8(c), items))
-    frames = [frames[0]] * 2 + frames + [frames[-1]] * 6
-    info = save_gif(frames, "wingevo_pipeline_walk", fps=1)
-    cap = ("**champion の鎖を 1 段ずつ歩く** ―― "
-           + " → ".join(f"`{s['op']}`" for s in specs) +
-           "。各段を最終出力とみなしたスコアは "
+    rb = data["robust"][problem]
+    prob, specs, states, scores, tgt, src = _stage_states(problem)
+    frames = [_rgbish(states[0])]
+    labels = [f"入力(テカりのある色画像。恒等 {row['locked_trivial']:.4f})"]
+    for i, s in enumerate(specs):
+        frames.append(_rgbish(states[i + 1]))
+        note = "(四元数: ベクトル部を色で表示)" if \
+            np.asarray(states[i + 1]).shape[-1] == 4 else ""
+        labels.append(f"{s['op']}{note}  →  {scores[i]:.4f}")
+    frames.append(_rgbish(tgt))
+    labels.append(f"正解(テカりが無ければ見えていた絵)")
+    book = flipbook(frames, labels, title=(
+        "負けた champion の中身 — 四元数へ寄り道する鎖 "
+        f"[{row['unit']}]"))
+    info = save_gif(book, "wingevo_stage_specular", fps=1.2)
+    cap = ("**族をまたいだ寄り道が「惜しく見えた」例** ―― `specular_removal` の "
+           "champion は " + " → ".join(f"`{s['op']}`" for s in specs) +
+           "。RGB を四元数に持ち上げて色空間で回し、戻してから鏡面分離する。"
+           f"観測用 holdout では {rb['selected_by_train']['holdout']:.4f} と手に迫って"
+           f"見えたのに、locked では {row['locked_champion']:.4f} で手 "
+           f"{row['locked_hand']:.4f} に**負けている**。"
+           f"1 枚目の item に対する段ごとのスコアは "
            + " → ".join(f"{v:.4f}" for v in scores) +
-           f"(恒等 {row['locked_trivial']:.4f} / 手 {row['locked_hand']:.4f})。"
-           "**途中で下がってから最後に取り返す**のが読み取れる。")
-    log(f"    wingevo_pipeline_walk: {info['frames']} frames "
+           " で、四元数へ持ち上げている間は 2 段とも 0.0000(型が合わないので"
+           "採点対象にならない)。")
+    log(f"    wingevo_stage_specular: {info['frames']} frames "
         f"{info['gif_bytes'] / 1e6:.2f} MB")
-    return [{"stem": "wingevo_pipeline_walk", "kind": "gif", "info": info,
-             "md": markdown_animation("wingevo_pipeline_walk", "パイプラインを 1 段ずつ", cap),
-             "numbers": {"per_stage": scores},
+    return [{"stem": "wingevo_stage_specular", "kind": "gif", "info": info,
+             "md": markdown_animation("wingevo_stage_specular",
+                                      "負けた champion の各段", cap),
+             "numbers": {"per_stage": scores,
+                         "ops": [s["op"] for s in specs],
+                         "observed": rb["selected_by_train"]["holdout"],
+                         "locked": row["locked_champion"],
+                         "hand": row["locked_hand"]},
              "provenance": f"champion={src} / 中間値は本スクリプトで実測"}]
 
 
