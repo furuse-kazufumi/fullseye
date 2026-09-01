@@ -769,8 +769,8 @@ def illuminant_from_dichromatic_planes(image_rgb, labels, min_pixels=16,
     The returned direction is unit length with a positive component sum
     (illuminant colours are positive; the null space fixes the line, not the
     sign). On synthetic data with three known materials it reproduces the true
-    illuminant to about 1e-16 (measured 8.0e-17 in
-    ``tests/test_specularity.py``).
+    illuminant with a maximum component error of 4.4e-14 and an angular error
+    that rounds to 0.0 degrees (measured in ``tests/test_specularity.py``).
 
     *min_intersection_ratio* guards the answer itself: if the plane normals are
     nearly parallel — two materials whose body colours differ only in
