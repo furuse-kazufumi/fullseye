@@ -386,6 +386,25 @@ from palette import (  # noqa: E402,F401
 # しか無く、**図に意味を載せる側**が空だった ― その穴を、図の生成器 6 本が各自の
 # 私的ヘルパーで埋めていた(実測の重複: _font 16 / _text 7 / _fill 5 / _legend 2)。
 # 文字は必ず幅を測ってから描き、収まらなければ黙って切らずに例外にする。
+# 2 枚の絵の差を測る層。op カタログ全文の実測(2026-09-02)で ssim / psnr /
+# mutual_information / delta_e が **一件も無かった** ― 変換する op は数百あるのに、
+# その出力が入力とどれだけ違うかを言う op が無く、進化の目的関数も図注も
+# その場限りの平均二乗誤差を毎回書き直していた。この族は **答え合わせが外から
+# できる**のが特徴(CIEDE2000 は公開検証表 34 組と一致、SSIM は独立実装と差 0.0)。
+# ``data_range`` を推測しないのが中心的な設計判断 ― [0,1] を 255 と取り違えると
+# PSNR が 48.13 dB ずれるが例外は出ない。
+# sRGB の伝達関数は gfx2d が実体なので、ここでは再輸出しない(重複を作らない)。
+import imgmetrics  # noqa: E402  (SSIM / PSNR / CIEDE2000 / mutual information / NCD)
+import opsimgmetrics  # noqa: E402  (the image-metrics op ledger)
+from imgmetrics import (  # noqa: E402,F401
+    rgb_to_lab, lab_to_rgb, rgb_to_xyz, xyz_to_lab,
+    delta_e_2000, delta_e_76, delta_e_map,
+    mse, rmse, psnr, ssim, ssim_map, ms_ssim,
+    joint_histogram, image_entropy, joint_entropy,
+    mutual_information, normalized_mutual_information,
+    compressed_size, ncd, compare_images, data_range_of,
+    D65_WHITE, MS_SSIM_WEIGHTS, CIEDE2000_TEST_PAIRS,
+)
 import annotate  # noqa: E402  (text plates, arrows, legends, colour bars, axes)
 import opsannotate  # noqa: E402  (the annotate op ledger)
 from annotate import (  # noqa: E402,F401
