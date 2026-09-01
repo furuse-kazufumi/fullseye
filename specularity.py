@@ -628,8 +628,10 @@ def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
       This is what catches the case the rank test misses: two albedos whose
       illuminant-orthogonal chromaticities are nearly anti-parallel still span
       one line, and that image measured 0.0815 on the rank test — under the
-      default threshold, i.e. accepted — while 41% of its pixels fit a negative
-      body coefficient. ``None`` disables it.
+      default threshold, i.e. accepted — while 50% of its pixels fit a negative
+      body coefficient. With both guards disabled that image returns a diffuse
+      map wrong by 1.03 in absolute radiance on an image whose maximum is 0.99,
+      with no exception and no NaN. ``None`` disables it.
 
     **Honest limits.** (1) *Without ``body_rgb``, one lit pixel must be
     specular-free.* The rendered-lobe measurement shows exactly what it costs
