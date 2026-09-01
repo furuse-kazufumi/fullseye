@@ -62,6 +62,39 @@ def _K(f=400.0, w=256, h=256):
     return camera.intrinsic_matrix(f, f, (w - 1) / 2.0, (h - 1) / 2.0)
 
 
+def _closed_blob(n=90, seed=3):
+    """閉じた(watertight)・外向き巻きの一般形。凸包なので巻きは保証される。
+
+    箱より面が多く傾きが散っているぶん、「可視率 vs カメラを向く面積比」の
+    比較が箱の 1/6 刻みより素直に効く。"""
+    import meshrepair
+    rng = np.random.default_rng(seed)
+    P = rng.normal(size=(n, 3))
+    P /= np.linalg.norm(P, axis=1, keepdims=True)
+    P *= 1.0 + 0.25 * rng.random((n, 1))
+    return meshrepair.convex_hull(P)
+
+
+def _surface_samples(V, F, per=4, seed=5):
+    """全ての面の上に重心座標で標本を撒く(決定的)。"""
+    rng = np.random.default_rng(seed)
+    w = rng.dirichlet(np.ones(3), size=(F.shape[0], per))
+    return np.einsum("fkj,fpk->fpj", V[F], w).reshape(-1, 3)
+
+
+def _front_facing_area_fraction(V, F, R, t):
+    """**外向き巻きの** (V, F) で、法線がカメラを向く面の面積比。
+
+    遮蔽は可視を減らすことしかできないので、これは可視率の**物理的な上限**。
+    可視率がこれを超えたら、裏面カリングか巻き方向が壊れている。"""
+    tri = V[F]
+    n = np.cross(tri[:, 1] - tri[:, 0], tri[:, 2] - tri[:, 0])
+    area = 0.5 * np.linalg.norm(n, axis=1)
+    eye = -R.T @ t
+    facing = np.einsum("fk,fk->f", n, eye - tri.mean(1)) > 0.0
+    return float(area[facing].sum() / area.sum())
+
+
 # --------------------------------------------------------------------------- #
 # 1. 往復可逆性 — 厳密な真値                                                    #
 # --------------------------------------------------------------------------- #
