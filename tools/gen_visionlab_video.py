@@ -383,7 +383,7 @@ def build_sweep_frames(*, focal_mm=35.0, working_distance_mm=200.0,
             (PLOT_X1 - 100, py0 + 2, "defect size [um] ->", C_DIM, 11, False),
             (int(_logx(optical_um, lo_um, hi_um)) + 4, py0 + 2,
              f"optical limit {optical_um:.1f} um", C_OPTICAL, 11, True),
-            (PLOT_X0 + 4, py1 - 14, "no information", (0.80, 0.52, 0.48), 10, False),
+            (PLOT_X0 + 4, py1 - 28, "no information", (0.80, 0.52, 0.48), 10, False),
         ]
         for t in (20, 30, 50, 100, 200, 400):
             if lo_um <= t <= hi_um:
