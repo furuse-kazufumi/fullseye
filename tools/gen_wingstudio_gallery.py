@@ -1219,7 +1219,8 @@ def ex_crop3d():
     facts = {"volume_shape": [D, Hh, Ww], "crop_shape": [int(s) for s in part.shape],
              "offset": [int(o) for o in off], "domain": "y in [20, 56)",
              "uncrop_shape_matches": bool(same_shape),
-             "outside_max_after_uncrop": float(full[domain < 0.5].max()),
+             "outside_box_max_after_uncrop": outside_max,
+             "roundtrip_max_abs_error": roundtrip_err,
              "n_points": {"all": int(len(P_all)), "crop": int(len(P_part)),
                           "processed": int(n_proc), "pasted": int(n_back)},
              "frames": len(stages) * per}

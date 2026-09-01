@@ -199,12 +199,12 @@
         491
       ],
       "fps": 8,
-      "bytes": 431923,
-      "thumb_bytes": 41361,
+      "bytes": 455816,
+      "thumb_bytes": 42381,
       "thumb_frame": 31,
-      "mean_abs_delta": 3.334,
-      "sha256": "4c19d4d2191e0b96f5a77f2bfaa433ed71cb4848f51ce54a2deb50bdb6000683",
-      "thumb_sha256": "33a38ec4578733c6d36011281e80721d70bc9844d4cb9aeff50968d85020548a",
+      "mean_abs_delta": 3.336,
+      "sha256": "862ef4b4faa3d367f9cd8faeafac2fd16b5b357b77d25ca19852dd0d86ac4c2d",
+      "thumb_sha256": "80b5fc437aa4d8e80ba34fb3b9a1b13ef1b43bd6aedc04c9e3c376c0879abe92",
       "facts": {
         "volume_shape": [
           20,
@@ -223,7 +223,8 @@
         ],
         "domain": "y in [20, 56)",
         "uncrop_shape_matches": true,
-        "outside_max_after_uncrop": 13.71108970698738,
+        "outside_box_max_after_uncrop": 0.0,
+        "roundtrip_max_abs_error": 0.0,
         "n_points": {
           "all": 2759,
           "crop": 1332,
@@ -232,7 +233,7 @@
         },
         "frames": 36
       },
-      "seconds": 2.32
+      "seconds": 3.3
     }
   ]
 }
