@@ -1946,10 +1946,8 @@ def subject_texture_zoo(log=print) -> dict:
             "%s\nGLCM %.3f / entropy %.3f"
             % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5)),
                float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))),
-            "gabor θ=0°（縦縞）— 表示は 1〜99%%tile 伸長\n平均応答 %.5f (伸長前)"
-            % float(np.mean(g0)),
-            "gabor θ=90°（横縞）— 表示は 1〜99%%tile 伸長\n平均応答 %.5f (伸長前)"
-            % float(np.mean(g9)),
+            "gabor θ=0°（縦縞）\n平均応答 %.5f" % float(np.mean(g0)),
+            "gabor θ=90°（横縞）\n平均応答 %.5f" % float(np.mean(g9)),
             "sk_lbp（局所二値パターン）\nstd %.4f"
             % float(fs.apply(lbp, "gray_histo_abs", 0.5, 0.5))]
     sheet = E.contact_sheet(
