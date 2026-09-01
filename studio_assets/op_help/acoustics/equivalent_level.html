@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">equivalent_level — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.equivalent_level(x, rate, weighting=&#x27;A&#x27;, ref=1.0, floor_db=-200.0)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;equivalent_level&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import acoustics; acoustics.equivalent_level(x, rate, weighting=&#x27;A&#x27;, ref=1.0, floor_db=-200.0, window=&#x27;none&#x27;)</code> (または <code style="color:#22d3bf">opsacoustics.get(&quot;equivalent_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>The energy-equivalent level of a record, in dB relative to `<code style="color:#22d3bf">ref</code>`.</p>
 <p>`<code style="color:#22d3bf">L_eq = 10 log10(mean(x_w**2) / ref**2)</code><code style="color:#22d3bf"> where </code><code style="color:#22d3bf">x_w</code>` is the signal after</p>
@@ -16,8 +16,30 @@
 <p>Doubling the amplitude adds 6.020600 dB. Silence returns -200.0.</p>
 <p>Silence returns `<code style="color:#22d3bf">floor_db</code><code style="color:#22d3bf"> (default -200) rather than </code><code style="color:#22d3bf">-inf</code><code style="color:#22d3bf">; an </code><code style="color:#22d3bf">-inf</code>`</p>
 <p>in a list of levels destroys every average taken over it afterwards.</p>
+<p>**A weighted level is only as good as the weighting, and the weighting has a</p>
+<p>leakage limit this operator inherits in full.** A pure tone that is not a</p>
+<p>whole number of periods in the record comes back <b>too loud</b> — measured</p>
+<p><b>+7.7986 dB</b> at 31.5 Hz (a nominal one-third-octave centre) over 0.5 s at</p>
+<p>48 kHz, and up to <b>+17.2116 dB</b> at 20.5 Hz — with no exception, no NaN and</p>
+<p>no warning. `<code style="color:#22d3bf">weighting=&quot;Z&quot;</code><code style="color:#22d3bf"> is exempt (it does no filtering) and </code><code style="color:#22d3bf">&quot;C&quot;</code>` is</p>
+<p>nearly so (+0.0493 dB on the same tone); it is `<code style="color:#22d3bf">&quot;A&quot;</code>`, whose curve spans</p>
+<p>about 40 dB across the audio band, that is exposed.</p>
+<p>`<code style="color:#22d3bf">window=&quot;hann&quot;</code>` is the opt-in remedy: the record is multiplied by a Hann</p>
+<p>window and the mean square divided by the window&#x27;s own mean square, which</p>
+<p>suppresses the leakage almost entirely — the 31.5 Hz error goes from</p>
+<p><b>+7.7986</b> to <b>+0.0534</b> dB and the 20.5 Hz error from <b>+17.2116</b> to</p>
+<p><b>+0.1841</b> — while costing about <b>0.15 dB</b> on records that were exact</p>
+<p>before. It is <b>not</b> the default, and must not be used when a transient&#x27;s</p>
+<p>level is the point: a window makes the answer depend on *where in the</p>
+<p>record the sound happened*. Measured on a 50 ms burst inside a 0.5 s record</p>
+<p>(Z weighting, so only the window acts; unwindowed all three are -13.0103 dB</p>
+<p>as they must be): at the start <b>-36.0587</b>, at the centre <b>-8.8218</b>, at</p>
+<p>the end <b>-36.0587</b> — a 27 dB spread produced by nothing but position.</p>
+<p>Use `<code style="color:#22d3bf">&quot;hann&quot;</code>` for a stationary tonal record, which is exactly the case the</p>
+<p>leakage ruins, and `<code style="color:#22d3bf">&quot;none&quot;</code>` (the default, an honest energy average) for</p>
+<p>everything else. The full measurement is in :func:<code style="color:#22d3bf">apply_weighting</code>.</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: everything :func:</code>_as_signal` refuses, an unknown</p>
-<p>`<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ref &lt;= 0</code>` (a decibel needs a positive reference; a zero</p>
+<p>`<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf"> or </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">ref &lt;= 0</code>` (a decibel needs a positive reference; a zero</p>
 <p>reference makes every level `<code style="color:#22d3bf">+inf</code>` and a negative one makes the ratio</p>
 <p>negative), `<code style="color:#22d3bf">rate &lt;= 0</code>`.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>

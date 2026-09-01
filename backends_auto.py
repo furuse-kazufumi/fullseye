@@ -511,12 +511,18 @@ def _sh_texture(p):
         if kind == "entropy" and _HAS_SK:
             return _norm(skfilters.rank.entropy(_u8(x), skmorph.disk(_rad(a))).astype(np.float64))
         if kind == "gabor":
+            # 向きの規約: a=0 (θ=0) が **縦縞**、a=0.5 (θ=90°) が横縞に応答する。
+            # 正規化はカーネル L1(画像に依らない固定スケール)—— core の
+            # `ops._gabor` と同じ。`_norm` (画像ごとの最大値で割る) は向きによる
+            # 応答の大小を潰してしまう(実測 54.9 倍 -> 1.35 倍)。
             theta, freq = np.pi * a, 0.1 + 0.3 * b
             yy, xx = np.mgrid[-7:8, -7:8]
             xr = xx * np.cos(theta) + yy * np.sin(theta)
             g = np.exp(-(xx * xx + yy * yy) / 8.0) * np.cos(2 * np.pi * freq * xr)
             g = g - g.mean()   # DC-free (zero-mean) kernel: a Gabor is band-pass, not a brightness detector
-            return _norm(np.abs(ndimage.convolve(x, g, mode="reflect")))
+            l1 = float(np.abs(g).sum())
+            resp = np.abs(ndimage.convolve(x, g, mode="reflect"))
+            return np.clip(resp / l1, 0, 1) if l1 > 1e-12 else np.zeros_like(resp)
         if kind == "lbp" and _HAS_SK:
             return _norm(skfeat.local_binary_pattern(x, 8, _rad(a)))
         if kind == "coherence" and _HAS_SK:

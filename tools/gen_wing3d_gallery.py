@@ -655,12 +655,9 @@ def ex_domain(log) -> dict:
         return best
     t_full_raw = _timeit(lambda: G("vol_gradient_magnitude")(vol))
     t_part_raw = _timeit(lambda: G("vol_gradient_magnitude")(np.asarray(part)))
-    # 図に焼くのは 1 桁に丸めた値(生の値は meta に残す)= 再生成しても画素が変わらない
-    t_full = _sig1(t_full_raw * 1e3)
-    t_part = _sig1(t_part_raw * 1e3)
     log(f"    vol_gradient_magnitude  full {t_full_raw * 1e3:.1f} ms -> "
         f"cropped {t_part_raw * 1e3:.1f} ms  = {t_full_raw / t_part_raw:.1f}x "
-        f"(図には 1 桁丸めで {t_full:.0f} ms -> {t_part:.0f} ms = {t_full / t_part:.0f}x)")
+        f"(壁時計なので図には焼かない)")
 
     W, H = 1120, 690
     pw = 236
@@ -719,14 +716,16 @@ def ex_domain(log) -> dict:
                   ["元 192^3", f"切出 {np.asarray(part).shape[0]}x{np.asarray(part).shape[1]}x{np.asarray(part).shape[2]}"],
                   [C_A, C_B], fmt="%.3f MB",
                   title="float64 ボリュームのメモリ(実測 nbytes)")
-        c = _bars(c, 580, 400, 522, 118, [t_full, t_part],
-                  ["元 192^3", "切出後"], [C_A, C_B], fmt="%.1f ms",
-                  title="vol_gradient_magnitude の実行時間(3 回の最小値)")
+        c = _bars(c, 580, 400, 522, 118,
+                  [float(vol.size), float(np.asarray(part).size)],
+                  ["元 192^3", "切出後"], [C_A, C_B], fmt="%.0f voxel",
+                  title="以降の op が触る voxel 数(厳密値)")
         c = _text(c, [
             (18, 540, f"メモリ比 1/{ratio:.1f}  ({full_mb:.2f} MB -> {part_mb:.3f} MB)",
              C_D, 16, True),
-            (18, 564, f"実行時間比 {t_full / t_part:.0f}x 速い  "
-                      f"({t_full:.0f} ms -> {t_part:.0f} ms、有効数字 1 桁に丸め)",
+            (18, 564, f"以降の op が触る voxel も 1/"
+                      f"{vol.size / np.asarray(part).size:.1f}"
+                      f"({vol.size:,} -> {np.asarray(part).size:,} voxel)",
              C_D, 16, True),
             (18, 590, f"vol_uncrop で元の座標へ貼り戻した結果は元と bit 一致: "
                       f"{'YES' if exact else 'NO'}", C_TEXT, 14, True),
@@ -736,7 +735,8 @@ def ex_domain(log) -> dict:
                       f"{int((red != 0).sum()):,} voxel", C_DIM, 13, False),
         ])
         c = _footer(c, "使用 op: vol_bounding_box / vol_crop_domain / vol_reduce_domain / "
-                       "vol_uncrop / vol_gradient_magnitude  — 合成データ, seed 固定")
+                       "vol_uncrop / vol_gradient_magnitude  — 合成データ, seed 固定 "
+                       "(実行時間の実測は _wing3d_meta.json)")
         frames.append(c)
 
     info = _save_clip(frames, "wing3d_domain_memory", fps=12,
@@ -751,26 +751,31 @@ def ex_domain(log) -> dict:
             f"{100 * float(dom.mean()):.2f} % of the field is foreground, so "
             f"`vol_crop_domain` takes memory from {full_mb:.2f} MB to {part_mb:.3f} MB "
             f"(**1/{ratio:.1f}**) and the very same `vol_gradient_magnitude` goes from "
-            f"{t_full:.0f} ms to {t_part:.0f} ms "
-            f"(**{t_full / t_part:.0f}x faster**, both rounded to one significant figure so "
-            "the figure stays byte-reproducible). `vol_uncrop` puts it back bit-identically."),
+            f"{vol.size:,} voxels to {np.asarray(part).size:,} — the same "
+            f"**1/{vol.size / np.asarray(part).size:.1f}**. (The measured wall-clock times "
+            "live in `_wing3d_meta.json` instead of being burned into the picture, so the "
+            "image stays byte-reproducible.) `vol_uncrop` puts it back bit-identically."),
         "ops": ["vol_bounding_box", "vol_crop_domain", "vol_reduce_domain", "vol_uncrop",
                 "vol_gradient_magnitude"],
         "facts": {"full_shape": list(vol.shape), "part_shape": list(np.asarray(part).shape),
                   "full_MB": full_mb, "part_MB": part_mb, "memory_ratio": ratio,
                   "t_full_ms_raw": t_full_raw * 1e3, "t_part_ms_raw": t_part_raw * 1e3,
                   "speedup_raw": t_full_raw / t_part_raw,
-                  "t_full_ms_shown": t_full, "t_part_ms_shown": t_part,
-                  "speedup_shown": t_full / t_part, "uncrop_exact": exact,
+                  "voxels_full": int(vol.size),
+                  "voxels_cropped": int(np.asarray(part).size),
+                  "voxel_ratio": float(vol.size / np.asarray(part).size),
+                  "uncrop_exact": exact,
                   "foreground_voxels": int(dom.sum()),
                   "foreground_pct": 100 * float(dom.mean())},
         "caption": ("192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・"
                     "domain マスク・切り出し後・貼り戻しを並べた。前景は全体の "
                     f"{100 * float(dom.mean()):.2f} % しかないので `vol_crop_domain` で "
                     f"メモリは {full_mb:.2f} MB → {part_mb:.3f} MB(**1/{ratio:.1f}**)、"
-                    f"同じ `vol_gradient_magnitude` が {t_full:.0f} ms → "
-                    f"{t_part:.0f} ms(**{t_full / t_part:.0f} 倍速**、"
-                    "図が再生成でバイト一致するよう有効数字 1 桁に丸めた実測値)になる。"
+                    f"同じ `vol_gradient_magnitude` が触る voxel も {vol.size:,} → "
+                    f"{np.asarray(part).size:,}(同じく **1/"
+                    f"{vol.size / np.asarray(part).size:.1f}**)。壁時計の実行時間も"
+                    "実測しているが、再生成のたびに変わるので図には焼かず "
+                    "`_wing3d_meta.json` に置いた。"
                     "`vol_uncrop` の貼り戻しは元と bit 一致。"),
         **info}
 
@@ -944,15 +949,11 @@ def ex_rle(log) -> dict:
     vox = G("vol_rle_volume")(rle)
     log(f"    dense {dense_bytes / 1e6:.2f} MB -> rle {rle.nbytes / 1e6:.3f} MB "
         f"= 1/{ratio:.1f}  runs {len(rle):,}  roundtrip exact={exact}")
-    # 図に焼くのは 1 桁丸め(生の値は meta へ)= 再生成しても画素が変わらない
-    us_rle_vol, us_den_vol = _sig1(t_rle_vol * 1e6), _sig1(t_den_vol * 1e6)
-    us_rle_bb, us_den_bb = _sig1(t_rle_bb * 1e6), _sig1(t_den_bb * 1e6)
-    ms_un, ms_in, ms_di = _sig1(t_un * 1e3), _sig1(t_in * 1e3), _sig1(t_di * 1e3)
-    sp_vol, sp_bb = us_den_vol / us_rle_vol, us_den_bb / us_rle_bb
+    # 時間は実測して meta に残すだけ。図とキャプションには焼かない
+    # (壁時計は再生成のたびに変わり、SHA-256 一致を壊すため)。
     log(f"    volume rle {t_rle_vol * 1e6:.1f} us vs dense {t_den_vol * 1e6:.1f} us "
-        f"= {t_den_vol / t_rle_vol:.0f}x ;  bbox {t_den_bb / t_rle_bb:.0f}x")
-    log(f"    (図には 1 桁丸めで volume {us_den_vol:.0f}/{us_rle_vol:.0f} us = "
-        f"{sp_vol:.0f}x, bbox {us_den_bb:.0f}/{us_rle_bb:.0f} us = {sp_bb:.0f}x)")
+        f"= {t_den_vol / t_rle_vol:.0f}x ;  bbox {t_den_bb / t_rle_bb:.0f}x "
+        f"(いずれも図には焼かない)")
 
     W, H = 1120, 720
     c = _canvas(W, H)
@@ -995,24 +996,25 @@ def ex_rle(log) -> dict:
               ["dense bool", "VolRLE"], [C_A, C_B], fmt="%.3f MB",
               title="同じ領域を保持するメモリ(実測 nbytes)")
     c = _bars(c, 430, 240, 672, 96,
-              [us_den_vol, us_rle_vol],
-              ["dense.sum()", "vol_rle_volume"], [C_A, C_B], fmt="%.1f us",
-              title="体積(voxel 数)を求める時間(25 回の最小値)")
+              [float(part.size), float(3 * len(rle))],
+              ["dense の要素数", "RLE の要素数"], [C_A, C_B], fmt="%.0f",
+              title="実際に保持している数値の個数(厳密値。RLE は 3 x run 数)")
     c = _bars(c, 430, 380, 672, 96,
-              [us_den_bb, us_rle_bb],
-              ["dense 走査", "vol_rle_bbox"], [C_A, C_B], fmt="%.1f us",
-              title="bounding box を求める時間(25 回の最小値)")
+              [float(v_un), float(v_in)],
+              ["union(球 U 軸)", "intersect(球 ^ 軸)"], [C_D, C_C], fmt="%.0f voxel",
+              title="run のまま解いた集合演算の結果(一度も展開していない)")
 
     rows = [
         f"メモリ比            1/{ratio:.1f}  ({dense_bytes / 1e6:.2f} MB -> {rle.nbytes / 1e6:.3f} MB, run 数 {len(rle):,})",
         f"decode 往復          元と bit 一致: {'YES' if exact else 'NO'}",
-        f"体積                 {vox:,} voxel   ({sp_vol:.0f} 倍速)",
-        f"bounding box         (z,y,x) {bbox[:3]} .. {bbox[3:]}   ({sp_bb:.0f} 倍速)",
+        f"体積                 {vox:,} voxel",
+        f"bounding box         (z,y,x) {bbox[:3]} .. {bbox[3:]}",
         f"重心                 ({cent[0]:.2f}, {cent[1]:.2f}, {cent[2]:.2f}) voxel",
-        f"union(球, 軸)        {v_un:,} voxel  {ms_un:.0f} ms",
-        f"intersect(球, 軸)    {v_in:,} voxel  {ms_in:.0f} ms",
-        f"difference(球 - 軸)  {v_di:,} voxel  {ms_di:.0f} ms",
-        "(時間はすべて実測値を有効数字 1 桁に丸めた値。生の値は _wing3d_meta.json)",
+        f"union(球, 軸)        {v_un:,} voxel",
+        f"intersect(球, 軸)    {v_in:,} voxel",
+        f"difference(球 - 軸)  {v_di:,} voxel",
+        "所要時間も実測しているが、壁時計は再生成のたびに変わるので図には焼かず",
+        "_wing3d_meta.json に置いた(dense を作らずに答えている、が要点)。",
     ]
     items = [(430, 500, "展開せずに答えた測定(すべて run の上で計算)", C_DIM, 12, False)]
     for i, s in enumerate(rows):
@@ -1035,9 +1037,10 @@ def ex_rle(log) -> dict:
             f"Holding a 256³ synthetic part as run-lengths costs **1/{ratio:.0f}** of the "
             f"dense mask ({dense_bytes / 1e6:.2f} MB to {rle.nbytes / 1e6:.3f} MB, "
             f"{len(rle):,} runs). And nothing has to be decoded: the volume of "
-            f"{vox:,} voxels comes back **{sp_vol:.0f}x faster**, the "
-            f"bounding box **{sp_bb:.0f}x faster** (measured, rounded to one significant "
-            "figure so the figure stays byte-reproducible), and set operations "
+            f"{vox:,} voxels, the bounding box and the set operations are all answered on "
+            "the runs themselves, with no bitmap ever materialised (the measured speed-ups "
+            "are in `_wing3d_meta.json`; wall-clock numbers stay out of the picture so it "
+            "remains byte-reproducible), and set operations "
             f"(ball ∪ axle = {v_un:,} voxels) are solved on the runs themselves. The "
             "decode round-trip is bit-identical."),
         "ops": ["vol_rle_encode", "vol_rle_decode", "vol_rle_volume", "vol_rle_bbox",
@@ -1052,16 +1055,16 @@ def ex_rle(log) -> dict:
                   "t_dense_volume_us_raw": t_den_vol * 1e6,
                   "t_rle_bbox_us_raw": t_rle_bb * 1e6,
                   "t_dense_bbox_us_raw": t_den_bb * 1e6,
-                  "volume_speedup_shown": sp_vol, "bbox_speedup_shown": sp_bb,
+                  "dense_elements": int(part.size), "rle_elements": int(3 * len(rle)),
                   "union_voxels": int(v_un), "intersect_voxels": int(v_in),
                   "difference_voxels": int(v_di)},
         "caption": (f"256³ の合成部品を run-length で持つと **1/{ratio:.0f}**"
                     f"({dense_bytes / 1e6:.2f} MB → {rle.nbytes / 1e6:.3f} MB、"
                     f"{len(rle):,} run)。しかも展開せずに体積 {vox:,} voxel を "
-                    f"**{sp_vol:.0f} 倍速**、BBox を "
-                    f"**{sp_bb:.0f} 倍速**で返し(時間は実測を有効数字 1 桁に丸めた値)、"
-                    "集合演算(球 ∪ 軸 = "
-                    f"{v_un:,} voxel)も run のまま解ける。decode の往復は bit 一致。"),
+                    "**dense を一度も作らずに**返し、集合演算(球 ∪ 軸 = "
+                    f"{v_un:,} voxel)も run のまま解ける。decode の往復は bit 一致。"
+                    "所要時間も実測してあるが、壁時計は再生成のたびに変わるので図には焼かず "
+                    "`_wing3d_meta.json` に置いた。"),
         **info}
 
 
@@ -2285,7 +2288,6 @@ def ex_mip(log) -> dict:
         xrays.append(np.asarray(G("render_volume_projection")(soft, azimuth=az,
                                                               elevation=12.0, mode="xray")))
     dt = time.perf_counter() - t0
-    ms_shown = _sig1(1e3 * dt / (2 * nf))          # 図に焼くのは 1 桁丸め
     mip_hi = float(max(m.max() for m in mips))
     xr_hi = float(max(x.max() for x in xrays))
     log(f"    render_volume_projection x{2 * nf} in {dt:.2f} s "
@@ -2326,7 +2328,7 @@ def ex_mip(log) -> dict:
             (930, 210, "ボリューム", C_DIM, 12, False),
             (930, 228, "%d x %d x %d" % (n, n, n), C_TEXT, 15, True),
             (930, 254, "投影 %d 枚" % (2 * nf), C_TEXT, 13, False),
-            (930, 274, "1 枚 %.0f ms(実測を 1 桁に丸め)" % ms_shown, C_DIM, 12, False),
+            (930, 274, "(所要時間は _wing3d_meta.json)", C_DIM, 12, False),
             (930, 310, "正規化の上限は", C_DIM, 12, False),
             (930, 328, "全フレーム共通", C_TEXT, 13, True),
             (930, 346, "(1 枚ごとに正規化", C_DIM, 11, False),
@@ -2346,21 +2348,19 @@ def ex_mip(log) -> dict:
             "`render_volume_projection`. On the left, maximum-intensity projection (MIP, "
             "bone window) keeps only the brightest sample along each ray, so bone floats "
             "out; on the right, attenuation summing (X-ray) accumulates along the ray, so "
-            f"thickness shows. {2 * nf} projections at **{ms_shown:.0f} ms each** "
-            "(measured, rounded to one significant figure so the figure stays "
-            "byte-reproducible). The normalisation ceiling is shared "
+            f"thickness shows. {2 * nf} projections in all (the wall-clock cost is in "
+            "`_wing3d_meta.json`, not in the picture). The normalisation ceiling is shared "
             "across all frames on purpose — normalise per frame and the brightness "
             "flickers as it turns, which is indistinguishable from the shape changing."),
         "ops": ["vol_window_level", "render_volume_projection"],
         "facts": {"volume": [n, n, n], "frames": nf, "elevation_deg": 12.0,
                   "render_seconds_total_raw": dt,
                   "ms_per_projection_raw": 1e3 * dt / (2 * nf),
-                  "ms_per_projection_shown": ms_shown,
                   "mip_max": mip_hi, "xray_max": xr_hi},
         "caption": (f"合成 CT ボリューム({n}³)を `render_volume_projection` で 1 周させた。"
                     "左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、"
                     "右は減衰積算(X 線)で厚みが出る。投影 "
-                    f"{2 * nf} 枚を **1 枚 {ms_shown:.0f} ms**(実測を有効数字 1 桁に丸めた値)。"
+                    f"投影は {2 * nf} 枚(所要時間の実測は `_wing3d_meta.json`)。"
                     "正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると"
                     "回転中に明るさがちらついて、形の変化と見分けがつかなくなる。"),
         **info}

@@ -4,7 +4,7 @@
 <p>きっかけはユーザーの一言でした ――「<b>1D が扱えるなら音響データも扱えるよね</b>」。</p>
 <p>答えは「扱えるが、道具になっていなかった」です。素材は前からありました。<code style="color:#22d3bf">dsp</code> が音声 I/O(<code style="color:#22d3bf">read_wav</code> / <code style="color:#22d3bf">read_audio</code> / <code style="color:#22d3bf">write_wav</code>)と基本 DSP(<code style="color:#22d3bf">spectrum</code> / <code style="color:#22d3bf">spectrogram</code> / <code style="color:#22d3bf">lowpass</code> / <code style="color:#22d3bf">highpass</code> / <code style="color:#22d3bf">bandpass</code> / <code style="color:#22d3bf">envelope</code> / <code style="color:#22d3bf">rms</code> / <code style="color:#22d3bf">find_peaks</code> / <code style="color:#22d3bf">signal_features</code> / <code style="color:#22d3bf">resample</code> / <code style="color:#22d3bf">zero_crossing_rate</code>)を持っていて、440 Hz の正弦を入れればスペクトルにピークが立ちます。ですが登録名 1661 個に対して <code style="color:#22d3bf">stft</code> / <code style="color:#22d3bf">mel</code> / <code style="color:#22d3bf">mfcc</code> / <code style="color:#22d3bf">octave</code> / <code style="color:#22d3bf">acoust</code> / <code style="color:#22d3bf">beamform</code> は<b>どの表面にも 1 件もヒットしませんでした</b>。つまり「波形を読んで周波数を見る」まではできて、<b>現場が音に対して実際に投げる問いには 1 つも答えられない</b>状態でした。</p>
 <p>その問いは、生スペクトルより狭くて難しいものです。</p>
-<p style="margin:2px 0 2px 12px">• <b>どの欠陥か。</b> 転がり軸受の外輪剥離は欠陥周波数で鳴りません。数 kHz の構造共振が、200 Hz 以下の欠陥周波数で<b>振幅変調</b>されて届きます。欠陥周波数は生スペクトルに<b>成分として存在しません</b>(実測: 生の単側振幅 4.3e-16)。</p>
+<p style="margin:2px 0 2px 12px">• <b>どの欠陥か。</b> 転がり軸受の外輪剥離は欠陥周波数で鳴りません。数 kHz の構造共振が、200 Hz 以下の欠陥周波数で<b>振幅変調</b>されて届きます。欠陥周波数は生スペクトルに<b>成分として存在しません</b>(実測: 単側振幅 4.291662e-16。<code style="color:#22d3bf">dsp.spectrum</code> の返り値に <code style="color:#22d3bf">2/N</code> を掛けた値 ―― 後述)。</p>
 <p style="margin:2px 0 2px 12px">• <b>そのピークは次数か共振か。</b> 回転数が動けば、軸に同期した成分は滲み、固定共振はその場に残ります。同じ信号を角度領域に置き直すと立場が厳密に逆転します。</p>
 <p style="margin:2px 0 2px 12px">• <b>何 dB か、誰の定義で。</b> 基準値と周波数重み付けを言わない dB は数ではありません。</p>
 <p style="margin:2px 0 2px 12px">• <b>その振動はこの加振から来たのか。</b> 2 チャネル、伝達関数、そして<b>その答えをどこまで信じてよいか</b>を言うコヒーレンス。</p>
@@ -95,9 +95,10 @@
 <p><b>その 1: 欠陥はそこに無い。</b> 3000 Hz の共振を 107 Hz で変調度 0.5 の振幅変調にした軸受信号で:</p>
 <p>| 見方 | 107 Hz での単側振幅 |</p>
 <p>|---|---:|</p>
-<p>| 生スペクトル(<code style="color:#22d3bf">dsp.spectrum</code>) | <b>4.3e-16</b> ← 成分として存在しない |</p>
+<p>| 生スペクトル(<code style="color:#22d3bf">dsp.spectrum(...)[1] * 2/N</code>) | <b>4.291662e-16</b> ← 成分として存在しない |</p>
 <p>| 包絡線スペクトル(<code style="color:#22d3bf">envelope_spectrum</code>) | <b>0.499677</b>(ピーク位置 107.000000 Hz) |</p>
-<p>生スペクトルのエネルギーは搬送波 3000 Hz(振幅 1.000000)と側帯波 2893 / 3107 Hz(各 0.250000 = ちょうど m/2)に居ます。包絡線が返す 0.499677 は<b>変調度 m そのもの</b>で、これはこの信号の解析包絡線が厳密に <code style="color:#22d3bf">1 + 0.5 cos(2π·107 t)</code> だからです。</p>
+<p>&gt; **<code style="color:#22d3bf">× 2/N</code> は書き落とせません。** <code style="color:#22d3bf">dsp.spectrum</code> が返すのは素の <code style="color:#22d3bf">|rfft|</code> であって単側振幅ではありません。同じ bin の生の値は <b>5.493328e-12</b> で、上の表の数字は <code style="color:#22d3bf">mag * (2.0 / len(sig))</code>(ここでは <code style="color:#22d3bf">2/25600 = 7.8125e-5</code>)を掛けた<b>後</b>の値です。<code style="color:#22d3bf">acoustics.envelope_spectrum</code> と <code style="color:#22d3bf">order_spectrum</code> は自前の FFT で <code style="color:#22d3bf">2/N</code> を<b>内部で</b>掛けているので単側振幅を直接返します ―― 2 つの流儀が混在しているので、比べるときに二重に掛けないでください。この表と下の次数の表の数字は、以前 <code style="color:#22d3bf">dsp.spectrum</code> の返り値そのものだと読める書き方になっており、<b>そのままでは再現できませんでした</b>。</p>
+<p>生スペクトルのエネルギーは搬送波 3000 Hz(振幅 1.000000、生 12800)と側帯波 2893 / 3107 Hz(各 0.250000 = ちょうど m/2、生 3200)に居ます。包絡線が返す 0.499677 は<b>変調度 m そのもの</b>で、これはこの信号の解析包絡線が厳密に <code style="color:#22d3bf">1 + 0.5 cos(2π·107 t)</code> だからです。</p>
 <p><b>その 2: 回転数が動くと、素朴なスペクトルが壊れる。</b> 600 → 1800 rpm、4 秒、5 kHz、次数 1.0 と 3.5(どちらも振幅 1.0)、固定共振 400 Hz(振幅 1.0)の走行記録で:</p>
 <p>| 量 | 通常のスペクトル | 次数スペクトル |</p>
 <p>|---|---|---|</p>

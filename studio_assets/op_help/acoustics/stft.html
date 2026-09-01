@@ -18,6 +18,15 @@
 <p>bin centre frequencies in Hz and frame start times in seconds. Frame</p>
 <p>time 0.0 is the first *original* sample, so the leading pad does not</p>
 <p>shift the time axis.</p>
+<p>**`<code style="color:#22d3bf">times[0]</code>` is therefore negative**, and that is the consequence of</p>
+<p>the sentence above rather than an error: the first frames start inside</p>
+<p>the leading pad. Measured on 1.0 s at 16 kHz with `<code style="color:#22d3bf">win=256, hop=128</code>`,</p>
+<p>`<code style="color:#22d3bf">times[0] = -0.016000</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">times[-1] = 1.000000</code>`, a span 1.6 %</p>
+<p>wider than the record. Do not hand `<code style="color:#22d3bf">times[0]</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">times[-1]</code>`</p>
+<p>straight to a plot&#x27;s time extent — the picture then claims a</p>
+<p>time-frequency surface wider than the recording, whose outermost columns</p>
+<p>are half-empty frames. Use `<code style="color:#22d3bf">times[interior]</code>`, whose first value is</p>
+<p>exactly `<code style="color:#22d3bf">0.000000</code>`, for anything that has to line up with the signal.</p>
 <p>`<code style="color:#22d3bf">rate</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">win</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hop</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">nfft</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">length</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">pad_left</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">scale</code>`,</p>
 <p>`<code style="color:#22d3bf">scaling</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">window</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">window_values</code>`</p>
 <p>the geometry, kept so the inverse needs no arguments.</p>

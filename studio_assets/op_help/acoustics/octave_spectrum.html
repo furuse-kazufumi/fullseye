@@ -25,7 +25,19 @@
 <p>`<code style="color:#22d3bf">clamped</code><code style="color:#22d3bf"> (bool mask of bands floored at </code><code style="color:#22d3bf">floor_db</code><code style="color:#22d3bf">), </code><code style="color:#22d3bf">ref</code>`,</p>
 <p>`<code style="color:#22d3bf">weighting</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">fraction</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">resolution_hz</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">narrow_bands</code>` (how many</p>
 <p>FFT bins landed in each band — a band with 0 or 1 is under-resolved and the</p>
-<p>level is not trustworthy).</p>
+<p>level is not trustworthy), and `<code style="color:#22d3bf">truncated</code>`.</p>
+<p>`<code style="color:#22d3bf">truncated</code>` is a bool mask of bands whose <b>upper edge is above Nyquist</b>,</p>
+<p>which means only the part of the band below Nyquist was measured and the</p>
+<p>level is the level of that part, not of the band. This is not an exotic</p>
+<p>case: `<code style="color:#22d3bf">f_max</code>` bounds band *centres*, so the top band&#x27;s edge always</p>
+<p>overhangs it by half a band width, and the **default `<code style="color:#22d3bf">f_max = 22050</code>`</p>
+<p>against the canonical rate of 44100** puts the top third-octave band at</p>
+<p>17782.79-22387.21 Hz over a Nyquist of 22050. Measured on 1 s of white</p>
+<p>noise at 44100: that band collects <b>4268</b> of the <b>4604</b> bins it spans</p>
+<p>(7.3 % missing) and reported a level with nothing in the old return value</p>
+<p>saying it was partial. Nothing raises — the missing bins simply do not</p>
+<p>exist. Drop the flagged bands, or lower `<code style="color:#22d3bf">f_max</code>` until</p>
+<p>`<code style="color:#22d3bf">upper[-1] &lt;= rate/2</code>`.</p>
 <p>Measured exactness: a 1 kHz sine of amplitude 0.7 at 16 kHz over exactly</p>
 <p>1000 periods, `<code style="color:#22d3bf">ref=1.0</code>`, gives the 1 kHz band level</p>
 <p><b>-6.1083391564</b> dB against the closed form</p>
