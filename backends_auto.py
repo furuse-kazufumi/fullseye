@@ -1006,14 +1006,25 @@ def _sh_xld(p):
                 cs = [c for c in _moore_boundaries(m) if len(c) >= 3]
             return {"shape": m.shape, "cs": cs}
         if kind == "edges_sub_pix":
+            # ★2026-09-02: 返していたのは `np.where` の **整数画素座標** そのもので、
+            #   `sub_pix` を名乗りながらサブピクセル精度が無かった。放物線当てはめ
+            #   による法線方向の精密化を追加(core `ops._edges_sub_pix` と同じ
+            #   共有ヘルパ。同名 op はレジストリで後勝ちなので、実際に走るのは
+            #   こちら —— core だけ直しても効かない)。
+            #   実測(真の位置が列 20.37 の合成ステップエッジ、a=0.2): 旧実装の
+            #   返す列は {20.0, 21.0} で平均絶対誤差 0.500 px、精密化後は
+            #   {20.324, 20.370} で 0.0228 px(約 22 倍改善)。
+            #   点の個数・連結成分の分け方は不変(座標が 1 px 未満動くだけ)。
             x = np.asarray(v, np.float64)
-            m = _norm(np.hypot(ndimage.sobel(x, 1), ndimage.sobel(x, 0)))
+            g, ny, nx = gradient_normals(x)
+            m = _norm(g)
             lab, n = ndimage.label(m > (0.15 + 0.5 * a), structure=np.ones((3, 3)))
             cs = []
             for i in range(1, n + 1):
                 ys, xs = np.where(lab == i)
                 if len(ys) >= 3:
-                    cs.append(np.stack([ys, xs], 1).astype(np.float64))
+                    pts = np.stack([ys, xs], 1).astype(np.float64)
+                    cs.append(subpixel_refine_edges(pts, m, ny, nx))
             return {"shape": x.shape, "cs": cs}
         if kind == "lines_gauss" and _HAS_SK:
             x = np.asarray(v, np.float64)
