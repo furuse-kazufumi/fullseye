@@ -1549,8 +1549,12 @@ def lifetime_fit(decay, bin_ps=100.0, background=None, min_counts=1.0,
 
     The fit starts at the **peak** bin by default (or at *start_bin* if given):
     the rising edge before the peak is the instrument response convolved with the
-    decay, not the decay, and including it biases the lifetime short. Only bins
-    with more than *min_counts* counts after background removal take part (the
+    decay, not the decay, and including it flattens the log slope and so biases
+    the lifetime **long**. Measured on a 2000 ps decay blurred by a 600 ps IRF
+    (256 bins x 100 ps): starting at the peak (bin 4) gives 2008.0 ps (+0.40%),
+    forcing ``start_bin=0`` gives 2100.7 ps (+5.0%) — a 12x worse bias from four
+    extra bins. Only bins with more than *min_counts* counts after background
+    removal take part (the
     logarithm of 0 is ``-inf``, and single-count tail bins carry almost no
     information but huge log-scatter).
 

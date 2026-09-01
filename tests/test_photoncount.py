@@ -228,15 +228,25 @@ def test_anscombe_unbiased_inverse_beats_the_algebraic_one(lam, alg_bias, unb_bi
     assert abs(got_unb) < abs(got_alg)              # the whole point of the mode
 
 
-def test_anscombe_unbiased_inverse_is_clipped_at_zero_not_negative():
-    """The closed form dips to a measured -3.97e-05 just above D = A(0)."""
-    d = np.linspace(2.0 * np.sqrt(0.375), 3.0, 2001).reshape(-1, 1)
-    out = PC.anscombe_inverse(d, mode="unbiased")
-    assert (out >= 0.0).all()
+def test_anscombe_unbiased_inverse_root_is_exactly_a_of_zero():
+    """The closed form's positive root coincides with A(0) = 2*sqrt(3/8).
+
+    That is why the clip at 0 essentially never fires: over the whole valid
+    domain the formula is non-negative to round-off (measured min -1.11e-16).
+    Below A(0) it IS genuinely negative (-0.0217 at D = 1.20), which is why
+    those values are refused instead of clipped.
+    """
+    a0 = 2.0 * np.sqrt(0.375)
     r32 = np.sqrt(1.5)
-    raw = (d * d / 4.0 + 0.25 * r32 / d - 1.375 / d ** 2
-           + 0.625 * r32 / d ** 3 - 0.125)
-    assert float(raw.min()) == pytest.approx(-3.97e-05, rel=0.05)   # it IS negative
+    raw = lambda d: (d * d / 4.0 + 0.25 * r32 / d - 1.375 / d ** 2      # noqa: E731
+                     + 0.625 * r32 / d ** 3 - 0.125)
+    assert raw(a0) == pytest.approx(0.0, abs=1e-15)
+    d = np.linspace(a0, 6.0, 20001).reshape(-1, 1)
+    assert float(raw(d).min()) > -1e-12          # only round-off is negative
+    assert (PC.anscombe_inverse(d, mode="unbiased") >= 0.0).all()
+    assert raw(1.20) == pytest.approx(-0.0217, rel=0.01)   # genuinely negative
+    with pytest.raises(ValueError, match="did not come from anscombe_transform"):
+        PC.anscombe_inverse(np.full((2, 2), -1.0), mode="unbiased")
 
 
 def test_anscombe_unbiased_refuses_the_generalised_parameters():
@@ -418,7 +428,12 @@ def test_irf_convolve_widths_add_in_quadrature():
     once = PC.tcspc_irf_convolve(PC.tcspc_irf_convolve(spike, 25.0, 300.0),
                                  25.0, 400.0)
     direct = PC.tcspc_irf_convolve(spike, 25.0, np.hypot(300.0, 400.0))
-    assert np.allclose(once, direct, atol=1e-9)
+    # Not exact: each kernel is truncated at +-4 sigma and renormalised, so the
+    # composition is only Gaussian to that approximation. Measured max absolute
+    # difference 2.7e-05 against a peak of 0.0469 = 0.06% of the peak.
+    assert np.abs(once - direct).max() < 5e-5
+    assert PC.tcspc_stats(once, 25.0)["fwhm_ps"] == pytest.approx(
+        PC.tcspc_stats(direct, 25.0)["fwhm_ps"], rel=1e-3)
 
 
 def test_irf_convolve_refuses_a_sub_bin_kernel_instead_of_doing_nothing():
@@ -594,7 +609,7 @@ def test_cube_depth_survives_photon_starvation():
 
 def test_cube_depth_marks_empty_pixels_without_a_silent_nan():
     depth = _tilted_plane(8, 8)
-    cube = PC.dtof_cube_simulate(depth, bins=64, bin_ps=200.0,
+    cube = PC.dtof_cube_simulate(depth, bins=128, bin_ps=200.0,
                                  signal_photons=50.0, ambient_photons=0.0,
                                  irf_fwhm_ps=400.0, noise=False)
     cube[0, 0, :] = 0.0                              # a dead pixel
@@ -608,7 +623,7 @@ def test_cube_depth_marks_empty_pixels_without_a_silent_nan():
 def test_cube_simulate_reflectivity_scales_the_signal_not_the_depth():
     depth = np.full((4, 4), 2.0)
     refl = np.linspace(0.1, 1.0, 16).reshape(4, 4)
-    cube = PC.dtof_cube_simulate(depth, bins=64, bin_ps=200.0, reflectivity=refl,
+    cube = PC.dtof_cube_simulate(depth, bins=128, bin_ps=200.0, reflectivity=refl,
                                  signal_photons=100.0, ambient_photons=0.0,
                                  irf_fwhm_ps=400.0, noise=False)
     assert np.allclose(cube.sum(axis=-1), 100.0 * refl, rtol=1e-9)
@@ -672,16 +687,24 @@ def test_lifetime_fit_bias_under_poisson_noise_is_documented_not_hidden():
 
 
 def test_lifetime_fit_starts_at_the_peak_by_default():
-    """The rising edge is the IRF, not the decay; including it biases tau short."""
+    """The rising edge is the IRF, not the decay.
+
+    Measured direction (2000 ps decay, 600 ps IRF, 256 bins x 100 ps): including
+    the four rising-edge bins FLATTENS the log slope, so the lifetime comes back
+    **long** — 2100.7 ps (+5.0%) against 2008.0 ps (+0.40%) from the peak. Pinned
+    with the numbers because the intuition ("the edge makes it look faster") is
+    the opposite of what actually happens.
+    """
     tau, dt = 2000.0, 100.0
-    decay = _decay_hist(tau, 256, dt, 10000.0)
-    with_edge = PC.tcspc_irf_convolve(decay, dt, 600.0)
+    with_edge = PC.tcspc_irf_convolve(_decay_hist(tau, 256, dt, 10000.0), dt, 600.0)
     auto = PC.lifetime_fit(with_edge, dt, background=0.0, min_counts=1.0)
     forced = PC.lifetime_fit(with_edge, dt, background=0.0, min_counts=1.0,
                              start_bin=0)
-    assert auto["start_bin"] > 0
-    assert forced["lifetime_ps"] < auto["lifetime_ps"]
-    assert abs(auto["lifetime_ps"] - tau) < abs(forced["lifetime_ps"] - tau)
+    assert auto["start_bin"] == 4
+    assert auto["lifetime_ps"] == pytest.approx(2008.0, abs=1.0)
+    assert forced["lifetime_ps"] == pytest.approx(2100.7, abs=1.0)
+    assert forced["lifetime_ps"] > auto["lifetime_ps"]        # biased LONG
+    assert abs(auto["lifetime_ps"] - tau) < abs(forced["lifetime_ps"] - tau) / 10.0
 
 
 def test_lifetime_fit_refuses_a_non_decaying_profile():
@@ -761,7 +784,9 @@ def test_photon_limited_image_composes_with_richardson_lucy():
     truth[6:10, 8:16, 8:16] = 50.0
     psf = volrestore.vol_gaussian_psf(1.2)
     from scipy.signal import fftconvolve
-    blurred = fftconvolve(truth, psf, mode="same")
+    # fftconvolve leaves ~-2e-15 round-off negatives; photon_sample refuses them
+    # by contract, so the clip is explicit here (that refusal is the point).
+    blurred = np.maximum(fftconvolve(truth, psf, mode="same"), 0.0)
     noisy = np.stack([PC.photon_sample(blurred[z], 1.0, seed=z)
                       for z in range(blurred.shape[0])])
     out = volrestore.vol_richardson_lucy(noisy, psf, iterations=8)
@@ -773,18 +798,49 @@ def test_photon_limited_image_composes_with_richardson_lucy():
     assert after < before
 
 
-def test_anscombe_route_beats_denoising_the_raw_counts():
-    """Why the transform exists: the same Gaussian denoiser does better on A(x)."""
-    from scipy.ndimage import gaussian_filter
-    truth = np.full((128, 128), 8.0)
-    truth[32:96, 32:96] = 40.0
+def test_anscombe_route_helps_a_threshold_not_a_linear_smoother():
+    """The honest version of "the transform helps you denoise".
+
+    Measured, seed 5, two-level scene (4 and 64 photons/pixel):
+
+      * a plain **Gaussian** filter does slightly WORSE through the transform
+        (2.459 vs 2.387) — averaging is already right for Poisson counts, so
+        stabilising the variance first buys nothing;
+      * a 5x5 **sigma filter**, whose parameter is an absolute noise scale, does
+        much better through it (1.191 at a 3-sigma threshold) than in the raw
+        domain using the same 3-sigma rule with a globally estimated sigma
+        (2.307), because in the raw domain "3 sigma" is 6 photons in the dark
+        region and 24 in the bright one and no single constant is right.
+
+    Both halves are asserted, so the docstring cannot quietly become a boast.
+    """
+    from scipy.ndimage import gaussian_filter, generic_filter
+
+    def sigma_filter(img, thresh, size=5):
+        def f(w):
+            c = w[len(w) // 2]
+            return w[np.abs(w - c) <= thresh].mean()
+        return generic_filter(img, f, size=size, mode="nearest")
+
+    truth = np.full((64, 64), 4.0)
+    truth[16:48, 16:48] = 64.0
     counts = PC.photon_sample(truth, 1.0, seed=5)
-    direct = gaussian_filter(counts, 1.5)
-    via_a = PC.anscombe_inverse(gaussian_filter(PC.anscombe_transform(counts), 1.5),
-                                mode="unbiased")
     rmse = lambda a: float(np.sqrt(((a - truth) ** 2).mean()))   # noqa: E731
-    assert rmse(via_a) < rmse(direct)
-    assert rmse(via_a) < rmse(counts)
+
+    # (a) a linear smoother gains nothing — the honest half
+    lin_direct = rmse(gaussian_filter(counts, 1.5))
+    lin_via = rmse(PC.anscombe_inverse(
+        gaussian_filter(PC.anscombe_transform(counts), 1.5), mode="unbiased"))
+    assert lin_via > lin_direct
+
+    # (b) an absolute-scale threshold gains a lot — the useful half
+    a = PC.anscombe_transform(counts)
+    via = rmse(PC.anscombe_inverse(sigma_filter(a, 3.0), mode="unbiased"))
+    raw = rmse(sigma_filter(counts, 3.0 * np.sqrt(counts.mean())))
+    assert via == pytest.approx(1.191, abs=0.02)
+    assert raw == pytest.approx(2.307, abs=0.02)
+    assert via < raw / 1.8
+    assert via < rmse(counts)
 
 
 def test_arrival_histogram_is_a_plain_1d_signal_for_dsp():
@@ -792,8 +848,9 @@ def test_arrival_histogram_is_a_plain_1d_signal_for_dsp():
     import dsp
     h = PC.tcspc_simulate(2.0, bins=256, bin_ps=100.0, signal_photons=400.0,
                           ambient_photons=200.0, seed=2)
-    spec = dsp.spectrum(h, 1.0 / 100e-12)
-    assert isinstance(spec, np.ndarray) and spec.ndim == 2 and spec.shape[1] == 2
+    freq, mag = dsp.spectrum(h, 1.0 / 100e-12)
+    assert freq.ndim == mag.ndim == 1 and freq.size == mag.size
+    assert np.isfinite(mag).all()
 
 
 # --------------------------------------------------------------------------- #
@@ -813,12 +870,12 @@ def test_ledger_has_every_op_and_no_ghosts():
 def test_ledger_out_types_match_the_actual_return_values():
     """The TYPEMISS check: call() must return exactly what the ledger declares."""
     depth = _tilted_plane(8, 8)
-    hist = PC.tcspc_simulate(2.0, bins=64, bin_ps=200.0, signal_photons=500.0,
+    hist = PC.tcspc_simulate(2.0, bins=128, bin_ps=200.0, signal_photons=500.0,
                              ambient_photons=100.0, seed=0)
-    decay = _decay_hist(2000.0, 64, 200.0, 5000.0)
+    decay = _decay_hist(2000.0, 128, 200.0, 5000.0)
     counts = PC.photon_sample(np.ones((8, 8)) * 0.5, 40.0, seed=0)
     rates = np.linspace(1e4, 1e6, 32)
-    cube = PC.dtof_cube_simulate(depth, bins=64, bin_ps=200.0, noise=False)
+    cube = PC.dtof_cube_simulate(depth, bins=128, bin_ps=200.0, noise=False)
     args = {
         "photon_sample": (counts,), "photon_statistics": (counts,),
         "photon_uncertainty": (counts,),
@@ -901,7 +958,7 @@ def test_string_scalars_are_refused_not_parsed():
 def test_non_integer_seeds_and_counts_are_refused():
     with pytest.raises(ValueError, match="non-negative int"):
         PC.photon_sample(np.ones((2, 2)), 10.0, seed=1.5)
-    with pytest.raises(ValueError, match="non-negative int"):
+    with pytest.raises(ValueError, match="seed must be >= 0"):
         PC.photon_sample(np.ones((2, 2)), 10.0, seed=-1)
     with pytest.raises(ValueError, match="must be an int"):
         PC.tcspc_simulate(1.0, bins=64.0)
@@ -918,8 +975,10 @@ def test_masked_arrays_are_refused():
 def test_size_caps_fail_closed_before_allocating():
     with pytest.raises(ValueError, match="MAX_LAMBDA"):
         PC.photon_sample(np.ones((2, 2)), 1e13)
-    with pytest.raises(ValueError, match="MAX_BINS"):
+    with pytest.raises(ValueError, match=r"bins must be in \[2, %d\]" % PC.MAX_BINS):
         PC.tcspc_simulate(1.0, bins=PC.MAX_BINS + 1)
+    with pytest.raises(ValueError, match="MAX_BINS"):
+        PC.tcspc_stats(np.ones(PC.MAX_BINS + 1), 100.0)
     with pytest.raises(ValueError, match="MAX_CUBE_ELEMENTS"):
         PC.dtof_cube_simulate(np.full((512, 512), 2.0), bins=256)
 
@@ -947,7 +1006,7 @@ def test_no_op_emits_a_runtime_warning_on_its_normal_path():
         PC.tcspc_stats(PC.tcspc_background_subtract(h), 200.0)
         PC.dtof_depth(h, 200.0, "gaussian")
         PC.lifetime_phasor(_decay_hist(2000.0, 128, 200.0, 5000.0), 200.0)
-        cube = PC.dtof_cube_simulate(_tilted_plane(8, 8), bins=64, bin_ps=200.0,
+        cube = PC.dtof_cube_simulate(_tilted_plane(8, 8), bins=128, bin_ps=200.0,
                                      seed=0)
         PC.dtof_cube_depth(cube, 200.0, "gaussian")
 
@@ -956,7 +1015,7 @@ def test_no_op_returns_a_silent_nan_or_inf():
     counts = PC.photon_sample(np.ones((16, 16)) * 0.5, 20.0, seed=0)
     hist = PC.tcspc_simulate(2.0, bins=128, bin_ps=200.0, signal_photons=300.0,
                              ambient_photons=80.0, seed=0)
-    cube = PC.dtof_cube_simulate(_tilted_plane(8, 8), bins=64, bin_ps=200.0,
+    cube = PC.dtof_cube_simulate(_tilted_plane(8, 8), bins=128, bin_ps=200.0,
                                  seed=0)
     outs = [PC.photon_sample(counts, 1.0, seed=0),
             PC.photon_uncertainty(counts),
@@ -1013,7 +1072,7 @@ class TestAdversarial20260901:
     def test_empty_value_string_is_no_longer_silently_parsed(self):
         """BUG: dtof_cube_depth(cube, empty_value="3") succeeded, because
         float("3") parses — an unparsed config value became a depth in metres."""
-        cube = PC.dtof_cube_simulate(_tilted_plane(2, 2), bins=8, bin_ps=400.0,
+        cube = PC.dtof_cube_simulate(_tilted_plane(2, 2), bins=32, bin_ps=400.0,
                                      noise=False)
         with pytest.raises(ValueError, match="string"):
             PC.dtof_cube_depth(cube, 400.0, empty_value="3")
