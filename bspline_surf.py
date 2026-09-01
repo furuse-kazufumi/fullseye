@@ -317,6 +317,7 @@ def eval_bspline_curve(tck, n=200):
     """
     from scipy.interpolate import splev
 
+    _check_tck(tck, 3, "eval_bspline_curve")
     n = int(n)
     if n < 2:
         raise ValueError(f"n must be >= 2 (got {n}).")
