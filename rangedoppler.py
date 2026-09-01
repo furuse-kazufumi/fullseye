@@ -723,6 +723,20 @@ def fmcw_beat_simulate(ranges_m=(10.0,), velocities_ms=(0.0,), angles_deg=None,
             "speed in km/h, this module wants metres per second."
             % (op, int(badv.sum()), float(np.abs(vv[badv]).max()), v_max, lam, tc,
                float(np.abs(vv[badv]).max())))
+    # |theta| <= 90 must be checked BEFORE sin(): sin() folds the rear
+    # hemisphere onto the front one, so a target requested at 95 deg would be
+    # synthesised bit-identically to one at 85 deg and beamformed back as 85 —
+    # a plausible-wrong answer with no diagnostic. (Found by the adversarial
+    # pass; minimal reproduction in tests/test_rangedoppler.py.)
+    outside = np.abs(aa) > 90.0
+    if outside.any():
+        raise ValueError(
+            "%s: %d angle(s) up to |%g| deg lie outside [-90, 90]. Angles are "
+            "measured from array boresight, and a linear array has no rear "
+            "hemisphere: sin() would fold 95 deg onto 85 deg and 190 deg onto "
+            "-10 deg, producing a cube identical to a different scene's. "
+            "Refusing rather than folding silently."
+            % (op, int(outside.sum()), float(np.abs(aa[outside]).max())))
     sin_t = np.sin(np.radians(aa))
     bada = np.abs(sin_t) >= sin_max
     if bada.any():
