@@ -886,8 +886,10 @@ def jpeg_ghost_map(image, qualities=None, block: int = 16) -> list:
     **Pillow 必須**(:class:`ImportError`)。理由は :func:`error_level_map` と同じ。
 
     実測(``tests/test_imgforensics.py::test_jpeg_ghost_finds_the_pasted_quality``、
-    品質 92 の背景に品質 60 で圧縮した 64x64 を貼った 192x192):
-    貼った領域の谷は **品質 60**、背景の谷は **品質 92**(掃引 40..95 step 5)。
+    品質 92 の背景に品質 60 で圧縮した 64x64 を貼った 192x192、掃引 40..95 step 5):
+    貼った領域の谷は **品質 60**(真値 60、誤差 0)、背景の谷は **品質 95**。
+    背景が 92 ではなく 95 になるのは掃引が 5 刻みで 92 を含まないからで、
+    **谷は掃引した品質の中からしか出ない** —— 刻みより細かい品質は読めない。
     """
     _require("PIL", "jpeg_ghost_map")
     x = _as_image(image)
