@@ -513,6 +513,11 @@ def test_jpeg_quality_estimate_says_nothing_on_uncompressed():
         assert r["caveats"]
 
 
+def _comb(rng, step, spread, n=4096, jitter=0.2):
+    """真のステップ ``step``・広がり ``spread`` ステップぶんの合成 comb。"""
+    return np.round(rng.standard_normal(n) * spread) * step + jitter * rng.standard_normal(n)
+
+
 def test_estimate_step_rejects_the_two_measured_traps():
     """量子化ステップ推定が過去に踏んだ **2 つの罠**を回帰テストとして固定する。
 
@@ -522,12 +527,26 @@ def test_estimate_step_rejects_the_two_measured_traps():
     rng = np.random.default_rng(0)
     # 罠 1: 連続値(量子化されていない)。何も答えてはいけない
     assert F._estimate_step(rng.standard_normal(4096) * 30.0) == 0.0
-    # 罠 2: ステップ 12 で量子化 + 半分は 0 に潰れている
-    v = np.round(rng.standard_normal(4096) * 18.0 / 12.0) * 12.0
-    v = v + 0.2 * rng.standard_normal(4096)               # 復号の丸め雑音
-    assert F._estimate_step(v) == 12.0
+    assert F._estimate_step(rng.standard_normal(4096) * 80.0) == 0.0
+    # 罠 2: 大半が 0 に潰れた櫛でも真のステップを当てる
+    for step in (5.0, 12.0, 16.0):
+        assert F._estimate_step(_comb(rng, step, 2.5)) == step
+        assert F._estimate_step(_comb(rng, step, 4.0)) == step
     # 標本が少なすぎるときも答えない
     assert F._estimate_step(np.round(rng.standard_normal(20) * 3) * 8.0) == 0.0
+
+
+def test_estimate_step_still_overshoots_on_narrow_combs():
+    """(B) **残っている限界を残っているものとして固定する**(直したふりをしない)。
+
+    係数の広がりが真のステップの約 2.5 倍未満だと上振れが残る。実画像では
+    高周波係数か低品質 JPEG がこの域に入り、:func:`jpeg_quality_estimate` は
+    それを ``n_quantized`` の減少として表に出す(材料が消えたので答えない)。
+    """
+    rng = np.random.default_rng(0)
+    got = {step: F._estimate_step(_comb(rng, step, 1.5)) for step in (5.0, 12.0, 16.0)}
+    assert got == {5.0: 6.0, 12.0: 25.0, 16.0: 34.0}
+    assert all(v > k for k, v in got.items())            # 必ず「上」に外れる
 
 
 @needs_pil
