@@ -21,10 +21,10 @@
 
 *↑ **色分けしたボクセルの断面送り** ―― 16 粒子を 26 連結でラベリングし、**ボリュームのまま**色を付けてから 24 枚の断面へ切り出した。1 つの粒子は最初から最後まで 1 色 (実測: 全 16 成分の色数が 1)。spacing (0.50, 0.20, 0.20) mm で 総体積 62.560 mm3。 使用 op: `vol_label`, `vol_colorize_labels`, `vol_label_slice_rgb`, `vol_label_shape_stats`, `vol_label_palette`。*
 
-- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 コマ, 432x616 px, 0.32 MB)
+- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 コマ, 432x616 px, 0.33 MB)
 - サムネ: `docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg`
 - 束ね方: フリップブック GIF(断面が進む・寸法が揃っている)
-- SHA-256: `64cd9b53a8a3fbdce37e5e8be7aa30c823f2b6179d4b91a46aaf698e292b5783`
+- SHA-256: `769ad42caa6786932daf625bafa14a34686fc299dc96b23a11404564b9343228`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -373,10 +373,10 @@
 
 *↑ **色付きメッシュのターンテーブル** ―― 16 個の成分それぞれの bbox 部分体に marching cubes をかけ、三角形 7088 枚のメッシュ 16 個にした。頂点は spacing (0.50, 0.20, 0.20) mm を掛けた物理座標で、``render3d.render_mesh`` の z バッファで合成している。**色は断面図とまったく同じパレットの同じ行**なので、切った絵と回した絵で同じ粒子を目で追える。 使用 op: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`。*
 
-- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 コマ, 380x538 px, 0.41 MB)
+- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 コマ, 380x538 px, 0.45 MB)
 - サムネ: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`
 - 束ね方: フリップブック GIF(方位が進む)
-- SHA-256: `b5b35e30108a7b5743adf6e161eeb25af190eaf33aa9ff9c3b89472e95e22116`
+- SHA-256: `4a2ba556d6751c838b4b68264026913f89e33a444e67eb73fc2606ec9d344240`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -404,10 +404,10 @@
 
 *↑ **凡例つきの計測表 ―― どの色がどの粒子か** ―― 色分けした図は、凡例が無ければ「きれいなだけ」で終わる。16 粒子の色見本・体積 mm3・全体比・等価直径・球形度・伸長度・視野端への接触を並べた。総体積 62.5600 mm3、比率の合計 1.000000。1 ボクセル = 0.020000 mm3。最大は #2ddc8a の 9.3200 mm3、最小は #15d4c9 の 0.5600 mm3。 使用 op: `vol_label`, `vol_region_props`, `vol_label_shape_stats`, `vol_label_legend`, `vol_label_palette`。*
 
-- PNG (原寸 1 枚): `docs/articles/assets/wingvox_legend.png` (900x604 px, 95 kB)
-- サムネ(記事はこちらを表示): `docs/articles/assets/wingvox_legend_thumb.jpg` (74 kB)
+- PNG (原寸 1 枚): `docs/articles/assets/wingvox_legend.png` (900x626 px, 104 kB)
+- サムネ(記事はこちらを表示): `docs/articles/assets/wingvox_legend_thumb.jpg` (79 kB)
 - 束ね方: 原寸 1 枚(表の数値が主役 ―― 縮めると読めない)
-- SHA-256: `b37104ede27f54858b08ec62c9237c334f3bc437203fa40c887b9237b3196453`
+- SHA-256: `996d79e05286f61b29e5add295e2a5519b6e7b87a2eede1d8e5fdec023a2e504`
 
 <details><summary>この図に焼いた実測値</summary>
 

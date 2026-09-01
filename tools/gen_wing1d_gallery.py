@@ -1007,7 +1007,9 @@ def ex_order_tracking(log):
         fig.stamp(ink, C_TRUE)
         fig.text(80, 392, "order spectrum [shaft order] - the shaft components stay, "
                           "the resonance moves", C_TEXT, 12, True)
-        fig.text(min(float(axo.X(r["o400"])) + 6, axo.x1 - 216), 414,
+        # 線が右寄りのときはラベルを左側へ回す(線に文字が重なるのを避ける)
+        xo = float(axo.X(r["o400"]))
+        fig.text(xo + 8 if xo < axo.x1 - 230 else xo - 226, 414,
                  f"400 Hz = order {r['o400']:.2f} (moves)", C_TRUE, 11, True)
         fig.text(axo.X(3.5) + 4, 436, "order 3.5 (fixed)", C_B, 11, True)
         fig.text(axo.x0 + 6, axo.y0 + 4, "amp", C_DIM, 11)

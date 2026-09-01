@@ -21,10 +21,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **Flipping through colour-coded voxel slices** ―― 16 particles labelled with 26-connectivity, coloured **as a volume** and only then cut into 24 slices. Each particle keeps one colour from first slice to last (measured: all 16 components have exactly one colour). At a spacing of (0.50, 0.20, 0.20) mm they total 62.560 mm3. Ops used: `vol_label`, `vol_colorize_labels`, `vol_label_slice_rgb`, `vol_label_shape_stats`, `vol_label_palette`.*
 
-- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 frames, 432x616 px, 0.32 MB)
+- GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 frames, 432x616 px, 0.33 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg`
 - Bundling: フリップブック GIF(断面が進む・寸法が揃っている)
-- SHA-256: `64cd9b53a8a3fbdce37e5e8be7aa30c823f2b6179d4b91a46aaf698e292b5783`
+- SHA-256: `769ad42caa6786932daf625bafa14a34686fc299dc96b23a11404564b9343228`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -373,10 +373,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **A turntable of colour-coded meshes** ―― Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
 
-- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 380x538 px, 0.41 MB)
+- GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 380x538 px, 0.45 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`
 - Bundling: フリップブック GIF(方位が進む)
-- SHA-256: `b5b35e30108a7b5743adf6e161eeb25af190eaf33aa9ff9c3b89472e95e22116`
+- SHA-256: `4a2ba556d6751c838b4b68264026913f89e33a444e67eb73fc2606ec9d344240`
 
 <details><summary>The measured values burned into this figure</summary>
 
@@ -404,10 +404,10 @@ as **a thumbnail linking to the full-size PNG**.
 
 *↑ **A measurement table with its legend — which colour is which particle** ―― A colour-coded figure without a legend is merely decorative. This table lists all 16 particles: swatch, volume in mm3, share of the total, equivalent diameter, sphericity, elongation and whether the particle touches the field of view. Total 62.5600 mm3, shares summing to 1.000000, one voxel = 0.020000 mm3. The largest is #2ddc8a at 9.3200 mm3, the smallest #15d4c9 at 0.5600 mm3. Ops used: `vol_label`, `vol_region_props`, `vol_label_shape_stats`, `vol_label_legend`, `vol_label_palette`.*
 
-- PNG (full size): `docs/articles/assets/wingvox_legend.png` (900x604 px, 95 kB)
-- Thumbnail (shown in the article): `docs/articles/assets/wingvox_legend_thumb.jpg` (74 kB)
+- PNG (full size): `docs/articles/assets/wingvox_legend.png` (900x626 px, 104 kB)
+- Thumbnail (shown in the article): `docs/articles/assets/wingvox_legend_thumb.jpg` (79 kB)
 - Bundling: 原寸 1 枚(表の数値が主役 ―― 縮めると読めない)
-- SHA-256: `b37104ede27f54858b08ec62c9237c334f3bc437203fa40c887b9237b3196453`
+- SHA-256: `996d79e05286f61b29e5add295e2a5519b6e7b87a2eede1d8e5fdec023a2e504`
 
 <details><summary>The measured values burned into this figure</summary>
 
