@@ -1,0 +1,59 @@
+{
+  "generated_by": "tools/gen_wing3d_gallery.py",
+  "seed": 20260902,
+  "exhibits": [
+    {
+      "name": "wing3d_rle_compression",
+      "title": "run-length で 1/71",
+      "ops": [
+        "vol_rle_encode",
+        "vol_rle_decode",
+        "vol_rle_volume",
+        "vol_rle_bbox",
+        "vol_rle_centroid",
+        "vol_rle_union",
+        "vol_rle_intersect",
+        "vol_rle_difference"
+      ],
+      "facts": {
+        "dense_MB": 16.777216,
+        "rle_MB": 0.237168,
+        "ratio": 70.73979626256494,
+        "runs": 19764,
+        "roundtrip_exact": true,
+        "voxels": 1610948,
+        "bbox": [
+          0,
+          58,
+          58,
+          256,
+          199,
+          199
+        ],
+        "centroid": [
+          122.35254272639465,
+          128.0,
+          128.0
+        ],
+        "volume_speedup": 240.92201339382157,
+        "bbox_speedup": 23.587785859242672,
+        "union_voxels": 1508456,
+        "intersect_voxels": 84857,
+        "difference_voxels": 1351528
+      },
+      "caption": "256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **241 倍速**、BBox を **24 倍速**で返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。",
+      "kind": "png",
+      "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression.png",
+      "png_bytes": 51579,
+      "png_size": [
+        1120,
+        720
+      ],
+      "png_sha256": "da76dbb9eb468a49243dff298b4e4c06c0e0ee7d3fa4f6a65286c7f7c0f1f4e3",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_rle_compression_thumb.jpg",
+      "thumb_bytes": 44754,
+      "exhibit": "rle",
+      "seconds": 3.000526199815795
+    }
+  ]
+}

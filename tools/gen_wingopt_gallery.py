@@ -2295,6 +2295,10 @@ TITLES = {
 }
 
 OPS = {
+    "pipeline_flow": ["system_geometry", "resolving_power", "system_feasibility",
+                      "surface_texture", "defect_scratch", "composite_defect",
+                      "defect_stats", "image_formation", "draw_polyline",
+                      "draw_circle"],
     "defect_atlas": ["defect_scratch", "defect_pits", "defect_crack", "defect_blob",
                      "surface_texture", "composite_defect", "defect_stats",
                      "image_formation"],

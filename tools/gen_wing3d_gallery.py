@@ -2619,12 +2619,16 @@ def main(argv=None) -> int:
               "| 展示 | 形式 | ファイル | 実測 |", "|---|---|---|---|"]
     for m in ordered:
         if m["kind"] == "gif":
-            lines.append("| %s | GIF+mp4 | `media/%s.gif` | %d フレーム, %dx%d, "
-                         "%.2f MB (%d 色), mp4 %.2f MB |"
-                         % (m["exhibit"], m["name"], m["frames"],
+            extra = ""
+            if m.get("gif_colors"):
+                extra += ", %d 色" % m["gif_colors"]
+            if m.get("mp4_bytes"):
+                extra += ", mp4 %.2f MB" % (m["mp4_bytes"] / 1e6)
+            lines.append("| %s | %s | `media/%s.gif` | %d フレーム, %dx%d, %.2f MB%s |"
+                         % (m["exhibit"], "GIF+mp4" if m.get("mp4_bytes") else "GIF",
+                            m["name"], m["frames"],
                             m["gif_shape"][1], m["gif_shape"][0],
-                            m["gif_bytes"] / 1e6, m["gif_colors"],
-                            m["mp4_bytes"] / 1e6))
+                            m["gif_bytes"] / 1e6, extra))
         else:
             lines.append("| %s | PNG | `%s.png` | %dx%d, %.0f kB |"
                          % (m["exhibit"], m["name"], m["png_size"][0],
