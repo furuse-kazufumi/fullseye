@@ -473,7 +473,7 @@ def ex_mesh_turntable(log):
     allV = np.concatenate([m["vertices"] for m in meshes])
     centre = 0.5 * (allV.min(axis=0) + allV.max(axis=0))
     radius = float(np.linalg.norm(allV - centre, axis=1).max())
-    size = 300
+    size = 380
     K = render3d.intrinsics_from_fov(38.0, size, size)
     dist = 1.30 * radius / np.tan(np.deg2rad(38.0) * 0.5)
     light = np.array([0.35, 0.45, 0.82])

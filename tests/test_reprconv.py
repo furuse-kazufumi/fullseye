@@ -25,7 +25,9 @@ import sys
 import numpy as np
 import pytest
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, _ROOT)
+sys.path.insert(0, os.path.join(_ROOT, "tools"))
 
 import opsreprconv                                          # noqa: E402
 import reprconv as rc                                       # noqa: E402
@@ -86,7 +88,7 @@ class TestRoundTripExact:
         c = rc.curvature_to_shape_index(k)[:, 1]
         assert np.allclose(c, [1.0, 1.0, 1.0, math.sqrt(0.5)], atol=1e-12)
 
-    @pytest.mark.parametrize("shape", [(131,), (12, 9), (1, 7)])
+    @pytest.mark.parametrize("shape", [(131,), (12, 9), (2, 5)])
     def test_descriptor_matrix_bit_identical(self, rng, shape):
         d = rng.standard_normal(shape)
         back = rc.matrix_to_descriptor(rc.descriptor_to_matrix(d))
@@ -339,6 +341,29 @@ def _sample_inputs(rng):
     }
 
 
+def _special_inputs(pool, scattered):
+    """同じ型名でも op ごとに要求する**形**が違うものを明示する。
+
+    ``matrix`` は ``matrix_to_angle`` が (3,3)、``matrix_to_rot_scale`` が (2,2)、
+    ``matrix_to_descriptor`` は任意 —— 同じ型プールの 1 つの値では全部を賄えない。
+    これを黙って型プールの都合に合わせると、**一部の op が「実行できなかった」
+    まま合格する**(この repo で実バグを見逃した経路そのもの)。
+    """
+    return {
+        "flow_speed": (scattered,),
+        "flow_apply": (pool["points"], scattered),
+        "correlation_score": (pool["voxel"], np.roll(pool["voxel"], 2, axis=1)),
+        "select_points": (pool["points"], pool["indices"]),
+        "polar_to_cscalar": (np.array([[2.0, 30.0]]),),
+        "shape_index_to_curvature": (np.stack(
+            [np.linspace(-1.0, 1.0, 32), np.linspace(0.1, 2.0, 32)], 1),),
+        "angles_to_normals": (np.stack(
+            [np.linspace(-179.0, 179.0, 32), np.linspace(-89.0, 89.0, 32)], 1),),
+        "matrix_to_angle": (rc.angle_to_matrix(37.5),),
+        "matrix_to_rot_scale": (rc.rot_scale_to_matrix((37.5, 2.0)),),
+    }
+
+
 class TestDeclaredTypeMatchesActualReturn:
     """台帳の ``out`` 宣言と実際の返りが一致するか。**全 op を実際に実行する**。
 
@@ -350,17 +375,7 @@ class TestDeclaredTypeMatchesActualReturn:
         pool = _sample_inputs(rng)
         # 散在フローは (N,3)。密フロー用の op と入力を分ける(同じ型名で別物)
         scattered = rng.standard_normal((160, 3)) * 0.1
-        special = {
-            "flow_speed": (scattered,),
-            "flow_apply": (pool["points"], scattered),
-            "correlation_score": (pool["voxel"], np.roll(pool["voxel"], 2, axis=1)),
-            "select_points": (pool["points"], pool["indices"]),
-            "polar_to_cscalar": (np.array([[2.0, 30.0]]),),
-            "shape_index_to_curvature": (np.stack(
-                [np.linspace(-1.0, 1.0, 32), np.linspace(0.1, 2.0, 32)], 1),),
-            "angles_to_normals": (np.stack(
-                [np.linspace(-179.0, 179.0, 32), np.linspace(-89.0, 89.0, 32)], 1),),
-        }
+        special = _special_inputs(pool, scattered)
         ran, problems = 0, []
         for name, meta in sorted(opsreprconv.OPSREPRCONV.items()):
             args = special.get(name) or tuple(pool[t] for t in meta["in"])
@@ -381,16 +396,7 @@ class TestDeclaredTypeMatchesActualReturn:
         """有限入力から NaN/Inf が無言で出ないか(NONFINITE_BY_CONTRACT は空)。"""
         pool = _sample_inputs(rng)
         scattered = rng.standard_normal((160, 3)) * 0.1
-        special = {
-            "flow_speed": (scattered,), "flow_apply": (pool["points"], scattered),
-            "correlation_score": (pool["voxel"], np.roll(pool["voxel"], 2, axis=1)),
-            "select_points": (pool["points"], pool["indices"]),
-            "polar_to_cscalar": (np.array([[2.0, 30.0]]),),
-            "shape_index_to_curvature": (np.stack(
-                [np.linspace(-1.0, 1.0, 32), np.linspace(0.1, 2.0, 32)], 1),),
-            "angles_to_normals": (np.stack(
-                [np.linspace(-179.0, 179.0, 32), np.linspace(-89.0, 89.0, 32)], 1),),
-        }
+        special = _special_inputs(pool, scattered)
         for name, meta in sorted(opsreprconv.OPSREPRCONV.items()):
             out = opsreprconv.call(name, *(special.get(name)
                                            or tuple(pool[t] for t in meta["in"])))
@@ -671,6 +677,19 @@ class TestAdversarial:
         assert rc.matrix_to_descriptor(np.zeros((1, 5))).shape == (5,)
         assert rc.matrix_to_descriptor(np.zeros((2, 5))).shape == (2, 5)
 
+    def test_one_row_descriptor_ambiguity_is_documented_not_hidden(self):
+        """★塞げない穴を**塞がずに固定**する。
+
+        元から (1, n) の 2-D だった記述子は往復で (n,) になる。(1,n) の行列は
+        「1-D 記述子を包んだもの」と「行 1 本の記述子束」を区別できないので、
+        これは実装の粗さではなく**表現の情報量そのもの**。値は全て保存される
+        (損失は「行が 1 本だった」というメタ情報のみ)ことを固定しておく。
+        """
+        d = np.arange(7.0).reshape(1, 7)
+        back = rc.matrix_to_descriptor(rc.descriptor_to_matrix(d))
+        assert back.shape == (7,), "the ambiguity is real; this test records it"
+        assert np.array_equal(back, d.reshape(-1)), "but no value may be lost"
+
     def test_pairs_to_signal_silently_drops_x_and_table_says_so(self):
         """非等間隔の x を持つ対は ``signal`` へ落とすと位置情報が消える。
 
@@ -710,13 +729,28 @@ class TestAdversarial:
         b[n - 1, 1, 1] = 1.0                          # -2 のシフト = 巡回で n-2
         assert rc.score_to_position(rc.correlation_score(a, b)) == (float(n - 2), 0.0, 0.0)
 
-    def test_gaussian_sigma_never_zero_on_duplicate_points(self):
-        """重複点で k 近傍距離が 0 になると sigma=0 → 下流でゼロ除算になる。"""
-        p = np.zeros((8, 3))
-        g = rc.points_to_gaussians(p)
+    def test_duplicate_points_fail_closed_instead_of_a_sentinel_sigma(self):
+        """★実バグの回帰テスト(**黙って NaN を返していた**)。
+
+        最初の実装は重複点の sigma を ``np.finfo(float).tiny`` = 2.2e-308 で
+        埋めていた。``sigma > 0`` は満たすので検査も通るが、
+        ``gaussians_to_voxel`` の ``sigma ** 3`` が**アンダーフローで 0** になり、
+        0 除算で体積の一部が NaN になる —— 例外もエラーメッセージも出ない。
+        「0 を避ける番兵」が「下流で NaN を作る値」だったという、
+        変換 op が黙って間違う典型。いまは fail-closed。
+        """
+        with pytest.raises(ValueError, match="spacing is 0"):
+            rc.points_to_gaussians(np.zeros((8, 3)))
+        # 部分的な重複は通る(全近傍が一致した点だけが問題)
+        p = np.concatenate([np.zeros((2, 3)), np.array([[1.0, 0.0, 0.0]])])
+        g = rc.points_to_gaussians(p, k=2)
         assert np.all(g["sigma"] > 0.0)
-        v = rc.gaussians_to_voxel(g, shape=(8, 8, 8))
-        assert np.all(np.isfinite(v))
+        assert np.all(np.isfinite(rc.gaussians_to_voxel(g, shape=(8, 8, 8))))
+
+    def test_unrepresentable_sigma_is_refused_not_turned_into_nan(self):
+        g = {"mu": np.zeros((1, 3)), "sigma": np.array([1e-200]), "w": np.array([1.0])}
+        with pytest.raises(ValueError, match="too small"):
+            rc.gaussians_to_voxel(g, shape=(8, 8, 8))
 
     def test_flow_rgb_hue_covers_the_wheel_and_zero_is_black(self):
         """色相環が本当に一周するか(半分しか使っていない実装は「それらしく」見える)。"""
