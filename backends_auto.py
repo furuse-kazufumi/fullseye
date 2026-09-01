@@ -1308,7 +1308,14 @@ SEED: list[tuple] = [
     ("select_shape", "region", REG, REG, "region_trans", {"kind": "remove_small"}),
     ("distance_transform", "region", REG, IMG, "region_trans", {"kind": "dist_transform"}),
     # ---- Regions: features -----------------------------------------------
-    ("area_center", "features", REG, FEA, "region_feat", {"metric": "area"}),
+    # ★2026-09-02: 旧仕様は out_sort=feature / metric="area" で、実体は
+    #   `np.mean(mask)` = **画像に占める面積比**。HALCON の `area_center` は
+    #   (Area, Row, Column) を返す op なので、(1) 中心を返さない (2) 面積が画素数
+    #   ではなく比率(= 解像度依存)という二重の食い違いがあった。1 スカラでは
+    #   名前を満たせないため、`ncc_locate` と同じ **match sort の 1-D ベクトル**
+    #   にして (面積比, 行, 列) を返す。match / feature はどちらも終端 sort
+    #   (候補は identity のみ)なので、ゲノム→op の写像は動かない。
+    ("area_center", "features", REG, MAT, "region_feat", {"metric": "area_center"}),
     ("count_obj", "features", REG, FEA, "region_feat", {"metric": "count"}),
     ("circularity", "features", REG, FEA, "region_feat", {"metric": "circularity"}),
     ("compactness", "features", REG, FEA, "region_feat", {"metric": "compactness"}),
