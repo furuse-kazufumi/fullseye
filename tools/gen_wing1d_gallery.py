@@ -2951,35 +2951,34 @@ def _write_exhibit_md(results: dict, log) -> str:
         info, facts = results[name]["info"], results[name]["facts"]
         cap = CAPTIONS[name]
         ops = ", ".join(f"`{o}`" for o in facts["ops"])
+        stem = info["stem"]
+        caption = (f"**{cap['title']}** ―― {cap['text'](facts)} 使用 op: {ops}。")
         lines.append(f"## {i}. {cap['title']}")
         lines.append("")
         if info["kind"] == "gif":
-            url = RAW_BASE + f"media/wing1d_{name}.gif"
-            thumb_url = RAW_BASE + f"thumbs/wing1d_{name}_720.jpg"
-            lines.append(f"![wing1d_{name}]({url})")
+            # GIF は動いてこそなので直接埋め込む(markdown_animation の形)。
+            lines.append(markdown_animation(stem, cap["title"], caption).rstrip())
             lines.append("")
-            lines.append(f"*↑ **{cap['title']}** ―― {cap['text'](facts)} "
-                         f"使用 op: {ops}.*")
-            lines.append("")
-            lines.append(f"- GIF: `docs/articles/assets/media/wing1d_{name}.gif` "
-                         f"({info['frames']} フレーム, "
+            lines.append(f"- GIF: `docs/articles/assets/media/{stem}.gif` "
+                         f"({info['frames']} コマ, "
                          f"{info['shape'][1]}x{info['shape'][0]} px, "
-                         f"{info['bytes'] / 1e6:.2f} MB, fps {info['fps']})")
-            lines.append(f"- サムネ: `docs/articles/assets/thumbs/wing1d_{name}_720.jpg` "
-                         f"([raw]({thumb_url}), フレーム {info['thumb_index']})")
+                         f"{info['bytes'] / 1e6:.2f} MB, {info['ms']} ms/コマ・"
+                         f"最終コマ {info['hold_ms']} ms)")
+            lines.append(f"- サムネ: `docs/articles/assets/thumbs/{stem}_thumb.jpg`")
         else:
-            url = RAW_BASE + f"wing1d_{name}.png"
-            thumb_url = RAW_BASE + f"wing1d_{name}_thumb.jpg"
-            lines.append(f"![wing1d_{name}]({url})")
+            # 静止画は必ずサムネ表示 + クリックで原寸(markdown の形)。
+            lines.append(markdown(stem, cap["title"], caption).rstrip())
             lines.append("")
-            lines.append(f"*↑ **{cap['title']}** ―― {cap['text'](facts)} "
-                         f"使用 op: {ops}.*")
-            lines.append("")
-            lines.append(f"- PNG: `docs/articles/assets/wing1d_{name}.png` "
+            kindja = "タイル" if info["kind"] == "sheet" else "原寸 1 枚"
+            extra = (f", {info['frames']} パネル / {info['ncols']} 列"
+                     if info["kind"] == "sheet" else "")
+            lines.append(f"- PNG({kindja}): `docs/articles/assets/{stem}.png` "
                          f"({info['shape'][1]}x{info['shape'][0]} px, "
-                         f"{info['bytes'] / 1e3:.0f} kB)")
-            lines.append(f"- サムネ: `docs/articles/assets/wing1d_{name}_thumb.jpg` "
-                         f"([raw]({thumb_url}))")
+                         f"{info['bytes'] / 1e3:.0f} kB{extra})")
+            lines.append(f"- サムネ(記事はこちらを表示): "
+                         f"`docs/articles/assets/{stem}_thumb.jpg` "
+                         f"({info['thumb_bytes'] / 1e3:.0f} kB)")
+        lines.append(f"- 束ね方: {BUNDLING.get(name, 'gif')}")
         lines.append(f"- SHA-256: `{info['sha256']}`")
         lines.append("")
         lines.append("<details><summary>この図に焼いた実測値</summary>")
