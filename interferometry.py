@@ -1295,7 +1295,7 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
                               dispersion_um_per_nm=0.20,
                               reference_wavelength_nm=600.0, mode="gaussian",
                               subtract_background=True, min_visibility=0.30,
-                              min_peak_bins=2.0):
+                              min_peak_bins=2.0, max_carrier_fraction=0.10):
     """Surface height from one confocal return spectrum — the wavelength *is* the height.
 
     The inverse of :func:`chromatic_confocal_simulate`. Find the peak wavelength
