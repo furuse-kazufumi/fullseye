@@ -191,8 +191,9 @@ def contact_sheet(panels: list, labels: list | None = None, *, ncols: int = 3,
         y = top + (row_h[r] - im.height) // 2
         canvas.paste(im, (x, y))
         if labels and labels[i]:
+            text, lfont = _fit_label(draw, str(labels[i]), font_size, cw)
             draw.text((pad + c * (cw + pad) + cw // 2, top + row_h[r] + lh // 2),
-                      labels[i], fill=MUTED, font=font, anchor="mm")
+                      text, fill=MUTED, font=lfont, anchor="mm")
 
     return np.asarray(canvas, np.float64) / 255.0
 
