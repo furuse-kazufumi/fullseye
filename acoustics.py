@@ -445,12 +445,15 @@ def stft(x, rate, win=256, hop=None, window="hann", nfft=None, scaling="none"):
     * ``"none"`` (default) — the raw ``rfft`` of the windowed frame.
     * ``"amplitude"`` — ``2 / sum(w)``. A sinusoid of amplitude ``A`` sitting on
       a bin centre then reads ``|Z| = A``. Measured on a 1 kHz, amplitude-0.7
-      tone at 16 kHz with a 256-sample periodic Hann: ``|Z| = 0.700000``.
+      tone at 16 kHz with a 256-sample periodic Hann, over the interior frames:
+      ``|Z|`` ranges 0.699999999999999 to 0.700000000000001.
       DC and Nyquist read twice their amplitude under this convention (they are
       not two-sided), which is the standard caveat and is not corrected for.
     * ``"density"`` — ``sqrt(2 / (rate * sum(w**2)))``, so ``|Z|**2`` is a
-      single-sided power spectral density in units^2/Hz. Measured on white noise
-      of variance 1.0 at 16 kHz: the PSD integrates to 0.9988 (target 1.0).
+      single-sided power spectral density in units^2/Hz. Measured on 16384
+      samples of white noise at 16 kHz (win 1024, hop 512): the PSD integrates
+      to 0.9933 over the interior frames against the record's own variance
+      0.9923, and to 0.9073 if the pad frames are included — see ``interior``.
 
     **Raises** ``ValueError``: non-1-D / non-finite / complex / masked input,
     ``rate <= 0``, a string or bool rate, ``hop`` outside ``[1, win]``,
