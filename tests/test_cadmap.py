@@ -515,27 +515,40 @@ def test_open_mesh_is_passed_through_without_a_winding_verdict():
     """**閉じていない mesh は巻き方向を判定せず素通しする**。
 
     符号つき体積は閉曲面でしか意味を持たないので、開いた板を「内向き」と
-    誤検出して壊さないための順序。``strict=True`` でも例外にならない。"""
-    V, F, _ = _quad_patch(0.0, z=6.0, half=(2.0, 2.0))     # 2 三角形 = 開いた板
-    Fin = np.ascontiguousarray(F[:, ::-1])                 # 裏返しても開いたまま
-    assert not cadmap._is_closed_surface(F, len(V))
-    assert cadmap._signed_volume(V, Fin) < 0.0             # 符号は負だが無意味
-    K = _K(f=400.0, w=256, h=256)
-    uv = np.array([[127.5, 127.5]])
+    誤検出して壊さないための順序。``strict=True`` でも例外にならない。
+
+    偽陽性が起きうる**いちばん際どい形**で確かめる: 箱から +z の 2 面を抜いた
+    「開いた殻」を裏返したもの。閉じていないのに符号つき体積は負に出るので、
+    watertight を先に見ないと内向きと誤判定して壊す。"""
+    Vb, Fb = _box(size=(1.0, 1.0, 1.0))
+    F = np.delete(Fb, [2, 3], axis=0)                      # +z の 2 面を抜く = 開く
+    Fin = np.ascontiguousarray(F[:, ::-1])                 # 裏返す
+    V = Vb
+    assert not cadmap._is_closed_surface(Fin, len(V))       # 開いている
+    assert cadmap._signed_volume(V, Fin) < 0.0              # 符号は負だが**無意味**
+
+    K = _K(f=200.0, w=64, h=64)
+    R, t = np.eye(3), np.array([0.0, 0.0, 5.0])
+    uv = np.array([[31.5, 31.5]])
     for Ff in (F, Fin):
-        rec = cadmap.cad_pixel_to_surface((V, Ff), uv, K=K, R=np.eye(3),
-                                          t=np.zeros(3), image_size=(256, 256),
-                                          strict=True)
-        assert rec["winding_fixed"] is False
-    # 素通しなので、裏返した板は「裏面だから当たらない」ままでなければならない
-    assert cadmap.cad_pixel_to_surface((V, F), uv, K=K, R=np.eye(3),
-                                       t=np.zeros(3), image_size=(256, 256),
-                                       strict=True)["hit"][0]
-    assert not cadmap.cad_pixel_to_surface((V, Fin), uv, K=K, R=np.eye(3),
-                                           t=np.zeros(3), image_size=(256, 256),
+        rec = cadmap.cad_pixel_to_surface((V, Ff), uv, K=K, R=R, t=t,
+                                          image_size=(64, 64), strict=True)
+        assert rec["winding_fixed"] is False               # 判定していない
+    # 素通しなので、裏返した殻は「全部裏面だから当たらない」ままでなければならない
+    assert cadmap.cad_pixel_to_surface((V, F), uv, K=K, R=R, t=t,
+                                       image_size=(64, 64), strict=True)["hit"][0]
+    assert not cadmap.cad_pixel_to_surface((V, Fin), uv, K=K, R=R, t=t,
+                                           image_size=(64, 64),
                                            strict=True)["hit"][0]
-    assert cadmap.cad_visible_faces((V, Fin), K=K, R=np.eye(3), t=np.zeros(3),
+    assert cadmap.cad_visible_faces((V, Fin), K=K, R=R, t=t,
                                     width=64, height=64).size == 0
+    # 平らな板(符号つき体積がちょうど 0)も素通し
+    Vp, Fp, _ = _quad_patch(0.0, z=6.0, half=(2.0, 2.0))
+    assert not cadmap._is_closed_surface(Fp, len(Vp))
+    assert cadmap.cad_pixel_to_surface((Vp, Fp), np.array([[127.5, 127.5]]),
+                                       K=_K(), R=np.eye(3), t=np.zeros(3),
+                                       image_size=(256, 256),
+                                       strict=True)["winding_fixed"] is False
 
 
 def test_no_winding_check_when_backface_culling_is_off():
