@@ -526,7 +526,8 @@ def lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False):
     **Raises** ``ValueError``: *raw* not 2-D or non-finite, *angular* outside
     ``[1, MAX_ANGULAR]``, a negative *offset*, an *offset* that leaves fewer
     than one whole microlens, a size that is not a multiple of the pitch (unless
-    ``crop=True``), and a decoded size over :data:`MAX_LF_ELEMENTS`.
+    ``crop=True``), a decoded sub-aperture image over :data:`MAX_SPATIAL` on a
+    side, and a decoded size over :data:`MAX_LF_ELEMENTS`.
     """
     op = "lf_from_mla"
     img = _require_image(raw, op, "raw")
