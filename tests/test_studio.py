@@ -3670,6 +3670,75 @@ def test_volume_to_shell_points_fail_closed():
         studio.volume_to_shell_points(bad)
 
 
+def test_volume_to_shell_points_returns_world_xyz_not_array_zyx():
+    """Regression (2026-09-02): the shell cloud came back in the volume's ARRAY
+    order (z, y, x) while every consumer — viewer3d_project / _persp,
+    render_points_frame's height ramp, viewer3d_fp_axes (world up = +z) — reads
+    the THIRD component as world up. A volume that is tall in z therefore
+    displayed lying on its side.
+
+    Measured before the fix, for the 40x8x8 pillar below:
+        P.max(0) - P.min(0) == [39, 1, 1]   (long axis first = (z, y, x))
+    after:
+        P.max(0) - P.min(0) == [1, 1, 39]   (long axis on world up)
+    """
+    vol = np.zeros((40, 8, 8), np.float32)
+    vol[:, 3:5, 3:5] = 1.0                              # a pillar 40 voxels tall in z
+    P, _C, info = studio.volume_to_shell_points(vol)
+    extent = P.max(axis=0) - P.min(axis=0)
+    assert info["axis_order"] == "xyz"                  # the convention is assertable
+    # world up (component 3) is the LONG axis; the two horizontal axes are thin
+    assert extent[2] == pytest.approx(39.0)
+    assert extent[0] < 2.0 and extent[1] < 2.0
+    assert int(np.argmax(extent)) == 2
+
+
+def test_volume_to_shell_points_spacing_is_reversed_with_the_indices():
+    """Anisotropic spacing must follow the (z,y,x)->(x,y,z) flip: sz scales the
+    world-up extent, sx the world-x extent. Reversing only one of the two would
+    silently scale the wrong axis (a plausible-looking but wrong size)."""
+    vol = np.zeros((40, 8, 8), np.float32)
+    vol[:, 3:5, 3:5] = 1.0
+    P, _C, _i = studio.volume_to_shell_points(vol, spacing=(3.0, 1.0, 5.0))
+    extent = P.max(axis=0) - P.min(axis=0)
+    assert extent[2] == pytest.approx(39.0 * 3.0)       # sz -> world z
+    assert extent[0] == pytest.approx(1.0 * 5.0)        # sx -> world x
+    assert extent[1] == pytest.approx(1.0)              # sy -> world y
+
+
+def test_volume_to_shell_points_height_ramp_follows_the_tall_axis():
+    """Consumer-level proof: render_points_frame's default (colors=None) height
+    ramp reads P[:, 2]. With the old (z, y, x) order the ramp coloured by the
+    x index, which for this pillar spans 2 voxels -> 2 distinct colours;
+    with world (x, y, z) it spans the 40 slices -> 40 distinct colours."""
+    import imgio
+    vol = np.zeros((40, 8, 8), np.float32)
+    vol[:, 3:5, 3:5] = 1.0
+    P, _C, _i = studio.volume_to_shell_points(vol)
+    z = P[:, 2]
+    t = (z - z.min()) / (z.max() - z.min())
+    ramp = imgio.apply_cmap(t.reshape(1, -1), name="viridis")[0]
+    assert len(np.unique(ramp, axis=0)) == 40           # was 2 before the fix
+    # and the rendered frame is genuinely non-empty (the cloud reaches the canvas)
+    img = studio.render_points_frame(P, size=64, point_px=1)
+    assert img.shape == (64, 64, 3) and len(np.unique(img.reshape(-1, 3), axis=0)) > 1
+
+
+def test_volume_to_shell_points_rejects_bad_spacing():
+    """fail-closed: the axis flip multiplies index by spacing axis-for-axis, so a
+    wrong-length / non-positive spacing must raise instead of broadcasting."""
+    vol = np.zeros((16, 16, 16), np.float32)
+    vol[4:12, 4:12, 4:12] = 1.0
+    with pytest.raises(ValueError, match="length 3"):
+        studio.volume_to_shell_points(vol, spacing=(1.0, 1.0))
+    with pytest.raises(ValueError, match="finite and positive"):
+        studio.volume_to_shell_points(vol, spacing=(1.0, 0.0, 1.0))
+    with pytest.raises(ValueError, match="finite and positive"):
+        studio.volume_to_shell_points(vol, spacing=(1.0, -2.0, 1.0))
+    with pytest.raises(ValueError, match="length-3"):
+        studio.volume_to_shell_points(vol, spacing="abc")
+
+
 def test_volume_to_shell_points_reports_original_shape_for_list_input():
     """Regression: info['shape'] fell back to `v.shape` for inputs without a
     .shape attribute — but `v` had been reassigned by the decimation loop, so
