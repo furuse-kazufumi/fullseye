@@ -535,6 +535,33 @@ def _require_aperture(na: int, d: float, lam: float, op: str, first_angle: float
             % (op, na, d, na * d / lam, float(np.degrees(bw)), first_angle))
 
 
+def _fft_checked(a, axis, op: str, what: str) -> np.ndarray:
+    """``np.fft.fft`` that refuses to return a silent NaN.
+
+    An FFT of an ``N``-point signal can be ``N`` times its largest sample, so a
+    finite cube can transform to Inf and then — through the complex arithmetic —
+    to NaN. Measured: ``fmcw_beat_simulate(amplitudes=[1e307])`` produces a cube
+    that passes every finiteness check, after which ``range_doppler_map``
+    returned a map whose maximum was ``nan``, with nothing but a numpy
+    ``RuntimeWarning`` to say so. The warning is suppressed here *only* around
+    the transform, and immediately replaced by an explicit refusal that names
+    the cause — trading an inscrutable warning plus a poisoned array for a
+    ValueError.
+    """
+    import warnings                                       # noqa: PLC0415
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", RuntimeWarning)
+        out = np.fft.fft(a, axis=axis)
+    if not np.isfinite(out).all():
+        raise ValueError(
+            "%s: the %s transform overflowed to Inf/NaN. An N-point FFT can be N "
+            "times the largest sample, and the largest |value| going in was %g "
+            "over %d points. Scale the data (the amplitudes are yours to choose "
+            "— there is no radar equation here) instead of accepting a map full "
+            "of NaN." % (op, what, float(np.abs(a).max()), a.shape[axis]))
+    return out
+
+
 def _angle_grid(angles_deg, op: str) -> np.ndarray:
     """The steering grid, defaulting to 1-degree steps over the full hemisphere."""
     if angles_deg is None:
