@@ -262,7 +262,7 @@ def vol_label_palette(n_labels, seed: int = 0, background=(0.0, 0.0, 0.0)):
     ``tests/test_volcolor.py`` が ``np.array_equal`` で固定している。
 
     実測(seed=0、RGB ユークリッド距離、取りうる最大は sqrt(3)=1.732):最近接の
-    色対の距離は 16 色で 0.109、64 色で 0.050、256 色で 0.020。**色は識別子では
+    色対の距離は 16 色で 0.1439、64 色で 0.0385、256 色で 0.0274。**色は識別子では
     なく目印**であり、区別が要る図には :func:`vol_label_legend` の表を添える。
 
     Raises ``ValueError`` for a negative / non-integer *n_labels*, an *n_labels*
