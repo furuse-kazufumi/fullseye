@@ -816,8 +816,9 @@ def spad_deadtime_correct(measured_hz, dead_time_ns=50.0):
     independent measurement (e.g. an attenuator step) and invert it yourself.
 
     *measured_hz* is a 1-D array of measured rates in counts per second;
-    *dead_time_ns* the dead time in nanoseconds. Returns the corrected true rates
-    as a float64 1-D array.
+    *dead_time_ns* the dead time in nanoseconds (default 50, the same
+    placeholder :func:`spad_deadtime_apply` uses — replace it with the
+    datasheet value). Returns the corrected true rates as a float64 1-D array.
 
     **Raises** ``ValueError``: negative, non-finite or non-1-D *measured_hz*, a
     non-positive *dead_time_ns*, and — instead of returning ``inf`` or a negative
