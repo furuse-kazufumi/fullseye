@@ -375,21 +375,38 @@ def hash_distance(hash1, hash2) -> int:
 # =========================================================================== #
 # (2) PRNU センサ指紋                                                          #
 # =========================================================================== #
-def _wiener_denoise(x: np.ndarray, sigma: float, windows=(3, 5, 7, 9)) -> np.ndarray:
+def _wiener_denoise(x: np.ndarray, sigma: float, windows=(3, 5, 7, 9),
+                    zero_mean_input: bool = False) -> np.ndarray:
     """局所適応 Wiener(Mihcak et al. 1999)。複数窓の局所分散の **最小**を使う。
 
     最小を取るのが要点で、これは「一番平坦に見える見方を採用する」= 信号分散を
     小さめに見積もる = **雑音を残しすぎない**側に倒す選択である。エッジの上では
     どの窓でも分散が大きいので、エッジの信号はきちんと残る。
+
+    ``zero_mean_input=True`` は **平均が 0 の帯域**(ウェーブレット詳細係数)向けで、
+    そのときだけ ``x * gain`` と書ける。空間領域の画像は局所平均が大きいので、
+    ``mu + gain*(x - mu)``(Lee フィルタの形)でなければならない。
+
+    **ここは実測で直した箇所**。最初の実装は空間領域でも ``x * gain`` と書いており、
+    残差が ``W = x·(1-gain)`` = **画像そのものの縮小コピー**になっていた。
+    それでも PCE は同一センサで 200 台・別センサで -20 と「分離しているように
+    見える」ので、例外も NaN も出ない。真の PRNU パターンとの相関を測って初めて
+    分かった —— 実測 ``corr(fingerprint, K_true)`` は **-0.027**(ほぼ無相関)で、
+    直した後は **+0.53**(``denoiser="wavelet"`` は +0.87)。
+    「もっともらしく間違う」の教科書的な例なので、テストで相関を固定してある。
     """
     s2 = float(sigma) ** 2
     est = None
     for w in windows:
-        mu = ndimage.uniform_filter(x, w, mode="reflect")
+        mu_w = ndimage.uniform_filter(x, w, mode="reflect")
         m2 = ndimage.uniform_filter(x * x, w, mode="reflect")
-        v = np.maximum(m2 - mu * mu - s2, 0.0)
+        v = np.maximum(m2 - mu_w * mu_w - s2, 0.0)
         est = v if est is None else np.minimum(est, v)
-    return x * (est / (est + s2))
+    gain = est / (est + s2)
+    if zero_mean_input:
+        return x * gain
+    mu = ndimage.uniform_filter(x, windows[0], mode="reflect")
+    return mu + gain * (x - mu)
 
 
 def _wavelet_denoise(x: np.ndarray, sigma: float, wavelet: str = "db4",
