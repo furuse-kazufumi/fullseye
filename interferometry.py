@@ -1387,6 +1387,24 @@ def chromatic_confocal_height(spectrum, wavelength_start_nm=500.0,
         raise ValueError("%s: min_visibility must be in [0, 1], got %g"
                          % (op, vis_min))
     bins_min = _nonneg(min_peak_bins, "min_peak_bins")
+    carr_max = _unit_interval(max_carrier_fraction, "max_carrier_fraction", op)
+
+    if carr_max > 0.0 and x.size >= 16:
+        ac = np.abs(np.fft.rfft((x - x.mean()) * np.hanning(x.size))) ** 2
+        ac[0] = 0.0
+        where = float(np.argmax(ac)) / float(ac.size - 1)
+        if where > carr_max:
+            raise ValueError(
+                "%s: the dominant oscillation in this spectrum sits at %.3f of "
+                "the Nyquist frequency, above max_carrier_fraction=%.3f. A "
+                "confocal response is a single smooth peak, whose alternating "
+                "content is all at low frequency (measured 0.010 for a 4 nm peak, "
+                "0.010 for a 1 nm peak, 0.015 with 5 %% noise). A value up here "
+                "means this is an *interferogram* — a fringe carrier at 0.333 is "
+                "what a z scan looks like — and reading its carrier's argmax as a "
+                "focused wavelength would return a plausible, finite, wrong "
+                "height. Pass max_carrier_fraction=0 to skip this check."
+                % (op, where, carr_max))
 
     vis = float(_visibility(x))
     if vis < vis_min:
