@@ -1239,9 +1239,10 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     in ``kurtosis`` with the same formula, and ``real_bins`` names them.
 
     Returns a dict: ``freqs``, ``kurtosis``, ``max_kurtosis``, ``max_freq``,
-    ``n_frames``, ``win``, ``hop``, ``real_bins``, ``window_seconds``,
-    ``bin_hz``, ``noise_sigma`` (the estimator's own standard deviation,
-    ``4/sqrt(n_frames)`` — a peak below this is not a finding).
+    ``band_lo``, ``band_hi`` (the demodulation band, ready for
+    :func:`envelope_spectrum`), ``n_frames``, ``win``, ``hop``, ``real_bins``,
+    ``window_seconds``, ``bin_hz``, ``noise_sigma`` (the estimator's own standard
+    deviation, ``4/sqrt(n_frames)`` — a peak below this is not a finding).
 
     **Raises** ``ValueError``: everything :func:`stft` refuses, plus a signal too
     short for 8 frames at the chosen window.
