@@ -344,7 +344,17 @@ def audit_ledger(rounds: int = 4):
                 if built is None:
                     verdict[name] = ("SKIP", "OP_ARG_BUILDERS が組み立てを断念")
                     continue
-                args, kwargs = list(built[0]), dict(built[1])
+                if isinstance(built, list):
+                    # ファザーと同じ約束: **list = data 引数だけ**を組んだ合図で、
+                    # 残る必須引数の束縛は通常経路に任せる(mesh を (V,F) の 2
+                    # 位置引数へ割る 8 op がこれ)。tuple なら (args, kwargs) 完成形
+                    bound, why = _bind(name, fn, built, rng)
+                    if bound is None:
+                        verdict[name] = ("SKIP", why)
+                        continue
+                    args, kwargs = bound
+                else:
+                    args, kwargs = list(built[0]), dict(built[1])
             else:
                 bound, why = _bind(name, fn, [pool[t] for t in want], rng)
                 if bound is None:
