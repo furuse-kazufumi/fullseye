@@ -565,6 +565,10 @@ def arrow(img, p0, p1, color="emphasis", width=2, head_len=12.0, head_width=9.0,
         raise ValueError(f"width must be >= 1 (got: {width})")
     if head_len < 0 or head_width < 0:
         raise ValueError(f"head_len/head_width must be >= 0 (got: {head_len}, {head_width})")
+    if float(p0[0]) == float(p1[0]) and float(p0[1]) == float(p1[1]):
+        raise ValueError(
+            f"arrow endpoints coincide at {tuple(p0)} — an arrow with no direction points at "
+            "nothing; it would be drawn as a dot and read as a marker")
     H, W = a.shape[:2]
     inside = [(0 <= p[0] <= W - 1 and 0 <= p[1] <= H - 1) for p in (p0, p1)]
     if not any(inside):
