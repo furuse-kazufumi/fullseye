@@ -686,6 +686,13 @@ RESULT_ADAPTERS = {
     "curvature_torsion": lambda r: np.stack(r),     # (kappa, tau) → (2, N) pairs
     "arc_length": lambda r: r[1],                   # (cumulative, total) → 全長 float
     "surface_form_error": lambda r: r[2],           # (residual, rms, pv) → pv float
+    # --- wave-5(2026-09-01): 「一度も実行されていなかったので見えなかった」乖離 ---
+    # カメラ内部行列 K / 姿勢 R,t / RANSAC 閾値などの引数を束縛できるようにして
+    # 初めて実行され、そこで露出した非 CONTRACT の署名。
+    "project_points": lambda r: r[0],               # (uv (N,2), depth (N,)) → uv
+    "segment_rigid_motions": lambda r: r["labels"],  # {"labels", "motions"} → labels
+    "surface_residual": lambda r: r["pv"],          # {"rms","max","pv"} → pv float
+    "label_components": lambda r: r[0],             # (labels, n) → labels
 }
 
 
