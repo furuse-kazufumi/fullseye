@@ -686,6 +686,11 @@ def anscombe_inverse(values, gain=1.0, read_sigma=0.0, offset=0.0,
     zero — ``mode="unbiased"`` with any value ``<= 0`` (the ``1/D^3`` term).
     """
     arr = _as_float_array(values, "values")
+    if arr.ndim != 2:
+        raise ValueError("anscombe_inverse: values must be a 2-D (H, W) array "
+                         "(the shape anscombe_transform returns), got a %d-D "
+                         "array of shape %r"
+                         % (arr.ndim, tuple(np.shape(values))))
     if arr.size == 0:
         raise ValueError("anscombe_inverse: values is empty")
     if arr.size > MAX_IMAGE_ELEMENTS:
