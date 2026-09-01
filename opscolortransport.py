@@ -62,6 +62,15 @@ _CATALOG = {
         ("transport_plan_1d", "colortransport", ["signal", "signal"], "transport_plan"),
         ("sinkhorn", "colortransport", ["signal", "signal", "matrix"], "transport_plan"),
         ("sinkhorn_distance", "colortransport", ["signal", "signal", "matrix"], "scalar"),
+        # 正則化の偏りを自分自身との距離で打ち消した版(自己距離が 0 に戻る)
+        ("sinkhorn_divergence", "colortransport", ["signal", "signal", "matrix"], "scalar"),
+    ],
+    # **輸送計画を消費する側**。2026-09-02 の点検まで transport_plan は
+    # 産む op が 2 つ・食う op が 0 の袋小路だった(この repo が繰り返し
+    # 踏んできた「入口はあるが消費 op が無い型」の形)。
+    "plan_use": [
+        ("transport_cost", "colortransport", ["transport_plan", "matrix"], "scalar"),
+        ("apply_transport", "colortransport", ["transport_plan", "signal"], "signal"),
     ],
     # 分布を合わせる
     "matching": [
