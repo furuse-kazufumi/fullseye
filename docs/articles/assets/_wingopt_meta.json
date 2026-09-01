@@ -4,7 +4,7 @@
    "kind": "gif",
    "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingopt_pipeline_flow.gif",
    "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingopt_pipeline_flow_thumb.jpg",
-   "bytes": 197655,
+   "bytes": 301292,
    "thumb_bytes": 30155,
    "size": [
     940,
@@ -15,7 +15,7 @@
    "step_ms": 700,
    "colors": null,
    "thumb_frame": 0,
-   "sha256": "0cc45944f44d336f0457478816689ca9c6745523fda2b6c635e374db2c8aa1a5"
+   "sha256": "347bfb1b5d3c224321cc7aa94e391dec77b75df15ca016e73e46196af4763a17"
   },
   "title": "設計から判定までの一本道",
   "ops": [
@@ -64,12 +64,12 @@
     "minor_axis_um": 157.5615887507317,
     "area_um2": 68777.0173469388
    },
-   "iou": 0.37900874635568516,
+   "iou": 0.42276422764227645,
    "detected": true,
    "intersection_px": 260,
-   "union_px": 686,
-   "flagged_px": 686,
-   "rms_capture_change": 0.0004563720087405441,
+   "union_px": 615,
+   "flagged_px": 615,
+   "rms_capture_change": 0.0004749779146217817,
    "steps": [
     "設計 — 視野と µm/画素を決める",
     "限界 — 標本化と回折のどちらが律速か",
@@ -77,163 +77,6 @@
     "撮像 — この系で実際に撮れる画像",
     "検査 — 検査アルゴリズムの生の出力",
     "判定 — 正解と突き合わせて IoU"
-   ]
-  }
- },
- "defect_atlas": {
-  "info": {
-   "kind": "png",
-   "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas.png",
-   "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingopt_defect_atlas_thumb.jpg",
-   "bytes": 146055,
-   "thumb_bytes": 50779,
-   "size": [
-    998,
-    882
-   ],
-   "frames": 1,
-   "sha256": "c732c5100726f75c5d833025434153faaaa43abe3ef4fc93fef430eb5dfedf40"
-  },
-  "title": "欠陥ジェネレータの見本帳",
-  "ops": [
-   "defect_scratch",
-   "defect_pits",
-   "defect_crack",
-   "defect_blob",
-   "surface_texture",
-   "composite_defect",
-   "defect_stats",
-   "image_formation"
-  ],
-  "facts": {
-   "system": "VisionSystem(f=35mm, WD=200mm, f/4, 16.26um/px, FOV 39.8x33.3mm)",
-   "um_per_pixel": 16.264285714285716,
-   "optical_limit_um": 32.52857142857143,
-   "limited_by": "sampling",
-   "tile_px": 232,
-   "rows": [
-    {
-     "kind": "scratch",
-     "order": "長さ2440µm × 幅73µm",
-     "params": {
-      "length_px": 150.0,
-      "width_px": 4.5,
-      "angle_deg": 22.0,
-      "wander": 0.055,
-      "contrast": -0.3,
-      "seed": 7
-     },
-     "stats": {
-      "area_px": 682,
-      "empty": false,
-      "bbox_h_px": 68,
-      "bbox_w_px": 132,
-      "major_axis_px": 171.60657330483335,
-      "minor_axis_px": 18.925409792808445,
-      "fill_ratio": 0.07598039215686274,
-      "major_axis_um": 2791.0583386793255,
-      "minor_axis_um": 307.8082721301774,
-      "area_um2": 180407.40704081638
-     },
-     "iou": 0.5576451349141456,
-     "detected": true
-    },
-    {
-     "kind": "pits",
-     "order": "16 個 直径130µm",
-     "params": {
-      "count": 16,
-      "radius_px": 4.0,
-      "radius_sigma": 0.35,
-      "contrast": -0.34,
-      "clustering": 0.45,
-      "seed": 7
-     },
-     "stats": {
-      "area_px": 949,
-      "empty": false,
-      "bbox_h_px": 112,
-      "bbox_w_px": 159,
-      "major_axis_px": 197.2634951582525,
-      "minor_axis_px": 120.93012627076945,
-      "fill_ratio": 0.05329065588499551,
-      "major_axis_um": 3208.349846252436,
-      "minor_axis_um": 1966.8421251324432,
-      "area_um2": 251036.11331632658
-     },
-     "iou": 0.7260902830910482,
-     "detected": true
-    },
-    {
-     "kind": "crack",
-     "order": "長さ2440µm × 幅49µm",
-     "params": {
-      "length_px": 150.0,
-      "width_px": 3.0,
-      "angle_deg": 104.0,
-      "branch_prob": 0.3,
-      "wander": 0.11,
-      "contrast": -0.36,
-      "seed": 4
-     },
-     "stats": {
-      "area_px": 441,
-      "empty": false,
-      "bbox_h_px": 125,
-      "bbox_w_px": 61,
-      "major_axis_px": 164.00957487950348,
-      "minor_axis_px": 17.282966976613544,
-      "fill_ratio": 0.05783606557377049,
-      "major_axis_um": 2667.4985857187817,
-      "minor_axis_um": 281.09511289820745,
-      "area_um2": 116656.40250000003
-     },
-     "iou": 0.7603448275862069,
-     "detected": true
-    },
-    {
-     "kind": "blob",
-     "order": "直径878µm",
-     "params": {
-      "radius_px": 27.0,
-      "roughness": 0.4,
-      "contrast": 0.26,
-      "seed": 7
-     },
-     "stats": {
-      "area_px": 2318,
-      "empty": false,
-      "bbox_h_px": 59,
-      "bbox_w_px": 63,
-      "major_axis_px": 58.730494044934964,
-      "minor_axis_px": 51.7985605556838,
-      "fill_ratio": 0.6236211998923863,
-      "major_axis_um": 955.209535287978,
-      "minor_axis_um": 842.4665884663716,
-      "area_um2": 613173.5623469389
-     },
-     "iou": 0.20491251682368775,
-     "detected": true
-    },
-    {
-     "kind": "composite",
-     "order": "scratch+pits+blob",
-     "params": null,
-     "stats": {
-      "area_px": 1749,
-      "empty": false,
-      "bbox_h_px": 194,
-      "bbox_w_px": 188,
-      "major_axis_px": 205.17200534617828,
-      "minor_axis_px": 147.7014982615652,
-      "fill_ratio": 0.047954595305988154,
-      "major_axis_um": 3336.9761155232,
-      "minor_axis_um": 2402.2593681541716,
-      "area_um2": 462657.7051530613
-     },
-     "iou": 0.5090497737556561,
-     "detected": true
-    }
    ]
   }
  }

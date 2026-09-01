@@ -64,7 +64,8 @@ for _p in (_ROOT, _HERE):
 
 import fullseye as fs                                    # noqa: E402  カラーマップ
 import imagedraw                                         # noqa: E402  Fullseye の描画 op
-from exhibit_tile import contact_sheet, markdown, save_exhibit  # noqa: E402
+from exhibit_tile import (contact_sheet, flipbook, markdown,  # noqa: E402
+                          markdown_animation, save_animation, save_exhibit)
 
 ASSETS = os.path.join(_ROOT, "docs", "articles", "assets")
 MEDIA = os.path.join(ASSETS, "media")

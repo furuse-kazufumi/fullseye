@@ -2040,7 +2040,7 @@ def ex_pipeline_flow(log):
     geo, res = _limits()
     upp = geo["um_per_pixel"]
     defect_um = 120.0
-    tile = 200
+    tile = 192
     sh = (tile, tile)
 
     # --- 工程 3: 理想の部品(撮像前) ------------------------------------- #
@@ -2135,14 +2135,17 @@ def ex_pipeline_flow(log):
     c = base_panel()
     bar_x0, bar_x1 = ix + 16, ix + IMG - 16
     bar_hi = max(res["nyquist_object_um"], res["diffraction_object_um"], defect_um) * 1.1
+    bar_lab = []
     for k, (nm, val, col) in enumerate((
             ("sampling (Nyquist)", res["nyquist_object_um"], C_CURVE),
             ("diffraction (Airy)", res["diffraction_object_um"], C_OPT),
             ("the defect we want", defect_um, C_HIT))):
-        yb = iy + 40 + k * 74
+        yb = iy + 44 + k * 84
         wpx = int(round((bar_x1 - bar_x0) * val / bar_hi))
-        _fill(c, yb, yb + 28, bar_x0, bar_x0 + max(1, wpx), col)
-    lab = lines([
+        _fill(c, yb, yb + 30, bar_x0, bar_x0 + max(1, wpx), col)
+        bar_lab += [(bar_x0, yb - 19, nm, col, 14, True),
+                    (bar_x0 + 6, yb + 6, f"{val:.2f} um", (0.05, 0.05, 0.07), 15, True)]
+    lab = bar_lab + lines([
         ("STEP 2  ask what the optics can carry", (0.95, 0.95, 0.92), True),
         ("", C_DIM, False),
         (f"Nyquist      2*pitch/m = {res['nyquist_object_um']:.2f} um", C_CURVE, True),
