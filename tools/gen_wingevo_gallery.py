@@ -666,18 +666,45 @@ def load_coverage_archive():
 PANEL_PX = 250
 
 
-def _photon_panel(y, target, label_color, px=PANEL_PX):
-    """光子ヒストグラムは面積で正規化して比べる(絶対カウントは光量で動く)。"""
-    y = np.asarray(y, np.float64).ravel()
-    t = np.asarray(target, np.float64).ravel()
-    sy = y.sum() if y.sum() > 0 else 1.0
-    st = t.sum() if t.sum() > 0 else 1.0
-    x = np.arange(len(t))
-    series = [{"x": x, "y": t / st, "color": C_TRUE, "width": 2}]
-    if not np.allclose(y / sy, t / st):
-        series.append({"x": np.arange(len(y)), "y": y / sy,
-                       "color": label_color, "width": 2})
-    return curve_panel(px, series, ylim=(-0.005, 0.075))
+def _photon_norm(v):
+    a = np.asarray(v, np.float64).ravel()
+    s = a.sum() if a.sum() > 0 else 1.0
+    return a / s
+
+
+def _photon_panel(y, target, label_color, vmax, px=PANEL_PX, zoom=0.06,
+                  h=None, labels=True):
+    """光子ヒストグラム 1 枚。上段 = 山ぜんぶ、下段 = 背景の帯を拡大。
+
+    面積で正規化して比べる(絶対カウントは光量で動くので、そこは問うていない)。
+    **縦軸は全パネル共通**にする。パネルごとに自動で伸ばすと、山の高さが変わって
+    見えて「形が変わった」と誤読させる。そして上段だけだと差が出るところ(背景の
+    高さ)が潰れるので、下段に同じデータを ``1/zoom`` 倍で拡大して並べる ――
+    軸の上限で頭を切って「平らな山」に見せるのは、静かな嘘になる。
+    """
+    h = px if h is None else h
+    t = _photon_norm(target)
+    yy = _photon_norm(y)
+    hi = vmax * 1.12
+    c = canvas(px, h, C_PANEL)
+    mid = int(h * 0.54)
+    top_box = (56, 16, px - 12, mid - 16)
+    bot_box = (56, mid + 14, px - 12, h - 30)
+    items = []
+    for box, lim, tag in ((top_box, hi, None),
+                          (bot_box, vmax * zoom, f"縦軸 x{1 / zoom:.0f} 拡大")):
+        p = Plot(c, box, (0, len(t) - 1), (-0.02 * lim, lim))
+        p.grid(yticks=np.linspace(0, lim, 3)).frame()
+        p.line(np.arange(len(t)), t, C_TRUE, 2)
+        p.line(np.arange(len(yy)), yy, label_color, 2)
+        c = p.c
+        if labels:
+            for v in np.linspace(0, lim, 3):
+                items.append((box[0] - 6, p.Y(v), f"{v:.3f}", C_DIM, 10, False,
+                              "rm", True))
+            if tag:
+                items.append((box[2], box[1] + 2, tag, C_DIM, 11, False, "ra"))
+    return np.asarray(text(to_u8(c), items), np.float64) / 255.0
 
 
 def problem_panels(name, row):
