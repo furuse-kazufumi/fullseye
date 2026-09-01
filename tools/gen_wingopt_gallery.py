@@ -48,13 +48,15 @@ import time
 
 import numpy as np
 
-# スクリプト直実行でも動くよう repo ルートを sys.path に足す。
+# スクリプト直実行でも動くよう repo ルートと tools/ を sys.path に足す。
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import defectgen                                          # noqa: E402
 import imagedraw                                          # Fullseye の描画 op
 import optics                                             # noqa: E402
 import visiondesign as vd                                 # noqa: E402
 import visionlab as vl                                    # noqa: E402
+from exhibit_tile import contact_sheet, markdown, save_exhibit   # noqa: E402
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _ROOT = os.path.dirname(_HERE)
