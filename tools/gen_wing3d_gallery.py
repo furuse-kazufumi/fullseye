@@ -100,35 +100,55 @@ C_AXIS_Z = (0.36, 0.68, 1.00)
 _FONT_CACHE: dict = {}
 
 
-def _font(size: int = 14, bold: bool = False):
-    """等幅フォント(数値が桁で揃う)。見つからなければ既定へ退避。"""
-    key = (size, bold)
+#: 日本語が要る文字列用(Consolas 系には CJK グリフが無く豆腐になる)。
+_CJK_FONTS = (r"C:\Windows\Fonts\meiryo.ttc", r"C:\Windows\Fonts\YuGothM.ttc",
+              r"C:\Windows\Fonts\msgothic.ttc")
+_ASCII_FONTS_B = (r"C:\Windows\Fonts\consolab.ttf", r"C:\Windows\Fonts\seguisb.ttf")
+_ASCII_FONTS_R = (r"C:\Windows\Fonts\consola.ttf", r"C:\Windows\Fonts\segoeui.ttf")
+
+
+def _font(size: int = 14, bold: bool = False, cjk: bool = False):
+    """フォントを引く。ASCII だけの文字列は等幅(数値が桁で揃う)、日本語を含む
+    ものは CJK グリフのあるフォント ―― 豆腐(□)で焼かないための切り替え。"""
+    key = (size, bold, cjk)
     if key not in _FONT_CACHE:
         from PIL import ImageFont
-        cand = ([r"C:\Windows\Fonts\consolab.ttf", r"C:\Windows\Fonts\seguisb.ttf"]
-                if bold else
-                [r"C:\Windows\Fonts\consola.ttf", r"C:\Windows\Fonts\segoeui.ttf"])
+        cand = _CJK_FONTS if cjk else (_ASCII_FONTS_B if bold else _ASCII_FONTS_R)
         font = None
         for p in cand:
             try:
-                font = ImageFont.truetype(p, size)
+                font = (ImageFont.truetype(p, size, index=0) if p.endswith(".ttc")
+                        else ImageFont.truetype(p, size))
                 break
             except OSError:
                 continue
+        if font is None and cjk:                       # CJK が無いなら ASCII へ退避
+            font = _font(size, bold, cjk=False)
         _FONT_CACHE[key] = font or ImageFont.load_default()
     return _FONT_CACHE[key]
 
 
+def _is_ascii(s: str) -> bool:
+    try:
+        s.encode("ascii")
+        return True
+    except UnicodeEncodeError:
+        return False
+
+
 def _text(canvas: np.ndarray, items) -> np.ndarray:
-    """``(x, y, s, color01, size, bold)`` の列をまとめて焼く。float [0,1] を返す。"""
+    """``(x, y, s, color01, size, bold)`` の列をまとめて焼く。float [0,1] を返す。
+
+    文字列ごとに ASCII / CJK でフォントを選ぶ(日本語を等幅英字フォントで焼くと
+    全部 □ になる ―― 図が黙って壊れる典型)。
+    """
     from PIL import Image, ImageDraw
-    u8 = _to_u8(canvas)
-    im = Image.fromarray(u8)
+    im = Image.fromarray(_to_u8(canvas))
     d = ImageDraw.Draw(im)
     for x, y, s, col, size, bold in items:
         d.text((int(x), int(y)), s,
                fill=tuple(int(round(255 * float(c))) for c in col),
-               font=_font(size, bold))
+               font=_font(size, bold, cjk=not _is_ascii(s)))
     return np.asarray(im, np.float64) / 255.0
 
 
@@ -136,7 +156,7 @@ def _text_w(s: str, size: int, bold: bool = False) -> int:
     """焼く前に文字幅を測る(右詰め・中央寄せの版面計算用)。"""
     from PIL import Image, ImageDraw
     d = ImageDraw.Draw(Image.new("RGB", (4, 4)))
-    box = d.textbbox((0, 0), s, font=_font(size, bold))
+    box = d.textbbox((0, 0), s, font=_font(size, bold, cjk=not _is_ascii(s)))
     return int(box[2] - box[0])
 
 

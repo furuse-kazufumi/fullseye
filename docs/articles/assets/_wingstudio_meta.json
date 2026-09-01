@@ -70,6 +70,36 @@
       "seconds": 1.86
     },
     {
+      "kind": "gif",
+      "name": "registration",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_registration.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_registration_thumb.jpg",
+      "frames": 26,
+      "size": [
+        962,
+        598
+      ],
+      "fps": 6,
+      "bytes": 376816,
+      "thumb_bytes": 55309,
+      "thumb_frame": 25,
+      "mean_abs_delta": 2.214,
+      "sha256": "75a6eddedda73f852f2f850fc2aeb077782c9d6364dc06a116c5e90f5d7e2c71",
+      "thumb_sha256": "e7112cd40cd033db5909da050b5933480f961c606fa3a3e8f8d604deafe52241",
+      "facts": {
+        "n_points": 3000,
+        "n_iter": 26,
+        "rotation_deg": 22.0,
+        "translation": 42.45109,
+        "noise_sigma": 1.21599,
+        "rmse_first": 22.76986,
+        "rmse_last": 5.44414,
+        "rmse_raw_before": 74.76265,
+        "improve_x": 4.18
+      },
+      "seconds": 3.47
+    },
+    {
       "kind": "png",
       "name": "normals",
       "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingstudio_normals.png",
@@ -94,6 +124,115 @@
         "coverage_back_px": 39686
       },
       "seconds": 2.44
+    },
+    {
+      "kind": "gif",
+      "name": "lightfield",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_lightfield.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_lightfield_thumb.jpg",
+      "frames": 24,
+      "size": [
+        864,
+        558
+      ],
+      "fps": 8,
+      "bytes": 2743185,
+      "thumb_bytes": 100364,
+      "thumb_frame": 3,
+      "mean_abs_delta": 6.902,
+      "sha256": "e40cf2a71631fade41cd05914c8c78ec828893959eab63d5dc7ece2d70e2f017",
+      "thumb_sha256": "4541c3e11834bb0af979cd3c24d19356d8845ac1d7de558a9e22f45aafd7db19",
+      "facts": {
+        "angular": [
+          7,
+          7
+        ],
+        "spatial": [
+          128,
+          128
+        ],
+        "n_views": 49,
+        "max_slope_px": 21.3333,
+        "frames": 24,
+        "epi_row": 64,
+        "refocus_var_slope0": 0.002011,
+        "refocus_var_slope3": 0.010101
+      },
+      "seconds": 1.79
+    },
+    {
+      "kind": "gif",
+      "name": "depth3d",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_depth3d.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_depth3d_thumb.jpg",
+      "frames": 30,
+      "size": [
+        812,
+        620
+      ],
+      "fps": 10,
+      "bytes": 622414,
+      "thumb_bytes": 49320,
+      "thumb_frame": 29,
+      "mean_abs_delta": 0.889,
+      "sha256": "dbc6370a58f85722aaf1463bbabfbb294c5694dec1138b4be1063cd5de4b4130",
+      "thumb_sha256": "b7988e630d8c4c94b8af270fcb6068fafa5396080fb63d137d44db3dc777824e",
+      "facts": {
+        "source": "itokawa_f0049152.stl",
+        "resolution": 200,
+        "n_points": 9715,
+        "valid_fraction": 0.24288,
+        "depth_min": 0.736283,
+        "depth_max": 0.882694,
+        "frames": 30
+      },
+      "seconds": 3.2
+    },
+    {
+      "kind": "gif",
+      "name": "crop3d",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wingstudio_crop3d.gif",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingstudio_crop3d_thumb.jpg",
+      "frames": 36,
+      "size": [
+        976,
+        491
+      ],
+      "fps": 8,
+      "bytes": 431923,
+      "thumb_bytes": 41361,
+      "thumb_frame": 31,
+      "mean_abs_delta": 3.334,
+      "sha256": "4c19d4d2191e0b96f5a77f2bfaa433ed71cb4848f51ce54a2deb50bdb6000683",
+      "thumb_sha256": "33a38ec4578733c6d36011281e80721d70bc9844d4cb9aeff50968d85020548a",
+      "facts": {
+        "volume_shape": [
+          20,
+          97,
+          28
+        ],
+        "crop_shape": [
+          20,
+          40,
+          28
+        ],
+        "offset": [
+          0,
+          18,
+          0
+        ],
+        "domain": "y in [20, 56)",
+        "uncrop_shape_matches": true,
+        "outside_max_after_uncrop": 13.71108970698738,
+        "n_points": {
+          "all": 2759,
+          "crop": 1332,
+          "processed": 3262,
+          "pasted": 3262
+        },
+        "frames": 36
+      },
+      "seconds": 2.32
     }
   ]
 }

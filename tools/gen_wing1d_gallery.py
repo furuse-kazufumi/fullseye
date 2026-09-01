@@ -2353,7 +2353,7 @@ def ex_envelope_flow(log):
     fs, dur, fc = 25600.0, 1.0, 3000.0
     x = A.synthesize_bearing_signal(fs, dur, carrier_hz=fc, defect_hz=fd,
                                     modulation=0.5, mode="impulse",
-                                    noise_sigma=0.12, seed=5)
+                                    noise_sigma=0.05, seed=5)
     t = np.arange(x.size) / fs
     freqs, mag = dsp.spectrum(x, fs)
     amp = mag * (2.0 / x.size)
@@ -2399,7 +2399,7 @@ def ex_envelope_flow(log):
 
     # 1. 生波形
     fig = _base("1. the raw record",
-                f"impulse bearing signal, {fs:g} Hz x {dur:g} s, noise sigma 0.12")
+                f"impulse bearing signal, {fs:g} Hz x {dur:g} s, noise sigma 0.05")
     ax = Ax(fig, 78, 56, PW - 24, PH - 78, (0.0, ms),
             (-float(np.abs(x).max()) * 1.1, float(np.abs(x).max()) * 1.1))
     ax.panel()
@@ -2425,6 +2425,7 @@ def ex_envelope_flow(log):
     ink = fig.ink()
     ax.frame(ink)
     ax.xticks(ink, [0, 1000, 2000, 3000, 4000, 6000, 8000], "%.0f")
+    ax.yticks(ink, [0.0, 0.05, 0.10], "%.2f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
     ax.curve(ink, freqs, amp, width=2)
@@ -2452,6 +2453,7 @@ def ex_envelope_flow(log):
     ink = fig.ink()
     ax.frame(ink)
     ax.xticks(ink, [0, 2000, 4000, 6000, 8000, 10000, 12000], "%.0f")
+    ax.yticks(ink, [-1, 0, 1, 2, 3], "%.0f")
     fig.stamp(ink, C_AXIS)
     fig.box(ax.X(lo), ax.y0, ax.X(hi), ax.y1, (0.14, 0.16, 0.10))
     ink = fig.ink()
@@ -2480,6 +2482,7 @@ def ex_envelope_flow(log):
     ink = fig.ink()
     ax.frame(ink)
     ax.xticks(ink, [0, 10, 20, 30, 40, 50, 60], "%.0f")
+    ax.yticks(ink, [-1, 0, 1], "%.0f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
     ax.curve(ink, t[keep] * 1e3, x[keep], width=1)
@@ -2501,6 +2504,7 @@ def ex_envelope_flow(log):
     ink = fig.ink()
     ax.frame(ink)
     ax.xticks(ink, [0, 10, 20, 30, 40, 50, 60], "%.0f")
+    ax.yticks(ink, [-0.2, 0.0, 0.2], "%.1f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
     ax.curve(ink, t[keep] * 1e3, band[keep], width=1)
@@ -2527,6 +2531,7 @@ def ex_envelope_flow(log):
     ink = fig.ink()
     ax.frame(ink)
     ax.xticks(ink, [0, 108, 216, 324, 432, 500, 600], "%.0f")
+    ax.yticks(ink, [0.0, 0.025, 0.05, 0.075], "%.3f")
     fig.stamp(ink, C_AXIS)
     ink = fig.ink()
     ax.curve(ink, es["freqs"], es["magnitude"], width=2)
