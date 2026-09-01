@@ -1050,6 +1050,8 @@ def phase_displacement(video, f_lo, f_hi, fps, scales: int = 4,
     b1 = np.zeros((t, h, w))
     weight = np.zeros((h, w))
     kmax = 0.0
+    coh_num = 0.0
+    coh_den = 0.0
     for j, filt in enumerate(bank["filters"]):
         if bank["kinds"][j] != _ORIENTED:
             continue
