@@ -933,8 +933,8 @@ def range_doppler_map(cube, combine="incoherent", antenna=None, normalize=False)
     all three agree exactly.
 
     ``normalize=True`` divides by ``N_c * N_s``, so a bin-centred target of
-    amplitude ``a`` peaks at exactly ``a`` (measured relative error 2.4e-16).
-    The default ``False`` keeps the raw FFT magnitude.
+    amplitude ``a`` peaks at exactly ``a`` (measured: 1.0 for a unit target,
+    absolute error 0.0). The default ``False`` keeps the raw FFT magnitude.
 
     No window is applied — compose :func:`fmcw_window_apply` first if you want
     one. The output is a plain 2-D float64 array, so every 2-D operator in
