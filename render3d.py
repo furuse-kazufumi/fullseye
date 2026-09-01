@@ -20,6 +20,38 @@ SDF for collision and grasp metrics). None of that is a 2-D operator, and all of
 it is exactly what evis / onocollo / hillco reach for when they turn a MuJoCo
 asset or a CAD part into perception input.
 
+Pixel-centre convention (**one convention, library-wide — do not add 0.5**):
+
+    The centre of pixel ``(row=r, col=c)`` **is** the continuous image coordinate
+    ``(u, v) = (c, r)``, exactly. Columns are ``u = 0 .. W-1`` and rows are
+    ``v = 0 .. H-1``; a pixel therefore covers ``[c-0.5, c+0.5) x [r-0.5, r+0.5)``
+    and the image spans ``[-0.5, W-0.5] x [-0.5, H-0.5]``. This is the OpenCV
+    convention and it is the one :func:`camera.depth_to_points` uses (its
+    ``v, u = np.mgrid[0:H, 0:W]`` are pixel *centres*), the one :mod:`cadmap` and
+    :mod:`visualhull` use, and the one the calibration modules use. The competing
+    OpenGL convention — pixel *corners* at integers, centres at ``index + 0.5`` —
+    is **not** used anywhere here. Mixing the two does not raise: it silently
+    biases every depth by half a pixel, which is a systematic metrology error
+    (measured on a tilted plane at ``fx = 241.4``: back-projected points sat
+    3.9e-4 world units off the true plane, all on the same side).
+
+    Consequently :func:`intrinsics_from_fov` puts the principal point at
+    ``cx = (W - 1) / 2``, ``cy = (H - 1) / 2`` — the centre of that span.
+
+Relation to :mod:`camera` (a *different* question from the pixel-centre one):
+:mod:`camera` is OpenCV-handed (``+X`` right, ``+Y`` **down**, ``+Z`` forward)
+while this module is OpenGL-handed (``+X`` right, ``+Y`` **up**, ``-Z`` forward).
+The two share the pixel-centre convention and the intrinsics ``K``, but the
+camera-space axes differ, so a camera-space point converts as::
+
+    (x, y, z)_camera_py = (x, -y, -z)_render3d
+
+In particular a :func:`render_mesh` ``depth`` map can be fed straight to
+``camera.depth_to_points(depth, K)`` — ``depth`` is already ``-z_render3d``,
+i.e. the positive ``+Z`` that :mod:`camera` expects — and the resulting cloud is
+in the :mod:`camera` (y-down) frame; negate ``y`` and ``z`` to get back to
+render3d camera space.
+
 Frame / array conventions (matching the rest of the library):
 
   * ``depth``      float64 (H, W). The metric distance *in front of* the camera
