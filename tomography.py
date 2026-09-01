@@ -1211,16 +1211,40 @@ def ring_artifact_remove(sinogram, window=5, mode="median"):
     curve. Smoothing the mean profile and subtracting the difference removes the
     spike and leaves the object.
 
-    Measured on the Shepp-Logan phantom with ``gain_sigma=0.02``: the
-    reconstruction's normalised RMS error against the truth goes 0.0166 (clean)
-    -> 0.0345 (with rings) -> **0.0175** (removed), so 96 % of the damage is
-    undone. The residual is the part of the ring error that is genuinely
-    indistinguishable from a low-frequency change in the object.
+    Measured on the Shepp-Logan phantom scaled to a peak line integral of 1.18
+    (i.e. CT-realistic, see the note below) with ``gain_sigma=0.02``: the
+    reconstruction's normalised RMS error against the truth goes 0.0250 (clean)
+    -> 0.0643 (with rings) -> **0.0358** (removed at the default window), so
+    **72 %** of the damage is undone.
 
-    The failure mode is stated rather than hidden: this **cannot** separate a real
-    object feature that is thin in the detector direction and present at every
-    angle — the axis of rotation itself is the extreme case — from a gain error.
-    A wider *window* removes more rings and more centre.
+    The window is the whole argument, and it was chosen by measurement rather
+    than by taste. Removed fraction, against the damage the same call does to an
+    already-clean sinogram:
+
+        window   median: undone / damage    mean: undone / damage
+           3       61.0 % / +0.0000           70.4 % / +0.0004
+           5       72.3 % / +0.0002           82.6 % / +0.0019
+           7       74.3 % / +0.0017           82.4 % / +0.0042
+          11       73.6 % / +0.0025           74.0 % / +0.0091
+          31       73.3 % / +0.0043           37.4 % / +0.0244
+          61       58.2 % / +0.0109            9.0 % / +0.0356
+
+    The default is ``window=5, mode="median"`` because it is the setting that
+    removes most of the rings while doing almost nothing to a sinogram that did
+    not need it — and *that* is the property that matters, because this operator
+    will be run on scans whose rings nobody has measured. ``mean`` at the same
+    window removes 10 points more and costs 10x the collateral damage; wide
+    windows are worse at both.
+
+    Two failure modes are stated rather than hidden. This **cannot** separate a
+    real object feature that is thin in the detector direction and present at
+    every angle — the axis of rotation itself is the extreme case — from a gain
+    error. And *gain_sigma is in line-integral units*, so how much a given gain
+    error matters depends entirely on how large the line integrals are: on the
+    same phantom left in raw pixel units (peak line integral 70.9 rather than
+    1.18) the identical 2 % gain error changes the reconstruction's error by less
+    than 0.0001 and this operator has nothing to do. That is not a bug in either
+    place — it is what "2 % of the signal" means when the signal is 60x larger.
 
     :param sinogram: ``(n_angles, n_detectors)``.
     :param window: smoothing width in detector bins, an **odd** int ``3 .. n_det``.
