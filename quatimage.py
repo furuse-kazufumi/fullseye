@@ -113,10 +113,12 @@ Where this sits next to what already exists
   ``pose_quat.quat_to_hom_mat3d``. Its per-quaternion helpers are scalar and this
   module needs per-pixel arithmetic, so the vectorised Hamilton product here is
   new code whose agreement with ``pose_quat.quat_compose`` is asserted in the
-  tests to 1.4e-16. **One caveat found while doing that, documented in
-  :func:`quat_color_rotate`**: ``pose_quat.quat_normalize`` divides by
-  ``norm + 1e-12`` rather than refusing a zero quaternion, so a zero rotor
-  becomes the identity rotation silently. This module validates before it calls.
+  tests to exactly 0.0. **Three defects found in that module while doing this
+  have since been fixed there** (it normalised with ``norm + 1e-12``, so a zero
+  rotor became the identity rotation silently and every valid rotor shrank by
+  one part in 1e12); the history and the re-measured numbers are in
+  :func:`quat_color_rotate`. This module keeps its own guard in front of the
+  call regardless, so it does not depend on that fix holding.
 * :mod:`complexops` owns the complex field. Nothing here duplicates it; the
   monogenic signal is the object complex numbers *cannot* hold in 2-D.
 * :mod:`motionmag` owns phase-based magnification via a **complex steerable**
