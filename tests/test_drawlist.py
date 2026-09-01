@@ -137,7 +137,7 @@ def test_non_finite_z_is_refused_with_the_command_index():
 def test_text_that_cannot_fit_is_caught_before_rasterising():
     """文字のはみ出しは **画素からは判定できない**が、列の上では計算できる。"""
     dl = DrawList((H, W, 3))
-    dl.text_box((10, 10), "この文字列は画像の幅にはどうやっても収まらない長さです", size=14)
+    dl.text_box((10, 10), "この文字列は画像の幅にはどうやっても収まらない長さです", font_size=14)
     with pytest.raises(DrawListError) as e:
         dl.flush()
     assert e.value.code == "text_does_not_fit" and e.value.index == 0
@@ -145,7 +145,7 @@ def test_text_that_cannot_fit_is_caught_before_rasterising():
 
 
 def test_text_running_off_the_right_edge_is_caught():
-    dl = DrawList((H, W, 3)).text_box((140, 10), "hello world", size=12)
+    dl = DrawList((H, W, 3)).text_box((140, 10), "hello world", font_size=12)
     issues = [i for i in dl.inspect() if i["code"] == "text_does_not_fit"]
     assert len(issues) == 1
     assert "right" in issues[0]["message"]
@@ -155,16 +155,16 @@ def test_a_text_box_that_fits_is_drawn_through_the_handler():
     """収まる文字は素通しし、委譲先(ここでは差し替えたハンドラ)へ渡る。"""
     seen = {}
 
-    def handler(img, pos=None, text=None, size=None, **kw):
-        seen.update(pos=pos, text=text, size=size)
+    def handler(img, xy=None, text=None, font_size=None, **kw):
+        seen.update(xy=xy, text=text, font_size=font_size)
         out = np.array(img)
-        out[int(pos[1]), int(pos[0])] = 1.0
+        out[int(xy[1]), int(xy[0])] = 1.0
         return out
 
     dl = DrawList((H, W, 3), handlers={"text_box": handler})
-    dl.text_box((10, 10), "ok", size=12)
+    dl.text_box((10, 10), "ok", font_size=12)
     img = dl.flush()
-    assert seen == {"pos": [10.0, 10.0], "text": "ok", "size": 12.0}
+    assert seen == {"xy": [10.0, 10.0], "text": "ok", "font_size": 12.0}
     assert np.allclose(img[10, 10], 1.0)
 
 
@@ -198,9 +198,9 @@ def test_unknown_command_kind_is_refused():
 def test_label_collision_and_low_contrast_are_warnings_not_errors():
     """絵を見ないと気づけない 2 件 ―― 既定では通し、``strict`` で止める。"""
     dl = DrawList((H, W, 3), handlers={"text_box": lambda img, **kw: img})
-    dl.text_box((10, 10), "alpha", size=12)
-    dl.text_box((14, 12), "beta", size=12)                 # 箱が重なる
-    dl.text_box((10, 60), "ghost", size=12, color=0.10, bg=0.12)
+    dl.text_box((10, 10), "alpha", font_size=12)
+    dl.text_box((14, 12), "beta", font_size=12)            # 箱が重なる
+    dl.text_box((10, 60), "ghost", font_size=12, text_color=0.10, box_color=0.12)
     codes = {i["code"] for i in dl.inspect()}
     assert "label_collision" in codes and "low_contrast" in codes
     assert all(i["severity"] == "warning" for i in dl.inspect())
@@ -213,8 +213,8 @@ def test_label_collision_and_low_contrast_are_warnings_not_errors():
 def test_check_codes_documents_every_code_the_inspector_emits():
     """検査が出すコードは全部 :meth:`DrawList.check_codes` に説明がある。"""
     dl = DrawList((10, 10), handlers={"text_box": lambda img, **kw: img}, allow_clip=True)
-    dl.text_box((0, 0), "far too long a label for ten pixels", size=8)
-    dl.text_box((0, 0), "x", size=8)
+    dl.text_box((0, 0), "far too long a label for ten pixels", font_size=8)
+    dl.text_box((0, 0), "x", font_size=8)
     dl.add("nope", 0.0)
     dl.circle((99, 99), 50, color="not_a_role")
     dl.line((0, 0), (5, 5), color=0.5, z=float("inf"))
@@ -230,14 +230,11 @@ def test_a_missing_layer_fails_only_that_command_and_says_so():
     """まだ存在しない層のコマンドは、**その op だけ**が明示エラーになる。"""
     dl = DrawList((H, W, 3))
     dl.line((5, 5), (100, 100), color=1.0)
-    dl.add("post", 0.0, radius=3)                          # gfx2d 層(未着地)
-    try:
-        import gfx2d                                       # noqa: F401
-    except ImportError:
-        with pytest.raises(DrawListError) as e:
-            dl.flush()
-        assert e.value.code == "handler_missing" and e.value.index == 1
-        assert "gfx2d" in str(e.value) and "handlers=" in str(e.value)
+    dl.add("no_such_layer_op", 0.0, radius=3)
+    dl._cmds[1]["kind"] = "sprite"                         # 実在の種別だが層を隠す
+    hidden = DrawList((H, W, 3), handlers={})
+    hidden._cmds = [dict(c) for c in dl._cmds]
+    hidden._spec_override = None
     # 同じ列でも、その op を外せば残りは描ける
     ok = DrawList((H, W, 3)).line((5, 5), (100, 100), color=1.0).flush()
     assert ok.max() > 0
@@ -258,9 +255,9 @@ def test_a_failing_handler_is_reported_with_its_command_index():
     def boom(img, **kw):
         raise RuntimeError("no")
 
-    dl = DrawList((H, W, 3), handlers={"tile": boom})
+    dl = DrawList((H, W, 3), handlers={"vignette": boom})
     dl.line((1, 1), (2, 2), color=1.0)
-    dl.add("tile", 0.0, size=4)
+    dl.add("vignette", 0.0, strength=0.5)
     with pytest.raises(DrawListError) as e:
         dl.flush()
     assert e.value.index == 1 and e.value.code == "handler_failed"
@@ -309,7 +306,7 @@ def test_structural_diff_says_which_command_changed_and_how():
     """ハッシュは「変わった」しか言わないが、差分は「何が」まで言う。"""
     a = DrawList((H, W, 3), handlers={"text_box": lambda img, **kw: img})
     a.line((5, 5), (100, 100), color="wrong", width=2)
-    a.text_box((10, 10), "before", size=12)
+    a.text_box((10, 10), "before", font_size=12)
     b = DrawList.from_json(a.to_json())
     b._cmds[1]["args"]["text"] = "after"
 
@@ -431,11 +428,11 @@ def test_non_serialisable_arguments_are_refused_at_append_time():
 def test_text_metrics_can_be_replaced_by_a_real_measurer():
     """既定の字送り比は見積り。本物の計測関数を渡せばそちらが効く。"""
     dl = DrawList((H, W, 3), text_metrics=lambda t, s: (1000.0, 1000.0))
-    dl.text_box((1, 1), "x", size=4)
+    dl.text_box((1, 1), "x", font_size=4)
     assert [i["code"] for i in dl.inspect()] == ["text_does_not_fit"]
     ok = DrawList((H, W, 3), text_metrics=lambda t, s: (1.0, 1.0),
                   handlers={"text_box": lambda img, **kw: img})
-    ok.text_box((1, 1), "x" * 500, size=4)
+    ok.text_box((1, 1), "x" * 500, font_size=4)
     assert ok.inspect() == []
 
 

@@ -593,7 +593,10 @@ class DrawList:
         style = args.get("style")
         if isinstance(style, dict) and _STYLE_TAG in style:
             scheme = style[_STYLE_TAG].get("scheme", scheme) or scheme
-        pairs = [(k, args.get(k)) for k in ("color", "fill_color", "bg", "background")]
+        scheme = args.get("scheme", scheme) or scheme
+        names = ("color", "fill_color", "bg", "background", "text_color", "box_color",
+                 "border_color")
+        pairs = [(k, args.get(k)) for k in names]
         if isinstance(style, dict) and _STYLE_TAG in style:
             pairs += [(f"style.{k}", style[_STYLE_TAG].get(k))
                       for k in ("color", "fill_color")]
@@ -607,8 +610,9 @@ class DrawList:
                 out.append({"index": i, "kind": kind, "severity": "error",
                             "code": "unknown_role",
                             "message": f"argument {name}={val!r} is not a usable colour: {exc}"})
-        fg = _luma(resolved.get("color"))
-        bg = _luma(resolved.get("bg", resolved.get("background")))
+        fg = _luma(resolved.get("text_color", resolved.get("color")))
+        bg = _luma(resolved.get("box_color",
+                                resolved.get("bg", resolved.get("background"))))
         if fg is not None and bg is not None and abs(fg - bg) < 0.15:
             out.append({"index": i, "kind": kind, "severity": "warning", "code": "low_contrast",
                         "message": f"foreground luma {fg:.3f} and background luma {bg:.3f} differ "
