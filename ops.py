@@ -462,11 +462,49 @@ def _gabor(v, a, b):
     return _norm(np.abs(ndimage.convolve(v, g, mode="reflect")))
 
 
+def _clip_limit_cdf(hist, climit_counts):
+    """Contrast-limited CDF: clip the histogram, redistribute the excess, normalise.
+
+    Zuiderveld (1994) の CLAHE の "CL"。各ビンを ``climit_counts`` で切り、
+    切り落とした総量を全ビンへ均等に配り直してから累積して [0,1] に正規化する。
+    再配分するので **CDF の終端は常に 1.0**(= 画像の最大値は 1.0 に写る)。
+
+    ``climit_counts`` はビンの **平均カウント** を単位にした倍率で与えるのが CLAHE の
+    習わし(OpenCV の ``clipLimit`` と同じ意味)。1.0 倍 = 全ビンを平均に均す =
+    トーンマップが直線 = コントラスト強調ゼロ、256 倍(= ビン数)= 1 ビンが取り得る
+    最大カウントなので **切り取りが一度も効かない = 素の AHE**。
+    """
+    h = np.asarray(hist, np.float64)
+    total = float(h.sum())
+    if total <= 0:
+        return h
+    excess = float(np.sum(np.maximum(h - climit_counts, 0.0)))
+    if excess > 0:
+        h = np.minimum(h, climit_counts) + excess / h.size
+    cdf = np.cumsum(h)
+    return cdf / cdf[-1] if cdf[-1] > 0 else cdf
+
+
 def _clahe(v, a, b):
-    """Adaptive (tiled) histogram equalization with inter-tile bilinear blending.
+    """Contrast-Limited Adaptive Histogram Equalization (tiled, bilinearly blended).
+
+    - ``a`` — タイル数 ``nb = 2 + int(3a)`` (画像を nb×nb に分割)
+    - ``b`` — **clip limit**。ビン平均カウントに対する倍率 ``256**b`` で与える
+      (``b=0`` → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 =
+      強調ゼロ、``b=1`` → 256 倍 = 1 ビンが取り得る最大値なので切り取りが
+      効かない = 素の AHE、``b=0.5`` → 16 倍。OpenCV の既定 ``clipLimit=40`` は
+      おおよそ ``b=0.665``)。
+
+    ★2026-09-02(この修正): それまで ``b`` は **完全に死んでいた**(実測:
+    ``max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0`` きっかり)。CLAHE の
+    "C" は contrast **limited** の C であり、clip limit こそが AHE と CLAHE を
+    分ける当のものなので、**実装は AHE であって CLAHE ではなかった** ——
+    名前が嘘をついていた。ここで clip limit を実装して ``b`` に割り当て、
+    ``b=1`` が旧実装とビット一致する端になるよう倍率を選んである
+    (切り取りが起きない上限 = ビン数 256 倍)。
 
     Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the
-    H % nb / W % nb remainder), each tile's normalised CDF is its local tone map,
+    H % nb / W % nb remainder), each tile's clip-limited CDF is its local tone map,
     and every pixel blends the maps of its (up to) 4 nearest tile centres with
     bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).
 
@@ -478,6 +516,8 @@ def _clahe(v, a, b):
     nb = 2 + int(a * 3)
     H, W = v.shape
     x = np.clip(np.asarray(v, np.float64), 0, 1)
+    # clip limit を「ビン平均カウントの何倍か」で持つ。256 倍 = 切り取り不能 = AHE。
+    clip_mult = 256.0 ** float(np.clip(b, 0.0, 1.0))
     ys = np.linspace(0, H, nb + 1).astype(int)
     xs = np.linspace(0, W, nb + 1).astype(int)
     cy = (ys[:-1] + ys[1:]) / 2.0                       # tile centres (pixel coords)
