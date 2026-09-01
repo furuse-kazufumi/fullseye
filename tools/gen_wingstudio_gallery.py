@@ -1112,9 +1112,9 @@ def ex_cadmap():
                       np.array([0.92, 0.42, 0.36]))
     pt_vis_frac = float(vis.mean())
 
-    S = 330
+    S = 270                       # 4 枚横並びで全幅 1200 px に収める
     W = 24 * 5 + S * 4
-    H = 52 + S + 190
+    H = 52 + S + 196
     ctr, rad3 = view_radius(pts, [0.0, 90.0, 180.0, 270.0], 22.0)
     frames, n = [], 24
     for i in range(n):
@@ -1884,7 +1884,7 @@ pose, K = render3d.auto_view(V, width=200, height=200)      # K[0,2] = 100.0
 buf = render3d.render_mesh(V, F, pose=pose, intrinsics=K, width=200, height=200)
 P_int  = camera.backproject(pix,       buf["depth"][valid], K)   # 添字
 P_half = camera.backproject(pix + 0.5, buf["depth"][valid], K)   # 添字 + 0.5
-# 実測: 平均 |P_half - P_int| = 0.00238 world 単位 = ちょうど 0.5 px 相当
+# 実測: 平均 |P_half - P_int| = 0.0022879 world 単位 = ちょうど 0.5 px 相当
 ```
 絵としては見えませんが、寸法計測に使うと系統誤差になります。
 

@@ -193,10 +193,46 @@ def test_more_defocus_blurs_more_and_vignetting_darkens_the_corner():
     soft = vd.image_formation(img, defocus_px=3.0, vignetting=False)
     assert soft.max() < sharp.max(), "デフォーカスでピークが下がるはず"
     flat = np.ones((48, 48))
-    vign = vd.image_formation(flat, vignetting=True, defocus_px=0.0)
+    vign = vd.image_formation(flat, vignetting=True, defocus_px=0.0,
+                              image_distance_mm=2.0)     # わざと短い像距離 = 広い画角
     novign = vd.image_formation(flat, vignetting=False, defocus_px=0.0)
     assert vign[0, 0] < vign[24, 24], "角が中心より暗いこと"
     assert novign[0, 0] == pytest.approx(novign[24, 24], rel=0.05)
+
+
+def test_vignetting_is_physical_not_normalised_to_the_array_corner():
+    """cos^4 は**画角**で決まる ―― 配列の角ではない。
+
+    2026-09 まではここが正規化半径で、配列の角が常に 45 度扱い(0.2500 固定)
+    だった。レンズにも画素ピッチにも切り出しの大きさにも反応せず、例外も出ない。
+    この検査は 2 つを縛る: (1) 全画面の角が ``system_feasibility`` の
+    ``corner_illumination`` と一致すること(**唯一の真実源にする**)、
+    (2) 同じ系の小さな切り出しは、ほとんど落ちないこと。
+    """
+    geo = vd.system_geometry(focal_mm=35.0, working_distance_mm=200.0,
+                             pixel_pitch_um=3.45, width_px=2448, height_px=2048)
+    feas = vd.system_feasibility(60.0, 35.0, 200.0, 3.45, 4.0, 2448, 2048)
+    kw = dict(f_number=4.0, pixel_pitch_um=3.45, vignetting=True,
+              image_distance_mm=geo["image_distance_mm"])
+
+    full = vd.image_formation(np.ones((2048, 2448)), **kw)
+    # 画素中心は感光面の端より半画素内側なので、厳密一致ではなく 1e-4 で縛る。
+    assert full[0, 0] == pytest.approx(feas["corner_illumination"], abs=1e-4)
+    assert full[0, 0] == pytest.approx(0.9671, abs=1e-3), "旧実装の 0.2500 に戻らないこと"
+
+    tile = vd.image_formation(np.ones((232, 232)), **kw)
+    assert tile[0, 0] > 0.999, "小さな切り出しはほとんど落ちない(旧実装は 0.2500)"
+
+    # 像距離を変えれば答えが変わること = 物理量に反応している証拠
+    near = vd.image_formation(np.ones((232, 232)), f_number=4.0, pixel_pitch_um=3.45,
+                              vignetting=True, image_distance_mm=2.0)
+    assert near[0, 0] < 0.5
+
+
+def test_vignetting_without_image_distance_fails_closed():
+    """既定値を置かない ―― 置けばまた「もっともらしい嘘」に戻るため。"""
+    with pytest.raises(ValueError, match="image_distance_mm"):
+        vd.image_formation(np.ones((8, 8)), vignetting=True)
 
 
 def test_image_formation_fails_closed_on_bad_input():
