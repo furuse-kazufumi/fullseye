@@ -1142,10 +1142,17 @@ def ex_res_vs_dof(log):
         f"window is f/{n_dof:.2f} .. f/{n_res:.2f} (sampling/diffraction swap at "
         f"f/{n_swap:.3f})")
 
+    # ★2 つの量を 1 枚の図に重ねると、**尺度の取り方しだいで 2 本の曲線が
+    # 偶然ぴったり重なる**(最初の版がまさにそうで、「独立な 2 軸」という主張の
+    # 真逆に見えていた)。尺度をいじって離すのは誤魔化しなので、**パネルを縦に
+    # 分ける** — 図の構造そのものが「別の軸だ」と言う。
     w, hdr = 1000, 34
-    plot_box = (86, hdr + 40, w - 96, hdr + 40 + 306)
-    h = int(plot_box[3]) + 118
-    lat_hi, dof_hi = 130.0, 3.2
+    box_a = (86, hdr + 34, w - 30, hdr + 34 + 166)          # 横分解能 [um]
+    box_b = (86, hdr + 232, w - 30, hdr + 232 + 166)        # 被写界深度 [mm]
+    h = int(box_b[3]) + 116
+    lat_hi, dof_hi = 140.0, 3.2
+    lat_ticks, dof_ticks = [25, 50, 75, 100, 125], [1, 2, 3]
+    x_ticks = [2, 4, 6, 8, 10, 12, 14, 16]
     frames = []
     for r in rows:
         canvas = _canvas(h, w)
@@ -1156,52 +1163,73 @@ def ex_res_vs_dof(log):
             f"f={f:g}mm  WD={wd:g}mm  pitch={pitch:g}um  lambda={lam:g}um   "
             f"target defect {target_um:g} um, part tolerance {tol:g} mm   "
             f"sweeping the f-number")
-        p = Plot(canvas, plot_box, (2.0, 16.0), (0.0, lat_hi))
+        # --- 上段: 横分解能 ---------------------------------------------- #
+        p = Plot(canvas, box_a, (2.0, 16.0), (0.0, lat_hi))
         p.bg()
         if n_dof is not None and n_res is not None:
             p.band_x(n_dof, n_res, (0.10, 0.20, 0.19))
             p.band_x(2.0, n_dof, (0.17, 0.14, 0.13))
             p.band_x(n_res, 16.0, (0.17, 0.14, 0.13))
-        p.grid_x([4, 6, 8, 10, 12, 14, 16])
-        p.grid_y([25, 50, 75, 100, 125])
+        p.grid_x(x_ticks[1:])
+        p.grid_y(lat_ticks)
         p.frame()
+        p.curve([q["n"] for q in rows], [q["nyq"] for q in rows], (0.34, 0.36, 0.40), 1)
+        p.curve([q["n"] for q in rows], [q["dif"] for q in rows], (0.34, 0.36, 0.40), 1)
         p.curve([q["n"] for q in rows], [q["lat"] for q in rows], C_OPT, 2)
-        p.curve([q["n"] for q in rows], [q["nyq"] for q in rows], C_GRID, 1)
-        p.curve([q["n"] for q in rows], [q["dif"] for q in rows], C_GRID, 1)
         p.hline(target_um, C_MISS, 1, dashed=True, dash=7, gap=6)
-        p.marker(r["n"], r["lat"], C_OPT, 5, "cross", 2)
-        p.ticks_y([25, 50, 75, 100, 125])
-        # 第 2 の縦軸(右) = 被写界深度 [mm]。**p.c から続ける** — imagedraw の
-        # op は新しい配列を返すので、元の canvas を渡すと p の描画が全部消える
-        # (実際に消えた: 青の横分解能曲線・枠・目盛りが 1 本も出なかった)。
-        p2 = Plot(p.c, plot_box, (2.0, 16.0), (0.0, dof_hi))
+        if n_res is not None:
+            p.vline(n_res, C_MISS, 1, dashed=True, dash=5, gap=5)
+        p.marker(r["n"], r["lat"], (1.0, 1.0, 1.0), 5, "cross", 2)
+        p.ticks_y(lat_ticks)
+        p.ticks_x(x_ticks)
+        # --- 下段: 被写界深度(**p.c から続ける** — imagedraw は新配列を返すので
+        #     元の canvas を渡すと上段の描画が丸ごと消える。実際に消えた) ---- #
+        p2 = Plot(p.c, box_b, (2.0, 16.0), (0.0, dof_hi))
+        p2.bg()
+        if n_dof is not None and n_res is not None:
+            p2.band_x(n_dof, n_res, (0.10, 0.20, 0.19))
+            p2.band_x(2.0, n_dof, (0.17, 0.14, 0.13))
+            p2.band_x(n_res, 16.0, (0.17, 0.14, 0.13))
+        p2.grid_x(x_ticks[1:])
+        p2.grid_y(dof_ticks)
+        p2.frame()
         p2.curve([q["n"] for q in rows], [q["dof"] for q in rows], C_CURVE, 2)
-        p2.hline(tol, C_CURVE, 1, dashed=True, dash=4, gap=8)
-        p2.marker(r["n"], r["dof"], C_CURVE, 5, "cross", 2)
-        p2.ticks_x([2, 4, 6, 8, 10, 12, 14, 16])
+        p2.hline(tol, C_MISS, 1, dashed=True, dash=7, gap=6)
+        if n_dof is not None:
+            p2.vline(n_dof, C_MISS, 1, dashed=True, dash=5, gap=5)
+        p2.marker(r["n"], r["dof"], (1.0, 1.0, 1.0), 5, "cross", 2)
+        p2.ticks_y(dof_ticks)
+        p2.ticks_x(x_ticks)
         canvas = p2.c
-        for t in (2, 4, 6, 8, 10, 12, 14, 16):
-            labels.append((int(p.px(t)) - 5, plot_box[3] + 6, f"{t}", C_DIM, 11, False))
-        for t in (25, 50, 75, 100, 125):
-            labels.append((plot_box[0] - 32, int(p.py(t)) - 7, f"{t}", C_OPT, 11, False))
-        for t in (1, 2, 3):
-            labels.append((plot_box[2] + 8, int(p2.py(t)) - 7, f"{t} mm", C_CURVE, 11, False))
-        yi = int(plot_box[3]) + 24
+        for t in x_ticks:
+            labels.append((int(p2.px(t)) - 5, box_b[3] + 6, f"{t}", C_DIM, 11, False))
+        for t in lat_ticks:
+            labels.append((box_a[0] - 32, int(p.py(t)) - 7, f"{t}", C_OPT, 11, False))
+        for t in dof_ticks:
+            labels.append((box_b[0] - 32, int(p2.py(t)) - 7, f"{t}", C_CURVE, 11, False))
+        yi = int(box_b[3]) + 26
+        feas = vd.system_feasibility(
+            defect_um=target_um, focal_mm=f, working_distance_mm=wd,
+            pixel_pitch_um=pitch, f_number=r["n"], width_px=SYS["width_px"],
+            height_px=SYS["height_px"], wavelength_um=lam, depth_tolerance_mm=tol)
         both = r["res_ok"] and r["dof_ok"]
-        verdict = ("resolvable" if both
-                   else "marginal (lateral OK, part drifts out of focus)"
-                   if r["res_ok"] else "not_resolvable")
         labels += [
-            (plot_box[0] + 6, plot_box[1] + 4,
-             "lateral resolution limit [um]  (blue)", C_OPT, 11, True),
-            (plot_box[2] - 208, plot_box[1] + 4,
-             "depth of field [mm]  (yellow)", C_CURVE, 11, True),
-            (plot_box[2] - 116, plot_box[3] - 16, "f-number ->", C_DIM, 11, False),
-            (int(p.px(min(n_res, 15.0))) - 148, plot_box[1] + 22,
-             f"resolvable only left of f/{n_res:.2f}", C_OPT, 11, True),
-            (int(p.px(n_dof)) + 6, plot_box[3] - 40,
-             f"tolerance met only right of f/{n_dof:.2f}", C_CURVE, 11, True),
-            (int(p.px(0.5 * (n_dof + n_res))) - 46, plot_box[1] + 40,
+            (box_a[0] + 6, box_a[1] + 4,
+             "lateral resolution limit [um]  --  can the optics carry a "
+             f"{target_um:g} um defect at all?", C_OPT, 12, True),
+            (box_b[0] + 6, box_b[1] + 4,
+             "depth of field [mm]  --  does the part stay in focus while it "
+             f"drifts {tol:g} mm?", C_CURVE, 12, True),
+            (box_b[2] - 106, box_b[3] + 6, "f-number ->", C_DIM, 11, False),
+            (box_a[0] + 8, int(p.py(target_um)) - 16,
+             f"target {target_um:g} um", C_MISS, 11, True),
+            (box_b[0] + 8, int(p2.py(tol)) - 16,
+             f"tolerance {tol:g} mm", C_MISS, 11, True),
+            (max(box_a[0] + 4, int(p.px(n_res)) - 190), box_a[3] - 20,
+             f"resolvable only left of f/{n_res:.2f} ->|", C_OPT, 11, True),
+            (int(p2.px(n_dof)) + 8, box_b[3] - 20,
+             f"|<- tolerance met only right of f/{n_dof:.2f}", C_CURVE, 11, True),
+            (int(p.px(0.5 * (n_dof + n_res))) - 44, box_a[1] + 22,
              "usable window", C_HIT, 12, True),
             (18, yi,
              f"f/{r['n']:5.2f}   lateral limit {r['lat']:6.2f} um "
@@ -1212,15 +1240,15 @@ def ex_res_vs_dof(log):
              + ("yes" if r["res_ok"] else "NO ")
              + f"    tolerance {tol:g} mm fits: "
              + ("yes" if r["dof_ok"] else "NO ")
-             + f"    ->  system_feasibility verdict: {verdict}",
+             + f"    ->  system_feasibility verdict: {feas['verdict']}",
              (C_HIT if both else C_BAD), 14, True),
             (18, yi + 44,
              "fold these two into a single yes/no and the reader goes shopping for "
              "a lens when the fix is the aperture, the tolerance, or a focus "
              "mechanism", C_DIM, 11, False),
             (18, yi + 60,
-             f"(the faint grey pair are the two raw limits; they swap at "
-             f"f/{n_swap:.3f}, and the blue curve is their maximum)",
+             f"(the faint grey pair in the top panel are the two raw limits; they "
+             f"swap at f/{n_swap:.3f} and the blue curve is their maximum)",
              C_DIM, 11, False),
         ]
         frames.append(_text(_to_u8(canvas), labels))

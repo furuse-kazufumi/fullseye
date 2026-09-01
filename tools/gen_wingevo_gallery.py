@@ -1004,7 +1004,9 @@ def ex_seed_spread(data, log=print):
                 items.append((W - 286, y0 + 210,
                               f"恒等を下回った seed {below}/{len(runs)}", C_WARN, 13, True))
         frames.append(text(to_u8(c), items))
-    frames = frames + [frames[-1]] * 6
+    # 末尾を複製して「溜め」を作らない — PIL の GIF 最適化は**連続する同一
+    # フレームを畳む**ので、書いた枚数と読み戻した枚数が食い違って
+    # save_animation の検証に落ちる。溜めは hold_last_ms が担当する。
     info = save_gif(frames, "wingevo_seed_spread", fps=2)
     lines = []
     for n in names:
@@ -1113,7 +1115,9 @@ def ex_generations(data, log=print):
              "長い方が強いとは限らない。", C_DIM, 13, False),
         ]
         frames.append(text(to_u8(c), items))
-    frames = frames + [frames[-1]] * 8
+    # 末尾を複製して「溜め」を作らない — PIL の GIF 最適化は**連続する同一
+    # フレームを畳む**ので、書いた枚数と読み戻した枚数が食い違って
+    # save_animation の検証に落ちる。溜めは hold_last_ms が担当する。
     info = save_gif(frames, "wingevo_generations", fps=3)
     cap = (f"**世代が進むとパイプラインが伸びる/縮む** ―― `{tj['problem']}` を "
            f"seed {tj['seed']} / pop {tj['pop']} で {tj['gens']} 世代、実際に走らせた軌跡。"
@@ -1323,7 +1327,9 @@ def ex_signature_collapse(data, log=print):
             items.append((56, 478, "この走行では数値違いの分裂が出なかった。",
                           C_DIM, 12, False))
         frames.append(text(to_u8(c), items))
-    frames = frames + [frames[-1]] * 8
+    # 末尾を複製して「溜め」を作らない — PIL の GIF 最適化は**連続する同一
+    # フレームを畳む**ので、書いた枚数と読み戻した枚数が食い違って
+    # save_animation の検証に落ちる。溜めは hold_last_ms が担当する。
     info = save_gif(frames, "wingevo_signature_collapse", fps=6)
     last = rows[-1]
     cap = ("**署名の収束** ―― 良いエラーメッセージほど実行固有の数を含むので、"
@@ -1609,7 +1615,9 @@ def ex_diffusion(data, log=print):
              C_DIM, 13, False),
         ]
         frames.append(text(to_u8(c), items))
-    frames = frames + [frames[-1]] * 8
+    # 末尾を複製して「溜め」を作らない — PIL の GIF 最適化は**連続する同一
+    # フレームを畳む**ので、書いた枚数と読み戻した枚数が食い違って
+    # save_animation の検証に落ちる。溜めは hold_last_ms が担当する。
     info = save_gif(frames, "wingevo_diffusion", fps=6)
     last = rows[-1]
     cap = ("**拡散と収束** ―― ランダム連鎖を "
