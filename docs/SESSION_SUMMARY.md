@@ -3,23 +3,23 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-01 20:30:45
+- **最終更新**: 2026-09-01 21:34:51
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-6a8318a6 fullseye: 四元数画像 19 op + pose_quat の fail-open 修正 + pose 型の嘘 3 件
-60afc5dd auto: test_quatimage.py 編集前 (2026-09-01 20:02)
-f71d5ef0 auto: test_quatimage.py 編集前 (2026-09-01 20:02)
-2b163f50 auto: quatimage.py 編集前 (2026-09-01 20:02)
-6e7ff09f auto: quatimage.py 編集前 (2026-09-01 20:01)
-ff0f953c auto: quatimage.py 編集前 (2026-09-01 20:01)
-59f78231 auto: quatimage.py 編集前 (2026-09-01 20:01)
-3bfb8ca0 auto: quatimage.py 編集前 (2026-09-01 20:01)
-b19e03b1 auto: test_pose_quat.py 編集前 (2026-09-01 19:56)
-20223cbf auto: quatimage.py 編集前 (2026-09-01 19:51)
+17746f58 auto: interferometry.py 編集前 (2026-09-01 21:34)
+eb6ac2eb fullseye: 進化が新しい族を実際に使えるようにし、光子計数で +44.5% を実測
+d2b120bd auto: interferometry.py 編集前 (2026-09-01 21:34)
+f19f84f1 auto: interferometry.py 編集前 (2026-09-01 21:34)
+4222bca4 auto: acoustics.py 編集前 (2026-09-01 21:33)
+a546f67b auto: acoustics.py 編集前 (2026-09-01 21:33)
+9162649e auto: acoustics.py 編集前 (2026-09-01 21:33)
+7441c312 auto: acoustics.py 編集前 (2026-09-01 21:32)
+e5c14c83 auto: acoustics.py 編集前 (2026-09-01 21:32)
+edcf4d75 auto: acoustics.py 編集前 (2026-09-01 21:32)
 ```
 
 ## 現在の git status
@@ -31,21 +31,21 @@ b19e03b1 auto: test_pose_quat.py 編集前 (2026-09-01 19:56)
 ## 直近 2 時間に変更されたファイル
 
 ```
-20:29 .pytest_cache/v/cache/nodeids
-20:20 studio_assets/op_help/guide_quaternion_monogenic.html
-20:20 studio_assets/op_help/guide_motion_magnification.html
-20:20 studio_assets/op_help/guide_specular_photometric.html
-20:20 studio_assets/op_help/guide_photon_timeresolved.html
-20:20 studio_assets/op_help/guide_optics_imaging.html
-20:20 studio_assets/op_help/guide_math_metrology.html
-20:20 studio_assets/op_help/guide_lightfield_depth.html
-20:20 studio_assets/op_help/guide_handpose.html
-20:20 studio_assets/op_help/guide_gallery2d_texture_freq.html
-20:20 studio_assets/op_help/guide_gallery2d_smoothing_rank.html
-20:20 studio_assets/op_help/guide_gallery2d_segmentation.html
-20:20 studio_assets/op_help/guide_gallery2d_region.html
-20:20 studio_assets/op_help/guide_gallery2d_physics_alife_3d.html
-20:20 studio_assets/op_help/guide_gallery2d_morphology.html
+21:34 interferometry.py
+21:33 .pytest_cache/v/cache/nodeids
+21:33 .pytest_cache/v/cache/lastfailed
+21:33 pyproject.toml
+21:33 acoustics.py
+21:33 rangedoppler.py
+21:32 examples/coherence_scanning.py
+21:30 tests/test_interferometry.py
+21:29 .ruff_cache/0.16.0/2128910586982079947
+21:29 .ruff_cache/0.16.0/8687138234577503176
+21:29 .ruff_cache/0.16.0/7363606932562918290
+21:28 examples/fmcw_range_doppler.py
+21:27 tests/test_rangedoppler.py
+21:26 opsrangedoppler.py
+21:23 studio_assets/op_help/guide_quaternion_monogenic.html
 ```
 
 ---

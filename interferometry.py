@@ -905,7 +905,7 @@ def csi_envelope(signal, remove_bias=True):
 
 def csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
                       mode="gaussian", remove_bias=True, min_visibility=0.30,
-                      max_edge_envelope=0.05):
+                      max_edge_envelope=0.05, carrier_tolerance=2.0):
     """Surface height from one z-scan: the position of the coherence envelope peak.
 
     This is the operator the whole module is for. Unlike a phase, an envelope has
