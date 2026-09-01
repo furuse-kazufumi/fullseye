@@ -1261,10 +1261,16 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
 
     r_best = np.abs(L @ best_g - Iv)
     if method == "median":
-        # Rousseeuw's scale estimate from the least median of squares.
+        # Rousseeuw's scale estimate from the least median of squares, with a
+        # floor. Without the floor the estimate collapses to ~0 on exactly
+        # consistent data — the winning subset then fits its inliers to rounding
+        # error — and the inlier test ``r <= 2.5 sigma`` starts rejecting good
+        # lights over 1e-16 residuals. Found by the adversarial pass: with 1 of
+        # 8 lights blocked, "median" disbelieved lights it had fitted perfectly.
+        # A residual below 1e-9 of the pixel's brightest measurement is not
+        # evidence of an outlier, so that is the floor.
         sigma = 1.4826 * (1.0 + 5.0 / max(N - 3, 1)) * best_score
-        sigma = np.maximum(sigma, np.finfo(np.float64).tiny)
-        inl = r_best <= 2.5 * sigma[None, :]
+        inl = r_best <= np.maximum(2.5 * sigma, 1e-9 * peak)[None, :]
     else:
         inl = r_best <= tol[None, :]
     # Refit on the consensus set where it is big enough to be better than the
