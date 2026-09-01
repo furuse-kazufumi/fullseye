@@ -1092,7 +1092,10 @@ def ex_vesselness(log) -> dict:
 
     fr = np.asarray(G("vol_frangi")(vol, scales=(1, 2, 3)))
     sa = np.asarray(G("vol_sato")(vol, scales=(1, 2, 3)))
-    bl = np.asarray(G("vol_hessian_blobness")(vol, scales=(1, 2, 3)))
+    # blobness は単一スケールの op なので、frangi/sato と条件を揃えるため
+    # 同じ 3 スケールで掛けて voxel ごとの最大応答を取る(多スケール化を明示)。
+    bl = np.max([np.asarray(G("vol_hessian_blobness")(vol, scale=s))
+                 for s in (1, 2, 3)], axis=0)
     m_t, m_b = tube, (b1 | b2)
     res = {}
     for nm, r in (("vol_frangi", fr), ("vol_sato", sa), ("vol_hessian_blobness", bl)):
