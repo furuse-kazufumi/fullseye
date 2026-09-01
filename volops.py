@@ -23,6 +23,20 @@ array indexed ``[z, y, x]``; ``spacing`` is ``(sz, sy, sx)`` in millimetres, lin
 up with those axes, exactly as :class:`volio.VolumeMeta` reports it (a
 ``VolumeMeta`` may itself be passed wherever ``spacing`` is accepted).
 
+**Registry op vs. raw projection — ``vol_mip`` is normalised (display only).**
+The registry op ``ops.RT["vol_mip"]`` returns ``_norm(vol.max(axis=0))``, i.e. the
+maximum-intensity projection **rescaled into [0, 1]** so it can be shown as an
+image. That rescale changes the denominator, so it must never be used as the
+reference for a *ratio*. Measured on the bundled skeleton CT
+(``studio_assets/sample_3d/skeleton_ct.npy``, shape (20, 97, 28), raw values up to
+1.2264): the cumulative MIP ``run = np.maximum.reduce(vol)`` is by construction
+identical to the full projection, yet ``run.sum() / vol_mip(vol).sum()`` measures
+**122.6 %** — a "reach" above 100 % that no accumulation can produce. Against the
+raw projection it is exactly 100.0 %. **Measure ratios against**
+``vol.max(axis=0)``; use ``vol_mip`` only for what you display. (This is a use
+mismatch, not a bug in the op — normalising is what a display projection should
+do.)
+
 Provenance (public papers, cited per function):
 
   * **Frangi** vesselness — A. F. Frangi, W. J. Niessen, K. L. Vincken, M. A.
