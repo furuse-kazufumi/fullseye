@@ -402,7 +402,16 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
       雑音、``cosmic_mask`` ``(H, W)`` bool は宇宙線の画素、``noiseless``
       ``(H, W)`` はノイズを載せる前の期待値(検算用)。
 
-    ``seed`` は非負整数、乱数は ``numpy.random.default_rng`` —— 同じ seed なら
+    **seed は 2 本ある。** ``field_seed`` が**星野**(座標とフラックス)を、
+    ``seed`` が**その回の観測**(ショットノイズ・読み出しノイズ・宇宙線の位置)を
+    決める。``field_seed=None`` なら ``seed`` と同じ値になる。分けてある理由は
+    実測で見つけた事故で、1 本にしていた最初の版では
+    :func:`synth_frame_series` がフレームごとに ``seed`` を変えた結果
+    **星野そのものが毎フレーム別物**になり、位置合わせが 1 対応しか見つけられず
+    (``frame_align`` が正しく fail-closed した)、フレーム間の宇宙線除去は
+    「全画素が外れ値」を返した。同じ空を撮り直すのと、別の空を撮るのは、
+    引数 1 つで取り違えられる —— だから型ではなく名前で分ける。
+    乱数はどちらも ``numpy.random.default_rng`` なので、同じ seed 対なら
     どの機械でも同じフレーム。
 
     Ground truth it reproduces(``tests/test_astrostack.py`` で固定):
