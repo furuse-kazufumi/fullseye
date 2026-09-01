@@ -45,7 +45,7 @@ Five families:
   * **views** — :func:`lf_subaperture` / :func:`lf_center_view` / :func:`lf_views`
     / :func:`lf_epi`: one viewpoint, the centre viewpoint (the "2-D image" a
     plenoptic camera also gives you for free), the whole grid as a list of plain
-    2-D images (so the ~1200 existing image operators apply unchanged), and the
+    2-D images (so the 801 operators in :mod:`ops` apply unchanged), and the
     epipolar-plane image whose *line slope is the disparity*.
   * **refocus** — :func:`lf_refocus` (shift-and-add), :func:`lf_focal_stack`,
     :func:`lf_aperture_mask` and :func:`lf_synthetic_aperture` (aperture
