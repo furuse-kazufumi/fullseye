@@ -1987,28 +1987,49 @@ def apply_weighting(x, rate, kind="A"):
     31.5 Hz the error is +7.7524 dB over 0.25 s, +7.7986 over 0.5 s, +0.4615
     over 1 s, and **-0.0000** over 2 s and 4 s (63 and 126 whole periods).
 
-    **The two obvious cures were tried and measured, and neither works** —
-    recorded here so the next person does not spend the afternoon on them:
+    Two candidate cures were measured (error in dB against the closed form,
+    0.5 s at 48 kHz):
 
-    ===================================  ==============  ==============
-    at 31.5 Hz / 0.5 s                   error (dB)      at 20.45 Hz
-    ===================================  ==============  ==============
-    as implemented (rectangular)         +7.7986         +17.1704
-    zero-pad x4 (linear convolution)     +8.6055         +20.3733
-    Hann window, corrected for its gain  +3.0879         +6.2068
-    ===================================  ==============  ==============
+    ===================================  ========  ========  ========
+    treatment                            31.5 Hz   20.5 Hz   22.0 Hz
+    ===================================  ========  ========  ========
+    as implemented (rectangular)         +7.7986   +17.2116  +0.0000
+    zero-pad x4 (linear convolution)     +5.5620   +14.3352  +0.7969
+    Hann window, corrected for its gain  **+0.0534**  **+0.1841**  +0.1505
+    ===================================  ========  ========  ========
 
-    Padding is *worse*, because zero-padding a tone puts an abrupt edge into the
-    record and an edge is broadband. Hann helps but does not come close, and it
-    also destroys the cases that are currently exact — the bin-centred 22 Hz row
-    above goes from +0.0000 to **+5.5586 dB** under a Hann window, because
-    spreading a tone over three bins is already enough at this dynamic range.
-    An honest cure is a different implementation entirely — the standard
-    cascade of A-weighting biquads applied in the time domain — which would give
+    Padding barely helps — zero-padding a tone puts an abrupt edge into the
+    record and an edge is broadband. **A Hann window does essentially cure it**,
+    turning +17 dB into +0.18 dB, at the cost of the bin-centred columns which
+    go from exactly 0 to about 0.15 dB. So why is it not the default?
+
+    **Because it would trade a loud error for a quiet one.** ``L_eq`` is an
+    *energy average over the record*, and a window is not energy-preserving for
+    anything that is not stationary. Measured with Z weighting (so the window is
+    the only thing acting) on a 50 ms 1 kHz burst inside a 0.5 s record, all
+    three placements being ``-13.0103`` dB unwindowed as they must be:
+
+    ==============  ============  ===========
+    burst position  Hann (dB)     difference
+    ==============  ============  ===========
+    start           -36.0587      **-23.05**
+    centre          -8.8218       +4.19
+    end             -36.0587      **-23.05**
+    ==============  ============  ===========
+
+    A window makes the answer depend on *where in the record the sound happened*,
+    which is precisely the "plausible wrong number" this module refuses to ship
+    by default. So the rectangular behaviour stays, and the Hann estimate is
+    available by asking for it: ``equivalent_level(..., window="hann")``. Use it
+    when the record is stationary and tonal — which is exactly when the leakage
+    bites — and never when the level of a transient is the point.
+
+    A cure with neither cost is a different implementation entirely: the
+    standard cascade of A-weighting biquads in the time domain, which would give
     up the exact-0-dB-at-1-kHz-by-construction property this function is built
-    on. So the limitation is documented rather than papered over.
+    on, and the zero group delay promised above.
 
-    **What to do about it**: give the analysis enough record that the content is
+    **Also worth doing**: give the analysis enough record that the content is
     many periods long, prefer durations that are whole multiples of the period
     you care about, and read a low-frequency A-weighted level from
     :func:`octave_spectrum` (which reports per-band power, so leakage is visible
