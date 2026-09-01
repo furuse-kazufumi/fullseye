@@ -284,10 +284,17 @@ def image_formation(scene, f_number=8.0, pixel_pitch_um=3.45,
     if not np.isfinite(s) or s <= 0.0:
         raise ValueError("the Airy PSF for f/%g at %g um pitch is degenerate "
                          "(sum=%r) — check the parameters" % (n, pitch, s))
-    out = fftconvolve(img, psf / s, mode="same")
-    # 2) デフォーカス
+    # 縁の扱い: ``mode="same"`` はセンサの外を 0 とみなすので、一様な面を撮ると
+    # **周辺光量落ちとは別の理由で縁が暗くなる**(実測: 一様 1.0 の面で角が
+    # 0.727 になった)。シーンはセンサの外にも続いているのが物理なので、
+    # カーネル半幅ぶんを端値で延長してから畳み込み、あとで切り戻す。
+    pad = ksize // 2
+    padded = np.pad(img, pad, mode="edge")
+    out = fftconvolve(padded, psf / s, mode="same")[pad:pad + img.shape[0],
+                                                    pad:pad + img.shape[1]]
+    # 2) デフォーカス(こちらも端値で延長 = 同じ理由)
     if blur > 0.0:
-        out = ndimage.gaussian_filter(out, sigma=blur)
+        out = ndimage.gaussian_filter(out, sigma=blur, mode="nearest")
     # 3) 周辺光量落ち(視野の中心からの正規化半径に cos^4 を掛ける)
     if vignetting:
         h, w = out.shape
