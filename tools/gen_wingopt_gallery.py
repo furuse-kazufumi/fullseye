@@ -560,14 +560,14 @@ def ex_defect_atlas(log):
     # 同じ um_per_pixel 1 つだけ)。render_part は長さ/幅を 4:1 に固定するので、
     # 見本帳ではその制約を外して各生成器の素の姿を見せる。
     specs = [
-        ("scratch", dict(length_px=176.0, width_px=4.5, angle_deg=22.0,
-                         wander=0.11, contrast=-0.30, seed=7),
+        ("scratch", dict(length_px=150.0, width_px=4.5, angle_deg=22.0,
+                         wander=0.055, contrast=-0.30, seed=7),
          defectgen.defect_scratch, "長さ{L:.0f}µm × 幅{W:.0f}µm"),
         ("pits", dict(count=16, radius_px=4.0, radius_sigma=0.35,
                       contrast=-0.34, clustering=0.45, seed=7),
          defectgen.defect_pits, "16 個 直径{D:.0f}µm"),
         ("crack", dict(length_px=150.0, width_px=3.0, angle_deg=104.0,
-                       branch_prob=0.22, wander=0.30, contrast=-0.36, seed=7),
+                       branch_prob=0.30, wander=0.11, contrast=-0.36, seed=4),
          defectgen.defect_crack, "長さ{L:.0f}µm × 幅{W:.0f}µm"),
         ("blob", dict(radius_px=27.0, roughness=0.40, contrast=0.26, seed=7),
          defectgen.defect_blob, "直径{D:.0f}µm"),
@@ -580,7 +580,8 @@ def ex_defect_atlas(log):
             L=kw.get("length_px", 0.0) * upp, W=kw.get("width_px", 0.0) * upp,
             D=kw.get("radius_px", 0.0) * 2.0 * upp)
         rows.append({"kind": kind, "order": order, "params": dict(kw),
-                     "img": system.capture(scene), "mask": mask})
+                     "img": system.capture(scene, vignetting=False),
+                     "mask": mask})
 
     # 5 段目 = composite: 3 種を 1 つの部品に重ねる(実ラインの部品が 1 種類の
     # 欠陥しか出さない、という前提の方が非現実的なので)。マスクは論理和。
@@ -597,7 +598,8 @@ def ex_defect_atlas(log):
         scene = defectgen.composite_defect(scene, ideal, msk)
         comp_mask |= msk
     rows.append({"kind": "composite", "order": "scratch+pits+blob",
-                 "params": None, "img": system.capture(scene), "mask": comp_mask})
+                 "params": None, "img": system.capture(scene, vignetting=False),
+                 "mask": comp_mask})
 
     panels, labels = [], []
     for r in rows:
@@ -2051,7 +2053,7 @@ def ex_pipeline_flow(log):
                                            contrast=-0.28, seed=5)
     scene = defectgen.composite_defect(bg, ideal, mask)
     # --- 工程 4: 撮像 ------------------------------------------------------ #
-    captured = system.capture(scene)
+    captured = system.capture(scene, vignetting=False)
     # --- 工程 5/6: 検査と判定 ---------------------------------------------- #
     pred, iou, detected = _detect(captured, mask)
     stats = defectgen.defect_stats(mask, um_per_pixel=upp)

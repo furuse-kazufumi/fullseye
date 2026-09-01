@@ -739,7 +739,7 @@ def ex_window_sweep(log):
     seg_t = np.arange(seg_n) / fs * 1e3
 
     W, H = GIF_W, GIF_H
-    frames, hold = [], 3
+    frames, labels, hold = [], [], 2
     for r in rows:
         fig = Fig(W, H)
         _header(fig, "Get the window wrong and the kurtosis reports the opposite",
