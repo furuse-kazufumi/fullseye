@@ -1255,6 +1255,8 @@ def subject_blob_select(log=print) -> dict:
             "accepted": len(keep), "rejected": n - len(keep),
             "circularity_accepted": circ_keep,
             "circularity_rejected": circ_rej,
+            "area_center_returns": "(面積比, 行/(H-1), 列/(W-1)) の 3 成分",
+            "area_center_max_centroid_error_px": round(ctr_err, 4),
             "per_blob": [{k: (round(v, 4) if isinstance(v, float) else v)
                           for k, v in f.items()} for f in feats],
         },
@@ -1263,9 +1265,12 @@ def subject_blob_select(log=print) -> dict:
             "ラベル付けし、blob_count が %d 個と数えた。真円度 (circularity) 0.85 を"
             "しきい値にすると採用 %d 個 (真円度 %.3f〜%.3f)、不採用 %d 個 "
             "(%.3f〜%.3f) にきれいに割れる —— 特徴空間の散布図でも 2 つの群が"
-            "しきい値をまたいで重なっていない。"
+            "しきい値をまたいで重なっていない。5 コマ目の十字は `area_center` が"
+            "返した中心で、この op は (面積比, 行, 列) の 3 成分を [0,1] 正規化して"
+            "返す —— 画素に戻して独立に計算した重心と比べると差は最大 %.3f px、"
+            "%d 個すべてが自分の粒の上に乗った。"
             % (n_blobs, len(keep), circ_keep[0], circ_keep[-1], n - len(keep),
-               circ_rej[0], circ_rej[-1])),
+               circ_rej[0], circ_rej[-1], ctr_err, n)),
     }
 
 
