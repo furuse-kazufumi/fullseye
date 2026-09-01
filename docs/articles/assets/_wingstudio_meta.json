@@ -68,6 +68,32 @@
         "threshold": 0.510815
       },
       "seconds": 1.86
+    },
+    {
+      "kind": "png",
+      "name": "normals",
+      "path": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingstudio_normals.png",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingstudio_normals_thumb.jpg",
+      "size": [
+        1840,
+        600
+      ],
+      "bytes": 336710,
+      "thumb_bytes": 26732,
+      "std": 51.21,
+      "sha256": "9cfd6b02e938fe2d16b3c0a183e62fd1779cb23ab1ee1aa78c74c868933667aa",
+      "thumb_sha256": "1958f8c12951d52b529c71540e4f814353e99199a1023f49293bd617628de8e5",
+      "facts": {
+        "source": "itokawa_f0049152.stl (JAXA はやぶさ Gaskell 形状モデル)",
+        "n_faces": 49152,
+        "n_vertices": 24578,
+        "outward_fraction": 0.98956,
+        "outward_faces": 48639,
+        "surface_area": 0.39936,
+        "coverage_front_px": 38540,
+        "coverage_back_px": 39686
+      },
+      "seconds": 2.44
     }
   ]
 }

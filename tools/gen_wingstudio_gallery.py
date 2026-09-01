@@ -1316,6 +1316,18 @@ EXHIBITS = {
                          "CT ボリュームのターンテーブル(等値面 / 境界シェル)"),
     "zslices": (lambda: ex_zslices(), False,
                 "z スライス送り(位置インジケータつき)"),
+    "registration": (lambda: ex_registration(), False,
+                     "点群レジストレーション(初期ずれ -> 収束、RMSE つき)"),
+    "normals": (lambda: ex_normals(), False,
+                "メッシュと法線(向きを色で / 裏面も)"),
+    "lightfield": (lambda: ex_lightfield(), False,
+                   "ライトフィールドの視点移動(視差)"),
+    "depth3d": (lambda: ex_depth3d(), False,
+                "深度マップ -> 3D(持ち上げる過程)"),
+    "cadmap": (lambda: ex_cadmap(), False,
+               "欠陥の CAD 面への逆写像 + 可視面カバレッジ"),
+    "crop3d": (lambda: ex_crop3d(), False,
+               "3D の処理領域 crop -> 処理 -> 貼り戻し"),
 }
 
 
