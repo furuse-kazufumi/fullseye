@@ -744,8 +744,8 @@ def cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True,
         raise ValueError("labels must be non-empty")
     bg = int(_num(background, "background"))
     minpx = _size(min_pixels, "min_pixels")
-    if not isinstance(cull_backfaces, (bool, np.bool_)):
-        raise ValueError("cull_backfaces must be a bool")
+    F, winding_fixed = _orient_for_culling(V, F, cull_backfaces, strict,
+                                           "cad_defect_to_cad", reports=True)
 
     fg = lab != bg
     _check_budget(int(fg.sum()), F.shape[0])     # ★ float64 昇格の前に
