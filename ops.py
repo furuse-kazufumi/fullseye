@@ -326,33 +326,6 @@ def _convex_fill(v, a, b):
 
 
 # --- image -> contour (XLD) -------------------------------------------------- #
-def _subpixel_refine(pts, mag, ny, nx):
-    """Move each edge point onto the gradient-magnitude ridge with sub-pixel accuracy.
-
-    勾配の**法線方向**に 1 px ずつ離れた 3 点 (p-n, p, p+n) の勾配強度に放物線を
-    当て、その頂点まで点をずらす(古典的なサブピクセル・エッジ位置決め。
-    Devernay 1995 / HALCON ``edges_sub_pix`` と同じ考え方)。オフセットは
-    ±1 px に制限する(3 点補間の外挿は当てにならない)。
-    """
-    if len(pts) == 0:
-        return pts
-    r, c = pts[:, 0], pts[:, 1]
-    ri, ci = r.astype(int), c.astype(int)
-    nyv, nxv = ny[ri, ci], nx[ri, ci]
-
-    def _s(rr, cc):
-        return ndimage.map_coordinates(mag, [rr, cc], order=1, mode="nearest")
-
-    m0, mm, mp = _s(r, c), _s(r - nyv, c - nxv), _s(r + nyv, c + nxv)
-    den = mm - 2.0 * m0 + mp
-    ok = np.abs(den) > 1e-12
-    t = np.zeros_like(m0)
-    t[ok] = 0.5 * (mm[ok] - mp[ok]) / den[ok]
-    t = np.clip(np.nan_to_num(t), -1.0, 1.0)
-    out = np.stack([r + t * nyv, c + t * nxv], 1)
-    return np.where(np.isfinite(out), out, pts)
-
-
 def _edges_sub_pix(v, a, b):
     """Gradient-band edge contours, refined to **sub-pixel** accuracy along the normal.
 
