@@ -314,7 +314,9 @@ tb_tcspc_irf_convolve -> tb_tcspc_background_subtract -> tb_spad_deadtime_correc
 
 = 新しい族が「単体で使える op」ではなく **op を繋いだ手順**として価値を出した
 最初の例。`lf_slope` の champion は手と同じ `tb_lf_epi_slope` で始まり画像
-フィルタを 3 段足した形で、伸びは 2% に留まる。
+フィルタを 3 段足した形で、伸びは locked で +4.7% に留まる。しかも**手を超えた
+のは 3 seed 中 1 つだけ**(seed 間 std 0.0224、手との差 +0.0246)なので、
+「勝った」と言うにはばらつきに埋もれている。
 
 ### ここで自分が踏みかけた罠(記録)
 
