@@ -93,8 +93,12 @@ def wing_source(wid: str, lang: str) -> Path:
     raise BuildError(f"exhibit source not found for wing {wid!r} ({lang}): {primary}")
 
 
-def check_body(body: str, where: str, asset_base: str) -> int:
-    """展示本文を検査し、キャプション(= 展示)の数を返す。"""
+def check_body(body: str, where: str, asset_base: str, *, require_exhibits: bool = True) -> int:
+    """展示本文を検査し、キャプション(= 展示)の数を返す。
+
+    ``require_exhibits=False`` は章の導入用 — 画像 URL とローカルパスの検査だけは
+    同じように効かせたいが、導入には展示そのものが無いので数はゼロでよい。
+    """
     bad_local = _LOCAL_PATH_RE.search(body)
     if bad_local:
         raise BuildError(f"{where}: a local path leaked into public text: {bad_local.group(0)!r}")
