@@ -125,6 +125,16 @@ _CATALOG = {
         ("perceptual_hash", "imgforensics", ["image2d"], "phash"),
         ("hash_distance", "imgforensics", ["phash", "phash"], "measurement"),
     ],
+    # 証拠量を「解釈できる形」にする層。しきい値は同梱せず、利用者自身の
+    # 清浄データから帰無分布を測る ―― 分離点は枚数・解像度・圧縮率・被写体で
+    # 動くので、出荷時に決められる値ではないため(各 op の caveats どおり)。
+    #
+    # ここは **measurement の消費側**でもある。2026-09-02 の点検まで
+    # measurement は hash_distance が産むだけで食う op が無い袋小路だった。
+    "calibration": [
+        ("null_distribution", "imgforensics", ["signal"], "table"),
+        ("evidence_quantile", "imgforensics", ["measurement", "table"], "table"),
+    ],
     # PRNU センサ指紋。fingerprint の入口 1・出口 2(うち 1 つは image2d へ抜ける)
     "sensor": [
         ("sensor_fingerprint", "imgforensics", ["images"], "fingerprint"),
