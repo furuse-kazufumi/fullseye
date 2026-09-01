@@ -1558,60 +1558,111 @@ def riesz_displacement(video, f_lo, f_hi, fps, scales: int = 4) -> dict:
     "wrap_limit_px", "reference_coherence"}`` — the same keys
     ``motionmag.phase_displacement`` returns, so the two are drop-in comparable.
 
-    Head to head against the complex steerable route — and it is not a win
-    ---------------------------------------------------------------------
-    Measured on ``motionmag.synthesize_translation`` defaults (64x64x64,
-    32 fps, 4 Hz, band 3-5 Hz, noiseless, 8 px horizontal grating), peak of the
-    recovered waveform against the closed-form truth:
+    Head to head against the complex steerable route
+    ------------------------------------------------
+    All of the following is measured against ``motionmag.phase_displacement`` on
+    identical clips (64x64x64, 32 fps, 4 Hz bin-centred, band 3-5 Hz), with the
+    truth from an exact Fourier phase ramp and the error read as the deviation of
+    the least-squares gain from 1. **The verdict is mixed and the losses are
+    stated first.**
 
-    ============  =====================  =====================
-    true d (px)   Riesz relative error   steerable rel. error
-    ============  =====================  =====================
-    0.001         1.7e-13                8.7e-15
-    0.010         1.7e-13                3.1e-15
-    0.100         1.7e-13                1.8e-15
-    0.500         1.6e-13                6.7e-16
-    1.000         1.4e-13                4.4e-16
-    2.000         6.7e-14                6.7e-16
-    3.000         5.5e-15                5.9e-16
-    3.100         4.4e-01  <- broken     4.4e-01  <- broken
-    ============  =====================  =====================
+    *When the model holds — one moving component per band — the two are the same
+    answer.* A single grating, translated:
 
-    **Both are exact to rounding and the steerable route is about two orders of
-    magnitude more exact**; the Riesz error floor at 1.7e-13 comes from
-    estimating ``k`` from the band's own spectral derivative rather than from a
-    filter whose centre frequency is known by construction. Both break at the
-    *same* place and for the same reason — the temporal-mean reference is
-    ``proportional to J0(k*A)``, which passes through zero at ``k*A = 2.4048``,
-    i.e. ``A = 3.0619`` px for an 8 px grating. The Riesz route does not lift
-    that ceiling, because the ceiling is a property of using a temporal mean as a
-    phase reference and not of the decomposition.
+    ============  ======================  ======================
+    true d (px)   Riesz relative error    steerable rel. error
+    ============  ======================  ======================
+    0.001         1.463e-13               1.694e-13
+    0.010         3.997e-15               6.217e-15
+    0.100         3.331e-16               0.0
+    0.500         3.331e-16               0.0
+    1.000         0.0                     0.0
+    2.000         0.0                     2.220e-16
+    3.000         0.0                     0.0
+    3.050         2.220e-16               2.220e-16
+    3.060         1.332e-15               0.0
+    3.070         1.573e+00  <- broken    1.573e+00  <- broken
+    4.000         1.207e+00  <- broken    1.207e+00  <- broken
+    ============  ======================  ======================
 
-    Where the Riesz route *does* win: **oblique orientations**. On the same clip
-    rotated to a direction the 4-orientation steerable bank does not have a
-    filter for, the steerable estimate degrades and this one does not, because
-    the orientation is measured rather than interpolated:
+    Both are exact to rounding, and **both break in the same place, between 3.06
+    and 3.07 px** — which is the closed-form ``J0`` zero, not an empirical
+    tolerance: the temporal-mean phase reference equals ``c * J0(k*A)``, whose
+    first zero at ``k*A = 2.4048`` is ``A = 2.4048/(2*pi/8) = 3.0619`` px for an
+    8 px grating. The Riesz route does **not** lift that ceiling, because the
+    ceiling belongs to the temporal-mean reference and not to the decomposition.
 
-    ==========  =====================  =====================
-    direction   Riesz relative error   steerable rel. error
-    ==========  =====================  =====================
-    0 deg       1.6e-13                6.7e-16
-    22.5 deg    1.1e-13                1.9e-15
-    45 deg      2.5e-14                1.5e-15
-    67.5 deg    1.9e-13                1.7e-15
-    ==========  =====================  =====================
+    *Where the Riesz route loses, and it loses badly.* A radial band has no
+    orientation index, so two components at the same scale but different
+    orientations land in **one** band and the single-plane-wave model behind the
+    monogenic signal is simply false there. A steerable bank separates them by
+    filter. On ``motionmag.synthesize_translation``, whose default is exactly
+    that situation:
 
-    which, measured, is **not** the win the theory advertises: the steerable
-    bank's raised-cosine angular windows already interpolate orientation
-    accurately enough that its advantage survives the obliques. The honest
-    summary is that on clean synthetic data the steerable route is better
-    everywhere and the Riesz route's real argument is cost, not accuracy — it
-    builds ``scales`` sub-bands where the other builds
-    ``scales * orientations + 3``. Measured wall clock on the 64x64x64 clip:
-    **0.0983 s vs 0.2664 s, a 2.71x speed-up** for a 100x-worse (and still
-    utterly negligible) error. Under noise the two converge, as they must, since
-    the error is then set by the recording: at sigma = 0.01 on a 0.5 px
-    amplitude, Riesz 2.9e-03 against steerable 1.8e-03.
+    ==================================  ==================  ==================
+    clip                                Riesz rel. error    steerable rel. err
+    ==================================  ==================  ==================
+    lambda = (8, 16) px  [the default]  1.299e-01           4.441e-16
+    lambda = (8, 32) px  [2 octaves]    2.220e-16           0.0
+    lambda = (8, 8)  px  [same band]    6.256e-01           1.329e-02
+    ==================================  ==================  ==================
+
+    A **13 % displacement error that does not shrink as the displacement shrinks,
+    with no exception and no NaN** — and 63 % when the two gratings share a
+    wavelength outright. Separate the components by two octaves and the error
+    returns to machine precision, which identifies the cause exactly. Any scene
+    with texture at several orientations in one octave — that is, most real
+    scenes — is in the bad case. This is the single most important limitation of
+    the Riesz route and no amount of tuning removes it.
+
+    *A second loss: it cannot measure everywhere.* The wave vector comes from the
+    Riesz pair, which **vanishes at every even-symmetric point** (local phase 0
+    or pi — the crest of a bright or dark line) even though the amplitude there
+    is at full strength. Measured on the single-grating clip, 1024 of 4096 pixels
+    (25.0 %) come back rank 0 against 0 of 4096 for the steerable route, whose
+    orientation comes from the filter and never degenerates. The affected pixels
+    are marked in ``rank`` and weighted zero, so they do not corrupt the answer —
+    but they are holes in the field.
+
+    *The theoretical win does not materialise.* Continuous per-pixel orientation
+    should beat a 4-orientation bank on oblique structure. Measured, it does not
+    — the raised-cosine angular windows already interpolate exactly:
+
+    ===============  ==================  ==================
+    grating (deg)    Riesz rel. error    steerable rel. err
+    ===============  ==================  ==================
+    0.0              3.331e-16           0.0
+    20.6             4.441e-16           4.441e-16
+    45.0             4.441e-16           4.441e-16
+    69.4             4.441e-16           4.441e-16
+    90.0             3.331e-16           0.0
+    ===============  ==================  ==================
+
+    *Two wins that are real.* Under noise the Riesz estimate is consistently
+    about twice as accurate, because it spends its degrees of freedom on 4 bands
+    instead of 19 and admits fewer noise-only sub-bands to the normal equations
+    (single grating, A = 0.5 px):
+
+    ==========  ==================  ==================
+    sigma       Riesz rel. error    steerable rel. err
+    ==========  ==================  ==================
+    0.001       1.812e-05           2.329e-05
+    0.010       3.008e-04           5.119e-04
+    0.050       4.047e-03           8.670e-03
+    ==========  ==================  ==================
+
+    And it is cheaper: it builds ``scales`` = 4 sub-bands where the steerable
+    bank builds ``scales * orientations + 3`` = 19. Measured wall clock on the
+    64x64x64 clip, best of 7: **0.0888 s against 0.1063 s (1.20x)** here, and
+    **0.1034 s against 0.2163 s (2.09x)** for the magnifiers — less than the
+    19:4 filter ratio suggests, because each Riesz band costs three inverse FFTs
+    (band, R1, R2) where a steerable band costs one.
+
+    **Summary, honestly.** Use the steerable route when the scene has structure
+    at several orientations per octave, which is the common case; use this one
+    when the scene is narrow-band, when the clip is noisy, or when the 2x is
+    worth having. The quaternion is the right *object* for the monogenic signal
+    and gives orientation for free; it does not make the measurement better.
 
     **Raises** ``ValueError``: *video* is not a valid clip or is over
     :data:`MAX_PYRAMID_ELEMENTS`; the pass-band is empty, reaches DC or exceeds
