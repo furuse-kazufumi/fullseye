@@ -12,9 +12,9 @@
       1060,
       352
      ],
-     "png_bytes": 23417,
-     "thumb_bytes": 23344,
-     "png_sha256": "47defb719f8ce4568834a286141949dc50a5445c525b45b96c7a39af0fd5994d"
+     "png_bytes": 27371,
+     "thumb_bytes": 28833,
+     "png_sha256": "9c7448fe87fd2bdf99b032cb8ae1647c82a04364fd3aacbc48e26b7160f6b459"
     },
     "numbers": {
      "locked_trivial": 0.4174,
@@ -150,11 +150,11 @@
      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wingevo_observed_vs_locked_thumb.jpg",
      "size": [
       1120,
-      620
+      660
      ],
-     "png_bytes": 74104,
-     "thumb_bytes": 48058,
-     "png_sha256": "face6db90f58b7e56e1a6308741b1fa80227d6d7fa0af10e02ce899f7da70239"
+     "png_bytes": 65804,
+     "thumb_bytes": 47153,
+     "png_sha256": "1c514f283d1995c94b352375b6d172d4eac77427a6cc15ba6ef85e2f004441a7"
     },
     "numbers": {
      "vibration_map": {
@@ -244,11 +244,11 @@
       1120,
       660
      ],
-     "gif_bytes": 1023524,
-     "gif_sha256": "3eccc43de5168eacfc5195590874eea188028522c45c3929dee25b39b2ab9e8f",
+     "gif_bytes": 1025476,
+     "gif_sha256": "5c1912361c2ad43f036bd0d86bbb90bd75b7d2da0a6a158192e8f796776e8850",
      "colors": null,
      "fps": 3,
-     "thumb_bytes": 40905
+     "thumb_bytes": 40551
     },
     "numbers": {
      "train": [
@@ -342,14 +342,14 @@
      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_stage_photon_thumb.jpg",
      "frames": 6,
      "size": [
-      880,
-      532
+      1040,
+      652
      ],
-     "gif_bytes": 121635,
-     "gif_sha256": "7832cd20f094a567495143f836f4bae6beb87acc398091bb463281df037ae06f",
+     "gif_bytes": 107539,
+     "gif_sha256": "4595d9e6abdd33532eb62594890a962fa6f1a55d6e7ac600a7b8184fee623800",
      "colors": null,
      "fps": 1.2,
-     "thumb_bytes": 35660
+     "thumb_bytes": 30817
     },
     "numbers": {
      "per_stage": [
@@ -377,14 +377,14 @@
      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wingevo_stage_specular_thumb.jpg",
      "frames": 6,
      "size": [
-      576,
-      668
+      1000,
+      652
      ],
-     "gif_bytes": 305602,
-     "gif_sha256": "2483b4e5b4924421926de700f07bcc3b9eb8393ebb554e06e0f13d554720db8a",
+     "gif_bytes": 299859,
+     "gif_sha256": "a42e93cfc652de1680101522d3f89356f260c4c2cc1cc7c7549c3f64cd85ce56",
      "colors": null,
      "fps": 1.2,
-     "thumb_bytes": 37855
+     "thumb_bytes": 27284
     },
     "numbers": {
      "per_stage": [
@@ -442,13 +442,13 @@
      "frames": 5,
      "size": [
       1100,
-      720
+      790
      ],
-     "gif_bytes": 372491,
-     "gif_sha256": "b21b0eedccbe7d08c12fe11c398e080f540bec0170dd98ec4891d5d11fca4284",
+     "gif_bytes": 343481,
+     "gif_sha256": "2c75bb6ac1666468db5b16866d81b53972e93edc8f5d3900c3dfa658161b6818",
      "colors": null,
      "fps": 0.6,
-     "thumb_bytes": 52516
+     "thumb_bytes": 50556
     },
     "numbers": {
      "rounds": [
@@ -477,9 +477,9 @@
       1120,
       816
      ],
-     "png_bytes": 78046,
-     "thumb_bytes": 56628,
-     "png_sha256": "be8176fca7c7570e01e326677542aba71d3473f999dbd485464dd84e6f5ce3f9"
+     "png_bytes": 80010,
+     "thumb_bytes": 57064,
+     "png_sha256": "8712890485053de4cab76e02a36219133422c8bce273eb380552a98fd70f4282"
     },
     "numbers": {
      "now": {

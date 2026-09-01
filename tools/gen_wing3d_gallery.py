@@ -2189,13 +2189,14 @@ def ex_distance(log) -> dict:
 
     W, H = 1120, 660
     pw = 300
-    nf = 46
     frames = []
     from PIL import Image
+    # 往復する送り。同じ z を 2 コマ続けて出さない(GIF が畳んでコマ落ちするため)
     z_lo, z_hi = 10, n - 10
-    for k in range(nf):
-        t = k / (nf - 1)
-        z = int(round(z_lo + (z_hi - z_lo) * (0.5 - 0.5 * math.cos(2 * math.pi * t))))
+    up = list(range(z_lo, z_hi + 1, 4))
+    zs = up + up[-2:0:-1]
+    nf = len(zs)
+    for z in zs:
         c = _canvas(W, H)
         c = _header(c, "距離変換 ―― 「ふちから何 mm 離れているか」で中心線と太さが出る",
                     f"合成した 3 本の管(spacing 0.5 mm/voxel)を輪切りで送る。"
