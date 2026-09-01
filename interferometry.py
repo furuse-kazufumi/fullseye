@@ -493,6 +493,58 @@ def _refine(env: np.ndarray, idx: np.ndarray, mode: str) -> np.ndarray:
     return np.asarray(off, dtype=np.float64)
 
 
+def _carrier_cycles_per_unit(power: np.ndarray, step: float) -> float:
+    """Dominant fringe frequency of a DC-removed scan, in cycles per scan unit.
+
+    *power* is a rFFT magnitude (or magnitude summed over pixels — the carrier
+    peak survives that sum, because a per-pixel height shift moves the phase and
+    not the magnitude). Bin 0 is dropped: the residual DC is not a fringe.
+    """
+    if power.size < 2:
+        return float("nan")
+    k = int(np.argmax(power[1:])) + 1
+    return float(np.fft.rfftfreq(2 * (power.size - 1), d=step)[k])
+
+
+def _check_carrier(power: np.ndarray, n: int, step: float, wavelength: float,
+                   tol: float, op: str) -> None:
+    """Cross-check the *stated* wavelength against the fringe frequency actually
+    present in the data. The unit guard that a name cannot provide.
+
+    ``wavelength_um`` is otherwise used only for the Nyquist ceiling, so passing
+    it in nanometres (600 instead of 0.6) silently *disables* that ceiling and
+    nothing in the answer changes — measured, ``csi_peak_position`` returns the
+    same 6.025 um either way. Here the interferogram is asked what wavelength it
+    actually has: the carrier sits at ``2/lambda`` cycles per micrometre (the
+    double pass again), and a 1000x error in the stated wavelength is a 1000x
+    mismatch that no plausible data can produce.
+
+    The tolerance is deliberately loose — a factor of *tol* either way, default
+    2 — because the point is to catch unit confusion, not to re-derive the
+    wavelength. Measured on the reference scan the ratio is 0.996, and it stays
+    0.996 with 1 % noise, with 10 % noise, with a truncated envelope, and with a
+    0.3 um envelope; only a scan of fewer than 16 planes moves it (0.667 at 9
+    planes), which is why short scans skip the check rather than fail it.
+    """
+    if n < 16 or tol <= 1.0:
+        return
+    f = _carrier_cycles_per_unit(power, step)
+    if not np.isfinite(f) or f <= 0.0:
+        return
+    want = 2.0 / wavelength
+    ratio = f / want
+    if ratio > tol or ratio < 1.0 / tol:
+        raise ValueError(
+            "%s: the data has its fringe carrier at %.4g cycles per scan unit, "
+            "but wavelength_um=%g says it should be at 2/lambda = %.4g — a "
+            "factor of %.4g. Either wavelength_um and z_step_um are in different "
+            "units (600 nm written as 600 rather than 0.6 is the classic one, "
+            "and it silently disables the Nyquist ceiling because nothing else "
+            "in the answer uses the wavelength), or this array is not an "
+            "interferogram. Pass carrier_tolerance=0 to skip this check."
+            % (op, f, wavelength, want, max(ratio, 1.0 / ratio)))
+
+
 def _gauss_envelope(z: np.ndarray, z0, sigma: float) -> np.ndarray:
     return np.exp(-0.5 * ((z - z0) / sigma) ** 2)
 
