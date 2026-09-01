@@ -89,7 +89,7 @@
 
 [![検出限界マップ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingopt_detect_map_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingopt_detect_map.png)
 
-*↑ **検出限界マップ** ―― 欠陥サイズ(横・対数)とコントラスト(縦)の平面で検出率を測ると、**光学限界 32.53 µm(sampling 律速)は縦の直線として動かず**、実際の検出境界(白線 = 実測 50 % 等高線)はその右に寝ています。コントラスト 0.03 では 231 µm(限界の 7.10 倍)必要なのに、0.40 まで上げると 33 µm(1.00 倍)で足ります —— **右側はレンズの問題ではありません**。 使用 op: `render_part`, `system_geometry`, `resolving_power`, `draw_polyline`, `draw_line`。*
+*↑ **検出限界マップ** ―― 欠陥サイズ(横・対数)とコントラスト(縦)の平面で検出率を測ると、**光学限界 32.53 µm(sampling 律速)は縦の直線として動かず**、実際の検出境界(白線 = 実測 50 % 等高線)はその右に寝ています。コントラスト 0.06 では 53 µm(限界の 1.64 倍)必要なのに、0.40 まで上げると 28 µm(0.85 倍)で足ります —— **右側はレンズの問題ではありません**。 使用 op: `render_part`, `system_geometry`, `resolving_power`, `draw_polyline`, `draw_line`。*
 
 <small>クリックで原寸 (1028×488 px / 40 kB)。</small>
 
@@ -105,9 +105,9 @@
 
 ![画素ピッチとサンプリング](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingopt_pixel_pitch.gif)
 
-*↑ **画素ピッチとサンプリング** ―― 130 µm の傷を固定して画素ピッチだけを粗くすると、欠陥が **2 画素を割るのはピッチ 13.79 µm** (Nyquist の境界)で、実測の 50 % 検出が保つのはピッチ **13.32 µm** までです。拡大は最近傍なので**見えている四角は本物の画素**で、滑らかに見せるための補間は入れていません。 使用 op: `render_part`, `system_geometry`, `resolving_power`, `draw_polyline`。*
+*↑ **画素ピッチとサンプリング** ―― 130 µm の傷を固定して画素ピッチだけを粗くすると、欠陥が **2 画素を割るのはピッチ 13.79 µm** (Nyquist の境界)で、実測の 50 % 検出が保つのはピッチ **15.02 µm** までです。拡大は最近傍なので**見えている四角は本物の画素**で、滑らかに見せるための補間は入れていません。 使用 op: `render_part`, `system_geometry`, `resolving_power`, `draw_polyline`。*
 
-<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_pixel_pitch_thumb.jpg`)。40 フレーム / 10 fps / 1000×502 px / 0.70 MB。</small>
+<small>静止フレームでも読めます(静止サムネ: `https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/wingopt_pixel_pitch_thumb.jpg`)。40 フレーム / 10 fps / 1000×502 px / 0.58 MB。</small>
 
 ---
 
@@ -125,6 +125,6 @@
 | Airy パターンと Rayleigh 基準 | GIF | 1000×516 | 33 | 2312 kB | `5d8a032aef0b8560` |
 | 偏光で金属のテカりを消す | GIF | 1000×492 | 31 | 2651 kB | `7201c5f510b43e36` |
 | thin lens / ABCD 行列 | GIF | 1000×474 | 39 | 533 kB | `9b69c483a02265f2` |
-| 検出限界マップ | PNG | 1028×488 | 1 | 40 kB | `dbf3d8317f993d48` |
+| 検出限界マップ | PNG | 1028×488 | 1 | 40 kB | `81b870b0b2bbbd90` |
 | 照明を変えると何が見えるか | GIF | 1000×502 | 33 | 297 kB | `9de5ff51d03720e0` |
-| 画素ピッチとサンプリング | GIF | 1000×502 | 40 | 697 kB | `ea32b17b5ff362f2` |
+| 画素ピッチとサンプリング | GIF | 1000×502 | 40 | 577 kB | `54e2158fdb88a94a` |
