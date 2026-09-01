@@ -1761,15 +1761,15 @@ def subject_texture_zoo(log=print) -> dict:
         # **縦縞**に、a=0.5 (θ=90°) は行方向に振動するので **横縞**に反応する
         # (生の畳み込みで実測: 横縞画像で |応答| の平均が 0.0193 vs 1.1105)。
         labels += [
-            "%s\nGLCM energy %.3f / entropy %.3f"
+            "%s\nGLCM %.3f / entropy %.3f"
             % (names[k], float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5)),
                float(fs.apply(texs[k], "entropy_gray", 0.5, 0.5))),
-            "gabor θ=0°（縦縞に反応）\n平均応答 %.4f" % float(np.mean(g0)),
-            "gabor θ=90°（横縞に反応）\n平均応答 %.4f" % float(np.mean(g9)),
+            "gabor θ=0°（縦縞）\n平均応答 %.4f" % float(np.mean(g0)),
+            "gabor θ=90°（横縞）\n平均応答 %.4f" % float(np.mean(g9)),
             "sk_lbp（局所二値パターン）\nstd %.4f"
             % float(fs.apply(lbp, "gray_histo_abs", 0.5, 0.5))]
     sheet = E.contact_sheet(
-        panels, labels, ncols=4, panel_px=272, label_h=54, font_size=16,
+        panels, labels, ncols=4, panel_px=272, label_h=54, font_size=15,
         title=("テクスチャの見分け —— 8 特徴量で %d/%d 枚を正しく分類 (%.1f%%)"
                % (correct, len(Xn), 100 * acc)))
     info = E.save_exhibit(sheet, "wing2d_texture_zoo")

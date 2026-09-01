@@ -72,7 +72,7 @@ RAW_BASE = ("https://raw.githubusercontent.com/furuse-kazufumi/fullseye/"
 
 SEED = 20260902
 THUMB_W = 720                       # exhibit_tile.save_exhibit の既定に合わせる
-GIF_MAX_BYTES = 3 * 1024 * 1024
+GIF_MAX_BYTES = 2_900_000            # 「3 MB 以下」を 10 進で確実に満たす上限
 
 G = ops3d.get                                       # op を名前で引く
 

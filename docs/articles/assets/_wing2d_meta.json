@@ -1324,15 +1324,15 @@
     "file": "docs/articles/assets/wing2d_texture_zoo.png",
     "thumb": "docs/articles/assets/wing2d_texture_zoo_thumb.jpg",
     "frames": 1,
-    "bytes": 1072601,
+    "bytes": 1066526,
     "size": [
       1084,
       1022
     ],
     "panels": 12,
     "sha256": {
-      "wing2d_texture_zoo.png": "80f9cb8c7787c1e7c32cc47a14df7c041415eec51f83e6ed6cb0264117da6e18",
-      "wing2d_texture_zoo_thumb.jpg": "e8de1c0c2df491b439881c77c0fddd86fb09acc0cad03d0ec497ed99553c2909"
+      "wing2d_texture_zoo.png": "63d3d0114bfacda8e8b88691ff94265df86d9e7dd1241d6af31cdc4482ea1d66",
+      "wing2d_texture_zoo_thumb.jpg": "bfbacdbcbfc4be90e2d6957f01c8b4baf5708c0920562771fdc0837e2d2a359d"
     },
     "title": "テクスチャの見分け —— 特徴量で模様を分ける",
     "ops": [

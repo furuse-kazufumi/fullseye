@@ -949,9 +949,9 @@ def ex_order_tracking(log):
         fig.stamp(ink, C_B)
         fig.text(80, 44, f"shaft speed [rpm] and the {win_s:g} s analysis window",
                  C_TEXT, 12, True)
-        fig.text(84, 152, f"window {r['t0']:.2f} - {r['t0'] + win_s:.2f} s   "
-                          f"mean {r['rpm']:7.1f} rpm = {r['shaft_hz']:6.3f} Hz",
-                 C_B, 12, True)
+        fig.text(axr.x0 + 8, axr.y0 + 5,
+                 f"window {r['t0']:.2f} - {r['t0'] + win_s:.2f} s   "
+                 f"mean {r['rpm']:7.1f} rpm = {r['shaft_hz']:6.3f} Hz", C_B, 12, True)
 
         # 中: 通常のスペクトル(Hz)
         axf = Ax(fig, 76, 200, W - 30, 356, (0.0, 600.0), (0.0, a_hi * 1.12))
@@ -2130,9 +2130,8 @@ def ex_peak_match(log):
         fig.text(W - 190, 306, "sample index ->", C_DIM, 11)
 
         # 下: テンプレートと 4 つの照合
-        fig.text(88, 344, f"match_funct_1d_trans of the {2 * half + 1}-sample template "
-                          f"against an equally long window centred on each true peak",
-                 C_TEXT, 12, True)
+        fig.text(88, 344, f"match_funct_1d_trans: the {2 * half + 1}-sample template "
+                          f"vs an equally long window on each peak", C_TEXT, 12, True)
         for j, c in enumerate(centres):
             x0 = 84 + j * 230
             axm = Ax(fig, x0, 376, x0 + 200, 500, (0.0, float(2 * half)),
@@ -2154,10 +2153,10 @@ def ex_peak_match(log):
             fig.stamp(ink, C_TRUE)
             ok = r["shifts"][j] == 0
             fig.text(x0, 358, f"window at {c}", C_TEXT, 12, True)
-            fig.text(x0, 512, f"shift {r['shifts'][j]:+d}  (truth 0)",
+            fig.text(x0, 516, f"shift {r['shifts'][j]:+d}  (truth 0)",
                      C_C if ok else C_E, 12, True)
-            fig.text(x0, 530, f"score {r['scores'][j]:8.4f}", C_DIM, 11)
-        _legend(fig, W - 200, 338, [("window", C_DIM), ("template", C_D)])
+            fig.text(x0, 534, f"score {r['scores'][j]:8.4f}", C_DIM, 11)
+        _legend(fig, W - 186, 340, [("window", C_DIM), ("template", C_D)])
 
         fig.box(84, 552, W - 30, H - 12, C_PANEL2)
         fig.text(96, 558, "local_min_max_funct_1d uses STRICT inequalities and has "
