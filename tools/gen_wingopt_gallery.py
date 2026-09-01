@@ -1988,6 +1988,246 @@ def ex_pixel_pitch(log):
 
 
 # =========================================================================== #
+# 13. 設計から判定までの一本道(フリップブック GIF)                              #
+# =========================================================================== #
+def ex_pipeline_flow(log):
+    """設計 → 限界 → 部品 → 撮像 → 検査 → 判定 の 6 工程を同寸法のコマ送りに。
+
+    工程ごとに絵が変わるだけでなく、**その工程で初めて確定する数字**を右に出す。
+    共通部品 ``exhibit_tile.flipbook`` に載せるので、1 コマで止めても
+    「今どの工程か / 何コマ目か」が読める。
+    """
+    system = _system()
+    geo, res = _limits()
+    upp = geo["um_per_pixel"]
+    defect_um = 120.0
+    tile = 200
+    sh = (tile, tile)
+
+    # --- 工程 3: 理想の部品(撮像前) ------------------------------------- #
+    size_px = system.px_for_um(defect_um)
+    bg = defectgen.surface_texture(sh, "orange_peel", strength=0.055,
+                                   scale_px=5.0, seed=3001)
+    ideal, mask = defectgen.defect_scratch(sh, length_px=min(size_px * 4.0, tile * 0.8),
+                                           width_px=max(1.0, size_px),
+                                           angle_deg=28.0, wander=0.14,
+                                           contrast=-0.28, seed=5)
+    scene = defectgen.composite_defect(bg, ideal, mask)
+    # --- 工程 4: 撮像 ------------------------------------------------------ #
+    captured = system.capture(scene)
+    # --- 工程 5/6: 検査と判定 ---------------------------------------------- #
+    pred, iou, detected = _detect(captured, mask)
+    stats = defectgen.defect_stats(mask, um_per_pixel=upp)
+    feas = system.limits(defect_um)
+
+    PW, PH = 940, 424
+    IMG = 384
+    ix, iy = 22, 20
+    tx = ix + IMG + 34
+
+    def base_panel():
+        c = _canvas(PH, PW, C_BG)
+        _fill(c, iy - 2, iy + IMG + 2, ix - 2, ix + IMG + 2, C_PANEL)
+        return c
+
+    def put_image(c, img_or_rgb):
+        k = IMG // tile                                   # 200 -> x1 が上限
+        a = img_or_rgb if img_or_rgb.ndim == 3 else _gray_to_rgb(img_or_rgb)
+        if k >= 2:
+            a = _upscale(a, k)
+        pad_y = (IMG - a.shape[0]) // 2
+        pad_x = (IMG - a.shape[1]) // 2
+        c[iy + pad_y:iy + pad_y + a.shape[0], ix + pad_x:ix + pad_x + a.shape[1]] = a
+        return c
+
+    def lines(items, y0=26, size=15, gap=22):
+        out = []
+        for k, (s, col, bold) in enumerate(items):
+            out.append((tx, y0 + k * gap, s, col, size, bold))
+        return out
+
+    panels = []
+
+    # ---- 1. 設計 ---------------------------------------------------------- #
+    c = base_panel()
+    # 視野の矩形と部品(実寸比で描く)
+    fov_w, fov_h = geo["fov_w_mm"], geo["fov_h_mm"]
+    scale = (IMG - 60) / max(fov_w, fov_h)
+    rw, rh = fov_w * scale, fov_h * scale
+    rx, ry = ix + (IMG - rw) / 2.0, iy + (IMG - rh) / 2.0
+    c = imagedraw.draw_polyline(c, [(rx, ry), (rx + rw, ry), (rx + rw, ry + rh),
+                                    (rx, ry + rh)], color=C_OPT, width=2, closed=True)
+    part_mm = 12.0
+    pw = part_mm * scale
+    c = imagedraw.draw_polyline(
+        c, [(ix + IMG / 2 - pw / 2, iy + IMG / 2 - pw / 2),
+            (ix + IMG / 2 + pw / 2, iy + IMG / 2 - pw / 2),
+            (ix + IMG / 2 + pw / 2, iy + IMG / 2 + pw / 2),
+            (ix + IMG / 2 - pw / 2, iy + IMG / 2 + pw / 2)],
+        color=C_HIT, width=2, closed=True)
+    c = imagedraw.draw_circle(c, (ix + IMG / 2, iy + IMG / 2),
+                              max(1.5, defect_um * 1e-3 * scale / 2.0),
+                              color=C_MISS, width=2)
+    lab = lines([
+        ("STEP 1  design the system", (0.95, 0.95, 0.92), True),
+        ("", C_DIM, False),
+        (f"lens        f = {SYS['focal_mm']:g} mm", C_TEXT, False),
+        (f"standoff    WD = {SYS['working_distance_mm']:g} mm", C_TEXT, False),
+        (f"sensor      {SYS['width_px']}x{SYS['height_px']} @ "
+         f"{SYS['pixel_pitch_um']:g} um", C_TEXT, False),
+        (f"aperture    f/{SYS['f_number']:g}", C_TEXT, False),
+        ("", C_DIM, False),
+        (f"magnification   {geo['magnification']:.5f}", C_OPT, True),
+        (f"field of view   {fov_w:.1f} x {fov_h:.1f} mm", C_OPT, True),
+        (f"object pixel    {upp:.3f} um / px", C_OPT, True),
+        ("", C_DIM, False),
+        ("blue = field of view,  green = a 12 mm part,", C_DIM, False),
+        (f"orange circle = the {defect_um:g} um defect (to scale)", C_DIM, False),
+    ])
+    panels.append(_text(_to_u8(c), lab))
+
+    # ---- 2. 限界 ---------------------------------------------------------- #
+    c = base_panel()
+    bar_x0, bar_x1 = ix + 16, ix + IMG - 16
+    bar_hi = max(res["nyquist_object_um"], res["diffraction_object_um"], defect_um) * 1.1
+    for k, (nm, val, col) in enumerate((
+            ("sampling (Nyquist)", res["nyquist_object_um"], C_CURVE),
+            ("diffraction (Airy)", res["diffraction_object_um"], C_OPT),
+            ("the defect we want", defect_um, C_HIT))):
+        yb = iy + 40 + k * 74
+        wpx = int(round((bar_x1 - bar_x0) * val / bar_hi))
+        _fill(c, yb, yb + 28, bar_x0, bar_x0 + max(1, wpx), col)
+    lab = lines([
+        ("STEP 2  ask what the optics can carry", (0.95, 0.95, 0.92), True),
+        ("", C_DIM, False),
+        (f"Nyquist      2*pitch/m = {res['nyquist_object_um']:.2f} um", C_CURVE, True),
+        (f"diffraction  2.44*l*N*(1+m)/m = "
+         f"{res['diffraction_object_um']:.2f} um", C_OPT, True),
+        (f"working f-number  N_eff = {res['working_f_number']:.3f}", C_DIM, False),
+        ("", C_DIM, False),
+        (f"optical limit  {res['resolution_object_um']:.2f} um "
+         f"({res['limited_by']}-limited)", (0.95, 0.95, 0.92), True),
+        (f"the {defect_um:g} um defect spans "
+         f"{feas['pixels_across']:.2f} px", C_HIT, True),
+        ("", C_DIM, False),
+        (f"depth of field {feas['depth_of_field_mm']:.3f} mm vs "
+         f"{feas['depth_tolerance_mm']:g} mm needed", C_TEXT, False),
+        (f"corner illumination {feas['corner_illumination']:.4f}", C_TEXT, False),
+        (f"verdict: {feas['verdict']}",
+         (C_HIT if feas["verdict"] == "resolvable" else C_MISS), True),
+    ])
+    panels.append(_text(_to_u8(c), lab))
+
+    # ---- 3. 仮想の部品 ---------------------------------------------------- #
+    c = put_image(base_panel(), scene)
+    lab = lines([
+        ("STEP 3  build a virtual part", (0.95, 0.95, 0.92), True),
+        ("", C_DIM, False),
+        ("surface_texture  orange_peel", C_TEXT, False),
+        (f"defect_scratch   {defect_um:g} um = {size_px:.2f} px wide", C_TEXT, False),
+        ("composite_defect keeps the texture outside", C_TEXT, False),
+        ("", C_DIM, False),
+        ("this is the IDEAL scene -- no optics yet", C_MISS, True),
+        ("", C_DIM, False),
+        (f"mask area      {stats['area_px']} px", C_HIT, True),
+        (f"major axis     {stats['major_axis_um']:.1f} um", C_HIT, True),
+        (f"minor axis     {stats['minor_axis_um']:.1f} um", C_HIT, True),
+        ("", C_DIM, False),
+        ("the mask comes from the geometry, so it is", C_DIM, False),
+        ("pixel-perfect and costs no annotation time", C_DIM, False),
+    ])
+    panels.append(_text(_to_u8(c), lab))
+
+    # ---- 4. 撮像 ---------------------------------------------------------- #
+    c = put_image(base_panel(), captured)
+    d_rms = float(np.sqrt(np.mean((captured - scene) ** 2)))
+    lab = lines([
+        ("STEP 4  photograph it with THIS system", (0.95, 0.95, 0.92), True),
+        ("", C_DIM, False),
+        ("image_formation applies, in order:", C_TEXT, False),
+        ("  1. the Airy PSF for this f-number", C_TEXT, False),
+        ("  2. defocus (none here)", C_TEXT, False),
+        ("  3. the cos^4 falloff", C_TEXT, False),
+        ("  4. exposure, clipped to [0, 1]", C_TEXT, False),
+        ("", C_DIM, False),
+        (f"RMS change from the ideal scene {d_rms:.4f}", C_OPT, True),
+        (f"contrast of the tile  {captured.min():.3f} .. "
+         f"{captured.max():.3f}", C_OPT, True),
+        ("", C_DIM, False),
+        ("the mask does NOT move when the image blurs --", C_DIM, False),
+        ("that is why it can still score the detector", C_DIM, False),
+    ])
+    panels.append(_text(_to_u8(c), lab))
+
+    # ---- 5. 検査 ---------------------------------------------------------- #
+    raw = np.zeros((tile, tile, 3), np.float64)
+    raw[:, :] = (0.07, 0.08, 0.10)
+    raw[pred] = (0.90, 0.90, 0.92)
+    c = put_image(base_panel(), raw)
+    lab = lines([
+        ("STEP 5  run the inspection algorithm", (0.95, 0.95, 0.92), True),
+        ("", C_DIM, False),
+        ("the visionlab baseline detector:", C_TEXT, False),
+        ("  residual from a 15x15 local mean,", C_TEXT, False),
+        ("  thresholded at 2.5 standard deviations", C_TEXT, False),
+        ("", C_DIM, False),
+        ("deliberately naive -- the point is to have a", C_DIM, False),
+        ("ruler for comparing designs, not to win", C_DIM, False),
+        ("", C_DIM, False),
+        (f"flagged pixels  {int(pred.sum())} of {tile * tile}", C_TEXT, True),
+        ("", C_DIM, False),
+        ("(this is the raw output; nothing has been", C_DIM, False),
+        (" compared to the truth yet)", C_DIM, False),
+    ])
+    panels.append(_text(_to_u8(c), lab))
+
+    # ---- 6. 判定 ---------------------------------------------------------- #
+    c = put_image(base_panel(), _verdict_rgb(captured, mask, pred))
+    inter = int(np.sum(pred & mask))
+    union = int(np.sum(pred | mask))
+    lab = lines([
+        ("STEP 6  score it against the truth", (0.95, 0.95, 0.92), True),
+        ("", C_DIM, False),
+        ("teal = hit,  orange = missed,", C_HIT, True),
+        ("purple = false alarm", C_FALSE, True),
+        ("", C_DIM, False),
+        (f"intersection {inter} px / union {union} px", C_TEXT, False),
+        (f"IoU  {iou:.4f}   (threshold {MIN_IOU:g})", C_TEXT, True),
+        (f"verdict: " + ("DETECTED" if detected else "not detected"),
+         (C_HIT if detected else C_BAD), True),
+        ("", C_DIM, False),
+        (f"optics say {res['resolution_object_um']:.2f} um is the floor;", C_DIM, False),
+        (f"this defect is {defect_um:g} um = "
+         f"{defect_um / res['resolution_object_um']:.2f}x that floor", C_DIM, False),
+        ("", C_DIM, False),
+        ("two numbers, never folded into one", C_MISS, True),
+    ])
+    panels.append(_text(_to_u8(c), lab))
+
+    steps = ["設計 — 視野と µm/画素を決める",
+             "限界 — 標本化と回折のどちらが律速か",
+             "仮想の部品 — 欠陥と画素完全なマスク",
+             "撮像 — この系で実際に撮れる画像",
+             "検査 — 検査アルゴリズムの生の出力",
+             "判定 — 正解と突き合わせて IoU"]
+    book = flipbook(panels, steps,
+                    title="設計から判定までの一本道(visionlab の 6 段)",
+                    label_h=38, title_h=44, font_size=18, title_font_size=21)
+    log(f"  6 steps, panel {PW}x{PH}, flipbook frame "
+        f"{book[0].shape[1]}x{book[0].shape[0]};  IoU {iou:.4f}, "
+        f"{'detected' if detected else 'not detected'}, verdict {feas['verdict']}")
+    facts = {"system": repr(system), "defect_um": defect_um,
+             "um_per_pixel": upp, "defect_px": size_px,
+             "optical_limit_um": res["resolution_object_um"],
+             "limited_by": res["limited_by"], "feasibility": feas,
+             "mask_stats": stats, "iou": iou, "detected": detected,
+             "intersection_px": inter, "union_px": union,
+             "flagged_px": int(pred.sum()),
+             "rms_capture_change": d_rms, "steps": steps}
+    return {"frames": book, "facts": facts, "fps": "flipbook", "thumb_index": 0}
+
+
+# =========================================================================== #
 # 展示の台帳とキャプション                                                       #
 # =========================================================================== #
 EXHIBIT_ORDER = [
