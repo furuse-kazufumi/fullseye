@@ -14,7 +14,7 @@
 ## 1. 可逆な変換 ―― 法線 ⇄ 方位・仰角[度]
 ![可逆な変換 ―― 法線 ⇄ 方位・仰角[度]](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_normals.gif)
 
-*↑ **可逆な変換 ―― 法線 ⇄ 方位・仰角[度]** ―— 袋小路だった `normals` に出口を作った。方位 az と仰角 el(**どちらも度**)へ変換し、そこから組み直すと 9216 本の法線が **max|Δ| = 2.289e-12**(角度差 1.207e-06 度)で戻る。最後のコマの残差が真っ黒なのは「絵が暗い」のではなく **0..1 の固定スケールで 0** だからで、自動スケールにすると倍精度の丸めが模様に見えて可逆なのに壊れて見える。*
+*↑ **可逆な変換 ―― 法線 ⇄ 方位・仰角[度]** ―― 袋小路だった `normals` に出口を作った。方位 az と仰角 el(**どちらも度**)へ変換し、そこから組み直すと 9216 本の法線が **max|Δ| = 2.289e-12**(角度差 1.207e-06 度)で戻る。最後のコマの残差が真っ黒なのは「絵が暗い」のではなく **0..1 の固定スケールで 0** だからで、自動スケールにすると倍精度の丸めが模様に見えて可逆なのに壊れて見える。*
 
 - GIF: `docs/articles/assets/media/wingconv_roundtrip_normals.gif` (4 frame(s), 792x532 px, 0.14 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_normals_thumb.jpg`
@@ -23,7 +23,7 @@
 ## 2. 可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)
 ![可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_curvature.gif)
 
-*↑ **可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)** ―— 球・鞍・円柱・平面の 4 パッチ(9216 点。うち臍点・平面 4608 点)を形状指数 S と曲がり C へ移し、戻して **max|Δ| = 2.220e-16**。教科書の `atan((k1+k2)/(k1-k2))` は臍点で 0 除算になるが、`atan2` 形で書けば球 S=+1・鞍 S=0・円柱 S=+0.5 が閉形式のまま全域で厳密に往復する。*
+*↑ **可逆な変換 ―― 主曲率 ⇄ 形状指数(臍点を含めて厳密)** ―― 球・鞍・円柱・平面の 4 パッチ(9216 点。うち臍点・平面 4608 点)を形状指数 S と曲がり C へ移し、戻して **max|Δ| = 2.220e-16**。教科書の `atan((k1+k2)/(k1-k2))` は臍点で 0 除算になるが、`atan2` 形で書けば球 S=+1・鞍 S=0・円柱 S=+0.5 が閉形式のまま全域で厳密に往復する。*
 
 - GIF: `docs/articles/assets/media/wingconv_roundtrip_curvature.gif` (4 frame(s), 792x532 px, 0.26 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_curvature_thumb.jpg`
@@ -32,7 +32,7 @@
 ## 3. 不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)
 ![不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_keypoints.gif)
 
-*↑ **不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)** ―— 4 px 間隔に置いた 900 点を計数画像へ焼いて拾い直すと、軸あたり RMS **0.2925 px**(一様量子化の理論 1/√12 = 0.2887)、2-D 距離 RMS 0.4136 px(理論 √(2/12) = 0.4082)。ランダム配置なら 120 → 111 点に融合する ―― **量子化(ずれる)と融合(消える)は別の損失**で、混ぜて 1 つの RMS にするとどちらがどれだけ効いたか言えなくなる。*
+*↑ **不可逆な変換 ―― keypoints ⇄ 画素格子(落ちる量を測る)** ―― 4 px 間隔に置いた 900 点を計数画像へ焼いて拾い直すと、軸あたり RMS **0.2925 px**(一様量子化の理論 1/√12 = 0.2887)、2-D 距離 RMS 0.4136 px(理論 √(2/12) = 0.4082)。ランダム配置なら 120 → 111 点に融合する ―― **量子化(ずれる)と融合(消える)は別の損失**で、混ぜて 1 つの RMS にするとどちらがどれだけ効いたか言えなくなる。*
 
 - GIF: `docs/articles/assets/media/wingconv_roundtrip_keypoints.gif` (5 frame(s), 792x532 px, 0.14 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_keypoints_thumb.jpg`
@@ -41,7 +41,7 @@
 ## 4. 不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)
 ![不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_gaussians.gif)
 
-*↑ **不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)** ―— **産む op が 1 つも無かった** `gaussians` に入口を作った。中心 mu は往復 max|Δ| = 0.000e+00 で bit 一致し、sigma と w は往復で消える「追加された情報」。体積へ焼くと 3σ の**箱**打ち切りで**0.99192** が理論値 —— 最初これを 3σ の**球** 0.9707 と書いたが、刻みを 1.0 → 0.125 と細かくすると箱の値へ収束して球へは近づかず、反証できた。*
+*↑ **不可逆な変換 ―― 点群 → ガウシアン → 体積(質量で測る)** ―― **産む op が 1 つも無かった** `gaussians` に入口を作った。中心 mu は往復 max|Δ| = 0.000e+00 で bit 一致し、sigma と w は往復で消える「追加された情報」。体積へ焼くと 3σ の**箱**打ち切りで**99.192%** が理論値 —— 最初これを 3σ の**球** 97.07% と書いたが、刻みを 1.0 → 0.125 と細かくすると箱の値へ収束して球へは近づかず、反証できた。*
 
 - GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x532 px, 0.10 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`
@@ -50,7 +50,7 @@
 ## 5. 表現をまたいで一周 ―― 何が残り、何が消えるか
 ![表現をまたいで一周 ―― 何が残り、何が消えるか](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_cross_loop.gif)
 
-*↑ **表現をまたいで一周 ―― 何が残り、何が消えるか** ―— voxel → mesh → points → gaussians → voxel。体積 5444 voxel の立体は mesh の段で**中身を失い**(3268 頂点 / 6584 面、表面積 2461.8)、points で接続と法線を失う。内部の充填率は**100.0% → 38.2%** で、戻ってきたのは立体ではなく殻。一方で重心は 1.2925 voxel しか動かない ―― **一致する指標と一致しない指標を両方出す**のが正直な報告で、重心だけ見せると「一周して戻った」という嘘になる。★この主張は最大値投影では言えない(MIP は薄い殻でも中が詰まって見える。実際に一度そう描きかけた)ので、中心断面と内部の充填率で示している。*
+*↑ **表現をまたいで一周 ―― 何が残り、何が消えるか** ―― voxel → mesh → points → gaussians → voxel。体積 5444 voxel の立体は mesh の段で**中身を失い**(3268 頂点 / 6584 面、表面積 2461.8)、points で接続と法線を失う。内部の充填率は**100.0% → 38.2%** で、戻ってきたのは立体ではなく殻。一方で重心は 1.2925 voxel しか動かない ―― **一致する指標と一致しない指標を両方出す**のが正直な報告で、重心だけ見せると「一周して戻った」という嘘になる。★この主張は最大値投影では言えない(MIP は薄い殻でも中が詰まって見える。実際に一度そう描きかけた)ので、中心断面と内部の充填率で示している。*
 
 - GIF: `docs/articles/assets/media/wingconv_cross_loop.gif` (5 frame(s), 792x532 px, 0.12 MB)
 - サムネ: `docs/articles/assets/thumbs/wingconv_cross_loop_thumb.jpg`
@@ -59,7 +59,7 @@
 ## 6. 死んだ型 `flow` が「見える」ようになった
 [![死んだ型 `flow` が「見える」ようになった](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_flow_colorwheel.png)
 
-*↑ **死んだ型 `flow` が「見える」ようになった** ―— `flow` は単入力で産む op も食う op も無い完全な孤島だった。密なシーンフロー [3, 24, 96, 96] を大きさ(voxel)と色相環(rgbimage)へ出す 2 つの出口を作り、**色の意味の凡例を同じ図に焼いた**。この repo の `flow` は (3,D,H,W) の密フローと (N,3) の散在フローが**同じ型名で同居している**ので、密用 ['flow_magnitude', 'flow_to_rgbimage'] と散在用 ['flow_speed', 'flow_apply'] でop を分け、相手の形は fail-closed にしてある。*
+*↑ **死んだ型 `flow` が「見える」ようになった** ―― `flow` は単入力で産む op も食う op も無い完全な孤島だった。密なシーンフロー [3, 24, 96, 96] を大きさ(voxel)と色相環(rgbimage)へ出す 2 つの出口を作り、**色の意味の凡例を同じ図に焼いた**。この repo の `flow` は (3,D,H,W) の密フローと (N,3) の散在フローが**同じ型名で同居している**ので、密用 ['flow_magnitude', 'flow_to_rgbimage'] と散在用 ['flow_speed', 'flow_apply'] でop を分け、相手の形は fail-closed にしてある。*
 
 - PNG: `docs/articles/assets/wingconv_flow_colorwheel.png` (1 frame(s), 676x820 px, 0.07 MB)
 - サムネ: `docs/articles/assets/wingconv_flow_colorwheel_thumb.jpg`
@@ -68,7 +68,7 @@
 ## 7. 軸・単位・spacing の取り違えは例外を出さずに通る
 [![軸・単位・spacing の取り違えは例外を出さずに通る](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_axis_unit_traps.png)
 
-*↑ **軸・単位・spacing の取り違えは例外を出さずに通る** ―— (u,v) を (v,u) と読むと重心が 39.5 px ずれて 元図形との重なりは 0.0% まで落ち、spacing を既定のままにするとピークが [4, 5, 6] でなく[10, 12, 14] に立ち、π/6 rad を「度」として渡すと0.5236 度だけ回る。積算窓を 1 ms でなく 1 s と読めば計数は 1000 倍になる。**どれも例外は出ず、有限で、もっともらしい絵が返る** ―― だから op 名に軸を書き、単位を引数にした。*
+*↑ **軸・単位・spacing の取り違えは例外を出さずに通る** ―― (u,v) を (v,u) と読むと重心が 39.5 px ずれて 元図形との重なりは 0.0% まで落ち、spacing を既定のままにするとピークが [4, 5, 6] でなく[10, 12, 14] に立ち、π/6 rad を「度」として渡すと0.5236 度だけ回る。積算窓を 1 ms でなく 1 s と読めば計数は 1000 倍になる。**どれも例外は出ず、有限で、もっともらしい絵が返る** ―― だから op 名に軸を書き、単位を引数にした。*
 
 - PNG: `docs/articles/assets/wingconv_axis_unit_traps.png` (1 frame(s), 636x1126 px, 0.03 MB)
 - サムネ: `docs/articles/assets/wingconv_axis_unit_traps_thumb.jpg`
@@ -77,7 +77,7 @@
 ## 8. 死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型
 [![死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingconv_dead_vocabulary.png)
 
-*↑ **死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型** ―— 台帳 515 op を「単入力かつ in 型 ≠ out 型 = 変換」で機械集計すると、他型へ一歩も出られない型が **25 個**あった。`reprconv` の 42 op で **16 型**に出口ができ、変換ペアは121 → 159 種、袋小路は 25 → 9 個。残した 9 型は**埋めない理由**を台帳に書いてある ―― 埋めないことも判断である。*
+*↑ **死んだ語彙 ―― 産む op はあるのに、そこから先へ行けない型** ―― 台帳 515 op を「単入力かつ in 型 ≠ out 型 = 変換」で機械集計すると、他型へ一歩も出られない型が **25 個**あった。`reprconv` の 42 op で **16 型**に出口ができ、変換ペアは121 → 159 種、袋小路は 25 → 9 個。残した 9 型は**埋めない理由**を台帳に書いてある ―― 埋めないことも判断である。*
 
 - PNG: `docs/articles/assets/wingconv_dead_vocabulary.png` (1 frame(s), 1180x720 px, 0.09 MB)
 - サムネ: `docs/articles/assets/wingconv_dead_vocabulary_thumb.jpg`

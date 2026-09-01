@@ -52,12 +52,12 @@
 
 ![スペクトルカートシスが復調帯域を選ぶ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_kurtosis_band.gif)
 
-*↑ **スペクトルカートシスが復調帯域を選ぶ** ―― 共振の位置を人が知らないとき、どの帯域で復調するかを機械に決めさせる。STFT 平面(129 bin × 199 内側フレーム、全 203 フレームのうち)にスペクトル尖度を重ね、幅 800 Hz の復調帯域を掃引した。SK の最大は 3.1037 @ 2400 Hz(窓 64 = 2.50 ms、bin 400 Hz、推定器の標準偏差 0.1001)で、その帯域の band_fraction は 0.4495(最悪の帯域は 0.1473)。包絡線のピークはどの帯域でも欠陥率に立つ ―― 動くのは「記録のどれだけがその帯域に居るか」のほうである。 使用 op: `synthesize_bearing_signal`, `stft`, `spectral_kurtosis`, `envelope_spectrum`。*
+*↑ **スペクトルカートシスが復調帯域を選ぶ** ―― 共振の位置を人が知らないとき、どの帯域で復調するかを機械に決めさせる。STFT 平面(129 bin × 199 内側フレーム、全 203 フレームのうち)にスペクトル尖度を重ね、幅 800 Hz の復調帯域を掃引した。SK の最大は 3.1037 @ 2400 Hz(窓 64 = 2.50 ms、bin 400 Hz、推定器の標準偏差 0.1001)で、その帯域の band_fraction は 0.4495。**帯域選びが効いていることが数で出ている**: 掃引した 24 帯域のうち欠陥率を返すのは 9 本だけで、残り 15 本は 6〜428 Hz のもっともらしい別の数を返す(例外も NaN も出ない)。ピーク周波数だけでは区別できず、分けるのは band_fraction である ―― 当たりは 0.1732〜0.6830、外れは 0.1473〜0.1645。 使用 op: `synthesize_bearing_signal`, `stft`, `spectral_kurtosis`, `envelope_spectrum`。*
 
-- GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 1.94 MB, 220 ms/コマ・最終コマ 1400 ms)
+- GIF: `docs/articles/assets/media/wing1d_kurtosis_band.gif` (24 コマ, 1000x668 px, 2.00 MB, 220 ms/コマ・最終コマ 1400 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_kurtosis_band_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `73dc182bbdb910f47fda70ff5e0df78d021194225569e154ac7d7edf1c023a62`
+- SHA-256: `c5d99ab9b37c33e0120328c4517e86d94cfe66402e7f17b069af75a4752b0e90`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -76,6 +76,21 @@
   "band_width_hz": 800.0,
   "best_band_centre": 3034.782608695652,
   "best_band_fraction": 0.6829578565909229,
+  "bands_total": 24,
+  "bands_returning_defect_rate": 9,
+  "bands_returning_something_else": 15,
+  "miss_peak_freq_range": [
+    6.0,
+    428.0
+  ],
+  "hit_band_fraction_range": [
+    0.17317467053263255,
+    0.6829578565909229
+  ],
+  "miss_band_fraction_range": [
+    0.14732009808588267,
+    0.16450564153139283
+  ],
   "sk_band_fraction": 0.4494574621219424,
   "sk_band_peak_freq": 107.0,
   "worst_band_fraction": 0.14732009808588267
@@ -692,12 +707,12 @@
 
 ![包絡線の端が切れると 76 % 間違う](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing1d_envelope_truncation.gif)
 
-*↑ **包絡線の端が切れると 76 % 間違う** ―― 12 µm の走査(241 plane × 0.05 µm)の中で、表面を中央 6.0 µm から端の 0.30 µm まで 32 段歩かせた。中央では誤差 2.2e-14 µm。表面が 0.30 µm まで寄ると `csi_peak_position` は 0.0477 µm を返す ―― 有限で、もっともらしく、84 % 間違っている。しかも包絡線の argmax は 241 plane 中の 1 番目、つまり**内部**なので「端に張り付いたら拒否」という素直な検査は発動しない。中央値基準の端レベルが 0.0539 を超えた表面 2.69 µm から op は拒否に転じる(図の値は `max_edge_envelope=1.0` で強制的に取り出したもの)。 使用 op: `csi_signal_simulate`, `csi_envelope`, `csi_peak_position`。*
+*↑ **包絡線の端が切れると 76 % 間違う** ―― 12 µm の走査(241 plane × 0.05 µm)の中で、表面を中央 6.0 µm から端の 0.30 µm まで 32 段歩かせた。中央では誤差 2.2e-14 µm。表面が 0.500 µm にあると `csi_peak_position` は 0.1190 µm を返す ―― 有限で、もっともらしく、76 % 間違っている。しかも包絡線の argmax は 241 plane 中の 2 番目、つまり**内部**なので「端に張り付いたら拒否」という素直な検査は発動しない(掃引の最悪点は 0.30 µm の 84 % で、そこでも argmax は plane 1)。中央値基準の端レベルが 0.0539 を超えた表面 2.69 µm から op は拒否に転じる(図の値は `max_edge_envelope=1.0` で強制的に取り出したもの)。 使用 op: `csi_signal_simulate`, `csi_envelope`, `csi_peak_position`。*
 
 - GIF: `docs/articles/assets/media/wing1d_envelope_truncation.gif` (32 コマ, 1000x668 px, 1.43 MB, 240 ms/コマ・最終コマ 2000 ms)
 - サムネ: `docs/articles/assets/thumbs/wing1d_envelope_truncation_thumb.jpg`
 - 束ね方: gif
-- SHA-256: `43ba7e01b758afc3be89e9e7d0edf1ff3836dae3cf4d475a6d72603e8b0ec6f8`
+- SHA-256: `ce035df03e06ff0c2e1b5ce485f16e45782ef8613f1475b1371d1d93c74e3612`
 
 <details><summary>この図に焼いた実測値</summary>
 
@@ -716,6 +731,11 @@
   "worst_returned": 0.04768769253057824,
   "worst_rel_pct": -84.10410248980725,
   "worst_argmax_plane": 1,
+  "documented_surface": 0.5,
+  "documented_returned": 0.11898968048241321,
+  "documented_rel_pct": -76.20206390351736,
+  "documented_edge": 0.636140666887029,
+  "documented_argmax_plane": 2,
   "centred_error_um": 2.220446049250313e-14,
   "centred_edge": 0.0,
   "table": [
@@ -768,11 +788,11 @@
       "refused": true
     },
     {
-      "surface": 0.483871,
-      "edge": 0.7946376252403394,
-      "returned": 0.42976549469478836,
-      "rel_pct": -11.18180368429016,
-      "argmax": 9,
+      "surface": 0.5,
+      "edge": 0.636140666887029,
+      "returned": 0.11898968048241321,
+      "rel_pct": -76.20206390351736,
+      "argmax": 2,
       "refused": true
     }
   ]

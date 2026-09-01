@@ -134,8 +134,11 @@ def main():
                                       mode="impulse", damping=0.05,
                                       noise_sigma=0.05, seed=3)
     sk = A.spectral_kurtosis(imp, fs_b)
-    lo = max(1.0, sk["max_freq"] - sk["bin_hz"])
-    hi = sk["max_freq"] + sk["bin_hz"]
+    # 帯域は spectral_kurtosis が組み立てて返す。max_freq ± bin_hz を呼び出し側で
+    # 手で組むと、勝ち bin が最上位内部 bin に来たとき上端がちょうど Nyquist に
+    # 乗り、envelope_spectrum が(正しく)拒否する。band_lo / band_hi は
+    # (0, rate/2) の内側に半 bin 分クランプ済みなので、常にそのまま渡せる。
+    lo, hi = sk["band_lo"], sk["band_hi"]
     auto = A.envelope_spectrum(imp, fs_b, lo, hi)
     print("\n4) 復調帯域の自動選択(共振周波数を人が知らない場合):")
     print(f"   スペクトル尖度: 最大 {sk['max_kurtosis']:.3f} @ "

@@ -41,7 +41,7 @@ lead exhibits are `A → B → A'` flipbooks whose last frame carries the residu
 ## 4. Lossy — points → gaussians → volume (measured by mass)
 ![Lossy — points → gaussians → volume (measured by mass)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingconv_roundtrip_gaussians.gif)
 
-*↑ **Lossy — points → gaussians → volume (measured by mass)** — `gaussians` had **no producing op at all**; this adds the entrance. Centres round-trip bit-identically (max|Δ| = 0.000e+00); sigma and w are information *added*, not lost. Splatting to a volume keeps **0.99192** of the mass under a 3σ **box** truncation — first written as the 3σ **ball** value 0.9707, then refuted by refining the grid from 1.0 to 0.125, which converges to the box.*
+*↑ **Lossy — points → gaussians → volume (measured by mass)** — `gaussians` had **no producing op at all**; this adds the entrance. Centres round-trip bit-identically (max|Δ| = 0.000e+00); sigma and w are information *added*, not lost. Splatting to a volume keeps **99.192%** of the mass under a 3σ **box** truncation — first written as the 3σ **ball** value 97.07%, then refuted by refining the grid from 1.0 to 0.125, which converges to the box.*
 
 - GIF: `docs/articles/assets/media/wingconv_roundtrip_gaussians.gif` (4 frame(s), 792x532 px, 0.10 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingconv_roundtrip_gaussians_thumb.jpg`

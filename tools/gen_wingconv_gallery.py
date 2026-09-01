@@ -918,8 +918,8 @@ CAPTION_JA = {
         "**産む op が 1 つも無かった** `gaussians` に入口を作った。中心 mu は"
         "往復 max|Δ| = {centres_max_abs:.3e} で bit 一致し、sigma と w は"
         "往復で消える「追加された情報」。体積へ焼くと 3σ の**箱**打ち切りで"
-        "**{box_truncation_theory:.5f}** が理論値 —— "
-        "最初これを 3σ の**球** {ball_truncation_wrong_value:.4f} と書いたが、"
+        "**{box_truncation_theory:.3%}** が理論値 —— "
+        "最初これを 3σ の**球** {ball_truncation_wrong_value:.2%} と書いたが、"
         "刻みを 1.0 → 0.125 と細かくすると箱の値へ収束して球へは近づかず、反証できた。"),
     "cross_loop": (
         "表現をまたいで一周 ―― 何が残り、何が消えるか",
@@ -987,8 +987,8 @@ CAPTION_EN = {
         "`gaussians` had **no producing op at all**; this adds the entrance. Centres "
         "round-trip bit-identically (max|Δ| = {centres_max_abs:.3e}); sigma and w are "
         "information *added*, not lost. Splatting to a volume keeps "
-        "**{box_truncation_theory:.5f}** of the mass under a 3σ **box** truncation — "
-        "first written as the 3σ **ball** value {ball_truncation_wrong_value:.4f}, then "
+        "**{box_truncation_theory:.3%}** of the mass under a 3σ **box** truncation — "
+        "first written as the 3σ **ball** value {ball_truncation_wrong_value:.2%}, then "
         "refuted by refining the grid from 1.0 to 0.125, which converges to the box."),
     "cross_loop": (
         "Around the representations — what survives and what does not",
@@ -1089,7 +1089,7 @@ def _write_captions(results, log):
             info = results[name]["info"]
             facts = results[name]["facts"]
             title, body = table[name]
-            caption = f"**{title}** ―— {_fmt(body, facts)}" if lang == "ja" \
+            caption = f"**{title}** ―― {_fmt(body, facts)}" if lang == "ja" \
                 else f"**{title}** — {_fmt(body, facts)}"
             lines.append(f"\n## {i}. {title}\n")
             stem = f"{PREFIX}_{name}"
