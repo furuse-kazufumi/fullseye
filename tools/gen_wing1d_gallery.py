@@ -1840,7 +1840,7 @@ def ex_profile_sources(log):
     t_mm, prof3d = volprobe.vol_profile_line(vol, (48.0, 48.0, 2.0),
                                             (48.0, 48.0, 93.0))
     # 立ち上がり -> 立ち下がりの対だけを厚みにするので、殻を 2 回横切れば 2 個返る。
-    walls = [float(w["thickness"]) for w in
+    walls = [float(w) for w in
              volprobe.vol_wall_thickness(vol, (48.0, 48.0, 2.0), (48.0, 48.0, 93.0))]
 
     # (3) センサー時系列 — 音響記録
@@ -1869,7 +1869,7 @@ def ex_profile_sources(log):
             f"zero-crossings {common[-1]['nzc']:3d} local maxima {common[-1]['nmax']:3d}")
     log(f"  2D profile stats: {st2d}")
     log(f"  3D probe: {prof3d.size} samples over {t_mm[-1]:.3f} voxel units; "
-        f"wall thickness {wall['thickness']:.6f}")
+        f"wall thicknesses {walls} voxel units")
     log(f"  sensor features: rms {feats['rms']:.6f} zcr {feats['zero_crossing_rate']:.6f} "
         f"centroid {feats['centroid']:.4f} Hz")
 
@@ -1909,8 +1909,9 @@ def ex_profile_sources(log):
     fig.text(410, 56, "2. 3D volume (synthetic shell), slice z = 48", C_C, 12, True)
     fig.text(414, 282, f"vol_profile_line (48,48,2) -> (48,48,93): {prof3d.size} samples",
              C_DIM, 11)
-    fig.text(414, 298, f"wall thickness {wall['thickness']:.4f} voxel units "
-                       f"(vol_wall_thickness)", C_DIM, 11)
+    fig.text(414, 298, "vol_wall_thickness pairs rising->falling edges: "
+                       + " / ".join("%.2f" % w for w in walls)
+                       + " voxel units", C_DIM, 11)
 
     # (3) センサー波形
     axs = Ax(fig, 800, 74, W - 30, 274, (0.0, 0.25),
@@ -1970,7 +1971,7 @@ def ex_profile_sources(log):
                                                 for k, v in st2d.items()}},
         "profile3d": {"n": int(prof3d.size), "length_voxels": float(t_mm[-1]),
                       "min": float(prof3d.min()), "max": float(prof3d.max()),
-                      "wall_thickness": float(wall["thickness"])},
+                      "wall_thicknesses": walls},
         "sensor": {"n": int(sensor.size), "rate_hz": fs,
                    "rms": float(feats["rms"]),
                    "zero_crossing_rate": float(feats["zero_crossing_rate"]),
@@ -2871,8 +2872,9 @@ CAPTIONS = {
         "text": lambda f: (
             f"2D 画像の測定線(実写真 coins、{f['profile2d']['n']} サンプル、最強エッジは"
             f"添字 {f['profile2d']['edge_at']})、3D ボリュームのプローブ"
-            f"({f['profile3d']['n']} サンプル、壁厚 {f['profile3d']['wall_thickness']:.4f} "
-            f"voxel)、センサー時系列({f['sensor']['n']} サンプル、rms "
+            f"({f['profile3d']['n']} サンプル、壁厚 "
+            + " / ".join("%.2f" % w for w in f["profile3d"]["wall_thicknesses"])
+            + f" voxel)、センサー時系列({f['sensor']['n']} サンプル、rms "
             f"{f['sensor']['rms']:.4f}、スペクトル重心 {f['sensor']['centroid_hz']:.1f} Hz)。"
             f"3 本とも素の 1-D float64 で届くので、`funct1d` はアダプタ無しでそのまま食える。"
             f"1D ウィングに専用の型を作らなかったのはこのためで ―― 任意の実数 1-D は"
