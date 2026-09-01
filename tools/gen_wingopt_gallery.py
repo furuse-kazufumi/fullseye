@@ -1591,6 +1591,11 @@ def ex_abcd_rays(log):
     h = int(diag[3]) + 132
     x_lo, x_hi = -305.0, 62.0                    # レンズを原点、光は左→右
     y_span = 7.0                                 # 縦 [mm](誇張して描く)
+    # ★誇張倍率は **縦の画素/mm ÷ 横の画素/mm**。最初の版は逆数を書いていて、
+    # 8 倍に伸ばした図に「0.13 倍」と表示していた(読者に真逆を伝える)。
+    _px_per_mm_x = (diag[2] - diag[0]) / (x_hi - x_lo)
+    _px_per_mm_y = (diag[3] - diag[1]) / (2.0 * y_span)
+    _exag = _px_per_mm_y / _px_per_mm_x
     frames = []
     for r in rows:
         canvas = _canvas(h, w)
@@ -1606,7 +1611,7 @@ def ex_abcd_rays(log):
         p.hline(0.0, C_GRID, 1)
         # レンズ(x=0)とセンサ(x=sensor_mm)
         p.vline(0.0, (0.55, 0.60, 0.70), 3)
-        p.vline(sensor_mm, C_MISS, 2)
+        p.vline(sensor_mm, C_MISS, 1)
         p.vline(r["si"], C_OPT, 1, dashed=True, dash=6, gap=5)
         # 物体の矢
         so_x = -r["so"]
@@ -1631,7 +1636,12 @@ def ex_abcd_rays(log):
         yA, yB = r["hits"]
         p.c = imagedraw.draw_line(p.c, (p.px(sensor_mm), p.py(yA)),
                                   (p.px(sensor_mm), p.py(yB)),
-                                  color=(1.0, 1.0, 1.0), width=3)
+                                  color=(1.0, 1.0, 1.0), width=5)
+        # ぼけの端を括弧で挟む(1 本の線だとセンサ線に紛れて見えない)
+        for yy in (yA, yB):
+            p.c = imagedraw.draw_line(p.c, (p.px(sensor_mm) - 9, p.py(yy)),
+                                      (p.px(sensor_mm) + 9, p.py(yy)),
+                                      color=(1.0, 1.0, 1.0), width=1)
         p.marker(r["si"], r["img_h"], C_OPT, 5, "cross", 2)
         p.ticks_x([-300, -250, -200, -150, -100, -50, 0, 50])
         canvas = p.c
@@ -1641,9 +1651,9 @@ def ex_abcd_rays(log):
         inb = r["blur_px"] <= 1.0
         labels += [
             (diag[0] + 6, diag[1] + 4,
-             f"height [mm], vertical scale exaggerated ({(diag[2] - diag[0]) / (x_hi - x_lo) / ((diag[3] - diag[1]) / (2 * y_span)):.2f}x horizontal)",
-             C_DIM, 11, False),
-            (diag[2] - 190, diag[3] - 16, "distance from the lens [mm] ->", C_DIM, 11, False),
+             f"height [mm], vertical scale exaggerated {_exag:.1f}x relative to "
+             f"the horizontal", C_DIM, 11, False),
+            (diag[2] - 190, diag[1] + 20, "distance from the lens [mm] ->", C_DIM, 11, False),
             (int(p.px(0.0)) - 16, diag[1] + 22, "lens", (0.75, 0.79, 0.86), 11, True),
             (int(p.px(sensor_mm)) - 96, diag[1] + 40, "sensor", C_MISS, 11, True),
             (max(diag[0] + 4, int(p.px(so_x)) - 24), int(p.py(obj_h)) - 18,

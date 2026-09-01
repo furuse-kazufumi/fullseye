@@ -1904,8 +1904,9 @@ def ex_profile_sources(log):
     log(f"  2D profile stats: {st2d}")
     log(f"  3D probe: {prof3d.size} samples over {t_mm[-1]:.3f} voxel units; "
         f"wall thicknesses {walls} voxel units")
-    log(f"  sensor features: rms {feats['rms']:.6f} zcr {feats['zero_crossing_rate']:.6f} "
-        f"centroid {feats['centroid']:.4f} Hz")
+    log(f"  sensor features: rms {feats['rms']:.6f} zcr {feats['zcr']:.6f} "
+        f"crest {feats['crest_factor']:.4f} centroid {feats['spectral_centroid']:.3f} Hz "
+        f"peak_freq {feats['peak_freq']:.3f} Hz bandwidth {feats['bandwidth']:.3f} Hz")
 
     W, H = 1200, 900
     fig = Fig(W, H)
@@ -1961,8 +1962,8 @@ def ex_profile_sources(log):
     fig.text(800, 56, "3. sensor time series (acoustic record)", C_B, 12, True)
     fig.text(804, 282, f"{fs:g} Hz x 0.25 s = {sensor.size} samples, rms "
                        f"{feats['rms']:.4f}", C_DIM, 11)
-    fig.text(804, 298, f"zero-crossing rate {feats['zero_crossing_rate']:.4f}, "
-                       f"centroid {feats['centroid']:.1f} Hz", C_DIM, 11)
+    fig.text(804, 298, f"zcr {feats['zcr']:.4f}, crest {feats['crest_factor']:.2f}, "
+                       f"centroid {feats['spectral_centroid']:.1f} Hz", C_DIM, 11)
 
     # 合流: 同じ (x, y) 面に 3 本を正規化して重ねる
     fig.text(30, 336, "They arrive as the same thing: a 1-D float64 array indexed by "
@@ -2008,8 +2009,11 @@ def ex_profile_sources(log):
                       "wall_thicknesses": walls},
         "sensor": {"n": int(sensor.size), "rate_hz": fs,
                    "rms": float(feats["rms"]),
-                   "zero_crossing_rate": float(feats["zero_crossing_rate"]),
-                   "centroid_hz": float(feats["centroid"])},
+                   "zcr": float(feats["zcr"]),
+                   "crest_factor": float(feats["crest_factor"]),
+                   "centroid_hz": float(feats["spectral_centroid"]),
+                   "peak_freq_hz": float(feats["peak_freq"]),
+                   "bandwidth_hz": float(feats["bandwidth"])},
         "funct1d": [{k: (list(map(float, v)) if isinstance(v, tuple) else v)
                      for k, v in c.items() if k not in ("y", "color")}
                     for c in common],
