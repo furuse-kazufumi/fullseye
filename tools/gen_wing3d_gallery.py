@@ -2877,6 +2877,16 @@ def ex_oblique(log) -> dict:
     return {
         "name": "wing3d_oblique_slice",
         "title": "斜めに切ると円が楕円になる(長径は 1/cos で伸びる)",
+        "title_en": "Cut it obliquely and the circle becomes an ellipse (major axis grows as 1/cos)",
+        "caption_en": (
+            f"A synthetic cylinder of radius {r_mm:.2f} mm, cut by a plane tilted from "
+            f"{angles[0]}° to {angles[-1]}° (done by counter-rotating with `vol_rotate`). The "
+            f"minor axis stays at {rows[0]['minor_mm']:.3f} mm whatever the angle, while the "
+            f"major axis follows **2r / cos θ** and reaches {rows[-1]['major_mm']:.3f} mm at "
+            f"{angles[-1]}° — {rows[-1]['major_mm'] / rows[0]['minor_mm']:.2f}x. Across all "
+            f"{len(rows)} angles the measurement is within {max_major_err:.4f} mm "
+            f"({max_major_err / sp:.2f} pixels) of theory. A reminder never to take \"the "
+            "diameter I measured on an oblique slice\" as a dimension."),
         "ops": ["vol_rotate"],
         "facts": {"radius_mm": r_mm, "spacing_mm": sp, "angles_deg": angles,
                   "rows": rows, "max_major_err_mm": max_major_err,
