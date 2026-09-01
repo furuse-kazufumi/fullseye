@@ -376,21 +376,25 @@ def build_sweep_frames(*, focal_mm=35.0, working_distance_mm=200.0,
              f" of {r['evaluated']} seeds   ->  "
              + ("DETECTED" if detected else "not detected"),
              (C_HIT if detected else C_DIM), 14, True),
-            (PLOT_X0 - 44, py0 - 4, "IoU", C_DIM, 11, False),
+            (MARGIN + 4, py0 + 2, "IoU", C_DIM, 11, False),
             (PLOT_X0 - 30, int(_ploty(0.5, 0.0, iou_hi, py0, py1)) - 6, "0.5", C_DIM, 11, False),
             (PLOT_X0 - 30, int(_ploty(MIN_IOU, 0.0, iou_hi, py0, py1)) - 6, "0.1", C_THRESH, 11, False),
             (PLOT_X0 - 30, int(py1) - 12, "0.0", C_DIM, 11, False),
+            (PLOT_X1 - 100, py0 + 2, "defect size [um] ->", C_DIM, 11, False),
             (int(_logx(optical_um, lo_um, hi_um)) + 4, py0 + 2,
              f"optical limit {optical_um:.1f} um", C_OPTICAL, 11, True),
+            (PLOT_X0 + 4, py1 - 14, "no information", (0.80, 0.52, 0.48), 10, False),
         ]
         for t in (20, 30, 50, 100, 200, 400):
             if lo_um <= t <= hi_um:
                 labels.append((int(_logx(float(t), lo_um, hi_um)) - 8,
                                PLOT_Y + PLOT_H - 2, f"{t}", C_DIM, 11, False))
-        labels.append((PLOT_X1 - 74, PLOT_Y + PLOT_H - 2, "defect size [um]", C_DIM, 11, False))
         if det_start is not None and r["defect_um"] >= det_start:
             labels.append((int(_logx(det_start, lo_um, hi_um)) + 4, py0 + 18,
                            f"detection starts {det_start:.0f} um", C_CURVE, 11, True))
+            labels.append((int(_logx(optical_um, lo_um, hi_um)) + 4, py0 + 34,
+                           "<- optics carry it here, the detector does not",
+                           (0.62, 0.70, 0.80), 11, False))
         out.append(_text(frame, labels))
 
     facts = {
