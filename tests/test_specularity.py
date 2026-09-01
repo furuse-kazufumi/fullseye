@@ -1159,8 +1159,7 @@ def test_a_light_stack_is_silently_accepted_by_the_polarisation_operators():
     assert accepted == 50, "the fail-closed check is not what separates these"
     # and the number it invents for a completely unpolarised scene:
     rng = np.random.default_rng(0)
-    L = np.array([[0.276, 0.276, 0.921], [-0.276, 0.276, 0.921],
-                  [0.276, -0.276, 0.921], [-0.192, -0.192, 0.962]])
+    L = _fuzzer_lights()
     stack = 0.6 * np.clip(np.einsum("hwc,nc->nhw", surf, L), 0.0, None)
     dolp = S.polarization_dolp_map(stack)
     assert 0.01 < dolp.mean() < 0.20            # measured 0.054, truth 0.0
@@ -1182,8 +1181,7 @@ def test_a_polariser_sweep_is_confidently_wrong_in_a_photometric_solver():
     flat = np.dstack([np.zeros((h, w)), np.zeros((h, w)), np.ones((h, w))])
     sweep = S.polarization_render(0.4 + 0.3 * rng.random((h, w)),
                                   0.5 * rng.random((h, w)), azimuth_deg=30.0)
-    L = np.array([[0.276, 0.276, 0.921], [-0.276, 0.276, 0.921],
-                  [0.276, -0.276, 0.921], [-0.192, -0.192, 0.962]])
+    L = _fuzzer_lights()
     n, a, _i = S.photometric_stereo_robust(sweep, L, method="ransac")
     err = PM.angular_error_deg(n, flat)
     assert np.isfinite(n).all() and np.isfinite(a).all()   # no exception, no NaN
@@ -1208,8 +1206,7 @@ def test_the_polsweep_predicate_cannot_tell_a_sweep_from_a_light_stack():
     implying the type verifies more than it can."""
     rng = np.random.default_rng(0)
     surf = bump_normals(32, 32, amp=4.0)
-    L = np.array([[0.276, 0.276, 0.921], [-0.276, 0.276, 0.921],
-                  [0.276, -0.276, 0.921], [-0.192, -0.192, 0.962]])
+    L = _fuzzer_lights()
     sweep = S.polarization_render(0.4 + 0.3 * rng.random((32, 32)),
                                   0.5 * rng.random((32, 32)))
     stack = 0.6 * np.clip(np.einsum("hwc,nc->nhw", surf, L), 0.0, None)
