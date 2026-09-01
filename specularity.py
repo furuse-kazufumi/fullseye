@@ -917,8 +917,11 @@ def brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0),
 
     * ``D`` the Trowbridge-Reitz (1975) / GGX normal distribution,
       ``a^2 / (pi * ((n.h)^2 (a^2 - 1) + 1)^2)`` for ``a = roughness^2``, which
-      integrates to 1 against ``(n.h) dw`` over the hemisphere (measured
-      relative error 4.1e-07 by quadrature in ``tests/test_specularity.py``);
+      integrates to 1 against ``(n.h) dw`` over the hemisphere — measured by
+      20000-point midpoint quadrature in ``tests/test_specularity.py`` at
+      relative errors 3.2e-07, 6.3e-08 and 4.0e-09 for roughness 0.2, 0.3 and
+      0.6, all of it quadrature error (the 200000-point rule gives 3.2e-09,
+      6.3e-10, 4.0e-11, exactly the 100x a midpoint rule predicts);
     * ``G`` the separable Smith (1967) masking-shadowing term with the GGX
       lambda;
     * ``F`` Schlick's (1994) Fresnel approximation,
