@@ -1892,9 +1892,12 @@ def riesz_displacement_series(video, f_lo, f_hi, fps, scales: int = 4) -> np.nda
     zero. A clip with no valid pixel anywhere (a constant image) returns exact
     zeros rather than dividing by zero.
 
-    Accuracy and the ``J0`` cliff inherit from :func:`riesz_displacement`;
-    measured on the shared 64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px
-    amplitude is recovered as 0.49999999999992 px (1.6e-13 relative)."""
+    Accuracy, the ``J0`` cliff and the multi-orientation failure all inherit from
+    :func:`riesz_displacement` — read its head-to-head table before trusting a
+    number from here. On a single-grating 64x64x64 / 8 px / 4 Hz clip a true
+    0.5 px amplitude is recovered as **0.50000000000000 px** (2.2e-16 relative);
+    on the two-grating ``motionmag.synthesize_translation`` default the same
+    0.5 px comes back 13.0 % low, with nothing to signal it."""
     field = riesz_displacement(video, f_lo, f_hi, fps, scales)
     wgt = field["weight"] * field["valid"]
     total = float(wgt.sum())
