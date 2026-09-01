@@ -1395,7 +1395,7 @@ def _band_reference(I: np.ndarray, R1: np.ndarray, R2: np.ndarray):
     amp = np.abs(zbar)
     amp_max = float(amp.max())
     live = amp > _AMP_LIVE * amp_max if amp_max > 0.0 else np.zeros_like(amp, bool)
-    return nx, ny, zbar, z, live, amp, amp_max
+    return nx, ny, zbar, z, live, amp, amp_max, Ibar, R1b, R2b, rmag
 
 
 def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict:
