@@ -146,12 +146,23 @@ def categories():
 #:     法線」と「8 枚の合意で出した法線」が区別できず、同じ確信度の顔をする。
 #:   * ``polarization_separate``      → ``(diffuse, specular)``。同上。
 #:
-#: :func:`call` は宣言どおり第 1 要素だけを返し、:func:`get` は素の関数を返す。
+#: 4 つめだけ性格が違い、**削るのではなく容れ物を変える** adapter:
+#:   * ``polarization_render`` → 素の返りは ``(N,H,W)`` の ndarray。これは
+#:     ``photometric.synthesize_ps_images`` と同じ、本 repo の画像スタック規約
+#:     そのものである。一方 ``images`` 型の TYPE_CHECKS は **list/tuple** を
+#:     要求する(``isinstance(v, (list, tuple))``)ので、宣言どおりの値を返す
+#:     には list へ包み直す必要がある。**規約の方を曲げて list を返す関数に
+#:     しなかった**のは、そちらが既存の全スタック op と食い違うからで、
+#:     ずれは 1 箇所(ここ)に閉じ込めるのが正しい。本族のスタック入力 op は
+#:     list も ndarray も受けるので、連鎖はどちらでも通る。
+#:
+#: :func:`call` は宣言どおりの値を返し、:func:`get` は素の関数を返す。
 #: 連鎖ファザーの TYPEMISS 検査は :func:`call` の結果を宣言と突き合わせる。
 RESULT_ADAPTERS = {
     "specular_diffuse_split": lambda r: r[0],
     "photometric_stereo_robust": lambda r: r[0],
     "polarization_separate": lambda r: r[0],
+    "polarization_render": lambda r: [r[i] for i in range(r.shape[0])],
 }
 
 
