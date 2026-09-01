@@ -226,8 +226,7 @@ def srgb_to_linear(rgb):
     **ガンマを二度外す**のがこの手の処理で最も多い間違い ―― 線形値を受け取った
     つもりで再度これを掛けないこと(``linear_to_srgb`` が逆)。
     """
-    import gfx2d
-    return gfx2d.srgb_to_linear(_to_unit_float(rgb))
+    return _elementwise_transfer("srgb_to_linear", _to_unit_float(rgb))
 
 
 def linear_to_srgb(lin):
@@ -235,8 +234,23 @@ def linear_to_srgb(lin):
 
     実体は :func:`gfx2d.linear_to_srgb`(上と同じ理由で委譲)。
     """
+    return _elementwise_transfer("linear_to_srgb",
+                                 np.clip(np.asarray(lin, dtype=np.float64), 0.0, 1.0))
+
+
+def _elementwise_transfer(fname, x):
+    """``gfx2d`` の伝達関数を**任意の形**に適用する。
+
+    ``gfx2d`` 側は画像 API なので ``(H, W)`` / ``(H, W, 3)`` / ``(H, W, 4)``
+    しか受けない。一方こちらは ``(3,)`` の 1 色や ``(N, 3)`` の色表も測る。
+    sRGB の伝達関数は**画素ごと・チャネルごとに独立**なので、``(1, -1)`` に
+    畳んで通し、元の形に戻せば厳密に同じ値になる ―― 形を変えるだけで、
+    計算そのものは 1 か所にしか無い状態を保てる。
+    """
     import gfx2d
-    return gfx2d.linear_to_srgb(np.clip(np.asarray(lin, dtype=np.float64), 0.0, 1.0))
+    x = np.asarray(x, dtype=np.float64)
+    flat = gfx2d.__dict__[fname](x.reshape(1, -1) if x.size else np.zeros((1, 1)))
+    return np.asarray(flat).reshape(x.shape) if x.size else x.copy()
 
 
 def rgb_to_xyz(rgb):
