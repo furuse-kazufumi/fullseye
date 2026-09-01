@@ -158,6 +158,8 @@ with warnings.catch_warnings():
         cad_defect_to_cad, cad_visible_faces,
         palette, semantic_palette, role_color, role_rgb8, diverging_lut,
         assert_not_red_green_pair, ROLES, ROLE_MARKERS, SCHEMES,
+        drawlist, DrawList, DrawListError, diff_command_lists, format_diff,
+        flush_buffer, default_text_metrics, COMMAND_SPECS, TEXT_ADVANCE_RATIO,
         drawstyle, DrawStyle, draw_style, current_style, set_color,
         set_line_width, set_line_style, set_draw, resolve_pattern,
         resolve_color, LINE_STYLES, DRAW_MODES,
