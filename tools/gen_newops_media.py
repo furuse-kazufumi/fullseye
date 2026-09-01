@@ -2055,6 +2055,8 @@ def main(argv=None) -> int:
                     help="comma list of: " + ", ".join(BUILDERS))
     ap.add_argument("--out", default=_MEDIA_DIR)
     ap.add_argument("--thumbs", default=_THUMB_DIR)
+    ap.add_argument("--no-extras", action="store_true",
+                    help="工程フリップブックと見本帳(束ねた展示)を作らない")
     args = ap.parse_args(argv)
 
     want = [c.strip() for c in args.figs.split(",") if c.strip()]
@@ -2077,7 +2079,16 @@ def main(argv=None) -> int:
             f"{frames[0].shape[1]}x{frames[0].shape[0]} in {time.time() - t1:.1f}s")
         info = _write(frames, stem, fps=fps, thumb_index=thumb_index,
                       out_dir=args.out, thumb_dir=args.thumbs, log=log)
-        results[name] = {"stem": stem, "info": info, "facts": facts}
+        results[name] = {"stem": stem, "info": info, "facts": facts,
+                         "frame": frames[info["thumb"]["frame_index"]]}
+
+    extras = {}
+    if not args.no_extras:
+        log("[build] flow -> newops_lightfield_flow (flipbook)")
+        extras["flow"] = build_lightfield_flow(log, args.out, args.thumbs)
+        if len(results) >= 3:
+            log("[build] sampler -> newops_family_sampler (contact sheet)")
+            extras["sampler"] = build_sampler(log, results)
 
     log(f"=== done in {time.time() - t0:.1f}s ===")
     for name, r in results.items():
@@ -2086,6 +2097,13 @@ def main(argv=None) -> int:
         parts = "  ".join(f"{k} {i[k]['bytes'] / 1e6:.2f}MB" for k in kinds)
         log(f"  {name:11s} {i['n_frames']:3d} frame(s) "
             f"{i['size'][0]}x{i['size'][1]} fps={i['fps']}  {parts}")
+    for name, i in extras.items():
+        if "gif_bytes" in i:
+            log(f"  {name:11s} {i['frames']:3d} frame(s) {i['size'][0]}x{i['size'][1]}"
+                f"       gif {i['gif_bytes'] / 1e6:.2f}MB")
+        else:
+            log(f"  {name:11s}   1 sheet   {i['size'][0]}x{i['size'][1]}"
+                f"       png {i['png_bytes'] / 1e6:.2f}MB")
     if ANOMALIES:
         log(f"--- {len(ANOMALIES)} anomaly/anomalies noticed while drawing ---")
         for a in ANOMALIES:

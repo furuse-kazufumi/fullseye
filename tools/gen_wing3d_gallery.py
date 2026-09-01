@@ -2516,6 +2516,8 @@ _EXHIBITS = [
     ("anisotropic", ex_anisotropic),
     ("mip", ex_mip),
     ("distance", ex_distance),
+    ("connectivity", ex_connectivity),
+    ("pipeline", ex_pipeline),
 ]
 
 
