@@ -640,11 +640,19 @@ def cad_surface_to_pixel(mesh, points, K=None, R=None, t=None, image_size=None,
       * ``occluder_face`` (N,) int64 — 遮っている面。無ければ ``-1``。
       * ``visible``       (N,) bool — ``in_front & in_image & ~occluded``。
       * ``camera``        実際に使われたカメラ。
+      * ``winding_fixed`` bool — 内向きに巻かれた閉メッシュを検出して直したか。
 
     ``depth_tol`` は「自分自身の面に遮られた」と誤判定しないための相対許容で、
     遮蔽と判定するのは ``z_hit < depth * (1 - depth_tol) - depth_tol`` のとき。
     閉じた mesh の**裏側**にある点は、手前の壁に遮られて ``occluded = True`` に
-    なる — これは仕様であって取りこぼしではない。"""
+    なる — これは仕様であって取りこぼしではない。
+
+    **遮蔽判定は巻き方向に依存する**(手前の壁が裏面としてカリングされると、
+    裏側の点まで ``visible`` になる)。そのため ``cull_backfaces=True`` では
+    内向きに巻かれた閉メッシュを検出し、既定では巻きを直して
+    ``winding_fixed=True`` を返す。``strict=True`` で ``ValueError``、
+    ``cull_backfaces=False`` では検査そのものをしない
+    (詳細は :func:`_orient_for_culling`)。"""
     V, F = _mesh(mesh)
     P = _real_array(points, "points")
     if P.ndim != 2 or P.shape[1] != 3:
