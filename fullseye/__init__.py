@@ -154,6 +154,8 @@ with warnings.catch_warnings():
         lifetime_fit, lifetime_phasor,
         specularity, motionmag, pose_quat, quatimage, rangedoppler,
         acoustics, interferometry,
+        cadmap, cad_pixel_to_surface, cad_surface_to_pixel,
+        cad_defect_to_cad, cad_visible_faces,
         chromatic_confocal_height, chromatic_confocal_simulate,
         csi_contrast_map, csi_design, csi_envelope, csi_height_map,
         csi_peak_position, csi_signal_simulate, csi_stack_simulate,
