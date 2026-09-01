@@ -915,6 +915,15 @@ def csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     **first or last plane** (the surface is at or beyond the end of the scan).
     Those last three are the same trap in three shapes: each would otherwise
     return a height that is finite, plausible, and wrong.
+
+    Honest scope of the boundary check: it is a **backstop, not the workhorse**.
+    The analytic-signal magnitude of a finite record is suppressed at its own
+    endpoints, so a surface at ``z = 0.0`` — or at ``-3.0 um``, entirely outside
+    the scan — comes back with its envelope maximum on plane **1**, one plane
+    inside the boundary, and the first-or-last-plane test does not fire. It fires
+    for a genuinely monotone input (a ramp, an impulse on the first sample) and
+    for a dead pixel. Everything else is caught by *max_edge_envelope*, and the
+    tests pin both halves of that statement.
     """
     op = "csi_peak_position"
     dz = _positive(z_step_um, "z_step_um")
