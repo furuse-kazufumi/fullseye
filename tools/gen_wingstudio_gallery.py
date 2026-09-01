@@ -2535,7 +2535,7 @@ def write_captions() -> dict:
             ]
         lines += spec["findings"].strip().splitlines()
         lines.append("")
-        path = os.path.join(EXHIBITS_DIR, spec["filename"])
+        path = CAPTION_PATHS[lang]
         with open(path, "w", encoding="utf-8") as f:
             f.write("\n".join(lines))
         written[lang] = path
