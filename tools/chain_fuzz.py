@@ -91,6 +91,24 @@ def _mesh(rng):
     return V, np.array([[0, 2, 1], [0, 3, 2]], np.int64)
 
 
+def _labels(rng):
+    """整数ラベル。**2-D 画像と 3-D volume を必ず混ぜて出す**。
+
+    2026-09-02 実測: 種が 2-D だけだと **3-D を要求する消費側が一度も走らない**。
+    ``vol_region_props`` は 3-D を期待し 2-D を documented ValueError で拒否する
+    ので、2-D しか無いプールでは毎回 fail-closed し、「同じ連鎖の中で先に
+    vol_label が引かれた場合だけ」到達する = ``counts`` を ``signal`` に相乗り
+    させていたときと同じ罠(実測でこの op は 1500 連鎖の未到達 75 件に入っていた)。
+    逆に 3-D だけにすると 2-D を要求する ``cad_defect_to_cad`` /
+    ``illuminant_from_dichromatic_planes`` が走らなくなるので、**両方**を出す。
+    3-D は球ファントムの連結成分ラベルにする(真の成分数が分かっている)。
+    """
+    if rng.random() < 0.5:
+        return _labels_2d(rng)
+    import volops                                          # noqa: PLC0415
+    return volops.vol_label(_ball_vol(rng) > 0.5, 26)[0]
+
+
 def _labels_2d(rng):
     """2-D の整数ラベル画像 (H,W)(背景 0 + 矩形領域 2-3 個)。
 

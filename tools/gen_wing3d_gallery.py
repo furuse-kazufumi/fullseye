@@ -1708,8 +1708,11 @@ def ex_visual_hull(log) -> dict:
             c, [(px, py), (px + pw - 1, py), (px + pw - 1, py + ph - 1), (px, py + ph - 1)],
             color=C_RULE, width=1, closed=True)
         c = _axis_gizmo(c, R, px + 46, py + ph - 46, size=30)
-        c = _text(c, [(px, py + ph + 6, "アンバー = 彫り出した占有 voxel / "
-                                        "グレー = 真の形(同じ格子に離散化)", C_TEXT, 12, True)])
+        c = _text(c, [
+            (px, py + ph + 6, "グレー = 真の形(同じ格子に離散化 %d voxel)" % gt_n,
+             (0.62, 0.66, 0.72), 12, True),
+            (px, py + ph + 24, "アンバー = 彫り残し(真の形の外にある %d voxel)"
+             % int(excess.sum()), C_B, 12, True)])
 
         # 中央: 使ったシルエット(最大 8 枚をタイル)
         sx, sy = 440, 88
