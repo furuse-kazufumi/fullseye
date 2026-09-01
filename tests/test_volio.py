@@ -320,6 +320,42 @@ def test_volume_feeds_existing_vol_ops(tmp_path):
     assert np.isscalar(n) or np.ndim(n) == 0
 
 
+def test_vol_mip_is_normalised_and_unfit_as_a_ratio_denominator():
+    """Documentation pin (2026-09-02): ``ops.RT["vol_mip"]`` rescales the
+    projection into [0, 1] for *display*. Used as the denominator of a "how far
+    has the cumulative MIP reached?" ratio it produces impossible values.
+
+    Measured on the bundled skeleton CT (shape (20, 97, 28), raw max 1.2264):
+    the cumulative MIP is by construction identical to the full projection, yet
+    it scores 122.6 % against vol_mip and exactly 100.0 % against
+    ``vol.max(axis=0)``. This test pins both the normalisation and the honest
+    denominator, so a future change to either is caught rather than silently
+    shifting every published percentage.
+    """
+    import ops
+    ct = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                      "studio_assets", "sample_3d", "skeleton_ct.npy")
+    if not os.path.exists(ct):                       # asset-optional checkout
+        pytest.skip("bundled skeleton CT not present")
+    vol = np.load(ct).astype(np.float64)
+    mip_op = ops.RT["vol_mip"](vol, 0.0, 0.0)
+    mip_raw = vol.max(axis=0)
+
+    assert float(mip_op.max()) == pytest.approx(1.0)             # normalised
+    assert float(mip_raw.max()) > 1.0                            # raw is NOT in [0, 1]
+
+    run = np.zeros_like(vol[0])
+    for z in range(vol.shape[0]):                                # cumulative MIP
+        run = np.maximum(run, vol[z])
+    assert np.allclose(run, mip_raw)                             # it IS the projection
+
+    against_raw = 100.0 * run.sum() / mip_raw.sum()
+    against_op = 100.0 * run.sum() / mip_op.sum()
+    assert against_raw == pytest.approx(100.0)                   # honest denominator
+    assert against_op > 100.0                                    # impossible "reach"
+    assert against_op == pytest.approx(122.6, abs=0.1)           # the documented number
+
+
 def test_volio_exports_match_all():
     for name in volio.__all__:
         assert hasattr(volio, name), name
