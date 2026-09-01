@@ -973,7 +973,7 @@ def scale_bar(img, length, units_per_pixel, unit="µm", xy=None, anchor="rb",
 # グラフ(matplotlib を使わない)
 # ------------------------------------------------------------------ #
 
-def axes_transform(rect, xlim, ylim, invert_y=True):
+def axes_transform(rect, xlim, ylim, invert_y=True, xscale="linear", yscale="linear"):
     """データ座標 → 画素座標の対応(**閉形式**)を作る。
 
     ``row は下向き`` という画像の事実と、``y は上向き`` というグラフの慣習の
@@ -988,19 +988,24 @@ def axes_transform(rect, xlim, ylim, invert_y=True):
         描画域(左上基準、画素)。
     xlim, ylim : (lo, hi)
         データ範囲。lo == hi は**傾きが無限大**になるので ValueError。
+        **lo > hi(反転軸)も許す** ―― 深度やランクを上下逆に描くため。
     invert_y : bool
         True(既定)なら ``ylim[0]`` が**下端**に来る = 普通のグラフ。
         False なら画像そのままの向き(上端が ``ylim[0]``)。
+    xscale, yscale : {'linear','log'}
+        ``'log'`` は常用対数。範囲に 0 以下が入れば ValueError
+        (log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。
 
     Returns
     -------
     dict
-        ``{"rect", "xlim", "ylim", "invert_y"}``。
+        ``{"rect", "xlim", "ylim", "invert_y", "xscale", "yscale"}``。
 
     Raises
     ------
     ValueError
-        矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満。
+        矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、
+        未知の scale、log 軸で範囲に 0 以下。
     """
     x, y, w, h = _rect(rect)
     if w < 2 or h < 2:
@@ -1010,12 +1015,33 @@ def axes_transform(rect, xlim, ylim, invert_y=True):
     y0, y1 = float(ylim[0]), float(ylim[1])
     if x0 == x1 or y0 == y1:
         raise ValueError(f"xlim/ylim must span a non-zero range (got: {xlim}, {ylim})")
+    for nm, sc, lim in (("xscale", xscale, (x0, x1)), ("yscale", yscale, (y0, y1))):
+        if sc not in ("linear", "log"):
+            raise ValueError(f"{nm} must be 'linear'|'log' (got: {sc!r})")
+        if sc == "log" and min(lim) <= 0.0:
+            raise ValueError(f"a log {nm[0]} axis needs a strictly positive range (got: {lim})")
     return {"rect": (x, y, w, h), "xlim": (x0, x1), "ylim": (y0, y1),
-            "invert_y": bool(invert_y)}
+            "invert_y": bool(invert_y), "xscale": xscale, "yscale": yscale}
+
+
+def _axis_fraction(v, lim, scale):
+    """データ値 → [0,1] の位置。``lim`` は反転(lo > hi)していてもよい。"""
+    lo, hi = float(lim[0]), float(lim[1])
+    v = np.asarray(v, dtype=np.float64)
+    if scale == "log":
+        if np.any(v <= 0.0):
+            raise ValueError("a log axis cannot place values <= 0")
+        return (np.log10(v) - math.log10(lo)) / (math.log10(hi) - math.log10(lo))
+    return (v - lo) / (hi - lo)
 
 
 def data_to_pixel(axes, x, y):
     """:func:`axes_transform` の対応でデータ点を画素 (x,y) に写す。
+
+    **クリップしない** ―― ``np.clip(v, lo, hi)`` は ``lo > hi``(反転軸)の
+    とき黙って ``hi`` を返し、全点が端に貼り付いた「もっともらしい嘘の図」に
+    なる(この repo の生成器で実際に一度騙されている)。範囲外を弾くのは
+    :func:`plot_series` の ``clip=True`` の仕事で、そこでは**例外**にする。
 
     Returns
     -------
@@ -1023,27 +1049,27 @@ def data_to_pixel(axes, x, y):
         ``px``, ``py``(float、丸めない ―― 丸めは描画側の仕事)。
     """
     rx, ry, rw, rh = axes["rect"]
-    xmin, xmax = axes["xlim"]
-    ymin, ymax = axes["ylim"]
-    xa = np.asarray(x, dtype=np.float64)
-    ya = np.asarray(y, dtype=np.float64)
-    px = rx + (xa - xmin) / (xmax - xmin) * (rw - 1)
-    fy = (ya - ymin) / (ymax - ymin) * (rh - 1)
-    py = ry + (rh - 1) - fy if axes["invert_y"] else ry + fy
+    fx = _axis_fraction(x, axes["xlim"], axes.get("xscale", "linear"))
+    fy = _axis_fraction(y, axes["ylim"], axes.get("yscale", "linear"))
+    px = rx + fx * (rw - 1)
+    py = ry + (rh - 1) - fy * (rh - 1) if axes["invert_y"] else ry + fy * (rh - 1)
     return px, py
 
 
-def nice_ticks(lo, hi, n=5):
+def nice_ticks(lo, hi, n=5, scale="linear"):
     """[lo, hi] を覆う「切りのよい」目盛り値(1/2/5 × 10^k、**閉形式**)。
 
     端は**含める**(``lo`` や ``hi`` がちょうど目盛りに乗るなら必ず出る)。
     浮動小数の丸めで端が 1 個落ちる off-by-one を避けるため、判定には
     ``step*1e-9`` の許容を使う。
 
+    ``scale='log'`` では 1/2/5 × 10^k の**十進の刻み**を返す(等間隔の刻みを
+    log 軸に置くと、目盛りが右へ行くほど潰れて読めなくなる)。
+
     Raises
     ------
     ValueError
-        lo == hi、非有限、n < 1。
+        lo == hi、非有限、n < 1、log で lo か hi が 0 以下。
     """
     _finite("lo/hi", lo, hi)
     lo, hi = float(lo), float(hi)
@@ -1054,6 +1080,18 @@ def nice_ticks(lo, hi, n=5):
     n = int(n)
     if n < 1:
         raise ValueError(f"n must be >= 1 (got: {n})")
+    if scale not in ("linear", "log"):
+        raise ValueError(f"scale must be 'linear'|'log' (got: {scale!r})")
+    if scale == "log":
+        if lo <= 0.0:
+            raise ValueError(f"log ticks need a strictly positive range (got: {(lo, hi)})")
+        out = []
+        for k in range(int(math.floor(math.log10(lo))), int(math.floor(math.log10(hi))) + 1):
+            for m in (1.0, 2.0, 5.0):
+                v = m * 10.0 ** k
+                if lo * (1 - 1e-9) <= v <= hi * (1 + 1e-9):
+                    out.append(v)
+        return np.asarray(out, dtype=np.float64)
     raw = (hi - lo) / n
     mag = 10.0 ** math.floor(math.log10(raw))
     norm = raw / mag
