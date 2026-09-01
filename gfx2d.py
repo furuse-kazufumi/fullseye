@@ -1290,6 +1290,11 @@ def radial_light(height, width, x, y, radius, intensity=1.0, falloff="smooth",
 
     The value at the centre is exactly ``intensity * color``. This is a
     *linear-light* quantity: add lights together, then encode once.
+
+    With ``intensity > 1`` the result leaves ``[0, 1]`` — deliberately, because a
+    light map is not a picture. :func:`light_mask` accepts it; the operators that
+    take an ``rgb`` *image* reject it with the documented range error rather than
+    clipping a light budget behind your back.
     """
     h, w = _check_hw(height, width, "output")
     cx = _scalar(x, "x", -1e6, 1e6)
