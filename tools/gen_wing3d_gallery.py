@@ -71,7 +71,7 @@ RAW_BASE = ("https://raw.githubusercontent.com/furuse-kazufumi/fullseye/"
             "master/docs/articles/assets/")
 
 SEED = 20260902
-THUMB_W = 900
+THUMB_W = 720                       # exhibit_tile.save_exhibit の既定に合わせる
 GIF_MAX_BYTES = 3 * 1024 * 1024
 
 G = ops3d.get                                       # op を名前で引く
