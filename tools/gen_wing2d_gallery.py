@@ -1327,8 +1327,9 @@ def subject_shape_match(log=print) -> dict:
         _text(sd, (75, 282), "指し棒 = 推定角", size=14, fill=INK_DIM, anchor="ma")
         _text(sd, (75, 302), "(上を 0°・反時計回り)", size=14, fill=INK_DIM,
               anchor="ma")
-        _text(sd, (75, 258), "1 回 %.2f 秒" % R["sec"], size=15, fill=ACCENT,
-              anchor="ma")
+        # 実測の所要時間はここに焼き込まない —— 走るたびに画素が変わり、
+        # 生成物が決定的でなくなる。時間は meta / キャプション側に載せる。
+        _text(sd, (75, 258), "CPU 単体", size=15, fill=ACCENT, anchor="ma")
         frames.append(_side_by_side(_side_by_side(np.asarray(side, np.uint8),
                                                   left), plot))
         labels.append("真の角度 %.0f° → 推定 %.0f° (誤差 %+.1f°) / 位置ずれ (%+d, %+d) px / スコア %.3f"
@@ -1364,7 +1365,7 @@ def subject_shape_match(log=print) -> dict:
             "96×96 px のテンプレートから作った形状モデルで、23° ずつ回した部品 "
             "(探索格子 5° の倍数を避けた角度) を %d 枚のシーンから探した。5° 刻みで角度も探索させると、角度の誤差は最大 "
             "%.1f°(探索格子 5° の半分 = 2.5° がそもそもの下限)、位置の誤差は最大 %d px、"
-            "スコアは最低でも %.3f。1 シーンあたり %.2f 秒(CPU、%d 角度ぶんの探索を含む)。"
+            "スコアは最低でも %.3f。1 シーンあたり約 %.1f 秒(CPU、%d 角度ぶんの探索を含む)。"
             % (len(rows), float(np.max(np.abs(d_ang))), int(np.max(np.abs(pos))),
                float(min(r["score"] for r in rows)), total / len(rows), len(search))),
     }

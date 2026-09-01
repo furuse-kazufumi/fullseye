@@ -338,7 +338,6 @@ def build_roundtrip_curvature(log):
     k = np.stack([np.maximum(k1, k2).ravel(), np.minimum(k1, k2).ravel()], 1)
 
     si = R.curvature_to_shape_index(k)
-    back = R.shape_index_to_curvature(k)
     back = R.shape_index_to_curvature(si)
     max_abs = float(np.max(np.abs(back - k)))
     err = np.max(np.abs(back - k), axis=1).reshape(n, n)
@@ -742,7 +741,7 @@ def build_axis_unit_traps(log):
         keep = (q[:, 0] >= 0) & (q[:, 0] < n) & (q[:, 1] >= 0) & (q[:, 1] < n)
         if keep.any():
             img = imagedraw.draw_markers(img, np.stack([q[keep, 1], q[keep, 0]], 1),
-                                         color=1.0, size=1, shape="point", width=1)
+                                         color=1.0, size=1, shape="dot", width=1)
         return img
 
     deg_img = rot(30.0)
