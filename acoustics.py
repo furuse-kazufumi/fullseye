@@ -1198,10 +1198,35 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     and its top six bins differ by 0.03, which is itself worth knowing), the six
     highest bins at ``win=64`` are 2000, 2400, 1600, 4000, 3600 and 1200 Hz —
     bracketing the true 3000 Hz resonance without any of them being it. And that
-    is enough: feeding the band ``max_freq +- one bin`` straight into
+    is enough: feeding the band this operator returns straight into
     :func:`envelope_spectrum` recovers the defect rate exactly — measured
     **107.0000 Hz** from the 1600-2400 Hz band the operator chose by itself,
     with no knowledge of the resonance.
+
+    **The band is returned, not left to the caller to assemble.** ``band_lo`` /
+    ``band_hi`` are ``max_freq -+ bin_hz`` *clamped into the open interval*
+    ``(0, rate/2)`` that :func:`envelope_spectrum` accepts, so
+    ``envelope_spectrum(x, rate, sk["band_lo"], sk["band_hi"])`` is always a
+    legal call. Assembling the band by hand is not: ``freqs`` runs up to and
+    including Nyquist, so whenever the winning bin is the topmost interior one,
+    ``max_freq + bin_hz`` lands exactly *on* Nyquist and ``envelope_spectrum``
+    refuses it — correctly, since no such band exists in the recording. Measured
+    on the ``mode="am"`` bearing signal (25600 Hz, 1 s, 3 kHz carrier, 107 Hz
+    defect, ``m = 0.5``), whose kurtosis maximum is the top interior bin:
+
+    ===========================  =====================  ==============================
+    band handed to the consumer  value                  ``envelope_spectrum``
+    ===========================  =====================  ==============================
+    ``max_freq -+ bin_hz``       12000.0 - 12800.0 Hz   ``ValueError`` (12800 = Nyquist)
+    ``band_lo`` / ``band_hi``    12000.0 - 12600.0 Hz   returns, ``peak_freq`` 107.0000
+    ===========================  =====================  ==============================
+
+    The clamp margin is **half a bin**: an edge cannot be placed more finely than
+    ``bin_hz`` in the first place, and half a bin is the smallest offset that is
+    still a resolvable distance from the boundary — no epsilon, no rate-dependent
+    fudge. ``band_lo < band_hi`` always holds, because ``max_freq`` is by
+    construction an interior bin and therefore at least one full bin away from
+    both 0 and Nyquist.
 
     ``win`` defaults to the largest power of two that leaves at least 8 interior
     frames, clamped to [16, 64] — short, for the reason in the table — and the
