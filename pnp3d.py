@@ -11,6 +11,27 @@ DLT(Direct Linear Transform)で射影行列を解き、K 既知として [R|t] �
 import numpy as np
 
 
+def _as_image_points(points_2d, name="points_2d"):
+    """画像平面の点列を (N,2) float へ。**fail-closed**: 画像や 3-D 点は明示拒否。
+
+    ここが緩かったために「2-D 点列を要求する引数へ 32x32 の画像を渡す」使い方が
+    生の ``IndexError`` になっていた(2026-09-01 実測)。何が悪いかを名指しする
+    ``ValueError`` にすると、呼び手は入力を直せる — 素の IndexError では
+    「この op の契約の穴」なのか「入力が悪い」のか区別できない。
+    """
+    x = np.asarray(points_2d, float)
+    if x.ndim != 2 or x.shape[1] != 2:
+        raise ValueError(
+            f"{name} must be (N, 2) image-plane points, got shape {x.shape}"
+            + (" — this looks like an image, not a point list;"
+               " project 3-D points with match3d.project_points first"
+               if x.ndim == 2 and x.shape[1] > 3 else "")
+        )
+    if not np.all(np.isfinite(x)):
+        raise ValueError(f"{name} contains non-finite values (NaN/Inf)")
+    return x
+
+
 def _project(X, K, R, t):
     """3D 点 (n,3) → 2D (n,2)。x = K(RX+t)、透視除算。"""
     Xc = (R @ np.asarray(X, float).T).T + np.asarray(t, float)
@@ -19,9 +40,16 @@ def _project(X, K, R, t):
 
 
 def reprojection_error(points_3d, points_2d, K, R, t):
-    """再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。"""
+    """再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。
+
+    Raises ValueError: points_2d が (N,2) でない / 点数不一致 / 非有限。
+    """
+    x = _as_image_points(points_2d)
     proj = _project(points_3d, K, R, t)
-    d = np.linalg.norm(proj - np.asarray(points_2d, float), axis=1)
+    if len(proj) != len(x):
+        raise ValueError(
+            f"3D and 2D point counts do not match ({len(proj)} vs {len(x)})")
+    d = np.linalg.norm(proj - x, axis=1)
     return float(np.sqrt(np.mean(d ** 2)))
 
 
