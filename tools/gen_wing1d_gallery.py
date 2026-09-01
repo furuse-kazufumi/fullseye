@@ -1652,7 +1652,7 @@ def ex_smoothing_tradeoff(log):
                  f"at sigma {rows[best]['sigma']:.3f}", C_C, 11, True)
         fig.text(90, axr.Y(rows[0]["rmse"]) - 16,
                  f"raw {rows[0]['rmse']:.6f}", C_DIM, 11, True)
-        fig.text(300, 558, "sigma [samples] ->", C_DIM, 11)
+        fig.text(392, 558, "sigma [samples] ->", C_DIM, 11)
 
         # 下段右: 極値の数とピークの高さ
         axn = Ax(fig, 596, 372, W - 30, 552, (0.5, 45.0),
@@ -1679,7 +1679,7 @@ def ex_smoothing_tradeoff(log):
             fig.stamp(ink, C_TRUE)
         fig.text(600, 354, "number of strict local maxima", C_TEXT, 12, True)
         fig.text(604, axn.Y(true_max) - 18, f"clean truth = {true_max}", C_C, 11, True)
-        fig.text(820, 558, "sigma [samples] ->", C_DIM, 11)
+        fig.text(852, 558, "sigma [samples] ->", C_DIM, 11)
 
         fig.box(84, 574, W - 30, H - 12, C_PANEL2)
         fig.text(96, 580, f"sigma {r['sigma']:6.3f}   rmse {r['rmse']:.6f} "
@@ -2155,19 +2155,18 @@ def ex_peak_match(log):
             fig.stamp(ink, C_TRUE)
             ok = r["shifts"][j] == 0
             fig.text(x0, 358, f"window at {c}", C_TEXT, 12, True)
-            fig.text(x0, 506, f"shift {r['shifts'][j]:+d}  (truth 0)",
+            fig.text(x0, 512, f"shift {r['shifts'][j]:+d}  (truth 0)",
                      C_C if ok else C_E, 12, True)
-            fig.text(x0, 524, f"score {r['scores'][j]:8.4f}", C_DIM, 11)
-        _legend(fig, W - 250, 376, [("window", C_DIM), ("template", C_D)])
+            fig.text(x0, 530, f"score {r['scores'][j]:8.4f}", C_DIM, 11)
+        _legend(fig, W - 200, 338, [("window", C_DIM), ("template", C_D)])
 
         fig.box(84, 552, W - 30, H - 12, C_PANEL2)
-        fig.text(96, 558, "local_min_max_funct_1d uses STRICT inequalities and has no "
-                          "noise model: on the raw trace it reports every sample that "
-                          "happens to sit above both neighbours.", C_DIM, 12)
+        fig.text(96, 558, "local_min_max_funct_1d uses STRICT inequalities and has "
+                          "no noise model: it reports every sample above both "
+                          "neighbours.", C_DIM, 12)
         fig.text(96, 578, f"here that is {r['n_raw']} maxima for {len(centres)} peaks. "
-                          f"Smoothing first, then a height gate, is the whole method - "
-                          f"and it is the caller's decision, not the operator's.",
-                 C_DIM, 12)
+                          f"Smooth first, then gate on height - the caller's "
+                          f"decision, not the operator's.", C_DIM, 12)
         allok = all(s == 0 for s in r["shifts"])
         fig.text(96, 600, ("all four template lags are exactly 0 - "
                            "the correlation peak has not moved yet"
