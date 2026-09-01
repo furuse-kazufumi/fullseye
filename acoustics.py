@@ -172,6 +172,14 @@ MAX_STFT_ELEMENTS = 1 << 24
 #: Largest number of fractional-octave bands in one request.
 MAX_BANDS = 4096
 
+#: Largest ``nfft / win``. Zero-padding a frame interpolates its spectrum and 2x
+#: to 8x is ordinary practice, but the memory grows linearly in ``nfft`` while
+#: the information does not grow at all. Found by adversarial audit: ``win=256,
+#: nfft=2**20`` on a 1000-sample (8 kB) input passed the element cap — 11 frames
+#: x 524289 bins is 5.77 M coefficients, under :data:`MAX_STFT_ELEMENTS` — and
+#: allocated **92.3 MB**, an 11500x amplification from a small, innocuous input.
+MAX_NFFT_RATIO = 16
+
 #: Largest angle-domain record produced by :func:`angular_resample`.
 MAX_ANGULAR_SAMPLES = 1 << 24
 
