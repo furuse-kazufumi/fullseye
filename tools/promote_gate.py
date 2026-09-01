@@ -307,28 +307,46 @@ def counterfactual_utility(ops, problems, op_name, a=0.5, b=0.5, cfg=None,
             ops, prob, pname, a, b, cfg, offset, op_name, max_existing)
         if not np.isfinite(best_existing):
             continue
-        denom = abs(best_existing) + 1e-12
-        rel = (cand - best_existing) / denom
+        rel, absolute, improved, basis, scale, scale_from = _gain(
+            cand, best_existing, prob, pname, cfg, offset)
         rows.append({"problem": pname, "unit": prob.unit,
                      "candidate": round(cand, 5),
                      "best_existing": round(best_existing, 5),
                      "best_existing_op": best_name,
-                     "relative_gain": round(float(rel), 5)})
+                     "absolute_gain": round(absolute, 5),
+                     "relative_gain": None if rel is None else round(float(rel), 5),
+                     "gain_basis": basis,
+                     "scale_reference": round(float(scale), 5),
+                     "scale_reference_from": scale_from,
+                     "improved": bool(improved)})
         if verbose:
+            shown = "rel undefined" if rel is None else f"rel {rel:+.4f}"
             print(f"  {pname:12s} cand {cand:9.4f}  best-existing {best_existing:9.4f}"
-                  f"  ({best_name})  rel {rel:+.4f}")
-    gains = [r["relative_gain"] for r in rows]
+                  f"  ({best_name})  {shown}  abs {absolute:+.4f}"
+                  f"  {'IMPROVED' if improved else ''}")
+    rels = [r["relative_gain"] for r in rows if r["relative_gain"] is not None]
+    abss = [r["absolute_gain"] for r in rows]
+    undefined = [r for r in rows if r["relative_gain"] is None]
     return {
         "per_problem": rows,
         "problems_evaluated": len(rows),
-        "problems_improved": int(sum(1 for g in gains if g > MIN_RELATIVE_GAIN)),
-        "best_relative_gain": round(float(max(gains)), 5) if gains else 0.0,
-        "mean_relative_gain": round(float(np.mean(gains)), 5) if gains else 0.0,
+        "problems_improved": int(sum(1 for r in rows if r["improved"])),
+        # 集計は**比が定義できた problem だけ**で取る。0 割りの跳ね上がりを 1 件
+        # 混ぜると、この 2 つはその 1 件しか表さなくなる。
+        "problems_with_defined_ratio": len(rels),
+        "problems_with_undefined_ratio": len(undefined),
+        "best_relative_gain": round(float(max(rels)), 5) if rels else 0.0,
+        "mean_relative_gain": round(float(np.mean(rels)), 5) if rels else 0.0,
+        "best_absolute_gain": round(float(max(abss)), 5) if abss else 0.0,
         "utility_method": ("single-stage substitution on the locked split: the "
                            "candidate is compared against the BEST existing op of "
                            "the same in_sort, per problem. This is an approximation "
                            "of 're-run evolution with and without the op', which "
-                           "would cost tens of minutes per candidate."),
+                           "would cost tens of minutes per candidate. Where the best "
+                           "existing op scores ~0 the ratio is UNDEFINED (not "
+                           "1e-12-divided): such problems are judged on absolute "
+                           "gain against the problem's own scale (hand/identity "
+                           "baseline) and are excluded from the relative aggregates."),
         "split": split,
     }
 
