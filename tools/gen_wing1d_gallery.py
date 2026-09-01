@@ -3098,9 +3098,15 @@ BUNDLING = {
 
 
 def _write_exhibit_md(results: dict, log) -> str:
-    """キャプション原稿を書く。記事本体(docs/articles/*.md)には一切触れない。"""
+    """キャプション原稿(ja)を書く。記事本体(docs/articles/*.md)には一切触れない。
+
+    展示の器(``tools/build_exhibits.py``)は ``<id>.ja.md`` と ``<id>.en.md`` の
+    **2 枚**を要求するので、生成側は ja を ``wing1d.ja.md`` に書く。en は同じ実測値
+    を人手で英語にしたもので、機械翻訳でも ja の流用でもない(数字と op 名だけが
+    厳密に一致していればよい)。
+    """
     os.makedirs(EXHIBITS, exist_ok=True)
-    path = os.path.join(EXHIBITS, "wing1d.md")
+    path = os.path.join(EXHIBITS, "wing1d.ja.md")
     lines = [
         "<!-- tools/gen_wing1d_gallery.py が自動生成。記事 md への挿入候補であり、",
         "     このファイル自体は記事ではない。数値はすべて生成時の実測値。 -->",
