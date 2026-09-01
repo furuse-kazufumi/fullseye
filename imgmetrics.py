@@ -887,6 +887,68 @@ def compare_images(a, b, data_range=None, bins=64, channel_axis=None, ms=False):
     return out
 
 
+def measure_with(report, a, b, ms=False):
+    """**前の測定と厳密に同じ条件で**もう一組を測る。
+
+    :func:`compare_images` の返り値(``contract`` を含む)を受け取り、そこに
+    記録された ``data_range`` / ``bins`` / ``ncd_levels`` をそのまま使って測り直す。
+
+    これが要るのは、この repo で実際に起きた事故の型があるから ―― **数値だけを
+    図注や表に写して、条件が消える**。別々に測った 2 つの PSNR を並べたとき、
+    片方が ``data_range=1.0``、もう片方が ``255`` なら **48.13 dB の差が「改善」に
+    見える**。条件を持ち回れば、そもそも比べられない組合せは作れない。
+
+    同時に、これが ``metrics`` 型の**消費側**でもある。``compare_images`` だけが
+    ``metrics`` を産んで誰も食わない状態は、この repo が繰り返し踏んできた
+    「入口はあるが消費 op が無い型」そのものだった(2026-09-02 の点検で検出)。
+
+    Parameters
+    ----------
+    report : dict
+        :func:`compare_images` の返り値、または ``contract`` そのもの。
+    a, b : array_like
+        測り直す 2 枚。
+
+    Returns
+    -------
+    dict
+        同じ形の報告。``contract`` は受け取ったものと**同一**。
+    """
+    contract = report.get("contract", report) if isinstance(report, dict) else None
+    if not isinstance(contract, dict) or "data_range" not in contract:
+        raise ValueError(
+            "report must be a compare_images() result (or its 'contract' dict); "
+            f"got {type(report).__name__} without a 'data_range' key"
+        )
+    dr = contract["data_range"]
+    bins = contract.get("bins", 64)
+    want_levels = contract.get("ncd_levels")
+    is_float = np.issubdtype(np.asarray(a).dtype, np.floating)
+    if bool(want_levels) != bool(is_float):
+        raise ValueError(
+            f"the recorded contract quantised NCD to {want_levels!r} levels, but this pair is "
+            f"{'float' if is_float else 'integer'}; the two NCD numbers would not be comparable"
+        )
+    out = compare_images(a, b, data_range=dr, bins=bins,
+                         channel_axis=contract.get("channel_axis"), ms=ms)
+    out["contract"] = dict(contract)
+    return out
+
+
+def metrics_table(report, order=None):
+    """報告を ``(名前, 値)`` の表にする ―― 条件の行も**必ず一緒に**並べる。
+
+    数値だけの表を作れないようにしてあるのがこの op の主旨。``contract`` の
+    各項目が ``条件: <名前>`` として同じ表に入る。
+    """
+    if not isinstance(report, dict) or "contract" not in report:
+        raise ValueError("report must be a compare_images() result (it must carry 'contract')")
+    keys = [k for k in (order or sorted(report)) if k != "contract" and k in report]
+    rows = [(k, report[k]) for k in keys]
+    rows += [(f"条件: {k}", v) for k, v in sorted(report["contract"].items())]
+    return rows
+
+
 if __name__ == "__main__":     # pragma: no cover - 手元確認用
     worst = 0.0
     for L1, a1, b1, L2, a2, b2, want in CIEDE2000_TEST_PAIRS:
