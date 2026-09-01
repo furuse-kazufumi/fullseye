@@ -1787,15 +1787,16 @@ def ex_aliasing(log):
         fig.text(96, 574, f"fs {r['fs']:7.0f} Hz   Nyquist {r['nyq']:6.1f} Hz   "
                           f"{r['n']:4d} samples   bin {r['res']:.3f} Hz", C_TEXT, 13, True)
         if r["aliased"]:
-            fig.text(96, 596, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
-                              f"{r['peak_amp']:.6f}  ->  folding predicts "
-                              f"|{f_true:g} - {r['fs']:.0f} k| = {r['expected']:.2f} Hz. "
-                              f"A full-height line at the wrong frequency.",
+            fig.text(96, 594, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
+                              f"{r['peak_amp']:.6f}   folding predicts "
+                              f"|{f_true:g} - {r['fs']:.0f} k| = {r['expected']:.2f} Hz",
                      C_E, 12, True)
+            fig.text(96, 612, "a full-height line at the wrong frequency - nothing "
+                              "raised, nothing is NaN", C_E, 12, True)
         else:
-            fig.text(96, 596, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
-                              f"{r['peak_amp']:.6f}  ->  correct "
-                              f"(Nyquist is above the tone).", C_C, 12, True)
+            fig.text(96, 594, f"peak reads {r['peak_hz']:7.2f} Hz, amplitude "
+                              f"{r['peak_amp']:.6f}   correct", C_C, 12, True)
+            fig.text(96, 612, "Nyquist is still above the tone", C_C, 12, True)
         frames.append(fig.u8())
 
     info = save_flipbook(frames, "aliasing", labels, ms=260, hold_ms=1800, log=log)
