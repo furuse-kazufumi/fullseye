@@ -418,11 +418,14 @@ def _require_rgb(a, name: str, op: str) -> np.ndarray:
 def _require_direction(a, name: str, op: str) -> np.ndarray:
     """A finite, non-degenerate 3-vector, returned unit length.
 
-    Refuses the zero vector explicitly. ``pose_quat``'s helpers normalise with
-    ``v / (norm + 1e-12)``, which turns a zero direction into a zero vector and
-    then into the identity rotation without a word — the exact class of quiet
-    wrong answer this module is built to refuse, so the check happens here,
-    before anything from ``pose_quat`` is called."""
+    Refuses the zero vector explicitly, and does so **before** anything from
+    ``pose_quat`` is called. That ordering is deliberate: ``pose_quat`` used to
+    normalise with ``v / (norm + 1e-12)``, which turned a zero direction into a
+    zero vector and then into the identity rotation without a word. It now
+    fail-closes on zero length itself, so this is defence in depth rather than
+    the only guard — but the guard stays here, because a caller of this module
+    should get this module's error message, and because a check that only works
+    while a dependency behaves is not a check."""
     v = _as_float_array(a, name, op).ravel()
     if v.size != 3:
         raise ValueError("%s: %s must be a 3-vector (an RGB direction), got %d "
