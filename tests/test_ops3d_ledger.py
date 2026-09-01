@@ -219,6 +219,8 @@ EXTRA_PARAM_HINTS = {
 
 #: op 固有の上書き(名前が同じでも意味・形が違う引数)。
 EXTRA_OP_HINTS = {
+    # sphere_sdf の R は **半径**(汎用ヒントの R = 回転行列と名前が衝突する)
+    ("sphere_sdf", "R"): 3.0,
     ("sphere_sdf", "center"): np.array([5.0, 5.0, 5.0]),
     ("box_sdf", "center"): np.array([5.0, 5.0, 5.0]),
     # grid_coords / occupancy_grid の bounds は ((min,max) x3)。ファザーの
