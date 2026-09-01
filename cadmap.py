@@ -132,12 +132,17 @@ def _real_array(a, name: str) -> np.ndarray:
     return out
 
 
-def _int_array(a, name: str) -> np.ndarray:
+def _int_array(a, name: str, allow_bool: bool = False) -> np.ndarray:
     """整数値の ndarray へ(面インデックス・ラベル画像)。
 
     浮動小数は**値が整数のときだけ**受け入れる — 連結成分ラベルを float で
-    持つ op が実在するため。小数を持つ配列は拒否(ラベルとして意味がない)。"""
+    持つ op が実在するため。小数を持つ配列は拒否(ラベルとして意味がない)。
+    ``allow_bool`` は**ラベル画像にだけ**立てる: 真偽マスクは「欠陥領域 1 つ」と
+    いう曖昧さのない意味を持ち、``float("50")`` のような黙った変換も起きない。
+    座標や面インデックスでは立てない(``True`` が 1 番の頂点になるのは事故)。"""
     arr = np.asarray(a)
+    if allow_bool and arr.dtype.kind == "b":
+        return arr.astype(np.int64)
     if arr.dtype.kind in "iu":
         return arr.astype(np.int64)
     if arr.dtype.kind == "f":
