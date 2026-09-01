@@ -2122,7 +2122,7 @@ def ex_peak_match(log):
                  C_C if allok else C_E, 12, True)
         frames.append(fig.u8())
 
-    info = save_gif(frames, "peak_match", fps=6, thumb_index=len(rows) // 2, log=log)
+    info = save_flipbook(frames, "peak_match", labels, ms=240, hold_ms=1600, log=log)
     facts = {
         "true_centres": centres, "peak_sigma_samples": width,
         "template_length": int(tmpl.size), "n_frames": len(rows),
