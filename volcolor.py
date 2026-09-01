@@ -296,9 +296,11 @@ def vol_colorize_labels(labels, seed: int = 0, background=(0.0, 0.0, 0.0)):
     **バイト単位で一致する**(``tests/test_volcolor.py`` が固定)。
 
     切る順序が効くこと自体は :func:`vol_label_color_flicker` が数える。実測
-    (16 成分・``(24, 48, 48)`` のテスト体、``connectivity=26``):スライスごとに
-    色を付け直すと **24 スライス中 21 スライス**で少なくとも 1 成分の色が変わり、
-    (成分, スライス) の変化は 96 件。ボリュームで色を付けてから切ると 0 件。
+    (16 球・``(24, 48, 48)`` の参照ファントム、``connectivity=26``、seed=0):
+    スライスごとに色を付け直すと **24 スライス中 20 スライス**で少なくとも
+    1 成分の色が変わり、(成分, スライス) の変化は 108 組中 **62 件**、
+    **16 成分すべて**が一度は色を変える。ボリュームで色を付けてから切ると
+    3 つとも 0。
 
     Raises ``ValueError`` on a non-3-D, float, or negative label volume, on a label
     over :data:`MAX_LABELS`, or on more than :data:`MAX_COLOR_VOXELS` voxels.
