@@ -997,8 +997,12 @@ def csi_peak_position(signal, z_step_um=0.05, z_start_um=0.0, wavelength_um=0.6,
     m = _estimator(mode, op)
     vis_min = _unit_interval(min_visibility, "min_visibility", op)
     edge_max = _unit_interval(max_edge_envelope, "max_edge_envelope", op)
+    tol = _nonneg(carrier_tolerance, "carrier_tolerance")
     _check_scan_step(dz, lam, op)
 
+    x = _as_float_array(signal, "signal", MAX_SCAN_POINTS, op)
+    if x.ndim == 1 and x.size >= 16:
+        _check_carrier(np.abs(np.fft.rfft(x - x.mean())), x.size, dz, lam, tol, op)
     env = csi_envelope(signal, remove_bias=remove_bias)
     vis = float(_visibility(env))
     if vis < vis_min:
