@@ -1986,18 +1986,23 @@ def subject_texture_zoo(log=print) -> dict:
             "標準偏差・ノイズ推定・4 方向の Gabor 応答の 8 個を特徴量にして "
             "leave-one-out の最近傍重心で分類したところ %d/%d = %.1f%% が正解だった。"
             "見た目が似ていても、GLCM energy は %.3f / %.3f / %.3f と離れている —— "
-            "「模様」は数字にできる。Gabor は 4 方向を当てたときの向き差が効いていて、"
-            "織り目では θ=0°/45°/90°/135° の平均応答が %.4f / %.4f / %.4f / %.4f "
-            "(最大÷最小 %.1f 倍)、方向を持たない 1/f 粒状では %.1f 倍しか開かない。"
-            "この比は `gabor` がカーネル L1 で割る**固定スケール**を返すからこそ"
-            "意味を持つ (画像ごとの最大値で割る正規化では、向きごとに別の数で"
-            "割ってしまい差が消える)。"
+            "「模様」は数字にできる。Gabor の 4 方向は、模様が向きを持つかどうかを"
+            "そのまま映す: レンガは横目地が効いて θ=0°/45°/90°/135° の平均応答が "
+            "%.5f / %.5f / %.5f / %.5f と θ=90° に偏り (最大÷最小 %.2f 倍)、"
+            "縦横が同居する織り目は %.5f と %.5f でほぼ同値、方向を持たない 1/f 粒状も"
+            "同じ %.2f 倍にとどまる。**向きで割れない織り目と粒状を分けているのは"
+            "応答の絶対値**で (0° の平均が %.5f 対 %.5f)、これは `gabor` が"
+            "カーネルの L1 ノルムで割る固定スケールを返すから残る量だ —— 画像ごとの"
+            "最大値で割る正規化では、向きごと・模様ごとに別の数で割ってしまい"
+            "この差は消える。"
             % (len(Xn), correct, len(Xn), 100 * acc,
                *[float(fs.apply(texs[k], "cooc_feature_matrix", 0.3, 0.5))
                  for k in keys],
-               *[gmean[k_weave][a] for a in gabor_a],
-               max(gmean[k_weave].values()) / max(min(gmean[k_weave].values()), 1e-12),
-               max(gmean[k_grain].values()) / max(min(gmean[k_grain].values()), 1e-12))),
+               *[gmean[k_brick][a] for a in gabor_a],
+               max(gmean[k_brick].values()) / max(min(gmean[k_brick].values()), 1e-12),
+               gmean[k_weave][0.0], gmean[k_weave][0.5],
+               max(gmean[k_grain].values()) / max(min(gmean[k_grain].values()), 1e-12),
+               gmean[k_weave][0.0], gmean[k_grain][0.0])),
     }
 
 
