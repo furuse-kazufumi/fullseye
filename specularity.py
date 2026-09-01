@@ -420,6 +420,7 @@ def _require_direction(a, name: str, op: str) -> np.ndarray:
 
 def _require_stack(a, name: str, op: str) -> np.ndarray:
     """An (N, H, W) float stack (a list of equal-shaped 2-D images is fine)."""
+    _precheck_size(a, name, op, MAX_STACK_ELEMENTS, "MAX_STACK_ELEMENTS")
     arr = _as_float_array(a, name)
     if arr.ndim != 3:
         raise ValueError("%s: %s must have shape (N, H, W) — %d images of the "
