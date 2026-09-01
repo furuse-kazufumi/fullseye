@@ -607,11 +607,11 @@ def ex_registration():
     rmse0 = float(np.sqrt(((src0 - dst) ** 2).sum(1)).mean())
 
     S = 470
-    PW, PH = S, 336
-    W = 24 * 2 + PW + 24 + 420
-    H = 52 + PH + 210
+    PW, PH = S, 356
+    W = 24 * 2 + PW + 24 + 430
+    H = 52 + PH + 92
     px0, px1 = 24 * 2 + PW + 24, W - 28
-    py0, py1 = 96, 96 + 200
+    py0, py1 = 96, 96 + 214
     lo, hi = float(min(rmses)), float(max(rmses + [rmse0]))
     ctr, rad = view_radius(np.vstack([dst, src0]), [40.0], 20.0)
 
