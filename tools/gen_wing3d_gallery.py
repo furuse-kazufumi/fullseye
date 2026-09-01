@@ -797,7 +797,7 @@ def ex_boundary(log) -> dict:
                     "mm 単位の境界点群)。ターンテーブルで 1 周。")
         scale = 6.4
         for i, (pts, col, title) in enumerate((
-                (solid_show, C_A, "中実ボクセル(表示は 9000 点に間引き)"),
+                (solid_show, C_A, "中実ボクセル(表示は %d 点に間引き)" % len(solid_show)),
                 (np.argwhere(shell > 0.5).astype(np.float64) * np.asarray(sp), C_B,
                  "vol_boundary(side='inner', 6 近傍)"),
                 (show, C_D, "vol_boundary_points(spacing 付き, mm)"))):
