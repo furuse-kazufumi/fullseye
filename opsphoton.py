@@ -46,40 +46,83 @@ import photoncount
 _MOD = {"photoncount": photoncount}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
-#   既存語彙の再利用: image2d / signal(1-D)/ depth / measurement(実スカラのみ)
-#   / table(dict or list)
+#   既存語彙の再利用: image2d / depth / measurement(実スカラのみ)/ table
+#   新語彙: counts / countrate / histcube(理由は下記)
 #
 # 既存語彙をそのまま使った判断(新語を作らなかったもの):
-#   * signal — 到達時刻ヒストグラム(bin ごとのカウント)と SPAD の計数レート列は
-#     どちらも「1-D の標本化された関数」そのもの。dsp / funct1d の平滑化・
-#     スペクトル・リサンプルがそのまま効く(実際に効かせたいので分けない)。
-#     非負という物理制約は fail-closed の ValueError で守る — 語彙を分けるほどの
-#     嘘ではない(負の値を持つ signal は「常に」拒否されるのではなく、非負の
-#     signal は完全に正当な入力だから)。連鎖ファザーの signal 生成元は
-#     正弦波(負値あり)なので CONTRACT になるが、``tcspc_simulate`` が
-#     **0 引数で signal を産む**ため、そこから光子ヒストグラムが pool に入り
-#     tcspc / dtof / lifetime 一族が実経路で回る(optics の airy_pattern と同型)。
 #   * image2d — 光子カウント画像。整数値を float64 に載せた 2-D 配列であり、
 #     既存の 2-D op(フィルタ・閾値・morphology)が意味を持ったまま使える。
+#     非負制約はあるが、image2d プールの生成元(rng.random((32,32)))は非負
+#     なので**実経路が実際に通る** — counts を分ける必要がない(下記 counts の
+#     判定基準と同じ物差しを当てた結果、こちらは「分けない」に倒れる)。
 #   * depth — dtof_cube_depth の返りは (H, W) の距離マップ = 既存の depth 語彙
 #     そのもの。stereo / range_image 側の depth op へ直結する。
 #   * measurement — dtof_depth は単一画素の距離(実スカラ)。
 #   * table — 統計・フィット結果の dict。
 #
-# 新語彙 1 つと、その理由(**既存では型レベルの嘘になる**もののみ追加。
+# --------------------------------------------------------------------------
+# 新語彙 3 つと、その理由
+# --------------------------------------------------------------------------
+# 追加の基準は一貫して「**既存語彙で宣言すると型レベルの嘘になるか**」。
 # 先例 = opsmath の cpoints / cscalar、opsoptics の jones / stokes、そして
 # 何より pointmap / normalmap — 構造チェックが完全に同一((H,W,3) の float)
-# でも意味が違うので別プールにした先例):
+# でも意味が違うので別プールにした先例。
+#
+#   * counts — 到達時刻ヒストグラム: **時間 bin で添字づけられた非負の光子
+#     カウント列**(1-D)。当初は既存の ``signal`` で宣言していたが、
+#     **2026-09-01 の連鎖ファザー実測(1200 連鎖 x 長さ 6、seed 7001)で
+#     photon 族 17 op 中 7 op が一度も実行されていない**ことが判明した。
+#     原因はファザーの signal 生成元が**負値を持つ正弦波**であることで、
+#     毎回こう落ちる:
+#         dtof_depth: hist has 127 negative bin(s) (min -1.17595) —
+#         a photon count cannot be negative
+#     これは opsoptics が jones / stokes を専用プールにしたのと**同じ状況**
+#     (「signal へ相乗りさせると常に CONTRACT にしかならない = 偏光連鎖を
+#     一度も通らない」)。fail-closed が完璧に効いているのに、その結果
+#     「発見ゼロ」が頑健さの証拠に見えてしまう — 実際は未実行だった。
+#     「任意の signal を光子ヒストグラムとして渡せる」は型レベルの嘘であり、
+#     histcube を voxel から分けたのと同じ理由で分ける。
+#     ★ なお counts は **1-D の float64 配列そのもの**なので、dsp / funct1d
+#     を「呼ぶ」ことは何も妨げられない(型語彙は連鎖ファザーの pool 分離で
+#     あって、Python の呼び出し可能性ではない)。逆向きの橋 = signal を
+#     非負化して counts にする経路は下の「橋」注記を参照。
+#
+#   * countrate — SPAD の**計数レート列(Hz)**(1-D、非負)。counts と同じ
+#     「非負の 1-D」だが、**別の量**なので別プールにした。理由は 2 つあり、
+#     どちらも実測に基づく:
+#       (a) 単位が 7 桁違う。counts プールの値域は 0-250 カウント程度で、
+#           これを spad_deadtime_apply(dead_time_ns=50) に渡すと
+#           250 Hz x 50 ns = 1.25e-5 → **恒等写像に限りなく近い値が
+#           例外なく返る**。op は「到達」しても、デッドタイムの物理(飽和、
+#           1/tau の fail-closed、麻痺型の非単射性)は一度も踏まれない。
+#           これは histcube を voxel に相乗りさせたときと同じ
+#           「もっともらしく間違った通過」で、CONTRACT も TYPEMISS も出ない。
+#       (b) 物理が違う。デッドタイムは**検出器のレート流**に効くのであって、
+#           TCSPC の時間 bin ヒストグラムに bin ごとに掛かるものではない
+#           (ヒストグラムに対する正しい歪みモデルは Coates =
+#           tcspc_coates_correct)。同じ語彙にすると、進化探索が
+#           「ヒストグラムにデッドタイム補正を掛ける」という**物理的に誤った
+#           連鎖**を正当な型接続として学習してしまう。
+#     countrate は apply <-> correct の 2 op しか持たない**狭い sort**である
+#     ことを承知のうえで分けている(jones が 2 op、stokes が 3 op なのと同格)。
+#     ただしこの 2 op は互いに厳密逆なので、プール内で往復不変量が回る。
+#
 #   * histcube — 画素ごとの到達時刻ヒストグラム立方体 **(H, W, T)、時間軸が
 #     最後**。既存の ``voxel`` は「3-D 配列」で TYPE_CHECKS も ndim == 3 だけ
 #     なので構造上は通ってしまう。しかし voxel は **(D, H, W) の空間格子**で、
 #     軸の意味が違う: (D,H,W) のボリュームを histcube として渡すと
 #     dtof_cube_depth は W を時間軸と読み、**例外ではなく「もっともらしく
 #     間違った深度マップ」**を返す(実測: 一様ボリュームで全画素 0.0075 m)。
-#     これは pointmap / normalmap を分けたのと同じ判断で、分けないと
-#     ファザーが voxel プールから立方体を流し込み、TYPEMISS も CONTRACT も
-#     出ないまま無意味な深度が下流を汚す。なお flat な histcube は
-#     dtof_cube_depth 側でも empty 判定して黙って通さない(二重防御)。
+#     なお flat な histcube は dtof_cube_depth 側でも empty 判定して黙って
+#     通さない(二重防御)。
+#
+# 橋(狭い sort への対策、実装は未了 = 親の判断待ち):
+#   signal -> counts の橋になりうるのは「任意の実数 1-D を非負の光子レート
+#   プロファイルとみなして Poisson 標本化する」op(photon_sample の 1-D 版)。
+#   負値の扱いを**明示引数**にすれば黙った整流にならず規律を破らない。
+#   既存の非負出力 1-D op(funct1d.abs_funct_1d は実測 min 0.0023、
+#   dsp.envelope は実測 min 0.749 で、どちらも非負が保証される)は、その橋が
+#   在れば signal -> counts の自然な前段になる。詳細は報告を参照。
 _CATALOG = {
     "counting": [
         ("photon_sample", "photoncount", ["image2d"], "image2d"),
