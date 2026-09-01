@@ -646,12 +646,12 @@
         800
       ],
       "fps": 4,
-      "bytes": 491091,
-      "thumb_bytes": 41321,
+      "bytes": 535903,
+      "thumb_bytes": 43458,
       "thumb_frame": 19,
-      "mean_abs_delta": 2.273,
-      "sha256": "7272fab7111d1e2bf73c391d74caf1fcb02103ed2c4513265cfac4c2e72ec670",
-      "thumb_sha256": "53877485cd449b5fd84e59ebe0e8f469726325f6fa169d8827df0781657f3af6",
+      "mean_abs_delta": 2.75,
+      "sha256": "2d841e05fc066d2196d89ba4b979b85f2bd1b4d49921958e72f708fdaf656617",
+      "thumb_sha256": "3eab61e40b6a53a77745c77439e85bf4fd9e43a27485adf4595f01cfc27ea1ff",
       "facts": {
         "steps": [
           {

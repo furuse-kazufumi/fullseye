@@ -1613,10 +1613,14 @@ def ex_studio_pipeline():
     import engine
     app, win, model = _studio_app()
     _studio_main(win)
-    # Problems リスト(型不一致の行き先)は pipeline ドックにあり既定で隠れている
+    # Problems リスト(型不一致の行き先)は pipeline ドックにあり既定で隠れている。
+    # ドックは Operators とタブ化されているので、``show()`` だけでは背面に留まり
+    # **画面に Problems が写らない**(この展示の主役が見えない)。``raise_()`` まで
+    # 送って前面に出す — studio.py 自身が使っているのと同じ手順。
     d = win._docks.get("pipeline")
     if d is not None:
         d.show()
+        d.raise_()
     _pump(6)
     win._load_sample_image("coins"); _pump(6)
     prog = win._program
