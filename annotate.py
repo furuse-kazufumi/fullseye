@@ -74,7 +74,7 @@ __all__ = [
     # 重ね
     "overlay_mask", "overlay_labels",
     # 組み立て
-    "zoom_inset", "compare_frame",
+    "zoom_inset", "compare_frame", "panel_grid",
     # 図形
     "rounded_rect", "filled_polygon", "arc", "ellipse",
 ]
