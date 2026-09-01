@@ -2190,8 +2190,11 @@ def ex_envelope_truncation(log):
         f"of {n_planes} (interior, so an end-of-scan check does not fire)")
 
     W, H = GIF_W, GIF_H
-    frames = []
+    frames, labels = [], []
     for k, r in enumerate(rows):
+        labels.append(f"表面 {r['surface']:.2f} µm  /  端レベル {r['edge']:.4f}  /  "
+                      f"返り値 {r['forced']:.4f} µm({r['rel']:+.1f} %)  /  "
+                      + ("op は拒否" if r["refused"] else "op は受理"))
         fig = Fig(W, H)
         _header(fig, "A truncated envelope returns a plausible, badly wrong height",
                 f"coherence scan {z_max:g} um in {n_planes} planes of {z_step} um, "
