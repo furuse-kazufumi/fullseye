@@ -63,6 +63,7 @@ __all__ = [
     "DrawStyle",
     "LINE_STYLES",
     "DRAW_MODES",
+    "check_width",
     "draw_style",
     "current_style",
     "resolve_pattern",
