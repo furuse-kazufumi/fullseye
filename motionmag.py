@@ -93,8 +93,14 @@ Honest limitations
   suppress phase noise. It is deliberately absent: it would trade a measurable
   exact relation (``alpha * d``) for an unquantified bias, and this module's
   contract is that the relation is exact.
+* **Each sub-band must carry a single moving component** for the relation to be
+  exact. Broadband texture puts several in one band, and the phase of a sum is
+  not linear in the displacement: measured, magnifying isotropic texture by
+  ``alpha = 3`` recovers 4.8-9.1 % less than ``3 d`` depending on how broad the
+  texture is. Quantified in :func:`motion_magnify` and made visible by the
+  two-octave default of :func:`synthesize_translation`.
 * **Magnification does not improve the motion SNR** and this module refuses to
-  imply otherwise — see :func:`band_snr` and the ``snr`` block returned by
+  imply otherwise — see :func:`band_snr` and the SNR block returned by
   :func:`motion_magnify`.
 """
 from __future__ import annotations
