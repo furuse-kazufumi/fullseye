@@ -840,6 +840,16 @@ def ex_boundary(log) -> dict:
     return {
         "name": "wing3d_boundary_shell",
         "title": "境界だけ持つと %.0f %% に痩せる" % pct,
+        "title_en": "Keep only the boundary and the shape drops to %.0f %%" % pct,
+        "caption_en": (
+            f"A solid ball ({solid_n:,} voxels) reduced by `vol_boundary` to its inner "
+            f"one-voxel shell keeps only **{pct:.1f} %** ({shell_n:,} voxels). Feeding "
+            f"that shell through `vol_boundary_points` (mm coordinates) into "
+            f"`fit_sphere3` recovers the centre with an error of **{cen_err:.3f} mm** "
+            f"(truth ({truth_center_mm[0]:.1f}, {truth_center_mm[1]:.1f}, "
+            f"{truth_center_mm[2]:.1f}) mm). The radius is off by {r_err:+.3f} mm — "
+            "because the shell sits one layer inside — and that bias is written on the "
+            "figure rather than hidden."),
         "ops": ["vol_boundary", "vol_boundary_points", "fit_sphere3"],
         "facts": {"solid_voxels": solid_n, "shell_voxels": shell_n, "shell_pct": pct,
                   "boundary_points": int(pts_mm.shape[0]),
