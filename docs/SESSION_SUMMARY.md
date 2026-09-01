@@ -3,51 +3,49 @@
 > 自動生成: `libexec/raptor-auto-summary` (Stop hook)
 > 次回 ccr 起動時に CLAUDE.md SESSION START で自動的に読み取られる。
 
-- **最終更新**: 2026-09-02 07:03:29
+- **最終更新**: 2026-09-02 07:21:38
 - **プロジェクト**: `C:/dev/projects/imgevolve`
 - **ブランチ**: `master`
 
 ## 直近の git log
 
 ```
-89098d92e auto: test_gfx2d.py 編集前 (2026-09-02 06:51)
-247ebd7e5 auto: gfx2d.py 編集前 (2026-09-02 06:50)
-c69788333 auto: gfx2d.py 編集前 (2026-09-02 06:50)
-c65c5968f auto: gfx2d.py 編集前 (2026-09-02 06:50)
-f07848f8e auto: gfx2d.py 編集前 (2026-09-02 06:50)
-0ca9dfa3a auto: drawlist.py 編集前 (2026-09-02 06:47)
-e106f8fff auto: drawlist.py 編集前 (2026-09-02 06:46)
-3ab4fe82f auto: annotate.py 編集前 (2026-09-02 06:46)
-0b77d9e74 auto: test_annotate.py 編集前 (2026-09-02 06:45)
-c202e4f96 auto: annotate.py 編集前 (2026-09-02 06:45)
+d0646a810 auto: test_imgmetrics.py 編集前 (2026-09-02 07:20)
+c74f3b249 auto: imgforensics.py 編集前 (2026-09-02 07:20)
+1514baceb auto: imgmetrics.py 編集前 (2026-09-02 07:19)
+ceb97db4f auto: imgmetrics.py 編集前 (2026-09-02 07:19)
+9d9d07b86 auto: imgmetrics.py 編集前 (2026-09-02 07:19)
+b8d0882d4 auto: pyproject.toml 編集前 (2026-09-02 07:18)
+4a2ad693a auto: __init__.py 編集前 (2026-09-02 07:18)
+69f053801 auto: __init__.py 編集前 (2026-09-02 07:18)
+86cf4ad47 auto: api.py 編集前 (2026-09-02 07:18)
+aaf3bf6fd auto: api.py 編集前 (2026-09-02 07:18)
 ```
 
 ## 現在の git status
 
 ```
-M examples/gfx2d_scene.py
- M gfx2d.py
- M tests/test_gfx2d.py
+M tests/test_imgmetrics.py
 ```
 
 ## 直近 2 時間に変更されたファイル
 
 ```
-07:01 .pytest_cache/v/cache/lastfailed
-07:01 .pytest_cache/v/cache/nodeids
+07:20 .pytest_cache/v/cache/nodeids
+07:20 tests/test_imgmetrics.py
+07:20 astrostack.py
+07:20 imgforensics.py
+07:19 imgmetrics.py
+07:18 pyproject.toml
+07:18 fullseye/__init__.py
+07:18 api.py
+07:17 opsimgmetrics.py
+07:16 .pytest_cache/v/cache/lastfailed
+07:03 docs/SESSION_SUMMARY.md
 06:51 gfx2d.py
 06:51 .ruff_cache/0.16.0/12647664543369260150
 06:51 .ruff_cache/0.16.0/8687138234577503176
 06:51 .ruff_cache/0.16.0/2128910586982079947
-06:51 .ruff_cache/0.16.0/716585250222942774
-06:51 .ruff_cache/0.16.0/10503971887389044536
-06:51 .ruff_cache/0.16.0/13230541455229796764
-06:51 .ruff_cache/0.16.0/10978968492489096631
-06:51 examples/gfx2d_scene.py
-06:51 .ruff_cache/0.16.0/7363606932562918290
-06:51 tests/test_gfx2d.py
-06:50 docs/SESSION_SUMMARY.md
-06:47 drawlist.py
 ```
 
 ---

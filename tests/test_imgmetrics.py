@@ -457,6 +457,57 @@ def test_ncd_compares_like_with_like():
         M.ncd(a, np.zeros((4, 4), np.uint8))
 
 
+def test_ncd_on_raw_float_would_give_the_opposite_answer_and_is_refused():
+    """float のまま測ると「よく似た 2 枚」が「無関係」と出る ―― 例外なしで。
+
+    圧縮器はバイト列の繰り返しを見るので、値がわずかに違うだけで float の
+    仮数部が総取っ替えになり、共通のバイト列が消える。実測:
+
+    * ``float64`` のまま:8 バイト語の共有 **0.02 %** → NCD **1.0959**(1 超え)
+    * 256 段に量子化:NCD **0.1290**
+    * 本当に無関係な 2 枚(量子化後):NCD **0.9981**
+
+    量子化した「似ている」0.1290 と「無関係」0.9981 は明確に分かれるのに、
+    float のままだと 1.0959 で後者より**さらに遠い**。逆の結論になる。
+    """
+    a = np.linspace(0, 1, 4096).reshape(64, 64)
+    b = np.clip(a + 0.02, 0, 1)
+    assert M.psnr(a, b, data_range=1.0) == pytest.approx(34.04, abs=0.05)   # よく似ている
+
+    with pytest.raises(ValueError, match="meaningless"):
+        M.ncd(a, b)
+
+    similar = M.ncd(a, b, levels=256)
+    unrelated = M.ncd(a, np.random.default_rng(0).random((64, 64)), levels=256)
+    assert similar == pytest.approx(0.1290, abs=5e-3), similar
+    assert unrelated == pytest.approx(0.9981, abs=5e-3), unrelated
+    assert similar < unrelated
+
+
+def test_levels_is_refused_on_data_that_is_already_quantised():
+    with pytest.raises(ValueError, match="only applies to float"):
+        M.ncd(np.zeros((8, 8), np.uint8), np.zeros((8, 8), np.uint8), levels=256)
+
+
+def test_levels_must_be_a_sane_number_of_steps():
+    a = np.linspace(0, 1, 256).reshape(16, 16)
+    for bad in (1, 0, -8, 70000, 2.5):
+        with pytest.raises(ValueError, match=r"levels must be"):
+            M.ncd(a, a.copy(), levels=bad)
+
+
+def test_compare_images_quantises_before_ncd_and_says_so():
+    """まとめ op が float を黙って生のまま NCD に流さないこと。"""
+    a = np.linspace(0, 1, 4096).reshape(64, 64)
+    b = np.clip(a + 0.02, 0, 1)
+    rep = M.compare_images(a, b)
+    assert rep["contract"]["ncd_levels"] == 256
+    assert rep["ncd"] < 0.2, rep["ncd"]        # 生の float なら 1.0959 になっていた
+
+    u8 = (a * 255).astype(np.uint8)
+    assert M.compare_images(u8, u8.copy())["contract"]["ncd_levels"] is None
+
+
 def test_unknown_compressor_is_refused():
     with pytest.raises(ValueError, match="compressor must be"):
         M.compressed_size(np.zeros(8), compressor="brotli")
