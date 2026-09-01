@@ -14,6 +14,25 @@ maps to the camera frame by ``X_cam = R @ X_world + t`` and projects to
 ``K = [[fx, s, cx], [0, fy, cy], [0, 0, 1]]`` and the 3x4 projection is
 ``P = K @ [R | t]``.
 
+Pixel-centre convention (**one convention, library-wide — never add 0.5**): the
+centre of pixel ``(row=r, col=c)`` **is** the continuous image coordinate
+``(u, v) = (c, r)``, exactly. Columns are ``u = 0 .. W-1``, rows are
+``v = 0 .. H-1``, a pixel covers ``[c-0.5, c+0.5) x [r-0.5, r+0.5)`` and the image
+spans ``[-0.5, W-0.5] x [-0.5, H-0.5]``, so the image centre is at
+``((W-1)/2, (H-1)/2)``. :func:`depth_to_points`'s ``v, u = np.mgrid[0:H, 0:W]``
+are those pixel centres. :mod:`cadmap`, :mod:`visualhull`, :mod:`render3d` and the
+calibration modules all agree with this. The competing OpenGL convention — pixel
+*corners* at integers, centres at ``index + 0.5`` — is **not** used anywhere in
+this library; mixing the two does not raise, it silently biases every measurement
+by half a pixel.
+
+Handedness note: :mod:`render3d` shares this pixel-centre convention and the same
+``K``, but its *camera-space axes* are OpenGL-handed (``+Y`` up, ``-Z`` forward).
+Its ``depth`` map is already the positive ``+Z`` this module expects, so
+``depth_to_points(view["depth"], K)`` is correct as-is; the returned cloud is in
+this module's y-down frame, and ``(x, y, z)_here = (x, -y, -z)_render3d`` converts
+between the two camera spaces.
+
 References (all public literature — reimplemented, not derived from any product):
 - Hartley & Zisserman, *Multiple View Geometry in Computer Vision*, 2nd ed. 2004
   (linear triangulation §12.2, DLT camera resection §7.1, normalized 8-point
