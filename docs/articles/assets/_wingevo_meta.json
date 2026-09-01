@@ -650,9 +650,9 @@
       1120,
       860
      ],
-     "png_bytes": 122944,
-     "thumb_bytes": 67013,
-     "png_sha256": "60267245c2b4f7f892d17b854a191a1b488dad946689adc60d5fb6d02e770c76"
+     "png_bytes": 123158,
+     "thumb_bytes": 67065,
+     "png_sha256": "d694f4e9f9bc2811948c14073c900c4865c673c962dad5774215a4727c67426d"
     },
     "numbers": {
      "macro_denoise": {

@@ -1956,6 +1956,64 @@ def apply_weighting(x, rate, kind="A"):
 
     ``kind="Z"`` returns a copy, unchanged.
 
+    **A tone that is not a whole number of periods in the record reads too
+    loud, by up to 17 dB, and nothing raises.** The multiplication is over the
+    record's own DFT, which treats it as periodic; a tone that does not close
+    on itself leaks across every bin. That leakage would be harmless if the
+    weighting were flat, but A weighting spans about 40 dB between 20 Hz and
+    1 kHz, so a sidelobe 40 dB below a 31.5 Hz tone arrives at 1 kHz weighted
+    40 dB *higher* and takes over the sum. Measured, 0.5 s at 48 kHz, error
+    against the closed-form ``A(f)`` for a pure tone:
+
+    ==========  =============  ==========  ==============
+    f (Hz)      periods        error (dB)  bin-centred?
+    ==========  =============  ==========  ==============
+    22.0        11.0           **+0.0000**  yes
+    31.5        15.75          **+7.7986**  no
+    20.5        10.25          **+17.2116** no (worst, 20-200 Hz)
+    63.0        31.5           +0.1121      no
+    100.0       50.0           +0.0000      yes
+    1000.0      500.0          -0.0000      yes
+    ==========  =============  ==========  ==============
+
+    **31.5 Hz is a nominal one-third-octave centre**, so this is a path a real
+    measurement walks into rather than a contrived one. The error is always
+    *positive* — leakage only ever adds power at frequencies the curve favours.
+
+    Two things confirm the diagnosis is dynamic range and not arithmetic. The
+    same 31.5 Hz tone under **C** weighting, whose tilt over the same span is a
+    few dB rather than forty, is off by only **+0.0493 dB**. And lengthening the
+    record to where the tone *does* close on itself removes it entirely: at
+    31.5 Hz the error is +7.7524 dB over 0.25 s, +7.7986 over 0.5 s, +0.4615
+    over 1 s, and **-0.0000** over 2 s and 4 s (63 and 126 whole periods).
+
+    **The two obvious cures were tried and measured, and neither works** —
+    recorded here so the next person does not spend the afternoon on them:
+
+    ===================================  ==============  ==============
+    at 31.5 Hz / 0.5 s                   error (dB)      at 20.45 Hz
+    ===================================  ==============  ==============
+    as implemented (rectangular)         +7.7986         +17.1704
+    zero-pad x4 (linear convolution)     +8.6055         +20.3733
+    Hann window, corrected for its gain  +3.0879         +6.2068
+    ===================================  ==============  ==============
+
+    Padding is *worse*, because zero-padding a tone puts an abrupt edge into the
+    record and an edge is broadband. Hann helps but does not come close, and it
+    also destroys the cases that are currently exact — the bin-centred 22 Hz row
+    above goes from +0.0000 to **+5.5586 dB** under a Hann window, because
+    spreading a tone over three bins is already enough at this dynamic range.
+    An honest cure is a different implementation entirely — the standard
+    cascade of A-weighting biquads applied in the time domain — which would give
+    up the exact-0-dB-at-1-kHz-by-construction property this function is built
+    on. So the limitation is documented rather than papered over.
+
+    **What to do about it**: give the analysis enough record that the content is
+    many periods long, prefer durations that are whole multiples of the period
+    you care about, and read a low-frequency A-weighted level from
+    :func:`octave_spectrum` (which reports per-band power, so leakage is visible
+    as energy in bands where none belongs) rather than from a single number.
+
     **Raises** ``ValueError``: everything :func:`_as_signal` refuses, an unknown
     ``kind``, ``rate <= 0``.
     """
