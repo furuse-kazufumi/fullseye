@@ -68,6 +68,7 @@ __all__ = [
     "COMMAND_SPECS",
     "TEXT_ADVANCE_RATIO",
     "default_text_metrics",
+    "measured_text_metrics",
     "diff_command_lists",
     "format_diff",
     "flush_buffer",
@@ -99,6 +100,23 @@ def default_text_metrics(text: str, size: float) -> tuple[float, float]:
     lines = str(text).split("\n")
     longest = max((len(ln) for ln in lines), default=0)
     return (TEXT_ADVANCE_RATIO * float(size) * longest, float(size) * max(1, len(lines)))
+
+
+def measured_text_metrics(text: str, size: float) -> tuple[float, float]:
+    """本物の文字計測が使えるならそれを、駄目なら :func:`default_text_metrics` を使う。
+
+    :class:`DrawList` の既定。文字を実際に描く層に計測関数(``measure_text``)が
+    あればそれを引く ―― 見積りより実測のほうが、はみ出し判定が正確になる。
+    層がまだ無い / その文字列を測れない(改行つきなど)ときは、黙って落ちるのではなく
+    等幅の見積りへ退く。**退いたこと自体は結果を甘くしない**: 見積りは切り上げ側の
+    比を使っているので、判定は「収まらない」側に倒れる。
+    """
+    try:
+        annotate = importlib.import_module("annotate")
+        m = annotate.measure_text(str(text), font_size=int(round(float(size))))
+        return (float(m["width"]), float(m["height"]))
+    except Exception:
+        return default_text_metrics(text, size)
 
 
 class DrawListError(ValueError):
@@ -308,7 +326,7 @@ class DrawList:
     shape: tuple[int, ...]
     background: Any = None
     handlers: dict[str, Callable[..., Any]] = field(default_factory=dict)
-    text_metrics: Callable[[str, float], tuple[float, float]] = default_text_metrics
+    text_metrics: Callable[[str, float], tuple[float, float]] = measured_text_metrics
     allow_clip: bool = False
     _cmds: list[dict] = field(default_factory=list, repr=False)
 
@@ -666,7 +684,7 @@ class DrawList:
                                 "bad_json")
         out = cls(tuple(d["shape"]), background=d.get("background"),
                   handlers=handlers or {},
-                  text_metrics=text_metrics or default_text_metrics, allow_clip=allow_clip)
+                  text_metrics=text_metrics or measured_text_metrics, allow_clip=allow_clip)
         for j, cmd in enumerate(d["commands"]):
             if not isinstance(cmd, dict) or set(cmd) != {"kind", "z", "args"}:
                 raise DrawListError(j, "<unknown>",
