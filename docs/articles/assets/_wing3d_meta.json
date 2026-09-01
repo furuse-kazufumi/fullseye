@@ -56,6 +56,107 @@
       "seconds": 3.000526199815795
     },
     {
+      "name": "wing3d_slice_zsweep",
+      "title": "断層を送る ―― `z = 48 / 95` は 38.40 mm のこと",
+      "ops": [
+        "vol_window_level"
+      ],
+      "facts": {
+        "shape": [
+          96,
+          128,
+          128
+        ],
+        "spacing_mm": [
+          0.8,
+          0.3,
+          0.3
+        ],
+        "z_extent_mm": 76.80000000000001,
+        "mm_per_slice": 0.8,
+        "mm_per_inplane_pixel": 0.3,
+        "anisotropy_ratio": 2.666666666666667,
+        "frames": 96
+      },
+      "caption": "合成 CT(96×128×128、spacing (0.8, 0.3, 0.3) mm)を 1 スライスずつ 96 コマ送る。各コマに**添字と物理位置の両方**(`z = 48 / 95` = 38.40 mm)と位置バーを焼いた。1 スライス送りは 0.80 mm、面内 1 画素は 0.30 mm = **0.37 倍**なので、下の折れ線のとおり「添字を 1 つ動かす」は軸ごとに違う距離を意味する ―― 異方性 CT でいちばん踏みやすい段差。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_slice_zsweep.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_slice_zsweep.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_slice_zsweep_thumb.jpg",
+      "frames": 96,
+      "fps": 15,
+      "gif_shape": [
+        660,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        660,
+        1120,
+        3
+      ],
+      "gif_colors": 256,
+      "gif_bytes": 1151195,
+      "mp4_bytes": 148139,
+      "thumb_bytes": 42930,
+      "thumb_frame": 48,
+      "gif_sha256": "b3aa03fc7220032e14c420fb3f143ccd4912385c19df7f14866f5d6d8939d658",
+      "mp4_sha256": "2fbc8c04570c7499931edbb53eb315e42f957b771bff35129c857c911b692d93",
+      "exhibit": "zsweep",
+      "seconds": 42.79305410012603
+    },
+    {
+      "name": "wing3d_mpr_crosshair",
+      "title": "3 直交断面(MPR)とクロスヘア",
+      "ops": [
+        "(numpy スライス + imagedraw)"
+      ],
+      "facts": {
+        "shape": [
+          128,
+          128,
+          128
+        ],
+        "spacing_mm": [
+          0.5,
+          0.5,
+          0.5
+        ],
+        "frames": 60,
+        "landmarks": {
+          "+x": "球",
+          "-y": "横棒",
+          "+z": "リング"
+        }
+      },
+      "caption": "同じ 1 点を 3 方向から見る MPR。axial(`vol[z]`)・coronal(`vol[:, y, :]`)・sagittal(`vol[:, :, x]`)を横に並べ、らせん状の目印を追いながら 3 本のクロスヘアを同時に動かした。各パネルに**どの軸が横でどの軸が縦か**を書き、`+x` に球・`-y` に横棒・`+z` にリングという非対称なランドマークを入れてある ―― 軸の入れ替わりや左右反転が起きたら、この 3 つの位置がずれて必ず露見する。",
+      "kind": "gif",
+      "gif": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mpr_crosshair.gif",
+      "mp4": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\media\\wing3d_mpr_crosshair.mp4",
+      "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\thumbs\\wing3d_mpr_crosshair_thumb.jpg",
+      "frames": 60,
+      "fps": 15,
+      "gif_shape": [
+        620,
+        1120,
+        3
+      ],
+      "mp4_shape": [
+        620,
+        1120,
+        3
+      ],
+      "gif_colors": 256,
+      "gif_bytes": 1184767,
+      "mp4_bytes": 224090,
+      "thumb_bytes": 42988,
+      "thumb_frame": 15,
+      "gif_sha256": "7480c3d1fd5b2c4c0df21fb2e77d67aa087164741e6d8c127a3d64462cc685a0",
+      "mp4_sha256": "3b9556290ab1c8282152ae822e9c84cda8359820921ff4de0ca73596ba9782f1",
+      "exhibit": "mpr",
+      "seconds": 149.0969873999711
+    },
+    {
       "name": "wing3d_oblique_slice",
       "title": "斜めに切ると円が楕円になる(長径は 1/cos で伸びる)",
       "ops": [

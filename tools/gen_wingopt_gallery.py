@@ -1394,12 +1394,12 @@ def ex_airy_rayleigh(log):
 # =========================================================================== #
 def ex_polarizer(log):
     """直交偏光子で鏡面反射が 0.0 まで落ち、その下の傷が出てくる。"""
-    tile = 240
+    tile = 196
     rng = np.random.default_rng(4242)
     bg = defectgen.surface_texture((tile, tile), "brushed", strength=0.05,
                                    scale_px=6.0, seed=11)
-    ideal, mask = defectgen.defect_scratch((tile, tile), length_px=150.0,
-                                           width_px=5.0, angle_deg=24.0,
+    ideal, mask = defectgen.defect_scratch((tile, tile), length_px=124.0,
+                                           width_px=4.5, angle_deg=24.0,
                                            wander=0.10, contrast=-0.30, seed=3)
     part = defectgen.composite_defect(bg, ideal, mask)
     # 鏡面反射のローブ(傷の上に重なる位置に置く。形は明示的なガウス)
@@ -1408,7 +1408,7 @@ def ex_polarizer(log):
                     + ((yy - tile * 0.50) / (tile * 0.20)) ** 2))
     system = _system()
 
-    angles = np.arange(0.0, 185.0, 5.0)
+    angles = np.arange(0.0, 181.0, 6.0)
     rows = []
     for a in angles:
         # 鏡面成分は完全偏光(0 度の直線偏光)。検光子を通すと Malus 則。
@@ -1538,6 +1538,21 @@ def ex_abcd_rays(log):
     half_ap = f / (2.0 * fn)                     # 入射瞳半径 [mm]
     dists = np.linspace(150.0, 300.0, 39)
 
+    def _hits(so):
+        """固定センサ面での、瞳の上下端を通る 2 本の到達高さ [mm]。"""
+        m_sen = optics.abcd_matrix([("free", float(so)), ("lens", f),
+                                    ("free", sensor_mm)])
+        out = []
+        for edge in (+half_ap, -half_ap):
+            th = (edge - obj_h) / float(so)      # 物体点から瞳の縁へ向かう角 [rad]
+            out.append(optics.abcd_trace(m_sen, height_mm=obj_h,
+                                         angle_mrad=th * 1e3)["height_mm"])
+        return out
+
+    def blur_px_at(so):
+        a, b = _hits(so)
+        return abs(a - b) * 1e3 / pitch
+
     rows = []
     for so in dists:
         conj = optics.thin_lens(focal_mm=f, object_mm=float(so))
@@ -1545,28 +1560,26 @@ def ex_abcd_rays(log):
         mag = float(conj["magnification"])
         m_img = optics.abcd_matrix([("free", float(so)), ("lens", f), ("free", si)])
         tr = optics.abcd_trace(m_img, height_mm=obj_h, angle_mrad=0.0)
-        # センサ面(固定)までの行列で、瞳の縁を通る 2 本を追う → ぼけ円
-        m_sen = optics.abcd_matrix([("free", float(so)), ("lens", f),
-                                    ("free", sensor_mm)])
-        hits = []
-        for edge in (+half_ap, -half_ap):
-            ang_mrad = np.degrees(0.0)           # 角度は下で直接与える
-            th = (edge - obj_h) / so             # 物体点から瞳の縁へ向かう角 [rad]
-            t = optics.abcd_trace(m_sen, height_mm=obj_h, angle_mrad=th * 1e3)
-            hits.append(t["height_mm"])
+        hits = _hits(so)
         blur_mm = abs(hits[0] - hits[1])
         rows.append({"so": float(so), "si": si, "mag": mag,
                      "img_h": tr["height_mm"], "imaging": bool(tr["imaging"]),
                      "B": float(m_img[0, 1]), "det": tr["determinant"],
                      "blur_mm": blur_mm, "blur_px": blur_mm * 1e3 / pitch,
                      "hits": hits})
-    inside = [r for r in rows if r["blur_px"] <= 1.0]
+    # ★「ぼけ 1 画素以内」の範囲は**格子から拾わない**。掃引の刻みは 3.9 mm で、
+    # 被写界深度は 0.74 mm しかないので、格子には 1 点も入らない(最初の版は
+    # そこで min() が空になって落ちた)。二分法で境界そのものを解く。
+    ray_near = _bisect(lambda s: blur_px_at(s) - 1.0, float(dists[0]), wd0, tol=1e-9)
+    ray_far = _bisect(lambda s: blur_px_at(s) - 1.0, wd0, float(dists[-1]), tol=1e-9)
     log(f"  sensor pinned at {sensor_mm:.4f} mm (the conjugate of {wd0:g} mm); "
-        f"blur stays within 1 pixel for object distances "
-        f"{min(r['so'] for r in inside):.1f}..{max(r['so'] for r in inside):.1f} mm")
+        f"the ray trace keeps the blur within 1 pixel for object distances "
+        f"{ray_near:.4f}..{ray_far:.4f} mm (depth {ray_far - ray_near:.4f} mm)")
     log(f"  optics.depth_of_field for the same 1-pixel circle: "
-        f"{dof['near_mm']:.3f}..{dof['far_mm']:.3f} mm "
-        f"(depth {dof['depth_mm']:.4f} mm) -- independent formula, same answer")
+        f"{dof['near_mm']:.4f}..{dof['far_mm']:.4f} mm "
+        f"(depth {dof['depth_mm']:.4f} mm) -- independent formula; near differs by "
+        f"{abs(ray_near - dof['near_mm']):.4f} mm, far by "
+        f"{abs(ray_far - dof['far_mm']):.4f} mm")
 
     w, hdr = 1000, 34
     diag = (60, hdr + 40, w - 30, hdr + 40 + 268)
@@ -1647,13 +1660,12 @@ def ex_abcd_rays(log):
              (C_HIT if inb else C_BAD), 14, True),
             (18, yi + 62,
              f"cross-check: the ray trace keeps the blur under 1 px from "
-             f"{min(q['so'] for q in inside):.1f} to "
-             f"{max(q['so'] for q in inside):.1f} mm; optics.depth_of_field with "
-             f"the same 1-pixel circle says {dof['near_mm']:.3f} to "
-             f"{dof['far_mm']:.3f} mm", C_DIM, 11, False),
+             f"{ray_near:.4f} to {ray_far:.4f} mm; optics.depth_of_field with the "
+             f"same 1-pixel circle says {dof['near_mm']:.4f} to "
+             f"{dof['far_mm']:.4f} mm", C_DIM, 11, False),
             (18, yi + 78,
-             "(two independent formulas -- the ray trace samples a grid, the "
-             "closed form does not, so they agree to the grid step)",
+             f"(two independent formulas -- a paraxial ray trace and the classic "
+             f"blur-circle algebra -- agreeing to {max(abs(ray_near - dof['near_mm']), abs(ray_far - dof['far_mm'])):.2e} mm)",
              C_DIM, 11, False),
         ]
         frames.append(_text(_to_u8(canvas), labels))
@@ -1661,8 +1673,8 @@ def ex_abcd_rays(log):
     thumb = int(np.argmin([abs(r["so"] - wd0) for r in rows]))
     facts = {"sensor_mm": sensor_mm, "pupil_radius_mm": half_ap,
              "object_height_mm": obj_h, "depth_of_field": dof,
-             "ray_trace_in_focus_mm": [min(r["so"] for r in inside),
-                                       max(r["so"] for r in inside)],
+             "ray_trace_in_focus_mm": [ray_near, ray_far],
+             "ray_trace_depth_mm": ray_far - ray_near,
              "rows": [{k: v for k, v in r.items() if k != "hits"} for r in rows]}
     return {"frames": frames, "facts": facts, "fps": 10, "thumb_index": thumb}
 
