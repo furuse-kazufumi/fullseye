@@ -596,40 +596,65 @@ def specular_diffuse_split(image_rgb, illuminant_rgb=(1.0, 1.0, 1.0),
 
     * **``body_rgb`` given** — a ``(3,)`` colour or an ``(H, W, 3)`` map. Each
       pixel solves the 3-equation, 2-unknown least-squares system exactly. This
-      is the textured-surface path and it is exact to machine precision:
-      re-adding ``m_s * G`` to the returned diffuse reproduces the input, and a
-      synthetic image built from known ``(m_d, m_s)`` returns those numbers to
-      about 1e-16 relative.
+      is the textured-surface path: on a synthetic image built from a known
+      ``(m_d, m_s)`` it returns them with a maximum absolute error of 4.0e-15
+      for a uniform body colour and 2.9e-15 for a per-pixel colour map
+      (measured in ``tests/test_specularity.py``).
     * **``body_rgb`` omitted** — one material is assumed. The
       illuminant-orthogonal part of the image is then exactly rank one, so the
       body direction is its leading singular vector; the unobservable component
       of ``L`` along ``G`` is fixed by requiring ``m_s >= 0`` with the minimum
-      over the image equal to zero. **At least one pixel must be specular-free**
-      (see the module docstring: without one, the split under-reports the
-      specular term by a constant and nothing in the image can reveal it).
+      over the image equal to zero. Maximum absolute error 5.0e-16 on the same
+      synthetic image. **At least one lit pixel must be specular-free** — see
+      below, this is the assumption that actually bites.
 
     *illuminant_rgb* is a **direction**; only its orientation matters and it is
     unit-normalised internally. ``(1, 1, 1)`` is the white-balanced case. Get it
     from :func:`illuminant_from_dichromatic_planes` when you have two or more
     materials in frame.
 
-    *max_rank_ratio* guards the uniform-body path: the second singular value of
-    the illuminant-orthogonal part divided by the first. One material gives
-    exactly 0 in the noiseless case (measured 1.1e-16 on the synthetic image in
-    ``tests/test_specularity.py``) and stays small under noise (measured 0.0134
-    at 1% Gaussian noise, 0.0672 at 5%); two materials give a large value
-    (measured 0.518 for a two-albedo image). The default 0.1 sits between those
-    measurements. Pass ``None`` to disable the check.
+    Two guards protect the uniform-body path, and **both are needed** — the
+    adversarial pass found the first one alone lets a two-material image
+    through:
+
+    * *max_rank_ratio* — the second singular value of the illuminant-orthogonal
+      part over the first. Measured on the synthetic bump: 4.6e-16 noiseless,
+      0.0175 at 0.5% Gaussian noise, 0.0348 at 1%, 0.0694 at 2%, 0.173 at 5%;
+      a two-material image with cyclically permuted albedos gives 0.574. The
+      default 0.1 sits between the 2% and 5% noise measurements. ``None``
+      disables it.
+    * *max_negative_frac* — the fraction of pixels whose fitted body
+      coefficient comes out negative, which cannot happen for one material.
+      This is what catches the case the rank test misses: two albedos whose
+      illuminant-orthogonal chromaticities are nearly anti-parallel still span
+      one line, and that image measured 0.0815 on the rank test — under the
+      default threshold, i.e. accepted — while 41% of its pixels fit a negative
+      body coefficient. ``None`` disables it.
+
+    **Honest limits.** (1) *Without ``body_rgb``, one lit pixel must be
+    specular-free.* The rendered-lobe measurement shows exactly what it costs
+    when none is: for a Blinn-Phong highlight on a Gaussian bump the maximum
+    diffuse error is 6.5e-11 at shininess 200 (where the lobe tail underflows to
+    9.1e-11), 0.0019 at shininess 48 (tail 0.0026) and 0.175 at shininess 8
+    (tail 0.243) — the error *is* the darkest highlight in the frame, because
+    that is the constant the constraint cannot see. (2) *The known-body path is
+    conditioned by ``1/(1 - b^2)`` where ``b`` is the cosine between the body
+    and illuminant colours.* A texture reaching ``|b| = 0.99999`` (an almost
+    neutral grey under a white lamp, amplification 6.4e+04) measured 5.9e-12
+    against 2.9e-15 for the same texture kept at ``|b| <= 0.965``. Near-grey
+    surfaces are where colour-based separation is weakest, and no amount of
+    arithmetic care changes that.
 
     **Raises** ``ValueError``: *image_rgb* is not ``(H, W, 3)``, is complex /
     masked / non-finite / string-typed, or exceeds :data:`MAX_PIXELS`;
     *illuminant_rgb* is not a non-zero 3-vector; the image is identically zero;
     the image has no component orthogonal to the illuminant (body colour
-    parallel to it, so no split exists); the rank check fails; *body_rgb* has
-    the wrong shape, a zero-length colour, or is parallel to the illuminant.
+    parallel to it, so no split exists); either guard above fires; *body_rgb*
+    has the wrong shape, a zero-length colour, or is parallel to the
+    illuminant.
 
     Returns ``(diffuse, specular)`` with ``diffuse + specular == image_rgb`` to
-    machine precision in both regimes.
+    machine precision in both regimes (measured 1.1e-16).
     """
     op = "specular_diffuse_split"
     I = _require_rgb(image_rgb, "image_rgb", op)
