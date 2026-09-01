@@ -141,14 +141,15 @@ def test_premultiplied_type_check_catches_only_what_it_can():
     with pytest.raises(ValueError, match="not premultiplied"):
         g.unpremultiply(bright)                     # colour > alpha at the edge: caught
     # A sprite darker than its own coverage satisfies colour <= alpha everywhere and
-    # slips straight through the guard. The smallest non-zero coverage on the 4x4
-    # supersampled edge is 1/16, so any colour below that is invisible to the check.
+    # slips straight through the guard: any colour below the smallest non-zero
+    # coverage on the edge (0.125 for this disc) is invisible to the check.
     dark = g.sprite_synthesize("disc", 24, (0.05, 0.05, 0.05))
     dark[..., :3] *= (dark[..., 3:4] > 0)
-    assert dark[..., 3][dark[..., 3] > 0].min() == pytest.approx(1.0 / 16.0)
+    assert dark[..., 3][dark[..., 3] > 0].min() == pytest.approx(0.125)
     slipped = g.unpremultiply(dark)                  # accepted, and wrong
     edge = (dark[..., 3] > 0) & (dark[..., 3] < 0.3)
-    assert np.abs(slipped[..., :3][edge] - dark[..., :3][edge]).max() > 0.1,         "the guard let a wrong picture through, which is the point being documented"
+    assert np.abs(slipped[..., :3][edge] - dark[..., :3][edge]).max() > 0.1, \
+        "the guard let a wrong picture through, which is the point being documented"
 
 
 # =========================================================================== #
