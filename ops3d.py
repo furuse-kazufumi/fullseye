@@ -471,7 +471,10 @@ _CATALOG = {
         ("reprojection_error", "pnp3d", ["points", "keypoints"], "measurement", False),
     ],
     "regionprops": [  # 3D 連結成分の多物体計測(検査で複数部品を一括)
-        ("label_components", "regionprops3d", ["voxel"], "voxel", False),
+        # (labels, n) を返す。旧宣言 "voxel" は 2 重に嘘だった(タプルであること、
+        # および中身が二値ボリュームでなくラベル場であること)。vol_label と
+        # 同じ "labels" + adapter に揃える(同クラス一掃、2026-09-01)
+        ("label_components", "regionprops3d", ["voxel"], "labels", False),
         ("region_props", "regionprops3d", ["voxel"], "table", False),
         ("largest_component", "regionprops3d", ["voxel"], "voxel", False),
         ("filter_by_volume", "regionprops3d", ["voxel"], "voxel", False),
