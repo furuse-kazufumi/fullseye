@@ -442,9 +442,11 @@ def synth_starfield(shape=(128, 128), n_stars=30, flux_min=400.0, flux_max=9000.
     どの機械でも同じフレーム。
 
     Ground truth it reproduces(``tests/test_astrostack.py`` で固定):
-    ``noise=False`` の 1 星フレームでは、画像全体の総和と与えたフラックスの
-    相対誤差が 1e-12 未満。半径 ``r`` の円形開口が拾う割合は
-    ``1 - exp(-r^2/(2 sigma^2))`` で、``r = 2 sigma`` なら 0.8647。
+    ``noise=False``、``sky=0``、``fwhm_px=3.0`` の 1 星フレーム(64x64、
+    フラックス 5000 e-)では、画像全体の総和と与えたフラックスの相対誤差が
+    **1.8e-16** —— float64 の丸め 1 回ぶんで、「ほぼ保存」ではなく保存。
+    半径 ``r`` の円形開口が拾う割合は ``1 - exp(-r^2/(2 sigma^2))`` で、
+    ``r = 2 sigma`` なら 0.8647、``r = 3 sigma`` なら 0.98889。
 
     **Raises** ``ValueError``: *shape* が小さすぎる / *n_stars* が非負整数でない /
     ``flux_min > flux_max`` / *psf* が :data:`PSF_MODELS` にない /
