@@ -902,37 +902,38 @@ def ex_photometry():
             bucket.append({"sigma": s, "r": r, "meas": ph["flux"],
                            "theory": th, "err": (ph["flux"] - th) / th})
 
-    p = Plot(w=900, h=520, xlim=(0.8, 3.3), ylim=(-1.2, 0.35),
-             margin=(86, 24, 54, 22))
+    p = Plot(w=980, h=560, xlim=(0.8, 3.3), ylim=(-1.25, 0.30),
+             margin=(96, 26, 56, 76))
     p.grid_x([1.0, 1.5, 2.0, 3.0], "%.1f")
-    p.grid_y([-1.0, -0.5, 0.0, 0.25], "%.2f%%")
-    p.line([w["sigma"] for w in wide], [100 * w["err"] for w in wide],
-           C_RIGHT, width=3)
-    p.markers([w["sigma"] for w in wide], [100 * w["err"] for w in wide],
-              C_RIGHT, size=6)
-    p.line([t["sigma"] for t in tight], [100 * t["err"] for t in tight],
-           C_WRONG, width=3)
-    p.markers([t["sigma"] for t in tight], [100 * t["err"] for t in tight],
-              C_WRONG, size=6)
+    p.grid_y([-1.0, -0.75, -0.5, -0.25, 0.0, 0.25], "%+.2f%%")
     p.line([1.0, 3.0], [0.0, 0.0], (90, 92, 112), width=1)
-    p.text(450, 10, "既知フラックス 10000 e- を測り返す —— 開口の広さで決まる",
-           size=18, anchor="ma")
-    p.text(104, 46, "%s 半径 8 sigma:誤差 %.4f %%(4 点すべて)"
-           % (M["right"], 100 * max(abs(w["err"]) for w in wide)), C_RIGHT, 15)
-    p.text(104, 68, "%s 半径 3 sigma:%.3f %% 〜 %.3f %%"
+    p.line([w["sigma"] for w in wide], [100 * w["err"] for w in wide],
+           C_RIGHT, width=4)
+    p.markers([w["sigma"] for w in wide], [100 * w["err"] for w in wide],
+              C_RIGHT, size=7)
+    p.line([t["sigma"] for t in tight], [100 * t["err"] for t in tight],
+           C_WRONG, width=4)
+    p.markers([t["sigma"] for t in tight], [100 * t["err"] for t in tight],
+              C_WRONG, size=7)
+    p.text(p.w // 2, 8, "既知フラックス 10000 e- を測り返す", size=20,
+           anchor="ma")
+    p.text(p.w // 2, 36, "縦 = 閉形式との差 (%) / 横 = 星の sigma(画素)",
+           et.MUTED, 14, anchor="ma")
+    # 凡例は左下の空いている領域へ(曲線とも 0 % 線とも重ならない位置)
+    p.text(140, 300, "%s 半径 8 sigma:4 点すべてで誤差 %.4f %%"
+           % (M["right"], 100 * max(abs(w["err"]) for w in wide)), C_RIGHT, 16)
+    p.text(140, 326, "%s 半径 3 sigma:%.3f %% 〜 %.3f %%(常に負)"
            % (M["wrong"], 100 * tight[0]["err"], 100 * tight[-1]["err"]),
-           C_WRONG, 15)
-    p.text(104, 96, "小さい開口のずれは**画素化**。開口の縁の画素を",
+           C_WRONG, 16)
+    p.text(140, 362, "小さい開口のずれは画素化に由来する。開口の縁の画素を",
            et.MUTED, 14)
-    p.text(104, 116, "「画素平均 x 面積比」で代表すると内側ほど明るい分だけ",
+    p.text(140, 382, "「画素平均 x 面積比」で代表すると、円の内側ほど明るい分",
            et.MUTED, 14)
-    p.text(104, 136, "必ず少なく出る —— sigma の 2 乗で消えるのがその証拠",
+    p.text(140, 402, "だけ必ず少なく出る。sigma の 2 乗で消えるのがその証拠 ——",
            et.MUTED, 14)
-    p.text(104, 160, "(%.3f %% -> %.3f %%、sigma 1.0 -> 3.0 で %.1f 倍小さく)"
+    p.text(140, 422, "%.3f %% -> %.3f %%(sigma 1.0 -> 3.0 で %.1f 倍小さく)"
            % (100 * tight[0]["err"], 100 * tight[-1]["err"],
               tight[0]["err"] / tight[-1]["err"]), et.MUTED, 14)
-    p.text(20, 494, "星の sigma(画素)", et.MUTED, 14)
-    p.text(12, 30, "理論値との差", et.MUTED, 14)
     fig = p.done()
     info = et.save_exhibit(fig, "wingastro_photometry")
     data = {"wide": wide, "tight": tight,
