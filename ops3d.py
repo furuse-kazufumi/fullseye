@@ -532,7 +532,10 @@ _CATALOG = {
         # 注: shape_distance は descriptors3d に既存のため衝突回避で未登録(descriptor 距離はそちらを使う)
         ("moment_invariants", "moments3d", ["points"], "descriptor", False),
         ("principal_moments", "moments3d", ["points"], "descriptor", False),
-        ("central_moments", "moments3d", ["points"], "descriptor", False),
+        # 返りは {(p,q,r): μ_pqr} の dict(次数がキー)。fit_zernike と同じ理由で
+        # descriptor(数値ベクトル)ではなく table。ベクトルが要るなら
+        # moment_invariants / principal_moments が既にその形で出している
+        ("central_moments", "moments3d", ["points"], "table", False),
         ("inertia_tensor", "moments3d", ["points"], "matrix", False),
     ],
     "geodesic": [  # 曲面上の測地距離(TRIZ 線→面: EDT の曲面版)
