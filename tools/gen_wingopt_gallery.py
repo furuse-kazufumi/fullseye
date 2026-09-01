@@ -816,6 +816,15 @@ def ex_cos4_falloff(log):
             color=(1.0, 1.0, 1.0), size=7, shape="cross", width=1)
         canvas = imagedraw.draw_circle(canvas, (map_x + 6, map_y + 6), 5,
                                        color=(1.0, 1.0, 1.0), width=1)
+        # 色スケール(帯の色が何の値かを推測させない。全フレーム共通の絶対尺度で、
+        # フレームごとに正規化し直していない = 明るさの比較がフレーム間で成り立つ)
+        cb_x, cb_y, cb_w, cb_h = map_x, map_y + map_h + 6, map_w, 12
+        ramp = _heat(np.linspace(0.0, 1.0, cb_w)[None, :].repeat(cb_h, axis=0))
+        canvas[cb_y:cb_y + cb_h, cb_x:cb_x + cb_w] = ramp
+        for tick, txt in ((0.0, "0.0"), (0.25, "0.25"), (0.5, "0.5"),
+                          (0.75, "0.75"), (1.0, "1.0")):
+            labels.append((int(cb_x + tick * (cb_w - 1)) - 8, cb_y + cb_h + 1,
+                           txt, C_DIM, 10, False))
         p = Plot(canvas, plot_box, (0.0, 46.0), (0.0, 1.02))
         p.bg()
         p.grid_y([0.25, 0.5, 0.75, 1.0])

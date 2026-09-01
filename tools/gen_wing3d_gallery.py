@@ -2662,9 +2662,9 @@ def ex_oblique(log) -> dict:
              % (r["area_mm2"], r["truth_area_mm2"]), C_TEXT, 12, False),
             (18, 520, "斜めに切った断面で測った「直径」は、そのままでは部品の直径ではない。",
              C_TEXT, 15, True),
-            (18, 546, "短径は角度によらず %.3f mm のままなのに、長径は 80 deg で %.3f mm "
+            (18, 546, "短径は角度によらず %.3f mm のままなのに、長径は %d deg で %.3f mm "
                       "= %.2f 倍になる。"
-             % (rows[0]["minor_mm"], rows[-1]["major_mm"],
+             % (rows[0]["minor_mm"], rows[-1]["angle_deg"], rows[-1]["major_mm"],
                 rows[-1]["major_mm"] / rows[0]["minor_mm"]), C_TEXT, 13, False),
             (18, 570, "全 %d 角度での実測と理論の差は 長径 最大 %.4f mm / "
                       "短径 最大 %.4f mm(spacing %.2f mm の %.2f 画素ぶん)。"
