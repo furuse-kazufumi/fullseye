@@ -1911,7 +1911,7 @@ def ex_obb(log) -> dict:
         scale = 5.4
         u2, v2, d2 = _project(shown[:, [2, 1, 0]], R, scale, pw / 2, ph / 2,
                               center[[2, 1, 0]])
-        _splat(sub, u2, v2, d2, (0.28, 0.31, 0.36), radius=1, shade=0.5)
+        _splat(sub, u2, v2, d2, (0.46, 0.49, 0.55), radius=1, shade=0.45)
         c = _draw_wire(c, aabb_corners, _BOX_EDGES, R, scale, px + pw / 2, py + ph / 2,
                        center[[2, 1, 0]], C_C, width=1)
         c = _draw_wire(c, obb_corners, obb_edges, R, scale, px + pw / 2, py + ph / 2,

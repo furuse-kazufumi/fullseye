@@ -348,18 +348,17 @@ def _edges_sub_pix(v, a, b):
     点**になる。1 画素幅の連鎖が要るなら `canny` を、より高精度な等値線が要るなら
     `threshold_sub_pix`(実測 0.001 px)を使うこと。
     """
-    gy, gx = ndimage.sobel(v, 0), ndimage.sobel(v, 1)
-    m = _norm(np.hypot(gx, gy))
-    g = np.hypot(gx, gy)
-    g = np.where(g < 1e-12, 1e-12, g)
-    ny, nx = gy / g, gx / g                     # unit gradient (= edge normal)
+    from backend_safe import gradient_normals, subpixel_refine_edges
+
+    g, ny, nx = gradient_normals(v)
+    m = _norm(g)
     lab, n = ndimage.label(m > (0.15 + 0.5 * a), structure=np.ones((3, 3)))
     cs = []
     for i in range(1, n + 1):
         ys, xs = np.where(lab == i)
         if len(ys) >= 3:
             pts = np.stack([ys, xs], 1).astype(np.float64)
-            cs.append(_subpixel_refine(pts, m, ny, nx))
+            cs.append(subpixel_refine_edges(pts, m, ny, nx))
     return {"shape": v.shape, "cs": cs}
 
 
