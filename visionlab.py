@@ -302,8 +302,10 @@ def detection_report(sweep):
         if opt is None:
             lines.append("  -> nothing is rated \"resolvable\" for that reason "
                          "alone; the lens is not the thing to change.")
-    if opt and det:
-        ratio = det / opt
+    # 比は**横分解能**に対して取る。「光学が情報を運べているか」を問うている
+    # のであって、被写界深度が足りるかは別の話だから
+    if lat and det:
+        ratio = det / lat
         lines.append("gap            : detection needs %.1fx the optical limit"
                      % ratio)
         if ratio > 2.0:

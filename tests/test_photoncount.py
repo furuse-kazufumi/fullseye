@@ -946,20 +946,24 @@ def test_counts_and_countrate_are_genuinely_different_quantities():
     """Why two words and not one: a counts-scale array through a rate op is a
     silent near-identity, so the dead-time physics would never be exercised.
 
-    Measured: a histogram peaking at ~250 counts, read as 250 Hz against the
-    default 50 ns dead time, comes back changed by 1.2e-05 relative — the op
+    Measured: a histogram peaking at 2212.5 counts, read as 2212.5 Hz against
+    the default 50 ns dead time, comes back changed by 1.11e-04 relative; the
+    default ``tcspc_simulate()`` budget (peak 23.0) moves by 1.15e-06. The op
     "runs" but its saturation branch, its 1/tau guard and the paralysable
     non-injectivity are all untouched. A real rate array (1e3-1e7 Hz) moves by
-    up to 33%.
+    33.3% at the top end — four to five orders of magnitude more effect.
     """
     hist = PC.tcspc_simulate(2.0, bins=256, bin_ps=100.0, signal_photons=5000.0,
                              ambient_photons=100.0, noise=False)
     as_rate = PC.spad_deadtime_apply(hist)              # counts misread as Hz
-    moved = float(np.abs(as_rate - hist).max() / max(hist.max(), 1e-30))
-    assert moved < 1e-4                                  # a silent near-identity
+    moved = float(np.abs(as_rate - hist).max() / hist.max())
+    assert moved == pytest.approx(1.106e-4, rel=0.02)    # a silent near-identity
+    pooled = PC.tcspc_simulate()                        # the fuzzer's seed value
+    assert float(np.abs(PC.spad_deadtime_apply(pooled) - pooled).max()
+                 / pooled.max()) < 1e-5
     real = np.logspace(3.0, 7.0, 32)
-    assert float(np.abs(PC.spad_deadtime_apply(real) - real).max()
-                 / real.max()) > 0.3                     # a real rate really moves
+    assert float((np.abs(PC.spad_deadtime_apply(real) - real) / real).max()
+                 ) == pytest.approx(0.3333, rel=0.01)    # a real rate really moves
 
 
 def test_every_op_documents_what_it_raises():
