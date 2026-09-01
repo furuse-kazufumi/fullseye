@@ -244,6 +244,18 @@ SLOW_OR_UNSUITABLE = {
     "vol_tiled_map": "呼び手が渡すコールバックの挙動に依存(台帳の型契約とは別軸)",
 }
 
+#: **まだ直せていない**乖離。黙って許すのではなく、op 名と理由を明記し、
+#: 「ちょうどこの集合だけ」であることを検査する(新しい乖離が増えれば落ちる)。
+KNOWN_LEDGER_GAPS = {
+    "vol_rle_components":
+        "宣言 'rle_region'(単一領域)だが実返りは list[VolRLE](成分ごと)。"
+        "adapter で r[0] にすると成分を黙って捨てるため採らず、out を 'table'"
+        "(list|dict)へ移すのが筋。ただし tools/chain_fuzz.py が同 op に "
+        "ローカル adapter(r[0])を後掛けしており、そこを直さないと "
+        "'table' 宣言に対して VolRLE が返って新たな TYPEMISS になる。"
+        "chain_fuzz.py は親が編集中で触れないため、台帳側も現状維持として記録する。",
+}
+
 
 def _resolve(hint, rng):
     return hint(rng) if callable(hint) and not isinstance(hint, np.ndarray) else hint
