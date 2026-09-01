@@ -325,9 +325,10 @@ def test_text_invisible_against_its_background_raises():
 def test_text_box_wraps_when_a_width_is_given():
     img = _canvas(0.0)
     one = A.text_box(img, "abcdefghij", (5, 5), font_size=12, box_alpha=1.0,
-                     box_color=(1.0, 1.0, 1.0))
+                     box_color=(1.0, 1.0, 1.0), text_color=(0.0, 0.0, 0.0))
     two = A.text_box(img, "abcdefghij", (5, 5), font_size=12, box_alpha=1.0,
-                     box_color=(1.0, 1.0, 1.0), max_width=48, min_font_size=12)
+                     box_color=(1.0, 1.0, 1.0), text_color=(0.0, 0.0, 0.0),
+                     max_width=48, min_font_size=12)
     h_one = np.flatnonzero((one[..., 0] > 0.9).any(axis=1)).size
     h_two = np.flatnonzero((two[..., 0] > 0.9).any(axis=1)).size
     assert h_two > h_one, "折り返したのに箱が高くなっていない"
