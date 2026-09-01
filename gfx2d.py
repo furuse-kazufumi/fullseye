@@ -113,8 +113,9 @@ Honest limitations
 * **Clipping to [0, 1] destroys information and this module does it anyway.**
   ``blend_mode("add")``, :func:`bloom` and :func:`particle_render` can exceed 1
   and the excess is clipped, not returned. Measured on the example scene, the
-  bloom pass clips 1.8 % of pixels and loses 0.7 % of the added energy. Work in
-  an unclipped buffer of your own if that matters; there is no HDR sort here.
+  bloom pass clips 2.7 % of the pixels and throws away 1.7 % of the total
+  energy (measured, ``test_bloom_energy_and_clipping``). Work in an unclipped
+  buffer of your own if that matters; there is no HDR sort here.
 * **:func:`shadow_cast_2d` is a ray-marched visibility map, not a physical
   shadow.** It samples the occluder along the segment to the light at a finite
   step count, so an occluder thinner than the step spacing can be missed. The
