@@ -413,28 +413,46 @@ def _sh_hough(p):
 
 # ---- image -> image : FFT / frequency domain ------------------------------- #
 def _sh_freq(p):
+    """FFT-domain image ops.
+
+    ★正規化の規約(2026-09-02 修正): **符号つきの応答は `signed01`、非負の応答は
+    `_norm`**。`highpass` / `bandpass` / `ifft` は零平均の *符号つき* 応答
+    (帯域を落とせば必ず負の半分が出る)なのに `_norm` を通していたため、
+    `image` を名乗りながら値域 [-1,1] の配列を返していた。実測(camera.png,
+    a=0.2,b=0.5): `highpass_image` min=-0.6067 / 負 50.2%、`bandpass_image`
+    min=-0.8812 / 負 49.8%、`fft_image_inv` 負 49.4%。`image` として保存・表示
+    すると **画素の約半分が無言で真っ黒に潰れる**(`ops._apply` の段間 clip でも
+    同じことが起きる)。core の兄弟 `ops._highpass` は最初から `_signed01` を
+    通しており、**兄弟の間で規約が割れていた**のが本体。
+
+    非負の応答(`fft_power` = log1p|F|、`fft_power_real` = |Re F|、`lowpass` =
+    低域だけを残した実信号)は従来どおり。`fft_phase` は角度を [0,1] へ写す
+    自前の規約で、これも符号問題は無い。
+    """
     kind = p["kind"]
 
     def fn(v, a, b):
         x = np.asarray(v, np.float64)
         F = np.fft.fftshift(np.fft.fft2(x))
         if kind == "fft_power":
-            return _norm(np.log1p(np.abs(F)))
+            return _norm(np.log1p(np.abs(F)))        # |.| >= 0 -> _norm で [0,1]
         if kind == "fft_power_real":
-            return _norm(np.abs(np.real(F)))
+            return _norm(np.abs(np.real(F)))         # |.| >= 0 -> _norm で [0,1]
         if kind == "fft_phase":
             return (np.angle(F) + np.pi) / (2 * np.pi)
         if kind == "ifft":                           # inverse Fourier transform (fft_image_inv)
-            return _norm(np.real(np.fft.ifft2(x)))
+            return signed01(np.real(np.fft.ifft2(x)))   # 符号つき -> 0 が 0.5
         H, W = x.shape
         rad = np.sqrt(np.fft.fftfreq(H)[:, None] ** 2 + np.fft.fftfreq(W)[None, :] ** 2)
         if kind == "lowpass":
             return np.clip(np.real(np.fft.ifft2(np.fft.fft2(x) * (rad <= (0.05 + 0.4 * a)))), 0, 1)
         if kind == "highpass":
-            return _norm(np.real(np.fft.ifft2(np.fft.fft2(x) * (rad > (0.02 + 0.3 * a)))))
+            return signed01(np.real(np.fft.ifft2(       # 符号つき -> 0 が 0.5
+                np.fft.fft2(x) * (rad > (0.02 + 0.3 * a)))))
         if kind == "bandpass":
             lo, hi = 0.02 + 0.15 * a, 0.2 + 0.3 * b
-            return _norm(np.real(np.fft.ifft2(np.fft.fft2(x) * ((rad > lo) & (rad < hi)))))
+            return signed01(np.real(np.fft.ifft2(       # 符号つき -> 0 が 0.5
+                np.fft.fft2(x) * ((rad > lo) & (rad < hi)))))
         raise ValueError(kind)
     return fn
 
