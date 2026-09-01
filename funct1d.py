@@ -577,7 +577,8 @@ def _match_scores(ac, bc):
     """Correlation coefficient of *ac* against *bc* placed at every integer lag.
 
     *ac* and *bc* must already be mean-subtracted (Pearson is invariant to that,
-    and centring keeps the sum-of-squares accumulation below well conditioned).
+    and centring keeps the sum-of-squares accumulation that follows well
+    conditioned).
     Returns ``(lags, r)`` where ``lags[k]`` is the shift and ``r[k]`` is the
     coefficient over the fixed reference window ``0 .. len(ac) - 1``, with *bc*
     end-held (``bc[0]`` to the left, ``bc[-1]`` to the right) outside its domain.
