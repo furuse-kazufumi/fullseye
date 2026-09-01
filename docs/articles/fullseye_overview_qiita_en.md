@@ -1661,7 +1661,7 @@ Here is what `pip install -U fullseye` gives you, listed by capability.
 | Glare removal / robust normals | `specular_diffuse_split` / `photometric_stereo_robust` | breaking point is **k=4** occluded lights |
 | Measure and show invisible vibration | `displacement_series` / `motion_magnify` | the cliff is **3.0619 px** (first zero of J₀) |
 | Not carrying big 3-D data around | `vol_crop_domain` / `vol_boundary` / `vol_rle_encode` | 1/34 · 19 % · 1/145 |
-| Reading a skeleton as a graph | `em_skeleton` / `junctions_skeleton` / `skeleton_branches3d` | pixel-exact against EM93 |
+| Reading a skeleton as a graph | `apply(mask, "em_skeleton")` / `junctions_skeleton` / `skeleton_branches3d` | pixel-exact against EM93 |
 | 1-D profile analysis | `derivate_funct_1d` / `zero_crossings_funct_1d` and 37 ops | converges with 2-D measure1d and the 3-D probe |
 | Digging out chained bugs | `tools/chain_fuzz.py --coverage-out` | always read the coverage **breakdown** |
 | Designing pipelines by evolution | `robust.py --problem <name>` | locked holdout and spread, together |
