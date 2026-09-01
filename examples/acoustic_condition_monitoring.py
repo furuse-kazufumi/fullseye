@@ -218,9 +218,11 @@ def main():
           f"角度領域では {ordsp['magnitude'][selr].max():.4f} が "
           f"{hi_o - lo_o:.1f} 次数に散る")
     odd = A.order_spectrum(xs, rate_s, rpm_s, 64, revolutions=79)
-    print(f"   罠: 半整数次数は回転数が奇数だと bin をまたぐ — "
-          f"revolutions=79 で振幅 {odd['peak_amplitude']:.6f}、"
-          f"78 で {ordsp['magnitude'][j]:.6f}(例外は出ない)")
+    j_odd = int(round(3.5 / odd["resolution_order"]))
+    print(f"   罠: 半整数次数は回転数が奇数だと bin をまたぐ — 次数 3.5 の振幅は "
+          f"revolutions=79 で {odd['magnitude'][j_odd]:.6f}、"
+          f"78 で {ordsp['magnitude'][j]:.6f}(真値 1.0、例外は出ない)")
+    assert odd["magnitude"][j_odd] < 0.7
     assert abs(ordsp["magnitude"][j] - 1.0) < 5e-3
     assert a_o[sel].max() < 0.15
 
