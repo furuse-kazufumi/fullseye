@@ -11,7 +11,7 @@
 
 ![処理領域(domain)でメモリが 1/84 になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_domain_memory.gif)
 
-*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 415.5 ms → 1.8 ms(**230.2 倍速**)になる。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
+*↑ **処理領域(domain)でメモリが 1/84 になる** ―― 192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・domain マスク・切り出し後・貼り戻しを並べた。前景は全体の 0.42 % しかないので `vol_crop_domain` で メモリは 56.62 MB → 0.678 MB(**1/83.5**)、同じ `vol_gradient_magnitude` が 405.0 ms → 1.9 ms(**214.9 倍速**)になる。`vol_uncrop` の貼り戻しは元と bit 一致。 使用 op: `vol_bounding_box`, `vol_crop_domain`, `vol_reduce_domain`, `vol_uncrop`, `vol_gradient_magnitude`。*
 
 ![境界だけ持つと 6 % に痩せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_boundary_shell.gif)
 
@@ -19,7 +19,11 @@
 
 [![run-length で 1/71](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_rle_compression_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_rle_compression.png)
 
-*↑ **run-length で 1/71** ―― 256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **241 倍速**、BBox を **24 倍速**で返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。 使用 op: `vol_rle_encode`, `vol_rle_decode`, `vol_rle_volume`, `vol_rle_bbox`, `vol_rle_centroid`, `vol_rle_union`, `vol_rle_intersect`, `vol_rle_difference`。*
+*↑ **run-length で 1/71** ―― 256³ の合成部品を run-length で持つと **1/71**(16.78 MB → 0.237 MB、19,764 run)。しかも展開せずに体積 1,610,948 voxel を **196 倍速**、BBox を **27 倍速**で返し、集合演算(球 ∪ 軸 = 1,508,456 voxel)も run のまま解ける。decode の往復は bit 一致。 使用 op: `vol_rle_encode`, `vol_rle_decode`, `vol_rle_volume`, `vol_rle_bbox`, `vol_rle_centroid`, `vol_rle_union`, `vol_rle_intersect`, `vol_rle_difference`。*
+
+![CT の「窓」で同じ体が 3 通りに見える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_ct_windowing.gif)
+
+*↑ **CT の「窓」で同じ体が 3 通りに見える** ―― 同じ合成 HU ボリュームを `vol_window_level` の 3 つの窓で見る。軟部組織窓では体積の 67.1 % が黒へ潰れ肋骨は白飛びし、骨窓では白飛びが 0.0 % まで下がって骨梁が読め、肺野窓では黒潰れが 0.0 % で肺の中身が出る。下の折れ線が窓そのもの(HU → [0,1] の一次写像 + クリップ)。 使用 op: `vol_window_level`。*
 
 [![Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control.png)
 
@@ -55,7 +59,7 @@
 
 ![MIP と X 線投影のターンテーブル](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_mip_turntable.gif)
 
-*↑ **MIP と X 線投影のターンテーブル** ―― 合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を 1.3 秒(**17 ms/枚**)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。 使用 op: `vol_window_level`, `render_volume_projection`。*
+*↑ **MIP と X 線投影のターンテーブル** ―― 合成 CT ボリューム(96³)を `render_volume_projection` で 1 周させた。左は最大値投影(MIP、骨窓)で光線上の最大値だけを拾うので骨が浮き、右は減衰積算(X 線)で厚みが出る。投影 72 枚を 1.4 秒(**19 ms/枚**)。正規化の上限は全フレーム共通にしてある ―― 1 枚ごとに正規化すると回転中に明るさがちらついて、形の変化と見分けがつかなくなる。 使用 op: `vol_window_level`, `render_volume_projection`。*
 
 ![距離変換で局所の太さを測る(最大内接半径 4.528 mm)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_distance_transform.gif)
 
@@ -99,11 +103,12 @@
 
 | 展示 | 形式 | ファイル | 実測 |
 |---|---|---|---|
-| domain | GIF+mp4 | `media/wing3d_domain_memory.gif` | 40 フレーム, 1120x690, 0.42 MB, 256 色, mp4 0.07 MB |
+| domain | GIF+mp4 | `media/wing3d_domain_memory.gif` | 40 フレーム, 1120x690, 0.45 MB, 256 色, mp4 0.07 MB |
 | boundary | GIF+mp4 | `media/wing3d_boundary_shell.gif` | 36 フレーム, 1120x640, 2.75 MB, 128 色, mp4 1.59 MB |
-| rle | PNG | `wing3d_rle_compression.png` | 1120x720, 52 kB |
+| rle | PNG | `wing3d_rle_compression.png` | 1120x720, 94 kB |
+| windowing | GIF+mp4 | `media/wing3d_ct_windowing.gif` | 40 フレーム, 1120x726, 0.49 MB, 256 色, mp4 0.07 MB |
 | vesselness | PNG | `wing3d_vesselness_control.png` | 1120x700, 72 kB |
-| skeleton | GIF+mp4 | `media/wing3d_skeleton_graph.gif` | 48 フレーム, 1120x660, 1.40 MB, 256 色, mp4 0.26 MB |
+| skeleton | GIF+mp4 | `media/wing3d_skeleton_graph.gif` | 48 フレーム, 1120x660, 1.41 MB, 256 色, mp4 0.26 MB |
 | wall | PNG | `wing3d_wall_thickness.png` | 1120x680, 99 kB |
 | rl | GIF+mp4 | `media/wing3d_richardson_lucy.gif` | 18 フレーム, 1120x660, 0.63 MB, 256 色, mp4 0.09 MB |
 | visualhull | GIF+mp4 | `media/wing3d_visual_hull.gif` | 16 フレーム, 1120x690, 0.73 MB, 256 色, mp4 0.27 MB |
@@ -116,7 +121,7 @@
 | pipeline | GIF | `media/wing3d_pipeline_flow.gif` | 7 フレーム, 900x588, 0.33 MB |
 | zsweep | GIF+mp4 | `media/wing3d_slice_zsweep.gif` | 96 フレーム, 1120x748, 1.16 MB, 256 色, mp4 0.16 MB |
 | mpr | GIF+mp4 | `media/wing3d_mpr_crosshair.gif` | 60 フレーム, 1120x620, 1.18 MB, 256 色, mp4 0.22 MB |
-| oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.90 MB, 256 色, mp4 0.11 MB |
+| oblique | GIF+mp4 | `media/wing3d_oblique_slice.gif` | 36 フレーム, 1120x640, 0.91 MB, 256 色, mp4 0.11 MB |
 | windowsweep | GIF+mp4 | `media/wing3d_window_sweep.gif` | 70 フレーム, 1120x660, 1.44 MB, 256 色, mp4 0.20 MB |
 | isosurface | GIF+mp4 | `media/wing3d_isosurface_sweep.gif` | 40 フレーム, 1120x640, 1.18 MB, 256 色, mp4 0.31 MB |
-| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x664, 0.98 MB, 256 色, mp4 0.15 MB |
+| vessel | GIF+mp4 | `media/wing3d_vessel_reslice.gif` | 49 フレーム, 1120x664, 0.96 MB, 256 色, mp4 0.15 MB |
