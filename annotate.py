@@ -382,7 +382,7 @@ def measure_text(text, font_size=14, font_path=None, max_width=None,
 
     for size in range(font_size, min_font_size - 1, -1):
         font = _font(size, font_path)
-        lines = [text] if max_width is None else _wrap(text, font, max_width)
+        lines = [text] if (max_width is None or not wrap) else _wrap(text, font, max_width)
         widths = [_text_width(s, font) for s in lines]
         w = max(widths) if widths else 0.0
         if max_width is None or w <= max_width:
