@@ -3,7 +3,7 @@ op: render_beauty
 dim: 3d
 category: render
 in: mesh
-out: image2d
+out: rgbimage
 examples: [render_beauty]
 author: Kazufumi Furuse
 license: Apache-2.0
@@ -12,7 +12,7 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 # render_beauty — 3D `render` op
 
-- **データ種**: `mesh` → `image2d`
+- **データ種**: `mesh` → `rgbimage`
 - **呼び出し**: `import render_beauty; render_beauty.render_beauty(V, F, *, pose=None, intrinsics=None, size: 'int' = 512, ss: 'int' = 2, light: 'Sequence[float]' = (0.3, 0.4, 1.0), albedo: 'Sequence[float]' = (0.8, 0.8, 0.85), material: 'str' = 'plastic', matcap=None, ambient: 'float' = 0.12, ao: 'bool' = True, ground_shadow: 'bool' = True, tonemap: 'str' = 'reinhard', background: 'Sequence[float]' = (0.1, 0.11, 0.13), exposure: 'float' = 1.0, shininess: 'Optional[float]' = None, ao_samples: 'int' = 32, shadow_res: 'int' = 512, penumbra: 'float' = 2.5, shadow_samples: 'int' = 12) -> 'np.ndarray'` (または `ops3d.get("render_beauty")`)
 
 ## 使い方
@@ -28,9 +28,9 @@ version: 0.1.0  # fullseye lib version this note was generated for
 
 - [render_beauty](../../../../examples_3d/render_beauty.py) — `py -3.11 examples_3d/render_beauty.py`
 
-## 型が繋がる次の op(`image2d` を入力に取れる)
+## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[fuse_to_voxel](../fusion/fuse_to_voxel.md) · [fit_poly_surface](../surface_fit/fit_poly_surface.md) · [eval_poly_surface](../surface_fit/eval_poly_surface.md) · [surface_form_error](../surface_fit/surface_form_error.md) · [background_flatten](../surface_fit/background_flatten.md) · [polar_unwrap](../curvilinear/polar_unwrap.md) · [fit_zernike](../curvilinear/fit_zernike.md) · [matcap_shade](matcap_shade.md)
+[fuse_to_voxel](../fusion/fuse_to_voxel.md)
 
 ## 同カテゴリ(`render`)
 

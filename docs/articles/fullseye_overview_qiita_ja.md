@@ -1226,20 +1226,10 @@ GPU 化については、**使える部分は既にあって実測も速い**（
 壊れ始めは **λ/4 = 0.15 µm ちょうど**。誤差は常に λ/2 の整数倍です ―― 縞の次数が飛ぶので、**例外も NaN も警告も出ない、構造を持った嘘**になります。λ を 0.8 µm に変えると破綻点も 0.20 µm へ移動します。**λ/4 を越える段差があるなら、位相シフト法は使えません。**
 
 ```python
-import numpy as np, fullseye as fs
-
-# 1) 買う前に決まる限界(走査ステップの上限・包絡線の幅・取り込み range)
-d = fs.csi_design(wavelength_um=0.6, bandwidth_um=0.10, z_range_um=12.0)
-print(d["max_z_step_um"], d["envelope_fwhm_um"], d["capture_range_um"])
-
-# 2) 既知の傾斜面から走査スタックを合成して、高さを戻す
-height = 5.0 + 2.0 * np.mgrid[0:32, 0:32][1] / 31.0        # [µm]
-stack = fs.csi_stack_simulate(height, 0.0, 0.05, 241, 0.6, envelope_fwhm_um=2.8258)
 h = fs.csi_height_map(stack, z_step_um=0.05, wavelength_um=0.6, mode="gaussian")
-print(float(np.sqrt(np.mean((h - height) ** 2))))          # 2.08e-06 µm
 ```
 
-単位はすべて **µm**、`z_step_um` は**走査の実ステップと一致していること**が前提です(ここがずれると高さが比例してずれ、やはり例外は出ません)。走査したくない場合は `chromatic_confocal_height` が、スペクトルのピーク波長だけから高さを返します。
+単位はすべて **µm**、`z_step_um` は**走査の実ステップと一致していること**が前提です(ここがずれると高さが比例してずれ、やはり例外は出ません)。買う前の限界は `csi_design`、走査したくない場合は `chromatic_confocal_height` がスペクトルのピーク波長だけから高さを返します。
 
 ### 回っている機械の異常を聞く ―― 欠陥周波数は生スペクトルに存在しない
 
