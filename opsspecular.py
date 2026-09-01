@@ -131,10 +131,10 @@ _CATALOG = {
         ("photometric_residual", "specularity", ["images"], "image2d"),
     ],
     "polarization": [
-        ("polarization_render", "specularity", ["image2d", "image2d"], "images"),
-        ("polarization_separate", "specularity", ["images"], "image2d"),
-        ("polarization_dolp_map", "specularity", ["images"], "image2d"),
-        ("polarization_stokes", "specularity", ["images"], "stokes"),
+        ("polarization_render", "specularity", ["image2d", "image2d"], "polsweep"),
+        ("polarization_separate", "specularity", ["polsweep"], "image2d"),
+        ("polarization_dolp_map", "specularity", ["polsweep"], "image2d"),
+        ("polarization_stokes", "specularity", ["polsweep"], "stokes"),
     ],
 }
 
