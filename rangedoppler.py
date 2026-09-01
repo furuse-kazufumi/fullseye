@@ -571,6 +571,16 @@ def _angle_grid(angles_deg, op: str) -> np.ndarray:
         raise ValueError("%s: angles_deg must lie in [-90, 90] degrees (measured "
                          "from array boresight), got min %g / max %g"
                          % (op, float(g.min()), float(g.max())))
+    # A "local maximum of the spectrum" only means anything on an ordered grid:
+    # on a scrambled one, adjacency in the array is not adjacency in angle. No
+    # wrong *number* could be produced from an unordered grid in testing (the
+    # peaks are ranked by power and the fallback is argmax), but the returned
+    # (grid_deg, spectrum) pair would be a scrambled curve, so the contract is
+    # stated up front rather than left to luck.
+    if not np.all(np.diff(g) > 0.0):
+        raise ValueError("%s: angles_deg must be strictly increasing — a local "
+                         "maximum of the angle spectrum is only defined on an "
+                         "ordered grid. Sort it explicitly." % (op,))
     return g
 
 
