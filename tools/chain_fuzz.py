@@ -622,10 +622,22 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None):
 # --------------------------------------------------------------------------- #
 # 収束フェーズ: 発見を「最小再現の連鎖」へ削る(delta debugging)               #
 # --------------------------------------------------------------------------- #
+#: 署名を作るときにメッセージから消す可変部分。良いエラーメッセージほど
+#: 「負の bin が 127 個、最小 -1.176」のように**その実行固有の数**を含むので、
+#: 素のメッセージで同一視すると同じ 1 件の問題が実行のたびに別署名になる
+#: (実測: photon 族を足した波で署名が 99 → 238 に膨れ、増分のほぼ全部が
+#: 「dtof_depth: hist has N negative bin(s) (min -X)」の N と X 違いだった)。
+_NUM_RE = re.compile(r"[-+]?\d[\d,]*\.?\d*(?:[eE][-+]?\d+)?")
+
+
 def signature(finding):
-    """findings を同一視する鍵(main の集約と --minimize で同じ定義を使う)。"""
-    return (finding["kind"], finding["op"], finding.get("exc", ""),
-            finding.get("msg", "")[:80])
+    """findings を同一視する鍵(main の集約と --minimize で同じ定義を使う)。
+
+    メッセージ中の**数値を伏せて**から比べる。伏せないと、実行ごとに違う数を
+    含むメッセージが別々の署名になり、収束(拡散 → 署名でまとめる)が機能しない。
+    """
+    msg = _NUM_RE.sub("#", finding.get("msg", ""))
+    return (finding["kind"], finding["op"], finding.get("exc", ""), msg[:80])
 
 
 def reproduces(ops, gens, script, seed, target):
