@@ -161,6 +161,11 @@ def report(a: dict, show_matrix: bool) -> str:
         w(f"   {s}")
     w("")
 
+    w(f"■ 専用ビルダで到達している op ({len(a['reached_via_builder'])}) ― 型プールだけでは届かない")
+    for n in a["reached_via_builder"]:
+        w(f"   {n}")
+    w("")
+
     w(f"■ 誰も食べない型 ({len(a['never_consumed'])}) ― 出力専用。終端なら正しい")
     w("   " + ", ".join(a["never_consumed"]))
     w("")
