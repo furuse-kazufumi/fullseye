@@ -955,7 +955,7 @@ def _cad_part(res=64):
     import meshrepair
     import render3d
     import sdf_ops
-    grid, _ext = sdf_ops.grid_coords((-40.0, 40.0, -40.0, 40.0, -14.0, 46.0), res)
+    grid, _ext = sdf_ops.grid_coords(((-40.0, 40.0), (-40.0, 40.0), (-14.0, 46.0)), res)
     base = sdf_ops.box_sdf(grid, (0.0, 0.0, 0.0), (30.0, 30.0, 6.0))
     tower = sdf_ops.box_sdf(grid, (6.0, -4.0, 16.0), (10.0, 10.0, 16.0))
     boss = sdf_ops.sphere_sdf(grid, (-17.0, 14.0, 6.0), 9.0)
