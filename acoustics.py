@@ -647,21 +647,25 @@ def stft_cola_check(window="hann", win=256, hop=None):
 
     Measured (periodic windows, ``relative_deviation`` of the plain sum):
 
-    ===========  =====  =====  ==================  ====
-    window       win    hop    relative_deviation  COLA
-    ===========  =====  =====  ==================  ====
-    hann         256    128    0.0                 yes
-    hann         256    64     4.34e-16            yes
-    hann         256    85     6.29e-02            no
-    hamming      256    128    2.16e-16            yes
-    blackman     256    128    3.16e-01            no
-    blackman     256    64     1.46e-16            yes
-    rectangular  256    128    1.00e+00            no
-    ===========  =====  =====  ==================  ====
+    ========  ====  ====  ==================  ========  ====
+    window    win   hop   relative_deviation  constant  COLA
+    ========  ====  ====  ==================  ========  ====
+    hann      256   128   4.44e-16            1.00      yes
+    hann      256   64    2.22e-16            2.00      yes
+    hann      256   85    1.48e-03            1.506     no
+    hamming   256   128   2.06e-16            1.08      yes
+    blackman  256   128   1.91e-01            0.84      no
+    blackman  256   64    3.97e-16            1.68      yes
+    boxcar    256   128   0.00e+00            2.00      yes
+    ========  ====  ====  ==================  ========  ====
 
-    The blackman row is the useful one: the same window is COLA at hop = win/4
-    and 32 % off at hop = win/2, so "which window" is not the question — the
-    pair is.
+    The two blackman rows are the useful ones: the same window is COLA at
+    hop = win/4 and 19 % off at hop = win/2, so "which window" is not the
+    question — the pair is. The boxcar row was worth measuring rather than
+    assuming: a rectangular window at 50 % overlap sums to exactly 2 and is
+    COLA, which is the opposite of the usual intuition about it. Note also that
+    the constant is not 1 in general — an overlap-add that does not divide by it
+    is off by a *gain*, which is the failure that looks like a working system.
 
     **Raises** ``ValueError``: unknown / all-zero window, ``hop`` outside
     ``[1, win]``, ``win`` outside ``[2, MAX_WINDOW]``.
