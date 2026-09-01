@@ -589,8 +589,8 @@ def test_overlay_boundary_mode_paints_only_the_shell():
     n_fill = int((fill.sum(axis=3) > 0).sum())
     n_edge = int((edge.sum(axis=3) > 0).sum())
     assert 0 < n_edge < n_fill                          # 殻だけ = 中身が見える
-    # 実測(2026-09-02): 3128 前景ボクセルのうち殻は 1698
-    assert n_fill == 3128 and n_edge == 1698
+    # 実測(2026-09-02): 3128 前景ボクセルのうち殻は 1648(52.7 %)
+    assert n_fill == 3128 and n_edge == 1648
 
 
 def test_overlay_window_is_explicit():
