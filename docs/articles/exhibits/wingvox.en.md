@@ -19,11 +19,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![Flipping through colour-coded voxel slices](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_slice_flow.gif)
 
-*↑ **Flipping through colour-coded voxel slices** ―― 16 particles labelled with 26-connectivity, coloured **as a volume** and only then cut into 24 slices. Each particle keeps one colour from first slice to last (measured: all 16 components have exactly one colour). At a spacing of (0.50, 0.20, 0.20) mm they total 62.560 mm3. Ops used: `vol_label`, `vol_colorize_labels`, `vol_label_slice_rgb`, `vol_label_shape_stats`, `vol_label_palette`.*
+*↑ **Flipping through colour-coded voxel slices** — 16 particles labelled with 26-connectivity, coloured **as a volume** and only then cut into 24 slices. Each particle keeps one colour from first slice to last (measured: all 16 components have exactly one colour). At a spacing of (0.50, 0.20, 0.20) mm they total 62.560 mm3. Ops used: `vol_label`, `vol_colorize_labels`, `vol_label_slice_rgb`, `vol_label_shape_stats`, `vol_label_palette`.*
 
 - GIF: `docs/articles/assets/media/wingvox_slice_flow.gif` (24 frames, 432x616 px, 0.33 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_slice_flow_thumb.jpg`
-- Bundling: フリップブック GIF(断面が進む・寸法が揃っている)
+- Bundling: Flipbook GIF (a process advancing at one fixed size)
 - SHA-256: `769ad42caa6786932daf625bafa14a34686fc299dc96b23a11404564b9343228`
 
 <details><summary>The measured values burned into this figure</summary>
@@ -53,11 +53,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![Flicker, side by side — the only difference is the order](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_flicker.gif)
 
-*↑ **Flicker, side by side — the only difference is the order** ―― On the left each slice is labelled in 2-D and coloured on its own, so the numbering is redrawn every slice: on **20 of 24 slices** at least one particle changes colour (62 of 108 (particle, slice) pairs = 57.4 %, and all 16 particles change at least once). On the right the volume is coloured first and cut afterwards: **0 slices, 0 pairs**. Same palette, same seed — only the order differs. Ops used: `vol_label`, `vol_label_color_flicker`, `vol_colorize_labels`, `vol_label_slice_rgb`, `colorize_labels`.*
+*↑ **Flicker, side by side — the only difference is the order** — On the left each slice is labelled in 2-D and coloured on its own, so the numbering is redrawn every slice: on **20 of 24 slices** at least one particle changes colour (62 of 108 (particle, slice) pairs = 57.4 %, and all 16 particles change at least once). On the right the volume is coloured first and cut afterwards: **0 slices, 0 pairs**. Same palette, same seed — only the order differs. Ops used: `vol_label`, `vol_label_color_flicker`, `vol_colorize_labels`, `vol_label_slice_rgb`, `colorize_labels`.*
 
 - GIF: `docs/articles/assets/media/wingvox_flicker.gif` (24 frames, 596x468 px, 0.37 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_flicker_thumb.jpg`
-- Bundling: フリップブック GIF(左右を 1 コマに合成して同時に進める)
+- Bundling: Flipbook GIF (both halves composited into one frame so they advance together)
 - SHA-256: `b22e88054154f9ce33e1504ed9e4b109955e2e7f86d24227cdff77f8fd732a41`
 
 <details><summary>The measured values burned into this figure</summary>
@@ -83,11 +83,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 [![6 / 18 / 26 connectivity — the neighbourhood decides the count](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingvox_connectivity_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingvox_connectivity.png)
 
-*↑ **6 / 18 / 26 connectivity — the neighbourhood decides the count** ―― The same two cubes: touching at a single corner they are 2 components under 6-connectivity, 2 under 18 and **1** under 26; touching along an edge, 2 / **1** / 1. The number of colours follows the number of components exactly — merge two blobs and one colour disappears. Ops used: `vol_label`, `vol_label_volume_render`, `vol_label_palette`.*
+*↑ **6 / 18 / 26 connectivity — the neighbourhood decides the count** — The same two cubes: touching at a single corner they are 2 components under 6-connectivity, 2 under 18 and **1** under 26; touching along an edge, 2 / **1** / 1. The number of colours follows the number of components exactly — merge two blobs and one colour disappears. Ops used: `vol_label`, `vol_label_volume_render`, `vol_label_palette`.*
 
 - PNG (contact sheet): `docs/articles/assets/wingvox_connectivity.png` (774x692 px, 31 kB, 6 panels / 3 columns)
 - Thumbnail (shown in the article): `docs/articles/assets/wingvox_connectivity_thumb.jpg` (57 kB)
-- Bundling: タイル(同じ被写体に近傍の定義違いを当てた 6 枚を比べる)
+- Bundling: Contact sheet (6 panels comparing neighbourhood definitions on the same body)
 - SHA-256: `1e71d481fec54a3b648163520a0c954e2077d102f7859d1b9da06e36196a01d6`
 
 <details><summary>The measured values burned into this figure</summary>
@@ -103,8 +103,7 @@ as **a thumbnail linking to the full-size PNG**.
   "6": 2,
   "18": 1,
   "26": 1
- },
- "note": "角接触は 26 だけが繋ぎ、稜線接触は 18 から繋がる"
+ }
 }
 ```
 
@@ -114,11 +113,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![Sieving by volume without moving a single colour](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_sieve.gif)
 
-*↑ **Sieving by volume without moving a single colour** ―― ``min_volume`` rises from 0 to 9.320 mm3 in 17 steps, dropping the particles one at a time. Those that fall out become background, but **the survivors do not change colour by a single pixel** (checked on all 17 frames). That holds because the labels are not renumbered (``relabel=False``); renumbering shifts the palette rows and repaints everything. Ops used: `vol_label`, `vol_label_shape_stats`, `vol_select_labels`, `vol_label_volume_render`, `vol_colorize_labels`.*
+*↑ **Sieving by volume without moving a single colour** — ``min_volume`` rises from 0 to 9.320 mm3 in 17 steps, dropping the particles one at a time. Those that fall out become background, but **the survivors do not change colour by a single pixel** (checked on all 17 frames). That holds because the labels are not renumbered (``relabel=False``); renumbering shifts the palette rows and repaints everything. Ops used: `vol_label`, `vol_label_shape_stats`, `vol_select_labels`, `vol_label_volume_render`, `vol_colorize_labels`.*
 
 - GIF: `docs/articles/assets/media/wingvox_sieve.gif` (17 frames, 432x616 px, 0.30 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_sieve_thumb.jpg`
-- Bundling: フリップブック GIF(閾値が進む)
+- Bundling: Flipbook GIF (the threshold advances)
 - SHA-256: `ed2622bdcb2dbbd98d792fb9c4e15c65ef20c0c688f4e3f272345affcfc97bd6`
 
 <details><summary>The measured values burned into this figure</summary>
@@ -242,11 +241,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![Overlaying colour labels on the original CT — sweeping alpha](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_overlay_alpha.gif)
 
-*↑ **Overlaying colour labels on the original CT — sweeping alpha** ―― At slice z=8 alpha sweeps from 0 to 1 and back. The mean change over the foreground runs 0.0000 -> 0.0262, **linear** in alpha, while the **background never moves at any alpha (0.0000)** — colour only lands on labelled voxels. In ``mode='boundary'`` only 1648 of the 3128 foreground voxels (52.7 %) are painted, so the structure underneath stays visible. Ops used: `vol_label`, `vol_label_overlay`, `vol_label_slice_rgb`.*
+*↑ **Overlaying colour labels on the original CT — sweeping alpha** — At slice z=8 alpha sweeps from 0 to 1 and back. The mean change over the foreground runs 0.0000 -> 0.0262, **linear** in alpha, while the **background never moves at any alpha (0.0000)** — colour only lands on labelled voxels. In ``mode='boundary'`` only 1648 of the 3128 foreground voxels (52.7 %) are painted, so the structure underneath stays visible. Ops used: `vol_label`, `vol_label_overlay`, `vol_label_slice_rgb`.*
 
 - GIF: `docs/articles/assets/media/wingvox_overlay_alpha.gif` (20 frames, 432x616 px, 0.99 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_overlay_alpha_thumb.jpg`
-- Bundling: フリップブック GIF(alpha を往復掃引)
+- Bundling: Flipbook GIF (alpha swept up and back)
 - SHA-256: `fcb879348b2dcf66cdf37bc2aad03a7cc786499ee3c358d304a6d6f6636c1ca7`
 
 <details><summary>The measured values burned into this figure</summary>
@@ -371,11 +370,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 ![A turntable of colour-coded meshes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wingvox_mesh_turntable.gif)
 
-*↑ **A turntable of colour-coded meshes** ―― Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. The grains look stretched along z because they **are** — the slice pitch is 2.5x the in-plane pitch, the same point exhibit 4 makes. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
+*↑ **A turntable of colour-coded meshes** — Marching cubes runs on each component's padded bounding box, giving 16 meshes and 7088 triangles for the 16 components. Vertices are in physical coordinates (spacing (0.50, 0.20, 0.20) mm) and the frames are composited through ``render3d.render_mesh``'s z-buffer. The grains look stretched along z because they **are** — the slice pitch is 2.5x the in-plane pitch, the same point exhibit 4 makes. **The colours are the same palette rows as the slice views**, so the same particle can be followed between the cut and the rotation. Ops used: `vol_label`, `vol_labels_to_meshes`, `look_at`, `intrinsics_from_fov`, `render_mesh`.*
 
 - GIF: `docs/articles/assets/media/wingvox_mesh_turntable.gif` (24 frames, 380x538 px, 0.45 MB)
 - Thumbnail: `docs/articles/assets/thumbs/wingvox_mesh_turntable_thumb.jpg`
-- Bundling: フリップブック GIF(方位が進む)
+- Bundling: Flipbook GIF (the azimuth advances)
 - SHA-256: `4a2ba556d6751c838b4b68264026913f89e33a444e67eb73fc2606ec9d344240`
 
 <details><summary>The measured values burned into this figure</summary>
@@ -402,11 +401,11 @@ as **a thumbnail linking to the full-size PNG**.
 
 [![A measurement table with its legend — which colour is which particle](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingvox_legend_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wingvox_legend.png)
 
-*↑ **A measurement table with its legend — which colour is which particle** ―― A colour-coded figure without a legend is merely decorative. This table lists all 16 particles: swatch, volume in mm3, share of the total, equivalent diameter, sphericity, elongation and whether the particle touches the field of view. Total 62.5600 mm3, shares summing to 1.000000, one voxel = 0.020000 mm3. The largest is #2ddc8a at 9.3200 mm3, the smallest #15d4c9 at 0.5600 mm3. Ops used: `vol_label`, `vol_region_props`, `vol_label_shape_stats`, `vol_label_legend`, `vol_label_palette`.*
+*↑ **A measurement table with its legend — which colour is which particle** — A colour-coded figure without a legend is merely decorative. This table lists all 16 particles: swatch, volume in mm3, share of the total, equivalent diameter, sphericity, elongation and whether the particle touches the field of view. Total 62.5600 mm3, shares summing to 1.000000, one voxel = 0.020000 mm3. The largest is #2ddc8a at 9.3200 mm3, the smallest #15d4c9 at 0.5600 mm3. Ops used: `vol_label`, `vol_region_props`, `vol_label_shape_stats`, `vol_label_legend`, `vol_label_palette`.*
 
 - PNG (full size): `docs/articles/assets/wingvox_legend.png` (900x626 px, 104 kB)
 - Thumbnail (shown in the article): `docs/articles/assets/wingvox_legend_thumb.jpg` (79 kB)
-- Bundling: 原寸 1 枚(表の数値が主役 ―― 縮めると読めない)
+- Bundling: Full size (the numbers are the point — shrinking makes them unreadable)
 - SHA-256: `996d79e05286f61b29e5add295e2a5519b6e7b87a2eede1d8e5fdec023a2e504`
 
 <details><summary>The measured values burned into this figure</summary>

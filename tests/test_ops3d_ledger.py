@@ -579,6 +579,17 @@ def test_ledger_skips_are_reported_not_silent(ledger_audit, capsys):
     assert ok >= 150, "健全性検査が届いた op が少なすぎる: OK=%d" % ok
 
 
+def test_none_returns_are_documented_contracts(ledger_audit):
+    """None を返した op は **ちょうど NONE_BY_CONTRACT の集合だけ**。
+
+    「解が無い」を None で表すのは契約(平行な平面に交線は無い)だが、契約に
+    書かれていない None は「黙って何も返さない」= 型の嘘と区別がつかない。
+    """
+    undocumented = {n: d for n, (k, d) in ledger_audit.items()
+                    if k == "NONE" and n not in NONE_BY_CONTRACT}
+    assert not undocumented, "契約に無い None を返した op: %s" % undocumented
+
+
 def test_result_adapters_only_reference_real_ops():
     """RESULT_ADAPTERS の鍵はすべて台帳に実在する op(stale entry を作らない)。"""
     unknown = sorted(set(ops3d.RESULT_ADAPTERS) - set(ops3d.OPS3D))

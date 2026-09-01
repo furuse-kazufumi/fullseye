@@ -418,16 +418,16 @@
       1100,
       620
      ],
-     "gif_bytes": 1474350,
-     "gif_sha256": "41302871423c9a9105d3ea00843eccb5fa3b55f00b0ca84f2f5632ebf7d8aea6",
+     "gif_bytes": 1467738,
+     "gif_sha256": "201b77da15f0523806f760c329aa867c111803f87a2515e55bc02dbc03465b74",
      "colors": null,
      "fps": 6,
-     "thumb_bytes": 34426
+     "thumb_bytes": 34409
     },
     "numbers": {
-     "findings": 216,
-     "sig_raw": 70,
-     "sig_masked": 51
+     "findings": 174,
+     "sig_raw": 63,
+     "sig_masked": 46
     },
     "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"
    }
@@ -477,15 +477,15 @@
       1120,
       816
      ],
-     "png_bytes": 79819,
-     "thumb_bytes": 57006,
-     "png_sha256": "271a09f28cd2e51305d86e235b108118143b8fb089f8853c4431c7d3ad916f43"
+     "png_bytes": 79221,
+     "thumb_bytes": 57044,
+     "png_sha256": "9fdb836e92d3b8ae362384a11946a10a0623a4011873552f3f6a0e4690d1fb2e"
     },
     "numbers": {
      "now": {
       "3d": [
-       240,
-       70
+       250,
+       60
       ],
       "1d": [
        34,
@@ -591,16 +591,16 @@
       1100,
       600
      ],
-     "gif_bytes": 1585726,
-     "gif_sha256": "30982f2f90bc5a1564a46ffffbfc0773f5fd7fe78e735a3a3f87107b478c4a06",
+     "gif_bytes": 1580160,
+     "gif_sha256": "1ed71cf3f4c25016cb43bd66bc98f534d9558d3f0b67571b40225f5cb8dfd59c",
      "colors": null,
      "fps": 6,
-     "thumb_bytes": 32040
+     "thumb_bytes": 32031
     },
     "numbers": {
-     "covered": 435,
+     "covered": 445,
      "kinds": {
-      "CONTRACT": 216
+      "CONTRACT": 174
      }
     },
     "provenance": "本スクリプトで実走(chain_fuzz.run_chain を in-process)"

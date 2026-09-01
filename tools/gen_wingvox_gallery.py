@@ -361,7 +361,6 @@ def ex_connectivity(log):
                           title=title, title_font_size=_fit_size(title, 3 * 280, 24))
     info = save_exhibit(sheet, "wingvox_connectivity")
     facts = {"corner": counts["corner"], "edge": counts["edge"],
-             "note": "角接触は 26 だけが繋ぎ、稜線接触は 18 から繋がる",
              "ops": ["vol_label", "vol_label_volume_render", "vol_label_palette"]}
     return _info(info, "sheet", "wingvox_connectivity", ncols=3, panels=len(panels)), facts
 
@@ -635,13 +634,23 @@ EXHIBIT_ORDER = [
 ]
 
 BUNDLING = {
-    "slice_flow": "フリップブック GIF(断面が進む・寸法が揃っている)",
-    "flicker": "フリップブック GIF(左右を 1 コマに合成して同時に進める)",
-    "connectivity": "タイル(同じ被写体に近傍の定義違いを当てた 6 枚を比べる)",
-    "sieve": "フリップブック GIF(閾値が進む)",
-    "overlay_alpha": "フリップブック GIF(alpha を往復掃引)",
-    "mesh_turntable": "フリップブック GIF(方位が進む)",
-    "legend": "原寸 1 枚(表の数値が主役 ―― 縮めると読めない)",
+    "slice_flow": {"ja": "フリップブック GIF(断面が進む・寸法が揃っている)",
+                   "en": "Flipbook GIF (a process advancing at one fixed size)"},
+    "flicker": {"ja": "フリップブック GIF(左右を 1 コマに合成して同時に進める)",
+                "en": "Flipbook GIF (both halves composited into one frame so they "
+                      "advance together)"},
+    "connectivity": {"ja": "タイル(同じ被写体に近傍の定義違いを当てた 6 枚を比べる)",
+                     "en": "Contact sheet (6 panels comparing neighbourhood "
+                           "definitions on the same body)"},
+    "sieve": {"ja": "フリップブック GIF(閾値が進む)",
+              "en": "Flipbook GIF (the threshold advances)"},
+    "overlay_alpha": {"ja": "フリップブック GIF(alpha を往復掃引)",
+                      "en": "Flipbook GIF (alpha swept up and back)"},
+    "mesh_turntable": {"ja": "フリップブック GIF(方位が進む)",
+                       "en": "Flipbook GIF (the azimuth advances)"},
+    "legend": {"ja": "原寸 1 枚(表の数値が主役 ―― 縮めると読めない)",
+               "en": "Full size (the numbers are the point — shrinking makes them "
+                     "unreadable)"},
 }
 
 CAPTIONS = {
@@ -843,7 +852,8 @@ def _write_exhibit_md(results: dict, lang: str, log) -> str:
         ops = ", ".join("`%s`" % o for o in facts["ops"])
         stem = info["stem"]
         tail = "使用 op: %s。" % ops if lang == "ja" else "Ops used: %s." % ops
-        caption = "**%s** ―― %s %s" % (title, text(facts), tail)
+        dash = "――" if lang == "ja" else "—"
+        caption = "**%s** %s %s %s" % (title, dash, text(facts), tail)
         lines.append("## %d. %s" % (i, title))
         lines.append("")
         if info["kind"] == "gif":
@@ -875,7 +885,7 @@ def _write_exhibit_md(results: dict, lang: str, log) -> str:
                             else "Thumbnail (shown in the article)",
                             stem, info["thumb_bytes"] / 1e3))
         lines.append("- %s: %s" % ("束ね方" if lang == "ja" else "Bundling",
-                                   BUNDLING[name]))
+                                   BUNDLING[name][lang]))
         lines.append("- SHA-256: `%s`" % info["sha256"])
         lines.append("")
         lines.append("<details><summary>%s</summary>"
