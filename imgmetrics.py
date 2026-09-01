@@ -755,19 +755,54 @@ def compressed_size(a, compressor="lzma"):
     return len(_COMPRESSORS[compressor](np.ascontiguousarray(np.asarray(a)).tobytes()))
 
 
-def ncd(a, b, compressor="lzma"):
+def ncd(a, b, compressor="lzma", levels=None, data_range=None):
     """正規化圧縮距離(Li, Chen, Li, Ma & Vitányi, IEEE TIT 50(12), 2004)。
 
     ``NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))``。
     同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし **実際の圧縮器は
     理想的な Kolmogorov 複雑度ではない**ので、同一入力でも厳密に 0 にはならない
     (ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。
+
+    **生の float 配列は受け付けない。** 圧縮器はバイト列の繰り返しを見るので、
+    値がごくわずか違うだけで float の仮数部が総取っ替えになり、**似ている 2 枚
+    でも共通のバイト列が消える**。実測(2026-09-02、``linspace`` の勾配と
+    それを +0.02 した絵、PSNR 34.0 dB = よく似ている):
+
+    * ``float64`` のまま:8 バイト語の共有率 **0.02 %** → **NCD 1.0959**
+      (「まったく無関係」と読める値。しかも 1 を超える)
+    * 256 段に量子化:**NCD 0.1290**(正しく「よく似ている」)
+    * 本当に無関係な 2 枚:**NCD 0.9981**
+
+    つまり float のまま測ると**例外なく逆の結論**が出る。よって float には
+    ``levels`` の明示を要求する(``levels=256`` なら ``data_range`` を 256 段に
+    量子化してから測る)。整数 dtype はそのまま測れる。
     """
     a = np.asarray(a)
     b = np.asarray(b)
     if a.dtype != b.dtype or a.shape != b.shape:
         raise ValueError(
             f"ncd compares like with like: dtypes {a.dtype}/{b.dtype}, shapes {a.shape}/{b.shape}"
+        )
+    if np.issubdtype(a.dtype, np.floating):
+        if levels is None:
+            raise ValueError(
+                "ncd on raw float arrays is meaningless: a tiny value change replaces the whole "
+                "mantissa, so two very similar images share almost no byte patterns (measured: "
+                "0.02 % of 8-byte words shared, NCD 1.0959 for a pair that is 34.0 dB apart, "
+                "while the same pair quantised to 256 levels gives 0.1290). "
+                "Pass levels= (e.g. levels=256) to quantise first, or hand in an integer dtype"
+            )
+        if not isinstance(levels, (int, np.integer)) or levels < 2 or levels > 65536:
+            raise ValueError(f"levels must be an integer in [2, 65536], got {levels!r}")
+        dr = data_range_of(a, b, data_range=data_range)
+        lo = min(float(a.min()), float(b.min()))
+        scale = (int(levels) - 1) / dr
+        dt = np.uint8 if levels <= 256 else np.uint16
+        a = np.clip(np.round((a.astype(np.float64) - lo) * scale), 0, levels - 1).astype(dt)
+        b = np.clip(np.round((b.astype(np.float64) - lo) * scale), 0, levels - 1).astype(dt)
+    elif levels is not None:
+        raise ValueError(
+            f"levels= only applies to float input; {a.dtype} is already quantised"
         )
     ca = compressed_size(a, compressor)
     cb = compressed_size(b, compressor)
