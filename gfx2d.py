@@ -264,6 +264,11 @@ def _as_array(value, name):
         raise ValueError(f"{name}: complex arrays are not accepted")
     if arr.dtype.kind not in "fiub":
         raise ValueError(f"{name}: expected a numeric array, got dtype {arr.dtype}")
+    if arr.dtype.kind in "iu" and arr.size and int(arr.max()) > 1:
+        raise ValueError(
+            f"{name}: integer image with values up to {int(arr.max())}. This family works "
+            "in float [0, 1] throughout; convert with imgio.to_float01() rather than "
+            "letting a 0-255 buffer be read as radiance.")
     arr = np.ascontiguousarray(arr, dtype=np.float64)
     if not np.all(np.isfinite(arr)):
         raise ValueError(f"{name}: contains NaN or infinity")
