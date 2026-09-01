@@ -582,7 +582,7 @@ class TestFailClosed:
             LF.lf_synthesize((0.0,), coverage=0.0)
         with pytest.raises(ValueError, match="texture_sigma"):
             LF.lf_synthesize((0.0,), texture_sigma=0.0)
-        with pytest.raises(ValueError, match="constant"):
+        with pytest.raises(ValueError, match="float dust"):
             LF.lf_synthesize((0.0,), shape=(8, 8), texture_sigma=400.0)
 
 
