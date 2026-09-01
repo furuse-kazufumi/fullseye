@@ -184,7 +184,9 @@ def test_thick_dashes_keep_their_gaps():
 
 def test_dash_phase_is_continuous_across_corners():
     """角で位相をリセットしない ―― リセットすると各辺が必ず点灯から始まる。"""
-    pts = [(10, 10), (100, 10), (100, 100)]
+    # 第 1 辺の長さ 87 は周期 15 の倍数でない(87 mod 15 = 12)ので、継いだ位相は
+    # 第 2 辺を「消灯の途中」から始める ―― リセット方式なら必ず点灯から始まる。
+    pts = [(10, 10), (97, 10), (97, 100)]
     got = D.draw_polyline(np.zeros((120, 120)), pts, style=DrawStyle(line_style=[10, 5])) > 0.5
     # リセット方式(各辺が phase 0 から)を組んで比べる
     reset = np.zeros((120, 120), bool)
