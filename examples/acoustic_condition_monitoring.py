@@ -300,7 +300,8 @@ def main():
           f"(真値 2.5、誤差 "
           f"{100 * abs(h1['magnitude'].mean() - 2.5) / 2.5:.2f} %)")
     print(f"                     H2 |H| 平均 {h2['magnitude'].mean():.6f} "
-          f"<- **2 倍ずれているが 5.04 という数字は何もおかしく見えない**")
+          f"<- **真値の {h2['magnitude'].mean() / 2.5:.2f} 倍。ずれているが、"
+          f"この数字を見て変だと思う理由はどこにも無い**")
     print(f"                     |H1/H2| = コヒーレンス を点ごとに確認: "
           f"最大差 {np.abs(ratio - h1['coherence']).max():.3e}")
     ci = A.coherence(drive, rng.standard_normal(n2), fs, win=1024)

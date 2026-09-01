@@ -869,3 +869,42 @@ class TestAdversarialFindings:
         got = itf.csi_peak_position(two, DZ, 0.0, LAM)
         assert np.isfinite(got)
         assert abs(got - 5.0) > 0.2 and abs(got - 6.5) > 0.2
+
+
+class TestSweepPoolIsSafeToShare:
+    """The ``sweep`` type carries two kinds of 1-D data — a z-scan interferogram
+    and a confocal spectrum — on the ``qimage`` precedent. That is only defensible
+    if handing one to the other family fails **closed**, so both directions are
+    measured here rather than assumed."""
+
+    def test_a_spectrum_is_refused_by_the_scan_family(self):
+        sp = itf.chromatic_confocal_simulate(3.0, 500.0, 0.5, 401, 0.20, 600.0)
+        with pytest.raises(ValueError, match="fringe carrier"):
+            itf.csi_peak_position(sp, DZ, 0.0, LAM)
+
+    def test_an_interferogram_is_refused_by_the_chromatic_family(self):
+        s = scan(6.025)
+        with pytest.raises(ValueError, match="max_carrier_fraction"):
+            itf.chromatic_confocal_height(s, 500.0, 0.5, 0.20, 600.0)
+        # ... and with the guard off it returns exactly the plausible-wrong
+        # number the guard exists to prevent
+        lied = itf.chromatic_confocal_height(s, 500.0, 0.5, 0.20, 600.0,
+                                             min_peak_bins=0.0,
+                                             max_carrier_fraction=0.0)
+        assert np.isfinite(lied)
+
+    def test_the_carrier_guard_survives_noise_on_both_sides(self):
+        """The discriminator is peak frequency **and** peak dominance; without
+        the second condition a noisy confocal spectrum is misread as a carrier."""
+        for fw in (0.5, 2.0, 8.0):
+            for t in (0, 7, 23):
+                sp = itf.chromatic_confocal_simulate(
+                    0.5, 500.0, 1.0, 301, 0.20, 600.0, peak_fwhm_nm=fw,
+                    peak_counts=1000.0, background=10.0, noise=10.0, seed=t)
+                itf.chromatic_confocal_height(sp, 500.0, 1.0, 0.20, 600.0,
+                                              min_peak_bins=0.0)
+        for nz in (0.0, 0.05, 0.20):
+            s = scan(6.0, noise=nz, seed=3)
+            with pytest.raises(ValueError, match="max_carrier_fraction"):
+                itf.chromatic_confocal_height(s, 500.0, 0.5, 0.20, 600.0,
+                                              min_peak_bins=0.0)
