@@ -779,7 +779,7 @@ def ex_lightfield():
     AV, AU = 7, 7
     field, slope_gt = lf.lf_synthesize(slopes=(-2.0, 0.0, 3.0), angular=(AV, AU),
                                        shape=(128, 128), occlusion=True,
-                                       coverage=0.55, texture_sigma=2.0, seed=SEED)
+                                       coverage=0.55, texture_sigma=5.0, seed=SEED)
     st = lf.lf_stats(field)
     vc, uc = st["center_v"], st["center_u"]
     center = lf.lf_center_view(field)
