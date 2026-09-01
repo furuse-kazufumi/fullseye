@@ -169,6 +169,11 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # keypoints = 画像平面上の (N,2) 点。3-D 台帳の PnP 系はこれを食う。
+        # 種が無いと「project_points が同じ連鎖の中で先に引かれた場合だけ」
+        # 到達する状態になり、実測で pnp_ransac / dlt_pose / reprojection_error
+        # が一度も実行されていなかった
+        "keypoints": lambda rng: rng.random((160, 2)) * 32.0,
         # rgbimage = (H,W,3) の色画像。二色性反射モデルは**色の方向**で拡散と
         # 鏡面を分けるので、輝度画像 (image2d) では原理的に成立しない。
         # 種は順方向モデル(既知の法線・アルベド・光源から描く)= 分離の真値が
@@ -399,6 +404,14 @@ OP_PARAM_HINTS = {
     # motion_magnify は毎回実行されるのに**一度も増幅しない**。狙いは
     # 増幅経路を通すことなので op 名で上書きする
     ("motion_magnify", "alpha"): lambda rng: 2.0,
+    # bounds という 1 つの名前に 3 通りの形が要求されている(平坦 6-tuple /
+    # ((min,max)x3) / (lo(3,), hi(3,)))。名前ヒントは平坦形のままにして、
+    # 別形を要求する op だけ狙い撃つ ― さもないと毎回 ValueError で
+    # **一度も実行されない**まま「発見ゼロ」に数えられる
+    ("occupancy_grid", "bounds"): lambda rng: ((0.0, 10.0), (0.0, 10.0), (0.0, 10.0)),
+    # sphere_sdf の R は**回転行列ではなく半径**。名前ヒントの np.eye(3) が
+    # そのまま渡ると生の TypeError になる(名前の衝突であって op の罪ではない)
+    ("sphere_sdf", "R"): lambda rng: 2.0,
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
