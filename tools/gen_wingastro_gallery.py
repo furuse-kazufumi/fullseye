@@ -303,7 +303,7 @@ def ex_sqrt_n():
         measured[n] = rms(img)
 
     panels, labels = [], []
-    for n in (1, 4, 16, 64):
+    for n in (1, 16, 64):
         img = stacks[n]
         panels.append(_label(
             _fit(_gray(img, frame_for_scale=frames[0])),
@@ -312,36 +312,41 @@ def ex_sqrt_n():
              "%s 1 枚比 %.2f 倍" % (M["right"], base / measured[n])]))
         labels.append("%d 枚合成 — 残差 %.3f e-" % (n, measured[n]))
 
-    # 測ったものと sqrt(N) を重ねた図(軸ラベルつき = 原寸で読ませる)
-    p = Plot(xlim=(1, 64), ylim=(0.9, 10.0), xlog=True, ylog=True)
+    # 測ったものと sqrt(N) を重ねた図(軸ラベルつき = 原寸で読ませる)。
+    # 理論を太く下に、測定を細く上に描く —— 逆にすると完全に重なって
+    # 「線が 1 本しか無い」ように見え、一致しているのか片方を描き忘れたのか
+    # 読者に区別が付かない。
+    worst = max(abs(base / measured[n] / np.sqrt(n) - 1.0) for n in counts)
+    p = Plot(xlim=(1, 64), ylim=(0.9, 10.0), xlog=True, ylog=True,
+             margin=(64, 20, 46, 74))
     p.grid_x(counts, "%d")
     p.grid_y([1, 2, 4, 8], "%dx")
-    p.line(counts, [np.sqrt(n) for n in counts], C_REF, width=2, dashed=True)
-    p.line(counts, [base / measured[n] for n in counts], C_RIGHT, width=3)
-    p.markers(counts, [base / measured[n] for n in counts], C_RIGHT)
-    p.text(PANEL // 2, 6, "雑音の下がり方 — 測定と sqrt(N)", size=17, anchor="ma")
-    p.text(14, PANEL - 24, "枚数 N", et.MUTED, 14)
-    p.text(10, 34, "1 枚に対する改善", et.MUTED, 14)
-    p.text(72, 62, "%s sqrt(N)(理論)" % M["reference"], C_REF, 14)
-    p.text(72, 82, "%s 測定" % M["right"], C_RIGHT, 14)
-    worst = max(abs(base / measured[n] / np.sqrt(n) - 1.0) for n in counts)
-    p.text(72, 102, "ずれは最大 %.1f%%" % (100 * worst), et.FG, 14)
+    p.line(counts, [np.sqrt(n) for n in counts], C_REF, width=7)
+    p.line(counts, [base / measured[n] for n in counts], C_EMPH, width=2)
+    p.markers(counts, [base / measured[n] for n in counts], C_EMPH)
+    p.text(PANEL // 2, 8, "雑音の下がり方(両対数)", size=17, anchor="ma")
+    p.text(PANEL // 2, 32, "縦 = 1 枚に対する改善 / 横 = 枚数 N", et.MUTED, 13,
+           anchor="ma")
+    p.text(76, 92, "%s sqrt(N)(理論・太線)" % M["reference"], C_REF, 14)
+    p.text(76, 112, "%s 測定(細線)" % M["emphasis"], C_EMPH, 14)
+    p.text(76, 132, "ずれは最大 %.1f %%" % (100 * worst), et.FG, 14)
     panels.append(_fit(p.done()))
     labels.append("測定 vs sqrt(N)(両対数)")
 
-    # 星は残り、雑音だけ消えたことを差分で示す
-    diff = stacks[64] - stacks[1]
-    lim = float(np.percentile(np.abs(diff), 99.0))
-    panels.append(_label(_fit(_signed(diff, lim)),
-                         ["64 枚 - 1 枚(%s 減 / %s 増)" % (M["wrong"],
-                                                          M["right"]),
-                          "|差| の 99 %%点 = %.1f e-" % lim,
-                          "星の位置だけが残らない = 雑音が消えた"]))
-    labels.append("差分(発散配色・赤緑不使用)")
+    # 残差そのものを同じ尺度で 2 枚。雑音が減ったことを「絵の暗さ」で示す。
+    lim = float(np.percentile(np.abs(frames[0] - ideal), 99.0))
+    for n in (1, 64):
+        panels.append(_label(
+            _fit(_signed(stacks[n] - ideal, lim)),
+            ["残差(真値との差)N = %d" % n,
+             "同じ尺度 ±%.0f e- で塗ってある" % lim,
+             "%s 減 / %s 増" % (M["wrong"], M["right"]),
+             "RMS %.3f e-" % measured[n]]))
+        labels.append("残差 N=%d(同じ尺度 ±%.0f e-)" % (n, lim))
 
     sheet = et.contact_sheet(panels, labels, ncols=3, panel_px=PANEL,
-                             title="重ねると雑音は sqrt(N) で減る(合成星野・"
-                                   "真値が分かっているので残差を直接測る)")
+                             title="重ねると雑音は sqrt(N) で減る"
+                                   "(合成星野なので残差を直接測れる)")
     info = et.save_exhibit(sheet, "wingastro_stack_sqrtn")
     data = {"base_rms": base, "rms": measured, "counts": counts,
             "max_dev_pct": 100 * worst,
