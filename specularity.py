@@ -1317,11 +1317,12 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
         # A residual below 1e-9 of the pixel's brightest measurement is not
         # evidence of an outlier, so that is the floor.
         sigma = 1.4826 * (1.0 + 5.0 / max(N - 3, 1)) * best_score
-        inl = r_best <= np.maximum(2.5 * sigma, 1e-9 * peak)[None, :]
+        scale = np.maximum(2.5 * sigma, 1e-9 * peak)
+        inl = (r_best <= scale[None, :]) & (Iv > scale[None, :])
     else:
-        inl = r_best <= tol[None, :]
-    # Refit on the consensus set where it is big enough to be better than the
-    # 3-light solve. Batched 3x3 normal equations, singular pixels left alone.
+        inl = (r_best <= tol[None, :]) & lit
+    # Refit on the credible set. Batched 3x3 normal equations; a pixel whose
+    # credible set cannot determine three unknowns is not solved at all.
     w = inl.astype(np.float64)
     enough = w.sum(axis=0) >= min_inliers
     A = np.einsum("np,ni,nj->pij", w, L, L)
@@ -1341,6 +1342,13 @@ def photometric_stereo_robust(images, lights, method="ransac", threshold=0.05,
     good = albedo > 1e-8
     normals[:, good] = best_g[:, good] / albedo[good]
     normals[2, ~good] = 1.0
+    # Unsolvable pixels are NaN, not (0, 0, 1). Keeping the 3-light subset's
+    # solution here was the silent failure: with 2 of 8 lights alive the system
+    # is 3 unknowns in 2 equations, and the minimum-norm answer looked like a
+    # 1.3-degree success on a nearly flat surface while being arbitrary on any
+    # other one. NaN cannot be mistaken for a measurement.
+    normals[:, ~ok] = np.nan
+    albedo[~ok] = np.nan
     return (normals.T.reshape(H, W, 3).astype(np.float32),
             albedo.reshape(H, W).astype(np.float32),
             inl.reshape(N, H, W))
