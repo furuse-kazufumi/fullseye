@@ -1208,9 +1208,9 @@ def ex_crop3d():
                     f"{n_proc:,}", f"{n_back:,}"),
                  C_ACCENT if same_shape else C_AMBER, 13, True),
                 (24, 52 + PH + 62,
-                 "貼り戻した外側が完全にゼロか: %s(領域外の最大値 %.6g)"
-                 % ("はい" if float(full[domain < 0.5].max()) == 0.0 else "いいえ",
-                    float(full[domain < 0.5].max())), C_TEXT, 12, False),
+                 "往復の実測: 切り出し箱の外は最大 %.6g(= 厳密に 0)、"
+                 "箱の中は元と最大差 %.6g(= ビット一致)"
+                 % (outside_max, roundtrip_err), C_TEXT, 12, False),
                 (24, H - 26, "切り出して処理して戻す —— 戻す時に 1 voxel ずれても "
                              "2D の表では気づけません。元の全体に重ねて回せば一発です",
                  C_DIM, 12, False),
