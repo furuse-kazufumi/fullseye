@@ -795,7 +795,7 @@ def quat_color_rotate(qimage, axis_rgb, angle_rad) -> np.ndarray:
     *axis_rgb* is not a finite non-zero 3-vector; *angle_rad* is not a finite
     real scalar; the constructed rotor is not unit norm."""
     op = "quat_color_rotate"
-    import pose_quat                                        # noqa: PLC0415
+    import pose_quat
 
     q = _require_qimage(qimage, "qimage", op)
     axis = _require_direction(axis_rgb, "axis_rgb", op)
@@ -857,7 +857,7 @@ def quat_color_filter(qimage, direction_rgb, mode) -> np.ndarray:
     *direction_rgb* is not a finite non-zero 3-vector; *mode* is not
     ``'remove'`` / ``'keep'``."""
     op = "quat_color_filter"
-    import specularity                                      # noqa: PLC0415
+    import specularity
 
     q = _require_qimage(qimage, "qimage", op)
     g = _require_direction(direction_rgb, "direction_rgb", op)
@@ -1557,7 +1557,7 @@ def riesz_motion_magnify(video, alpha, f_lo, f_hi, fps, scales: int = 4) -> dict
     the pass-band is empty, reaches DC, or exceeds Nyquist; *scales* is outside
     ``[1, MAX_SCALES]``."""
     op = "riesz_motion_magnify"
-    import motionmag                                       # noqa: PLC0415
+    import motionmag
 
     vid = _require_video(video, "video", op, MAX_PYRAMID_ELEMENTS)
     t, h, w = vid.shape

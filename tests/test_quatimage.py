@@ -120,7 +120,7 @@ def test_monogenic_amplitude_phase_orientation_are_exact():
     amp = qi.monogenic_amplitude(q)
     assert abs(amp.mean() - 1.0) < 1e-14
     assert amp.max() - amp.min() < 1e-14
-    yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
+    _yy, xx = np.mgrid[0:H, 0:W].astype(np.float64)
     psi = np.mod(2.0 * np.pi * (8 * xx / W) + 0.7, 2.0 * np.pi)
     folded = np.where(psi > np.pi, 2.0 * np.pi - psi, psi)   # monogenic phase in [0, pi]
     assert np.abs(qi.monogenic_phase(q) - folded).max() < 1e-13

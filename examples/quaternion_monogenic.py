@@ -38,9 +38,9 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import motionmag as mm          # noqa: E402
-import pose_quat                # noqa: E402
-import quatimage as qi          # noqa: E402
+import motionmag as mm
+import pose_quat
+import quatimage as qi
 
 H = W = 64
 T = 64
@@ -56,7 +56,7 @@ def one_grating_clip(amplitude, cyc_x=8, cyc_y=0, h=H, w=W, t=T):
     """1 成分だけを厳密な Fourier 位相ランプで並進させたクリップ(真値は閉形式)。"""
     yy, xx = np.mgrid[0:h, 0:w].astype(np.float64)
     base = 0.5 + 0.2 * np.cos(2.0 * np.pi * (cyc_x * xx / w + cyc_y * yy / h))
-    fv, fu = np.fft.fftfreq(h)[:, None], np.fft.fftfreq(w)[None, :]
+    fu = np.fft.fftfreq(w)[None, :]
     spec = np.fft.fft2(base)
     disp = amplitude * np.sin(2.0 * np.pi * FREQ * np.arange(t) / FPS)
     return np.stack([np.real(np.fft.ifft2(spec * np.exp(-2j * np.pi * fu * d)))
@@ -212,12 +212,6 @@ def run():
     print("   QFT(left) を **3 回のチャンネル FFT だけ**から組み直した誤差: %.3e"
           % np.abs(rebuilt - FL).max())
     big = np.random.default_rng(4).random((256, 256, 4))
-
-    def _t(f, n_rep=10):
-        f()
-        return min((lambda: (time.perf_counter(),
-                             f(), time.perf_counter())[::2])() for _ in range(n_rep))
-
     ts_q, ts_c = [], []
     for _ in range(10):
         t0 = time.perf_counter(); qi.qft2(big, "left"); ts_q.append(time.perf_counter() - t0)
