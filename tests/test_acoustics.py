@@ -260,8 +260,11 @@ def test_acoustics_guide_python_snippets_actually_run():
                          "acoustic_condition_monitoring.md")
     with open(guide, encoding="utf-8") as f:
         blocks = re.findall(r"```python\n(.*?)```", f.read(), re.S)
-    assert blocks, "the acoustics guide lost its runnable snippet"
-    for src in blocks:
+    # Self-contained blocks only. The guide also quotes the *broken* handoff as a
+    # one-liner fragment, deliberately, and that one must keep raising.
+    runnable = [b for b in blocks if "import acoustics" in b]
+    assert runnable, "the acoustics guide lost its runnable snippet"
+    for src in runnable:
         exec(compile(src, guide, "exec"), {"__name__": "__guide__"})
 
 
