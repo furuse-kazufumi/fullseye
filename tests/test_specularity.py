@@ -1115,6 +1115,119 @@ def test_the_new_sort_is_reachable_from_and_returns_to_existing_sorts():
     assert {outs[e] for e in exits} == {"image2d", "vector"}
 
 
+def test_the_polsweep_sort_is_reachable_and_returns_to_existing_sorts():
+    """Same anti-orphan check for the second new sort: two producers (the
+    operator below plus the fuzzer's generator) and three exits."""
+    ins = {n: m["in"] for n, m in opsspecular.OPSSPECULAR.items()}
+    outs = {n: m["out"] for n, m in opsspecular.OPSSPECULAR.items()}
+    entries = [n for n, o in outs.items()
+               if o == "polsweep" and "polsweep" not in ins[n]]
+    exits = [n for n, t in ins.items()
+             if "polsweep" in t and outs[n] != "polsweep"]
+    assert entries == ["polarization_render"]
+    assert ins["polarization_render"] == ["image2d", "image2d"]
+    assert set(exits) == {"polarization_separate", "polarization_dolp_map",
+                          "polarization_stokes"}
+    assert {outs[e] for e in exits} == {"image2d", "stokes"}
+
+
+def test_a_light_stack_is_silently_accepted_by_the_polarisation_operators():
+    """Why the sweep needs its own sort, direction A — measured.
+
+    A genuine multi-light Lambertian stack is not a polariser sweep, but it is
+    structurally identical and physically plausible, so the fail-closed check
+    (which exists to catch a *negative* fitted minimum) never fires. The scene
+    contains no polariser and no polarised light whatsoever, and the operator
+    reports a degree of linear polarisation of about 5% without complaint.
+
+    Measured: 50 of 50 randomly oriented four-light stacks are accepted. The
+    guard catches random noise, not a wrong-but-plausible stack — which is
+    exactly why the separation has to be by pool name and not by predicate.
+    """
+    surf = bump_normals(32, 32, amp=4.0)
+    accepted = 0
+    for seed in range(50):
+        rng = np.random.default_rng(seed)
+        L = rng.standard_normal((4, 3)) + np.array([0.0, 0.0, 2.5])
+        L = L / np.linalg.norm(L, axis=1, keepdims=True)
+        stack = 0.6 * np.clip(np.einsum("hwc,nc->nhw", surf, L), 0.0, None)
+        try:
+            S.polarization_separate(stack)
+            accepted += 1
+        except ValueError:
+            pass
+    assert accepted == 50, "the fail-closed check is not what separates these"
+    # and the number it invents for a completely unpolarised scene:
+    rng = np.random.default_rng(0)
+    L = np.array([[0.276, 0.276, 0.921], [-0.276, 0.276, 0.921],
+                  [0.276, -0.276, 0.921], [-0.192, -0.192, 0.962]])
+    stack = 0.6 * np.clip(np.einsum("hwc,nc->nhw", surf, L), 0.0, None)
+    dolp = S.polarization_dolp_map(stack)
+    assert 0.01 < dolp.mean() < 0.20            # measured 0.054, truth 0.0
+
+
+def test_a_polariser_sweep_is_confidently_wrong_in_a_photometric_solver():
+    """Why the sweep needs its own sort, direction B — the worse one, measured.
+
+    A sweep handed to photometric stereo is a valid-looking light stack, so
+    nothing raises. On a surface whose true normal is exactly ``(0, 0, 1)``
+    everywhere, the solver returns normals averaging **34 degrees** off, with a
+    plausible albedo and a residual of only about 8% of the peak radiance —
+    the fit looks good because four frames over three unknowns always do. The
+    same operator on genuine photometric data of the same flat surface measures
+    0.00011 degrees, so 34 degrees is not a failure, it is a confident lie.
+    """
+    h = w = 32
+    rng = np.random.default_rng(0)
+    flat = np.dstack([np.zeros((h, w)), np.zeros((h, w)), np.ones((h, w))])
+    sweep = S.polarization_render(0.4 + 0.3 * rng.random((h, w)),
+                                  0.5 * rng.random((h, w)), azimuth_deg=30.0)
+    L = np.array([[0.276, 0.276, 0.921], [-0.276, 0.276, 0.921],
+                  [0.276, -0.276, 0.921], [-0.192, -0.192, 0.962]])
+    n, a, _i = S.photometric_stereo_robust(sweep, L, method="ransac")
+    err = PM.angular_error_deg(n, flat)
+    assert np.isfinite(n).all() and np.isfinite(a).all()   # no exception, no NaN
+    assert err.mean() > 20.0                               # measured 33.99 deg
+    unit = n.astype(np.float64) / np.linalg.norm(n, axis=-1, keepdims=True)
+    residual = S.photometric_residual(sweep, L, unit, a.astype(np.float64))
+    assert residual.max() / sweep.max() < 0.30    # measured 21%: looks fittable
+    # the same solver on real photometric data of the same flat surface
+    real = 0.6 * np.clip(np.einsum("hwc,nc->nhw", flat, L), 0.0, None)
+    honest = PM.angular_error_deg(
+        S.photometric_stereo_robust(real, L, method="ransac")[0], flat)
+    assert honest.max() < 1e-3                             # measured 0.00011
+    assert err.mean() > 1e4 * honest.mean()
+
+
+def test_the_polsweep_predicate_cannot_tell_a_sweep_from_a_light_stack():
+    """The honest boundary of what the type system does here.
+
+    A structural predicate passes a sweep, a light stack and pure noise alike.
+    Separation is by pool *name*; the predicate only pins the invariants that
+    are genuinely checkable, and the ledger comment says so rather than
+    implying the type verifies more than it can."""
+    rng = np.random.default_rng(0)
+    surf = bump_normals(32, 32, amp=4.0)
+    L = np.array([[0.276, 0.276, 0.921], [-0.276, 0.276, 0.921],
+                  [0.276, -0.276, 0.921], [-0.192, -0.192, 0.962]])
+    sweep = S.polarization_render(0.4 + 0.3 * rng.random((32, 32)),
+                                  0.5 * rng.random((32, 32)))
+    stack = 0.6 * np.clip(np.einsum("hwc,nc->nhw", surf, L), 0.0, None)
+    noise = np.stack([rng.random((32, 32)) for _ in range(4)])
+    for arr in (sweep, stack, noise):
+        assert POLSWEEP_CHECK(arr), "all three are structurally indistinguishable"
+    # nor can it police the frame-to-angle correspondence: a permuted sweep is
+    # a valid sweep of a different scene (measured 0.559 / 0.141 for a true
+    # 0.5 / 0.2), which is metadata living outside the array.
+    d0 = np.full((4, 4), 0.5)
+    s0 = np.full((4, 4), 0.2)
+    frames = S.polarization_render(d0, s0)
+    assert POLSWEEP_CHECK(frames[[2, 0, 3, 1]])
+    dd, ss = S.polarization_separate(frames[[2, 0, 3, 1]])
+    assert dd[0, 0] == pytest.approx(0.5586, abs=1e-3)
+    assert ss[0, 0] == pytest.approx(0.1414, abs=1e-3)
+
+
 def test_polarization_stokes_feeds_the_existing_stokes_sort():
     """The other direction of the same argument: this family is the first
     producer of ``stokes`` from a *measurement* rather than from optics' own
