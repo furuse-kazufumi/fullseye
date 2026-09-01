@@ -1093,11 +1093,11 @@ def spectral_kurtosis(x, rate, win=None, hop=None, window="hann"):
     * a repetitive **transient** gives ``SK > 0``, and the larger it is the more
       concentrated in time the band's content is.
 
-    Measured over 8192 samples at 16 kHz, win = 256, 125 interior frames: white
-    Gaussian noise gives a mean SK of **-0.0259** over the interior bins (the
-    estimator's own standard deviation at 125 frames is about
-    ``4/sqrt(125) = 0.358``, so this is zero), and a 2 kHz tone gives
-    **-1.0000** in its bin. Both reference cases land on their closed forms.
+    Measured over 8192 samples at 16 kHz at the default window (64, 509 interior
+    frames): white Gaussian noise gives a mean SK of **-0.0444** over the
+    interior bins, against the estimator's own standard deviation
+    ``4/sqrt(509) = 0.1773``, so it is zero; and a 2 kHz tone gives **-1.0000**
+    in its bin. Both reference cases land on their closed forms.
 
     **The answer is a band, and it depends on the window — measured, not
     asserted.** The frame has to be *shorter than the gap between transients*,
