@@ -46,7 +46,9 @@ END = "<!-- EXHIBITS:END -->"
 
 _IMG_RE = re.compile(r"!\[[^\]]*\]\((?P<url>[^)\s]+)\)")
 _CAPTION_RE = re.compile(r"^\*↑ \*\*")
-_LOCAL_PATH_RE = re.compile(r"[A-Za-z]:[\\/]|(?<![\w/])/(?:home|Users|tmp)/")
+# ドライブレター(C:\ / D:/)と Unix のホーム系。``https://`` の ``s:/`` を拾わないよう、
+# 直前が英字のときは除外する。
+_LOCAL_PATH_RE = re.compile(r"(?<![A-Za-z])[A-Za-z]:[\\/]|(?<![\w/])/(?:home|Users|tmp)/")
 
 
 class BuildError(Exception):
