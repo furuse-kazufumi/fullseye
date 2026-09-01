@@ -247,6 +247,8 @@
     {
       "name": "wing3d_vesselness_control",
       "title": "Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる",
+      "title_en": "Frangi vs Sato — only a negative control (blobness) settles it",
+      "caption_en": "A synthetic CT holding one straight tube and two balls, run through two tubeness filters and one blobness filter. `vol_frangi` answers **1.26x** stronger on the tube than on the balls, but `vol_sato` gives **0.97x** — it barely tells them apart. The negative control `vol_hessian_blobness` gives **0.32x**, i.e. it prefers the balls, so the direction cleanly reverses. \"The vessels lit up\" is not by itself evidence of tubeness — that obvious point, drawn.",
       "ops": [
         "vol_frangi",
         "vol_sato",
@@ -275,16 +277,16 @@
       "caption": "管 1 本と球 2 個だけの合成 CT に、管状度 2 種と粒状度 1 種を掛けた。`vol_frangi` は管を球より **1.26 倍**強く出すが、`vol_sato` は **0.97 倍**でほとんど区別しない。否定対照の `vol_hessian_blobness` は **0.32 倍** = 管より球を選び、向きがきれいに逆転する。「血管が光った」だけでは管状度の証明にならない、という当たり前を図にした。",
       "kind": "png",
       "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_vesselness_control.png",
-      "png_bytes": 72097,
+      "png_bytes": 88759,
       "png_size": [
         1120,
         700
       ],
-      "png_sha256": "cc38dce5f5e7553be77acf186a8c7d47c20941c8633c4ba95acb04323046ebd5",
+      "png_sha256": "b646c9422e87ca3fca33d689d1ef97676660c9f3ead1d41ab4a3408682cae76c",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_vesselness_control_thumb.jpg",
-      "thumb_bytes": 44817,
+      "thumb_bytes": 54273,
       "exhibit": "vesselness",
-      "seconds": 2.6274558999575675
+      "seconds": 3.0416413999628276
     },
     {
       "name": "wing3d_skeleton_graph",
@@ -335,6 +337,8 @@
     {
       "name": "wing3d_wall_thickness",
       "title": "virtual probe で壁厚 2.000 mm(真値 2.000 mm)",
+      "title_en": "A virtual probe reads a 2.000 mm wall (truth 2.000 mm)",
+      "caption_en": "One probe pushed through a synthetic pipe of 10.000 mm outer / 8.000 mm inner diameter. `vol_edge_probe` picks up four edges at sub-sample precision and `vol_wall_thickness` pairs rising→falling to return **2.0000 mm / 2.0000 mm** (truth 2.000 mm). Raise the smoothing sigma to 3.0 and it fattens to 2.1252 mm (**+6.3 %**) — the noise remedy turns straight into a dimensional bias, which is the other half of the lesson.",
       "ops": [
         "vol_profile_line",
         "vol_edge_probe",
@@ -403,16 +407,16 @@
       "caption": "外径 10.000 mm / 内径 8.000 mm の合成パイプにプローブを 1 本だけ刺す。`vol_edge_probe` が 4 つのエッジをサブサンプル精度で拾い、`vol_wall_thickness` が立ち上がり→立ち下がりの対から壁厚 **2.0000 mm / 2.0000 mm**(真値 2.000 mm)を返す。平滑化 sigma を 3.0 まで上げると 2.1252 mm (**+6.3 %**)に太る — ノイズ対策がそのまま寸法の偏りになる、という測定の基本も一緒に。",
       "kind": "png",
       "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_wall_thickness.png",
-      "png_bytes": 98825,
+      "png_bytes": 107667,
       "png_size": [
         1120,
-        680
+        792
       ],
-      "png_sha256": "681f7798e38d082447aeffdbd7691c0e78320b0f84fda7d70a3c9b7af030652f",
+      "png_sha256": "705ea090f2bce633f2b72dc44d45a1115454d69709b481846fd5fd4e8a0af612",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_wall_thickness_thumb.jpg",
-      "thumb_bytes": 61576,
+      "thumb_bytes": 63947,
       "exhibit": "wall",
-      "seconds": 2.0883851998951286
+      "seconds": 2.563382300082594
     },
     {
       "name": "wing3d_richardson_lucy",
@@ -503,7 +507,7 @@
       "title_en": "Visual hull — carving a shape out of stacked shadows",
       "caption_en": "An L-shaped synthetic object carved by `visual_hull` from silhouettes taken in 16 directions. One view gives a column-like blob at **5.12x** the true volume; adding views shrinks it to **1.24x** (IoU 0.755) at 16 views. The concave notch of the L, though, never fills in no matter how many views are stacked — that is not implementation slop but the principled limit of a visual hull, and the figure shows the convergence target is not the truth.",
       "ops": [
-        "look_at",
+        "visualhull.look_at",
         "synthesize_silhouette",
         "visual_hull"
       ],
@@ -635,7 +639,7 @@
       "gif_sha256": "e923601ba882562691ad1d6f89f12830d9abe1a2476a4a1f1743161dac48cb27",
       "mp4_sha256": "3c561080174108be4c932020d32ca0013f92122ec41e042ffa06f877ede9b689",
       "exhibit": "visualhull",
-      "seconds": 44.341136400122195
+      "seconds": 47.091176899848506
     },
     {
       "name": "wing3d_obb_innerbox",
@@ -717,14 +721,14 @@
         3
       ],
       "gif_colors": 256,
-      "gif_bytes": 2222810,
-      "mp4_bytes": 395589,
-      "thumb_bytes": 45175,
+      "gif_bytes": 2229101,
+      "mp4_bytes": 491781,
+      "thumb_bytes": 45347,
       "thumb_frame": 10,
-      "gif_sha256": "9bc2e61ebd31808bfa635e7750d79e781d1588c143b71fb9df06e134b0cf8ae7",
-      "mp4_sha256": "15d4846f3d78baa9c13351834f66ce7760ba25ac2ecac9648d848b77a2f79211",
+      "gif_sha256": "de353b6f6102dc53e67b7a5f077781cc21147ce1229b2976ef3fd22507ff8fc6",
+      "mp4_sha256": "796908f7a39a5a34b525b043c3f26820282ee8ce663b52b252b503b7e6e3adc2",
       "exhibit": "obb",
-      "seconds": 46.00613969983533
+      "seconds": 44.52869120007381
     },
     {
       "name": "wing3d_icp_registration",
@@ -963,6 +967,8 @@
     {
       "name": "wing3d_boundary_connectivity",
       "title": "連結性の定義だけで殻の厚みが 1.9 倍変わる",
+      "title_en": "Change only the connectivity and the shell gets 1.9x thicker",
+      "caption_en": "The shell of a synthetic ball of radius 30 voxels (112,931 voxels), taken six ways by varying nothing but `vol_boundary`'s `connectivity` (6 / 18 / 26) and `side` (inner / outer). The 6-neighbour inner shell — face contact only — is 9,170 voxels (8.12 %); the 26-neighbour outer shell, which counts diagonal contact too, is 17,570 voxels (15.56 %). **The same shape, 1.92x apart.** Six panels showing that \"the number of surface voxels\" means nothing without the definition. The near half is cut away so the thickness is visible.",
       "ops": [
         "vol_boundary"
       ],
@@ -1011,16 +1017,16 @@
       "caption": "半径 30 voxel の合成球(112,931 voxel)の殻を、`vol_boundary` の `connectivity`(6 / 18 / 26)と `side`(inner / outer)だけ変えて 6 通り取った。面だけ触れる 6 近傍の内側殻は 9,170 voxel(8.12 %)、斜めの接触も数える 26 近傍の外側殻は 17,570 voxel(15.56 %)で、**同じ形なのに 1.92 倍**違う。「表面のボクセル数」という言い方が定義抜きでは意味を持たない、という 6 枚。手前半分を切って厚みが見えるようにしてある。",
       "kind": "png",
       "png": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_boundary_connectivity.png",
-      "png_bytes": 222224,
+      "png_bytes": 33098,
       "png_size": [
         948,
-        770
+        768
       ],
-      "png_sha256": "e4bcdcd8c825a181f2be00ade234d1b4f67ec0cd138ae7fae7a2003773a998c1",
+      "png_sha256": "ea715605379f6e4117783d31028306fcc814da2410ba579f06c98b6b2f9befcc",
       "thumb": "C:\\dev\\projects\\imgevolve\\docs\\articles\\assets\\wing3d_boundary_connectivity_thumb.jpg",
-      "thumb_bytes": 122100,
+      "thumb_bytes": 66342,
       "exhibit": "connectivity",
-      "seconds": 0.27624989999458194
+      "seconds": 0.25721820001490414
     },
     {
       "name": "wing3d_pipeline_flow",

@@ -12,8 +12,9 @@ Generate the "tomography wing" exhibits for the Qiita science-museum article.
 * 版面は ``tools/exhibit_tile.py`` の判断基準に従う。**工程が進むもの**は
   ``flipbook`` の GIF、**パラメータ違いを比べるもの**は ``contact_sheet``、
   **図中の数値が主役のもの**は原寸 1 枚。
-* 乱数は ``SEED`` 固定 + ``np.random.default_rng`` で決定的。同じコマンドで
-  再生成すると PNG / GIF は SHA-256 が一致する(``--verify`` で確認できる)。
+* 乱数を使うのは検出器ゲイン誤差(``ring_artifact_apply(..., seed=SEED_RING)``)
+  だけで、他はすべて解析的。同じコマンドで再生成すると PNG / GIF の SHA-256 が
+  一致する(``--verify`` で機械確認できる)。
 * このウィングは **投影から作る側**だけを扱う。既にあるボリュームを切る断面送りや
   MPR は ``wing3d_`` の担当なので重複させない。
 
@@ -55,7 +56,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 META_PATH = os.path.join(ROOT, "docs", "articles", "assets", "_wingct_meta.json")
 EXHIBITS_DIR = os.path.join(ROOT, "docs", "articles", "exhibits")
 
-SEED = 20260902
+SEED_RING = 0                    # 検出器ゲイン誤差の唯一の乱数源
 PANEL = 440                      # 各パネルの一辺(画素)
 SIZE = 256                       # 再構成格子
 PIX_MM = 0.35                    # 面内画素ピッチ(mm)
@@ -193,7 +194,7 @@ def _mesh_panel(verts, faces, side=PANEL):
     scale = (side - 24) / max(float((hi - lo).max()), 1e-9)
     xy = (pts - lo) * scale + 12.0
     canvas = np.zeros((side, side), np.float64)
-    step = max(1, f.shape[0] // 2200)          # 決定的な間引き(全部は要らない)
+    step = max(1, f.shape[0] // 7000)          # 決定的な間引き(全部は要らない)
     for tri in f[::step]:
         p = xy[tri]
         canvas = imagedraw.draw_polyline(
@@ -255,11 +256,14 @@ def ex_pipeline():
                                    f"しきい値 {thr:.4f}"]))
     labels_txt.append("二値化 + 連結成分(既存 op)")
 
-    occ = binary.max(axis=0)
+    # z 方向の最大値投影にすると空洞が埋まって「消えた」ように見えるので、
+    # 中央スライスの占有をそのまま出す(数は全体の値を焼く)
+    occ = binary[mid]
     frames.append(_label(_fit(np.dstack([occ * 0.25, occ * 0.66, occ * 0.98])),
-                         [f"占有ボクセル {int(binary.sum())} 個",
-                          f"体積 {v_mm3:.0f} mm3 ({v_mm3/true_mm3-1:+.1%})"]))
-    labels_txt.append("ボクセル格子(z 方向に投影)")
+                         [f"占有ボクセル 全体で {int(binary.sum())} 個",
+                          f"体積 {v_mm3:.0f} mm3 ({v_mm3/true_mm3-1:+.1%})",
+                          f"1 ボクセル = {SLICE_MM*PIX_MM*PIX_MM:.4f} mm3"]))
+    labels_txt.append("占有ボクセル(中央スライス)")
 
     frames.append(_label(_mesh_panel(verts, faces),
                          [f"marching_cubes 面 {np.asarray(faces).shape[0]}",
@@ -458,7 +462,7 @@ def ex_beam_hardening():
 def ex_rings():
     truth = ct_slice()
     sino = T.ellipse_sinogram(SIZE, SL_CT, ANG180)
-    ringed = T.ring_artifact_apply(sino, 0.02, seed=0)
+    ringed = T.ring_artifact_apply(sino, 0.02, seed=SEED_RING)
     fixed = T.ring_artifact_remove(ringed)
     recs = [T.filtered_backprojection(s, ANG180, size=SIZE)
             for s in (sino, ringed, fixed)]

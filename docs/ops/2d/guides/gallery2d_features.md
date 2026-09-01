@@ -47,7 +47,9 @@ flowchart LR
 - `connect_and_holes` — 連結成分の個数を返す（metric=`count`）。呼び出し: `fullseye.apply(region, "connect_and_holes")`
 - `euler_number` / `sk_euler` — オイラー数（連結成分数 − 穴の数、`skimage.measure.euler_number`）。呼び出し: `fullseye.apply(region, "euler_number")`
 - `area_holes` — 穴の面積比 `(穴埋め面積 − 面積)/穴埋め面積`。呼び出し: `fullseye.apply(region, "area_holes")`
-- `area_frac` / `area_center` — マスクの面積比（前景画素の割合 = `mean(mask)`）。HALCON の `area_center` は重心も返すが本実装は面積割合のみ。呼び出し: `fullseye.apply(region, "area_frac")`
+- `area_frac` — マスクの面積比（前景画素の割合 = `mean(mask)`、`feature` の 1 スカラ）。呼び出し: `fullseye.apply(region, "area_frac")`
+- `area_center` — HALCON と同じ **(面積, 行, 列)** の 3 成分を返す（`region → match` の 1-D ベクトル）。3 成分とも解像度に依らないよう正規化してある: `[0]=面積/画像画素数`、`[1]=重心行/(H-1)`、`[2]=重心列/(W-1)`。空領域は `(0, 0.5, 0.5)`。呼び出し: `fullseye.apply(region, "area_center")`  
+  <br>★2026-09-02 まではこの op は `mean(mask)` の 1 スカラだけを返しており、名前にある **中心を返していなかった**（面積も画素数ではなく比率で、解像度依存だった）。1 スカラでは HALCON の 3 値を表せないため、`ncc_locate` と同じ `match` sort に移した。
 - `count_contours` — 輪郭リスト `cs` の本数。呼び出し: `fullseye.apply(contour, "count_contours")`
 - `vol_count` — 3-D ボリューム内の連結成分数（`> 0.5` を 3-D ラベリング）。呼び出し: `fullseye.apply(volume, "vol_count")`
 
@@ -96,7 +98,8 @@ flowchart LR
 - `gray_histo_abs` — 標準偏差（ヒストグラムの広がりを 1 スカラで要約）。呼び出し: `fullseye.apply(image, "gray_histo_abs")`
 - `entropy_gray` — 64 ビンヒストグラムの Shannon エントロピー `/6`（平坦画像 ≈ 0、ノイズ画像で大）。呼び出し: `fullseye.apply(image, "entropy_gray")`
 - `sk_entropy_feat` — `skimage.measure.shannon_entropy`。
-- `estimate_noise` — ラプラシアンの MAD による頑健ノイズ σ（ノイズが増えると上がる）。呼び出し: `fullseye.apply(image, "estimate_noise")`
+- `estimate_noise` — ラプラシアンの MAD による頑健ノイズ **σ そのもの**（[0,1] 階調の単位つき量）。`σ = 1.4826·MAD(∇²x)/√20`（√20 は 5 点ラプラシアンのノイズ利得）。平坦画像 + ガウス雑音での実測は σ=0.01〜0.30 で真値の ±10% 以内。呼び出し: `fullseye.apply(image, "estimate_noise")`  
+  <br>★2026-09-02 まではこれが `min(1, 1.4826·MAD·3)` で、**σ の単位ですらなく σ≳0.08 から 1.0 に張り付いて**いた（σ を 0.02→0.22 と 11 点振ると 8 点が厳密に 1.0）。上限 1.0 の clip は残っているが、入力が [0,1] である以上 σ≥1 は起こらないので **到達しない安全弁**であって動作域ではない。
 - `xsk3_estimate_sigma` — `skimage.restoration.estimate_sigma` を `×5` 正規化。
 - `xsk3_is_low_contrast` — 低コントラスト判定フラグ（0/1）。
 - `xcv2_lap_var` — ラプラシアンの分散（ピント／ぼけ指標、`min(1, ·×20)`）。呼び出し: `fullseye.apply(image, "xcv2_lap_var")`
@@ -186,9 +189,11 @@ Shannon エントロピー（`entropy_gray` / `xwt_packet_entropy`）。ビン�
 
 $$H = -\sum_i p_i \log_2 p_i$$
 
-頑健ノイズ推定（`estimate_noise`）。ラプラシアン $L$ の MAD:
+頑健ノイズ推定（`estimate_noise`）。ラプラシアン $L = \nabla^2 x$ の MAD を正規分布換算し、**カーネルのノイズ利得で割って σ に戻す**:
 
-$$\hat{\sigma} \approx 1.4826 \cdot \mathrm{median}\big|\,L - \mathrm{median}(L)\,\big|$$
+$$\hat{\sigma} = \frac{1.4826 \cdot \mathrm{median}\big|\,L - \mathrm{median}(L)\,\big|}{\sqrt{20}}$$
+
+$\sqrt{20}$ は 5 点ラプラシアン $[[0,1,0],[1,-4,1],[0,1,0]]$ のノイズ利得（独立同分布ノイズ $\sigma$ を通すと分散が $(-4)^2 + 4\cdot 1^2 = 20$ 倍になる）。実測（平坦画像 + ガウス雑音 512×512、$\sigma = 0.01 \ldots 0.30$）で $1.4826\,\mathrm{MAD}/\sigma = 4.4501 \ldots 4.4816$、$\sqrt{20} = 4.4721$ と 0.5% 以内で一致する。★2026-09-02 以前は $\sqrt{20}$ で割る代わりに **3 を掛けて** おり、σ の単位ですらないうえ σ≳0.08 で 1.0 に飽和していた。
 
 折れ線長（`total_length` / `length_xld`）。頂点列 $(x_i, y_i)$:
 

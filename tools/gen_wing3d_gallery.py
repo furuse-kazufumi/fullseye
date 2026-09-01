@@ -632,6 +632,7 @@ def _ct_phantom(n=128):
 # 展示 01 — 処理領域(domain)でメモリが縮む                                        #
 # --------------------------------------------------------------------------- #
 def ex_domain(log) -> dict:
+    """処理領域を切り出すとメモリと処理対象がどれだけ縮むかを、断面送りで見せる。"""
     n = 192
     zz, yy, xx = _grid((n, n, n))
     # 大きな空の視野の隅に置かれた小さな部品(実際の CT でよくある構図)
@@ -792,6 +793,7 @@ def ex_domain(log) -> dict:
 # 展示 02 — 境界だけ持つ / 球フィット                                            #
 # --------------------------------------------------------------------------- #
 def ex_boundary(log) -> dict:
+    """中実の球・内側 1 層の殻・mm 点群を並べ、殻から球をフィットして誤差を出す。"""
     n = 128
     sp = (0.4, 0.4, 0.4)                       # mm / voxel
     r_vox = 40.0
@@ -912,6 +914,7 @@ def ex_boundary(log) -> dict:
 # 展示 03 — run-length で持つ                                                   #
 # --------------------------------------------------------------------------- #
 def ex_rle(log) -> dict:
+    """run-length で領域を持つとどれだけ小さくなり、展開せずに何が測れるかを示す。"""
     n = 256
     zz, yy, xx = _grid((n, n, n))
     ball = ((zz - 128.) ** 2 + (yy - 128.) ** 2 + (xx - 128.) ** 2) <= 70.0 ** 2
@@ -1079,6 +1082,7 @@ def ex_rle(log) -> dict:
 # 展示 04 — CT windowing                                                        #
 # --------------------------------------------------------------------------- #
 def ex_windowing(log) -> dict:
+    """同じ HU ボリュームを 3 つの窓で見ながら断面を送る(何が飽和し何が沈むか)。"""
     n = 128
     hu = _ct_phantom(n)
     windows = [("軟部組織窓 soft", 40.0, 400.0, C_A),
@@ -1181,6 +1185,7 @@ def ex_windowing(log) -> dict:
 # 展示 05 — Frangi 対 Sato 対 blobness                                          #
 # --------------------------------------------------------------------------- #
 def ex_vesselness(log) -> dict:
+    """管状度 2 種と粒状度 1 種を同じ合成 CT に掛け、否定対照として比べる。"""
     n = 88
     tube = _capsule((n, n, n), (6, 44, 26), (81, 44, 26), 3.2)
     b1 = _aa_ball((n, n, n), (26., 42., 60.), 6.0) > 0.5
@@ -1308,6 +1313,7 @@ def ex_vesselness(log) -> dict:
 # 展示 06 — 3D スケルトンのグラフ化                                              #
 # --------------------------------------------------------------------------- #
 def ex_skeleton(log) -> dict:
+    """塊を細線化して枝・分岐・端点に分け、ターンテーブルでつながりを見せる。"""
     n = 104
     segs = [((10, 52, 52), (46, 52, 52), 5.0),
             ((46, 52, 52), (80, 22, 40), 3.4),
@@ -1436,6 +1442,7 @@ def ex_skeleton(log) -> dict:
 # 展示 07 — virtual probe で壁厚                                                #
 # --------------------------------------------------------------------------- #
 def ex_wall(log) -> dict:
+    """パイプにプローブを 1 本刺して壁厚を測り、平滑化 sigma による偏りも出す。"""
     sp = (0.25, 0.25, 0.25)
     n = 96
     zz, yy, xx = _grid((n, n, n))
@@ -1586,6 +1593,7 @@ def ex_wall(log) -> dict:
 # 展示 08 — Richardson-Lucy                                                     #
 # --------------------------------------------------------------------------- #
 def ex_rl(log) -> dict:
+    """Richardson-Lucy の反復で、前方一貫性と真値 RMSE の落ち方の違いを見せる。"""
     n = 64
     truth = ((_aa_ball((n, n, n), (32., 26., 26.), 8.0) > 0.5) |
              (_aa_ball((n, n, n), (32., 40., 40.), 8.0) > 0.5)).astype(np.float64)
@@ -1696,6 +1704,7 @@ def ex_rl(log) -> dict:
 # 展示 09 — visual hull(空間彫刻)                                              #
 # --------------------------------------------------------------------------- #
 def ex_visual_hull(log) -> dict:
+    """多視点シルエットで彫った形が、枚数とともにどこまで真値へ近づくか。"""
     rng = np.random.default_rng(SEED)
     npts = 9000
 
@@ -1866,6 +1875,7 @@ def ex_visual_hull(log) -> dict:
 # 展示 10 — OBB と最大内接直方体                                                 #
 # --------------------------------------------------------------------------- #
 def ex_obb(log) -> dict:
+    """傾いた直方体に AABB / OBB / 最大内接箱を同時に描き、体積比を比べる。"""
     n = 88
     zz, yy, xx = _grid((n, n, n))
     ang = 30.0
@@ -2029,6 +2039,7 @@ def ex_obb(log) -> dict:
 # 展示 11 — 点群レジストレーション(ICP / GICP)                                   #
 # --------------------------------------------------------------------------- #
 def ex_icp(log) -> dict:
+    """ずれた 2 つの点群を ICP / GICP で重ね、収束の様子と姿勢誤差を出す。"""
     rng = np.random.default_rng(SEED)
     n = 2600
     # 表面点群(だ円体 + 突起) — 対称すぎると ICP が回りやすいので突起を付ける
@@ -2167,6 +2178,7 @@ def ex_icp(log) -> dict:
 # 展示 12 — 異方性ボクセル                                                       #
 # --------------------------------------------------------------------------- #
 def ex_anisotropic(log) -> dict:
+    """z だけ粗い spacing で、spacing を渡し忘れると体積がどう化けるかを示す。"""
     sp = (1.5, 0.4, 0.4)                     # z だけ粗い(実際の CT でよくある)
     D, H_, W_ = 44, 128, 128
     semi_mm = (18.0, 16.0, 16.0)
@@ -2299,6 +2311,7 @@ def ex_anisotropic(log) -> dict:
 # 展示 13 — MIP ターンテーブル(合成 CT を X 線のように)                          #
 # --------------------------------------------------------------------------- #
 def ex_mip(log) -> dict:
+    """合成 CT を MIP と X 線(減衰積算)で 1 周させ、2 つの投影の違いを見せる。"""
     n = 96
     hu = _ct_phantom(n)
     bone = np.asarray(G("vol_window_level")(hu, 500.0, 2000.0))
@@ -2395,6 +2408,7 @@ def ex_mip(log) -> dict:
 # 展示 14 — 距離変換で「中心線」と「いちばん太いところ」                          #
 # --------------------------------------------------------------------------- #
 def ex_distance(log) -> dict:
+    """距離変換で「ふちから何 mm」を出し、局所の太さ(最大内接半径)を測る。"""
     n = 112
     sp = (0.5, 0.5, 0.5)
     # 枝は必ず主管の**軸上**から生やす(軸から外して置くと連結しない別々の管になる)
@@ -2821,7 +2835,7 @@ def ex_mpr(log) -> dict:
 # 展示 S3 — 斜め断面(円柱を斜めに切ると楕円になる)                               #
 # --------------------------------------------------------------------------- #
 def ex_oblique(log) -> dict:
-    """切断面を 0 -> 80 度まで倒し、切り口が円から楕円へ伸びるのを測る。"""
+    """切断面を 0 -> 70 度まで倒し、切り口が円から楕円へ伸びるのを測る。"""
     n = 192
     sp = 0.25                                  # mm / voxel(等方)
     r_vox = 20.0
@@ -3466,10 +3480,7 @@ def ex_connectivity(log) -> dict:
     ball = (_aa_ball((n, n, n), (48., 48., 48.), r) > 0.5).astype(np.float64)
     solid = int(ball.sum())
     variants, panels, labels = [], [], []
-    R = _rot(28.0, 20.0)
-    center = np.array([48.0, 48.0, 48.0])
     ps = 300
-    rng = np.random.default_rng(SEED)
     for side in ("inner", "outer"):
         for conn in (6, 18, 26):
             sh = np.asarray(G("vol_boundary")(ball, connectivity=conn, side=side))
@@ -3478,18 +3489,31 @@ def ex_connectivity(log) -> dict:
             variants.append({"side": side, "connectivity": conn, "voxels": cnt,
                              "pct_of_solid": pct})
             log(f"    side={side:5s} conn={conn:2d} -> {cnt:6d} voxel  {pct:5.2f} %")
-            pts = np.argwhere(sh > 0.5).astype(np.float64)
-            if pts.shape[0] > 16000:
-                pts = pts[np.sort(rng.choice(pts.shape[0], 16000, replace=False))]
-            panel = _canvas(ps, ps, C_PANEL)
-            u, v, d = _project(pts[:, [2, 1, 0]], R, 3.6, ps / 2, ps / 2,
-                               center[[2, 1, 0]])
-            # **画面の奥行き**で半分に切る(手前側を落とす)。世界座標の軸で切ると
-            # 視線の向き次第では切り口がこちらを向かず、ただの球に見えてしまう。
-            far = d <= 0.0
-            _splat(panel, u[far], v[far], d[far],
-                   C_B if side == "inner" else C_A, radius=1, shade=0.55)
-            panel = _axis_gizmo(panel, R, 38, ps - 38, size=24)
+            # 中心を通る断面で見る。薄い殻を 3-D の点で描くと、半分に切っても
+            # 輪郭が円板に見えるだけで「厚み」が読めない。断面なら厚みが
+            # そのまま画素の幅として出る。
+            from PIL import Image as _Im
+            col = C_B if side == "inner" else C_A
+            sl = np.asarray(sh)[48]
+            full = _cmap(sl, "gray") * np.asarray(col)
+            im = _Im.fromarray(_to_u8(full)).resize((ps, ps), _Im.NEAREST)
+            panel = np.asarray(im, np.float64) / 255.0
+            # 斜めに走る面のところを拡大して重ねる(差が一番はっきり出る場所)
+            r0, c0, w0 = 14, 56, 28
+            crop = _cmap(sl[r0:r0 + w0, c0:c0 + w0], "gray") * np.asarray(col)
+            zoom = np.asarray(_Im.fromarray(_to_u8(crop)).resize((120, 120), _Im.NEAREST),
+                              np.float64) / 255.0
+            # 拡大は **中央**に置く(環の内側は空なので何も隠さない)
+            z0 = (ps - 120) // 2
+            panel[z0:z0 + 120, z0:z0 + 120] = zoom
+            panel = imagedraw.draw_polyline(
+                panel, [(z0, z0), (z0 + 119, z0), (z0 + 119, z0 + 119), (z0, z0 + 119)],
+                color=(0.9, 0.9, 0.9), width=1, closed=True)
+            sc0 = ps / sl.shape[0]
+            panel = imagedraw.draw_polyline(
+                panel, [(c0 * sc0, r0 * sc0), ((c0 + w0) * sc0, r0 * sc0),
+                        ((c0 + w0) * sc0, (r0 + w0) * sc0), (c0 * sc0, (r0 + w0) * sc0)],
+                color=(0.9, 0.9, 0.9), width=1, closed=True)
             panels.append(panel)
             labels.append("%s / %d 近傍   %s voxel (%.2f %%)"
                           % ("内側" if side == "inner" else "外側", conn,
@@ -3497,7 +3521,8 @@ def ex_connectivity(log) -> dict:
 
     sheet = et.contact_sheet(
         panels, labels, ncols=3, panel_px=300,
-        title="vol_boundary の 6 通り ― 同じ球(%s voxel)の殻を、触れ方の定義だけ変えて取る"
+        title="vol_boundary の 6 通り ― 同じ球(%s voxel)の殻の断面(z=48)。"
+              "中央は白枠の中の拡大 ― 殻の厚みがそのまま画素の幅として見える"
               % format(solid, ","),
         title_font_size=19, font_size=14)
     info = _save_png(sheet, "wing3d_boundary_connectivity", log)

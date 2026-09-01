@@ -52,7 +52,8 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_test_region_points</code> — 間隔 <code style="color:#22d3bf">a</code> の格子点のうち region に含まれる割合。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_distance_pr</code> — 正規化クエリ点 <code style="color:#22d3bf">(a,b)</code> から region までの最小距離（距離変換ベース、<code style="color:#22d3bf">max(H,W)</code> 正規化）。</p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">E. グレー画像の空間フィルタ・照明/形状加工（image → image）</h3>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gabor</code> — 方位 <code style="color:#22d3bf">a·π</code>・周波数 <code style="color:#22d3bf">b</code> の Gabor フィルタ応答の大きさ（DC 除去済みで平坦部は 0）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gabor&quot;, 0.3, 0.5)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_gabor</code> — 方位 <code style="color:#22d3bf">a·π</code>・周波数 <code style="color:#22d3bf">0.08+0.35b</code> の Gabor フィルタ応答の大きさ（DC 除去済みで平坦部は 0）。**向きの規約: <code style="color:#22d3bf">a=0</code> が縦縞、<code style="color:#22d3bf">a=0.5</code> が横縞<b>。正規化は</b>カーネルの L1 ノルム**（画像に依らない固定スケール）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gabor&quot;, 0.3, 0.5)</code></p>
+<p>&lt;br&gt;★2026-09-02 まで <code style="color:#22d3bf">_norm01</code>（その画像の min–max を [0,1] へ引き伸ばす）だったため、向きによる応答の大小が潰れるどころか <b>順序が逆転</b>していた —— 実測（96×96 の横縞、b=0.5）: 横縞検出器 (a=0.5) が 0.34663 に対し、ほぼ反応しないはずの縦縞検出器 (a=0) が 0.58434。修正後は 0.04866 対 0.00232（21.0 倍、向きは正しい方向）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_fit_surface1</code> / <code style="color:#22d3bf">hx_fit_surface2</code> — グレー値を 1 次 / 2 次多項式面で最小二乗近似（照明・背景の緩やかな傾きを推定）。 例: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_fit_surface2&quot;, 0.5, 0.5)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_plane_deviation</code> — 1 次平面近似からの偏差 <code style="color:#22d3bf">|v − plane|</code>（平坦度・欠陥検査）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">hx_shade_height_field</code> — 高さ場 <code style="color:#22d3bf">v</code> を方位 <code style="color:#22d3bf">a</code>・仰角 <code style="color:#22d3bf">b</code> の Lambertian 陰影で描画。</p>
@@ -147,7 +148,7 @@ print(&quot;PASS&quot;)</pre>
 <p>$$</p>
 <p>\mathrm{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\bigl(\sqrt{(x_i-c_x)^2+(y_i-c_y)^2}\; - \; r\bigr)^2}</p>
 <p>$$</p>
-<p><b>Gabor カーネル</b>（<code style="color:#22d3bf">hx_gabor</code>）— 方位 $\theta=a\pi$、周波数 $f=0.08+0.35b$、包絡 $\sigma=2.2$。回転座標 $x_\theta = x\cos\theta + y\sin\theta$ に対し DC 除去した実 Gabor（応答の大きさを正規化して返す）:</p>
+<p><b>Gabor カーネル</b>（<code style="color:#22d3bf">hx_gabor</code>）— 方位 $\theta=a\pi$、周波数 $f=0.08+0.35b$、包絡 $\sigma=2.2$。回転座標 $x_\theta = x\cos\theta + y\sin\theta$ に対し DC 除去した実 Gabor（応答の大きさをカーネルの L1 ノルム $\sum|g|$ で割って返す = 画像に依らない固定スケール）:</p>
 <p>$$</p>
 <p>g(x,y) = \exp\!\Bigl(-\tfrac{x_\theta^2 + y_\theta^2}{2\sigma^2}\Bigr)\,\cos\!\bigl(2\pi f\, x_\theta\bigr)</p>
 <p>$$</p>

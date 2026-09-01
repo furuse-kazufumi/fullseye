@@ -48,7 +48,8 @@ flowchart LR
 
 ### A. 画像 → 下位画素輪郭(image -> contour 抽出)
 
-- **edges_sub_pix** — Sobel 勾配振幅を `0.15+0.5a` で閾値化し、連結成分を点列輪郭にする(*HALCON: edges_sub_pix*)。`fullseye.apply(img, "edges_sub_pix", 0.4, 0.5)`
+- **edges_sub_pix** — Sobel 勾配振幅を `0.15+0.5a` で閾値化し、連結成分を点列輪郭にしたうえで、各点を**勾配の法線方向に放物線当てはめ**して勾配稜線へ寄せる(サブピクセル精度、Devernay 1995 系)。`fullseye.apply(img, "edges_sub_pix", 0.4, 0.5)`  
+  <br>★2026-09-02 まで返していたのは `np.where` の **整数画素座標**そのもので、`sub_pix` を名乗りながらサブピクセル精度が無かった。実測(真の位置が列 20.37 の合成ステップエッジ、a=0.2): 旧実装の返す列は {20.0, 21.0} で平均絶対誤差 **0.500 px**、精密化後は {20.324, 20.370} で **0.0228 px**。点の個数・連結成分の分け方は不変。非極大抑制はしていないので、太いエッジでは帯の全画素が稜線へ寄って重なる —— 1 画素幅の連鎖が要るなら `canny`、より高精度な等値線が要るなら `threshold_sub_pix`。
 - **threshold_sub_pix** — marching-squares で輝度レベル `0.2+0.5a` の等値線を下位画素輪郭にする(*HALCON: threshold_sub_pix*)。`fullseye.apply(img, "threshold_sub_pix", 0.5, 0.5)`
 - **zero_crossing_sub_pix** — Gauss ラプラシアン(LoG)のゼロ交差を輪郭にする。`a` が平滑スケール(*HALCON: zero_crossing_sub_pix*)。`fullseye.apply(img, "zero_crossing_sub_pix", 0.5, 0.5)`
 - **lines_gauss** — Frangi(Hessian リッジ)応答を閾値化して線状構造を抽出する Steger 流の線検出(*HALCON: lines_gauss*)。`fullseye.apply(img, "lines_gauss", 0.5, 0.5)`

@@ -40,7 +40,7 @@
 
 ![visual hull ―― 影を重ねて形を削り出す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_visual_hull.gif)
 
-*↑ **visual hull ―― 影を重ねて形を削り出す** ―― L 字の合成物体を 16 方向から撮ったシルエットで `visual_hull` を彫る。1 枚では真の体積の **5.12 倍**という柱状の塊だが、枚数を足すと 16 枚で **1.24 倍**(IoU 0.755)まで縮む。ただし L 字の凹みは何枚重ねても埋まらない ―― これは実装の粗さではなく visual hull の原理的な限界で、収束先が真値でないことが図から読める。 使用 op: `look_at`, `synthesize_silhouette`, `visual_hull`。*
+*↑ **visual hull ―― 影を重ねて形を削り出す** ―― L 字の合成物体を 16 方向から撮ったシルエットで `visual_hull` を彫る。1 枚では真の体積の **5.12 倍**という柱状の塊だが、枚数を足すと 16 枚で **1.24 倍**(IoU 0.755)まで縮む。ただし L 字の凹みは何枚重ねても埋まらない ―― これは実装の粗さではなく visual hull の原理的な限界で、収束先が真値でないことが図から読める。 使用 op: `visualhull.look_at`, `synthesize_silhouette`, `visual_hull`。*
 
 ![外から抱く箱(OBB)と中に入る箱(inner_box3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_obb_innerbox.gif)
 

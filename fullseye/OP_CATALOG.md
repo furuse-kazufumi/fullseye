@@ -304,7 +304,7 @@ _計 310 ops / 63 categories。_
 ### curvilinear(3)
 - `polar_unwrap` (`image2d → image2d`) — 画像の円環/円板を (θ×r) 矩形へアンラップ(工業: ラベル/リング/回転体の検査)。 · 例: `curvilinear_proj`
 - `cylinder_unwrap` (`voxel → voxel`) — voxel の円筒面を (height×θ×r) へアンラップ(円筒部品/配管の内外面検査)。軸=z(D 軸)。 · 例: `curvilinear_proj`
-- `fit_zernike` (`image2d → descriptor`) — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: `curvilinear_proj`
+- `fit_zernike` (`image2d → table`) — 円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。 · 例: `curvilinear_proj`
 
 ### deform(4)
 - `tps_fit` (`points, points → deformation`) — 3D Thin-Plate-Spline を制御点対応から当てはめる。 · 例: `nonrigid_deform`
@@ -360,11 +360,11 @@ _計 310 ops / 63 categories。_
 - `register_shot` (`points, points → pose`) — SHOT 記述子による疎特徴マッチング + RANSAC 剛体姿勢推定(全パイプライン)。 · 例: `feature_register`
 
 ### freeform(5)
-- `fit_bspline_surface` (`points → surface`) — 散布 (x, y, z) に双三次(既定)B スプライン曲面を最小二乗フィット(bisplrep)。 · 例: `bspline_freeform`
-- `eval_bspline_surface` (`surface → image2d`) — フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。 · 例: `bspline_freeform`
-- `surface_residual` (`points, surface → measurement`) — 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。 · 例: `bspline_freeform`
-- `fit_bspline_curve` (`points → surface`) — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: `bspline_freeform`
-- `eval_bspline_curve` (`surface → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
+- `fit_bspline_surface` (`image2d, image2d, image2d → bspline_surface`) — 散布 (x, y, z) に双三次(既定)B スプライン曲面を最小二乗フィット(bisplrep)。 · 例: `bspline_freeform`
+- `eval_bspline_surface` (`bspline_surface, image2d, image2d → image2d`) — フィット済み曲面 tck を評価(bisplev)。散布点(既定)または格子の 2 モード。 · 例: `bspline_freeform`
+- `surface_residual` (`image2d, image2d, image2d, bspline_surface → measurement`) — 散布データと曲面 tck の残差統計を返す(形状誤差=フィットからの逸脱)。 · 例: `bspline_freeform`
+- `fit_bspline_curve` (`points → bspline_curve`) — 順序付き点列(M,D)に B スプライン曲線をフィット(splprep, パラメトリック)。 · 例: `bspline_freeform`
+- `eval_bspline_curve` (`bspline_curve → points`) — 曲線 tck をパラメータ u∈[0,1] 上 n 点で等間隔評価(splev)。 · 例: `bspline_freeform`
 
 ### frequency(3)
 - `vol_fft_lowpass` (`voxel → voxel`) — Gaussian low-pass: keeps structure coarser than ``1/cutoff`` (voxels, or · 例: `deconv_fft_restore`
@@ -376,8 +376,8 @@ _計 310 ops / 63 categories。_
 - `fuse_to_voxel` (`any → voxel`) — 複数構造を共通密度 voxel へ融合(TRIZ 統合)。items=[(data,kind,params_dict), ...]。 · 例: `transforms_repr`
 
 ### geodesic(4)
-- `geodesic_distances` (`points → measurement`) — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: `geodesic_distance`
-- `geodesic_mesh` (`mesh → measurement`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
+- `geodesic_distances` (`points → signal`) — source から全点への測地距離(kNN グラフ上 Dijkstra)。→ (N,) float(不達は inf)。 · 例: `geodesic_distance`
+- `geodesic_mesh` (`mesh → signal`) — 三角メッシュのエッジグラフ上 Dijkstra で source から各頂点への測地距離。→ (V,) float。 · 例: `pcl_geodesic`
 - `farthest_point_sampling` (`points → indices`) — 測地距離での最遠点サンプリング(均等間引き)。→ 選択インデックス列 (n,) int。 · 例: `geodesic_distance`, `pointcloud_downsampling`
 - `knn_graph` (`points → graph`) — 各点の k 近傍インデックスと Euclid 距離(自己を除く)。→ (idx (N,k) int, dist (N,k) float)。 · 例: `pcl_geodesic`
 
@@ -444,7 +444,7 @@ _計 310 ops / 63 categories。_
 - `distance_ridge` (`voxel → voxel`) — EDT のリッジ(距離場の局所極大)を medial として抽出。返り値 (ridge_mask, edt)。 · 例: `pcl_geodesic`
 - `skeletonize_vol` (`voxel → voxel`) — 3D バイナリ voxel を細線化して 1 voxel 幅の骨格に。skimage の Lee(1994)法ラッパ。 · 例: `medial_topology`
 - `medial_axis_points` (`voxel → points`) — medial voxel の座標と局所半径(= その点の EDT 値)を点群化。返り値 (points, radius)。 · 例: `medial_topology`
-- `topology_signature` (`voxel → descriptor`) — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。 · 例: `medial_topology`
+- `topology_signature` (`voxel → table`) — 骨格の 26 近傍次数から位相記述子を作る。端点/分岐点/通常点/孤立点の個数を返す。 · 例: `medial_topology`
 - `medial_match` (`voxel, voxel → measurement`) — 2 つの voxel 形状の medial(位相 + 半径分布)による粗照合スコア。返り値 [0,1]。 · 例: `medial_topology`
 - `skeleton_junctions3d` (`voxel → voxel`) — 3D 骨格の分岐点(joint、26 近傍に骨格 voxel が 3 個以上)を voxel マスクで返す。 · 例: `medial_topology`
 - `skeleton_endpoints3d` (`voxel → voxel`) — 3D 骨格の端点(26 近傍に骨格 voxel が 1 個以下)を voxel マスクで返す。 · 例: `medial_topology`
@@ -473,7 +473,7 @@ _計 310 ops / 63 categories。_
 ### moment_invariant(4)
 - `moment_invariants` (`points → descriptor`) — 並進+回転+スケール不変な形状特徴ベクトル(Sadjadi–Hall 流 + 高次半径分布)。 · 例: `moment_invariants`
 - `principal_moments` (`points → descriptor`) — 慣性テンソルの固有値(主慣性モーメント、降順ソート、回転不変)。 · 例: `shape_desc_pose`
-- `central_moments` (`points → descriptor`) — 重心中心化した中心モーメント μ_{pqr}(並進不変、キー=(p,q,r))を返す。 · 例: `moment_invariants`
+- `central_moments` (`points → table`) — 重心中心化した中心モーメント μ_{pqr}(並進不変、キー=(p,q,r))を返す。 · 例: `moment_invariants`
 - `inertia_tensor` (`points → matrix`) — 点群の慣性テンソル (3,3)(中心 2 次モーメントから、等質量・総質量 1)。 · 例: `moment_invariants`
 
 ### morphology(7)
@@ -486,11 +486,11 @@ _計 310 ops / 63 categories。_
 - `morph_blackhat3d` (`voxel → voxel`) — 3D black-hat = closing − vol。SE より小さい **暗構造/穴**を抽出。 · 例: `diff_features`
 
 ### motion(1)
-- `scene_flow_lk` (`voxel, voxel → flow`) — Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。 · 例: `motion_scene`
+- `scene_flow_lk` (`voxel, voxel → flow_dense`) — Lucas-Kanade scene flow(2D optical flow の 3D 版)。voxel ごとの運動場 d=(dz,dy,dx)。 · 例: `motion_scene`
 
 ### motion_segment(3)
 - `segment_rigid_motions` (`points, points → labels`) — 2 点群を運動が一致する剛体ごとに分割する(反復 RANSAC による multi-body 分割)。 · 例: `motion_seg`
-- `estimate_flow` (`points, points → flow`) — pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。 · 例: `motion_scene`
+- `estimate_flow` (`points, points → flow_scattered`) — pts0 の各点から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す(最近傍フロー)。 · 例: `motion_scene`
 - `fit_rigid` (`points, points → pose`) — 対応点から閉形式 Kabsch で剛体変換 (R, t) を推定する(pts_from[i] -> pts_to[i])。 · 例: `motion_scene`
 
 ### normals_orient(2)
@@ -521,9 +521,9 @@ _計 310 ops / 63 categories。_
 - `warp_by_plane` (`image2d → image2d`) — homography H で img を逆ワープ。→ out[y,x] = img(H·(x,y,1))(bilinear)。 · 例: `motion_scene`
 
 ### pose_estimation(3)
-- `dlt_pose` (`points, image2d → pose`) — DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。 · 例: `pnp_pose_outliers`, `pose_estimation`
-- `pnp_ransac` (`points, image2d → pose`) — 外れ値に頑健な PnP(RANSAC + 最終 DLT リフィット)。→ (R, t, inlier_mask, info)。 · 例: `pnp_pose_outliers`, `pose_estimation`
-- `reprojection_error` (`points, pose → measurement`) — 再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `dlt_pose` (`points, keypoints → pose`) — DLT で 3D-2D 対応からカメラ姿勢を復元(K 既知)。→ (R (3,3), t (3,))。6 点以上必要。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `pnp_ransac` (`points, keypoints → pose`) — 外れ値に頑健な PnP(RANSAC + 最終 DLT リフィット)。→ (R, t, inlier_mask, info)。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `reprojection_error` (`points, keypoints → measurement`) — 再投影誤差(RMS ピクセル)。姿勢の当てはまり評価。→ scalar。 · 例: `pnp_pose_outliers`, `pose_estimation`
 
 ### pose_graph(3)
 - `optimize_pose_graph` (`pose → pose`) — 相対姿勢制約 + ループ閉じから大域姿勢を最適化。→ dict{poses, rmse, cost}。 · 例: `pose_graph_slam`
@@ -551,19 +551,19 @@ _計 310 ops / 63 categories。_
 ### reconstruct(4)
 - `poisson_lite` (`points → mesh`) — 点群 (N,3) → (vertices(V,3), faces(F,3)) の表面メッシュ(スクリーンド Poisson 軽量近似)。 · 例: `poisson_surface_recon`
 - `alpha_shape_mesh` (`points → mesh`) — alpha shapes による**表面三角形メッシュ**(点群 → (vertices, faces))。 · 例: `alpha_shape_topology`
-- `alpha_shape_boundary` (`points → points`) — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: `sfm_recon`
+- `alpha_shape_boundary` (`points → indices`) — alpha shapes による**境界点インデックス**を返す(点群 → 境界点)。 · 例: `sfm_recon`
 - `estimate_alpha` (`points → measurement`) — 点群のスケールから推奨 alpha を返す(最近傍距離の中央値ベース)。 · 例: `alpha_shape_topology`, `sfm_recon`
 
 ### refine(6)
 - `refine_peak_newton` (`score, position → position`) — スコア/相関 volume の整数ピークを 3D Newton でサブボクセル精緻化する(反復最適化)。 · 例: `refinement`
 - `refine_translation_lk` (`voxel, voxel, position → position`) — Gauss-Newton 逆合成 Lucas-Kanade による 3D 並進サブボクセル精緻化。 · 例: `refinement`
-- `refine_lm` (`voxel, voxel, position → pose`) — Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。 · 例: `refinement`
+- `refine_lm` (`voxel, voxel, position → table`) — Levenberg-Marquardt による並進(+等方スケール/輝度ゲイン)サブボクセル精緻化。 · 例: `refinement`
 - `refine_rotation_z` (`voxel, voxel, angle → angle`) — z 軸回転角の **Gauss-Newton 精緻化**(Lucas-Kanade on SSD、1 パラメータ)。 · 例: `refinement`
 - `icp_point2point_3d` (`points, points → pose`) — 点群を point-to-point ICP(Kabsch/SVD)で精緻化する。 · 例: `gicp_register`, `itokawa_self_register`, `itokawa_shape_match`, `partial_overlap_icp`
 - `icp_point2plane` (`points, points, normals → pose`) — 点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。 · 例: `refinement`
 
 ### regionprops(7)
-- `label_components` (`voxel → voxel`) — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
+- `label_components` (`voxel → labels`) — 3D 二値ボリュームを連結成分にラベリングする。 · 例: `region_props_3d`, `watershed3d`
 - `region_props` (`voxel → table`) — 各連結成分のリージョンプロパティ一覧を返す。 · 例: `region_props_3d`
 - `largest_component` (`voxel → voxel`) — 最大(最多ボクセル)連結成分の bool マスクを返す。 · 例: `region_props_3d`
 - `filter_by_volume` (`voxel → voxel`) — min_voxels 未満の連結成分を除去した bool マスクを返す。 · 例: `region_props_3d`
@@ -578,7 +578,7 @@ _計 310 ops / 63 categories。_
 - `rotation_translation_error` (`pose, pose → measurement`) — 2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。 · 例: `reg_eval`
 
 ### render(14)
-- `project_points` (`points → image2d`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
+- `project_points` (`points → keypoints`) — 3D 点群 (N,3) → 画像座標 (u,v) と深度。ピンホール(depth_to_points の順方向)。 · 例: `pnp_pose_outliers`, `pose_estimation`
 - `render_point_depth` (`points → depth`) — 点群 → 深度画像(z-buffer、各画素に最近点の深度)。観測合成/外観検査サンプル。 · 例: `sfm_recon`
 - `render_volume_projection` (`voxel → image2d`) — voxel を任意視点で 2D 投影(mode=xray=減衰積算 / mip=最大値)。DRR(X線)・世界モデル観測。 · 例: `ct_hand_radiograph`
 - `render_shaded` (`normalmap → image2d`) — 法線マップ (H,W,3) + 光源方向 → Lambertian 陰影画像(外観サンプル生成、光学と接続)。 · 例: `render_ao`
@@ -591,7 +591,7 @@ _計 310 ops / 63 categories。_
 - `edge_alias_energy` (`image2d → measurement`) — エッジのエイリアス(ジャギー)エネルギー = ラプラシアンの RMS(小さいほど滑らか)。 · 例: `render_beauty`, `render_ssaa`
 - `tonemap_reinhard` (`image2d → image2d`) — Reinhard トーンマップで HDR を ``[0, 1]`` の LDR へ圧縮。→ float64、入力と同形状。 · 例: `render_beauty`, `render_tonemap`
 - `tonemap_aces` (`image2d → image2d`) — ACES filmic 近似(Narkowicz 2015)で HDR を ``[0, 1]`` の LDR へ圧縮。→ float64。 · 例: `render_tonemap`
-- `render_beauty` (`mesh → image2d`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `render_beauty`
+- `render_beauty` (`mesh → rgbimage`) — メッシュを全品質層合成で「映える静止 3D」1 枚に描く → RGB ``(size, size, 3)`` float [0,1]。 · 例: `render_beauty`
 
 ### restoration(2)
 - `vol_gaussian_psf` (`measurement → voxel`) — A normalised (sums to 1) 3-D Gaussian PSF kernel. *sigma* is a scalar or · 例: `deconv_fft_restore`
@@ -618,9 +618,9 @@ _計 310 ops / 63 categories。_
 - `fit_ellipsoid` (`points → primitive`) — 点群に任意姿勢の 3 軸楕円体を代数フィットし ``{center, axes, radii, residual}`` を返す。 · 例: `fit_primitives_ext`
 
 ### scene_flow3d(3)
-- `nearest_neighbor_flow` (`points, points → flow`) — 各点 pts0 から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す。 · 例: `scene_flow_rigid`
+- `nearest_neighbor_flow` (`points, points → flow_scattered`) — 各点 pts0 から pts1 の最近傍への 3-D 変位ベクトル場 (N, 3) を返す。 · 例: `scene_flow_rigid`
 - `rigid_flow` (`points, points → pose`) — pts0 -> pts1 を説明する単一剛体運動を最近傍対応 + Kabsch(ICP 風)で推定。 · 例: `scene_flow_rigid`
-- `smooth_flow` (`points, points → flow`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
+- `smooth_flow` (`points, points → flow_scattered`) — 最近傍フローを近傍平均で局所平滑化した正則化フロー (N, 3) を返す。 · 例: `scene_flow_rigid`
 
 ### sdf_csg(7)
 - `sphere_sdf` (`points → sdf`) — 球の符号付き距離場: ``|p - center| - R``(内側負・外側正)。 · 例: `gear_metrology`, `molecule_atom_count`, `procedural_hand`, `render_beauty`, `sdf_csg`, `sfm_recon`
@@ -658,13 +658,13 @@ _計 310 ops / 63 categories。_
 
 ### superquadric(4)
 - `fit_superquadric` (`points → primitive`) — 点群にスーパー2次曲面を least_squares で当てはめ dict{a,eps,R,t,residual} を返す。 · 例: `superquadric_fit`
-- `sample_surface` (`primitive → points`) — スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。 · 例: `mesh_lod_download`, `superquadric_fit`
-- `inside_outside` (`points → measurement`) — スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。 · 例: `superquadric_fit`
+- `sample_surface` (`vector → points`) — スーパー2次曲面の表面点を (eta, omega) パラメトリックにサンプリング。 · 例: `mesh_lod_download`, `superquadric_fit`
+- `inside_outside` (`points → signal`) — スーパー2次曲面の内外関数 F(表面=1, 内部<1, 外部>1)。 · 例: `superquadric_fit`
 - `superquadric_residual` (`points → measurement`) — Gross-Boult 体積補正残差 mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。 · 例: `superquadric_fit`
 
 ### surface_fit(4)
-- `fit_poly_surface` (`image2d → surface`) — 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。 · 例: `contours_to_terrain`
-- `eval_poly_surface` (`surface → image2d`) — model を (x,y) で評価 → z(x の shape で返す)。 · 例: `contours_to_terrain`
+- `fit_poly_surface` (`image2d, image2d, image2d → poly_surface`) — 散布 (x,y,z) → z=f(x,y) 多項式最小二乗。返り値 model(coef/powers/degree/rms/pv)。 · 例: `contours_to_terrain`
+- `eval_poly_surface` (`poly_surface, image2d, image2d → image2d`) — model を (x,y) で評価 → z(x の shape で返す)。 · 例: `contours_to_terrain`
 - `surface_form_error` (`image2d → measurement`) — 高さ場 grid → 理想曲面(多項式)残差=形状誤差(平面度 deg1/球面度 deg2)。→ (residual, rms, pv)。 · 例: `geometry_metrology`
 - `background_flatten` (`image2d → image2d`) — 画像の低次曲面(照明ムラ)をフィット減算=シェーディング補正。→ flattened。 · 例: `geometry_metrology`
 
@@ -676,7 +676,7 @@ _計 310 ops / 63 categories。_
 
 ### transform(12)
 - `points_to_voxel` (`points → voxel`) — 点群 (N,3) → 密度 voxel (size³)。scatter_add で splat、任意で gaussian 平滑。 · 例: `sh_descriptor_retrieval`, `shape_desc_pose`
-- `gaussians_to_voxel` (`gaussians → voxel`) — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: `transforms_repr`
+- `gaussians_to_voxel` (`points → voxel`) — 3DGS(異方性ガウス)→ 密度 voxel。各ガウスを means に opacity で置き、平均 scale で平滑。 · 例: `transforms_repr`
 - `mesh_to_voxel` (`mesh → voxel`) — mesh(頂点+面)→ 密度 voxel。面上を一様サンプリング → splat(mesh 行を全手法へ接続)。 · 例: `transforms_repr`
 - `mesh_to_points` (`mesh → points`) — mesh(頂点+面)→ 表面点群(面積重み一様サンプリング)。mesh→point cloud 変換。 · 例: `mesh_decimate`
 - `depth_to_points` (`depth → points`) — 深度マップ(2.5D)→ point cloud(ピンホール逆投影)。depth 行を全手法へ接続。 · 例: `transforms_repr`
@@ -701,7 +701,7 @@ _計 310 ops / 63 categories。_
 - `sampson_distance` (`image2d, image2d → measurement`) — エピポーラ拘束の Sampson 距離(1 次幾何誤差、各対応)。→ (N,)。 · 例: `two_view_pose`
 
 ## 2-D pipeline operators(ops registry)by category
-_計 801 ops / 47 categories。_
+_計 847 ops / 47 categories。_
 
 
 1 画像を取り 1 画像/領域/輪郭/特徴を返すパイプライン op。`in → out` のデータ種で連鎖を組む。HALCON 別名は用途の手掛かり。
@@ -832,7 +832,7 @@ _計 801 ops / 47 categories。_
 - `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
-- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `signal_funct1d`
+- `log` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `photon_timeresolved`, `signal_funct1d`
 - `corner_response` (halcon: `points_harris`) `image → image` · 例: `gallery2d_edges`
 - `sk_scharr` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
 - `sk_farid` (halcon: `edges_image`) `image → image` · 例: `gallery2d_edges`
@@ -913,7 +913,7 @@ _計 801 ops / 47 categories。_
 - `cv_hough_lines` (halcon: `hough_lines`) `image → feature` · 例: `gallery2d_features`
 - `cv_hough_circles` (halcon: `hough_circles`) `image → feature` · 例: `gallery2d_features`
 - `cv_good_features` `image → feature` · 例: `gallery2d_features`
-- `area_center` (halcon: `area_center`) `region → feature` · 例: `gallery2d_features`
+- `area_center` (halcon: `area_center`) `region → match` · 例: `gallery2d_features`
 - `count_obj` (halcon: `count_obj`) `region → feature` · 例: `gallery2d_features`
 - `circularity` (halcon: `circularity`) `region → feature` · 例: `draw_annotate`, `gallery2d_features`
 - `compactness` (halcon: `compactness`) `region → feature` · 例: `gallery2d_features`
@@ -983,7 +983,7 @@ _計 801 ops / 47 categories。_
 - `fft_image` (halcon: `fft_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `power_real` (halcon: `power_real`) `image → image` · 例: `gallery2d_texture_freq`
 - `power_byte` (halcon: `power_byte`) `image → image` · 例: `gallery2d_texture_freq`
-- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `gallery2d_texture_freq`
+- `phase_rad` (halcon: `phase_rad`) `image → image` · 例: `acoustic_condition_monitoring`, `gallery2d_texture_freq`
 - `highpass_image` (halcon: `highpass_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `bandpass_image` (halcon: `bandpass_image`) `image → image` · 例: `gallery2d_texture_freq`
 - `fft_image_inv` (halcon: `fft_image_inv`) `image → image` · 例: `gallery2d_texture_freq`
@@ -999,7 +999,7 @@ _計 801 ops / 47 categories。_
 
 ### geometry(28)
 - `rotate_img` (halcon: `rotate_image`) `image → image` · 例: `gallery2d_geometry`
-- `rescale_img` (halcon: `zoom_image_size`) `image → image` · 例: `gallery2d_geometry`
+- `rescale_img` (halcon: `zoom_image_factor`) `image → image` · 例: `gallery2d_geometry`
 - `affine_warp` (halcon: `affine_trans_image`) `image → image` · 例: `gallery2d_geometry`
 - `sk_swirl` (halcon: `polar_trans_image`) `image → image` · 例: `gallery2d_geometry`
 - `mirror_image` (halcon: `mirror_image`) `image → image` · 例: `gallery2d_geometry`
@@ -1227,10 +1227,10 @@ _計 801 ops / 47 categories。_
 - `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 
 ### rank(23)
-- `median` (halcon: `median_image`) `image → image` · 例: `consumer_onocollo`, `gallery2d_smoothing_rank`, `perception_pipeline`, `quickstart`
+- `median` (halcon: `median_image`) `image → image` · 例: `consumer_onocollo`, `gallery2d_smoothing_rank`, `lightfield_depth`, `perception_pipeline`, `photon_timeresolved`, `quickstart`, `representation_roundtrip`, `specular_photometric`
 - `min_filter` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`
+- `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `representation_roundtrip`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `median_image` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1280,7 +1280,7 @@ _計 801 ops / 47 categories。_
 - `opening_rectangle1` (halcon: `opening_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `closing_rectangle1` (halcon: `closing_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `fill_up` (halcon: `fill_up`) `region → region` · 例: `gallery2d_region`
-- `boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`
+- `boundary` (halcon: `boundary`) `region → region` · 例: `gallery2d_region`, `voxel_labels_color`
 - `skeleton` (halcon: `skeleton`) `region → region` · 例: `gallery2d_region`
 - `thinning` (halcon: `thinning`) `region → region` · 例: `gallery2d_region`
 - `shape_trans` (halcon: `shape_trans`) `region → region` · 例: `gallery2d_region`
@@ -1422,7 +1422,7 @@ _計 801 ops / 47 categories。_
 - `xmh_selfmatch` `image → image` · 例: `gallery2d_features`
 
 ### smoothing(48)
-- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `ct_inspection`, `gallery2d_smoothing_rank`, `quickstart`
+- `gaussian` (halcon: `gauss_filter`) `image → image` · 例: `coherence_scanning`, `ct_inspection`, `gallery2d_smoothing_rank`, `photon_timeresolved`, `quickstart`
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1528,13 +1528,17 @@ _計 801 ops / 47 categories。_
 - `xmh_daubechies` `image → image` · 例: `gallery2d_geometry`
 - `tf_radon_sinogram` `image → image` · 例: `gallery2d_geometry`
 
-### typed(59)
+### typed(105)
 - `tb_points_to_voxel` `points → volume` · 例: なし
 - `tb_estimate_point_normals` `points → points` · 例: なし
 - `tb_iss_keypoints` `points → signal` · 例: なし
+- `tb_angle_3points` `points → feature` · 例: なし
+- `tb_project_points` `points → points` · 例: なし
+- `tb_render_point_depth` `points → image` · 例: なし
 - `tb_statistical_outlier_removal` `points → points` · 例: なし
 - `tb_radius_outlier_removal` `points → points` · 例: なし
 - `tb_mls_smooth` `points → points` · 例: なし
+- `tb_alpha_shape_boundary` `points → signal` · 例: なし
 - `tb_estimate_alpha` `points → feature` · 例: なし
 - `tb_arc_length` `points → feature` · 例: なし
 - `tb_resample_uniform` `points → points` · 例: なし
@@ -1544,15 +1548,19 @@ _計 801 ops / 47 categories。_
 - `tb_estimate_normals` `points → points` · 例: なし
 - `tb_inertia_tensor` `points → matrix` · 例: なし
 - `tb_farthest_point_sampling` `points → signal` · 例: なし
+- `tb_synthesize_silhouette` `points → image` · 例: なし
 - `tb_jitter` `points → points` · 例: なし
 - `tb_random_rotation` `points → points` · 例: なし
 - `tb_random_scale` `points → points` · 例: なし
 - `tb_random_dropout` `points → points` · 例: なし
+- `tb_elastic_deform` `points → points` · 例: なし
 - `tb_cutout` `points → points` · 例: なし
 - `tb_region_growing` `points → volume` · 例: なし
 - `tb_estimate_oriented_normals` `points → points` · 例: なし
+- `tb_occupancy_grid` `points → volume` · 例: なし
 - `tb_project_spherical` `points → image` · 例: なし
 - `tb_project_cylindrical` `points → image` · 例: なし
+- `tb_sphere_sdf` `points → volume` · 例: なし
 - `tb_create_funct_1d_array` `signal → signal` · 例: なし
 - `tb_smooth_funct_1d_gauss` `signal → signal` · 例: なし
 - `tb_smooth_funct_1d_mean` `signal → signal` · 例: なし
@@ -1588,6 +1596,44 @@ _計 801 ops / 47 categories。_
 - `tb_stat_zscore` `signal → signal` · 例: なし
 - `tb_cplx_cr_residual` `cimage → feature` · 例: なし
 - `tb_angular_spectrum_propagate` `cimage → cimage` · 例: なし
+- `tb_lf_to_mla` `lightfield → image` · 例: なし
+- `tb_lf_subaperture` `lightfield → image` · 例: なし
+- `tb_lf_center_view` `lightfield → image` · 例: なし
+- `tb_lf_epi` `lightfield → image` · 例: なし
+- `tb_lf_refocus` `lightfield → image` · 例: なし
+- `tb_lf_synthetic_aperture` `lightfield → image` · 例: なし
+- `tb_lf_depth_from_focus` `lightfield → image` · 例: なし
+- `tb_lf_epi_slope` `lightfield → image` · 例: なし
+- `tb_spad_deadtime_apply` `counts → counts` · 例: なし
+- `tb_spad_deadtime_correct` `counts → counts` · 例: なし
+- `tb_tcspc_coates_correct` `counts → counts` · 例: なし
+- `tb_tcspc_irf_convolve` `counts → counts` · 例: なし
+- `tb_tcspc_background_subtract` `counts → counts` · 例: なし
+- `tb_dtof_depth` `counts → feature` · 例: なし
+- `tb_specular_diffuse_split` `rgbimage → rgbimage` · 例: なし
+- `tb_specular_coefficient_map` `rgbimage → image` · 例: なし
+- `tb_specular_free_transform` `rgbimage → rgbimage` · 例: なし
+- `tb_temporal_bandpass` `video → video` · 例: なし
+- `tb_temporal_band_power` `video → image` · 例: なし
+- `tb_rgb_to_quaternion` `rgbimage → qimage` · 例: なし
+- `tb_quaternion_to_rgb` `qimage → rgbimage` · 例: なし
+- `tb_quat_norm` `qimage → image` · 例: なし
+- `tb_quat_conjugate_image` `qimage → qimage` · 例: なし
+- `tb_quat_normalize_image` `qimage → qimage` · 例: なし
+- `tb_monogenic_amplitude` `qimage → image` · 例: なし
+- `tb_monogenic_phase` `qimage → image` · 例: なし
+- `tb_monogenic_orientation` `qimage → image` · 例: なし
+- `tb_quat_color_rotate` `qimage → qimage` · 例: なし
+- `tb_quat_color_filter` `qimage → qimage` · 例: なし
+- `tb_qft2` `qimage → qimage` · 例: なし
+- `tb_iqft2` `qimage → qimage` · 例: なし
+- `tb_fmcw_window_apply` `beatcube → beatcube` · 例: なし
+- `tb_range_doppler_map` `beatcube → image` · 例: なし
+- `tb_fmcw_range_profile` `beatcube → signal` · 例: なし
+- `tb_beamform_delay_sum` `beatcube → signal` · 例: なし
+- `tb_weighting_response` `signal → signal` · 例: なし
+- `tb_apply_weighting` `signal → signal` · 例: なし
+- `tb_equivalent_level` `signal → feature` · 例: なし
 
 ### xldgeom(10)
 - `xg_moments` (halcon: `moments_points_xld`) `contour → feature` · 例: `gallery2d_geometry`
@@ -1609,7 +1655,7 @@ _計 37 ops / 3 categories。_
 
 ### function(23)
 - `create_funct_1d_array` (`signal → signal`) — A 1-D function from equidistant samples (HALCON ``create_funct_1d_array``).
-- `create_funct_1d_pairs` (`signal, signal → pairs`) — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an
+- `create_funct_1d_pairs` (`signal, signal → signal`) — A 1-D function from arbitrary ``(x, y)`` pairs, resampled to an
 - `smooth_funct_1d_gauss` (`signal → signal`) — Gaussian smoothing of a 1-D function (HALCON ``smooth_funct_1d_gauss``).
 - `smooth_funct_1d_mean` (`signal → signal`) — Iterated moving-average smoothing (HALCON ``smooth_funct_1d_mean``).
 - `derivate_funct_1d` (`signal → signal`) — First derivative by central differences (HALCON ``derivate_funct_1d``).
@@ -1623,7 +1669,7 @@ _計 37 ops / 3 categories。_
 - `transform_funct_1d` (`signal → pairs`) — Independent affine transform of x and y (HALCON ``transform_funct_1d``).
 - `compose_funct_1d` (`signal, signal → signal`) — Composition ``y1(y2)``: the values of *y2* used as positions into *y1*
 - `sample_funct_1d` (`signal → signal`) — Every *step*-th sample (HALCON ``sample_funct_1d``).
-- `match_funct_1d_trans` (`signal, signal → table`) — Best integer translation between two functions by cross-correlation
+- `match_funct_1d_trans` (`signal, signal → table`) — Best integer translation between two functions by correlation
 - `distance_funct_1d` (`signal, signal → measurement`) — Distance between two functions on the same grid (HALCON ``distance_funct_1d``).
 - `num_points_funct_1d` (`signal → measurement`) — Number of samples (HALCON ``num_points_funct_1d``).
 - `x_range_funct_1d` (`signal → pairs`) — The x-domain ``(0.0, n - 1.0)`` (HALCON ``x_range_funct_1d``).
@@ -1644,7 +1690,7 @@ _計 37 ops / 3 categories。_
 - `envelope` (`signal → signal`) — Amplitude envelope via the analytic (Hilbert) signal — the shape of a
 - `rms` (`signal → measurement`) — RMS level. Scalar for the whole signal, or a framewise array when *frame*
 - `resample` (`signal → signal`) — Resample a signal to *new_rate* (Fourier method).
-- `spectrum` (`signal → pairs`) — Single-sided magnitude spectrum -> ``(freqs, magnitude)`` (real FFT).
+- `spectrum` (`signal → pairs`) — Raw one-sided magnitude spectrum -> ``(freqs, magnitude)`` (``np.fft.rfft``).
 - `spectrogram` (`signal → image2d`) — STFT magnitude spectrogram -> ``(freqs, times, S)`` with ``S`` shape
 - `zero_crossing_rate` (`signal → measurement`) — Fraction of adjacent samples that change sign — a cheap pitch/noisiness cue.
 - `find_peaks` (`signal → indices`) — Peak indices (scipy.signal.find_peaks) — impacts / defect echoes.

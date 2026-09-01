@@ -22,17 +22,17 @@ Anything that steps through slices is a GIF rather than a still. Each frame carr
 
 *↑ **One CT volume, three windows, three different bodies** — The same synthetic HU volume seen through three `vol_window_level` windows while the slice steps back and forth. In the soft-tissue window 67.1 % of the volume collapses to black and the ribs blow out to white; the bone window brings the blow-out down to 0.0 % so the bone reads; the lung window has only 0.0 % crushed to black and shows what is inside the lungs. The polyline underneath is the window itself — a linear HU → [0,1] map plus a clip. Ops used: `vol_window_level`.*
 
-[![Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control.png)
+[![Frangi vs Sato — only a negative control (blobness) settles it](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_vesselness_control.png)
 
-*↑ **Frangi 対 Sato ―― 否定対照(粒状度)を並べて初めて分かる** — 管 1 本と球 2 個だけの合成 CT に、管状度 2 種と粒状度 1 種を掛けた。`vol_frangi` は管を球より **1.26 倍**強く出すが、`vol_sato` は **0.97 倍**でほとんど区別しない。否定対照の `vol_hessian_blobness` は **0.32 倍** = 管より球を選び、向きがきれいに逆転する。「血管が光った」だけでは管状度の証明にならない、という当たり前を図にした。 Ops used: `vol_frangi`, `vol_sato`, `vol_hessian_blobness`.*
+*↑ **Frangi vs Sato — only a negative control (blobness) settles it** — A synthetic CT holding one straight tube and two balls, run through two tubeness filters and one blobness filter. `vol_frangi` answers **1.26x** stronger on the tube than on the balls, but `vol_sato` gives **0.97x** — it barely tells them apart. The negative control `vol_hessian_blobness` gives **0.32x**, i.e. it prefers the balls, so the direction cleanly reverses. "The vessels lit up" is not by itself evidence of tubeness — that obvious point, drawn. Ops used: `vol_frangi`, `vol_sato`, `vol_hessian_blobness`.*
 
 ![3-D スケルトンをグラフにする](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_skeleton_graph.gif)
 
 *↑ **3-D スケルトンをグラフにする** — 合成した枝分かれ構造(8,690 voxel)を `skeletonize_vol` に通すと 192 voxel の 1 voxel 幅の針金になる(**2.21 %**)。そこから枝 **4 本**・分岐 **1 か所**・端点 **4 点**をグラフとして取り出した。白が分岐、ローズが端点、枝は連結成分ごとに色分け。ターンテーブルで1 周するとつながり方が読める。 Ops used: `skeletonize_vol`, `skeleton_branches3d`, `skeleton_junctions3d`, `skeleton_endpoints3d`.*
 
-[![virtual probe で壁厚 2.000 mm(真値 2.000 mm)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_wall_thickness_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_wall_thickness.png)
+[![A virtual probe reads a 2.000 mm wall (truth 2.000 mm)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_wall_thickness_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_wall_thickness.png)
 
-*↑ **virtual probe で壁厚 2.000 mm(真値 2.000 mm)** — 外径 10.000 mm / 内径 8.000 mm の合成パイプにプローブを 1 本だけ刺す。`vol_edge_probe` が 4 つのエッジをサブサンプル精度で拾い、`vol_wall_thickness` が立ち上がり→立ち下がりの対から壁厚 **2.0000 mm / 2.0000 mm**(真値 2.000 mm)を返す。平滑化 sigma を 3.0 まで上げると 2.1252 mm (**+6.3 %**)に太る — ノイズ対策がそのまま寸法の偏りになる、という測定の基本も一緒に。 Ops used: `vol_profile_line`, `vol_edge_probe`, `vol_wall_thickness`.*
+*↑ **A virtual probe reads a 2.000 mm wall (truth 2.000 mm)** — One probe pushed through a synthetic pipe of 10.000 mm outer / 8.000 mm inner diameter. `vol_edge_probe` picks up four edges at sub-sample precision and `vol_wall_thickness` pairs rising→falling to return **2.0000 mm / 2.0000 mm** (truth 2.000 mm). Raise the smoothing sigma to 3.0 and it fattens to 2.1252 mm (**+6.3 %**) — the noise remedy turns straight into a dimensional bias, which is the other half of the lesson. Ops used: `vol_profile_line`, `vol_edge_probe`, `vol_wall_thickness`.*
 
 ![Richardson-Lucy ―― 前方一貫性 0.033x に対し真値 RMSE は 0.689x](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_richardson_lucy.gif)
 
@@ -40,7 +40,7 @@ Anything that steps through slices is a GIF rather than a still. Each frame carr
 
 ![Visual hull — carving a shape out of stacked shadows](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_visual_hull.gif)
 
-*↑ **Visual hull — carving a shape out of stacked shadows** — An L-shaped synthetic object carved by `visual_hull` from silhouettes taken in 16 directions. One view gives a column-like blob at **5.12x** the true volume; adding views shrinks it to **1.24x** (IoU 0.755) at 16 views. The concave notch of the L, though, never fills in no matter how many views are stacked — that is not implementation slop but the principled limit of a visual hull, and the figure shows the convergence target is not the truth. Ops used: `look_at`, `synthesize_silhouette`, `visual_hull`.*
+*↑ **Visual hull — carving a shape out of stacked shadows** — An L-shaped synthetic object carved by `visual_hull` from silhouettes taken in 16 directions. One view gives a column-like blob at **5.12x** the true volume; adding views shrinks it to **1.24x** (IoU 0.755) at 16 views. The concave notch of the L, though, never fills in no matter how many views are stacked — that is not implementation slop but the principled limit of a visual hull, and the figure shows the convergence target is not the truth. Ops used: `visualhull.look_at`, `synthesize_silhouette`, `visual_hull`.*
 
 ![The box that holds it (OBB) and the box that fits inside (inner_box3)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_obb_innerbox.gif)
 
@@ -62,9 +62,9 @@ Anything that steps through slices is a GIF rather than a still. Each frame carr
 
 *↑ **距離変換で局所の太さを測る(最大内接半径 4.528 mm)** — 合成した 3 本の管に `vol_distance_transform` を掛けると、各ボクセルが「ふちから何 mm 離れているか」になる。その最大値が最大内接球の半径 = 局所の太さで、実測 **4.5277 mm**(真値 4.500 mm、差 +0.0277 mm — 離散格子でふちが半 voxel 内側に来るぶん)。虹の等高線は 0.5 mm ごと。 Ops used: `vol_distance_transform`.*
 
-[![連結性の定義だけで殻の厚みが 1.9 倍変わる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_boundary_connectivity_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_boundary_connectivity.png)
+[![Change only the connectivity and the shell gets 1.9x thicker](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_boundary_connectivity_thumb.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/wing3d_boundary_connectivity.png)
 
-*↑ **連結性の定義だけで殻の厚みが 1.9 倍変わる** — 半径 30 voxel の合成球(112,931 voxel)の殻を、`vol_boundary` の `connectivity`(6 / 18 / 26)と `side`(inner / outer)だけ変えて 6 通り取った。面だけ触れる 6 近傍の内側殻は 9,170 voxel(8.12 %)、斜めの接触も数える 26 近傍の外側殻は 17,570 voxel(15.56 %)で、**同じ形なのに 1.92 倍**違う。「表面のボクセル数」という言い方が定義抜きでは意味を持たない、という 6 枚。手前半分を切って厚みが見えるようにしてある。 Ops used: `vol_boundary`.*
+*↑ **Change only the connectivity and the shell gets 1.9x thicker** — The shell of a synthetic ball of radius 30 voxels (112,931 voxels), taken six ways by varying nothing but `vol_boundary`'s `connectivity` (6 / 18 / 26) and `side` (inner / outer). The 6-neighbour inner shell — face contact only — is 9,170 voxels (8.12 %); the 26-neighbour outer shell, which counts diagonal contact too, is 17,570 voxels (15.56 %). **The same shape, 1.92x apart.** Six panels showing that "the number of surface voxels" means nothing without the definition. The near half is cut away so the thickness is visible. Ops used: `vol_boundary`.*
 
 ![CT のかたまりが寸法になるまで(7 工程)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/wing3d_pipeline_flow.gif)
 

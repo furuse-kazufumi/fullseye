@@ -26,7 +26,9 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">connect_and_holes</code> — 連結成分の個数を返す（metric=<code style="color:#22d3bf">count</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;connect_and_holes&quot;)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">euler_number</code> / <code style="color:#22d3bf">sk_euler</code> — オイラー数（連結成分数 − 穴の数、<code style="color:#22d3bf">skimage.measure.euler_number</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;euler_number&quot;)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_holes</code> — 穴の面積比 <code style="color:#22d3bf">(穴埋め面積 − 面積)/穴埋め面積</code>。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;area_holes&quot;)</code></p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_frac</code> / <code style="color:#22d3bf">area_center</code> — マスクの面積比（前景画素の割合 = <code style="color:#22d3bf">mean(mask)</code>）。HALCON の <code style="color:#22d3bf">area_center</code> は重心も返すが本実装は面積割合のみ。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;area_frac&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_frac</code> — マスクの面積比（前景画素の割合 = <code style="color:#22d3bf">mean(mask)</code>、<code style="color:#22d3bf">feature</code> の 1 スカラ）。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;area_frac&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_center</code> — HALCON と同じ <b>(面積, 行, 列)</b> の 3 成分を返す（<code style="color:#22d3bf">region → match</code> の 1-D ベクトル）。3 成分とも解像度に依らないよう正規化してある: <code style="color:#22d3bf">[0]=面積/画像画素数</code>、<code style="color:#22d3bf">[1]=重心行/(H-1)</code>、<code style="color:#22d3bf">[2]=重心列/(W-1)</code>。空領域は <code style="color:#22d3bf">(0, 0.5, 0.5)</code>。呼び出し: <code style="color:#22d3bf">fullseye.apply(region, &quot;area_center&quot;)</code></p>
+<p>&lt;br&gt;★2026-09-02 まではこの op は <code style="color:#22d3bf">mean(mask)</code> の 1 スカラだけを返しており、名前にある <b>中心を返していなかった</b>（面積も画素数ではなく比率で、解像度依存だった）。1 スカラでは HALCON の 3 値を表せないため、<code style="color:#22d3bf">ncc_locate</code> と同じ <code style="color:#22d3bf">match</code> sort に移した。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">count_contours</code> — 輪郭リスト <code style="color:#22d3bf">cs</code> の本数。呼び出し: <code style="color:#22d3bf">fullseye.apply(contour, &quot;count_contours&quot;)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vol_count</code> — 3-D ボリューム内の連結成分数（<code style="color:#22d3bf">&gt; 0.5</code> を 3-D ラベリング）。呼び出し: <code style="color:#22d3bf">fullseye.apply(volume, &quot;vol_count&quot;)</code></p>
 <h3 style="color:#17b8a6;margin:8px 0 2px 0">2. 形の丸み・細長さ（region → feature、<code style="color:#22d3bf">skimage.regionprops</code> ベース、最大領域について測る）</h3>
@@ -71,7 +73,8 @@
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gray_histo_abs</code> — 標準偏差（ヒストグラムの広がりを 1 スカラで要約）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;gray_histo_abs&quot;)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">entropy_gray</code> — 64 ビンヒストグラムの Shannon エントロピー <code style="color:#22d3bf">/6</code>（平坦画像 ≈ 0、ノイズ画像で大）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;entropy_gray&quot;)</code></p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sk_entropy_feat</code> — <code style="color:#22d3bf">skimage.measure.shannon_entropy</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">estimate_noise</code> — ラプラシアンの MAD による頑健ノイズ σ（ノイズが増えると上がる）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;estimate_noise&quot;)</code></p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">estimate_noise</code> — ラプラシアンの MAD による頑健ノイズ <b>σ そのもの</b>（[0,1] 階調の単位つき量）。<code style="color:#22d3bf">σ = 1.4826·MAD(∇²x)/√20</code>（√20 は 5 点ラプラシアンのノイズ利得）。平坦画像 + ガウス雑音での実測は σ=0.01〜0.30 で真値の ±10% 以内。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;estimate_noise&quot;)</code></p>
+<p>&lt;br&gt;★2026-09-02 まではこれが <code style="color:#22d3bf">min(1, 1.4826·MAD·3)</code> で、<b>σ の単位ですらなく σ≳0.08 から 1.0 に張り付いて</b>いた（σ を 0.02→0.22 と 11 点振ると 8 点が厳密に 1.0）。上限 1.0 の clip は残っているが、入力が [0,1] である以上 σ≥1 は起こらないので <b>到達しない安全弁</b>であって動作域ではない。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_estimate_sigma</code> — <code style="color:#22d3bf">skimage.restoration.estimate_sigma</code> を <code style="color:#22d3bf">×5</code> 正規化。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xsk3_is_low_contrast</code> — 低コントラスト判定フラグ（0/1）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">xcv2_lap_var</code> — ラプラシアンの分散（ピント／ぼけ指標、<code style="color:#22d3bf">min(1, ·×20)</code>）。呼び出し: <code style="color:#22d3bf">fullseye.apply(image, &quot;xcv2_lap_var&quot;)</code></p>
@@ -143,8 +146,9 @@ print(&quot;PASS&quot;)</pre>
 <p>$$\phi_1 = \eta_{20} + \eta_{02}$$</p>
 <p>Shannon エントロピー（<code style="color:#22d3bf">entropy_gray</code> / <code style="color:#22d3bf">xwt_packet_entropy</code>）。ビン確率 $p_i$:</p>
 <p>$$H = -\sum_i p_i \log_2 p_i$$</p>
-<p>頑健ノイズ推定（<code style="color:#22d3bf">estimate_noise</code>）。ラプラシアン $L$ の MAD:</p>
-<p>$$\hat{\sigma} \approx 1.4826 \cdot \mathrm{median}\big|\,L - \mathrm{median}(L)\,\big|$$</p>
+<p>頑健ノイズ推定（<code style="color:#22d3bf">estimate_noise</code>）。ラプラシアン $L = \nabla^2 x$ の MAD を正規分布換算し、<b>カーネルのノイズ利得で割って σ に戻す</b>:</p>
+<p>$$\hat{\sigma} = \frac{1.4826 \cdot \mathrm{median}\big|\,L - \mathrm{median}(L)\,\big|}{\sqrt{20}}$$</p>
+<p>$\sqrt{20}$ は 5 点ラプラシアン $[[0,1,0],[1,-4,1],[0,1,0]]$ のノイズ利得（独立同分布ノイズ $\sigma$ を通すと分散が $(-4)^2 + 4\cdot 1^2 = 20$ 倍になる）。実測（平坦画像 + ガウス雑音 512×512、$\sigma = 0.01 \ldots 0.30$）で $1.4826\,\mathrm{MAD}/\sigma = 4.4501 \ldots 4.4816$、$\sqrt{20} = 4.4721$ と 0.5% 以内で一致する。★2026-09-02 以前は $\sqrt{20}$ で割る代わりに <b>3 を掛けて</b> おり、σ の単位ですらないうえ σ≳0.08 で 1.0 に飽和していた。</p>
 <p>折れ線長（<code style="color:#22d3bf">total_length</code> / <code style="color:#22d3bf">length_xld</code>）。頂点列 $(x_i, y_i)$:</p>
 <p>$$L = \sum_i \sqrt{(x_{i+1}-x_i)^2 + (y_{i+1}-y_i)^2}$$</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>

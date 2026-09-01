@@ -4,7 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gabor&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 相当</b>: <code style="color:#22d3bf">convol_gabor</code>(意味・パラメータは HALCON リファレンスが参考になる)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
-<p>Gabor フィルタ(方位 theta=a*pi、周波数 freq=b)。応答の大きさを返す。</p>
+<p>Gabor フィルタ(方位 theta=a*pi、周波数 freq=0.08+0.35b)。応答の大きさを返す。</p>
+<p>向きの規約は core の `<code style="color:#22d3bf">gabor</code><code style="color:#22d3bf"> と同じ: </code><code style="color:#22d3bf">a=0</code><code style="color:#22d3bf"> (θ=0) が **縦縞**、</code><code style="color:#22d3bf">a=0.5</code>`</p>
+<p>(θ=90°) が横縞に最も応答する。</p>
+<p>★正規化(2026-09-02 の修正): <b>カーネルの L1 ノルムで割る固定スケール</b>。</p>
+<p>以前は `<code style="color:#22d3bf">_norm01</code>`(その画像の min–max を [0,1] へ引き伸ばす)だったため、</p>
+<p>向きによる応答の大小が潰れるどころか <b>順序が逆転していた</b> —— 実測</p>
+<p>(96×96 の横縞、b=0.5): 横縞検出器 (a=0.5) の平均 0.34663 に対し、ほとんど</p>
+<p>反応しないはずの縦縞検出器 (a=0) が 0.58434 と <b>高く</b>出ていた(弱い応答ほど</p>
+<p>引き伸ばし率が大きいため)。`<code style="color:#22d3bf">|v| &lt;= 1</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">|v * g| &lt;= sum|g|</code>` なので</p>
+<p>L1 で割れば [0,1] を保ったまま向き・画像を跨いで比較できる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳しい使い方ガイド</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext ファミリ ガイド</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

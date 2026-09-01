@@ -70,7 +70,19 @@ def _gen_grid_region(v, a, b):
 
 # ── Filters: Gabor ─────────────────────────────────────────────────────────── #
 def _convol_gabor(v, a, b):
-    """Gabor フィルタ(方位 theta=a*pi、周波数 freq=b)。応答の大きさを返す。"""
+    """Gabor フィルタ(方位 theta=a*pi、周波数 freq=0.08+0.35b)。応答の大きさを返す。
+
+    向きの規約は core の ``gabor`` と同じ: ``a=0`` (θ=0) が **縦縞**、``a=0.5``
+    (θ=90°) が横縞に最も応答する。
+
+    ★正規化(2026-09-02 の修正): **カーネルの L1 ノルムで割る固定スケール**。
+    以前は ``_norm01``(その画像の min–max を [0,1] へ引き伸ばす)だったため、
+    向きによる応答の大小が潰れるどころか **順序が逆転していた** —— 実測
+    (96×96 の横縞、b=0.5): 横縞検出器 (a=0.5) の平均 0.34663 に対し、ほとんど
+    反応しないはずの縦縞検出器 (a=0) が 0.58434 と **高く**出ていた(弱い応答ほど
+    引き伸ばし率が大きいため)。``|v| <= 1`` なら ``|v * g| <= sum|g|`` なので
+    L1 で割れば [0,1] を保ったまま向き・画像を跨いで比較できる。
+    """
     theta = a * np.pi
     freq = 0.08 + 0.35 * b
     sigma = 2.2
@@ -81,8 +93,9 @@ def _convol_gabor(v, a, b):
     envelope = np.exp(-(xr ** 2 + yr ** 2) / (2 * sigma ** 2))
     kernel = envelope * np.cos(2 * np.pi * freq * xr)
     kernel -= kernel.mean()                              # DC 除去(平坦部で 0)
-    resp = ndimage.convolve(v, kernel, mode="reflect")
-    return _norm01(np.abs(resp))
+    l1 = float(np.abs(kernel).sum())
+    resp = np.abs(ndimage.convolve(np.clip(v, 0, 1), kernel, mode="reflect"))
+    return np.clip(resp / l1, 0, 1) if l1 > 1e-12 else np.zeros_like(resp)
 
 
 # ── Image: gray 値の多項式面近似(照明/背景推定)─────────────────────────────── #

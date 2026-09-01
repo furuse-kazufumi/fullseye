@@ -51,7 +51,7 @@ flowchart LR
 - `power_byte` — パワースペクトル(対数パワー、byte 表示相当、HALCON `power_byte`)。`fullseye.apply(img, "power_byte")`
 - `phase_rad` — スペクトルの位相角を `(angle+π)/2π` で `[0,1]` へ(HALCON `phase_rad`)。`fullseye.apply(img, "phase_rad")`
 - `phase_deg` — `phase_rad` と同じ位相マップ(HALCON `phase_deg`)。`fullseye.apply(img, "phase_deg")`
-- `fft_image_inv` — 逆 FFT の実部を正規化(HALCON `fft_image_inv`)。`fullseye.apply(img, "fft_image_inv")`
+- `fft_image_inv` — 逆 FFT の実部を `signed01`(零点 0.5)で `[0,1]` へ(HALCON `fft_image_inv`)。`fullseye.apply(img, "fft_image_inv")`
 - `xsp_dct` — 2-D DCT の対数振幅スペクトル。`fullseye.apply(img, "xsp_dct")`
 - `xwt_subband_tile` — Haar DWT の 4 サブバンド(LL/LH/HL/HH)を 2×2 に敷き詰めたモザイク。`fullseye.apply(img, "xwt_subband_tile")`
 - `xwt_mra_component` — 多重解像度解析(MRA, db2, 3 レベル)の 1 成分を `a` で選択。`fullseye.apply(img, "xwt_mra_component", 0.5)`
@@ -61,8 +61,10 @@ flowchart LR
 
 - `lowpass` — FFT の円形マスクで半径 `≤ 0.05+0.4a` を残す(高周波を落とす=ぼかし)。`fullseye.apply(img, "lowpass", 0.5)`
 - `highpass` — FFT の高周波側を通す(エッジ検出、零点 0.5 の `signed01`)。`fullseye.apply(img, "highpass", 0.5)`
-- `highpass_image` — `highpass` 同等(HALCON `highpass_image` 別名)。`fullseye.apply(img, "highpass_image")`
-- `bandpass_image` — 半径 `a` 下限〜`b` 上限の帯域だけを通す(HALCON `bandpass_image`)。`fullseye.apply(img, "bandpass_image", 0.3, 0.7)`
+- `highpass_image` — `highpass` 同等(HALCON `highpass_image` 別名。零点 0.5 の `signed01`)。`fullseye.apply(img, "highpass_image")`
+- `bandpass_image` — 半径 `a` 下限〜`b` 上限の帯域だけを通す(HALCON `bandpass_image`。零点 0.5 の `signed01`)。`fullseye.apply(img, "bandpass_image", 0.3, 0.7)`
+
+> ★正規化の規約(2026-09-02 に統一)。帯域を落とした結果は **零平均の符号つき信号**なので、`highpass` / `highpass_image` / `bandpass_image` / `fft_image_inv` は零点を 0.5 に置く `signed01` で `[0,1]` に写す。それ以前は `highpass_image` / `bandpass_image` / `fft_image_inv` だけが最大絶対値で割る `_norm` を使っており、`image` を名乗りながら値域 `[-1,1]` の配列を返していた(実測 camera.png, a=0.2: `highpass_image` min=-0.6067・負 50.2%、`bandpass_image` min=-0.8812・負 49.8%、`fft_image_inv` 負 49.4%)。保存・表示すると**画素の約半分が無言で真っ黒に潰れる**。非負の応答(`fft_image` / `power_real` / `power_byte` / `lowpass`)は従来どおり。
 - `sk_butterworth` — Butterworth 低域通過(`a` = カットオフ比)。`fullseye.apply(img, "sk_butterworth", 0.5)`
 - `xsp_dct_lowpass` — DCT 係数の左上ブロックだけ残す低域通過(周波数領域のぼかし)。`fullseye.apply(img, "xsp_dct_lowpass", 0.5)`
 - `dc_homomorphic` — `log(I)` を Fourier 領域で高域強調し照明を平坦化(`a` = カットオフ、`b` = 高/低ゲイン差)。`fullseye.apply(img, "dc_homomorphic", 0.5, 0.5)`
@@ -79,8 +81,10 @@ flowchart LR
 
 ### 方向性・リッジ・畳み込み系テクスチャフィルタ
 
-- `gabor` — DC を除いた Gabor カーネルで畳み込み帯域応答(`a`=向き θ、`b`=周波数)。`fullseye.apply(img, "gabor", 0.5, 0.5)`
+- `gabor` — DC を除いた Gabor カーネルで畳み込み帯域応答(`a`=向き `θ=πa`、`b`=周波数 `0.1+0.3b`)。**向きの規約: `a=0` が縦縞、`a=0.5` が横縞に応答**。正規化は**カーネルの L1 ノルム**(画像に依らない固定スケール)。`fullseye.apply(img, "gabor", 0.5, 0.5)`
 - `gen_gabor` — `gabor` と同じ Gabor 帯域応答(HALCON `gen_gabor` 別名)。`fullseye.apply(img, "gen_gabor", 0.5, 0.5)`
+
+> ★2026-09-02 まで `gabor` / `gen_gabor` / `hx_gabor` は**画像ごとの正規化**(最大絶対値で割る `_norm`、`hx_gabor` は min–max 引き伸ばし)で、**向きによる応答の大小が消えていた**。実測(96×96 の横縞): 生の畳み込みの平均振幅は θ=0° が 0.0165、θ=90° が 0.9077 で **54.9 倍**の差があるのに、`_norm` 経由の平均は 0.3554 対 0.4790 = **1.35 倍**まで潰れていた。`hx_gabor` はさらに悪く **順序が逆転**(横縞画像で a=0.5 が 0.34663、ほぼ反応しないはずの a=0 が 0.58434)。カーネル L1 で割る固定スケールにしたので 54.9 倍(`hx_gabor` は 21.0 倍)がそのまま残る。**`sk_gabor` は向きノブを持たない(skimage 既定 θ=0、`a` は周波数)ため今回の対象外**で、いまも画像依存の `_norm` を使っている —— 画像を跨いだ絶対比較には使えない。
 - `sk_gabor` — skimage Gabor 実部の振幅(`a`=周波数)。`fullseye.apply(img, "sk_gabor", 0.5)`
 - `sk_frangi` — Frangi vesselness(多スケール Hessian で管状/リッジ構造を強調)。`a`=スケール範囲(最大 σ 1..5、既定 a=0.5 で σ∈{1,2,3})、`b`=blobness 感度 beta(既定 b=0.5 で skimage 既定 0.5。2026-08-30 にノブを配線 — それ以前は無視されていた)。`fullseye.apply(img, "sk_frangi")`
 - `sk_meijering` — Meijering neuriteness(神経突起状の線構造を強調)。`fullseye.apply(img, "sk_meijering")`

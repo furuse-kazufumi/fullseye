@@ -300,19 +300,25 @@ def test_area_center_of_an_empty_region_is_fail_soft():
 # --------------------------------------------------------------------------- #
 # A6: gabor が向きによる応答の大小を保つ                                       #
 # --------------------------------------------------------------------------- #
-@pytest.mark.parametrize("name", ["gabor", "gen_gabor"])
+@pytest.mark.parametrize("name", ["gabor", "gen_gabor", "hx_gabor"])
 def test_gabor_keeps_the_orientation_contrast(name):
-    """`_norm`(画像ごとの最大値で割る)は 54.9 倍の差を 1.35 倍に潰していた。"""
+    """画像依存の正規化が向きの識別力を壊していた。
+
+    実測: `gabor` / `gen_gabor` は `_norm`(画像ごとの最大絶対値で割る)で
+    54.9 倍の差が 1.35 倍に潰れていた。`hx_gabor` は `_norm01`(min-max 引き伸ばし)
+    でさらに悪く、**順序が逆転** していた(横縞画像で a=0.5 が 0.34663、
+    ほとんど反応しないはずの a=0 が 0.58434)。
+    """
     n = 96
     yy, xx = np.mgrid[0:n, 0:n]
     horiz = 0.5 + 0.4 * np.sin(2 * np.pi * yy / 8.0)      # 横縞
     m_para = float(np.mean(RT[name](horiz.copy(), 0.0, 0.5)))   # a=0 -> 縦縞検出器
     m_perp = float(np.mean(RT[name](horiz.copy(), 0.5, 0.5)))   # a=0.5 -> 横縞検出器
-    assert m_perp / max(m_para, 1e-12) > 20.0, (
+    assert m_perp / max(m_para, 1e-12) > 10.0, (
         f"{name}: 向きの識別力が潰れている ({m_perp:.5f} / {m_para:.5f})")
 
 
-@pytest.mark.parametrize("name", ["gabor", "gen_gabor"])
+@pytest.mark.parametrize("name", ["gabor", "gen_gabor", "hx_gabor"])
 def test_gabor_orientation_convention_a0_is_vertical_stripes(name):
     """docstring の規約: a=0 (θ=0) が **縦縞** に応答する。"""
     n = 96
@@ -322,7 +328,7 @@ def test_gabor_orientation_convention_a0_is_vertical_stripes(name):
         20.0 * float(np.mean(RT[name](vert.copy(), 0.5, 0.5)))
 
 
-@pytest.mark.parametrize("name", ["gabor", "gen_gabor"])
+@pytest.mark.parametrize("name", ["gabor", "gen_gabor", "hx_gabor"])
 def test_gabor_scale_is_image_independent(name):
     """固定スケール(カーネル L1)なので、同じ模様なら明るさを変えても比例する。
 

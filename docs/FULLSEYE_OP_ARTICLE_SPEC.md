@@ -20,7 +20,7 @@
    - 判定列: 成功 / 部分成功 / 失敗。失敗も削除せず教訓として掲載(赤緑インジケータ禁止 — ✓/✗ や枠線で)。
    - **評価つきで少なく > 未評価で多く**。
 5. **図の様式**: 行=入力バリエーション(2〜4 行)× 列=入力/(baseline)/出力 のグリッド。各パネル上部に小ラベル(op 名は英語、説明は日本語)。幅 ~900px、PNG、1 枚 400KB 以下(パレット減色・縮小可)。
-6. **honest 表記**: キャプションに入力の出所を必ず明記 — 「AI 生成画像(Gemini)」「自前合成(真値つき)」「scikit-image 同梱」「NASA(PD)」「EHT Collaboration(CC BY 4.0)」。医療風画像には「診断用途ではない」を添える。実装の限界も書く(例: 本レジストリの edges_sub_pix はピクセル精度実装、lines_gauss は Frangi 稜線領域)。
+6. **honest 表記**: キャプションに入力の出所を必ず明記 — 「AI 生成画像(Gemini)」「自前合成(真値つき)」「scikit-image 同梱」「NASA(PD)」「EHT Collaboration(CC BY 4.0)」。医療風画像には「診断用途ではない」を添える。実装の限界も書く(例: 本レジストリの edges_sub_pix は勾配帯を法線方向に放物線当てはめで精密化したサブピクセル実装 —— 平均絶対誤差 0.0228 px 実測、ただし非極大抑制は無いので帯の全画素が稜線に寄る。lines_gauss は Frangi 稜線領域)。
 7. **家訓**: 赤緑インジケータ禁止 / ALL_CAPS 禁止 / 公開物にローカルパス禁止 / 文字入り画像の生成は避け PIL で入れる。
 
 ## 2. 入力素材の方針
@@ -68,7 +68,7 @@
 
 - 実行経路: `fullseye.apply(img, op, a, b)`(進化レジストリ 752 op、a/b は 0..1 の正規化ノブ)、`unified` 名前空間(`u.tools.*` 等、facade 1,606 op)、モジュール直呼び(`stereo/terrain/flow/videops/detect/measure/segmentation.watersheds_marker` 等)。
 - ハマりどころ(実測):
-  - `edges_sub_pix` はピクセル精度実装(勾配帯ラベリング)。サブピクセルは `threshold_sub_pix`(0.001px 実測)。
+  - `edges_sub_pix` は勾配帯ラベリング + 法線方向の放物線当てはめ(2026-09-02 に追加。真値 20.37 の合成ステップエッジで平均絶対誤差 0.500 px → **0.0228 px**)。非極大抑制が無いので帯の全画素が稜線へ重なる点は変わらない —— 1 画素幅の連鎖は `canny`、より高精度な等値線は `threshold_sub_pix`(0.001px 実測)。
   - `lines_gauss` は Frangi 稜線応答の領域を返す(Steger 中心線ではない)→ `skeleton` を併用して中心線化。
   - `local_max` の footprint は最大 9px → 距離マップは gauss 平滑+マーカー dilation で過分割を抑える。
   - registry の `projective_trans_image` は a/b の canned warp。実ホモグラフィは `vector_to_proj_hom_mat2d`+`gen_image_warp_map`。

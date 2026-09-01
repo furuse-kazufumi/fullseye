@@ -56,9 +56,11 @@ flowchart LR
 ### A. 剛体・相似・アフィン変換(`image → image`)
 - **rotate_image** — 画像中心まわりに回転(角度 `= -45° + 90°·a`、反射境界)。 — `fullseye.apply(img, "rotate_image", 0.5, 0.5)`(`a=0.5` で 0°)
 - **rotate_img** — `rotate_image` と同型の回転(コア registry 版、HALCON `rotate_image` 相当)。 — `fullseye.apply(img, "rotate_img", 0.7, 0.5)`
-- **zoom_image_factor** — 中心固定で拡大縮小(倍率 `s = 0.7 + 0.6·a`)。 — `fullseye.apply(img, "zoom_image_factor", 0.8, 0.5)`
-- **zoom_image_size** — サイズ指定ズームの型(挙動は中心スケーリング、HALCON `zoom_image_size` 相当)。 — `fullseye.apply(img, "zoom_image_size", 0.3, 0.5)`
-- **rescale_img** — コア版の再スケール(`zoom_image_size` と同系、Wolberg の画像ワープ)。 — `fullseye.apply(img, "rescale_img", 0.6, 0.5)`
+- **zoom_image_factor** — 中心固定で拡大縮小。HALCON と同じく **2 つの倍率**を取る: `a` = 縦倍率 `0.7+0.6a`、`b` = 横倍率 `0.7+0.6b`(キャンバスは保つ)。 — `fullseye.apply(img, "zoom_image_factor", 0.8, 0.5)`
+- **zoom_image_size** — **目標サイズ**指定。出力は `(round(H·(0.5+a)), round(W·(0.5+b)))` 画素ちょうどの配列で、入力画像全体がそこへ写る(この族で唯一 **出力 shape が変わる**)。 — `fullseye.apply(img, "zoom_image_size", 0.3, 0.5)`
+- **rescale_img** — コア版の等方再スケール(倍率 `s = 0.7+0.6a`、Wolberg の画像ワープ)。`b` は **補間の次数** `(0,1,3,3)[min(3,int(4b))]`(0=最近傍 / 1=双一次 / 3=三次)。 — `fullseye.apply(img, "rescale_img", 0.6, 0.5)`
+
+> ★2026-09-02 まで `zoom_image_factor` / `zoom_image_size` / `rescale_img` は **3 つとも同一実装**で(実測: 相互の最大絶対差 0.0 と 4.9e-14)、しかも 3 つとも `b` を使っていなかった。上記のとおり役割を分け、`rescale_img` の HALCON 名も実態に合わせて `zoom_image_size` → `zoom_image_factor` に付け替えてある。
 - **affine_trans_image** — 回転+せん断のアフィン写像(回転 `-20°+40°·a`、せん断 `(b-0.5)·0.4`)。 — `fullseye.apply(img, "affine_trans_image", 0.5, 0.7)`
 - **affine_trans_image_size** — 出力サイズ指定型のアフィン(同じアフィン核)。 — `fullseye.apply(img, "affine_trans_image_size", 0.5, 0.5)`
 - **affine_warp** — コア版のアフィンワープ(`affine_trans_image` と同核)。 — `fullseye.apply(img, "affine_warp", 0.5, 0.6)`

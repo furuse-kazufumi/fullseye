@@ -64,7 +64,8 @@ flowchart LR
 - `equalize` — ヒストグラム平坦化(CDF を LUT に)。順位を保ちコントラストを均す(HALCON `equ_histo_image`)。`fullseye.apply(img, "equalize", 0.5, 0.5)`
 - `equ_histo_image` — 大域ヒストグラム平坦化(HALCON `equ_histo_image`)。`fullseye.apply(img, "equ_histo_image", 0.5, 0.5)`
 - `equ_histo_image_rect` — 矩形ブロックごとの局所ヒストグラム平坦化。`a`=ブロック分割数(HALCON `equ_histo_image_rect`)。`fullseye.apply(img, "equ_histo_image_rect", 0.5, 0.5)`
-- `clahe` — タイル分割の適応平坦化。各タイルの CDF を近傍 4 タイル中心で**双線形ブレンド**するのでタイル継ぎ目は出ない(Zuiderveld 1994 の標準補間。2026-08-30 に補間を追加)。`a`=タイル数。`fullseye.apply(img, "clahe", 0.5, 0.5)`
+- `clahe` — タイル分割の適応平坦化 + **contrast limit**。各タイルの CDF を近傍 4 タイル中心で**双線形ブレンド**するのでタイル継ぎ目は出ない(Zuiderveld 1994 の標準補間。2026-08-30 に補間を追加)。`a`=タイル数 `2+int(3a)`、`b`=**clip limit**(ビン平均カウントに対する倍率 `256**b`。`b=0` → 1 倍 = 強調ゼロ、`b=1` → 256 倍 = 切り取り無効 = 素の AHE、OpenCV の既定 `clipLimit=40` ≈ `b=0.665`)。切り取った分は全ビンへ均等に配り直す。`fullseye.apply(img, "clahe", 0.5, 0.5)`  
+  <br>★2026-09-02 まで `b` は **完全に死んで**おり(`b=0` と `b=1` の出力差がきっかり 0.0)、clip limit が無い以上 **実装は AHE であって CLAHE ではなかった**。`b=1` は旧実装とビット一致する端に選んである。
 - `cv_clahe` — OpenCV CLAHE。`a`=clipLimit。`fullseye.apply(img, "cv_clahe", 0.5, 0.5)`
 - `sk_adapthist` — skimage の適応ヒストグラム平坦化(CLAHE)。`a`=clip_limit。`fullseye.apply(img, "sk_adapthist", 0.5, 0.5)`
 - `xkor_clahe` — kornia の CLAHE。`a`=clip_limit。`fullseye.apply(img, "xkor_clahe", 0.5, 0.5)`

@@ -81,7 +81,8 @@ flowchart LR
 - `hx_distance_pr` — 正規化クエリ点 `(a,b)` から region までの最小距離（距離変換ベース、`max(H,W)` 正規化）。
 
 ### E. グレー画像の空間フィルタ・照明/形状加工（image → image）
-- `hx_gabor` — 方位 `a·π`・周波数 `b` の Gabor フィルタ応答の大きさ（DC 除去済みで平坦部は 0）。 例: `fullseye.apply(img, "hx_gabor", 0.3, 0.5)`
+- `hx_gabor` — 方位 `a·π`・周波数 `0.08+0.35b` の Gabor フィルタ応答の大きさ（DC 除去済みで平坦部は 0）。**向きの規約: `a=0` が縦縞、`a=0.5` が横縞**。正規化は**カーネルの L1 ノルム**（画像に依らない固定スケール）。 例: `fullseye.apply(img, "hx_gabor", 0.3, 0.5)`  
+  <br>★2026-09-02 まで `_norm01`（その画像の min–max を [0,1] へ引き伸ばす）だったため、向きによる応答の大小が潰れるどころか **順序が逆転**していた —— 実測（96×96 の横縞、b=0.5）: 横縞検出器 (a=0.5) が 0.34663 に対し、ほぼ反応しないはずの縦縞検出器 (a=0) が 0.58434。修正後は 0.04866 対 0.00232（21.0 倍、向きは正しい方向）。
 - `hx_fit_surface1` / `hx_fit_surface2` — グレー値を 1 次 / 2 次多項式面で最小二乗近似（照明・背景の緩やかな傾きを推定）。 例: `fullseye.apply(img, "hx_fit_surface2", 0.5, 0.5)`
 - `hx_plane_deviation` — 1 次平面近似からの偏差 `|v − plane|`（平坦度・欠陥検査）。
 - `hx_shade_height_field` — 高さ場 `v` を方位 `a`・仰角 `b` の Lambertian 陰影で描画。
@@ -191,7 +192,7 @@ $$
 \mathrm{RMS} = \sqrt{\frac{1}{N}\sum_{i=1}^{N}\bigl(\sqrt{(x_i-c_x)^2+(y_i-c_y)^2}\; - \; r\bigr)^2}
 $$
 
-**Gabor カーネル**（`hx_gabor`）— 方位 $\theta=a\pi$、周波数 $f=0.08+0.35b$、包絡 $\sigma=2.2$。回転座標 $x_\theta = x\cos\theta + y\sin\theta$ に対し DC 除去した実 Gabor（応答の大きさを正規化して返す）:
+**Gabor カーネル**（`hx_gabor`）— 方位 $\theta=a\pi$、周波数 $f=0.08+0.35b$、包絡 $\sigma=2.2$。回転座標 $x_\theta = x\cos\theta + y\sin\theta$ に対し DC 除去した実 Gabor（応答の大きさをカーネルの L1 ノルム $\sum|g|$ で割って返す = 画像に依らない固定スケール）:
 
 $$
 g(x,y) = \exp\!\Bigl(-\tfrac{x_\theta^2 + y_\theta^2}{2\sigma^2}\Bigr)\,\cos\!\bigl(2\pi f\, x_\theta\bigr)

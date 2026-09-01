@@ -96,16 +96,23 @@ def test_gaussian_curvature_signal():
 # ops3d(curve3d)— 同格タプルは stack、補助つきタプルは本体を剥がす
 # --------------------------------------------------------------------------- #
 def test_curvature_torsion_pairs():
-    """curvature_torsion: (kappa, tau) が adapter で (2,N) に stack され pairs 宣言を通る。"""
+    """curvature_torsion: (kappa, tau) が adapter で **(N,2)** に並べられ pairs を通る。
+
+    2026-09-02 まで adapter は ``np.stack(r)`` = **(2,N)** を作っていた。当時
+    ``TYPE_CHECKS["pairs"]`` が ``lambda v: True`` で何でも通したため誰も気づけ
+    なかったが、``pairs`` の正典は消費側 6 op を実行して確かめると **(N,2)**
+    (または同じ長さの 1-D 2 本)で、(2,N) は名指しで拒否される
+    ("pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays")。
+    """
     c = _helix()
     r = ops3d.call("curvature_torsion", c)
     assert ops3d.OPS3D["curvature_torsion"]["out"] == "pairs"
     _check(ops3d.OPS3D, "curvature_torsion", r)
-    assert isinstance(r, np.ndarray) and r.shape == (2, len(c))
+    assert isinstance(r, np.ndarray) and r.shape == (len(c), 2)
     # 螺旋の解析値 κ=a/(a²+b²)=0.4706, τ=b/(a²+b²)=0.1176(端点は数値微分が乱れる)
     a2b2 = 2.0 ** 2 + 0.5 ** 2
-    assert np.median(r[0]) == pytest.approx(2.0 / a2b2, rel=0.1)
-    assert np.median(r[1]) == pytest.approx(0.5 / a2b2, rel=0.1)
+    assert np.median(r[:, 0]) == pytest.approx(2.0 / a2b2, rel=0.1)
+    assert np.median(r[:, 1]) == pytest.approx(0.5 / a2b2, rel=0.1)
 
 
 def test_arc_length_measurement():
