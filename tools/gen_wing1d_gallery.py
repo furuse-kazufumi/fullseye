@@ -1312,7 +1312,7 @@ def ex_weighting_ac(log):
                           f"   <- rectangular-window leakage, weighted at another gain",
                  C_WARN, 12, True)
 
-        axs = Ax(fig, 596, 452, W - 24, 560, (0.0, 6.0), (-1.25, 1.25))
+        axs = Ax(fig, 596, 452, W - 24, 556, (0.0, 6.0), (-1.25, 1.25))
         axs.panel(C_PANEL2)
         ink = fig.ink()
         axs.frame(ink)
