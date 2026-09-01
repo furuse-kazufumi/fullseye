@@ -1080,9 +1080,10 @@ def lf_epi_slope(lf, *, window=9, min_energy=1e-10):
     5x5x64x64 synthetic fields, median over the interior: with texture
     ``sigma = 1.5`` px, true ``+1.00 -> +1.0004``, ``+0.50 -> +0.5285``,
     ``+1.50 -> +1.3018``, ``+2.00 -> +1.4614``; with ``sigma = 5.0`` px the same
-    slopes give ``+0.9999``, ``+0.5029``, ``+1.4807``, ``+1.9411``. Integer
-    slopes on a wrapped field are recovered to ~1e-4; ``|s| > 1`` is
-    under-estimated. Use it as a fast dense initialiser, not as the final word.
+    slopes give ``+1.0003``, ``+0.5029``, ``+1.4827``, ``+1.9482``. Integer
+    slopes on a wrapped field come back within 4e-4 and ``s = 0`` is exact;
+    ``|s| > 1`` is under-estimated, by 27% at ``s = 2`` on the roughest texture.
+    Use it as a fast dense initialiser, not as the final word.
 
     Returns ``(slope_map, energy)``: the ``(H, W)`` slope map and the ``(H, W)``
     gradient energy ``J_xx + J_yy`` that was the denominator. Pixels whose
