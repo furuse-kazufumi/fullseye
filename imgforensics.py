@@ -604,9 +604,11 @@ def fingerprint_strength_map(fingerprint, block: int = 16) -> np.ndarray:
 # =========================================================================== #
 def _jpeg_roundtrip(u8: np.ndarray, quality: int) -> np.ndarray:
     """Pillow で **本物の JPEG** を通して戻す。近似には落ちない。"""
-    Image = _require("PIL", "JPEG 再圧縮").Image if False else None
-    from PIL import Image                                    # noqa: F811 (遅延)
     import io
+
+    _require("PIL", "JPEG 再圧縮")
+    from PIL import Image
+
     buf = io.BytesIO()
     Image.fromarray(u8, mode="L").save(buf, format="JPEG", quality=int(quality),
                                        subsampling=0, optimize=False)
