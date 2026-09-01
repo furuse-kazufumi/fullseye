@@ -1430,8 +1430,12 @@ def frame_align(reference, frame, model="similarity", threshold_sigma=5.0,
     2. 粗い平行移動を**オフセット投票**で出す(``_vote_translation``)。
        ここで :func:`features.match_keypoints` を使わないのは実測に基づく判断で、
        星野の 9x9 パッチは互いにほとんど同じ形なので Lowe の比検定
-       (既定 ratio=0.8)がほぼ全部を捨てる —— 実測では 40 星のフレーム対で
-       採れた対応が 0 件だった(投票法は同じ対で 38 件)。
+       (既定 ratio=0.8)がほぼ全部を捨てる。128x128 に 40 星、真のずれが
+       ``(+0.590, -0.540)`` px のフレーム対での実測: ``match_keypoints`` が
+       返した対応は **4 件、うち真値から 1 px 以内は 0 件**(= 使えるものが
+       1 つも無い)。同じ対で投票法は **26 票 → 26 対応 → 26 内点**、推定誤差
+       **0.0155 px**。星野は「特徴が無い」のではなく「特徴が全部同じ」なので、
+       記述子ではなく**配置の幾何**を使うのが正しい。
     3. 粗い移動で最近傍の対応を作り、
        :func:`mosaic.proj_match_points_ransac` で誤対応を落とし、
        :func:`fit_transform.vector_to_similarity`(``model`` に応じて
