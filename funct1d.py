@@ -67,7 +67,10 @@ Honest limitations (each is documented on the function it concerns):
     to the domain instead of failing or extrapolating (HALCON errors on
     out-of-domain composition; the clamp is the documented difference).
   * :func:`match_funct_1d_trans` recovers integer translation only (no sub-sample
-    shift, no x-scaling), by full cross-correlation of mean-subtracted signals.
+    shift, no x-scaling). It scores every candidate lag on the **same** window
+    (*y1*'s domain, *y2* end-held outside its own domain — the module's clamp
+    convention), so the returned ``score`` is a plain correlation coefficient in
+    ``[-1, 1]`` and lags are comparable to each other.
 
 Fail-closed on untrusted input: every entry point requires a **1-D** array
 (anything else raises ``ValueError``), rejects NaN / Inf samples and parameters

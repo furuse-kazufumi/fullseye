@@ -719,14 +719,15 @@ def ex_domain(log) -> dict:
                   ["元 192^3", f"切出 {np.asarray(part).shape[0]}x{np.asarray(part).shape[1]}x{np.asarray(part).shape[2]}"],
                   [C_A, C_B], fmt="%.3f MB",
                   title="float64 ボリュームのメモリ(実測 nbytes)")
-        c = _bars(c, 580, 400, 522, 118, [t_full * 1e3, t_part * 1e3],
+        c = _bars(c, 580, 400, 522, 118, [t_full, t_part],
                   ["元 192^3", "切出後"], [C_A, C_B], fmt="%.1f ms",
                   title="vol_gradient_magnitude の実行時間(3 回の最小値)")
         c = _text(c, [
             (18, 540, f"メモリ比 1/{ratio:.1f}  ({full_mb:.2f} MB -> {part_mb:.3f} MB)",
              C_D, 16, True),
-            (18, 564, f"実行時間比 {t_full / t_part:.1f}x 速い  "
-                      f"({t_full * 1e3:.1f} ms -> {t_part * 1e3:.1f} ms)", C_D, 16, True),
+            (18, 564, f"実行時間比 {t_full / t_part:.0f}x 速い  "
+                      f"({t_full:.0f} ms -> {t_part:.0f} ms、有効数字 1 桁に丸め)",
+             C_D, 16, True),
             (18, 590, f"vol_uncrop で元の座標へ貼り戻した結果は元と bit 一致: "
                       f"{'YES' if exact else 'NO'}", C_TEXT, 14, True),
             (18, 614, f"bounding box (z,y,x) = ({z0},{y0},{x0}) .. ({z1},{y1},{x1})  "
@@ -750,22 +751,26 @@ def ex_domain(log) -> dict:
             f"{100 * float(dom.mean()):.2f} % of the field is foreground, so "
             f"`vol_crop_domain` takes memory from {full_mb:.2f} MB to {part_mb:.3f} MB "
             f"(**1/{ratio:.1f}**) and the very same `vol_gradient_magnitude` goes from "
-            f"{t_full * 1e3:.1f} ms to {t_part * 1e3:.1f} ms "
-            f"(**{t_full / t_part:.1f}x faster**). `vol_uncrop` puts it back bit-identically."),
+            f"{t_full:.0f} ms to {t_part:.0f} ms "
+            f"(**{t_full / t_part:.0f}x faster**, both rounded to one significant figure so "
+            "the figure stays byte-reproducible). `vol_uncrop` puts it back bit-identically."),
         "ops": ["vol_bounding_box", "vol_crop_domain", "vol_reduce_domain", "vol_uncrop",
                 "vol_gradient_magnitude"],
         "facts": {"full_shape": list(vol.shape), "part_shape": list(np.asarray(part).shape),
                   "full_MB": full_mb, "part_MB": part_mb, "memory_ratio": ratio,
-                  "t_full_ms": t_full * 1e3, "t_part_ms": t_part * 1e3,
-                  "speedup": t_full / t_part, "uncrop_exact": exact,
+                  "t_full_ms_raw": t_full_raw * 1e3, "t_part_ms_raw": t_part_raw * 1e3,
+                  "speedup_raw": t_full_raw / t_part_raw,
+                  "t_full_ms_shown": t_full, "t_part_ms_shown": t_part,
+                  "speedup_shown": t_full / t_part, "uncrop_exact": exact,
                   "foreground_voxels": int(dom.sum()),
                   "foreground_pct": 100 * float(dom.mean())},
         "caption": ("192³ の視野に浮かぶ合成部品を輪切りで送りながら、元ボリューム・"
                     "domain マスク・切り出し後・貼り戻しを並べた。前景は全体の "
                     f"{100 * float(dom.mean()):.2f} % しかないので `vol_crop_domain` で "
                     f"メモリは {full_mb:.2f} MB → {part_mb:.3f} MB(**1/{ratio:.1f}**)、"
-                    f"同じ `vol_gradient_magnitude` が {t_full * 1e3:.1f} ms → "
-                    f"{t_part * 1e3:.1f} ms(**{t_full / t_part:.1f} 倍速**)になる。"
+                    f"同じ `vol_gradient_magnitude` が {t_full:.0f} ms → "
+                    f"{t_part:.0f} ms(**{t_full / t_part:.0f} 倍速**、"
+                    "図が再生成でバイト一致するよう有効数字 1 桁に丸めた実測値)になる。"
                     "`vol_uncrop` の貼り戻しは元と bit 一致。"),
         **info}
 
