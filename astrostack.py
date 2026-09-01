@@ -1317,6 +1317,15 @@ def _vote_translation(src, dst, max_shift, bin_px=1.0):
                                     mode="constant")
     p = np.unravel_index(int(np.argmax(smooth)), hist.shape)
     centre = np.array([p[0] * bin_px - max_shift, p[1] * bin_px - max_shift])
+    # 2 段の絞り込み: ビンの格子は真値と一般にずれるので、最頻ビンの中心から
+    # 一度平均を取り直し、その平均のまわりでもう一度選び直す。1 段だけだと
+    # 真値がビン境界に乗ったときに票が 2 分され、実測で 26 対応あるフレーム対の
+    # 票が 3 まで落ちた(推定値そのものは NN 照合が救っていたが、票数を
+    # 信頼度として読むと嘘になる)。
+    near = np.abs(d - centre).max(axis=1) <= 1.5 * bin_px
+    if near.sum() == 0:
+        return centre, 0
+    centre = d[near].mean(axis=0)
     near = np.abs(d - centre).max(axis=1) <= 1.5 * bin_px
     if near.sum() == 0:
         return centre, 0
