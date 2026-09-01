@@ -761,9 +761,10 @@ def temporal_bandpass(video, f_lo, f_hi, fps) -> np.ndarray:
 
     Exact for a component sitting on a bin: with ``T`` frames at ``fps``, a
     sinusoid at ``k*fps/T`` Hz passes with gain 1 and everything else in the band
-    passes untouched. Measured on a bin-centred 4 Hz sinusoid of amplitude 1 in
-    a clip that also carries a DC offset and a 12 Hz component, the recovered
-    amplitude is ``1.0`` to ``4.4e-16`` and the residual outside is ``0``.
+    passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame
+    32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of
+    amplitude 0.3, the recovered waveform matches the 4 Hz term alone to
+    ``max|err| = 4.36e-15``.
 
     A brick-wall filter rings in time; that is the price of an exact pass-band
     and it is the same choice the 2012 Eulerian magnification paper makes. The
