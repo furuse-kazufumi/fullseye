@@ -392,13 +392,20 @@ def _face_geometry(V: np.ndarray, F: np.ndarray):
     return A, e1, e2, unit
 
 
+#: ``image_size`` を画素から推定するときの上限(既定カメラの正気度のため)。
+#: これは割り当てではなく ``cx``/``cy`` と画角を決める数なので、上限を超えたら
+#: 例外ではなく頭打ちにする — 「画枠の外を指す画素」は正当な問い合わせで、
+#: 答えは miss だから。
+_MAX_IMPLIED_SIZE = 1 << 16
+
+
 def _implied_size(uv: np.ndarray):
     """画素の外接箱から画像サイズを推定する(既定カメラを合わせるためだけ)。"""
     if uv.shape[0] == 0:
         return DEFAULT_IMAGE_SIZE
     w = int(np.ceil(max(float(uv[:, 0].max()), 0.0))) + 1
     h = int(np.ceil(max(float(uv[:, 1].max()), 0.0))) + 1
-    return max(w, 2), max(h, 2)
+    return (min(max(w, 2), _MAX_IMPLIED_SIZE), min(max(h, 2), _MAX_IMPLIED_SIZE))
 
 
 def _cam_dict(K, R, t, width, height):

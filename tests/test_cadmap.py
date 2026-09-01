@@ -573,3 +573,30 @@ def test_coplanar_duplicate_faces_pick_the_lowest_index_deterministically():
                                     t=np.zeros(3), image_size=(256, 256))
     assert np.array_equal(a["face_id"], b["face_id"])
     assert (a["face_id"] < 2).all()                    # 複製ではなく元の面
+
+
+def test_many_labels_is_linear_not_quadratic():
+    """「1 画素 1 ラベル」の画像が線形時間で返る(実バグの回帰試験)。
+
+    ラベル値ごとに全画素を舐め直す実装だと O(ラベル数 x 画素数) になり、
+    実測で 256x256 = 65536 ラベル(たった 256 KB の入力)に 24.97 秒かかった。
+    argsort で 1 度にまとめる版では 0.85 秒。"""
+    import time
+    V, F, _ = _quad_patch(0.0, z=6.0, half=(2.0, 2.0))
+    n = 160
+    lab = np.arange(n * n, dtype=np.int32).reshape(n, n) + 1
+    t0 = time.perf_counter()
+    tbl = cadmap.cad_defect_to_cad((V, F), lab, K=_K(f=250.0, w=n, h=n),
+                                   R=np.eye(3), t=np.zeros(3))
+    dt = time.perf_counter() - t0
+    assert len(tbl) == n * n
+    assert all(r["n_pixels"] == 1 for r in tbl)
+    assert dt < 5.0, dt          # 二次だと 10 秒級になる
+
+
+def test_far_out_of_frame_pixel_does_not_build_an_absurd_default_camera():
+    """画枠の外を指す巨大な画素座標は miss を返すだけで、暴走しない。"""
+    V, F = _box()
+    rec = cadmap.cad_pixel_to_surface((V, F), np.array([[1e12, 1e12]]))
+    assert not rec["hit"][0]
+    assert rec["camera"]["width"] <= (1 << 16)
