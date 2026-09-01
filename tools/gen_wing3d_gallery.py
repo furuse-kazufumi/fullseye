@@ -2055,6 +2055,16 @@ def ex_icp(log) -> dict:
         "name": "wing3d_icp_registration",
         "title": "点群レジストレーション ―― ICP %d 回 / GICP %d 回" % (
             info_icp["iters"], g["iterations"]),
+        "title_en": "Point-cloud registration — ICP in %d iterations, GICP in %d" % (
+            info_icp["iters"], g["iterations"]),
+        "caption_en": (
+            f"A synthetic surface cloud of {target.shape[0]} points, rotated by "
+            f"{ang_deg:.0f}° and translated, put back by `icp_point2point_3d`. The initial "
+            f"RMSE of {hist[0]:.3f} falls to {info_icp['rmse']:.1e} in "
+            f"**{info_icp['iters']} iterations**, and the recovered pose is off by "
+            f"{ang_err:.1e} degrees and {t_err:.1e} in translation. `gicp`, which uses the "
+            f"local surface covariances, reaches the same answer in "
+            f"**{g['iterations']} iterations**."),
         "ops": ["icp_point2point_3d", "gicp"],
         "facts": {"points": int(target.shape[0]), "applied_rotation_deg": ang_deg,
                   "applied_translation": tt.tolist(),
