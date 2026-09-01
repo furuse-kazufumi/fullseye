@@ -161,8 +161,20 @@ def test_every_interop_exemption_carries_a_reason():
     """理由の無い免除は、次に読む人にとって規律ではなく抜け穴にしか見えない。"""
     for word, (prefixes, reason) in _INTEROP_ALLOWLIST.items():
         assert word in _BANNED, f"{word} は禁止語に無いので免除の意味がない"
-        assert prefixes, f"{word} の免除にパス制限が無い(全面免除は認めない)"
+        assert prefixes, f"{word} の免除にパス制限が無い(パス限定側で全面免除は認めない)"
         assert len(reason) >= 20, f"{word} の免除理由が短すぎる: {reason!r}"
+    for word, reason in _GLOBAL_INTEROP.items():
+        assert word in _BANNED, f"{word} は禁止語に無いので免除の意味がない"
+        assert len(reason) >= 20, f"{word} の全面免除の理由が短すぎる: {reason!r}"
+    assert not (set(_GLOBAL_INTEROP) & set(_INTEROP_ALLOWLIST)), \
+        "同じ語が全面免除とパス限定免除の両方にあると、どちらが効くか読めない"
+
+
+def test_global_exemptions_stay_few():
+    """全面免除は例外中の例外。増えたら規律が形骸化しているサインなので気づけるように。"""
+    assert len(_GLOBAL_INTEROP) <= 3, (
+        "全面免除が増えている。新しい語はパス限定側 (_INTEROP_ALLOWLIST) に入れるか、"
+        "そもそも名前を使わない設計に直すこと")
 
 
 def test_the_check_actually_catches_a_violation():
