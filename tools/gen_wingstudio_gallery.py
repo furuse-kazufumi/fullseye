@@ -1719,13 +1719,14 @@ CAPTIONS = {
         lambda f, r: (
             "{0} を {1}×{1} px の深度画像にし、有効画素 {2:,}({3:.1f} %)だけを"
             "逆投影して立体に起こす過程です。深度は {4:.4f}〜{5:.4f}。"
-            "ここで **画素中心の規約が 2 つある** ことが効きます —— `render3d` は"
-            "「添字 + 0.5」を画素中心としてレイを飛ばし、`camera.depth_to_points` は"
-            "添字そのものを中心とみなすので、素直に繋ぐと雲全体が {6:.5f} world 単位"
-            "(ちょうど半画素)ずれます。この展示は +0.5 側を採用しています。"
+            "ここで効くのが **画素中心の規約** です —— `render3d` も "
+            "`camera.depth_to_points` も `cadmap` も画素中心を**整数添字**に揃えたので、"
+            "逆投影した点を投影し直すと残差 rms は {6:.2e} px(= 丸め誤差)に収まります。"
+            "うっかり +0.5 を足すと雲全体が {7:.5f} world 単位、"
+            "全点が同じ側へ系統的にずれます。"
         ).format(f["source"], f["resolution"], f["n_points"],
                  f["valid_fraction"] * 100.0, f["depth_min"], f["depth_max"],
-                 f["half_pixel_shift_world"])),
+                 f["reprojection_rms_px"], f["offset_if_half_pixel_added"])),
     "cadmap": (
         "欠陥を CAD 面へ逆写像し、見えていない面を数える",
         "`cad_pixel_to_surface`, `cad_defect_to_cad`, `cad_visible_faces`, "
