@@ -1498,15 +1498,26 @@ def roundtrip_report(seed=0):
     rows.append({"pair": "points(z,y,x) -> keypoints -> points", "kind": "lossy",
                  "lost": f"z 列そのもの(RMS {float(np.sqrt(np.mean(z ** 2))):.4f})"})
 
-    # 5. keypoints <-> image2d(画素格子への量子化)
-    kp_in = rng.random((60, 2)) * 50.0 + 5.0
-    img = keypoints_to_image2d(kp_in, shape=(64, 64))
-    back = keypoints_from_image2d(img)
+    # 5. keypoints <-> image2d(画素格子への量子化)。**融合と量子化を分けて測る**
+    #    —— 混ぜると 8 近傍で融合した点の中間位置が誤差に乗り、一様量子化の
+    #    理論値 1/sqrt(12) と比較できなくなる(最初に混ぜて測って 0.586 px を
+    #    得たが、それは量子化誤差ではなく「量子化 + 融合」だった)。
     from scipy.spatial import cKDTree                       # noqa: PLC0415
+    grid = np.stack(np.meshgrid(np.arange(3.0, 62.0, 4.0), np.arange(3.0, 62.0, 4.0),
+                                indexing="ij"), -1).reshape(-1, 2)
+    kp_sep = grid + rng.uniform(-0.5, 0.5, size=grid.shape)     # 4 px 間隔 = 融合しない
+    back_sep = keypoints_from_image2d(keypoints_to_image2d(kp_sep, shape=(64, 64)))
+    d_sep, _ = cKDTree(back_sep).query(kp_sep, k=1)
+    rows.append({"pair": "keypoints -> image2d -> keypoints (離した点)", "kind": "lossy",
+                 "lost": f"画素格子への量子化のみ RMS {float(np.sqrt(np.mean(d_sep ** 2))):.4f} px "
+                         f"(一様量子化の理論値 1/sqrt(12) = 0.2887)、"
+                         f"点数 {kp_sep.shape[0]} -> {back_sep.shape[0]}(融合なし)"})
+    kp_in = rng.random((60, 2)) * 50.0 + 5.0
+    back = keypoints_from_image2d(keypoints_to_image2d(kp_in, shape=(64, 64)))
     dist, _ = cKDTree(back).query(kp_in, k=1)
-    rows.append({"pair": "keypoints -> image2d -> keypoints", "kind": "lossy",
-                 "lost": f"画素格子への量子化 RMS {float(np.sqrt(np.mean(dist ** 2))):.4f} px "
-                         f"(理論 1/sqrt(12) = 0.2887)、点数 {kp_in.shape[0]} -> {back.shape[0]}"})
+    rows.append({"pair": "keypoints -> image2d -> keypoints (ランダム配置)", "kind": "lossy",
+                 "lost": f"量子化 + 8 近傍の融合 RMS {float(np.sqrt(np.mean(dist ** 2))):.4f} px、"
+                         f"点数 {kp_in.shape[0]} -> {back.shape[0]}"})
 
     # 6. indices <-> labels
     idx = np.unique(rng.integers(0, 200, size=40))
