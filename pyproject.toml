@@ -86,7 +86,7 @@ py-modules = [
   "imgops_nary", "scale", "stereo", "terrain", "locomotion", "occupancy", "imgio", "detect", "registration", "deformreg", "ppf", "pose",
   "unified", "sim_source", "oss_adapter", "filters_flow", "matching3d",
   "calib", "matching", "mosaic", "objmodel3d", "pose_quat", "reconstruction", "transforms",
-  "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp", "funct1d", "mathops", "ops1d", "opsmath", "optics", "opsoptics", "visiondesign", "defectgen", "visionlab", "lightfield", "opslightfield", "photoncount", "opsphoton", "specularity", "opsspecular", "motionmag", "opsmotionmag",
+  "pointcloud", "pcseg", "mesh", "meshio_opt", "volio", "raster", "render3d", "camera", "odometry", "grasp", "meshrepair", "volops", "volregion", "volgray", "volxform", "volprobe", "volfreq", "volrestore", "handpose", "complexops", "specops", "flow", "motion", "sceneflow", "features", "events", "video", "videops", "engine", "graphengine", "acquire", "comm", "device", "dsp", "funct1d", "mathops", "ops1d", "opsmath", "optics", "opsoptics", "visiondesign", "defectgen", "visionlab", "lightfield", "opslightfield", "photoncount", "opsphoton", "specularity", "opsspecular", "motionmag", "opsmotionmag", "quatimage", "opsquat",
   "recipes", "measure", "studio", "sample_images", "sample_data", "accuracy_bench",
   "evolve", "problems", "baseline", "robust",
   "verify_auto", "honest_summary", "dispositions", "catalog", "report",

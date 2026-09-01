@@ -93,6 +93,26 @@ def _motion_clip(rng):
         seed=int(rng.integers(0, 1 << 31)))
 
 
+def _quat_image(rng):
+    """四元数画像。**2 種類を必ず混ぜて出す**。
+
+    色の四元数 (0,R,G,B) とモノジェニック信号は形が同じ (H,W,4) だが意味が
+    違い、取り違えても例外は出ない(色画像の方位を測ると滑らかで
+    もっともらしい atan2(G,R) 地図が返る)。片方しか種に置かないと、
+    相手側の op が永久に fail-closed のまま「発見ゼロ」に見える。
+    """
+    import quatimage                                    # noqa: PLC0415
+    if rng.random() < 0.5:
+        return quatimage.monogenic_signal(rng.random((32, 32)), wavelength_px=8.0)
+    import photometric                                  # noqa: PLC0415
+    import specularity                                  # noqa: PLC0415
+    return quatimage.rgb_to_quaternion(specularity.dichromatic_render(
+        photometric.surface_normals(
+            6.0 * np.exp(-((np.arange(32)[:, None] - 16.0) ** 2
+                           + (np.arange(32)[None, :] - 16.0) ** 2) / 200.0)),
+        (0.80, 0.55, 0.35), (0.30, 0.20, 1.0), specular=0.5, shininess=48.0))
+
+
 def _photon_counts(rng):
     """光子カウントヒストグラム(非負・時間 bin 添字)。
 
@@ -169,6 +189,8 @@ def make_generators():
         "lightfield": lambda rng: __import__("lightfield").lf_synthesize(
             (0.0, 1.0), angular=(3, 3), shape=(32, 32),
             seed=int(rng.integers(0, 1000)))[0],
+        # 四元数画像 (H,W,4)、順序 (w,x,y,z)
+        "qimage": _quat_image,
         # 偏光子掃引。既定の 0/45/90/135 度は面偏光センサの実配置で、
         # polarization_render の逆が polarization_separate なので鎖が閉じる
         "polsweep": lambda rng: __import__("specularity").polarization_render(
@@ -281,6 +303,13 @@ PARAM_HINTS = {
     # 時間軸の単位。T=32 / fps=32 なので 4 Hz はちょうど bin に乗り、
     # 3-5 Hz の通過帯域が空にならない
     "fps": lambda rng: 32.0, "f_lo": lambda rng: 3.0, "f_hi": lambda rng: 5.0,
+    # 四元数の積は**非可換**なので、左右は既定に頼らせず必ず引く
+    "side": lambda rng: "left" if rng.random() < 0.5 else "right",
+    "axis_rgb": lambda rng: (lambda v: v / np.linalg.norm(v))(
+        rng.standard_normal(3)),
+    "direction_rgb": lambda rng: (lambda v: v / np.linalg.norm(v))(
+        rng.standard_normal(3)),
+    "angle_rad": lambda rng: float(rng.uniform(-np.pi, np.pi)),
 }
 
 #: シグネチャが「型リスト=先頭位置引数」の素直な形でない op の専用ビルダー。
@@ -476,6 +505,9 @@ OP_PARAM_HINTS = {
     # sphere_sdf の R は**回転行列ではなく半径**。名前ヒントの np.eye(3) が
     # そのまま渡ると生の TypeError になる(名前の衝突であって op の罪ではない)
     ("sphere_sdf", "R"): lambda rng: 2.0,
+    ("quat_color_filter", "mode"): lambda rng: "remove" if rng.random() < 0.5 else "keep",
+    # PARAM_HINTS["alpha"] は 1.0(恒等利得)。motion_magnify と同じ理由で上書き
+    ("riesz_motion_magnify", "alpha"): lambda rng: 2.0,
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
@@ -514,6 +546,8 @@ def _registry_adapters():
     d.update(opsspecular.RESULT_ADAPTERS)
     import opsmotionmag
     d.update(opsmotionmag.RESULT_ADAPTERS)  # 意図的に空(下の理由を参照)
+    import opsquat
+    d.update(opsquat.RESULT_ADAPTERS)       # 空: 19 op とも宣言型を素で返す
     d["vol_rle_components"] = lambda r: r[0] if r else None
     d["label_components"] = lambda r: r[0] if isinstance(r, tuple) else r
     return d
@@ -592,6 +626,13 @@ def catalog():
     for n, m in opsmotionmag.OPSMOTIONMAG.items():
         if m["func"] is not None:
             ops.append((n, "motionmag", list(m["in"]), m["out"], m["func"]))
+    # 四元数画像(opsquat 台帳)。新語彙 `qimage` は (H,W,4)。色の四元数と
+    # モノジェニック信号という**意味の違う 2 種類が同じ形**なので、生成器は
+    # 必ず両方を出す(片方だけだと相手側の op が永久に fail-closed になる)
+    import opsquat
+    for n, m in opsquat.OPSQUAT.items():
+        if m["func"] is not None:
+            ops.append((n, "quat", list(m["in"]), m["out"], m["func"]))
     return ops
 
 
@@ -672,6 +713,12 @@ TYPE_CHECKS = {
     "cscalar": lambda v: isinstance(v, complex) and not isinstance(v, np.ndarray),
     # lightfield = 4-D (V, U, H, W)。角度 2 軸 × 空間 2 軸
     "lightfield": lambda v: isinstance(v, np.ndarray) and v.ndim == 4,
+    # qimage = (H,W,4) の四元数画像。**voxel / sdf / labels / video / score /
+    # histcube の述語も同時に満たす**(どれも ndim==3)ので、宣言型が qimage の
+    # op だけがこのプールを食う設計に頼っている。逆向き(既存の種が qimage を
+    # 名乗る)は起きない — 既存生成器で shape[2]==4 のものは無い
+    "qimage": lambda v: isinstance(v, np.ndarray) and v.ndim == 3
+    and v.shape[2] == 4 and v.dtype.kind == "f",
     # polsweep = 検光子を既知角度で回して撮った (N,H,W)。images と構造は同じだが
     # 意味が違い、**両方向とも黙って間違う**: 本物のライトスタックを
     # polarization_separate へ渡すと例外を出さず偏光度 5.4% を捏造し、逆に

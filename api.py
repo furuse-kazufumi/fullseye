@@ -330,6 +330,19 @@ from pose_quat import (  # noqa: E402,F401
     quat_interpolate, quat_normalize, quat_rotate_point_3d,
     quat_to_hom_mat3d, quat_to_pose, screw_to_dual_quat,
 )
+# 四元数画像: 画素が 4 成分になる層。複素画像 (cimage) の回転軸は 1 本だが、
+# 四元数の純虚部 (0,R,G,B) は 3 次元ベクトルで、q·x·q* が**色空間の 3 次元
+# 回転**になる — チャンネルごとの複素演算では構造的に書けない操作。加えて
+# Riesz 変換 / モノジェニック信号(解析信号の 2 次元一般化)を持つ。
+import quatimage  # noqa: E402  (quaternion images / Riesz + monogenic signal)
+from quatimage import (  # noqa: E402,F401
+    iqft2, monogenic_amplitude, monogenic_orientation, monogenic_phase,
+    monogenic_signal, qft2, quat_color_filter, quat_color_rotate,
+    quat_conjugate_image, quat_correlate, quat_image_multiply, quat_norm,
+    quat_normalize_image, quaternion_to_rgb, rgb_to_quaternion,
+    riesz_displacement, riesz_displacement_series, riesz_motion_magnify,
+    riesz_transform,
+)
 import motionmag  # noqa: E402  (phase-based motion magnification / vibration measurement)
 from motionmag import (  # noqa: E402,F401
     band_snr, complex_steerable_decompose, complex_steerable_reconstruct,
@@ -477,7 +490,14 @@ __all__ = [
     "tcspc_simulate", "tcspc_irf_convolve", "tcspc_background_subtract",
     "tcspc_stats", "dtof_depth", "dtof_cube_simulate", "dtof_cube_depth",
     "lifetime_fit", "lifetime_phasor",
-    "specularity", "motionmag", "pose_quat",
+    "specularity", "motionmag", "pose_quat", "quatimage",
+    "iqft2", "monogenic_amplitude", "monogenic_orientation",
+    "monogenic_phase", "monogenic_signal", "qft2", "quat_color_filter",
+    "quat_color_rotate", "quat_conjugate_image", "quat_correlate",
+    "quat_image_multiply", "quat_norm", "quat_normalize_image",
+    "quaternion_to_rgb", "rgb_to_quaternion", "riesz_displacement",
+    "riesz_displacement_series", "riesz_motion_magnify",
+    "riesz_transform",
     "axis_angle_to_quat", "convert_point_3d_cart_to_spher",
     "convert_point_3d_spher_to_cart", "convert_pose_type", "create_pose",
     "dual_quat_compose", "dual_quat_conjugate", "dual_quat_interpolate",

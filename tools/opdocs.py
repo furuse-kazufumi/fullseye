@@ -65,6 +65,8 @@ LEDGER_DIMS = {
                  "module": "specularity", "family": "specular_photometric"},
     "motionmag": {"registry": "opsmotionmag", "table": "OPSMOTIONMAG",
                   "module": "motionmag", "family": "motion_magnification"},
+    "quat": {"registry": "opsquat", "table": "OPSQUAT",
+             "module": "quatimage", "family": "quaternion_monogenic"},
 }
 
 _AUTHOR = "Kazufumi Furuse"

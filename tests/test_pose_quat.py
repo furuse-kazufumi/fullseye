@@ -63,13 +63,29 @@ def test_a_rotor_is_exactly_unit_and_its_matrix_is_orthogonal():
 def test_the_shrink_would_have_been_visible_at_this_tolerance():
     """この検査が実際に旧実装を落とすことの確認(空振りしていないこと)。
 
-    旧実装は ``q / (norm + 1e-12)`` だった。同じ式を再現して、上の許容差を
-    確かに超えることを示す ―― 超えないなら検査に意味が無い。
+    **ε がどこで効いていたかを取り違えない**のが要点。旧実装では
+    ``axis_angle_to_quat`` と ``quat_normalize`` の両方が ``norm + 1e-12`` で
+    割り、しかも ``quat_to_hom_mat3d`` は内部で ``quat_normalize`` を呼ぶので、
+    縮みが**二重に**掛かって直交性が 4.0e-12 ずれていた。外側の式だけ
+    再現しても現行の内部正規化が直してしまうので(実測 4.4e-16)、ここでは
+    行列の構成まで旧経路で組み直して比べる。
     """
-    q = pq.axis_angle_to_quat(0.0, 0.0, 1.0, np.pi / 2)
-    old = q / (float(np.linalg.norm(q)) + 1e-12)       # 旧実装の再現
-    R = np.asarray(pq.quat_to_hom_mat3d(old))[:3, :3]
-    assert float(np.abs(R.T @ R - np.eye(3)).max()) > 1e-13
+    axis = np.array([0.0, 0.0, 1.0])
+    axis = axis / (float(np.linalg.norm(axis)) + 1e-12)          # 旧 axis_angle
+    q = np.concatenate([[np.cos(np.pi / 4)], axis * np.sin(np.pi / 4)])
+    w, x, y, z = q / (float(np.linalg.norm(q)) + 1e-12)          # 旧 normalize
+    R = np.array([[1 - 2 * (y * y + z * z), 2 * (x * y - w * z), 2 * (x * z + w * y)],
+                  [2 * (x * y + w * z), 1 - 2 * (x * x + z * z), 2 * (y * z - w * x)],
+                  [2 * (x * z - w * y), 2 * (y * z + w * x), 1 - 2 * (x * x + y * y)]])
+    old_err = float(np.abs(R.T @ R - np.eye(3)).max())
+    assert old_err > 1e-13, (
+        "旧経路の再現が縮みを示していない(%.3g)— 検査が空振りしている" % old_err)
+
+    # 現行経路は同じ回転で丸め誤差の桁に収まる
+    new = np.asarray(pq.quat_to_hom_mat3d(
+        pq.axis_angle_to_quat(0.0, 0.0, 1.0, np.pi / 2)))[:3, :3]
+    new_err = float(np.abs(new.T @ new - np.eye(3)).max())
+    assert new_err < 1e-14 and new_err < old_err / 100.0
 
 
 # --------------------------------------------------------------------------- #
