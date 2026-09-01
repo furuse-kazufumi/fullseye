@@ -351,18 +351,224 @@ def test_camera_inside_the_mesh_sees_nothing_with_culling():
     assert off["hit"].any()
 
 
-def test_inverted_winding_inverts_which_faces_are_visible():
-    """巻きを全部反転すると、**近い面が消えて遠い面が見える**。
+def test_inverted_winding_inverts_which_faces_are_visible_on_an_open_mesh():
+    """裏面判定は巻きに依存する ―― という文書化済みの仮定を数値に出す。
 
-    裏面判定は巻きに依存するという文書化済みの仮定を、そのまま数値に出す
-    (「巻きが混在した mesh では cull_backfaces=False にすること」の根拠)。"""
-    V, F = _box()
-    kw = dict(K=_K(f=60.0, w=48, h=48), R=np.eye(3),
-              t=np.array([0.0, 0.0, 5.0]), width=48, height=48)
+    **開いた**(watertight でない)mesh で確かめる。閉じた mesh を反転したものは
+    2026-09-02 以降、巻き方向の門番(:func:`cadmap._orient_for_culling`)が先に
+    捕まえるので、この仮定を素で観察できるのは開いた mesh だけになった
+    (門番が開いた mesh を素通しすることの確認も兼ねる)。"""
+    Vn, Fn, _ = _quad_patch(0.0, z=5.0, half=(1.0, 1.0))     # 手前の板
+    Vf, Ff, _ = _quad_patch(0.0, z=9.0, half=(3.0, 3.0))     # 奥の板
+    V = np.vstack([Vn, Vf])
+    F = np.vstack([Fn, Ff + len(Vn)])
+    kw = dict(K=_K(f=200.0, w=64, h=64), R=np.eye(3), t=np.zeros(3),
+              width=64, height=64)
     ok = set(cadmap.cad_visible_faces((V, F), **kw).tolist())
     flipped = set(cadmap.cad_visible_faces((V, F[:, ::-1].copy()), **kw).tolist())
-    assert {0, 1} <= ok and ok.isdisjoint({2, 3})        # 正しい巻き: 近い面
-    assert {2, 3} <= flipped and flipped.isdisjoint({0, 1})   # 反転: 遠い面
+    off = set(cadmap.cad_visible_faces((V, F[:, ::-1].copy()),
+                                       cull_backfaces=False, **kw).tolist())
+    assert {0, 1} <= ok                                  # 正しい巻き: 手前の板が見える
+    assert flipped == set()                              # 反転: 全部裏面 = 何も見えない
+    assert {0, 1} <= off                                 # カリングを切れば当たる
+
+
+# --------------------------------------------------------------------------- #
+# 4b. 内向きに巻かれた閉メッシュ(2026-09-02 の実バグの回帰試験)                #
+# --------------------------------------------------------------------------- #
+def _pass_through_winding_gate(monkeypatch):
+    """巻き方向の門番を素通しにする = **修正前の cadmap** を再現する。"""
+    monkeypatch.setattr(cadmap, "_orient_for_culling",
+                        lambda V, F, cull, strict, op, reports: (F, False))
+
+
+def test_inward_winding_reported_impossible_visibility_before_the_fix(monkeypatch):
+    """★元のバグの再現 → 修正の効果、を 1 つの試験の中で並べる。
+
+    内向きに巻かれた閉メッシュに ``cull_backfaces=True`` を掛けると、**手前の壁
+    が裏面としてカリングされて**光線が部品を突き抜け、裏側の点まで
+    ``visible`` になる。遮蔽は可視を**減らす**ことしかできないので、
+
+        可視率 > 法線がカメラを向く面積比
+
+    は物理的にあり得ない ―― これを「不可能条件」としてそのまま assert する。
+    実測(この試験のジオメトリ): 門番を外すと可視率 1.0000 に対し前向き面積比
+    0.4414。1400 面の実部品でも同じことが起き、0.861 対 0.517 だった。"""
+    V, F = _closed_blob()
+    Fin = np.ascontiguousarray(F[:, ::-1])              # 内向きに巻き直す
+    K, R, t = _K(f=300.0, w=256, h=256), np.eye(3), np.array([0.0, 0.0, 5.0])
+    bound = _front_facing_area_fraction(V, F, R, t)
+    pts = _surface_samples(V, Fin)
+
+    with monkeypatch.context() as m:                     # --- 修正前を再現 ---
+        _pass_through_winding_gate(m)
+        buggy = cadmap.cad_surface_to_pixel((V, Fin), pts, K=K, R=R, t=t,
+                                            image_size=(256, 256))
+        buggy_frac = float(np.mean(buggy["visible"]))
+    assert buggy_frac > bound, (buggy_frac, bound)       # ← 不可能条件が出ていた
+
+    fixed = cadmap.cad_surface_to_pixel((V, Fin), pts, K=K, R=R, t=t,
+                                        image_size=(256, 256))
+    fixed_frac = float(np.mean(fixed["visible"]))
+    assert fixed["winding_fixed"] is True
+    assert fixed_frac <= bound, (fixed_frac, bound)      # ← 修正後は整合する
+    assert fixed_frac < buggy_frac
+
+
+def test_inward_winding_is_fixed_and_reported_in_the_return_value():
+    """自動修正したことが**返り値に出る**(黙って直さない)。
+
+    直したあとの答えは、最初から外向きに巻いてある同じ形と一致する。"""
+    V, F = _closed_blob()
+    Fin = np.ascontiguousarray(F[:, ::-1])
+    K, R, t = _K(f=300.0, w=128, h=128), np.eye(3), np.array([0.0, 0.0, 5.0])
+    uv = np.stack(np.meshgrid(np.arange(8.0, 120.0, 3.0),
+                              np.arange(8.0, 120.0, 3.0)), -1).reshape(-1, 2)
+
+    a = cadmap.cad_pixel_to_surface((V, F), uv, K=K, R=R, t=t, image_size=(128, 128))
+    b = cadmap.cad_pixel_to_surface((V, Fin), uv, K=K, R=R, t=t, image_size=(128, 128))
+    assert a["winding_fixed"] is False and b["winding_fixed"] is True
+    assert np.array_equal(a["face_id"], b["face_id"])     # 面の行番号は変わらない
+    assert a["hit"].any()
+    assert np.allclose(a["point"][a["hit"]], b["point"][b["hit"]], atol=1e-12)
+    # 法線も外向きに揃う(内向きのまま返していたら符号が逆になる)
+    assert np.allclose(a["normal"][a["hit"]], b["normal"][b["hit"]], atol=1e-12)
+
+    lab = np.zeros((128, 128), np.int32)
+    lab[50:80, 50:80] = 1
+    ta = cadmap.cad_defect_to_cad((V, F), lab, K=K, R=R, t=t)
+    tb = cadmap.cad_defect_to_cad((V, Fin), lab, K=K, R=R, t=t)
+    assert ta[0]["winding_fixed"] is False and tb[0]["winding_fixed"] is True
+    assert np.isclose(ta[0]["area"], tb[0]["area"])
+
+    # 配列しか返せない op は既定で拒否し、明示的に頼まれたときだけ直す
+    kw = dict(K=K, R=R, t=t, width=96, height=96)
+    with pytest.raises(ValueError, match="wound inward"):
+        cadmap.cad_visible_faces((V, Fin), **kw)
+    assert np.array_equal(cadmap.cad_visible_faces((V, Fin), strict=False, **kw),
+                          cadmap.cad_visible_faces((V, F), **kw))
+
+
+def test_strict_refuses_the_inward_wound_closed_mesh():
+    """``strict=True`` は直さずに ``ValueError``(fail-closed)。"""
+    V, F = _closed_blob()
+    Fin = np.ascontiguousarray(F[:, ::-1])
+    K, R, t = _K(f=300.0, w=64, h=64), np.eye(3), np.array([0.0, 0.0, 5.0])
+    with pytest.raises(ValueError, match="signed volume is negative"):
+        cadmap.cad_pixel_to_surface((V, Fin), np.array([[32.0, 32.0]]), K=K, R=R,
+                                    t=t, image_size=(64, 64), strict=True)
+    with pytest.raises(ValueError, match="signed volume is negative"):
+        cadmap.cad_surface_to_pixel((V, Fin), V[:4].copy(), K=K, R=R, t=t,
+                                    image_size=(64, 64), strict=True)
+    with pytest.raises(ValueError, match="signed volume is negative"):
+        cadmap.cad_defect_to_cad((V, Fin), np.ones((64, 64), np.int32), K=K, R=R,
+                                 t=t, strict=True)
+    with pytest.raises(ValueError, match="signed volume is negative"):
+        cadmap.cad_visible_faces((V, Fin), K=K, R=R, t=t, width=64, height=64)
+
+
+def test_correctly_wound_closed_mesh_is_untouched_no_false_positive():
+    """**正しく外向きに巻かれた閉メッシュでは何も変わらない**(偽陽性が無い)。
+
+    門番を素通しにした「修正前」の答えと、修正後の答えが**厳密に一致**すること
+    を全 op で確かめる。``strict=True`` でも通る。"""
+    for V, F in (_closed_blob(), _box(size=(2.0, 1.5, 1.2))):
+        K, R, t = _K(f=300.0, w=96, h=96), np.eye(3), np.array([0.0, 0.0, 5.0])
+        uv = np.stack(np.meshgrid(np.arange(4.0, 92.0, 3.0),
+                                  np.arange(4.0, 92.0, 3.0)), -1).reshape(-1, 2)
+        lab = np.zeros((96, 96), np.int32)
+        lab[30:60, 30:60] = 1
+        pts = _surface_samples(V, F)
+
+        import unittest.mock as _mock
+        with _mock.patch.object(cadmap, "_orient_for_culling",
+                                lambda V, F, c, s, o, reports: (F, False)):
+            ref_pix = cadmap.cad_pixel_to_surface((V, F), uv, K=K, R=R, t=t,
+                                                  image_size=(96, 96))
+            ref_srf = cadmap.cad_surface_to_pixel((V, F), pts, K=K, R=R, t=t,
+                                                  image_size=(96, 96))
+            ref_tab = cadmap.cad_defect_to_cad((V, F), lab, K=K, R=R, t=t)
+            ref_vis = cadmap.cad_visible_faces((V, F), K=K, R=R, t=t,
+                                               width=96, height=96)
+
+        got_pix = cadmap.cad_pixel_to_surface((V, F), uv, K=K, R=R, t=t,
+                                              image_size=(96, 96), strict=True)
+        got_srf = cadmap.cad_surface_to_pixel((V, F), pts, K=K, R=R, t=t,
+                                              image_size=(96, 96), strict=True)
+        got_tab = cadmap.cad_defect_to_cad((V, F), lab, K=K, R=R, t=t, strict=True)
+        got_vis = cadmap.cad_visible_faces((V, F), K=K, R=R, t=t,
+                                           width=96, height=96, strict=True)
+
+        assert got_pix["winding_fixed"] is False
+        assert got_srf["winding_fixed"] is False
+        assert got_tab[0]["winding_fixed"] is False
+        assert np.array_equal(ref_pix["face_id"], got_pix["face_id"])
+        assert np.array_equal(np.nan_to_num(ref_pix["point"], nan=0.0),
+                              np.nan_to_num(got_pix["point"], nan=0.0))
+        assert np.array_equal(ref_srf["visible"], got_srf["visible"])
+        assert np.array_equal(ref_srf["occluder_face"], got_srf["occluder_face"])
+        assert ref_tab[0]["area"] == got_tab[0]["area"]
+        assert np.array_equal(ref_vis, got_vis)
+
+
+def test_open_mesh_is_passed_through_without_a_winding_verdict():
+    """**閉じていない mesh は巻き方向を判定せず素通しする**。
+
+    符号つき体積は閉曲面でしか意味を持たないので、開いた板を「内向き」と
+    誤検出して壊さないための順序。``strict=True`` でも例外にならない。"""
+    V, F, _ = _quad_patch(0.0, z=6.0, half=(2.0, 2.0))     # 2 三角形 = 開いた板
+    Fin = np.ascontiguousarray(F[:, ::-1])                 # 裏返しても開いたまま
+    assert not cadmap._is_closed_surface(F, len(V))
+    assert cadmap._signed_volume(V, Fin) < 0.0             # 符号は負だが無意味
+    K = _K(f=400.0, w=256, h=256)
+    uv = np.array([[127.5, 127.5]])
+    for Ff in (F, Fin):
+        rec = cadmap.cad_pixel_to_surface((V, Ff), uv, K=K, R=np.eye(3),
+                                          t=np.zeros(3), image_size=(256, 256),
+                                          strict=True)
+        assert rec["winding_fixed"] is False
+    # 素通しなので、裏返した板は「裏面だから当たらない」ままでなければならない
+    assert cadmap.cad_pixel_to_surface((V, F), uv, K=K, R=np.eye(3),
+                                       t=np.zeros(3), image_size=(256, 256),
+                                       strict=True)["hit"][0]
+    assert not cadmap.cad_pixel_to_surface((V, Fin), uv, K=K, R=np.eye(3),
+                                           t=np.zeros(3), image_size=(256, 256),
+                                           strict=True)["hit"][0]
+    assert cadmap.cad_visible_faces((V, Fin), K=K, R=np.eye(3), t=np.zeros(3),
+                                    width=64, height=64).size == 0
+
+
+def test_no_winding_check_when_backface_culling_is_off():
+    """``cull_backfaces=False`` では巻き方向は結果に効かないので**検査しない**。
+
+    ``strict=True`` を渡しても内向きの閉メッシュが通り、``winding_fixed`` は
+    ``False`` のまま(= 法線は入力の巻きどおりに返る)という docstring どおりの
+    honest な挙動。"""
+    V, F = _closed_blob()
+    Fin = np.ascontiguousarray(F[:, ::-1])
+    K, R, t = _K(f=300.0, w=64, h=64), np.eye(3), np.array([0.0, 0.0, 5.0])
+    rec = cadmap.cad_pixel_to_surface((V, Fin), np.array([[32.0, 32.0]]), K=K,
+                                      R=R, t=t, image_size=(64, 64),
+                                      cull_backfaces=False, strict=True)
+    assert rec["winding_fixed"] is False
+    ok = cadmap.cad_pixel_to_surface((V, F), np.array([[32.0, 32.0]]), K=K, R=R,
+                                     t=t, image_size=(64, 64),
+                                     cull_backfaces=False, strict=True)
+    assert rec["hit"][0] and ok["hit"][0]
+    # 法線は入力の巻きどおり = 符号が逆になる(直していないことの直接の証拠)
+    assert np.allclose(rec["normal"][0], -ok["normal"][0], atol=1e-12)
+    assert cadmap.cad_visible_faces((V, Fin), K=K, R=R, t=t, width=64, height=64,
+                                    cull_backfaces=False, strict=True).size > 0
+
+
+def test_winding_gate_rejects_non_bool_flags():
+    """``cull_backfaces`` / ``strict`` の型は 1 箇所(門番)で締める。"""
+    V, F = _box()
+    for kw in ({"cull_backfaces": 1}, {"strict": 1}, {"cull_backfaces": "yes"}):
+        with pytest.raises(ValueError):
+            cadmap.cad_pixel_to_surface((V, F), np.array([[10.0, 10.0]]), **kw)
+        with pytest.raises(ValueError):
+            cadmap.cad_visible_faces((V, F), width=16, height=16, **kw)
 
 
 # --------------------------------------------------------------------------- #
