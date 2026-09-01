@@ -953,10 +953,11 @@ def envelope_spectrum(x, rate, low, high, order=4, n_peaks=5):
 
     Measured on :func:`synthesize_bearing_signal` (25600 Hz, 1 s, 3 kHz carrier,
     107 Hz defect, ``m = 0.5``) demodulated over 2000-4000 Hz: ``peak_freq =
-    107.000000`` Hz, ``peak_amplitude = 0.499999`` — the modulation depth
-    itself, recovered to 6 digits, because the analytic envelope of that signal
-    is exactly ``1 + 0.5 cos(2 pi 107 t)``. The raw ``dsp.spectrum`` of the same
-    signal has amplitude 3.1e-17 at 107 Hz.
+    107.000000`` Hz, ``peak_amplitude = 0.499677`` — the modulation depth
+    itself, because the analytic envelope of that signal is exactly
+    ``1 + 0.5 cos(2 pi 107 t)``. The raw ``dsp.spectrum`` of the same signal has
+    amplitude 4.3e-16 at 107 Hz: the defect rate is not present as a frequency
+    component at all, which is the entire point of the operator.
 
     **Raises** ``ValueError``: everything :func:`_as_signal` and ``dsp.bandpass``
     refuse (non-finite, complex, masked, non-1-D, a band edge outside
