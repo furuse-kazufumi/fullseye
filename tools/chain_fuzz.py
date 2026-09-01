@@ -616,17 +616,28 @@ def run_chain(ops, gens, rng, length, log, chain_seed=None, script=None,
                      if all((t in pool and pool[t]) or t == "any" for t in o[2])]
             if not cands:
                 break
-            # 型空間の探索バイアス。一様に引くと、**深い前置きが要る型**
-            # (mesh / primitive / surface など、他の op が作らないとプールに
-            # 現れない型)へ辿り着く確率が低いままになる。実測では 1500 連鎖 ×
-            # 長さ 6 で 112 op が「構造的には到達可能なのに一度も引かれない」
-            # 状態だった。そこで一定確率で「**まだプールに無い型を産む op**」に
-            # 絞る。判断材料はその連鎖のプールだけなので、chain_seed から
-            # 決定的に再現でき、--minimize / --replay の前提を壊さない。
-            if explore > 0.0 and rng.random() < explore:
-                fresh = [o for o in cands if o[3] not in pool]
-                if fresh:
-                    cands = fresh
+            # **狙いを持った拡散**。一様に引くと、候補が数百ある中から特定の op
+            # が長さ 6 の枠内で選ばれる確率は低く、実測では 1500 連鎖でも 112 op
+            # が「構造的には到達可能なのに一度も引かれない」ままだった。
+            #
+            # 最初は「まだプールに無い型を産む op を優先する」型空間バイアスを
+            # 試したが、**効かなかった**(321 → 322 op、1500 連鎖で +1)。プールは
+            # 最初から全生成器型で埋まっているので、優先対象がすぐ尽きるため。
+            #
+            # そこで **連鎖ごとに目標 op を 1 つ決め、そこへ寄せる**方式にした。
+            # 目標は連鎖固有 seed から決めるので chain_seed だけで再現でき、
+            # --minimize / --replay の前提を壊さない。1500 連鎖 / 434 op なら
+            # 1 op あたり平均 3.5 連鎖が狙ってくれる勘定になる。
+            if target is not None and rng.random() < explore:
+                hit = [o for o in cands if o[0] == target[0]]
+                if hit:
+                    cands = hit
+                else:
+                    # 目標が食う型を**産む** op を優先 = 1 手ぶん近づく
+                    want = set(target[2])
+                    step = [o for o in cands if o[3] in want]
+                    if step:
+                        cands = step
             name, dim, ins, out, fn = cands[rng.integers(len(cands))]
         occ[name] = occ.get(name, 0) + 1
         arng = _step_rng(chain_seed, name, occ[name], rng)
