@@ -840,11 +840,11 @@ def _side_by_side(left, right, gap=8) -> np.ndarray:
 # --------------------------------------------------------------------------- #
 # 展示 5: 楕円フーリエ記述子 / elliptic Fourier descriptors                      #
 # --------------------------------------------------------------------------- #
-def _leaf_region(H=340, W=340) -> np.ndarray:
+def _leaf_region(H=460, W=460) -> np.ndarray:
     """葉のようなギザギザ輪郭の領域を Fullseye の region 生成 op で作る."""
     import regions_gen
     t = np.linspace(0.0, 2.0 * np.pi, 720, endpoint=False)
-    r = 108.0 + 30.0 * np.sin(3 * t) + 15.0 * np.cos(5 * t) + 9.0 * np.sin(9 * t)
+    r = 146.0 + 40.0 * np.sin(3 * t) + 20.0 * np.cos(5 * t) + 12.0 * np.sin(9 * t)
     rows = H / 2.0 + r * np.sin(t)
     cols = W / 2.0 + r * np.cos(t)
     return np.asarray(regions_gen.gen_region_polygon_filled(rows, cols, H, W),
@@ -880,7 +880,7 @@ def subject_fourier_desc(log=print) -> dict:
         right = _plot(
             [{"x": np.arange(1, k + 1), "y": rms[:k], "color": (255, 176, 72),
               "label": "最近傍 RMS 誤差 [px]"}],
-            base.shape[1], base.shape[0], xlim=(1, n_max), ylim=(0, 26),
+            base.shape[1], base.shape[0], xlim=(1, n_max), ylim=(0, 30),
             title="次数を上げると輪郭はどこまで戻るか",
             xlabel="使った高調波の数", legend_pos="tr",
             marks=[{"x": k, "y": rms[k - 1], "color": (255, 255, 255)}])
@@ -892,6 +892,11 @@ def subject_fourier_desc(log=print) -> dict:
     info = E.save_animation(book, "wing2d_fourier_desc",
                             duration_ms=340, hold_last_ms=1800)
     k1 = next(k for k in range(1, n_max + 1) if rms[k - 1] < 1.0)
+    # 「何次を足したときに誤差が落ちるか」を実測する(推測しない)。
+    drop = {k + 2: rms[k] - rms[k + 1] for k in range(len(rms) - 1)}
+    even_drop = [drop[k] for k in drop if k % 2 == 0]
+    odd_drop = [drop[k] for k in drop if k % 2 == 1]
+    top3 = sorted(drop, key=lambda k: -drop[k])[:3]
     return {
         "name": "fourier_desc", "kind": "gif", "file": info["gif"],
         "thumb": info["thumb"], "frames": info["frames"],
@@ -899,20 +904,27 @@ def subject_fourier_desc(log=print) -> dict:
         "title": "楕円フーリエ記述子 —— 何次で形が戻るか",
         "ops": ["gen_region_polygon_filled", "gen_contour_region_xld",
                 "elliptic_fourier", "reconstruct"],
-        "data": "Fullseye の region 生成 op で作った合成の葉形 (r = 108 + 30sin3θ + 15cos5θ + 9sin9θ)",
+        "data": "Fullseye の region 生成 op で作った合成の葉形 (r = 146 + 40sin3θ + 20cos5θ + 12sin9θ)",
         "measured": {
             "contour_points": int(len(ref)),
             "rms_px_by_harmonic": [round(v, 3) for v in rms],
             "area_ratio_by_harmonic": [round(v, 4) for v in area_ratio],
             "first_harmonic_under_1px": k1,
+            "rms_drop_when_adding_harmonic": {str(k): round(v, 3)
+                                              for k, v in drop.items()},
+            "mean_drop_even_harmonics_px": round(float(np.mean(even_drop)), 4),
+            "mean_drop_odd_harmonics_px": round(float(np.mean(odd_drop)), 4),
         },
         "caption": (
             "%d 点の輪郭を楕円フーリエ記述子に直し、高調波を 1 次から %d 次まで"
             "足しながら復元した。1 次 (楕円 1 個) では最近傍 RMS 誤差 %.2f px、"
-            "3 次で %.2f px、%d 次でついに 1 px を切り、%d 次では %.2f px。"
-            "この形は sin3θ・cos5θ・sin9θ で作ってあるので、3・5・9 次を跨ぐたびに"
-            "誤差がガクンと落ちる —— 形を作った周波数が、そのまま記述子に出てくる。"
-            % (len(ref), n_max, rms[0], rms[2], k1, n_max, rms[-1])),
+            "%d 次で 1 px を切り、%d 次では %.2f px。誤差が大きく落ちるのは "
+            "%s 次を足したときで、偶数次を足したときの平均低下 %.3f px に対し"
+            "奇数次では %.3f px しか下がらない —— r = 146 + 40sin3θ + 20cos5θ + 12sin9θ "
+            "という作り方が、閉曲線としては n±1 次(= 偶数次)に現れるためだ。"
+            % (len(ref), n_max, rms[0], k1, n_max, rms[-1],
+               "・".join(str(k) for k in sorted(top3)),
+               float(np.mean(even_drop)), float(np.mean(odd_drop)))),
     }
 
 
@@ -969,7 +981,7 @@ def subject_face_morph(log=print) -> dict:
              "morph piecewise affine\nα = %.2f" % a,
              "morph TPS\nα = %.2f" % a, "顔 B (合成・実在しない)",
              "affine と TPS の差\n平均 %.5f" % diff[i]],
-            3, tile=(268, 268), label_h=52, title=None, title_h=0)
+            3, tile=(300, 300), label_h=52, title=None, title_h=0)
         frames.append(panel)
         labels.append("α = %.2f — affine と TPS の平均差 %.5f" % (a, diff[i]))
     book = E.flipbook(frames, labels,
@@ -1004,21 +1016,21 @@ def subject_face_morph(log=print) -> dict:
 # --------------------------------------------------------------------------- #
 # 展示 7: ブロブ選別 / blob analysis                                            #
 # --------------------------------------------------------------------------- #
-def _grain_scene(H=420, W=560) -> np.ndarray:
-    """円・楕円・四角・棒・三角を混ぜた合成の粒シーン (決定的)."""
+def _grain_scene(H=720, W=960) -> np.ndarray:
+    """円・楕円・四角・棒・三角を混ぜた合成の粒シーン (決定的・座標は固定)."""
     from PIL import Image, ImageDraw
     im = Image.new("L", (W, H), 12)
     d = ImageDraw.Draw(im)
-    circles = [(40, 40, 96, 96), (150, 34, 194, 78), (250, 50, 330, 130),
-               (400, 40, 452, 92), (60, 250, 128, 318), (300, 300, 356, 356),
-               (470, 230, 522, 282), (196, 320, 240, 364)]
+    circles = [(70, 70, 166, 166), (258, 58, 334, 134), (430, 86, 566, 222),
+               (686, 68, 776, 158), (104, 430, 220, 546), (516, 514, 612, 610),
+               (806, 394, 896, 484), (336, 548, 412, 624)]
     for box in circles:
         d.ellipse(box, fill=232)
-    d.rectangle([340, 180, 420, 260], fill=232)          # 四角
-    d.rectangle([30, 160, 230, 196], fill=232)           # 細長い棒
-    d.rectangle([440, 330, 540, 372], fill=232)          # 横長の板
-    d.polygon([(120, 360), (176, 400), (110, 408)], fill=232)   # 三角
-    d.ellipse([250, 200, 330, 240], fill=232)            # 扁平な楕円
+    d.rectangle([584, 308, 720, 444], fill=232)          # 四角
+    d.rectangle([52, 274, 394, 336], fill=232)           # 細長い棒
+    d.rectangle([754, 566, 926, 638], fill=232)          # 横長の板
+    d.polygon([(206, 616), (302, 686), (188, 700)], fill=232)   # 三角
+    d.ellipse([430, 342, 566, 412], fill=232)            # 扁平な楕円
     return np.asarray(im, np.float64) / 255.0
 
 
@@ -1058,7 +1070,7 @@ def subject_blob_select(log=print) -> dict:
          {"x": [f["circ"] for f in feats if f["circ"] < circ_thr],
           "y": [f["px"] for f in feats if f["circ"] < circ_thr],
           "color": (235, 110, 110), "style": "dots", "label": "不採用"}],
-        scene.shape[1], scene.shape[0], xlim=(0.3, 1.0), ylim=(0, 9000),
+        scene.shape[1], scene.shape[0], xlim=(0.3, 1.0), ylim=(0, 26000),
         title="真円度 (circularity) × 面積 [px] の特徴空間",
         xlabel="circularity", legend_pos="tl")
     steps = [np.stack([scene] * 3, -1),

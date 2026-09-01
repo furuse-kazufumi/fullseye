@@ -438,7 +438,9 @@ def ex_volume_turntable():
     n_shell = int(P.shape[0])
 
     S, PITCH = 462, 18.0
-    W, H = 24 * 3 + S * 2, 646
+    CY0, CY1 = int(0.19 * S), int(0.81 * S)              # 縦は中央だけ切る(平たい物体)
+    PH = CY1 - CY0
+    W, H = 24 * 3 + S * 2, 52 + PH + 92
     frames, n, ious = [], 36, []
     yaws = [360.0 * i / n for i in range(n)]
     # 両者を **同じ中心・同じ倍率** に合わせる(外接球で正規化すると細長い物体は
