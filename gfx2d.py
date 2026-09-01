@@ -996,8 +996,13 @@ def parallax_layers(layers, camera_x, factors, camera_y=0.0, factors_y=None):
     ``factors_y`` is given) and **wraps** — a parallax backdrop is a loop, and
     wrapping is what makes it one.
 
-    Shifts are rounded to whole pixels, so the operation is a pure permutation:
-    a shift of exactly the layer width returns the layer unchanged, bit for bit.
+    Shifts are rounded to whole pixels, so the scroll is a pure permutation: a
+    single layer shifted by exactly its own width comes back with its alpha
+    channel bit-identical and its colour identical wherever ``alpha > 0``. (The
+    colour of *fully transparent* pixels is not preserved — compositing goes
+    through :func:`premultiply`, which zeroes it by definition. That is the
+    documented cost of the premultiplied round trip, not a bug in the scroll.)
+
     Sub-pixel scrolling would resample every frame and accumulate blur, which is
     why it is not offered here — put the fractional part in
     :func:`sprite_transform` if you need it.
