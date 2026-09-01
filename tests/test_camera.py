@@ -68,6 +68,42 @@ def test_depth_to_points_recovers_plane():
     assert np.isnan(org[0, 0]).all() and np.isnan(org[1, 1]).all()
 
 
+def test_depth_to_points_pixel_centres_are_integer_coordinates():
+    # Pins the library-wide convention: the centre of pixel (row=r, col=c) IS the
+    # continuous image coordinate (u, v) = (c, r) — no +0.5. Anything that renders
+    # or ray-casts a depth map for this function must sample on that same grid;
+    # render3d used to sample at (c+0.5, r+0.5) and biased every cloud half a
+    # pixel without raising. A tilted plane makes the offset visible (a constant
+    # depth map cannot distinguish the two conventions).
+    K = camera.intrinsic_matrix(400.0, 380.0, 160.0, 120.0)
+    H, W = 40, 50
+    fx, fy, cx, cy = K[0, 0], K[1, 1], K[0, 2], K[1, 2]
+    # plane in camera space: n . X = d, with n not parallel to the image plane
+    n = np.array([0.25, -0.4, 1.0])
+    d = 5.0
+    v, u = np.mgrid[0:H, 0:W].astype(np.float64)      # pixel *centres*
+    Z = d / (n[0] * (u - cx) / fx + n[1] * (v - cy) / fy + n[2])
+
+    grid = camera.depth_to_points(Z, K, organized=True)
+    assert grid.shape == (H, W, 3)
+    # every back-projected point sits on the plane, to machine precision
+    resid = (grid.reshape(-1, 3) @ n - d) / np.linalg.norm(n)
+    assert np.abs(resid).max() < 1e-12, float(np.abs(resid).max())
+
+    # ...and the same map read on the half-integer (OpenGL) grid would NOT, so the
+    # assertion above genuinely discriminates between the two conventions.
+    Zh = d / (n[0] * (u + 0.5 - cx) / fx + n[1] * (v + 0.5 - cy) / fy + n[2])
+    resid_h = (camera.depth_to_points(Zh, K, organized=True).reshape(-1, 3) @ n - d)
+    resid_h = resid_h / np.linalg.norm(n)
+    assert np.abs(resid_h).max() > 1e-4, float(np.abs(resid_h).max())
+
+    # Explicit statement of the mapping: pixel (r, c) back-projects along the ray
+    # through the pixel coordinate (c, r) exactly.
+    r, c = 7, 31
+    direct = camera.backproject(np.array([[float(c), float(r)]]), Z[r, c], K)
+    assert np.allclose(grid[r, c], direct[0], atol=1e-12)
+
+
 def test_normals_from_depth_frontoparallel():
     K = camera.intrinsic_matrix(400.0, 400.0, 160.0, 120.0)
     Z = np.full((40, 50), 4.0)
