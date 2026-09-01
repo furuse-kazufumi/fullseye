@@ -286,12 +286,22 @@ def test_overlay_labels_gives_the_same_id_the_same_colour():
 # 3. 文字 —— 測ってから描く / 黙って切らない
 # ------------------------------------------------------------------ #
 
-def test_measure_text_shrinks_to_fit():
+def test_measure_text_shrinks_to_fit_when_wrapping_is_off():
+    """格子のラベルは 2 行にすると版が崩れる ―― 折り返さずに縮める。"""
     wide = A.measure_text("これは長めのラベルです", font_size=20)
     narrow = A.measure_text("これは長めのラベルです", font_size=20, max_width=wide["width"] // 2,
-                            min_font_size=6)
+                            min_font_size=6, wrap=False)
     assert narrow["font_size"] < 20
+    assert len(narrow["lines"]) == 1
     assert narrow["width"] <= wide["width"] // 2
+
+
+def test_measure_text_wraps_instead_of_shrinking_by_default():
+    wide = A.measure_text("これは長めのラベルです", font_size=20)
+    wrapped = A.measure_text("これは長めのラベルです", font_size=20,
+                             max_width=wide["width"] // 2, min_font_size=6)
+    assert wrapped["font_size"] == 20 and len(wrapped["lines"]) > 1
+    assert wrapped["width"] <= wide["width"] // 2
 
 
 def test_text_that_cannot_fit_raises_instead_of_being_clipped():
