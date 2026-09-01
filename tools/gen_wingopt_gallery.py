@@ -2186,15 +2186,16 @@ def ex_pipeline_flow(log):
         ("image_formation applies, in order:", C_TEXT, False),
         ("  1. the Airy PSF for this f-number", C_TEXT, False),
         ("  2. defocus (none here)", C_TEXT, False),
-        ("  3. the cos^4 falloff", C_TEXT, False),
+        ("  3. the cos^4 falloff (OFF -- see below)", C_TEXT, False),
         ("  4. exposure, clipped to [0, 1]", C_TEXT, False),
         ("", C_DIM, False),
         (f"RMS change from the ideal scene {d_rms:.4f}", C_OPT, True),
         (f"contrast of the tile  {captured.min():.3f} .. "
          f"{captured.max():.3f}", C_OPT, True),
         ("", C_DIM, False),
-        ("the mask does NOT move when the image blurs --", C_DIM, False),
-        ("that is why it can still score the detector", C_DIM, False),
+        (f"this {tile} px crop spans {crop_half_deg:.3f} deg of field,", C_DIM, False),
+        (f"where cos^4 = {crop_cos4:.5f} -- so vignetting is off", C_DIM, False),
+        ("here and shown properly in its own exhibit", C_DIM, False),
     ])
     panels.append(_text(_to_u8(c), lab))
 
