@@ -2491,7 +2491,11 @@ def ex_mpr(log) -> dict:
         x = 64 + 28 * math.cos(a)
         helix |= _aa_ball((n, n, n), (z, y, x), 2.6) > 0.5
     vol[helix] = 1.0
+    # 表示のコントラストは op で作る(手書きの正規化を混ぜない)
+    vol = np.asarray(G("vol_window_level")(vol, 0.5, 1.0))
     log(f"    volume {vol.shape} spacing {sp}  landmarks: +x 球 / -y 棒 / +z リング / らせん")
+    log(f"    vol_window_level(center 0.5, width 1.0) -> range "
+        f"{vol.min():.3f} .. {vol.max():.3f}")
 
     W, H = 1120, 620
     ps = 300
