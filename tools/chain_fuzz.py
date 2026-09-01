@@ -679,6 +679,14 @@ OP_PARAM_HINTS = {
     ("cplx_mobius", "b"): lambda rng: -1j,
     ("cplx_mobius", "c"): lambda rng: 1.0,
     ("cplx_mobius", "d"): lambda rng: 1j,
+    # mesh を (V, F) に割る 8 op のうち、残る必須引数がこの 2 つ。名前
+    # ("target_faces" / "source")は他の op と衝突しないが**汎用の意味も無い**
+    # ので、名前ヒントに置かず op 名で狙い撃つ。8 は種の最小メッシュ(平面
+    # パッチ 2 面)より大きいが、実測でこの op は目標超過を例外にせず現状を
+    # 返す(nf=2 / target=8 で (4,3),(2,3) が返る)ので毎回 CONTRACT にはならない
+    ("decimate_qem", "target_faces"): lambda rng: 8,
+    # 測地距離の起点は頂点添字。種の最小メッシュでも 0 は必ず存在する
+    ("geodesic_mesh", "source"): lambda rng: 0,
 }
 
 #: 文書化済みの非有限を返す op(光学)。docstring が契約として明記している:

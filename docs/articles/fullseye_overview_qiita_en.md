@@ -1193,139 +1193,232 @@ The pile of work is tall, but **the foundation — typed ops, honest evaluation,
 
 ---
 
-## Addendum (2026-08-31): The Skeleton Toolkit Got a Level Deeper
+## Adding Measurement Modalities — What the Eight New Operator Families Let You Do
 
-> **Status: Production-ready / Verified** (shipped on PyPI as **v0.1.4** (`pip install -U fullseye`). The op counts at publication — 731+265 — are now **733+271** with this addendum.)
+This section covers the **8 families / 111 ops** added after release. None of them were added because they were new: each one was added only after **measuring where the existing approach breaks, on the same footing**. The typed catalogue is now **511 ops** and the evolution registry **847** (`pip install -U fullseye`).
 
-The day after publication I ended up digging into "how different is Fullseye's skeletonization from HALCON's, really?" — and the skeleton toolkit grew substantially. In this article's spirit, here it is **with verification**.
+### What you can do now
 
-- **`em_skeleton` (new op)** — a pure-numpy clean-room implementation of the **Eckhardt–Maderlechner (1993) invariant thinning**, the same algorithm family as HALCON's `skeleton`. One story worth telling: implementing the literature's definition verbatim broke topology under parallel deletion. After isolating the cause with a counter-example pattern and re-reading it as the standard (8,4) simple-point test, the output **matched the published EM93 reference results pixel for pixel** (test shape 1 = 724/724 pixels, zero differences; the other two shapes matched the published counts 2434/3895). That comparison is now baked in as a regression test. The only thing left unverified is a direct comparison against a live HALCON installation (no license at hand).
-- **Skeleton graph elements now share one vocabulary across 2D/3D** — alongside junctions (`junctions_skeleton`) there are now endpoints (`r2_endpoints_skeleton`), and in 3D: `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d`. Feed them a thick volume and they thin it with Lee's method (1994) first, then return nodes, branches, and endpoints. **Voxel skeleton graphs have no counterpart in HALCON** — useful for vessels, porous media, and root-system network analysis.
-- **3D morphology groundwork** — single-op `morph_open3d` / `morph_close3d`, a ball structuring element, and a scipy path so that **every op runs without torch** (the cube-SE path is pinned bit-identical to the torch path by tests).
-
-Here's one picture made with the freshly minted ops.
-
-[![Skeleton graph extraction from a slime mold network](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/science_physarum_skeleton_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_physarum_skeleton.png)
-
-*↑ **Extracting the skeleton graph from a slime mold's tube network** — a Physarum (slime mold) mathematical model (an adaptive network where high-flow tubes thicken and unused tubes decay), grown in my own simulation and read with `em_skeleton` (cyan) and `junctions_skeleton` (white = junctions). Left: the exploring mesh. Right: after convergence — **only the shortest path survives**. Ops used: `binary_threshold`, `em_skeleton`, `junctions_skeleton`, `dilation_circle`.*
-
-Full disclosure: this slime mold simulation is actual experimental data from a separate homegrown research project — **an attempt to build an "evolving brain" (development codename Afterman, an homage to Dougal Dixon's "After Man")** — a reckless quest to search for what comes *after* the Transformer, by evolution. The slime mold's tube dynamics handed it an unexpected answer. That story will get its own article in due time.
-
-## Addendum 2 (evening of 2026-08-31): a hidden GPU bug, dormant 3-D ops, and "hands"
-
-> **Status: Production-ready / Verified** (with this addendum the op counts are **738+279** and the test suite is **6,357 tests**)
-
-There was one more round the same evening, so here it is — three topics, each of which turned into a live demonstration of "making honesty structural," failure stories included.
-
-**1. A hidden bug in the GPU path (and an "impossible" verdict that turned out to be a misdiagnosis).** Fullseye's GPU acceleration is gated by faithfulness — only ops whose outputs numerically match the CPU reference get loaded. That day it emerged that **torch's `reflect` padding and scipy's default `reflect` are different animals** (edge samples duplicated or not), and the fix had only been applied to some kernels. After repairing it, seven ops (sobel, median, and friends) became exact all the way to the borders — and it also turned out that **DoG (difference of Gaussians), which had been excluded as "impossible to make faithful in principle," had this padding as its real culprit all along**. The misdiagnosis stays in the planning doc, overwritten with "this verdict was wrong" rather than deleted. While at it, the faithfulness gate itself had a hole (tested at a single parameter point, with large kernels bleeding into the inspection margin), so it now sweeps five points with a kernel-radius-aware margin. Then, running an adversarial review against that *strengthened* gate found a second hole: on flat (constant) images the normalization amplified float32 rounding noise to full scale (constant input made Canny report a fully-foreground edge map — a spectacular failure mode). With constant and quantized images added to the test set, all 90 mappings now agree. Build a gate, then adversarially verify the gate itself — the day's biggest lesson.
-
-**2. Machine-mining "same implementation, different name" ops doubled GPU coverage from 45 to 90 mappings.** The registry contains many HALCON-named "twins" (identical implementations under different names), so I wrote an automatic search that cross-checks every uncovered op against every GPU kernel. One instructive failure: the first attempt used **salt-noise binary images** as test inputs, and the degenerate case "erosion wipes everything out" **mass-produced false matches** (all-zeros agrees with anything). Switching to structured blob images and re-running, only the 42 pairs confirmed by measurement across five parameter points were adopted; one candidate that behaves differently on gray-level images was rejected despite matching numerically. Together with new gateway ops (Otsu, Canny, and others), **GPU coverage of the 20 shipped recipes went from 45% to 79%** (no speed numbers here — the GPU-box measurements haven't been run yet).
-
-**3. Excavating dormant 3-D ops, plus an integrated 3-D metrology example.** As a by-product of the survey, it turned out that **eight 3-D ops — Frangi vesselness, Sato, labeling, spacing-aware distance transform and more — were implemented, tested, and exported, yet missing from the 3-D registry catalog**, making them undiscoverable from Studio and search. They are now registered, with a new end-to-end example (a synthetic CT of "one tube + two balls" where tubeness and blobness **flip as each other's negative control**), and physical volumes in mm³ / wall thickness in mm on anisotropic voxels (the everyday reality of CT, where only z is coarse) pinned to hand-computed values.
-
-**Bonus: the "hands" door is now open.** Hand 21-keypoint detection (`hand_landmarks`) and per-finger flexion angles (`finger_flexions`) landed as an optional extra (detection depends on MediaPipe; without it you get an explicit error with install instructions). The aim is the Physical AI bridge — the *hand version* of the pipeline that taught a robot to walk from human motion capture: video → 21 keypoints → finger flexion angles → target commands for a robot hand. So far it covers the geometry (machine-tested: fully extended = 0°, right angle = 90°) and the wiring; real-footage runs come next.
-
-## Addendum 3 (2026-08-31): a "processing domain" and "boundaries" for 3-D, plus Minecraft-style walkthroughs
-
-> **Status: Production-ready / Verified** (this addendum takes the 3-D side from **279 → 285 ops**, with dedicated tests and a ground-truth example)
-
-Both items in this addendum started from **my (the author's) own observations**. The first was a question: "**What exists in 2-D but not in 3-D? Does HALCON's *domain* (processing region) concept exist on the 3-D side? What about boundary operators? Both feel necessary for keeping memory in check.**" Cross-checking the catalogs proved the hunch right on both counts — none of the 55 3-D families had a domain or a voxel boundary anywhere.
-
-**1. The domain family (4 ops): stop carrying the whole 512³ CT around.** `vol_reduce_domain` (silence everything outside a mask) → `vol_crop_domain` (cut out the tight box around the foreground, **returning the offset needed to go back**) → process → `vol_uncrop` (paste the result back into the original frame, exactly). In the verification example, cropping a synthetic 96³ CT down to just the target sphere cuts memory to **1/34 (measured)**. The 3-D Hessian operators (vessel enhancement and friends) have a memory-motivated size cap; this family is the honest way *through* that cap rather than around it.
-
-**2. The boundary family (2 ops): throw away the inside, keep the shell.** `vol_boundary` is the voxel version of 2-D `region_boundary` (6/18/26 connectivity, inner/outer), and `vol_boundary_points` turns the shell straight into a point cloud in physical millimetres. A solid ball slims down to **19% (measured)** as its shell — and a sphere fit on that slimmed point cloud still closes with **0.000 mm center error** (radius 4.33 vs 4.5 mm: inner-boundary voxel centers sit half a voxel inside the surface, so **reading slightly small is the correct behaviour** — the example states and verifies that systematic bias explicitly). It is also the cheapest bridge from the voxel world into the point-cloud world.
-
-Here too, adversarial review ran *before* shipping and pulled two bugs out of my own code (the default crop mask thresholded at 0.5 and dropped gray voxels; an absurd target shape could integer-overflow past the memory cap).
-
-**3. Minecraft-style walkthrough (Studio).** The second observation: "**if you could change viewpoints and walk around inside 3-D data, you'd get the presence of seeing the real thing in a museum or a science center.**" Studio's 3-D viewer only had an orbit camera (circling the object); now **F enters a first-person mode** — WASD to walk, drag to look around, wheel to change walking speed, R to return to the entrance. The core of the presence is **perspective projection** (near things large, far things small); since the renderer is our own software rasteriser, I verified it independently against the analytic pinhole-camera equations — they **agree to 10⁻¹³**. Brightness and point size also fall off with distance. Not a single line of the orbit-camera path changed (178 existing tests, zero regressions).
-
-Walking through a CT scan hunting for defects, or through a scanned archaeological site — when "looking at data" turns into "standing inside data," you notice different things.
-
-## Addendum 4 (late night, 2026-08-31): a big 3-D build-out, the true identity of HALCON regions, and "1-D wasn't missing — it was disconnected"
-
-> **Status: Production-ready / Verified** (this addendum takes the 3-D side from **285 → 310 ops**, adds a new **37-op 1-D catalog**, and the test suite to **6,535 passed**)
-
-After addendum 3 I kept digging — "what else is missing?", "is there a more efficient way?", "isn't 1-D under-served too?" — and the night produced three discoveries.
-
-**1. The true identity of HALCON regions is run-length encoding.** HALCON can hold thousands of regions of a 10-megapixel image in memory because a region is not a bitmap but a **list of horizontal runs**. Building the 3-D equivalent (the `vol_rle_encode` family, 9 ops) shrank a 384³ part mask to **1/145 (measured)** of the dense array, with volume and bounding box answered **300–1000x faster** straight on the runs, no decoding. Set algebra (union/intersection/difference) also runs on the runs — **3.1 ms** for two 192³ regions. And a structural fact — a run's label is necessarily constant along its length — makes connected-component splitting a per-run assignment. The memory trio is now complete: crop = *where* you compute, RLE = *what* you keep, tiling = *how much* sits in RAM at once.
-
-**2. Fifteen more 3-D gap ops landed in one night (three parallel AI work streams + integration).** CT windowing (the radiologist's daily "window" — machine-verified that the soft-tissue window saturates bone while the bone window makes soft tissue vanish into background), geometric transforms (the rotation-direction convention is pinned by **bit-identity with `np.rot90`** — sign flips being a classic adversarial failure, the test is now the convention's guard), a virtual probe (one probe line measures a pipe wall at 2.042 mm vs 2.000 mm ground truth), 3-D FFT filters, and Richardson–Lucy deconvolution.
-
-A confession here: my first RL docstring claimed "RMSE halves in 10 iterations." Measured: **0.81x**. I rewrote the claim with the reason it doesn't halve (the residual is dominated by hard edges, which RL repairs slowly) and pinned instead the quantity RL actually optimises — *forward consistency*: re-blurring the estimate matches the observation at 0.021x.
-
-Adversarial review then confirmed **nine real bugs**. The flagship: with an **even-sized PSF, RL's adjoint operator is off by one voxel and the estimate diverges to 10⁹¹ in ten iterations** — a genuine math bug in the 'same'-convolution cropping convention, which differs from the true adjoint on even axes. After the fix the adjoint inner-product identity holds to 0.0 error, and odd-sized PSFs are bit-identical to the old implementation (no behaviour change). Add three silent underflow-to-NaN paths and two silent truncations, and the two grand champions of adversarial testing reconfirmed themselves: **sign flips, and division-by-zero with its relatives (underflow, near-zero normalisation)**.
-
-**3. 1-D wasn't missing — it was disconnected.** An implementation of HALCON's funct_1d family (1-D function smoothing/derivatives/extrema/matching, 23 functions) existed in the repo as a **complete orphan** — imported by nothing, absent from packaging, no tests, invisible to every catalog. Worse: the facade's mapping table already referenced it, meaning **in the installed PyPI wheel all 23 funct_1d ops died with ModuleNotFoundError** (fixed as a shipping bug). It was adopted properly (fail-closed validation + 41 analytic ground-truth tests: derivative of sin ≈ cos, zero crossings at kπ, a damped oscillation's period/decay/lag all recovered exactly), and together with 16 signal-processing functions it now lives in a new **unified 37-op 1-D catalog**. The 2-D measure line, the 3-D probe, and sensor time series all converge on "extract a profile (x, y)" — and funct1d is what comes next. Three dimensionalities, one thread.
-
-One lesson for gap audits: hunting for *missing* ops is not enough. Hunt for ops that **exist but are disconnected from the world** — implemented and worth testing, yet with a broken link somewhere in the catalog, the packaging, or the facade. That hunt revived 23+16 functions today.
-
-## Addendum 5 (2026-09-01): shaking ops as a chain — a diffuse-and-converge fuzzer digs up the bugs unit tests can't see
-
-> **Status: Converged / Verified** (the chain fuzzer converged to **0 suspicious signatures** over 2000 chains; the test suite stands at **6,630 passed**)
-
-This addendum grew out of one directive from the author: "**wire the ops together, and repeat diffusion and convergence like we used to — find the defects inside that flow.**" Per-op unit tests and adversarial verification had been done to death through addendum 4. The next enemy is the bug class that **passes every unit test and only appears when ops are chained**.
-
-**The mechanism: a typed pool + random chains + signature convergence.** Following each op's declaration (in-types → out-type), the fuzzer draws arguments from a pool, chains ops at random (diffusion), and feeds products back into the pool. Every exception and anomaly is collapsed into a **signature** (kind, op, exception, message) and counted (convergence). The taxonomy is the heart of it: a documented ValueError is **CONTRACT** (white); a raw TypeError/IndexError is **SUSPECT** (a hole in the contract); returning a type that differs from the declaration is **TYPEMISS** (a lie about types); silently returning NaN/Inf is **NONFINITE**; and a product exceeding the pool cap is recorded as **GROWTH** rather than dropped silently (the "no silent truncation" rule applies to the fuzzer itself).
-
-**The fuzzer itself got hardened twice in the field.** The first run stalled when a chain of upsampling ops grew the pool exponentially — a radius-1 morphology op pinned against a 34 GB voxel grid for 20 minutes (fixed with a pool-insertion cap plus GROWTH records). The next stall was a **TPS fit with 40,000 control points allocating a 12 GB dense matrix internally** — no pool cap can prevent that, because the *input* is small and only the **internal allocation** explodes. That is a new family of adversarial failure (family #6). The same pattern swept up PSF generation (a stray huge sigma requests 64 GB) and the CPD correspondence matrix: fail-closed caps on the op side, and the TPS warp chunked to bounded memory **while staying bit-identical**.
-
-**The best catch was a ghost we had chased across three waves.** fit_zernike (Zernike coefficient fitting) occasionally returned all-NaN coefficients — never reproducible in isolation, and guess-patching is forbidden here, so it stayed "gray" for three waves. The chain trace finally exposed the condition: **a value around 1e39 — finite in float64, produced by amplifying chains — turns into inf under the torch path's float32 cast**, after which grid_sample and lstsq return NaN **silently**. The fix is one helper that validates finiteness *after* the cast — but the same cast appears in ~20 places, so we **actually pumped 1e39 through them** and patched only the four ops that emitted silent NaN (fit_zernike / polar_unwrap / cylinder_unwrap / scene_flow_lk). sobel3d and friends measured clean, so they were left untouched (patching only what measurement implicates is part of the discipline too).
-
-**The other find is a framing: inf is not a bug — the question is whether it's a contract.** The fuzzer flagged inf coming out of sdf_subtract (SDF set difference). But the source turned out to be esdf's **documented contract** ("+inf if the volume is all free space"), which min/max algebra propagates **with mathematical exactness** — innocent. Its sibling sdf_smooth_union, however, blends with arithmetic (inf−inf, inf×0) and returned **all-NaN on inf input** — a genuine bug. Since the blend band |a−b|<k degenerates at inf, it now degrades exactly to min. Registration's rmse=inf ("no match" sentinel) was likewise ruled a contract and whitelisted explicitly in the fuzzer. **Don't blame the op that emitted the non-finite value; trace where it came from and what the contract says** — that's this round's lesson.
-
-Two more families of entry-contract holes got closed (feeding FPFH descriptors **normals from a different point cloud** drives neighbor indices out of range into a raw IndexError → pairing validated at the entry; passing an (N,1) column vector into the epipolar-geometry ops crashes at the centroid's c[1] → an (N,2) contract on four entry points). The first 16 ops of the mathematics family (linear algebra, statistics, polynomial interpolation — north star: "every problem in a mathematics dictionary", starting from the computable footholds) also landed in this period.
-
-The convergence in numbers: first run **103 signatures** → 22 type lies and the contract holes fixed in three stages → final run (2000 chains, same seed) shows **0 suspicious signatures — only 63 documented-ValueError kinds (white) remain**. "Diffusion and convergence" is not a metaphor: you can watch the signature count monotonically shrink run over run. Alongside unit tests and adversarial verification, this fuzzer is now the **third standing layer of quality assurance**, CI-grade equipment.
-
-## Addendum 6 (2026-09-01): Checking "will it even be visible?" on video, before buying the parts — a virtual machine-vision lab, and two new fields
-
-> **Status: Measured / Verified** — 34 new operators, **zero suspect signatures** across 1,500 fuzz chains with both new families at **17/17 reached**, and **7,300+ tests** green.
-
-While the fuzzer from Addendum 5 was running, three more requests arrived from the author: *"it would be good to have features that connect to the sort of thing in the vision awards"*, *"a virtual machine-vision environment is clearly the better thing to have — that's why I've been assembling the optics operators"*, and *"it would be nice to be able to demo it on video"*. This addendum is the few days that answered all three.
-
-### Start with the video — seeing at how many µm a defect becomes findable
-
-![A defect swept from 20 to 400 µm, with the optical limit and the measured onset of detection side by side](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/visionlab_sweep.gif)
-
-On the left is a captured image of a virtual part; on the right is the inspector's answer overlaid on the ground-truth mask. As the defect grows through **48 steps from 20 µm to 400 µm**, detection switches on quite suddenly. Every number on screen is computed on the spot — none of it is decoration written to match the picture.
-
-For this system (f=35 mm, working distance 200 mm, f/4, 3.45 µm pixels, 2448×2048) the measured values are:
-
-| quantity | value | where it comes from |
+| Family | What it lets you do | Entry points |
 |---|---|---|
-| object-space pixel size | **16.264 µm/px** | magnification 0.21212 from the Gaussian conjugate equation |
-| sampling limit (Nyquist) | **32.53 µm** | two pixel pitches, referred to object space |
-| diffraction limit (Airy criterion) | **30.67 µm** | 2.44λN(1+m), working f-number 4.848 |
-| **optical limit (sampling-limited)** | **32.53 µm** | the larger of the two above |
-| **measured onset of detection** | **45.80 µm** (2.82 px) | 5 seeds × 48 sizes |
+| Coherence scanning interferometry | Measure step height and surface form without phase unwrapping | `csi_stack_simulate` / `csi_height_map` |
+| Acoustics & vibration diagnostics | Pull a rotating machine's defect frequency out from under a resonance | `envelope_spectrum` / `order_spectrum` |
+| Light field | Change the focal plane and the viewpoint *after* a single exposure | `lf_from_mla` / `lf_refocus` / `lf_depth_from_focus` |
+| Photon counting / time-resolved | Count light as particles: range, fluorescence lifetime, Poisson error bars | `tcspc_simulate` / `dtof_depth` / `photon_uncertainty` |
+| Quaternion images | 3-D rotation in colour space — an operation per-channel gains cannot express | `rgb_to_quaternion` / `quat_color_rotate` |
+| FMCW range-Doppler | Range, velocity and angle of arrival from one beat cube | `fmcw_beat_simulate` / `range_doppler_map` |
+| Specular separation | Remove glare; recover normals that survive occluded lights | `specular_diffuse_split` / `photometric_stereo_robust` |
+| Motion magnification | Measure and show a 0.2-pixel vibration you cannot see | `displacement_series` / `motion_magnify` |
 
-The answer for this configuration is that a defect must be **1.41× the optical limit**. That ratio is the whole point: **large means the problem is the algorithm or the lighting, close to 1 means the problem is the lens.** No amount of staring at datasheets produces that number.
+For each family below: **what you can see**, and **where it breaks**. The second half is usually the more useful one. Full argument lists and units live in the Studio op help and in the 24 guides under `docs/ops/<family>/guides/`, so only the **one- or two-line entry point** appears here.
 
-The second clip sweeps the other way — **change the design and the limit moves**.
+### Measuring step height — phase shifting breaks at exactly λ/4
 
-![Working distance swept from 120 to 700 mm, showing the same 100 µm defect becoming invisible](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/visionlab_design.gif)
+White-light interferometry decides height from the **position of the envelope peak**, not from the fringe **phase**. Feed both methods the same input and the breaking point appears exactly where the closed form says it should.
 
-The defect is pinned at 100 µm while only the working distance moves, 120 mm to 700 mm. Pixel size swells from 8.38 to 65.55 µm and the optical limit degrades from 18.40 to 131.13 µm. Three things are worth watching: **which limit binds actually switches over** (diffraction-limited below 160.5 mm, sampling-limited above it), **the optical limit overtakes 100 µm at about 551.6 mm** (past which it is impossible in principle), and **detection in practice only survives to about 403.3 mm**. The practical wall arrives some 150 mm before the theoretical one.
+| True step | Phase shifting | Coherence scanning |
+|---|---|---|
+| 0.15 µm | error 0.0000 | error 0.0000 |
+| 0.20 µm | **returns −0.1000** (−λ/2) | error 0.0000 |
+| 0.30 µm | **returns −0.0000** (−λ/2) | error 0.0000 |
+| 1.00 µm | **returns +0.1000** (−3λ/2) | error 0.0000 |
 
-Both clips are deterministic — regenerating them reproduces the same files down to the **SHA-256**. The drawing is done with Fullseye's own `imagedraw` operators and numpy compositing, not matplotlib (only the numeric labels go through Pillow's text rendering). GIF and mp4 are written from the *same* frame list, and the frame count is read back and checked after writing — video is dangerously easy to make *look* right, so without a check I would not trust it myself.
+It starts failing at **λ/4 = 0.15 µm exactly**, and the error is always an integer multiple of λ/2 — fringe orders skip, so this is a **structured lie with no exception, no NaN and no warning**. Change λ to 0.8 µm and the breaking point moves to 0.20 µm. **If your steps exceed λ/4, phase shifting is not an option.**
 
-### How it works — returning *limits* rather than making images
+```python
+h = fs.csi_height_map(stack, z_step_um=0.05, wavelength_um=0.6, mode="gaussian")
+```
 
-The lab is three layers. **`visiondesign`** does closed-form optics (Gaussian conjugates, Nyquist, the Airy criterion, circle of confusion, the cos⁴ law), **`defectgen`** generates defects from mathematics, and **`visionlab`** joins the whole thing into one chain: design → limits → build a part → capture → inspect → verdict.
+Every unit here is **µm**, and `z_step_um` must match the **actual scan step** — get that wrong and the height scales proportionally, again without an exception. `csi_design` gives you the limits before you buy anything; if you cannot scan at all, `chromatic_confocal_height` returns height from the spectral peak wavelength alone.
 
-The constraint of **having no renderer** is what settled the design. Monte-Carlo light transport fits neither the dependency policy nor the compute policy here. So the layer leans on returning **limits instead of images**. Resolution, depth of field, illumination falloff and contrast transfer are all closed forms that have been in textbooks for decades; the module is an *arrangement* of them.
+### Listening to a rotating machine — the defect frequency is not in the raw spectrum
 
-`defectgen` takes the view that a defect is stochastic geometry: a scratch is a random walk, pitting is a point process, a crack is a branching path, surface texture is band-limited noise. **The payoff is not that the pictures look nice — it is that a pixel-perfect ground-truth mask falls out of the definition for free.** There is no annotation step to do.
+An outer-race spall in a rolling bearing does not ring at the defect frequency. A structural resonance in the kHz range arrives **amplitude-modulated at a defect frequency below 200 Hz**. Staring at the raw spectrum will never show it.
 
-### "Don't mix up the reasons for a miss" — twice
+| Where you look | Amplitude at 107 Hz |
+|---|---|
+| Raw spectrum | **4.3e-16** ← the component is not there |
+| Envelope spectrum | **0.499677** (peak at **107.000000 Hz**) |
 
-Two of the defects adversarial testing caught in this layer share a shape: **something other than a genuine miss gets folded into "not detected."**
+```python
+sk  = fs.spectral_kurtosis(x, 25600.0)                      # let the machine pick the band
+env = fs.envelope_spectrum(x, 25600.0, sk["max_freq"] - sk["bin_hz"],
+                                        sk["max_freq"] + sk["bin_hz"])
+print(env["peak_freq"], env["band_fraction"])               # 107.0 and ~1.0 = genuine
+```
 
-The first was in the sweep tally. Trials that were **too small to render at all** (sub-pixel) and trials where a **caller-supplied inspector raised** were both being counted as 0% detection. Mixing them blames the design or the algorithm unfairly. `unrenderable` and `detector_failed` are now counted separately, and when nothing could be evaluated the rate is `None`, not `0%`.
+Cross-check against the frequencies the geometry predicts (`bearing_defect_frequencies(1800.0, 9, 8.0, 40.0)` → outer race 108.0 Hz, inner race 162.0 Hz) and you also know *which* part it is. When the shaft speed varies, a naive spectrum collapses to 7 % of the true amplitude and smears over 66.5 Hz. Move to the angle domain with `order_spectrum` and you get **0.999371 with a 0-bin width**.
 
-The second was worse: **the report said "optical limit not reached" while the lens was in fact resolving the defect perfectly well.** The cause was folding two independent axes — *lateral resolution* and *depth of field* — into the single verdict `resolvable`. In one configuration the lateral limit is 30.7 µm, so a 60 µm defect is resolved with room to spare, yet a depth of field of 0.52 mm falls short of the 1.00 mm tolerance, so nothing is ever promoted to `resolvable` — and the headline reads "optical limit not reached". **Someone reading that goes shopping for a lens, when the thing to change is the aperture, the tolerance, or a focus mechanism.**
+**The dangerous argument in this family is a scalar, not an array.** Read the same recording as `rate=48000` and the defect is reported at **200.625 Hz** instead of 107 Hz — no exception. That is why the guard lives on `rate`: any real 1-D array genuinely *is* a valid acoustic signal, so declaring a separate type would protect nothing.
 
-The two axes are now always reported apart:
+### Changing the focal plane after the exposure
+
+A light field is 4-D — (view V, view U, height H, width W). The **input differs** from stereo (two eyes) or a focus stack (a real camera refocusing), so it carries its own type.
+
+```python
+sharp = fs.lf_refocus(lf, slope=2.0)                        # pick the focal plane afterwards
+slope, conf = fs.lf_depth_from_focus(lf, np.linspace(-4.0, 4.0, 81))
+z = fs.lf_disparity_to_depth(slope, focal_px=..., baseline=...)   # to mm
+```
+
+Decoding from the raw MLA image (`lf_from_mla` / `lf_to_mla`) **round-trips bit-exactly**, zero disparity (infinity) raises ValueError rather than a silent inf, and the camera itself is designed with `lf_plenoptic_design`.
+
+**What you gain and what you pay come out of the same calculation.** The depth-of-field gain from refocusing matches the angular resolution exactly.
+
+| Angular resolution | DoF (pixel-based) | DoF (after refocus) | Ratio |
+|---|---|---|---|
+| 6×6 | 1.656 mm | 9.939 mm | **6.0016** |
+| 8×8 | 1.656 mm | 13.254 mm | **8.0038** |
+| 10×10 | 1.656 mm | 16.573 mm | **10.0075** |
+
+The ratio is not hard-coded: it is **two calls to `depth_of_field` with different circles of confusion** (the 0.0016 in 6.0016 *is* the difference between those two calculations). The price is on the other side of the same table — spatial resolution drops from 2048×2448 to 341×408 / 256×306 / 204×244. **Put those two columns side by side before you buy the camera.**
+
+### Counting light — error bars without calibration
+
+Photon counting is where light stops being a continuous brightness and becomes **countable particles**. Because the Poisson distribution has variance = mean, **your error bars come out without any calibration**. The noise model differs from `aug_read_noise` (additive Gaussian read noise); the two only meet in the generalised Anscombe transform.
+
+```python
+clean = fs.tcspc_background_subtract(hist, "median")        # subtract outdoor sunlight
+print(fs.dtof_depth(clean, bin_ps=100.0, mode="gaussian"))  # ≈ 3.0 m
+sigma = fs.photon_uncertainty(counts)                       # sqrt(N) — error bars, no calibration
+```
+
+If `photon_statistics(counts)["fano_factor"]` sits near 1.0, it really is Poisson. SPAD dead-time correction matches the textbook `m = n/(1+nτ)` **bit for bit**, the inverse round-trips at 1.7e-16, and dToF ranging returns **1.5000003 m** when you order 1.5 m.
+
+**There is one specific way to break it.** Dead time applies to the detector's **rate stream** (Hz), not per-bin to a time-bin histogram (counts). Pass a histogram to `spad_deadtime_correct` and you get **no exception and a value indistinguishable from the identity** (relative change 1.1e-4) where a genuine count rate (1e3–1e7 Hz) would change by 33.3 %. **Saturation, the fail-closed path and the non-injective regime are never once exercised.** That is why the types are separate — without that split, this plausible pass is undetectable forever.
+
+### An honest answer to "could quaternion images do something interesting?"
+
+**Yes — for exactly one reason.**
+
+A complex pixel is a 2-D value with a single rotation axis. The pure imaginary part of a quaternion, `(0,R,G,B)`, is a 3-D vector, and `q·x·q*` is a **3-D rotation in colour space**. Turning pure red 90° about the blue axis into green **cannot be produced by any per-channel gain** (the best diagonal approximation is off by `‖P−diag(P)‖₂ = 0.6667`). That is the only genuine capability difference.
+
+```python
+import fullseye as fs
+
+q = fs.rgb_to_quaternion(rgb)
+turned = fs.quaternion_to_rgb(fs.quat_color_rotate(q, (0.0, 0.0, 1.0), 1.57))
+chroma = fs.quat_color_filter(q, (1.0, 1.0, 1.0), "remove")  # drop the grey axis
+spec = fs.qft2(q, "left"); back = fs.iqft2(spec, "left")     # side is required; round-trip on the same side
+```
+
+**Everything else failed to sell.**
+
+- The same rotation works with a 3×3 matrix (agreeing to 2.22e-16). The quaternion-specific gain is closure of the representation, nothing more.
+- **The quaternion Fourier transform buys nothing.** It agrees with a per-channel FFT reassembly to 1.14e-13 and is **2.4× slower**. The only genuinely quaternionic property is that left and right multiplication differ.
+- **The Riesz / monogenic signal lost to the complex steerable version built the same day.** With two orientations in the same octave the error is **1.30e-01 vs 4.4e-16**. Two octaves apart both reach machine precision, which pins the cause: the single-plane-wave model is false within a radial band. 25 % of pixels came out rank 0, and the theoretical win (a diagonal lattice) did not materialise either. **It wins twice only** — about 2× under noise, and 2.21× faster at magnification.
+
+**So: narrow-band subjects → `riesz_displacement_series`; broadband → `motion_magnify` below. If you need a rotation in colour space, quaternions are the only option.**
+
+### Far, fast, glossy, barely moving — the remaining three families
+
+**FMCW range-Doppler (8 ops)** gets range, velocity and angle of arrival out of one beat cube. The window function's effect is measurable: a **−45 dB target is buried under −24.57 dB of leakage with a rectangular window** and comes back at **−43.56 dB** with a Hann window.
+
+```python
+rdmap = fs.range_doppler_map(fs.fmcw_window_apply(cube, "hann"), normalize=True)
+peaks = fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]   # dr, dv = bin widths
+```
+
+**Without `dr, dv`, the returned `range_m` is a bin index, not metres** (3.0 vs 3.5131928671875). The unit trap is concentrated in this one place.
+
+**Specular separation (13 ops)** either removes glare by colour (one material, white illuminant) or recovers normals from multiple lights. **The shared breaking point is k=4**: once 4 of 8 lights are occluded, plain least squares collapses and both median and RANSAC fall to the noise floor. If you expect more occlusion than that, adding lights is the only remedy.
+
+**Motion magnification (9 ops)** measures and displays a 0.2-pixel vibration. The important part is that **the cliff has a closed form**: the phase reference follows `c·J₀(k·A)`, so beyond the first zero at **2.4048/k = 3.0619 pixels** the measurement inverts.
+
+```python
+print(abs(fs.displacement_series(clip, 3.0, 5.0, 32.0)[:, 0]).max())   # 0.2003 px (true 0.2)
+r = fs.motion_magnify(clip, alpha=8.0, f_lo=3.0, f_hi=5.0, fps=32.0)   # band in Hz, plus fps
+print(r["motion_snr_change_db"], r["band_power_ratio"])                # -2.18 dB, 0.629
+```
+
+**The cost of magnification is inside the same return value.** SNR always drops — it never rises. The further `band_power_ratio` is from 1, the further you are from the linear assumption.
+
+### Not carrying big 3-D data around — domain, boundary, run-length
+
+Loading a 512³ CT volume into RAM in full is usually pure waste. **Three separate tools cut "where to compute", "what to keep" and "how much to hold at once".**
+
+```python
+part, offset = fs.vol_crop_domain(vol, mask)     # (1) where to compute
+back = fs.vol_uncrop(heavy_3d_op(part), offset, vol.shape)    # exact restoration
+pts  = fs.vol_boundary_points(mask, spacing=(0.5, 0.2, 0.2))  # (2) shell only, (z,y,x) mm/voxel
+print(fs.vol_rle_volume(fs.vol_rle_encode(mask)))             # (3) voxel count, no dense array
+```
+
+Measured: cropping a sphere out of a 96³ synthetic CT gives **1/34 the memory**; keeping only the shell of a solid sphere leaves **19 %**; run-length encoding a 384³ part mask gives **1/145 of dense**. Volume and bounding box straight off the runs are **300–1000× faster**, and union / intersection / difference on two 192³ regions take **3.1 ms**.
+
+**A shell reporting a slightly smaller radius is correct behaviour.** Fitting a sphere to the thinned cloud closes with a centre error of 0.000 mm and a radius of 4.33 vs 4.5 mm — the inner-boundary voxel centres sit half a voxel inside the surface. That systematic error is written into the example. **Don't chase it as a precision bug.**
+
+This period also added CT windowing to the 3-D side (machine-verified: bone saturates in a soft-tissue window, soft tissue merges into the background in a bone window), geometric transforms, a virtual probe (2.042 mm wall thickness from one probe against a true 2.000 mm), 3-D FFT filtering and Richardson–Lucy deconvolution. On RL: the docstring claimed "RMSE halves in 10 iterations" and **the measurement was 0.81×**. It was rewritten with the reason it does not halve (the residual is dominated by the staircase at edges, which RL only fixes slowly), and replaced with what RL actually optimises — forward consistency, where re-blurring the estimate matches the observation to 0.021×. **Measure before you write a number in a docstring.**
+
+**Looking at the data changed too.** The Studio 3-D viewer enters **first-person mode with the F key** — WASD to walk, drag to look, wheel to change walking speed, R to return to the entrance. The core of the immersion is **perspective projection**, and because that projection is our own software rasteriser, it was independently verified to agree with the analytic pinhole camera to **10⁻¹³**. Walking through a CT volume looking for defects, or through a point-cloud scan of a ruin — when "looking at data" becomes "standing inside data", you notice different things.
+
+### Reading a skeleton as a graph, and one catalogue for 1-D
+
+**Skeletons**: `em_skeleton` thins (a clean-room implementation of the Eckhardt–Maderlechner method, 1993), `junctions_skeleton` / `r2_endpoints_skeleton` give junctions and endpoints, and on the 3-D side `skeleton_junctions3d` / `skeleton_endpoints3d` / `skeleton_prune3d` / `skeleton_branches3d` return nodes, branches and endpoints — a thick volume is thinned by the Lee method (1994) first. **Graphing a voxel skeleton is for vessel, porous-media and root-system network analysis**, and 2-D and 3-D now share one vocabulary.
+
+Verification was a pixel-by-pixel comparison against the published EM93 results (test shape 1: 724/724 pixels, zero difference; the other two match the published pixel counts 2434/3895). That comparison is burned into the regression tests. **The one thing not done is a direct comparison against a HALCON installation** (no licence here).
+
+[![Extracting a skeleton graph from a slime-mould network](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/thumbs/science_physarum_skeleton_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/science_physarum_skeleton.png)
+
+*↑ **A skeleton graph pulled out of a slime-mould tube network** — a mathematical model of *Physarum* (tubes carrying more flow thicken; unused tubes decay) grown in simulation, then read with `em_skeleton` (cyan) and `junctions_skeleton` (white = junctions). Left is the exploring mesh, right is after convergence — **only the shortest path survives**. Ops used: `binary_threshold`, `em_skeleton`, `junctions_skeleton`, `dilation_circle`. The slime-mould simulation is experimental data from a separate "evolving brain" project, which will get its own article.*
+
+**On the 1-D side the problem was not "missing" but "not connected".** The implementation matching the 1-D function family (smoothing, differentiation, extrema, matching — 23 functions) was a **complete orphan** inside the repository: imported by nobody, registered nowhere, no tests, no catalogue entry. And the facade's dispatch table already referenced that module — meaning that **in the version installed from PyPI, those 23 ops died with `ModuleNotFoundError`** (fixed as a shipping bug).
+
+Together with 16 signal-processing functions it is now a **unified 1-D catalogue of 37 ops**, pinned by 41 analytic ground-truth tests (derivative of sin ≈ cos, zero crossings at kπ, period / time constant / delay recovered exactly from a damped oscillation). **2-D `measure1d`, the 3-D probe and sensor series all converge on "extract a profile (x, y)", and this catalogue is what comes next in that chain.**
+
+> **The gap-audit rule**: hunting for "missing ops" is not enough. Hunt for **ops that exist but are not connected to the world** — implemented, worth testing, but with the chain broken somewhere in the catalogue, the package or the facade. That brought 23+16 functions back to life.
+
+## Checking "Will It Even Be Visible?" Before You Buy Any Parts
+
+The first thing an inspection system design has to settle is: **with this configuration, how small a defect can we see?** No catalogue answers that. So this layer returns **limits rather than images**.
+
+### Start with the video
+
+![Sweeping defect size from 20 to 400 µm, with the optical limit and the measured onset of detection](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/visionlab_sweep.gif)
+
+Left is the virtual part as photographed; right is the inspector's answer overlaid on the ground-truth mask. As the defect grows **from 20 µm to 400 µm across 48 steps**, detection starts abruptly at a point. Every number on screen is computed on the spot.
+
+For this system (f=35 mm, working distance 200 mm, f/4, 3.45 µm pixel pitch, 2448×2048):
+
+| Quantity | Value | Where it comes from |
+|---|---|---|
+| Object-side pixel size | **16.264 µm/px** | magnification 0.21212 from the Gaussian imaging equation |
+| Sampling limit (Nyquist) | **32.53 µm** | twice the pixel pitch, projected to object space |
+| Diffraction limit (Airy criterion) | **30.67 µm** | 2.44λN(1+m), effective f-number 4.848 |
+| **Optical limit (sampling-limited)** | **32.53 µm** | the larger of the two above |
+| **Measured onset of detection** | **45.80 µm** (2.82 px) | 5 seeds × 48 sizes |
+
+The answer for this configuration is **1.41× the optical limit**. **That ratio is the whole reading**: much larger means the algorithm or the lighting is the problem; close to 1 means the lens is.
+
+![Sweeping working distance from 120 to 700 mm, watching the same 100 µm defect disappear](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/media/visionlab_design.gif)
+
+The second sweep runs the other way: hold the defect at 100 µm and move the working distance from 120 mm to 700 mm. Pixel size swells from 8.38 to 65.55 µm and the optical limit degrades from 18.40 to 131.13 µm. Three things to watch — **the binding constraint swaps over** (diffraction-limited to sampling-limited at 160.5 mm), **the optical limit passes 100 µm at about 551.6 mm** (beyond that it is unsolvable in principle), and **detection actually holds only to about 403.3 mm**. The practical limit arrives about 150 mm before the theoretical one.
+
+### How to call it
+
+```python
+import numpy as np, fullseye as fs
+
+system = fs.VisionSystem(focal_mm=35.0, working_distance_mm=200.0,
+                         pixel_pitch_um=3.45, width_px=2448, height_px=2048,
+                         f_number=4.0, depth_tolerance_mm=1.0)
+
+sweep = fs.inspection_sweep(system, np.linspace(20.0, 400.0, 48),
+                            kind="scratch", seeds=5, contrast=-0.25)
+print(fs.detection_report(sweep))
+```
+
+`defect_um_grid` is in **µm**; `depth_tolerance_mm` is how far the part may drift off the focal plane, in **mm**. Pass your own inspection function as `detector=` and you get **your algorithm's onset of detection** on the same footing. `kind` is `scratch` / `pits` / `crack` and so on, with defects generated as stochastic geometry (scratches as random walks, pitting as a point process, cracks as branching paths). **The point of that view is not that the pictures look nice — it is that a pixel-perfect ground-truth mask falls out of the definition for free.** There is no annotation step.
+
+There are three layers: `visiondesign` holds the closed-form optics (Gaussian imaging equation, Nyquist, Airy criterion, circle of confusion, cos⁴ law), `defectgen` generates defects, and `visionlab` chains design → limits → build the part → image it → inspect → decide. **Having no renderer** is what settled the design: Monte-Carlo light transport fits neither the dependency policy nor the compute policy. Resolution, depth of field, vignetting and contrast transfer have all been in textbooks for decades, so the implementation is **just an arrangement of them**.
+
+### Never fold the optical limit and the detection limit into one verdict
+
+The worst bug in this layer: **the report said "optical limit not reached" while the lens was resolving perfectly well.** One verdict, `resolvable`, had folded together two independent axes — **lateral resolution** and **depth of field**.
+
+In one configuration the lateral limit was 30.7 µm, so a 60 µm defect was resolved with room to spare, but a depth of field of 0.52 mm fell short of the 1.00 mm tolerance — so no size was ever promoted to `resolvable`, and the headline read "optical limit not reached". **Anyone reading that goes shopping for a lens, when what needs changing is the aperture, the tolerance or the focus mechanism.**
+
+Now they are always reported separately:
 
 ```
 optical limit  : 30.7 um (diffraction-limited)
@@ -1334,205 +1427,129 @@ depth of field : 0.52 mm < 1.00 mm required — resolvable laterally, but the pa
   -> nothing is rated "resolvable" for that reason alone; the lens is not the thing to change.
 ```
 
-The lateral limit is closed form, so **it is always a number**, whatever grid the sweep used. It was never a place where "not reached" could honestly be printed.
+A second bug of the same character: the sweep tally was mixing **"too small to render at sub-pixel size"** and **"the externally supplied detector threw"** into a 0 % detection rate. `unrenderable` and `detector_failed` are now counted separately, and if zero trials could be evaluated the rate is `None`, not `0%`.
 
-### Turning industry awards into a standing input for operator ideas
+> **Rule**: when you tally failures, **do not mix in the reason for the failure**. Mixing blames the design or the algorithm unfairly. And a quantity with a closed form always produces a number — there is no place to write "not reached".
 
-From the author's remark — *"it might be worth considering new operators from the information at this kind of vision event"* — came a written procedure (`docs/INDUSTRY_SIGNALS.md`) for reading industrial-vision trade fairs and awards from primary sources. The reason is that they **judge on a different axis** than a paper corpus. A reviewer asks "is this academically novel?"; an award jury asks "is industry paying for this right now?" The latter means **the specification is settled and there are numbers to verify against**.
+### Making industry primary sources a standing input for op ideas
 
-The inventory check nearly went wrong once, so that trap is in the procedure too. **Never conclude "zero" from a single keyword** — searching `hyperspect` and `spectral` almost produced "we have no hyperspectral", when in fact there are 14 operators behind the `spec_` prefix. The same trap exists elsewhere, so findings are now recorded in four states rather than two: present, **present but unregistered**, **present but off-policy**, and absent.
+`docs/INDUSTRY_SIGNALS.md` is a procedure for reading industrial-vision trade shows and awards as primary sources when looking for op ideas. The reason is that **the criterion differs from a paper corpus**. A reviewer asks "is this academically novel?"; a judge asks "**has industry decided, right now, that this is worth paying for?**" The latter means **the specification is settled and there are numbers to verify against**.
 
-And **thirteen rejected ideas are kept with their reasons**. Camera transport interfaces are "not operators, they are a transport layer" and permanently out of scope; edge-AI processors are hardware; learned defect classification violates the dependency policy *and* has no closed-form ground truth; a light-transport renderer is an honest "we cannot". **Without that record the same round trip happens again next time.**
+The inventory trap is written into the procedure too. **Never conclude "zero" from a single keyword** — searching `hyperspect` and `spectral` almost led to "we have no hyperspectral", when in fact 14 ops carried a `spec_` prefix. So findings are recorded not as a binary present/absent but in **four states**, including "present but unregistered" and "present but off-convention".
 
-### Two new fields — light field and photon counting
+And **13 rejected candidates are kept with their reasons**. Camera transport interfaces are permanently out of scope ("a transport layer, not an op"); edge AI processors are hardware; learning-based defect classification violates the dependency policy and admits no closed-form ground truth; a light-transport renderer is an honest "cannot". **Without that record, you make the same round trip again next time.**
 
-Of the areas that came back **zero across all three inventory surfaces**, two are now implemented. (The remaining four — specular/diffuse separation, motion magnification, Doppler, and coherence-scanning interferometry — are recorded as the next candidates.)
+## The Third Layer of QA — Shaking Ops as a Chain
 
-**Light field (17 operators)** handles a 4-D array of (view V, view U, height H, width W): pull out a viewpoint, change focus after the fact, extract depth — all from one exposure. Its input differs from stereo (two eyes) and from focus stacking (a real camera refocusing), so the types are kept separate.
+After unit tests and adversarial review, a third layer hunts **bugs that only appear when ops are chained**. And then it turned out that **that layer lies too**. This section is a procedure for anyone putting the same thing on their own library.
 
-The number I like most here is the textbook result that **refocusing gain equals angular resolution**, reproduced independently by the implementation:
+### How it works, and how to run it
 
-| angular resolution | depth of field (pixel-based) | depth of field (after refocus) | ratio |
-|---|---|---|---|
-| 6×6 | 1.656 mm | 9.939 mm | **6.0016** |
-| 8×8 | 1.656 mm | 13.254 mm | **8.0038** |
-| 10×10 | 1.656 mm | 16.573 mm | **10.0075** |
+**Typed pool + random chaining + signature convergence.** Following each op's declaration (in-type → out-type), draw arguments from the pool, chain ops at random (**diffusion**), and put the products back. Every exception or anomaly is collapsed into a **signature** — (class, op, exception, message) — and counted (**convergence**).
 
-The ratio is not hard-coded — it comes out of **two calls to `depth_of_field` with different circles of confusion**. The 0.0016 in 6.0016 is the difference between those two computations, not a rounded figure. The price is in the same table: spatial resolution drops from 2048×2448 to 341×408 / 256×306 / 204×244. **What you gain and what you pay both fall out of the same calculation**, which is the satisfying part of this family.
+The classification is the heart of it.
 
-**Photon counting and time-resolved sensing (17 operators)** covers the regime where light stops being a continuous brightness and becomes **countable grains**: Poisson sampling, the Anscombe variance-stabilising transform, SPAD dead time, TCSPC arrival-time histograms, and the distance and fluorescence lifetime derived from them. The noise model differs from the existing `aug_read_noise` (additive Gaussian read noise); the only place the two meet is the generalised Anscombe form.
+| Class | Meaning |
+|---|---|
+| **CONTRACT** | A documented ValueError = clean |
+| **SUSPECT** | A raw TypeError / IndexError = a hole in the contract |
+| **TYPEMISS** | Returned a type other than declared = the type is lying |
+| **NONFINITE** | Silent NaN / Inf |
+| **GROWTH** | A product exceeded the pool cap (recorded, never silently dropped) |
 
-The dead-time implementation matches the textbook `m = n/(1+nτ)` **bit for bit**, and its inverse round-trips to 1.7e-16. Asked for 1.5 m, the dToF estimator returns **1.5000003 m** (log-parabola fit).
+```bash
+py -3.11 tools/chain_fuzz.py --chains 1500 --length 6 --seed 7001 \
+    --coverage-out coverage.json --explore 0.3
+py -3.11 tools/chain_fuzz.py --minimize findings.jsonl --only fit_zernike   # shrink to a minimal repro
+py -3.11 tools/chain_fuzz.py --replay 7001 --script "op_a,op_b,op_c"        # confirm the repro
+```
 
-### "Zero findings" was masquerading as robustness — three holes in the fuzzer
+`--coverage-out` is the point of this section. `--explore` is the probability of preferring ops that produce types not yet in the pool; 0 is uniform (the old behaviour).
 
-Wiring the 34 new operators into the chain fuzzer exposed **three holes in the fuzzer itself**. All three have the same shape: they cannot distinguish **"there is no bug"** from **"it never ran at all."** Addendum 5 called the fuzzer a third layer of quality assurance; this is the story of that layer being capable of lying.
+**The fuzzer itself was hardened twice in the field.** The first run hit exponential volume growth from a chain of upsampling ops and stalled with a radius-1 morphology pinned to a 34 GB voxel array for 20 minutes. The second stalled when **a TPS fit over 40,000 control points allocated a 12 GB dense matrix internally** — which a pool cap cannot prevent. **Small input, enormous internal allocation** is its own family of adversarial finding. The same pattern was swept out of PSF generation (an order-of-magnitude σ gives 64 GB) and the CPD correspondence matrix; the ops got fail-closed caps, and the TPS warp was chunked into bounded memory **bit-for-bit identically**.
 
-**One — arguments with defaults could never be overridden.** If an operator's default does not fit the pool's fixed sizes, it is rejected with a ValueError every single time and is counted under "zero findings" **without ever having executed**. `lf_from_mla`'s default `angular=(5,5)` does not divide 32×32, and it had not run once in 1,200 chains. Fixed by letting only the op-name-targeted hints override defaults (letting name-level hints do it would change the behaviour of every existing operator at once, so that path stays frozen).
+**One representative catch.** `fit_zernike` occasionally returned all-NaN coefficients — never reproducible in isolation, carried as "grey" across three waves. The chain trace pinned it: **a value of order 1e39, finite in float64 (a product of amplifying chains), becomes inf when cast to float32 on the torch path**, after which `grid_sample` and `lstsq` return NaN **silently**. The fix is one helper that validates finiteness after the cast — but the same cast appears in 20 places, so **1e39 was actually pushed through each of them** and only the 4 ops that produced silent NaN were changed (`sobel3d` and others measured clean and were left alone).
 
-**Two — coverage was only ever a number.** "304/417" cannot tell you whether the other 113 are **robust** or **unreachable**. Breaking the count down per family immediately showed the photon family at `10/17` — meaning **fail-closed validation worked so well that 7 operators never executed**. The fuzzer's generic `signal` pool is a sine wave with negative values, and a photon count is non-negative by contract, so they were being cleanly rejected every time. The guard worked perfectly, and **as a result nothing behind the guard was ever tested.**
+**A second lesson: inf is not a bug — the question is whether it is a contract.** `sdf_subtract`'s inf output came from `esdf`'s **documented** contract ("+inf if everything is free space"), propagated with mathematical precision by min/max algebra — innocent. But `sdf_smooth_union` in the same family is arithmetic internally (inf−inf, inf×0) and returned **all-NaN on inf input** — a real bug, fixed by degenerating exactly to `min` where the blend band |a−b|<k degenerates. **Don't blame the op that emitted a non-finite value; trace where it came from and whether that is a contract.**
 
-**Three — signatures were splitting on numbers.** The better the error message, the more likely it contains **run-specific numbers** ("127 negative bins, minimum -1.176"). Comparing raw strings makes one single problem produce a fresh signature on every run — nearly the whole jump from 99 to 238 signatures was this. Masking numbers before forming the signature fixes it.
+### "Zero findings" is not robustness — four disguises and how to detect them
 
-The run after all three fixes:
+**This is the part of the article that transfers most directly to other projects.** A fuzzer's "zero findings" disguises **never-executed** as **robust** in four different ways. All four were hit in a single project.
+
+**1. Arguments with defaults could not be overridden at all.** An op whose default clashes with the pool's dimensions is rejected with ValueError every time and counted as "zero findings" **without ever running**. Concretely: `lf_from_mla`'s default `angular=(5,5)` does not divide 32×32, and it never ran once in 1200 chains.
+→ **Detection**: let op-targeted hints override defaults too (name-level hints are left alone, since applying those to defaults would shift the behaviour of every existing op at once).
+
+**2. Coverage reported only a count.** "304/417" does not say whether the remaining 113 are **robust** or **unreachable**.
+→ **Detection**: break it down per family. The moment that appeared, the photon family showed `10/17` — **fail-closed working so well that 7 ops had never executed** (the generic `signal` pool is a sine wave with negative values, and non-negativity is a contract for photon counts, so they were cleanly rejected every time). **The defence worked perfectly, and therefore nothing behind the defence was ever tested.**
+
+**3. Signatures split on numbers inside the message.** The better the error message, the more likely it contains **run-specific numbers** ("127 negative bins, min −1.176"), so one issue produces a new signature every run. Almost the entire growth from 99 to 238 signatures was this.
+→ **Detection**: mask numbers before forming the signature. 238 → **40**.
+
+**4. Required arguments could not be bound, and it was skipped without a record.** The 3-D family ran only 204 of 310 ops in 1500 chains — not because the ops were robust, but because the fuzzer was silently skipping them.
 
 ```
-== diffusion: 1500 chains x len 6 (seed 7001, 45s)
+skipped silently, could not bind a required argument   70
+input type absent from the pool (must be chained)      21
+bindable (simply never drawn)                           9
+```
+
+What was missing were ordinary arguments: camera intrinsics, a pose, a RANSAC threshold, voxelisation bounds and resolution. The moment hints opened those paths, **five genuine type mismatches came out of code that had never run**.
+
+```
+project_points        declared out image2d -> actually a tuple (uv(160,2), depth(160,))
+alpha_shape_boundary  declared out points  -> actually indices (38,) int64
+segment_rigid_motions declared out labels  -> actually dict{labels, motions}
+pnp_ransac            declared in image2d  -> 2nd argument is actually 2-D points -> raw IndexError
+surface type          folded a polynomial model and a B-spline model under one name
+```
+
+A health check across the whole ledger then found **seven more of the same class**. The three that could not be fixed are listed with reasons, and the check asserts **exactly that set** — it fails if a listed one is fixed but left in, and it fails if a new divergence appears.
+
+**Reachability is not a guess; it is a fixed point.** Start from the initial pool's types, add the output types of every op whose inputs are all present, and repeat until closed. Measured across 434 ops, **exactly one was structurally unreachable**. Everything else had simply never been drawn.
+
+A run looks like this:
+
+```
+== diffusion 1500 chains x len 6 (seed 7001, 45s)
 == op coverage: 321/434
-== per family: 1d 34/34  2d 12/12  3d 204/310  lightfield 17/17  math 20/26  optics 17/18  photon 17/17
+== per-family: 1d 34/34  2d 12/12  3d 204/310  lightfield 17/17  math 20/26  optics 17/18  photon 17/17
 == findings (raw): {'CONTRACT': 284} / 40 signatures
 ```
 
-Both new families at **17/17**, **zero** suspect signatures, and the signature count converged from **238 to 40**.
+### When to split a type — does mixing raise, or return a plausible wrong number?
 
-### Splitting a type, twice
+"Same shape, so same type" builds systems that are quietly wrong. **There is one criterion.**
 
-Not putting every "non-negative 1-D array" into one type was a decision made from measurement. Feed a photon-count histogram (values 0 to a few thousand) into the SPAD dead-time law and it **raises nothing and returns something almost exactly equal to the input** — a relative change of 1.1e-4. A real count rate (1e3–1e7 Hz) changes by 33.3%. Which means **saturation, the fail-closed branch, and the non-invertibility of the paralysable model are never once exercised**. Without the type split, that plausible-looking pass-through is undetectable forever.
+> **If mixing them raises, one type is fine. If mixing them returns a plausible wrong number, split them.**
 
-The physics differs too. Dead time applies to a detector's **rate stream**, not bin-by-bin to a time histogram (the correct distortion model on the histogram side is a different one). Merging the types would teach **the evolutionary search that a physically wrong chain is a legitimate type connection.**
+The strongest example was polarisation. **A polariser sweep and a multi-light stack are both non-negative `(N,H,W)` arrays and structurally indistinguishable.** And mixing them **lies silently in both directions**.
 
-The same call was made for the 4-D light field: collapsing it into the existing "list of images" type erases *which viewpoint*, and then neither refocusing nor the epipolar plane can be defined. **A type is not the shape of the container; it is a promise about meaning.**
+- Feed a genuine light stack to polarisation separation and it **fabricates 5.4 % degree of polarisation** with no polariser and no polarised light anywhere in the scene (50 of 50 random light layouts accepted).
+- Feed a genuine polariser sweep to photometric stereo and it returns a normal **34° off** from the true `(0,0,1)` of a flat surface, at 21 % residual. The same op on genuine photometric data gives 0.000115°. **A factor of 296,000** (independently re-measured at 35.15° vs 0.000000°).
 
-### Did the evolution vocabulary grow? Measurement says: it had not
+No exception, no NaN — a confident lie. The same judgement was applied to time-first video (T,H,W) vs spatial voxels, time-of-arrival cubes (H,W,T), colour quaternions vs monogenic signals, complex beat cubes vs real photon histograms, and z-scan stacks — **six times, each backed by measurement**.
 
-An honest note. **Adding 34 operators to the catalogue grew the evolutionary search vocabulary by exactly zero** — no bridge operators at all. The reason came in two stages.
+**The counter-example is the acoustic signal**, which was *not* split: any real 1-D array genuinely is a valid acoustic signal, so declaring a type would not be a lie but would also protect nothing. The danger was in a scalar, so the guard went there instead.
 
-First, there was no evolution-side sort for the new types. That part is easy to add. But adding it is not enough, because each family's **entry point** (image → light field, depth → arrival-time cube) **takes an existing image sort as input**. Putting those into the default vocabulary shifts the candidate list of an existing sort, which changes the genome→operator mapping and **silently rewrites past champions**. Yet adding only the consumers without the entry points grows **vocabulary that nothing produces and nothing can ever reach** — the very trap the fuzzer had just walked into.
+**One pitfall when you do split**: **always place the entry op and the consuming ops in the same mode, together.** Adding only the consumers means nothing ever produces that type, so all you gain is **dead vocabulary that is permanently unreachable** — the same trap as in the fuzzer.
 
-The conclusion: **entry points and consumers always go into the same mode, together.** The default vocabulary stays at 801 operators, untouched (the mapping invariant holds), while the wide, opt-in vocabulary goes from 873 to **890**, and bridges into the two new families from 5 to **22**. The invariant is pinned by a test that fails when a sort has consumers in the vocabulary but no producer.
+## An Evolutionary Algorithm Development Environment — Vocabulary and Workload
 
-### Turning the provenance rule from prose into a check
+> **Status: PoC** — demonstrated on four problems. General-purpose automatic design is still not claimed here.
 
-The author also asked a sharp question: *"is it a problem to implement something under the same name?"*
+This continues Layer 2. **Widening the vocabulary to 511 ops does nothing if there is no work that uses it.** Here are the measurements.
 
-The answer matters, because **however independently the code was written, provenance is whatever you wrote down.** And in fact a commercial product name did get written into a new module's docstring as *the reason the module exists*. The code had been derived from public literature independently — the record was contaminated anyway.
+### The vocabulary did not actually grow
 
-So the rule was rewritten as a three-way distinction and **turned into a check**:
+Right after 34 ops were added to the catalogue, **the evolution search vocabulary had grown by exactly zero.** Zero bridging ops. The reason came in two stages.
 
-| use | verdict | why |
-|---|---|---|
-| naming **our own** things after a product (module, operator, API, or "this exists because X does it") | **banned** | it fabricates a provenance record regardless of how the code was written |
-| **interoperation identifiers** (the string that selects a vendor's driver; an alias table for people arriving from another tool) | allowed | a factual name for something that exists outside us; removing it makes the code less usable, not more independent |
-| **cited attribution in a research log** ("award A went to company C", with the source URL) | allowed | this is a citation, and removing it makes the claim unverifiable. **Attribution is the opposite of appropriation** |
+First, there was no corresponding type on the evolution side. That part is easy to add. But adding it was not enough, because **each family's entry op** (image → light field, depth → time-of-arrival cube) **takes an existing image type as input**. Putting those into the default vocabulary shifts the candidate list of an existing type, **which changes the genome→op mapping and silently rewrites past champions**.
 
-The test to apply: **does the name describe something of ours, or something of theirs?** Describing theirs with a source is a citation; attaching theirs to ours is the thing that must never happen.
+The conclusion is the same as the previous section: **entry and consumers together, in the same mode**. The default vocabulary was left at 801 ops with nothing moved (preserving mapping invariance), while the wide (opt-in) vocabulary went 873 → **890 ops** and the bridges into the new families 5 → **22**. The invariant is pinned by a test: it fails whenever **an op that consumes a type is in the vocabulary while no op produces it**.
 
-The old rule said such names must never appear *anywhere* — and **the repository itself did not obey it**. A rule nothing obeys cannot be audited, so it was rewritten to match reality and backed by a machine check (module names, function and class names, module docstrings and public docstrings, with every exemption required to carry a written reason).
+### The problems only accepted old types
 
-### The numbers for this stretch
-
-| item | before | after |
-|---|---|---|
-| typed catalogue | 400 ops | **434 ops** |
-| evolution vocabulary (default) | 801 ops | **801 ops** — deliberately frozen to preserve the mapping |
-| evolution vocabulary (wide, opt-in) | 873 ops | **890 ops** |
-| per-operator documentation | 1,155 notes | **1,189 notes** |
-| fuzzer signatures (1,500 chains) | 238 | **40** |
-| reach of the two new families | — | **17/17 and 17/17** |
-
-Real bugs found by adversarial testing and fixed: three in the light-field family (a silent Inf, a raw numpy error leaking out, a missing size cap), five in photon counting (a silent NaN from denormal underflow, a type lie, implicit string parsing, `argmax` picking bin 0 on a flat histogram, a landmine default), and three in the virtual lab. On top of that, **the authors corrected three of their own docstring numbers by re-measuring**: "including the rise makes the lifetime come out short" is measurably **the opposite — it comes out long**, and "going through Anscombe denoises better" **loses** under linear smoothing. Not keeping only the flattering results applies here too.
-
-## Addendum 7 (2026-09-02): Filling the five fields we had not a single word for — and learning that "zero findings" can lie
-
-> **Status: Measured / Verified** — 8 new families, 111 operators, **zero suspect signatures** across 1,500 fuzz chains, **8,169 tests** green. Evolution gained **+44.5%** with a new family — and **lost by 28.2%** on another.
-
-Addendum 6 introduced a written procedure for turning industry awards into a standing input for operator ideas. It recorded **four fields where fullseye returned zero across all three inventory surfaces**. This addendum is the few days that **filled all four**. Along the way the author asked two more questions — *"if 1-D works, then acoustic data works too, right?"* and *"HALCON has complex images; would quaternion images make something interesting possible?"* — and those went in as well.
-
-### What landed
-
-| family | ops | the measurement that justifies adding it |
-|---|---|---|
-| light field | 17 | refocus gain equals angular resolution (6.0016 / 8.0038 / 10.0075) |
-| photon counting | 17 | dead-time law matches the textbook **bit for bit**; dToF returns 1.5000003 m for 1.5 m |
-| specular separation | 13 | plain least squares collapses under blocked lights while median/RANSAC hold the noise floor; **k=4 is the shared breakdown point** |
-| motion magnification | 9 | **the cliff is explained in closed form** — the first zero of J₀, 2.4048/k = 3.0619 px |
-| quaternion images | 19 | a 3-D colour rotation is the only genuine capability difference (honest verdict below) |
-| FMCW range-Doppler | 8 | a weak target buried under −24.57 dB of rectangular-window leakage reappears at −43.56 dB with a Hann window |
-| acoustic diagnostics | 19 | **envelope spectrum peaks at 107.000000 Hz; the raw spectrum at that same frequency is 4.3e-16** |
-| coherence-scanning interferometry | 9 | **phase shifting breaks at exactly λ/4**, and its error is always an integer multiple of λ/2 |
-
-The typed catalogue is now **511 operators**; the evolution registry is **847**.
-
-### The best thing learned this stretch — "zero findings" was not robustness
-
-Addendum 5 called the chain fuzzer a third layer of quality assurance. What this stretch showed is that **the layer itself can lie**.
-
-Digging into why the 3-D family had executed only 204 of 310 operators across 1,500 chains, the cause turned out not to be robust operators but a **fuzzer that was silently skipping them**. The breakdown of the 100 unreached:
-
-```
-required argument could not be bound — skipped with no record   70
-input type not in the pool (must be produced mid-chain)         21
-bindable, simply never drawn                                     9
-```
-
-**Seventy were skipped without leaving a record.** What was missing were ordinary arguments: camera intrinsics, pose, a RANSAC threshold, voxelisation bounds and resolution. The moment those hints opened the path, **five genuine type mismatches surfaced from code that had never executed once**:
-
-```
-project_points        declared image2d out → actually a (uv(160,2), depth(160,)) tuple
-alpha_shape_boundary  declared points  out → actually indices, (38,) int64
-segment_rigid_motions declared labels  out → actually dict{labels, motions}
-pnp_ransac            declared image2d in  → second argument is really 2-D points → raw IndexError
-the `surface` type    folded a polynomial model and a B-spline model under one name
-```
-
-Writing a health check over the whole ledger then found **seven more of the same class**. Three that could not be fixed are listed with their reasons, and the test asserts **exactly that set** — it fails if a listed one gets fixed *or* if a new divergence appears.
-
-**The same shape was walked into four times this stretch.**
-
-1. **Arguments with defaults could never be overridden.** An operator whose default does not fit the pool's fixed sizes is rejected every single time and counted under "zero findings" **without ever having run**.
-2. **Coverage was only a number.** "304/417" cannot distinguish robust from unreachable. Breaking it down per family immediately showed the photon family at 10/17 — **fail-closed validation working so well that 7 operators never executed**.
-3. **Signatures were splitting on numbers.** The better the error message, the more run-specific numbers it carries ("127 negative bins, minimum −1.176"), so one problem produced a fresh signature every run.
-4. **The 70 above.**
-
-Type reachability can be solved as a fixpoint (start from the initial pool's types, add the output type of every operator whose inputs are all present, repeat). Measured across 434 operators, **exactly one was structurally unreachable**. Everything else had simply never been drawn.
-
-### Splitting a type, six times, each decided by measurement
-
-"Same shape, so one type will do" builds a system that goes quietly wrong. The criterion is single: **when you mix them, does it raise, or does it return a plausible wrong number?** If the latter, split.
-
-Polarisation was the sharpest case. **A polariser sweep and a multi-light stack are both non-negative `(N,H,W)` arrays and are structurally indistinguishable.** Mixing them goes wrong **in both directions**:
-
-- Feed a genuine light stack to the polarisation separator and it **fabricates a degree of polarisation of 5.4%** on a scene containing neither a polariser nor polarised light — 50 of 50 randomly oriented stacks accepted.
-- Feed a genuine sweep to the photometric solver and, on a flat surface whose true normal is exactly `(0,0,1)`, it returns normals averaging **34 degrees off** with a residual of only 21%. The same operator on genuine photometric data gives 0.000115 degrees. **A factor of 296,000.**
-
-I reproduced it independently: **35.15 degrees versus 0.000000 degrees**. No exception, no NaN — a confident lie.
-
-The same call was made for time-first video `(T,H,W)` against spatial voxels, arrival-time cubes `(H,W,T)`, colour quaternions against monogenic signals, complex beat cubes against real photon histograms, and z-scan stacks. **In the opposite direction, acoustic signals were allowed to ride on the existing 1-D type** — any real 1-D array genuinely *is* a valid acoustic signal, so declaring a type would not be a lie, but it would guard nothing. The danger lives in the `rate` scalar instead: read the same recording at 48000 Hz instead of 25600 and the defect is reported at 200.625 Hz rather than 107, again with nothing raised. So the defence went on the scalar.
-
-### The honest answer to "would quaternion images make something interesting possible?"
-
-**Yes — but for exactly one reason.**
-
-A complex pixel is a 2-D value with one axis of rotation. The quaternion's pure part `(0,R,G,B)` is a 3-vector, and `q·x·q*` is a genuine **3-D rotation in colour space**. Turning pure red into green by rotating 90° about the blue axis **cannot be done by any per-channel gain** — the best diagonal approximation is off by `‖P−diag(P)‖₂ = 0.6667`. That is the one real capability difference.
-
-**Everything else failed to sell.**
-
-- The same rotation works with a 3×3 matrix (agreement 2.22e-16). The only quaternion-specific gain is representational closure.
-- **The quaternion Fourier transform buys nothing.** Rebuilt from per-channel FFTs it agrees to 1.14e-13, and it is **2.4× slower**. The genuinely quaternionic part is only that left ≠ right.
-- **The Riesz/monogenic route lost to the complex steerable pyramid built the same day.** With two orientations in one octave the error is **1.30e-01 against 4.4e-16**. Two octaves apart both reach machine precision, which pins the cause on the single-plane-wave model being false in a radial band. A quarter of the pixels come back rank 0, and the theoretical win on oblique gratings did not materialise either. **Two genuine wins remain** — roughly 2× better under noise, and 2.21× faster at magnification.
-
-Leading with the losses is not a stylistic choice; it is what makes the next step decidable. The loss has a located cause, so it says what to fix.
-
-### Showing where the existing method breaks
-
-"It is new" does not justify a family. What justifies one is **showing where the existing approach breaks, on the same ground**. Coherence-scanning interferometry was the cleanest example.
-
-| true step | phase shifting (existing) | coherence method (new) |
-|---|---|---|
-| 0.15 µm | error 0.0000 | error 0.0000 |
-| 0.20 µm | **returns −0.1000** (−λ/2) | error 0.0000 |
-| 0.30 µm | **returns −0.0000** (−λ/2) | error 0.0000 |
-| 1.00 µm | **returns +0.1000** (−3λ/2) | error 0.0000 |
-
-It starts failing at **exactly λ/4 = 0.15 µm**, and the error is always an integer multiple of λ/2 — a fringe-order jump, which makes it a **structured** lie. Nothing raises, nothing is NaN, nothing warns. Changing λ to 0.8 µm moves the breakdown to 0.20 µm, which is also verified.
-
-Acoustics got the same treatment. A bearing defect's **envelope spectrum peaks at 107.000000 Hz**, while **the raw spectrum at that same frequency reads 4.3e-16** — the defect is not there. Order tracking likewise: on a signal whose shaft speed varies, the ordinary spectrum smears the component to 7% of its amplitude over 66.5 Hz, while resampling into the angle domain gives 0.999371 in a peak **0 bins** wide.
-
-### Evolution actually used the new families
-
-This was the real objective. **Widening the vocabulary to 511 operators achieves nothing if there is no work that uses it.**
-
-Running the evolution loop, the top rejection reason was exactly that:
+Running the evolution loop, the top reason for rejection was this:
 
 ```
 rejected  5  problem does not accept this input type (histcube)
@@ -1540,63 +1557,116 @@ rejected  4  problem does not accept this input type (lightfield)
 rejected  2  problem does not accept this input type (counts)
 ```
 
-**All twelve problems were in old types.** So four problems in the new types were added, each with ground truth built exactly from a forward model (synthesise the input knowing the answer). Results are on the **locked holdout** — the split scored exactly once, against the champion, and never touched otherwise.
+**All 12 problems used old types.** Four problems on the new types were added; the ground truth for each is constructed exactly from a forward model (synthesise the input knowing the answer).
 
-| problem | identity | hand (best single existing op) | evolved | vs hand |
+### Scoring on a locked holdout — two wins, one loss
+
+```bash
+py -3.11 robust.py --problem photon_denoise --seeds 3 --gens 12 --pop 12
+```
+
+`robust.py` runs N independent seeds, **selects strictly on TRAIN**, and reports the **locked holdout** — the genuinely untouched split, scored exactly once against the final champion — together with the seed-to-seed spread.
+
+| Problem | Identity | Hand (best single existing op) | Evolved | vs hand |
 |---|---|---|---|---|
-| photon-histogram denoise | 0.2664 | 0.5371 | **0.7760** | **+44.5%** |
-| map of what is vibrating | 0.0000 | 0.6973 | **0.8868** | **+27.2%** |
-| light-field disparity map | 0.0000 | 0.5794 | 0.5907 | +2.0% |
-| specular removal | 0.4115 | 0.8406 | 0.6039 | **−28.2%** |
+| Photon histogram denoising | 0.2664 | 0.5371 | **0.7760** | **+44.5 %** |
+| Map of where things vibrate | 0.0000 | 0.6973 | **0.8868** | **+27.2 %** |
+| Light-field disparity map | 0.0000 | 0.5794 | 0.5907 | +2.0 % |
+| Specular removal | 0.4115 | 0.8406 | 0.6039 | **−28.2 %** |
 
-The photon champion is a composition **closed entirely within the photon family**:
+The photon champion is **a composition closed entirely within the photon family**:
 
 ```
 irf_convolve → background_subtract → deadtime_correct
 ```
 
-That is the first case of a new family paying off not as a usable operator but as **a sequence of operators joined together**.
+That is the first case where a new family delivered value **as a chained procedure** rather than as an individually useful op.
 
-**And the one that lost is the most instructive.** For specular removal the evolution found a champion that goes **across families, through the quaternion route** (colour image → quaternion → colour-space rotation → colour image). On the observed split it read 0.776, closing on the hand's 0.84 — but on the untouched split it fell to **0.628**, with a seed-to-seed standard deviation of 0.190. **Looking only at the observed split, it would have read as "nearly there."** The winning vibration problem, by contrast, had a standard deviation of 0.001 on the untouched split. Disclosing the spread is what made the difference legible.
+**The most useful row is the loss.** For specular removal, evolution found a champion that **crosses families through the quaternion ops** (colour image → quaternion → colour-space rotation → colour image). On the observed split it read 0.776, close to the hand baseline of 0.84 — **on the untouched split it fell to 0.628**, with a seed-to-seed standard deviation of 0.190. The winning vibration map, by contrast, had a standard deviation of 0.001 on the untouched split.
 
-### Five of my own and my agents' errors, kept on the record
+> **Rule**: looking only at the observed split, this reads as "so close". **Until you report the locked holdout and the spread together, nothing has been won.**
 
-This is the section I most want to keep.
+## Building "Honesty" Into the System (continued)
 
-**1. I nearly wrote the evolution gain as +38%.** I was comparing a hand baseline of 0.3945 against an evolved 0.546 — **two numbers measured on different draws**. Re-measured on the same split, the hand is 0.5794 and the real difference is **+2.0%**. Comparing across draws inflates by nearly 20×.
+Continuing the chapter of the same name earlier. Three cases of **turning a discipline into a check**.
 
-**2. I had put the weaker operator in as the hand baseline.** The promotion gate searched all existing operators for the best single-op baseline and showed one **more than twice as strong** as the one I had chosen. A weak baseline makes the problem look easier than it is. The baseline should be "the best that already exists", not "the first thing I thought of".
+### Turning provenance discipline from prose into a test
 
-**3. When I wrote the type predicate, my predicate was the thing that was wrong.** Adding a check for the `pose` type flagged six operators — but four of them were flagged **because I had written `isinstance(np.ndarray)`**. GPU-backed operators return torch tensors by this repository's own convention, so the check had to be **on shape, not on type**. Fixed, exactly three remained, and those were genuine (one declared `pose` while carrying neither R nor t).
+The answer to "is it a problem to implement something under the same name?" is: **however independently the code was written, provenance is whatever you wrote down**. In practice, a commercial product name ended up in a new module's docstring as *the reason the module exists*. The code was raised independently from public literature, and the provenance record was polluted anyway.
 
-**4. An agent corrected a number that flattered its own work.** The quaternion agent had reported "100k composed rotations drift 0.0 for quaternions versus 4.4e-10 for matrices" as a quaternion advantage. That 4.4e-10 turned out to come from a *different* bug in the `pose_quat` module I had just published (its normalisation added 1e-12 to the divisor), feeding slightly non-orthogonal matrices through all 100,000 steps. The honest figure is **4.33e-14** — four orders smaller, and merely rounding. **The number that flatters what you are building is the one to re-measure first.**
+The discipline was rewritten as a three-way split:
 
-**5. An agent caught a figure it had written in a code comment and never measured.** Writing the family guide forced the check; the measured effect scales with how much of each frame is zero padding, coming out **worse than written at high padding** (pure white noise reporting a strong repetitive transient of +4.09 that does not exist) and **milder at low padding**. A single fabricated pair could not have conveyed that.
-
-### A by-product — a bug in an API minutes after publishing it
-
-While checking the inventory for the quaternion question, it turned out that 28 quaternion and dual-quaternion functions **existed but could not be reached from either facade**. Minutes after wiring them, an agent reported three silent errors:
-
-- `quat_normalize([0,0,0,0])` returns `[0,0,0,0]`, and converting that to a rotation matrix yields the **identity** — "no rotation can be defined" turning into "no rotation".
-- A rotation requested about a zero axis becomes a non-unit quaternion of norm 0.878.
-- `|RᵀR − I| = 4.0e-12` — not rounding but a **one-directional shrink** that accumulates through composition.
-
-The cause was dividing by `norm + 1e-12`. Zero length is now fail-closed and the division is exact; **the orthogonality error is 4.4e-16**. One thing the diagnosis taught: the 4.0e-12 figure arose because `quat_to_hom_mat3d` calls `quat_normalize` internally, so **the epsilon applied twice** — reproducing only the outer expression does not reproduce the number against the current code.
-
-Sweeping the same class through sibling code is house discipline here. Two modules also had their size caps applied **after** the float64 promotion, so they were not preventing the allocation they exist to prevent; both now reject in 0.0000 s with nothing allocated (verified with a zero-byte broadcast view).
-
-### The numbers for this stretch
-
-| item | before | after |
+| Use | Verdict | Reason |
 |---|---|---|
-| typed catalogue | 400 ops | **511 ops** |
-| evolution registry | 801 ops | **847 ops** |
-| evolution problems | 12 | **16** (4 of them in new types) |
-| per-operator documentation | 1,155 notes | **1,264 notes** |
-| family guides | 16 | **24** |
-| tests | 6,630 | **8,169** (all green) |
+| Attaching another company's name to **something of ours** (module name, op name, API name, "why this exists") | **Forbidden** | It creates a false provenance record regardless of how the code was actually written |
+| **An interoperability identifier** (a string that selects a device driver, an alias table for people arriving from another tool) | Allowed | It is the de-facto name of something that really exists over there; removing it lowers availability without raising independence |
+| **An attributed citation** (recording which award went to whom, with a URL) | Allowed | This is a citation; removing it makes the claim unverifiable. **Attribution is the opposite of plagiarism** |
 
-Adversarial testing found and fixed **more than 30 real bugs** across the eight families. Every one of them was of the "**returns a plausible wrong number**" kind rather than the "raises" kind: an angle silently folded by the sine so that 95° and 85° produce a **bit-identical** cube; an array with no aperture **confidently returning −90°**; frames straddling zero padding looking like the most impulsive thing present and **reporting a transient that does not exist**; a truncated envelope returning a height that is **76% wrong**; a nm/µm mix-up in the wavelength that is **completely asymptomatic**. None of them are visible without running and measuring.
+The test is "**does this name refer to something of ours, or to something of theirs?**" Pointing at theirs with attribution is citation; pasting theirs onto ours is the thing you must never do.
+
+**The old rule said "never write it anywhere in the documentation" — and the repository itself did not comply.** A rule nobody can follow cannot be audited either. It was rewritten to match reality and then turned into a machine check, scanning four surfaces (module names, function names, module docstrings, public docstrings), with a written reason required for every exemption.
+
+```bash
+py -3.11 -m pytest tests/test_provenance_naming.py -q      # 7 passed
+```
+
+### Building a fidelity gate? Then attack the gate itself
+
+GPU acceleration runs behind a fidelity gate: **only ops that numerically match the CPU reference get loaded**. That gate had three holes. **Here they all are, for anyone building the same thing.**
+
+**1. `reflect` padding is not the same in torch and scipy.** Whether the edge pixel is duplicated differs. The fix for that difference had only been applied to some kernels; applying it everywhere brought **7 ops including sobel and median into exact agreement out to the edges**. It also turned out that DoG (difference of Gaussians), which had been **excluded with the conclusion that it was impossible to make faithful in principle**, had this padding as its real culprit. **When a port disagrees at the border, suspect the padding convention first.**
+
+**2. The gate tested at a single parameter point.** With large kernels the edge intrudes into the inspection margin. Strengthened to a 5-point sweep with a margin tied to kernel radius.
+
+**3. The strengthened version had a second hole.** **On a flat (constant) image, normalisation amplifies float32 rounding noise to full scale.** It breaks spectacularly — canny turns a constant input entirely into foreground. Constant and quantised images were added to the inspection set, and **all 90 mappings now agree**.
+
+**The automated alias search had the same trap.** Ops with identical implementations under different names were mined by brute-force comparison of every unsupported op against every GPU kernel — but the first test image was **binary salt noise**, and the degeneracy "erode it and everything vanishes" **mass-produced false matches**: **all-zero agrees with all-zero for any reason at all.** Re-run on a structured blob image, only the 42 confirmed at 5 parameter points were adopted (one that behaves differently on greyscale was rejected despite matching numerically). GPU coverage across the 20 shipping recipes went **45 % → 79 %**.
+
+### Five rules that decide whether a number can be trusted
+
+Five of my own and the AI's errors from this period, stated as **rules** rather than stories.
+
+1. **Always compare on the same split.** A hand baseline of 0.3945 next to an evolved 0.546 was nearly written up as "+38 %" — **those two numbers came from different draws**. Re-measured on the same split it is +2.0 %. **Comparing across draws inflates by nearly 20×.**
+2. **The hand baseline is not "the first op you thought of" but "the best existing op".** The promotion gate searched exhaustively and found an op more than twice as strong as the one placed by hand. A weak baseline makes the problem look easier than it is.
+3. **Write type predicates on shape, not on type.** A `pose` check written with `isinstance(np.ndarray)` flagged 6 items, of which 4 were the predicate's own fault — GPU-capable ops return torch tensors by convention here. Rewritten on shape, the remaining 3 were genuine (one declared `pose` while carrying neither R nor t).
+4. **Re-measure the numbers that favour you, first.** A report claimed quaternion superiority: "composing quaternions 100,000 times drifts by 0.0; matrices by 4.4e-10". That 4.4e-10 came from a *different* bug in `pose_quat` (adding 1e-12 to the denominator during normalisation) feeding it non-orthogonal matrices. The correct figure is **4.33e-14** — four orders smaller, plain rounding error, and no advantage at all.
+5. **A number written in a comment is, at the time of writing, unmeasured.** Writing a guide surfaced an unmeasured value; measuring it showed the behaviour was **worse than written at high padding** (reporting a strong transient of +4.09 that does not exist in pure white noise) and **milder at low padding**. One invented pair of numbers cannot convey that scale dependence.
+
+### The API had 28 unwired functions the day after release
+
+Checking the inventory during the quaternion discussion revealed that **28 quaternion and dual-quaternion functions existed and not one was reachable from either facade**. Wiring them up immediately surfaced three silent errors.
+
+- `quat_normalize([0,0,0,0])` returned `[0,0,0,0]`, which becomes the **identity matrix** as a rotation — "rotation undefined" turns into "no rotation".
+- A rotation request about a zero axis produced a non-unit quaternion of norm 0.878.
+- `|RᵀR − I| = 4.0e-12` — not rounding error but a **one-directional shrink**, accumulating with every composition.
+
+The cause was dividing by `norm + 1e-12`. **Making zero length fail-closed and using exact division brings the orthogonality error to 4.4e-16.** The 4.0e-12 figure, it turned out, arose because `quat_to_hom_mat3d` calls `quat_normalize` internally, so **ε was applied twice**; reproducing only the outer formula does not show it in the current code.
+
+**Sweep the same class of miss through sibling code.** A size cap that took effect **after promotion to float64**, and therefore failed to prevent the allocation it existed to prevent, was fixed in two modules (verified with a 0-byte view rejected in 0.0000 s).
+
+Across the 8 families, adversarial review found and fixed **more than 30 real bugs** — every one of them the "**silently returns a wrong number**" kind rather than the "raises" kind: an angle folded by a sine so that 95° and 85° become **bit-identical**, an array with no aperture **confidently returning −90°**, a frame straddling a pad looking the most dramatic and **reporting a transient that does not exist**, an envelope clipped at the edge **returning a height that is 76 % wrong**, an nm/µm wavelength mix-up that is **completely asymptomatic**. None of these are visible without running and measuring.
+
+### What you get today
+
+Here is what `pip install -U fullseye` gives you, listed by capability.
+
+| What you want | Entry point | The number to remember |
+|---|---|---|
+| Step height / surface form, no unwrapping | `csi_stack_simulate` / `csi_height_map` | phase shifting breaks at **λ/4** |
+| Rotating-machine defect diagnosis | `envelope_spectrum` / `order_spectrum` | the defect frequency is **not in** the raw spectrum |
+| Change focus and viewpoint afterwards | `lf_refocus` / `lf_depth_from_focus` | gain = angular resolution; you pay in spatial resolution |
+| Photon-level metrology with error bars | `tcspc_simulate` / `dtof_depth` / `photon_uncertainty` | Poisson: variance = mean (no calibration) |
+| 3-D rotation in colour space | `rgb_to_quaternion` / `quat_color_rotate` | the **only** quaternion-specific gain |
+| Range, velocity, angle of arrival | `fmcw_beat_simulate` / `range_doppler_map` | without bin widths, the units are bin indices |
+| Glare removal / robust normals | `specular_diffuse_split` / `photometric_stereo_robust` | breaking point is **k=4** occluded lights |
+| Measure and show invisible vibration | `displacement_series` / `motion_magnify` | the cliff is **3.0619 px** (first zero of J₀) |
+| Not carrying big 3-D data around | `vol_crop_domain` / `vol_boundary` / `vol_rle_encode` | 1/34 · 19 % · 1/145 |
+| Reading a skeleton as a graph | `em_skeleton` / `junctions_skeleton` / `skeleton_branches3d` | pixel-exact against EM93 |
+| 1-D profile analysis | `derivate_funct_1d` / `zero_crossings_funct_1d` and 37 ops | converges with 2-D measure1d and the 3-D probe |
+| Digging out chained bugs | `tools/chain_fuzz.py --coverage-out` | always read the coverage **breakdown** |
+| Designing pipelines by evolution | `robust.py --problem <name>` | locked holdout and spread, together |
+
+Per-family usage in detail (units, breaking conditions, comparisons against existing methods) lives in 24 guides under `docs/ops/<family>/guides/`. The test suite stands at **8,169 passing**.
 
 ## Summary
 
